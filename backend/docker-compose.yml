@@ -1,0 +1,31 @@
+# dizi.jpg — izole yığın. Mevcut servislere (CRM, host PG 5432, Redis 6379) dokunmaz.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: dizijpg-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: dizijpg
+      POSTGRES_USER: dizijpg
+      POSTGRES_PASSWORD: ${DB_SIFRE}
+    volumes:
+      - dizijpg_pg:/var/lib/postgresql/data
+      - ./sema.sql:/docker-entrypoint-initdb.d/01-sema.sql:ro
+    # Dışarı port AÇMIYORUZ; yalnızca compose ağı içinden erişilir.
+
+  api:
+    build: .
+    container_name: dizijpg-api
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://dizijpg:${DB_SIFRE}@db:5432/dizijpg
+      JWT_SECRET: ${JWT_SECRET}
+      TMDB_TOKEN: ${TMDB_TOKEN}
+      PORT: 8500
+    ports:
+      - "8500:8500"
+
+volumes:
+  dizijpg_pg:
