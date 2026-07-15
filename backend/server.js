@@ -20,6 +20,15 @@ const havuz = new pg.Pool({ connectionString: DATABASE_URL });
 const app = express();
 app.use(express.json({ limit: '1mb' }));
 
+// CORS: web sürümü (dizijpg.com) tarayıcıdan istek atabilsin.
+app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 // ---------- yardımcılar ----------
 const TMDB = 'https://api.themoviedb.org/3';
 const ONBELLEK_TTL_SN = { varsayilan: 6 * 3600, uzun: 7 * 24 * 3600 };

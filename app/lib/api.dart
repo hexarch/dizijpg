@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// dizi.jpg API istemcisi. SSL Faz 8'de eklenecek; şimdilik IP üzerinden.
-const String apiTaban = 'http://154.53.161.139:8500';
+const String apiTaban = 'https://dizijpg.com/api';
 
 /// TMDB görsel adresleri
 String? posterUrl(String? yol, {String boyut = 'w342'}) =>

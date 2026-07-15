@@ -25,7 +25,8 @@ services:
       TMDB_TOKEN: ${TMDB_TOKEN}
       PORT: 8500
     ports:
-      - "8500:8500"
+      # Yalnızca yerelden: dışarıya nginx üzerinden (SSL ile) açılır.
+      - "127.0.0.1:8500:8500"
 
 volumes:
   dizijpg_pg:
