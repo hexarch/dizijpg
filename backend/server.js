@@ -116,8 +116,62 @@ app.post('/auth/kayit', sarici(async (req, res) => {
   try {
     const { rows } = await havuz.query(
       `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash)
-       VALUES (lower($1), $2, $3) RETURNING id, kullanici_adi, email`,
+       VALUES (lower($1), $2, $3)
+       RETURNING id, kullanici_adi, email, misafir`,
       [email, kullanici_adi, hash],
+    );
+    res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
+  } catch (e) {
+    if (e.code === '23505') {
+      return res.status(409).json({ hata: 'Bu e-posta veya kullanıcı adı zaten kayıtlı' });
+    }
+    throw e;
+  }
+}));
+
+// Misafir girişi: hesap anında oluşur, veri toplamaya hemen başlanır.
+// Kullanıcı isterse sonradan /auth/bagla ile e-postaya bağlar.
+app.post('/auth/misafir', sarici(async (_req, res) => {
+  for (let deneme = 0; deneme < 5; deneme++) {
+    const ad = 'misafir_' + Math.random().toString(36).slice(2, 8);
+    try {
+      const { rows } = await havuz.query(
+        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, misafir)
+         VALUES (NULL, $1, NULL, true)
+         RETURNING id, kullanici_adi, email, misafir`,
+        [ad],
+      );
+      return res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
+    } catch (e) {
+      if (e.code !== '23505') throw e; // ad çakıştıysa yeniden dene
+    }
+  }
+  res.status(500).json({ hata: 'Misafir hesabı oluşturulamadı' });
+}));
+
+// Misafir hesabını e-postaya bağlar (veriler korunur).
+app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
+  const { email, sifre, kullanici_adi } = req.body || {};
+  if (!email?.includes('@') || (sifre || '').length < 6) {
+    return res.status(400).json({ hata: 'Geçerli e-posta ve en az 6 karakter şifre gerekli' });
+  }
+  if (kullanici_adi && !/^[a-z0-9_]{3,20}$/.test(kullanici_adi)) {
+    return res.status(400).json({ hata: 'Kullanıcı adı 3-20 karakter, küçük harf/rakam/alt çizgi olmalı' });
+  }
+  const mevcut = await havuz.query(
+    'SELECT misafir FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+  if (!mevcut.rows.length || !mevcut.rows[0].misafir) {
+    return res.status(400).json({ hata: 'Bu hesap zaten bağlı' });
+  }
+  const hash = await bcrypt.hash(sifre, 10);
+  try {
+    const { rows } = await havuz.query(
+      `UPDATE kullanicilar
+       SET email = lower($1), sifre_hash = $2, misafir = false,
+           kullanici_adi = COALESCE($3, kullanici_adi)
+       WHERE id = $4
+       RETURNING id, kullanici_adi, email, misafir`,
+      [email, hash, kullanici_adi || null, req.kullanici.id],
     );
     res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
   } catch (e) {
@@ -134,11 +188,15 @@ app.post('/auth/giris', sarici(async (req, res) => {
     'SELECT * FROM kullanicilar WHERE email = lower($1) OR kullanici_adi = $1',
     [email || ''],
   );
-  if (!rows.length || !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
+  if (!rows.length || !rows[0].sifre_hash ||
+      !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
     return res.status(401).json({ hata: 'E-posta/kullanıcı adı veya şifre hatalı' });
   }
-  const { id, kullanici_adi, email: eposta } = rows[0];
-  res.json({ token: jwtUret(rows[0]), kullanici: { id, kullanici_adi, email: eposta } });
+  const { id, kullanici_adi, email: eposta, misafir } = rows[0];
+  res.json({
+    token: jwtUret(rows[0]),
+    kullanici: { id, kullanici_adi, email: eposta, misafir },
+  });
 }));
 
 // ---------- TMDB proxy (beyaz listeli) ----------

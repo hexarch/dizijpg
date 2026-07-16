@@ -1,9 +1,11 @@
 -- dizi.jpg veri modeli
+-- email/sifre misafir hesaplarda NULL olur; misafir sonradan e-postayla bağlanır.
 CREATE TABLE IF NOT EXISTS kullanicilar (
   id SERIAL PRIMARY KEY,
-  email TEXT UNIQUE NOT NULL,
+  email TEXT UNIQUE,
   kullanici_adi TEXT UNIQUE NOT NULL,
-  sifre_hash TEXT NOT NULL,
+  sifre_hash TEXT,
+  misafir BOOLEAN DEFAULT false,
   avatar TEXT,
   olusturma TIMESTAMPTZ DEFAULT now()
 );

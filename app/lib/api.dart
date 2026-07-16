@@ -90,6 +90,25 @@ class Api {
     return d['kullanici'] as Map<String, dynamic>;
   }
 
+  static Future<Map<String, dynamic>> misafirGiris() async {
+    final d = await post('/auth/misafir', {});
+    await _tokenKaydet(d['token'] as String);
+    return d['kullanici'] as Map<String, dynamic>;
+  }
+
+  /// Misafir hesabını e-postaya bağlar; sunucu yeni token döndürür.
+  static Future<Map<String, dynamic>> hesabiBagla(
+      String email, String? kullaniciAdi, String sifre) async {
+    final d = await post('/auth/bagla', {
+      'email': email,
+      if (kullaniciAdi != null && kullaniciAdi.isNotEmpty)
+        'kullanici_adi': kullaniciAdi,
+      'sifre': sifre,
+    });
+    await _tokenKaydet(d['token'] as String);
+    return d['kullanici'] as Map<String, dynamic>;
+  }
+
   static Future<void> cikis() => _tokenKaydet(null);
 }
 

@@ -48,6 +48,74 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     }
   }
 
+  Future<void> _hesabiBagla() async {
+    final email = TextEditingController();
+    final kullaniciAdi = TextEditingController();
+    final sifre = TextEditingController();
+
+    final bagla = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (context) => Padding(
+        padding: EdgeInsets.fromLTRB(
+            20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('Hesabını Bağla',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 6),
+            const Text(
+              'İzleme geçmişin ve listelerin korunur; artık her cihazdan girebilirsin.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.white54, fontSize: 13),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+                controller: email,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(hintText: 'E-posta')),
+            const SizedBox(height: 10),
+            TextField(
+                controller: kullaniciAdi,
+                decoration: const InputDecoration(
+                    hintText: 'Yeni kullanıcı adı (isteğe bağlı)')),
+            const SizedBox(height: 10),
+            TextField(
+                controller: sifre,
+                obscureText: true,
+                decoration: const InputDecoration(hintText: 'Şifre')),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Bağla'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (bagla == true) {
+      try {
+        final kullanici = await Api.hesabiBagla(
+            email.text.trim(),
+            kullaniciAdi.text.trim().isEmpty ? null : kullaniciAdi.text.trim(),
+            sifre.text);
+        if (!mounted) return;
+        await context.read<Oturum>().girisYapildi(kullanici);
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Hesabın bağlandı! 🎉')));
+      } catch (e) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
   Future<void> _yeniListe() async {
     final ad = TextEditingController();
     final olustur = await showDialog<bool>(
@@ -110,6 +178,36 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Misafir hesabı bağlama bandı
+            if (oturum.kullanici?['misafir'] == true) ...[
+              Card(
+                color: DiziRenkler.kirmizi,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: _hesabiBagla,
+                  child: const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: Row(
+                      children: [
+                        Icon(Icons.link, color: Colors.white),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Misafir hesabındasın — e-postanla bağla, '
+                            'verilerini kaybetme!',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Icon(Icons.chevron_right, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 14),
+            ],
             // İstatistik kartları
             Row(
               children: [

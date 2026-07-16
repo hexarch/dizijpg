@@ -26,6 +26,21 @@ class _GirisEkraniState extends State<GirisEkrani> {
     super.dispose();
   }
 
+  Future<void> _misafirGiris() async {
+    setState(() => _yukleniyor = true);
+    try {
+      final kullanici = await Api.misafirGiris();
+      if (!mounted) return;
+      await context.read<Oturum>().girisYapildi(kullanici);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _yukleniyor = false);
+    }
+  }
+
   Future<void> _gonder() async {
     setState(() => _yukleniyor = true);
     try {
@@ -103,6 +118,13 @@ class _GirisEkraniState extends State<GirisEkrani> {
                         : 'Hesabın yok mu? Kayıt ol',
                     style: const TextStyle(color: DiziRenkler.kirmizi),
                   ),
+                ),
+                const SizedBox(height: 4),
+                OutlinedButton.icon(
+                  onPressed: _yukleniyor ? null : _misafirGiris,
+                  icon: const Icon(Icons.person_outline, color: Colors.white70),
+                  label: const Text('Misafir olarak devam et',
+                      style: TextStyle(color: Colors.white70)),
                 ),
               ],
             ),
