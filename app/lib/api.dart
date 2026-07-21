@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// dizi.jpg API istemcisi. SSL Faz 8'de eklenecek; şimdilik IP üzerinden.
+import 'ceviri.dart';
+
+/// dizi.jpg API istemcisi (nginx + Cloudflare arkasında, TLS'li).
 const String apiTaban = 'https://dizijpg.com/api';
 
 /// TMDB görsel adresleri
@@ -43,9 +45,9 @@ class Api {
   }
 
   static Map<String, String> get _basliklar => {
-        'Content-Type': 'application/json',
-        if (_token != null) 'Authorization': 'Bearer $_token',
-      };
+    'Content-Type': 'application/json',
+    if (_token != null) 'Authorization': 'Bearer $_token',
+  };
 
   static Future<dynamic> get(String yol) async {
     final cevap = await http
@@ -56,8 +58,11 @@ class Api {
 
   static Future<dynamic> post(String yol, Map<String, dynamic> govde) async {
     final cevap = await http
-        .post(Uri.parse('$apiTaban$yol'),
-            headers: _basliklar, body: jsonEncode(govde))
+        .post(
+          Uri.parse('$apiTaban$yol'),
+          headers: _basliklar,
+          body: jsonEncode(govde),
+        )
         .timeout(const Duration(seconds: 20));
     return _isle(cevap);
   }
@@ -72,18 +77,26 @@ class Api {
   static dynamic _isle(http.Response cevap) {
     final govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
     if (cevap.statusCode >= 400) {
-      throw ApiHata(govde is Map && govde['hata'] != null
-          ? govde['hata'] as String
-          : 'Sunucu hatası (${cevap.statusCode})');
+      throw ApiHata(
+        govde is Map && govde['hata'] != null
+            ? govde['hata'] as String
+            : 'Sunucu hatası ({})'.cf([cevap.statusCode]),
+      );
     }
     return govde;
   }
 
   // ---- oturum ----
   static Future<Map<String, dynamic>> kayit(
-      String email, String kullaniciAdi, String sifre) async {
-    final d = await post('/auth/kayit',
-        {'email': email, 'kullanici_adi': kullaniciAdi, 'sifre': sifre});
+    String email,
+    String kullaniciAdi,
+    String sifre,
+  ) async {
+    final d = await post('/auth/kayit', {
+      'email': email,
+      'kullanici_adi': kullaniciAdi,
+      'sifre': sifre,
+    });
     await _tokenKaydet(d['token'] as String);
     return d['kullanici'] as Map<String, dynamic>;
   }
@@ -102,7 +115,10 @@ class Api {
 
   /// Misafir hesabını e-postaya bağlar; sunucu yeni token döndürür.
   static Future<Map<String, dynamic>> hesabiBagla(
-      String email, String? kullaniciAdi, String sifre) async {
+    String email,
+    String? kullaniciAdi,
+    String sifre,
+  ) async {
     final d = await post('/auth/bagla', {
       'email': email,
       if (kullaniciAdi != null && kullaniciAdi.isNotEmpty)
@@ -115,39 +131,101 @@ class Api {
 
   static Future<void> cikis() => _tokenKaydet(null);
 
+  /// Şifre sıfırlama gibi dış akışların aldığı token'ı kaydeder.
+  static Future<void> tokenKaydet(String token) => _tokenKaydet(token);
+
   // ---- profil ----
   static Future<Map<String, dynamic>> profilim() async =>
       await get('/profilim') as Map<String, dynamic>;
 
-  static Future<Map<String, dynamic>> profilGuncelle(
-          {required String bio, required String ulke}) async =>
+  static Future<Map<String, dynamic>> profilGuncelle({
+    required String bio,
+    required String ulke,
+  }) async =>
       await post('/profilim', {'bio': bio, 'ulke': ulke})
           as Map<String, dynamic>;
 
-  /// Ham resim verisini yükler; sunucu türü baytlardan doğrular.
-  static Future<String> avatarYukle(Uint8List veri) async {
+  /// Profil resmi yükler (avatar). Sunucu türü baytlardan doğrular.
+  static Future<String> avatarYukle(Uint8List veri) async =>
+      _profilResmiYukle('avatar', veri);
+
+  /// Kapak (arka plan) resmi yükler.
+  static Future<String> kapakYukle(Uint8List veri) async =>
+      _profilResmiYukle('kapak', veri);
+
+  static Future<String> _profilResmiYukle(String alan, Uint8List veri) async {
     final cevap = await http
-        .post(Uri.parse('$apiTaban/profilim/avatar'),
-            headers: {
-              'Content-Type': 'application/octet-stream',
-              if (_token != null) 'Authorization': 'Bearer $_token',
-            },
-            body: veri)
+        .post(
+          Uri.parse('$apiTaban/profilim/$alan'),
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            if (_token != null) 'Authorization': 'Bearer $_token',
+          },
+          body: veri,
+        )
         .timeout(const Duration(minutes: 2));
-    return (_isle(cevap) as Map<String, dynamic>)['avatar'] as String;
+    return (_isle(cevap) as Map<String, dynamic>)[alan] as String;
   }
 
   /// Yorum eki (fotoğraf/video) yükler; sunucu yolunu döndürür.
   static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async {
     final cevap = await http
-        .post(Uri.parse('$apiTaban/medya'),
-            headers: {
-              'Content-Type': 'application/octet-stream',
-              if (_token != null) 'Authorization': 'Bearer $_token',
-            },
-            body: veri)
+        .post(
+          Uri.parse('$apiTaban/medya'),
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            if (_token != null) 'Authorization': 'Bearer $_token',
+          },
+          body: veri,
+        )
         .timeout(const Duration(minutes: 5));
     return _isle(cevap) as Map<String, dynamic>;
+  }
+
+  // ---- sosyal ----
+  static Future<Map<String, dynamic>> acikProfil(String kullaniciAdi) async =>
+      await get('/profil/$kullaniciAdi') as Map<String, dynamic>;
+
+  static Future<Map<String, dynamic>> takipToggle(String kullaniciAdi) async =>
+      await post('/takip/$kullaniciAdi', {}) as Map<String, dynamic>;
+
+  static Future<List<dynamic>> takipciler(String kullaniciAdi) async =>
+      (await get('/takipciler/$kullaniciAdi'))['kullanicilar'] as List<dynamic>;
+
+  static Future<List<dynamic>> takipEdilenler(String kullaniciAdi) async =>
+      (await get('/takipedilenler/$kullaniciAdi'))['kullanicilar']
+          as List<dynamic>;
+
+  static Future<List<dynamic>> kullaniciAra(String q) async =>
+      (await get(
+            '/kullanici-ara?q=${Uri.encodeQueryComponent(q)}',
+          ))['kullanicilar']
+          as List<dynamic>;
+
+  static Future<Map<String, dynamic>> yorumBegen(int yorumId) async =>
+      await post('/yorumlar/$yorumId/begen', {}) as Map<String, dynamic>;
+
+  // ---- veri aktarma (GDPR) ----
+  /// Verileri ZIP'leyip kullanıcının e-postasına gönderir.
+  static Future<String> veriDisaAktar() async {
+    final d = await post('/veri/disa-aktar', {}) as Map<String, dynamic>;
+    return d['mesaj'] as String? ?? 'Gönderildi'.c;
+  }
+
+  /// ZIP verisini içe aktarır; içe aktarım özetini döndürür.
+  static Future<Map<String, dynamic>> veriIceAktar(Uint8List zip) async {
+    final cevap = await http
+        .post(
+          Uri.parse('$apiTaban/veri/ice-aktar'),
+          headers: {
+            'Content-Type': 'application/zip',
+            if (_token != null) 'Authorization': 'Bearer $_token',
+          },
+          body: zip,
+        )
+        .timeout(const Duration(minutes: 5));
+    return (_isle(cevap) as Map<String, dynamic>)['ozet']
+        as Map<String, dynamic>;
   }
 }
 

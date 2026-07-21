@@ -4,3 +4,4 @@ app/build/
 app/.dart_tool/
 app/ios/Pods/
 app/.flutter-plugins*
+app/android/build/

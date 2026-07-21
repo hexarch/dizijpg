@@ -1,53 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
-import 'arama.dart';
-import 'kesfet.dart';
-import 'profil.dart';
-import 'takvim.dart';
+import '../ceviri.dart';
 
-/// Ana kabuk: Keşfet · Takvim · Arama · Profil
-class KabukEkrani extends StatefulWidget {
-  const KabukEkrani({super.key});
-
-  @override
-  State<KabukEkrani> createState() => _KabukEkraniState();
-}
-
-class _KabukEkraniState extends State<KabukEkrani> {
-  int _sekme = 0;
+/// Ana kabuk: Keşfet · Takvim · Arama · Profil.
+/// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
+class KabukEkrani extends StatelessWidget {
+  final StatefulNavigationShell shell;
+  const KabukEkrani({super.key, required this.shell});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _sekme,
-        children: const [
-          KesfetEkrani(),
-          TakvimEkrani(),
-          AramaEkrani(),
-          ProfilEkrani(),
-        ],
-      ),
+      body: shell,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: _sekme,
-        onDestinationSelected: (i) => setState(() => _sekme = i),
-        destinations: const [
+        selectedIndex: shell.currentIndex,
+        onDestinationSelected: (i) => shell.goBranch(
+          i,
+          // Aynı sekmeye tekrar basınca köke dön
+          initialLocation: i == shell.currentIndex,
+        ),
+        destinations: [
           NavigationDestination(
-              icon: Icon(Icons.explore_outlined),
-              selectedIcon: Icon(Icons.explore),
-              label: 'Keşfet'),
+            icon: const Icon(Icons.explore_outlined),
+            selectedIcon: const Icon(Icons.explore),
+            label: 'Keşfet'.c,
+          ),
           NavigationDestination(
-              icon: Icon(Icons.calendar_month_outlined),
-              selectedIcon: Icon(Icons.calendar_month),
-              label: 'Takvim'),
+            icon: const Icon(Icons.calendar_month_outlined),
+            selectedIcon: const Icon(Icons.calendar_month),
+            label: 'Takvim'.c,
+          ),
           NavigationDestination(
-              icon: Icon(Icons.search_outlined),
-              selectedIcon: Icon(Icons.search),
-              label: 'Arama'),
+            icon: const Icon(Icons.add_circle_outline, size: 30),
+            selectedIcon: const Icon(Icons.add_circle, size: 30),
+            label: 'Akış'.c,
+          ),
           NavigationDestination(
-              icon: Icon(Icons.person_outline),
-              selectedIcon: Icon(Icons.person),
-              label: 'Profil'),
+            icon: const Icon(Icons.search_outlined),
+            selectedIcon: const Icon(Icons.search),
+            label: 'Arama'.c,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: 'Profil'.c,
+          ),
         ],
       ),
     );

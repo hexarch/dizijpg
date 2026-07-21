@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
+import '../ceviri.dart';
 import '../tema.dart';
-import 'kisi.dart';
 import 'ortak.dart';
 
 class AramaEkrani extends StatefulWidget {
@@ -20,9 +22,30 @@ class _AramaEkraniState extends State<AramaEkrani>
   Timer? _geciktirici;
   List<dynamic> _sonuclar = [];
   bool _yukleniyor = false;
+  List<String> _gecmis = [];
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((p) {
+      if (mounted) {
+        setState(() => _gecmis = p.getStringList('arama_gecmisi') ?? []);
+      }
+    });
+  }
+
+  Future<void> _gecmiseEkle(String sorgu) async {
+    final s = sorgu.trim();
+    if (s.length < 2) return;
+    _gecmis.remove(s);
+    _gecmis.insert(0, s);
+    if (_gecmis.length > 10) _gecmis = _gecmis.sublist(0, 10);
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList('arama_gecmisi', _gecmis);
+  }
 
   @override
   void dispose() {
@@ -44,15 +67,19 @@ class _AramaEkraniState extends State<AramaEkrani>
     setState(() => _yukleniyor = true);
     try {
       final d = await Api.get(
-          '/tmdb/search/multi?query=${Uri.encodeComponent(sorgu.trim())}');
+        '/tmdb/search/multi?query=${Uri.encodeComponent(sorgu.trim())}',
+      );
       if (!mounted) return;
       setState(() {
         _sonuclar = (d['results'] as List<dynamic>)
-            .where((r) => r['media_type'] != 'person'
-                ? r['poster_path'] != null
-                : r['profile_path'] != null)
+            .where(
+              (r) => r['media_type'] != 'person'
+                  ? r['poster_path'] != null
+                  : r['profile_path'] != null,
+            )
             .toList();
       });
+      if (_sonuclar.isNotEmpty) _gecmiseEkle(sorgu);
     } catch (_) {
     } finally {
       if (mounted) setState(() => _yukleniyor = false);
@@ -63,7 +90,7 @@ class _AramaEkraniState extends State<AramaEkrani>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Arama')),
+      appBar: AppBar(title: Text('Arama'.c)),
       body: Column(
         children: [
           Padding(
@@ -72,16 +99,19 @@ class _AramaEkraniState extends State<AramaEkrani>
               controller: _kutu,
               onChanged: _degisti,
               decoration: InputDecoration(
-                hintText: 'Dizi, film veya kişi ara...',
+                hintText: 'Dizi, film veya kişi ara...'.c,
                 prefixIcon: const Icon(Icons.search, color: Colors.white54),
                 suffixIcon: _yukleniyor
                     ? const Padding(
                         padding: EdgeInsets.all(12),
                         child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                                strokeWidth: 2, color: DiziRenkler.kirmizi)),
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: DiziRenkler.sari,
+                          ),
+                        ),
                       )
                     : null,
               ),
@@ -89,18 +119,61 @@ class _AramaEkraniState extends State<AramaEkrani>
           ),
           Expanded(
             child: _sonuclar.isEmpty
-                ? const Center(
-                    child: Text('Aramaya başla 🎬',
-                        style: TextStyle(color: Colors.white38)))
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.local_movies_outlined,
+                          size: 44,
+                          color: Colors.white24,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Aramaya başla'.c,
+                          style: const TextStyle(color: Colors.white38),
+                        ),
+                        if (_gecmis.isNotEmpty) ...[
+                          const SizedBox(height: 18),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              alignment: WrapAlignment.center,
+                              children: [
+                                for (final g in _gecmis)
+                                  ActionChip(
+                                    avatar: const Icon(
+                                      Icons.history,
+                                      size: 15,
+                                      color: Colors.white38,
+                                    ),
+                                    label: Text(
+                                      g,
+                                      style: const TextStyle(fontSize: 12.5),
+                                    ),
+                                    onPressed: () {
+                                      _kutu.text = g;
+                                      _ara(g);
+                                    },
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  )
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      mainAxisSpacing: 14,
-                      crossAxisSpacing: 10,
-                      childAspectRatio: 0.53,
-                    ),
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: 0.53,
+                        ),
                     itemCount: _sonuclar.length,
                     itemBuilder: (context, i) {
                       final r = _sonuclar[i] as Map<String, dynamic>;
@@ -125,11 +198,7 @@ class _KisiKarti extends StatelessWidget {
   Widget build(BuildContext context) {
     final foto = posterUrl(kisi['profile_path'] as String?, boyut: 'w185');
     return InkWell(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (_) => KisiEkrani(kisiId: kisi['id'] as int)),
-      ),
+      onTap: () => context.push('/kisi/${kisi['id']}'),
       child: Column(
         children: [
           Expanded(
@@ -138,18 +207,23 @@ class _KisiKarti extends StatelessWidget {
               child: foto == null
                   ? Container(
                       color: DiziRenkler.kart,
-                      child: const Icon(Icons.person, color: Colors.white24))
-                  : Image.network(foto,
-                      fit: BoxFit.cover, width: double.infinity),
+                      child: const Icon(Icons.person, color: Colors.white24),
+                    )
+                  : Image.network(
+                      foto,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
             ),
           ),
           const SizedBox(height: 6),
-          Text('🎭 ${kisi['name']}',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style:
-                  const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(
+            '🎭 ${kisi['name']}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );

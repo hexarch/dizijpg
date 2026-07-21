@@ -1,0 +1,94 @@
+import 'dil_en.dart';
+import 'dil_zh.dart';
+import 'dil_hi.dart';
+import 'dil_es.dart';
+import 'dil_fr.dart';
+import 'dil_ar.dart';
+import 'dil_bn.dart';
+import 'dil_pt.dart';
+import 'dil_ru.dart';
+import 'dil_ur.dart';
+import 'dil_id.dart';
+import 'dil_de.dart';
+import 'dil_ja.dart';
+import 'dil_sw.dart';
+import 'dil_mr.dart';
+import 'dil_te.dart';
+import 'dil_vi.dart';
+import 'dil_ko.dart';
+import 'dil_ta.dart';
+import 'dil_it.dart';
+import 'dil_fa.dart';
+import 'dil_pl.dart';
+import 'dil_uk.dart';
+import 'dil_ro.dart';
+import 'dil_nl.dart';
+import 'dil_th.dart';
+import 'dil_gu.dart';
+import 'dil_kn.dart';
+import 'dil_ml.dart';
+import 'dil_pa.dart';
+import 'dil_ms.dart';
+import 'dil_my.dart';
+import 'dil_am.dart';
+import 'dil_az.dart';
+import 'dil_el.dart';
+import 'dil_hu.dart';
+import 'dil_cs.dart';
+import 'dil_sv.dart';
+import 'dil_he.dart';
+import 'dil_fil.dart';
+import 'dil_sr.dart';
+import 'dil_bg.dart';
+import 'dil_da.dart';
+import 'dil_fi.dart';
+import 'dil_nb.dart';
+
+/// Dil kodu → çeviri haritası. 'tr' anahtarların kendisidir, haritası yoktur.
+const Map<String, Map<String, String>> tumCeviriler = {
+  'en': cevirilerEn,
+  'zh': cevirilerZh,
+  'hi': cevirilerHi,
+  'es': cevirilerEs,
+  'fr': cevirilerFr,
+  'ar': cevirilerAr,
+  'bn': cevirilerBn,
+  'pt': cevirilerPt,
+  'ru': cevirilerRu,
+  'ur': cevirilerUr,
+  'id': cevirilerId,
+  'de': cevirilerDe,
+  'ja': cevirilerJa,
+  'sw': cevirilerSw,
+  'mr': cevirilerMr,
+  'te': cevirilerTe,
+  'vi': cevirilerVi,
+  'ko': cevirilerKo,
+  'ta': cevirilerTa,
+  'it': cevirilerIt,
+  'fa': cevirilerFa,
+  'pl': cevirilerPl,
+  'uk': cevirilerUk,
+  'ro': cevirilerRo,
+  'nl': cevirilerNl,
+  'th': cevirilerTh,
+  'gu': cevirilerGu,
+  'kn': cevirilerKn,
+  'ml': cevirilerMl,
+  'pa': cevirilerPa,
+  'ms': cevirilerMs,
+  'my': cevirilerMy,
+  'am': cevirilerAm,
+  'az': cevirilerAz,
+  'el': cevirilerEl,
+  'hu': cevirilerHu,
+  'cs': cevirilerCs,
+  'sv': cevirilerSv,
+  'he': cevirilerHe,
+  'fil': cevirilerFil,
+  'sr': cevirilerSr,
+  'bg': cevirilerBg,
+  'da': cevirilerDa,
+  'fi': cevirilerFi,
+  'nb': cevirilerNb,
+};

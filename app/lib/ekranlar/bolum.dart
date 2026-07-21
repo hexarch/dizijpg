@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../api.dart';
+import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'tepki.dart';
 import 'yorumlar.dart';
 
 /// Bölüm sayfası: görsel, özet, konuk oyuncular, izleme işareti ve
@@ -41,7 +43,8 @@ class _BolumEkraniState extends State<BolumEkrani> {
     setState(() => _hata = null);
     try {
       final d = await Api.get(
-          '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/episode/${widget.bolumNo}');
+        '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/episode/${widget.bolumNo}',
+      );
       if (mounted) setState(() => _bolum = d as Map<String, dynamic>);
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
@@ -60,8 +63,9 @@ class _BolumEkraniState extends State<BolumEkrani> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _izlendi = !_izlendi);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -72,7 +76,8 @@ class _BolumEkraniState extends State<BolumEkrani> {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_bolum == null) {
       govde = const Center(
-          child: CircularProgressIndicator(color: DiziRenkler.kirmizi));
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
     } else {
       final b = _bolum!;
       final gorsel = posterUrl(b['still_path'] as String?, boyut: 'w780');
@@ -93,17 +98,23 @@ class _BolumEkraniState extends State<BolumEkrani> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(b['name'] as String? ?? '${widget.bolumNo}. Bölüm',
-                    style: const TextStyle(
-                        fontSize: 21, fontWeight: FontWeight.w900)),
+                Text(
+                  b['name'] as String? ?? '{}. Bölüm'.cf([widget.bolumNo]),
+                  style: const TextStyle(
+                    fontSize: 21,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
                 const SizedBox(height: 4),
                 Text(
                   [
                     'S${widget.sezonNo}B${widget.bolumNo}',
                     if (tarih.isNotEmpty) tarih,
-                    if (sure != null) '$sure dk',
+                    if (sure != null) '{} dk'.cf([sure]),
                     if (b['vote_average'] != null)
-                      '⭐ ${((b['vote_average'] as num)).toStringAsFixed(1)}',
+                      '{} TMDB'.cf([
+                        (b['vote_average'] as num).toStringAsFixed(1),
+                      ]),
                   ].join(' · '),
                   style: const TextStyle(color: Colors.white54),
                 ),
@@ -113,25 +124,32 @@ class _BolumEkraniState extends State<BolumEkrani> {
                   style: _izlendi
                       ? FilledButton.styleFrom(
                           backgroundColor: DiziRenkler.kart,
-                          foregroundColor: DiziRenkler.kirmizi)
+                          foregroundColor: DiziRenkler.sari,
+                        )
                       : null,
-                  icon: Icon(
-                      _izlendi ? Icons.check_circle : Icons.visibility),
-                  label: Text(_izlendi ? 'İzledin' : 'İzledim'),
+                  icon: Icon(_izlendi ? Icons.check_circle : Icons.visibility),
+                  label: Text(_izlendi ? 'İzledin'.c : 'İzledim'.c),
                 ),
                 if ((b['overview'] as String?)?.isNotEmpty == true) ...[
                   const SizedBox(height: 14),
-                  Text(b['overview'] as String,
-                      style: const TextStyle(height: 1.5)),
+                  Text(
+                    b['overview'] as String,
+                    style: const TextStyle(height: 1.5),
+                  ),
                 ],
               ],
             ),
           ),
           if (konuklar.isNotEmpty) ...[
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 10),
-              child: Text('Konuk Oyuncular',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 10),
+              child: Text(
+                'Konuk Oyuncular'.c,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ),
             SizedBox(
               height: 150,
@@ -142,8 +160,10 @@ class _BolumEkraniState extends State<BolumEkrani> {
                 separatorBuilder: (_, __) => const SizedBox(width: 12),
                 itemBuilder: (context, i) {
                   final o = konuklar[i] as Map<String, dynamic>;
-                  final foto =
-                      posterUrl(o['profile_path'] as String?, boyut: 'w185');
+                  final foto = posterUrl(
+                    o['profile_path'] as String?,
+                    boyut: 'w185',
+                  );
                   return SizedBox(
                     width: 76,
                     child: Column(
@@ -155,16 +175,17 @@ class _BolumEkraniState extends State<BolumEkrani> {
                               ? null
                               : CachedNetworkImageProvider(foto),
                           child: foto == null
-                              ? const Icon(Icons.person,
-                                  color: Colors.white24)
+                              ? const Icon(Icons.person, color: Colors.white24)
                               : null,
                         ),
                         const SizedBox(height: 6),
-                        Text(o['name'] as String? ?? '',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(fontSize: 11)),
+                        Text(
+                          o['name'] as String? ?? '',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 11),
+                        ),
                       ],
                     ),
                   );
@@ -172,6 +193,15 @@ class _BolumEkraniState extends State<BolumEkrani> {
               ),
             ),
           ],
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: TepkiSatiri(
+              tur: 'tv',
+              tmdbId: widget.tmdbId,
+              sezon: widget.sezonNo,
+              bolum: widget.bolumNo,
+            ),
+          ),
           YorumBolumu(
             tur: 'tv',
             tmdbId: widget.tmdbId,
@@ -185,7 +215,8 @@ class _BolumEkraniState extends State<BolumEkrani> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('S${widget.sezonNo} · ${widget.bolumNo}. Bölüm')),
+        title: Text('S{} · {}. Bölüm'.cf([widget.sezonNo, widget.bolumNo])),
+      ),
       body: govde,
     );
   }

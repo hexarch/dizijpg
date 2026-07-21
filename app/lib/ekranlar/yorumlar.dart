@@ -4,7 +4,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
+import 'package:go_router/go_router.dart';
+
 import '../api.dart';
+import '../ceviri.dart';
 import '../tema.dart';
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
@@ -33,6 +36,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
   bool _gonderiliyor = false;
+  Map<String, dynamic>? _yanitlanan; // yanıt modundaki üst yorum
 
   @override
   void initState() {
@@ -52,8 +56,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
 
   Future<void> _yukle() async {
     try {
-      final d =
-          await Api.get('/yorumlar/${widget.tur}/${widget.tmdbId}$_sorgu');
+      final d = await Api.get(
+        '/yorumlar/${widget.tur}/${widget.tmdbId}$_sorgu',
+      );
       if (mounted) {
         setState(() => _yorumlar = d['yorumlar'] as List<dynamic>);
       }
@@ -70,15 +75,16 @@ class _YorumBolumuState extends State<YorumBolumu> {
     try {
       final veri = await secim.readAsBytes();
       if (veri.length > 30 * 1024 * 1024) {
-        throw ApiHata('Dosya en fazla 30MB olabilir');
+        throw ApiHata('Dosya en fazla 30MB olabilir'.c);
       }
       final d = await Api.medyaYukle(veri);
       if (!mounted) return;
       setState(() => _ekler.add({'yol': d['yol'], 'video': d['video']}));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _ekYukleniyor = false);
     }
@@ -96,14 +102,17 @@ class _YorumBolumuState extends State<YorumBolumu> {
         if (widget.sezon != null) 'bolum': widget.bolum,
         'metin': metin,
         'medya': _ekler.map((e) => e['yol']).toList(),
+        if (_yanitlanan != null) 'ust_id': _yanitlanan!['id'],
       });
       _metin.clear();
       _ekler.clear();
+      _yanitlanan = null;
       await _yukle();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _gonderiliyor = false);
     }
@@ -115,8 +124,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
       _yukle();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -129,9 +139,24 @@ class _YorumBolumuState extends State<YorumBolumu> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-          child: Text(
-            '💬 Yorumlar${_yorumlar != null ? ' (${_yorumlar!.length})' : ''}',
-            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.chat_bubble_outline,
+                size: 19,
+                color: DiziRenkler.sari,
+              ),
+              const SizedBox(width: 7),
+              Text(
+                _yorumlar != null
+                    ? 'Yorumlar ({})'.cf([_yorumlar!.length])
+                    : 'Yorumlar'.c,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
           ),
         ),
         // Yorum yazma kutusu
@@ -142,15 +167,57 @@ class _YorumBolumuState extends State<YorumBolumu> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (_yanitlanan != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.reply,
+                          size: 16,
+                          color: DiziRenkler.sari,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            '@{} kullanıcısına yanıt veriyorsun'.cf([
+                              _yanitlanan!['kullanici_adi'],
+                            ]),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: DiziRenkler.sari,
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => setState(() => _yanitlanan = null),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 TextField(
                   controller: _metin,
                   maxLines: 3,
                   minLines: 1,
                   maxLength: 1000,
-                  buildCounter: (_, {required currentLength, maxLength, required isFocused}) =>
-                      null,
-                  decoration: const InputDecoration(
-                      hintText: 'Yorumunu yaz...', border: InputBorder.none),
+                  buildCounter:
+                      (
+                        _, {
+                        required currentLength,
+                        maxLength,
+                        required isFocused,
+                      }) => null,
+                  decoration: InputDecoration(
+                    hintText: 'Yorumunu yaz...'.c,
+                    border: InputBorder.none,
+                  ),
                 ),
                 if (_ekler.isNotEmpty)
                   Wrap(
@@ -168,12 +235,17 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                 child: _ekler[i]['video'] == true
                                     ? Container(
                                         color: DiziRenkler.koyuGri,
-                                        child: const Icon(Icons.videocam,
-                                            color: Colors.white54))
+                                        child: const Icon(
+                                          Icons.videocam,
+                                          color: Colors.white54,
+                                        ),
+                                      )
                                     : CachedNetworkImage(
                                         imageUrl: dosyaUrl(
-                                            _ekler[i]['yol'] as String)!,
-                                        fit: BoxFit.cover),
+                                          _ekler[i]['yol'] as String,
+                                        )!,
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
                             Positioned(
@@ -184,8 +256,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                 child: const CircleAvatar(
                                   radius: 10,
                                   backgroundColor: Colors.black87,
-                                  child: Icon(Icons.close,
-                                      size: 13, color: Colors.white),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 13,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -196,26 +271,37 @@ class _YorumBolumuState extends State<YorumBolumu> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed:
-                          _ekYukleniyor || _ekler.length >= 4 ? null : _ekSec,
+                      onPressed: _ekYukleniyor || _ekler.length >= 4
+                          ? null
+                          : _ekSec,
                       icon: _ekYukleniyor
                           ? const SizedBox(
-                              width: 18, height: 18,
+                              width: 18,
+                              height: 18,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: DiziRenkler.kirmizi))
-                          : const Icon(Icons.attach_file,
-                              color: DiziRenkler.kirmizi),
-                      tooltip: 'Fotoğraf / video ekle',
+                                strokeWidth: 2,
+                                color: DiziRenkler.sari,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.attach_file,
+                              color: DiziRenkler.sari,
+                            ),
+                      tooltip: 'Fotoğraf / video ekle'.c,
                     ),
                     const Spacer(),
                     FilledButton(
                       onPressed: _gonderiliyor ? null : _gonder,
                       child: _gonderiliyor
                           ? const SizedBox(
-                              width: 18, height: 18,
+                              width: 18,
+                              height: 18,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white))
-                          : const Text('Gönder'),
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : Text('Gönder'.c),
                     ),
                   ],
                 ),
@@ -228,39 +314,117 @@ class _YorumBolumuState extends State<YorumBolumu> {
           const Padding(
             padding: EdgeInsets.all(24),
             child: Center(
-                child: CircularProgressIndicator(color: DiziRenkler.kirmizi)),
+              child: CircularProgressIndicator(color: DiziRenkler.sari),
+            ),
           )
         else if (_yorumlar!.isEmpty)
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Text('İlk yorumu sen yaz!',
-                style: TextStyle(color: Colors.white38)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Text(
+              'İlk yorumu sen yaz!'.c,
+              style: const TextStyle(color: Colors.white38),
+            ),
           )
-        else
-          for (final y in _yorumlar!)
+        else ...[
+          for (final y in _yorumlar!.where((y) => y['ust_id'] == null))
             _YorumKarti(
+              // Liste yenilenince state konuma göre değil yoruma göre eşleşsin
+              key: ValueKey(y['id']),
               yorum: y as Map<String, dynamic>,
               benim: y['kullanici_id'] == benimId,
+              benimId: benimId,
               sil: () => _sil(y['id'] as int),
+              yanitla: (hedef) => setState(() => _yanitlanan = hedef),
+              yanitSil: _sil,
+              yanitlar:
+                  (_yorumlar!.where((c) => c['ust_id'] == y['id']).toList()
+                    ..sort(
+                      (a, b) => (a['id'] as int).compareTo(b['id'] as int),
+                    )),
             ),
+        ],
       ],
     );
   }
 }
 
-class _YorumKarti extends StatelessWidget {
+class _YorumKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final bool benim;
+  final Object? benimId;
   final VoidCallback sil;
+  final void Function(Map<String, dynamic>) yanitla;
+  final void Function(int) yanitSil;
+  final List<dynamic> yanitlar;
 
-  const _YorumKarti(
-      {required this.yorum, required this.benim, required this.sil});
+  const _YorumKarti({
+    super.key,
+    required this.yorum,
+    required this.benim,
+    required this.benimId,
+    required this.sil,
+    required this.yanitla,
+    required this.yanitSil,
+    required this.yanitlar,
+  });
+
+  @override
+  State<_YorumKarti> createState() => _YorumKartiState();
+}
+
+class _YorumKartiState extends State<_YorumKarti> {
+  late bool _begendim = widget.yorum['begendim'] == true;
+  late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+  bool _isleniyor = false;
+
+  @override
+  void didUpdateWidget(_YorumKarti eski) {
+    super.didUpdateWidget(eski);
+    if (eski.yorum != widget.yorum) {
+      _begendim = widget.yorum['begendim'] == true;
+      _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+    }
+  }
+
+  Future<void> _begen() async {
+    if (_isleniyor) return;
+    setState(() {
+      _isleniyor = true;
+      // iyimser güncelleme
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1;
+    });
+    try {
+      final d = await Api.yorumBegen(widget.yorum['id'] as int);
+      if (mounted) {
+        setState(() {
+          _begendim = d['begendim'] as bool;
+          _begeni = d['begeni'] as int;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _begendim = !_begendim;
+          _begeni += _begendim ? 1 : -1;
+        });
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    } finally {
+      if (mounted) setState(() => _isleniyor = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final yorum = widget.yorum;
+    final benim = widget.benim;
     final avatar = dosyaUrl(yorum['avatar'] as String?);
     final tarih = (yorum['tarih'] as String? ?? '').split('T').first;
     final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
+    final goruntulenme = (yorum['goruntulenme'] as int?) ?? 0;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
@@ -274,28 +438,41 @@ class _YorumKarti extends StatelessWidget {
                 CircleAvatar(
                   radius: 14,
                   backgroundColor: DiziRenkler.koyuGri,
-                  backgroundImage:
-                      avatar != null ? NetworkImage(avatar) : null,
+                  backgroundImage: avatar != null ? NetworkImage(avatar) : null,
                   child: avatar == null
-                      ? const Icon(Icons.person,
-                          size: 14, color: Colors.white38)
+                      ? const Icon(
+                          Icons.person,
+                          size: 14,
+                          color: Colors.white38,
+                        )
                       : null,
                 ),
                 const SizedBox(width: 8),
-                Text('@${yorum['kullanici_adi']}',
+                InkWell(
+                  onTap: () =>
+                      context.push('/kullanici/${yorum['kullanici_adi']}'),
+                  child: Text(
+                    '@${yorum['kullanici_adi']}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: DiziRenkler.kirmizi)),
+                      fontWeight: FontWeight.w700,
+                      color: DiziRenkler.sari,
+                    ),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                Text(tarih,
-                    style:
-                        const TextStyle(fontSize: 11, color: Colors.white38)),
+                Text(
+                  tarih,
+                  style: const TextStyle(fontSize: 11, color: Colors.white38),
+                ),
                 const Spacer(),
                 if (benim)
                   InkWell(
-                    onTap: sil,
-                    child: const Icon(Icons.delete_outline,
-                        size: 18, color: Colors.white38),
+                    onTap: widget.sil,
+                    child: const Icon(
+                      Icons.delete_outline,
+                      size: 18,
+                      color: Colors.white38,
+                    ),
                   ),
               ],
             ),
@@ -317,7 +494,8 @@ class _YorumKarti extends StatelessWidget {
                                 backgroundColor: Colors.transparent,
                                 child: InteractiveViewer(
                                   child: CachedNetworkImage(
-                                      imageUrl: dosyaUrl(m)!),
+                                    imageUrl: dosyaUrl(m)!,
+                                  ),
                                 ),
                               ),
                             ),
@@ -332,6 +510,100 @@ class _YorumKarti extends StatelessWidget {
                             ),
                           ),
                 ],
+              ),
+            ],
+            const SizedBox(height: 8),
+            // Görüntülenme + beğeni
+            Row(
+              children: [
+                const Icon(
+                  Icons.remove_red_eye,
+                  size: 16,
+                  color: Colors.white38,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '$goruntulenme',
+                  style: const TextStyle(fontSize: 12, color: Colors.white38),
+                ),
+                const SizedBox(width: 16),
+                InkWell(
+                  onTap: _begen,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _begendim ? Icons.favorite : Icons.favorite_border,
+                          size: 16,
+                          color: _begendim ? DiziRenkler.sari : Colors.white38,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$_begeni',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _begendim
+                                ? DiziRenkler.sari
+                                : Colors.white38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                InkWell(
+                  onTap: () => widget.yanitla(widget.yorum),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 4,
+                      vertical: 2,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.reply,
+                          size: 16,
+                          color: Colors.white38,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Yanıtla'.c,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.white38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            // Yanıtlar (tek seviye)
+            if (widget.yanitlar.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final c in widget.yanitlar)
+                      _YanitSatiri(
+                        key: ValueKey(c['id']),
+                        yanit: c as Map<String, dynamic>,
+                        benim: c['kullanici_id'] == widget.benimId,
+                        sil: () => widget.yanitSil(c['id'] as int),
+                        yanitla: () => widget.yanitla(c),
+                      ),
+                  ],
+                ),
               ),
             ],
           ],
@@ -395,9 +667,13 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                   child: Center(
                     child: _yukleniyor
                         ? const CircularProgressIndicator(
-                            color: DiziRenkler.kirmizi)
-                        : const Icon(Icons.play_circle_outline,
-                            size: 44, color: Colors.white70),
+                            color: DiziRenkler.sari,
+                          )
+                        : const Icon(
+                            Icons.play_circle_outline,
+                            size: 44,
+                            color: Colors.white70,
+                          ),
                   ),
                 ),
               )
@@ -417,11 +693,178 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                       ),
                     ),
                     if (!d.value.isPlaying)
-                      const Icon(Icons.play_circle_outline,
-                          size: 44, color: Colors.white70),
+                      const Icon(
+                        Icons.play_circle_outline,
+                        size: 44,
+                        color: Colors.white70,
+                      ),
                   ],
                 ),
               ),
+      ),
+    );
+  }
+}
+
+/// Tek yanıt satırı: küçük avatar + metin + beğeni; kendi yanıtını silebilir.
+class _YanitSatiri extends StatefulWidget {
+  final Map<String, dynamic> yanit;
+  final bool benim;
+  final VoidCallback sil;
+  final VoidCallback yanitla;
+
+  const _YanitSatiri({
+    super.key,
+    required this.yanit,
+    required this.benim,
+    required this.sil,
+    required this.yanitla,
+  });
+
+  @override
+  State<_YanitSatiri> createState() => _YanitSatiriState();
+}
+
+class _YanitSatiriState extends State<_YanitSatiri> {
+  late bool _begendim = widget.yanit['begendim'] == true;
+  late int _begeni = (widget.yanit['begeni'] as int?) ?? 0;
+  bool _isleniyor = false;
+
+  @override
+  void didUpdateWidget(_YanitSatiri eski) {
+    super.didUpdateWidget(eski);
+    if (eski.yanit != widget.yanit) {
+      _begendim = widget.yanit['begendim'] == true;
+      _begeni = (widget.yanit['begeni'] as int?) ?? 0;
+    }
+  }
+
+  Future<void> _begen() async {
+    if (_isleniyor) return;
+    setState(() {
+      _isleniyor = true;
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1;
+    });
+    try {
+      final d = await Api.yorumBegen(widget.yanit['id'] as int);
+      if (mounted) {
+        setState(() {
+          _begendim = d['begendim'] as bool;
+          _begeni = d['begeni'] as int;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _begendim = !_begendim;
+          _begeni += _begendim ? 1 : -1;
+        });
+      }
+    } finally {
+      if (mounted) _isleniyor = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final y = widget.yanit;
+    final avatar = dosyaUrl(y['avatar'] as String?);
+    final tarih = (y['tarih'] as String? ?? '').split('T').first;
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 10,
+                backgroundColor: DiziRenkler.koyuGri,
+                backgroundImage: avatar != null ? NetworkImage(avatar) : null,
+                child: avatar == null
+                    ? const Icon(Icons.person, size: 11, color: Colors.white38)
+                    : null,
+              ),
+              const SizedBox(width: 6),
+              InkWell(
+                onTap: () => context.push('/kullanici/${y['kullanici_adi']}'),
+                child: Text(
+                  '@${y['kullanici_adi']}',
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w700,
+                    color: DiziRenkler.sari,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                tarih,
+                style: const TextStyle(fontSize: 10, color: Colors.white38),
+              ),
+              const Spacer(),
+              // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
+              InkWell(
+                onTap: _begen,
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 10,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _begendim ? Icons.favorite : Icons.favorite_border,
+                        size: 15,
+                        color: _begendim ? DiziRenkler.sari : Colors.white38,
+                      ),
+                      if (_begeni > 0) ...[
+                        const SizedBox(width: 3),
+                        Text(
+                          '$_begeni',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: Colors.white38,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: widget.yanitla,
+                borderRadius: BorderRadius.circular(16),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                  child: Icon(Icons.reply, size: 15, color: Colors.white38),
+                ),
+              ),
+              if (widget.benim)
+                InkWell(
+                  onTap: widget.sil,
+                  borderRadius: BorderRadius.circular(16),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                    child: Icon(
+                      Icons.delete_outline,
+                      size: 15,
+                      color: Colors.white38,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 26, top: 2),
+            child: Text(
+              y['metin'] as String? ?? '',
+              style: const TextStyle(fontSize: 13, height: 1.35),
+            ),
+          ),
+        ],
       ),
     );
   }

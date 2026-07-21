@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../ceviri.dart';
 import '../tema.dart';
-import 'bolum.dart';
-import 'kisi.dart';
 import 'ortak.dart';
 import 'puan_sheet.dart';
+import 'tepki.dart';
 import 'yorumlar.dart';
 
 const durumSecenekleri = [
@@ -65,23 +66,43 @@ class _DetayEkraniState extends State<DetayEkrani> {
     } catch (_) {}
   }
 
-  Future<void> _durumSec(String? durum) async {
-    await Api.post('/durum',
-        {'tmdb_id': widget.tmdbId, 'tur': widget.tur, 'durum': durum ?? ''});
+  /// Mutasyonu çalıştırır; hata olursa SnackBar gösterir.
+  Future<void> _mutasyon(Future<void> Function() istek) async {
+    try {
+      await istek();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      return;
+    }
     _benimYenile();
   }
 
-  Future<void> _favoriToggle() async {
-    await Api.post(
-        '/favori/toggle', {'tmdb_id': widget.tmdbId, 'tur': widget.tur});
-    _benimYenile();
-  }
+  Future<void> _durumSec(String? durum) => _mutasyon(
+    () => Api.post('/durum', {
+      'tmdb_id': widget.tmdbId,
+      'tur': widget.tur,
+      'durum': durum ?? '',
+    }),
+  );
 
-  Future<void> _filmIzlendiToggle() async {
-    await Api.post('/izleme/toggle',
-        {'tmdb_id': widget.tmdbId, 'tur': 'movie', 'sezon': 0, 'bolum': 0});
-    _benimYenile();
-  }
+  Future<void> _favoriToggle() => _mutasyon(
+    () => Api.post('/favori/toggle', {
+      'tmdb_id': widget.tmdbId,
+      'tur': widget.tur,
+    }),
+  );
+
+  Future<void> _filmIzlendiToggle() => _mutasyon(
+    () => Api.post('/izleme/toggle', {
+      'tmdb_id': widget.tmdbId,
+      'tur': 'movie',
+      'sezon': 0,
+      'bolum': 0,
+    }),
+  );
 
   Future<void> _puanla() async {
     final kaydedildi = await puanlaVeKaydet(
@@ -94,7 +115,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
     if (kaydedildi) {
       _benimYenile();
       try {
-        final inc = await Api.get('/incelemeler/${widget.tur}/${widget.tmdbId}');
+        final inc = await Api.get(
+          '/incelemeler/${widget.tur}/${widget.tmdbId}',
+        );
         if (mounted) setState(() => _incelemeler = inc as Map<String, dynamic>);
       } catch (_) {}
     }
@@ -112,26 +135,36 @@ class _DetayEkraniState extends State<DetayEkrani> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('Listeye Ekle',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Listeye Ekle'.c,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               if (listeler.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Text('Henüz listen yok — Profil sekmesinden oluştur.'),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'Henüz listen yok — Profil sekmesinden oluştur.'.c,
+                  ),
                 ),
               for (final l in listeler)
                 ListTile(
-                  leading:
-                      const Icon(Icons.playlist_add, color: DiziRenkler.kirmizi),
+                  leading: const Icon(
+                    Icons.playlist_add,
+                    color: DiziRenkler.sari,
+                  ),
                   title: Text(l['ad'] as String),
-                  subtitle: Text('${l['oge_sayisi']} içerik'),
+                  subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
                   onTap: () async {
-                    await Api.post('/listeler/${l['id']}/oge',
-                        {'tmdb_id': widget.tmdbId, 'tur': widget.tur});
+                    await Api.post('/listeler/${l['id']}/oge', {
+                      'tmdb_id': widget.tmdbId,
+                      'tur': widget.tur,
+                    });
                     if (context.mounted) Navigator.pop(context);
                   },
                 ),
@@ -142,8 +175,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -151,13 +185,14 @@ class _DetayEkraniState extends State<DetayEkrani> {
   Widget build(BuildContext context) {
     if (_hata != null) {
       return Scaffold(
-          appBar: AppBar(),
-          body: HataGorunumu(mesaj: _hata!, tekrar: _yukle));
+        appBar: AppBar(),
+        body: HataGorunumu(mesaj: _hata!, tekrar: _yukle),
+      );
     }
     if (_icerik == null) {
       return const Scaffold(
-          body: Center(
-              child: CircularProgressIndicator(color: DiziRenkler.kirmizi)));
+        body: Center(child: CircularProgressIndicator(color: DiziRenkler.sari)),
+      );
     }
 
     final c = _icerik!;
@@ -172,13 +207,14 @@ class _DetayEkraniState extends State<DetayEkrani> {
         .join(' · ');
     final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w780');
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
-    final oneriler = ((c['recommendations']?['results'] as List<dynamic>?) ?? []);
+    final oneriler =
+        ((c['recommendations']?['results'] as List<dynamic>?) ?? []);
     final sezonlar = ((c['seasons'] as List<dynamic>?) ?? [])
         .where((s) => (s['season_number'] as int) > 0)
         .toList();
     final izlenenSet = {
       for (final r in (_benim?['izlenenler'] as List<dynamic>? ?? []))
-        '${r['sezon']}:${r['bolum']}'
+        '${r['sezon']}:${r['bolum']}',
     };
     final filmIzlendi = !tv && izlenenSet.contains('0:0');
     final favori = _benim?['favori'] == true;
@@ -217,14 +253,18 @@ class _DetayEkraniState extends State<DetayEkrani> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(ad,
-                      style: const TextStyle(
-                          fontSize: 24, fontWeight: FontWeight.w900)),
+                  Text(
+                    ad,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     [
                       if (yil.isNotEmpty) yil,
-                      if (tv) '${c['number_of_seasons']} sezon',
+                      if (tv) '{} sezon'.cf([c['number_of_seasons']]),
                       if (turler.isNotEmpty) turler,
                     ].join(' · '),
                     style: const TextStyle(color: Colors.white54),
@@ -232,27 +272,37 @@ class _DetayEkraniState extends State<DetayEkrani> {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: DiziRenkler.kirmizi, size: 18),
+                      const Icon(Icons.star, color: DiziRenkler.sari, size: 18),
                       const SizedBox(width: 4),
                       Text(
-                        '${((c['vote_average'] as num?) ?? 0).toStringAsFixed(1)} TMDB',
+                        '{} TMDB'.cf([
+                          ((c['vote_average'] as num?) ?? 0).toStringAsFixed(1),
+                        ]),
                         style: const TextStyle(fontWeight: FontWeight.w700),
                       ),
                       if (_incelemeler?['ortalama'] != null) ...[
                         const SizedBox(width: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
-                            color: DiziRenkler.kirmizi,
+                            color: DiziRenkler.sari,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            '${_incelemeler!['ortalama']} dizi.jpg',
+                            '{} dizi.jpg'.cf([
+                              ((num.tryParse('${_incelemeler!['ortalama']}') ??
+                                          0) /
+                                      2)
+                                  .toStringAsFixed(1),
+                            ]),
                             style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12),
+                              color: Colors.black,
+                              fontWeight: FontWeight.w800,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ],
@@ -268,16 +318,21 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           Padding(
                             padding: const EdgeInsets.only(right: 8),
                             child: FilterChip(
-                              avatar: Icon(ikon,
-                                  size: 16,
+                              avatar: Icon(
+                                ikon,
+                                size: 16,
+                                color: benimDurum == kod
+                                    ? Colors.black
+                                    : Colors.white70,
+                              ),
+                              label: Text(
+                                etiket.c,
+                                style: TextStyle(
                                   color: benimDurum == kod
                                       ? Colors.black
-                                      : Colors.white70),
-                              label: Text(etiket,
-                                  style: TextStyle(
-                                      color: benimDurum == kod
-                                          ? Colors.black
-                                          : Colors.white)),
+                                      : Colors.white,
+                                ),
+                              ),
                               selected: benimDurum == kod,
                               onSelected: (s) => _durumSec(s ? kod : null),
                             ),
@@ -296,13 +351,17 @@ class _DetayEkraniState extends State<DetayEkrani> {
                             style: filmIzlendi
                                 ? FilledButton.styleFrom(
                                     backgroundColor: DiziRenkler.kart,
-                                    foregroundColor: DiziRenkler.kirmizi)
+                                    foregroundColor: DiziRenkler.sari,
+                                  )
                                 : null,
-                            icon: Icon(filmIzlendi
-                                ? Icons.check_circle
-                                : Icons.visibility),
-                            label:
-                                Text(filmIzlendi ? 'İzledin' : 'İzledim'),
+                            icon: Icon(
+                              filmIzlendi
+                                  ? Icons.check_circle
+                                  : Icons.visibility,
+                            ),
+                            label: Text(
+                              filmIzlendi ? 'İzledin'.c : 'İzledim'.c,
+                            ),
                           ),
                         ),
                       if (!tv) const SizedBox(width: 8),
@@ -319,29 +378,40 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                                benimPuan != null
-                                    ? Icons.star
-                                    : Icons.star_border,
-                                color: DiziRenkler.kirmizi),
+                              benimPuan != null
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              color: DiziRenkler.sari,
+                            ),
                             if (benimPuan != null)
-                              Text(' $benimPuan',
-                                  style: const TextStyle(
-                                      color: DiziRenkler.kirmizi,
-                                      fontWeight: FontWeight.w800)),
+                              Text(
+                                ' ${(benimPuan / 2).round()}',
+                                style: const TextStyle(
+                                  color: DiziRenkler.sari,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
                           ],
                         ),
                       ),
                       IconButton(
                         onPressed: _listeyeEkle,
-                        icon: const Icon(Icons.playlist_add,
-                            color: Colors.white),
+                        icon: const Icon(
+                          Icons.playlist_add,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
+                  // Tepki ikonları
+                  TepkiSatiri(tur: widget.tur, tmdbId: widget.tmdbId),
+                  const SizedBox(height: 12),
                   if ((c['overview'] as String?)?.isNotEmpty == true)
-                    Text(c['overview'] as String,
-                        style: const TextStyle(height: 1.5)),
+                    Text(
+                      c['overview'] as String,
+                      style: const TextStyle(height: 1.5),
+                    ),
                 ],
               ),
             ),
@@ -352,11 +422,15 @@ class _DetayEkraniState extends State<DetayEkrani> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
-                    child: Text('Sezonlar',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w800)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                    child: Text(
+                      'Sezonlar'.c,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                   for (final s in sezonlar)
                     _SezonSatiri(
@@ -374,11 +448,15 @@ class _DetayEkraniState extends State<DetayEkrani> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 16, 10),
-                    child: Text('Oyuncular',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w800)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                    child: Text(
+                      'Oyuncular'.c,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
                   SizedBox(
                     height: 150,
@@ -389,15 +467,12 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       separatorBuilder: (_, __) => const SizedBox(width: 12),
                       itemBuilder: (context, i) {
                         final o = kadro[i] as Map<String, dynamic>;
-                        final foto =
-                            posterUrl(o['profile_path'] as String?, boyut: 'w185');
+                        final foto = posterUrl(
+                          o['profile_path'] as String?,
+                          boyut: 'w185',
+                        );
                         return InkWell(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) =>
-                                    KisiEkrani(kisiId: o['id'] as int)),
-                          ),
+                          onTap: () => context.push('/kisi/${o['id']}'),
                           child: SizedBox(
                             width: 76,
                             child: Column(
@@ -409,16 +484,20 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                       ? null
                                       : CachedNetworkImageProvider(foto),
                                   child: foto == null
-                                      ? const Icon(Icons.person,
-                                          color: Colors.white24)
+                                      ? const Icon(
+                                          Icons.person,
+                                          color: Colors.white24,
+                                        )
                                       : null,
                                 ),
                                 const SizedBox(height: 6),
-                                Text(o['name'] as String? ?? '',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(fontSize: 11)),
+                                Text(
+                                  o['name'] as String? ?? '',
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(fontSize: 11),
+                                ),
                               ],
                             ),
                           ),
@@ -430,24 +509,30 @@ class _DetayEkraniState extends State<DetayEkrani> {
               ),
             ),
           // İncelemeler
-          if ((_incelemeler?['incelemeler'] as List<dynamic>? ?? [])
-              .isNotEmpty)
+          if ((_incelemeler?['incelemeler'] as List<dynamic>? ?? []).isNotEmpty)
             SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-                    child: Text('İncelemeler',
-                        style: TextStyle(
-                            fontSize: 17, fontWeight: FontWeight.w800)),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+                    child: Text(
+                      'İncelemeler'.c,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                  for (final inc in (_incelemeler!['incelemeler']
-                          as List<dynamic>)
-                      .take(10))
+                  for (final inc
+                      in (_incelemeler!['incelemeler'] as List<dynamic>).take(
+                        10,
+                      ))
                     Card(
                       margin: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 4),
+                        horizontal: 16,
+                        vertical: 4,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(12),
                         child: Column(
@@ -455,21 +540,37 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           children: [
                             Row(
                               children: [
-                                Text('@${inc['kullanici_adi']}',
+                                InkWell(
+                                  onTap: () => context.push(
+                                    '/kullanici/${inc['kullanici_adi']}',
+                                  ),
+                                  child: Text(
+                                    '@${inc['kullanici_adi']}',
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: DiziRenkler.kirmizi)),
+                                      fontWeight: FontWeight.w700,
+                                      color: DiziRenkler.sari,
+                                    ),
+                                  ),
+                                ),
                                 const Spacer(),
-                                const Icon(Icons.star,
-                                    color: DiziRenkler.kirmizi, size: 14),
-                                Text(' ${inc['puan']}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w700)),
+                                const Icon(
+                                  Icons.star,
+                                  color: DiziRenkler.sari,
+                                  size: 14,
+                                ),
+                                Text(
+                                  ' ${(((inc['puan'] as num?) ?? 0) / 2).round()}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 6),
-                            Text(inc['yorum'] as String,
-                                style: const TextStyle(height: 1.4)),
+                            Text(
+                              inc['yorum'] as String,
+                              style: const TextStyle(height: 1.4),
+                            ),
                           ],
                         ),
                       ),
@@ -485,9 +586,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
           if (oneriler.isNotEmpty)
             SliverToBoxAdapter(
               child: PosterSeridi(
-                  baslik: 'Bunları da Beğenebilirsin',
-                  icerikler: oneriler,
-                  turZorla: widget.tur),
+                baslik: 'Bunları da Beğenebilirsin'.c,
+                icerikler: oneriler,
+                turZorla: widget.tur,
+              ),
             ),
           const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
@@ -545,8 +647,9 @@ class _SezonSatiriState extends State<_SezonSatiri> {
       widget.degisti();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -561,8 +664,9 @@ class _SezonSatiriState extends State<_SezonSatiri> {
       widget.degisti();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -589,24 +693,30 @@ class _SezonSatiriState extends State<_SezonSatiri> {
                   CircularProgressIndicator(
                     value: toplam == 0 ? 0 : izlenen / toplam,
                     strokeWidth: 4,
-                    color: DiziRenkler.kirmizi,
+                    color: DiziRenkler.sari,
                     backgroundColor: Colors.white12,
                   ),
-                  Text('$_no',
-                      style: const TextStyle(fontWeight: FontWeight.w800)),
+                  Text(
+                    '$_no',
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
                 ],
               ),
             ),
-            title: Text(widget.sezon['name'] as String? ?? '$_no. Sezon',
-                style: const TextStyle(fontWeight: FontWeight.w700)),
-            subtitle: Text('$izlenen / $toplam bölüm'),
+            title: Text(
+              widget.sezon['name'] as String? ?? '{}. Sezon'.cf([_no]),
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: Text('{} / {} bölüm'.cf([izlenen, toplam])),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (tamam)
-                  const Icon(Icons.check_circle, color: DiziRenkler.kirmizi),
-                Icon(_acik ? Icons.expand_less : Icons.expand_more,
-                    color: Colors.white38),
+                  const Icon(Icons.check_circle, color: DiziRenkler.sari),
+                Icon(
+                  _acik ? Icons.expand_less : Icons.expand_more,
+                  color: Colors.white38,
+                ),
               ],
             ),
             onTap: () {
@@ -618,30 +728,40 @@ class _SezonSatiriState extends State<_SezonSatiri> {
             if (_hata != null)
               Padding(
                 padding: const EdgeInsets.all(12),
-                child: Column(children: [
-                  Text(_hata!, style: const TextStyle(color: Colors.white54)),
-                  TextButton(
+                child: Column(
+                  children: [
+                    Text(_hata!, style: const TextStyle(color: Colors.white54)),
+                    TextButton(
                       onPressed: _bolumleriYukle,
-                      child: const Text('Tekrar dene')),
-                ]),
+                      child: Text('Tekrar dene'.c),
+                    ),
+                  ],
+                ),
               )
             else if (_bolumler == null)
               const Padding(
                 padding: EdgeInsets.all(16),
                 child: Center(
-                    child: CircularProgressIndicator(
-                        color: DiziRenkler.kirmizi)),
+                  child: CircularProgressIndicator(color: DiziRenkler.sari),
+                ),
               )
             else ...[
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(
                   onPressed: () => _tumu(!tamam, toplam),
-                  icon: Icon(tamam ? Icons.remove_done : Icons.done_all,
-                      size: 18, color: DiziRenkler.kirmizi),
-                  label: Text(tamam ? 'Tümünü Kaldır' : 'Tümünü İzledim',
-                      style: const TextStyle(
-                          color: DiziRenkler.kirmizi, fontSize: 13)),
+                  icon: Icon(
+                    tamam ? Icons.remove_done : Icons.done_all,
+                    size: 18,
+                    color: DiziRenkler.sari,
+                  ),
+                  label: Text(
+                    tamam ? 'Tümünü Kaldır'.c : 'Tümünü İzledim'.c,
+                    style: const TextStyle(
+                      color: DiziRenkler.sari,
+                      fontSize: 13,
+                    ),
+                  ),
                 ),
               ),
               for (final b in _bolumler!)
@@ -649,10 +769,10 @@ class _SezonSatiriState extends State<_SezonSatiri> {
                   tmdbId: widget.tmdbId,
                   sezonNo: _no,
                   bolum: b as Map<String, dynamic>,
-                  izlendi: widget.izlenenSet
-                      .contains('$_no:${b['episode_number']}'),
-                  izlendiToggle: () =>
-                      _toggle(b['episode_number'] as int),
+                  izlendi: widget.izlenenSet.contains(
+                    '$_no:${b['episode_number']}',
+                  ),
+                  izlendiToggle: () => _toggle(b['episode_number'] as int),
                   degisti: widget.degisti,
                 ),
               const SizedBox(height: 8),
@@ -689,16 +809,9 @@ class _BolumSatiri extends StatelessWidget {
 
     return InkWell(
       onTap: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => BolumEkrani(
-              tmdbId: tmdbId,
-              sezonNo: sezonNo,
-              bolumNo: no,
-              izlendi: izlendi,
-            ),
-          ),
+        await context.push(
+          '/dizi/$tmdbId/sezon/$sezonNo/bolum/$no',
+          extra: izlendi,
         );
         degisti();
       },
@@ -714,7 +827,8 @@ class _BolumSatiri extends StatelessWidget {
                 child: gorsel == null
                     ? Container(
                         color: DiziRenkler.koyuGri,
-                        child: const Icon(Icons.tv, color: Colors.white24))
+                        child: const Icon(Icons.tv, color: Colors.white24),
+                      )
                     : CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover),
               ),
             ),
@@ -723,15 +837,23 @@ class _BolumSatiri extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$no. ${bolum['name'] ?? 'Bölüm'}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.w700, fontSize: 13)),
+                  Text(
+                    '$no. ${bolum['name'] ?? 'Bölüm'.c}',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
                   if (tarih.isNotEmpty)
-                    Text(tarih,
-                        style: const TextStyle(
-                            fontSize: 11, color: Colors.white38)),
+                    Text(
+                      tarih,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Colors.white38,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -739,7 +861,7 @@ class _BolumSatiri extends StatelessWidget {
               onPressed: izlendiToggle,
               icon: Icon(
                 izlendi ? Icons.check_circle : Icons.radio_button_unchecked,
-                color: izlendi ? DiziRenkler.kirmizi : Colors.white24,
+                color: izlendi ? DiziRenkler.sari : Colors.white24,
                 size: 26,
               ),
             ),
