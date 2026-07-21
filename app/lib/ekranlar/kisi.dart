@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'puan_sheet.dart';
+import 'yorumlar.dart';
 
 class KisiEkrani extends StatefulWidget {
   final int kisiId;
@@ -16,6 +18,8 @@ class KisiEkrani extends StatefulWidget {
 class _KisiEkraniState extends State<KisiEkrani> {
   Map<String, dynamic>? _kisi;
   List<dynamic> _isler = [];
+  Map<String, dynamic>? _benimPuan;
+  Map<String, dynamic>? _toplum;
   String? _hata;
 
   @override
@@ -24,8 +28,35 @@ class _KisiEkraniState extends State<KisiEkrani> {
     _yukle();
   }
 
+  Future<void> _puanYenile() async {
+    try {
+      final sonuclar = await Future.wait([
+        Api.get('/benim/person/${widget.kisiId}'),
+        Api.get('/incelemeler/person/${widget.kisiId}'),
+      ]);
+      if (mounted) {
+        setState(() {
+          _benimPuan = sonuclar[0]['puan'] as Map<String, dynamic>?;
+          _toplum = sonuclar[1] as Map<String, dynamic>;
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _puanla() async {
+    final kaydedildi = await puanlaVeKaydet(
+      context,
+      tur: 'person',
+      tmdbId: widget.kisiId,
+      mevcutPuan: _benimPuan?['puan'] as int?,
+      mevcutYorum: _benimPuan?['yorum'] as String?,
+    );
+    if (kaydedildi) _puanYenile();
+  }
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
+    _puanYenile();
     try {
       final sonuclar = await Future.wait([
         Api.get('/tmdb/person/${widget.kisiId}'),
@@ -65,8 +96,13 @@ class _KisiEkraniState extends State<KisiEkrani> {
     return Scaffold(
       appBar: AppBar(title: Text(k['name'] as String? ?? '')),
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -100,6 +136,33 @@ class _KisiEkraniState extends State<KisiEkrani> {
                           style: const TextStyle(color: Colors.white54)),
                     Text('🎬 ${_isler.length}+ yapım',
                         style: const TextStyle(color: Colors.white54)),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: _puanla,
+                          icon: Icon(
+                              _benimPuan != null
+                                  ? Icons.star
+                                  : Icons.star_border,
+                              size: 18,
+                              color: DiziRenkler.kirmizi),
+                          label: Text(
+                            _benimPuan != null
+                                ? '${_benimPuan!['puan']}/10'
+                                : 'Puanla',
+                            style:
+                                const TextStyle(color: DiziRenkler.kirmizi),
+                          ),
+                        ),
+                        if (_toplum?['ortalama'] != null) ...[
+                          const SizedBox(width: 8),
+                          Text('ort. ${_toplum!['ortalama']}',
+                              style: const TextStyle(
+                                  color: Colors.white54, fontSize: 12)),
+                        ],
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -129,6 +192,11 @@ class _KisiEkraniState extends State<KisiEkrani> {
             itemBuilder: (context, i) =>
                 PosterKarti(icerik: _isler[i] as Map<String, dynamic>),
           ),
+              ],
+            ),
+          ),
+          YorumBolumu(tur: 'person', tmdbId: widget.kisiId),
+          const SizedBox(height: 16),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../tema.dart';
+import 'ayarlar.dart';
 import 'ortak.dart';
 
 class ProfilEkrani extends StatefulWidget {
@@ -16,6 +17,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     with AutomaticKeepAliveClientMixin {
   Map<String, dynamic>? _istatistik;
   Map<String, dynamic>? _kitaplik;
+  Map<String, dynamic>? _profil;
   List<dynamic> _listeler = [];
   String? _hata;
 
@@ -35,12 +37,14 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         Api.get('/istatistiklerim'),
         Api.get('/kitapligim'),
         Api.get('/listelerim'),
+        Api.get('/profilim'),
       ]);
       if (!mounted) return;
       setState(() {
         _istatistik = sonuclar[0] as Map<String, dynamic>;
         _kitaplik = sonuclar[1] as Map<String, dynamic>;
         _listeler = sonuclar[2]['listeler'] as List<dynamic>;
+        _profil = sonuclar[3] as Map<String, dynamic>;
       });
     } catch (e) {
       if (!mounted) return;
@@ -178,6 +182,54 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            // Profil başlığı: avatar (GIF olabilir), bio, ülke
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 38,
+                  backgroundColor: DiziRenkler.kart,
+                  backgroundImage: dosyaUrl(_profil?['avatar'] as String?) !=
+                          null
+                      ? NetworkImage(dosyaUrl(_profil!['avatar'] as String)!)
+                      : null,
+                  child: _profil?['avatar'] == null
+                      ? const Icon(Icons.person,
+                          size: 38, color: Colors.white38)
+                      : null,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('@$kullaniciAdi',
+                          style: const TextStyle(
+                              fontSize: 17, fontWeight: FontWeight.w900)),
+                      if ((_profil?['bio'] as String?)?.isNotEmpty == true)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Text(_profil!['bio'] as String,
+                              style: const TextStyle(
+                                  color: Colors.white70, fontSize: 13)),
+                        ),
+                      if ((_profil?['ulke'] as String?)?.isNotEmpty == true)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 3),
+                          child: Row(children: [
+                            const Icon(Icons.location_on,
+                                size: 14, color: DiziRenkler.kirmizi),
+                            const SizedBox(width: 3),
+                            Text(_profil!['ulke'] as String,
+                                style: const TextStyle(
+                                    color: Colors.white54, fontSize: 12)),
+                          ]),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
             // Misafir hesabı bağlama bandı
             if (oturum.kullanici?['misafir'] == true) ...[
               Card(
@@ -289,7 +341,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('@$kullaniciAdi')),
+      appBar: AppBar(
+        title: Text('@$kullaniciAdi'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () async {
+              await Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const AyarlarEkrani()));
+              _yukle();
+            },
+          ),
+        ],
+      ),
       body: govde,
     );
   }

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../tema.dart';
+import 'bolum.dart';
 import 'kisi.dart';
 import 'ortak.dart';
-import 'sezon.dart';
+import 'puan_sheet.dart';
+import 'yorumlar.dart';
 
 const durumSecenekleri = [
   ('izleyecegim', 'İzleyeceğim', Icons.bookmark_add_outlined),
@@ -82,84 +84,14 @@ class _DetayEkraniState extends State<DetayEkrani> {
   }
 
   Future<void> _puanla() async {
-    final mevcutPuan = (_benim?['puan']?['puan'] as int?) ?? 0;
-    final yorumKutusu =
-        TextEditingController(text: _benim?['puan']?['yorum'] as String? ?? '');
-    var secilen = mevcutPuan;
-
-    final kaydet = await showModalBottomSheet<bool>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.koyuGri,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setModal) => Padding(
-          padding: EdgeInsets.fromLTRB(
-              20, 20, 20, MediaQuery.of(context).viewInsets.bottom + 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const Text('Puanın',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 12),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 4,
-                children: [
-                  for (var p = 1; p <= 10; p++)
-                    IconButton(
-                      onPressed: () => setModal(() => secilen = p),
-                      icon: Icon(
-                        p <= secilen ? Icons.star : Icons.star_border,
-                        color: DiziRenkler.kirmizi,
-                        size: 28,
-                      ),
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 30, minHeight: 30),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: yorumKutusu,
-                maxLines: 4,
-                decoration:
-                    const InputDecoration(hintText: 'İncelemen (isteğe bağlı)'),
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  if (mevcutPuan > 0)
-                    TextButton(
-                      onPressed: () {
-                        secilen = 0;
-                        Navigator.pop(context, true);
-                      },
-                      child: const Text('Puanı Sil',
-                          style: TextStyle(color: Colors.redAccent)),
-                    ),
-                  const Spacer(),
-                  FilledButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: const Text('Kaydet'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+    final kaydedildi = await puanlaVeKaydet(
+      context,
+      tur: widget.tur,
+      tmdbId: widget.tmdbId,
+      mevcutPuan: _benim?['puan']?['puan'] as int?,
+      mevcutYorum: _benim?['puan']?['yorum'] as String?,
     );
-
-    if (kaydet == true) {
-      await Api.post('/puan', {
-        'tmdb_id': widget.tmdbId,
-        'tur': widget.tur,
-        'puan': secilen == 0 ? null : secilen,
-        'yorum': yorumKutusu.text.trim().isEmpty ? null : yorumKutusu.text.trim(),
-      });
+    if (kaydedildi) {
       _benimYenile();
       try {
         final inc = await Api.get('/incelemeler/${widget.tur}/${widget.tmdbId}');
@@ -545,6 +477,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                 ],
               ),
             ),
+          // Yorumlar (fotoğraf/video destekli)
+          SliverToBoxAdapter(
+            child: YorumBolumu(tur: widget.tur, tmdbId: widget.tmdbId),
+          ),
           // Öneriler
           if (oneriler.isNotEmpty)
             SliverToBoxAdapter(
@@ -560,7 +496,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
   }
 }
 
-class _SezonSatiri extends StatelessWidget {
+/// Tıklayınca yeni sayfa açmaz; kartın altında bölüm listesi açılır.
+/// Bölüme tıklamak bölüm sayfasını açar, sağdaki halka izleme işaretidir.
+class _SezonSatiri extends StatefulWidget {
   final int tmdbId;
   final Map<String, dynamic> sezon;
   final Set<String> izlenenSet;
@@ -574,52 +512,239 @@ class _SezonSatiri extends StatelessWidget {
   });
 
   @override
+  State<_SezonSatiri> createState() => _SezonSatiriState();
+}
+
+class _SezonSatiriState extends State<_SezonSatiri> {
+  bool _acik = false;
+  List<dynamic>? _bolumler;
+  String? _hata;
+
+  int get _no => widget.sezon['season_number'] as int;
+
+  Future<void> _bolumleriYukle() async {
+    setState(() => _hata = null);
+    try {
+      final d = await Api.get('/tmdb/tv/${widget.tmdbId}/season/$_no');
+      if (mounted) {
+        setState(() => _bolumler = d['episodes'] as List<dynamic>);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _hata = e.toString());
+    }
+  }
+
+  Future<void> _toggle(int bolumNo) async {
+    try {
+      await Api.post('/izleme/toggle', {
+        'tmdb_id': widget.tmdbId,
+        'tur': 'tv',
+        'sezon': _no,
+        'bolum': bolumNo,
+      });
+      widget.degisti();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  Future<void> _tumu(bool isaretle, int toplam) async {
+    try {
+      await Api.post('/izleme/sezon', {
+        'tmdb_id': widget.tmdbId,
+        'sezon': _no,
+        'bolum_sayisi': toplam,
+        'isaretle': isaretle,
+      });
+      widget.degisti();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final no = sezon['season_number'] as int;
-    final toplam = (sezon['episode_count'] as int?) ?? 0;
-    final izlenen =
-        izlenenSet.where((k) => k.startsWith('$no:')).length.clamp(0, toplam);
+    final toplam = (widget.sezon['episode_count'] as int?) ?? 0;
+    final izlenen = widget.izlenenSet
+        .where((k) => k.startsWith('$_no:'))
+        .length
+        .clamp(0, toplam);
     final tamam = toplam > 0 && izlenen >= toplam;
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: SizedBox(
-          width: 44,
-          height: 44,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              CircularProgressIndicator(
-                value: toplam == 0 ? 0 : izlenen / toplam,
-                strokeWidth: 4,
-                color: DiziRenkler.kirmizi,
-                backgroundColor: Colors.white12,
-              ),
-              Text('$no',
-                  style: const TextStyle(fontWeight: FontWeight.w800)),
-            ],
-          ),
-        ),
-        title: Text(sezon['name'] as String? ?? '$no. Sezon',
-            style: const TextStyle(fontWeight: FontWeight.w700)),
-        subtitle: Text('$izlenen / $toplam bölüm'),
-        trailing: tamam
-            ? const Icon(Icons.check_circle, color: DiziRenkler.kirmizi)
-            : const Icon(Icons.chevron_right, color: Colors.white38),
-        onTap: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => SezonEkrani(
-                tmdbId: tmdbId,
-                sezonNo: no,
-                bolumSayisi: toplam,
+      child: Column(
+        children: [
+          ListTile(
+            leading: SizedBox(
+              width: 44,
+              height: 44,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: toplam == 0 ? 0 : izlenen / toplam,
+                    strokeWidth: 4,
+                    color: DiziRenkler.kirmizi,
+                    backgroundColor: Colors.white12,
+                  ),
+                  Text('$_no',
+                      style: const TextStyle(fontWeight: FontWeight.w800)),
+                ],
               ),
             ),
-          );
-          degisti();
-        },
+            title: Text(widget.sezon['name'] as String? ?? '$_no. Sezon',
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: Text('$izlenen / $toplam bölüm'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (tamam)
+                  const Icon(Icons.check_circle, color: DiziRenkler.kirmizi),
+                Icon(_acik ? Icons.expand_less : Icons.expand_more,
+                    color: Colors.white38),
+              ],
+            ),
+            onTap: () {
+              setState(() => _acik = !_acik);
+              if (_acik && _bolumler == null) _bolumleriYukle();
+            },
+          ),
+          if (_acik) ...[
+            if (_hata != null)
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(children: [
+                  Text(_hata!, style: const TextStyle(color: Colors.white54)),
+                  TextButton(
+                      onPressed: _bolumleriYukle,
+                      child: const Text('Tekrar dene')),
+                ]),
+              )
+            else if (_bolumler == null)
+              const Padding(
+                padding: EdgeInsets.all(16),
+                child: Center(
+                    child: CircularProgressIndicator(
+                        color: DiziRenkler.kirmizi)),
+              )
+            else ...[
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: () => _tumu(!tamam, toplam),
+                  icon: Icon(tamam ? Icons.remove_done : Icons.done_all,
+                      size: 18, color: DiziRenkler.kirmizi),
+                  label: Text(tamam ? 'Tümünü Kaldır' : 'Tümünü İzledim',
+                      style: const TextStyle(
+                          color: DiziRenkler.kirmizi, fontSize: 13)),
+                ),
+              ),
+              for (final b in _bolumler!)
+                _BolumSatiri(
+                  tmdbId: widget.tmdbId,
+                  sezonNo: _no,
+                  bolum: b as Map<String, dynamic>,
+                  izlendi: widget.izlenenSet
+                      .contains('$_no:${b['episode_number']}'),
+                  izlendiToggle: () =>
+                      _toggle(b['episode_number'] as int),
+                  degisti: widget.degisti,
+                ),
+              const SizedBox(height: 8),
+            ],
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _BolumSatiri extends StatelessWidget {
+  final int tmdbId;
+  final int sezonNo;
+  final Map<String, dynamic> bolum;
+  final bool izlendi;
+  final VoidCallback izlendiToggle;
+  final VoidCallback degisti;
+
+  const _BolumSatiri({
+    required this.tmdbId,
+    required this.sezonNo,
+    required this.bolum,
+    required this.izlendi,
+    required this.izlendiToggle,
+    required this.degisti,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final no = bolum['episode_number'] as int;
+    final gorsel = posterUrl(bolum['still_path'] as String?, boyut: 'w300');
+    final tarih = bolum['air_date'] as String? ?? '';
+
+    return InkWell(
+      onTap: () async {
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BolumEkrani(
+              tmdbId: tmdbId,
+              sezonNo: sezonNo,
+              bolumNo: no,
+              izlendi: izlendi,
+            ),
+          ),
+        );
+        degisti();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 88,
+                height: 50,
+                child: gorsel == null
+                    ? Container(
+                        color: DiziRenkler.koyuGri,
+                        child: const Icon(Icons.tv, color: Colors.white24))
+                    : CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$no. ${bolum['name'] ?? 'Bölüm'}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 13)),
+                  if (tarih.isNotEmpty)
+                    Text(tarih,
+                        style: const TextStyle(
+                            fontSize: 11, color: Colors.white38)),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: izlendiToggle,
+              icon: Icon(
+                izlendi ? Icons.check_circle : Icons.radio_button_unchecked,
+                color: izlendi ? DiziRenkler.kirmizi : Colors.white24,
+                size: 26,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

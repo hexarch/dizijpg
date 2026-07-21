@@ -24,9 +24,20 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
       PORT: 8500
+      AVATAR_DIZIN: /veri/avatarlar
+      MEDYA_DIZIN: /veri/medya
+      MAIL_HOST: host.docker.internal
+      MAIL_PORT: "25"
+      MAIL_FROM: "dizi.jpg <noreply@dizijpg.com>"
+    volumes:
+      - dizijpg_dosyalar:/veri
+    extra_hosts:
+      # Konteynerden host'taki Postfix'e erişim (mail gönderimi)
+      - "host.docker.internal:host-gateway"
     ports:
       # Yalnızca yerelden: dışarıya nginx üzerinden (SSL ile) açılır.
       - "127.0.0.1:8500:8500"
 
 volumes:
   dizijpg_pg:
+  dizijpg_dosyalar:

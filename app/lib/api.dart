@@ -11,6 +11,10 @@ const String apiTaban = 'https://dizijpg.com/api';
 String? posterUrl(String? yol, {String boyut = 'w342'}) =>
     yol == null ? null : 'https://image.tmdb.org/t/p/$boyut$yol';
 
+/// Sunucudaki dosya yolları (avatar, yorum medyası) → tam URL
+String? dosyaUrl(String? yol) =>
+    yol == null ? null : (yol.startsWith('http') ? yol : '$apiTaban$yol');
+
 class ApiHata implements Exception {
   final String mesaj;
   ApiHata(this.mesaj);
@@ -110,6 +114,41 @@ class Api {
   }
 
   static Future<void> cikis() => _tokenKaydet(null);
+
+  // ---- profil ----
+  static Future<Map<String, dynamic>> profilim() async =>
+      await get('/profilim') as Map<String, dynamic>;
+
+  static Future<Map<String, dynamic>> profilGuncelle(
+          {required String bio, required String ulke}) async =>
+      await post('/profilim', {'bio': bio, 'ulke': ulke})
+          as Map<String, dynamic>;
+
+  /// Ham resim verisini yükler; sunucu türü baytlardan doğrular.
+  static Future<String> avatarYukle(Uint8List veri) async {
+    final cevap = await http
+        .post(Uri.parse('$apiTaban/profilim/avatar'),
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              if (_token != null) 'Authorization': 'Bearer $_token',
+            },
+            body: veri)
+        .timeout(const Duration(minutes: 2));
+    return (_isle(cevap) as Map<String, dynamic>)['avatar'] as String;
+  }
+
+  /// Yorum eki (fotoğraf/video) yükler; sunucu yolunu döndürür.
+  static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async {
+    final cevap = await http
+        .post(Uri.parse('$apiTaban/medya'),
+            headers: {
+              'Content-Type': 'application/octet-stream',
+              if (_token != null) 'Authorization': 'Bearer $_token',
+            },
+            body: veri)
+        .timeout(const Duration(minutes: 5));
+    return _isle(cevap) as Map<String, dynamic>;
+  }
 }
 
 /// Oturum durumu (giriş yapan kullanıcı bilgisi).

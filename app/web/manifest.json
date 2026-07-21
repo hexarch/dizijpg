@@ -1,11 +1,11 @@
 {
-    "name": "dizijpg",
-    "short_name": "dizijpg",
+    "name": "dizi.jpg",
+    "short_name": "dizi.jpg",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0D0D0D",
+    "theme_color": "#A80828",
+    "description": "Dizi ve filmlerini takip et",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
