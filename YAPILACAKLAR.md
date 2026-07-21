@@ -70,16 +70,16 @@ kontrast (sarı üstü metinler), boşluk ritmi (8'in katları), boş durum ikon
 Bildirime tıklayınca yoruma/yanıta doğrudan gitme (şimdilik profile gidiyor);
 bildirim gruplama ("3 kişi yorumunu beğendi").
 
-### 11. Sohbete küçük dokunuşlar 🚀 (tarih ayraçları + ✓/✓✓ okundu tikleri; "yazıyor..." istenirse)
+### 11. Sohbete küçük dokunuşlar 🚀 (tarih ayraçları + ✓/✓✓ tikleri + "yazıyor..." göstergesi)
 Tarih ayraçları (Bugün/Dün), gönderim durumu (saat → tik), yazıyor... göstergesi
 (poll tabanlı, opsiyonel).
 
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 
-- **DKIM** ⬜ — şifre sıfırlama/veri maili Gmail'de spam'e düşebilir; opendkim
-  kurulumu + Cloudflare'a TXT kaydı (CF panelinden elle) gerekir.
-- **Git commit** ⬜ — 17 Tem'den beri commit yok; istenirse anlamlı paketler
-  halinde commit'lenir (keystore/env zaten git dışı).
+- **DKIM** ✅ sunucu tarafı kuruldu (opendkim + Postfix milter, seçici: dizi).
+  ⬜ KALAN: Cloudflare'a `dizi._domainkey` TXT + SPF kaydını KULLANICI ekleyecek.
+- **Git commit** ✅ 3 paket halinde commit'lendi (backend / app v1.1.0 / docs).
+  Push YAPILMADI — istenirse `git push` ile GitHub'a gönderilir.
 - **Sunucuya Flutter SDK** ⬜ — istenirse derlemeler tamamen sunucuya taşınır.
 
 ## TAMAMLANANLAR (özet) 🚀
