@@ -123,6 +123,49 @@ class _DetayEkraniState extends State<DetayEkrani> {
     }
   }
 
+  /// Tüm izleme izlerini siler: hiç izlenmemiş sayılır + listelerden kalkar.
+  Future<void> _sifirla() async {
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: DiziRenkler.koyuGri,
+        title: Text('Sil'.c),
+        content: Text(
+          'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.'
+              .c,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('İptal'.c),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.redAccent,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: Text('Sil'.c),
+          ),
+        ],
+      ),
+    );
+    if (onay != true) return;
+    try {
+      await Api.post('/icerik/sifirla', {
+        'tmdb_id': widget.tmdbId,
+        'tur': widget.tur,
+      });
+      if (!mounted) return;
+      _yukle();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   Future<void> _listeyeEkle() async {
     try {
       final d = await Api.get('/listelerim');
@@ -231,6 +274,18 @@ class _DetayEkraniState extends State<DetayEkrani> {
     final favori = _benim?['favori'] == true;
     final benimDurum = _benim?['durum'] as String?;
     final benimPuan = _benim?['puan']?['puan'] as int?;
+    // Gelecek bölüm: tarih belliyse kaç gün kaldığını göster
+    final sonrakiTarih = tv
+        ? ((c['next_episode_to_air'] as Map<String, dynamic>?)?['air_date']
+              as String?)
+        : null;
+    int? kalanGun;
+    if (sonrakiTarih != null) {
+      final simdi = DateTime.now();
+      kalanGun = DateTime.parse(
+        sonrakiTarih,
+      ).difference(DateTime(simdi.year, simdi.month, simdi.day)).inDays;
+    }
 
     return Scaffold(
       body: CustomScrollView(
@@ -348,9 +403,55 @@ class _DetayEkraniState extends State<DetayEkrani> {
                               onSelected: (s) => _durumSec(s ? kod : null),
                             ),
                           ),
+                        // Sil: tüm izleme izini kaldırır (uyarılı)
+                        if (benimDurum != null || izlenenSet.isNotEmpty)
+                          ActionChip(
+                            avatar: const Icon(
+                              Icons.delete_outline,
+                              size: 16,
+                              color: Colors.redAccent,
+                            ),
+                            label: Text(
+                              'Sil'.c,
+                              style: const TextStyle(color: Colors.redAccent),
+                            ),
+                            onPressed: _sifirla,
+                          ),
                       ],
                     ),
                   ),
+                  // Gelecek bölüm geri sayımı
+                  if (kalanGun != null && kalanGun >= 0) ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.schedule,
+                          size: 16,
+                          color: DiziRenkler.sari,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          kalanGun == 0
+                              ? 'Gelecek bölüm bugün'.c
+                              : 'Gelecek bölüm {} gün sonra'.cf([kalanGun]),
+                          style: const TextStyle(
+                            color: DiziRenkler.sari,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          sonrakiTarih!,
+                          style: const TextStyle(
+                            color: Colors.white38,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   // Aksiyon satırı
                   Row(

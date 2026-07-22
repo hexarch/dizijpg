@@ -214,4 +214,9 @@ const Map<String, String> cevirilerTa = {
   'Konumla ve kırp': 'நிலைப்படுத்தி வெட்டு',
   'Listeye eklendi': 'பட்டியலில் சேர்க்கப்பட்டது',
   'Listeyi sil?': 'பட்டியலை நீக்கவா?',
+  'Sil': 'நீக்கு',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'இது பார்க்கப்படாததாகக் குறிக்கப்பட்டு உன் பட்டியல்களிலிருந்து நீக்கப்படும்.',
+  'Gelecek bölüm bugün': 'அடுத்த அத்தியாயம் இன்று',
+  'Gelecek bölüm {} gün sonra': 'அடுத்த அத்தியாயம் {} நாட்களில்',
 };

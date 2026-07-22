@@ -214,4 +214,9 @@ const Map<String, String> cevirilerGu = {
   'Konumla ve kırp': 'સ્થિતિ ગોઠવો અને કાપો',
   'Listeye eklendi': 'યાદીમાં ઉમેરાયું',
   'Listeyi sil?': 'યાદી કાઢી નાખવી?',
+  'Sil': 'કાઢી નાખો',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'આ ક્યારેય ન જોયેલું ગણાશે અને તમારી યાદીઓમાંથી નીકળી જશે.',
+  'Gelecek bölüm bugün': 'આગલો એપિસોડ આજે',
+  'Gelecek bölüm {} gün sonra': 'આગલો એપિસોડ {} દિવસ પછી',
 };

@@ -214,4 +214,9 @@ const Map<String, String> cevirilerEl = {
   'Konumla ve kırp': 'Τοποθέτησε και περίκοψε',
   'Listeye eklendi': 'Προστέθηκε στη λίστα',
   'Listeyi sil?': 'Διαγραφή λίστας;',
+  'Sil': 'Διαγραφή',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Θα σημειωθεί ως μη προβεβλημένο και θα αφαιρεθεί από τις λίστες σου.',
+  'Gelecek bölüm bugün': 'Επόμενο επεισόδιο σήμερα',
+  'Gelecek bölüm {} gün sonra': 'Επόμενο επεισόδιο σε {} μέρες',
 };

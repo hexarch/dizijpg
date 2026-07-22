@@ -214,4 +214,9 @@ const Map<String, String> cevirilerRo = {
   'Konumla ve kırp': 'Poziționează și decupează',
   'Listeye eklendi': 'Adăugat în listă',
   'Listeyi sil?': 'Ștergi lista?',
+  'Sil': 'Șterge',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Acest titlu va fi marcat ca nevizionat și scos din listele tale.',
+  'Gelecek bölüm bugün': 'Următorul episod azi',
+  'Gelecek bölüm {} gün sonra': 'Următorul episod în {} zile',
 };

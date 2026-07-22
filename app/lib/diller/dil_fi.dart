@@ -214,4 +214,9 @@ const Map<String, String> cevirilerFi = {
   'Konumla ve kırp': 'Asettele ja rajaa',
   'Listeye eklendi': 'Lisätty listaan',
   'Listeyi sil?': 'Poistetaanko lista?',
+  'Sil': 'Poista',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Tämä merkitään katsomattomaksi ja poistetaan listoiltasi.',
+  'Gelecek bölüm bugün': 'Seuraava jakso tänään',
+  'Gelecek bölüm {} gün sonra': 'Seuraava jakso {} päivän päästä',
 };

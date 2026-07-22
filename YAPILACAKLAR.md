@@ -110,6 +110,17 @@ Temiz çıkanlar: hit-test, RichText, mounted korumaları, dispose'lar, iyimser
 rollback'ler, veri sızıntısı, statik-405. Kalan (kozmetik): 12 ekranda düz spinner →
 iskelete çevrilebilir (listesi denetim raporunda).
 
+
+## SPRINT 5 — Kullanıcı istekleri (2026-07-22/23) 🚀
+1. ✅ Sohbet PC tasarımı: baloncuklara 420px tavan + kolon 800px ortalanır
+2. ✅ Profil sekmeye dönünce tazelenir (izlenenler sırası güncel) + sunucuda kararlı sıralama
+3. ✅ Posterde İLERLEME BARI: üstte sarı dolum, %100'de TURUNCU (rozet yerine)
+4. ✅ Detayda "Gelecek bölüm bugün / {} gün sonra" etiketi (next_episode_to_air)
+5. ✅ Profil kitaplık başlıkları tıklanır → /kitaplik/:durum tam dikey liste (ilerleme barlı)
+6. ✅ Detayda "Sil": uyarı modalı → hiç izlenmemiş işaretle + listelerden kaldır
+   (POST /icerik/sifirla: izlemeler+durum+favori+kaynak+liste_ogeleri; puan/yorum korunur;
+   canlıda uçtan uca test edildi)
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 
 - **DKIM** ✅ sunucu tarafı kuruldu (opendkim + Postfix milter, seçici: dizi).

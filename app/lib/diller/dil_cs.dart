@@ -214,4 +214,9 @@ const Map<String, String> cevirilerCs = {
   'Konumla ve kırp': 'Umísti a ořízni',
   'Listeye eklendi': 'Přidáno do seznamu',
   'Listeyi sil?': 'Smazat seznam?',
+  'Sil': 'Smazat',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Titul bude označen jako nezhlédnutý a odstraněn z tvých seznamů.',
+  'Gelecek bölüm bugün': 'Další díl dnes',
+  'Gelecek bölüm {} gün sonra': 'Další díl za {} dní',
 };

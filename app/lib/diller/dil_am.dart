@@ -212,4 +212,9 @@ const Map<String, String> cevirilerAm = {
   'Konumla ve kırp': 'አስቀምጥ እና ቁረጥ',
   'Listeye eklendi': 'ወደ ዝርዝሩ ታክሏል',
   'Listeyi sil?': 'ዝርዝሩን ልሰርዝ?',
+  'Sil': 'ሰርዝ',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'ይህ በጭራሽ እንዳልታየ ተቆጥሮ ከዝርዝሮችህ ይወገዳል።',
+  'Gelecek bölüm bugün': 'ቀጣዩ ክፍል ዛሬ',
+  'Gelecek bölüm {} gün sonra': 'ቀጣዩ ክፍል በ{} ቀናት',
 };

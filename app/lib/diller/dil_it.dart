@@ -215,4 +215,9 @@ const Map<String, String> cevirilerIt = {
   'Konumla ve kırp': 'Posiziona e ritaglia',
   'Listeye eklendi': 'Aggiunto alla lista',
   'Listeyi sil?': 'Eliminare la lista?',
+  'Sil': 'Elimina',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Questo titolo sarà segnato come mai visto e rimosso dalle tue liste.',
+  'Gelecek bölüm bugün': 'Prossimo episodio oggi',
+  'Gelecek bölüm {} gün sonra': 'Prossimo episodio tra {} giorni',
 };

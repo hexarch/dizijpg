@@ -213,4 +213,9 @@ const Map<String, String> cevirilerEn = {
   'Konumla ve kırp': 'Position and crop',
   'Listeye eklendi': 'Added to list',
   'Listeyi sil?': 'Delete list?',
+  'Sil': 'Delete',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'This title will be marked as never watched and removed from your lists.',
+  'Gelecek bölüm bugün': 'Next episode today',
+  'Gelecek bölüm {} gün sonra': 'Next episode in {} days',
 };

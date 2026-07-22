@@ -214,4 +214,9 @@ const Map<String, String> cevirilerPa = {
   'Konumla ve kırp': 'ਸਥਿਤੀ ਸੈੱਟ ਕਰੋ ਅਤੇ ਕੱਟੋ',
   'Listeye eklendi': 'ਸੂਚੀ ਵਿੱਚ ਜੋੜਿਆ ਗਿਆ',
   'Listeyi sil?': 'ਸੂਚੀ ਮਿਟਾਉਣੀ?',
+  'Sil': 'ਮਿਟਾਓ',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'ਇਹ ਕਦੇ ਨਾ ਦੇਖਿਆ ਮੰਨਿਆ ਜਾਵੇਗਾ ਅਤੇ ਤੇਰੀਆਂ ਸੂਚੀਆਂ ਵਿੱਚੋਂ ਹਟ ਜਾਵੇਗਾ।',
+  'Gelecek bölüm bugün': 'ਅਗਲਾ ਐਪੀਸੋਡ ਅੱਜ',
+  'Gelecek bölüm {} gün sonra': 'ਅਗਲਾ ਐਪੀਸੋਡ {} ਦਿਨ ਬਾਅਦ',
 };

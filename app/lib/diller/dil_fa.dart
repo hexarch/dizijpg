@@ -214,4 +214,9 @@ const Map<String, String> cevirilerFa = {
   'Konumla ve kırp': 'جابه‌جا کن و برش بده',
   'Listeye eklendi': 'به فهرست افزوده شد',
   'Listeyi sil?': 'فهرست حذف شود؟',
+  'Sil': 'حذف',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'این عنوان دیده‌نشده علامت می‌خورد و از فهرست‌هایت حذف می‌شود.',
+  'Gelecek bölüm bugün': 'قسمت بعدی امروز',
+  'Gelecek bölüm {} gün sonra': 'قسمت بعدی {} روز دیگر',
 };

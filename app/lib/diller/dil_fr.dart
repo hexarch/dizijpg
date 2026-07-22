@@ -216,4 +216,9 @@ const Map<String, String> cevirilerFr = {
   'Konumla ve kırp': 'Positionner et rogner',
   'Listeye eklendi': 'Ajouté à la liste',
   'Listeyi sil?': 'Supprimer la liste ?',
+  'Sil': 'Supprimer',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Ce titre sera marqué comme jamais vu et retiré de tes listes.',
+  'Gelecek bölüm bugün': 'Prochain épisode aujourd\'hui',
+  'Gelecek bölüm {} gün sonra': 'Prochain épisode dans {} jours',
 };

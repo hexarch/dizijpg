@@ -215,4 +215,9 @@ const Map<String, String> cevirilerKn = {
   'Konumla ve kırp': 'ಸ್ಥಾನ ಹೊಂದಿಸಿ ಕತ್ತರಿಸಿ',
   'Listeye eklendi': 'ಪಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ',
   'Listeyi sil?': 'ಪಟ್ಟಿ ಅಳಿಸುವುದೇ?',
+  'Sil': 'ಅಳಿಸಿ',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'ಇದು ನೋಡಿಲ್ಲವೆಂದು ಗುರುತಿಸಲ್ಪಟ್ಟು ನಿನ್ನ ಪಟ್ಟಿಗಳಿಂದ ತೆಗೆಯಲಾಗುತ್ತದೆ.',
+  'Gelecek bölüm bugün': 'ಮುಂದಿನ ಸಂಚಿಕೆ ಇಂದು',
+  'Gelecek bölüm {} gün sonra': 'ಮುಂದಿನ ಸಂಚಿಕೆ {} ದಿನಗಳಲ್ಲಿ',
 };

@@ -411,6 +411,26 @@ app.get('/izleme/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
   res.json({ izlenenler: rows });
 }));
 
+// İçeriği tamamen sıfırla: hiç izlenmemiş sayılır, listelerden kalkar.
+// (Puan ve yorumlar bilinçli olarak KORUNUR.)
+app.post('/icerik/sifirla', girisZorunlu, sarici(async (req, res) => {
+  const { tmdb_id, tur } = req.body || {};
+  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
+  const p = [req.kullanici.id, tur, tmdb_id];
+  await Promise.all([
+    havuz.query('DELETE FROM izlemeler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    havuz.query('DELETE FROM durumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    havuz.query('DELETE FROM favoriler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    havuz.query('DELETE FROM izleme_kaynaklari WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    havuz.query(
+      `DELETE FROM liste_ogeleri o USING listeler l
+       WHERE o.liste_id = l.id AND l.kullanici_id=$1 AND o.tur=$2 AND o.tmdb_id=$3`, p),
+  ]);
+  res.json({ tamam: true });
+}));
+
 // ---------- durum / puan / favori ----------
 app.post('/durum', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, durum } = req.body || {};
@@ -745,7 +765,7 @@ app.get('/izlediklerim', girisZorunlu, sarici(async (req, res) => {
     `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
      FROM izlemeler WHERE kullanici_id=$1
      GROUP BY tur, tmdb_id
-     ORDER BY son DESC LIMIT 200`,
+     ORDER BY son DESC, tmdb_id DESC LIMIT 200`,
     [req.kullanici.id],
   );
   res.json({
@@ -1589,7 +1609,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     havuz.query(
       `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
        FROM izlemeler WHERE kullanici_id=$1
-       GROUP BY tur, tmdb_id ORDER BY son DESC LIMIT 60`,
+       GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60`,
       [id]),
   ]);
   // Yorum kartları için içerik adı + poster (önbellekli TMDB)

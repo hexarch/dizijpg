@@ -212,4 +212,9 @@ const Map<String, String> cevirilerKo = {
   'Konumla ve kırp': '위치 조정 후 자르기',
   'Listeye eklendi': '리스트에 추가됨',
   'Listeyi sil?': '리스트를 삭제할까요?',
+  'Sil': '삭제',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      '이 작품은 시청한 적 없음으로 표시되고 리스트에서 제거됩니다.',
+  'Gelecek bölüm bugün': '다음 에피소드 오늘',
+  'Gelecek bölüm {} gün sonra': '다음 에피소드 {}일 후',
 };

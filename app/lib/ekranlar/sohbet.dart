@@ -296,135 +296,150 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: !_yuklendi
-                ? const Center(
-                    child: CircularProgressIndicator(color: DiziRenkler.sari),
-                  )
-                : ListView.builder(
-                    controller: _kaydirma,
-                    padding: const EdgeInsets.all(12),
-                    itemCount: _mesajlar.length,
-                    itemBuilder: (context, i) {
-                      final m = _mesajlar[i] as Map<String, dynamic>;
-                      final gun = (m['tarih'] as String? ?? '')
-                          .split('T')
-                          .first;
-                      final oncekiGun = i > 0
-                          ? ((_mesajlar[i - 1] as Map<String, dynamic>)['tarih']
-                                        as String? ??
-                                    '')
-                                .split('T')
-                                .first
-                          : null;
-                      final baloncuk = _MesajBaloncugu(
-                        mesaj: m,
-                        benim: m['gonderen_id'] == benimId,
-                        icerikler: _icerikler,
-                      );
-                      if (gun == oncekiGun || gun.isEmpty) return baloncuk;
-                      // Tarih ayracı: gün değişince ortada küçük rozet
-                      final p = gun.split('-');
-                      final etiket = p.length == 3
-                          ? '${p[2]}.${p[1]}.${p[0]}'
-                          : gun;
-                      return Column(
-                        children: [
-                          Center(
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: DiziRenkler.koyuGri,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Text(
-                                etiket,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.white54,
+      body: Center(
+        child: ConstrainedBox(
+          // Genis ekranda sohbet kolonu ortalanir (Telegram Web gibi)
+          constraints: const BoxConstraints(maxWidth: 800),
+          child: Column(
+            children: [
+              Expanded(
+                child: !_yuklendi
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: DiziRenkler.sari,
+                        ),
+                      )
+                    : ListView.builder(
+                        controller: _kaydirma,
+                        padding: const EdgeInsets.all(12),
+                        itemCount: _mesajlar.length,
+                        itemBuilder: (context, i) {
+                          final m = _mesajlar[i] as Map<String, dynamic>;
+                          final gun = (m['tarih'] as String? ?? '')
+                              .split('T')
+                              .first;
+                          final oncekiGun = i > 0
+                              ? ((_mesajlar[i - 1]
+                                                as Map<
+                                                  String,
+                                                  dynamic
+                                                >)['tarih']
+                                            as String? ??
+                                        '')
+                                    .split('T')
+                                    .first
+                              : null;
+                          final baloncuk = _MesajBaloncugu(
+                            mesaj: m,
+                            benim: m['gonderen_id'] == benimId,
+                            icerikler: _icerikler,
+                          );
+                          if (gun == oncekiGun || gun.isEmpty) return baloncuk;
+                          // Tarih ayracı: gün değişince ortada küçük rozet
+                          final p = gun.split('-');
+                          final etiket = p.length == 3
+                              ? '${p[2]}.${p[1]}.${p[0]}'
+                              : gun;
+                          return Column(
+                            children: [
+                              Center(
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(
+                                    vertical: 10,
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: DiziRenkler.koyuGri,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Text(
+                                    etiket,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.white54,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          baloncuk,
-                        ],
-                      );
-                    },
-                  ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Fotoğraf / GIF
-                  IconButton(
-                    onPressed: _ekYukleniyor ? null : _fotoGonder,
-                    icon: _ekYukleniyor
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: DiziRenkler.sari,
-                            ),
-                          )
-                        : const Icon(
-                            Icons.add_photo_alternate_outlined,
-                            color: DiziRenkler.sari,
-                          ),
-                  ),
-                  // Dizi/film kartı paylaş
-                  IconButton(
-                    onPressed: _icerikPaylas,
-                    icon: const Icon(
-                      Icons.local_movies_outlined,
-                      color: DiziRenkler.sari,
-                    ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _metin,
-                      minLines: 1,
-                      maxLines: 4,
-                      maxLength: 2000,
-                      buildCounter:
-                          (
-                            _, {
-                            required currentLength,
-                            maxLength,
-                            required isFocused,
-                          }) => null,
-                      onChanged: (_) => _yaziyorBildir(),
-                      onSubmitted: (_) => _gonder(metin: _metin.text.trim()),
-                      decoration: InputDecoration(
-                        hintText: 'Mesajını yaz...'.c,
+                              baloncuk,
+                            ],
+                          );
+                        },
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  IconButton.filled(
-                    onPressed: _gonderiliyor
-                        ? null
-                        : () => _gonder(metin: _metin.text.trim()),
-                    style: IconButton.styleFrom(
-                      backgroundColor: DiziRenkler.sari,
-                      foregroundColor: Colors.black,
-                    ),
-                    icon: const Icon(Icons.send),
-                  ),
-                ],
               ),
-            ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      // Fotoğraf / GIF
+                      IconButton(
+                        onPressed: _ekYukleniyor ? null : _fotoGonder,
+                        icon: _ekYukleniyor
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: DiziRenkler.sari,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.add_photo_alternate_outlined,
+                                color: DiziRenkler.sari,
+                              ),
+                      ),
+                      // Dizi/film kartı paylaş
+                      IconButton(
+                        onPressed: _icerikPaylas,
+                        icon: const Icon(
+                          Icons.local_movies_outlined,
+                          color: DiziRenkler.sari,
+                        ),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _metin,
+                          minLines: 1,
+                          maxLines: 4,
+                          maxLength: 2000,
+                          buildCounter:
+                              (
+                                _, {
+                                required currentLength,
+                                maxLength,
+                                required isFocused,
+                              }) => null,
+                          onChanged: (_) => _yaziyorBildir(),
+                          onSubmitted: (_) =>
+                              _gonder(metin: _metin.text.trim()),
+                          decoration: InputDecoration(
+                            hintText: 'Mesajını yaz...'.c,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      IconButton.filled(
+                        onPressed: _gonderiliyor
+                            ? null
+                            : () => _gonder(metin: _metin.text.trim()),
+                        style: IconButton.styleFrom(
+                          backgroundColor: DiziRenkler.sari,
+                          foregroundColor: Colors.black,
+                        ),
+                        icon: const Icon(Icons.send),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -464,7 +479,10 @@ class _MesajBaloncugu extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 3),
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.75,
+          // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
+          maxWidth: MediaQuery.of(context).size.width > 560
+              ? 420
+              : MediaQuery.of(context).size.width * 0.75,
         ),
         decoration: BoxDecoration(
           color: benim ? DiziRenkler.sari : DiziRenkler.kart,

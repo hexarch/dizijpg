@@ -216,4 +216,9 @@ const Map<String, String> cevirilerMy = {
   'Konumla ve kırp': 'နေရာချပြီး ဖြတ်ပါ',
   'Listeye eklendi': 'စာရင်းထဲ ထည့်ပြီး',
   'Listeyi sil?': 'စာရင်းကို ဖျက်မလား။',
+  'Sil': 'ဖျက်ရန်',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'ဤဇာတ်လမ်းကို မကြည့်ဖူးသလို မှတ်ပြီး သင့်စာရင်းများမှ ဖယ်ရှားပါမည်။',
+  'Gelecek bölüm bugün': 'နောက်အပိုင်း ယနေ့',
+  'Gelecek bölüm {} gün sonra': 'နောက်အပိုင်း {} ရက်အကြာ',
 };

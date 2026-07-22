@@ -214,4 +214,9 @@ const Map<String, String> cevirilerTe = {
   'Konumla ve kırp': 'స్థానం సర్దుబాటు చేసి కత్తిరించు',
   'Listeye eklendi': 'జాబితాకు జోడించబడింది',
   'Listeyi sil?': 'జాబితాను తొలగించాలా?',
+  'Sil': 'తొలగించు',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'ఇది ఎప్పుడూ చూడనిదిగా గుర్తించబడి నీ జాబితాల నుండి తీసివేయబడుతుంది.',
+  'Gelecek bölüm bugün': 'తదుపరి ఎపిసోడ్ ఈరోజు',
+  'Gelecek bölüm {} gün sonra': 'తదుపరి ఎపిసోడ్ {} రోజుల్లో',
 };

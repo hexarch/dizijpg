@@ -214,4 +214,9 @@ const Map<String, String> cevirilerHu = {
   'Konumla ve kırp': 'Igazítás és kivágás',
   'Listeye eklendi': 'Hozzáadva a listához',
   'Listeyi sil?': 'Törlöd a listát?',
+  'Sil': 'Törlés',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Meg-nem-nézettként lesz jelölve, és lekerül a listáidról.',
+  'Gelecek bölüm bugün': 'Következő epizód ma',
+  'Gelecek bölüm {} gün sonra': 'Következő epizód {} nap múlva',
 };

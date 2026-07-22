@@ -214,4 +214,9 @@ const Map<String, String> cevirilerSw = {
   'Konumla ve kırp': 'Weka mahali na ukate',
   'Listeye eklendi': 'Imeongezwa kwenye orodha',
   'Listeyi sil?': 'Ufute orodha?',
+  'Sil': 'Futa',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Kichwa hiki kitawekwa kama hakijatazamwa na kuondolewa kwenye orodha zako.',
+  'Gelecek bölüm bugün': 'Kipindi kijacho leo',
+  'Gelecek bölüm {} gün sonra': 'Kipindi kijacho baada ya siku {}',
 };

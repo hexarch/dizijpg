@@ -211,4 +211,9 @@ const Map<String, String> cevirilerZh = {
   'Konumla ve kırp': '调整位置并裁剪',
   'Listeye eklendi': '已加入片单',
   'Listeyi sil?': '删除片单？',
+  'Sil': '删除',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      '该作品将被标记为从未观看，并从你的片单中移除。',
+  'Gelecek bölüm bugün': '下一集今天播出',
+  'Gelecek bölüm {} gün sonra': '下一集 {} 天后播出',
 };

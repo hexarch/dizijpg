@@ -214,4 +214,9 @@ const Map<String, String> cevirilerMr = {
   'Konumla ve kırp': 'स्थिती ठरवा आणि क्रॉप करा',
   'Listeye eklendi': 'यादीत जोडले',
   'Listeyi sil?': 'यादी हटवायची?',
+  'Sil': 'हटवा',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'हे कधीही न पाहिलेले म्हणून चिन्हांकित होईल आणि तुझ्या याद्यांतून निघेल.',
+  'Gelecek bölüm bugün': 'पुढील भाग आज',
+  'Gelecek bölüm {} gün sonra': 'पुढील भाग {} दिवसांनी',
 };

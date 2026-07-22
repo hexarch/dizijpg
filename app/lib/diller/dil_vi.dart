@@ -214,4 +214,9 @@ const Map<String, String> cevirilerVi = {
   'Konumla ve kırp': 'Căn chỉnh và cắt',
   'Listeye eklendi': 'Đã thêm vào danh sách',
   'Listeyi sil?': 'Xóa danh sách?',
+  'Sil': 'Xóa',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Phim này sẽ được đánh dấu chưa từng xem và bị xóa khỏi danh sách của bạn.',
+  'Gelecek bölüm bugün': 'Tập tiếp theo hôm nay',
+  'Gelecek bölüm {} gün sonra': 'Tập tiếp theo sau {} ngày',
 };

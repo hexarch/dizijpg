@@ -213,4 +213,9 @@ const Map<String, String> cevirilerHe = {
   'Konumla ve kırp': 'מקם וחתוך',
   'Listeye eklendi': 'נוסף לרשימה',
   'Listeyi sil?': 'למחוק את הרשימה?',
+  'Sil': 'מחק',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'הכותר יסומן כלא נצפה ויוסר מהרשימות שלך.',
+  'Gelecek bölüm bugün': 'הפרק הבא היום',
+  'Gelecek bölüm {} gün sonra': 'הפרק הבא בעוד {} ימים',
 };

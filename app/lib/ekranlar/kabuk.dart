@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../ceviri.dart';
+import 'profil.dart' show profilYenileTetik;
 
 /// Ana kabuk: Keşfet · Takvim · Arama · Profil.
 /// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
@@ -15,11 +16,14 @@ class KabukEkrani extends StatelessWidget {
       body: shell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: shell.currentIndex,
-        onDestinationSelected: (i) => shell.goBranch(
-          i,
-          // Aynı sekmeye tekrar basınca köke dön
-          initialLocation: i == shell.currentIndex,
-        ),
+        onDestinationSelected: (i) {
+          if (i == 4) profilYenileTetik.value++;
+          shell.goBranch(
+            i,
+            // Aynı sekmeye tekrar basınca köke dön
+            initialLocation: i == shell.currentIndex,
+          );
+        },
         destinations: [
           NavigationDestination(
             icon: const Icon(Icons.explore_outlined),

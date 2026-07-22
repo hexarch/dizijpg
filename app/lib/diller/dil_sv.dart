@@ -214,4 +214,9 @@ const Map<String, String> cevirilerSv = {
   'Konumla ve kırp': 'Justera och beskär',
   'Listeye eklendi': 'Tillagd i listan',
   'Listeyi sil?': 'Ta bort listan?',
+  'Sil': 'Ta bort',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Titeln markeras som aldrig sedd och tas bort från dina listor.',
+  'Gelecek bölüm bugün': 'Nästa avsnitt idag',
+  'Gelecek bölüm {} gün sonra': 'Nästa avsnitt om {} dagar',
 };

@@ -214,4 +214,9 @@ const Map<String, String> cevirilerMs = {
   'Konumla ve kırp': 'Laraskan dan pangkas',
   'Listeye eklendi': 'Ditambah ke senarai',
   'Listeyi sil?': 'Padam senarai?',
+  'Sil': 'Padam',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Judul ini akan ditanda tidak pernah ditonton dan dibuang dari senarai anda.',
+  'Gelecek bölüm bugün': 'Episod seterusnya hari ini',
+  'Gelecek bölüm {} gün sonra': 'Episod seterusnya dalam {} hari',
 };

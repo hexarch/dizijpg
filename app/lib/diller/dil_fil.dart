@@ -214,4 +214,9 @@ const Map<String, String> cevirilerFil = {
   'Konumla ve kırp': 'Iposisyon at i-crop',
   'Listeye eklendi': 'Naidagdag sa listahan',
   'Listeyi sil?': 'Burahin ang listahan?',
+  'Sil': 'Burahin',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Mamarkahan itong hindi pa napapanood at aalisin sa mga listahan mo.',
+  'Gelecek bölüm bugün': 'Susunod na episode ngayon',
+  'Gelecek bölüm {} gün sonra': 'Susunod na episode sa {} araw',
 };

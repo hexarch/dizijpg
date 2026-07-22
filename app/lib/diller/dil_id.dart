@@ -214,4 +214,9 @@ const Map<String, String> cevirilerId = {
   'Konumla ve kırp': 'Atur posisi dan potong',
   'Listeye eklendi': 'Ditambahkan ke daftar',
   'Listeyi sil?': 'Hapus daftar?',
+  'Sil': 'Hapus',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Judul ini akan ditandai belum pernah ditonton dan dihapus dari daftarmu.',
+  'Gelecek bölüm bugün': 'Episode berikutnya hari ini',
+  'Gelecek bölüm {} gün sonra': 'Episode berikutnya {} hari lagi',
 };

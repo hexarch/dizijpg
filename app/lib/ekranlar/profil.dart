@@ -34,6 +34,9 @@ String sureBicimle(int dakika) {
   return parcalar.isEmpty ? '{} dk'.cf([dk]) : parcalar.take(3).join(' ');
 }
 
+/// Profil sekmesi seçildiğinde tazeleme tetiği (kabuk artırır).
+final ValueNotifier<int> profilYenileTetik = ValueNotifier(0);
+
 class ProfilEkrani extends StatefulWidget {
   const ProfilEkrani({super.key});
 
@@ -66,6 +69,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     super.initState();
     _yukle();
     _siraYukle();
+    // Sekmeye her dönüşte veriyi tazele (izlenenler sırası güncel kalsın)
+    profilYenileTetik.addListener(_tetikle);
+  }
+
+  void _tetikle() {
+    _yukle();
+    _siraYukle();
+  }
+
+  @override
+  void dispose() {
+    profilYenileTetik.removeListener(_tetikle);
+    super.dispose();
   }
 
   Future<void> _siraYukle() async {
@@ -688,22 +704,33 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       if (gruplar[durum]?.isNotEmpty == true)
                         MapEntry(durum, gruplar[durum]!),
                   ]) ...[
-                    Row(
-                      children: [
-                        Icon(
-                          durumAdlari[e.key]?.$1 ?? Icons.tv,
-                          size: 19,
-                          color: DiziRenkler.sari,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          (durumAdlari[e.key]?.$2 ?? e.key).c,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
+                    // Başlığa tıklayınca o durumun tam listesi açılır
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () => context.push('/kitaplik/${e.key}'),
+                      child: Row(
+                        children: [
+                          Icon(
+                            durumAdlari[e.key]?.$1 ?? Icons.tv,
+                            size: 19,
+                            color: DiziRenkler.sari,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Text(
+                            (durumAdlari[e.key]?.$2 ?? e.key).c,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          const Icon(
+                            Icons.chevron_right,
+                            size: 18,
+                            color: Colors.white38,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 8),
                     SizedBox(

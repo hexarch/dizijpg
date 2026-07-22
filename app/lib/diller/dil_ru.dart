@@ -214,4 +214,9 @@ const Map<String, String> cevirilerRu = {
   'Konumla ve kırp': 'Выберите область и обрежьте',
   'Listeye eklendi': 'Добавлено в список',
   'Listeyi sil?': 'Удалить список?',
+  'Sil': 'Удалить',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Тайтл будет отмечен как непросмотренный и удалён из твоих списков.',
+  'Gelecek bölüm bugün': 'Новая серия сегодня',
+  'Gelecek bölüm {} gün sonra': 'Новая серия через {} дн.',
 };

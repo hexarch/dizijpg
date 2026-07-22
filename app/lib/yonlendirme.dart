@@ -14,6 +14,7 @@ import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
+import 'ekranlar/kitaplik_liste.dart';
 import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/profil.dart';
 import 'ekranlar/takvim.dart';
@@ -108,6 +109,11 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
               GoRoute(
                 path: '/profil',
                 builder: (_, __) => const ProfilEkrani(),
+              ),
+              GoRoute(
+                path: '/kitaplik/:durum',
+                builder: (_, s) =>
+                    KitaplikListesiEkrani(durum: s.pathParameters['durum']!),
               ),
             ],
           ),

@@ -221,29 +221,32 @@ class _MiniIcerikState extends State<MiniIcerik> {
       turZorla: widget.tur,
       genislik: widget.genislik,
     );
-    // Dizi ilerlemesi: izlenen / toplam bölüm rozeti
+    // Dizi ilerlemesi: posterin üstünde dolum barı.
+    // Sarı = izlenen oran; tamamı izlendiyse turuncu.
     final toplam = (_icerik!['number_of_episodes'] as num?)?.toInt() ?? 0;
     final izlenen = widget.izlenenSayi ?? 0;
     if (widget.tur != 'tv' || toplam <= 0 || izlenen <= 0) return kart;
-    final yuzde = (izlenen / toplam * 100).clamp(1, 100).round();
+    final oranDolu = (izlenen / toplam).clamp(0.03, 1.0).toDouble();
+    final tamamlandi = izlenen >= toplam;
     return Stack(
       children: [
         kart,
         Positioned(
-          top: 6,
-          left: 6,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(
-              color: Colors.black87,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              '%$yuzde',
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                color: yuzde >= 100 ? DiziRenkler.sari : Colors.white,
+          top: 0,
+          left: 0,
+          right: 0,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+            child: Container(
+              height: 5,
+              color: Colors.black45,
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: oranDolu,
+                heightFactor: 1,
+                child: Container(
+                  color: tamamlandi ? Colors.deepOrange : DiziRenkler.sari,
+                ),
               ),
             ),
           ),

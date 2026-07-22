@@ -212,4 +212,9 @@ const Map<String, String> cevirilerJa = {
   'Konumla ve kırp': '位置を調整して切り抜く',
   'Listeye eklendi': 'リストに追加しました',
   'Listeyi sil?': 'リストを削除しますか？',
+  'Sil': '削除',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'この作品は未視聴扱いになり、リストからも削除されます。',
+  'Gelecek bölüm bugün': '次のエピソードは今日',
+  'Gelecek bölüm {} gün sonra': '次のエピソードは{}日後',
 };

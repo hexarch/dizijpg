@@ -214,4 +214,9 @@ const Map<String, String> cevirilerBn = {
   'Konumla ve kırp': 'অবস্থান ঠিক করে ক্রপ করো',
   'Listeye eklendi': 'তালিকায় যোগ হয়েছে',
   'Listeyi sil?': 'তালিকা মুছবেন?',
+  'Sil': 'মুছুন',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'এটি কখনো দেখা হয়নি বলে চিহ্নিত হবে এবং তোমার তালিকা থেকে সরবে।',
+  'Gelecek bölüm bugün': 'পরের পর্ব আজ',
+  'Gelecek bölüm {} gün sonra': 'পরের পর্ব {} দিন পরে',
 };

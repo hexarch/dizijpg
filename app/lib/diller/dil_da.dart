@@ -213,4 +213,9 @@ const Map<String, String> cevirilerDa = {
   'Konumla ve kırp': 'Placer og beskær',
   'Listeye eklendi': 'Tilføjet til listen',
   'Listeyi sil?': 'Slet listen?',
+  'Sil': 'Slet',
+  'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
+      'Titlen markeres som aldrig set og fjernes fra dine lister.',
+  'Gelecek bölüm bugün': 'Næste afsnit i dag',
+  'Gelecek bölüm {} gün sonra': 'Næste afsnit om {} dage',
 };
