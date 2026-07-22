@@ -47,7 +47,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
       govde = Center(
         child: Text(
           'Henüz izleme kaydın yok'.c,
-          style: const TextStyle(color: Colors.white38),
+          style: TextStyle(color: DiziRenkler.metin38),
         ),
       );
     } else {

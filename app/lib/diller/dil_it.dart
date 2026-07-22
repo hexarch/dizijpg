@@ -220,4 +220,9 @@ const Map<String, String> cevirilerIt = {
       'Questo titolo sarà segnato come mai visto e rimosso dalle tue liste.',
   'Gelecek bölüm bugün': 'Prossimo episodio oggi',
   'Gelecek bölüm {} gün sonra': 'Prossimo episodio tra {} giorni',
+  'Tema': 'Tema',
+  'Sistem': 'Sistema',
+  'Koyu': 'Scuro',
+  'Açık': 'Chiaro',
+  'İzleyenler': 'Spettatori',
 };

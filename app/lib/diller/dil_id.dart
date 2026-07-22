@@ -219,4 +219,9 @@ const Map<String, String> cevirilerId = {
       'Judul ini akan ditandai belum pernah ditonton dan dihapus dari daftarmu.',
   'Gelecek bölüm bugün': 'Episode berikutnya hari ini',
   'Gelecek bölüm {} gün sonra': 'Episode berikutnya {} hari lagi',
+  'Tema': 'Tema',
+  'Sistem': 'Sistem',
+  'Koyu': 'Gelap',
+  'Açık': 'Terang',
+  'İzleyenler': 'Penonton',
 };

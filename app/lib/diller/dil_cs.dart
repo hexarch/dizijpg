@@ -219,4 +219,9 @@ const Map<String, String> cevirilerCs = {
       'Titul bude označen jako nezhlédnutý a odstraněn z tvých seznamů.',
   'Gelecek bölüm bugün': 'Další díl dnes',
   'Gelecek bölüm {} gün sonra': 'Další díl za {} dní',
+  'Tema': 'Motiv',
+  'Sistem': 'Systém',
+  'Koyu': 'Tmavý',
+  'Açık': 'Světlý',
+  'İzleyenler': 'Diváci',
 };

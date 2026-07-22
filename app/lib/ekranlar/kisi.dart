@@ -120,9 +120,9 @@ class _KisiEkraniState extends State<KisiEkrani> {
                         child: foto == null
                             ? Container(
                                 color: DiziRenkler.kart,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.person,
-                                  color: Colors.white24,
+                                  color: DiziRenkler.metin24,
                                 ),
                               )
                             : CachedNetworkImage(
@@ -189,8 +189,8 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                             2)
                                         .toStringAsFixed(1),
                                   ]),
-                                  style: const TextStyle(
-                                    color: Colors.white54,
+                                  style: TextStyle(
+                                    color: DiziRenkler.metin54,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -208,7 +208,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
                     k['biography'] as String,
                     maxLines: 6,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(height: 1.5, color: Colors.white70),
+                    style: TextStyle(height: 1.5, color: DiziRenkler.metin70),
                   ),
                 ],
                 const SizedBox(height: 18),
@@ -258,9 +258,9 @@ class _BilgiSatiri extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(ikon, size: 14, color: Colors.white54),
+          Icon(ikon, size: 14, color: DiziRenkler.metin54),
           const SizedBox(width: 5),
-          Text(metin, style: const TextStyle(color: Colors.white54)),
+          Text(metin, style: TextStyle(color: DiziRenkler.metin54)),
         ],
       ),
     );

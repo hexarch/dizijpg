@@ -92,12 +92,27 @@ Kullanıcı bildirimi + kendi tespitlerimle düzeltilenler (hepsi canlıda test 
    Ayarlar > Profil düzeni'nden sürükle-bırakla değiştirilebilir; varsayılan
    sırada ROZETLER EN ALTTA.
 
-## SPRINT 4 — Açık tema (sıradaki büyük iş) ⬜
-Cihaz moduna uy (ThemeMode.system) + Ayarlar'dan Koyu/Açık/Sistem seçimi.
-Zorluk: ekranlarda yüzlerce sabit Colors.white*/siyah var — DiziRenkler dinamik
-getter'lara çevrilecek, sabit renkler tema-farkındalıklı adlara taşınacak
-(ajan süpürmesi + analyzer döngüsü). Açık palet: zemin #F7F7F9, kart #FFFFFF,
-koyuGri #ECECEF, metinler ters çevrilir, sarı vurgu aynı kalır.
+## SPRINT 4 — Açık tema 🚀 (2026-07-23 canlıda)
+1. ✅ tema.dart: TemaAyar (sistem/koyu/acik, prefs 'tema') + DiziRenkler dinamik
+   getter'lar (siyah/koyuGri/kart/metin/metin70-54-38-24-12) + diziTema(acik:)
+2. ✅ main.dart: WidgetsBindingObserver ile cihaz modu takibi; DiziRenkler.acik
+   MaterialApp kurulmadan hemen önce güncellenir
+3. ✅ ~130 Colors.white* → DiziRenkler.metin* süpürmesi (4 paralel ajan; poster
+   rozeti / siyah bindirme / sarı zemin istisnaları korundu); analyze 0 hata
+4. ✅ Ayarlar > Tema: SegmentedButton (Sistem/Koyu/Açık) + 45 dile çeviri
+
+## SPRINT 6 — Kullanıcı istekleri (2026-07-23) 🚀
+1. ✅ Kendi profilinde listeye dokununca içerik modalı (ListeSheet ortak.dart'a
+   taşındı; iki profil de aynı modalı kullanır)
+2. ✅ Detay: durum çipleri dar ekranda sağa taşmak yerine alt satıra sarar (Wrap)
+3. ✅ Detay: TMDB puanı yanında göz ikonu + uygulamada izleyen sayısı;
+   dokununca Instagram tarzı liste (avatar + @ad → profil).
+   Yeni uç: GET /izleyenler/:tur/:tmdbId (son izleyene göre sıralı, misafirsiz)
+4. ✅ "Bitirdim" artık TÜM yayınlanmış bölümleri izlendi işaretler (film: tek
+   kayıt; dizi: last_episode_to_air'e kadar, özel sezonlar hariç, unnest toplu
+   insert). Canlıda test: Arcane 18/18 bölüm ✓, sıfırlama sonrası sayaç düştü ✓
+5. ✅ F5 kalıcılığı kökten çözüldü: GoRouter initialLocation artık doğrudan
+   Uri.base'den (motorun rotayı '/' yakalama yarışı devre dışı)
 
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀

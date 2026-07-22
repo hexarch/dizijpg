@@ -100,9 +100,9 @@ class _OzetEkraniState extends State<OzetEkrani> {
                           etiket,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white54,
+                            color: DiziRenkler.metin54,
                           ),
                         ),
                       ],
@@ -137,7 +137,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
                   title: Text(d['ad'] as String? ?? ''),
                   subtitle: Text(
                     '{} bölüm izlendi'.cf([d['bolum']]),
-                    style: const TextStyle(color: Colors.white54, fontSize: 12),
+                    style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
                   ),
                   onTap: () => context.push('/icerik/tv/${d['tmdb_id']}'),
                 ),

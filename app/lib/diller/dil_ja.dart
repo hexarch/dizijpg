@@ -217,4 +217,9 @@ const Map<String, String> cevirilerJa = {
       'この作品は未視聴扱いになり、リストからも削除されます。',
   'Gelecek bölüm bugün': '次のエピソードは今日',
   'Gelecek bölüm {} gün sonra': '次のエピソードは{}日後',
+  'Tema': 'テーマ',
+  'Sistem': 'システム',
+  'Koyu': 'ダーク',
+  'Açık': 'ライト',
+  'İzleyenler': '視聴者',
 };

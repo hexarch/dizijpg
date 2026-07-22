@@ -219,4 +219,9 @@ const Map<String, String> cevirilerMr = {
       'हे कधीही न पाहिलेले म्हणून चिन्हांकित होईल आणि तुझ्या याद्यांतून निघेल.',
   'Gelecek bölüm bugün': 'पुढील भाग आज',
   'Gelecek bölüm {} gün sonra': 'पुढील भाग {} दिवसांनी',
+  'Tema': 'थीम',
+  'Sistem': 'सिस्टम',
+  'Koyu': 'डार्क',
+  'Açık': 'लाइट',
+  'İzleyenler': 'प्रेक्षक',
 };

@@ -219,4 +219,9 @@ const Map<String, String> cevirilerSw = {
       'Kichwa hiki kitawekwa kama hakijatazamwa na kuondolewa kwenye orodha zako.',
   'Gelecek bölüm bugün': 'Kipindi kijacho leo',
   'Gelecek bölüm {} gün sonra': 'Kipindi kijacho baada ya siku {}',
+  'Tema': 'Mandhari',
+  'Sistem': 'Mfumo',
+  'Koyu': 'Giza',
+  'Açık': 'Mwanga',
+  'İzleyenler': 'Watazamaji',
 };

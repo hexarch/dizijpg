@@ -100,7 +100,7 @@ class _AramaEkraniState extends State<AramaEkrani>
               onChanged: _degisti,
               decoration: InputDecoration(
                 hintText: 'Dizi, film veya kişi ara...'.c,
-                prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
                 suffixIcon: _yukleniyor
                     ? const Padding(
                         padding: EdgeInsets.all(12),
@@ -123,15 +123,15 @@ class _AramaEkraniState extends State<AramaEkrani>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.local_movies_outlined,
                           size: 44,
-                          color: Colors.white24,
+                          color: DiziRenkler.metin24,
                         ),
                         const SizedBox(height: 10),
                         Text(
                           'Aramaya başla'.c,
-                          style: const TextStyle(color: Colors.white38),
+                          style: TextStyle(color: DiziRenkler.metin38),
                         ),
                         if (_gecmis.isNotEmpty) ...[
                           const SizedBox(height: 18),
@@ -144,10 +144,10 @@ class _AramaEkraniState extends State<AramaEkrani>
                               children: [
                                 for (final g in _gecmis)
                                   ActionChip(
-                                    avatar: const Icon(
+                                    avatar: Icon(
                                       Icons.history,
                                       size: 15,
-                                      color: Colors.white38,
+                                      color: DiziRenkler.metin38,
                                     ),
                                     label: Text(
                                       g,
@@ -207,7 +207,7 @@ class _KisiKarti extends StatelessWidget {
               child: foto == null
                   ? Container(
                       color: DiziRenkler.kart,
-                      child: const Icon(Icons.person, color: Colors.white24),
+                      child: Icon(Icons.person, color: DiziRenkler.metin24),
                     )
                   : Image.network(
                       foto,

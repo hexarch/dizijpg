@@ -142,13 +142,13 @@ class _AkisEkraniState extends State<AkisEkrani>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.dynamic_feed, size: 44, color: Colors.white24),
+              Icon(Icons.dynamic_feed, size: 44, color: DiziRenkler.metin24),
               const SizedBox(height: 10),
               Text(
                 'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.'
                     .c,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, height: 1.6),
+                style: TextStyle(color: DiziRenkler.metin54, height: 1.6),
               ),
             ],
           ),
@@ -219,15 +219,15 @@ class _AkisEkraniState extends State<AkisEkrani>
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.person_search,
-                      color: Colors.white38,
+                      color: DiziRenkler.metin38,
                       size: 20,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Kullanıcı adı ara...'.c,
-                      style: const TextStyle(color: Colors.white38),
+                      style: TextStyle(color: DiziRenkler.metin38),
                     ),
                   ],
                 ),
@@ -316,10 +316,10 @@ class _AkisKartiState extends State<_AkisKarti> {
                         ? NetworkImage(avatar)
                         : null,
                     child: avatar == null
-                        ? const Icon(
+                        ? Icon(
                             Icons.person,
                             size: 18,
-                            color: Colors.white38,
+                            color: DiziRenkler.metin38,
                           )
                         : null,
                   ),
@@ -393,9 +393,9 @@ class _AkisKartiState extends State<_AkisKarti> {
                         child: video
                             ? Container(
                                 color: DiziRenkler.koyuGri,
-                                child: const Icon(
+                                child: Icon(
                                   Icons.play_circle_outline,
-                                  color: Colors.white54,
+                                  color: DiziRenkler.metin54,
                                   size: 34,
                                 ),
                               )
@@ -426,15 +426,17 @@ class _AkisKartiState extends State<_AkisKarti> {
                         Icon(
                           _begendim ? Icons.favorite : Icons.favorite_border,
                           size: 18,
-                          color: _begendim ? DiziRenkler.sari : Colors.white54,
+                          color: _begendim
+                              ? DiziRenkler.sari
+                              : DiziRenkler.metin54,
                         ),
                         if (_begeni > 0) ...[
                           const SizedBox(width: 4),
                           Text(
                             '$_begeni',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: Colors.white70,
+                              color: DiziRenkler.metin70,
                             ),
                           ),
                         ],
@@ -443,20 +445,20 @@ class _AkisKartiState extends State<_AkisKarti> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Icon(
+                Icon(
                   Icons.visibility_outlined,
                   size: 16,
-                  color: Colors.white38,
+                  color: DiziRenkler.metin38,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '${y['goruntulenme'] ?? 0}',
-                  style: const TextStyle(fontSize: 12, color: Colors.white38),
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                 ),
                 const Spacer(),
                 Text(
                   tarih,
-                  style: const TextStyle(fontSize: 11, color: Colors.white38),
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                 ),
               ],
             ),

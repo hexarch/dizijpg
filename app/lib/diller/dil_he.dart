@@ -218,4 +218,9 @@ const Map<String, String> cevirilerHe = {
       'הכותר יסומן כלא נצפה ויוסר מהרשימות שלך.',
   'Gelecek bölüm bugün': 'הפרק הבא היום',
   'Gelecek bölüm {} gün sonra': 'הפרק הבא בעוד {} ימים',
+  'Tema': 'ערכת נושא',
+  'Sistem': 'מערכת',
+  'Koyu': 'כהה',
+  'Açık': 'בהיר',
+  'İzleyenler': 'צופים',
 };

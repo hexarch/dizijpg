@@ -219,4 +219,9 @@ const Map<String, String> cevirilerAr = {
       'سيُعتبر هذا العمل غير مُشاهد وسيُزال من قوائمك.',
   'Gelecek bölüm bugün': 'الحلقة القادمة اليوم',
   'Gelecek bölüm {} gün sonra': 'الحلقة القادمة بعد {} يومًا',
+  'Tema': 'السمة',
+  'Sistem': 'النظام',
+  'Koyu': 'داكن',
+  'Açık': 'فاتح',
+  'İzleyenler': 'المشاهدون',
 };

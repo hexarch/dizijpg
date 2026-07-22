@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:go_router/go_router.dart';
 
 import 'api.dart';
@@ -21,8 +22,15 @@ import 'ekranlar/takvim.dart';
 
 /// URL tabanlı yönlendirme: web'de reload bulunulan sayfada kalır.
 GoRouter yonlendiriciOlustur(Oturum oturum) {
+  // F5 güvencesi: motor başlangıç rotasını URL stratejisi kurulmadan '/'
+  // olarak yakalayabiliyor; o durumda derin bağlantı kaybolup keşfete
+  // düşülüyordu. Başlangıcı doğrudan tarayıcı adresinden alıyoruz.
+  var baslangic = '/kesfet';
+  if (kIsWeb && Uri.base.path.length > 1) {
+    baslangic = Uri.base.path + (Uri.base.hasQuery ? '?${Uri.base.query}' : '');
+  }
   return GoRouter(
-    initialLocation: '/kesfet',
+    initialLocation: baslangic,
     refreshListenable: oturum,
     redirect: (context, state) {
       final girisli = oturum.girisli;

@@ -219,4 +219,9 @@ const Map<String, String> cevirilerPa = {
       'ਇਹ ਕਦੇ ਨਾ ਦੇਖਿਆ ਮੰਨਿਆ ਜਾਵੇਗਾ ਅਤੇ ਤੇਰੀਆਂ ਸੂਚੀਆਂ ਵਿੱਚੋਂ ਹਟ ਜਾਵੇਗਾ।',
   'Gelecek bölüm bugün': 'ਅਗਲਾ ਐਪੀਸੋਡ ਅੱਜ',
   'Gelecek bölüm {} gün sonra': 'ਅਗਲਾ ਐਪੀਸੋਡ {} ਦਿਨ ਬਾਅਦ',
+  'Tema': 'ਥੀਮ',
+  'Sistem': 'ਸਿਸਟਮ',
+  'Koyu': 'ਡਾਰਕ',
+  'Açık': 'ਲਾਈਟ',
+  'İzleyenler': 'ਦਰਸ਼ਕ',
 };

@@ -219,4 +219,9 @@ const Map<String, String> cevirilerFil = {
       'Mamarkahan itong hindi pa napapanood at aalisin sa mga listahan mo.',
   'Gelecek bölüm bugün': 'Susunod na episode ngayon',
   'Gelecek bölüm {} gün sonra': 'Susunod na episode sa {} araw',
+  'Tema': 'Tema',
+  'Sistem': 'Sistema',
+  'Koyu': 'Madilim',
+  'Açık': 'Maliwanag',
+  'İzleyenler': 'Mga nanood',
 };

@@ -218,4 +218,9 @@ const Map<String, String> cevirilerDa = {
       'Titlen markeres som aldrig set og fjernes fra dine lister.',
   'Gelecek bölüm bugün': 'Næste afsnit i dag',
   'Gelecek bölüm {} gün sonra': 'Næste afsnit om {} dage',
+  'Tema': 'Tema',
+  'Sistem': 'System',
+  'Koyu': 'Mørk',
+  'Açık': 'Lys',
+  'İzleyenler': 'Seere',
 };

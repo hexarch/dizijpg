@@ -219,4 +219,9 @@ const Map<String, String> cevirilerFi = {
       'Tämä merkitään katsomattomaksi ja poistetaan listoiltasi.',
   'Gelecek bölüm bugün': 'Seuraava jakso tänään',
   'Gelecek bölüm {} gün sonra': 'Seuraava jakso {} päivän päästä',
+  'Tema': 'Teema',
+  'Sistem': 'Järjestelmä',
+  'Koyu': 'Tumma',
+  'Açık': 'Vaalea',
+  'İzleyenler': 'Katsojat',
 };

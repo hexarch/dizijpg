@@ -217,4 +217,9 @@ const Map<String, String> cevirilerKo = {
       '이 작품은 시청한 적 없음으로 표시되고 리스트에서 제거됩니다.',
   'Gelecek bölüm bugün': '다음 에피소드 오늘',
   'Gelecek bölüm {} gün sonra': '다음 에피소드 {}일 후',
+  'Tema': '테마',
+  'Sistem': '시스템',
+  'Koyu': '다크',
+  'Açık': '라이트',
+  'İzleyenler': '시청자',
 };

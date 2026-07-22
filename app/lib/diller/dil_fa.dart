@@ -219,4 +219,9 @@ const Map<String, String> cevirilerFa = {
       'این عنوان دیده‌نشده علامت می‌خورد و از فهرست‌هایت حذف می‌شود.',
   'Gelecek bölüm bugün': 'قسمت بعدی امروز',
   'Gelecek bölüm {} gün sonra': 'قسمت بعدی {} روز دیگر',
+  'Tema': 'پوسته',
+  'Sistem': 'سیستم',
+  'Koyu': 'تیره',
+  'Açık': 'روشن',
+  'İzleyenler': 'بینندگان',
 };

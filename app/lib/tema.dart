@@ -1,73 +1,124 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// dizi.jpg tasarım dili: siyah zemin, beyaz metin, marka sarısı vurgu.
-class DiziRenkler {
-  /// Marka sarısı (siyah zeminde yüksek kontrast)
-  static const sari = Color(0xFFF5C518);
-  static const acikSari = Color(0xFFFFD75E);
-  static const siyah = Color(0xFF0B0B0D);
-  static const koyuGri = Color(0xFF17171A);
-  static const kart = Color(0xFF1F1F23);
-  static const acikGri = Color(0xFF9E9EA3);
+/// Tema tercihi: sistem / koyu / acik. Ayarlar'dan seçilir, prefs'te saklanır.
+class TemaAyar {
+  static const varsayilan = 'sistem';
+  static final ValueNotifier<String> mod = ValueNotifier(varsayilan);
+
+  static Future<void> yukle() async {
+    final p = await SharedPreferences.getInstance();
+    final k = p.getString('tema');
+    if (k == 'koyu' || k == 'acik' || k == 'sistem') mod.value = k!;
+  }
+
+  static Future<void> sec(String k) async {
+    mod.value = k;
+    final p = await SharedPreferences.getInstance();
+    await p.setString('tema', k);
+  }
 }
 
-ThemeData diziTema() {
+/// dizi.jpg tasarım dili. Renkler tema moduna göre dinamiktir:
+/// [acik] bayrağını main.dart, MaterialApp kurulmadan hemen önce günceller.
+/// Sarı vurgu her iki temada aynıdır; sarı üstüne DAİMA siyah yazılır.
+class DiziRenkler {
+  /// Açık tema aktif mi? (main.dart yönetir — ekranlar okumakla yetinir)
+  static bool acik = false;
+
+  /// Marka sarısı (her iki temada aynı)
+  static const sari = Color(0xFFF5C518);
+  static const acikSari = Color(0xFFFFD75E);
+
+  // --- Zeminler ---
+  /// Ana zemin (koyu: gerçek siyah, açık: kırık beyaz)
+  static Color get siyah =>
+      acik ? const Color(0xFFF6F6F8) : const Color(0xFF0B0B0D);
+
+  /// İkincil zemin (sheet/nav)
+  static Color get koyuGri =>
+      acik ? const Color(0xFFECECEF) : const Color(0xFF17171A);
+
+  /// Kart zemini
+  static Color get kart => acik ? Colors.white : const Color(0xFF1F1F23);
+  static Color get acikGri =>
+      acik ? const Color(0xFF6E6E76) : const Color(0xFF9E9EA3);
+
+  // --- Metin/ikon tonları (Colors.whiteXX yerine BUNLAR kullanılır) ---
+  static Color get metin => acik ? const Color(0xFF17171A) : Colors.white;
+  static Color get metin70 => acik ? Colors.black54 : Colors.white70;
+  static Color get metin54 => acik ? Colors.black45 : Colors.white54;
+  static Color get metin38 => acik ? Colors.black38 : Colors.white38;
+  static Color get metin24 => acik ? Colors.black26 : Colors.white24;
+  static Color get metin12 => acik ? Colors.black12 : Colors.white12;
+}
+
+ThemeData diziTema({required bool acik}) {
   const sari = DiziRenkler.sari;
   final scheme =
       ColorScheme.fromSeed(
         seedColor: sari,
-        brightness: Brightness.dark,
+        brightness: acik ? Brightness.light : Brightness.dark,
       ).copyWith(
         primary: sari,
         onPrimary: Colors.black,
         secondary: sari,
-        surface: DiziRenkler.siyah,
-        surfaceContainerLowest: DiziRenkler.siyah,
-        surfaceContainerLow: DiziRenkler.kart,
-        surfaceContainer: DiziRenkler.koyuGri,
-        surfaceContainerHighest: const Color(0xFF2A2A2F),
-        onSurface: Colors.white,
-        onSurfaceVariant: const Color(0xFFB9B9BF),
-        outline: const Color(0xFF3A3A40),
+        surface: acik ? const Color(0xFFF6F6F8) : const Color(0xFF0B0B0D),
+        surfaceContainerLowest: acik
+            ? const Color(0xFFF6F6F8)
+            : const Color(0xFF0B0B0D),
+        surfaceContainerLow: acik ? Colors.white : const Color(0xFF1F1F23),
+        surfaceContainer: acik
+            ? const Color(0xFFECECEF)
+            : const Color(0xFF17171A),
+        surfaceContainerHighest: acik
+            ? const Color(0xFFE2E2E6)
+            : const Color(0xFF2A2A2F),
+        onSurface: acik ? const Color(0xFF17171A) : Colors.white,
+        onSurfaceVariant: acik
+            ? const Color(0xFF54545C)
+            : const Color(0xFFB9B9BF),
+        outline: acik ? const Color(0xFFC9C9CF) : const Color(0xFF3A3A40),
       );
 
   final taban = ThemeData(useMaterial3: true, colorScheme: scheme);
+  final zemin = acik ? const Color(0xFFF6F6F8) : const Color(0xFF0B0B0D);
+  final kart = acik ? Colors.white : const Color(0xFF1F1F23);
+  final ikincil = acik ? const Color(0xFFECECEF) : const Color(0xFF17171A);
+  final metin = acik ? const Color(0xFF17171A) : Colors.white;
+  final metin70 = acik ? Colors.black54 : Colors.white70;
+
   return taban.copyWith(
-    scaffoldBackgroundColor: DiziRenkler.siyah,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: DiziRenkler.siyah,
-      foregroundColor: Colors.white,
+    scaffoldBackgroundColor: zemin,
+    appBarTheme: AppBarTheme(
+      backgroundColor: zemin,
+      foregroundColor: metin,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
       titleTextStyle: TextStyle(
         fontSize: 22,
         fontWeight: FontWeight.w800,
-        color: Colors.white,
+        color: metin,
       ),
     ),
     cardTheme: CardThemeData(
-      elevation: 0,
-      color: DiziRenkler.kart,
+      elevation: acik ? 1 : 0,
+      shadowColor: acik ? Colors.black12 : null,
+      color: kart,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       margin: const EdgeInsets.symmetric(vertical: 4),
     ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: DiziRenkler.koyuGri,
+      backgroundColor: ikincil,
       indicatorColor: sari,
       iconTheme: WidgetStateProperty.resolveWith(
         (s) => IconThemeData(
-          color: s.contains(WidgetState.selected)
-              ? Colors.black
-              : Colors.white70,
+          color: s.contains(WidgetState.selected) ? Colors.black : metin70,
         ),
       ),
       labelTextStyle: WidgetStateProperty.all(
-        const TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-          color: Colors.white70,
-        ),
+        TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: metin70),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -82,28 +133,38 @@ ThemeData diziTema() {
     chipTheme: ChipThemeData(
       shape: const StadiumBorder(),
       side: BorderSide.none,
-      backgroundColor: DiziRenkler.kart,
+      backgroundColor: kart,
       selectedColor: sari,
-      // Seçili çip sarı zeminli: yazı siyah, değilse beyaz
+      // Seçili çip sarı zeminli: yazı siyah; değilse tema metni
       labelStyle: WidgetStateTextStyle.resolveWith(
         (s) => TextStyle(
-          color: s.contains(WidgetState.selected) ? Colors.black : Colors.white,
+          color: s.contains(WidgetState.selected) ? Colors.black : metin,
         ),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: DiziRenkler.kart,
+      fillColor: kart,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
+        borderSide: acik
+            ? const BorderSide(color: Color(0xFFDADAE0))
+            : BorderSide.none,
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: acik
+            ? const BorderSide(color: Color(0xFFDADAE0))
+            : BorderSide.none,
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: sari, width: 2),
       ),
-      hintStyle: const TextStyle(color: Colors.white38),
+      hintStyle: TextStyle(color: acik ? Colors.black38 : Colors.white38),
     ),
-    dividerTheme: const DividerThemeData(color: Color(0xFF2A2A2F)),
+    dividerTheme: DividerThemeData(
+      color: acik ? const Color(0xFFE2E2E6) : const Color(0xFF2A2A2F),
+    ),
   );
 }

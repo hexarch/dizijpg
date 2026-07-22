@@ -217,4 +217,9 @@ const Map<String, String> cevirilerAm = {
       'ይህ በጭራሽ እንዳልታየ ተቆጥሮ ከዝርዝሮችህ ይወገዳል።',
   'Gelecek bölüm bugün': 'ቀጣዩ ክፍል ዛሬ',
   'Gelecek bölüm {} gün sonra': 'ቀጣዩ ክፍል በ{} ቀናት',
+  'Tema': 'ገጽታ',
+  'Sistem': 'ስርዓት',
+  'Koyu': 'ጨለማ',
+  'Açık': 'ብርሃን',
+  'İzleyenler': 'ተመልካቾች',
 };

@@ -117,7 +117,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                         (b['vote_average'] as num).toStringAsFixed(1),
                       ]),
                   ].join(' · '),
-                  style: const TextStyle(color: Colors.white54),
+                  style: TextStyle(color: DiziRenkler.metin54),
                 ),
                 const SizedBox(height: 14),
                 FilledButton.icon(
@@ -179,10 +179,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                                 ? null
                                 : CachedNetworkImageProvider(foto),
                             child: foto == null
-                                ? const Icon(
-                                    Icons.person,
-                                    color: Colors.white24,
-                                  )
+                                ? Icon(Icons.person, color: DiziRenkler.metin24)
                                 : null,
                           ),
                           const SizedBox(height: 6),

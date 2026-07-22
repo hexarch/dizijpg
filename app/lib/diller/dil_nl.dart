@@ -219,4 +219,9 @@ const Map<String, String> cevirilerNl = {
       'Deze titel wordt gemarkeerd als nooit bekeken en uit je lijsten verwijderd.',
   'Gelecek bölüm bugün': 'Volgende aflevering vandaag',
   'Gelecek bölüm {} gün sonra': 'Volgende aflevering over {} dagen',
+  'Tema': 'Thema',
+  'Sistem': 'Systeem',
+  'Koyu': 'Donker',
+  'Açık': 'Licht',
+  'İzleyenler': 'Kijkers',
 };

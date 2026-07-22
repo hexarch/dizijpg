@@ -216,4 +216,9 @@ const Map<String, String> cevirilerZh = {
       '该作品将被标记为从未观看，并从你的片单中移除。',
   'Gelecek bölüm bugün': '下一集今天播出',
   'Gelecek bölüm {} gün sonra': '下一集 {} 天后播出',
+  'Tema': '主题',
+  'Sistem': '系统',
+  'Koyu': '深色',
+  'Açık': '浅色',
+  'İzleyenler': '观看用户',
 };

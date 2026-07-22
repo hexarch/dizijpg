@@ -95,15 +95,15 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.notifications_none,
               size: 44,
-              color: Colors.white24,
+              color: DiziRenkler.metin24,
             ),
             const SizedBox(height: 10),
             Text(
               'Henüz bildirim yok'.c,
-              style: const TextStyle(color: Colors.white54),
+              style: TextStyle(color: DiziRenkler.metin54),
             ),
           ],
         ),
@@ -130,7 +130,7 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                           ? NetworkImage(avatar)
                           : null,
                       child: avatar == null
-                          ? const Icon(Icons.person, color: Colors.white38)
+                          ? Icon(Icons.person, color: DiziRenkler.metin38)
                           : null,
                     ),
                     Positioned(
@@ -150,7 +150,7 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                 ),
                 subtitle: Text(
                   tarih,
-                  style: const TextStyle(fontSize: 11, color: Colors.white38),
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                 ),
                 trailing: b['okundu'] == false
                     ? const CircleAvatar(

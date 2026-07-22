@@ -219,4 +219,9 @@ const Map<String, String> cevirilerSv = {
       'Titeln markeras som aldrig sedd och tas bort från dina listor.',
   'Gelecek bölüm bugün': 'Nästa avsnitt idag',
   'Gelecek bölüm {} gün sonra': 'Nästa avsnitt om {} dagar',
+  'Tema': 'Tema',
+  'Sistem': 'System',
+  'Koyu': 'Mörkt',
+  'Açık': 'Ljust',
+  'İzleyenler': 'Tittare',
 };

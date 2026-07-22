@@ -106,10 +106,10 @@ class _TakvimEkraniState extends State<TakvimEkrani>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
+              Icon(
                 Icons.calendar_month_outlined,
                 size: 44,
-                color: Colors.white24,
+                color: DiziRenkler.metin24,
               ),
               const SizedBox(height: 10),
               Text(
@@ -117,7 +117,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                         'yeni bölümleri burada takip et.'
                     .c,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, height: 1.6),
+                style: TextStyle(color: DiziRenkler.metin54, height: 1.6),
               ),
             ],
           ),
@@ -206,10 +206,10 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                             ),
                             child: Text(
                               '${bolumler.length}',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.white70,
+                                color: DiziRenkler.metin70,
                               ),
                             ),
                           ),
@@ -217,7 +217,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                             acik
                                 ? Icons.keyboard_arrow_up
                                 : Icons.keyboard_arrow_down,
-                            color: Colors.white54,
+                            color: DiziRenkler.metin54,
                           ),
                         ],
                       ],
@@ -232,7 +232,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                           ),
                   ),
                   if (acik) ...[
-                    const Divider(color: Colors.white12, height: 1),
+                    Divider(color: DiziRenkler.metin12, height: 1),
                     for (final b in bolumler)
                       ListTile(
                         dense: true,
@@ -249,9 +249,9 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                         ),
                         trailing: Text(
                           b['tarih'] as String? ?? '',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11.5,
-                            color: Colors.white54,
+                            color: DiziRenkler.metin54,
                           ),
                         ),
                         onTap: () => _modalAc(b),
@@ -378,7 +378,7 @@ class _BolumModaliState extends State<BolumModali> {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: DiziRenkler.metin24,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -414,7 +414,7 @@ class _BolumModaliState extends State<BolumModali> {
                           (b['bolum_adi'] != null
                               ? ' · ${b['bolum_adi']}'
                               : ''),
-                      style: const TextStyle(color: Colors.white70),
+                      style: TextStyle(color: DiziRenkler.metin70),
                     ),
                     if (b['tarih'] != null) ...[
                       const SizedBox(height: 6),
@@ -509,7 +509,7 @@ class _BolumModaliState extends State<BolumModali> {
               ),
             ],
           ),
-          const Divider(color: Colors.white12, height: 28),
+          Divider(color: DiziRenkler.metin12, height: 28),
           // Bölüme özel yorumlar
           YorumBolumu(
             tur: 'tv',

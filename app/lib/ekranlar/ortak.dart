@@ -43,9 +43,9 @@ class PosterKarti extends StatelessWidget {
                     child: posterYolu == null
                         ? Container(
                             color: DiziRenkler.kart,
-                            child: const Icon(
+                            child: Icon(
                               Icons.movie,
-                              color: Colors.white24,
+                              color: DiziRenkler.metin24,
                               size: 40,
                             ),
                           )
@@ -56,9 +56,9 @@ class PosterKarti extends StatelessWidget {
                                 Container(color: DiziRenkler.kart),
                             errorWidget: (_, __, ___) => Container(
                               color: DiziRenkler.kart,
-                              child: const Icon(
+                              child: Icon(
                                 Icons.broken_image,
-                                color: Colors.white24,
+                                color: DiziRenkler.metin24,
                               ),
                             ),
                           ),
@@ -310,7 +310,7 @@ class HataGorunumu extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.cloud_off, size: 48, color: Colors.white38),
+            Icon(Icons.cloud_off, size: 48, color: DiziRenkler.metin38),
             const SizedBox(height: 12),
             Text(mesaj, textAlign: TextAlign.center),
             const SizedBox(height: 12),
@@ -364,6 +364,182 @@ class RozetliIkon extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// Liste içeriği modalı: 3'lü poster ızgarası, dokununca detaya gider.
+/// Hem kendi profilinden hem başkasının profilinden açılır.
+class ListeSheet extends StatefulWidget {
+  final int listeId;
+  final String ad;
+
+  const ListeSheet({super.key, required this.listeId, required this.ad});
+
+  static void ac(
+    BuildContext context, {
+    required int listeId,
+    required String ad,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => ListeSheet(listeId: listeId, ad: ad),
+    );
+  }
+
+  @override
+  State<ListeSheet> createState() => _ListeSheetState();
+}
+
+class _ListeSheetState extends State<ListeSheet> {
+  List<dynamic>? _ogeler;
+  String? _hata;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final d = await Api.get('/listeler/${widget.listeId}');
+      if (!mounted) return;
+      setState(() => _ogeler = d['ogeler'] as List<dynamic>);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _hata = e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget govde;
+    if (_hata != null) {
+      govde = Center(
+        child: Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
+      );
+    } else if (_ogeler == null) {
+      govde = const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    } else if (_ogeler!.isEmpty) {
+      govde = Center(
+        child: Text(
+          'Liste boş.'.c,
+          style: TextStyle(color: DiziRenkler.metin38),
+        ),
+      );
+    } else {
+      govde = GridView.builder(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          childAspectRatio: 2 / 3,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
+        itemCount: _ogeler!.length,
+        itemBuilder: (context, i) {
+          final o = _ogeler![i] as Map<String, dynamic>;
+          return _ListeOgeKart(
+            tur: o['tur'] as String,
+            tmdbId: (o['tmdb_id'] as num).toInt(),
+          );
+        },
+      );
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(Icons.playlist_play, color: DiziRenkler.sari),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.ad,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(child: govde),
+        ],
+      ),
+    );
+  }
+}
+
+/// Liste öğesi: posteri önbellekli TMDB'den çeker, tıklayınca detaya gider.
+class _ListeOgeKart extends StatefulWidget {
+  final String tur;
+  final int tmdbId;
+
+  const _ListeOgeKart({required this.tur, required this.tmdbId});
+
+  @override
+  State<_ListeOgeKart> createState() => _ListeOgeKartState();
+}
+
+class _ListeOgeKartState extends State<_ListeOgeKart> {
+  Map<String, dynamic>? _icerik;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final d = await Api.get('/tmdb/${widget.tur}/${widget.tmdbId}');
+      if (mounted) setState(() => _icerik = d as Map<String, dynamic>);
+    } catch (_) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
+    final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        context.push('/icerik/${widget.tur}/${widget.tmdbId}');
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          color: DiziRenkler.kart,
+          child: poster != null
+              ? Image.network(poster, fit: BoxFit.cover)
+              : Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Text(
+                      ad,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: DiziRenkler.metin54,
+                      ),
+                    ),
+                  ),
+                ),
+        ),
       ),
     );
   }

@@ -219,4 +219,9 @@ const Map<String, String> cevirilerHu = {
       'Meg-nem-nézettként lesz jelölve, és lekerül a listáidról.',
   'Gelecek bölüm bugün': 'Következő epizód ma',
   'Gelecek bölüm {} gün sonra': 'Következő epizód {} nap múlva',
+  'Tema': 'Téma',
+  'Sistem': 'Rendszer',
+  'Koyu': 'Sötét',
+  'Açık': 'Világos',
+  'İzleyenler': 'Nézők',
 };

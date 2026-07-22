@@ -454,7 +454,76 @@ app.post('/durum', girisZorunlu, sarici(async (req, res) => {
      ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE SET durum=$4, guncelleme=now()`,
     [req.kullanici.id, tur, tmdb_id, durum],
   );
+  // "Bitirdim": yayınlanmış her şey izlendi sayılır.
+  // Filmde tek kayıt; dizide son yayınlanan bölüme kadar tüm bölümler.
+  if (durum === 'bitirdim') {
+    if (tur === 'movie') {
+      await havuz.query(
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+         VALUES ($1,'movie',$2,0,0) ON CONFLICT DO NOTHING`,
+        [req.kullanici.id, tmdb_id],
+      );
+    } else {
+      try {
+        const dizi = await tmdbGetir(`/tv/${tmdb_id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+        const son = dizi.last_episode_to_air;
+        const sezonlar = [];
+        const bolumler = [];
+        for (const s of dizi.seasons || []) {
+          const no = s.season_number;
+          if (!Number.isInteger(no) || no < 1) continue; // özel bölümler hariç
+          let adet = s.episode_count || 0;
+          if (son && Number.isInteger(son.season_number)) {
+            if (no > son.season_number) continue; // henüz yayınlanmamış sezon
+            if (no === son.season_number) adet = Math.min(adet, son.episode_number || adet);
+          }
+          for (let b = 1; b <= Math.min(adet, 500); b++) {
+            sezonlar.push(no);
+            bolumler.push(b);
+          }
+        }
+        if (sezonlar.length > 0 && sezonlar.length <= 10000) {
+          await havuz.query(
+            `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+             SELECT $1, 'tv', $2, s, b FROM unnest($3::int[], $4::int[]) AS t(s, b)
+             ON CONFLICT DO NOTHING`,
+            [req.kullanici.id, tmdb_id, sezonlar, bolumler],
+          );
+        }
+      } catch {
+        // TMDB'ye ulaşılamazsa durum yine de kaydedilmiş olur
+      }
+    }
+  }
   res.json({ durum });
+}));
+
+// İçeriği izlemiş kullanıcılar (detaydaki göz ikonu listesi).
+// Kullanıcı adları zaten herkese açık olduğundan giriş şartı yok.
+app.get('/izleyenler/:tur/:tmdbId', sarici(async (req, res) => {
+  const { tur } = req.params;
+  const tmdbId = Number(req.params.tmdbId);
+  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdbId)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
+  const [sayi, kullanicilar] = await Promise.all([
+    havuz.query(
+      `SELECT COUNT(DISTINCT i.kullanici_id)::int AS n
+       FROM izlemeler i JOIN kullanicilar k ON k.id = i.kullanici_id AND k.misafir = false
+       WHERE i.tur=$1 AND i.tmdb_id=$2`,
+      [tur, tmdbId],
+    ),
+    havuz.query(
+      `SELECT k.kullanici_adi, k.avatar
+       FROM (SELECT kullanici_id, MAX(tarih) AS son FROM izlemeler
+             WHERE tur=$1 AND tmdb_id=$2 GROUP BY kullanici_id) i
+       JOIN kullanicilar k ON k.id = i.kullanici_id AND k.misafir = false
+       ORDER BY i.son DESC NULLS LAST, k.kullanici_adi
+       LIMIT 200`,
+      [tur, tmdbId],
+    ),
+  ]);
+  res.json({ sayi: sayi.rows[0].n, kullanicilar: kullanicilar.rows });
 }));
 
 app.post('/puan', girisZorunlu, sarici(async (req, res) => {

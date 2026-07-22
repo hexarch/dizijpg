@@ -219,4 +219,9 @@ const Map<String, String> cevirilerPl = {
       'Ten tytuł zostanie oznaczony jako nieobejrzany i usunięty z twoich list.',
   'Gelecek bölüm bugün': 'Następny odcinek dzisiaj',
   'Gelecek bölüm {} gün sonra': 'Następny odcinek za {} dni',
+  'Tema': 'Motyw',
+  'Sistem': 'Systemowy',
+  'Koyu': 'Ciemny',
+  'Açık': 'Jasny',
+  'İzleyenler': 'Widzowie',
 };

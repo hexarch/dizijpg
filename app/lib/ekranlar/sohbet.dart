@@ -55,7 +55,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.chat_outlined, size: 44, color: Colors.white24),
+            Icon(Icons.chat_outlined, size: 44, color: DiziRenkler.metin24),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -63,7 +63,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
                 'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.'
                     .c,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, height: 1.5),
+                style: TextStyle(color: DiziRenkler.metin54, height: 1.5),
               ),
             ),
           ],
@@ -86,7 +86,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
                   backgroundColor: DiziRenkler.koyuGri,
                   backgroundImage: avatar != null ? NetworkImage(avatar) : null,
                   child: avatar == null
-                      ? const Icon(Icons.person, color: Colors.white38)
+                      ? Icon(Icons.person, color: DiziRenkler.metin38)
                       : null,
                 ),
                 title: Text(
@@ -99,7 +99,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
                       : '·',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white54),
+                  style: TextStyle(color: DiziRenkler.metin54),
                 ),
                 trailing: okunmamis > 0
                     ? CircleAvatar(
@@ -357,9 +357,9 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                   ),
                                   child: Text(
                                     etiket,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 11,
-                                      color: Colors.white54,
+                                      color: DiziRenkler.metin54,
                                     ),
                                   ),
                                 ),
@@ -471,7 +471,7 @@ class _MesajBaloncugu extends StatelessWidget {
         : null;
     final saat = (m['tarih'] as String? ?? '');
     final saatKisa = saat.length >= 16 ? saat.substring(11, 16) : '';
-    final yaziRengi = benim ? Colors.black : Colors.white;
+    final yaziRengi = benim ? Colors.black : DiziRenkler.metin;
 
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
@@ -564,10 +564,10 @@ class _MesajBaloncugu extends StatelessWidget {
                                   )
                                 : Container(
                                     color: DiziRenkler.koyuGri,
-                                    child: const Icon(
+                                    child: Icon(
                                       Icons.movie,
                                       size: 18,
-                                      color: Colors.white38,
+                                      color: DiziRenkler.metin38,
                                     ),
                                   ),
                           ),
@@ -686,7 +686,7 @@ class _IcerikSecSheetState extends State<_IcerikSecSheet> {
               onChanged: _degisti,
               decoration: InputDecoration(
                 hintText: 'Dizi, film veya kişi ara...'.c,
-                prefixIcon: const Icon(Icons.search, color: Colors.white38),
+                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin38),
               ),
             ),
           ),
@@ -720,7 +720,7 @@ class _IcerikSecSheetState extends State<_IcerikSecSheet> {
                   ),
                   subtitle: Text(
                     r['media_type'] == 'tv' ? 'Dizi'.c : 'Film'.c,
-                    style: const TextStyle(fontSize: 11, color: Colors.white38),
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                   ),
                   onTap: () => Navigator.pop(context, r),
                 );

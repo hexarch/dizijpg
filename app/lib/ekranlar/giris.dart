@@ -184,7 +184,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                 Text(
                   'Dizi ve filmlerini takip et'.c,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white54),
+                  style: TextStyle(color: DiziRenkler.metin54),
                 ),
                 const SizedBox(height: 36),
                 TextField(
@@ -233,7 +233,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     onPressed: _sifremiUnuttum,
                     child: Text(
                       'Şifreni mi unuttun?'.c,
-                      style: const TextStyle(color: Colors.white54),
+                      style: TextStyle(color: DiziRenkler.metin54),
                     ),
                   ),
                 TextButton(
@@ -248,10 +248,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
                 const SizedBox(height: 4),
                 OutlinedButton.icon(
                   onPressed: _yukleniyor ? null : _misafirGiris,
-                  icon: const Icon(Icons.person_outline, color: Colors.white70),
+                  icon: Icon(Icons.person_outline, color: DiziRenkler.metin70),
                   label: Text(
                     'Misafir olarak devam et'.c,
-                    style: const TextStyle(color: Colors.white70),
+                    style: TextStyle(color: DiziRenkler.metin70),
                   ),
                 ),
               ],

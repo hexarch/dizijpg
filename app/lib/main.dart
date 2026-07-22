@@ -27,6 +27,7 @@ Future<void> main() async {
   usePathUrlStrategy();
   WidgetsFlutterBinding.ensureInitialized();
   await Ceviri.yukle();
+  await TemaAyar.yukle();
   final oturum = Oturum();
   await oturum.yukle();
   runApp(
@@ -41,28 +42,60 @@ class DiziJpgApp extends StatefulWidget {
   State<DiziJpgApp> createState() => _DiziJpgAppState();
 }
 
-class _DiziJpgAppState extends State<DiziJpgApp> {
+class _DiziJpgAppState extends State<DiziJpgApp> with WidgetsBindingObserver {
   late final GoRouter _yonlendirici = yonlendiriciOlustur(
     context.read<Oturum>(),
   );
 
   @override
+  void initState() {
+    super.initState();
+    // "Sistem" modunda cihaz teması değişince yeniden kur
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangePlatformBrightness() => setState(() {});
+
+  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: Ceviri.dil,
-      builder: (context, dil, _) => MaterialApp.router(
-        title: 'dizi.jpg',
-        debugShowCheckedModeBanner: false,
-        scrollBehavior: FareKaydirma(),
-        theme: diziTema(),
-        locale: Locale(dil),
-        supportedLocales: Ceviri.desteklenenLocaleler,
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        routerConfig: _yonlendirici,
+      builder: (context, dil, _) => ValueListenableBuilder<String>(
+        valueListenable: TemaAyar.mod,
+        builder: (context, mod, _) {
+          // Ekranlardaki DiziRenkler getter'ları bu bayrağı okur —
+          // MaterialApp kurulmadan HEMEN önce güncellenmeli.
+          final acik =
+              mod == 'acik' ||
+              (mod == 'sistem' &&
+                  WidgetsBinding
+                          .instance
+                          .platformDispatcher
+                          .platformBrightness ==
+                      Brightness.light);
+          DiziRenkler.acik = acik;
+          return MaterialApp.router(
+            title: 'dizi.jpg',
+            debugShowCheckedModeBanner: false,
+            scrollBehavior: FareKaydirma(),
+            theme: diziTema(acik: acik),
+            locale: Locale(dil),
+            supportedLocales: Ceviri.desteklenenLocaleler,
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            routerConfig: _yonlendirici,
+          );
+        },
       ),
     );
   }

@@ -219,4 +219,9 @@ const Map<String, String> cevirilerGu = {
       'આ ક્યારેય ન જોયેલું ગણાશે અને તમારી યાદીઓમાંથી નીકળી જશે.',
   'Gelecek bölüm bugün': 'આગલો એપિસોડ આજે',
   'Gelecek bölüm {} gün sonra': 'આગલો એપિસોડ {} દિવસ પછી',
+  'Tema': 'થીમ',
+  'Sistem': 'સિસ્ટમ',
+  'Koyu': 'ડાર્ક',
+  'Açık': 'લાઇટ',
+  'İzleyenler': 'દર્શકો',
 };

@@ -25,14 +25,9 @@ const Map<String, String> _tepkiGorselleri = {
 class TepkiIkonu extends StatelessWidget {
   final String emoji;
   final double boyut;
-  final Color renk;
+  final Color? renk; // null → tema metin70
 
-  const TepkiIkonu(
-    this.emoji, {
-    super.key,
-    this.boyut = 20,
-    this.renk = Colors.white70,
-  });
+  const TepkiIkonu(this.emoji, {super.key, this.boyut = 20, this.renk});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +39,10 @@ class TepkiIkonu extends StatelessWidget {
       gorsel,
       width: boyut,
       height: boyut,
-      colorFilter: ColorFilter.mode(renk, BlendMode.srcIn),
+      colorFilter: ColorFilter.mode(
+        renk ?? DiziRenkler.metin70,
+        BlendMode.srcIn,
+      ),
     );
   }
 }
@@ -156,7 +154,7 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
                 children: [
                   TepkiIkonu(
                     e,
-                    renk: _benim == e ? Colors.black : Colors.white70,
+                    renk: _benim == e ? Colors.black : DiziRenkler.metin70,
                   ),
                   if ((_sayilar[e] ?? 0) > 0) ...[
                     const SizedBox(width: 4),
@@ -165,7 +163,7 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: _benim == e ? Colors.black : Colors.white70,
+                        color: _benim == e ? Colors.black : DiziRenkler.metin70,
                       ),
                     ),
                   ],
@@ -249,7 +247,7 @@ class _YildizPuanState extends State<YildizPuan> {
               child: Icon(
                 y <= _yildiz ? Icons.star_rounded : Icons.star_outline_rounded,
                 size: widget.boyut,
-                color: y <= _yildiz ? DiziRenkler.sari : Colors.white38,
+                color: y <= _yildiz ? DiziRenkler.sari : DiziRenkler.metin38,
               ),
             ),
           ),

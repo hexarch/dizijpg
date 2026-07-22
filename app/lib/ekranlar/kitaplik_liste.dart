@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../tema.dart';
 import 'ortak.dart';
 
 /// Bir kitaplık durumunun (izliyorum/bitirdim/...) TAM listesi, dikey ızgara.
@@ -76,7 +77,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
       govde = Center(
         child: Text(
           'Henüz izleme kaydın yok'.c,
-          style: const TextStyle(color: Colors.white38),
+          style: TextStyle(color: DiziRenkler.metin38),
         ),
       );
     } else {

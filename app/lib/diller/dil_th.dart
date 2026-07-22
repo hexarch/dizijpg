@@ -218,4 +218,9 @@ const Map<String, String> cevirilerTh = {
       'เรื่องนี้จะถูกทำเครื่องหมายว่าไม่เคยดูและถูกลบออกจากลิสต์ของคุณ',
   'Gelecek bölüm bugün': 'ตอนต่อไปวันนี้',
   'Gelecek bölüm {} gün sonra': 'ตอนต่อไปในอีก {} วัน',
+  'Tema': 'ธีม',
+  'Sistem': 'ระบบ',
+  'Koyu': 'มืด',
+  'Açık': 'สว่าง',
+  'İzleyenler': 'ผู้ชม',
 };

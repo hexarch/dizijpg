@@ -219,4 +219,9 @@ const Map<String, String> cevirilerAz = {
       'Bu, heç izlənilməmiş sayılacaq və siyahılarından silinəcək.',
   'Gelecek bölüm bugün': 'Növbəti bölüm bu gün',
   'Gelecek bölüm {} gün sonra': 'Növbəti bölüm {} gün sonra',
+  'Tema': 'Mövzu',
+  'Sistem': 'Sistem',
+  'Koyu': 'Tünd',
+  'Açık': 'Açıq',
+  'İzleyenler': 'İzləyənlər',
 };

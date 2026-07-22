@@ -218,4 +218,9 @@ const Map<String, String> cevirilerEn = {
       'This title will be marked as never watched and removed from your lists.',
   'Gelecek bölüm bugün': 'Next episode today',
   'Gelecek bölüm {} gün sonra': 'Next episode in {} days',
+  'Tema': 'Theme',
+  'Sistem': 'System',
+  'Koyu': 'Dark',
+  'Açık': 'Light',
+  'İzleyenler': 'Watched by',
 };

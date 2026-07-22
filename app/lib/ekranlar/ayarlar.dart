@@ -213,7 +213,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                         onPressed: () => Navigator.pop(context, null),
                         child: Text(
                           'İptal'.c,
-                          style: const TextStyle(color: Colors.white54),
+                          style: TextStyle(color: DiziRenkler.metin54),
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -385,9 +385,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   for (final b in sira)
                     ListTile(
                       key: ValueKey(b),
-                      leading: const Icon(
+                      leading: Icon(
                         Icons.drag_handle,
-                        color: Colors.white38,
+                        color: DiziRenkler.metin38,
                       ),
                       title: Text(etiketler[b] ?? b),
                     ),
@@ -458,9 +458,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     onChanged: (_) => setSheet(() {}),
                     decoration: InputDecoration(
                       hintText: ipucu,
-                      prefixIcon: const Icon(
+                      prefixIcon: Icon(
                         Icons.search,
-                        color: Colors.white38,
+                        color: DiziRenkler.metin38,
                       ),
                     ),
                   ),
@@ -619,7 +619,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_hata!, style: const TextStyle(color: Colors.white54)),
+            Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
             TextButton(onPressed: _yukle, child: Text('Tekrar dene'.c)),
           ],
         ),
@@ -656,16 +656,16 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.add_photo_alternate_outlined,
-                                    color: Colors.white38,
+                                    color: DiziRenkler.metin38,
                                     size: 30,
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
                                     'Kapak resmi ekle'.c,
-                                    style: const TextStyle(
-                                      color: Colors.white38,
+                                    style: TextStyle(
+                                      color: DiziRenkler.metin38,
                                       fontSize: 12,
                                     ),
                                   ),
@@ -721,10 +721,10 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                                   ? NetworkImage(avatar)
                                   : null,
                               child: avatar == null
-                                  ? const Icon(
+                                  ? Icon(
                                       Icons.person,
                                       size: 48,
-                                      color: Colors.white38,
+                                      color: DiziRenkler.metin38,
                                     )
                                   : null,
                             ),
@@ -763,7 +763,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
           Center(
             child: Text(
               'Fotoğraf veya GIF — profil ve kapak resmi'.c,
-              style: const TextStyle(color: Colors.white38, fontSize: 12),
+              style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
             ),
           ),
           const SizedBox(height: 24),
@@ -797,16 +797,15 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     title: Text(
                       _ulke ?? 'Ülke seç'.c,
                       style: TextStyle(
-                        color: _ulke == null ? Colors.white38 : Colors.white,
+                        color: _ulke == null
+                            ? DiziRenkler.metin38
+                            : DiziRenkler.metin,
                       ),
                     ),
                     trailing: _ulke == null
-                        ? const Icon(Icons.chevron_right, color: Colors.white38)
+                        ? Icon(Icons.chevron_right, color: DiziRenkler.metin38)
                         : IconButton(
-                            icon: const Icon(
-                              Icons.close,
-                              color: Colors.white38,
-                            ),
+                            icon: Icon(Icons.close, color: DiziRenkler.metin38),
                             onPressed: () => setState(() => _ulke = null),
                           ),
                     onTap: _ulkeSec,
@@ -825,11 +824,60 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       color: DiziRenkler.sari,
                     ),
                     title: Text(Ceviri.diller[Ceviri.dil.value] ?? 'Türkçe'),
-                    trailing: const Icon(
+                    trailing: Icon(
                       Icons.chevron_right,
-                      color: Colors.white38,
+                      color: DiziRenkler.metin38,
                     ),
                     onTap: _dilSec,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Tema'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.brightness_6_outlined,
+                          color: DiziRenkler.sari,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: SegmentedButton<String>(
+                            segments: [
+                              ButtonSegment(
+                                value: 'sistem',
+                                label: Text('Sistem'.c),
+                                icon: const Icon(
+                                  Icons.settings_suggest_outlined,
+                                ),
+                              ),
+                              ButtonSegment(
+                                value: 'koyu',
+                                label: Text('Koyu'.c),
+                                icon: const Icon(Icons.dark_mode_outlined),
+                              ),
+                              ButtonSegment(
+                                value: 'acik',
+                                label: Text('Açık'.c),
+                                icon: const Icon(Icons.light_mode_outlined),
+                              ),
+                            ],
+                            selected: {TemaAyar.mod.value},
+                            onSelectionChanged: (s) => TemaAyar.sec(s.first),
+                            showSelectedIcon: false,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -841,9 +889,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       color: DiziRenkler.sari,
                     ),
                     title: Text('Profil düzeni'.c),
-                    trailing: const Icon(
+                    trailing: Icon(
                       Icons.chevron_right,
-                      color: Colors.white38,
+                      color: DiziRenkler.metin38,
                     ),
                     onTap: _profilDuzeni,
                   ),
@@ -863,7 +911,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       : Text('Kaydet'.c),
                 ),
                 const SizedBox(height: 32),
-                const Divider(color: Colors.white12),
+                Divider(color: DiziRenkler.metin12),
                 const SizedBox(height: 8),
                 Text(
                   'Verilerim'.c,
@@ -874,7 +922,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak '
                           'al ya da başka uygulamadan gelen ZIP\'i içe aktar.'
                       .c,
-                  style: const TextStyle(color: Colors.white38, fontSize: 12),
+                  style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
@@ -882,7 +930,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   icon: const Icon(Icons.upload_file, color: DiziRenkler.sari),
                   label: Text(
                     'Verilerimi dışa aktar (e-posta)'.c,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -891,7 +939,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   icon: const Icon(Icons.download, color: DiziRenkler.sari),
                   label: Text(
                     'Veri içe aktar (.zip)'.c,
-                    style: const TextStyle(color: Colors.white),
+                    style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),
                 const SizedBox(height: 32),

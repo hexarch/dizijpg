@@ -219,4 +219,9 @@ const Map<String, String> cevirilerHi = {
       'यह टाइटल कभी न देखा गया माना जाएगा और तुम्हारी सूचियों से हट जाएगा।',
   'Gelecek bölüm bugün': 'अगला एपिसोड आज',
   'Gelecek bölüm {} gün sonra': 'अगला एपिसोड {} दिन बाद',
+  'Tema': 'थीम',
+  'Sistem': 'सिस्टम',
+  'Koyu': 'डार्क',
+  'Açık': 'लाइट',
+  'İzleyenler': 'दर्शक',
 };

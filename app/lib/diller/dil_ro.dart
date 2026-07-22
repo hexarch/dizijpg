@@ -219,4 +219,9 @@ const Map<String, String> cevirilerRo = {
       'Acest titlu va fi marcat ca nevizionat și scos din listele tale.',
   'Gelecek bölüm bugün': 'Următorul episod azi',
   'Gelecek bölüm {} gün sonra': 'Următorul episod în {} zile',
+  'Tema': 'Temă',
+  'Sistem': 'Sistem',
+  'Koyu': 'Întunecat',
+  'Açık': 'Luminos',
+  'İzleyenler': 'Spectatori',
 };

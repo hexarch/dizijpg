@@ -219,4 +219,9 @@ const Map<String, String> cevirilerVi = {
       'Phim này sẽ được đánh dấu chưa từng xem và bị xóa khỏi danh sách của bạn.',
   'Gelecek bölüm bugün': 'Tập tiếp theo hôm nay',
   'Gelecek bölüm {} gün sonra': 'Tập tiếp theo sau {} ngày',
+  'Tema': 'Chủ đề',
+  'Sistem': 'Hệ thống',
+  'Koyu': 'Tối',
+  'Açık': 'Sáng',
+  'İzleyenler': 'Người xem',
 };

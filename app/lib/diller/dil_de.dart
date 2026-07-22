@@ -220,4 +220,9 @@ const Map<String, String> cevirilerDe = {
       'Dieser Titel gilt dann als nie gesehen und wird aus deinen Listen entfernt.',
   'Gelecek bölüm bugün': 'Nächste Folge heute',
   'Gelecek bölüm {} gün sonra': 'Nächste Folge in {} Tagen',
+  'Tema': 'Design',
+  'Sistem': 'System',
+  'Koyu': 'Dunkel',
+  'Açık': 'Hell',
+  'İzleyenler': 'Zuschauer',
 };

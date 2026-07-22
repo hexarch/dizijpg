@@ -219,4 +219,9 @@ const Map<String, String> cevirilerBn = {
       'এটি কখনো দেখা হয়নি বলে চিহ্নিত হবে এবং তোমার তালিকা থেকে সরবে।',
   'Gelecek bölüm bugün': 'পরের পর্ব আজ',
   'Gelecek bölüm {} gün sonra': 'পরের পর্ব {} দিন পরে',
+  'Tema': 'থিম',
+  'Sistem': 'সিস্টেম',
+  'Koyu': 'ডার্ক',
+  'Açık': 'লাইট',
+  'İzleyenler': 'দর্শকরা',
 };

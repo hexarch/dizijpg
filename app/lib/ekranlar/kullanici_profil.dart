@@ -68,7 +68,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       context: context,
       isScrollControlled: true,
       backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => _ListeSheet(listeId: id, ad: ad ?? ''),
+      builder: (_) => ListeSheet(listeId: id, ad: ad ?? ''),
     );
   }
 
@@ -119,10 +119,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             ? NetworkImage(avatar)
                             : null,
                         child: avatar == null
-                            ? const Icon(
+                            ? Icon(
                                 Icons.person,
                                 size: 40,
-                                color: Colors.white38,
+                                color: DiziRenkler.metin38,
                               )
                             : null,
                       ),
@@ -151,8 +151,8 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                     const SizedBox(width: 3),
                                     Text(
                                       p['ulke'] as String,
-                                      style: const TextStyle(
-                                        color: Colors.white54,
+                                      style: TextStyle(
+                                        color: DiziRenkler.metin54,
                                         fontSize: 12,
                                       ),
                                     ),
@@ -168,10 +168,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     const SizedBox(height: 12),
                     Text(
                       p['bio'] as String,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        height: 1.4,
-                      ),
+                      style: TextStyle(color: DiziRenkler.metin70, height: 1.4),
                     ),
                   ],
                   const SizedBox(height: 16),
@@ -204,7 +201,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             style: takipEdiyorum
                                 ? FilledButton.styleFrom(
                                     backgroundColor: DiziRenkler.kart,
-                                    foregroundColor: Colors.white,
+                                    foregroundColor: DiziRenkler.metin,
                                   )
                                 : null,
                             icon: Icon(
@@ -229,7 +226,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             ),
                             label: Text(
                               'Mesaj'.c,
-                              style: const TextStyle(color: Colors.white),
+                              style: TextStyle(color: DiziRenkler.metin),
                             ),
                           ),
                         ),
@@ -312,14 +309,14 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           title: Text(l['ad'] as String? ?? ''),
                           subtitle: Text(
                             '{} içerik'.cf([l['oge_sayisi'] ?? 0]),
-                            style: const TextStyle(
-                              color: Colors.white38,
+                            style: TextStyle(
+                              color: DiziRenkler.metin38,
                               fontSize: 12,
                             ),
                           ),
-                          trailing: const Icon(
+                          trailing: Icon(
                             Icons.chevron_right,
-                            color: Colors.white38,
+                            color: DiziRenkler.metin38,
                           ),
                           onTap: () =>
                               _listeAc(l['id'] as int, l['ad'] as String?),
@@ -349,7 +346,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           _yorumlarAcik
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          color: Colors.white54,
+                          color: DiziRenkler.metin54,
                         ),
                       ],
                     ),
@@ -361,7 +358,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Text(
                           'Henüz yorum yok.'.c,
-                          style: const TextStyle(color: Colors.white38),
+                          style: TextStyle(color: DiziRenkler.metin38),
                         ),
                       ),
                     for (final y in yorumlar)
@@ -413,7 +410,7 @@ class _Sayac extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 etiket,
-                style: const TextStyle(fontSize: 11, color: Colors.white54),
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
               ),
             ],
           ),
@@ -515,7 +512,7 @@ class _ProfilYorumKarti extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     tarih,
-                    style: const TextStyle(fontSize: 11, color: Colors.white38),
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                   ),
                 ],
               ),
@@ -529,22 +526,22 @@ class _ProfilYorumKarti extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.remove_red_eye,
                     size: 15,
-                    color: Colors.white38,
+                    color: DiziRenkler.metin38,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${yorum['goruntulenme'] ?? 0}',
-                    style: const TextStyle(fontSize: 12, color: Colors.white38),
+                    style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                   ),
                   const SizedBox(width: 14),
                   const Icon(Icons.favorite, size: 15, color: DiziRenkler.sari),
                   const SizedBox(width: 4),
                   Text(
                     '${yorum['begeni'] ?? 0}',
-                    style: const TextStyle(fontSize: 12, color: Colors.white38),
+                    style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                   ),
                 ],
               ),
@@ -604,7 +601,7 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
       govde = Center(
         child: Text(
           widget.takipciler ? 'Takipçi yok'.c : 'Kimseyi takip etmiyor'.c,
-          style: const TextStyle(color: Colors.white38),
+          style: TextStyle(color: DiziRenkler.metin38),
         ),
       );
     } else {
@@ -635,7 +632,7 @@ class KullaniciSatiri extends StatelessWidget {
         backgroundColor: DiziRenkler.kart,
         backgroundImage: avatar != null ? NetworkImage(avatar) : null,
         child: avatar == null
-            ? const Icon(Icons.person, color: Colors.white38)
+            ? Icon(Icons.person, color: DiziRenkler.metin38)
             : null,
       ),
       title: Text(
@@ -711,7 +708,7 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
           ? Center(
               child: Text(
                 'En az 2 harf yaz'.c,
-                style: const TextStyle(color: Colors.white38),
+                style: TextStyle(color: DiziRenkler.metin38),
               ),
             )
           : ListView(
@@ -722,167 +719,6 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
 }
 
 /// Açık listenin içeriğini gösteren alt sayfa.
-class _ListeSheet extends StatefulWidget {
-  final int listeId;
-  final String ad;
-
-  const _ListeSheet({required this.listeId, required this.ad});
-
-  @override
-  State<_ListeSheet> createState() => _ListeSheetState();
-}
-
-class _ListeSheetState extends State<_ListeSheet> {
-  List<dynamic>? _ogeler;
-  String? _hata;
-
-  @override
-  void initState() {
-    super.initState();
-    _yukle();
-  }
-
-  Future<void> _yukle() async {
-    try {
-      final d = await Api.get('/listeler/${widget.listeId}');
-      if (!mounted) return;
-      setState(() => _ogeler = d['ogeler'] as List<dynamic>);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _hata = e.toString());
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget govde;
-    if (_hata != null) {
-      govde = Center(
-        child: Text(_hata!, style: const TextStyle(color: Colors.white54)),
-      );
-    } else if (_ogeler == null) {
-      govde = const Center(
-        child: CircularProgressIndicator(color: DiziRenkler.sari),
-      );
-    } else if (_ogeler!.isEmpty) {
-      govde = Center(
-        child: Text(
-          'Liste boş.'.c,
-          style: const TextStyle(color: Colors.white38),
-        ),
-      );
-    } else {
-      govde = GridView.builder(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 2 / 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: _ogeler!.length,
-        itemBuilder: (context, i) {
-          final o = _ogeler![i] as Map<String, dynamic>;
-          return _ListeOge(
-            tur: o['tur'] as String,
-            tmdbId: (o['tmdb_id'] as num).toInt(),
-          );
-        },
-      );
-    }
-
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.75,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const Icon(Icons.playlist_play, color: DiziRenkler.sari),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    widget.ad,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(child: govde),
-        ],
-      ),
-    );
-  }
-}
-
-/// Liste öğesi: posteri önbellekli TMDB'den çeker, tıklayınca detaya gider.
-class _ListeOge extends StatefulWidget {
-  final String tur;
-  final int tmdbId;
-
-  const _ListeOge({required this.tur, required this.tmdbId});
-
-  @override
-  State<_ListeOge> createState() => _ListeOgeState();
-}
-
-class _ListeOgeState extends State<_ListeOge> {
-  Map<String, dynamic>? _icerik;
-
-  @override
-  void initState() {
-    super.initState();
-    _yukle();
-  }
-
-  Future<void> _yukle() async {
-    try {
-      final d = await Api.get('/tmdb/${widget.tur}/${widget.tmdbId}');
-      if (mounted) setState(() => _icerik = d as Map<String, dynamic>);
-    } catch (_) {}
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
-    final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
-    return InkWell(
-      onTap: () {
-        Navigator.pop(context);
-        context.push('/icerik/${widget.tur}/${widget.tmdbId}');
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Container(
-          color: DiziRenkler.kart,
-          child: poster != null
-              ? Image.network(poster, fit: BoxFit.cover)
-              : Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6),
-                    child: Text(
-                      ad,
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        color: Colors.white54,
-                      ),
-                    ),
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-}
-
 /// Profildeki yorumun modal görünümü: içerik başlığı + tam metin + medya.
 class _YorumDetayModal extends StatelessWidget {
   final Map<String, dynamic> yorum;
@@ -920,7 +756,7 @@ class _YorumDetayModal extends StatelessWidget {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.white24,
+                color: DiziRenkler.metin24,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -944,9 +780,9 @@ class _YorumDetayModal extends StatelessWidget {
                         ? Image.network(poster!, fit: BoxFit.cover)
                         : Container(
                             color: DiziRenkler.kart,
-                            child: const Icon(
+                            child: Icon(
                               Icons.movie,
-                              color: Colors.white38,
+                              color: DiziRenkler.metin38,
                             ),
                           ),
                   ),
@@ -962,7 +798,7 @@ class _YorumDetayModal extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Icon(Icons.chevron_right, color: Colors.white38),
+                Icon(Icons.chevron_right, color: DiziRenkler.metin38),
               ],
             ),
           ),
@@ -985,9 +821,9 @@ class _YorumDetayModal extends StatelessWidget {
                       ? Container(
                           width: 120,
                           color: DiziRenkler.kart,
-                          child: const Icon(
+                          child: Icon(
                             Icons.play_circle_outline,
-                            color: Colors.white54,
+                            color: DiziRenkler.metin54,
                             size: 32,
                           ),
                         )
@@ -1003,23 +839,23 @@ class _YorumDetayModal extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.remove_red_eye, size: 15, color: Colors.white38),
+              Icon(Icons.remove_red_eye, size: 15, color: DiziRenkler.metin38),
               const SizedBox(width: 4),
               Text(
                 '${yorum['goruntulenme'] ?? 0}',
-                style: const TextStyle(fontSize: 12, color: Colors.white38),
+                style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
               ),
               const SizedBox(width: 14),
               const Icon(Icons.favorite, size: 15, color: DiziRenkler.sari),
               const SizedBox(width: 4),
               Text(
                 '${yorum['begeni'] ?? 0}',
-                style: const TextStyle(fontSize: 12, color: Colors.white38),
+                style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
               ),
               const Spacer(),
               Text(
                 tarih,
-                style: const TextStyle(fontSize: 11, color: Colors.white38),
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
               ),
             ],
           ),

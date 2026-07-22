@@ -219,4 +219,9 @@ const Map<String, String> cevirilerUr = {
       'یہ کبھی نہ دیکھا ہوا شمار ہوگا اور آپ کی فہرستوں سے ہٹ جائے گا۔',
   'Gelecek bölüm bugün': 'اگلی قسط آج',
   'Gelecek bölüm {} gün sonra': 'اگلی قسط {} دن بعد',
+  'Tema': 'تھیم',
+  'Sistem': 'سسٹم',
+  'Koyu': 'ڈارک',
+  'Açık': 'لائٹ',
+  'İzleyenler': 'ناظرین',
 };

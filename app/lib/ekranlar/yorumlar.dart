@@ -194,12 +194,12 @@ class _YorumBolumuState extends State<YorumBolumu> {
                         InkWell(
                           borderRadius: BorderRadius.circular(16),
                           onTap: () => setState(() => _yanitlanan = null),
-                          child: const Padding(
-                            padding: EdgeInsets.all(10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
                             child: Icon(
                               Icons.close,
                               size: 16,
-                              color: Colors.white38,
+                              color: DiziRenkler.metin38,
                             ),
                           ),
                         ),
@@ -239,9 +239,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                 child: _ekler[i]['video'] == true
                                     ? Container(
                                         color: DiziRenkler.koyuGri,
-                                        child: const Icon(
+                                        child: Icon(
                                           Icons.videocam,
-                                          color: Colors.white54,
+                                          color: DiziRenkler.metin54,
                                         ),
                                       )
                                     : CachedNetworkImage(
@@ -297,12 +297,12 @@ class _YorumBolumuState extends State<YorumBolumu> {
                     FilledButton(
                       onPressed: _gonderiliyor ? null : _gonder,
                       child: _gonderiliyor
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 18,
                               height: 18,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: DiziRenkler.metin,
                               ),
                             )
                           : Text('Gönder'.c),
@@ -326,7 +326,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: Text(
               'İlk yorumu sen yaz!'.c,
-              style: const TextStyle(color: Colors.white38),
+              style: TextStyle(color: DiziRenkler.metin38),
             ),
           )
         else ...[
@@ -444,11 +444,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                   backgroundColor: DiziRenkler.koyuGri,
                   backgroundImage: avatar != null ? NetworkImage(avatar) : null,
                   child: avatar == null
-                      ? const Icon(
-                          Icons.person,
-                          size: 14,
-                          color: Colors.white38,
-                        )
+                      ? Icon(Icons.person, size: 14, color: DiziRenkler.metin38)
                       : null,
                 ),
                 const SizedBox(width: 8),
@@ -466,19 +462,19 @@ class _YorumKartiState extends State<_YorumKarti> {
                 const SizedBox(width: 8),
                 Text(
                   tarih,
-                  style: const TextStyle(fontSize: 11, color: Colors.white38),
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                 ),
                 const Spacer(),
                 if (benim)
                   InkWell(
                     borderRadius: BorderRadius.circular(16),
                     onTap: widget.sil,
-                    child: const Padding(
-                      padding: EdgeInsets.all(10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
                       child: Icon(
                         Icons.delete_outline,
                         size: 18,
-                        color: Colors.white38,
+                        color: DiziRenkler.metin38,
                       ),
                     ),
                   ),
@@ -524,15 +520,15 @@ class _YorumKartiState extends State<_YorumKarti> {
             // Görüntülenme + beğeni
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.remove_red_eye,
                   size: 16,
-                  color: Colors.white38,
+                  color: DiziRenkler.metin38,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '$goruntulenme',
-                  style: const TextStyle(fontSize: 12, color: Colors.white38),
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                 ),
                 const SizedBox(width: 16),
                 InkWell(
@@ -548,7 +544,9 @@ class _YorumKartiState extends State<_YorumKarti> {
                         Icon(
                           _begendim ? Icons.favorite : Icons.favorite_border,
                           size: 16,
-                          color: _begendim ? DiziRenkler.sari : Colors.white38,
+                          color: _begendim
+                              ? DiziRenkler.sari
+                              : DiziRenkler.metin38,
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -557,7 +555,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                             fontSize: 12,
                             color: _begendim
                                 ? DiziRenkler.sari
-                                : Colors.white38,
+                                : DiziRenkler.metin38,
                           ),
                         ),
                       ],
@@ -575,17 +573,13 @@ class _YorumKartiState extends State<_YorumKarti> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.reply,
-                          size: 16,
-                          color: Colors.white38,
-                        ),
+                        Icon(Icons.reply, size: 16, color: DiziRenkler.metin38),
                         const SizedBox(width: 4),
                         Text(
                           'Yanıtla'.c,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Colors.white38,
+                            color: DiziRenkler.metin38,
                           ),
                         ),
                       ],
@@ -677,10 +671,10 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                         ? const CircularProgressIndicator(
                             color: DiziRenkler.sari,
                           )
-                        : const Icon(
+                        : Icon(
                             Icons.play_circle_outline,
                             size: 44,
-                            color: Colors.white70,
+                            color: DiziRenkler.metin70,
                           ),
                   ),
                 ),
@@ -791,7 +785,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                 backgroundColor: DiziRenkler.koyuGri,
                 backgroundImage: avatar != null ? NetworkImage(avatar) : null,
                 child: avatar == null
-                    ? const Icon(Icons.person, size: 11, color: Colors.white38)
+                    ? Icon(Icons.person, size: 11, color: DiziRenkler.metin38)
                     : null,
               ),
               const SizedBox(width: 6),
@@ -809,7 +803,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               const SizedBox(width: 8),
               Text(
                 tarih,
-                style: const TextStyle(fontSize: 10, color: Colors.white38),
+                style: TextStyle(fontSize: 10, color: DiziRenkler.metin38),
               ),
               const Spacer(),
               // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
@@ -826,15 +820,17 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                       Icon(
                         _begendim ? Icons.favorite : Icons.favorite_border,
                         size: 15,
-                        color: _begendim ? DiziRenkler.sari : Colors.white38,
+                        color: _begendim
+                            ? DiziRenkler.sari
+                            : DiziRenkler.metin38,
                       ),
                       if (_begeni > 0) ...[
                         const SizedBox(width: 3),
                         Text(
                           '$_begeni',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 11,
-                            color: Colors.white38,
+                            color: DiziRenkler.metin38,
                           ),
                         ),
                       ],
@@ -845,21 +841,31 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               InkWell(
                 onTap: widget.yanitla,
                 borderRadius: BorderRadius.circular(16),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                  child: Icon(Icons.reply, size: 15, color: Colors.white38),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 10,
+                  ),
+                  child: Icon(
+                    Icons.reply,
+                    size: 15,
+                    color: DiziRenkler.metin38,
+                  ),
                 ),
               ),
               if (widget.benim)
                 InkWell(
                   onTap: widget.sil,
                   borderRadius: BorderRadius.circular(16),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
                     child: Icon(
                       Icons.delete_outline,
                       size: 15,
-                      color: Colors.white38,
+                      color: DiziRenkler.metin38,
                     ),
                   ),
                 ),

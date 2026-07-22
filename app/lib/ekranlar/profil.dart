@@ -178,9 +178,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         ),
         subtitle: Text(
           'Yıllık izleme istatistiklerin'.c,
-          style: const TextStyle(color: Colors.white38, fontSize: 12),
+          style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.white38),
+        trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
         onTap: () => context.push('/ozet/${DateTime.now().year}'),
       ),
     ),
@@ -241,11 +241,17 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     for (final l in _listeler)
       Card(
         child: ListTile(
+          // Dokununca liste içeriği modalda açılır (başkasının profilindekiyle aynı)
+          onTap: () => ListeSheet.ac(
+            context,
+            listeId: (l['id'] as num).toInt(),
+            ad: l['ad'] as String,
+          ),
           leading: const Icon(Icons.list, color: DiziRenkler.sari),
           title: Text(l['ad'] as String),
           subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
           trailing: IconButton(
-            icon: const Icon(Icons.delete_outline, color: Colors.white38),
+            icon: Icon(Icons.delete_outline, color: DiziRenkler.metin38),
             onPressed: () async {
               // Silmeden önce onay iste; hatayı kullanıcıya göster
               final onay = await showDialog<bool>(
@@ -344,7 +350,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                 'İzleme geçmişin ve listelerin korunur; artık her cihazdan girebilirsin.'
                     .c,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white54, fontSize: 13),
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 13),
               ),
               const SizedBox(height: 16),
               TextField(
@@ -513,10 +519,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                               )
                             : null,
                         child: _profil?['avatar'] == null
-                            ? const Icon(
+                            ? Icon(
                                 Icons.person,
                                 size: 38,
-                                color: Colors.white38,
+                                color: DiziRenkler.metin38,
                               )
                             : null,
                       ),
@@ -538,8 +544,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 padding: const EdgeInsets.only(top: 3),
                                 child: Text(
                                   _profil!['bio'] as String,
-                                  style: const TextStyle(
-                                    color: Colors.white70,
+                                  style: TextStyle(
+                                    color: DiziRenkler.metin70,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -558,8 +564,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                     const SizedBox(width: 3),
                                     Text(
                                       _profil!['ulke'] as String,
-                                      style: const TextStyle(
-                                        color: Colors.white54,
+                                      style: TextStyle(
+                                        color: DiziRenkler.metin54,
                                         fontSize: 12,
                                       ),
                                     ),
@@ -679,8 +685,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         const SizedBox(width: 12),
                         Text(
                           'Toplam ekran süresi'.c,
-                          style: const TextStyle(
-                            color: Colors.white54,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
                             fontSize: 13,
                           ),
                         ),
@@ -724,10 +730,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                             ),
                           ),
                           const SizedBox(width: 4),
-                          const Icon(
+                          Icon(
                             Icons.chevron_right,
                             size: 18,
-                            color: Colors.white38,
+                            color: DiziRenkler.metin38,
                           ),
                         ],
                       ),
@@ -805,18 +811,18 @@ class _TakipSayac extends StatelessWidget {
         child: RichText(
           // RichText tema rengini devralmaz; renk açıkça verilmeli
           text: TextSpan(
-            style: const TextStyle(fontSize: 13, color: Colors.white),
+            style: TextStyle(fontSize: 13, color: DiziRenkler.metin),
             children: [
               TextSpan(
                 text: deger,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: DiziRenkler.metin,
                 ),
               ),
               TextSpan(
                 text: ' $etiket',
-                style: const TextStyle(color: Colors.white54),
+                style: TextStyle(color: DiziRenkler.metin54),
               ),
             ],
           ),
@@ -862,7 +868,7 @@ class _StatKarti extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               etiket,
-              style: const TextStyle(fontSize: 11, color: Colors.white54),
+              style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
             ),
           ],
         ),
@@ -1043,7 +1049,7 @@ class _RozetCipi extends StatelessWidget {
           Icon(
             ikon,
             size: 15,
-            color: kazanildi ? Colors.black : Colors.white38,
+            color: kazanildi ? Colors.black : DiziRenkler.metin38,
           ),
           const SizedBox(width: 5),
           Text(
@@ -1051,14 +1057,14 @@ class _RozetCipi extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: kazanildi ? Colors.black : Colors.white38,
+              color: kazanildi ? Colors.black : DiziRenkler.metin38,
             ),
           ),
           if (!kazanildi) ...[
             const SizedBox(width: 4),
             Text(
               '${rozet['deger']}/${rozet['esik']}',
-              style: const TextStyle(fontSize: 10, color: Colors.white24),
+              style: TextStyle(fontSize: 10, color: DiziRenkler.metin24),
             ),
           ],
         ],
