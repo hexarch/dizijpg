@@ -211,4 +211,7 @@ const Map<String, String> cevirilerHi = {
   '100 Beğeni': '100 लाइक',
   'yazıyor...': 'लिख रहे हैं...',
   'Profil düzeni': 'प्रोफ़ाइल लेआउट',
+  'Konumla ve kırp': 'स्थिति सेट करें और क्रॉप करें',
+  'Listeye eklendi': 'सूची में जोड़ा गया',
+  'Listeyi sil?': 'सूची हटाएँ?',
 };

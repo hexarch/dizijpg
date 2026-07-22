@@ -211,4 +211,7 @@ const Map<String, String> cevirilerCs = {
   '100 Beğeni': '100 lajků',
   'yazıyor...': 'píše...',
   'Profil düzeni': 'Rozložení profilu',
+  'Konumla ve kırp': 'Umísti a ořízni',
+  'Listeye eklendi': 'Přidáno do seznamu',
+  'Listeyi sil?': 'Smazat seznam?',
 };

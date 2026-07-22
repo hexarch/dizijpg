@@ -211,4 +211,7 @@ const Map<String, String> cevirilerTa = {
   '100 Beğeni': '100 விருப்பங்கள்',
   'yazıyor...': 'தட்டச்சு செய்கிறார்...',
   'Profil düzeni': 'சுயவிவர அமைப்பு',
+  'Konumla ve kırp': 'நிலைப்படுத்தி வெட்டு',
+  'Listeye eklendi': 'பட்டியலில் சேர்க்கப்பட்டது',
+  'Listeyi sil?': 'பட்டியலை நீக்கவா?',
 };

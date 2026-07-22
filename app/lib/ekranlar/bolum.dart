@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -166,27 +167,34 @@ class _BolumEkraniState extends State<BolumEkrani> {
                   );
                   return SizedBox(
                     width: 76,
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 34,
-                          backgroundColor: DiziRenkler.kart,
-                          backgroundImage: foto == null
-                              ? null
-                              : CachedNetworkImageProvider(foto),
-                          child: foto == null
-                              ? const Icon(Icons.person, color: Colors.white24)
-                              : null,
-                        ),
-                        const SizedBox(height: 6),
-                        Text(
-                          o['name'] as String? ?? '',
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 11),
-                        ),
-                      ],
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () => context.push('/kisi/${o['id']}'),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 34,
+                            backgroundColor: DiziRenkler.kart,
+                            backgroundImage: foto == null
+                                ? null
+                                : CachedNetworkImageProvider(foto),
+                            child: foto == null
+                                ? const Icon(
+                                    Icons.person,
+                                    color: Colors.white24,
+                                  )
+                                : null,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            o['name'] as String? ?? '',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 11),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

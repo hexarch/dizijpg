@@ -210,4 +210,7 @@ const Map<String, String> cevirilerHe = {
   '100 Beğeni': '100 לייקים',
   'yazıyor...': 'מקליד...',
   'Profil düzeni': 'פריסת פרופיל',
+  'Konumla ve kırp': 'מקם וחתוך',
+  'Listeye eklendi': 'נוסף לרשימה',
+  'Listeyi sil?': 'למחוק את הרשימה?',
 };

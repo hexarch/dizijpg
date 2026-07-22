@@ -209,4 +209,7 @@ const Map<String, String> cevirilerJa = {
   '100 Beğeni': 'いいね100',
   'yazıyor...': '入力中…',
   'Profil düzeni': 'プロフィールの並び順',
+  'Konumla ve kırp': '位置を調整して切り抜く',
+  'Listeye eklendi': 'リストに追加しました',
+  'Listeyi sil?': 'リストを削除しますか？',
 };

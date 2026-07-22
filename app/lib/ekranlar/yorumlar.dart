@@ -192,11 +192,15 @@ class _YorumBolumuState extends State<YorumBolumu> {
                           ),
                         ),
                         InkWell(
+                          borderRadius: BorderRadius.circular(16),
                           onTap: () => setState(() => _yanitlanan = null),
-                          child: const Icon(
-                            Icons.close,
-                            size: 16,
-                            color: Colors.white38,
+                          child: const Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white38,
+                            ),
                           ),
                         ),
                       ],
@@ -467,11 +471,15 @@ class _YorumKartiState extends State<_YorumKarti> {
                 const Spacer(),
                 if (benim)
                   InkWell(
+                    borderRadius: BorderRadius.circular(16),
                     onTap: widget.sil,
-                    child: const Icon(
-                      Icons.delete_outline,
-                      size: 18,
-                      color: Colors.white38,
+                    child: const Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.delete_outline,
+                        size: 18,
+                        color: Colors.white38,
+                      ),
                     ),
                   ),
               ],

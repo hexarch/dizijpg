@@ -209,4 +209,7 @@ const Map<String, String> cevirilerKo = {
   '100 Beğeni': '좋아요 100개',
   'yazıyor...': '입력 중...',
   'Profil düzeni': '프로필 배치',
+  'Konumla ve kırp': '위치 조정 후 자르기',
+  'Listeye eklendi': '리스트에 추가됨',
+  'Listeyi sil?': '리스트를 삭제할까요?',
 };

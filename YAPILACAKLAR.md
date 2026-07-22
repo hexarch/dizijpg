@@ -99,6 +99,17 @@ getter'lara çevrilecek, sabit renkler tema-farkındalıklı adlara taşınacak
 (ajan süpürmesi + analyzer döngüsü). Açık palet: zemin #F7F7F9, kart #FFFFFF,
 koyuGri #ECECEF, metinler ters çevrilir, sarı vurgu aynı kalır.
 
+
+## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
+dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:
+misafir bandı sarı-üstü-beyaz→siyah · liste ekle/sil/oluştur try-catch+SnackBar+onay
+diyaloğu · bölüm sayfası konuk oyuncuları tıklanabilir (→/kisi) · /favori/toggle,
+/listeler/:id/oge, /izleme/toggle, /listeler doğrulamaları · /takvim 8'li öbek ·
+arama 🎭 emoji→ikon · 3 küçük dokunma hedefi büyütüldü. 20 GET ucu canlıda 200.
+Temiz çıkanlar: hit-test, RichText, mounted korumaları, dispose'lar, iyimser
+rollback'ler, veri sızıntısı, statik-405. Kalan (kozmetik): 12 ekranda düz spinner →
+iskelete çevrilebilir (listesi denetim raporunda).
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 
 - **DKIM** ✅ sunucu tarafı kuruldu (opendkim + Postfix milter, seçici: dizi).

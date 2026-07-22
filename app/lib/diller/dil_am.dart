@@ -209,4 +209,7 @@ const Map<String, String> cevirilerAm = {
   '100 Beğeni': '100 መውደዶች',
   'yazıyor...': 'እየጻፈ ነው...',
   'Profil düzeni': 'የመገለጫ አቀማመጥ',
+  'Konumla ve kırp': 'አስቀምጥ እና ቁረጥ',
+  'Listeye eklendi': 'ወደ ዝርዝሩ ታክሏል',
+  'Listeyi sil?': 'ዝርዝሩን ልሰርዝ?',
 };

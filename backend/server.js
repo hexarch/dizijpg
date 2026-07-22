@@ -358,8 +358,10 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
 // ---------- izleme ----------
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
-  if (!tmdb_id || !['tv', 'movie'].includes(tur)) {
-    return res.status(400).json({ hata: 'tmdb_id ve tur gerekli' });
+  if (!Number.isInteger(tmdb_id) || !['tv', 'movie'].includes(tur) ||
+      !Number.isInteger(sezon) || !Number.isInteger(bolum) ||
+      sezon < 0 || bolum < 0) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id/tur/sezon/bolum' });
   }
   const silindi = await havuz.query(
     `DELETE FROM izlemeler
@@ -481,6 +483,9 @@ app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
 
 app.post('/favori/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur } = req.body || {};
+  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
   const silindi = await havuz.query(
     'DELETE FROM favoriler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3',
     [req.kullanici.id, tur, tmdb_id],
@@ -618,7 +623,12 @@ app.get('/listelerim', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/listeler', girisZorunlu, sarici(async (req, res) => {
   const { ad, aciklama = '', herkese_acik = true } = req.body || {};
-  if (!ad) return res.status(400).json({ hata: 'Liste adı gerekli' });
+  if (!ad || String(ad).trim().length === 0) {
+    return res.status(400).json({ hata: 'Liste adı gerekli' });
+  }
+  if (String(ad).length > 60 || String(aciklama).length > 300) {
+    return res.status(400).json({ hata: 'Ad en fazla 60, açıklama 300 karakter olabilir' });
+  }
   const { rows } = await havuz.query(
     `INSERT INTO listeler (kullanici_id, ad, aciklama, herkese_acik)
      VALUES ($1,$2,$3,$4) RETURNING *`,
@@ -635,6 +645,9 @@ app.delete('/listeler/:id', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/listeler/:id/oge', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, ekle = true } = req.body || {};
+  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
   const sahip = await havuz.query(
     'SELECT 1 FROM listeler WHERE id=$1 AND kullanici_id=$2',
     [req.params.id, req.kullanici.id],
@@ -760,7 +773,8 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   const bugun = new Date().toISOString().slice(0, 10);
   const DIZI_BASI_SINIR = 15; // tek dizi takvimi boğmasın
   const sonuclar = [];
-  await Promise.all(rows.map(async ({ tmdb_id }) => {
+  // 8'li paralel öbekler: 40 dizi × 4 sezon çağrısı aynı anda patlamasın
+  const diziIsle = async ({ tmdb_id }) => {
     try {
       const dizi = await tmdbGetir(`/tv/${tmdb_id}?language=tr-TR`, ONBELLEK_TTL_SN.varsayilan);
       // İzlenen en ileri bölüm
@@ -803,7 +817,10 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
         }
       }
     } catch { /* tek dizi hatası takvimi bozmasın */ }
-  }));
+  };
+  for (let i = 0; i < rows.length; i += 8) {
+    await Promise.all(rows.slice(i, i + 8).map(diziIsle));
+  }
   sonuclar.sort((a, b) => a.tarih.localeCompare(b.tarih));
   res.json({ yaklasan: sonuclar });
 }));

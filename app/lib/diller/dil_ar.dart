@@ -211,4 +211,7 @@ const Map<String, String> cevirilerAr = {
   '100 Beğeni': '100 إعجاب',
   'yazıyor...': 'يكتب...',
   'Profil düzeni': 'تخطيط الملف الشخصي',
+  'Konumla ve kırp': 'حدّد الموضع وقصّ',
+  'Listeye eklendi': 'أضيف إلى القائمة',
+  'Listeyi sil?': 'حذف القائمة؟',
 };

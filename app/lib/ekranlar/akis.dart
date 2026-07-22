@@ -414,25 +414,32 @@ class _AkisKartiState extends State<_AkisKarti> {
             Row(
               children: [
                 InkWell(
+                  borderRadius: BorderRadius.circular(16),
                   onTap: _begen,
-                  child: Row(
-                    children: [
-                      Icon(
-                        _begendim ? Icons.favorite : Icons.favorite_border,
-                        size: 18,
-                        color: _begendim ? DiziRenkler.sari : Colors.white54,
-                      ),
-                      if (_begeni > 0) ...[
-                        const SizedBox(width: 4),
-                        Text(
-                          '$_begeni',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.white70,
-                          ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _begendim ? Icons.favorite : Icons.favorite_border,
+                          size: 18,
+                          color: _begendim ? DiziRenkler.sari : Colors.white54,
                         ),
+                        if (_begeni > 0) ...[
+                          const SizedBox(width: 4),
+                          Text(
+                            '$_begeni',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(width: 16),

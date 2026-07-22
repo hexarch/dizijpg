@@ -210,4 +210,7 @@ const Map<String, String> cevirilerDa = {
   '100 Beğeni': '100 likes',
   'yazıyor...': 'skriver...',
   'Profil düzeni': 'Profillayout',
+  'Konumla ve kırp': 'Placer og beskær',
+  'Listeye eklendi': 'Tilføjet til listen',
+  'Listeyi sil?': 'Slet listen?',
 };

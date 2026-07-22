@@ -161,11 +161,22 @@ class _DetayEkraniState extends State<DetayEkrani> {
                   title: Text(l['ad'] as String),
                   subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
                   onTap: () async {
-                    await Api.post('/listeler/${l['id']}/oge', {
-                      'tmdb_id': widget.tmdbId,
-                      'tur': widget.tur,
-                    });
-                    if (context.mounted) Navigator.pop(context);
+                    try {
+                      await Api.post('/listeler/${l['id']}/oge', {
+                        'tmdb_id': widget.tmdbId,
+                        'tur': widget.tur,
+                      });
+                      if (!context.mounted) return;
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Listeye eklendi'.c)),
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                    }
                   },
                 ),
               const SizedBox(height: 8),

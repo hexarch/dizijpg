@@ -231,8 +231,35 @@ class _ProfilEkraniState extends State<ProfilEkrani>
           trailing: IconButton(
             icon: const Icon(Icons.delete_outline, color: Colors.white38),
             onPressed: () async {
-              await Api.delete('/listeler/${l['id']}');
-              _yukle();
+              // Silmeden önce onay iste; hatayı kullanıcıya göster
+              final onay = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  backgroundColor: DiziRenkler.koyuGri,
+                  title: Text('Listeyi sil?'.c),
+                  content: Text(l['ad'] as String),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: Text('İptal'.c),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: Text('Tamam'.c),
+                    ),
+                  ],
+                ),
+              );
+              if (onay != true) return;
+              try {
+                await Api.delete('/listeler/${l['id']}');
+                _yukle();
+              } catch (e) {
+                if (!mounted) return;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(e.toString())));
+              }
             },
           ),
         ),
@@ -391,8 +418,16 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         ),
       );
       if (olustur == true && ad.text.trim().isNotEmpty) {
-        await Api.post('/listeler', {'ad': ad.text.trim()});
-        _yukle();
+        try {
+          await Api.post('/listeler', {'ad': ad.text.trim()});
+          _yukle();
+        } catch (e) {
+          if (mounted) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(e.toString())));
+          }
+        }
       }
     } finally {
       ad.dispose();
@@ -549,21 +584,21 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           padding: const EdgeInsets.all(14),
                           child: Row(
                             children: [
-                              const Icon(Icons.link, color: Colors.white),
+                              const Icon(Icons.link, color: Colors.black),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   'Misafir hesabındasın — e-postanla bağla, verilerini kaybetme!'
                                       .c,
                                   style: const TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                               ),
                               const Icon(
                                 Icons.chevron_right,
-                                color: Colors.white,
+                                color: Colors.black,
                               ),
                             ],
                           ),

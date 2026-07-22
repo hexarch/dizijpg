@@ -212,4 +212,7 @@ const Map<String, String> cevirilerIt = {
   '100 Beğeni': '100 mi piace',
   'yazıyor...': 'sta scrivendo...',
   'Profil düzeni': 'Layout del profilo',
+  'Konumla ve kırp': 'Posiziona e ritaglia',
+  'Listeye eklendi': 'Aggiunto alla lista',
+  'Listeyi sil?': 'Eliminare la lista?',
 };

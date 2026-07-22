@@ -211,4 +211,7 @@ const Map<String, String> cevirilerVi = {
   '100 Beğeni': '100 lượt thích',
   'yazıyor...': 'đang nhập...',
   'Profil düzeni': 'Bố cục trang cá nhân',
+  'Konumla ve kırp': 'Căn chỉnh và cắt',
+  'Listeye eklendi': 'Đã thêm vào danh sách',
+  'Listeyi sil?': 'Xóa danh sách?',
 };

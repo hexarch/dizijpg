@@ -211,4 +211,7 @@ const Map<String, String> cevirilerSw = {
   '100 Beğeni': 'Vipendwa 100',
   'yazıyor...': 'anaandika...',
   'Profil düzeni': 'Mpangilio wa wasifu',
+  'Konumla ve kırp': 'Weka mahali na ukate',
+  'Listeye eklendi': 'Imeongezwa kwenye orodha',
+  'Listeyi sil?': 'Ufute orodha?',
 };

@@ -217,12 +217,28 @@ class _KisiKarti extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(
-            '🎭 ${kisi['name']}',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.theater_comedy_outlined,
+                size: 13,
+                color: DiziRenkler.sari,
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  kisi['name'] as String? ?? '',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),

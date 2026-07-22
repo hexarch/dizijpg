@@ -211,4 +211,7 @@ const Map<String, String> cevirilerAz = {
   '100 Beğeni': '100 Bəyənmə',
   'yazıyor...': 'yazır...',
   'Profil düzeni': 'Profil düzəni',
+  'Konumla ve kırp': 'Yerləşdir və kəs',
+  'Listeye eklendi': 'Siyahıya əlavə edildi',
+  'Listeyi sil?': 'Siyahı silinsin?',
 };

@@ -211,4 +211,7 @@ const Map<String, String> cevirilerHu = {
   '100 Beğeni': '100 kedvelés',
   'yazıyor...': 'gépel...',
   'Profil düzeni': 'Profil elrendezése',
+  'Konumla ve kırp': 'Igazítás és kivágás',
+  'Listeye eklendi': 'Hozzáadva a listához',
+  'Listeyi sil?': 'Törlöd a listát?',
 };

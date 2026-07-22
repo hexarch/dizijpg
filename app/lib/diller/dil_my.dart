@@ -213,4 +213,7 @@ const Map<String, String> cevirilerMy = {
   '100 Beğeni': 'လိုက် 100',
   'yazıyor...': 'စာရိုက်နေသည်...',
   'Profil düzeni': 'ပရိုဖိုင် အပြင်အဆင်',
+  'Konumla ve kırp': 'နေရာချပြီး ဖြတ်ပါ',
+  'Listeye eklendi': 'စာရင်းထဲ ထည့်ပြီး',
+  'Listeyi sil?': 'စာရင်းကို ဖျက်မလား။',
 };
