@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'kullanici_profil.dart' show ProfilYorumKarti;
 import 'ortak.dart';
 
 /// Dakikayı insancıl süreye çevirir: "1 yıl 2 ay 3 gün" (en anlamlı 3 birim).
@@ -408,6 +409,16 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     }
   }
 
+  /// Yorum sayacına dokununca: kendi yorumların, dokununca tam hedefe gider.
+  void _yorumlarAc(String kullaniciAdi) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => _YorumlarSheet(kullaniciAdi: kullaniciAdi),
+    );
+  }
+
   void _takipListe(String kullaniciAdi, bool takipciler) {
     context.push(
       '/kullanici/$kullaniciAdi/${takipciler ? 'takipciler' : 'takip'}',
@@ -638,25 +649,31 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         spacing: bosluk,
                         runSpacing: bosluk,
                         children: [
+                          // Sayaçlar tıklanır: ilgili liste/modal açılır
                           _StatKarti(
                             genislik: genislik,
                             deger: '${st['izlenen_bolum']}',
                             etiket: 'Bölüm'.c,
+                            onTap: () => context.push('/izlediklerim?tur=tv'),
                           ),
                           _StatKarti(
                             genislik: genislik,
                             deger: '${st['izlenen_film']}',
                             etiket: 'Film'.c,
+                            onTap: () =>
+                                context.push('/izlediklerim?tur=movie'),
                           ),
                           _StatKarti(
                             genislik: genislik,
                             deger: '${st['takip_edilen_dizi']}',
                             etiket: 'Dizi'.c,
+                            onTap: () => context.push('/izlediklerim?tur=tv'),
                           ),
                           _StatKarti(
                             genislik: genislik,
                             deger: '${st['yorum_sayisi'] ?? 0}',
                             etiket: 'Yorum'.c,
+                            onTap: () => _yorumlarAc(kullaniciAdi),
                           ),
                         ],
                       );
@@ -836,41 +853,47 @@ class _StatKarti extends StatelessWidget {
   final String deger;
   final String etiket;
   final double genislik;
+  final VoidCallback? onTap;
   const _StatKarti({
     required this.deger,
     required this.etiket,
     required this.genislik,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: genislik,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 2),
-        decoration: BoxDecoration(
-          color: DiziRenkler.kart,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: const Color(0xFF2A2A2F)),
-        ),
-        child: Column(
-          children: [
-            Text(
-              deger,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 19,
-                fontWeight: FontWeight.w900,
-                color: DiziRenkler.sari,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 2),
+          decoration: BoxDecoration(
+            color: DiziRenkler.kart,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: const Color(0xFF2A2A2F)),
+          ),
+          child: Column(
+            children: [
+              Text(
+                deger,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w900,
+                  color: DiziRenkler.sari,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              etiket,
-              style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                etiket,
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1067,6 +1090,102 @@ class _RozetCipi extends StatelessWidget {
               style: TextStyle(fontSize: 10, color: DiziRenkler.metin24),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Kendi yorumların modalı: içerik adı + bölüm bilgisiyle listeler;
+/// karta dokununca ilgili sayfaya (bölüm/dizi/film) tam hedefle gider.
+class _YorumlarSheet extends StatefulWidget {
+  final String kullaniciAdi;
+  const _YorumlarSheet({required this.kullaniciAdi});
+
+  @override
+  State<_YorumlarSheet> createState() => _YorumlarSheetState();
+}
+
+class _YorumlarSheetState extends State<_YorumlarSheet> {
+  Map<String, dynamic>? _veri;
+  String? _hata;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final d = await Api.acikProfil(widget.kullaniciAdi);
+      if (mounted) setState(() => _veri = d);
+    } catch (e) {
+      if (mounted) setState(() => _hata = e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final yorumlar = (_veri?['yorumlar'] as List<dynamic>? ?? []);
+    final icerikler = _veri?['icerikler'] as Map<String, dynamic>? ?? {};
+
+    Widget govde;
+    if (_hata != null) {
+      govde = Center(
+        child: Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
+      );
+    } else if (_veri == null) {
+      govde = const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    } else if (yorumlar.isEmpty) {
+      govde = Center(
+        child: Text(
+          'Henüz yorum yok.'.c,
+          style: TextStyle(color: DiziRenkler.metin38),
+        ),
+      );
+    } else {
+      govde = ListView(
+        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+        children: [
+          for (final y in yorumlar)
+            ProfilYorumKarti(
+              yorum: y as Map<String, dynamic>,
+              icerikler: icerikler,
+            ),
+        ],
+      );
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(Icons.chat_bubble_outline, color: DiziRenkler.sari),
+                const SizedBox(width: 8),
+                Text(
+                  'Yorumlar'.c,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const Spacer(),
+                if (yorumlar.isNotEmpty)
+                  Text(
+                    '${yorumlar.length}',
+                    style: TextStyle(color: DiziRenkler.metin54),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(child: govde),
         ],
       ),
     );

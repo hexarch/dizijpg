@@ -113,6 +113,12 @@ Kullanıcı bildirimi + kendi tespitlerimle düzeltilenler (hepsi canlıda test 
    insert). Canlıda test: Arcane 18/18 bölüm ✓, sıfırlama sonrası sayaç düştü ✓
 5. ✅ F5 kalıcılığı kökten çözüldü: GoRouter initialLocation artık doğrudan
    Uri.base'den (motorun rotayı '/' yakalama yarışı devre dışı)
+6. ✅ Profildeki Bölüm/Film/Dizi/Yorum SAYAÇLARI tıklanır oldu (kullanıcının
+   "tıklayamıyorum" dediği asıl yer buydu — kartlarda onTap yoktu):
+   Bölüm+Dizi → /izlediklerim?tur=tv, Film → ?tur=movie (başlık türe göre),
+   Yorum → kendi yorumların modalı (ProfilYorumKarti ortaklaştırıldı;
+   karta dokununca bölüm/dizi/film tam hedefine gider)
+7. ✅ v1.2.0+3: web + APK (masaüstüne kopyalandı)
 
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀

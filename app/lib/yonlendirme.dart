@@ -156,7 +156,7 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
       ),
       GoRoute(
         path: '/izlediklerim',
-        builder: (_, __) => const IzlenenlerEkrani(),
+        builder: (_, s) => IzlenenlerEkrani(tur: s.uri.queryParameters['tur']),
       ),
     ],
   );

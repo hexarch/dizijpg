@@ -7,8 +7,10 @@ import 'ortak.dart';
 
 /// Otomatik "İzlediklerim": izlenen tüm film ve dizilerin ızgarası.
 /// Kendi verisini çeker (reload'da doğrudan açılabilir).
+/// [tur] verilirse yalnız o tür listelenir ('tv' | 'movie').
 class IzlenenlerEkrani extends StatefulWidget {
-  const IzlenenlerEkrani({super.key});
+  final String? tur;
+  const IzlenenlerEkrani({super.key, this.tur});
 
   @override
   State<IzlenenlerEkrani> createState() => _IzlenenlerEkraniState();
@@ -36,14 +38,21 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
 
   @override
   Widget build(BuildContext context) {
+    // İsteğe bağlı tür filtresi (profildeki Bölüm/Film/Dizi sayaçlarından)
+    final ogeler = widget.tur == null
+        ? _ogeler
+        : _ogeler
+              ?.where((o) => (o as Map<String, dynamic>)['tur'] == widget.tur)
+              .toList();
+
     Widget govde;
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
-    } else if (_ogeler == null) {
+    } else if (ogeler == null) {
       govde = const Center(
         child: CircularProgressIndicator(color: DiziRenkler.sari),
       );
-    } else if (_ogeler!.isEmpty) {
+    } else if (ogeler.isEmpty) {
       govde = Center(
         child: Text(
           'Henüz izleme kaydın yok'.c,
@@ -59,22 +68,31 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
           crossAxisSpacing: 10,
           childAspectRatio: 0.5,
         ),
-        itemCount: _ogeler!.length,
+        itemCount: ogeler.length,
         itemBuilder: (context, i) {
-          final o = _ogeler![i] as Map<String, dynamic>;
+          final o = ogeler[i] as Map<String, dynamic>;
           return MiniIcerik(
             tmdbId: o['tmdb_id'] as int,
             tur: o['tur'] as String,
             genislik: double.infinity,
+            izlenenSayi: (o['sayi'] as num?)?.toInt(),
           );
         },
       );
     }
 
+    final baslik = widget.tur == 'movie'
+        ? 'İzlediğim Filmler ({})'
+        : widget.tur == 'tv'
+        ? 'İzlediğim Diziler ({})'
+        : null;
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'İzlediklerim'.c + (_ogeler != null ? ' (${_ogeler!.length})' : ''),
+          baslik != null
+              ? baslik.cf([ogeler?.length ?? 0])
+              : 'İzlediklerim'.c +
+                    (ogeler != null ? ' (${ogeler.length})' : ''),
         ),
       ),
       body: govde,

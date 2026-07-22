@@ -362,7 +362,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ),
                     for (final y in yorumlar)
-                      _ProfilYorumKarti(
+                      ProfilYorumKarti(
                         yorum: y as Map<String, dynamic>,
                         icerikler:
                             p['icerikler'] as Map<String, dynamic>? ?? {},
@@ -421,10 +421,10 @@ class _Sayac extends StatelessWidget {
 }
 
 /// Profildeki yorum: metin + görüntülenme/beğeni sayıları, içeriğe götürür.
-class _ProfilYorumKarti extends StatelessWidget {
+class ProfilYorumKarti extends StatelessWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
-  const _ProfilYorumKarti({required this.yorum, this.icerikler = const {}});
+  const ProfilYorumKarti({required this.yorum, this.icerikler = const {}});
 
   @override
   Widget build(BuildContext context) {
