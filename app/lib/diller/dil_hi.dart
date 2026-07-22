@@ -210,4 +210,5 @@ const Map<String, String> cevirilerHi = {
   '10 Beğeni': '10 लाइक',
   '100 Beğeni': '100 लाइक',
   'yazıyor...': 'लिख रहे हैं...',
+  'Profil düzeni': 'प्रोफ़ाइल लेआउट',
 };

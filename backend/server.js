@@ -34,8 +34,16 @@ const MEDYA_DIZIN = process.env.MEDYA_DIZIN || './medya';
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
 const statikSecenek = { maxAge: '365d', immutable: true, fallthrough: false };
-app.use('/avatarlar', express.static(AVATAR_DIZIN, statikSecenek));
-app.use('/medya', express.static(MEDYA_DIZIN, statikSecenek));
+// DİKKAT: statik sunucu yalnızca GET/HEAD'e bakmalı; aksi halde POST /medya
+// (yükleme ucu) 405 ile burada ölür ve route'a hiç ulaşmaz.
+const avatarStatik = express.static(AVATAR_DIZIN, statikSecenek);
+const medyaStatik = express.static(MEDYA_DIZIN, statikSecenek);
+const yalnizGet = (statik) => (req, res, next) =>
+  (req.method === 'GET' || req.method === 'HEAD')
+    ? statik(req, res, next)
+    : next();
+app.use('/avatarlar', yalnizGet(avatarStatik));
+app.use('/medya', yalnizGet(medyaStatik));
 
 // CORS: web sürümü (dizijpg.com) tarayıcıdan istek atabilsin.
 app.use((req, res, next) => {

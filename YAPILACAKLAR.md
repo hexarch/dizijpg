@@ -74,6 +74,31 @@ bildirim gruplama ("3 kişi yorumunu beğendi").
 Tarih ayraçları (Bugün/Dün), gönderim durumu (saat → tik), yazıyor... göstergesi
 (poll tabanlı, opsiyonel).
 
+
+## SPRINT 3 — Hata avı sonuçları (2026-07-22 gece) 🚀
+Kullanıcı bildirimi + kendi tespitlerimle düzeltilenler (hepsi canlıda test edildi):
+1. ✅ **/medya yükleme 405 hatası** — statik sunucu tüm metodları yutuyordu (fallthrough:false);
+   artık yalnız GET/HEAD statiğe gider. Sohbet + yorum medya yüklemeleri düzeldi
+   (curl ile uçtan uca doğrulandı: yükle→gönder→görüntüle).
+2. ✅ **ZIP içe aktarım** — TV Time'ın YENİ tek-CSV formatı desteklendi (isimle eşleme,
+   8'li paralel arama, nginx timeout 60s→300s). Gerçek dosyayla test: 11 sn'de
+   5.552 bölüm + 417 film, 113 eşleşmeyen satır (~%2).
+3. ✅ **Ayarlar'da avatar/kapak tıklanamıyor** — avatar Stack sınırı DIŞINDA
+   Positioned'dı (görünür ama hit-test almaz); yapı sınır içine alındı. GIF desteği
+   sunucuda zaten vardı (avatar+kapak GIF yükleme curl ile doğrulandı).
+4. ✅ **Takip/Takipçi görünmüyor** — RichText tema rengini devralmıyordu (siyah
+   basıyordu); renkler açıkça verildi.
+5. ✅ **Profil düzeni** — bölüm sırası (İzlediklerim/Özet/Listeler/Rozetler)
+   Ayarlar > Profil düzeni'nden sürükle-bırakla değiştirilebilir; varsayılan
+   sırada ROZETLER EN ALTTA.
+
+## SPRINT 4 — Açık tema (sıradaki büyük iş) ⬜
+Cihaz moduna uy (ThemeMode.system) + Ayarlar'dan Koyu/Açık/Sistem seçimi.
+Zorluk: ekranlarda yüzlerce sabit Colors.white*/siyah var — DiziRenkler dinamik
+getter'lara çevrilecek, sabit renkler tema-farkındalıklı adlara taşınacak
+(ajan süpürmesi + analyzer döngüsü). Açık palet: zemin #F7F7F9, kart #FFFFFF,
+koyuGri #ECECEF, metinler ters çevrilir, sarı vurgu aynı kalır.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 
 - **DKIM** ✅ sunucu tarafı kuruldu (opendkim + Postfix milter, seçici: dizi).

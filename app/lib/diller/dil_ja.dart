@@ -208,4 +208,5 @@ const Map<String, String> cevirilerJa = {
   '10 Beğeni': 'いいね10',
   '100 Beğeni': 'いいね100',
   'yazıyor...': '入力中…',
+  'Profil düzeni': 'プロフィールの並び順',
 };

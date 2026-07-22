@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -49,6 +50,13 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   List<dynamic> _izlenenler = [];
   List<dynamic> _rozetler = [];
   String? _hata;
+  // Varsayılan: rozetler en altta
+  List<String> _bolumSirasi = const [
+    'seritler',
+    'ozet',
+    'listeler',
+    'rozetler',
+  ];
 
   @override
   bool get wantKeepAlive => true;
@@ -57,7 +65,180 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   void initState() {
     super.initState();
     _yukle();
+    _siraYukle();
   }
+
+  Future<void> _siraYukle() async {
+    final p = await SharedPreferences.getInstance();
+    final kayitli = p.getStringList('profil_sira');
+    if (kayitli == null || !mounted) return;
+    const gecerli = ['seritler', 'ozet', 'listeler', 'rozetler'];
+    final sira = [
+      for (final b in kayitli)
+        if (gecerli.contains(b)) b,
+    ];
+    for (final b in gecerli) {
+      if (!sira.contains(b)) sira.add(b);
+    }
+    setState(() => _bolumSirasi = sira);
+  }
+
+  /// Profil bölümleri: kullanıcı Ayarlar'dan sıralarını değiştirebilir.
+  List<Widget> _bolumUret(String ad) {
+    switch (ad) {
+      case 'seritler':
+        return _seritlerBolumu();
+      case 'ozet':
+        return _ozetBolumu();
+      case 'rozetler':
+        return _rozetlerBolumu();
+      case 'listeler':
+        return _listelerBolumu();
+      default:
+        return const [];
+    }
+  }
+
+  List<Widget> _seritlerBolumu() => [
+    for (final grup in [
+      (
+        Icons.tv_outlined,
+        'İzlediğim Diziler ({})',
+        _izlenenler.where((o) => o['tur'] == 'tv').toList(),
+      ),
+      (
+        Icons.movie_outlined,
+        'İzlediğim Filmler ({})',
+        _izlenenler.where((o) => o['tur'] == 'movie').toList(),
+      ),
+    ])
+      if (grup.$3.isNotEmpty) ...[
+        Row(
+          children: [
+            Icon(grup.$1, size: 19, color: DiziRenkler.sari),
+            const SizedBox(width: 6),
+            Text(
+              grup.$2.cf([grup.$3.length]),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            ),
+            const Spacer(),
+            TextButton(
+              onPressed: () => context.push('/izlediklerim'),
+              child: Text(
+                'Tümünü gör'.c,
+                style: const TextStyle(color: DiziRenkler.sari, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        SizedBox(
+          height: 190,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 10),
+            itemBuilder: (context, i) {
+              final o = grup.$3[i] as Map<String, dynamic>;
+              return MiniIcerik(
+                tmdbId: o['tmdb_id'] as int,
+                tur: o['tur'] as String,
+                izlenenSayi: (o['sayi'] as num?)?.toInt(),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 16),
+      ],
+  ];
+
+  List<Widget> _ozetBolumu() => [
+    Card(
+      child: ListTile(
+        leading: const Icon(Icons.auto_awesome, color: DiziRenkler.sari),
+        title: Text(
+          '{} özetin'.cf([DateTime.now().year]),
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        subtitle: Text(
+          'Yıllık izleme istatistiklerin'.c,
+          style: const TextStyle(color: Colors.white38, fontSize: 12),
+        ),
+        trailing: const Icon(Icons.chevron_right, color: Colors.white38),
+        onTap: () => context.push('/ozet/${DateTime.now().year}'),
+      ),
+    ),
+    const SizedBox(height: 16),
+  ];
+
+  List<Widget> _rozetlerBolumu() => [
+    if (_rozetler.isNotEmpty) ...[
+      Row(
+        children: [
+          const Icon(
+            Icons.military_tech_outlined,
+            size: 20,
+            color: DiziRenkler.sari,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            'Rozetler'.c,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final r in _rozetler)
+            _RozetCipi(rozet: r as Map<String, dynamic>),
+        ],
+      ),
+      const SizedBox(height: 16),
+    ],
+  ];
+
+  List<Widget> _listelerBolumu() => [
+    Row(
+      children: [
+        const Icon(Icons.playlist_play, size: 20, color: DiziRenkler.sari),
+        const SizedBox(width: 6),
+        Text(
+          'Listelerim'.c,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+        ),
+        const Spacer(),
+        IconButton(
+          onPressed: _yeniListe,
+          icon: const Icon(Icons.add, color: DiziRenkler.sari),
+        ),
+      ],
+    ),
+    // Otomatik izlenenler listesi (silinemez, kapak kolajı arka planlı)
+    if (_izlenenler.isNotEmpty)
+      _IzlenenlerKarti(
+        ogeler: _izlenenler,
+        onTap: () => context.push('/izlediklerim'),
+      ),
+    for (final l in _listeler)
+      Card(
+        child: ListTile(
+          leading: const Icon(Icons.list, color: DiziRenkler.sari),
+          title: Text(l['ad'] as String),
+          subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
+          trailing: IconButton(
+            icon: const Icon(Icons.delete_outline, color: Colors.white38),
+            onPressed: () async {
+              await Api.delete('/listeler/${l['id']}');
+              _yukle();
+            },
+          ),
+        ),
+      ),
+    const SizedBox(height: 16),
+  ];
 
   Future<void> _yukle() async {
     setState(() => _hata = null);
@@ -507,170 +688,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     ),
                     const SizedBox(height: 16),
                   ],
-                  // İzlenenler: diziler ve filmler ayrı şeritler
-                  for (final grup in [
-                    (
-                      Icons.tv_outlined,
-                      'İzlediğim Diziler ({})',
-                      _izlenenler.where((o) => o['tur'] == 'tv').toList(),
-                    ),
-                    (
-                      Icons.movie_outlined,
-                      'İzlediğim Filmler ({})',
-                      _izlenenler.where((o) => o['tur'] == 'movie').toList(),
-                    ),
-                  ])
-                    if (grup.$3.isNotEmpty) ...[
-                      Row(
-                        children: [
-                          Icon(grup.$1, size: 19, color: DiziRenkler.sari),
-                          const SizedBox(width: 6),
-                          Text(
-                            grup.$2.cf([grup.$3.length]),
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () => context.push('/izlediklerim'),
-                            child: Text(
-                              'Tümünü gör'.c,
-                              style: const TextStyle(
-                                color: DiziRenkler.sari,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 4),
-                      SizedBox(
-                        height: 190,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 10),
-                          itemBuilder: (context, i) {
-                            final o = grup.$3[i] as Map<String, dynamic>;
-                            return MiniIcerik(
-                              tmdbId: o['tmdb_id'] as int,
-                              tur: o['tur'] as String,
-                              izlenenSayi: (o['sayi'] as num?)?.toInt(),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  // Yıl özeti kartı
-                  Card(
-                    child: ListTile(
-                      leading: const Icon(
-                        Icons.auto_awesome,
-                        color: DiziRenkler.sari,
-                      ),
-                      title: Text(
-                        '{} özetin'.cf([DateTime.now().year]),
-                        style: const TextStyle(fontWeight: FontWeight.w700),
-                      ),
-                      subtitle: Text(
-                        'Yıllık izleme istatistiklerin'.c,
-                        style: const TextStyle(
-                          color: Colors.white38,
-                          fontSize: 12,
-                        ),
-                      ),
-                      trailing: const Icon(
-                        Icons.chevron_right,
-                        color: Colors.white38,
-                      ),
-                      onTap: () => context.push('/ozet/${DateTime.now().year}'),
-                    ),
-                  ),
-                  // Rozetler
-                  if (_rozetler.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.military_tech_outlined,
-                          size: 20,
-                          color: DiziRenkler.sari,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Rozetler'.c,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final r in _rozetler)
-                          _RozetCipi(rozet: r as Map<String, dynamic>),
-                      ],
-                    ),
-                  ],
-                  const SizedBox(height: 16),
-                  // Listelerim
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.playlist_play,
-                        size: 20,
-                        color: DiziRenkler.sari,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        'Listelerim'.c,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: _yeniListe,
-                        icon: const Icon(Icons.add, color: DiziRenkler.sari),
-                      ),
-                    ],
-                  ),
-                  // Otomatik izlenenler listesi (silinemez, kapak kolajı arka planlı)
-                  if (_izlenenler.isNotEmpty)
-                    _IzlenenlerKarti(
-                      ogeler: _izlenenler,
-                      onTap: () => context.push('/izlediklerim'),
-                    ),
-                  for (final l in _listeler)
-                    Card(
-                      child: ListTile(
-                        leading: const Icon(
-                          Icons.list,
-                          color: DiziRenkler.sari,
-                        ),
-                        title: Text(l['ad'] as String),
-                        subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
-                        trailing: IconButton(
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: Colors.white38,
-                          ),
-                          onPressed: () async {
-                            await Api.delete('/listeler/${l['id']}');
-                            _yukle();
-                          },
-                        ),
-                      ),
-                    ),
+                  // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
+                  for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
                   const SizedBox(height: 24),
                 ],
               ),
@@ -694,6 +713,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
             onPressed: () async {
               await context.push('/ayarlar');
               _yukle();
+              _siraYukle();
             },
           ),
         ],
@@ -721,12 +741,16 @@ class _TakipSayac extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
         child: RichText(
+          // RichText tema rengini devralmaz; renk açıkça verilmeli
           text: TextSpan(
-            style: const TextStyle(fontSize: 13),
+            style: const TextStyle(fontSize: 13, color: Colors.white),
             children: [
               TextSpan(
                 text: deger,
-                style: const TextStyle(fontWeight: FontWeight.w900),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                ),
               ),
               TextSpan(
                 text: ' $etiket',

@@ -210,4 +210,5 @@ const Map<String, String> cevirilerFi = {
   '10 Beğeni': '10 tykkäystä',
   '100 Beğeni': '100 tykkäystä',
   'yazıyor...': 'kirjoittaa...',
+  'Profil düzeni': 'Profiilin asettelu',
 };

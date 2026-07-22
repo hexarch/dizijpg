@@ -210,4 +210,5 @@ const Map<String, String> cevirilerId = {
   '10 Beğeni': '10 Suka',
   '100 Beğeni': '100 Suka',
   'yazıyor...': 'mengetik...',
+  'Profil düzeni': 'Tata letak profil',
 };

@@ -210,4 +210,5 @@ const Map<String, String> cevirilerFil = {
   '10 Beğeni': '10 Likes',
   '100 Beğeni': '100 Likes',
   'yazıyor...': 'nagta-type...',
+  'Profil düzeni': 'Layout ng profile',
 };

@@ -170,8 +170,10 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   let toplam = 0;
   for (const giris of girisler) {
     if (giris.dir) continue;
-    const ad = giris.name.split('/').pop(); // yol kısmı atılır → traversal engellenir
-    if (!IZIN_LI_DOSYALAR.has(ad)) continue; // token/şifre/ip dosyaları hiç okunmaz
+    let ad = giris.name.split('/').pop(); // yol kısmı atılır → traversal engellenir
+    // TV Time'ın yeni tek dosyalı dışa aktarımı: "tv-time-export (1).csv" gibi
+    if (/^tv-time-export.*\.csv$/i.test(ad)) ad = 'tv-time-export.csv';
+    else if (!IZIN_LI_DOSYALAR.has(ad)) continue; // token/şifre/ip dosyaları okunmaz
     const veri = await giris.async('nodebuffer');
     if (veri.length > MAX_DOSYA_ACIK) {
       throw Object.assign(new Error(`${ad} çok büyük`), { status: 400 });
@@ -188,6 +190,117 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   // 1) Kayıpsız kendi biçimimiz varsa onu kullan.
   if (metinler['dizijpg.json']) {
     return iceAktarNative(havuz, userId, metinler['dizijpg.json'], ozet);
+  }
+
+  // 1.5) TV Time'ın YENİ tek dosyalı formatı (2026+):
+  // type,media_type,tmdb_id,imdb_id,tvdb_id,title,year,season,episode,watched_at,rating,review
+  // id alanları çoğunlukla boş gelir → isimle (tr-TR arama) eşlenir.
+  if (metinler['tv-time-export.csv']) {
+    let satirlar = [];
+    try {
+      satirlar = parse(metinler['tv-time-export.csv'],
+        { columns: true, skip_empty_lines: true, relax_column_count: true });
+    } catch {
+      throw Object.assign(new Error('CSV okunamadı'), { status: 400 });
+    }
+    ozet.isim_eslesme = 0;
+    const adOnbellek = new Map(); // 'tv:Ad' | 'movie:Ad' → tmdbId|null
+    async function coz(tur, isim, tmdbIdAlan) {
+      const dogrudan = parseInt(tmdbIdAlan, 10);
+      if (Number.isInteger(dogrudan) && dogrudan > 0) return dogrudan;
+      const temiz = String(isim || '').replace(/\s*\(\d{4}\)\s*$/, '').trim();
+      if (!temiz) return null;
+      const anahtar = `${tur}:${temiz}`;
+      if (adOnbellek.has(anahtar)) return adOnbellek.get(anahtar);
+      if (adOnbellek.size >= MAX_FIND) return null;
+      let id = null;
+      try {
+        id = tur === 'tv'
+          ? (tmdbAra ? await tmdbAra(temiz) : null)
+          : (tmdbAraFilm ? await tmdbAraFilm(temiz) : null);
+      } catch { id = null; }
+      if (id) ozet.isim_eslesme += 1;
+      adOnbellek.set(anahtar, id);
+      return id;
+    }
+
+    // Bölümleri dizi başına grupla
+    const diziler = new Map(); // title → [{sezon,bolum,tarih}]
+    const filmler = new Map(); // title → {tarih, tmdb_id}
+    for (const r of satirlar) {
+      if ((r.type || 'watch') !== 'watch') continue;
+      if (r.media_type === 'episode') {
+        const s = parseInt(r.season, 10);
+        const b = parseInt(r.episode, 10);
+        if (!Number.isInteger(s) || !Number.isInteger(b)) { ozet.atlanan += 1; continue; }
+        const liste = diziler.get(r.title) || [];
+        liste.push({ s, b, t: r.watched_at || null, tmdb: r.tmdb_id });
+        diziler.set(r.title, liste);
+      } else if (r.media_type === 'movie') {
+        if (!filmler.has(r.title)) {
+          filmler.set(r.title, { t: r.watched_at || null, tmdb: r.tmdb_id });
+        }
+      } else {
+        ozet.atlanan += 1;
+      }
+    }
+
+    // İsim aramalarını 8'erli paralel öbeklerle önden doldur (nginx zaman
+    // aşımına takılmamak için; tekil aramalar sıralı olursa dakikalar sürer).
+    const hedefler = [
+      ...[...diziler.entries()].map(([i, b]) => ['tv', i, b[0].tmdb]),
+      ...[...filmler.entries()].map(([i, f]) => ['movie', i, f.tmdb]),
+    ];
+    for (let i = 0; i < hedefler.length; i += 8) {
+      await Promise.all(
+        hedefler.slice(i, i + 8).map(([t, isim, id]) => coz(t, isim, id)));
+    }
+
+    for (const [isim, bolumler] of diziler) {
+      const id = await coz('tv', isim, bolumler[0].tmdb);
+      if (!id) { ozet.atlanan += bolumler.length; continue; }
+      const { rowCount } = await havuz.query(
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+         SELECT $1, 'tv', $2, u.s, u.b, COALESCE(u.t, now())
+         FROM unnest($3::int[], $4::int[], $5::timestamptz[]) AS u(s, b, t)
+         ON CONFLICT DO NOTHING`,
+        [userId, id,
+         bolumler.map((x) => x.s), bolumler.map((x) => x.b),
+         bolumler.map((x) => x.t)],
+      );
+      ozet.izleme += rowCount;
+      // Durum: tüm bölümler izlendiyse bitirdim, değilse izliyorum
+      let durum = 'izliyorum';
+      if (tmdbDetay) {
+        try {
+          const detay = await tmdbDetay(id);
+          const toplamBolum = detay?.number_of_episodes || 0;
+          const izlenenSayi = (await havuz.query(
+            `SELECT count(*)::int AS n FROM izlemeler
+             WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2`,
+            [userId, id])).rows[0].n;
+          if (toplamBolum > 0 && izlenenSayi >= toplamBolum) durum = 'bitirdim';
+        } catch { /* durum izliyorum kalır */ }
+      }
+      await havuz.query(
+        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum)
+         VALUES ($1,'tv',$2,$3)
+         ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE SET durum=$3`,
+        [userId, id, durum]);
+      ozet.durum += 1;
+    }
+
+    for (const [isim, bilgi] of filmler) {
+      const id = await coz('movie', isim, bilgi.tmdb);
+      if (!id) { ozet.atlanan += 1; continue; }
+      const { rowCount } = await havuz.query(
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+         VALUES ($1,'movie',$2,0,0,COALESCE($3,now()))
+         ON CONFLICT DO NOTHING`,
+        [userId, id, bilgi.t]);
+      ozet.izleme += rowCount;
+    }
+    return ozet;
   }
 
   // 2) TV Time CSV'leri (en iyi çaba, TheTVDB→TMDB eşlemeli).

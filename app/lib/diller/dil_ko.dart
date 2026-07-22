@@ -208,4 +208,5 @@ const Map<String, String> cevirilerKo = {
   '10 Beğeni': '좋아요 10개',
   '100 Beğeni': '좋아요 100개',
   'yazıyor...': '입력 중...',
+  'Profil düzeni': '프로필 배치',
 };

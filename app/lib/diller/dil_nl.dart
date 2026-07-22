@@ -210,4 +210,5 @@ const Map<String, String> cevirilerNl = {
   '10 Beğeni': '10 likes',
   '100 Beğeni': '100 likes',
   'yazıyor...': 'typt...',
+  'Profil düzeni': 'Profielindeling',
 };

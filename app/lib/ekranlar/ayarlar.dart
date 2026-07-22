@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -231,6 +232,72 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       ipucu: 'Ülke ara...'.c,
     );
     if (secilen != null) setState(() => _ulke = secilen);
+  }
+
+  /// Profil bölümlerinin sırasını sürükle-bırakla düzenler.
+  Future<void> _profilDuzeni() async {
+    final p = await SharedPreferences.getInstance();
+    const gecerli = ['seritler', 'ozet', 'listeler', 'rozetler'];
+    final sira = [
+      for (final b in p.getStringList('profil_sira') ?? gecerli)
+        if (gecerli.contains(b)) b,
+    ];
+    for (final b in gecerli) {
+      if (!sira.contains(b)) sira.add(b);
+    }
+    final etiketler = {
+      'seritler': 'İzlediklerim'.c,
+      'ozet': '{} özetin'.cf([DateTime.now().year]),
+      'listeler': 'Listelerim'.c,
+      'rozetler': 'Rozetler'.c,
+    };
+    if (!mounted) return;
+    await showModalBottomSheet(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheet) => SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  'Profil düzeni'.c,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              ReorderableListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                onReorder: (eski, yeni) {
+                  setSheet(() {
+                    if (yeni > eski) yeni -= 1;
+                    sira.insert(yeni, sira.removeAt(eski));
+                  });
+                  p.setStringList('profil_sira', sira);
+                },
+                children: [
+                  for (final b in sira)
+                    ListTile(
+                      key: ValueKey(b),
+                      leading: const Icon(
+                        Icons.drag_handle,
+                        color: Colors.white38,
+                      ),
+                      title: Text(etiketler[b] ?? b),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Future<void> _dilSec() async {
@@ -466,118 +533,132 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       govde = ListView(
         padding: EdgeInsets.zero,
         children: [
-          // Kapak (arka plan) + üstüne binen avatar
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.bottomCenter,
-            children: [
-              // Kapak resmi
-              GestureDetector(
-                onTap: _kapakYukleniyor ? null : _kapakSec,
-                child: Container(
+          // Kapak + avatar: HER ŞEY Stack sınırları İÇİNDE kalmalı —
+          // sınır dışına taşan Positioned görünür ama TIKLANAMAZ (hit-test).
+          SizedBox(
+            height: 202,
+            child: Stack(
+              children: [
+                // Kapak resmi (üst 150px)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
                   height: 150,
-                  width: double.infinity,
-                  color: DiziRenkler.kart,
-                  child: kapak != null
-                      ? Image.network(kapak, fit: BoxFit.cover)
-                      : Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.add_photo_alternate_outlined,
-                                color: Colors.white38,
-                                size: 30,
+                  child: GestureDetector(
+                    onTap: _kapakYukleniyor ? null : _kapakSec,
+                    child: Container(
+                      color: DiziRenkler.kart,
+                      child: kapak != null
+                          ? Image.network(kapak, fit: BoxFit.cover)
+                          : Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.add_photo_alternate_outlined,
+                                    color: Colors.white38,
+                                    size: 30,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Kapak resmi ekle'.c,
+                                    style: const TextStyle(
+                                      color: Colors.white38,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Kapak resmi ekle'.c,
-                                style: const TextStyle(
-                                  color: Colors.white38,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                ),
-              ),
-              // Kapak düzenle rozeti
-              Positioned(
-                right: 12,
-                top: 12,
-                child: InkWell(
-                  onTap: _kapakYukleniyor ? null : _kapakSec,
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.black54,
-                    child: _kapakYukleniyor
-                        ? const SizedBox(
-                            width: 15,
-                            height: 15,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
                             ),
-                          )
-                        : const Icon(Icons.edit, size: 15, color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-              // Avatar (kapağın altına taşar)
-              Positioned(
-                bottom: -46,
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 52,
-                      backgroundColor: DiziRenkler.siyah,
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundColor: DiziRenkler.kart,
-                        backgroundImage: avatar != null
-                            ? NetworkImage(avatar)
-                            : null,
-                        child: avatar == null
-                            ? const Icon(
-                                Icons.person,
-                                size: 48,
-                                color: Colors.white38,
-                              )
-                            : null,
-                      ),
+                // Kapak düzenle rozeti
+                Positioned(
+                  right: 12,
+                  top: 12,
+                  child: InkWell(
+                    onTap: _kapakYukleniyor ? null : _kapakSec,
+                    child: CircleAvatar(
+                      radius: 16,
+                      backgroundColor: Colors.black54,
+                      child: _kapakYukleniyor
+                          ? const SizedBox(
+                              width: 15,
+                              height: 15,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.edit,
+                              size: 15,
+                              color: Colors.white,
+                            ),
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: InkWell(
-                        onTap: _avatarYukleniyor ? null : _avatarSec,
-                        child: CircleAvatar(
-                          radius: 17,
-                          backgroundColor: DiziRenkler.sari,
-                          child: _avatarYukleniyor
-                              ? const SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.black,
-                                  ),
-                                )
-                              : const Icon(
-                                  Icons.edit,
-                                  size: 17,
-                                  color: Colors.black,
-                                ),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-            ],
+                // Avatar (alt kenara hizalı, sınır İÇİNDE)
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: GestureDetector(
+                      onTap: _avatarYukleniyor ? null : _avatarSec,
+                      child: Stack(
+                        children: [
+                          CircleAvatar(
+                            radius: 52,
+                            backgroundColor: DiziRenkler.siyah,
+                            child: CircleAvatar(
+                              radius: 48,
+                              backgroundColor: DiziRenkler.kart,
+                              backgroundImage: avatar != null
+                                  ? NetworkImage(avatar)
+                                  : null,
+                              child: avatar == null
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 48,
+                                      color: Colors.white38,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: CircleAvatar(
+                              radius: 17,
+                              backgroundColor: DiziRenkler.sari,
+                              child: _avatarYukleniyor
+                                  ? const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.edit,
+                                      size: 17,
+                                      color: Colors.black,
+                                    ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 56),
+          const SizedBox(height: 10),
           Center(
             child: Text(
               'Fotoğraf veya GIF — profil ve kapak resmi'.c,
@@ -648,6 +729,22 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       color: Colors.white38,
                     ),
                     onTap: _dilSec,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Profil bölümlerinin sırası (sürükle-bırak)
+                Card(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.swap_vert,
+                      color: DiziRenkler.sari,
+                    ),
+                    title: Text('Profil düzeni'.c),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.white38,
+                    ),
+                    onTap: _profilDuzeni,
                   ),
                 ),
                 const SizedBox(height: 24),

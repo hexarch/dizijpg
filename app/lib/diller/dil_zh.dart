@@ -207,4 +207,5 @@ const Map<String, String> cevirilerZh = {
   '10 Beğeni': '10 个赞',
   '100 Beğeni': '100 个赞',
   'yazıyor...': '正在输入…',
+  'Profil düzeni': '主页布局',
 };

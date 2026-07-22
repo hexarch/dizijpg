@@ -209,4 +209,5 @@ const Map<String, String> cevirilerTh = {
   '10 Beğeni': '10 ไลก์',
   '100 Beğeni': '100 ไลก์',
   'yazıyor...': 'กำลังพิมพ์...',
+  'Profil düzeni': 'เลย์เอาต์โปรไฟล์',
 };

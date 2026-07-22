@@ -210,4 +210,5 @@ const Map<String, String> cevirilerRu = {
   '10 Beğeni': '10 лайков',
   '100 Beğeni': '100 лайков',
   'yazıyor...': 'печатает...',
+  'Profil düzeni': 'Порядок разделов профиля',
 };

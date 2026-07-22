@@ -210,4 +210,5 @@ const Map<String, String> cevirilerSv = {
   '10 Beğeni': '10 gilla',
   '100 Beğeni': '100 gilla',
   'yazıyor...': 'skriver...',
+  'Profil düzeni': 'Profillayout',
 };

@@ -211,4 +211,5 @@ const Map<String, String> cevirilerIt = {
   '10 Beğeni': '10 mi piace',
   '100 Beğeni': '100 mi piace',
   'yazıyor...': 'sta scrivendo...',
+  'Profil düzeni': 'Layout del profilo',
 };

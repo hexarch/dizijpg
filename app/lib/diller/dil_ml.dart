@@ -210,4 +210,5 @@ const Map<String, String> cevirilerMl = {
   '10 Beğeni': '10 ലൈക്കുകൾ',
   '100 Beğeni': '100 ലൈക്കുകൾ',
   'yazıyor...': 'ടൈപ്പ് ചെയ്യുന്നു...',
+  'Profil düzeni': 'പ്രൊഫൈൽ ലേഔട്ട്',
 };

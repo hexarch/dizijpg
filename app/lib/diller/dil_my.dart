@@ -212,4 +212,5 @@ const Map<String, String> cevirilerMy = {
   '10 Beğeni': 'လိုက် 10',
   '100 Beğeni': 'လိုက် 100',
   'yazıyor...': 'စာရိုက်နေသည်...',
+  'Profil düzeni': 'ပရိုဖိုင် အပြင်အဆင်',
 };

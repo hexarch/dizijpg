@@ -211,4 +211,5 @@ const Map<String, String> cevirilerDe = {
   '10 Beğeni': '10 Likes',
   '100 Beğeni': '100 Likes',
   'yazıyor...': 'schreibt...',
+  'Profil düzeni': 'Profil-Layout',
 };
