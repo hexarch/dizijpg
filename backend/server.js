@@ -356,6 +356,56 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
 }));
 
 // ---------- izleme ----------
+// Bir dizinin YAYINLANMIŞ bölümleri: [sezon, bolum] çiftleri.
+// Özel sezonlar (0) hariç; last_episode_to_air'den sonrası sayılmaz.
+async function yayinlanmisBolumler(tmdbId) {
+  const dizi = await tmdbGetir(`/tv/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+  const son = dizi.last_episode_to_air;
+  const ciftler = [];
+  for (const s of dizi.seasons || []) {
+    const no = s.season_number;
+    if (!Number.isInteger(no) || no < 1) continue;
+    let adet = s.episode_count || 0;
+    if (son && Number.isInteger(son.season_number)) {
+      if (no > son.season_number) continue;
+      if (no === son.season_number) adet = Math.min(adet, son.episode_number || adet);
+    }
+    for (let b = 1; b <= Math.min(adet, 500); b++) ciftler.push([no, b]);
+  }
+  return ciftler;
+}
+
+// Yayınlanmış tüm bölümler izlendiyse dizi otomatik "bitirdim" olur
+// (yeni bölüm gelene kadar); bölüm geri alınıp eksik kalırsa "izliyorum"a düşer.
+async function diziDurumunuGuncelle(kullaniciId, tmdbId) {
+  try {
+    const toplam = (await yayinlanmisBolumler(tmdbId)).length;
+    if (!toplam) return;
+    const { rows } = await havuz.query(
+      `SELECT count(*)::int AS n FROM izlemeler
+       WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND sezon >= 1`,
+      [kullaniciId, tmdbId],
+    );
+    if (rows[0].n >= toplam) {
+      await havuz.query(
+        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
+         VALUES ($1,'tv',$2,'bitirdim',now())
+         ON CONFLICT (kullanici_id, tur, tmdb_id)
+         DO UPDATE SET durum='bitirdim', guncelleme=now()`,
+        [kullaniciId, tmdbId],
+      );
+    } else {
+      await havuz.query(
+        `UPDATE durumlar SET durum='izliyorum', guncelleme=now()
+         WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND durum='bitirdim'`,
+        [kullaniciId, tmdbId],
+      );
+    }
+  } catch {
+    // TMDB'ye ulaşılamazsa durum kendiliğinden değişmez — sorun değil
+  }
+}
+
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
   if (!Number.isInteger(tmdb_id) || !['tv', 'movie'].includes(tur) ||
@@ -375,6 +425,8 @@ app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
       [req.kullanici.id, tur, tmdb_id, sezon, bolum],
     );
   }
+  // Dizi tamamlandıysa otomatik "bitirdim" (geri alındıysa düşür)
+  if (tur === 'tv') await diziDurumunuGuncelle(req.kullanici.id, tmdb_id);
   res.json({ izlendi: silindi.rowCount === 0 });
 }));
 
@@ -398,6 +450,8 @@ app.post('/izleme/sezon', girisZorunlu, sarici(async (req, res) => {
       [req.kullanici.id, tmdb_id, sezon],
     );
   }
+  // Sezon işaretlemesi diziyi tamamlamış olabilir (veya bozmuş)
+  await diziDurumunuGuncelle(req.kullanici.id, tmdb_id);
   res.json({ tamam: true });
 }));
 
@@ -465,29 +519,14 @@ app.post('/durum', girisZorunlu, sarici(async (req, res) => {
       );
     } else {
       try {
-        const dizi = await tmdbGetir(`/tv/${tmdb_id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-        const son = dizi.last_episode_to_air;
-        const sezonlar = [];
-        const bolumler = [];
-        for (const s of dizi.seasons || []) {
-          const no = s.season_number;
-          if (!Number.isInteger(no) || no < 1) continue; // özel bölümler hariç
-          let adet = s.episode_count || 0;
-          if (son && Number.isInteger(son.season_number)) {
-            if (no > son.season_number) continue; // henüz yayınlanmamış sezon
-            if (no === son.season_number) adet = Math.min(adet, son.episode_number || adet);
-          }
-          for (let b = 1; b <= Math.min(adet, 500); b++) {
-            sezonlar.push(no);
-            bolumler.push(b);
-          }
-        }
-        if (sezonlar.length > 0 && sezonlar.length <= 10000) {
+        const ciftler = await yayinlanmisBolumler(tmdb_id);
+        if (ciftler.length > 0 && ciftler.length <= 10000) {
           await havuz.query(
             `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
              SELECT $1, 'tv', $2, s, b FROM unnest($3::int[], $4::int[]) AS t(s, b)
              ON CONFLICT DO NOTHING`,
-            [req.kullanici.id, tmdb_id, sezonlar, bolumler],
+            [req.kullanici.id, tmdb_id,
+              ciftler.map((c) => c[0]), ciftler.map((c) => c[1])],
           );
         }
       } catch {
@@ -1651,6 +1690,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       `SELECT
          (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
          (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='movie') AS film,
+         (SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS dizi,
          (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
          (SELECT count(*)::int FROM takipler WHERE takip_eden_id=$1) AS takip_edilen,
          (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum`,
@@ -1675,10 +1715,16 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     havuz.query(
       'SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var',
       [benId, id]),
+    // Tür başına ayrı limit: yoksa son izlenen filmler dizileri listeden atıyor
     havuz.query(
-      `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-       FROM izlemeler WHERE kullanici_id=$1
-       GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60`,
+      `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+        FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'
+        GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
+       UNION ALL
+       (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+        FROM izlemeler WHERE kullanici_id=$1 AND tur='movie'
+        GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
+       ORDER BY son DESC, tmdb_id DESC`,
       [id]),
   ]);
   // Yorum kartları için içerik adı + poster (önbellekli TMDB)

@@ -491,8 +491,10 @@ class _BolumModaliState extends State<BolumModali> {
                 ),
                 label: Text('Diziye git'.c),
                 onPressed: () {
+                  // Yönlendirici modal kapanmadan ÖNCE alınır (ölü context)
+                  final yonlendirici = GoRouter.of(context);
                   Navigator.pop(context);
-                  context.push('/icerik/tv/$_tmdbId');
+                  yonlendirici.push('/icerik/tv/$_tmdbId');
                 },
               ),
               ActionChip(

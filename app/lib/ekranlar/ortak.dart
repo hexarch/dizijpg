@@ -515,8 +515,10 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
     final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
     return InkWell(
       onTap: () {
+        // Yönlendiriciyi modal kapanmadan ÖNCE al (ölü context tuzağı)
+        final yonlendirici = GoRouter.of(context);
         Navigator.pop(context);
-        context.push('/icerik/${widget.tur}/${widget.tmdbId}');
+        yonlendirici.push('/icerik/${widget.tur}/${widget.tmdbId}');
       },
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10),

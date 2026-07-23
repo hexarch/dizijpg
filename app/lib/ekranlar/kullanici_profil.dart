@@ -232,17 +232,20 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ],
                     ),
-                  // İzledikleri: diziler ve filmler ayrı şeritler
+                  // İzledikleri: diziler ve filmler ayrı şeritler.
+                  // Başlıktaki sayı GERÇEK toplamdır (şerit son 60'ı gösterir).
                   for (final grup in [
                     (
                       Icons.tv_outlined,
                       'İzlediği Diziler ({})',
                       izlenenler.where((o) => o['tur'] == 'tv').toList(),
+                      (st['dizi'] as num?)?.toInt(),
                     ),
                     (
                       Icons.movie_outlined,
                       'İzlediği Filmler ({})',
                       izlenenler.where((o) => o['tur'] == 'movie').toList(),
+                      (st['film'] as num?)?.toInt(),
                     ),
                   ])
                     if (grup.$3.isNotEmpty) ...[
@@ -252,7 +255,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           Icon(grup.$1, size: 19, color: DiziRenkler.sari),
                           const SizedBox(width: 6),
                           Text(
-                            grup.$2.cf([grup.$3.length]),
+                            grup.$2.cf([grup.$4 ?? grup.$3.length]),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -766,8 +769,10 @@ class _YorumDetayModal extends StatelessWidget {
           InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () {
+              // Yönlendirici modal kapanmadan ÖNCE alınır (ölü context)
+              final yonlendirici = GoRouter.of(context);
               Navigator.pop(context);
-              context.push(hedef);
+              yonlendirici.push(hedef);
             },
             child: Row(
               children: [

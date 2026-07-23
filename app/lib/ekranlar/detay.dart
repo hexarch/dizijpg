@@ -150,8 +150,11 @@ class _DetayEkraniState extends State<DetayEkrani> {
                     ),
                     title: Text('@$ad'),
                     onTap: () {
+                      // Yönlendiriciyi modal kapanmadan ÖNCE al: kapanan
+                      // modalın context'i ölür, onunla push çalışmaz.
+                      final yonlendirici = GoRouter.of(context);
                       Navigator.pop(context);
-                      context.push('/kullanici/$ad');
+                      yonlendirici.push('/kullanici/$ad');
                     },
                   );
                 },
