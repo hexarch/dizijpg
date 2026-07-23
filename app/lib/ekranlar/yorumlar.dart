@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'etiket.dart';
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
 /// liste + fotoğraf/video ekli yorum yazma.
@@ -206,20 +207,13 @@ class _YorumBolumuState extends State<YorumBolumu> {
                       ],
                     ),
                   ),
-                TextField(
+                EtiketliGirdi(
                   controller: _metin,
                   maxLines: 3,
                   minLines: 1,
                   maxLength: 1000,
-                  buildCounter:
-                      (
-                        _, {
-                        required currentLength,
-                        maxLength,
-                        required isFocused,
-                      }) => null,
                   decoration: InputDecoration(
-                    hintText: 'Yorumunu yaz...'.c,
+                    hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
                     border: InputBorder.none,
                   ),
                 ),
@@ -481,7 +475,10 @@ class _YorumKartiState extends State<_YorumKarti> {
               ],
             ),
             const SizedBox(height: 8),
-            Text(yorum['metin'] as String, style: const TextStyle(height: 1.4)),
+            EtiketliMetin(
+              yorum['metin'] as String,
+              stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
+            ),
             if (medya.isNotEmpty) ...[
               const SizedBox(height: 10),
               Wrap(
@@ -873,9 +870,13 @@ class _YanitSatiriState extends State<_YanitSatiri> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 26, top: 2),
-            child: Text(
+            child: EtiketliMetin(
               y['metin'] as String? ?? '',
-              style: const TextStyle(fontSize: 13, height: 1.35),
+              stil: TextStyle(
+                fontSize: 13,
+                height: 1.35,
+                color: DiziRenkler.metin,
+              ),
             ),
           ),
         ],

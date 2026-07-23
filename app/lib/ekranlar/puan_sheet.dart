@@ -101,13 +101,25 @@ Future<bool> puanlaVeKaydet(
     );
 
     if (kaydet != true) return false;
-    await Api.post('/puan', {
-      'tmdb_id': tmdbId,
-      'tur': tur,
-      'puan': secilen == 0 ? null : secilen * 2,
-      'yorum': yorumKutusu.text.trim().isEmpty ? null : yorumKutusu.text.trim(),
-    });
-    return true;
+    try {
+      await Api.post('/puan', {
+        'tmdb_id': tmdbId,
+        'tur': tur,
+        'puan': secilen == 0 ? null : secilen * 2,
+        'yorum': yorumKutusu.text.trim().isEmpty
+            ? null
+            : yorumKutusu.text.trim(),
+      });
+      return true;
+    } catch (e) {
+      // Sessiz veri kaybı olmasın: kullanıcıya bildir, başarısız say
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Puan kaydedilemedi'.c)));
+      }
+      return false;
+    }
   } finally {
     yorumKutusu.dispose();
   }

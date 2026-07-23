@@ -224,4 +224,12 @@ const Map<String, String> cevirilerFil = {
   'Koyu': 'Madilim',
   'Açık': 'Maliwanag',
   'İzleyenler': 'Mga nanood',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Isulat ang iyong komento... (@ para i-tag)',
+  '@{} bir yorumda seni etiketledi': 'Ni-tag ka ni @{} sa isang komento',
+  'Mesajı sil': 'Burahin ang mensahe',
+  'Mesaj silinemedi': 'Hindi mabura ang mensahe',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Di-wasto ang link o hindi natagpuan ang pahina',
+  'Keşfet\'e dön': 'Bumalik sa Tuklasin',
 };

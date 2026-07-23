@@ -224,4 +224,12 @@ const Map<String, String> cevirilerHu = {
   'Koyu': 'Sötét',
   'Açık': 'Világos',
   'İzleyenler': 'Nézők',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Írd meg a hozzászólásod... (@ a jelöléshez)',
+  '@{} bir yorumda seni etiketledi': '@{} megjelölt egy hozzászólásban',
+  'Mesajı sil': 'Üzenet törlése',
+  'Mesaj silinemedi': 'Az üzenetet nem sikerült törölni',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'A hivatkozás érvénytelen vagy az oldal nem található',
+  'Keşfet\'e dön': 'Vissza a Felfedezéshez',
 };

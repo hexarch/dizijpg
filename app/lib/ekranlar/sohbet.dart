@@ -206,6 +206,25 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     }
   }
 
+  /// Kendi mesajını sil: önce yerelde kaldır (iyimser), hata olursa geri getir.
+  Future<void> _mesajSil(int id) async {
+    final yedek = List<dynamic>.from(_mesajlar);
+    setState(
+      () => _mesajlar = _mesajlar
+          .where((m) => (m as Map<String, dynamic>)['id'] != id)
+          .toList(),
+    );
+    try {
+      await Api.delete('/mesajlar/$id');
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _mesajlar = yedek);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Mesaj silinemedi'.c)));
+    }
+  }
+
   Future<void> _gonder({
     String? metin,
     String? medya,
@@ -329,10 +348,14 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                     .split('T')
                                     .first
                               : null;
+                          final benimMi = m['gonderen_id'] == benimId;
                           final baloncuk = _MesajBaloncugu(
                             mesaj: m,
-                            benim: m['gonderen_id'] == benimId,
+                            benim: benimMi,
                             icerikler: _icerikler,
+                            sil: benimMi && m['id'] != null
+                                ? () => _mesajSil((m['id'] as num).toInt())
+                                : null,
                           );
                           if (gun == oncekiGun || gun.isEmpty) return baloncuk;
                           // Tarih ayracı: gün değişince ortada küçük rozet
@@ -450,11 +473,13 @@ class _MesajBaloncugu extends StatelessWidget {
   final Map<String, dynamic> mesaj;
   final bool benim;
   final Map<String, dynamic> icerikler;
+  final VoidCallback? sil;
 
   const _MesajBaloncugu({
     required this.mesaj,
     required this.benim,
     required this.icerikler,
+    this.sil,
   });
 
   @override
@@ -475,153 +500,183 @@ class _MesajBaloncugu extends StatelessWidget {
 
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 3),
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
-        constraints: BoxConstraints(
-          // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
-          maxWidth: MediaQuery.of(context).size.width > 560
-              ? 420
-              : MediaQuery.of(context).size.width * 0.75,
-        ),
-        decoration: BoxDecoration(
-          color: benim ? DiziRenkler.sari : DiziRenkler.kart,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(14),
-            topRight: const Radius.circular(14),
-            bottomLeft: Radius.circular(benim ? 14 : 3),
-            bottomRight: Radius.circular(benim ? 3 : 14),
+      child: GestureDetector(
+        // Kendi mesajına uzun bas → sil
+        onLongPress: sil == null
+            ? null
+            : () => showModalBottomSheet(
+                context: context,
+                backgroundColor: DiziRenkler.koyuGri,
+                builder: (sheetCtx) => SafeArea(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.redAccent,
+                        ),
+                        title: Text(
+                          'Mesajı sil'.c,
+                          style: const TextStyle(color: Colors.redAccent),
+                        ),
+                        onTap: () {
+                          Navigator.pop(sheetCtx);
+                          sil!();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(vertical: 3),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+          constraints: BoxConstraints(
+            // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
+            maxWidth: MediaQuery.of(context).size.width > 560
+                ? 420
+                : MediaQuery.of(context).size.width * 0.75,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Fotoğraf / GIF / video
-            if (medya != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: video
-                      ? Container(
-                          width: 180,
-                          height: 120,
-                          color: Colors.black26,
-                          child: const Icon(
-                            Icons.play_circle_outline,
-                            size: 40,
-                            color: Colors.white70,
-                          ),
-                        )
-                      : InkWell(
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (_) => Dialog(
-                              backgroundColor: Colors.transparent,
-                              child: InteractiveViewer(
-                                child: CachedNetworkImage(
-                                  imageUrl: dosyaUrl(medya)!,
+          decoration: BoxDecoration(
+            color: benim ? DiziRenkler.sari : DiziRenkler.kart,
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(14),
+              topRight: const Radius.circular(14),
+              bottomLeft: Radius.circular(benim ? 14 : 3),
+              bottomRight: Radius.circular(benim ? 3 : 14),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Fotoğraf / GIF / video
+              if (medya != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: video
+                        ? Container(
+                            width: 180,
+                            height: 120,
+                            color: Colors.black26,
+                            child: const Icon(
+                              Icons.play_circle_outline,
+                              size: 40,
+                              color: Colors.white70,
+                            ),
+                          )
+                        : InkWell(
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (_) => Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: InteractiveViewer(
+                                  child: CachedNetworkImage(
+                                    imageUrl: dosyaUrl(medya)!,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: dosyaUrl(medya)!,
-                            width: 200,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                ),
-              ),
-            // Dizi/film kartı
-            if (icerikTur != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: InkWell(
-                  onTap: () => context.push('/icerik/$icerikTur/$icerikId'),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.18),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(6),
-                          child: SizedBox(
-                            width: 38,
-                            height: 56,
-                            child: icerik?['poster'] != null
-                                ? CachedNetworkImage(
-                                    imageUrl: posterUrl(
-                                      icerik!['poster'] as String?,
-                                      boyut: 'w92',
-                                    )!,
-                                    fit: BoxFit.cover,
-                                  )
-                                : Container(
-                                    color: DiziRenkler.koyuGri,
-                                    child: Icon(
-                                      Icons.movie,
-                                      size: 18,
-                                      color: DiziRenkler.metin38,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Flexible(
-                          child: Text(
-                            icerik?['ad'] as String? ?? '...',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 13,
-                              color: yaziRengi,
+                            child: CachedNetworkImage(
+                              imageUrl: dosyaUrl(medya)!,
+                              width: 200,
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        Icon(
-                          Icons.chevron_right,
-                          size: 16,
-                          color: yaziRengi.withValues(alpha: 0.6),
-                        ),
-                      ],
+                  ),
+                ),
+              // Dizi/film kartı
+              if (icerikTur != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: InkWell(
+                    onTap: () => context.push('/icerik/$icerikTur/$icerikId'),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.18),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: SizedBox(
+                              width: 38,
+                              height: 56,
+                              child: icerik?['poster'] != null
+                                  ? CachedNetworkImage(
+                                      imageUrl: posterUrl(
+                                        icerik!['poster'] as String?,
+                                        boyut: 'w92',
+                                      )!,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Container(
+                                      color: DiziRenkler.koyuGri,
+                                      child: Icon(
+                                        Icons.movie,
+                                        size: 18,
+                                        color: DiziRenkler.metin38,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              icerik?['ad'] as String? ?? '...',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                color: yaziRengi,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.chevron_right,
+                            size: 16,
+                            color: yaziRengi.withValues(alpha: 0.6),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            if (metin != null && metin.isNotEmpty)
-              Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    saatKisa,
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: yaziRengi.withValues(alpha: 0.55),
+              if (metin != null && metin.isNotEmpty)
+                Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      saatKisa,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: yaziRengi.withValues(alpha: 0.55),
+                      ),
                     ),
-                  ),
-                  if (benim) ...[
-                    const SizedBox(width: 3),
-                    Icon(
-                      m['okundu'] == true ? Icons.done_all : Icons.done,
-                      size: 13,
-                      color: yaziRengi.withValues(alpha: 0.55),
-                    ),
+                    if (benim) ...[
+                      const SizedBox(width: 3),
+                      Icon(
+                        m['okundu'] == true ? Icons.done_all : Icons.done,
+                        size: 13,
+                        color: yaziRengi.withValues(alpha: 0.55),
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

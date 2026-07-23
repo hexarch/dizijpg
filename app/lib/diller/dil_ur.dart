@@ -224,4 +224,10 @@ const Map<String, String> cevirilerUr = {
   'Koyu': 'ڈارک',
   'Açık': 'لائٹ',
   'İzleyenler': 'ناظرین',
+  'Yorumunu yaz... (@ ile etiketle)': 'اپنا تبصرہ لکھیں... (@ ٹیگ کرنے کے لیے)',
+  '@{} bir yorumda seni etiketledi': '‏@{} نے آپ کو ایک تبصرے میں ٹیگ کیا',
+  'Mesajı sil': 'پیغام حذف کریں',
+  'Mesaj silinemedi': 'پیغام حذف نہیں ہو سکا',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'لنک غلط ہے یا صفحہ نہیں ملا',
+  'Keşfet\'e dön': 'دریافت پر واپس جائیں',
 };

@@ -222,4 +222,10 @@ const Map<String, String> cevirilerJa = {
   'Koyu': 'ダーク',
   'Açık': 'ライト',
   'İzleyenler': '視聴者',
+  'Yorumunu yaz... (@ ile etiketle)': 'コメントを書く…（@ でタグ付け）',
+  '@{} bir yorumda seni etiketledi': '@{}さんがコメントであなたをタグ付けしました',
+  'Mesajı sil': 'メッセージを削除',
+  'Mesaj silinemedi': 'メッセージを削除できませんでした',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'リンクが無効か、ページが見つかりません',
+  'Keşfet\'e dön': '見つけるに戻る',
 };

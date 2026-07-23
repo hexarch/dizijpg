@@ -221,4 +221,10 @@ const Map<String, String> cevirilerZh = {
   'Koyu': '深色',
   'Açık': '浅色',
   'İzleyenler': '观看用户',
+  'Yorumunu yaz... (@ ile etiketle)': '写下你的评论……（@ 来标记）',
+  '@{} bir yorumda seni etiketledi': '@{} 在评论中标记了你',
+  'Mesajı sil': '删除消息',
+  'Mesaj silinemedi': '无法删除消息',
+  'Bağlantı geçersiz veya sayfa bulunamadı': '链接无效或页面未找到',
+  'Keşfet\'e dön': '返回发现',
 };

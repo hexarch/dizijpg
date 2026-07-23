@@ -224,4 +224,11 @@ const Map<String, String> cevirilerPl = {
   'Koyu': 'Ciemny',
   'Açık': 'Jasny',
   'İzleyenler': 'Widzowie',
+  'Yorumunu yaz... (@ ile etiketle)': 'Napisz komentarz... (@ aby oznaczyć)',
+  '@{} bir yorumda seni etiketledi': '@{} oznaczył Cię w komentarzu',
+  'Mesajı sil': 'Usuń wiadomość',
+  'Mesaj silinemedi': 'Nie udało się usunąć wiadomości',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Link jest nieprawidłowy lub nie znaleziono strony',
+  'Keşfet\'e dön': 'Wróć do Odkrywaj',
 };

@@ -225,4 +225,12 @@ const Map<String, String> cevirilerKn = {
   'Koyu': 'ಡಾರ್ಕ್',
   'Açık': 'ಲೈಟ್',
   'İzleyenler': 'ವೀಕ್ಷಕರು',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಬರೆಯಿರಿ... (@ ಟ್ಯಾಗ್ ಮಾಡಲು)',
+  '@{} bir yorumda seni etiketledi':
+      '@{} ನಿಮ್ಮನ್ನು ಕಾಮೆಂಟ್‌ನಲ್ಲಿ ಟ್ಯಾಗ್ ಮಾಡಿದ್ದಾರೆ',
+  'Mesajı sil': 'ಸಂದೇಶ ಅಳಿಸಿ',
+  'Mesaj silinemedi': 'ಸಂದೇಶವನ್ನು ಅಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'ಲಿಂಕ್ ಅಮಾನ್ಯ ಅಥವಾ ಪುಟ ಸಿಗಲಿಲ್ಲ',
+  'Keşfet\'e dön': 'ಅನ್ವೇಷಣೆಗೆ ಹಿಂತಿರುಗಿ',
 };

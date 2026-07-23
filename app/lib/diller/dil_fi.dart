@@ -224,4 +224,12 @@ const Map<String, String> cevirilerFi = {
   'Koyu': 'Tumma',
   'Açık': 'Vaalea',
   'İzleyenler': 'Katsojat',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Kirjoita kommenttisi... (@ merkitäksesi)',
+  '@{} bir yorumda seni etiketledi': '@{} merkitsi sinut kommenttiin',
+  'Mesajı sil': 'Poista viesti',
+  'Mesaj silinemedi': 'Viestiä ei voitu poistaa',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Linkki on virheellinen tai sivua ei löytynyt',
+  'Keşfet\'e dön': 'Takaisin Löydä-sivulle',
 };

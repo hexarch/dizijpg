@@ -223,4 +223,11 @@ const Map<String, String> cevirilerDa = {
   'Koyu': 'Mørk',
   'Açık': 'Lys',
   'İzleyenler': 'Seere',
+  'Yorumunu yaz... (@ ile etiketle)': 'Skriv din kommentar... (@ for at tagge)',
+  '@{} bir yorumda seni etiketledi': '@{} taggede dig i en kommentar',
+  'Mesajı sil': 'Slet besked',
+  'Mesaj silinemedi': 'Beskeden kunne ikke slettes',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Linket er ugyldigt eller siden blev ikke fundet',
+  'Keşfet\'e dön': 'Tilbage til Opdag',
 };

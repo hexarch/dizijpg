@@ -224,4 +224,12 @@ const Map<String, String> cevirilerVi = {
   'Koyu': 'Tối',
   'Açık': 'Sáng',
   'İzleyenler': 'Người xem',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Viết bình luận của bạn... (@ để gắn thẻ)',
+  '@{} bir yorumda seni etiketledi': '@{} đã gắn thẻ bạn trong một bình luận',
+  'Mesajı sil': 'Xóa tin nhắn',
+  'Mesaj silinemedi': 'Không thể xóa tin nhắn',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Liên kết không hợp lệ hoặc không tìm thấy trang',
+  'Keşfet\'e dön': 'Quay lại Khám phá',
 };

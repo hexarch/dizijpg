@@ -224,4 +224,11 @@ const Map<String, String> cevirilerTe = {
   'Koyu': 'డార్క్',
   'Açık': 'లైట్',
   'İzleyenler': 'వీక్షకులు',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'మీ వ్యాఖ్యను రాయండి... (@ ట్యాగ్ చేయడానికి)',
+  '@{} bir yorumda seni etiketledi': '@{} మిమ్మల్ని ఒక వ్యాఖ్యలో ట్యాగ్ చేశారు',
+  'Mesajı sil': 'సందేశాన్ని తొలగించు',
+  'Mesaj silinemedi': 'సందేశాన్ని తొలగించలేకపోయాం',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'లింక్ చెల్లదు లేదా పేజీ దొరకలేదు',
+  'Keşfet\'e dön': 'అన్వేషణకు తిరిగి వెళ్లు',
 };

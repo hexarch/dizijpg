@@ -49,6 +49,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
     final kod = TextEditingController();
     final yeni = TextEditingController();
     var kodIstendi = false;
+    var isliyor = false;
     try {
       await showModalBottomSheet(
         context: context,
@@ -97,42 +98,60 @@ class _GirisEkraniState extends State<GirisEkrani> {
                 ],
                 const SizedBox(height: 16),
                 FilledButton(
-                  onPressed: () async {
-                    try {
-                      if (!kodIstendi) {
-                        final d = await Api.post('/auth/sifre-sifirla-istek', {
-                          'email': email.text.trim(),
-                        });
-                        setSheet(() => kodIstendi = true);
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(d['mesaj'] as String? ?? ''),
-                            ),
-                          );
-                        }
-                      } else {
-                        final d = await Api.post('/auth/sifre-sifirla', {
-                          'email': email.text.trim(),
-                          'kod': kod.text.trim(),
-                          'sifre': yeni.text,
-                        });
-                        await Api.tokenKaydet(d['token'] as String);
-                        if (context.mounted) Navigator.pop(context);
-                        if (!mounted) return;
-                        await this.context.read<Oturum>().girisYapildi(
-                          d['kullanici'] as Map<String, dynamic>,
-                        );
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text(e.toString())));
-                      }
-                    }
-                  },
-                  child: Text(kodIstendi ? 'Şifreyi Sıfırla'.c : 'Gönder'.c),
+                  // İşlem sürerken kilitli + spinner (çift dokunma / çift kod engellenir)
+                  onPressed: isliyor
+                      ? null
+                      : () async {
+                          setSheet(() => isliyor = true);
+                          try {
+                            if (!kodIstendi) {
+                              final d = await Api.post(
+                                '/auth/sifre-sifirla-istek',
+                                {'email': email.text.trim()},
+                              );
+                              setSheet(() {
+                                kodIstendi = true;
+                                isliyor = false;
+                              });
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(d['mesaj'] as String? ?? ''),
+                                  ),
+                                );
+                              }
+                            } else {
+                              final d = await Api.post('/auth/sifre-sifirla', {
+                                'email': email.text.trim(),
+                                'kod': kod.text.trim(),
+                                'sifre': yeni.text,
+                              });
+                              await Api.tokenKaydet(d['token'] as String);
+                              if (context.mounted) Navigator.pop(context);
+                              if (!mounted) return;
+                              await this.context.read<Oturum>().girisYapildi(
+                                d['kullanici'] as Map<String, dynamic>,
+                              );
+                            }
+                          } catch (e) {
+                            setSheet(() => isliyor = false);
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(e.toString())),
+                              );
+                            }
+                          }
+                        },
+                  child: isliyor
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Text(kodIstendi ? 'Şifreyi Sıfırla'.c : 'Gönder'.c),
                 ),
               ],
             ),

@@ -192,6 +192,28 @@ async function bildirimEkle(aliciId, tur, aktorId, yorumId = null) {
   ).catch(() => {});
 }
 
+// Metindeki @kullanici_adi etiketlerini bulup 'etiket' bildirimi gönderir.
+// Kullanıcı adları küçük harf/rakam/alt çizgi 3-20 karakter (kayıt kuralıyla aynı).
+// haricId: bu id'ye ayrı bildirim gidiyorsa (ör. yanıtlanan) çift bildirim engellenir.
+async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null) {
+  const bulunan = new Set();
+  const re = /@([a-z0-9_]{3,20})/g;
+  let m;
+  while ((m = re.exec(String(metin || '').toLowerCase())) !== null) bulunan.add(m[1]);
+  if (bulunan.size === 0) return;
+  try {
+    const { rows } = await havuz.query(
+      `SELECT id FROM kullanicilar
+       WHERE lower(kullanici_adi) = ANY($1) AND misafir = false`,
+      [[...bulunan]],
+    );
+    for (const r of rows) {
+      if (r.id === aktorId || r.id === haricId) continue;
+      bildirimEkle(r.id, 'etiket', aktorId, yorumId);
+    }
+  } catch { /* etiket bildirimi başarısızsa yorum akışı bozulmaz */ }
+}
+
 // ---------- sağlık ----------
 app.get('/saglik', sarici(async (_req, res) => {
   await havuz.query('SELECT 1');
@@ -1306,6 +1328,21 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));
 
+// Kendi mesajını sil (iki taraftan da kalkar; medyası varsa dosyayı da temizler)
+app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const { rows } = await havuz.query(
+    'DELETE FROM mesajlar WHERE id=$1 AND gonderen_id=$2 RETURNING medya',
+    [id, req.kullanici.id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  if (rows[0].medya) {
+    fs.unlink(path.join(MEDYA_DIZIN, path.basename(rows[0].medya)), () => {});
+  }
+  res.json({ tamam: true });
+}));
+
 // ---------- şifre sıfırlama ----------
 app.post('/auth/sifre-sifirla-istek', authLimiti, sarici(async (req, res) => {
   const { email } = req.body || {};
@@ -1547,11 +1584,15 @@ app.post('/yorumlar', girisZorunlu, sarici(async (req, res) => {
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, tarih`,
     [req.kullanici.id, tur, tmdb_id, sezon, bolum, temiz, medya, gercekUst],
   );
+  let yanitlananSahip = null;
   if (gercekUst) {
     const sahip = await havuz.query(
       'SELECT kullanici_id FROM yorumlar WHERE id=$1', [gercekUst]);
-    bildirimEkle(sahip.rows[0]?.kullanici_id, 'yanit', req.kullanici.id, rows[0].id);
+    yanitlananSahip = sahip.rows[0]?.kullanici_id ?? null;
+    bildirimEkle(yanitlananSahip, 'yanit', req.kullanici.id, rows[0].id);
   }
+  // @etiketlenen kullanıcılara bildirim (yanıtlanan zaten 'yanit' aldıysa hariç)
+  etiketBildirimleriGonder(temiz, req.kullanici.id, rows[0].id, yanitlananSahip);
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));
 

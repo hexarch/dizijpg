@@ -224,4 +224,10 @@ const Map<String, String> cevirilerPa = {
   'Koyu': 'ਡਾਰਕ',
   'Açık': 'ਲਾਈਟ',
   'İzleyenler': 'ਦਰਸ਼ਕ',
+  'Yorumunu yaz... (@ ile etiketle)': 'ਆਪਣੀ ਟਿੱਪਣੀ ਲਿਖੋ... (@ ਟੈਗ ਕਰਨ ਲਈ)',
+  '@{} bir yorumda seni etiketledi': '@{} ਨੇ ਤੁਹਾਨੂੰ ਇੱਕ ਟਿੱਪਣੀ ਵਿੱਚ ਟੈਗ ਕੀਤਾ',
+  'Mesajı sil': 'ਸੁਨੇਹਾ ਮਿਟਾਓ',
+  'Mesaj silinemedi': 'ਸੁਨੇਹਾ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'ਲਿੰਕ ਗਲਤ ਹੈ ਜਾਂ ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ',
+  'Keşfet\'e dön': 'ਖੋਜ \'ਤੇ ਵਾਪਸ ਜਾਓ',
 };

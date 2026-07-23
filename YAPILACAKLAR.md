@@ -120,6 +120,23 @@ Kullanıcı bildirimi + kendi tespitlerimle düzeltilenler (hepsi canlıda test 
    karta dokununca bölüm/dizi/film tam hedefine gider)
 7. ✅ v1.2.0+3: web + APK (masaüstüne kopyalandı)
 
+## SPRINT 7 — Etiketleme + bildirim + sohbet + hata avı (2026-07-24) 🚀
+1. ✅ @kullanıcı ETİKETLEME: yorum/yanıt kutusunda "@" yazınca otomatik-tamamlama
+   (EtiketliGirdi), metinde @ad sarı tıklanır bağlantı (EtiketliMetin → profil)
+2. ✅ Etiket BİLDİRİMİ: yoruma @etiketlenen kullanıcılara 'etiket' bildirimi
+   (yanıtlanan çift bildirim almaz). Migrasyon: bildirimler CHECK + 'etiket'.
+   Canlı test: aktör+yorum_id bağlı bildirim düştü ✓
+3. ✅ Takip bildirimi zaten vardı (doğrulandı) — bildirim sistemi tam
+4. ✅ SOHBET: kendi mesajını uzun bas → sil (iyimser kaldırma + geri alma).
+   Yeni uç DELETE /mesajlar/:id (yalnız gönderen; başkasınınki 404 — test edildi)
+5. ✅ Denetim ajanı 3 gerçek hata buldu, hepsi düzeltildi:
+   - Puan kaydı sessiz veri kaybı → try/catch + SnackBar (puan_sheet)
+   - Şifre sıfırlama sheet üç-hal yok → spinner + buton kilidi (giris)
+   - Web bozuk derin URL int.parse çökmesi → güvenli parse + _GecersizBaglanti
+     + GoRouter errorBuilder
+6. ✅ 6 yeni metin 45 dile çevrildi (219 anahtar, senkron doğrulandı)
+7. ✅ v1.3.0+4: backend + web yayında; APK masaüstünde
+
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
 dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:

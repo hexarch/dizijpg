@@ -225,4 +225,12 @@ const Map<String, String> cevirilerDe = {
   'Koyu': 'Dunkel',
   'Açık': 'Hell',
   'İzleyenler': 'Zuschauer',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Schreibe deinen Kommentar... (@ zum Markieren)',
+  '@{} bir yorumda seni etiketledi': '@{} hat dich in einem Kommentar markiert',
+  'Mesajı sil': 'Nachricht löschen',
+  'Mesaj silinemedi': 'Nachricht konnte nicht gelöscht werden',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Link ist ungültig oder Seite nicht gefunden',
+  'Keşfet\'e dön': 'Zurück zu Entdecken',
 };

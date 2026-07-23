@@ -224,4 +224,11 @@ const Map<String, String> cevirilerAr = {
   'Koyu': 'داكن',
   'Açık': 'فاتح',
   'İzleyenler': 'المشاهدون',
+  'Yorumunu yaz... (@ ile etiketle)': 'اكتب تعليقك... (@ للإشارة)',
+  '@{} bir yorumda seni etiketledi': 'أشار إليك @{} في تعليق',
+  'Mesajı sil': 'حذف الرسالة',
+  'Mesaj silinemedi': 'تعذّر حذف الرسالة',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'الرابط غير صالح أو الصفحة غير موجودة',
+  'Keşfet\'e dön': 'العودة إلى الاستكشاف',
 };

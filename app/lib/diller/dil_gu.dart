@@ -224,4 +224,11 @@ const Map<String, String> cevirilerGu = {
   'Koyu': 'ડાર્ક',
   'Açık': 'લાઇટ',
   'İzleyenler': 'દર્શકો',
+  'Yorumunu yaz... (@ ile etiketle)': 'તમારી ટિપ્પણી લખો... (@ ટૅગ કરવા)',
+  '@{} bir yorumda seni etiketledi': '@{} એ તમને એક ટિપ્પણીમાં ટૅગ કર્યા',
+  'Mesajı sil': 'સંદેશ કાઢી નાખો',
+  'Mesaj silinemedi': 'સંદેશ કાઢી શકાયો નહીં',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'લિંક અમાન્ય છે અથવા પૃષ્ઠ મળ્યું નથી',
+  'Keşfet\'e dön': 'શોધ પર પાછા જાઓ',
 };

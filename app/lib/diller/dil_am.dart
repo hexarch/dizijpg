@@ -222,4 +222,10 @@ const Map<String, String> cevirilerAm = {
   'Koyu': 'ጨለማ',
   'Açık': 'ብርሃን',
   'İzleyenler': 'ተመልካቾች',
+  'Yorumunu yaz... (@ ile etiketle)': 'አስተያየትህን ጻፍ... (@ ለመሰየም)',
+  '@{} bir yorumda seni etiketledi': '@{} በአስተያየት ውስጥ ሰይሞሃል',
+  'Mesajı sil': 'መልእክት ሰርዝ',
+  'Mesaj silinemedi': 'መልእክቱ ሊሰረዝ አልቻለም',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'አገናኙ ልክ ያልሆነ ወይም ገጹ አልተገኘም',
+  'Keşfet\'e dön': 'ወደ አስስ ተመለስ',
 };

@@ -224,4 +224,12 @@ const Map<String, String> cevirilerRo = {
   'Koyu': 'Întunecat',
   'Açık': 'Luminos',
   'İzleyenler': 'Spectatori',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Scrie comentariul tău... (@ pentru etichetare)',
+  '@{} bir yorumda seni etiketledi': '@{} te-a etichetat într-un comentariu',
+  'Mesajı sil': 'Șterge mesajul',
+  'Mesaj silinemedi': 'Mesajul nu a putut fi șters',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Linkul este invalid sau pagina nu a fost găsită',
+  'Keşfet\'e dön': 'Înapoi la Descoperă',
 };

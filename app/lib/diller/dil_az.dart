@@ -224,4 +224,11 @@ const Map<String, String> cevirilerAz = {
   'Koyu': 'Tünd',
   'Açık': 'Açıq',
   'İzleyenler': 'İzləyənlər',
+  'Yorumunu yaz... (@ ile etiketle)': 'Şərhini yaz... (@ ilə etiketlə)',
+  '@{} bir yorumda seni etiketledi': '@{} səni bir şərhdə etiketlədi',
+  'Mesajı sil': 'Mesajı sil',
+  'Mesaj silinemedi': 'Mesaj silinə bilmədi',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Keçid etibarsızdır və ya səhifə tapılmadı',
+  'Keşfet\'e dön': 'Kəşfə qayıt',
 };

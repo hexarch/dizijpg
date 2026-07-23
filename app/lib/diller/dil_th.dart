@@ -223,4 +223,10 @@ const Map<String, String> cevirilerTh = {
   'Koyu': 'มืด',
   'Açık': 'สว่าง',
   'İzleyenler': 'ผู้ชม',
+  'Yorumunu yaz... (@ ile etiketle)': 'เขียนความคิดเห็นของคุณ... (@ เพื่อแท็ก)',
+  '@{} bir yorumda seni etiketledi': '@{} แท็กคุณในความคิดเห็น',
+  'Mesajı sil': 'ลบข้อความ',
+  'Mesaj silinemedi': 'ไม่สามารถลบข้อความได้',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'ลิงก์ไม่ถูกต้องหรือไม่พบหน้า',
+  'Keşfet\'e dön': 'กลับไปที่สำรวจ',
 };

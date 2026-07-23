@@ -161,7 +161,7 @@ CREATE INDEX IF NOT EXISTS yorumlar_ust ON yorumlar (ust_id);
 CREATE TABLE IF NOT EXISTS bildirimler (
   id SERIAL PRIMARY KEY,
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE, -- alıcı
-  tur TEXT NOT NULL CHECK (tur IN ('yanit','begeni','takip','mesaj')),
+  tur TEXT NOT NULL CHECK (tur IN ('yanit','begeni','takip','mesaj','etiket')),
   aktor_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
   yorum_id INT REFERENCES yorumlar(id) ON DELETE CASCADE,
   okundu BOOLEAN DEFAULT false,

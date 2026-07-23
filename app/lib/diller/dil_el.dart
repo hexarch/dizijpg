@@ -224,4 +224,12 @@ const Map<String, String> cevirilerEl = {
   'Koyu': 'Σκούρο',
   'Açık': 'Φωτεινό',
   'İzleyenler': 'Θεατές',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Γράψε το σχόλιό σου... (@ για επισήμανση)',
+  '@{} bir yorumda seni etiketledi': 'Ο/Η @{} σε επισήμανε σε σχόλιο',
+  'Mesajı sil': 'Διαγραφή μηνύματος',
+  'Mesaj silinemedi': 'Δεν ήταν δυνατή η διαγραφή του μηνύματος',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Ο σύνδεσμος δεν είναι έγκυρος ή η σελίδα δεν βρέθηκε',
+  'Keşfet\'e dön': 'Πίσω στην Ανακάλυψη',
 };

@@ -224,4 +224,11 @@ const Map<String, String> cevirilerNl = {
   'Koyu': 'Donker',
   'Açık': 'Licht',
   'İzleyenler': 'Kijkers',
+  'Yorumunu yaz... (@ ile etiketle)': 'Schrijf je reactie... (@ om te taggen)',
+  '@{} bir yorumda seni etiketledi': '@{} heeft je getagd in een reactie',
+  'Mesajı sil': 'Bericht verwijderen',
+  'Mesaj silinemedi': 'Bericht kon niet worden verwijderd',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Link is ongeldig of pagina niet gevonden',
+  'Keşfet\'e dön': 'Terug naar Ontdekken',
 };

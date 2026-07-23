@@ -222,4 +222,10 @@ const Map<String, String> cevirilerKo = {
   'Koyu': '다크',
   'Açık': '라이트',
   'İzleyenler': '시청자',
+  'Yorumunu yaz... (@ ile etiketle)': '댓글을 작성하세요... (@ 로 태그)',
+  '@{} bir yorumda seni etiketledi': '@{}님이 댓글에서 회원님을 태그했습니다',
+  'Mesajı sil': '메시지 삭제',
+  'Mesaj silinemedi': '메시지를 삭제할 수 없습니다',
+  'Bağlantı geçersiz veya sayfa bulunamadı': '링크가 잘못되었거나 페이지를 찾을 수 없습니다',
+  'Keşfet\'e dön': '탐색으로 돌아가기',
 };

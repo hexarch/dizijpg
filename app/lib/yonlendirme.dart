@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'api.dart';
+import 'ceviri.dart';
+import 'tema.dart';
 import 'ekranlar/akis.dart';
 import 'ekranlar/arama.dart';
 import 'ekranlar/bildirimler.dart';
@@ -127,37 +130,91 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           ),
         ],
       ),
-      // Detay sayfaları (sekmelerin üstünde)
+      // Detay sayfaları (sekmelerin üstünde).
+      // Sayısal parametreler güvenli parse edilir: bozuk/eski URL'de (web'de
+      // elle yazılmış /icerik/tv/abc gibi) hata ekranı yerine "bulunamadı".
       GoRoute(
         path: '/icerik/:tur/:id',
-        builder: (_, s) => DetayEkrani(
-          tmdbId: int.parse(s.pathParameters['id']!),
-          tur: s.pathParameters['tur']!,
-        ),
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          final tur = s.pathParameters['tur'];
+          if (id == null || (tur != 'tv' && tur != 'movie')) {
+            return const _GecersizBaglanti();
+          }
+          return DetayEkrani(tmdbId: id, tur: tur!);
+        },
       ),
       GoRoute(
         path: '/kisi/:id',
-        builder: (_, s) =>
-            KisiEkrani(kisiId: int.parse(s.pathParameters['id']!)),
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : KisiEkrani(kisiId: id);
+        },
       ),
       GoRoute(
         path: '/dizi/:id/sezon/:sezon/bolum/:bolum',
-        builder: (_, s) => BolumEkrani(
-          tmdbId: int.parse(s.pathParameters['id']!),
-          sezonNo: int.parse(s.pathParameters['sezon']!),
-          bolumNo: int.parse(s.pathParameters['bolum']!),
-          izlendi: (s.extra as bool?) ?? false,
-        ),
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          final sezon = int.tryParse(s.pathParameters['sezon'] ?? '');
+          final bolum = int.tryParse(s.pathParameters['bolum'] ?? '');
+          if (id == null || sezon == null || bolum == null) {
+            return const _GecersizBaglanti();
+          }
+          return BolumEkrani(
+            tmdbId: id,
+            sezonNo: sezon,
+            bolumNo: bolum,
+            izlendi: (s.extra as bool?) ?? false,
+          );
+        },
       ),
       GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
       GoRoute(
         path: '/ozet/:yil',
-        builder: (_, s) => OzetEkrani(yil: int.parse(s.pathParameters['yil']!)),
+        builder: (_, s) {
+          final yil = int.tryParse(s.pathParameters['yil'] ?? '');
+          return yil == null ? const _GecersizBaglanti() : OzetEkrani(yil: yil);
+        },
       ),
       GoRoute(
         path: '/izlediklerim',
         builder: (_, s) => IzlenenlerEkrani(tur: s.uri.queryParameters['tur']),
       ),
     ],
+    // Eşleşmeyen rota (bozuk/eski bağlantı): hata ekranı yerine nazik sayfa
+    errorBuilder: (_, __) => const _GecersizBaglanti(),
   );
+}
+
+/// Bozuk/eski bağlantıda gösterilir (hata ekranı yerine nazik yönlendirme).
+class _GecersizBaglanti extends StatelessWidget {
+  const _GecersizBaglanti();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.link_off, size: 48, color: DiziRenkler.metin38),
+            const SizedBox(height: 12),
+            Text(
+              'Bağlantı geçersiz veya sayfa bulunamadı'.c,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: DiziRenkler.metin54),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => context.go('/kesfet'),
+              child: Text('Keşfet\'e dön'.c),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

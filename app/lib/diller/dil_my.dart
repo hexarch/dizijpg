@@ -226,4 +226,12 @@ const Map<String, String> cevirilerMy = {
   'Koyu': 'အမှောင်',
   'Açık': 'အလင်း',
   'İzleyenler': 'ကြည့်ရှုသူများ',
+  'Yorumunu yaz... (@ ile etiketle)': 'သင့်မှတ်ချက်ရေးပါ... (@ တက်ဂ်လုပ်ရန်)',
+  '@{} bir yorumda seni etiketledi':
+      '@{} က မှတ်ချက်တစ်ခုတွင် သင့်ကို တက်ဂ်လုပ်ခဲ့သည်',
+  'Mesajı sil': 'မက်ဆေ့ဂျ်ဖျက်ရန်',
+  'Mesaj silinemedi': 'မက်ဆေ့ဂျ်ကို ဖျက်၍မရပါ',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'လင့်ခ်မမှန်ကန်ပါ သို့မဟုတ် စာမျက်နှာမတွေ့ပါ',
+  'Keşfet\'e dön': 'ရှာဖွေရန်သို့ ပြန်သွားရန်',
 };

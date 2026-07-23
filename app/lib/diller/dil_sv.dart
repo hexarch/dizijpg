@@ -224,4 +224,12 @@ const Map<String, String> cevirilerSv = {
   'Koyu': 'Mörkt',
   'Açık': 'Ljust',
   'İzleyenler': 'Tittare',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Skriv din kommentar... (@ för att tagga)',
+  '@{} bir yorumda seni etiketledi': '@{} taggade dig i en kommentar',
+  'Mesajı sil': 'Radera meddelande',
+  'Mesaj silinemedi': 'Meddelandet kunde inte raderas',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Länken är ogiltig eller sidan hittades inte',
+  'Keşfet\'e dön': 'Tillbaka till Utforska',
 };

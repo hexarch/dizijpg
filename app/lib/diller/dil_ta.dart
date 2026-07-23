@@ -224,4 +224,12 @@ const Map<String, String> cevirilerTa = {
   'Koyu': 'டார்க்',
   'Açık': 'லைட்',
   'İzleyenler': 'பார்வையாளர்கள்',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'உங்கள் கருத்தை எழுதுங்கள்... (@ குறியிட)',
+  '@{} bir yorumda seni etiketledi': '@{} உங்களை ஒரு கருத்தில் குறியிட்டார்',
+  'Mesajı sil': 'செய்தியை நீக்கு',
+  'Mesaj silinemedi': 'செய்தியை நீக்க முடியவில்லை',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'இணைப்பு தவறானது அல்லது பக்கம் கிடைக்கவில்லை',
+  'Keşfet\'e dön': 'கண்டறிதலுக்குத் திரும்பு',
 };

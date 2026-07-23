@@ -224,4 +224,11 @@ const Map<String, String> cevirilerFa = {
   'Koyu': 'تیره',
   'Açık': 'روشن',
   'İzleyenler': 'بینندگان',
+  'Yorumunu yaz... (@ ile etiketle)': 'نظرت را بنویس... (@ برای برچسب‌زدن)',
+  '@{} bir yorumda seni etiketledi': '‏@{} شما را در یک نظر برچسب زد',
+  'Mesajı sil': 'حذف پیام',
+  'Mesaj silinemedi': 'پیام حذف نشد',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'پیوند نامعتبر است یا صفحه پیدا نشد',
+  'Keşfet\'e dön': 'بازگشت به کشف',
 };

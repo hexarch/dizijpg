@@ -223,4 +223,10 @@ const Map<String, String> cevirilerHe = {
   'Koyu': 'כהה',
   'Açık': 'בהיר',
   'İzleyenler': 'צופים',
+  'Yorumunu yaz... (@ ile etiketle)': 'כתוב את התגובה שלך... (@ לתיוג)',
+  '@{} bir yorumda seni etiketledi': '‏@{} תייג אותך בתגובה',
+  'Mesajı sil': 'מחק הודעה',
+  'Mesaj silinemedi': 'לא ניתן היה למחוק את ההודעה',
+  'Bağlantı geçersiz veya sayfa bulunamadı': 'הקישור אינו תקין או שהדף לא נמצא',
+  'Keşfet\'e dön': 'חזרה לגילוי',
 };

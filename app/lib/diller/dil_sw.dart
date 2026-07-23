@@ -224,4 +224,11 @@ const Map<String, String> cevirilerSw = {
   'Koyu': 'Giza',
   'Açık': 'Mwanga',
   'İzleyenler': 'Watazamaji',
+  'Yorumunu yaz... (@ ile etiketle)': 'Andika maoni yako... (@ kutambulisha)',
+  '@{} bir yorumda seni etiketledi': '@{} amekutambulisha kwenye maoni',
+  'Mesajı sil': 'Futa ujumbe',
+  'Mesaj silinemedi': 'Ujumbe haukuweza kufutwa',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Kiungo si sahihi au ukurasa haukupatikana',
+  'Keşfet\'e dön': 'Rudi kwenye Gundua',
 };

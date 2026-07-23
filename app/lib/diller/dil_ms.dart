@@ -224,4 +224,11 @@ const Map<String, String> cevirilerMs = {
   'Koyu': 'Gelap',
   'Açık': 'Cerah',
   'İzleyenler': 'Penonton',
+  'Yorumunu yaz... (@ ile etiketle)': 'Tulis komen anda... (@ untuk tag)',
+  '@{} bir yorumda seni etiketledi': '@{} menandai anda dalam komen',
+  'Mesajı sil': 'Padam mesej',
+  'Mesaj silinemedi': 'Mesej tidak dapat dipadam',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Pautan tidak sah atau halaman tidak dijumpai',
+  'Keşfet\'e dön': 'Kembali ke Terokai',
 };

@@ -70,6 +70,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     switch (b['tur'] as String?) {
       case 'yanit':
         return (Icons.reply, '@{} yorumuna yanıt verdi'.cf([b['aktor']]));
+      case 'etiket':
+        return (
+          Icons.alternate_email,
+          '@{} bir yorumda seni etiketledi'.cf([b['aktor']]),
+        );
       case 'begeni':
         return (Icons.favorite, '@{} yorumunu beğendi'.cf([b['aktor']]));
       case 'takip':

@@ -224,4 +224,11 @@ const Map<String, String> cevirilerCs = {
   'Koyu': 'Tmavý',
   'Açık': 'Světlý',
   'İzleyenler': 'Diváci',
+  'Yorumunu yaz... (@ ile etiketle)': 'Napiš komentář... (@ pro označení)',
+  '@{} bir yorumda seni etiketledi': '@{} tě označil v komentáři',
+  'Mesajı sil': 'Smazat zprávu',
+  'Mesaj silinemedi': 'Zprávu se nepodařilo smazat',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Odkaz je neplatný nebo stránka nenalezena',
+  'Keşfet\'e dön': 'Zpět na Objevovat',
 };

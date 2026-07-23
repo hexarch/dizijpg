@@ -224,4 +224,11 @@ const Map<String, String> cevirilerBn = {
   'Koyu': 'ডার্ক',
   'Açık': 'লাইট',
   'İzleyenler': 'দর্শকরা',
+  'Yorumunu yaz... (@ ile etiketle)': 'আপনার মন্তব্য লিখুন... (@ ট্যাগ করতে)',
+  '@{} bir yorumda seni etiketledi': '@{} আপনাকে একটি মন্তব্যে ট্যাগ করেছেন',
+  'Mesajı sil': 'বার্তা মুছুন',
+  'Mesaj silinemedi': 'বার্তা মোছা যায়নি',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'লিঙ্কটি অবৈধ বা পৃষ্ঠা পাওয়া যায়নি',
+  'Keşfet\'e dön': 'আবিষ্কারে ফিরে যান',
 };

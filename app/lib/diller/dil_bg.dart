@@ -224,4 +224,12 @@ const Map<String, String> cevirilerBg = {
   'Koyu': 'Тъмна',
   'Açık': 'Светла',
   'İzleyenler': 'Гледали',
+  'Yorumunu yaz... (@ ile etiketle)':
+      'Напиши коментара си... (@ за отбелязване)',
+  '@{} bir yorumda seni etiketledi': '@{} те отбеляза в коментар',
+  'Mesajı sil': 'Изтрий съобщението',
+  'Mesaj silinemedi': 'Съобщението не можа да бъде изтрито',
+  'Bağlantı geçersiz veya sayfa bulunamadı':
+      'Връзката е невалидна или страницата не е намерена',
+  'Keşfet\'e dön': 'Обратно към Открий',
 };
