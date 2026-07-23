@@ -232,4 +232,16 @@ const Map<String, String> cevirilerRo = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linkul este invalid sau pagina nu a fost găsită',
   'Keşfet\'e dön': 'Înapoi la Descoperă',
+  'Düzenle': 'Editează',
+  'Mesajı düzenle': 'Editează mesajul',
+  'Yanıtlanıyor': 'Răspunde',
+  'düzenlendi': 'editat',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Conținut',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'văzut acum {} min',
+  'son görülme {} saat önce': 'văzut acum {} h',
+  'son görülme {} gün önce': 'văzut acum {} z',
+  'Yorumlar yüklenemedi': 'Comentariile nu au putut fi încărcate',
 };

@@ -234,4 +234,16 @@ const Map<String, String> cevirilerMy = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'လင့်ခ်မမှန်ကန်ပါ သို့မဟုတ် စာမျက်နှာမတွေ့ပါ',
   'Keşfet\'e dön': 'ရှာဖွေရန်သို့ ပြန်သွားရန်',
+  'Düzenle': 'တည်းဖြတ်',
+  'Mesajı düzenle': 'မက်ဆေ့ဂျ်တည်းဖြတ်',
+  'Yanıtlanıyor': 'ပြန်စာပေးနေသည်',
+  'düzenlendi': 'တည်းဖြတ်ပြီး',
+  'Fotoğraf': 'ဓာတ်ပုံ',
+  'Video': 'ဗီဒီယို',
+  'İçerik': 'အကြောင်းအရာ',
+  'çevrimiçi': 'အွန်လိုင်း',
+  'son görülme {} dk önce': '{} မိနစ်က တွေ့ခဲ့',
+  'son görülme {} saat önce': '{} နာရီက တွေ့ခဲ့',
+  'son görülme {} gün önce': '{} ရက်က တွေ့ခဲ့',
+  'Yorumlar yüklenemedi': 'မှတ်ချက်များ ဖွင့်၍မရပါ',
 };

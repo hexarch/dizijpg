@@ -232,4 +232,16 @@ const Map<String, String> cevirilerNb = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Lenken er ugyldig eller siden ble ikke funnet',
   'Keşfet\'e dön': 'Tilbake til Utforsk',
+  'Düzenle': 'Rediger',
+  'Mesajı düzenle': 'Rediger melding',
+  'Yanıtlanıyor': 'Svarer',
+  'düzenlendi': 'redigert',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Innhold',
+  'çevrimiçi': 'pålogget',
+  'son görülme {} dk önce': 'sist sett for {} min siden',
+  'son görülme {} saat önce': 'sist sett for {} t siden',
+  'son görülme {} gün önce': 'sist sett for {} d siden',
+  'Yorumlar yüklenemedi': 'Kunne ikke laste kommentarer',
 };

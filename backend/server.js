@@ -123,12 +123,28 @@ function jwtUret(kullanici) {
   );
 }
 
+// Çevrimiçi göstergesi için son_gorulme; her istekte değil, kullanıcı başına
+// en fazla 20 sn'de bir DB'ye yazılır (yazma yükünü azaltır).
+const sonGorulmeYazildi = new Map();
+function sonGorulmeGuncelle(kullaniciId) {
+  const simdi = Date.now();
+  if (simdi - (sonGorulmeYazildi.get(kullaniciId) || 0) < 20000) return;
+  sonGorulmeYazildi.set(kullaniciId, simdi);
+  havuz.query('UPDATE kullanicilar SET son_gorulme=now() WHERE id=$1', [kullaniciId])
+    .catch(() => {});
+  if (sonGorulmeYazildi.size > 10000) {
+    const esik = simdi - 60000;
+    for (const [k, t] of sonGorulmeYazildi) if (t < esik) sonGorulmeYazildi.delete(k);
+  }
+}
+
 function girisZorunlu(req, res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
   if (!token) return res.status(401).json({ hata: 'Giriş gerekli' });
   try {
     req.kullanici = jwt.verify(token, JWT_SECRET);
+    sonGorulmeGuncelle(req.kullanici.id);
     next();
   } catch {
     return res.status(401).json({ hata: 'Geçersiz oturum' });
@@ -1250,16 +1266,23 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
 // Bir kullanıcıyla mesajlaşma geçmişi; gelenler okundu işaretlenir.
 app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const k = await havuz.query(
-    'SELECT id, kullanici_adi, avatar FROM kullanicilar WHERE kullanici_adi=$1',
+    `SELECT id, kullanici_adi, avatar, son_gorulme
+     FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const partnerId = k.rows[0].id;
   const once = parseInt(req.query.once, 10) || null;
+  // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const { rows } = await havuz.query(
-    `SELECT id, gonderen_id, metin, medya, icerik_tur, icerik_id, okundu, tarih FROM mesajlar
-     WHERE ((gonderen_id=$1 AND alici_id=$2) OR (gonderen_id=$2 AND alici_id=$1))
-       AND ($3::int IS NULL OR id < $3)
-     ORDER BY id DESC LIMIT 50`,
+    `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.icerik_tur, m.icerik_id,
+            m.okundu, m.duzenlendi, m.yanit_id, m.tarih,
+            y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
+            y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
+     FROM mesajlar m
+     LEFT JOIN mesajlar y ON y.id = m.yanit_id
+     WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))
+       AND ($3::int IS NULL OR m.id < $3)
+     ORDER BY m.id DESC LIMIT 50`,
     [req.kullanici.id, partnerId, once],
   );
   // Paylaşılan içerik kartları için ad + poster (önbellekli TMDB)
@@ -1290,10 +1313,16 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
 }));
 
 app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
-  const { kullanici_adi, metin, medya = null, icerik_tur = null, icerik_id = null } = req.body || {};
+  const {
+    kullanici_adi, metin, medya = null, icerik_tur = null, icerik_id = null,
+    yanit_id = null,
+  } = req.body || {};
   const temiz = String(metin || '').trim();
   if (temiz.length > 2000) {
     return res.status(400).json({ hata: 'Mesaj en fazla 2000 karakter olabilir' });
+  }
+  if (yanit_id != null && !Number.isInteger(yanit_id)) {
+    return res.status(400).json({ hata: 'Geçersiz yanit_id' });
   }
   // Medya: yalnızca bu kullanıcının yüklediği, bizim ürettiğimiz adlar
   if (medya != null &&
@@ -1318,14 +1347,44 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   if (aliciId === req.kullanici.id) {
     return res.status(400).json({ hata: 'Kendine mesaj gönderemezsin' });
   }
+  // Alıntılanan mesaj bu iki kişiye ait olmalı (başka sohbetten alıntı olmaz)
+  let gecerliYanit = null;
+  if (yanit_id != null) {
+    const y = await havuz.query(
+      `SELECT id FROM mesajlar WHERE id=$1
+       AND ((gonderen_id=$2 AND alici_id=$3) OR (gonderen_id=$3 AND alici_id=$2))`,
+      [yanit_id, req.kullanici.id, aliciId],
+    );
+    if (y.rows.length) gecerliYanit = yanit_id;
+  }
   const { rows } = await havuz.query(
-    `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, icerik_tur, icerik_id)
-     VALUES ($1,$2,$3,$4,$5,$6) RETURNING id, tarih`,
+    `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, icerik_tur, icerik_id, yanit_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, tarih`,
     [req.kullanici.id, aliciId, temiz || null, medya,
-     icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null],
+     icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit],
   );
   bildirimEkle(aliciId, 'mesaj', req.kullanici.id);
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
+}));
+
+// Kendi mesajını düzenle (yalnız metin; medya/içerik kartı düzenlenmez)
+app.patch('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
+  const id = Number(req.params.id);
+  const { metin } = req.body || {};
+  const temiz = String(metin || '').trim();
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  if (!temiz || temiz.length > 2000) {
+    return res.status(400).json({ hata: 'Mesaj 1-2000 karakter olmalı' });
+  }
+  // Yalnız kendi METİN mesajını (medya/içerik kartı olmayan) düzenleyebilir
+  const { rows } = await havuz.query(
+    `UPDATE mesajlar SET metin=$1, duzenlendi=true
+     WHERE id=$2 AND gonderen_id=$3 AND medya IS NULL AND icerik_tur IS NULL
+     RETURNING id`,
+    [temiz, id, req.kullanici.id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı veya düzenlenemez' });
+  res.json({ tamam: true });
 }));
 
 // Kendi mesajını sil (iki taraftan da kalkar; medyası varsa dosyayı da temizler)

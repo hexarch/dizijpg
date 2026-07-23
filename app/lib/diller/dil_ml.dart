@@ -232,4 +232,16 @@ const Map<String, String> cevirilerMl = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'ലിങ്ക് അസാധുവാണ് അല്ലെങ്കിൽ പേജ് കണ്ടെത്തിയില്ല',
   'Keşfet\'e dön': 'കണ്ടെത്തലിലേക്ക് മടങ്ങുക',
+  'Düzenle': 'എഡിറ്റ്',
+  'Mesajı düzenle': 'സന്ദേശം എഡിറ്റ്',
+  'Yanıtlanıyor': 'മറുപടി നൽകുന്നു',
+  'düzenlendi': 'എഡിറ്റ് ചെയ്തു',
+  'Fotoğraf': 'ഫോട്ടോ',
+  'Video': 'വീഡിയോ',
+  'İçerik': 'ഉള്ളടക്കം',
+  'çevrimiçi': 'ഓൺലൈൻ',
+  'son görülme {} dk önce': '{} മിനിറ്റ് മുമ്പ് കണ്ടു',
+  'son görülme {} saat önce': '{} മണിക്കൂർ മുമ്പ് കണ്ടു',
+  'son görülme {} gün önce': '{} ദിവസം മുമ്പ് കണ്ടു',
+  'Yorumlar yüklenemedi': 'കമന്റുകൾ ലോഡ് ചെയ്യാനായില്ല',
 };

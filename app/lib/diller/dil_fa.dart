@@ -231,4 +231,16 @@ const Map<String, String> cevirilerFa = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'پیوند نامعتبر است یا صفحه پیدا نشد',
   'Keşfet\'e dön': 'بازگشت به کشف',
+  'Düzenle': 'ویرایش',
+  'Mesajı düzenle': 'ویرایش پیام',
+  'Yanıtlanıyor': 'در حال پاسخ',
+  'düzenlendi': 'ویرایش‌شده',
+  'Fotoğraf': 'عکس',
+  'Video': 'ویدیو',
+  'İçerik': 'محتوا',
+  'çevrimiçi': 'آنلاین',
+  'son görülme {} dk önce': 'آخرین بازدید {} دقیقه پیش',
+  'son görülme {} saat önce': 'آخرین بازدید {} ساعت پیش',
+  'son görülme {} gün önce': 'آخرین بازدید {} روز پیش',
+  'Yorumlar yüklenemedi': 'نظرات بارگذاری نشد',
 };

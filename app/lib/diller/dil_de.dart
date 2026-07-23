@@ -233,4 +233,16 @@ const Map<String, String> cevirilerDe = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link ist ungültig oder Seite nicht gefunden',
   'Keşfet\'e dön': 'Zurück zu Entdecken',
+  'Düzenle': 'Bearbeiten',
+  'Mesajı düzenle': 'Nachricht bearbeiten',
+  'Yanıtlanıyor': 'Antwortet',
+  'düzenlendi': 'bearbeitet',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Inhalt',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'zuletzt vor {} Min.',
+  'son görülme {} saat önce': 'zuletzt vor {} Std.',
+  'son görülme {} gün önce': 'zuletzt vor {} T.',
+  'Yorumlar yüklenemedi': 'Kommentare konnten nicht geladen werden',
 };

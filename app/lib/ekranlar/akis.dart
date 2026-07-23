@@ -256,6 +256,17 @@ class _AkisKartiState extends State<_AkisKarti> {
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
   bool _isleniyor = false;
 
+  @override
+  void didUpdateWidget(_AkisKarti eski) {
+    super.didUpdateWidget(eski);
+    // Yenilemeden sonra (ValueKey ile State yeniden kullanılır) beğeni
+    // durumunu sunucudan gelen taze veriyle eşitle — işlem sürerken dokunma.
+    if (!_isleniyor && eski.yorum != widget.yorum) {
+      _begendim = widget.yorum['begendim'] == true;
+      _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+    }
+  }
+
   Future<void> _begen() async {
     if (_isleniyor) return;
     setState(() {

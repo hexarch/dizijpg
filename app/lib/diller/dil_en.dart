@@ -230,4 +230,16 @@ const Map<String, String> cevirilerEn = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link is invalid or page not found',
   'Keşfet\'e dön': 'Back to Discover',
+  'Düzenle': 'Edit',
+  'Mesajı düzenle': 'Edit message',
+  'Yanıtlanıyor': 'Replying',
+  'düzenlendi': 'edited',
+  'Fotoğraf': 'Photo',
+  'Video': 'Video',
+  'İçerik': 'Content',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'last seen {} min ago',
+  'son görülme {} saat önce': 'last seen {} h ago',
+  'son görülme {} gün önce': 'last seen {} d ago',
+  'Yorumlar yüklenemedi': 'Couldn\'t load comments',
 };

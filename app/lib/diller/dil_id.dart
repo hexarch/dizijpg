@@ -231,4 +231,16 @@ const Map<String, String> cevirilerId = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Tautan tidak valid atau halaman tidak ditemukan',
   'Keşfet\'e dön': 'Kembali ke Jelajahi',
+  'Düzenle': 'Edit',
+  'Mesajı düzenle': 'Edit pesan',
+  'Yanıtlanıyor': 'Membalas',
+  'düzenlendi': 'diedit',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Konten',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'terakhir dilihat {} mnt lalu',
+  'son görülme {} saat önce': 'terakhir dilihat {} jam lalu',
+  'son görülme {} gün önce': 'terakhir dilihat {} hr lalu',
+  'Yorumlar yüklenemedi': 'Tidak dapat memuat komentar',
 };

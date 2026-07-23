@@ -231,4 +231,16 @@ const Map<String, String> cevirilerSr = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Веза је неисправна или страница није пронађена',
   'Keşfet\'e dön': 'Назад на Откриј',
+  'Düzenle': 'Измени',
+  'Mesajı düzenle': 'Измени поруку',
+  'Yanıtlanıyor': 'Одговара',
+  'düzenlendi': 'измењено',
+  'Fotoğraf': 'Фотографија',
+  'Video': 'Видео',
+  'İçerik': 'Садржај',
+  'çevrimiçi': 'на вези',
+  'son görülme {} dk önce': 'виђен пре {} мин',
+  'son görülme {} saat önce': 'виђен пре {} ч',
+  'son görülme {} gün önce': 'виђен пре {} д',
+  'Yorumlar yüklenemedi': 'Коментари нису могли да се учитају',
 };

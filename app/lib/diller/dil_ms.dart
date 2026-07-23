@@ -231,4 +231,16 @@ const Map<String, String> cevirilerMs = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Pautan tidak sah atau halaman tidak dijumpai',
   'Keşfet\'e dön': 'Kembali ke Terokai',
+  'Düzenle': 'Edit',
+  'Mesajı düzenle': 'Edit mesej',
+  'Yanıtlanıyor': 'Membalas',
+  'düzenlendi': 'disunting',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Kandungan',
+  'çevrimiçi': 'dalam talian',
+  'son görülme {} dk önce': 'dilihat {} min lalu',
+  'son görülme {} saat önce': 'dilihat {} jam lalu',
+  'son görülme {} gün önce': 'dilihat {} hari lalu',
+  'Yorumlar yüklenemedi': 'Tidak dapat memuatkan komen',
 };

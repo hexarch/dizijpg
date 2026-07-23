@@ -231,4 +231,16 @@ const Map<String, String> cevirilerCs = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Odkaz je neplatný nebo stránka nenalezena',
   'Keşfet\'e dön': 'Zpět na Objevovat',
+  'Düzenle': 'Upravit',
+  'Mesajı düzenle': 'Upravit zprávu',
+  'Yanıtlanıyor': 'Odpovídání',
+  'düzenlendi': 'upraveno',
+  'Fotoğraf': 'Fotka',
+  'Video': 'Video',
+  'İçerik': 'Obsah',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'naposledy před {} min',
+  'son görülme {} saat önce': 'naposledy před {} h',
+  'son görülme {} gün önce': 'naposledy před {} d',
+  'Yorumlar yüklenemedi': 'Komentáře se nepodařilo načíst',
 };

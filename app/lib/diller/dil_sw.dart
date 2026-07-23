@@ -231,4 +231,16 @@ const Map<String, String> cevirilerSw = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Kiungo si sahihi au ukurasa haukupatikana',
   'Keşfet\'e dön': 'Rudi kwenye Gundua',
+  'Düzenle': 'Hariri',
+  'Mesajı düzenle': 'Hariri ujumbe',
+  'Yanıtlanıyor': 'Anajibu',
+  'düzenlendi': 'imehaririwa',
+  'Fotoğraf': 'Picha',
+  'Video': 'Video',
+  'İçerik': 'Maudhui',
+  'çevrimiçi': 'mtandaoni',
+  'son görülme {} dk önce': 'alionekana dakika {} zilizopita',
+  'son görülme {} saat önce': 'alionekana saa {} zilizopita',
+  'son görülme {} gün önce': 'alionekana siku {} zilizopita',
+  'Yorumlar yüklenemedi': 'Imeshindwa kupakia maoni',
 };

@@ -233,4 +233,16 @@ const Map<String, String> cevirilerPt = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link inválido ou página não encontrada',
   'Keşfet\'e dön': 'Voltar a Descobrir',
+  'Düzenle': 'Editar',
+  'Mesajı düzenle': 'Editar mensagem',
+  'Yanıtlanıyor': 'A responder',
+  'düzenlendi': 'editado',
+  'Fotoğraf': 'Foto',
+  'Video': 'Vídeo',
+  'İçerik': 'Conteúdo',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'visto há {} min',
+  'son görülme {} saat önce': 'visto há {} h',
+  'son görülme {} gün önce': 'visto há {} d',
+  'Yorumlar yüklenemedi': 'Não foi possível carregar os comentários',
 };

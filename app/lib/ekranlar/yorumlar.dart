@@ -33,6 +33,7 @@ class YorumBolumu extends StatefulWidget {
 
 class _YorumBolumuState extends State<YorumBolumu> {
   List<dynamic>? _yorumlar;
+  bool _yorumHatasi = false; // yükleme başarısız mı (boş ≠ hata)
   final _metin = TextEditingController();
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
@@ -61,10 +62,14 @@ class _YorumBolumuState extends State<YorumBolumu> {
         '/yorumlar/${widget.tur}/${widget.tmdbId}$_sorgu',
       );
       if (mounted) {
-        setState(() => _yorumlar = d['yorumlar'] as List<dynamic>);
+        setState(() {
+          _yorumlar = d['yorumlar'] as List<dynamic>;
+          _yorumHatasi = false;
+        });
       }
     } catch (_) {
-      if (mounted) setState(() => _yorumlar = []);
+      // Hata boş durumla karışmasın: ayrı bayrak, "tekrar dene" göster
+      if (mounted) setState(() => _yorumHatasi = true);
     }
   }
 
@@ -308,7 +313,24 @@ class _YorumBolumuState extends State<YorumBolumu> {
           ),
         ),
         // Yorum listesi
-        if (_yorumlar == null)
+        if (_yorumHatasi && _yorumlar == null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: Row(
+              children: [
+                Icon(Icons.error_outline, size: 18, color: DiziRenkler.metin38),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Yorumlar yüklenemedi'.c,
+                    style: TextStyle(color: DiziRenkler.metin54),
+                  ),
+                ),
+                TextButton(onPressed: _yukle, child: Text('Tekrar dene'.c)),
+              ],
+            ),
+          )
+        else if (_yorumlar == null)
           const Padding(
             padding: EdgeInsets.all(24),
             child: Center(
@@ -476,7 +498,7 @@ class _YorumKartiState extends State<_YorumKarti> {
             ),
             const SizedBox(height: 8),
             EtiketliMetin(
-              yorum['metin'] as String,
+              yorum['metin'] as String? ?? '',
               stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
             ),
             if (medya.isNotEmpty) ...[

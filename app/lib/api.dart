@@ -74,6 +74,17 @@ class Api {
     return _isle(cevap);
   }
 
+  static Future<dynamic> patch(String yol, Map<String, dynamic> govde) async {
+    final cevap = await http
+        .patch(
+          Uri.parse('$apiTaban$yol'),
+          headers: _basliklar,
+          body: jsonEncode(govde),
+        )
+        .timeout(const Duration(seconds: 20));
+    return _isle(cevap);
+  }
+
   static dynamic _isle(http.Response cevap) {
     final govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
     if (cevap.statusCode >= 400) {

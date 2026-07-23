@@ -150,6 +150,10 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   bool _gonderiliyor = false;
   bool _ekYukleniyor = false;
   bool _yaziyor = false; // karşı taraf yazıyor mu
+  String? _hata; // ilk yükleme hatası
+  Map<String, dynamic>? _partner; // avatar + son_gorulme
+  Map<String, dynamic>? _yanitlanan; // alıntılanan mesaj (yanıt modu)
+  int? _duzenlenenId; // düzenlenen mesajın id'si (düzenleme modu)
   DateTime _sonYaziyorBildirimi = DateTime.fromMillisecondsSinceEpoch(0);
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
@@ -198,11 +202,19 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
         _mesajlar = yeni;
         _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
         _yaziyor = d['yaziyor'] == true;
+        _partner = d['partner'] as Map<String, dynamic>?;
         _yuklendi = true;
+        _hata = null;
       });
       if (ilk || degisti) _sonaKaydir();
-    } catch (_) {
-      if (mounted && ilk) setState(() => _yuklendi = true);
+    } catch (e) {
+      // İlk yüklemede hata → boş sohbet yerine hata + tekrar dene göster
+      if (mounted && ilk) {
+        setState(() {
+          _yuklendi = true;
+          _hata = e.toString();
+        });
+      }
     }
   }
 
@@ -232,6 +244,11 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     int? icerikId,
   }) async {
     if (_gonderiliyor) return;
+    // Düzenleme modunda: metni PATCH ile güncelle, yeni mesaj atma
+    if (_duzenlenenId != null) {
+      await _duzenlemeyiKaydet(metin ?? '');
+      return;
+    }
     setState(() => _gonderiliyor = true);
     try {
       await Api.post('/mesajlar', {
@@ -240,10 +257,61 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
         if (medya != null) 'medya': medya,
         if (icerikTur != null) 'icerik_tur': icerikTur,
         if (icerikId != null) 'icerik_id': icerikId,
+        if (_yanitlanan != null)
+          'yanit_id': (_yanitlanan!['id'] as num).toInt(),
       });
       _metin.clear();
+      setState(() => _yanitlanan = null);
       await _yukle();
       _sonaKaydir();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _gonderiliyor = false);
+    }
+  }
+
+  /// Bir mesaja yanıt vermeye başla (alıntı kutusu belirir, klavye açılır).
+  void _yanitBaslat(Map<String, dynamic> m) {
+    setState(() {
+      _duzenlenenId = null;
+      _yanitlanan = m;
+    });
+  }
+
+  /// Kendi metin mesajını düzenlemeye başla (metin kutusuna yüklenir).
+  void _duzenlemeBaslat(Map<String, dynamic> m) {
+    setState(() {
+      _yanitlanan = null;
+      _duzenlenenId = (m['id'] as num).toInt();
+      _metin.text = (m['metin'] as String?) ?? '';
+      _metin.selection = TextSelection.fromPosition(
+        TextPosition(offset: _metin.text.length),
+      );
+    });
+  }
+
+  void _modIptal() {
+    setState(() {
+      _yanitlanan = null;
+      _duzenlenenId = null;
+      _metin.clear();
+    });
+  }
+
+  Future<void> _duzenlemeyiKaydet(String metin) async {
+    final id = _duzenlenenId;
+    if (id == null) return;
+    if (metin.trim().isEmpty) return;
+    setState(() => _gonderiliyor = true);
+    try {
+      await Api.patch('/mesajlar/$id', {'metin': metin.trim()});
+      _metin.clear();
+      setState(() => _duzenlenenId = null);
+      await _yukle();
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -310,7 +378,9 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                     fontWeight: FontWeight.w500,
                     color: DiziRenkler.sari,
                   ),
-                ),
+                )
+              else
+                _DurumSatiri(sonGorulme: _partner?['son_gorulme'] as String?),
             ],
           ),
         ),
@@ -327,6 +397,11 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                         child: CircularProgressIndicator(
                           color: DiziRenkler.sari,
                         ),
+                      )
+                    : (_hata != null && _mesajlar.isEmpty)
+                    ? HataGorunumu(
+                        mesaj: _hata!,
+                        tekrar: () => _yukle(ilk: true),
                       )
                     : ListView.builder(
                         controller: _kaydirma,
@@ -349,12 +424,22 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                     .first
                               : null;
                           final benimMi = m['gonderen_id'] == benimId;
+                          final metinMi =
+                              (m['metin'] as String?)?.isNotEmpty == true &&
+                              m['medya'] == null &&
+                              m['icerik_tur'] == null;
                           final baloncuk = _MesajBaloncugu(
                             mesaj: m,
                             benim: benimMi,
                             icerikler: _icerikler,
+                            yanitla: m['id'] != null
+                                ? () => _yanitBaslat(m)
+                                : null,
                             sil: benimMi && m['id'] != null
                                 ? () => _mesajSil((m['id'] as num).toInt())
+                                : null,
+                            duzenle: benimMi && metinMi
+                                ? () => _duzenlemeBaslat(m)
                                 : null,
                           );
                           if (gun == oncekiGun || gun.isEmpty) return baloncuk;
@@ -393,15 +478,66 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                         },
                       ),
               ),
+              // Yanıt / düzenleme kutusu (giriş alanının hemen üstünde)
+              if (_yanitlanan != null || _duzenlenenId != null)
+                Container(
+                  padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+                  color: DiziRenkler.koyuGri,
+                  child: Row(
+                    children: [
+                      Icon(
+                        _duzenlenenId != null ? Icons.edit : Icons.reply,
+                        size: 18,
+                        color: DiziRenkler.sari,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              _duzenlenenId != null
+                                  ? 'Mesajı düzenle'.c
+                                  : 'Yanıtlanıyor'.c,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: DiziRenkler.sari,
+                              ),
+                            ),
+                            Text(
+                              _duzenlenenId != null
+                                  ? ((_metin.text).trim())
+                                  : _yanitOnizleme(_yanitlanan!),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DiziRenkler.metin54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: _modIptal,
+                        icon: Icon(Icons.close, color: DiziRenkler.metin54),
+                      ),
+                    ],
+                  ),
+                ),
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      // Fotoğraf / GIF
+                      // Fotoğraf / GIF (düzenleme modunda kapalı — düzenleme yalnız metin)
                       IconButton(
-                        onPressed: _ekYukleniyor ? null : _fotoGonder,
+                        onPressed: (_ekYukleniyor || _duzenlenenId != null)
+                            ? null
+                            : _fotoGonder,
                         icon: _ekYukleniyor
                             ? const SizedBox(
                                 width: 20,
@@ -411,17 +547,21 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                   color: DiziRenkler.sari,
                                 ),
                               )
-                            : const Icon(
+                            : Icon(
                                 Icons.add_photo_alternate_outlined,
-                                color: DiziRenkler.sari,
+                                color: _duzenlenenId != null
+                                    ? DiziRenkler.metin24
+                                    : DiziRenkler.sari,
                               ),
                       ),
-                      // Dizi/film kartı paylaş
+                      // Dizi/film kartı paylaş (düzenleme modunda kapalı)
                       IconButton(
-                        onPressed: _icerikPaylas,
-                        icon: const Icon(
+                        onPressed: _duzenlenenId != null ? null : _icerikPaylas,
+                        icon: Icon(
                           Icons.local_movies_outlined,
-                          color: DiziRenkler.sari,
+                          color: _duzenlenenId != null
+                              ? DiziRenkler.metin24
+                              : DiziRenkler.sari,
                         ),
                       ),
                       Expanded(
@@ -468,19 +608,120 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   }
 }
 
+/// Başlıktaki durum satırı: son 60 sn içinde aktifse "çevrimiçi", değilse
+/// "son görülme ...". son_gorulme ISO zaman damgası (UTC) beklenir.
+class _DurumSatiri extends StatelessWidget {
+  final String? sonGorulme;
+  const _DurumSatiri({this.sonGorulme});
+
+  @override
+  Widget build(BuildContext context) {
+    if (sonGorulme == null) return const SizedBox.shrink();
+    final an = DateTime.tryParse(sonGorulme!)?.toLocal();
+    if (an == null) return const SizedBox.shrink();
+    final fark = DateTime.now().difference(an);
+    final cevrimici = fark.inSeconds < 60;
+    final String etiket;
+    if (cevrimici) {
+      etiket = 'çevrimiçi'.c;
+    } else if (fark.inMinutes < 60) {
+      etiket = 'son görülme {} dk önce'.cf([fark.inMinutes]);
+    } else if (fark.inHours < 24) {
+      etiket = 'son görülme {} saat önce'.cf([fark.inHours]);
+    } else {
+      etiket = 'son görülme {} gün önce'.cf([fark.inDays]);
+    }
+    return Text(
+      etiket,
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w500,
+        color: cevrimici ? DiziRenkler.sari : DiziRenkler.metin54,
+      ),
+    );
+  }
+}
+
+/// Alıntı/yanıt kutusu için kısa önizleme metni (medya/içerik ikon yerine söz).
+String _yanitOnizleme(Map<String, dynamic> m) {
+  final metin = (m['metin'] as String?)?.trim();
+  if (metin != null && metin.isNotEmpty) return metin;
+  final medya = m['medya'] as String? ?? m['yanit_medya'] as String?;
+  if (medya != null) {
+    final video = medya.endsWith('.mp4') || medya.endsWith('.webm');
+    return video ? 'Video'.c : 'Fotoğraf'.c;
+  }
+  if (m['icerik_tur'] != null || m['yanit_icerik_tur'] != null) {
+    return 'İçerik'.c;
+  }
+  return '...';
+}
+
 /// Tek mesaj baloncuğu: metin, medya (foto/GIF/video) ve içerik kartı.
 class _MesajBaloncugu extends StatelessWidget {
   final Map<String, dynamic> mesaj;
   final bool benim;
   final Map<String, dynamic> icerikler;
   final VoidCallback? sil;
+  final VoidCallback? yanitla;
+  final VoidCallback? duzenle;
 
   const _MesajBaloncugu({
     required this.mesaj,
     required this.benim,
     required this.icerikler,
     this.sil,
+    this.yanitla,
+    this.duzenle,
   });
+
+  /// Uzun basınca: Yanıtla / Düzenle / Sil (uygun olanlar). Telegram tarzı menü.
+  void _menuAc(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (sheetCtx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (yanitla != null)
+              ListTile(
+                leading: const Icon(Icons.reply, color: DiziRenkler.sari),
+                title: Text('Yanıtla'.c),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  yanitla!();
+                },
+              ),
+            if (duzenle != null)
+              ListTile(
+                leading: const Icon(Icons.edit, color: DiziRenkler.sari),
+                title: Text('Düzenle'.c),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  duzenle!();
+                },
+              ),
+            if (sil != null)
+              ListTile(
+                leading: const Icon(
+                  Icons.delete_outline,
+                  color: Colors.redAccent,
+                ),
+                title: Text(
+                  'Mesajı sil'.c,
+                  style: const TextStyle(color: Colors.redAccent),
+                ),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  sil!();
+                },
+              ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -498,37 +739,16 @@ class _MesajBaloncugu extends StatelessWidget {
     final saatKisa = saat.length >= 16 ? saat.substring(11, 16) : '';
     final yaziRengi = benim ? Colors.black : DiziRenkler.metin;
 
+    final yanitId = m['yanit_id'];
+    final duzenlendi = m['duzenlendi'] == true;
+
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
-        // Kendi mesajına uzun bas → sil
-        onLongPress: sil == null
+        // Uzun bas → Yanıtla / Düzenle / Sil menüsü
+        onLongPress: (yanitla == null && duzenle == null && sil == null)
             ? null
-            : () => showModalBottomSheet(
-                context: context,
-                backgroundColor: DiziRenkler.koyuGri,
-                builder: (sheetCtx) => SafeArea(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ListTile(
-                        leading: const Icon(
-                          Icons.delete_outline,
-                          color: Colors.redAccent,
-                        ),
-                        title: Text(
-                          'Mesajı sil'.c,
-                          style: const TextStyle(color: Colors.redAccent),
-                        ),
-                        onTap: () {
-                          Navigator.pop(sheetCtx);
-                          sil!();
-                        },
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            : () => _menuAc(context),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 3),
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
@@ -551,6 +771,36 @@ class _MesajBaloncugu extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Alıntılanan mesaj önizlemesi (yanıtsa)
+              if (yanitId != null)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 5),
+                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  decoration: BoxDecoration(
+                    color: (benim ? Colors.black : DiziRenkler.metin)
+                        .withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border(
+                      left: BorderSide(
+                        color: benim ? Colors.black54 : DiziRenkler.sari,
+                        width: 3,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    _yanitOnizleme({
+                      'metin': m['yanit_metin'],
+                      'yanit_medya': m['yanit_medya'],
+                      'yanit_icerik_tur': m['yanit_icerik_tur'],
+                    }),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: yaziRengi.withValues(alpha: 0.75),
+                    ),
+                  ),
+                ),
               // Fotoğraf / GIF / video
               if (medya != null)
                 Padding(
@@ -657,6 +907,17 @@ class _MesajBaloncugu extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (duzenlendi) ...[
+                      Text(
+                        'düzenlendi'.c,
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontStyle: FontStyle.italic,
+                          color: yaziRengi.withValues(alpha: 0.5),
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                    ],
                     Text(
                       saatKisa,
                       style: TextStyle(

@@ -137,6 +137,29 @@ Kullanıcı bildirimi + kendi tespitlerimle düzeltilenler (hepsi canlıda test 
 6. ✅ 6 yeni metin 45 dile çevrildi (219 anahtar, senkron doğrulandı)
 7. ✅ v1.3.0+4: backend + web yayında; APK masaüstünde
 
+## SPRINT 8 — Telegram-denk mesajlaşma + Play Store hazırlık (2026-07-24) 🚀
+Telegram özellikleri (tasarım değil, ÖZELLİK paritesi):
+1. ✅ YANITLAMA (alıntı): uzun bas → Yanıtla; baloncukta alıntı önizlemesi;
+   backend yanit_id (aynı sohbete ait doğrulanır)
+2. ✅ MESAJ DÜZENLEME: uzun bas → Düzenle; "Mesajı düzenle" kutusu; PATCH
+   /mesajlar/:id (yalnız kendi METİN mesajı); baloncukta "düzenlendi"
+3. ✅ ÇEVRİMİÇİ / SON GÖRÜLME: kullanicilar.son_gorulme (girisZorunlu'da 20sn
+   throttle); başlıkta "çevrimiçi" / "son görülme X dk önce"
+4. ✅ MESAJ SİLME (önceki sprintten) + uzun-basma menüsü (Yanıtla/Düzenle/Sil)
+   Migrasyon 2026-07-24b: mesajlar.yanit_id + duzenlendi, kullanicilar.son_gorulme
+   Canlı test: yanıt önizleme ✓, düzenle+bayrak ✓, başkasını düzenle 404 ✓
+   Emülatör: menü ✓, düzenleme kutusu ✓
+
+Play Store hazırlık — denetim ajanı 6 bulgu, hepsi düzeltildi:
+5. ✅ Düzenleme modunda foto/içerik butonları kilitli (sessiz yükleme kaybı giderildi)
+6. ✅ Yorum yükleme hatası → "Yorumlar yüklenemedi + Tekrar dene" (boş ≠ hata)
+7. ✅ Sohbet ilk yükleme hatası → HataGorunumu + tekrar dene
+8. ✅ Akış kartı didUpdateWidget (yenilemeden sonra beğeni bayat kalmıyor)
+9. ✅ yorum metni güvenli cast (as String? ?? '')
+10. ✅ kullanici_profil 4× Image.network → CachedNetworkImage + errorWidget
+Backend smoke-test: tüm GET 200, geçersiz girdiler 400 (hiç 500 yok)
+11. ✅ v1.4.1+6
+
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
 dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:

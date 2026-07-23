@@ -231,4 +231,16 @@ const Map<String, String> cevirilerGu = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'લિંક અમાન્ય છે અથવા પૃષ્ઠ મળ્યું નથી',
   'Keşfet\'e dön': 'શોધ પર પાછા જાઓ',
+  'Düzenle': 'સંપાદિત કરો',
+  'Mesajı düzenle': 'સંદેશ સંપાદિત કરો',
+  'Yanıtlanıyor': 'જવાબ આપી રહ્યાં છે',
+  'düzenlendi': 'સંપાદિત',
+  'Fotoğraf': 'ફોટો',
+  'Video': 'વિડિઓ',
+  'İçerik': 'સામગ્રી',
+  'çevrimiçi': 'ઓનલાઇન',
+  'son görülme {} dk önce': '{} મિનિટ પહેલાં જોયું',
+  'son görülme {} saat önce': '{} કલાક પહેલાં જોયું',
+  'son görülme {} gün önce': '{} દિવસ પહેલાં જોયું',
+  'Yorumlar yüklenemedi': 'ટિપ્પણીઓ લોડ થઈ શકી નથી',
 };

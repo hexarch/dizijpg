@@ -230,4 +230,16 @@ const Map<String, String> cevirilerDa = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linket er ugyldigt eller siden blev ikke fundet',
   'Keşfet\'e dön': 'Tilbage til Opdag',
+  'Düzenle': 'Rediger',
+  'Mesajı düzenle': 'Rediger besked',
+  'Yanıtlanıyor': 'Svarer',
+  'düzenlendi': 'redigeret',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Indhold',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'sidst set for {} min siden',
+  'son görülme {} saat önce': 'sidst set for {} t siden',
+  'son görülme {} gün önce': 'sidst set for {} d siden',
+  'Yorumlar yüklenemedi': 'Kunne ikke indlæse kommentarer',
 };

@@ -231,4 +231,16 @@ const Map<String, String> cevirilerAr = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'الرابط غير صالح أو الصفحة غير موجودة',
   'Keşfet\'e dön': 'العودة إلى الاستكشاف',
+  'Düzenle': 'تعديل',
+  'Mesajı düzenle': 'تعديل الرسالة',
+  'Yanıtlanıyor': 'يرد',
+  'düzenlendi': 'معدّلة',
+  'Fotoğraf': 'صورة',
+  'Video': 'فيديو',
+  'İçerik': 'محتوى',
+  'çevrimiçi': 'متصل',
+  'son görülme {} dk önce': 'آخر ظهور قبل {} د',
+  'son görülme {} saat önce': 'آخر ظهور قبل {} س',
+  'son görülme {} gün önce': 'آخر ظهور قبل {} ي',
+  'Yorumlar yüklenemedi': 'تعذّر تحميل التعليقات',
 };

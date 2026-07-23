@@ -232,4 +232,16 @@ const Map<String, String> cevirilerHu = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'A hivatkozás érvénytelen vagy az oldal nem található',
   'Keşfet\'e dön': 'Vissza a Felfedezéshez',
+  'Düzenle': 'Szerkesztés',
+  'Mesajı düzenle': 'Üzenet szerkesztése',
+  'Yanıtlanıyor': 'Válaszol',
+  'düzenlendi': 'szerkesztve',
+  'Fotoğraf': 'Fotó',
+  'Video': 'Videó',
+  'İçerik': 'Tartalom',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': '{} perce látták',
+  'son görülme {} saat önce': '{} órája látták',
+  'son görülme {} gün önce': '{} napja látták',
+  'Yorumlar yüklenemedi': 'A hozzászólások betöltése sikertelen',
 };

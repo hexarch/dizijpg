@@ -232,4 +232,16 @@ const Map<String, String> cevirilerMr = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'दुवा अवैध आहे किंवा पृष्ठ सापडले नाही',
   'Keşfet\'e dön': 'शोधाकडे परत जा',
+  'Düzenle': 'संपादित करा',
+  'Mesajı düzenle': 'संदेश संपादित करा',
+  'Yanıtlanıyor': 'उत्तर देत आहे',
+  'düzenlendi': 'संपादित',
+  'Fotoğraf': 'फोटो',
+  'Video': 'व्हिडिओ',
+  'İçerik': 'आशय',
+  'çevrimiçi': 'ऑनलाइन',
+  'son görülme {} dk önce': '{} मिनिटांपूर्वी पाहिले',
+  'son görülme {} saat önce': '{} तासांपूर्वी पाहिले',
+  'son görülme {} gün önce': '{} दिवसांपूर्वी पाहिले',
+  'Yorumlar yüklenemedi': 'टिप्पण्या लोड करता आल्या नाहीत',
 };

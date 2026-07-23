@@ -232,4 +232,16 @@ const Map<String, String> cevirilerEl = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Ο σύνδεσμος δεν είναι έγκυρος ή η σελίδα δεν βρέθηκε',
   'Keşfet\'e dön': 'Πίσω στην Ανακάλυψη',
+  'Düzenle': 'Επεξεργασία',
+  'Mesajı düzenle': 'Επεξεργασία μηνύματος',
+  'Yanıtlanıyor': 'Απάντηση',
+  'düzenlendi': 'επεξεργασμένο',
+  'Fotoğraf': 'Φωτογραφία',
+  'Video': 'Βίντεο',
+  'İçerik': 'Περιεχόμενο',
+  'çevrimiçi': 'συνδεδεμένος',
+  'son görülme {} dk önce': 'είδε πριν {} λ',
+  'son görülme {} saat önce': 'είδε πριν {} ώ',
+  'son görülme {} gün önce': 'είδε πριν {} μ',
+  'Yorumlar yüklenemedi': 'Δεν ήταν δυνατή η φόρτωση σχολίων',
 };

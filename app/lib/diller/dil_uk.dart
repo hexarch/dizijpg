@@ -231,4 +231,16 @@ const Map<String, String> cevirilerUk = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Посилання недійсне або сторінку не знайдено',
   'Keşfet\'e dön': 'Назад до Огляду',
+  'Düzenle': 'Редагувати',
+  'Mesajı düzenle': 'Редагувати повідомлення',
+  'Yanıtlanıyor': 'Відповідь',
+  'düzenlendi': 'змінено',
+  'Fotoğraf': 'Фото',
+  'Video': 'Відео',
+  'İçerik': 'Контент',
+  'çevrimiçi': 'онлайн',
+  'son görülme {} dk önce': 'бачили {} хв тому',
+  'son görülme {} saat önce': 'бачили {} год тому',
+  'son görülme {} gün önce': 'бачили {} дн тому',
+  'Yorumlar yüklenemedi': 'Не вдалося завантажити коментарі',
 };

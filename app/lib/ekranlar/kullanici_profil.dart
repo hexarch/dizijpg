@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -103,7 +104,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
               SizedBox(
                 height: 130,
                 width: double.infinity,
-                child: Image.network(kapak, fit: BoxFit.cover),
+                child: CachedNetworkImage(
+                  imageUrl: kapak,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, __, ___) =>
+                      Container(color: DiziRenkler.koyuGri),
+                ),
               ),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -476,7 +482,12 @@ class ProfilYorumKarti extends StatelessWidget {
                         child: SizedBox(
                           width: 24,
                           height: 34,
-                          child: Image.network(poster, fit: BoxFit.cover),
+                          child: CachedNetworkImage(
+                            imageUrl: poster,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) =>
+                                Container(color: DiziRenkler.koyuGri),
+                          ),
                         ),
                       ),
                     )
@@ -782,7 +793,17 @@ class _YorumDetayModal extends StatelessWidget {
                     width: 46,
                     height: 68,
                     child: poster != null
-                        ? Image.network(poster!, fit: BoxFit.cover)
+                        ? CachedNetworkImage(
+                            imageUrl: poster!,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) => Container(
+                              color: DiziRenkler.kart,
+                              child: Icon(
+                                Icons.movie,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                          )
                         : Container(
                             color: DiziRenkler.kart,
                             child: Icon(
@@ -832,10 +853,18 @@ class _YorumDetayModal extends StatelessWidget {
                             size: 32,
                           ),
                         )
-                      : Image.network(
-                          dosyaUrl(medya[i])!,
+                      : CachedNetworkImage(
+                          imageUrl: dosyaUrl(medya[i])!,
                           width: 120,
                           fit: BoxFit.cover,
+                          errorWidget: (_, __, ___) => Container(
+                            width: 120,
+                            color: DiziRenkler.kart,
+                            child: Icon(
+                              Icons.broken_image,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ),
                         ),
                 ),
               ),

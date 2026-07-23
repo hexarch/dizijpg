@@ -232,4 +232,16 @@ const Map<String, String> cevirilerVi = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Liên kết không hợp lệ hoặc không tìm thấy trang',
   'Keşfet\'e dön': 'Quay lại Khám phá',
+  'Düzenle': 'Sửa',
+  'Mesajı düzenle': 'Sửa tin nhắn',
+  'Yanıtlanıyor': 'Đang trả lời',
+  'düzenlendi': 'đã sửa',
+  'Fotoğraf': 'Ảnh',
+  'Video': 'Video',
+  'İçerik': 'Nội dung',
+  'çevrimiçi': 'trực tuyến',
+  'son görülme {} dk önce': 'hoạt động {} phút trước',
+  'son görülme {} saat önce': 'hoạt động {} giờ trước',
+  'son görülme {} gün önce': 'hoạt động {} ngày trước',
+  'Yorumlar yüklenemedi': 'Không thể tải bình luận',
 };

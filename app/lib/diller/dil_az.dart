@@ -231,4 +231,16 @@ const Map<String, String> cevirilerAz = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Keçid etibarsızdır və ya səhifə tapılmadı',
   'Keşfet\'e dön': 'Kəşfə qayıt',
+  'Düzenle': 'Redaktə',
+  'Mesajı düzenle': 'Mesajı redaktə et',
+  'Yanıtlanıyor': 'Cavablanır',
+  'düzenlendi': 'redaktə edildi',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Məzmun',
+  'çevrimiçi': 'onlayn',
+  'son görülme {} dk önce': 'son görülmə {} dəq əvvəl',
+  'son görülme {} saat önce': 'son görülmə {} saat əvvəl',
+  'son görülme {} gün önce': 'son görülmə {} gün əvvəl',
+  'Yorumlar yüklenemedi': 'Şərhlər yüklənə bilmədi',
 };

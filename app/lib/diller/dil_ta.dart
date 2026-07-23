@@ -232,4 +232,16 @@ const Map<String, String> cevirilerTa = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'இணைப்பு தவறானது அல்லது பக்கம் கிடைக்கவில்லை',
   'Keşfet\'e dön': 'கண்டறிதலுக்குத் திரும்பு',
+  'Düzenle': 'திருத்து',
+  'Mesajı düzenle': 'செய்தியைத் திருத்து',
+  'Yanıtlanıyor': 'பதிலளிக்கிறது',
+  'düzenlendi': 'திருத்தப்பட்டது',
+  'Fotoğraf': 'புகைப்படம்',
+  'Video': 'வீடியோ',
+  'İçerik': 'உள்ளடக்கம்',
+  'çevrimiçi': 'ஆன்லைன்',
+  'son görülme {} dk önce': '{} நிமிடம் முன் பார்த்தார்',
+  'son görülme {} saat önce': '{} மணி முன் பார்த்தார்',
+  'son görülme {} gün önce': '{} நாள் முன் பார்த்தார்',
+  'Yorumlar yüklenemedi': 'கருத்துகளை ஏற்ற முடியவில்லை',
 };

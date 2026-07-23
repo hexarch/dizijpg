@@ -231,4 +231,16 @@ const Map<String, String> cevirilerNl = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link is ongeldig of pagina niet gevonden',
   'Keşfet\'e dön': 'Terug naar Ontdekken',
+  'Düzenle': 'Bewerken',
+  'Mesajı düzenle': 'Bericht bewerken',
+  'Yanıtlanıyor': 'Reageren',
+  'düzenlendi': 'bewerkt',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Inhoud',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'laatst gezien {} min geleden',
+  'son görülme {} saat önce': 'laatst gezien {} u geleden',
+  'son görülme {} gün önce': 'laatst gezien {} d geleden',
+  'Yorumlar yüklenemedi': 'Reacties konden niet worden geladen',
 };

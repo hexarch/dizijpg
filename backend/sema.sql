@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   kapak TEXT,
   bio TEXT,
   ulke TEXT,
+  son_gorulme TIMESTAMPTZ,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 
@@ -175,6 +176,8 @@ CREATE TABLE IF NOT EXISTS mesajlar (
   alici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
   metin TEXT NOT NULL CHECK (char_length(metin) BETWEEN 1 AND 2000),
   okundu BOOLEAN DEFAULT false,
+  yanit_id INT REFERENCES mesajlar(id) ON DELETE SET NULL, -- alıntılanan mesaj
+  duzenlendi BOOLEAN DEFAULT false,                        -- düzenlenmiş mi
   tarih TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS mesajlar_cift

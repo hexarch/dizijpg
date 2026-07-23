@@ -232,4 +232,16 @@ const Map<String, String> cevirilerFi = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linkki on virheellinen tai sivua ei löytynyt',
   'Keşfet\'e dön': 'Takaisin Löydä-sivulle',
+  'Düzenle': 'Muokkaa',
+  'Mesajı düzenle': 'Muokkaa viestiä',
+  'Yanıtlanıyor': 'Vastataan',
+  'düzenlendi': 'muokattu',
+  'Fotoğraf': 'Kuva',
+  'Video': 'Video',
+  'İçerik': 'Sisältö',
+  'çevrimiçi': 'paikalla',
+  'son görülme {} dk önce': 'nähty {} min sitten',
+  'son görülme {} saat önce': 'nähty {} t sitten',
+  'son görülme {} gün önce': 'nähty {} pv sitten',
+  'Yorumlar yüklenemedi': 'Kommenttien lataus epäonnistui',
 };

@@ -232,4 +232,16 @@ const Map<String, String> cevirilerFil = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Di-wasto ang link o hindi natagpuan ang pahina',
   'Keşfet\'e dön': 'Bumalik sa Tuklasin',
+  'Düzenle': 'I-edit',
+  'Mesajı düzenle': 'I-edit ang mensahe',
+  'Yanıtlanıyor': 'Sumasagot',
+  'düzenlendi': 'na-edit',
+  'Fotoğraf': 'Larawan',
+  'Video': 'Video',
+  'İçerik': 'Nilalaman',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'huling nakita {} min ang nakalipas',
+  'son görülme {} saat önce': 'huling nakita {} oras ang nakalipas',
+  'son görülme {} gün önce': 'huling nakita {} araw ang nakalipas',
+  'Yorumlar yüklenemedi': 'Hindi ma-load ang mga komento',
 };

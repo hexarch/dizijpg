@@ -232,4 +232,16 @@ const Map<String, String> cevirilerSv = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Länken är ogiltig eller sidan hittades inte',
   'Keşfet\'e dön': 'Tillbaka till Utforska',
+  'Düzenle': 'Redigera',
+  'Mesajı düzenle': 'Redigera meddelande',
+  'Yanıtlanıyor': 'Svarar',
+  'düzenlendi': 'redigerat',
+  'Fotoğraf': 'Foto',
+  'Video': 'Video',
+  'İçerik': 'Innehåll',
+  'çevrimiçi': 'online',
+  'son görülme {} dk önce': 'senast sedd för {} min sedan',
+  'son görülme {} saat önce': 'senast sedd för {} tim sedan',
+  'son görülme {} gün önce': 'senast sedd för {} d sedan',
+  'Yorumlar yüklenemedi': 'Kunde inte läsa in kommentarer',
 };

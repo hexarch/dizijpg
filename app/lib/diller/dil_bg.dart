@@ -232,4 +232,16 @@ const Map<String, String> cevirilerBg = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Връзката е невалидна или страницата не е намерена',
   'Keşfet\'e dön': 'Обратно към Открий',
+  'Düzenle': 'Редакция',
+  'Mesajı düzenle': 'Редактирай съобщението',
+  'Yanıtlanıyor': 'Отговаряне',
+  'düzenlendi': 'редактирано',
+  'Fotoğraf': 'Снимка',
+  'Video': 'Видео',
+  'İçerik': 'Съдържание',
+  'çevrimiçi': 'на линия',
+  'son görülme {} dk önce': 'видян преди {} мин',
+  'son görülme {} saat önce': 'видян преди {} ч',
+  'son görülme {} gün önce': 'видян преди {} д',
+  'Yorumlar yüklenemedi': 'Коментарите не можаха да се заредят',
 };

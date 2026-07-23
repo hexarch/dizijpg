@@ -231,4 +231,16 @@ const Map<String, String> cevirilerBn = {
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'লিঙ্কটি অবৈধ বা পৃষ্ঠা পাওয়া যায়নি',
   'Keşfet\'e dön': 'আবিষ্কারে ফিরে যান',
+  'Düzenle': 'সম্পাদনা',
+  'Mesajı düzenle': 'বার্তা সম্পাদনা',
+  'Yanıtlanıyor': 'উত্তর দেওয়া হচ্ছে',
+  'düzenlendi': 'সম্পাদিত',
+  'Fotoğraf': 'ছবি',
+  'Video': 'ভিডিও',
+  'İçerik': 'কনটেন্ট',
+  'çevrimiçi': 'অনলাইন',
+  'son görülme {} dk önce': '{} মিনিট আগে দেখা',
+  'son görülme {} saat önce': '{} ঘণ্টা আগে দেখা',
+  'son görülme {} gün önce': '{} দিন আগে দেখা',
+  'Yorumlar yüklenemedi': 'মন্তব্য লোড করা যায়নি',
 };
