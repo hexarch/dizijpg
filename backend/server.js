@@ -907,11 +907,30 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
 // Otomatik "İzlediklerim" listesi: izlenmiş filmler + en az bir bölümü
 // izlenmiş diziler. En son izlenen önce gelir.
 app.get('/izlediklerim', girisZorunlu, sarici(async (req, res) => {
+  const tur = req.query.tur;
+  // Tek tür istendiyse yalnız onu döndür (profildeki Dizi/Film sayacından).
+  if (tur === 'tv' || tur === 'movie') {
+    const { rows } = await havuz.query(
+      `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+       FROM izlemeler WHERE kullanici_id=$1 AND tur=$2
+       GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 500`,
+      [req.kullanici.id, tur],
+    );
+    return res.json({
+      ogeler: rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
+    });
+  }
+  // Tür belirtilmezse her türden ayrı limit: tek LIMIT 200 bir türü aç bırakıyordu
+  // (son 200 film olunca diziler 3'e düşüyordu).
   const { rows } = await havuz.query(
-    `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-     FROM izlemeler WHERE kullanici_id=$1
-     GROUP BY tur, tmdb_id
-     ORDER BY son DESC, tmdb_id DESC LIMIT 200`,
+    `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+      FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'
+      GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 200)
+     UNION ALL
+     (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+      FROM izlemeler WHERE kullanici_id=$1 AND tur='movie'
+      GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 200)
+     ORDER BY son DESC, tmdb_id DESC`,
     [req.kullanici.id],
   );
   res.json({

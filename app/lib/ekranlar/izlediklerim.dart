@@ -28,7 +28,12 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
-      final d = await Api.get('/izlediklerim');
+      // Tür filtresini SUNUCUYA gönder: yerelde kırpılmış listeyi filtrelemek
+      // yanlış sayı verirdi (215 dizi → 3 görünüyordu).
+      final yol = widget.tur == null
+          ? '/izlediklerim'
+          : '/izlediklerim?tur=${widget.tur}';
+      final d = await Api.get(yol);
       if (mounted) setState(() => _ogeler = d['ogeler'] as List<dynamic>);
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
@@ -37,12 +42,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
 
   @override
   Widget build(BuildContext context) {
-    // İsteğe bağlı tür filtresi (profildeki Bölüm/Film/Dizi sayaçlarından)
-    final ogeler = widget.tur == null
-        ? _ogeler
-        : _ogeler
-              ?.where((o) => (o as Map<String, dynamic>)['tur'] == widget.tur)
-              .toList();
+    final ogeler = _ogeler;
 
     Widget govde;
     if (_hata != null) {

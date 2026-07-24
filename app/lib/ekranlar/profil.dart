@@ -116,58 +116,72 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     }
   }
 
-  List<Widget> _seritlerBolumu() => [
-    for (final grup in [
-      (
-        Icons.tv_outlined,
-        'İzlediğim Diziler ({})',
-        _izlenenler.where((o) => o['tur'] == 'tv').toList(),
-      ),
-      (
-        Icons.movie_outlined,
-        'İzlediğim Filmler ({})',
-        _izlenenler.where((o) => o['tur'] == 'movie').toList(),
-      ),
-    ])
-      if (grup.$3.isNotEmpty) ...[
-        Row(
-          children: [
-            Icon(grup.$1, size: 19, color: DiziRenkler.sari),
-            const SizedBox(width: 6),
-            Text(
-              grup.$2.cf([grup.$3.length]),
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-            ),
-            const Spacer(),
-            TextButton(
-              onPressed: () => context.push('/izlediklerim'),
-              child: Text(
-                'Tümünü gör'.c,
-                style: const TextStyle(color: DiziRenkler.sari, fontSize: 12),
+  List<Widget> _seritlerBolumu() {
+    // Başlıktaki sayı GERÇEK toplamdır (istatistikten); şerit yalnız son N'i
+    // önizler. Aksi halde son-200 penceresi bir türü aç bırakıp yanlış
+    // sayı gösteriyordu (215 dizi → 3).
+    final diziToplam = (_istatistik?['takip_edilen_dizi'] as num?)?.toInt();
+    final filmToplam = (_istatistik?['izlenen_film'] as num?)?.toInt();
+    return [
+      for (final grup in [
+        (
+          Icons.tv_outlined,
+          'İzlediğim Diziler ({})',
+          _izlenenler.where((o) => o['tur'] == 'tv').toList(),
+          'tv',
+          diziToplam,
+        ),
+        (
+          Icons.movie_outlined,
+          'İzlediğim Filmler ({})',
+          _izlenenler.where((o) => o['tur'] == 'movie').toList(),
+          'movie',
+          filmToplam,
+        ),
+      ])
+        if (grup.$3.isNotEmpty) ...[
+          Row(
+            children: [
+              Icon(grup.$1, size: 19, color: DiziRenkler.sari),
+              const SizedBox(width: 6),
+              Text(
+                grup.$2.cf([grup.$5 ?? grup.$3.length]),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 4),
-        SizedBox(
-          height: 190,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) {
-              final o = grup.$3[i] as Map<String, dynamic>;
-              return MiniIcerik(
-                tmdbId: o['tmdb_id'] as int,
-                tur: o['tur'] as String,
-                izlenenSayi: (o['sayi'] as num?)?.toInt(),
-              );
-            },
+              const Spacer(),
+              TextButton(
+                onPressed: () => context.push('/izlediklerim?tur=${grup.$4}'),
+                child: Text(
+                  'Tümünü gör'.c,
+                  style: const TextStyle(color: DiziRenkler.sari, fontSize: 12),
+                ),
+              ),
+            ],
           ),
-        ),
-        const SizedBox(height: 16),
-      ],
-  ];
+          const SizedBox(height: 4),
+          SizedBox(
+            height: 190,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              itemBuilder: (context, i) {
+                final o = grup.$3[i] as Map<String, dynamic>;
+                return MiniIcerik(
+                  tmdbId: o['tmdb_id'] as int,
+                  tur: o['tur'] as String,
+                  izlenenSayi: (o['sayi'] as num?)?.toInt(),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+    ];
+  }
 
   List<Widget> _ozetBolumu() => [
     Card(

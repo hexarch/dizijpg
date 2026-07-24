@@ -187,6 +187,22 @@ Kalan düşük-öncelik (opsiyonel): 17→16 bölüm başlığı birleştirme, r
    Türkçe karakterler (ç ş ğ ı İ ö ü) Poppins'te tam destekli
 4. ✅ v1.6.0+8
 
+## SPRINT 11 — Uygulama ikonu + izlediklerim sayaç senkron hatası (2026-07-24) 🚀
+1. ✅ UYGULAMA İKONU: varsayılan Flutter ikonu → marka logosu (siyah zemin +
+   DIZIJPG). flutter_launcher_icons ile tüm yoğunluklar + Android adaptif + iOS.
+   İkon görselleri assets/icon/ (PIL ile logodan üretildi)
+2. ✅ SAYAÇ SENKRON HATASI: profilde "İzlediğim Diziler (3)" ama tıklayınca 200;
+   stat kartı 215 ama açılınca 3 — kök neden /izlediklerim tek LIMIT 200 (son
+   izlenene göre; kullanıcı son 200'de çoğunlukla film → diziler 3'e düşüyordu).
+   - Backend: /izlediklerim tür başına ayrı limit (UNION tv+movie) + ?tur= desteği
+   - izlediklerim.dart: tür filtresi SUNUCUYA gider (kırpılmış listede filtreleme
+     yerine) — tam per-tür liste gelir
+   - profil.dart: şerit başlığı GERÇEK toplamı gösterir (istatistikten:
+     takip_edilen_dizi/izlenen_film); "Tümünü gör" doğru türe gider
+   Canlı test: ?tur=tv=113, ?tur=movie=417, istatistikle birebir ✓
+3. ✅ pubspec düzeltmesi: flutter_lints yanlış yere düşmüştü (lint devre dışıydı)
+4. ✅ v1.6.1+9
+
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
 dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:
