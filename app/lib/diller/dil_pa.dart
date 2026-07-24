@@ -242,4 +242,13 @@ const Map<String, String> cevirilerPa = {
   'son görülme {} saat önce': '{} ਘੰਟੇ ਪਹਿਲਾਂ ਵੇਖਿਆ',
   'son görülme {} gün önce': '{} ਦਿਨ ਪਹਿਲਾਂ ਵੇਖਿਆ',
   'Yorumlar yüklenemedi': 'ਟਿੱਪਣੀਆਂ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀਆਂ',
+  'Favori': 'ਪਸੰਦੀਦਾ',
+  'Listeye ekle': 'ਸੂਚੀ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ',
+  'İçerik paylaş': 'ਸਾਂਝਾ ਕਰੋ',
+  'Kapat': 'ਬੰਦ ਕਰੋ',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'ਜੋ ਤੁਸੀਂ ਵੇਖਿਆ ਵਜੋਂ ਨਿਸ਼ਾਨ ਲਗਾਉਂਦੇ ਹੋ ਇੱਥੇ ਇਕੱਠਾ ਹੁੰਦਾ ਹੈ।',
+  'Henüz sohbetin yok': 'ਹਾਲੇ ਕੋਈ ਗੱਲਬਾਤ ਨਹੀਂ',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'ਪ੍ਰੋਫਾਈਲ ਖੋਲ੍ਹੋ ਅਤੇ ਸੁਨੇਹਾ ਭੇਜੋ।',
 };

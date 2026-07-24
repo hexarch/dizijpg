@@ -587,6 +587,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       if (!tv) const SizedBox(width: 8),
                       IconButton(
                         onPressed: _favoriToggle,
+                        tooltip: 'Favori'.c,
                         icon: Icon(
                           favori ? Icons.favorite : Icons.favorite_border,
                           color: favori ? Colors.redAccent : DiziRenkler.metin,
@@ -594,6 +595,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       ),
                       IconButton(
                         onPressed: _puanla,
+                        tooltip: 'Puanla'.c,
                         icon: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -616,6 +618,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       ),
                       IconButton(
                         onPressed: _listeyeEkle,
+                        tooltip: 'Listeye ekle'.c,
                         icon: Icon(
                           Icons.playlist_add,
                           color: DiziRenkler.metin,

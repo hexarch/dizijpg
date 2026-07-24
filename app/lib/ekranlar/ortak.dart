@@ -105,10 +105,7 @@ class PosterKarti extends StatelessWidget {
               ad as String,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w600,
-              ),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
           ],
         ),
@@ -296,6 +293,52 @@ class _IskeletKutuState extends State<IskeletKutu>
   }
 }
 
+/// Kart-listesi iskeleti: yuvarlak avatar + iki metin çubuğu.
+/// Bildirimler/sohbetler gibi liste ekranlarında bekleme yerine kullanılır.
+class IskeletSatir extends StatelessWidget {
+  const IskeletSatir({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            const IskeletKutu(genislik: 44, yukseklik: 44),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: const [
+                  IskeletKutu(genislik: 160, yukseklik: 12),
+                  SizedBox(height: 8),
+                  IskeletKutu(genislik: 90, yukseklik: 10),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Verilen sayıda iskelet satırından oluşan liste (padding'li).
+class IskeletListe extends StatelessWidget {
+  final int adet;
+  const IskeletListe({super.key, this.adet = 7});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: adet,
+      itemBuilder: (_, __) => const IskeletSatir(),
+    );
+  }
+}
+
 /// Hata + tekrar dene görünümü
 class HataGorunumu extends StatelessWidget {
   final String mesaj;
@@ -322,23 +365,106 @@ class HataGorunumu extends StatelessWidget {
   }
 }
 
+/// Boş durum görünümü: ikon + başlık + ipucu (+ isteğe bağlı aksiyon).
+/// Sade "X yok" metinleri yerine kullanılır — daha profesyonel his.
+class BosDurum extends StatelessWidget {
+  final IconData ikon;
+  final String baslik;
+  final String? ipucu;
+  final Widget? aksiyon;
+  const BosDurum({
+    super.key,
+    required this.ikon,
+    required this.baslik,
+    this.ipucu,
+    this.aksiyon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(ikon, size: 48, color: DiziRenkler.metin38),
+            const SizedBox(height: 12),
+            Text(
+              baslik,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+            if (ipucu != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                ipucu!,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: DiziRenkler.metin54,
+                  height: 1.4,
+                ),
+              ),
+            ],
+            if (aksiyon != null) ...[const SizedBox(height: 16), aksiyon!],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Tutarlı bölüm başlığı: sarı ikon + kalın başlık. Tüm ekranlarda aynı.
+class BolumBasligi extends StatelessWidget {
+  final IconData ikon;
+  final String baslik;
+  final Widget? sonEk; // sağdaki buton (ör. "Tümünü gör", +)
+  const BolumBasligi({
+    super.key,
+    required this.ikon,
+    required this.baslik,
+    this.sonEk,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(ikon, size: 20, color: DiziRenkler.sari),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            baslik,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+          ),
+        ),
+        if (sonEk != null) sonEk!,
+      ],
+    );
+  }
+}
+
 /// Okunmamış sayacı rozetli appbar ikonu (zil, zarf, DM).
 class RozetliIkon extends StatelessWidget {
   final IconData ikon;
   final int sayi;
   final VoidCallback onTap;
+  final String? etiket; // erişilebilirlik + tooltip
 
   const RozetliIkon({
     super.key,
     required this.ikon,
     required this.sayi,
     required this.onTap,
+    this.etiket,
   });
 
   @override
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onTap,
+      tooltip: etiket,
       icon: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -356,7 +482,7 @@ class RozetliIkon extends StatelessWidget {
                 child: Text(
                   sayi > 99 ? '99+' : '$sayi',
                   style: const TextStyle(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     color: Colors.black,
                   ),

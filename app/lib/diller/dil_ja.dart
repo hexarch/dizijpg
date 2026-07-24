@@ -240,4 +240,12 @@ const Map<String, String> cevirilerJa = {
   'son görülme {} saat önce': '最終ログイン {}時間前',
   'son görülme {} gün önce': '最終ログイン {}日前',
   'Yorumlar yüklenemedi': 'コメントを読み込めませんでした',
+  'Favori': 'お気に入り',
+  'Listeye ekle': 'リストに追加',
+  'İçerik paylaş': 'コンテンツを共有',
+  'Kapat': '閉じる',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      '視聴済みにしたものがここに集まります。',
+  'Henüz sohbetin yok': 'まだ会話はありません',
+  'Bir profile girip mesaj gönderebilirsin.': 'プロフィールを開いてメッセージを送りましょう。',
 };

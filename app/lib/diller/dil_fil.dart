@@ -244,4 +244,13 @@ const Map<String, String> cevirilerFil = {
   'son görülme {} saat önce': 'huling nakita {} oras ang nakalipas',
   'son görülme {} gün önce': 'huling nakita {} araw ang nakalipas',
   'Yorumlar yüklenemedi': 'Hindi ma-load ang mga komento',
+  'Favori': 'Paborito',
+  'Listeye ekle': 'Idagdag sa listahan',
+  'İçerik paylaş': 'Ibahagi ang nilalaman',
+  'Kapat': 'Isara',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Lahat ng minarkahan mong napanood ay naiipon dito.',
+  'Henüz sohbetin yok': 'Wala pang usapan',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Magbukas ng profile at magpadala ng mensahe.',
 };

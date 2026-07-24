@@ -151,7 +151,7 @@ class _AramaEkraniState extends State<AramaEkrani>
                                     ),
                                     label: Text(
                                       g,
-                                      style: const TextStyle(fontSize: 12.5),
+                                      style: const TextStyle(fontSize: 12),
                                     ),
                                     onPressed: () {
                                       _kutu.text = g;

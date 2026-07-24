@@ -241,4 +241,12 @@ const Map<String, String> cevirilerHe = {
   'son görülme {} saat önce': 'נראה לפני {} ש\'',
   'son görülme {} gün önce': 'נראה לפני {} י\'',
   'Yorumlar yüklenemedi': 'לא ניתן היה לטעון תגובות',
+  'Favori': 'מועדף',
+  'Listeye ekle': 'הוסף לרשימה',
+  'İçerik paylaş': 'שתף תוכן',
+  'Kapat': 'סגור',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'כל מה שתסמן כנצפה נאסף כאן.',
+  'Henüz sohbetin yok': 'אין שיחות עדיין',
+  'Bir profile girip mesaj gönderebilirsin.': 'פתח פרופיל ושלח הודעה.',
 };

@@ -246,4 +246,13 @@ const Map<String, String> cevirilerFr = {
   'son görülme {} saat önce': 'vu il y a {} h',
   'son görülme {} gün önce': 'vu il y a {} j',
   'Yorumlar yüklenemedi': 'Impossible de charger les commentaires',
+  'Favori': 'Favori',
+  'Listeye ekle': 'Ajouter à la liste',
+  'İçerik paylaş': 'Partager le contenu',
+  'Kapat': 'Fermer',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Tout ce que tu marques comme vu se retrouve ici.',
+  'Henüz sohbetin yok': 'Aucune conversation pour l\'instant',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Ouvre un profil et envoie un message.',
 };

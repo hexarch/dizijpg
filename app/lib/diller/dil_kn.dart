@@ -245,4 +245,12 @@ const Map<String, String> cevirilerKn = {
   'son görülme {} saat önce': '{} ಗಂ ಹಿಂದೆ ಕಂಡರು',
   'son görülme {} gün önce': '{} ದಿನ ಹಿಂದೆ ಕಂಡರು',
   'Yorumlar yüklenemedi': 'ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ',
+  'Favori': 'ಮೆಚ್ಚಿನವು',
+  'Listeye ekle': 'ಪಟ್ಟಿಗೆ ಸೇರಿಸಿ',
+  'İçerik paylaş': 'ಹಂಚಿಕೊಳ್ಳಿ',
+  'Kapat': 'ಮುಚ್ಚಿ',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'ನೀವು ವೀಕ್ಷಿಸಿದೆಂದು ಗುರುತಿಸಿದವೆಲ್ಲ ಇಲ್ಲಿ ಸೇರುತ್ತವೆ.',
+  'Henüz sohbetin yok': 'ಇನ್ನೂ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ',
+  'Bir profile girip mesaj gönderebilirsin.': 'ಪ್ರೊಫೈಲ್ ತೆರೆದು ಸಂದೇಶ ಕಳುಹಿಸಿ.',
 };

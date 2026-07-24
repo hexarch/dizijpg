@@ -244,4 +244,13 @@ const Map<String, String> cevirilerEl = {
   'son görülme {} saat önce': 'είδε πριν {} ώ',
   'son görülme {} gün önce': 'είδε πριν {} μ',
   'Yorumlar yüklenemedi': 'Δεν ήταν δυνατή η φόρτωση σχολίων',
+  'Favori': 'Αγαπημένο',
+  'Listeye ekle': 'Προσθήκη σε λίστα',
+  'İçerik paylaş': 'Κοινοποίηση',
+  'Kapat': 'Κλείσιμο',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Ό,τι σημειώνεις ως προβεβλημένο συγκεντρώνεται εδώ.',
+  'Henüz sohbetin yok': 'Δεν υπάρχουν συνομιλίες ακόμη',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Άνοιξε ένα προφίλ και στείλε μήνυμα.',
 };

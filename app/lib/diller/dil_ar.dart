@@ -243,4 +243,12 @@ const Map<String, String> cevirilerAr = {
   'son görülme {} saat önce': 'آخر ظهور قبل {} س',
   'son görülme {} gün önce': 'آخر ظهور قبل {} ي',
   'Yorumlar yüklenemedi': 'تعذّر تحميل التعليقات',
+  'Favori': 'المفضلة',
+  'Listeye ekle': 'إضافة إلى قائمة',
+  'İçerik paylaş': 'مشاركة المحتوى',
+  'Kapat': 'إغلاق',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'كل ما تحدده كمُشاهَد يُجمع هنا.',
+  'Henüz sohbetin yok': 'لا محادثات بعد',
+  'Bir profile girip mesaj gönderebilirsin.': 'افتح ملفًا شخصيًا وأرسل رسالة.',
 };

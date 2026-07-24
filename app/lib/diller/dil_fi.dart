@@ -244,4 +244,12 @@ const Map<String, String> cevirilerFi = {
   'son görülme {} saat önce': 'nähty {} t sitten',
   'son görülme {} gün önce': 'nähty {} pv sitten',
   'Yorumlar yüklenemedi': 'Kommenttien lataus epäonnistui',
+  'Favori': 'Suosikki',
+  'Listeye ekle': 'Lisää listaan',
+  'İçerik paylaş': 'Jaa sisältö',
+  'Kapat': 'Sulje',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Kaikki katsotuksi merkitsemäsi kerääntyy tänne.',
+  'Henüz sohbetin yok': 'Ei keskusteluja vielä',
+  'Bir profile girip mesaj gönderebilirsin.': 'Avaa profiili ja lähetä viesti.',
 };

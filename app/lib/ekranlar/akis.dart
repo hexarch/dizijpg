@@ -184,6 +184,7 @@ class _AkisEkraniState extends State<AkisEkrani>
           RozetliIkon(
             ikon: Icons.notifications_none,
             sayi: _bildirimSayi,
+            etiket: 'Bildirimler'.c,
             onTap: () async {
               await context.push('/bildirimler');
               _rozetleriYukle();
@@ -192,6 +193,7 @@ class _AkisEkraniState extends State<AkisEkrani>
           RozetliIkon(
             ikon: Icons.mail_outline,
             sayi: _mesajSayi,
+            etiket: 'Mesajlar'.c,
             onTap: () async {
               await context.push('/sohbetler');
               _rozetleriYukle();
@@ -357,7 +359,7 @@ class _AkisKartiState extends State<_AkisKarti> {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: DiziRenkler.sari,
-                            fontSize: 12.5,
+                            fontSize: 12,
                           ),
                         ),
                       ),

@@ -92,9 +92,7 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_bildirimler == null) {
-      govde = const Center(
-        child: CircularProgressIndicator(color: DiziRenkler.sari),
-      );
+      govde = const IskeletListe();
     } else if (_bildirimler!.isEmpty) {
       govde = Center(
         child: Column(

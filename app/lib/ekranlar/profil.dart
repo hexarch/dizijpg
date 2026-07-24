@@ -229,6 +229,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         const Spacer(),
         IconButton(
           onPressed: _yeniListe,
+          tooltip: 'Yeni Liste'.c,
           icon: const Icon(Icons.add, color: DiziRenkler.sari),
         ),
       ],
@@ -252,6 +253,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
           title: Text(l['ad'] as String),
           subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
           trailing: IconButton(
+            tooltip: 'Listeyi sil'.c,
             icon: Icon(Icons.delete_outline, color: DiziRenkler.metin38),
             onPressed: () async {
               // Silmeden önce onay iste; hatayı kullanıcıya göster
@@ -690,7 +692,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     decoration: BoxDecoration(
                       color: DiziRenkler.kart,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: const Color(0xFF2A2A2F)),
+                      border: Border.all(color: DiziRenkler.metin12),
                     ),
                     child: Row(
                       children: [
@@ -795,6 +797,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
           ),
           IconButton(
             icon: const Icon(Icons.settings_outlined),
+            tooltip: 'Ayarlar'.c,
             onPressed: () async {
               await context.push('/ayarlar');
               _yukle();
@@ -873,7 +876,7 @@ class _StatKarti extends StatelessWidget {
           decoration: BoxDecoration(
             color: DiziRenkler.kart,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFF2A2A2F)),
+            border: Border.all(color: DiziRenkler.metin12),
           ),
           child: Column(
             children: [
@@ -882,7 +885,7 @@ class _StatKarti extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 19,
+                  fontSize: 20,
                   fontWeight: FontWeight.w900,
                   color: DiziRenkler.sari,
                 ),
@@ -1087,7 +1090,7 @@ class _RozetCipi extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               '${rozet['deger']}/${rozet['esik']}',
-              style: TextStyle(fontSize: 10, color: DiziRenkler.metin24),
+              style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
             ),
           ],
         ],

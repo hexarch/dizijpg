@@ -245,12 +245,12 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                           '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 13.5),
+                          style: const TextStyle(fontSize: 14),
                         ),
                         trailing: Text(
                           b['tarih'] as String? ?? '',
                           style: TextStyle(
-                            fontSize: 11.5,
+                            fontSize: 12,
                             color: DiziRenkler.metin54,
                           ),
                         ),

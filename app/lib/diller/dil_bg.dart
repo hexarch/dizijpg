@@ -244,4 +244,13 @@ const Map<String, String> cevirilerBg = {
   'son görülme {} saat önce': 'видян преди {} ч',
   'son görülme {} gün önce': 'видян преди {} д',
   'Yorumlar yüklenemedi': 'Коментарите не можаха да се заредят',
+  'Favori': 'Любимо',
+  'Listeye ekle': 'Добави в списък',
+  'İçerik paylaş': 'Сподели',
+  'Kapat': 'Затвори',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Всичко, което отбележиш като гледано, се събира тук.',
+  'Henüz sohbetin yok': 'Все още няма разговори',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Отвори профил и изпрати съобщение.',
 };

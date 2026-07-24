@@ -240,4 +240,12 @@ const Map<String, String> cevirilerKo = {
   'son görülme {} saat önce': '{}시간 전 접속',
   'son görülme {} gün önce': '{}일 전 접속',
   'Yorumlar yüklenemedi': '댓글을 불러오지 못했습니다',
+  'Favori': '즐겨찾기',
+  'Listeye ekle': '목록에 추가',
+  'İçerik paylaş': '콘텐츠 공유',
+  'Kapat': '닫기',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      '시청함으로 표시한 모든 것이 여기에 모입니다.',
+  'Henüz sohbetin yok': '아직 대화가 없습니다',
+  'Bir profile girip mesaj gönderebilirsin.': '프로필을 열고 메시지를 보내세요.',
 };

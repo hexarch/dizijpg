@@ -240,4 +240,12 @@ const Map<String, String> cevirilerAm = {
   'son görülme {} saat önce': 'ከ{} ሰዓት በፊት ታይቷል',
   'son görülme {} gün önce': 'ከ{} ቀን በፊት ታይቷል',
   'Yorumlar yüklenemedi': 'አስተያየቶችን መጫን አልተቻለም',
+  'Favori': 'ተወዳጅ',
+  'Listeye ekle': 'ወደ ዝርዝር አክል',
+  'İçerik paylaş': 'ይዘት አጋራ',
+  'Kapat': 'ዝጋ',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'እንዳየኸው ምልክት ያደረግከው ሁሉ እዚህ ይሰበሰባል።',
+  'Henüz sohbetin yok': 'እስካሁን ውይይት የለም',
+  'Bir profile girip mesaj gönderebilirsin.': 'መገለጫ ክፈት እና መልእክት ላክ።',
 };

@@ -243,4 +243,12 @@ const Map<String, String> cevirilerGu = {
   'son görülme {} saat önce': '{} કલાક પહેલાં જોયું',
   'son görülme {} gün önce': '{} દિવસ પહેલાં જોયું',
   'Yorumlar yüklenemedi': 'ટિપ્પણીઓ લોડ થઈ શકી નથી',
+  'Favori': 'પ્રિય',
+  'Listeye ekle': 'સૂચિમાં ઉમેરો',
+  'İçerik paylaş': 'શેર કરો',
+  'Kapat': 'બંધ કરો',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'તમે જોયેલું ચિહ્નિત કરો તે બધું અહીં એકઠું થાય છે.',
+  'Henüz sohbetin yok': 'હજી કોઈ વાતચીત નથી',
+  'Bir profile girip mesaj gönderebilirsin.': 'પ્રોફાઇલ ખોલો અને સંદેશ મોકલો.',
 };

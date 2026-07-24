@@ -243,4 +243,12 @@ const Map<String, String> cevirilerTe = {
   'son görülme {} saat önce': '{} గం క్రితం చూశారు',
   'son görülme {} gün önce': '{} రోజు క్రితం చూశారు',
   'Yorumlar yüklenemedi': 'వ్యాఖ్యలను లోడ్ చేయలేకపోయాం',
+  'Favori': 'ఇష్టమైనవి',
+  'Listeye ekle': 'జాబితాకు జోడించు',
+  'İçerik paylaş': 'షేర్ చేయి',
+  'Kapat': 'మూసివేయి',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'మీరు చూసినట్లు గుర్తించినవన్నీ ఇక్కడ చేరతాయి.',
+  'Henüz sohbetin yok': 'ఇంకా సంభాషణలు లేవు',
+  'Bir profile girip mesaj gönderebilirsin.': 'ప్రొఫైల్ తెరిచి సందేశం పంపండి.',
 };

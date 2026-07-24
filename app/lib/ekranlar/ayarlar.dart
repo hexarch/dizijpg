@@ -805,6 +805,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     trailing: _ulke == null
                         ? Icon(Icons.chevron_right, color: DiziRenkler.metin38)
                         : IconButton(
+                            tooltip: 'Kapat'.c,
                             icon: Icon(Icons.close, color: DiziRenkler.metin38),
                             onPressed: () => setState(() => _ulke = null),
                           ),

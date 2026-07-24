@@ -242,4 +242,13 @@ const Map<String, String> cevirilerDa = {
   'son görülme {} saat önce': 'sidst set for {} t siden',
   'son görülme {} gün önce': 'sidst set for {} d siden',
   'Yorumlar yüklenemedi': 'Kunne ikke indlæse kommentarer',
+  'Favori': 'Favorit',
+  'Listeye ekle': 'Føj til liste',
+  'İçerik paylaş': 'Del indhold',
+  'Kapat': 'Luk',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Alt du markerer som set samles her.',
+  'Henüz sohbetin yok': 'Ingen samtaler endnu',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Åbn en profil og send en besked.',
 };

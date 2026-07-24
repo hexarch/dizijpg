@@ -243,4 +243,12 @@ const Map<String, String> cevirilerAz = {
   'son görülme {} saat önce': 'son görülmə {} saat əvvəl',
   'son görülme {} gün önce': 'son görülmə {} gün əvvəl',
   'Yorumlar yüklenemedi': 'Şərhlər yüklənə bilmədi',
+  'Favori': 'Sevimli',
+  'Listeye ekle': 'Siyahıya əlavə et',
+  'İçerik paylaş': 'Paylaş',
+  'Kapat': 'Bağla',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'İzlədin kimi işarələdiyin hər şey burada toplanır.',
+  'Henüz sohbetin yok': 'Hələ söhbət yoxdur',
+  'Bir profile girip mesaj gönderebilirsin.': 'Profil aç və mesaj göndər.',
 };

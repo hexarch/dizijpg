@@ -160,6 +160,26 @@ Play Store hazırlık — denetim ajanı 6 bulgu, hepsi düzeltildi:
 Backend smoke-test: tüm GET 200, geçersiz girdiler 400 (hiç 500 yok)
 11. ✅ v1.4.1+6
 
+## SPRINT 9 — UI/UX cila taraması (ui-ux-pro-max, 2026-07-24) 🚀
+Denetim ajanı 39 bulgu; en yüksek kaldıraçlılar uygulandı:
+1. ✅ Paylaşılan `BosDurum` widget'ı (ikon+başlık+ipucu+aksiyon) — sade "X yok"
+   metinleri yerine; izlediklerim + sohbetler buradan geçti
+2. ✅ Paylaşılan `BolumBasligi` + `IskeletSatir`/`IskeletListe` widget'ları
+3. ✅ İskelet yükleyiciler: izlediklerim (ızgara), bildirimler + sohbetler (satır)
+   — bare CircularProgressIndicator yerine içerik-şekilli bekleme
+4. ✅ ERİŞİLEBİLİRLİK (Play Store): 13 ikon-only butona tooltip/Semantics
+   (RozetliIkon etiket param → tüm appbar; detay favori/puanla/listeye-ekle;
+   sohbet gönder/foto/paylaş; profil ayarlar/yeni-liste/sil; ayarlar kapat)
+   + 4 yeni etiket 45 dile
+5. ✅ KONTRAST: rozet ilerleme metni metin24→metin54 + 10px→12px (en düşük
+   kontrast metin düzeldi); boş-durum metinleri metin54'e
+6. ✅ AÇIK TEMA HATASI: profil sabit hex Border(0xFF2A2A2F) → DiziRenkler.metin12
+7. ✅ TİPOGRAFİ: yarım boyutlar (11.5/12.5/13.5/14.5) + 19/21 → 12/14/20 ölçeğine
+8. ✅ 45 dil: 238 anahtar (senkron)
+9. ✅ v1.5.0+7
+Kalan düşük-öncelik (opsiyonel): 17→16 bölüm başlığı birleştirme, radius token
+(poster=12/thumb=8), 6/10/14px boşluk ritmi ince ayarı, ozet iskelet ızgarası
+
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
 dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:

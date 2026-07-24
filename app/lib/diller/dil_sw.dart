@@ -243,4 +243,12 @@ const Map<String, String> cevirilerSw = {
   'son görülme {} saat önce': 'alionekana saa {} zilizopita',
   'son görülme {} gün önce': 'alionekana siku {} zilizopita',
   'Yorumlar yüklenemedi': 'Imeshindwa kupakia maoni',
+  'Favori': 'Kipendwa',
+  'Listeye ekle': 'Ongeza kwenye orodha',
+  'İçerik paylaş': 'Shiriki maudhui',
+  'Kapat': 'Funga',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Kila unachokiweka kama kimetazamwa hukusanywa hapa.',
+  'Henüz sohbetin yok': 'Bado hakuna mazungumzo',
+  'Bir profile girip mesaj gönderebilirsin.': 'Fungua wasifu na tuma ujumbe.',
 };

@@ -831,7 +831,7 @@ class _YorumDetayModal extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             yorum['metin'] as String? ?? '',
-            style: const TextStyle(height: 1.5, fontSize: 14.5),
+            style: const TextStyle(height: 1.5, fontSize: 14),
           ),
           if (medya.isNotEmpty) ...[
             const SizedBox(height: 12),

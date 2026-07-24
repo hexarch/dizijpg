@@ -239,4 +239,12 @@ const Map<String, String> cevirilerZh = {
   'son görülme {} saat önce': '{}小时前在线',
   'son görülme {} gün önce': '{}天前在线',
   'Yorumlar yüklenemedi': '无法加载评论',
+  'Favori': '收藏',
+  'Listeye ekle': '加入列表',
+  'İçerik paylaş': '分享内容',
+  'Kapat': '关闭',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      '你标记为已看的内容都会汇总在这里。',
+  'Henüz sohbetin yok': '还没有对话',
+  'Bir profile girip mesaj gönderebilirsin.': '打开一个资料页并发送消息。',
 };

@@ -241,4 +241,12 @@ const Map<String, String> cevirilerTh = {
   'son görülme {} saat önce': 'เห็นล่าสุด {} ชม.ที่แล้ว',
   'son görülme {} gün önce': 'เห็นล่าสุด {} วันที่แล้ว',
   'Yorumlar yüklenemedi': 'โหลดความคิดเห็นไม่สำเร็จ',
+  'Favori': 'รายการโปรด',
+  'Listeye ekle': 'เพิ่มลงในลิสต์',
+  'İçerik paylaş': 'แชร์เนื้อหา',
+  'Kapat': 'ปิด',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'ทุกอย่างที่คุณทำเครื่องหมายว่าดูแล้วจะรวมอยู่ที่นี่',
+  'Henüz sohbetin yok': 'ยังไม่มีการสนทนา',
+  'Bir profile girip mesaj gönderebilirsin.': 'เปิดโปรไฟล์แล้วส่งข้อความ',
 };

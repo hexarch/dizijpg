@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
-import '../tema.dart';
 import 'ortak.dart';
 
 /// Otomatik "İzlediklerim": izlenen tüm film ve dizilerin ızgarası.
@@ -49,23 +48,34 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (ogeler == null) {
-      govde = const Center(
-        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      // İskelet ızgara: bekleme yerine içerik şekli belirir (premium his)
+      govde = GridView.builder(
+        padding: const EdgeInsets.all(16),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 12,
+          childAspectRatio: 0.5,
+        ),
+        itemCount: 9,
+        itemBuilder: (_, __) => const IskeletKutu(
+          genislik: double.infinity,
+          yukseklik: double.infinity,
+        ),
       );
     } else if (ogeler.isEmpty) {
-      govde = Center(
-        child: Text(
-          'Henüz izleme kaydın yok'.c,
-          style: TextStyle(color: DiziRenkler.metin38),
-        ),
+      govde = BosDurum(
+        ikon: Icons.movie_outlined,
+        baslik: 'Henüz izleme kaydın yok'.c,
+        ipucu: 'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.'.c,
       );
     } else {
       govde = GridView.builder(
         padding: const EdgeInsets.all(16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
-          mainAxisSpacing: 14,
-          crossAxisSpacing: 10,
+          mainAxisSpacing: 16,
+          crossAxisSpacing: 12,
           childAspectRatio: 0.5,
         ),
         itemCount: ogeler.length,

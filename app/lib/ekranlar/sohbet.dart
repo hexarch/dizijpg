@@ -47,27 +47,12 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_sohbetler == null) {
-      govde = const Center(
-        child: CircularProgressIndicator(color: DiziRenkler.sari),
-      );
+      govde = const IskeletListe();
     } else if (_sohbetler!.isEmpty) {
-      govde = Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.chat_outlined, size: 44, color: DiziRenkler.metin24),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.'
-                    .c,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: DiziRenkler.metin54, height: 1.5),
-              ),
-            ),
-          ],
-        ),
+      govde = BosDurum(
+        ikon: Icons.chat_outlined,
+        baslik: 'Henüz sohbetin yok'.c,
+        ipucu: 'Bir profile girip mesaj gönderebilirsin.'.c,
       );
     } else {
       govde = RefreshIndicator(
@@ -535,6 +520,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                     children: [
                       // Fotoğraf / GIF (düzenleme modunda kapalı — düzenleme yalnız metin)
                       IconButton(
+                        tooltip: 'Fotoğraf / video ekle'.c,
                         onPressed: (_ekYukleniyor || _duzenlenenId != null)
                             ? null
                             : _fotoGonder,
@@ -556,6 +542,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                       ),
                       // Dizi/film kartı paylaş (düzenleme modunda kapalı)
                       IconButton(
+                        tooltip: 'İçerik paylaş'.c,
                         onPressed: _duzenlenenId != null ? null : _icerikPaylas,
                         icon: Icon(
                           Icons.local_movies_outlined,
@@ -587,6 +574,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                       ),
                       const SizedBox(width: 6),
                       IconButton.filled(
+                        tooltip: 'Gönder'.c,
                         onPressed: _gonderiliyor
                             ? null
                             : () => _gonder(metin: _metin.text.trim()),

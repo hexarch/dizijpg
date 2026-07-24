@@ -813,7 +813,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                 child: Text(
                   '@${y['kullanici_adi']}',
                   style: const TextStyle(
-                    fontSize: 12.5,
+                    fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: DiziRenkler.sari,
                   ),

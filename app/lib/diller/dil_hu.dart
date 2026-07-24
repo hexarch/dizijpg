@@ -244,4 +244,13 @@ const Map<String, String> cevirilerHu = {
   'son görülme {} saat önce': '{} órája látták',
   'son görülme {} gün önce': '{} napja látták',
   'Yorumlar yüklenemedi': 'A hozzászólások betöltése sikertelen',
+  'Favori': 'Kedvenc',
+  'Listeye ekle': 'Listához adás',
+  'İçerik paylaş': 'Tartalom megosztása',
+  'Kapat': 'Bezárás',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Minden, amit megnézettként jelölsz, itt gyűlik.',
+  'Henüz sohbetin yok': 'Még nincsenek beszélgetések',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Nyiss meg egy profilt és küldj üzenetet.',
 };

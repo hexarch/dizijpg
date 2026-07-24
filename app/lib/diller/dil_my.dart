@@ -246,4 +246,13 @@ const Map<String, String> cevirilerMy = {
   'son görülme {} saat önce': '{} နာရီက တွေ့ခဲ့',
   'son görülme {} gün önce': '{} ရက်က တွေ့ခဲ့',
   'Yorumlar yüklenemedi': 'မှတ်ချက်များ ဖွင့်၍မရပါ',
+  'Favori': 'အကြိုက်ဆုံး',
+  'Listeye ekle': 'စာရင်းသို့ ထည့်ရန်',
+  'İçerik paylaş': 'မျှဝေရန်',
+  'Kapat': 'ပိတ်ရန်',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'ကြည့်ပြီးဟု အမှတ်အသားပြုသမျှ ဤနေရာတွင် စုစည်းသည်။',
+  'Henüz sohbetin yok': 'စကားဝိုင်း မရှိသေးပါ',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'ပရိုဖိုင်ဖွင့်၍ မက်ဆေ့ဂျ်ပို့ပါ။',
 };

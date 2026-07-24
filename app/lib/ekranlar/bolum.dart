@@ -102,7 +102,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                 Text(
                   b['name'] as String? ?? '{}. Bölüm'.cf([widget.bolumNo]),
                   style: const TextStyle(
-                    fontSize: 21,
+                    fontSize: 20,
                     fontWeight: FontWeight.w900,
                   ),
                 ),

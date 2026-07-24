@@ -244,4 +244,12 @@ const Map<String, String> cevirilerVi = {
   'son görülme {} saat önce': 'hoạt động {} giờ trước',
   'son görülme {} gün önce': 'hoạt động {} ngày trước',
   'Yorumlar yüklenemedi': 'Không thể tải bình luận',
+  'Favori': 'Yêu thích',
+  'Listeye ekle': 'Thêm vào danh sách',
+  'İçerik paylaş': 'Chia sẻ nội dung',
+  'Kapat': 'Đóng',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Mọi thứ bạn đánh dấu đã xem sẽ gom về đây.',
+  'Henüz sohbetin yok': 'Chưa có cuộc trò chuyện nào',
+  'Bir profile girip mesaj gönderebilirsin.': 'Mở một hồ sơ và gửi tin nhắn.',
 };

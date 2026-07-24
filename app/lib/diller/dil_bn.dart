@@ -243,4 +243,13 @@ const Map<String, String> cevirilerBn = {
   'son görülme {} saat önce': '{} ঘণ্টা আগে দেখা',
   'son görülme {} gün önce': '{} দিন আগে দেখা',
   'Yorumlar yüklenemedi': 'মন্তব্য লোড করা যায়নি',
+  'Favori': 'প্রিয়',
+  'Listeye ekle': 'তালিকায় যোগ করুন',
+  'İçerik paylaş': 'কনটেন্ট শেয়ার করুন',
+  'Kapat': 'বন্ধ করুন',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'আপনি যা দেখা হিসেবে চিহ্নিত করেন তা এখানে জমা হয়।',
+  'Henüz sohbetin yok': 'এখনও কোনো কথোপকথন নেই',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'একটি প্রোফাইল খুলে বার্তা পাঠান।',
 };

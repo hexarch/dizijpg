@@ -244,4 +244,13 @@ const Map<String, String> cevirilerTa = {
   'son görülme {} saat önce': '{} மணி முன் பார்த்தார்',
   'son görülme {} gün önce': '{} நாள் முன் பார்த்தார்',
   'Yorumlar yüklenemedi': 'கருத்துகளை ஏற்ற முடியவில்லை',
+  'Favori': 'பிடித்தவை',
+  'Listeye ekle': 'பட்டியலில் சேர்',
+  'İçerik paylaş': 'பகிர்',
+  'Kapat': 'மூடு',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'பார்த்ததாகக் குறிப்பவை இங்கே சேரும்.',
+  'Henüz sohbetin yok': 'இன்னும் உரையாடல்கள் இல்லை',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'சுயவிவரத்தைத் திறந்து செய்தி அனுப்பவும்.',
 };

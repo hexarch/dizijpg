@@ -138,6 +138,7 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
           RozetliIkon(
             ikon: Icons.near_me_outlined,
             sayi: _mesajSayi,
+            etiket: 'Mesajlar'.c,
             onTap: () async {
               await context.push('/sohbetler');
               _mesajSayisiYukle();

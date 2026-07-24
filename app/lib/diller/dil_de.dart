@@ -245,4 +245,13 @@ const Map<String, String> cevirilerDe = {
   'son görülme {} saat önce': 'zuletzt vor {} Std.',
   'son görülme {} gün önce': 'zuletzt vor {} T.',
   'Yorumlar yüklenemedi': 'Kommentare konnten nicht geladen werden',
+  'Favori': 'Favorit',
+  'Listeye ekle': 'Zur Liste',
+  'İçerik paylaş': 'Inhalt teilen',
+  'Kapat': 'Schließen',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Alles, was du als gesehen markierst, sammelt sich hier.',
+  'Henüz sohbetin yok': 'Noch keine Unterhaltungen',
+  'Bir profile girip mesaj gönderebilirsin.':
+      'Öffne ein Profil und sende eine Nachricht.',
 };

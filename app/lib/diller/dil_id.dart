@@ -243,4 +243,12 @@ const Map<String, String> cevirilerId = {
   'son görülme {} saat önce': 'terakhir dilihat {} jam lalu',
   'son görülme {} gün önce': 'terakhir dilihat {} hr lalu',
   'Yorumlar yüklenemedi': 'Tidak dapat memuat komentar',
+  'Favori': 'Favorit',
+  'Listeye ekle': 'Tambah ke daftar',
+  'İçerik paylaş': 'Bagikan konten',
+  'Kapat': 'Tutup',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'Semua yang kamu tandai ditonton terkumpul di sini.',
+  'Henüz sohbetin yok': 'Belum ada percakapan',
+  'Bir profile girip mesaj gönderebilirsin.': 'Buka profil dan kirim pesan.',
 };

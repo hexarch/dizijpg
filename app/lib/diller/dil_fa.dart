@@ -243,4 +243,12 @@ const Map<String, String> cevirilerFa = {
   'son görülme {} saat önce': 'آخرین بازدید {} ساعت پیش',
   'son görülme {} gün önce': 'آخرین بازدید {} روز پیش',
   'Yorumlar yüklenemedi': 'نظرات بارگذاری نشد',
+  'Favori': 'علاقه‌مندی',
+  'Listeye ekle': 'افزودن به فهرست',
+  'İçerik paylaş': 'اشتراک محتوا',
+  'Kapat': 'بستن',
+  'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
+      'هر چه به‌عنوان دیده‌شده علامت بزنی اینجا جمع می‌شود.',
+  'Henüz sohbetin yok': 'هنوز گفتگویی نیست',
+  'Bir profile girip mesaj gönderebilirsin.': 'یک نمایه باز کن و پیام بفرست.',
 };
