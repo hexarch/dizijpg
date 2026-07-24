@@ -9,6 +9,14 @@ import 'ortak.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
 
+/// ISO tarihi (2021-01-03) kompakt biçime çevirir: 03.01.2021.
+String tarihKisa(String? iso) {
+  if (iso == null || iso.isEmpty) return '';
+  final t = iso.split('T').first.split('-');
+  if (t.length != 3) return iso;
+  return '${t[2]}.${t[1]}.${t[0]}';
+}
+
 /// Takip edilen dizilerin yaklaşan bölümleri.
 class TakvimEkrani extends StatefulWidget {
   const TakvimEkrani({super.key});
@@ -31,14 +39,18 @@ class _TakvimEkraniState extends State<TakvimEkrani>
       backgroundColor: DiziRenkler.koyuGri,
       builder: (_) => BolumModali(bolum: b),
     );
-    if (birakilan != null && mounted) {
+    if (!mounted) return;
+    // "Bıraktım": diziyi anında kaldır (iyimser).
+    if (birakilan != null) {
       setState(
         () => _yaklasan?.removeWhere(
           (r) => (r['tmdb_id'] as num).toInt() == birakilan,
         ),
       );
-      _yukle();
     }
+    // Modal kapanınca her durumda tazele: izlenen bölüm backend'den düşer,
+    // takvimden otomatik gider (yenilemeye gerek kalmaz).
+    _yukle();
   }
 
   @override
@@ -177,19 +189,19 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
+                            horizontal: 8,
+                            vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: DiziRenkler.sari,
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            ilk['tarih'] as String? ?? '',
+                            tarihKisa(ilk['tarih'] as String?),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11,
                             ),
                           ),
                         ),
@@ -248,7 +260,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                           style: const TextStyle(fontSize: 14),
                         ),
                         trailing: Text(
-                          b['tarih'] as String? ?? '',
+                          tarihKisa(b['tarih'] as String?),
                           style: TextStyle(
                             fontSize: 12,
                             color: DiziRenkler.metin54,
@@ -335,6 +347,13 @@ class _BolumModaliState extends State<BolumModali> {
     }
   }
 
+  /// Dizi sayfasına git (modal kapanır; ölü-context tuzağına karşı önce alınır).
+  void _diziyeGit() {
+    final yonlendirici = GoRouter.of(context);
+    Navigator.pop(context);
+    yonlendirici.push('/icerik/tv/$_tmdbId');
+  }
+
   Future<void> _izleToggle() async {
     if (_izleIsleniyor) return;
     setState(() {
@@ -384,63 +403,83 @@ class _BolumModaliState extends State<BolumModali> {
             ),
           ),
           const SizedBox(height: 14),
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: SizedBox(
-                  width: 56,
-                  height: 82,
-                  child: poster == null
-                      ? Container(color: DiziRenkler.kart)
-                      : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+          // Poster + dizi adı tıklanır → dizi sayfası
+          InkWell(
+            borderRadius: BorderRadius.circular(10),
+            onTap: _diziyeGit,
+            child: Row(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: SizedBox(
+                    width: 56,
+                    height: 82,
+                    child: poster == null
+                        ? Container(color: DiziRenkler.kart)
+                        : CachedNetworkImage(
+                            imageUrl: poster,
+                            fit: BoxFit.cover,
+                          ),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      b['dizi_adi'] as String? ?? '',
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              b['dizi_adi'] as String? ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          Icon(
+                            Icons.chevron_right,
+                            size: 18,
+                            color: DiziRenkler.metin38,
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'S{} · {}. Bölüm'.cf([_sezon, _bolumNo]) +
-                          (b['bolum_adi'] != null
-                              ? ' · ${b['bolum_adi']}'
-                              : ''),
-                      style: TextStyle(color: DiziRenkler.metin70),
-                    ),
-                    if (b['tarih'] != null) ...[
-                      const SizedBox(height: 6),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: DiziRenkler.sari,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          b['tarih'] as String,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 11,
+                      const SizedBox(height: 4),
+                      Text(
+                        'S{} · {}. Bölüm'.cf([_sezon, _bolumNo]) +
+                            (b['bolum_adi'] != null
+                                ? ' · ${b['bolum_adi']}'
+                                : ''),
+                        style: TextStyle(color: DiziRenkler.metin70),
+                      ),
+                      if (b['tarih'] != null) ...[
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 3,
+                          ),
+                          decoration: BoxDecoration(
+                            color: DiziRenkler.sari,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            tarihKisa(b['tarih'] as String?),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 16),
           // Bu bölüme emoji tepkisi
@@ -490,12 +529,7 @@ class _BolumModaliState extends State<BolumModali> {
                   color: DiziRenkler.sari,
                 ),
                 label: Text('Diziye git'.c),
-                onPressed: () {
-                  // Yönlendirici modal kapanmadan ÖNCE alınır (ölü context)
-                  final yonlendirici = GoRouter.of(context);
-                  Navigator.pop(context);
-                  yonlendirici.push('/icerik/tv/$_tmdbId');
-                },
+                onPressed: _diziyeGit,
               ),
               ActionChip(
                 avatar: const Icon(
