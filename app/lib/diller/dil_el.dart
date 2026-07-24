@@ -253,4 +253,6 @@ const Map<String, String> cevirilerEl = {
   'Henüz sohbetin yok': 'Δεν υπάρχουν συνομιλίες ακόμη',
   'Bir profile girip mesaj gönderebilirsin.':
       'Άνοιξε ένα προφίλ και στείλε μήνυμα.',
+  'Listeyi sil': 'Διαγραφή λίστας',
+  'Puan kaydedilemedi': 'Δεν ήταν δυνατή η αποθήκευση βαθμολογίας',
 };

@@ -252,4 +252,6 @@ const Map<String, String> cevirilerMr = {
       'तुम्ही पाहिले म्हणून चिन्हांकित करता ते इथे जमा होते.',
   'Henüz sohbetin yok': 'अजून संभाषणे नाहीत',
   'Bir profile girip mesaj gönderebilirsin.': 'प्रोफाइल उघडा आणि संदेश पाठवा.',
+  'Listeyi sil': 'सूची हटवा',
+  'Puan kaydedilemedi': 'रेटिंग जतन करता आली नाही',
 };

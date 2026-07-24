@@ -251,4 +251,6 @@ const Map<String, String> cevirilerGu = {
       'તમે જોયેલું ચિહ્નિત કરો તે બધું અહીં એકઠું થાય છે.',
   'Henüz sohbetin yok': 'હજી કોઈ વાતચીત નથી',
   'Bir profile girip mesaj gönderebilirsin.': 'પ્રોફાઇલ ખોલો અને સંદેશ મોકલો.',
+  'Listeyi sil': 'સૂચિ કાઢી નાખો',
+  'Puan kaydedilemedi': 'રેટિંગ સાચવી શકાઈ નથી',
 };

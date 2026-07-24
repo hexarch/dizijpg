@@ -253,4 +253,6 @@ const Map<String, String> cevirilerNb = {
   'Henüz sohbetin yok': 'Ingen samtaler ennå',
   'Bir profile girip mesaj gönderebilirsin.':
       'Åpne en profil og send en melding.',
+  'Listeyi sil': 'Slett liste',
+  'Puan kaydedilemedi': 'Vurderingen kunne ikke lagres',
 };

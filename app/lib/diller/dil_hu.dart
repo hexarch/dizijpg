@@ -253,4 +253,6 @@ const Map<String, String> cevirilerHu = {
   'Henüz sohbetin yok': 'Még nincsenek beszélgetések',
   'Bir profile girip mesaj gönderebilirsin.':
       'Nyiss meg egy profilt és küldj üzenetet.',
+  'Listeyi sil': 'Lista törlése',
+  'Puan kaydedilemedi': 'Az értékelést nem sikerült menteni',
 };

@@ -255,4 +255,6 @@ const Map<String, String> cevirilerMy = {
   'Henüz sohbetin yok': 'စကားဝိုင်း မရှိသေးပါ',
   'Bir profile girip mesaj gönderebilirsin.':
       'ပရိုဖိုင်ဖွင့်၍ မက်ဆေ့ဂျ်ပို့ပါ။',
+  'Listeyi sil': 'စာရင်းဖျက်ရန်',
+  'Puan kaydedilemedi': 'အဆင့်သတ်မှတ်ချက် သိမ်း၍မရပါ',
 };

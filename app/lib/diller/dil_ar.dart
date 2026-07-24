@@ -251,4 +251,6 @@ const Map<String, String> cevirilerAr = {
       'كل ما تحدده كمُشاهَد يُجمع هنا.',
   'Henüz sohbetin yok': 'لا محادثات بعد',
   'Bir profile girip mesaj gönderebilirsin.': 'افتح ملفًا شخصيًا وأرسل رسالة.',
+  'Listeyi sil': 'حذف القائمة',
+  'Puan kaydedilemedi': 'تعذّر حفظ التقييم',
 };

@@ -253,4 +253,6 @@ const Map<String, String> cevirilerFil = {
   'Henüz sohbetin yok': 'Wala pang usapan',
   'Bir profile girip mesaj gönderebilirsin.':
       'Magbukas ng profile at magpadala ng mensahe.',
+  'Listeyi sil': 'Burahin ang listahan',
+  'Puan kaydedilemedi': 'Hindi ma-save ang rating',
 };

@@ -251,4 +251,6 @@ const Map<String, String> cevirilerUr = {
   'Henüz sohbetin yok': 'ابھی کوئی گفتگو نہیں',
   'Bir profile girip mesaj gönderebilirsin.':
       'کوئی پروفائل کھولیں اور پیغام بھیجیں۔',
+  'Listeyi sil': 'فہرست حذف کریں',
+  'Puan kaydedilemedi': 'درجہ بندی محفوظ نہ ہو سکی',
 };

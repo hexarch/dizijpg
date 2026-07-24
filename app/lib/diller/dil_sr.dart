@@ -251,4 +251,6 @@ const Map<String, String> cevirilerSr = {
       'Све што означиш као погледано скупља се овде.',
   'Henüz sohbetin yok': 'Још нема разговора',
   'Bir profile girip mesaj gönderebilirsin.': 'Отвори профил и пошаљи поруку.',
+  'Listeyi sil': 'Обриши листу',
+  'Puan kaydedilemedi': 'Оцена није могла да се сачува',
 };

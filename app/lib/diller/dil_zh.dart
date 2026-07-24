@@ -247,4 +247,6 @@ const Map<String, String> cevirilerZh = {
       '你标记为已看的内容都会汇总在这里。',
   'Henüz sohbetin yok': '还没有对话',
   'Bir profile girip mesaj gönderebilirsin.': '打开一个资料页并发送消息。',
+  'Listeyi sil': '删除列表',
+  'Puan kaydedilemedi': '无法保存评分',
 };

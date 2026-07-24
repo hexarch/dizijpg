@@ -253,4 +253,6 @@ const Map<String, String> cevirilerRu = {
   'Henüz sohbetin yok': 'Пока нет переписок',
   'Bir profile girip mesaj gönderebilirsin.':
       'Откройте профиль и отправьте сообщение.',
+  'Listeyi sil': 'Удалить список',
+  'Puan kaydedilemedi': 'Не удалось сохранить оценку',
 };

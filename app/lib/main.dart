@@ -82,6 +82,10 @@ class _DiziJpgAppState extends State<DiziJpgApp> with WidgetsBindingObserver {
                       Brightness.light);
           DiziRenkler.acik = acik;
           return MaterialApp.router(
+            // Dil değişince tüm ağaç taze kurulur; keep-alive sekme ekranları
+            // (Keşfet/Takvim/Akış/Profil) yeni dili anında yansıtır. Yoksa
+            // yalnız nav çubuğu çevriliyor, gövdeler eski dilde kalıyordu.
+            key: ValueKey('uygulama-$dil'),
             title: 'dizi.jpg',
             debugShowCheckedModeBanner: false,
             scrollBehavior: FareKaydirma(),

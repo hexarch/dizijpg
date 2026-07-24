@@ -251,4 +251,6 @@ const Map<String, String> cevirilerCs = {
       'Vše, co označíš jako zhlédnuté, se sbírá zde.',
   'Henüz sohbetin yok': 'Zatím žádné konverzace',
   'Bir profile girip mesaj gönderebilirsin.': 'Otevři profil a pošli zprávu.',
+  'Listeyi sil': 'Smazat seznam',
+  'Puan kaydedilemedi': 'Hodnocení se nepodařilo uložit',
 };

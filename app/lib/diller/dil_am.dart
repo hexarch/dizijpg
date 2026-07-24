@@ -248,4 +248,6 @@ const Map<String, String> cevirilerAm = {
       'እንዳየኸው ምልክት ያደረግከው ሁሉ እዚህ ይሰበሰባል።',
   'Henüz sohbetin yok': 'እስካሁን ውይይት የለም',
   'Bir profile girip mesaj gönderebilirsin.': 'መገለጫ ክፈት እና መልእክት ላክ።',
+  'Listeyi sil': 'ዝርዝር ሰርዝ',
+  'Puan kaydedilemedi': 'ደረጃ ማስቀመጥ አልተቻለም',
 };

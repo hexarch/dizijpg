@@ -252,4 +252,6 @@ const Map<String, String> cevirilerFi = {
       'Kaikki katsotuksi merkitsemäsi kerääntyy tänne.',
   'Henüz sohbetin yok': 'Ei keskusteluja vielä',
   'Bir profile girip mesaj gönderebilirsin.': 'Avaa profiili ja lähetä viesti.',
+  'Listeyi sil': 'Poista lista',
+  'Puan kaydedilemedi': 'Arvion tallennus epäonnistui',
 };

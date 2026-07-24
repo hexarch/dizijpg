@@ -253,4 +253,6 @@ const Map<String, String> cevirilerMl = {
   'Henüz sohbetin yok': 'ഇതുവരെ സംഭാഷണങ്ങളില്ല',
   'Bir profile girip mesaj gönderebilirsin.':
       'ഒരു പ്രൊഫൈൽ തുറന്ന് സന്ദേശം അയയ്ക്കൂ.',
+  'Listeyi sil': 'ലിസ്റ്റ് ഇല്ലാതാക്കുക',
+  'Puan kaydedilemedi': 'റേറ്റിംഗ് സംരക്ഷിക്കാനായില്ല',
 };

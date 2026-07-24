@@ -253,4 +253,6 @@ const Map<String, String> cevirilerRo = {
   'Henüz sohbetin yok': 'Încă nicio conversație',
   'Bir profile girip mesaj gönderebilirsin.':
       'Deschide un profil și trimite un mesaj.',
+  'Listeyi sil': 'Șterge lista',
+  'Puan kaydedilemedi': 'Evaluarea nu a putut fi salvată',
 };

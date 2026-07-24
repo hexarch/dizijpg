@@ -253,4 +253,6 @@ const Map<String, String> cevirilerTa = {
   'Henüz sohbetin yok': 'இன்னும் உரையாடல்கள் இல்லை',
   'Bir profile girip mesaj gönderebilirsin.':
       'சுயவிவரத்தைத் திறந்து செய்தி அனுப்பவும்.',
+  'Listeyi sil': 'பட்டியலை நீக்கு',
+  'Puan kaydedilemedi': 'மதிப்பீட்டைச் சேமிக்க முடியவில்லை',
 };

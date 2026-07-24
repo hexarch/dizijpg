@@ -248,4 +248,6 @@ const Map<String, String> cevirilerKo = {
       '시청함으로 표시한 모든 것이 여기에 모입니다.',
   'Henüz sohbetin yok': '아직 대화가 없습니다',
   'Bir profile girip mesaj gönderebilirsin.': '프로필을 열고 메시지를 보내세요.',
+  'Listeyi sil': '목록 삭제',
+  'Puan kaydedilemedi': '평점을 저장하지 못했습니다',
 };

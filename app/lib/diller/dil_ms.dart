@@ -251,4 +251,6 @@ const Map<String, String> cevirilerMs = {
       'Semua yang anda tandai ditonton terkumpul di sini.',
   'Henüz sohbetin yok': 'Belum ada perbualan',
   'Bir profile girip mesaj gönderebilirsin.': 'Buka profil dan hantar mesej.',
+  'Listeyi sil': 'Padam senarai',
+  'Puan kaydedilemedi': 'Penilaian tidak dapat disimpan',
 };

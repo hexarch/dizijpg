@@ -251,4 +251,6 @@ const Map<String, String> cevirilerId = {
       'Semua yang kamu tandai ditonton terkumpul di sini.',
   'Henüz sohbetin yok': 'Belum ada percakapan',
   'Bir profile girip mesaj gönderebilirsin.': 'Buka profil dan kirim pesan.',
+  'Listeyi sil': 'Hapus daftar',
+  'Puan kaydedilemedi': 'Rating tidak dapat disimpan',
 };

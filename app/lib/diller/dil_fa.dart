@@ -251,4 +251,6 @@ const Map<String, String> cevirilerFa = {
       'هر چه به‌عنوان دیده‌شده علامت بزنی اینجا جمع می‌شود.',
   'Henüz sohbetin yok': 'هنوز گفتگویی نیست',
   'Bir profile girip mesaj gönderebilirsin.': 'یک نمایه باز کن و پیام بفرست.',
+  'Listeyi sil': 'حذف فهرست',
+  'Puan kaydedilemedi': 'ذخیره امتیاز ممکن نشد',
 };

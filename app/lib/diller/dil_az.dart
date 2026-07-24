@@ -251,4 +251,6 @@ const Map<String, String> cevirilerAz = {
       'İzlədin kimi işarələdiyin hər şey burada toplanır.',
   'Henüz sohbetin yok': 'Hələ söhbət yoxdur',
   'Bir profile girip mesaj gönderebilirsin.': 'Profil aç və mesaj göndər.',
+  'Listeyi sil': 'Siyahını sil',
+  'Puan kaydedilemedi': 'Reytinq saxlanıla bilmədi',
 };

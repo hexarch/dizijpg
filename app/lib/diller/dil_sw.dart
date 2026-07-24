@@ -251,4 +251,6 @@ const Map<String, String> cevirilerSw = {
       'Kila unachokiweka kama kimetazamwa hukusanywa hapa.',
   'Henüz sohbetin yok': 'Bado hakuna mazungumzo',
   'Bir profile girip mesaj gönderebilirsin.': 'Fungua wasifu na tuma ujumbe.',
+  'Listeyi sil': 'Futa orodha',
+  'Puan kaydedilemedi': 'Ukadiriaji haukuweza kuhifadhiwa',
 };

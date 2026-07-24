@@ -251,4 +251,6 @@ const Map<String, String> cevirilerTe = {
       'మీరు చూసినట్లు గుర్తించినవన్నీ ఇక్కడ చేరతాయి.',
   'Henüz sohbetin yok': 'ఇంకా సంభాషణలు లేవు',
   'Bir profile girip mesaj gönderebilirsin.': 'ప్రొఫైల్ తెరిచి సందేశం పంపండి.',
+  'Listeyi sil': 'జాబితాను తొలగించు',
+  'Puan kaydedilemedi': 'రేటింగ్‌ను సేవ్ చేయలేకపోయాం',
 };

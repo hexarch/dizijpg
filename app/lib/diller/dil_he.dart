@@ -249,4 +249,6 @@ const Map<String, String> cevirilerHe = {
       'כל מה שתסמן כנצפה נאסף כאן.',
   'Henüz sohbetin yok': 'אין שיחות עדיין',
   'Bir profile girip mesaj gönderebilirsin.': 'פתח פרופיל ושלח הודעה.',
+  'Listeyi sil': 'מחק רשימה',
+  'Puan kaydedilemedi': 'לא ניתן היה לשמור את הדירוג',
 };

@@ -248,4 +248,6 @@ const Map<String, String> cevirilerJa = {
       '視聴済みにしたものがここに集まります。',
   'Henüz sohbetin yok': 'まだ会話はありません',
   'Bir profile girip mesaj gönderebilirsin.': 'プロフィールを開いてメッセージを送りましょう。',
+  'Listeyi sil': 'リストを削除',
+  'Puan kaydedilemedi': '評価を保存できませんでした',
 };

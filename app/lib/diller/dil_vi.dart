@@ -252,4 +252,6 @@ const Map<String, String> cevirilerVi = {
       'Mọi thứ bạn đánh dấu đã xem sẽ gom về đây.',
   'Henüz sohbetin yok': 'Chưa có cuộc trò chuyện nào',
   'Bir profile girip mesaj gönderebilirsin.': 'Mở một hồ sơ và gửi tin nhắn.',
+  'Listeyi sil': 'Xóa danh sách',
+  'Puan kaydedilemedi': 'Không thể lưu đánh giá',
 };

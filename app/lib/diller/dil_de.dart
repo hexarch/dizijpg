@@ -254,4 +254,6 @@ const Map<String, String> cevirilerDe = {
   'Henüz sohbetin yok': 'Noch keine Unterhaltungen',
   'Bir profile girip mesaj gönderebilirsin.':
       'Öffne ein Profil und sende eine Nachricht.',
+  'Listeyi sil': 'Liste löschen',
+  'Puan kaydedilemedi': 'Bewertung konnte nicht gespeichert werden',
 };

@@ -252,4 +252,6 @@ const Map<String, String> cevirilerHi = {
   'Henüz sohbetin yok': 'अभी कोई बातचीत नहीं',
   'Bir profile girip mesaj gönderebilirsin.':
       'कोई प्रोफ़ाइल खोलें और संदेश भेजें।',
+  'Listeyi sil': 'सूची हटाएं',
+  'Puan kaydedilemedi': 'रेटिंग सहेजी नहीं जा सकी',
 };

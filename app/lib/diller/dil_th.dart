@@ -249,4 +249,6 @@ const Map<String, String> cevirilerTh = {
       'ทุกอย่างที่คุณทำเครื่องหมายว่าดูแล้วจะรวมอยู่ที่นี่',
   'Henüz sohbetin yok': 'ยังไม่มีการสนทนา',
   'Bir profile girip mesaj gönderebilirsin.': 'เปิดโปรไฟล์แล้วส่งข้อความ',
+  'Listeyi sil': 'ลบลิสต์',
+  'Puan kaydedilemedi': 'ไม่สามารถบันทึกคะแนนได้',
 };

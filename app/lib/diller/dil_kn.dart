@@ -253,4 +253,6 @@ const Map<String, String> cevirilerKn = {
       'ನೀವು ವೀಕ್ಷಿಸಿದೆಂದು ಗುರುತಿಸಿದವೆಲ್ಲ ಇಲ್ಲಿ ಸೇರುತ್ತವೆ.',
   'Henüz sohbetin yok': 'ಇನ್ನೂ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ',
   'Bir profile girip mesaj gönderebilirsin.': 'ಪ್ರೊಫೈಲ್ ತೆರೆದು ಸಂದೇಶ ಕಳುಹಿಸಿ.',
+  'Listeyi sil': 'ಪಟ್ಟಿ ಅಳಿಸಿ',
+  'Puan kaydedilemedi': 'ರೇಟಿಂಗ್ ಉಳಿಸಲಾಗಲಿಲ್ಲ',
 };

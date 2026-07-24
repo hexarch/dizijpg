@@ -251,4 +251,6 @@ const Map<String, String> cevirilerDa = {
   'Henüz sohbetin yok': 'Ingen samtaler endnu',
   'Bir profile girip mesaj gönderebilirsin.':
       'Åbn en profil og send en besked.',
+  'Listeyi sil': 'Slet liste',
+  'Puan kaydedilemedi': 'Bedømmelsen kunne ikke gemmes',
 };
