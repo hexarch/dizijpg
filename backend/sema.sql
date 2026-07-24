@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   bio TEXT,
   ulke TEXT,
   son_gorulme TIMESTAMPTZ,
+  sifre_surumu INT NOT NULL DEFAULT 0,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 

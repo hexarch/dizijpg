@@ -542,13 +542,26 @@ async function iceAktarNative(havuz, userId, json, ozet) {
       [userId, d.tur, d.tmdb_id, d.durum]);
     ozet.durum++;
   }
+  // İzlemeler (100k'ya kadar) TOPLU eklenir: tek tek INSERT = 100k round-trip
+  // = DB havuzunu tıkayan DoS. 500'lük çok-satırlı VALUES ile gruplanır.
+  const izlemeGecerli = [];
   for (const i of (veri.izlemeler || []).slice(0, 100000)) {
     if (!tamsayi(i.tmdb_id) || !['tv', 'movie'].includes(i.tur)) { ozet.atlanan++; continue; }
+    izlemeGecerli.push([i.tur, i.tmdb_id, tamsayi(i.sezon) ?? 0, tamsayi(i.bolum) ?? 0]);
+  }
+  for (let g = 0; g < izlemeGecerli.length; g += 500) {
+    const grup = izlemeGecerli.slice(g, g + 500);
+    const parametreler = [userId];
+    const degerler = grup.map((r, j) => {
+      const b = j * 4;
+      parametreler.push(r[0], r[1], r[2], r[3]);
+      return `($1,$${b + 2},$${b + 3},$${b + 4},$${b + 5})`;
+    });
     await havuz.query(
       `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
-       VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`,
-      [userId, i.tur, i.tmdb_id, tamsayi(i.sezon) ?? 0, tamsayi(i.bolum) ?? 0]);
-    ozet.izleme++;
+       VALUES ${degerler.join(',')} ON CONFLICT DO NOTHING`,
+      parametreler);
+    ozet.izleme += grup.length;
   }
   for (const p of (veri.puanlar || []).slice(0, 5000)) {
     if (!tamsayi(p.tmdb_id) || !turGecerli(p.tur)) { ozet.atlanan++; continue; }

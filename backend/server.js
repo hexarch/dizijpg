@@ -158,13 +158,42 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
   return veri;
 }
 
+// Geçerli TMDB id: tam sayı, 1..1e9 (int4 taşması → temiz 400).
+function gecerliTmdb(x) { return Number.isInteger(x) && x > 0 && x <= 1e9; }
+
 function jwtUret(kullanici) {
   return jwt.sign(
-    { id: kullanici.id, kullanici_adi: kullanici.kullanici_adi },
+    // sv = şifre sürümü: şifre değişince artar, eski token'lar geçersiz olur.
+    { id: kullanici.id, kullanici_adi: kullanici.kullanici_adi,
+      sv: kullanici.sifre_surumu ?? 0 },
     JWT_SECRET,
     { expiresIn: '90d' },
   );
 }
+
+// Şifre sürümü önbelleği (id → {sv, zaman}): her istekte DB'ye gitmemek için
+// 30 sn TTL. Şifre değişince DB'deki sürüm artar; önbellek en geç 30 sn'de
+// yenilenir, böylece çalınmış eski token'lar kısa sürede reddedilir.
+const sifreSurumOnbellek = new Map();
+async function sifreSurumuGecerli(id, tokenSv) {
+  const simdi = Date.now();
+  let e = sifreSurumOnbellek.get(id);
+  if (!e || simdi - e.zaman > 30000) {
+    const { rows } = await havuz.query(
+      'SELECT sifre_surumu FROM kullanicilar WHERE id=$1', [id]);
+    if (!rows.length) return false; // hesap silinmiş
+    e = { sv: rows[0].sifre_surumu, zaman: simdi };
+    sifreSurumOnbellek.set(id, e);
+    if (sifreSurumOnbellek.size > 20000) {
+      for (const [k, v] of sifreSurumOnbellek) {
+        if (simdi - v.zaman > 60000) sifreSurumOnbellek.delete(k);
+      }
+    }
+  }
+  return (tokenSv ?? 0) === e.sv;
+}
+// Şifre değişince önbelleği hemen düşür (yeni token anında geçerli olsun).
+function sifreSurumOnbellekSil(id) { sifreSurumOnbellek.delete(id); }
 
 // Çevrimiçi göstergesi için son_gorulme; her istekte değil, kullanıcı başına
 // en fazla 20 sn'de bir DB'ye yazılır (yazma yükünü azaltır).
@@ -181,17 +210,23 @@ function sonGorulmeGuncelle(kullaniciId) {
   }
 }
 
-function girisZorunlu(req, res, next) {
+async function girisZorunlu(req, res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
   if (!token) return res.status(401).json({ hata: 'Giriş gerekli' });
+  let kimlik;
   try {
-    req.kullanici = jwt.verify(token, JWT_SECRET);
-    sonGorulmeGuncelle(req.kullanici.id);
-    next();
+    kimlik = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
   } catch {
     return res.status(401).json({ hata: 'Geçersiz oturum' });
   }
+  // Şifre değiştiyse (veya hesap silindiyse) eski token reddedilir.
+  if (!(await sifreSurumuGecerli(kimlik.id, kimlik.sv))) {
+    return res.status(401).json({ hata: 'Oturum sonlandı, tekrar giriş yap' });
+  }
+  req.kullanici = kimlik;
+  sonGorulmeGuncelle(req.kullanici.id);
+  next();
 }
 
 // Token varsa req.kullanici'yi doldurur; yoksa geçer (herkese açık uçlarda
@@ -200,7 +235,7 @@ function girisIsteğeBagli(req, _res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
   if (token) {
-    try { req.kullanici = jwt.verify(token, JWT_SECRET); } catch { /* anonim */ }
+    try { req.kullanici = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }); } catch { /* anonim */ }
   }
   next();
 }
@@ -241,6 +276,10 @@ const tmdbLimiti = hizLimiti(600, (req) => `t:${req.ip}`);
 const takvimLimiti = hizLimiti(60, (req) => `k:${req.kullanici.id}`);
 const akisLimiti = hizLimiti(240, (req) => `f:${req.kullanici.id}`);
 const mesajLimiti = hizLimiti(300, (req) => `m:${req.kullanici.id}`);
+// Yorum spam + @etiket bildirim seli koruması
+const yorumLimiti = hizLimiti(60, (req) => `c:${req.kullanici.id}`);
+// Kimliksiz arama (tam-tarama LIKE) DoS koruması: IP başına
+const aramaLimiti = hizLimiti(120, (req) => `s:${req.ip}`);
 
 // Bildirim ekler; kendi eylemine bildirim düşmez, hata akışı bozmaz.
 async function bildirimEkle(aliciId, tur, aktorId, yorumId = null) {
@@ -309,7 +348,7 @@ app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
 // Kullanıcı isterse sonradan /auth/bagla ile e-postaya bağlar.
 app.post('/auth/misafir', authLimiti, sarici(async (_req, res) => {
   for (let deneme = 0; deneme < 5; deneme++) {
-    const ad = 'misafir_' + Math.random().toString(36).slice(2, 8);
+    const ad = 'misafir_' + crypto.randomBytes(4).toString('hex');
     try {
       const { rows } = await havuz.query(
         `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, misafir)
@@ -489,7 +528,7 @@ async function diziDurumunuGuncelle(kullaniciId, tmdbId) {
 
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
-  if (!Number.isInteger(tmdb_id) || !['tv', 'movie'].includes(tur) ||
+  if (!gecerliTmdb(tmdb_id) || !['tv', 'movie'].includes(tur) ||
       !Number.isInteger(sezon) || !Number.isInteger(bolum) ||
       sezon < 0 || bolum < 0) {
     return res.status(400).json({ hata: 'Geçersiz tmdb_id/tur/sezon/bolum' });
@@ -516,7 +555,7 @@ app.post('/izleme/sezon', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, sezon, bolum_sayisi, isaretle = true } = req.body || {};
   // Tam sayı + pozitif + makul aralık: negatif bolum_sayisi boş INSERT'e yol açıp
   // SQL sözdizimi hatası (500) veriyordu; int4 taşması da engellenir.
-  if (!Number.isInteger(tmdb_id) || tmdb_id < 1 || tmdb_id > 1e9 ||
+  if (!gecerliTmdb(tmdb_id) || tmdb_id < 1 || tmdb_id > 1e9 ||
       !Number.isInteger(sezon) || sezon < 0 || sezon > 1e6 ||
       !Number.isInteger(bolum_sayisi) || bolum_sayisi < 1 || bolum_sayisi > 500) {
     return res.status(400).json({ hata: 'Geçersiz tmdb_id / sezon / bolum_sayisi' });
@@ -554,7 +593,7 @@ app.get('/izleme/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
 // (Puan ve yorumlar bilinçli olarak KORUNUR.)
 app.post('/icerik/sifirla', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   const p = [req.kullanici.id, tur, tmdb_id];
@@ -573,7 +612,7 @@ app.post('/icerik/sifirla', girisZorunlu, sarici(async (req, res) => {
 // ---------- durum / puan / favori ----------
 app.post('/durum', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, durum } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   if (durum != null && durum !== ''
@@ -627,7 +666,7 @@ app.post('/durum', girisZorunlu, sarici(async (req, res) => {
 app.get('/izleyenler/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur } = req.params;
   const tmdbId = Number(req.params.tmdbId);
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdbId)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdbId)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   const [sayi, kullanicilar] = await Promise.all([
@@ -652,7 +691,7 @@ app.get('/izleyenler/:tur/:tmdbId', sarici(async (req, res) => {
 
 app.post('/puan', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, puan, yorum = null } = req.body || {};
-  if (!['tv', 'movie', 'person'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 10)) {
@@ -696,7 +735,7 @@ app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
 
 app.post('/favori/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   const silindi = await havuz.query(
@@ -738,7 +777,7 @@ const TEPKI_EMOJILERI = ['😄', '😢', '😮', '🥱', '😭', '😂', '😱',
 function tepkiHedef(govde) {
   const { tmdb_id, tur } = govde || {};
   let { sezon = null, bolum = null } = govde || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) return null;
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
   if ((sezon == null) !== (bolum == null)) return null;
   if (sezon != null && (!Number.isInteger(sezon) || !Number.isInteger(bolum)
       || sezon < 0 || bolum < 0)) return null;
@@ -802,7 +841,7 @@ app.post('/tepki', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/kaynak', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, platform = null } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   if (platform == null || platform === '') {
@@ -858,7 +897,7 @@ app.delete('/listeler/:id', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/listeler/:id/oge', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, ekle = true } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   const sahip = await havuz.query(
@@ -893,7 +932,7 @@ app.get('/listeler/:id', sarici(async (req, res) => {
     const baslik = req.headers.authorization || '';
     const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
     let kimlik = null;
-    try { kimlik = token ? jwt.verify(token, JWT_SECRET) : null; } catch { /* gizli kalsın */ }
+    try { kimlik = token ? jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] }) : null; } catch { /* gizli kalsın */ }
     if (kimlik?.id !== liste.rows[0].kullanici_id) {
       return res.status(404).json({ hata: 'Liste bulunamadı' });
     }
@@ -1476,7 +1515,8 @@ app.post('/auth/sifre-sifirla-istek', authLimiti, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     'SELECT id FROM kullanicilar WHERE email=$1 AND NOT misafir', [email]);
   if (!rows.length) return res.json(cevap);
-  const kod = String(Math.floor(100000 + Math.random() * 900000));
+  // Kripto-güvenli 6 haneli kod (Math.random tahmin edilebilir PRNG'dir).
+  const kod = String(crypto.randomInt(100000, 1000000));
   const hash = await bcrypt.hash(kod, 10);
   await havuz.query(
     `INSERT INTO sifirlama_kodlari (kullanici_id, kod_hash, bitis)
@@ -1508,10 +1548,14 @@ app.post('/auth/sifre-sifirla', authLimiti, sarici(async (req, res) => {
     return res.status(400).json({ hata: 'Kod geçersiz veya süresi dolmuş' });
   }
   const hash = await bcrypt.hash(sifre, 10);
-  await havuz.query('UPDATE kullanicilar SET sifre_hash=$1 WHERE id=$2', [hash, kayit.id]);
+  // Şifre sürümünü artır: eski JWT'ler (çalınmış olabilir) geçersiz olsun.
+  await havuz.query(
+    'UPDATE kullanicilar SET sifre_hash=$1, sifre_surumu=sifre_surumu+1 WHERE id=$2',
+    [hash, kayit.id]);
   await havuz.query('DELETE FROM sifirlama_kodlari WHERE kullanici_id=$1', [kayit.id]);
+  sifreSurumOnbellekSil(kayit.id);
   const kullanici = await havuz.query(
-    'SELECT id, kullanici_adi, email, misafir, avatar FROM kullanicilar WHERE id=$1',
+    'SELECT id, kullanici_adi, email, misafir, avatar, sifre_surumu FROM kullanicilar WHERE id=$1',
     [kayit.id]);
   res.json({ token: jwtUret(kullanici.rows[0]), kullanici: kullanici.rows[0] });
 }));
@@ -1659,7 +1703,7 @@ app.post('/yorumlar/:id/begen', girisZorunlu, sarici(async (req, res) => {
   res.json({ begendim: silindi.rowCount === 0, begeni: rows[0].begeni });
 }));
 
-app.post('/yorumlar', girisZorunlu, sarici(async (req, res) => {
+app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   let { tur, tmdb_id, sezon = null, bolum = null } = req.body || {};
   const { metin, medya = [], ust_id = null } = req.body || {};
   // Yanıt: hedef alanları üst yorumdan alınır; yanıtın yanıtı üst yoruma bağlanır (tek seviye).
@@ -1682,7 +1726,7 @@ app.post('/yorumlar', girisZorunlu, sarici(async (req, res) => {
     sezon = u.sezon;
     bolum = u.bolum;
   }
-  if (!YORUM_TURLERI.includes(tur) || !Number.isInteger(tmdb_id)) {
+  if (!YORUM_TURLERI.includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   if ((sezon == null) !== (bolum == null) ||
@@ -1786,7 +1830,7 @@ app.get('/takipedilenler/:kullaniciAdi', sarici(async (req, res) => {
 }));
 
 // Kullanıcı arama (keşfet / takip için)
-app.get('/kullanici-ara', sarici(async (req, res) => {
+app.get('/kullanici-ara', aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (q.length < 2) return res.json({ kullanicilar: [] });
   const { rows } = await havuz.query(
