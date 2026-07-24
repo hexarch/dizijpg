@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { AsyncLocalStorage } from 'async_hooks';
 import { disaAktar, iceAktar } from './veri_aktar.js';
 
 const {
@@ -23,6 +24,24 @@ if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
 
 const havuz = new pg.Pool({ connectionString: DATABASE_URL });
 const app = express();
+
+// İstek başına TMDB dili: istemci X-Dil başlığıyla uygulama dilini gönderir,
+// tmdbGetir bunu okuyup içeriği (başlık/özet/tür) o dilde çeker.
+const istekBaglam = new AsyncLocalStorage();
+// Uygulama dil kodu → TMDB dil kodu. TMDB çoğu ISO 639-1 kodunu kabul eder;
+// bazıları için bölge eklemek daha iyi sonuç verir. Bilinmeyen → 'en'.
+const TMDB_DIL = {
+  tr: 'tr-TR', en: 'en-US', es: 'es-ES', de: 'de-DE', fr: 'fr-FR',
+  it: 'it-IT', pt: 'pt-BR', ru: 'ru-RU', ja: 'ja-JP', ko: 'ko-KR',
+  zh: 'zh-CN', ar: 'ar-SA', hi: 'hi-IN', nl: 'nl-NL', pl: 'pl-PL',
+  sv: 'sv-SE', da: 'da-DK', fi: 'fi-FI', nb: 'nb-NO', cs: 'cs-CZ',
+  el: 'el-GR', hu: 'hu-HU', ro: 'ro-RO', bg: 'bg-BG', uk: 'uk-UA',
+  sr: 'sr-RS', he: 'he-IL', fa: 'fa-IR', ur: 'ur-PK', bn: 'bn-BD',
+  ta: 'ta-IN', te: 'te-IN', mr: 'mr-IN', gu: 'gu-IN', kn: 'kn-IN',
+  ml: 'ml-IN', pa: 'pa-IN', th: 'th-TH', vi: 'vi-VN', id: 'id-ID',
+  ms: 'ms-MY', fil: 'tl-PH', sw: 'sw-KE', az: 'az-AZ', am: 'am-ET',
+  my: 'my-MM',
+};
 // nginx arkasındayız: req.ip gerçek istemci IP'sini (X-Forwarded-For) yansıtsın,
 // yoksa tüm kullanıcılar hız limitinde tek IP gibi görünür.
 app.set('trust proxy', 1);
@@ -48,12 +67,19 @@ app.use('/medya', yalnizGet(medyaStatik));
 // CORS: web sürümü (dizijpg.com) tarayıcıdan istek atabilsin.
 app.use((req, res, next) => {
   res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Dil');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
   // Yüklenen dosyalar tarayıcıda içerik koklamasıyla çalıştırılamasın.
   res.set('X-Content-Type-Options', 'nosniff');
   if (req.method === 'OPTIONS') return res.sendStatus(204);
   next();
+});
+
+// İstek dilini bağlama koy: TMDB içeriği kullanıcının dilinde gelsin.
+app.use((req, _res, next) => {
+  const kod = String(req.headers['x-dil'] || 'tr').toLowerCase();
+  const tmdbDil = TMDB_DIL[kod] || 'en-US';
+  istekBaglam.run({ tmdbDil }, next);
 });
 
 // ---------- mail (kendi sunucumuz: host üzerindeki Postfix'e SMTP ile) ----------
@@ -74,6 +100,15 @@ const TMDB = 'https://api.themoviedb.org/3';
 const ONBELLEK_TTL_SN = { varsayilan: 6 * 3600, uzun: 7 * 24 * 3600 };
 
 async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
+  // İçerik dilini isteğin diline göre ayarla: çağrılar 'language=tr-TR' yazsa da
+  // gerçek dil buradan gelir. Önbellek anahtarı da dili içerdiğinden dil-başına
+  // ayrı önbelleklenir.
+  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  if (/[?&]language=/.test(yol)) {
+    yol = yol.replace(/([?&]language=)[a-zA-Z-]+/, `$1${dil}`);
+  } else {
+    yol += (yol.includes('?') ? '&' : '?') + 'language=' + dil;
+  }
   const anahtar = yol;
   const { rows } = await havuz.query(
     `SELECT veri FROM tmdb_onbellek

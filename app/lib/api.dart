@@ -46,6 +46,8 @@ class Api {
 
   static Map<String, String> get _basliklar => {
     'Content-Type': 'application/json',
+    // İçerik dili: TMDB başlık/özet/tür bu dilde gelsin
+    'X-Dil': Ceviri.dil.value,
     if (_token != null) 'Authorization': 'Bearer $_token',
   };
 
