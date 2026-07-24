@@ -180,6 +180,13 @@ Denetim ajanı 39 bulgu; en yüksek kaldıraçlılar uygulandı:
 Kalan düşük-öncelik (opsiyonel): 17→16 bölüm başlığı birleştirme, radius token
 (poster=12/thumb=8), 6/10/14px boşluk ritmi ince ayarı, ozet iskelet ızgarası
 
+## SPRINT 10 — Marka fontu Poppins (2026-07-24) 🚀
+1. ✅ Poppins gömüldü (6 ağırlık 400-900, ~930KB, assets/fonts/, OFL lisans)
+2. ✅ tema.dart fontFamily: 'Poppins' — tüm metinler marka fontunda
+3. ✅ Latin-dışı diller (Arapça/Çince/Japonca/…) otomatik sistem fontuna düşer;
+   Türkçe karakterler (ç ş ğ ı İ ö ü) Poppins'te tam destekli
+4. ✅ v1.6.0+8
+
 
 ## DENETİM 2 — skill destekli tam tarama (2026-07-22) 🚀
 dizijpg-ux-kontrol listesiyle ajan denetimi: 12 bulgu, TÜMÜ düzeltildi ve canlıda doğrulandı:

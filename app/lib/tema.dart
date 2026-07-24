@@ -81,7 +81,12 @@ ThemeData diziTema({required bool acik}) {
         outline: acik ? const Color(0xFFC9C9CF) : const Color(0xFF3A3A40),
       );
 
-  final taban = ThemeData(useMaterial3: true, colorScheme: scheme);
+  // Marka fontu Poppins; Latin-dışı diller (Arapça/Çince/…) sistem fontuna düşer.
+  final taban = ThemeData(
+    useMaterial3: true,
+    colorScheme: scheme,
+    fontFamily: 'Poppins',
+  );
   final zemin = acik ? const Color(0xFFF6F6F8) : const Color(0xFF0B0B0D);
   final kart = acik ? Colors.white : const Color(0xFF1F1F23);
   final ikincil = acik ? const Color(0xFFECECEF) : const Color(0xFF17171A);
@@ -97,6 +102,7 @@ ThemeData diziTema({required bool acik}) {
       scrolledUnderElevation: 0,
       centerTitle: false,
       titleTextStyle: TextStyle(
+        fontFamily: 'Poppins',
         fontSize: 22,
         fontWeight: FontWeight.w800,
         color: metin,
@@ -118,14 +124,22 @@ ThemeData diziTema({required bool acik}) {
         ),
       ),
       labelTextStyle: WidgetStateProperty.all(
-        TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: metin70),
+        TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: metin70,
+        ),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
         backgroundColor: sari,
         foregroundColor: Colors.black,
-        textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        textStyle: const TextStyle(
+          fontFamily: 'Poppins',
+          fontWeight: FontWeight.w800,
+        ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
       ),
@@ -138,6 +152,7 @@ ThemeData diziTema({required bool acik}) {
       // Seçili çip sarı zeminli: yazı siyah; değilse tema metni
       labelStyle: WidgetStateTextStyle.resolveWith(
         (s) => TextStyle(
+          fontFamily: 'Poppins',
           color: s.contains(WidgetState.selected) ? Colors.black : metin,
         ),
       ),
