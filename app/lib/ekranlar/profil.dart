@@ -523,9 +523,11 @@ class _ProfilEkraniState extends State<ProfilEkrani>
               SizedBox(
                 height: 130,
                 width: double.infinity,
-                child: Image.network(
-                  dosyaUrl(_profil!['kapak'] as String)!,
+                child: CachedNetworkImage(
+                  imageUrl: dosyaUrl(_profil!['kapak'] as String)!,
                   fit: BoxFit.cover,
+                  errorWidget: (_, __, ___) =>
+                      Container(color: DiziRenkler.koyuGri),
                 ),
               ),
             Padding(
@@ -541,7 +543,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         backgroundColor: DiziRenkler.kart,
                         backgroundImage:
                             dosyaUrl(_profil?['avatar'] as String?) != null
-                            ? NetworkImage(
+                            ? CachedNetworkImageProvider(
                                 dosyaUrl(_profil!['avatar'] as String)!,
                               )
                             : null,

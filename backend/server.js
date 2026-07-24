@@ -82,6 +82,14 @@ app.use((req, _res, next) => {
   istekBaglam.run({ tmdbDil }, next);
 });
 
+// Sayısal yol parametreleri INT kolonlara bağlanıyor: harf içeren veya taşan
+// değer 500 yerine 400 dönsün (1-9 haneli → int4 taşması da engellenir).
+const sayiParam = (ad) => app.param(ad, (req, res, next, val) =>
+  /^\d{1,9}$/.test(val) ? next() : res.status(400).json({ hata: `Geçersiz ${ad}` }));
+sayiParam('tmdbId');
+sayiParam('id');
+sayiParam('yil');
+
 // ---------- mail (kendi sunucumuz: host üzerindeki Postfix'e SMTP ile) ----------
 // API konteynerde çalıştığından host.docker.internal:25 üzerinden gönderir.
 const MAIL_FROM = process.env.MAIL_FROM || 'dizi.jpg <noreply@dizijpg.com>';
@@ -506,8 +514,12 @@ app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
 // Bir sezonun tamamını işaretle/kaldır
 app.post('/izleme/sezon', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, sezon, bolum_sayisi, isaretle = true } = req.body || {};
-  if (!tmdb_id || !sezon || !bolum_sayisi) {
-    return res.status(400).json({ hata: 'tmdb_id, sezon, bolum_sayisi gerekli' });
+  // Tam sayı + pozitif + makul aralık: negatif bolum_sayisi boş INSERT'e yol açıp
+  // SQL sözdizimi hatası (500) veriyordu; int4 taşması da engellenir.
+  if (!Number.isInteger(tmdb_id) || tmdb_id < 1 || tmdb_id > 1e9 ||
+      !Number.isInteger(sezon) || sezon < 0 || sezon > 1e6 ||
+      !Number.isInteger(bolum_sayisi) || bolum_sayisi < 1 || bolum_sayisi > 500) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id / sezon / bolum_sayisi' });
   }
   if (isaretle) {
     const degerler = [];

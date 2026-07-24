@@ -282,21 +282,23 @@ class _DetayEkraniState extends State<DetayEkrani> {
                   title: Text(l['ad'] as String),
                   subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
                   onTap: () async {
+                    // Messenger'ı pop'tan ÖNCE al: modal kapanınca context ölür,
+                    // onunla SnackBar aramak "deactivated widget" hatası verir.
+                    final messenger = ScaffoldMessenger.of(context);
+                    final sayfa = Navigator.of(context);
                     try {
                       await Api.post('/listeler/${l['id']}/oge', {
                         'tmdb_id': widget.tmdbId,
                         'tur': widget.tur,
                       });
-                      if (!context.mounted) return;
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      sayfa.pop();
+                      messenger.showSnackBar(
                         SnackBar(content: Text('Listeye eklendi'.c)),
                       );
                     } catch (e) {
-                      if (!context.mounted) return;
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text(e.toString())));
+                      messenger.showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
                     }
                   },
                 ),

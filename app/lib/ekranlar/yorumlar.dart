@@ -155,7 +155,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
               const SizedBox(width: 7),
               Text(
                 _yorumlar != null
-                    ? 'Yorumlar ({})'.cf([_yorumlar!.length])
+                    // Yalnız üst yorumları say (yanıtlar hariç): görünen sayı
+                    // listedeki üst yorum sayısıyla tutarlı olsun.
+                    ? 'Yorumlar ({})'.cf([
+                        _yorumlar!.where((y) => y['ust_id'] == null).length,
+                      ])
                     : 'Yorumlar'.c,
                 style: const TextStyle(
                   fontSize: 17,

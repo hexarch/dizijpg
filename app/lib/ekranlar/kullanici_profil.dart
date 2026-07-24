@@ -532,7 +532,7 @@ class ProfilYorumKarti extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                yorum['metin'] as String,
+                yorum['metin'] as String? ?? '',
                 maxLines: 4,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(height: 1.4),
