@@ -430,6 +430,23 @@ asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
   twitter://, tg:// — manifest <queries> eklendi), sonra tarayıcı, son çare
   kopyala; baştaki @ soyulur. Çeviri +1 anahtar → **321 × 45**.
 
+## ADMİN HAREKETLER + PROFİL ETKİLEŞİM ✅🚀 (2026-07-28, canlıda, v1.8.2+18)
+- **Admin "Hareketler" sekmesi** (https://dizijpg.com/api/admin): son 30 yorum
+  (içerik adı, metin, beğeni/görüntülenme, medya rozeti) · son izlemeler ·
+  kitaplık eklemeleri · yeni kayıtlar; 15 sn'de bir tazelenir. **Çevrimiçi**:
+  kart + rozet + tıklanır kullanıcı listesi (son_gorulme ≤ 3 dk).
+- **Kullanıcı detay modalı** (her @ad tıklanır): e-posta, misafir/yasaklı,
+  kayıt/son görülme, bio, sosyal, izleme/yorum/DM/takipçi/görüntülenme/beğeni/
+  cihaz sayıları, hakkında+yorum şikayetleri, son IP'ler (bellek-içi istek
+  halkasından; API restart'ında sıfırlanır), son 20 yorumu satır içi "sil"
+  butonuyla, banla/yasak kaldır.
+- **Profillerde toplam etkileşim** (kendi + açık): "Beğeni" ve "Görüntülenme"
+  kutuları (EtkilesimSatiri). Görüntülenme = yorum görüntülenmeleri; foto/video
+  ekli yorumlar aynı sayaca dahil (ayrı medya sayacı yok). Backend:
+  /istatistiklerim + /profil'e toplam_begeni/toplam_goruntulenme eklendi.
+- Akış kartındaki VİDEO artık oynuyor (yorumlardaki VideoOynatici'ye bağlandı;
+  önceden sadece ikon vardı). Çeviri +2 anahtar → **323 × 45**.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).
