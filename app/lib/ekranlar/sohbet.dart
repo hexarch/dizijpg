@@ -162,7 +162,9 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   final _kaydirma = ScrollController();
   Timer? _sayac;
   // Sesli mesaj kaydı
-  final AudioRecorder _kaydedici = AudioRecorder();
+  // Web'de mikrofon gizli; kaydediciyi hiç kurma ki eklenti kanalı
+  // MissingPluginException gürültüsü üretmesin (hata günlüğü #8-16).
+  final AudioRecorder? _kaydedici = kIsWeb ? null : AudioRecorder();
   bool _kaydediyor = false;
   int _kayitSn = 0;
   Timer? _kayitSayaci;
@@ -194,7 +196,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     _sayac?.cancel();
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
-    _kaydedici.dispose();
+    _kaydedici?.dispose();
     _metin.dispose();
     _kaydirma.dispose();
     super.dispose();
@@ -203,6 +205,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   // ---- Sesli mesaj kaydı ----
   Future<void> _kayitBasla() async {
     try {
+      if (_kaydedici == null) return;
       if (!await _kaydedici.hasPermission()) return;
       final dizin = await getTemporaryDirectory();
       final yol =
@@ -240,7 +243,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     try {
-      await _kaydedici.stop();
+      await _kaydedici?.stop();
     } catch (_) {}
     _kayitYolu = null;
     if (mounted) {
@@ -258,7 +261,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     final dalga = dalgaKodla(_seviyeler, saniye);
     String? yol;
     try {
-      yol = await _kaydedici.stop();
+      yol = await _kaydedici?.stop();
     } catch (_) {}
     yol ??= _kayitYolu;
     if (mounted) {
