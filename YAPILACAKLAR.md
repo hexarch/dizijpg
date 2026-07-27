@@ -404,8 +404,12 @@ Yeni APK+AAB masaüstünde (66MB).
 - Çeviri: +13 anahtar → **320 anahtar × 45 dil**. Yeni APK: ~/Desktop/dizijpg-1.8.0.apk
 - Siber test: sosyal doğrulama (4 giriş/enjeksiyon/bilinmeyen platform → 400),
   kimliksiz uçlar 401, admin 403, traversal 404 — hepsi canlıda doğrulandı.
-- NOT: hata günlüğünde web'de ses eklentisi MissingPluginException'ları var
-  (audioplayers/record web'de kayıtlı değil) — ayrı ele alınacak.
+- **Web ses hataları ele alındı (2026-07-27 akşam, canlıda):** kayıt cihazı
+  web'de artık hiç kurulmuyor (record create/dispose gürültüsü bitti).
+  Asıl bulgu: `Api.surum` sabiti 1.7.1+13'te kalmıştı — hata günlüğü 3 sürümdür
+  yanlış etiketliydi; 1.8.0+16'ya eşitlendi (pubspec'e hatırlatma yorumu
+  eklendi). audioplayers.global kayıtları eski etiket yüzünden hangi build'den
+  geldiği belirsizdi; yeni doğru etiketlerle tekrar ederse ayrıca bakılacak.
 
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
