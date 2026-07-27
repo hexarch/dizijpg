@@ -4,6 +4,7 @@ const Map<String, String> cevirilerMs = {
       'Tiada data yang dikenali untuk diimport.',
   'Arama': 'Carian',
   'Aramaya başla': 'Mula mencari',
+  'Son aramalar': 'Carian terkini',
   'Ayarlar': 'Tetapan',
   'Bağla': 'Pautkan',
   'Bio': 'Bio',
@@ -216,7 +217,7 @@ const Map<String, String> cevirilerMs = {
   'Listeyi sil?': 'Padam senarai?',
   'Sil': 'Padam',
   'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
-      'Judul ini akan ditanda tidak pernah ditonton dan dibuang dari senarai anda.',
+      'Tajuk ini akan ditanda tidak pernah ditonton dan dibuang dari senarai anda.',
   'Gelecek bölüm bugün': 'Episod seterusnya hari ini',
   'Gelecek bölüm {} gün sonra': 'Episod seterusnya dalam {} hari',
   'Tema': 'Tema',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerMs = {
   'Bir profile girip mesaj gönderebilirsin.': 'Buka profil dan hantar mesej.',
   'Listeyi sil': 'Padam senarai',
   'Puan kaydedilemedi': 'Penilaian tidak dapat disimpan',
+  'Nerede İzlenir': 'Tempat Menonton',
+  'Abonelik': 'Langganan',
+  'Kirala': 'Sewa',
+  'Satın al': 'Beli',
+  'Hoş geldin!': 'Selamat datang!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Pilih rancangan dan filem yang anda mahu tonton',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Pilihan anda ditambah ke senarai tontonan',
+  'Şimdilik atla': 'Langkau buat masa ini',
+  'Devam et': 'Teruskan',
+  '{} ekle': 'Tambah {}',
+  'Şikayet et': 'Laporkan',
+  'Engelle': 'Sekat',
+  'Engeli kaldır': 'Nyahsekat',
+  'Kullanıcı engellendi': 'Pengguna disekat',
+  'Engel kaldırıldı': 'Sekatan dibuang',
+  'Şikayet sebebi': 'Sebab laporan',
+  'Spam veya yanıltıcı': 'Spam atau mengelirukan',
+  'Taciz veya nefret söylemi': 'Gangguan atau ucapan kebencian',
+  'Uygunsuz / cinsel içerik': 'Tidak sesuai / kandungan seksual',
+  'Şiddet veya tehlikeli içerik': 'Keganasan atau kandungan berbahaya',
+  'Telif hakkı ihlali': 'Pelanggaran hak cipta',
+  'Şikayetin alındı, teşekkürler': 'Laporan kamu telah diterima, terima kasih',
+  'Hesabımı Sil': 'Padam Akaun Saya',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Akaun kamu dan semua data (sejarah, penilaian, komen, senarai, mesej) akan dipadam secara kekal. Ini tidak boleh dibatalkan.',
+  'Şifreni gir': 'Masukkan kata laluan kamu',
+  'Hesabımı kalıcı sil': 'Padam akaun saya secara kekal',
+  'Sesli mesaj': 'Mesej suara',
+  'Ses gönderilemedi': 'Mesej suara gagal dihantar',
+  'Kaydediliyor…': 'Merakam…',
+  'Ses oynatılamadı': 'Audio tidak dapat dimainkan',
+  'Oynat': 'Main',
+  'Duraklat': 'Jeda',
+  'Liste görünümü': 'Paparan senarai',
+  'Takvim görünümü': 'Paparan kalendar',
+  'Önceki ay': 'Bulan sebelum',
+  'Sonraki ay': 'Bulan seterusnya',
+  'Bu gün bölüm yok': 'Tiada episod pada hari ini',
+  'Gizlilik Politikası': 'Dasar Privasi',
+  'Son güncelleme: {}': 'Kemas kini terakhir: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Dasar ini menerangkan data apa yang dikumpul, bagaimana ia digunakan dan apakah hak kamu apabila menggunakan aplikasi dizi.jpg dan laman dizijpg.com.',
+  'Topladığımız Veriler': 'Data yang Kami Kumpul',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Akaun: alamat e-mel, nama pengguna dan kata laluan. Kata laluan disimpan sebagai cincangan yang tidak boleh dipulihkan; akaun tetamu boleh digunakan tanpa e-mel.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: maklumat yang kamu pilih untuk tambah, seperti avatar, imej muka depan, bio dan negara.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Penggunaan: sejarah tontonan, penilaian, komen, senarai, reaksi dan kegemaran kamu.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Mesej: mesej teks, imej dan suara kamu disimpan di pelayan kami. Mesej tidak disulitkan hujung-ke-hujung; ia hanya disemak untuk tujuan moderasi jika dilaporkan.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Media yang dimuat naik: foto, GIF, video dan rakaman suara yang kamu tambah pada profil, komen dan mesej.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Teknikal: alamat IP, lokasi anggaran (peringkat negara/bandar), platform peranti, versi aplikasi dan log ralat. Ini disimpan untuk keselamatan dan pembaikan masalah.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Pemberitahuan: untuk pemberitahuan tolak, kami menyimpan token peranti dan pilihan bahasa kamu. Kamu boleh mematikan pemberitahuan pada bila-bila masa dalam tetapan peranti.',
+  'Verileri Nasıl Kullanırız': 'Cara Kami Menggunakan Data',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Kami menggunakan data kamu hanya untuk menyediakan perkhidmatan, melindungi akaun, menghantar pemberitahuan, membetulkan ralat dan mencegah penyalahgunaan. Kami tidak menjual data kamu dan tidak berkongsi dengan sesiapa untuk tujuan iklan.',
+  'Çerezler ve Yerel Depolama': 'Kuki dan Storan Setempat',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Storan setempat hanya digunakan untuk mengekalkan log masuk kamu dan mengingati pilihan seperti bahasa dan tema. Tiada kuki iklan atau penjejakan.',
+  'Üçüncü Taraf Hizmetler': 'Perkhidmatan Pihak Ketiga',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Data siri dan filem datang daripada TMDB, maklumat platform penstriman daripada JustWatch. Pemberitahuan tolak dihantar melalui Google Firebase dan trafik laman dilindungi oleh Cloudflare. Perkhidmatan ini tertakluk pada dasar privasi masing-masing.',
+  'Saklama ve Silme': 'Penyimpanan dan Pemadaman',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Data kamu disimpan selagi akaun kamu wujud. Melalui "Padam Akaun Saya" dalam tetapan, kamu boleh memadam akaun secara kekal; data dipadam serta-merta, salinan dalam sandaran selewat-lewatnya dalam 14 hari. Log ralat dipadam secara automatik selepas 30 hari.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Kamu boleh mengeksport data sebagai ZIP daripada tetapan; arkib dihantar ke alamat e-mel kamu.',
+  'Güvenlik': 'Keselamatan',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data dihantar melalui sambungan tersulit (HTTPS) dan disimpan di pelayan dengan akses terhad.',
+  'Çocukların Gizliliği': 'Privasi Kanak-kanak',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg bukan untuk kanak-kanak bawah 13 tahun.',
+  'Hakların': 'Hak Kamu',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Di bawah KVKK dan GDPR, kamu berhak mengakses, membetulkan, memadam dan memindahkan data kamu. Untuk itu, tulis kepada kami: {}',
+  'Değişiklikler': 'Perubahan',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Jika dasar ini berubah, versi baharu akan diterbitkan di halaman ini dan tarikhnya dikemas kini.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Dengan mendaftar, kamu menerima {}.',
 };

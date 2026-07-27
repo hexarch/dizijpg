@@ -98,7 +98,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
         color: DiziRenkler.sari,
         onRefresh: _yukle,
         child: ListView(
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.only(bottom: altGuvenli(context)),
           children: [
             if (kapak != null)
               SizedBox(
@@ -385,10 +385,81 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       );
     }
 
+    final p = _profil;
+    final digerKullanici =
+        p != null && p['ben_mi'] != true && context.watch<Oturum>().girisli;
     return Scaffold(
-      appBar: AppBar(title: Text('@${widget.kullaniciAdi}')),
+      appBar: AppBar(
+        title: Text('@${widget.kullaniciAdi}'),
+        actions: [
+          if (digerKullanici)
+            PopupMenuButton<String>(
+              onSelected: (secim) {
+                if (secim == 'sikayet') {
+                  sikayetEtSheet(context, 'kullanici', p['id'] as int);
+                } else if (secim == 'engelle') {
+                  _engelleToggle();
+                }
+              },
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'sikayet',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.flag_outlined, size: 20),
+                      const SizedBox(width: 10),
+                      Text('Şikayet et'.c),
+                    ],
+                  ),
+                ),
+                PopupMenuItem(
+                  value: 'engelle',
+                  child: Row(
+                    children: [
+                      Icon(
+                        p['engelledim'] == true
+                            ? Icons.block
+                            : Icons.block_outlined,
+                        size: 20,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(width: 10),
+                      Text(
+                        p['engelledim'] == true
+                            ? 'Engeli kaldır'.c
+                            : 'Engelle'.c,
+                        style: const TextStyle(color: Colors.redAccent),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
       body: govde,
     );
+  }
+
+  Future<void> _engelleToggle() async {
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final engellendi = await Api.engelleToggle(widget.kullaniciAdi);
+      if (!mounted) return;
+      setState(() {
+        _profil!['engelledim'] = engellendi;
+        if (engellendi) _profil!['takip_ediyorum'] = false;
+      });
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            engellendi ? 'Kullanıcı engellendi'.c : 'Engel kaldırıldı'.c,
+          ),
+        ),
+      );
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    }
   }
 }
 

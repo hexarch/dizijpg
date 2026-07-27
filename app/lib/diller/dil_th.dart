@@ -3,6 +3,7 @@ const Map<String, String> cevirilerTh = {
   'Aktarılacak tanınan veri bulunamadı.': 'ไม่พบข้อมูลที่นำเข้าได้',
   'Arama': 'ค้นหา',
   'Aramaya başla': 'เริ่มค้นหาเลย',
+  'Son aramalar': 'การค้นหาล่าสุด',
   'Ayarlar': 'การตั้งค่า',
   'Bağla': 'เชื่อมบัญชี',
   'Bio': 'ประวัติ',
@@ -162,8 +163,8 @@ const Map<String, String> cevirilerTh = {
   'Tümünü gör': 'ดูทั้งหมด',
   'Bildirimler': 'การแจ้งเตือน',
   'Henüz bildirim yok': 'ยังไม่มีการแจ้งเตือน',
-  '@{} yorumuna yanıt verdi': '@{} ตอบกลับความคิดเห็นของคุณ',
-  '@{} yorumunu beğendi': '@{} ถูกใจความคิดเห็นของคุณ',
+  '@{} yorumuna yanıt verdi': '@{} ตอบกลับคอมเมนต์ของคุณ',
+  '@{} yorumunu beğendi': '@{} ถูกใจคอมเมนต์ของคุณ',
   '@{} seni takip etti': '@{} ติดตามคุณ',
   '@{} sana mesaj gönderdi': '@{} ส่งข้อความถึงคุณ',
   'Mesajlar': 'ข้อความ',
@@ -223,8 +224,8 @@ const Map<String, String> cevirilerTh = {
   'Koyu': 'มืด',
   'Açık': 'สว่าง',
   'İzleyenler': 'ผู้ชม',
-  'Yorumunu yaz... (@ ile etiketle)': 'เขียนความคิดเห็นของคุณ... (@ เพื่อแท็ก)',
-  '@{} bir yorumda seni etiketledi': '@{} แท็กคุณในความคิดเห็น',
+  'Yorumunu yaz... (@ ile etiketle)': 'เขียนคอมเมนต์ของคุณ... (@ เพื่อแท็ก)',
+  '@{} bir yorumda seni etiketledi': '@{} แท็กคุณในคอมเมนต์',
   'Mesajı sil': 'ลบข้อความ',
   'Mesaj silinemedi': 'ไม่สามารถลบข้อความได้',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'ลิงก์ไม่ถูกต้องหรือไม่พบหน้า',
@@ -240,7 +241,7 @@ const Map<String, String> cevirilerTh = {
   'son görülme {} dk önce': 'เห็นล่าสุด {} นาทีที่แล้ว',
   'son görülme {} saat önce': 'เห็นล่าสุด {} ชม.ที่แล้ว',
   'son görülme {} gün önce': 'เห็นล่าสุด {} วันที่แล้ว',
-  'Yorumlar yüklenemedi': 'โหลดความคิดเห็นไม่สำเร็จ',
+  'Yorumlar yüklenemedi': 'โหลดคอมเมนต์ไม่สำเร็จ',
   'Favori': 'รายการโปรด',
   'Listeye ekle': 'เพิ่มลงในลิสต์',
   'İçerik paylaş': 'แชร์เนื้อหา',
@@ -251,4 +252,89 @@ const Map<String, String> cevirilerTh = {
   'Bir profile girip mesaj gönderebilirsin.': 'เปิดโปรไฟล์แล้วส่งข้อความ',
   'Listeyi sil': 'ลบลิสต์',
   'Puan kaydedilemedi': 'ไม่สามารถบันทึกคะแนนได้',
+  'Nerede İzlenir': 'รับชมได้ที่ไหน',
+  'Abonelik': 'สมัครสมาชิก',
+  'Kirala': 'เช่า',
+  'Satın al': 'ซื้อ',
+  'Hoş geldin!': 'ยินดีต้อนรับ!',
+  'İzlemek istediğin dizi ve filmleri seç': 'เลือกซีรีส์และหนังที่คุณอยากดู',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'รายการที่เลือกจะถูกเพิ่มในลิสต์ดูของคุณ',
+  'Şimdilik atla': 'ข้ามไปก่อน',
+  'Devam et': 'ดำเนินการต่อ',
+  '{} ekle': 'เพิ่ม {}',
+  'Şikayet et': 'รายงาน',
+  'Engelle': 'บล็อก',
+  'Engeli kaldır': 'เลิกบล็อก',
+  'Kullanıcı engellendi': 'บล็อกผู้ใช้แล้ว',
+  'Engel kaldırıldı': 'เลิกบล็อกแล้ว',
+  'Şikayet sebebi': 'เหตุผลการรายงาน',
+  'Spam veya yanıltıcı': 'สแปมหรือทำให้เข้าใจผิด',
+  'Taciz veya nefret söylemi': 'การคุกคามหรือคำพูดสร้างความเกลียดชัง',
+  'Uygunsuz / cinsel içerik': 'ไม่เหมาะสม / เนื้อหาทางเพศ',
+  'Şiddet veya tehlikeli içerik': 'ความรุนแรงหรือเนื้อหาอันตราย',
+  'Telif hakkı ihlali': 'การละเมิดลิขสิทธิ์',
+  'Şikayetin alındı, teşekkürler': 'ได้รับรายงานของคุณแล้ว ขอบคุณ',
+  'Hesabımı Sil': 'ลบบัญชีของฉัน',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'บัญชีและข้อมูลทั้งหมดของคุณ (ประวัติการดู คะแนน คอมเมนต์ ลิสต์ ข้อความ) จะถูกลบถาวร ไม่สามารถกู้คืนได้',
+  'Şifreni gir': 'ใส่รหัสผ่านของคุณ',
+  'Hesabımı kalıcı sil': 'ลบบัญชีของฉันถาวร',
+  'Sesli mesaj': 'ข้อความเสียง',
+  'Ses gönderilemedi': 'ส่งข้อความเสียงไม่สำเร็จ',
+  'Kaydediliyor…': 'กำลังบันทึก…',
+  'Ses oynatılamadı': 'เล่นเสียงไม่ได้',
+  'Oynat': 'เล่น',
+  'Duraklat': 'หยุดชั่วคราว',
+  'Liste görünümü': 'มุมมองรายการ',
+  'Takvim görünümü': 'มุมมองปฏิทิน',
+  'Önceki ay': 'เดือนก่อนหน้า',
+  'Sonraki ay': 'เดือนถัดไป',
+  'Bu gün bölüm yok': 'ไม่มีตอนในวันนี้',
+  'Gizlilik Politikası': 'นโยบายความเป็นส่วนตัว',
+  'Son güncelleme: {}': 'อัปเดตล่าสุด: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'นโยบายนี้อธิบายว่ามีการเก็บข้อมูลอะไรบ้าง นำไปใช้อย่างไร และคุณมีสิทธิ์อะไรบ้างเมื่อใช้แอป dizi.jpg และเว็บไซต์ dizijpg.com',
+  'Topladığımız Veriler': 'ข้อมูลที่เราเก็บ',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'บัญชี: ที่อยู่อีเมล ชื่อผู้ใช้ และรหัสผ่าน รหัสผ่านถูกเก็บเป็นแฮชที่ย้อนกลับไม่ได้ บัญชีผู้เยี่ยมชมใช้ได้โดยไม่ต้องมีอีเมล',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'โปรไฟล์: ข้อมูลที่คุณเลือกเพิ่มเอง เช่น อวตาร ภาพปก ประวัติย่อ และประเทศ',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'การใช้งาน: ประวัติการดู คะแนน ความคิดเห็น รายการ รีแอ็กชัน และรายการโปรดของคุณ',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'ข้อความ: ข้อความตัวอักษร รูปภาพ และเสียงของคุณถูกเก็บบนเซิร์ฟเวอร์ของเรา ข้อความไม่ได้เข้ารหัสแบบต้นทางถึงปลายทาง จะถูกตรวจดูเพื่อการดูแลเนื้อหาก็ต่อเมื่อมีการรายงานเท่านั้น',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'สื่อที่อัปโหลด: รูปภาพ GIF วิดีโอ และเสียงบันทึกที่คุณเพิ่มในโปรไฟล์ ความคิดเห็น และข้อความ',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'ข้อมูลทางเทคนิค: ที่อยู่ IP ตำแหน่งโดยประมาณ (ระดับประเทศ/เมือง) แพลตฟอร์มอุปกรณ์ เวอร์ชันแอป และบันทึกข้อผิดพลาด เก็บไว้เพื่อความปลอดภัยและการแก้ไขปัญหา',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'การแจ้งเตือน: สำหรับการแจ้งเตือนแบบพุช เราเก็บโทเคนอุปกรณ์และภาษาที่คุณเลือก คุณปิดการแจ้งเตือนได้ทุกเมื่อในการตั้งค่าอุปกรณ์',
+  'Verileri Nasıl Kullanırız': 'เราใช้ข้อมูลอย่างไร',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'เราใช้ข้อมูลของคุณเพื่อให้บริการ ปกป้องบัญชี ส่งการแจ้งเตือน แก้ไขข้อผิดพลาด และป้องกันการใช้งานในทางที่ผิดเท่านั้น เราไม่ขายข้อมูลของคุณ และไม่แชร์ให้ใครเพื่อการโฆษณา',
+  'Çerezler ve Yerel Depolama': 'คุกกี้และพื้นที่จัดเก็บในเครื่อง',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'เราใช้พื้นที่จัดเก็บในเครื่องเพียงเพื่อให้คุณล็อกอินค้างไว้ และจดจำการตั้งค่าอย่างภาษาและธีม ไม่มีคุกกี้โฆษณาหรือติดตามใด ๆ',
+  'Üçüncü Taraf Hizmetler': 'บริการของบุคคลที่สาม',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'ข้อมูลซีรีส์และภาพยนตร์มาจาก TMDB ข้อมูลแพลตฟอร์มสตรีมมิงมาจาก JustWatch การแจ้งเตือนแบบพุชส่งผ่าน Google Firebase และทราฟฟิกของเว็บไซต์ได้รับการปกป้องโดย Cloudflare บริการเหล่านี้อยู่ภายใต้นโยบายความเป็นส่วนตัวของตนเอง',
+  'Saklama ve Silme': 'การเก็บรักษาและการลบ',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'ข้อมูลของคุณถูกเก็บไว้ตราบเท่าที่บัญชียังอยู่ คุณลบบัญชีถาวรได้ด้วย "ลบบัญชีของฉัน" ในการตั้งค่า ข้อมูลถูกลบทันที ส่วนสำเนาในข้อมูลสำรองถูกลบภายใน 14 วันเป็นอย่างช้า บันทึกข้อผิดพลาดถูกลบอัตโนมัติหลัง 30 วัน',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'คุณส่งออกข้อมูลเป็น ZIP ได้จากการตั้งค่า ไฟล์เก็บถาวรจะถูกส่งไปยังที่อยู่อีเมลของคุณ',
+  'Güvenlik': 'ความปลอดภัย',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ข้อมูลถูกส่งผ่านการเชื่อมต่อที่เข้ารหัส (HTTPS) และเก็บบนเซิร์ฟเวอร์ที่จำกัดการเข้าถึง',
+  'Çocukların Gizliliği': 'ความเป็นส่วนตัวของเด็ก',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg ไม่ได้มีไว้สำหรับเด็กอายุต่ำกว่า 13 ปี',
+  'Hakların': 'สิทธิ์ของคุณ',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'ตาม KVKK และ GDPR คุณมีสิทธิ์เข้าถึง แก้ไข ลบ และโอนย้ายข้อมูลของคุณ ติดต่อเราได้ที่: {}',
+  'Değişiklikler': 'การเปลี่ยนแปลง',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'หากนโยบายนี้เปลี่ยนแปลง เวอร์ชันใหม่จะถูกเผยแพร่ในหน้านี้และวันที่จะถูกอัปเดต',
+  'Kayıt olarak {} kabul etmiş olursun.': 'เมื่อสมัครสมาชิก แสดงว่าคุณยอมรับ{}',
 };

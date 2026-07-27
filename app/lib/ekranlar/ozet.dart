@@ -67,7 +67,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
         (Icons.chat_bubble_outline, '${o['yorum']}', 'Yorum'.c),
       ];
       govde = ListView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         children: [
           GridView.count(
             shrinkWrap: true,

@@ -63,7 +63,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_ogeler == null) {
       govde = GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 14,
@@ -82,7 +82,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
       );
     } else {
       govde = GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 14,

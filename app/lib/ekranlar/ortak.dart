@@ -672,3 +672,68 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
     );
   }
 }
+
+/// Şikayet sebebi seçtiren alt sayfa; seçilince sunucuya bildirir.
+/// tur: 'yorum' | 'mesaj' | 'kullanici' | 'liste'
+Future<void> sikayetEtSheet(
+  BuildContext context,
+  String tur,
+  int hedefId,
+) async {
+  const sebepler = [
+    'Spam veya yanıltıcı',
+    'Taciz veya nefret söylemi',
+    'Uygunsuz / cinsel içerik',
+    'Şiddet veya tehlikeli içerik',
+    'Telif hakkı ihlali',
+    'Diğer',
+  ];
+  final messenger = ScaffoldMessenger.of(context);
+  final secilen = await showModalBottomSheet<String>(
+    context: context,
+    backgroundColor: DiziRenkler.koyuGri,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+            child: Row(
+              children: [
+                const Icon(Icons.flag_outlined, color: DiziRenkler.sari),
+                const SizedBox(width: 10),
+                Text(
+                  'Şikayet sebebi'.c,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          for (final s in sebepler)
+            ListTile(title: Text(s.c), onTap: () => Navigator.pop(context, s)),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+  if (secilen == null) return;
+  try {
+    await Api.sikayetEt(tur, hedefId, secilen);
+    messenger.showSnackBar(
+      SnackBar(content: Text('Şikayetin alındı, teşekkürler'.c)),
+    );
+  } catch (e) {
+    messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+  }
+}
+
+/// Push edilen (alt menüsüz) ekranlarda kaydırma sonunun telefonun sistem
+/// gezinme çubuğu (3 buton / gesture) altında kalmaması için alt boşluk.
+double altGuvenli(BuildContext context, {double ekstra = 16}) =>
+    MediaQuery.of(context).padding.bottom + ekstra;

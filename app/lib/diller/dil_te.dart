@@ -4,6 +4,7 @@ const Map<String, String> cevirilerTe = {
       'దిగుమతికి గుర్తించదగిన డేటా ఏదీ దొరకలేదు.',
   'Arama': 'శోధన',
   'Aramaya başla': 'వెతకడం మొదలుపెట్టు',
+  'Son aramalar': 'ఇటీవలి శోధనలు',
   'Ayarlar': 'సెట్టింగ్స్',
   'Bağla': 'లింక్ చేయి',
   'Bio': 'బయో',
@@ -224,9 +225,8 @@ const Map<String, String> cevirilerTe = {
   'Koyu': 'డార్క్',
   'Açık': 'లైట్',
   'İzleyenler': 'వీక్షకులు',
-  'Yorumunu yaz... (@ ile etiketle)':
-      'మీ వ్యాఖ్యను రాయండి... (@ ట్యాగ్ చేయడానికి)',
-  '@{} bir yorumda seni etiketledi': '@{} మిమ్మల్ని ఒక వ్యాఖ్యలో ట్యాగ్ చేశారు',
+  'Yorumunu yaz... (@ ile etiketle)': 'నీ కామెంట్ రాయి... (@ తో ట్యాగ్ చెయ్యి)',
+  '@{} bir yorumda seni etiketledi': '@{} నిన్ను ఒక కామెంట్‌లో ట్యాగ్ చేశారు',
   'Mesajı sil': 'సందేశాన్ని తొలగించు',
   'Mesaj silinemedi': 'సందేశాన్ని తొలగించలేకపోయాం',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'లింక్ చెల్లదు లేదా పేజీ దొరకలేదు',
@@ -239,18 +239,105 @@ const Map<String, String> cevirilerTe = {
   'Video': 'వీడియో',
   'İçerik': 'కంటెంట్',
   'çevrimiçi': 'ఆన్‌లైన్',
-  'son görülme {} dk önce': '{} నిమి క్రితం చూశారు',
-  'son görülme {} saat önce': '{} గం క్రితం చూశారు',
-  'son görülme {} gün önce': '{} రోజు క్రితం చూశారు',
-  'Yorumlar yüklenemedi': 'వ్యాఖ్యలను లోడ్ చేయలేకపోయాం',
+  'son görülme {} dk önce': 'చివరిగా {} నిమి క్రితం',
+  'son görülme {} saat önce': 'చివరిగా {} గం క్రితం',
+  'son görülme {} gün önce': 'చివరిగా {} రోజు క్రితం',
+  'Yorumlar yüklenemedi': 'కామెంట్‌లను లోడ్ చేయలేకపోయాం',
   'Favori': 'ఇష్టమైనవి',
   'Listeye ekle': 'జాబితాకు జోడించు',
   'İçerik paylaş': 'షేర్ చేయి',
   'Kapat': 'మూసివేయి',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
-      'మీరు చూసినట్లు గుర్తించినవన్నీ ఇక్కడ చేరతాయి.',
+      'నువ్వు చూసినట్లు గుర్తించినవన్నీ ఇక్కడ చేరతాయి.',
   'Henüz sohbetin yok': 'ఇంకా సంభాషణలు లేవు',
-  'Bir profile girip mesaj gönderebilirsin.': 'ప్రొఫైల్ తెరిచి సందేశం పంపండి.',
+  'Bir profile girip mesaj gönderebilirsin.': 'ప్రొఫైల్ తెరిచి సందేశం పంపు.',
   'Listeyi sil': 'జాబితాను తొలగించు',
   'Puan kaydedilemedi': 'రేటింగ్‌ను సేవ్ చేయలేకపోయాం',
+  'Nerede İzlenir': 'ఎక్కడ చూడాలి',
+  'Abonelik': 'సబ్‌స్క్రిప్షన్',
+  'Kirala': 'అద్దెకు తీసుకోండి',
+  'Satın al': 'కొనండి',
+  'Hoş geldin!': 'స్వాగతం!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'నువ్వు చూడాలనుకునే సిరీస్‌లు, సినిమాలను ఎంచుకో',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'నీ ఎంపికలు "చూస్తాను" లిస్ట్‌కు జోడించబడతాయి',
+  'Şimdilik atla': 'ప్రస్తుతానికి దాటవేయి',
+  'Devam et': 'కొనసాగించు',
+  '{} ekle': '{} జోడించు',
+  'Şikayet et': 'ఫిర్యాదు చెయ్యి',
+  'Engelle': 'బ్లాక్ చెయ్యి',
+  'Engeli kaldır': 'అన్‌బ్లాక్ చెయ్యి',
+  'Kullanıcı engellendi': 'వినియోగదారు బ్లాక్ అయ్యారు',
+  'Engel kaldırıldı': 'బ్లాక్ తీసివేయబడింది',
+  'Şikayet sebebi': 'ఫిర్యాదు కారణం',
+  'Spam veya yanıltıcı': 'స్పామ్ లేదా తప్పుదోవ పట్టించేది',
+  'Taciz veya nefret söylemi': 'వేధింపు లేదా ద్వేషపూరిత ప్రసంగం',
+  'Uygunsuz / cinsel içerik': 'అనుచిత / లైంగిక కంటెంట్',
+  'Şiddet veya tehlikeli içerik': 'హింస లేదా ప్రమాదకర కంటెంట్',
+  'Telif hakkı ihlali': 'కాపీరైట్ ఉల్లంఘన',
+  'Şikayetin alındı, teşekkürler': 'నీ ఫిర్యాదు అందింది, ధన్యవాదాలు',
+  'Hesabımı Sil': 'నా ఖాతాను తొలగించు',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'నీ ఖాతా, అన్ని డేటా (చరిత్ర, రేటింగ్‌లు, కామెంట్‌లు, జాబితాలు, సందేశాలు) శాశ్వతంగా తొలగించబడతాయి. దీన్ని రద్దు చేయలేం.',
+  'Şifreni gir': 'నీ పాస్‌వర్డ్ ఎంటర్ చెయ్యి',
+  'Hesabımı kalıcı sil': 'నా ఖాతాను శాశ్వతంగా తొలగించు',
+  'Sesli mesaj': 'వాయిస్ మెసేజ్',
+  'Ses gönderilemedi': 'వాయిస్ మెసేజ్ పంపడం సాధ్యపడలేదు',
+  'Kaydediliyor…': 'రికార్డ్ అవుతోంది…',
+  'Ses oynatılamadı': 'ఆడియో ప్లే చేయలేకపోయాం',
+  'Oynat': 'ప్లే చేయి',
+  'Duraklat': 'పాజ్ చేయి',
+  'Liste görünümü': 'జాబితా వీక్షణ',
+  'Takvim görünümü': 'క్యాలెండర్ వీక్షణ',
+  'Önceki ay': 'మునుపటి నెల',
+  'Sonraki ay': 'తదుపరి నెల',
+  'Bu gün bölüm yok': 'ఈ రోజు ఎపిసోడ్‌లు లేవు',
+  'Gizlilik Politikası': 'గోప్యతా విధానం',
+  'Son güncelleme: {}': 'చివరి అప్‌డేట్: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg యాప్ మరియు dizijpg.com సైట్ వాడేటప్పుడు ఏ డేటా సేకరిస్తారో, ఎలా వాడతారో, నీ హక్కులు ఏమిటో ఈ విధానం వివరిస్తుంది.',
+  'Topladığımız Veriler': 'మేము సేకరించే డేటా',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'ఖాతా: ఇమెయిల్ చిరునామా, యూజర్‌నేమ్, పాస్‌వర్డ్. పాస్‌వర్డ్‌లు తిరిగి చదవలేని హ్యాష్ రూపంలో నిల్వ అవుతాయి; గెస్ట్ ఖాతాలను ఇమెయిల్ లేకుండా వాడుకోవచ్చు.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'ప్రొఫైల్: అవతార్, కవర్ ఫోటో, బయో, దేశం వంటి నువ్వు జోడించాలనుకున్న వివరాలు.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'వాడకం: నీ వీక్షణ చరిత్ర, రేటింగ్‌లు, వ్యాఖ్యలు, జాబితాలు, రియాక్షన్‌లు, ఇష్టమైనవి.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'సందేశాలు: నీ టెక్స్ట్, ఫోటో, వాయిస్ సందేశాలు మా సర్వర్లలో నిల్వ అవుతాయి. సందేశాలకు ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్షన్ లేదు; రిపోర్ట్ అయితేనే మోడరేషన్ కోసం చూస్తారు.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'అప్‌లోడ్ చేసిన మీడియా: ప్రొఫైల్, వ్యాఖ్యలు, సందేశాల్లో నువ్వు జోడించే ఫోటోలు, GIF, వీడియోలు, వాయిస్ రికార్డింగ్‌లు.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'సాంకేతికం: IP చిరునామా, సుమారు ప్రాంతం (దేశం/నగరం స్థాయి), పరికర ప్లాట్‌ఫారమ్, యాప్ వెర్షన్, ఎర్రర్ లాగ్‌లు. ఇవి భద్రత, లోపాల సరిదిద్దటం కోసం ఉంచుతాం.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'నోటిఫికేషన్లు: పుష్ నోటిఫికేషన్ల కోసం నీ పరికర టోకెన్, భాషా ఎంపిక నిల్వ అవుతాయి. పరికర సెట్టింగ్స్ నుంచి ఎప్పుడైనా నోటిఫికేషన్లు ఆపేయవచ్చు.',
+  'Verileri Nasıl Kullanırız': 'డేటాను ఎలా వాడతాం',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'నీ డేటాను సేవ అందించడానికి, ఖాతా రక్షణకు, నోటిఫికేషన్లు పంపడానికి, లోపాలు సరిచేయడానికి, దుర్వినియోగం ఆపడానికి మాత్రమే వాడతాం. నీ డేటాను అమ్మము; ప్రకటనల కోసం ఎవరితోనూ పంచుకోము.',
+  'Çerezler ve Yerel Depolama': 'కుకీలు మరియు లోకల్ స్టోరేజ్',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'నిన్ను లాగిన్‌లో ఉంచడానికి, భాష/థీమ్ వంటి ఎంపికలను గుర్తుంచుకోవడానికి మాత్రమే లోకల్ స్టోరేజ్ వాడతాం. ప్రకటన లేదా ట్రాకింగ్ కుకీలు లేవు.',
+  'Üçüncü Taraf Hizmetler': 'మూడో పక్ష సేవలు',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'సిరీస్, సినిమాల డేటా TMDB నుంచి, స్ట్రీమింగ్ ప్లాట్‌ఫారమ్ సమాచారం JustWatch నుంచి వస్తాయి. పుష్ నోటిఫికేషన్లు Google Firebase ద్వారా చేరతాయి; సైట్ ట్రాఫిక్‌ను Cloudflare కాపాడుతుంది. ఈ సేవలకు వాటి సొంత గోప్యతా విధానాలు వర్తిస్తాయి.',
+  'Saklama ve Silme': 'నిల్వ మరియు తొలగింపు',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'నీ ఖాతా ఉన్నంతవరకు నీ డేటా ఉంటుంది. సెట్టింగ్స్‌లోని "నా ఖాతాను తొలగించు" ద్వారా ఖాతాను శాశ్వతంగా తొలగించవచ్చు; డేటా వెంటనే, బ్యాకప్‌లలోని కాపీలు గరిష్ఠంగా 14 రోజుల్లో తొలగుతాయి. ఎర్రర్ లాగ్‌లు 30 రోజుల తర్వాత ఆటోమేటిక్‌గా తొలగుతాయి.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'సెట్టింగ్స్ నుంచి నీ డేటాను ZIP రూపంలో ఎగుమతి చేసుకోవచ్చు; ఆర్కైవ్ నీ ఇమెయిల్ చిరునామాకు పంపబడుతుంది.',
+  'Güvenlik': 'భద్రత',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'డేటా ఎన్‌క్రిప్టెడ్ కనెక్షన్ల (HTTPS) ద్వారా వెళ్తుంది; పరిమిత యాక్సెస్ ఉన్న సర్వర్లలో నిల్వ అవుతుంది.',
+  'Çocukların Gizliliği': 'పిల్లల గోప్యత',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg 13 ఏళ్లలోపు పిల్లల కోసం కాదు.',
+  'Hakların': 'నీ హక్కులు',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK మరియు GDPR ప్రకారం నీ డేటాను చూడటానికి, సరిచేయడానికి, తొలగించడానికి, బదిలీ చేయడానికి నీకు హక్కు ఉంది. వీటి కోసం మాకు రాయి: {}',
+  'Değişiklikler': 'మార్పులు',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'ఈ విధానం మారితే కొత్త వెర్షన్ ఇదే పేజీలో ప్రచురించబడి తేదీ అప్‌డేట్ అవుతుంది.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'నమోదు చేసుకోవడం ద్వారా నువ్వు {} అంగీకరిస్తున్నావు.',
 };

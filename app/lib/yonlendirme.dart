@@ -14,8 +14,10 @@ import 'ekranlar/ayarlar.dart';
 import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
 import 'ekranlar/giris.dart';
+import 'ekranlar/gizlilik.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
+import 'ekranlar/karsilama.dart';
 import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
 import 'ekranlar/kitaplik_liste.dart';
@@ -38,12 +40,20 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
     redirect: (context, state) {
       final girisli = oturum.girisli;
       final giriste = state.matchedLocation == '/giris';
+      // Gizlilik politikası girişsiz de açılabilmeli (mağaza denetçileri dahil).
+      if (state.matchedLocation == '/gizlilik') return null;
       if (!girisli) return giriste ? null : '/giris';
+      // Yeni kayıt sonrası bir kez karşılama ekranı.
+      if (Oturum.karsilamaGerekli && state.matchedLocation != '/karsilama') {
+        return '/karsilama';
+      }
       if (giriste) return '/kesfet';
       return null;
     },
     routes: [
       GoRoute(path: '/giris', builder: (_, __) => const GirisEkrani()),
+      GoRoute(path: '/gizlilik', builder: (_, __) => const GizlilikEkrani()),
+      GoRoute(path: '/karsilama', builder: (_, __) => const KarsilamaEkrani()),
       // Alt sekmeler — durum korunur, URL sekmeyi yansıtır
       StatefulShellRoute.indexedStack(
         builder: (_, __, navigationShell) =>

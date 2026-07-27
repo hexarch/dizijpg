@@ -4,6 +4,7 @@ const Map<String, String> cevirilerGu = {
       'ઇમ્પોર્ટ કરવા જેવો કોઈ ડેટા મળ્યો નથી.',
   'Arama': 'શોધ',
   'Aramaya başla': 'શોધવાનું શરૂ કરો',
+  'Son aramalar': 'તાજેતરની શોધ',
   'Ayarlar': 'સેટિંગ્સ',
   'Bağla': 'લિંક કરો',
   'Bio': 'બાયો',
@@ -230,7 +231,7 @@ const Map<String, String> cevirilerGu = {
   'Mesaj silinemedi': 'સંદેશ કાઢી શકાયો નહીં',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'લિંક અમાન્ય છે અથવા પૃષ્ઠ મળ્યું નથી',
-  'Keşfet\'e dön': 'શોધ પર પાછા જાઓ',
+  'Keşfet\'e dön': 'ડિસ્કવર પર પાછા જાઓ',
   'Düzenle': 'સંપાદિત કરો',
   'Mesajı düzenle': 'સંદેશ સંપાદિત કરો',
   'Yanıtlanıyor': 'જવાબ આપી રહ્યાં છે',
@@ -243,7 +244,7 @@ const Map<String, String> cevirilerGu = {
   'son görülme {} saat önce': '{} કલાક પહેલાં જોયું',
   'son görülme {} gün önce': '{} દિવસ પહેલાં જોયું',
   'Yorumlar yüklenemedi': 'ટિપ્પણીઓ લોડ થઈ શકી નથી',
-  'Favori': 'પ્રિય',
+  'Favori': 'મનપસંદ',
   'Listeye ekle': 'સૂચિમાં ઉમેરો',
   'İçerik paylaş': 'શેર કરો',
   'Kapat': 'બંધ કરો',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerGu = {
   'Bir profile girip mesaj gönderebilirsin.': 'પ્રોફાઇલ ખોલો અને સંદેશ મોકલો.',
   'Listeyi sil': 'સૂચિ કાઢી નાખો',
   'Puan kaydedilemedi': 'રેટિંગ સાચવી શકાઈ નથી',
+  'Nerede İzlenir': 'ક્યાં જોવું',
+  'Abonelik': 'સબ્સ્ક્રિપ્શન',
+  'Kirala': 'ભાડે લો',
+  'Satın al': 'ખરીદો',
+  'Hoş geldin!': 'સ્વાગત છે!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'તમે જોવા માંગતા હો તે શો અને ફિલ્મો પસંદ કરો',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'તમારી પસંદ તમારી વૉચલિસ્ટમાં ઉમેરાશે',
+  'Şimdilik atla': 'અત્યારે છોડો',
+  'Devam et': 'ચાલુ રાખો',
+  '{} ekle': '{} ઉમેરો',
+  'Şikayet et': 'ફરિયાદ કરો',
+  'Engelle': 'બ્લોક કરો',
+  'Engeli kaldır': 'અનબ્લોક કરો',
+  'Kullanıcı engellendi': 'વપરાશકર્તા બ્લોક થયો',
+  'Engel kaldırıldı': 'બ્લોક દૂર થયો',
+  'Şikayet sebebi': 'ફરિયાદનું કારણ',
+  'Spam veya yanıltıcı': 'સ્પામ અથવા ગેરમાર્ગે દોરનારું',
+  'Taciz veya nefret söylemi': 'સતામણી અથવા દ્વેષપૂર્ણ ભાષણ',
+  'Uygunsuz / cinsel içerik': 'અયોગ્ય / જાતીય સામગ્રી',
+  'Şiddet veya tehlikeli içerik': 'હિંસા અથવા જોખમી સામગ્રી',
+  'Telif hakkı ihlali': 'કૉપિરાઇટ ઉલ્લંઘન',
+  'Şikayetin alındı, teşekkürler': 'તારી ફરિયાદ મળી, આભાર',
+  'Hesabımı Sil': 'મારું ખાતું કાઢી નાખો',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'તારું ખાતું અને બધો ડેટા (ઇતિહાસ, રેટિંગ, કમેન્ટ, યાદીઓ, સંદેશા) કાયમ માટે કાઢી નાખવામાં આવશે. આ પાછું લઈ શકાતું નથી.',
+  'Şifreni gir': 'તારો પાસવર્ડ દાખલ કરો',
+  'Hesabımı kalıcı sil': 'મારું ખાતું કાયમ માટે કાઢી નાખો',
+  'Sesli mesaj': 'વૉઇસ મેસેજ',
+  'Ses gönderilemedi': 'વૉઇસ મેસેજ મોકલી શકાયો નહીં',
+  'Kaydediliyor…': 'રેકોર્ડ થઈ રહ્યું છે…',
+  'Ses oynatılamadı': 'ઑડિયો ચલાવી શકાયો નહીં',
+  'Oynat': 'ચલાવ',
+  'Duraklat': 'થોભાવ',
+  'Liste görünümü': 'સૂચિ દૃશ્ય',
+  'Takvim görünümü': 'કૅલેન્ડર દૃશ્ય',
+  'Önceki ay': 'પાછલો મહિનો',
+  'Sonraki ay': 'આગલો મહિનો',
+  'Bu gün bölüm yok': 'આ દિવસે કોઈ એપિસોડ નથી',
+  'Gizlilik Politikası': 'ગોપનીયતા નીતિ',
+  'Son güncelleme: {}': 'છેલ્લું અપડેટ: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'આ નીતિ સમજાવે છે કે dizi.jpg ઍપ અને dizijpg.com સાઇટ વાપરતી વખતે કયો ડેટા એકત્ર થાય છે, કેવી રીતે વપરાય છે અને તારા હક શું છે.',
+  'Topladığımız Veriler': 'અમે એકત્ર કરીએ છીએ તે ડેટા',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'ખાતું: ઇમેઇલ સરનામું, યુઝરનેમ અને પાસવર્ડ. પાસવર્ડ પાછા વાંચી ન શકાય તેવા હૅશ રૂપે સચવાય છે; ગેસ્ટ ખાતાં ઇમેઇલ વગર પણ વાપરી શકાય છે.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'પ્રોફાઇલ: અવતાર, કવર ઇમેજ, બાયો અને દેશ જેવી તું જાતે ઉમેરવાનું પસંદ કરે તે માહિતી.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'વપરાશ: તારો જોવાનો ઇતિહાસ, રેટિંગ, ટિપ્પણીઓ, યાદીઓ, રિએક્શન અને મનપસંદ.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'સંદેશા: તારા લખાણ, ઇમેજ અને વૉઇસ સંદેશા અમારા સર્વર પર સચવાય છે. સંદેશા એન્ડ-ટુ-એન્ડ એન્ક્રિપ્ટેડ નથી; રિપોર્ટ થાય તો જ મોડરેશન માટે જોવાય છે.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'અપલોડ કરેલો મીડિયા: પ્રોફાઇલ, ટિપ્પણીઓ અને સંદેશામાં ઉમેરેલા ફોટા, GIF, વીડિયો અને વૉઇસ રેકોર્ડિંગ.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'ટેક્નિકલ: IP સરનામું, અંદાજિત સ્થાન (દેશ/શહેર સ્તરે), ડિવાઇસ પ્લેટફોર્મ, ઍપ વર્ઝન અને એરર લૉગ. આ સુરક્ષા અને ખામી સુધારવા માટે રખાય છે.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'નોટિફિકેશન: પુશ નોટિફિકેશન માટે તારા ડિવાઇસનો ટોકન અને ભાષાની પસંદગી સચવાય છે. ડિવાઇસનાં સેટિંગ્સમાંથી ગમે ત્યારે નોટિફિકેશન બંધ કરી શકે છે.',
+  'Verileri Nasıl Kullanırız': 'અમે ડેટા કેવી રીતે વાપરીએ છીએ',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'તારો ડેટા ફક્ત સેવા આપવા, ખાતું સુરક્ષિત રાખવા, નોટિફિકેશન મોકલવા, ખામીઓ સુધારવા અને દુરુપયોગ અટકાવવા વપરાય છે. અમે તારો ડેટા વેચતા નથી અને જાહેરાત માટે કોઈની સાથે શેર કરતા નથી.',
+  'Çerezler ve Yerel Depolama': 'કૂકીઝ અને લોકલ સ્ટોરેજ',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'લોકલ સ્ટોરેજ ફક્ત તને લૉગ-ઇન રાખવા અને ભાષા/થીમ જેવી પસંદગીઓ યાદ રાખવા વપરાય છે. કોઈ જાહેરાત કે ટ્રેકિંગ કૂકી નથી.',
+  'Üçüncü Taraf Hizmetler': 'તૃતીય-પક્ષ સેવાઓ',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'સિરીઝ અને ફિલ્મોનો ડેટા TMDB પરથી અને સ્ટ્રીમિંગ પ્લેટફોર્મની માહિતી JustWatch પરથી આવે છે. પુશ નોટિફિકેશન Google Firebase દ્વારા પહોંચે છે અને સાઇટનો ટ્રાફિક Cloudflare સુરક્ષિત રાખે છે. આ સેવાઓ પર તેમની પોતાની ગોપનીયતા નીતિઓ લાગુ પડે છે.',
+  'Saklama ve Silme': 'સંગ્રહ અને કાઢી નાખવું',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'તારું ખાતું હોય ત્યાં સુધી તારો ડેટા રહે છે. સેટિંગ્સમાં "મારું ખાતું કાઢી નાખો" થી ખાતું કાયમ માટે કાઢી શકે છે; ડેટા તરત અને બૅકઅપની નકલો વધુમાં વધુ ૧૪ દિવસમાં ભૂંસાય છે. એરર લૉગ ૩૦ દિવસ પછી આપમેળે ભૂંસાય છે.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'સેટિંગ્સમાંથી તારો ડેટા ZIP રૂપે નિકાસ કરી શકે છે; આર્કાઇવ તારા ઇમેઇલ સરનામે મોકલાય છે.',
+  'Güvenlik': 'સુરક્ષા',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ડેટા એન્ક્રિપ્ટેડ કનેક્શન (HTTPS) થી જાય છે અને મર્યાદિત ઍક્સેસવાળા સર્વર પર સચવાય છે.',
+  'Çocukların Gizliliği': 'બાળકોની ગોપનીયતા',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg ૧૩ વર્ષથી નાનાં બાળકો માટે નથી.',
+  'Hakların': 'તારા હક',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK અને GDPR હેઠળ તને તારા ડેટામાં પ્રવેશ, સુધારો, કાઢી નાખવાનો અને ટ્રાન્સફરનો હક છે. આ માટે અમને લખ: {}',
+  'Değişiklikler': 'ફેરફારો',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'આ નીતિ બદલાય તો નવી આવૃત્તિ આ જ પાના પર પ્રકાશિત થશે અને તારીખ અપડેટ થશે.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'નોંધણી કરીને તું {} સ્વીકારે છે.',
 };

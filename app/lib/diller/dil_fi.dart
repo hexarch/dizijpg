@@ -4,6 +4,7 @@ const Map<String, String> cevirilerFi = {
       'Tuotavaa tunnistettua dataa ei löytynyt.',
   'Arama': 'Haku',
   'Aramaya başla': 'Aloita haku',
+  'Son aramalar': 'Viimeisimmät haut',
   'Ayarlar': 'Asetukset',
   'Bağla': 'Yhdistä',
   'Bio': 'Bio',
@@ -180,8 +181,8 @@ const Map<String, String> cevirilerFi = {
   '{} özetin': '{}-koosteesi',
   'Yıllık izleme istatistiklerin': 'Vuotuiset katselutilastosi',
   'Rozetler': 'Merkit',
-  'Verdiğin puan': 'Annetut arviot',
-  'Ortalama puanın': 'Keskiarviosi',
+  'Verdiğin puan': 'Annetut arvosanat',
+  'Ortalama puanın': 'Keskiarvosanasi',
   'En çok izlediğin diziler': 'Katsotuimmat sarjasi',
   'İlk Bölüm': 'Ensimmäinen jakso',
   '100 Bölüm': '100 jaksoa',
@@ -190,7 +191,7 @@ const Map<String, String> cevirilerFi = {
   '50 Film': '50 elokuvaa',
   'İlk Yorum': 'Ensimmäinen kommentti',
   '25 Yorum': '25 kommenttia',
-  '10 Puan': '10 arviota',
+  '10 Puan': '10 arvosanaa',
   'İlk Takipçi': 'Ensimmäinen seuraaja',
   '10 Dizi Bitirdin': '10 sarjaa katsottu loppuun',
   'İzlemeyi Bıraktım': 'Lopetin katsomisen',
@@ -201,8 +202,8 @@ const Map<String, String> cevirilerFi = {
   '10 Film': '10 elokuvaa',
   '100 Film': '100 elokuvaa',
   '100 Yorum': '100 kommenttia',
-  '50 Puan': '50 arviota',
-  '100 Puan': '100 arviota',
+  '50 Puan': '50 arvosanaa',
+  '100 Puan': '100 arvosanaa',
   '10 Takipçi': '10 seuraajaa',
   '50 Takipçi': '50 seuraajaa',
   '25 Dizi Bitirdin': '25 sarjaa katsottu loppuun',
@@ -253,5 +254,91 @@ const Map<String, String> cevirilerFi = {
   'Henüz sohbetin yok': 'Ei keskusteluja vielä',
   'Bir profile girip mesaj gönderebilirsin.': 'Avaa profiili ja lähetä viesti.',
   'Listeyi sil': 'Poista lista',
-  'Puan kaydedilemedi': 'Arvion tallennus epäonnistui',
+  'Puan kaydedilemedi': 'Arvosanan tallennus epäonnistui',
+  'Nerede İzlenir': 'Missä katsoa',
+  'Abonelik': 'Tilaus',
+  'Kirala': 'Vuokraa',
+  'Satın al': 'Osta',
+  'Hoş geldin!': 'Tervetuloa!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Valitse sarjat ja elokuvat, joita haluat katsoa',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Valintasi lisätään katselulistallesi',
+  'Şimdilik atla': 'Ohita nyt',
+  'Devam et': 'Jatka',
+  '{} ekle': 'Lisää {}',
+  'Şikayet et': 'Ilmoita',
+  'Engelle': 'Estä',
+  'Engeli kaldır': 'Poista esto',
+  'Kullanıcı engellendi': 'Käyttäjä estetty',
+  'Engel kaldırıldı': 'Esto poistettu',
+  'Şikayet sebebi': 'Ilmoituksen syy',
+  'Spam veya yanıltıcı': 'Roskaposti tai harhaanjohtava',
+  'Taciz veya nefret söylemi': 'Häirintä tai vihapuhe',
+  'Uygunsuz / cinsel içerik': 'Sopimaton / seksuaalinen sisältö',
+  'Şiddet veya tehlikeli içerik': 'Väkivalta tai vaarallinen sisältö',
+  'Telif hakkı ihlali': 'Tekijänoikeusrikkomus',
+  'Şikayetin alındı, teşekkürler': 'Ilmoituksesi vastaanotettiin, kiitos',
+  'Hesabımı Sil': 'Poista tilini',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Tilisi ja kaikki tietosi (katseluhistoria, arvosanat, kommentit, listat, viestit) poistetaan pysyvästi. Tätä ei voi kumota.',
+  'Şifreni gir': 'Anna salasanasi',
+  'Hesabımı kalıcı sil': 'Poista tilini pysyvästi',
+  'Sesli mesaj': 'Ääniviesti',
+  'Ses gönderilemedi': 'Ääniviestiä ei voitu lähettää',
+  'Kaydediliyor…': 'Tallennetaan…',
+  'Ses oynatılamadı': 'Ääniviestiä ei voitu toistaa',
+  'Oynat': 'Toista',
+  'Duraklat': 'Keskeytä',
+  'Liste görünümü': 'Luettelonäkymä',
+  'Takvim görünümü': 'Kalenterinäkymä',
+  'Önceki ay': 'Edellinen kuukausi',
+  'Sonraki ay': 'Seuraava kuukausi',
+  'Bu gün bölüm yok': 'Ei jaksoja tänä päivänä',
+  'Gizlilik Politikası': 'Tietosuojakäytäntö',
+  'Son güncelleme: {}': 'Viimeksi päivitetty: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Tämä käytäntö kertoo, mitä tietoja kerätään, miten niitä käytetään ja mitkä ovat oikeutesi, kun käytät dizi.jpg-sovellusta ja dizijpg.com-sivustoa.',
+  'Topladığımız Veriler': 'Keräämämme tiedot',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Tili: sähköpostiosoite, käyttäjänimi ja salasana. Salasanat tallennetaan peruuttamattomana tiivisteenä; vierastilejä voi käyttää ilman sähköpostia.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profiili: tiedot, jotka itse päätät lisätä, kuten avatar, kansikuva, bio ja maa.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Käyttö: katseluhistoriasi, arviosi, kommenttisi, listasi, reaktiosi ja suosikkisi.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Viestit: teksti-, kuva- ja ääniviestisi tallennetaan palvelimillemme. Viestejä ei ole salattu päästä päähän; niitä tarkastellaan vain moderointia varten, jos niistä tehdään ilmoitus.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Ladattu media: valokuvat, GIFit, videot ja ääninauhoitteet, joita lisäät profiiliisi, kommentteihisi ja viesteihisi.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Tekniset: IP-osoite, likimääräinen sijainti (maa-/kaupunkitasolla), laitealusta, sovellusversio ja virhelokit. Näitä säilytetään turvallisuutta ja vianetsintää varten.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Ilmoitukset: push-ilmoituksia varten tallennamme laitteesi tokenin ja kielivalintasi. Voit poistaa ilmoitukset käytöstä milloin tahansa laitteen asetuksista.',
+  'Verileri Nasıl Kullanırız': 'Miten käytämme tietojasi',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Käytämme tietojasi vain palvelun tarjoamiseen, tilisi suojaamiseen, ilmoitusten lähettämiseen, virheiden korjaamiseen ja väärinkäytön estämiseen. Emme myy tietojasi emmekä jaa niitä kenellekään mainostarkoituksiin.',
+  'Çerezler ve Yerel Depolama': 'Evästeet ja paikallinen tallennustila',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Käytämme paikallista tallennustilaa vain pitääksemme sinut kirjautuneena ja muistaaksemme asetukset, kuten kielen ja teeman. Mainos- tai seurantaevästeitä ei ole.',
+  'Üçüncü Taraf Hizmetler': 'Kolmansien osapuolten palvelut',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Sarja- ja elokuvatiedot tulevat TMDB:stä, suoratoistoalustojen tiedot JustWatchista. Push-ilmoitukset toimitetaan Google Firebasen kautta, ja sivuston liikennettä suojaa Cloudflare. Näihin palveluihin sovelletaan niiden omia tietosuojakäytäntöjä.',
+  'Saklama ve Silme': 'Säilytys ja poistaminen',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Tietosi säilytetään niin kauan kuin tilisi on olemassa. Asetusten "Poista tilini" -toiminnolla voit poistaa tilisi pysyvästi; tietosi poistetaan heti ja varmuuskopioissa olevat kopiot viimeistään 14 päivässä. Virhelokit poistuvat automaattisesti 30 päivän kuluttua.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Voit viedä tietosi ZIP-muodossa asetuksista; arkisto lähetetään sähköpostiosoitteeseesi.',
+  'Güvenlik': 'Turvallisuus',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Tiedot siirretään salattujen yhteyksien (HTTPS) kautta ja tallennetaan palvelimille, joihin on rajoitettu pääsy.',
+  'Çocukların Gizliliği': 'Lasten yksityisyys',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg ei ole tarkoitettu alle 13-vuotiaille lapsille.',
+  'Hakların': 'Oikeutesi',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK:n ja GDPR:n nojalla sinulla on oikeus päästä tietoihisi sekä korjata, poistaa ja siirtää niitä. Kirjoita meille näistä asioista: {}',
+  'Değişiklikler': 'Muutokset',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Jos tämä käytäntö muuttuu, uusi versio julkaistaan tällä sivulla ja päivämäärä päivitetään.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Rekisteröitymällä hyväksyt: {}.',
 };

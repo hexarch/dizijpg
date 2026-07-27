@@ -1,49 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../api.dart';
 import '../tema.dart';
 
-/// Sunucudaki CHECK ile aynı sırada: mutlu, üzgün, şaşırmış, sıkılmış,
-/// ağlamış, gülmüş, korkmuş, bayılmış.
-const tepkiEmojileri = ['😄', '😢', '😮', '🥱', '😭', '😂', '😱', '😍'];
+/// Sunucudaki CHECK ile aynı sırada: bayılmış, gülmüş, şaşırmış, üzgün,
+/// korkmuş, sıkılmış, ağlamış, mutlu — dizi/film tepkileri.
+const tepkiEmojileri = ['😍', '😂', '😮', '😢', '😱', '🥱', '😭', '😄'];
 
-/// Çizgi-ikon tarzı tepkiler: OpenMoji "black" seti (CC BY-SA 4.0,
-/// hfg-gmuend/openmoji). Tek renk oldukları için duruma göre boyanır.
-const Map<String, String> _tepkiGorselleri = {
-  '😄': 'assets/tepkiler/o_1f604.svg',
-  '😢': 'assets/tepkiler/o_1f622.svg',
-  '😮': 'assets/tepkiler/o_1f62e.svg',
-  '🥱': 'assets/tepkiler/o_1f971.svg',
-  '😭': 'assets/tepkiler/o_1f62d.svg',
-  '😂': 'assets/tepkiler/o_1f602.svg',
-  '😱': 'assets/tepkiler/o_1f631.svg',
-  '😍': 'assets/tepkiler/o_1f60d.svg',
-};
-
-/// Emoji karakterini çizgi ikon olarak çizer (bilinmiyorsa yazıya düşer).
+/// Tepki emojisini RENKLİ çizer (sistem emoji fontu; karanlık temada canlı durur).
 class TepkiIkonu extends StatelessWidget {
   final String emoji;
   final double boyut;
-  final Color? renk; // null → tema metin70
+  final Color? renk; // artık kullanılmıyor (emoji kendi renginde) — uyumluluk
 
   const TepkiIkonu(this.emoji, {super.key, this.boyut = 20, this.renk});
 
   @override
   Widget build(BuildContext context) {
-    final gorsel = _tepkiGorselleri[emoji];
-    if (gorsel == null) {
-      return Text(emoji, style: TextStyle(fontSize: boyut - 2));
-    }
-    return SvgPicture.asset(
-      gorsel,
-      width: boyut,
-      height: boyut,
-      colorFilter: ColorFilter.mode(
-        renk ?? DiziRenkler.metin70,
-        BlendMode.srcIn,
-      ),
-    );
+    return Text(emoji, style: TextStyle(fontSize: boyut, height: 1.1));
   }
 }
 
@@ -144,26 +118,31 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
             borderRadius: BorderRadius.circular(20),
             onTap: () => _sec(e),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
               decoration: BoxDecoration(
-                color: _benim == e ? DiziRenkler.sari : DiziRenkler.kart,
+                // Seçili: sarı-tint dolgu + sarı kenar (renkli emoji kaybolmasın)
+                color: _benim == e
+                    ? DiziRenkler.sari.withValues(alpha: 0.20)
+                    : DiziRenkler.kart,
                 borderRadius: BorderRadius.circular(20),
+                border: _benim == e
+                    ? Border.all(color: DiziRenkler.sari, width: 1.5)
+                    : null,
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TepkiIkonu(
-                    e,
-                    renk: _benim == e ? Colors.black : DiziRenkler.metin70,
-                  ),
+                  TepkiIkonu(e, boyut: 20),
                   if ((_sayilar[e] ?? 0) > 0) ...[
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 5),
                     Text(
                       '${_sayilar[e]}',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
-                        color: _benim == e ? Colors.black : DiziRenkler.metin70,
+                        color: _benim == e
+                            ? DiziRenkler.sari
+                            : DiziRenkler.metin70,
                       ),
                     ),
                   ],

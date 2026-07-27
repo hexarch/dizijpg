@@ -4,6 +4,7 @@ const Map<String, String> cevirilerFil = {
       'Walang nakilalang data na maaaring i-import.',
   'Arama': 'Maghanap',
   'Aramaya başla': 'Simulan ang paghahanap',
+  'Son aramalar': 'Mga kamakailang paghahanap',
   'Ayarlar': 'Mga Setting',
   'Bağla': 'I-link',
   'Bio': 'Bio',
@@ -182,7 +183,7 @@ const Map<String, String> cevirilerFil = {
   'Rozetler': 'Mga Badge',
   'Verdiğin puan': 'Mga ibinigay na rating',
   'Ortalama puanın': 'Average rating mo',
-  'En çok izlediğin diziler': 'Pinaka-pinanood mong shows',
+  'En çok izlediğin diziler': 'Mga seryeng pinakamadalas mong pinanood',
   'İlk Bölüm': 'Unang Episode',
   '100 Bölüm': '100 Episodes',
   '1000 Bölüm': '1000 Episodes',
@@ -192,7 +193,7 @@ const Map<String, String> cevirilerFil = {
   '25 Yorum': '25 Komento',
   '10 Puan': '10 Rating',
   'İlk Takipçi': 'Unang Follower',
-  '10 Dizi Bitirdin': 'Natapos ang 10 Shows',
+  '10 Dizi Bitirdin': 'Natapos ang 10 Serye',
   'İzlemeyi Bıraktım': 'Huminto na ako sa panonood',
   'İzlediği Diziler ({})': 'Mga show na pinanood niya ({})',
   'İzlediği Filmler ({})': 'Mga pelikulang pinanood niya ({})',
@@ -205,8 +206,8 @@ const Map<String, String> cevirilerFil = {
   '100 Puan': '100 Rating',
   '10 Takipçi': '10 Followers',
   '50 Takipçi': '50 Followers',
-  '25 Dizi Bitirdin': 'Natapos ang 25 Shows',
-  '50 Dizi Bitirdin': 'Natapos ang 50 Shows',
+  '25 Dizi Bitirdin': 'Natapos ang 25 Serye',
+  '50 Dizi Bitirdin': 'Natapos ang 50 Serye',
   '10 Beğeni': '10 Likes',
   '100 Beğeni': '100 Likes',
   'yazıyor...': 'nagta-type...',
@@ -255,4 +256,91 @@ const Map<String, String> cevirilerFil = {
       'Magbukas ng profile at magpadala ng mensahe.',
   'Listeyi sil': 'Burahin ang listahan',
   'Puan kaydedilemedi': 'Hindi ma-save ang rating',
+  'Nerede İzlenir': 'Saan Manonood',
+  'Abonelik': 'Subscription',
+  'Kirala': 'Umupa',
+  'Satın al': 'Bumili',
+  'Hoş geldin!': 'Maligayang pagdating!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Pumili ng mga palabas at pelikulang gusto mong panoorin',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Idaragdag ang mga pinili mo sa iyong watchlist',
+  'Şimdilik atla': 'Laktawan muna',
+  'Devam et': 'Magpatuloy',
+  '{} ekle': 'Magdagdag ng {}',
+  'Şikayet et': 'Iulat',
+  'Engelle': 'I-block',
+  'Engeli kaldır': 'I-unblock',
+  'Kullanıcı engellendi': 'Na-block ang user',
+  'Engel kaldırıldı': 'Inalis ang block',
+  'Şikayet sebebi': 'Dahilan ng ulat',
+  'Spam veya yanıltıcı': 'Spam o mapanlinlang',
+  'Taciz veya nefret söylemi': 'Panliligalig o hate speech',
+  'Uygunsuz / cinsel içerik': 'Hindi angkop / sekswal na content',
+  'Şiddet veya tehlikeli içerik': 'Karahasan o mapanganib na content',
+  'Telif hakkı ihlali': 'Paglabag sa copyright',
+  'Şikayetin alındı, teşekkürler': 'Natanggap na ang ulat mo, salamat',
+  'Hesabımı Sil': 'Burahin ang Account Ko',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Permanenteng mabubura ang account mo at lahat ng data (history, ratings, komento, lists, mensahe). Hindi na ito maibabalik.',
+  'Şifreni gir': 'Ilagay ang password mo',
+  'Hesabımı kalıcı sil': 'Permanenteng burahin ang account ko',
+  'Sesli mesaj': 'Voice message',
+  'Ses gönderilemedi': 'Hindi naipadala ang voice message',
+  'Kaydediliyor…': 'Nagre-record…',
+  'Ses oynatılamadı': 'Hindi ma-play ang audio',
+  'Oynat': 'I-play',
+  'Duraklat': 'I-pause',
+  'Liste görünümü': 'List view',
+  'Takvim görünümü': 'Calendar view',
+  'Önceki ay': 'Nakaraang buwan',
+  'Sonraki ay': 'Susunod na buwan',
+  'Bu gün bölüm yok': 'Walang episode sa araw na ito',
+  'Gizlilik Politikası': 'Patakaran sa Privacy',
+  'Son güncelleme: {}': 'Huling na-update: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Ipinapaliwanag ng patakarang ito kung anong data ang kinokolekta, paano ito ginagamit, at ano ang mga karapatan mo kapag ginagamit mo ang dizi.jpg app at ang site na dizijpg.com.',
+  'Topladığımız Veriler': 'Data na Kinokolekta Namin',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Account: email address, username, at password. Ang mga password ay iniimbak bilang hash na hindi na maibabalik; magagamit ang guest account kahit walang email.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profile: impormasyong pinipili mong idagdag, tulad ng avatar, cover image, bio, at bansa.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Paggamit: ang history ng panonood mo, mga rating, komento, listahan, reaksyon, at paborito.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Mga mensahe: ang text, larawan, at voice message mo ay iniimbak sa aming mga server. Hindi end-to-end encrypted ang mga mensahe; sinusuri lang ang mga ito para sa moderation kapag ni-report.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Na-upload na media: mga larawan, GIF, video, at voice recording na idinaragdag mo sa profile, komento, at mensahe.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Teknikal: IP address, tinatayang lokasyon (antas ng bansa/lungsod), platform ng device, bersyon ng app, at mga error log. Iniimbak ang mga ito para sa seguridad at pag-aayos ng problema.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Mga notification: para sa push notification, iniimbak namin ang token ng device mo at piniling wika. Puwede mong i-off ang mga notification anumang oras sa settings ng device.',
+  'Verileri Nasıl Kullanırız': 'Paano Namin Ginagamit ang Data',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Ginagamit lang namin ang data mo para maibigay ang serbisyo, protektahan ang account, magpadala ng notification, ayusin ang mga error, at pigilan ang pang-aabuso. Hindi namin ibinebenta ang data mo at hindi ibinabahagi kaninuman para sa advertising.',
+  'Çerezler ve Yerel Depolama': 'Cookies at Local Storage',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Ginagamit lang ang local storage para panatilihin kang naka-login at tandaan ang mga kagustuhan tulad ng wika at tema. Walang advertising o tracking cookies.',
+  'Üçüncü Taraf Hizmetler': 'Mga Serbisyo ng Third Party',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Ang data ng mga serye at pelikula ay galing sa TMDB, ang impormasyon ng streaming platform ay galing sa JustWatch. Ang push notification ay ipinapadala sa pamamagitan ng Google Firebase, at ang trapiko ng site ay pinoprotektahan ng Cloudflare. Saklaw ang mga serbisyong ito ng kani-kanilang patakaran sa privacy.',
+  'Saklama ve Silme': 'Pag-iimbak at Pagbura',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Nakaimbak ang data mo hangga\'t umiiral ang account mo. Sa "Burahin ang Account Ko" sa settings, permanente mong mabubura ang account; agad na mabubura ang data, at ang mga kopya sa backup ay sa loob ng hindi lalampas sa 14 na araw. Awtomatikong nabubura ang mga error log pagkalipas ng 30 araw.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Puwede mong i-export ang data mo bilang ZIP mula sa settings; ipapadala ang archive sa email address mo.',
+  'Güvenlik': 'Seguridad',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Dumadaan ang data sa mga naka-encrypt na koneksyon (HTTPS) at nakaimbak sa mga server na limitado ang access.',
+  'Çocukların Gizliliği': 'Privacy ng mga Bata',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'Ang dizi.jpg ay hindi para sa mga batang wala pang 13 taong gulang.',
+  'Hakların': 'Mga Karapatan Mo',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Sa ilalim ng KVKK at GDPR, may karapatan kang i-access, itama, burahin, at ilipat ang data mo. Para dito, sumulat sa amin: {}',
+  'Değişiklikler': 'Mga Pagbabago',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Kapag nagbago ang patakarang ito, ilalathala ang bagong bersyon sa pahinang ito at ia-update ang petsa.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'Sa pagrerehistro, tinatanggap mo ang {}.',
 };

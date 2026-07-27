@@ -132,7 +132,40 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Image.asset('assets/logo.png', height: 40),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/logo.png', height: 40),
+            const SizedBox(width: 8),
+            // BETA rozeti (marka sarısı pill)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              decoration: BoxDecoration(
+                color: DiziRenkler.sari,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: const Text(
+                'BETA',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            // Sürüm numarası (yapı numarası olmadan)
+            Text(
+              'v${Api.surum.split('+').first}',
+              style: TextStyle(
+                color: DiziRenkler.metin38,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
         actions: [
           // Instagram tarzı DM kısayolu
           RozetliIkon(

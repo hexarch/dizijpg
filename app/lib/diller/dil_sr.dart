@@ -4,6 +4,7 @@ const Map<String, String> cevirilerSr = {
       'Није пронађен препознатљив податак за увоз.',
   'Arama': 'Претрага',
   'Aramaya başla': 'Почни да претражујеш',
+  'Son aramalar': 'Недавне претраге',
   'Ayarlar': 'Подешавања',
   'Bağla': 'Повежи',
   'Bio': 'Био',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerSr = {
   'Bir profile girip mesaj gönderebilirsin.': 'Отвори профил и пошаљи поруку.',
   'Listeyi sil': 'Обриши листу',
   'Puan kaydedilemedi': 'Оцена није могла да се сачува',
+  'Nerede İzlenir': 'Где гледати',
+  'Abonelik': 'Претплата',
+  'Kirala': 'Изнајми',
+  'Satın al': 'Купи',
+  'Hoş geldin!': 'Добро дошли!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Изабери серије и филмове које желиш да гледаш',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Твој избор се додаје у листу за гледање',
+  'Şimdilik atla': 'Прескочи за сада',
+  'Devam et': 'Настави',
+  '{} ekle': 'Додај {}',
+  'Şikayet et': 'Пријави',
+  'Engelle': 'Блокирај',
+  'Engeli kaldır': 'Одблокирај',
+  'Kullanıcı engellendi': 'Корисник је блокиран',
+  'Engel kaldırıldı': 'Блокирање уклоњено',
+  'Şikayet sebebi': 'Разлог пријаве',
+  'Spam veya yanıltıcı': 'Спам или обмањујуће',
+  'Taciz veya nefret söylemi': 'Узнемиравање или говор мржње',
+  'Uygunsuz / cinsel içerik': 'Неприкладан / сексуални садржај',
+  'Şiddet veya tehlikeli içerik': 'Насиље или опасан садржај',
+  'Telif hakkı ihlali': 'Кршење ауторских права',
+  'Şikayetin alındı, teşekkürler': 'Твоја пријава је примљена, хвала',
+  'Hesabımı Sil': 'Обриши налог',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Твој налог и сви подаци (историја, оцене, коментари, листе, поруке) биће трајно обрисани. Ово се не може опозвати.',
+  'Şifreni gir': 'Унеси лозинку',
+  'Hesabımı kalıcı sil': 'Трајно обриши налог',
+  'Sesli mesaj': 'Гласовна порука',
+  'Ses gönderilemedi': 'Гласовна порука није послата',
+  'Kaydediliyor…': 'Снимање…',
+  'Ses oynatılamadı': 'Није могуће репродуковати аудио',
+  'Oynat': 'Пусти',
+  'Duraklat': 'Пауза',
+  'Liste görünümü': 'Приказ листе',
+  'Takvim görünümü': 'Приказ календара',
+  'Önceki ay': 'Претходни месец',
+  'Sonraki ay': 'Следећи месец',
+  'Bu gün bölüm yok': 'Нема епизода овог дана',
+  'Gizlilik Politikası': 'Политика приватности',
+  'Son güncelleme: {}': 'Последње ажурирање: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Ова политика објашњава који се подаци прикупљају, како се користе и која су твоја права када користиш апликацију dizi.jpg и сајт dizijpg.com.',
+  'Topladığımız Veriler': 'Подаци које прикупљамо',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Налог: имејл адреса, корисничко име и лозинка. Лозинке се чувају као неповратни хеш; гостујући налози могу се користити без имејла.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Профил: подаци које сам одлучиш да додаш, попут аватара, насловне слике, биографије и земље.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Коришћење: твоја историја гледања, оцене, коментари, листе, реакције и омиљено.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Поруке: твоје текстуалне, сликовне и гласовне поруке чувају се на нашим серверима. Поруке нису шифроване с краја на крај; прегледају се само ако буду пријављене, ради модерације.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Отпремљени медији: фотографије, GIF-ови, видео-снимци и гласовни снимци које додајеш профилу, коментарима и порукама.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Техничко: IP адреса, приближна локација (на нивоу земље/града), платформа уређаја, верзија апликације и евиденције грешака. Чувају се ради безбедности и отклањања грешака.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Обавештења: за пуш обавештења чувамо токен твог уређаја и изабрани језик. Обавештења можеш било кад искључити у подешавањима уређаја.',
+  'Verileri Nasıl Kullanırız': 'Како користимо твоје податке',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Твоје податке користимо искључиво за пружање услуге, заштиту налога, слање обавештења, исправљање грешака и спречавање злоупотребе. Не продајемо твоје податке и не делимо их ни са ким у рекламне сврхе.',
+  'Çerezler ve Yerel Depolama': 'Колачићи и локално складиште',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Локално складиште користимо само да останеш пријављен и да запамтимо изборе попут језика и теме. Нема рекламних ни колачића за праћење.',
+  'Üçüncü Taraf Hizmetler': 'Услуге трећих страна',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Подаци о серијама и филмовима долазе са TMDB, информације о стриминг платформама са JustWatch. Пуш обавештења испоручује Google Firebase, а саобраћај сајта штити Cloudflare. На ове услуге примењују се њихове сопствене политике приватности.',
+  'Saklama ve Silme': 'Чување и брисање',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Твоји подаци се чувају док твој налог постоји. Преко „Обриши мој налог" у подешавањима можеш трајно обрисати налог; подаци се бришу одмах, а њихове копије у резервним копијама најкасније за 14 дана. Евиденције грешака аутоматски се бришу после 30 дана.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Своје податке можеш извести као ZIP из подешавања; архива се шаље на твоју имејл адресу.',
+  'Güvenlik': 'Безбедност',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Подаци путују шифрованим везама (HTTPS) и чувају се на серверима са ограниченим приступом.',
+  'Çocukların Gizliliği': 'Приватност деце',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg није намењен деци млађој од 13 година.',
+  'Hakların': 'Твоја права',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Према KVKK и GDPR имаш право на приступ својим подацима, исправку, брисање и пренос. За то нам пиши: {}',
+  'Değişiklikler': 'Измене',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Ако се ова политика промени, нова верзија биће објављена на овој страници, а датум ажуриран.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Регистрацијом прихваташ {}.',
 };

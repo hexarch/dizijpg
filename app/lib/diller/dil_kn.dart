@@ -4,6 +4,7 @@ const Map<String, String> cevirilerKn = {
       'ಆಮದು ಮಾಡಲು ಗುರುತಿಸಬಹುದಾದ ಡೇಟಾ ಸಿಗಲಿಲ್ಲ.',
   'Arama': 'ಹುಡುಕಾಟ',
   'Aramaya başla': 'ಹುಡುಕಲು ಶುರು ಮಾಡು',
+  'Son aramalar': 'ಇತ್ತೀಚಿನ ಹುಡುಕಾಟಗಳು',
   'Ayarlar': 'ಸೆಟ್ಟಿಂಗ್ಸ್',
   'Bağla': 'ಲಿಂಕ್ ಮಾಡು',
   'Bio': 'ಬಯೋ',
@@ -226,9 +227,9 @@ const Map<String, String> cevirilerKn = {
   'Açık': 'ಲೈಟ್',
   'İzleyenler': 'ವೀಕ್ಷಕರು',
   'Yorumunu yaz... (@ ile etiketle)':
-      'ನಿಮ್ಮ ಕಾಮೆಂಟ್ ಬರೆಯಿರಿ... (@ ಟ್ಯಾಗ್ ಮಾಡಲು)',
+      'ನಿನ್ನ ಕಾಮೆಂಟ್ ಬರೆ... (@ ಹಾಕಿ ಟ್ಯಾಗ್ ಮಾಡು)',
   '@{} bir yorumda seni etiketledi':
-      '@{} ನಿಮ್ಮನ್ನು ಕಾಮೆಂಟ್‌ನಲ್ಲಿ ಟ್ಯಾಗ್ ಮಾಡಿದ್ದಾರೆ',
+      '@{} ನಿನ್ನನ್ನು ಒಂದು ಕಾಮೆಂಟ್‌ನಲ್ಲಿ ಟ್ಯಾಗ್ ಮಾಡಿದ್ದಾರೆ',
   'Mesajı sil': 'ಸಂದೇಶ ಅಳಿಸಿ',
   'Mesaj silinemedi': 'ಸಂದೇಶವನ್ನು ಅಳಿಸಲಾಗಲಿಲ್ಲ',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'ಲಿಂಕ್ ಅಮಾನ್ಯ ಅಥವಾ ಪುಟ ಸಿಗಲಿಲ್ಲ',
@@ -241,18 +242,105 @@ const Map<String, String> cevirilerKn = {
   'Video': 'ವೀಡಿಯೋ',
   'İçerik': 'ವಿಷಯ',
   'çevrimiçi': 'ಆನ್‌ಲೈನ್',
-  'son görülme {} dk önce': '{} ನಿಮಿ ಹಿಂದೆ ಕಂಡರು',
-  'son görülme {} saat önce': '{} ಗಂ ಹಿಂದೆ ಕಂಡರು',
-  'son görülme {} gün önce': '{} ದಿನ ಹಿಂದೆ ಕಂಡರು',
+  'son görülme {} dk önce': 'ಕೊನೆಯದಾಗಿ {} ನಿಮಿ ಹಿಂದೆ',
+  'son görülme {} saat önce': 'ಕೊನೆಯದಾಗಿ {} ಗಂ ಹಿಂದೆ',
+  'son görülme {} gün önce': 'ಕೊನೆಯದಾಗಿ {} ದಿನ ಹಿಂದೆ',
   'Yorumlar yüklenemedi': 'ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ',
   'Favori': 'ಮೆಚ್ಚಿನವು',
   'Listeye ekle': 'ಪಟ್ಟಿಗೆ ಸೇರಿಸಿ',
   'İçerik paylaş': 'ಹಂಚಿಕೊಳ್ಳಿ',
   'Kapat': 'ಮುಚ್ಚಿ',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
-      'ನೀವು ವೀಕ್ಷಿಸಿದೆಂದು ಗುರುತಿಸಿದವೆಲ್ಲ ಇಲ್ಲಿ ಸೇರುತ್ತವೆ.',
+      'ನೀನು ನೋಡಿದೆಂದು ಗುರುತಿಸಿದವೆಲ್ಲ ಇಲ್ಲಿ ಸೇರುತ್ತವೆ.',
   'Henüz sohbetin yok': 'ಇನ್ನೂ ಸಂಭಾಷಣೆಗಳಿಲ್ಲ',
   'Bir profile girip mesaj gönderebilirsin.': 'ಪ್ರೊಫೈಲ್ ತೆರೆದು ಸಂದೇಶ ಕಳುಹಿಸಿ.',
   'Listeyi sil': 'ಪಟ್ಟಿ ಅಳಿಸಿ',
   'Puan kaydedilemedi': 'ರೇಟಿಂಗ್ ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Nerede İzlenir': 'ಎಲ್ಲಿ ನೋಡಬೇಕು',
+  'Abonelik': 'ಚಂದಾದಾರಿಕೆ',
+  'Kirala': 'ಬಾಡಿಗೆಗೆ',
+  'Satın al': 'ಖರೀದಿಸಿ',
+  'Hoş geldin!': 'ಸ್ವಾಗತ!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'ನೀನು ನೋಡಲು ಬಯಸುವ ಸೀರೀಸ್ ಮತ್ತು ಸಿನಿಮಾಗಳನ್ನು ಆಯ್ಕೆ ಮಾಡು',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'ನಿನ್ನ ಆಯ್ಕೆಗಳು "ನೋಡುತ್ತೇನೆ" ಲಿಸ್ಟ್‌ಗೆ ಸೇರುತ್ತವೆ',
+  'Şimdilik atla': 'ಸದ್ಯಕ್ಕೆ ಬಿಟ್ಟುಬಿಡಿ',
+  'Devam et': 'ಮುಂದುವರಿಸಿ',
+  '{} ekle': '{} ಸೇರಿಸಿ',
+  'Şikayet et': 'ದೂರು ನೀಡು',
+  'Engelle': 'ಬ್ಲಾಕ್ ಮಾಡು',
+  'Engeli kaldır': 'ಅನ್‌ಬ್ಲಾಕ್ ಮಾಡು',
+  'Kullanıcı engellendi': 'ಬಳಕೆದಾರ ಬ್ಲಾಕ್ ಆಗಿದ್ದಾರೆ',
+  'Engel kaldırıldı': 'ಬ್ಲಾಕ್ ತೆಗೆಯಲಾಗಿದೆ',
+  'Şikayet sebebi': 'ದೂರಿನ ಕಾರಣ',
+  'Spam veya yanıltıcı': 'ಸ್ಪ್ಯಾಮ್ ಅಥವಾ ದಾರಿತಪ್ಪಿಸುವ',
+  'Taciz veya nefret söylemi': 'ಕಿರುಕುಳ ಅಥವಾ ದ್ವೇಷ ಭಾಷಣ',
+  'Uygunsuz / cinsel içerik': 'ಅನುಚಿತ / ಲೈಂಗಿಕ ವಿಷಯ',
+  'Şiddet veya tehlikeli içerik': 'ಹಿಂಸೆ ಅಥವಾ ಅಪಾಯಕಾರಿ ವಿಷಯ',
+  'Telif hakkı ihlali': 'ಕೃತಿಸ್ವಾಮ್ಯ ಉಲ್ಲಂಘನೆ',
+  'Şikayetin alındı, teşekkürler': 'ನಿನ್ನ ದೂರು ಸಿಕ್ಕಿದೆ, ಧನ್ಯವಾದ',
+  'Hesabımı Sil': 'ನನ್ನ ಖಾತೆ ಅಳಿಸು',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'ನಿನ್ನ ಖಾತೆ ಮತ್ತು ಎಲ್ಲಾ ಡೇಟಾ (ಇತಿಹಾಸ, ರೇಟಿಂಗ್, ಕಾಮೆಂಟ್, ಪಟ್ಟಿಗಳು, ಸಂದೇಶಗಳು) ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲಾಗುತ್ತದೆ. ಇದನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗದು.',
+  'Şifreni gir': 'ನಿನ್ನ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸು',
+  'Hesabımı kalıcı sil': 'ನನ್ನ ಖಾತೆ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸು',
+  'Sesli mesaj': 'ವಾಯ್ಸ್ ಸಂದೇಶ',
+  'Ses gönderilemedi': 'ವಾಯ್ಸ್ ಸಂದೇಶ ಕಳುಹಿಸಲಾಗಲಿಲ್ಲ',
+  'Kaydediliyor…': 'ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ…',
+  'Ses oynatılamadı': 'ಆಡಿಯೋ ಪ್ಲೇ ಮಾಡಲಾಗಲಿಲ್ಲ',
+  'Oynat': 'ಪ್ಲೇ ಮಾಡು',
+  'Duraklat': 'ವಿರಾಮ',
+  'Liste görünümü': 'ಪಟ್ಟಿ ನೋಟ',
+  'Takvim görünümü': 'ಕ್ಯಾಲೆಂಡರ್ ನೋಟ',
+  'Önceki ay': 'ಹಿಂದಿನ ತಿಂಗಳು',
+  'Sonraki ay': 'ಮುಂದಿನ ತಿಂಗಳು',
+  'Bu gün bölüm yok': 'ಈ ದಿನ ಯಾವುದೇ ಸಂಚಿಕೆ ಇಲ್ಲ',
+  'Gizlilik Politikası': 'ಗೌಪ್ಯತಾ ನೀತಿ',
+  'Son güncelleme: {}': 'ಕೊನೆಯ ಅಪ್‌ಡೇಟ್: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg ಆ್ಯಪ್ ಮತ್ತು dizijpg.com ಸೈಟ್ ಬಳಸುವಾಗ ಯಾವ ಡೇಟಾ ಸಂಗ್ರಹವಾಗುತ್ತದೆ, ಹೇಗೆ ಬಳಕೆಯಾಗುತ್ತದೆ ಮತ್ತು ನಿನ್ನ ಹಕ್ಕುಗಳೇನು ಎಂಬುದನ್ನು ಈ ನೀತಿ ವಿವರಿಸುತ್ತದೆ.',
+  'Topladığımız Veriler': 'ನಾವು ಸಂಗ್ರಹಿಸುವ ಡೇಟಾ',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'ಖಾತೆ: ಇಮೇಲ್ ವಿಳಾಸ, ಬಳಕೆದಾರ ಹೆಸರು ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್. ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹಿಂತಿರುಗಿಸಲಾಗದ ಹ್ಯಾಶ್ ರೂಪದಲ್ಲಿ ಸಂಗ್ರಹವಾಗುತ್ತವೆ; ಅತಿಥಿ ಖಾತೆಗಳನ್ನು ಇಮೇಲ್ ಇಲ್ಲದೆಯೂ ಬಳಸಬಹುದು.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'ಪ್ರೊಫೈಲ್: ಅವತಾರ್, ಕವರ್ ಚಿತ್ರ, ಬಯೋ ಮತ್ತು ದೇಶದಂತಹ ನೀನು ಸೇರಿಸಲು ಆರಿಸುವ ಮಾಹಿತಿ.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'ಬಳಕೆ: ನಿನ್ನ ವೀಕ್ಷಣೆ ಇತಿಹಾಸ, ರೇಟಿಂಗ್‌ಗಳು, ಕಾಮೆಂಟ್‌ಗಳು, ಪಟ್ಟಿಗಳು, ರಿಯಾಕ್ಷನ್‌ಗಳು ಮತ್ತು ಮೆಚ್ಚಿನವು.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'ಸಂದೇಶಗಳು: ನಿನ್ನ ಪಠ್ಯ, ಚಿತ್ರ ಮತ್ತು ಧ್ವನಿ ಸಂದೇಶಗಳು ನಮ್ಮ ಸರ್ವರ್‌ಗಳಲ್ಲಿ ಸಂಗ್ರಹವಾಗುತ್ತವೆ. ಸಂದೇಶಗಳಿಗೆ ಎಂಡ್-ಟು-ಎಂಡ್ ಎನ್‌ಕ್ರಿಪ್ಶನ್ ಇಲ್ಲ; ವರದಿಯಾದರೆ ಮಾತ್ರ ಮಾಡರೇಶನ್‌ಗಾಗಿ ನೋಡಲಾಗುತ್ತದೆ.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಮೀಡಿಯಾ: ಪ್ರೊಫೈಲ್, ಕಾಮೆಂಟ್ ಮತ್ತು ಸಂದೇಶಗಳಿಗೆ ನೀನು ಸೇರಿಸುವ ಫೋಟೋಗಳು, GIF, ವೀಡಿಯೊಗಳು ಮತ್ತು ಧ್ವನಿ ರೆಕಾರ್ಡಿಂಗ್‌ಗಳು.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'ತಾಂತ್ರಿಕ: IP ವಿಳಾಸ, ಅಂದಾಜು ಸ್ಥಳ (ದೇಶ/ನಗರ ಮಟ್ಟ), ಸಾಧನದ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್, ಆ್ಯಪ್ ಆವೃತ್ತಿ ಮತ್ತು ದೋಷ ದಾಖಲೆಗಳು. ಇವು ಭದ್ರತೆ ಮತ್ತು ದೋಷ ಸರಿಪಡಿಸುವಿಕೆಗಾಗಿ ಇಡಲಾಗುತ್ತವೆ.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'ಅಧಿಸೂಚನೆಗಳು: ಪುಶ್ ಅಧಿಸೂಚನೆಗಳಿಗಾಗಿ ನಿನ್ನ ಸಾಧನದ ಟೋಕನ್ ಮತ್ತು ಭಾಷಾ ಆಯ್ಕೆ ಸಂಗ್ರಹವಾಗುತ್ತವೆ. ಸಾಧನದ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಿಂದ ಯಾವಾಗ ಬೇಕಾದರೂ ಅಧಿಸೂಚನೆ ಆಫ್ ಮಾಡಬಹುದು.',
+  'Verileri Nasıl Kullanırız': 'ಡೇಟಾವನ್ನು ಹೇಗೆ ಬಳಸುತ್ತೇವೆ',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'ನಿನ್ನ ಡೇಟಾವನ್ನು ಸೇವೆ ನೀಡಲು, ಖಾತೆ ರಕ್ಷಿಸಲು, ಅಧಿಸೂಚನೆ ಕಳುಹಿಸಲು, ದೋಷ ಸರಿಪಡಿಸಲು ಮತ್ತು ದುರ್ಬಳಕೆ ತಡೆಯಲು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ. ನಿನ್ನ ಡೇಟಾವನ್ನು ಮಾರುವುದಿಲ್ಲ; ಜಾಹೀರಾತಿಗಾಗಿ ಯಾರೊಂದಿಗೂ ಹಂಚುವುದಿಲ್ಲ.',
+  'Çerezler ve Yerel Depolama': 'ಕುಕೀಗಳು ಮತ್ತು ಲೋಕಲ್ ಸ್ಟೋರೇಜ್',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'ನಿನ್ನನ್ನು ಲಾಗಿನ್‌ನಲ್ಲಿ ಇಡಲು ಮತ್ತು ಭಾಷೆ/ಥೀಮ್‌ನಂತಹ ಆಯ್ಕೆಗಳನ್ನು ನೆನಪಿಡಲು ಮಾತ್ರ ಲೋಕಲ್ ಸ್ಟೋರೇಜ್ ಬಳಸುತ್ತೇವೆ. ಜಾಹೀರಾತು ಅಥವಾ ಟ್ರ್ಯಾಕಿಂಗ್ ಕುಕೀಗಳಿಲ್ಲ.',
+  'Üçüncü Taraf Hizmetler': 'ಮೂರನೇ ವ್ಯಕ್ತಿಯ ಸೇವೆಗಳು',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'ಸರಣಿ ಮತ್ತು ಚಲನಚಿತ್ರಗಳ ಡೇಟಾ TMDB ಯಿಂದ, ಸ್ಟ್ರೀಮಿಂಗ್ ವೇದಿಕೆಗಳ ಮಾಹಿತಿ JustWatch ನಿಂದ ಬರುತ್ತದೆ. ಪುಶ್ ಅಧಿಸೂಚನೆಗಳು Google Firebase ಮೂಲಕ ತಲುಪುತ್ತವೆ; ಸೈಟ್ ಟ್ರಾಫಿಕ್ ಅನ್ನು Cloudflare ರಕ್ಷಿಸುತ್ತದೆ. ಈ ಸೇವೆಗಳಿಗೆ ಅವುಗಳದೇ ಗೌಪ್ಯತಾ ನೀತಿಗಳು ಅನ್ವಯಿಸುತ್ತವೆ.',
+  'Saklama ve Silme': 'ಸಂಗ್ರಹಣೆ ಮತ್ತು ಅಳಿಸುವಿಕೆ',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'ನಿನ್ನ ಖಾತೆ ಇರುವವರೆಗೆ ನಿನ್ನ ಡೇಟಾ ಇರುತ್ತದೆ. ಸೆಟ್ಟಿಂಗ್ಸ್‌ನ "ನನ್ನ ಖಾತೆಯನ್ನು ಅಳಿಸಿ" ಮೂಲಕ ಖಾತೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಬಹುದು; ಡೇಟಾ ತಕ್ಷಣ, ಬ್ಯಾಕಪ್‌ಗಳಲ್ಲಿನ ಪ್ರತಿಗಳು ಗರಿಷ್ಠ 14 ದಿನಗಳಲ್ಲಿ ಅಳಿಸಲ್ಪಡುತ್ತವೆ. ದೋಷ ದಾಖಲೆಗಳು 30 ದಿನಗಳ ನಂತರ ತಾವಾಗಿಯೇ ಅಳಿಸಲ್ಪಡುತ್ತವೆ.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಿಂದ ನಿನ್ನ ಡೇಟಾವನ್ನು ZIP ರೂಪದಲ್ಲಿ ರಫ್ತು ಮಾಡಬಹುದು; ಆರ್ಕೈವ್ ನಿನ್ನ ಇಮೇಲ್ ವಿಳಾಸಕ್ಕೆ ಕಳುಹಿಸಲಾಗುತ್ತದೆ.',
+  'Güvenlik': 'ಭದ್ರತೆ',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ಡೇಟಾ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆದ ಸಂಪರ್ಕಗಳ (HTTPS) ಮೂಲಕ ಸಾಗುತ್ತದೆ; ಸೀಮಿತ ಪ್ರವೇಶದ ಸರ್ವರ್‌ಗಳಲ್ಲಿ ಸಂಗ್ರಹವಾಗುತ್ತದೆ.',
+  'Çocukların Gizliliği': 'ಮಕ್ಕಳ ಗೌಪ್ಯತೆ',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg 13 ವರ್ಷದೊಳಗಿನ ಮಕ್ಕಳಿಗಾಗಿ ಅಲ್ಲ.',
+  'Hakların': 'ನಿನ್ನ ಹಕ್ಕುಗಳು',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK ಮತ್ತು GDPR ಪ್ರಕಾರ ನಿನ್ನ ಡೇಟಾವನ್ನು ಪಡೆಯುವ, ಸರಿಪಡಿಸುವ, ಅಳಿಸುವ ಮತ್ತು ವರ್ಗಾಯಿಸುವ ಹಕ್ಕು ನಿನಗಿದೆ. ಇದಕ್ಕಾಗಿ ನಮಗೆ ಬರೆ: {}',
+  'Değişiklikler': 'ಬದಲಾವಣೆಗಳು',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'ಈ ನೀತಿ ಬದಲಾದರೆ ಹೊಸ ಆವೃತ್ತಿ ಇದೇ ಪುಟದಲ್ಲಿ ಪ್ರಕಟವಾಗಿ ದಿನಾಂಕ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'ನೋಂದಣಿ ಮಾಡುವ ಮೂಲಕ ನೀನು {} ಒಪ್ಪಿಕೊಳ್ಳುತ್ತೀಯ.',
 };

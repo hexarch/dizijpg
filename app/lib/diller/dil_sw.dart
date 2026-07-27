@@ -4,6 +4,7 @@ const Map<String, String> cevirilerSw = {
       'Hakuna data inayotambulika ya kuhamisha.',
   'Arama': 'Tafuta',
   'Aramaya başla': 'Anza kutafuta',
+  'Son aramalar': 'Utafutaji wa hivi karibuni',
   'Ayarlar': 'Mipangilio',
   'Bağla': 'Unganisha',
   'Bio': 'Bio',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerSw = {
   'Bir profile girip mesaj gönderebilirsin.': 'Fungua wasifu na tuma ujumbe.',
   'Listeyi sil': 'Futa orodha',
   'Puan kaydedilemedi': 'Ukadiriaji haukuweza kuhifadhiwa',
+  'Nerede İzlenir': 'Wapi Kutazama',
+  'Abonelik': 'Kujiunga',
+  'Kirala': 'Kodisha',
+  'Satın al': 'Nunua',
+  'Hoş geldin!': 'Karibu!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Chagua vipindi na filamu unazotaka kutazama',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Chaguo lako litaongezwa kwenye orodha yako',
+  'Şimdilik atla': 'Ruka kwa sasa',
+  'Devam et': 'Endelea',
+  '{} ekle': 'Ongeza {}',
+  'Şikayet et': 'Ripoti',
+  'Engelle': 'Zuia',
+  'Engeli kaldır': 'Ondoa uzuiaji',
+  'Kullanıcı engellendi': 'Mtumiaji amezuiwa',
+  'Engel kaldırıldı': 'Uzuiaji umeondolewa',
+  'Şikayet sebebi': 'Sababu ya ripoti',
+  'Spam veya yanıltıcı': 'Barua taka au kupotosha',
+  'Taciz veya nefret söylemi': 'Unyanyasaji au matamshi ya chuki',
+  'Uygunsuz / cinsel içerik': 'Isiyofaa / maudhui ya ngono',
+  'Şiddet veya tehlikeli içerik': 'Vurugu au maudhui hatari',
+  'Telif hakkı ihlali': 'Ukiukaji wa hakimiliki',
+  'Şikayetin alındı, teşekkürler': 'Ripoti yako imepokelewa, asante',
+  'Hesabımı Sil': 'Futa Akaunti Yangu',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Akaunti yako na data yako yote (historia, ukadiriaji, maoni, orodha, ujumbe) itafutwa kabisa. Hii haiwezi kutenduliwa.',
+  'Şifreni gir': 'Weka nywila yako',
+  'Hesabımı kalıcı sil': 'Futa akaunti yangu kabisa',
+  'Sesli mesaj': 'Ujumbe wa sauti',
+  'Ses gönderilemedi': 'Ujumbe wa sauti haukutumwa',
+  'Kaydediliyor…': 'Inarekodi…',
+  'Ses oynatılamadı': 'Sauti haikuweza kuchezwa',
+  'Oynat': 'Cheza',
+  'Duraklat': 'Sitisha',
+  'Liste görünümü': 'Mwonekano wa orodha',
+  'Takvim görünümü': 'Mwonekano wa kalenda',
+  'Önceki ay': 'Mwezi uliopita',
+  'Sonraki ay': 'Mwezi ujao',
+  'Bu gün bölüm yok': 'Hakuna vipindi siku hii',
+  'Gizlilik Politikası': 'Sera ya Faragha',
+  'Son güncelleme: {}': 'Sasisho la mwisho: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Sera hii inaeleza data gani hukusanywa, jinsi inavyotumika na haki zako ni zipi unapotumia programu ya dizi.jpg na tovuti ya dizijpg.com.',
+  'Topladığımız Veriler': 'Data Tunayokusanya',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Akaunti: anwani ya barua pepe, jina la mtumiaji na nenosiri. Manenosiri huhifadhiwa kama heshi isiyoweza kurejeshwa; akaunti za mgeni zinaweza kutumika bila barua pepe.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Wasifu: taarifa unazochagua kuongeza, kama avatari, picha ya jalada, wasifu mfupi na nchi.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Matumizi: historia yako ya kutazama, ukadiriaji, maoni, orodha, riaksheni na vipendwa.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Ujumbe: ujumbe wako wa maandishi, picha na sauti huhifadhiwa kwenye seva zetu. Ujumbe haujasimbwa kutoka mwanzo hadi mwisho; hukaguliwa tu kwa madhumuni ya usimamizi endapo utaripotiwa.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Media zilizopakiwa: picha, GIF, video na rekodi za sauti unazoongeza kwenye wasifu, maoni na ujumbe wako.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Kiufundi: anwani ya IP, mahali pa makadirio (kiwango cha nchi/jiji), jukwaa la kifaa, toleo la programu na kumbukumbu za hitilafu. Hizi huhifadhiwa kwa usalama na kurekebisha matatizo.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Arifa: kwa arifa za papo hapo tunahifadhi tokeni ya kifaa chako na lugha uliyochagua. Unaweza kuzima arifa wakati wowote kwenye mipangilio ya kifaa.',
+  'Verileri Nasıl Kullanırız': 'Jinsi Tunavyotumia Data Yako',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Tunatumia data yako tu kutoa huduma, kulinda akaunti yako, kutuma arifa, kurekebisha hitilafu na kuzuia matumizi mabaya. Hatuuzi data yako wala kuishiriki na yeyote kwa madhumuni ya matangazo.',
+  'Çerezler ve Yerel Depolama': 'Vidakuzi na Hifadhi ya Ndani',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Tunatumia hifadhi ya ndani tu kukuweka umeingia na kukumbuka mapendeleo kama lugha na mandhari. Hakuna vidakuzi vya matangazo wala vya ufuatiliaji.',
+  'Üçüncü Taraf Hizmetler': 'Huduma za Wahusika Wengine',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Data ya vipindi na filamu hutoka TMDB, taarifa za majukwaa ya kutiririsha kutoka JustWatch. Arifa za papo hapo huwasilishwa kupitia Google Firebase, na trafiki ya tovuti hulindwa na Cloudflare. Huduma hizi zinafuata sera zao za faragha.',
+  'Saklama ve Silme': 'Uhifadhi na Ufutaji',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Data yako huhifadhiwa muda wote akaunti yako ipo. Kupitia "Futa Akaunti Yangu" kwenye mipangilio unaweza kufuta akaunti kabisa; data yako hufutwa mara moja, na nakala kwenye hifadhi rudufu ndani ya siku 14 zaidi. Kumbukumbu za hitilafu hufutwa kiotomatiki baada ya siku 30.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Unaweza kuhamisha data yako kama ZIP kutoka kwenye mipangilio; jalada hutumwa kwa anwani yako ya barua pepe.',
+  'Güvenlik': 'Usalama',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data husafirishwa kupitia miunganisho iliyosimbwa (HTTPS) na kuhifadhiwa kwenye seva zenye ufikiaji mdogo.',
+  'Çocukların Gizliliği': 'Faragha ya Watoto',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg haikusudiwi watoto walio chini ya miaka 13.',
+  'Hakların': 'Haki Zako',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Chini ya KVKK na GDPR una haki ya kufikia, kusahihisha, kufuta na kuhamisha data yako. Kwa haya tuandikie: {}',
+  'Değişiklikler': 'Mabadiliko',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Sera hii ikibadilika, toleo jipya litachapishwa kwenye ukurasa huu na tarehe itasasishwa.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Kwa kujisajili unakubali {}.',
 };

@@ -87,7 +87,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
       final konuklar = (b['guest_stars'] as List<dynamic>? ?? []);
 
       govde = ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(bottom: altGuvenli(context)),
         children: [
           if (gorsel != null)
             AspectRatio(

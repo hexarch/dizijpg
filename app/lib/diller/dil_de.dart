@@ -4,6 +4,7 @@ const Map<String, String> cevirilerDe = {
       'Keine erkannten Daten zum Importieren gefunden.',
   'Arama': 'Suche',
   'Aramaya başla': 'Starte die Suche',
+  'Son aramalar': 'Letzte Suchen',
   'Ayarlar': 'Einstellungen',
   'Bağla': 'Verknüpfen',
   'Bio': 'Bio',
@@ -246,7 +247,7 @@ const Map<String, String> cevirilerDe = {
   'son görülme {} gün önce': 'zuletzt vor {} T.',
   'Yorumlar yüklenemedi': 'Kommentare konnten nicht geladen werden',
   'Favori': 'Favorit',
-  'Listeye ekle': 'Zur Liste',
+  'Listeye ekle': 'Zur Liste hinzufügen',
   'İçerik paylaş': 'Inhalt teilen',
   'Kapat': 'Schließen',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
@@ -256,4 +257,91 @@ const Map<String, String> cevirilerDe = {
       'Öffne ein Profil und sende eine Nachricht.',
   'Listeyi sil': 'Liste löschen',
   'Puan kaydedilemedi': 'Bewertung konnte nicht gespeichert werden',
+  'Nerede İzlenir': 'Wo streamen',
+  'Abonelik': 'Abo',
+  'Kirala': 'Leihen',
+  'Satın al': 'Kaufen',
+  'Hoş geldin!': 'Willkommen!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Wähle Serien und Filme, die du sehen möchtest',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Deine Auswahl kommt auf deine Merkliste',
+  'Şimdilik atla': 'Vorerst überspringen',
+  'Devam et': 'Weiter',
+  '{} ekle': '{} hinzufügen',
+  'Şikayet et': 'Melden',
+  'Engelle': 'Blockieren',
+  'Engeli kaldır': 'Entsperren',
+  'Kullanıcı engellendi': 'Benutzer blockiert',
+  'Engel kaldırıldı': 'Blockierung aufgehoben',
+  'Şikayet sebebi': 'Grund der Meldung',
+  'Spam veya yanıltıcı': 'Spam oder irreführend',
+  'Taciz veya nefret söylemi': 'Belästigung oder Hassrede',
+  'Uygunsuz / cinsel içerik': 'Unangemessene / sexuelle Inhalte',
+  'Şiddet veya tehlikeli içerik': 'Gewalt oder gefährliche Inhalte',
+  'Telif hakkı ihlali': 'Urheberrechtsverletzung',
+  'Şikayetin alındı, teşekkürler': 'Deine Meldung ist eingegangen, danke',
+  'Hesabımı Sil': 'Konto löschen',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Dein Konto und alle deine Daten (Verlauf, Bewertungen, Kommentare, Listen, Nachrichten) werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.',
+  'Şifreni gir': 'Gib dein Passwort ein',
+  'Hesabımı kalıcı sil': 'Mein Konto endgültig löschen',
+  'Sesli mesaj': 'Sprachnachricht',
+  'Ses gönderilemedi': 'Sprachnachricht konnte nicht gesendet werden',
+  'Kaydediliyor…': 'Aufnahme…',
+  'Ses oynatılamadı': 'Sprachnachricht konnte nicht abgespielt werden',
+  'Oynat': 'Abspielen',
+  'Duraklat': 'Pause',
+  'Liste görünümü': 'Listenansicht',
+  'Takvim görünümü': 'Kalenderansicht',
+  'Önceki ay': 'Voriger Monat',
+  'Sonraki ay': 'Nächster Monat',
+  'Bu gün bölüm yok': 'Keine Folgen an diesem Tag',
+  'Gizlilik Politikası': 'Datenschutzerklärung',
+  'Son güncelleme: {}': 'Zuletzt aktualisiert: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Diese Erklärung beschreibt, welche Daten erhoben werden, wie sie verwendet werden und welche Rechte du hast, wenn du die dizi.jpg-App und die Website dizijpg.com nutzt.',
+  'Topladığımız Veriler': 'Welche Daten wir erheben',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Konto: E-Mail-Adresse, Benutzername und Passwort. Passwörter werden unumkehrbar gehasht gespeichert; Gastkonten können ohne E-Mail genutzt werden.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: Angaben, die du freiwillig hinzufügst, etwa Avatar, Titelbild, Bio und Land.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Nutzung: dein Verlauf, deine Bewertungen, Kommentare, Listen, Reaktionen und Favoriten.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Nachrichten: deine Text-, Bild- und Sprachnachrichten werden auf unseren Servern gespeichert. Nachrichten sind nicht Ende-zu-Ende-verschlüsselt; sie werden nur bei einer Meldung zu Moderationszwecken eingesehen.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Hochgeladene Medien: Fotos, GIF, Videos und Sprachaufnahmen, die du deinem Profil, deinen Kommentaren und Nachrichten hinzufügst.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Technisches: IP-Adresse, ungefährer Standort (Land/Stadt), Geräteplattform, App-Version und Fehlerprotokolle. Diese Daten dienen der Sicherheit und Fehlerbehebung.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Benachrichtigungen: für Push-Benachrichtigungen speichern wir dein Geräte-Token und deine Spracheinstellung. Du kannst Benachrichtigungen jederzeit in den Geräteeinstellungen deaktivieren.',
+  'Verileri Nasıl Kullanırız': 'Wie wir deine Daten verwenden',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Wir verwenden deine Daten ausschließlich, um den Dienst bereitzustellen, dein Konto zu schützen, Benachrichtigungen zu senden, Fehler zu beheben und Missbrauch zu verhindern. Wir verkaufen deine Daten nicht und geben sie nicht zu Werbezwecken weiter.',
+  'Çerezler ve Yerel Depolama': 'Cookies und lokaler Speicher',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Wir nutzen lokalen Speicher nur, um dich angemeldet zu halten und Einstellungen wie Sprache und Design zu merken. Es gibt keine Werbe- oder Tracking-Cookies.',
+  'Üçüncü Taraf Hizmetler': 'Dienste von Drittanbietern',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Serien- und Filmdaten stammen von TMDB, Streaming-Anbieter-Daten von JustWatch. Push-Benachrichtigungen werden über Google Firebase zugestellt, der Website-Verkehr wird von Cloudflare geschützt. Für diese Dienste gelten deren eigene Datenschutzerklärungen.',
+  'Saklama ve Silme': 'Speicherung und Löschung',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Deine Daten werden gespeichert, solange dein Konto besteht. Über "Konto löschen" in den Einstellungen kannst du dein Konto dauerhaft löschen; deine Daten werden sofort gelöscht, Kopien in Backups spätestens nach 14 Tagen. Fehlerprotokolle werden nach 30 Tagen automatisch gelöscht.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Du kannst deine Daten in den Einstellungen als ZIP exportieren; das Archiv wird an deine E-Mail-Adresse gesendet.',
+  'Güvenlik': 'Sicherheit',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Daten werden über verschlüsselte Verbindungen (HTTPS) übertragen und auf Servern mit beschränktem Zugriff gespeichert.',
+  'Çocukların Gizliliği': 'Datenschutz von Kindern',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg richtet sich nicht an Kinder unter 13 Jahren.',
+  'Hakların': 'Deine Rechte',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Nach KVKK und GDPR hast du das Recht, auf deine Daten zuzugreifen, sie zu berichtigen, zu löschen und zu übertragen. Schreib uns dazu einfach: {}',
+  'Değişiklikler': 'Änderungen',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Wenn sich diese Erklärung ändert, wird die neue Fassung auf dieser Seite veröffentlicht und das Aktualisierungsdatum erneuert.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'Mit der Registrierung akzeptierst du die {}.',
 };

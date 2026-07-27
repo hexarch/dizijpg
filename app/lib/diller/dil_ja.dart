@@ -3,6 +3,7 @@ const Map<String, String> cevirilerJa = {
   'Aktarılacak tanınan veri bulunamadı.': 'インポートできるデータが見つかりませんでした。',
   'Arama': '検索',
   'Aramaya başla': '検索してみよう',
+  'Son aramalar': '最近の検索',
   'Ayarlar': '設定',
   'Bağla': '連携',
   'Bio': '自己紹介',
@@ -250,4 +251,88 @@ const Map<String, String> cevirilerJa = {
   'Bir profile girip mesaj gönderebilirsin.': 'プロフィールを開いてメッセージを送りましょう。',
   'Listeyi sil': 'リストを削除',
   'Puan kaydedilemedi': '評価を保存できませんでした',
+  'Nerede İzlenir': '視聴可能な場所',
+  'Abonelik': '定額見放題',
+  'Kirala': 'レンタル',
+  'Satın al': '購入',
+  'Hoş geldin!': 'ようこそ！',
+  'İzlemek istediğin dizi ve filmleri seç': '見たいドラマや映画を選ぼう',
+  'Seçtiklerin "İzleyeceğim" listene eklenir': '選んだ作品は「見たい」リストに追加されます',
+  'Şimdilik atla': '今はスキップ',
+  'Devam et': '続ける',
+  '{} ekle': '{}件追加',
+  'Şikayet et': '報告',
+  'Engelle': 'ブロック',
+  'Engeli kaldır': 'ブロック解除',
+  'Kullanıcı engellendi': 'ユーザーをブロックしました',
+  'Engel kaldırıldı': 'ブロックを解除しました',
+  'Şikayet sebebi': '報告の理由',
+  'Spam veya yanıltıcı': 'スパムまたは誤解を招く',
+  'Taciz veya nefret söylemi': '嫌がらせやヘイトスピーチ',
+  'Uygunsuz / cinsel içerik': '不適切 / 性的なコンテンツ',
+  'Şiddet veya tehlikeli içerik': '暴力または危険なコンテンツ',
+  'Telif hakkı ihlali': '著作権侵害',
+  'Şikayetin alındı, teşekkürler': '報告を受け付けました、ありがとう',
+  'Hesabımı Sil': 'アカウントを削除',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'アカウントとすべてのデータ（視聴履歴、評価、コメント、リスト、メッセージ）が完全に削除されます。この操作は取り消せません。',
+  'Şifreni gir': 'パスワードを入力',
+  'Hesabımı kalıcı sil': 'アカウントを完全に削除',
+  'Sesli mesaj': 'ボイスメッセージ',
+  'Ses gönderilemedi': 'ボイスメッセージを送信できませんでした',
+  'Kaydediliyor…': '録音中…',
+  'Ses oynatılamadı': '音声を再生できませんでした',
+  'Oynat': '再生',
+  'Duraklat': '一時停止',
+  'Liste görünümü': 'リスト表示',
+  'Takvim görünümü': 'カレンダー表示',
+  'Önceki ay': '前の月',
+  'Sonraki ay': '次の月',
+  'Bu gün bölüm yok': 'この日はエピソードなし',
+  'Gizlilik Politikası': 'プライバシーポリシー',
+  'Son güncelleme: {}': '最終更新：{}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'このポリシーでは、dizi.jpg アプリと dizijpg.com サイトの利用時にどのようなデータが収集され、どのように使われ、あなたにどんな権利があるかを説明します。',
+  'Topladığımız Veriler': '収集するデータ',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'アカウント：メールアドレス、ユーザー名、パスワード。パスワードは復元できないハッシュとして保存されます。ゲストアカウントはメールなしでも利用できます。',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'プロフィール：アバター、カバー画像、自己紹介、国など、あなたが任意で追加する情報。',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      '利用状況：視聴履歴、評価、コメント、リスト、リアクション、お気に入り。',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'メッセージ：テキスト・画像・ボイスメッセージは当社のサーバーに保存されます。メッセージはエンドツーエンド暗号化されていません。通報された場合にのみ、モデレーションのために確認されます。',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'アップロードしたメディア：プロフィール、コメント、メッセージに追加した写真、GIF、動画、音声録音。',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      '技術データ：IP アドレス、おおよその位置（国・都市レベル）、端末プラットフォーム、アプリのバージョン、エラーログ。これらはセキュリティと不具合修正のために保持されます。',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      '通知：プッシュ通知のために端末トークンと言語設定を保存します。通知は端末の設定からいつでもオフにできます。',
+  'Verileri Nasıl Kullanırız': 'データの使いみち',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'あなたのデータは、サービスの提供、アカウントの保護、通知の送信、不具合の修正、不正利用の防止のためだけに使用します。データを販売したり、広告目的で第三者と共有したりすることはありません。',
+  'Çerezler ve Yerel Depolama': 'Cookie とローカルストレージ',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'ローカルストレージは、ログイン状態の維持と、言語やテーマなどの設定を記憶するためだけに使います。広告用・追跡用の Cookie はありません。',
+  'Üçüncü Taraf Hizmetler': '第三者サービス',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'ドラマや映画のデータは TMDB から、配信プラットフォーム情報は JustWatch から取得しています。プッシュ通知は Google Firebase 経由で配信され、サイトのトラフィックは Cloudflare が保護しています。これらのサービスには各社のプライバシーポリシーが適用されます。',
+  'Saklama ve Silme': '保存と削除',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'あなたのデータはアカウントが存在する間保存されます。設定の「アカウントを削除」でアカウントを完全に削除できます。データは即時に、バックアップ内のコピーも遅くとも 14 日以内に削除されます。エラーログは 30 日後に自動削除されます。',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      '設定からデータを ZIP としてエクスポートできます。アーカイブはあなたのメールアドレスに送信されます。',
+  'Güvenlik': 'セキュリティ',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'データは暗号化された接続（HTTPS)で転送され、アクセスが制限されたサーバーに保存されます。',
+  'Çocukların Gizliliği': '子どものプライバシー',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg は 13 歳未満の子ども向けではありません。',
+  'Hakların': 'あなたの権利',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK と GDPR に基づき、あなたには自分のデータへのアクセス、訂正、削除、移転の権利があります。ご希望の場合はこちらまでご連絡ください：{}',
+  'Değişiklikler': '変更',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'このポリシーが変更された場合、新しい版をこのページで公開し、日付を更新します。',
+  'Kayıt olarak {} kabul etmiş olursun.': '登録すると、{}に同意したことになります。',
 };

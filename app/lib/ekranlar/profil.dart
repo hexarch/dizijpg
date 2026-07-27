@@ -739,10 +739,13 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   ),
                   const SizedBox(height: 20),
                   // Kitaplık grupları
-                  // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim → Bıraktım
+                  // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim.
+                  // Bıraktım poster şeridi olarak GÖSTERİLMEZ (kullanıcı isteği);
+                  // aşağıda yalnız soluk bir satır olarak durur.
                   for (final e in [
                     for (final durum in durumAdlari.keys)
-                      if (gruplar[durum]?.isNotEmpty == true)
+                      if (durum != 'biraktim' &&
+                          gruplar[durum]?.isNotEmpty == true)
                         MapEntry(durum, gruplar[durum]!),
                   ]) ...[
                     // Başlığa tıklayınca o durumun tam listesi açılır
@@ -790,6 +793,48 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       ),
                     ),
                     const SizedBox(height: 16),
+                  ],
+                  // Bıraktım: şerit yok, tam listeye giden soluk bir satır
+                  if (gruplar['biraktim']?.isNotEmpty == true) ...[
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () => context.push('/kitaplik/biraktim'),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.cancel_outlined,
+                              size: 17,
+                              color: DiziRenkler.metin38,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Bıraktım'.c,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                                color: DiziRenkler.metin54,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              '${gruplar['biraktim']!.length}',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 16,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                   ],
                   // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
                   for (final bolum in _bolumSirasi) ..._bolumUret(bolum),

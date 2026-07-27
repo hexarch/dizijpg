@@ -4,9 +4,10 @@ const Map<String, String> cevirilerSv = {
       'Inga igenkända data att importera hittades.',
   'Arama': 'Sök',
   'Aramaya başla': 'Börja söka',
+  'Son aramalar': 'Senaste sökningar',
   'Ayarlar': 'Inställningar',
   'Bağla': 'Koppla',
-  'Bio': 'Bio',
+  'Bio': 'Biografi',
   'Bitirdim': 'Sett klart',
   'Bunları da Beğenebilirsin': 'Du kanske också gillar dessa',
   'Bölüm': 'Avsnitt',
@@ -180,7 +181,7 @@ const Map<String, String> cevirilerSv = {
   '{} özetin': 'Din {}-summering',
   'Yıllık izleme istatistiklerin': 'Din årliga tittarstatistik',
   'Rozetler': 'Utmärkelser',
-  'Verdiğin puan': 'Betyg satta',
+  'Verdiğin puan': 'Givna betyg',
   'Ortalama puanın': 'Ditt snittbetyg',
   'En çok izlediğin diziler': 'Dina mest sedda serier',
   'İlk Bölüm': 'Första avsnittet',
@@ -207,8 +208,8 @@ const Map<String, String> cevirilerSv = {
   '50 Takipçi': '50 följare',
   '25 Dizi Bitirdin': '25 avklarade serier',
   '50 Dizi Bitirdin': '50 avklarade serier',
-  '10 Beğeni': '10 gilla',
-  '100 Beğeni': '100 gilla',
+  '10 Beğeni': '10 gillningar',
+  '100 Beğeni': '100 gillningar',
   'yazıyor...': 'skriver...',
   'Profil düzeni': 'Profillayout',
   'Konumla ve kırp': 'Justera och beskär',
@@ -255,4 +256,90 @@ const Map<String, String> cevirilerSv = {
       'Öppna en profil och skicka ett meddelande.',
   'Listeyi sil': 'Ta bort lista',
   'Puan kaydedilemedi': 'Betyget kunde inte sparas',
+  'Nerede İzlenir': 'Var kan man se',
+  'Abonelik': 'Prenumeration',
+  'Kirala': 'Hyr',
+  'Satın al': 'Köp',
+  'Hoş geldin!': 'Välkommen!',
+  'İzlemek istediğin dizi ve filmleri seç': 'Välj serier och filmer du vill se',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Dina val läggs till i din bevakningslista',
+  'Şimdilik atla': 'Hoppa över nu',
+  'Devam et': 'Fortsätt',
+  '{} ekle': 'Lägg till {}',
+  'Şikayet et': 'Anmäl',
+  'Engelle': 'Blockera',
+  'Engeli kaldır': 'Avblockera',
+  'Kullanıcı engellendi': 'Användare blockerad',
+  'Engel kaldırıldı': 'Blockering borttagen',
+  'Şikayet sebebi': 'Anledning till anmälan',
+  'Spam veya yanıltıcı': 'Skräppost eller vilseledande',
+  'Taciz veya nefret söylemi': 'Trakasserier eller hatretorik',
+  'Uygunsuz / cinsel içerik': 'Olämpligt / sexuellt innehåll',
+  'Şiddet veya tehlikeli içerik': 'Våld eller farligt innehåll',
+  'Telif hakkı ihlali': 'Upphovsrättsintrång',
+  'Şikayetin alındı, teşekkürler': 'Din anmälan har mottagits, tack',
+  'Hesabımı Sil': 'Radera mitt konto',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Ditt konto och all din data (historik, betyg, kommentarer, listor, meddelanden) raderas permanent. Detta kan inte ångras.',
+  'Şifreni gir': 'Ange ditt lösenord',
+  'Hesabımı kalıcı sil': 'Radera mitt konto permanent',
+  'Sesli mesaj': 'Röstmeddelande',
+  'Ses gönderilemedi': 'Röstmeddelandet kunde inte skickas',
+  'Kaydediliyor…': 'Spelar in…',
+  'Ses oynatılamadı': 'Röstmeddelandet kunde inte spelas upp',
+  'Oynat': 'Spela upp',
+  'Duraklat': 'Pausa',
+  'Liste görünümü': 'Listvy',
+  'Takvim görünümü': 'Kalendervy',
+  'Önceki ay': 'Föregående månad',
+  'Sonraki ay': 'Nästa månad',
+  'Bu gün bölüm yok': 'Inga avsnitt denna dag',
+  'Gizlilik Politikası': 'Integritetspolicy',
+  'Son güncelleme: {}': 'Senast uppdaterad: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Den här policyn förklarar vilka uppgifter som samlas in, hur de används och vilka rättigheter du har när du använder appen dizi.jpg och webbplatsen dizijpg.com.',
+  'Topladığımız Veriler': 'Uppgifter vi samlar in',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Konto: e-postadress, användarnamn och lösenord. Lösenord lagras oåterkalleligt hashade; gästkonton kan användas utan e-post.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: uppgifter du själv väljer att lägga till, som avatar, omslagsbild, bio och land.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Användning: din tittarhistorik, dina betyg, kommentarer, listor, reaktioner och favoriter.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Meddelanden: dina text-, bild- och röstmeddelanden lagras på våra servrar. Meddelanden är inte totalsträckskrypterade; de granskas endast vid en anmälan, i modereringssyfte.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Uppladdade medier: foton, GIF:ar, videor och röstinspelningar som du lägger till i din profil, dina kommentarer och meddelanden.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Tekniskt: IP-adress, ungefärlig plats (land/stad), enhetsplattform, appversion och felloggar. Dessa sparas för säkerhet och felsökning.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Aviseringar: för pushaviseringar sparar vi din enhetstoken och ditt språkval. Du kan när som helst stänga av aviseringar i enhetens inställningar.',
+  'Verileri Nasıl Kullanırız': 'Hur vi använder dina uppgifter',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Vi använder dina uppgifter enbart för att tillhandahålla tjänsten, skydda ditt konto, skicka aviseringar, åtgärda fel och förhindra missbruk. Vi säljer inte dina uppgifter och delar dem inte med någon i reklamsyfte.',
+  'Çerezler ve Yerel Depolama': 'Cookies och lokal lagring',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Vi använder lokal lagring endast för att hålla dig inloggad och komma ihåg val som språk och tema. Det finns inga reklam- eller spårningscookies.',
+  'Üçüncü Taraf Hizmetler': 'Tredjepartstjänster',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Serie- och filmdata kommer från TMDB, information om streamingtjänster från JustWatch. Pushaviseringar levereras via Google Firebase och webbplatstrafiken skyddas av Cloudflare. För dessa tjänster gäller deras egna integritetspolicyer.',
+  'Saklama ve Silme': 'Lagring och radering',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Dina uppgifter sparas så länge ditt konto finns. Med "Radera mitt konto" i inställningarna kan du radera kontot permanent; dina uppgifter raderas direkt och kopior i säkerhetskopior senast inom 14 dagar. Felloggar raderas automatiskt efter 30 dagar.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Du kan exportera dina uppgifter som ZIP från inställningarna; arkivet skickas till din e-postadress.',
+  'Güvenlik': 'Säkerhet',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Uppgifter överförs via krypterade anslutningar (HTTPS) och lagras på servrar med begränsad åtkomst.',
+  'Çocukların Gizliliği': 'Barns integritet',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg riktar sig inte till barn under 13 år.',
+  'Hakların': 'Dina rättigheter',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Enligt KVKK och GDPR har du rätt att få tillgång till, rätta, radera och flytta dina uppgifter. Skriv till oss om detta: {}',
+  'Değişiklikler': 'Ändringar',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Om policyn ändras publiceras den nya versionen på den här sidan och datumet uppdateras.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'Genom att registrera dig godkänner du {}.',
 };

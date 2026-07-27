@@ -4,6 +4,7 @@ const Map<String, String> cevirilerMr = {
       'इंपोर्ट करण्यासारखा कोणताही डेटा सापडला नाही.',
   'Arama': 'शोध',
   'Aramaya başla': 'शोधायला सुरुवात करा',
+  'Son aramalar': 'अलीकडील शोध',
   'Ayarlar': 'सेटिंग्ज',
   'Bağla': 'लिंक करा',
   'Bio': 'बायो',
@@ -231,7 +232,7 @@ const Map<String, String> cevirilerMr = {
   'Mesaj silinemedi': 'संदेश हटवता आला नाही',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'दुवा अवैध आहे किंवा पृष्ठ सापडले नाही',
-  'Keşfet\'e dön': 'शोधाकडे परत जा',
+  'Keşfet\'e dön': 'डिस्कव्हरकडे परत जा',
   'Düzenle': 'संपादित करा',
   'Mesajı düzenle': 'संदेश संपादित करा',
   'Yanıtlanıyor': 'उत्तर देत आहे',
@@ -254,4 +255,90 @@ const Map<String, String> cevirilerMr = {
   'Bir profile girip mesaj gönderebilirsin.': 'प्रोफाइल उघडा आणि संदेश पाठवा.',
   'Listeyi sil': 'सूची हटवा',
   'Puan kaydedilemedi': 'रेटिंग जतन करता आली नाही',
+  'Nerede İzlenir': 'कुठे पाहावे',
+  'Abonelik': 'सदस्यता',
+  'Kirala': 'भाड्याने घ्या',
+  'Satın al': 'खरेदी करा',
+  'Hoş geldin!': 'स्वागत आहे!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'तुम्हाला पाहायचे असलेले शो आणि चित्रपट निवडा',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'तुमच्या निवडी तुमच्या वॉचलिस्टमध्ये जोडल्या जातील',
+  'Şimdilik atla': 'आत्ता वगळा',
+  'Devam et': 'सुरू ठेवा',
+  '{} ekle': '{} जोडा',
+  'Şikayet et': 'तक्रार करा',
+  'Engelle': 'ब्लॉक करा',
+  'Engeli kaldır': 'अनब्लॉक करा',
+  'Kullanıcı engellendi': 'वापरकर्ता ब्लॉक केला',
+  'Engel kaldırıldı': 'ब्लॉक काढला',
+  'Şikayet sebebi': 'तक्रारीचे कारण',
+  'Spam veya yanıltıcı': 'स्पॅम किंवा दिशाभूल करणारे',
+  'Taciz veya nefret söylemi': 'छळ किंवा द्वेषपूर्ण भाषण',
+  'Uygunsuz / cinsel içerik': 'अयोग्य / लैंगिक आशय',
+  'Şiddet veya tehlikeli içerik': 'हिंसा किंवा धोकादायक आशय',
+  'Telif hakkı ihlali': 'कॉपीराइट उल्लंघन',
+  'Şikayetin alındı, teşekkürler': 'तुझी तक्रार मिळाली, धन्यवाद',
+  'Hesabımı Sil': 'माझे खाते हटवा',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'तुझे खाते आणि सर्व डेटा (इतिहास, रेटिंग, कमेंट, याद्या, संदेश) कायमचा हटवला जाईल. हे परत करता येणार नाही.',
+  'Şifreni gir': 'तुझा पासवर्ड टाक',
+  'Hesabımı kalıcı sil': 'माझे खाते कायमचे हटवा',
+  'Sesli mesaj': 'व्हॉइस मेसेज',
+  'Ses gönderilemedi': 'व्हॉइस मेसेज पाठवता आला नाही',
+  'Kaydediliyor…': 'रेकॉर्ड होत आहे…',
+  'Ses oynatılamadı': 'ऑडिओ प्ले होऊ शकला नाही',
+  'Oynat': 'प्ले कर',
+  'Duraklat': 'थांबव',
+  'Liste görünümü': 'सूची दृश्य',
+  'Takvim görünümü': 'कॅलेंडर दृश्य',
+  'Önceki ay': 'मागील महिना',
+  'Sonraki ay': 'पुढील महिना',
+  'Bu gün bölüm yok': 'या दिवशी कोणताही भाग नाही',
+  'Gizlilik Politikası': 'गोपनीयता धोरण',
+  'Son güncelleme: {}': 'शेवटचे अपडेट: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg अ‍ॅप आणि dizijpg.com साइट वापरताना कोणता डेटा गोळा होतो, तो कसा वापरला जातो आणि तुझे हक्क काय आहेत, हे हे धोरण सांगते.',
+  'Topladığımız Veriler': 'आम्ही गोळा करतो तो डेटा',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'खाते: ईमेल पत्ता, यूजरनेम आणि पासवर्ड. पासवर्ड परत वाचता न येणाऱ्या हॅश स्वरूपात ठेवले जातात; गेस्ट खाती ईमेलशिवायही वापरता येतात.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'प्रोफाइल: अवतार, कव्हर इमेज, बायो आणि देश यांसारखी तू स्वतः जोडलेली माहिती.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'वापर: तुझा पाहण्याचा इतिहास, रेटिंग, टिप्पण्या, याद्या, रिअ‍ॅक्शन आणि आवडते.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'संदेश: तुझे मजकूर, इमेज आणि व्हॉइस संदेश आमच्या सर्व्हरवर साठवले जातात. संदेश एंड-टू-एंड एनक्रिप्टेड नाहीत; तक्रार आल्यासच मॉडरेशनसाठी पाहिले जातात.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'अपलोड केलेला मीडिया: प्रोफाइल, टिप्पण्या आणि संदेशांत जोडलेले फोटो, GIF, व्हिडिओ आणि व्हॉइस रेकॉर्डिंग.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'तांत्रिक: IP पत्ता, अंदाजे स्थान (देश/शहर पातळी), डिव्हाइस प्लॅटफॉर्म, अ‍ॅप आवृत्ती आणि एरर लॉग. हे सुरक्षा आणि दोष दुरुस्तीसाठी ठेवले जातात.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'सूचना: पुश सूचनांसाठी तुझ्या डिव्हाइसचा टोकन आणि भाषेची निवड साठवली जाते. डिव्हाइसच्या सेटिंग्जमधून सूचना कधीही बंद करू शकतोस.',
+  'Verileri Nasıl Kullanırız': 'आम्ही डेटा कसा वापरतो',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'तुझा डेटा फक्त सेवा देणे, खाते सुरक्षित ठेवणे, सूचना पाठवणे, दोष दुरुस्त करणे आणि गैरवापर रोखणे यासाठीच वापरतो. आम्ही तुझा डेटा विकत नाही आणि जाहिरातीसाठी कोणाशीही शेअर करत नाही.',
+  'Çerezler ve Yerel Depolama': 'कुकीज आणि लोकल स्टोरेज',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'लोकल स्टोरेज फक्त तुला लॉग-इन ठेवण्यासाठी आणि भाषा/थीमसारख्या आवडी लक्षात ठेवण्यासाठी वापरले जाते. जाहिरात किंवा ट्रॅकिंग कुकीज नाहीत.',
+  'Üçüncü Taraf Hizmetler': 'तृतीय-पक्ष सेवा',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'मालिका आणि चित्रपटांचा डेटा TMDB कडून, स्ट्रीमिंग प्लॅटफॉर्मची माहिती JustWatch कडून येते. पुश सूचना Google Firebase मार्फत पोहोचतात आणि साइटची वाहतूक Cloudflare सुरक्षित ठेवते. या सेवांना त्यांची स्वतःची गोपनीयता धोरणे लागू होतात.',
+  'Saklama ve Silme': 'साठवण आणि हटवणे',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'तुझे खाते असेपर्यंत तुझा डेटा राहतो. सेटिंग्जमधील "माझे खाते हटवा" ने खाते कायमचे हटवू शकतोस; डेटा लगेच आणि बॅकअपमधील प्रती जास्तीत जास्त १४ दिवसांत हटतात. एरर लॉग ३० दिवसांनी आपोआप हटतात.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'सेटिंग्जमधून तुझा डेटा ZIP स्वरूपात निर्यात करू शकतोस; संग्रह तुझ्या ईमेल पत्त्यावर पाठवला जातो.',
+  'Güvenlik': 'सुरक्षा',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'डेटा एनक्रिप्टेड कनेक्शनने (HTTPS) जातो आणि मर्यादित प्रवेश असलेल्या सर्व्हरवर साठवला जातो.',
+  'Çocukların Gizliliği': 'मुलांची गोपनीयता',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg हे १३ वर्षांखालील मुलांसाठी नाही.',
+  'Hakların': 'तुझे हक्क',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK आणि GDPR अंतर्गत तुला तुझ्या डेटामध्ये प्रवेश, दुरुस्ती, हटवणे आणि हस्तांतरणाचा हक्क आहे. यासाठी आम्हाला लिही: {}',
+  'Değişiklikler': 'बदल',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'हे धोरण बदलल्यास नवी आवृत्ती याच पानावर प्रसिद्ध होईल आणि तारीख अपडेट होईल.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'नोंदणी करून तू {} स्वीकारतोस.',
 };

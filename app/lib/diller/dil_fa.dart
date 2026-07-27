@@ -4,6 +4,7 @@ const Map<String, String> cevirilerFa = {
       'داده‌ی قابل‌شناسایی برای انتقال پیدا نشد.',
   'Arama': 'جستجو',
   'Aramaya başla': 'جستجو را شروع کن',
+  'Son aramalar': 'جستجوهای اخیر',
   'Ayarlar': 'تنظیمات',
   'Bağla': 'اتصال',
   'Bio': 'بیو',
@@ -225,12 +226,12 @@ const Map<String, String> cevirilerFa = {
   'Açık': 'روشن',
   'İzleyenler': 'بینندگان',
   'Yorumunu yaz... (@ ile etiketle)': 'نظرت را بنویس... (@ برای برچسب‌زدن)',
-  '@{} bir yorumda seni etiketledi': '‏@{} شما را در یک نظر برچسب زد',
+  '@{} bir yorumda seni etiketledi': '‏@{} تو را در یک نظر برچسب زد',
   'Mesajı sil': 'حذف پیام',
   'Mesaj silinemedi': 'پیام حذف نشد',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'پیوند نامعتبر است یا صفحه پیدا نشد',
-  'Keşfet\'e dön': 'بازگشت به کشف',
+  'Keşfet\'e dön': 'بازگشت به کاوش',
   'Düzenle': 'ویرایش',
   'Mesajı düzenle': 'ویرایش پیام',
   'Yanıtlanıyor': 'در حال پاسخ',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerFa = {
   'Bir profile girip mesaj gönderebilirsin.': 'یک نمایه باز کن و پیام بفرست.',
   'Listeyi sil': 'حذف فهرست',
   'Puan kaydedilemedi': 'ذخیره امتیاز ممکن نشد',
+  'Nerede İzlenir': 'کجا ببینیم',
+  'Abonelik': 'اشتراک',
+  'Kirala': 'اجاره',
+  'Satın al': 'خرید',
+  'Hoş geldin!': 'خوش آمدید!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'سریال‌ها و فیلم‌هایی را که می‌خواهید ببینید انتخاب کنید',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'انتخاب‌های شما به فهرست تماشا اضافه می‌شود',
+  'Şimdilik atla': 'فعلاً رد شو',
+  'Devam et': 'ادامه',
+  '{} ekle': 'افزودن {}',
+  'Şikayet et': 'گزارش',
+  'Engelle': 'مسدود کردن',
+  'Engeli kaldır': 'رفع مسدودیت',
+  'Kullanıcı engellendi': 'کاربر مسدود شد',
+  'Engel kaldırıldı': 'مسدودیت برداشته شد',
+  'Şikayet sebebi': 'دلیل گزارش',
+  'Spam veya yanıltıcı': 'هرزنامه یا گمراه‌کننده',
+  'Taciz veya nefret söylemi': 'آزار یا نفرت‌پراکنی',
+  'Uygunsuz / cinsel içerik': 'محتوای نامناسب / جنسی',
+  'Şiddet veya tehlikeli içerik': 'خشونت یا محتوای خطرناک',
+  'Telif hakkı ihlali': 'نقض حق تکثیر',
+  'Şikayetin alındı, teşekkürler': 'گزارش تو دریافت شد، ممنون',
+  'Hesabımı Sil': 'حذف حساب',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'حساب تو و همه داده‌هایت (تاریخچه، امتیازها، نظرها، فهرست‌ها، پیام‌ها) برای همیشه حذف می‌شود. این کار قابل بازگشت نیست.',
+  'Şifreni gir': 'رمز عبورت را وارد کن',
+  'Hesabımı kalıcı sil': 'حذف همیشگی حساب',
+  'Sesli mesaj': 'پیام صوتی',
+  'Ses gönderilemedi': 'پیام صوتی ارسال نشد',
+  'Kaydediliyor…': 'در حال ضبط…',
+  'Ses oynatılamadı': 'پخش صدا ممکن نشد',
+  'Oynat': 'پخش',
+  'Duraklat': 'مکث',
+  'Liste görünümü': 'نمای فهرست',
+  'Takvim görünümü': 'نمای تقویم',
+  'Önceki ay': 'ماه قبل',
+  'Sonraki ay': 'ماه بعد',
+  'Bu gün bölüm yok': 'این روز قسمتی نیست',
+  'Gizlilik Politikası': 'سیاست حفظ حریم خصوصی',
+  'Son güncelleme: {}': 'آخرین به‌روزرسانی: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'این سیاست توضیح می‌دهد هنگام استفاده از اپلیکیشن dizi.jpg و سایت dizijpg.com چه داده‌هایی جمع‌آوری می‌شود، چگونه استفاده می‌شود و چه حقوقی داری.',
+  'Topladığımız Veriler': 'داده‌هایی که جمع‌آوری می‌کنیم',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'حساب: نشانی ایمیل، نام کاربری و رمز عبور. رمزهای عبور به‌صورت هش برگشت‌ناپذیر ذخیره می‌شوند؛ حساب‌های مهمان را می‌توان بدون ایمیل استفاده کرد.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'پروفایل: اطلاعاتی که خودت انتخاب می‌کنی اضافه کنی، مانند آواتار، تصویر کاور، بیو و کشور.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'استفاده: تاریخچه تماشا، امتیازها، نظرها، فهرست‌ها، واکنش‌ها و علاقه‌مندی‌هایت.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'پیام‌ها: پیام‌های متنی، تصویری و صوتی تو روی سرورهای ما ذخیره می‌شوند. پیام‌ها رمزگذاری سرتاسری ندارند؛ فقط در صورت گزارش‌شدن و برای نظارت بررسی می‌شوند.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'رسانه‌های بارگذاری‌شده: عکس‌ها، GIFها، ویدیوها و ضبط‌های صوتی که به پروفایل، نظرها و پیام‌هایت اضافه می‌کنی.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'داده‌های فنی: نشانی IP، موقعیت تقریبی (کشور/شهر)، پلتفرم دستگاه، نسخه اپلیکیشن و گزارش‌های خطا. این‌ها برای امنیت و رفع اشکال نگهداری می‌شوند.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'اعلان‌ها: برای اعلان‌های پوش، توکن دستگاه و زبان انتخابی‌ات را نگه می‌داریم. هر وقت بخواهی می‌توانی اعلان‌ها را از تنظیمات دستگاه خاموش کنی.',
+  'Verileri Nasıl Kullanırız': 'چطور از داده‌هایت استفاده می‌کنیم',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'از داده‌هایت فقط برای ارائه سرویس، محافظت از حساب، ارسال اعلان، رفع خطاها و جلوگیری از سوءاستفاده استفاده می‌کنیم. داده‌هایت را نمی‌فروشیم و برای تبلیغات با هیچ‌کس به اشتراک نمی‌گذاریم.',
+  'Çerezler ve Yerel Depolama': 'کوکی‌ها و ذخیره‌سازی محلی',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'از ذخیره‌سازی محلی فقط برای باز نگه داشتن نشستت و به‌خاطر سپردن ترجیح‌هایی مانند زبان و پوسته استفاده می‌کنیم. هیچ کوکی تبلیغاتی یا ردیابی وجود ندارد.',
+  'Üçüncü Taraf Hizmetler': 'سرویس‌های شخص ثالث',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'اطلاعات سریال‌ها و فیلم‌ها از TMDB و اطلاعات پلتفرم‌های پخش از JustWatch می‌آید. اعلان‌های پوش از طریق Google Firebase ارسال می‌شوند و ترافیک سایت را Cloudflare محافظت می‌کند. این سرویس‌ها تابع سیاست‌های حریم خصوصی خودشان هستند.',
+  'Saklama ve Silme': 'نگهداری و حذف',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'داده‌هایت تا زمانی که حسابت فعال است نگهداری می‌شوند. با «حذف حساب من» در تنظیمات می‌توانی حسابت را برای همیشه حذف کنی؛ داده‌هایت بلافاصله و نسخه‌های موجود در پشتیبان‌ها حداکثر تا ۱۴ روز پاک می‌شوند. گزارش‌های خطا پس از ۳۰ روز به‌طور خودکار حذف می‌شوند.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'می‌توانی داده‌هایت را از تنظیمات به‌صورت ZIP خروجی بگیری؛ آرشیو به نشانی ایمیلت فرستاده می‌شود.',
+  'Güvenlik': 'امنیت',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'داده‌ها از طریق اتصال‌های رمزگذاری‌شده (HTTPS) منتقل و روی سرورهایی با دسترسی محدود نگهداری می‌شوند.',
+  'Çocukların Gizliliği': 'حریم خصوصی کودکان',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      '‏dizi.jpg برای کودکان زیر ۱۳ سال طراحی نشده است.',
+  'Hakların': 'حقوق تو',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'طبق KVKK و GDPR حق دسترسی به داده‌هایت، اصلاح، حذف و انتقال آن‌ها را داری. برای این موارد برایمان بنویس: {}',
+  'Değişiklikler': 'تغییرات',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'اگر این سیاست تغییر کند، نسخه جدید در همین صفحه منتشر و تاریخ به‌روزرسانی می‌شود.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'با ثبت‌نام، {} را می‌پذیری.',
 };

@@ -4,6 +4,7 @@ const Map<String, String> cevirilerNl = {
       'Geen herkende gegevens gevonden om te importeren.',
   'Arama': 'Zoeken',
   'Aramaya başla': 'Begin met zoeken',
+  'Son aramalar': 'Recente zoekopdrachten',
   'Ayarlar': 'Instellingen',
   'Bağla': 'Koppelen',
   'Bio': 'Bio',
@@ -254,4 +255,91 @@ const Map<String, String> cevirilerNl = {
       'Open een profiel en stuur een bericht.',
   'Listeyi sil': 'Lijst verwijderen',
   'Puan kaydedilemedi': 'Beoordeling kon niet worden opgeslagen',
+  'Nerede İzlenir': 'Waar te kijken',
+  'Abonelik': 'Abonnement',
+  'Kirala': 'Huren',
+  'Satın al': 'Kopen',
+  'Hoş geldin!': 'Welkom!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Kies series en films die je wilt kijken',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Je keuzes worden aan je kijklijst toegevoegd',
+  'Şimdilik atla': 'Nu overslaan',
+  'Devam et': 'Doorgaan',
+  '{} ekle': '{} toevoegen',
+  'Şikayet et': 'Rapporteren',
+  'Engelle': 'Blokkeren',
+  'Engeli kaldır': 'Deblokkeren',
+  'Kullanıcı engellendi': 'Gebruiker geblokkeerd',
+  'Engel kaldırıldı': 'Blokkering opgeheven',
+  'Şikayet sebebi': 'Reden van melding',
+  'Spam veya yanıltıcı': 'Spam of misleidend',
+  'Taciz veya nefret söylemi': 'Intimidatie of haatzaaien',
+  'Uygunsuz / cinsel içerik': 'Ongepaste / seksuele inhoud',
+  'Şiddet veya tehlikeli içerik': 'Geweld of gevaarlijke inhoud',
+  'Telif hakkı ihlali': 'Auteursrechtschending',
+  'Şikayetin alındı, teşekkürler': 'Je melding is ontvangen, bedankt',
+  'Hesabımı Sil': 'Mijn account verwijderen',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Je account en al je gegevens (kijkgeschiedenis, beoordelingen, reacties, lijsten, berichten) worden permanent verwijderd. Dit kan niet ongedaan worden gemaakt.',
+  'Şifreni gir': 'Voer je wachtwoord in',
+  'Hesabımı kalıcı sil': 'Mijn account permanent verwijderen',
+  'Sesli mesaj': 'Spraakbericht',
+  'Ses gönderilemedi': 'Spraakbericht kon niet worden verzonden',
+  'Kaydediliyor…': 'Opnemen…',
+  'Ses oynatılamadı': 'Spraakbericht kon niet worden afgespeeld',
+  'Oynat': 'Afspelen',
+  'Duraklat': 'Pauzeren',
+  'Liste görünümü': 'Lijstweergave',
+  'Takvim görünümü': 'Kalenderweergave',
+  'Önceki ay': 'Vorige maand',
+  'Sonraki ay': 'Volgende maand',
+  'Bu gün bölüm yok': 'Geen afleveringen op deze dag',
+  'Gizlilik Politikası': 'Privacybeleid',
+  'Son güncelleme: {}': 'Laatst bijgewerkt: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Dit beleid legt uit welke gegevens worden verzameld, hoe ze worden gebruikt en welke rechten je hebt wanneer je de dizi.jpg-app en de website dizijpg.com gebruikt.',
+  'Topladığımız Veriler': 'Gegevens die we verzamelen',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Account: e-mailadres, gebruikersnaam en wachtwoord. Wachtwoorden worden onomkeerbaar gehasht opgeslagen; gastaccounts kunnen zonder e-mail worden gebruikt.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profiel: gegevens die je zelf kiest toe te voegen, zoals avatar, omslagfoto, bio en land.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Gebruik: je kijkgeschiedenis, beoordelingen, reacties, lijsten, reacties-emoji\'s en favorieten.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Berichten: je tekst-, beeld- en spraakberichten worden op onze servers opgeslagen. Berichten zijn niet end-to-end versleuteld; ze worden alleen bij een melding voor moderatie bekeken.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Geüploade media: foto\'s, GIF\'s, video\'s en spraakopnamen die je toevoegt aan je profiel, reacties en berichten.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Technisch: IP-adres, geschatte locatie (land/stad), apparaatplatform, app-versie en foutlogboeken. Deze worden bewaard voor beveiliging en probleemoplossing.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Meldingen: voor pushmeldingen bewaren we je apparaattoken en taalvoorkeur. Je kunt meldingen altijd uitschakelen in de instellingen van je apparaat.',
+  'Verileri Nasıl Kullanırız': 'Hoe we je gegevens gebruiken',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'We gebruiken je gegevens alleen om de dienst te leveren, je account te beschermen, meldingen te sturen, fouten op te lossen en misbruik te voorkomen. We verkopen je gegevens niet en delen ze met niemand voor reclame.',
+  'Çerezler ve Yerel Depolama': 'Cookies en lokale opslag',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'We gebruiken lokale opslag alleen om je ingelogd te houden en voorkeuren zoals taal en thema te onthouden. Er zijn geen advertentie- of trackingcookies.',
+  'Üçüncü Taraf Hizmetler': 'Diensten van derden',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Serie- en filmgegevens komen van TMDB, informatie over streamingdiensten van JustWatch. Pushmeldingen worden bezorgd via Google Firebase en het siteverkeer wordt beschermd door Cloudflare. Voor deze diensten gelden hun eigen privacybeleid.',
+  'Saklama ve Silme': 'Bewaren en verwijderen',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Je gegevens worden bewaard zolang je account bestaat. Met "Mijn account verwijderen" in de instellingen kun je je account definitief verwijderen; je gegevens worden direct gewist, kopieën in back-ups uiterlijk binnen 14 dagen. Foutlogboeken worden na 30 dagen automatisch verwijderd.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Je kunt je gegevens via de instellingen als ZIP exporteren; het archief wordt naar je e-mailadres gestuurd.',
+  'Güvenlik': 'Beveiliging',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Gegevens worden verzonden via versleutelde verbindingen (HTTPS) en opgeslagen op servers met beperkte toegang.',
+  'Çocukların Gizliliği': 'Privacy van kinderen',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg is niet bedoeld voor kinderen onder de 13 jaar.',
+  'Hakların': 'Je rechten',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Onder KVKK en GDPR heb je het recht om je gegevens in te zien, te corrigeren, te verwijderen en over te dragen. Schrijf ons hiervoor: {}',
+  'Değişiklikler': 'Wijzigingen',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Als dit beleid wijzigt, wordt de nieuwe versie op deze pagina gepubliceerd en wordt de datum bijgewerkt.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'Door je te registreren accepteer je het {}.',
 };

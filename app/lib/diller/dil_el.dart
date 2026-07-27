@@ -4,6 +4,7 @@ const Map<String, String> cevirilerEl = {
       'Δεν βρέθηκαν αναγνωρίσιμα δεδομένα για εισαγωγή.',
   'Arama': 'Αναζήτηση',
   'Aramaya başla': 'Ξεκίνα την αναζήτηση',
+  'Son aramalar': 'Πρόσφατες αναζητήσεις',
   'Ayarlar': 'Ρυθμίσεις',
   'Bağla': 'Σύνδεσε',
   'Bio': 'Βιογραφικό',
@@ -240,9 +241,9 @@ const Map<String, String> cevirilerEl = {
   'Video': 'Βίντεο',
   'İçerik': 'Περιεχόμενο',
   'çevrimiçi': 'συνδεδεμένος',
-  'son görülme {} dk önce': 'είδε πριν {} λ',
-  'son görülme {} saat önce': 'είδε πριν {} ώ',
-  'son görülme {} gün önce': 'είδε πριν {} μ',
+  'son görülme {} dk önce': 'εθεάθη πριν {} λ',
+  'son görülme {} saat önce': 'εθεάθη πριν {} ώ',
+  'son görülme {} gün önce': 'εθεάθη πριν {} μ',
   'Yorumlar yüklenemedi': 'Δεν ήταν δυνατή η φόρτωση σχολίων',
   'Favori': 'Αγαπημένο',
   'Listeye ekle': 'Προσθήκη σε λίστα',
@@ -255,4 +256,91 @@ const Map<String, String> cevirilerEl = {
       'Άνοιξε ένα προφίλ και στείλε μήνυμα.',
   'Listeyi sil': 'Διαγραφή λίστας',
   'Puan kaydedilemedi': 'Δεν ήταν δυνατή η αποθήκευση βαθμολογίας',
+  'Nerede İzlenir': 'Πού να δείτε',
+  'Abonelik': 'Συνδρομή',
+  'Kirala': 'Ενοικίαση',
+  'Satın al': 'Αγορά',
+  'Hoş geldin!': 'Καλώς ήρθες!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Διάλεξε σειρές και ταινίες που θέλεις να δεις',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Οι επιλογές σου προστίθενται στη λίστα σου',
+  'Şimdilik atla': 'Παράλειψη προς το παρόν',
+  'Devam et': 'Συνέχεια',
+  '{} ekle': 'Προσθήκη {}',
+  'Şikayet et': 'Αναφορά',
+  'Engelle': 'Αποκλεισμός',
+  'Engeli kaldır': 'Άρση αποκλεισμού',
+  'Kullanıcı engellendi': 'Ο χρήστης αποκλείστηκε',
+  'Engel kaldırıldı': 'Ο αποκλεισμός αφαιρέθηκε',
+  'Şikayet sebebi': 'Λόγος αναφοράς',
+  'Spam veya yanıltıcı': 'Ανεπιθύμητο ή παραπλανητικό',
+  'Taciz veya nefret söylemi': 'Παρενόχληση ή ρητορική μίσους',
+  'Uygunsuz / cinsel içerik': 'Ακατάλληλο / σεξουαλικό περιεχόμενο',
+  'Şiddet veya tehlikeli içerik': 'Βία ή επικίνδυνο περιεχόμενο',
+  'Telif hakkı ihlali': 'Παραβίαση πνευματικών δικαιωμάτων',
+  'Şikayetin alındı, teşekkürler': 'Η αναφορά σου ελήφθη, ευχαριστούμε',
+  'Hesabımı Sil': 'Διαγραφή λογαριασμού',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Ο λογαριασμός σου και όλα τα δεδομένα σου (ιστορικό, βαθμολογίες, σχόλια, λίστες, μηνύματα) θα διαγραφούν οριστικά. Αυτό δεν αναιρείται.',
+  'Şifreni gir': 'Εισάγαγε τον κωδικό σου',
+  'Hesabımı kalıcı sil': 'Οριστική διαγραφή λογαριασμού',
+  'Sesli mesaj': 'Φωνητικό μήνυμα',
+  'Ses gönderilemedi': 'Δεν ήταν δυνατή η αποστολή του φωνητικού μηνύματος',
+  'Kaydediliyor…': 'Εγγραφή…',
+  'Ses oynatılamadı': 'Δεν ήταν δυνατή η αναπαραγωγή του ήχου',
+  'Oynat': 'Αναπαραγωγή',
+  'Duraklat': 'Παύση',
+  'Liste görünümü': 'Προβολή λίστας',
+  'Takvim görünümü': 'Προβολή ημερολογίου',
+  'Önceki ay': 'Προηγούμενος μήνας',
+  'Sonraki ay': 'Επόμενος μήνας',
+  'Bu gün bölüm yok': 'Κανένα επεισόδιο αυτήν την ημέρα',
+  'Gizlilik Politikası': 'Πολιτική Απορρήτου',
+  'Son güncelleme: {}': 'Τελευταία ενημέρωση: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Αυτή η πολιτική εξηγεί ποια δεδομένα συλλέγονται, πώς χρησιμοποιούνται και ποια είναι τα δικαιώματά σου όταν χρησιμοποιείς την εφαρμογή dizi.jpg και τον ιστότοπο dizijpg.com.',
+  'Topladığımız Veriler': 'Δεδομένα που συλλέγουμε',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Λογαριασμός: διεύθυνση email, όνομα χρήστη και κωδικός πρόσβασης. Οι κωδικοί αποθηκεύονται ως μη αναστρέψιμο hash· οι λογαριασμοί επισκέπτη μπορούν να χρησιμοποιηθούν χωρίς email.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Προφίλ: πληροφορίες που επιλέγεις να προσθέσεις, όπως avatar, εικόνα εξωφύλλου, βιογραφικό και χώρα.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Χρήση: το ιστορικό προβολών σου, οι βαθμολογίες, τα σχόλια, οι λίστες, οι αντιδράσεις και τα αγαπημένα σου.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Μηνύματα: τα μηνύματα κειμένου, εικόνας και φωνής σου αποθηκεύονται στους διακομιστές μας. Τα μηνύματα δεν έχουν κρυπτογράφηση από άκρο σε άκρο· εξετάζονται μόνο αν αναφερθούν, για λόγους εποπτείας.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Ανεβασμένα πολυμέσα: φωτογραφίες, GIF, βίντεο και ηχογραφήσεις που προσθέτεις στο προφίλ, στα σχόλια και στα μηνύματά σου.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Τεχνικά: διεύθυνση IP, κατά προσέγγιση τοποθεσία (επίπεδο χώρας/πόλης), πλατφόρμα συσκευής, έκδοση εφαρμογής και αρχεία σφαλμάτων. Διατηρούνται για ασφάλεια και διόρθωση προβλημάτων.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Ειδοποιήσεις: για τις push ειδοποιήσεις αποθηκεύουμε το token της συσκευής σου και τη γλώσσα που προτιμάς. Μπορείς να απενεργοποιήσεις τις ειδοποιήσεις όποτε θες από τις ρυθμίσεις της συσκευής.',
+  'Verileri Nasıl Kullanırız': 'Πώς χρησιμοποιούμε τα δεδομένα σου',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Χρησιμοποιούμε τα δεδομένα σου μόνο για να παρέχουμε την υπηρεσία, να προστατεύουμε τον λογαριασμό σου, να στέλνουμε ειδοποιήσεις, να διορθώνουμε σφάλματα και να αποτρέπουμε την κατάχρηση. Δεν πουλάμε τα δεδομένα σου και δεν τα μοιραζόμαστε με κανέναν για διαφημιστικούς σκοπούς.',
+  'Çerezler ve Yerel Depolama': 'Cookies και τοπική αποθήκευση',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Χρησιμοποιούμε τοπική αποθήκευση μόνο για να παραμένεις συνδεδεμένος και να θυμόμαστε προτιμήσεις όπως γλώσσα και θέμα. Δεν υπάρχουν διαφημιστικά cookies ή cookies παρακολούθησης.',
+  'Üçüncü Taraf Hizmetler': 'Υπηρεσίες τρίτων',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Τα δεδομένα σειρών και ταινιών προέρχονται από το TMDB, οι πληροφορίες πλατφορμών streaming από το JustWatch. Οι push ειδοποιήσεις παραδίδονται μέσω Google Firebase και την κίνηση του ιστότοπου προστατεύει το Cloudflare. Οι υπηρεσίες αυτές διέπονται από τις δικές τους πολιτικές απορρήτου.',
+  'Saklama ve Silme': 'Διατήρηση και διαγραφή',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Τα δεδομένα σου διατηρούνται όσο υπάρχει ο λογαριασμός σου. Με το «Διαγραφή λογαριασμού» στις ρυθμίσεις μπορείς να διαγράψεις οριστικά τον λογαριασμό· τα δεδομένα διαγράφονται αμέσως και τα αντίγραφά τους στα αντίγραφα ασφαλείας το αργότερο σε 14 ημέρες. Τα αρχεία σφαλμάτων διαγράφονται αυτόματα μετά από 30 ημέρες.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Μπορείς να εξαγάγεις τα δεδομένα σου ως ZIP από τις ρυθμίσεις· το αρχείο αποστέλλεται στη διεύθυνση email σου.',
+  'Güvenlik': 'Ασφάλεια',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Τα δεδομένα μεταφέρονται μέσω κρυπτογραφημένων συνδέσεων (HTTPS) και αποθηκεύονται σε διακομιστές με περιορισμένη πρόσβαση.',
+  'Çocukların Gizliliği': 'Απόρρητο παιδιών',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'Το dizi.jpg δεν απευθύνεται σε παιδιά κάτω των 13 ετών.',
+  'Hakların': 'Τα δικαιώματά σου',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Βάσει KVKK και GDPR έχεις δικαίωμα πρόσβασης, διόρθωσης, διαγραφής και μεταφοράς των δεδομένων σου. Για αυτά γράψε μας: {}',
+  'Değişiklikler': 'Αλλαγές',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Αν αλλάξει αυτή η πολιτική, η νέα έκδοση θα δημοσιευτεί σε αυτή τη σελίδα και θα ενημερωθεί η ημερομηνία.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'Με την εγγραφή σου αποδέχεσαι την {}.',
 };

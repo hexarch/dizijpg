@@ -641,6 +641,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
               ),
             ),
           ),
+          // Nerede izlenir (TMDB / JustWatch)
+          SliverToBoxAdapter(
+            child: _NeredeIzlenir(saglayicilar: c['watch/providers']),
+          ),
           // Sezonlar (dizi)
           if (tv)
             SliverToBoxAdapter(
@@ -689,7 +693,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       itemCount: kadro.length.clamp(0, 20),
-                      separatorBuilder: (_, __) => const SizedBox(width: 12),
+                      separatorBuilder: (_, _) => const SizedBox(width: 12),
                       itemBuilder: (context, i) {
                         final o = kadro[i] as Map<String, dynamic>;
                         final foto = posterUrl(
@@ -816,7 +820,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
                 turZorla: widget.tur,
               ),
             ),
-          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          SliverToBoxAdapter(
+            child: SizedBox(height: altGuvenli(context, ekstra: 32)),
+          ),
         ],
       ),
     );
@@ -1092,6 +1098,164 @@ class _BolumSatiri extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// TMDB "watch/providers" verisinden içeriğin hangi platformlarda
+/// (abonelik/kirala/satın al) olduğunu bölgeye göre gösterir.
+class _NeredeIzlenir extends StatelessWidget {
+  final dynamic saglayicilar; // c['watch/providers']
+  const _NeredeIzlenir({required this.saglayicilar});
+
+  /// Uygulama diline göre öncelikli bölge (ISO ülke kodu).
+  static const _bolgeler = {
+    'tr': 'TR',
+    'en': 'US',
+    'zh': 'CN',
+    'hi': 'IN',
+    'es': 'ES',
+    'fr': 'FR',
+    'ar': 'SA',
+    'bn': 'BD',
+    'pt': 'BR',
+    'ru': 'RU',
+    'ur': 'PK',
+    'id': 'ID',
+    'de': 'DE',
+    'ja': 'JP',
+    'sw': 'TZ',
+    'mr': 'IN',
+    'te': 'IN',
+    'vi': 'VN',
+    'ko': 'KR',
+    'ta': 'IN',
+    'it': 'IT',
+    'fa': 'IR',
+    'pl': 'PL',
+    'uk': 'UA',
+    'ro': 'RO',
+    'nl': 'NL',
+    'th': 'TH',
+    'gu': 'IN',
+    'kn': 'IN',
+    'ml': 'IN',
+    'pa': 'IN',
+    'ms': 'MY',
+    'my': 'MM',
+    'am': 'ET',
+    'az': 'AZ',
+    'el': 'GR',
+    'hu': 'HU',
+    'cs': 'CZ',
+    'sv': 'SE',
+    'he': 'IL',
+    'fil': 'PH',
+    'sr': 'RS',
+    'bg': 'BG',
+    'da': 'DK',
+    'fi': 'FI',
+    'nb': 'NO',
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final sonuclar = (saglayicilar is Map)
+        ? (saglayicilar['results'] as Map<String, dynamic>?)
+        : null;
+    if (sonuclar == null || sonuclar.isEmpty) return const SizedBox.shrink();
+
+    // Tercih bölgesi → ABD → İngiltere → mevcut ilk bölge
+    final tercih = _bolgeler[Ceviri.dil.value] ?? 'US';
+    final bolgeKod = sonuclar.containsKey(tercih)
+        ? tercih
+        : sonuclar.containsKey('US')
+        ? 'US'
+        : sonuclar.containsKey('GB')
+        ? 'GB'
+        : sonuclar.keys.first;
+    final bolge = sonuclar[bolgeKod] as Map<String, dynamic>;
+
+    final gruplar = <(String, List<dynamic>)>[
+      ('Abonelik'.c, (bolge['flatrate'] as List<dynamic>?) ?? const []),
+      ('Kirala'.c, (bolge['rent'] as List<dynamic>?) ?? const []),
+      ('Satın al'.c, (bolge['buy'] as List<dynamic>?) ?? const []),
+    ].where((g) => g.$2.isNotEmpty).toList();
+    if (gruplar.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+          child: Text(
+            'Nerede İzlenir'.c,
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
+          ),
+        ),
+        for (final g in gruplar)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  g.$1,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: DiziRenkler.metin54,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (final s in g.$2)
+                      _saglayiciRozet(s as Map<String, dynamic>),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        // JustWatch atıfı (TMDB kullanım koşulu)
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+          child: Text(
+            'Veri: JustWatch',
+            style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _saglayiciRozet(Map<String, dynamic> s) {
+    final logo = posterUrl(s['logo_path'] as String?, boyut: 'w92');
+    final ad = (s['provider_name'] as String?) ?? '';
+    return Tooltip(
+      message: ad,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: logo == null
+            ? Container(
+                width: 48,
+                height: 48,
+                color: DiziRenkler.metin12,
+                alignment: Alignment.center,
+                child: Text(
+                  ad.isNotEmpty ? ad[0] : '?',
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              )
+            : CachedNetworkImage(
+                imageUrl: logo,
+                width: 48,
+                height: 48,
+                fit: BoxFit.cover,
+              ),
       ),
     );
   }

@@ -4,6 +4,7 @@ const Map<String, String> cevirilerRu = {
       'Не найдено распознанных данных для импорта.',
   'Arama': 'Поиск',
   'Aramaya başla': 'Начни поиск',
+  'Son aramalar': 'Недавние запросы',
   'Ayarlar': 'Настройки',
   'Bağla': 'Привязать',
   'Bio': 'Био',
@@ -211,7 +212,7 @@ const Map<String, String> cevirilerRu = {
   '100 Beğeni': '100 лайков',
   'yazıyor...': 'печатает...',
   'Profil düzeni': 'Порядок разделов профиля',
-  'Konumla ve kırp': 'Выберите область и обрежьте',
+  'Konumla ve kırp': 'Выбери область и обрежь',
   'Listeye eklendi': 'Добавлено в список',
   'Listeyi sil?': 'Удалить список?',
   'Sil': 'Удалить',
@@ -225,8 +226,8 @@ const Map<String, String> cevirilerRu = {
   'Açık': 'Светлая',
   'İzleyenler': 'Зрители',
   'Yorumunu yaz... (@ ile etiketle)':
-      'Напишите комментарий... (@ чтобы отметить)',
-  '@{} bir yorumda seni etiketledi': '@{} упомянул вас в комментарии',
+      'Напиши комментарий... (@ чтобы отметить)',
+  '@{} bir yorumda seni etiketledi': '@{} упомянул тебя в комментарии',
   'Mesajı sil': 'Удалить сообщение',
   'Mesaj silinemedi': 'Не удалось удалить сообщение',
   'Bağlantı geçersiz veya sayfa bulunamadı':
@@ -249,10 +250,96 @@ const Map<String, String> cevirilerRu = {
   'İçerik paylaş': 'Поделиться',
   'Kapat': 'Закрыть',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
-      'Всё, что вы отметите просмотренным, собирается здесь.',
+      'Всё, что ты отметишь просмотренным, собирается здесь.',
   'Henüz sohbetin yok': 'Пока нет переписок',
   'Bir profile girip mesaj gönderebilirsin.':
-      'Откройте профиль и отправьте сообщение.',
+      'Открой профиль и отправь сообщение.',
   'Listeyi sil': 'Удалить список',
   'Puan kaydedilemedi': 'Не удалось сохранить оценку',
+  'Nerede İzlenir': 'Где смотреть',
+  'Abonelik': 'Подписка',
+  'Kirala': 'Аренда',
+  'Satın al': 'Купить',
+  'Hoş geldin!': 'Добро пожаловать!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Выбери сериалы и фильмы, которые хочешь посмотреть',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Выбранное добавится в твой список «Буду смотреть»',
+  'Şimdilik atla': 'Пропустить',
+  'Devam et': 'Продолжить',
+  '{} ekle': 'Добавить {}',
+  'Şikayet et': 'Пожаловаться',
+  'Engelle': 'Заблокировать',
+  'Engeli kaldır': 'Разблокировать',
+  'Kullanıcı engellendi': 'Пользователь заблокирован',
+  'Engel kaldırıldı': 'Блокировка снята',
+  'Şikayet sebebi': 'Причина жалобы',
+  'Spam veya yanıltıcı': 'Спам или обман',
+  'Taciz veya nefret söylemi': 'Оскорбления или разжигание ненависти',
+  'Uygunsuz / cinsel içerik': 'Неприемлемый / сексуальный контент',
+  'Şiddet veya tehlikeli içerik': 'Насилие или опасный контент',
+  'Telif hakkı ihlali': 'Нарушение авторских прав',
+  'Şikayetin alındı, teşekkürler': 'Твоя жалоба принята, спасибо',
+  'Hesabımı Sil': 'Удалить аккаунт',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Твой аккаунт и все данные (история, оценки, комментарии, списки, сообщения) будут удалены навсегда. Это нельзя отменить.',
+  'Şifreni gir': 'Введи пароль',
+  'Hesabımı kalıcı sil': 'Удалить аккаунт навсегда',
+  'Sesli mesaj': 'Голосовое сообщение',
+  'Ses gönderilemedi': 'Не удалось отправить голосовое сообщение',
+  'Kaydediliyor…': 'Запись…',
+  'Ses oynatılamadı': 'Не удалось воспроизвести аудио',
+  'Oynat': 'Воспроизвести',
+  'Duraklat': 'Пауза',
+  'Liste görünümü': 'Список',
+  'Takvim görünümü': 'Календарь',
+  'Önceki ay': 'Предыдущий месяц',
+  'Sonraki ay': 'Следующий месяц',
+  'Bu gün bölüm yok': 'В этот день нет серий',
+  'Gizlilik Politikası': 'Политика конфиденциальности',
+  'Son güncelleme: {}': 'Последнее обновление: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Эта политика объясняет, какие данные собираются, как они используются и какие у тебя есть права при использовании приложения dizi.jpg и сайта dizijpg.com.',
+  'Topladığımız Veriler': 'Какие данные мы собираем',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Аккаунт: адрес электронной почты, имя пользователя и пароль. Пароли хранятся в виде необратимого хеша; гостевыми аккаунтами можно пользоваться без почты.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Профиль: сведения, которые ты добавляешь по желанию, — аватар, обложка, био и страна.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Использование: твоя история просмотров, оценки, комментарии, списки, реакции и избранное.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Сообщения: твои текстовые, графические и голосовые сообщения хранятся на наших серверах. Сообщения не защищены сквозным шифрованием; их просматривают только при жалобе, в целях модерации.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Загруженные файлы: фото, GIF, видео и голосовые записи, которые ты добавляешь в профиль, комментарии и сообщения.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Технические данные: IP-адрес, приблизительное местоположение (страна/город), платформа устройства, версия приложения и журналы ошибок. Они хранятся для безопасности и отладки.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Уведомления: для push-уведомлений мы храним токен твоего устройства и выбранный язык. Уведомления можно в любой момент отключить в настройках устройства.',
+  'Verileri Nasıl Kullanırız': 'Как мы используем твои данные',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Мы используем твои данные только для работы сервиса, защиты аккаунта, отправки уведомлений, исправления ошибок и предотвращения злоупотреблений. Мы не продаём твои данные и не передаём их никому в рекламных целях.',
+  'Çerezler ve Yerel Depolama': 'Cookie и локальное хранилище',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Локальное хранилище используется только для того, чтобы не разлогинивать тебя и запоминать настройки вроде языка и темы. Рекламных и отслеживающих cookie нет.',
+  'Üçüncü Taraf Hizmetler': 'Сторонние сервисы',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Данные о сериалах и фильмах поступают из TMDB, сведения о стриминговых платформах — из JustWatch. Push-уведомления доставляются через Google Firebase, трафик сайта защищает Cloudflare. На эти сервисы распространяются их собственные политики конфиденциальности.',
+  'Saklama ve Silme': 'Хранение и удаление',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Твои данные хранятся, пока существует аккаунт. Через «Удалить аккаунт» в настройках можно удалить аккаунт навсегда; данные стираются сразу, а их копии в резервных копиях — не позднее чем через 14 дней. Журналы ошибок автоматически удаляются через 30 дней.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Ты можешь выгрузить свои данные в виде ZIP из настроек; архив придёт на твою электронную почту.',
+  'Güvenlik': 'Безопасность',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Данные передаются по зашифрованным соединениям (HTTPS) и хранятся на серверах с ограниченным доступом.',
+  'Çocukların Gizliliği': 'Конфиденциальность детей',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg не предназначен для детей младше 13 лет.',
+  'Hakların': 'Твои права',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Согласно KVKK и GDPR ты имеешь право на доступ к своим данным, их исправление, удаление и перенос. По этим вопросам напиши нам: {}',
+  'Değişiklikler': 'Изменения',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Если политика изменится, новая версия будет опубликована на этой странице, а дата обновления — изменена.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Регистрируясь, ты принимаешь {}.',
 };

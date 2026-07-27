@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'takvim_ay.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
 
@@ -30,6 +32,14 @@ class _TakvimEkraniState extends State<TakvimEkrani>
   List<dynamic>? _yaklasan;
   String? _hata;
   final Set<int> _acik = {}; // bölümleri açılmış diziler
+  bool _takvimModu = false; // liste mi ay-takvimi mi (tercih kalıcı)
+
+  /// Görünüm modunu değiştir + tercihi kaydet (sonraki açılışlarda hatırlanır).
+  Future<void> _modDegistir() async {
+    setState(() => _takvimModu = !_takvimModu);
+    final p = await SharedPreferences.getInstance();
+    await p.setBool('takvim_modu', _takvimModu);
+  }
 
   /// Bölüm modalını açar; "bıraktım" dönerse diziyi listeden anında kaldırır.
   Future<void> _modalAc(Map<String, dynamic> b) async {
@@ -60,6 +70,11 @@ class _TakvimEkraniState extends State<TakvimEkrani>
   void initState() {
     super.initState();
     _yukle();
+    SharedPreferences.getInstance().then((p) {
+      if (mounted) {
+        setState(() => _takvimModu = p.getBool('takvim_modu') ?? false);
+      }
+    });
   }
 
   Future<void> _yukle() async {
@@ -111,6 +126,9 @@ class _TakvimEkraniState extends State<TakvimEkrani>
             ),
         ],
       );
+    } else if (_takvimModu) {
+      // Ay-takvimi görünümü
+      govde = AyTakvimi(olaylar: _yaklasan!, onAc: _modalAc);
     } else if (_yaklasan!.isEmpty) {
       govde = Center(
         child: Padding(
@@ -278,7 +296,19 @@ class _TakvimEkraniState extends State<TakvimEkrani>
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Takvim'.c)),
+      appBar: AppBar(
+        title: Text('Takvim'.c),
+        actions: [
+          IconButton(
+            tooltip: _takvimModu ? 'Liste görünümü'.c : 'Takvim görünümü'.c,
+            onPressed: _modDegistir,
+            icon: Icon(
+              _takvimModu ? Icons.view_agenda_outlined : Icons.calendar_month,
+              color: DiziRenkler.sari,
+            ),
+          ),
+        ],
+      ),
       body: govde,
     );
   }

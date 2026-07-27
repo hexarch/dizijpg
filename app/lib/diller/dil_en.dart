@@ -3,6 +3,7 @@ const Map<String, String> cevirilerEn = {
   'Aktarılacak tanınan veri bulunamadı.': 'No recognized data found to import.',
   'Arama': 'Search',
   'Aramaya başla': 'Start searching',
+  'Son aramalar': 'Recent searches',
   'Ayarlar': 'Settings',
   'Bağla': 'Link',
   'Bio': 'Bio',
@@ -247,10 +248,96 @@ const Map<String, String> cevirilerEn = {
   'İçerik paylaş': 'Share content',
   'Kapat': 'Close',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
-      'Everything you mark as watched collects here.',
+      'Everything you mark as watched is collected here.',
   'Henüz sohbetin yok': 'No conversations yet',
   'Bir profile girip mesaj gönderebilirsin.':
       'Open a profile and send a message.',
   'Listeyi sil': 'Delete list',
   'Puan kaydedilemedi': 'Rating couldn\'t be saved',
+  'Nerede İzlenir': 'Where to Watch',
+  'Abonelik': 'Subscription',
+  'Kirala': 'Rent',
+  'Satın al': 'Buy',
+  'Hoş geldin!': 'Welcome!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Pick shows and movies you want to watch',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Your picks are added to your Watchlist',
+  'Şimdilik atla': 'Skip for now',
+  'Devam et': 'Continue',
+  '{} ekle': 'Add {}',
+  'Şikayet et': 'Report',
+  'Engelle': 'Block',
+  'Engeli kaldır': 'Unblock',
+  'Kullanıcı engellendi': 'User blocked',
+  'Engel kaldırıldı': 'Block removed',
+  'Şikayet sebebi': 'Report reason',
+  'Spam veya yanıltıcı': 'Spam or misleading',
+  'Taciz veya nefret söylemi': 'Harassment or hate speech',
+  'Uygunsuz / cinsel içerik': 'Inappropriate / sexual content',
+  'Şiddet veya tehlikeli içerik': 'Violence or dangerous content',
+  'Telif hakkı ihlali': 'Copyright infringement',
+  'Şikayetin alındı, teşekkürler': 'Your report was received, thanks',
+  'Hesabımı Sil': 'Delete My Account',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Your account and all your data (watch history, ratings, comments, lists, messages) will be permanently deleted. This cannot be undone.',
+  'Şifreni gir': 'Enter your password',
+  'Hesabımı kalıcı sil': 'Permanently delete my account',
+  'Sesli mesaj': 'Voice message',
+  'Ses gönderilemedi': 'Voice couldn’t be sent',
+  'Kaydediliyor…': 'Recording…',
+  'Ses oynatılamadı': 'Voice couldn’t be played',
+  'Oynat': 'Play',
+  'Duraklat': 'Pause',
+  'Liste görünümü': 'List view',
+  'Takvim görünümü': 'Calendar view',
+  'Önceki ay': 'Previous month',
+  'Sonraki ay': 'Next month',
+  'Bu gün bölüm yok': 'No episodes this day',
+  'Gizlilik Politikası': 'Privacy Policy',
+  'Son güncelleme: {}': 'Last updated: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'This policy explains what data is collected, how it is used, and what your rights are when you use the dizi.jpg app and the dizijpg.com website.',
+  'Topladığımız Veriler': 'Data We Collect',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Account: email address, username, and password. Passwords are stored as irreversible hashes; guest accounts can be used without an email.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profile: information you choose to add, such as your avatar, cover image, bio, and country.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Usage: your watch history, ratings, comments, lists, reactions, and favorites.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Messages: your text, image, and voice messages are stored on our servers. Messages are not end-to-end encrypted; they are only reviewed for moderation purposes if reported.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Uploaded media: photos, GIFs, videos, and audio recordings you add to your profile, comments, and messages.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Technical: IP address, approximate location (country/city level), device platform, app version, and error logs. These are kept for security and debugging.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Notifications: your device token and language preference are stored for push notifications. You can turn off notifications anytime in your device settings.',
+  'Verileri Nasıl Kullanırız': 'How We Use Your Data',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'We use your data only to provide the service, protect your account, send notifications, fix errors, and prevent abuse. We never sell your data or share it with anyone for advertising.',
+  'Çerezler ve Yerel Depolama': 'Cookies and Local Storage',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'We only use local storage to keep you signed in and remember preferences like language and theme. There are no advertising or tracking cookies.',
+  'Üçüncü Taraf Hizmetler': 'Third-Party Services',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Show and movie information comes from TMDB, and streaming provider information from JustWatch. Push notifications are delivered via Google Firebase, and site traffic is protected by Cloudflare. These services are subject to their own privacy policies.',
+  'Saklama ve Silme': 'Retention and Deletion',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Your data is kept for as long as your account is active. You can permanently delete your account with "Delete My Account" in Settings; your data is deleted immediately, and copies in backups within 14 days at the latest. Error logs are automatically deleted after 30 days.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'You can export your data as a ZIP from Settings; the archive is sent to your email address.',
+  'Güvenlik': 'Security',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data is transferred over an encrypted connection (HTTPS) and stored on servers with restricted access.',
+  'Çocukların Gizliliği': 'Children\'s Privacy',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg is not intended for children under 13.',
+  'Hakların': 'Your Rights',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Under KVKK and GDPR, you have the right to access, correct, delete, and transfer your data. To exercise these rights, you can write to us at: {}',
+  'Değişiklikler': 'Changes',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'If this policy changes, the new version will be published on this page and the update date will be refreshed.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'By signing up, you agree to {}.',
 };

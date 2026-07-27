@@ -4,6 +4,7 @@ const Map<String, String> cevirilerVi = {
       'Không tìm thấy dữ liệu hợp lệ để nhập.',
   'Arama': 'Tìm kiếm',
   'Aramaya başla': 'Bắt đầu tìm kiếm',
+  'Son aramalar': 'Tìm kiếm gần đây',
   'Ayarlar': 'Cài đặt',
   'Bağla': 'Liên kết',
   'Bio': 'Tiểu sử',
@@ -254,4 +255,90 @@ const Map<String, String> cevirilerVi = {
   'Bir profile girip mesaj gönderebilirsin.': 'Mở một hồ sơ và gửi tin nhắn.',
   'Listeyi sil': 'Xóa danh sách',
   'Puan kaydedilemedi': 'Không thể lưu đánh giá',
+  'Nerede İzlenir': 'Xem ở đâu',
+  'Abonelik': 'Đăng ký',
+  'Kirala': 'Thuê',
+  'Satın al': 'Mua',
+  'Hoş geldin!': 'Chào mừng!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Chọn phim bộ và phim lẻ bạn muốn xem',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Lựa chọn của bạn sẽ được thêm vào danh sách xem',
+  'Şimdilik atla': 'Bỏ qua bây giờ',
+  'Devam et': 'Tiếp tục',
+  '{} ekle': 'Thêm {}',
+  'Şikayet et': 'Báo cáo',
+  'Engelle': 'Chặn',
+  'Engeli kaldır': 'Bỏ chặn',
+  'Kullanıcı engellendi': 'Đã chặn người dùng',
+  'Engel kaldırıldı': 'Đã bỏ chặn',
+  'Şikayet sebebi': 'Lý do báo cáo',
+  'Spam veya yanıltıcı': 'Spam hoặc gây hiểu lầm',
+  'Taciz veya nefret söylemi': 'Quấy rối hoặc phát ngôn thù ghét',
+  'Uygunsuz / cinsel içerik': 'Nội dung không phù hợp / khiêu dâm',
+  'Şiddet veya tehlikeli içerik': 'Bạo lực hoặc nội dung nguy hiểm',
+  'Telif hakkı ihlali': 'Vi phạm bản quyền',
+  'Şikayetin alındı, teşekkürler': 'Đã nhận báo cáo của bạn, cảm ơn',
+  'Hesabımı Sil': 'Xóa tài khoản của tôi',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Tài khoản và toàn bộ dữ liệu của bạn (lịch sử xem, đánh giá, bình luận, danh sách, tin nhắn) sẽ bị xóa vĩnh viễn. Không thể hoàn tác.',
+  'Şifreni gir': 'Nhập mật khẩu của bạn',
+  'Hesabımı kalıcı sil': 'Xóa vĩnh viễn tài khoản của tôi',
+  'Sesli mesaj': 'Tin nhắn thoại',
+  'Ses gönderilemedi': 'Không thể gửi tin nhắn thoại',
+  'Kaydediliyor…': 'Đang ghi…',
+  'Ses oynatılamadı': 'Không phát được âm thanh',
+  'Oynat': 'Phát',
+  'Duraklat': 'Tạm dừng',
+  'Liste görünümü': 'Xem danh sách',
+  'Takvim görünümü': 'Xem lịch',
+  'Önceki ay': 'Tháng trước',
+  'Sonraki ay': 'Tháng sau',
+  'Bu gün bölüm yok': 'Không có tập nào ngày này',
+  'Gizlilik Politikası': 'Chính sách Quyền riêng tư',
+  'Son güncelleme: {}': 'Cập nhật lần cuối: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Chính sách này giải thích dữ liệu nào được thu thập, được sử dụng ra sao và bạn có những quyền gì khi dùng ứng dụng dizi.jpg và trang dizijpg.com.',
+  'Topladığımız Veriler': 'Dữ liệu chúng tôi thu thập',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Tài khoản: địa chỉ email, tên người dùng và mật khẩu. Mật khẩu được lưu dưới dạng băm không thể đảo ngược; tài khoản khách có thể dùng mà không cần email.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Hồ sơ: những thông tin bạn tự chọn thêm, như ảnh đại diện, ảnh bìa, tiểu sử và quốc gia.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Sử dụng: lịch sử xem, điểm đánh giá, bình luận, danh sách, cảm xúc và mục yêu thích của bạn.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Tin nhắn: tin nhắn văn bản, hình ảnh và thoại của bạn được lưu trên máy chủ của chúng tôi. Tin nhắn không được mã hóa đầu cuối; chỉ được xem xét cho mục đích kiểm duyệt khi bị báo cáo.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Nội dung tải lên: ảnh, GIF, video và bản ghi âm bạn thêm vào hồ sơ, bình luận và tin nhắn.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Kỹ thuật: địa chỉ IP, vị trí ước chừng (cấp quốc gia/thành phố), nền tảng thiết bị, phiên bản ứng dụng và nhật ký lỗi. Chúng được lưu để bảo mật và khắc phục sự cố.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Thông báo: để gửi thông báo đẩy, chúng tôi lưu token thiết bị và ngôn ngữ bạn chọn. Bạn có thể tắt thông báo bất cứ lúc nào trong cài đặt thiết bị.',
+  'Verileri Nasıl Kullanırız': 'Cách chúng tôi dùng dữ liệu',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Chúng tôi chỉ dùng dữ liệu của bạn để cung cấp dịch vụ, bảo vệ tài khoản, gửi thông báo, sửa lỗi và ngăn lạm dụng. Chúng tôi không bán dữ liệu của bạn và không chia sẻ với ai vì mục đích quảng cáo.',
+  'Çerezler ve Yerel Depolama': 'Cookie và bộ nhớ cục bộ',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Bộ nhớ cục bộ chỉ dùng để giữ bạn đăng nhập và ghi nhớ các tùy chọn như ngôn ngữ, giao diện. Không có cookie quảng cáo hay theo dõi.',
+  'Üçüncü Taraf Hizmetler': 'Dịch vụ bên thứ ba',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Dữ liệu phim và series lấy từ TMDB, thông tin nền tảng streaming từ JustWatch. Thông báo đẩy được gửi qua Google Firebase, lưu lượng trang được Cloudflare bảo vệ. Các dịch vụ này tuân theo chính sách quyền riêng tư của riêng họ.',
+  'Saklama ve Silme': 'Lưu trữ và xóa',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Dữ liệu của bạn được giữ chừng nào tài khoản còn tồn tại. Với "Xóa tài khoản của tôi" trong Cài đặt, bạn có thể xóa tài khoản vĩnh viễn; dữ liệu bị xóa ngay lập tức, các bản sao trong bản sao lưu chậm nhất trong 14 ngày. Nhật ký lỗi tự động xóa sau 30 ngày.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Bạn có thể xuất dữ liệu dưới dạng ZIP từ Cài đặt; tệp lưu trữ sẽ được gửi tới địa chỉ email của bạn.',
+  'Güvenlik': 'Bảo mật',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Dữ liệu được truyền qua kết nối mã hóa (HTTPS) và lưu trên các máy chủ có quyền truy cập hạn chế.',
+  'Çocukların Gizliliği': 'Quyền riêng tư của trẻ em',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg không dành cho trẻ em dưới 13 tuổi.',
+  'Hakların': 'Quyền của bạn',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Theo KVKK và GDPR, bạn có quyền truy cập, sửa, xóa và chuyển dữ liệu của mình. Hãy viết cho chúng tôi về những việc này: {}',
+  'Değişiklikler': 'Thay đổi',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Nếu chính sách này thay đổi, phiên bản mới sẽ được đăng trên trang này và ngày cập nhật sẽ được làm mới.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Khi đăng ký, bạn chấp nhận {}.',
 };

@@ -1,5 +1,7 @@
-import 'dart:ui' show PointerDeviceKind;
+import 'dart:async';
+import 'dart:ui' show PlatformDispatcher, PointerDeviceKind;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -8,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import 'api.dart';
 import 'ceviri.dart';
+import 'push.dart';
 import 'tema.dart';
 import 'yonlendirme.dart';
 
@@ -23,16 +26,31 @@ class FareKaydirma extends MaterialScrollBehavior {
 }
 
 Future<void> main() async {
-  // Web'de #'sız temiz URL; F5 aynı sayfayı açar (nginx try_files ile).
-  usePathUrlStrategy();
-  WidgetsFlutterBinding.ensureInitialized();
-  await Ceviri.yukle();
-  await TemaAyar.yukle();
-  final oturum = Oturum();
-  await oturum.yukle();
-  runApp(
-    ChangeNotifierProvider.value(value: oturum, child: const DiziJpgApp()),
-  );
+  // Yakalanan Flutter hataları önce konsola, sonra sunucuya (self-hosted günlük).
+  FlutterError.onError = (ayrinti) {
+    FlutterError.presentError(ayrinti);
+    Api.hataBildir(ayrinti.exception, ayrinti.stack);
+  };
+  // Widget ağacı dışındaki (platform/async) hatalar.
+  PlatformDispatcher.instance.onError = (hata, yigin) {
+    Api.hataBildir(hata, yigin);
+    return true;
+  };
+  runZonedGuarded(() async {
+    // Web'de #'sız temiz URL; F5 aynı sayfayı açar (nginx try_files ile).
+    usePathUrlStrategy();
+    WidgetsFlutterBinding.ensureInitialized();
+    await pushCekirdek(); // Firebase çekirdeği + arka plan mesaj işleyicisi
+    await Ceviri.yukle();
+    await TemaAyar.yukle();
+    final oturum = Oturum();
+    await oturum.yukle();
+    // Girişli kullanıcıda push'u başlat (izin + token kaydı)
+    if (oturum.girisli) pushBaslat();
+    runApp(
+      ChangeNotifierProvider.value(value: oturum, child: const DiziJpgApp()),
+    );
+  }, (hata, yigin) => Api.hataBildir(hata, yigin));
 }
 
 class DiziJpgApp extends StatefulWidget {

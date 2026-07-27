@@ -50,7 +50,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
     } else if (ogeler == null) {
       // İskelet ızgara: bekleme yerine içerik şekli belirir (premium his)
       govde = GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 16,
@@ -71,7 +71,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
       );
     } else {
       govde = GridView.builder(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 16,

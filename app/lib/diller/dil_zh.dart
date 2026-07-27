@@ -3,6 +3,7 @@ const Map<String, String> cevirilerZh = {
   'Aktarılacak tanınan veri bulunamadı.': '未找到可导入的有效数据。',
   'Arama': '搜索',
   'Aramaya başla': '开始搜索',
+  'Son aramalar': '最近搜索',
   'Ayarlar': '设置',
   'Bağla': '绑定',
   'Bio': '简介',
@@ -140,7 +141,7 @@ const Map<String, String> cevirilerZh = {
   '{}+ yapım': '{}+ 部作品',
   'Yorumlar': '评论',
   'Yorumlar ({})': '评论（{}）',
-  'Yorumları ({})': 'Ta 的评论（{}）',
+  'Yorumları ({})': 'TA的评论（{}）',
   'Listelerim': '我的片单',
   'Nereden izledin?': '你在哪里看的？',
   'Diziye git': '前往剧集',
@@ -249,4 +250,88 @@ const Map<String, String> cevirilerZh = {
   'Bir profile girip mesaj gönderebilirsin.': '打开一个资料页并发送消息。',
   'Listeyi sil': '删除列表',
   'Puan kaydedilemedi': '无法保存评分',
+  'Nerede İzlenir': '观看渠道',
+  'Abonelik': '订阅',
+  'Kirala': '租赁',
+  'Satın al': '购买',
+  'Hoş geldin!': '欢迎！',
+  'İzlemek istediğin dizi ve filmleri seç': '选择你想看的剧集和电影',
+  'Seçtiklerin "İzleyeceğim" listene eklenir': '你的选择会加入想看列表',
+  'Şimdilik atla': '暂时跳过',
+  'Devam et': '继续',
+  '{} ekle': '添加 {}',
+  'Şikayet et': '举报',
+  'Engelle': '屏蔽',
+  'Engeli kaldır': '取消屏蔽',
+  'Kullanıcı engellendi': '已屏蔽用户',
+  'Engel kaldırıldı': '已取消屏蔽',
+  'Şikayet sebebi': '举报原因',
+  'Spam veya yanıltıcı': '垃圾信息或误导',
+  'Taciz veya nefret söylemi': '骚扰或仇恨言论',
+  'Uygunsuz / cinsel içerik': '不当 / 色情内容',
+  'Şiddet veya tehlikeli içerik': '暴力或危险内容',
+  'Telif hakkı ihlali': '侵犯版权',
+  'Şikayetin alındı, teşekkürler': '已收到你的举报，谢谢',
+  'Hesabımı Sil': '删除我的账号',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      '你的账号和所有数据（观看记录、评分、评论、列表、消息）将被永久删除。此操作无法撤销。',
+  'Şifreni gir': '输入你的密码',
+  'Hesabımı kalıcı sil': '永久删除我的账号',
+  'Sesli mesaj': '语音消息',
+  'Ses gönderilemedi': '语音消息发送失败',
+  'Kaydediliyor…': '录音中…',
+  'Ses oynatılamadı': '无法播放语音',
+  'Oynat': '播放',
+  'Duraklat': '暂停',
+  'Liste görünümü': '列表视图',
+  'Takvim görünümü': '日历视图',
+  'Önceki ay': '上个月',
+  'Sonraki ay': '下个月',
+  'Bu gün bölüm yok': '这天没有剧集',
+  'Gizlilik Politikası': '隐私政策',
+  'Son güncelleme: {}': '最近更新：{}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      '本政策说明你在使用 dizi.jpg 应用和 dizijpg.com 网站时，我们收集哪些数据、如何使用这些数据，以及你拥有哪些权利。',
+  'Topladığımız Veriler': '我们收集的数据',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      '账号：电子邮箱、用户名和密码。密码以不可逆的哈希形式存储；访客账号可以不绑定邮箱使用。',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      '个人资料：你自行选择添加的信息，例如头像、封面图、简介和国家/地区。',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      '使用数据：你的观看历史、评分、评论、片单、表情反应和收藏。',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      '消息：你的文字、图片和语音消息保存在我们的服务器上。消息未采用端到端加密；仅在被举报时才会出于审核目的查看。',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      '上传的媒体：你添加到个人资料、评论和消息中的照片、GIF、视频和语音录音。',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      '技术数据：IP 地址、大致位置（国家/城市级别）、设备平台、应用版本和错误日志。这些数据用于安全防护和排查故障。',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      '通知：为发送推送通知，我们会保存你的设备令牌和语言偏好。你可以随时在设备设置中关闭通知。',
+  'Verileri Nasıl Kullanırız': '我们如何使用你的数据',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      '我们仅将你的数据用于提供服务、保护账号、发送通知、修复错误和防止滥用。我们不会出售你的数据，也不会出于广告目的与任何人共享。',
+  'Çerezler ve Yerel Depolama': 'Cookie 与本地存储',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      '本地存储仅用于保持你的登录状态，以及记住语言、主题等偏好。没有任何广告或跟踪 Cookie。',
+  'Üçüncü Taraf Hizmetler': '第三方服务',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      '剧集和电影数据来自 TMDB，流媒体平台信息来自 JustWatch。推送通知通过 Google Firebase 送达，网站流量由 Cloudflare 保护。这些服务适用其各自的隐私政策。',
+  'Saklama ve Silme': '保存与删除',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      '你的数据在账号存续期间保留。通过设置中的“删除我的账号”可以永久删除账号；数据会立即删除，备份中的副本最迟在 14 天内清除。错误日志在 30 天后自动删除。',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      '你可以在设置中将数据导出为 ZIP；压缩包会发送到你的邮箱。',
+  'Güvenlik': '安全',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      '数据通过加密连接（HTTPS）传输，并存储在访问受限的服务器上。',
+  'Çocukların Gizliliği': '儿童隐私',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg 不面向 13 岁以下的儿童。',
+  'Hakların': '你的权利',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      '根据 KVKK 和 GDPR，你有权访问、更正、删除和迁移自己的数据。如需行使这些权利，请联系我们：{}',
+  'Değişiklikler': '变更',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      '如本政策发生变更，新版本将发布在本页面，并更新日期。',
+  'Kayıt olarak {} kabul etmiş olursun.': '注册即表示你接受{}。',
 };

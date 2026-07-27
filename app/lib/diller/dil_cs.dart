@@ -4,6 +4,7 @@ const Map<String, String> cevirilerCs = {
       'Nenalezena žádná rozpoznaná data k importu.',
   'Arama': 'Hledat',
   'Aramaya başla': 'Začni hledat',
+  'Son aramalar': 'Nedávná hledání',
   'Ayarlar': 'Nastavení',
   'Bağla': 'Propojit',
   'Bio': 'Bio',
@@ -154,7 +155,7 @@ const Map<String, String> cevirilerCs = {
   'Akış': 'Kanál',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'Tvůj kanál je prázdný.\nAž někdo okomentuje seriály a filmy, které sleduješ, objeví se tady.',
-  'Listeleri ({})': 'Jeho seznamy ({})',
+  'Listeleri ({})': 'Seznamy uživatele ({})',
   'Liste boş.': 'Tento seznam je prázdný.',
   'Yanıtla': 'Odpovědět',
   '@{} kullanıcısına yanıt veriyorsun': 'Odpovídáš @{}',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerCs = {
   'Bir profile girip mesaj gönderebilirsin.': 'Otevři profil a pošli zprávu.',
   'Listeyi sil': 'Smazat seznam',
   'Puan kaydedilemedi': 'Hodnocení se nepodařilo uložit',
+  'Nerede İzlenir': 'Kde sledovat',
+  'Abonelik': 'Předplatné',
+  'Kirala': 'Půjčit',
+  'Satın al': 'Koupit',
+  'Hoş geldin!': 'Vítej!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Vyber si seriály a filmy, které chceš sledovat',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Tvé výběry se přidají do tvého seznamu',
+  'Şimdilik atla': 'Zatím přeskočit',
+  'Devam et': 'Pokračovat',
+  '{} ekle': 'Přidat {}',
+  'Şikayet et': 'Nahlásit',
+  'Engelle': 'Zablokovat',
+  'Engeli kaldır': 'Odblokovat',
+  'Kullanıcı engellendi': 'Uživatel zablokován',
+  'Engel kaldırıldı': 'Blokování zrušeno',
+  'Şikayet sebebi': 'Důvod nahlášení',
+  'Spam veya yanıltıcı': 'Spam nebo zavádějící',
+  'Taciz veya nefret söylemi': 'Obtěžování nebo nenávistné projevy',
+  'Uygunsuz / cinsel içerik': 'Nevhodný / sexuální obsah',
+  'Şiddet veya tehlikeli içerik': 'Násilí nebo nebezpečný obsah',
+  'Telif hakkı ihlali': 'Porušení autorských práv',
+  'Şikayetin alındı, teşekkürler': 'Tvé nahlášení bylo přijato, děkujeme',
+  'Hesabımı Sil': 'Smazat můj účet',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Tvůj účet a všechna tvá data (historie, hodnocení, komentáře, seznamy, zprávy) budou trvale smazána. Tuto akci nelze vrátit.',
+  'Şifreni gir': 'Zadej své heslo',
+  'Hesabımı kalıcı sil': 'Trvale smazat můj účet',
+  'Sesli mesaj': 'Hlasová zpráva',
+  'Ses gönderilemedi': 'Hlasovou zprávu se nepodařilo odeslat',
+  'Kaydediliyor…': 'Nahrávání…',
+  'Ses oynatılamadı': 'Zvuk se nepodařilo přehrát',
+  'Oynat': 'Přehrát',
+  'Duraklat': 'Pozastavit',
+  'Liste görünümü': 'Zobrazení seznamu',
+  'Takvim görünümü': 'Zobrazení kalendáře',
+  'Önceki ay': 'Předchozí měsíc',
+  'Sonraki ay': 'Další měsíc',
+  'Bu gün bölüm yok': 'Žádné epizody v tento den',
+  'Gizlilik Politikası': 'Zásady ochrany soukromí',
+  'Son güncelleme: {}': 'Poslední aktualizace: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Tyto zásady vysvětlují, jaká data se shromažďují, jak se používají a jaká máš práva, když používáš aplikaci dizi.jpg a web dizijpg.com.',
+  'Topladığımız Veriler': 'Jaká data shromažďujeme',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Účet: e-mailová adresa, uživatelské jméno a heslo. Hesla se ukládají jako nevratný hash; hostovské účty lze používat bez e-mailu.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: údaje, které se rozhodneš přidat, např. avatar, úvodní obrázek, bio a zemi.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Používání: tvá historie sledování, hodnocení, komentáře, seznamy, reakce a oblíbené.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Zprávy: tvé textové, obrazové a hlasové zprávy jsou uloženy na našich serverech. Zprávy nejsou šifrované end-to-end; prohlížejí se jen při nahlášení, pro účely moderace.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Nahraná média: fotky, GIFy, videa a hlasové nahrávky, které přidáš do profilu, komentářů a zpráv.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Technické údaje: IP adresa, přibližná poloha (země/město), platforma zařízení, verze aplikace a záznamy chyb. Uchovávají se kvůli bezpečnosti a ladění.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Oznámení: pro push oznámení ukládáme token tvého zařízení a zvolený jazyk. Oznámení můžeš kdykoli vypnout v nastavení zařízení.',
+  'Verileri Nasıl Kullanırız': 'Jak tvá data používáme',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Tvá data používáme výhradně k poskytování služby, ochraně účtu, zasílání oznámení, opravám chyb a předcházení zneužití. Tvá data neprodáváme a nikomu je nepředáváme pro reklamní účely.',
+  'Çerezler ve Yerel Depolama': 'Cookies a místní úložiště',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Místní úložiště používáme jen k tomu, abychom tě udrželi přihlášeného a zapamatovali si předvolby jako jazyk a motiv. Žádné reklamní ani sledovací cookies nejsou.',
+  'Üçüncü Taraf Hizmetler': 'Služby třetích stran',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Data o seriálech a filmech pocházejí z TMDB, informace o streamovacích platformách z JustWatch. Push oznámení doručuje Google Firebase a provoz webu chrání Cloudflare. Tyto služby se řídí vlastními zásadami ochrany soukromí.',
+  'Saklama ve Silme': 'Uchovávání a mazání',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Tvá data se uchovávají, dokud existuje tvůj účet. Přes „Smazat můj účet" v nastavení můžeš účet trvale smazat; data se vymažou okamžitě a jejich kopie v zálohách nejpozději do 14 dnů. Záznamy chyb se automaticky mažou po 30 dnech.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Svá data si můžeš z nastavení exportovat jako ZIP; archiv ti přijde na e-mail.',
+  'Güvenlik': 'Zabezpečení',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data se přenášejí šifrovaným spojením (HTTPS) a ukládají na serverech s omezeným přístupem.',
+  'Çocukların Gizliliği': 'Soukromí dětí',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg není určen dětem mladším 13 let.',
+  'Hakların': 'Tvá práva',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Podle KVKK a GDPR máš právo na přístup ke svým datům, jejich opravu, výmaz a přenos. V těchto věcech nám napiš: {}',
+  'Değişiklikler': 'Změny',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Pokud se tyto zásady změní, nová verze bude zveřejněna na této stránce a datum se aktualizuje.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Registrací přijímáš {}.',
 };

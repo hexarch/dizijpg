@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../push.dart';
 import '../tema.dart';
 
 class GirisEkrani extends StatefulWidget {
@@ -33,6 +35,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
       final kullanici = await Api.misafirGiris();
       if (!mounted) return;
       await context.read<Oturum>().girisYapildi(kullanici);
+      pushBaslat(); // push izni + token kaydı
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -176,7 +179,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
             )
           : await Api.giris(_email.text.trim(), _sifre.text);
       if (!mounted) return;
+      // Yeni kayıt → karşılama akışı (router yönlendirir).
+      if (_kayitModu) Oturum.karsilamaGerekli = true;
       await context.read<Oturum>().girisYapildi(kullanici);
+      pushBaslat(); // push izni + token kaydı
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -247,6 +253,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                           style: const TextStyle(fontSize: 16),
                         ),
                 ),
+                if (_kayitModu) _gizlilikSatiri(),
                 if (!_kayitModu)
                   TextButton(
                     onPressed: _sifremiUnuttum,
@@ -277,6 +284,33 @@ class _GirisEkraniState extends State<GirisEkrani> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Kayıt modunda gizlilik onay satırı; tamamı dokunulabilir.
+  /// DİKKAT: TextSpan tema rengini devralmaz — renkler açıkça verilir.
+  Widget _gizlilikSatiri() {
+    final parcalar = 'Kayıt olarak {} kabul etmiş olursun.'.c.split('{}');
+    return TextButton(
+      onPressed: () => context.push('/gizlilik'),
+      child: Text.rich(
+        TextSpan(
+          style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+          children: [
+            TextSpan(text: parcalar.first),
+            TextSpan(
+              text: 'Gizlilik Politikası'.c,
+              style: const TextStyle(
+                color: DiziRenkler.sari,
+                decoration: TextDecoration.underline,
+                decorationColor: DiziRenkler.sari,
+              ),
+            ),
+            if (parcalar.length > 1) TextSpan(text: parcalar.last),
+          ],
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }

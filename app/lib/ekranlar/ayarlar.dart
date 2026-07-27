@@ -3,12 +3,14 @@ import 'dart:typed_data';
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../push.dart';
 import '../tema.dart';
 
 const List<String> ulkeler = [
@@ -485,6 +487,85 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     );
   }
 
+  /// Hesabı kalıcı siler: onay + (şifreli hesapta) şifre doğrulaması.
+  Future<void> _hesabiSil() async {
+    final misafir = context.read<Oturum>().kullanici?['misafir'] == true;
+    final sifre = TextEditingController();
+    var isliyor = false;
+    final messenger = ScaffoldMessenger.of(context);
+    final oturum = context.read<Oturum>();
+    final silindi = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDlg) => AlertDialog(
+          backgroundColor: DiziRenkler.koyuGri,
+          title: Text('Hesabımı Sil'.c),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) '
+                        'kalıcı olarak silinecek. Bu işlem geri alınamaz.'
+                    .c,
+                style: TextStyle(color: DiziRenkler.metin70),
+              ),
+              if (!misafir) ...[
+                const SizedBox(height: 16),
+                TextField(
+                  controller: sifre,
+                  obscureText: true,
+                  decoration: InputDecoration(hintText: 'Şifreni gir'.c),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text('İptal'.c),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: isliyor
+                  ? null
+                  : () async {
+                      setDlg(() => isliyor = true);
+                      try {
+                        await Api.hesabiSil(sifre.text);
+                        if (context.mounted) Navigator.pop(context, true);
+                      } catch (e) {
+                        setDlg(() => isliyor = false);
+                        messenger.showSnackBar(
+                          SnackBar(content: Text(e.toString())),
+                        );
+                      }
+                    },
+              child: isliyor
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : Text('Hesabımı kalıcı sil'.c),
+            ),
+          ],
+        ),
+      ),
+    );
+    sifre.dispose();
+    if (silindi == true) {
+      await pushTokenSil();
+      await oturum.cikis();
+    }
+  }
+
   Future<void> _disaAktar() async {
     final onay = await showDialog<bool>(
       context: context,
@@ -945,14 +1026,40 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 ),
                 const SizedBox(height: 32),
                 OutlinedButton.icon(
-                  onPressed: () {
+                  onPressed: () async {
+                    final oturum = context.read<Oturum>();
+                    await pushTokenSil(); // bu cihaza artık bildirim gitmesin
+                    if (!context.mounted) return;
                     Navigator.pop(context);
-                    context.read<Oturum>().cikis();
+                    oturum.cikis();
                   },
                   icon: const Icon(Icons.logout, color: Colors.redAccent),
                   label: Text(
                     'Çıkış Yap'.c,
                     style: const TextStyle(color: Colors.redAccent),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/gizlilik'),
+                  child: Text(
+                    'Gizlilik Politikası'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.metin54,
+                      decoration: TextDecoration.underline,
+                      decorationColor: DiziRenkler.metin54,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: _hesabiSil,
+                  child: Text(
+                    'Hesabımı Sil'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.metin54,
+                      decoration: TextDecoration.underline,
+                      decorationColor: DiziRenkler.metin54,
+                    ),
                   ),
                 ),
               ],

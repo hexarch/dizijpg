@@ -102,7 +102,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
     return Scaffold(
       appBar: AppBar(title: Text(k['name'] as String? ?? '')),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.fromLTRB(0, 16, 0, altGuvenli(context)),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

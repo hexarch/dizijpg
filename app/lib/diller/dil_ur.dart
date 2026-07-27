@@ -4,6 +4,7 @@ const Map<String, String> cevirilerUr = {
       'منتقلی کے لیے کوئی قابلِ شناخت ڈیٹا نہیں ملا۔',
   'Arama': 'تلاش',
   'Aramaya başla': 'تلاش شروع کریں',
+  'Son aramalar': 'حالیہ تلاشیں',
   'Ayarlar': 'ترتیبات',
   'Bağla': 'منسلک کریں',
   'Bio': 'تعارف',
@@ -146,7 +147,7 @@ const Map<String, String> cevirilerUr = {
   'Yorumları ({})': 'اس پر تبصرے ({})',
   'Listelerim': 'میری لسٹیں',
   'Nereden izledin?': 'کہاں دیکھا؟',
-  'Diziye git': 'شو پر جائیں',
+  'Diziye git': 'سیریز پر جائیں',
   'TV / Kanal': 'ٹی وی / چینل',
   'Sinema': 'سینما',
   'DVD / Blu-ray': 'DVD / Blu-ray',
@@ -252,5 +253,91 @@ const Map<String, String> cevirilerUr = {
   'Bir profile girip mesaj gönderebilirsin.':
       'کوئی پروفائل کھولیں اور پیغام بھیجیں۔',
   'Listeyi sil': 'فہرست حذف کریں',
-  'Puan kaydedilemedi': 'درجہ بندی محفوظ نہ ہو سکی',
+  'Puan kaydedilemedi': 'ریٹنگ محفوظ نہ ہو سکی',
+  'Nerede İzlenir': 'کہاں دیکھیں',
+  'Abonelik': 'سبسکرپشن',
+  'Kirala': 'کرائے پر لیں',
+  'Satın al': 'خریدیں',
+  'Hoş geldin!': 'خوش آمدید!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'وہ شوز اور فلمیں منتخب کریں جو آپ دیکھنا چاہتے ہیں',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'آپ کی پسند آپ کی واچ لسٹ میں شامل ہو جائے گی',
+  'Şimdilik atla': 'ابھی چھوڑیں',
+  'Devam et': 'جاری رکھیں',
+  '{} ekle': '{} شامل کریں',
+  'Şikayet et': 'رپورٹ کریں',
+  'Engelle': 'بلاک کریں',
+  'Engeli kaldır': 'بلاک ہٹائیں',
+  'Kullanıcı engellendi': 'صارف بلاک ہو گیا',
+  'Engel kaldırıldı': 'بلاک ہٹا دیا گیا',
+  'Şikayet sebebi': 'رپورٹ کی وجہ',
+  'Spam veya yanıltıcı': 'اسپام یا گمراہ کن',
+  'Taciz veya nefret söylemi': 'ہراسانی یا نفرت انگیز تقریر',
+  'Uygunsuz / cinsel içerik': 'نامناسب / جنسی مواد',
+  'Şiddet veya tehlikeli içerik': 'تشدد یا خطرناک مواد',
+  'Telif hakkı ihlali': 'کاپی رائٹ کی خلاف ورزی',
+  'Şikayetin alındı, teşekkürler': 'تمہاری رپورٹ موصول ہو گئی، شکریہ',
+  'Hesabımı Sil': 'میرا اکاؤنٹ حذف کریں',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'تمہارا اکاؤنٹ اور تمام ڈیٹا (ہسٹری، ریٹنگز، تبصرے، فہرستیں، پیغامات) مستقل طور پر حذف ہو جائے گا۔ اسے واپس نہیں کیا جا سکتا۔',
+  'Şifreni gir': 'اپنا پاس ورڈ درج کریں',
+  'Hesabımı kalıcı sil': 'میرا اکاؤنٹ مستقل طور پر حذف کریں',
+  'Sesli mesaj': 'صوتی پیغام',
+  'Ses gönderilemedi': 'صوتی پیغام نہیں بھیجا جا سکا',
+  'Kaydediliyor…': 'ریکارڈنگ…',
+  'Ses oynatılamadı': 'آواز نہیں چلائی جا سکی',
+  'Oynat': 'چلائیں',
+  'Duraklat': 'وقفہ',
+  'Liste görünümü': 'فہرست منظر',
+  'Takvim görünümü': 'کیلنڈر منظر',
+  'Önceki ay': 'پچھلا مہینہ',
+  'Sonraki ay': 'اگلا مہینہ',
+  'Bu gün bölüm yok': 'اس دن کوئی قسط نہیں',
+  'Gizlilik Politikası': 'رازداری کی پالیسی',
+  'Son güncelleme: {}': 'آخری اپڈیٹ: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'یہ پالیسی بتاتی ہے کہ dizi.jpg ایپ اور dizijpg.com سائٹ استعمال کرتے وقت کون سا ڈیٹا جمع کیا جاتا ہے، کیسے استعمال ہوتا ہے اور تمہارے کیا حقوق ہیں۔',
+  'Topladığımız Veriler': 'ہم کون سا ڈیٹا جمع کرتے ہیں',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'اکاؤنٹ: ای میل ایڈریس، صارف نام اور پاس ورڈ۔ پاس ورڈ ناقابلِ واپسی ہیش کی صورت میں محفوظ ہوتے ہیں؛ مہمان اکاؤنٹ بغیر ای میل کے استعمال کیے جا سکتے ہیں۔',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'پروفائل: وہ معلومات جو تم خود شامل کرنا چاہو، جیسے اوتار، کور تصویر، بایو اور ملک۔',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'استعمال: تمہاری دیکھنے کی ہسٹری، ریٹنگز، تبصرے، فہرستیں، ری ایکشنز اور پسندیدہ۔',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'پیغامات: تمہارے تحریری، تصویری اور صوتی پیغامات ہمارے سرورز پر محفوظ ہوتے ہیں۔ پیغامات اینڈ ٹو اینڈ انکرپٹڈ نہیں ہیں؛ صرف رپورٹ ہونے پر ماڈریشن کے لیے دیکھے جاتے ہیں۔',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'اپ لوڈ کردہ میڈیا: تصاویر، GIF، ویڈیوز اور صوتی ریکارڈنگز جو تم پروفائل، تبصروں اور پیغامات میں شامل کرتے ہو۔',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'تکنیکی ڈیٹا: IP ایڈریس، تخمینی مقام (ملک/شہر)، ڈیوائس پلیٹ فارم، ایپ ورژن اور ایرر لاگز۔ یہ سکیورٹی اور خرابیاں دور کرنے کے لیے رکھے جاتے ہیں۔',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'اطلاعات: پش اطلاعات کے لیے ہم تمہاری ڈیوائس کا ٹوکن اور زبان کی ترجیح محفوظ رکھتے ہیں۔ تم جب چاہو ڈیوائس کی سیٹنگز سے اطلاعات بند کر سکتے ہو۔',
+  'Verileri Nasıl Kullanırız': 'ہم تمہارا ڈیٹا کیسے استعمال کرتے ہیں',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'ہم تمہارا ڈیٹا صرف سروس فراہم کرنے، اکاؤنٹ محفوظ رکھنے، اطلاعات بھیجنے، خرابیاں دور کرنے اور غلط استعمال روکنے کے لیے استعمال کرتے ہیں۔ ہم تمہارا ڈیٹا نہ بیچتے ہیں اور نہ اشتہاری مقاصد کے لیے کسی سے شیئر کرتے ہیں۔',
+  'Çerezler ve Yerel Depolama': 'کوکیز اور لوکل اسٹوریج',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'لوکل اسٹوریج صرف تمہیں لاگ ان رکھنے اور زبان و تھیم جیسی ترجیحات یاد رکھنے کے لیے استعمال ہوتی ہے۔ کوئی اشتہاری یا ٹریکنگ کوکی نہیں ہے۔',
+  'Üçüncü Taraf Hizmetler': 'تیسرے فریق کی سروسز',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'سیریز اور فلموں کا ڈیٹا TMDB سے اور اسٹریمنگ پلیٹ فارمز کی معلومات JustWatch سے آتی ہیں۔ پش اطلاعات Google Firebase کے ذریعے پہنچائی جاتی ہیں اور سائٹ کی ٹریفک کو Cloudflare محفوظ رکھتا ہے۔ یہ سروسز اپنی اپنی رازداری پالیسیوں کے تابع ہیں۔',
+  'Saklama ve Silme': 'ذخیرہ اور حذف',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'تمہارا ڈیٹا اس وقت تک محفوظ رہتا ہے جب تک تمہارا اکاؤنٹ موجود ہے۔ سیٹنگز میں "میرا اکاؤنٹ حذف کریں" سے اکاؤنٹ مستقل طور پر حذف کر سکتے ہو؛ ڈیٹا فوراً اور بیک اپ میں موجود نقول زیادہ سے زیادہ 14 دن میں حذف ہو جاتی ہیں۔ ایرر لاگز 30 دن بعد خودکار طور پر حذف ہو جاتے ہیں۔',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'تم سیٹنگز سے اپنا ڈیٹا ZIP کی صورت میں ایکسپورٹ کر سکتے ہو؛ آرکائیو تمہارے ای میل ایڈریس پر بھیجا جاتا ہے۔',
+  'Güvenlik': 'سکیورٹی',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ڈیٹا انکرپٹڈ کنکشنز (HTTPS) کے ذریعے منتقل ہوتا ہے اور محدود رسائی والے سرورز پر محفوظ رہتا ہے۔',
+  'Çocukların Gizliliği': 'بچوں کی رازداری',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      '‏dizi.jpg تیرہ (13) سال سے کم عمر بچوں کے لیے نہیں ہے۔',
+  'Hakların': 'تمہارے حقوق',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK اور GDPR کے تحت تمہیں اپنے ڈیٹا تک رسائی، درستی، حذف اور منتقلی کا حق حاصل ہے۔ ان امور کے لیے ہمیں لکھو: {}',
+  'Değişiklikler': 'تبدیلیاں',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'اگر یہ پالیسی تبدیل ہو تو نیا ورژن اسی صفحے پر شائع ہوگا اور تاریخ اپڈیٹ کر دی جائے گی۔',
+  'Kayıt olarak {} kabul etmiş olursun.': 'رجسٹر ہو کر تم {} قبول کرتے ہو۔',
 };

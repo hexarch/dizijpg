@@ -4,6 +4,7 @@ const Map<String, String> cevirilerTa = {
       'இறக்குமதிக்கு அடையாளம் காணக்கூடிய தரவு எதுவும் கிடைக்கவில்லை.',
   'Arama': 'தேடல்',
   'Aramaya başla': 'தேடத் தொடங்கு',
+  'Son aramalar': 'சமீபத்திய தேடல்கள்',
   'Ayarlar': 'அமைப்புகள்',
   'Bağla': 'இணை',
   'Bio': 'பயோ',
@@ -225,8 +226,8 @@ const Map<String, String> cevirilerTa = {
   'Açık': 'லைட்',
   'İzleyenler': 'பார்வையாளர்கள்',
   'Yorumunu yaz... (@ ile etiketle)':
-      'உங்கள் கருத்தை எழுதுங்கள்... (@ குறியிட)',
-  '@{} bir yorumda seni etiketledi': '@{} உங்களை ஒரு கருத்தில் குறியிட்டார்',
+      'உன் கருத்தை எழுது... (@ போட்டு டேக் செய்)',
+  '@{} bir yorumda seni etiketledi': '@{} உன்னை ஒரு கருத்தில் குறியிட்டார்',
   'Mesajı sil': 'செய்தியை நீக்கு',
   'Mesaj silinemedi': 'செய்தியை நீக்க முடியவில்லை',
   'Bağlantı geçersiz veya sayfa bulunamadı':
@@ -240,9 +241,9 @@ const Map<String, String> cevirilerTa = {
   'Video': 'வீடியோ',
   'İçerik': 'உள்ளடக்கம்',
   'çevrimiçi': 'ஆன்லைன்',
-  'son görülme {} dk önce': '{} நிமிடம் முன் பார்த்தார்',
-  'son görülme {} saat önce': '{} மணி முன் பார்த்தார்',
-  'son görülme {} gün önce': '{} நாள் முன் பார்த்தார்',
+  'son görülme {} dk önce': 'கடைசியாக {} நிமிடம் முன்',
+  'son görülme {} saat önce': 'கடைசியாக {} மணி முன்',
+  'son görülme {} gün önce': 'கடைசியாக {} நாள் முன்',
   'Yorumlar yüklenemedi': 'கருத்துகளை ஏற்ற முடியவில்லை',
   'Favori': 'பிடித்தவை',
   'Listeye ekle': 'பட்டியலில் சேர்',
@@ -255,4 +256,91 @@ const Map<String, String> cevirilerTa = {
       'சுயவிவரத்தைத் திறந்து செய்தி அனுப்பவும்.',
   'Listeyi sil': 'பட்டியலை நீக்கு',
   'Puan kaydedilemedi': 'மதிப்பீட்டைச் சேமிக்க முடியவில்லை',
+  'Nerede İzlenir': 'எங்கு பார்க்கலாம்',
+  'Abonelik': 'சந்தா',
+  'Kirala': 'வாடகைக்கு',
+  'Satın al': 'வாங்கு',
+  'Hoş geldin!': 'வரவேற்கிறோம்!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'நீ பார்க்க விரும்பும் தொடர்களையும் படங்களையும் தேர்ந்தெடு',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'உன் தேர்வுகள் "பார்க்கப் போகிறேன்" பட்டியலில் சேர்க்கப்படும்',
+  'Şimdilik atla': 'இப்போதைக்கு தவிர்',
+  'Devam et': 'தொடரவும்',
+  '{} ekle': '{} சேர்',
+  'Şikayet et': 'புகார் செய்',
+  'Engelle': 'தடு',
+  'Engeli kaldır': 'தடையை நீக்கு',
+  'Kullanıcı engellendi': 'பயனர் தடுக்கப்பட்டார்',
+  'Engel kaldırıldı': 'தடை நீக்கப்பட்டது',
+  'Şikayet sebebi': 'புகார் காரணம்',
+  'Spam veya yanıltıcı': 'ஸ்பேம் அல்லது தவறான தகவல்',
+  'Taciz veya nefret söylemi': 'துன்புறுத்தல் அல்லது வெறுப்புப் பேச்சு',
+  'Uygunsuz / cinsel içerik': 'பொருத்தமற்ற / பாலியல் உள்ளடக்கம்',
+  'Şiddet veya tehlikeli içerik': 'வன்முறை அல்லது ஆபத்தான உள்ளடக்கம்',
+  'Telif hakkı ihlali': 'பதிப்புரிமை மீறல்',
+  'Şikayetin alındı, teşekkürler': 'உன் புகார் பெறப்பட்டது, நன்றி',
+  'Hesabımı Sil': 'என் கணக்கை நீக்கு',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'உன் கணக்கும் எல்லா தரவும் (வரலாறு, மதிப்பீடுகள், கருத்துகள், பட்டியல்கள், செய்திகள்) நிரந்தரமாக நீக்கப்படும். இதை மீட்க முடியாது.',
+  'Şifreni gir': 'உன் கடவுச்சொல்லை உள்ளிடு',
+  'Hesabımı kalıcı sil': 'என் கணக்கை நிரந்தரமாக நீக்கு',
+  'Sesli mesaj': 'குரல் செய்தி',
+  'Ses gönderilemedi': 'குரல் செய்தியை அனுப்ப முடியவில்லை',
+  'Kaydediliyor…': 'பதிவாகிறது…',
+  'Ses oynatılamadı': 'ஆடியோவை இயக்க முடியவில்லை',
+  'Oynat': 'இயக்கு',
+  'Duraklat': 'இடைநிறுத்து',
+  'Liste görünümü': 'பட்டியல் காட்சி',
+  'Takvim görünümü': 'நாட்காட்டி காட்சி',
+  'Önceki ay': 'முந்தைய மாதம்',
+  'Sonraki ay': 'அடுத்த மாதம்',
+  'Bu gün bölüm yok': 'இந்த நாளில் அத்தியாயம் இல்லை',
+  'Gizlilik Politikası': 'தனியுரிமைக் கொள்கை',
+  'Son güncelleme: {}': 'கடைசி புதுப்பிப்பு: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg செயலியையும் dizijpg.com தளத்தையும் பயன்படுத்தும்போது என்ன தரவு சேகரிக்கப்படுகிறது, எப்படிப் பயன்படுத்தப்படுகிறது, உன் உரிமைகள் என்ன என்பதை இந்தக் கொள்கை விளக்குகிறது.',
+  'Topladığımız Veriler': 'நாங்கள் சேகரிக்கும் தரவு',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'கணக்கு: மின்னஞ்சல் முகவரி, பயனர்பெயர், கடவுச்சொல். கடவுச்சொற்கள் மீட்க முடியாத ஹாஷாகச் சேமிக்கப்படுகின்றன; விருந்தினர் கணக்குகளை மின்னஞ்சல் இல்லாமல் பயன்படுத்தலாம்.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'சுயவிவரம்: அவதாரம், அட்டைப் படம், பயோ, நாடு போன்ற நீ சேர்க்கத் தேர்வு செய்யும் தகவல்கள்.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'பயன்பாடு: உன் பார்வை வரலாறு, மதிப்பீடுகள், கருத்துகள், பட்டியல்கள், ரியாக்ஷன்கள், பிடித்தவை.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'செய்திகள்: உன் உரை, படம், குரல் செய்திகள் எங்கள் சர்வர்களில் சேமிக்கப்படுகின்றன. செய்திகள் முனைக்கு-முனை என்க்ரிப்ட் செய்யப்படவில்லை; புகார் வந்தால் மட்டுமே மதிப்பாய்வுக்காகப் பார்க்கப்படும்.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'பதிவேற்றிய மீடியா: சுயவிவரம், கருத்துகள், செய்திகளில் நீ சேர்க்கும் புகைப்படங்கள், GIF, வீடியோக்கள், குரல் பதிவுகள்.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'தொழில்நுட்பம்: IP முகவரி, தோராயமான இடம் (நாடு/நகரம் அளவில்), சாதன இயங்குதளம், செயலி பதிப்பு, பிழைப் பதிவுகள். இவை பாதுகாப்புக்கும் பிழை சரிசெய்யவும் வைக்கப்படுகின்றன.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'அறிவிப்புகள்: புஷ் அறிவிப்புகளுக்காக உன் சாதன டோக்கனும் மொழித் தேர்வும் சேமிக்கப்படுகின்றன. சாதன அமைப்புகளில் எப்போது வேண்டுமானாலும் அறிவிப்புகளை அணைக்கலாம்.',
+  'Verileri Nasıl Kullanırız': 'தரவை எப்படிப் பயன்படுத்துகிறோம்',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'உன் தரவை சேவை வழங்க, கணக்கைப் பாதுகாக்க, அறிவிப்பு அனுப்ப, பிழைகளைச் சரிசெய்ய, தவறான பயன்பாட்டைத் தடுக்க மட்டுமே பயன்படுத்துகிறோம். உன் தரவை விற்பதில்லை; விளம்பரத்துக்காக யாருடனும் பகிர்வதில்லை.',
+  'Çerezler ve Yerel Depolama': 'குக்கீகளும் லோக்கல் ஸ்டோரேஜும்',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'உன்னை உள்நுழைந்த நிலையில் வைக்கவும் மொழி/தீம் போன்ற விருப்பங்களை நினைவில் வைக்கவும் மட்டுமே லோக்கல் ஸ்டோரேஜ் பயன்படுகிறது. விளம்பர அல்லது கண்காணிப்பு குக்கீகள் இல்லை.',
+  'Üçüncü Taraf Hizmetler': 'மூன்றாம் தரப்பு சேவைகள்',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'தொடர்கள், படங்களின் தரவு TMDB-யிலிருந்தும், ஸ்ட்ரீமிங் தள விவரம் JustWatch-இலிருந்தும் வருகிறது. புஷ் அறிவிப்புகள் Google Firebase வழியாக அனுப்பப்படுகின்றன; தள ட்ராஃபிக்கை Cloudflare பாதுகாக்கிறது. இந்தச் சேவைகளுக்கு அவற்றின் சொந்த தனியுரிமைக் கொள்கைகள் பொருந்தும்.',
+  'Saklama ve Silme': 'சேமிப்பும் நீக்கமும்',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'உன் கணக்கு இருக்கும் வரை உன் தரவு இருக்கும். அமைப்புகளில் உள்ள "என் கணக்கை நீக்கு" மூலம் கணக்கை நிரந்தரமாக நீக்கலாம்; தரவு உடனே அழிக்கப்படும், பேக்அப்பில் உள்ள நகல்கள் அதிகபட்சம் 14 நாட்களில் அழியும். பிழைப் பதிவுகள் 30 நாட்களுக்குப் பிறகு தானாக அழிக்கப்படும்.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'அமைப்புகளிலிருந்து உன் தரவை ZIP ஆக ஏற்றுமதி செய்யலாம்; காப்பகம் உன் மின்னஞ்சல் முகவரிக்கு அனுப்பப்படும்.',
+  'Güvenlik': 'பாதுகாப்பு',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'தரவு என்க்ரிப்ட் செய்யப்பட்ட இணைப்புகள் (HTTPS) வழியாகச் செல்கிறது; வரம்புள்ள அணுகல் கொண்ட சர்வர்களில் சேமிக்கப்படுகிறது.',
+  'Çocukların Gizliliği': 'குழந்தைகளின் தனியுரிமை',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg 13 வயதுக்குக் குறைவான குழந்தைகளுக்கானது அல்ல.',
+  'Hakların': 'உன் உரிமைகள்',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK மற்றும் GDPR படி உன் தரவை அணுக, திருத்த, நீக்க, மாற்ற உனக்கு உரிமை உண்டு. இதற்காக எங்களுக்கு எழுது: {}',
+  'Değişiklikler': 'மாற்றங்கள்',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'இந்தக் கொள்கை மாறினால் புதிய பதிப்பு இதே பக்கத்தில் வெளியிடப்பட்டு தேதி புதுப்பிக்கப்படும்.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'பதிவு செய்வதன் மூலம் {} ஏற்றுக்கொள்கிறாய்.',
 };

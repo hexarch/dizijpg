@@ -4,6 +4,7 @@ const Map<String, String> cevirilerId = {
       'Tidak ada data yang dikenali untuk diimpor.',
   'Arama': 'Pencarian',
   'Aramaya başla': 'Mulai mencari',
+  'Son aramalar': 'Pencarian terbaru',
   'Ayarlar': 'Pengaturan',
   'Bağla': 'Tautkan',
   'Bio': 'Bio',
@@ -59,9 +60,9 @@ const Map<String, String> cevirilerId = {
   'Oyuncular': 'Pemeran',
   'Profil': 'Profil',
   'Profil kaydedildi': 'Profil tersimpan',
-  'Puanla': 'Beri Nilai',
-  'Puanı Sil': 'Hapus Nilai',
-  'Puanın': 'Nilaimu',
+  'Puanla': 'Beri Rating',
+  'Puanı Sil': 'Hapus Rating',
+  'Puanın': 'Ratingmu',
   'Sezonlar': 'Musim',
   'Sunucu hatası ({})': 'Kesalahan server ({})',
   'S{} · {}. Bölüm': 'S{} · E{}',
@@ -138,7 +139,7 @@ const Map<String, String> cevirilerId = {
   '• {} dizi durumu': '• {} status serial',
   '• {} izleme kaydı': '• {} catatan tontonan',
   '• {} liste': '• {} daftar',
-  '• {} puan': '• {} nilai',
+  '• {} puan': '• {} rating',
   '• {} yorum': '• {} komentar',
   '{}+ yapım': '{}+ judul',
   'Yorumlar': 'Komentar',
@@ -180,7 +181,7 @@ const Map<String, String> cevirilerId = {
   '{} özetin': 'Rekap {}-mu',
   'Yıllık izleme istatistiklerin': 'Statistik tontonan tahunanmu',
   'Rozetler': 'Lencana',
-  'Verdiğin puan': 'Rating diberikan',
+  'Verdiğin puan': 'Rating yang kamu beri',
   'Ortalama puanın': 'Rata-rata ratingmu',
   'En çok izlediğin diziler': 'Serial paling sering ditonton',
   'İlk Bölüm': 'Episode Pertama',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerId = {
   'Bir profile girip mesaj gönderebilirsin.': 'Buka profil dan kirim pesan.',
   'Listeyi sil': 'Hapus daftar',
   'Puan kaydedilemedi': 'Rating tidak dapat disimpan',
+  'Nerede İzlenir': 'Tempat Menonton',
+  'Abonelik': 'Langganan',
+  'Kirala': 'Sewa',
+  'Satın al': 'Beli',
+  'Hoş geldin!': 'Selamat datang!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Pilih serial dan film yang ingin kamu tonton',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Pilihanmu ditambahkan ke daftar tontonanmu',
+  'Şimdilik atla': 'Lewati dulu',
+  'Devam et': 'Lanjutkan',
+  '{} ekle': 'Tambah {}',
+  'Şikayet et': 'Laporkan',
+  'Engelle': 'Blokir',
+  'Engeli kaldır': 'Buka blokir',
+  'Kullanıcı engellendi': 'Pengguna diblokir',
+  'Engel kaldırıldı': 'Blokir dihapus',
+  'Şikayet sebebi': 'Alasan laporan',
+  'Spam veya yanıltıcı': 'Spam atau menyesatkan',
+  'Taciz veya nefret söylemi': 'Pelecehan atau ujaran kebencian',
+  'Uygunsuz / cinsel içerik': 'Tidak pantas / konten seksual',
+  'Şiddet veya tehlikeli içerik': 'Kekerasan atau konten berbahaya',
+  'Telif hakkı ihlali': 'Pelanggaran hak cipta',
+  'Şikayetin alındı, teşekkürler': 'Laporanmu sudah diterima, terima kasih',
+  'Hesabımı Sil': 'Hapus Akunku',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Akunmu dan semua datamu (riwayat, rating, komentar, daftar, pesan) akan dihapus permanen. Ini tidak bisa dibatalkan.',
+  'Şifreni gir': 'Masukkan kata sandimu',
+  'Hesabımı kalıcı sil': 'Hapus akunku permanen',
+  'Sesli mesaj': 'Pesan suara',
+  'Ses gönderilemedi': 'Pesan suara gagal dikirim',
+  'Kaydediliyor…': 'Merekam…',
+  'Ses oynatılamadı': 'Audio tidak bisa diputar',
+  'Oynat': 'Putar',
+  'Duraklat': 'Jeda',
+  'Liste görünümü': 'Tampilan daftar',
+  'Takvim görünümü': 'Tampilan kalender',
+  'Önceki ay': 'Bulan sebelumnya',
+  'Sonraki ay': 'Bulan berikutnya',
+  'Bu gün bölüm yok': 'Tidak ada episode hari ini',
+  'Gizlilik Politikası': 'Kebijakan Privasi',
+  'Son güncelleme: {}': 'Terakhir diperbarui: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Kebijakan ini menjelaskan data apa yang dikumpulkan, bagaimana digunakan, dan apa saja hakmu saat memakai aplikasi dizi.jpg dan situs dizijpg.com.',
+  'Topladığımız Veriler': 'Data yang Kami Kumpulkan',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Akun: alamat email, nama pengguna, dan kata sandi. Kata sandi disimpan sebagai hash yang tidak bisa dibalik; akun tamu bisa dipakai tanpa email.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: informasi yang kamu pilih untuk ditambahkan, seperti avatar, gambar sampul, bio, dan negara.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Penggunaan: riwayat tontonan, penilaian, komentar, daftar, reaksi, dan favoritmu.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Pesan: pesan teks, gambar, dan suaramu disimpan di server kami. Pesan tidak terenkripsi end-to-end; hanya ditinjau untuk moderasi jika dilaporkan.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Media yang diunggah: foto, GIF, video, dan rekaman suara yang kamu tambahkan ke profil, komentar, dan pesan.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Teknis: alamat IP, perkiraan lokasi (tingkat negara/kota), platform perangkat, versi aplikasi, dan log kesalahan. Ini disimpan untuk keamanan dan perbaikan masalah.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Notifikasi: untuk notifikasi push, kami menyimpan token perangkatmu dan pilihan bahasa. Kamu bisa mematikan notifikasi kapan saja dari pengaturan perangkat.',
+  'Verileri Nasıl Kullanırız': 'Cara Kami Menggunakan Data',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Kami memakai datamu hanya untuk menyediakan layanan, melindungi akun, mengirim notifikasi, memperbaiki kesalahan, dan mencegah penyalahgunaan. Kami tidak menjual datamu dan tidak membagikannya kepada siapa pun untuk iklan.',
+  'Çerezler ve Yerel Depolama': 'Cookie dan Penyimpanan Lokal',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Penyimpanan lokal hanya dipakai untuk menjagamu tetap masuk dan mengingat preferensi seperti bahasa dan tema. Tidak ada cookie iklan atau pelacakan.',
+  'Üçüncü Taraf Hizmetler': 'Layanan Pihak Ketiga',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Data serial dan film berasal dari TMDB, informasi platform streaming dari JustWatch. Notifikasi push dikirim lewat Google Firebase, dan lalu lintas situs dilindungi Cloudflare. Layanan ini tunduk pada kebijakan privasi masing-masing.',
+  'Saklama ve Silme': 'Penyimpanan dan Penghapusan',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Datamu disimpan selama akunmu ada. Lewat "Hapus Akun Saya" di pengaturan, kamu bisa menghapus akun secara permanen; data langsung dihapus, salinan di cadangan paling lambat dalam 14 hari. Log kesalahan otomatis terhapus setelah 30 hari.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Kamu bisa mengekspor datamu sebagai ZIP dari pengaturan; arsipnya dikirim ke alamat emailmu.',
+  'Güvenlik': 'Keamanan',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data dikirim lewat koneksi terenkripsi (HTTPS) dan disimpan di server dengan akses terbatas.',
+  'Çocukların Gizliliği': 'Privasi Anak',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg tidak ditujukan untuk anak di bawah 13 tahun.',
+  'Hakların': 'Hakmu',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Berdasarkan KVKK dan GDPR, kamu berhak mengakses, memperbaiki, menghapus, dan memindahkan datamu. Untuk itu, tulis kepada kami: {}',
+  'Değişiklikler': 'Perubahan',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Jika kebijakan ini berubah, versi baru akan dipublikasikan di halaman ini dan tanggalnya diperbarui.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Dengan mendaftar, kamu menerima {}.',
 };

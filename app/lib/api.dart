@@ -144,6 +144,74 @@ class Api {
 
   static Future<void> cikis() => _tokenKaydet(null);
 
+  /// FCM cihaz token'ını sunucuya kaydeder (push bildirimleri için).
+  static Future<void> cihazTokenKaydet(
+    String token,
+    String platform,
+    String dil,
+  ) => post('/cihaz-token', {'token': token, 'platform': platform, 'dil': dil});
+
+  /// FCM cihaz token'ını sunucudan siler.
+  static Future<void> cihazTokenSil(String token) async {
+    await http
+        .delete(
+          Uri.parse('$apiTaban/cihaz-token'),
+          headers: _basliklar,
+          body: jsonEncode({'token': token}),
+        )
+        .timeout(const Duration(seconds: 15));
+  }
+
+  /// Hesabı ve tüm veriyi kalıcı siler (şifreli hesapta şifre doğrulanır).
+  static Future<void> hesabiSil(String sifre) async {
+    final cevap = await http
+        .delete(
+          Uri.parse('$apiTaban/hesabim'),
+          headers: _basliklar,
+          body: jsonEncode({'sifre': sifre}),
+        )
+        .timeout(const Duration(seconds: 20));
+    _isle(cevap);
+    await _tokenKaydet(null);
+  }
+
+  /// Bir içeriği/kullanıcıyı şikayet eder.
+  static Future<void> sikayetEt(String tur, int hedefId, String sebep) =>
+      post('/sikayet', {'tur': tur, 'hedef_id': hedefId, 'sebep': sebep});
+
+  /// Kullanıcıyı engelle/engeli kaldır; sonuç engellendi mi?
+  static Future<bool> engelleToggle(String kullaniciAdi) async {
+    final d = await post('/engelle/$kullaniciAdi', {});
+    return d['engellendi'] as bool;
+  }
+
+  /// Engellediğim kullanıcılar.
+  static Future<List<dynamic>> engellenenler() async =>
+      (await get('/engellenenler'))['kullanicilar'] as List<dynamic>;
+
+  /// Uygulama sürümü (hata bildirimlerinde etiketlenir; pubspec ile eşle).
+  static const surum = '1.7.1+13';
+
+  /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
+  /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
+  static Future<void> hataBildir(
+    Object hata,
+    StackTrace? yigin, {
+    String? yol,
+  }) async {
+    try {
+      await post('/hata-bildir', {
+        'mesaj': hata.toString(),
+        'yigin': yigin?.toString(),
+        'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
+        'surum': surum,
+        if (yol != null) 'yol': yol,
+      });
+    } catch (_) {
+      // sessiz
+    }
+  }
+
   /// Şifre sıfırlama gibi dış akışların aldığı token'ı kaydeder.
   static Future<void> tokenKaydet(String token) => _tokenKaydet(token);
 
@@ -245,6 +313,10 @@ class Api {
 /// Oturum durumu (giriş yapan kullanıcı bilgisi).
 class Oturum extends ChangeNotifier {
   Map<String, dynamic>? kullanici;
+
+  /// Yeni kayıt sonrası karşılama ekranına yönlendirmeyi tetikler
+  /// (yalnız bu oturum için; uygulama yeniden başlayınca sıfırlanır).
+  static bool karsilamaGerekli = false;
 
   bool get girisli => Api.girisli;
 

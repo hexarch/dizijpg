@@ -116,7 +116,7 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         color: DiziRenkler.sari,
         onRefresh: _yukle,
         child: ListView.builder(
-          padding: const EdgeInsets.all(12),
+          padding: EdgeInsets.fromLTRB(12, 12, 12, altGuvenli(context)),
           itemCount: _bildirimler!.length,
           itemBuilder: (context, i) {
             final b = _bildirimler![i] as Map<String, dynamic>;

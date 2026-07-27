@@ -4,6 +4,7 @@ const Map<String, String> cevirilerMy = {
       'ထည့်သွင်းရန် သိရှိနိုင်သော ဒေတာ မတွေ့ပါ။',
   'Arama': 'ရှာဖွေရန်',
   'Aramaya başla': 'ရှာဖွေမှု စတင်လိုက်ပါ',
+  'Son aramalar': 'မကြာသေးမီက ရှာဖွေမှုများ',
   'Ayarlar': 'ဆက်တင်များ',
   'Bağla': 'ချိတ်ဆက်ရန်',
   'Bio': 'ကိုယ်ရေးအကျဉ်း',
@@ -167,7 +168,7 @@ const Map<String, String> cevirilerMy = {
   'Henüz bildirim yok': 'အသိပေးချက် မရှိသေးပါ',
   '@{} yorumuna yanıt verdi': '@{} က သင့်မှတ်ချက်ကို ပြန်ဖြေခဲ့သည်',
   '@{} yorumunu beğendi': '@{} က သင့်မှတ်ချက်ကို ကြိုက်ခဲ့သည်',
-  '@{} seni takip etti': '@{} က သင့်ကို follow လုပ်ခဲ့သည်',
+  '@{} seni takip etti': '@{} က သင့်ကို စောင့်ကြည့်ခဲ့သည်',
   '@{} sana mesaj gönderdi': '@{} က သင့်ထံ စာပို့ခဲ့သည်',
   'Mesajlar': 'စာများ',
   'Mesaj': 'စာ',
@@ -193,7 +194,7 @@ const Map<String, String> cevirilerMy = {
   'İlk Yorum': 'ပထမဆုံး မှတ်ချက်',
   '25 Yorum': 'မှတ်ချက် 25',
   '10 Puan': 'အဆင့် 10',
-  'İlk Takipçi': 'ပထမဆုံး follower',
+  'İlk Takipçi': 'ပထမဆုံး စောင့်ကြည့်သူ',
   '10 Dizi Bitirdin': 'ဇာတ်လမ်း 10 ခု ပြီးမြောက်',
   'İzlemeyi Bıraktım': 'ကြည့်ရှုမှု ရပ်လိုက်ပြီ',
   'İzlediği Diziler ({})': 'သူကြည့်ခဲ့သော ဇာတ်လမ်းများ ({})',
@@ -205,8 +206,8 @@ const Map<String, String> cevirilerMy = {
   '100 Yorum': 'မှတ်ချက် 100',
   '50 Puan': 'အဆင့် 50',
   '100 Puan': 'အဆင့် 100',
-  '10 Takipçi': 'follower 10',
-  '50 Takipçi': 'follower 50',
+  '10 Takipçi': 'စောင့်ကြည့်သူ 10',
+  '50 Takipçi': 'စောင့်ကြည့်သူ 50',
   '25 Dizi Bitirdin': 'ဇာတ်လမ်း 25 ပြီးမြောက်',
   '50 Dizi Bitirdin': 'ဇာတ်လမ်း 50 ပြီးမြောက်',
   '10 Beğeni': 'လိုက် 10',
@@ -257,4 +258,93 @@ const Map<String, String> cevirilerMy = {
       'ပရိုဖိုင်ဖွင့်၍ မက်ဆေ့ဂျ်ပို့ပါ။',
   'Listeyi sil': 'စာရင်းဖျက်ရန်',
   'Puan kaydedilemedi': 'အဆင့်သတ်မှတ်ချက် သိမ်း၍မရပါ',
+  'Nerede İzlenir': 'ဘယ်မှာကြည့်ရမလဲ',
+  'Abonelik': 'အသင်းဝင်ခ',
+  'Kirala': 'ငှားရမ်း',
+  'Satın al': 'ဝယ်ယူ',
+  'Hoş geldin!': 'ကြိုဆိုပါတယ်!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'သင်ကြည့်လိုသော ဇာတ်လမ်းတွဲများနှင့် ရုပ်ရှင်များကို ရွေးပါ',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'သင့်ရွေးချယ်မှုများကို သင့်စာရင်းသို့ ထည့်ပါမည်',
+  'Şimdilik atla': 'ယခုအတွက် ကျော်ပါ',
+  'Devam et': 'ဆက်လုပ်ပါ',
+  '{} ekle': '{} ထည့်ပါ',
+  'Şikayet et': 'တိုင်ကြားရန်',
+  'Engelle': 'ပိတ်ဆို့ရန်',
+  'Engeli kaldır': 'ပိတ်ဆို့မှုဖြုတ်ရန်',
+  'Kullanıcı engellendi': 'အသုံးပြုသူကို ပိတ်ဆို့ပြီး',
+  'Engel kaldırıldı': 'ပိတ်ဆို့မှု ဖြုတ်ပြီး',
+  'Şikayet sebebi': 'တိုင်ကြားရသည့်အကြောင်းရင်း',
+  'Spam veya yanıltıcı': 'စပမ် သို့မဟုတ် လှည့်စားမှု',
+  'Taciz veya nefret söylemi': 'နှောင့်ယှက်မှု သို့မဟုတ် အမုန်းစကား',
+  'Uygunsuz / cinsel içerik': 'မသင့်လျော် / လိင်ဆိုင်ရာအကြောင်းအရာ',
+  'Şiddet veya tehlikeli içerik':
+      'အကြမ်းဖက်မှု သို့မဟုတ် အန္တရာယ်ရှိအကြောင်းအရာ',
+  'Telif hakkı ihlali': 'မူပိုင်ခွင့်ချိုးဖောက်မှု',
+  'Şikayetin alındı, teşekkürler':
+      'မင်းရဲ့တိုင်ကြားချက် ရရှိပါပြီ၊ ကျေးဇူးတင်ပါတယ်',
+  'Hesabımı Sil': 'ကျွန်ုပ်အကောင့်ကို ဖျက်ရန်',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'မင်းရဲ့အကောင့်နဲ့ ဒေတာအားလုံး (မှတ်တမ်း၊ အဆင့်သတ်မှတ်ချက်၊ မှတ်ချက်၊ စာရင်း၊ မက်ဆေ့ချ်) အပြီးအပိုင် ဖျက်ခံရမည်။ ဒါကို ပြန်ဖျက်လို့မရပါ။',
+  'Şifreni gir': 'မင်းရဲ့စကားဝှက်ကို ထည့်ပါ',
+  'Hesabımı kalıcı sil': 'ကျွန်ုပ်အကောင့်ကို အပြီးအပိုင်ဖျက်ရန်',
+  'Sesli mesaj': 'အသံမက်ဆေ့ချ်',
+  'Ses gönderilemedi': 'အသံမက်ဆေ့ချ် ပို့၍မရပါ',
+  'Kaydediliyor…': 'အသံဖမ်းနေသည်…',
+  'Ses oynatılamadı': 'အသံဖွင့်၍ မရပါ',
+  'Oynat': 'ဖွင့်ရန်',
+  'Duraklat': 'ခေတ္တရပ်ရန်',
+  'Liste görünümü': 'စာရင်းမြင်ကွင်း',
+  'Takvim görünümü': 'ပြက္ခဒိန်မြင်ကွင်း',
+  'Önceki ay': 'ယခင်လ',
+  'Sonraki ay': 'နောက်လ',
+  'Bu gün bölüm yok': 'ဒီနေ့ ဇာတ်လမ်းအပိုင်း မရှိပါ',
+  'Gizlilik Politikası': 'ကိုယ်ရေးအချက်အလက် မူဝါဒ',
+  'Son güncelleme: {}': 'နောက်ဆုံးအပ်ဒိတ်- {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg အက်ပ်နှင့် dizijpg.com ဆိုက်ကို အသုံးပြုစဉ် မည်သည့်ဒေတာများ စုဆောင်းသည်၊ မည်သို့အသုံးပြုသည်၊ သင့်အခွင့်အရေးများ မည်သည်တို့ဖြစ်သည်ကို ဤမူဝါဒက ရှင်းပြသည်။',
+  'Topladığımız Veriler': 'ကျွန်ုပ်တို့ စုဆောင်းသောဒေတာ',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'အကောင့်- အီးမေးလ်လိပ်စာ၊ အသုံးပြုသူအမည်နှင့် စကားဝှက်။ စကားဝှက်များကို ပြန်ဖော်၍မရသော hash ပုံစံဖြင့် သိမ်းဆည်းသည်။ ဧည့်သည်အကောင့်များကို အီးမေးလ်မလိုဘဲ သုံးနိုင်သည်။',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'ပရိုဖိုင်- avatar၊ ကာဗာပုံ၊ ကိုယ်ရေးအကျဉ်းနှင့် နိုင်ငံကဲ့သို့ သင်ကိုယ်တိုင် ထည့်ရန်ရွေးချယ်သော အချက်အလက်များ။',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'အသုံးပြုမှု- သင့်ကြည့်ရှုမှုမှတ်တမ်း၊ အဆင့်သတ်မှတ်ချက်များ၊ မှတ်ချက်များ၊ စာရင်းများ၊ တုံ့ပြန်မှုများနှင့် အကြိုက်ဆုံးများ။',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'မက်ဆေ့ချ်များ- သင့်စာသား၊ ပုံနှင့် အသံမက်ဆေ့ချ်များကို ကျွန်ုပ်တို့၏ဆာဗာများပေါ်တွင် သိမ်းဆည်းသည်။ မက်ဆေ့ချ်များသည် အစွန်းမှအစွန်း စာဝှက်မထားပါ။ တိုင်ကြားခံရမှသာ စိစစ်ရေးအတွက် ကြည့်ရှုမည်။',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'တင်ထားသောမီဒီယာ- ပရိုဖိုင်၊ မှတ်ချက်နှင့် မက်ဆေ့ချ်များတွင် သင်ထည့်သော ဓာတ်ပုံ၊ GIF၊ ဗီဒီယိုနှင့် အသံသွင်းချက်များ။',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'နည်းပညာဆိုင်ရာ- IP လိပ်စာ၊ ခန့်မှန်းတည်နေရာ (နိုင်ငံ/မြို့အဆင့်)၊ စက်ပလက်ဖောင်း၊ အက်ပ်ဗားရှင်းနှင့် အမှားမှတ်တမ်းများ။ ၎င်းတို့ကို လုံခြုံရေးနှင့် ပြဿနာဖြေရှင်းရန်အတွက် သိမ်းထားသည်။',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'အသိပေးချက်များ- push အသိပေးချက်များအတွက် သင့်စက်၏ token နှင့် ဘာသာစကားရွေးချယ်မှုကို သိမ်းထားသည်။ စက်၏ဆက်တင်များမှ အသိပေးချက်များကို အချိန်မရွေး ပိတ်နိုင်သည်။',
+  'Verileri Nasıl Kullanırız': 'ဒေတာကို မည်သို့အသုံးပြုသနည်း',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'သင့်ဒေတာကို ဝန်ဆောင်မှုပေးရန်၊ အကောင့်ကာကွယ်ရန်၊ အသိပေးချက်ပို့ရန်၊ အမှားပြင်ရန်နှင့် အလွဲသုံးမှုတားဆီးရန်အတွက်သာ အသုံးပြုသည်။ သင့်ဒေတာကို မရောင်းပါ၊ ကြော်ငြာအတွက် မည်သူနှင့်မျှ မမျှဝေပါ။',
+  'Çerezler ve Yerel Depolama': 'Cookie များနှင့် စက်တွင်းသိုလှောင်မှု',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'သင့်ကို လော့ဂ်အင်ဝင်ထားစေရန်နှင့် ဘာသာစကား/အပြင်အဆင်ကဲ့သို့ ရွေးချယ်မှုများကို မှတ်ထားရန်အတွက်သာ စက်တွင်းသိုလှောင်မှုကို သုံးသည်။ ကြော်ငြာ သို့မဟုတ် ခြေရာခံ cookie မရှိပါ။',
+  'Üçüncü Taraf Hizmetler': 'ပြင်ပဝန်ဆောင်မှုများ',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'ဇာတ်လမ်းတွဲနှင့် ရုပ်ရှင်ဒေတာများသည် TMDB မှ၊ streaming ပလက်ဖောင်းအချက်အလက်များသည် JustWatch မှ လာသည်။ Push အသိပေးချက်များကို Google Firebase မှတစ်ဆင့် ပို့ဆောင်ပြီး ဆိုက်၏အသွားအလာကို Cloudflare က ကာကွယ်သည်။ ဤဝန်ဆောင်မှုများသည် ၎င်းတို့၏ကိုယ်ပိုင် ကိုယ်ရေးအချက်အလက်မူဝါဒများနှင့် လိုက်နာရသည်။',
+  'Saklama ve Silme': 'သိမ်းဆည်းမှုနှင့် ဖျက်ခြင်း',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'သင့်အကောင့်ရှိနေသရွေ့ သင့်ဒေတာကို သိမ်းထားသည်။ ဆက်တင်များရှိ "ကျွန်ုပ်၏အကောင့်ကို ဖျက်ရန်" ဖြင့် အကောင့်ကို အပြီးတိုင်ဖျက်နိုင်သည်။ ဒေတာကို ချက်ချင်းဖျက်ပြီး အရန်ကူးယူမှုများရှိ မိတ္တူများကို အများဆုံး ၁၄ ရက်အတွင်း ဖျက်သည်။ အမှားမှတ်တမ်းများကို ရက် ၃၀ ကြာပြီးနောက် အလိုအလျောက် ဖျက်သည်။',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'ဆက်တင်များမှ သင့်ဒေတာကို ZIP အဖြစ် ထုတ်ယူနိုင်သည်။ မှတ်တမ်းဖိုင်ကို သင့်အီးမေးလ်လိပ်စာသို့ ပို့ပေးသည်။',
+  'Güvenlik': 'လုံခြုံရေး',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ဒေတာများသည် စာဝှက်ထားသောချိတ်ဆက်မှုများ (HTTPS) မှတစ်ဆင့် သွားလာပြီး ဝင်ရောက်ခွင့်ကန့်သတ်ထားသော ဆာဗာများပေါ်တွင် သိမ်းဆည်းသည်။',
+  'Çocukların Gizliliği': 'ကလေးများ၏ ကိုယ်ရေးအချက်အလက်',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg သည် အသက် ၁၃ နှစ်အောက် ကလေးများအတွက် မဟုတ်ပါ။',
+  'Hakların': 'သင့်အခွင့်အရေးများ',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK နှင့် GDPR အရ သင့်ဒေတာကို ဝင်ကြည့်ရန်၊ ပြင်ရန်၊ ဖျက်ရန်နှင့် ရွှေ့ပြောင်းရန် အခွင့်အရေးရှိသည်။ ဤကိစ္စများအတွက် ကျွန်ုပ်တို့ထံ စာရေးပါ- {}',
+  'Değişiklikler': 'ပြောင်းလဲမှုများ',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'ဤမူဝါဒ ပြောင်းလဲပါက ဗားရှင်းအသစ်ကို ဤစာမျက်နှာတွင် ထုတ်ပြန်ပြီး ရက်စွဲကို အပ်ဒိတ်လုပ်မည်။',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'စာရင်းသွင်းခြင်းဖြင့် {} ကို လက်ခံပြီးဖြစ်သည်။',
 };

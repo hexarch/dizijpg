@@ -3,6 +3,7 @@ const Map<String, String> cevirilerHe = {
   'Aktarılacak tanınan veri bulunamadı.': 'לא נמצאו נתונים מזוהים לייבוא.',
   'Arama': 'חיפוש',
   'Aramaya başla': 'התחל לחפש',
+  'Son aramalar': 'חיפושים אחרונים',
   'Ayarlar': 'הגדרות',
   'Bağla': 'קשר',
   'Bio': 'ביו',
@@ -251,4 +252,89 @@ const Map<String, String> cevirilerHe = {
   'Bir profile girip mesaj gönderebilirsin.': 'פתח פרופיל ושלח הודעה.',
   'Listeyi sil': 'מחק רשימה',
   'Puan kaydedilemedi': 'לא ניתן היה לשמור את הדירוג',
+  'Nerede İzlenir': 'איפה לצפות',
+  'Abonelik': 'מנוי',
+  'Kirala': 'השכרה',
+  'Satın al': 'קנייה',
+  'Hoş geldin!': 'ברוך הבא!',
+  'İzlemek istediğin dizi ve filmleri seç': 'בחר סדרות וסרטים שאתה רוצה לראות',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'הבחירות שלך יתווספו לרשימת הצפייה',
+  'Şimdilik atla': 'דלג בינתיים',
+  'Devam et': 'המשך',
+  '{} ekle': 'הוסף {}',
+  'Şikayet et': 'דיווח',
+  'Engelle': 'חסימה',
+  'Engeli kaldır': 'ביטול חסימה',
+  'Kullanıcı engellendi': 'המשתמש נחסם',
+  'Engel kaldırıldı': 'החסימה הוסרה',
+  'Şikayet sebebi': 'סיבת הדיווח',
+  'Spam veya yanıltıcı': 'ספאם או מטעה',
+  'Taciz veya nefret söylemi': 'הטרדה או דברי שנאה',
+  'Uygunsuz / cinsel içerik': 'תוכן לא הולם / מיני',
+  'Şiddet veya tehlikeli içerik': 'אלימות או תוכן מסוכן',
+  'Telif hakkı ihlali': 'הפרת זכויות יוצרים',
+  'Şikayetin alındı, teşekkürler': 'הדיווח שלך התקבל, תודה',
+  'Hesabımı Sil': 'מחיקת החשבון שלי',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'החשבון שלך וכל הנתונים שלך (היסטוריה, דירוגים, תגובות, רשימות, הודעות) יימחקו לצמיתות. לא ניתן לבטל זאת.',
+  'Şifreni gir': 'הזן את הסיסמה שלך',
+  'Hesabımı kalıcı sil': 'מחק את החשבון שלי לצמיתות',
+  'Sesli mesaj': 'הודעה קולית',
+  'Ses gönderilemedi': 'לא ניתן היה לשלוח את ההודעה הקולית',
+  'Kaydediliyor…': 'מקליט…',
+  'Ses oynatılamadı': 'לא ניתן להפעיל את ההודעה הקולית',
+  'Oynat': 'הפעל',
+  'Duraklat': 'השהה',
+  'Liste görünümü': 'תצוגת רשימה',
+  'Takvim görünümü': 'תצוגת לוח שנה',
+  'Önceki ay': 'חודש קודם',
+  'Sonraki ay': 'חודש הבא',
+  'Bu gün bölüm yok': 'אין פרקים ביום זה',
+  'Gizlilik Politikası': 'מדיניות פרטיות',
+  'Son güncelleme: {}': 'עדכון אחרון: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'מדיניות זו מסבירה אילו נתונים נאספים, כיצד הם משמשים ומהן הזכויות שלך כשאתה משתמש באפליקציית dizi.jpg ובאתר dizijpg.com.',
+  'Topladığımız Veriler': 'אילו נתונים אנחנו אוספים',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'חשבון: כתובת אימייל, שם משתמש וסיסמה. הסיסמאות נשמרות כגיבוב בלתי הפיך; בחשבונות אורח אפשר להשתמש בלי אימייל.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'פרופיל: מידע שאתה בוחר להוסיף, כמו אווטאר, תמונת רקע, ביו ומדינה.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'שימוש: היסטוריית הצפייה, הדירוגים, התגובות, הרשימות, הריאקציות והמועדפים שלך.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'הודעות: הודעות הטקסט, התמונה והקול שלך נשמרות בשרתים שלנו. ההודעות אינן מוצפנות מקצה לקצה; הן נבדקות רק אם הוגש עליהן דיווח, לצורכי פיקוח.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'מדיה שהועלתה: תמונות, קובצי GIF, סרטונים והקלטות קול שאתה מוסיף לפרופיל, לתגובות ולהודעות.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'נתונים טכניים: כתובת IP, מיקום משוער (מדינה/עיר), פלטפורמת המכשיר, גרסת האפליקציה ויומני שגיאות. אלה נשמרים לצורכי אבטחה ותיקון תקלות.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'התראות: לצורך התראות פוש אנחנו שומרים את אסימון המכשיר ואת שפת ההעדפה שלך. אפשר לכבות התראות בכל עת בהגדרות המכשיר.',
+  'Verileri Nasıl Kullanırız': 'איך אנחנו משתמשים בנתונים שלך',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'אנחנו משתמשים בנתונים שלך אך ורק כדי לספק את השירות, להגן על החשבון, לשלוח התראות, לתקן תקלות ולמנוע שימוש לרעה. אנחנו לא מוכרים את הנתונים שלך ולא משתפים אותם עם איש למטרות פרסום.',
+  'Çerezler ve Yerel Depolama': 'עוגיות ואחסון מקומי',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'אנחנו משתמשים באחסון מקומי רק כדי לשמור אותך מחובר ולזכור העדפות כמו שפה וערכת נושא. אין עוגיות פרסום או מעקב.',
+  'Üçüncü Taraf Hizmetler': 'שירותי צד שלישי',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'נתוני הסדרות והסרטים מגיעים מ-TMDB, ומידע על פלטפורמות סטרימינג מ-JustWatch. התראות פוש נשלחות דרך Google Firebase, ותעבורת האתר מוגנת על ידי Cloudflare. שירותים אלה כפופים למדיניות הפרטיות שלהם.',
+  'Saklama ve Silme': 'שמירה ומחיקה',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'הנתונים שלך נשמרים כל עוד החשבון קיים. באמצעות "מחק את החשבון שלי" בהגדרות אפשר למחוק את החשבון לצמיתות; הנתונים נמחקים מיד, והעותקים בגיבויים בתוך 14 יום לכל היותר. יומני שגיאות נמחקים אוטומטית אחרי 30 יום.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'אפשר לייצא את הנתונים שלך כקובץ ZIP מההגדרות; הארכיון נשלח לכתובת האימייל שלך.',
+  'Güvenlik': 'אבטחה',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'הנתונים עוברים בחיבורים מוצפנים (HTTPS) ונשמרים בשרתים עם גישה מוגבלת.',
+  'Çocukların Gizliliği': 'פרטיות ילדים',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      '‏dizi.jpg אינו מיועד לילדים מתחת לגיל 13.',
+  'Hakların': 'הזכויות שלך',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'לפי KVKK ו-GDPR יש לך זכות לגשת לנתונים שלך, לתקן אותם, למחוק אותם ולהעביר אותם. בנושאים אלה כתוב לנו: {}',
+  'Değişiklikler': 'שינויים',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'אם המדיניות תשתנה, הגרסה החדשה תפורסם בעמוד זה והתאריך יעודכן.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'בהרשמה אתה מקבל את {}.',
 };

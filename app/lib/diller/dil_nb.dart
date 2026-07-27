@@ -4,9 +4,10 @@ const Map<String, String> cevirilerNb = {
       'Fant ingen gjenkjente data å importere.',
   'Arama': 'Søk',
   'Aramaya başla': 'Begynn å søke',
+  'Son aramalar': 'Nylige søk',
   'Ayarlar': 'Innstillinger',
   'Bağla': 'Koble til',
-  'Bio': 'Bio',
+  'Bio': 'Biografi',
   'Bitirdim': 'Fullført',
   'Bunları da Beğenebilirsin': 'Disse kan du også like',
   'Bölüm': 'Episode',
@@ -255,4 +256,89 @@ const Map<String, String> cevirilerNb = {
       'Åpne en profil og send en melding.',
   'Listeyi sil': 'Slett liste',
   'Puan kaydedilemedi': 'Vurderingen kunne ikke lagres',
+  'Nerede İzlenir': 'Hvor du kan se',
+  'Abonelik': 'Abonnement',
+  'Kirala': 'Lei',
+  'Satın al': 'Kjøp',
+  'Hoş geldin!': 'Velkommen!',
+  'İzlemek istediğin dizi ve filmleri seç': 'Velg serier og filmer du vil se',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Valgene dine legges til i listen din',
+  'Şimdilik atla': 'Hopp over nå',
+  'Devam et': 'Fortsett',
+  '{} ekle': 'Legg til {}',
+  'Şikayet et': 'Rapporter',
+  'Engelle': 'Blokker',
+  'Engeli kaldır': 'Fjern blokkering',
+  'Kullanıcı engellendi': 'Bruker blokkert',
+  'Engel kaldırıldı': 'Blokkering fjernet',
+  'Şikayet sebebi': 'Årsak til rapportering',
+  'Spam veya yanıltıcı': 'Spam eller villedende',
+  'Taciz veya nefret söylemi': 'Trakassering eller hatefulle ytringer',
+  'Uygunsuz / cinsel içerik': 'Upassende / seksuelt innhold',
+  'Şiddet veya tehlikeli içerik': 'Vold eller farlig innhold',
+  'Telif hakkı ihlali': 'Brudd på opphavsrett',
+  'Şikayetin alındı, teşekkürler': 'Rapporten din er mottatt, takk',
+  'Hesabımı Sil': 'Slett kontoen min',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Kontoen din og alle dataene dine (historikk, vurderinger, kommentarer, lister, meldinger) slettes permanent. Dette kan ikke angres.',
+  'Şifreni gir': 'Skriv inn passordet ditt',
+  'Hesabımı kalıcı sil': 'Slett kontoen min permanent',
+  'Sesli mesaj': 'Talemelding',
+  'Ses gönderilemedi': 'Talemeldingen kunne ikke sendes',
+  'Kaydediliyor…': 'Tar opp…',
+  'Ses oynatılamadı': 'Talemeldingen kunne ikke spilles av',
+  'Oynat': 'Spill av',
+  'Duraklat': 'Pause',
+  'Liste görünümü': 'Listevisning',
+  'Takvim görünümü': 'Kalendervisning',
+  'Önceki ay': 'Forrige måned',
+  'Sonraki ay': 'Neste måned',
+  'Bu gün bölüm yok': 'Ingen episoder denne dagen',
+  'Gizlilik Politikası': 'Personvernerklæring',
+  'Son güncelleme: {}': 'Sist oppdatert: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Denne erklæringen forklarer hvilke data som samles inn når du bruker dizi.jpg-appen og nettstedet dizijpg.com, hvordan de brukes og hvilke rettigheter du har.',
+  'Topladığımız Veriler': 'Data vi samler inn',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Konto: e-postadresse, brukernavn og passord. Passord lagres med irreversibel hashing; gjestekontoer kan brukes uten e-post.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: informasjon du selv velger å legge til, som avatar, forsidebilde, bio og land.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Bruk: visningshistorikken din, vurderingene, kommentarene, listene, reaksjonene og favorittene dine.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Meldinger: tekst-, bilde- og talemeldingene dine lagres på serverne våre. Meldinger er ikke ende-til-ende-krypterte; de gjennomgås kun for moderering hvis de blir rapportert.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Opplastede medier: bilder, GIF-er, videoer og lydopptak du legger til i profilen, kommentarene og meldingene dine.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Teknisk: IP-adresse, omtrentlig posisjon (land-/bynivå), enhetsplattform, appversjon og feillogger. Disse lagres for sikkerhet og feilsøking.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Varsler: enhetstokenet ditt og språkvalget ditt lagres for push-varsler. Du kan når som helst slå av varsler i innstillingene på enheten din.',
+  'Verileri Nasıl Kullanırız': 'Hvordan vi bruker dataene',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Vi bruker dataene dine kun til å levere tjenesten, beskytte kontoen din, sende varsler, rette feil og forhindre misbruk. Vi selger ikke dataene dine og deler dem ikke med noen for reklameformål.',
+  'Çerezler ve Yerel Depolama': 'Informasjonskapsler og lokal lagring',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Vi bruker lokal lagring kun for å holde deg innlogget og huske preferansene dine, som språk og tema. Det finnes ingen reklame- eller sporingsinformasjonskapsler.',
+  'Üçüncü Taraf Hizmetler': 'Tredjepartstjenester',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Serie- og filminformasjon hentes fra TMDB, og informasjon om strømmetilbydere fra JustWatch. Push-varsler leveres via Google Firebase, og trafikken til nettstedet beskyttes av Cloudflare. Disse tjenestene har sine egne personvernerklæringer.',
+  'Saklama ve Silme': 'Lagring og sletting',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Dataene dine lagres så lenge kontoen din er aktiv. Du kan slette kontoen din permanent med "Slett kontoen min" i Innstillinger; dataene dine slettes umiddelbart, og kopier i sikkerhetskopier slettes senest innen 14 dager. Feillogger slettes automatisk etter 30 dager.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Du kan eksportere dataene dine som ZIP fra Innstillinger; arkivet sendes til e-postadressen din.',
+  'Güvenlik': 'Sikkerhet',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Data overføres via kryptert forbindelse (HTTPS) og lagres på servere med begrenset tilgang.',
+  'Çocukların Gizliliği': 'Barns personvern',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg er ikke rettet mot barn under 13 år.',
+  'Hakların': 'Rettighetene dine',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'I henhold til KVKK og GDPR har du rett til å få innsyn i, rette, slette og overføre dataene dine. Du kan skrive til oss om disse rettighetene: {}',
+  'Değişiklikler': 'Endringer',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Hvis denne erklæringen endres, publiseres den nye versjonen på denne siden, og oppdateringsdatoen fornyes.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Ved å registrere deg godtar du {}.',
 };

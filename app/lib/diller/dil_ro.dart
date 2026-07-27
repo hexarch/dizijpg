@@ -4,6 +4,7 @@ const Map<String, String> cevirilerRo = {
       'Nu s-au găsit date recunoscute de importat.',
   'Arama': 'Căutare',
   'Aramaya başla': 'Începe să cauți',
+  'Son aramalar': 'Căutări recente',
   'Ayarlar': 'Setări',
   'Bağla': 'Asociază',
   'Bio': 'Bio',
@@ -254,5 +255,91 @@ const Map<String, String> cevirilerRo = {
   'Bir profile girip mesaj gönderebilirsin.':
       'Deschide un profil și trimite un mesaj.',
   'Listeyi sil': 'Șterge lista',
-  'Puan kaydedilemedi': 'Evaluarea nu a putut fi salvată',
+  'Puan kaydedilemedi': 'Nota nu a putut fi salvată',
+  'Nerede İzlenir': 'Unde vizionezi',
+  'Abonelik': 'Abonament',
+  'Kirala': 'Închiriază',
+  'Satın al': 'Cumpără',
+  'Hoş geldin!': 'Bun venit!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Alege serialele și filmele pe care vrei să le vezi',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Alegerile tale se adaugă în lista ta',
+  'Şimdilik atla': 'Omite deocamdată',
+  'Devam et': 'Continuă',
+  '{} ekle': 'Adaugă {}',
+  'Şikayet et': 'Raportează',
+  'Engelle': 'Blochează',
+  'Engeli kaldır': 'Deblochează',
+  'Kullanıcı engellendi': 'Utilizator blocat',
+  'Engel kaldırıldı': 'Blocare eliminată',
+  'Şikayet sebebi': 'Motivul raportării',
+  'Spam veya yanıltıcı': 'Spam sau înșelător',
+  'Taciz veya nefret söylemi': 'Hărțuire sau discurs de ură',
+  'Uygunsuz / cinsel içerik': 'Conținut nepotrivit / sexual',
+  'Şiddet veya tehlikeli içerik': 'Violență sau conținut periculos',
+  'Telif hakkı ihlali': 'Încălcarea drepturilor de autor',
+  'Şikayetin alındı, teşekkürler': 'Raportul tău a fost primit, mulțumim',
+  'Hesabımı Sil': 'Șterge contul meu',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Contul tău și toate datele tale (istoric, note, comentarii, liste, mesaje) vor fi șterse definitiv. Această acțiune nu poate fi anulată.',
+  'Şifreni gir': 'Introdu parola',
+  'Hesabımı kalıcı sil': 'Șterge definitiv contul meu',
+  'Sesli mesaj': 'Mesaj vocal',
+  'Ses gönderilemedi': 'Mesajul vocal nu a putut fi trimis',
+  'Kaydediliyor…': 'Se înregistrează…',
+  'Ses oynatılamadı': 'Audio nu a putut fi redat',
+  'Oynat': 'Redă',
+  'Duraklat': 'Pauză',
+  'Liste görünümü': 'Vizualizare listă',
+  'Takvim görünümü': 'Vizualizare calendar',
+  'Önceki ay': 'Luna anterioară',
+  'Sonraki ay': 'Luna următoare',
+  'Bu gün bölüm yok': 'Niciun episod în această zi',
+  'Gizlilik Politikası': 'Politica de Confidențialitate',
+  'Son güncelleme: {}': 'Ultima actualizare: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Această politică explică ce date sunt colectate, cum sunt folosite și ce drepturi ai atunci când folosești aplicația dizi.jpg și site-ul dizijpg.com.',
+  'Topladığımız Veriler': 'Datele pe care le colectăm',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Cont: adresa de e-mail, numele de utilizator și parola. Parolele sunt stocate ca hash ireversibil; conturile de oaspete pot fi folosite fără e-mail.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: informațiile pe care alegi să le adaugi, precum avatarul, imaginea de copertă, bio și țara.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Utilizare: istoricul tău de vizionare, notele, comentariile, listele, reacțiile și favoritele.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Mesaje: mesajele tale text, cu imagini și vocale sunt stocate pe serverele noastre. Mesajele nu sunt criptate end-to-end; sunt examinate doar dacă sunt raportate, în scop de moderare.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Conținut încărcat: fotografii, GIF-uri, videoclipuri și înregistrări vocale pe care le adaugi la profil, comentarii și mesaje.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Tehnice: adresa IP, locația aproximativă (la nivel de țară/oraș), platforma dispozitivului, versiunea aplicației și jurnalele de erori. Sunt păstrate pentru securitate și remedierea problemelor.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Notificări: pentru notificările push păstrăm tokenul dispozitivului tău și limba preferată. Poți dezactiva notificările oricând din setările dispozitivului.',
+  'Verileri Nasıl Kullanırız': 'Cum îți folosim datele',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Îți folosim datele doar pentru a oferi serviciul, a-ți proteja contul, a trimite notificări, a remedia erori și a preveni abuzurile. Nu îți vindem datele și nu le partajăm cu nimeni în scopuri publicitare.',
+  'Çerezler ve Yerel Depolama': 'Cookie-uri și stocare locală',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Folosim stocarea locală doar pentru a te menține conectat și a reține preferințe precum limba și tema. Nu există cookie-uri de publicitate sau de urmărire.',
+  'Üçüncü Taraf Hizmetler': 'Servicii terțe',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Datele despre seriale și filme provin de la TMDB, informațiile despre platformele de streaming de la JustWatch. Notificările push sunt livrate prin Google Firebase, iar traficul site-ului este protejat de Cloudflare. Aceste servicii au propriile politici de confidențialitate.',
+  'Saklama ve Silme': 'Păstrare și ștergere',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Datele tale sunt păstrate cât timp există contul tău. Prin „Șterge-mi contul" din setări îți poți șterge contul definitiv; datele sunt șterse imediat, iar copiile din backupuri în cel mult 14 zile. Jurnalele de erori se șterg automat după 30 de zile.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Îți poți exporta datele ca ZIP din setări; arhiva este trimisă la adresa ta de e-mail.',
+  'Güvenlik': 'Securitate',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Datele circulă prin conexiuni criptate (HTTPS) și sunt stocate pe servere cu acces restricționat.',
+  'Çocukların Gizliliği': 'Confidențialitatea copiilor',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg nu se adresează copiilor sub 13 ani.',
+  'Hakların': 'Drepturile tale',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Conform KVKK și GDPR ai dreptul să îți accesezi, corectezi, ștergi și transferi datele. Pentru acestea scrie-ne: {}',
+  'Değişiklikler': 'Modificări',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Dacă această politică se schimbă, noua versiune va fi publicată pe această pagină, iar data va fi actualizată.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Prin înregistrare accepți {}.',
 };

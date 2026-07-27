@@ -4,6 +4,7 @@ const Map<String, String> cevirilerBg = {
       'Не бяха намерени разпознати данни за импортиране.',
   'Arama': 'Търсене',
   'Aramaya başla': 'Започни да търсиш',
+  'Son aramalar': 'Скорошни търсения',
   'Ayarlar': 'Настройки',
   'Bağla': 'Свържи',
   'Bio': 'Био',
@@ -108,7 +109,7 @@ const Map<String, String> cevirilerBg = {
   '{} dk': '{} мин',
   '{} gün': '{} дни',
   '{} içerik': '{} заглавия',
-  '{} içerik · otomatik': '{} заглавия · автоматичен',
+  '{} içerik · otomatik': '{} заглавия · автоматично',
   '{} kayıt atlandı (eşleşmedi).': '{} записа са пропуснати (няма съвпадение).',
   '{} saat': '{} часа',
   '{} sezon': '{} сезона',
@@ -154,7 +155,7 @@ const Map<String, String> cevirilerBg = {
   'Akış': 'Емисия',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'Емисията ти е празна.\nКогато коментират сериалите и филмите, които гледаш, ще се появи тук.',
-  'Listeleri ({})': 'Неговите списъци ({})',
+  'Listeleri ({})': 'Списъци ({})',
   'Liste boş.': 'Този списък е празен.',
   'Yanıtla': 'Отговори',
   '@{} kullanıcısına yanıt veriyorsun': 'Отговаряш на @{}',
@@ -223,7 +224,7 @@ const Map<String, String> cevirilerBg = {
   'Sistem': 'Системна',
   'Koyu': 'Тъмна',
   'Açık': 'Светла',
-  'İzleyenler': 'Гледали',
+  'İzleyenler': 'Зрители',
   'Yorumunu yaz... (@ ile etiketle)':
       'Напиши коментара си... (@ за отбелязване)',
   '@{} bir yorumda seni etiketledi': '@{} те отбеляза в коментар',
@@ -255,4 +256,90 @@ const Map<String, String> cevirilerBg = {
       'Отвори профил и изпрати съобщение.',
   'Listeyi sil': 'Изтрий списъка',
   'Puan kaydedilemedi': 'Оценката не можа да се запази',
+  'Nerede İzlenir': 'Къде да гледате',
+  'Abonelik': 'Абонамент',
+  'Kirala': 'Наем',
+  'Satın al': 'Купуване',
+  'Hoş geldin!': 'Добре дошъл!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Избери сериали и филми, които искаш да гледаш',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Избраното се добавя към списъка ти „Ще гледам“',
+  'Şimdilik atla': 'Пропусни засега',
+  'Devam et': 'Продължи',
+  '{} ekle': 'Добави {}',
+  'Şikayet et': 'Докладвай',
+  'Engelle': 'Блокирай',
+  'Engeli kaldır': 'Разблокирай',
+  'Kullanıcı engellendi': 'Потребителят е блокиран',
+  'Engel kaldırıldı': 'Блокирането е премахнато',
+  'Şikayet sebebi': 'Причина за доклада',
+  'Spam veya yanıltıcı': 'Спам или подвеждащо',
+  'Taciz veya nefret söylemi': 'Тормоз или изказвания на омраза',
+  'Uygunsuz / cinsel içerik': 'Неподходящо / сексуално съдържание',
+  'Şiddet veya tehlikeli içerik': 'Насилие или опасно съдържание',
+  'Telif hakkı ihlali': 'Нарушение на авторски права',
+  'Şikayetin alındı, teşekkürler': 'Докладът ти е получен, благодарим',
+  'Hesabımı Sil': 'Изтрий акаунта ми',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Акаунтът ти и всички данни (история, оценки, коментари, списъци, съобщения) ще бъдат изтрити завинаги. Това не може да бъде отменено.',
+  'Şifreni gir': 'Въведи паролата си',
+  'Hesabımı kalıcı sil': 'Изтрий акаунта ми завинаги',
+  'Sesli mesaj': 'Гласово съобщение',
+  'Ses gönderilemedi': 'Гласовото съобщение не можа да бъде изпратено',
+  'Kaydediliyor…': 'Записване…',
+  'Ses oynatılamadı': 'Аудиото не можа да се възпроизведе',
+  'Oynat': 'Възпроизвеждане',
+  'Duraklat': 'Пауза',
+  'Liste görünümü': 'Изглед списък',
+  'Takvim görünümü': 'Изглед календар',
+  'Önceki ay': 'Предишен месец',
+  'Sonraki ay': 'Следващ месец',
+  'Bu gün bölüm yok': 'Няма епизоди този ден',
+  'Gizlilik Politikası': 'Политика за поверителност',
+  'Son güncelleme: {}': 'Последна актуализация: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Тази политика обяснява какви данни се събират, как се използват и какви права имаш, когато използваш приложението dizi.jpg и сайта dizijpg.com.',
+  'Topladığımız Veriler': 'Какви данни събираме',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Акаунт: имейл адрес, потребителско име и парола. Паролите се съхраняват като необратим хеш; гост акаунтите могат да се използват без имейл.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Профил: данните, които сам избираш да добавиш — аватар, корица, био и държава.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Използване: твоята история на гледане, оценки, коментари, списъци, реакции и любими.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Съобщения: твоите текстови, снимкови и гласови съобщения се съхраняват на нашите сървъри. Съобщенията не са криптирани от край до край; преглеждат се само при подаден сигнал, с цел модерация.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Качени файлове: снимки, GIF, видеа и гласови записи, които добавяш към профила, коментарите и съобщенията си.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Технически данни: IP адрес, приблизително местоположение (държава/град), платформа на устройството, версия на приложението и записи за грешки. Пазят се за сигурност и отстраняване на проблеми.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Известия: за push известията пазим токена на устройството ти и избрания език. Можеш да изключиш известията по всяко време от настройките на устройството.',
+  'Verileri Nasıl Kullanırız': 'Как използваме данните ти',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Използваме данните ти единствено за да предоставяме услугата, да пазим акаунта ти, да изпращаме известия, да поправяме грешки и да предотвратяваме злоупотреби. Не продаваме данните ти и не ги споделяме с никого с рекламна цел.',
+  'Çerezler ve Yerel Depolama': 'Бисквитки и локално хранилище',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Използваме локално хранилище само за да останеш вписан и да помним предпочитания като език и тема. Няма рекламни или проследяващи бисквитки.',
+  'Üçüncü Taraf Hizmetler': 'Услуги на трети страни',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Данните за сериали и филми идват от TMDB, информацията за стрийминг платформите — от JustWatch. Push известията се доставят чрез Google Firebase, а трафикът на сайта се защитава от Cloudflare. За тези услуги важат собствените им политики за поверителност.',
+  'Saklama ve Silme': 'Съхранение и изтриване',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Данните ти се пазят, докато акаунтът ти съществува. Чрез „Изтрий акаунта ми" в настройките можеш да изтриеш акаунта завинаги; данните се изтриват веднага, а копията им в резервните копия — най-късно до 14 дни. Записите за грешки се изтриват автоматично след 30 дни.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Можеш да експортираш данните си като ZIP от настройките; архивът се изпраща на имейл адреса ти.',
+  'Güvenlik': 'Сигурност',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Данните се пренасят по криптирани връзки (HTTPS) и се съхраняват на сървъри с ограничен достъп.',
+  'Çocukların Gizliliği': 'Поверителност на децата',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg не е предназначен за деца под 13 години.',
+  'Hakların': 'Твоите права',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'Съгласно KVKK и GDPR имаш право на достъп до данните си, коригиране, изтриване и прехвърляне. За тези въпроси ни пиши: {}',
+  'Değişiklikler': 'Промени',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Ако тази политика се промени, новата версия ще бъде публикувана на тази страница и датата ще бъде обновена.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'С регистрацията си приемаш {}.',
 };

@@ -4,6 +4,7 @@ const Map<String, String> cevirilerMl = {
       'ഇറക്കുമതി ചെയ്യാൻ തിരിച്ചറിയാവുന്ന ഡാറ്റയൊന്നും കണ്ടെത്തിയില്ല.',
   'Arama': 'തിരയൽ',
   'Aramaya başla': 'തിരയാൻ തുടങ്ങൂ',
+  'Son aramalar': 'സമീപകാല തിരയലുകൾ',
   'Ayarlar': 'സെറ്റിംഗ്സ്',
   'Bağla': 'ലിങ്ക് ചെയ്യൂ',
   'Bio': 'ബയോ',
@@ -68,7 +69,7 @@ const Map<String, String> cevirilerMl = {
   'S{}B{} yorumu': 'S{}E{} കമന്റ്',
   'Takibi Bırak': 'അൺഫോളോ',
   'Takip': 'ഫോളോയിംഗ്',
-  'Takip Edilenler': 'ഫോളോ ചെയ്യുന്നവർ',
+  'Takip Edilenler': 'ഫോളോ ചെയ്യുന്നു',
   'Takip Et': 'ഫോളോ ചെയ്യൂ',
   'Takipçi': 'ഫോളോവർ',
   'Takipçi yok': 'ഫോളോവേഴ്സ് ഇല്ല',
@@ -105,7 +106,7 @@ const Map<String, String> cevirilerMl = {
   '{} ay': '{} മാസം',
   '{} bölüm izlendi': '{} എപ്പിസോഡ് കണ്ടു',
   '{} dizi.jpg': '{} dizi.jpg',
-  '{} dk': '{} മിനി',
+  '{} dk': '{} മിനിറ്റ്',
   '{} gün': '{} ദിവസം',
   '{} içerik': '{} ഉള്ളടക്കം',
   '{} içerik · otomatik': '{} ഉള്ളടക്കം · ഓട്ടോമാറ്റിക്',
@@ -240,9 +241,9 @@ const Map<String, String> cevirilerMl = {
   'Video': 'വീഡിയോ',
   'İçerik': 'ഉള്ളടക്കം',
   'çevrimiçi': 'ഓൺലൈൻ',
-  'son görülme {} dk önce': '{} മിനിറ്റ് മുമ്പ് കണ്ടു',
-  'son görülme {} saat önce': '{} മണിക്കൂർ മുമ്പ് കണ്ടു',
-  'son görülme {} gün önce': '{} ദിവസം മുമ്പ് കണ്ടു',
+  'son görülme {} dk önce': '{} മിനിറ്റ് മുമ്പ് ഓൺലൈനിൽ',
+  'son görülme {} saat önce': '{} മണിക്കൂർ മുമ്പ് ഓൺലൈനിൽ',
+  'son görülme {} gün önce': '{} ദിവസം മുമ്പ് ഓൺലൈനിൽ',
   'Yorumlar yüklenemedi': 'കമന്റുകൾ ലോഡ് ചെയ്യാനായില്ല',
   'Favori': 'പ്രിയപ്പെട്ടത്',
   'Listeye ekle': 'ലിസ്റ്റിൽ ചേർക്കുക',
@@ -255,4 +256,91 @@ const Map<String, String> cevirilerMl = {
       'ഒരു പ്രൊഫൈൽ തുറന്ന് സന്ദേശം അയയ്ക്കൂ.',
   'Listeyi sil': 'ലിസ്റ്റ് ഇല്ലാതാക്കുക',
   'Puan kaydedilemedi': 'റേറ്റിംഗ് സംരക്ഷിക്കാനായില്ല',
+  'Nerede İzlenir': 'എവിടെ കാണാം',
+  'Abonelik': 'സബ്‌സ്‌ക്രിപ്ഷൻ',
+  'Kirala': 'വാടകയ്‌ക്ക്',
+  'Satın al': 'വാങ്ങുക',
+  'Hoş geldin!': 'സ്വാഗതം!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'നിങ്ങൾ കാണാൻ ആഗ്രഹിക്കുന്ന ഷോകളും സിനിമകളും തിരഞ്ഞെടുക്കുക',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'നിങ്ങളുടെ തിരഞ്ഞെടുപ്പുകൾ വാച്ച്‌ലിസ്റ്റിൽ ചേരും',
+  'Şimdilik atla': 'ഇപ്പോൾ ഒഴിവാക്കുക',
+  'Devam et': 'തുടരുക',
+  '{} ekle': '{} ചേർക്കുക',
+  'Şikayet et': 'റിപ്പോർട്ട് ചെയ്യുക',
+  'Engelle': 'ബ്ലോക്ക് ചെയ്യുക',
+  'Engeli kaldır': 'അൺബ്ലോക്ക് ചെയ്യുക',
+  'Kullanıcı engellendi': 'ഉപയോക്താവിനെ ബ്ലോക്ക് ചെയ്തു',
+  'Engel kaldırıldı': 'ബ്ലോക്ക് നീക്കി',
+  'Şikayet sebebi': 'റിപ്പോർട്ടിന്റെ കാരണം',
+  'Spam veya yanıltıcı': 'സ്പാം അല്ലെങ്കിൽ തെറ്റിദ്ധരിപ്പിക്കുന്നത്',
+  'Taciz veya nefret söylemi': 'ഉപദ്രവം അല്ലെങ്കിൽ വിദ്വേഷ പ്രസംഗം',
+  'Uygunsuz / cinsel içerik': 'അനുചിതം / ലൈംഗിക ഉള്ളടക്കം',
+  'Şiddet veya tehlikeli içerik': 'അക്രമം അല്ലെങ്കിൽ അപകടകരമായ ഉള്ളടക്കം',
+  'Telif hakkı ihlali': 'പകർപ്പവകാശ ലംഘനം',
+  'Şikayetin alındı, teşekkürler': 'നിന്റെ റിപ്പോർട്ട് ലഭിച്ചു, നന്ദി',
+  'Hesabımı Sil': 'എന്റെ അക്കൗണ്ട് ഇല്ലാതാക്കുക',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'നിന്റെ അക്കൗണ്ടും എല്ലാ ഡാറ്റയും (ചരിത്രം, റേറ്റിംഗുകൾ, കമന്റുകൾ, ലിസ്റ്റുകൾ, സന്ദേശങ്ങൾ) ശാശ്വതമായി ഇല്ലാതാക്കും. ഇത് പഴയപടിയാക്കാനാവില്ല.',
+  'Şifreni gir': 'നിന്റെ പാസ്‌വേഡ് നൽകുക',
+  'Hesabımı kalıcı sil': 'എന്റെ അക്കൗണ്ട് ശാശ്വതമായി ഇല്ലാതാക്കുക',
+  'Sesli mesaj': 'വോയ്‌സ് സന്ദേശം',
+  'Ses gönderilemedi': 'വോയ്‌സ് സന്ദേശം അയയ്‌ക്കാനായില്ല',
+  'Kaydediliyor…': 'റെക്കോർഡ് ചെയ്യുന്നു…',
+  'Ses oynatılamadı': 'ഓഡിയോ പ്ലേ ചെയ്യാനായില്ല',
+  'Oynat': 'പ്ലേ ചെയ്യൂ',
+  'Duraklat': 'താൽക്കാലികമായി നിർത്തൂ',
+  'Liste görünümü': 'ലിസ്റ്റ് കാഴ്ച',
+  'Takvim görünümü': 'കലണ്ടർ കാഴ്ച',
+  'Önceki ay': 'മുൻ മാസം',
+  'Sonraki ay': 'അടുത്ത മാസം',
+  'Bu gün bölüm yok': 'ഈ ദിവസം എപ്പിസോഡുകളൊന്നുമില്ല',
+  'Gizlilik Politikası': 'സ്വകാര്യതാ നയം',
+  'Son güncelleme: {}': 'അവസാന അപ്ഡേറ്റ്: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'dizi.jpg ആപ്പും dizijpg.com സൈറ്റും ഉപയോഗിക്കുമ്പോൾ ഏതെല്ലാം ഡാറ്റ ശേഖരിക്കുന്നു, എങ്ങനെ ഉപയോഗിക്കുന്നു, നിന്റെ അവകാശങ്ങൾ എന്തൊക്കെ എന്നിവ ഈ നയം വിശദീകരിക്കുന്നു.',
+  'Topladığımız Veriler': 'ഞങ്ങൾ ശേഖരിക്കുന്ന ഡാറ്റ',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'അക്കൗണ്ട്: ഇമെയിൽ വിലാസം, യൂസർനെയിം, പാസ്‌വേഡ്. പാസ്‌വേഡുകൾ തിരിച്ചെടുക്കാനാവാത്ത ഹാഷ് രൂപത്തിലാണ് സൂക്ഷിക്കുന്നത്; ഗസ്റ്റ് അക്കൗണ്ടുകൾ ഇമെയിൽ ഇല്ലാതെയും ഉപയോഗിക്കാം.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'പ്രൊഫൈൽ: അവതാർ, കവർ ചിത്രം, ബയോ, രാജ്യം എന്നിങ്ങനെ നീ ചേർക്കാൻ തിരഞ്ഞെടുക്കുന്ന വിവരങ്ങൾ.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'ഉപയോഗം: നിന്റെ കാണൽ ചരിത്രം, റേറ്റിംഗുകൾ, കമന്റുകൾ, ലിസ്റ്റുകൾ, റിയാക്ഷനുകൾ, പ്രിയപ്പെട്ടവ.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'സന്ദേശങ്ങൾ: നിന്റെ ടെക്സ്റ്റ്, ചിത്ര, വോയ്സ് സന്ദേശങ്ങൾ ഞങ്ങളുടെ സെർവറുകളിൽ സൂക്ഷിക്കുന്നു. സന്ദേശങ്ങൾക്ക് എൻഡ്-ടു-എൻഡ് എൻക്രിപ്ഷൻ ഇല്ല; റിപ്പോർട്ട് ചെയ്താൽ മാത്രം മോഡറേഷനായി പരിശോധിക്കും.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'അപ്‌ലോഡ് ചെയ്ത മീഡിയ: പ്രൊഫൈലിലും കമന്റുകളിലും സന്ദേശങ്ങളിലും നീ ചേർക്കുന്ന ഫോട്ടോകൾ, GIF, വീഡിയോകൾ, വോയ്സ് റെക്കോർഡിംഗുകൾ.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'സാങ്കേതികം: IP വിലാസം, ഏകദേശ സ്ഥാനം (രാജ്യം/നഗരം തലത്തിൽ), ഉപകരണ പ്ലാറ്റ്ഫോം, ആപ്പ് പതിപ്പ്, പിശക് ലോഗുകൾ. ഇവ സുരക്ഷയ്ക്കും തകരാർ പരിഹാരത്തിനുമായി സൂക്ഷിക്കുന്നു.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'അറിയിപ്പുകൾ: പുഷ് അറിയിപ്പുകൾക്കായി നിന്റെ ഉപകരണ ടോക്കണും ഭാഷാ തിരഞ്ഞെടുപ്പും സൂക്ഷിക്കുന്നു. ഉപകരണ ക്രമീകരണങ്ങളിൽ നിന്ന് എപ്പോൾ വേണമെങ്കിലും അറിയിപ്പുകൾ ഓഫാക്കാം.',
+  'Verileri Nasıl Kullanırız': 'ഡാറ്റ എങ്ങനെ ഉപയോഗിക്കുന്നു',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'സേവനം നൽകാനും അക്കൗണ്ട് സംരക്ഷിക്കാനും അറിയിപ്പുകൾ അയയ്ക്കാനും പിശകുകൾ പരിഹരിക്കാനും ദുരുപയോഗം തടയാനും മാത്രമാണ് നിന്റെ ഡാറ്റ ഉപയോഗിക്കുന്നത്. നിന്റെ ഡാറ്റ വിൽക്കുന്നില്ല; പരസ്യത്തിനായി ആരുമായും പങ്കിടുന്നില്ല.',
+  'Çerezler ve Yerel Depolama': 'കുക്കികളും ലോക്കൽ സ്റ്റോറേജും',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'നിന്നെ ലോഗിൻ ആയി നിലനിർത്താനും ഭാഷ/തീം പോലുള്ള മുൻഗണനകൾ ഓർക്കാനും മാത്രമാണ് ലോക്കൽ സ്റ്റോറേജ് ഉപയോഗിക്കുന്നത്. പരസ്യ അല്ലെങ്കിൽ ട്രാക്കിംഗ് കുക്കികൾ ഇല്ല.',
+  'Üçüncü Taraf Hizmetler': 'മൂന്നാം കക്ഷി സേവനങ്ങൾ',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'സീരീസുകളുടെയും സിനിമകളുടെയും ഡാറ്റ TMDB-യിൽ നിന്നും സ്ട്രീമിംഗ് പ്ലാറ്റ്ഫോം വിവരങ്ങൾ JustWatch-ൽ നിന്നും വരുന്നു. പുഷ് അറിയിപ്പുകൾ Google Firebase വഴി എത്തുന്നു; സൈറ്റ് ട്രാഫിക്ക് Cloudflare സംരക്ഷിക്കുന്നു. ഈ സേവനങ്ങൾക്ക് അവയുടെ സ്വന്തം സ്വകാര്യതാ നയങ്ങൾ ബാധകമാണ്.',
+  'Saklama ve Silme': 'സൂക്ഷിക്കലും നീക്കം ചെയ്യലും',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'നിന്റെ അക്കൗണ്ട് ഉള്ളിടത്തോളം ഡാറ്റയും ഉണ്ടാകും. ക്രമീകരണങ്ങളിലെ "എന്റെ അക്കൗണ്ട് ഇല്ലാതാക്കുക" വഴി അക്കൗണ്ട് ശാശ്വതമായി ഇല്ലാതാക്കാം; ഡാറ്റ ഉടനെയും ബാക്കപ്പുകളിലെ പകർപ്പുകൾ പരമാവധി 14 ദിവസത്തിനുള്ളിലും മായ്ക്കപ്പെടും. പിശക് ലോഗുകൾ 30 ദിവസത്തിന് ശേഷം സ്വയമേവ മായ്ക്കപ്പെടും.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'ക്രമീകരണങ്ങളിൽ നിന്ന് നിന്റെ ഡാറ്റ ZIP ആയി എക്സ്പോർട്ട് ചെയ്യാം; ആർക്കൈവ് നിന്റെ ഇമെയിൽ വിലാസത്തിലേക്ക് അയയ്ക്കും.',
+  'Güvenlik': 'സുരക്ഷ',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'ഡാറ്റ എൻക്രിപ്റ്റഡ് കണക്ഷനുകൾ (HTTPS) വഴി സഞ്ചരിക്കുന്നു; പരിമിത ആക്സസ് ഉള്ള സെർവറുകളിൽ സൂക്ഷിക്കുന്നു.',
+  'Çocukların Gizliliği': 'കുട്ടികളുടെ സ്വകാര്യത',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'dizi.jpg 13 വയസ്സിന് താഴെയുള്ള കുട്ടികൾക്കുള്ളതല്ല.',
+  'Hakların': 'നിന്റെ അവകാശങ്ങൾ',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'KVKK, GDPR പ്രകാരം നിന്റെ ഡാറ്റ ആക്സസ് ചെയ്യാനും തിരുത്താനും ഇല്ലാതാക്കാനും മാറ്റാനും നിനക്ക് അവകാശമുണ്ട്. ഇതിനായി ഞങ്ങൾക്ക് എഴുതൂ: {}',
+  'Değişiklikler': 'മാറ്റങ്ങൾ',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'ഈ നയം മാറിയാൽ പുതിയ പതിപ്പ് ഇതേ പേജിൽ പ്രസിദ്ധീകരിച്ച് തീയതി പുതുക്കും.',
+  'Kayıt olarak {} kabul etmiş olursun.':
+      'രജിസ്റ്റർ ചെയ്യുന്നതിലൂടെ നീ {} അംഗീകരിക്കുന്നു.',
 };

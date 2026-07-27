@@ -4,6 +4,7 @@ const Map<String, String> cevirilerPt = {
       'Nenhum dado reconhecido para importar.',
   'Arama': 'Busca',
   'Aramaya başla': 'Comece a buscar',
+  'Son aramalar': 'Pesquisas recentes',
   'Ayarlar': 'Configurações',
   'Bağla': 'Vincular',
   'Bio': 'Bio',
@@ -226,16 +227,16 @@ const Map<String, String> cevirilerPt = {
   'Açık': 'Claro',
   'İzleyenler': 'Espectadores',
   'Yorumunu yaz... (@ ile etiketle)':
-      'Escreve o teu comentário... (@ para marcar)',
-  '@{} bir yorumda seni etiketledi': '@{} marcou-te num comentário',
-  'Mesajı sil': 'Eliminar mensagem',
-  'Mesaj silinemedi': 'Não foi possível eliminar a mensagem',
+      'Escreva seu comentário... (@ para marcar)',
+  '@{} bir yorumda seni etiketledi': '@{} marcou você em um comentário',
+  'Mesajı sil': 'Excluir mensagem',
+  'Mesaj silinemedi': 'Não foi possível excluir a mensagem',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link inválido ou página não encontrada',
   'Keşfet\'e dön': 'Voltar a Descobrir',
   'Düzenle': 'Editar',
   'Mesajı düzenle': 'Editar mensagem',
-  'Yanıtlanıyor': 'A responder',
+  'Yanıtlanıyor': 'Respondendo',
   'düzenlendi': 'editado',
   'Fotoğraf': 'Foto',
   'Video': 'Vídeo',
@@ -247,13 +248,99 @@ const Map<String, String> cevirilerPt = {
   'Yorumlar yüklenemedi': 'Não foi possível carregar os comentários',
   'Favori': 'Favorito',
   'Listeye ekle': 'Adicionar à lista',
-  'İçerik paylaş': 'Partilhar conteúdo',
+  'İçerik paylaş': 'Compartilhar conteúdo',
   'Kapat': 'Fechar',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
-      'Tudo o que marcares como visto junta-se aqui.',
+      'Tudo o que você marcar como visto se junta aqui.',
   'Henüz sohbetin yok': 'Ainda sem conversas',
   'Bir profile girip mesaj gönderebilirsin.':
-      'Abre um perfil e envia uma mensagem.',
-  'Listeyi sil': 'Eliminar lista',
-  'Puan kaydedilemedi': 'Não foi possível guardar a classificação',
+      'Abra um perfil e envie uma mensagem.',
+  'Listeyi sil': 'Excluir lista',
+  'Puan kaydedilemedi': 'Não foi possível salvar a nota',
+  'Nerede İzlenir': 'Onde assistir',
+  'Abonelik': 'Assinatura',
+  'Kirala': 'Alugar',
+  'Satın al': 'Comprar',
+  'Hoş geldin!': 'Bem-vindo!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Escolha séries e filmes que quer assistir',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Suas escolhas vão para sua lista',
+  'Şimdilik atla': 'Pular por enquanto',
+  'Devam et': 'Continuar',
+  '{} ekle': 'Adicionar {}',
+  'Şikayet et': 'Denunciar',
+  'Engelle': 'Bloquear',
+  'Engeli kaldır': 'Desbloquear',
+  'Kullanıcı engellendi': 'Usuário bloqueado',
+  'Engel kaldırıldı': 'Bloqueio removido',
+  'Şikayet sebebi': 'Motivo da denúncia',
+  'Spam veya yanıltıcı': 'Spam ou enganoso',
+  'Taciz veya nefret söylemi': 'Assédio ou discurso de ódio',
+  'Uygunsuz / cinsel içerik': 'Conteúdo impróprio / sexual',
+  'Şiddet veya tehlikeli içerik': 'Violência ou conteúdo perigoso',
+  'Telif hakkı ihlali': 'Violação de direitos autorais',
+  'Şikayetin alındı, teşekkürler': 'Sua denúncia foi recebida, obrigado',
+  'Hesabımı Sil': 'Excluir minha conta',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'Sua conta e todos os seus dados (histórico, avaliações, comentários, listas, mensagens) serão excluídos permanentemente. Isso não pode ser desfeito.',
+  'Şifreni gir': 'Digite sua senha',
+  'Hesabımı kalıcı sil': 'Excluir minha conta permanentemente',
+  'Sesli mesaj': 'Mensagem de voz',
+  'Ses gönderilemedi': 'Não foi possível enviar o áudio',
+  'Kaydediliyor…': 'Gravando…',
+  'Ses oynatılamadı': 'Não foi possível reproduzir o áudio',
+  'Oynat': 'Reproduzir',
+  'Duraklat': 'Pausar',
+  'Liste görünümü': 'Visualização em lista',
+  'Takvim görünümü': 'Visualização em calendário',
+  'Önceki ay': 'Mês anterior',
+  'Sonraki ay': 'Próximo mês',
+  'Bu gün bölüm yok': 'Nenhum episódio neste dia',
+  'Gizlilik Politikası': 'Política de Privacidade',
+  'Son güncelleme: {}': 'Última atualização: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Esta política explica quais dados são coletados, como são usados e quais são os seus direitos ao usar o aplicativo dizi.jpg e o site dizijpg.com.',
+  'Topladığımız Veriler': 'Dados que coletamos',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Conta: endereço de e-mail, nome de usuário e senha. As senhas são armazenadas com hash irreversível; contas de convidado podem ser usadas sem e-mail.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Perfil: informações que você escolhe adicionar, como avatar, imagem de capa, bio e país.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Uso: seu histórico de exibição, notas, comentários, listas, reações e favoritos.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Mensagens: suas mensagens de texto, imagem e voz ficam armazenadas em nossos servidores. As mensagens não têm criptografia de ponta a ponta; elas só são analisadas, para fins de moderação, se forem denunciadas.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Mídia enviada: fotos, GIF, vídeos e gravações de voz que você adiciona ao seu perfil, comentários e mensagens.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Dados técnicos: endereço IP, localização aproximada (país/cidade), plataforma do dispositivo, versão do aplicativo e registros de erros. São mantidos por segurança e para correção de falhas.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Notificações: para notificações push, guardamos o token do seu dispositivo e seu idioma. Você pode desativá-las quando quiser nas configurações do dispositivo.',
+  'Verileri Nasıl Kullanırız': 'Como usamos seus dados',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Usamos seus dados apenas para fornecer o serviço, proteger sua conta, enviar notificações, corrigir erros e prevenir abusos. Não vendemos seus dados nem os compartilhamos com ninguém para fins publicitários.',
+  'Çerezler ve Yerel Depolama': 'Cookies e armazenamento local',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'Usamos armazenamento local apenas para manter você conectado e lembrar preferências como idioma e tema. Não há cookies de publicidade nem de rastreamento.',
+  'Üçüncü Taraf Hizmetler': 'Serviços de terceiros',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'Os dados de séries e filmes vêm do TMDB e as informações de plataformas de streaming, do JustWatch. As notificações push são entregues pelo Google Firebase e o tráfego do site é protegido pela Cloudflare. Esses serviços seguem suas próprias políticas de privacidade.',
+  'Saklama ve Silme': 'Retenção e exclusão',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Seus dados são mantidos enquanto sua conta existir. Com "Excluir minha conta" nas Configurações, você pode excluir sua conta permanentemente; seus dados são apagados na hora e as cópias em backups, em até 14 dias. Os registros de erros são apagados automaticamente após 30 dias.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Você pode exportar seus dados como ZIP nas Configurações; o arquivo é enviado para o seu e-mail.',
+  'Güvenlik': 'Segurança',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Os dados trafegam por conexões criptografadas (HTTPS) e ficam em servidores com acesso restrito.',
+  'Çocukların Gizliliği': 'Privacidade de crianças',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'O dizi.jpg não é destinado a menores de 13 anos.',
+  'Hakların': 'Seus direitos',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'De acordo com a KVKK e o GDPR, você tem direito de acessar, corrigir, excluir e transferir seus dados. Para isso, escreva para: {}',
+  'Değişiklikler': 'Alterações',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Se esta política mudar, a nova versão será publicada nesta página e a data será atualizada.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'Ao se cadastrar, você aceita a {}.',
 };

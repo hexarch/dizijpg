@@ -47,6 +47,12 @@ class _AramaEkraniState extends State<AramaEkrani>
     await p.setStringList('arama_gecmisi', _gecmis);
   }
 
+  Future<void> _gecmistenSil(String sorgu) async {
+    setState(() => _gecmis = List.of(_gecmis)..remove(sorgu));
+    final p = await SharedPreferences.getInstance();
+    await p.setStringList('arama_gecmisi', _gecmis);
+  }
+
   @override
   void dispose() {
     _kutu.dispose();
@@ -119,52 +125,82 @@ class _AramaEkraniState extends State<AramaEkrani>
           ),
           Expanded(
             child: _sonuclar.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.local_movies_outlined,
-                          size: 44,
-                          color: DiziRenkler.metin24,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Aramaya başla'.c,
-                          style: TextStyle(color: DiziRenkler.metin38),
-                        ),
-                        if (_gecmis.isNotEmpty) ...[
-                          const SizedBox(height: 18),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Wrap(
-                              spacing: 8,
-                              runSpacing: 8,
-                              alignment: WrapAlignment.center,
-                              children: [
-                                for (final g in _gecmis)
-                                  ActionChip(
-                                    avatar: Icon(
-                                      Icons.history,
-                                      size: 15,
-                                      color: DiziRenkler.metin38,
-                                    ),
-                                    label: Text(
-                                      g,
-                                      style: const TextStyle(fontSize: 12),
-                                    ),
-                                    onPressed: () {
-                                      _kutu.text = g;
-                                      _ara(g);
-                                    },
-                                  ),
-                              ],
-                            ),
+                ? (_gecmis.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.local_movies_outlined,
+                                size: 44,
+                                color: DiziRenkler.metin24,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Aramaya başla'.c,
+                                style: TextStyle(color: DiziRenkler.metin38),
+                              ),
+                            ],
                           ),
-                        ],
-                      ],
-                    ),
-                  )
+                        )
+                      // Geçmiş aramalar: satır satır, sağda çarpı ile silinir
+                      : ListView(
+                          padding: const EdgeInsets.only(top: 4, bottom: 16),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.history,
+                                    size: 16,
+                                    color: DiziRenkler.metin54,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    'Son aramalar'.c,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: DiziRenkler.metin54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            for (final g in _gecmis)
+                              ListTile(
+                                key: ValueKey('gecmis-$g'),
+                                dense: true,
+                                visualDensity: const VisualDensity(
+                                  vertical: -2,
+                                ),
+                                leading: Icon(
+                                  Icons.history,
+                                  size: 20,
+                                  color: DiziRenkler.metin38,
+                                ),
+                                title: Text(
+                                  g,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                trailing: IconButton(
+                                  tooltip: 'Sil'.c,
+                                  onPressed: () => _gecmistenSil(g),
+                                  icon: Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: DiziRenkler.metin54,
+                                  ),
+                                ),
+                                onTap: () {
+                                  _kutu.text = g;
+                                  _ara(g);
+                                },
+                              ),
+                          ],
+                        ))
                 : GridView.builder(
                     padding: const EdgeInsets.all(16),
                     gridDelegate:

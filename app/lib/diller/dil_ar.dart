@@ -4,6 +4,7 @@ const Map<String, String> cevirilerAr = {
       'لم يتم العثور على بيانات معروفة للاستيراد.',
   'Arama': 'بحث',
   'Aramaya başla': 'ابدأ البحث',
+  'Son aramalar': 'عمليات البحث الأخيرة',
   'Ayarlar': 'الإعدادات',
   'Bağla': 'ربط',
   'Bio': 'نبذة',
@@ -47,7 +48,7 @@ const Map<String, String> cevirilerAr = {
   'Kimseyi takip etmiyor': 'لا يتابع أحدًا',
   'Kişi ara': 'ابحث عن شخص',
   'Kişi yorumu': 'تعليق على الشخص',
-  'Konuk Oyuncular': 'ضيوف الشرف',
+  'Konuk Oyuncular': 'ممثلون ضيوف',
   'Kullanıcı adı (küçük harf)': 'اسم المستخدم (بأحرف صغيرة)',
   'Kullanıcı adı ara...': 'ابحث عن اسم مستخدم...',
   'Liste adı': 'اسم القائمة',
@@ -205,8 +206,8 @@ const Map<String, String> cevirilerAr = {
   '100 Puan': '100 تقييم',
   '10 Takipçi': '10 متابعين',
   '50 Takipçi': '50 متابعًا',
-  '25 Dizi Bitirdin': 'أنهى 25 مسلسلًا',
-  '50 Dizi Bitirdin': 'أنهى 50 مسلسلًا',
+  '25 Dizi Bitirdin': 'أنهيت 25 مسلسلًا',
+  '50 Dizi Bitirdin': 'أنهيت 50 مسلسلًا',
   '10 Beğeni': '10 إعجابات',
   '100 Beğeni': '100 إعجاب',
   'yazıyor...': 'يكتب...',
@@ -253,4 +254,90 @@ const Map<String, String> cevirilerAr = {
   'Bir profile girip mesaj gönderebilirsin.': 'افتح ملفًا شخصيًا وأرسل رسالة.',
   'Listeyi sil': 'حذف القائمة',
   'Puan kaydedilemedi': 'تعذّر حفظ التقييم',
+  'Nerede İzlenir': 'أين تشاهد',
+  'Abonelik': 'اشتراك',
+  'Kirala': 'تأجير',
+  'Satın al': 'شراء',
+  'Hoş geldin!': 'مرحبًا!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'اختر المسلسلات والأفلام التي تريد مشاهدتها',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'تُضاف اختياراتك إلى قائمة «سأشاهده»',
+  'Şimdilik atla': 'تخطَّ الآن',
+  'Devam et': 'متابعة',
+  '{} ekle': 'أضف {}',
+  'Şikayet et': 'إبلاغ',
+  'Engelle': 'حظر',
+  'Engeli kaldır': 'إلغاء الحظر',
+  'Kullanıcı engellendi': 'تم حظر المستخدم',
+  'Engel kaldırıldı': 'تمت إزالة الحظر',
+  'Şikayet sebebi': 'سبب البلاغ',
+  'Spam veya yanıltıcı': 'بريد مزعج أو مضلل',
+  'Taciz veya nefret söylemi': 'تحرش أو خطاب كراهية',
+  'Uygunsuz / cinsel içerik': 'محتوى غير لائق / جنسي',
+  'Şiddet veya tehlikeli içerik': 'عنف أو محتوى خطير',
+  'Telif hakkı ihlali': 'انتهاك حقوق النشر',
+  'Şikayetin alındı, teşekkürler': 'تم استلام بلاغك، شكرًا لك',
+  'Hesabımı Sil': 'حذف حسابي',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'سيتم حذف حسابك وكل بياناتك (السجل، التقييمات، التعليقات، القوائم، الرسائل) نهائيًا. لا يمكن التراجع عن هذا.',
+  'Şifreni gir': 'أدخل كلمة مرورك',
+  'Hesabımı kalıcı sil': 'حذف حسابي نهائيًا',
+  'Sesli mesaj': 'رسالة صوتية',
+  'Ses gönderilemedi': 'تعذّر إرسال الرسالة الصوتية',
+  'Kaydediliyor…': 'جارٍ التسجيل…',
+  'Ses oynatılamadı': 'تعذّر تشغيل الصوت',
+  'Oynat': 'تشغيل',
+  'Duraklat': 'إيقاف مؤقت',
+  'Liste görünümü': 'عرض القائمة',
+  'Takvim görünümü': 'عرض التقويم',
+  'Önceki ay': 'الشهر السابق',
+  'Sonraki ay': 'الشهر التالي',
+  'Bu gün bölüm yok': 'لا حلقات في هذا اليوم',
+  'Gizlilik Politikası': 'سياسة الخصوصية',
+  'Son güncelleme: {}': 'آخر تحديث: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'توضّح هذه السياسة ما البيانات التي تُجمع وكيف تُستخدم وما حقوقك عند استخدام تطبيق dizi.jpg وموقع dizijpg.com.',
+  'Topladığımız Veriler': 'البيانات التي نجمعها',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'الحساب: عنوان البريد الإلكتروني واسم المستخدم وكلمة المرور. تُحفظ كلمات المرور بتجزئة لا يمكن عكسها؛ ويمكن استخدام حسابات الضيوف دون بريد إلكتروني.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'الملف الشخصي: المعلومات التي تختار إضافتها مثل الصورة الرمزية وصورة الغلاف والنبذة والبلد.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'الاستخدام: سجل مشاهدتك وتقييماتك وتعليقاتك وقوائمك وتفاعلاتك ومفضلاتك.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'الرسائل: تُحفظ رسائلك النصية والمصوّرة والصوتية على خوادمنا. الرسائل غير مشفّرة من طرف إلى طرف؛ ولا تُراجع إلا عند الإبلاغ عنها ولأغراض الإشراف فقط.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'الوسائط المرفوعة: الصور وملفات GIF والفيديوهات والتسجيلات الصوتية التي تضيفها إلى ملفك الشخصي وتعليقاتك ورسائلك.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'البيانات التقنية: عنوان IP والموقع التقريبي (البلد/المدينة) ومنصة الجهاز وإصدار التطبيق وسجلات الأخطاء. تُحفظ هذه لأغراض الأمان وإصلاح الأعطال.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'الإشعارات: من أجل الإشعارات الفورية نحفظ رمز جهازك ولغتك المفضّلة. يمكنك إيقاف الإشعارات في أي وقت من إعدادات جهازك.',
+  'Verileri Nasıl Kullanırız': 'كيف نستخدم بياناتك',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'نستخدم بياناتك فقط لتقديم الخدمة وحماية حسابك وإرسال الإشعارات وإصلاح الأخطاء ومنع إساءة الاستخدام. لا نبيع بياناتك ولا نشاركها مع أي جهة لأغراض إعلانية.',
+  'Çerezler ve Yerel Depolama': 'ملفات تعريف الارتباط والتخزين المحلي',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'نستخدم التخزين المحلي فقط لإبقائك مسجّل الدخول وتذكّر تفضيلاتك مثل اللغة والمظهر. لا توجد ملفات تعريف ارتباط إعلانية أو تتبّعية.',
+  'Üçüncü Taraf Hizmetler': 'خدمات الجهات الخارجية',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'تأتي بيانات المسلسلات والأفلام من TMDB، ومعلومات منصات المشاهدة من JustWatch. تُرسل الإشعارات الفورية عبر Google Firebase، وتحمي Cloudflare حركة الموقع. تخضع هذه الخدمات لسياسات الخصوصية الخاصة بها.',
+  'Saklama ve Silme': 'الاحتفاظ والحذف',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'تُحفظ بياناتك ما دام حسابك قائمًا. يمكنك حذف حسابك نهائيًا عبر "حذف حسابي" في الإعدادات؛ تُحذف بياناتك فورًا وتُحذف نسخها في النسخ الاحتياطية خلال 14 يومًا كحد أقصى. وتُحذف سجلات الأخطاء تلقائيًا بعد 30 يومًا.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'يمكنك تصدير بياناتك بصيغة ZIP من الإعدادات؛ ويُرسل الأرشيف إلى بريدك الإلكتروني.',
+  'Güvenlik': 'الأمان',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'تُنقل البيانات عبر اتصالات مشفّرة (HTTPS) وتُخزّن على خوادم بوصول مقيّد.',
+  'Çocukların Gizliliği': 'خصوصية الأطفال',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      '‏dizi.jpg غير موجّه للأطفال دون 13 عامًا.',
+  'Hakların': 'حقوقك',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'بموجب KVKK وGDPR يحق لك الوصول إلى بياناتك وتصحيحها وحذفها ونقلها. لهذه الأمور راسلنا على: {}',
+  'Değişiklikler': 'التغييرات',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'إذا تغيّرت هذه السياسة، تُنشر النسخة الجديدة في هذه الصفحة ويُحدّث التاريخ.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'بتسجيلك فإنك توافق على {}.',
 };

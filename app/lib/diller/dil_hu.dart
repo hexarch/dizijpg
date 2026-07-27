@@ -4,6 +4,7 @@ const Map<String, String> cevirilerHu = {
       'Nem található importálható, felismert adat.',
   'Arama': 'Keresés',
   'Aramaya başla': 'Kezdj el keresni',
+  'Son aramalar': 'Korábbi keresések',
   'Ayarlar': 'Beállítások',
   'Bağla': 'Összekapcsolás',
   'Bio': 'Bemutatkozás',
@@ -177,7 +178,7 @@ const Map<String, String> cevirilerHu = {
   'E-postadaki kod': 'Kód az e-mailből',
   'Yeni şifre': 'Új jelszó',
   'Sana Özel': 'Neked',
-  '{} özetin': '{}-ös összegzésed',
+  '{} özetin': '{}. évi összegzésed',
   'Yıllık izleme istatistiklerin': 'Éves nézési statisztikáid',
   'Rozetler': 'Jelvények',
   'Verdiğin puan': 'Adott értékelések',
@@ -216,7 +217,7 @@ const Map<String, String> cevirilerHu = {
   'Listeyi sil?': 'Törlöd a listát?',
   'Sil': 'Törlés',
   'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
-      'Meg-nem-nézettként lesz jelölve, és lekerül a listáidról.',
+      'Nem megnézettként lesz megjelölve, és lekerül a listáidról.',
   'Gelecek bölüm bugün': 'Következő epizód ma',
   'Gelecek bölüm {} gün sonra': 'Következő epizód {} nap múlva',
   'Tema': 'Téma',
@@ -255,4 +256,90 @@ const Map<String, String> cevirilerHu = {
       'Nyiss meg egy profilt és küldj üzenetet.',
   'Listeyi sil': 'Lista törlése',
   'Puan kaydedilemedi': 'Az értékelést nem sikerült menteni',
+  'Nerede İzlenir': 'Hol nézhető',
+  'Abonelik': 'Előfizetés',
+  'Kirala': 'Kölcsönzés',
+  'Satın al': 'Vásárlás',
+  'Hoş geldin!': 'Üdvözlünk!',
+  'İzlemek istediğin dizi ve filmleri seç':
+      'Válaszd ki a sorozatokat és filmeket, amiket meg akarsz nézni',
+  'Seçtiklerin "İzleyeceğim" listene eklenir':
+      'Választásaid a listádra kerülnek',
+  'Şimdilik atla': 'Kihagyás most',
+  'Devam et': 'Folytatás',
+  '{} ekle': '{} hozzáadása',
+  'Şikayet et': 'Jelentés',
+  'Engelle': 'Letiltás',
+  'Engeli kaldır': 'Letiltás feloldása',
+  'Kullanıcı engellendi': 'Felhasználó letiltva',
+  'Engel kaldırıldı': 'Letiltás feloldva',
+  'Şikayet sebebi': 'Jelentés oka',
+  'Spam veya yanıltıcı': 'Spam vagy félrevezető',
+  'Taciz veya nefret söylemi': 'Zaklatás vagy gyűlöletbeszéd',
+  'Uygunsuz / cinsel içerik': 'Nem megfelelő / szexuális tartalom',
+  'Şiddet veya tehlikeli içerik': 'Erőszak vagy veszélyes tartalom',
+  'Telif hakkı ihlali': 'Szerzői jog megsértése',
+  'Şikayetin alındı, teşekkürler': 'A jelentésedet megkaptuk, köszönjük',
+  'Hesabımı Sil': 'Fiókom törlése',
+  'Hesabın ve tüm verin (izleme, puan, yorum, liste, mesaj) kalıcı olarak silinecek. Bu işlem geri alınamaz.':
+      'A fiókod és minden adatod (előzmények, értékelések, hozzászólások, listák, üzenetek) véglegesen törlődik. Ez nem vonható vissza.',
+  'Şifreni gir': 'Add meg a jelszavad',
+  'Hesabımı kalıcı sil': 'Fiókom végleges törlése',
+  'Sesli mesaj': 'Hangüzenet',
+  'Ses gönderilemedi': 'A hangüzenetet nem sikerült elküldeni',
+  'Kaydediliyor…': 'Felvétel…',
+  'Ses oynatılamadı': 'A hangüzenetet nem sikerült lejátszani',
+  'Oynat': 'Lejátszás',
+  'Duraklat': 'Szünet',
+  'Liste görünümü': 'Listanézet',
+  'Takvim görünümü': 'Naptárnézet',
+  'Önceki ay': 'Előző hónap',
+  'Sonraki ay': 'Következő hónap',
+  'Bu gün bölüm yok': 'Nincs epizód ezen a napon',
+  'Gizlilik Politikası': 'Adatvédelmi Szabályzat',
+  'Son güncelleme: {}': 'Utolsó frissítés: {}',
+  'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
+      'Ez a szabályzat elmagyarázza, milyen adatokat gyűjtünk, hogyan használjuk őket, és milyen jogaid vannak, amikor a dizi.jpg alkalmazást és a dizijpg.com oldalt használod.',
+  'Topladığımız Veriler': 'Milyen adatokat gyűjtünk',
+  'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
+      'Fiók: e-mail-cím, felhasználónév és jelszó. A jelszavakat visszafejthetetlen hash formában tároljuk; a vendégfiókok e-mail nélkül is használhatók.',
+  'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
+      'Profil: az általad megadott adatok, például avatár, borítókép, bemutatkozás és ország.',
+  'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
+      'Használat: a megtekintési előzményeid, értékeléseid, hozzászólásaid, listáid, reakcióid és kedvenceid.',
+  'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
+      'Üzenetek: a szöveges, képes és hangüzeneteidet a szervereinken tároljuk. Az üzenetek nem végpontok közötti titkosításúak; csak bejelentés esetén, moderálási célból tekintjük meg őket.',
+  'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
+      'Feltöltött média: a profilodhoz, hozzászólásaidhoz és üzeneteidhez adott fotók, GIF-ek, videók és hangfelvételek.',
+  'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
+      'Technikai: IP-cím, hozzávetőleges hely (ország/város szinten), eszközplatform, alkalmazásverzió és hibanaplók. Ezeket biztonsági és hibajavítási célból őrizzük.',
+  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+      'Értesítések: a push értesítésekhez tároljuk az eszközöd tokenjét és a nyelvi beállításodat. Az értesítéseket bármikor kikapcsolhatod az eszköz beállításaiban.',
+  'Verileri Nasıl Kullanırız': 'Hogyan használjuk az adataidat',
+  'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
+      'Az adataidat kizárólag a szolgáltatás nyújtására, a fiókod védelmére, értesítések küldésére, hibák javítására és a visszaélések megelőzésére használjuk. Az adataidat nem adjuk el, és reklámcélból senkivel sem osztjuk meg.',
+  'Çerezler ve Yerel Depolama': 'Sütik és helyi tárhely',
+  'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
+      'A helyi tárhelyet csak arra használjuk, hogy bejelentkezve maradj, és megjegyezzük a beállításaidat, például a nyelvet és a témát. Nincsenek reklám- vagy nyomkövető sütik.',
+  'Üçüncü Taraf Hizmetler': 'Harmadik féltől származó szolgáltatások',
+  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+      'A sorozat- és filmadatok a TMDB-től, a streamingplatform-információk a JustWatch-tól származnak. A push értesítéseket a Google Firebase kézbesíti, az oldal forgalmát a Cloudflare védi. Ezekre a szolgáltatásokra a saját adatvédelmi szabályzataik vonatkoznak.',
+  'Saklama ve Silme': 'Tárolás és törlés',
+  'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
+      'Az adataidat addig tároljuk, amíg a fiókod létezik. A beállításokban a „Fiókom törlése" gombbal véglegesen törölheted a fiókodat; az adataid azonnal, a biztonsági mentésekben lévő másolataik legkésőbb 14 napon belül törlődnek. A hibanaplók 30 nap után automatikusan törlődnek.',
+  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+      'Az adataidat ZIP formátumban exportálhatod a beállításokból; az archívumot az e-mail-címedre küldjük.',
+  'Güvenlik': 'Biztonság',
+  'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
+      'Az adatok titkosított kapcsolaton (HTTPS) keresztül utaznak, és korlátozott hozzáférésű szervereken tároljuk őket.',
+  'Çocukların Gizliliği': 'Gyermekek adatvédelme',
+  'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
+      'A dizi.jpg nem 13 év alatti gyerekeknek készült.',
+  'Hakların': 'A jogaid',
+  'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
+      'A KVKK és a GDPR alapján jogod van az adataidhoz hozzáférni, azokat helyesbíteni, törölni és áthelyezni. Ezekben az ügyekben írj nekünk: {}',
+  'Değişiklikler': 'Változások',
+  'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
+      'Ha ez a szabályzat változik, az új verziót ezen az oldalon tesszük közzé, és frissítjük a dátumot.',
+  'Kayıt olarak {} kabul etmiş olursun.': 'A regisztrációval elfogadod: {}.',
 };

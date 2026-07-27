@@ -1,15 +1,21 @@
 import 'dart:async';
+import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:record/record.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../dosya_oku.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'ses.dart';
 
 /// Sohbet listesi: partner başına son mesaj + okunmamış rozeti.
 class SohbetlerEkrani extends StatefulWidget {
@@ -78,13 +84,25 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
                   '@${s['partner']}',
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                subtitle: Text(
-                  (s['metin'] as String?)?.isNotEmpty == true
-                      ? s['metin'] as String
-                      : '·',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: DiziRenkler.metin54),
+                subtitle: Builder(
+                  builder: (_) {
+                    // Metinsiz son mesaj: "·" yerine türünü söyle (ses/foto/…)
+                    final ozet = mesajOzeti(s);
+                    final yazi = Text(
+                      ozet.metin,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: DiziRenkler.metin54),
+                    );
+                    if (ozet.ikon == null) return yazi;
+                    return Row(
+                      children: [
+                        Icon(ozet.ikon, size: 14, color: DiziRenkler.metin54),
+                        const SizedBox(width: 4),
+                        Expanded(child: yazi),
+                      ],
+                    );
+                  },
                 ),
                 trailing: okunmamis > 0
                     ? CircleAvatar(
@@ -143,6 +161,16 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
   Timer? _sayac;
+  // Sesli mesaj kaydı
+  final AudioRecorder _kaydedici = AudioRecorder();
+  bool _kaydediyor = false;
+  int _kayitSn = 0;
+  Timer? _kayitSayaci;
+  String? _kayitYolu;
+  // Kayıt sırasında mikrofon genliği (0..1) — hem canlı çubuklar hem de
+  // mesajla gönderilen dalga formu bundan üretilir.
+  final List<double> _seviyeler = [];
+  StreamSubscription<Amplitude>? _seviyeAbonelik;
 
   /// Yazarken karşı tarafa "yazıyor" sinyali (3 sn'de bir en fazla).
   void _yaziyorBildir() {
@@ -164,9 +192,99 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   @override
   void dispose() {
     _sayac?.cancel();
+    _kayitSayaci?.cancel();
+    _seviyeAbonelik?.cancel();
+    _kaydedici.dispose();
     _metin.dispose();
     _kaydirma.dispose();
     super.dispose();
+  }
+
+  // ---- Sesli mesaj kaydı ----
+  Future<void> _kayitBasla() async {
+    try {
+      if (!await _kaydedici.hasPermission()) return;
+      final dizin = await getTemporaryDirectory();
+      final yol =
+          '${dizin.path}/ses_${DateTime.now().millisecondsSinceEpoch}.ogg';
+      await _kaydedici.start(
+        const RecordConfig(encoder: AudioEncoder.opus),
+        path: yol,
+      );
+      _kayitYolu = yol;
+      if (!mounted) return;
+      setState(() {
+        _kaydediyor = true;
+        _kayitSn = 0;
+        _seviyeler.clear();
+      });
+      // Canlı ses şiddeti: 100 ms'de bir örnek (2 dk × 10 = en çok 1200 örnek)
+      _seviyeAbonelik?.cancel();
+      _seviyeAbonelik = _kaydedici
+          .onAmplitudeChanged(const Duration(milliseconds: 100))
+          .listen((a) {
+            if (!mounted) return;
+            setState(() => _seviyeler.add(genlikNormalle(a.current)));
+          });
+      _kayitSayaci = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        setState(() => _kayitSn++);
+        if (_kayitSn >= 120) _kayitGonder(); // 2 dk üst sınır
+      });
+    } catch (_) {
+      if (mounted) setState(() => _kaydediyor = false);
+    }
+  }
+
+  Future<void> _kayitIptal() async {
+    _kayitSayaci?.cancel();
+    _seviyeAbonelik?.cancel();
+    try {
+      await _kaydedici.stop();
+    } catch (_) {}
+    _kayitYolu = null;
+    if (mounted) {
+      setState(() {
+        _kaydediyor = false;
+        _kayitSn = 0;
+      });
+    }
+  }
+
+  Future<void> _kayitGonder() async {
+    _kayitSayaci?.cancel();
+    _seviyeAbonelik?.cancel();
+    final saniye = _kayitSn;
+    final dalga = dalgaKodla(_seviyeler, saniye);
+    String? yol;
+    try {
+      yol = await _kaydedici.stop();
+    } catch (_) {}
+    yol ??= _kayitYolu;
+    if (mounted) {
+      setState(() {
+        _kaydediyor = false;
+        _kayitSn = 0;
+      });
+    }
+    if (yol == null || saniye < 1) return; // çok kısa → iptal
+    if (mounted) setState(() => _ekYukleniyor = true);
+    try {
+      final bayt = await dosyaOku(yol);
+      final sonuc = await Api.medyaYukle(bayt);
+      await _gonder(
+        medya: sonuc['yol'] as String,
+        sesDalga: dalga.isEmpty ? null : dalga,
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Ses gönderilemedi'.c)));
+      }
+    } finally {
+      if (mounted) setState(() => _ekYukleniyor = false);
+    }
   }
 
   void _sonaKaydir() {
@@ -225,6 +343,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   Future<void> _gonder({
     String? metin,
     String? medya,
+    String? sesDalga,
     String? icerikTur,
     int? icerikId,
   }) async {
@@ -240,6 +359,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
         'kullanici_adi': widget.kullaniciAdi,
         if (metin != null && metin.isNotEmpty) 'metin': metin,
         if (medya != null) 'medya': medya,
+        if (sesDalga != null) 'ses_dalga': sesDalga,
         if (icerikTur != null) 'icerik_tur': icerikTur,
         if (icerikId != null) 'icerik_id': icerikId,
         if (_yanitlanan != null)
@@ -515,77 +635,97 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      // Fotoğraf / GIF (düzenleme modunda kapalı — düzenleme yalnız metin)
-                      IconButton(
-                        tooltip: 'Fotoğraf / video ekle'.c,
-                        onPressed: (_ekYukleniyor || _duzenlenenId != null)
-                            ? null
-                            : _fotoGonder,
-                        icon: _ekYukleniyor
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.sari,
-                                ),
-                              )
-                            : Icon(
-                                Icons.add_photo_alternate_outlined,
+                  child: _kaydediyor
+                      ? _kayitCubugu()
+                      : Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Fotoğraf / GIF (düzenleme modunda kapalı — düzenleme yalnız metin)
+                            IconButton(
+                              tooltip: 'Fotoğraf / video ekle'.c,
+                              onPressed:
+                                  (_ekYukleniyor || _duzenlenenId != null)
+                                  ? null
+                                  : _fotoGonder,
+                              icon: _ekYukleniyor
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: DiziRenkler.sari,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.add_photo_alternate_outlined,
+                                      color: _duzenlenenId != null
+                                          ? DiziRenkler.metin24
+                                          : DiziRenkler.sari,
+                                    ),
+                            ),
+                            // Dizi/film kartı paylaş (düzenleme modunda kapalı)
+                            IconButton(
+                              tooltip: 'İçerik paylaş'.c,
+                              onPressed: _duzenlenenId != null
+                                  ? null
+                                  : _icerikPaylas,
+                              icon: Icon(
+                                Icons.local_movies_outlined,
                                 color: _duzenlenenId != null
                                     ? DiziRenkler.metin24
                                     : DiziRenkler.sari,
                               ),
-                      ),
-                      // Dizi/film kartı paylaş (düzenleme modunda kapalı)
-                      IconButton(
-                        tooltip: 'İçerik paylaş'.c,
-                        onPressed: _duzenlenenId != null ? null : _icerikPaylas,
-                        icon: Icon(
-                          Icons.local_movies_outlined,
-                          color: _duzenlenenId != null
-                              ? DiziRenkler.metin24
-                              : DiziRenkler.sari,
+                            ),
+                            Expanded(
+                              child: TextField(
+                                controller: _metin,
+                                minLines: 1,
+                                maxLines: 4,
+                                maxLength: 2000,
+                                buildCounter:
+                                    (
+                                      _, {
+                                      required currentLength,
+                                      maxLength,
+                                      required isFocused,
+                                    }) => null,
+                                onChanged: (_) => _yaziyorBildir(),
+                                onSubmitted: (_) =>
+                                    _gonder(metin: _metin.text.trim()),
+                                decoration: InputDecoration(
+                                  hintText: 'Mesajını yaz...'.c,
+                                ),
+                              ),
+                            ),
+                            // Sesli mesaj kaydı (web'de yok; düzenlemede kapalı)
+                            if (!kIsWeb)
+                              IconButton(
+                                tooltip: 'Sesli mesaj'.c,
+                                onPressed:
+                                    (_ekYukleniyor || _duzenlenenId != null)
+                                    ? null
+                                    : _kayitBasla,
+                                icon: Icon(
+                                  Icons.mic_none,
+                                  color: _duzenlenenId != null
+                                      ? DiziRenkler.metin24
+                                      : DiziRenkler.sari,
+                                ),
+                              ),
+                            const SizedBox(width: 2),
+                            IconButton.filled(
+                              tooltip: 'Gönder'.c,
+                              onPressed: _gonderiliyor
+                                  ? null
+                                  : () => _gonder(metin: _metin.text.trim()),
+                              style: IconButton.styleFrom(
+                                backgroundColor: DiziRenkler.sari,
+                                foregroundColor: Colors.black,
+                              ),
+                              icon: const Icon(Icons.send),
+                            ),
+                          ],
                         ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: _metin,
-                          minLines: 1,
-                          maxLines: 4,
-                          maxLength: 2000,
-                          buildCounter:
-                              (
-                                _, {
-                                required currentLength,
-                                maxLength,
-                                required isFocused,
-                              }) => null,
-                          onChanged: (_) => _yaziyorBildir(),
-                          onSubmitted: (_) =>
-                              _gonder(metin: _metin.text.trim()),
-                          decoration: InputDecoration(
-                            hintText: 'Mesajını yaz...'.c,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      IconButton.filled(
-                        tooltip: 'Gönder'.c,
-                        onPressed: _gonderiliyor
-                            ? null
-                            : () => _gonder(metin: _metin.text.trim()),
-                        style: IconButton.styleFrom(
-                          backgroundColor: DiziRenkler.sari,
-                          foregroundColor: Colors.black,
-                        ),
-                        icon: const Icon(Icons.send),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ],
@@ -594,6 +734,89 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
       ),
     );
   }
+
+  /// Kayıt sırasında giriş çubuğu: iptal + nabız + canlı dalga + süre + gönder.
+  Widget _kayitCubugu() {
+    final dk = _kayitSn ~/ 60;
+    final sn = (_kayitSn % 60).toString().padLeft(2, '0');
+    // Son 40 örnek akar; başta soldan doldurmak için sıfırlarla tamamlanır.
+    final son = _seviyeler.length > dalgaOrnekSayisi
+        ? _seviyeler.sublist(_seviyeler.length - dalgaOrnekSayisi)
+        : [
+            ..._seviyeler,
+            ...List.filled(dalgaOrnekSayisi - _seviyeler.length, 0.0),
+          ];
+    return Row(
+      children: [
+        IconButton(
+          tooltip: 'İptal'.c,
+          onPressed: _kayitIptal,
+          icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+        ),
+        const _KayitNabzi(),
+        const SizedBox(width: 10),
+        Text(
+          '$dk:$sn',
+          style: const TextStyle(
+            fontWeight: FontWeight.w700,
+            fontFeatures: [FontFeature.tabularFigures()],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: SesDalga(
+            seviyeler: son,
+            renk: DiziRenkler.sari,
+            yukseklik: 28,
+          ),
+        ),
+        const SizedBox(width: 6),
+        IconButton.filled(
+          tooltip: 'Gönder'.c,
+          onPressed: _kayitGonder,
+          style: IconButton.styleFrom(
+            backgroundColor: DiziRenkler.sari,
+            foregroundColor: Colors.black,
+          ),
+          icon: const Icon(Icons.send),
+        ),
+      ],
+    );
+  }
+}
+
+/// Kayıt sırasında yanıp sönen kırmızı nokta.
+class _KayitNabzi extends StatefulWidget {
+  const _KayitNabzi();
+  @override
+  State<_KayitNabzi> createState() => _KayitNabziState();
+}
+
+class _KayitNabziState extends State<_KayitNabzi>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 700),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: Tween<double>(begin: 0.3, end: 1).animate(_c),
+    child: Container(
+      width: 12,
+      height: 12,
+      decoration: const BoxDecoration(
+        color: Colors.redAccent,
+        shape: BoxShape.circle,
+      ),
+    ),
+  );
 }
 
 /// Başlıktaki durum satırı: son 60 sn içinde aktifse "çevrimiçi", değilse
@@ -630,20 +853,35 @@ class _DurumSatiri extends StatelessWidget {
   }
 }
 
-/// Alıntı/yanıt kutusu için kısa önizleme metni (medya/içerik ikon yerine söz).
-String _yanitOnizleme(Map<String, dynamic> m) {
+bool sesDosyasi(String yol) =>
+    yol.endsWith('.ogg') ||
+    yol.endsWith('.m4a') ||
+    yol.endsWith('.mp3') ||
+    yol.endsWith('.aac');
+
+/// Metinsiz mesajın (ses/foto/video/içerik) kısa özeti: ikon + söz.
+/// Hem sohbet listesindeki son mesaj satırında hem alıntı kutusunda kullanılır.
+({IconData? ikon, String metin}) mesajOzeti(Map<String, dynamic> m) {
   final metin = (m['metin'] as String?)?.trim();
-  if (metin != null && metin.isNotEmpty) return metin;
+  if (metin != null && metin.isNotEmpty) return (ikon: null, metin: metin);
   final medya = m['medya'] as String? ?? m['yanit_medya'] as String?;
   if (medya != null) {
-    final video = medya.endsWith('.mp4') || medya.endsWith('.webm');
-    return video ? 'Video'.c : 'Fotoğraf'.c;
+    if (sesDosyasi(medya)) {
+      return (ikon: Icons.mic, metin: 'Sesli mesaj'.c);
+    }
+    if (medya.endsWith('.mp4') || medya.endsWith('.webm')) {
+      return (ikon: Icons.videocam, metin: 'Video'.c);
+    }
+    return (ikon: Icons.photo, metin: 'Fotoğraf'.c);
   }
   if (m['icerik_tur'] != null || m['yanit_icerik_tur'] != null) {
-    return 'İçerik'.c;
+    return (ikon: Icons.local_movies, metin: 'İçerik'.c);
   }
-  return '...';
+  return (ikon: null, metin: '');
 }
+
+/// Alıntı/yanıt kutusu için kısa önizleme metni.
+String _yanitOnizleme(Map<String, dynamic> m) => mesajOzeti(m).metin;
 
 /// Tek mesaj baloncuğu: metin, medya (foto/GIF/video) ve içerik kartı.
 class _MesajBaloncugu extends StatelessWidget {
@@ -718,6 +956,7 @@ class _MesajBaloncugu extends StatelessWidget {
     final medya = m['medya'] as String?;
     final video =
         medya != null && (medya.endsWith('.mp4') || medya.endsWith('.webm'));
+    final ses = medya != null && sesDosyasi(medya);
     final icerikTur = m['icerik_tur'] as String?;
     final icerikId = (m['icerik_id'] as num?)?.toInt();
     final icerik = icerikTur != null
@@ -755,176 +994,191 @@ class _MesajBaloncugu extends StatelessWidget {
               bottomRight: Radius.circular(benim ? 3 : 14),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Alıntılanan mesaj önizlemesi (yanıtsa)
-              if (yanitId != null)
-                Container(
-                  margin: const EdgeInsets.only(bottom: 5),
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                  decoration: BoxDecoration(
-                    color: (benim ? Colors.black : DiziRenkler.metin)
-                        .withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border(
-                      left: BorderSide(
-                        color: benim ? Colors.black54 : DiziRenkler.sari,
-                        width: 3,
+          // IntrinsicWidth: baloncuk en geniş çocuğuna (metin/footer) göre küçülür;
+          // kısa mesaj ("selam") artık tüm satırı kaplamaz (WhatsApp/Telegram gibi).
+          child: IntrinsicWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Alıntılanan mesaj önizlemesi (yanıtsa)
+                if (yanitId != null)
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 5),
+                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                    decoration: BoxDecoration(
+                      color: (benim ? Colors.black : DiziRenkler.metin)
+                          .withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border(
+                        left: BorderSide(
+                          color: benim ? Colors.black54 : DiziRenkler.sari,
+                          width: 3,
+                        ),
+                      ),
+                    ),
+                    child: Text(
+                      _yanitOnizleme({
+                        'metin': m['yanit_metin'],
+                        'yanit_medya': m['yanit_medya'],
+                        'yanit_icerik_tur': m['yanit_icerik_tur'],
+                      }),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: yaziRengi.withValues(alpha: 0.75),
                       ),
                     ),
                   ),
-                  child: Text(
-                    _yanitOnizleme({
-                      'metin': m['yanit_metin'],
-                      'yanit_medya': m['yanit_medya'],
-                      'yanit_icerik_tur': m['yanit_icerik_tur'],
-                    }),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: yaziRengi.withValues(alpha: 0.75),
+                // Sesli mesaj
+                if (ses)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: SesOynatici(
+                      key: ValueKey('ses-$medya'), // poll'da state korunsun
+                      url: dosyaUrl(medya)!,
+                      renk: yaziRengi,
+                      dalga: m['ses_dalga'] as String?,
                     ),
                   ),
-                ),
-              // Fotoğraf / GIF / video
-              if (medya != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: video
-                        ? Container(
-                            width: 180,
-                            height: 120,
-                            color: Colors.black26,
-                            child: const Icon(
-                              Icons.play_circle_outline,
-                              size: 40,
-                              color: Colors.white70,
-                            ),
-                          )
-                        : InkWell(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: InteractiveViewer(
-                                  child: CachedNetworkImage(
-                                    imageUrl: dosyaUrl(medya)!,
+                // Fotoğraf / GIF / video
+                if (medya != null && !ses)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: video
+                          ? Container(
+                              width: 180,
+                              height: 120,
+                              color: Colors.black26,
+                              child: const Icon(
+                                Icons.play_circle_outline,
+                                size: 40,
+                                color: Colors.white70,
+                              ),
+                            )
+                          : InkWell(
+                              onTap: () => showDialog(
+                                context: context,
+                                builder: (_) => Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  child: InteractiveViewer(
+                                    child: CachedNetworkImage(
+                                      imageUrl: dosyaUrl(medya)!,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: dosyaUrl(medya)!,
-                              width: 200,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                  ),
-                ),
-              // Dizi/film kartı
-              if (icerikTur != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: InkWell(
-                    onTap: () => context.push('/icerik/$icerikTur/$icerikId'),
-                    child: Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: SizedBox(
-                              width: 38,
-                              height: 56,
-                              child: icerik?['poster'] != null
-                                  ? CachedNetworkImage(
-                                      imageUrl: posterUrl(
-                                        icerik!['poster'] as String?,
-                                        boyut: 'w92',
-                                      )!,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      color: DiziRenkler.koyuGri,
-                                      child: Icon(
-                                        Icons.movie,
-                                        size: 18,
-                                        color: DiziRenkler.metin38,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              icerik?['ad'] as String? ?? '...',
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 13,
-                                color: yaziRengi,
+                              child: CachedNetworkImage(
+                                imageUrl: dosyaUrl(medya)!,
+                                width: 200,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.chevron_right,
-                            size: 16,
-                            color: yaziRengi.withValues(alpha: 0.6),
-                          ),
-                        ],
+                    ),
+                  ),
+                // Dizi/film kartı
+                if (icerikTur != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: InkWell(
+                      onTap: () => context.push('/icerik/$icerikTur/$icerikId'),
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(6),
+                              child: SizedBox(
+                                width: 38,
+                                height: 56,
+                                child: icerik?['poster'] != null
+                                    ? CachedNetworkImage(
+                                        imageUrl: posterUrl(
+                                          icerik!['poster'] as String?,
+                                          boyut: 'w92',
+                                        )!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Container(
+                                        color: DiziRenkler.koyuGri,
+                                        child: Icon(
+                                          Icons.movie,
+                                          size: 18,
+                                          color: DiziRenkler.metin38,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                icerik?['ad'] as String? ?? '...',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13,
+                                  color: yaziRengi,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 16,
+                              color: yaziRengi.withValues(alpha: 0.6),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              if (metin != null && metin.isNotEmpty)
-                Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (duzenlendi) ...[
+                if (metin != null && metin.isNotEmpty)
+                  Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (duzenlendi) ...[
+                        Text(
+                          'düzenlendi'.c,
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontStyle: FontStyle.italic,
+                            color: yaziRengi.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                      ],
                       Text(
-                        'düzenlendi'.c,
+                        saatKisa,
                         style: TextStyle(
                           fontSize: 10,
-                          fontStyle: FontStyle.italic,
-                          color: yaziRengi.withValues(alpha: 0.5),
+                          color: yaziRengi.withValues(alpha: 0.55),
                         ),
                       ),
-                      const SizedBox(width: 5),
+                      if (benim) ...[
+                        const SizedBox(width: 3),
+                        Icon(
+                          m['okundu'] == true ? Icons.done_all : Icons.done,
+                          size: 13,
+                          color: yaziRengi.withValues(alpha: 0.55),
+                        ),
+                      ],
                     ],
-                    Text(
-                      saatKisa,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: yaziRengi.withValues(alpha: 0.55),
-                      ),
-                    ),
-                    if (benim) ...[
-                      const SizedBox(width: 3),
-                      Icon(
-                        m['okundu'] == true ? Icons.done_all : Icons.done,
-                        size: 13,
-                        color: yaziRengi.withValues(alpha: 0.55),
-                      ),
-                    ],
-                  ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

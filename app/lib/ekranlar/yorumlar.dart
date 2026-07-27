@@ -10,6 +10,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'etiket.dart';
+import 'ortak.dart';
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
 /// liste + fotoğraf/video ekli yorum yazma.
@@ -493,6 +494,20 @@ class _YorumKartiState extends State<_YorumKarti> {
                       padding: const EdgeInsets.all(10),
                       child: Icon(
                         Icons.delete_outline,
+                        size: 18,
+                        color: DiziRenkler.metin38,
+                      ),
+                    ),
+                  )
+                else if (widget.benimId != null)
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () =>
+                        sikayetEtSheet(context, 'yorum', yorum['id'] as int),
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        Icons.flag_outlined,
                         size: 18,
                         color: DiziRenkler.metin38,
                       ),
