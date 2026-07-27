@@ -7,6 +7,8 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'profil.dart' show sureBicimle, RozetCipi;
+import 'sosyal.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
 class KullaniciProfilEkrani extends StatefulWidget {
@@ -177,6 +179,8 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       style: TextStyle(color: DiziRenkler.metin70, height: 1.4),
                     ),
                   ],
+                  // Sosyal bağlantılar (varsa)
+                  SosyalSatiri(sosyal: p['sosyal'] as List<dynamic>? ?? []),
                   const SizedBox(height: 16),
                   // Takipçi / takip / yorum sayaçları
                   Row(
@@ -196,6 +200,46 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       _Sayac(deger: '${st['bolum']}', etiket: 'Bölüm'.c),
                     ],
                   ),
+                  // Toplam ekran süresi (kendi profildekiyle aynı biçim)
+                  if (((st['tahmini_dakika'] as num?)?.toInt() ?? 0) > 0) ...[
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: DiziRenkler.kart,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.schedule,
+                            color: DiziRenkler.sari,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Toplam ekran süresi'.c,
+                            style: TextStyle(
+                              color: DiziRenkler.metin54,
+                              fontSize: 13,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            sureBicimle((st['tahmini_dakika'] as num).toInt()),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              color: DiziRenkler.sari,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   // Takip + Mesaj (kendi profilinde gösterme)
                   if (!benMi && girisli)
@@ -238,6 +282,36 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ],
                     ),
+                  // Kazanılan rozetler (backend yalnız kazanılanları döner)
+                  if ((p['rozetler'] as List<dynamic>? ?? []).isNotEmpty) ...[
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.military_tech_outlined,
+                          size: 18,
+                          color: DiziRenkler.sari,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Rozetler'.c,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final r in p['rozetler'] as List<dynamic>)
+                          RozetCipi(rozet: r as Map<String, dynamic>),
+                      ],
+                    ),
+                  ],
                   // İzledikleri: diziler ve filmler ayrı şeritler.
                   // Başlıktaki sayı GERÇEK toplamdır (şerit son 60'ı gösterir).
                   for (final grup in [

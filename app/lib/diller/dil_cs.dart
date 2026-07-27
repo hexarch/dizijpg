@@ -340,4 +340,18 @@ const Map<String, String> cevirilerCs = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Pokud se tyto zásady změní, nová verze bude zveřejněna na této stránce a datum se aktualizuje.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Registrací přijímáš {}.',
+  'Kullanıcılar': 'Uživatelé',
+  'Fotoğrafı değiştir': 'Změnit fotku',
+  'Yeniden konumlandır': 'Znovu umístit',
+  'Bir şeyler ters gitti': 'Něco se pokazilo',
+  'Sosyal Bağlantılar': 'Sociální odkazy',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Na profilu se zobrazí až 3 odkazy.',
+  'Platform seç': 'Vyber platformu',
+  'Kullanıcı adın': 'Tvé uživatelské jméno',
+  'Ekle': 'Přidat',
+  'Kaldır': 'Odebrat',
+  'Kopyalandı: {}': 'Zkopírováno: {}',
+  'Geçersiz kullanıcı adı': 'Neplatné uživatelské jméno',
+  'Bağlantı ekle': 'Přidat odkaz',
 };

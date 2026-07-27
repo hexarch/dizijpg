@@ -341,4 +341,18 @@ const Map<String, String> cevirilerFi = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Jos tämä käytäntö muuttuu, uusi versio julkaistaan tällä sivulla ja päivämäärä päivitetään.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Rekisteröitymällä hyväksyt: {}.',
+  'Kullanıcılar': 'Käyttäjät',
+  'Fotoğrafı değiştir': 'Vaihda kuva',
+  'Yeniden konumlandır': 'Rajaa uudelleen',
+  'Bir şeyler ters gitti': 'Jokin meni pieleen',
+  'Sosyal Bağlantılar': 'Somelinkit',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Profiilissasi näytetään enintään 3 linkkiä.',
+  'Platform seç': 'Valitse alusta',
+  'Kullanıcı adın': 'Käyttäjänimesi',
+  'Ekle': 'Lisää',
+  'Kaldır': 'Poista',
+  'Kopyalandı: {}': 'Kopioitu: {}',
+  'Geçersiz kullanıcı adı': 'Virheellinen käyttäjänimi',
+  'Bağlantı ekle': 'Lisää linkki',
 };

@@ -342,4 +342,18 @@ const Map<String, String> cevirilerRo = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Dacă această politică se schimbă, noua versiune va fi publicată pe această pagină, iar data va fi actualizată.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Prin înregistrare accepți {}.',
+  'Kullanıcılar': 'Utilizatori',
+  'Fotoğrafı değiştir': 'Schimbă fotografia',
+  'Yeniden konumlandır': 'Repoziționează',
+  'Bir şeyler ters gitti': 'Ceva n-a mers bine',
+  'Sosyal Bağlantılar': 'Linkuri sociale',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Pe profil se afișează cel mult 3 linkuri.',
+  'Platform seç': 'Alege o platformă',
+  'Kullanıcı adın': 'Numele tău de utilizator',
+  'Ekle': 'Adaugă',
+  'Kaldır': 'Elimină',
+  'Kopyalandı: {}': 'Copiat: {}',
+  'Geçersiz kullanıcı adı': 'Nume de utilizator nevalid',
+  'Bağlantı ekle': 'Adaugă link',
 };

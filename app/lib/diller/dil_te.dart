@@ -340,4 +340,18 @@ const Map<String, String> cevirilerTe = {
       'ఈ విధానం మారితే కొత్త వెర్షన్ ఇదే పేజీలో ప్రచురించబడి తేదీ అప్‌డేట్ అవుతుంది.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'నమోదు చేసుకోవడం ద్వారా నువ్వు {} అంగీకరిస్తున్నావు.',
+  'Kullanıcılar': 'వినియోగదారులు',
+  'Fotoğrafı değiştir': 'ఫోటో మార్చు',
+  'Yeniden konumlandır': 'మళ్లీ సర్దు',
+  'Bir şeyler ters gitti': 'ఏదో తప్పు జరిగింది',
+  'Sosyal Bağlantılar': 'సోషల్ లింక్‌లు',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'నీ ప్రొఫైల్‌లో గరిష్ఠంగా 3 లింక్‌లు కనిపిస్తాయి.',
+  'Platform seç': 'ప్లాట్‌ఫారమ్ ఎంచుకో',
+  'Kullanıcı adın': 'నీ యూజర్‌నేమ్',
+  'Ekle': 'జోడించు',
+  'Kaldır': 'తీసేయి',
+  'Kopyalandı: {}': 'కాపీ అయింది: {}',
+  'Geçersiz kullanıcı adı': 'చెల్లని యూజర్‌నేమ్',
+  'Bağlantı ekle': 'లింక్ జోడించు',
 };

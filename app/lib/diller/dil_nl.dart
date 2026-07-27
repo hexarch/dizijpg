@@ -342,4 +342,18 @@ const Map<String, String> cevirilerNl = {
       'Als dit beleid wijzigt, wordt de nieuwe versie op deze pagina gepubliceerd en wordt de datum bijgewerkt.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Door je te registreren accepteer je het {}.',
+  'Kullanıcılar': 'Gebruikers',
+  'Fotoğrafı değiştir': 'Foto wijzigen',
+  'Yeniden konumlandır': 'Opnieuw positioneren',
+  'Bir şeyler ters gitti': 'Er is iets misgegaan',
+  'Sosyal Bağlantılar': 'Sociale links',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Er worden maximaal 3 links op je profiel getoond.',
+  'Platform seç': 'Kies een platform',
+  'Kullanıcı adın': 'Je gebruikersnaam',
+  'Ekle': 'Toevoegen',
+  'Kaldır': 'Verwijderen',
+  'Kopyalandı: {}': 'Gekopieerd: {}',
+  'Geçersiz kullanıcı adı': 'Ongeldige gebruikersnaam',
+  'Bağlantı ekle': 'Link toevoegen',
 };

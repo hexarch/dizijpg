@@ -150,11 +150,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                     ),
                     title: Text('@$ad'),
                     onTap: () {
-                      // Yönlendiriciyi modal kapanmadan ÖNCE al: kapanan
-                      // modalın context'i ölür, onunla push çalışmaz.
-                      final yonlendirici = GoRouter.of(context);
+                      // Dış context: kapanan modalın context'i ölür.
+                      final dis = this.context;
                       Navigator.pop(context);
-                      yonlendirici.push('/kullanici/$ad');
+                      kullaniciyaGit(dis, ad);
                     },
                   );
                 },
@@ -770,8 +769,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
                             Row(
                               children: [
                                 InkWell(
-                                  onTap: () => context.push(
-                                    '/kullanici/${inc['kullanici_adi']}',
+                                  onTap: () => kullaniciyaGit(
+                                    context,
+                                    inc['kullanici_adi'] as String,
                                   ),
                                   child: Text(
                                     '@${inc['kullanici_adi']}',

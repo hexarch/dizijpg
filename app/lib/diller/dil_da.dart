@@ -339,4 +339,18 @@ const Map<String, String> cevirilerDa = {
       'Hvis politikken ændres, offentliggøres den nye version på denne side, og datoen opdateres.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Ved at registrere dig accepterer du {}.',
+  'Kullanıcılar': 'Brugere',
+  'Fotoğrafı değiştir': 'Skift foto',
+  'Yeniden konumlandır': 'Justér igen',
+  'Bir şeyler ters gitti': 'Noget gik galt',
+  'Sosyal Bağlantılar': 'Sociale links',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Der vises op til 3 links på din profil.',
+  'Platform seç': 'Vælg platform',
+  'Kullanıcı adın': 'Dit brugernavn',
+  'Ekle': 'Tilføj',
+  'Kaldır': 'Fjern',
+  'Kopyalandı: {}': 'Kopieret: {}',
+  'Geçersiz kullanıcı adı': 'Ugyldigt brugernavn',
+  'Bağlantı ekle': 'Tilføj link',
 };

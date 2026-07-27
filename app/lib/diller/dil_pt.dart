@@ -343,4 +343,18 @@ const Map<String, String> cevirilerPt = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Se esta política mudar, a nova versão será publicada nesta página e a data será atualizada.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Ao se cadastrar, você aceita a {}.',
+  'Kullanıcılar': 'Usuários',
+  'Fotoğrafı değiştir': 'Trocar foto',
+  'Yeniden konumlandır': 'Reposicionar',
+  'Bir şeyler ters gitti': 'Algo deu errado',
+  'Sosyal Bağlantılar': 'Redes sociais',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Até 3 links aparecem no seu perfil.',
+  'Platform seç': 'Escolha uma plataforma',
+  'Kullanıcı adın': 'Seu nome de usuário',
+  'Ekle': 'Adicionar',
+  'Kaldır': 'Remover',
+  'Kopyalandı: {}': 'Copiado: {}',
+  'Geçersiz kullanıcı adı': 'Nome de usuário inválido',
+  'Bağlantı ekle': 'Adicionar link',
 };

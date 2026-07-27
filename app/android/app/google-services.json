@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1026295944597",
+    "project_id": "dizi-jpg-7b723",
+    "storage_bucket": "dizi-jpg-7b723.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026295944597:android:c503bd268f0112c827929c",
+        "android_client_info": {
+          "package_name": "com.dizijpg.dizijpg"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ3Egk7oJ7JZosAcJsy4iU_F09hbnLfU0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

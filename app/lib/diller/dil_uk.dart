@@ -341,4 +341,18 @@ const Map<String, String> cevirilerUk = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Якщо політика зміниться, нову версію буде опубліковано на цій сторінці, а дату оновлено.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Реєструючись, ти приймаєш {}.',
+  'Kullanıcılar': 'Користувачі',
+  'Fotoğrafı değiştir': 'Змінити фото',
+  'Yeniden konumlandır': 'Перекадрувати',
+  'Bir şeyler ters gitti': 'Щось пішло не так',
+  'Sosyal Bağlantılar': 'Соцмережі',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'У профілі показується до 3 посилань.',
+  'Platform seç': 'Обери платформу',
+  'Kullanıcı adın': 'Твоє ім\'я користувача',
+  'Ekle': 'Додати',
+  'Kaldır': 'Прибрати',
+  'Kopyalandı: {}': 'Скопійовано: {}',
+  'Geçersiz kullanıcı adı': 'Неприпустиме ім\'я користувача',
+  'Bağlantı ekle': 'Додати посилання',
 };

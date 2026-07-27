@@ -344,4 +344,18 @@ const Map<String, String> cevirilerDe = {
       'Wenn sich diese Erklärung ändert, wird die neue Fassung auf dieser Seite veröffentlicht und das Aktualisierungsdatum erneuert.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Mit der Registrierung akzeptierst du die {}.',
+  'Kullanıcılar': 'Nutzer',
+  'Fotoğrafı değiştir': 'Foto ändern',
+  'Yeniden konumlandır': 'Neu ausrichten',
+  'Bir şeyler ters gitti': 'Etwas ist schiefgelaufen',
+  'Sosyal Bağlantılar': 'Soziale Links',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'In deinem Profil werden bis zu 3 Links angezeigt.',
+  'Platform seç': 'Plattform wählen',
+  'Kullanıcı adın': 'Dein Benutzername',
+  'Ekle': 'Hinzufügen',
+  'Kaldır': 'Entfernen',
+  'Kopyalandı: {}': 'Kopiert: {}',
+  'Geçersiz kullanıcı adı': 'Ungültiger Benutzername',
+  'Bağlantı ekle': 'Link hinzufügen',
 };

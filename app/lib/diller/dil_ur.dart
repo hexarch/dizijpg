@@ -340,4 +340,18 @@ const Map<String, String> cevirilerUr = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'اگر یہ پالیسی تبدیل ہو تو نیا ورژن اسی صفحے پر شائع ہوگا اور تاریخ اپڈیٹ کر دی جائے گی۔',
   'Kayıt olarak {} kabul etmiş olursun.': 'رجسٹر ہو کر تم {} قبول کرتے ہو۔',
+  'Kullanıcılar': 'صارفین',
+  'Fotoğrafı değiştir': 'تصویر بدلیں',
+  'Yeniden konumlandır': 'دوبارہ ترتیب دیں',
+  'Bir şeyler ters gitti': 'کچھ غلط ہو گیا',
+  'Sosyal Bağlantılar': 'سوشل لنکس',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'تمہاری پروفائل پر زیادہ سے زیادہ 3 لنکس دکھتے ہیں۔',
+  'Platform seç': 'پلیٹ فارم چنو',
+  'Kullanıcı adın': 'تمہارا صارف نام',
+  'Ekle': 'شامل کرو',
+  'Kaldır': 'ہٹاؤ',
+  'Kopyalandı: {}': 'کاپی ہو گیا: {}',
+  'Geçersiz kullanıcı adı': 'غلط صارف نام',
+  'Bağlantı ekle': 'لنک شامل کرو',
 };

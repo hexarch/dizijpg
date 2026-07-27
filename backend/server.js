@@ -8,13 +8,38 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { AsyncLocalStorage } from 'async_hooks';
+import os from 'os';
+import geoip from 'geoip-lite';
+import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
+
+// ---------- FCM push (servis hesabı varsa etkin) ----------
+const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
+let fcmHazir = false;
+try {
+  if (fs.existsSync(FIREBASE_SA_YOL)) {
+    admin.initializeApp({
+      credential: admin.credential.cert(
+        JSON.parse(fs.readFileSync(FIREBASE_SA_YOL, 'utf8')),
+      ),
+    });
+    fcmHazir = true;
+    console.log('FCM push etkin');
+  } else {
+    console.log('FCM push kapalı (servis hesabı dosyası yok)');
+  }
+} catch (e) {
+  console.error('FCM init hatası:', e.message);
+}
 
 const {
   DATABASE_URL,
   JWT_SECRET,
   TMDB_TOKEN,
   PORT = 8500,
+  // Admin panel erişimi: virgülle ayrılmış IP listesi + isteğe bağlı gizli anahtar.
+  ADMIN_IPLER = '',
+  ADMIN_TOKEN = '',
 } = process.env;
 
 if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
@@ -80,6 +105,55 @@ app.use((req, _res, next) => {
   const kod = String(req.headers['x-dil'] || 'tr').toLowerCase();
   const tmdbDil = TMDB_DIL[kod] || 'en-US';
   istekBaglam.run({ tmdbDil }, next);
+});
+
+// ---------- gerçek istemci IP (Cloudflare arkasında) ----------
+// CF-Connecting-IP gerçek ziyaretçiyi verir; req.ip Cloudflare edge IP'sidir.
+function gercekIp(req) {
+  return (
+    req.headers['cf-connecting-ip'] ||
+    (req.headers['x-forwarded-for'] || '').split(',')[0].trim() ||
+    req.ip ||
+    ''
+  ).replace('::ffff:', '');
+}
+
+// ---------- istek takibi (admin panel; bellek içi, kalıcı değil) ----------
+const ISTEK = {
+  son: [], // son N istek (globe + akış)
+  toplam: 0,
+  ulke: new Map(), // ülke kodu → sayı
+  dakika: new Map(), // epoch-dakika → sayı (istek/dk grafiği)
+};
+const ISTEK_SINIR = 400;
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') return next();
+  const bas = Date.now();
+  res.on('finish', () => {
+    try {
+      const ip = gercekIp(req);
+      const g = geoip.lookup(ip);
+      const dk = Math.floor(Date.now() / 60000);
+      ISTEK.toplam++;
+      ISTEK.dakika.set(dk, (ISTEK.dakika.get(dk) || 0) + 1);
+      for (const k of ISTEK.dakika.keys()) if (k < dk - 120) ISTEK.dakika.delete(k);
+      if (g?.country) ISTEK.ulke.set(g.country, (ISTEK.ulke.get(g.country) || 0) + 1);
+      ISTEK.son.unshift({
+        ip,
+        yol: req.path,
+        method: req.method,
+        kod: res.statusCode,
+        sure: Date.now() - bas,
+        ts: Date.now(),
+        ulke: g?.country || null,
+        sehir: g?.city || null,
+        ll: g?.ll || null,
+        kullanici: req.kullanici?.id || null,
+      });
+      if (ISTEK.son.length > ISTEK_SINIR) ISTEK.son.length = ISTEK_SINIR;
+    } catch { /* takip asla isteği bozmasın */ }
+  });
+  next();
 });
 
 // Sayısal yol parametreleri INT kolonlara bağlanıyor: harf içeren veya taşan
@@ -280,14 +354,98 @@ const mesajLimiti = hizLimiti(300, (req) => `m:${req.kullanici.id}`);
 const yorumLimiti = hizLimiti(60, (req) => `c:${req.kullanici.id}`);
 // Kimliksiz arama (tam-tarama LIKE) DoS koruması: IP başına
 const aramaLimiti = hizLimiti(120, (req) => `s:${req.ip}`);
+// İstemci hata bildirimi seli koruması: IP başına
+const hataLimiti = hizLimiti(60, (req) => `h:${req.ip}`);
 
 // Bildirim ekler; kendi eylemine bildirim düşmez, hata akışı bozmaz.
-async function bildirimEkle(aliciId, tur, aktorId, yorumId = null) {
+// Push bildirim şablonları (alıcının diline göre; {ad} = @kullanıcı).
+const PUSH_SABLON = {
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt' },
+  fr: { takip: '{ad} a commencé à te suivre', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: '{ad} t\'a mentionné dans un commentaire' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: '{ad} ti ha menzionato in un commento' },
+  ru: { takip: '{ad} подписался на тебя', begeni: '{ad} оценил твой комментарий', yanit: '{ad} ответил на твой комментарий', mesaj: '{ad} отправил тебе сообщение', etiket: '{ad} упомянул тебя в комментарии' },
+  ar: { takip: '{ad} بدأ بمتابعتك', begeni: '{ad} أعجب بتعليقك', yanit: '{ad} رد على تعليقك', mesaj: '{ad} أرسل لك رسالة', etiket: '{ad} أشار إليك في تعليق' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie' },
+  pl: { takip: '{ad} zaczął cię obserwować', begeni: '{ad} polubił twój komentarz', yanit: '{ad} odpowiedział na twój komentarz', mesaj: '{ad} wysłał ci wiadomość', etiket: '{ad} wspomniał o tobie w komentarzu' },
+};
+
+// Alıcının cihazlarına anlık push gönderir (fire-and-forget, hata yutulur).
+// ekstra.metin: mesaj bildiriminde gövdede gösterilecek içerik.
+async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
+  if (!fcmHazir || !aliciId || aliciId === aktorId) return;
+  try {
+    const [akt, tok] = await Promise.all([
+      havuz.query('SELECT kullanici_adi, avatar FROM kullanicilar WHERE id=$1', [aktorId]),
+      havuz.query('SELECT token, dil FROM cihaz_tokenlari WHERE kullanici_id=$1', [aliciId]),
+    ]);
+    if (!tok.rows.length) return;
+    const aktorAdi = akt.rows[0]?.kullanici_adi || '';
+    const ad = '@' + aktorAdi;
+    const dil = tok.rows[0].dil || 'tr';
+    const sablon = PUSH_SABLON[dil] || PUSH_SABLON.en;
+    const govde = (sablon[tur] || '').replace('{ad}', ad);
+    if (!govde) return;
+    const tokens = tok.rows.map((r) => r.token);
+    // Derin bağlantı + görsel için ortak veri (FCM data değerleri string olmalı)
+    const veri = {
+      tur: String(tur),
+      ad: aktorAdi,
+      avatar: akt.rows[0]?.avatar || '',
+    };
+    let paket;
+    if (tur === 'mesaj') {
+      // Veri-mesajı: istemci gönderenin avatarıyla, mesaj İÇERİKLİ yerel
+      // bildirim kurar ve dokununca sohbeti açar. notification alanı olsaydı
+      // sistem kendisi basar, avatar/derin bağlantı özelleşemezdi.
+      paket = {
+        tokens,
+        data: {
+          ...veri,
+          baslik: ad,
+          metin: String(ekstra?.metin || govde).slice(0, 500),
+        },
+        android: { priority: 'high' },
+      };
+    } else {
+      paket = {
+        tokens,
+        notification: { title: 'dizi.jpg', body: govde },
+        data: veri,
+        android: { priority: 'high', notification: { channelId: 'dizijpg_bildirim' } },
+      };
+    }
+    const yanit = await admin.messaging().sendEachForMulticast(paket);
+    const gecersiz = [];
+    yanit.responses.forEach((r, i) => {
+      const kod = r.error?.code || '';
+      if (!r.success && /not-registered|invalid-argument|invalid-registration/.test(kod)) {
+        gecersiz.push(tokens[i]);
+      }
+    });
+    if (gecersiz.length) {
+      await havuz.query('DELETE FROM cihaz_tokenlari WHERE token = ANY($1)', [gecersiz]);
+    }
+  } catch (e) {
+    console.error('push:', e.message);
+  }
+}
+
+async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = null) {
   if (!aliciId || aliciId === aktorId) return;
   await havuz.query(
     'INSERT INTO bildirimler (kullanici_id, tur, aktor_id, yorum_id) VALUES ($1,$2,$3,$4)',
     [aliciId, tur, aktorId, yorumId],
   ).catch(() => {});
+  pushBildirim(aliciId, tur, aktorId, pushEkstra); // anlık push (beklemeden)
 }
 
 // Metindeki @kullanici_adi etiketlerini bulup 'etiket' bildirimi gönderir.
@@ -316,6 +474,28 @@ async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null)
 app.get('/saglik', sarici(async (_req, res) => {
   await havuz.query('SELECT 1');
   res.json({ durum: 'ok', servis: 'dizi.jpg API' });
+}));
+
+// İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).
+// Anonim de kabul edilir; varsa kullanıcıyı iliştirir. Alanlar sınırlanır.
+app.post('/hata-bildir', hataLimiti, girisIsteğeBagli, sarici(async (req, res) => {
+  const g = req.body || {};
+  const kirp = (v, n) => (typeof v === 'string' ? v.slice(0, n) : null);
+  const mesaj = kirp(g.mesaj, 2000);
+  if (!mesaj) return res.status(400).json({ hata: 'mesaj gerekli' });
+  await havuz.query(
+    `INSERT INTO hatalar (kullanici_id, mesaj, yigin, platform, surum, yol)
+     VALUES ($1,$2,$3,$4,$5,$6)`,
+    [
+      req.kullanici?.id ?? null,
+      mesaj,
+      kirp(g.yigin, 8000),
+      kirp(g.platform, 40),
+      kirp(g.surum, 40),
+      kirp(g.yol, 200),
+    ],
+  );
+  res.json({ durum: 'alindi' });
 }));
 
 // ---------- auth ----------
@@ -407,6 +587,9 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
       !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
     return res.status(401).json({ hata: 'E-posta/kullanıcı adı veya şifre hatalı' });
   }
+  if (rows[0].yasakli) {
+    return res.status(403).json({ hata: 'Hesabın askıya alındı' });
+  }
   const { id, kullanici_adi, email: eposta, misafir } = rows[0];
   res.json({
     token: jwtUret(rows[0]),
@@ -437,12 +620,27 @@ async function tvdbdenTmdb(tvdbId) {
   return veri?.tv_results?.[0]?.id || null;
 }
 
+// TMDB arama sonuçlarından EN İYİ eşleşme: önce ada birebir (normalize) uyanlar,
+// aralarında en çok oy alan (klasik/yerleşik yapım yeni aynı-adlıya tercih edilir —
+// ör. One Piece animesi, One Piece canlı-aksiyonuna). Yanlış içe aktarımı azaltır.
+function enIyiEslesme(sonuclar, sorgu) {
+  if (!Array.isArray(sonuclar) || !sonuclar.length) return null;
+  const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const hedef = norm(String(sorgu).replace(/\s*\(\d{4}\)\s*$/, ''));
+  const alanlar = (r) => [r.name, r.original_name, r.title, r.original_title];
+  const tam = sonuclar.filter((r) => alanlar(r).some((a) => norm(a) === hedef));
+  const havuz = tam.length ? tam : sonuclar;
+  return havuz
+    .slice()
+    .sort((a, b) => (b.vote_count || 0) - (a.vote_count || 0))[0];
+}
+
 // Dizi adından TMDB tv id'si (isimle arama; içe aktarım yedeği, önbellekli).
 async function isimdenTmdbTv(isim) {
   const q = encodeURIComponent(String(isim).slice(0, 100));
   const veri = await tmdbGetir(
     `/search/tv?query=${q}&language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-  return veri?.results?.[0]?.id || null;
+  return enIyiEslesme(veri?.results, isim)?.id || null;
 }
 
 // TMDB dizi toplam bölüm sayısı (bitirme tespiti için, önbellekli).
@@ -456,7 +654,7 @@ async function isimdenTmdbFilm(isim) {
   const q = encodeURIComponent(String(isim).slice(0, 100));
   const veri = await tmdbGetir(
     `/search/movie?query=${q}&language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-  return veri?.results?.[0]?.id || null;
+  return enIyiEslesme(veri?.results, isim)?.id || null;
 }
 
 app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
@@ -468,7 +666,7 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   if (!parametreler.has('language')) parametreler.set('language', 'tr-TR');
   // Detay sayfalarına ek verileri tek istekte iliştir.
   if (/^\/(tv|movie)\/\d+$/.test(yol) && !parametreler.has('append_to_response')) {
-    parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids');
+    parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids,watch/providers');
   }
   const tam = `${yol}?${parametreler.toString()}`;
   const uzunTtl = /^\/(tv|movie|person)\//.test(yol);
@@ -495,23 +693,41 @@ async function yayinlanmisBolumler(tmdbId) {
   return ciftler;
 }
 
-// Yayınlanmış tüm bölümler izlendiyse dizi otomatik "bitirdim" olur
-// (yeni bölüm gelene kadar); bölüm geri alınıp eksik kalırsa "izliyorum"a düşer.
+// Dizi durumu otomatiği:
+// - En az bir bölüm izlendiyse durumu olmayan / "izleyeceğim" dizi "izliyorum" olur.
+// - "bitirdim" YALNIZ dizi gerçekten bittiyse (TMDB status Ended/Canceled) VE
+//   tüm bölümler izlendiyse verilir. Devam eden dizide yetişmiş kullanıcı
+//   "izliyorum"da kalır; yeni sezon gelen "bitirdim" de "izliyorum"a döner
+//   (ör. Silo: bitirilmişti, 3. sezon başladı → tekrar izliyorum).
+// - "bıraktım" bilinçli bir seçim: bölüm işaretlemek onu bozmaz.
 async function diziDurumunuGuncelle(kullaniciId, tmdbId) {
   try {
-    const toplam = (await yayinlanmisBolumler(tmdbId)).length;
-    if (!toplam) return;
     const { rows } = await havuz.query(
       `SELECT count(*)::int AS n FROM izlemeler
        WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND sezon >= 1`,
       [kullaniciId, tmdbId],
     );
-    if (rows[0].n >= toplam) {
+    if (rows[0].n > 0) {
+      await havuz.query(
+        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
+         VALUES ($1,'tv',$2,'izliyorum',now())
+         ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE
+         SET durum='izliyorum', guncelleme=now()
+         WHERE durumlar.durum = 'izleyecegim'`,
+        [kullaniciId, tmdbId],
+      );
+    }
+    const dizi = await tmdbGetir(`/tv/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+    const bitti = ['Ended', 'Canceled'].includes(dizi.status);
+    const toplam = (await yayinlanmisBolumler(tmdbId)).length;
+    if (!toplam) return;
+    if (rows[0].n >= toplam && bitti) {
       await havuz.query(
         `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
          VALUES ($1,'tv',$2,'bitirdim',now())
          ON CONFLICT (kullanici_id, tur, tmdb_id)
-         DO UPDATE SET durum='bitirdim', guncelleme=now()`,
+         DO UPDATE SET durum='bitirdim', guncelleme=now()
+         WHERE durumlar.durum <> 'bitirdim'`,
         [kullaniciId, tmdbId],
       );
     } else {
@@ -525,6 +741,30 @@ async function diziDurumunuGuncelle(kullaniciId, tmdbId) {
     // TMDB'ye ulaşılamazsa durum kendiliğinden değişmez — sorun değil
   }
 }
+
+// "Bitirdim" dizilere yeni bölüm geldiyse durumu "izliyorum"a düşür.
+// (Ör. Silo: bitirilmişti, yeni sezon başladı → tekrar izliyorum'a döner.)
+// 12 saatte bir tarama; TMDB önbelleği sayesinde ucuz, 8'li öbekle.
+async function bitenleriTara() {
+  try {
+    // Yalnız bölüm takibi YAPILAN diziler: hiç bölüm işaretlemeden elle
+    // "bitirdim" diyen kullanıcının seçimi taramayla bozulmaz.
+    const { rows } = await havuz.query(
+      `SELECT d.kullanici_id, d.tmdb_id FROM durumlar d
+       WHERE d.tur='tv' AND d.durum='bitirdim'
+         AND EXISTS (SELECT 1 FROM izlemeler i
+                     WHERE i.kullanici_id=d.kullanici_id AND i.tur='tv'
+                       AND i.tmdb_id=d.tmdb_id AND i.sezon>=1)`);
+    for (let i = 0; i < rows.length; i += 8) {
+      await Promise.all(rows.slice(i, i + 8).map((r) =>
+        diziDurumunuGuncelle(r.kullanici_id, r.tmdb_id)));
+    }
+  } catch {
+    // tarama başarısızsa bir sonraki turda tekrar denenir
+  }
+}
+setInterval(bitenleriTara, 12 * 60 * 60 * 1000);
+setTimeout(bitenleriTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
 
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
@@ -1097,9 +1337,32 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
 }));
 
 // ---------- profilim ----------
+// Sosyal bağlantı platform beyaz listesi (app'teki listeyle aynı olmalı)
+const SOSYAL_PLATFORMLAR = new Set([
+  'instagram', 'facebook', 'x', 'tiktok', 'discord', 'steam', 'xbox',
+  'epicgames', 'imdb', 'vk', 'youtube', 'twitch', 'spotify', 'github',
+  'reddit', 'telegram', 'snapchat', 'pinterest', 'letterboxd',
+]);
+// [{platform, deger}] × ≤3 doğrular; bozuksa null döner.
+function sosyalDogrula(sosyal) {
+  if (!Array.isArray(sosyal) || sosyal.length > 3) return null;
+  const temiz = [];
+  const gorulen = new Set();
+  for (const s of sosyal) {
+    const platform = String(s?.platform || '');
+    const deger = String(s?.deger || '').trim();
+    if (!SOSYAL_PLATFORMLAR.has(platform) || gorulen.has(platform)) return null;
+    // Kullanıcı adı/handle: url enjeksiyonunu engelle (boşluk, <>, tırnak yok)
+    if (!/^[A-Za-z0-9._@/-]{1,100}$/.test(deger)) return null;
+    gorulen.add(platform);
+    temiz.push({ platform, deger });
+  }
+  return temiz;
+}
+
 app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke
+    `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal
      FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
@@ -1108,21 +1371,30 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
 }));
 
 app.post('/profilim', girisZorunlu, sarici(async (req, res) => {
-  const { bio, ulke } = req.body || {};
+  const { bio, ulke, sosyal } = req.body || {};
   if (bio != null && (typeof bio !== 'string' || bio.length > 300)) {
     return res.status(400).json({ hata: 'Bio en fazla 300 karakter olabilir' });
   }
   if (ulke != null && (typeof ulke !== 'string' || ulke.length > 60)) {
     return res.status(400).json({ hata: 'Geçersiz ülke' });
   }
+  let sosyalTemiz = null;
+  if (sosyal !== undefined) {
+    sosyalTemiz = sosyalDogrula(sosyal);
+    if (sosyalTemiz === null) {
+      return res.status(400).json({ hata: 'Geçersiz sosyal bağlantı' });
+    }
+  }
   // Boş string alanı temizler; gönderilmeyen alan olduğu gibi kalır.
   const { rows } = await havuz.query(
     `UPDATE kullanicilar
      SET bio  = CASE WHEN $1 THEN NULLIF($2, '') ELSE bio  END,
-         ulke = CASE WHEN $3 THEN NULLIF($4, '') ELSE ulke END
-     WHERE id=$5
-     RETURNING id, kullanici_adi, email, misafir, avatar, bio, ulke`,
-    [bio !== undefined, bio ?? '', ulke !== undefined, ulke ?? '', req.kullanici.id],
+         ulke = CASE WHEN $3 THEN NULLIF($4, '') ELSE ulke END,
+         sosyal = CASE WHEN $5 THEN $6::jsonb ELSE sosyal END
+     WHERE id=$7
+     RETURNING id, kullanici_adi, email, misafir, avatar, bio, ulke, sosyal`,
+    [bio !== undefined, bio ?? '', ulke !== undefined, ulke ?? '',
+     sosyal !== undefined, JSON.stringify(sosyalTemiz ?? []), req.kullanici.id],
   );
   res.json(rows[0]);
 }));
@@ -1182,25 +1454,45 @@ const VIDEO_TURLERI = [
     kontrol: (b) => b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3,
   },
 ];
+// Sesli mesaj: OggS (opus) net ayırt edilir; m4a yalnız 'M4A' markasıyla (mp4
+// video ile karışmasın). VIDEO'dan ÖNCE denenir.
+const SES_TURLERI = [
+  { uzanti: 'ogg', kontrol: (b) => b.slice(0, 4).toString('ascii') === 'OggS' },
+  {
+    uzanti: 'm4a',
+    kontrol: (b) => b.slice(4, 8).toString('ascii') === 'ftyp'
+      && b.slice(8, 11).toString('ascii') === 'M4A',
+  },
+  {
+    uzanti: 'mp3',
+    kontrol: (b) => (b[0] === 0x49 && b[1] === 0x44 && b[2] === 0x33)
+      || (b[0] === 0xff && (b[1] & 0xe0) === 0xe0),
+  },
+  { uzanti: 'aac', kontrol: (b) => b[0] === 0xff && (b[1] & 0xf6) === 0xf0 },
+];
 
 // Yorum eki yükleme: ham gövde, fotoğraf veya video. Dönen yol yorumda kullanılır.
 app.post('/medya',
   girisZorunlu,
   yuklemeLimiti,
-  express.raw({ type: ['image/*', 'video/*', 'application/octet-stream'], limit: '30mb' }),
+  express.raw({ type: ['image/*', 'video/*', 'audio/*', 'application/octet-stream'], limit: '30mb' }),
   sarici(async (req, res) => {
     const veri = req.body;
     if (!Buffer.isBuffer(veri) || veri.length < 12) {
       return res.status(400).json({ hata: 'Dosya verisi gerekli' });
     }
-    const tur = [...RESIM_TURLERI, ...VIDEO_TURLERI].find((t) => t.kontrol(veri));
+    const tur = [...RESIM_TURLERI, ...SES_TURLERI, ...VIDEO_TURLERI].find((t) => t.kontrol(veri));
     if (!tur) {
-      return res.status(400).json({ hata: 'Desteklenen türler: GIF, PNG, JPEG, WebP, MP4, WebM' });
+      return res.status(400).json({ hata: 'Desteklenen türler: GIF, PNG, JPEG, WebP, MP4, WebM, ses' });
     }
     // Dosya adı yükleyenin kimliğini taşır; yorum eklerken sahiplik bununla doğrulanır.
     const dosya = `m${req.kullanici.id}-${crypto.randomBytes(8).toString('hex')}.${tur.uzanti}`;
     fs.writeFileSync(path.join(MEDYA_DIZIN, dosya), veri);
-    res.json({ yol: `/medya/${dosya}`, video: VIDEO_TURLERI.includes(tur) });
+    res.json({
+      yol: `/medya/${dosya}`,
+      video: VIDEO_TURLERI.includes(tur),
+      ses: SES_TURLERI.includes(tur),
+    });
   }));
 
 // ---------- yorumlar ----------
@@ -1267,6 +1559,10 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim
      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
      WHERE y.kullanici_id <> $1
+       AND NOT k.yasakli
+       AND y.kullanici_id NOT IN (
+         SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$1
+         UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$1)
        AND y.ust_id IS NULL
        AND ($2::int IS NULL OR y.id < $2)
        AND (
@@ -1332,7 +1628,7 @@ app.post('/bildirimler/okundu', girisZorunlu, sarici(async (req, res) => {
 app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT DISTINCT ON (LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id))
-            m.id, m.metin, m.tarih, m.gonderen_id,
+            m.id, m.metin, m.medya, m.icerik_tur, m.tarih, m.gonderen_id,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
             (SELECT count(*)::int FROM mesajlar o
              WHERE o.alici_id=$1 AND o.gonderen_id=k.id AND NOT o.okundu) AS okunmamis
@@ -1379,7 +1675,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const once = parseInt(req.query.once, 10) || null;
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const { rows } = await havuz.query(
-    `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.icerik_tur, m.icerik_id,
+    `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
             m.okundu, m.duzenlendi, m.yanit_id, m.tarih,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
@@ -1407,6 +1703,12 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   havuz.query(
     'UPDATE mesajlar SET okundu=true WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu',
     [req.kullanici.id, partnerId]).catch(() => {});
+  // Sohbeti okumak zildeki 'mesaj' bildirimini de düşürür; yoksa
+  // kullanıcı DM'i okuduğu halde rozette 1 görmeye devam ediyordu.
+  havuz.query(
+    `UPDATE bildirimler SET okundu=true
+     WHERE kullanici_id=$1 AND aktor_id=$2 AND tur='mesaj' AND NOT okundu`,
+    [req.kullanici.id, partnerId]).catch(() => {});
   res.json({
     mesajlar: rows.reverse(),
     partner: k.rows[0],
@@ -1419,8 +1721,8 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   const {
-    kullanici_adi, metin, medya = null, icerik_tur = null, icerik_id = null,
-    yanit_id = null,
+    kullanici_adi, metin, medya = null, ses_dalga = null,
+    icerik_tur = null, icerik_id = null, yanit_id = null,
   } = req.body || {};
   const temiz = String(metin || '').trim();
   if (temiz.length > 2000) {
@@ -1432,9 +1734,16 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   // Medya: yalnızca bu kullanıcının yüklediği, bizim ürettiğimiz adlar
   if (medya != null &&
       (typeof medya !== 'string' ||
-       !new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm)$`).test(medya) ||
+       !new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm|ogg|m4a|mp3|aac)$`).test(medya) ||
        !fs.existsSync(path.join(MEDYA_DIZIN, path.basename(medya))))) {
     return res.status(400).json({ hata: 'Geçersiz medya' });
+  }
+  // Ses dalgası: yalnız ses medyasında, "<saniye>:<en çok 64 örnek>" biçiminde
+  const sesMi = medya != null && /\.(ogg|m4a|mp3|aac)$/.test(medya);
+  if (ses_dalga != null &&
+      (typeof ses_dalga !== 'string' || !sesMi ||
+       !/^\d{1,3}:[0-9a-v]{1,64}$/.test(ses_dalga))) {
+    return res.status(400).json({ hata: 'Geçersiz ses dalgası' });
   }
   // İçerik paylaşımı: dizi/film kartı
   const icerikVar = icerik_tur != null || icerik_id != null;
@@ -1452,6 +1761,16 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   if (aliciId === req.kullanici.id) {
     return res.status(400).json({ hata: 'Kendine mesaj gönderemezsin' });
   }
+  // Engelleme: taraflardan biri diğerini engellediyse mesaj gitmez.
+  const engel = await havuz.query(
+    `SELECT 1 FROM engellemeler
+     WHERE (engelleyen_id=$1 AND engellenen_id=$2)
+        OR (engelleyen_id=$2 AND engellenen_id=$1) LIMIT 1`,
+    [req.kullanici.id, aliciId],
+  );
+  if (engel.rows.length) {
+    return res.status(403).json({ hata: 'Bu kullanıcıyla mesajlaşamazsın' });
+  }
   // Alıntılanan mesaj bu iki kişiye ait olmalı (başka sohbetten alıntı olmaz)
   let gecerliYanit = null;
   if (yanit_id != null) {
@@ -1463,12 +1782,15 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     if (y.rows.length) gecerliYanit = yanit_id;
   }
   const { rows } = await havuz.query(
-    `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, icerik_tur, icerik_id, yanit_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id, tarih`,
-    [req.kullanici.id, aliciId, temiz || null, medya,
+    `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, ses_dalga,
+                           icerik_tur, icerik_id, yanit_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, tarih`,
+    [req.kullanici.id, aliciId, temiz || null, medya, sesMi ? ses_dalga : null,
      icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit],
   );
-  bildirimEkle(aliciId, 'mesaj', req.kullanici.id);
+  // Push gövdesinde mesajın kendisi görünsün (boşsa şablona düşer)
+  bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
+    temiz ? { metin: temiz } : null);
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));
 
@@ -1641,7 +1963,8 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
 
 // ---------- rozetler ----------
 // Eşiklerden hesaplanır, tablo yok. kod → (eşik, mevcut değer).
-app.get('/rozetler', girisZorunlu, sarici(async (req, res) => {
+// Hem /rozetler (kendi, tümü) hem /profil (açık profil, kazanılanlar) kullanır.
+async function rozetleriHesapla(kullaniciId) {
   const { rows } = await havuz.query(
     `SELECT
        (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
@@ -1652,7 +1975,7 @@ app.get('/rozetler', girisZorunlu, sarici(async (req, res) => {
        (SELECT count(*)::int FROM durumlar WHERE kullanici_id=$1 AND durum='bitirdim') AS bitirilen,
        (SELECT count(*)::int FROM yorum_begeniler b
         JOIN yorumlar y ON y.id=b.yorum_id WHERE y.kullanici_id=$1) AS begeni_alinan`,
-    [req.kullanici.id]);
+    [kullaniciId]);
   const s = rows[0];
   const tanimlar = [
     ['ilk_bolum', s.bolum, 1], ['bolum_100', s.bolum, 100],
@@ -1668,11 +1991,13 @@ app.get('/rozetler', girisZorunlu, sarici(async (req, res) => {
     ['bitiren_50', s.bitirilen, 50],
     ['begeni_10', s.begeni_alinan, 10], ['begeni_100', s.begeni_alinan, 100],
   ];
-  res.json({
-    rozetler: tanimlar.map(([kod, deger, esik]) => ({
-      kod, esik, deger, kazanildi: deger >= esik,
-    })),
-  });
+  return tanimlar.map(([kod, deger, esik]) => ({
+    kod, esik, deger, kazanildi: deger >= esik,
+  }));
+}
+
+app.get('/rozetler', girisZorunlu, sarici(async (req, res) => {
+  res.json({ rozetler: await rozetleriHesapla(req.kullanici.id) });
 }));
 
 // Yorum beğen / beğeniyi geri al
@@ -1743,7 +2068,7 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   for (const m of medya) {
     // Yalnızca bu kullanıcının yüklediği, bizim ürettiğimiz adlar kabul edilir.
     if (typeof m !== 'string' ||
-        !new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm)$`).test(m) ||
+        !new RegExp(`^/medya/m${req.kullanici.id}-[0-9a-f]{16}\\.(gif|png|jpg|webp|mp4|webm|ogg|m4a|mp3|aac)$`).test(m) ||
         !fs.existsSync(path.join(MEDYA_DIZIN, path.basename(m)))) {
       return res.status(400).json({ hata: 'Geçersiz medya' });
     }
@@ -1889,13 +2214,13 @@ app.post('/veri/ice-aktar',
 // ---------- herkese açık profil ----------
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
-    'SELECT id, kullanici_adi, avatar, kapak, bio, ulke, olusturma FROM kullanicilar WHERE kullanici_adi=$1',
+    'SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma FROM kullanicilar WHERE kullanici_adi=$1',
     [req.params.kullaniciAdi],
   );
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const id = k.rows[0].id;
   const benId = req.kullanici?.id || 0;
-  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler] = await Promise.all([
+  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetler] = await Promise.all([
     havuz.query(
       `SELECT
          (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
@@ -1923,7 +2248,8 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
        FROM yorumlar y WHERE y.kullanici_id=$1 ORDER BY y.tarih DESC LIMIT 20`,
       [id]),
     havuz.query(
-      'SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var',
+      `SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var,
+              EXISTS(SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2) AS engel`,
       [benId, id]),
     // Tür başına ayrı limit: yoksa son izlenen filmler dizileri listeden atıyor
     havuz.query(
@@ -1936,6 +2262,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
         GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
        ORDER BY son DESC, tmdb_id DESC`,
       [id]),
+    rozetleriHesapla(id),
   ]);
   // Yorum kartları için içerik adı + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(yorumlar.rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
@@ -1956,13 +2283,265 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     ...k.rows[0],
     ben_mi: benId === id,
     takip_ediyorum: takip.rows[0].var,
-    istatistik: istatistik.rows[0],
+    engelledim: takip.rows[0].engel,
+    istatistik: {
+      ...istatistik.rows[0],
+      // Yaklaşık ekran süresi (bölüm ~42 dk, film ~110 dk) — açık profilde de görünür
+      tahmini_dakika:
+        istatistik.rows[0].bolum * 42 + istatistik.rows[0].film * 110,
+    },
+    // Açık profilde yalnız kazanılan rozetler gösterilir
+    rozetler: rozetler.filter((r) => r.kazanildi),
     listeler: listeler.rows,
     incelemeler: sonIncelemeler.rows,
     yorumlar: yorumlar.rows,
     icerikler,
     izlenenler: izlenenler.rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
   });
+}));
+
+// ---------- hesap silme (Play Store gereksinimi) ----------
+// Girişli kullanıcı kendi hesabını + tüm verisini siler (FK CASCADE).
+app.delete('/hesabim', girisZorunlu, sarici(async (req, res) => {
+  const { sifre } = req.body || {};
+  const { rows } = await havuz.query(
+    'SELECT sifre_hash FROM kullanicilar WHERE id=$1', [req.kullanici.id],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
+  // Şifreli hesaplarda silmeden önce şifre doğrula (kaza/kötüye kullanım koruması).
+  if (rows[0].sifre_hash && !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
+    return res.status(401).json({ hata: 'Şifre hatalı' });
+  }
+  await havuz.query('DELETE FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+  sifreSurumOnbellekSil(req.kullanici.id);
+  res.json({ durum: 'silindi' });
+}));
+
+// ---------- şikayet + engelleme (Play Store UGC gereksinimi) ----------
+const sikayetLimiti = hizLimiti(20, (req) => `sk:${req.kullanici.id}`);
+const SIKAYET_TUR = ['yorum', 'mesaj', 'kullanici', 'liste'];
+
+app.post('/sikayet', girisZorunlu, sikayetLimiti, sarici(async (req, res) => {
+  const { tur, hedef_id, sebep } = req.body || {};
+  if (!SIKAYET_TUR.includes(tur) || !gecerliTmdb(hedef_id)) {
+    return res.status(400).json({ hata: 'Geçersiz şikayet' });
+  }
+  const metin = String(sebep || '').slice(0, 500).trim();
+  if (!metin) return res.status(400).json({ hata: 'Sebep gerekli' });
+  await havuz.query(
+    'INSERT INTO sikayetler (sikayet_eden_id, tur, hedef_id, sebep) VALUES ($1,$2,$3,$4)',
+    [req.kullanici.id, tur, hedef_id, metin],
+  );
+  res.json({ durum: 'alindi' });
+}));
+
+// Kullanıcıyı engelle/engeli kaldır (toggle).
+app.post('/engelle/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
+  const hedef = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi],
+  );
+  if (!hedef.rows.length) return res.status(404).json({ hata: 'Kullanıcı yok' });
+  const hedefId = hedef.rows[0].id;
+  if (hedefId === req.kullanici.id) {
+    return res.status(400).json({ hata: 'Kendini engelleyemezsin' });
+  }
+  const mevcut = await havuz.query(
+    'SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2',
+    [req.kullanici.id, hedefId],
+  );
+  if (mevcut.rows.length) {
+    await havuz.query(
+      'DELETE FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2',
+      [req.kullanici.id, hedefId],
+    );
+    return res.json({ engellendi: false });
+  }
+  await havuz.query(
+    'INSERT INTO engellemeler (engelleyen_id, engellenen_id) VALUES ($1,$2)',
+    [req.kullanici.id, hedefId],
+  );
+  // Engellenince karşılıklı takip de kalksın.
+  await havuz.query(
+    `DELETE FROM takipler WHERE (takip_eden_id=$1 AND takip_edilen_id=$2)
+       OR (takip_eden_id=$2 AND takip_edilen_id=$1)`,
+    [req.kullanici.id, hedefId],
+  );
+  res.json({ engellendi: true });
+}));
+
+// ---------- FCM cihaz token kaydı ----------
+app.post('/cihaz-token', girisZorunlu, sarici(async (req, res) => {
+  const { token, platform, dil } = req.body || {};
+  if (typeof token !== 'string' || token.length < 20 || token.length > 4096) {
+    return res.status(400).json({ hata: 'Geçersiz token' });
+  }
+  await havuz.query(
+    `INSERT INTO cihaz_tokenlari (token, kullanici_id, platform, dil, guncelleme)
+     VALUES ($1,$2,$3,$4,now())
+     ON CONFLICT (token) DO UPDATE
+       SET kullanici_id=$2, platform=$3, dil=$4, guncelleme=now()`,
+    [token, req.kullanici.id, String(platform || '').slice(0, 20),
+     String(dil || 'tr').slice(0, 10)],
+  );
+  res.json({ durum: 'kayitli' });
+}));
+
+app.delete('/cihaz-token', girisZorunlu, sarici(async (req, res) => {
+  const { token } = req.body || {};
+  if (token) {
+    await havuz.query(
+      'DELETE FROM cihaz_tokenlari WHERE token=$1 AND kullanici_id=$2',
+      [token, req.kullanici.id]);
+  }
+  res.json({ durum: 'silindi' });
+}));
+
+// Engellediğim kullanıcılar.
+app.get('/engellenenler', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT k.id, k.kullanici_adi, k.avatar FROM engellemeler e
+       JOIN kullanicilar k ON k.id = e.engellenen_id
+     WHERE e.engelleyen_id=$1 ORDER BY e.tarih DESC`,
+    [req.kullanici.id],
+  );
+  res.json({ kullanicilar: rows });
+}));
+
+// ---------- admin panel (IP kısıtlı) ----------
+// Erişim: gerçek IP ADMIN_IPLER listesinde VEYA ADMIN_TOKEN eşleşiyorsa.
+function adminKisit(req, res, next) {
+  const ip = gercekIp(req);
+  const izinli = ADMIN_IPLER.split(',').map((s) => s.trim()).filter(Boolean);
+  const tokenGecerli = ADMIN_TOKEN &&
+    (req.headers['x-admin-token'] === ADMIN_TOKEN || req.query.token === ADMIN_TOKEN);
+  if (izinli.includes(ip) || tokenGecerli) return next();
+  return res.status(403).json({ hata: 'Erişim reddedildi' });
+}
+
+const ADMIN_HTML = fs.existsSync('./admin.html')
+  ? fs.readFileSync('./admin.html', 'utf8')
+  : '<h1>admin.html bulunamadı</h1>';
+app.get('/admin', adminKisit, (_req, res) => res.type('html').send(ADMIN_HTML));
+
+// Genel özet: kullanıcı/hata/şikayet sayıları + sistem + istek/dk + ülkeler.
+app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
+  const [ku, h24, hT, sy, sT] = await Promise.all([
+    havuz.query('SELECT count(*)::int n, count(*) FILTER (WHERE misafir)::int misafir FROM kullanicilar'),
+    havuz.query("SELECT count(*)::int n FROM hatalar WHERE tarih > now() - interval '24 hours'"),
+    havuz.query('SELECT count(*)::int n FROM hatalar'),
+    havuz.query("SELECT count(*)::int n FROM sikayetler WHERE durum='yeni'"),
+    havuz.query('SELECT count(*)::int n FROM sikayetler'),
+  ]);
+  const simdiDk = Math.floor(Date.now() / 60000);
+  const seri = [];
+  for (let i = 59; i >= 0; i--) seri.push(ISTEK.dakika.get(simdiDk - i) || 0);
+  const ulkeler = [...ISTEK.ulke.entries()]
+    .map(([ulke, sayi]) => ({ ulke, sayi }))
+    .sort((a, b) => b.sayi - a.sayi)
+    .slice(0, 40);
+  let disk = null;
+  try {
+    const s = fs.statfsSync('/');
+    disk = { toplam: s.blocks * s.bsize, bos: s.bfree * s.bsize };
+  } catch { /* statfs yoksa atla */ }
+  res.json({
+    kullanici: ku.rows[0].n,
+    misafir: ku.rows[0].misafir,
+    hata24: h24.rows[0].n,
+    hataToplam: hT.rows[0].n,
+    sikayetYeni: sy.rows[0].n,
+    sikayetToplam: sT.rows[0].n,
+    istekToplam: ISTEK.toplam,
+    istekSeri: seri,
+    ulkeler,
+    sistem: {
+      yuk: os.loadavg(),
+      cpu: os.cpus().length,
+      bellekToplam: os.totalmem(),
+      bellekBos: os.freemem(),
+      uptime: os.uptime(),
+      apiUptime: process.uptime(),
+      disk,
+    },
+  });
+}));
+
+// Son istekler (3D globe + canlı akış için).
+app.get('/admin/istekler', adminKisit, (_req, res) => {
+  res.json({ istekler: ISTEK.son.slice(0, 250) });
+});
+
+// Hata günlüğü.
+app.get('/admin/hatalar', adminKisit, sarici(async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit, 10) || 100, 500);
+  const { rows } = await havuz.query(
+    `SELECT h.id, h.mesaj, h.yigin, h.platform, h.surum, h.yol, h.tarih,
+            k.kullanici_adi
+       FROM hatalar h LEFT JOIN kullanicilar k ON k.id = h.kullanici_id
+     ORDER BY h.id DESC LIMIT $1`, [limit],
+  );
+  res.json({ hatalar: rows });
+}));
+
+// Şikayetler (hedef özetiyle zenginleştirilmiş).
+app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
+  const durum = req.query.durum;
+  const filtre = ['yeni', 'incelendi', 'kapatildi'].includes(durum);
+  const { rows } = await havuz.query(
+    `SELECT s.*, k.kullanici_adi AS eden FROM sikayetler s
+       LEFT JOIN kullanicilar k ON k.id = s.sikayet_eden_id
+     ${filtre ? 'WHERE s.durum=$1' : ''} ORDER BY s.id DESC LIMIT 300`,
+    filtre ? [durum] : [],
+  );
+  // Hedefleri toplu çöz: yorum metni + kullanıcı adı.
+  const yorumIds = rows.filter((r) => r.tur === 'yorum').map((r) => r.hedef_id);
+  const kulIds = rows.filter((r) => r.tur === 'kullanici').map((r) => r.hedef_id);
+  const yorumlar = yorumIds.length
+    ? (await havuz.query('SELECT id, metin, kullanici_id FROM yorumlar WHERE id = ANY($1)', [yorumIds])).rows
+    : [];
+  const kullar = kulIds.length
+    ? (await havuz.query('SELECT id, kullanici_adi, yasakli FROM kullanicilar WHERE id = ANY($1)', [kulIds])).rows
+    : [];
+  const yMap = new Map(yorumlar.map((y) => [y.id, y]));
+  const kMap = new Map(kullar.map((k) => [k.id, k]));
+  for (const r of rows) {
+    if (r.tur === 'yorum') {
+      const y = yMap.get(r.hedef_id);
+      r.hedef_ozet = y ? y.metin.slice(0, 200) : '(silinmiş yorum)';
+      r.hedef_kullanici_id = y?.kullanici_id ?? null;
+    } else if (r.tur === 'kullanici') {
+      const k = kMap.get(r.hedef_id);
+      r.hedef_ozet = k ? '@' + k.kullanici_adi : '(silinmiş kullanıcı)';
+      r.hedef_yasakli = k?.yasakli ?? null;
+    }
+  }
+  res.json({ sikayetler: rows });
+}));
+
+// Moderasyon aksiyonları.
+app.post('/admin/sikayet-durum', adminKisit, sarici(async (req, res) => {
+  const { id, durum } = req.body || {};
+  if (!['yeni', 'incelendi', 'kapatildi'].includes(durum)) {
+    return res.status(400).json({ hata: 'Geçersiz durum' });
+  }
+  await havuz.query('UPDATE sikayetler SET durum=$1 WHERE id=$2', [durum, id]);
+  res.json({ durum: 'ok' });
+}));
+app.post('/admin/yorum-sil', adminKisit, sarici(async (req, res) => {
+  await havuz.query('DELETE FROM yorumlar WHERE id=$1', [req.body?.id]);
+  res.json({ durum: 'ok' });
+}));
+app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
+  const { id, yasakli } = req.body || {};
+  if (yasakli) {
+    await havuz.query(
+      'UPDATE kullanicilar SET yasakli=true, sifre_surumu=sifre_surumu+1 WHERE id=$1', [id],
+    );
+  } else {
+    await havuz.query('UPDATE kullanicilar SET yasakli=false WHERE id=$1', [id]);
+  }
+  sifreSurumOnbellekSil(id);
+  res.json({ durum: 'ok' });
 }));
 
 // Son durak hata yakalayıcı: varsayılan Express işleyicisi yığın izi

@@ -340,4 +340,18 @@ const Map<String, String> cevirilerId = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Jika kebijakan ini berubah, versi baru akan dipublikasikan di halaman ini dan tanggalnya diperbarui.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Dengan mendaftar, kamu menerima {}.',
+  'Kullanıcılar': 'Pengguna',
+  'Fotoğrafı değiştir': 'Ganti foto',
+  'Yeniden konumlandır': 'Atur ulang posisi',
+  'Bir şeyler ters gitti': 'Ada yang salah',
+  'Sosyal Bağlantılar': 'Tautan Sosial',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Maksimal 3 tautan tampil di profilmu.',
+  'Platform seç': 'Pilih platform',
+  'Kullanıcı adın': 'Nama penggunamu',
+  'Ekle': 'Tambah',
+  'Kaldır': 'Hapus',
+  'Kopyalandı: {}': 'Disalin: {}',
+  'Geçersiz kullanıcı adı': 'Nama pengguna tidak valid',
+  'Bağlantı ekle': 'Tambah tautan',
 };

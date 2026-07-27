@@ -342,4 +342,18 @@ const Map<String, String> cevirilerRu = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Если политика изменится, новая версия будет опубликована на этой странице, а дата обновления — изменена.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Регистрируясь, ты принимаешь {}.',
+  'Kullanıcılar': 'Пользователи',
+  'Fotoğrafı değiştir': 'Сменить фото',
+  'Yeniden konumlandır': 'Перекадрировать',
+  'Bir şeyler ters gitti': 'Что-то пошло не так',
+  'Sosyal Bağlantılar': 'Соцсети',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'В профиле показывается до 3 ссылок.',
+  'Platform seç': 'Выбери платформу',
+  'Kullanıcı adın': 'Твоё имя пользователя',
+  'Ekle': 'Добавить',
+  'Kaldır': 'Убрать',
+  'Kopyalandı: {}': 'Скопировано: {}',
+  'Geçersiz kullanıcı adı': 'Недопустимое имя пользователя',
+  'Bağlantı ekle': 'Добавить ссылку',
 };

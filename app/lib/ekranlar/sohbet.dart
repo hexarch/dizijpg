@@ -1168,10 +1168,13 @@ class _MesajBaloncugu extends StatelessWidget {
                       ),
                       if (benim) ...[
                         const SizedBox(width: 3),
+                        // Okundu → WhatsApp geleneği: MAVİ çift tik.
                         Icon(
                           m['okundu'] == true ? Icons.done_all : Icons.done,
                           size: 13,
-                          color: yaziRengi.withValues(alpha: 0.55),
+                          color: m['okundu'] == true
+                              ? const Color(0xFF1976D2)
+                              : yaziRengi.withValues(alpha: 0.55),
                         ),
                       ],
                     ],

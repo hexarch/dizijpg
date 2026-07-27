@@ -4,8 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
-import 'package:go_router/go_router.dart';
-
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
@@ -471,7 +469,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                 const SizedBox(width: 8),
                 InkWell(
                   onTap: () =>
-                      context.push('/kullanici/${yorum['kullanici_adi']}'),
+                      kullaniciyaGit(context, yorum['kullanici_adi'] as String),
                   child: Text(
                     '@${yorum['kullanici_adi']}',
                     style: const TextStyle(
@@ -828,7 +826,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               ),
               const SizedBox(width: 6),
               InkWell(
-                onTap: () => context.push('/kullanici/${y['kullanici_adi']}'),
+                onTap: () =>
+                    kullaniciyaGit(context, y['kullanici_adi'] as String),
                 child: Text(
                   '@${y['kullanici_adi']}',
                   style: const TextStyle(

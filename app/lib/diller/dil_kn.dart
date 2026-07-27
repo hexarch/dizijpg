@@ -343,4 +343,18 @@ const Map<String, String> cevirilerKn = {
       'ಈ ನೀತಿ ಬದಲಾದರೆ ಹೊಸ ಆವೃತ್ತಿ ಇದೇ ಪುಟದಲ್ಲಿ ಪ್ರಕಟವಾಗಿ ದಿನಾಂಕ ಅಪ್‌ಡೇಟ್ ಆಗುತ್ತದೆ.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'ನೋಂದಣಿ ಮಾಡುವ ಮೂಲಕ ನೀನು {} ಒಪ್ಪಿಕೊಳ್ಳುತ್ತೀಯ.',
+  'Kullanıcılar': 'ಬಳಕೆದಾರರು',
+  'Fotoğrafı değiştir': 'ಫೋಟೋ ಬದಲಿಸು',
+  'Yeniden konumlandır': 'ಮತ್ತೆ ಹೊಂದಿಸು',
+  'Bir şeyler ters gitti': 'ಏನೋ ತಪ್ಪಾಗಿದೆ',
+  'Sosyal Bağlantılar': 'ಸೋಶಿಯಲ್ ಲಿಂಕ್‌ಗಳು',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'ನಿನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಗರಿಷ್ಠ 3 ಲಿಂಕ್‌ಗಳು ಕಾಣಿಸುತ್ತವೆ.',
+  'Platform seç': 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆರಿಸು',
+  'Kullanıcı adın': 'ನಿನ್ನ ಬಳಕೆದಾರ ಹೆಸರು',
+  'Ekle': 'ಸೇರಿಸು',
+  'Kaldır': 'ತೆಗೆ',
+  'Kopyalandı: {}': 'ನಕಲಾಯಿತು: {}',
+  'Geçersiz kullanıcı adı': 'ತಪ್ಪಾದ ಬಳಕೆದಾರ ಹೆಸರು',
+  'Bağlantı ekle': 'ಲಿಂಕ್ ಸೇರಿಸು',
 };

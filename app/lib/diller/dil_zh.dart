@@ -334,4 +334,17 @@ const Map<String, String> cevirilerZh = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       '如本政策发生变更，新版本将发布在本页面，并更新日期。',
   'Kayıt olarak {} kabul etmiş olursun.': '注册即表示你接受{}。',
+  'Kullanıcılar': '用户',
+  'Fotoğrafı değiştir': '更换照片',
+  'Yeniden konumlandır': '重新调整',
+  'Bir şeyler ters gitti': '出了点问题',
+  'Sosyal Bağlantılar': '社交链接',
+  'Profilinde en fazla 3 bağlantı gösterilir.': '个人资料最多显示 3 个链接。',
+  'Platform seç': '选择平台',
+  'Kullanıcı adın': '你的用户名',
+  'Ekle': '添加',
+  'Kaldır': '移除',
+  'Kopyalandı: {}': '已复制:{}',
+  'Geçersiz kullanıcı adı': '用户名无效',
+  'Bağlantı ekle': '添加链接',
 };

@@ -343,4 +343,18 @@ const Map<String, String> cevirilerTa = {
       'இந்தக் கொள்கை மாறினால் புதிய பதிப்பு இதே பக்கத்தில் வெளியிடப்பட்டு தேதி புதுப்பிக்கப்படும்.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'பதிவு செய்வதன் மூலம் {} ஏற்றுக்கொள்கிறாய்.',
+  'Kullanıcılar': 'பயனர்கள்',
+  'Fotoğrafı değiştir': 'புகைப்படத்தை மாற்று',
+  'Yeniden konumlandır': 'மீண்டும் பொருத்து',
+  'Bir şeyler ters gitti': 'ஏதோ தவறு நடந்தது',
+  'Sosyal Bağlantılar': 'சமூக இணைப்புகள்',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'உன் சுயவிவரத்தில் அதிகபட்சம் 3 இணைப்புகள் காட்டப்படும்.',
+  'Platform seç': 'தளத்தைத் தேர்வு செய்',
+  'Kullanıcı adın': 'உன் பயனர்பெயர்',
+  'Ekle': 'சேர்',
+  'Kaldır': 'நீக்கு',
+  'Kopyalandı: {}': 'நகலெடுக்கப்பட்டது: {}',
+  'Geçersiz kullanıcı adı': 'தவறான பயனர்பெயர்',
+  'Bağlantı ekle': 'இணைப்பைச் சேர்',
 };

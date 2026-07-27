@@ -340,4 +340,18 @@ const Map<String, String> cevirilerSr = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Ако се ова политика промени, нова верзија биће објављена на овој страници, а датум ажуриран.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Регистрацијом прихваташ {}.',
+  'Kullanıcılar': 'Корисници',
+  'Fotoğrafı değiştir': 'Промени фотографију',
+  'Yeniden konumlandır': 'Поново кадрирај',
+  'Bir şeyler ters gitti': 'Нешто је пошло наопако',
+  'Sosyal Bağlantılar': 'Друштвене везе',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'На профилу се приказује до 3 везе.',
+  'Platform seç': 'Изабери платформу',
+  'Kullanıcı adın': 'Твоје корисничко име',
+  'Ekle': 'Додај',
+  'Kaldır': 'Уклони',
+  'Kopyalandı: {}': 'Копирано: {}',
+  'Geçersiz kullanıcı adı': 'Неисправно корисничко име',
+  'Bağlantı ekle': 'Додај везу',
 };

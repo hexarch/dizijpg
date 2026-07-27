@@ -341,4 +341,18 @@ const Map<String, String> cevirilerHi = {
       'यह नीति बदलने पर नया संस्करण इसी पेज पर प्रकाशित होगा और तारीख़ अपडेट होगी।',
   'Kayıt olarak {} kabul etmiş olursun.':
       'रजिस्टर करके तुम {} स्वीकार करते हो।',
+  'Kullanıcılar': 'उपयोगकर्ता',
+  'Fotoğrafı değiştir': 'फ़ोटो बदलो',
+  'Yeniden konumlandır': 'फिर से सेट करो',
+  'Bir şeyler ters gitti': 'कुछ गड़बड़ हो गई',
+  'Sosyal Bağlantılar': 'सोशल लिंक',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'तुम्हारी प्रोफ़ाइल पर ज़्यादा से ज़्यादा 3 लिंक दिखते हैं।',
+  'Platform seç': 'प्लैटफ़ॉर्म चुनो',
+  'Kullanıcı adın': 'तुम्हारा यूज़रनेम',
+  'Ekle': 'जोड़ो',
+  'Kaldır': 'हटाओ',
+  'Kopyalandı: {}': 'कॉपी हो गया: {}',
+  'Geçersiz kullanıcı adı': 'गलत यूज़रनेम',
+  'Bağlantı ekle': 'लिंक जोड़ो',
 };

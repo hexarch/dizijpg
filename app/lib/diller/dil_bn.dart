@@ -342,4 +342,18 @@ const Map<String, String> cevirilerBn = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'এই নীতি বদলালে নতুন সংস্করণ এই পাতায় প্রকাশ হবে এবং তারিখ আপডেট হবে।',
   'Kayıt olarak {} kabul etmiş olursun.': 'নিবন্ধন করে তুমি {} মেনে নিচ্ছ।',
+  'Kullanıcılar': 'ব্যবহারকারী',
+  'Fotoğrafı değiştir': 'ছবি বদলাও',
+  'Yeniden konumlandır': 'আবার সাজাও',
+  'Bir şeyler ters gitti': 'কিছু একটা ভুল হয়েছে',
+  'Sosyal Bağlantılar': 'সোশ্যাল লিংক',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'তোমার প্রোফাইলে সর্বোচ্চ ৩টি লিংক দেখা যায়।',
+  'Platform seç': 'প্ল্যাটফর্ম বেছে নাও',
+  'Kullanıcı adın': 'তোমার ইউজারনেম',
+  'Ekle': 'যোগ করো',
+  'Kaldır': 'সরাও',
+  'Kopyalandı: {}': 'কপি হয়েছে: {}',
+  'Geçersiz kullanıcı adı': 'ভুল ইউজারনেম',
+  'Bağlantı ekle': 'লিংক যোগ করো',
 };

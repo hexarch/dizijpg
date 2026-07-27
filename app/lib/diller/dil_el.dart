@@ -343,4 +343,18 @@ const Map<String, String> cevirilerEl = {
       'Αν αλλάξει αυτή η πολιτική, η νέα έκδοση θα δημοσιευτεί σε αυτή τη σελίδα και θα ενημερωθεί η ημερομηνία.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Με την εγγραφή σου αποδέχεσαι την {}.',
+  'Kullanıcılar': 'Χρήστες',
+  'Fotoğrafı değiştir': 'Αλλαγή φωτογραφίας',
+  'Yeniden konumlandır': 'Επανατοποθέτηση',
+  'Bir şeyler ters gitti': 'Κάτι πήγε στραβά',
+  'Sosyal Bağlantılar': 'Κοινωνικοί σύνδεσμοι',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Στο προφίλ σου εμφανίζονται έως 3 σύνδεσμοι.',
+  'Platform seç': 'Διάλεξε πλατφόρμα',
+  'Kullanıcı adın': 'Το όνομα χρήστη σου',
+  'Ekle': 'Προσθήκη',
+  'Kaldır': 'Αφαίρεση',
+  'Kopyalandı: {}': 'Αντιγράφηκε: {}',
+  'Geçersiz kullanıcı adı': 'Μη έγκυρο όνομα χρήστη',
+  'Bağlantı ekle': 'Προσθήκη συνδέσμου',
 };

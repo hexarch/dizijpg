@@ -340,4 +340,18 @@ const Map<String, String> cevirilerPa = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'ਇਹ ਨੀਤੀ ਬਦਲੇ ਤਾਂ ਨਵਾਂ ਰੂਪ ਇਸੇ ਪੰਨੇ \'ਤੇ ਪ੍ਰਕਾਸ਼ਿਤ ਹੋਵੇਗਾ ਅਤੇ ਤਾਰੀਖ ਅੱਪਡੇਟ ਹੋਵੇਗੀ।',
   'Kayıt olarak {} kabul etmiş olursun.': 'ਰਜਿਸਟਰ ਕਰਕੇ ਤੂੰ {} ਸਵੀਕਾਰ ਕਰਦਾ ਹੈਂ।',
+  'Kullanıcılar': 'ਵਰਤੋਂਕਾਰ',
+  'Fotoğrafı değiştir': 'ਫੋਟੋ ਬਦਲੋ',
+  'Yeniden konumlandır': 'ਮੁੜ ਸੈੱਟ ਕਰੋ',
+  'Bir şeyler ters gitti': 'ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ',
+  'Sosyal Bağlantılar': 'ਸੋਸ਼ਲ ਲਿੰਕ',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ \'ਤੇ ਵੱਧ ਤੋਂ ਵੱਧ 3 ਲਿੰਕ ਦਿਖਦੇ ਹਨ।',
+  'Platform seç': 'ਪਲੇਟਫਾਰਮ ਚੁਣ',
+  'Kullanıcı adın': 'ਤੇਰਾ ਯੂਜ਼ਰਨੇਮ',
+  'Ekle': 'ਜੋੜੋ',
+  'Kaldır': 'ਹਟਾਓ',
+  'Kopyalandı: {}': 'ਕਾਪੀ ਹੋ ਗਿਆ: {}',
+  'Geçersiz kullanıcı adı': 'ਗਲਤ ਯੂਜ਼ਰਨੇਮ',
+  'Bağlantı ekle': 'ਲਿੰਕ ਜੋੜੋ',
 };

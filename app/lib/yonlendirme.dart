@@ -25,6 +25,34 @@ import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/profil.dart';
 import 'ekranlar/takvim.dart';
 
+/// Son kurulan yönlendirici — push bildirimi dokunuşları buradan gezinir
+/// (bildirim işleyicilerinin BuildContext'i yoktur).
+GoRouter? sonYonlendirici;
+
+/// Kabuk-güvenli gezinme: kabuk-içi rotaya kabuk DIŞINDAN push yapılırsa
+/// kabuk ikinci kez kurulur (GlobalKey çakışması → beyaz ekran); o durumda go.
+void rotayaGit(String hedef) {
+  final y = sonYonlendirici;
+  if (y == null) return;
+  final yol = y.routerDelegate.currentConfiguration.uri.path;
+  const kabukDisi = [
+    '/icerik/',
+    '/kisi/',
+    '/dizi/',
+    '/ozet/',
+    '/izlediklerim',
+    '/ayarlar',
+    '/gizlilik',
+    '/giris',
+    '/karsilama',
+  ];
+  if (kabukDisi.any(yol.startsWith)) {
+    y.go(hedef);
+  } else {
+    y.push(hedef);
+  }
+}
+
 /// URL tabanlı yönlendirme: web'de reload bulunulan sayfada kalır.
 GoRouter yonlendiriciOlustur(Oturum oturum) {
   // F5 güvencesi: motor başlangıç rotasını URL stratejisi kurulmadan '/'
@@ -34,7 +62,7 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
   if (kIsWeb && Uri.base.path.length > 1) {
     baslangic = Uri.base.path + (Uri.base.hasQuery ? '?${Uri.base.query}' : '');
   }
-  return GoRouter(
+  return sonYonlendirici = GoRouter(
     initialLocation: baslangic,
     refreshListenable: oturum,
     redirect: (context, state) {

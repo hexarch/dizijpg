@@ -337,4 +337,17 @@ const Map<String, String> cevirilerHe = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'אם המדיניות תשתנה, הגרסה החדשה תפורסם בעמוד זה והתאריך יעודכן.',
   'Kayıt olarak {} kabul etmiş olursun.': 'בהרשמה אתה מקבל את {}.',
+  'Kullanıcılar': 'משתמשים',
+  'Fotoğrafı değiştir': 'החלפת תמונה',
+  'Yeniden konumlandır': 'מיקום מחדש',
+  'Bir şeyler ters gitti': 'משהו השתבש',
+  'Sosyal Bağlantılar': 'קישורים חברתיים',
+  'Profilinde en fazla 3 bağlantı gösterilir.': 'בפרופיל מוצגים עד 3 קישורים.',
+  'Platform seç': 'בחר פלטפורמה',
+  'Kullanıcı adın': 'שם המשתמש שלך',
+  'Ekle': 'הוספה',
+  'Kaldır': 'הסרה',
+  'Kopyalandı: {}': 'הועתק: {}',
+  'Geçersiz kullanıcı adı': 'שם משתמש לא תקין',
+  'Bağlantı ekle': 'הוספת קישור',
 };

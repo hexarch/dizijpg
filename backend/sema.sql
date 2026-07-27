@@ -10,8 +10,10 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   kapak TEXT,
   bio TEXT,
   ulke TEXT,
+  sosyal JSONB NOT NULL DEFAULT '[]',
   son_gorulme TIMESTAMPTZ,
   sifre_surumu INT NOT NULL DEFAULT 0,
+  yasakli BOOLEAN NOT NULL DEFAULT false,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 
@@ -195,3 +197,45 @@ ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS medya TEXT;
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS icerik_tur TEXT;
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS icerik_id INT;
 ALTER TABLE mesajlar ALTER COLUMN metin DROP NOT NULL;
+-- 2026-07-26: sesli mesaj dalga formu ("<saniye>:<40 örnek 0-9a-v>")
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS ses_dalga TEXT;
+-- 2026-07-25: self-hosted istemci hata/çökme günlüğü (Firebase gerektirmez)
+CREATE TABLE IF NOT EXISTS hatalar (
+  id BIGSERIAL PRIMARY KEY,
+  kullanici_id INT REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  mesaj TEXT NOT NULL,
+  yigin TEXT,
+  platform TEXT,
+  surum TEXT,
+  yol TEXT,
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS hatalar_zaman ON hatalar (tarih DESC);
+-- 2026-07-25c: içerik şikayeti + kullanıcı engelleme (Play Store UGC gereksinimi)
+CREATE TABLE IF NOT EXISTS sikayetler (
+  id BIGSERIAL PRIMARY KEY,
+  sikayet_eden_id INT REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  tur TEXT NOT NULL CHECK (tur IN ('yorum','mesaj','kullanici','liste')),
+  hedef_id INT NOT NULL,
+  sebep TEXT NOT NULL,
+  durum TEXT NOT NULL DEFAULT 'yeni' CHECK (durum IN ('yeni','incelendi','kapatildi')),
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS sikayetler_durum ON sikayetler (durum, id DESC);
+CREATE TABLE IF NOT EXISTS engellemeler (
+  engelleyen_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  engellenen_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  tarih TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (engelleyen_id, engellenen_id),
+  CHECK (engelleyen_id <> engellenen_id)
+);
+CREATE INDEX IF NOT EXISTS engelleme_engellenen ON engellemeler (engellenen_id);
+-- 2026-07-25d: FCM push cihaz token kaydı
+CREATE TABLE IF NOT EXISTS cihaz_tokenlari (
+  token TEXT PRIMARY KEY,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  platform TEXT,
+  dil TEXT DEFAULT 'tr',
+  guncelleme TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS cihaz_kullanici ON cihaz_tokenlari (kullanici_id);

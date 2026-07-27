@@ -7,8 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
 import 'ortak.dart';
+import 'sosyal.dart';
 
 /// Dakikayı insancıl süreye çevirir: "1 yıl 2 ay 3 gün" (en anlamlı 3 birim).
 /// Küçük süreler için saat/dakika gösterir. Yaklaşık: yıl=365g, ay=30g.
@@ -54,6 +56,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   List<dynamic> _izlenenler = [];
   List<dynamic> _rozetler = [];
   String? _hata;
+  bool _gorselYukleniyor = false;
   // Varsayılan: rozetler en altta
   List<String> _bolumSirasi = const [
     'seritler',
@@ -72,6 +75,20 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     _siraYukle();
     // Sekmeye her dönüşte veriyi tazele (izlenenler sırası güncel kalsın)
     profilYenileTetik.addListener(_tetikle);
+  }
+
+  /// Avatar (kapak=false) veya kapak (kapak=true) düzenleme akışı.
+  Future<void> _gorselDuzenle(bool kapak) async {
+    final alan = kapak ? 'kapak' : 'avatar';
+    await profilGorseliDuzenle(
+      context,
+      kapak: kapak,
+      mevcutUrl: dosyaUrl(_profil?[alan] as String?),
+      onYuklendi: (yol) => setState(() => _profil![alan] = yol),
+      yukleniyor: (v) {
+        if (mounted) setState(() => _gorselYukleniyor = v);
+      },
+    );
   }
 
   void _tetikle() {
@@ -224,7 +241,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         runSpacing: 8,
         children: [
           for (final r in _rozetler)
-            _RozetCipi(rozet: r as Map<String, dynamic>),
+            RozetCipi(rozet: r as Map<String, dynamic>),
         ],
       ),
       const SizedBox(height: 16),
@@ -518,16 +535,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            // Kapak resmi (varsa)
+            // Kapak resmi (varsa) — dokununca değiştir/yeniden konumlandır
             if (dosyaUrl(_profil?['kapak'] as String?) != null)
-              SizedBox(
-                height: 130,
-                width: double.infinity,
-                child: CachedNetworkImage(
-                  imageUrl: dosyaUrl(_profil!['kapak'] as String)!,
-                  fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) =>
-                      Container(color: DiziRenkler.koyuGri),
+              GestureDetector(
+                onTap: _gorselYukleniyor ? null : () => _gorselDuzenle(true),
+                child: SizedBox(
+                  height: 130,
+                  width: double.infinity,
+                  child: CachedNetworkImage(
+                    imageUrl: dosyaUrl(_profil!['kapak'] as String)!,
+                    fit: BoxFit.cover,
+                    errorWidget: (_, __, ___) =>
+                        Container(color: DiziRenkler.koyuGri),
+                  ),
                 ),
               ),
             Padding(
@@ -538,22 +558,36 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   // Profil başlığı: avatar (GIF olabilir), bio, ülke
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 38,
-                        backgroundColor: DiziRenkler.kart,
-                        backgroundImage:
-                            dosyaUrl(_profil?['avatar'] as String?) != null
-                            ? CachedNetworkImageProvider(
-                                dosyaUrl(_profil!['avatar'] as String)!,
-                              )
-                            : null,
-                        child: _profil?['avatar'] == null
-                            ? Icon(
-                                Icons.person,
-                                size: 38,
-                                color: DiziRenkler.metin38,
-                              )
-                            : null,
+                      GestureDetector(
+                        onTap: _gorselYukleniyor
+                            ? null
+                            : () => _gorselDuzenle(false),
+                        child: CircleAvatar(
+                          radius: 38,
+                          backgroundColor: DiziRenkler.kart,
+                          backgroundImage:
+                              dosyaUrl(_profil?['avatar'] as String?) != null
+                              ? CachedNetworkImageProvider(
+                                  dosyaUrl(_profil!['avatar'] as String)!,
+                                )
+                              : null,
+                          child: _gorselYukleniyor
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: DiziRenkler.sari,
+                                  ),
+                                )
+                              : (_profil?['avatar'] == null
+                                    ? Icon(
+                                        Icons.person,
+                                        size: 38,
+                                        color: DiziRenkler.metin38,
+                                      )
+                                    : null),
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -622,6 +656,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         ),
                       ),
                     ],
+                  ),
+                  // Sosyal bağlantılar (Ayarlar'dan eklenir, en fazla 3)
+                  SosyalSatiri(
+                    sosyal: _profil?['sosyal'] as List<dynamic>? ?? [],
                   ),
                   const SizedBox(height: 18),
                   // Misafir hesabı bağlama bandı
@@ -1088,10 +1126,10 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
 }
 
 /// Rozet çipi: kazanılanlar sarı, kalanlar soluk + ilerleme.
-class _RozetCipi extends StatelessWidget {
+class RozetCipi extends StatelessWidget {
   final Map<String, dynamic> rozet;
 
-  const _RozetCipi({required this.rozet});
+  const RozetCipi({required this.rozet});
 
   static const _bilgi = {
     'ilk_bolum': (Icons.play_arrow_rounded, 'İlk Bölüm'),

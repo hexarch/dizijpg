@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dizi.jpg · Yönetim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07070c; --panel:#12121b; --panel2:#191924; --line:#24242f;
+  --sari:#F5C518; --metin:#f4f4f7; --soluk:#8b8b99; --soluk2:#5a5a68;
+  --yesil:#34d399; --kirmizi:#f87171; --mavi:#60a5fa; --mor:#a78bfa;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:radial-gradient(1200px 600px at 80% -10%, #1a1a2e 0%, var(--bg) 55%);
+  color:var(--metin);font-family:'Inter',system-ui,sans-serif;
+  font-size:14px;line-height:1.5;overflow-x:hidden;
+}
+.mono{font-family:'JetBrains Mono',monospace}
+a{color:var(--sari);text-decoration:none}
+.gizli{display:none!important}
+
+/* Üst bar */
+header{
+  display:flex;align-items:center;gap:16px;padding:16px 24px;
+  border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20;
+  background:rgba(7,7,12,.72);backdrop-filter:blur(14px);
+}
+.logo{font-weight:900;font-size:19px;letter-spacing:-.4px}
+.logo b{color:var(--sari)}
+.canli{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--soluk);margin-left:4px}
+.nokta{width:8px;height:8px;border-radius:50%;background:var(--yesil);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:nabiz 1.8s infinite}
+@keyframes nabiz{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
+header .sag{margin-left:auto;display:flex;gap:8px}
+.sekme-btn{padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--soluk);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.15s}
+.sekme-btn:hover{color:var(--metin);border-color:#33333f}
+.sekme-btn.aktif{background:var(--sari);color:#000;border-color:var(--sari)}
+.rozet{display:inline-flex;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:var(--kirmizi);color:#fff;font-size:11px;font-weight:800;align-items:center;justify-content:center;margin-left:6px}
+
+/* Kartlar */
+.kucuk-kartlar{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;padding:20px 24px}
+.kart{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;position:relative;overflow:hidden}
+.kart .etk{font-size:12px;color:var(--soluk);font-weight:500;display:flex;align-items:center;gap:6px}
+.kart .deg{font-size:28px;font-weight:800;margin-top:6px;letter-spacing:-1px}
+.kart .alt{font-size:11px;color:var(--soluk2);margin-top:2px}
+.kart .ikon{position:absolute;right:14px;top:14px;opacity:.18;font-size:26px}
+.kart.vurgu{border-color:rgba(245,197,24,.35);background:linear-gradient(160deg,rgba(245,197,24,.08),var(--panel))}
+.kart.uyari{border-color:rgba(248,113,113,.4)}
+.bar{height:6px;border-radius:3px;background:var(--panel2);margin-top:10px;overflow:hidden}
+.bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--sari),#ffd75e);border-radius:3px;transition:width .5s}
+.bar.kirmizi > i{background:linear-gradient(90deg,#f87171,#fb923c)}
+
+/* Ana ızgara */
+.izgara{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;padding:4px 24px 24px}
+@media(max-width:1000px){.izgara{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.panel h3{font-size:13px;font-weight:700;padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;color:var(--metin)}
+.panel h3 .sag{margin-left:auto;font-size:11px;color:var(--soluk);font-weight:500}
+
+/* Globe */
+#globe-sar{height:520px;position:relative;background:radial-gradient(circle at 50% 40%,#0d1530 0%,#07070c 70%)}
+#globe canvas{display:block}
+.globe-etiket{position:absolute;left:16px;bottom:14px;font-size:11px;color:var(--soluk);pointer-events:none}
+.globe-etiket b{color:var(--metin)}
+
+/* Canlı akış */
+#akis{height:520px;overflow-y:auto}
+.istek{display:flex;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid rgba(36,36,47,.5);font-size:12px;animation:gir .3s}
+@keyframes gir{from{opacity:0;transform:translateX(8px)}to{opacity:1}}
+.yontem{font-family:'JetBrains Mono';font-weight:700;font-size:10px;padding:2px 6px;border-radius:5px;background:var(--panel2);color:var(--mavi)}
+.yontem.POST{color:var(--yesil)}.yontem.DELETE{color:var(--kirmizi)}.yontem.PATCH{color:var(--mor)}
+.durum{font-family:'JetBrains Mono';font-weight:700;font-size:11px;min-width:28px}
+.d2{color:var(--yesil)}.d3{color:var(--sari)}.d4{color:#fb923c}.d5{color:var(--kirmizi)}
+.yol{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--metin);font-family:'JetBrains Mono';font-size:11px}
+.konum{color:var(--soluk);font-size:11px;white-space:nowrap}
+.sure{color:var(--soluk2);font-size:10px;font-family:'JetBrains Mono'}
+
+/* Tablolar */
+.sayfa{padding:4px 24px 40px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:11px 14px;color:var(--soluk);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel)}
+td{padding:11px 14px;border-bottom:1px solid rgba(36,36,47,.6);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.02)}
+.etiket{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.e-yeni{background:rgba(245,197,24,.15);color:var(--sari)}
+.e-incelendi{background:rgba(96,165,250,.15);color:var(--mavi)}
+.e-kapatildi{background:rgba(90,90,104,.2);color:var(--soluk)}
+.btn{padding:5px 11px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;transition:.15s}
+.btn:hover{border-color:#3a3a48}
+.btn.tehlike{color:var(--kirmizi);border-color:rgba(248,113,113,.3)}
+.btn.tehlike:hover{background:rgba(248,113,113,.12)}
+.btn.iyi{color:var(--yesil);border-color:rgba(52,211,153,.3)}
+.btnler{display:flex;gap:6px;flex-wrap:wrap}
+.yigin{font-family:'JetBrains Mono';font-size:11px;color:var(--soluk);white-space:pre-wrap;max-height:0;overflow:hidden;transition:.2s}
+.acik .yigin{max-height:340px;overflow:auto;margin-top:8px}
+.katla{cursor:pointer}
+.bos{padding:60px;text-align:center;color:var(--soluk)}
+.ulke-satir{display:flex;align-items:center;gap:10px;padding:7px 16px;font-size:12px}
+.ulke-bar{flex:1;height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.ulke-bar > i{display:block;height:100%;background:linear-gradient(90deg,var(--mor),var(--mavi));border-radius:3px}
+#spark{width:100%;height:60px;display:block}
+.uyari-kutu{margin:0 24px 16px;padding:12px 16px;border-radius:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><b>dizi</b>.jpg <span style="color:var(--soluk);font-weight:600">yönetim</span></div>
+  <div class="canli"><span class="nokta"></span><span id="canli-yazi">canlı</span></div>
+  <div class="sag">
+    <button class="sekme-btn aktif" data-sekme="genel">Genel</button>
+    <button class="sekme-btn" data-sekme="hatalar">Hatalar</button>
+    <button class="sekme-btn" data-sekme="sikayetler">Şikayetler <span id="sik-rozet" class="rozet gizli">0</span></button>
+  </div>
+</header>
+
+<div id="uyari" class="uyari-kutu gizli"></div>
+
+<!-- GENEL -->
+<section id="s-genel">
+  <div class="kucuk-kartlar" id="kartlar"></div>
+  <div class="izgara">
+    <div class="panel">
+      <h3>🌍 Canlı İstek Haritası <span class="sag" id="globe-sayi">—</span></h3>
+      <div id="globe-sar">
+        <div id="globe"></div>
+        <div class="globe-etiket">Son <b id="globe-nokta">0</b> istek · yeşil 2xx · sarı 3xx · kırmızı hata</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>⚡ Canlı Akış <span class="sag" id="akis-hiz">0/dk</span></h3>
+      <div id="akis"></div>
+    </div>
+  </div>
+  <div class="izgara">
+    <div class="panel">
+      <h3>📈 İstek / Dakika (son 60 dk)</h3>
+      <div style="padding:18px"><canvas id="spark"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>🏳️ Ülkelere Göre Trafik</h3>
+      <div id="ulkeler" style="padding:8px 0 12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- HATALAR -->
+<section id="s-hatalar" class="sayfa gizli">
+  <div class="panel">
+    <h3>🐞 Hata / Çökme Günlüğü <span class="sag" id="hata-say">—</span></h3>
+    <div style="overflow:auto"><table id="hata-tablo"></table></div>
+  </div>
+</section>
+
+<!-- ŞİKAYETLER -->
+<section id="s-sikayetler" class="sayfa gizli">
+  <div class="panel">
+    <h3>🚩 Şikayetler <span class="sag" id="sik-say">—</span></h3>
+    <div style="overflow:auto"><table id="sik-tablo"></table></div>
+  </div>
+</section>
+
+<script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js"></script>
+<script>
+const TOKEN = new URLSearchParams(location.search).get('token') || '';
+const TABAN = '/api/admin';
+async function api(yol, opt={}){
+  const r = await fetch(TABAN+yol, {...opt, headers:{'Content-Type':'application/json','x-admin-token':TOKEN,...(opt.headers||{})}});
+  if(!r.ok) throw new Error('HTTP '+r.status);
+  return r.json();
+}
+const $ = s => document.querySelector(s);
+const bytFmt = n => { if(n==null) return '—'; const b=['B','KB','MB','GB','TB']; let i=0; while(n>=1024&&i<4){n/=1024;i++} return n.toFixed(i?1:0)+' '+b[i]; };
+const bayrak = cc => cc ? cc.toUpperCase().replace(/./g,c=>String.fromCodePoint(127397+c.charCodeAt())) : '🏴';
+const sureFmt = sn => { sn=Math.floor(sn); const g=Math.floor(sn/86400),s=Math.floor(sn%86400/3600),d=Math.floor(sn%3600/60); return g?`${g}g ${s}s`:s?`${s}s ${d}dk`:`${d}dk`; };
+const zaman = ts => { const f=(Date.now()-ts)/1000; return f<60?`${Math.floor(f)}sn`:f<3600?`${Math.floor(f/60)}dk`:`${Math.floor(f/3600)}s`; };
+const dCls = k => 'd'+String(k)[0];
+
+/* ---- Sekmeler ---- */
+document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.sekme-btn').forEach(x=>x.classList.remove('aktif'));
+  b.classList.add('aktif');
+  const s=b.dataset.sekme;
+  $('#s-genel').classList.toggle('gizli',s!=='genel');
+  $('#s-hatalar').classList.toggle('gizli',s!=='hatalar');
+  $('#s-sikayetler').classList.toggle('gizli',s!=='sikayetler');
+  if(s==='hatalar') hatalariYukle();
+  if(s==='sikayetler') sikayetleriYukle();
+});
+
+/* ---- 3D Globe ---- */
+let globe;
+function globeKur(){
+  globe = Globe()(document.getElementById('globe'))
+    .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
+    .backgroundColor('rgba(0,0,0,0)')
+    .atmosphereColor('#F5C518').atmosphereAltitude(0.16)
+    .pointLat('lat').pointLng('lng').pointColor('renk').pointAltitude(0.012).pointRadius('r')
+    .ringLat('lat').ringLng('lng').ringColor(()=>t=>`rgba(245,197,24,${1-t})`)
+    .ringMaxRadius('mr').ringPropagationSpeed(3).ringRepeatPeriod(900);
+  const el=document.getElementById('globe-sar');
+  const boyut=()=>{ globe.width(el.clientWidth).height(el.clientHeight); };
+  boyut(); addEventListener('resize',boyut);
+  globe.controls().autoRotate=true; globe.controls().autoRotateSpeed=0.55;
+  globe.controls().enableZoom=true;
+  globe.pointOfView({lat:25,lng:20,altitude:2.4});
+}
+function globeGuncelle(istekler){
+  const geo=istekler.filter(i=>i.ll);
+  const renk=k=> k>=500?'#f87171':k>=400?'#fb923c':k>=300?'#F5C518':'#34d399';
+  const pts=geo.map(i=>({lat:i.ll[0],lng:i.ll[1],renk:renk(i.kod),r:0.28}));
+  globe && globe.pointsData(pts);
+  const rings=geo.slice(0,14).map(i=>({lat:i.ll[0],lng:i.ll[1],mr:3.5}));
+  globe && globe.ringsData(rings);
+  $('#globe-nokta').textContent=geo.length;
+  $('#globe-sayi').textContent=geo.length+' konumlu';
+}
+
+/* ---- Canlı akış ---- */
+function akisGuncelle(istekler){
+  $('#akis').innerHTML = istekler.slice(0,60).map(i=>`
+    <div class="istek">
+      <span class="yontem ${i.method}">${i.method}</span>
+      <span class="durum ${dCls(i.kod)}">${i.kod}</span>
+      <span class="yol" title="${i.yol}">${i.yol}</span>
+      <span class="konum">${bayrak(i.ulke)} ${i.sehir||i.ulke||'?'}</span>
+      <span class="sure">${i.sure}ms · ${zaman(i.ts)}</span>
+    </div>`).join('');
+}
+
+/* ---- Kartlar + sistem ---- */
+function kartlar(d){
+  const s=d.sistem, yuk1=s.yuk[0], yukPct=Math.min(100,Math.round(yuk1/s.cpu*100));
+  const belPct=Math.round((s.bellekToplam-s.bellekBos)/s.bellekToplam*100);
+  const diskPct=s.disk?Math.round((s.disk.toplam-s.disk.bos)/s.disk.toplam*100):null;
+  const anlik=d.istekSeri[d.istekSeri.length-1]||0;
+  $('#akis-hiz').textContent=anlik+'/dk';
+  const K=[
+    {e:'Kullanıcılar',v:d.kullanici,a:d.misafir+' misafir',i:'👤',vurgu:1},
+    {e:'Toplam İstek',v:d.istekToplam.toLocaleString('tr'),a:anlik+'/dk şu an',i:'⚡'},
+    {e:'Hata (24s)',v:d.hata24,a:d.hataToplam+' toplam',i:'🐞',uyari:d.hata24>0},
+    {e:'Yeni Şikayet',v:d.sikayetYeni,a:d.sikayetToplam+' toplam',i:'🚩',uyari:d.sikayetYeni>0},
+    {e:'CPU Yükü',v:'%'+yukPct,a:s.yuk.map(x=>x.toFixed(2)).join(' / ')+' · '+s.cpu+' çekirdek',i:'🖥️',bar:yukPct},
+    {e:'Bellek',v:'%'+belPct,a:bytFmt(s.bellekToplam-s.bellekBos)+' / '+bytFmt(s.bellekToplam),i:'🧠',bar:belPct},
+    {e:'Disk',v:diskPct!=null?'%'+diskPct:'—',a:s.disk?bytFmt(s.disk.toplam-s.disk.bos)+' / '+bytFmt(s.disk.toplam):'bilinmiyor',i:'💾',bar:diskPct},
+    {e:'Çalışma Süresi',v:sureFmt(s.apiUptime),a:'sunucu '+sureFmt(s.uptime),i:'⏱️'},
+  ];
+  $('#kartlar').innerHTML=K.map(k=>`
+    <div class="kart ${k.vurgu?'vurgu':''} ${k.uyari?'uyari':''}">
+      <div class="ikon">${k.i}</div>
+      <div class="etk">${k.e}</div>
+      <div class="deg">${k.v}</div>
+      <div class="alt">${k.a}</div>
+      ${k.bar!=null?`<div class="bar ${k.bar>85?'kirmizi':''}"><i style="width:${k.bar}%"></i></div>`:''}
+    </div>`).join('');
+  // şikayet rozeti
+  const rz=$('#sik-rozet'); rz.textContent=d.sikayetYeni; rz.classList.toggle('gizli',!d.sikayetYeni);
+  ulkeler(d.ulkeler);
+  spark(d.istekSeri);
+}
+function ulkeler(list){
+  const max=Math.max(1,...list.map(u=>u.sayi));
+  $('#ulkeler').innerHTML = list.slice(0,12).map(u=>`
+    <div class="ulke-satir">
+      <span style="font-size:16px">${bayrak(u.ulke)}</span>
+      <span style="width:34px" class="mono">${u.ulke||'??'}</span>
+      <span class="ulke-bar"><i style="width:${u.sayi/max*100}%"></i></span>
+      <span class="mono" style="color:var(--soluk);min-width:40px;text-align:right">${u.sayi}</span>
+    </div>`).join('') || '<div class="bos">Henüz veri yok</div>';
+}
+function spark(seri){
+  const c=$('#spark'),dpr=devicePixelRatio||1;
+  const w=c.clientWidth,h=60; c.width=w*dpr;c.height=h*dpr;
+  const x=c.getContext('2d');x.scale(dpr,dpr);x.clearRect(0,0,w,h);
+  const max=Math.max(1,...seri);const n=seri.length;const dx=w/(n-1);
+  x.beginPath();seri.forEach((v,i)=>{const px=i*dx,py=h-4-(v/max)*(h-10);i?x.lineTo(px,py):x.moveTo(px,py)});
+  x.lineTo(w,h);x.lineTo(0,h);x.closePath();
+  const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,'rgba(245,197,24,.35)');g.addColorStop(1,'rgba(245,197,24,0)');
+  x.fillStyle=g;x.fill();
+  x.beginPath();seri.forEach((v,i)=>{const px=i*dx,py=h-4-(v/max)*(h-10);i?x.lineTo(px,py):x.moveTo(px,py)});
+  x.strokeStyle='#F5C518';x.lineWidth=2;x.stroke();
+}
+
+/* ---- Hatalar ---- */
+async function hatalariYukle(){
+  try{
+    const {hatalar}=await api('/hatalar?limit=200');
+    $('#hata-say').textContent=hatalar.length+' kayıt';
+    $('#hata-tablo').innerHTML = hatalar.length? `
+      <thead><tr><th>Zaman</th><th>Mesaj</th><th>Ekran</th><th>Platform</th><th>Sürüm</th><th>Kullanıcı</th></tr></thead>
+      <tbody>${hatalar.map(h=>`
+        <tr class="katla" onclick="this.classList.toggle('acik')">
+          <td class="mono" style="white-space:nowrap;color:var(--soluk)">${new Date(h.tarih).toLocaleString('tr')}</td>
+          <td style="max-width:420px">${esc(h.mesaj)}${h.yigin?`<div class="yigin">${esc(h.yigin)}</div>`:''}</td>
+          <td class="mono" style="color:var(--mavi)">${esc(h.yol||'—')}</td>
+          <td>${esc(h.platform||'—')}</td>
+          <td class="mono">${esc(h.surum||'—')}</td>
+          <td>${h.kullanici_adi?'@'+esc(h.kullanici_adi):'<span style="color:var(--soluk2)">anonim</span>'}</td>
+        </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">🎉 Hiç hata yok</td></tr></tbody>';
+  }catch(e){ $('#hata-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi</td></tr></tbody>'; }
+}
+
+/* ---- Şikayetler ---- */
+async function sikayetleriYukle(){
+  try{
+    const {sikayetler}=await api('/sikayetler');
+    $('#sik-say').textContent=sikayetler.length+' kayıt';
+    $('#sik-tablo').innerHTML = sikayetler.length? `
+      <thead><tr><th>#</th><th>Tür</th><th>Hedef</th><th>Sebep</th><th>Şikayet eden</th><th>Durum</th><th>İşlem</th></tr></thead>
+      <tbody>${sikayetler.map(s=>satirSik(s)).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">🎉 Şikayet yok</td></tr></tbody>';
+  }catch(e){ $('#sik-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi</td></tr></tbody>'; }
+}
+function satirSik(s){
+  const dm={yeni:'e-yeni',incelendi:'e-incelendi',kapatildi:'e-kapatildi'};
+  const dl={yeni:'Yeni',incelendi:'İncelendi',kapatildi:'Kapatıldı'};
+  let islem='';
+  if(s.tur==='yorum') islem=`<button class="btn tehlike" onclick="yorumSil(${s.hedef_id})">Yorumu sil</button>`;
+  if(s.tur==='kullanici') islem=s.hedef_yasakli
+    ? `<button class="btn iyi" onclick="ban(${s.hedef_id},false)">Yasağı kaldır</button>`
+    : `<button class="btn tehlike" onclick="ban(${s.hedef_id},true)">Kullanıcıyı banla</button>`;
+  return `<tr>
+    <td class="mono" style="color:var(--soluk)">${s.id}</td>
+    <td><span class="etiket e-incelendi">${s.tur}</span></td>
+    <td style="max-width:280px">${esc(s.hedef_ozet||('#'+s.hedef_id))}</td>
+    <td style="max-width:240px;color:var(--soluk)">${esc(s.sebep)}</td>
+    <td>${s.eden?'@'+esc(s.eden):'—'}</td>
+    <td><span class="etiket ${dm[s.durum]}">${dl[s.durum]}</span></td>
+    <td><div class="btnler">
+      ${islem}
+      ${s.durum!=='incelendi'?`<button class="btn" onclick="sikDurum(${s.id},'incelendi')">İncelendi</button>`:''}
+      ${s.durum!=='kapatildi'?`<button class="btn" onclick="sikDurum(${s.id},'kapatildi')">Kapat</button>`:''}
+    </div></td>
+  </tr>`;
+}
+async function yorumSil(id){ if(!confirm('Yorum silinsin mi?'))return; await api('/yorum-sil',{method:'POST',body:JSON.stringify({id})}); sikayetleriYukle(); }
+async function ban(id,yasakli){ if(!confirm(yasakli?'Kullanıcı banlansın mı?':'Yasak kalksın mı?'))return; await api('/kullanici-ban',{method:'POST',body:JSON.stringify({id,yasakli})}); sikayetleriYukle(); }
+async function sikDurum(id,durum){ await api('/sikayet-durum',{method:'POST',body:JSON.stringify({id,durum})}); sikayetleriYukle(); }
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ---- Döngü ---- */
+async function tik(){
+  try{
+    const [ozet,ist]=await Promise.all([api('/ozet'),api('/istekler')]);
+    kartlar(ozet); akisGuncelle(ist.istekler); globeGuncelle(ist.istekler);
+    $('#uyari').classList.add('gizli');
+    $('#canli-yazi').textContent='canlı · '+new Date().toLocaleTimeString('tr');
+  }catch(e){
+    $('#uyari').textContent='Bağlantı hatası: '+e.message+' (IP izinli mi? token doğru mu?)';
+    $('#uyari').classList.remove('gizli');
+  }
+}
+globeKur(); tik(); setInterval(tik,3000);
+</script>
+</body>
+</html>

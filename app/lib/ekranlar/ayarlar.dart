@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:crop_your_image/crop_your_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +8,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
+import 'gorsel_kirp.dart';
+import 'sosyal.dart';
 import '../tema.dart';
 
 const List<String> ulkeler = [
@@ -147,6 +146,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   bool _kapakYukleniyor = false;
   final _bio = TextEditingController();
   String? _ulke;
+  List<Map<String, dynamic>> _sosyal = [];
 
   @override
   void initState() {
@@ -169,6 +169,10 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
         _profil = p;
         _bio.text = (p['bio'] as String?) ?? '';
         _ulke = p['ulke'] as String?;
+        _sosyal = [
+          for (final s in p['sosyal'] as List<dynamic>? ?? [])
+            Map<String, dynamic>.from(s as Map),
+        ];
       });
     } catch (e) {
       if (!mounted) return;
@@ -177,89 +181,6 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   }
 
   /// GIF mi? (sihirli baytlar) — GIF'ler kırpılmaz, animasyon korunur.
-  bool _gifMi(Uint8List veri) =>
-      veri.length > 3 && veri[0] == 0x47 && veri[1] == 0x49 && veri[2] == 0x46;
-
-  /// Kırpma/konumlama modalı: kullanıcı kadrajı ayarlar, kırpılmış
-  /// baytlar döner (vazgeçerse null).
-  Future<Uint8List?> _kirp(
-    Uint8List veri, {
-    required double oran,
-    bool daire = false,
-  }) async {
-    final kontrol = CropController();
-    final sonuc = await showModalBottomSheet<Uint8List?>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.siyah,
-      builder: (context) {
-        var kirpiliyor = false;
-        return StatefulBuilder(
-          builder: (context, setSheet) => SizedBox(
-            height: MediaQuery.of(context).size.height * 0.85,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Konumla ve kırp'.c,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, null),
-                        child: Text(
-                          'İptal'.c,
-                          style: TextStyle(color: DiziRenkler.metin54),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      FilledButton(
-                        onPressed: kirpiliyor
-                            ? null
-                            : () {
-                                setSheet(() => kirpiliyor = true);
-                                kontrol.crop();
-                              },
-                        child: kirpiliyor
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.black,
-                                ),
-                              )
-                            : Text('Tamam'.c),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Crop(
-                    image: veri,
-                    controller: kontrol,
-                    aspectRatio: oran,
-                    withCircleUi: daire,
-                    baseColor: DiziRenkler.siyah,
-                    maskColor: Colors.black54,
-                    onCropped: (kirpik) => Navigator.pop(context, kirpik),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-    return sonuc;
-  }
-
   Future<void> _avatarSec() async {
     final secim = await ImagePicker().pickImage(
       source: ImageSource.gallery,
@@ -268,9 +189,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     if (secim == null) return;
     var veri = await secim.readAsBytes();
     // GIF değilse önce konumlama/kırpma modalı (1:1 daire)
-    if (!_gifMi(veri)) {
+    if (!gifMi(veri)) {
       if (!mounted) return;
-      final kirpik = await _kirp(veri, oran: 1, daire: true);
+      final kirpik = await gorselKirp(context, veri, oran: 1, daire: true);
       if (kirpik == null) return;
       veri = kirpik;
     }
@@ -302,9 +223,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     if (secim == null) return;
     var veri = await secim.readAsBytes();
     // GIF değilse önce konumlama/kırpma modalı (geniş kapak oranı)
-    if (!_gifMi(veri)) {
+    if (!gifMi(veri)) {
       if (!mounted) return;
-      final kirpik = await _kirp(veri, oran: 2.4);
+      final kirpik = await gorselKirp(context, veri, oran: 2.4);
       if (kirpik == null) return;
       veri = kirpik;
     }
@@ -673,6 +594,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       final p = await Api.profilGuncelle(
         bio: _bio.text.trim(),
         ulke: _ulke ?? '',
+        sosyal: _sosyal,
       );
       if (!mounted) return;
       final oturum = context.read<Oturum>();
@@ -892,6 +814,21 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                           ),
                     onTap: _ulkeSec,
                   ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Sosyal Bağlantılar'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Profilinde en fazla 3 bağlantı gösterilir.'.c,
+                  style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
+                ),
+                const SizedBox(height: 4),
+                SosyalDuzenleyici(
+                  sosyal: _sosyal,
+                  onDegisti: (yeni) => setState(() => _sosyal = yeni),
                 ),
                 const SizedBox(height: 12),
                 Text(

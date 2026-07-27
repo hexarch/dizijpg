@@ -376,6 +376,37 @@ Yeni APK+AAB masaüstünde (66MB).
   `https://dizijpg.com/gizlilik.html` gir (Data safety: hesap verisi, kullanım
   verisi, medya, cihaz token'ı, IP + hata günlüğü beyanları politikayla uyumlu).
 
+## SPRINT 9 — kullanıcının 7 maddelik listesi ✅🚀 (2026-07-27, web+API canlıda, v1.8.0+16)
+1. **Aramada kullanıcılar** ✅: Arama sekmesi TMDB ile birlikte /kullanici-ara'yı
+   da sorgular; üstte yatay "Kullanıcılar" şeridi (avatar+@ad → profil).
+2. **DM push yenilendi** ✅ (cihaz testi bekliyor — yeni APK şart):
+   gönderenin avatarı (largeIcon), gövdede mesaj İÇERİĞİ, dokununca /sohbet/:ad
+   (ön plan + arka plan + kapalı). Mesaj türü artık veri-mesajı; diğer türlere
+   de derin bağlantı verisi eklendi (takip→profil, kalanlar→/bildirimler).
+3. **Sosyal bağlantılar** ✅: Ayarlar'da 19 platform (instagram, facebook, x,
+   tiktok, discord, steam, xbox, epicgames, imdb, vk, youtube, twitch, spotify,
+   github, reddit, telegram, snapchat, pinterest, letterboxd) simple_icons
+   logolarıyla; en fazla 3; profilde ikon sırası, dokununca bağlantı açılır
+   (bağlantısızlarda kullanıcı adı kopyalanır). Backend: kullanicilar.sosyal
+   jsonb + whitelist/regex/≤3 doğrulama (migrasyon-2026-07-27.sql UYGULANDI).
+4. **Profil görselleri** ✅: kendi profilinde avatar/kapağa dokun → "Fotoğrafı
+   değiştir" / "Yeniden konumlandır" (mevcut görsel indirilip yeniden kırpılır;
+   GIF'te kırpma yok). Ortak kırpma kodu gorsel_kirp.dart'a taşındı.
+5. **Açık profil** ✅: kazanılan rozetler + toplam ekran süresi artık görünür
+   (/profil yanıtına rozetler + istatistik.tahmini_dakika eklendi).
+6. **Beyaz ekran düzeltildi** ✅: kabuk-İÇİ /kullanici rotasının kabuk-DIŞI
+   sayfalardan (detay/bölüm) push'lanması kabuğu ikinci kez kurup GlobalKey
+   çakıştırıyordu. ortak.kullaniciyaGit + yonlendirme.rotayaGit kabuk-güvenli
+   (dışarıdaysa go, içerideyse push); izleyenler modalı, inceleme satırları,
+   @etiketler, yorum kartları buna bağlandı.
+7. **Okundu düzeltildi** ✅: sohbeti okumak zildeki 'mesaj' bildirimlerini de
+   okundu yapar (canlıda 6→0 doğrulandı); okunan mesajın çift tiki artık MAVİ.
+- Çeviri: +13 anahtar → **320 anahtar × 45 dil**. Yeni APK: ~/Desktop/dizijpg-1.8.0.apk
+- Siber test: sosyal doğrulama (4 giriş/enjeksiyon/bilinmeyen platform → 400),
+  kimliksiz uçlar 401, admin 403, traversal 404 — hepsi canlıda doğrulandı.
+- NOT: hata günlüğünde web'de ses eklentisi MissingPluginException'ları var
+  (audioplayers/record web'de kayıtlı değil) — ayrı ele alınacak.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).

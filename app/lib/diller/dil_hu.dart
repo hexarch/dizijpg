@@ -342,4 +342,18 @@ const Map<String, String> cevirilerHu = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Ha ez a szabályzat változik, az új verziót ezen az oldalon tesszük közzé, és frissítjük a dátumot.',
   'Kayıt olarak {} kabul etmiş olursun.': 'A regisztrációval elfogadod: {}.',
+  'Kullanıcılar': 'Felhasználók',
+  'Fotoğrafı değiştir': 'Fotó cseréje',
+  'Yeniden konumlandır': 'Újrapozicionálás',
+  'Bir şeyler ters gitti': 'Valami hiba történt',
+  'Sosyal Bağlantılar': 'Közösségi linkek',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'A profilodon legfeljebb 3 link jelenik meg.',
+  'Platform seç': 'Válassz platformot',
+  'Kullanıcı adın': 'A felhasználóneved',
+  'Ekle': 'Hozzáadás',
+  'Kaldır': 'Eltávolítás',
+  'Kopyalandı: {}': 'Másolva: {}',
+  'Geçersiz kullanıcı adı': 'Érvénytelen felhasználónév',
+  'Bağlantı ekle': 'Link hozzáadása',
 };

@@ -335,4 +335,17 @@ const Map<String, String> cevirilerJa = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'このポリシーが変更された場合、新しい版をこのページで公開し、日付を更新します。',
   'Kayıt olarak {} kabul etmiş olursun.': '登録すると、{}に同意したことになります。',
+  'Kullanıcılar': 'ユーザー',
+  'Fotoğrafı değiştir': '写真を変更',
+  'Yeniden konumlandır': '位置を調整',
+  'Bir şeyler ters gitti': '問題が発生しました',
+  'Sosyal Bağlantılar': 'ソーシャルリンク',
+  'Profilinde en fazla 3 bağlantı gösterilir.': 'プロフィールには最大3件のリンクが表示されます。',
+  'Platform seç': 'プラットフォームを選択',
+  'Kullanıcı adın': 'あなたのユーザー名',
+  'Ekle': '追加',
+  'Kaldır': '削除',
+  'Kopyalandı: {}': 'コピーしました:{}',
+  'Geçersiz kullanıcı adı': '無効なユーザー名です',
+  'Bağlantı ekle': 'リンクを追加',
 };

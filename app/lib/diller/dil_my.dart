@@ -347,4 +347,18 @@ const Map<String, String> cevirilerMy = {
       'ဤမူဝါဒ ပြောင်းလဲပါက ဗားရှင်းအသစ်ကို ဤစာမျက်နှာတွင် ထုတ်ပြန်ပြီး ရက်စွဲကို အပ်ဒိတ်လုပ်မည်။',
   'Kayıt olarak {} kabul etmiş olursun.':
       'စာရင်းသွင်းခြင်းဖြင့် {} ကို လက်ခံပြီးဖြစ်သည်။',
+  'Kullanıcılar': 'အသုံးပြုသူများ',
+  'Fotoğrafı değiştir': 'ဓာတ်ပုံပြောင်းရန်',
+  'Yeniden konumlandır': 'ပြန်နေရာချရန်',
+  'Bir şeyler ters gitti': 'တစ်ခုခုမှားသွားသည်',
+  'Sosyal Bağlantılar': 'ဆိုရှယ်လင့်ခ်များ',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'သင့်ပရိုဖိုင်တွင် လင့်ခ် ၃ ခုအထိ ပြသည်။',
+  'Platform seç': 'ပလက်ဖောင်းရွေးပါ',
+  'Kullanıcı adın': 'သင့်အသုံးပြုသူအမည်',
+  'Ekle': 'ထည့်ရန်',
+  'Kaldır': 'ဖယ်ရန်',
+  'Kopyalandı: {}': 'ကူးယူပြီး- {}',
+  'Geçersiz kullanıcı adı': 'အသုံးပြုသူအမည် မမှန်ပါ',
+  'Bağlantı ekle': 'လင့်ခ်ထည့်ရန်',
 };

@@ -335,4 +335,17 @@ const Map<String, String> cevirilerKo = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       '이 방침이 바뀌면 새 버전을 이 페이지에 게시하고 날짜를 갱신해요.',
   'Kayıt olarak {} kabul etmiş olursun.': '가입하면 {}에 동의하는 거예요.',
+  'Kullanıcılar': '사용자',
+  'Fotoğrafı değiştir': '사진 바꾸기',
+  'Yeniden konumlandır': '다시 배치',
+  'Bir şeyler ters gitti': '문제가 발생했어요',
+  'Sosyal Bağlantılar': '소셜 링크',
+  'Profilinde en fazla 3 bağlantı gösterilir.': '프로필에는 최대 3개의 링크가 표시돼요.',
+  'Platform seç': '플랫폼 선택',
+  'Kullanıcı adın': '네 사용자 이름',
+  'Ekle': '추가',
+  'Kaldır': '제거',
+  'Kopyalandı: {}': '복사됨: {}',
+  'Geçersiz kullanıcı adı': '올바르지 않은 사용자 이름이에요',
+  'Bağlantı ekle': '링크 추가',
 };

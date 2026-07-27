@@ -337,4 +337,18 @@ const Map<String, String> cevirilerTh = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'หากนโยบายนี้เปลี่ยนแปลง เวอร์ชันใหม่จะถูกเผยแพร่ในหน้านี้และวันที่จะถูกอัปเดต',
   'Kayıt olarak {} kabul etmiş olursun.': 'เมื่อสมัครสมาชิก แสดงว่าคุณยอมรับ{}',
+  'Kullanıcılar': 'ผู้ใช้',
+  'Fotoğrafı değiştir': 'เปลี่ยนรูป',
+  'Yeniden konumlandır': 'จัดตำแหน่งใหม่',
+  'Bir şeyler ters gitti': 'มีบางอย่างผิดพลาด',
+  'Sosyal Bağlantılar': 'ลิงก์โซเชียล',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'โปรไฟล์ของคุณแสดงลิงก์ได้สูงสุด 3 ลิงก์',
+  'Platform seç': 'เลือกแพลตฟอร์ม',
+  'Kullanıcı adın': 'ชื่อผู้ใช้ของคุณ',
+  'Ekle': 'เพิ่ม',
+  'Kaldır': 'ลบออก',
+  'Kopyalandı: {}': 'คัดลอกแล้ว: {}',
+  'Geçersiz kullanıcı adı': 'ชื่อผู้ใช้ไม่ถูกต้อง',
+  'Bağlantı ekle': 'เพิ่มลิงก์',
 };

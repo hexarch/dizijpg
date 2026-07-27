@@ -340,4 +340,18 @@ const Map<String, String> cevirilerSw = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Sera hii ikibadilika, toleo jipya litachapishwa kwenye ukurasa huu na tarehe itasasishwa.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Kwa kujisajili unakubali {}.',
+  'Kullanıcılar': 'Watumiaji',
+  'Fotoğrafı değiştir': 'Badilisha picha',
+  'Yeniden konumlandır': 'Panga upya',
+  'Bir şeyler ters gitti': 'Hitilafu imetokea',
+  'Sosyal Bağlantılar': 'Viungo vya Mitandao',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Viungo 3 pekee huonyeshwa kwenye wasifu wako.',
+  'Platform seç': 'Chagua jukwaa',
+  'Kullanıcı adın': 'Jina lako la mtumiaji',
+  'Ekle': 'Ongeza',
+  'Kaldır': 'Ondoa',
+  'Kopyalandı: {}': 'Imenakiliwa: {}',
+  'Geçersiz kullanıcı adı': 'Jina la mtumiaji si sahihi',
+  'Bağlantı ekle': 'Ongeza kiungo',
 };

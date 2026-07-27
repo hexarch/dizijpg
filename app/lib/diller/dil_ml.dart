@@ -343,4 +343,18 @@ const Map<String, String> cevirilerMl = {
       'ഈ നയം മാറിയാൽ പുതിയ പതിപ്പ് ഇതേ പേജിൽ പ്രസിദ്ധീകരിച്ച് തീയതി പുതുക്കും.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'രജിസ്റ്റർ ചെയ്യുന്നതിലൂടെ നീ {} അംഗീകരിക്കുന്നു.',
+  'Kullanıcılar': 'ഉപയോക്താക്കൾ',
+  'Fotoğrafı değiştir': 'ഫോട്ടോ മാറ്റുക',
+  'Yeniden konumlandır': 'വീണ്ടും ക്രമീകരിക്കുക',
+  'Bir şeyler ters gitti': 'എന്തോ പിഴവ് സംഭവിച്ചു',
+  'Sosyal Bağlantılar': 'സോഷ്യൽ ലിങ്കുകൾ',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'നിന്റെ പ്രൊഫൈലിൽ പരമാവധി 3 ലിങ്കുകൾ കാണിക്കും.',
+  'Platform seç': 'പ്ലാറ്റ്ഫോം തിരഞ്ഞെടുക്കൂ',
+  'Kullanıcı adın': 'നിന്റെ യൂസർനെയിം',
+  'Ekle': 'ചേർക്കുക',
+  'Kaldır': 'നീക്കുക',
+  'Kopyalandı: {}': 'കോപ്പി ചെയ്തു: {}',
+  'Geçersiz kullanıcı adı': 'തെറ്റായ യൂസർനെയിം',
+  'Bağlantı ekle': 'ലിങ്ക് ചേർക്കുക',
 };

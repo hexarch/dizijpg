@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../tema.dart';
+import 'ortak.dart';
 
 /// Kullanıcı adı deseni (kayıt kuralıyla aynı): 3-20 küçük harf/rakam/alt çizgi.
 final RegExp etiketDeseni = RegExp(r'@([a-z0-9_]{3,20})');
@@ -52,7 +52,7 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
       }
       final ad = m.group(1)!;
       final taniyici = TapGestureRecognizer()
-        ..onTap = () => context.push('/kullanici/$ad');
+        ..onTap = () => kullaniciyaGit(context, ad);
       _taniyicilar.add(taniyici);
       parcalar.add(
         TextSpan(

@@ -21,6 +21,7 @@ class _AramaEkraniState extends State<AramaEkrani>
   final _kutu = TextEditingController();
   Timer? _geciktirici;
   List<dynamic> _sonuclar = [];
+  List<dynamic> _kullanicilar = [];
   bool _yukleniyor = false;
   List<String> _gecmis = [];
 
@@ -67,23 +68,30 @@ class _AramaEkraniState extends State<AramaEkrani>
 
   Future<void> _ara(String sorgu) async {
     if (sorgu.trim().length < 2) {
-      setState(() => _sonuclar = []);
+      setState(() {
+        _sonuclar = [];
+        _kullanicilar = [];
+      });
       return;
     }
     setState(() => _yukleniyor = true);
     try {
-      final d = await Api.get(
-        '/tmdb/search/multi?query=${Uri.encodeComponent(sorgu.trim())}',
-      );
+      final q = Uri.encodeComponent(sorgu.trim());
+      // İçerik/kişi (TMDB) ve uygulama kullanıcıları birlikte aranır.
+      final yanitlar = await Future.wait([
+        Api.get('/tmdb/search/multi?query=$q'),
+        Api.get('/kullanici-ara?q=$q').catchError((_) => <String, dynamic>{}),
+      ]);
       if (!mounted) return;
       setState(() {
-        _sonuclar = (d['results'] as List<dynamic>)
+        _sonuclar = (yanitlar[0]['results'] as List<dynamic>)
             .where(
               (r) => r['media_type'] != 'person'
                   ? r['poster_path'] != null
                   : r['profile_path'] != null,
             )
             .toList();
+        _kullanicilar = yanitlar[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
       if (_sonuclar.isNotEmpty) _gecmiseEkle(sorgu);
     } catch (_) {
@@ -124,7 +132,7 @@ class _AramaEkraniState extends State<AramaEkrani>
             ),
           ),
           Expanded(
-            child: _sonuclar.isEmpty
+            child: _sonuclar.isEmpty && _kullanicilar.isEmpty
                 ? (_gecmis.isEmpty
                       ? Center(
                           child: Column(
@@ -201,26 +209,111 @@ class _AramaEkraniState extends State<AramaEkrani>
                               ),
                           ],
                         ))
-                : GridView.builder(
-                    padding: const EdgeInsets.all(16),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 14,
-                          crossAxisSpacing: 10,
-                          childAspectRatio: 0.53,
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Eşleşen uygulama kullanıcıları: yatay şerit
+                      if (_kullanicilar.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.people_outline,
+                                size: 18,
+                                color: DiziRenkler.sari,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Kullanıcılar'.c,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                    itemCount: _sonuclar.length,
-                    itemBuilder: (context, i) {
-                      final r = _sonuclar[i] as Map<String, dynamic>;
-                      if (r['media_type'] == 'person') {
-                        return _KisiKarti(kisi: r);
-                      }
-                      return PosterKarti(icerik: r);
-                    },
+                        SizedBox(
+                          height: 92,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            itemCount: _kullanicilar.length,
+                            itemBuilder: (context, i) {
+                              final k =
+                                  _kullanicilar[i] as Map<String, dynamic>;
+                              return _KullaniciKutusu(kullanici: k);
+                            },
+                          ),
+                        ),
+                      ],
+                      Expanded(
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                mainAxisSpacing: 14,
+                                crossAxisSpacing: 10,
+                                childAspectRatio: 0.53,
+                              ),
+                          itemCount: _sonuclar.length,
+                          itemBuilder: (context, i) {
+                            final r = _sonuclar[i] as Map<String, dynamic>;
+                            if (r['media_type'] == 'person') {
+                              return _KisiKarti(kisi: r);
+                            }
+                            return PosterKarti(icerik: r);
+                          },
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Arama sonucundaki uygulama kullanıcısı: avatar + @ad, dokununca profil.
+class _KullaniciKutusu extends StatelessWidget {
+  final Map<String, dynamic> kullanici;
+  const _KullaniciKutusu({required this.kullanici});
+
+  @override
+  Widget build(BuildContext context) {
+    final av = dosyaUrl(kullanici['avatar'] as String?);
+    final ad = kullanici['kullanici_adi'] as String;
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () => kullaniciyaGit(context, ad),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 26,
+              backgroundColor: DiziRenkler.kart,
+              backgroundImage: av != null ? NetworkImage(av) : null,
+              child: av == null
+                  ? Icon(Icons.person, color: DiziRenkler.metin38)
+                  : null,
+            ),
+            const SizedBox(height: 5),
+            SizedBox(
+              width: 72,
+              child: Text(
+                '@$ad',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

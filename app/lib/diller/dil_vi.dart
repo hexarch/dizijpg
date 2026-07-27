@@ -341,4 +341,18 @@ const Map<String, String> cevirilerVi = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Nếu chính sách này thay đổi, phiên bản mới sẽ được đăng trên trang này và ngày cập nhật sẽ được làm mới.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Khi đăng ký, bạn chấp nhận {}.',
+  'Kullanıcılar': 'Người dùng',
+  'Fotoğrafı değiştir': 'Đổi ảnh',
+  'Yeniden konumlandır': 'Căn chỉnh lại',
+  'Bir şeyler ters gitti': 'Đã xảy ra lỗi',
+  'Sosyal Bağlantılar': 'Liên kết mạng xã hội',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Hồ sơ của bạn hiển thị tối đa 3 liên kết.',
+  'Platform seç': 'Chọn nền tảng',
+  'Kullanıcı adın': 'Tên người dùng của bạn',
+  'Ekle': 'Thêm',
+  'Kaldır': 'Gỡ',
+  'Kopyalandı: {}': 'Đã sao chép: {}',
+  'Geçersiz kullanıcı adı': 'Tên người dùng không hợp lệ',
+  'Bağlantı ekle': 'Thêm liên kết',
 };

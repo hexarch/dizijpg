@@ -342,4 +342,18 @@ const Map<String, String> cevirilerSv = {
       'Om policyn ändras publiceras den nya versionen på den här sidan och datumet uppdateras.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Genom att registrera dig godkänner du {}.',
+  'Kullanıcılar': 'Användare',
+  'Fotoğrafı değiştir': 'Byt foto',
+  'Yeniden konumlandır': 'Justera om',
+  'Bir şeyler ters gitti': 'Något gick fel',
+  'Sosyal Bağlantılar': 'Sociala länkar',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Upp till 3 länkar visas på din profil.',
+  'Platform seç': 'Välj plattform',
+  'Kullanıcı adın': 'Ditt användarnamn',
+  'Ekle': 'Lägg till',
+  'Kaldır': 'Ta bort',
+  'Kopyalandı: {}': 'Kopierat: {}',
+  'Geçersiz kullanıcı adı': 'Ogiltigt användarnamn',
+  'Bağlantı ekle': 'Lägg till länk',
 };

@@ -341,4 +341,18 @@ const Map<String, String> cevirilerNb = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Hvis denne erklæringen endres, publiseres den nye versjonen på denne siden, og oppdateringsdatoen fornyes.',
   'Kayıt olarak {} kabul etmiş olursun.': 'Ved å registrere deg godtar du {}.',
+  'Kullanıcılar': 'Brukere',
+  'Fotoğrafı değiştir': 'Bytt bilde',
+  'Yeniden konumlandır': 'Juster på nytt',
+  'Bir şeyler ters gitti': 'Noe gikk galt',
+  'Sosyal Bağlantılar': 'Sosiale lenker',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Opptil 3 lenker vises på profilen din.',
+  'Platform seç': 'Velg plattform',
+  'Kullanıcı adın': 'Brukernavnet ditt',
+  'Ekle': 'Legg til',
+  'Kaldır': 'Fjern',
+  'Kopyalandı: {}': 'Kopiert: {}',
+  'Geçersiz kullanıcı adı': 'Ugyldig brukernavn',
+  'Bağlantı ekle': 'Legg til lenke',
 };

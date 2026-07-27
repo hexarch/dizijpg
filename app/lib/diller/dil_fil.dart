@@ -343,4 +343,18 @@ const Map<String, String> cevirilerFil = {
       'Kapag nagbago ang patakarang ito, ilalathala ang bagong bersyon sa pahinang ito at ia-update ang petsa.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Sa pagrerehistro, tinatanggap mo ang {}.',
+  'Kullanıcılar': 'Mga user',
+  'Fotoğrafı değiştir': 'Palitan ang larawan',
+  'Yeniden konumlandır': 'Ayusin muli',
+  'Bir şeyler ters gitti': 'May nangyaring mali',
+  'Sosyal Bağlantılar': 'Mga Social Link',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Hanggang 3 link ang ipinapakita sa profile mo.',
+  'Platform seç': 'Pumili ng platform',
+  'Kullanıcı adın': 'Ang username mo',
+  'Ekle': 'Idagdag',
+  'Kaldır': 'Alisin',
+  'Kopyalandı: {}': 'Nakopya: {}',
+  'Geçersiz kullanıcı adı': 'Hindi wastong username',
+  'Bağlantı ekle': 'Magdagdag ng link',
 };

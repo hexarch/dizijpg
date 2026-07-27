@@ -222,8 +222,13 @@ class Api {
   static Future<Map<String, dynamic>> profilGuncelle({
     required String bio,
     required String ulke,
+    List<Map<String, dynamic>>? sosyal,
   }) async =>
-      await post('/profilim', {'bio': bio, 'ulke': ulke})
+      await post('/profilim', {
+            'bio': bio,
+            'ulke': ulke,
+            if (sosyal != null) 'sosyal': sosyal,
+          })
           as Map<String, dynamic>;
 
   /// Profil resmi yükler (avatar). Sunucu türü baytlardan doğrular.

@@ -2,6 +2,6 @@ FROM node:22-alpine
 WORKDIR /app
 COPY package.json ./
 RUN npm install --omit=dev
-COPY server.js veri_aktar.js ./
+COPY server.js veri_aktar.js admin.html ./
 EXPOSE 8500
 CMD ["node", "server.js"]

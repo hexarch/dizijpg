@@ -341,4 +341,18 @@ const Map<String, String> cevirilerAz = {
       'Bu siyasət dəyişərsə, yeni versiya bu səhifədə dərc olunacaq və yenilənmə tarixi təzələnəcək.',
   'Kayıt olarak {} kabul etmiş olursun.':
       'Qeydiyyatdan keçməklə {} qəbul etmiş olursan.',
+  'Kullanıcılar': 'İstifadəçilər',
+  'Fotoğrafı değiştir': 'Fotonu dəyiş',
+  'Yeniden konumlandır': 'Yenidən yerləşdir',
+  'Bir şeyler ters gitti': 'Nəsə səhv getdi',
+  'Sosyal Bağlantılar': 'Sosial Bağlantılar',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'Profilində ən çox 3 bağlantı göstərilir.',
+  'Platform seç': 'Platforma seç',
+  'Kullanıcı adın': 'İstifadəçi adın',
+  'Ekle': 'Əlavə et',
+  'Kaldır': 'Sil',
+  'Kopyalandı: {}': 'Kopyalandı: {}',
+  'Geçersiz kullanıcı adı': 'Yanlış istifadəçi adı',
+  'Bağlantı ekle': 'Bağlantı əlavə et',
 };

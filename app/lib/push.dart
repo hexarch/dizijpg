@@ -1,17 +1,16 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
+import 'dart:ui' show DartPluginRegistrant;
 
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
 
 import 'api.dart';
 import 'ceviri.dart';
-
-/// Arka planda/kapalıyken gelen mesaj (top-level, ayrı izolatta çalışır).
-/// Bildirim payload'ı olduğu için Android otomatik gösterir; ek iş gerekmez.
-@pragma('vm:entry-point')
-Future<void> pushArkaplan(RemoteMessage mesaj) async {}
+import 'yonlendirme.dart';
 
 final FlutterLocalNotificationsPlugin _yerel =
     FlutterLocalNotificationsPlugin();
@@ -22,6 +21,84 @@ const AndroidNotificationChannel _kanal = AndroidNotificationChannel(
   importance: Importance.high,
 );
 bool _kuruldu = false;
+
+/// Mesaj bildirimi (veri-mesajı): gönderenin avatarı + mesaj içeriğiyle
+/// yerel bildirim basar. Ön planda ve arka plan izolatında ortak kullanılır.
+Future<void> mesajBildirimiGoster(Map<String, dynamic> veri) async {
+  final baslik = veri['baslik'] as String? ?? 'dizi.jpg';
+  final metin = veri['metin'] as String? ?? '';
+  if (metin.isEmpty) return;
+
+  // Gönderenin avatarı büyük ikon olur (indirilemezse ikonsuz devam)
+  AndroidBitmap<Object>? buyukIkon;
+  final avatarYol = veri['avatar'] as String? ?? '';
+  if (avatarYol.isNotEmpty && !avatarYol.endsWith('.gif')) {
+    try {
+      final y = await http
+          .get(Uri.parse(dosyaUrl(avatarYol)!))
+          .timeout(const Duration(seconds: 5));
+      if (y.statusCode == 200) buyukIkon = ByteArrayAndroidBitmap(y.bodyBytes);
+    } catch (_) {}
+  }
+
+  await _yerel.show(
+    // Aynı gönderenin bildirimi üst üste binsin (kişi başına tek satır)
+    (veri['ad'] as String? ?? '').hashCode,
+    baslik,
+    metin,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        _kanal.id,
+        _kanal.name,
+        channelDescription: _kanal.description,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+        largeIcon: buyukIkon,
+        styleInformation: BigTextStyleInformation(metin),
+      ),
+    ),
+    payload: jsonEncode({'tur': veri['tur'], 'ad': veri['ad']}),
+  );
+}
+
+/// Arka planda/kapalıyken gelen mesaj (top-level, ayrı izolatta çalışır).
+/// Bildirim payload'lı türleri Android kendisi gösterir; veri-mesajı olan
+/// 'mesaj' türünü burada avatarlı yerel bildirime çeviririz.
+@pragma('vm:entry-point')
+Future<void> pushArkaplan(RemoteMessage mesaj) async {
+  if (mesaj.data['tur'] != 'mesaj') return;
+  try {
+    DartPluginRegistrant.ensureInitialized();
+    await _yerel.initialize(
+      const InitializationSettings(
+        android: AndroidInitializationSettings('@mipmap/ic_launcher'),
+      ),
+    );
+    await mesajBildirimiGoster(mesaj.data);
+  } catch (_) {}
+}
+
+/// Bildirim verisinden hedefe gider (dokunma / açılış).
+void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
+  final tur = veri['tur'] as String? ?? '';
+  final ad = veri['ad'] as String? ?? '';
+  switch (tur) {
+    case 'mesaj':
+      if (ad.isNotEmpty) rotayaGit('/sohbet/$ad');
+    case 'takip':
+      if (ad.isNotEmpty) rotayaGit('/kullanici/$ad');
+    case 'begeni' || 'yanit' || 'etiket':
+      rotayaGit('/bildirimler');
+  }
+}
+
+void _payloadIleGit(String? payload) {
+  if (payload == null || payload.isEmpty) return;
+  try {
+    _bildirimVerisiyleGit(jsonDecode(payload) as Map<String, dynamic>);
+  } catch (_) {}
+}
 
 /// Firebase çekirdeğini başlatır + arka plan mesaj işleyicisini kaydeder.
 /// main() içinde runApp'ten önce çağrılır. Web'de hiçbir şey yapmaz.
@@ -48,6 +125,9 @@ Future<void> pushBaslat() async {
         const InitializationSettings(
           android: AndroidInitializationSettings('@mipmap/ic_launcher'),
         ),
+        // Yerel bildirime dokununca ilgili sayfaya git
+        onDidReceiveNotificationResponse: (yanit) =>
+            _payloadIleGit(yanit.payload),
       );
       await _yerel
           .resolvePlatformSpecificImplementation<
@@ -55,8 +135,17 @@ Future<void> pushBaslat() async {
           >()
           ?.createNotificationChannel(_kanal);
 
-      // Uygulama açıkken gelen bildirimi yerel bildirim olarak göster
+      // Uygulama açıkken gelen bildirim
       FirebaseMessaging.onMessage.listen((m) {
+        if (m.data['tur'] == 'mesaj') {
+          // Zaten o sohbetteyse bildirim basma (5 sn'lik poll gösterir)
+          final ad = m.data['ad'] as String? ?? '';
+          final yol =
+              sonYonlendirici?.routerDelegate.currentConfiguration.uri.path;
+          if (yol == '/sohbet/$ad') return;
+          mesajBildirimiGoster(m.data);
+          return;
+        }
         final n = m.notification;
         if (n == null) return;
         _yerel.show(
@@ -73,8 +162,26 @@ Future<void> pushBaslat() async {
               icon: '@mipmap/ic_launcher',
             ),
           ),
+          payload: jsonEncode({'tur': m.data['tur'], 'ad': m.data['ad']}),
         );
       });
+
+      // Arka plandayken sistem bildirimine dokunuldu (FCM notification türleri)
+      FirebaseMessaging.onMessageOpenedApp.listen(
+        (m) => _bildirimVerisiyleGit(m.data),
+      );
+      // Uygulama bildirimle açıldıysa hedefe git (yönlendirici kurulduktan sonra)
+      final ilkMesaj = await mesajlasma.getInitialMessage();
+      final ilkYerel = await _yerel.getNotificationAppLaunchDetails();
+      if (ilkMesaj != null || ilkYerel?.didNotificationLaunchApp == true) {
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (ilkMesaj != null) {
+            _bildirimVerisiyleGit(ilkMesaj.data);
+          } else {
+            _payloadIleGit(ilkYerel?.notificationResponse?.payload);
+          }
+        });
+      }
 
       mesajlasma.onTokenRefresh.listen(_tokenGonder);
       _kuruldu = true;

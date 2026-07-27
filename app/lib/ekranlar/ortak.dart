@@ -445,6 +445,30 @@ class BolumBasligi extends StatelessWidget {
   }
 }
 
+/// Kullanıcı profiline güvenli gidiş. /kullanici/:ad kabuk İÇİNDE yaşar;
+/// kabuğun üstündeki sayfalardan (detay/bölüm/kişi/özet...) push'lanırsa
+/// kabuk ikinci kez kurulur, branch GlobalKey'leri çakışır → beyaz ekran.
+/// O yüzden kabuk dışındaysak go (kabuğa dön), içindeysek push (yığın korunur).
+void kullaniciyaGit(BuildContext context, String ad) {
+  final yol = GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+  const kabukDisi = [
+    '/icerik/',
+    '/kisi/',
+    '/dizi/',
+    '/ozet/',
+    '/izlediklerim',
+    '/ayarlar',
+    '/gizlilik',
+  ];
+  final disarida = kabukDisi.any(yol.startsWith);
+  final hedef = '/kullanici/$ad';
+  if (disarida) {
+    context.go(hedef);
+  } else {
+    context.push(hedef);
+  }
+}
+
 /// Okunmamış sayacı rozetli appbar ikonu (zil, zarf, DM).
 class RozetliIkon extends StatelessWidget {
   final IconData ikon;

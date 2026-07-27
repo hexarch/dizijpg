@@ -340,4 +340,18 @@ const Map<String, String> cevirilerGu = {
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'આ નીતિ બદલાય તો નવી આવૃત્તિ આ જ પાના પર પ્રકાશિત થશે અને તારીખ અપડેટ થશે.',
   'Kayıt olarak {} kabul etmiş olursun.': 'નોંધણી કરીને તું {} સ્વીકારે છે.',
+  'Kullanıcılar': 'વપરાશકર્તાઓ',
+  'Fotoğrafı değiştir': 'ફોટો બદલો',
+  'Yeniden konumlandır': 'ફરી ગોઠવો',
+  'Bir şeyler ters gitti': 'કંઈક ખોટું થયું',
+  'Sosyal Bağlantılar': 'સોશિયલ લિંક',
+  'Profilinde en fazla 3 bağlantı gösterilir.':
+      'તારી પ્રોફાઇલ પર વધુમાં વધુ 3 લિંક દેખાય છે.',
+  'Platform seç': 'પ્લેટફોર્મ પસંદ કર',
+  'Kullanıcı adın': 'તારું યુઝરનેમ',
+  'Ekle': 'ઉમેરો',
+  'Kaldır': 'કાઢી નાખો',
+  'Kopyalandı: {}': 'કૉપિ થયું: {}',
+  'Geçersiz kullanıcı adı': 'ખોટું યુઝરનેમ',
+  'Bağlantı ekle': 'લિંક ઉમેરો',
 };
