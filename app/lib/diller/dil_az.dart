@@ -356,4 +356,6 @@ const Map<String, String> cevirilerAz = {
   'Geçersiz kullanıcı adı': 'Yanlış istifadəçi adı',
   'Bağlantı ekle': 'Bağlantı əlavə et',
   'Spoiler olabilir — dokun ve gör': 'Spoyler ola bilər — görmək üçün toxun',
+  'Beğeni': 'Bəyənmə',
+  'Görüntülenme': 'Baxış',
 };

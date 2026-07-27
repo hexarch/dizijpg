@@ -349,4 +349,6 @@ const Map<String, String> cevirilerJa = {
   'Geçersiz kullanıcı adı': '無効なユーザー名です',
   'Bağlantı ekle': 'リンクを追加',
   'Spoiler olabilir — dokun ve gör': 'ネタバレを含む可能性があります — タップして表示',
+  'Beğeni': 'いいね',
+  'Görüntülenme': '表示回数',
 };

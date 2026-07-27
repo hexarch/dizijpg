@@ -352,4 +352,6 @@ const Map<String, String> cevirilerTh = {
   'Geçersiz kullanıcı adı': 'ชื่อผู้ใช้ไม่ถูกต้อง',
   'Bağlantı ekle': 'เพิ่มลิงก์',
   'Spoiler olabilir — dokun ve gör': 'อาจมีสปอยล์ — แตะเพื่อดู',
+  'Beğeni': 'ถูกใจ',
+  'Görüntülenme': 'ยอดดู',
 };

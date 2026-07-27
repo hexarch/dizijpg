@@ -356,4 +356,6 @@ const Map<String, String> cevirilerVi = {
   'Geçersiz kullanıcı adı': 'Tên người dùng không hợp lệ',
   'Bağlantı ekle': 'Thêm liên kết',
   'Spoiler olabilir — dokun ve gör': 'Có thể chứa spoiler — chạm để xem',
+  'Beğeni': 'Lượt thích',
+  'Görüntülenme': 'Lượt xem',
 };

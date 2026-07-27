@@ -6,6 +6,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'yorumlar.dart' show VideoOynatici;
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
 /// Spoiler emniyeti sunucuda: izlemediğin bölümün/filmin yorumu gelmez.
@@ -438,23 +439,17 @@ class _AkisKartiState extends State<_AkisKarti> {
                   itemBuilder: (context, i) {
                     final m = medya[i] as String;
                     final video = m.endsWith('.mp4') || m.endsWith('.webm');
+                    // Video: yorumlardakiyle aynı dokun-oynat kutusu
+                    // (önceden yalnız ikon vardı, oynatılamıyordu)
+                    if (video) return VideoOynatici(url: dosyaUrl(m)!);
                     return ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: SizedBox(
                         width: 130,
-                        child: video
-                            ? Container(
-                                color: DiziRenkler.koyuGri,
-                                child: Icon(
-                                  Icons.play_circle_outline,
-                                  color: DiziRenkler.metin54,
-                                  size: 34,
-                                ),
-                              )
-                            : CachedNetworkImage(
-                                imageUrl: dosyaUrl(m)!,
-                                fit: BoxFit.cover,
-                              ),
+                        child: CachedNetworkImage(
+                          imageUrl: dosyaUrl(m)!,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     );
                   },

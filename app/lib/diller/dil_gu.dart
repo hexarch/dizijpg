@@ -355,4 +355,6 @@ const Map<String, String> cevirilerGu = {
   'Geçersiz kullanıcı adı': 'ખોટું યુઝરનેમ',
   'Bağlantı ekle': 'લિંક ઉમેરો',
   'Spoiler olabilir — dokun ve gör': 'સ્પોઇલર હોઈ શકે — જોવા માટે ટૅપ કર',
+  'Beğeni': 'લાઇક',
+  'Görüntülenme': 'વ્યૂ',
 };

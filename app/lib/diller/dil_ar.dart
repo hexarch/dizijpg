@@ -354,4 +354,6 @@ const Map<String, String> cevirilerAr = {
   'Geçersiz kullanıcı adı': 'اسم مستخدم غير صالح',
   'Bağlantı ekle': 'إضافة رابط',
   'Spoiler olabilir — dokun ve gör': 'قد يحتوي على حرق للأحداث — انقر للعرض',
+  'Beğeni': 'الإعجابات',
+  'Görüntülenme': 'المشاهدات',
 };

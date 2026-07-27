@@ -363,4 +363,6 @@ const Map<String, String> cevirilerMy = {
   'Bağlantı ekle': 'လင့်ခ်ထည့်ရန်',
   'Spoiler olabilir — dokun ve gör':
       'ဇာတ်လမ်းပေါက်ကြားနိုင်သည် — ကြည့်ရန် တို့ပါ',
+  'Beğeni': 'ကြိုက်နှစ်သက်မှု',
+  'Görüntülenme': 'ကြည့်ရှုမှု',
 };

@@ -355,4 +355,6 @@ const Map<String, String> cevirilerSw = {
   'Geçersiz kullanıcı adı': 'Jina la mtumiaji si sahihi',
   'Bağlantı ekle': 'Ongeza kiungo',
   'Spoiler olabilir — dokun ve gör': 'Inaweza kuwa na spoiler — gusa kuona',
+  'Beğeni': 'Zilizopendwa',
+  'Görüntülenme': 'Mionekano',
 };

@@ -356,4 +356,6 @@ const Map<String, String> cevirilerMr = {
   'Geçersiz kullanıcı adı': 'चुकीचे यूजरनेम',
   'Bağlantı ekle': 'लिंक जोड',
   'Spoiler olabilir — dokun ve gör': 'स्पॉयलर असू शकतो — पाहण्यासाठी टॅप कर',
+  'Beğeni': 'लाइक',
+  'Görüntülenme': 'व्ह्यू',
 };

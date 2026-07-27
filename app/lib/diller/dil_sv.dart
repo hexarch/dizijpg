@@ -358,4 +358,6 @@ const Map<String, String> cevirilerSv = {
   'Bağlantı ekle': 'Lägg till länk',
   'Spoiler olabilir — dokun ve gör':
       'Kan innehålla spoilrar — tryck för att visa',
+  'Beğeni': 'Gillanden',
+  'Görüntülenme': 'Visningar',
 };

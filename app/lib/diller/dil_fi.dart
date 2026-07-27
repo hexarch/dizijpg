@@ -357,4 +357,6 @@ const Map<String, String> cevirilerFi = {
   'Bağlantı ekle': 'Lisää linkki',
   'Spoiler olabilir — dokun ve gör':
       'Voi sisältää juonipaljastuksia — napauta nähdäksesi',
+  'Beğeni': 'Tykkäykset',
+  'Görüntülenme': 'Katselukerrat',
 };

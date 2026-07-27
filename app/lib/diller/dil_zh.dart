@@ -348,4 +348,6 @@ const Map<String, String> cevirilerZh = {
   'Geçersiz kullanıcı adı': '用户名无效',
   'Bağlantı ekle': '添加链接',
   'Spoiler olabilir — dokun ve gör': '可能包含剧透 — 点按查看',
+  'Beğeni': '点赞',
+  'Görüntülenme': '浏览量',
 };

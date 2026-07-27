@@ -356,4 +356,6 @@ const Map<String, String> cevirilerCs = {
   'Bağlantı ekle': 'Přidat odkaz',
   'Spoiler olabilir — dokun ve gör':
       'Může obsahovat spoilery — klepni pro zobrazení',
+  'Beğeni': 'Lajky',
+  'Görüntülenme': 'Zobrazení',
 };

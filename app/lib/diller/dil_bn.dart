@@ -357,4 +357,6 @@ const Map<String, String> cevirilerBn = {
   'Geçersiz kullanıcı adı': 'ভুল ইউজারনেম',
   'Bağlantı ekle': 'লিংক যোগ করো',
   'Spoiler olabilir — dokun ve gör': 'স্পয়লার থাকতে পারে — দেখতে ট্যাপ করো',
+  'Beğeni': 'লাইক',
+  'Görüntülenme': 'ভিউ',
 };

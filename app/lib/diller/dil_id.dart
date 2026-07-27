@@ -356,4 +356,6 @@ const Map<String, String> cevirilerId = {
   'Bağlantı ekle': 'Tambah tautan',
   'Spoiler olabilir — dokun ve gör':
       'Mungkin mengandung spoiler — ketuk untuk melihat',
+  'Beğeni': 'Suka',
+  'Görüntülenme': 'Dilihat',
 };

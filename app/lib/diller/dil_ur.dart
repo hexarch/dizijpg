@@ -356,4 +356,6 @@ const Map<String, String> cevirilerUr = {
   'Bağlantı ekle': 'لنک شامل کرو',
   'Spoiler olabilir — dokun ve gör':
       'اسپائلر ہو سکتا ہے — دیکھنے کے لیے چھوئیں',
+  'Beğeni': 'پسندیدگیاں',
+  'Görüntülenme': 'ملاحظات',
 };

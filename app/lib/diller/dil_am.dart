@@ -349,4 +349,6 @@ const Map<String, String> cevirilerAm = {
   'Geçersiz kullanıcı adı': 'ልክ ያልሆነ የተጠቃሚ ስም',
   'Bağlantı ekle': 'አገናኝ ጨምር',
   'Spoiler olabilir — dokun ve gör': 'ስፖይለር ሊኖረው ይችላል — ለማየት ንካ',
+  'Beğeni': 'መውደዶች',
+  'Görüntülenme': 'እይታዎች',
 };

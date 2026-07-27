@@ -356,4 +356,6 @@ const Map<String, String> cevirilerTe = {
   'Bağlantı ekle': 'లింక్ జోడించు',
   'Spoiler olabilir — dokun ve gör':
       'స్పాయిలర్ ఉండవచ్చు — చూడటానికి ట్యాప్ చేయి',
+  'Beğeni': 'లైక్‌లు',
+  'Görüntülenme': 'వీక్షణలు',
 };

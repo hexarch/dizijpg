@@ -1199,7 +1199,7 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 }));
 
 app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
-  const [bolum, film, dizi, yorum, sosyal] = await Promise.all([
+  const [bolum, film, dizi, yorum, sosyal, etkilesim] = await Promise.all([
     havuz.query(
       `SELECT count(*)::int AS adet FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'`,
       [req.kullanici.id]),
@@ -1217,6 +1217,16 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
          (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
          (SELECT count(*)::int FROM takipler WHERE takip_eden_id=$1) AS takip`,
       [req.kullanici.id]),
+    // Yorum görüntülenmeleri (foto/video ekli yorumlar dahil — medya
+    // görüntülenmesi yorum görüntülenmesiyle aynı sayaçtır) + alınan beğeni.
+    havuz.query(
+      `SELECT
+         (SELECT COALESCE(sum(goruntulenme),0)::int FROM yorumlar
+          WHERE kullanici_id=$1) AS goruntulenme,
+         (SELECT count(*)::int FROM yorum_begeniler b
+          JOIN yorumlar y ON y.id=b.yorum_id
+          WHERE y.kullanici_id=$1) AS begeni`,
+      [req.kullanici.id]),
   ]);
   res.json({
     izlenen_bolum: bolum.rows[0].adet,
@@ -1225,6 +1235,8 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
     yorum_sayisi: yorum.rows[0].adet,
     takipci_sayisi: sosyal.rows[0].takipci,
     takip_sayisi: sosyal.rows[0].takip,
+    toplam_goruntulenme: etkilesim.rows[0].goruntulenme,
+    toplam_begeni: etkilesim.rows[0].begeni,
     // Yaklaşık süreler: bölüm ~42 dk, film ~110 dk
     tahmini_dakika: bolum.rows[0].adet * 42 + film.rows[0].adet * 110,
   });
@@ -2308,7 +2320,12 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
          (SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS dizi,
          (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
          (SELECT count(*)::int FROM takipler WHERE takip_eden_id=$1) AS takip_edilen,
-         (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum`,
+         (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum,
+         (SELECT COALESCE(sum(goruntulenme),0)::int FROM yorumlar
+          WHERE kullanici_id=$1) AS toplam_goruntulenme,
+         (SELECT count(*)::int FROM yorum_begeniler b
+          JOIN yorumlar y2 ON y2.id=b.yorum_id
+          WHERE y2.kullanici_id=$1) AS toplam_begeni`,
       [id]),
     havuz.query(
       `SELECT l.id, l.ad, l.aciklama,
@@ -2505,12 +2522,13 @@ app.get('/admin', adminKisit, (_req, res) => res.type('html').send(ADMIN_HTML));
 
 // Genel özet: kullanıcı/hata/şikayet sayıları + sistem + istek/dk + ülkeler.
 app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
-  const [ku, h24, hT, sy, sT] = await Promise.all([
+  const [ku, h24, hT, sy, sT, cv] = await Promise.all([
     havuz.query('SELECT count(*)::int n, count(*) FILTER (WHERE misafir)::int misafir FROM kullanicilar'),
     havuz.query("SELECT count(*)::int n FROM hatalar WHERE tarih > now() - interval '24 hours'"),
     havuz.query('SELECT count(*)::int n FROM hatalar'),
     havuz.query("SELECT count(*)::int n FROM sikayetler WHERE durum='yeni'"),
     havuz.query('SELECT count(*)::int n FROM sikayetler'),
+    havuz.query("SELECT count(*)::int n FROM kullanicilar WHERE son_gorulme > now() - interval '3 minutes'"),
   ]);
   const simdiDk = Math.floor(Date.now() / 60000);
   const seri = [];
@@ -2527,6 +2545,7 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
   res.json({
     kullanici: ku.rows[0].n,
     misafir: ku.rows[0].misafir,
+    cevrimici: cv.rows[0].n,
     hata24: h24.rows[0].n,
     hataToplam: hT.rows[0].n,
     sikayetYeni: sy.rows[0].n,
@@ -2543,6 +2562,109 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
       apiUptime: process.uptime(),
       disk,
     },
+  });
+}));
+
+// Son hareketler: yorumlar, izlemeler, durum eklemeleri, yeni kayıtlar +
+// çevrimiçi kullanıcılar (son_gorulme ≤ 3 dk; yazım aralığı 20 sn).
+app.get('/admin/hareketler', adminKisit, sarici(async (_req, res) => {
+  const [yorumlar, izlemeler, durumlar, yeniler, cevrimici] = await Promise.all([
+    havuz.query(
+      `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, LEFT(y.metin,140) AS metin,
+              cardinality(y.medya) AS medya_sayi, y.goruntulenme, y.tarih,
+              k.kullanici_adi,
+              (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
+       FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+       ORDER BY y.id DESC LIMIT 30`),
+    havuz.query(
+      `SELECT i.tur, i.tmdb_id, i.sezon, i.bolum, i.tarih, k.kullanici_adi
+       FROM izlemeler i JOIN kullanicilar k ON k.id=i.kullanici_id
+       ORDER BY i.tarih DESC LIMIT 30`),
+    havuz.query(
+      `SELECT d.tur, d.tmdb_id, d.durum, d.guncelleme AS tarih, k.kullanici_adi
+       FROM durumlar d JOIN kullanicilar k ON k.id=d.kullanici_id
+       ORDER BY d.guncelleme DESC LIMIT 30`),
+    havuz.query(
+      `SELECT kullanici_adi, misafir, olusturma FROM kullanicilar
+       ORDER BY id DESC LIMIT 30`),
+    havuz.query(
+      `SELECT kullanici_adi, misafir, son_gorulme FROM kullanicilar
+       WHERE son_gorulme > now() - interval '3 minutes'
+       ORDER BY son_gorulme DESC LIMIT 100`),
+  ]);
+  // İçerik adları (önbellekli TMDB; panelde ne izlendiği okunur olsun)
+  const anahtarlar = [...new Set([
+    ...yorumlar.rows, ...izlemeler.rows, ...durumlar.rows,
+  ].map((r) => `${r.tur}:${r.tmdb_id}`))];
+  const icerikler = {};
+  await Promise.all(anahtarlar.map(async (a) => {
+    const [tur, id] = a.split(':');
+    try {
+      const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+      icerikler[a] = v.name || v.title || '?';
+    } catch { icerikler[a] = '?'; }
+  }));
+  res.json({
+    yorumlar: yorumlar.rows,
+    izlemeler: izlemeler.rows,
+    durumlar: durumlar.rows,
+    yeni_kullanicilar: yeniler.rows,
+    cevrimici: { sayi: cevrimici.rows.length, liste: cevrimici.rows },
+    icerikler,
+  });
+}));
+
+// Kullanıcı detayı: moderasyon için tam profil + etkileşim + son IP'ler.
+app.get('/admin/kullanici/:ad', adminKisit, sarici(async (req, res) => {
+  const k = await havuz.query(
+    `SELECT id, kullanici_adi, email, misafir, yasakli, bio, ulke, sosyal,
+            olusturma, son_gorulme FROM kullanicilar WHERE kullanici_adi=$1`,
+    [req.params.ad]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const id = k.rows[0].id;
+  const [ist, yorumlar, sikayet] = await Promise.all([
+    havuz.query(
+      `SELECT
+         (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1) AS izleme,
+         (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum,
+         (SELECT count(*)::int FROM mesajlar WHERE gonderen_id=$1) AS mesaj,
+         (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
+         (SELECT COALESCE(sum(goruntulenme),0)::int FROM yorumlar
+          WHERE kullanici_id=$1) AS goruntulenme,
+         (SELECT count(*)::int FROM yorum_begeniler b
+          JOIN yorumlar y ON y.id=b.yorum_id WHERE y.kullanici_id=$1) AS begeni,
+         (SELECT count(*)::int FROM cihaz_tokenlari WHERE kullanici_id=$1) AS cihaz`,
+      [id]),
+    havuz.query(
+      `SELECT id, tur, tmdb_id, sezon, bolum, LEFT(metin,200) AS metin,
+              cardinality(medya) AS medya_sayi, goruntulenme, tarih
+       FROM yorumlar WHERE kullanici_id=$1 ORDER BY id DESC LIMIT 20`,
+      [id]),
+    havuz.query(
+      `SELECT
+         (SELECT count(*)::int FROM sikayetler
+          WHERE tur='kullanici' AND hedef_id=$1) AS hakkinda,
+         (SELECT count(*)::int FROM sikayetler s
+          JOIN yorumlar y ON s.tur='yorum' AND y.id=s.hedef_id
+          WHERE y.kullanici_id=$1) AS yorum_sikayet,
+         (SELECT count(*)::int FROM sikayetler WHERE sikayet_eden_id=$1) AS ettigi`,
+      [id]).catch(() => ({ rows: [{ hakkinda: null, yorum_sikayet: null, ettigi: null }] })),
+  ]);
+  // Bellek-içi istek halkasından bu kullanıcının son IP'leri
+  const ipler = [];
+  const gorulenIp = new Set();
+  for (const i of ISTEK.son) {
+    if (i.kullanici !== id || gorulenIp.has(i.ip)) continue;
+    gorulenIp.add(i.ip);
+    ipler.push({ ip: i.ip, ulke: i.ulke, sehir: i.sehir, ts: i.ts });
+    if (ipler.length >= 10) break;
+  }
+  res.json({
+    ...k.rows[0],
+    istatistik: ist.rows[0],
+    sikayet: sikayet.rows[0],
+    son_yorumlar: yorumlar.rows,
+    son_ipler: ipler,
   });
 }));
 

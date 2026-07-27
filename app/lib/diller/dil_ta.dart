@@ -358,4 +358,6 @@ const Map<String, String> cevirilerTa = {
   'Geçersiz kullanıcı adı': 'தவறான பயனர்பெயர்',
   'Bağlantı ekle': 'இணைப்பைச் சேர்',
   'Spoiler olabilir — dokun ve gör': 'ஸ்பாய்லர் இருக்கலாம் — பார்க்கத் தட்டு',
+  'Beğeni': 'லைக்குகள்',
+  'Görüntülenme': 'பார்வைகள்',
 };

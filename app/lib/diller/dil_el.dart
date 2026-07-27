@@ -359,4 +359,6 @@ const Map<String, String> cevirilerEl = {
   'Bağlantı ekle': 'Προσθήκη συνδέσμου',
   'Spoiler olabilir — dokun ve gör':
       'Ίσως περιέχει spoiler — πάτησε για προβολή',
+  'Beğeni': 'Μου αρέσει',
+  'Görüntülenme': 'Προβολές',
 };

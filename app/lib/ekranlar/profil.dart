@@ -37,6 +37,66 @@ String sureBicimle(int dakika) {
   return parcalar.isEmpty ? '{} dk'.cf([dk]) : parcalar.take(3).join(' ');
 }
 
+/// Yorumların toplam beğeni + görüntülenme şeridi. Görüntülenme, foto/video
+/// ekli yorumları da kapsar (medya izlenmesi yorum görüntülenmesiyle aynı
+/// sayaçtır). Kendi profil ve açık profil ortak kullanır.
+class EtkilesimSatiri extends StatelessWidget {
+  final int begeni;
+  final int goruntulenme;
+  const EtkilesimSatiri({
+    super.key,
+    required this.begeni,
+    required this.goruntulenme,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Widget kutu(IconData ikon, String etiket, int deger) => Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: BoxDecoration(
+          color: DiziRenkler.kart,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(ikon, size: 17, color: DiziRenkler.sari),
+            const SizedBox(width: 7),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$deger',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  Text(
+                    etiket,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    return Row(
+      children: [
+        kutu(Icons.favorite_border, 'Beğeni'.c, begeni),
+        const SizedBox(width: 10),
+        kutu(Icons.visibility_outlined, 'Görüntülenme'.c, goruntulenme),
+      ],
+    );
+  }
+}
+
 /// Profil sekmesi seçildiğinde tazeleme tetiği (kabuk artırır).
 final ValueNotifier<int> profilYenileTetik = ValueNotifier(0);
 
@@ -774,6 +834,14 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         ),
                       ],
                     ),
+                  ),
+                  const SizedBox(height: 10),
+                  // Yorumlarının toplam etkileşimi (görüntülenme: foto/video
+                  // ekli yorumlar dahil — aynı sayaç)
+                  EtkilesimSatiri(
+                    begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
+                    goruntulenme:
+                        (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
                   ),
                   const SizedBox(height: 20),
                   // Kitaplık grupları

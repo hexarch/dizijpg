@@ -358,4 +358,6 @@ const Map<String, String> cevirilerRu = {
   'Bağlantı ekle': 'Добавить ссылку',
   'Spoiler olabilir — dokun ve gör':
       'Возможны спойлеры — нажми, чтобы посмотреть',
+  'Beğeni': 'Лайки',
+  'Görüntülenme': 'Просмотры',
 };

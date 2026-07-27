@@ -7,7 +7,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
-import 'profil.dart' show sureBicimle, RozetCipi;
+import 'profil.dart' show sureBicimle, RozetCipi, EtkilesimSatiri;
 import 'sosyal.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
@@ -240,6 +240,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       ),
                     ),
                   ],
+                  const SizedBox(height: 10),
+                  // Yorumlarının toplam beğeni + görüntülenmesi
+                  EtkilesimSatiri(
+                    begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
+                    goruntulenme:
+                        (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
+                  ),
                   const SizedBox(height: 16),
                   // Takip + Mesaj (kendi profilinde gösterme)
                   if (!benMi && girisli)

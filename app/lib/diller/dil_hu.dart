@@ -358,4 +358,6 @@ const Map<String, String> cevirilerHu = {
   'Bağlantı ekle': 'Link hozzáadása',
   'Spoiler olabilir — dokun ve gör':
       'Spoilert tartalmazhat — koppints a megtekintéshez',
+  'Beğeni': 'Kedvelések',
+  'Görüntülenme': 'Megtekintések',
 };
