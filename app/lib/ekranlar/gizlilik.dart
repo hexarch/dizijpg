@@ -191,8 +191,9 @@ class _Madde extends StatelessWidget {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 6, right: 8),
+        // RTL dillerde işaret doğru tarafta kalsın diye yön duyarlı dolgu.
+        const Padding(
+          padding: EdgeInsetsDirectional.only(top: 6, end: 8),
           child: Icon(Icons.circle, size: 6, color: DiziRenkler.sari),
         ),
         Expanded(
