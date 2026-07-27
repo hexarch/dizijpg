@@ -355,4 +355,6 @@ const Map<String, String> cevirilerHi = {
   'Kopyalandı: {}': 'कॉपी हो गया: {}',
   'Geçersiz kullanıcı adı': 'गलत यूज़रनेम',
   'Bağlantı ekle': 'लिंक जोड़ो',
+  'Spoiler olabilir — dokun ve gör':
+      'स्पॉइलर हो सकता है — देखने के लिए टैप करो',
 };

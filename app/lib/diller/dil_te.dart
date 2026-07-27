@@ -354,4 +354,6 @@ const Map<String, String> cevirilerTe = {
   'Kopyalandı: {}': 'కాపీ అయింది: {}',
   'Geçersiz kullanıcı adı': 'చెల్లని యూజర్‌నేమ్',
   'Bağlantı ekle': 'లింక్ జోడించు',
+  'Spoiler olabilir — dokun ve gör':
+      'స్పాయిలర్ ఉండవచ్చు — చూడటానికి ట్యాప్ చేయి',
 };

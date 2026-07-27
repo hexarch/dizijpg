@@ -239,3 +239,11 @@ CREATE TABLE IF NOT EXISTS cihaz_tokenlari (
   guncelleme TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS cihaz_kullanici ON cihaz_tokenlari (kullanici_id);
+
+-- Akışta gösterilenler (popüler fallback "gördüğünü tekrar gösterme" kuralı)
+CREATE TABLE IF NOT EXISTS akis_goruldu (
+  kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  yorum_id INT REFERENCES yorumlar(id) ON DELETE CASCADE,
+  tarih TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (kullanici_id, yorum_id)
+);

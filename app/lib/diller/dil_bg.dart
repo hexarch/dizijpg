@@ -356,4 +356,6 @@ const Map<String, String> cevirilerBg = {
   'Kopyalandı: {}': 'Копирано: {}',
   'Geçersiz kullanıcı adı': 'Невалидно потребителско име',
   'Bağlantı ekle': 'Добави връзка',
+  'Spoiler olabilir — dokun ve gör':
+      'Може да съдържа спойлери — докосни, за да видиш',
 };

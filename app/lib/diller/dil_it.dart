@@ -358,4 +358,5 @@ const Map<String, String> cevirilerIt = {
   'Kopyalandı: {}': 'Copiato: {}',
   'Geçersiz kullanıcı adı': 'Nome utente non valido',
   'Bağlantı ekle': 'Aggiungi link',
+  'Spoiler olabilir — dokun ve gör': 'Può contenere spoiler — tocca per vedere',
 };

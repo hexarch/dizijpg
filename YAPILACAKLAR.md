@@ -411,6 +411,25 @@ Yeni APK+AAB masaüstünde (66MB).
   eklendi). audioplayers.global kayıtları eski etiket yüzünden hangi build'den
   geldiği belirsizdi; yeni doğru etiketlerle tekrar ederse ayrıca bakılacak.
 
+## AKIŞ v2 ✅🚀 (2026-07-28, canlıda, v1.8.1+17)
+Kullanıcı kuralları: akış ASLA boş kalmayacak; öncelik takip ettikleri →
+izledikleri → izlediklerinin oyuncu/yönetmenleri; izlenmemiş bölüm yorumu
+asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
+- Ana akış (kronolojik): izlenen bölümlerin yorumları + HERKESİN film/dizi-geneli
+  yorumları (izlenmemiş içerikte `spoiler:true` → kartta "Spoiler olabilir —
+  dokun ve gör" bulanıklaması) + kişi yorumları (takip edilenlerden veya son
+  izlenen 20 yapımın kadrosundan — önbellekli TMDB credits).
+- İlk sayfa boşsa fallback zinciri: günün en beğenilenleri → ayın (görülenler
+  hariç, `akis_goruldu` tablosu — migrasyon-2026-07-28.sql UYGULANDI) → son
+  çare ayın en beğenilenleri görülmüş olsa da. Yanıtta `kaynak: akis|populer`.
+- Kişi kartları /kisi'ye gider; kişi posteri profile_path'ten gelir.
+- Canlı test: boş kitaplıklı sıfır hesap 12 kart görüyor (0 bölüm yorumu,
+  12/12 bulanık); dolu hesapta izlenenler açık, kalanlar bulanık.
+- Sosyal bağlantı açılışı düzeltildi: web'de `webOnlyWindowName:_blank` ile
+  YENİ SEKME; Android'de önce uygulama derin bağlantısı (instagram://,
+  twitter://, tg:// — manifest <queries> eklendi), sonra tarayıcı, son çare
+  kopyala; baştaki @ soyulur. Çeviri +1 anahtar → **321 × 45**.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).

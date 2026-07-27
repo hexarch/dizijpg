@@ -355,4 +355,6 @@ const Map<String, String> cevirilerFi = {
   'Kopyalandı: {}': 'Kopioitu: {}',
   'Geçersiz kullanıcı adı': 'Virheellinen käyttäjänimi',
   'Bağlantı ekle': 'Lisää linkki',
+  'Spoiler olabilir — dokun ve gör':
+      'Voi sisältää juonipaljastuksia — napauta nähdäksesi',
 };

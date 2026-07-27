@@ -255,6 +255,8 @@ class _AkisKarti extends StatefulWidget {
 
 class _AkisKartiState extends State<_AkisKarti> {
   late bool _begendim = widget.yorum['begendim'] == true;
+  // spoiler=true gelen kart dokunulana dek bulanık başlar
+  late bool _spoilerAcik = widget.yorum['spoiler'] != true;
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
   bool _isleniyor = false;
 
@@ -307,7 +309,9 @@ class _AkisKartiState extends State<_AkisKarti> {
     final bolumlu = y['sezon'] != null;
     final hedef = bolumlu
         ? '/dizi/${y['tmdb_id']}/sezon/${y['sezon']}/bolum/${y['bolum']}'
-        : '/icerik/${y['tur']}/${y['tmdb_id']}';
+        : (y['tur'] == 'person'
+              ? '/kisi/${y['tmdb_id']}'
+              : '/icerik/${y['tur']}/${y['tmdb_id']}');
     final tarih = (y['tarih'] as String? ?? '').split('T').first;
 
     return Card(
@@ -384,11 +388,46 @@ class _AkisKartiState extends State<_AkisKarti> {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
-              (y['metin'] as String?) ?? '',
-              style: const TextStyle(height: 1.45),
-            ),
-            if (medya.isNotEmpty) ...[
+            // İzlemediğin içeriğin yorumu: dokunana kadar bulanık
+            if (!_spoilerAcik)
+              InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => setState(() => _spoilerAcik = true),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.koyuGri,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.visibility_off_outlined,
+                        size: 18,
+                        color: DiziRenkler.metin54,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Spoiler olabilir — dokun ve gör'.c,
+                          style: TextStyle(color: DiziRenkler.metin54),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            if (_spoilerAcik)
+              Text(
+                (y['metin'] as String?) ?? '',
+                style: const TextStyle(height: 1.45),
+              ),
+            if (_spoilerAcik && medya.isNotEmpty) ...[
               const SizedBox(height: 10),
               SizedBox(
                 height: 130,

@@ -357,4 +357,5 @@ const Map<String, String> cevirilerTa = {
   'Kopyalandı: {}': 'நகலெடுக்கப்பட்டது: {}',
   'Geçersiz kullanıcı adı': 'தவறான பயனர்பெயர்',
   'Bağlantı ekle': 'இணைப்பைச் சேர்',
+  'Spoiler olabilir — dokun ve gör': 'ஸ்பாய்லர் இருக்கலாம் — பார்க்கத் தட்டு',
 };

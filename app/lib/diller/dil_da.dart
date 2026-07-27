@@ -353,4 +353,5 @@ const Map<String, String> cevirilerDa = {
   'Kopyalandı: {}': 'Kopieret: {}',
   'Geçersiz kullanıcı adı': 'Ugyldigt brugernavn',
   'Bağlantı ekle': 'Tilføj link',
+  'Spoiler olabilir — dokun ve gör': 'Kan indeholde spoilere — tryk for at se',
 };

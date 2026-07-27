@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_icons/simple_icons.dart';
@@ -8,76 +9,121 @@ import '../tema.dart';
 
 /// Desteklenen sosyal platformlar (backend SOSYAL_PLATFORMLAR ile aynı).
 /// url null ise profil bağlantısı yoktur; dokununca kullanıcı adı kopyalanır.
+/// uygulamaUrl: Android'de yüklü uygulamayı doğrudan açan derin bağlantı
+/// (şemaları AndroidManifest <queries> içinde bildirilmiş olmalı).
 class SosyalPlatform {
   final String kod;
   final String ad;
   final IconData ikon;
   final String? url; // {} → kullanıcı adı
+  final String? uygulamaUrl;
 
-  const SosyalPlatform(this.kod, this.ad, this.ikon, this.url);
+  const SosyalPlatform(
+    this.kod,
+    this.ad,
+    this.ikon,
+    this.url, {
+    this.uygulamaUrl,
+  });
 }
 
 const sosyalPlatformlar = [
   SosyalPlatform(
-    'instagram', 'Instagram', SimpleIcons.instagram,
+    'instagram',
+    'Instagram',
+    SimpleIcons.instagram,
     'https://instagram.com/{}',
+    uygulamaUrl: 'instagram://user?username={}',
   ),
   SosyalPlatform(
-    'facebook', 'Facebook', SimpleIcons.facebook,
+    'facebook',
+    'Facebook',
+    SimpleIcons.facebook,
     'https://facebook.com/{}',
   ),
-  SosyalPlatform('x', 'X', SimpleIcons.x, 'https://x.com/{}'),
   SosyalPlatform(
-    'tiktok', 'TikTok', SimpleIcons.tiktok,
+    'x',
+    'X',
+    SimpleIcons.x,
+    'https://x.com/{}',
+    uygulamaUrl: 'twitter://user?screen_name={}',
+  ),
+  SosyalPlatform(
+    'tiktok',
+    'TikTok',
+    SimpleIcons.tiktok,
     'https://tiktok.com/@{}',
   ),
   SosyalPlatform('discord', 'Discord', SimpleIcons.discord, null),
   SosyalPlatform(
-    'steam', 'Steam', SimpleIcons.steam,
+    'steam',
+    'Steam',
+    SimpleIcons.steam,
     'https://steamcommunity.com/id/{}',
   ),
   // Simple Icons'ta xbox/epic yok (marka politikası) — yakın ikonlarla.
   SosyalPlatform('xbox', 'Xbox', Icons.sports_esports, null),
   SosyalPlatform('epicgames', 'Epic Games', SimpleIcons.epicgames, null),
   SosyalPlatform(
-    'imdb', 'IMDb', SimpleIcons.imdb,
+    'imdb',
+    'IMDb',
+    SimpleIcons.imdb,
     'https://www.imdb.com/user/{}',
   ),
   SosyalPlatform('vk', 'VK', SimpleIcons.vk, 'https://vk.com/{}'),
   SosyalPlatform(
-    'youtube', 'YouTube', SimpleIcons.youtube,
+    'youtube',
+    'YouTube',
+    SimpleIcons.youtube,
     'https://youtube.com/@{}',
   ),
   SosyalPlatform(
-    'twitch', 'Twitch', SimpleIcons.twitch,
+    'twitch',
+    'Twitch',
+    SimpleIcons.twitch,
     'https://twitch.tv/{}',
   ),
   SosyalPlatform(
-    'spotify', 'Spotify', SimpleIcons.spotify,
+    'spotify',
+    'Spotify',
+    SimpleIcons.spotify,
     'https://open.spotify.com/user/{}',
   ),
   SosyalPlatform(
-    'github', 'GitHub', SimpleIcons.github,
+    'github',
+    'GitHub',
+    SimpleIcons.github,
     'https://github.com/{}',
   ),
   SosyalPlatform(
-    'reddit', 'Reddit', SimpleIcons.reddit,
+    'reddit',
+    'Reddit',
+    SimpleIcons.reddit,
     'https://reddit.com/u/{}',
   ),
   SosyalPlatform(
-    'telegram', 'Telegram', SimpleIcons.telegram,
+    'telegram',
+    'Telegram',
+    SimpleIcons.telegram,
     'https://t.me/{}',
+    uygulamaUrl: 'tg://resolve?domain={}',
   ),
   SosyalPlatform(
-    'snapchat', 'Snapchat', SimpleIcons.snapchat,
+    'snapchat',
+    'Snapchat',
+    SimpleIcons.snapchat,
     'https://snapchat.com/add/{}',
   ),
   SosyalPlatform(
-    'pinterest', 'Pinterest', SimpleIcons.pinterest,
+    'pinterest',
+    'Pinterest',
+    SimpleIcons.pinterest,
     'https://pinterest.com/{}',
   ),
   SosyalPlatform(
-    'letterboxd', 'Letterboxd', SimpleIcons.letterboxd,
+    'letterboxd',
+    'Letterboxd',
+    SimpleIcons.letterboxd,
     'https://letterboxd.com/{}',
   ),
 ];
@@ -97,16 +143,41 @@ class SosyalSatiri extends StatelessWidget {
   const SosyalSatiri({super.key, required this.sosyal});
 
   Future<void> _ac(BuildContext context, SosyalPlatform p, String deger) async {
-    if (p.url != null) {
-      final uri = Uri.parse(p.url!.replaceFirst('{}', deger));
-      final oldu = await launchUrl(uri, mode: LaunchMode.externalApplication);
-      if (oldu) return;
+    // URL'de baştaki @ sorun çıkarır (instagram.com/@ad gibi) — soy
+    final temiz = deger.startsWith('@') ? deger.substring(1) : deger;
+    // 1) Android/iOS: yüklü uygulamayı doğrudan aç (instagram:// vb.)
+    if (!kIsWeb && p.uygulamaUrl != null) {
+      try {
+        if (await launchUrl(
+          Uri.parse(p.uygulamaUrl!.replaceFirst('{}', temiz)),
+          mode: LaunchMode.externalNonBrowserApplication,
+        )) {
+          return;
+        }
+      } catch (_) {
+        /* uygulama yüklü değil → tarayıcıya düş */
+      }
     }
+    // 2) Tarayıcı: web'de YENİ SEKME (_blank), mobilde dış tarayıcı/app link
+    if (p.url != null) {
+      try {
+        if (await launchUrl(
+          Uri.parse(p.url!.replaceFirst('{}', temiz)),
+          mode: LaunchMode.externalApplication,
+          webOnlyWindowName: '_blank',
+        )) {
+          return;
+        }
+      } catch (_) {
+        /* açılamadı → kopyalamaya düş */
+      }
+    }
+    // 3) Son çare: kullanıcı adını panoya kopyala
     await Clipboard.setData(ClipboardData(text: deger));
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kopyalandı: {}'.cf([deger]))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Kopyalandı: {}'.cf([deger]))));
     }
   }
 
@@ -114,8 +185,10 @@ class SosyalSatiri extends StatelessWidget {
   Widget build(BuildContext context) {
     final gecerli = [
       for (final s in sosyal.take(3))
-        if (sosyalBul((s as Map<String, dynamic>)['platform'] as String? ?? '')
-            != null)
+        if (sosyalBul(
+              (s as Map<String, dynamic>)['platform'] as String? ?? '',
+            ) !=
+            null)
           s,
     ];
     if (gecerli.isEmpty) return const SizedBox.shrink();
@@ -184,13 +257,12 @@ class SosyalDuzenleyici extends StatelessWidget {
               Expanded(
                 child: GridView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  gridDelegate:
-                      const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 6,
-                        crossAxisSpacing: 6,
-                        childAspectRatio: 0.95,
-                      ),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    childAspectRatio: 0.95,
+                  ),
                   itemCount: kalan.length,
                   itemBuilder: (context, i) => InkWell(
                     borderRadius: BorderRadius.circular(12),
@@ -258,13 +330,16 @@ class SosyalDuzenleyici extends StatelessWidget {
     // Backend'le aynı desen; kaydetmeden önce yerelde de ele
     if (!RegExp(r'^[A-Za-z0-9._@/-]{1,100}$').hasMatch(deger)) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Geçersiz kullanıcı adı'.c)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Geçersiz kullanıcı adı'.c)));
       }
       return;
     }
-    onDegisti([...sosyal, {'platform': platform.kod, 'deger': deger}]);
+    onDegisti([
+      ...sosyal,
+      {'platform': platform.kod, 'deger': deger},
+    ]);
   }
 
   @override

@@ -350,4 +350,5 @@ const Map<String, String> cevirilerHe = {
   'Kopyalandı: {}': 'הועתק: {}',
   'Geçersiz kullanıcı adı': 'שם משתמש לא תקין',
   'Bağlantı ekle': 'הוספת קישור',
+  'Spoiler olabilir — dokun ve gör': 'עשוי להכיל ספוילרים — הקש כדי לצפות',
 };

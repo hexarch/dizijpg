@@ -361,4 +361,6 @@ const Map<String, String> cevirilerMy = {
   'Kopyalandı: {}': 'ကူးယူပြီး- {}',
   'Geçersiz kullanıcı adı': 'အသုံးပြုသူအမည် မမှန်ပါ',
   'Bağlantı ekle': 'လင့်ခ်ထည့်ရန်',
+  'Spoiler olabilir — dokun ve gör':
+      'ဇာတ်လမ်းပေါက်ကြားနိုင်သည် — ကြည့်ရန် တို့ပါ',
 };

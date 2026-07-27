@@ -192,7 +192,7 @@ class Api {
   /// Uygulama sürümü (hata bildirimlerinde etiketlenir; pubspec ile eşle).
   /// DİKKAT: pubspec version'ı artınca BURAYI da güncelle — 1.7.1'de
   /// unutulduğu için hata günlüğü üç sürüm boyunca yanlış etiketlendi.
-  static const surum = '1.8.0+16';
+  static const surum = '1.8.1+17';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

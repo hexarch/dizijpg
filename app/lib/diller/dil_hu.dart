@@ -356,4 +356,6 @@ const Map<String, String> cevirilerHu = {
   'Kopyalandı: {}': 'Másolva: {}',
   'Geçersiz kullanıcı adı': 'Érvénytelen felhasználónév',
   'Bağlantı ekle': 'Link hozzáadása',
+  'Spoiler olabilir — dokun ve gör':
+      'Spoilert tartalmazhat — koppints a megtekintéshez',
 };

@@ -354,4 +354,6 @@ const Map<String, String> cevirilerSr = {
   'Kopyalandı: {}': 'Копирано: {}',
   'Geçersiz kullanıcı adı': 'Неисправно корисничко име',
   'Bağlantı ekle': 'Додај везу',
+  'Spoiler olabilir — dokun ve gör':
+      'Може садржати спојлере — додирни да видиш',
 };

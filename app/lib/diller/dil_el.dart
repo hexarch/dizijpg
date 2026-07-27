@@ -357,4 +357,6 @@ const Map<String, String> cevirilerEl = {
   'Kopyalandı: {}': 'Αντιγράφηκε: {}',
   'Geçersiz kullanıcı adı': 'Μη έγκυρο όνομα χρήστη',
   'Bağlantı ekle': 'Προσθήκη συνδέσμου',
+  'Spoiler olabilir — dokun ve gör':
+      'Ίσως περιέχει spoiler — πάτησε για προβολή',
 };

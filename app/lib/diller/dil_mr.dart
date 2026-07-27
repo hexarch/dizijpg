@@ -355,4 +355,5 @@ const Map<String, String> cevirilerMr = {
   'Kopyalandı: {}': 'कॉपी झाले: {}',
   'Geçersiz kullanıcı adı': 'चुकीचे यूजरनेम',
   'Bağlantı ekle': 'लिंक जोड',
+  'Spoiler olabilir — dokun ve gör': 'स्पॉयलर असू शकतो — पाहण्यासाठी टॅप कर',
 };

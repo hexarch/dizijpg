@@ -354,4 +354,5 @@ const Map<String, String> cevirilerPa = {
   'Kopyalandı: {}': 'ਕਾਪੀ ਹੋ ਗਿਆ: {}',
   'Geçersiz kullanıcı adı': 'ਗਲਤ ਯੂਜ਼ਰਨੇਮ',
   'Bağlantı ekle': 'ਲਿੰਕ ਜੋੜੋ',
+  'Spoiler olabilir — dokun ve gör': 'ਸਪੌਇਲਰ ਹੋ ਸਕਦਾ ਹੈ — ਦੇਖਣ ਲਈ ਟੈਪ ਕਰੋ',
 };

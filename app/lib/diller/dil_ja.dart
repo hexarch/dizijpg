@@ -348,4 +348,5 @@ const Map<String, String> cevirilerJa = {
   'Kopyalandı: {}': 'コピーしました:{}',
   'Geçersiz kullanıcı adı': '無効なユーザー名です',
   'Bağlantı ekle': 'リンクを追加',
+  'Spoiler olabilir — dokun ve gör': 'ネタバレを含む可能性があります — タップして表示',
 };

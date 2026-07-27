@@ -357,4 +357,5 @@ const Map<String, String> cevirilerFil = {
   'Kopyalandı: {}': 'Nakopya: {}',
   'Geçersiz kullanıcı adı': 'Hindi wastong username',
   'Bağlantı ekle': 'Magdagdag ng link',
+  'Spoiler olabilir — dokun ve gör': 'Maaaring may spoiler — i-tap para makita',
 };

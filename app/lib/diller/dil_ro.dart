@@ -356,4 +356,6 @@ const Map<String, String> cevirilerRo = {
   'Kopyalandı: {}': 'Copiat: {}',
   'Geçersiz kullanıcı adı': 'Nume de utilizator nevalid',
   'Bağlantı ekle': 'Adaugă link',
+  'Spoiler olabilir — dokun ve gör':
+      'Poate conține spoilere — atinge pentru a vedea',
 };
