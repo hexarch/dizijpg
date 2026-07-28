@@ -447,6 +447,18 @@ asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
 - Akış kartındaki VİDEO artık oynuyor (yorumlardaki VideoOynatici'ye bağlandı;
   önceden sadece ikon vardı). Çeviri +2 anahtar → **323 × 45**.
 
+## REELS KEŞFET + AKIŞ İÇİ ARAMA + VİDEO KONTROLLERİ ✅🚀 (2026-07-28, canlıda)
+- Tam ekran video: oynat/duraklat düğmesi, ses kapat + seviye kaydırıcısı,
+  sarma çubuğu + süre (medya_goster.dart).
+- Arama Akış'a taşındı: üstteki kutu gerçek arama; sonuçlar modal değil,
+  çubuğun altında bölümlü liste (Kullanıcılar / Dizi ve Filmler / Kişiler).
+- Arama SEKMESİ → Reels tarzı KEŞFET (kesfet_akis.dart, GET /kesfet-akis):
+  ızgara (video öncelikli, akış kurallarıyla) → dikey tam ekran kaydırma;
+  sol altta avatar+@ad+Takip Et+metin+içerik+süre, sağda beğeni/yanıtlar/paylaş,
+  çift dokunuş=beğeni+kalp, sola kaydır=paylaşanın profili, spoiler örtüsü.
+  1. sekme "Ana Sayfa" olarak yeniden adlandı. Çeviri 330 × 45.
+  NOT: eski arama.dart rotasız duruyor (gerekirse geri bağlanır).
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).
