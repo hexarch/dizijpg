@@ -79,7 +79,7 @@ class _AramaEkraniState extends State<AramaEkrani>
       final q = Uri.encodeComponent(sorgu.trim());
       // İçerik/kişi (TMDB) ve uygulama kullanıcıları birlikte aranır.
       final yanitlar = await Future.wait([
-        Api.get('/tmdb/search/multi?query=$q'),
+        Api.get('/ara?q=$q'),
         Api.get('/kullanici-ara?q=$q').catchError((_) => <String, dynamic>{}),
       ]);
       if (!mounted) return;

@@ -2317,6 +2317,55 @@ app.get('/takipedilenler/:kullaniciAdi', sarici(async (req, res) => {
 }));
 
 // Kullanıcı arama (keşfet / takip için)
+// Akıllı içerik araması: sorgu VARYANTLARI ("Black List" → "BlackList",
+// "the"siz hali) TMDB'de paralel aranır, tekilleştirilip popülerliğe göre
+// sıralanır. Düz /tmdb/search/multi tek yazımı bulamıyordu.
+app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
+  const q = String(req.query.q || '').trim();
+  if (q.length < 2) return res.json({ results: [] });
+  // Tabanlar: aynen + "the"siz; her taban için bir de boşluksuz hali
+  // ("the black list" → "the black list", "theblacklist", "black list",
+  // "blacklist"). Bitişik → boşluklu yönü belirsiz olduğundan denenmez.
+  const varyantlar = new Set();
+  for (const taban of [q, q.replace(/^the\s+/i, '')]) {
+    varyantlar.add(taban);
+    varyantlar.add(taban.replace(/\s+/g, ''));
+  }
+  const sonuclar = new Map();
+  await Promise.all([...varyantlar].map(async (v) => {
+    try {
+      const d = await tmdbGetir(
+        `/search/multi?query=${encodeURIComponent(v)}`,
+        ONBELLEK_TTL_SN.varsayilan,
+      );
+      for (const r of (d.results || [])) {
+        const k = `${r.media_type}:${r.id}`;
+        if (!sonuclar.has(k)) sonuclar.set(k, r);
+      }
+    } catch { /* tek varyant hatası aramayı bozmasın */ }
+  }));
+  // Sıralama: başlık eşleşmesi popülerlikten önce gelir — yoksa "game of
+  // thrones" aramasında House of the Dragon (daha popüler) üste çıkıyordu.
+  const duz = (s) =>
+    String(s || '').toLowerCase().replace(/\s+/g, '').replace(/^the/, '');
+  const hedefler = [...varyantlar].map(duz);
+  const puanla = (r) => {
+    const pop = r.popularity || 0;
+    const adlar = [r.name, r.title, r.original_name, r.original_title]
+      .filter(Boolean)
+      .map(duz);
+    if (adlar.some((a) => hedefler.includes(a))) return 1e9 + pop; // birebir
+    if (adlar.some((a) => hedefler.some((h) => a.startsWith(h)))) {
+      return 1e6 + pop; // başlangıç eşleşmesi
+    }
+    return pop;
+  };
+  const results = [...sonuclar.values()]
+    .sort((a, b) => puanla(b) - puanla(a))
+    .slice(0, 30);
+  res.json({ results });
+}));
+
 app.get('/kullanici-ara', aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (q.length < 2) return res.json({ kullanicilar: [] });

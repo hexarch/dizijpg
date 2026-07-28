@@ -73,7 +73,7 @@ class _AkisEkraniState extends State<AkisEkrani>
     try {
       final q = Uri.encodeComponent(sorgu.trim());
       final y = await Future.wait([
-        Api.get('/tmdb/search/multi?query=$q'),
+        Api.get('/ara?q=$q'),
         Api.get('/kullanici-ara?q=$q').catchError((_) => <String, dynamic>{}),
       ]);
       if (!mounted || _sorgu.trim() != sorgu.trim()) return;
