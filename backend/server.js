@@ -2317,9 +2317,31 @@ app.get('/takipedilenler/:kullaniciAdi', sarici(async (req, res) => {
 }));
 
 // Kullanıcı arama (keşfet / takip için)
+// Arama sonuçlarını yerel başlık dizinine işler (yazım toleransının besini).
+function icerikDizineEkle(liste) {
+  const satirlar = (liste || []).filter((r) =>
+    (r.media_type === 'tv' || r.media_type === 'movie') &&
+    r.id && (r.name || r.title));
+  if (!satirlar.length) return;
+  havuz.query(
+    `INSERT INTO icerik_dizini (tur, tmdb_id, ad, orijinal_ad, populerlik)
+     SELECT * FROM unnest($1::text[], $2::int[], $3::text[], $4::text[], $5::real[])
+     ON CONFLICT (tur, tmdb_id) DO UPDATE
+       SET ad = EXCLUDED.ad, orijinal_ad = EXCLUDED.orijinal_ad,
+           populerlik = GREATEST(icerik_dizini.populerlik, EXCLUDED.populerlik),
+           guncelleme = now()`,
+    [satirlar.map((r) => r.media_type), satirlar.map((r) => r.id),
+     satirlar.map((r) => r.name || r.title),
+     satirlar.map((r) => r.original_name || r.original_title || null),
+     satirlar.map((r) => r.popularity || 0)],
+  ).catch(() => {});
+}
+
 // Akıllı içerik araması: sorgu VARYANTLARI ("Black List" → "BlackList",
 // "the"siz hali) TMDB'de paralel aranır, tekilleştirilip popülerliğe göre
 // sıralanır. Düz /tmdb/search/multi tek yazımı bulamıyordu.
+// Sonuç çıkmazsa YAZIM TOLERANSI: yerel başlık dizininde pg_trgm benzerliğiyle
+// en yakın başlıklar bulunur ("brekaing bad" → Breaking Bad).
 app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim();
   if (q.length < 2) return res.json({ results: [] });
@@ -2360,10 +2382,49 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
     }
     return pop;
   };
-  const results = [...sonuclar.values()]
+  let results = [...sonuclar.values()]
     .sort((a, b) => puanla(b) - puanla(a))
     .slice(0, 30);
-  res.json({ results });
+  icerikDizineEkle(results); // dizin her başarılı aramayla zenginleşir
+  let duzeltme = null;
+  if (!results.length) {
+    try {
+      const o = await havuz.query(
+        `SELECT tur, tmdb_id, ad, populerlik,
+                GREATEST(similarity(lower(ad), lower($1)),
+                         similarity(lower(COALESCE(orijinal_ad,'')), lower($1)))
+                  AS puan
+         FROM icerik_dizini
+         WHERE lower(ad) % lower($1)
+            OR lower(COALESCE(orijinal_ad,'')) % lower($1)
+         ORDER BY puan DESC, populerlik DESC LIMIT 5`,
+        [q]);
+      if (o.rows.length) {
+        duzeltme = o.rows[0].ad;
+        // Önerileri TMDB detayından tam sonuç satırına çevir (önbellekli)
+        const ekler = [];
+        await Promise.all(o.rows.map(async (r) => {
+          try {
+            const v = await tmdbGetir(`/${r.tur}/${r.tmdb_id}`, ONBELLEK_TTL_SN.uzun);
+            ekler.push({
+              media_type: r.tur,
+              id: r.tmdb_id,
+              name: v.name,
+              title: v.title,
+              original_name: v.original_name,
+              original_title: v.original_title,
+              poster_path: v.poster_path,
+              popularity: v.popularity || r.populerlik,
+              first_air_date: v.first_air_date,
+              release_date: v.release_date,
+            });
+          } catch { /* tek öneri hatası aramayı bozmasın */ }
+        }));
+        results = ekler.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+      }
+    } catch { /* dizin/uzantı yoksa arama düz davranır */ }
+  }
+  res.json(duzeltme ? { results, duzeltme } : { results });
 }));
 
 app.get('/kullanici-ara', aramaLimiti, sarici(async (req, res) => {

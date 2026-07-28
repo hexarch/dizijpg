@@ -247,3 +247,19 @@ CREATE TABLE IF NOT EXISTS akis_goruldu (
   tarih TIMESTAMPTZ DEFAULT now(),
   PRIMARY KEY (kullanici_id, yorum_id)
 );
+
+-- Yazım toleranslı arama: yerel başlık dizini (pg_trgm; migrasyon-2026-07-28b)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+CREATE TABLE IF NOT EXISTS icerik_dizini (
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tmdb_id INT NOT NULL,
+  ad TEXT NOT NULL,
+  orijinal_ad TEXT,
+  populerlik REAL DEFAULT 0,
+  guncelleme TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (tur, tmdb_id)
+);
+CREATE INDEX IF NOT EXISTS icerik_dizini_trgm
+  ON icerik_dizini USING gin (lower(ad) gin_trgm_ops);
+CREATE INDEX IF NOT EXISTS icerik_dizini_trgm_orj
+  ON icerik_dizini USING gin (lower(COALESCE(orijinal_ad,'')) gin_trgm_ops);
