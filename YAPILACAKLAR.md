@@ -1,5 +1,21 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-07-22 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-07-28 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-07-28 — Instagram arşivi içe aktarımı + kullanıcı adı kuralı 🚀
+**Ne:** dizi.jpg Instagram hesabının arşivi (Instaloader) uygulamaya resmi hesabın
+yorumları olarak taşındı; kullanıcı adlarında artık nokta/tire de geçerli.
+- 🚀 Kullanıcı adı kuralı gevşetildi: `[a-z0-9_.-]{3,20}`, başta/sonda nokta-tire yok,
+  `..` yok (kayit + bagla + @etiket bildirimi; app'te etiket.dart desenleri).
+  Hata metni güncellendi. Canlıda `nokta.test-42` ile doğrulandı.
+- 🚀 Resmi hesap: **dizi.jpg** (id=42, allamesia1@gmail.com) — DB'den yeniden adlandırıldı.
+- 🚀 İçe aktarım: 2875 gönderiden 2281'i (%81) dizi/filme eşlendi → `yorumlar`a
+  orijinal Instagram tarihleriyle (2017→2026) eklendi; 3380 medya dosyası (1.1GB,
+  MD5 doğrulamalı) `m42-…` adlarıyla medya volume'üne kopyalandı.
+  Eşleme: icerik_dizini trigram (boşluksuz başlık) + elle karakter/takma ad tablosu
+  (walterwhite→Breaking Bad, gallagher→Shameless, himym…) + TMDB araması.
+  Eşlenemeyen 540 gönderi (İyi geceler, IMDb top-10 vb.) bilinçli atlandı;
+  ham eşleme dosyaları scratchpad'de. 23 yeni başlık icerik_dizini'ne tohumlandı.
+- ✅ 45 dil dosyasındaki yinelenen `'Keşfet\'e dön'` anahtarı temizlendi (build kırıyordu).
 
 ## SPRINT 1 — Yarım kalanlar + son istekler (şimdi)
 
@@ -458,6 +474,135 @@ asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
   çift dokunuş=beğeni+kalp, sola kaydır=paylaşanın profili, spoiler örtüsü.
   1. sekme "Ana Sayfa" olarak yeniden adlandı. Çeviri 330 × 45.
   NOT: eski arama.dart rotasız duruyor (gerekirse geri bağlanır).
+
+## PAYLAŞILAN GÖNDERİ LİNKİ ✅🚀 (2026-07-28, canlıda, v1.8.6+22)
+Kullanıcı: "içeriği paylaşınca /icerik/tv/1396 linki diziyi açtı, ilgili
+gönderiyi açmadı." Kök neden: Reels _paylas içeriğe (dizi/film) link veriyordu,
+gönderiye değil; tek yoruma giden rota yoktu. Çözüm (2. yol — gönderi rotası):
+- Backend `GET /yorum/:id` (girisIsteğeBagli): tek yorumu Reels formatında döner
+  (kullanici/avatar/medya/begeni/begendim/takip_ediyorum/videolu/spoiler +
+  icerikler{ad,poster}); engellenen/yasaklı → 404; açılışta görüntülenme +1.
+- Frontend `/gonderi/:id` rotası (yonlendirme.dart, güvenli parse) → GonderiEkrani
+  (kesfet_akis.dart): /yorum/:id çeker → ReelsGorunumu tek sayfa tam ekran.
+  ReelsGorunumu kapat butonu artık canPop yoksa /arama'ya döner (doğrudan URL).
+  _paylas linki `/gonderi/${id}` oldu. kabukDisi listelerine /gonderi/ eklendi
+  (Reels içi profil gidişinde beyaz ekran önlemi).
+- Çeviri +2 anahtar (Gönderi bulunamadı, Keşfet'e dön zaten vardı) → 346 × 45.
+  DİKKAT: "Keşfet'e dön" zaten mevcuttu, grep kaçış (\') yüzünden "yeni" sandım →
+  const map dup key → web derleme hatası; Python ile fazla örnek temizlendi.
+- Kanıt: GET /yorum/:id yorum+içerik döndü, geçersiz id 404, /gonderi/1 web 200.
+- ⬜ NOT: WhatsApp/Twitter link önizlemesi (poster+başlık) hâlâ #8 OG kartlarına
+  bağlı (henüz yok). APK 1.8.6 için derlenmedi (web canlıda).
+
+## 9 MADDELİK İSTEK LİSTESİ (projeler/yapilacaklar) — sürüyor (2026-07-28)
+Kullanıcının onayladığı 9 öneri; gruplar halinde deploy ediliyor.
+
+### GRUP 1 ✅🚀 (canlıda) — arama düzeltme + spoiler + uyum
+- **#1 "Şunu mu demek istedin?"**: /ara zaten `duzeltme` dönüyordu; akis.dart
+  arama sonuçları başına sarı vurgulu satır (yalnız sorgudan farklıysa). Kanıt:
+  "brekaing bad" → Breaking Bad.
+- **#7 Yorum spoiler işareti**: migrasyon-2026-07-28c (yorumlar.spoiler bool);
+  POST /yorumlar spoiler kabul; GET/profil/akış döner; akisSatiri otomatik+işaret
+  spoiler'ı OR'lar. Frontend: yazma kutusunda "Spoiler" toggle, yorum+yanıt
+  metni `SpoilerMetin` ile bulanık ("Spoiler — dokun ve gör"). Kanıt: spoiler:true
+  kaydedildi+döndü.
+- **#4 Uyum yüzdesi**: /profil/:ad yanıtına `uyum` (ortak_dizi, ortak_film,
+  yuzde=ortak puanlarda 1-|fark|/9 ort×100, ortak_puan). kullanici_profil.dart
+  `_UyumKarti` (sarı kart, "%X uyum" + "N ortak dizi · M ortak film"). Kanıt:
+  import-test→alcelik = 40 ortak dizi, 82 ortak film.
+- Çeviri: 7 yeni anahtar × 45 dil = 339 (senkron). NOT: sürüm henüz artırılmadı
+  (sprint sonunda 1.8.5'e çıkacak + APK). ProfilYorumKarti spoiler henüz sarılmadı.
+### GRUP 2 ✅🚀 (canlıda, v1.8.5+21) — reels foto + rewatch + bildirim tercihleri
+- **#3 Reels yanıtlara foto/GIF**: kesfet_akis _YanitlarSheet'e ek altyapısı
+  (ImagePicker + medyaYukle, ≤4 ek, 30MB), foto butonu + önizleme + _KesfetYanitSatiri
+  medya thumbnail'ı (dokun→medyaGoster). Metin yine zorunlu, ek bonus.
+- **#6 Rewatch sayacı**: migrasyon-2026-07-28d (durumlar.tekrar); POST /rewatch
+  (deger ±1, yalnız 'bitirdim' durumunda, 0-99 clamp); /benim tekrar döner.
+  detay.dart: bitirdim durumunda "Yeniden izledim" ActionChip + "N. kez izlendi"
+  + geri al. Kanıt: bitirdim→+1→tekrar:1→-1→0, durumsuzda 400.
+- **#9 Bildirim tercihleri**: migrasyon-2026-07-28d (kullanicilar bildir_begeni/
+  yanit/takip/mesaj/etiket bool, default true); bildirimEkle tercih kapalıysa
+  ne bildirim ne push üretir (BILDIRIM_TERCIH_KOLON sabit map); GET/POST
+  /bildirim-tercihleri. ayarlar.dart "Bildirim Tercihleri" → sheet (5 switch,
+  iyimser). Kanıt: GET 5 alan, POST begeni kapat/aç.
+- Çeviri: 6 yeni anahtar × 45 = 345 (senkron).
+- ⬜ KALAN (grup 3, en karmaşık): #2 yeni bölüm push (zamanlayıcı + tekrar-önleme),
+  #5 yıl özeti paylaşım kartı (görsel üret/paylaş), #8 OG önizleme kartları (nginx/servis).
+- İmzalı APK derlendi: ~/Desktop/dizijpg-1.8.5.apk (64MB) — grup 1+2 (6 özellik) dahil.
+
+## GÜVENLİK SERTLEŞTİRME ✅🚀 (2026-07-28, canlıda)
+Kullanıcı "komple güvenlik taraması" istedi. 5 paralel ajan başlatıldı ama oturum
+limiti/API hatasıyla YARIDA KALDI (enjeksiyon, medya-polyglot, admin.html depolanmış
+XSS, istemci-tarafı yüzeyleri TAMAMLANMADI — 15:50 sonrası yeniden taranmalı).
+Kendi canlı testlerimle bulunan ve DÜZELTİLEN KRİTİK zafiyet:
+- 🔴 **Cloudflare baypası + admin ele geçirme (KESİN, canlıda kanıtlandı):**
+  origin 154.53.163.3:80 doğrudan (CF'siz) erişilebiliyordu; nginx `/api/`
+  bloğu istemci `CF-Connecting-IP`/`X-Forwarded-For` başlıklarını temizlemiyor,
+  uygulama `gercekIp()` bu ham başlıkları okuyordu → sahte admin IP ile
+  `/api/admin` 200 veriyordu (herkes tam yönetici: e-posta/IP/ban/yorum-sil).
+  Aynı baypas tüm IP-tabanlı hız limitlerini de anlamsızlaştırıyordu.
+  ÇÖZÜM (iki katman): (1) nginx dizijpg.com conf `/api/` bloğunda
+  `proxy_set_header CF-Connecting-IP $remote_addr` + `X-Forwarded-For $remote_addr`
+  + `X-Real-IP $remote_addr` (real_ip modülü sonrası güvenilir; CF listesi 8→22
+  aralığa tamamlandı). (2) `gercekIp()` artık YALNIZ nginx'in yazdığı
+  spoof-edilemez `X-Real-IP`'yi okur. Ters test: admin-dışı IP spoof'u yoksayıldı.
+  nginx yedeği: `/etc/nginx/sites-available/dizijpg.com.yedek-guvenlik-20260728`.
+- 🟠 Admin `ADMIN_TOKEN` artık query string'den DEĞİL yalnız `X-Admin-Token`
+  başlığından, `crypto.timingSafeEqual` ile (log/zamanlama sızıntısı kapandı).
+- 🟠 `/admin/yorum-sil`, `/admin/kullanici-ban`, `/admin/sikayet-durum` gövde
+  `id` doğrulaması (gecerliTmdb) — sayısal olmayan değer artık 500 değil 400.
+- 🟠 `girisIsteğeBagli` artık şifre_surumu doğruluyor (banlı kullanıcının eski
+  token'ı okuma uçlarında da geçersiz).
+- 🟠 CORS `*` → yalnız https://(www.)dizijpg.com (Vary: Origin). Mobil native
+  HTTP olduğu için etkilenmez; bilinmeyen köken CORS başlığı almaz (test edildi).
+- 🟢 Sırlar temiz doğrulandı: .env/key.properties/.jks/firebase-gizli hepsi
+  gitignore'da ve hiç commit edilmemiş.
+- ✅ port 80 → 443 redirect EKLENDİ (kullanıcı CF SSL modunu "Full" doğruladı →
+  döngü yok). 80 ayrı server bloğu `return 301 https://$host$request_uri`;
+  443 bloğuna HSTS eklendi. Origin'e doğrudan HTTP artık 301 döner (test edildi).
+- ⬜ AÇIK (yarım kalan tarama): SQL enjeksiyon derinlemesine, medya polyglot/SVG,
+  admin.html depolanmış XSS (bio/yorum innerHTML?), Reels etiket belirteci
+  istismarı, npm audit — 15:50 sonrası tamamlanacak.
+- Deploy: server.js scp + docker-compose rebuild; nginx reload. Canlı doğrulama:
+  saglik 200, girisli+isteğe-bağlı uçlar 200, CORS doğru, admin gerçek IP 200.
+
+## REELS VİDEO KONTROLLERİ v2 ✅🚀 (2026-07-28, canlıda, v1.8.3+19)
+Kullanıcı: "videoda ilerleme çubuğu yok, tıklayınca pause almıyor, çift tık beğeni".
+- KÖK NEDEN: tek-tık pause kodu vardı ama web'de video bir HTML platform
+  görünümü olduğundan dokunuşları DOM'da yutuyordu — GestureDetector'a hiç
+  ulaşmıyordu (çift-tık beğeni de video üstünde aynı sebepten ölüydü).
+- ÇÖZÜM: `pointer_interceptor` paketi (resmî flutter.dev çözümü) — Reels
+  sayfasına Positioned.fill şeffaf dokunuş katmanı (kesfet_akis.dart);
+  1 tık = durdur/oynat (duraklayınca ortada oynat ikonu), 2 tık = beğeni+kalp,
+  sola kaydırma = profil aynen korunur. Mobilde paket no-op.
+- En altta IG/TikTok tarzı İLERLEME ÇUBUĞU: VideoProgressIndicator
+  (allowScrubbing — dokunarak/sürükleyerek sarma), sarı dolum, üst padding'le
+  büyütülmüş dokunma hedefi. Yeni metin yok → çeviri gerekmedi.
+- NOT: aynı platform-view sorunu medya_goster.dart tam ekran videoda da
+  gizli duruyor olabilir (orada görünür buton olduğu için şikayet gelmedi).
+- APK henüz yeniden derlenmedi (web canlıda; istenirse 1.8.3 APK alınır).
+
+## YORUM ETKİLEŞİM + ZENGİN ETİKETLEME ✅🚀 (2026-07-28, canlıda, v1.8.4+20)
+Kullanıcı: "yorumlara like, görüntüleme, yoruma yorum; @ ile kullanıcı + dizi +
+oyuncu etiketleme".
+- **Reels Yanıtlar sayfası tam donanım** (kesfet_akis.dart): her yanıt satırında
+  beğeni (iyimser + geri alma), görüntülenme sayacı, Yanıtla (yanıtın yanıtı —
+  ust_id hedef satıra gider, sunucu üste bağlar + bildirim), kendi yanıtını
+  silme; avatar/@ad → profil; satırlar eskiden yeniye sıralı. Reels gönderisinin
+  sağ sütununa göz ikonu + görüntülenme eklendi. Giriş kutusu artık EtiketliGirdi
+  + "@X kullanıcısına yanıt veriyorsun" çipi.
+- **@ etiketleme genişledi** (etiket.dart — YorumBolumu dahil her yorum kutusunda):
+  "@" yazınca KULLANICI + DİZİ/FİLM + OYUNCU birlikte aranır (paralel
+  /kullanici-ara + /ara; boşluklu/büyük harfli sorgu desteklenir, "@breaking bad").
+  Kullanıcı seçimi "@ad", içerik/kişi seçimi metne **[[tv:1396|Breaking Bad]]**
+  belirteci yazar (sunucu değişikliği YOK, düz metin). EtiketliMetin belirteci
+  ikonlu sarı bağlantı olarak basar → /icerik veya /kisi. Ad içindeki []| ayıklanır;
+  regex sıkı (tur enum + id ≤9 hane + ad ≤80).
+- Çeviri: yeni anahtar YOK (mevcut anahtarlar yeniden kullanıldı).
+- Canlı e2e (testkullanici, sonra silindi): etiketli yorum + ust_id'li yanıt +
+  yanıt beğenisi (begeni:1/begendim:true) + goruntulenme alanı doğrulandı.
+- İmzalı APK derlendi: ~/Desktop/dizijpg-1.8.4.apk (64MB) — Reels video
+  kontrolleri (1.8.3) + bu paket dahil.
 
 ## AKILLI ARAMA + YAZIM TOLERANSI ✅🚀 (2026-07-28, canlıda)
 - GET /ara: sorgu varyantları (aynen/boşluksuz/the'siz kombinasyonları) paralel

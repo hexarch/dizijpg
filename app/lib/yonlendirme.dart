@@ -45,6 +45,7 @@ void rotayaGit(String hedef) {
     '/gizlilik',
     '/giris',
     '/karsilama',
+    '/gonderi/',
   ];
   if (kabukDisi.any(yol.startsWith)) {
     y.go(hedef);
@@ -193,6 +194,16 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           return id == null
               ? const _GecersizBaglanti()
               : KisiEkrani(kisiId: id);
+        },
+      ),
+      // Paylaşılan gönderi (reel/yorum) — tam ekran tek gönderi
+      GoRoute(
+        path: '/gonderi/:id',
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : GonderiEkrani(yorumId: id);
         },
       ),
       GoRoute(

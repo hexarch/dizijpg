@@ -38,6 +38,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
   bool _gonderiliyor = false;
+  bool _spoiler = false; // "spoiler içerir" işareti
   Map<String, dynamic>? _yanitlanan; // yanıt modundaki üst yorum
 
   @override
@@ -108,11 +109,13 @@ class _YorumBolumuState extends State<YorumBolumu> {
         if (widget.sezon != null) 'bolum': widget.bolum,
         'metin': metin,
         'medya': _ekler.map((e) => e['yol']).toList(),
+        'spoiler': _spoiler,
         if (_yanitlanan != null) 'ust_id': _yanitlanan!['id'],
       });
       _metin.clear();
       _ekler.clear();
       _yanitlanan = null;
+      _spoiler = false;
       await _yukle();
     } catch (e) {
       if (!mounted) return;
@@ -295,6 +298,44 @@ class _YorumBolumuState extends State<YorumBolumu> {
                               color: DiziRenkler.sari,
                             ),
                       tooltip: 'Fotoğraf / video ekle'.c,
+                    ),
+                    // Spoiler işareti: yorumu bulanık gönderir
+                    InkWell(
+                      onTap: () => setState(() => _spoiler = !_spoiler),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              _spoiler
+                                  ? Icons.visibility_off
+                                  : Icons.visibility_off_outlined,
+                              size: 20,
+                              color: _spoiler
+                                  ? DiziRenkler.sari
+                                  : DiziRenkler.metin54,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Spoiler'.c,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: _spoiler
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                                color: _spoiler
+                                    ? DiziRenkler.sari
+                                    : DiziRenkler.metin54,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                     const Spacer(),
                     FilledButton(
@@ -515,8 +556,9 @@ class _YorumKartiState extends State<_YorumKarti> {
               ],
             ),
             const SizedBox(height: 8),
-            EtiketliMetin(
+            SpoilerMetin(
               yorum['metin'] as String? ?? '',
+              spoiler: yorum['spoiler'] == true,
               stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
             ),
             if (medya.isNotEmpty) ...[
@@ -647,6 +689,69 @@ class _YorumKartiState extends State<_YorumKarti> {
                 ),
               ),
             ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Spoiler işaretli yorum metni: kapalıyken "Spoiler — dokun ve gör" örtüsü,
+/// dokununca açılıp [EtiketliMetin] olarak gösterir. İşaretsizse doğrudan metin.
+class SpoilerMetin extends StatefulWidget {
+  final String metin;
+  final bool spoiler;
+  final TextStyle? stil;
+  const SpoilerMetin(this.metin, {super.key, required this.spoiler, this.stil});
+
+  @override
+  State<SpoilerMetin> createState() => _SpoilerMetinState();
+}
+
+class _SpoilerMetinState extends State<SpoilerMetin> {
+  bool _acik = false;
+
+  @override
+  void didUpdateWidget(SpoilerMetin eski) {
+    super.didUpdateWidget(eski);
+    // Liste yenilenip farklı yoruma denk gelirse kapalıya dön
+    if (eski.metin != widget.metin) _acik = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.spoiler || _acik) {
+      return EtiketliMetin(widget.metin, stil: widget.stil);
+    }
+    return InkWell(
+      onTap: () => setState(() => _acik = true),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: DiziRenkler.koyuGri,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: DiziRenkler.metin12),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.visibility_off_outlined,
+              size: 18,
+              color: DiziRenkler.metin54,
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Spoiler — dokun ve gör'.c,
+                style: TextStyle(
+                  color: DiziRenkler.metin54,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -932,8 +1037,9 @@ class _YanitSatiriState extends State<_YanitSatiri> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 26, top: 2),
-            child: EtiketliMetin(
+            child: SpoilerMetin(
               y['metin'] as String? ?? '',
+              spoiler: y['spoiler'] == true,
               stil: TextStyle(
                 fontSize: 13,
                 height: 1.35,

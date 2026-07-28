@@ -247,6 +247,11 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     goruntulenme:
                         (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
                   ),
+                  // Uyum: seninle ortak izlenenler + puan uyumu
+                  if (!benMi && p['uyum'] != null) ...[
+                    const SizedBox(height: 12),
+                    _UyumKarti(uyum: p['uyum'] as Map<String, dynamic>),
+                  ],
                   const SizedBox(height: 16),
                   // Takip + Mesaj (kendi profilinde gösterme)
                   if (!benMi && girisli)
@@ -541,6 +546,66 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     } catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(e.toString())));
     }
+  }
+}
+
+/// Uyum kartı: puan uyumu yüzdesi (varsa) + ortak izlenen dizi/film sayısı.
+class _UyumKarti extends StatelessWidget {
+  final Map<String, dynamic> uyum;
+  const _UyumKarti({required this.uyum});
+
+  @override
+  Widget build(BuildContext context) {
+    final yuzde = (uyum['yuzde'] as num?)?.toInt();
+    final dizi = (uyum['ortak_dizi'] as num?)?.toInt() ?? 0;
+    final film = (uyum['ortak_film'] as num?)?.toInt() ?? 0;
+    final parcalar = <String>[
+      if (dizi > 0) '{} ortak dizi'.cf([dizi]),
+      if (film > 0) '{} ortak film'.cf([film]),
+    ];
+    // Ne yüzde ne ortak varsa kart gösterilmez (backend zaten null döndürür ama
+    // ortak da 0 olabilir)
+    if (yuzde == null && parcalar.isEmpty) return const SizedBox.shrink();
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: DiziRenkler.sari.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: DiziRenkler.sari.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.favorite, size: 22, color: DiziRenkler.sari),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  yuzde != null ? '%$yuzde ${'uyum'.c}' : 'Uyum'.c,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                if (parcalar.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      parcalar.join(' · '),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DiziRenkler.metin54,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

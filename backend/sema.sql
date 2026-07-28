@@ -14,6 +14,11 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   son_gorulme TIMESTAMPTZ,
   sifre_surumu INT NOT NULL DEFAULT 0,
   yasakli BOOLEAN NOT NULL DEFAULT false,
+  bildir_begeni BOOLEAN NOT NULL DEFAULT true,
+  bildir_yanit BOOLEAN NOT NULL DEFAULT true,
+  bildir_takip BOOLEAN NOT NULL DEFAULT true,
+  bildir_mesaj BOOLEAN NOT NULL DEFAULT true,
+  bildir_etiket BOOLEAN NOT NULL DEFAULT true,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 
@@ -34,6 +39,7 @@ CREATE TABLE IF NOT EXISTS durumlar (
   tmdb_id INT NOT NULL,
   tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
   durum TEXT NOT NULL CHECK (durum IN ('izleyecegim','izliyorum','bitirdim','biraktim')),
+  tekrar INT NOT NULL DEFAULT 0,
   guncelleme TIMESTAMPTZ DEFAULT now(),
   PRIMARY KEY (kullanici_id, tur, tmdb_id)
 );
@@ -61,6 +67,7 @@ CREATE TABLE IF NOT EXISTS yorumlar (
   metin TEXT NOT NULL,
   medya TEXT[] NOT NULL DEFAULT '{}',
   goruntulenme INT NOT NULL DEFAULT 0,
+  spoiler BOOLEAN NOT NULL DEFAULT false,
   tarih TIMESTAMPTZ DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS idx_yorum_icerik ON yorumlar(tur, tmdb_id, sezon, bolum, tarih DESC);

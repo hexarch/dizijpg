@@ -97,6 +97,15 @@ class _DetayEkraniState extends State<DetayEkrani> {
     }),
   );
 
+  /// Yeniden izleme sayacı (+1 / -1); yalnız "bitirdim" durumunda çalışır.
+  Future<void> _rewatch(int deger) => _mutasyon(
+    () => Api.post('/rewatch', {
+      'tmdb_id': widget.tmdbId,
+      'tur': widget.tur,
+      'deger': deger,
+    }),
+  );
+
   /// İzleyenler listesi: avatar + kullanıcı adı, dokununca profile gider.
   void _izleyenlerAc() {
     final liste = (_izleyenler?['kullanicilar'] as List<dynamic>? ?? []);
@@ -352,6 +361,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
     final filmIzlendi = !tv && izlenenSet.contains('0:0');
     final favori = _benim?['favori'] == true;
     final benimDurum = _benim?['durum'] as String?;
+    final tekrar = (_benim?['tekrar'] as int?) ?? 0; // yeniden izleme sayısı
     final benimPuan = _benim?['puan']?['puan'] as int?;
     // Gelecek bölüm: tarih belliyse kaç gün kaldığını göster
     final sonrakiTarih = tv
@@ -529,6 +539,47 @@ class _DetayEkraniState extends State<DetayEkrani> {
                         ),
                     ],
                   ),
+                  // Yeniden izleme (yalnız "bitirdim" durumunda): Letterboxd tarzı
+                  if (benimDurum == 'bitirdim') ...[
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        ActionChip(
+                          avatar: const Icon(
+                            Icons.replay,
+                            size: 16,
+                            color: DiziRenkler.sari,
+                          ),
+                          label: Text('Yeniden izledim'.c),
+                          onPressed: () => _rewatch(1),
+                        ),
+                        if (tekrar > 0) ...[
+                          const SizedBox(width: 10),
+                          Text(
+                            // tekrar=1 → toplam 2. izleme
+                            '{}. kez izlendi'.cf([tekrar + 1]),
+                            style: TextStyle(
+                              color: DiziRenkler.metin54,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () => _rewatch(-1),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Icon(
+                                Icons.remove_circle_outline,
+                                size: 16,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
                   // Gelecek bölüm geri sayımı
                   if (kalanGun != null && kalanGun >= 0) ...[
                     const SizedBox(height: 10),

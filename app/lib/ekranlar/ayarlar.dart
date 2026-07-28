@@ -961,6 +961,29 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),
+                const SizedBox(height: 16),
+                Card(
+                  child: ListTile(
+                    leading: const Icon(
+                      Icons.notifications_none,
+                      color: DiziRenkler.sari,
+                    ),
+                    title: Text(
+                      'Bildirim Tercihleri'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      isScrollControlled: true,
+                      builder: (_) => const _BildirimTercihleriSheet(),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 32),
                 OutlinedButton.icon(
                   onPressed: () async {
@@ -1010,6 +1033,120 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     return Scaffold(
       appBar: AppBar(title: Text('Ayarlar'.c)),
       body: govde,
+    );
+  }
+}
+
+/// Bildirim tercihleri: her bildirim türünü ayrı aç/kapat (beğeni, yanıt,
+/// takip, mesaj, etiket). Kapalı tür ne uygulama-içi bildirim ne push üretir.
+class _BildirimTercihleriSheet extends StatefulWidget {
+  const _BildirimTercihleriSheet();
+
+  @override
+  State<_BildirimTercihleriSheet> createState() =>
+      _BildirimTercihleriSheetState();
+}
+
+class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
+  Map<String, dynamic>? _tercih;
+  String? _hata;
+
+  static const _alanlar = [
+    ('bildir_begeni', 'Beğeniler'),
+    ('bildir_yanit', 'Yanıtlar'),
+    ('bildir_takip', 'Yeni takipçiler'),
+    ('bildir_mesaj', 'Mesajlar'),
+    ('bildir_etiket', 'Etiketlenmeler'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final d = await Api.get('/bildirim-tercihleri');
+      if (mounted) setState(() => _tercih = Map<String, dynamic>.from(d));
+    } catch (e) {
+      if (mounted) setState(() => _hata = e.toString());
+    }
+  }
+
+  Future<void> _degistir(String alan, bool deger) async {
+    final eski = _tercih![alan];
+    setState(() => _tercih![alan] = deger); // iyimser
+    try {
+      await Api.post('/bildirim-tercihleri', {alan: deger});
+    } catch (e) {
+      if (mounted) {
+        setState(() => _tercih![alan] = eski); // geri al
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.notifications_none,
+                    size: 20,
+                    color: DiziRenkler.sari,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Bildirim Tercihleri'.c,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (_hata != null)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _hata!,
+                  style: TextStyle(color: DiziRenkler.metin54),
+                ),
+              )
+            else if (_tercih == null)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: CircularProgressIndicator(color: DiziRenkler.sari),
+              )
+            else
+              for (final (alan, etiket) in _alanlar)
+                SwitchListTile(
+                  value: _tercih![alan] == true,
+                  activeColor: DiziRenkler.sari,
+                  title: Text(
+                    etiket.c,
+                    style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                  ),
+                  onChanged: (v) => _degistir(alan, v),
+                ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -54,16 +54,17 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     }
   }
 
-  /// Bildirimin götüreceği yer: yorum → ilgili içerik/bölüm, mesaj → sohbet.
+  /// Bildirimin götüreceği yer:
+  ///  - mesaj → sohbet
+  ///  - beğeni/yanıt/etiket (yorum_id var) → doğrudan O GÖNDERİYE (/gonderi/:id)
+  ///    (eskiden yalnız yorumun içeriğine/dizisine gidiyordu; hedef yorumu
+  ///    bulmak zordu)
+  ///  - yorumsuz (takip) → aktörün profili
   String _hedef(Map<String, dynamic> b) {
-    final yTur = b['yorum_tur'] as String?;
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
-    if (yTur == null) return '/kullanici/${b['aktor']}';
-    if (yTur == 'person') return '/kisi/${b['yorum_tmdb']}';
-    if (b['yorum_sezon'] != null) {
-      return '/dizi/${b['yorum_tmdb']}/sezon/${b['yorum_sezon']}/bolum/${b['yorum_bolum']}';
-    }
-    return '/icerik/$yTur/${b['yorum_tmdb']}';
+    final yorumId = b['yorum_id'];
+    if (yorumId != null) return '/gonderi/$yorumId';
+    return '/kullanici/${b['aktor']}';
   }
 
   (IconData, String) _gorunum(Map<String, dynamic> b) {

@@ -3,16 +3,37 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
-/// Kullanıcı adı deseni (kayıt kuralıyla aynı): 3-20 küçük harf/rakam/alt çizgi.
-final RegExp etiketDeseni = RegExp(r'@([a-z0-9_]{3,20})');
+/// Kullanıcı adı deseni (kayıt kuralıyla aynı): 3-20 küçük harf/rakam/nokta/tire/
+/// alt çizgi; başta/sonda nokta-tire olmaz ki cümle sonu noktası ada yapışmasın.
+final RegExp etiketDeseni = RegExp(r'@([a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_])');
 
-/// Metindeki @kullanici_adi etiketlerini sarı, tıklanır bağlantı olarak gösterir.
-/// Bağlantıya dokununca ilgili profile gider. Diğer metin verilen [stil]'i alır.
+/// Dizi/film/kişi etiketi: metinde "[[tv:1396|Breaking Bad]]" olarak saklanır;
+/// ekranda yalnız ad görünür, dokununca içerik/kişi sayfasına gider.
+/// Sunucu değişikliği gerektirmez (düz metin içinde yaşar).
+final RegExp icerikEtiketDeseni = RegExp(
+  r'\[\[(tv|movie|person):(\d{1,9})\|([^\]|]{1,80})\]\]',
+);
+
+/// Tek geçişte hem @kullanıcı hem [[tur:id|Ad]] etiketlerini yakalar.
+final RegExp _tumEtiketler = RegExp(
+  r'@([a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_])|\[\[(tv|movie|person):(\d{1,9})\|([^\]|]{1,80})\]\]',
+);
+
+IconData _turIkonu(String tur) => switch (tur) {
+  'tv' => Icons.live_tv_outlined,
+  'movie' => Icons.movie_outlined,
+  _ => Icons.person_outline,
+};
+
+/// Metindeki @kullanici_adi ve [[tur:id|Ad]] etiketlerini sarı, tıklanır
+/// bağlantı olarak gösterir. Kullanıcı etiketi profile, içerik etiketi
+/// dizi/film sayfasına, kişi etiketi oyuncu sayfasına gider.
 class EtiketliMetin extends StatefulWidget {
   final String metin;
   final TextStyle? stil;
@@ -43,27 +64,52 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
     final taban =
         widget.stil ??
         DefaultTextStyle.of(context).style.copyWith(color: DiziRenkler.metin);
+    const etiketStili = TextStyle(
+      color: DiziRenkler.sari,
+      fontWeight: FontWeight.w700,
+    );
     final metin = widget.metin;
     final parcalar = <InlineSpan>[];
     var i = 0;
-    for (final m in etiketDeseni.allMatches(metin)) {
+    for (final m in _tumEtiketler.allMatches(metin)) {
       if (m.start > i) {
         parcalar.add(TextSpan(text: metin.substring(i, m.start)));
       }
-      final ad = m.group(1)!;
-      final taniyici = TapGestureRecognizer()
-        ..onTap = () => kullaniciyaGit(context, ad);
-      _taniyicilar.add(taniyici);
-      parcalar.add(
-        TextSpan(
-          text: '@$ad',
-          style: const TextStyle(
-            color: DiziRenkler.sari,
-            fontWeight: FontWeight.w700,
+      if (m.group(1) != null) {
+        // @kullanıcı etiketi
+        final ad = m.group(1)!;
+        final taniyici = TapGestureRecognizer()
+          ..onTap = () => kullaniciyaGit(context, ad);
+        _taniyicilar.add(taniyici);
+        parcalar.add(
+          TextSpan(text: '@$ad', style: etiketStili, recognizer: taniyici),
+        );
+      } else {
+        // [[tur:id|Ad]] içerik/kişi etiketi
+        final tur = m.group(2)!;
+        final id = m.group(3)!;
+        final ad = m.group(4)!;
+        final yol = tur == 'person' ? '/kisi/$id' : '/icerik/$tur/$id';
+        final taniyici = TapGestureRecognizer()
+          ..onTap = () => GoRouter.of(context).push(yol);
+        _taniyicilar.add(taniyici);
+        parcalar.add(
+          WidgetSpan(
+            alignment: PlaceholderAlignment.middle,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 2),
+              child: Icon(
+                _turIkonu(tur),
+                size: (taban.fontSize ?? 14) + 2,
+                color: DiziRenkler.sari,
+              ),
+            ),
           ),
-          recognizer: taniyici,
-        ),
-      );
+        );
+        parcalar.add(
+          TextSpan(text: ad, style: etiketStili, recognizer: taniyici),
+        );
+      }
       i = m.end;
     }
     if (i < metin.length) parcalar.add(TextSpan(text: metin.substring(i)));
@@ -72,9 +118,10 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
 }
 
 /// @etiketleme otomatik-tamamlaması olan metin girişi.
-/// Kullanıcı "@" yazıp sürdürünce eşleşen kullanıcılar alan ÜSTÜNDE listelenir
-/// (yorum kutusu ekranın altında olduğundan öneriler yukarı açılır).
-/// Seçilince aktif "@kelime" -> "@kullanici_adi " ile değiştirilir.
+/// "@" yazıp sürdürünce KULLANICILAR + DİZİ/FİLMLER + KİŞİLER birlikte
+/// aranır ve alan ÜSTÜNDE listelenir (yorum kutusu ekranın altında
+/// olduğundan öneriler yukarı açılır). Kullanıcı seçilince "@ad ",
+/// içerik/kişi seçilince "[[tur:id|Ad]] " eklenir.
 class EtiketliGirdi extends StatefulWidget {
   final TextEditingController controller;
   final InputDecoration? decoration;
@@ -98,7 +145,7 @@ class EtiketliGirdi extends StatefulWidget {
 }
 
 class _EtiketliGirdiState extends State<EtiketliGirdi> {
-  List<dynamic> _oneriler = [];
+  List<Map<String, dynamic>> _oneriler = [];
   Timer? _zaman;
   int _istek = 0;
 
@@ -116,13 +163,15 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
   }
 
   /// İmlecin hemen solundaki aktif "@kelime"yi döndürür (yoksa null).
+  /// Dizi/film adları için boşluk ve büyük harf de kabul edilir
+  /// ("@breaking bad" gibi); @ veya satır sonu aramayı bitirir.
   RegExpMatch? _aktifEtiket() {
     final secim = widget.controller.selection;
     if (!secim.isValid || !secim.isCollapsed) return null;
     final metin = widget.controller.text;
     final imlec = secim.baseOffset.clamp(0, metin.length);
     final onces = metin.substring(0, imlec);
-    return RegExp(r'@([a-z0-9_]{0,20})$').firstMatch(onces);
+    return RegExp(r'@(\S[^@\n\[\]]{0,39})$').firstMatch(onces);
   }
 
   void _dinle() {
@@ -133,38 +182,166 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
       return;
     }
     _zaman?.cancel();
-    _zaman = Timer(const Duration(milliseconds: 220), () => _ara(q));
+    _zaman = Timer(const Duration(milliseconds: 250), () => _ara(q));
+  }
+
+  Future<List<dynamic>> _kullanicilarGetir(String q) async {
+    // Kullanıcı adları küçük harf/rakam/nokta/tire/alt çizgi; boşluklu sorgu kullanıcı olamaz
+    final kq = q.toLowerCase().trim();
+    if (!RegExp(r'^[a-z0-9_.-]{2,20}$').hasMatch(kq)) return [];
+    try {
+      return await Api.kullaniciAra(kq);
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<List<dynamic>> _iceriklerGetir(String q) async {
+    try {
+      final d = await Api.get('/ara?q=${Uri.encodeQueryComponent(q.trim())}');
+      return (d['results'] as List<dynamic>? ?? []);
+    } catch (_) {
+      return [];
+    }
   }
 
   Future<void> _ara(String q) async {
     final benim = ++_istek;
-    try {
-      final sonuc = await Api.kullaniciAra(q);
-      if (!mounted || benim != _istek) return;
-      // Kutu hâlâ aynı "@kelime"de mi? (kullanıcı bu arada devam etmiş olabilir)
-      final hala = _aktifEtiket();
-      if (hala == null) return;
-      setState(() => _oneriler = sonuc.take(6).toList());
-    } catch (_) {
-      /* öneri getirilemezse sessizce boş kalır */
+    final sonuc = await Future.wait([
+      _kullanicilarGetir(q),
+      _iceriklerGetir(q),
+    ]);
+    if (!mounted || benim != _istek) return;
+    // Kutu hâlâ aynı "@kelime"de mi? (kullanıcı bu arada devam etmiş olabilir)
+    if (_aktifEtiket() == null) return;
+    final oneriler = <Map<String, dynamic>>[
+      for (final k in sonuc[0].take(4))
+        {'_tip': 'kullanici', ...(k as Map<String, dynamic>)},
+    ];
+    var icerikSayi = 0, kisiSayi = 0;
+    for (final ham in sonuc[1]) {
+      final r = ham as Map<String, dynamic>;
+      final mt = r['media_type'] as String?;
+      if (mt == 'person' && kisiSayi < 3) {
+        final ad = r['name'] as String?;
+        if (ad == null || ad.isEmpty) continue;
+        kisiSayi++;
+        oneriler.add({
+          '_tip': 'icerik',
+          'tur': 'person',
+          'id': r['id'],
+          'ad': ad,
+          'gorsel': r['profile_path'],
+        });
+      } else if ((mt == 'tv' || mt == 'movie') && icerikSayi < 4) {
+        final ad = (r['name'] ?? r['title']) as String?;
+        if (ad == null || ad.isEmpty) continue;
+        icerikSayi++;
+        final tarih = (r['first_air_date'] ?? r['release_date']) as String?;
+        oneriler.add({
+          '_tip': 'icerik',
+          'tur': mt,
+          'id': r['id'],
+          'ad': ad,
+          'gorsel': r['poster_path'],
+          'yil': (tarih != null && tarih.length >= 4)
+              ? tarih.substring(0, 4)
+              : null,
+        });
+      }
     }
+    setState(() => _oneriler = oneriler);
   }
 
-  void _sec(String kullaniciAdi) {
+  /// Aktif "@kelime"yi verilen metinle değiştirir, imleci sonuna taşır.
+  void _degistir(String yerine) {
     final eslesme = _aktifEtiket();
     if (eslesme == null) return;
     final metin = widget.controller.text;
     final secim = widget.controller.selection;
     final imlec = secim.baseOffset.clamp(0, metin.length);
     final yeni =
-        '${metin.substring(0, eslesme.start)}@$kullaniciAdi ${metin.substring(imlec)}';
-    final imlecYeni =
-        eslesme.start + kullaniciAdi.length + 2; // @ + ad + boşluk
+        '${metin.substring(0, eslesme.start)}$yerine ${metin.substring(imlec)}';
     widget.controller.value = TextEditingValue(
       text: yeni,
-      selection: TextSelection.collapsed(offset: imlecYeni),
+      selection: TextSelection.collapsed(
+        offset: eslesme.start + yerine.length + 1,
+      ),
     );
     setState(() => _oneriler = []);
+  }
+
+  void _secKullanici(String kullaniciAdi) => _degistir('@$kullaniciAdi');
+
+  void _secIcerik(Map<String, dynamic> o) {
+    // Belirteci bozacak karakterleri addan ayıkla
+    final ad = (o['ad'] as String).replaceAll(RegExp(r'[\[\]|]'), '').trim();
+    if (ad.isEmpty) return;
+    _degistir('[[${o['tur']}:${o['id']}|$ad]]');
+  }
+
+  Widget _oneriSatiri(Map<String, dynamic> o) {
+    if (o['_tip'] == 'kullanici') {
+      final av = dosyaUrl(o['avatar'] as String?);
+      return ListTile(
+        dense: true,
+        leading: CircleAvatar(
+          radius: 16,
+          backgroundColor: DiziRenkler.koyuGri,
+          backgroundImage: av != null ? CachedNetworkImageProvider(av) : null,
+          child: av == null
+              ? Icon(Icons.person, size: 16, color: DiziRenkler.metin38)
+              : null,
+        ),
+        title: Text(
+          '@${o['kullanici_adi']}',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        onTap: () => _secKullanici(o['kullanici_adi'] as String),
+      );
+    }
+    final tur = o['tur'] as String;
+    final gorsel = posterUrl(o['gorsel'] as String?, boyut: 'w92');
+    final yil = o['yil'] as String?;
+    return ListTile(
+      dense: true,
+      leading: tur == 'person'
+          ? CircleAvatar(
+              radius: 16,
+              backgroundColor: DiziRenkler.koyuGri,
+              backgroundImage: gorsel != null
+                  ? CachedNetworkImageProvider(gorsel)
+                  : null,
+              child: gorsel == null
+                  ? Icon(Icons.person, size: 16, color: DiziRenkler.metin38)
+                  : null,
+            )
+          : ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: SizedBox(
+                width: 27,
+                height: 40,
+                child: gorsel != null
+                    ? CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover)
+                    : Container(
+                        color: DiziRenkler.koyuGri,
+                        child: Icon(
+                          _turIkonu(tur),
+                          size: 14,
+                          color: DiziRenkler.metin38,
+                        ),
+                      ),
+              ),
+            ),
+      title: Text(
+        yil != null ? '${o['ad']} ($yil)' : o['ad'] as String,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      trailing: Icon(_turIkonu(tur), size: 16, color: DiziRenkler.sari),
+      onTap: () => _secIcerik(o),
+    );
   }
 
   @override
@@ -176,7 +353,7 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
         if (_oneriler.isNotEmpty)
           Container(
             margin: const EdgeInsets.only(bottom: 6),
-            constraints: const BoxConstraints(maxHeight: 210),
+            constraints: const BoxConstraints(maxHeight: 264),
             decoration: BoxDecoration(
               color: DiziRenkler.kart,
               borderRadius: BorderRadius.circular(12),
@@ -186,32 +363,7 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _oneriler.length,
-              itemBuilder: (context, i) {
-                final k = _oneriler[i] as Map<String, dynamic>;
-                final av = dosyaUrl(k['avatar'] as String?);
-                return ListTile(
-                  dense: true,
-                  leading: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: DiziRenkler.koyuGri,
-                    backgroundImage: av != null
-                        ? CachedNetworkImageProvider(av)
-                        : null,
-                    child: av == null
-                        ? Icon(
-                            Icons.person,
-                            size: 16,
-                            color: DiziRenkler.metin38,
-                          )
-                        : null,
-                  ),
-                  title: Text(
-                    '@${k['kullanici_adi']}',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  onTap: () => _sec(k['kullanici_adi'] as String),
-                );
-              },
+              itemBuilder: (context, i) => _oneriSatiri(_oneriler[i]),
             ),
           ),
         TextField(

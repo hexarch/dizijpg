@@ -37,6 +37,7 @@ class _AkisEkraniState extends State<AkisEkrani>
   List<dynamic> _aramaIcerik = []; // dizi + film
   List<dynamic> _aramaKisiler = []; // oyuncu/yönetmen (TMDB)
   List<dynamic> _aramaKullanicilar = []; // uygulama kullanıcıları
+  String? _duzeltme; // "şunu mu demek istedin" — sunucu yazım düzeltmesi
 
   @override
   bool get wantKeepAlive => true;
@@ -78,7 +79,12 @@ class _AkisEkraniState extends State<AkisEkrani>
       ]);
       if (!mounted || _sorgu.trim() != sorgu.trim()) return;
       final sonuclar = (y[0]['results'] as List<dynamic>? ?? []);
+      // Sunucu yazım hatasını düzeltip "duzeltme" döndürdüyse başlıkta göster
+      final d = y[0]['duzeltme'] as String?;
       setState(() {
+        _duzeltme = (d != null && d.toLowerCase() != sorgu.trim().toLowerCase())
+            ? d
+            : null;
         _aramaIcerik = sonuclar
             .where(
               (r) => r['media_type'] != 'person' && r['poster_path'] != null,
@@ -350,6 +356,25 @@ class _AkisEkraniState extends State<AkisEkrani>
         child: ListView(
           padding: const EdgeInsets.only(bottom: 24),
           children: [
+            if (_duzeltme != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+                child: RichText(
+                  text: TextSpan(
+                    style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
+                    children: [
+                      TextSpan(text: '${'Şunu mu demek istedin'.c}: '),
+                      TextSpan(
+                        text: _duzeltme,
+                        style: const TextStyle(
+                          color: DiziRenkler.sari,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             if (_aramaKullanicilar.isNotEmpty) ...[
               baslik(Icons.people_outline, 'Kullanıcılar'.c),
               for (final k in _aramaKullanicilar.take(6))

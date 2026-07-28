@@ -89,7 +89,13 @@ void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
     case 'takip':
       if (ad.isNotEmpty) rotayaGit('/kullanici/$ad');
     case 'begeni' || 'yanit' || 'etiket':
-      rotayaGit('/bildirimler');
+      // yorum_id varsa doğrudan o gönderiye; yoksa bildirim listesine
+      final yorumId = veri['yorum_id'] as String?;
+      rotayaGit(
+        (yorumId != null && yorumId.isNotEmpty)
+            ? '/gonderi/$yorumId'
+            : '/bildirimler',
+      );
   }
 }
 

@@ -459,6 +459,7 @@ void kullaniciyaGit(BuildContext context, String ad) {
     '/izlediklerim',
     '/ayarlar',
     '/gizlilik',
+    '/gonderi/',
   ];
   final disarida = kabukDisi.any(yol.startsWith);
   final hedef = '/kullanici/$ad';
