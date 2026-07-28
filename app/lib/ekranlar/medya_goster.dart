@@ -141,6 +141,8 @@ class _TamVideo extends StatefulWidget {
 class _TamVideoState extends State<_TamVideo> {
   VideoPlayerController? _d;
   String? _hata;
+  double _ses = 1; // 0..1 ses seviyesi
+  bool _sessiz = false;
 
   @override
   void initState() {
@@ -217,44 +219,104 @@ class _TamVideoState extends State<_TamVideo> {
               size: 72,
               color: Colors.white70,
             ),
-          // Alt: sarma çubuğu + süre
+          // Alt kontrol çubuğu: oynat/duraklat + sarma + süre + ses
           Positioned(
-            left: 16,
-            right: 16,
-            bottom: 24,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                VideoProgressIndicator(
-                  d,
-                  allowScrubbing: true,
-                  colors: const VideoProgressColors(
-                    playedColor: DiziRenkler.sari,
-                    bufferedColor: Colors.white24,
-                    backgroundColor: Colors.white12,
-                  ),
+            left: 12,
+            right: 12,
+            bottom: 16,
+            // Çubuğun boş alanına dokunuş videoyu durdurmasın
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.55),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      _sure(d.value.position),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
+                    VideoProgressIndicator(
+                      d,
+                      allowScrubbing: true,
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      colors: const VideoProgressColors(
+                        playedColor: DiziRenkler.sari,
+                        bufferedColor: Colors.white24,
+                        backgroundColor: Colors.white12,
                       ),
                     ),
-                    Text(
-                      _sure(d.value.duration),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () =>
+                              d.value.isPlaying ? d.pause() : d.play(),
+                          icon: Icon(
+                            d.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                            color: Colors.white,
+                            size: 26,
+                          ),
+                        ),
+                        Text(
+                          '${_sure(d.value.position)} / ${_sure(d.value.duration)}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          onPressed: () {
+                            setState(() => _sessiz = !_sessiz);
+                            d.setVolume(_sessiz ? 0 : _ses);
+                          },
+                          icon: Icon(
+                            _sessiz || _ses == 0
+                                ? Icons.volume_off
+                                : (_ses < 0.5
+                                      ? Icons.volume_down
+                                      : Icons.volume_up),
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ),
+                        // Ses seviyesi (dar ekranda gizlenir; sessize alma kalır)
+                        if (MediaQuery.of(context).size.width > 480)
+                          SizedBox(
+                            width: 110,
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                trackHeight: 3,
+                                thumbShape: const RoundSliderThumbShape(
+                                  enabledThumbRadius: 6,
+                                ),
+                                overlayShape: const RoundSliderOverlayShape(
+                                  overlayRadius: 12,
+                                ),
+                              ),
+                              child: Slider(
+                                value: _sessiz ? 0 : _ses,
+                                activeColor: DiziRenkler.sari,
+                                inactiveColor: Colors.white24,
+                                onChanged: (v) {
+                                  setState(() {
+                                    _ses = v;
+                                    _sessiz = v == 0;
+                                  });
+                                  d.setVolume(v);
+                                },
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
