@@ -459,6 +459,15 @@ asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
   1. sekme "Ana Sayfa" olarak yeniden adlandı. Çeviri 330 × 45.
   NOT: eski arama.dart rotasız duruyor (gerekirse geri bağlanır).
 
+## AKILLI ARAMA + YAZIM TOLERANSI ✅🚀 (2026-07-28, canlıda)
+- GET /ara: sorgu varyantları (aynen/boşluksuz/the'siz kombinasyonları) paralel
+  TMDB araması + tekilleştirme + başlık-eşleşmesi öncelikli sıralama
+  ("Black List" → The Blacklist; "game of thrones"ta GoT, HotD'nin üstünde).
+- Yazım toleransı: `icerik_dizini` (pg_trgm, migrasyon-2026-07-28b, 1244 başlık
+  tohum + her aramayla büyür); sonuç yoksa en benzer başlıklar döner
+  ("brekaing bad" → Breaking Bad, "blacklst" → The Blacklist). Yanıtta
+  `duzeltme` alanı var — istersek UI'da "şunu mu demek istedin" gösterilebilir.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).
