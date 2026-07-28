@@ -1554,39 +1554,8 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
 }));
 
 // ---------- sosyal akış ----------
-// Instagram tarzı akış: kitaplığındaki içeriklere BAŞKALARININ yorumları.
-// Spoiler emniyeti:
-//  - Bölüm yorumu yalnızca o bölümü izlediysen gelir.
-//  - Film yorumu yalnızca filmi izlediysen gelir.
-//  - Dizi geneli yorum yalnızca dizi kitaplığında izliyorum/bitirdim ise gelir.
-app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
-  const once = parseInt(req.query.once, 10) || null; // sayfalama: bu id'den eskiler
-  const benId = req.kullanici.id;
-  // Akış ASLA boş kalmaz. Kurallar:
-  //  - Bölüm yorumları YALNIZ o bölümü izlediysen gelir (spoiler: tamamen dışarıda).
-  //  - Film ve dizi-geneli yorumlar HERKESTEN gelir; içerik kitaplığında
-  //    "guvenli" değilse istemci bulanık gösterir (spoiler bayrağı).
-  //  - Kişi (oyuncu/yönetmen) yorumları: takip ettiklerinin tümü + izlediğin
-  //    yapımların kadrosundaki kişiler (önbellekli TMDB credits).
-  // Kadro kişi id'leri: son izlenen 20 yapımın oyuncu/yönetmenleri.
-  const kadro = new Set();
-  try {
-    const son = await havuz.query(
-      `SELECT tur, tmdb_id, max(tarih) AS son FROM izlemeler
-       WHERE kullanici_id=$1 GROUP BY tur, tmdb_id ORDER BY son DESC LIMIT 20`,
-      [benId]);
-    await Promise.all(son.rows.map(async (r) => {
-      try {
-        const v = await tmdbGetir(`/${r.tur}/${r.tmdb_id}/credits`, ONBELLEK_TTL_SN.uzun);
-        for (const o of (v.cast || []).slice(0, 20)) kadro.add(o.id);
-        for (const c of v.crew || []) {
-          if (c.job === 'Director' || c.department === 'Directing') kadro.add(c.id);
-        }
-      } catch { /* kadro alınamazsa o yapım atlanır */ }
-    }));
-  } catch { /* kadro tamamen boş kalabilir */ }
-  // Ortak SELECT/FROM/filtreler: guvenli = spoiler-emniyetli kitaplık eşleşmesi.
-  const AKIS_GOVDE = `
+// Ortak SELECT/FROM/filtreler: guvenli = spoiler-emniyetli kitaplık eşleşmesi.
+const AKIS_GOVDE = `
      FROM yorumlar y
      JOIN kullanicilar k ON k.id = y.kullanici_id
      CROSS JOIN LATERAL (SELECT (
@@ -1608,19 +1577,19 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
          SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$1
          UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$1)
        AND y.ust_id IS NULL`;
-  const AKIS_ALANLAR = `
+const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme,
             k.kullanici_adi, k.avatar, g.guvenli,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim`;
-  // Ana akış (kronolojik): izlenen bölümler + herkesin film/dizi-geneli
-  // yorumları (izlenmemişse istemci bulanıklaştırır) + kişi yorumları
-  // (takip edilenlerden ya da izlenen yapımların kadrosundan).
-  let { rows } = await havuz.query(
-    `${AKIS_ALANLAR} ${AKIS_GOVDE}
-       AND ($2::int IS NULL OR y.id < $2)
+// Akış uygunluk kuralı (asla boş kalmaz):
+//  - Bölüm yorumları YALNIZ o bölüm izlendiyse (spoiler: tamamen dışarıda).
+//  - Film/dizi-geneli yorumlar herkesten; kitaplıkta "guvenli" değilse istemci
+//    bulanık gösterir (spoiler bayrağı).
+//  - Kişi yorumları: takip edilenlerden VEYA izlenen yapımların kadrosundan.
+const AKIS_KURAL = `
        AND (
          g.guvenli
          OR (y.sezon IS NULL AND y.tur <> 'person' AND y.kullanici_id IN (
@@ -1630,9 +1599,65 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
             OR y.kullanici_id IN (
               SELECT takip_edilen_id FROM takipler WHERE takip_eden_id=$1)))
          OR (y.sezon IS NULL AND y.tur <> 'person')
-       )
+       )`;
+
+// Son izlenen 20 yapımın oyuncu/yönetmen TMDB id'leri (önbellekli credits).
+async function kadroKisileri(benId) {
+  const kadro = new Set();
+  try {
+    const son = await havuz.query(
+      `SELECT tur, tmdb_id, max(tarih) AS son FROM izlemeler
+       WHERE kullanici_id=$1 GROUP BY tur, tmdb_id ORDER BY son DESC LIMIT 20`,
+      [benId]);
+    await Promise.all(son.rows.map(async (r) => {
+      try {
+        const v = await tmdbGetir(`/${r.tur}/${r.tmdb_id}/credits`, ONBELLEK_TTL_SN.uzun);
+        for (const o of (v.cast || []).slice(0, 20)) kadro.add(o.id);
+        for (const c of v.crew || []) {
+          if (c.job === 'Director' || c.department === 'Directing') kadro.add(c.id);
+        }
+      } catch { /* kadro alınamazsa o yapım atlanır */ }
+    }));
+  } catch { /* kadro tamamen boş kalabilir */ }
+  return [...kadro];
+}
+
+// Satır listesi için içerik adı + poster haritası (kişide profile_path).
+async function akisIcerikleri(rows) {
+  const anahtarlar = [...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))];
+  const icerikler = {};
+  await Promise.all(anahtarlar.map(async (a) => {
+    const [tur, id] = a.split(':');
+    try {
+      const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+      icerikler[a] = {
+        ad: v.name || v.title || '?',
+        poster: v.poster_path || v.profile_path || null,
+      };
+    } catch {
+      icerikler[a] = { ad: '?', poster: null };
+    }
+  }));
+  return icerikler;
+}
+
+const akisSatiri = ({ guvenli, ...r }) => ({
+  ...r,
+  // İzlemediğin içeriğin yorumu: istemci bulanık gösterir. Kişi yorumları
+  // ve kitaplık eşleşmeleri spoiler sayılmaz.
+  spoiler: !(guvenli || r.tur === 'person'),
+});
+
+app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
+  const once = parseInt(req.query.once, 10) || null; // sayfalama: bu id'den eskiler
+  const benId = req.kullanici.id;
+  const kadro = await kadroKisileri(benId);
+  let { rows } = await havuz.query(
+    `${AKIS_ALANLAR} ${AKIS_GOVDE}
+       AND ($2::int IS NULL OR y.id < $2)
+       ${AKIS_KURAL}
      ORDER BY y.id DESC LIMIT 30`,
-    [benId, once, [...kadro]],
+    [benId, once, kadro],
   );
   let kaynak = 'akis';
   // FALLBACK (yalnız ilk sayfa boşsa): günün en beğenilenleri → ayın en
@@ -1660,31 +1685,39 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
        SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
       [benId, rows.map((r) => r.id)]).catch(() => {});
   }
-  // Kart başlıkları için içerik adı + poster (önbellekli TMDB; kişilerde
-  // profile_path kullanılır)
-  const anahtarlar = [...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))];
-  const icerikler = {};
-  await Promise.all(anahtarlar.map(async (a) => {
-    const [tur, id] = a.split(':');
-    try {
-      const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-      icerikler[a] = {
-        ad: v.name || v.title || '?',
-        poster: v.poster_path || v.profile_path || null,
-      };
-    } catch {
-      icerikler[a] = { ad: '?', poster: null };
-    }
-  }));
   res.json({
     kaynak,
-    akis: rows.map(({ guvenli, ...r }) => ({
-      ...r,
-      // İzlemediğin içeriğin yorumu: istemci bulanık gösterir. Kişi
-      // yorumları ve kitaplık eşleşmeleri spoiler sayılmaz.
-      spoiler: !(guvenli || r.tur === 'person'),
-    })),
-    icerikler,
+    akis: rows.map(akisSatiri),
+    icerikler: await akisIcerikleri(rows),
+  });
+}));
+
+// Keşfet (Reels tarzı): akışla AYNI uygunluk/öncelik; videolu postlar önce,
+// sonra diğer medyalılar, sonra yazılı yorumlar. Tek sayfa (60), takip durumu
+// dahil — istemci ızgara + tam ekran dikey kaydırma olarak gösterir.
+app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
+  const benId = req.kullanici.id;
+  const kadro = await kadroKisileri(benId);
+  const { rows } = await havuz.query(
+    `${AKIS_ALANLAR},
+            EXISTS (SELECT 1 FROM unnest(y.medya) mm
+                    WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm') AS videolu,
+            EXISTS (SELECT 1 FROM takipler t
+                    WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id)
+              AS takip_ediyorum
+     ${AKIS_GOVDE}
+       AND ($2::int IS NULL OR true)
+       ${AKIS_KURAL}
+     ORDER BY (EXISTS (SELECT 1 FROM unnest(y.medya) mm
+                       WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')) DESC,
+              (cardinality(y.medya) > 0) DESC,
+              y.id DESC
+     LIMIT 60`,
+    [benId, null, kadro],
+  );
+  res.json({
+    akis: rows.map(akisSatiri),
+    icerikler: await akisIcerikleri(rows),
   });
 }));
 

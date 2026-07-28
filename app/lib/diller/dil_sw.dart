@@ -358,4 +358,10 @@ const Map<String, String> cevirilerSw = {
   'Beğeni': 'Zilizopendwa',
   'Görüntülenme': 'Mionekano',
   'Tam ekran': 'Skrini nzima',
+  'Sonuç bulunamadı': 'Hakuna matokeo',
+  'Dizi ve Filmler': 'Tamthilia na Filamu',
+  'Kişiler': 'Watu',
+  'Ana Sayfa': 'Mwanzo',
+  'Paylaş': 'Shiriki',
+  'Yanıtlar': 'Majibu',
 };

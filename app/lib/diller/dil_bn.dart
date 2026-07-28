@@ -360,4 +360,10 @@ const Map<String, String> cevirilerBn = {
   'Beğeni': 'লাইক',
   'Görüntülenme': 'ভিউ',
   'Tam ekran': 'ফুলস্ক্রিন',
+  'Sonuç bulunamadı': 'কোনো ফলাফল নেই',
+  'Dizi ve Filmler': 'সিরিজ ও সিনেমা',
+  'Kişiler': 'ব্যক্তি',
+  'Ana Sayfa': 'হোম',
+  'Paylaş': 'শেয়ার',
+  'Yanıtlar': 'জবাব',
 };

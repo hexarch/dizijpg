@@ -366,4 +366,10 @@ const Map<String, String> cevirilerMy = {
   'Beğeni': 'ကြိုက်နှစ်သက်မှု',
   'Görüntülenme': 'ကြည့်ရှုမှု',
   'Tam ekran': 'မျက်နှာပြင်အပြည့်',
+  'Sonuç bulunamadı': 'ရလဒ်မတွေ့ပါ',
+  'Dizi ve Filmler': 'စီးရီးနှင့် ရုပ်ရှင်များ',
+  'Kişiler': 'ပုဂ္ဂိုလ်များ',
+  'Ana Sayfa': 'ပင်မ',
+  'Paylaş': 'မျှဝေရန်',
+  'Yanıtlar': 'ပြန်စာများ',
 };

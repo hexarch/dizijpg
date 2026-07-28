@@ -361,4 +361,10 @@ const Map<String, String> cevirilerTa = {
   'Beğeni': 'லைக்குகள்',
   'Görüntülenme': 'பார்வைகள்',
   'Tam ekran': 'முழுத்திரை',
+  'Sonuç bulunamadı': 'முடிவுகள் இல்லை',
+  'Dizi ve Filmler': 'தொடர்கள் & படங்கள்',
+  'Kişiler': 'நபர்கள்',
+  'Ana Sayfa': 'முகப்பு',
+  'Paylaş': 'பகிர்',
+  'Yanıtlar': 'பதில்கள்',
 };

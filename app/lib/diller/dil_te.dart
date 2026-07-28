@@ -359,4 +359,10 @@ const Map<String, String> cevirilerTe = {
   'Beğeni': 'లైక్‌లు',
   'Görüntülenme': 'వీక్షణలు',
   'Tam ekran': 'పూర్తి స్క్రీన్',
+  'Sonuç bulunamadı': 'ఫలితాలు లేవు',
+  'Dizi ve Filmler': 'సిరీస్ & సినిమాలు',
+  'Kişiler': 'వ్యక్తులు',
+  'Ana Sayfa': 'హోమ్',
+  'Paylaş': 'షేర్',
+  'Yanıtlar': 'జవాబులు',
 };

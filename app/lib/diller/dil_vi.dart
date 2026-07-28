@@ -359,4 +359,10 @@ const Map<String, String> cevirilerVi = {
   'Beğeni': 'Lượt thích',
   'Görüntülenme': 'Lượt xem',
   'Tam ekran': 'Toàn màn hình',
+  'Sonuç bulunamadı': 'Không có kết quả',
+  'Dizi ve Filmler': 'Phim bộ & phim lẻ',
+  'Kişiler': 'Người',
+  'Ana Sayfa': 'Trang chủ',
+  'Paylaş': 'Chia sẻ',
+  'Yanıtlar': 'Trả lời',
 };

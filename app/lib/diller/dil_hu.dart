@@ -361,4 +361,10 @@ const Map<String, String> cevirilerHu = {
   'Beğeni': 'Kedvelések',
   'Görüntülenme': 'Megtekintések',
   'Tam ekran': 'Teljes képernyő',
+  'Sonuç bulunamadı': 'Nincs találat',
+  'Dizi ve Filmler': 'Sorozatok és filmek',
+  'Kişiler': 'Személyek',
+  'Ana Sayfa': 'Kezdőlap',
+  'Paylaş': 'Megosztás',
+  'Yanıtlar': 'Válaszok',
 };

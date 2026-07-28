@@ -354,4 +354,10 @@ const Map<String, String> cevirilerHe = {
   'Beğeni': 'לייקים',
   'Görüntülenme': 'צפיות',
   'Tam ekran': 'מסך מלא',
+  'Sonuç bulunamadı': 'אין תוצאות',
+  'Dizi ve Filmler': 'סדרות וסרטים',
+  'Kişiler': 'אנשים',
+  'Ana Sayfa': 'בית',
+  'Paylaş': 'שיתוף',
+  'Yanıtlar': 'תגובות',
 };

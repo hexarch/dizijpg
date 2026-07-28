@@ -352,4 +352,10 @@ const Map<String, String> cevirilerKo = {
   'Beğeni': '좋아요',
   'Görüntülenme': '조회수',
   'Tam ekran': '전체 화면',
+  'Sonuç bulunamadı': '결과가 없어요',
+  'Dizi ve Filmler': '시리즈 & 영화',
+  'Kişiler': '인물',
+  'Ana Sayfa': '홈',
+  'Paylaş': '공유',
+  'Yanıtlar': '답글',
 };

@@ -360,4 +360,10 @@ const Map<String, String> cevirilerFi = {
   'Beğeni': 'Tykkäykset',
   'Görüntülenme': 'Katselukerrat',
   'Tam ekran': 'Koko näyttö',
+  'Sonuç bulunamadı': 'Ei tuloksia',
+  'Dizi ve Filmler': 'Sarjat ja elokuvat',
+  'Kişiler': 'Henkilöt',
+  'Ana Sayfa': 'Etusivu',
+  'Paylaş': 'Jaa',
+  'Yanıtlar': 'Vastaukset',
 };

@@ -360,4 +360,10 @@ const Map<String, String> cevirilerUk = {
   'Beğeni': 'Вподобання',
   'Görüntülenme': 'Перегляди',
   'Tam ekran': 'На весь екран',
+  'Sonuç bulunamadı': 'Нічого не знайдено',
+  'Dizi ve Filmler': 'Серіали та фільми',
+  'Kişiler': 'Люди',
+  'Ana Sayfa': 'Головна',
+  'Paylaş': 'Поділитися',
+  'Yanıtlar': 'Відповіді',
 };

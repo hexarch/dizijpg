@@ -357,4 +357,10 @@ const Map<String, String> cevirilerDa = {
   'Beğeni': 'Synes godt om',
   'Görüntülenme': 'Visninger',
   'Tam ekran': 'Fuld skærm',
+  'Sonuç bulunamadı': 'Ingen resultater',
+  'Dizi ve Filmler': 'Serier & film',
+  'Kişiler': 'Personer',
+  'Ana Sayfa': 'Hjem',
+  'Paylaş': 'Del',
+  'Yanıtlar': 'Svar',
 };

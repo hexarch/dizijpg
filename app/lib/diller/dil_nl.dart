@@ -361,4 +361,10 @@ const Map<String, String> cevirilerNl = {
   'Beğeni': 'Vind-ik-leuks',
   'Görüntülenme': 'Weergaven',
   'Tam ekran': 'Volledig scherm',
+  'Sonuç bulunamadı': 'Geen resultaten',
+  'Dizi ve Filmler': 'Series & films',
+  'Kişiler': 'Personen',
+  'Ana Sayfa': 'Home',
+  'Paylaş': 'Delen',
+  'Yanıtlar': 'Reacties',
 };

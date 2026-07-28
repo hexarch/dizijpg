@@ -361,4 +361,10 @@ const Map<String, String> cevirilerKn = {
   'Beğeni': 'ಲೈಕ್‌ಗಳು',
   'Görüntülenme': 'ವೀಕ್ಷಣೆಗಳು',
   'Tam ekran': 'ಪೂರ್ಣ ಪರದೆ',
+  'Sonuç bulunamadı': 'ಫಲಿತಾಂಶ ಸಿಗಲಿಲ್ಲ',
+  'Dizi ve Filmler': 'ಸರಣಿ & ಚಲನಚಿತ್ರಗಳು',
+  'Kişiler': 'ವ್ಯಕ್ತಿಗಳು',
+  'Ana Sayfa': 'ಮುಖಪುಟ',
+  'Paylaş': 'ಹಂಚಿಕೊಳ್ಳಿ',
+  'Yanıtlar': 'ಉತ್ತರಗಳು',
 };

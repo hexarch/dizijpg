@@ -359,4 +359,10 @@ const Map<String, String> cevirilerFa = {
   'Beğeni': 'پسندها',
   'Görüntülenme': 'بازدیدها',
   'Tam ekran': 'تمام‌صفحه',
+  'Sonuç bulunamadı': 'نتیجه‌ای یافت نشد',
+  'Dizi ve Filmler': 'سریال‌ها و فیلم‌ها',
+  'Kişiler': 'افراد',
+  'Ana Sayfa': 'خانه',
+  'Paylaş': 'اشتراک‌گذاری',
+  'Yanıtlar': 'پاسخ‌ها',
 };

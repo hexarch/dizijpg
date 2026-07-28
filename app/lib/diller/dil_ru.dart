@@ -361,4 +361,10 @@ const Map<String, String> cevirilerRu = {
   'Beğeni': 'Лайки',
   'Görüntülenme': 'Просмотры',
   'Tam ekran': 'Во весь экран',
+  'Sonuç bulunamadı': 'Ничего не найдено',
+  'Dizi ve Filmler': 'Сериалы и фильмы',
+  'Kişiler': 'Люди',
+  'Ana Sayfa': 'Главная',
+  'Paylaş': 'Поделиться',
+  'Yanıtlar': 'Ответы',
 };

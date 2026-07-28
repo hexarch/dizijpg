@@ -26,9 +26,9 @@ class KabukEkrani extends StatelessWidget {
         },
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.explore_outlined),
+            icon: const Icon(Icons.home_outlined),
             selectedIcon: const Icon(Icons.explore),
-            label: 'Keşfet'.c,
+            label: 'Ana Sayfa'.c,
           ),
           NavigationDestination(
             icon: const Icon(Icons.calendar_month_outlined),
@@ -41,9 +41,9 @@ class KabukEkrani extends StatelessWidget {
             label: 'Akış'.c,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.search_outlined),
+            icon: const Icon(Icons.explore_outlined),
             selectedIcon: const Icon(Icons.search),
-            label: 'Arama'.c,
+            label: 'Keşfet'.c,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),

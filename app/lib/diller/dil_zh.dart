@@ -351,4 +351,10 @@ const Map<String, String> cevirilerZh = {
   'Beğeni': '点赞',
   'Görüntülenme': '浏览量',
   'Tam ekran': '全屏',
+  'Sonuç bulunamadı': '没有结果',
+  'Dizi ve Filmler': '剧集与电影',
+  'Kişiler': '人物',
+  'Ana Sayfa': '首页',
+  'Paylaş': '分享',
+  'Yanıtlar': '回复',
 };

@@ -6,7 +6,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'tema.dart';
 import 'ekranlar/akis.dart';
-import 'ekranlar/arama.dart';
+import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
 import 'ekranlar/ozet.dart';
 import 'ekranlar/sohbet.dart';
@@ -150,7 +150,11 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/arama', builder: (_, __) => const AramaEkrani()),
+              // Reels tarzı Keşfet (eski Arama sekmesi; arama artık Akış'ta)
+              GoRoute(
+                path: '/arama',
+                builder: (_, __) => const KesfetAkisEkrani(),
+              ),
             ],
           ),
           StatefulShellBranch(

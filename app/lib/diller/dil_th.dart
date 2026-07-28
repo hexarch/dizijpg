@@ -355,4 +355,10 @@ const Map<String, String> cevirilerTh = {
   'Beğeni': 'ถูกใจ',
   'Görüntülenme': 'ยอดดู',
   'Tam ekran': 'เต็มจอ',
+  'Sonuç bulunamadı': 'ไม่พบผลลัพธ์',
+  'Dizi ve Filmler': 'ซีรีส์และภาพยนตร์',
+  'Kişiler': 'บุคคล',
+  'Ana Sayfa': 'หน้าแรก',
+  'Paylaş': 'แชร์',
+  'Yanıtlar': 'การตอบกลับ',
 };

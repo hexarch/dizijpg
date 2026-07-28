@@ -358,4 +358,10 @@ const Map<String, String> cevirilerEn = {
   'Beğeni': 'Likes',
   'Görüntülenme': 'Views',
   'Tam ekran': 'Fullscreen',
+  'Sonuç bulunamadı': 'No results found',
+  'Dizi ve Filmler': 'Shows & Movies',
+  'Kişiler': 'People',
+  'Ana Sayfa': 'Home',
+  'Paylaş': 'Share',
+  'Yanıtlar': 'Replies',
 };

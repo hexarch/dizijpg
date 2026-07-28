@@ -362,4 +362,10 @@ const Map<String, String> cevirilerIt = {
   'Beğeni': 'Mi piace',
   'Görüntülenme': 'Visualizzazioni',
   'Tam ekran': 'Schermo intero',
+  'Sonuç bulunamadı': 'Nessun risultato',
+  'Dizi ve Filmler': 'Serie e film',
+  'Kişiler': 'Persone',
+  'Ana Sayfa': 'Home',
+  'Paylaş': 'Condividi',
+  'Yanıtlar': 'Risposte',
 };

@@ -358,4 +358,10 @@ const Map<String, String> cevirilerGu = {
   'Beğeni': 'લાઇક',
   'Görüntülenme': 'વ્યૂ',
   'Tam ekran': 'ફુલ સ્ક્રીન',
+  'Sonuç bulunamadı': 'કોઈ પરિણામ મળ્યું નથી',
+  'Dizi ve Filmler': 'સિરીઝ અને ફિલ્મો',
+  'Kişiler': 'વ્યક્તિઓ',
+  'Ana Sayfa': 'હોમ',
+  'Paylaş': 'શેર',
+  'Yanıtlar': 'જવાબો',
 };
