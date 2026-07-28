@@ -365,4 +365,6 @@ const Map<String, String> cevirilerTe = {
   'Ana Sayfa': 'హోమ్',
   'Paylaş': 'షేర్',
   'Yanıtlar': 'జవాబులు',
+  'Yaklaşan Bölümler': 'రాబోయే ఎపిసోడ్‌లు',
+  'Yetişme Listesi': 'క్యాచ్-అప్ జాబితా',
 };

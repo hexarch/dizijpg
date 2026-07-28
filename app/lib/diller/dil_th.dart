@@ -361,4 +361,6 @@ const Map<String, String> cevirilerTh = {
   'Ana Sayfa': 'หน้าแรก',
   'Paylaş': 'แชร์',
   'Yanıtlar': 'การตอบกลับ',
+  'Yaklaşan Bölümler': 'ตอนที่กำลังจะมาถึง',
+  'Yetişme Listesi': 'รายการดูย้อนหลัง',
 };

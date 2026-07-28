@@ -1281,10 +1281,16 @@ app.get('/izlediklerim', girisZorunlu, sarici(async (req, res) => {
 // + yayın tarihi belli gelecek bölümler. Başlanmamış (izleyeceğim) dizilerde
 // arşiv dökülmez, yalnızca gelecek bölümler gelir. Tarihe göre sıralı.
 app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
+  // İki ayrı liste döner:
+  //  - takvim: GERÇEK takvim penceresi — son 60 gün + TÜM gelecek tarihli
+  //    bölümler, izlenenler de dahil (izlendi bayrağıyla ✓ gösterilir).
+  //  - yetisme: yayınlanmış ama İZLENMEMİŞ arşiv (en ileri izlenenden sonrası,
+  //    dizi başına 15) — eski "Naruto 2003" yığını takvimi boğmasın diye ayrı.
+  //  - yaklasan: eski istemciler için (yetisme + gelecek izlenmemişler).
   const { rows } = await havuz.query(
     `SELECT tmdb_id FROM durumlar
      WHERE kullanici_id=$1 AND tur='tv' AND durum IN ('izliyorum','izleyecegim')
-     LIMIT 40`,
+     LIMIT 60`,
     [req.kullanici.id],
   );
   const izl = await havuz.query(
@@ -1294,9 +1300,11 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   );
   const izlenen = new Set(izl.rows.map((r) => `${r.tmdb_id}:${r.sezon}:${r.bolum}`));
   const bugun = new Date().toISOString().slice(0, 10);
-  const DIZI_BASI_SINIR = 15; // tek dizi takvimi boğmasın
-  const sonuclar = [];
-  // 8'li paralel öbekler: 40 dizi × 4 sezon çağrısı aynı anda patlamasın
+  const geri = new Date(Date.now() - 60 * 86400000).toISOString().slice(0, 10);
+  const YETISME_SINIR = 15; // tek dizi yetişme listesini boğmasın
+  const TAKVIM_SINIR = 40; // tek dizi takvim penceresini boğmasın
+  const takvim = [];
+  const yetisme = [];
   const diziIsle = async ({ tmdb_id }) => {
     try {
       const dizi = await tmdbGetir(`/tv/${tmdb_id}?language=tr-TR`, ONBELLEK_TTL_SN.varsayilan);
@@ -1310,24 +1318,32 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
           maxB = r.bolum;
         }
       }
-      const sezonlar = (dizi.seasons || [])
+      // Getirilecek sezonlar: yetişme aralığı (en ileri izlenenden +4 sezon) +
+      // pencere sezonları (son yayınlanan ve sıradaki bölümün sezonları —
+      // izlenen güncel bölümler de takvimde ✓ ile görünsün diye).
+      const yetismeSezonlari = (dizi.seasons || [])
         .filter((s) => s.season_number > 0 && s.season_number >= Math.max(maxS, 1))
-        .slice(0, 4); // en fazla 4 sezon ileri bak
-      let eklenen = 0;
-      for (const s of sezonlar) {
-        if (eklenen >= DIZI_BASI_SINIR) break;
+        .slice(0, 4)
+        .map((s) => s.season_number);
+      const sezonNolar = new Set(yetismeSezonlari);
+      if (dizi.last_episode_to_air?.season_number > 0) {
+        sezonNolar.add(dizi.last_episode_to_air.season_number);
+      }
+      if (dizi.next_episode_to_air?.season_number > 0) {
+        sezonNolar.add(dizi.next_episode_to_air.season_number);
+      }
+      let yetEk = 0;
+      let takEk = 0;
+      for (const sn of [...sezonNolar].sort((a, b) => a - b)) {
+        if (yetEk >= YETISME_SINIR && takEk >= TAKVIM_SINIR) break;
         const sez = await tmdbGetir(
-          `/tv/${tmdb_id}/season/${s.season_number}?language=tr-TR`,
+          `/tv/${tmdb_id}/season/${sn}?language=tr-TR`,
           ONBELLEK_TTL_SN.varsayilan,
         );
         for (const b of (sez.episodes || [])) {
-          const sn = s.season_number;
-          const bn = b.episode_number;
-          if (sn < maxS || (sn === maxS && bn <= maxB)) continue;
-          if (izlenen.has(`${tmdb_id}:${sn}:${bn}`)) continue;
           if (!b.air_date) continue; // yayın tarihi belli olmayanlar gelmez
-          if (maxS === 0 && b.air_date < bugun) continue; // başlanmamış dizi arşivi
-          sonuclar.push({
+          const bn = b.episode_number;
+          const kayit = {
             tmdb_id,
             dizi_adi: dizi.name,
             poster: dizi.poster_path,
@@ -1335,8 +1351,23 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
             bolum: bn,
             bolum_adi: b.name,
             tarih: b.air_date,
-          });
-          if (++eklenen >= DIZI_BASI_SINIR) break;
+          };
+          const izlendiMi = izlenen.has(`${tmdb_id}:${sn}:${bn}`);
+          // Takvim penceresi: son 60 gün + tüm gelecek (izlenenler dahil)
+          if (b.air_date >= geri && takEk < TAKVIM_SINIR) {
+            takvim.push({ ...kayit, izlendi: izlendiMi });
+            takEk++;
+          }
+          // Yetişme: yayınlanmış + izlenmemiş + en ileri izlenenden sonra;
+          // başlanmamış (izleyeceğim) dizinin arşivi dökülmez.
+          if (
+            yetismeSezonlari.includes(sn) && yetEk < YETISME_SINIR &&
+            maxS > 0 && b.air_date <= bugun && !izlendiMi &&
+            !(sn < maxS || (sn === maxS && bn <= maxB))
+          ) {
+            yetisme.push(kayit);
+            yetEk++;
+          }
         }
       }
     } catch { /* tek dizi hatası takvimi bozmasın */ }
@@ -1344,8 +1375,14 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   for (let i = 0; i < rows.length; i += 8) {
     await Promise.all(rows.slice(i, i + 8).map(diziIsle));
   }
-  sonuclar.sort((a, b) => a.tarih.localeCompare(b.tarih));
-  res.json({ yaklasan: sonuclar });
+  takvim.sort((a, b) => a.tarih.localeCompare(b.tarih));
+  yetisme.sort((a, b) => a.tarih.localeCompare(b.tarih));
+  // Eski istemci uyumu (APK ≤1.8.2): yetişme + gelecekteki izlenmemişler
+  const yaklasan = [
+    ...yetisme,
+    ...takvim.filter((t) => !t.izlendi && t.tarih > bugun),
+  ].sort((a, b) => a.tarih.localeCompare(b.tarih));
+  res.json({ takvim, yetisme, yaklasan });
 }));
 
 // ---------- profilim ----------

@@ -358,4 +358,6 @@ const Map<String, String> cevirilerAm = {
   'Ana Sayfa': 'መነሻ',
   'Paylaş': 'አጋራ',
   'Yanıtlar': 'ምላሾች',
+  'Yaklaşan Bölümler': 'የሚመጡ ክፍሎች',
+  'Yetişme Listesi': 'የመድረሻ ዝርዝር',
 };

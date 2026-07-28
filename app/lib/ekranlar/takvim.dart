@@ -29,7 +29,8 @@ class TakvimEkrani extends StatefulWidget {
 
 class _TakvimEkraniState extends State<TakvimEkrani>
     with AutomaticKeepAliveClientMixin {
-  List<dynamic>? _yaklasan;
+  List<dynamic>? _takvim; // pencere: son 60 gün + gelecek (izlendi bayraklı)
+  List<dynamic>? _yetisme; // yayınlanmış izlenmemiş arşiv (dizi başına 15)
   String? _hata;
   final Set<int> _acik = {}; // bölümleri açılmış diziler
   bool _takvimModu = false; // liste mi ay-takvimi mi (tercih kalıcı)
@@ -52,11 +53,12 @@ class _TakvimEkraniState extends State<TakvimEkrani>
     if (!mounted) return;
     // "Bıraktım": diziyi anında kaldır (iyimser).
     if (birakilan != null) {
-      setState(
-        () => _yaklasan?.removeWhere(
+      setState(() {
+        _takvim?.removeWhere((r) => (r['tmdb_id'] as num).toInt() == birakilan);
+        _yetisme?.removeWhere(
           (r) => (r['tmdb_id'] as num).toInt() == birakilan,
-        ),
-      );
+        );
+      });
     }
     // Modal kapanınca her durumda tazele: izlenen bölüm backend'den düşer,
     // takvimden otomatik gider (yenilemeye gerek kalmaz).
@@ -82,7 +84,10 @@ class _TakvimEkraniState extends State<TakvimEkrani>
     try {
       final d = await Api.get('/takvim');
       if (!mounted) return;
-      setState(() => _yaklasan = d['yaklasan'] as List<dynamic>);
+      setState(() {
+        _takvim = d['takvim'] as List<dynamic>? ?? [];
+        _yetisme = d['yetisme'] as List<dynamic>? ?? [];
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
@@ -95,7 +100,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
     Widget govde;
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
-    } else if (_yaklasan == null) {
+    } else if (_takvim == null) {
       // İskelet satırlar
       govde = ListView(
         padding: const EdgeInsets.all(12),
@@ -127,9 +132,9 @@ class _TakvimEkraniState extends State<TakvimEkrani>
         ],
       );
     } else if (_takvimModu) {
-      // Ay-takvimi görünümü
-      govde = AyTakvimi(olaylar: _yaklasan!, onAc: _modalAc);
-    } else if (_yaklasan!.isEmpty) {
+      // Ay-takvimi görünümü: gerçek pencere (geçmiş ✓ + gelecek)
+      govde = AyTakvimi(olaylar: _takvim!, onAc: _modalAc);
+    } else if (_takvim!.isEmpty && _yetisme!.isEmpty) {
       govde = Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -154,143 +159,52 @@ class _TakvimEkraniState extends State<TakvimEkrani>
         ),
       );
     } else {
-      // Dizi başına grupla (liste tarih sıralı; ilk görünüm sırası korunur)
+      // İki bölüm: 1) Yaklaşan Bölümler (bugün ve sonrası, tarih sıralı)
+      //            2) Yetişme Listesi (yayınlanmış izlenmemişler, dizi gruplu)
+      final bugun = DateTime.now().toIso8601String().substring(0, 10);
+      final yaklasanlar = [
+        for (final r in _takvim!)
+          if ((r as Map<String, dynamic>)['izlendi'] != true &&
+              (r['tarih'] as String? ?? '').compareTo(bugun) >= 0)
+            r,
+      ];
+      // Yetişme: dizi başına grupla (liste tarih sıralı; görünüm sırası korunur)
       final gruplar = <int, List<Map<String, dynamic>>>{};
       final sira = <int>[];
-      for (final r in _yaklasan!) {
+      for (final r in _yetisme!) {
         final m = r as Map<String, dynamic>;
         final id = (m['tmdb_id'] as num).toInt();
         if (!gruplar.containsKey(id)) sira.add(id);
         gruplar.putIfAbsent(id, () => []).add(m);
       }
+      Widget baslik(IconData ikon, String metin) => Padding(
+        padding: const EdgeInsets.fromLTRB(4, 10, 4, 6),
+        child: Row(
+          children: [
+            Icon(ikon, size: 18, color: DiziRenkler.sari),
+            const SizedBox(width: 7),
+            Text(
+              metin,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+            ),
+          ],
+        ),
+      );
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: ListView.builder(
+        child: ListView(
           padding: const EdgeInsets.all(12),
-          itemCount: sira.length,
-          itemBuilder: (context, i) {
-            final bolumler = gruplar[sira[i]]!;
-            final ilk = bolumler.first;
-            final tekBolum = bolumler.length == 1;
-            final acik = _acik.contains(sira[i]);
-            final poster = posterUrl(ilk['poster'] as String?, boyut: 'w185');
-            return Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: SizedBox(
-                        width: 42,
-                        height: 62,
-                        child: poster == null
-                            ? Container(color: DiziRenkler.koyuGri)
-                            : CachedNetworkImage(
-                                imageUrl: poster,
-                                fit: BoxFit.cover,
-                              ),
-                      ),
-                    ),
-                    title: Text(
-                      ilk['dizi_adi'] as String? ?? '',
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    subtitle: Text(
-                      'S${ilk['sezon']}B${ilk['bolum']}'
-                      '${ilk['bolum_adi'] != null ? ' · ${ilk['bolum_adi']}' : ''}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: DiziRenkler.sari,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            tarihKisa(ilk['tarih'] as String?),
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ),
-                        if (!tekBolum) ...[
-                          const SizedBox(width: 6),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 7,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: DiziRenkler.koyuGri,
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '${bolumler.length}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: DiziRenkler.metin70,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            acik
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: DiziRenkler.metin54,
-                          ),
-                        ],
-                      ],
-                    ),
-                    // Tek bölümse direkt modal; birden çoksa altında listele
-                    onTap: () => tekBolum
-                        ? _modalAc(ilk)
-                        : setState(
-                            () => acik
-                                ? _acik.remove(sira[i])
-                                : _acik.add(sira[i]),
-                          ),
-                  ),
-                  if (acik) ...[
-                    Divider(color: DiziRenkler.metin12, height: 1),
-                    for (final b in bolumler)
-                      ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.only(
-                          left: 70,
-                          right: 16,
-                        ),
-                        title: Text(
-                          'S${b['sezon']}B${b['bolum']}'
-                          '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                        trailing: Text(
-                          tarihKisa(b['tarih'] as String?),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: DiziRenkler.metin54,
-                          ),
-                        ),
-                        onTap: () => _modalAc(b),
-                      ),
-                  ],
-                ],
-              ),
-            );
-          },
+          children: [
+            if (yaklasanlar.isNotEmpty) ...[
+              baslik(Icons.upcoming_outlined, 'Yaklaşan Bölümler'.c),
+              for (final b in yaklasanlar) _yaklasanSatiri(b),
+            ],
+            if (sira.isNotEmpty) ...[
+              baslik(Icons.playlist_add_check, 'Yetişme Listesi'.c),
+              for (final id in sira) _diziKarti(id, gruplar[id]!),
+            ],
+          ],
         ),
       );
     }
@@ -310,6 +224,159 @@ class _TakvimEkraniState extends State<TakvimEkrani>
         ],
       ),
       body: govde,
+    );
+  }
+
+  /// Yaklaşan bölüm satırı: poster + dizi + SxB + tarih çipi.
+  Widget _yaklasanSatiri(Map<String, dynamic> b) {
+    final poster = posterUrl(b['poster'] as String?, boyut: 'w185');
+    return Card(
+      child: ListTile(
+        leading: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            width: 42,
+            height: 62,
+            child: poster == null
+                ? Container(color: DiziRenkler.koyuGri)
+                : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+          ),
+        ),
+        title: Text(
+          b['dizi_adi'] as String? ?? '',
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+        subtitle: Text(
+          'S${b['sezon']}B${b['bolum']}'
+          '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        trailing: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          decoration: BoxDecoration(
+            color: DiziRenkler.sari,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Text(
+            tarihKisa(b['tarih'] as String?),
+            style: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w700,
+              fontSize: 11,
+            ),
+          ),
+        ),
+        onTap: () => _modalAc(b),
+      ),
+    );
+  }
+
+  /// Yetişme kartı: dizi başlığı + (birden çoksa) akordeon bölüm listesi.
+  Widget _diziKarti(int id, List<Map<String, dynamic>> bolumler) {
+    final ilk = bolumler.first;
+    final tekBolum = bolumler.length == 1;
+    final acik = _acik.contains(id);
+    final poster = posterUrl(ilk['poster'] as String?, boyut: 'w185');
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            leading: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                width: 42,
+                height: 62,
+                child: poster == null
+                    ? Container(color: DiziRenkler.koyuGri)
+                    : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+              ),
+            ),
+            title: Text(
+              ilk['dizi_adi'] as String? ?? '',
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+            subtitle: Text(
+              'S${ilk['sezon']}B${ilk['bolum']}'
+              '${ilk['bolum_adi'] != null ? ' · ${ilk['bolum_adi']}' : ''}',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.sari,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    tarihKisa(ilk['tarih'] as String?),
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 11,
+                    ),
+                  ),
+                ),
+                if (!tekBolum) ...[
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: DiziRenkler.koyuGri,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '${bolumler.length}',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        color: DiziRenkler.metin70,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    acik ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+                    color: DiziRenkler.metin54,
+                  ),
+                ],
+              ],
+            ),
+            // Tek bölümse direkt modal; birden çoksa altında listele
+            onTap: () => tekBolum
+                ? _modalAc(ilk)
+                : setState(() => acik ? _acik.remove(id) : _acik.add(id)),
+          ),
+          if (acik) ...[
+            Divider(color: DiziRenkler.metin12, height: 1),
+            for (final b in bolumler)
+              ListTile(
+                dense: true,
+                contentPadding: const EdgeInsets.only(left: 70, right: 16),
+                title: Text(
+                  'S${b['sezon']}B${b['bolum']}'
+                  '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                trailing: Text(
+                  tarihKisa(b['tarih'] as String?),
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+                ),
+                onTap: () => _modalAc(b),
+              ),
+          ],
+        ],
+      ),
     );
   }
 }

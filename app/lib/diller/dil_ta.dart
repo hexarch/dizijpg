@@ -367,4 +367,6 @@ const Map<String, String> cevirilerTa = {
   'Ana Sayfa': 'முகப்பு',
   'Paylaş': 'பகிர்',
   'Yanıtlar': 'பதில்கள்',
+  'Yaklaşan Bölümler': 'வரவிருக்கும் எபிசோட்கள்',
+  'Yetişme Listesi': 'கேட்ச்-அப் பட்டியல்',
 };

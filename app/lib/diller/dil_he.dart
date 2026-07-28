@@ -360,4 +360,6 @@ const Map<String, String> cevirilerHe = {
   'Ana Sayfa': 'בית',
   'Paylaş': 'שיתוף',
   'Yanıtlar': 'תגובות',
+  'Yaklaşan Bölümler': 'פרקים קרובים',
+  'Yetişme Listesi': 'רשימת השלמות',
 };

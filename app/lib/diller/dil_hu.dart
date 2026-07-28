@@ -367,4 +367,6 @@ const Map<String, String> cevirilerHu = {
   'Ana Sayfa': 'Kezdőlap',
   'Paylaş': 'Megosztás',
   'Yanıtlar': 'Válaszok',
+  'Yaklaşan Bölümler': 'Következő epizódok',
+  'Yetişme Listesi': 'Bepótolandók',
 };

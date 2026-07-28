@@ -366,4 +366,6 @@ const Map<String, String> cevirilerFi = {
   'Ana Sayfa': 'Etusivu',
   'Paylaş': 'Jaa',
   'Yanıtlar': 'Vastaukset',
+  'Yaklaşan Bölümler': 'Tulevat jaksot',
+  'Yetişme Listesi': 'Kiinniottolista',
 };

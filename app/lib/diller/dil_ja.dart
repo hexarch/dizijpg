@@ -358,4 +358,6 @@ const Map<String, String> cevirilerJa = {
   'Ana Sayfa': 'ホーム',
   'Paylaş': '共有',
   'Yanıtlar': '返信',
+  'Yaklaşan Bölümler': '今後のエピソード',
+  'Yetişme Listesi': '追いつきリスト',
 };

@@ -358,4 +358,6 @@ const Map<String, String> cevirilerKo = {
   'Ana Sayfa': '홈',
   'Paylaş': '공유',
   'Yanıtlar': '답글',
+  'Yaklaşan Bölümler': '다가오는 에피소드',
+  'Yetişme Listesi': '몰아보기 목록',
 };

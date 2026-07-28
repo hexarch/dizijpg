@@ -357,4 +357,6 @@ const Map<String, String> cevirilerZh = {
   'Ana Sayfa': '首页',
   'Paylaş': '分享',
   'Yanıtlar': '回复',
+  'Yaklaşan Bölümler': '即将播出',
+  'Yetişme Listesi': '补看清单',
 };

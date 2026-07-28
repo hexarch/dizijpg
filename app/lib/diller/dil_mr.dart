@@ -365,4 +365,6 @@ const Map<String, String> cevirilerMr = {
   'Ana Sayfa': 'होम',
   'Paylaş': 'शेअर',
   'Yanıtlar': 'उत्तरे',
+  'Yaklaşan Bölümler': 'आगामी भाग',
+  'Yetişme Listesi': 'कॅच-अप यादी',
 };

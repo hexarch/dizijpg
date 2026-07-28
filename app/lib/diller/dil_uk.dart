@@ -366,4 +366,6 @@ const Map<String, String> cevirilerUk = {
   'Ana Sayfa': 'Головна',
   'Paylaş': 'Поділитися',
   'Yanıtlar': 'Відповіді',
+  'Yaklaşan Bölümler': 'Найближчі серії',
+  'Yetişme Listesi': 'Список надолуження',
 };

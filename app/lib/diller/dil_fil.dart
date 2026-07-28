@@ -367,4 +367,6 @@ const Map<String, String> cevirilerFil = {
   'Ana Sayfa': 'Home',
   'Paylaş': 'Ibahagi',
   'Yanıtlar': 'Mga tugon',
+  'Yaklaşan Bölümler': 'Paparating na episode',
+  'Yetişme Listesi': 'Listahan ng habulin',
 };

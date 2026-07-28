@@ -365,4 +365,6 @@ const Map<String, String> cevirilerCs = {
   'Ana Sayfa': 'Domů',
   'Paylaş': 'Sdílet',
   'Yanıtlar': 'Odpovědi',
+  'Yaklaşan Bölümler': 'Nadcházející díly',
+  'Yetişme Listesi': 'Seznam k dohnání',
 };

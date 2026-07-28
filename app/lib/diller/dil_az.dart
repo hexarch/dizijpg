@@ -365,4 +365,6 @@ const Map<String, String> cevirilerAz = {
   'Ana Sayfa': 'Əsas səhifə',
   'Paylaş': 'Paylaş',
   'Yanıtlar': 'Cavablar',
+  'Yaklaşan Bölümler': 'Gələcək Bölümlər',
+  'Yetişme Listesi': 'Çatdırma Siyahısı',
 };

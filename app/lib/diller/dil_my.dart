@@ -372,4 +372,6 @@ const Map<String, String> cevirilerMy = {
   'Ana Sayfa': 'ပင်မ',
   'Paylaş': 'မျှဝေရန်',
   'Yanıtlar': 'ပြန်စာများ',
+  'Yaklaşan Bölümler': 'လာမည့်အပိုင်းများ',
+  'Yetişme Listesi': 'လိုက်ကြည့်ရန်စာရင်း',
 };

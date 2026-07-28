@@ -367,4 +367,6 @@ const Map<String, String> cevirilerKn = {
   'Ana Sayfa': 'ಮುಖಪುಟ',
   'Paylaş': 'ಹಂಚಿಕೊಳ್ಳಿ',
   'Yanıtlar': 'ಉತ್ತರಗಳು',
+  'Yaklaşan Bölümler': 'ಮುಂಬರುವ ಎಪಿಸೋಡ್‌ಗಳು',
+  'Yetişme Listesi': 'ಕ್ಯಾಚ್-ಅಪ್ ಪಟ್ಟಿ',
 };

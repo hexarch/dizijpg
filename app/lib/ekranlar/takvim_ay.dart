@@ -283,8 +283,11 @@ class _AyTakvimiState extends State<AyTakvimi> {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        trailing: (tarihGoster && tarih.isNotEmpty)
-            ? Container(
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (tarihGoster && tarih.isNotEmpty)
+              Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: DiziRenkler.sari,
@@ -298,8 +301,14 @@ class _AyTakvimiState extends State<AyTakvimi> {
                     fontSize: 11,
                   ),
                 ),
-              )
-            : null,
+              ),
+            // İzlenmiş bölüm: yeşil onay (geçmiş günler artık takvimde)
+            if (b['izlendi'] == true) ...[
+              const SizedBox(width: 6),
+              const Icon(Icons.check_circle, size: 18, color: Colors.green),
+            ],
+          ],
+        ),
         onTap: () => widget.onAc(b),
       ),
     );

@@ -364,4 +364,6 @@ const Map<String, String> cevirilerGu = {
   'Ana Sayfa': 'હોમ',
   'Paylaş': 'શેર',
   'Yanıtlar': 'જવાબો',
+  'Yaklaşan Bölümler': 'આગામી એપિસોડ',
+  'Yetişme Listesi': 'કૅચ-અપ યાદી',
 };

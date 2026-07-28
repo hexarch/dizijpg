@@ -365,4 +365,6 @@ const Map<String, String> cevirilerVi = {
   'Ana Sayfa': 'Trang chủ',
   'Paylaş': 'Chia sẻ',
   'Yanıtlar': 'Trả lời',
+  'Yaklaşan Bölümler': 'Tập sắp phát sóng',
+  'Yetişme Listesi': 'Danh sách xem bù',
 };

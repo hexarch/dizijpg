@@ -364,4 +364,6 @@ const Map<String, String> cevirilerSw = {
   'Ana Sayfa': 'Mwanzo',
   'Paylaş': 'Shiriki',
   'Yanıtlar': 'Majibu',
+  'Yaklaşan Bölümler': 'Vipindi Vijavyo',
+  'Yetişme Listesi': 'Orodha ya Kufikia',
 };

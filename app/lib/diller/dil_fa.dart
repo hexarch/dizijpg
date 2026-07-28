@@ -365,4 +365,6 @@ const Map<String, String> cevirilerFa = {
   'Ana Sayfa': 'خانه',
   'Paylaş': 'اشتراک‌گذاری',
   'Yanıtlar': 'پاسخ‌ها',
+  'Yaklaşan Bölümler': 'قسمت‌های پیش‌رو',
+  'Yetişme Listesi': 'فهرست عقب‌ماندگی',
 };

@@ -367,4 +367,6 @@ const Map<String, String> cevirilerPl = {
   'Ana Sayfa': 'Główna',
   'Paylaş': 'Udostępnij',
   'Yanıtlar': 'Odpowiedzi',
+  'Yaklaşan Bölümler': 'Nadchodzące odcinki',
+  'Yetişme Listesi': 'Lista zaległości',
 };

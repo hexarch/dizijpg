@@ -364,4 +364,6 @@ const Map<String, String> cevirilerPa = {
   'Ana Sayfa': 'ਹੋਮ',
   'Paylaş': 'ਸਾਂਝਾ ਕਰੋ',
   'Yanıtlar': 'ਜਵਾਬ',
+  'Yaklaşan Bölümler': 'ਆਉਣ ਵਾਲੇ ਐਪੀਸੋਡ',
+  'Yetişme Listesi': 'ਕੈਚ-ਅੱਪ ਸੂਚੀ',
 };

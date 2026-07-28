@@ -365,4 +365,6 @@ const Map<String, String> cevirilerId = {
   'Ana Sayfa': 'Beranda',
   'Paylaş': 'Bagikan',
   'Yanıtlar': 'Balasan',
+  'Yaklaşan Bölümler': 'Episode Mendatang',
+  'Yetişme Listesi': 'Daftar Kejar Tayang',
 };

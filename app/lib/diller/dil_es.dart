@@ -366,4 +366,6 @@ const Map<String, String> cevirilerEs = {
   'Ana Sayfa': 'Inicio',
   'Paylaş': 'Compartir',
   'Yanıtlar': 'Respuestas',
+  'Yaklaşan Bölümler': 'Próximos episodios',
+  'Yetişme Listesi': 'Lista para ponerte al día',
 };

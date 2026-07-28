@@ -367,4 +367,6 @@ const Map<String, String> cevirilerSv = {
   'Ana Sayfa': 'Hem',
   'Paylaş': 'Dela',
   'Yanıtlar': 'Svar',
+  'Yaklaşan Bölümler': 'Kommande avsnitt',
+  'Yetişme Listesi': 'Ikapplista',
 };

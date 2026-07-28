@@ -363,4 +363,6 @@ const Map<String, String> cevirilerDa = {
   'Ana Sayfa': 'Hjem',
   'Paylaş': 'Del',
   'Yanıtlar': 'Svar',
+  'Yaklaşan Bölümler': 'Kommende afsnit',
+  'Yetişme Listesi': 'Indhentningsliste',
 };
