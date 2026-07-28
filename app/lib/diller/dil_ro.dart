@@ -360,4 +360,5 @@ const Map<String, String> cevirilerRo = {
       'Poate conține spoilere — atinge pentru a vedea',
   'Beğeni': 'Aprecieri',
   'Görüntülenme': 'Vizualizări',
+  'Tam ekran': 'Ecran complet',
 };

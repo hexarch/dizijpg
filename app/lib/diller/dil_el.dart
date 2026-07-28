@@ -361,4 +361,5 @@ const Map<String, String> cevirilerEl = {
       'Ίσως περιέχει spoiler — πάτησε για προβολή',
   'Beğeni': 'Μου αρέσει',
   'Görüntülenme': 'Προβολές',
+  'Tam ekran': 'Πλήρης οθόνη',
 };

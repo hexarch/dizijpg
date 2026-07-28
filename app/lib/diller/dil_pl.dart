@@ -360,4 +360,5 @@ const Map<String, String> cevirilerPl = {
       'Może zawierać spoilery — dotknij, aby zobaczyć',
   'Beğeni': 'Polubienia',
   'Görüntülenme': 'Wyświetlenia',
+  'Tam ekran': 'Pełny ekran',
 };

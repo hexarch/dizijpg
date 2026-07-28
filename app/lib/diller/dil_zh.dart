@@ -350,4 +350,5 @@ const Map<String, String> cevirilerZh = {
   'Spoiler olabilir — dokun ve gör': '可能包含剧透 — 点按查看',
   'Beğeni': '点赞',
   'Görüntülenme': '浏览量',
+  'Tam ekran': '全屏',
 };

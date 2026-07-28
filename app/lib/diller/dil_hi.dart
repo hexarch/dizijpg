@@ -359,4 +359,5 @@ const Map<String, String> cevirilerHi = {
       'स्पॉइलर हो सकता है — देखने के लिए टैप करो',
   'Beğeni': 'लाइक',
   'Görüntülenme': 'व्यू',
+  'Tam ekran': 'फ़ुल स्क्रीन',
 };

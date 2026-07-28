@@ -351,4 +351,5 @@ const Map<String, String> cevirilerAm = {
   'Spoiler olabilir — dokun ve gör': 'ስፖይለር ሊኖረው ይችላል — ለማየት ንካ',
   'Beğeni': 'መውደዶች',
   'Görüntülenme': 'እይታዎች',
+  'Tam ekran': 'ሙሉ ማያ',
 };

@@ -362,4 +362,5 @@ const Map<String, String> cevirilerDe = {
       'Kann Spoiler enthalten — zum Ansehen tippen',
   'Beğeni': 'Gefällt mir',
   'Görüntülenme': 'Aufrufe',
+  'Tam ekran': 'Vollbild',
 };

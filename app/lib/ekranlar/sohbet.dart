@@ -14,6 +14,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../dosya_oku.dart';
 import '../tema.dart';
+import 'medya_goster.dart';
 import 'ortak.dart';
 import 'ses.dart';
 
@@ -1049,37 +1050,29 @@ class _MesajBaloncugu extends StatelessWidget {
                 if (medya != null && !ses)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: video
-                          ? Container(
-                              width: 180,
-                              height: 120,
-                              color: Colors.black26,
-                              child: const Icon(
-                                Icons.play_circle_outline,
-                                size: 40,
-                                color: Colors.white70,
-                              ),
-                            )
-                          : InkWell(
-                              onTap: () => showDialog(
-                                context: context,
-                                builder: (_) => Dialog(
-                                  backgroundColor: Colors.transparent,
-                                  child: InteractiveViewer(
-                                    child: CachedNetworkImage(
-                                      imageUrl: dosyaUrl(medya)!,
-                                    ),
-                                  ),
+                    // Foto/GIF ve video: dokununca tam ekran görüntüleyici
+                    // (yakınlaştırma + video oynatma/sarma)
+                    child: InkWell(
+                      onTap: () => medyaGoster(context, [dosyaUrl(medya)!]),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: video
+                            ? Container(
+                                width: 180,
+                                height: 120,
+                                color: Colors.black26,
+                                child: const Icon(
+                                  Icons.play_circle_outline,
+                                  size: 40,
+                                  color: Colors.white70,
                                 ),
-                              ),
-                              child: CachedNetworkImage(
+                              )
+                            : CachedNetworkImage(
                                 imageUrl: dosyaUrl(medya)!,
                                 width: 200,
                                 fit: BoxFit.cover,
                               ),
-                            ),
+                      ),
                     ),
                   ),
                 // Dizi/film kartı

@@ -357,4 +357,5 @@ const Map<String, String> cevirilerSw = {
   'Spoiler olabilir — dokun ve gör': 'Inaweza kuwa na spoiler — gusa kuona',
   'Beğeni': 'Zilizopendwa',
   'Görüntülenme': 'Mionekano',
+  'Tam ekran': 'Skrini nzima',
 };

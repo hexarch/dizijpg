@@ -358,4 +358,5 @@ const Map<String, String> cevirilerAz = {
   'Spoiler olabilir — dokun ve gör': 'Spoyler ola bilər — görmək üçün toxun',
   'Beğeni': 'Bəyənmə',
   'Görüntülenme': 'Baxış',
+  'Tam ekran': 'Tam ekran',
 };

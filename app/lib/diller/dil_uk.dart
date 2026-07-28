@@ -359,4 +359,5 @@ const Map<String, String> cevirilerUk = {
       'Можливі спойлери — торкнись, щоб переглянути',
   'Beğeni': 'Вподобання',
   'Görüntülenme': 'Перегляди',
+  'Tam ekran': 'На весь екран',
 };

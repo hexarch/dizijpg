@@ -351,4 +351,5 @@ const Map<String, String> cevirilerJa = {
   'Spoiler olabilir — dokun ve gör': 'ネタバレを含む可能性があります — タップして表示',
   'Beğeni': 'いいね',
   'Görüntülenme': '表示回数',
+  'Tam ekran': '全画面',
 };

@@ -8,6 +8,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'etiket.dart';
+import 'medya_goster.dart';
 import 'ortak.dart';
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
@@ -520,36 +521,38 @@ class _YorumKartiState extends State<_YorumKarti> {
             ),
             if (medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final m in medya)
-                    m.endsWith('.mp4') || m.endsWith('.webm')
-                        ? VideoOynatici(url: dosyaUrl(m)!)
-                        : InkWell(
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (_) => Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: InteractiveViewer(
+              // Dokununca tam ekran görüntüleyici (yakınlaştırma + video
+              // sarma); videolar yerinde de oynatılabilir.
+              Builder(
+                builder: (context) {
+                  final urller = [for (final m in medya) dosyaUrl(m)!];
+                  return Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      for (var i = 0; i < medya.length; i++)
+                        medya[i].endsWith('.mp4') || medya[i].endsWith('.webm')
+                            ? VideoOynatici(
+                                url: urller[i],
+                                tamEkran: () =>
+                                    medyaGoster(context, urller, baslangic: i),
+                              )
+                            : InkWell(
+                                onTap: () =>
+                                    medyaGoster(context, urller, baslangic: i),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
                                   child: CachedNetworkImage(
-                                    imageUrl: dosyaUrl(m)!,
+                                    imageUrl: urller[i],
+                                    width: 140,
+                                    height: 140,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
-                            ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: CachedNetworkImage(
-                                imageUrl: dosyaUrl(m)!,
-                                width: 140,
-                                height: 140,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                ],
+                    ],
+                  );
+                },
               ),
             ],
             const SizedBox(height: 8),
@@ -652,9 +655,11 @@ class _YorumKartiState extends State<_YorumKarti> {
 }
 
 /// Tıklayınca yüklenen ve oynayan basit video kutusu.
+/// [tamEkran] verilirse sağ üstte tam ekran düğmesi görünür.
 class VideoOynatici extends StatefulWidget {
   final String url;
-  const VideoOynatici({super.key, required this.url});
+  final VoidCallback? tamEkran;
+  const VideoOynatici({super.key, required this.url, this.tamEkran});
 
   @override
   State<VideoOynatici> createState() => _VideoOynaticiState();
@@ -735,6 +740,23 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                         Icons.play_circle_outline,
                         size: 44,
                         color: Colors.white70,
+                      ),
+                    if (widget.tamEkran != null)
+                      Positioned(
+                        top: 2,
+                        right: 2,
+                        child: IconButton(
+                          tooltip: 'Tam ekran'.c,
+                          onPressed: widget.tamEkran,
+                          icon: const Icon(
+                            Icons.fullscreen,
+                            size: 20,
+                            color: Colors.white,
+                          ),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.black38,
+                          ),
+                        ),
                       ),
                   ],
                 ),

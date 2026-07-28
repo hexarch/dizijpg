@@ -359,4 +359,5 @@ const Map<String, String> cevirilerFi = {
       'Voi sisältää juonipaljastuksia — napauta nähdäksesi',
   'Beğeni': 'Tykkäykset',
   'Görüntülenme': 'Katselukerrat',
+  'Tam ekran': 'Koko näyttö',
 };

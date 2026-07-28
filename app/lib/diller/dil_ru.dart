@@ -360,4 +360,5 @@ const Map<String, String> cevirilerRu = {
       'Возможны спойлеры — нажми, чтобы посмотреть',
   'Beğeni': 'Лайки',
   'Görüntülenme': 'Просмотры',
+  'Tam ekran': 'Во весь экран',
 };

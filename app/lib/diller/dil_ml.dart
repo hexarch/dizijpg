@@ -360,4 +360,5 @@ const Map<String, String> cevirilerMl = {
   'Spoiler olabilir — dokun ve gör': 'സ്പോയിലർ ഉണ്ടാകാം — കാണാൻ ടാപ്പ് ചെയ്യൂ',
   'Beğeni': 'ലൈക്കുകൾ',
   'Görüntülenme': 'കാഴ്ചകൾ',
+  'Tam ekran': 'ഫുൾസ്ക്രീൻ',
 };

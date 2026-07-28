@@ -358,4 +358,5 @@ const Map<String, String> cevirilerSr = {
       'Може садржати спојлере — додирни да видиш',
   'Beğeni': 'Свиђања',
   'Görüntülenme': 'Прегледи',
+  'Tam ekran': 'Цео екран',
 };

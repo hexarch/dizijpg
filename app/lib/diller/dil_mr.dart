@@ -358,4 +358,5 @@ const Map<String, String> cevirilerMr = {
   'Spoiler olabilir — dokun ve gör': 'स्पॉयलर असू शकतो — पाहण्यासाठी टॅप कर',
   'Beğeni': 'लाइक',
   'Görüntülenme': 'व्ह्यू',
+  'Tam ekran': 'फुल स्क्रीन',
 };

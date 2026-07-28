@@ -360,4 +360,5 @@ const Map<String, String> cevirilerTa = {
   'Spoiler olabilir — dokun ve gör': 'ஸ்பாய்லர் இருக்கலாம் — பார்க்கத் தட்டு',
   'Beğeni': 'லைக்குகள்',
   'Görüntülenme': 'பார்வைகள்',
+  'Tam ekran': 'முழுத்திரை',
 };

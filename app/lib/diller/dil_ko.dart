@@ -351,4 +351,5 @@ const Map<String, String> cevirilerKo = {
   'Spoiler olabilir — dokun ve gör': '스포일러가 있을 수 있어요 — 탭해서 보기',
   'Beğeni': '좋아요',
   'Görüntülenme': '조회수',
+  'Tam ekran': '전체 화면',
 };

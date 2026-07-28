@@ -358,4 +358,5 @@ const Map<String, String> cevirilerCs = {
       'Může obsahovat spoilery — klepni pro zobrazení',
   'Beğeni': 'Lajky',
   'Görüntülenme': 'Zobrazení',
+  'Tam ekran': 'Celá obrazovka',
 };

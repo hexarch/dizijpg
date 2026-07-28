@@ -360,4 +360,5 @@ const Map<String, String> cevirilerBg = {
       'Може да съдържа спойлери — докосни, за да видиш',
   'Beğeni': 'Харесвания',
   'Görüntülenme': 'Показвания',
+  'Tam ekran': 'Цял екран',
 };

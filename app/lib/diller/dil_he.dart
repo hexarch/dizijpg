@@ -353,4 +353,5 @@ const Map<String, String> cevirilerHe = {
   'Spoiler olabilir — dokun ve gör': 'עשוי להכיל ספוילרים — הקש כדי לצפות',
   'Beğeni': 'לייקים',
   'Görüntülenme': 'צפיות',
+  'Tam ekran': 'מסך מלא',
 };

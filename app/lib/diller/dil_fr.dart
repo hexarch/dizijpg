@@ -363,4 +363,5 @@ const Map<String, String> cevirilerFr = {
       'Peut contenir des spoilers — touche pour voir',
   'Beğeni': 'J\'aime',
   'Görüntülenme': 'Vues',
+  'Tam ekran': 'Plein écran',
 };

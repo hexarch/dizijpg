@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'medya_goster.dart';
 import 'ortak.dart';
-import 'yorumlar.dart' show VideoOynatici;
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
 /// Spoiler emniyeti sunucuda: izlemediğin bölümün/filmin yorumu gelmez.
@@ -156,17 +156,23 @@ class _AkisEkraniState extends State<AkisEkrani>
         ),
       );
     } else {
+      // PC'de kartlar tüm genişliğe yayılmasın: 720px ortalanmış kolon
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: ListView.builder(
-          controller: _kaydirma,
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-          itemCount: _akis!.length,
-          itemBuilder: (context, i) => _AkisKarti(
-            key: ValueKey((_akis![i] as Map<String, dynamic>)['id']),
-            yorum: _akis![i] as Map<String, dynamic>,
-            icerikler: _icerikler,
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 720),
+            child: ListView.builder(
+              controller: _kaydirma,
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              itemCount: _akis!.length,
+              itemBuilder: (context, i) => _AkisKarti(
+                key: ValueKey((_akis![i] as Map<String, dynamic>)['id']),
+                yorum: _akis![i] as Map<String, dynamic>,
+                icerikler: _icerikler,
+              ),
+            ),
           ),
         ),
       );
@@ -430,30 +436,55 @@ class _AkisKartiState extends State<_AkisKarti> {
               ),
             if (_spoilerAcik && medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              SizedBox(
-                height: 130,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: medya.length,
-                  separatorBuilder: (context, i) => const SizedBox(width: 8),
-                  itemBuilder: (context, i) {
-                    final m = medya[i] as String;
-                    final video = m.endsWith('.mp4') || m.endsWith('.webm');
-                    // Video: yorumlardakiyle aynı dokun-oynat kutusu
-                    // (önceden yalnız ikon vardı, oynatılamıyordu)
-                    if (video) return VideoOynatici(url: dosyaUrl(m)!);
-                    return ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: SizedBox(
-                        width: 130,
-                        child: CachedNetworkImage(
-                          imageUrl: dosyaUrl(m)!,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+              // Geniş ekranda (PC) medya büyür; dokununca tam ekran
+              // görüntüleyici açılır (fotoğrafta yakınlaştırma, videoda
+              // oynatma + sarma).
+              Builder(
+                builder: (context) {
+                  final genis = MediaQuery.of(context).size.width > 700;
+                  final urller = [
+                    for (final m in medya) dosyaUrl(m as String)!,
+                  ];
+                  return SizedBox(
+                    height: genis ? 250 : 150,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: medya.length,
+                      separatorBuilder: (context, i) =>
+                          const SizedBox(width: 8),
+                      itemBuilder: (context, i) {
+                        final m = medya[i] as String;
+                        final video = m.endsWith('.mp4') || m.endsWith('.webm');
+                        return InkWell(
+                          borderRadius: BorderRadius.circular(10),
+                          onTap: () =>
+                              medyaGoster(context, urller, baslangic: i),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: SizedBox(
+                              width: genis ? 330 : 150,
+                              child: video
+                                  ? Container(
+                                      color: DiziRenkler.koyuGri,
+                                      child: Center(
+                                        child: Icon(
+                                          Icons.play_circle_outline,
+                                          size: genis ? 56 : 40,
+                                          color: DiziRenkler.metin70,
+                                        ),
+                                      ),
+                                    )
+                                  : CachedNetworkImage(
+                                      imageUrl: urller[i],
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
             ],
             const SizedBox(height: 8),

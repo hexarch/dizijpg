@@ -354,4 +354,5 @@ const Map<String, String> cevirilerTh = {
   'Spoiler olabilir — dokun ve gör': 'อาจมีสปอยล์ — แตะเพื่อดู',
   'Beğeni': 'ถูกใจ',
   'Görüntülenme': 'ยอดดู',
+  'Tam ekran': 'เต็มจอ',
 };

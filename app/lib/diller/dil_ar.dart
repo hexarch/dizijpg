@@ -356,4 +356,5 @@ const Map<String, String> cevirilerAr = {
   'Spoiler olabilir — dokun ve gör': 'قد يحتوي على حرق للأحداث — انقر للعرض',
   'Beğeni': 'الإعجابات',
   'Görüntülenme': 'المشاهدات',
+  'Tam ekran': 'ملء الشاشة',
 };

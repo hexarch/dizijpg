@@ -360,4 +360,5 @@ const Map<String, String> cevirilerSv = {
       'Kan innehålla spoilrar — tryck för att visa',
   'Beğeni': 'Gillanden',
   'Görüntülenme': 'Visningar',
+  'Tam ekran': 'Helskärm',
 };

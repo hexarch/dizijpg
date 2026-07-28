@@ -360,4 +360,5 @@ const Map<String, String> cevirilerHu = {
       'Spoilert tartalmazhat — koppints a megtekintéshez',
   'Beğeni': 'Kedvelések',
   'Görüntülenme': 'Megtekintések',
+  'Tam ekran': 'Teljes képernyő',
 };

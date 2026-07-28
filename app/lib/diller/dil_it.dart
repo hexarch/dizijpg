@@ -361,4 +361,5 @@ const Map<String, String> cevirilerIt = {
   'Spoiler olabilir — dokun ve gör': 'Può contenere spoiler — tocca per vedere',
   'Beğeni': 'Mi piace',
   'Görüntülenme': 'Visualizzazioni',
+  'Tam ekran': 'Schermo intero',
 };

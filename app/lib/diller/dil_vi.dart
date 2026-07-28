@@ -358,4 +358,5 @@ const Map<String, String> cevirilerVi = {
   'Spoiler olabilir — dokun ve gör': 'Có thể chứa spoiler — chạm để xem',
   'Beğeni': 'Lượt thích',
   'Görüntülenme': 'Lượt xem',
+  'Tam ekran': 'Toàn màn hình',
 };

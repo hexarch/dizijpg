@@ -358,4 +358,5 @@ const Map<String, String> cevirilerTe = {
       'స్పాయిలర్ ఉండవచ్చు — చూడటానికి ట్యాప్ చేయి',
   'Beğeni': 'లైక్‌లు',
   'Görüntülenme': 'వీక్షణలు',
+  'Tam ekran': 'పూర్తి స్క్రీన్',
 };

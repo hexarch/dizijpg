@@ -357,4 +357,5 @@ const Map<String, String> cevirilerGu = {
   'Spoiler olabilir — dokun ve gör': 'સ્પોઇલર હોઈ શકે — જોવા માટે ટૅપ કર',
   'Beğeni': 'લાઇક',
   'Görüntülenme': 'વ્યૂ',
+  'Tam ekran': 'ફુલ સ્ક્રીન',
 };

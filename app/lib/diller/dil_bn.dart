@@ -359,4 +359,5 @@ const Map<String, String> cevirilerBn = {
   'Spoiler olabilir — dokun ve gör': 'স্পয়লার থাকতে পারে — দেখতে ট্যাপ করো',
   'Beğeni': 'লাইক',
   'Görüntülenme': 'ভিউ',
+  'Tam ekran': 'ফুলস্ক্রিন',
 };

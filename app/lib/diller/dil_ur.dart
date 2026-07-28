@@ -358,4 +358,5 @@ const Map<String, String> cevirilerUr = {
       'اسپائلر ہو سکتا ہے — دیکھنے کے لیے چھوئیں',
   'Beğeni': 'پسندیدگیاں',
   'Görüntülenme': 'ملاحظات',
+  'Tam ekran': 'فل اسکرین',
 };

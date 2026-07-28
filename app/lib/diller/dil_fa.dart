@@ -358,4 +358,5 @@ const Map<String, String> cevirilerFa = {
       'ممکن است اسپویل داشته باشد — برای دیدن لمس کن',
   'Beğeni': 'پسندها',
   'Görüntülenme': 'بازدیدها',
+  'Tam ekran': 'تمام‌صفحه',
 };

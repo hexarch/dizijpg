@@ -360,4 +360,5 @@ const Map<String, String> cevirilerNl = {
       'Kan spoilers bevatten — tik om te bekijken',
   'Beğeni': 'Vind-ik-leuks',
   'Görüntülenme': 'Weergaven',
+  'Tam ekran': 'Volledig scherm',
 };
