@@ -10,11 +10,12 @@ import '../tema.dart';
 import 'medya_goster.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
-/// Tek medya: tam genişlik büyük (16:10). Çoklu (2-4): 2 sütun kare ızgara.
-/// Videoda büyük kapak + dokununca TAM EKRAN oynatıcı. otomatikOynat=true
-/// (akış) ile kapak yerine yerinde oynatıcı: ekran ortasına gelen video sessiz
-/// başlar, uzaklaşınca durur — AkisVideo aynı anda tek video oynatır, bu
-/// yüzden birden çok oynatıcı çakışıp çift ses vermez.
+/// Tek medya: TAM GENİŞLİK, yükseklik medyanın KENDİ oranından — her post
+/// kendi boyutunda (aşırı uzunlar üst sınırda ortadan kırpılır). Çoklu (2-4):
+/// 2 sütun kare ızgara. Videoda büyük kapak + dokununca TAM EKRAN oynatıcı.
+/// otomatikOynat=true (akış) ile kapak yerine yerinde oynatıcı: ekran ortasına
+/// gelen video sessiz başlar, uzaklaşınca durur — AkisVideo aynı anda tek
+/// video oynatır, bu yüzden birden çok oynatıcı çakışıp çift ses vermez.
 class MedyaGaleri extends StatelessWidget {
   final List<String> yollar; // /medya/... yolları
   /// Verilirse medyaya dokununca bu çağrılır (indeks); yoksa tam ekran
@@ -73,9 +74,60 @@ class MedyaGaleri extends StatelessWidget {
     }
 
     if (yollar.length == 1) {
+      // Tek medya: genişlik tam dolar, yükseklik medyanın KENDİ oranından
+      // gelir — her post kendi boyutunda.
+      final video = _video(yollar[0]);
+      Widget icerik;
+      if (video) {
+        // AkisVideo oranını oynatıcıdan verir; kapak modunda oran bilinmez → 16:9
+        icerik = otomatikOynat
+            ? AkisVideo(url: urller[0])
+            : AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Container(
+                  color: Colors.black87,
+                  child: const Center(
+                    child: Icon(
+                      Icons.play_circle_outline,
+                      size: 52,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+      } else {
+        // Görsel doğal oranında tam genişlik; aşırı uzun görseller akışı
+        // yutmasın diye yükseklik genişliğin 1.5 katıyla sınırlı (taşan
+        // kısım ortalanıp kırpılır).
+        icerik = LayoutBuilder(
+          builder: (context, kisit) => ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: kisit.maxWidth * 1.5),
+            child: CachedNetworkImage(
+              imageUrl: urller[0],
+              width: double.infinity,
+              fit: BoxFit.fitWidth,
+              placeholder: (_, _) =>
+                  Container(height: 220, color: DiziRenkler.kart),
+              errorWidget: (_, _, _) => Container(
+                height: 220,
+                color: DiziRenkler.kart,
+                child: Icon(
+                  Icons.broken_image_outlined,
+                  color: DiziRenkler.metin38,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: AspectRatio(aspectRatio: 16 / 10, child: hucre(0)),
+        child: InkWell(
+          onTap: () => onAc != null
+              ? onAc!(0)
+              : medyaGoster(context, urller, baslangic: 0),
+          child: icerik,
+        ),
       );
     }
     return ClipRRect(
@@ -255,10 +307,19 @@ class _AkisVideoState extends State<AkisVideo> {
         ),
       );
     }
+    // Kutunun oranı videonun KENDİ oranı: genişlik tam dolar, yükseklik
+    // posta göre değişir. Oran bilinene dek 16:9; aşırı dik videolar 9:16'da
+    // sınırlanır (ızgara hücresi gibi sıkı kısıtta bu oran zaten ezilir).
+    final oran = (d != null && d.value.isInitialized && d.value.aspectRatio > 0)
+        ? d.value.aspectRatio.clamp(9 / 16, 21 / 9).toDouble()
+        : 16 / 9;
     return VisibilityDetector(
       key: ValueKey('akis-video-${widget.url}'),
       onVisibilityChanged: _gorunurluk,
-      child: Container(color: Colors.black87, child: govde),
+      child: AspectRatio(
+        aspectRatio: oran,
+        child: Container(color: Colors.black87, child: govde),
+      ),
     );
   }
 }

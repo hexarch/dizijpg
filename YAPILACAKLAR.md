@@ -23,6 +23,17 @@ ve yorumlarını gizleyebilir; Ayarlar'dan geri bildirim gönderilebilir.
   45 dil × 363 anahtar senkron. Uçtan uca curl testleri geçti, test verisi temizlendi.
 - NOT: yorum gizleme yalnız AÇIK PROFİL listesini kapsar; akışta ve içerik/bölüm
   sayfalarındaki yorumlar görünmeye devam eder (sosyal akış bilinçli korunuyor).
+- 🚀 **Medya boyutlama (aynı gün, 2. paket):** tek medyalı postlarda 16:10 sabit
+  kutu kaldırıldı — genişlik her zaman tam dolar, YÜKSEKLİK medyanın kendi
+  oranından gelir (her post kendi boyutunda). Videoda oran oynatıcıdan
+  (AkisVideo kendi AspectRatio'sunu verir, 9:16–21:9 aralığında), fotoğrafta
+  doğal oran (üst sınır: genişlik × 1.5, taşan ortadan kırpılır). Çoklu medya
+  ızgarası değişmedi.
+- 🚀 **Görüntülenme = her görüntüleme (aynı gün):** kişi başı tekil sayım
+  kaldırıldı (yorum_goruntuleyen artık kullanılmıyor, tablo duruyor). /yorum/:id
+  ve /yorumlar her açılışta +1; akış/keşfette ekranda GERÇEKTEN görünen kartlar
+  da /akis/goruldu üzerinden +1 sayıyor (istemci oturum başına kart başı bir
+  bildirim atar). Canlıda test edildi: aynı kişinin tekrarları artırıyor.
 
 ## 2026-07-28 — Instagram arşivi içe aktarımı + kullanıcı adı kuralı 🚀
 **Ne:** dizi.jpg Instagram hesabının arşivi (Instaloader) uygulamaya resmi hesabın

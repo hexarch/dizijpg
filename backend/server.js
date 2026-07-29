@@ -1871,7 +1871,7 @@ const YORUM_TURLERI = ['tv', 'movie', 'person'];
 
 // Tek gönderi (paylaşılan link → /gonderi/:id): yorumu + içerik bilgisini
 // Reels/akış formatında döndürür. Engellenen/yasaklı kullanıcının gönderisi
-// 404. Açılışta görüntülenme +1 (kişi başı tekil).
+// 404. Her açılışta görüntülenme +1 (tekrar görüntülemeler de sayılır).
 app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   const yorumId = parseInt(req.params.id, 10);
   if (!gecerliTmdb(yorumId)) return res.status(400).json({ hata: 'Geçersiz id' });
@@ -1896,15 +1896,10 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   );
   if (!rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
   const y = rows[0];
-  // Görüntülenme (kişi başı tekil): açan kişi kimliği veya IP anahtarı
-  const izleyen = benId ? `u:${benId}` : `ip:${req.headers['x-real-ip'] || req.ip || '?'}`;
+  // Görüntülenme: HER açılış sayılır (aynı kişinin tekrarları dahil).
   havuz.query(
-    `WITH yeni AS (
-       INSERT INTO yorum_goruntuleyen (yorum_id, izleyen) VALUES ($1,$2)
-       ON CONFLICT DO NOTHING RETURNING yorum_id)
-     UPDATE yorumlar SET goruntulenme = goruntulenme + 1
-     WHERE id=$1 AND EXISTS(SELECT 1 FROM yeni)`,
-    [yorumId, izleyen],
+    'UPDATE yorumlar SET goruntulenme = goruntulenme + 1 WHERE id=$1',
+    [yorumId],
   ).catch(() => {});
   // İçerik adı + poster (Reels'in beklediği icerikler haritası)
   const anahtar = `${y.tur}:${y.tmdb_id}`;
@@ -1943,22 +1938,11 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
      ORDER BY y.tarih DESC LIMIT 100`,
     [req.params.tur, req.params.tmdbId, sezon, bolum, benId],
   );
-  // Görüntülenme: kişi başı tek sayılır. Girişliyse kullanıcı kimliği,
-  // değilse IP anahtarı kullanılır; yalnızca ilk görüntülemede artar.
+  // Görüntülenme: HER listeleme sayılır (aynı kişinin tekrarları dahil).
   if (rows.length) {
-    const izleyen = req.kullanici?.id
-      ? `u:${req.kullanici.id}`
-      : `ip:${req.headers['x-real-ip'] || req.ip || '?'}`;
-    const idler = rows.map((r) => r.id);
     havuz.query(
-      `WITH yeni AS (
-         INSERT INTO yorum_goruntuleyen (yorum_id, izleyen)
-         SELECT id, $2 FROM unnest($1::int[]) AS id
-         ON CONFLICT DO NOTHING RETURNING yorum_id
-       )
-       UPDATE yorumlar SET goruntulenme = goruntulenme + 1
-       WHERE id IN (SELECT yorum_id FROM yeni)`,
-      [idler, izleyen],
+      'UPDATE yorumlar SET goruntulenme = goruntulenme + 1 WHERE id = ANY($1::int[])',
+      [rows.map((r) => r.id)],
     ).catch(() => {});
   }
   res.json({ yorumlar: rows });
@@ -2140,15 +2124,22 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
 
 // İstemci, kullanıcının EKRANDA gördüğü akış/keşfet kartlarını bildirir;
 // bunlar bir daha gösterilmez (akis_goruldu). En fazla 200 id/istek.
+// Ayrıca her bildirim görüntülenme sayar (aynı kişinin tekrarları dahil —
+// istemci oturum içinde aynı kartı bir kez bildirir).
 app.post('/akis/goruldu', girisZorunlu, sarici(async (req, res) => {
   const idler = Array.isArray(req.body?.idler)
     ? req.body.idler.filter((x) => Number.isInteger(x) && x > 0).slice(0, 200)
     : [];
   if (idler.length) {
-    await havuz.query(
-      `INSERT INTO akis_goruldu (kullanici_id, yorum_id)
-       SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
-      [req.kullanici.id, idler]).catch(() => {});
+    await Promise.all([
+      havuz.query(
+        `INSERT INTO akis_goruldu (kullanici_id, yorum_id)
+         SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
+        [req.kullanici.id, idler]).catch(() => {}),
+      havuz.query(
+        'UPDATE yorumlar SET goruntulenme = goruntulenme + 1 WHERE id = ANY($1::int[])',
+        [idler]).catch(() => {}),
+    ]);
   }
   res.json({ tamam: true });
 }));
