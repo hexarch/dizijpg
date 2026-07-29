@@ -377,4 +377,25 @@ const Map<String, String> cevirilerTh = {
   'Yeniden izledim': 'ดูอีกครั้ง',
   '{}. kez izlendi': 'ดูแล้ว {} ครั้ง',
   'Gönderi bulunamadı': 'ไม่พบโพสต์',
+  'Gözat': 'เรียกดู',
+  'Diziler': 'ซีรีส์',
+  'Filmler': 'หนัง',
+  'Tümü': 'ทั้งหมด',
+  'Farklı bir tür seç.': 'ลองแนวอื่นดู',
+  'Gizlilik': 'ความเป็นส่วนตัว',
+  'İzlediklerimi gizle': 'ซ่อนสิ่งที่ฉันดู',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'ซีรีส์และหนังที่คุณดูจะไม่แสดงบนโปรไฟล์ของคุณ',
+  'Yorumlarımı gizle': 'ซ่อนความคิดเห็นของฉัน',
+  'Profilinde yorumların görünmez': 'ความคิดเห็นของคุณจะไม่แสดงบนโปรไฟล์ของคุณ',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ซ่อนซีรีส์หรือหนังเรื่องใดเรื่องหนึ่งได้ด้วยชิป "ซ่อนบนโปรไฟล์ของฉัน" ในหน้าของเรื่องนั้น',
+  'Geri Bildirim': 'ข้อเสนอแนะ',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'เขียนความคิดเห็นและข้อเสนอแนะเกี่ยวกับแอป...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ขอบคุณ! ได้รับข้อเสนอแนะของคุณแล้ว',
+  'Profilimde gizle': 'ซ่อนบนโปรไฟล์ของฉัน',
+  'Yorumları': 'คอมเมนต์ของเขา',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ผู้ใช้รายนี้เลือกที่จะซ่อนความคิดเห็นของตน',
 };

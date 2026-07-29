@@ -15,6 +15,7 @@ import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
 import 'ekranlar/giris.dart';
 import 'ekranlar/gizlilik.dart';
+import 'ekranlar/gozat.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/karsilama.dart';
@@ -224,6 +225,7 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
         },
       ),
       GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
+      GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
       GoRoute(
         path: '/ozet/:yil',
         builder: (_, s) {

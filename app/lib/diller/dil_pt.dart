@@ -383,4 +383,27 @@ const Map<String, String> cevirilerPt = {
   'Yeniden izledim': 'Revisto',
   '{}. kez izlendi': 'Visto {} vezes',
   'Gönderi bulunamadı': 'Publicação não encontrada',
+  'Gözat': 'Explorar',
+  'Diziler': 'Séries',
+  'Filmler': 'Filmes',
+  'Tümü': 'Tudo',
+  'Farklı bir tür seç.': 'Tente outro gênero.',
+  'Gizlilik': 'Privacidade',
+  'İzlediklerimi gizle': 'Ocultar o que assisti',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'As séries e filmes que você assistiu não aparecem no seu perfil',
+  'Yorumlarımı gizle': 'Ocultar meus comentários',
+  'Profilinde yorumların görünmez':
+      'Seus comentários não aparecem no seu perfil',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Você pode ocultar uma série ou filme específico com o chip "Ocultar no meu perfil" na página do conteúdo.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Escreva sua opinião e sugestões sobre o app...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Obrigado! Seu feedback foi recebido.',
+  'Profilimde gizle': 'Ocultar no meu perfil',
+  'Yorumları': 'Comentários',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Este usuário prefere manter seus comentários privados.',
 };

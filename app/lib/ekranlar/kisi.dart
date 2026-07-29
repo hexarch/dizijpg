@@ -175,8 +175,8 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                   _benimPuan != null
                                       ? '${(((_benimPuan!['puan'] as num?) ?? 0) / 2).round()}/5'
                                       : 'Puanla'.c,
-                                  style: const TextStyle(
-                                    color: DiziRenkler.sari,
+                                  style: TextStyle(
+                                    color: DiziRenkler.sariMetin,
                                   ),
                                 ),
                               ),
@@ -227,7 +227,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
                     crossAxisCount: 3,
                     mainAxisSpacing: 14,
                     crossAxisSpacing: 10,
-                    childAspectRatio: 0.53,
+                    childAspectRatio: 0.50,
                   ),
                   itemCount: _isler.length,
                   itemBuilder: (context, i) =>

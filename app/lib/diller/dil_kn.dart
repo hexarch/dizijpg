@@ -383,4 +383,26 @@ const Map<String, String> cevirilerKn = {
   'Yeniden izledim': 'ಮತ್ತೆ ನೋಡಿದೆ',
   '{}. kez izlendi': '{} ಬಾರಿ ನೋಡಲಾಗಿದೆ',
   'Gönderi bulunamadı': 'ಪೋಸ್ಟ್ ಸಿಗಲಿಲ್ಲ',
+  'Gözat': 'ಬ್ರೌಸ್',
+  'Diziler': 'ಸರಣಿಗಳು',
+  'Filmler': 'ಸಿನಿಮಾಗಳು',
+  'Tümü': 'ಎಲ್ಲಾ',
+  'Farklı bir tür seç.': 'ಬೇರೆ ಪ್ರಕಾರ ಪ್ರಯತ್ನಿಸಿ.',
+  'Gizlilik': 'ಗೌಪ್ಯತೆ',
+  'İzlediklerimi gizle': 'ನಾನು ನೋಡಿದ್ದನ್ನು ಮರೆಮಾಡು',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'ನೀನು ನೋಡಿದ ಸರಣಿ ಮತ್ತು ಚಿತ್ರಗಳು ನಿನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಕಾಣಿಸುವುದಿಲ್ಲ',
+  'Yorumlarımı gizle': 'ನನ್ನ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಮರೆಮಾಡು',
+  'Profilinde yorumların görünmez':
+      'ನಿನ್ನ ಕಾಮೆಂಟ್‌ಗಳು ನಿನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಕಾಣಿಸುವುದಿಲ್ಲ',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ಯಾವುದೇ ಒಂದು ಸರಣಿ ಅಥವಾ ಚಿತ್ರವನ್ನು ಅದರ ಪುಟದಲ್ಲಿರುವ "ನನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡು" ಚಿಪ್ ಮೂಲಕ ಮರೆಮಾಡಬಹುದು.',
+  'Geri Bildirim': 'ಪ್ರತಿಕ್ರಿಯೆ',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ಆ್ಯಪ್ ಬಗ್ಗೆ ನಿನ್ನ ಅಭಿಪ್ರಾಯ ಮತ್ತು ಸಲಹೆಗಳನ್ನು ಬರೆ...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ಧನ್ಯವಾದ! ನಿನ್ನ ಪ್ರತಿಕ್ರಿಯೆ ತಲುಪಿದೆ.',
+  'Profilimde gizle': 'ನನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡು',
+  'Yorumları': 'ಕಾಮೆಂಟ್‌ಗಳು',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ಈ ಬಳಕೆದಾರ ತನ್ನ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
 };

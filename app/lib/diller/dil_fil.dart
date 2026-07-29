@@ -383,4 +383,27 @@ const Map<String, String> cevirilerFil = {
   'Yeniden izledim': 'Napanood muli',
   '{}. kez izlendi': 'Napanood ng {} beses',
   'Gönderi bulunamadı': 'Hindi natagpuan ang post',
+  'Gözat': 'Mag-browse',
+  'Diziler': 'Mga serye',
+  'Filmler': 'Mga pelikula',
+  'Tümü': 'Lahat',
+  'Farklı bir tür seç.': 'Subukan ang ibang genre.',
+  'Gizlilik': 'Privacy',
+  'İzlediklerimi gizle': 'Itago ang mga napanood ko',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Hindi makikita sa profile mo ang mga series at pelikulang napanood mo',
+  'Yorumlarımı gizle': 'Itago ang mga komento ko',
+  'Profilinde yorumların görünmez':
+      'Hindi makikita sa profile mo ang mga komento mo',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Puwede mong itago ang isang partikular na series o pelikula gamit ang "Itago sa profile ko" na chip sa page nito.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Isulat ang opinyon at mungkahi mo tungkol sa app...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Salamat! Natanggap na ang feedback mo.',
+  'Profilimde gizle': 'Itago sa profile ko',
+  'Yorumları': 'Mga Komento Nito',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Mas gusto ng user na ito na itago ang kanyang mga komento.',
 };

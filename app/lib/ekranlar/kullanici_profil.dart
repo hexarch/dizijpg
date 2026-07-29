@@ -151,10 +151,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.location_on,
                                       size: 14,
-                                      color: DiziRenkler.sari,
+                                      color: DiziRenkler.sariMetin,
                                     ),
                                     const SizedBox(width: 3),
                                     Text(
@@ -214,9 +214,9 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.schedule,
-                            color: DiziRenkler.sari,
+                            color: DiziRenkler.sariMetin,
                             size: 20,
                           ),
                           const SizedBox(width: 10),
@@ -230,10 +230,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           const Spacer(),
                           Text(
                             sureBicimle((st['tahmini_dakika'] as num).toInt()),
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
-                              color: DiziRenkler.sari,
+                              color: DiziRenkler.sariMetin,
                             ),
                           ),
                         ],
@@ -281,10 +281,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           child: OutlinedButton.icon(
                             onPressed: () =>
                                 context.push('/sohbet/${widget.kullaniciAdi}'),
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.mail_outline,
                               size: 18,
-                              color: DiziRenkler.sari,
+                              color: DiziRenkler.sariMetin,
                             ),
                             label: Text(
                               'Mesaj'.c,
@@ -299,10 +299,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.military_tech_outlined,
                           size: 18,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -344,7 +344,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Icon(grup.$1, size: 19, color: DiziRenkler.sari),
+                          Icon(grup.$1, size: 19, color: DiziRenkler.sariMetin),
                           const SizedBox(width: 6),
                           Text(
                             grup.$2.cf([grup.$4 ?? grup.$3.length]),
@@ -378,10 +378,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.playlist_play,
                           size: 20,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 6),
                         Text(
@@ -397,9 +397,9 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     for (final l in listeler)
                       Card(
                         child: ListTile(
-                          leading: const Icon(
+                          leading: Icon(
                             Icons.playlist_play,
-                            color: DiziRenkler.sari,
+                            color: DiziRenkler.sariMetin,
                           ),
                           title: Text(l['ad'] as String? ?? ''),
                           subtitle: Text(
@@ -419,49 +419,92 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       ),
                   ],
                   const SizedBox(height: 20),
-                  InkWell(
-                    onTap: () => setState(() => _yorumlarAcik = !_yorumlarAcik),
-                    child: Row(
+                  // Yorumlarını gizleyen kullanıcı: liste yerine bilgilendirme
+                  if (!benMi && p['yorumlar_gizli'] == true) ...[
+                    Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.chat_bubble_outline,
                           size: 18,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Yorumları ({})'.cf([yorumlar.length]),
+                          'Yorumları'.c,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const SizedBox(width: 6),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
                         Icon(
-                          _yorumlarAcik
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: DiziRenkler.metin54,
+                          Icons.visibility_off_outlined,
+                          size: 16,
+                          color: DiziRenkler.metin38,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.'
+                                .c,
+                            style: TextStyle(
+                              color: DiziRenkler.metin54,
+                              height: 1.4,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  if (_yorumlarAcik) ...[
-                    if (yorumlar.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Text(
-                          'Henüz yorum yok.'.c,
-                          style: TextStyle(color: DiziRenkler.metin38),
+                  ] else ...[
+                    InkWell(
+                      onTap: () =>
+                          setState(() => _yorumlarAcik = !_yorumlarAcik),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 18,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            'Yorumları ({})'.cf([yorumlar.length]),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            _yorumlarAcik
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            color: DiziRenkler.metin54,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    if (_yorumlarAcik) ...[
+                      if (yorumlar.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Text(
+                            'Henüz yorum yok.'.c,
+                            style: TextStyle(color: DiziRenkler.metin38),
+                          ),
                         ),
-                      ),
-                    for (final y in yorumlar)
-                      ProfilYorumKarti(
-                        yorum: y as Map<String, dynamic>,
-                        icerikler:
-                            p['icerikler'] as Map<String, dynamic>? ?? {},
-                      ),
+                      for (final y in yorumlar)
+                        ProfilYorumKarti(
+                          yorum: y as Map<String, dynamic>,
+                          icerikler:
+                              p['icerikler'] as Map<String, dynamic>? ?? {},
+                        ),
+                    ],
                   ],
                 ],
               ),
@@ -627,10 +670,12 @@ class _Sayac extends StatelessWidget {
             children: [
               Text(
                 deger,
-                style: const TextStyle(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: DiziRenkler.sari,
+                  color: DiziRenkler.sariMetin,
                 ),
               ),
               const SizedBox(height: 2),
@@ -716,7 +761,7 @@ class ProfilYorumKarti extends StatelessWidget {
                           ? Icons.movie
                           : Icons.tv,
                       size: 15,
-                      color: DiziRenkler.sari,
+                      color: DiziRenkler.sariMetin,
                     ),
                     const SizedBox(width: 6),
                   ],
@@ -733,10 +778,10 @@ class ProfilYorumKarti extends StatelessWidget {
                               : ''),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
-                        color: DiziRenkler.sari,
+                        color: DiziRenkler.sariMetin,
                       ),
                     ),
                   ),
@@ -768,7 +813,7 @@ class ProfilYorumKarti extends StatelessWidget {
                     style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                   ),
                   const SizedBox(width: 14),
-                  const Icon(Icons.favorite, size: 15, color: DiziRenkler.sari),
+                  Icon(Icons.favorite, size: 15, color: DiziRenkler.sariMetin),
                   const SizedBox(width: 4),
                   Text(
                     '${yorum['begeni'] ?? 0}',
@@ -1034,10 +1079,10 @@ class _YorumDetayModal extends StatelessWidget {
                 Expanded(
                   child: Text(
                     baslik,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w800,
-                      color: DiziRenkler.sari,
+                      color: DiziRenkler.sariMetin,
                     ),
                   ),
                 ),
@@ -1097,7 +1142,7 @@ class _YorumDetayModal extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
               ),
               const SizedBox(width: 14),
-              const Icon(Icons.favorite, size: 15, color: DiziRenkler.sari),
+              Icon(Icons.favorite, size: 15, color: DiziRenkler.sariMetin),
               const SizedBox(width: 4),
               Text(
                 '${yorum['begeni'] ?? 0}',

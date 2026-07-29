@@ -167,6 +167,12 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
           ],
         ),
         actions: [
+          // Katalog gözat (türe göre keşif)
+          IconButton(
+            tooltip: 'Gözat'.c,
+            icon: const Icon(Icons.grid_view_outlined),
+            onPressed: () => context.push('/gozat'),
+          ),
           // Instagram tarzı DM kısayolu
           RozetliIkon(
             ikon: Icons.near_me_outlined,

@@ -376,4 +376,25 @@ const Map<String, String> cevirilerHe = {
   'Yeniden izledim': 'נצפה שוב',
   '{}. kez izlendi': 'נצפה {} פעמים',
   'Gönderi bulunamadı': 'הפוסט לא נמצא',
+  'Gözat': 'עיון',
+  'Diziler': 'סדרות',
+  'Filmler': 'סרטים',
+  'Tümü': 'הכול',
+  'Farklı bir tür seç.': 'נסה ז\'אנר אחר.',
+  'Gizlilik': 'פרטיות',
+  'İzlediklerimi gizle': 'להסתיר מה שצפיתי',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'סדרות וסרטים שצפית בהם לא יוצגו בפרופיל שלך',
+  'Yorumlarımı gizle': 'להסתיר את התגובות שלי',
+  'Profilinde yorumların görünmez': 'התגובות שלך לא יוצגו בפרופיל שלך',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'אפשר להסתיר סדרה או סרט מסוימים עם הצ\'יפ "הסתר בפרופיל שלי" בעמוד התוכן.',
+  'Geri Bildirim': 'משוב',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'כתוב את דעתך והצעותיך על האפליקציה...',
+  'Teşekkürler! Geri bildirimin alındı.': 'תודה! המשוב שלך התקבל.',
+  'Profilimde gizle': 'הסתר בפרופיל שלי',
+  'Yorumları': 'התגובות',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'המשתמש הזה מעדיף לשמור על התגובות שלו חסויות.',
 };

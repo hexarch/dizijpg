@@ -388,4 +388,27 @@ const Map<String, String> cevirilerMy = {
   'Yeniden izledim': 'ပြန်ကြည့်ပြီး',
   '{}. kez izlendi': '{} ကြိမ် ကြည့်ပြီး',
   'Gönderi bulunamadı': 'ပို့စ်ကို ရှာမတွေ့ပါ',
+  'Gözat': 'လှော်လှန်ကြည့်ရန်',
+  'Diziler': 'ဇာတ်လမ်းတွဲများ',
+  'Filmler': 'ရုပ်ရှင်များ',
+  'Tümü': 'အားလုံး',
+  'Farklı bir tür seç.': 'အခြားအမျိုးအစား စမ်းကြည့်ပါ။',
+  'Gizlilik': 'ကိုယ်ရေးလုံခြုံမှု',
+  'İzlediklerimi gizle': 'ကြည့်ထားသည်များကို ဖျောက်ရန်',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'သင်ကြည့်ထားသော စီးရီးနှင့် ရုပ်ရှင်များ သင့်ပရိုဖိုင်တွင် မပေါ်ပါ',
+  'Yorumlarımı gizle': 'ကျွန်ုပ်၏ မှတ်ချက်များကို ဖျောက်ရန်',
+  'Profilinde yorumların görünmez':
+      'သင့်မှတ်ချက်များ သင့်ပရိုဖိုင်တွင် မပေါ်ပါ',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'စီးရီး သို့မဟုတ် ရုပ်ရှင်တစ်ခုချင်းကို ၎င်း၏စာမျက်နှာရှိ "ကျွန်ုပ်ပရိုဖိုင်တွင် ဖျောက်ရန်" ချစ်ပ်ဖြင့် ဖျောက်နိုင်သည်။',
+  'Geri Bildirim': 'အကြံပြုချက်',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'အက်ပ်အကြောင်း သင့်ထင်မြင်ချက်နှင့် အကြံပြုချက်များ ရေးပါ...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'ကျေးဇူးတင်ပါသည်! သင့်အကြံပြုချက် လက်ခံရရှိပါပြီ။',
+  'Profilimde gizle': 'ကျွန်ုပ်ပရိုဖိုင်တွင် ဖျောက်ရန်',
+  'Yorumları': 'မှတ်ချက်များ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ဤအသုံးပြုသူသည် မိမိ၏မှတ်ချက်များကို လျှို့ဝှက်ထားလိုသည်။',
 };

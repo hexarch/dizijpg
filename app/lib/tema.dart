@@ -26,9 +26,16 @@ class DiziRenkler {
   /// Açık tema aktif mi? (main.dart yönetir — ekranlar okumakla yetinir)
   static bool acik = false;
 
-  /// Marka sarısı (her iki temada aynı)
+  /// Marka sarısı (her iki temada aynı) — DOLGU/zemin ve daima-koyu (Reels,
+  /// poster rozeti, siyah bindirme) yüzeylerde kullanılır.
   static const sari = Color(0xFFF5C518);
   static const acikSari = Color(0xFFFFD75E);
+
+  /// Sarı METİN/ikon için tema-duyarlı ton: koyu temada parlak marka sarısı,
+  /// AÇIK temada koyulaştırılmış hardal (beyaz/açık kart üstünde okunur ~4.5:1).
+  /// Kart/scaffold zemininde sarı yazı/ikon için `sari` yerine BUNU kullan.
+  /// (Daima-siyah zeminlerde — Reels, poster rozeti — yine `sari` kalır.)
+  static Color get sariMetin => acik ? const Color(0xFF8A6D00) : sari;
 
   // --- Zeminler ---
   /// Ana zemin (koyu: gerçek siyah, açık: kırık beyaz)

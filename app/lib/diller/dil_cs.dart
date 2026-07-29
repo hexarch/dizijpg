@@ -381,4 +381,27 @@ const Map<String, String> cevirilerCs = {
   'Yeniden izledim': 'Znovu zhlédnuto',
   '{}. kez izlendi': 'Zhlédnuto {}×',
   'Gönderi bulunamadı': 'Příspěvek nenalezen',
+  'Gözat': 'Procházet',
+  'Diziler': 'Seriály',
+  'Filmler': 'Filmy',
+  'Tümü': 'Vše',
+  'Farklı bir tür seç.': 'Zkus jiný žánr.',
+  'Gizlilik': 'Soukromí',
+  'İzlediklerimi gizle': 'Skrýt, co sleduji',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Zhlédnuté seriály a filmy se na tvém profilu nezobrazí',
+  'Yorumlarımı gizle': 'Skrýt mé komentáře',
+  'Profilinde yorumların görünmez':
+      'Tvé komentáře se na tvém profilu nezobrazí',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Jednotlivý seriál nebo film můžeš skrýt čipem „Skrýt na mém profilu” na jeho stránce.',
+  'Geri Bildirim': 'Zpětná vazba',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Napiš svůj názor a návrhy k aplikaci...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Díky! Tvoje zpětná vazba byla přijata.',
+  'Profilimde gizle': 'Skrýt na mém profilu',
+  'Yorumları': 'Komentáře',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Tento uživatel si přeje nechat své komentáře skryté.',
 };

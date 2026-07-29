@@ -383,4 +383,26 @@ const Map<String, String> cevirilerRu = {
   'Yeniden izledim': 'Пересмотрено',
   '{}. kez izlendi': 'Просмотрено {} раз',
   'Gönderi bulunamadı': 'Публикация не найдена',
+  'Gözat': 'Обзор',
+  'Diziler': 'Сериалы',
+  'Filmler': 'Фильмы',
+  'Tümü': 'Все',
+  'Farklı bir tür seç.': 'Попробуй другой жанр.',
+  'Gizlilik': 'Приватность',
+  'İzlediklerimi gizle': 'Скрыть, что я смотрю',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Сериалы и фильмы, которые ты посмотрел, не будут видны в твоём профиле',
+  'Yorumlarımı gizle': 'Скрыть мои комментарии',
+  'Profilinde yorumların görünmez':
+      'Твои комментарии не будут видны в твоём профиле',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Отдельный сериал или фильм можно скрыть чипом «Скрыть в моём профиле» на его странице.',
+  'Geri Bildirim': 'Обратная связь',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Напиши своё мнение и предложения о приложении...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Спасибо! Твой отзыв получен.',
+  'Profilimde gizle': 'Скрыть в моём профиле',
+  'Yorumları': 'Комментарии',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Этот пользователь предпочитает не показывать свои комментарии.',
 };

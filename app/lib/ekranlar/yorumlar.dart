@@ -8,7 +8,6 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'etiket.dart';
-import 'medya_goster.dart';
 import 'ortak.dart';
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
@@ -35,6 +34,8 @@ class _YorumBolumuState extends State<YorumBolumu> {
   List<dynamic>? _yorumlar;
   bool _yorumHatasi = false; // yükleme başarısız mı (boş ≠ hata)
   final _metin = TextEditingController();
+  final _odak = FocusNode(); // Yanıtla → kutuya odaklan
+  final _kutuKey = GlobalKey(); // Yanıtla → kutuya kaydır
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
   bool _gonderiliyor = false;
@@ -50,7 +51,25 @@ class _YorumBolumuState extends State<YorumBolumu> {
   @override
   void dispose() {
     _metin.dispose();
+    _odak.dispose();
     super.dispose();
+  }
+
+  /// Yanıtla: yazma kutusunu yanıtlanana ayarla, kutuya kaydır ve klavyeyi aç
+  /// (kutu ekranın üstünde olduğundan kullanıcı "bir şey olmadı" sanmasın).
+  void _yanitla(Map<String, dynamic> hedef) {
+    setState(() => _yanitlanan = hedef);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final ctx = _kutuKey.currentContext;
+      if (ctx != null) {
+        Scrollable.ensureVisible(
+          ctx,
+          duration: const Duration(milliseconds: 300),
+          alignment: 0.1,
+        );
+      }
+      _odak.requestFocus();
+    });
   }
 
   String get _sorgu => widget.sezon != null
@@ -150,10 +169,10 @@ class _YorumBolumuState extends State<YorumBolumu> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
           child: Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.chat_bubble_outline,
                 size: 19,
-                color: DiziRenkler.sari,
+                color: DiziRenkler.sariMetin,
               ),
               const SizedBox(width: 7),
               Text(
@@ -174,6 +193,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
         ),
         // Yorum yazma kutusu
         Card(
+          key: _kutuKey,
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Padding(
             padding: const EdgeInsets.all(10),
@@ -185,10 +205,10 @@ class _YorumBolumuState extends State<YorumBolumu> {
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.reply,
                           size: 16,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 6),
                         Expanded(
@@ -198,9 +218,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
                             ]),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
-                              color: DiziRenkler.sari,
+                              color: DiziRenkler.sariMetin,
                             ),
                           ),
                         ),
@@ -221,6 +241,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
                   ),
                 EtiketliGirdi(
                   controller: _metin,
+                  focusNode: _odak,
                   maxLines: 3,
                   minLines: 1,
                   maxLength: 1000,
@@ -263,13 +284,19 @@ class _YorumBolumuState extends State<YorumBolumu> {
                               right: 0,
                               child: InkWell(
                                 onTap: () => setState(() => _ekler.removeAt(i)),
-                                child: const CircleAvatar(
-                                  radius: 10,
-                                  backgroundColor: Colors.black87,
-                                  child: Icon(
-                                    Icons.close,
-                                    size: 13,
-                                    color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                // Görünmez padding: rozet küçük kalır ama
+                                // dokunma alanı 40px olur (20 avatar + 2×10)
+                                child: const Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: CircleAvatar(
+                                    radius: 10,
+                                    backgroundColor: Colors.black87,
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 13,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -293,9 +320,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                 color: DiziRenkler.sari,
                               ),
                             )
-                          : const Icon(
+                          : Icon(
                               Icons.attach_file,
-                              color: DiziRenkler.sari,
+                              color: DiziRenkler.sariMetin,
                             ),
                       tooltip: 'Fotoğraf / video ekle'.c,
                     ),
@@ -317,7 +344,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                   : Icons.visibility_off_outlined,
                               size: 20,
                               color: _spoiler
-                                  ? DiziRenkler.sari
+                                  ? DiziRenkler.sariMetin
                                   : DiziRenkler.metin54,
                             ),
                             const SizedBox(width: 4),
@@ -329,7 +356,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
                                     ? FontWeight.w700
                                     : FontWeight.w400,
                                 color: _spoiler
-                                    ? DiziRenkler.sari
+                                    ? DiziRenkler.sariMetin
                                     : DiziRenkler.metin54,
                               ),
                             ),
@@ -399,7 +426,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
               benim: y['kullanici_id'] == benimId,
               benimId: benimId,
               sil: () => _sil(y['id'] as int),
-              yanitla: (hedef) => setState(() => _yanitlanan = hedef),
+              yanitla: _yanitla,
               yanitSil: _sil,
               yanitlar:
                   (_yorumlar!.where((c) => c['ust_id'] == y['id']).toList()
@@ -514,9 +541,9 @@ class _YorumKartiState extends State<_YorumKarti> {
                       kullaniciyaGit(context, yorum['kullanici_adi'] as String),
                   child: Text(
                     '@${yorum['kullanici_adi']}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      color: DiziRenkler.sari,
+                      color: DiziRenkler.sariMetin,
                     ),
                   ),
                 ),
@@ -563,39 +590,9 @@ class _YorumKartiState extends State<_YorumKarti> {
             ),
             if (medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              // Dokununca tam ekran görüntüleyici (yakınlaştırma + video
-              // sarma); videolar yerinde de oynatılabilir.
-              Builder(
-                builder: (context) {
-                  final urller = [for (final m in medya) dosyaUrl(m)!];
-                  return Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (var i = 0; i < medya.length; i++)
-                        medya[i].endsWith('.mp4') || medya[i].endsWith('.webm')
-                            ? VideoOynatici(
-                                url: urller[i],
-                                tamEkran: () =>
-                                    medyaGoster(context, urller, baslangic: i),
-                              )
-                            : InkWell(
-                                onTap: () =>
-                                    medyaGoster(context, urller, baslangic: i),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: CachedNetworkImage(
-                                    imageUrl: urller[i],
-                                    width: 140,
-                                    height: 140,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                    ],
-                  );
-                },
-              ),
+              // Tek medya tam genişlik büyük, çoklu 2 sütun ızgara; dokununca
+              // tam ekran (fotoğrafta yakınlaştırma, videoda oynatma + sarma).
+              MedyaGaleri(yollar: medya.cast<String>()),
             ],
             const SizedBox(height: 8),
             // Görüntülenme + beğeni
@@ -617,8 +614,8 @@ class _YorumKartiState extends State<_YorumKarti> {
                   borderRadius: BorderRadius.circular(20),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
+                      horizontal: 8,
+                      vertical: 10,
                     ),
                     child: Row(
                       children: [
@@ -626,7 +623,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                           _begendim ? Icons.favorite : Icons.favorite_border,
                           size: 16,
                           color: _begendim
-                              ? DiziRenkler.sari
+                              ? DiziRenkler.sariMetin
                               : DiziRenkler.metin38,
                         ),
                         const SizedBox(width: 4),
@@ -635,7 +632,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                           style: TextStyle(
                             fontSize: 12,
                             color: _begendim
-                                ? DiziRenkler.sari
+                                ? DiziRenkler.sariMetin
                                 : DiziRenkler.metin38,
                           ),
                         ),
@@ -649,8 +646,8 @@ class _YorumKartiState extends State<_YorumKarti> {
                   borderRadius: BorderRadius.circular(20),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 2,
+                      horizontal: 8,
+                      vertical: 10,
                     ),
                     child: Row(
                       children: [
@@ -852,7 +849,12 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                         right: 2,
                         child: IconButton(
                           tooltip: 'Tam ekran'.c,
-                          onPressed: widget.tamEkran,
+                          // Tam ekrana geçerken yerindeki videoyu DURDUR —
+                          // aksi halde iki oynatıcı aynı anda çalıp çift ses verir.
+                          onPressed: () {
+                            _denetleyici?.pause();
+                            widget.tamEkran!();
+                          },
                           icon: const Icon(
                             Icons.fullscreen,
                             size: 20,
@@ -957,10 +959,10 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                     kullaniciyaGit(context, y['kullanici_adi'] as String),
                 child: Text(
                   '@${y['kullanici_adi']}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: DiziRenkler.sari,
+                    color: DiziRenkler.sariMetin,
                   ),
                 ),
               ),
@@ -985,7 +987,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                         _begendim ? Icons.favorite : Icons.favorite_border,
                         size: 15,
                         color: _begendim
-                            ? DiziRenkler.sari
+                            ? DiziRenkler.sariMetin
                             : DiziRenkler.metin38,
                       ),
                       if (_begeni > 0) ...[

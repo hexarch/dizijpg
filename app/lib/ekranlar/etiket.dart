@@ -37,7 +37,16 @@ IconData _turIkonu(String tur) => switch (tur) {
 class EtiketliMetin extends StatefulWidget {
   final String metin;
   final TextStyle? stil;
-  const EtiketliMetin(this.metin, {super.key, this.stil});
+
+  /// Daima-siyah zeminde mi (Reels)? true → parlak sarı; false → tema-duyarlı
+  /// sariMetin (açık temada koyu, kart zemininde okunur).
+  final bool koyuZemin;
+  const EtiketliMetin(
+    this.metin, {
+    super.key,
+    this.stil,
+    this.koyuZemin = false,
+  });
 
   @override
   State<EtiketliMetin> createState() => _EtiketliMetinState();
@@ -64,8 +73,8 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
     final taban =
         widget.stil ??
         DefaultTextStyle.of(context).style.copyWith(color: DiziRenkler.metin);
-    const etiketStili = TextStyle(
-      color: DiziRenkler.sari,
+    final etiketStili = TextStyle(
+      color: widget.koyuZemin ? DiziRenkler.sari : DiziRenkler.sariMetin,
       fontWeight: FontWeight.w700,
     );
     final metin = widget.metin;
@@ -101,7 +110,7 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
               child: Icon(
                 _turIkonu(tur),
                 size: (taban.fontSize ?? 14) + 2,
-                color: DiziRenkler.sari,
+                color: etiketStili.color,
               ),
             ),
           ),
@@ -129,6 +138,7 @@ class EtiketliGirdi extends StatefulWidget {
   final int? minLines;
   final int? maxLength;
   final Function(String)? onChanged;
+  final FocusNode? focusNode;
 
   const EtiketliGirdi({
     super.key,
@@ -138,6 +148,7 @@ class EtiketliGirdi extends StatefulWidget {
     this.minLines,
     this.maxLength,
     this.onChanged,
+    this.focusNode,
   });
 
   @override
@@ -368,6 +379,7 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
           ),
         TextField(
           controller: widget.controller,
+          focusNode: widget.focusNode,
           maxLines: widget.maxLines,
           minLines: widget.minLines,
           maxLength: widget.maxLength,

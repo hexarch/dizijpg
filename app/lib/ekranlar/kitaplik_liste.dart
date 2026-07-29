@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
-import '../tema.dart';
 import 'ortak.dart';
 
 /// Bir kitaplık durumunun (izliyorum/bitirdim/...) TAM listesi, dikey ızgara.
@@ -74,11 +73,10 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
         itemBuilder: (_, __) => const IskeletKutu(genislik: double.infinity),
       );
     } else if (_ogeler!.isEmpty) {
-      govde = Center(
-        child: Text(
-          'Henüz izleme kaydın yok'.c,
-          style: TextStyle(color: DiziRenkler.metin38),
-        ),
+      govde = BosDurum(
+        ikon: Icons.video_library_outlined,
+        baslik: 'Henüz izleme kaydın yok'.c,
+        ipucu: 'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.'.c,
       );
     } else {
       govde = GridView.builder(

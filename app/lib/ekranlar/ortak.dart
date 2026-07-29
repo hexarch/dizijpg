@@ -1,10 +1,267 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'medya_goster.dart';
+
+/// Yorum/akış postlarındaki fotoğraf-video galerisi.
+/// Tek medya: tam genişlik büyük (16:10). Çoklu (2-4): 2 sütun kare ızgara.
+/// Videoda büyük kapak + dokununca TAM EKRAN oynatıcı. otomatikOynat=true
+/// (akış) ile kapak yerine yerinde oynatıcı: ekran ortasına gelen video sessiz
+/// başlar, uzaklaşınca durur — AkisVideo aynı anda tek video oynatır, bu
+/// yüzden birden çok oynatıcı çakışıp çift ses vermez.
+class MedyaGaleri extends StatelessWidget {
+  final List<String> yollar; // /medya/... yolları
+  /// Verilirse medyaya dokununca bu çağrılır (indeks); yoksa tam ekran
+  /// görüntüleyici (medyaGoster) açılır. Akış bunu Reels açmak için kullanır.
+  final void Function(int index)? onAc;
+
+  /// Akışta: videolar kapak yerine yerinde (sessiz) oynar.
+  final bool otomatikOynat;
+  const MedyaGaleri({
+    super.key,
+    required this.yollar,
+    this.onAc,
+    this.otomatikOynat = false,
+  });
+
+  static bool _video(String m) => m.endsWith('.mp4') || m.endsWith('.webm');
+
+  @override
+  Widget build(BuildContext context) {
+    if (yollar.isEmpty) return const SizedBox.shrink();
+    final urller = [for (final m in yollar) dosyaUrl(m)!];
+    Widget hucre(int i) {
+      final video = _video(yollar[i]);
+      return InkWell(
+        onTap: () => onAc != null
+            ? onAc!(i)
+            : medyaGoster(context, urller, baslangic: i),
+        child: video
+            ? (otomatikOynat
+                  ? AkisVideo(url: urller[i])
+                  // Video kapağı: koyu zemin + beyaz oynat (tema-bağımsız,
+                  // videolar koyu görünür — açık temada da görünür kalır)
+                  : Container(
+                      color: Colors.black87,
+                      child: const Center(
+                        child: Icon(
+                          Icons.play_circle_outline,
+                          size: 52,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ))
+            : CachedNetworkImage(
+                imageUrl: urller[i],
+                fit: BoxFit.cover,
+                placeholder: (_, _) => Container(color: DiziRenkler.kart),
+                errorWidget: (_, _, _) => Container(
+                  color: DiziRenkler.kart,
+                  child: Icon(
+                    Icons.broken_image_outlined,
+                    color: DiziRenkler.metin38,
+                  ),
+                ),
+              ),
+      );
+    }
+
+    if (yollar.length == 1) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: AspectRatio(aspectRatio: 16 / 10, child: hucre(0)),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: GridView.count(
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        childAspectRatio: 1,
+        children: [for (var i = 0; i < yollar.length; i++) hucre(i)],
+      ),
+    );
+  }
+}
+
+/// Akışta yerinde oynayan video. Kaydırırken siyah kapakla duraklamış durur;
+/// ekran ortasına EN YAKIN görünür video sessiz oynamaya başlar, merkezden
+/// uzaklaşınca (veya başka kart merkeze gelince) durur. Statik aday kaydıyla
+/// aynı anda yalnız BİR video oynar. Ses kapalı başlar (web otomatik oynatma
+/// kuralı); sağ alttaki hoparlör rozeti oturum boyu ortak ses tercihini açar.
+/// Karta dokunuş üstteki InkWell'e düşer (akışta Reels açar).
+class AkisVideo extends StatefulWidget {
+  final String url;
+  const AkisVideo({super.key, required this.url});
+
+  @override
+  State<AkisVideo> createState() => _AkisVideoState();
+}
+
+class _AkisVideoState extends State<AkisVideo> {
+  /// Görünür adaylar → ekran merkezine dikey uzaklık (px). En yakını oynar.
+  static final Map<_AkisVideoState, double> _adaylar = {};
+  static _AkisVideoState? _aktif;
+  static bool _sesli = false; // oturum boyu ortak ses tercihi
+
+  VideoPlayerController? _d;
+  Future<void>? _kurulum; // ilk oynatma isteğinde tembel kurulur
+  bool _hata = false;
+
+  void _gorunurluk(VisibilityInfo info) {
+    if (!mounted) return;
+    if (info.visibleFraction < 0.55) {
+      _adaylar.remove(this);
+    } else {
+      final kutu = context.findRenderObject();
+      var uzaklik = 0.0;
+      if (kutu is RenderBox && kutu.attached) {
+        final merkez = kutu.localToGlobal(kutu.size.center(Offset.zero)).dy;
+        uzaklik = (merkez - MediaQuery.of(context).size.height / 2).abs();
+      }
+      _adaylar[this] = uzaklik;
+    }
+    _secimiUygula();
+  }
+
+  /// Merkeze en yakın adayı oynat; öncekini (aday kalmadıysa aktifi) durdur.
+  static void _secimiUygula() {
+    _AkisVideoState? enYakin;
+    var enKucuk = double.infinity;
+    _adaylar.forEach((aday, uzaklik) {
+      if (uzaklik < enKucuk) {
+        enKucuk = uzaklik;
+        enYakin = aday;
+      }
+    });
+    if (enYakin == _aktif) return;
+    _aktif?._d?.pause();
+    _aktif = enYakin;
+    _aktif?._oynat();
+  }
+
+  Future<void> _oynat() async {
+    _kurulum ??= _kur();
+    await _kurulum;
+    final d = _d;
+    // Kurulum sürerken kart merkezden çıktıysa başlatma
+    if (!mounted || d == null || _aktif != this) return;
+    await d.setVolume(_sesli ? 1 : 0);
+    await d.play();
+  }
+
+  Future<void> _kur() async {
+    try {
+      final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
+      await d.initialize();
+      if (!mounted) {
+        d.dispose();
+        return;
+      }
+      d.setLooping(true);
+      setState(() => _d = d);
+    } catch (_) {
+      if (mounted) setState(() => _hata = true);
+    }
+  }
+
+  void _sesDegistir() {
+    _sesli = !_sesli;
+    _d?.setVolume(_sesli ? 1 : 0);
+  }
+
+  @override
+  void dispose() {
+    _adaylar.remove(this);
+    if (_aktif == this) _aktif = null;
+    _d?.dispose();
+    // Liste karttan kurtulduysa sıradaki görünür video devralsın
+    _secimiUygula();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final d = _d;
+    Widget govde;
+    if (_hata) {
+      govde = const Center(
+        child: Icon(
+          Icons.videocam_off_outlined,
+          size: 44,
+          color: Colors.white38,
+        ),
+      );
+    } else if (d == null) {
+      // Henüz kurulmadı: siyah duraklatılmış kapak
+      govde = const Center(
+        child: Icon(Icons.play_circle_outline, size: 52, color: Colors.white),
+      );
+    } else {
+      govde = ValueListenableBuilder<VideoPlayerValue>(
+        valueListenable: d,
+        builder: (_, v, _) => Stack(
+          fit: StackFit.expand,
+          children: [
+            Center(
+              child: AspectRatio(
+                aspectRatio: v.aspectRatio == 0 ? 16 / 9 : v.aspectRatio,
+                child: VideoPlayer(d),
+              ),
+            ),
+            if (!v.isPlaying)
+              const Center(
+                child: Icon(
+                  Icons.play_circle_outline,
+                  size: 52,
+                  color: Colors.white70,
+                ),
+              ),
+            if (v.isPlaying)
+              Positioned(
+                right: 2,
+                bottom: 2,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: _sesDegistir,
+                  // 44px dokunma hedefi: saydam kenar + küçük görünür rozet
+                  child: Padding(
+                    padding: const EdgeInsets.all(6),
+                    child: Container(
+                      padding: const EdgeInsets.all(7),
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        v.volume > 0 ? Icons.volume_up : Icons.volume_off,
+                        size: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+    return VisibilityDetector(
+      key: ValueKey('akis-video-${widget.url}'),
+      onVisibilityChanged: _gorunurluk,
+      child: Container(color: Colors.black87, child: govde),
+    );
+  }
+}
 
 /// Poster kartı: dokununca detaya gider.
 class PosterKarti extends StatelessWidget {
@@ -197,6 +454,7 @@ class MiniIcerik extends StatefulWidget {
 
 class _MiniIcerikState extends State<MiniIcerik> {
   Map<String, dynamic>? _icerik;
+  bool _hata = false;
 
   @override
   void initState() {
@@ -205,11 +463,30 @@ class _MiniIcerikState extends State<MiniIcerik> {
         .then((d) {
           if (mounted) setState(() => _icerik = d as Map<String, dynamic>);
         })
-        .catchError((_) {});
+        .catchError((_) {
+          // Hata: sonsuz iskelet yerine kırık görsel göster
+          if (mounted) setState(() => _hata = true);
+        });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_hata) {
+      // genislik double.infinity olabilir → sabit yükseklik yerine oran kullan
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: AspectRatio(
+          aspectRatio: 2 / 3,
+          child: Container(
+            color: DiziRenkler.kart,
+            child: Icon(
+              Icons.broken_image_outlined,
+              color: DiziRenkler.metin38,
+            ),
+          ),
+        ),
+      );
+    }
     if (_icerik == null) {
       return IskeletKutu(genislik: widget.genislik);
     }
@@ -676,7 +953,14 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
         child: Container(
           color: DiziRenkler.kart,
           child: poster != null
-              ? Image.network(poster, fit: BoxFit.cover)
+              ? CachedNetworkImage(
+                  imageUrl: poster,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => Icon(
+                    Icons.broken_image_outlined,
+                    color: DiziRenkler.metin38,
+                  ),
+                )
               : Center(
                   child: Padding(
                     padding: const EdgeInsets.all(6),

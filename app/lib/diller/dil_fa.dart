@@ -381,4 +381,25 @@ const Map<String, String> cevirilerFa = {
   'Yeniden izledim': 'دوباره دیده شد',
   '{}. kez izlendi': '{} بار دیده شد',
   'Gönderi bulunamadı': 'پست پیدا نشد',
+  'Gözat': 'مرور',
+  'Diziler': 'سریال‌ها',
+  'Filmler': 'فیلم‌ها',
+  'Tümü': 'همه',
+  'Farklı bir tür seç.': 'ژانر دیگری را امتحان کن.',
+  'Gizlilik': 'حریم خصوصی',
+  'İzlediklerimi gizle': 'پنهان کردن تماشاهایم',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'سریال‌ها و فیلم‌هایی که دیده‌ای در پروفایلت نمایش داده نمی‌شوند',
+  'Yorumlarımı gizle': 'پنهان کردن نظرات من',
+  'Profilinde yorumların görünmez': 'نظرات تو در پروفایلت نمایش داده نمی‌شوند',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'می‌توانی یک سریال یا فیلم خاص را با گزینه «در پروفایلم پنهان کن» در صفحه‌اش پنهان کنی.',
+  'Geri Bildirim': 'بازخورد',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'نظر و پیشنهادت را درباره اپلیکیشن بنویس...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ممنون! بازخوردت دریافت شد.',
+  'Profilimde gizle': 'در پروفایلم پنهان کن',
+  'Yorumları': 'نظرهایش',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'این کاربر ترجیح می‌دهد نظراتش پنهان بمانند.',
 };

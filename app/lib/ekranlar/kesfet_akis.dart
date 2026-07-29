@@ -11,7 +11,6 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'etiket.dart';
-import 'medya_goster.dart';
 import 'ortak.dart';
 
 /// Keşfet (Reels tarzı): akış öncelikleriyle gelen postlar — önce videolar,
@@ -289,6 +288,7 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
   late final PageController _sayfa = PageController(
     initialPage: widget.baslangic,
   );
+  late int _aktif = widget.baslangic; // yalnız aktif sayfa oynar/işaretlenir
 
   @override
   void dispose() {
@@ -306,10 +306,14 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
             controller: _sayfa,
             scrollDirection: Axis.vertical,
             itemCount: widget.liste.length,
+            // Aktif sayfa değişince: yalnız görünen sayfa video oynatır ve
+            // "görüldü" işaretlenir (komşu sayfalar önden kurulsa da sessiz).
+            onPageChanged: (i) => setState(() => _aktif = i),
             itemBuilder: (context, i) => _ReelSayfa(
               key: ValueKey((widget.liste[i] as Map<String, dynamic>)['id']),
               yorum: widget.liste[i] as Map<String, dynamic>,
               icerikler: widget.icerikler,
+              aktif: i == _aktif,
             ),
           ),
           SafeArea(
@@ -336,19 +340,31 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
 class _ReelSayfa extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
-  const _ReelSayfa({super.key, required this.yorum, required this.icerikler});
+  final bool aktif; // ekranda görünen sayfa mı (yalnız o oynar/işaretlenir)
+  const _ReelSayfa({
+    super.key,
+    required this.yorum,
+    required this.icerikler,
+    this.aktif = true,
+  });
 
   @override
   State<_ReelSayfa> createState() => _ReelSayfaState();
 }
 
-class _ReelSayfaState extends State<_ReelSayfa> {
+class _ReelSayfaState extends State<_ReelSayfa>
+    with SingleTickerProviderStateMixin {
   VideoPlayerController? _d;
   late bool _begendim = widget.yorum['begendim'] == true;
   late int _begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
   late bool _takipte = widget.yorum['takip_ediyorum'] == true;
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
-  bool _kalpGoster = false; // çift dokunuş animasyonu
+  // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar
+  late final AnimationController _kalpAnim = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+  Offset? _kalpKonum;
 
   String? get _videoUrl {
     for (final m in (widget.yorum['medya'] as List<dynamic>? ?? [])) {
@@ -366,9 +382,40 @@ class _ReelSayfaState extends State<_ReelSayfa> {
     return null;
   }
 
+  bool _isaretlendi = false;
+
+  /// Bu gönderiyi gördü → bir daha akış/keşfette gösterilmesin (yalnız bir kez,
+  /// ve YALNIZ sayfa gerçekten aktifleşince — komşu sayfalar sayılmaz).
+  void _isaretle() {
+    if (_isaretlendi) return;
+    _isaretlendi = true;
+    Api.post('/akis/goruldu', {
+      'idler': [widget.yorum['id']],
+    }).catchError((_) => null);
+  }
+
+  /// Yalnız aktif (ekranda görünen) sayfa oynar → çift ses olmaz.
+  void _videoDurumGuncelle() {
+    final d = _d;
+    if (d == null || !d.value.isInitialized) return;
+    if (widget.aktif && _spoilerAcik) {
+      d.play();
+    } else {
+      d.pause();
+    }
+  }
+
+  @override
+  void didUpdateWidget(_ReelSayfa eski) {
+    super.didUpdateWidget(eski);
+    if (widget.aktif && !eski.aktif) _isaretle();
+    if (widget.aktif != eski.aktif) _videoDurumGuncelle();
+  }
+
   @override
   void initState() {
     super.initState();
+    if (widget.aktif) _isaretle();
     final v = _videoUrl;
     if (v != null) {
       final d = VideoPlayerController.networkUrl(Uri.parse(v));
@@ -378,7 +425,7 @@ class _ReelSayfaState extends State<_ReelSayfa> {
             if (!mounted) return;
             setState(() => _d = d);
             d.setLooping(true);
-            if (_spoilerAcik) d.play();
+            _videoDurumGuncelle(); // yalnız aktifse oynar
             d.addListener(() {
               if (mounted) setState(() {});
             });
@@ -389,6 +436,7 @@ class _ReelSayfaState extends State<_ReelSayfa> {
 
   @override
   void dispose() {
+    _kalpAnim.dispose();
     _d?.dispose();
     super.dispose();
   }
@@ -412,12 +460,10 @@ class _ReelSayfaState extends State<_ReelSayfa> {
     }
   }
 
-  void _ciftDokunus() {
+  void _ciftDokunus(Offset konum) {
     _begenToggle(sadeceBegen: true);
-    setState(() => _kalpGoster = true);
-    Future.delayed(const Duration(milliseconds: 700), () {
-      if (mounted) setState(() => _kalpGoster = false);
-    });
+    setState(() => _kalpKonum = konum);
+    _kalpAnim.forward(from: 0);
   }
 
   /// Tek dokunuş: video varsa durdur/oynat (TikTok davranışı).
@@ -483,6 +529,9 @@ class _ReelSayfaState extends State<_ReelSayfa> {
     final d = _d;
     final foto = _fotoUrl;
     final poster = posterUrl(icerik['poster'] as String?, boyut: 'w500');
+    // Android'in alt sistem çubuğu (geri/ana/menü tuşları) sabit olduğundan
+    // alt bilgiler (kullanıcı/süre) ve ilerleme çubuğu onun ALTINDA kalmasın.
+    final altInset = MediaQuery.of(context).padding.bottom;
 
     Widget zemin;
     if (d != null && d.value.isInitialized) {
@@ -515,6 +564,7 @@ class _ReelSayfaState extends State<_ReelSayfa> {
               padding: const EdgeInsets.fromLTRB(28, 28, 28, 160),
               child: EtiketliMetin(
                 y['metin'] as String? ?? '',
+                koyuZemin: true, // Reels daima siyah zemin → parlak sarı etiket
                 stil: const TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -540,7 +590,9 @@ class _ReelSayfaState extends State<_ReelSayfa> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: _dokunus,
-              onDoubleTap: _ciftDokunus,
+              // Konumlu: kalp tam dokunulan yerde belirir
+              onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+              onDoubleTap: () {},
               // Sola kaydırma → paylaşanın profili (TikTok davranışı)
               onHorizontalDragEnd: (detay) {
                 if ((detay.primaryVelocity ?? 0) < -250) {
@@ -613,16 +665,41 @@ class _ReelSayfaState extends State<_ReelSayfa> {
             ),
           ),
         ),
-        // Çift dokunuş kalbi
-        if (_kalpGoster)
-          const Center(
-            child: Icon(Icons.favorite, size: 110, color: Colors.white70),
+        // Çift dokunuş kalbi: dokunulan KONUMDA belirir, hafifçe yükselip solar
+        if (_kalpKonum != null)
+          AnimatedBuilder(
+            animation: _kalpAnim,
+            builder: (context, _) {
+              final t = _kalpAnim.value; // 0→1
+              if (t == 0 || t == 1) return const SizedBox.shrink();
+              // Ölçek: hızlı büyür sonra sabit; opaklık: sonlara doğru solar;
+              // konum: 40px yukarı kayar
+              final olcek = t < 0.3 ? (0.4 + t / 0.3 * 0.9) : 1.3;
+              final opaklik = t < 0.6 ? 1.0 : (1 - (t - 0.6) / 0.4);
+              return Positioned(
+                left: _kalpKonum!.dx - 55,
+                top: _kalpKonum!.dy - 55 - t * 40,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: opaklik.clamp(0, 1),
+                    child: Transform.scale(
+                      scale: olcek,
+                      child: const Icon(
+                        Icons.favorite,
+                        size: 110,
+                        color: Colors.redAccent,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         // Sol alt: kullanıcı + takip + metin + içerik + süre
         Positioned(
           left: 14,
           right: 86,
-          bottom: 18,
+          bottom: 18 + altInset,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -737,7 +814,7 @@ class _ReelSayfaState extends State<_ReelSayfa> {
         // Sağ alt: görüntülenme / beğeni / yorum / paylaş
         Positioned(
           right: 10,
-          bottom: 30,
+          bottom: 30 + altInset,
           child: Column(
             children: [
               // Görüntülenme (salt bilgi, buton değil)
@@ -789,7 +866,7 @@ class _ReelSayfaState extends State<_ReelSayfa> {
           Positioned(
             left: 0,
             right: 0,
-            bottom: 0,
+            bottom: altInset,
             child: VideoProgressIndicator(
               d,
               allowScrubbing: true,
@@ -1280,10 +1357,11 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
                           kullaniciyaGit(context, c['kullanici_adi'] as String),
                       child: Text(
                         '@${c['kullanici_adi']}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 12,
-                          color: DiziRenkler.sari,
+                          // Yanıtlar sheet'i açık temada açık zemin → sariMetin
+                          color: DiziRenkler.sariMetin,
                         ),
                       ),
                     ),
@@ -1305,44 +1383,8 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
                 if ((c['medya'] as List<dynamic>? ?? []).isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 6),
-                    child: Builder(
-                      builder: (context) {
-                        final medya = (c['medya'] as List<dynamic>)
-                            .cast<String>();
-                        final urller = [for (final m in medya) dosyaUrl(m)!];
-                        return Wrap(
-                          spacing: 6,
-                          runSpacing: 6,
-                          children: [
-                            for (var i = 0; i < medya.length; i++)
-                              InkWell(
-                                onTap: () =>
-                                    medyaGoster(context, urller, baslangic: i),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child:
-                                      medya[i].endsWith('.mp4') ||
-                                          medya[i].endsWith('.webm')
-                                      ? Container(
-                                          width: 90,
-                                          height: 90,
-                                          color: DiziRenkler.kart,
-                                          child: const Icon(
-                                            Icons.play_circle_outline,
-                                            color: Colors.white70,
-                                          ),
-                                        )
-                                      : CachedNetworkImage(
-                                          imageUrl: urller[i],
-                                          width: 90,
-                                          height: 90,
-                                          fit: BoxFit.cover,
-                                        ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
+                    child: MedyaGaleri(
+                      yollar: (c['medya'] as List<dynamic>).cast<String>(),
                     ),
                   ),
                 Row(

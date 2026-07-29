@@ -382,4 +382,26 @@ const Map<String, String> cevirilerFi = {
   'Yeniden izledim': 'Katsottu uudelleen',
   '{}. kez izlendi': 'Katsottu {} kertaa',
   'Gönderi bulunamadı': 'Julkaisua ei löytynyt',
+  'Gözat': 'Selaa',
+  'Diziler': 'Sarjat',
+  'Filmler': 'Elokuvat',
+  'Tümü': 'Kaikki',
+  'Farklı bir tür seç.': 'Kokeile toista lajityyppiä.',
+  'Gizlilik': 'Yksityisyys',
+  'İzlediklerimi gizle': 'Piilota katsomani',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Katsomasi sarjat ja elokuvat eivät näy profiilissasi',
+  'Yorumlarımı gizle': 'Piilota kommenttini',
+  'Profilinde yorumların görünmez': 'Kommenttisi eivät näy profiilissasi',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Voit piilottaa yksittäisen sarjan tai elokuvan sen sivulla olevalla "Piilota profiilistani" -sirulla.',
+  'Geri Bildirim': 'Palaute',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Kirjoita mielipiteesi ja ehdotuksesi sovelluksesta...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Kiitos! Palautteesi on vastaanotettu.',
+  'Profilimde gizle': 'Piilota profiilistani',
+  'Yorumları': 'Kommentit',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Tämä käyttäjä haluaa pitää kommenttinsa yksityisinä.',
 };

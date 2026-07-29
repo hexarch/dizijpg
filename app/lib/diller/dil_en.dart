@@ -380,4 +380,27 @@ const Map<String, String> cevirilerEn = {
   'Yeniden izledim': 'Watched again',
   '{}. kez izlendi': 'Watched {} times',
   'Gönderi bulunamadı': 'Post not found',
+  'Gözat': 'Browse',
+  'Diziler': 'Shows',
+  'Filmler': 'Movies',
+  'Tümü': 'All',
+  'Farklı bir tür seç.': 'Try a different genre.',
+  'Gizlilik': 'Privacy',
+  'İzlediklerimi gizle': 'Hide what I watch',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Shows and movies you watched won\'t be shown on your profile',
+  'Yorumlarımı gizle': 'Hide my comments',
+  'Profilinde yorumların görünmez':
+      'Your comments won\'t be shown on your profile',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'You can hide a single show or movie with the "Hide on my profile" chip on its page.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Write your thoughts and suggestions about the app...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Thanks! Your feedback has been received.',
+  'Profilimde gizle': 'Hide on my profile',
+  'Yorumları': 'Comments',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'This user prefers to keep their comments private.',
 };

@@ -85,7 +85,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(ikon, size: 20, color: DiziRenkler.sari),
+                        Icon(ikon, size: 20, color: DiziRenkler.sariMetin),
                         const SizedBox(height: 6),
                         FittedBox(
                           child: Text(

@@ -47,7 +47,16 @@ if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
   process.exit(1);
 }
 
-const havuz = new pg.Pool({ connectionString: DATABASE_URL });
+// Havuz: /akis, /takvim gibi uçlar Promise.all ile istek başına 20-30 paralel
+// sorgu açtığından varsayılan max=10 tek istekte tükeniyordu. Postgres
+// max_connections=100 içinde güvenli tavan + timeout'lar (asılı bağlantı yerine
+// hızlı hata).
+const havuz = new pg.Pool({
+  connectionString: DATABASE_URL,
+  max: 30,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 5000,
+});
 const app = express();
 
 // İstek başına TMDB dili: istemci X-Dil başlığıyla uygulama dilini gönderir,
@@ -483,7 +492,8 @@ async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = 
     'INSERT INTO bildirimler (kullanici_id, tur, aktor_id, yorum_id) VALUES ($1,$2,$3,$4)',
     [aliciId, tur, aktorId, yorumId],
   ).catch(() => {});
-  pushBildirim(aliciId, tur, aktorId, pushEkstra); // anlık push (beklemeden)
+  // Push data'sına yorum_id de gider (dokununca doğrudan gönderiye)
+  pushBildirim(aliciId, tur, aktorId, { ...(pushEkstra || {}), yorum_id: yorumId });
 }
 
 // Metindeki @kullanici_adi etiketlerini bulup 'etiket' bildirimi gönderir.
@@ -513,6 +523,117 @@ async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null)
 app.get('/saglik', sarici(async (_req, res) => {
   await havuz.query('SELECT 1');
   res.json({ durum: 'ok', servis: 'dizi.jpg API' });
+}));
+
+// ---------- OG / link önizleme (bot'lar için) ----------
+// Flutter SPA'nın index.html'inde içerik-özel meta yok; WhatsApp/Twitter/
+// Facebook gibi botlar JS çalıştırmaz. nginx bot User-Agent'ını /og/...'e
+// yönlendirir; bu uçlar paylaşılan içeriğe göre OG/Twitter meta'lı küçük HTML
+// döndürür (gerçek tarayıcılar normal Flutter index.html'i alır).
+function htmlKacir(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website' }) {
+  const b = htmlKacir(baslik);
+  const a = htmlKacir(String(aciklama || '').replace(/\s+/g, ' ').trim().slice(0, 200));
+  const g = htmlKacir(gorsel || '');
+  const u = htmlKacir(url);
+  const gorselKart = g ? 'summary_large_image' : 'summary';
+  return `<!doctype html><html lang="tr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${b}</title>
+<meta name="description" content="${a}">
+<meta property="og:type" content="${htmlKacir(tur)}">
+<meta property="og:site_name" content="dizi.jpg">
+<meta property="og:title" content="${b}">
+<meta property="og:description" content="${a}">${g ? `\n<meta property="og:image" content="${g}">` : ''}
+<meta property="og:url" content="${u}">
+<meta name="twitter:card" content="${gorselKart}">
+<meta name="twitter:title" content="${b}">
+<meta name="twitter:description" content="${a}">${g ? `\n<meta name="twitter:image" content="${g}">` : ''}
+</head><body><h1>${b}</h1><p>${a}</p><p><a href="${u}">dizi.jpg</a></p></body></html>`;
+}
+const tmdbGorsel = (yol, boyut = 'w780') =>
+  yol ? `https://image.tmdb.org/t/p/${boyut}${yol}` : '';
+
+app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
+  const { tur, tmdbId } = req.params;
+  const url = `https://dizijpg.com/icerik/${tur}/${tmdbId}`;
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(parseInt(tmdbId, 10))) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
+  try {
+    const v = await tmdbGetir(`/${tur}/${tmdbId}`, ONBELLEK_TTL_SN.uzun);
+    const ad = v.name || v.title || 'dizi.jpg';
+    const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
+    res.type('html').send(ogSayfa({
+      baslik: `${ad}${yil ? ` (${yil})` : ''} — dizi.jpg`,
+      aciklama: v.overview,
+      gorsel: tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280'),
+      url,
+      tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
+    }));
+  } catch {
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
+}));
+
+app.get('/og/kisi/:id', sarici(async (req, res) => {
+  const url = `https://dizijpg.com/kisi/${req.params.id}`;
+  if (!gecerliTmdb(parseInt(req.params.id, 10))) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
+  try {
+    const v = await tmdbGetir(`/person/${req.params.id}`, ONBELLEK_TTL_SN.uzun);
+    res.type('html').send(ogSayfa({
+      baslik: `${v.name || 'dizi.jpg'} — dizi.jpg`,
+      aciklama: v.biography || 'dizi.jpg üzerinde keşfet.',
+      gorsel: tmdbGorsel(v.profile_path, 'w500'),
+      url,
+      tur: 'profile',
+    }));
+  } catch {
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
+}));
+
+app.get('/og/gonderi/:id', sarici(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const url = `https://dizijpg.com/gonderi/${req.params.id}`;
+  if (!gecerliTmdb(id)) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
+  try {
+    const { rows } = await havuz.query(
+      `SELECT y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi
+       FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+       WHERE y.id=$1 AND NOT k.yasakli`, [id]);
+    if (!rows.length) {
+      return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+    }
+    const y = rows[0];
+    // Görsel: yorumun fotoğrafı (video değil) varsa o, yoksa içeriğin posteri
+    const foto = (y.medya || []).find(
+      (m) => !m.endsWith('.mp4') && !m.endsWith('.webm'));
+    let gorsel = foto ? `https://dizijpg.com/api${foto}` : '';
+    let icerikAd = '';
+    try {
+      const v = await tmdbGetir(`/${y.tur}/${y.tmdb_id}`, ONBELLEK_TTL_SN.uzun);
+      icerikAd = v.name || v.title || '';
+      if (!gorsel) gorsel = tmdbGorsel(v.poster_path);
+    } catch { /* içerik alınamazsa pos+ad boş */ }
+    res.type('html').send(ogSayfa({
+      baslik: `@${y.kullanici_adi}${icerikAd ? ` · ${icerikAd}` : ''} — dizi.jpg`,
+      aciklama: y.metin || 'dizi.jpg üzerinde bir gönderi.',
+      gorsel,
+      url,
+      tur: 'article',
+    }));
+  } catch {
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  }
 }));
 
 // İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).
@@ -805,6 +926,23 @@ async function bitenleriTara() {
 setInterval(bitenleriTara, 12 * 60 * 60 * 1000);
 setTimeout(bitenleriTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
 
+// Büyüyen tabloların günlük budaması (sınırsız şişmeyi önler). Süresi geçen
+// akış-görüldü kayıtları, eski TMDB önbelleği, görüntülenme izleri ve hata
+// günlükleri silinir. Popüler fallback zaten 30 günden eskiyi önemsemez.
+async function tablolariBuda() {
+  const isler = [
+    `DELETE FROM akis_goruldu WHERE tarih < now() - interval '30 days'`,
+    `DELETE FROM tmdb_onbellek WHERE guncelleme < now() - interval '30 days'`,
+    `DELETE FROM yorum_goruntuleyen WHERE tarih < now() - interval '90 days'`,
+    `DELETE FROM hatalar WHERE tarih < now() - interval '30 days'`,
+  ];
+  for (const sql of isler) {
+    try { await havuz.query(sql); } catch (e) { console.error('buda:', e.message); }
+  }
+}
+setInterval(tablolariBuda, 24 * 60 * 60 * 1000);
+setTimeout(tablolariBuda, 5 * 60 * 1000); // açılıştan 5 dk sonra
+
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
   if (!gecerliTmdb(tmdb_id) || !['tv', 'movie'].includes(tur) ||
@@ -942,30 +1080,58 @@ app.post('/durum', girisZorunlu, sarici(async (req, res) => {
 
 // İçeriği izlemiş kullanıcılar (detaydaki göz ikonu listesi).
 // Kullanıcı adları zaten herkese açık olduğundan giriş şartı yok.
-app.get('/izleyenler/:tur/:tmdbId', sarici(async (req, res) => {
+app.get('/izleyenler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => {
   const { tur } = req.params;
   const tmdbId = Number(req.params.tmdbId);
   if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdbId)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
-  const [sayi, kullanicilar] = await Promise.all([
+  const benId = req.kullanici?.id || 0;
+  // Gizlilik: izlenenlerini gizleyen ya da BU içeriği gizleyen kullanıcı
+  // listede/sayılarda görünmez (kendisi hariç).
+  const gizliYok = `AND (k.id = $3 OR (
+        k.izlenenler_gizli = false
+        AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+              WHERE g.kullanici_id=k.id AND g.tur=$1 AND g.tmdb_id=$2)))`;
+  const [sayi, kullanicilar, takip] = await Promise.all([
     havuz.query(
       `SELECT COUNT(DISTINCT i.kullanici_id)::int AS n
        FROM izlemeler i JOIN kullanicilar k ON k.id = i.kullanici_id AND k.misafir = false
-       WHERE i.tur=$1 AND i.tmdb_id=$2`,
-      [tur, tmdbId],
+       WHERE i.tur=$1 AND i.tmdb_id=$2 ${gizliYok}`,
+      [tur, tmdbId, benId],
     ),
+    // Takip ettiklerin ÖNCE (sosyal kanıt), sonra son izleyen sırasıyla.
     havuz.query(
-      `SELECT k.kullanici_adi, k.avatar
+      `SELECT k.kullanici_adi, k.avatar,
+              EXISTS (SELECT 1 FROM takipler t
+                      WHERE t.takip_eden_id=$3 AND t.takip_edilen_id=k.id) AS takip_ediyorum
        FROM (SELECT kullanici_id, MAX(tarih) AS son FROM izlemeler
              WHERE tur=$1 AND tmdb_id=$2 GROUP BY kullanici_id) i
        JOIN kullanicilar k ON k.id = i.kullanici_id AND k.misafir = false
-       ORDER BY i.son DESC NULLS LAST, k.kullanici_adi
+       WHERE true ${gizliYok}
+       ORDER BY (EXISTS (SELECT 1 FROM takipler t
+                 WHERE t.takip_eden_id=$3 AND t.takip_edilen_id=k.id)) DESC,
+                i.son DESC NULLS LAST, k.kullanici_adi
        LIMIT 200`,
-      [tur, tmdbId],
+      [tur, tmdbId, benId],
     ),
+    // "Takip ettiğin N kişi izledi" tam sayısı
+    benId
+      ? havuz.query(
+          `SELECT COUNT(DISTINCT i.kullanici_id)::int AS n
+           FROM izlemeler i
+           JOIN takipler t ON t.takip_edilen_id=i.kullanici_id AND t.takip_eden_id=$3
+           JOIN kullanicilar k ON k.id = i.kullanici_id
+           WHERE i.tur=$1 AND i.tmdb_id=$2 ${gizliYok}`,
+          [tur, tmdbId, benId],
+        )
+      : Promise.resolve({ rows: [{ n: 0 }] }),
   ]);
-  res.json({ sayi: sayi.rows[0].n, kullanicilar: kullanicilar.rows });
+  res.json({
+    sayi: sayi.rows[0].n,
+    kullanicilar: kullanicilar.rows,
+    takip_sayi: takip.rows[0].n,
+  });
 }));
 
 app.post('/puan', girisZorunlu, sarici(async (req, res) => {
@@ -1033,12 +1199,13 @@ app.post('/favori/toggle', girisZorunlu, sarici(async (req, res) => {
 // İçerik hakkında kullanıcının tüm durumu (tek istekte)
 app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
   const p = [req.kullanici.id, req.params.tur, req.params.tmdbId];
-  const [izleme, durum, puan, favori, kaynak] = await Promise.all([
+  const [izleme, durum, puan, favori, kaynak, gizli] = await Promise.all([
     havuz.query('SELECT sezon, bolum FROM izlemeler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT durum, tekrar FROM durumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT puan, yorum FROM puanlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT 1 FROM favoriler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT platform FROM izleme_kaynaklari WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    havuz.query('SELECT 1 FROM gizli_icerikler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
   ]);
   res.json({
     izlenenler: izleme.rows,
@@ -1047,6 +1214,7 @@ app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
     puan: puan.rows[0] || null,
     favori: favori.rows.length > 0,
     kaynak: kaynak.rows[0]?.platform || null,
+    gizli: gizli.rows.length > 0,
   });
 }));
 
@@ -1097,6 +1265,71 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
     deg,
   );
   res.json(rows[0]);
+}));
+
+// Gizlilik tercihleri: izlenenler/yorumlar açık profilde gizli mi.
+app.get('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    'SELECT izlenenler_gizli, yorumlar_gizli FROM kullanicilar WHERE id=$1',
+    [req.kullanici.id],
+  );
+  res.json(rows[0] || {});
+}));
+app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
+  const g = req.body || {};
+  // Yalnız bilinen 2 anahtar; boolean'a zorlanır (eksik = değişmez).
+  const alanlar = ['izlenenler_gizli', 'yorumlar_gizli'];
+  const set = [];
+  const deg = [req.kullanici.id];
+  for (const a of alanlar) {
+    if (typeof g[a] === 'boolean') {
+      deg.push(g[a]);
+      set.push(`${a}=$${deg.length}`);
+    }
+  }
+  if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
+  const { rows } = await havuz.query(
+    `UPDATE kullanicilar SET ${set.join(', ')} WHERE id=$1
+     RETURNING izlenenler_gizli, yorumlar_gizli`,
+    deg,
+  );
+  res.json(rows[0]);
+}));
+
+// İçerik bazlı gizleme: bu dizi/film açık profildeki izlenen şeritlerinde,
+// yorum listesinde ve içeriğin "izleyenler" listesinde görünmez.
+app.post('/gizle', girisZorunlu, sarici(async (req, res) => {
+  const { tur, tmdb_id, gizli } = req.body || {};
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id) || typeof gizli !== 'boolean') {
+    return res.status(400).json({ hata: 'Geçersiz istek' });
+  }
+  if (gizli) {
+    await havuz.query(
+      `INSERT INTO gizli_icerikler (kullanici_id, tur, tmdb_id)
+       VALUES ($1,$2,$3) ON CONFLICT DO NOTHING`,
+      [req.kullanici.id, tur, tmdb_id],
+    );
+  } else {
+    await havuz.query(
+      'DELETE FROM gizli_icerikler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3',
+      [req.kullanici.id, tur, tmdb_id],
+    );
+  }
+  res.json({ gizli });
+}));
+
+// Geri bildirim: kullanıcı görüş/önerisi (Ayarlar > Geri Bildirim).
+const geriBildirimLimiti = hizLimiti(10, (req) => `gb:${req.kullanici.id}`);
+app.post('/geri-bildirim', girisZorunlu, geriBildirimLimiti, sarici(async (req, res) => {
+  const metin = typeof req.body?.metin === 'string' ? req.body.metin.trim() : '';
+  if (metin.length < 3 || metin.length > 2000) {
+    return res.status(400).json({ hata: 'Geri bildirim 3-2000 karakter olmalı' });
+  }
+  await havuz.query(
+    'INSERT INTO geri_bildirimler (kullanici_id, metin) VALUES ($1,$2)',
+    [req.kullanici.id, metin],
+  );
+  res.json({ tamam: true });
 }));
 
 // ---------- emoji tepkileri + nereden izledin ----------
@@ -1834,6 +2067,7 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   let { rows } = await havuz.query(
     `${AKIS_ALANLAR} ${AKIS_GOVDE}
        AND ($2::int IS NULL OR y.id < $2)
+       AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)
        ${AKIS_KURAL}
      ORDER BY y.id DESC LIMIT 30`,
     [benId, once, kadro],
@@ -1848,7 +2082,7 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
          AND y.sezon IS NULL AND y.tur <> 'person'
          AND y.tarih >= now() - make_interval(days => $2)
          ${gorulmusHaric
-           ? `AND y.id NOT IN (SELECT yorum_id FROM akis_goruldu WHERE kullanici_id=$1)`
+           ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)`
            : ''}
        ORDER BY begeni DESC, y.id DESC LIMIT 30`,
       [benId, gun]);
@@ -1857,13 +2091,11 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
       if (p.rows.length) { rows = p.rows; kaynak = 'populer'; break; }
     }
   }
-  // Gösterilenler işaretlenir (popüler fallback rotasyonu için; hata yutulur)
-  if (rows.length) {
-    havuz.query(
-      `INSERT INTO akis_goruldu (kullanici_id, yorum_id)
-       SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
-      [benId, rows.map((r) => r.id)]).catch(() => {});
-  }
+  // "Görüldü" işaretlemesini TAMAMEN istemci yapar (POST /akis/goruldu) —
+  // yalnız kullanıcının EKRANDA gerçekten gördüğü kartlar (popüler fallback
+  // dahil) işaretlenir. Sunucu döndürdü diye görüldü sayılmaz; kaydırmadan
+  // kapatılan gönderiler tekrar gelir, popüler rotasyonu da istemci-görünürlükle
+  // döner.
   res.json({
     kaynak,
     akis: rows.map(akisSatiri),
@@ -1877,7 +2109,9 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
 app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   const benId = req.kullanici.id;
   const kadro = await kadroKisileri(benId);
-  const { rows } = await havuz.query(
+  // gorulenHaric: görülenleri hariç tut. Boş dönerse SON ÇARE olarak filtresiz
+  // tekrar sorgula (hepsini gördüysen tekrar göster — boş kalmasından iyi).
+  const sorgula = (gorulenHaric) => havuz.query(
     `${AKIS_ALANLAR},
             EXISTS (SELECT 1 FROM unnest(y.medya) mm
                     WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm') AS videolu,
@@ -1886,18 +2120,37 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
               AS takip_ediyorum
      ${AKIS_GOVDE}
        AND ($2::int IS NULL OR true)
+       ${gorulenHaric
+         ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)`
+         : ''}
        ${AKIS_KURAL}
      ORDER BY (EXISTS (SELECT 1 FROM unnest(y.medya) mm
                        WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')) DESC,
               (cardinality(y.medya) > 0) DESC,
               y.id DESC
      LIMIT 60`,
-    [benId, null, kadro],
-  );
+    [benId, null, kadro]);
+  let { rows } = await sorgula(true);
+  if (!rows.length) ({ rows } = await sorgula(false)); // son çare: tümü görüldü
   res.json({
     akis: rows.map(akisSatiri),
     icerikler: await akisIcerikleri(rows),
   });
+}));
+
+// İstemci, kullanıcının EKRANDA gördüğü akış/keşfet kartlarını bildirir;
+// bunlar bir daha gösterilmez (akis_goruldu). En fazla 200 id/istek.
+app.post('/akis/goruldu', girisZorunlu, sarici(async (req, res) => {
+  const idler = Array.isArray(req.body?.idler)
+    ? req.body.idler.filter((x) => Number.isInteger(x) && x > 0).slice(0, 200)
+    : [];
+  if (idler.length) {
+    await havuz.query(
+      `INSERT INTO akis_goruldu (kullanici_id, yorum_id)
+       SELECT $1, unnest($2::int[]) ON CONFLICT DO NOTHING`,
+      [req.kullanici.id, idler]).catch(() => {});
+  }
+  res.json({ tamam: true });
 }));
 
 // ---------- bildirimler ----------
@@ -2629,12 +2882,23 @@ app.post('/veri/ice-aktar',
 // ---------- herkese açık profil ----------
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
-    'SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma FROM kullanicilar WHERE kullanici_adi=$1',
+    `SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma,
+            izlenenler_gizli, yorumlar_gizli
+     FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi],
   );
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const id = k.rows[0].id;
   const benId = req.kullanici?.id || 0;
+  // Gizlilik: sahibi kendi profilinde her şeyi görür; başkaları için
+  // içerik bazlı gizlenenler düşer, genel anahtarlar bölümü tamamen kapatır.
+  const benMi = benId === id;
+  const izlenenlerGizli = !benMi && k.rows[0].izlenenler_gizli === true;
+  const yorumlarGizli = !benMi && k.rows[0].yorumlar_gizli === true;
+  // Başkası bakıyorsa gizli içerikleri dışlayan SQL parçası ('' = filtre yok)
+  const gizliFiltre = (tablo) => benMi ? '' :
+    `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+       WHERE g.kullanici_id=$1 AND g.tur=${tablo}.tur AND g.tmdb_id=${tablo}.tmdb_id)`;
   const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetler] = await Promise.all([
     havuz.query(
       `SELECT
@@ -2656,32 +2920,40 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
        FROM listeler l WHERE l.kullanici_id=$1 AND l.herkese_acik=true
        ORDER BY l.olusturma DESC`,
       [id]),
-    havuz.query(
-      `SELECT tur, tmdb_id, puan, yorum, tarih FROM puanlar
-       WHERE kullanici_id=$1 AND yorum IS NOT NULL ORDER BY tarih DESC LIMIT 10`,
-      [id]),
+    yorumlarGizli
+      ? Promise.resolve({ rows: [] })
+      : havuz.query(
+          `SELECT tur, tmdb_id, puan, yorum, tarih FROM puanlar
+           WHERE kullanici_id=$1 AND yorum IS NOT NULL ${gizliFiltre('puanlar')}
+           ORDER BY tarih DESC LIMIT 10`,
+          [id]),
     // Kullanıcının yorumları, beğeni ve görüntülenme sayılarıyla
-    havuz.query(
-      `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.metin, y.medya,
-              y.goruntulenme, y.spoiler, y.tarih,
-              (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
-       FROM yorumlar y WHERE y.kullanici_id=$1 ORDER BY y.tarih DESC LIMIT 20`,
-      [id]),
+    yorumlarGizli
+      ? Promise.resolve({ rows: [] })
+      : havuz.query(
+          `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.metin, y.medya,
+                  y.goruntulenme, y.spoiler, y.tarih,
+                  (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
+           FROM yorumlar y WHERE y.kullanici_id=$1 ${gizliFiltre('y')}
+           ORDER BY y.tarih DESC LIMIT 20`,
+          [id]),
     havuz.query(
       `SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var,
               EXISTS(SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2) AS engel`,
       [benId, id]),
     // Tür başına ayrı limit: yoksa son izlenen filmler dizileri listeden atıyor
-    havuz.query(
-      `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-        FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'
-        GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
-       UNION ALL
-       (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-        FROM izlemeler WHERE kullanici_id=$1 AND tur='movie'
-        GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
-       ORDER BY son DESC, tmdb_id DESC`,
-      [id]),
+    izlenenlerGizli
+      ? Promise.resolve({ rows: [] })
+      : havuz.query(
+          `(SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+            FROM izlemeler WHERE kullanici_id=$1 AND tur='tv' ${gizliFiltre('izlemeler')}
+            GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
+           UNION ALL
+           (SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
+            FROM izlemeler WHERE kullanici_id=$1 AND tur='movie' ${gizliFiltre('izlemeler')}
+            GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 60)
+           ORDER BY son DESC, tmdb_id DESC`,
+          [id]),
     rozetleriHesapla(id),
   ]);
   // Uyum: giriş yapan başka bir kullanıcı bu profile bakıyorsa, ortak izlenen

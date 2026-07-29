@@ -118,7 +118,7 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
             borderRadius: BorderRadius.circular(20),
             onTap: () => _sec(e),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               decoration: BoxDecoration(
                 // Seçili: sarı-tint dolgu + sarı kenar (renkli emoji kaybolmasın)
                 color: _benim == e
@@ -141,7 +141,7 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: _benim == e
-                            ? DiziRenkler.sari
+                            ? DiziRenkler.sariMetin
                             : DiziRenkler.metin70,
                       ),
                     ),
@@ -222,7 +222,7 @@ class _YildizPuanState extends State<YildizPuan> {
             borderRadius: BorderRadius.circular(6),
             onTap: () => _sec(y),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               child: Icon(
                 y <= _yildiz ? Icons.star_rounded : Icons.star_outline_rounded,
                 size: widget.boyut,

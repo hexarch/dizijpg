@@ -374,4 +374,25 @@ const Map<String, String> cevirilerAm = {
   'Yeniden izledim': 'እንደገና ታይቷል',
   '{}. kez izlendi': '{} ጊዜ ታይቷል',
   'Gönderi bulunamadı': 'ልጥፍ አልተገኘም',
+  'Gözat': 'አስስ',
+  'Diziler': 'ተከታታዮች',
+  'Filmler': 'ፊልሞች',
+  'Tümü': 'ሁሉም',
+  'Farklı bir tür seç.': 'ሌላ ዘውግ ሞክር።',
+  'Gizlilik': 'ግላዊነት',
+  'İzlediklerimi gizle': 'የተመለከትኩትን ደብቅ',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'የተመለከትካቸው ተከታታዮች እና ፊልሞች በመገለጫህ ላይ አይታዩም',
+  'Yorumlarımı gizle': 'አስተያየቶቼን ደብቅ',
+  'Profilinde yorumların görünmez': 'አስተያየቶችህ በመገለጫህ ላይ አይታዩም',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'አንድ ተከታታይ ወይም ፊልም በገጹ ላይ ባለው «በመገለጫዬ ደብቅ» ቺፕ መደበቅ ትችላለህ።',
+  'Geri Bildirim': 'ግብረመልስ',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ስለ መተግበሪያው አስተያየትህን እና ጥቆማህን ጻፍ...',
+  'Teşekkürler! Geri bildirimin alındı.': 'እናመሰግናለን! ግብረመልስህ ደርሷል።',
+  'Profilimde gizle': 'በመገለጫዬ ደብቅ',
+  'Yorumları': 'አስተያየቶቹ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ይህ ተጠቃሚ አስተያየቶቹን በሚስጥር መያዝ ይመርጣል።',
 };

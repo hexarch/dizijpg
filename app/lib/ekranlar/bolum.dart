@@ -125,7 +125,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                   style: _izlendi
                       ? FilledButton.styleFrom(
                           backgroundColor: DiziRenkler.kart,
-                          foregroundColor: DiziRenkler.sari,
+                          foregroundColor: DiziRenkler.sariMetin,
                         )
                       : null,
                   icon: Icon(_izlendi ? Icons.check_circle : Icons.visibility),

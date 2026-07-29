@@ -383,4 +383,27 @@ const Map<String, String> cevirilerRo = {
   'Yeniden izledim': 'Revăzut',
   '{}. kez izlendi': 'Vizionat de {} ori',
   'Gönderi bulunamadı': 'Postarea nu a fost găsită',
+  'Gözat': 'Explorează',
+  'Diziler': 'Seriale',
+  'Filmler': 'Filme',
+  'Tümü': 'Toate',
+  'Farklı bir tür seç.': 'Încearcă alt gen.',
+  'Gizlilik': 'Confidențialitate',
+  'İzlediklerimi gizle': 'Ascunde ce am vizionat',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Serialele și filmele vizionate nu vor apărea pe profilul tău',
+  'Yorumlarımı gizle': 'Ascunde comentariile mele',
+  'Profilinde yorumların görünmez':
+      'Comentariile tale nu vor apărea pe profilul tău',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Poți ascunde un anumit serial sau film cu cipul „Ascunde pe profilul meu” de pe pagina lui.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Scrie-ți părerea și sugestiile despre aplicație...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Mulțumim! Feedbackul tău a fost primit.',
+  'Profilimde gizle': 'Ascunde pe profilul meu',
+  'Yorumları': 'Comentariile sale',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Acest utilizator preferă să-și țină comentariile private.',
 };

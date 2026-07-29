@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -394,7 +395,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     itemBuilder: (context, i) => ListTile(
                       title: Text(filtreli[i]),
                       trailing: filtreli[i] == secili
-                          ? const Icon(Icons.check, color: DiziRenkler.sari)
+                          ? Icon(Icons.check, color: DiziRenkler.sariMetin)
                           : null,
                       onTap: () => Navigator.pop(context, filtreli[i]),
                     ),
@@ -654,7 +655,18 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     child: Container(
                       color: DiziRenkler.kart,
                       child: kapak != null
-                          ? Image.network(kapak, fit: BoxFit.cover)
+                          ? CachedNetworkImage(
+                              imageUrl: kapak,
+                              fit: BoxFit.cover,
+                              placeholder: (_, _) =>
+                                  Container(color: DiziRenkler.kart),
+                              errorWidget: (_, _, _) => Center(
+                                child: Icon(
+                                  Icons.broken_image_outlined,
+                                  color: DiziRenkler.metin38,
+                                ),
+                              ),
+                            )
                           : Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -796,7 +808,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 8),
                 Card(
                   child: ListTile(
-                    leading: const Icon(Icons.public, color: DiziRenkler.sari),
+                    leading: Icon(Icons.public, color: DiziRenkler.sariMetin),
                     title: Text(
                       _ulke ?? 'Ülke seç'.c,
                       style: TextStyle(
@@ -838,10 +850,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 8),
                 Card(
                   child: ListTile(
-                    leading: const Icon(
-                      Icons.language,
-                      color: DiziRenkler.sari,
-                    ),
+                    leading: Icon(Icons.language, color: DiziRenkler.sariMetin),
                     title: Text(Ceviri.diller[Ceviri.dil.value] ?? 'Türkçe'),
                     trailing: Icon(
                       Icons.chevron_right,
@@ -864,9 +873,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.brightness_6_outlined,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -903,9 +912,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 // Profil bölümlerinin sırası (sürükle-bırak)
                 Card(
                   child: ListTile(
-                    leading: const Icon(
+                    leading: Icon(
                       Icons.swap_vert,
-                      color: DiziRenkler.sari,
+                      color: DiziRenkler.sariMetin,
                     ),
                     title: Text('Profil düzeni'.c),
                     trailing: Icon(
@@ -946,7 +955,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 10),
                 OutlinedButton.icon(
                   onPressed: _disaAktar,
-                  icon: const Icon(Icons.upload_file, color: DiziRenkler.sari),
+                  icon: Icon(Icons.upload_file, color: DiziRenkler.sariMetin),
                   label: Text(
                     'Verilerimi dışa aktar (e-posta)'.c,
                     style: TextStyle(color: DiziRenkler.metin),
@@ -955,7 +964,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
                   onPressed: _iceAktar,
-                  icon: const Icon(Icons.download, color: DiziRenkler.sari),
+                  icon: Icon(Icons.download, color: DiziRenkler.sariMetin),
                   label: Text(
                     'Veri içe aktar (.zip)'.c,
                     style: TextStyle(color: DiziRenkler.metin),
@@ -964,9 +973,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 16),
                 Card(
                   child: ListTile(
-                    leading: const Icon(
+                    leading: Icon(
                       Icons.notifications_none,
-                      color: DiziRenkler.sari,
+                      color: DiziRenkler.sariMetin,
                     ),
                     title: Text(
                       'Bildirim Tercihleri'.c,
@@ -981,6 +990,52 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       backgroundColor: DiziRenkler.koyuGri,
                       isScrollControlled: true,
                       builder: (_) => const _BildirimTercihleriSheet(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.visibility_off_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'Gizlilik'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      isScrollControlled: true,
+                      builder: (_) => const _GizlilikSheet(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.rate_review_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'Geri Bildirim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      isScrollControlled: true,
+                      builder: (_) => const _GeriBildirimSheet(),
                     ),
                   ),
                 ),
@@ -1103,10 +1158,10 @@ class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.notifications_none,
                     size: 20,
-                    color: DiziRenkler.sari,
+                    color: DiziRenkler.sariMetin,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -1144,6 +1199,240 @@ class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
                   onChanged: (v) => _degistir(alan, v),
                 ),
             const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Gizlilik tercihleri: izlenenleri ve yorumları açık profilde gizle.
+/// Tek bir dizi/filmi gizlemek içerik sayfasındaki "Profilimde gizle" çipinde.
+class _GizlilikSheet extends StatefulWidget {
+  const _GizlilikSheet();
+
+  @override
+  State<_GizlilikSheet> createState() => _GizlilikSheetState();
+}
+
+class _GizlilikSheetState extends State<_GizlilikSheet> {
+  Map<String, dynamic>? _tercih;
+  String? _hata;
+
+  static const _alanlar = [
+    (
+      'izlenenler_gizli',
+      'İzlediklerimi gizle',
+      'Profilinde izlediğin dizi ve filmler görünmez',
+    ),
+    ('yorumlar_gizli', 'Yorumlarımı gizle', 'Profilinde yorumların görünmez'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    try {
+      final d = await Api.get('/gizlilik-tercihleri');
+      if (mounted) setState(() => _tercih = Map<String, dynamic>.from(d));
+    } catch (e) {
+      if (mounted) setState(() => _hata = e.toString());
+    }
+  }
+
+  Future<void> _degistir(String alan, bool deger) async {
+    final eski = _tercih![alan];
+    setState(() => _tercih![alan] = deger); // iyimser
+    try {
+      await Api.post('/gizlilik-tercihleri', {alan: deger});
+    } catch (e) {
+      if (mounted) {
+        setState(() => _tercih![alan] = eski); // geri al
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.visibility_off_outlined,
+                  size: 20,
+                  color: DiziRenkler.sariMetin,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Gizlilik'.c,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (_hata != null)
+            Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
+            )
+          else if (_tercih == null)
+            const Padding(
+              padding: EdgeInsets.all(24),
+              child: CircularProgressIndicator(color: DiziRenkler.sari),
+            )
+          else ...[
+            for (final (alan, etiket, aciklama) in _alanlar)
+              SwitchListTile(
+                value: _tercih![alan] == true,
+                activeColor: DiziRenkler.sari,
+                title: Text(
+                  etiket.c,
+                  style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                ),
+                subtitle: Text(
+                  aciklama.c,
+                  style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+                ),
+                onChanged: (v) => _degistir(alan, v),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 15,
+                    color: DiziRenkler.metin38,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.'
+                          .c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin38,
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+/// Geri bildirim: kullanıcı görüş/önerisini yazar, sunucuya kaydedilir.
+class _GeriBildirimSheet extends StatefulWidget {
+  const _GeriBildirimSheet();
+
+  @override
+  State<_GeriBildirimSheet> createState() => _GeriBildirimSheetState();
+}
+
+class _GeriBildirimSheetState extends State<_GeriBildirimSheet> {
+  final _metin = TextEditingController();
+  bool _gonderiliyor = false;
+
+  @override
+  void dispose() {
+    _metin.dispose();
+    super.dispose();
+  }
+
+  Future<void> _gonder() async {
+    final metin = _metin.text.trim();
+    if (metin.length < 3 || _gonderiliyor) return;
+    setState(() => _gonderiliyor = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await Api.post('/geri-bildirim', {'metin': metin});
+      if (!mounted) return;
+      Navigator.pop(context);
+      messenger.showSnackBar(
+        SnackBar(content: Text('Teşekkürler! Geri bildirimin alındı.'.c)),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _gonderiliyor = false);
+      messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.rate_review_outlined,
+                  size: 20,
+                  color: DiziRenkler.sariMetin,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Geri Bildirim'.c,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _metin,
+              maxLines: 5,
+              maxLength: 2000,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Uygulama hakkında görüş ve önerini yaz...'.c,
+              ),
+            ),
+            const SizedBox(height: 8),
+            FilledButton(
+              onPressed: _gonderiliyor ? null : _gonder,
+              child: _gonderiliyor
+                  ? const SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.black,
+                      ),
+                    )
+                  : Text('Gönder'.c),
+            ),
           ],
         ),
       ),

@@ -381,4 +381,27 @@ const Map<String, String> cevirilerSr = {
   'Yeniden izledim': 'Поново гледано',
   '{}. kez izlendi': 'Гледано {} пута',
   'Gönderi bulunamadı': 'Објава није пронађена',
+  'Gözat': 'Прегледај',
+  'Diziler': 'Серије',
+  'Filmler': 'Филмови',
+  'Tümü': 'Све',
+  'Farklı bir tür seç.': 'Пробај други жанр.',
+  'Gizlilik': 'Приватност',
+  'İzlediklerimi gizle': 'Сакриј шта гледам',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Серије и филмови које си гледао неће се видети на твом профилу',
+  'Yorumlarımı gizle': 'Сакриј моје коментаре',
+  'Profilinde yorumların görünmez':
+      'Твоји коментари неће се видети на твом профилу',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Појединачну серију или филм можеш сакрити чипом „Сакриј на мом профилу” на њеној страници.',
+  'Geri Bildirim': 'Повратне информације',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Напиши своје мишљење и предлоге о апликацији...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Хвала! Твоја повратна информација је примљена.',
+  'Profilimde gizle': 'Сакриј на мом профилу',
+  'Yorumları': 'Коментари',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Овај корисник радије држи своје коментаре скривеним.',
 };

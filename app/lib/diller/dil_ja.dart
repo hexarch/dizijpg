@@ -374,4 +374,23 @@ const Map<String, String> cevirilerJa = {
   'Yeniden izledim': 'また視聴した',
   '{}. kez izlendi': '{} 回視聴',
   'Gönderi bulunamadı': '投稿が見つかりません',
+  'Gözat': 'さがす',
+  'Diziler': '番組',
+  'Filmler': '映画',
+  'Tümü': 'すべて',
+  'Farklı bir tür seç.': '別のジャンルを試してみて。',
+  'Gizlilik': 'プライバシー',
+  'İzlediklerimi gizle': '視聴履歴を隠す',
+  'Profilinde izlediğin dizi ve filmler görünmez': '視聴した作品はプロフィールに表示されなくなります',
+  'Yorumlarımı gizle': 'コメントを隠す',
+  'Profilinde yorumların görünmez': 'あなたのコメントはプロフィールに表示されなくなります',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      '特定の作品は、そのページの「プロフィールで隠す」チップで隠せます。',
+  'Geri Bildirim': 'フィードバック',
+  'Uygulama hakkında görüş ve önerini yaz...': 'アプリへのご意見・ご要望を書いてください...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ありがとうございます！フィードバックを受け取りました。',
+  'Profilimde gizle': 'プロフィールで隠す',
+  'Yorumları': 'コメント一覧',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'このユーザーはコメントを非公開にしています。',
 };

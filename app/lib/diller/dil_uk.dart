@@ -382,4 +382,26 @@ const Map<String, String> cevirilerUk = {
   'Yeniden izledim': 'Переглянуто знову',
   '{}. kez izlendi': 'Переглянуто {} разів',
   'Gönderi bulunamadı': 'Допис не знайдено',
+  'Gözat': 'Огляд',
+  'Diziler': 'Серіали',
+  'Filmler': 'Фільми',
+  'Tümü': 'Усі',
+  'Farklı bir tür seç.': 'Спробуй інший жанр.',
+  'Gizlilik': 'Приватність',
+  'İzlediklerimi gizle': 'Приховати, що я дивлюся',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Серіали та фільми, які ти подивився, не буде видно у твоєму профілі',
+  'Yorumlarımı gizle': 'Приховати мої коментарі',
+  'Profilinde yorumların görünmez':
+      'Твої коментарі не буде видно у твоєму профілі',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Окремий серіал чи фільм можна приховати чипом «Приховати в моєму профілі» на його сторінці.',
+  'Geri Bildirim': 'Зворотний зв\'язок',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Напиши свою думку та пропозиції щодо застосунку...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Дякуємо! Твій відгук отримано.',
+  'Profilimde gizle': 'Приховати в моєму профілі',
+  'Yorumları': 'Коментарі',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Цей користувач воліє тримати свої коментарі прихованими.',
 };

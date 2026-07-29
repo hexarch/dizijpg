@@ -94,7 +94,13 @@ class _AramaEkraniState extends State<AramaEkrani>
         _kullanicilar = yanitlar[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
       if (_sonuclar.isNotEmpty) _gecmiseEkle(sorgu);
-    } catch (_) {
+    } catch (e) {
+      // Sessiz yutma yok: arama başarısızsa kullanıcıya bildir.
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     } finally {
       if (mounted) setState(() => _yukleniyor = false);
     }
@@ -134,22 +140,9 @@ class _AramaEkraniState extends State<AramaEkrani>
           Expanded(
             child: _sonuclar.isEmpty && _kullanicilar.isEmpty
                 ? (_gecmis.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.local_movies_outlined,
-                                size: 44,
-                                color: DiziRenkler.metin24,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Aramaya başla'.c,
-                                style: TextStyle(color: DiziRenkler.metin38),
-                              ),
-                            ],
-                          ),
+                      ? BosDurum(
+                          ikon: Icons.local_movies_outlined,
+                          baslik: 'Aramaya başla'.c,
                         )
                       // Geçmiş aramalar: satır satır, sağda çarpı ile silinir
                       : ListView(
@@ -218,10 +211,10 @@ class _AramaEkraniState extends State<AramaEkrani>
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
                           child: Row(
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.people_outline,
                                 size: 18,
-                                color: DiziRenkler.sari,
+                                color: DiziRenkler.sariMetin,
                               ),
                               const SizedBox(width: 6),
                               Text(
@@ -349,10 +342,10 @@ class _KisiKarti extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
+              Icon(
                 Icons.theater_comedy_outlined,
                 size: 13,
-                color: DiziRenkler.sari,
+                color: DiziRenkler.sariMetin,
               ),
               const SizedBox(width: 4),
               Flexible(

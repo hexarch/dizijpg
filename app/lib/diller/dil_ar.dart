@@ -379,4 +379,25 @@ const Map<String, String> cevirilerAr = {
   'Yeniden izledim': 'أُعيدت مشاهدته',
   '{}. kez izlendi': 'شوهد {} مرات',
   'Gönderi bulunamadı': 'المنشور غير موجود',
+  'Gözat': 'تصفّح',
+  'Diziler': 'مسلسلات',
+  'Filmler': 'أفلام',
+  'Tümü': 'الكل',
+  'Farklı bir tür seç.': 'جرّب نوعًا آخر.',
+  'Gizlilik': 'الخصوصية',
+  'İzlediklerimi gizle': 'إخفاء ما شاهدته',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'لن تظهر المسلسلات والأفلام التي شاهدتها في ملفك الشخصي',
+  'Yorumlarımı gizle': 'إخفاء تعليقاتي',
+  'Profilinde yorumların görünmez': 'لن تظهر تعليقاتك في ملفك الشخصي',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'يمكنك إخفاء مسلسل أو فيلم بعينه عبر خيار «إخفاء في ملفي» في صفحة العمل.',
+  'Geri Bildirim': 'ملاحظات',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'اكتب رأيك واقتراحاتك حول التطبيق...',
+  'Teşekkürler! Geri bildirimin alındı.': 'شكرًا! تم استلام ملاحظاتك.',
+  'Profilimde gizle': 'إخفاء في ملفي',
+  'Yorumları': 'تعليقاته',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'يفضّل هذا المستخدم إبقاء تعليقاته مخفية.',
 };

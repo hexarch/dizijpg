@@ -1,5 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-07-28 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-07-30 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-07-30 — Akışta yerinde video + gizlilik + geri bildirim 🚀
+**Ne:** Akışta videolar kaydırırken kendiliğinden oynar; kullanıcılar izlediklerini
+ve yorumlarını gizleyebilir; Ayarlar'dan geri bildirim gönderilebilir.
+- 🚀 **Akış videosu (AkisVideo, ortak.dart):** videolar siyah kapakla duraklamış
+  durur; ekran ortasına EN YAKIN görünür video sessiz oynamaya başlar, merkezden
+  uzaklaşınca durur. Statik aday kaydıyla aynı anda tek video oynar (çift ses yok).
+  Sağ altta ses aç/kapat rozeti (oturum boyu ortak tercih); dokunuş yine Reels açar.
+  Web otomatik oynatma kuralı gereği ses kapalı başlar.
+- 🚀 **Gizlilik (Ayarlar > Gizlilik):** `izlenenler_gizli` + `yorumlar_gizli`
+  (kullanicilar kolonları, GET/POST /gizlilik-tercihleri). Açık profilde izlenen
+  şeritleri/yorumlar/incelemeler gizlenir; yorumlar yerine "Bu kullanıcı
+  yorumlarını gizli tutmayı tercih ediyor." yazar. Sahibi kendini her zaman görür.
+- 🚀 **İçerik bazlı gizleme:** detay sayfasında "Profilimde gizle" çipi
+  (`gizli_icerikler` tablosu, POST /gizle, /benim'e `gizli` alanı). Gizlenen içerik
+  açık profildeki şeritlerden, yorum listesinden VE içeriğin "izleyenler"
+  listesinden/sayılarından düşer (kendisi görmeye devam eder).
+- 🚀 **Geri bildirim (Ayarlar > Geri Bildirim):** metin sheet'i → POST /geri-bildirim
+  (`geri_bildirimler` tablosu, 10/sa kullanıcı limiti, 3-2000 karakter).
+- ✅ Migrasyon: migrasyon-2026-07-30.sql (canlıya uygulandı). Çeviri: +12 anahtar,
+  45 dil × 363 anahtar senkron. Uçtan uca curl testleri geçti, test verisi temizlendi.
+- NOT: yorum gizleme yalnız AÇIK PROFİL listesini kapsar; akışta ve içerik/bölüm
+  sayfalarındaki yorumlar görünmeye devam eder (sosyal akış bilinçli korunuyor).
 
 ## 2026-07-28 — Instagram arşivi içe aktarımı + kullanıcı adı kuralı 🚀
 **Ne:** dizi.jpg Instagram hesabının arşivi (Instaloader) uygulamaya resmi hesabın
@@ -388,9 +411,18 @@ Yeni APK+AAB masaüstünde (66MB).
 - Çeviri: +29 anahtar → **307 anahtar × 45 dil** senkron.
 - ⬜ KALAN (kullanıcı): `iletisim@dizijpg.com` posta kutusunu aç/yönlendir
   (politikadaki iletişim adresi bu) — ya da adres değişsin istersen söyle.
-- ⬜ Play Console'a gizlilik politikası URL'i olarak
-  `https://dizijpg.com/gizlilik.html` gir (Data safety: hesap verisi, kullanım
-  verisi, medya, cihaz token'ı, IP + hata günlüğü beyanları politikayla uyumlu).
+- ✅ Play Console'a gizlilik politikası URL'i girildi (2026-07-29):
+  `https://dizijpg.com/gizlilik.html`. Ayrıca tamamlanan Play Console beyanları:
+  Oturum açma bilgileri (test@dizijpg.com), Reklam (yok), Reklam Kimliği (yok),
+  İçerik derecelendirme (IARC, Sosyal — PEGI Ebeveyn Rehberliği / USK 12+,
+  e-posta: iletisim@dizijpg.com), Hedef kitle (13-15/16-17/18+), Veri güvenliği
+  (11 veri türü: e-posta+kullanıcı kimliği zorunlu; mesaj/foto/video/ses/UGC/
+  işlemler isteğe bağlı; kilitlenme+teşhis+cihaz kimliği zorunlu; hepsi HTTPS,
+  hesap+veri silme URL'i gizlilik.html), Resmi kurum (hayır), Finans (yok),
+  Sağlık (yok), Kategori (Sosyal) + iletişim (iletisim@dizijpg.com,
+  https://dizijpg.com — YAYINLANDI).
+  ⬜ KALAN: Mağaza girişi (ad/açıklamalar + 512 ikon + 1024x500 grafik +
+  ≥2 telefon ekran görüntüsü) ve sonrasında Yayınlama özetinden incelemeye gönder.
 
 ## SPRINT 9 — kullanıcının 7 maddelik listesi ✅🚀 (2026-07-27, web+API canlıda, v1.8.0+16)
 1. **Aramada kullanıcılar** ✅: Arama sekmesi TMDB ile birlikte /kullanici-ara'yı
@@ -474,6 +506,169 @@ asla; popüler fallback görüleni tekrarlamaz, son çarede tekrarlar.
   çift dokunuş=beğeni+kalp, sola kaydır=paylaşanın profili, spoiler örtüsü.
   1. sekme "Ana Sayfa" olarak yeniden adlandı. Çeviri 330 × 45.
   NOT: eski arama.dart rotasız duruyor (gerekirse geri bağlanır).
+
+## KATALOG GÖZAT — Faz 3.1 ✅🚀 (2026-07-29, canlıda, v1.9.4+30, APK ~/Desktop/dizijpg-1.9.4.apk)
+Tarama önerilerinden EN BÜYÜK ürün boşluğu (içerik ekleme yolu): katalog gözat.
+- Yeni `lib/ekranlar/gozat.dart` GozatEkrani (/gozat rotası, üst-düzey push):
+  Diziler/Filmler SegmentedButton + TMDB genre çipleri (yatay, ChoiceChip) +
+  popülerlik sıralı poster ızgarası (3/4/6 sütun responsive, sonsuz kaydırma,
+  vote_count.gte=80, poster_path filtreli). PosterKarti(turZorla) → detay.
+  İskelet yükleme + BosDurum + HataGorunumu. TMDB `/discover/$tur` + `/genre/$tur/list`
+  proxy beyaz listesinde zaten vardı (yeni backend uç YOK).
+- Erişim: Ana Sayfa (kesfet.dart) appbar'a grid_view ikonu → context.push('/gozat').
+- Çeviri +5 anahtar (Gözat/Diziler/Filmler/Tümü/Farklı bir tür seç.) → **351 × 45**.
+- Kanıt: genre/tv/list 200, discover/tv 20 sonuç (House of the Dragon), /gozat web 200.
+- ⬜ KALAN Faz 3 (ürün): diary/günlük, streak+yıllık hedef, detayda arkadaş kanıtı,
+  /onerilen yüzeye çıkar, yeni-bölüm push, video autoplay. Faz 4 (backend perf).
+
+## TARAMA SONRASI DÜZELTMELER — Faz 1+2 ✅🚀 (2026-07-29, canlıda, v1.9.3+29, APK ~/Desktop/dizijpg-1.9.3.apk)
+3 paralel ajan taraması (kod kalitesi + ürün + backend ölçek). FAZ 1 (acil buglar) + FAZ 2 (ölçek):
+- **FAZ 1 — buglar:** (1) Reels ÇİFT SES: PageView komşu sayfa video oynamaya devam
+  ediyordu → ReelsGorunumu `_aktif` + onPageChanged; _ReelSayfa `aktif` param +
+  didUpdateWidget ile _videoDurumGuncelle (yalnız aktif sayfa oynar/pause).
+  (2) IMPRESSION YANLIŞ: akış build side-effect (_kartGorundu itemBuilder'da →
+  ekran-dışı kartlar da "görüldü") + Reels komşu initState → görülmeyen gönderiler
+  kalıcı kayboluyordu. Çözüm: **visibility_detector** paketi, akış kartı %60
+  görününce işaretle; Reels _isaretle() yalnız aktif olunca (bir kez, _isaretlendi
+  guard). (3) Backend popüler fallback akis_goruldu'ya YAZMAYI bıraktı (tümüyle
+  istemci-impression; döndürülen≠görüldü).
+- **FAZ 2 — ölçek:** pg havuzu max=30 + idle/connection timeout (varsayılan 10
+  tek /akis'te tükeniyordu); günlük **tablolariBuda** (akis_goruldu 30g,
+  tmdb_onbellek 30g, yorum_goruntuleyen 90g, hatalar 30g — sınırsız büyüme durdu);
+  migrasyon-2026-07-29 indeksler (yorumlar id-DESC WHERE ust_id IS NULL, mesajlar
+  gonderen/alici, durumlar tur-durum kısmi, akis_goruldu tarih); akış NOT IN →
+  **NOT EXISTS** (3 yer, stabil plan). sema.sql senkron (yorumlar_ust_null_id
+  ust_id ALTER'ından SONRA — yeni kurulum sırası).
+- Kanıt: saglik+akis+kesfet-akis+sohbetler 200; migrasyon 5 CREATE INDEX. Çeviri değişmedi.
+- ⬜ SONRAKI (tarama önerileri, Faz 3): **katalog GÖZAT sekmesi** (en büyük ürün
+  boşluğu — içerik ekleme yolu; rotasız arama.dart evrilir), aktivite günlüğü (diary),
+  izleme serisi (streak)+yıllık hedef, detayda arkadaş kanıtı, /onerilen yüzeye çıkar,
+  yeni-bölüm push. Backend kalan: N+1 TMDB toplu-önbellek okuma, yorum begeni denormalize,
+  migrasyon runner. Ayrıca kullanıcının video-autoplay isteği hâlâ açık.
+
+## SOHBET OTOMATİK-AŞAĞI KAYDIRMA ✅🚀 (2026-07-28, canlıda, v1.9.2+28, APK ~/Desktop/dizijpg-1.9.2.apk)
+Kullanıcı: "sohbette sürekli yukarı kayıyor, mesaj gelince otomatik aşağı kaymıyor".
+İki kök neden: (1) 5sn poll listeyi setState ile yeniliyor ama _MesajBaloncugu
+KEY'SİZDİ → medya yeniden yüklenip yükseklik oynayınca scroll pozisyonu kayıyordu
+(→ _MesajBaloncugu(key: ValueKey(m['id'] ?? 'm$i')) + super.key eklendi). (2)
+_sonaKaydir tek jumpTo medya yüklenmeden çalışıp tam alta gitmiyordu → [0,120,400]ms
+üç deneme (görsel/video yüklendikçe sabitler). Ek: _yukle akıllı kaydırma —
+setState'ten ÖNCE `altaYakinDi` ölçülür (maxScrollExtent-250); yalnız ilk açılış
+VEYA (yeni mesaj VE kullanıcı zaten alttaydı) kaydırır (yukarıda eski okurken
+zorla atmaz, WhatsApp davranışı). Sadece sohbet.dart, backend değişmedi.
+
+## GÖRÜLEN-FİLTRESİ + REELS KALP + YANIT UX ✅🚀 (2026-07-28, canlıda, v1.9.1+27, APK ~/Desktop/dizijpg-1.9.1.apk)
+Kullanıcının bir dizi isteği (bir turda):
+1. **Akış/Keşfet'te görüleni bir daha gösterme** (impression-tabanlı):
+   - Backend: /akis ana sorguya `AND y.id NOT IN (akis_goruldu)` filtresi;
+     döndürüleni artık İŞARETLEMEZ (yalnız popüler fallback işaretler); /kesfet-akis
+     `sorgula(gorulenHaric)` — görülmemiş boşsa SON ÇARE filtresiz tekrar (hepsini
+     gördüysen tekrar, boş kalmasından iyi). Yeni `POST /akis/goruldu {idler:[]}`
+     (≤200, ON CONFLICT DO NOTHING).
+   - Frontend: akis.dart itemBuilder'da kart build=görüldü → _kartGorundu(id) Set +
+     1sn debounce toplu POST; Reels _ReelSayfa initState'te tek POST. "Sunucu
+     döndürdü" DEĞİL "ekranda belirdi" = görüldü (kaydırmadan kapatılan tekrar gelir).
+2. **Reels çift-dokunuş kalbi**: ortadaki gri kalp → DOKUNULAN KONUMDA kırmızı
+   (redAccent) kalp, 900ms yükselip solan animasyon (AnimationController +
+   onDoubleTapDown localPosition; büyür→sabit, 40px yukarı, geç solar).
+3. **Yorum "Yanıtla" UX** (kullanıcı "yoruma yorum yapma yok" dedi — aslında VARDI
+   ama kutu ekranın üstünde, basınca bir şey olmuyor sanılıyordu): _yanitla() artık
+   yazma kutusuna `Scrollable.ensureVisible` + `FocusNode.requestFocus` (kutuya
+   kaydırır + klavye açar). EtiketliGirdi'ye focusNode param eklendi.
+- Çeviri değişmedi (346×45). Kanıt: POST /akis/goruldu {tamam:true}, /kesfet-akis 200.
+- ⬜ KALAN (kullanıcı istedi, SONRAKI tur — büyük): AKIŞTA VİDEO OTOMATİK OYNATMA
+  + siyah ekran yok (visibility_detector/görünürlük + inline video controller);
+  DİZİ/FİLM YORUM VİDEOLARI siyah-kapak yerine ilk-kare/oynatma. Bunlar video
+  controller yönetimi + paket gerektirdiği için ayrıldı.
+
+## AKIŞ→REELS + OG ÖNİZLEME KARTLARI ✅🚀 (2026-07-28, canlıda, v1.9.0+26, APK ~/Desktop/dizijpg-1.9.0.apk)
+1. **Akışta medyaya dokun → Reels modu**: akış kartındaki foto/videoya dokununca
+   o gönderiden başlayıp TÜM akış Reels (dikey kaydırma, çift-dokunuş beğeni, sola
+   kaydırma profil) modunda açılır. MedyaGaleri'ye opsiyonel `onAc(index)` param;
+   akış onu `_reelsAc(i)` → `ReelsGorunumu(liste:_akis, baslangic:i)` rootNavigator
+   push'a bağlar (yorumlarda param verilmez → eski tam-ekran medyaGoster). akis.dart
+   `import kesfet_akis show ReelsGorunumu`. Akış gönderileri Reels alanlarını
+   içeriyor (takip_ediyorum yok→false, videolu yok→_videoUrl medyadan; sorun yok).
+2. **#8 OG önizleme kartları** (WhatsApp/Twitter/FB link önizlemesi):
+   - Backend `GET /og/icerik/:tur/:id`, `/og/kisi/:id`, `/og/gonderi/:id` → OG +
+     Twitter meta'lı küçük HTML (htmlKacir XSS-güvenli; TMDB önbellekli; gönderi
+     görseli: yorum fotoğrafı varsa o, yoksa içerik posteri). Girişsiz.
+   - nginx: `map $http_user_agent $og_bot` (facebookexternalhit/Twitterbot/WhatsApp/
+     Telegram/Discord/Slack/… + Google/bing/Yandex); `location ~ ^/(icerik|gonderi|
+     kisi)/` bot ise `return 418 → @og` (proxy /og$uri), değilse Flutter try_files.
+     "if is evil" değil (return+error_page güvenli deseni). yedek:
+     dizijpg.com.yedek-og-20260728.
+   - index.html'e site-geneli fallback OG (bot /icerik dışı sayfa paylaşırsa
+     generic dizi.jpg kartı; og:image=Icon-512).
+   - Kanıt: BOT UA → içerik "Breaking Bad (2008)"+poster, kişi "Bryan Cranston"+foto,
+     gönderi "@testkullanici · Breaking Bad"+metin; NORMAL UA → Flutter index.html.
+- Çeviri değişmedi (346×45). NOT: OG mimari kararı = nginx bot-serving (SSR yok).
+
+## KALAN UX BULGULARI DÜZELTİLDİ ✅🚀 (2026-07-28, canlıda, v1.8.9+25, APK ~/Desktop/dizijpg-1.8.9.apk)
+Önceki turdaki ajan raporunun kalan bulguları (3 paralel ajan + merkezi altyapı):
+- **AÇIK TEMA SARI-METİN kontrastı** (en yüksek etkili): tema.dart'a
+  `DiziRenkler.sariMetin` (koyu tema: parlak sari #F5C518; açık tema: koyu hardal
+  #8A6D00, beyaz kart üstünde ~4.5:1). Tüm ekranlarda KART/SCAFFOLD/SHEET
+  zeminindeki sarı METİN/İKON → sariMetin (akis/profil/kullanici_profil/ozet/
+  yorumlar/detay/bolum/kisi/tepki/bildirimler/giris/ayarlar/sohbet/arama/
+  karsilama). DOKUNULMADI: sarı DOLGU (baloncuk, rozet, misafir kartı, tepki çip),
+  siyah-bindirme/Reels üstü sarı, spinner/RefreshIndicator, border. EtiketliMetin'e
+  `koyuZemin` param (Reels çağrısı true=parlak sari; kart varsayılan sariMetin).
+- **Dokunma hedefleri ≥44px**: yorum ek-silme (20→40px), tepki çip (36→44),
+  YildizPuan (yıldız +dikey padding=46), profil takipçi/takip sayacı (v2→8).
+- **Boş durum tutarlılığı**: kitaplik_liste + arama → BosDurum.
+- **Üç-hal**: puan_sheet Kaydet (buton kilidi+spinner, çift-gönderim engeli, başarıda
+  kapat); arama sessiz catch → hata SnackBar; karsilama hata state (HataGorunumu)
+  + sessiz başarısızlıkta SnackBar.
+- **Form etiketleri**: giris tüm alanlar hintText → labelText (kalıcı görünür etiket).
+- **Placeholder/error + önbellek**: sohbet baloncuk görsel + ayarlar kapak +
+  bildirimler avatar + ortak _ListeOgeKart + MiniIcerik hata state (CachedNetworkImage /
+  errorWidget). kisi ızgara childAspectRatio 0.53→0.50 (alt-taşma).
+- _Sayac değer metni maxLines+ellipsis (büyük sayı taşması).
+- Çeviri değişmedi (346×45, yeni metin gerekmedi). Sadece frontend.
+
+## MEDYA BOYUTU + UX/UI TARAMASI ✅🚀 (2026-07-28, canlıda, v1.8.8+24, APK ~/Desktop/dizijpg-1.8.8.apk)
+Kullanıcı: "akış+dizi/film postlarında video/foto çok küçük, düzelt; her yeri gez
+UX/UI bozuk var mı" + 3 canlı bug bildirdi. ui-ux-pro-max'e danışıldı, 3 paralel
+ajan tüm ekranları taradı.
+- **ORTAK `MedyaGaleri` widget (ortak.dart)**: tek medya TAM GENİŞLİK büyük (16:10),
+  çoklu 2 sütun kare ızgara; videoda büyük kapak + dokununca TAM EKRAN oynatıcı
+  (yerinde oynatma yok → çift oynatıcı/çift ses imkansız). akis.dart _AkisKarti,
+  yorumlar.dart _YorumKarti, kesfet_akis _KesfetYanitSatiri hepsi buna geçti
+  (eski 140x140/220x124/yatay-şerit sabit boyutlar kaldırıldı).
+- **BUG: Reels alt bilgi + ilerleme çubuğu Android sistem tuşlarının altında**:
+  _ReelSayfa'ya `altInset = MediaQuery.padding.bottom`; sol-alt(+inset), sağ-alt
+  (+inset), ilerleme çubuğu bottom:0→altInset.
+- **BUG: yorumda video tam ekrana alınca çift ses**: MedyaGaleri yerinde oynatmayı
+  kaldırdı (kök çözüm); ayrıca VideoOynatici tam-ekran butonuna `_denetleyici.pause()`
+  eklendi (başka kullanımlar için).
+- **UX bulguları (ajan taraması, en yüksek etkililer düzeltildi):**
+  MiniIcerik hata durumu (sonsuz iskelet → kırık-görsel; AspectRatio ile
+  double.infinity güvenli); profil _IzlenenlerKarti gradyanı sabit Colors.black
+  (açık temada beyaz-üstü-beyaz düzeldi); yorum beğeni/yanıtla dokunma hedefi
+  vertical 2→10 (~20px→44px). Video kapağı Colors.black87+beyaz (açık temada da görünür).
+- Çeviri değişmedi (346 × 45). Sadece frontend; backend/migrasyon YOK.
+- ⬜ KALAN UX (ajan raporu, orta/düşük — sonraki tur): AÇIK TEMA sarı-metin
+  kontrastı geniş süpürme (akış içerik başlığı/_Sayac/yanıt @ad/"Tümünü gör" —
+  açık temada sarı metin düşük kontrast; acikSari/metin tonu gerek); kalan dokunma
+  hedefleri (YildizPuan, tepki emoji, yorum ek-silme 20px, Reels "Takip Et" 30px,
+  takipçi/takip sayacı 2px); boş durum tutarlılığı (kitaplik_liste/arama/bildirimler/
+  karsilama → BosDurum); form etiketleri placeholder-only (giris); puan_sheet üç-hal;
+  arama/karsilama sessiz hata; kisi grid overflow riski; sohbet görsel placeholder/error;
+  Image.network→CachedNetworkImage (ayarlar kapak, bildirimler avatar, _ListeOgeKart).
+
+## BİLDİRİM YÖNLENDİRMELERİ ✅🚀 (2026-07-28, canlıda, v1.8.7+23, APK ~/Desktop/dizijpg-1.8.7.apk)
+Kullanıcı: "bildirimlerdeki yönlendirmeleri de düzelt." Beğeni/yanıt/etiket
+bildirimleri yorumun İÇERİĞİNE (dizi/bölüm sayfası) gidiyordu — hedef yorumu
+bulmak zordu. Gönderi rotası (/gonderi/:id) artık olduğundan doğrudan yoruma:
+- bildirimler.dart _hedef: mesaj→/sohbet; yorum_id var + silinmemiş (yorum_tur
+  dolu)→**/gonderi/:yorum_id**; yoksa/silinmişse→/kullanici/:aktor.
+- push.dart _bildirimVerisiyleGit: begeni/yanit/etiket'te data.yorum_id varsa
+  /gonderi/:id, yoksa /bildirimler. Backend pushBildirim data'ya yorum_id ekler
+  (bildirimEkle pushEkstra'ya yorumId koyar). İstemci cihaz testi bekliyor.
+- Kanıt: import-test testkullanici'nın yorumunu beğendi → bildirim yorum_id=2368,
+  hedef /gonderi/2368 (eskiden /icerik/tv/1396).
+- Çeviri değişmedi (346 × 45). APK 1.8.7 masaüstünde.
 
 ## PAYLAŞILAN GÖNDERİ LİNKİ ✅🚀 (2026-07-28, canlıda, v1.8.6+22)
 Kullanıcı: "içeriği paylaşınca /icerik/tv/1396 linki diziyi açtı, ilgili

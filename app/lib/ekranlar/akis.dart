@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
-import 'medya_goster.dart';
+import 'kesfet_akis.dart' show ReelsGorunumu;
 import 'ortak.dart';
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
@@ -39,6 +40,11 @@ class _AkisEkraniState extends State<AkisEkrani>
   List<dynamic> _aramaKullanicilar = []; // uygulama kullanıcıları
   String? _duzeltme; // "şunu mu demek istedin" — sunucu yazım düzeltmesi
 
+  // "Görüldü" biriktirme: ekranda beliren kartlar toplanıp toplu bildirilir;
+  // bir daha akışta gösterilmezler.
+  final Set<int> _goruldu = {};
+  Timer? _gorulduZaman;
+
   @override
   bool get wantKeepAlive => true;
 
@@ -54,8 +60,24 @@ class _AkisEkraniState extends State<AkisEkrani>
     });
   }
 
+  /// Bir kart ekranda belirdi: id'yi biriktir, kısa gecikmeyle toplu bildir.
+  void _kartGorundu(int id) {
+    if (!_goruldu.add(id)) return;
+    _gorulduZaman?.cancel();
+    _gorulduZaman = Timer(const Duration(seconds: 1), _gorulduGonder);
+  }
+
+  void _gorulduGonder() {
+    if (_goruldu.isEmpty) return;
+    final idler = _goruldu.toList();
+    _goruldu.clear();
+    Api.post('/akis/goruldu', {'idler': idler}).catchError((_) => null);
+  }
+
   @override
   void dispose() {
+    _gorulduGonder(); // kalan id'leri gönder
+    _gorulduZaman?.cancel();
     _kaydirma.dispose();
     _aramaKutu.dispose();
     _aramaGecikme?.cancel();
@@ -153,6 +175,18 @@ class _AkisEkraniState extends State<AkisEkrani>
     }
   }
 
+  /// Akıştaki medyaya dokununca: o gönderiden başlayıp tüm akışı Reels
+  /// (dikey kaydırmalı, çift-dokunuş beğeni, sola kaydırma profil) modunda açar.
+  void _reelsAc(int i) {
+    if (_akis == null) return;
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (_) =>
+            ReelsGorunumu(liste: _akis!, icerikler: _icerikler, baslangic: i),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -221,11 +255,25 @@ class _AkisEkraniState extends State<AkisEkrani>
               controller: _kaydirma,
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
               itemCount: _akis!.length,
-              itemBuilder: (context, i) => _AkisKarti(
-                key: ValueKey((_akis![i] as Map<String, dynamic>)['id']),
-                yorum: _akis![i] as Map<String, dynamic>,
-                icerikler: _icerikler,
-              ),
+              itemBuilder: (context, i) {
+                final y = _akis![i] as Map<String, dynamic>;
+                // "Görüldü": kart GERÇEKTEN ekranda (>%60) belirince işaretle —
+                // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
+                return VisibilityDetector(
+                  key: ValueKey('gor-${y['id']}'),
+                  onVisibilityChanged: (info) {
+                    if (info.visibleFraction > 0.6) {
+                      _kartGorundu(y['id'] as int);
+                    }
+                  },
+                  child: _AkisKarti(
+                    key: ValueKey(y['id']),
+                    yorum: y,
+                    icerikler: _icerikler,
+                    onMedyaAc: () => _reelsAc(i),
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -341,7 +389,7 @@ class _AkisEkraniState extends State<AkisEkrani>
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
       child: Row(
         children: [
-          Icon(ikon, size: 17, color: DiziRenkler.sari),
+          Icon(ikon, size: 17, color: DiziRenkler.sariMetin),
           const SizedBox(width: 6),
           Text(
             metin,
@@ -366,8 +414,8 @@ class _AkisEkraniState extends State<AkisEkrani>
                       TextSpan(text: '${'Şunu mu demek istedin'.c}: '),
                       TextSpan(
                         text: _duzeltme,
-                        style: const TextStyle(
-                          color: DiziRenkler.sari,
+                        style: TextStyle(
+                          color: DiziRenkler.sariMetin,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -507,8 +555,14 @@ class _AramaSatiri extends StatelessWidget {
 class _AkisKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
+  final VoidCallback? onMedyaAc; // medyaya dokununca Reels aç
 
-  const _AkisKarti({super.key, required this.yorum, required this.icerikler});
+  const _AkisKarti({
+    super.key,
+    required this.yorum,
+    required this.icerikler,
+    this.onMedyaAc,
+  });
 
   @override
   State<_AkisKarti> createState() => _AkisKartiState();
@@ -622,8 +676,8 @@ class _AkisKartiState extends State<_AkisKarti> {
                           '${bolumlu ? ' · S${y['sezon']}B${y['bolum']}' : ''}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: DiziRenkler.sari,
+                          style: TextStyle(
+                            color: DiziRenkler.sariMetin,
                             fontSize: 12,
                           ),
                         ),
@@ -690,55 +744,13 @@ class _AkisKartiState extends State<_AkisKarti> {
               ),
             if (_spoilerAcik && medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              // Geniş ekranda (PC) medya büyür; dokununca tam ekran
-              // görüntüleyici açılır (fotoğrafta yakınlaştırma, videoda
-              // oynatma + sarma).
-              Builder(
-                builder: (context) {
-                  final genis = MediaQuery.of(context).size.width > 700;
-                  final urller = [
-                    for (final m in medya) dosyaUrl(m as String)!,
-                  ];
-                  return SizedBox(
-                    height: genis ? 250 : 150,
-                    child: ListView.separated(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: medya.length,
-                      separatorBuilder: (context, i) =>
-                          const SizedBox(width: 8),
-                      itemBuilder: (context, i) {
-                        final m = medya[i] as String;
-                        final video = m.endsWith('.mp4') || m.endsWith('.webm');
-                        return InkWell(
-                          borderRadius: BorderRadius.circular(10),
-                          onTap: () =>
-                              medyaGoster(context, urller, baslangic: i),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: SizedBox(
-                              width: genis ? 330 : 150,
-                              child: video
-                                  ? Container(
-                                      color: DiziRenkler.koyuGri,
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.play_circle_outline,
-                                          size: genis ? 56 : 40,
-                                          color: DiziRenkler.metin70,
-                                        ),
-                                      ),
-                                    )
-                                  : CachedNetworkImage(
-                                      imageUrl: urller[i],
-                                      fit: BoxFit.cover,
-                                    ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
+              // Tek medya tam genişlik büyük, çoklu 2 sütun ızgara; videolar
+              // ekran ortasına gelince yerinde sessiz oynar (AkisVideo),
+              // dokununca Reels açılır.
+              MedyaGaleri(
+                yollar: medya.cast<String>(),
+                onAc: (_) => widget.onMedyaAc?.call(),
+                otomatikOynat: true,
               ),
             ],
             const SizedBox(height: 8),
@@ -759,7 +771,7 @@ class _AkisKartiState extends State<_AkisKarti> {
                           _begendim ? Icons.favorite : Icons.favorite_border,
                           size: 18,
                           color: _begendim
-                              ? DiziRenkler.sari
+                              ? DiziRenkler.sariMetin
                               : DiziRenkler.metin54,
                         ),
                         if (_begeni > 0) ...[

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'ortak.dart';
 
 /// Yeni kayıt olan kullanıcıya gösterilen karşılama akışı: popüler dizi ve
 /// filmlerden seçtiklerini "İzleyeceğim" listesine ekleyerek profili tohumlar.
@@ -20,6 +21,7 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   final _secili = <String>{}; // 'tur:id'
   bool _yukleniyor = true;
   bool _kaydediyor = false;
+  String? _hata;
 
   @override
   void initState() {
@@ -28,6 +30,10 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
   }
 
   Future<void> _yukle() async {
+    setState(() {
+      _yukleniyor = true;
+      _hata = null;
+    });
     try {
       final s = await Future.wait([
         Api.get('/tmdb/trending/tv/week'),
@@ -55,8 +61,14 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
           _yukleniyor = false;
         });
       }
-    } catch (_) {
-      if (mounted) setState(() => _yukleniyor = false);
+    } catch (e) {
+      // Trend çekimi başarısız → boş ızgara yerine hata + tekrar dene.
+      if (mounted) {
+        setState(() {
+          _yukleniyor = false;
+          _hata = e.toString();
+        });
+      }
     }
   }
 
@@ -66,6 +78,7 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
       return;
     }
     setState(() => _kaydediyor = true);
+    Object? sonHata;
     await Future.wait(
       _secili.map((anahtar) {
         final p = anahtar.split(':');
@@ -73,9 +86,18 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
           'tmdb_id': int.parse(p[1]),
           'tur': p[0],
           'durum': 'izleyecegim',
-        }).catchError((_) => <String, dynamic>{});
+        }).catchError((e) {
+          sonHata = e;
+          return <String, dynamic>{};
+        });
       }),
     );
+    // Sessiz başarısızlık yok: en az bir ekleme başarısızsa bildir.
+    if (sonHata != null && mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(sonHata.toString())));
+    }
     _kapat();
   }
 
@@ -118,7 +140,9 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
             ),
             // Poster ızgarası
             Expanded(
-              child: _yukleniyor
+              child: _hata != null
+                  ? HataGorunumu(mesaj: _hata!, tekrar: _yukle)
+                  : _yukleniyor
                   ? const Center(child: CircularProgressIndicator())
                   : GridView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),

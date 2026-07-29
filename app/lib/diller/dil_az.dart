@@ -381,4 +381,25 @@ const Map<String, String> cevirilerAz = {
   'Yeniden izledim': 'Yenidən baxıldı',
   '{}. kez izlendi': '{} dəfə baxıldı',
   'Gönderi bulunamadı': 'Paylaşım tapılmadı',
+  'Gözat': 'Kəşf et',
+  'Diziler': 'Seriallar',
+  'Filmler': 'Filmlər',
+  'Tümü': 'Hamısı',
+  'Farklı bir tür seç.': 'Başqa janr sına.',
+  'Gizlilik': 'Məxfilik',
+  'İzlediklerimi gizle': 'İzlədiklərimi gizlət',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'İzlədiyin serial və filmlər profilində görünməyəcək',
+  'Yorumlarımı gizle': 'Şərhlərimi gizlət',
+  'Profilinde yorumların görünmez': 'Şərhlərin profilində görünməyəcək',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Tək bir serialı və ya filmi məzmun səhifəsindəki "Profilimdə gizlət" çipi ilə gizlədə bilərsən.',
+  'Geri Bildirim': 'Rəy',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Tətbiq haqqında fikir və təkliflərini yaz...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Təşəkkürlər! Rəyin alındı.',
+  'Profilimde gizle': 'Profilimdə gizlət',
+  'Yorumları': 'Şərhləri',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Bu istifadəçi şərhlərini gizli saxlamağa üstünlük verir.',
 };

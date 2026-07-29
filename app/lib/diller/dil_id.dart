@@ -381,4 +381,26 @@ const Map<String, String> cevirilerId = {
   'Yeniden izledim': 'Ditonton lagi',
   '{}. kez izlendi': 'Ditonton {} kali',
   'Gönderi bulunamadı': 'Postingan tidak ditemukan',
+  'Gözat': 'Jelajahi',
+  'Diziler': 'Serial',
+  'Filmler': 'Film',
+  'Tümü': 'Semua',
+  'Farklı bir tür seç.': 'Coba genre lain.',
+  'Gizlilik': 'Privasi',
+  'İzlediklerimi gizle': 'Sembunyikan tontonanku',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Series dan film yang kamu tonton tidak akan tampil di profilmu',
+  'Yorumlarımı gizle': 'Sembunyikan komentarku',
+  'Profilinde yorumların görünmez': 'Komentarmu tidak akan tampil di profilmu',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Kamu bisa menyembunyikan satu series atau film lewat chip "Sembunyikan di profilku" di halamannya.',
+  'Geri Bildirim': 'Masukan',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Tulis pendapat dan saranmu tentang aplikasi...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Terima kasih! Masukanmu sudah diterima.',
+  'Profilimde gizle': 'Sembunyikan di profilku',
+  'Yorumları': 'Komentarnya',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Pengguna ini memilih menyembunyikan komentarnya.',
 };

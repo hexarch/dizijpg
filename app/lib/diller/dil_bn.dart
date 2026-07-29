@@ -382,4 +382,26 @@ const Map<String, String> cevirilerBn = {
   'Yeniden izledim': 'আবার দেখা হয়েছে',
   '{}. kez izlendi': '{} বার দেখা হয়েছে',
   'Gönderi bulunamadı': 'পোস্ট পাওয়া যায়নি',
+  'Gözat': 'ব্রাউজ',
+  'Diziler': 'সিরিজ',
+  'Filmler': 'সিনেমা',
+  'Tümü': 'সব',
+  'Farklı bir tür seç.': 'অন্য ধরন চেষ্টা করুন।',
+  'Gizlilik': 'গোপনীয়তা',
+  'İzlediklerimi gizle': 'আমি যা দেখেছি তা লুকাও',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'তুমি যে সিরিজ ও সিনেমা দেখেছ তা তোমার প্রোফাইলে দেখা যাবে না',
+  'Yorumlarımı gizle': 'আমার কমেন্ট লুকাও',
+  'Profilinde yorumların görünmez': 'তোমার কমেন্ট তোমার প্রোফাইলে দেখা যাবে না',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'কোনো নির্দিষ্ট সিরিজ বা সিনেমা তার পেজের "আমার প্রোফাইলে লুকাও" চিপ দিয়ে লুকাতে পারো।',
+  'Geri Bildirim': 'ফিডব্যাক',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'অ্যাপ নিয়ে তোমার মতামত ও পরামর্শ লেখো...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'ধন্যবাদ! তোমার ফিডব্যাক পাওয়া গেছে।',
+  'Profilimde gizle': 'আমার প্রোফাইলে লুকাও',
+  'Yorumları': 'এটা নিয়ে কমেন্ট',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'এই ব্যবহারকারী তার কমেন্ট গোপন রাখতে পছন্দ করেন।',
 };

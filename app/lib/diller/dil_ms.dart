@@ -381,4 +381,27 @@ const Map<String, String> cevirilerMs = {
   'Yeniden izledim': 'Ditonton semula',
   '{}. kez izlendi': 'Ditonton {} kali',
   'Gönderi bulunamadı': 'Siaran tidak dijumpai',
+  'Gözat': 'Semak',
+  'Diziler': 'Siri',
+  'Filmler': 'Filem',
+  'Tümü': 'Semua',
+  'Farklı bir tür seç.': 'Cuba genre lain.',
+  'Gizlilik': 'Privasi',
+  'İzlediklerimi gizle': 'Sembunyikan tontonan saya',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Siri dan filem yang kamu tonton tidak akan dipaparkan di profil kamu',
+  'Yorumlarımı gizle': 'Sembunyikan komen saya',
+  'Profilinde yorumların görünmez':
+      'Komen kamu tidak akan dipaparkan di profil kamu',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Kamu boleh sembunyikan satu siri atau filem dengan cip "Sembunyikan di profil saya" di halamannya.',
+  'Geri Bildirim': 'Maklum balas',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Tulis pendapat dan cadangan kamu tentang aplikasi...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Terima kasih! Maklum balas kamu telah diterima.',
+  'Profilimde gizle': 'Sembunyikan di profil saya',
+  'Yorumları': 'Komennya',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Pengguna ini memilih untuk merahsiakan komennya.',
 };

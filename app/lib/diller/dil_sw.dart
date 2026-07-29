@@ -380,4 +380,26 @@ const Map<String, String> cevirilerSw = {
   'Yeniden izledim': 'Imetazamwa tena',
   '{}. kez izlendi': 'Imetazamwa mara {}',
   'Gönderi bulunamadı': 'Chapisho halikupatikana',
+  'Gözat': 'Vinjari',
+  'Diziler': 'Vipindi',
+  'Filmler': 'Filamu',
+  'Tümü': 'Zote',
+  'Farklı bir tür seç.': 'Jaribu aina nyingine.',
+  'Gizlilik': 'Faragha',
+  'İzlediklerimi gizle': 'Ficha nilichotazama',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Series na filamu ulizotazama hazitaonekana kwenye wasifu wako',
+  'Yorumlarımı gizle': 'Ficha maoni yangu',
+  'Profilinde yorumların görünmez':
+      'Maoni yako hayataonekana kwenye wasifu wako',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Unaweza kuficha series au filamu moja kwa kutumia kibonye "Ficha kwenye wasifu wangu" kwenye ukurasa wake.',
+  'Geri Bildirim': 'Mrejesho',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Andika maoni na mapendekezo yako kuhusu programu...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Asante! Mrejesho wako umepokelewa.',
+  'Profilimde gizle': 'Ficha kwenye wasifu wangu',
+  'Yorumları': 'Maoni yake',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Mtumiaji huyu anapendelea kuficha maoni yake.',
 };

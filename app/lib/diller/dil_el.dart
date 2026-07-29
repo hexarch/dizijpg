@@ -384,4 +384,26 @@ const Map<String, String> cevirilerEl = {
   'Yeniden izledim': 'Ξαναειδωμένο',
   '{}. kez izlendi': 'Ειδώθηκε {} φορές',
   'Gönderi bulunamadı': 'Η ανάρτηση δεν βρέθηκε',
+  'Gözat': 'Περιήγηση',
+  'Diziler': 'Σειρές',
+  'Filmler': 'Ταινίες',
+  'Tümü': 'Όλα',
+  'Farklı bir tür seç.': 'Δοκίμασε άλλο είδος.',
+  'Gizlilik': 'Απόρρητο',
+  'İzlediklerimi gizle': 'Απόκρυψη όσων έχω δει',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Οι σειρές και οι ταινίες που έχεις δει δεν θα εμφανίζονται στο προφίλ σου',
+  'Yorumlarımı gizle': 'Απόκρυψη των σχολίων μου',
+  'Profilinde yorumların görünmez':
+      'Τα σχόλιά σου δεν θα εμφανίζονται στο προφίλ σου',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Μπορείς να κρύψεις μια συγκεκριμένη σειρά ή ταινία με το τσιπ «Απόκρυψη στο προφίλ μου» στη σελίδα της.',
+  'Geri Bildirim': 'Η γνώμη σου',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Γράψε τη γνώμη και τις προτάσεις σου για την εφαρμογή...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Ευχαριστούμε! Λάβαμε τη γνώμη σου.',
+  'Profilimde gizle': 'Απόκρυψη στο προφίλ μου',
+  'Yorumları': 'Τα σχόλιά του/της',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Αυτός ο χρήστης προτιμά να κρατά τα σχόλιά του ιδιωτικά.',
 };

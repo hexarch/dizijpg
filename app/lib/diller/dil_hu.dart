@@ -383,4 +383,27 @@ const Map<String, String> cevirilerHu = {
   'Yeniden izledim': 'Újranézve',
   '{}. kez izlendi': '{} alkalommal megnézve',
   'Gönderi bulunamadı': 'A bejegyzés nem található',
+  'Gözat': 'Böngészés',
+  'Diziler': 'Sorozatok',
+  'Filmler': 'Filmek',
+  'Tümü': 'Összes',
+  'Farklı bir tür seç.': 'Próbálj másik műfajt.',
+  'Gizlilik': 'Adatvédelem',
+  'İzlediklerimi gizle': 'Megnézettek elrejtése',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'A megnézett sorozatok és filmek nem jelennek meg a profilodon',
+  'Yorumlarımı gizle': 'Kommentjeim elrejtése',
+  'Profilinde yorumların görünmez':
+      'A kommentjeid nem jelennek meg a profilodon',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Egy adott sorozatot vagy filmet az oldalán lévő „Elrejtés a profilomon” csippel rejthetsz el.',
+  'Geri Bildirim': 'Visszajelzés',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Írd meg a véleményed és javaslataid az appról...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Köszönjük! Visszajelzésed megérkezett.',
+  'Profilimde gizle': 'Elrejtés a profilomon',
+  'Yorumları': 'Hozzászólásai',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Ez a felhasználó inkább priváton tartja a kommentjeit.',
 };

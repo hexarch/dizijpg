@@ -383,4 +383,25 @@ const Map<String, String> cevirilerMl = {
   'Yeniden izledim': 'വീണ്ടും കണ്ടു',
   '{}. kez izlendi': '{} തവണ കണ്ടു',
   'Gönderi bulunamadı': 'പോസ്റ്റ് കണ്ടെത്തിയില്ല',
+  'Gözat': 'ബ്രൗസ്',
+  'Diziler': 'പരമ്പരകൾ',
+  'Filmler': 'സിനിമകൾ',
+  'Tümü': 'എല്ലാം',
+  'Farklı bir tür seç.': 'മറ്റൊരു വിഭാഗം പരീക്ഷിക്കൂ.',
+  'Gizlilik': 'സ്വകാര്യത',
+  'İzlediklerimi gizle': 'ഞാൻ കണ്ടവ മറയ്ക്കുക',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'നീ കണ്ട സീരീസുകളും സിനിമകളും നിന്റെ പ്രൊഫൈലിൽ കാണില്ല',
+  'Yorumlarımı gizle': 'എന്റെ കമന്റുകൾ മറയ്ക്കുക',
+  'Profilinde yorumların görünmez': 'നിന്റെ കമന്റുകൾ നിന്റെ പ്രൊഫൈലിൽ കാണില്ല',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ഏതെങ്കിലും ഒരു സീരീസോ സിനിമയോ അതിന്റെ പേജിലെ "എന്റെ പ്രൊഫൈലിൽ മറയ്ക്കുക" ചിപ്പ് ഉപയോഗിച്ച് മറയ്ക്കാം.',
+  'Geri Bildirim': 'ഫീഡ്‌ബാക്ക്',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ആപ്പിനെക്കുറിച്ചുള്ള നിന്റെ അഭിപ്രായവും നിർദ്ദേശങ്ങളും എഴുതൂ...',
+  'Teşekkürler! Geri bildirimin alındı.': 'നന്ദി! നിന്റെ ഫീഡ്‌ബാക്ക് ലഭിച്ചു.',
+  'Profilimde gizle': 'എന്റെ പ്രൊഫൈലിൽ മറയ്ക്കുക',
+  'Yorumları': 'കമന്റുകൾ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ഈ ഉപയോക്താവ് കമന്റുകൾ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
 };

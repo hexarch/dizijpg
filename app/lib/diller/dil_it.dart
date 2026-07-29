@@ -384,4 +384,27 @@ const Map<String, String> cevirilerIt = {
   'Yeniden izledim': 'Rivisto',
   '{}. kez izlendi': 'Visto {} volte',
   'Gönderi bulunamadı': 'Post non trovato',
+  'Gözat': 'Sfoglia',
+  'Diziler': 'Serie',
+  'Filmler': 'Film',
+  'Tümü': 'Tutti',
+  'Farklı bir tür seç.': 'Prova un altro genere.',
+  'Gizlilik': 'Privacy',
+  'İzlediklerimi gizle': 'Nascondi ciò che guardo',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Le serie e i film che hai visto non appariranno sul tuo profilo',
+  'Yorumlarımı gizle': 'Nascondi i miei commenti',
+  'Profilinde yorumların görünmez':
+      'I tuoi commenti non appariranno sul tuo profilo',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Puoi nascondere una singola serie o un film con il chip "Nascondi sul mio profilo" nella sua pagina.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Scrivi la tua opinione e i tuoi suggerimenti sull\'app...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Grazie! Il tuo feedback è stato ricevuto.',
+  'Profilimde gizle': 'Nascondi sul mio profilo',
+  'Yorumları': 'Commenti',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Questo utente preferisce tenere privati i propri commenti.',
 };

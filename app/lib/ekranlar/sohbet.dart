@@ -83,6 +83,8 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
                 ),
                 title: Text(
                   '@${s['partner']}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 subtitle: Builder(
@@ -292,11 +294,15 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   }
 
   void _sonaKaydir() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_kaydirma.hasClients) {
-        _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
-      }
-    });
+    // Görsel/video baloncukları sonradan yüklenip yüksekliği değiştirdiğinden
+    // birkaç kez dener; her seferinde gerçek en-alta sabitler.
+    for (final ms in const [0, 120, 400]) {
+      Future.delayed(Duration(milliseconds: ms), () {
+        if (mounted && _kaydirma.hasClients) {
+          _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
+        }
+      });
+    }
   }
 
   Future<void> _yukle({bool ilk = false}) async {
@@ -305,6 +311,11 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
       if (!mounted) return;
       final yeni = d['mesajlar'] as List<dynamic>;
       final degisti = yeni.length != _mesajlar.length;
+      // setState'ten ÖNCE ölç: kullanıcı en altta mıydı? (yukarıda eski mesaj
+      // okuyorsa yeni mesaj gelince zorla aşağı atmayalım — WhatsApp davranışı)
+      final altaYakinDi =
+          !_kaydirma.hasClients ||
+          _kaydirma.position.pixels >= _kaydirma.position.maxScrollExtent - 250;
       setState(() {
         _mesajlar = yeni;
         _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
@@ -313,7 +324,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
         _yuklendi = true;
         _hata = null;
       });
-      if (ilk || degisti) _sonaKaydir();
+      if (ilk || (degisti && altaYakinDi)) _sonaKaydir();
     } catch (e) {
       // İlk yüklemede hata → boş sohbet yerine hata + tekrar dene göster
       if (mounted && ilk) {
@@ -478,14 +489,18 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('@${widget.kullaniciAdi}'),
+              Text(
+                '@${widget.kullaniciAdi}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
               if (_yaziyor)
                 Text(
                   'yazıyor...'.c,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
-                    color: DiziRenkler.sari,
+                    color: DiziRenkler.sariMetin,
                   ),
                 )
               else
@@ -538,6 +553,9 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                               m['medya'] == null &&
                               m['icerik_tur'] == null;
                           final baloncuk = _MesajBaloncugu(
+                            // Poll (5sn) listeyi yenilerken baloncuk id ile
+                            // eşleşsin: medya yeniden yüklenip kaymasın.
+                            key: ValueKey(m['id'] ?? 'm$i'),
                             mesaj: m,
                             benim: benimMi,
                             icerikler: _icerikler,
@@ -597,7 +615,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                       Icon(
                         _duzenlenenId != null ? Icons.edit : Icons.reply,
                         size: 18,
-                        color: DiziRenkler.sari,
+                        color: DiziRenkler.sariMetin,
                       ),
                       const SizedBox(width: 10),
                       Expanded(
@@ -609,10 +627,10 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                               _duzenlenenId != null
                                   ? 'Mesajı düzenle'.c
                                   : 'Yanıtlanıyor'.c,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                color: DiziRenkler.sari,
+                                color: DiziRenkler.sariMetin,
                               ),
                             ),
                             Text(
@@ -664,7 +682,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                       Icons.add_photo_alternate_outlined,
                                       color: _duzenlenenId != null
                                           ? DiziRenkler.metin24
-                                          : DiziRenkler.sari,
+                                          : DiziRenkler.sariMetin,
                                     ),
                             ),
                             // Dizi/film kartı paylaş (düzenleme modunda kapalı)
@@ -677,7 +695,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                 Icons.local_movies_outlined,
                                 color: _duzenlenenId != null
                                     ? DiziRenkler.metin24
-                                    : DiziRenkler.sari,
+                                    : DiziRenkler.sariMetin,
                               ),
                             ),
                             Expanded(
@@ -713,7 +731,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                   Icons.mic_none,
                                   color: _duzenlenenId != null
                                       ? DiziRenkler.metin24
-                                      : DiziRenkler.sari,
+                                      : DiziRenkler.sariMetin,
                                 ),
                               ),
                             const SizedBox(width: 2),
@@ -851,7 +869,7 @@ class _DurumSatiri extends StatelessWidget {
       style: TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w500,
-        color: cevrimici ? DiziRenkler.sari : DiziRenkler.metin54,
+        color: cevrimici ? DiziRenkler.sariMetin : DiziRenkler.metin54,
       ),
     );
   }
@@ -897,6 +915,7 @@ class _MesajBaloncugu extends StatelessWidget {
   final VoidCallback? duzenle;
 
   const _MesajBaloncugu({
+    super.key,
     required this.mesaj,
     required this.benim,
     required this.icerikler,
@@ -916,7 +935,7 @@ class _MesajBaloncugu extends StatelessWidget {
           children: [
             if (yanitla != null)
               ListTile(
-                leading: const Icon(Icons.reply, color: DiziRenkler.sari),
+                leading: Icon(Icons.reply, color: DiziRenkler.sariMetin),
                 title: Text('Yanıtla'.c),
                 onTap: () {
                   Navigator.pop(sheetCtx);
@@ -925,7 +944,7 @@ class _MesajBaloncugu extends StatelessWidget {
               ),
             if (duzenle != null)
               ListTile(
-                leading: const Icon(Icons.edit, color: DiziRenkler.sari),
+                leading: Icon(Icons.edit, color: DiziRenkler.sariMetin),
                 title: Text('Düzenle'.c),
                 onTap: () {
                   Navigator.pop(sheetCtx);
@@ -1071,6 +1090,20 @@ class _MesajBaloncugu extends StatelessWidget {
                                 imageUrl: dosyaUrl(medya)!,
                                 width: 200,
                                 fit: BoxFit.cover,
+                                placeholder: (_, _) => Container(
+                                  width: 200,
+                                  height: 150,
+                                  color: Colors.black26,
+                                ),
+                                errorWidget: (_, _, _) => Container(
+                                  width: 200,
+                                  height: 150,
+                                  color: Colors.black26,
+                                  child: const Icon(
+                                    Icons.broken_image_outlined,
+                                    color: Colors.white70,
+                                  ),
+                                ),
                               ),
                       ),
                     ),

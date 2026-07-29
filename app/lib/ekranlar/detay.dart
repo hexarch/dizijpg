@@ -122,10 +122,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.visibility_outlined,
-                    color: DiziRenkler.sari,
-                  ),
+                  Icon(Icons.visibility_outlined, color: DiziRenkler.sariMetin),
                   const SizedBox(width: 8),
                   Text(
                     'İzleyenler'.c,
@@ -252,6 +249,25 @@ class _DetayEkraniState extends State<DetayEkrani> {
     }
   }
 
+  /// Bu içeriği açık profilden gizler/gösterir (iyimser, hatada geri alınır).
+  Future<void> _gizleToggle() async {
+    final eski = _benim?['gizli'] == true;
+    setState(() => _benim?['gizli'] = !eski);
+    try {
+      await Api.post('/gizle', {
+        'tmdb_id': widget.tmdbId,
+        'tur': widget.tur,
+        'gizli': !eski,
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _benim?['gizli'] = eski);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
   Future<void> _listeyeEkle() async {
     try {
       final d = await Api.get('/listelerim');
@@ -283,9 +299,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
                 ),
               for (final l in listeler)
                 ListTile(
-                  leading: const Icon(
+                  leading: Icon(
                     Icons.playlist_add,
-                    color: DiziRenkler.sari,
+                    color: DiziRenkler.sariMetin,
                   ),
                   title: Text(l['ad'] as String),
                   subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
@@ -497,6 +513,109 @@ class _DetayEkraniState extends State<DetayEkrani> {
                       ],
                     ],
                   ),
+                  // Sosyal kanıt: takip ettiklerin arasında kim izlemiş
+                  if ((_izleyenler?['takip_sayi'] as num? ?? 0) > 0) ...[
+                    const SizedBox(height: 12),
+                    InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: _izleyenlerAc,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            // Takip edilen izleyenlerin üst üste binen avatarları
+                            Builder(
+                              builder: (context) {
+                                final takipliler =
+                                    (_izleyenler?['kullanicilar']
+                                                as List<dynamic>? ??
+                                            [])
+                                        .where(
+                                          (k) => k['takip_ediyorum'] == true,
+                                        )
+                                        .take(4)
+                                        .toList();
+                                if (takipliler.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return SizedBox(
+                                  width: 24.0 + (takipliler.length - 1) * 16,
+                                  height: 28,
+                                  child: Stack(
+                                    children: [
+                                      for (
+                                        var i = 0;
+                                        i < takipliler.length;
+                                        i++
+                                      )
+                                        Positioned(
+                                          left: i * 16.0,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: DiziRenkler.siyah,
+                                                width: 2,
+                                              ),
+                                            ),
+                                            child: CircleAvatar(
+                                              radius: 12,
+                                              backgroundColor:
+                                                  DiziRenkler.koyuGri,
+                                              backgroundImage:
+                                                  dosyaUrl(
+                                                        takipliler[i]['avatar']
+                                                            as String?,
+                                                      ) !=
+                                                      null
+                                                  ? NetworkImage(
+                                                      dosyaUrl(
+                                                        takipliler[i]['avatar']
+                                                            as String?,
+                                                      )!,
+                                                    )
+                                                  : null,
+                                              child:
+                                                  takipliler[i]['avatar'] ==
+                                                      null
+                                                  ? Icon(
+                                                      Icons.person,
+                                                      size: 13,
+                                                      color:
+                                                          DiziRenkler.metin38,
+                                                    )
+                                                  : null,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Takip ettiğin {} kişi izledi'.cf([
+                                  (_izleyenler?['takip_sayi'] as num).toInt(),
+                                ]),
+                                style: TextStyle(
+                                  color: DiziRenkler.metin70,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 18,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 14),
                   // Durum çipleri: dar ekranda sağa taşmak yerine alt satıra sarar
                   Wrap(
@@ -523,6 +642,28 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           selected: benimDurum == kod,
                           onSelected: (s) => _durumSec(s ? kod : null),
                         ),
+                      // Profilimde gizle: içerik açık profilde ve izleyenler
+                      // listesinde görünmez (durum/izleme varsa anlamlı)
+                      if (benimDurum != null || izlenenSet.isNotEmpty)
+                        FilterChip(
+                          avatar: Icon(
+                            Icons.visibility_off_outlined,
+                            size: 16,
+                            color: _benim?['gizli'] == true
+                                ? Colors.black
+                                : DiziRenkler.metin70,
+                          ),
+                          label: Text(
+                            'Profilimde gizle'.c,
+                            style: TextStyle(
+                              color: _benim?['gizli'] == true
+                                  ? Colors.black
+                                  : DiziRenkler.metin,
+                            ),
+                          ),
+                          selected: _benim?['gizli'] == true,
+                          onSelected: (_) => _gizleToggle(),
+                        ),
                       // Sil: tüm izleme izini kaldırır (uyarılı)
                       if (benimDurum != null || izlenenSet.isNotEmpty)
                         ActionChip(
@@ -545,10 +686,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                     Row(
                       children: [
                         ActionChip(
-                          avatar: const Icon(
+                          avatar: Icon(
                             Icons.replay,
                             size: 16,
-                            color: DiziRenkler.sari,
+                            color: DiziRenkler.sariMetin,
                           ),
                           label: Text('Yeniden izledim'.c),
                           onPressed: () => _rewatch(1),
@@ -585,18 +726,18 @@ class _DetayEkraniState extends State<DetayEkrani> {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.schedule,
                           size: 16,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 6),
                         Text(
                           kalanGun == 0
                               ? 'Gelecek bölüm bugün'.c
                               : 'Gelecek bölüm {} gün sonra'.cf([kalanGun]),
-                          style: const TextStyle(
-                            color: DiziRenkler.sari,
+                          style: TextStyle(
+                            color: DiziRenkler.sariMetin,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -623,7 +764,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                             style: filmIzlendi
                                 ? FilledButton.styleFrom(
                                     backgroundColor: DiziRenkler.kart,
-                                    foregroundColor: DiziRenkler.sari,
+                                    foregroundColor: DiziRenkler.sariMetin,
                                   )
                                 : null,
                             icon: Icon(
@@ -660,8 +801,8 @@ class _DetayEkraniState extends State<DetayEkrani> {
                             if (benimPuan != null)
                               Text(
                                 ' ${(benimPuan / 2).round()}',
-                                style: const TextStyle(
-                                  color: DiziRenkler.sari,
+                                style: TextStyle(
+                                  color: DiziRenkler.sariMetin,
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
@@ -826,9 +967,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                   ),
                                   child: Text(
                                     '@${inc['kullanici_adi']}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: DiziRenkler.sari,
+                                      color: DiziRenkler.sariMetin,
                                     ),
                                   ),
                                 ),
@@ -994,7 +1135,7 @@ class _SezonSatiriState extends State<_SezonSatiri> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (tamam)
-                  const Icon(Icons.check_circle, color: DiziRenkler.sari),
+                  Icon(Icons.check_circle, color: DiziRenkler.sariMetin),
                 Icon(
                   _acik ? Icons.expand_less : Icons.expand_more,
                   color: DiziRenkler.metin38,
@@ -1035,12 +1176,12 @@ class _SezonSatiriState extends State<_SezonSatiri> {
                   icon: Icon(
                     tamam ? Icons.remove_done : Icons.done_all,
                     size: 18,
-                    color: DiziRenkler.sari,
+                    color: DiziRenkler.sariMetin,
                   ),
                   label: Text(
                     tamam ? 'Tümünü Kaldır'.c : 'Tümünü İzledim'.c,
-                    style: const TextStyle(
-                      color: DiziRenkler.sari,
+                    style: TextStyle(
+                      color: DiziRenkler.sariMetin,
                       fontSize: 13,
                     ),
                   ),
@@ -1143,7 +1284,7 @@ class _BolumSatiri extends StatelessWidget {
               onPressed: izlendiToggle,
               icon: Icon(
                 izlendi ? Icons.check_circle : Icons.radio_button_unchecked,
-                color: izlendi ? DiziRenkler.sari : DiziRenkler.metin24,
+                color: izlendi ? DiziRenkler.sariMetin : DiziRenkler.metin24,
                 size: 26,
               ),
             ),

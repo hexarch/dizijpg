@@ -381,4 +381,26 @@ const Map<String, String> cevirilerMr = {
   'Yeniden izledim': 'पुन्हा पाहिले',
   '{}. kez izlendi': '{} वेळा पाहिले',
   'Gönderi bulunamadı': 'पोस्ट सापडली नाही',
+  'Gözat': 'ब्राउझ करा',
+  'Diziler': 'मालिका',
+  'Filmler': 'चित्रपट',
+  'Tümü': 'सर्व',
+  'Farklı bir tür seç.': 'दुसरा प्रकार वापरून पहा.',
+  'Gizlilik': 'गोपनीयता',
+  'İzlediklerimi gizle': 'मी पाहिलेले लपवा',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'तू पाहिलेल्या मालिका आणि चित्रपट तुझ्या प्रोफाइलवर दिसणार नाहीत',
+  'Yorumlarımı gizle': 'माझ्या कमेंट लपवा',
+  'Profilinde yorumların görünmez':
+      'तुझ्या कमेंट तुझ्या प्रोफाइलवर दिसणार नाहीत',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'एखादी मालिका किंवा चित्रपट त्याच्या पेजवरील "माझ्या प्रोफाइलवर लपवा" चिपने लपवता येतो.',
+  'Geri Bildirim': 'फीडबॅक',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'अ‍ॅपबद्दल तुझे मत आणि सूचना लिही...',
+  'Teşekkürler! Geri bildirimin alındı.': 'धन्यवाद! तुझा फीडबॅक मिळाला.',
+  'Profilimde gizle': 'माझ्या प्रोफाइलवर लपवा',
+  'Yorumları': 'यावरील कमेंट्स',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'हा वापरकर्ता आपल्या कमेंट खाजगी ठेवणे पसंत करतो.',
 };

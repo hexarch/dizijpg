@@ -61,7 +61,7 @@ class EtkilesimSatiri extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(ikon, size: 17, color: DiziRenkler.sari),
+            Icon(ikon, size: 17, color: DiziRenkler.sariMetin),
             const SizedBox(width: 7),
             Flexible(
               child: Column(
@@ -219,7 +219,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         if (grup.$3.isNotEmpty) ...[
           Row(
             children: [
-              Icon(grup.$1, size: 19, color: DiziRenkler.sari),
+              Icon(grup.$1, size: 19, color: DiziRenkler.sariMetin),
               const SizedBox(width: 6),
               Text(
                 grup.$2.cf([grup.$5 ?? grup.$3.length]),
@@ -233,7 +233,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                 onPressed: () => context.push('/izlediklerim?tur=${grup.$4}'),
                 child: Text(
                   'Tümünü gör'.c,
-                  style: const TextStyle(color: DiziRenkler.sari, fontSize: 12),
+                  style: TextStyle(color: DiziRenkler.sariMetin, fontSize: 12),
                 ),
               ),
             ],
@@ -263,7 +263,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   List<Widget> _ozetBolumu() => [
     Card(
       child: ListTile(
-        leading: const Icon(Icons.auto_awesome, color: DiziRenkler.sari),
+        leading: Icon(Icons.auto_awesome, color: DiziRenkler.sariMetin),
         title: Text(
           '{} özetin'.cf([DateTime.now().year]),
           style: const TextStyle(fontWeight: FontWeight.w700),
@@ -283,10 +283,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     if (_rozetler.isNotEmpty) ...[
       Row(
         children: [
-          const Icon(
+          Icon(
             Icons.military_tech_outlined,
             size: 20,
-            color: DiziRenkler.sari,
+            color: DiziRenkler.sariMetin,
           ),
           const SizedBox(width: 6),
           Text(
@@ -311,7 +311,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   List<Widget> _listelerBolumu() => [
     Row(
       children: [
-        const Icon(Icons.playlist_play, size: 20, color: DiziRenkler.sari),
+        Icon(Icons.playlist_play, size: 20, color: DiziRenkler.sariMetin),
         const SizedBox(width: 6),
         Text(
           'Listelerim'.c,
@@ -321,7 +321,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         IconButton(
           onPressed: _yeniListe,
           tooltip: 'Yeni Liste'.c,
-          icon: const Icon(Icons.add, color: DiziRenkler.sari),
+          icon: Icon(Icons.add, color: DiziRenkler.sariMetin),
         ),
       ],
     ),
@@ -340,7 +340,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
             listeId: (l['id'] as num).toInt(),
             ad: l['ad'] as String,
           ),
-          leading: const Icon(Icons.list, color: DiziRenkler.sari),
+          leading: Icon(Icons.list, color: DiziRenkler.sariMetin),
           title: Text(l['ad'] as String),
           subtitle: Text('{} içerik'.cf([l['oge_sayisi']])),
           trailing: IconButton(
@@ -679,10 +679,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 padding: const EdgeInsets.only(top: 3),
                                 child: Row(
                                   children: [
-                                    const Icon(
+                                    Icon(
                                       Icons.location_on,
                                       size: 14,
-                                      color: DiziRenkler.sari,
+                                      color: DiziRenkler.sariMetin,
                                     ),
                                     const SizedBox(width: 3),
                                     Text(
@@ -810,9 +810,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.schedule,
-                          color: DiziRenkler.sari,
+                          color: DiziRenkler.sariMetin,
                           size: 22,
                         ),
                         const SizedBox(width: 12),
@@ -826,10 +826,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         const Spacer(),
                         Text(
                           sureBicimle(dakika),
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
-                            color: DiziRenkler.sari,
+                            color: DiziRenkler.sariMetin,
                           ),
                         ),
                       ],
@@ -863,7 +863,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           Icon(
                             durumAdlari[e.key]?.$1 ?? Icons.tv,
                             size: 19,
-                            color: DiziRenkler.sari,
+                            color: DiziRenkler.sariMetin,
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -994,7 +994,7 @@ class _TakipSayac extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
         child: RichText(
           // RichText tema rengini devralmaz; renk açıkça verilmeli
           text: TextSpan(
@@ -1051,10 +1051,10 @@ class _StatKarti extends StatelessWidget {
                 deger,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
-                  color: DiziRenkler.sari,
+                  color: DiziRenkler.sariMetin,
                 ),
               ),
               const SizedBox(height: 2),
@@ -1141,8 +1141,11 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     colors: [
-                      DiziRenkler.siyah.withValues(alpha: 0.85),
-                      DiziRenkler.siyah.withValues(alpha: 0.55),
+                      // Sabit siyah (tema-bağımsız): üstteki beyaz metin açık
+                      // temada da okunsun — DiziRenkler.siyah açık temada beyaza
+                      // döner ve beyaz-üstü-beyaz olurdu.
+                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: 0.55),
                     ],
                   ),
                 ),
@@ -1337,7 +1340,7 @@ class _YorumlarSheetState extends State<_YorumlarSheet> {
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
-                const Icon(Icons.chat_bubble_outline, color: DiziRenkler.sari),
+                Icon(Icons.chat_bubble_outline, color: DiziRenkler.sariMetin),
                 const SizedBox(width: 8),
                 Text(
                   'Yorumlar'.c,

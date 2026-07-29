@@ -386,4 +386,26 @@ const Map<String, String> cevirilerFr = {
   'Yeniden izledim': 'Revu',
   '{}. kez izlendi': 'Vu {} fois',
   'Gönderi bulunamadı': 'Publication introuvable',
+  'Gözat': 'Parcourir',
+  'Diziler': 'Séries',
+  'Filmler': 'Films',
+  'Tümü': 'Tout',
+  'Farklı bir tür seç.': 'Essaie un autre genre.',
+  'Gizlilik': 'Confidentialité',
+  'İzlediklerimi gizle': 'Masquer ce que je regarde',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Les séries et films que tu as vus n\'apparaîtront pas sur ton profil',
+  'Yorumlarımı gizle': 'Masquer mes commentaires',
+  'Profilinde yorumların görünmez':
+      'Tes commentaires n\'apparaîtront pas sur ton profil',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Tu peux masquer une série ou un film précis avec la puce « Masquer sur mon profil » sur sa page.',
+  'Geri Bildirim': 'Ton avis',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Écris ton avis et tes suggestions sur l\'appli...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Merci ! Ton avis a bien été reçu.',
+  'Profilimde gizle': 'Masquer sur mon profil',
+  'Yorumları': 'Commentaires',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Cet utilisateur préfère garder ses commentaires privés.',
 };

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -63,7 +64,9 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
   String _hedef(Map<String, dynamic> b) {
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
-    if (yorumId != null) return '/gonderi/$yorumId';
+    // yorum silinmişse (JOIN'de yorum_tur null) gönderi 404 verir → profile git
+    final silinmis = b['yorum_tur'] == null;
+    if (yorumId != null && !silinmis) return '/gonderi/$yorumId';
     return '/kullanici/${b['aktor']}';
   }
 
@@ -131,7 +134,7 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                     CircleAvatar(
                       backgroundColor: DiziRenkler.koyuGri,
                       backgroundImage: avatar != null
-                          ? NetworkImage(avatar)
+                          ? CachedNetworkImageProvider(avatar)
                           : null,
                       child: avatar == null
                           ? Icon(Icons.person, color: DiziRenkler.metin38)

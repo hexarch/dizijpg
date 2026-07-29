@@ -381,4 +381,27 @@ const Map<String, String> cevirilerNb = {
   'Yeniden izledim': 'Sett igjen',
   '{}. kez izlendi': 'Sett {} ganger',
   'Gönderi bulunamadı': 'Innlegget ble ikke funnet',
+  'Gözat': 'Bla',
+  'Diziler': 'Serier',
+  'Filmler': 'Filmer',
+  'Tümü': 'Alle',
+  'Farklı bir tür seç.': 'Prøv en annen sjanger.',
+  'Gizlilik': 'Personvern',
+  'İzlediklerimi gizle': 'Skjul det jeg har sett',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Serier og filmer du har sett, vises ikke på profilen din',
+  'Yorumlarımı gizle': 'Skjul kommentarene mine',
+  'Profilinde yorumların görünmez':
+      'Kommentarene dine vises ikke på profilen din',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Du kan skjule en enkelt serie eller film med brikken «Skjul på profilen min» på siden dens.',
+  'Geri Bildirim': 'Tilbakemelding',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Skriv din mening og dine forslag om appen...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Takk! Tilbakemeldingen din er mottatt.',
+  'Profilimde gizle': 'Skjul på profilen min',
+  'Yorumları': 'Kommentarer',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Denne brukeren foretrekker å holde kommentarene sine private.',
 };

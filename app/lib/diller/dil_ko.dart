@@ -374,4 +374,23 @@ const Map<String, String> cevirilerKo = {
   'Yeniden izledim': '다시 봤어요',
   '{}. kez izlendi': '{}번 시청',
   'Gönderi bulunamadı': '게시물을 찾을 수 없음',
+  'Gözat': '둘러보기',
+  'Diziler': '시리즈',
+  'Filmler': '영화',
+  'Tümü': '전체',
+  'Farklı bir tür seç.': '다른 장르를 시도해 보세요.',
+  'Gizlilik': '프라이버시',
+  'İzlediklerimi gizle': '시청 기록 숨기기',
+  'Profilinde izlediğin dizi ve filmler görünmez': '시청한 시리즈와 영화가 프로필에 표시되지 않아요',
+  'Yorumlarımı gizle': '내 댓글 숨기기',
+  'Profilinde yorumların görünmez': '내 댓글이 프로필에 표시되지 않아요',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      '특정 시리즈나 영화는 해당 페이지의 "내 프로필에서 숨기기" 칩으로 숨길 수 있어요.',
+  'Geri Bildirim': '피드백',
+  'Uygulama hakkında görüş ve önerini yaz...': '앱에 대한 의견과 제안을 적어 주세요...',
+  'Teşekkürler! Geri bildirimin alındı.': '고마워요! 피드백이 접수됐어요.',
+  'Profilimde gizle': '내 프로필에서 숨기기',
+  'Yorumları': '남긴 댓글',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      '이 사용자는 댓글을 비공개로 유지하고 있어요.',
 };

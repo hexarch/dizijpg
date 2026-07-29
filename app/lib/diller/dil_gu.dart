@@ -380,4 +380,25 @@ const Map<String, String> cevirilerGu = {
   'Yeniden izledim': 'ફરી જોયું',
   '{}. kez izlendi': '{} વાર જોયું',
   'Gönderi bulunamadı': 'પોસ્ટ મળી નથી',
+  'Gözat': 'બ્રાઉઝ કરો',
+  'Diziler': 'શ્રેણીઓ',
+  'Filmler': 'ફિલ્મો',
+  'Tümü': 'બધું',
+  'Farklı bir tür seç.': 'બીજી શૈલી અજમાવો.',
+  'Gizlilik': 'ગોપનીયતા',
+  'İzlediklerimi gizle': 'મેં જોયેલું છુપાવો',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'તેં જોયેલી સિરીઝ અને ફિલ્મો તારી પ્રોફાઇલ પર દેખાશે નહીં',
+  'Yorumlarımı gizle': 'મારી કૉમેન્ટ છુપાવો',
+  'Profilinde yorumların görünmez': 'તારી કૉમેન્ટ તારી પ્રોફાઇલ પર દેખાશે નહીં',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'કોઈ એક સિરીઝ કે ફિલ્મ તેના પેજ પરની "મારી પ્રોફાઇલમાં છુપાવો" ચિપથી છુપાવી શકાય છે.',
+  'Geri Bildirim': 'ફીડબૅક',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ઍપ વિશે તારો અભિપ્રાય અને સૂચનો લખ...',
+  'Teşekkürler! Geri bildirimin alındı.': 'આભાર! તારો ફીડબૅક મળી ગયો.',
+  'Profilimde gizle': 'મારી પ્રોફાઇલમાં છુપાવો',
+  'Yorumları': 'આના પર કૉમેન્ટ્સ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'આ યુઝર પોતાની કૉમેન્ટ ખાનગી રાખવાનું પસંદ કરે છે.',
 };

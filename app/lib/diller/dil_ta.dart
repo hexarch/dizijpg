@@ -383,4 +383,25 @@ const Map<String, String> cevirilerTa = {
   'Yeniden izledim': 'மீண்டும் பார்த்தது',
   '{}. kez izlendi': '{} முறை பார்த்தது',
   'Gönderi bulunamadı': 'இடுகை கிடைக்கவில்லை',
+  'Gözat': 'உலாவு',
+  'Diziler': 'தொடர்கள்',
+  'Filmler': 'படங்கள்',
+  'Tümü': 'அனைத்தும்',
+  'Farklı bir tür seç.': 'வேறு வகையை முயற்சி செய்.',
+  'Gizlilik': 'தனியுரிமை',
+  'İzlediklerimi gizle': 'நான் பார்த்தவற்றை மறை',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'நீ பார்த்த தொடர்களும் படங்களும் உன் சுயவிவரத்தில் தெரியாது',
+  'Yorumlarımı gizle': 'என் கருத்துகளை மறை',
+  'Profilinde yorumların görünmez': 'உன் கருத்துகள் உன் சுயவிவரத்தில் தெரியாது',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ஒரு குறிப்பிட்ட தொடரையோ படத்தையோ அதன் பக்கத்தில் உள்ள "என் சுயவிவரத்தில் மறை" சிப் மூலம் மறைக்கலாம்.',
+  'Geri Bildirim': 'பின்னூட்டம்',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'செயலி பற்றிய உன் கருத்தையும் பரிந்துரைகளையும் எழுது...',
+  'Teşekkürler! Geri bildirimin alındı.': 'நன்றி! உன் பின்னூட்டம் கிடைத்தது.',
+  'Profilimde gizle': 'என் சுயவிவரத்தில் மறை',
+  'Yorumları': 'கருத்துகள்',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'இந்தப் பயனர் தன் கருத்துகளை மறைத்து வைக்க விரும்புகிறார்.',
 };

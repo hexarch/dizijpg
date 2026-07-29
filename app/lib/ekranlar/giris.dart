@@ -83,20 +83,20 @@ class _GirisEkraniState extends State<GirisEkrani> {
                   controller: email,
                   enabled: !kodIstendi,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(hintText: 'E-posta'.c),
+                  decoration: InputDecoration(labelText: 'E-posta'.c),
                 ),
                 if (kodIstendi) ...[
                   const SizedBox(height: 10),
                   TextField(
                     controller: kod,
                     keyboardType: TextInputType.number,
-                    decoration: InputDecoration(hintText: 'E-postadaki kod'.c),
+                    decoration: InputDecoration(labelText: 'E-postadaki kod'.c),
                   ),
                   const SizedBox(height: 10),
                   TextField(
                     controller: yeni,
                     obscureText: true,
-                    decoration: InputDecoration(hintText: 'Yeni şifre'.c),
+                    decoration: InputDecoration(labelText: 'Yeni şifre'.c),
                   ),
                 ],
                 const SizedBox(height: 16),
@@ -216,7 +216,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    hintText: _kayitModu
+                    labelText: _kayitModu
                         ? 'E-posta'.c
                         : 'E-posta veya kullanıcı adı'.c,
                   ),
@@ -226,7 +226,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                   TextField(
                     controller: _kullaniciAdi,
                     decoration: InputDecoration(
-                      hintText: 'Kullanıcı adı (küçük harf)'.c,
+                      labelText: 'Kullanıcı adı (küçük harf)'.c,
                     ),
                   ),
                 ],
@@ -234,7 +234,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                 TextField(
                   controller: _sifre,
                   obscureText: true,
-                  decoration: InputDecoration(hintText: 'Şifre'.c),
+                  decoration: InputDecoration(labelText: 'Şifre'.c),
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
@@ -268,7 +268,7 @@ class _GirisEkraniState extends State<GirisEkrani> {
                     _kayitModu
                         ? 'Zaten hesabın var mı? Giriş yap'.c
                         : 'Hesabın yok mu? Kayıt ol'.c,
-                    style: const TextStyle(color: DiziRenkler.sari),
+                    style: TextStyle(color: DiziRenkler.sariMetin),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -301,10 +301,10 @@ class _GirisEkraniState extends State<GirisEkrani> {
             TextSpan(text: parcalar.first),
             TextSpan(
               text: 'Gizlilik Politikası'.c,
-              style: const TextStyle(
-                color: DiziRenkler.sari,
+              style: TextStyle(
+                color: DiziRenkler.sariMetin,
                 decoration: TextDecoration.underline,
-                decorationColor: DiziRenkler.sari,
+                decorationColor: DiziRenkler.sariMetin,
               ),
             ),
             if (parcalar.length > 1) TextSpan(text: parcalar.last),

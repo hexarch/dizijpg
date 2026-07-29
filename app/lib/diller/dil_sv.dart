@@ -383,4 +383,25 @@ const Map<String, String> cevirilerSv = {
   'Yeniden izledim': 'Sedd igen',
   '{}. kez izlendi': 'Sedd {} gånger',
   'Gönderi bulunamadı': 'Inlägget hittades inte',
+  'Gözat': 'Bläddra',
+  'Diziler': 'Serier',
+  'Filmler': 'Filmer',
+  'Tümü': 'Alla',
+  'Farklı bir tür seç.': 'Prova en annan genre.',
+  'Gizlilik': 'Integritet',
+  'İzlediklerimi gizle': 'Dölj vad jag har sett',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Serier och filmer du har sett visas inte på din profil',
+  'Yorumlarımı gizle': 'Dölj mina kommentarer',
+  'Profilinde yorumların görünmez': 'Dina kommentarer visas inte på din profil',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Du kan dölja en enskild serie eller film med chippet "Dölj på min profil" på dess sida.',
+  'Geri Bildirim': 'Feedback',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Skriv dina åsikter och förslag om appen...',
+  'Teşekkürler! Geri bildirimin alındı.': 'Tack! Din feedback har tagits emot.',
+  'Profilimde gizle': 'Dölj på min profil',
+  'Yorumları': 'Kommentarer',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Den här användaren föredrar att hålla sina kommentarer privata.',
 };

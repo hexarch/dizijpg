@@ -381,4 +381,25 @@ const Map<String, String> cevirilerTe = {
   'Yeniden izledim': 'మళ్లీ చూశారు',
   '{}. kez izlendi': '{} సార్లు చూశారు',
   'Gönderi bulunamadı': 'పోస్ట్ కనబడలేదు',
+  'Gözat': 'బ్రౌజ్',
+  'Diziler': 'సిరీస్‌లు',
+  'Filmler': 'సినిమాలు',
+  'Tümü': 'అన్నీ',
+  'Farklı bir tür seç.': 'వేరే శైలిని ప్రయత్నించండి.',
+  'Gizlilik': 'గోప్యత',
+  'İzlediklerimi gizle': 'నేను చూసినవి దాచు',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'నువ్వు చూసిన సిరీస్‌లు, సినిమాలు నీ ప్రొఫైల్‌లో కనిపించవు',
+  'Yorumlarımı gizle': 'నా కామెంట్లు దాచు',
+  'Profilinde yorumların görünmez': 'నీ కామెంట్లు నీ ప్రొఫైల్‌లో కనిపించవు',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ఒక నిర్దిష్ట సిరీస్ లేదా సినిమాను దాని పేజీలోని "నా ప్రొఫైల్‌లో దాచు" చిప్‌తో దాచవచ్చు.',
+  'Geri Bildirim': 'ఫీడ్‌బ్యాక్',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'యాప్ గురించి నీ అభిప్రాయం, సూచనలు రాయి...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ధన్యవాదాలు! నీ ఫీడ్‌బ్యాక్ అందింది.',
+  'Profilimde gizle': 'నా ప్రొఫైల్‌లో దాచు',
+  'Yorumları': 'కామెంట్లు',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ఈ వినియోగదారు తన కామెంట్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
 };

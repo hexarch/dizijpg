@@ -380,4 +380,26 @@ const Map<String, String> cevirilerPa = {
   'Yeniden izledim': 'ਦੁਬਾਰਾ ਦੇਖਿਆ',
   '{}. kez izlendi': '{} ਵਾਰ ਦੇਖਿਆ',
   'Gönderi bulunamadı': 'ਪੋਸਟ ਨਹੀਂ ਮਿਲੀ',
+  'Gözat': 'ਬ੍ਰਾਊਜ਼ ਕਰੋ',
+  'Diziler': 'ਸੀਰੀਜ਼',
+  'Filmler': 'ਫ਼ਿਲਮਾਂ',
+  'Tümü': 'ਸਭ',
+  'Farklı bir tür seç.': 'ਹੋਰ ਸ਼ੈਲੀ ਅਜ਼ਮਾਓ।',
+  'Gizlilik': 'ਪਰਦੇਦਾਰੀ',
+  'İzlediklerimi gizle': 'ਮੇਰਾ ਦੇਖਿਆ ਲੁਕਾਓ',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'ਤੇਰੀਆਂ ਦੇਖੀਆਂ ਸੀਰੀਜ਼ ਅਤੇ ਫ਼ਿਲਮਾਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ \'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ',
+  'Yorumlarımı gizle': 'ਮੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾਓ',
+  'Profilinde yorumların görünmez':
+      'ਤੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ \'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'ਕਿਸੇ ਇੱਕ ਸੀਰੀਜ਼ ਜਾਂ ਫ਼ਿਲਮ ਨੂੰ ਉਸਦੇ ਪੇਜ \'ਤੇ "ਮੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ਲੁਕਾਓ" ਚਿੱਪ ਨਾਲ ਲੁਕਾ ਸਕਦੇ ਹੋ।',
+  'Geri Bildirim': 'ਫੀਡਬੈਕ',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ਐਪ ਬਾਰੇ ਆਪਣੀ ਰਾਏ ਅਤੇ ਸੁਝਾਅ ਲਿਖੋ...',
+  'Teşekkürler! Geri bildirimin alındı.': 'ਧੰਨਵਾਦ! ਤੇਰਾ ਫੀਡਬੈਕ ਮਿਲ ਗਿਆ।',
+  'Profilimde gizle': 'ਮੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ਲੁਕਾਓ',
+  'Yorumları': 'ਇਸ ਬਾਰੇ ਕਮੈਂਟ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾ ਕੇ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
 };

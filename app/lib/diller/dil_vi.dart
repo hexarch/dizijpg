@@ -381,4 +381,27 @@ const Map<String, String> cevirilerVi = {
   'Yeniden izledim': 'Đã xem lại',
   '{}. kez izlendi': 'Đã xem {} lần',
   'Gönderi bulunamadı': 'Không tìm thấy bài đăng',
+  'Gözat': 'Duyệt',
+  'Diziler': 'Phim bộ',
+  'Filmler': 'Phim lẻ',
+  'Tümü': 'Tất cả',
+  'Farklı bir tür seç.': 'Thử thể loại khác.',
+  'Gizlilik': 'Quyền riêng tư',
+  'İzlediklerimi gizle': 'Ẩn những gì tôi đã xem',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'Các series và phim bạn đã xem sẽ không hiển thị trên hồ sơ của bạn',
+  'Yorumlarımı gizle': 'Ẩn bình luận của tôi',
+  'Profilinde yorumların görünmez':
+      'Bình luận của bạn sẽ không hiển thị trên hồ sơ của bạn',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'Bạn có thể ẩn một series hoặc phim cụ thể bằng nút "Ẩn trên hồ sơ của tôi" ở trang nội dung.',
+  'Geri Bildirim': 'Phản hồi',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'Viết ý kiến và góp ý của bạn về ứng dụng...',
+  'Teşekkürler! Geri bildirimin alındı.':
+      'Cảm ơn! Đã nhận được phản hồi của bạn.',
+  'Profilimde gizle': 'Ẩn trên hồ sơ của tôi',
+  'Yorumları': 'Bình luận của họ',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'Người dùng này muốn giữ kín bình luận của mình.',
 };

@@ -381,4 +381,26 @@ const Map<String, String> cevirilerUr = {
   'Yeniden izledim': 'دوبارہ دیکھا',
   '{}. kez izlendi': '{} بار دیکھا',
   'Gönderi bulunamadı': 'پوسٹ نہیں ملی',
+  'Gözat': 'براؤز کریں',
+  'Diziler': 'سیریز',
+  'Filmler': 'فلمیں',
+  'Tümü': 'سب',
+  'Farklı bir tür seç.': 'کوئی اور صنف آزمائیں۔',
+  'Gizlilik': 'رازداری',
+  'İzlediklerimi gizle': 'میری دیکھی ہوئی چیزیں چھپائیں',
+  'Profilinde izlediğin dizi ve filmler görünmez':
+      'تمہاری دیکھی ہوئی سیریز اور فلمیں تمہارے پروفائل پر نظر نہیں آئیں گی',
+  'Yorumlarımı gizle': 'میرے تبصرے چھپائیں',
+  'Profilinde yorumların görünmez':
+      'تمہارے تبصرے تمہارے پروفائل پر نظر نہیں آئیں گے',
+  'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
+      'کسی ایک سیریز یا فلم کو اس کے صفحے پر «میرے پروفائل میں چھپائیں» چپ سے چھپا سکتے ہو۔',
+  'Geri Bildirim': 'رائے',
+  'Uygulama hakkında görüş ve önerini yaz...':
+      'ایپ کے بارے میں اپنی رائے اور تجاویز لکھو...',
+  'Teşekkürler! Geri bildirimin alındı.': 'شکریہ! تمہاری رائے موصول ہو گئی۔',
+  'Profilimde gizle': 'میرے پروفائل میں چھپائیں',
+  'Yorumları': 'اس پر تبصرے',
+  'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
+      'یہ صارف اپنے تبصرے چھپا کر رکھنا پسند کرتا ہے۔',
 };
