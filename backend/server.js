@@ -2224,7 +2224,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const { rows } = await havuz.query(
     `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
-            m.okundu, m.duzenlendi, m.yanit_id, m.tarih,
+            m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
      FROM mesajlar m
@@ -2249,7 +2249,8 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     }
   }));
   havuz.query(
-    'UPDATE mesajlar SET okundu=true WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu',
+    `UPDATE mesajlar SET okundu=true, iletildi=true
+     WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu`,
     [req.kullanici.id, partnerId]).catch(() => {});
   // Sohbeti okumak zildeki 'mesaj' bildirimini de düşürür; yoksa
   // kullanıcı DM'i okuduğu halde rozette 1 görmeye devam ediyordu.
@@ -2265,6 +2266,20 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
       Date.now() - (yaziyorlar.get(`${partnerId}:${req.kullanici.id}`) || 0) <
       6000,
   });
+}));
+
+// Push alıcı cihaza ulaştı: gönderenin mesajları "iletildi" olur (çift tik).
+// İstemci, 'mesaj' türü veri-push'u işlerken çağırır.
+app.post('/mesajlar/iletildi', girisZorunlu, sarici(async (req, res) => {
+  const ad = String(req.body?.kullanici_adi || '');
+  if (!ad) return res.status(400).json({ hata: 'kullanici_adi gerekli' });
+  await havuz.query(
+    `UPDATE mesajlar SET iletildi=true
+     WHERE alici_id=$1 AND NOT iletildi
+       AND gonderen_id=(SELECT id FROM kullanicilar WHERE kullanici_adi=$2)`,
+    [req.kullanici.id, ad],
+  );
+  res.json({ tamam: true });
 }));
 
 app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
