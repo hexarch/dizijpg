@@ -37,6 +37,11 @@ class MedyaGaleri extends StatelessWidget {
   Widget build(BuildContext context) {
     if (yollar.isEmpty) return const SizedBox.shrink();
     final urller = [for (final m in yollar) dosyaUrl(m)!];
+    // Akış: TAM GENİŞLİK kaydırmalı görüntüleyici (ilk medya önce, yana
+    // kaydırınca sonraki) — ızgara/kırpma yok, yükseklik postun kendi oranı.
+    if (otomatikOynat) {
+      return AkisMedya(urller: urller, onAc: onAc);
+    }
     Widget hucre(int i) {
       final video = _video(yollar[i]);
       return InkWell(
@@ -145,15 +150,178 @@ class MedyaGaleri extends StatelessWidget {
   }
 }
 
-/// Akışta yerinde oynayan video. Kaydırırken siyah kapakla duraklamış durur;
-/// ekran ortasına EN YAKIN görünür video sessiz oynamaya başlar, merkezden
-/// uzaklaşınca (veya başka kart merkeze gelince) durur. Statik aday kaydıyla
-/// aynı anda yalnız BİR video oynar. Ses kapalı başlar (web otomatik oynatma
-/// kuralı); sağ alttaki hoparlör rozeti oturum boyu ortak ses tercihini açar.
-/// Karta dokunuş üstteki InkWell'e düşer (akışta Reels açar).
+/// Akıştaki postun medya görüntüleyicisi: TAM GENİŞLİK, yükseklik postun
+/// ilk medyasının kendi oranından. Birden çok medya varsa yana kaydırılır
+/// (ilk medya her zaman başta), altta nokta göstergesi + sayaç görünür.
+class AkisMedya extends StatefulWidget {
+  final List<String> urller;
+  final void Function(int index)? onAc;
+  const AkisMedya({super.key, required this.urller, this.onAc});
+
+  @override
+  State<AkisMedya> createState() => _AkisMedyaState();
+}
+
+class _AkisMedyaState extends State<AkisMedya> {
+  static bool _video(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
+
+  double? _oran; // ilk medyanın oranı (bilinene dek 4:5)
+  int _sayfa = 0;
+  ImageStream? _akis;
+  ImageStreamListener? _dinleyici;
+
+  @override
+  void initState() {
+    super.initState();
+    // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
+    if (!_video(widget.urller.first)) {
+      final saglayici = CachedNetworkImageProvider(widget.urller.first);
+      _akis = saglayici.resolve(const ImageConfiguration());
+      _dinleyici = ImageStreamListener(
+        (bilgi, _) {
+          if (!mounted || _oran != null) return;
+          final o = bilgi.image.width / bilgi.image.height;
+          setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
+        },
+        onError: (_, _) {},
+      );
+      _akis!.addListener(_dinleyici!);
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_akis != null && _dinleyici != null) {
+      _akis!.removeListener(_dinleyici!);
+    }
+    super.dispose();
+  }
+
+  void _oranBildir(double o) {
+    if (!mounted || _oran != null) return;
+    setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final coklu = widget.urller.length > 1;
+    return AspectRatio(
+      aspectRatio: _oran ?? 4 / 5,
+      child: Stack(
+        children: [
+          PageView.builder(
+            itemCount: widget.urller.length,
+            // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir
+            allowImplicitScrolling: true,
+            onPageChanged: (i) => setState(() => _sayfa = i),
+            itemBuilder: (context, i) {
+              final url = widget.urller[i];
+              return GestureDetector(
+                onTap: () => widget.onAc != null
+                    ? widget.onAc!(i)
+                    : medyaGoster(context, widget.urller, baslangic: i),
+                child: _video(url)
+                    ? AkisVideo(
+                        url: url,
+                        kendiOrani: false,
+                        onOran: i == 0 ? _oranBildir : null,
+                      )
+                    : Container(
+                        color: Colors.black,
+                        child: CachedNetworkImage(
+                          imageUrl: url,
+                          // İlk medya oranı kutuyu belirlediği için o tam
+                          // oturur; diğerleri kırpılmadan sığdırılır.
+                          fit: i == 0 ? BoxFit.cover : BoxFit.contain,
+                          width: double.infinity,
+                          height: double.infinity,
+                          placeholder: (_, _) =>
+                              Container(color: DiziRenkler.kart),
+                          errorWidget: (_, _, _) => Container(
+                            color: DiziRenkler.kart,
+                            child: Icon(
+                              Icons.broken_image_outlined,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ),
+                        ),
+                      ),
+              );
+            },
+          ),
+          if (coklu) ...[
+            // Sayaç (1/3) + nokta göstergesi
+            Positioned(
+              top: 10,
+              right: 10,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 3,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_sayfa + 1}/${widget.urller.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < widget.urller.length; i++)
+                    Container(
+                      width: 6,
+                      height: 6,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: i == _sayfa ? Colors.white : Colors.white38,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Akışta yerinde oynayan video. Kart ekranda belirir belirmez (daha merkeze
+/// gelmeden) yüklenmeye başlar — eşzamanlı hazırlanan video sayısı sınırlıdır.
+/// Ekran ortasına EN YAKIN görünür video sessiz oynar, merkezden uzaklaşınca
+/// (veya başka kart merkeze gelince) durur; statik aday kaydıyla aynı anda
+/// yalnız BİR video oynar. Ses kapalı başlar (web otomatik oynatma kuralı);
+/// sağ alttaki hoparlör rozeti oturum boyu ortak ses tercihini açar.
 class AkisVideo extends StatefulWidget {
   final String url;
-  const AkisVideo({super.key, required this.url});
+
+  /// Kendi en-boy oranına göre yer kaplasın mı (AkisMedya kutuyu kendisi
+  /// belirlediği için false verir).
+  final bool kendiOrani;
+
+  /// Oran öğrenilince bildirilir (post yüksekliğini belirlemek için).
+  final ValueChanged<double>? onOran;
+
+  const AkisVideo({
+    super.key,
+    required this.url,
+    this.kendiOrani = true,
+    this.onOran,
+  });
 
   @override
   State<AkisVideo> createState() => _AkisVideoState();
@@ -165,9 +333,24 @@ class _AkisVideoState extends State<AkisVideo> {
   static _AkisVideoState? _aktif;
   static bool _sesli = false; // oturum boyu ortak ses tercihi
 
+  /// Aynı anda hazırlanan (buffer'lanan) video sayısı. Liste ilerideki
+  /// kartları önden kurar; sınır olmasa onlarca çözücü/indirme açılır ve
+  /// hem bellek şişer hem oynayan video için bant genişliği kalmazdı.
+  static int _hazirSayi = 0;
+  static const int _hazirUst = 6;
+
   VideoPlayerController? _d;
-  Future<void>? _kurulum; // ilk oynatma isteğinde tembel kurulur
+  Future<void>? _kurulum;
   bool _hata = false;
+  bool _sayildi = false; // bu kart hazır sayacına dahil edildi mi
+
+  @override
+  void initState() {
+    super.initState();
+    // ÖNDEN YÜKLEME: kart listede kurulur kurulmaz (henüz ekranda bile
+    // olmayabilir) video hazırlanmaya başlar; kaydırınca beklenmez.
+    if (_hazirSayi < _hazirUst) _kurulum ??= _kur();
+  }
 
   void _gorunurluk(VisibilityInfo info) {
     if (!mounted) return;
@@ -212,6 +395,8 @@ class _AkisVideoState extends State<AkisVideo> {
   }
 
   Future<void> _kur() async {
+    _hazirSayi++;
+    _sayildi = true;
     try {
       final d = VideoPlayerController.networkUrl(Uri.parse(widget.url));
       await d.initialize();
@@ -221,6 +406,8 @@ class _AkisVideoState extends State<AkisVideo> {
       }
       d.setLooping(true);
       setState(() => _d = d);
+      // Postun yüksekliği videonun kendi oranından belirlensin
+      if (d.value.aspectRatio > 0) widget.onOran?.call(d.value.aspectRatio);
     } catch (_) {
       if (mounted) setState(() => _hata = true);
     }
@@ -235,6 +422,7 @@ class _AkisVideoState extends State<AkisVideo> {
   void dispose() {
     _adaylar.remove(this);
     if (_aktif == this) _aktif = null;
+    if (_sayildi) _hazirSayi--; // yer aç: sıradaki kart önden kurulabilsin
     _d?.dispose();
     // Liste karttan kurtulduysa sıradaki görünür video devralsın
     _secimiUygula();
@@ -307,20 +495,18 @@ class _AkisVideoState extends State<AkisVideo> {
         ),
       );
     }
+    final kutu = VisibilityDetector(
+      key: ValueKey('akis-video-${widget.url}'),
+      onVisibilityChanged: _gorunurluk,
+      child: Container(color: Colors.black, child: govde),
+    );
+    if (!widget.kendiOrani) return kutu; // kutuyu AkisMedya belirledi
     // Kutunun oranı videonun KENDİ oranı: genişlik tam dolar, yükseklik
-    // posta göre değişir. Oran bilinene dek 16:9; aşırı dik videolar 9:16'da
-    // sınırlanır (ızgara hücresi gibi sıkı kısıtta bu oran zaten ezilir).
+    // posta göre değişir. Oran bilinene dek 16:9.
     final oran = (d != null && d.value.isInitialized && d.value.aspectRatio > 0)
         ? d.value.aspectRatio.clamp(9 / 16, 21 / 9).toDouble()
         : 16 / 9;
-    return VisibilityDetector(
-      key: ValueKey('akis-video-${widget.url}'),
-      onVisibilityChanged: _gorunurluk,
-      child: AspectRatio(
-        aspectRatio: oran,
-        child: Container(color: Colors.black87, child: govde),
-      ),
-    );
+    return AspectRatio(aspectRatio: oran, child: kutu);
   }
 }
 

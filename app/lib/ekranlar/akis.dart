@@ -253,7 +253,11 @@ class _AkisEkraniState extends State<AkisEkrani>
             constraints: const BoxConstraints(maxWidth: 720),
             child: ListView.builder(
               controller: _kaydirma,
-              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              // Yatay dolgu YOK: medya sağa-sola tam dayanır (kart kenarları
+              // ekrana yaslı; başlık/metin kendi iç dolgusunu alır).
+              padding: const EdgeInsets.only(top: 8, bottom: 24),
+              // İlerideki kartlar önden kurulur → videoları erkenden yüklenir
+              cacheExtent: 4000,
               itemCount: _akis!.length,
               itemBuilder: (context, i) {
                 final y = _akis![i] as Map<String, dynamic>;
@@ -629,182 +633,198 @@ class _AkisKartiState extends State<_AkisKarti> {
               : '/icerik/${y['tur']}/${y['tmdb_id']}');
     final tarih = (y['tarih'] as String? ?? '').split('T').first;
 
+    // Kart ekran kenarlarına dayanır (yatay kenar boşluğu yok) ki medya
+    // sağa-sola TAM otursun; köşe yuvarlaması da bu yüzden kapalı.
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: const RoundedRectangleBorder(),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.fromLTRB(0, 12, 0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Üst satır: kullanıcı + içerik
-            Row(
-              children: [
-                InkWell(
-                  onTap: () => context.push('/kullanici/${y['kullanici_adi']}'),
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: DiziRenkler.koyuGri,
-                    backgroundImage: avatar != null
-                        ? NetworkImage(avatar)
-                        : null,
-                    child: avatar == null
-                        ? Icon(
-                            Icons.person,
-                            size: 18,
-                            color: DiziRenkler.metin38,
-                          )
-                        : null,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  InkWell(
+                    onTap: () =>
+                        context.push('/kullanici/${y['kullanici_adi']}'),
+                    child: CircleAvatar(
+                      radius: 18,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      backgroundImage: avatar != null
+                          ? NetworkImage(avatar)
+                          : null,
+                      child: avatar == null
+                          ? Icon(
+                              Icons.person,
+                              size: 18,
+                              color: DiziRenkler.metin38,
+                            )
+                          : null,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      InkWell(
-                        onTap: () =>
-                            context.push('/kullanici/${y['kullanici_adi']}'),
-                        child: Text(
-                          '@${y['kullanici_adi']}',
-                          style: const TextStyle(fontWeight: FontWeight.w800),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        InkWell(
+                          onTap: () =>
+                              context.push('/kullanici/${y['kullanici_adi']}'),
+                          child: Text(
+                            '@${y['kullanici_adi']}',
+                            style: const TextStyle(fontWeight: FontWeight.w800),
+                          ),
                         ),
-                      ),
-                      InkWell(
-                        onTap: () => context.push(hedef),
-                        child: Text(
-                          '${icerik['ad']}'
-                          '${bolumlu ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: DiziRenkler.sariMetin,
-                            fontSize: 12,
+                        InkWell(
+                          onTap: () => context.push(hedef),
+                          child: Text(
+                            '${icerik['ad']}'
+                            '${bolumlu ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: DiziRenkler.sariMetin,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (poster != null)
+                    InkWell(
+                      onTap: () => context.push(hedef),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: SizedBox(
+                          width: 32,
+                          height: 46,
+                          child: CachedNetworkImage(
+                            imageUrl: poster,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                if (poster != null)
-                  InkWell(
-                    onTap: () => context.push(hedef),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(6),
-                      child: SizedBox(
-                        width: 32,
-                        height: 46,
-                        child: CachedNetworkImage(
-                          imageUrl: poster,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 10),
             // İzlemediğin içeriğin yorumu: dokunana kadar bulanık
             if (!_spoilerAcik)
-              InkWell(
-                borderRadius: BorderRadius.circular(10),
-                onTap: () => setState(() => _spoilerAcik = true),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: DiziRenkler.koyuGri,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.visibility_off_outlined,
-                        size: 18,
-                        color: DiziRenkler.metin54,
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          'Spoiler olabilir — dokun ve gör'.c,
-                          style: TextStyle(color: DiziRenkler.metin54),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: () => setState(() => _spoilerAcik = true),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: DiziRenkler.koyuGri,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.visibility_off_outlined,
+                          size: 18,
+                          color: DiziRenkler.metin54,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Spoiler olabilir — dokun ve gör'.c,
+                            style: TextStyle(color: DiziRenkler.metin54),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            if (_spoilerAcik)
-              Text(
-                (y['metin'] as String?) ?? '',
-                style: const TextStyle(height: 1.45),
+            if (_spoilerAcik && (y['metin'] as String? ?? '').isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  (y['metin'] as String?) ?? '',
+                  style: const TextStyle(height: 1.45),
+                ),
               ),
             if (_spoilerAcik && medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              // Tek medya tam genişlik büyük, çoklu 2 sütun ızgara; videolar
-              // ekran ortasına gelince yerinde sessiz oynar (AkisVideo),
-              // dokununca Reels açılır.
+              // Medya SAĞA-SOLA TAM DAYALI (kart dolgusunun dışında):
+              // ilk medya başta gelir, yana kaydırınca sonraki; videolar
+              // ekran ortasına gelince yerinde sessiz oynar, dokununca Reels.
               MedyaGaleri(
                 yollar: medya.cast<String>(),
                 onAc: (_) => widget.onMedyaAc?.call(),
                 otomatikOynat: true,
               ),
             ],
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             // Alt satır: beğeni + görüntülenme + tarih
-            Row(
-              children: [
-                InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: _begen,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _begendim ? Icons.favorite : Icons.favorite_border,
-                          size: 18,
-                          color: _begendim
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.metin54,
-                        ),
-                        if (_begeni > 0) ...[
-                          const SizedBox(width: 4),
-                          Text(
-                            '$_begeni',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: DiziRenkler.metin70,
-                            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: Row(
+                children: [
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: _begen,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            _begendim ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: _begendim
+                                ? DiziRenkler.sariMetin
+                                : DiziRenkler.metin54,
                           ),
+                          if (_begeni > 0) ...[
+                            const SizedBox(width: 4),
+                            Text(
+                              '$_begeni',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DiziRenkler.metin70,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Icon(
-                  Icons.visibility_outlined,
-                  size: 16,
-                  color: DiziRenkler.metin38,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '${y['goruntulenme'] ?? 0}',
-                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
-                ),
-                const Spacer(),
-                Text(
-                  tarih,
-                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
-                ),
-              ],
+                  const SizedBox(width: 16),
+                  Icon(
+                    Icons.visibility_outlined,
+                    size: 16,
+                    color: DiziRenkler.metin38,
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${y['goruntulenme'] ?? 0}',
+                    style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+                  ),
+                  const Spacer(),
+                  Text(
+                    tarih,
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

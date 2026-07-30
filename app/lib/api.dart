@@ -27,6 +27,11 @@ class ApiHata implements Exception {
 class Api {
   static String? _token;
 
+  /// TEK, kalıcı istemci: bağlantı (TCP+TLS) yeniden kullanılır. Her çağrıda
+  /// yeni http.get kullanılsaydı her istekte TLS el sıkışması tekrarlanır ve
+  /// istek başına ~130ms boşa giderdi.
+  static final http.Client _istemci = http.Client();
+
   static Future<void> tokenYukle() async {
     final prefs = await SharedPreferences.getInstance();
     _token = prefs.getString('token');
@@ -52,14 +57,14 @@ class Api {
   };
 
   static Future<dynamic> get(String yol) async {
-    final cevap = await http
+    final cevap = await _istemci
         .get(Uri.parse('$apiTaban$yol'), headers: _basliklar)
         .timeout(const Duration(seconds: 20));
     return _isle(cevap);
   }
 
   static Future<dynamic> post(String yol, Map<String, dynamic> govde) async {
-    final cevap = await http
+    final cevap = await _istemci
         .post(
           Uri.parse('$apiTaban$yol'),
           headers: _basliklar,
@@ -70,14 +75,14 @@ class Api {
   }
 
   static Future<dynamic> delete(String yol) async {
-    final cevap = await http
+    final cevap = await _istemci
         .delete(Uri.parse('$apiTaban$yol'), headers: _basliklar)
         .timeout(const Duration(seconds: 20));
     return _isle(cevap);
   }
 
   static Future<dynamic> patch(String yol, Map<String, dynamic> govde) async {
-    final cevap = await http
+    final cevap = await _istemci
         .patch(
           Uri.parse('$apiTaban$yol'),
           headers: _basliklar,
@@ -153,7 +158,7 @@ class Api {
 
   /// FCM cihaz token'ını sunucudan siler.
   static Future<void> cihazTokenSil(String token) async {
-    await http
+    await _istemci
         .delete(
           Uri.parse('$apiTaban/cihaz-token'),
           headers: _basliklar,
@@ -164,7 +169,7 @@ class Api {
 
   /// Hesabı ve tüm veriyi kalıcı siler (şifreli hesapta şifre doğrulanır).
   static Future<void> hesabiSil(String sifre) async {
-    final cevap = await http
+    final cevap = await _istemci
         .delete(
           Uri.parse('$apiTaban/hesabim'),
           headers: _basliklar,
@@ -192,7 +197,7 @@ class Api {
   /// Uygulama sürümü (hata bildirimlerinde etiketlenir; pubspec ile eşle).
   /// DİKKAT: pubspec version'ı artınca BURAYI da güncelle — 1.7.1'de
   /// unutulduğu için hata günlüğü üç sürüm boyunca yanlış etiketlendi.
-  static const surum = '1.9.4+30';
+  static const surum = '1.10.4+35';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -242,7 +247,7 @@ class Api {
       _profilResmiYukle('kapak', veri);
 
   static Future<String> _profilResmiYukle(String alan, Uint8List veri) async {
-    final cevap = await http
+    final cevap = await _istemci
         .post(
           Uri.parse('$apiTaban/profilim/$alan'),
           headers: {
@@ -257,7 +262,7 @@ class Api {
 
   /// Yorum eki (fotoğraf/video) yükler; sunucu yolunu döndürür.
   static Future<Map<String, dynamic>> medyaYukle(Uint8List veri) async {
-    final cevap = await http
+    final cevap = await _istemci
         .post(
           Uri.parse('$apiTaban/medya'),
           headers: {
@@ -302,7 +307,7 @@ class Api {
 
   /// ZIP verisini içe aktarır; içe aktarım özetini döndürür.
   static Future<Map<String, dynamic>> veriIceAktar(Uint8List zip) async {
-    final cevap = await http
+    final cevap = await _istemci
         .post(
           Uri.parse('$apiTaban/veri/ice-aktar'),
           headers: {
