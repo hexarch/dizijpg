@@ -1,5 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-07-30 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-07-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-07-31 — dizi.jpg AI hesabı 🚀
+**Ne:** `@dizi.jpg.ai` (id=51, ai@dizijpg.com) — TMDB puanı en yüksek 25 dizi +
+25 filme 2'şer sahne kareli, spoilersız Türkçe tanıtım yorumu yazan AI hesabı.
+- 🚀 **Tohum:** `backend/ai_tohum.js` + `backend/ai_yorumlar.json` (metinler TR +
+  EN çevirisi; EN, metin_cevirileri'ne md5 özetiyle yazıldı → Çevir düğmesi
+  çalışıyor). Konteyner içinde çalıştırılır, idempotent (var olanı atlar).
+  Kareler TMDB backdrops'tan (yazısız öncelikli, en oylanan 2, w1280) indirilip
+  `/medya/m51-*.jpg` olarak kaydedildi. Tarihler ~6 güne yayıldı (3'er saat).
+- 🚀 **Avatar:** resmi dizi.jpg hesabının (id=42) profil resminin KOPYASI
+  (`/avatarlar/avatar51-*.png`) — orijinal değişirse AI'ınki bozulmaz.
+- 🚀 **AI rozeti (app):** `ortak.dart` `KullaniciAvatari` + `aiKullaniciAdi`
+  sabiti — AI avatarı her yerde sarı çerçeve + çerçevenin altında "AI" pili
+  (rozet Stack sınırları İÇİNDE, hit-test tuzağı yok; "AI" evrensel etiket,
+  çevrilmez). Uygulanan yerler: yorum kartı+yanıt, ana akış kartı, akış arama
+  kullanıcı satırı, Reels üst bilgisi + yanıtlar, açık profil başlığı,
+  takipçi/takip listeleri (KullaniciSatiri), kullanıcı arama ızgarası,
+  paylaşım sheet'i kişileri, sohbet listesi, @etiket önerisi, izleyenler modalı.
+- 🚀 **Akış muafiyeti (server.js):** `akisSatiri` — AI'ın işaretsiz yorumları
+  "izlemediğin içerik" otomatik bulanıklığından muaf (AI_KULLANICI sabiti);
+  spoiler işaretlenirse yine bulanık olur.
+- Doğrulandı (curl): profil + avatar 200, tv/1396 yorumu medya 2 + kaynak_dil=tr,
+  X-Dil:en ile ceviri_var=true + /ceviri EN metni, /akis'te 30 AI kartı
+  spoiler:false. Keşfet-akis'te görünmüyorlar — video önceliği tasarım gereği.
+- NOT: AI şifresi tohum çıktısında üretildi (kullanıcıya iletildi); hesap normal
+  giriş yapabilir. APK yeniden derlenmedi (web canlıda; rozet mobilde sonraki
+  APK ile gelir).
 
 ## 2026-07-30 — Akışta yerinde video + gizlilik + geri bildirim 🚀
 **Ne:** Akışta videolar kaydırırken kendiliğinden oynar; kullanıcılar izlediklerini

@@ -1098,6 +1098,91 @@ void kullaniciyaGit(BuildContext context, String ad) {
   }
 }
 
+/// dizi.jpg AI hesabının kullanıcı adı. Bu adı taşıyan avatarlar her yerde
+/// sarı çerçeve + çerçevenin altına oturan "AI" rozetiyle çizilir.
+const String aiKullaniciAdi = 'dizi.jpg.ai';
+
+/// Kullanıcı avatarı. [kullaniciAdi] AI hesabıysa sarı çerçeve ve altına
+/// bindirilmiş "AI" rozeti ekler; diğer herkes için düz CircleAvatar'dır.
+/// Rozetli halde bileşen çerçeve + rozet payı kadar büyür; rozet Stack
+/// SINIRLARI İÇİNDE kalır (dışarı taşan Positioned tıklama almaz).
+class KullaniciAvatari extends StatelessWidget {
+  final String? url; // dosyaUrl'den geçmiş TAM adres; null = kişi ikonu
+  final String? kullaniciAdi;
+  final double yaricap;
+  final Color? arkaplan;
+  final Color? ikonRenk;
+  const KullaniciAvatari({
+    super.key,
+    required this.url,
+    required this.kullaniciAdi,
+    this.yaricap = 20,
+    this.arkaplan,
+    this.ikonRenk,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final avatar = CircleAvatar(
+      radius: yaricap,
+      backgroundColor: arkaplan ?? DiziRenkler.koyuGri,
+      backgroundImage: url != null ? CachedNetworkImageProvider(url!) : null,
+      child: url == null
+          ? Icon(
+              Icons.person,
+              size: yaricap,
+              color: ikonRenk ?? DiziRenkler.metin38,
+            )
+          : null,
+    );
+    if (kullaniciAdi != aiKullaniciAdi) return avatar;
+    final kenar = (yaricap * 0.09).clamp(1.2, 2.0);
+    final halka = yaricap * 2 + 2 * (kenar + 1.5);
+    final yazi = (yaricap * 0.42).clamp(7.0, 11.0);
+    final rozetYukseklik = yazi * 1.1 + 3;
+    return SizedBox(
+      width: halka,
+      height: halka + rozetYukseklik / 2,
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: halka,
+            height: halka,
+            padding: const EdgeInsets.all(1.5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: DiziRenkler.sari, width: kenar),
+            ),
+            child: avatar,
+          ),
+          Positioned(
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: yazi * 0.55),
+              decoration: BoxDecoration(
+                color: DiziRenkler.sari,
+                borderRadius: BorderRadius.circular(rozetYukseklik),
+              ),
+              // "AI" evrensel kısaltma/marka etiketi — çevrilmez.
+              child: Text(
+                'AI',
+                style: TextStyle(
+                  fontSize: yazi,
+                  height: 1.4,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// Okunmamış sayacı rozetli appbar ikonu (zil, zarf, DM).
 class RozetliIkon extends StatelessWidget {
   final IconData ikon;

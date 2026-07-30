@@ -410,4 +410,6 @@ const Map<String, String> cevirilerSw = {
   'Henüz kimseyi takip etmiyorsun.': 'Bado hujamfuata mtu yeyote.',
   'Çevir': 'Tafsiri',
   'Orijinali göster': 'Onyesha asili',
+  'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
+      'Mwezi huu hakuna vipindi vyenye tarehe ya kurushwa iliyotangazwa. Tarehe hutangazwa wiki chache kabla na zitaonekana hapa.',
 };

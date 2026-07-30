@@ -450,6 +450,7 @@ class _AkisEkraniState extends State<AkisEkrani>
                     (k as Map<String, dynamic>)['avatar'] as String?,
                   ),
                   yuvarlak: true,
+                  kullaniciAdi: k['kullanici_adi'] as String?,
                   ad: '@${k['kullanici_adi']}',
                   altYazi: (k['bio'] as String?) ?? '',
                   onTap: () =>
@@ -505,12 +506,14 @@ class _AramaSatiri extends StatelessWidget {
   final String ad;
   final String altYazi;
   final VoidCallback onTap;
+  final String? kullaniciAdi; // kullanıcı satırlarında AI rozeti için
   const _AramaSatiri({
     required this.gorselUrl,
     this.yuvarlak = false,
     required this.ad,
     required this.altYazi,
     required this.onTap,
+    this.kullaniciAdi,
   });
 
   @override
@@ -532,8 +535,11 @@ class _AramaSatiri extends StatelessWidget {
         child: Row(
           children: [
             yuvarlak
-                ? ClipOval(
-                    child: SizedBox(width: 44, height: 44, child: gorsel),
+                ? KullaniciAvatari(
+                    url: gorselUrl,
+                    kullaniciAdi: kullaniciAdi,
+                    yaricap: 22,
+                    arkaplan: DiziRenkler.kart,
                   )
                 : ClipRRect(
                     borderRadius: BorderRadius.circular(6),
@@ -666,19 +672,10 @@ class _AkisKartiState extends State<_AkisKarti> {
                   InkWell(
                     onTap: () =>
                         context.push('/kullanici/${y['kullanici_adi']}'),
-                    child: CircleAvatar(
-                      radius: 18,
-                      backgroundColor: DiziRenkler.koyuGri,
-                      backgroundImage: avatar != null
-                          ? NetworkImage(avatar)
-                          : null,
-                      child: avatar == null
-                          ? Icon(
-                              Icons.person,
-                              size: 18,
-                              color: DiziRenkler.metin38,
-                            )
-                          : null,
+                    child: KullaniciAvatari(
+                      url: avatar,
+                      kullaniciAdi: y['kullanici_adi'] as String?,
+                      yaricap: 18,
                     ),
                   ),
                   const SizedBox(width: 10),

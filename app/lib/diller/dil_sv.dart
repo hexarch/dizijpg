@@ -412,4 +412,6 @@ const Map<String, String> cevirilerSv = {
   'Henüz kimseyi takip etmiyorsun.': 'Du följer ingen än.',
   'Çevir': 'Översätt',
   'Orijinali göster': 'Visa original',
+  'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
+      'Inga avsnitt med annonserat sändningsdatum den här månaden. Datum brukar tillkännages några veckor i förväg och dyker då upp här.',
 };

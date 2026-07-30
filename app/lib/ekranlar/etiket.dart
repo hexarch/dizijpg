@@ -296,13 +296,10 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
       final av = dosyaUrl(o['avatar'] as String?);
       return ListTile(
         dense: true,
-        leading: CircleAvatar(
-          radius: 16,
-          backgroundColor: DiziRenkler.koyuGri,
-          backgroundImage: av != null ? CachedNetworkImageProvider(av) : null,
-          child: av == null
-              ? Icon(Icons.person, size: 16, color: DiziRenkler.metin38)
-              : null,
+        leading: KullaniciAvatari(
+          url: av,
+          kullaniciAdi: o['kullanici_adi'] as String?,
+          yaricap: 16,
         ),
         title: Text(
           '@${o['kullanici_adi']}',

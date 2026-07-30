@@ -1776,9 +1776,14 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   //    dizi başına 15) — eski "Naruto 2003" yığını takvimi boğmasın diye ayrı.
   //  - yaklasan: eski istemciler için (yetisme + gelecek izlenmemişler).
   const { rows } = await havuz.query(
+    // DİKKAT: burada LIMIT 60 vardı ve SIRALAMA YOKTU — 60'tan çok dizi izleyen
+    // kullanıcıda hangi dizilerin geleceği rastgeleydi; izlenen dizi (ör. Silo)
+    // sessizce takvimden düşüyordu. Artık izliyorum önce, son güncellenen önce
+    // ve sınır 200. (Sezon/dizi verileri toplu okunduğu için maliyet düşük.)
     `SELECT tmdb_id FROM durumlar
      WHERE kullanici_id=$1 AND tur='tv' AND durum IN ('izliyorum','izleyecegim')
-     LIMIT 60`,
+     ORDER BY (durum = 'izliyorum') DESC, guncelleme DESC NULLS LAST
+     LIMIT 200`,
     [req.kullanici.id],
   );
   const izl = await havuz.query(
@@ -2252,12 +2257,17 @@ async function akisIcerikleri(rows) {
   return icerikBilgileri([...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))]);
 }
 
+// dizi.jpg AI hesabı: tanıtım yorumları spoilersız yazılır, izlenmemiş içerik
+// bulanıklığından muaftır (işaretlenirse yine bulanık olur).
+const AI_KULLANICI = 'dizi.jpg.ai';
+
 const akisSatiri = ({ guvenli, spoiler_isaret, ...r }) => ({
   ...r,
   // İstemci bulanık gösterir. İki kaynak: (1) izlemediğin içeriğin yorumu
   // (otomatik), (2) yazan kişinin "spoiler içerir" işareti. Kişi yorumları ve
   // kitaplık eşleşmeleri otomatik spoiler sayılmaz ama işaretliyse yine bulanık.
-  spoiler: spoiler_isaret === true || !(guvenli || r.tur === 'person'),
+  spoiler: spoiler_isaret === true ||
+    !(guvenli || r.tur === 'person' || r.kullanici_adi === AI_KULLANICI),
 });
 
 app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {

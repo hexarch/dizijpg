@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'ortak.dart';
 
 /// Gönderi paylaşma sayfası: üstte kişilere (mesajlaştıkların, takip
 /// ettiklerin, takipçilerin) DM ile gönder, altta telefonun kendi paylaşım
@@ -191,18 +191,11 @@ class _PaylasSheetState extends State<_PaylasSheet> {
                               const SizedBox(height: 8),
                               Stack(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 28,
-                                    backgroundColor: DiziRenkler.kart,
-                                    backgroundImage: avatar != null
-                                        ? CachedNetworkImageProvider(avatar)
-                                        : null,
-                                    child: avatar == null
-                                        ? Icon(
-                                            Icons.person,
-                                            color: DiziRenkler.metin38,
-                                          )
-                                        : null,
+                                  KullaniciAvatari(
+                                    url: avatar,
+                                    kullaniciAdi: k['kullanici_adi'] as String?,
+                                    yaricap: 28,
+                                    arkaplan: DiziRenkler.kart,
                                   ),
                                   if (gonderildi || gidiyor)
                                     Positioned.fill(

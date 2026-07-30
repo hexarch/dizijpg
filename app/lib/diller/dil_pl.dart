@@ -414,4 +414,6 @@ const Map<String, String> cevirilerPl = {
   'Henüz kimseyi takip etmiyorsun.': 'Nikogo jeszcze nie obserwujesz.',
   'Çevir': 'Przetłumacz',
   'Orijinali göster': 'Pokaż oryginał',
+  'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
+      'W tym miesiącu nie ma odcinków z ogłoszoną datą emisji. Daty zwykle podaje się kilka tygodni wcześniej i wtedy pojawią się tutaj.',
 };

@@ -411,4 +411,6 @@ const Map<String, String> cevirilerEn = {
   'Henüz kimseyi takip etmiyorsun.': 'You\'re not following anyone yet.',
   'Çevir': 'Translate',
   'Orijinali göster': 'Show original',
+  'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
+      'No episodes with announced air dates this month. Dates are usually revealed a few weeks ahead and will appear here once announced.',
 };

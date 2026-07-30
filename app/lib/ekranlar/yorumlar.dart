@@ -527,13 +527,10 @@ class _YorumKartiState extends State<_YorumKarti> {
           children: [
             Row(
               children: [
-                CircleAvatar(
-                  radius: 14,
-                  backgroundColor: DiziRenkler.koyuGri,
-                  backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-                  child: avatar == null
-                      ? Icon(Icons.person, size: 14, color: DiziRenkler.metin38)
-                      : null,
+                KullaniciAvatari(
+                  url: avatar,
+                  kullaniciAdi: yorum['kullanici_adi'] as String?,
+                  yaricap: 14,
                 ),
                 const SizedBox(width: 8),
                 InkWell(
@@ -951,13 +948,10 @@ class _YanitSatiriState extends State<_YanitSatiri> {
         children: [
           Row(
             children: [
-              CircleAvatar(
-                radius: 10,
-                backgroundColor: DiziRenkler.koyuGri,
-                backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-                child: avatar == null
-                    ? Icon(Icons.person, size: 11, color: DiziRenkler.metin38)
-                    : null,
+              KullaniciAvatari(
+                url: avatar,
+                kullaniciAdi: y['kullanici_adi'] as String?,
+                yaricap: 10,
               ),
               const SizedBox(width: 6),
               InkWell(

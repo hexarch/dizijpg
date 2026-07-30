@@ -286,13 +286,11 @@ class _KullaniciKutusu extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircleAvatar(
-              radius: 26,
-              backgroundColor: DiziRenkler.kart,
-              backgroundImage: av != null ? NetworkImage(av) : null,
-              child: av == null
-                  ? Icon(Icons.person, color: DiziRenkler.metin38)
-                  : null,
+            KullaniciAvatari(
+              url: av,
+              kullaniciAdi: ad,
+              yaricap: 26,
+              arkaplan: DiziRenkler.kart,
             ),
             const SizedBox(height: 5),
             SizedBox(

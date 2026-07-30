@@ -414,4 +414,6 @@ const Map<String, String> cevirilerHu = {
   'Henüz kimseyi takip etmiyorsun.': 'Még senkit sem követsz.',
   'Çevir': 'Fordítás',
   'Orijinali göster': 'Eredeti mutatása',
+  'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
+      'Ebben a hónapban nincs bejelentett adásidejű epizód. A dátumokat általában néhány héttel előre jelentik be, és akkor itt is megjelennek.',
 };

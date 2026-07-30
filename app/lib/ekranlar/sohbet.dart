@@ -75,12 +75,9 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
             final okunmamis = (s['okunmamis'] as int?) ?? 0;
             return Card(
               child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: DiziRenkler.koyuGri,
-                  backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-                  child: avatar == null
-                      ? Icon(Icons.person, color: DiziRenkler.metin38)
-                      : null,
+                leading: KullaniciAvatari(
+                  url: avatar,
+                  kullaniciAdi: s['partner'] as String?,
                 ),
                 title: Text(
                   '@${s['partner']}',

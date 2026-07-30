@@ -801,19 +801,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
                   GestureDetector(
                     onTap: () =>
                         kullaniciyaGit(context, y['kullanici_adi'] as String),
-                    child: CircleAvatar(
-                      radius: 19,
-                      backgroundColor: DiziRenkler.kart,
-                      backgroundImage: avatar != null
-                          ? CachedNetworkImageProvider(avatar)
-                          : null,
-                      child: avatar == null
-                          ? const Icon(
-                              Icons.person,
-                              size: 19,
-                              color: Colors.white54,
-                            )
-                          : null,
+                    child: KullaniciAvatari(
+                      url: avatar,
+                      kullaniciAdi: y['kullanici_adi'] as String?,
+                      yaricap: 19,
+                      arkaplan: DiziRenkler.kart,
+                      ikonRenk: Colors.white54,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -1428,15 +1421,11 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
         children: [
           GestureDetector(
             onTap: () => kullaniciyaGit(context, c['kullanici_adi'] as String),
-            child: CircleAvatar(
-              radius: 14,
-              backgroundColor: DiziRenkler.kart,
-              backgroundImage: av != null
-                  ? CachedNetworkImageProvider(av)
-                  : null,
-              child: av == null
-                  ? Icon(Icons.person, size: 14, color: DiziRenkler.metin38)
-                  : null,
+            child: KullaniciAvatari(
+              url: av,
+              kullaniciAdi: c['kullanici_adi'] as String?,
+              yaricap: 14,
+              arkaplan: DiziRenkler.kart,
             ),
           ),
           const SizedBox(width: 10),

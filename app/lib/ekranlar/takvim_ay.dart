@@ -29,6 +29,24 @@ class _AyTakvimiState extends State<AyTakvimi> {
     _ay = DateTime(s.year, s.month, 1);
   }
 
+  /// Ayı değiştirir ve seçimi o ayın ilk DOLU gününe taşır (yoksa ayın 1'i).
+  /// Eskiden seçim bugünde kalıyordu; başka aya geçince alttaki liste hep
+  /// boş görünüyor, kullanıcı "veri yok mu, yüklenmedi mi" diye kalıyordu.
+  void _ayaGit(DateTime yeniAy) {
+    final gunler = _gunlereBol();
+    final onEk =
+        '${yeniAy.year.toString().padLeft(4, '0')}-'
+        '${yeniAy.month.toString().padLeft(2, '0')}';
+    final doluGunler = gunler.keys.where((t) => t.startsWith(onEk)).toList()
+      ..sort();
+    setState(() {
+      _ay = yeniAy;
+      _secili = doluGunler.isEmpty
+          ? DateTime(yeniAy.year, yeniAy.month, 1)
+          : DateTime.parse(doluGunler.first);
+    });
+  }
+
   String _anahtar(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-'
       '${d.month.toString().padLeft(2, '0')}-'
@@ -94,8 +112,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                 ikon: Icons.chevron_left,
                 sayi: oncekiSayi,
                 tooltip: 'Önceki ay'.c,
-                onTap: () =>
-                    setState(() => _ay = DateTime(_ay.year, _ay.month - 1, 1)),
+                onTap: () => _ayaGit(DateTime(_ay.year, _ay.month - 1, 1)),
               ),
               Expanded(
                 child: Text(
@@ -112,8 +129,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                 ikon: Icons.chevron_right,
                 sayi: sonrakiSayi,
                 tooltip: 'Sonraki ay'.c,
-                onTap: () =>
-                    setState(() => _ay = DateTime(_ay.year, _ay.month + 1, 1)),
+                onTap: () => _ayaGit(DateTime(_ay.year, _ay.month + 1, 1)),
               ),
             ],
           ),
@@ -229,6 +245,33 @@ class _AyTakvimiState extends State<AyTakvimi> {
                       'Bu gün bölüm yok'.c,
                       style: TextStyle(color: DiziRenkler.metin54),
                     ),
+                    // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
+                    // yüklemedi" diye tereddüt etmesin.
+                    if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            size: 15,
+                            color: DiziRenkler.metin38,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
+                                  .c,
+                              style: TextStyle(
+                                color: DiziRenkler.metin38,
+                                fontSize: 12,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     if (sonrakiOlay != null) ...[
                       const SizedBox(height: 18),
                       Text(

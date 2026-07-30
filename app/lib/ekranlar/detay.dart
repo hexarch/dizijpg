@@ -147,12 +147,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                   final av = dosyaUrl(k['avatar'] as String?);
                   final ad = k['kullanici_adi'] as String;
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: DiziRenkler.kart,
-                      backgroundImage: av != null ? NetworkImage(av) : null,
-                      child: av == null
-                          ? Icon(Icons.person, color: DiziRenkler.metin38)
-                          : null,
+                    leading: KullaniciAvatari(
+                      url: av,
+                      kullaniciAdi: ad,
+                      arkaplan: DiziRenkler.kart,
                     ),
                     title: Text('@$ad'),
                     onTap: () {

@@ -120,19 +120,11 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                 children: [
                   Row(
                     children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundColor: DiziRenkler.kart,
-                        backgroundImage: avatar != null
-                            ? NetworkImage(avatar)
-                            : null,
-                        child: avatar == null
-                            ? Icon(
-                                Icons.person,
-                                size: 40,
-                                color: DiziRenkler.metin38,
-                              )
-                            : null,
+                      KullaniciAvatari(
+                        url: avatar,
+                        kullaniciAdi: p['kullanici_adi'] as String?,
+                        yaricap: 40,
+                        arkaplan: DiziRenkler.kart,
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -904,12 +896,10 @@ class KullaniciSatiri extends StatelessWidget {
   Widget build(BuildContext context) {
     final avatar = dosyaUrl(kullanici['avatar'] as String?);
     return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: DiziRenkler.kart,
-        backgroundImage: avatar != null ? NetworkImage(avatar) : null,
-        child: avatar == null
-            ? Icon(Icons.person, color: DiziRenkler.metin38)
-            : null,
+      leading: KullaniciAvatari(
+        url: avatar,
+        kullaniciAdi: kullanici['kullanici_adi'] as String?,
+        arkaplan: DiziRenkler.kart,
       ),
       title: Text(
         '@${kullanici['kullanici_adi']}',
