@@ -205,11 +205,11 @@ const mailUlastirici = nodemailer.createTransport({
 const TMDB = 'https://api.themoviedb.org/3';
 const ONBELLEK_TTL_SN = { varsayilan: 6 * 3600, uzun: 7 * 24 * 3600 };
 
-async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
+async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = null) {
   // İçerik dilini isteğin diline göre ayarla: çağrılar 'language=tr-TR' yazsa da
   // gerçek dil buradan gelir. Önbellek anahtarı da dili içerdiğinden dil-başına
-  // ayrı önbelleklenir.
-  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  // ayrı önbelleklenir. dilZorla: İngilizceye düşerken kullanılır.
+  const dil = dilZorla || istekBaglam.getStore()?.tmdbDil || 'tr-TR';
   if (/[?&]language=/.test(yol)) {
     yol = yol.replace(/([?&]language=)[a-zA-Z-]+/, `$1${dil}`);
   } else {
@@ -259,8 +259,8 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
 // Çok sayıda TMDB kaydını TEK sorguda önbellekten okur; yalnız eksik olanlar
 // TMDB'ye gider. Akış/takvim gibi ekranlar 30-60 içeriği tek tek sorduğunda
 // istek başına o kadar veritabanı gidiş-gelişi oluyordu.
-async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
-  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = null) {
+  const dil = dilZorla || istekBaglam.getStore()?.tmdbDil || 'tr-TR';
   const anahtarla = (yol) => (/[?&]language=/.test(yol)
     ? yol.replace(/([?&]language=)[a-zA-Z-]+/, `$1${dil}`)
     : yol + (yol.includes('?') ? '&' : '?') + 'language=' + dil);
@@ -283,10 +283,83 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
   // Eksikler: 8'li öbekler (tmdbGetir tek tek önbelleğe de yazar)
   for (let i = 0; i < eksik.length; i += 8) {
     const obek = eksik.slice(i, i + 8);
-    const veriler = await Promise.all(obek.map((y) => tmdbGetir(y, ttlSn).catch(() => null)));
+    const veriler = await Promise.all(
+      obek.map((y) => tmdbGetir(y, ttlSn, dilZorla).catch(() => null)),
+    );
     obek.forEach((y, j) => { if (veriler[j] != null) sonuc.set(y, veriler[j]); });
   }
   return sonuc;
+}
+
+// Latin alfabesi kullanan bir kullanıcıya Çince/Japonca/Korece/Kiril başlık
+// göstermek işe yaramaz: TMDB o dilde çevirisi olmayan yapımda ORİJİNAL adı
+// döndürür. Böyle başlıkları (ve boş özetleri) İngilizcesiyle değiştiririz.
+const LATIN_DISI_AD =
+  /[\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7af\u0400-\u04ff\u0600-\u06ff\u0e00-\u0e7f\u0900-\u097f\u0590-\u05ff]/;
+const LATIN_DILLER = new Set([
+  'tr', 'en', 'es', 'pt', 'fr', 'it', 'de', 'nl', 'sv', 'da', 'nb', 'pl',
+  'cs', 'ro', 'hu', 'fi', 'id', 'ms', 'fil', 'sw', 'vi', 'az', 'hr', 'sq',
+]);
+function latinDisiMi(v) {
+  return !!v && LATIN_DISI_AD.test(String(v.name || v.title || ''));
+}
+
+// Türkçe başlıklardan HANGİSİ gerçekten kullanılıyor?
+// TMDB'nin Türkçe başlığı bazen kimsenin demediği birebir çeviri oluyor
+// ("Man of Steel" → "Çelik Adam"). Varsayılan olarak ORİJİNAL adı gösteririz;
+// Türkçesi yerleşmiş klasikler bu listede istisna tutulur.
+const TURKCE_ADI_YAYGIN = new Set([
+  120, 121, 122,          // Yüzüklerin Efendisi üçlemesi
+  122917, 57158, 49051,   // Hobbit üçlemesi
+  22, 58, 285, 1865, 166426, // Karayip Korsanları serisi
+  671, 672, 673, 674, 675, 767, 12444, 12445, // Harry Potter serisi
+  11, 1891, 1892, 1893, 1894, 1895, 140607, 181808, 181812, // Star Wars
+  862, 863, 10193, 301528, // Oyuncak Hikayesi
+  354912, 508442, 12,      // Coco, Soul, Kayıp Balık Nemo
+  278, 238, 240, 424,      // Esaretin Bedeli, Baba 1-2, Schindler'in Listesi
+]);
+/// Gösterilecek adı seçer: orijinal ad Latin alfabesindeyse ONU tercih eder
+/// (izleyici genelde orijinal adı kullanır); Türkçesi yerleşmiş yapımlarda ve
+/// orijinali okunamayan (Çince/Japonca/Korece) yapımlarda yerel adı bırakır.
+function adTercihUygula(v) {
+  if (!v || typeof v !== 'object') return v;
+  const orijinal = v.original_title || v.original_name;
+  const yerel = v.title || v.name;
+  if (!orijinal || !yerel || orijinal === yerel) return v;
+  if (TURKCE_ADI_YAYGIN.has(v.id)) return v;
+  if (LATIN_DISI_AD.test(String(orijinal))) return v; // orijinali okunamaz
+  return v.title ? { ...v, title: orijinal } : { ...v, name: orijinal };
+}
+function ingilizceBirlestir(v, e) {
+  if (!e) return v;
+  return {
+    ...v,
+    name: e.name || v.name,
+    title: e.title || v.title,
+    overview: v.overview || e.overview,
+  };
+}
+/// Yanıttaki (liste ya da tekil) okunamayan başlıkları İngilizcesiyle değiştirir.
+async function latinAdaDus(veri, yol, ttlSn) {
+  const dil = istekBaglam.getStore()?.dil || 'tr';
+  if (!LATIN_DILLER.has(dil)) return veri; // Kiril/Arap kullanıcıda gerek yok
+  const liste = Array.isArray(veri?.results) ? veri.results : null;
+  if (liste) {
+    let sonuc = liste;
+    if (liste.some(latinDisiMi)) {
+      const en = await tmdbGetir(yol, ttlSn, 'en-US').catch(() => null);
+      if (Array.isArray(en?.results)) {
+        const harita = new Map(en.results.map((r) => [r.id, r]));
+        sonuc = liste.map((r) => (latinDisiMi(r) ? ingilizceBirlestir(r, harita.get(r.id)) : r));
+      }
+    }
+    return { ...veri, results: sonuc.map(adTercihUygula) };
+  }
+  if (latinDisiMi(veri)) {
+    const en = await tmdbGetir(yol, ttlSn, 'en-US').catch(() => null);
+    return adTercihUygula(ingilizceBirlestir(veri, en));
+  }
+  return adTercihUygula(veri);
 }
 
 // ---------- gönderi dili + çeviri ----------
@@ -922,7 +995,8 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
     'Cache-Control',
     `public, max-age=${uzunTtl ? 86400 : 3600}, s-maxage=${uzunTtl ? 604800 : 21600}`,
   );
-  res.json(await tmdbGetir(tam, uzunTtl ? ONBELLEK_TTL_SN.uzun : ONBELLEK_TTL_SN.varsayilan));
+  const ttl = uzunTtl ? ONBELLEK_TTL_SN.uzun : ONBELLEK_TTL_SN.varsayilan;
+  res.json(await latinAdaDus(await tmdbGetir(tam, ttl), tam, ttl));
 }));
 
 // ---------- izleme ----------
@@ -2142,21 +2216,40 @@ async function kadroKisileri(benId) {
 }
 
 // Satır listesi için içerik adı + poster haritası (kişide profile_path).
-async function akisIcerikleri(rows) {
-  const anahtarlar = [...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))];
+// "tur:tmdb_id" anahtarlarından {ad, poster} haritası. Okunamayan (Çince vb.)
+// başlıklar İngilizcesiyle, birebir çeviri başlıklar orijinaliyle değiştirilir.
+async function icerikBilgileri(anahtarlar) {
   const yollar = anahtarlar.map((a) => {
     const [tur, id] = a.split(':');
     return `/${tur}/${id}?language=tr-TR`;
   });
   const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+  // Latin dışı başlıklar için tek toplu İngilizce okuma
+  const latinDili = LATIN_DILLER.has(istekBaglam.getStore()?.dil || 'tr');
+  const enYollar = latinDili
+    ? yollar.filter((y) => latinDisiMi(harita.get(y)))
+    : [];
+  const enHarita = enYollar.length
+    ? await tmdbTopluGetir(enYollar, ONBELLEK_TTL_SN.uzun, 'en-US')
+    : new Map();
   const icerikler = {};
   anahtarlar.forEach((a, i) => {
-    const v = harita.get(yollar[i]);
-    icerikler[a] = v
-      ? { ad: v.name || v.title || '?', poster: v.poster_path || v.profile_path || null }
-      : { ad: '?', poster: null };
+    let v = harita.get(yollar[i]);
+    if (!v) { icerikler[a] = { ad: '?', poster: null }; return; }
+    if (latinDili) {
+      if (latinDisiMi(v)) v = ingilizceBirlestir(v, enHarita.get(yollar[i]));
+      v = adTercihUygula(v);
+    }
+    icerikler[a] = {
+      ad: v.name || v.title || '?',
+      poster: v.poster_path || v.profile_path || null,
+    };
   });
   return icerikler;
+}
+
+async function akisIcerikleri(rows) {
+  return icerikBilgileri([...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))]);
 }
 
 const akisSatiri = ({ guvenli, spoiler_isaret, ...r }) => ({
@@ -2470,7 +2563,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const { rows } = await havuz.query(
     `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
-            m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
+            m.yorum_id, m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
      FROM mesajlar m
@@ -2484,19 +2577,28 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   const anahtarlar = [...new Set(rows
     .filter((r) => r.icerik_tur && r.icerik_id)
     .map((r) => `${r.icerik_tur}:${r.icerik_id}`))];
-  const icerikler = {};
-  {
-    const yollar = anahtarlar.map((a) => {
-      const [tur, tmdbId] = a.split(':');
-      return `/${tur}/${tmdbId}?language=tr-TR`;
-    });
-    const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
-    anahtarlar.forEach((a, i) => {
-      const v = harita.get(yollar[i]);
-      icerikler[a] = v
-        ? { ad: v.name || v.title || '?', poster: v.poster_path || null }
-        : { ad: '?', poster: null };
-    });
+  const icerikler = await icerikBilgileri(anahtarlar);
+  // Paylaşılan gönderilerin önizlemesi (sohbette kart olarak çizilir)
+  const gonderiIdler = [...new Set(rows.filter((r) => r.yorum_id).map((r) => r.yorum_id))];
+  const gonderiler = {};
+  if (gonderiIdler.length) {
+    const g = await havuz.query(
+      `SELECT y.id, y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi, k.avatar
+       FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+       WHERE y.id = ANY($1::int[])`,
+      [gonderiIdler],
+    );
+    for (const r of g.rows) {
+      gonderiler[r.id] = {
+        id: r.id,
+        kullanici_adi: r.kullanici_adi,
+        avatar: r.avatar,
+        metin: (r.metin || '').slice(0, 140),
+        kapak: (r.medya || [])[0] || null,
+        tur: r.tur,
+        tmdb_id: r.tmdb_id,
+      };
+    }
   }
   havuz.query(
     `UPDATE mesajlar SET okundu=true, iletildi=true
@@ -2512,6 +2614,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     mesajlar: rows.reverse(),
     partner: k.rows[0],
     icerikler,
+    gonderiler,
     yaziyor:
       Date.now() - (yaziyorlar.get(`${partnerId}:${req.kullanici.id}`) || 0) <
       6000,
@@ -2535,7 +2638,7 @@ app.post('/mesajlar/iletildi', girisZorunlu, sarici(async (req, res) => {
 app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   const {
     kullanici_adi, metin, medya = null, ses_dalga = null,
-    icerik_tur = null, icerik_id = null, yanit_id = null,
+    icerik_tur = null, icerik_id = null, yanit_id = null, yorum_id = null,
   } = req.body || {};
   const temiz = String(metin || '').trim();
   if (temiz.length > 2000) {
@@ -2564,7 +2667,15 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
       (!['tv', 'movie'].includes(icerik_tur) || !Number.isInteger(icerik_id))) {
     return res.status(400).json({ hata: 'Geçersiz içerik' });
   }
-  if (!temiz && !medya && !icerikVar) {
+  // Gönderi paylaşımı: sohbette kart olur, dokununca Reels'te açılır
+  if (yorum_id != null) {
+    if (!Number.isInteger(yorum_id)) {
+      return res.status(400).json({ hata: 'Geçersiz yorum_id' });
+    }
+    const v = await havuz.query('SELECT 1 FROM yorumlar WHERE id=$1', [yorum_id]);
+    if (!v.rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
+  }
+  if (!temiz && !medya && !icerikVar && yorum_id == null) {
     return res.status(400).json({ hata: 'Boş mesaj gönderilemez' });
   }
   const k = await havuz.query(
@@ -2596,10 +2707,11 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   }
   const { rows } = await havuz.query(
     `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, ses_dalga,
-                           icerik_tur, icerik_id, yanit_id)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, tarih`,
+                           icerik_tur, icerik_id, yanit_id, yorum_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id, tarih`,
     [req.kullanici.id, aliciId, temiz || null, medya, sesMi ? ses_dalga : null,
-     icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit],
+     icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit,
+     yorum_id ?? null],
   );
   // Push gövdesinde mesajın kendisi görünsün (boşsa şablona düşer)
   bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
@@ -3247,20 +3359,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   }
   // Yorum kartları için içerik adı + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(yorumlar.rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
-  const icerikler = {};
-  {
-    const yollar = anahtarlar.map((a) => {
-      const [tur, tmdbId] = a.split(':');
-      return `/${tur}/${tmdbId}?language=tr-TR`;
-    });
-    const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
-    anahtarlar.forEach((a, i) => {
-      const v = harita.get(yollar[i]);
-      icerikler[a] = v
-        ? { ad: v.name || v.title || '?', poster: v.poster_path || v.profile_path || null }
-        : { ad: '?', poster: null };
-    });
-  }
+  const icerikler = await icerikBilgileri(anahtarlar);
   res.json({
     ...k.rows[0],
     ben_mi: benId === id,

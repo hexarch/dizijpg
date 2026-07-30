@@ -317,3 +317,9 @@ CREATE TABLE IF NOT EXISTS metin_cevirileri (
 -- Gönderinin tespit edilen kaynak dili ('tr','en'...). NULL = henüz bakılmadı.
 ALTER TABLE yorumlar ADD COLUMN IF NOT EXISTS kaynak_dil TEXT;
 CREATE INDEX IF NOT EXISTS yorumlar_kaynak_dil ON yorumlar (kaynak_dil);
+-- 2026-07-31: sohbette GÖNDERİ paylaşımı (link yerine postun kendisi)
+-- Mesaja bir yorum (gönderi) iliştirilir; sohbette kart olarak görünür,
+-- dokununca Reels görünümünde açılır.
+ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS yorum_id INT
+  REFERENCES yorumlar(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS mesajlar_yorum ON mesajlar (yorum_id);

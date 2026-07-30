@@ -153,6 +153,7 @@ class SohbetEkrani extends StatefulWidget {
 class _SohbetEkraniState extends State<SohbetEkrani> {
   List<dynamic> _mesajlar = [];
   final Map<String, dynamic> _icerikler = {};
+  final Map<String, dynamic> _gonderiler = {};
   bool _yuklendi = false;
   bool _gonderiliyor = false;
   bool _ekYukleniyor = false;
@@ -322,6 +323,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
       setState(() {
         _mesajlar = yeni;
         _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
+        _gonderiler.addAll(d['gonderiler'] as Map<String, dynamic>? ?? {});
         _yaziyor = d['yaziyor'] == true;
         _partner = d['partner'] as Map<String, dynamic>?;
         _yuklendi = true;
@@ -562,6 +564,7 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                             mesaj: m,
                             benim: benimMi,
                             icerikler: _icerikler,
+                            gonderiler: _gonderiler,
                             yanitla: m['id'] != null
                                 ? () => _yanitBaslat(m)
                                 : null,
@@ -913,6 +916,7 @@ class _MesajBaloncugu extends StatelessWidget {
   final Map<String, dynamic> mesaj;
   final bool benim;
   final Map<String, dynamic> icerikler;
+  final Map<String, dynamic> gonderiler; // paylaşılan gönderi önizlemeleri
   final VoidCallback? sil;
   final VoidCallback? yanitla;
   final VoidCallback? duzenle;
@@ -925,6 +929,7 @@ class _MesajBaloncugu extends StatelessWidget {
     this.sil,
     this.yanitla,
     this.duzenle,
+    this.gonderiler = const {},
   });
 
   /// Uzun basınca: Yanıtla / Düzenle / Sil (uygun olanlar). Telegram tarzı menü.
@@ -987,6 +992,11 @@ class _MesajBaloncugu extends StatelessWidget {
     final icerikId = (m['icerik_id'] as num?)?.toInt();
     final icerik = icerikTur != null
         ? icerikler['$icerikTur:$icerikId'] as Map<String, dynamic>?
+        : null;
+    // Paylaşılan gönderi (link değil postun kendisi)
+    final gonderiId = (m['yorum_id'] as num?)?.toInt();
+    final gonderi = gonderiId != null
+        ? gonderiler['$gonderiId'] as Map<String, dynamic>?
         : null;
     final saat = (m['tarih'] as String? ?? '');
     final saatKisa = saat.length >= 16 ? saat.substring(11, 16) : '';
@@ -1108,6 +1118,87 @@ class _MesajBaloncugu extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                      ),
+                    ),
+                  ),
+                // Paylaşılan gönderi kartı: dokununca Reels'te açılır
+                if (gonderiId != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: InkWell(
+                      onTap: () => context.push('/gonderi/$gonderiId'),
+                      child: Container(
+                        width: 210,
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (gonderi?['kapak'] != null)
+                              AspectRatio(
+                                aspectRatio: 1,
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: dosyaUrl(
+                                        gonderi!['kapak'] as String?,
+                                      )!,
+                                      fit: BoxFit.cover,
+                                      errorWidget: (_, _, _) =>
+                                          Container(color: Colors.black26),
+                                    ),
+                                    if ((gonderi['kapak'] as String).endsWith(
+                                          '.mp4',
+                                        ) ||
+                                        (gonderi['kapak'] as String).endsWith(
+                                          '.webm',
+                                        ))
+                                      const Center(
+                                        child: Icon(
+                                          Icons.play_circle_outline,
+                                          size: 40,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    '@${gonderi?['kullanici_adi'] ?? '...'}',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w800,
+                                      color: yaziRengi,
+                                    ),
+                                  ),
+                                  if ((gonderi?['metin'] as String?)
+                                          ?.isNotEmpty ==
+                                      true) ...[
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      gonderi!['metin'] as String,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: yaziRengi.withValues(alpha: 0.8),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

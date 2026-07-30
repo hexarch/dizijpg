@@ -15,6 +15,7 @@ Future<void> paylasSheet(
   BuildContext context, {
   required String url,
   String? metin,
+  int? yorumId, // verilirse DM'e bağlantı değil GÖNDERİNİN KENDİSİ gider
 }) => showModalBottomSheet(
   context: context,
   isScrollControlled: true,
@@ -22,13 +23,14 @@ Future<void> paylasSheet(
   shape: const RoundedRectangleBorder(
     borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
   ),
-  builder: (_) => _PaylasSheet(url: url, metin: metin),
+  builder: (_) => _PaylasSheet(url: url, metin: metin, yorumId: yorumId),
 );
 
 class _PaylasSheet extends StatefulWidget {
   final String url;
   final String? metin;
-  const _PaylasSheet({required this.url, this.metin});
+  final int? yorumId;
+  const _PaylasSheet({required this.url, this.metin, this.yorumId});
 
   @override
   State<_PaylasSheet> createState() => _PaylasSheetState();
@@ -64,7 +66,10 @@ class _PaylasSheetState extends State<_PaylasSheet> {
     try {
       await Api.post('/mesajlar', {
         'kullanici_adi': k['kullanici_adi'],
-        'metin': widget.url,
+        // Gönderi paylaşımında link DEĞİL postun kendisi gider: sohbette
+        // kart görünür, dokununca Reels'te açılır.
+        if (widget.yorumId != null) 'yorum_id': widget.yorumId,
+        if (widget.yorumId == null) 'metin': widget.url,
       });
       if (!mounted) return;
       setState(() {

@@ -214,6 +214,11 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
     _yukle();
   }
 
+  // Paylaşılan gönderiden sonra kaydırma DEVAM etsin: bu gönderi başta,
+  // ardından keşfet akışı gelir (mesajdan gelen kullanıcı tek postta kilitli
+  // kalmasın).
+  List<dynamic> _devam = [];
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
@@ -223,9 +228,29 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
         _yorum = d['yorum'] as Map<String, dynamic>;
         _icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       });
+      _devamYukle();
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
+    }
+  }
+
+  Future<void> _devamYukle() async {
+    try {
+      final d = await Api.get('/kesfet-akis');
+      if (!mounted) return;
+      final liste = (d['akis'] as List<dynamic>? ?? [])
+          .where((y) => (y as Map<String, dynamic>)['id'] != widget.yorumId)
+          .toList();
+      setState(() {
+        _devam = liste;
+        _icerikler = {
+          ..._icerikler,
+          ...(d['icerikler'] as Map<String, dynamic>? ?? {}),
+        };
+      });
+    } catch (_) {
+      // devam listesi gelmezse tek gönderi olarak kalır
     }
   }
 
@@ -264,7 +289,11 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
         body: Center(child: CircularProgressIndicator(color: DiziRenkler.sari)),
       );
     }
-    return ReelsGorunumu(liste: [_yorum!], icerikler: _icerikler, baslangic: 0);
+    return ReelsGorunumu(
+      liste: [_yorum!, ..._devam],
+      icerikler: _icerikler,
+      baslangic: 0,
+    );
   }
 }
 
@@ -539,6 +568,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
       context,
       url: 'https://dizijpg.com/gonderi/${widget.yorum['id']}',
       metin: widget.yorum['metin'] as String?,
+      yorumId: widget.yorum['id'] as int,
     );
   }
 
@@ -915,7 +945,9 @@ class _ReelSayfaState extends State<_ReelSayfa>
               ),
               const SizedBox(height: 16),
               _ReelsDugme(
-                ikon: Icons.share_outlined,
+                // Sohbete gönder: alt sayfada kişiler listelenir, dokunulan
+                // kişiye gönderinin KENDİSİ gider (kart olarak).
+                ikon: Icons.send_outlined,
                 etiket: 'Paylaş'.c,
                 onTap: _paylas,
               ),
