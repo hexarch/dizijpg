@@ -412,4 +412,6 @@ const Map<String, String> cevirilerHu = {
   'Diğer uygulamalar': 'Más alkalmazások',
   'Bağlantıyı kopyala': 'Link másolása',
   'Henüz kimseyi takip etmiyorsun.': 'Még senkit sem követsz.',
+  'Çevir': 'Fordítás',
+  'Orijinali göster': 'Eredeti mutatása',
 };

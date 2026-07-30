@@ -411,4 +411,6 @@ const Map<String, String> cevirilerRu = {
   'Diğer uygulamalar': 'Другие приложения',
   'Bağlantıyı kopyala': 'Копировать ссылку',
   'Henüz kimseyi takip etmiyorsun.': 'Ты пока ни на кого не подписан.',
+  'Çevir': 'Перевести',
+  'Orijinali göster': 'Показать оригинал',
 };

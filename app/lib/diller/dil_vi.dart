@@ -410,4 +410,6 @@ const Map<String, String> cevirilerVi = {
   'Diğer uygulamalar': 'Ứng dụng khác',
   'Bağlantıyı kopyala': 'Sao chép liên kết',
   'Henüz kimseyi takip etmiyorsun.': 'Bạn chưa theo dõi ai.',
+  'Çevir': 'Dịch',
+  'Orijinali göster': 'Xem bản gốc',
 };

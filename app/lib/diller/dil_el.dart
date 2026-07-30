@@ -412,4 +412,6 @@ const Map<String, String> cevirilerEl = {
   'Diğer uygulamalar': 'Άλλες εφαρμογές',
   'Bağlantıyı kopyala': 'Αντιγραφή συνδέσμου',
   'Henüz kimseyi takip etmiyorsun.': 'Δεν ακολουθείς κανέναν ακόμα.',
+  'Çevir': 'Μετάφραση',
+  'Orijinali göster': 'Εμφάνιση πρωτότυπου',
 };

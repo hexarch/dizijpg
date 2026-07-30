@@ -411,4 +411,6 @@ const Map<String, String> cevirilerNl = {
   'Diğer uygulamalar': 'Andere apps',
   'Bağlantıyı kopyala': 'Link kopiëren',
   'Henüz kimseyi takip etmiyorsun.': 'Je volgt nog niemand.',
+  'Çevir': 'Vertalen',
+  'Orijinali göster': 'Origineel tonen',
 };

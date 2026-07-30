@@ -408,4 +408,6 @@ const Map<String, String> cevirilerFa = {
   'Diğer uygulamalar': 'برنامه‌های دیگر',
   'Bağlantıyı kopyala': 'کپی لینک',
   'Henüz kimseyi takip etmiyorsun.': 'هنوز کسی را دنبال نمی‌کنی.',
+  'Çevir': 'ترجمه',
+  'Orijinali göster': 'نمایش متن اصلی',
 };

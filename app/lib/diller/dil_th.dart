@@ -404,4 +404,6 @@ const Map<String, String> cevirilerTh = {
   'Diğer uygulamalar': 'แอปอื่น',
   'Bağlantıyı kopyala': 'คัดลอกลิงก์',
   'Henüz kimseyi takip etmiyorsun.': 'คุณยังไม่ได้ติดตามใคร',
+  'Çevir': 'แปล',
+  'Orijinali göster': 'ดูต้นฉบับ',
 };

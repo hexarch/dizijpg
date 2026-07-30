@@ -410,4 +410,6 @@ const Map<String, String> cevirilerSv = {
   'Diğer uygulamalar': 'Fler appar',
   'Bağlantıyı kopyala': 'Kopiera länk',
   'Henüz kimseyi takip etmiyorsun.': 'Du följer ingen än.',
+  'Çevir': 'Översätt',
+  'Orijinali göster': 'Visa original',
 };

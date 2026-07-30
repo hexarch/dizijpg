@@ -407,4 +407,6 @@ const Map<String, String> cevirilerGu = {
   'Diğer uygulamalar': 'અન્ય ઍપ',
   'Bağlantıyı kopyala': 'લિંક કૉપિ કરો',
   'Henüz kimseyi takip etmiyorsun.': 'તું હજી કોઈને ફોલો કરતો નથી.',
+  'Çevir': 'ભાષાંતર કરો',
+  'Orijinali göster': 'મૂળ બતાવો',
 };

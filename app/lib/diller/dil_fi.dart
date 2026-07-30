@@ -410,4 +410,6 @@ const Map<String, String> cevirilerFi = {
   'Diğer uygulamalar': 'Muut sovellukset',
   'Bağlantıyı kopyala': 'Kopioi linkki',
   'Henüz kimseyi takip etmiyorsun.': 'Et seuraa vielä ketään.',
+  'Çevir': 'Käännä',
+  'Orijinali göster': 'Näytä alkuperäinen',
 };

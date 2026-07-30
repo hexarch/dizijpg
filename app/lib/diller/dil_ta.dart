@@ -410,4 +410,6 @@ const Map<String, String> cevirilerTa = {
   'Diğer uygulamalar': 'மற்ற ஆப்ஸ்',
   'Bağlantıyı kopyala': 'இணைப்பை நகலெடு',
   'Henüz kimseyi takip etmiyorsun.': 'இன்னும் யாரையும் பின்தொடரவில்லை.',
+  'Çevir': 'மொழிபெயர்',
+  'Orijinali göster': 'மூலத்தைக் காட்டு',
 };

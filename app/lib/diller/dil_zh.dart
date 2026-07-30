@@ -397,4 +397,6 @@ const Map<String, String> cevirilerZh = {
   'Diğer uygulamalar': '更多应用',
   'Bağlantıyı kopyala': '复制链接',
   'Henüz kimseyi takip etmiyorsun.': '你还没有关注任何人。',
+  'Çevir': '翻译',
+  'Orijinali göster': '显示原文',
 };

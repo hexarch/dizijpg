@@ -408,4 +408,6 @@ const Map<String, String> cevirilerTe = {
   'Diğer uygulamalar': 'ఇతర యాప్‌లు',
   'Bağlantıyı kopyala': 'లింక్ కాపీ చేయి',
   'Henüz kimseyi takip etmiyorsun.': 'నువ్వు ఇంకా ఎవరినీ ఫాలో అవ్వలేదు.',
+  'Çevir': 'అనువదించు',
+  'Orijinali göster': 'అసలుది చూపు',
 };

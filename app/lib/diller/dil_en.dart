@@ -409,4 +409,6 @@ const Map<String, String> cevirilerEn = {
   'Diğer uygulamalar': 'More apps',
   'Bağlantıyı kopyala': 'Copy link',
   'Henüz kimseyi takip etmiyorsun.': 'You\'re not following anyone yet.',
+  'Çevir': 'Translate',
+  'Orijinali göster': 'Show original',
 };

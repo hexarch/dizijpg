@@ -401,4 +401,6 @@ const Map<String, String> cevirilerAm = {
   'Diğer uygulamalar': 'ሌሎች መተግበሪያዎች',
   'Bağlantıyı kopyala': 'ማገናኛ ቅዳ',
   'Henüz kimseyi takip etmiyorsun.': 'ገና ማንንም አልተከተልክም።',
+  'Çevir': 'ተርጉም',
+  'Orijinali göster': 'ዋናውን አሳይ',
 };

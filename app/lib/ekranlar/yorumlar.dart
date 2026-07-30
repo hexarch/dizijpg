@@ -583,10 +583,16 @@ class _YorumKartiState extends State<_YorumKarti> {
               ],
             ),
             const SizedBox(height: 8),
-            SpoilerMetin(
-              yorum['metin'] as String? ?? '',
-              spoiler: yorum['spoiler'] == true,
-              stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
+            CeviriliMetin(
+              yorumId: yorum['id'] as int,
+              metin: yorum['metin'] as String? ?? '',
+              kaynakDil: yorum['kaynak_dil'] as String?,
+              ceviriVar: yorum['ceviri_var'] == true,
+              yapici: (m) => SpoilerMetin(
+                m,
+                spoiler: yorum['spoiler'] == true,
+                stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
+              ),
             ),
             if (medya.isNotEmpty) ...[
               const SizedBox(height: 10),

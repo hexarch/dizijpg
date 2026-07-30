@@ -408,4 +408,6 @@ const Map<String, String> cevirilerSw = {
   'Diğer uygulamalar': 'Programu nyingine',
   'Bağlantıyı kopyala': 'Nakili kiungo',
   'Henüz kimseyi takip etmiyorsun.': 'Bado hujamfuata mtu yeyote.',
+  'Çevir': 'Tafsiri',
+  'Orijinali göster': 'Onyesha asili',
 };

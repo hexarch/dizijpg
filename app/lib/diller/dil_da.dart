@@ -406,4 +406,6 @@ const Map<String, String> cevirilerDa = {
   'Diğer uygulamalar': 'Flere apps',
   'Bağlantıyı kopyala': 'Kopiér link',
   'Henüz kimseyi takip etmiyorsun.': 'Du følger ingen endnu.',
+  'Çevir': 'Oversæt',
+  'Orijinali göster': 'Vis original',
 };

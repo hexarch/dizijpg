@@ -180,7 +180,7 @@ class _AkisMedyaState extends State<AkisMedya> {
       _dinleyici = ImageStreamListener((bilgi, _) {
         if (!mounted || _oran != null) return;
         final o = bilgi.image.width / bilgi.image.height;
-        setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
+        setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
       }, onError: (_, _) {});
       _akis!.addListener(_dinleyici!);
     }
@@ -196,7 +196,7 @@ class _AkisMedyaState extends State<AkisMedya> {
 
   void _oranBildir(double o) {
     if (!mounted || _oran != null) return;
-    setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
+    setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
   }
 
   @override
@@ -498,9 +498,116 @@ class _AkisVideoState extends State<AkisVideo> {
     // Kutunun oranı videonun KENDİ oranı: genişlik tam dolar, yükseklik
     // posta göre değişir. Oran bilinene dek 16:9.
     final oran = (d != null && d.value.isInitialized && d.value.aspectRatio > 0)
-        ? d.value.aspectRatio.clamp(9 / 16, 21 / 9).toDouble()
+        ? d.value.aspectRatio.clamp(0.5, 21 / 9).toDouble()
         : 16 / 9;
     return AspectRatio(aspectRatio: oran, child: kutu);
+  }
+}
+
+/// Gönderi metni + "Çevir" düğmesi. Çeviri sunucuda HAZIRSA (ceviri_var)
+/// ve gönderinin dili kullanıcının dilinden farklıysa düğme görünür; basınca
+/// tek istekle çeviri gelir ve oturum boyunca yeniden istenmez.
+/// Metni her ekran kendi biçiminde çizsin diye gövde `yapici` ile verilir.
+class CeviriliMetin extends StatefulWidget {
+  final int yorumId;
+  final String metin;
+  final String? kaynakDil;
+  final bool ceviriVar;
+  final Widget Function(String metin) yapici;
+  final Color? dugmeRengi;
+
+  const CeviriliMetin({
+    super.key,
+    required this.yorumId,
+    required this.metin,
+    required this.kaynakDil,
+    required this.ceviriVar,
+    required this.yapici,
+    this.dugmeRengi,
+  });
+
+  @override
+  State<CeviriliMetin> createState() => _CeviriliMetinState();
+}
+
+class _CeviriliMetinState extends State<CeviriliMetin> {
+  String? _ceviri;
+  bool _cevrili = false;
+  bool _yukleniyor = false;
+
+  Future<void> _degistir() async {
+    if (_ceviri != null) {
+      setState(() => _cevrili = !_cevrili);
+      return;
+    }
+    setState(() => _yukleniyor = true);
+    try {
+      final d = await Api.get(
+        '/ceviri/${widget.yorumId}?dil=${Ceviri.dil.value}',
+      );
+      if (!mounted) return;
+      final m = d['metin'] as String?;
+      setState(() {
+        _yukleniyor = false;
+        if (m != null && m.isNotEmpty) {
+          _ceviri = m;
+          _cevrili = true;
+        }
+      });
+    } catch (_) {
+      if (mounted) setState(() => _yukleniyor = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Dil bilinmiyorsa ya da zaten kullanıcının dilindeyse düğme yok
+    final farkliDil =
+        widget.kaynakDil != null && widget.kaynakDil != Ceviri.dil.value;
+    final gosterilsin = farkliDil && (widget.ceviriVar || _ceviri != null);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        widget.yapici(_cevrili ? (_ceviri ?? widget.metin) : widget.metin),
+        if (gosterilsin)
+          InkWell(
+            onTap: _yukleniyor ? null : _degistir,
+            borderRadius: BorderRadius.circular(6),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (_yukleniyor)
+                    const SizedBox(
+                      width: 12,
+                      height: 12,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: DiziRenkler.sari,
+                      ),
+                    )
+                  else
+                    Icon(
+                      Icons.translate,
+                      size: 14,
+                      color: widget.dugmeRengi ?? DiziRenkler.sariMetin,
+                    ),
+                  const SizedBox(width: 5),
+                  Text(
+                    _cevrili ? 'Orijinali göster'.c : 'Çevir'.c,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: widget.dugmeRengi ?? DiziRenkler.sariMetin,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
   }
 }
 
@@ -521,12 +628,10 @@ class PosterKarti extends StatelessWidget {
   Widget build(BuildContext context) {
     final tur = turZorla ?? icerik['media_type'] as String? ?? 'tv';
     final ad = icerik['name'] ?? icerik['title'] ?? '?';
-    // Kart darsa küçük poster iste: w342 ~45KB, w185 ~18KB. 120px'lik kartta
-    // ikisi de aynı görünür ama listelerde trafiğin çoğu posterlerden gider.
-    final posterYolu = posterUrl(
-      icerik['poster_path'] as String?,
-      boyut: genislik <= 140 ? 'w185' : 'w342',
-    );
+    // DİKKAT: burada w185 denendi ve GERİ ALINDI — 3x ekranda 118dp kart 354
+    // fiziksel piksel demek; w185 büyütülüp gözle görülür bulanıklaşıyor.
+    // Bant genişliği kazancı kaliteye değmez.
+    final posterYolu = posterUrl(icerik['poster_path'] as String?);
     final puan = (icerik['vote_average'] as num?)?.toDouble() ?? 0;
 
     return SizedBox(

@@ -408,4 +408,6 @@ const Map<String, String> cevirilerAz = {
   'Diğer uygulamalar': 'Digər tətbiqlər',
   'Bağlantıyı kopyala': 'Linki kopyala',
   'Henüz kimseyi takip etmiyorsun.': 'Hələ heç kimi izləmirsən.',
+  'Çevir': 'Tərcümə et',
+  'Orijinali göster': 'Orijinalı göstər',
 };

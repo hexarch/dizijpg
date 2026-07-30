@@ -769,9 +769,12 @@ class _AkisKartiState extends State<_AkisKarti> {
             if (_spoilerAcik && (y['metin'] as String? ?? '').isNotEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text(
-                  (y['metin'] as String?) ?? '',
-                  style: const TextStyle(height: 1.45),
+                child: CeviriliMetin(
+                  yorumId: y['id'] as int,
+                  metin: (y['metin'] as String?) ?? '',
+                  kaynakDil: y['kaynak_dil'] as String?,
+                  ceviriVar: y['ceviri_var'] == true,
+                  yapici: (m) => Text(m, style: const TextStyle(height: 1.45)),
                 ),
               ),
             if (_spoilerAcik && medya.isNotEmpty) ...[

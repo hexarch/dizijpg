@@ -127,7 +127,7 @@ app.use((req, _res, next) => {
   // dildeki kullanıcıya servis edilirdi.
   const kod = String(req.query?.dil || req.headers['x-dil'] || 'tr').toLowerCase();
   const tmdbDil = TMDB_DIL[kod] || 'en-US';
-  istekBaglam.run({ tmdbDil }, next);
+  istekBaglam.run({ tmdbDil, dil: kod }, next);
 });
 
 // ---------- gerçek istemci IP (Cloudflare arkasında) ----------
@@ -254,6 +254,87 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
     [anahtar, veri],
   );
   return veri;
+}
+
+// Çok sayıda TMDB kaydını TEK sorguda önbellekten okur; yalnız eksik olanlar
+// TMDB'ye gider. Akış/takvim gibi ekranlar 30-60 içeriği tek tek sorduğunda
+// istek başına o kadar veritabanı gidiş-gelişi oluyordu.
+async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan) {
+  const dil = istekBaglam.getStore()?.tmdbDil || 'tr-TR';
+  const anahtarla = (yol) => (/[?&]language=/.test(yol)
+    ? yol.replace(/([?&]language=)[a-zA-Z-]+/, `$1${dil}`)
+    : yol + (yol.includes('?') ? '&' : '?') + 'language=' + dil);
+  const benzersiz = [...new Set(yollar)];
+  const sonuc = new Map();
+  if (!benzersiz.length) return sonuc;
+  const anahtarlar = benzersiz.map(anahtarla);
+  const { rows } = await havuz.query(
+    `SELECT anahtar, veri FROM tmdb_onbellek
+     WHERE anahtar = ANY($1::text[]) AND guncelleme > now() - ($2 || ' seconds')::interval`,
+    [anahtarlar, ttlSn],
+  );
+  const onbellek = new Map(rows.map((r) => [r.anahtar, r.veri]));
+  const eksik = [];
+  benzersiz.forEach((yol, i) => {
+    const v = onbellek.get(anahtarlar[i]);
+    if (v !== undefined) sonuc.set(yol, v);
+    else eksik.push(yol);
+  });
+  // Eksikler: 8'li öbekler (tmdbGetir tek tek önbelleğe de yazar)
+  for (let i = 0; i < eksik.length; i += 8) {
+    const obek = eksik.slice(i, i + 8);
+    const veriler = await Promise.all(obek.map((y) => tmdbGetir(y, ttlSn).catch(() => null)));
+    obek.forEach((y, j) => { if (veriler[j] != null) sonuc.set(y, veriler[j]); });
+  }
+  return sonuc;
+}
+
+// ---------- gönderi dili + çeviri ----------
+// Dış servis YOK: yazı sistemi + sık kelime sezgisiyle kaynak dili kestirir.
+// Amaç kusursuz tespit değil, "bu gönderi zaten kullanıcının dilinde mi?"
+// sorusuna yetecek isabet; yanılırsa en fazla gereksiz bir çevir düğmesi çıkar.
+const YAZI_SISTEMI = [
+  [/[\u3040-\u30ff]/, 'ja'], [/[\uac00-\ud7af]/, 'ko'],
+  [/[\u0e00-\u0e7f]/, 'th'], [/[\u0590-\u05ff]/, 'he'],
+  [/[\u0600-\u06ff]/, 'ar'], [/[\u0900-\u097f]/, 'hi'],
+  [/[\u0980-\u09ff]/, 'bn'], [/[\u0400-\u04ff]/, 'ru'],
+  [/[\u0370-\u03ff]/, 'el'], [/[\u4e00-\u9fff]/, 'zh'],
+];
+// Latin alfabesi: ayırt edici kelimeler (küçük harfe indirgenmiş metinde aranır)
+const DIL_KELIMELERI = {
+  tr: ['bir','ve','bu','için','çok','ama','daha','ben','sen','değil','gibi','olan','şey','yok','var'],
+  en: ['the','and','is','of','to','in','this','that','with','you','for','was','are','it'],
+  es: ['el','la','de','que','los','una','por','con','para','como','pero','más'],
+  pt: ['de','que','não','uma','com','para','mais','como','mas','muito'],
+  fr: ['le','la','les','des','une','pour','avec','dans','pas','plus','être'],
+  de: ['der','die','das','und','ist','nicht','für','mit','auch','eine','aber'],
+  it: ['il','la','di','che','per','non','con','una','sono','anche','più'],
+  nl: ['de','het','een','van','en','is','niet','voor','met','maar'],
+  pl: ['nie','się','jest','tak','ale','jak','tym','czy'],
+  id: ['yang','dan','ini','itu','untuk','dengan','tidak','saya'],
+  vi: ['của','và','các','một','người','những','được','trong'],
+};
+function dilTespit(ham) {
+  const metin = String(ham || '')
+    .replace(/[#@][\w._-]+/g, ' ')   // etiket ve kullanıcı adları dile karışmasın
+    .replace(/https?:\/\/\S+/g, ' ')
+    .trim();
+  if (metin.length < 3) return null;
+  for (const [desen, kod] of YAZI_SISTEMI) {
+    if (desen.test(metin)) return kod;
+  }
+  const kucuk = ' ' + metin.toLowerCase().replace(/[^\p{L}\s]/gu, ' ').replace(/\s+/g, ' ') + ' ';
+  const puanlar = {};
+  for (const [kod, kelimeler] of Object.entries(DIL_KELIMELERI)) {
+    puanlar[kod] = kelimeler.reduce((t, k) => t + (kucuk.includes(` ${k} `) ? 1 : 0), 0);
+  }
+  // Türkçeye özgü harfler güçlü kanıt
+  if (/[ğışİĞİŞ]/.test(metin)) puanlar.tr += 2;
+  const [enIyi, puan] = Object.entries(puanlar).sort((a, b) => b[1] - a[1])[0];
+  if (puan >= 2) return enIyi;
+  if (puan === 1) return enIyi;
+  // Ayırt edici kelime yok (çok kısa/emoji): Türkçe harf varsa tr, yoksa bilinmiyor
+  return /[ğışçöüĞİŞÇÖÜ]/.test(metin) ? 'tr' : null;
 }
 
 // Geçerli TMDB id: tam sayı, 1..1e9 (int4 taşması → temiz 400).
@@ -1638,41 +1719,66 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   const TAKVIM_SINIR = 40; // tek dizi takvim penceresini boğmasın
   const takvim = [];
   const yetisme = [];
+  // Tüm dizilerin detayı TEK sorguda önbellekten (eksikler TMDB'den);
+  // eskiden dizi başına ayrı sorgu gidiyordu.
+  const diziHarita = await tmdbTopluGetir(
+    rows.map((r) => `/tv/${r.tmdb_id}?language=tr-TR`),
+    ONBELLEK_TTL_SN.varsayilan,
+  );
+  // İzlenen en ileri bölüm (dizi başına)
+  const enIleri = (tmdb_id) => {
+    let maxS = 0;
+    let maxB = 0;
+    for (const r of izl.rows) {
+      if (r.tmdb_id !== tmdb_id) continue;
+      if (r.sezon > maxS || (r.sezon === maxS && r.bolum > maxB)) {
+        maxS = r.sezon;
+        maxB = r.bolum;
+      }
+    }
+    return { maxS, maxB };
+  };
+  // Getirilecek sezonlar: yetişme aralığı (en ileri izlenenden +4 sezon) +
+  // pencere sezonları (son yayınlanan ve sıradaki bölümün sezonları —
+  // izlenen güncel bölümler de takvimde ✓ ile görünsün diye).
+  const hedefSezonlar = (dizi, maxS) => {
+    const yetismeSezonlari = (dizi.seasons || [])
+      .filter((s) => s.season_number > 0 && s.season_number >= Math.max(maxS, 1))
+      .slice(0, 4)
+      .map((s) => s.season_number);
+    const sezonNolar = new Set(yetismeSezonlari);
+    if (dizi.last_episode_to_air?.season_number > 0) {
+      sezonNolar.add(dizi.last_episode_to_air.season_number);
+    }
+    if (dizi.next_episode_to_air?.season_number > 0) {
+      sezonNolar.add(dizi.next_episode_to_air.season_number);
+    }
+    return { yetismeSezonlari, sezonNolar };
+  };
+  // Gereken TÜM sezonlar da tek toplu okumayla gelsin
+  const sezonYollari = [];
+  for (const { tmdb_id } of rows) {
+    const dizi = diziHarita.get(`/tv/${tmdb_id}?language=tr-TR`);
+    if (!dizi) continue;
+    const { sezonNolar } = hedefSezonlar(dizi, enIleri(tmdb_id).maxS);
+    for (const sn of sezonNolar) {
+      sezonYollari.push(`/tv/${tmdb_id}/season/${sn}?language=tr-TR`);
+    }
+  }
+  const sezonHarita = await tmdbTopluGetir(sezonYollari, ONBELLEK_TTL_SN.varsayilan);
+
   const diziIsle = async ({ tmdb_id }) => {
     try {
-      const dizi = await tmdbGetir(`/tv/${tmdb_id}?language=tr-TR`, ONBELLEK_TTL_SN.varsayilan);
-      // İzlenen en ileri bölüm
-      let maxS = 0;
-      let maxB = 0;
-      for (const r of izl.rows) {
-        if (r.tmdb_id !== tmdb_id) continue;
-        if (r.sezon > maxS || (r.sezon === maxS && r.bolum > maxB)) {
-          maxS = r.sezon;
-          maxB = r.bolum;
-        }
-      }
-      // Getirilecek sezonlar: yetişme aralığı (en ileri izlenenden +4 sezon) +
-      // pencere sezonları (son yayınlanan ve sıradaki bölümün sezonları —
-      // izlenen güncel bölümler de takvimde ✓ ile görünsün diye).
-      const yetismeSezonlari = (dizi.seasons || [])
-        .filter((s) => s.season_number > 0 && s.season_number >= Math.max(maxS, 1))
-        .slice(0, 4)
-        .map((s) => s.season_number);
-      const sezonNolar = new Set(yetismeSezonlari);
-      if (dizi.last_episode_to_air?.season_number > 0) {
-        sezonNolar.add(dizi.last_episode_to_air.season_number);
-      }
-      if (dizi.next_episode_to_air?.season_number > 0) {
-        sezonNolar.add(dizi.next_episode_to_air.season_number);
-      }
+      const dizi = diziHarita.get(`/tv/${tmdb_id}?language=tr-TR`);
+      if (!dizi) return;
+      const { maxS, maxB } = enIleri(tmdb_id);
+      const { yetismeSezonlari, sezonNolar } = hedefSezonlar(dizi, maxS);
       let yetEk = 0;
       let takEk = 0;
       for (const sn of [...sezonNolar].sort((a, b) => a - b)) {
         if (yetEk >= YETISME_SINIR && takEk >= TAKVIM_SINIR) break;
-        const sez = await tmdbGetir(
-          `/tv/${tmdb_id}/season/${sn}?language=tr-TR`,
-          ONBELLEK_TTL_SN.varsayilan,
-        );
+        const sez = sezonHarita.get(`/tv/${tmdb_id}/season/${sn}?language=tr-TR`);
+        if (!sez) continue;
         for (const b of (sez.episodes || [])) {
           if (!b.air_date) continue; // yayın tarihi belli olmayanlar gelmez
           const bn = b.episode_number;
@@ -1890,7 +1996,9 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler,
-            k.kullanici_adi, k.avatar,
+            k.kullanici_adi, k.avatar, y.kaynak_dil,
+            EXISTS(SELECT 1 FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_var,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$2) AS begendim,
@@ -1903,7 +2011,7 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
        AND y.kullanici_id NOT IN (
          SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$2
          UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$2)`,
-    [yorumId, benId],
+    [yorumId, benId, istekBaglam.getStore()?.dil || 'tr'],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
   const y = rows[0];
@@ -1939,7 +2047,9 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
   const benId = req.kullanici?.id || 0;
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
-            y.ust_id, y.goruntulenme, y.spoiler, k.kullanici_adi, k.avatar,
+            y.ust_id, y.goruntulenme, y.spoiler, k.kullanici_adi, k.avatar, y.kaynak_dil,
+            EXISTS(SELECT 1 FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_var,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$5) AS begendim
@@ -1947,7 +2057,8 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
      WHERE y.tur=$1 AND y.tmdb_id=$2
        AND y.sezon IS NOT DISTINCT FROM $3 AND y.bolum IS NOT DISTINCT FROM $4
      ORDER BY y.tarih DESC LIMIT 100`,
-    [req.params.tur, req.params.tmdbId, sezon, bolum, benId],
+    [req.params.tur, req.params.tmdbId, sezon, bolum, benId,
+     istekBaglam.getStore()?.dil || 'tr'],
   );
   // Görüntülenme: HER listeleme sayılır (aynı kişinin tekrarları dahil).
   if (rows.length) {
@@ -1986,7 +2097,9 @@ const AKIS_GOVDE = `
 const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler AS spoiler_isaret,
-            k.kullanici_adi, k.avatar, g.guvenli,
+            k.kullanici_adi, k.avatar, g.guvenli, y.kaynak_dil,
+            EXISTS(SELECT 1 FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_var,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim`;
@@ -2031,19 +2144,18 @@ async function kadroKisileri(benId) {
 // Satır listesi için içerik adı + poster haritası (kişide profile_path).
 async function akisIcerikleri(rows) {
   const anahtarlar = [...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))];
-  const icerikler = {};
-  await Promise.all(anahtarlar.map(async (a) => {
+  const yollar = anahtarlar.map((a) => {
     const [tur, id] = a.split(':');
-    try {
-      const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-      icerikler[a] = {
-        ad: v.name || v.title || '?',
-        poster: v.poster_path || v.profile_path || null,
-      };
-    } catch {
-      icerikler[a] = { ad: '?', poster: null };
-    }
-  }));
+    return `/${tur}/${id}?language=tr-TR`;
+  });
+  const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+  const icerikler = {};
+  anahtarlar.forEach((a, i) => {
+    const v = harita.get(yollar[i]);
+    icerikler[a] = v
+      ? { ad: v.name || v.title || '?', poster: v.poster_path || v.profile_path || null }
+      : { ad: '?', poster: null };
+  });
   return icerikler;
 }
 
@@ -2065,7 +2177,7 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
        AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)
        ${AKIS_KURAL}
      ORDER BY y.id DESC LIMIT 30`,
-    [benId, once, kadro],
+    [benId, once, kadro, istekBaglam.getStore()?.dil || 'tr'],
   );
   let kaynak = 'akis';
   // FALLBACK (yalnız ilk sayfa boşsa): günün en beğenilenleri → ayın en
@@ -2080,7 +2192,7 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
            ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)`
            : ''}
        ORDER BY begeni DESC, y.id DESC LIMIT 30`,
-      [benId, gun]);
+      [benId, gun, null, istekBaglam.getStore()?.dil || 'tr']);
     for (const [gun, haric] of [[1, true], [30, true], [30, false]]) {
       const p = await populer(gun, haric);
       if (p.rows.length) { rows = p.rows; kaynak = 'populer'; break; }
@@ -2124,7 +2236,7 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
               (cardinality(y.medya) > 0) DESC,
               y.id DESC
      LIMIT 60`,
-    [benId, null, kadro]);
+    [benId, null, kadro, istekBaglam.getStore()?.dil || 'tr']);
   let { rows } = await sorgula(true);
   if (!rows.length) ({ rows } = await sorgula(false)); // son çare: tümü görüldü
   res.json({
@@ -2153,6 +2265,95 @@ app.post('/akis/goruldu', girisZorunlu, sarici(async (req, res) => {
     ]);
   }
   res.json({ tamam: true });
+}));
+
+// ---------- gönderi çevirisi ----------
+// Kullanıcı "Çevir"e basınca: metnin özetine bağlı hazır çeviri döner.
+// Çeviri YOKSA üretilmez (dış API yok) — 404 yerine {yok:true} ile temiz cevap.
+app.get('/ceviri/:yorumId', girisIsteğeBagli, sarici(async (req, res) => {
+  const id = parseInt(req.params.yorumId, 10);
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const dil = String(req.query.dil || istekBaglam.getStore()?.dil || 'tr').toLowerCase();
+  const { rows } = await havuz.query(
+    `SELECT c.metin FROM yorumlar y
+     JOIN metin_cevirileri c ON c.ozet = md5(btrim(y.metin)) AND c.dil = $2
+     WHERE y.id = $1`,
+    [id, dil],
+  );
+  if (!rows.length) return res.json({ yok: true });
+  res.json({ metin: rows[0].metin, dil });
+}));
+
+// Admin: çevrilmeyi bekleyen BENZERSİZ metinler (en çok görülenler önce).
+app.get('/admin/cevrilecek', adminKisit, sarici(async (req, res) => {
+  const dil = String(req.query.dil || 'en').toLowerCase();
+  const limit = Math.min(parseInt(req.query.limit, 10) || 200, 1000);
+  const kaynak = req.query.kaynak ? String(req.query.kaynak).toLowerCase() : null;
+  const { rows } = await havuz.query(
+    `SELECT md5(btrim(y.metin)) AS ozet, btrim(y.metin) AS metin,
+            count(*)::int AS gonderi, min(y.kaynak_dil) AS kaynak_dil
+     FROM yorumlar y
+     WHERE y.metin IS NOT NULL AND length(btrim(y.metin)) > 2
+       AND ($3::text IS NULL OR y.kaynak_dil = $3)
+       AND y.kaynak_dil IS DISTINCT FROM $1
+       AND NOT EXISTS (SELECT 1 FROM metin_cevirileri c
+                       WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $1)
+     GROUP BY 1, 2
+     ORDER BY gonderi DESC, length(btrim(y.metin))
+     LIMIT $2`,
+    [dil, limit, kaynak],
+  );
+  res.json({ dil, adet: rows.length, metinler: rows });
+}));
+
+// Admin: toplu çeviri yükleme. Gövde: {ceviriler:[{ozet,dil,metin}, ...]}
+app.post('/admin/ceviri', adminKisit, express.json({ limit: '8mb' }), sarici(async (req, res) => {
+  const liste = Array.isArray(req.body?.ceviriler) ? req.body.ceviriler : [];
+  if (!liste.length) return res.status(400).json({ hata: 'ceviriler dizisi gerekli' });
+  const ozetler = [];
+  const diller = [];
+  const metinler = [];
+  for (const c of liste) {
+    if (!/^[0-9a-f]{32}$/.test(String(c?.ozet || '')) ||
+        !/^[a-z]{2,3}$/.test(String(c?.dil || '')) ||
+        typeof c?.metin !== 'string' || !c.metin.trim()) {
+      return res.status(400).json({ hata: 'Geçersiz çeviri kaydı' });
+    }
+    ozetler.push(c.ozet); diller.push(c.dil); metinler.push(c.metin.trim().slice(0, 4000));
+  }
+  await havuz.query(
+    `INSERT INTO metin_cevirileri (ozet, dil, metin)
+     SELECT * FROM unnest($1::text[], $2::text[], $3::text[])
+     ON CONFLICT (ozet, dil) DO UPDATE SET metin = EXCLUDED.metin, olusturma = now()`,
+    [ozetler, diller, metinler],
+  );
+  res.json({ eklenen: liste.length });
+}));
+
+// Admin: kaynak_dil'i boş olan gönderilerin dilini tespit edip yazar.
+app.post('/admin/dil-tespit', adminKisit, sarici(async (req, res) => {
+  const limit = Math.min(parseInt(req.body?.limit, 10) || 5000, 20000);
+  const { rows } = await havuz.query(
+    `SELECT id, metin FROM yorumlar
+     WHERE kaynak_dil IS NULL AND metin IS NOT NULL AND length(btrim(metin)) > 2
+     LIMIT $1`,
+    [limit],
+  );
+  const idler = [];
+  const diller = [];
+  for (const r of rows) {
+    const d = dilTespit(r.metin);
+    if (d) { idler.push(r.id); diller.push(d); }
+  }
+  if (idler.length) {
+    await havuz.query(
+      `UPDATE yorumlar y SET kaynak_dil = v.dil
+       FROM (SELECT * FROM unnest($1::int[], $2::text[]) AS t(id, dil)) v
+       WHERE y.id = v.id`,
+      [idler, diller],
+    );
+  }
+  res.json({ bakilan: rows.length, isaretlenen: idler.length });
 }));
 
 // ---------- bildirimler ----------
@@ -2284,15 +2485,19 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     .filter((r) => r.icerik_tur && r.icerik_id)
     .map((r) => `${r.icerik_tur}:${r.icerik_id}`))];
   const icerikler = {};
-  await Promise.all(anahtarlar.map(async (a) => {
-    const [tur, tmdbId] = a.split(':');
-    try {
-      const v = await tmdbGetir(`/${tur}/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-      icerikler[a] = { ad: v.name || v.title || '?', poster: v.poster_path || null };
-    } catch {
-      icerikler[a] = { ad: '?', poster: null };
-    }
-  }));
+  {
+    const yollar = anahtarlar.map((a) => {
+      const [tur, tmdbId] = a.split(':');
+      return `/${tur}/${tmdbId}?language=tr-TR`;
+    });
+    const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+    anahtarlar.forEach((a, i) => {
+      const v = harita.get(yollar[i]);
+      icerikler[a] = v
+        ? { ad: v.name || v.title || '?', poster: v.poster_path || null }
+        : { ad: '?', poster: null };
+    });
+  }
   havuz.query(
     `UPDATE mesajlar SET okundu=true, iletildi=true
      WHERE alici_id=$1 AND gonderen_id=$2 AND NOT okundu`,
@@ -2683,9 +2888,10 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
     }
   }
   const { rows } = await havuz.query(
-    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, ust_id, spoiler)
-     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id, tarih`,
-    [req.kullanici.id, tur, tmdb_id, sezon, bolum, temiz, medya, gercekUst, spoiler],
+    `INSERT INTO yorumlar (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, ust_id, spoiler, kaynak_dil)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id, tarih`,
+    [req.kullanici.id, tur, tmdb_id, sezon, bolum, temiz, medya, gercekUst, spoiler,
+     dilTespit(temiz)],
   );
   let yanitlananSahip = null;
   if (gercekUst) {
@@ -3042,18 +3248,19 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   // Yorum kartları için içerik adı + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(yorumlar.rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
   const icerikler = {};
-  await Promise.all(anahtarlar.map(async (a) => {
-    const [tur, tmdbId] = a.split(':');
-    try {
-      const v = await tmdbGetir(`/${tur}/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-      icerikler[a] = {
-        ad: v.name || v.title || '?',
-        poster: v.poster_path || v.profile_path || null,
-      };
-    } catch {
-      icerikler[a] = { ad: '?', poster: null };
-    }
-  }));
+  {
+    const yollar = anahtarlar.map((a) => {
+      const [tur, tmdbId] = a.split(':');
+      return `/${tur}/${tmdbId}?language=tr-TR`;
+    });
+    const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+    anahtarlar.forEach((a, i) => {
+      const v = harita.get(yollar[i]);
+      icerikler[a] = v
+        ? { ad: v.name || v.title || '?', poster: v.poster_path || v.profile_path || null }
+        : { ad: '?', poster: null };
+    });
+  }
   res.json({
     ...k.rows[0],
     ben_mi: benId === id,

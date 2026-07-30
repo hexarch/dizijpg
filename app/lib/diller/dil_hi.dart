@@ -410,4 +410,6 @@ const Map<String, String> cevirilerHi = {
   'Diğer uygulamalar': 'अन्य ऐप',
   'Bağlantıyı kopyala': 'लिंक कॉपी करें',
   'Henüz kimseyi takip etmiyorsun.': 'तुम अभी किसी को फ़ॉलो नहीं करते।',
+  'Çevir': 'अनुवाद करें',
+  'Orijinali göster': 'मूल दिखाएँ',
 };

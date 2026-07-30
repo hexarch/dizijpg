@@ -412,4 +412,6 @@ const Map<String, String> cevirilerRo = {
   'Diğer uygulamalar': 'Alte aplicații',
   'Bağlantıyı kopyala': 'Copiază linkul',
   'Henüz kimseyi takip etmiyorsun.': 'Încă nu urmărești pe nimeni.',
+  'Çevir': 'Tradu',
+  'Orijinali göster': 'Arată originalul',
 };

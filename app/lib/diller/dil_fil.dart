@@ -412,4 +412,6 @@ const Map<String, String> cevirilerFil = {
   'Diğer uygulamalar': 'Iba pang app',
   'Bağlantıyı kopyala': 'Kopyahin ang link',
   'Henüz kimseyi takip etmiyorsun.': 'Wala ka pang sinusundan.',
+  'Çevir': 'Isalin',
+  'Orijinali göster': 'Ipakita ang orihinal',
 };

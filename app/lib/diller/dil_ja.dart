@@ -399,4 +399,6 @@ const Map<String, String> cevirilerJa = {
   'Diğer uygulamalar': '他のアプリ',
   'Bağlantıyı kopyala': 'リンクをコピー',
   'Henüz kimseyi takip etmiyorsun.': 'まだ誰もフォローしていません。',
+  'Çevir': '翻訳',
+  'Orijinali göster': '原文を表示',
 };

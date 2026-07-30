@@ -417,4 +417,6 @@ const Map<String, String> cevirilerMy = {
   'Diğer uygulamalar': 'အခြားအက်ပ်များ',
   'Bağlantıyı kopyala': 'လင့်ခ်ကူးရန်',
   'Henüz kimseyi takip etmiyorsun.': 'သင်ဘယ်သူ့ကိုမှ မလိုက်ရသေးပါ။',
+  'Çevir': 'ဘာသာပြန်',
+  'Orijinali göster': 'မူရင်းပြရန်',
 };
