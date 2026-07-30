@@ -521,7 +521,12 @@ class PosterKarti extends StatelessWidget {
   Widget build(BuildContext context) {
     final tur = turZorla ?? icerik['media_type'] as String? ?? 'tv';
     final ad = icerik['name'] ?? icerik['title'] ?? '?';
-    final posterYolu = posterUrl(icerik['poster_path'] as String?);
+    // Kart darsa küçük poster iste: w342 ~45KB, w185 ~18KB. 120px'lik kartta
+    // ikisi de aynı görünür ama listelerde trafiğin çoğu posterlerden gider.
+    final posterYolu = posterUrl(
+      icerik['poster_path'] as String?,
+      boyut: genislik <= 140 ? 'w185' : 'w342',
+    );
     final puan = (icerik['vote_average'] as num?)?.toDouble() ?? 0;
 
     return SizedBox(

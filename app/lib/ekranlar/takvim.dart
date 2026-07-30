@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../onbellek.dart';
 import '../tema.dart';
 import 'ortak.dart';
 import 'takvim_ay.dart';
@@ -71,11 +72,22 @@ class _TakvimEkraniState extends State<TakvimEkrani>
   @override
   void initState() {
     super.initState();
+    _onbellektenYukle();
     _yukle();
     SharedPreferences.getInstance().then((p) {
       if (mounted) {
         setState(() => _takvimModu = p.getBool('takvim_modu') ?? false);
       }
+    });
+  }
+
+  /// Son başarılı takvim anında gösterilir (SWR); taze veri arkadan gelir.
+  Future<void> _onbellektenYukle() async {
+    final d = await Onbellek.oku('takvim');
+    if (d == null || !mounted || _takvim != null) return;
+    setState(() {
+      _takvim = d['takvim'] as List<dynamic>? ?? [];
+      _yetisme = d['yetisme'] as List<dynamic>? ?? [];
     });
   }
 
@@ -88,9 +100,10 @@ class _TakvimEkraniState extends State<TakvimEkrani>
         _takvim = d['takvim'] as List<dynamic>? ?? [];
         _yetisme = d['yetisme'] as List<dynamic>? ?? [];
       });
+      Onbellek.yaz('takvim', {'takvim': _takvim, 'yetisme': _yetisme});
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      if (_takvim == null) setState(() => _hata = e.toString());
     }
   }
 

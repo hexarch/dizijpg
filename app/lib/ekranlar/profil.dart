@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../onbellek.dart';
 import '../tema.dart';
 import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
@@ -131,6 +132,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   @override
   void initState() {
     super.initState();
+    _onbellektenYukle();
     _yukle();
     _siraYukle();
     // Sekmeye her dönüşte veriyi tazele (izlenenler sırası güncel kalsın)
@@ -383,6 +385,20 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     const SizedBox(height: 16),
   ];
 
+  /// Son başarılı profil anında gösterilir (SWR); taze veri arkadan gelir.
+  Future<void> _onbellektenYukle() async {
+    final d = await Onbellek.oku('profil');
+    if (d == null || !mounted || _profil != null) return;
+    setState(() {
+      _istatistik = d['istatistik'] as Map<String, dynamic>?;
+      _kitaplik = d['kitaplik'] as Map<String, dynamic>?;
+      _listeler = (d['listeler'] as List<dynamic>?) ?? _listeler;
+      _profil = d['profil'] as Map<String, dynamic>?;
+      _izlenenler = (d['izlenenler'] as List<dynamic>?) ?? _izlenenler;
+      _rozetler = (d['rozetler'] as List<dynamic>?) ?? _rozetler;
+    });
+  }
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
@@ -405,9 +421,17 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         _izlenenler = sonuclar[4]['ogeler'] as List<dynamic>;
         _rozetler = sonuclar[5]['rozetler'] as List<dynamic>? ?? [];
       });
+      Onbellek.yaz('profil', {
+        'istatistik': _istatistik,
+        'kitaplik': _kitaplik,
+        'listeler': _listeler,
+        'profil': _profil,
+        'izlenenler': _izlenenler,
+        'rozetler': _rozetler,
+      });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      if (_profil == null) setState(() => _hata = e.toString());
     }
   }
 

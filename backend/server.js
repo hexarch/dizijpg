@@ -122,7 +122,10 @@ app.use((req, res, next) => {
 
 // İstek dilini bağlama koy: TMDB içeriği kullanıcının dilinde gelsin.
 app.use((req, _res, next) => {
-  const kod = String(req.headers['x-dil'] || 'tr').toLowerCase();
+  // Dil önce ADRESTEN (?dil=xx) okunur: Cloudflare önbellek anahtarı yalnız
+  // URL'dir, başlığa bakmaz — dil adreste olmasaydı bir dilin yanıtı başka
+  // dildeki kullanıcıya servis edilirdi.
+  const kod = String(req.query?.dil || req.headers['x-dil'] || 'tr').toLowerCase();
   const tmdbDil = TMDB_DIL[kod] || 'en-US';
   istekBaglam.run({ tmdbDil }, next);
 });
@@ -823,6 +826,7 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
     return res.status(403).json({ hata: 'Bu TMDB yoluna izin yok' });
   }
   const parametreler = new URLSearchParams(req.query);
+  parametreler.delete('dil'); // yalnız önbellek anahtarı için vardı
   if (!parametreler.has('language')) parametreler.set('language', 'tr-TR');
   // Detay sayfalarına ek verileri tek istekte iliştir.
   if (/^\/(tv|movie)\/\d+$/.test(yol) && !parametreler.has('append_to_response')) {
@@ -830,6 +834,13 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   }
   const tam = `${yol}?${parametreler.toString()}`;
   const uzunTtl = /^\/(tv|movie|person)\//.test(yol);
+  // Katalog verisi herkeste AYNI (kişiye özel alan yok) → Cloudflare kenarında
+  // önbelleklensin: istek Amerika'daki sunucuya gitmeden en yakın kenardan
+  // döner. Dil adreste (?dil=xx) taşındığı için diller karışmaz.
+  res.set(
+    'Cache-Control',
+    `public, max-age=${uzunTtl ? 86400 : 3600}, s-maxage=${uzunTtl ? 604800 : 21600}`,
+  );
   res.json(await tmdbGetir(tam, uzunTtl ? ONBELLEK_TTL_SN.uzun : ONBELLEK_TTL_SN.varsayilan));
 }));
 

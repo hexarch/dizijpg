@@ -7,6 +7,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../onbellek.dart';
 import '../tema.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu;
 import 'ortak.dart';
@@ -51,6 +52,7 @@ class _AkisEkraniState extends State<AkisEkrani>
   @override
   void initState() {
     super.initState();
+    _onbellektenYukle();
     _yukle();
     _kaydirma.addListener(() {
       if (_kaydirma.position.pixels >
@@ -139,6 +141,17 @@ class _AkisEkraniState extends State<AkisEkrani>
     } catch (_) {}
   }
 
+  /// Son başarılı akış anında gösterilir (SWR); taze veri arkadan gelir.
+  Future<void> _onbellektenYukle() async {
+    final d = await Onbellek.oku('akis');
+    if (d == null || !mounted || _akis != null) return;
+    setState(() {
+      _akis = d['akis'] as List<dynamic>;
+      _icerikler = (d['icerikler'] as Map<String, dynamic>? ?? {});
+      _dahaVar = (_akis!.length) >= 30;
+    });
+  }
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
     _rozetleriYukle();
@@ -150,9 +163,11 @@ class _AkisEkraniState extends State<AkisEkrani>
         _icerikler = (d['icerikler'] as Map<String, dynamic>? ?? {});
         _dahaVar = (_akis!.length) >= 30;
       });
+      Onbellek.yaz('akis', {'akis': _akis, 'icerikler': _icerikler});
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      // Önbellekten gösteriliyorsa ağ hatasını yut
+      if (_akis == null) setState(() => _hata = e.toString());
     }
   }
 
