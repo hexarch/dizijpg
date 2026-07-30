@@ -404,4 +404,5 @@ const Map<String, String> cevirilerAz = {
       'Bu istifadəçi şərhlərini gizli saxlamağa üstünlük verir.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Məlumat: JustWatch',
+  'Web Sitesi': 'Vebsayt',
 };

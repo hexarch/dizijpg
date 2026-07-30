@@ -1712,7 +1712,7 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
 const SOSYAL_PLATFORMLAR = new Set([
   'instagram', 'facebook', 'x', 'tiktok', 'discord', 'steam', 'xbox',
   'epicgames', 'imdb', 'vk', 'youtube', 'twitch', 'spotify', 'github',
-  'reddit', 'telegram', 'snapchat', 'pinterest', 'letterboxd',
+  'reddit', 'telegram', 'snapchat', 'pinterest', 'letterboxd', 'website',
 ]);
 // [{platform, deger}] × ≤3 doğrular; bozuksa null döner.
 function sosyalDogrula(sosyal) {

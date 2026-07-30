@@ -406,4 +406,5 @@ const Map<String, String> cevirilerMl = {
       'ഈ ഉപയോക്താവ് കമന്റുകൾ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ഡാറ്റ: JustWatch',
+  'Web Sitesi': 'വെബ്സൈറ്റ്',
 };

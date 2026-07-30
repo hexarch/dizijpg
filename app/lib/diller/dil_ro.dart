@@ -408,4 +408,5 @@ const Map<String, String> cevirilerRo = {
       'Acest utilizator preferă să-și țină comentariile private.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Date: JustWatch',
+  'Web Sitesi': 'Site web',
 };

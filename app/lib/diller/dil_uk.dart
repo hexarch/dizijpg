@@ -406,4 +406,5 @@ const Map<String, String> cevirilerUk = {
       'Цей користувач воліє тримати свої коментарі прихованими.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Дані: JustWatch',
+  'Web Sitesi': 'Вебсайт',
 };

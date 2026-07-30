@@ -404,4 +404,5 @@ const Map<String, String> cevirilerTe = {
       'ఈ వినియోగదారు తన కామెంట్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'డేటా: JustWatch',
+  'Web Sitesi': 'వెబ్‌సైట్',
 };

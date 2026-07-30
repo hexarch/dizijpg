@@ -402,4 +402,5 @@ const Map<String, String> cevirilerAr = {
       'يفضّل هذا المستخدم إبقاء تعليقاته مخفية.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'البيانات: JustWatch',
+  'Web Sitesi': 'الموقع الإلكتروني',
 };

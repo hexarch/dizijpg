@@ -406,4 +406,5 @@ const Map<String, String> cevirilerCs = {
       'Tento uživatel si přeje nechat své komentáře skryté.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Web',
 };

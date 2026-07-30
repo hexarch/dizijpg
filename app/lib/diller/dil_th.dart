@@ -400,4 +400,5 @@ const Map<String, String> cevirilerTh = {
       'ผู้ใช้รายนี้เลือกที่จะซ่อนความคิดเห็นของตน',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ข้อมูล: JustWatch',
+  'Web Sitesi': 'เว็บไซต์',
 };

@@ -406,4 +406,5 @@ const Map<String, String> cevirilerSr = {
       'Овај корисник радије држи своје коментаре скривеним.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Подаци: JustWatch',
+  'Web Sitesi': 'Веб-сајт',
 };

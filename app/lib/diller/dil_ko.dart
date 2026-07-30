@@ -395,4 +395,5 @@ const Map<String, String> cevirilerKo = {
       '이 사용자는 댓글을 비공개로 유지하고 있어요.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': '데이터: JustWatch',
+  'Web Sitesi': '웹사이트',
 };

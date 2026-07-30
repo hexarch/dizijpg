@@ -403,4 +403,5 @@ const Map<String, String> cevirilerGu = {
       'આ યુઝર પોતાની કૉમેન્ટ ખાનગી રાખવાનું પસંદ કરે છે.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ડેટા: JustWatch',
+  'Web Sitesi': 'વેબસાઇટ',
 };

@@ -407,4 +407,5 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಬಳಕೆದಾರ ತನ್ನ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ಡೇಟಾ: JustWatch',
+  'Web Sitesi': 'ವೆಬ್‌ಸೈಟ್',
 };

@@ -395,4 +395,5 @@ const Map<String, String> cevirilerJa = {
       'このユーザーはコメントを非公開にしています。',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'データ：JustWatch',
+  'Web Sitesi': 'ウェブサイト',
 };

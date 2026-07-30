@@ -404,4 +404,5 @@ const Map<String, String> cevirilerSw = {
       'Mtumiaji huyu anapendelea kuficha maoni yake.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Tovuti',
 };

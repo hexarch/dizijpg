@@ -405,4 +405,5 @@ const Map<String, String> cevirilerId = {
       'Pengguna ini memilih menyembunyikan komentarnya.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Situs web',
 };

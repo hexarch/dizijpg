@@ -404,4 +404,5 @@ const Map<String, String> cevirilerPa = {
       'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾ ਕੇ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ਡੇਟਾ: JustWatch',
+  'Web Sitesi': 'ਵੈੱਬਸਾਈਟ',
 };

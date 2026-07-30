@@ -126,6 +126,8 @@ const sosyalPlatformlar = [
     SimpleIcons.letterboxd,
     'https://letterboxd.com/{}',
   ),
+  // Genel web sitesi: değer alan adıdır (ör. ornek.com/sayfa)
+  SosyalPlatform('website', 'Web Sitesi', Icons.language, 'https://{}'),
 ];
 
 SosyalPlatform? sosyalBul(String kod) {
@@ -201,7 +203,7 @@ class SosyalSatiri extends StatelessWidget {
               final p = sosyalBul(s['platform'] as String)!;
               final deger = s['deger'] as String? ?? '';
               return Tooltip(
-                message: '${p.ad}: $deger',
+                message: '${p.ad.c}: $deger',
                 child: InkWell(
                   borderRadius: BorderRadius.circular(22),
                   onTap: () => _ac(context, p, deger),
@@ -273,7 +275,7 @@ class SosyalDuzenleyici extends StatelessWidget {
                         Icon(kalan[i].ikon, size: 26, color: DiziRenkler.sari),
                         const SizedBox(height: 6),
                         Text(
-                          kalan[i].ad,
+                          kalan[i].ad.c,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -302,7 +304,7 @@ class SosyalDuzenleyici extends StatelessWidget {
           children: [
             Icon(platform.ikon, size: 20, color: DiziRenkler.sari),
             const SizedBox(width: 8),
-            Expanded(child: Text(platform.ad)),
+            Expanded(child: Text(platform.ad.c)),
           ],
         ),
         content: TextField(
@@ -356,7 +358,7 @@ class SosyalDuzenleyici extends StatelessWidget {
                 contentPadding: EdgeInsets.zero,
                 dense: true,
                 leading: Icon(p.ikon, size: 22, color: DiziRenkler.sari),
-                title: Text(p.ad),
+                title: Text(p.ad.c),
                 subtitle: Text(
                   s['deger'] as String? ?? '',
                   style: TextStyle(color: DiziRenkler.metin54),

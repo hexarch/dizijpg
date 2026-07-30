@@ -407,4 +407,5 @@ const Map<String, String> cevirilerNl = {
       'Deze gebruiker houdt zijn reacties liever privé.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Gegevens: JustWatch',
+  'Web Sitesi': 'Website',
 };

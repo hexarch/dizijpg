@@ -404,4 +404,5 @@ const Map<String, String> cevirilerFa = {
       'این کاربر ترجیح می‌دهد نظراتش پنهان بمانند.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'داده‌ها: JustWatch',
+  'Web Sitesi': 'وب‌سایت',
 };

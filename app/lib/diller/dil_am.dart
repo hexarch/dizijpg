@@ -397,4 +397,5 @@ const Map<String, String> cevirilerAm = {
       'ይህ ተጠቃሚ አስተያየቶቹን በሚስጥር መያዝ ይመርጣል።',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ውሂብ: JustWatch',
+  'Web Sitesi': 'ድር ጣቢያ',
 };

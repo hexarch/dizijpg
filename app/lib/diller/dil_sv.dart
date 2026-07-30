@@ -406,4 +406,5 @@ const Map<String, String> cevirilerSv = {
       'Den här användaren föredrar att hålla sina kommentarer privata.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Webbplats',
 };

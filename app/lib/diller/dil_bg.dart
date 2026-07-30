@@ -407,4 +407,5 @@ const Map<String, String> cevirilerBg = {
       'Този потребител предпочита да пази коментарите си скрити.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Данни: JustWatch',
+  'Web Sitesi': 'Уебсайт',
 };

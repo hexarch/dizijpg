@@ -399,4 +399,5 @@ const Map<String, String> cevirilerHe = {
       'המשתמש הזה מעדיף לשמור על התגובות שלו חסויות.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'נתונים: JustWatch',
+  'Web Sitesi': 'אתר אינטרנט',
 };

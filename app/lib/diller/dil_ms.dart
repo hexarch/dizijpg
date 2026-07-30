@@ -406,4 +406,5 @@ const Map<String, String> cevirilerMs = {
       'Pengguna ini memilih untuk merahsiakan komennya.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Laman web',
 };

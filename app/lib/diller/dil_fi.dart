@@ -406,4 +406,5 @@ const Map<String, String> cevirilerFi = {
       'Tämä käyttäjä haluaa pitää kommenttinsa yksityisinä.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Tiedot: JustWatch',
+  'Web Sitesi': 'Verkkosivusto',
 };

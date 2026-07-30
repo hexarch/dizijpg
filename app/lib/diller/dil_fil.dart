@@ -408,4 +408,5 @@ const Map<String, String> cevirilerFil = {
       'Mas gusto ng user na ito na itago ang kanyang mga komento.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
+  'Web Sitesi': 'Website',
 };

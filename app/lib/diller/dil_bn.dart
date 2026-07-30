@@ -406,4 +406,5 @@ const Map<String, String> cevirilerBn = {
       'এই ব্যবহারকারী তার কমেন্ট গোপন রাখতে পছন্দ করেন।',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ডেটা: JustWatch',
+  'Web Sitesi': 'ওয়েবসাইট',
 };

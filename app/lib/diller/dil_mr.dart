@@ -405,4 +405,5 @@ const Map<String, String> cevirilerMr = {
       'हा वापरकर्ता आपल्या कमेंट खाजगी ठेवणे पसंत करतो.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'डेटा: JustWatch',
+  'Web Sitesi': 'वेबसाइट',
 };

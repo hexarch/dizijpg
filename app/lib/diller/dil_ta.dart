@@ -406,4 +406,5 @@ const Map<String, String> cevirilerTa = {
       'இந்தப் பயனர் தன் கருத்துகளை மறைத்து வைக்க விரும்புகிறார்.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'தரவு: JustWatch',
+  'Web Sitesi': 'இணையதளம்',
 };
