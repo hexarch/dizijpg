@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -12,6 +11,7 @@ import '../ceviri.dart';
 import '../tema.dart';
 import 'etiket.dart';
 import 'ortak.dart';
+import 'paylas.dart';
 
 /// Keşfet (Reels tarzı): akış öncelikleriyle gelen postlar — önce videolar,
 /// sonra fotoğraflılar, sonra yazılı yorumlar. Izgaradan birine dokununca
@@ -369,20 +369,28 @@ class _ReelSayfaState extends State<_ReelSayfa>
   );
   Offset? _kalpKonum;
 
+  /// Gönderinin TÜM medyası (sırayla) — çoklu gönderide yana kaydırılır.
+  late final List<String> _medya = [
+    for (final m in (widget.yorum['medya'] as List<dynamic>? ?? []))
+      dosyaUrl(m as String)!,
+  ];
+  int _medyaSayfa = 0;
+  String? _kuruluUrl; // oynatıcının kurulu olduğu video adresi
+
+  static bool _videoMu(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
+
+  /// Ekranda duran medya (çoklu gönderide kaydırmayla değişir)
+  String? get _aktifMedya =>
+      _medya.isEmpty ? null : _medya[_medyaSayfa.clamp(0, _medya.length - 1)];
+
   String? get _videoUrl {
-    for (final m in (widget.yorum['medya'] as List<dynamic>? ?? [])) {
-      final s = m as String;
-      if (s.endsWith('.mp4') || s.endsWith('.webm')) return dosyaUrl(s);
-    }
-    return null;
+    final m = _aktifMedya;
+    return (m != null && _videoMu(m)) ? m : null;
   }
 
   String? get _fotoUrl {
-    for (final m in (widget.yorum['medya'] as List<dynamic>? ?? [])) {
-      final s = m as String;
-      if (!s.endsWith('.mp4') && !s.endsWith('.webm')) return dosyaUrl(s);
-    }
-    return null;
+    final m = _aktifMedya;
+    return (m != null && !_videoMu(m)) ? m : null;
   }
 
   bool _isaretlendi = false;
@@ -419,21 +427,49 @@ class _ReelSayfaState extends State<_ReelSayfa>
   void initState() {
     super.initState();
     if (widget.aktif) _isaretle();
+    _videoKur();
+  }
+
+  /// Ekrandaki medya videoysa oynatıcıyı kurar (kaydırınca yenisine geçilir).
+  void _videoKur() {
     final v = _videoUrl;
-    if (v != null) {
-      final d = VideoPlayerController.networkUrl(Uri.parse(v));
-      d
-          .initialize()
-          .then((_) {
-            if (!mounted) return;
-            setState(() => _d = d);
-            d.setLooping(true);
-            _videoDurumGuncelle(); // yalnız aktifse oynar
-            d.addListener(() {
-              if (mounted) setState(() {});
-            });
-          })
-          .catchError((_) {});
+    if (v == null || v == _kuruluUrl) return;
+    _kuruluUrl = v;
+    final eski = _d;
+    setState(() => _d = null);
+    eski?.dispose();
+    final d = VideoPlayerController.networkUrl(Uri.parse(v));
+    d
+        .initialize()
+        .then((_) {
+          if (!mounted || _kuruluUrl != v) {
+            d.dispose();
+            return;
+          }
+          setState(() => _d = d);
+          d.setLooping(true);
+          _videoDurumGuncelle(); // yalnız aktifse oynar
+          d.addListener(() {
+            if (mounted) setState(() {});
+          });
+        })
+        .catchError((_) {});
+  }
+
+  /// Yana kaydırma: sonraki/önceki medya; SON medyadan sonra sola kaydırınca
+  /// paylaşan kişinin profiline gidilir (TikTok davranışı).
+  void _yanaKaydir(double hiz) {
+    final y = widget.yorum;
+    if (hiz < 0) {
+      if (_medyaSayfa < _medya.length - 1) {
+        setState(() => _medyaSayfa++);
+        _videoKur();
+      } else {
+        kullaniciyaGit(context, y['kullanici_adi'] as String);
+      }
+    } else if (hiz > 0 && _medyaSayfa > 0) {
+      setState(() => _medyaSayfa--);
+      _videoKur();
     }
   }
 
@@ -496,15 +532,14 @@ class _ReelSayfaState extends State<_ReelSayfa>
   }
 
   Future<void> _paylas() async {
-    // Paylaşılan link, içeriğe değil bu GÖNDERİYE gider (tıklayınca bu
-    // reel/yorum tam ekran açılır) — /icerik yerine /gonderi/:id.
-    final url = 'https://dizijpg.com/gonderi/${widget.yorum['id']}';
-    await Clipboard.setData(ClipboardData(text: url));
-    if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Kopyalandı: {}'.cf([url]))));
-    }
+    // Paylaşım sayfası: kişilere DM olarak gönder + telefonun kendi paylaşım
+    // sayfası (WhatsApp/e-posta/Instagram...) + bağlantıyı kopyala.
+    // Bağlantı içeriğe değil bu GÖNDERİYE gider (/gonderi/:id).
+    await paylasSheet(
+      context,
+      url: 'https://dizijpg.com/gonderi/${widget.yorum['id']}',
+      metin: widget.yorum['metin'] as String?,
+    );
   }
 
   void _yanitlarAc() {
@@ -596,15 +631,39 @@ class _ReelSayfaState extends State<_ReelSayfa>
               // Konumlu: kalp tam dokunulan yerde belirir
               onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
               onDoubleTap: () {},
-              // Sola kaydırma → paylaşanın profili (TikTok davranışı)
+              // Yana kaydırma: sonraki/önceki medya; son medyadan sonra
+              // sola kaydırınca paylaşanın profili açılır.
               onHorizontalDragEnd: (detay) {
-                if ((detay.primaryVelocity ?? 0) < -250) {
-                  kullaniciyaGit(context, y['kullanici_adi'] as String);
-                }
+                final hiz = detay.primaryVelocity ?? 0;
+                if (hiz.abs() > 250) _yanaKaydir(hiz);
               },
             ),
           ),
         ),
+        // Çoklu medya: üstte nokta göstergesi + sayaç (kaçıncı medyadasın)
+        if (_medya.length > 1)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 60,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 0; i < _medya.length; i++)
+                    Container(
+                      width: 7,
+                      height: 7,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: i == _medyaSayfa ? Colors.white : Colors.white38,
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
         // Duraklatıldığında ortada oynat ikonu (dokunuşun görünür sonucu)
         if (d != null &&
             d.value.isInitialized &&

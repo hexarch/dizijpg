@@ -2194,6 +2194,40 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   res.json({ sohbetler: rows, okunmamis: toplam.rows[0].adet });
 }));
 
+// Paylaşım hedefleri: mesajlaştıkların ÖNCE, sonra takip ettiklerin, sonra
+// takipçilerin (tekilleştirilmiş). Gönderiyi DM ile yollarken listelenir.
+app.get('/paylas-hedefler', girisZorunlu, sarici(async (req, res) => {
+  const benId = req.kullanici.id;
+  const { rows } = await havuz.query(
+    `WITH sohbet AS (
+       SELECT DISTINCT ON (k.id) k.id, k.kullanici_adi, k.avatar, 0 AS oncelik, max(m.id) AS sira
+       FROM mesajlar m
+       JOIN kullanicilar k ON k.id = CASE WHEN m.gonderen_id=$1 THEN m.alici_id ELSE m.gonderen_id END
+       WHERE (m.gonderen_id=$1 OR m.alici_id=$1) AND NOT k.yasakli
+       GROUP BY k.id, k.kullanici_adi, k.avatar
+     ), takip AS (
+       SELECT k.id, k.kullanici_adi, k.avatar, 1 AS oncelik, 0 AS sira
+       FROM takipler t JOIN kullanicilar k ON k.id=t.takip_edilen_id
+       WHERE t.takip_eden_id=$1 AND NOT k.yasakli
+     ), takipci AS (
+       SELECT k.id, k.kullanici_adi, k.avatar, 2 AS oncelik, 0 AS sira
+       FROM takipler t JOIN kullanicilar k ON k.id=t.takip_eden_id
+       WHERE t.takip_edilen_id=$1 AND NOT k.yasakli
+     ), hepsi AS (
+       SELECT * FROM sohbet UNION ALL SELECT * FROM takip UNION ALL SELECT * FROM takipci
+     )
+     SELECT DISTINCT ON (id) id, kullanici_adi, avatar, oncelik
+     FROM hepsi
+     WHERE id <> $1
+       AND id NOT IN (SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$1
+                      UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$1)
+     ORDER BY id, oncelik, sira DESC`,
+    [benId],
+  );
+  rows.sort((a, b) => a.oncelik - b.oncelik);
+  res.json({ kullanicilar: rows.slice(0, 60) });
+}));
+
 // "Yazıyor..." durumu: bellek içi, kalıcı değil. gonderen:alici -> zaman
 const yaziyorlar = new Map();
 app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {

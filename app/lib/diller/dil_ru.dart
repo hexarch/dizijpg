@@ -408,4 +408,7 @@ const Map<String, String> cevirilerRu = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Данные: JustWatch',
   'Web Sitesi': 'Веб-сайт',
+  'Diğer uygulamalar': 'Другие приложения',
+  'Bağlantıyı kopyala': 'Копировать ссылку',
+  'Henüz kimseyi takip etmiyorsun.': 'Ты пока ни на кого не подписан.',
 };

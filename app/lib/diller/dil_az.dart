@@ -405,4 +405,7 @@ const Map<String, String> cevirilerAz = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Məlumat: JustWatch',
   'Web Sitesi': 'Vebsayt',
+  'Diğer uygulamalar': 'Digər tətbiqlər',
+  'Bağlantıyı kopyala': 'Linki kopyala',
+  'Henüz kimseyi takip etmiyorsun.': 'Hələ heç kimi izləmirsən.',
 };

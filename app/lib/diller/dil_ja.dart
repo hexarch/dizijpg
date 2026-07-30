@@ -396,4 +396,7 @@ const Map<String, String> cevirilerJa = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'データ：JustWatch',
   'Web Sitesi': 'ウェブサイト',
+  'Diğer uygulamalar': '他のアプリ',
+  'Bağlantıyı kopyala': 'リンクをコピー',
+  'Henüz kimseyi takip etmiyorsun.': 'まだ誰もフォローしていません。',
 };

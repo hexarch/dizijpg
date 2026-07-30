@@ -414,4 +414,7 @@ const Map<String, String> cevirilerMy = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ဒေတာ- JustWatch',
   'Web Sitesi': 'ဝဘ်ဆိုက်',
+  'Diğer uygulamalar': 'အခြားအက်ပ်များ',
+  'Bağlantıyı kopyala': 'လင့်ခ်ကူးရန်',
+  'Henüz kimseyi takip etmiyorsun.': 'သင်ဘယ်သူ့ကိုမှ မလိုက်ရသေးပါ။',
 };

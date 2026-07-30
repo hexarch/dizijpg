@@ -406,4 +406,7 @@ const Map<String, String> cevirilerMr = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'डेटा: JustWatch',
   'Web Sitesi': 'वेबसाइट',
+  'Diğer uygulamalar': 'इतर अ‍ॅप्स',
+  'Bağlantıyı kopyala': 'लिंक कॉपी करा',
+  'Henüz kimseyi takip etmiyorsun.': 'तू अजून कुणालाही फॉलो करत नाहीस.',
 };

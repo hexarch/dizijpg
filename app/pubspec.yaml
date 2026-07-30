@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.10.4+35
+version: 1.10.5+36
 
 environment:
   sdk: ^3.12.2
@@ -61,6 +61,8 @@ dependencies:
   crop_your_image: ^1.1.0
   simple_icons: ^16.23.0
   url_launcher: ^6.3.2
+  # Telefonun kendi paylaşım sayfası (WhatsApp, e-posta, Instagram...)
+  share_plus: ^10.1.4
   pointer_interceptor: ^0.10.1+2
   visibility_detector: ^0.4.0+2
 

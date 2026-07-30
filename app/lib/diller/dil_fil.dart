@@ -409,4 +409,7 @@ const Map<String, String> cevirilerFil = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
   'Web Sitesi': 'Website',
+  'Diğer uygulamalar': 'Iba pang app',
+  'Bağlantıyı kopyala': 'Kopyahin ang link',
+  'Henüz kimseyi takip etmiyorsun.': 'Wala ka pang sinusundan.',
 };

@@ -401,4 +401,7 @@ const Map<String, String> cevirilerTh = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ข้อมูล: JustWatch',
   'Web Sitesi': 'เว็บไซต์',
+  'Diğer uygulamalar': 'แอปอื่น',
+  'Bağlantıyı kopyala': 'คัดลอกลิงก์',
+  'Henüz kimseyi takip etmiyorsun.': 'คุณยังไม่ได้ติดตามใคร',
 };

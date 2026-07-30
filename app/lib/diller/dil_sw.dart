@@ -405,4 +405,7 @@ const Map<String, String> cevirilerSw = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Data: JustWatch',
   'Web Sitesi': 'Tovuti',
+  'Diğer uygulamalar': 'Programu nyingine',
+  'Bağlantıyı kopyala': 'Nakili kiungo',
+  'Henüz kimseyi takip etmiyorsun.': 'Bado hujamfuata mtu yeyote.',
 };

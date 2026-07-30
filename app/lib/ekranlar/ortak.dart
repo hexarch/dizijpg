@@ -177,14 +177,11 @@ class _AkisMedyaState extends State<AkisMedya> {
     if (!_video(widget.urller.first)) {
       final saglayici = CachedNetworkImageProvider(widget.urller.first);
       _akis = saglayici.resolve(const ImageConfiguration());
-      _dinleyici = ImageStreamListener(
-        (bilgi, _) {
-          if (!mounted || _oran != null) return;
-          final o = bilgi.image.width / bilgi.image.height;
-          setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
-        },
-        onError: (_, _) {},
-      );
+      _dinleyici = ImageStreamListener((bilgi, _) {
+        if (!mounted || _oran != null) return;
+        final o = bilgi.image.width / bilgi.image.height;
+        setState(() => _oran = o.clamp(9 / 16, 16 / 9).toDouble());
+      }, onError: (_, _) {});
       _akis!.addListener(_dinleyici!);
     }
   }
@@ -255,10 +252,7 @@ class _AkisMedyaState extends State<AkisMedya> {
               top: 10,
               right: 10,
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 3,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(12),

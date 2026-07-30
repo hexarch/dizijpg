@@ -409,4 +409,7 @@ const Map<String, String> cevirilerPt = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Dados: JustWatch',
   'Web Sitesi': 'Site',
+  'Diğer uygulamalar': 'Outros apps',
+  'Bağlantıyı kopyala': 'Copiar link',
+  'Henüz kimseyi takip etmiyorsun.': 'Você ainda não segue ninguém.',
 };

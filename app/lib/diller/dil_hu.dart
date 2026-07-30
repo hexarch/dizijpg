@@ -409,4 +409,7 @@ const Map<String, String> cevirilerHu = {
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Adatok: JustWatch',
   'Web Sitesi': 'Weboldal',
+  'Diğer uygulamalar': 'Más alkalmazások',
+  'Bağlantıyı kopyala': 'Link másolása',
+  'Henüz kimseyi takip etmiyorsun.': 'Még senkit sem követsz.',
 };
