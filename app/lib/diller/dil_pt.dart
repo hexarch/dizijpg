@@ -406,4 +406,6 @@ const Map<String, String> cevirilerPt = {
   'Yorumları': 'Comentários',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Este usuário prefere manter seus comentários privados.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Dados: JustWatch',
 };

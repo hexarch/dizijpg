@@ -278,7 +278,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         subtitle: Text(
-          'S${b['sezon']}B${b['bolum']}'
+          '${'S{}B{}'.cf([b['sezon'], b['bolum']])}'
           '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,

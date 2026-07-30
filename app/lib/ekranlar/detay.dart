@@ -1416,7 +1416,7 @@ class _NeredeIzlenir extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
           child: Text(
-            'Veri: JustWatch',
+            'Veri: JustWatch'.c,
             style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
           ),
         ),

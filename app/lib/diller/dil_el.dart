@@ -406,4 +406,6 @@ const Map<String, String> cevirilerEl = {
   'Yorumları': 'Τα σχόλιά του/της',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Αυτός ο χρήστης προτιμά να κρατά τα σχόλιά του ιδιωτικά.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Δεδομένα: JustWatch',
 };

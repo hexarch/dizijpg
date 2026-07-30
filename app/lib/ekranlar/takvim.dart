@@ -247,7 +247,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         subtitle: Text(
-          'S${b['sezon']}B${b['bolum']}'
+          '${'S{}B{}'.cf([b['sezon'], b['bolum']])}'
           '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -297,7 +297,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
               style: const TextStyle(fontWeight: FontWeight.w700),
             ),
             subtitle: Text(
-              'S${ilk['sezon']}B${ilk['bolum']}'
+              '${'S{}B{}'.cf([ilk['sezon'], ilk['bolum']])}'
               '${ilk['bolum_adi'] != null ? ' · ${ilk['bolum_adi']}' : ''}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -362,7 +362,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                 dense: true,
                 contentPadding: const EdgeInsets.only(left: 70, right: 16),
                 title: Text(
-                  'S${b['sezon']}B${b['bolum']}'
+                  '${'S{}B{}'.cf([b['sezon'], b['bolum']])}'
                   '${b['bolum_adi'] != null ? ' · ${b['bolum_adi']}' : ''}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

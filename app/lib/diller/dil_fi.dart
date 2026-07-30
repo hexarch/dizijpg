@@ -404,4 +404,6 @@ const Map<String, String> cevirilerFi = {
   'Yorumları': 'Kommentit',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Tämä käyttäjä haluaa pitää kommenttinsa yksityisinä.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Tiedot: JustWatch',
 };

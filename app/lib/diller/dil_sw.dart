@@ -402,4 +402,6 @@ const Map<String, String> cevirilerSw = {
   'Yorumları': 'Maoni yake',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Mtumiaji huyu anapendelea kuficha maoni yake.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Data: JustWatch',
 };

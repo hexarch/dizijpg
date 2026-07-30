@@ -405,4 +405,6 @@ const Map<String, String> cevirilerRu = {
   'Yorumları': 'Комментарии',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Этот пользователь предпочитает не показывать свои комментарии.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Данные: JustWatch',
 };

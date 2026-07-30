@@ -788,7 +788,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     Flexible(
                       child: Text(
                         '${icerik['ad']}'
-                        '${y['sezon'] != null ? ' · S${y['sezon']}B${y['bolum']}' : ''}',
+                        '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(

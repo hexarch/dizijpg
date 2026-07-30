@@ -403,4 +403,6 @@ const Map<String, String> cevirilerMr = {
   'Yorumları': 'यावरील कमेंट्स',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'हा वापरकर्ता आपल्या कमेंट खाजगी ठेवणे पसंत करतो.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'डेटा: JustWatch',
 };

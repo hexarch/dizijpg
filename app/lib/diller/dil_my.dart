@@ -411,4 +411,6 @@ const Map<String, String> cevirilerMy = {
   'Yorumları': 'မှတ်ချက်များ',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ဤအသုံးပြုသူသည် မိမိ၏မှတ်ချက်များကို လျှို့ဝှက်ထားလိုသည်။',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'ဒေတာ- JustWatch',
 };

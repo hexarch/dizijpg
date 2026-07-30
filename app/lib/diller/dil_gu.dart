@@ -401,4 +401,6 @@ const Map<String, String> cevirilerGu = {
   'Yorumları': 'આના પર કૉમેન્ટ્સ',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'આ યુઝર પોતાની કૉમેન્ટ ખાનગી રાખવાનું પસંદ કરે છે.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'ડેટા: JustWatch',
 };

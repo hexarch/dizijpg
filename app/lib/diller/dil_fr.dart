@@ -408,4 +408,6 @@ const Map<String, String> cevirilerFr = {
   'Yorumları': 'Commentaires',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Cet utilisateur préfère garder ses commentaires privés.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Données : JustWatch',
 };

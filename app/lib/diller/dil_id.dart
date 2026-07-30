@@ -403,4 +403,6 @@ const Map<String, String> cevirilerId = {
   'Yorumları': 'Komentarnya',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Pengguna ini memilih menyembunyikan komentarnya.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Data: JustWatch',
 };

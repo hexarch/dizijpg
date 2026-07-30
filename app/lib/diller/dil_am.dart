@@ -395,4 +395,6 @@ const Map<String, String> cevirilerAm = {
   'Yorumları': 'አስተያየቶቹ',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ይህ ተጠቃሚ አስተያየቶቹን በሚስጥር መያዝ ይመርጣል።',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'ውሂብ: JustWatch',
 };

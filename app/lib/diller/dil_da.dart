@@ -400,4 +400,6 @@ const Map<String, String> cevirilerDa = {
   'Yorumları': 'Kommentarer',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Denne bruger foretrækker at holde sine kommentarer private.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Data: JustWatch',
 };

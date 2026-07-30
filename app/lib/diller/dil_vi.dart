@@ -404,4 +404,6 @@ const Map<String, String> cevirilerVi = {
   'Yorumları': 'Bình luận của họ',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Người dùng này muốn giữ kín bình luận của mình.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Dữ liệu: JustWatch',
 };

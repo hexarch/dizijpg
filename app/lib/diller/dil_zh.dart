@@ -391,4 +391,6 @@ const Map<String, String> cevirilerZh = {
   'Profilimde gizle': '在我的主页隐藏',
   'Yorumları': 'TA的评论',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.': '该用户选择不公开自己的评论。',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': '数据：JustWatch',
 };

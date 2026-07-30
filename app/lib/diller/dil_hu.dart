@@ -406,4 +406,6 @@ const Map<String, String> cevirilerHu = {
   'Yorumları': 'Hozzászólásai',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Ez a felhasználó inkább priváton tartja a kommentjeit.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'Adatok: JustWatch',
 };

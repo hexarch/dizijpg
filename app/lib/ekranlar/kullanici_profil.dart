@@ -774,7 +774,7 @@ class ProfilYorumKarti extends StatelessWidget {
                                   ? 'Film yorumu'.c
                                   : 'Dizi yorumu'.c)) +
                           (bolumMu
-                              ? ' · S${yorum['sezon']}B${yorum['bolum']}'
+                              ? ' · ${'S{}B{}'.cf([yorum['sezon'], yorum['bolum']])}'
                               : ''),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -1016,7 +1016,8 @@ class _YorumDetayModal extends StatelessWidget {
     final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
     final tarih = (yorum['tarih'] as String? ?? '').split('T').first;
     final baslik =
-        (ad ?? '') + (bolumMu ? ' · S${yorum['sezon']}B${yorum['bolum']}' : '');
+        (ad ?? '') +
+        (bolumMu ? ' · ${'S{}B{}'.cf([yorum['sezon'], yorum['bolum']])}' : '');
 
     return DraggableScrollableSheet(
       expand: false,

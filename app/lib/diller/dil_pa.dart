@@ -402,4 +402,6 @@ const Map<String, String> cevirilerPa = {
   'Yorumları': 'ਇਸ ਬਾਰੇ ਕਮੈਂਟ',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾ ਕੇ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'ਡੇਟਾ: JustWatch',
 };

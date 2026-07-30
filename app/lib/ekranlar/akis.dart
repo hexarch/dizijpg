@@ -673,7 +673,7 @@ class _AkisKartiState extends State<_AkisKarti> {
                         onTap: () => context.push(hedef),
                         child: Text(
                           '${icerik['ad']}'
-                          '${bolumlu ? ' · S${y['sezon']}B${y['bolum']}' : ''}',
+                          '${bolumlu ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(

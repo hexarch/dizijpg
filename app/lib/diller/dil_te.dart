@@ -402,4 +402,6 @@ const Map<String, String> cevirilerTe = {
   'Yorumları': 'కామెంట్లు',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ఈ వినియోగదారు తన కామెంట్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
+  'S{}B{}': 'S{}E{}',
+  'Veri: JustWatch': 'డేటా: JustWatch',
 };
