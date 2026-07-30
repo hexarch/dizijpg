@@ -13,6 +13,7 @@ import 'package:record/record.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../dosya_oku.dart';
+import '../push.dart';
 import '../tema.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
@@ -192,6 +193,8 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     super.initState();
     _yukle(ilk: true);
     _sayac = Timer.periodic(const Duration(seconds: 5), (_) => _yukle());
+    // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
+    mesajBildirimleriniTemizle(widget.kullaniciAdi);
   }
 
   @override

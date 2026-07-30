@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'ceviri.dart';
@@ -22,14 +23,38 @@ const AndroidNotificationChannel _kanal = AndroidNotificationChannel(
 );
 bool _kuruldu = false;
 
+// Sohbet bildirimleri tek grupta toplansın (WhatsApp tarzı demet)
+const String _mesajGrubu = 'dizijpg_mesajlar';
+
 /// Mesaj bildirimi (veri-mesajı): gönderenin avatarı + mesaj içeriğiyle
-/// yerel bildirim basar. Ön planda ve arka plan izolatında ortak kullanılır.
+/// yerel bildirim basar. Aynı gönderenin okunmamış mesajları tek bildirimde
+/// BİRİKİR (MessagingStyle, genişletilebilir — WhatsApp tarzı); geçmiş
+/// SharedPreferences'ta tutulur ki arka plan izolatı da ekleyebilsin.
+/// Ön planda ve arka plan izolatında ortak kullanılır.
 Future<void> mesajBildirimiGoster(Map<String, dynamic> veri) async {
   final baslik = veri['baslik'] as String? ?? 'dizi.jpg';
   final metin = veri['metin'] as String? ?? '';
+  final ad = veri['ad'] as String? ?? '';
   if (metin.isEmpty) return;
 
-  // Gönderenin avatarı büyük ikon olur (indirilemezse ikonsuz devam)
+  // Konuşma geçmişini yükle-ekle-kırp (kişi başına son 10 mesaj).
+  // reload: arka plan izolatı yazmış olabilir, bayat önbelleği tazele.
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.reload();
+  final anahtar = 'bildirim_mesajlari_$ad';
+  final gecmis = <Map<String, dynamic>>[
+    for (final e in prefs.getStringList(anahtar) ?? <String>[])
+      jsonDecode(e) as Map<String, dynamic>,
+  ];
+  gecmis.add({'m': metin, 't': DateTime.now().millisecondsSinceEpoch});
+  while (gecmis.length > 10) {
+    gecmis.removeAt(0);
+  }
+  await prefs.setStringList(anahtar, [for (final e in gecmis) jsonEncode(e)]);
+
+  // Gönderenin avatarı: sohbet balonundaki kişi ikonu + büyük ikon
+  // (indirilemezse ikonsuz devam)
+  ByteArrayAndroidIcon? kisiIkon;
   AndroidBitmap<Object>? buyukIkon;
   final avatarYol = veri['avatar'] as String? ?? '';
   if (avatarYol.isNotEmpty && !avatarYol.endsWith('.gif')) {
@@ -37,13 +62,17 @@ Future<void> mesajBildirimiGoster(Map<String, dynamic> veri) async {
       final y = await http
           .get(Uri.parse(dosyaUrl(avatarYol)!))
           .timeout(const Duration(seconds: 5));
-      if (y.statusCode == 200) buyukIkon = ByteArrayAndroidBitmap(y.bodyBytes);
+      if (y.statusCode == 200) {
+        kisiIkon = ByteArrayAndroidIcon(y.bodyBytes);
+        buyukIkon = ByteArrayAndroidBitmap(y.bodyBytes);
+      }
     } catch (_) {}
   }
 
+  final gonderen = Person(name: baslik, key: ad, icon: kisiIkon);
   await _yerel.show(
-    // Aynı gönderenin bildirimi üst üste binsin (kişi başına tek satır)
-    (veri['ad'] as String? ?? '').hashCode,
+    // Kişi başına tek bildirim; içeriği MessagingStyle ile birikir
+    ad.hashCode,
     baslik,
     metin,
     NotificationDetails(
@@ -55,11 +84,50 @@ Future<void> mesajBildirimiGoster(Map<String, dynamic> veri) async {
         priority: Priority.high,
         icon: '@mipmap/ic_launcher',
         largeIcon: buyukIkon,
-        styleInformation: BigTextStyleInformation(metin),
+        groupKey: _mesajGrubu,
+        styleInformation: MessagingStyleInformation(
+          const Person(name: 'Sen', key: 'ben'),
+          messages: [
+            for (final e in gecmis)
+              Message(
+                e['m'] as String,
+                DateTime.fromMillisecondsSinceEpoch(e['t'] as int),
+                gonderen,
+              ),
+          ],
+        ),
       ),
     ),
-    payload: jsonEncode({'tur': veri['tur'], 'ad': veri['ad']}),
+    payload: jsonEncode({'tur': veri['tur'], 'ad': ad}),
   );
+  // Özet bildirim: birden çok sohbet varsa Android tek demette toplar
+  await _yerel.show(
+    0,
+    'dizi.jpg',
+    null,
+    NotificationDetails(
+      android: AndroidNotificationDetails(
+        _kanal.id,
+        _kanal.name,
+        channelDescription: _kanal.description,
+        icon: '@mipmap/ic_launcher',
+        groupKey: _mesajGrubu,
+        setAsGroupSummary: true,
+        styleInformation: const InboxStyleInformation([]),
+      ),
+    ),
+  );
+}
+
+/// Sohbet açılınca o kişinin biriken bildirim geçmişini sıfırlar ve
+/// bildirimini kapatır (bir sonraki mesaj yeni listeyle başlar).
+Future<void> mesajBildirimleriniTemizle(String ad) async {
+  if (kIsWeb) return;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('bildirim_mesajlari_$ad');
+    await _yerel.cancel(ad.hashCode);
+  } catch (_) {}
 }
 
 /// Arka planda/kapalıyken gelen mesaj (top-level, ayrı izolatta çalışır).
