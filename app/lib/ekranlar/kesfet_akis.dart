@@ -306,6 +306,9 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
             controller: _sayfa,
             scrollDirection: Axis.vertical,
             itemCount: widget.liste.length,
+            // Komşu sayfalar ÖNDEN kurulur → sıradaki video kaydırmadan önce
+            // yüklenmeye başlar (bunsuz her kaydırışta bekleniyordu).
+            allowImplicitScrolling: true,
             // Aktif sayfa değişince: yalnız görünen sayfa video oynatır ve
             // "görüldü" işaretlenir (komşu sayfalar önden kurulsa da sessiz).
             onPageChanged: (i) => setState(() => _aktif = i),

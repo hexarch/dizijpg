@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -31,8 +34,25 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
   @override
   void initState() {
     super.initState();
+    _onbellektenYukle();
     _yukle();
     _mesajSayisiYukle();
+  }
+
+  /// Son başarılı raflar anında gösterilir (SWR): ekran boş iskelette
+  /// beklemez, taze veri arkadan gelip üzerine yazar.
+  Future<void> _onbellektenYukle() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final ham = prefs.getString('kesfet_onbellek');
+      if (ham == null || !mounted || _bolumler != null) return;
+      final d = jsonDecode(ham) as Map<String, dynamic>;
+      if (_bolumler == null) {
+        setState(() {
+          _bolumler = {for (final e in d.entries) e.key: e.value as List};
+        });
+      }
+    } catch (_) {}
   }
 
   Future<void> _yukle() async {
@@ -56,19 +76,23 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       ]);
       if (!mounted) return;
       final onerilen = (sonuclar[5]['oneriler'] as List<dynamic>? ?? []);
-      setState(
-        () => _bolumler = {
-          if (onerilen.isNotEmpty) 'Sana Özel': onerilen,
-          'Haftanın Dizileri': sonuclar[0]['results'] as List<dynamic>,
-          'Haftanın Filmleri': sonuclar[1]['results'] as List<dynamic>,
-          'Türk Dizileri': sonuclar[2]['results'] as List<dynamic>,
-          'Tüm Zamanların En İyileri': sonuclar[3]['results'] as List<dynamic>,
-          'Yeni Diziler': sonuclar[4]['results'] as List<dynamic>,
-        },
+      final bolumler = {
+        if (onerilen.isNotEmpty) 'Sana Özel': onerilen,
+        'Haftanın Dizileri': sonuclar[0]['results'] as List<dynamic>,
+        'Haftanın Filmleri': sonuclar[1]['results'] as List<dynamic>,
+        'Türk Dizileri': sonuclar[2]['results'] as List<dynamic>,
+        'Tüm Zamanların En İyileri': sonuclar[3]['results'] as List<dynamic>,
+        'Yeni Diziler': sonuclar[4]['results'] as List<dynamic>,
+      };
+      setState(() => _bolumler = bolumler);
+      // Bir sonraki açılış anında dolu başlasın
+      SharedPreferences.getInstance().then(
+        (p) => p.setString('kesfet_onbellek', jsonEncode(bolumler)),
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      // Önbellekten raflar gösteriliyorsa taze veri hatasını yut
+      if (_bolumler == null) setState(() => _hata = e.toString());
     }
   }
 
