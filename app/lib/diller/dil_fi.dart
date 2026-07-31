@@ -422,4 +422,5 @@ const Map<String, String> cevirilerFi = {
   'Mobil veride veri tasarrufu': 'Datansäästö mobiilidatalla',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Kun tämä on päällä, kuvia ei ladata etukäteen, vain se kuva jota katsot.',
+  'Çocuk güvenliği': 'Lasten turvallisuus',
 };

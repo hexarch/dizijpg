@@ -564,18 +564,11 @@ class _YorumKartiState extends State<_YorumKarti> {
                     ),
                   )
                 else if (widget.benimId != null)
-                  InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: () =>
-                        sikayetEtSheet(context, 'yorum', yorum['id'] as int),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(
-                        Icons.flag_outlined,
-                        size: 18,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
+                  // Tek bayrak ikonu yerine standart dikey üç nokta menüsü
+                  UcNoktaMenu(
+                    tur: 'yorum',
+                    hedefId: yorum['id'] as int,
+                    renk: DiziRenkler.metin38,
                   ),
               ],
             ),

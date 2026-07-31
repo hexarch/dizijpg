@@ -416,4 +416,5 @@ const Map<String, String> cevirilerTh = {
   'Mobil veride veri tasarrufu': 'ประหยัดข้อมูลเมื่อใช้เน็ตมือถือ',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'เมื่อเปิดอยู่ รูปจะไม่ถูกดาวน์โหลดล่วงหน้า จะโหลดเฉพาะรูปที่คุณกำลังดู',
+  'Çocuk güvenliği': 'ความปลอดภัยของเด็ก',
 };

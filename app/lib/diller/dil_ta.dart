@@ -422,4 +422,5 @@ const Map<String, String> cevirilerTa = {
   'Mobil veride veri tasarrufu': 'மொபைல் தரவில் தரவு சேமிப்பு',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'இயக்கத்தில் இருக்கும்போது படங்கள் முன்கூட்டியே பதிவிறக்கப்படாது, நீ பார்க்கும் படம் மட்டுமே ஏற்றப்படும்.',
+  'Çocuk güvenliği': 'குழந்தைப் பாதுகாப்பு',
 };

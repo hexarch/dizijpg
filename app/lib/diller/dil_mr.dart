@@ -421,4 +421,5 @@ const Map<String, String> cevirilerMr = {
   'Mobil veride veri tasarrufu': 'मोबाइल डेटावर डेटा बचत',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'चालू असताना फोटो आधीच डाउनलोड होत नाहीत, फक्त तू बघत असलेली प्रतिमा लोड होते.',
+  'Çocuk güvenliği': 'बाल सुरक्षा',
 };

@@ -411,4 +411,5 @@ const Map<String, String> cevirilerKo = {
   'Mobil veride veri tasarrufu': '모바일 데이터에서 데이터 절약',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       '켜져 있으면 사진을 미리 받지 않고 지금 보는 사진만 불러와요.',
+  'Çocuk güvenliği': '아동 안전',
 };

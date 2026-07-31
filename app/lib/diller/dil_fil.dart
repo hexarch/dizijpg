@@ -424,4 +424,5 @@ const Map<String, String> cevirilerFil = {
   'Mobil veride veri tasarrufu': 'Pagtitipid ng data sa mobile data',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Kapag naka-on, hindi muna dina-download ang mga larawan; ang tinitingnan mo lang ang naglo-load.',
+  'Çocuk güvenliği': 'Kaligtasan ng bata',
 };

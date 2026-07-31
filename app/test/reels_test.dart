@@ -1,6 +1,9 @@
+import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Reels çoklu fotoğraf davranışı.
 ///
@@ -24,15 +27,21 @@ Future<void> _reelsKur(
   required int medyaSayisi,
   int medyaBaslangic = 0,
 }) async {
+  // Reels sayfası şikayet menüsü için Oturum sağlayıcısını okur.
+  SharedPreferences.setMockInitialValues({});
+  await Api.tokenYukle();
   await tester.pumpWidget(
-    MaterialApp(
-      home: ReelsGorunumu(
-        liste: [_gonderi(medyaSayisi: medyaSayisi)],
-        icerikler: const {
-          'tv:100': {'ad': 'Test Dizi', 'poster': null},
-        },
-        baslangic: 0,
-        medyaBaslangic: medyaBaslangic,
+    ChangeNotifierProvider<Oturum>.value(
+      value: Oturum(),
+      child: MaterialApp(
+        home: ReelsGorunumu(
+          liste: [_gonderi(medyaSayisi: medyaSayisi)],
+          icerikler: const {
+            'tv:100': {'ad': 'Test Dizi', 'poster': null},
+          },
+          baslangic: 0,
+          medyaBaslangic: medyaBaslangic,
+        ),
       ),
     ),
   );

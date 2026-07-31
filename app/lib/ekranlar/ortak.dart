@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -1431,6 +1432,7 @@ Future<void> sikayetEtSheet(
     'Uygunsuz / cinsel içerik',
     'Şiddet veya tehlikeli içerik',
     'Telif hakkı ihlali',
+    'Çocuk güvenliği',
     'Diğer',
   ];
   final messenger = ScaffoldMessenger.of(context);
@@ -1475,6 +1477,71 @@ Future<void> sikayetEtSheet(
     );
   } catch (e) {
     messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+  }
+}
+
+/// Gönderi/yorum kartlarının sağ üstündeki dikey üç nokta menüsü.
+///
+/// Kendi içeriğinde gösterilmez (kendini şikayet etmek anlamsız); misafir
+/// kullanıcıya da gösterilmez çünkü /sikayet giriş ister ve buton basılınca
+/// hata verirdi. [tur] backend SIKAYET_TUR ile aynı olmalı: yorum/kullanici.
+class UcNoktaMenu extends StatelessWidget {
+  final String tur;
+  final int hedefId;
+  final bool benimMi;
+  final Color renk;
+
+  /// Verilirse menüye "Engelle" de eklenir (gönderiyi paylaşan kişi).
+  final VoidCallback? onEngelle;
+
+  const UcNoktaMenu({
+    super.key,
+    required this.tur,
+    required this.hedefId,
+    this.benimMi = false,
+    this.renk = Colors.white70,
+    this.onEngelle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (benimMi || !context.read<Oturum>().girisli) {
+      return const SizedBox.shrink();
+    }
+    return PopupMenuButton<String>(
+      icon: Icon(Icons.more_vert, size: 20, color: renk),
+      tooltip: 'Şikayet et'.c,
+      onSelected: (secim) {
+        if (secim == 'sikayet') {
+          sikayetEtSheet(context, tur, hedefId);
+        } else if (secim == 'engelle') {
+          onEngelle?.call();
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 'sikayet',
+          child: Row(
+            children: [
+              const Icon(Icons.flag_outlined, size: 20),
+              const SizedBox(width: 10),
+              Text('Şikayet et'.c),
+            ],
+          ),
+        ),
+        if (onEngelle != null)
+          PopupMenuItem(
+            value: 'engelle',
+            child: Row(
+              children: [
+                const Icon(Icons.block, size: 20),
+                const SizedBox(width: 10),
+                Text('Engelle'.c),
+              ],
+            ),
+          ),
+      ],
+    );
   }
 }
 

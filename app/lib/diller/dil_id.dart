@@ -421,4 +421,5 @@ const Map<String, String> cevirilerId = {
   'Mobil veride veri tasarrufu': 'Hemat data di data seluler',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Saat aktif, foto tidak diunduh lebih dulu; hanya gambar yang sedang kamu lihat yang dimuat.',
+  'Çocuk güvenliği': 'Keselamatan anak',
 };

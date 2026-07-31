@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
@@ -713,6 +714,15 @@ class _AkisKartiState extends State<_AkisKarti> {
                         ),
                       ],
                     ),
+                  ),
+                  // Şikayet menüsü: posterin solunda, başlık satırının sonunda
+                  UcNoktaMenu(
+                    tur: 'yorum',
+                    hedefId: y['id'] as int,
+                    benimMi:
+                        y['kullanici_id'] ==
+                        context.read<Oturum>().kullanici?['id'],
+                    renk: DiziRenkler.metin54,
                   ),
                   if (poster != null)
                     InkWell(

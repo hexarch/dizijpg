@@ -422,4 +422,5 @@ const Map<String, String> cevirilerCs = {
   'Mobil veride veri tasarrufu': 'Úspora dat na mobilních datech',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Když je zapnutá, fotky se nestahují dopředu — načte se jen snímek, který si prohlížíš.',
+  'Çocuk güvenliği': 'Bezpečnost dětí',
 };

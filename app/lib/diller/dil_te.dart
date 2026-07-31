@@ -420,4 +420,5 @@ const Map<String, String> cevirilerTe = {
   'Mobil veride veri tasarrufu': 'మొబైల్ డేటాలో డేటా ఆదా',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ఆన్‌లో ఉన్నప్పుడు ఫోటోలు ముందుగా డౌన్‌లోడ్ కావు, నువ్వు చూస్తున్న చిత్రం మాత్రమే లోడ్ అవుతుంది.',
+  'Çocuk güvenliği': 'పిల్లల భద్రత',
 };

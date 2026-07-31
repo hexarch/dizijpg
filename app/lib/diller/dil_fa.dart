@@ -420,4 +420,5 @@ const Map<String, String> cevirilerFa = {
   'Mobil veride veri tasarrufu': 'صرفه‌جویی داده در اینترنت همراه',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'وقتی روشن است عکس‌ها از پیش دانلود نمی‌شوند و فقط تصویری که می‌بینی بارگذاری می‌شود.',
+  'Çocuk güvenliği': 'ایمنی کودکان',
 };

@@ -413,4 +413,5 @@ const Map<String, String> cevirilerAm = {
   'Mobil veride veri tasarrufu': 'በሞባይል ውሂብ ላይ የውሂብ ቁጠባ',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ሲበራ ፎቶዎች አስቀድመው አይወርዱም፤ የምታየው ምስል ብቻ ይጫናል።',
+  'Çocuk güvenliği': 'የልጆች ደህንነት',
 };

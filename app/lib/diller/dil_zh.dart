@@ -409,4 +409,5 @@ const Map<String, String> cevirilerZh = {
   'Mobil veride veri tasarrufu': '移动数据下节省流量',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       '开启后不会提前下载照片，只加载你正在看的那一张。',
+  'Çocuk güvenliği': '儿童安全',
 };

@@ -423,4 +423,5 @@ const Map<String, String> cevirilerKn = {
   'Mobil veride veri tasarrufu': 'ಮೊಬೈಲ್ ಡೇಟಾದಲ್ಲಿ ಡೇಟಾ ಉಳಿತಾಯ',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ಆನ್ ಆಗಿದ್ದಾಗ ಫೋಟೋಗಳು ಮೊದಲೇ ಡೌನ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ, ನೀನು ನೋಡುತ್ತಿರುವ ಚಿತ್ರ ಮಾತ್ರ ಲೋಡ್ ಆಗುತ್ತದೆ.',
+  'Çocuk güvenliği': 'ಮಕ್ಕಳ ಸುರಕ್ಷತೆ',
 };

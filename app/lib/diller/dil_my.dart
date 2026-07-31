@@ -429,4 +429,5 @@ const Map<String, String> cevirilerMy = {
   'Mobil veride veri tasarrufu': 'မိုဘိုင်းဒေတာတွင် ဒေတာချွေတာမှု',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ဖွင့်ထားချိန်တွင် ဓာတ်ပုံများကို ကြိုတင်မဒေါင်းလုဒ်ဘဲ ကြည့်နေသည့်ပုံကိုသာ တင်ပါသည်။',
+  'Çocuk güvenliği': 'ကလေးလုံခြုံရေး',
 };

@@ -424,4 +424,5 @@ const Map<String, String> cevirilerHu = {
   'Mobil veride veri tasarrufu': 'Adattakarékos mód mobilneten',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Ha be van kapcsolva, a képek nem töltődnek le előre, csak az, amit éppen nézel.',
+  'Çocuk güvenliği': 'Gyermekbiztonság',
 };

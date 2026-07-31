@@ -422,4 +422,5 @@ const Map<String, String> cevirilerMs = {
   'Mobil veride veri tasarrufu': 'Penjimatan data pada data mudah alih',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Apabila aktif, foto tidak dimuat turun lebih awal; hanya imej yang sedang kamu lihat dimuatkan.',
+  'Çocuk güvenliği': 'Keselamatan kanak-kanak',
 };

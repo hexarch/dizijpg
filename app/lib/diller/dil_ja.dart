@@ -411,4 +411,5 @@ const Map<String, String> cevirilerJa = {
   'Mobil veride veri tasarrufu': 'モバイル通信でデータセーバー',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'オンのときは写真を先読みせず、見ている画像だけを読み込みます。',
+  'Çocuk güvenliği': '児童の安全',
 };

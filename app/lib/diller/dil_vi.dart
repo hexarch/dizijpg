@@ -422,4 +422,5 @@ const Map<String, String> cevirilerVi = {
   'Mobil veride veri tasarrufu': 'Tiết kiệm dữ liệu khi dùng mạng di động',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Khi bật, ảnh không được tải trước; chỉ tải khung hình bạn đang xem.',
+  'Çocuk güvenliği': 'An toàn trẻ em',
 };

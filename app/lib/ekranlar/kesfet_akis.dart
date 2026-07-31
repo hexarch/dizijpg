@@ -1063,6 +1063,15 @@ class _ReelSayfaState extends State<_ReelSayfa>
                 etiket: '$_begeni',
                 onTap: _begenToggle,
               ),
+              const SizedBox(height: 8),
+              // Şikayet menüsü (kendi gönderinde ve misafirde gizli)
+              UcNoktaMenu(
+                tur: 'yorum',
+                hedefId: y['id'] as int,
+                benimMi:
+                    y['kullanici_id'] ==
+                    context.read<Oturum>().kullanici?['id'],
+              ),
               const SizedBox(height: 16),
               _ReelsDugme(
                 ikon: Icons.mode_comment_outlined,

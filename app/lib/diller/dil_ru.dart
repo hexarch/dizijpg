@@ -423,4 +423,5 @@ const Map<String, String> cevirilerRu = {
   'Mobil veride veri tasarrufu': 'Экономия трафика в мобильной сети',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Когда включено, фото не загружаются заранее — грузится только тот кадр, который ты смотришь.',
+  'Çocuk güvenliği': 'Безопасность детей',
 };

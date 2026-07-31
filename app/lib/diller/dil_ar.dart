@@ -418,4 +418,5 @@ const Map<String, String> cevirilerAr = {
   'Mobil veride veri tasarrufu': 'توفير البيانات على بيانات الجوال',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'عند التفعيل لا يتم تنزيل الصور مسبقًا، وتُحمَّل فقط الصورة التي تشاهدها.',
+  'Çocuk güvenliği': 'سلامة الأطفال',
 };

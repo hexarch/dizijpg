@@ -420,4 +420,5 @@ const Map<String, String> cevirilerSw = {
   'Mobil veride veri tasarrufu': 'Kuokoa data kwenye data ya simu',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Ikiwashwa, picha hazipakuliwi mapema; inapakia tu picha unayoitazama.',
+  'Çocuk güvenliği': 'Usalama wa watoto',
 };

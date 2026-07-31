@@ -424,4 +424,5 @@ const Map<String, String> cevirilerPt = {
   'Mobil veride veri tasarrufu': 'Poupança de dados nos dados móveis',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Quando está ativa, as fotos não são transferidas antecipadamente; só carrega a imagem que estás a ver.',
+  'Çocuk güvenliği': 'Segurança infantil',
 };

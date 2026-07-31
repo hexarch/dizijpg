@@ -419,4 +419,5 @@ const Map<String, String> cevirilerGu = {
   'Mobil veride veri tasarrufu': 'મોબાઇલ ડેટા પર ડેટા બચત',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ચાલુ હોય ત્યારે ફોટા પહેલેથી ડાઉનલોડ થતા નથી, ફક્ત તું જુએ છે તે ચિત્ર લોડ થાય છે.',
+  'Çocuk güvenliği': 'બાળ સુરક્ષા',
 };

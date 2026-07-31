@@ -420,4 +420,5 @@ const Map<String, String> cevirilerAz = {
   'Mobil veride veri tasarrufu': 'Mobil internetdə trafik qənaəti',
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Aktiv olduqda şəkillər əvvəlcədən yüklənmir, yalnız baxdığın kadr yüklənir.',
+  'Çocuk güvenliği': 'Uşaq təhlükəsizliyi',
 };
