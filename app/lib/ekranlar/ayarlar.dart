@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1417,7 +1418,13 @@ class _GeriBildirimSheetState extends State<_GeriBildirimSheet> {
     setState(() => _gonderiliyor = true);
     final messenger = ScaffoldMessenger.of(context);
     try {
-      await Api.post('/geri-bildirim', {'metin': metin});
+      // Sürüm/platform da gitsin: hangi derlemeden geldiğini bilmeden
+      // "bende olmuyor" raporları kovalanamıyor.
+      await Api.post('/geri-bildirim', {
+        'metin': metin,
+        'surum': Api.surum,
+        'platform': kIsWeb ? 'web' : defaultTargetPlatform.name,
+      });
       if (!mounted) return;
       Navigator.pop(context);
       messenger.showSnackBar(

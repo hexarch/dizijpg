@@ -1566,9 +1566,14 @@ app.post('/geri-bildirim', girisZorunlu, geriBildirimLimiti, sarici(async (req, 
   if (metin.length < 3 || metin.length > 2000) {
     return res.status(400).json({ hata: 'Geri bildirim 3-2000 karakter olmalı' });
   }
+  // Sürüm/platform: hangi derlemeden geldiğini bilmeden "bende olmuyor"
+  // raporları kovalanamıyor (eski sürümde kalmış kullanıcı düzeltilmiş hatayı
+  // bildiriyor). İstemci yollamazsa NULL kalır.
+  const kirp = (v) => (typeof v === 'string' ? v.slice(0, 40) : null);
   await havuz.query(
-    'INSERT INTO geri_bildirimler (kullanici_id, metin) VALUES ($1,$2)',
-    [req.kullanici.id, metin],
+    `INSERT INTO geri_bildirimler (kullanici_id, metin, surum, platform)
+     VALUES ($1,$2,$3,$4)`,
+    [req.kullanici.id, metin, kirp(req.body?.surum), kirp(req.body?.platform)],
   );
   res.json({ tamam: true });
 }));

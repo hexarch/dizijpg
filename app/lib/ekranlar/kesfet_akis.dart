@@ -403,11 +403,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
   late int _begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
   late bool _takipte = widget.yorum['takip_ediyorum'] == true;
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
-  // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar
-  late final AnimationController _kalpAnim = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 900),
-  );
+  // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar.
+  // DİKKAT: `late final` ile TEMBEL kurulmamalı — kullanıcı hiç çift
+  // dokunmadan sayfadan çıkarsa ilk erişim dispose() içinde olur ve vsync
+  // araması koparılmış widget üzerinde patlar. initState'te kurulur.
+  late final AnimationController _kalpAnim;
   Offset? _kalpKonum;
 
   /// Gönderinin TÜM medyası (sırayla) — çoklu gönderide yana kaydırılır.
@@ -472,6 +472,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
   @override
   void initState() {
     super.initState();
+    _kalpAnim = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
     if (widget.aktif) _isaretle();
     _videoKur();
     if (widget.aktif) _medyaOnbellekle();
