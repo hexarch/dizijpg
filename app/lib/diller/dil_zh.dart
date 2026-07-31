@@ -401,4 +401,5 @@ const Map<String, String> cevirilerZh = {
   'Orijinali göster': '显示原文',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       '本月没有已公布播出日期的剧集。日期通常提前几周公布，公布后会显示在这里。',
+  'devamı': '更多',
 };

@@ -416,4 +416,5 @@ const Map<String, String> cevirilerFil = {
   'Orijinali göster': 'Ipakita ang orihinal',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Walang episode na may anunsyadong petsa ng pagpapalabas ngayong buwan. Karaniwang inaanunsyo ang mga petsa ilang linggo bago, at lalabas dito.',
+  'devamı': 'higit pa',
 };

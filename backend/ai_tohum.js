@@ -26,6 +26,8 @@ const havuz = new Pool({ connectionString: DATABASE_URL });
 
 const AI_KULLANICI = 'dizi.jpg.ai';
 const AI_EMAIL = 'ai@dizijpg.com';
+const KARE_SAYISI = 10; // yorum başına sahne karesi
+const KARE_BOYUT = 'w780'; // disk dostu, mobil/web için yeterli çözünürlük
 const AI_BIO = "dizi.jpg'nin yapay zekasi. En sevilen dizi ve filmleri spoilersiz anlatirim.";
 const RESMI_HESAP_ID = 42; // dizi.jpg resmi hesabı (avatar kaynağı)
 
@@ -82,17 +84,20 @@ async function kullaniciHazirla() {
   return id;
 }
 
-// Yapımın en oylanan 2 sahne karesi (yazısız olanlar öncelikli) → /medya dosyaları
+// Yapımın en oylanan KARE_SAYISI sahne karesi (yazısız olanlar öncelikli)
+// → /medya dosyaları. Hiç backdrop yoksa poster tek kare olarak kullanılır.
 async function kareIndir(kullaniciId, tur, tmdbId) {
   const veri = await tmdb(`/${tur}/${tmdbId}/images`);
   const hepsi = (veri.backdrops || []).slice()
     .sort((a, b) => (b.vote_count || 0) - (a.vote_count || 0));
   const yazisiz = hepsi.filter((b) => !b.iso_639_1);
-  const secim = [...yazisiz, ...hepsi.filter((b) => b.iso_639_1)].slice(0, 2);
+  let secim = [...yazisiz, ...hepsi.filter((b) => b.iso_639_1)]
+    .slice(0, KARE_SAYISI);
+  if (!secim.length && veri.posters?.length) secim = [veri.posters[0]];
   const yollar = [];
   for (const b of secim) {
     const dosya = `m${kullaniciId}-${crypto.randomBytes(8).toString('hex')}.jpg`;
-    await indir(`https://image.tmdb.org/t/p/w1280${b.file_path}`,
+    await indir(`https://image.tmdb.org/t/p/${KARE_BOYUT}${b.file_path}`,
       path.join(medyaDizin, dosya));
     yollar.push(`/medya/${dosya}`);
   }
@@ -114,15 +119,31 @@ async function ana() {
   }
 
   const simdi = Date.now();
-  const aralikMs = 3 * 3600 * 1000; // 3 saat arayla, ~6 güne yayılır
-  let eklendi = 0, atlandi = 0, hatali = 0;
+  const aralikMs = 90 * 60 * 1000; // 90 dk arayla; 250 yorum ~2 haftaya yayılır
+  let eklendi = 0, tazelendi = 0, atlandi = 0, hatali = 0;
   for (let i = 0; i < sirali.length; i++) {
     const v = sirali[i];
     try {
       const mevcut = await havuz.query(
-        `SELECT 1 FROM yorumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL`,
+        `SELECT id, medya FROM yorumlar
+         WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL`,
         [aiId, v.tur, v.tmdb_id]);
-      if (mevcut.rows.length) { atlandi++; continue; }
+      if (mevcut.rows.length) {
+        // Var olan yorum: kare sayısı eksikse medya setini yenile
+        // (eskiler en oylanan 2'ydi; taze 10'luk set indirilir, eskiler silinir).
+        const y = mevcut.rows[0];
+        if ((y.medya || []).length >= KARE_SAYISI) { atlandi++; continue; }
+        const medya = await kareIndir(aiId, v.tur, v.tmdb_id);
+        if (!medya.length) { atlandi++; continue; }
+        await havuz.query('UPDATE yorumlar SET medya=$1 WHERE id=$2',
+          [medya, y.id]);
+        for (const m of y.medya || []) {
+          fs.unlink(path.join(medyaDizin, path.basename(m)), () => {});
+        }
+        tazelendi++;
+        console.log(`~ ${v.tur} ${v.ad} (medya ${y.medya?.length || 0}→${medya.length})`);
+        continue;
+      }
 
       const medya = await kareIndir(aiId, v.tur, v.tmdb_id);
       const tarih = new Date(simdi - (sirali.length - 1 - i) * aralikMs);
@@ -141,7 +162,7 @@ async function ana() {
       console.error(`! ${v.tur} ${v.ad}: ${e.message}`);
     }
   }
-  console.log(`bitti: ${eklendi} eklendi, ${atlandi} atlandı, ${hatali} hatalı`);
+  console.log(`bitti: ${eklendi} eklendi, ${tazelendi} tazelendi, ${atlandi} atlandı, ${hatali} hatalı`);
   await havuz.end();
 }
 

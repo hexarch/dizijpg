@@ -411,4 +411,5 @@ const Map<String, String> cevirilerGu = {
   'Orijinali göster': 'મૂળ બતાવો',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'આ મહિને પ્રસારણ તારીખ જાહેર થયેલો કોઈ એપિસોડ નથી. તારીખો સામાન્ય રીતે થોડા અઠવાડિયા પહેલાં જાહેર થાય છે અને પછી અહીં દેખાશે.',
+  'devamı': 'વધુ',
 };

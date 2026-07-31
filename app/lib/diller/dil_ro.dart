@@ -416,4 +416,5 @@ const Map<String, String> cevirilerRo = {
   'Orijinali göster': 'Arată originalul',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Luna aceasta nu există episoade cu dată de difuzare anunțată. Datele se anunță de obicei cu câteva săptămâni înainte și vor apărea aici.',
+  'devamı': 'mai mult',
 };

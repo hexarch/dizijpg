@@ -415,4 +415,5 @@ const Map<String, String> cevirilerRu = {
   'Orijinali göster': 'Показать оригинал',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'В этом месяце нет серий с объявленной датой выхода. Даты обычно сообщают за несколько недель, и они появятся здесь.',
+  'devamı': 'ещё',
 };

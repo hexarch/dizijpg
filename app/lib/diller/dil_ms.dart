@@ -414,4 +414,5 @@ const Map<String, String> cevirilerMs = {
   'Orijinali göster': 'Tunjuk asal',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Bulan ini tiada episod dengan tarikh siaran yang diumumkan. Tarikh biasanya diumumkan beberapa minggu lebih awal dan akan muncul di sini.',
+  'devamı': 'lagi',
 };

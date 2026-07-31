@@ -403,4 +403,5 @@ const Map<String, String> cevirilerKo = {
   'Orijinali göster': '원문 보기',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       '이번 달에는 방영일이 공개된 에피소드가 없어요. 날짜는 보통 몇 주 전에 공개되며, 공개되면 여기에 표시됩니다.',
+  'devamı': '더보기',
 };

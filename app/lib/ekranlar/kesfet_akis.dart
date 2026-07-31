@@ -405,6 +405,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
   ];
   int _medyaSayfa = 0;
   String? _kuruluUrl; // oynatıcının kurulu olduğu video adresi
+  bool _metinAcik = false; // uzun yorum metni açıldı mı ("... devamı")
 
   static bool _videoMu(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
 
@@ -846,15 +847,51 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     ),
                 ],
               ),
-              // Yorum metni (medyalı postta altta gösterilir)
+              // Yorum metni: uzunsa İKİ SATIR + "... devamı"; dokununca
+              // tamamı açılır (üstteki kullanıcı satırı yukarı kayar, uzun
+              // metin ekranı taşırmasın diye kendi içinde kaydırılır).
               if ((y['metin'] as String?)?.isNotEmpty == true &&
                   (foto != null || _videoUrl != null)) ...[
                 const SizedBox(height: 8),
-                Text(
-                  y['metin'] as String,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, height: 1.35),
+                GestureDetector(
+                  onTap: () => setState(() => _metinAcik = !_metinAcik),
+                  behavior: HitTestBehavior.opaque,
+                  child: _metinAcik
+                      ? ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight:
+                                MediaQuery.of(context).size.height * 0.42,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Text(
+                              y['metin'] as String,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                height: 1.35,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(text: y['metin'] as String),
+                              TextSpan(
+                                text: '  ${'devamı'.c}',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.75),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            height: 1.35,
+                          ),
+                        ),
                 ),
               ],
               const SizedBox(height: 8),

@@ -412,4 +412,5 @@ const Map<String, String> cevirilerAz = {
   'Orijinali göster': 'Orijinalı göstər',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Bu ay yayım tarixi elan olunmuş epizod yoxdur. Tarixlər adətən bir neçə həftə əvvəl açıqlanır və burada görünəcək.',
+  'devamı': 'daha çox',
 };

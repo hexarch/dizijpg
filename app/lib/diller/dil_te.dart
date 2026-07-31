@@ -412,4 +412,5 @@ const Map<String, String> cevirilerTe = {
   'Orijinali göster': 'అసలుది చూపు',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'ఈ నెలలో ప్రసార తేదీ ప్రకటించిన ఎపిసోడ్ లేదు. తేదీలు సాధారణంగా కొన్ని వారాల ముందు ప్రకటిస్తారు, అప్పుడు ఇక్కడ కనిపిస్తాయి.',
+  'devamı': 'మరిన్ని',
 };

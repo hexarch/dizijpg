@@ -414,4 +414,5 @@ const Map<String, String> cevirilerHi = {
   'Orijinali göster': 'मूल दिखाएँ',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'इस महीने प्रसारण तिथि घोषित कोई एपिसोड नहीं है। तिथियाँ आम तौर पर कुछ हफ़्ते पहले बताई जाती हैं और फिर यहाँ दिखेंगी।',
+  'devamı': 'और',
 };

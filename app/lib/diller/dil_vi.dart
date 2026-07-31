@@ -414,4 +414,5 @@ const Map<String, String> cevirilerVi = {
   'Orijinali göster': 'Xem bản gốc',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Tháng này chưa có tập nào được công bố ngày phát sóng. Ngày thường được công bố trước vài tuần và sẽ hiện ở đây.',
+  'devamı': 'thêm',
 };
