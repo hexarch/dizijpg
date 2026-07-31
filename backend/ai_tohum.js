@@ -94,14 +94,19 @@ async function kareIndir(kullaniciId, tur, tmdbId) {
   let secim = [...yazisiz, ...hepsi.filter((b) => b.iso_639_1)]
     .slice(0, KARE_SAYISI);
   if (!secim.length && veri.posters?.length) secim = [veri.posters[0]];
-  const yollar = [];
-  for (const b of secim) {
+  // Bir yapımın kareleri PARALEL iner (1000 içerik × 10 kare seri inseydi
+  // saatler sürerdi). İnemeyen kare atlanır, sıra korunur.
+  const yollar = await Promise.all(secim.map(async (b) => {
     const dosya = `m${kullaniciId}-${crypto.randomBytes(8).toString('hex')}.jpg`;
-    await indir(`https://image.tmdb.org/t/p/${KARE_BOYUT}${b.file_path}`,
-      path.join(medyaDizin, dosya));
-    yollar.push(`/medya/${dosya}`);
-  }
-  return yollar;
+    try {
+      await indir(`https://image.tmdb.org/t/p/${KARE_BOYUT}${b.file_path}`,
+        path.join(medyaDizin, dosya));
+      return `/medya/${dosya}`;
+    } catch {
+      return null;
+    }
+  }));
+  return yollar.filter(Boolean);
 }
 
 async function ana() {
@@ -119,7 +124,10 @@ async function ana() {
   }
 
   const simdi = Date.now();
-  const aralikMs = 90 * 60 * 1000; // 90 dk arayla; 250 yorum ~2 haftaya yayılır
+  // Tarihler geriye doğru eşit aralıkla yayılır (hepsi aynı ana yığılmasın;
+  // hesap aylardır paylaşıyormuş gibi görünsün). Aralık listenin boyuna göre
+  // ölçeklenir: toplam yayılım ~60 gün.
+  const aralikMs = Math.max(5, Math.round(60 * 24 * 60 / sirali.length)) * 60_000;
   let eklendi = 0, tazelendi = 0, atlandi = 0, hatali = 0;
   for (let i = 0; i < sirali.length; i++) {
     const v = sirali[i];
