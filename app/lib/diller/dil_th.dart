@@ -409,4 +409,11 @@ const Map<String, String> cevirilerTh = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'เดือนนี้ยังไม่มีตอนที่ประกาศวันออกอากาศ วันที่มักประกาศล่วงหน้าไม่กี่สัปดาห์ และจะแสดงที่นี่',
   'devamı': 'เพิ่มเติม',
+  'Google ile devam et': 'ดำเนินการต่อด้วย Google',
+  'Google girişi başarısız': 'การลงชื่อเข้าใช้ Google ล้มเหลว',
+  'Veri tasarrufu': 'ประหยัดข้อมูล',
+  'Wi-Fi ağında veri tasarrufu': 'ประหยัดข้อมูลเมื่อใช้ Wi-Fi',
+  'Mobil veride veri tasarrufu': 'ประหยัดข้อมูลเมื่อใช้เน็ตมือถือ',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'เมื่อเปิดอยู่ รูปจะไม่ถูกดาวน์โหลดล่วงหน้า จะโหลดเฉพาะรูปที่คุณกำลังดู',
 };

@@ -417,4 +417,11 @@ const Map<String, String> cevirilerFil = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Walang episode na may anunsyadong petsa ng pagpapalabas ngayong buwan. Karaniwang inaanunsyo ang mga petsa ilang linggo bago, at lalabas dito.',
   'devamı': 'higit pa',
+  'Google ile devam et': 'Magpatuloy gamit ang Google',
+  'Google girişi başarısız': 'Nabigo ang pag-sign in sa Google',
+  'Veri tasarrufu': 'Pagtitipid ng data',
+  'Wi-Fi ağında veri tasarrufu': 'Pagtitipid ng data sa Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Pagtitipid ng data sa mobile data',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Kapag naka-on, hindi muna dina-download ang mga larawan; ang tinitingnan mo lang ang naglo-load.',
 };

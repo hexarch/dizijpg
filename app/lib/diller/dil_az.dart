@@ -413,4 +413,11 @@ const Map<String, String> cevirilerAz = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Bu ay yayım tarixi elan olunmuş epizod yoxdur. Tarixlər adətən bir neçə həftə əvvəl açıqlanır və burada görünəcək.',
   'devamı': 'daha çox',
+  'Google ile devam et': 'Google ilə davam et',
+  'Google girişi başarısız': 'Google girişi alınmadı',
+  'Veri tasarrufu': 'Trafik qənaəti',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi şəbəkəsində trafik qənaəti',
+  'Mobil veride veri tasarrufu': 'Mobil internetdə trafik qənaəti',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Aktiv olduqda şəkillər əvvəlcədən yüklənmir, yalnız baxdığın kadr yüklənir.',
 };

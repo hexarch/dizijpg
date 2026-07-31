@@ -415,4 +415,11 @@ const Map<String, String> cevirilerFi = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Tässä kuussa ei ole jaksoja, joiden esityspäivä olisi julkistettu. Päivät ilmoitetaan yleensä paria viikkoa aiemmin ja näkyvät sitten täällä.',
   'devamı': 'lisää',
+  'Google ile devam et': 'Jatka Google-tilillä',
+  'Google girişi başarısız': 'Google-kirjautuminen epäonnistui',
+  'Veri tasarrufu': 'Datansäästö',
+  'Wi-Fi ağında veri tasarrufu': 'Datansäästö Wi-Fi-verkossa',
+  'Mobil veride veri tasarrufu': 'Datansäästö mobiilidatalla',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Kun tämä on päällä, kuvia ei ladata etukäteen, vain se kuva jota katsot.',
 };

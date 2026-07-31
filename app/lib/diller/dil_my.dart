@@ -422,4 +422,11 @@ const Map<String, String> cevirilerMy = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'ဤလတွင် ထုတ်လွှင့်မည့်ရက် ကြေညာထားသော အပိုင်းမရှိပါ။ ရက်စွဲများကို များသောအားဖြင့် ရက်သတ္တပတ်အနည်းငယ်ကြိုတင်ကြေညာပြီး ဤနေရာတွင် ပေါ်လာပါမည်။',
   'devamı': 'ထပ်ဖတ်ရန်',
+  'Google ile devam et': 'Google ဖြင့် ဆက်လုပ်ပါ',
+  'Google girişi başarısız': 'Google ဖြင့် ဝင်ရောက်မှု မအောင်မြင်ပါ',
+  'Veri tasarrufu': 'ဒေတာချွေတာမှု',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi တွင် ဒေတာချွေတာမှု',
+  'Mobil veride veri tasarrufu': 'မိုဘိုင်းဒေတာတွင် ဒေတာချွေတာမှု',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'ဖွင့်ထားချိန်တွင် ဓာတ်ပုံများကို ကြိုတင်မဒေါင်းလုဒ်ဘဲ ကြည့်နေသည့်ပုံကိုသာ တင်ပါသည်။',
 };

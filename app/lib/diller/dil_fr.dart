@@ -419,4 +419,11 @@ const Map<String, String> cevirilerFr = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Aucun épisode avec une date de diffusion annoncée ce mois-ci. Les dates sont généralement révélées quelques semaines à l\'avance et apparaîtront ici.',
   'devamı': 'plus',
+  'Google ile devam et': 'Continuer avec Google',
+  'Google girişi başarısız': 'Échec de la connexion Google',
+  'Veri tasarrufu': 'Économiseur de données',
+  'Wi-Fi ağında veri tasarrufu': 'Économiseur de données en Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Économiseur de données en données mobiles',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Quand il est activé, les photos ne sont pas téléchargées à lavance ; seule limage que tu regardes se charge.',
 };

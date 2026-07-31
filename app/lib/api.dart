@@ -141,6 +141,20 @@ class Api {
     return d['kullanici'] as Map<String, dynamic>;
   }
 
+  /// Google ile giriş/kayıt: Android kimlik (id) token'ı, web erişim token'ı
+  /// yollar; sunucu Google'a doğrulatır. Dönen harita: {kullanici, yeni}.
+  static Future<Map<String, dynamic>> googleGiris({
+    String? kimlik,
+    String? erisim,
+  }) async {
+    final d = await post('/auth/google', {
+      if (kimlik != null) 'kimlik': kimlik,
+      if (erisim != null) 'erisim': erisim,
+    });
+    await _tokenKaydet(d['token'] as String);
+    return d;
+  }
+
   /// Misafir hesabını e-postaya bağlar; sunucu yeni token döndürür.
   static Future<Map<String, dynamic>> hesabiBagla(
     String email,
@@ -210,7 +224,7 @@ class Api {
   /// Uygulama sürümü (hata bildirimlerinde etiketlenir; pubspec ile eşle).
   /// DİKKAT: pubspec version'ı artınca BURAYI da güncelle — 1.7.1'de
   /// unutulduğu için hata günlüğü üç sürüm boyunca yanlış etiketlendi.
-  static const surum = '1.11.3+42';
+  static const surum = '1.12.2+45';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

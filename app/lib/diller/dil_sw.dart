@@ -413,4 +413,11 @@ const Map<String, String> cevirilerSw = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Mwezi huu hakuna vipindi vyenye tarehe ya kurushwa iliyotangazwa. Tarehe hutangazwa wiki chache kabla na zitaonekana hapa.',
   'devamı': 'zaidi',
+  'Google ile devam et': 'Endelea na Google',
+  'Google girişi başarısız': 'Kuingia kwa Google hakukufaulu',
+  'Veri tasarrufu': 'Kuokoa data',
+  'Wi-Fi ağında veri tasarrufu': 'Kuokoa data kwenye Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Kuokoa data kwenye data ya simu',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Ikiwashwa, picha hazipakuliwi mapema; inapakia tu picha unayoitazama.',
 };

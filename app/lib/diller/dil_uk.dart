@@ -415,4 +415,11 @@ const Map<String, String> cevirilerUk = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Цього місяця немає серій з оголошеною датою виходу. Дати зазвичай повідомляють за кілька тижнів, і вони з’являться тут.',
   'devamı': 'ще',
+  'Google ile devam et': 'Продовжити з Google',
+  'Google girişi başarısız': 'Не вдалося ввійти через Google',
+  'Veri tasarrufu': 'Економія трафіку',
+  'Wi-Fi ağında veri tasarrufu': 'Економія трафіку у Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Економія трафіку в мобільній мережі',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Коли увімкнено, фото не завантажуються заздалегідь — вантажиться лише той кадр, який ти дивишся.',
 };

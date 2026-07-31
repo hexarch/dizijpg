@@ -914,6 +914,81 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
   });
 }));
 
+// Google ile giriş/kayıt: istemci Google'dan aldığı kimliği yollar, sunucu
+// Google'a doğrulatır. Android id_token, web ise erişim token'ı gönderir
+// (GIS web akışı id_token vermiyor). E-posta doğrulanmış Google hesabı =
+// e-posta sahipliği kanıtı: hesap varsa girilir, yoksa oluşturulur.
+const GOOGLE_ISTEMCI = '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
+
+app.post('/auth/google', authLimiti, sarici(async (req, res) => {
+  const { kimlik, erisim } = req.body || {};
+  let bilgi = null;
+  try {
+    if (kimlik) {
+      const c = await fetch('https://oauth2.googleapis.com/tokeninfo?id_token=' + encodeURIComponent(kimlik));
+      if (c.ok) {
+        const d = await c.json();
+        if (d.aud === GOOGLE_ISTEMCI && String(d.email_verified) === 'true') {
+          bilgi = { email: d.email };
+        }
+      }
+    } else if (erisim) {
+      // Erişim token'ı iki adımda: önce bizim istemciye mi verilmiş (aud),
+      // sonra e-posta kime ait (userinfo).
+      const t = await fetch('https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=' + encodeURIComponent(erisim));
+      if (t.ok) {
+        const ti = await t.json();
+        if (ti.aud === GOOGLE_ISTEMCI || ti.azp === GOOGLE_ISTEMCI) {
+          const u = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: 'Bearer ' + erisim },
+          });
+          if (u.ok) {
+            const d = await u.json();
+            if (d.email_verified) bilgi = { email: d.email };
+          }
+        }
+      }
+    }
+  } catch { /* ağ hatası → aşağıda 401 */ }
+  if (!bilgi?.email) {
+    return res.status(401).json({ hata: 'Google doğrulaması başarısız' });
+  }
+
+  const email = bilgi.email.toLowerCase();
+  const mevcut = await havuz.query(
+    'SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
+  if (mevcut.rows.length) {
+    const k = mevcut.rows[0];
+    if (k.yasakli) return res.status(403).json({ hata: 'Hesabın askıya alındı' });
+    const { id, kullanici_adi, email: eposta, misafir } = k;
+    return res.json({
+      token: jwtUret(k),
+      kullanici: { id, kullanici_adi, email: eposta, misafir },
+      yeni: false,
+    });
+  }
+  // Yeni hesap: ad e-postanın ön ekinden türetilir, çakışırsa sonek eklenir.
+  // Şifre alanına rastgele hash yazılır; kullanıcı isterse şifre sıfırlama ile belirler.
+  let kok = email.split('@')[0].replace(/[^a-z0-9_.-]/g, '').replace(/\.{2,}/g, '.')
+    .replace(/^[.-]+|[.-]+$/g, '').slice(0, 15);
+  if (kok.length < 3) kok = 'kullanici';
+  for (let deneme = 0; deneme < 6; deneme++) {
+    const ad = deneme === 0 ? kok : kok.slice(0, 12) + '_' + crypto.randomBytes(2).toString('hex');
+    try {
+      const { rows } = await havuz.query(
+        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash)
+         VALUES (lower($1), $2, $3)
+         RETURNING id, kullanici_adi, email, misafir`,
+        [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10)],
+      );
+      return res.json({ token: jwtUret(rows[0]), kullanici: rows[0], yeni: true });
+    } catch (e) {
+      if (e.code !== '23505') throw e; // ad çakıştıysa yeniden dene
+    }
+  }
+  res.status(500).json({ hata: 'Hesap oluşturulamadı' });
+}));
+
 // ---------- TMDB proxy (beyaz listeli) ----------
 const TMDB_IZINLI = [
   /^\/trending\/(tv|movie|all)\/(day|week)$/,

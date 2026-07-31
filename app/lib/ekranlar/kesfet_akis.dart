@@ -9,6 +9,7 @@ import 'package:video_player/video_player.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import '../veri_tasarrufu.dart';
 import 'etiket.dart';
 import 'ortak.dart';
 import 'paylas.dart';
@@ -302,11 +303,17 @@ class ReelsGorunumu extends StatefulWidget {
   final List<dynamic> liste;
   final Map<String, dynamic> icerikler;
   final int baslangic;
+
+  /// Açılış gönderisinde KAÇINCI medyadan başlanacağı. Akışta 5. fotoğrafa
+  /// dokunan kullanıcı Reels'te de 5. fotoğrafı görmeli (eskiden hep 1.
+  /// açılıyordu; kullanıcı "sonraki resim gelmiyor" diye bildirdi).
+  final int medyaBaslangic;
   const ReelsGorunumu({
     super.key,
     required this.liste,
     required this.icerikler,
     required this.baslangic,
+    this.medyaBaslangic = 0,
   });
 
   @override
@@ -346,6 +353,9 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
               yorum: widget.liste[i] as Map<String, dynamic>,
               icerikler: widget.icerikler,
               aktif: i == _aktif,
+              // Yalnız açılış gönderisi dokunulan medyadan başlar; diğerleri
+              // her zaman baştan.
+              medyaBaslangic: i == widget.baslangic ? widget.medyaBaslangic : 0,
             ),
           ),
           SafeArea(
@@ -373,11 +383,13 @@ class _ReelSayfa extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
   final bool aktif; // ekranda görünen sayfa mı (yalnız o oynar/işaretlenir)
+  final int medyaBaslangic; // açılışta gösterilecek medyanın sırası
   const _ReelSayfa({
     super.key,
     required this.yorum,
     required this.icerikler,
     this.aktif = true,
+    this.medyaBaslangic = 0,
   });
 
   @override
@@ -403,7 +415,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
     for (final m in (widget.yorum['medya'] as List<dynamic>? ?? []))
       dosyaUrl(m as String)!,
   ];
-  int _medyaSayfa = 0;
+  late int _medyaSayfa = widget.medyaBaslangic.clamp(
+    0,
+    _medya.isEmpty ? 0 : _medya.length - 1,
+  );
   String? _kuruluUrl; // oynatıcının kurulu olduğu video adresi
   bool _metinAcik = false; // uzun yorum metni açıldı mı ("... devamı")
 
@@ -451,6 +466,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
     super.didUpdateWidget(eski);
     if (widget.aktif && !eski.aktif) _isaretle();
     if (widget.aktif != eski.aktif) _videoDurumGuncelle();
+    if (widget.aktif && !eski.aktif) _medyaOnbellekle();
   }
 
   @override
@@ -458,6 +474,34 @@ class _ReelSayfaState extends State<_ReelSayfa>
     super.initState();
     if (widget.aktif) _isaretle();
     _videoKur();
+    if (widget.aktif) _medyaOnbellekle();
+  }
+
+  bool _onbellekBasladi = false;
+
+  /// Aktif gönderinin TÜM fotoğraflarını önden indirir. Eskiden yalnız ekranda
+  /// duran kare iniyordu; kullanıcı yana kaydırdıkça her seferinde indirmeyi
+  /// bekliyordu. Kareler ~180 KB, 10'luk gönderi ~1,8 MB → önden almak ucuz.
+  /// Yalnız AKTİF sayfa için çalışır (komşu gönderiler kendi ilk karesini
+  /// zaten PageView'ın önden kurmasıyla yüklüyor).
+  ///
+  /// Veri tasarrufu o bağlantı için AÇIKSA hiç indirmez (varsayılan: mobil
+  /// veride açık, Wi-Fi'da kapalı) — Ayarlar > Veri tasarrufu.
+  void _medyaOnbellekle() {
+    if (!VeriTasarrufu.onYuklemeSerbest) return;
+    if (_onbellekBasladi || _medya.length < 2) return;
+    _onbellekBasladi = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      for (final u in _medya) {
+        if (_videoMu(u)) continue; // videolar akışla gelir, önbelleğe alınmaz
+        precacheImage(
+          CachedNetworkImageProvider(u),
+          context,
+          onError: (_, _) {}, // ağ hatası sessiz geçilir, gösterim etkilenmez
+        );
+      }
+    });
   }
 
   /// Ekrandaki medya videoysa oynatıcıyı kurar (kaydırınca yenisine geçilir).
@@ -671,27 +715,29 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ),
           ),
         ),
-        // Çoklu medya: üstte nokta göstergesi + sayaç (kaçıncı medyadasın)
+        // Çoklu medya sayacı sağ üstte ("3/10") — noktalar altta, alt blokta.
         if (_medya.length > 1)
           Positioned(
-            top: MediaQuery.of(context).padding.top + 60,
-            left: 0,
-            right: 0,
+            top: MediaQuery.of(context).padding.top + 14,
+            right: 14,
             child: IgnorePointer(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < _medya.length; i++)
-                    Container(
-                      width: 7,
-                      height: 7,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: i == _medyaSayfa ? Colors.white : Colors.white38,
-                      ),
-                    ),
-                ],
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_medyaSayfa + 1}/${_medya.length}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ),
             ),
           ),
@@ -788,146 +834,192 @@ class _ReelSayfaState extends State<_ReelSayfa>
               );
             },
           ),
-        // Sol alt: kullanıcı + takip + metin + içerik + süre
+        // Alt blok: solda kullanıcı/metin/içerik, EN ALTTA ORTADA medya
+        // noktaları (kullanıcılar taşıyıcı göstergesini altta arıyor).
         Positioned(
-          left: 14,
-          right: 86,
+          left: 0,
+          right: 0,
           bottom: 18 + altInset,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () =>
-                        kullaniciyaGit(context, y['kullanici_adi'] as String),
-                    child: KullaniciAvatari(
-                      url: avatar,
-                      kullaniciAdi: y['kullanici_adi'] as String?,
-                      yaricap: 19,
-                      arkaplan: DiziRenkler.kart,
-                      ikonRenk: Colors.white54,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: GestureDetector(
-                      onTap: () =>
-                          kullaniciyaGit(context, y['kullanici_adi'] as String),
-                      child: Text(
-                        '@${y['kullanici_adi']}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  if (!_takipte)
-                    SizedBox(
-                      height: 30,
-                      child: OutlinedButton(
-                        onPressed: _takipToggle,
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          side: const BorderSide(color: Colors.white70),
-                        ),
-                        child: Text(
-                          'Takip Et'.c,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+              Padding(
+                padding: const EdgeInsets.only(left: 14, right: 86),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () => kullaniciyaGit(
+                            context,
+                            y['kullanici_adi'] as String,
+                          ),
+                          child: KullaniciAvatari(
+                            url: avatar,
+                            kullaniciAdi: y['kullanici_adi'] as String?,
+                            yaricap: 19,
+                            arkaplan: DiziRenkler.kart,
+                            ikonRenk: Colors.white54,
                           ),
                         ),
-                      ),
-                    ),
-                ],
-              ),
-              // Yorum metni: uzunsa İKİ SATIR + "... devamı"; dokununca
-              // tamamı açılır (üstteki kullanıcı satırı yukarı kayar, uzun
-              // metin ekranı taşırmasın diye kendi içinde kaydırılır).
-              if ((y['metin'] as String?)?.isNotEmpty == true &&
-                  (foto != null || _videoUrl != null)) ...[
-                const SizedBox(height: 8),
-                GestureDetector(
-                  onTap: () => setState(() => _metinAcik = !_metinAcik),
-                  behavior: HitTestBehavior.opaque,
-                  child: _metinAcik
-                      ? ConstrainedBox(
-                          constraints: BoxConstraints(
-                            maxHeight:
-                                MediaQuery.of(context).size.height * 0.42,
-                          ),
-                          child: SingleChildScrollView(
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: GestureDetector(
+                            onTap: () => kullaniciyaGit(
+                              context,
+                              y['kullanici_adi'] as String,
+                            ),
                             child: Text(
-                              y['metin'] as String,
+                              '@${y['kullanici_adi']}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 color: Colors.white,
-                                height: 1.35,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
                           ),
-                        )
-                      : Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(text: y['metin'] as String),
-                              TextSpan(
-                                text: '  ${'devamı'.c}',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.75),
-                                  fontWeight: FontWeight.w700,
+                        ),
+                        const SizedBox(width: 10),
+                        if (!_takipte)
+                          SizedBox(
+                            height: 30,
+                            child: OutlinedButton(
+                              onPressed: _takipToggle,
+                              style: OutlinedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                side: const BorderSide(color: Colors.white70),
+                              ),
+                              child: Text(
+                                'Takip Et'.c,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            height: 1.35,
-                          ),
-                        ),
-                ),
-              ],
-              const SizedBox(height: 8),
-              // İçerik rozeti → içerik sayfası
-              GestureDetector(
-                onTap: () => rotayaGitGuvenli(context, _icerikYolu),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.local_movies_outlined,
-                      size: 15,
-                      color: DiziRenkler.sari,
+                      ],
                     ),
-                    const SizedBox(width: 5),
-                    Flexible(
-                      child: Text(
-                        '${icerik['ad']}'
-                        '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: DiziRenkler.sari,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                        ),
+                    // Yorum metni: uzunsa İKİ SATIR + "... devamı"; dokununca
+                    // tamamı açılır (üstteki kullanıcı satırı yukarı kayar, uzun
+                    // metin ekranı taşırmasın diye kendi içinde kaydırılır).
+                    if ((y['metin'] as String?)?.isNotEmpty == true &&
+                        (foto != null || _videoUrl != null)) ...[
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () => setState(() => _metinAcik = !_metinAcik),
+                        behavior: HitTestBehavior.opaque,
+                        child: _metinAcik
+                            ? ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxHeight:
+                                      MediaQuery.of(context).size.height * 0.42,
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Text(
+                                    y['metin'] as String,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      height: 1.35,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(text: y['metin'] as String),
+                                    TextSpan(
+                                      text: '  ${'devamı'.c}',
+                                      style: TextStyle(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.75,
+                                        ),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  height: 1.35,
+                                ),
+                              ),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    // İçerik rozeti → içerik sayfası
+                    GestureDetector(
+                      onTap: () => rotayaGitGuvenli(context, _icerikYolu),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.local_movies_outlined,
+                            size: 15,
+                            color: DiziRenkler.sari,
+                          ),
+                          const SizedBox(width: 5),
+                          Flexible(
+                            child: Text(
+                              '${icerik['ad']}'
+                              '${y['sezon'] != null ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: DiziRenkler.sari,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                    if (d != null && d.value.isInitialized) ...[
+                      const SizedBox(height: 6),
+                      Text(
+                        '${_sure(d.value.position)} / ${_sure(d.value.duration)}',
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
-              if (d != null && d.value.isInitialized) ...[
-                const SizedBox(height: 6),
-                Text(
-                  '${_sure(d.value.position)} / ${_sure(d.value.duration)}',
-                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+              // Çoklu medya nokta göstergesi: ekranın tam altında, ortada.
+              if (_medya.length > 1) ...[
+                const SizedBox(height: 12),
+                IgnorePointer(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < _medya.length; i++)
+                        Container(
+                          width: 7,
+                          height: 7,
+                          margin: const EdgeInsets.symmetric(horizontal: 3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: i == _medyaSayfa
+                                ? Colors.white
+                                : Colors.white38,
+                            boxShadow: const [
+                              BoxShadow(color: Colors.black45, blurRadius: 3),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ],

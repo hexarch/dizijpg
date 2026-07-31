@@ -406,4 +406,11 @@ const Map<String, String> cevirilerAm = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'በዚህ ወር የስርጭት ቀኑ የተገለጸ ክፍል የለም። ቀኖቹ አብዛኛውን ጊዜ ከጥቂት ሳምንታት በፊት ይገለጻሉ፤ ከዚያ እዚህ ይታያሉ።',
   'devamı': 'ተጨማሪ',
+  'Google ile devam et': 'በGoogle ይቀጥሉ',
+  'Google girişi başarısız': 'በGoogle መግባት አልተሳካም',
+  'Veri tasarrufu': 'የውሂብ ቁጠባ',
+  'Wi-Fi ağında veri tasarrufu': 'በWi-Fi ላይ የውሂብ ቁጠባ',
+  'Mobil veride veri tasarrufu': 'በሞባይል ውሂብ ላይ የውሂብ ቁጠባ',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'ሲበራ ፎቶዎች አስቀድመው አይወርዱም፤ የምታየው ምስል ብቻ ይጫናል።',
 };

@@ -1,11 +1,19 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
 import '../tema.dart';
+
+/// Google OAuth web istemcisi (dizi-jpg-7b723). Android'de serverClientId,
+/// web'de clientId olarak kullanılır; gizli değildir.
+const _googleIstemci =
+    '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
 
 class GirisEkrani extends StatefulWidget {
   const GirisEkrani({super.key});
@@ -41,6 +49,42 @@ class _GirisEkraniState extends State<GirisEkrani> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _yukleniyor = false);
+    }
+  }
+
+  /// Google ile giriş/kayıt: hesap yoksa oluşturulur (yeni → karşılama akışı).
+  Future<void> _googleGiris() async {
+    setState(() => _yukleniyor = true);
+    try {
+      final google = GoogleSignIn(
+        clientId: kIsWeb ? _googleIstemci : null,
+        serverClientId: kIsWeb ? null : _googleIstemci,
+        scopes: const ['email'],
+      );
+      final hesap = await google.signIn();
+      if (hesap == null) return; // kullanıcı pencereyi kapattı
+      final yetki = await hesap.authentication;
+      // Android id_token verir; web (GIS) yalnız erişim token'ı verir.
+      final d = yetki.idToken != null
+          ? await Api.googleGiris(kimlik: yetki.idToken)
+          : await Api.googleGiris(erisim: yetki.accessToken);
+      if (!mounted) return;
+      if (d['yeni'] == true) Oturum.karsilamaGerekli = true;
+      await context.read<Oturum>().girisYapildi(
+        d['kullanici'] as Map<String, dynamic>,
+      );
+      pushBaslat(); // push izni + token kaydı
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e is ApiHata ? e.toString() : 'Google girişi başarısız'.c,
+          ),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _yukleniyor = false);
     }
@@ -272,6 +316,21 @@ class _GirisEkraniState extends State<GirisEkrani> {
                   ),
                 ),
                 const SizedBox(height: 4),
+                // Web'de de açık: OAuth web istemcisine yetkili JavaScript
+                // kaynağı olarak https://dizijpg.com (+www) eklendi.
+                OutlinedButton.icon(
+                  onPressed: _yukleniyor ? null : _googleGiris,
+                  icon: SvgPicture.asset(
+                    'assets/google_g.svg',
+                    width: 18,
+                    height: 18,
+                  ),
+                  label: Text(
+                    'Google ile devam et'.c,
+                    style: TextStyle(color: DiziRenkler.metin70),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 OutlinedButton.icon(
                   onPressed: _yukleniyor ? null : _misafirGiris,
                   icon: Icon(Icons.person_outline, color: DiziRenkler.metin70),

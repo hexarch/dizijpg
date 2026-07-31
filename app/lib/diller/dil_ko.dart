@@ -404,4 +404,11 @@ const Map<String, String> cevirilerKo = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       '이번 달에는 방영일이 공개된 에피소드가 없어요. 날짜는 보통 몇 주 전에 공개되며, 공개되면 여기에 표시됩니다.',
   'devamı': '더보기',
+  'Google ile devam et': 'Google로 계속하기',
+  'Google girişi başarısız': 'Google 로그인에 실패했어요',
+  'Veri tasarrufu': '데이터 절약',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi에서 데이터 절약',
+  'Mobil veride veri tasarrufu': '모바일 데이터에서 데이터 절약',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      '켜져 있으면 사진을 미리 받지 않고 지금 보는 사진만 불러와요.',
 };

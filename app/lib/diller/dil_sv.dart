@@ -415,4 +415,11 @@ const Map<String, String> cevirilerSv = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Inga avsnitt med annonserat sändningsdatum den här månaden. Datum brukar tillkännages några veckor i förväg och dyker då upp här.',
   'devamı': 'mer',
+  'Google ile devam et': 'Fortsätt med Google',
+  'Google girişi başarısız': 'Google-inloggningen misslyckades',
+  'Veri tasarrufu': 'Datasparläge',
+  'Wi-Fi ağında veri tasarrufu': 'Datasparläge på Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Datasparläge på mobildata',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'När det är på hämtas inte bilder i förväg, bara den bild du tittar på.',
 };

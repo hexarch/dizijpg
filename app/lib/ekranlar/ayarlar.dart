@@ -12,6 +12,7 @@ import '../push.dart';
 import 'gorsel_kirp.dart';
 import 'sosyal.dart';
 import '../tema.dart';
+import '../veri_tasarrufu.dart';
 
 const List<String> ulkeler = [
   'Türkiye',
@@ -906,6 +907,57 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                         ),
                       ],
                     ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Veri tasarrufu'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Column(
+                    children: [
+                      // Bağlantı türüne göre AYRI ayarlar: varsayılan olarak
+                      // Wi-Fi'da kapalı (önden indir), mobil veride açık.
+                      ValueListenableBuilder<bool>(
+                        valueListenable: VeriTasarrufu.wifi,
+                        builder: (context, acik, _) => SwitchListTile(
+                          value: acik,
+                          activeColor: DiziRenkler.sari,
+                          secondary: Icon(
+                            Icons.wifi,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          title: Text('Wi-Fi ağında veri tasarrufu'.c),
+                          onChanged: VeriTasarrufu.wifiSec,
+                        ),
+                      ),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: VeriTasarrufu.mobil,
+                        builder: (context, acik, _) => SwitchListTile(
+                          value: acik,
+                          activeColor: DiziRenkler.sari,
+                          secondary: Icon(
+                            Icons.signal_cellular_alt,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          title: Text('Mobil veride veri tasarrufu'.c),
+                          onChanged: VeriTasarrufu.mobilSec,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Text(
+                          'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.'
+                              .c,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 12),

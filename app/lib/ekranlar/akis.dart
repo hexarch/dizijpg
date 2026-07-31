@@ -192,12 +192,17 @@ class _AkisEkraniState extends State<AkisEkrani>
 
   /// Akıştaki medyaya dokununca: o gönderiden başlayıp tüm akışı Reels
   /// (dikey kaydırmalı, çift-dokunuş beğeni, sola kaydırma profil) modunda açar.
-  void _reelsAc(int i) {
+  void _reelsAc(int i, int medyaIndeks) {
     if (_akis == null) return;
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
-        builder: (_) =>
-            ReelsGorunumu(liste: _akis!, icerikler: _icerikler, baslangic: i),
+        builder: (_) => ReelsGorunumu(
+          liste: _akis!,
+          icerikler: _icerikler,
+          baslangic: i,
+          // Dokunulan fotoğraftan devam et (eskiden hep ilkinden açılıyordu).
+          medyaBaslangic: medyaIndeks,
+        ),
       ),
     );
   }
@@ -289,7 +294,7 @@ class _AkisEkraniState extends State<AkisEkrani>
                     key: ValueKey(y['id']),
                     yorum: y,
                     icerikler: _icerikler,
-                    onMedyaAc: () => _reelsAc(i),
+                    onMedyaAc: (mi) => _reelsAc(i, mi),
                   ),
                 );
               },
@@ -580,7 +585,9 @@ class _AramaSatiri extends StatelessWidget {
 class _AkisKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
-  final VoidCallback? onMedyaAc; // medyaya dokununca Reels aç
+
+  /// Medyaya dokununca Reels aç — parametre DOKUNULAN medyanın sırası.
+  final void Function(int medyaIndeks)? onMedyaAc;
 
   const _AkisKarti({
     super.key,
@@ -781,7 +788,7 @@ class _AkisKartiState extends State<_AkisKarti> {
               // ekran ortasına gelince yerinde sessiz oynar, dokununca Reels.
               MedyaGaleri(
                 yollar: medya.cast<String>(),
-                onAc: (_) => widget.onMedyaAc?.call(),
+                onAc: (mi) => widget.onMedyaAc?.call(mi),
                 otomatikOynat: true,
               ),
             ],

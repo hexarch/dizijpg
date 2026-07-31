@@ -402,4 +402,11 @@ const Map<String, String> cevirilerZh = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       '本月没有已公布播出日期的剧集。日期通常提前几周公布，公布后会显示在这里。',
   'devamı': '更多',
+  'Google ile devam et': '通过 Google 继续',
+  'Google girişi başarısız': 'Google 登录失败',
+  'Veri tasarrufu': '流量节省',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi 下节省流量',
+  'Mobil veride veri tasarrufu': '移动数据下节省流量',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      '开启后不会提前下载照片，只加载你正在看的那一张。',
 };

@@ -417,4 +417,11 @@ const Map<String, String> cevirilerPt = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Nenhum episódio com data de exibição anunciada neste mês. As datas costumam sair algumas semanas antes e aparecerão aqui.',
   'devamı': 'mais',
+  'Google ile devam et': 'Continuar com o Google',
+  'Google girişi başarısız': 'Falha ao iniciar sessão com o Google',
+  'Veri tasarrufu': 'Poupança de dados',
+  'Wi-Fi ağında veri tasarrufu': 'Poupança de dados no Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Poupança de dados nos dados móveis',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Quando está ativa, as fotos não são transferidas antecipadamente; só carrega a imagem que estás a ver.',
 };

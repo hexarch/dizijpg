@@ -417,4 +417,11 @@ const Map<String, String> cevirilerHu = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Ebben a hónapban nincs bejelentett adásidejű epizód. A dátumokat általában néhány héttel előre jelentik be, és akkor itt is megjelennek.',
   'devamı': 'tovább',
+  'Google ile devam et': 'Folytatás Google-fiókkal',
+  'Google girişi başarısız': 'A Google-bejelentkezés nem sikerült',
+  'Veri tasarrufu': 'Adattakarékos mód',
+  'Wi-Fi ağında veri tasarrufu': 'Adattakarékos mód Wi-Fi-n',
+  'Mobil veride veri tasarrufu': 'Adattakarékos mód mobilneten',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Ha be van kapcsolva, a képek nem töltődnek le előre, csak az, amit éppen nézel.',
 };

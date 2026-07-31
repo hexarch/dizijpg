@@ -413,4 +413,11 @@ const Map<String, String> cevirilerPa = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'ਇਸ ਮਹੀਨੇ ਪ੍ਰਸਾਰਣ ਤਾਰੀਖ਼ ਐਲਾਨੀ ਗਈ ਕੋਈ ਕੜੀ ਨਹੀਂ। ਤਾਰੀਖ਼ਾਂ ਆਮ ਤੌਰ \'ਤੇ ਕੁਝ ਹਫ਼ਤੇ ਪਹਿਲਾਂ ਦੱਸੀਆਂ ਜਾਂਦੀਆਂ ਹਨ ਅਤੇ ਫਿਰ ਇੱਥੇ ਦਿਸਣਗੀਆਂ।',
   'devamı': 'ਹੋਰ',
+  'Google ile devam et': 'Google ਨਾਲ ਜਾਰੀ ਰੱਖੋ',
+  'Google girişi başarısız': 'Google ਸਾਈਨ-ਇਨ ਅਸਫਲ ਰਿਹਾ',
+  'Veri tasarrufu': 'ਡਾਟਾ ਬਚਤ',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi ਤੇ ਡਾਟਾ ਬਚਤ',
+  'Mobil veride veri tasarrufu': 'ਮੋਬਾਈਲ ਡਾਟੇ ਤੇ ਡਾਟਾ ਬਚਤ',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'ਚਾਲੂ ਹੋਣ ਤੇ ਫੋਟੋਆਂ ਪਹਿਲਾਂ ਤੋਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਹੁੰਦੀਆਂ, ਸਿਰਫ਼ ਉਹੀ ਤਸਵੀਰ ਲੋਡ ਹੁੰਦੀ ਹੈ ਜੋ ਤੂੰ ਵੇਖ ਰਿਹਾ ਹੈਂ।',
 };

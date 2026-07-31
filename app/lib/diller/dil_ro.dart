@@ -417,4 +417,11 @@ const Map<String, String> cevirilerRo = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Luna aceasta nu există episoade cu dată de difuzare anunțată. Datele se anunță de obicei cu câteva săptămâni înainte și vor apărea aici.',
   'devamı': 'mai mult',
+  'Google ile devam et': 'Continuă cu Google',
+  'Google girişi başarısız': 'Conectarea cu Google a eșuat',
+  'Veri tasarrufu': 'Economisire date',
+  'Wi-Fi ağında veri tasarrufu': 'Economisire date pe Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Economisire date pe date mobile',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Când este activă, fotografiile nu se descarcă în avans; se încarcă doar imaginea pe care o privești.',
 };

@@ -415,4 +415,11 @@ const Map<String, String> cevirilerTa = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'இந்த மாதம் ஒளிபரப்புத் தேதி அறிவிக்கப்பட்ட எபிசோடு இல்லை. தேதிகள் பொதுவாக சில வாரங்களுக்கு முன் அறிவிக்கப்படும், பிறகு இங்கே தெரியும்.',
   'devamı': 'மேலும்',
+  'Google ile devam et': 'Google மூலம் தொடரவும்',
+  'Google girişi başarısız': 'Google உள்நுழைவு தோல்வியடைந்தது',
+  'Veri tasarrufu': 'தரவு சேமிப்பு',
+  'Wi-Fi ağında veri tasarrufu': 'Wi-Fi இல் தரவு சேமிப்பு',
+  'Mobil veride veri tasarrufu': 'மொபைல் தரவில் தரவு சேமிப்பு',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'இயக்கத்தில் இருக்கும்போது படங்கள் முன்கூட்டியே பதிவிறக்கப்படாது, நீ பார்க்கும் படம் மட்டுமே ஏற்றப்படும்.',
 };

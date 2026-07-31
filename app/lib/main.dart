@@ -12,6 +12,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'push.dart';
 import 'tema.dart';
+import 'veri_tasarrufu.dart';
 import 'yonlendirme.dart';
 
 /// Web'de yatay rafların fareyle sürüklenebilmesi için (varsayılanda kapalı).
@@ -43,6 +44,7 @@ Future<void> main() async {
     await pushCekirdek(); // Firebase çekirdeği + arka plan mesaj işleyicisi
     await Ceviri.yukle();
     await TemaAyar.yukle();
+    await VeriTasarrufu.yukle(); // bağlantı türü + veri tasarrufu tercihleri
     final oturum = Oturum();
     await oturum.yukle();
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)

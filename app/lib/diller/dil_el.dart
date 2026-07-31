@@ -417,4 +417,11 @@ const Map<String, String> cevirilerEl = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Αυτόν τον μήνα δεν υπάρχουν επεισόδια με ανακοινωμένη ημερομηνία προβολής. Οι ημερομηνίες ανακοινώνονται συνήθως λίγες εβδομάδες νωρίτερα και θα εμφανιστούν εδώ.',
   'devamı': 'περισσότερα',
+  'Google ile devam et': 'Συνέχεια με Google',
+  'Google girişi başarısız': 'Η σύνδεση με Google απέτυχε',
+  'Veri tasarrufu': 'Εξοικονόμηση δεδομένων',
+  'Wi-Fi ağında veri tasarrufu': 'Εξοικονόμηση δεδομένων στο Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Εξοικονόμηση δεδομένων στα δεδομένα κινητής',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Όταν είναι ενεργή, οι φωτογραφίες δεν κατεβαίνουν εκ των προτέρων — φορτώνει μόνο το καρέ που βλέπεις.',
 };

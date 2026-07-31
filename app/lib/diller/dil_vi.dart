@@ -415,4 +415,11 @@ const Map<String, String> cevirilerVi = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Tháng này chưa có tập nào được công bố ngày phát sóng. Ngày thường được công bố trước vài tuần và sẽ hiện ở đây.',
   'devamı': 'thêm',
+  'Google ile devam et': 'Tiếp tục với Google',
+  'Google girişi başarısız': 'Đăng nhập Google không thành công',
+  'Veri tasarrufu': 'Tiết kiệm dữ liệu',
+  'Wi-Fi ağında veri tasarrufu': 'Tiết kiệm dữ liệu khi dùng Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Tiết kiệm dữ liệu khi dùng mạng di động',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Khi bật, ảnh không được tải trước; chỉ tải khung hình bạn đang xem.',
 };

@@ -1,6 +1,104 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-07-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-07-31 — Veri tasarrufu (Wi-Fi / mobil ayrı) · v1.12.2+45
+**Kullanıcı isteği:** "Wi-Fi'dayken önden çeksin, mobildeyken çekmesin; Ayarlar'da
+mobil ve Wi-Fi için ayrı veri tasarrufu olsun; varsayılan Wi-Fi kapalı, mobil açık."
+- 🚀 **`lib/veri_tasarrufu.dart`** — `TemaAyar` kalıbında `VeriTasarrufu`:
+  `wifi` (varsayılan **false**) ve `mobil` (varsayılan **true**) ValueNotifier'ları,
+  SharedPreferences anahtarları `veri_tasarrufu_wifi` / `veri_tasarrufu_mobil`.
+  Bağlantı türü `connectivity_plus ^6.1.0` ile izlenir (`onConnectivityChanged`),
+  `mobilBaglanti` notifier'ı güncellenir. `acik` → o anki bağlantının ayarı;
+  `onYuklemeSerbest` → tasarruf kapalıysa true.
+  **Web:** tür güvenilir ayırt edilemediği için daima Wi-Fi sayılır (kIsWeb erken
+  çıkış). Bağlantı okunamazsa da Wi-Fi varsayılır (özellikten mahrum bırakma).
+- 🚀 `main.dart`: `await VeriTasarrufu.yukle()` (Ceviri/TemaAyar yanında).
+- 🚀 `kesfet_akis.dart` `_medyaOnbellekle()` başına
+  `if (!VeriTasarrufu.onYuklemeSerbest) return;` → tasarruf açıkken ön yükleme yok.
+- 🚀 **Ayarlar > Veri tasarrufu** bölümü (Tema ile Profil düzeni arasında):
+  iki `SwitchListTile` (Wi-Fi ikonu / sinyal ikonu), `ValueListenableBuilder` ile
+  anında güncellenir, altında açıklama satırı.
+- ✅ Çeviri: 4 yeni anahtar × 45 dil (doğrulandı 45/45). Anahtar/değerlerde
+  KESME İŞARETİ YOK — Dart tek tırnaklı string'i bozardı ("Wi-Fi ağında",
+  "Mobil veride" diye yazıldı).
+- ✅ `flutter analyze lib`: hata/uyarı yok.
+- ⚠️ **Görsel doğrulama eksik:** Ayarlar bölümü web'de gözle görülemedi —
+  Flutter tuvali erişilebilirlik ağacı vermiyor ve `left_click_drag` fling
+  sayıldığı için sayfa sona atlıyor. Mantık web'de zaten Wi-Fi yolunu kullanıyor
+  (ön yükleme çalışmaya devam ediyor, daha önce 12 eşzamanlı istekle
+  doğrulanmıştı). Mobil yol yalnızca APK ile test edilebilir.
+- 📦 `~/Desktop/dizijpg-1.12.2.apk` — bu özelliği içeren derleme.
+
+## 2026-07-31 — Reels çoklu fotoğraf hataları (web canlıda, APK bekliyor)
+**Kullanıcı bildirimi:** "10 resimli postta bir tanesine tıklıyorum, reels'e
+geçiyor ama sonraki resim gelmiyor; aşağıda yuvarlaklar da yok. Bazılarında
+düzgün çalışıyor."
+- 🚀 **KÖK NEDEN — dokunulan fotoğrafın sırası atılıyordu.** `akis.dart`
+  `onAc: (_) => widget.onMedyaAc?.call()` — `MedyaSeridi` dokunulan medyanın
+  indeksini VERİYOR ama akış onu yok sayıyordu; Reels her zaman 1. fotoğraftan
+  açılıyordu. Kullanıcı 5. fotoğrafa dokunup 1.'yi görünce "sonraki gelmiyor"
+  diyordu (sağa kaydırma = GERİ, 1.'de geri gidecek yer yok → hiçbir şey olmaz).
+  Düzeltme: `onMedyaAc` artık `void Function(int medyaIndeks)`;
+  `ReelsGorunumu.medyaBaslangic` eklendi, yalnız AÇILIŞ gönderisine uygulanır
+  (`i == baslangic ? medyaBaslangic : 0`), `_medyaSayfa` ondan başlar (clamp'li).
+- 🚀 **Noktalar üstteydi, alta alındı.** Gösterge `top: padding.top + 60`'taydı;
+  kullanıcılar taşıyıcı noktalarını EKRANIN ALTINDA arıyor. Alt blok tam
+  genişliğe alınıp (metin bloğu `Padding(left:14,right:86)` içine sarıldı)
+  noktalar en alta, ortaya kondu + gölge eklendi (açık görsellerde kayboluyordu).
+- 🚀 **Sağ üstte "5/10" sayacı** eklendi (akış kartındaki rozetle aynı dil).
+- ✅ **Metne dokununca açılma** canlıda test edildi, ÇALIŞIYOR (2 satır → tam
+  metin). Kullanıcının gördüğü sorun büyük olasılıkla eski sürümdendi.
+- **Doğrulama:** dizijpg.com'da test hesabıyla uçtan uca — akışta 5/10'a kaydırıp
+  dokunuldu → Reels 5/10 açıldı, alttaki 5. nokta dolu; sola kaydırınca 6/10.
+- 🚀 **Fotoğraf ÖN YÜKLEME (kullanıcı: "sürekli resimlerin inmesini bekliyorum").**
+  Reels'te yalnız EKRANDAKİ kare indiriliyordu; her kaydırışta yeni indirme
+  bekleniyordu (ilk 1-2 kare akış kartından önbellekte olduğu için "ilk 2
+  iniyor" hissi). `_medyaOnbellekle()` eklendi: sayfa AKTİF olunca gönderinin
+  tüm fotoğrafları `precacheImage` ile önden çekilir (videolar hariç, hata
+  sessiz yutulur, sayfa başına bir kez). Maliyet düşük: kareler ~178 KB,
+  10'luk gönderi ~1,8 MB. Komşu GÖNDERİLERİN ilk karesi zaten PageView'ın
+  `allowImplicitScrolling` ile önden kurulmasıyla iniyor.
+  **Doğrulama:** dizijpg.com'da Reels açılışında ağ kaydında 12 görsel isteği
+  aynı anda (10 kare + 2 komşu), eskiden kaydırdıkça tek tek geliyordu.
+- ⬜ Mobil için YENİ SÜRÜM gerekir: 1.12.0+43 şu an Play incelemesinde; bu
+  düzeltmeler bir sonraki derlemeye (1.12.1+44) girecek.
+
+## 2026-07-31 — Google (Gmail) ile giriş/kayıt · v1.12.0+43
+**Ne:** Giriş ekranında "Google ile devam et"; hesap varsa girer, yoksa oluşturur
+(yeni hesap → karşılama akışı). Şifre gerekmez.
+- 🚀 **Backend `POST /auth/google`** (authLimiti): istemci `kimlik` (Android
+  id_token) veya `erisim` (web erişim token'ı) yollar; sunucu Google'a
+  doğrulatır. id_token'da `aud` bizim istemci + `email_verified` şartı;
+  erişim token'ında önce `tokeninfo` ile aud/azp kontrolü, sonra `userinfo`.
+  E-posta eşleşirse mevcut hesaba girilir (yasaklı → 403), yoksa kullanıcı adı
+  e-posta ön ekinden türetilir (çakışırsa rastgele sonek), şifre alanına
+  rastgele hash yazılır (kullanıcı isterse şifre sıfırlamayla belirler).
+- 🚀 **App:** `google_sign_in ^6.3.0`; `Api.googleGiris`; giriş ekranında
+  Google G logolu buton (assets/google_g.svg). Android'de `serverClientId`
+  = web istemci kimliği (eklenti bunu doğrudan kullanır, google-services.json'a
+  düşmez → dosyayı yenilemeye gerek yok).
+- ✅ **Google tarafı:** Firebase Auth'ta Google sağlayıcısı açıldı (herkese
+  görünen ad "dizi.jpg", destek e-postası alcelikbcayir@gmail.com); Android
+  uygulamasına İKİ SHA-1 eklendi — yükleme anahtarı
+  `2E:38:AB:...:AB:58` ve Play uygulama imzalama `EA:7A:FB:...:10:E0`
+  (Play AAB'yi kendi anahtarıyla yeniden imzaladığı için ikisi de şart).
+- 🚀 **WEB'DE DE AÇIK (31 Tem, çözüldü):** Kullanıcı Google Cloud Hizmet
+  Şartları'nı onayladı → Auth Platform → Clients → Web client → Authorized
+  JavaScript origins'e `https://dizijpg.com` + `https://www.dizijpg.com`
+  eklendi ("OAuth client saved"). Koddaki `if (!kIsWeb)` gizleme koşulu
+  kaldırıldı, web yeniden yayınlandı (v1.12.1); buton dizijpg.com/giris'te
+  görünüyor. NOT: Google "ayarın etkili olması 5 dk – birkaç saat sürebilir"
+  diyor; ilk denemede origin hatası gelirse biraz bekleyip tekrar dene.
+- ✅ Çeviri: +2 anahtar × 45 dil ("Google ile devam et", "Google girişi
+  başarısız").
+- ✅ **AAB Play Store'a yüklendi ve incelemeye gönderildi (31 Tem):** kapalı test
+  Alpha kanalı, sürüm **43 (1.12.0)**, tam kullanıma sunma. Kanal durumu
+  "43 (1.12.0) sürümü incelemede". Dosyayı KULLANICI yükledi (Claude yükleyemez:
+  tarayıcı yükleme aracı 10MB sınırlı, dosya 66MB; Play Developer API yolu da
+  projede androidpublisher API'si kapalı + Cloud ToS onayı gerektiği için kapalı).
+  Claude son adımı (incelemeye gönder) konsoldan tamamladı.
+  Dosyalar: `~/Desktop/dizijpg-1.12.0.aab` (66MB) + `~/Desktop/dizijpg-1.12.0.apk`.
+
 ## 2026-07-31 — dizi.jpg AI hesabı 🚀
 **Ne:** `@dizi.jpg.ai` (id=51, ai@dizijpg.com) — TMDB puanı en yüksek 25 dizi +
 25 filme 2'şer sahne kareli, spoilersız Türkçe tanıtım yorumu yazan AI hesabı.

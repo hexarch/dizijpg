@@ -408,4 +408,11 @@ const Map<String, String> cevirilerHe = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'אין פרקים עם תאריך שידור מוכרז החודש. התאריכים מתפרסמים בדרך כלל שבועות ספורים מראש ויופיעו כאן.',
   'devamı': 'עוד',
+  'Google ile devam et': 'המשך עם Google',
+  'Google girişi başarısız': 'ההתחברות עם Google נכשלה',
+  'Veri tasarrufu': 'חיסכון בנתונים',
+  'Wi-Fi ağında veri tasarrufu': 'חיסכון בנתונים ב-Wi-Fi',
+  'Mobil veride veri tasarrufu': 'חיסכון בנתונים בחבילת גלישה',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'כשהאפשרות פעילה התמונות לא יורדות מראש, נטענת רק התמונה שאתה צופה בה.',
 };

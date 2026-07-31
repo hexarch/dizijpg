@@ -414,4 +414,11 @@ const Map<String, String> cevirilerId = {
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Bulan ini belum ada episode dengan tanggal tayang yang diumumkan. Tanggal biasanya diumumkan beberapa minggu sebelumnya dan akan muncul di sini.',
   'devamı': 'selengkapnya',
+  'Google ile devam et': 'Lanjutkan dengan Google',
+  'Google girişi başarısız': 'Login Google gagal',
+  'Veri tasarrufu': 'Hemat data',
+  'Wi-Fi ağında veri tasarrufu': 'Hemat data di Wi-Fi',
+  'Mobil veride veri tasarrufu': 'Hemat data di data seluler',
+  'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
+      'Saat aktif, foto tidak diunduh lebih dulu; hanya gambar yang sedang kamu lihat yang dimuat.',
 };
