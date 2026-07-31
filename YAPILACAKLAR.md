@@ -134,6 +134,19 @@ düzgün çalışıyor."
   1 yorumda 7 kare (o yapımda TMDB'de 7 backdrop var). 300 EN çevirisi
   metin_cevirileri'nde doğrulandı. Medya klasörü 1.9G. Yeni yorum tarihleri 90 dk
   arayla ~2 haftaya yayıldı.
+- 🚀 **Parti 3 (2026-08-01): +1000 içerik → AI toplam 1300 yorum.** Aday eşiği
+  vote_count 2000→**500**'e çekildi (havuz: 1130 dizi + 7981 film); puan sırasının
+  devamından 500 dizi + 500 film alındı, özeti olmayanlar elendi. 40 paralel ajan
+  × 25 içerik (2 dalga), hepsi doğrulamadan geçti: 1000/1000 kayıt, mükerrer yok,
+  1300 metnin 1300'ü benzersiz. Ajan promptuna **"tanımadığın yapımda oyuncu/
+  ödül/eleştiri iddiası UYDURMA, TMDB özetine ve türe dayan"** kuralı eklendi
+  (niş anime/Asya yapımları için). Tohum: 1000 eklendi, 0 hata; 1231 yorumda 10
+  kare, kalanında TMDB'de o kadar backdrop yok (en az 2). 1300 EN çevirisi tam.
+  Medya 3.6G / 16.580 dosya, disk %52. Tarihler 16 Haziran–31 Temmuz aralığına
+  yayıldı (aralık liste boyuna göre otomatik ölçekleniyor, ~60 gün).
+- 🚀 **ai_tohum.js iyileştirmesi:** bir yapımın kareleri artık PARALEL iniyor
+  (10.000 görsel seri inseydi saatler sürerdi); inemeyen kare atlanır, yorum
+  yine de girer.
 - 🚀 **Sunucu diski büyütüldü:** sağlayıcının eklediği yeni 32G disk (sdb)
   LVM'e katıldı (pvcreate+vgextend+lvextend -r) → kök bölüm 48G→**80G** (39G boş),
   kesintisiz. Not: kullanıcının panelde verdiği 136G'nin tamamı görünmüyor;
