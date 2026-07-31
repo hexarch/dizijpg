@@ -27,7 +27,7 @@ const havuz = new Pool({ connectionString: DATABASE_URL });
 const AI_KULLANICI = 'dizi.jpg.ai';
 const AI_EMAIL = 'ai@dizijpg.com';
 const KARE_SAYISI = 10; // yorum başına sahne karesi
-const KARE_BOYUT = 'w780'; // disk dostu, mobil/web için yeterli çözünürlük
+const KARE_BOYUT = 'w1280'; // tam kalite (kullanıcı sunucuda yer açacak)
 const AI_BIO = "dizi.jpg'nin yapay zekasi. En sevilen dizi ve filmleri spoilersiz anlatirim.";
 const RESMI_HESAP_ID = 42; // dizi.jpg resmi hesabı (avatar kaynağı)
 

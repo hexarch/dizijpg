@@ -27,6 +27,19 @@
 - NOT: AI şifresi tohum çıktısında üretildi (kullanıcıya iletildi); hesap normal
   giriş yapabilir. APK yeniden derlenmedi (web canlıda; rozet mobilde sonraki
   APK ile gelir).
+- 🚀 **Parti 2 (aynı gün): +250 içerik & 10'ar kare.** TMDB puan sıralamasının
+  devamı: +125 dizi + 125 film → AI toplam **300 yorum**. Metinler 10 paralel
+  ajanla yazıldı, doğrulamadan geçti (400-1000 kr, spoilersız, TR+EN); tamamı
+  `backend/ai_yorumlar.json`'da (kalıcı kayıt, 300 giriş — mükerrer koruması
+  bu dosya + DB kontrolü). Kare sayısı 2→**10** (w1280): yeni yorumlar 10 kareyle
+  girdi, mevcut 50'nin medyası tazelendi (eski dosyalar silindi); 299 yorumda 10,
+  1 yorumda 7 kare (o yapımda TMDB'de 7 backdrop var). 300 EN çevirisi
+  metin_cevirileri'nde doğrulandı. Medya klasörü 1.9G. Yeni yorum tarihleri 90 dk
+  arayla ~2 haftaya yayıldı.
+- 🚀 **Sunucu diski büyütüldü:** sağlayıcının eklediği yeni 32G disk (sdb)
+  LVM'e katıldı (pvcreate+vgextend+lvextend -r) → kök bölüm 48G→**80G** (39G boş),
+  kesintisiz. Not: kullanıcının panelde verdiği 136G'nin tamamı görünmüyor;
+  fark yansırsa aynı yöntemle eklenir.
 
 ## 2026-07-30 — Akışta yerinde video + gizlilik + geri bildirim 🚀
 **Ne:** Akışta videolar kaydırırken kendiliğinden oynar; kullanıcılar izlediklerini
