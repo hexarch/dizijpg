@@ -1045,6 +1045,27 @@ oyuncu etiketleme".
 - ⚠️ `test@dizijpg.com` gerçek posta kutusu değil: o hesaba giden mailler
   Postfix'ten `550 User unknown` alır, panelde "gönderilemedi" görünür. Normal.
 
+## 2026-08-01b — Admin paneline 4 sekme daha ✅
+- **Geri Bildirim:** `geri_bildirimler` 29 Tem'den beri toplanıyordu ama okunacak
+  yer yoktu. Liste + sürüm/platform + yeni/okundu/kapatıldı + **maille yanıt**
+  (`mailGonder`'den geçer, giden günlüğüne düşer, kullanıcının mesajı alıntılanır).
+  Misafir hesapta (e-posta yok) yanıt alanı kapalı.
+- **Kullanıcılar:** arama (ad/e-posta), süzgeç (kayıtlı/misafir/yasaklı),
+  sıralama (son görülme/kayıt/yorum/izleme/ad), yorum-izleme-takipçi-cihaz
+  sayıları; satıra tıklayınca mevcut kullanıcı detay modalı.
+- **Yorumlar:** 4800+ yorumun TAMAMINDA arama (şu ana dek yalnız şikayet
+  edilenler görülebiliyordu) + medyalı/şikayetli süzgeci + medya önizleme + sil.
+- **Duyuru:** toplu push. Cihaz dili `tr` ise Türkçe, değilse İngilizce gövde
+  (app değişikliği/45 dil işi gerekmez). Gönderim öncesi kaç cihaza gideceği
+  gösterilir + onay ister; ölü FCM tokenları otomatik silinir; geçmiş `duyurular`
+  tablosunda. **Uygulama içi bildirim DEĞİL** — `bildirimler.tur` CHECK'ine yeni
+  tür eklemek 45 dillik metin işi açardı.
+- Uçlar: `/admin/geri-bildirimler`, `/admin/geri-bildirim-durum`,
+  `/admin/geri-bildirim-yanit`, `/admin/kullanicilar`, `/admin/yorumlar`,
+  `/admin/duyuru-onizleme`, `/admin/duyuru`. Migrasyon: 2026-08-01b.
+- ⬜ Canlıda GERÇEK duyuru hiç gönderilmedi (20 gerçek cihaza push gider —
+  kullanıcı onayı bekliyor). Doğrulama dalları ve önizleme test edildi.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **docker-compose.yml artık TAM** (ADMIN_IPLER/ADMIN_TOKEN env + firebase-admin.json

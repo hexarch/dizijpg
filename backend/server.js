@@ -4002,6 +4002,219 @@ app.post('/admin/yorum-sil', adminKisit, sarici(async (req, res) => {
   await havuz.query('DELETE FROM yorumlar WHERE id=$1', [id]);
   res.json({ durum: 'ok' });
 }));
+// ---------- geri bildirimler ----------
+const GB_DURUM = ['yeni', 'okundu', 'kapatildi'];
+
+app.get('/admin/geri-bildirimler', adminKisit, sarici(async (req, res) => {
+  const durum = GB_DURUM.includes(req.query.durum) ? req.query.durum : null;
+  const { rows } = await havuz.query(
+    `SELECT g.id, g.metin, g.surum, g.platform, g.durum, g.yanit_metni,
+            g.yanit_tarihi, g.tarih, k.kullanici_adi, k.email, k.id AS kullanici_id
+       FROM geri_bildirimler g JOIN kullanicilar k ON k.id = g.kullanici_id
+     ${durum ? 'WHERE g.durum=$1' : ''} ORDER BY g.id DESC LIMIT 300`,
+    durum ? [durum] : [],
+  );
+  const { rows: sayim } = await havuz.query(
+    "SELECT count(*) FILTER (WHERE durum='yeni')::int yeni, count(*)::int toplam FROM geri_bildirimler");
+  res.json({ geri_bildirimler: rows, ...sayim[0] });
+}));
+
+app.post('/admin/geri-bildirim-durum', adminKisit, sarici(async (req, res) => {
+  const { id, durum } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  if (!GB_DURUM.includes(durum)) return res.status(400).json({ hata: 'Geçersiz durum' });
+  await havuz.query('UPDATE geri_bildirimler SET durum=$1 WHERE id=$2', [durum, id]);
+  res.json({ durum: 'ok' });
+}));
+
+// Geri bildirime e-postayla yanıt: mailGonder'den geçer, giden günlüğüne düşer.
+app.post('/admin/geri-bildirim-yanit', adminKisit, sarici(async (req, res) => {
+  const { id, metin } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const govde = String(metin || '').trim();
+  if (govde.length < 2 || govde.length > 5000) {
+    return res.status(400).json({ hata: 'Yanıt 2-5000 karakter olmalı' });
+  }
+  const { rows } = await havuz.query(
+    `SELECT g.metin, k.email, k.id AS kullanici_id FROM geri_bildirimler g
+       JOIN kullanicilar k ON k.id = g.kullanici_id WHERE g.id=$1`, [id]);
+  if (!rows.length) return res.status(404).json({ hata: 'Geri bildirim bulunamadı' });
+  if (!rows[0].email) {
+    return res.status(400).json({ hata: 'Kullanıcının e-postası yok (misafir hesap)' });
+  }
+  // Kullanıcının ne yazdığını alıntıla: aylar sonra gelen yanıtta bağlam kalsın.
+  await mailGonder({
+    to: rows[0].email,
+    subject: 'dizi.jpg — geri bildirimin hakkında',
+    text: `${govde}\n\n---\nSenin gönderdiğin geri bildirim:\n`
+      + `${String(rows[0].metin).split('\n').map((s) => `> ${s}`).join('\n')}\n\ndizi.jpg`,
+  }, { tur: 'geri_bildirim_yanit', kullanici_id: rows[0].kullanici_id });
+  await havuz.query(
+    `UPDATE geri_bildirimler SET yanit_metni=$1, yanit_tarihi=now(),
+       durum=CASE WHEN durum='yeni' THEN 'okundu' ELSE durum END WHERE id=$2`,
+    [govde, id]);
+  res.json({ durum: 'ok', kime: rows[0].email });
+}));
+
+// ---------- kullanıcı listesi ----------
+// Panelde kullanıcıya ancak adını BİLEREK ulaşılabiliyordu; gezilebilir liste.
+const KULLANICI_SIRA = {
+  son_gorulme: 'k.son_gorulme DESC NULLS LAST',
+  kayit: 'k.id DESC',
+  yorum: 'yorum DESC',
+  izleme: 'izleme DESC',
+  ad: 'k.kullanici_adi ASC',
+};
+
+app.get('/admin/kullanicilar', adminKisit, sarici(async (req, res) => {
+  const sirala = KULLANICI_SIRA[req.query.sirala] || KULLANICI_SIRA.son_gorulme;
+  const ara = String(req.query.ara || '').trim().slice(0, 60);
+  const limit = Math.min(parseInt(req.query.limit, 10) || 100, 500);
+  const kosullar = [];
+  const parametreler = [];
+  if (ara) {
+    parametreler.push(`%${ara.toLowerCase()}%`);
+    kosullar.push(`(lower(k.kullanici_adi) LIKE $${parametreler.length}
+                    OR lower(k.email) LIKE $${parametreler.length})`);
+  }
+  if (req.query.suzgec === 'yasakli') kosullar.push('k.yasakli');
+  if (req.query.suzgec === 'kayitli') kosullar.push('NOT k.misafir');
+  if (req.query.suzgec === 'misafir') kosullar.push('k.misafir');
+  parametreler.push(limit);
+  const { rows } = await havuz.query(
+    `SELECT k.id, k.kullanici_adi, k.email, k.misafir, k.yasakli, k.avatar,
+            k.ulke, k.olusturma, k.son_gorulme,
+            (SELECT count(*)::int FROM yorumlar y WHERE y.kullanici_id=k.id) AS yorum,
+            (SELECT count(*)::int FROM izlemeler i WHERE i.kullanici_id=k.id) AS izleme,
+            (SELECT count(*)::int FROM takipler t WHERE t.takip_edilen_id=k.id) AS takipci,
+            (SELECT count(*)::int FROM cihaz_tokenlari c WHERE c.kullanici_id=k.id) AS cihaz
+       FROM kullanicilar k
+     ${kosullar.length ? 'WHERE ' + kosullar.join(' AND ') : ''}
+     ORDER BY ${sirala} LIMIT $${parametreler.length}`,
+    parametreler,
+  );
+  res.json({ kullanicilar: rows });
+}));
+
+// ---------- yorum moderasyonu ----------
+// Şu ana kadar yalnız ŞİKAYET EDİLEN yorumlar görülebiliyordu; bu uç tümünde
+// arama yapar (4800+ yorum), medya ve etkileşim sayılarıyla.
+app.get('/admin/yorumlar', adminKisit, sarici(async (req, res) => {
+  const ara = String(req.query.ara || '').trim().slice(0, 80);
+  const limit = Math.min(parseInt(req.query.limit, 10) || 60, 200);
+  const parametreler = [];
+  const kosullar = [];
+  if (ara) {
+    parametreler.push(`%${ara.toLowerCase()}%`);
+    kosullar.push(`(lower(y.metin) LIKE $${parametreler.length}
+                    OR lower(k.kullanici_adi) LIKE $${parametreler.length})`);
+  }
+  if (req.query.suzgec === 'medyali') kosullar.push('cardinality(y.medya) > 0');
+  if (req.query.suzgec === 'sikayetli') {
+    kosullar.push("EXISTS (SELECT 1 FROM sikayetler s WHERE s.tur='yorum' AND s.hedef_id=y.id)");
+  }
+  parametreler.push(limit);
+  const { rows } = await havuz.query(
+    `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, LEFT(y.metin, 400) AS metin,
+            y.medya, y.goruntulenme, y.tarih, y.ust_id, k.kullanici_adi, k.yasakli,
+            k.id AS kullanici_id,
+            (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+            (SELECT count(*)::int FROM sikayetler s
+              WHERE s.tur='yorum' AND s.hedef_id=y.id) AS sikayet
+       FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     ${kosullar.length ? 'WHERE ' + kosullar.join(' AND ') : ''}
+     ORDER BY y.id DESC LIMIT $${parametreler.length}`,
+    parametreler,
+  );
+  // İçerik adları (önbellekli TMDB) — hangi dizi/filme yazıldığı okunur olsun.
+  const anahtarlar = [...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))].slice(0, 60);
+  const icerikler = {};
+  for (let i = 0; i < anahtarlar.length; i += 8) {
+    await Promise.all(anahtarlar.slice(i, i + 8).map(async (a) => {
+      const [tur, id] = a.split(':');
+      try {
+        const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+        icerikler[a] = v.name || v.title || '?';
+      } catch { icerikler[a] = '?'; }
+    }));
+  }
+  res.json({ yorumlar: rows, icerikler });
+}));
+
+// ---------- toplu duyuru (push) ----------
+// Kaç cihaza gideceğini ÖNCE gösterir: geri alınamaz bir işlem, körlemesine
+// gönderilmemeli.
+app.get('/admin/duyuru-onizleme', adminKisit, sarici(async (_req, res) => {
+  const [dagilim, gecmis] = await Promise.all([
+    havuz.query(
+      `SELECT COALESCE(platform,'bilinmiyor') platform,
+              CASE WHEN dil='tr' THEN 'tr' ELSE 'diger' END dil_grup,
+              count(*)::int sayi
+         FROM cihaz_tokenlari GROUP BY 1,2 ORDER BY 3 DESC`),
+    havuz.query('SELECT * FROM duyurular ORDER BY id DESC LIMIT 20'),
+  ]);
+  res.json({
+    dagilim: dagilim.rows,
+    toplam: dagilim.rows.reduce((t, r) => t + r.sayi, 0),
+    fcm: fcmHazir,
+    gecmis: gecmis.rows,
+  });
+}));
+
+app.post('/admin/duyuru', adminKisit, sarici(async (req, res) => {
+  if (!fcmHazir) return res.status(503).json({ hata: 'FCM kapalı (servis hesabı yok)' });
+  const baslik = String(req.body?.baslik || '').trim().slice(0, 80);
+  const metin = String(req.body?.metin || '').trim().slice(0, 400);
+  const metinEn = String(req.body?.metin_en || '').trim().slice(0, 400);
+  const platform = ['android', 'ios'].includes(req.body?.platform) ? req.body.platform : null;
+  if (baslik.length < 2 || metin.length < 2) {
+    return res.status(400).json({ hata: 'Başlık ve metin gerekli (en az 2 karakter)' });
+  }
+  const { rows: cihazlar } = await havuz.query(
+    `SELECT token, COALESCE(dil,'tr') dil FROM cihaz_tokenlari
+     ${platform ? 'WHERE platform=$1' : ''}`, platform ? [platform] : []);
+  if (!cihazlar.length) return res.status(400).json({ hata: 'Hedefte kayıtlı cihaz yok' });
+
+  // Türkçe cihazlara Türkçe, diğerlerine İngilizce (boşsa Türkçe) gövde.
+  const gruplar = [
+    { tokens: cihazlar.filter((c) => c.dil === 'tr').map((c) => c.token), govde: metin },
+    { tokens: cihazlar.filter((c) => c.dil !== 'tr').map((c) => c.token), govde: metinEn || metin },
+  ].filter((g) => g.tokens.length);
+
+  let basarili = 0;
+  let basarisiz = 0;
+  const gecersiz = [];
+  for (const grup of gruplar) {
+    // FCM multicast tavanı 500 token.
+    for (let i = 0; i < grup.tokens.length; i += 500) {
+      const parca = grup.tokens.slice(i, i + 500);
+      const yanit = await admin.messaging().sendEachForMulticast({
+        tokens: parca,
+        notification: { title: baslik, body: grup.govde },
+        data: { tur: 'duyuru' },
+        android: { priority: 'high', notification: { channelId: 'dizijpg_bildirim' } },
+      });
+      basarili += yanit.successCount;
+      basarisiz += yanit.failureCount;
+      yanit.responses.forEach((r, j) => {
+        const kod = r.error?.code || '';
+        if (!r.success && /not-registered|invalid-argument|invalid-registration/.test(kod)) {
+          gecersiz.push(parca[j]);
+        }
+      });
+    }
+  }
+  // Ölü tokenları temizle: bir dahaki duyuruda sayılar şişmesin.
+  if (gecersiz.length) {
+    await havuz.query('DELETE FROM cihaz_tokenlari WHERE token = ANY($1)', [gecersiz]);
+  }
+  const { rows } = await havuz.query(
+    `INSERT INTO duyurular (baslik, metin, metin_en, platform, cihaz_sayi, basarili, basarisiz)
+     VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+    [baslik, metin, metinEn || null, platform, cihazlar.length, basarili, basarisiz]);
+  res.json({ durum: 'ok', ...rows[0], temizlenen: gecersiz.length });
+}));
+
 app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
   const { id, yasakli } = req.body || {};
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });

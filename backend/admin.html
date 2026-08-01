@@ -34,7 +34,7 @@ header{
 .canli{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--soluk);margin-left:4px}
 .nokta{width:8px;height:8px;border-radius:50%;background:var(--yesil);box-shadow:0 0 0 0 rgba(52,211,153,.6);animation:nabiz 1.8s infinite}
 @keyframes nabiz{0%{box-shadow:0 0 0 0 rgba(52,211,153,.55)}70%{box-shadow:0 0 0 10px rgba(52,211,153,0)}100%{box-shadow:0 0 0 0 rgba(52,211,153,0)}}
-header .sag{margin-left:auto;display:flex;gap:8px}
+header .sag{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .sekme-btn{padding:8px 16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--soluk);cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:.15s}
 .sekme-btn:hover{color:var(--metin);border-color:#33333f}
 .sekme-btn.aktif{background:var(--sari);color:#000;border-color:var(--sari)}
@@ -130,6 +130,38 @@ tr:hover td{background:rgba(255,255,255,.02)}
 .mail-html{width:100%;height:52vh;border:1px solid var(--line);border-radius:12px;background:#fff}
 .mail-bilgi{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--soluk);margin-bottom:12px}
 .mail-bilgi b{color:var(--metin)}
+
+/* Araç çubuğu (kullanıcı/yorum/geri bildirim sekmeleri ortak) */
+.arac{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+.arac input,.arac select{padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);font-family:inherit;font-size:13px}
+.arac input{flex:1;min-width:180px}
+.arac input:focus,.arac select:focus{outline:none;border-color:var(--sari)}
+.btn.secili{background:var(--sari);color:#000;border-color:var(--sari)}
+.satir-tikla{cursor:pointer}
+.satir-tikla:hover td{background:rgba(245,197,24,.06)}
+.kck{font-size:11px;color:var(--soluk2)}
+
+/* Yorum moderasyonu */
+.y-kart{display:flex;gap:12px;padding:13px 16px;border-bottom:1px solid rgba(36,36,47,.6)}
+.y-govde{flex:1;min-width:0}
+.y-ust{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;font-size:12px;color:var(--soluk);margin-bottom:5px}
+.y-ust b{color:var(--metin);font-size:13px}
+.y-metin{font-size:13px;line-height:1.6;word-break:break-word;white-space:pre-wrap}
+.y-medya{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.y-medya img,.y-medya video{width:96px;height:96px;object-fit:cover;border-radius:10px;border:1px solid var(--line);background:var(--panel2)}
+
+/* Duyuru */
+.d-form{display:grid;gap:10px;padding:16px;max-width:640px}
+.d-form label{font-size:12px;color:var(--soluk);font-weight:600}
+.d-form input,.d-form textarea,.d-form select{width:100%;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);font-family:inherit;font-size:13px}
+.d-form textarea{min-height:80px;resize:vertical;line-height:1.6}
+.d-form input:focus,.d-form textarea:focus,.d-form select:focus{outline:none;border-color:var(--sari)}
+.d-onizleme{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px;font-size:13px}
+.d-uyari{border-radius:12px;padding:12px 14px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5;font-size:12px}
+.d-telefon{max-width:340px;border-radius:14px;padding:12px 14px;background:#1c1c26;border:1px solid var(--line)}
+.d-telefon .u{font-size:11px;color:var(--soluk2);margin-bottom:5px}
+.d-telefon .b{font-weight:700;font-size:13px}
+.d-telefon .m{font-size:12.5px;color:var(--soluk);margin-top:2px;white-space:pre-wrap;word-break:break-word}
 </style>
 </head>
 <body>
@@ -139,7 +171,11 @@ tr:hover td{background:rgba(255,255,255,.02)}
   <div class="sag">
     <button class="sekme-btn aktif" data-sekme="genel">Genel</button>
     <button class="sekme-btn" data-sekme="hareketler">Hareketler <span id="cev-rozet" class="rozet gizli" style="background:var(--yesil);color:#000">0</span></button>
+    <button class="sekme-btn" data-sekme="kullanicilar">Kullanıcılar</button>
+    <button class="sekme-btn" data-sekme="yorumlar">Yorumlar</button>
     <button class="sekme-btn" data-sekme="mailler">Mailler <span id="mail-rozet" class="rozet gizli">0</span></button>
+    <button class="sekme-btn" data-sekme="geribildirim">Geri Bildirim <span id="gb-rozet" class="rozet gizli">0</span></button>
+    <button class="sekme-btn" data-sekme="duyuru">Duyuru</button>
     <button class="sekme-btn" data-sekme="hatalar">Hatalar</button>
     <button class="sekme-btn" data-sekme="sikayetler">Şikayetler <span id="sik-rozet" class="rozet gizli">0</span></button>
   </div>
@@ -212,6 +248,117 @@ tr:hover td{background:rgba(255,255,255,.02)}
   </div>
 </div>
 
+<!-- KULLANICILAR -->
+<section id="s-kullanicilar" class="sayfa gizli">
+  <div class="panel">
+    <h3>👥 Kullanıcılar <span class="sag" id="ku-say">—</span></h3>
+    <div class="arac">
+      <input id="ku-ara" placeholder="Kullanıcı adı veya e-posta…" oninput="kullanicilariYukleGec()">
+      <select id="ku-suzgec" onchange="kullanicilariYukle()">
+        <option value="">Tümü</option>
+        <option value="kayitli">Kayıtlı</option>
+        <option value="misafir">Misafir</option>
+        <option value="yasakli">Yasaklı</option>
+      </select>
+      <select id="ku-sira" onchange="kullanicilariYukle()">
+        <option value="son_gorulme">Son görülme</option>
+        <option value="kayit">Kayıt tarihi</option>
+        <option value="yorum">Yorum sayısı</option>
+        <option value="izleme">İzleme sayısı</option>
+        <option value="ad">Ada göre</option>
+      </select>
+    </div>
+    <div style="overflow:auto"><table id="ku-tablo"></table></div>
+  </div>
+</section>
+
+<!-- YORUMLAR -->
+<section id="s-yorumlar" class="sayfa gizli">
+  <div class="panel">
+    <h3>💬 Yorum Moderasyonu <span class="sag" id="yo-say">—</span></h3>
+    <div class="arac">
+      <input id="yo-ara" placeholder="Yorum metni veya kullanıcı adı…" oninput="yorumlariYukleGec()">
+      <button class="btn secili" id="yf-" onclick="yorumSuzgec('')">Tümü</button>
+      <button class="btn" id="yf-medyali" onclick="yorumSuzgec('medyali')">Medyalı</button>
+      <button class="btn" id="yf-sikayetli" onclick="yorumSuzgec('sikayetli')">Şikayetli</button>
+    </div>
+    <div id="yo-liste" style="max-height:72vh;overflow-y:auto"><div class="bos">Yükleniyor…</div></div>
+  </div>
+</section>
+
+<!-- GERİ BİLDİRİM -->
+<section id="s-geribildirim" class="sayfa gizli">
+  <div class="panel">
+    <h3>📝 Geri Bildirimler <span class="sag" id="gb-say">—</span></h3>
+    <div class="arac">
+      <button class="btn secili" id="gf-" onclick="gbSuzgec('')">Tümü</button>
+      <button class="btn" id="gf-yeni" onclick="gbSuzgec('yeni')">Yeni</button>
+      <button class="btn" id="gf-okundu" onclick="gbSuzgec('okundu')">Okundu</button>
+      <button class="btn" id="gf-kapatildi" onclick="gbSuzgec('kapatildi')">Kapatıldı</button>
+    </div>
+    <div style="overflow:auto"><table id="gb-tablo"></table></div>
+  </div>
+</section>
+
+<!-- GERİ BİLDİRİM YANIT MODALI -->
+<div id="gb-modal" class="gizli" style="position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)this.classList.add('gizli')">
+  <div class="panel" style="width:min(640px,100%);max-height:90vh;overflow-y:auto">
+    <h3>✉️ Geri bildirime yanıt
+      <span class="sag"><button class="btn" onclick="$('#gb-modal').classList.add('gizli')">Kapat ✕</button></span></h3>
+    <div id="gb-icerik" style="padding:16px"></div>
+  </div>
+</div>
+
+<!-- DUYURU -->
+<section id="s-duyuru" class="sayfa gizli">
+  <div class="izgara" style="padding:0">
+    <div class="panel">
+      <h3>📣 Toplu Duyuru (push)</h3>
+      <div class="d-form">
+        <div id="du-uyari" class="d-uyari gizli"></div>
+        <div>
+          <label for="du-baslik">Başlık</label>
+          <input id="du-baslik" maxlength="80" placeholder="dizi.jpg" oninput="duyuruOnizle()">
+        </div>
+        <div>
+          <label for="du-metin">Metin (Türkçe cihazlar)</label>
+          <textarea id="du-metin" maxlength="400" placeholder="Yeni sürüm yayında…" oninput="duyuruOnizle()"></textarea>
+        </div>
+        <div>
+          <label for="du-metin-en">Metin (diğer diller · boşsa Türkçesi gider)</label>
+          <textarea id="du-metin-en" maxlength="400" placeholder="A new version is out…" oninput="duyuruOnizle()"></textarea>
+        </div>
+        <div>
+          <label for="du-platform">Hedef</label>
+          <select id="du-platform" onchange="duyuruOnizle()">
+            <option value="">Tüm cihazlar</option>
+            <option value="android">Yalnız Android</option>
+            <option value="ios">Yalnız iOS</option>
+          </select>
+        </div>
+        <div class="d-onizleme" id="du-hedef">—</div>
+        <div>
+          <div class="kck" style="margin-bottom:6px">Cihazda böyle görünecek:</div>
+          <div class="d-telefon">
+            <div class="u">dizi.jpg · şimdi</div>
+            <div class="b" id="du-p-baslik">—</div>
+            <div class="m" id="du-p-metin">—</div>
+          </div>
+        </div>
+        <div class="btnler">
+          <button class="btn tehlike" id="du-gonder" onclick="duyuruGonder()">Duyuruyu gönder</button>
+          <button class="btn" onclick="duyuruOnizle()">Hedefi yenile ↻</button>
+        </div>
+        <div class="kck">Duyuru yalnızca <b>push bildirimi</b> olarak gider (uygulama içi bildirim listesine düşmez). Gönderim geri alınamaz.</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>🕘 Gönderilmiş Duyurular</h3>
+      <div style="overflow:auto"><table id="du-gecmis"></table></div>
+    </div>
+  </div>
+</section>
+
 <!-- MAILLER -->
 <section id="s-mailler" class="sayfa gizli">
   <div class="panel">
@@ -277,10 +424,18 @@ document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
   $('#s-genel').classList.toggle('gizli',s!=='genel');
   $('#s-hareketler').classList.toggle('gizli',s!=='hareketler');
   $('#s-mailler').classList.toggle('gizli',s!=='mailler');
+  $('#s-kullanicilar').classList.toggle('gizli',s!=='kullanicilar');
+  $('#s-yorumlar').classList.toggle('gizli',s!=='yorumlar');
+  $('#s-geribildirim').classList.toggle('gizli',s!=='geribildirim');
+  $('#s-duyuru').classList.toggle('gizli',s!=='duyuru');
   $('#s-hatalar').classList.toggle('gizli',s!=='hatalar');
   $('#s-sikayetler').classList.toggle('gizli',s!=='sikayetler');
   if(s==='hareketler') hareketleriYukle();
   if(s==='mailler') mailleriYukle();
+  if(s==='kullanicilar') kullanicilariYukle();
+  if(s==='yorumlar') yorumlariYukle();
+  if(s==='geribildirim') geriBildirimYukle();
+  if(s==='duyuru') duyuruOnizle();
   if(s==='hatalar') hatalariYukle();
   if(s==='sikayetler') sikayetleriYukle();
 });
@@ -468,6 +623,196 @@ async function kullaniciDetay(ad){
   }catch(e){ $('#k-icerik').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
 }
 
+/* ---- Kullanıcılar ---- */
+const MEDYA_TABAN='/api';           // yorum medyası nginx'te /api/medya/… altında
+let kuGecikme;
+const tarihKisa = t => t? new Date(t).toLocaleDateString('tr',{day:'2-digit',month:'2-digit',year:'2-digit'}) : '—';
+const gorulmeFmt = t => { if(!t) return '—'; const f=(Date.now()-new Date(t))/1000;
+  return f<3600?`${Math.max(1,Math.floor(f/60))} dk önce`:f<86400?`${Math.floor(f/3600)} sa önce`:tarihKisa(t); };
+// Yazarken her tuşta sorgu atmasın (66 kullanıcı bugün az, yarın değil).
+function kullanicilariYukleGec(){ clearTimeout(kuGecikme); kuGecikme=setTimeout(kullanicilariYukle,300); }
+async function kullanicilariYukle(){
+  try{
+    const p=new URLSearchParams({ara:$('#ku-ara').value.trim(),suzgec:$('#ku-suzgec').value,sirala:$('#ku-sira').value,limit:300});
+    const {kullanicilar:L}=await api('/kullanicilar?'+p);
+    $('#ku-say').textContent=L.length+' kullanıcı';
+    $('#ku-tablo').innerHTML = L.length? `
+      <thead><tr><th>Kullanıcı</th><th>E-posta</th><th>Yorum</th><th>İzleme</th><th>Takipçi</th><th>Cihaz</th><th>Kayıt</th><th>Son görülme</th><th>Durum</th></tr></thead>
+      <tbody>${L.map(k=>`
+        <tr class="satir-tikla" onclick="kullaniciDetay('${esc(k.kullanici_adi)}')">
+          <td><b>@${esc(k.kullanici_adi)}</b>${k.ulke?` <span class="kck">${bayrak(k.ulke)}</span>`:''}</td>
+          <td class="mono" style="color:var(--soluk)">${esc(k.email||'—')}</td>
+          <td class="mono">${k.yorum}</td><td class="mono">${k.izleme}</td>
+          <td class="mono">${k.takipci}</td>
+          <td class="mono" style="color:${k.cihaz?'var(--yesil)':'var(--soluk2)'}">${k.cihaz}</td>
+          <td class="kck">${tarihKisa(k.olusturma)}</td>
+          <td class="kck">${gorulmeFmt(k.son_gorulme)}</td>
+          <td>${k.yasakli?'<span class="etiket" style="background:rgba(248,113,113,.15);color:var(--kirmizi)">yasaklı</span>'
+              :k.misafir?'<span class="etiket e-kapatildi">misafir</span>':'<span class="etiket e-incelendi">kayıtlı</span>'}</td>
+        </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Eşleşen kullanıcı yok</td></tr></tbody>';
+  }catch(e){ $('#ku-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi: '+esc(e.message)+'</td></tr></tbody>'; }
+}
+
+/* ---- Yorum moderasyonu ---- */
+let YO_SUZGEC='', yoGecikme;
+function yorumSuzgec(s){ YO_SUZGEC=s; ['','medyali','sikayetli'].forEach(x=>$('#yf-'+x).classList.toggle('secili',x===s)); yorumlariYukle(); }
+function yorumlariYukleGec(){ clearTimeout(yoGecikme); yoGecikme=setTimeout(yorumlariYukle,300); }
+async function yorumlariYukle(){
+  try{
+    const p=new URLSearchParams({ara:$('#yo-ara').value.trim(),suzgec:YO_SUZGEC,limit:120});
+    const {yorumlar:L,icerikler}=await api('/yorumlar?'+p);
+    $('#yo-say').textContent=L.length+' yorum';
+    $('#yo-liste').innerHTML = L.length? L.map(y=>{
+      const ad=icerikler[y.tur+':'+y.tmdb_id]||('#'+y.tmdb_id);
+      const yer=y.sezon?` · S${y.sezon}B${y.bolum}`:'';
+      return `<div class="y-kart">
+        <div class="y-govde">
+          <div class="y-ust">
+            <b>@${esc(y.kullanici_adi)}</b>
+            ${y.yasakli?'<span class="etiket" style="background:rgba(248,113,113,.15);color:var(--kirmizi)">yasaklı</span>':''}
+            <span>${esc(ad)}${yer}</span>
+            ${y.ust_id?'<span class="etiket e-kapatildi">yanıt</span>':''}
+            ${y.sikayet?`<span class="etiket e-yeni">🚩 ${y.sikayet}</span>`:''}
+            <span class="kck mono">👍${y.begeni} 👁${y.goruntulenme} · ${new Date(y.tarih).toLocaleString('tr')}</span>
+          </div>
+          <div class="y-metin">${esc(y.metin)}</div>
+          ${(y.medya||[]).length?`<div class="y-medya">${y.medya.map(m=>
+            /\.(mp4|webm|mov)$/i.test(m)
+              ? `<video src="${MEDYA_TABAN+esc(m)}" muted preload="metadata" onclick="this.paused?this.play():this.pause()"></video>`
+              : `<img src="${MEDYA_TABAN+esc(m)}" loading="lazy" alt="">`).join('')}</div>`:''}
+        </div>
+        <div class="btnler" style="align-items:flex-start">
+          <button class="btn" onclick="kullaniciDetay('${esc(y.kullanici_adi)}')">Profil</button>
+          <button class="btn tehlike" onclick="yorumSilMod(${y.id})">Sil</button>
+        </div>
+      </div>`;}).join('')
+      : '<div class="bos">Eşleşen yorum yok</div>';
+  }catch(e){ $('#yo-liste').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+async function yorumSilMod(id){
+  if(!confirm('Bu yorum kalıcı olarak silinsin mi?')) return;
+  try{ await api('/yorum-sil',{method:'POST',body:JSON.stringify({id})}); yorumlariYukle(); }
+  catch(e){ alert('Silinemedi: '+e.message); }
+}
+
+/* ---- Geri bildirimler ---- */
+let GB_SUZGEC='', GB_LISTE=[];
+function gbSuzgec(s){ GB_SUZGEC=s; ['','yeni','okundu','kapatildi'].forEach(x=>$('#gf-'+x).classList.toggle('secili',x===s)); geriBildirimYukle(); }
+async function geriBildirimYukle(){
+  try{
+    const d=await api('/geri-bildirimler'+(GB_SUZGEC?'?durum='+GB_SUZGEC:''));
+    const L=d.geri_bildirimler; GB_LISTE=L;   // modal veriyi buradan alır
+    $('#gb-say').textContent=`${L.length} kayıt · ${d.yeni} yeni`;
+    const rz=$('#gb-rozet'); rz.textContent=d.yeni; rz.classList.toggle('gizli',!d.yeni);
+    const dm={yeni:'e-yeni',okundu:'e-incelendi',kapatildi:'e-kapatildi'};
+    $('#gb-tablo').innerHTML = L.length? `
+      <thead><tr><th>Zaman</th><th>Kullanıcı</th><th>Mesaj</th><th>Sürüm</th><th>Durum</th><th>İşlem</th></tr></thead>
+      <tbody>${L.map(g=>`
+        <tr>
+          <td class="kck mono" style="white-space:nowrap">${new Date(g.tarih).toLocaleString('tr')}</td>
+          <td><b>@${esc(g.kullanici_adi)}</b><div class="kck">${esc(g.email||'e-posta yok')}</div></td>
+          <td style="max-width:460px"><div class="y-metin">${esc(g.metin)}</div>
+            ${g.yanit_metni?`<div class="kck" style="margin-top:7px;padding-left:9px;border-left:2px solid var(--yesil)">
+              ↩ ${new Date(g.yanit_tarihi).toLocaleDateString('tr')} yanıtlandı: ${esc(g.yanit_metni.slice(0,140))}</div>`:''}</td>
+          <td class="kck mono">${esc(g.surum||'—')}<div>${esc(g.platform||'')}</div></td>
+          <td><span class="etiket ${dm[g.durum]||'e-kapatildi'}">${esc(g.durum)}</span></td>
+          <td><div class="btnler">
+            <button class="btn" onclick="gbYanitAc(${g.id})">Yanıtla</button>
+            ${g.durum!=='okundu'?`<button class="btn" onclick="gbDurum(${g.id},'okundu')">Okundu</button>`:''}
+            ${g.durum!=='kapatildi'?`<button class="btn" onclick="gbDurum(${g.id},'kapatildi')">Kapat</button>`:''}
+          </div></td>
+        </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Geri bildirim yok</td></tr></tbody>';
+  }catch(e){ $('#gb-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi: '+esc(e.message)+'</td></tr></tbody>'; }
+}
+async function gbDurum(id,durum){
+  try{ await api('/geri-bildirim-durum',{method:'POST',body:JSON.stringify({id,durum})}); geriBildirimYukle(); }
+  catch(e){ alert('Güncellenemedi: '+e.message); }
+}
+function gbYanitAc(id){
+  const g=GB_LISTE.find(x=>x.id===id);
+  if(!g) return;
+  $('#gb-modal').classList.remove('gizli');
+  $('#gb-icerik').innerHTML=`
+    <div class="mail-bilgi"><span>kime: <b>${esc(g.email||'—')}</b></span><span>@${esc(g.kullanici_adi)}</span>
+      <span>${new Date(g.tarih).toLocaleString('tr')}</span>${g.surum?`<span>sürüm: <b>${esc(g.surum)}</b></span>`:''}</div>
+    <div class="mail-govde" style="max-height:24vh;margin-bottom:12px">${esc(g.metin)}</div>
+    ${g.email?'':'<div class="d-uyari" style="margin-bottom:10px">Bu kullanıcının e-postası yok (misafir hesap) — yanıt gönderilemez.</div>'}
+    <label class="kck">Yanıtın (kullanıcının mesajı altta alıntılanır)</label>
+    <textarea id="gb-yanit" ${g.email?'':'disabled'} style="width:100%;min-height:120px;margin-top:6px;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--metin);font-family:inherit;font-size:13px;line-height:1.6"></textarea>
+    <div class="btnler" style="margin-top:12px">
+      <button class="btn iyi" id="gb-yolla" ${g.email?'':'disabled'} onclick="gbYanitla(${g.id})">Yanıtı gönder</button>
+      <button class="btn" onclick="$('#gb-modal').classList.add('gizli')">Vazgeç</button>
+    </div>
+    <div id="gb-sonuc" class="kck" style="margin-top:8px"></div>`;
+  setTimeout(()=>$('#gb-yanit')?.focus(),50);
+}
+async function gbYanitla(id){
+  const metin=$('#gb-yanit').value.trim();
+  if(metin.length<2){ $('#gb-sonuc').textContent='Yanıt çok kısa.'; return; }
+  const b=$('#gb-yolla'); b.disabled=true; b.textContent='Gönderiliyor…';
+  try{
+    const r=await api('/geri-bildirim-yanit',{method:'POST',body:JSON.stringify({id,metin})});
+    $('#gb-sonuc').innerHTML='<span style="color:var(--yesil)">Gönderildi → '+esc(r.kime)+'</span>';
+    b.textContent='Gönderildi ✓';
+    geriBildirimYukle(); mailleriYukle();
+    setTimeout(()=>$('#gb-modal').classList.add('gizli'),1200);
+  }catch(e){
+    $('#gb-sonuc').innerHTML='<span style="color:var(--kirmizi)">Gönderilemedi: '+esc(e.message)+'</span>';
+    b.disabled=false; b.textContent='Yanıtı gönder';
+  }
+}
+
+/* ---- Duyuru ---- */
+let DU_HEDEF=0;
+async function duyuruOnizle(){
+  $('#du-p-baslik').textContent=$('#du-baslik').value.trim()||'dizi.jpg';
+  $('#du-p-metin').textContent=$('#du-metin').value.trim()||'(metin girilmedi)';
+  try{
+    const d=await api('/duyuru-onizleme');
+    const plat=$('#du-platform').value;
+    const uygun=d.dagilim.filter(r=>!plat||r.platform===plat);
+    DU_HEDEF=uygun.reduce((t,r)=>t+r.sayi,0);
+    const tr=uygun.filter(r=>r.dil_grup==='tr').reduce((t,r)=>t+r.sayi,0);
+    // Dağılım platform+dil kırılımlı gelir; satırda platformları TOPLA
+    // (yoksa "android: 18 · android: 2" gibi tekrar eder).
+    const platTop={}; uygun.forEach(r=>{ platTop[r.platform]=(platTop[r.platform]||0)+r.sayi; });
+    const platMetin=Object.entries(platTop).map(([p,s])=>`${esc(p)}: ${s}`).join(' · ');
+    $('#du-hedef').innerHTML=`<b>${DU_HEDEF}</b> cihaza gidecek
+      <span class="kck">(${tr} Türkçe · ${DU_HEDEF-tr} diğer dil)</span>
+      ${platMetin?`<div class="kck" style="margin-top:6px">${platMetin}</div>`:''}`;
+    $('#du-uyari').classList.toggle('gizli',d.fcm);
+    if(!d.fcm) $('#du-uyari').textContent='FCM kapalı (servis hesabı dosyası yok) — duyuru gönderilemez.';
+    $('#du-gonder').disabled=!d.fcm||!DU_HEDEF;
+    $('#du-gecmis').innerHTML = d.gecmis.length? `
+      <thead><tr><th>Zaman</th><th>Başlık</th><th>Hedef</th><th>Sonuç</th></tr></thead>
+      <tbody>${d.gecmis.map(g=>`<tr>
+        <td class="kck mono" style="white-space:nowrap">${new Date(g.tarih).toLocaleString('tr')}</td>
+        <td><b>${esc(g.baslik)}</b><div class="kck">${esc(g.metin.slice(0,70))}</div></td>
+        <td class="mono">${g.cihaz_sayi}${g.platform?' · '+esc(g.platform):''}</td>
+        <td class="mono"><span style="color:var(--yesil)">${g.basarili}</span> / <span style="color:${g.basarisiz?'var(--kirmizi)':'var(--soluk2)'}">${g.basarisiz}</span></td>
+      </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Henüz duyuru gönderilmedi</td></tr></tbody>';
+  }catch(e){ $('#du-hedef').textContent='Hedef okunamadı: '+e.message; }
+}
+async function duyuruGonder(){
+  const baslik=$('#du-baslik').value.trim(), metin=$('#du-metin').value.trim();
+  if(baslik.length<2||metin.length<2){ alert('Başlık ve metin gerekli.'); return; }
+  // Geri alınamaz: kaç kişiye gittiğini onayda TEKRAR göster.
+  if(!confirm(`"${baslik}" duyurusu ${DU_HEDEF} cihaza gönderilecek.\n\nBu işlem geri alınamaz. Gönderilsin mi?`)) return;
+  const b=$('#du-gonder'); b.disabled=true; b.textContent='Gönderiliyor…';
+  try{
+    const r=await api('/duyuru',{method:'POST',body:JSON.stringify({
+      baslik,metin,metin_en:$('#du-metin-en').value.trim(),platform:$('#du-platform').value})});
+    alert(`Gönderildi.\nBaşarılı: ${r.basarili}\nBaşarısız: ${r.basarisiz}`
+      +(r.temizlenen?`\nSilinen ölü cihaz kaydı: ${r.temizlenen}`:''));
+    $('#du-baslik').value=''; $('#du-metin').value=''; $('#du-metin-en').value='';
+  }catch(e){ alert('Gönderilemedi: '+e.message); }
+  b.textContent='Duyuruyu gönder';
+  duyuruOnizle();
+}
+
 /* ---- Mailler ---- */
 let MAILLER=[], MAIL_FILTRE='hepsi';
 const mailTarih = t => {
@@ -619,7 +964,7 @@ async function tik(){
 globeKur(); tik(); setInterval(tik,3000);
 // Mailler: rozet açılışta dolsun, dakikada bir tazelensin (ayrıştırma
 // önbellekli olduğundan tekrar maliyeti readdir+stat kadar).
-mailFiltre('hepsi'); mailleriYukle();
+mailFiltre('hepsi'); mailleriYukle(); geriBildirimYukle(); // rozetler açılışta dolsun
 setInterval(()=>{ if($('#m-modal').classList.contains('gizli')) mailleriYukle(); },60000);
 </script>
 </body>
