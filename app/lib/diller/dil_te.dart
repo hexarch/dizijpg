@@ -422,4 +422,12 @@ const Map<String, String> cevirilerTe = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ఆన్‌లో ఉన్నప్పుడు ఫోటోలు ముందుగా డౌన్‌లోడ్ కావు, నువ్వు చూస్తున్న చిత్రం మాత్రమే లోడ్ అవుతుంది.',
   'Çocuk güvenliği': 'పిల్లల భద్రత',
+  'Türk Filmleri': 'టర్కిష్ సినిమాలు',
+  'En Yüksek Puanlı Filmler': 'అత్యధిక రేటింగ్ ఉన్న సినిమాలు',
+  'En Yüksek Puanlı Diziler': 'అత్యధిక రేటింగ్ ఉన్న సిరీస్',
+  'En Çok İzlenen Filmler': 'అత్యధికంగా చూసిన సినిమాలు',
+  'Popüler Diziler': 'జనాదరణ పొందిన సిరీస్',
+  'En Çok Kazanan Filmler': 'అత్యధిక వసూళ్ల సినిమాలు',
+  'Kült Filmler': 'కల్ట్ సినిమాలు',
+  'Yeni Filmler': 'కొత్త సినిమాలు',
 };

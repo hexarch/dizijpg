@@ -411,4 +411,12 @@ const Map<String, String> cevirilerZh = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       '开启后不会提前下载照片，只加载你正在看的那一张。',
   'Çocuk güvenliği': '儿童安全',
+  'Türk Filmleri': '土耳其电影',
+  'En Yüksek Puanlı Filmler': '评分最高的电影',
+  'En Yüksek Puanlı Diziler': '评分最高的剧集',
+  'En Çok İzlenen Filmler': '观看最多的电影',
+  'Popüler Diziler': '热门剧集',
+  'En Çok Kazanan Filmler': '票房最高的电影',
+  'Kült Filmler': '邪典电影',
+  'Yeni Filmler': '新电影',
 };

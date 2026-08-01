@@ -422,4 +422,12 @@ const Map<String, String> cevirilerSw = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Ikiwashwa, picha hazipakuliwi mapema; inapakia tu picha unayoitazama.',
   'Çocuk güvenliği': 'Usalama wa watoto',
+  'Türk Filmleri': 'Filamu za Kituruki',
+  'En Yüksek Puanlı Filmler': 'Filamu zenye ukadiriaji wa juu',
+  'En Yüksek Puanlı Diziler': 'Misururu yenye ukadiriaji wa juu',
+  'En Çok İzlenen Filmler': 'Filamu zilizotazamwa zaidi',
+  'Popüler Diziler': 'Misururu maarufu',
+  'En Çok Kazanan Filmler': 'Filamu zilizoingiza mapato zaidi',
+  'Kült Filmler': 'Filamu za kipekee',
+  'Yeni Filmler': 'Filamu mpya',
 };

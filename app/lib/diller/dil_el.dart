@@ -426,4 +426,12 @@ const Map<String, String> cevirilerEl = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Όταν είναι ενεργή, οι φωτογραφίες δεν κατεβαίνουν εκ των προτέρων — φορτώνει μόνο το καρέ που βλέπεις.',
   'Çocuk güvenliği': 'Ασφάλεια παιδιών',
+  'Türk Filmleri': 'Τουρκικές ταινίες',
+  'En Yüksek Puanlı Filmler': 'Ταινίες με την καλύτερη βαθμολογία',
+  'En Yüksek Puanlı Diziler': 'Σειρές με την καλύτερη βαθμολογία',
+  'En Çok İzlenen Filmler': 'Ταινίες με τις περισσότερες προβολές',
+  'Popüler Diziler': 'Δημοφιλείς σειρές',
+  'En Çok Kazanan Filmler': 'Ταινίες με τα μεγαλύτερα έσοδα',
+  'Kült Filmler': 'Ταινίες καλτ',
+  'Yeni Filmler': 'Νέες ταινίες',
 };

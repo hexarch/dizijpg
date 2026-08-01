@@ -413,4 +413,12 @@ const Map<String, String> cevirilerJa = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'オンのときは写真を先読みせず、見ている画像だけを読み込みます。',
   'Çocuk güvenliği': '児童の安全',
+  'Türk Filmleri': 'トルコ映画',
+  'En Yüksek Puanlı Filmler': '高評価の映画',
+  'En Yüksek Puanlı Diziler': '高評価のドラマ',
+  'En Çok İzlenen Filmler': '最も視聴された映画',
+  'Popüler Diziler': '人気のドラマ',
+  'En Çok Kazanan Filmler': '興行収入トップの映画',
+  'Kült Filmler': 'カルト映画',
+  'Yeni Filmler': '新作映画',
 };

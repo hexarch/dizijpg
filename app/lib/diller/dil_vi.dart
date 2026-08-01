@@ -424,4 +424,12 @@ const Map<String, String> cevirilerVi = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Khi bật, ảnh không được tải trước; chỉ tải khung hình bạn đang xem.',
   'Çocuk güvenliği': 'An toàn trẻ em',
+  'Türk Filmleri': 'Phim Thổ Nhĩ Kỳ',
+  'En Yüksek Puanlı Filmler': 'Phim được đánh giá cao nhất',
+  'En Yüksek Puanlı Diziler': 'Phim bộ được đánh giá cao nhất',
+  'En Çok İzlenen Filmler': 'Phim được xem nhiều nhất',
+  'Popüler Diziler': 'Phim bộ phổ biến',
+  'En Çok Kazanan Filmler': 'Phim doanh thu cao nhất',
+  'Kült Filmler': 'Phim cult',
+  'Yeni Filmler': 'Phim mới',
 };

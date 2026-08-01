@@ -426,4 +426,12 @@ const Map<String, String> cevirilerHu = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Ha be van kapcsolva, a képek nem töltődnek le előre, csak az, amit éppen nézel.',
   'Çocuk güvenliği': 'Gyermekbiztonság',
+  'Türk Filmleri': 'Török filmek',
+  'En Yüksek Puanlı Filmler': 'Legjobbra értékelt filmek',
+  'En Yüksek Puanlı Diziler': 'Legjobbra értékelt sorozatok',
+  'En Çok İzlenen Filmler': 'Legnézettebb filmek',
+  'Popüler Diziler': 'Népszerű sorozatok',
+  'En Çok Kazanan Filmler': 'Legtöbb bevételt hozó filmek',
+  'Kült Filmler': 'Kultuszfilmek',
+  'Yeni Filmler': 'Új filmek',
 };

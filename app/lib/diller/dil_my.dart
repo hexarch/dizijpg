@@ -431,4 +431,12 @@ const Map<String, String> cevirilerMy = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ဖွင့်ထားချိန်တွင် ဓာတ်ပုံများကို ကြိုတင်မဒေါင်းလုဒ်ဘဲ ကြည့်နေသည့်ပုံကိုသာ တင်ပါသည်။',
   'Çocuk güvenliği': 'ကလေးလုံခြုံရေး',
+  'Türk Filmleri': 'တူရကီ ရုပ်ရှင်များ',
+  'En Yüksek Puanlı Filmler': 'အဆင့်သတ်မှတ်ချက် အမြင့်ဆုံး ရုပ်ရှင်များ',
+  'En Yüksek Puanlı Diziler': 'အဆင့်သတ်မှတ်ချက် အမြင့်ဆုံး စီးရီးများ',
+  'En Çok İzlenen Filmler': 'အကြည့်အများဆုံး ရုပ်ရှင်များ',
+  'Popüler Diziler': 'ရေပန်းစား စီးရီးများ',
+  'En Çok Kazanan Filmler': 'ဝင်ငွေအများဆုံး ရုပ်ရှင်များ',
+  'Kült Filmler': 'ကာလ့်ရုပ်ရှင်များ',
+  'Yeni Filmler': 'ရုပ်ရှင်အသစ်များ',
 };

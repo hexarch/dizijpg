@@ -420,4 +420,12 @@ const Map<String, String> cevirilerAr = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'عند التفعيل لا يتم تنزيل الصور مسبقًا، وتُحمَّل فقط الصورة التي تشاهدها.',
   'Çocuk güvenliği': 'سلامة الأطفال',
+  'Türk Filmleri': 'أفلام تركية',
+  'En Yüksek Puanlı Filmler': 'أعلى الأفلام تقييمًا',
+  'En Yüksek Puanlı Diziler': 'أعلى المسلسلات تقييمًا',
+  'En Çok İzlenen Filmler': 'الأفلام الأكثر مشاهدة',
+  'Popüler Diziler': 'مسلسلات رائجة',
+  'En Çok Kazanan Filmler': 'الأفلام الأعلى إيرادًا',
+  'Kült Filmler': 'أفلام كلاسيكية مميزة',
+  'Yeni Filmler': 'أفلام جديدة',
 };

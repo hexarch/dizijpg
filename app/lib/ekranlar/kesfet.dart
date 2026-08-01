@@ -7,7 +7,74 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'katalog_liste.dart';
 import 'ortak.dart';
+
+/// Ana Sayfa rafları: (başlık, TMDB yolu, tür).
+///
+/// Yol sayfa parametresi İÇERMEZ — raf ilk sayfayı gösterir, "Tümünü gör"
+/// ekranı aynı yolu sayfalayarak devam ettirir.
+const anaSayfaRaflari = <(String, String, String)>[
+  ('Haftanın Dizileri', '/tmdb/trending/tv/week', 'tv'),
+  ('Haftanın Filmleri', '/tmdb/trending/movie/week', 'movie'),
+  (
+    'Türk Dizileri',
+    '/tmdb/discover/tv?sort_by=popularity.desc&with_original_language=tr',
+    'tv',
+  ),
+  (
+    'Türk Filmleri',
+    '/tmdb/discover/movie?sort_by=popularity.desc&with_original_language=tr',
+    'movie',
+  ),
+  (
+    'En Yüksek Puanlı Filmler',
+    '/tmdb/discover/movie?sort_by=vote_average.desc&vote_count.gte=3000',
+    'movie',
+  ),
+  (
+    'En Yüksek Puanlı Diziler',
+    '/tmdb/discover/tv?sort_by=vote_average.desc&vote_count.gte=1000',
+    'tv',
+  ),
+  (
+    'En Çok İzlenen Filmler',
+    '/tmdb/discover/movie?sort_by=popularity.desc&vote_count.gte=500',
+    'movie',
+  ),
+  (
+    'Popüler Diziler',
+    '/tmdb/discover/tv?sort_by=popularity.desc&vote_count.gte=200',
+    'tv',
+  ),
+  (
+    'En Çok Kazanan Filmler',
+    '/tmdb/discover/movie?sort_by=revenue.desc&vote_count.gte=500',
+    'movie',
+  ),
+  (
+    'Kült Filmler',
+    '/tmdb/discover/movie?sort_by=vote_count.desc&vote_average.gte=7.5'
+        '&primary_release_date.lte=2005-12-31',
+    'movie',
+  ),
+  (
+    'Tüm Zamanların En İyileri',
+    '/tmdb/discover/movie?sort_by=vote_count.desc&vote_average.gte=8',
+    'movie',
+  ),
+  (
+    'Yeni Diziler',
+    '/tmdb/discover/tv?sort_by=first_air_date.desc&vote_count.gte=20',
+    'tv',
+  ),
+  (
+    'Yeni Filmler',
+    '/tmdb/discover/movie?sort_by=primary_release_date.desc'
+        '&vote_count.gte=100',
+    'movie',
+  ),
+];
 
 class KesfetEkrani extends StatefulWidget {
   const KesfetEkrani({super.key});
@@ -58,40 +125,29 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
-      final sonuclar = await Future.wait([
-        Api.get('/tmdb/trending/tv/week'),
-        Api.get('/tmdb/trending/movie/week'),
-        Api.get(
-          '/tmdb/discover/tv?sort_by=popularity.desc&with_original_language=tr',
-        ),
-        Api.get(
-          '/tmdb/discover/movie?sort_by=vote_count.desc&vote_average.gte=8',
-        ),
-        Api.get(
-          '/tmdb/discover/tv?sort_by=first_air_date.desc&vote_count.gte=20',
-        ),
+      // Tüm raflar + öneriler paralel çekilir (öneri hatası rafları düşürmez).
+      final istekler = <Future<dynamic>>[
+        for (final r in anaSayfaRaflari) Api.get(r.$2),
         Api.get(
           '/onerilen',
         ).catchError((_) => <String, dynamic>{'oneriler': <dynamic>[]}),
-      ]);
+      ];
+      final sonuclar = await Future.wait(istekler);
       if (!mounted) return;
-      final onerilen = (sonuclar[5]['oneriler'] as List<dynamic>? ?? []);
-      final bolumler = {
+      final onerilen =
+          (sonuclar.last['oneriler'] as List<dynamic>? ?? <dynamic>[]);
+      final bolumler = <String, List<dynamic>>{
         if (onerilen.isNotEmpty) 'Sana Özel': onerilen,
-        'Haftanın Dizileri': sonuclar[0]['results'] as List<dynamic>,
-        'Haftanın Filmleri': sonuclar[1]['results'] as List<dynamic>,
-        'Türk Dizileri': sonuclar[2]['results'] as List<dynamic>,
-        'Tüm Zamanların En İyileri': sonuclar[3]['results'] as List<dynamic>,
-        'Yeni Diziler': sonuclar[4]['results'] as List<dynamic>,
+        for (var i = 0; i < anaSayfaRaflari.length; i++)
+          anaSayfaRaflari[i].$1:
+              (sonuclar[i]['results'] as List<dynamic>? ?? <dynamic>[]),
       };
       setState(() => _bolumler = bolumler);
-      // Bir sonraki açılış anında dolu başlasın
       SharedPreferences.getInstance().then(
         (p) => p.setString('kesfet_onbellek', jsonEncode(bolumler)),
       );
     } catch (e) {
       if (!mounted) return;
-      // Önbellekten raflar gösteriliyorsa taze veri hatasını yut
       if (_bolumler == null) setState(() => _hata = e.toString());
     }
   }
@@ -130,13 +186,7 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
         ],
       );
     } else {
-      final turMap = {
-        'Haftanın Dizileri': 'tv',
-        'Haftanın Filmleri': 'movie',
-        'Türk Dizileri': 'tv',
-        'Tüm Zamanların En İyileri': 'movie',
-        'Yeni Diziler': 'tv',
-      };
+      final rafMap = {for (final r in anaSayfaRaflari) r.$1: r};
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
@@ -146,7 +196,19 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
               PosterSeridi(
                 baslik: e.key.c,
                 icerikler: e.value,
-                turZorla: turMap[e.key],
+                turZorla: rafMap[e.key]?.$3,
+                // "Sana Özel" kişiye özel üretiliyor, sayfalanamaz.
+                onBaslikTap: rafMap[e.key] == null
+                    ? null
+                    : () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => KatalogListeEkrani(
+                            baslik: rafMap[e.key]!.$1,
+                            yol: rafMap[e.key]!.$2,
+                            tur: rafMap[e.key]!.$3,
+                          ),
+                        ),
+                      ),
               ),
             const SizedBox(height: 24),
           ],

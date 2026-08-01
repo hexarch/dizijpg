@@ -423,4 +423,12 @@ const Map<String, String> cevirilerId = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Saat aktif, foto tidak diunduh lebih dulu; hanya gambar yang sedang kamu lihat yang dimuat.',
   'Çocuk güvenliği': 'Keselamatan anak',
+  'Türk Filmleri': 'Film Turki',
+  'En Yüksek Puanlı Filmler': 'Film dengan rating tertinggi',
+  'En Yüksek Puanlı Diziler': 'Serial dengan rating tertinggi',
+  'En Çok İzlenen Filmler': 'Film paling banyak ditonton',
+  'Popüler Diziler': 'Serial populer',
+  'En Çok Kazanan Filmler': 'Film berpendapatan tertinggi',
+  'Kült Filmler': 'Film kultus',
+  'Yeni Filmler': 'Film baru',
 };

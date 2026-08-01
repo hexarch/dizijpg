@@ -420,4 +420,12 @@ const Map<String, String> cevirilerDa = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Når den er slået til, hentes billeder ikke på forhånd, kun det billede du ser på.',
   'Çocuk güvenliği': 'Børns sikkerhed',
+  'Türk Filmleri': 'Tyrkiske film',
+  'En Yüksek Puanlı Filmler': 'Højest bedømte film',
+  'En Yüksek Puanlı Diziler': 'Højest bedømte serier',
+  'En Çok İzlenen Filmler': 'Mest sete film',
+  'Popüler Diziler': 'Populære serier',
+  'En Çok Kazanan Filmler': 'Mest indtjenende film',
+  'Kült Filmler': 'Kultfilm',
+  'Yeni Filmler': 'Nye film',
 };

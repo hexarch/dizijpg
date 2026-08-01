@@ -426,4 +426,12 @@ const Map<String, String> cevirilerFil = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Kapag naka-on, hindi muna dina-download ang mga larawan; ang tinitingnan mo lang ang naglo-load.',
   'Çocuk güvenliği': 'Kaligtasan ng bata',
+  'Türk Filmleri': 'Mga pelikulang Turkish',
+  'En Yüksek Puanlı Filmler': 'Pinakamataas ang rating na pelikula',
+  'En Yüksek Puanlı Diziler': 'Pinakamataas ang rating na serye',
+  'En Çok İzlenen Filmler': 'Pinakamaraming napanood na pelikula',
+  'Popüler Diziler': 'Sikat na serye',
+  'En Çok Kazanan Filmler': 'Pinakamalaking kita na pelikula',
+  'Kült Filmler': 'Mga cult na pelikula',
+  'Yeni Filmler': 'Mga bagong pelikula',
 };

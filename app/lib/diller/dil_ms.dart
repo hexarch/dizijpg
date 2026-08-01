@@ -424,4 +424,12 @@ const Map<String, String> cevirilerMs = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Apabila aktif, foto tidak dimuat turun lebih awal; hanya imej yang sedang kamu lihat dimuatkan.',
   'Çocuk güvenliği': 'Keselamatan kanak-kanak',
+  'Türk Filmleri': 'Filem Turki',
+  'En Yüksek Puanlı Filmler': 'Filem penarafan tertinggi',
+  'En Yüksek Puanlı Diziler': 'Siri penarafan tertinggi',
+  'En Çok İzlenen Filmler': 'Filem paling banyak ditonton',
+  'Popüler Diziler': 'Siri popular',
+  'En Çok Kazanan Filmler': 'Filem pendapatan tertinggi',
+  'Kült Filmler': 'Filem kultus',
+  'Yeni Filmler': 'Filem baharu',
 };

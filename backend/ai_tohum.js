@@ -12,6 +12,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { spawn } from 'child_process';
 import bcrypt from 'bcryptjs';
 import pg from 'pg';
 const { Pool } = pg;
@@ -84,29 +85,92 @@ async function kullaniciHazirla() {
   return id;
 }
 
-// Yapımın en oylanan KARE_SAYISI sahne karesi (yazısız olanlar öncelikli)
-// → /medya dosyaları. Hiç backdrop yoksa poster tek kare olarak kullanılır.
-async function kareIndir(kullaniciId, tur, tmdbId) {
+// --- ALGISAL TEKRAR KONTROLÜ ---------------------------------------------
+// TMDB aynı görseli farklı kırpım/renk varyantlarıyla AYRI backdrop olarak
+// sunuyor; dosyalar byte olarak farklı olduğu için md5 yakalamaz. ffmpeg ile
+// dHash üretip (9x8 gri → komşu piksel karşılaştırması → 64 bit) Hamming
+// mesafesi ESIK'in altındakileri aynı görsel sayıyoruz.
+// EŞİK gözle kalibre edildi (2026-08-01): 0-11 arası çiftler hep aynı
+// görselin varyantı çıktı, 12'de farklı görseller yakalanmaya başladı
+// (Schindler'de iki ayrı afiş) → bir basamak emniyetle 10.
+const TEKRAR_ESIK = 10;
+
+function dhash(dosyaYolu) {
+  return new Promise((coz) => {
+    const p = spawn('ffmpeg', ['-v', 'error', '-i', dosyaYolu,
+      '-vf', 'scale=9:8,format=gray', '-f', 'rawvideo', '-']);
+    const parcalar = [];
+    p.stdout.on('data', (d) => parcalar.push(d));
+    p.on('error', () => coz(null));
+    p.on('close', () => {
+      const b = Buffer.concat(parcalar);
+      if (b.length < 72) return coz(null);
+      let h = 0n;
+      for (let y = 0; y < 8; y++) {
+        for (let x = 0; x < 8; x++) {
+          h = (h << 1n) | (b[y * 9 + x] > b[y * 9 + x + 1] ? 1n : 0n);
+        }
+      }
+      coz(h);
+    });
+  });
+}
+
+const mesafe = (a, b) => {
+  let x = a ^ b, n = 0;
+  while (x) { n += Number(x & 1n); x >>= 1n; }
+  return n;
+};
+
+async function indirVeHashle(kullaniciId, b) {
+  const dosya = `m${kullaniciId}-${crypto.randomBytes(8).toString('hex')}.jpg`;
+  const tamYol = path.join(medyaDizin, dosya);
+  try {
+    await indir(`https://image.tmdb.org/t/p/${KARE_BOYUT}${b.file_path}`, tamYol);
+  } catch {
+    return null;
+  }
+  const h = await dhash(tamYol);
+  return { yol: `/medya/${dosya}`, tamYol, hash: h };
+}
+
+// Yapımın en oylanan sahne karelerinden BİRBİRİNDEN FARKLI olan KARE_SAYISI
+// tanesini indirir. Aday havuzu hedefin 3 katıdır: tekrar çıkanlar elenince
+// yine 10'a ulaşılabilsin. Elenen dosyalar hemen silinir.
+// [mevcut] verilirse (eksik/kirli yorumu onarırken) yeni kareler onlara karşı
+// da tekrar kontrolünden geçer.
+async function kareIndir(kullaniciId, tur, tmdbId, mevcut = []) {
   const veri = await tmdb(`/${tur}/${tmdbId}/images`);
   const hepsi = (veri.backdrops || []).slice()
     .sort((a, b) => (b.vote_count || 0) - (a.vote_count || 0));
   const yazisiz = hepsi.filter((b) => !b.iso_639_1);
-  let secim = [...yazisiz, ...hepsi.filter((b) => b.iso_639_1)]
-    .slice(0, KARE_SAYISI);
-  if (!secim.length && veri.posters?.length) secim = [veri.posters[0]];
-  // Bir yapımın kareleri PARALEL iner (1000 içerik × 10 kare seri inseydi
-  // saatler sürerdi). İnemeyen kare atlanır, sıra korunur.
-  const yollar = await Promise.all(secim.map(async (b) => {
-    const dosya = `m${kullaniciId}-${crypto.randomBytes(8).toString('hex')}.jpg`;
-    try {
-      await indir(`https://image.tmdb.org/t/p/${KARE_BOYUT}${b.file_path}`,
-        path.join(medyaDizin, dosya));
-      return `/medya/${dosya}`;
-    } catch {
-      return null;
+  let havuz = [...yazisiz, ...hepsi.filter((b) => b.iso_639_1)]
+    .slice(0, KARE_SAYISI * 3);
+  if (!havuz.length && veri.posters?.length) havuz = [veri.posters[0]];
+
+  // Elde tutulan karelerin hash'leri (onarım durumunda dolu gelir)
+  const tutulanHash = (await Promise.all(mevcut.map(
+    (m) => dhash(path.join(medyaDizin, path.basename(m)))))).filter((h) => h !== null);
+  const secilen = [...mevcut];
+
+  // 10'arlı öbekler halinde indir: hedefe ulaşınca kalan adaylar hiç inmez.
+  for (let i = 0; i < havuz.length && secilen.length < KARE_SAYISI; i += KARE_SAYISI) {
+    const obek = havuz.slice(i, i + KARE_SAYISI);
+    const inen = (await Promise.all(
+      obek.map((b) => indirVeHashle(kullaniciId, b)))).filter(Boolean);
+    for (const k of inen) {
+      const tekrar = k.hash === null
+        ? false // hash alınamadıysa eleme, kareyi kaybetme
+        : tutulanHash.some((t) => mesafe(t, k.hash) <= TEKRAR_ESIK);
+      if (tekrar || secilen.length >= KARE_SAYISI) {
+        fs.unlink(k.tamYol, () => {});
+        continue;
+      }
+      if (k.hash !== null) tutulanHash.push(k.hash);
+      secilen.push(k.yol);
     }
-  }));
-  return yollar.filter(Boolean);
+  }
+  return secilen;
 }
 
 async function ana() {
@@ -137,19 +201,38 @@ async function ana() {
          WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL`,
         [aiId, v.tur, v.tmdb_id]);
       if (mevcut.rows.length) {
-        // Var olan yorum: kare sayısı eksikse medya setini yenile
-        // (eskiler en oylanan 2'ydi; taze 10'luk set indirilir, eskiler silinir).
+        // Var olan yorum: önce KENDİ kareleri tekrar açısından denetlenir
+        // (eski koşularda tekrar süzgeci yoktu), sonra eksik kalan sayı
+        // TMDB'nin kullanılmamış karelerinden tamamlanır.
         const y = mevcut.rows[0];
-        if ((y.medya || []).length >= KARE_SAYISI) { atlandi++; continue; }
-        const medya = await kareIndir(aiId, v.tur, v.tmdb_id);
-        if (!medya.length) { atlandi++; continue; }
-        await havuz.query('UPDATE yorumlar SET medya=$1 WHERE id=$2',
-          [medya, y.id]);
-        for (const m of y.medya || []) {
-          fs.unlink(path.join(medyaDizin, path.basename(m)), () => {});
-        }
-        tazelendi++;
-        console.log(`~ ${v.tur} ${v.ad} (medya ${y.medya?.length || 0}→${medya.length})`);
+        const eski = y.medya || [];
+        // Hash'ler PARALEL üretilir (2400 yorum × 10 kare seri hashlenirse
+        // yalnız denetim yarım saati bulur); karşılaştırma sırayla yapılır.
+        const hashlar = await Promise.all(eski.map(
+          (m) => dhash(path.join(medyaDizin, path.basename(m)))));
+        const tut = [], at = [];
+        const tutHash = [];
+        eski.forEach((m, k) => {
+          const h = hashlar[k];
+          if (h === null) { tut.push(m); return; } // okunamadıysa dokunma
+          if (tutHash.some((t) => mesafe(t, h) <= TEKRAR_ESIK)) { at.push(m); return; }
+          tutHash.push(h);
+          tut.push(m);
+        });
+        if (!at.length && tut.length >= KARE_SAYISI) { atlandi++; continue; }
+        // Tekrarlar atıldı; kalan boşluğu yeni (farklı) karelerle doldur
+        const medya = tut.length >= KARE_SAYISI
+          ? tut
+          : await kareIndir(aiId, v.tur, v.tmdb_id, tut);
+        if (medya.length !== eski.length || at.length) {
+          await havuz.query('UPDATE yorumlar SET medya=$1 WHERE id=$2',
+            [medya, y.id]);
+          for (const m of at) {
+            fs.unlink(path.join(medyaDizin, path.basename(m)), () => {});
+          }
+          tazelendi++;
+          console.log(`~ ${v.tur} ${v.ad} (${eski.length} → ${medya.length} kare, ${at.length} tekrar atıldı)`);
+        } else atlandi++;
         continue;
       }
 

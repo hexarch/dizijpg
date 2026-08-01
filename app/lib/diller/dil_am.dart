@@ -415,4 +415,12 @@ const Map<String, String> cevirilerAm = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ሲበራ ፎቶዎች አስቀድመው አይወርዱም፤ የምታየው ምስል ብቻ ይጫናል።',
   'Çocuk güvenliği': 'የልጆች ደህንነት',
+  'Türk Filmleri': 'የቱርክ ፊልሞች',
+  'En Yüksek Puanlı Filmler': 'ከፍተኛ ደረጃ ያላቸው ፊልሞች',
+  'En Yüksek Puanlı Diziler': 'ከፍተኛ ደረጃ ያላቸው ተከታታዮች',
+  'En Çok İzlenen Filmler': 'በብዛት የታዩ ፊልሞች',
+  'Popüler Diziler': 'ታዋቂ ተከታታዮች',
+  'En Çok Kazanan Filmler': 'ከፍተኛ ገቢ ያስገቡ ፊልሞች',
+  'Kült Filmler': 'ተወዳጅ ልዩ ፊልሞች',
+  'Yeni Filmler': 'አዲስ ፊልሞች',
 };

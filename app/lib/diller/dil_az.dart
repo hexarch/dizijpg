@@ -422,4 +422,12 @@ const Map<String, String> cevirilerAz = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Aktiv olduqda şəkillər əvvəlcədən yüklənmir, yalnız baxdığın kadr yüklənir.',
   'Çocuk güvenliği': 'Uşaq təhlükəsizliyi',
+  'Türk Filmleri': 'Türk filmləri',
+  'En Yüksek Puanlı Filmler': 'Ən yüksək reytinqli filmlər',
+  'En Yüksek Puanlı Diziler': 'Ən yüksək reytinqli seriallar',
+  'En Çok İzlenen Filmler': 'Ən çox izlənən filmlər',
+  'Popüler Diziler': 'Populyar seriallar',
+  'En Çok Kazanan Filmler': 'Ən çox gəlir gətirən filmlər',
+  'Kült Filmler': 'Kult filmlər',
+  'Yeni Filmler': 'Yeni filmlər',
 };

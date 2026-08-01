@@ -422,4 +422,12 @@ const Map<String, String> cevirilerPa = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ਚਾਲੂ ਹੋਣ ਤੇ ਫੋਟੋਆਂ ਪਹਿਲਾਂ ਤੋਂ ਡਾਊਨਲੋਡ ਨਹੀਂ ਹੁੰਦੀਆਂ, ਸਿਰਫ਼ ਉਹੀ ਤਸਵੀਰ ਲੋਡ ਹੁੰਦੀ ਹੈ ਜੋ ਤੂੰ ਵੇਖ ਰਿਹਾ ਹੈਂ।',
   'Çocuk güvenliği': 'ਬੱਚਿਆਂ ਦੀ ਸੁਰੱਖਿਆ',
+  'Türk Filmleri': 'ਤੁਰਕੀ ਫਿਲਮਾਂ',
+  'En Yüksek Puanlı Filmler': 'ਸਭ ਤੋਂ ਵੱਧ ਰੇਟਿੰਗ ਵਾਲੀਆਂ ਫਿਲਮਾਂ',
+  'En Yüksek Puanlı Diziler': 'ਸਭ ਤੋਂ ਵੱਧ ਰੇਟਿੰਗ ਵਾਲੀਆਂ ਸੀਰੀਜ਼',
+  'En Çok İzlenen Filmler': 'ਸਭ ਤੋਂ ਵੱਧ ਵੇਖੀਆਂ ਫਿਲਮਾਂ',
+  'Popüler Diziler': 'ਪ੍ਰਸਿੱਧ ਸੀਰੀਜ਼',
+  'En Çok Kazanan Filmler': 'ਸਭ ਤੋਂ ਵੱਧ ਕਮਾਈ ਵਾਲੀਆਂ ਫਿਲਮਾਂ',
+  'Kült Filmler': 'ਕਲਟ ਫਿਲਮਾਂ',
+  'Yeni Filmler': 'ਨਵੀਆਂ ਫਿਲਮਾਂ',
 };

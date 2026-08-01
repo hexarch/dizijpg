@@ -421,4 +421,12 @@ const Map<String, String> cevirilerGu = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'ચાલુ હોય ત્યારે ફોટા પહેલેથી ડાઉનલોડ થતા નથી, ફક્ત તું જુએ છે તે ચિત્ર લોડ થાય છે.',
   'Çocuk güvenliği': 'બાળ સુરક્ષા',
+  'Türk Filmleri': 'તુર્કી ફિલ્મો',
+  'En Yüksek Puanlı Filmler': 'સૌથી વધુ રેટિંગવાળી ફિલ્મો',
+  'En Yüksek Puanlı Diziler': 'સૌથી વધુ રેટિંગવાળી શ્રેણીઓ',
+  'En Çok İzlenen Filmler': 'સૌથી વધુ જોવાયેલી ફિલ્મો',
+  'Popüler Diziler': 'લોકપ્રિય શ્રેણીઓ',
+  'En Çok Kazanan Filmler': 'સૌથી વધુ કમાણી કરનારી ફિલ્મો',
+  'Kült Filmler': 'કલ્ટ ફિલ્મો',
+  'Yeni Filmler': 'નવી ફિલ્મો',
 };

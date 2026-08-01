@@ -795,11 +795,16 @@ class PosterSeridi extends StatelessWidget {
   final List<dynamic> icerikler;
   final String? turZorla;
 
+  /// Verilirse başlık tıklanabilir olur ("Tümünü gör" + ok) — şerit yalnız
+  /// ilk sayfayı gösterir, tam liste ayrı ekranda sayfalanarak açılır.
+  final VoidCallback? onBaslikTap;
+
   const PosterSeridi({
     super.key,
     required this.baslik,
     required this.icerikler,
     this.turZorla,
+    this.onBaslikTap,
   });
 
   @override
@@ -808,27 +813,50 @@ class PosterSeridi extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 18,
-                decoration: BoxDecoration(
-                  color: DiziRenkler.sari,
-                  borderRadius: BorderRadius.circular(2),
+        InkWell(
+          onTap: onBaslikTap,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+            child: Row(
+              children: [
+                Container(
+                  width: 4,
+                  height: 18,
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.sari,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                baslik,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    baslik,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
-              ),
-            ],
+                if (onBaslikTap != null) ...[
+                  const Spacer(),
+                  Text(
+                    'Tümünü gör'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.sariMetin,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    color: DiziRenkler.sariMetin,
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
         SizedBox(

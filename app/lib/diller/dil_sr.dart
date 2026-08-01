@@ -424,4 +424,12 @@ const Map<String, String> cevirilerSr = {
   'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.':
       'Када је укључено, фотографије се не преузимају унапред — учитава се само кадар који гледаш.',
   'Çocuk güvenliği': 'Безбедност деце',
+  'Türk Filmleri': 'Турски филмови',
+  'En Yüksek Puanlı Filmler': 'Најбоље оцењени филмови',
+  'En Yüksek Puanlı Diziler': 'Најбоље оцењене серије',
+  'En Çok İzlenen Filmler': 'Најгледанији филмови',
+  'Popüler Diziler': 'Популарне серије',
+  'En Çok Kazanan Filmler': 'Најуноснији филмови',
+  'Kült Filmler': 'Култни филмови',
+  'Yeni Filmler': 'Нови филмови',
 };
