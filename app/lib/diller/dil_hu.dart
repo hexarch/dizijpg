@@ -415,6 +415,8 @@ const Map<String, String> cevirilerHu = {
   'Bağlantıyı kopyala': 'Link másolása',
   'Henüz kimseyi takip etmiyorsun.': 'Még senkit sem követsz.',
   'Çevir': 'Fordítás',
+  'Çeviri şu an yapılamadı': 'A fordítás most nem lehetséges',
+  'Bağlantı açılamadı': 'A hivatkozás nem nyitható meg',
   'Orijinali göster': 'Eredeti mutatása',
   'Çeviriyi göster': 'Fordítás mutatása',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

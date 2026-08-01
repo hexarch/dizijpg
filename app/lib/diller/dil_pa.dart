@@ -411,6 +411,8 @@ const Map<String, String> cevirilerPa = {
   'Bağlantıyı kopyala': 'ਲਿੰਕ ਕਾਪੀ ਕਰੋ',
   'Henüz kimseyi takip etmiyorsun.': 'ਤੂੰ ਹਾਲੇ ਕਿਸੇ ਨੂੰ ਫਾਲੋ ਨਹੀਂ ਕਰਦਾ।',
   'Çevir': 'ਅਨੁਵਾਦ ਕਰੋ',
+  'Çeviri şu an yapılamadı': 'ਹੁਣੇ ਅਨੁਵਾਦ ਸੰਭਵ ਨਹੀਂ ਹੈ',
+  'Bağlantı açılamadı': 'ਲਿੰਕ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕਿਆ',
   'Orijinali göster': 'ਅਸਲ ਦਿਖਾਓ',
   'Çeviriyi göster': 'ਅਨੁਵਾਦ ਦਿਖਾਓ',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

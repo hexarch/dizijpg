@@ -415,6 +415,8 @@ const Map<String, String> cevirilerFil = {
   'Bağlantıyı kopyala': 'Kopyahin ang link',
   'Henüz kimseyi takip etmiyorsun.': 'Wala ka pang sinusundan.',
   'Çevir': 'Isalin',
+  'Çeviri şu an yapılamadı': 'Hindi available ang pagsasalin ngayon',
+  'Bağlantı açılamadı': 'Hindi mabuksan ang link',
   'Orijinali göster': 'Ipakita ang orihinal',
   'Çeviriyi göster': 'Ipakita ang pagsasalin',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

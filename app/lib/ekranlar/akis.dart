@@ -10,7 +10,8 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../onbellek.dart';
 import '../tema.dart';
-import 'kesfet_akis.dart' show ReelsGorunumu;
+import 'etiket.dart';
+import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'ortak.dart';
 
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
@@ -606,6 +607,7 @@ class _AkisKartiState extends State<AkisKarti> {
   // spoiler=true gelen kart dokunulana dek bulanık başlar
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+  late int _yanit = (widget.yorum['yanit'] as int?) ?? 0;
   bool _isleniyor = false;
 
   @override
@@ -616,6 +618,28 @@ class _AkisKartiState extends State<AkisKarti> {
     if (!_isleniyor && eski.yorum != widget.yorum) {
       _begendim = widget.yorum['begendim'] == true;
       _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+      _yanit = (widget.yorum['yanit'] as int?) ?? 0;
+    }
+  }
+
+  /// Ortak yanıt sheet'i (Reels/profil ile AYNI). Kapanınca sayı tazelenir ki
+  /// kullanıcı yazdığı yorumun sayıya yansıdığını görsün.
+  Future<void> _yanitlariAc() async {
+    await yanitlariAc(context, widget.yorum);
+    if (!mounted) return;
+    try {
+      final y = widget.yorum;
+      final sorgu = y['sezon'] != null
+          ? '?sezon=${y['sezon']}&bolum=${y['bolum']}'
+          : '';
+      final d = await Api.get('/yorumlar/${y['tur']}/${y['tmdb_id']}$sorgu');
+      if (!mounted) return;
+      final sayi = (d['yorumlar'] as List<dynamic>)
+          .where((c) => c['ust_id'] == y['id'])
+          .length;
+      setState(() => _yanit = sayi);
+    } catch (_) {
+      /* sayı eski kalır; yanıt sheet'inde doğrusu zaten görüldü */
     }
   }
 
@@ -790,7 +814,13 @@ class _AkisKartiState extends State<AkisKarti> {
                   ceviriVar: y['ceviri_var'] == true,
                   cevrildi: y['cevrildi'] == true,
                   orijinalMetin: y['orijinal_metin'] as String?,
-                  yapici: (m) => Text(m, style: const TextStyle(height: 1.45)),
+                  // Metindeki @kullanıcı, [[dizi/film]] etiketleri ve
+                  // http/www bağlantıları tıklanabilir olsun (içerik
+                  // sayfasındaki yorumlarla aynı davranış).
+                  yapici: (m) => EtiketliMetin(
+                    m,
+                    stil: TextStyle(height: 1.45, color: DiziRenkler.metin),
+                  ),
                 ),
               ),
             if (_spoilerAcik && medya.isNotEmpty) ...[
@@ -844,7 +874,38 @@ class _AkisKartiState extends State<AkisKarti> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 8),
+                  // Gönderiye yorum: içerik sayfasındaki kartla AYNI konuşma
+                  // balonu + sayı. Yanıt sheet'i ortak (yanitlariAc), böylece
+                  // akıştan atılan yorum içerik sayfasında da görünür.
+                  InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: _yanitlariAc,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.mode_comment_outlined,
+                            size: 16,
+                            color: DiziRenkler.metin54,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            _yanit > 0 ? '$_yanit' : 'Yorum yap'.c,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: DiziRenkler.metin70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
                   Icon(
                     Icons.visibility_outlined,
                     size: 16,

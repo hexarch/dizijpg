@@ -589,8 +589,18 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
           _cevrili = true;
         }
       });
+      // Sessiz başarısızlık yok: çeviri gelmediyse kullanıcı bilsin.
+      if ((m == null || m.isEmpty) && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Çeviri şu an yapılamadı'.c)));
+      }
     } catch (_) {
-      if (mounted) setState(() => _yukleniyor = false);
+      if (!mounted) return;
+      setState(() => _yukleniyor = false);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Çeviri şu an yapılamadı'.c)));
     }
   }
 

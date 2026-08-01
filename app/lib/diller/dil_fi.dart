@@ -413,6 +413,8 @@ const Map<String, String> cevirilerFi = {
   'Bağlantıyı kopyala': 'Kopioi linkki',
   'Henüz kimseyi takip etmiyorsun.': 'Et seuraa vielä ketään.',
   'Çevir': 'Käännä',
+  'Çeviri şu an yapılamadı': 'Käännös ei ole nyt mahdollinen',
+  'Bağlantı açılamadı': 'Linkkiä ei voitu avata',
   'Orijinali göster': 'Näytä alkuperäinen',
   'Çeviriyi göster': 'Näytä käännös',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

@@ -411,6 +411,8 @@ const Map<String, String> cevirilerSw = {
   'Bağlantıyı kopyala': 'Nakili kiungo',
   'Henüz kimseyi takip etmiyorsun.': 'Bado hujamfuata mtu yeyote.',
   'Çevir': 'Tafsiri',
+  'Çeviri şu an yapılamadı': 'Tafsiri haipatikani kwa sasa',
+  'Bağlantı açılamadı': 'Kiungo hakikuweza kufunguliwa',
   'Orijinali göster': 'Onyesha asili',
   'Çeviriyi göster': 'Onyesha tafsiri',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

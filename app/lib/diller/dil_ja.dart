@@ -401,6 +401,8 @@ const Map<String, String> cevirilerJa = {
   'Bağlantıyı kopyala': 'リンクをコピー',
   'Henüz kimseyi takip etmiyorsun.': 'まだ誰もフォローしていません。',
   'Çevir': '翻訳',
+  'Çeviri şu an yapılamadı': '現在翻訳できません',
+  'Bağlantı açılamadı': 'リンクを開けませんでした',
   'Orijinali göster': '原文を表示',
   'Çeviriyi göster': '翻訳を表示',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

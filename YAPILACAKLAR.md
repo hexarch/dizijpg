@@ -1,6 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Akış kartı: çeviri düğmesi, tıklanır bağlantılar, yorum düğmesi
+**Kullanıcı isteği:** "Akışta yabancı gönderilerin altında çeviri düğmesi
+çıkmıyor; Instagram bağlantıları tıklanmıyor; gönderiye yorum yapamıyorum."
+- 🚀 **Çeviri — kök neden sanılanın dışındaydı.** `AkisKarti` zaten
+  `CeviriliMetin` kullanıyordu; sorun VERİDEYDİ: `/ceviri` ucu YALNIZ önceden
+  toplu yüklenmiş çevirileri döndürüyordu, `ceviriUygula` da hazır çeviri
+  yoksa `ceviri_var:false` veriyordu → yeni (Instagram aktarımı) gönderilerde
+  düğme hiç çıkmıyordu. İçerik sayfasında görünmesinin sebebi oradaki ESKİ
+  gönderilerin çevirisinin önbellekte olmasıydı.
+- 🚀 `GET /ceviri/:yorumId` artık hazır çeviri yoksa ANINDA üretiyor
+  (anahtarsız genel çeviri ucu, 12 sn zaman aşımı, 4000 karakter sınırı) ve
+  sonucu `metin_cevirileri`ne yazıyor. Aynı metin onlarca gönderide tekrar
+  ettiği için ikinci istek önbellekten (1.4 sn → 0.34 sn). Bir kez çevrilen
+  metin sonraki akış yüklemesinde SUNUCUDA uygulanıyor (kullanıcı düğmeye
+  basmadan kendi dilinde okuyor, düğme "Orijinali göster" oluyor).
+- 🚀 `ceviriUygula`: çeviri uygulanmadıysa ve gönderi yabancı dildeyse artık
+  `ceviri_var:true` → düğme akış, keşfet, içerik sayfası ve iki profilde birden
+  çıkıyor. Yeni hız limiti: kullanıcı başına saatte 120 çeviri.
+- 🚀 Sessiz başarısızlık kapatıldı: çeviri gelmezse `Çeviri şu an yapılamadı`
+  SnackBar'ı (eskiden hiçbir şey olmuyordu).
+- 🚀 **Bağlantılar** — `EtiketliMetin` (etiket.dart) artık `http(s)://` ve
+  `www.` adreslerini de yakalıyor: sarı + altı çizili, dokununca `url_launcher`
+  ile dış tarayıcı. Renkler AÇIKÇA veriliyor (TextSpan temayı devralmaz).
+  Cümle sonu noktalaması adrese dahil edilmiyor (`www.a.com.` → `www.a.com`).
+  Akış kartı metni artık düz `Text` değil `EtiketliMetin` → @kullanıcı ve
+  dizi/film etiketleri de akışta tıklanır oldu.
+- 🚀 **Yorum düğmesi** — akış kartına beğeninin yanına konuşma balonu +
+  yanıt sayısı (yoksa `Yorum yap`); ortak `yanitlariAc` sheet'ini açıyor,
+  kapanınca sayı tazeleniyor. `yanit` sayısı `/akis`, `/kesfet-akis` ve
+  `/profil/:kullaniciAdi` uçlarına eklendi.
+- ✅ Çeviri: 2 yeni anahtar (`Çeviri şu an yapılamadı`, `Bağlantı açılamadı`)
+  × 45 dil, 45/45 doğrulandı, değerlerde kesme işareti yok.
+- ✅ `test/akis_karti_test.dart` (9 test): yabancı gönderide Çevir çıkar /
+  Türkçede çıkmaz, bağlantı span'ı altı çizili + renkli + tıklanır, nokta
+  kırpma, @etiket bozulmadı, yorum düğmesi sayı/etiket, spoiler perdesi
+  açılana dek hiçbir bağlantı tıklanmıyor. `flutter test` 32/32.
+- ✅ `flutter analyze lib`: hata/uyarı yok. Backend + web canlıya dağıtıldı
+  (saglik 200, site 200, uçtan uca curl ile doğrulandı).
+
 ## 2026-08-02 — Alt gezinme ikonları sekme değişince anlam değiştiriyordu
 **Kullanıcı isteği:** "İlk sekme seçiliyken pusula, başka sekmedeyken ev
 görünüyor; ikon seçili olsun olmasın aynı şeyi anlatmalı."

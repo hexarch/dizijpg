@@ -414,6 +414,8 @@ const Map<String, String> cevirilerNl = {
   'Bağlantıyı kopyala': 'Link kopiëren',
   'Henüz kimseyi takip etmiyorsun.': 'Je volgt nog niemand.',
   'Çevir': 'Vertalen',
+  'Çeviri şu an yapılamadı': 'Vertalen is nu niet mogelijk',
+  'Bağlantı açılamadı': 'Kan de link niet openen',
   'Orijinali göster': 'Origineel tonen',
   'Çeviriyi göster': 'Vertaling tonen',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

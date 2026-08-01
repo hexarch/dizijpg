@@ -409,6 +409,8 @@ const Map<String, String> cevirilerDa = {
   'Bağlantıyı kopyala': 'Kopiér link',
   'Henüz kimseyi takip etmiyorsun.': 'Du følger ingen endnu.',
   'Çevir': 'Oversæt',
+  'Çeviri şu an yapılamadı': 'Oversættelse er ikke mulig lige nu',
+  'Bağlantı açılamadı': 'Linket kunne ikke åbnes',
   'Orijinali göster': 'Vis original',
   'Çeviriyi göster': 'Vis oversættelse',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

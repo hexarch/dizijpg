@@ -412,6 +412,8 @@ const Map<String, String> cevirilerVi = {
   'Bağlantıyı kopyala': 'Sao chép liên kết',
   'Henüz kimseyi takip etmiyorsun.': 'Bạn chưa theo dõi ai.',
   'Çevir': 'Dịch',
+  'Çeviri şu an yapılamadı': 'Hiện chưa dịch được',
+  'Bağlantı açılamadı': 'Không mở được liên kết',
   'Orijinali göster': 'Xem bản gốc',
   'Çeviriyi göster': 'Xem bản dịch',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

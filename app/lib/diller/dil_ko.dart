@@ -401,6 +401,8 @@ const Map<String, String> cevirilerKo = {
   'Bağlantıyı kopyala': '링크 복사',
   'Henüz kimseyi takip etmiyorsun.': '아직 아무도 팔로우하지 않았어요.',
   'Çevir': '번역',
+  'Çeviri şu an yapılamadı': '지금은 번역할 수 없습니다',
+  'Bağlantı açılamadı': '링크를 열 수 없습니다',
   'Orijinali göster': '원문 보기',
   'Çeviriyi göster': '번역 보기',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

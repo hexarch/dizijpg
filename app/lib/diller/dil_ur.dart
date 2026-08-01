@@ -411,6 +411,8 @@ const Map<String, String> cevirilerUr = {
   'Bağlantıyı kopyala': 'لنک کاپی کریں',
   'Henüz kimseyi takip etmiyorsun.': 'ابھی تم کسی کو فالو نہیں کرتے۔',
   'Çevir': 'ترجمہ کریں',
+  'Çeviri şu an yapılamadı': 'ابھی ترجمہ ممکن نہیں',
+  'Bağlantı açılamadı': 'لنک نہیں کھل سکا',
   'Orijinali göster': 'اصل دکھائیں',
   'Çeviriyi göster': 'ترجمہ دکھائیں',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

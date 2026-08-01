@@ -2335,6 +2335,7 @@ const AKIS_ALANLAR = `
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+            (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim`;
 // Akış uygunluk kuralı (asla boş kalmaz):
@@ -2458,15 +2459,18 @@ const AI_KULLANICI = 'dizi.jpg.ai';
 // (ve gönderi zaten o dilde değilse) `metin` alanına çeviri konur, orijinal
 // `orijinal_metin`de kalır. Böylece eski istemciler bile (uygulama güncellemesi
 // beklemeden) kendi dillerinde okur; yeni istemci "Orijinali göster" sunar.
-// `ceviri_var` eski istemciler için korunur: çeviri UYGULANDIYSA düğmeye gerek
-// yok → false.
+// `ceviri_var`: çeviri UYGULANDIYSA düğmeye gerek yok → false. Uygulanmadıysa
+// ama gönderi yabancı dildeyse true — /ceviri ucu artık hazır çeviri yoksa
+// ANINDA üretiyor, yani düğme her yabancı gönderide iş görür.
 function ceviriUygula({ ceviri_metin, ...r }) {
   const dil = istekBaglam.getStore()?.dil || 'tr';
   if (ceviri_metin && r.kaynak_dil && r.kaynak_dil !== dil) {
     return { ...r, metin: ceviri_metin, orijinal_metin: r.metin,
       cevrildi: true, ceviri_var: false };
   }
-  return { ...r, cevrildi: false, ceviri_var: false };
+  return { ...r, cevrildi: false,
+    ceviri_var: !!(r.kaynak_dil && r.kaynak_dil !== dil
+      && String(r.metin || '').trim().length > 1) };
 }
 
 const akisSatiri = ({ guvenli, spoiler_isaret, ...ham }) => ({
@@ -2579,20 +2583,61 @@ app.post('/akis/goruldu', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // ---------- gönderi çevirisi ----------
-// Kullanıcı "Çevir"e basınca: metnin özetine bağlı hazır çeviri döner.
-// Çeviri YOKSA üretilmez (dış API yok) — 404 yerine {yok:true} ile temiz cevap.
-app.get('/ceviri/:yorumId', girisIsteğeBagli, sarici(async (req, res) => {
+// Hazır çeviri yoksa ANINDA üretilir: anahtarsız genel çeviri ucu. Sonuç
+// metin_cevirileri'ne yazılır, böylece aynı metin bir daha dışarı sorulmaz
+// (Instagram aktarımlarında aynı metin onlarca gönderide tekrar ediyor).
+// Başarısız olursa null döner; uç {yok:true} ile temiz cevap verir.
+const CEVIRI_UCU = 'https://translate.googleapis.com/translate_a/single';
+const CEVIRI_AZAMI = 4000; // uzun metinler ucu 413'e düşürüyor
+
+async function metniCevir(metin, hedefDil, kaynakDil) {
+  const kirp = String(metin || '').slice(0, CEVIRI_AZAMI);
+  if (kirp.trim().length < 2) return null;
+  const url = `${CEVIRI_UCU}?client=gtx&sl=${encodeURIComponent(kaynakDil || 'auto')}`
+    + `&tl=${encodeURIComponent(hedefDil)}&dt=t&q=${encodeURIComponent(kirp)}`;
+  try {
+    const cevap = await fetch(url, { signal: AbortSignal.timeout(12000) });
+    if (!cevap.ok) return null;
+    const veri = await cevap.json();
+    if (!Array.isArray(veri?.[0])) return null;
+    // [0] = cümle cümle [[çeviri, orijinal, ...], ...]
+    const sonuc = veri[0]
+      .map((p) => (Array.isArray(p) && typeof p[0] === 'string' ? p[0] : ''))
+      .join('');
+    return sonuc.trim() ? sonuc : null;
+  } catch {
+    return null; // ağ/zaman aşımı/blok → çeviri yok
+  }
+}
+
+// Dış çeviri ucunu koru: kullanıcı başına saatte 120 gönderi çevirisi.
+const ceviriLimiti = hizLimiti(120, (req) => `cv:${req.kullanici?.id || req.ip}`);
+
+app.get('/ceviri/:yorumId', girisIsteğeBagli, ceviriLimiti, sarici(async (req, res) => {
   const id = parseInt(req.params.yorumId, 10);
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
   const dil = String(req.query.dil || istekBaglam.getStore()?.dil || 'tr').toLowerCase();
+  if (!/^[a-z]{2,3}$/.test(dil)) return res.status(400).json({ hata: 'Geçersiz dil' });
   const { rows } = await havuz.query(
-    `SELECT c.metin FROM yorumlar y
-     JOIN metin_cevirileri c ON c.ozet = md5(btrim(y.metin)) AND c.dil = $2
-     WHERE y.id = $1`,
+    `SELECT btrim(y.metin) AS metin, y.kaynak_dil, md5(btrim(y.metin)) AS ozet,
+            (SELECT c.metin FROM metin_cevirileri c
+              WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri
+     FROM yorumlar y WHERE y.id = $1`,
     [id, dil],
   );
   if (!rows.length) return res.json({ yok: true });
-  res.json({ metin: rows[0].metin, dil });
+  const y = rows[0];
+  if (y.ceviri) return res.json({ metin: y.ceviri, dil });
+  // Zaten okuyanın dilindeyse çevirmeye gerek yok
+  if (!y.metin || y.kaynak_dil === dil) return res.json({ yok: true });
+  const ceviri = await metniCevir(y.metin, dil, y.kaynak_dil);
+  if (!ceviri) return res.json({ yok: true });
+  await havuz.query(
+    `INSERT INTO metin_cevirileri (ozet, dil, metin) VALUES ($1, $2, $3)
+     ON CONFLICT (ozet, dil) DO NOTHING`,
+    [y.ozet, dil, ceviri],
+  ).catch(() => {});
+  res.json({ metin: ceviri, dil });
 }));
 
 // Admin: çevrilmeyi bekleyen BENZERSİZ metinler (en çok görülenler önce).
@@ -3519,14 +3564,22 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     yorumlarGizli
       ? Promise.resolve({ rows: [] })
       : havuz.query(
-          `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.metin, y.medya,
+          // kullanici_id + begendim akış kartı (AkisKarti) için ZORUNLU:
+          // olmazsa kart "@null" yazar, kalp hep boş görünür ve kendi
+          // gönderinde "şikayet et" menüsü çıkar. kullanici_adi/avatar
+          // aşağıda profil sahibinden eklenir (hepsi aynı kişinin yorumu).
+          `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
+                  y.metin, y.medya,
                   y.goruntulenme, y.spoiler, y.tarih, y.kaynak_dil,
                   (SELECT c.metin FROM metin_cevirileri c
                      WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri_metin,
-                  (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
+                  (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
+                  (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
+                  EXISTS(SELECT 1 FROM yorum_begeniler b
+                         WHERE b.yorum_id=y.id AND b.kullanici_id=$3) AS begendim
            FROM yorumlar y WHERE y.kullanici_id=$1 ${gizliFiltre('y')}
            ORDER BY y.tarih DESC LIMIT 20`,
-          [id, istekBaglam.getStore()?.dil || 'tr']),
+          [id, istekBaglam.getStore()?.dil || 'tr', benId]),
     havuz.query(
       `SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var,
               EXISTS(SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2) AS engel`,
@@ -3597,7 +3650,13 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     rozetler: rozetler.filter((r) => r.kazanildi),
     listeler: listeler.rows,
     incelemeler: sonIncelemeler.rows,
-    yorumlar: yorumlar.rows.map(ceviriUygula),
+    // Kart yazarı gösterir: satırlar zaten YALNIZ bu profilin yorumları,
+    // o yüzden kullanıcı bilgisi JOIN yerine buradan eklenir.
+    yorumlar: yorumlar.rows.map((y) => ({
+      ...ceviriUygula(y),
+      kullanici_adi: k.rows[0].kullanici_adi,
+      avatar: k.rows[0].avatar,
+    })),
     icerikler,
     izlenenler: izlenenler.rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
   });

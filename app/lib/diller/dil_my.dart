@@ -419,6 +419,8 @@ const Map<String, String> cevirilerMy = {
   'Bağlantıyı kopyala': 'လင့်ခ်ကူးရန်',
   'Henüz kimseyi takip etmiyorsun.': 'သင်ဘယ်သူ့ကိုမှ မလိုက်ရသေးပါ။',
   'Çevir': 'ဘာသာပြန်',
+  'Çeviri şu an yapılamadı': 'ယခုအချိန်တွင် ဘာသာပြန်၍မရပါ',
+  'Bağlantı açılamadı': 'လင့်ခ်ကို ဖွင့်၍မရပါ',
   'Orijinali göster': 'မူရင်းပြရန်',
   'Çeviriyi göster': 'ဘာသာပြန်ကို ပြပါ',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':

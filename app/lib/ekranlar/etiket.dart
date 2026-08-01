@@ -4,8 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
+import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -20,10 +22,62 @@ final RegExp icerikEtiketDeseni = RegExp(
   r'\[\[(tv|movie|person):(\d{1,9})\|([^\]|]{1,80})\]\]',
 );
 
-/// Tek geçişte hem @kullanıcı hem [[tur:id|Ad]] etiketlerini yakalar.
-final RegExp _tumEtiketler = RegExp(
-  r'@([a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_])|\[\[(tv|movie|person):(\d{1,9})\|([^\]|]{1,80})\]\]',
+/// Metindeki bağlantı deseni: http(s):// ya da www. ile başlayan adresler.
+/// Instagram aktarımlarında gönderi metni bağlantı içeriyor ve düz yazı
+/// olarak duruyordu; artık dokunulunca dış tarayıcıda açılır.
+/// Büyük/küçük harf açık yazıldı: birleşik desen case-SENSITIVE kalmalı,
+/// yoksa @Kullanici gibi geçersiz adlar da etiket sanılır.
+final RegExp baglantiDeseni = RegExp(
+  r'(?:[Hh][Tt][Tt][Pp][Ss]?://|[Ww][Ww][Ww]\.)[^\s<>"]+',
 );
+
+/// Adres sonuna yapışan noktalama (cümle sonu, parantez) bağlantıya dahil
+/// edilmez: "bak www.a.com." → "www.a.com". Kapanan parantez ancak açılanı
+/// yoksa atılır (Wikipedia tarzı adreslerde parantez adresin parçası).
+String _baglantiyiKirp(String ham) {
+  var s = ham;
+  while (s.isNotEmpty) {
+    final son = s[s.length - 1];
+    if ('.,;:!?’\'"'.contains(son)) {
+      s = s.substring(0, s.length - 1);
+    } else if (son == ')' && !s.contains('(')) {
+      s = s.substring(0, s.length - 1);
+    } else {
+      break;
+    }
+  }
+  return s;
+}
+
+/// Tek geçişte bağlantı + @kullanıcı + [[tur:id|Ad]] etiketlerini yakalar.
+/// Bağlantı ÖNCE gelir ki adres içindeki noktalar kullanıcı adı sanılmasın.
+final RegExp _tumEtiketler = RegExp(
+  '(?<baglanti>${baglantiDeseni.pattern})'
+  r'|@(?<kadi>[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_])'
+  r'|\[\[(?<tur>tv|movie|person):(?<kimlik>\d{1,9})\|(?<ad>[^\]|]{1,80})\]\]',
+);
+
+/// Bağlantıyı dış tarayıcıda/uygulamada açar. Açılamazsa sessiz kalmaz.
+Future<void> baglantiyiAc(BuildContext context, String ham) async {
+  final adres = ham.startsWith('http') ? ham : 'https://$ham';
+  try {
+    final u = Uri.parse(adres);
+    if (await launchUrl(
+      u,
+      mode: LaunchMode.externalApplication,
+      webOnlyWindowName: '_blank',
+    )) {
+      return;
+    }
+  } catch (_) {
+    /* geçersiz adres ya da açacak uygulama yok */
+  }
+  if (context.mounted) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Bağlantı açılamadı'.c)));
+  }
+}
 
 IconData _turIkonu(String tur) => switch (tur) {
   'tv' => Icons.live_tv_outlined,
@@ -73,9 +127,14 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
     final taban =
         widget.stil ??
         DefaultTextStyle.of(context).style.copyWith(color: DiziRenkler.metin);
+    // TextSpan tema rengini DEVRALMAZ — renkler burada AÇIKÇA verilir.
     final etiketStili = TextStyle(
       color: widget.koyuZemin ? DiziRenkler.sari : DiziRenkler.sariMetin,
       fontWeight: FontWeight.w700,
+    );
+    final baglantiStili = etiketStili.copyWith(
+      decoration: TextDecoration.underline,
+      decorationColor: etiketStili.color,
     );
     final metin = widget.metin;
     final parcalar = <InlineSpan>[];
@@ -84,9 +143,27 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
       if (m.start > i) {
         parcalar.add(TextSpan(text: metin.substring(i, m.start)));
       }
-      if (m.group(1) != null) {
+      if (m.namedGroup('baglanti') != null) {
+        // http(s)://… veya www.… bağlantısı → dış tarayıcı
+        final adres = _baglantiyiKirp(m.namedGroup('baglanti')!);
+        if (adres.isEmpty) {
+          parcalar.add(TextSpan(text: m[0]));
+          i = m.end;
+          continue;
+        }
+        final taniyici = TapGestureRecognizer()
+          ..onTap = () => baglantiyiAc(context, adres);
+        _taniyicilar.add(taniyici);
+        parcalar.add(
+          TextSpan(text: adres, style: baglantiStili, recognizer: taniyici),
+        );
+        // Adrese yapışan noktalama düz metin olarak kalsın
+        i = m.start + adres.length;
+        continue;
+      }
+      if (m.namedGroup('kadi') != null) {
         // @kullanıcı etiketi
-        final ad = m.group(1)!;
+        final ad = m.namedGroup('kadi')!;
         final taniyici = TapGestureRecognizer()
           ..onTap = () => kullaniciyaGit(context, ad);
         _taniyicilar.add(taniyici);
@@ -95,9 +172,9 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
         );
       } else {
         // [[tur:id|Ad]] içerik/kişi etiketi
-        final tur = m.group(2)!;
-        final id = m.group(3)!;
-        final ad = m.group(4)!;
+        final tur = m.namedGroup('tur')!;
+        final id = m.namedGroup('kimlik')!;
+        final ad = m.namedGroup('ad')!;
         final yol = tur == 'person' ? '/kisi/$id' : '/icerik/$tur/$id';
         final taniyici = TapGestureRecognizer()
           ..onTap = () => GoRouter.of(context).push(yol);
