@@ -10,9 +10,9 @@ import '../onbellek.dart';
 import '../tema.dart';
 import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
+import 'akis.dart';
 import 'kesfet_akis.dart';
 import 'ortak.dart';
-import 'yorumlar.dart';
 import 'sosyal.dart';
 
 /// Dakikayı insancıl süreye çevirir: "1 yıl 2 ay 3 gün" (en anlamlı 3 birim).
@@ -1506,183 +1506,25 @@ class ProfilYorumAkisi extends StatelessWidget {
     }
     return Column(
       children: [
-        for (final y in yorumlar)
-          _ProfilYorumKarti(
-            yorum: y as Map<String, dynamic>,
-            icerik:
-                icerikler['${y['tur']}:${y['tmdb_id']}']
-                    as Map<String, dynamic>?,
-          ),
-      ],
-    );
-  }
-}
-
-class _ProfilYorumKarti extends StatefulWidget {
-  final Map<String, dynamic> yorum;
-  final Map<String, dynamic>? icerik;
-  const _ProfilYorumKarti({required this.yorum, this.icerik});
-
-  @override
-  State<_ProfilYorumKarti> createState() => _ProfilYorumKartiState();
-}
-
-class _ProfilYorumKartiState extends State<_ProfilYorumKarti> {
-  late bool _begendim = widget.yorum['begendim'] == true;
-  late int _begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
-  bool _islemde = false;
-
-  Future<void> _begen() async {
-    if (_islemde) return;
-    setState(() {
-      _islemde = true;
-      _begendim = !_begendim;
-      _begeni += _begendim ? 1 : -1; // iyimser: hata olursa geri alınır
-    });
-    try {
-      final d = await Api.post('/yorumlar/${widget.yorum['id']}/begen', {});
-      if (!mounted) return;
-      setState(() {
-        _begendim = d['begendim'] as bool;
-        _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _begendim = !_begendim;
-        _begeni += _begendim ? 1 : -1;
-      });
-    } finally {
-      if (mounted) setState(() => _islemde = false);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final y = widget.yorum;
-    final ad = widget.icerik?['ad'] as String? ?? '';
-    final poster = posterUrl(
-      widget.icerik?['poster'] as String?,
-      boyut: 'w185',
-    );
-    final bolumlu = y['sezon'] != null;
-    final yol = '/icerik/${y['tur']}/${y['tmdb_id']}';
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Hangi içeriğe yazıldığı: dokununca içerik sayfası
-            InkWell(
-              onTap: () => context.push(yol),
-              child: Row(
-                children: [
-                  if (poster != null)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(4),
-                      child: CachedNetworkImage(
-                        imageUrl: poster,
-                        width: 30,
-                        height: 44,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      '$ad${bolumlu ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: DiziRenkler.sariMetin,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                ],
+        for (var i = 0; i < yorumlar.length; i++)
+          AkisKarti(
+            key: ValueKey((yorumlar[i] as Map<String, dynamic>)['id']),
+            yorum: yorumlar[i] as Map<String, dynamic>,
+            icerikler: icerikler,
+            // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
+            // kareden başlar ve listede kaydırmaya devam edilir.
+            onMedyaAc: (mi) => Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (_) => ReelsGorunumu(
+                  liste: yorumlar,
+                  icerikler: icerikler,
+                  baslangic: i,
+                  medyaBaslangic: mi,
+                ),
               ),
             ),
-            const SizedBox(height: 8),
-            SpoilerMetin(
-              y['metin'] as String? ?? '',
-              spoiler: y['spoiler'] == true,
-              stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
-            ),
-            if ((y['medya'] as List<dynamic>? ?? []).isNotEmpty) ...[
-              const SizedBox(height: 10),
-              MedyaGaleri(yollar: (y['medya'] as List<dynamic>).cast<String>()),
-            ],
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                InkWell(
-                  onTap: _begen,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _begendim ? Icons.favorite : Icons.favorite_border,
-                          size: 16,
-                          color: _begendim
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.metin38,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$_begeni',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _begendim
-                                ? DiziRenkler.sariMetin
-                                : DiziRenkler.metin38,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // Aynı sheet Reels'te de kullanılıyor: yanıtlar tek kaynak.
-                InkWell(
-                  onTap: () => yanitlariAc(context, y),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.mode_comment_outlined,
-                          size: 16,
-                          color: DiziRenkler.metin38,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Yorum yap'.c,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: DiziRenkler.metin38,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          ),
+      ],
     );
   }
 }

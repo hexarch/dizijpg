@@ -25,12 +25,16 @@ class MedyaGaleri extends StatelessWidget {
   /// görüntüleyici (medyaGoster) açılır. Akış bunu Reels açmak için kullanır.
   final void Function(int index)? onAc;
 
+  /// Çift dokunuş = beğeni; akış kartından geçilir.
+  final VoidCallback? onCiftDokunus;
+
   /// Akışta: videolar kapak yerine yerinde (sessiz) oynar.
   final bool otomatikOynat;
   const MedyaGaleri({
     super.key,
     required this.yollar,
     this.onAc,
+    this.onCiftDokunus,
     this.otomatikOynat = false,
   });
 
@@ -43,7 +47,11 @@ class MedyaGaleri extends StatelessWidget {
     // Akış: TAM GENİŞLİK kaydırmalı görüntüleyici (ilk medya önce, yana
     // kaydırınca sonraki) — ızgara/kırpma yok, yükseklik postun kendi oranı.
     if (otomatikOynat) {
-      return AkisMedya(urller: urller, onAc: onAc);
+      return AkisMedya(
+        urller: urller,
+        onAc: onAc,
+        onCiftDokunus: onCiftDokunus,
+      );
     }
     Widget hucre(int i) {
       final video = _video(yollar[i]);
@@ -159,7 +167,16 @@ class MedyaGaleri extends StatelessWidget {
 class AkisMedya extends StatefulWidget {
   final List<String> urller;
   final void Function(int index)? onAc;
-  const AkisMedya({super.key, required this.urller, this.onAc});
+
+  /// Çift dokunuş = beğeni (Instagram davranışı). Verilmezse çift dokunuş
+  /// tek dokunuş gibi davranır ve gönderi açılırdı — kullanıcı bildirdi.
+  final VoidCallback? onCiftDokunus;
+  const AkisMedya({
+    super.key,
+    required this.urller,
+    this.onAc,
+    this.onCiftDokunus,
+  });
 
   @override
   State<AkisMedya> createState() => _AkisMedyaState();
@@ -220,6 +237,7 @@ class _AkisMedyaState extends State<AkisMedya> {
                 onTap: () => widget.onAc != null
                     ? widget.onAc!(i)
                     : medyaGoster(context, widget.urller, baslangic: i),
+                onDoubleTap: widget.onCiftDokunus,
                 child: _video(url)
                     ? AkisVideo(
                         url: url,

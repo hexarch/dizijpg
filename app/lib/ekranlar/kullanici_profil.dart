@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'akis.dart';
+import 'kesfet_akis.dart';
 import 'ortak.dart';
 import 'profil.dart' show sureBicimle, RozetCipi, EtkilesimSatiri;
 import 'sosyal.dart';
@@ -490,11 +492,30 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             style: TextStyle(color: DiziRenkler.metin38),
                           ),
                         ),
-                      for (final y in yorumlar)
-                        ProfilYorumKarti(
-                          yorum: y as Map<String, dynamic>,
+                      // Kendi profilimizle AYNI akış kartı: görüntülenme,
+                      // çift dokunuş = beğeni, medyaya dokununca Reels.
+                      for (var i = 0; i < yorumlar.length; i++)
+                        AkisKarti(
+                          key: ValueKey(
+                            (yorumlar[i] as Map<String, dynamic>)['id'],
+                          ),
+                          yorum: yorumlar[i] as Map<String, dynamic>,
                           icerikler:
                               p['icerikler'] as Map<String, dynamic>? ?? {},
+                          onMedyaAc: (mi) =>
+                              Navigator.of(context, rootNavigator: true).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ReelsGorunumu(
+                                    liste: yorumlar,
+                                    icerikler:
+                                        p['icerikler']
+                                            as Map<String, dynamic>? ??
+                                        {},
+                                    baslangic: i,
+                                    medyaBaslangic: mi,
+                                  ),
+                                ),
+                              ),
                         ),
                     ],
                   ],

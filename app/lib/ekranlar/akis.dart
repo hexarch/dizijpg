@@ -291,7 +291,7 @@ class _AkisEkraniState extends State<AkisEkrani>
                       _kartGorundu(y['id'] as int);
                     }
                   },
-                  child: _AkisKarti(
+                  child: AkisKarti(
                     key: ValueKey(y['id']),
                     yorum: y,
                     icerikler: _icerikler,
@@ -583,14 +583,14 @@ class _AramaSatiri extends StatelessWidget {
   }
 }
 
-class _AkisKarti extends StatefulWidget {
+class AkisKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
 
   /// Medyaya dokununca Reels aç — parametre DOKUNULAN medyanın sırası.
   final void Function(int medyaIndeks)? onMedyaAc;
 
-  const _AkisKarti({
+  const AkisKarti({
     super.key,
     required this.yorum,
     required this.icerikler,
@@ -598,10 +598,10 @@ class _AkisKarti extends StatefulWidget {
   });
 
   @override
-  State<_AkisKarti> createState() => _AkisKartiState();
+  State<AkisKarti> createState() => _AkisKartiState();
 }
 
-class _AkisKartiState extends State<_AkisKarti> {
+class _AkisKartiState extends State<AkisKarti> {
   late bool _begendim = widget.yorum['begendim'] == true;
   // spoiler=true gelen kart dokunulana dek bulanık başlar
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
@@ -609,7 +609,7 @@ class _AkisKartiState extends State<_AkisKarti> {
   bool _isleniyor = false;
 
   @override
-  void didUpdateWidget(_AkisKarti eski) {
+  void didUpdateWidget(AkisKarti eski) {
     super.didUpdateWidget(eski);
     // Yenilemeden sonra (ValueKey ile State yeniden kullanılır) beğeni
     // durumunu sunucudan gelen taze veriyle eşitle — işlem sürerken dokunma.
@@ -801,6 +801,9 @@ class _AkisKartiState extends State<_AkisKarti> {
               MedyaGaleri(
                 yollar: medya.cast<String>(),
                 onAc: (mi) => widget.onMedyaAc?.call(mi),
+                // Çift dokunuş beğenir; eskiden onTap iki kez tetiklenip
+                // gönderiyi Reels'te açıyordu (kullanıcı bildirdi).
+                onCiftDokunus: _begen,
                 otomatikOynat: true,
               ),
             ],
