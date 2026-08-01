@@ -349,7 +349,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       ),
                       const SizedBox(height: 8),
                       SizedBox(
-                        height: 190,
+                        height: 208,
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
