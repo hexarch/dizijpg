@@ -177,6 +177,36 @@ düzgün çalışıyor."
   → **45 dil × 381 anahtar** senkron. Doğrulandı: EN arayüz→İngilizce metin,
   TR arayüz→Türkçe, DE (çeviri yok)→Türkçe'ye düşüyor, thelostvibe0'ın
   İngilizce gönderileri TR arayüzde Türkçe geliyor.
+- 🚀 **Parti 4+5 (2026-08-01 akşam): +100 ve +1000 → AI toplam 2400 yorum.**
+  Dizi havuzu 500 oyda tükendiği için dizi eşiği 200'e çekildi (film 500'de
+  kaldı). `ai_yorumlar.json` 2400 kayıt, 2400 benzersiz metin, 2400 EN çevirisi.
+  2064 yorumda tam 10 farklı kare; 63'ünde 5'ten az (TMDB'de o kadar backdrop
+  yok). Medya 5.3G, disk %56.
+- 🚀 **TEKRAR SÜZGECİ ARTIK TOHUMLAMANIN İÇİNDE (kök çözüm).** Önceki çözüm
+  tohumlamadan SONRA çalışan ayrı bir adımdı, dolayısıyla her yeni parti sorunu
+  geri getiriyordu (ölçüldü: yeni 40 yorumun 18'inde tekrar). Artık
+  `ai_tohum.js` kareleri indirirken dHash'liyor (**ffmpeg KONTEYNERDE ZATEN
+  KURULU** — Dockerfile'da video küçük resmi için var; host'a çıkmaya gerek
+  yokmuş), eşiğin altındaki kare daha kaydedilmeden siliniyor ve yerine bir
+  sonraki aday indiriliyor. Aday havuzu hedefin 3 katı. Mevcut yorumlar da her
+  koşuda denetlenip onarılıyor. Doğrulama: rastgele 120 yorumda 0 tekrar.
+  `ai_kare_tazele.js` + `ai_kare_dhash.sh` artık gereksiz (duruyor, referans).
+- 🐛 **Tohum hedefleme hatası düzeltildi:** betik yorumu yalnız tür+tmdb_id ile
+  arıyordu; AI hesabının aynı yapımdaki BAŞKA gönderisini (Instagram'dan
+  aktarılan) kendi tanıtım yorumu sanıp medyasını bozdu. Artık `btrim(metin)`
+  de eşleşiyor.
+- 🚀 **Instagram → dizi.jpg köprüsü (`araclar/insta_kopru.mjs`).** dizi.jpg
+  sohbetinden @dizi.jpg.ai'a Instagram bağlantısı + dizi/film kartı yollarsın;
+  betik gönderiyi indirip AI hesabından paylaşır ve "Paylaşıldı" yanıtı döner.
+  Kart linkten SONRA gelirse de eşleşir (bekleyen link tutulur). Metin:
+  kullanıcının notu (yoksa IG açıklaması) + `Instagram: @yaratici` atfı.
+  **BU MAKİNEDE çalışmalı** — Instagram veri merkezi IP'lerini engelliyor.
+  instaloader'ın tek-gönderi ucu Instagram tarafından kırılmış; indirmeyi
+  **gallery-dl** yapıyor ama instaloader oturumunun çerezleri ona aktarılıyor
+  (`~/.config/dizijpg/ig_cookies.txt`, her turda tazelenir). Yalnız `alcelik`
+  yetkili (IZINLILER env). Şifre: `~/.config/dizijpg/ai_sifre`.
+  `?img_index=N` YOK SAYILIR (sadece linki kopyalarken açık olan karo) →
+  karuselin tamamı paylaşılır. Bunun için **POST /yorumlar medya sınırı 4→10**.
 - 🚀 **Sunucu diski büyütüldü:** sağlayıcının eklediği yeni 32G disk (sdb)
   LVM'e katıldı (pvcreate+vgextend+lvextend -r) → kök bölüm 48G→**80G** (39G boş),
   kesintisiz. Not: kullanıcının panelde verdiği 136G'nin tamamı görünmüyor;
