@@ -196,10 +196,14 @@ async function ana() {
   for (let i = 0; i < sirali.length; i++) {
     const v = sirali[i];
     try {
+      // METİN de eşleşmeli: AI hesabı aynı yapıma başka gönderiler de
+      // yapabiliyor (ör. Instagram'dan aktarılanlar). Yalnız tür+tmdb_id ile
+      // arayınca betik onları kendi tanıtım yorumu sanıp medyasını bozuyordu.
       const mevcut = await havuz.query(
         `SELECT id, medya FROM yorumlar
-         WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL`,
-        [aiId, v.tur, v.tmdb_id]);
+         WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL
+           AND btrim(metin) = btrim($4)`,
+        [aiId, v.tur, v.tmdb_id, v.tr]);
       if (mevcut.rows.length) {
         // Var olan yorum: önce KENDİ kareleri tekrar açısından denetlenir
         // (eski koşularda tekrar süzgeci yoktu), sonra eksik kalan sayı

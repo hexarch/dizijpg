@@ -39,7 +39,7 @@ const GECICI = path.join(os.tmpdir(), 'insta_kopru');
 // Sondaki eğik çizgi ve ?igsh=... gibi ekler de yutulur; yoksa metinde
 // bağlantıdan artakalan çöp kalıyor.
 const IG_DESEN = /https?:\/\/(?:www\.)?instagram\.com\/(?:p|reel|tv)\/([A-Za-z0-9_-]+)\/?(?:\?\S*)?/i;
-const EN_FAZLA_MEDYA = 4; // sunucu sınırı: gönderi başına 4 medya
+const EN_FAZLA_MEDYA = 10; // sunucu sınırı: gönderi başına 10 medya
 
 function sifreOku() {
   if (process.env.AI_SIFRE) return process.env.AI_SIFRE;
@@ -93,15 +93,15 @@ async function api(yol, { yontem = 'GET', token, govde, ham, tip } = {}) {
 }
 
 // Instagram gönderisini indirir → { dosyalar, yaratici, aciklama }
-// [sira] verilirse (bağlantıdaki ?img_index=N) çoklu gönderiden YALNIZ o
-// karo indirilir — kullanıcı hangi fotoğrafı gösterdiyse o paylaşılsın.
-function instaIndir(kisaKod, sira = null) {
+// Çoklu (karusel) gönderide TÜM karolar iner (sunucu sınırına kadar).
+// Bağlantıdaki ?img_index=N yalnızca linki kopyalarken açık olan karoyu
+// gösterir, "sadece bunu istiyorum" demek DEĞİLDİR — bu yüzden yok sayılır.
+function instaIndir(kisaKod) {
   const hedef = path.join(GECICI, kisaKod);
   fs.rmSync(hedef, { recursive: true, force: true });
   fs.mkdirSync(hedef, { recursive: true });
   const s = spawnSync('gallery-dl', [
     '--cookies', CEREZ_DOSYA, '-D', hedef, '--no-part', '--write-metadata',
-    ...(sira ? ['--range', String(sira)] : []),
     `https://www.instagram.com/p/${kisaKod}/`,
   ], { encoding: 'utf8' });
   const dosyalar = fs.existsSync(hedef)
@@ -164,9 +164,8 @@ async function tur() {
   async function paylas(partner, m, hedef) {
     const eslesme = (m.metin || '').match(IG_DESEN);
     const kisaKod = eslesme[1];
-    const sira = (m.metin.match(/[?&]img_index=(\d+)/) || [])[1] || null;
     try {
-      const g = instaIndir(kisaKod, sira);
+      const g = instaIndir(kisaKod);
       const yollar = [];
       for (const d of g.dosyalar) yollar.push(await medyaYukle(token, path.join(g.dizin, d)));
       await api('/yorumlar', { yontem: 'POST', token, govde: {

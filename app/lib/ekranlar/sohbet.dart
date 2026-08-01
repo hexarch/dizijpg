@@ -357,6 +357,45 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     }
   }
 
+  /// Yazma kutusunun içindeki kompakt eylem ikonu (foto / içerik / ses /
+  /// gönder). IconButton'un 48px dokunma alanı kutuyu şişirdiği için
+  /// InkWell + sıkı padding kullanılır; hedef yine ~36px kalır.
+  Widget _kutuIkonu({
+    required String ipucu,
+    required IconData ikon,
+    required VoidCallback onTap,
+    bool kapali = false,
+    bool yukleniyor = false,
+    bool vurgulu = false,
+  }) {
+    return Tooltip(
+      message: ipucu,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: kapali ? null : onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(7),
+          child: yukleniyor
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: DiziRenkler.sari,
+                  ),
+                )
+              : Icon(
+                  ikon,
+                  size: 22,
+                  color: kapali
+                      ? DiziRenkler.metin24
+                      : (vurgulu ? DiziRenkler.sari : DiziRenkler.sariMetin),
+                ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _gonder({
     String? metin,
     String? medya,
@@ -455,7 +494,9 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
         throw ApiHata('Dosya en fazla 30MB olabilir'.c);
       }
       final d = await Api.medyaYukle(veri);
-      await _gonder(medya: d['yol'] as String);
+      // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince
+      // kutudaki yazı sessizce kayboluyordu.
+      await _gonder(medya: d['yol'] as String, metin: _metin.text.trim());
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
@@ -476,7 +517,13 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     );
     if (secilen == null) return;
     final tur = (secilen['media_type'] as String?) ?? 'tv';
-    await _gonder(icerikTur: tur, icerikId: (secilen['id'] as num).toInt());
+    // Dizi/film kartıyla birlikte yazılmış metin de gönderilir
+    // (kullanıcı bildirdi: kart gidiyor, mesaj kayboluyordu).
+    await _gonder(
+      icerikTur: tur,
+      icerikId: (secilen['id'] as num).toInt(),
+      metin: _metin.text.trim(),
+    );
   }
 
   @override
@@ -665,42 +712,8 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                       : Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            // Fotoğraf / GIF (düzenleme modunda kapalı — düzenleme yalnız metin)
-                            IconButton(
-                              tooltip: 'Fotoğraf / video ekle'.c,
-                              onPressed:
-                                  (_ekYukleniyor || _duzenlenenId != null)
-                                  ? null
-                                  : _fotoGonder,
-                              icon: _ekYukleniyor
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: DiziRenkler.sari,
-                                      ),
-                                    )
-                                  : Icon(
-                                      Icons.add_photo_alternate_outlined,
-                                      color: _duzenlenenId != null
-                                          ? DiziRenkler.metin24
-                                          : DiziRenkler.sariMetin,
-                                    ),
-                            ),
-                            // Dizi/film kartı paylaş (düzenleme modunda kapalı)
-                            IconButton(
-                              tooltip: 'İçerik paylaş'.c,
-                              onPressed: _duzenlenenId != null
-                                  ? null
-                                  : _icerikPaylas,
-                              icon: Icon(
-                                Icons.local_movies_outlined,
-                                color: _duzenlenenId != null
-                                    ? DiziRenkler.metin24
-                                    : DiziRenkler.sariMetin,
-                              ),
-                            ),
+                            // Dört eylem de kutunun İÇİNDE (suffixIcon):
+                            // metin alanı boydan boya, ikonlar küçük.
                             Expanded(
                               child: TextField(
                                 controller: _metin,
@@ -719,36 +732,62 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                                     _gonder(metin: _metin.text.trim()),
                                 decoration: InputDecoration(
                                   hintText: 'Mesajını yaz...'.c,
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.fromLTRB(
+                                    14,
+                                    10,
+                                    4,
+                                    10,
+                                  ),
+                                  suffixIconConstraints: const BoxConstraints(
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                  ),
+                                  suffixIcon: Padding(
+                                    padding: const EdgeInsets.only(right: 6),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        _kutuIkonu(
+                                          ipucu: 'Fotoğraf / video ekle'.c,
+                                          ikon: Icons
+                                              .add_photo_alternate_outlined,
+                                          kapali:
+                                              _ekYukleniyor ||
+                                              _duzenlenenId != null,
+                                          yukleniyor: _ekYukleniyor,
+                                          onTap: _fotoGonder,
+                                        ),
+                                        _kutuIkonu(
+                                          ipucu: 'İçerik paylaş'.c,
+                                          ikon: Icons.local_movies_outlined,
+                                          kapali: _duzenlenenId != null,
+                                          onTap: _icerikPaylas,
+                                        ),
+                                        if (!kIsWeb)
+                                          _kutuIkonu(
+                                            ipucu: 'Sesli mesaj'.c,
+                                            ikon: Icons.mic_none,
+                                            kapali:
+                                                _ekYukleniyor ||
+                                                _duzenlenenId != null,
+                                            onTap: _kayitBasla,
+                                          ),
+                                        _kutuIkonu(
+                                          ipucu: 'Gönder'.c,
+                                          ikon: Icons.send,
+                                          kapali:
+                                              _gonderiliyor || _ekYukleniyor,
+                                          vurgulu: true,
+                                          onTap: () => _gonder(
+                                            metin: _metin.text.trim(),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                            // Sesli mesaj kaydı (web'de yok; düzenlemede kapalı)
-                            if (!kIsWeb)
-                              IconButton(
-                                tooltip: 'Sesli mesaj'.c,
-                                onPressed:
-                                    (_ekYukleniyor || _duzenlenenId != null)
-                                    ? null
-                                    : _kayitBasla,
-                                icon: Icon(
-                                  Icons.mic_none,
-                                  color: _duzenlenenId != null
-                                      ? DiziRenkler.metin24
-                                      : DiziRenkler.sariMetin,
-                                ),
-                              ),
-                            const SizedBox(width: 2),
-                            IconButton.filled(
-                              tooltip: 'Gönder'.c,
-                              // Yükleme sürerken gönderilemez (medyasız giderdi)
-                              onPressed: _gonderiliyor || _ekYukleniyor
-                                  ? null
-                                  : () => _gonder(metin: _metin.text.trim()),
-                              style: IconButton.styleFrom(
-                                backgroundColor: DiziRenkler.sari,
-                                foregroundColor: Colors.black,
-                              ),
-                              icon: const Icon(Icons.send),
                             ),
                           ],
                         ),

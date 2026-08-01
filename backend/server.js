@@ -3206,8 +3206,10 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   if (!temiz || temiz.length > 1000) {
     return res.status(400).json({ hata: 'Yorum 1-1000 karakter olmalı' });
   }
-  if (!Array.isArray(medya) || medya.length > 4) {
-    return res.status(400).json({ hata: 'En fazla 4 medya eklenebilir' });
+  // 10: AI tanıtım gönderileri ve Instagram'dan aktarılan çoklu karolar zaten
+  // 10 kareye kadar çıkıyor; galeri/Reels bileşenleri sayıya bağlı değil.
+  if (!Array.isArray(medya) || medya.length > 10) {
+    return res.status(400).json({ hata: 'En fazla 10 medya eklenebilir' });
   }
   for (const m of medya) {
     // Yalnızca bu kullanıcının yüklediği, bizim ürettiğimiz adlar kabul edilir.
