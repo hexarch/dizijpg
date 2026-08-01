@@ -15,6 +15,10 @@ class KabukEkrani extends StatelessWidget {
     return Scaffold(
       body: shell,
       bottomNavigationBar: NavigationBar(
+        // Etiketler gizli: beş ikon (ev, takvim, akış, pusula, kişi) zaten
+        // tanıdık; yazılar çubuğu yükseltip içerik alanını daraltıyordu.
+        // label'lar SİLİNMEDİ — erişilebilirlik (TalkBack) onları okuyor.
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         selectedIndex: shell.currentIndex,
         onDestinationSelected: (i) {
           if (i == 4) profilYenileTetik.value++;

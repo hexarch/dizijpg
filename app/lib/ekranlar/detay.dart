@@ -368,7 +368,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
         .map((g) => g['name'])
         .take(3)
         .join(' · ');
-    final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w780');
+    // w780 idi: 3x yoğunluklu telefonda bu alan ~1290 fiziksel piksel,
+    // görsel büyütülüp gözle görülür bulanıklaşıyordu. w1280 tam oturuyor;
+    // "original" birkaç MB olabildiği için tercih edilmedi.
+    final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w1280');
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
     final oneriler =
         ((c['recommendations']?['results'] as List<dynamic>?) ?? []);
