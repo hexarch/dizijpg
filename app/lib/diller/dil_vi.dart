@@ -412,6 +412,7 @@ const Map<String, String> cevirilerVi = {
   'Henüz kimseyi takip etmiyorsun.': 'Bạn chưa theo dõi ai.',
   'Çevir': 'Dịch',
   'Orijinali göster': 'Xem bản gốc',
+  'Çeviriyi göster': 'Xem bản dịch',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Tháng này chưa có tập nào được công bố ngày phát sóng. Ngày thường được công bố trước vài tuần và sẽ hiện ở đây.',
   'devamı': 'thêm',

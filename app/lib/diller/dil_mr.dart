@@ -411,6 +411,7 @@ const Map<String, String> cevirilerMr = {
   'Henüz kimseyi takip etmiyorsun.': 'तू अजून कुणालाही फॉलो करत नाहीस.',
   'Çevir': 'भाषांतर करा',
   'Orijinali göster': 'मूळ दाखवा',
+  'Çeviriyi göster': 'भाषांतर दाखवा',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'या महिन्यात प्रसारण तारीख जाहीर झालेला कोणताही भाग नाही. तारखा साधारणतः काही आठवडे आधी जाहीर होतात आणि नंतर इथे दिसतील.',
   'devamı': 'अधिक',

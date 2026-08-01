@@ -411,6 +411,7 @@ const Map<String, String> cevirilerUr = {
   'Henüz kimseyi takip etmiyorsun.': 'ابھی تم کسی کو فالو نہیں کرتے۔',
   'Çevir': 'ترجمہ کریں',
   'Orijinali göster': 'اصل دکھائیں',
+  'Çeviriyi göster': 'ترجمہ دکھائیں',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'اس مہینے نشریات کی اعلان کردہ تاریخ والی کوئی قسط نہیں۔ تاریخیں عموماً چند ہفتے پہلے بتائی جاتی ہیں اور پھر یہاں نظر آئیں گی۔',
   'devamı': 'مزید',

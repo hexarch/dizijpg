@@ -147,6 +147,36 @@ düzgün çalışıyor."
 - 🚀 **ai_tohum.js iyileştirmesi:** bir yapımın kareleri artık PARALEL iniyor
   (10.000 görsel seri inseydi saatler sürerdi); inemeyen kare atlanır, yorum
   yine de girer.
+- 🚀 **Tekrar eden kareler temizlendi (2026-08-01).** Şikâyet: "çok fazla aynı
+  fotoğraf". Kök neden: TMDB aynı görseli farklı kırpım/renk varyantlarıyla
+  AYRI backdrop olarak sunuyor; dosyalar byte olarak farklı olduğu için md5 ile
+  yakalanmıyor (12.795 görselde yalnız 1 birebir çift). Çözüm: **ffmpeg ile
+  dHash** (9x8 gri → komşu piksel karşılaştırması → 64 bit), yorum içinde
+  Hamming mesafesi ≤ eşik olanlar tekrar sayılır. **Eşik gözle kalibre edildi:**
+  0/8/10/11 → aynı görselin varyantı, **12 → farklı görseller** (Schindler'de iki
+  ayrı afiş), 17 → tamamen farklı sahne. Bir basamak emniyetle **eşik 10**.
+  Sonuç: 791 tekrar kare silindi (558 yorum), ardından TMDB'nin KULLANILMAMIŞ
+  karelerinden 1371 aday indirilip tekrar süzgecinden geçirildi → +659 kare
+  eklendi (493 yorum), 712 aday tekrar çıktığı için atıldı.
+  **Son durum: 1179 yorumda tam 10 farklı kare** (kalan 121'de TMDB'de zaten
+  10 ayrı backdrop yok). Araç: `backend/ai_kare_tazele.js` (+ `ai_kare_dhash.sh`)
+  — 3 adımlı akış dosya başında yazılı (aday → dhash → yerlestir), çünkü ffmpeg
+  konteynerde değil HOST'ta. Farklı yapımlar arasında ortak görsel yalnız 8 tane
+  (seri filmlerin paylaştığı afişler) — dokunulmadı.
+- 🚀 **Gönderiler artık OKUYANIN dilinde (2026-08-01).** Önceden çeviri hazır olsa
+  bile kullanıcı "Çevir" düğmesine basmak zorundaydı. Artık sunucu, isteğin
+  diline (X-Dil) hazır çeviri varsa ve gönderi zaten o dilde değilse `metin`
+  alanına ÇEVİRİYİ koyuyor; orijinal `orijinal_metin`de, bayrak `cevrildi:true`.
+  Sunucu tarafında olduğu için **eski APK'lardaki kullanıcılar bile güncelleme
+  beklemeden kendi dilinde okuyor**. Uygulanan uçlar: `/yorumlar`, `/yorum/:id`,
+  `/akis`, `/kesfet-akis` (akisSatiri), `/profil` (profil yorumlarına çeviri
+  desteği YENİ eklendi). Yardımcı: server.js `ceviriUygula()`.
+  App: `CeviriliMetin` artık `cevrildi`/`orijinalMetin` alıyor → düğme
+  "Orijinali göster" ↔ "Çeviriyi göster" olarak çalışıyor (çeviri hazır ama
+  sunucu uygulamadıysa eski "Çevir" davranışı korunuyor). Çeviri: +1 anahtar
+  → **45 dil × 381 anahtar** senkron. Doğrulandı: EN arayüz→İngilizce metin,
+  TR arayüz→Türkçe, DE (çeviri yok)→Türkçe'ye düşüyor, thelostvibe0'ın
+  İngilizce gönderileri TR arayüzde Türkçe geliyor.
 - 🚀 **Sunucu diski büyütüldü:** sağlayıcının eklediği yeni 32G disk (sdb)
   LVM'e katıldı (pvcreate+vgextend+lvextend -r) → kök bölüm 48G→**80G** (39G boş),
   kesintisiz. Not: kullanıcının panelde verdiği 136G'nin tamamı görünmüyor;

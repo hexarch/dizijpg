@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -30,8 +31,35 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   Map<String, dynamic> _icerikler = {};
   String? _hata;
 
+  /// Ekranda görünen VİDEOLU karoların sırası (görünme anına göre).
+  final List<int> _gorunurVideolar = [];
+
+  /// Aynı anda oynayan karo sayısı. İkiden fazlası hem veri hem pil yakar.
+  static const _esZamanliOynatma = 2;
+
   @override
   bool get wantKeepAlive => true;
+
+  bool _videoluMu(int i) =>
+      (_liste?[i] as Map<String, dynamic>?)?['videolu'] == true;
+
+  /// Karo görünürlüğü değişince oynayacak ikiliyi yeniden belirler.
+  void _gorunurlukDegisti(int i, bool gorunur) {
+    if (!_videoluMu(i)) return;
+    final vardi = _gorunurVideolar.contains(i);
+    if (gorunur == vardi) return;
+    setState(() {
+      if (gorunur) {
+        _gorunurVideolar.add(i);
+      } else {
+        _gorunurVideolar.remove(i);
+      }
+    });
+  }
+
+  /// İlk gören ilk oynar: listedeki ilk iki görünür video.
+  bool _oynasinMi(int i) =>
+      _gorunurVideolar.take(_esZamanliOynatma).contains(i);
 
   @override
   void initState() {
@@ -109,6 +137,8 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
             yorum: _liste![i] as Map<String, dynamic>,
             icerikler: _icerikler,
             onTap: () => _ac(i),
+            oynat: _oynasinMi(i),
+            onGorunurluk: (gorunur) => _gorunurlukDegisti(i, gorunur),
           ),
         ),
       );
@@ -120,75 +150,199 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   }
 }
 
-/// Izgara karosu: medya varsa görsel (videoda oynatma rozeti), yoksa
-/// içerik posteri + yorum metni.
-class _KesfetKutusu extends StatelessWidget {
+/// Izgara karosu.
+///
+/// Video gönderilerinde İÇERİK POSTERİ değil, videonun kendi karesi gösterilir
+/// (sunucu yüklemede `<yol>.jpg` üretir). Böylece ızgara resim gösterir;
+/// onlarca video çözücü açılmaz. [oynat] verilen karo — ekranda aynı anda en
+/// fazla iki tanesi — sessiz ve döngüsel olarak gerçekten oynar.
+class _KesfetKutusu extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
   final VoidCallback onTap;
+  final bool oynat;
+
+  /// Karo ekranda görünür hale gelince/çıkınca haber verir (ebeveyn hangi
+  /// videoların oynayacağını buna göre seçer).
+  final void Function(bool gorunur) onGorunurluk;
+
   const _KesfetKutusu({
     required this.yorum,
     required this.icerikler,
     required this.onTap,
+    required this.oynat,
+    required this.onGorunurluk,
   });
 
   @override
+  State<_KesfetKutusu> createState() => _KesfetKutusuState();
+}
+
+class _KesfetKutusuState extends State<_KesfetKutusu> {
+  VideoPlayerController? _d;
+
+  static bool _videoMu(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
+
+  List<String> get _medya =>
+      (widget.yorum['medya'] as List<dynamic>? ?? []).cast<String>();
+
+  String? get _ilkVideo {
+    for (final m in _medya) {
+      if (_videoMu(m)) return m;
+    }
+    return null;
+  }
+
+  @override
+  void didUpdateWidget(_KesfetKutusu eski) {
+    super.didUpdateWidget(eski);
+    if (widget.oynat != eski.oynat) {
+      widget.oynat ? _oynatmayiKur() : _oynatmayiBirak();
+    }
+  }
+
+  Future<void> _oynatmayiKur() async {
+    final v = _ilkVideo;
+    if (v == null || _d != null) return;
+    final d = VideoPlayerController.networkUrl(Uri.parse(dosyaUrl(v)!));
+    _d = d;
+    try {
+      await d.initialize();
+      if (!mounted || !widget.oynat) return _oynatmayiBirak();
+      await d.setVolume(0); // ızgarada ses ASLA çalmaz
+      await d.setLooping(true);
+      await d.play();
+      if (mounted) setState(() {});
+    } catch (_) {
+      _oynatmayiBirak(); // ağ/kodek hatası: sessizce kapağa düşer
+    }
+  }
+
+  void _oynatmayiBirak() {
+    final d = _d;
+    _d = null;
+    d?.dispose();
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _d?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
-    final videolu = yorum['videolu'] == true;
-    final spoiler = yorum['spoiler'] == true;
+    final medya = _medya;
+    final videolu = widget.yorum['videolu'] == true;
+    final spoiler = widget.yorum['spoiler'] == true;
     final icerik =
-        icerikler['${yorum['tur']}:${yorum['tmdb_id']}']
+        widget.icerikler['${widget.yorum['tur']}:${widget.yorum['tmdb_id']}']
             as Map<String, dynamic>? ??
         const {'ad': '?', 'poster': null};
-    // Görsel: ilk fotoğraf; yoksa (video/yazı) içerik posteri
-    final ilkFoto = medya
-        .where((m) => !m.endsWith('.mp4') && !m.endsWith('.webm'))
-        .toList();
+    final goruntulenme = (widget.yorum['goruntulenme'] as num?)?.toInt() ?? 0;
+
+    // Arka plan sırası: fotoğraf → video karesi → içerik posteri.
+    final ilkFoto = medya.where((m) => !_videoMu(m)).toList();
+    final video = _ilkVideo;
+    final poster = posterUrl(icerik['poster'] as String?, boyut: 'w342');
     final arka = ilkFoto.isNotEmpty
         ? dosyaUrl(ilkFoto.first)
-        : posterUrl(icerik['poster'] as String?, boyut: 'w342');
-    return InkWell(
-      onTap: onTap,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          arka != null
-              ? CachedNetworkImage(imageUrl: arka, fit: BoxFit.cover)
-              : Container(color: DiziRenkler.kart),
-          // Yazılı yorum: alt yarıda metin bandı
-          if (medya.isEmpty)
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(6),
-                color: Colors.black54,
-                child: Text(
-                  spoiler ? '•••' : (yorum['metin'] as String? ?? ''),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: Colors.white, fontSize: 11),
+        : (video != null ? dosyaUrl('$video.jpg') : poster);
+
+    final d = _d;
+    return VisibilityDetector(
+      key: Key('kesfet-${widget.yorum['id']}'),
+      onVisibilityChanged: (bilgi) =>
+          widget.onGorunurluk(bilgi.visibleFraction > 0.6),
+      child: InkWell(
+        onTap: widget.onTap,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            if (d != null && d.value.isInitialized)
+              FittedBox(
+                fit: BoxFit.cover,
+                clipBehavior: Clip.hardEdge,
+                child: SizedBox(
+                  width: d.value.size.width,
+                  height: d.value.size.height,
+                  child: VideoPlayer(d),
+                ),
+              )
+            else if (arka != null)
+              CachedNetworkImage(
+                imageUrl: arka,
+                fit: BoxFit.cover,
+                // Video karesi henüz üretilmemişse içerik posterine düş
+                errorWidget: (context, url, hata) => poster != null
+                    ? CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover)
+                    : Container(color: DiziRenkler.kart),
+              )
+            else
+              Container(color: DiziRenkler.kart),
+            // Yazılı yorum: alt yarıda metin bandı
+            if (medya.isEmpty)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 22),
+                  color: Colors.black54,
+                  child: Text(
+                    spoiler ? '•••' : (widget.yorum['metin'] as String? ?? ''),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white, fontSize: 11),
+                  ),
+                ),
+              ),
+            if (videolu)
+              const Positioned(
+                top: 6,
+                right: 6,
+                child: Icon(Icons.play_arrow, size: 20, color: Colors.white),
+              ),
+            // Sol alt: göz + izlenme sayısı (okunurluk için gölgeli)
+            Positioned(
+              left: 6,
+              bottom: 5,
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.remove_red_eye_outlined,
+                      size: 13,
+                      color: Colors.white,
+                      shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+                    ),
+                    const SizedBox(width: 3),
+                    Text(
+                      '$goruntulenme',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-          if (videolu)
-            const Positioned(
-              top: 6,
-              right: 6,
-              child: Icon(Icons.play_arrow, size: 20, color: Colors.white),
-            ),
-          if (spoiler)
-            Container(
-              color: Colors.black45,
-              child: const Center(
-                child: Icon(
-                  Icons.visibility_off_outlined,
-                  color: Colors.white70,
+            if (spoiler)
+              Container(
+                color: Colors.black45,
+                child: const Center(
+                  child: Icon(
+                    Icons.visibility_off_outlined,
+                    color: Colors.white70,
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

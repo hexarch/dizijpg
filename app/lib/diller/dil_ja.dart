@@ -401,6 +401,7 @@ const Map<String, String> cevirilerJa = {
   'Henüz kimseyi takip etmiyorsun.': 'まだ誰もフォローしていません。',
   'Çevir': '翻訳',
   'Orijinali göster': '原文を表示',
+  'Çeviriyi göster': '翻訳を表示',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       '今月は放送日が発表されたエピソードはありません。日程はたいてい数週間前に発表され、その後ここに表示されます。',
   'devamı': '続き',

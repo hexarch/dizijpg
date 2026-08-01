@@ -405,6 +405,7 @@ const Map<String, String> cevirilerHe = {
   'Henüz kimseyi takip etmiyorsun.': 'עדיין לא עוקב אחרי אף אחד.',
   'Çevir': 'תרגם',
   'Orijinali göster': 'הצג מקור',
+  'Çeviriyi göster': 'הצג תרגום',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'אין פרקים עם תאריך שידור מוכרז החודש. התאריכים מתפרסמים בדרך כלל שבועות ספורים מראש ויופיעו כאן.',
   'devamı': 'עוד',

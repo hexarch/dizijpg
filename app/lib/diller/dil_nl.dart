@@ -413,6 +413,7 @@ const Map<String, String> cevirilerNl = {
   'Henüz kimseyi takip etmiyorsun.': 'Je volgt nog niemand.',
   'Çevir': 'Vertalen',
   'Orijinali göster': 'Origineel tonen',
+  'Çeviriyi göster': 'Vertaling tonen',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Deze maand zijn er geen afleveringen met een aangekondigde uitzenddatum. Data worden meestal enkele weken van tevoren bekend en verschijnen dan hier.',
   'devamı': 'meer',

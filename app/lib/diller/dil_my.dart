@@ -419,6 +419,7 @@ const Map<String, String> cevirilerMy = {
   'Henüz kimseyi takip etmiyorsun.': 'သင်ဘယ်သူ့ကိုမှ မလိုက်ရသေးပါ။',
   'Çevir': 'ဘာသာပြန်',
   'Orijinali göster': 'မူရင်းပြရန်',
+  'Çeviriyi göster': 'ဘာသာပြန်ကို ပြပါ',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'ဤလတွင် ထုတ်လွှင့်မည့်ရက် ကြေညာထားသော အပိုင်းမရှိပါ။ ရက်စွဲများကို များသောအားဖြင့် ရက်သတ္တပတ်အနည်းငယ်ကြိုတင်ကြေညာပြီး ဤနေရာတွင် ပေါ်လာပါမည်။',
   'devamı': 'ထပ်ဖတ်ရန်',

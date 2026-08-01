@@ -411,6 +411,7 @@ const Map<String, String> cevirilerId = {
   'Henüz kimseyi takip etmiyorsun.': 'Kamu belum mengikuti siapa pun.',
   'Çevir': 'Terjemahkan',
   'Orijinali göster': 'Lihat asli',
+  'Çeviriyi göster': 'Tampilkan terjemahan',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Bulan ini belum ada episode dengan tanggal tayang yang diumumkan. Tanggal biasanya diumumkan beberapa minggu sebelumnya dan akan muncul di sini.',
   'devamı': 'selengkapnya',

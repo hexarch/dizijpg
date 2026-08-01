@@ -413,6 +413,7 @@ const Map<String, String> cevirilerKn = {
   'Henüz kimseyi takip etmiyorsun.': 'ನೀನು ಇನ್ನೂ ಯಾರನ್ನೂ ಫಾಲೋ ಮಾಡುತ್ತಿಲ್ಲ.',
   'Çevir': 'ಅನುವಾದಿಸು',
   'Orijinali göster': 'ಮೂಲ ತೋರಿಸು',
+  'Çeviriyi göster': 'ಅನುವಾದ ತೋರಿಸು',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'ಈ ತಿಂಗಳು ಪ್ರಸಾರ ದಿನಾಂಕ ಘೋಷಿಸಿದ ಸಂಚಿಕೆ ಇಲ್ಲ. ದಿನಾಂಕಗಳನ್ನು ಸಾಮಾನ್ಯವಾಗಿ ಕೆಲವು ವಾರ ಮುಂಚೆ ತಿಳಿಸಲಾಗುತ್ತದೆ, ಆಗ ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.',
   'devamı': 'ಇನ್ನಷ್ಟು',

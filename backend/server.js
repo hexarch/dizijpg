@@ -7,6 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
+import { execFile } from 'child_process';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import geoip from 'geoip-lite';
@@ -84,6 +85,21 @@ app.use(express.json({ limit: '1mb' }));
 // Avatar ve yorum medyası (compose'ta kalıcı volume'a bağlanır)
 const AVATAR_DIZIN = process.env.AVATAR_DIZIN || './avatarlar';
 const MEDYA_DIZIN = process.env.MEDYA_DIZIN || './medya';
+
+// Video için küçük resim: ilk saniyeden bir kare alınıp <dosya>.jpg olarak
+// yazılır. Keşfet ızgarası bunu gösterir — video yerine resim koymak, aynı
+// anda onlarca çözücü açılmasını (ve telefonun ısınmasını) engeller.
+// Başarısız olursa sessiz geçilir; istemci kapak yoksa postere düşer.
+function videoKaresiCikar(dosyaYolu) {
+  return new Promise((bitti) => {
+    execFile('ffmpeg', [
+      '-y', '-ss', '0.5', '-i', dosyaYolu,
+      '-frames:v', '1', '-vf', 'scale=480:-2',
+      '-q:v', '4', `${dosyaYolu}.jpg`,
+    ], { timeout: 20000 }, (hata) => bitti(!hata));
+  });
+}
+
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
 const statikSecenek = { maxAge: '365d', immutable: true, fallthrough: false };
@@ -2134,11 +2150,16 @@ app.post('/medya',
     }
     // Dosya adı yükleyenin kimliğini taşır; yorum eklerken sahiplik bununla doğrulanır.
     const dosya = `m${req.kullanici.id}-${crypto.randomBytes(8).toString('hex')}.${tur.uzanti}`;
-    fs.writeFileSync(path.join(MEDYA_DIZIN, dosya), veri);
+    const tamYol = path.join(MEDYA_DIZIN, dosya);
+    fs.writeFileSync(tamYol, veri);
+    const videoMu = VIDEO_TURLERI.includes(tur);
+    // Kare çıkarma yüklemeyi ~1 sn uzatır ama ızgarayı çok hafifletir.
+    const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
     res.json({
       yol: `/medya/${dosya}`,
-      video: VIDEO_TURLERI.includes(tur),
+      video: videoMu,
       ses: SES_TURLERI.includes(tur),
+      kapak: kapakVar ? `/medya/${dosya}.jpg` : null,
     });
   }));
 
@@ -2156,8 +2177,8 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
     `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler,
             k.kullanici_adi, k.avatar, y.kaynak_dil,
-            EXISTS(SELECT 1 FROM metin_cevirileri c
-                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_var,
+            (SELECT c.metin FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $3) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$2) AS begendim,
@@ -2191,7 +2212,7 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   } catch {
     icerikler[anahtar] = { ad: '?', poster: null };
   }
-  res.json({ yorum: y, icerikler });
+  res.json({ yorum: ceviriUygula(y), icerikler });
 }));
 
 app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => {
@@ -2207,8 +2228,8 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
   const { rows } = await havuz.query(
     `SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
             y.ust_id, y.goruntulenme, y.spoiler, k.kullanici_adi, k.avatar, y.kaynak_dil,
-            EXISTS(SELECT 1 FROM metin_cevirileri c
-                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_var,
+            (SELECT c.metin FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$5) AS begendim
@@ -2226,7 +2247,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
       [rows.map((r) => r.id)],
     ).catch(() => {});
   }
-  res.json({ yorumlar: rows });
+  res.json({ yorumlar: rows.map(ceviriUygula) });
 }));
 
 // ---------- sosyal akış ----------
@@ -2257,8 +2278,8 @@ const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler AS spoiler_isaret,
             k.kullanici_adi, k.avatar, g.guvenli, y.kaynak_dil,
-            EXISTS(SELECT 1 FROM metin_cevirileri c
-                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_var,
+            (SELECT c.metin FROM metin_cevirileri c
+                   WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim`;
@@ -2341,13 +2362,28 @@ async function akisIcerikleri(rows) {
 // bulanıklığından muaftır (işaretlenirse yine bulanık olur).
 const AI_KULLANICI = 'dizi.jpg.ai';
 
-const akisSatiri = ({ guvenli, spoiler_isaret, ...r }) => ({
-  ...r,
+// Gönderiyi OKUYANIN dilinde göster: metnin o dilde hazır çevirisi varsa
+// (ve gönderi zaten o dilde değilse) `metin` alanına çeviri konur, orijinal
+// `orijinal_metin`de kalır. Böylece eski istemciler bile (uygulama güncellemesi
+// beklemeden) kendi dillerinde okur; yeni istemci "Orijinali göster" sunar.
+// `ceviri_var` eski istemciler için korunur: çeviri UYGULANDIYSA düğmeye gerek
+// yok → false.
+function ceviriUygula({ ceviri_metin, ...r }) {
+  const dil = istekBaglam.getStore()?.dil || 'tr';
+  if (ceviri_metin && r.kaynak_dil && r.kaynak_dil !== dil) {
+    return { ...r, metin: ceviri_metin, orijinal_metin: r.metin,
+      cevrildi: true, ceviri_var: false };
+  }
+  return { ...r, cevrildi: false, ceviri_var: false };
+}
+
+const akisSatiri = ({ guvenli, spoiler_isaret, ...ham }) => ({
+  ...ceviriUygula(ham),
   // İstemci bulanık gösterir. İki kaynak: (1) izlemediğin içeriğin yorumu
   // (otomatik), (2) yazan kişinin "spoiler içerir" işareti. Kişi yorumları ve
   // kitaplık eşleşmeleri otomatik spoiler sayılmaz ama işaretliyse yine bulanık.
   spoiler: spoiler_isaret === true ||
-    !(guvenli || r.tur === 'person' || r.kullanici_adi === AI_KULLANICI),
+    !(guvenli || ham.tur === 'person' || ham.kullanici_adi === AI_KULLANICI),
 });
 
 app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
@@ -3391,11 +3427,13 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       ? Promise.resolve({ rows: [] })
       : havuz.query(
           `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.metin, y.medya,
-                  y.goruntulenme, y.spoiler, y.tarih,
+                  y.goruntulenme, y.spoiler, y.tarih, y.kaynak_dil,
+                  (SELECT c.metin FROM metin_cevirileri c
+                     WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri_metin,
                   (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
            FROM yorumlar y WHERE y.kullanici_id=$1 ${gizliFiltre('y')}
            ORDER BY y.tarih DESC LIMIT 20`,
-          [id]),
+          [id, istekBaglam.getStore()?.dil || 'tr']),
     havuz.query(
       `SELECT EXISTS(SELECT 1 FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS var,
               EXISTS(SELECT 1 FROM engellemeler WHERE engelleyen_id=$1 AND engellenen_id=$2) AS engel`,
@@ -3466,7 +3504,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     rozetler: rozetler.filter((r) => r.kazanildi),
     listeler: listeler.rows,
     incelemeler: sonIncelemeler.rows,
-    yorumlar: yorumlar.rows,
+    yorumlar: yorumlar.rows.map(ceviriUygula),
     icerikler,
     izlenenler: izlenenler.rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
   });

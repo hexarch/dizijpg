@@ -412,6 +412,7 @@ const Map<String, String> cevirilerFi = {
   'Henüz kimseyi takip etmiyorsun.': 'Et seuraa vielä ketään.',
   'Çevir': 'Käännä',
   'Orijinali göster': 'Näytä alkuperäinen',
+  'Çeviriyi göster': 'Näytä käännös',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Tässä kuussa ei ole jaksoja, joiden esityspäivä olisi julkistettu. Päivät ilmoitetaan yleensä paria viikkoa aiemmin ja näkyvät sitten täällä.',
   'devamı': 'lisää',

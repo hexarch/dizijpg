@@ -582,6 +582,8 @@ class _YorumKartiState extends State<_YorumKarti> {
               metin: yorum['metin'] as String? ?? '',
               kaynakDil: yorum['kaynak_dil'] as String?,
               ceviriVar: yorum['ceviri_var'] == true,
+              cevrildi: yorum['cevrildi'] == true,
+              orijinalMetin: yorum['orijinal_metin'] as String?,
               yapici: (m) => SpoilerMetin(
                 m,
                 spoiler: yorum['spoiler'] == true,

@@ -414,6 +414,7 @@ const Map<String, String> cevirilerEl = {
   'Henüz kimseyi takip etmiyorsun.': 'Δεν ακολουθείς κανέναν ακόμα.',
   'Çevir': 'Μετάφραση',
   'Orijinali göster': 'Εμφάνιση πρωτότυπου',
+  'Çeviriyi göster': 'Εμφάνιση μετάφρασης',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
       'Αυτόν τον μήνα δεν υπάρχουν επεισόδια με ανακοινωμένη ημερομηνία προβολής. Οι ημερομηνίες ανακοινώνονται συνήθως λίγες εβδομάδες νωρίτερα και θα εμφανιστούν εδώ.',
   'devamı': 'περισσότερα',

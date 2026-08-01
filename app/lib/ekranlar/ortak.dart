@@ -511,8 +511,18 @@ class _AkisVideoState extends State<AkisVideo> {
 /// Metni her ekran kendi biçiminde çizsin diye gövde `yapici` ile verilir.
 class CeviriliMetin extends StatefulWidget {
   final int yorumId;
+
+  /// Gösterilecek metin. Sunucu, okuyanın dilinde hazır çeviri varsa BURAYA
+  /// çeviriyi koyar (kullanıcı düğmeye basmadan kendi dilinde okur).
   final String metin;
   final String? kaynakDil;
+
+  /// Sunucu çeviriyi zaten uyguladıysa true; o zaman düğme "Orijinali göster"
+  /// olur ve [orijinalMetin] ile geri dönülür.
+  final bool cevrildi;
+  final String? orijinalMetin;
+
+  /// Çeviri hazır AMA sunucu uygulamadıysa (eski uçlar) "Çevir" düğmesi çıkar.
   final bool ceviriVar;
   final Widget Function(String metin) yapici;
   final Color? dugmeRengi;
@@ -524,6 +534,8 @@ class CeviriliMetin extends StatefulWidget {
     required this.kaynakDil,
     required this.ceviriVar,
     required this.yapici,
+    this.cevrildi = false,
+    this.orijinalMetin,
     this.dugmeRengi,
   });
 
@@ -535,6 +547,8 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
   String? _ceviri;
   bool _cevrili = false;
   bool _yukleniyor = false;
+  // Sunucunun uyguladığı çeviride: orijinale dönüldü mü?
+  bool _orijinalde = false;
 
   Future<void> _degistir() async {
     if (_ceviri != null) {
@@ -562,17 +576,26 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
 
   @override
   Widget build(BuildContext context) {
+    // Sunucu çeviriyi zaten uyguladıysa: metin kullanıcının dilinde gelir,
+    // düğme yalnızca orijinale dönmek için durur.
+    final sunucuCevirdi = widget.cevrildi && widget.orijinalMetin != null;
     // Dil bilinmiyorsa ya da zaten kullanıcının dilindeyse düğme yok
     final farkliDil =
         widget.kaynakDil != null && widget.kaynakDil != Ceviri.dil.value;
-    final gosterilsin = farkliDil && (widget.ceviriVar || _ceviri != null);
+    final gosterilsin =
+        sunucuCevirdi || (farkliDil && (widget.ceviriVar || _ceviri != null));
+    final govde = sunucuCevirdi
+        ? (_orijinalde ? widget.orijinalMetin! : widget.metin)
+        : (_cevrili ? (_ceviri ?? widget.metin) : widget.metin);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        widget.yapici(_cevrili ? (_ceviri ?? widget.metin) : widget.metin),
+        widget.yapici(govde),
         if (gosterilsin)
           InkWell(
-            onTap: _yukleniyor ? null : _degistir,
+            onTap: sunucuCevirdi
+                ? () => setState(() => _orijinalde = !_orijinalde)
+                : (_yukleniyor ? null : _degistir),
             borderRadius: BorderRadius.circular(6),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 2),
@@ -596,7 +619,11 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
                     ),
                   const SizedBox(width: 5),
                   Text(
-                    _cevrili ? 'Orijinali göster'.c : 'Çevir'.c,
+                    sunucuCevirdi
+                        ? (_orijinalde
+                              ? 'Çeviriyi göster'.c
+                              : 'Orijinali göster'.c)
+                        : (_cevrili ? 'Orijinali göster'.c : 'Çevir'.c),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,

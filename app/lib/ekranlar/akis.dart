@@ -788,6 +788,8 @@ class _AkisKartiState extends State<_AkisKarti> {
                   metin: (y['metin'] as String?) ?? '',
                   kaynakDil: y['kaynak_dil'] as String?,
                   ceviriVar: y['ceviri_var'] == true,
+                  cevrildi: y['cevrildi'] == true,
+                  orijinalMetin: y['orijinal_metin'] as String?,
                   yapici: (m) => Text(m, style: const TextStyle(height: 1.45)),
                 ),
               ),
