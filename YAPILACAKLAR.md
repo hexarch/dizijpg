@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Profil > Yorumlar sekmesinde kullanıcı adı "@null" görünüyordu
+**Kullanıcı bildirimi:** "Kendi profilimde Yorumlar sekmesindeki kartlarda
+kullanıcı adı @null yazıyor."
+- 🚀 **Kök neden:** profil yorumları `/profil/:kullaniciAdi` ucundan geliyor,
+  o uç yorum satırlarını kullanıcı bilgisi OLMADAN döndürüyordu. Satırlar
+  eskiden sade bir kartla çiziliyordu; kart `AkisKarti` ile ortaklaşınca
+  `kullanici_adi`, `avatar`, `begendim`, `kullanici_id` alanları eksik kaldı.
+- 🚀 Uç artık her satıra `kullanici_id` + `begendim` (akış sorgusundaki EXISTS
+  kalıbı; girişsiz istekte `benId=0` → false) veriyor; `kullanici_adi`/`avatar`
+  profil sahibinden ekleniyor (satırlar zaten tek kişinin, JOIN gereksiz).
+  Yan etki: kalp artık gerçek beğeni durumunu gösteriyor ve kendi gönderinde
+  "şikayet et" menüsü çıkmıyor (`benimMi` doğru hesaplanıyor). Profilden açılan
+  Reels de düzeldi: orada `y['kullanici_adi'] as String` null cast'i patlıyordu.
+- 🚀 **Reels takip düğmesi** — profilden açılan Reels'te `takip_ediyorum` alanı
+  gelmiyor; düğme artık alan YOKSA hiç çizilmiyor (kendi gönderinde "Takip Et"
+  ya da zaten takip edilene tekrar sorma yok). Profil sayfasının kendi takip
+  düğmesi yerinde.
+- ✅ `test/profil_yorum_karti_test.dart` (5 test): yazar adı basılır (@null
+  değil), begendim=true'da kalp dolu / false'ta boş, takip alanı yokken düğme
+  çıkmaz, false gelince çıkar. `flutter test` 37/37, `flutter analyze` temiz.
+- ✅ Canlıda curl ile doğrulandı: hem başkasının (alcelik) hem kendi
+  (testkullanici) profilinde alanlar dolu; girişsiz istekte begendim=false,
+  http 200. Backend + web dağıtıldı (saglik 200, site 200) — bu dağıtım
+  alt gezinme ikonları maddesinin bekleyen web adımını da canlıya aldı.
+
 ## 2026-08-02 — Akış kartı: çeviri düğmesi, tıklanır bağlantılar, yorum düğmesi
 **Kullanıcı isteği:** "Akışta yabancı gönderilerin altında çeviri düğmesi
 çıkmıyor; Instagram bağlantıları tıklanmıyor; gönderiye yorum yapamıyorum."
@@ -50,7 +75,7 @@ görünüyor; ikon seçili olsun olmasın aynı şeyi anlatmalı."
 - ✅ Hedef listesi test edilebilsin diye `kabukHedefleri()` fonksiyonuna alındı;
   `test/kabuk_ikon_test.dart` (4 test) beş sekmenin de ikon ailesini,
   etiketlerin (ekran okuyucu) silinmediğini ve `alwaysHide` ayarını kilitliyor.
-- ⬜ Canlıya alma: scp izin engeline takıldı, ana oturum dağıtacak.
+- 🚀 Canlıya alındı (2026-08-02, profil "@null" düzeltmesiyle aynı web derlemesi).
 
 ## 2026-08-02 — Başkasının profilinde de iki sekme (Dizi ve Filmler / Yorumlar)
 **Kullanıcı isteği:** "Kendi profilimdeki iki sekmeli düzen başkasının
