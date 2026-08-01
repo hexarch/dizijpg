@@ -1,6 +1,42 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Tema geçişi artık ANINDA ve TAM
+**Kullanıcı bildirimi:** "koyu temadan açık temaya veya açık temadan koyu temaya
+geçişler tam olmuyor, uygulamayı yeniden başlatmak gerekiyor öyle düzeliyor."
+- 🚀 **Kök neden (ölçüldü):** uygulamadaki 627 renk okuması `Theme.of(context)`
+  yerine `DiziRenkler` STATİK getter'larından geliyor (`lib` genelinde yalnız
+  **1** adet `Theme.of(` var, o da SliderTheme). `main.dart` tema değişince
+  `DiziRenkler.acik` bayrağını çeviriyordu ama statik alan değişimi hiçbir
+  Element'i kirli işaretlemez. Üstelik sayfa gövdeleri route'un
+  `_ModalScopeState`'inde önbelleğe alınır ve ekranlar `const` kuruluyor
+  (`const AyarlarEkrani()`, `const KesfetEkrani()`, `const ProfilEkrani()`),
+  yani MaterialApp yeniden inşa edilse bile sayfa YENİDEN ÇİZİLMEZ.
+  Sonuç: yalnız Theme'e bağımlı Material widget'ları yeni renge geçiyordu.
+  Widget testiyle ölçülen tam tablo (koyu → açık):
+  `zemin 0B0B0D → F6F6F8` ✅, `nav 17171A → ECECEF` ✅ ama
+  `kart 1F1F23 → 1F1F23` ❌, `metin beyaz → beyaz` ❌ —
+  yani AÇIK zemin üstünde KOYU kartlar ve BEYAZ yazı kalıyordu.
+- 🚀 **Çözüm:** `tema.dart`'a `TemaKapsayici` — tema tercihini + cihaz
+  parlaklığını dinler, `DiziRenkler.acik`ı tazeler ve ağaç anahtarına TEMAYI
+  katar (`uygulama-<dil>-<acik|koyu>`). Anahtar değişince ağaç baştan kurulur,
+  statik renkler yeniden okunur, `const` alt ağaçlar da yeni Element aldığı
+  için tazelenir. Dil değişiminde zaten kullanılan ve kanıtlanmış kalıp;
+  627 çağrıyı elle `Theme.of(context)`e çevirmekten çok daha küçük ve güvenli.
+  Bedeli: ekranların yerel durumu (kaydırma konumu, keep-alive sekme önbelleği)
+  sıfırlanır — tema değişimi nadir bir işlem olduğu için kabul edildi.
+- 🚀 **Ayarlar tema seçici** artık `TemaAyar.mod`u `ValueListenableBuilder` ile
+  dinliyor: "Koyu → Sistem" (cihaz zaten koyu) gibi RENGİ değiştirmeyen
+  geçişlerde ağaç yeniden kurulmadığı için düğme eski seçimde takılı kalıyordu.
+- 🚀 `main.dart` sadeleşti: parlaklık gözlemcisi (`WidgetsBindingObserver`) ve
+  `acik` hesabı `TemaKapsayici`ye taşındı; tema tercihi hâlâ prefs'te ('tema').
+- ✅ **Kanıt:** `test/tema_gecisi_test.dart` (7 test) — koyu→açık, açık→koyu,
+  açık temada kontrast (beyaz kart üstünde beyaz yazı yok), rengi değiştirmeyen
+  mod geçişinde seçicinin güncellenmesi, "sistem" modunda cihaz parlaklığı
+  değişimi, tercih kalıcılığı. Anahtardaki tema parçası geçici olarak
+  kaldırıldığında testlerin **4'ü KIRMIZIYA** döndü, geri konunca yeşil.
+  Tüm paket: 64 test geçiyor (önce 57), analyze 0 error/0 warning.
+
 ## 2026-08-02 — Keşfet sonsuz kaydırma + havuz bitince tekrar turu
 **Kullanıcı bildirimi:** "Keşfet belirli bir noktadan sonra aşağı inmiyor;
 tamamen bitene kadar inmeli. En sonda izlediklerimi de tekrar göstermeli —

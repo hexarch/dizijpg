@@ -67,6 +67,24 @@ bool temaAcikMi(String mod, Brightness cihaz) =>
 /// Uygulama kökü: tema tercihini (ve "sistem" modunda cihaz parlaklığını)
 /// dinler, `DiziRenkler.acik` bayrağını tazeler ve tema DEĞİŞTİĞİNDE alt ağaca
 /// yeni bir anahtar vererek ağacı baştan kurar.
+///
+/// NEDEN ANAHTAR DEĞİŞTİRİYORUZ: uygulamadaki ~630 renk okuması
+/// `Theme.of(context)` yerine `DiziRenkler` STATİK getter'larından geliyor.
+/// Statik bir alanın değişmesi hiçbir Element'i "kirli" işaretlemez; üstelik
+/// sayfa gövdeleri route'un `_ModalScopeState`'inde önbelleğe alınır ve
+/// ekranlar `const` kuruluyor (`const AyarlarEkrani()`), yani MaterialApp
+/// yeniden inşa edilse bile sayfa yeniden çizilmez. Sonuç: tema değişince
+/// yalnız Theme'e bağımlı Material widget'ları (Scaffold zemini, AppBar,
+/// NavigationBar, Card, TextField) yeni renge geçiyor; kart yüzeyleri,
+/// metinler ve rozetler eski temada kalıyordu — beyaz zemin üstünde BEYAZ
+/// yazı. Kullanıcı uygulamayı yeniden başlatmak zorunda kalıyordu.
+///
+/// Anahtar değişince ağaç baştan inşa edilir, statik renkler yeniden okunur;
+/// `const` alt ağaçlar da yeni Element aldığı için tazelenir. Bedeli:
+/// ekranların yerel durumu (kaydırma konumu, keep-alive sekme önbelleği)
+/// sıfırlanır — dil değişiminde zaten uygulanan ve kabul edilen bedel.
+/// 630 çağrı yerini elle `Theme.of(context)`e çevirmekten çok daha küçük ve
+/// güvenli; tema değişimi de nadir bir işlem.
 class TemaKapsayici extends StatefulWidget {
   const TemaKapsayici({super.key, required this.olustur, this.ekAnahtar = ''});
 
@@ -117,7 +135,9 @@ class _TemaKapsayiciDurum extends State<TemaKapsayici>
     return widget.olustur(
       context,
       diziTema(acik: acik),
-      ValueKey('uygulama-${widget.ekAnahtar}'),
+      // Anahtara TEMA da katılır: değişince ağaç baştan kurulur ve
+      // DiziRenkler statikleri yeniden okunur (bkz. sınıf açıklaması).
+      ValueKey('uygulama-${widget.ekAnahtar}-${acik ? 'acik' : 'koyu'}'),
     );
   }
 }

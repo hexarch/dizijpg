@@ -64,64 +64,37 @@ class DiziJpgApp extends StatefulWidget {
   State<DiziJpgApp> createState() => _DiziJpgAppState();
 }
 
-class _DiziJpgAppState extends State<DiziJpgApp> with WidgetsBindingObserver {
+class _DiziJpgAppState extends State<DiziJpgApp> {
   late final GoRouter _yonlendirici = yonlendiriciOlustur(
     context.read<Oturum>(),
   );
 
   @override
-  void initState() {
-    super.initState();
-    // "Sistem" modunda cihaz teması değişince yeniden kur
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-
-  @override
-  void didChangePlatformBrightness() => setState(() {});
-
-  @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<String>(
       valueListenable: Ceviri.dil,
-      builder: (context, dil, _) => ValueListenableBuilder<String>(
-        valueListenable: TemaAyar.mod,
-        builder: (context, mod, _) {
-          // Ekranlardaki DiziRenkler getter'ları bu bayrağı okur —
-          // MaterialApp kurulmadan HEMEN önce güncellenmeli.
-          final acik =
-              mod == 'acik' ||
-              (mod == 'sistem' &&
-                  WidgetsBinding
-                          .instance
-                          .platformDispatcher
-                          .platformBrightness ==
-                      Brightness.light);
-          DiziRenkler.acik = acik;
-          return MaterialApp.router(
-            // Dil değişince tüm ağaç taze kurulur; keep-alive sekme ekranları
-            // (Keşfet/Takvim/Akış/Profil) yeni dili anında yansıtır. Yoksa
-            // yalnız nav çubuğu çevriliyor, gövdeler eski dilde kalıyordu.
-            key: ValueKey('uygulama-$dil'),
-            title: 'dizi.jpg',
-            debugShowCheckedModeBanner: false,
-            scrollBehavior: FareKaydirma(),
-            theme: diziTema(acik: acik),
-            locale: Locale(dil),
-            supportedLocales: Ceviri.desteklenenLocaleler,
-            localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            routerConfig: _yonlendirici,
-          );
-        },
+      // TemaKapsayici tema tercihini + cihaz parlaklığını dinler,
+      // DiziRenkler.acik bayrağını tazeler ve DİL ya da TEMA değişince
+      // ağacı baştan kurduran anahtarı üretir. Yeniden kurulmazsa keep-alive
+      // sekmeler eski dilde, DiziRenkler okuyan her şey eski temada kalıyor
+      // (bkz. tema.dart'taki açıklama + test/tema_gecisi_test.dart).
+      builder: (context, dil, _) => TemaKapsayici(
+        ekAnahtar: dil,
+        olustur: (context, tema, anahtar) => MaterialApp.router(
+          key: anahtar,
+          title: 'dizi.jpg',
+          debugShowCheckedModeBanner: false,
+          scrollBehavior: FareKaydirma(),
+          theme: tema,
+          locale: Locale(dil),
+          supportedLocales: Ceviri.desteklenenLocaleler,
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          routerConfig: _yonlendirici,
+        ),
       ),
     );
   }

@@ -41,6 +41,11 @@ class _OrnekEkran extends StatelessWidget {
           // const KURULAN alt widget — tema değişiminde hiç yeniden çizilmeyen
           // sınıfın temsilcisi (üretimde `const AyarlarEkrani()` gibi).
           const _SabitRozet(),
+          // Ayarlar'daki tema seçici kalıbı: seçimi ValueListenable'dan okur.
+          ValueListenableBuilder<String>(
+            valueListenable: TemaAyar.mod,
+            builder: (context, mod, _) => Text('mod:$mod'),
+          ),
           // RichText tema rengini DEVRALMAZ; renk açıkça verilir (skill kuralı).
           RichText(
             key: const Key('zengin'),
@@ -165,7 +170,11 @@ void main() {
     await TemaAyar.sec('koyu');
     await t.pumpAndSettle();
 
-    expect(_kartRengi(t), const Color(0xFF1F1F23), reason: 'kart koyuya dönmedi');
+    expect(
+      _kartRengi(t),
+      const Color(0xFF1F1F23),
+      reason: 'kart koyuya dönmedi',
+    );
     expect(_metinRengi(t, 'Başlık'), Colors.white);
     expect(_metinRengi(t, 'rozet'), DiziRenkler.sari);
     expect(_zenginRengi(t), Colors.white70);
@@ -192,6 +201,50 @@ void main() {
         reason: 'açık temada $renk, $kart zemininde okunmuyor',
       );
     }
+  });
+
+  testWidgets('rengi değiştirmeyen mod geçişinde seçici yine de güncellenir', (
+    t,
+  ) async {
+    // Cihaz koyu, seçim "Koyu" → "Sistem": renkler AYNI kalır, dolayısıyla
+    // ağaç yeniden kurulmaz. Ayarlar'daki seçici bu yüzden TemaAyar.mod'u
+    // doğrudan okumamalı, ValueListenableBuilder ile dinlemeli.
+    t.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(t.platformDispatcher.clearPlatformBrightnessTestValue);
+    await t.pumpWidget(_kok());
+    final kartOnce = _kartRengi(t);
+    expect(find.text('mod:koyu'), findsOneWidget);
+
+    await TemaAyar.sec('sistem');
+    await t.pumpAndSettle();
+
+    expect(_kartRengi(t), kartOnce, reason: 'renk gereksiz yere değişti');
+    expect(
+      find.text('mod:sistem'),
+      findsOneWidget,
+      reason: 'seçici eski modda takılı kaldı',
+    );
+  });
+
+  testWidgets('"sistem" modunda cihaz parlaklığı değişince tema da geçer', (
+    t,
+  ) async {
+    t.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(t.platformDispatcher.clearPlatformBrightnessTestValue);
+    TemaAyar.mod.value = 'sistem';
+    await t.pumpWidget(_kok());
+    expect(_kartRengi(t), const Color(0xFF1F1F23));
+
+    // Cihaz açık temaya geçti (gece modu kapandı) — uygulama takip etmeli.
+    t.platformDispatcher.platformBrightnessTestValue = Brightness.light;
+    await t.pumpAndSettle();
+
+    expect(
+      _kartRengi(t),
+      Colors.white,
+      reason: 'cihaz parlaklığı değişti ama uygulama koyu kaldı',
+    );
+    expect(_metinRengi(t, 'Başlık'), const Color(0xFF17171A));
   });
 
   test('tema tercihi kalıcı: yeniden yüklenince korunur', () async {

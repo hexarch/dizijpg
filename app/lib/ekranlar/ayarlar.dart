@@ -880,30 +880,44 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                           color: DiziRenkler.sariMetin,
                         ),
                         const SizedBox(width: 12),
+                        // Seçimi ValueListenable'dan oku: "Koyu → Sistem"
+                        // (cihaz zaten koyuysa) gibi RENGİ değiştirmeyen
+                        // geçişlerde ağaç yeniden kurulmaz; doğrudan
+                        // TemaAyar.mod.value okunsaydı düğme eski seçimde
+                        // takılı kalırdı.
                         Expanded(
-                          child: SegmentedButton<String>(
-                            segments: [
-                              ButtonSegment(
-                                value: 'sistem',
-                                label: Text('Sistem'.c),
-                                icon: const Icon(
-                                  Icons.settings_suggest_outlined,
+                          child: ValueListenableBuilder<String>(
+                            valueListenable: TemaAyar.mod,
+                            builder: (context, mod, _) =>
+                                SegmentedButton<String>(
+                                  segments: [
+                                    ButtonSegment(
+                                      value: 'sistem',
+                                      label: Text('Sistem'.c),
+                                      icon: const Icon(
+                                        Icons.settings_suggest_outlined,
+                                      ),
+                                    ),
+                                    ButtonSegment(
+                                      value: 'koyu',
+                                      label: Text('Koyu'.c),
+                                      icon: const Icon(
+                                        Icons.dark_mode_outlined,
+                                      ),
+                                    ),
+                                    ButtonSegment(
+                                      value: 'acik',
+                                      label: Text('Açık'.c),
+                                      icon: const Icon(
+                                        Icons.light_mode_outlined,
+                                      ),
+                                    ),
+                                  ],
+                                  selected: {mod},
+                                  onSelectionChanged: (s) =>
+                                      TemaAyar.sec(s.first),
+                                  showSelectedIcon: false,
                                 ),
-                              ),
-                              ButtonSegment(
-                                value: 'koyu',
-                                label: Text('Koyu'.c),
-                                icon: const Icon(Icons.dark_mode_outlined),
-                              ),
-                              ButtonSegment(
-                                value: 'acik',
-                                label: Text('Açık'.c),
-                                icon: const Icon(Icons.light_mode_outlined),
-                              ),
-                            ],
-                            selected: {TemaAyar.mod.value},
-                            onSelectionChanged: (s) => TemaAyar.sec(s.first),
-                            showSelectedIcon: false,
                           ),
                         ),
                       ],
