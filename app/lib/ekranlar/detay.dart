@@ -866,13 +866,45 @@ class _DetayEkraniState extends State<DetayEkrani> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-                    child: Text(
-                      'Oyuncular'.c,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w800,
+                  // Başlık tıklanabilir: yatay şerit yalnız ilk 20 kişiyi
+                  // gösteriyor, dokununca TÜM kadro listelenir.
+                  InkWell(
+                    onTap: () => tumOyuncularAc(context, kadro),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Oyuncular'.c,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            '(${kadro.length})',
+                            style: TextStyle(
+                              color: DiziRenkler.metin54,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            'Tümünü gör'.c,
+                            style: TextStyle(
+                              color: DiziRenkler.sariMetin,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            size: 20,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -1450,3 +1482,90 @@ class _NeredeIzlenir extends StatelessWidget {
     );
   }
 }
+
+/// Dizinin/filmin TÜM oyuncu kadrosunu alt sayfada listeler.
+///
+/// Detaydaki yatay şerit yalnız ilk 20 kişiyi gösteriyor; kalabalık
+/// kadrolarda (Kurtlar Vadisi gibi) geri kalanına ulaşmanın yolu yoktu.
+Future<void> tumOyuncularAc(BuildContext context, List<dynamic> kadro) =>
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.75,
+        minChildSize: 0.4,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, kaydirma) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+              child: Row(
+                children: [
+                  Icon(Icons.people_outline, color: DiziRenkler.sari),
+                  const SizedBox(width: 10),
+                  Text(
+                    'Oyuncular'.c,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '(${kadro.length})',
+                    style: TextStyle(color: DiziRenkler.metin54, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                controller: kaydirma,
+                itemCount: kadro.length,
+                itemBuilder: (context, i) {
+                  final o = kadro[i] as Map<String, dynamic>;
+                  final foto = posterUrl(
+                    o['profile_path'] as String?,
+                    boyut: 'w185',
+                  );
+                  final rol = o['character'] as String?;
+                  return ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundColor: DiziRenkler.kart,
+                      backgroundImage: foto != null
+                          ? CachedNetworkImageProvider(foto)
+                          : null,
+                      child: foto == null
+                          ? Icon(Icons.person, color: DiziRenkler.metin38)
+                          : null,
+                    ),
+                    title: Text(
+                      '${o['name']}',
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: rol != null && rol.isNotEmpty
+                        ? Text(
+                            rol,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(color: DiziRenkler.metin54),
+                          )
+                        : null,
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      context.push('/kisi/${o['id']}');
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );

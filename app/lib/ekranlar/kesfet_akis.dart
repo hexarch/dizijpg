@@ -1463,7 +1463,10 @@ class _YanitlarSheetState extends State<_YanitlarSheet> {
                       ),
                       const SizedBox(width: 8),
                       IconButton(
-                        onPressed: _gonderiliyor ? null : _gonder,
+                        // Yükleme sürerken gönderilemez (medyasız giderdi)
+                        onPressed: _gonderiliyor || _ekYukleniyor
+                            ? null
+                            : _gonder,
                         icon: _gonderiliyor
                             ? const SizedBox(
                                 width: 18,

@@ -78,7 +78,7 @@ const Map<String, String> cevirilerAr = {
   'Tamam': 'حسنًا',
   'Tekrar Dene': 'أعد المحاولة',
   'Tekrar dene': 'أعد المحاولة',
-  'Toplam ekran süresi': 'إجمالي وقت المشاهدة',
+  'Toplam İzleme Süresi': 'إجمالي وقت المشاهدة',
   'Tüm Zamanların En İyileri': 'الأفضل على الإطلاق',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'صدّر كل بياناتك (المشاهدات والتقييمات والتعليقات والقوائم) كملف ZIP متوافق مع TV Time، أو استورد ملف ZIP قادمًا من تطبيق آخر.',

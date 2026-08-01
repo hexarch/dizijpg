@@ -78,7 +78,7 @@ const Map<String, String> cevirilerSw = {
   'Tamam': 'Sawa',
   'Tekrar Dene': 'Jaribu Tena',
   'Tekrar dene': 'Jaribu tena',
-  'Toplam ekran süresi': 'Jumla ya muda wa kutazama',
+  'Toplam İzleme Süresi': 'Jumla ya muda wa kutazama',
   'Tüm Zamanların En İyileri': 'Bora Zaidi za Wakati Wote',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Pakua data zako zote (kutazama, alama, maoni, orodha) kama ZIP inayooana na TV Time, au leta ZIP kutoka programu nyingine.',

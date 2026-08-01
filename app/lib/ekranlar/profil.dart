@@ -841,7 +841,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Toplam ekran süresi'.c,
+                          'Toplam İzleme Süresi'.c,
                           style: TextStyle(
                             color: DiziRenkler.metin54,
                             fontSize: 13,

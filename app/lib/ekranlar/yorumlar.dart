@@ -366,7 +366,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
                     ),
                     const Spacer(),
                     FilledButton(
-                      onPressed: _gonderiliyor ? null : _gonder,
+                      // Yükleme sürerken gönderilemez: eskiden basılınca
+                      // yorum medyasız gidiyor, video kaybediliyordu.
+                      onPressed: _gonderiliyor || _ekYukleniyor
+                          ? null
+                          : _gonder,
                       child: _gonderiliyor
                           ? SizedBox(
                               width: 18,

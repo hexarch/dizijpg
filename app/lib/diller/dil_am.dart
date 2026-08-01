@@ -76,7 +76,7 @@ const Map<String, String> cevirilerAm = {
   'Tamam': 'እሺ',
   'Tekrar Dene': 'እንደገና ሞክር',
   'Tekrar dene': 'እንደገና ሞክር',
-  'Toplam ekran süresi': 'ጠቅላላ የእይታ ጊዜ',
+  'Toplam İzleme Süresi': 'ጠቅላላ የእይታ ጊዜ',
   'Tüm Zamanların En İyileri': 'የሁሉም ጊዜ ምርጦች',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'ሁሉንም ዳታህን (እይታ፣ ነጥብ፣ አስተያየት፣ ዝርዝር) ከTV Time ጋር ተኳሃኝ በሆነ ZIP መልክ አውርድ ወይም ከሌላ መተግበሪያ የመጣ ZIP አስገባ።',

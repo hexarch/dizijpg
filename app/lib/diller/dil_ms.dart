@@ -78,7 +78,7 @@ const Map<String, String> cevirilerMs = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Cuba Lagi',
   'Tekrar dene': 'Cuba lagi',
-  'Toplam ekran süresi': 'Jumlah masa tontonan',
+  'Toplam İzleme Süresi': 'Jumlah masa tontonan',
   'Tüm Zamanların En İyileri': 'Terbaik Sepanjang Zaman',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Eksport semua data anda (tontonan, rating, komen, senarai) sebagai ZIP serasi TV Time, atau import ZIP dari aplikasi lain.',

@@ -78,7 +78,7 @@ const Map<String, String> cevirilerAz = {
   'Tamam': 'Tamam',
   'Tekrar Dene': 'Yenidən Cəhd Et',
   'Tekrar dene': 'Yenidən cəhd et',
-  'Toplam ekran süresi': 'Ümumi ekran vaxtı',
+  'Toplam İzleme Süresi': 'Ümumi ekran vaxtı',
   'Tüm Zamanların En İyileri': 'Bütün Zamanların Ən Yaxşıları',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Bütün məlumatlarını (izləmə, qiymət, şərh, siyahı) TV Time ilə uyğun ZIP kimi al və ya başqa tətbiqdən gələn ZIP-i idxal et.',

@@ -78,7 +78,7 @@ const Map<String, String> cevirilerTa = {
   'Tamam': 'சரி',
   'Tekrar Dene': 'மீண்டும் முயற்சி',
   'Tekrar dene': 'மீண்டும் முயற்சி செய்',
-  'Toplam ekran süresi': 'மொத்த திரை நேரம்',
+  'Toplam İzleme Süresi': 'மொத்த திரை நேரம்',
   'Tüm Zamanların En İyileri': 'எல்லா காலத்திலும் சிறந்தவை',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'உன் எல்லா தரவையும் (பார்த்தவை, மதிப்பீடுகள், கருத்துகள், பட்டியல்கள்) TV Time இணக்கமான ZIP ஆக பதிவிறக்கு அல்லது வேறு ஆப்பிலிருந்து வந்த ZIP ஐ இறக்குமதி செய்.',

@@ -78,7 +78,7 @@ const Map<String, String> cevirilerId = {
   'Tamam': 'Oke',
   'Tekrar Dene': 'Coba Lagi',
   'Tekrar dene': 'Coba lagi',
-  'Toplam ekran süresi': 'Total waktu nonton',
+  'Toplam İzleme Süresi': 'Total waktu nonton',
   'Tüm Zamanların En İyileri': 'Terbaik Sepanjang Masa',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Ekspor semua datamu (tontonan, nilai, komentar, daftar) sebagai ZIP yang kompatibel dengan TV Time, atau impor ZIP dari aplikasi lain.',

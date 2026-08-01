@@ -78,7 +78,7 @@ const Map<String, String> cevirilerHu = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Próbáld újra',
   'Tekrar dene': 'Próbáld újra',
-  'Toplam ekran süresi': 'Teljes képernyőidő',
+  'Toplam İzleme Süresi': 'Teljes képernyőidő',
   'Tüm Zamanların En İyileri': 'Minden idők legjobbjai',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Töltsd le az összes adatodat (megtekintések, értékelések, hozzászólások, listák) TV Time-kompatibilis ZIP-ként, vagy importálj ZIP-et egy másik alkalmazásból.',

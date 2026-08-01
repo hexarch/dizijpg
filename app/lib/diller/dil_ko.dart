@@ -76,7 +76,7 @@ const Map<String, String> cevirilerKo = {
   'Tamam': '확인',
   'Tekrar Dene': '다시 시도',
   'Tekrar dene': '다시 시도',
-  'Toplam ekran süresi': '총 시청 시간',
+  'Toplam İzleme Süresi': '총 시청 시간',
   'Tüm Zamanların En İyileri': '역대 최고 작품',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       '모든 데이터(시청, 평점, 댓글, 리스트)를 TV Time 호환 ZIP으로 내보내거나, 다른 앱의 ZIP을 가져올 수 있어요.',

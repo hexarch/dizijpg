@@ -78,7 +78,7 @@ const Map<String, String> cevirilerPl = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Spróbuj ponownie',
   'Tekrar dene': 'Spróbuj jeszcze raz',
-  'Toplam ekran süresi': 'Łączny czas przed ekranem',
+  'Toplam İzleme Süresi': 'Łączny czas przed ekranem',
   'Tüm Zamanların En İyileri': 'Najlepsze wszech czasów',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Pobierz wszystkie swoje dane (obejrzane, oceny, komentarze, listy) jako ZIP zgodny z TV Time albo zaimportuj ZIP z innej aplikacji.',

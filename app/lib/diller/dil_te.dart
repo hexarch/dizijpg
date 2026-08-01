@@ -78,7 +78,7 @@ const Map<String, String> cevirilerTe = {
   'Tamam': 'సరే',
   'Tekrar Dene': 'మళ్ళీ ప్రయత్నించు',
   'Tekrar dene': 'మళ్ళీ ప్రయత్నించు',
-  'Toplam ekran süresi': 'మొత్తం స్క్రీన్ సమయం',
+  'Toplam İzleme Süresi': 'మొత్తం స్క్రీన్ సమయం',
   'Tüm Zamanların En İyileri': 'అన్ని కాలాల్లో అత్యుత్తమమైనవి',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'నీ మొత్తం డేటాను (వీక్షణలు, రేటింగ్‌లు, కామెంట్లు, లిస్టులు) TV Time అనుకూల ZIP గా పొందు లేదా వేరే యాప్ నుండి వచ్చిన ZIP ను దిగుమతి చేయి.',

@@ -79,7 +79,7 @@ const Map<String, String> cevirilerKn = {
   'Tamam': 'ಸರಿ',
   'Tekrar Dene': 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು',
   'Tekrar dene': 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸು',
-  'Toplam ekran süresi': 'ಒಟ್ಟು ಸ್ಕ್ರೀನ್ ಸಮಯ',
+  'Toplam İzleme Süresi': 'ಒಟ್ಟು ಸ್ಕ್ರೀನ್ ಸಮಯ',
   'Tüm Zamanların En İyileri': 'ಸಾರ್ವಕಾಲಿಕ ಶ್ರೇಷ್ಠ',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'ನಿನ್ನ ಎಲ್ಲಾ ಡೇಟಾವನ್ನು (ವೀಕ್ಷಣೆ, ರೇಟಿಂಗ್, ಕಾಮೆಂಟ್, ಲಿಸ್ಟ್) TV Time ಹೊಂದಾಣಿಕೆಯ ZIP ಆಗಿ ಪಡೆ ಅಥವಾ ಬೇರೆ ಆ್ಯಪ್‌ನಿಂದ ಬಂದ ZIP ಅನ್ನು ಆಮದು ಮಾಡು.',

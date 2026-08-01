@@ -78,7 +78,7 @@ const Map<String, String> cevirilerFi = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Yritä uudelleen',
   'Tekrar dene': 'Yritä uudelleen',
-  'Toplam ekran süresi': 'Ruutuaika yhteensä',
+  'Toplam İzleme Süresi': 'Ruutuaika yhteensä',
   'Tüm Zamanların En İyileri': 'Kaikkien aikojen parhaat',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Lataa kaikki tietosi (katselut, arvosanat, kommentit, listat) TV Time -yhteensopivana ZIP-tiedostona tai tuo ZIP toisesta sovelluksesta.',

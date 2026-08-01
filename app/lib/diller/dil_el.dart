@@ -78,7 +78,7 @@ const Map<String, String> cevirilerEl = {
   'Tamam': 'Εντάξει',
   'Tekrar Dene': 'Δοκίμασε Ξανά',
   'Tekrar dene': 'Δοκίμασε ξανά',
-  'Toplam ekran süresi': 'Συνολικός χρόνος οθόνης',
+  'Toplam İzleme Süresi': 'Συνολικός χρόνος οθόνης',
   'Tüm Zamanların En İyileri': 'Τα Καλύτερα Όλων των Εποχών',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Κατέβασε όλα τα δεδομένα σου (προβολές, βαθμολογίες, σχόλια, λίστες) ως ZIP συμβατό με TV Time ή κάνε εισαγωγή ενός ZIP από άλλη εφαρμογή.',

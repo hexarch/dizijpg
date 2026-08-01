@@ -80,7 +80,7 @@ const Map<String, String> cevirilerMy = {
   'Tamam': 'အိုကေ',
   'Tekrar Dene': 'ထပ်စမ်းကြည့်ပါ',
   'Tekrar dene': 'ထပ်စမ်းကြည့်ပါ',
-  'Toplam ekran süresi': 'စုစုပေါင်း ကြည့်ရှုချိန်',
+  'Toplam İzleme Süresi': 'စုစုပေါင်း ကြည့်ရှုချိန်',
   'Tüm Zamanların En İyileri': 'အချိန်တိုင်းရဲ့ အကောင်းဆုံးများ',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'မင်းရဲ့ ဒေတာအားလုံး (ကြည့်ရှုမှတ်တမ်း၊ အမှတ်၊ မှတ်ချက်၊ စာရင်း) ကို TV Time နဲ့ ကိုက်ညီတဲ့ ZIP အနေနဲ့ ထုတ်ယူပါ ဒါမှမဟုတ် တခြားအက်ပ်က ZIP ကို ထည့်သွင်းပါ။',

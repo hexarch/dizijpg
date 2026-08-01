@@ -75,7 +75,7 @@ const Map<String, String> cevirilerZh = {
   'Tamam': '好的',
   'Tekrar Dene': '重试',
   'Tekrar dene': '重试',
-  'Toplam ekran süresi': '总观看时长',
+  'Toplam İzleme Süresi': '总观看时长',
   'Tüm Zamanların En İyileri': '史上最佳',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       '将你的全部数据（观看、评分、评论、片单）导出为 TV Time 兼容的 ZIP，或导入来自其他应用的 ZIP。',

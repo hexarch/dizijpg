@@ -78,7 +78,7 @@ const Map<String, String> cevirilerMr = {
   'Tamam': 'ठीक आहे',
   'Tekrar Dene': 'पुन्हा प्रयत्न करा',
   'Tekrar dene': 'पुन्हा प्रयत्न करा',
-  'Toplam ekran süresi': 'एकूण स्क्रीन टाइम',
+  'Toplam İzleme Süresi': 'एकूण स्क्रीन टाइम',
   'Tüm Zamanların En İyileri': 'सर्वकालीन सर्वोत्तम',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'तुमचा सगळा डेटा (वॉच हिस्टरी, रेटिंग, कमेंट, लिस्ट) TV Time-सुसंगत ZIP म्हणून घ्या किंवा दुसऱ्या ॲपमधून आलेली ZIP इंपोर्ट करा.',

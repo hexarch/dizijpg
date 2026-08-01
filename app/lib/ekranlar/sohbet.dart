@@ -740,7 +740,8 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                             const SizedBox(width: 2),
                             IconButton.filled(
                               tooltip: 'Gönder'.c,
-                              onPressed: _gonderiliyor
+                              // Yükleme sürerken gönderilemez (medyasız giderdi)
+                              onPressed: _gonderiliyor || _ekYukleniyor
                                   ? null
                                   : () => _gonder(metin: _metin.text.trim()),
                               style: IconButton.styleFrom(

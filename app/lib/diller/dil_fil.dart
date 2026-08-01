@@ -78,7 +78,7 @@ const Map<String, String> cevirilerFil = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Subukan Ulit',
   'Tekrar dene': 'Subukan ulit',
-  'Toplam ekran süresi': 'Kabuuang screen time',
+  'Toplam İzleme Süresi': 'Kabuuang screen time',
   'Tüm Zamanların En İyileri': 'Pinakamahusay sa Lahat ng Panahon',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'I-export ang lahat ng data mo (panonood, rating, komento, listahan) bilang TV Time-compatible na ZIP, o mag-import ng ZIP mula sa ibang app.',

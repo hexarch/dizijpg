@@ -76,7 +76,7 @@ const Map<String, String> cevirilerJa = {
   'Tamam': 'OK',
   'Tekrar Dene': 'もう一度試す',
   'Tekrar dene': 'もう一度試す',
-  'Toplam ekran süresi': '合計視聴時間',
+  'Toplam İzleme Süresi': '合計視聴時間',
   'Tüm Zamanların En İyileri': '歴代ベスト',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       '全データ（視聴・評価・コメント・リスト）をTV Time互換のZIPでエクスポート、または他のアプリのZIPをインポートできます。',

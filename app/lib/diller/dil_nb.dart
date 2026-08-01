@@ -78,7 +78,7 @@ const Map<String, String> cevirilerNb = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Prøv igjen',
   'Tekrar dene': 'Prøv igjen',
-  'Toplam ekran süresi': 'Total skjermtid',
+  'Toplam İzleme Süresi': 'Total skjermtid',
   'Tüm Zamanların En İyileri': 'Tidenes beste',
   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
       'Eksporter alle dataene dine (historikk, vurderinger, kommentarer, lister) som en TV Time-kompatibel ZIP, eller importer en ZIP fra en annen app.',
