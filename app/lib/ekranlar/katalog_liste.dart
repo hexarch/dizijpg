@@ -146,7 +146,16 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text(widget.baslik.c)),
+      // Raf adları uzun ("Ταινίες με τις περισσότερες προβολές"): tek satırlık
+      // AppBar başlığı kesiliyordu. 2 satıra izin ver + puntoyu bir tık düşür;
+      // 2x17 pt = ~40 dp, 56 dp'lik araç çubuğuna sığar.
+      appBar: AppBar(
+        title: Text(
+          widget.baslik.c,
+          maxLines: 2,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
+      ),
       body: govde,
     );
   }

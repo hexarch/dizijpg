@@ -1,6 +1,35 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Ana Sayfa raf başlıkları mobilde kırpılıyordu
+**Kullanıcı bildirimi:** "Haftanın Dizileri / Haftanın Filmleri tam görünmüyor,
+başka tam gözükmeyenler de var."
+- 🚀 **Kök neden `Spacer()`.** `PosterSeridi` başlık satırında başlık
+  `Flexible`, sağında `Spacer()` vardı. İkisi de esnek ve varsayılan flex 1
+  olduğu için boş alan YARI YARIYA bölünüyordu. 360 dp'de ölçüldü: başlığa
+  **81,75 dp** veriliyor, oysa **293,25 dp** gerekiyordu → kısa başlıklar bile
+  üç noktaya düşüyordu. (Geçici testle kanıtlandı, sonra silindi.)
+- 🚀 Ortak `SeritBasligi` widget'ı (`ekranlar/ortak.dart`): başlık `Expanded`,
+  `Spacer` yok, `maxLines` yok (sığmazsa sarar, KESİLMEZ), dar ekranda
+  (<400 dp) "Tümünü gör" metni gizlenip yalnız ok kalıyor — başlığa ~90 dp
+  daha yer. Dokunma hedefi satırın tamamı (>=44 dp), `Semantics` etiketiyle
+  ekran okuyucu yine "<başlık>, Tümünü gör" duyuyor.
+- 🚀 Aynı kalıptaki diğer kırpma/taşma noktaları da düzeltildi: Detay >
+  Oyuncular başlığı (artık `SeritBasligi`, sayı eki `ek:` ile), tüm oyuncular
+  sayfası başlığı (`Flexible`), Profil > "İzlediğim Diziler/Filmler" ve
+  "Toplam İzleme Süresi" kartı, Kullanıcı profili > "Toplam ekran süresi",
+  "Tümünü gör" ekranının AppBar başlığı (2 satır + 17 pt).
+- ✅ `test/serit_basligi_test.dart` (7 test): 360 dp'de bildirilen başlıklar
+  ve **el/fil/my/ml/pl** dillerinin en uzun raf çevirileri kırpılmıyor
+  (`didExceedMaxLines` false + taşma yok), dar ekranda metin gizli/ok var,
+  geniş ekranda metin var, dokunma `onTap` tetikliyor, hedef >=44 dp.
+  `flutter test` 45/45, `flutter analyze` temiz (yalnız info).
+- ✅ Web dağıtıldı: site 200, `/api/saglik` 200, `main.dart.js` özeti yerelle
+  aynı, SW sökücü yerinde.
+- ⬜ Yan bulgu (bu turda düzeltilmedi): `ozet.dart` ve `kullanici_profil.dart`
+  içindeki `'Toplam ekran süresi'.c` anahtarı 45 dil dosyasının HİÇBİRİNDE yok
+  (`'Toplam İzleme Süresi'` var) → o etiket her dilde Türkçe kalıyor.
+
 ## 2026-08-02 — Profil > Yorumlar sekmesinde kullanıcı adı "@null" görünüyordu
 **Kullanıcı bildirimi:** "Kendi profilimde Yorumlar sekmesindeki kartlarda
 kullanıcı adı @null yazıyor."

@@ -218,14 +218,17 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             size: 20,
                           ),
                           const SizedBox(width: 10),
-                          Text(
-                            'Toplam ekran süresi'.c,
-                            style: TextStyle(
-                              color: DiziRenkler.metin54,
-                              fontSize: 13,
+                          // Expanded: uzun çevirilerde Spacer'lı satır taşıyordu.
+                          Expanded(
+                            child: Text(
+                              'Toplam ekran süresi'.c,
+                              style: TextStyle(
+                                color: DiziRenkler.metin54,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                          const Spacer(),
+                          const SizedBox(width: 8),
                           Text(
                             sureBicimle((st['tahmini_dakika'] as num).toInt()),
                             style: TextStyle(

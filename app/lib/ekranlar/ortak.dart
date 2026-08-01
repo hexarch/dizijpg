@@ -818,6 +818,99 @@ class PosterKarti extends StatelessWidget {
   }
 }
 
+/// Yatay şeritlerin (poster/oyuncu) ortak başlık satırı.
+///
+/// Başlık ASLA kırpılmaz — 45 dilin bazılarında raf adları çok uzun
+/// ("Ταινίες με τις περισσότερες προβολές", "Pinakamataas ang rating na
+/// pelikula"). Bunu üç önlemle garantiliyoruz:
+///  1. Başlık [Expanded] — kalan TÜM genişliği alır. (Eskiden `Flexible` +
+///     `Spacer()` vardı; ikisi de esnek olduğu için boş alan yarı yarıya
+///     bölünüyordu ve "Haftanın Dizileri" gibi KISA başlıklar bile üç noktaya
+///     düşüyordu. Asıl hata buydu.)
+///  2. `maxLines` yok — sığmayan başlık alt satıra sarar, kesilmez.
+///  3. Dar ekranda (<400 dp) "Tümünü gör" metni gizlenir, yalnız ok kalır;
+///     başlığa ~90 dp daha yer açılır. Dokunma hedefi satırın tamamıdır
+///     (>=44 dp), yani ok küçülse de dokunulabilirlik değişmez.
+class SeritBasligi extends StatelessWidget {
+  /// Başlığın solundaki işaret (sarı çubuk, ikon vb.) — isteğe bağlı.
+  final Widget? oncu;
+  final String baslik;
+
+  /// Başlıktan sonra gelen soluk küçük metin, ör. oyuncu sayısı "(24)".
+  final String? ek;
+
+  /// Verilirse satır tıklanabilir olur ve "Tümünü gör" + ok gösterilir.
+  final VoidCallback? onTap;
+
+  const SeritBasligi({
+    super.key,
+    required this.baslik,
+    this.oncu,
+    this.ek,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final dar = MediaQuery.sizeOf(context).width < 400;
+    final satir = Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
+      child: Row(
+        children: [
+          if (oncu != null) ...[oncu!, const SizedBox(width: 8)],
+          Expanded(
+            // Text.rich (RichText DEĞİL) — DefaultTextStyle'ı devralır, ama
+            // koyu/açık tema karışmasın diye taban rengi yine de açıkça verilir.
+            child: Text.rich(
+              TextSpan(
+                text: baslik,
+                children: ek == null
+                    ? null
+                    : [
+                        TextSpan(
+                          text: '  $ek',
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+              ),
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+                color: DiziRenkler.metin,
+              ),
+            ),
+          ),
+          if (onTap != null) ...[
+            const SizedBox(width: 8),
+            if (!dar)
+              Text(
+                'Tümünü gör'.c,
+                style: TextStyle(
+                  color: DiziRenkler.sariMetin,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            Icon(Icons.chevron_right, size: 20, color: DiziRenkler.sariMetin),
+          ],
+        ],
+      ),
+    );
+    if (onTap == null) return satir;
+    // Semantik etiket: dar ekranda metin gizlendiği için ok tek başına kalıyor;
+    // ekran okuyucu yine "<başlık>, Tümünü gör" duyar.
+    return Semantics(
+      button: true,
+      label: '$baslik, ${'Tümünü gör'.c}',
+      child: InkWell(onTap: onTap, child: satir),
+    );
+  }
+}
+
 /// Yatay poster şeridi (başlık + liste).
 class PosterSeridi extends StatelessWidget {
   final String baslik;
@@ -842,49 +935,15 @@ class PosterSeridi extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        InkWell(
+        SeritBasligi(
+          baslik: baslik,
           onTap: onBaslikTap,
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
-            child: Row(
-              children: [
-                Container(
-                  width: 4,
-                  height: 18,
-                  decoration: BoxDecoration(
-                    color: DiziRenkler.sari,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    baslik,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-                if (onBaslikTap != null) ...[
-                  const Spacer(),
-                  Text(
-                    'Tümünü gör'.c,
-                    style: TextStyle(
-                      color: DiziRenkler.sariMetin,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Icon(
-                    Icons.chevron_right,
-                    size: 20,
-                    color: DiziRenkler.sariMetin,
-                  ),
-                ],
-              ],
+          oncu: Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              color: DiziRenkler.sari,
+              borderRadius: BorderRadius.circular(2),
             ),
           ),
         ),

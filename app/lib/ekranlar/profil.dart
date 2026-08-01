@@ -231,14 +231,17 @@ class _ProfilEkraniState extends State<ProfilEkrani>
             children: [
               Icon(grup.$1, size: 19, color: DiziRenkler.sariMetin),
               const SizedBox(width: 6),
-              Text(
-                grup.$2.cf([grup.$5 ?? grup.$3.length]),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
+              // Expanded (Flexible+Spacer değil): "İzlediğim Diziler (215)"
+              // uzun çevirilerde (fil/my/ta) taşıyordu. maxLines yok → sarar.
+              Expanded(
+                child: Text(
+                  grup.$2.cf([grup.$5 ?? grup.$3.length]),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
-              const Spacer(),
               TextButton(
                 onPressed: () => context.push('/izlediklerim?tur=${grup.$4}'),
                 child: Text(
@@ -858,14 +861,18 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           size: 22,
                         ),
                         const SizedBox(width: 12),
-                        Text(
-                          'Toplam İzleme Süresi'.c,
-                          style: TextStyle(
-                            color: DiziRenkler.metin54,
-                            fontSize: 13,
+                        // Expanded: pl "Łączny czas przed ekranem" (25 harf)
+                        // Spacer'lı halde 360 dp altında satırı taşırıyordu.
+                        Expanded(
+                          child: Text(
+                            'Toplam İzleme Süresi'.c,
+                            style: TextStyle(
+                              color: DiziRenkler.metin54,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 8),
                         Text(
                           sureBicimle(dakika),
                           style: TextStyle(
