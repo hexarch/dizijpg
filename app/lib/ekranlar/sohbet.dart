@@ -1125,15 +1125,20 @@ class _MesajBaloncugu extends StatelessWidget {
                       onTap: () => medyaGoster(context, [dosyaUrl(medya)!]),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
+                        // Yer tutucu SAYDAM siyahtı (black26): altındaki
+                        // baloncuk sarı ya da açık temada beyaz olunca
+                        // white70 ikon kayboluyordu. black54 + tam beyaz ikon
+                        // her iki temada ve her iki baloncuk renginde okunur
+                        // (beyaz kart üstünde ~4.6:1, sarı üstünde ~6.5:1).
                         child: video
                             ? Container(
                                 width: 180,
                                 height: 120,
-                                color: Colors.black26,
+                                color: Colors.black54,
                                 child: const Icon(
                                   Icons.play_circle_outline,
                                   size: 40,
-                                  color: Colors.white70,
+                                  color: Colors.white,
                                 ),
                               )
                             : CachedNetworkImage(
@@ -1143,15 +1148,15 @@ class _MesajBaloncugu extends StatelessWidget {
                                 placeholder: (_, _) => Container(
                                   width: 200,
                                   height: 150,
-                                  color: Colors.black26,
+                                  color: Colors.black54,
                                 ),
                                 errorWidget: (_, _, _) => Container(
                                   width: 200,
                                   height: 150,
-                                  color: Colors.black26,
+                                  color: Colors.black54,
                                   child: const Icon(
                                     Icons.broken_image_outlined,
-                                    color: Colors.white70,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
