@@ -1,6 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Alt gezinme ikonları sekme değişince anlam değiştiriyordu
+**Kullanıcı isteği:** "İlk sekme seçiliyken pusula, başka sekmedeyken ev
+görünüyor; ikon seçili olsun olmasın aynı şeyi anlatmalı."
+- ✅ **kabuk.dart** — Ana Sayfa sekmesi `home_outlined` → seçili `home` (eskiden
+  seçili hâli `explore` idi). Aynı hata Keşfet sekmesinde de vardı: seçili
+  olmayan `explore_outlined`, seçili `search` (sekme eskiden "Arama"ydı) →
+  seçili hâli `explore` yapıldı. Diğer üç sekme zaten tutarlıydı.
+- ✅ Hedef listesi test edilebilsin diye `kabukHedefleri()` fonksiyonuna alındı;
+  `test/kabuk_ikon_test.dart` (4 test) beş sekmenin de ikon ailesini,
+  etiketlerin (ekran okuyucu) silinmediğini ve `alwaysHide` ayarını kilitliyor.
+- ⬜ Canlıya alma: scp izin engeline takıldı, ana oturum dağıtacak.
+
 ## 2026-08-02 — Başkasının profilinde de iki sekme (Dizi ve Filmler / Yorumlar)
 **Kullanıcı isteği:** "Kendi profilimdeki iki sekmeli düzen başkasının
 profilinde de olsun; yorumlar katlanır bölüm olmaktan çıksın."
