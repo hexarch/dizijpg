@@ -124,12 +124,34 @@ function instaIndir(kisaKod) {
 
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
   webp: 'image/webp', mp4: 'video/mp4', webm: 'video/webm' };
+// Sunucu sınırı 30MB; Instagram videoları 40-70MB olabiliyor → hedef boyuta
+// göre bit hızı hesaplanıp yeniden kodlanır (CRF ile boyut öngörülemiyor).
+const SINIR_BAYT = 28 * 1024 * 1024;
+const HEDEF_BAYT = 26 * 1024 * 1024;
+
+function videoKucult(tamYol) {
+  const sure = parseFloat(execFileSync('ffprobe', ['-v', 'error',
+    '-show_entries', 'format=duration', '-of', 'csv=p=0', tamYol], { encoding: 'utf8' }).trim());
+  if (!Number.isFinite(sure) || sure <= 0) return null;
+  const vb = Math.max(300, Math.floor((HEDEF_BAYT * 8 / sure) / 1000) - 128);
+  const cikti = tamYol.replace(/\.[^.]+$/, '') + '_kucuk.mp4';
+  const s = spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', tamYol,
+    '-vf', "scale='min(1280,iw)':-2", '-c:v', 'libx264', '-preset', 'veryfast',
+    '-b:v', `${vb}k`, '-maxrate', `${Math.floor(vb * 1.5)}k`, '-bufsize', `${vb * 2}k`,
+    '-c:a', 'aac', '-b:a', '128k', cikti], { encoding: 'utf8' });
+  if (s.status !== 0 || !fs.existsSync(cikti)) return null;
+  return cikti;
+}
 
 async function medyaYukle(token, tamYol) {
-  const uzanti = path.extname(tamYol).slice(1).toLowerCase();
-  const veri = fs.readFileSync(tamYol);
+  let yol = tamYol;
+  if (fs.statSync(yol).size > SINIR_BAYT && /\.(mp4|webm|mov)$/i.test(yol)) {
+    const k = videoKucult(yol);
+    if (k) yol = k;
+  }
+  const uzanti = path.extname(yol).slice(1).toLowerCase();
   const c = await api('/medya', {
-    yontem: 'POST', token, ham: veri, tip: MIME[uzanti] || 'application/octet-stream',
+    yontem: 'POST', token, ham: fs.readFileSync(yol), tip: MIME[uzanti] || 'application/octet-stream',
   });
   return c.yol;
 }
