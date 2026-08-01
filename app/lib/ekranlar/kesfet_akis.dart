@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -48,13 +49,17 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     if (!_videoluMu(i)) return;
     final vardi = _gorunurVideolar.contains(i);
     if (gorunur == vardi) return;
-    setState(() {
-      if (gorunur) {
-        _gorunurVideolar.add(i);
-      } else {
-        _gorunurVideolar.remove(i);
-      }
-    });
+    final oncekiIkili = _gorunurVideolar.take(_esZamanliOynatma).toList();
+    if (gorunur) {
+      _gorunurVideolar.add(i);
+    } else {
+      _gorunurVideolar.remove(i);
+    }
+    // Kaydırırken görünürlük sürekli değişir; YALNIZ oynayan ikili
+    // değiştiyse yeniden çiz. Aksi halde her olayda tüm ızgara yeniden
+    // kurulur ve kaydırma takılır.
+    final yeniIkili = _gorunurVideolar.take(_esZamanliOynatma).toList();
+    if (!listEquals(oncekiIkili, yeniIkili)) setState(() {});
   }
 
   /// İlk gören ilk oynar: listedeki ilk iki görünür video.
