@@ -4,6 +4,37 @@ import 'package:go_router/go_router.dart';
 import '../ceviri.dart';
 import 'profil.dart' show profilYenileTetik;
 
+/// Alt gezinme sekmeleri. Kural: bir sekmenin seçili ve seçili olmayan ikonu
+/// AYNI ikon ailesinden olmalı (yalnız içi dolu/boş farkı) — yoksa sekme
+/// değiştikçe ikon başka bir şeye dönüşüyormuş gibi görünür. Test bunu kilitler.
+List<NavigationDestination> kabukHedefleri() => [
+  NavigationDestination(
+    icon: const Icon(Icons.home_outlined),
+    selectedIcon: const Icon(Icons.home),
+    label: 'Ana Sayfa'.c,
+  ),
+  NavigationDestination(
+    icon: const Icon(Icons.calendar_month_outlined),
+    selectedIcon: const Icon(Icons.calendar_month),
+    label: 'Takvim'.c,
+  ),
+  NavigationDestination(
+    icon: const Icon(Icons.add_circle_outline, size: 30),
+    selectedIcon: const Icon(Icons.add_circle, size: 30),
+    label: 'Akış'.c,
+  ),
+  NavigationDestination(
+    icon: const Icon(Icons.explore_outlined),
+    selectedIcon: const Icon(Icons.explore),
+    label: 'Keşfet'.c,
+  ),
+  NavigationDestination(
+    icon: const Icon(Icons.person_outline),
+    selectedIcon: const Icon(Icons.person),
+    label: 'Profil'.c,
+  ),
+];
+
 /// Ana kabuk: Keşfet · Takvim · Arama · Profil.
 /// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
 class KabukEkrani extends StatelessWidget {
@@ -28,33 +59,7 @@ class KabukEkrani extends StatelessWidget {
             initialLocation: i == shell.currentIndex,
           );
         },
-        destinations: [
-          NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.explore),
-            label: 'Ana Sayfa'.c,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.calendar_month_outlined),
-            selectedIcon: const Icon(Icons.calendar_month),
-            label: 'Takvim'.c,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.add_circle_outline, size: 30),
-            selectedIcon: const Icon(Icons.add_circle, size: 30),
-            label: 'Akış'.c,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.explore_outlined),
-            selectedIcon: const Icon(Icons.search),
-            label: 'Keşfet'.c,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.person_outline),
-            selectedIcon: const Icon(Icons.person),
-            label: 'Profil'.c,
-          ),
-        ],
+        destinations: kabukHedefleri(),
       ),
     );
   }
