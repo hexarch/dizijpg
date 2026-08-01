@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ceviri.dart';
+import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
 
 /// dizi.jpg API istemcisi (nginx + Cloudflare arkasında, TLS'li).
@@ -371,11 +372,13 @@ class Oturum extends ChangeNotifier {
     kullanici = k;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('kullanici', jsonEncode(k));
+    KitaplikDurumu.yukle(); // poster kartlarındaki "izledin" rozeti için
     notifyListeners();
   }
 
   Future<void> cikis() async {
     await Api.cikis();
+    KitaplikDurumu.temizle(); // başka hesap önceki kitaplığı görmesin
     kullanici = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('kullanici');

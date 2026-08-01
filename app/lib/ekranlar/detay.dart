@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
@@ -89,13 +90,19 @@ class _DetayEkraniState extends State<DetayEkrani> {
     _benimYenile();
   }
 
-  Future<void> _durumSec(String? durum) => _mutasyon(
-    () => Api.post('/durum', {
+  Future<void> _durumSec(String? durum) => _mutasyon(() async {
+    await Api.post('/durum', {
       'tmdb_id': widget.tmdbId,
       'tur': widget.tur,
       'durum': durum ?? '',
-    }),
-  );
+    });
+    // Poster kartlarındaki "izledin" rozeti anında doğru olsun.
+    KitaplikDurumu.isaretle(
+      widget.tur,
+      widget.tmdbId,
+      durum == 'izliyorum' || durum == 'bitirdim' || durum == 'biraktim',
+    );
+  });
 
   /// Yeniden izleme sayacı (+1 / -1); yalnız "bitirdim" durumunda çalışır.
   Future<void> _rewatch(int deger) => _mutasyon(

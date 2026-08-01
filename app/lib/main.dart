@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'api.dart';
 import 'ceviri.dart';
 import 'push.dart';
+import 'kitaplik_durumu.dart';
 import 'tema.dart';
 import 'veri_tasarrufu.dart';
 import 'yonlendirme.dart';
@@ -49,6 +50,7 @@ Future<void> main() async {
     await oturum.yukle();
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)
     if (oturum.girisli) pushBaslat();
+    if (oturum.girisli) KitaplikDurumu.yukle();
     runApp(
       ChangeNotifierProvider.value(value: oturum, child: const DiziJpgApp()),
     );

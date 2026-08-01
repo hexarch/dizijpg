@@ -6,5 +6,8 @@ RUN apk add --no-cache ffmpeg
 COPY package.json ./
 RUN npm install --omit=dev
 COPY server.js veri_aktar.js admin.html ./
+# dizi.jpg AI bakım araçları: imaja girsin ki her yeniden derlemede
+# elle `docker cp` gerekmesin (tohumlama + kare tekrar temizliği).
+COPY ai_tohum.js ai_kare_tazele.js ai_yorumlar.json ./
 EXPOSE 8500
 CMD ["node", "server.js"]

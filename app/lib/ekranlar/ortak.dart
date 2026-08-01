@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
+import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'medya_goster.dart';
@@ -640,6 +641,29 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
 }
 
 /// Poster kartı: dokununca detaya gider.
+
+/// "Bunu izledin" rozeti: poster kartlarının sağ üstünde.
+///
+/// ÇİFT RENK: arkada biraz büyük SİYAH ikon, önde BEYAZ ikon. Poster açık da
+/// olsa koyu da olsa okunur — tek renk ikon bazı posterlerde kayboluyordu.
+class IzlendiRozeti extends StatelessWidget {
+  final double boyut;
+  const IzlendiRozeti({super.key, this.boyut = 17});
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Icon(Icons.remove_red_eye, size: boyut + 3, color: Colors.black87),
+          Icon(Icons.remove_red_eye, size: boyut, color: Colors.white),
+        ],
+      ),
+    );
+  }
+}
+
 class PosterKarti extends StatelessWidget {
   final Map<String, dynamic> icerik;
   final String? turZorla; // multi aramada media_type gelir; trendlerde belli
@@ -662,6 +686,7 @@ class PosterKarti extends StatelessWidget {
     final posterYolu = posterUrl(icerik['poster_path'] as String?);
     final puan = (icerik['vote_average'] as num?)?.toDouble() ?? 0;
 
+    final tmdbId = (icerik['id'] as num?)?.toInt();
     return SizedBox(
       width: genislik,
       child: InkWell(
@@ -700,6 +725,20 @@ class PosterKarti extends StatelessWidget {
                           ),
                   ),
                 ),
+                // Sağ üst: bu içeriği izlediysen göz rozeti. Kitaplık
+                // değişince (izlemeye başla/bırak) anında güncellenir.
+                if (tmdbId != null)
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: ValueListenableBuilder<int>(
+                      valueListenable: KitaplikDurumu.surum,
+                      builder: (context, _, _) =>
+                          KitaplikDurumu.izlendiMi(tur, tmdbId)
+                          ? const IzlendiRozeti()
+                          : const SizedBox.shrink(),
+                    ),
+                  ),
                 if (puan > 0)
                   Positioned(
                     top: 6,
