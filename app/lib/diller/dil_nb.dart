@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (nb).
 const Map<String, String> cevirilerNb = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Du har sett alt, vi viser deg fra begynnelsen',
   'Aktarılacak tanınan veri bulunamadı.':
       'Fant ingen gjenkjente data å importere.',
   'Arama': 'Søk',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (vi).
 const Map<String, String> cevirilerVi = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Bạn đã thấy tất cả, chúng tôi chỉ cho bạn từ đầu',
   'Aktarılacak tanınan veri bulunamadı.':
       'Không tìm thấy dữ liệu hợp lệ để nhập.',
   'Arama': 'Tìm kiếm',

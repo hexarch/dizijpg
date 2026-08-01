@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Keşfet sonsuz kaydırma + havuz bitince tekrar turu
+**Kullanıcı bildirimi:** "Keşfet belirli bir noktadan sonra aşağı inmiyor;
+tamamen bitene kadar inmeli. En sonda izlediklerimi de tekrar göstermeli —
+ama sadece her şeyi izlediysem."
+- 🚀 **Kök neden:** `GET /kesfet-akis` SABİT 60 gönderi döndürüyordu, sayfalama
+  yoktu (`$2` parametresi `OR true` ile boşa yazılmıştı); istemci de tek
+  seferlik `_yukle()` yapıyordu. Liste bitince kaydırma duruyordu.
+- 🚀 **Sunucu:** uç artık imleçle sayfalıyor. İmleç `"<tur>:<kat>:<id>"` —
+  `kat` sıralama kategorisi (0 videolu, 1 fotoğraflı, 2 yazılı). Yalnız id ile
+  sayfalamak sıralamayı bozardı (yazılı yorumun id'si videolunun id'sinden
+  büyük olabilir); `(kat, -id) > (kat0, -id0)` demeti ile sıralama korunuyor.
+  İlk sayfa 60 (eski istemciler aynı doluluğu görsün), sonrakiler 30.
+- 🚀 **İki tur:** 1. tur görülmemişler (`akis_goruldu` hariç); havuz tükenince
+  sunucu 2. turu işaret eder (`imlec: "1:"`) ve o turda görülenler DAHİL baştan
+  döner, yanıtta `tekrar: true`. 2. tur da bitince `imlec: null` → istemci
+  durur. Sonsuz döngü yok: imleç her sayfada kesinlikle ilerler.
+- 🚀 **İstemci:** `KesfetAkisEkrani` artık `CustomScrollView` + dibe 600px kala
+  sonraki sayfa, altta dönen gösterge, `tekrar` turu başlarken tam genişlikte
+  "Hepsini gördün, baştan gösteriyoruz" ayracı (45 dile çevrildi). Liste yalnız
+  SONUNA eklendiği için indeksler kaymıyor: 2 eşzamanlı video oynatma kuralı ve
+  açık Reels'in sayfa indeksi bozulmuyor. Tekrar turunda aynı gönderi listede
+  iki kez olabildiği için görünürlük/sayfa anahtarlarına indeks eklendi.
+- 🚀 Reels ızgarayla AYNI liste nesnesini kullanıyor; sona 3 sayfa kala
+  `dahaGetir` ile yeni sayfa çekiyor (tam ekranda da sonsuz kaydırma).
+- ✅ Kanıt (test hesabı): 40 sayfa çekildi → 1230 benzersiz id, sayfalar arası
+  kesişim 0, kategori sırası bozulmadı. Havuz sonu imleci `0:2:12` → 9 gönderi
+  + `imlec:"1:"`; `1:` → `tekrar:true` 30 gönderi; `1:2:2` → 0 gönderi,
+  `imlec:null`. Bozuk imleç sessizce ilk sayfaya düşüyor.
+- ✅ Canlıda tarayıcıyla doğrulandı: Keşfet kaydırınca `?imlec=0:0:2328`,
+  `0:0:2298`, `0:0:2241`, `0:0:1992` istekleri (hepsi 200) art arda gidiyor.
+- ✅ `test/kesfet_sayfalama_test.dart` (8 test): imleç ilerlemesi, tekrar
+  ayracının indeksi, bitiş (sonsuz istek yok), tavan, yenilemede sıfırlama,
+  ayracın dar ekranda taşmaması, Reels'in sona yaklaşınca sayfa istemesi.
+
 ## 2026-08-02 — Detay/bölüm yorumlarındaki medya artık akıştaki gibi kaydırmalı
 **Kullanıcı bildirimi:** "dizi, dizi bölüm, filmlerin profiline gittiğimde her
 zaman yorumlarda 10 tane de resim olsa sırasıyla kaydırmalı gözükmeli akıştaki

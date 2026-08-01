@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (de).
 const Map<String, String> cevirilerDe = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Sie haben alles gesehen, wir zeigen es Ihnen von Anfang an',
   'Aktarılacak tanınan veri bulunamadı.':
       'Keine erkannten Daten zum Importieren gefunden.',
   'Arama': 'Suche',

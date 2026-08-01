@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (my).
 const Map<String, String> cevirilerMy = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'အားလုံးမြင်ပြီးပြီ၊ ငါတို့အစကတည်းက မင်းကိုပြမယ်။',
   'Aktarılacak tanınan veri bulunamadı.':
       'ထည့်သွင်းရန် သိရှိနိုင်သော ဒေတာ မတွေ့ပါ။',
   'Arama': 'ရှာဖွေရန်',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ru).
 const Map<String, String> cevirilerRu = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Вы все это видели, мы покажем вам с самого начала',
   'Aktarılacak tanınan veri bulunamadı.':
       'Не найдено распознанных данных для импорта.',
   'Arama': 'Поиск',

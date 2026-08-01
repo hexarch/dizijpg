@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (gu).
 const Map<String, String> cevirilerGu = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'તમે તે બધું જોયું છે, અમે તમને શરૂઆતથી જ બતાવીએ છીએ',
   'Aktarılacak tanınan veri bulunamadı.':
       'ઇમ્પોર્ટ કરવા જેવો કોઈ ડેટા મળ્યો નથી.',
   'Arama': 'શોધ',

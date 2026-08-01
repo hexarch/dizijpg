@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fi).
 const Map<String, String> cevirilerFi = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Olet nähnyt kaiken, näytämme sinulle alusta alkaen',
   'Aktarılacak tanınan veri bulunamadı.':
       'Tuotavaa tunnistettua dataa ei löytynyt.',
   'Arama': 'Haku',

@@ -2526,37 +2526,66 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
 }));
 
 // Keşfet (Reels tarzı): akışla AYNI uygunluk/öncelik; videolu postlar önce,
-// sonra diğer medyalılar, sonra yazılı yorumlar. Tek sayfa (60), takip durumu
-// dahil — istemci ızgara + tam ekran dikey kaydırma olarak gösterir.
+// sonra diğer medyalılar, sonra yazılı yorumlar.
+const KESFET_VIDEOLU = `EXISTS (SELECT 1 FROM unnest(y.medya) mm
+                    WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')`;
+// Sıralama kategorisi: 0 videolu, 1 fotoğraflı, 2 yazılı. Sayfalama imleci
+// (kat, id) ikilisidir — yalnız id ile sayfalamak sıralamayı bozardı, çünkü
+// yazılı yorumun id'si videolu gönderininkinden büyük olabilir.
+const KESFET_KAT = `CASE WHEN ${KESFET_VIDEOLU} THEN 0
+                         WHEN cardinality(y.medya) > 0 THEN 1 ELSE 2 END`;
+const KESFET_ILK = 60; // ilk sayfa: eski istemciler de aynı doluluğu görsün
+const KESFET_SAYFA = 30; // sonraki sayfalar
+
+// İki turlu akış:
+//  1. tur — görülmemişler (akis_goruldu'da olmayanlar), imleçle sayfa sayfa.
+//  2. tur — havuz tükenince BAŞTAN, görülenler dahil (`tekrar: true`).
+// `imlec` yanıtta gelir, istemci olduğu gibi geri gönderir: "<tur>:<kat>:<id>".
+// `imlec: null` → gerçekten bitti, istemci daha fazla istememeli (sonsuz döngü
+// yok: imleç her sayfada kesin ilerler, ikinci tur da havuz sonunda biter).
 app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   const benId = req.kullanici.id;
   const kadro = await kadroKisileri(benId);
-  // gorulenHaric: görülenleri hariç tut. Boş dönerse SON ÇARE olarak filtresiz
-  // tekrar sorgula (hepsini gördüysen tekrar göster — boş kalmasından iyi).
-  const sorgula = (gorulenHaric) => havuz.query(
+  const cozum = /^([01]):(?:([0-2]):(\d{1,9}))?$/.exec(String(req.query.imlec || ''));
+  let tekrar = cozum ? cozum[1] === '1' : false;
+  const kat = cozum && cozum[2] !== undefined ? parseInt(cozum[2], 10) : null;
+  const once = cozum && cozum[3] !== undefined ? parseInt(cozum[3], 10) : null;
+  const adet = cozum ? KESFET_SAYFA : KESFET_ILK;
+
+  // gorulenHaric: görülenleri hariç tut (1. tur).
+  const sorgula = (gorulenHaric, katV, onceV) => havuz.query(
     `${AKIS_ALANLAR},
-            EXISTS (SELECT 1 FROM unnest(y.medya) mm
-                    WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm') AS videolu,
+            ${KESFET_VIDEOLU} AS videolu,
+            ${KESFET_KAT} AS kat,
             EXISTS (SELECT 1 FROM takipler t
                     WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id)
               AS takip_ediyorum
      ${AKIS_GOVDE}
-       AND ($2::int IS NULL OR true)
+       AND ($2::int IS NULL
+            OR (${KESFET_KAT}, -y.id) > ($5::int, -$2::int))
        ${gorulenHaric
          ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)`
          : ''}
        ${AKIS_KURAL}
-     ORDER BY (EXISTS (SELECT 1 FROM unnest(y.medya) mm
-                       WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')) DESC,
-              (cardinality(y.medya) > 0) DESC,
-              y.id DESC
-     LIMIT 60`,
-    [benId, null, kadro, istekBaglam.getStore()?.dil || 'tr']);
-  let { rows } = await sorgula(true);
-  if (!rows.length) ({ rows } = await sorgula(false)); // son çare: tümü görüldü
+     ORDER BY ${KESFET_KAT}, y.id DESC
+     LIMIT ${adet}`,
+    [benId, onceV, kadro, istekBaglam.getStore()?.dil || 'tr', katV]);
+
+  let { rows } = await sorgula(!tekrar, kat, once);
+  // Görülmemiş havuz TAM sayfa sınırında bittiyse boş döner: hemen 2. tura geç.
+  if (!rows.length && !tekrar) {
+    tekrar = true;
+    ({ rows } = await sorgula(false, null, null));
+  }
+  const son = rows[rows.length - 1];
+  const imlec = rows.length >= adet
+    ? `${tekrar ? 1 : 0}:${son.kat}:${son.id}`
+    : (tekrar ? null : '1:'); // 1. tur bitti → 2. tur baştan başlar
   res.json({
     akis: rows.map(akisSatiri),
     icerikler: await akisIcerikleri(rows),
+    tekrar, // bu sayfa "daha önce görülenlerin tekrarı" mı
+    imlec,
   });
 }));
 

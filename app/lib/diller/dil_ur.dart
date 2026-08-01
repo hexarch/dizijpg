@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ur).
 const Map<String, String> cevirilerUr = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'آپ نے یہ سب دیکھا ہے، ہم آپ کو شروع سے دکھاتے ہیں۔',
   'Aktarılacak tanınan veri bulunamadı.':
       'منتقلی کے لیے کوئی قابلِ شناخت ڈیٹا نہیں ملا۔',
   'Arama': 'تلاش',

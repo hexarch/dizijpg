@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (az).
 const Map<String, String> cevirilerAz = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Siz hər şeyi görmüsünüz, biz sizə əvvəldən göstəririk',
   'Aktarılacak tanınan veri bulunamadı.':
       'Köçürüləcək tanınan məlumat tapılmadı.',
   'Arama': 'Axtarış',

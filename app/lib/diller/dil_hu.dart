@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (hu).
 const Map<String, String> cevirilerHu = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Te mindent láttál, mi megmutatjuk az elejétől',
   'Aktarılacak tanınan veri bulunamadı.':
       'Nem található importálható, felismert adat.',
   'Arama': 'Keresés',

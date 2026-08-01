@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (bg).
 const Map<String, String> cevirilerBg = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Вие сте видели всичко, ние ви показваме от самото начало',
   'Aktarılacak tanınan veri bulunamadı.':
       'Не бяха намерени разпознати данни за импортиране.',
   'Arama': 'Търсене',

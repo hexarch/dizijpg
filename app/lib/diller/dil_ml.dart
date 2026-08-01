@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ml).
 const Map<String, String> cevirilerMl = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'നിങ്ങൾ എല്ലാം കണ്ടു, ഞങ്ങൾ ആദ്യം മുതൽ കാണിക്കുന്നു',
   'Aktarılacak tanınan veri bulunamadı.':
       'ഇറക്കുമതി ചെയ്യാൻ തിരിച്ചറിയാവുന്ന ഡാറ്റയൊന്നും കണ്ടെത്തിയില്ല.',
   'Arama': 'തിരയൽ',

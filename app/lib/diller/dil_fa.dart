@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fa).
 const Map<String, String> cevirilerFa = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'شما همه چیز را دیده اید، ما از ابتدا به شما نشان می دهیم',
   'Aktarılacak tanınan veri bulunamadı.':
       'داده‌ی قابل‌شناسایی برای انتقال پیدا نشد.',
   'Arama': 'جستجو',

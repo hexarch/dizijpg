@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (el).
 const Map<String, String> cevirilerEl = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Τα έχεις δει όλα, σου τα δείχνουμε από την αρχή',
   'Aktarılacak tanınan veri bulunamadı.':
       'Δεν βρέθηκαν αναγνωρίσιμα δεδομένα για εισαγωγή.',
   'Arama': 'Αναζήτηση',

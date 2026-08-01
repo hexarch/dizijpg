@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (th).
 const Map<String, String> cevirilerTh = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'คุณได้เห็นมาหมดแล้ว เราแสดงให้คุณเห็นตั้งแต่ต้น',
   'Aktarılacak tanınan veri bulunamadı.': 'ไม่พบข้อมูลที่นำเข้าได้',
   'Arama': 'ค้นหา',
   'Aramaya başla': 'เริ่มค้นหาเลย',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (hi).
 const Map<String, String> cevirilerHi = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'आपने यह सब देखा है, हम आपको शुरुआत से दिखाते हैं',
   'Aktarılacak tanınan veri bulunamadı.':
       'इंपोर्ट करने लायक कोई डेटा नहीं मिला।',
   'Arama': 'खोज',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (sr).
 const Map<String, String> cevirilerSr = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Видели сте све, ми вам показујемо од почетка',
   'Aktarılacak tanınan veri bulunamadı.':
       'Није пронађен препознатљив податак за увоз.',
   'Arama': 'Претрага',

@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (ko).
 const Map<String, String> cevirilerKo = {
+  'Hepsini gördün, baştan gösteriyoruz': '당신은 모든 것을 보았습니다. 우리는 처음부터 당신에게 보여줍니다',
   'Aktarılacak tanınan veri bulunamadı.': '가져올 수 있는 데이터를 찾지 못했어요.',
   'Arama': '검색',
   'Aramaya başla': '검색을 시작해 보세요',

@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (mr).
 const Map<String, String> cevirilerMr = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'तुम्ही हे सर्व पाहिले आहे, आम्ही तुम्हाला सुरुवातीपासून दाखवतो',
   'Aktarılacak tanınan veri bulunamadı.':
       'इंपोर्ट करण्यासारखा कोणताही डेटा सापडला नाही.',
   'Arama': 'शोध',

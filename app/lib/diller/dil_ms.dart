@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ms).
 const Map<String, String> cevirilerMs = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Anda telah melihat semuanya, kami menunjukkan kepada anda dari awal',
   'Aktarılacak tanınan veri bulunamadı.':
       'Tiada data yang dikenali untuk diimport.',
   'Arama': 'Carian',

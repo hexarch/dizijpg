@@ -16,6 +16,77 @@ import 'etiket.dart';
 import 'ortak.dart';
 import 'paylas.dart';
 
+/// Keşfet sayfalama defteri (saf mantık — ekrandan ayrı ki test edilebilsin).
+///
+/// Sunucu iki tur döndürür: önce görülmemişler, havuz tükenince `tekrar: true`
+/// ile baştan (görülenler dahil). Her yanıtta bir sonraki sayfanın `imlec`i
+/// gelir; `imlec: null` → gerçekten bitti, bir daha istenmez. Sonsuz istek
+/// döngüsü böyle engellenir.
+class KesfetSayfalama {
+  /// Emniyet tavanı: sunucu zaten bitişi bildiriyor, bu yalnız bellek sigortası.
+  static const tavan = 2000;
+
+  String? imlec;
+  bool bitti = false;
+
+  /// "Daha önce gördüklerin" turunun başladığı indeks (yoksa null).
+  int? tekrarBasi;
+
+  void sifirla() {
+    imlec = null;
+    bitti = false;
+    tekrarBasi = null;
+  }
+
+  /// Sıradaki sayfa istenebilir mi? İlk sayfa (imlec null, bitti false) hariç.
+  bool get devamVar => !bitti && imlec != null;
+
+  /// Gelen sayfayı defterle: [oncekiUzunluk] sayfa eklenmeden önceki liste
+  /// uzunluğu, [gelenAdet] bu sayfada eklenen gönderi sayısı.
+  void yanitIsle(
+    Map<String, dynamic> d, {
+    required int oncekiUzunluk,
+    required int gelenAdet,
+  }) {
+    if (d['tekrar'] == true && tekrarBasi == null && gelenAdet > 0) {
+      tekrarBasi = oncekiUzunluk;
+    }
+    imlec = d['imlec'] as String?;
+    bitti =
+        imlec == null || gelenAdet == 0 || oncekiUzunluk + gelenAdet >= tavan;
+  }
+}
+
+/// "Hepsini gördün" ayracı: buradan sonrası daha önce gösterilenlerin tekrarı.
+class TekrarAyraci extends StatelessWidget {
+  const TekrarAyraci({super.key});
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 18, 12, 10),
+    child: Row(
+      children: [
+        const Expanded(child: Divider(color: Colors.white24)),
+        Flexible(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              'Hepsini gördün, baştan gösteriyoruz'.c,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        const Expanded(child: Divider(color: Colors.white24)),
+      ],
+    ),
+  );
+}
+
 /// Keşfet (Reels tarzı): akış öncelikleriyle gelen postlar — önce videolar,
 /// sonra fotoğraflılar, sonra yazılı yorumlar. Izgaradan birine dokununca
 /// tam ekran dikey kaydırmalı görünüm açılır.
@@ -28,9 +99,15 @@ class KesfetAkisEkrani extends StatefulWidget {
 
 class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     with AutomaticKeepAliveClientMixin {
+  /// Gönderiler. Sayfalar SONUNA eklenir, asla araya girmez → indeksler
+  /// kaymaz (Reels'in açık listesi ve video görünürlük indeksleri bozulmaz).
   List<dynamic>? _liste;
   Map<String, dynamic> _icerikler = {};
   String? _hata;
+
+  final _kaydirma = ScrollController();
+  final _sayfalama = KesfetSayfalama();
+  bool _yukluyor = false;
 
   /// Ekranda görünen VİDEOLU karoların sırası (görünme anına göre).
   final List<int> _gorunurVideolar = [];
@@ -70,31 +147,126 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   void initState() {
     super.initState();
     _yukle();
+    _kaydirma.addListener(() {
+      // Dibe 600px kala sıradaki sayfayı çek: kullanıcı beklemesin.
+      if (_kaydirma.hasClients &&
+          _kaydirma.position.pixels >=
+              _kaydirma.position.maxScrollExtent - 600) {
+        _sonrakiSayfa();
+      }
+    });
   }
 
+  @override
+  void dispose() {
+    _kaydirma.dispose();
+    super.dispose();
+  }
+
+  /// İlk yükleme + aşağı çekince yenileme: her şey baştan kurulur.
   Future<void> _yukle() async {
-    setState(() => _hata = null);
+    if (_yukluyor) return;
+    setState(() {
+      _hata = null;
+      _yukluyor = true;
+    });
     try {
-      final d = await Api.get('/kesfet-akis');
+      final d = await Api.get('/kesfet-akis') as Map<String, dynamic>;
       if (!mounted) return;
+      final gelen = d['akis'] as List<dynamic>? ?? [];
       setState(() {
-        _liste = d['akis'] as List<dynamic>;
-        _icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
+        // YENİ liste/harita nesnesi: açık duran Reels eski listesiyle
+        // tutarlı kalsın (aynı nesneyi temizlemek onu bozardı).
+        _liste = List<dynamic>.from(gelen);
+        _icerikler = Map<String, dynamic>.from(
+          d['icerikler'] as Map<String, dynamic>? ?? {},
+        );
+        _sayfalama.sifirla();
+        _sayfalama.yanitIsle(d, oncekiUzunluk: 0, gelenAdet: gelen.length);
+        _gorunurVideolar.clear();
+        _yukluyor = false;
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      setState(() {
+        _yukluyor = false;
+        _hata = e.toString();
+      });
+    }
+  }
+
+  /// Sonraki sayfa. Sunucu `imlec: null` derse havuz gerçekten bitmiştir —
+  /// bir daha istenmez (sonsuz istek döngüsü olmaz).
+  Future<void> _sonrakiSayfa() async {
+    if (_yukluyor || _liste == null || !_sayfalama.devamVar) return;
+    setState(() => _yukluyor = true);
+    try {
+      final d =
+          await Api.get(
+                '/kesfet-akis?imlec=${Uri.encodeQueryComponent(_sayfalama.imlec!)}',
+              )
+              as Map<String, dynamic>;
+      if (!mounted) return;
+      final gelen = d['akis'] as List<dynamic>? ?? [];
+      setState(() {
+        _sayfalama.yanitIsle(
+          d,
+          oncekiUzunluk: _liste!.length,
+          gelenAdet: gelen.length,
+        );
+        // Listeye YALNIZ EKLEME: açık Reels'in indeksleri ve ızgaranın video
+        // görünürlük indeksleri kaymasın.
+        _liste!.addAll(gelen);
+        _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
+        _yukluyor = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      // Sonraki sayfa patlarsa sessizce dur: eldeki içerik kaybolmasın.
+      setState(() {
+        _yukluyor = false;
+        _sayfalama.bitti = true;
+      });
     }
   }
 
   void _ac(int i) {
     Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
-        builder: (_) =>
-            ReelsGorunumu(liste: _liste!, icerikler: _icerikler, baslangic: i),
+        builder: (_) => ReelsGorunumu(
+          liste: _liste!,
+          icerikler: _icerikler,
+          baslangic: i,
+          // Reels sona yaklaşınca ızgarayla AYNI listeye sayfa ekler; ızgara
+          // listeye yalnız EKLEME yaptığı için açık sayfanın indeksi kaymaz.
+          dahaGetir: _sonrakiSayfa,
+        ),
       ),
     );
   }
+
+  Widget _izgara(int bas, int son, int sutun) => SliverGrid.builder(
+    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: sutun,
+      mainAxisSpacing: 2,
+      crossAxisSpacing: 2,
+      childAspectRatio: 0.66,
+    ),
+    itemCount: son - bas,
+    itemBuilder: (context, j) {
+      final i = bas + j;
+      return _KesfetKutusu(
+        // Tekrar turunda AYNI gönderi listede iki kez bulunabilir; anahtar
+        // yalnız id olursa görünürlük takibi karışır → indeks de girer.
+        sira: i,
+        yorum: _liste![i] as Map<String, dynamic>,
+        icerikler: _icerikler,
+        onTap: () => _ac(i),
+        oynat: _oynasinMi(i),
+        onGorunurluk: (gorunur) => _gorunurlukDegisti(i, gorunur),
+      );
+    },
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -126,25 +298,45 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
       );
     } else {
       final genis = MediaQuery.of(context).size.width > 900;
+      final sutun = genis ? 5 : 3;
+      final tekrarBasi = _sayfalama.tekrarBasi;
+      // Görülmemişler → ayraç → tekrar gösterilenler. Tek ızgara yerine iki
+      // sliver: ayraç tam genişlikte durur, indeksler global kalır.
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: GridView.builder(
-          padding: const EdgeInsets.all(2),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: genis ? 5 : 3,
-            mainAxisSpacing: 2,
-            crossAxisSpacing: 2,
-            childAspectRatio: 0.66,
-          ),
-          itemCount: _liste!.length,
-          itemBuilder: (context, i) => _KesfetKutusu(
-            yorum: _liste![i] as Map<String, dynamic>,
-            icerikler: _icerikler,
-            onTap: () => _ac(i),
-            oynat: _oynasinMi(i),
-            onGorunurluk: (gorunur) => _gorunurlukDegisti(i, gorunur),
-          ),
+        child: CustomScrollView(
+          controller: _kaydirma,
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(2),
+              sliver: _izgara(0, tekrarBasi ?? _liste!.length, sutun),
+            ),
+            if (tekrarBasi != null) ...[
+              const SliverToBoxAdapter(child: TekrarAyraci()),
+              SliverPadding(
+                padding: const EdgeInsets.all(2),
+                sliver: _izgara(tekrarBasi, _liste!.length, sutun),
+              ),
+            ],
+            // Sonraki sayfa yüklenirken alt tarafta dönen gösterge
+            if (_yukluyor)
+              const SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 18),
+                  child: Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: DiziRenkler.sari,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       );
     }
@@ -167,11 +359,16 @@ class _KesfetKutusu extends StatefulWidget {
   final VoidCallback onTap;
   final bool oynat;
 
+  /// Listedeki global indeks — görünürlük anahtarını benzersiz kılar (tekrar
+  /// turunda aynı gönderi listede iki kez yer alabilir).
+  final int sira;
+
   /// Karo ekranda görünür hale gelince/çıkınca haber verir (ebeveyn hangi
   /// videoların oynayacağını buna göre seçer).
   final void Function(bool gorunur) onGorunurluk;
 
   const _KesfetKutusu({
+    required this.sira,
     required this.yorum,
     required this.icerikler,
     required this.onTap,
@@ -257,7 +454,7 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
 
     final d = _d;
     return VisibilityDetector(
-      key: Key('kesfet-${widget.yorum['id']}'),
+      key: Key('kesfet-${widget.sira}-${widget.yorum['id']}'),
       onVisibilityChanged: (bilgi) =>
           widget.onGorunurluk(bilgi.visibleFraction > 0.6),
       child: InkWell(
@@ -467,12 +664,19 @@ class ReelsGorunumu extends StatefulWidget {
   /// dokunan kullanıcı Reels'te de 5. fotoğrafı görmeli (eskiden hep 1.
   /// açılıyordu; kullanıcı "sonraki resim gelmiyor" diye bildirdi).
   final int medyaBaslangic;
+
+  /// Sona yaklaşınca çağrılır: ızgarayla AYNI listeye sayfa ekler. Liste
+  /// yalnız büyüdüğü için açık sayfanın indeksi kaymaz. Null → sayfalama yok
+  /// (tek gönderi ekranı).
+  final Future<void> Function()? dahaGetir;
+
   const ReelsGorunumu({
     super.key,
     required this.liste,
     required this.icerikler,
     required this.baslangic,
     this.medyaBaslangic = 0,
+    this.dahaGetir,
   });
 
   @override
@@ -484,11 +688,26 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
     initialPage: widget.baslangic,
   );
   late int _aktif = widget.baslangic; // yalnız aktif sayfa oynar/işaretlenir
+  bool _getiriyor = false;
 
   @override
   void dispose() {
     _sayfa.dispose();
     super.dispose();
+  }
+
+  /// Son 3 sayfaya girince sıradaki sayfayı ızgaraya çektir; gelen gönderiler
+  /// aynı liste nesnesine eklendiği için burada tek setState yeter.
+  Future<void> _dahaGetir() async {
+    final f = widget.dahaGetir;
+    if (f == null || _getiriyor) return;
+    _getiriyor = true;
+    try {
+      await f();
+    } finally {
+      _getiriyor = false;
+      if (mounted) setState(() {});
+    }
   }
 
   @override
@@ -506,9 +725,13 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
             allowImplicitScrolling: true,
             // Aktif sayfa değişince: yalnız görünen sayfa video oynatır ve
             // "görüldü" işaretlenir (komşu sayfalar önden kurulsa da sessiz).
-            onPageChanged: (i) => setState(() => _aktif = i),
+            onPageChanged: (i) {
+              setState(() => _aktif = i);
+              if (i >= widget.liste.length - 3) _dahaGetir();
+            },
             itemBuilder: (context, i) => _ReelSayfa(
-              key: ValueKey((widget.liste[i] as Map<String, dynamic>)['id']),
+              // Tekrar turunda aynı id iki kez bulunabilir → indeks de girer.
+              key: ValueKey('$i-${(widget.liste[i] as Map)['id']}'),
               yorum: widget.liste[i] as Map<String, dynamic>,
               icerikler: widget.icerikler,
               aktif: i == _aktif,

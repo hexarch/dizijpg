@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (ro).
 const Map<String, String> cevirilerRo = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Le-ai văzut pe toate, îți arătăm de la început',
   'Aktarılacak tanınan veri bulunamadı.':
       'Nu s-au găsit date recunoscute de importat.',
   'Arama': 'Căutare',

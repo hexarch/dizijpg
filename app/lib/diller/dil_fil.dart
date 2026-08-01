@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (fil).
 const Map<String, String> cevirilerFil = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'Nakita mo na ang lahat, ipinakita namin sa iyo mula sa simula',
   'Aktarılacak tanınan veri bulunamadı.':
       'Walang nakilalang data na maaaring i-import.',
   'Arama': 'Maghanap',

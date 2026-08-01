@@ -1,5 +1,7 @@
 /// Otomatik üretilen çeviri haritası (kn).
 const Map<String, String> cevirilerKn = {
+  'Hepsini gördün, baştan gösteriyoruz':
+      'ನೀವು ಎಲ್ಲವನ್ನೂ ನೋಡಿದ್ದೀರಿ, ನಾವು ನಿಮಗೆ ಮೊದಲಿನಿಂದಲೂ ತೋರಿಸುತ್ತೇವೆ',
   'Aktarılacak tanınan veri bulunamadı.':
       'ಆಮದು ಮಾಡಲು ಗುರುತಿಸಬಹುದಾದ ಡೇಟಾ ಸಿಗಲಿಲ್ಲ.',
   'Arama': 'ಹುಡುಕಾಟ',

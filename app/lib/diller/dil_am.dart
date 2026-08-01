@@ -1,5 +1,6 @@
 /// Otomatik üretilen çeviri haritası (am).
 const Map<String, String> cevirilerAm = {
+  'Hepsini gördün, baştan gösteriyoruz': 'ሁሉንም አይተሃል፣ ከመጀመሪያው እናሳይሃለን።',
   'Aktarılacak tanınan veri bulunamadı.': 'ለማስገባት የሚታወቅ ዳታ አልተገኘም።',
   'Arama': 'ፍለጋ',
   'Aramaya başla': 'መፈለግ ጀምር',
