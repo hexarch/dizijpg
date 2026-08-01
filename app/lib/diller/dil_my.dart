@@ -439,4 +439,5 @@ const Map<String, String> cevirilerMy = {
   'En Çok Kazanan Filmler': 'ဝင်ငွေအများဆုံး ရုပ်ရှင်များ',
   'Kült Filmler': 'ကာလ့်ရုပ်ရှင်များ',
   'Yeni Filmler': 'ရုပ်ရှင်အသစ်များ',
+  'Yorum yap': 'မှတ်ချက်ပေးရန်',
 };

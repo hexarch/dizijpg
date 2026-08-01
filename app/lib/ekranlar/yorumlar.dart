@@ -643,6 +643,9 @@ class _YorumKartiState extends State<_YorumKarti> {
                   ),
                 ),
                 const SizedBox(width: 16),
+                // Gönderiye yorum: ok değil KONUŞMA BALONU + yorum sayısı.
+                // Ok ikonu "paylaş/ilet" gibi okunuyordu, kullanıcı gönderiye
+                // yorum yazılabildiğini fark etmiyordu.
                 InkWell(
                   onTap: () => widget.yanitla(widget.yorum),
                   borderRadius: BorderRadius.circular(20),
@@ -653,10 +656,16 @@ class _YorumKartiState extends State<_YorumKarti> {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.reply, size: 16, color: DiziRenkler.metin38),
+                        Icon(
+                          Icons.mode_comment_outlined,
+                          size: 16,
+                          color: DiziRenkler.metin38,
+                        ),
                         const SizedBox(width: 4),
                         Text(
-                          'Yanıtla'.c,
+                          widget.yanitlar.isEmpty
+                              ? 'Yorum yap'.c
+                              : '${widget.yanitlar.length}',
                           style: TextStyle(
                             fontSize: 12,
                             color: DiziRenkler.metin38,

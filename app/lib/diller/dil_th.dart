@@ -426,4 +426,5 @@ const Map<String, String> cevirilerTh = {
   'En Çok Kazanan Filmler': 'ภาพยนตร์ทำเงินสูงสุด',
   'Kült Filmler': 'ภาพยนตร์คัลต์',
   'Yeni Filmler': 'ภาพยนตร์ใหม่',
+  'Yorum yap': 'แสดงความคิดเห็น',
 };

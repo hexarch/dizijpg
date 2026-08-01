@@ -431,4 +431,5 @@ const Map<String, String> cevirilerId = {
   'En Çok Kazanan Filmler': 'Film berpendapatan tertinggi',
   'Kült Filmler': 'Film kultus',
   'Yeni Filmler': 'Film baru',
+  'Yorum yap': 'Komentari',
 };

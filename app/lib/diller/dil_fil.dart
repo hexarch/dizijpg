@@ -434,4 +434,5 @@ const Map<String, String> cevirilerFil = {
   'En Çok Kazanan Filmler': 'Pinakamalaking kita na pelikula',
   'Kült Filmler': 'Mga cult na pelikula',
   'Yeni Filmler': 'Mga bagong pelikula',
+  'Yorum yap': 'Magkomento',
 };

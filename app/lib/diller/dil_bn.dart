@@ -432,4 +432,5 @@ const Map<String, String> cevirilerBn = {
   'En Çok Kazanan Filmler': 'সর্বোচ্চ আয় করা সিনেমা',
   'Kült Filmler': 'কাল্ট সিনেমা',
   'Yeni Filmler': 'নতুন সিনেমা',
+  'Yorum yap': 'মন্তব্য করুন',
 };

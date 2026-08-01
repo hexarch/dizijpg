@@ -430,4 +430,5 @@ const Map<String, String> cevirilerSw = {
   'En Çok Kazanan Filmler': 'Filamu zilizoingiza mapato zaidi',
   'Kült Filmler': 'Filamu za kipekee',
   'Yeni Filmler': 'Filamu mpya',
+  'Yorum yap': 'Toa maoni',
 };

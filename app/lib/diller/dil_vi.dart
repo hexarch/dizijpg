@@ -432,4 +432,5 @@ const Map<String, String> cevirilerVi = {
   'En Çok Kazanan Filmler': 'Phim doanh thu cao nhất',
   'Kült Filmler': 'Phim cult',
   'Yeni Filmler': 'Phim mới',
+  'Yorum yap': 'Bình luận',
 };

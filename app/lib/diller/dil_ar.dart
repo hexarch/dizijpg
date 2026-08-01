@@ -428,4 +428,5 @@ const Map<String, String> cevirilerAr = {
   'En Çok Kazanan Filmler': 'الأفلام الأعلى إيرادًا',
   'Kült Filmler': 'أفلام كلاسيكية مميزة',
   'Yeni Filmler': 'أفلام جديدة',
+  'Yorum yap': 'أضف تعليقًا',
 };

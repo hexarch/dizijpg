@@ -429,4 +429,5 @@ const Map<String, String> cevirilerGu = {
   'En Çok Kazanan Filmler': 'સૌથી વધુ કમાણી કરનારી ફિલ્મો',
   'Kült Filmler': 'કલ્ટ ફિલ્મો',
   'Yeni Filmler': 'નવી ફિલ્મો',
+  'Yorum yap': 'ટિપ્પણી કરો',
 };

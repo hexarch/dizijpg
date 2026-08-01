@@ -430,4 +430,5 @@ const Map<String, String> cevirilerFa = {
   'En Çok Kazanan Filmler': 'پرفروش‌ترین فیلم‌ها',
   'Kült Filmler': 'فیلم‌های کالت',
   'Yeni Filmler': 'فیلم‌های جدید',
+  'Yorum yap': 'نظر بدهید',
 };
