@@ -221,7 +221,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                           // Expanded: uzun çevirilerde Spacer'lı satır taşıyordu.
                           Expanded(
                             child: Text(
-                              'Toplam ekran süresi'.c,
+                              'Toplam İzleme Süresi'.c,
                               style: TextStyle(
                                 color: DiziRenkler.metin54,
                                 fontSize: 13,

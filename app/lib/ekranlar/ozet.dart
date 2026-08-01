@@ -56,7 +56,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
         (
           Icons.schedule,
           sureBicimle((o['dakika'] as num?)?.toInt() ?? 0),
-          'Toplam ekran süresi'.c,
+          'Toplam İzleme Süresi'.c,
         ),
         (Icons.star_outline_rounded, '${o['puan_sayisi']}', 'Verdiğin puan'.c),
         (
