@@ -152,7 +152,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
     });
     for (final y in tumu.where((y) => y['ust_id'] == null)) {
       if (medyali(y)) ekle(y);
-      for (final c in tumu.where((c) => c['ust_id'] == (y as Map)['id'])) {
+      // Yanıtlar ekranda id sırasıyla çizilir; Reels sırası da aynı olmalı.
+      final yanitlar =
+          tumu.where((c) => c['ust_id'] == (y as Map)['id']).toList()
+            ..sort((a, b) => (a['id'] as int).compareTo(b['id'] as int));
+      for (final c in yanitlar) {
         if (medyali(c)) ekle(c);
       }
     }
