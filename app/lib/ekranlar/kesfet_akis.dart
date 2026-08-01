@@ -561,6 +561,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
   late bool _begendim = widget.yorum['begendim'] == true;
   late int _begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
   late bool _takipte = widget.yorum['takip_ediyorum'] == true;
+  // Takip durumu HER kaynakta gelmez (profilden açılan Reels'te yok). Bilinmiyorsa
+  // düğme hiç çizilmez: kendi gönderinde "Takip Et" göstermek ya da zaten takip
+  // ettiğin kişiye yeniden sormak yanlış olur; profil sayfasının kendi düğmesi var.
+  late final bool _takipBilinir = widget.yorum.containsKey('takip_ediyorum');
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
   // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar.
   // DİKKAT: `late final` ile TEMBEL kurulmamalı — kullanıcı hiç çift
@@ -1046,7 +1050,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                           ),
                         ),
                         const SizedBox(width: 10),
-                        if (!_takipte)
+                        if (_takipBilinir && !_takipte)
                           SizedBox(
                             height: 30,
                             child: OutlinedButton(
