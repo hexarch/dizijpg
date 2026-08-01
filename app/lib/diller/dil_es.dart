@@ -434,4 +434,7 @@ const Map<String, String> cevirilerEs = {
   'Kült Filmler': 'Películas de culto',
   'Yeni Filmler': 'Películas nuevas',
   'Yorum yap': 'Comentar',
+  'Henüz yorum yok': 'Aún no hay comentarios',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Tus comentarios sobre series y películas se reúnen aquí.',
 };

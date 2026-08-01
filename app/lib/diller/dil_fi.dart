@@ -433,4 +433,7 @@ const Map<String, String> cevirilerFi = {
   'Kült Filmler': 'Kulttielokuvat',
   'Yeni Filmler': 'Uudet elokuvat',
   'Yorum yap': 'Kommentoi',
+  'Henüz yorum yok': 'Ei vielä kommentteja',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Sarjoista ja elokuvista kirjoittamasi kommentit kootaan tänne.',
 };

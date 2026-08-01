@@ -422,4 +422,7 @@ const Map<String, String> cevirilerJa = {
   'Kült Filmler': 'カルト映画',
   'Yeni Filmler': '新作映画',
   'Yorum yap': 'コメントする',
+  'Henüz yorum yok': 'まだコメントがありません',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'ドラマや映画に書いたコメントがここに集まります。',
 };

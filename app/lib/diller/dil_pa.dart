@@ -431,4 +431,7 @@ const Map<String, String> cevirilerPa = {
   'Kült Filmler': 'ਕਲਟ ਫਿਲਮਾਂ',
   'Yeni Filmler': 'ਨਵੀਆਂ ਫਿਲਮਾਂ',
   'Yorum yap': 'ਟਿੱਪਣੀ ਕਰੋ',
+  'Henüz yorum yok': 'ਹਾਲੇ ਕੋਈ ਟਿੱਪਣੀ ਨਹੀਂ',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'ਸੀਰੀਜ਼ ਅਤੇ ਫਿਲਮਾਂ ਉੱਤੇ ਤੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਇੱਥੇ ਇਕੱਠੀਆਂ ਹੁੰਦੀਆਂ ਹਨ।',
 };

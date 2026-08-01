@@ -10,7 +10,9 @@ import '../onbellek.dart';
 import '../tema.dart';
 import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
+import 'kesfet_akis.dart';
 import 'ortak.dart';
+import 'yorumlar.dart';
 import 'sosyal.dart';
 
 /// Dakikayı insancıl süreye çevirir: "1 yıl 2 ay 3 gün" (en anlamlı 3 birim).
@@ -113,6 +115,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   Map<String, dynamic>? _istatistik;
   Map<String, dynamic>? _kitaplik;
   Map<String, dynamic>? _profil;
+
+  /// Yorumlar sekmesi için: açık profil yanıtı (yorumlar + icerikler)
+  Map<String, dynamic>? _yorumVeri;
   List<dynamic> _listeler = [];
   List<dynamic> _izlenenler = [];
   List<dynamic> _rozetler = [];
@@ -180,6 +185,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   }
 
   /// Profil bölümleri: kullanıcı Ayarlar'dan sıralarını değiştirebilir.
+  /// 0 = Dizi ve Filmler (kitaplık), 1 = Yorumlar (Twitter tarzı akış)
+  int _sekme = 0;
+
   List<Widget> _bolumUret(String ad) {
     switch (ad) {
       case 'seritler':
@@ -421,6 +429,16 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         _izlenenler = sonuclar[4]['ogeler'] as List<dynamic>;
         _rozetler = sonuclar[5]['rozetler'] as List<dynamic>? ?? [];
       });
+      // Yorumlar sekmesi: kendi yorumların + içerik adları (açık profil ucu).
+      // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
+      final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
+      if (kadi.isNotEmpty) {
+        Api.acikProfil(kadi)
+            .then((d) {
+              if (mounted) setState(() => _yorumVeri = d);
+            })
+            .catchError((_) {});
+      }
       Onbellek.yaz('profil', {
         'istatistik': _istatistik,
         'kitaplik': _kitaplik,
@@ -868,107 +886,176 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
                   ),
                   const SizedBox(height: 20),
-                  // Kitaplık grupları
-                  // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim.
-                  // Bıraktım poster şeridi olarak GÖSTERİLMEZ (kullanıcı isteği);
-                  // aşağıda yalnız soluk bir satır olarak durur.
-                  for (final e in [
-                    for (final durum in durumAdlari.keys)
-                      if (durum != 'biraktim' &&
-                          gruplar[durum]?.isNotEmpty == true)
-                        MapEntry(durum, gruplar[durum]!),
-                  ]) ...[
-                    // Başlığa tıklayınca o durumun tam listesi açılır
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () => context.push('/kitaplik/${e.key}'),
-                      child: Row(
-                        children: [
-                          Icon(
-                            durumAdlari[e.key]?.$1 ?? Icons.tv,
-                            size: 19,
-                            color: DiziRenkler.sariMetin,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            (durumAdlari[e.key]?.$2 ?? e.key).c,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
+                  // İki sekme: boydan boya, ekranı ikiye bölen butonlar.
+                  // Kitaplık grupları ve yorum akışı aynı profilde ayrı
+                  // sekmelerde durur (kullanıcı isteği).
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Row(
+                      children: [
+                        for (final (i, ikon, etiket) in [
+                          (0, Icons.movie_outlined, 'Dizi ve Filmler'),
+                          (1, Icons.mode_comment_outlined, 'Yorumlar'),
+                        ])
+                          Expanded(
+                            child: InkWell(
+                              onTap: () => setState(() => _sekme = i),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: _sekme == i ? 2.5 : 1,
+                                      color: _sekme == i
+                                          ? DiziRenkler.sari
+                                          : DiziRenkler.metin12,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      ikon,
+                                      size: 18,
+                                      color: _sekme == i
+                                          ? DiziRenkler.sariMetin
+                                          : DiziRenkler.metin54,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      etiket.c,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: _sekme == i
+                                            ? DiziRenkler.sariMetin
+                                            : DiziRenkler.metin54,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          Icon(
-                            Icons.chevron_right,
-                            size: 18,
-                            color: DiziRenkler.metin38,
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
-                    const SizedBox(height: 8),
-                    SizedBox(
-                      height: 208,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: e.value.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 10),
-                        itemBuilder: (context, i) {
-                          final d = e.value[i] as Map<String, dynamic>;
-                          return MiniIcerik(
-                            tmdbId: d['tmdb_id'] as int,
-                            tur: d['tur'] as String,
-                          );
-                        },
-                      ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_sekme == 1) ...[
+                    ProfilYorumAkisi(
+                      yorumlar:
+                          (_yorumVeri?['yorumlar'] as List<dynamic>? ?? []),
+                      icerikler:
+                          (_yorumVeri?['icerikler'] as Map<String, dynamic>? ??
+                          {}),
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                  // Bıraktım: şerit yok, tam listeye giden soluk bir satır
-                  if (gruplar['biraktim']?.isNotEmpty == true) ...[
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () => context.push('/kitaplik/biraktim'),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                    const SizedBox(height: 24),
+                  ] else ...[
+                    // Kitaplık grupları
+                    // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim.
+                    // Bıraktım poster şeridi olarak GÖSTERİLMEZ (kullanıcı isteği);
+                    // aşağıda yalnız soluk bir satır olarak durur.
+                    for (final e in [
+                      for (final durum in durumAdlari.keys)
+                        if (durum != 'biraktim' &&
+                            gruplar[durum]?.isNotEmpty == true)
+                          MapEntry(durum, gruplar[durum]!),
+                    ]) ...[
+                      // Başlığa tıklayınca o durumun tam listesi açılır
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => context.push('/kitaplik/${e.key}'),
                         child: Row(
                           children: [
                             Icon(
-                              Icons.cancel_outlined,
-                              size: 17,
-                              color: DiziRenkler.metin38,
+                              durumAdlari[e.key]?.$1 ?? Icons.tv,
+                              size: 19,
+                              color: DiziRenkler.sariMetin,
                             ),
                             const SizedBox(width: 6),
                             Text(
-                              'Bıraktım'.c,
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w600,
-                                color: DiziRenkler.metin54,
+                              (durumAdlari[e.key]?.$2 ?? e.key).c,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
                               ),
                             ),
-                            const SizedBox(width: 6),
-                            Text(
-                              '${gruplar['biraktim']!.length}',
-                              style: TextStyle(
-                                fontSize: 12.5,
-                                color: DiziRenkler.metin38,
-                              ),
-                            ),
+                            const SizedBox(width: 4),
                             Icon(
                               Icons.chevron_right,
-                              size: 16,
+                              size: 18,
                               color: DiziRenkler.metin38,
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 8),
+                      SizedBox(
+                        height: 208,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: e.value.length,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: 10),
+                          itemBuilder: (context, i) {
+                            final d = e.value[i] as Map<String, dynamic>;
+                            return MiniIcerik(
+                              tmdbId: d['tmdb_id'] as int,
+                              tur: d['tur'] as String,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    // Bıraktım: şerit yok, tam listeye giden soluk bir satır
+                    if (gruplar['biraktim']?.isNotEmpty == true) ...[
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => context.push('/kitaplik/biraktim'),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.cancel_outlined,
+                                size: 17,
+                                color: DiziRenkler.metin38,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Bıraktım'.c,
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w600,
+                                  color: DiziRenkler.metin54,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${gruplar['biraktim']!.length}',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  color: DiziRenkler.metin38,
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 16,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                    // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
+                    for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
+                    const SizedBox(height: 24),
                   ],
-                  // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
-                  for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
-                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -1384,6 +1471,217 @@ class _YorumlarSheetState extends State<_YorumlarSheet> {
           ),
           Expanded(child: govde),
         ],
+      ),
+    );
+  }
+}
+
+/// Profilin "Yorumlar" sekmesi: kullanıcının dizi/filmlere yazdığı yorumlar,
+/// Twitter profili gibi tek akışta.
+///
+/// Beğeni ve yanıtlar İÇERİK SAYFASIYLA AYNI kayıtlar üzerinde çalışır
+/// (POST /yorumlar/:id/begen ve YanitlarSheet). Yani buradan atılan beğeni
+/// Breaking Bad sayfasındaki yorumda da görünür, tersi de geçerli.
+class ProfilYorumAkisi extends StatelessWidget {
+  final List<dynamic> yorumlar;
+  final Map<String, dynamic> icerikler;
+
+  const ProfilYorumAkisi({
+    super.key,
+    required this.yorumlar,
+    required this.icerikler,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (yorumlar.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+        child: BosDurum(
+          ikon: Icons.mode_comment_outlined,
+          baslik: 'Henüz yorum yok'.c,
+          ipucu: 'Dizi ve filmlere yazdığın yorumlar burada toplanır.'.c,
+        ),
+      );
+    }
+    return Column(
+      children: [
+        for (final y in yorumlar)
+          _ProfilYorumKarti(
+            yorum: y as Map<String, dynamic>,
+            icerik:
+                icerikler['${y['tur']}:${y['tmdb_id']}']
+                    as Map<String, dynamic>?,
+          ),
+      ],
+    );
+  }
+}
+
+class _ProfilYorumKarti extends StatefulWidget {
+  final Map<String, dynamic> yorum;
+  final Map<String, dynamic>? icerik;
+  const _ProfilYorumKarti({required this.yorum, this.icerik});
+
+  @override
+  State<_ProfilYorumKarti> createState() => _ProfilYorumKartiState();
+}
+
+class _ProfilYorumKartiState extends State<_ProfilYorumKarti> {
+  late bool _begendim = widget.yorum['begendim'] == true;
+  late int _begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
+  bool _islemde = false;
+
+  Future<void> _begen() async {
+    if (_islemde) return;
+    setState(() {
+      _islemde = true;
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1; // iyimser: hata olursa geri alınır
+    });
+    try {
+      final d = await Api.post('/yorumlar/${widget.yorum['id']}/begen', {});
+      if (!mounted) return;
+      setState(() {
+        _begendim = d['begendim'] as bool;
+        _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _begendim = !_begendim;
+        _begeni += _begendim ? 1 : -1;
+      });
+    } finally {
+      if (mounted) setState(() => _islemde = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final y = widget.yorum;
+    final ad = widget.icerik?['ad'] as String? ?? '';
+    final poster = posterUrl(
+      widget.icerik?['poster'] as String?,
+      boyut: 'w185',
+    );
+    final bolumlu = y['sezon'] != null;
+    final yol = '/icerik/${y['tur']}/${y['tmdb_id']}';
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Hangi içeriğe yazıldığı: dokununca içerik sayfası
+            InkWell(
+              onTap: () => context.push(yol),
+              child: Row(
+                children: [
+                  if (poster != null)
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: CachedNetworkImage(
+                        imageUrl: poster,
+                        width: 30,
+                        height: 44,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      '$ad${bolumlu ? ' · ${'S{}B{}'.cf([y['sezon'], y['bolum']])}' : ''}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: DiziRenkler.sariMetin,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            SpoilerMetin(
+              y['metin'] as String? ?? '',
+              spoiler: y['spoiler'] == true,
+              stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
+            ),
+            if ((y['medya'] as List<dynamic>? ?? []).isNotEmpty) ...[
+              const SizedBox(height: 10),
+              MedyaGaleri(yollar: (y['medya'] as List<dynamic>).cast<String>()),
+            ],
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                InkWell(
+                  onTap: _begen,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          _begendim ? Icons.favorite : Icons.favorite_border,
+                          size: 16,
+                          color: _begendim
+                              ? DiziRenkler.sariMetin
+                              : DiziRenkler.metin38,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '$_begeni',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: _begendim
+                                ? DiziRenkler.sariMetin
+                                : DiziRenkler.metin38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Aynı sheet Reels'te de kullanılıyor: yanıtlar tek kaynak.
+                InkWell(
+                  onTap: () => yanitlariAc(context, y),
+                  borderRadius: BorderRadius.circular(20),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 10,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.mode_comment_outlined,
+                          size: 16,
+                          color: DiziRenkler.metin38,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Yorum yap'.c,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: DiziRenkler.metin38,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

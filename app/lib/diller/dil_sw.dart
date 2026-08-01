@@ -431,4 +431,7 @@ const Map<String, String> cevirilerSw = {
   'Kült Filmler': 'Filamu za kipekee',
   'Yeni Filmler': 'Filamu mpya',
   'Yorum yap': 'Toa maoni',
+  'Henüz yorum yok': 'Bado hakuna maoni',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Maoni unayoandika kuhusu misururu na filamu hukusanywa hapa.',
 };

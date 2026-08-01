@@ -435,4 +435,7 @@ const Map<String, String> cevirilerFil = {
   'Kült Filmler': 'Mga cult na pelikula',
   'Yeni Filmler': 'Mga bagong pelikula',
   'Yorum yap': 'Magkomento',
+  'Henüz yorum yok': 'Wala pang komento',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Ang mga komento mo sa serye at pelikula ay natitipon dito.',
 };

@@ -427,4 +427,7 @@ const Map<String, String> cevirilerTh = {
   'Kült Filmler': 'ภาพยนตร์คัลต์',
   'Yeni Filmler': 'ภาพยนตร์ใหม่',
   'Yorum yap': 'แสดงความคิดเห็น',
+  'Henüz yorum yok': 'ยังไม่มีความคิดเห็น',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'ความคิดเห็นที่คุณเขียนถึงซีรีส์และภาพยนตร์จะรวมอยู่ที่นี่',
 };

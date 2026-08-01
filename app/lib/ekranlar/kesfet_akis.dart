@@ -785,7 +785,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
       context: context,
       isScrollControlled: true,
       backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => _YanitlarSheet(yorum: widget.yorum),
+      builder: (_) => YanitlarSheet(yorum: widget.yorum),
     );
   }
 
@@ -1311,15 +1311,28 @@ class _ReelsDugme extends StatelessWidget {
 }
 
 /// Yanıtlar alt sayfası: bu yoruma verilen yanıtlar + yanıt yazma.
-class _YanitlarSheet extends StatefulWidget {
+
+/// Gönderinin yanıt sheet'ini açar (Reels, profil yorum akışı vb.).
+Future<void> yanitlariAc(BuildContext context, Map<String, dynamic> yorum) =>
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => YanitlarSheet(yorum: yorum),
+    );
+
+/// Bir gönderinin yanıtları + yazma kutusu. Reels ve profil yorum akışı
+/// AYNI sheet'i kullanır: beğeni ve yanıtlar tek veri kaynağından geldiği için
+/// nerede atılırsa atılsın her iki tarafta da görünür.
+class YanitlarSheet extends StatefulWidget {
   final Map<String, dynamic> yorum;
-  const _YanitlarSheet({required this.yorum});
+  const YanitlarSheet({super.key, required this.yorum});
 
   @override
-  State<_YanitlarSheet> createState() => _YanitlarSheetState();
+  State<YanitlarSheet> createState() => _YanitlarSheetState();
 }
 
-class _YanitlarSheetState extends State<_YanitlarSheet> {
+class _YanitlarSheetState extends State<YanitlarSheet> {
   List<dynamic>? _yanitlar;
   final _kutu = TextEditingController();
   bool _gonderiliyor = false;

@@ -433,4 +433,7 @@ const Map<String, String> cevirilerTa = {
   'Kült Filmler': 'வழிபாட்டுப் படங்கள்',
   'Yeni Filmler': 'புதிய படங்கள்',
   'Yorum yap': 'கருத்து சொல்',
+  'Henüz yorum yok': 'இன்னும் கருத்துகள் இல்லை',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'தொடர்கள் மற்றும் படங்களுக்கு நீ எழுதும் கருத்துகள் இங்கே சேரும்.',
 };

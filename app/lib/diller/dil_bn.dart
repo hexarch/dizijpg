@@ -433,4 +433,7 @@ const Map<String, String> cevirilerBn = {
   'Kült Filmler': 'কাল্ট সিনেমা',
   'Yeni Filmler': 'নতুন সিনেমা',
   'Yorum yap': 'মন্তব্য করুন',
+  'Henüz yorum yok': 'এখনো কোনো মন্তব্য নেই',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'সিরিজ ও সিনেমায় লেখা তোমার মন্তব্য এখানে জমা হয়।',
 };

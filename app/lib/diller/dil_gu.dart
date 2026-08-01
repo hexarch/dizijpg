@@ -430,4 +430,7 @@ const Map<String, String> cevirilerGu = {
   'Kült Filmler': 'કલ્ટ ફિલ્મો',
   'Yeni Filmler': 'નવી ફિલ્મો',
   'Yorum yap': 'ટિપ્પણી કરો',
+  'Henüz yorum yok': 'હજી કોઈ ટિપ્પણી નથી',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'શ્રેણી અને ફિલ્મો પર લખેલી તારી ટિપ્પણીઓ અહીં ભેગી થાય છે.',
 };

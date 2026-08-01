@@ -432,4 +432,7 @@ const Map<String, String> cevirilerId = {
   'Kült Filmler': 'Film kultus',
   'Yeni Filmler': 'Film baru',
   'Yorum yap': 'Komentari',
+  'Henüz yorum yok': 'Belum ada komentar',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Komentar yang kamu tulis untuk serial dan film terkumpul di sini.',
 };

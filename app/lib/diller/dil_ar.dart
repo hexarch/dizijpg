@@ -429,4 +429,7 @@ const Map<String, String> cevirilerAr = {
   'Kült Filmler': 'أفلام كلاسيكية مميزة',
   'Yeni Filmler': 'أفلام جديدة',
   'Yorum yap': 'أضف تعليقًا',
+  'Henüz yorum yok': 'لا توجد تعليقات بعد',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'تعليقاتك على المسلسلات والأفلام تُجمع هنا.',
 };

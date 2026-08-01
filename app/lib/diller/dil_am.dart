@@ -424,4 +424,7 @@ const Map<String, String> cevirilerAm = {
   'Kült Filmler': 'ተወዳጅ ልዩ ፊልሞች',
   'Yeni Filmler': 'አዲስ ፊልሞች',
   'Yorum yap': 'አስተያየት ስጡ',
+  'Henüz yorum yok': 'እስካሁን አስተያየት የለም',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'ለተከታታዮችና ለፊልሞች የጻፍካቸው አስተያየቶች እዚህ ይሰበሰባሉ።',
 };

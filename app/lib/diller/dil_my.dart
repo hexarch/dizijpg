@@ -440,4 +440,7 @@ const Map<String, String> cevirilerMy = {
   'Kült Filmler': 'ကာလ့်ရုပ်ရှင်များ',
   'Yeni Filmler': 'ရုပ်ရှင်အသစ်များ',
   'Yorum yap': 'မှတ်ချက်ပေးရန်',
+  'Henüz yorum yok': 'မှတ်ချက် မရှိသေးပါ',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'စီးရီးများနှင့် ရုပ်ရှင်များအတွက် သင်ရေးသော မှတ်ချက်များ ဤနေရာတွင် စုစည်းပါသည်။',
 };

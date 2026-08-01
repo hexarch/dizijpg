@@ -433,4 +433,7 @@ const Map<String, String> cevirilerVi = {
   'Kült Filmler': 'Phim cult',
   'Yeni Filmler': 'Phim mới',
   'Yorum yap': 'Bình luận',
+  'Henüz yorum yok': 'Chưa có bình luận',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Bình luận bạn viết cho phim bộ và phim lẻ sẽ gom về đây.',
 };

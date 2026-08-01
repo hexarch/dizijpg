@@ -420,4 +420,6 @@ const Map<String, String> cevirilerZh = {
   'Kült Filmler': '邪典电影',
   'Yeni Filmler': '新电影',
   'Yorum yap': '评论',
+  'Henüz yorum yok': '还没有评论',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.': '你对剧集和电影的评论都会汇集在这里。',
 };

@@ -432,4 +432,7 @@ const Map<String, String> cevirilerEn = {
   'Kült Filmler': 'Cult Movies',
   'Yeni Filmler': 'New Movies',
   'Yorum yap': 'Comment',
+  'Henüz yorum yok': 'No comments yet',
+  'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
+      'Comments you write on shows and movies collect here.',
 };
