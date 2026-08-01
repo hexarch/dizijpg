@@ -6,9 +6,15 @@ import 'package:video_player/video_player.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../icerik_deposu.dart';
 import '../tema.dart';
 import 'etiket.dart';
+import 'kesfet_akis.dart' show ReelsGorunumu;
 import 'ortak.dart';
+
+/// Bir yoruma eklenebilecek en çok medya (sunucu tavanıyla aynı).
+/// Galeri artık kaydırmalı olduğu için 10 medya da sırayla görünür.
+const enCokEk = 10;
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
 /// liste + fotoğraf/video ekli yorum yazma.
@@ -18,12 +24,17 @@ class YorumBolumu extends StatefulWidget {
   final int? sezon;
   final int? bolum;
 
+  /// Reels'te gösterilecek içerik kartı ({ad, poster}). Verilmezse dizi/film
+  /// için [IcerikDeposu]'ndan çekilir (kişi sayfası kendi bilgisini verir).
+  final Map<String, dynamic>? icerik;
+
   const YorumBolumu({
     super.key,
     required this.tur,
     required this.tmdbId,
     this.sezon,
     this.bolum,
+    this.icerik,
   });
 
   @override
@@ -41,6 +52,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
   bool _gonderiliyor = false;
   bool _spoiler = false; // "spoiler içerir" işareti
   Map<String, dynamic>? _yanitlanan; // yanıt modundaki üst yorum
+
+  /// Reels'in içerik kartı için: {'tur:tmdb_id': {ad, poster}}
+  Map<String, dynamic> _icerikler = const {};
 
   @override
   void initState() {
@@ -86,6 +100,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
           _yorumlar = d['yorumlar'] as List<dynamic>;
           _yorumHatasi = false;
         });
+        _icerikYukle();
       }
     } catch (_) {
       // Hata boş durumla karışmasın: ayrı bayrak, "tekrar dene" göster
@@ -93,8 +108,77 @@ class _YorumBolumuState extends State<YorumBolumu> {
     }
   }
 
+  String get _icerikAnahtar => '${widget.tur}:${widget.tmdbId}';
+
+  /// Reels'in üstündeki içerik kartı (poster + ad) için tek seferlik bilgi.
+  /// Yalnız MEDYALI yorum varsa çekilir — medyasız sayfa fazladan istek atmaz.
+  Future<void> _icerikYukle() async {
+    if (_icerikler.isNotEmpty) return;
+    if (!(_yorumlar ?? []).any(
+      (y) => ((y as Map)['medya'] as List<dynamic>? ?? []).isNotEmpty,
+    )) {
+      return;
+    }
+    if (widget.icerik != null) {
+      setState(() => _icerikler = {_icerikAnahtar: widget.icerik!});
+      return;
+    }
+    // Kişi sayfası (/icerikler ucu yalnız dizi/film bilir) kendi bilgisini verir
+    if (widget.tur == 'person') return;
+    final k = await IcerikDeposu.getir(widget.tur, widget.tmdbId);
+    if (!mounted || k == null) return;
+    setState(
+      () => _icerikler = {
+        _icerikAnahtar: {
+          'ad': k['name'] ?? k['title'] ?? '?',
+          'poster': k['poster_path'],
+        },
+      },
+    );
+  }
+
+  /// Medyalı yorumlar EKRANDAKİ sırayla (üst yorum, sonra yanıtları) — Reels
+  /// bu listeyi dikey kaydırır. Yorumlar bu uçta tür/tmdb bilgisi taşımadığı
+  /// için Reels'in beklediği alanlar (içerik kartı, yanıt yazma) eklenir.
+  List<Map<String, dynamic>> get _medyaliYorumlar {
+    bool medyali(dynamic y) =>
+        ((y as Map)['medya'] as List<dynamic>? ?? []).isNotEmpty;
+    final tumu = _yorumlar ?? [];
+    final liste = <Map<String, dynamic>>[];
+    void ekle(dynamic y) => liste.add({
+      ...(y as Map<String, dynamic>),
+      'tur': widget.tur,
+      'tmdb_id': widget.tmdbId,
+    });
+    for (final y in tumu.where((y) => y['ust_id'] == null)) {
+      if (medyali(y)) ekle(y);
+      for (final c in tumu.where((c) => c['ust_id'] == (y as Map)['id'])) {
+        if (medyali(c)) ekle(c);
+      }
+    }
+    return liste;
+  }
+
+  /// Medyaya TEK dokunuş: akıştaki gibi Reels açılır ve DOKUNULAN medyadan
+  /// başlar (indeks düşürülürse kullanıcı hep ilk kareyi görür — 31 Tem hatası).
+  void _medyaAc(Map<String, dynamic> yorum, int medyaIndeks) {
+    final liste = _medyaliYorumlar;
+    final i = liste.indexWhere((y) => y['id'] == yorum['id']);
+    if (i < 0) return;
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (_) => ReelsGorunumu(
+          liste: liste,
+          icerikler: _icerikler,
+          baslangic: i,
+          medyaBaslangic: medyaIndeks,
+        ),
+      ),
+    );
+  }
+
   Future<void> _ekSec() async {
-    if (_ekler.length >= 4) return;
+    if (_ekler.length >= enCokEk) return;
     final secim = await ImagePicker().pickMedia();
     if (secim == null) return;
     setState(() => _ekYukleniyor = true);
@@ -308,7 +392,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: _ekYukleniyor || _ekler.length >= 4
+                      onPressed: _ekYukleniyor || _ekler.length >= enCokEk
                           ? null
                           : _ekSec,
                       icon: _ekYukleniyor
@@ -423,7 +507,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
           )
         else ...[
           for (final y in _yorumlar!.where((y) => y['ust_id'] == null))
-            _YorumKarti(
+            YorumKarti(
               // Liste yenilenince state konuma göre değil yoruma göre eşleşsin
               key: ValueKey(y['id']),
               yorum: y as Map<String, dynamic>,
@@ -432,6 +516,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
               sil: () => _sil(y['id'] as int),
               yanitla: _yanitla,
               yanitSil: _sil,
+              medyaAc: _medyaAc,
               yanitlar:
                   (_yorumlar!.where((c) => c['ust_id'] == y['id']).toList()
                     ..sort(
@@ -444,7 +529,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   }
 }
 
-class _YorumKarti extends StatefulWidget {
+class YorumKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final bool benim;
   final Object? benimId;
@@ -453,7 +538,10 @@ class _YorumKarti extends StatefulWidget {
   final void Function(int) yanitSil;
   final List<dynamic> yanitlar;
 
-  const _YorumKarti({
+  /// Medyaya dokununca (yorum, dokunulan medyanın sırası) — Reels açar.
+  final void Function(Map<String, dynamic>, int) medyaAc;
+
+  const YorumKarti({
     super.key,
     required this.yorum,
     required this.benim,
@@ -462,19 +550,20 @@ class _YorumKarti extends StatefulWidget {
     required this.yanitla,
     required this.yanitSil,
     required this.yanitlar,
+    required this.medyaAc,
   });
 
   @override
-  State<_YorumKarti> createState() => _YorumKartiState();
+  State<YorumKarti> createState() => _YorumKartiState();
 }
 
-class _YorumKartiState extends State<_YorumKarti> {
+class _YorumKartiState extends State<YorumKarti> {
   late bool _begendim = widget.yorum['begendim'] == true;
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
   bool _isleniyor = false;
 
   @override
-  void didUpdateWidget(_YorumKarti eski) {
+  void didUpdateWidget(YorumKarti eski) {
     super.didUpdateWidget(eski);
     if (eski.yorum != widget.yorum) {
       _begendim = widget.yorum['begendim'] == true;
@@ -592,9 +681,16 @@ class _YorumKartiState extends State<_YorumKarti> {
             ),
             if (medya.isNotEmpty) ...[
               const SizedBox(height: 10),
-              // Tek medya tam genişlik büyük, çoklu 2 sütun ızgara; dokununca
-              // tam ekran (fotoğrafta yakınlaştırma, videoda oynatma + sarma).
-              MedyaGaleri(yollar: medya.cast<String>()),
+              // AKIŞTAKİ galeri: medya kaç tane olursa olsun (10 dahil) sırayla
+              // yana kaydırılır, altta nokta + sağ üstte "5/10" sayacı olur.
+              // Eskiden 2 sütun ızgaraydı: kareye kırpılıyor, sıra kayboluyordu.
+              // Tek dokunuş Reels (dokunulan medyadan), çift dokunuş beğeni.
+              MedyaGaleri(
+                yollar: medya,
+                otomatikOynat: true,
+                onAc: (mi) => widget.medyaAc(widget.yorum, mi),
+                onCiftDokunus: _begen,
+              ),
             ],
             const SizedBox(height: 8),
             // Görüntülenme + beğeni
@@ -692,6 +788,7 @@ class _YorumKartiState extends State<_YorumKarti> {
                         benim: c['kullanici_id'] == widget.benimId,
                         sil: () => widget.yanitSil(c['id'] as int),
                         yanitla: () => widget.yanitla(c),
+                        medyaAc: widget.medyaAc,
                       ),
                   ],
                 ),
@@ -891,12 +988,16 @@ class _YanitSatiri extends StatefulWidget {
   final VoidCallback sil;
   final VoidCallback yanitla;
 
+  /// Medyaya dokununca (yanıt, dokunulan medyanın sırası) — Reels açar.
+  final void Function(Map<String, dynamic>, int) medyaAc;
+
   const _YanitSatiri({
     super.key,
     required this.yanit,
     required this.benim,
     required this.sil,
     required this.yanitla,
+    required this.medyaAc,
   });
 
   @override
@@ -949,6 +1050,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
     final y = widget.yanit;
     final avatar = dosyaUrl(y['avatar'] as String?);
     final tarih = (y['tarih'] as String? ?? '').split('T').first;
+    final medya = (y['medya'] as List<dynamic>? ?? []).cast<String>();
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Column(
@@ -1057,6 +1159,19 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               ),
             ),
           ),
+          // Yanıtın medyası: üst yorumla AYNI kaydırmalı galeri. Eskiden hiç
+          // çizilmiyordu — fotoğraflı yanıt gönderen kullanıcı boş metin
+          // görüyordu.
+          if (medya.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(left: 26, top: 6),
+              child: MedyaGaleri(
+                yollar: medya,
+                otomatikOynat: true,
+                onAc: (mi) => widget.medyaAc(y, mi),
+                onCiftDokunus: _begen,
+              ),
+            ),
         ],
       ),
     );

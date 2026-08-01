@@ -236,7 +236,13 @@ class _KisiEkraniState extends State<KisiEkrani> {
               ],
             ),
           ),
-          YorumBolumu(tur: 'person', tmdbId: widget.kisiId),
+          // Kişi kartı Reels'e buradan verilir: /icerikler ucu yalnız dizi/film
+          // bilir, kişi adı olmadan Reels üstünde "?" görünürdü.
+          YorumBolumu(
+            tur: 'person',
+            tmdbId: widget.kisiId,
+            icerik: {'ad': k['name'], 'poster': k['profile_path']},
+          ),
           const SizedBox(height: 16),
         ],
       ),

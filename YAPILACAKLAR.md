@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Detay/bölüm yorumlarındaki medya artık akıştaki gibi kaydırmalı
+**Kullanıcı bildirimi:** "dizi, dizi bölüm, filmlerin profiline gittiğimde her
+zaman yorumlarda 10 tane de resim olsa sırasıyla kaydırmalı gözükmeli akıştaki
+gibi."
+- 🚀 **Önceki davranış:** detay/bölüm/kişi sayfasındaki yorum kartı medyayı
+  `MedyaGaleri`nin IZGARA kipinde çiziyordu (2 sütun, `childAspectRatio: 1`,
+  `BoxFit.cover`) — 10 medya 5 satır kareye kırpılıyor, yana kaydırma, nokta
+  göstergesi ve "5/10" sayacı olmuyordu. Yanıtlardaki medya ise HİÇ
+  çizilmiyordu (fotoğraflı yanıt boş metin gibi görünüyordu).
+- 🚀 Yorum kartı ve yanıt satırı artık akışın kullandığı galeriyi
+  (`MedyaGaleri(otomatikOynat: true)` → `AkisMedya`) çağırıyor: yatay
+  `PageView`, sıra korunur, altta noktalar, sağ üstte sayaç, videolar yerinde
+  sessiz oynar. Kod tekrarı yok — akıştaki widget'ın kendisi kullanıldı.
+- 🚀 Tek dokunuş Reels'i DOKUNULAN medyadan açar (`medyaBaslangic`), çift
+  dokunuş beğenir; Reels listesi o sayfadaki medyalı yorumlar (yanıtlar dahil,
+  ekrandaki sırayla). Yorum ucu tür/tmdb taşımadığı için kart bu alanları
+  ekliyor; içerik kartı `IcerikDeposu`dan (kişi sayfası kendi adını veriyor).
+- 🚀 Yorum başına ek sınırı 4 → 10 (sunucu tavanıyla aynı; galeri artık 10'unu
+  da sırayla gösterebiliyor).
+- ✅ Sunucu değişmedi: `GET /yorumlar/tv/1399` 10 medyalı yorumu (id 4911,
+  test hesabı) 10 yolun TAMAMIYLA ve SIRASIYLA döndürüyor (curl ile doğrulandı).
+- ✅ `test/yorum_medya_galeri_test.dart` (4 test): 10 medyada `PageView` +
+  "1/10" (ızgara yok, 10 sayfa kurulu), kaydırınca 2/10 → 3/10, dokunulan
+  indeks (2) medyaAc'a bildiriliyor, tek medyada sayaç yok.
+
 ## 2026-08-02 — Ana Sayfa raf başlıkları mobilde kırpılıyordu
 **Kullanıcı bildirimi:** "Haftanın Dizileri / Haftanın Filmleri tam görünmüyor,
 başka tam gözükmeyenler de var."
