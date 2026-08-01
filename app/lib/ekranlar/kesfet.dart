@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'arama_cubugu.dart';
 import 'katalog_liste.dart';
 import 'ortak.dart';
 
@@ -272,7 +273,8 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
           const SizedBox(width: 4),
         ],
       ),
-      body: govde,
+      // Akışla AYNI arama bileşeni (ortak widget)
+      body: AramaCubugu(cocuk: govde),
     );
   }
 }
