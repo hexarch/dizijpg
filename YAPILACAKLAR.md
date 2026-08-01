@@ -1000,8 +1000,26 @@ oyuncu etiketleme".
   ("brekaing bad" → Breaking Bad, "blacklst" → The Blacklist). Yanıtta
   `duzeltme` alanı var — istersek UI'da "şunu mu demek istedin" gösterilebilir.
 
+## 2026-08-01 — Admin panelinde MAİLLER ✅
+- **Gelen mailler:** host'taki Maildir'ler (`/home/admin`, `/home/noreply`)
+  konteynere SALT-OKUNUR bağlandı (`/mail/<hesap>`), `mail_kutu.js` okuyup
+  ayrıştırıyor (mailparser: UTF-8 konu, quoted-printable, ekler). Dovecot IMAP
+  alt klasörleri (`.Sent` vb.) da otomatik görünür.
+- **Giden mailler:** Postfix kopya saklamadığı için uygulama seviyesinde günlük —
+  `mailler` tablosu (migrasyon-2026-08-01) + `mailGonder()` sarmalayıcı. Şifre
+  sıfırlama kodu gövdede MASKELENİR (panele erişen hesap ele geçiremesin).
+- **Panel:** yeni "Mailler" sekmesi — okunmamış rozeti, Tümü/Gelen/Giden filtresi,
+  arama, detay modalı (HTML gövde sandbox'lı iframe'de, uzak görsel engelli).
+- Uçlar: `GET /admin/mailler`, `GET /admin/mail/:yon/:kimlik`.
+  (`:id` KULLANMA — `sayiParam('id')` base64 kimliği 400'e düşürüyor.)
+- ⚠️ `test@dizijpg.com` gerçek posta kutusu değil: o hesaba giden mailler
+  Postfix'ten `550 User unknown` alır, panelde "gönderilemedi" görünür. Normal.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
+- **docker-compose.yml artık TAM** (ADMIN_IPLER/ADMIN_TOKEN env + firebase-admin.json
+  bağlaması dahil). 1 Ağu'da bu ayarlar yalnız sunucudaki kopyada vardı; scp
+  üzerine yazınca panel 403 verdi ve FCM kapandı. Depodaki dosya artık kaynak.
 - **HSTS:** kullanıcı Cloudflare'dan açıyor (6 ay, includeSubDomains açık, preload kapalı).
 - **Play Store:** yeni AAB (FCM'li) hazır → yükle. Firebase dosyaları firebase-gizli/ (git dışı).
 

@@ -13,6 +13,9 @@ import os from 'os';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
+import {
+  mailKutulari, mailAyristir, mailKimlikCoz, gelenMailler, htmlKisirlastir,
+} from './mail_kutu.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -216,6 +219,41 @@ const mailUlastirici = nodemailer.createTransport({
   ignoreTLS: true, // yerel ağ; Postfix relay
   tls: { rejectUnauthorized: false },
 });
+
+// Sıfırlama kodu tek kullanımlık bir kimlik bilgisidir: günlüğe düz yazılırsa
+// panele erişen biri istediği hesabın şifresini sıfırlayabilir. Maskele.
+function mailGovdeTemizle(metin, tur) {
+  const t = tur === 'sifirlama'
+    ? String(metin).replace(/\b\d{6}\b/g, '••••••') : String(metin);
+  return t.length > 20000 ? `${t.slice(0, 20000)}\n…(kırpıldı)` : t;
+}
+
+// Postfix gönderdiği mailin kopyasını saklamaz — her gönderim `mailler`
+// tablosuna da yazılır ki admin panelinde "kime ne göndermişiz" görülebilsin.
+// Günlük yazımı gönderimi bloklamaz/başarısız etmez (ateşle-unut).
+async function mailGonder(secenekler, bilgi = {}) {
+  const ek = secenekler.attachments?.[0];
+  let sonuc = null;
+  let hata = null;
+  try {
+    sonuc = await mailUlastirici.sendMail({ from: MAIL_FROM, ...secenekler });
+  } catch (e) {
+    hata = e.message;
+  }
+  havuz.query(
+    `INSERT INTO mailler (kime, konu, govde, tur, kullanici_id, ek_ad, ek_boyut,
+                          durum, hata, mesaj_id)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+    [
+      String(secenekler.to || ''), secenekler.subject || null,
+      mailGovdeTemizle(secenekler.text || '', bilgi.tur), bilgi.tur || null,
+      bilgi.kullanici_id || null, ek?.filename || null, ek?.content?.length ?? null,
+      hata ? 'hata' : 'gonderildi', hata, sonuc?.messageId || null,
+    ],
+  ).catch((e) => console.error('mail gunlugu:', e.message));
+  if (hata) throw new Error(hata);
+  return sonuc;
+}
 
 // ---------- yardımcılar ----------
 const TMDB = 'https://api.themoviedb.org/3';
@@ -2897,12 +2935,12 @@ app.post('/auth/sifre-sifirla-istek', authLimiti, sarici(async (req, res) => {
      ON CONFLICT (kullanici_id) DO UPDATE SET kod_hash=$2, bitis=now() + interval '15 minutes'`,
     [rows[0].id, hash],
   );
-  mailUlastirici.sendMail({
-    from: MAIL_FROM,
+  mailGonder({
     to: email,
     subject: 'dizi.jpg şifre sıfırlama kodun',
     text: `Şifre sıfırlama kodun: ${kod}\n\n15 dakika geçerlidir. Sen istemediysen bu e-postayı yok say.`,
-  }).catch((e) => console.error('sifirlama maili:', e.message));
+  }, { tur: 'sifirlama', kullanici_id: rows[0].id })
+    .catch((e) => console.error('sifirlama maili:', e.message));
   res.json(cevap);
 }));
 
@@ -3343,15 +3381,14 @@ app.post('/veri/disa-aktar', girisZorunlu, veriLimiti, sarici(async (req, res) =
   }
   const zip = await disaAktar(havuz, req.kullanici.id);
   const tarih = new Date().toISOString().slice(0, 10);
-  await mailUlastirici.sendMail({
-    from: MAIL_FROM,
+  await mailGonder({
     to: eposta,
     subject: 'dizi.jpg — Verilerin',
     text: 'Merhaba,\n\nTalep ettiğin dizi.jpg verilerin ekte ZIP olarak yer alıyor. '
       + 'Bu ZIP\'i uygulamada Ayarlar > Veri içe aktar ile geri yükleyebilirsin.\n\n'
       + 'Bu isteği sen yapmadıysan lütfen dikkate alma.\n\ndizi.jpg',
     attachments: [{ filename: `dizijpg-verilerim-${tarih}.zip`, content: zip }],
-  });
+  }, { tur: 'disa_aktar', kullanici_id: req.kullanici.id });
   res.json({ tamam: true, mesaj: `Verilerin ${eposta} adresine gönderildi` });
 }));
 
@@ -3808,6 +3845,54 @@ app.get('/admin/hatalar', adminKisit, sarici(async (req, res) => {
      ORDER BY h.id DESC LIMIT $1`, [limit],
   );
   res.json({ hatalar: rows });
+}));
+
+// ---------- mailler (gelen: Maildir · giden: `mailler` tablosu) ----------
+app.get('/admin/mailler', adminKisit, sarici(async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit, 10) || 80, 300);
+  const kutular = mailKutulari();
+  const [gelen, giden] = await Promise.all([
+    gelenMailler(limit),
+    havuz.query(
+      `SELECT m.id, m.kime, m.konu, LEFT(m.govde, 180) AS ozet, m.tur,
+              m.ek_ad, m.ek_boyut, m.durum, m.hata, m.tarih, k.kullanici_adi
+         FROM mailler m LEFT JOIN kullanicilar k ON k.id = m.kullanici_id
+       ORDER BY m.id DESC LIMIT $1`, [limit],
+    ),
+  ]);
+  res.json({
+    gelen,
+    giden: giden.rows.map((r) => ({
+      ...r, yon: 'giden', kimden: MAIL_FROM, tarih: r.tarih,
+      ek_sayi: r.ek_ad ? 1 : 0,
+    })),
+    kutular: kutular.map((k) => `${k.hesap}/${k.klasor}`),
+    kutu_bagli: kutular.length > 0,
+  });
+}));
+
+// Tek mailin tam gövdesi. HTML gövde panelde sandbox'lı iframe'de gösterilir;
+// yine de script/olay öznitelikleri sökülür ve uzak görseller (izleme pikseli)
+// yüklenmesin diye src pasifleştirilir.
+// DİKKAT: parametre adı ':id' OLAMAZ — sayiParam('id') tüm :id'leri 1-9 haneli
+// sayıya zorlar, gelen mailin base64url kimliği 400 alırdı (canlıda yakalandı).
+app.get('/admin/mail/:yon/:kimlik', adminKisit, sarici(async (req, res) => {
+  if (req.params.yon === 'giden') {
+    const { rows } = await havuz.query(
+      `SELECT m.*, k.kullanici_adi FROM mailler m
+         LEFT JOIN kullanicilar k ON k.id = m.kullanici_id WHERE m.id=$1`,
+      [parseInt(req.params.kimlik, 10) || 0]);
+    if (!rows.length) return res.status(404).json({ hata: 'Mail bulunamadı' });
+    return res.json({ ...rows[0], yon: 'giden', kimden: MAIL_FROM, metin: rows[0].govde });
+  }
+  const kayit = mailKimlikCoz(req.params.kimlik);
+  if (!kayit) return res.status(404).json({ hata: 'Mail bulunamadı' });
+  const m = await mailAyristir(kayit);
+  res.json({
+    ...m, yon: 'gelen', hesap: kayit.hesap, klasor: kayit.klasor,
+    okunmadi: kayit.okunmadi, boyut: kayit.boyut,
+    html: m.html ? htmlKisirlastir(m.html) : null,
+  });
 }));
 
 // Şikayetler (hedef özetiyle zenginleştirilmiş).
