@@ -2201,6 +2201,22 @@ app.post('/medya',
     });
   }));
 
+
+// Toplu içerik kartı: kitaplık/profil şeritleri 30 karo için 30 ayrı istek
+// yerine TEK istek atar. Ölçüm: tek tek 30 x ~61 KB = ~1,8 MB; buradan ~3 KB.
+app.post('/icerikler', girisIsteğeBagli, tmdbLimiti, sarici(async (req, res) => {
+  const gelen = req.body?.anahtarlar;
+  if (!Array.isArray(gelen)) {
+    return res.status(400).json({ hata: 'anahtarlar dizisi gerekli' });
+  }
+  // "tur:id" biçimi + makul tavan (tek ekranda bu kadarı zaten görünmez)
+  const anahtarlar = [...new Set(gelen)]
+    .filter((a) => typeof a === 'string' && /^(tv|movie):\d{1,9}$/.test(a))
+    .slice(0, 120);
+  if (!anahtarlar.length) return res.json({ icerikler: {} });
+  res.json({ icerikler: await icerikKartlari(anahtarlar) });
+}));
+
 // ---------- yorumlar ----------
 const YORUM_TURLERI = ['tv', 'movie', 'person'];
 
@@ -2390,6 +2406,44 @@ async function icerikBilgileri(anahtarlar) {
     };
   });
   return icerikler;
+}
+
+
+// Poster kartının ihtiyacı olan ALANLAR (ad, poster, puan, bölüm sayısı).
+// icerikBilgileri yalnız ad+poster döner; kart ayrıca puan ve dizi ilerlemesi
+// için bölüm sayısı ister. Tek tek /tmdb/tv/:id çağırmak yerine bu kullanılır:
+// tek içerik detayı ~61 KB, buradaki özet ~100 bayt.
+async function icerikKartlari(anahtarlar) {
+  const yollar = anahtarlar.map((a) => {
+    const [tur, id] = a.split(':');
+    return `/${tur}/${id}?language=tr-TR`;
+  });
+  const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+  const latinDili = LATIN_DILLER.has(istekBaglam.getStore()?.dil || 'tr');
+  const enYollar = latinDili
+    ? yollar.filter((y) => latinDisiMi(harita.get(y)))
+    : [];
+  const enHarita = enYollar.length
+    ? await tmdbTopluGetir(enYollar, ONBELLEK_TTL_SN.uzun, 'en-US')
+    : new Map();
+  const kartlar = {};
+  anahtarlar.forEach((a, i) => {
+    let v = harita.get(yollar[i]);
+    if (!v) return; // bulunamayan içerik atlanır; istemci iskelet gösterir
+    if (latinDili) {
+      if (latinDisiMi(v)) v = ingilizceBirlestir(v, enHarita.get(yollar[i]));
+      v = adTercihUygula(v);
+    }
+    kartlar[a] = {
+      id: v.id,
+      name: v.name || null,
+      title: v.title || null,
+      poster_path: v.poster_path || null,
+      vote_average: v.vote_average ?? 0,
+      number_of_episodes: v.number_of_episodes ?? null,
+    };
+  });
+  return kartlar;
 }
 
 async function akisIcerikleri(rows) {

@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
+import '../icerik_deposu.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
@@ -905,14 +906,13 @@ class _MiniIcerikState extends State<MiniIcerik> {
   @override
   void initState() {
     super.initState();
-    Api.get('/tmdb/${widget.tur}/${widget.tmdbId}')
-        .then((d) {
-          if (mounted) setState(() => _icerik = d as Map<String, dynamic>);
-        })
-        .catchError((_) {
-          // Hata: sonsuz iskelet yerine kırık görsel göster
-          if (mounted) setState(() => _hata = true);
-        });
+    // Tek tek /tmdb/{tur}/{id} çağırmak yerine toplu depo: aynı karedeki
+    // tüm karolar TEK istekte alınır (61 KB/karo yerine ~150 bayt).
+    IcerikDeposu.getir(widget.tur, widget.tmdbId).then((d) {
+      if (!mounted) return;
+      // Bulunamadıysa sonsuz iskelet yerine kırık görsel göster
+      setState(() => d == null ? _hata = true : _icerik = d);
+    });
   }
 
   @override
