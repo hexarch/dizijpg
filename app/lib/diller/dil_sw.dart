@@ -400,6 +400,8 @@ const Map<String, String> cevirilerSw = {
   'Teşekkürler! Geri bildirimin alındı.': 'Asante! Mrejesho wako umepokelewa.',
   'Profilimde gizle': 'Ficha kwenye wasifu wangu',
   'Yorumları': 'Maoni yake',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Mtumiaji huyu bado hajatazama chochote.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Mtumiaji huyu anapendelea kuficha maoni yake.',
   'S{}B{}': 'S{}E{}',

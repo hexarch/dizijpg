@@ -391,6 +391,7 @@ const Map<String, String> cevirilerJa = {
   'Teşekkürler! Geri bildirimin alındı.': 'ありがとうございます！フィードバックを受け取りました。',
   'Profilimde gizle': 'プロフィールで隠す',
   'Yorumları': 'コメント一覧',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'このユーザーはまだ何も視聴していません。',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'このユーザーはコメントを非公開にしています。',
   'S{}B{}': 'S{}E{}',

@@ -9,7 +9,8 @@ import '../tema.dart';
 import 'akis.dart';
 import 'kesfet_akis.dart';
 import 'ortak.dart';
-import 'profil.dart' show sureBicimle, RozetCipi, EtkilesimSatiri;
+import 'profil.dart'
+    show sureBicimle, RozetCipi, EtkilesimSatiri, ProfilSekmeleri;
 import 'sosyal.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
@@ -25,7 +26,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
   Map<String, dynamic>? _profil;
   String? _hata;
   bool _takipIsleniyor = false;
-  bool _yorumlarAcik = false;
+
+  /// 0 = Dizi ve Filmler (rozet/şerit/listeler), 1 = Yorumlar.
+  /// Kendi profilimizdeki (profil.dart) iki sekmeli düzenin aynısı.
+  int _sekme = 0;
 
   @override
   void initState() {
@@ -288,60 +292,28 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ],
                     ),
-                  // Kazanılan rozetler (backend yalnız kazanılanları döner)
-                  if ((p['rozetler'] as List<dynamic>? ?? []).isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.military_tech_outlined,
-                          size: 18,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Rozetler'.c,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final r in p['rozetler'] as List<dynamic>)
-                          RozetCipi(rozet: r as Map<String, dynamic>),
-                      ],
-                    ),
-                  ],
-                  // İzledikleri: diziler ve filmler ayrı şeritler.
-                  // Başlıktaki sayı GERÇEK toplamdır (şerit son 60'ı gösterir).
-                  for (final grup in [
-                    (
-                      Icons.tv_outlined,
-                      'İzlediği Diziler ({})',
-                      izlenenler.where((o) => o['tur'] == 'tv').toList(),
-                      (st['dizi'] as num?)?.toInt(),
-                    ),
-                    (
-                      Icons.movie_outlined,
-                      'İzlediği Filmler ({})',
-                      izlenenler.where((o) => o['tur'] == 'movie').toList(),
-                      (st['film'] as num?)?.toInt(),
-                    ),
-                  ])
-                    if (grup.$3.isNotEmpty) ...[
+                  const SizedBox(height: 20),
+                  // İki sekme: kendi profilimizle BİREBİR aynı widget
+                  // (profil.dart > ProfilSekmeleri).
+                  ProfilSekmeleri(
+                    secili: _sekme,
+                    onSec: (i) => setState(() => _sekme = i),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_sekme == 0) ...[
+                    // Kazanılan rozetler (backend yalnız kazanılanları döner)
+                    if ((p['rozetler'] as List<dynamic>? ?? []).isNotEmpty) ...[
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          Icon(grup.$1, size: 19, color: DiziRenkler.sariMetin),
+                          Icon(
+                            Icons.military_tech_outlined,
+                            size: 18,
+                            color: DiziRenkler.sariMetin,
+                          ),
                           const SizedBox(width: 6),
                           Text(
-                            grup.$2.cf([grup.$4 ?? grup.$3.length]),
+                            'Rozetler'.c,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
@@ -350,174 +322,173 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ],
                       ),
                       const SizedBox(height: 8),
-                      SizedBox(
-                        height: 208,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 10),
-                          itemBuilder: (context, i) {
-                            final o = grup.$3[i] as Map<String, dynamic>;
-                            return MiniIcerik(
-                              tmdbId: (o['tmdb_id'] as num).toInt(),
-                              tur: o['tur'] as String,
-                              izlenenSayi: (o['sayi'] as num?)?.toInt(),
-                            );
-                          },
-                        ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final r in p['rozetler'] as List<dynamic>)
+                            RozetCipi(rozet: r as Map<String, dynamic>),
+                        ],
                       ),
                     ],
-                  if (listeler.isNotEmpty) ...[
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.playlist_play,
-                          size: 20,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Listeleri ({})'.cf([listeler.length]),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    for (final l in listeler)
-                      Card(
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.playlist_play,
-                            color: DiziRenkler.sariMetin,
-                          ),
-                          title: Text(l['ad'] as String? ?? ''),
-                          subtitle: Text(
-                            '{} içerik'.cf([l['oge_sayisi'] ?? 0]),
-                            style: TextStyle(
-                              color: DiziRenkler.metin38,
-                              fontSize: 12,
-                            ),
-                          ),
-                          trailing: Icon(
-                            Icons.chevron_right,
-                            color: DiziRenkler.metin38,
-                          ),
-                          onTap: () =>
-                              _listeAc(l['id'] as int, l['ad'] as String?),
-                        ),
+                    // İzledikleri: diziler ve filmler ayrı şeritler.
+                    // Başlıktaki sayı GERÇEK toplamdır (şerit son 60'ı gösterir).
+                    for (final grup in [
+                      (
+                        Icons.tv_outlined,
+                        'İzlediği Diziler ({})',
+                        izlenenler.where((o) => o['tur'] == 'tv').toList(),
+                        (st['dizi'] as num?)?.toInt(),
                       ),
-                  ],
-                  const SizedBox(height: 20),
-                  // Yorumlarını gizleyen kullanıcı: liste yerine bilgilendirme
-                  if (!benMi && p['yorumlar_gizli'] == true) ...[
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.chat_bubble_outline,
-                          size: 18,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          'Yorumları'.c,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.visibility_off_outlined,
-                          size: 16,
-                          color: DiziRenkler.metin38,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.'
-                                .c,
-                            style: TextStyle(
-                              color: DiziRenkler.metin54,
-                              height: 1.4,
+                      (
+                        Icons.movie_outlined,
+                        'İzlediği Filmler ({})',
+                        izlenenler.where((o) => o['tur'] == 'movie').toList(),
+                        (st['film'] as num?)?.toInt(),
+                      ),
+                    ])
+                      if (grup.$3.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Icon(
+                              grup.$1,
+                              size: 19,
+                              color: DiziRenkler.sariMetin,
                             ),
+                            const SizedBox(width: 6),
+                            Text(
+                              grup.$2.cf([grup.$4 ?? grup.$3.length]),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          height: 208,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: grup.$3.length > 30
+                                ? 30
+                                : grup.$3.length,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: 10),
+                            itemBuilder: (context, i) {
+                              final o = grup.$3[i] as Map<String, dynamic>;
+                              return MiniIcerik(
+                                tmdbId: (o['tmdb_id'] as num).toInt(),
+                                tur: o['tur'] as String,
+                                izlenenSayi: (o['sayi'] as num?)?.toInt(),
+                              );
+                            },
                           ),
                         ),
                       ],
-                    ),
-                  ] else ...[
-                    InkWell(
-                      onTap: () =>
-                          setState(() => _yorumlarAcik = !_yorumlarAcik),
-                      child: Row(
+                    if (listeler.isNotEmpty) ...[
+                      const SizedBox(height: 20),
+                      Row(
                         children: [
                           Icon(
-                            Icons.chat_bubble_outline,
-                            size: 18,
+                            Icons.playlist_play,
+                            size: 20,
                             color: DiziRenkler.sariMetin,
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            'Yorumları ({})'.cf([yorumlar.length]),
+                            'Listeleri ({})'.cf([listeler.length]),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
                             ),
                           ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            _yorumlarAcik
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: DiziRenkler.metin54,
-                          ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    if (_yorumlarAcik) ...[
-                      if (yorumlar.isEmpty)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Text(
-                            'Henüz yorum yok.'.c,
-                            style: TextStyle(color: DiziRenkler.metin38),
-                          ),
-                        ),
-                      // Kendi profilimizle AYNI akış kartı: görüntülenme,
-                      // çift dokunuş = beğeni, medyaya dokununca Reels.
-                      for (var i = 0; i < yorumlar.length; i++)
-                        AkisKarti(
-                          key: ValueKey(
-                            (yorumlar[i] as Map<String, dynamic>)['id'],
-                          ),
-                          yorum: yorumlar[i] as Map<String, dynamic>,
-                          icerikler:
-                              p['icerikler'] as Map<String, dynamic>? ?? {},
-                          onMedyaAc: (mi) =>
-                              Navigator.of(context, rootNavigator: true).push(
-                                MaterialPageRoute(
-                                  builder: (_) => ReelsGorunumu(
-                                    liste: yorumlar,
-                                    icerikler:
-                                        p['icerikler']
-                                            as Map<String, dynamic>? ??
-                                        {},
-                                    baslangic: i,
-                                    medyaBaslangic: mi,
-                                  ),
-                                ),
+                      const SizedBox(height: 8),
+                      for (final l in listeler)
+                        Card(
+                          child: ListTile(
+                            leading: Icon(
+                              Icons.playlist_play,
+                              color: DiziRenkler.sariMetin,
+                            ),
+                            title: Text(l['ad'] as String? ?? ''),
+                            subtitle: Text(
+                              '{} içerik'.cf([l['oge_sayisi'] ?? 0]),
+                              style: TextStyle(
+                                color: DiziRenkler.metin38,
+                                fontSize: 12,
                               ),
+                            ),
+                            trailing: Icon(
+                              Icons.chevron_right,
+                              color: DiziRenkler.metin38,
+                            ),
+                            onTap: () =>
+                                _listeAc(l['id'] as int, l['ad'] as String?),
+                          ),
                         ),
                     ],
+                    // Hiç izlemesi/listesi/rozeti olmayan kullanıcıda sekme
+                    // bomboş kalmasın
+                    if (izlenenler.isEmpty &&
+                        listeler.isEmpty &&
+                        (p['rozetler'] as List<dynamic>? ?? []).isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: BosDurum(
+                          ikon: Icons.movie_outlined,
+                          baslik: 'Bu kullanıcı henüz bir şey izlememiş.'.c,
+                        ),
+                      ),
+                    const SizedBox(height: 24),
+                  ] else if (!benMi && p['yorumlar_gizli'] == true) ...[
+                    // Yorumlarını gizleyen kullanıcı: liste yerine bilgilendirme
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 32),
+                      child: BosDurum(
+                        ikon: Icons.visibility_off_outlined,
+                        baslik:
+                            'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.'
+                                .c,
+                      ),
+                    ),
+                  ] else ...[
+                    if (yorumlar.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: BosDurum(
+                          ikon: Icons.mode_comment_outlined,
+                          baslik: 'Henüz yorum yok'.c,
+                        ),
+                      ),
+                    // Kendi profilimizle AYNI akış kartı: görüntülenme,
+                    // çift dokunuş = beğeni, medyaya dokununca Reels.
+                    for (var i = 0; i < yorumlar.length; i++)
+                      AkisKarti(
+                        key: ValueKey(
+                          (yorumlar[i] as Map<String, dynamic>)['id'],
+                        ),
+                        yorum: yorumlar[i] as Map<String, dynamic>,
+                        icerikler:
+                            p['icerikler'] as Map<String, dynamic>? ?? {},
+                        onMedyaAc: (mi) =>
+                            Navigator.of(context, rootNavigator: true).push(
+                              MaterialPageRoute(
+                                builder: (_) => ReelsGorunumu(
+                                  liste: yorumlar,
+                                  icerikler:
+                                      p['icerikler'] as Map<String, dynamic>? ??
+                                      {},
+                                  baslangic: i,
+                                  medyaBaslangic: mi,
+                                ),
+                              ),
+                            ),
+                      ),
+                    const SizedBox(height: 24),
                   ],
                 ],
               ),

@@ -403,6 +403,8 @@ const Map<String, String> cevirilerRu = {
   'Teşekkürler! Geri bildirimin alındı.': 'Спасибо! Твой отзыв получен.',
   'Profilimde gizle': 'Скрыть в моём профиле',
   'Yorumları': 'Комментарии',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Этот пользователь пока ничего не смотрел.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Этот пользователь предпочитает не показывать свои комментарии.',
   'S{}B{}': 'S{}E{}',

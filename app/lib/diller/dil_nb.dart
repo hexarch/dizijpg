@@ -402,6 +402,8 @@ const Map<String, String> cevirilerNb = {
       'Takk! Tilbakemeldingen din er mottatt.',
   'Profilimde gizle': 'Skjul på profilen min',
   'Yorumları': 'Kommentarer',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Denne brukeren har ikke sett noe ennå.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Denne brukeren foretrekker å holde kommentarene sine private.',
   'S{}B{}': 'S{}E{}',

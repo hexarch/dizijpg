@@ -402,6 +402,8 @@ const Map<String, String> cevirilerSr = {
       'Хвала! Твоја повратна информација је примљена.',
   'Profilimde gizle': 'Сакриј на мом профилу',
   'Yorumları': 'Коментари',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Овај корисник још ништа није гледао.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Овај корисник радије држи своје коментаре скривеним.',
   'S{}B{}': 'S{}E{}',

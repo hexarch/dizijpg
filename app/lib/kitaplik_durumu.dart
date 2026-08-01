@@ -34,7 +34,9 @@ class KitaplikDurumu {
         // "İzleyeceğim" henüz izlenmedi — rozet yalnız gerçekten
         // izlenmiş/izlenmekte olan içeriklerde çıkar.
         final durum = m['durum'] as String?;
-        if (durum == 'izliyorum' || durum == 'bitirdim' || durum == 'biraktim') {
+        if (durum == 'izliyorum' ||
+            durum == 'bitirdim' ||
+            durum == 'biraktim') {
           yeni.add(_anahtar(m['tur'] as String, (m['tmdb_id'] as num).toInt()));
         }
       }

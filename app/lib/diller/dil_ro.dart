@@ -404,6 +404,8 @@ const Map<String, String> cevirilerRo = {
       'Mulțumim! Feedbackul tău a fost primit.',
   'Profilimde gizle': 'Ascunde pe profilul meu',
   'Yorumları': 'Comentariile sale',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Acest utilizator nu a vizionat nimic încă.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Acest utilizator preferă să-și țină comentariile private.',
   'S{}B{}': 'S{}E{}',

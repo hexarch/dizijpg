@@ -398,6 +398,8 @@ const Map<String, String> cevirilerDa = {
   'Teşekkürler! Geri bildirimin alındı.': 'Tak! Din feedback er modtaget.',
   'Profilimde gizle': 'Skjul på min profil',
   'Yorumları': 'Kommentarer',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Denne bruger har ikke set noget endnu.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Denne bruger foretrækker at holde sine kommentarer private.',
   'S{}B{}': 'S{}E{}',

@@ -402,6 +402,7 @@ const Map<String, String> cevirilerBn = {
       'ধন্যবাদ! তোমার ফিডব্যাক পাওয়া গেছে।',
   'Profilimde gizle': 'আমার প্রোফাইলে লুকাও',
   'Yorumları': 'এটা নিয়ে কমেন্ট',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'এই ব্যবহারকারী এখনও কিছু দেখেননি।',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'এই ব্যবহারকারী তার কমেন্ট গোপন রাখতে পছন্দ করেন।',
   'S{}B{}': 'S{}E{}',

@@ -39,10 +39,18 @@ void main() {
     await VeriTasarrufu.mobilSec(false); // mobil tasarrufu kapatıldı
 
     VeriTasarrufu.mobilBaglanti.value = false;
-    expect(VeriTasarrufu.onYuklemeSerbest, isFalse, reason: 'Wi-Fi tasarrufu açık');
+    expect(
+      VeriTasarrufu.onYuklemeSerbest,
+      isFalse,
+      reason: 'Wi-Fi tasarrufu açık',
+    );
 
     VeriTasarrufu.mobilBaglanti.value = true;
-    expect(VeriTasarrufu.onYuklemeSerbest, isTrue, reason: 'mobil tasarrufu kapalı');
+    expect(
+      VeriTasarrufu.onYuklemeSerbest,
+      isTrue,
+      reason: 'mobil tasarrufu kapalı',
+    );
   });
 
   test('seçimler kalıcı: yeniden yüklenince korunur', () async {

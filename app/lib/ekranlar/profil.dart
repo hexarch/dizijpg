@@ -889,58 +889,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   // İki sekme: boydan boya, ekranı ikiye bölen butonlar.
                   // Kitaplık grupları ve yorum akışı aynı profilde ayrı
                   // sekmelerde durur (kullanıcı isteği).
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Row(
-                      children: [
-                        for (final (i, ikon, etiket) in [
-                          (0, Icons.movie_outlined, 'Dizi ve Filmler'),
-                          (1, Icons.mode_comment_outlined, 'Yorumlar'),
-                        ])
-                          Expanded(
-                            child: InkWell(
-                              onTap: () => setState(() => _sekme = i),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      width: _sekme == i ? 2.5 : 1,
-                                      color: _sekme == i
-                                          ? DiziRenkler.sari
-                                          : DiziRenkler.metin12,
-                                    ),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      ikon,
-                                      size: 18,
-                                      color: _sekme == i
-                                          ? DiziRenkler.sariMetin
-                                          : DiziRenkler.metin54,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      etiket.c,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: _sekme == i
-                                            ? DiziRenkler.sariMetin
-                                            : DiziRenkler.metin54,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                  ProfilSekmeleri(
+                    secili: _sekme,
+                    onSec: (i) => setState(() => _sekme = i),
                   ),
                   const SizedBox(height: 12),
                   if (_sekme == 1) ...[
@@ -1470,6 +1421,74 @@ class _YorumlarSheetState extends State<_YorumlarSheet> {
             ),
           ),
           Expanded(child: govde),
+        ],
+      ),
+    );
+  }
+}
+
+/// Profil ekranlarının boydan boya iki sekmesi: "Dizi ve Filmler" / "Yorumlar".
+///
+/// Kendi profilimiz (profil.dart) ve başkasının profili (kullanici_profil.dart)
+/// AYNI widget'ı kullanır; görsel dil ayrışmasın diye kopyalanmadı.
+class ProfilSekmeleri extends StatelessWidget {
+  /// Seçili sekme: 0 = Dizi ve Filmler, 1 = Yorumlar.
+  final int secili;
+  final ValueChanged<int> onSec;
+
+  const ProfilSekmeleri({super.key, required this.secili, required this.onSec});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Row(
+        children: [
+          for (final (i, ikon, etiket) in const [
+            (0, Icons.movie_outlined, 'Dizi ve Filmler'),
+            (1, Icons.mode_comment_outlined, 'Yorumlar'),
+          ])
+            Expanded(
+              child: InkWell(
+                onTap: () => onSec(i),
+                child: Container(
+                  // Dokunma hedefi: 12+12 dikey dolgu + metin ≈ 45px
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: secili == i ? 2.5 : 1,
+                        color: secili == i
+                            ? DiziRenkler.sari
+                            : DiziRenkler.metin12,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        ikon,
+                        size: 18,
+                        color: secili == i
+                            ? DiziRenkler.sariMetin
+                            : DiziRenkler.metin54,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        etiket.c,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: secili == i
+                              ? DiziRenkler.sariMetin
+                              : DiziRenkler.metin54,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

@@ -402,6 +402,8 @@ const Map<String, String> cevirilerCs = {
       'Díky! Tvoje zpětná vazba byla přijata.',
   'Profilimde gizle': 'Skrýt na mém profilu',
   'Yorumları': 'Komentáře',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Tento uživatel zatím nic nesledoval.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Tento uživatel si přeje nechat své komentáře skryté.',
   'S{}B{}': 'S{}E{}',

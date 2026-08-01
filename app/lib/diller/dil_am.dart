@@ -393,6 +393,7 @@ const Map<String, String> cevirilerAm = {
   'Teşekkürler! Geri bildirimin alındı.': 'እናመሰግናለን! ግብረመልስህ ደርሷል።',
   'Profilimde gizle': 'በመገለጫዬ ደብቅ',
   'Yorumları': 'አስተያየቶቹ',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'ይህ ተጠቃሚ እስካሁን ምንም አልተመለከተም።',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ይህ ተጠቃሚ አስተያየቶቹን በሚስጥር መያዝ ይመርጣል።',
   'S{}B{}': 'S{}E{}',

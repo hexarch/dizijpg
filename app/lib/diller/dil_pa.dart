@@ -400,6 +400,8 @@ const Map<String, String> cevirilerPa = {
   'Teşekkürler! Geri bildirimin alındı.': 'ਧੰਨਵਾਦ! ਤੇਰਾ ਫੀਡਬੈਕ ਮਿਲ ਗਿਆ।',
   'Profilimde gizle': 'ਮੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ਲੁਕਾਓ',
   'Yorumları': 'ਇਸ ਬਾਰੇ ਕਮੈਂਟ',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'ਇਸ ਵਰਤੋਂਕਾਰ ਨੇ ਹਾਲੇ ਕੁਝ ਨਹੀਂ ਦੇਖਿਆ।',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾ ਕੇ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
   'S{}B{}': 'S{}E{}',

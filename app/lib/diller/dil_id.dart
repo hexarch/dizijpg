@@ -401,6 +401,8 @@ const Map<String, String> cevirilerId = {
       'Terima kasih! Masukanmu sudah diterima.',
   'Profilimde gizle': 'Sembunyikan di profilku',
   'Yorumları': 'Komentarnya',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Pengguna ini belum menonton apa pun.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Pengguna ini memilih menyembunyikan komentarnya.',
   'S{}B{}': 'S{}E{}',

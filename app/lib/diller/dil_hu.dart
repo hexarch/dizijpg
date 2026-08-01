@@ -404,6 +404,8 @@ const Map<String, String> cevirilerHu = {
       'Köszönjük! Visszajelzésed megérkezett.',
   'Profilimde gizle': 'Elrejtés a profilomon',
   'Yorumları': 'Hozzászólásai',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Ez a felhasználó még nem nézett semmit.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Ez a felhasználó inkább priváton tartja a kommentjeit.',
   'S{}B{}': 'S{}E{}',

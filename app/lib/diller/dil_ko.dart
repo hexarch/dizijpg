@@ -391,6 +391,7 @@ const Map<String, String> cevirilerKo = {
   'Teşekkürler! Geri bildirimin alındı.': '고마워요! 피드백이 접수됐어요.',
   'Profilimde gizle': '내 프로필에서 숨기기',
   'Yorumları': '남긴 댓글',
+  'Bu kullanıcı henüz bir şey izlememiş.': '이 사용자는 아직 아무것도 보지 않았습니다.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       '이 사용자는 댓글을 비공개로 유지하고 있어요.',
   'S{}B{}': 'S{}E{}',

@@ -390,6 +390,7 @@ const Map<String, String> cevirilerZh = {
   'Teşekkürler! Geri bildirimin alındı.': '谢谢！已收到你的反馈。',
   'Profilimde gizle': '在我的主页隐藏',
   'Yorumları': 'TA的评论',
+  'Bu kullanıcı henüz bir şey izlememiş.': '该用户还没有观看任何内容。',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.': '该用户选择不公开自己的评论。',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': '数据：JustWatch',

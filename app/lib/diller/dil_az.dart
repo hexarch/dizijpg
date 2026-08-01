@@ -400,6 +400,8 @@ const Map<String, String> cevirilerAz = {
   'Teşekkürler! Geri bildirimin alındı.': 'Təşəkkürlər! Rəyin alındı.',
   'Profilimde gizle': 'Profilimdə gizlət',
   'Yorumları': 'Şərhləri',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Bu istifadəçi hələ heç nə izləməyib.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Bu istifadəçi şərhlərini gizli saxlamağa üstünlük verir.',
   'S{}B{}': 'S{}E{}',

@@ -404,6 +404,8 @@ const Map<String, String> cevirilerPt = {
       'Obrigado! Seu feedback foi recebido.',
   'Profilimde gizle': 'Ocultar no meu perfil',
   'Yorumları': 'Comentários',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Este usuário ainda não assistiu nada.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Este usuário prefere manter seus comentários privados.',
   'S{}B{}': 'S{}E{}',

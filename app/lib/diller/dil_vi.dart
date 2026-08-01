@@ -402,6 +402,7 @@ const Map<String, String> cevirilerVi = {
       'Cảm ơn! Đã nhận được phản hồi của bạn.',
   'Profilimde gizle': 'Ẩn trên hồ sơ của tôi',
   'Yorumları': 'Bình luận của họ',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'Người dùng này chưa xem gì cả.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Người dùng này muốn giữ kín bình luận của mình.',
   'S{}B{}': 'S{}E{}',

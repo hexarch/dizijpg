@@ -399,6 +399,7 @@ const Map<String, String> cevirilerGu = {
   'Teşekkürler! Geri bildirimin alındı.': 'આભાર! તારો ફીડબૅક મળી ગયો.',
   'Profilimde gizle': 'મારી પ્રોફાઇલમાં છુપાવો',
   'Yorumları': 'આના પર કૉમેન્ટ્સ',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'આ વપરાશકર્તાએ હજી કંઈ જોયું નથી.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'આ યુઝર પોતાની કૉમેન્ટ ખાનગી રાખવાનું પસંદ કરે છે.',
   'S{}B{}': 'S{}E{}',

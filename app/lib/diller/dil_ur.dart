@@ -401,6 +401,7 @@ const Map<String, String> cevirilerUr = {
   'Teşekkürler! Geri bildirimin alındı.': 'شکریہ! تمہاری رائے موصول ہو گئی۔',
   'Profilimde gizle': 'میرے پروفائل میں چھپائیں',
   'Yorumları': 'اس پر تبصرے',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'اس صارف نے ابھی تک کچھ نہیں دیکھا۔',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'یہ صارف اپنے تبصرے چھپا کر رکھنا پسند کرتا ہے۔',
   'S{}B{}': 'S{}E{}',

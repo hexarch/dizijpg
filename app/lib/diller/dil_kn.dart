@@ -403,6 +403,7 @@ const Map<String, String> cevirilerKn = {
   'Teşekkürler! Geri bildirimin alındı.': 'ಧನ್ಯವಾದ! ನಿನ್ನ ಪ್ರತಿಕ್ರಿಯೆ ತಲುಪಿದೆ.',
   'Profilimde gizle': 'ನನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡು',
   'Yorumları': 'ಕಾಮೆಂಟ್‌ಗಳು',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'ಈ ಬಳಕೆದಾರರು ಇನ್ನೂ ಏನನ್ನೂ ನೋಡಿಲ್ಲ.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ಈ ಬಳಕೆದಾರ ತನ್ನ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
   'S{}B{}': 'S{}E{}',

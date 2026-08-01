@@ -402,6 +402,8 @@ const Map<String, String> cevirilerTa = {
   'Teşekkürler! Geri bildirimin alındı.': 'நன்றி! உன் பின்னூட்டம் கிடைத்தது.',
   'Profilimde gizle': 'என் சுயவிவரத்தில் மறை',
   'Yorumları': 'கருத்துகள்',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'இந்தப் பயனர் இதுவரை எதையும் பார்க்கவில்லை.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'இந்தப் பயனர் தன் கருத்துகளை மறைத்து வைக்க விரும்புகிறார்.',
   'S{}B{}': 'S{}E{}',

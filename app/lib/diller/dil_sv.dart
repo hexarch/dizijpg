@@ -402,6 +402,8 @@ const Map<String, String> cevirilerSv = {
   'Teşekkürler! Geri bildirimin alındı.': 'Tack! Din feedback har tagits emot.',
   'Profilimde gizle': 'Dölj på min profil',
   'Yorumları': 'Kommentarer',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Den här användaren har inte sett något än.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Den här användaren föredrar att hålla sina kommentarer privata.',
   'S{}B{}': 'S{}E{}',

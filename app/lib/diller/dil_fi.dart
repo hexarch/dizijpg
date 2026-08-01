@@ -402,6 +402,8 @@ const Map<String, String> cevirilerFi = {
       'Kiitos! Palautteesi on vastaanotettu.',
   'Profilimde gizle': 'Piilota profiilistani',
   'Yorumları': 'Kommentit',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Tämä käyttäjä ei ole katsonut vielä mitään.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Tämä käyttäjä haluaa pitää kommenttinsa yksityisinä.',
   'S{}B{}': 'S{}E{}',

@@ -1,5 +1,26 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-07-31 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-02 — Başkasının profilinde de iki sekme (Dizi ve Filmler / Yorumlar)
+**Kullanıcı isteği:** "Kendi profilimdeki iki sekmeli düzen başkasının
+profilinde de olsun; yorumlar katlanır bölüm olmaktan çıksın."
+- 🚀 **`ProfilSekmeleri` (profil.dart)** — boydan boya iki sekme artık ORTAK
+  widget; kendi profilimiz ve `kullanici_profil.dart` aynı kodu kullanıyor
+  (görsel dil kopyalanmadı: seçilide 2.5px `DiziRenkler.sari` alt çizgi +
+  `sariMetin`, seçili değilde 1px `metin12` + `metin54`).
+- 🚀 `kullanici_profil.dart`: `_yorumlarAcik` katlama durumu SİLİNDİ, yerine
+  `_sekme`. Sekme 0 = rozetler + izlediği dizi/film şeritleri + listeleri,
+  sekme 1 = yorum akışı (aynı `AkisKarti`, Reels dahil).
+- 🚀 Gizlilik korundu: `yorumlar_gizli` olan başkasının profilinde Yorumlar
+  sekmesi "Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor." boş durumunu
+  gösterir; yorum listesi hiç kurulmaz.
+- 🚀 Boş durumlar `BosDurum`a çevrildi (yorum yoksa, izleme/liste/rozet yoksa) —
+  sekmeler artık bomboş açılmıyor.
+- ✅ Çeviri: 1 yeni anahtar (`Bu kullanıcı henüz bir şey izlememiş.`) × 45 dil,
+  45/45 doğrulandı, değerlerde kesme işareti yok (fr için apostrofsuz karşılık).
+- ✅ `test/profil_sekme_test.dart` (5 test): iki sekme görünür, dokunuş doğru
+  indeksi tetikler, seçili renkleri, dokunma hedefi ≥44px. `flutter test` 19/19.
+- ✅ `flutter analyze lib test`: hata/uyarı yok. Web canlıya dağıtıldı (200).
 
 ## 2026-07-31 — Veri tasarrufu (Wi-Fi / mobil ayrı) · v1.12.2+45
 **Kullanıcı isteği:** "Wi-Fi'dayken önden çeksin, mobildeyken çekmesin; Ayarlar'da

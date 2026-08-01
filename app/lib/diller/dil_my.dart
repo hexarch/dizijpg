@@ -409,6 +409,7 @@ const Map<String, String> cevirilerMy = {
       'ကျေးဇူးတင်ပါသည်! သင့်အကြံပြုချက် လက်ခံရရှိပါပြီ။',
   'Profilimde gizle': 'ကျွန်ုပ်ပရိုဖိုင်တွင် ဖျောက်ရန်',
   'Yorumları': 'မှတ်ချက်များ',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'ဤအသုံးပြုသူသည် ဘာမျှ မကြည့်ရသေးပါ။',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ဤအသုံးပြုသူသည် မိမိ၏မှတ်ချက်များကို လျှို့ဝှက်ထားလိုသည်။',
   'S{}B{}': 'S{}E{}',

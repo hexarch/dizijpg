@@ -400,6 +400,8 @@ const Map<String, String> cevirilerFa = {
   'Teşekkürler! Geri bildirimin alındı.': 'ممنون! بازخوردت دریافت شد.',
   'Profilimde gizle': 'در پروفایلم پنهان کن',
   'Yorumları': 'نظرهایش',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'این کاربر هنوز چیزی تماشا نکرده است.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'این کاربر ترجیح می‌دهد نظراتش پنهان بمانند.',
   'S{}B{}': 'S{}E{}',

@@ -404,6 +404,8 @@ const Map<String, String> cevirilerFil = {
       'Salamat! Natanggap na ang feedback mo.',
   'Profilimde gizle': 'Itago sa profile ko',
   'Yorumları': 'Mga Komento Nito',
+  'Bu kullanıcı henüz bir şey izlememiş.':
+      'Wala pang napapanood ang user na ito.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'Mas gusto ng user na ito na itago ang kanyang mga komento.',
   'S{}B{}': 'S{}E{}',

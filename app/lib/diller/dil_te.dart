@@ -400,6 +400,7 @@ const Map<String, String> cevirilerTe = {
   'Teşekkürler! Geri bildirimin alındı.': 'ధన్యవాదాలు! నీ ఫీడ్‌బ్యాక్ అందింది.',
   'Profilimde gizle': 'నా ప్రొఫైల్‌లో దాచు',
   'Yorumları': 'కామెంట్లు',
+  'Bu kullanıcı henüz bir şey izlememiş.': 'ఈ వినియోగదారు ఇంకా ఏమీ చూడలేదు.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
       'ఈ వినియోగదారు తన కామెంట్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
   'S{}B{}': 'S{}E{}',
