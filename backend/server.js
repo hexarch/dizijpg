@@ -2176,7 +2176,9 @@ const SES_TURLERI = [
 app.post('/medya',
   girisZorunlu,
   yuklemeLimiti,
-  express.raw({ type: ['image/*', 'video/*', 'audio/*', 'application/octet-stream'], limit: '30mb' }),
+  // 100mb: Instagram'dan aktarılan videolar özgün kalitesinde yüklensin
+  // (40-70MB olabiliyor). nginx tarafında client_max_body_size 105m.
+  express.raw({ type: ['image/*', 'video/*', 'audio/*', 'application/octet-stream'], limit: '100mb' }),
   sarici(async (req, res) => {
     const veri = req.body;
     if (!Buffer.isBuffer(veri) || veri.length < 12) {

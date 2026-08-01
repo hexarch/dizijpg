@@ -124,10 +124,10 @@ function instaIndir(kisaKod) {
 
 const MIME = { jpg: 'image/jpeg', jpeg: 'image/jpeg', png: 'image/png',
   webp: 'image/webp', mp4: 'video/mp4', webm: 'video/webm' };
-// Sunucu sınırı 30MB; Instagram videoları 40-70MB olabiliyor → hedef boyuta
-// göre bit hızı hesaplanıp yeniden kodlanır (CRF ile boyut öngörülemiyor).
-const SINIR_BAYT = 28 * 1024 * 1024;
-const HEDEF_BAYT = 26 * 1024 * 1024;
+// Sunucu sınırı 100MB: videolar ÖZGÜN kalitesinde yüklenir. Küçültme yalnız
+// sınırı aşan devasa dosyalar için son çaredir (hedef bit hızıyla).
+const SINIR_BAYT = 95 * 1024 * 1024;
+const HEDEF_BAYT = 90 * 1024 * 1024;
 
 function videoKucult(tamYol) {
   const sure = parseFloat(execFileSync('ffprobe', ['-v', 'error',

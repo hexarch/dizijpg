@@ -60,6 +60,68 @@ class DiziRenkler {
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
 }
 
+/// Seçilen mod + cihaz parlaklığından "açık tema mı?" kararı.
+bool temaAcikMi(String mod, Brightness cihaz) =>
+    mod == 'acik' || (mod == 'sistem' && cihaz == Brightness.light);
+
+/// Uygulama kökü: tema tercihini (ve "sistem" modunda cihaz parlaklığını)
+/// dinler, `DiziRenkler.acik` bayrağını tazeler ve tema DEĞİŞTİĞİNDE alt ağaca
+/// yeni bir anahtar vererek ağacı baştan kurar.
+class TemaKapsayici extends StatefulWidget {
+  const TemaKapsayici({super.key, required this.olustur, this.ekAnahtar = ''});
+
+  /// (context, tema, agacAnahtari) — anahtar MaterialApp'e VERİLMELİDİR.
+  final Widget Function(BuildContext context, ThemeData tema, Key agacAnahtari)
+  olustur;
+
+  /// Dil gibi ek yeniden-kurma tetikleyicileri anahtara katılır.
+  final String ekAnahtar;
+
+  @override
+  State<TemaKapsayici> createState() => _TemaKapsayiciDurum();
+}
+
+class _TemaKapsayiciDurum extends State<TemaKapsayici>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    TemaAyar.mod.addListener(_tazele);
+  }
+
+  @override
+  void dispose() {
+    TemaAyar.mod.removeListener(_tazele);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  void _tazele() {
+    if (mounted) setState(() {});
+  }
+
+  /// "Sistem" modunda cihaz teması değişince yeniden kur.
+  @override
+  void didChangePlatformBrightness() => _tazele();
+
+  @override
+  Widget build(BuildContext context) {
+    final acik = temaAcikMi(
+      TemaAyar.mod.value,
+      WidgetsBinding.instance.platformDispatcher.platformBrightness,
+    );
+    // Ekranlardaki DiziRenkler getter'ları bu bayrağı okur — tema kurulmadan
+    // HEMEN önce güncellenmeli.
+    DiziRenkler.acik = acik;
+    return widget.olustur(
+      context,
+      diziTema(acik: acik),
+      ValueKey('uygulama-${widget.ekAnahtar}'),
+    );
+  }
+}
+
 ThemeData diziTema({required bool acik}) {
   const sari = DiziRenkler.sari;
   final scheme =
