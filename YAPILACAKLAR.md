@@ -201,6 +201,29 @@ görünüyor; ikon seçili olsun olmasın aynı şeyi anlatmalı."
   etiketlerin (ekran okuyucu) silinmediğini ve `alwaysHide` ayarını kilitliyor.
 - 🚀 Canlıya alındı (2026-08-02, profil "@null" düzeltmesiyle aynı web derlemesi).
 
+## 2026-08-02 — Profildeki yorum kartları ekranı tam kaplamıyordu
+**Kullanıcı isteği:** "başkasının profilindeki yorumlar kısmı ekranı sağ ve sol
+olarak tam kaplamıyor tam kaplamalı, gönderi içindeki fotoğraf video falan da"
+- 🚀 **Kök neden sarmalayıcıdaydı:** profil gövdesinin TAMAMI
+  `Padding(EdgeInsets.all(16))` içindeydi. `AkisKarti` kenar boşluğu olmadan
+  (yatay dolgu 0, köşe yuvarlaması kapalı) çizilmek üzere tasarlandığı için
+  profilde 32px dar kalıyor, içindeki `AkisMedya` da kartla birlikte daralıyordu.
+  Ölçüm (widget testi, 600px ekran): akış kartı 600, profil kartı 568.
+- 🚀 Sekme içeriği artık o 16px dolgunun DIŞINDA, `ListView`in doğrudan çocuğu.
+  Kitaplık sekmesi eski dolgusunu kendi içinde korur; başlık/avatar/sayaçlar ve
+  sekme çubuğu hiç değişmedi.
+- 🚀 AYNI hata kendi profilimizde de vardı (`profil.dart`) — o da düzeltildi.
+- 🚀 `kullanici_profil.dart` artık kendi kopyasını değil ortak `ProfilYorumAkisi`
+  widget'ını kullanıyor; iki ekranın bir daha ayrışması imkânsız. Geniş ekranda
+  akış.dart ile aynı 720px üst sınır uygulanır.
+- ✅ Medya için ek düzeltme GEREKMEDİ: `MedyaGaleri`/`AkisMedya` kendi yatay
+  dolgusu taşımıyor, kart genişliğini birebir izliyor (ölçümle doğrulandı).
+- ✅ `test/profil_yorum_genislik_test.dart` (4 test): akış referansı + iki profil
+  için kart ve medya genişliği = ekran genişliği. Düzeltme geri alınınca test
+  kırmızıya döndü (568 ≠ 600), geri getirilince yeşil. `flutter test` 68/68.
+- ✅ Yeni kullanıcı metni yok (çeviri gerekmedi). `flutter analyze lib test`:
+  hata/uyarı yok.
+
 ## 2026-08-02 — Başkasının profilinde de iki sekme (Dizi ve Filmler / Yorumlar)
 **Kullanıcı isteği:** "Kendi profilimdeki iki sekmeli düzen başkasının
 profilinde de olsun; yorumlar katlanır bölüm olmaktan çıksın."

@@ -6,11 +6,14 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
-import 'akis.dart';
-import 'kesfet_akis.dart';
 import 'ortak.dart';
 import 'profil.dart'
-    show sureBicimle, RozetCipi, EtkilesimSatiri, ProfilSekmeleri;
+    show
+        sureBicimle,
+        RozetCipi,
+        EtkilesimSatiri,
+        ProfilSekmeleri,
+        ProfilYorumAkisi;
 import 'sosyal.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
@@ -303,7 +306,18 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     onSec: (i) => setState(() => _sekme = i),
                   ),
                   const SizedBox(height: 12),
-                  if (_sekme == 0) ...[
+                ],
+              ),
+            ),
+            // Sekme içeriği gövdenin 16px yatay dolgusunun DIŞINDA durur:
+            // yorum kartı akıştaki gibi ekranı sağdan sola TAM kaplasın,
+            // içindeki fotoğraf/video da öyle (kendi profilimizle aynı düzen).
+            if (_sekme == 0)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     // Kazanılan rozetler (backend yalnız kazanılanları döner)
                     if ((p['rozetler'] as List<dynamic>? ?? []).isNotEmpty) ...[
                       const SizedBox(height: 20),
@@ -447,55 +461,31 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         ),
                       ),
                     const SizedBox(height: 24),
-                  ] else if (!benMi && p['yorumlar_gizli'] == true) ...[
-                    // Yorumlarını gizleyen kullanıcı: liste yerine bilgilendirme
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32),
-                      child: BosDurum(
-                        ikon: Icons.visibility_off_outlined,
-                        baslik:
-                            'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.'
-                                .c,
-                      ),
-                    ),
-                  ] else ...[
-                    if (yorumlar.isEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 32),
-                        child: BosDurum(
-                          ikon: Icons.mode_comment_outlined,
-                          baslik: 'Henüz yorum yok'.c,
-                        ),
-                      ),
-                    // Kendi profilimizle AYNI akış kartı: görüntülenme,
-                    // çift dokunuş = beğeni, medyaya dokununca Reels.
-                    for (var i = 0; i < yorumlar.length; i++)
-                      AkisKarti(
-                        key: ValueKey(
-                          (yorumlar[i] as Map<String, dynamic>)['id'],
-                        ),
-                        yorum: yorumlar[i] as Map<String, dynamic>,
-                        icerikler:
-                            p['icerikler'] as Map<String, dynamic>? ?? {},
-                        onMedyaAc: (mi) =>
-                            Navigator.of(context, rootNavigator: true).push(
-                              MaterialPageRoute(
-                                builder: (_) => ReelsGorunumu(
-                                  liste: yorumlar,
-                                  icerikler:
-                                      p['icerikler'] as Map<String, dynamic>? ??
-                                      {},
-                                  baslangic: i,
-                                  medyaBaslangic: mi,
-                                ),
-                              ),
-                            ),
-                      ),
-                    const SizedBox(height: 24),
                   ],
-                ],
+                ),
+              )
+            // Yorumlarını gizleyen kullanıcı: liste yerine bilgilendirme
+            else if (!benMi && p['yorumlar_gizli'] == true)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 32,
+                  horizontal: 24,
+                ),
+                child: BosDurum(
+                  ikon: Icons.visibility_off_outlined,
+                  baslik:
+                      'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.'.c,
+                ),
+              )
+            else ...[
+              // Kendi profilimizle BİREBİR aynı widget (profil.dart):
+              // görüntülenme, çift dokunuş = beğeni, medyaya dokununca Reels.
+              ProfilYorumAkisi(
+                yorumlar: yorumlar,
+                icerikler: p['icerikler'] as Map<String, dynamic>? ?? {},
               ),
-            ),
+              const SizedBox(height: 24),
+            ],
           ],
         ),
       );

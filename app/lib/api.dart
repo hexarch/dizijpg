@@ -33,7 +33,11 @@ class Api {
   /// TEK, kalıcı istemci: bağlantı (TCP+TLS) yeniden kullanılır. Her çağrıda
   /// yeni http.get kullanılsaydı her istekte TLS el sıkışması tekrarlanır ve
   /// istek başına ~130ms boşa giderdi.
-  static final http.Client _istemci = http.Client();
+  static http.Client _istemci = http.Client();
+
+  /// YALNIZ TEST: gerçek ağ yerine sahte istemci tak (http/testing MockClient).
+  @visibleForTesting
+  static set istemci(http.Client c) => _istemci = c;
 
   static Future<void> tokenYukle() async {
     final prefs = await SharedPreferences.getInstance();

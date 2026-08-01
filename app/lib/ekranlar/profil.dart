@@ -901,16 +901,27 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     onSec: (i) => setState(() => _sekme = i),
                   ),
                   const SizedBox(height: 12),
-                  if (_sekme == 1) ...[
-                    ProfilYorumAkisi(
-                      yorumlar:
-                          (_yorumVeri?['yorumlar'] as List<dynamic>? ?? []),
-                      icerikler:
-                          (_yorumVeri?['icerikler'] as Map<String, dynamic>? ??
-                          {}),
-                    ),
-                    const SizedBox(height: 24),
-                  ] else ...[
+                ],
+              ),
+            ),
+            // Sekme içeriği gövdenin 16px yatay dolgusunun DIŞINDA durur:
+            // yorum kartı akıştaki gibi ekranı sağdan sola TAM kaplasın,
+            // içindeki fotoğraf/video da öyle. Kitaplık sekmesi eski
+            // dolgusunu kendi içinde korur.
+            if (_sekme == 1) ...[
+              ProfilYorumAkisi(
+                yorumlar: (_yorumVeri?['yorumlar'] as List<dynamic>? ?? []),
+                icerikler:
+                    (_yorumVeri?['icerikler'] as Map<String, dynamic>? ?? {}),
+                ipucu: 'Dizi ve filmlere yazdığın yorumlar burada toplanır.'.c,
+              ),
+              const SizedBox(height: 24),
+            ] else
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     // Kitaplık grupları
                     // Sabit sıra: İzliyorum → İzleyeceğim → Bitirdim.
                     // Bıraktım poster şeridi olarak GÖSTERİLMEZ (kullanıcı isteği);
@@ -1014,9 +1025,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
                     const SizedBox(height: 24),
                   ],
-                ],
+                ),
               ),
-            ),
           ],
         ),
       );
@@ -1512,10 +1522,15 @@ class ProfilYorumAkisi extends StatelessWidget {
   final List<dynamic> yorumlar;
   final Map<String, dynamic> icerikler;
 
+  /// Boş durumun alt satırı. Kendi profilinde "yazdığın yorumlar..." denir,
+  /// başkasının profilinde ikinci tekil şahıs yanlış olur → verilmez.
+  final String? ipucu;
+
   const ProfilYorumAkisi({
     super.key,
     required this.yorumlar,
     required this.icerikler,
+    this.ipucu,
   });
 
   @override
@@ -1526,31 +1541,40 @@ class ProfilYorumAkisi extends StatelessWidget {
         child: BosDurum(
           ikon: Icons.mode_comment_outlined,
           baslik: 'Henüz yorum yok'.c,
-          ipucu: 'Dizi ve filmlere yazdığın yorumlar burada toplanır.'.c,
+          ipucu: ipucu,
         ),
       );
     }
-    return Column(
-      children: [
-        for (var i = 0; i < yorumlar.length; i++)
-          AkisKarti(
-            key: ValueKey((yorumlar[i] as Map<String, dynamic>)['id']),
-            yorum: yorumlar[i] as Map<String, dynamic>,
-            icerikler: icerikler,
-            // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
-            // kareden başlar ve listede kaydırmaya devam edilir.
-            onMedyaAc: (mi) => Navigator.of(context, rootNavigator: true).push(
-              MaterialPageRoute(
-                builder: (_) => ReelsGorunumu(
-                  liste: yorumlar,
-                  icerikler: icerikler,
-                  baslangic: i,
-                  medyaBaslangic: mi,
-                ),
+    // Kartlar akıştakiyle BİREBİR aynı geometride durur: yatay dolgu YOK
+    // (kart ekranın sağına-soluna dayanır, medya da tam yayılır), geniş
+    // ekranda ise akış.dart ile aynı 720px üst sınır uygulanır.
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 720),
+        child: Column(
+          children: [
+            for (var i = 0; i < yorumlar.length; i++)
+              AkisKarti(
+                key: ValueKey((yorumlar[i] as Map<String, dynamic>)['id']),
+                yorum: yorumlar[i] as Map<String, dynamic>,
+                icerikler: icerikler,
+                // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
+                // kareden başlar ve listede kaydırmaya devam edilir.
+                onMedyaAc: (mi) =>
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (_) => ReelsGorunumu(
+                          liste: yorumlar,
+                          icerikler: icerikler,
+                          baslangic: i,
+                          medyaBaslangic: mi,
+                        ),
+                      ),
+                    ),
               ),
-            ),
-          ),
-      ],
+          ],
+        ),
+      ),
     );
   }
 }
