@@ -173,10 +173,17 @@ function videoKucult(tamYol) {
   if (!Number.isFinite(sure) || sure <= 0) return null;
   const vb = Math.max(300, Math.floor((HEDEF_BAYT * 8 / sure) / 1000) - 128);
   const cikti = tamYol.replace(/\.[^.]+$/, '') + '_kucuk.mp4';
+  // Çözünürlük KORUNUR (yalnız 1920 üstü kaynak kırpılır). Eski 1280 tavanı
+  // 1920x804 Instagram videolarını 1280x536'ya düşürüyordu — gereksiz kayıp.
+  // preset slow: aynı bit hızında belirgin daha iyi görüntü (aktarım toplu ve
+  // çevrimdışı, kodlama süresi önemsiz). +faststart: moov atomu başa gider,
+  // yoksa tarayıcı 26MB'ın tamamını indirmeden oynatmaya başlayamıyor.
   const s = spawnSync('ffmpeg', ['-v', 'error', '-y', '-i', tamYol,
-    '-vf', "scale='min(1280,iw)':-2", '-c:v', 'libx264', '-preset', 'veryfast',
+    '-vf', "scale='min(1920,iw)':-2", '-c:v', 'libx264', '-preset', 'slow',
+    '-profile:v', 'high', '-pix_fmt', 'yuv420p',
     '-b:v', `${vb}k`, '-maxrate', `${Math.floor(vb * 1.5)}k`, '-bufsize', `${vb * 2}k`,
-    '-c:a', 'aac', '-b:a', '128k', cikti], { encoding: 'utf8' });
+    '-c:a', 'aac', '-b:a', '128k',
+    '-movflags', '+faststart', cikti], { encoding: 'utf8' });
   if (s.status !== 0 || !fs.existsSync(cikti)) return null;
   return cikti;
 }
