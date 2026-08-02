@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'medya_goster.dart';
 import 'ortak.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
@@ -31,6 +32,9 @@ class BolumEkrani extends StatefulWidget {
 
 class _BolumEkraniState extends State<BolumEkrani> {
   Map<String, dynamic>? _bolum;
+
+  /// Bölüme ait kare (still) yolları; ilki bölümün kapak karesidir.
+  List<String> _kareler = const [];
   String? _hata;
   late bool _izlendi = widget.izlendi;
 
@@ -42,14 +46,51 @@ class _BolumEkraniState extends State<BolumEkrani> {
 
   Future<void> _yukle() async {
     setState(() => _hata = null);
+    final taban =
+        '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/episode/${widget.bolumNo}';
     try {
-      final d = await Api.get(
-        '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/episode/${widget.bolumNo}',
-      );
-      if (mounted) setState(() => _bolum = d as Map<String, dynamic>);
+      // Kareler bölümle BİRLİKTE istenir: sonradan gelseydi kutu boyu/nokta
+      // göstergesi yüklendikten sonra belirir, içerik zıplardı.
+      final sonuc = await Future.wait([
+        Api.get(taban),
+        // Kareler süs veridir; gelmezse sayfa eskisi gibi tek kapakla çalışır.
+        Api.get('$taban/images').catchError((_) => null),
+      ]);
+      if (!mounted) return;
+      final b = sonuc[0] as Map<String, dynamic>;
+      setState(() {
+        _bolum = b;
+        _kareler = _kareleriCikar(b, sonuc[1]);
+      });
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
     }
+  }
+
+  /// Kapak karesi + TMDB kareleri (en çok oy alan önce), tekrarsız.
+  static List<String> _kareleriCikar(
+    Map<String, dynamic> bolum,
+    dynamic gorsel,
+  ) {
+    final yollar = <String>[];
+    final kapak = bolum['still_path'] as String?;
+    if (kapak != null && kapak.isNotEmpty) yollar.add(kapak);
+    final kareler =
+        <Map<String, dynamic>>[
+          for (final k
+              in (gorsel is Map ? gorsel['stills'] : null) as List? ?? [])
+            if (k is Map<String, dynamic>) k,
+        ]..sort(
+          (a, b) => ((b['vote_count'] as num?) ?? 0).compareTo(
+            (a['vote_count'] as num?) ?? 0,
+          ),
+        );
+    for (final k in kareler) {
+      final y = k['file_path'] as String?;
+      if (y != null && y.isNotEmpty && !yollar.contains(y)) yollar.add(y);
+      if (yollar.length >= 12) break;
+    }
+    return yollar;
   }
 
   Future<void> _izlendiToggle() async {
@@ -89,7 +130,20 @@ class _BolumEkraniState extends State<BolumEkrani> {
       govde = ListView(
         padding: EdgeInsets.only(bottom: altGuvenli(context)),
         children: [
-          if (gorsel != null)
+          // Birden çok kare varsa yana kaydırmalı (nokta göstergeli) görünüm;
+          // tek kare varsa eski sabit kapak. Kare yoksa hiçbir şey çizilmez.
+          if (_kareler.length > 1)
+            AkisMedya(
+              urller: [for (final y in _kareler) posterUrl(y, boyut: 'w780')!],
+              oran: 16 / 9,
+              // Tam ekranda daha büyük kopya; üst sınır uygulamanın her
+              // yerindeki gibi w1280 ('original' 1-2 MB'a çıkıp mobil veriyi
+              // yerdi).
+              onAc: (i) => medyaGoster(context, [
+                for (final y in _kareler) posterUrl(y, boyut: 'w1280')!,
+              ], baslangic: i),
+            )
+          else if (gorsel != null)
             AspectRatio(
               aspectRatio: 16 / 9,
               child: CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover),

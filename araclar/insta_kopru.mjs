@@ -50,8 +50,10 @@ function sifreOku() {
 }
 
 const durumOku = () => {
-  try { return JSON.parse(fs.readFileSync(DURUM_DOSYA, 'utf8')); }
-  catch { return { islenen: [] }; }
+  try {
+    const d = JSON.parse(fs.readFileSync(DURUM_DOSYA, 'utf8'));
+    return { islenen: d.islenen || [], kodlar: d.kodlar || [] };
+  } catch { return { islenen: [], kodlar: [] }; }
 };
 const durumYaz = (d) => {
   fs.mkdirSync(AYAR_DIZIN, { recursive: true });
@@ -178,6 +180,7 @@ async function tur() {
   cerezleriHazirla();
   const durum = durumOku();
   const islenen = new Set(durum.islenen);
+  const kodlar = new Set(durum.kodlar); // paylaşılmış Instagram kısa kodları
   const giris = await api('/auth/giris', {
     yontem: 'POST', govde: { email: BOT_EMAIL, sifre: sifreOku() },
   });
@@ -191,6 +194,10 @@ async function tur() {
   async function paylas(partner, m, hedef) {
     const eslesme = (m.metin || '').match(IG_DESEN);
     const kisaKod = eslesme[1];
+    // Aynı gönderi ikinci kez paylaşılmasın. Mesaj id'si tek başına yetmiyor:
+    // link ve kart AYRI mesajlarda gelince iki farklı id aynı gönderiyi
+    // gösteriyor ve sonraki koşuda kopya oluşuyordu. Kayıt kısa kod üzerinden.
+    if (kodlar.has(kisaKod)) { islenen.add(m.id); return; }
     try {
       const g = instaIndir(kisaKod);
       const yollar = [];
@@ -203,6 +210,7 @@ async function tur() {
       await api('/mesajlar', { yontem: 'POST', token, govde: { kullanici_adi: partner,
         metin: `Paylaşıldı (${yollar.length} medya) — ${hedef.tur}/${hedef.id}` } });
       fs.rmSync(g.dizin, { recursive: true, force: true });
+      kodlar.add(kisaKod);
       console.log(`+ ${kisaKod} → ${hedef.tur}/${hedef.id} (${yollar.length} medya)`);
       yeni++;
     } catch (e) {
@@ -228,6 +236,7 @@ async function tur() {
       // (kullanıcı önce linki, sonra kartı yolluyor).
       if (gelen && kart && bekleyen) {
         await paylas(partner, bekleyen, kart);
+        islenen.add(m.id); // kart mesajı da işlendi sayılmalı
         bekleyen = null;
         continue;
       }
@@ -244,7 +253,7 @@ async function tur() {
     }
   }
   // Durum dosyası şişmesin: son 500 kayıt yeter
-  durumYaz({ islenen: [...islenen].slice(-500) });
+  durumYaz({ islenen: [...islenen].slice(-500), kodlar: [...kodlar].slice(-500) });
   return yeni;
 }
 
