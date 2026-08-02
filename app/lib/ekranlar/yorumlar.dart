@@ -578,6 +578,9 @@ class YorumKarti extends StatefulWidget {
 class _YorumKartiState extends State<YorumKarti> {
   late bool _begendim = widget.yorum['begendim'] == true;
   late int _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+  // Perde kapalıyken MEDYA da çizilmez (akıştaki kartla aynı): tek bir ekran
+  // görüntüsü metinden fazlasını ele verir. Metne dokununca ikisi de açılır.
+  late bool _spoilerAcik = widget.yorum['spoiler'] != true;
   bool _isleniyor = false;
 
   @override
@@ -586,6 +589,10 @@ class _YorumKartiState extends State<YorumKarti> {
     if (eski.yorum != widget.yorum) {
       _begendim = widget.yorum['begendim'] == true;
       _begeni = (widget.yorum['begeni'] as int?) ?? 0;
+      // Liste tazelenip kart başka yoruma denk gelirse perde yeniden kapanır.
+      if (eski.yorum['id'] != widget.yorum['id']) {
+        _spoilerAcik = widget.yorum['spoiler'] != true;
+      }
     }
   }
 
@@ -708,11 +715,12 @@ class _YorumKartiState extends State<YorumKarti> {
               orijinalMetin: yorum['orijinal_metin'] as String?,
               yapici: (m) => SpoilerMetin(
                 m,
-                spoiler: yorum['spoiler'] == true,
+                spoiler: !_spoilerAcik,
+                onAc: () => setState(() => _spoilerAcik = true),
                 stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
               ),
             ),
-            if (medya.isNotEmpty) ...[
+            if (medya.isNotEmpty && _spoilerAcik) ...[
               const SizedBox(height: 10),
               // AKIŞTAKİ galeri: medya kaç tane olursa olsun (10 dahil) sırayla
               // yana kaydırılır, altta nokta + sağ üstte "5/10" sayacı olur.
@@ -882,11 +890,22 @@ class BolumRozeti extends StatelessWidget {
 
 /// Spoiler işaretli yorum metni: kapalıyken "Spoiler — dokun ve gör" örtüsü,
 /// dokununca açılıp [EtiketliMetin] olarak gösterir. İşaretsizse doğrudan metin.
+///
+/// [onAc]: perde açıldığında haber verir. Kart bunu dinleyip MEDYAYI da açar —
+/// ekran görüntüsü metinden çok daha fazla spoiler verir, akıştaki kart da
+/// (akis.dart) medyayı perde açılana kadar hiç çizmez.
 class SpoilerMetin extends StatefulWidget {
   final String metin;
   final bool spoiler;
   final TextStyle? stil;
-  const SpoilerMetin(this.metin, {super.key, required this.spoiler, this.stil});
+  final VoidCallback? onAc;
+  const SpoilerMetin(
+    this.metin, {
+    super.key,
+    required this.spoiler,
+    this.stil,
+    this.onAc,
+  });
 
   @override
   State<SpoilerMetin> createState() => _SpoilerMetinState();
@@ -908,7 +927,10 @@ class _SpoilerMetinState extends State<SpoilerMetin> {
       return EtiketliMetin(widget.metin, stil: widget.stil);
     }
     return InkWell(
-      onTap: () => setState(() => _acik = true),
+      onTap: () {
+        setState(() => _acik = true);
+        widget.onAc?.call();
+      },
       borderRadius: BorderRadius.circular(8),
       child: Container(
         width: double.infinity,
@@ -1086,6 +1108,9 @@ class _YanitSatiri extends StatefulWidget {
 class _YanitSatiriState extends State<_YanitSatiri> {
   late bool _begendim = widget.yanit['begendim'] == true;
   late int _begeni = (widget.yanit['begeni'] as int?) ?? 0;
+  // Yanıt, üst yorumun sezon/bölümünü devralır — bölüm yorumuna gelen yanıt da
+  // perdelenir. Perde kapalıyken medyası da çizilmez (üst yorumla aynı kural).
+  late bool _spoilerAcik = widget.yanit['spoiler'] != true;
   bool _isleniyor = false;
 
   @override
@@ -1094,6 +1119,9 @@ class _YanitSatiriState extends State<_YanitSatiri> {
     if (eski.yanit != widget.yanit) {
       _begendim = widget.yanit['begendim'] == true;
       _begeni = (widget.yanit['begeni'] as int?) ?? 0;
+      if (eski.yanit['id'] != widget.yanit['id']) {
+        _spoilerAcik = widget.yanit['spoiler'] != true;
+      }
     }
   }
 
@@ -1230,7 +1258,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
             padding: const EdgeInsets.only(left: 26, top: 2),
             child: SpoilerMetin(
               y['metin'] as String? ?? '',
-              spoiler: y['spoiler'] == true,
+              spoiler: !_spoilerAcik,
+              onAc: () => setState(() => _spoilerAcik = true),
               stil: TextStyle(
                 fontSize: 13,
                 height: 1.35,
@@ -1240,8 +1269,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
           ),
           // Yanıtın medyası: üst yorumla AYNI kaydırmalı galeri. Eskiden hiç
           // çizilmiyordu — fotoğraflı yanıt gönderen kullanıcı boş metin
-          // görüyordu.
-          if (medya.isNotEmpty)
+          // görüyordu. Spoiler perdesi kapalıysa medya da gizli kalır.
+          if (medya.isNotEmpty && _spoilerAcik)
             Padding(
               padding: const EdgeInsets.only(left: 26, top: 6),
               child: MedyaGaleri(

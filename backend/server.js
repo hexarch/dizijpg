@@ -2290,14 +2290,39 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
   //    bölüm yorumlarını dizi sayfasından tamamen dışarıda bırakıyordu.
   // Limit ÜST yorumlara uygulanır; yanıtlar üstünden koparılmasın diye ayrıca
   // toplanır (eski düz LIMIT 100 yanıtı listeye alıp üstünü dışarıda bırakabiliyordu).
+  //
+  // OTOMATİK SPOİLER PERDESİ (akıştaki kuralın aynısı — AKIS_GOVDE'deki
+  // `guvenli` hesabının bölüm dalı): bölüm yorumu, o bölüm `izlemeler`de
+  // KAYITLI DEĞİLSE bulanık gelir. Dizi sayfası artık tüm bölüm yorumlarını
+  // listelediği için (7b76d08) 9. sezonu izlemeyen kişi 9. sezon yorumunu
+  // açıkta görüyordu. Kapsam bilinçli olarak dar:
+  //  - YALNIZ dizi/film sayfası listesinde (sezon parametresi yokken). Bölüm
+  //    sayfasına kullanıcı o bölümü BİLEREK açarak gelir; oradaki davranış
+  //    değişmez.
+  //  - YALNIZ bölüm yorumlarında (y.sezon IS NOT NULL). Dizi geneline yazılan
+  //    yorumda bölüm spoiler'ı yoktur; akıştaki `durumlar` dalını buraya
+  //    taşımak, kitaplığında olmayan her diziyi baştan sona bulanık gösterirdi.
+  //  - Kendi yorumun ve AI hesabının yorumları muaf (akıştaki muafiyetin aynısı).
+  // İzlemeler TEK sorguda toplanır (`izlenen` CTE'si = tek indeks taraması);
+  // 100 yorum için 100 ayrı izleme sorgusu ATILMAZ.
   const { rows } = await havuz.query(
     `WITH ustler AS (
        SELECT y.id FROM yorumlar y
        WHERE y.tur=$1 AND y.tmdb_id=$2 AND y.ust_id IS NULL
          AND ($3::int IS NULL OR (y.sezon = $3 AND y.bolum = $4))
-       ORDER BY y.tarih DESC LIMIT 100)
+       ORDER BY y.tarih DESC LIMIT 100),
+     izlenen AS (
+       SELECT i.sezon, i.bolum FROM izlemeler i
+       WHERE $3::int IS NULL AND i.kullanici_id=$5
+         AND i.tur=$1 AND i.tmdb_id=$2::int)
      SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
-            y.ust_id, y.goruntulenme, y.spoiler, k.kullanici_adi, k.avatar, y.kaynak_dil,
+            y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, y.kaynak_dil,
+            (y.spoiler OR (
+               $3::int IS NULL AND y.sezon IS NOT NULL
+               AND y.kullanici_id <> $5 AND k.kullanici_adi <> $7
+               AND NOT EXISTS (SELECT 1 FROM izlenen iz
+                     WHERE iz.sezon = y.sezon AND iz.bolum = y.bolum)
+             )) AS spoiler,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
@@ -2308,7 +2333,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
         OR y.ust_id IN (SELECT id FROM ustler)
      ORDER BY y.tarih DESC`,
     [req.params.tur, req.params.tmdbId, sezon, bolum, benId,
-     istekBaglam.getStore()?.dil || 'tr'],
+     istekBaglam.getStore()?.dil || 'tr', AI_KULLANICI],
   );
   // Görüntülenme: HER listeleme sayılır (aynı kişinin tekrarları dahil).
   if (rows.length) {
