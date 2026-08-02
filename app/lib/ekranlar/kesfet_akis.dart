@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show Uint8List, listEquals;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -1007,14 +1008,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
     );
   }
 
-  void _yanitlarAc() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: DiziRenkler.koyuGri,
-      builder: (_) => YanitlarSheet(yorum: widget.yorum),
-    );
-  }
+  // Reels de akış kartıyla AYNI sheet'i açar (tek açılış ayarı: yanitlariAc)
+  void _yanitlarAc() => yanitlariAc(context, widget.yorum);
 
   String _sure(Duration s) {
     final dk = s.inMinutes, sn = s.inSeconds % 60;
@@ -1540,13 +1535,85 @@ class _ReelsDugme extends StatelessWidget {
 /// Yanıtlar alt sayfası: bu yoruma verilen yanıtlar + yanıt yazma.
 
 /// Gönderinin yanıt sheet'ini açar (Reels, profil yorum akışı vb.).
+/// TAM AÇILIR: sheet ekranın tamamını (durum çubuğu hariç) kaplar; eskiden
+/// ekranın %60'ında takılıydı ve klavye açılınca yazma kutusu ortada kalıyordu.
 Future<void> yanitlariAc(BuildContext context, Map<String, dynamic> yorum) =>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: DiziRenkler.koyuGri,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
       builder: (_) => YanitlarSheet(yorum: yorum),
     );
+
+/// Yorum kutusunun üstündeki 8'li hızlı emoji satırının kaynağı.
+///
+/// Sunucu `/emojiler/sik` ucundan KENDİ yorumlarındaki emojileri (`benim`) ve
+/// uygulama genelindekileri (`genel`) döndürür — ayrı bir takip tablosu yok,
+/// mevcut yorum metinleri sayılır. Kendi listen kısa kalırsa genel liste,
+/// ikisi de boşsa [yedek] tamamlar; satır asla boş görünmez.
+/// Sonuç oturum boyunca istemcide tutulur (her sheet açılışında istek atılmaz).
+class SikEmojiler {
+  static const int adet = 8;
+
+  /// Yeni kurulumda (hiç yorum yokken) gösterilen sabit liste.
+  static const List<String> yedek = [
+    '😂',
+    '❤️',
+    '🔥',
+    '👏',
+    '😍',
+    '😮',
+    '😢',
+    '👍',
+  ];
+
+  /// Oturum önbelleği. Testler doğrudan yazabilir (ağ isteği atılmaz).
+  static List<String>? onbellek;
+
+  /// Sıralı birleştirme: önce kişinin kendi emojileri, sonra uygulama geneli,
+  /// eksik kalırsa yedek. Tekrar eden emoji bir kez yazılır.
+  static List<String> birlestir(List<String> benim, List<String> genel) {
+    final liste = <String>[];
+    for (final e in [...benim, ...genel, ...yedek]) {
+      if (e.trim().isEmpty || liste.contains(e)) continue;
+      liste.add(e);
+      if (liste.length == adet) break;
+    }
+    return liste;
+  }
+
+  static Future<List<String>> getir() async {
+    if (onbellek != null) return onbellek!;
+    try {
+      final d = await Api.get('/emojiler/sik') as Map<String, dynamic>;
+      final liste = birlestir(
+        (d['benim'] as List<dynamic>? ?? []).cast<String>(),
+        (d['genel'] as List<dynamic>? ?? []).cast<String>(),
+      );
+      onbellek = liste;
+      return liste;
+    } catch (_) {
+      // Önbelleğe YAZMA: bir sonraki açılışta tekrar denensin.
+      return yedek;
+    }
+  }
+}
+
+/// Metnin [secim] konumuna emoji ekler, imleci emojinin sonuna taşır.
+/// Seçim yoksa (imleç kaybolmuşsa) metnin sonuna eklenir.
+TextEditingValue emojiEkle(TextEditingValue deger, String emoji) {
+  final metin = deger.text;
+  final secim = deger.selection;
+  final bas = secim.isValid ? secim.start.clamp(0, metin.length) : metin.length;
+  final son = secim.isValid ? secim.end.clamp(0, metin.length) : metin.length;
+  return TextEditingValue(
+    text: metin.replaceRange(bas, son, emoji),
+    selection: TextSelection.collapsed(offset: bas + emoji.length),
+  );
+}
 
 /// Bir gönderinin yanıtları + yazma kutusu. Reels ve profil yorum akışı
 /// AYNI sheet'i kullanır: beğeni ve yanıtlar tek veri kaynağından geldiği için
@@ -1562,21 +1629,53 @@ class YanitlarSheet extends StatefulWidget {
 class _YanitlarSheetState extends State<YanitlarSheet> {
   List<dynamic>? _yanitlar;
   final _kutu = TextEditingController();
+  final _liste = ScrollController();
+  // Sheet ekranı kapladığı için kök ScaffoldMessenger'ın SnackBar'ı ARKADA
+  // kalır; sheet kendi messenger'ını taşır, hatalar burada görünür.
+  final _mesajci = GlobalKey<ScaffoldMessengerState>();
   bool _gonderiliyor = false;
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
+  // Medya yüklenirken gönder'e basıldı: yükleme bitince metin+medya BİRLİKTE
+  // gider (sohbet ekranında medyasız gönderim hatası buradan çıkmıştı).
+  bool _gonderBekliyor = false;
+  bool _yaziVar = false; // gönder düğmesi bu bayrakla belirir
   Map<String, dynamic>? _yanitlanan; // yanıtın yanıtı: hedeflenen satır
+  List<String> _emojiler = SikEmojiler.onbellek ?? SikEmojiler.yedek;
 
   @override
   void initState() {
     super.initState();
+    _kutu.addListener(_metinDegisti);
     _yukle();
+    _emojileriYukle();
   }
 
   @override
   void dispose() {
+    _kutu.removeListener(_metinDegisti);
     _kutu.dispose();
+    _liste.dispose();
     super.dispose();
+  }
+
+  void _metinDegisti() {
+    final dolu = _kutu.text.trim().isNotEmpty;
+    if (dolu != _yaziVar) setState(() => _yaziVar = dolu);
+  }
+
+  Future<void> _emojileriYukle() async {
+    final liste = await SikEmojiler.getir();
+    if (mounted && !listEquals(liste, _emojiler)) {
+      setState(() => _emojiler = liste);
+    }
+  }
+
+  void _uyar(String mesaj) =>
+      _mesajci.currentState?.showSnackBar(SnackBar(content: Text(mesaj)));
+
+  void _emojiSec(String emoji) {
+    _kutu.value = emojiEkle(_kutu.value, emoji);
   }
 
   String get _sorgu => widget.yorum['sezon'] != null
@@ -1607,21 +1706,37 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
       await Api.delete('/yorumlar/$id');
       await _yukle();
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
-      }
+      if (mounted) _uyar(e.toString());
     }
   }
 
+  /// Fotoğraf / video eki (galeri).
   Future<void> _ekSec() async {
     if (_ekler.length >= 4) return;
     final secim = await ImagePicker().pickMedia();
     if (secim == null) return;
+    await _ekYukle(() => secim.readAsBytes());
+  }
+
+  /// GIF eki. Dış GIF servisi (Giphy/Tenor) YOK — anahtar/gizli bilgi
+  /// gerektirir; kullanıcının kendi galerisinden .gif seçilir. Sunucu GIF'i
+  /// sihirli baytla doğrular ve kırpmadan geçirir (animasyon bozulmaz).
+  Future<void> _gifSec() async {
+    if (_ekler.length >= 4) return;
+    final secim = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['gif'],
+      withData: true,
+    );
+    final veri = secim?.files.single.bytes;
+    if (veri == null) return;
+    await _ekYukle(() async => veri);
+  }
+
+  Future<void> _ekYukle(Future<Uint8List> Function() oku) async {
     setState(() => _ekYukleniyor = true);
     try {
-      final veri = await secim.readAsBytes();
+      final veri = await oku();
       if (veri.length > 30 * 1024 * 1024) {
         throw ApiHata('Dosya en fazla {}MB olabilir'.cf([30]));
       }
@@ -1630,17 +1745,27 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
       setState(() => _ekler.add({'yol': d['yol'], 'video': d['video']}));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      _gonderBekliyor = false; // yükleme başarısız: bekleyen gönderim iptal
+      _uyar(e.toString());
     } finally {
       if (mounted) setState(() => _ekYukleniyor = false);
+      // Yükleme sürerken gönder'e basılmışsa şimdi gönder: metin de medya da
+      // kaybolmaz.
+      if (mounted && _gonderBekliyor) {
+        _gonderBekliyor = false;
+        await _gonder();
+      }
     }
   }
 
   Future<void> _gonder() async {
     final metin = _kutu.text.trim();
     if (metin.isEmpty || _gonderiliyor) return;
+    if (_ekYukleniyor) {
+      // Yükleme bitmeden gönderilirse medya eksik giderdi; sıraya al.
+      setState(() => _gonderBekliyor = true);
+      return;
+    }
     setState(() => _gonderiliyor = true);
     try {
       final y = widget.yorum;
@@ -1659,230 +1784,390 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
       _ekler.clear();
       _yanitlanan = null;
       await _yukle();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+      // Başarı görünür olsun: yeni yanıt listenin sonunda, oraya kaydır.
+      if (mounted && _liste.hasClients) {
+        await _liste.animateTo(
+          _liste.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOut,
+        );
       }
+    } catch (e) {
+      if (mounted) _uyar(e.toString());
     } finally {
       if (mounted) setState(() => _gonderiliyor = false);
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.6,
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.mode_comment_outlined,
-                    size: 18,
+  /// Yazma kutusunun içindeki kompakt eylem ikonu (dosya / GIF / gönder).
+  /// Dokunma hedefi 44x44: ikon 22 px kalır, PADDING büyütülür.
+  Widget _kutuIkonu({
+    required String ipucu,
+    required IconData ikon,
+    required VoidCallback onTap,
+    bool kapali = false,
+    bool yukleniyor = false,
+  }) {
+    return Tooltip(
+      message: ipucu,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: kapali ? null : onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(11),
+          child: yukleniyor
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
                     color: DiziRenkler.sari,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Yanıtlar'.c,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  const Spacer(),
-                  Text(
-                    '${_yanitlar?.length ?? ''}',
-                    style: TextStyle(color: DiziRenkler.metin54),
-                  ),
-                ],
+                )
+              : Icon(
+                  ikon,
+                  size: 22,
+                  color: kapali ? DiziRenkler.metin24 : DiziRenkler.sari,
+                ),
+        ),
+      ),
+    );
+  }
+
+  /// Sık kullanılan 8 emoji, yazma satırının ÜSTÜNDE yan yana. Dar ekranda
+  /// (360 dp) sığmazsa yatay kaydırılır — taşma çizgisi çıkmaz, hepsi
+  /// erişilebilir kalır.
+  Widget _emojiSatiri() {
+    const olcu = 44.0; // dokunma hedefi
+    final dugmeler = [
+      for (final e in _emojiler)
+        InkWell(
+          key: ValueKey('emoji-$e'),
+          borderRadius: BorderRadius.circular(22),
+          onTap: () => _emojiSec(e),
+          child: SizedBox(
+            width: olcu,
+            height: olcu,
+            child: Center(child: Text(e, style: const TextStyle(fontSize: 22))),
+          ),
+        ),
+    ];
+    return SizedBox(
+      height: olcu,
+      child: LayoutBuilder(
+        builder: (_, kisit) => olcu * dugmeler.length <= kisit.maxWidth
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: dugmeler,
+              )
+            : SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(children: dugmeler),
+              ),
+      ),
+    );
+  }
+
+  /// Yazma satırı: SOLDA profil fotoğrafı, ortada metin alanı, SAĞDA
+  /// (dosya + GIF) ya da yazı yazılmışsa (gönder).
+  Widget _girisSatiri(Map<String, dynamic>? ben) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: KullaniciAvatari(
+            url: dosyaUrl(ben?['avatar'] as String?),
+            kullaniciAdi: ben?['kullanici_adi'] as String?,
+            yaricap: 16,
+            arkaplan: DiziRenkler.kart,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: EtiketliGirdi(
+            controller: _kutu,
+            maxLength: 1000,
+            maxLines: 4,
+            minLines: 1,
+            decoration: InputDecoration(
+              hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
+              isDense: true,
+              contentPadding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 0,
+                minHeight: 0,
+              ),
+              suffixIcon: Padding(
+                padding: const EdgeInsets.only(right: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _yaziVar
+                      // Yazı yazılınca yalnız GÖNDER kalır
+                      ? [
+                          _kutuIkonu(
+                            ipucu: 'Gönder'.c,
+                            ikon: Icons.send,
+                            kapali: _gonderiliyor || _gonderBekliyor,
+                            yukleniyor: _gonderiliyor || _gonderBekliyor,
+                            onTap: _gonder,
+                          ),
+                        ]
+                      // Boşken dosya ve GIF ekleme
+                      : [
+                          _kutuIkonu(
+                            ipucu: 'Fotoğraf / video ekle'.c,
+                            ikon: Icons.attach_file,
+                            kapali: _ekYukleniyor || _ekler.length >= 4,
+                            yukleniyor: _ekYukleniyor,
+                            onTap: _ekSec,
+                          ),
+                          _kutuIkonu(
+                            ipucu: 'GIF ekle'.c,
+                            ikon: Icons.gif_box_outlined,
+                            kapali: _ekYukleniyor || _ekler.length >= 4,
+                            onTap: _gifSec,
+                          ),
+                        ],
+                ),
               ),
             ),
-            Expanded(
-              child: _yanitlar == null
-                  ? const Center(
-                      child: CircularProgressIndicator(color: DiziRenkler.sari),
-                    )
-                  : (_yanitlar!.isEmpty
-                        ? Center(
-                            child: Text(
-                              'Henüz yorum yok.'.c,
-                              style: TextStyle(color: DiziRenkler.metin54),
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            itemCount: _yanitlar!.length,
-                            itemBuilder: (context, i) {
-                              final c = _yanitlar![i] as Map<String, dynamic>;
-                              return _KesfetYanitSatiri(
-                                key: ValueKey(c['id']),
-                                yanit: c,
-                                benim:
-                                    c['kullanici_id'] ==
-                                    context.read<Oturum>().kullanici?['id'],
-                                sil: () => _sil(c['id'] as int),
-                                yanitla: () => setState(() => _yanitlanan = c),
-                              );
-                            },
-                          )),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(14, 4, 14, 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (_yanitlanan != null)
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.reply,
-                          size: 16,
-                          color: DiziRenkler.sari,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            '@{} kullanıcısına yanıt veriyorsun'.cf([
-                              _yanitlanan!['kullanici_adi'],
-                            ]),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: DiziRenkler.sari,
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: () => setState(() => _yanitlanan = null),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.close,
-                              size: 16,
-                              color: DiziRenkler.metin38,
-                            ),
-                          ),
-                        ),
-                      ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final olcum = MediaQuery.of(context);
+    final klavye = olcum.viewInsets.bottom;
+    // TAM AÇILIŞ: kullanılabilir yüksekliğin tamamı (eskiden ekranın %60'ı).
+    // Klavye açılınca sheet kısalır, yazma kutusu klavyenin ÜSTÜNDE kalır.
+    final yukseklik = (olcum.size.height - olcum.padding.top - klavye).clamp(
+      200.0,
+      olcum.size.height,
+    );
+    final ben = context.watch<Oturum>().kullanici;
+    return Padding(
+      padding: EdgeInsets.only(bottom: klavye),
+      child: SizedBox(
+        height: yukseklik,
+        // Sheet ekranı kapladığı için kök SnackBar arkada kalırdı; sheet kendi
+        // messenger'ını taşıyor (hata mesajları görünür).
+        child: ScaffoldMessenger(
+          key: _mesajci,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            resizeToAvoidBottomInset: false, // klavye payı zaten yukarıda
+            body: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 8, bottom: 2),
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: DiziRenkler.metin24,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                  if (_ekler.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Wrap(
-                        spacing: 8,
-                        children: [
-                          for (var i = 0; i < _ekler.length; i++)
-                            Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: SizedBox(
-                                    width: 60,
-                                    height: 60,
-                                    child: _ekler[i]['video'] == true
-                                        ? Container(
-                                            color: DiziRenkler.kart,
-                                            child: Icon(
-                                              Icons.videocam,
-                                              color: DiziRenkler.metin54,
-                                            ),
-                                          )
-                                        : CachedNetworkImage(
-                                            imageUrl: dosyaUrl(
-                                              _ekler[i]['yol'] as String,
-                                            )!,
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 0,
-                                  right: 0,
-                                  child: InkWell(
-                                    onTap: () =>
-                                        setState(() => _ekler.removeAt(i)),
-                                    child: const CircleAvatar(
-                                      radius: 9,
-                                      backgroundColor: Colors.black87,
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 12,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                    ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 6, 6, 6),
+                  child: Row(
                     children: [
-                      IconButton(
-                        onPressed: _ekYukleniyor || _ekler.length >= 4
-                            ? null
-                            : _ekSec,
-                        tooltip: 'Fotoğraf / video ekle'.c,
-                        icon: _ekYukleniyor
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.sari,
-                                ),
-                              )
-                            : const Icon(
-                                Icons.attach_file,
-                                color: DiziRenkler.sari,
-                              ),
+                      const Icon(
+                        Icons.mode_comment_outlined,
+                        size: 18,
+                        color: DiziRenkler.sari,
                       ),
-                      Expanded(
-                        child: EtiketliGirdi(
-                          controller: _kutu,
-                          maxLength: 1000,
-                          maxLines: 3,
-                          minLines: 1,
-                          decoration: InputDecoration(
-                            hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
-                          ),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Yanıtlar'.c,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
                         ),
                       ),
                       const SizedBox(width: 8),
+                      Text(
+                        '${_yanitlar?.length ?? ''}',
+                        style: TextStyle(color: DiziRenkler.metin54),
+                      ),
+                      const Spacer(),
                       IconButton(
-                        // Yükleme sürerken gönderilemez (medyasız giderdi)
-                        onPressed: _gonderiliyor || _ekYukleniyor
-                            ? null
-                            : _gonder,
-                        icon: _gonderiliyor
-                            ? const SizedBox(
-                                width: 18,
-                                height: 18,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.sari,
-                                ),
-                              )
-                            : const Icon(Icons.send, color: DiziRenkler.sari),
+                        tooltip: 'Kapat'.c,
+                        onPressed: () => Navigator.of(context).maybePop(),
+                        icon: Icon(Icons.close, color: DiziRenkler.metin54),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: _yanitlar == null
+                      ? const Center(
+                          child: CircularProgressIndicator(
+                            color: DiziRenkler.sari,
+                          ),
+                        )
+                      : (_yanitlar!.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.forum_outlined,
+                                      size: 34,
+                                      color: DiziRenkler.metin24,
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      'Henüz yorum yok.'.c,
+                                      style: TextStyle(
+                                        color: DiziRenkler.metin54,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'İlk yorumu sen yaz'.c,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: DiziRenkler.metin38,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : ListView.builder(
+                                controller: _liste,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 14,
+                                ),
+                                itemCount: _yanitlar!.length,
+                                itemBuilder: (context, i) {
+                                  final c =
+                                      _yanitlar![i] as Map<String, dynamic>;
+                                  return _KesfetYanitSatiri(
+                                    key: ValueKey(c['id']),
+                                    yanit: c,
+                                    benim: c['kullanici_id'] == ben?['id'],
+                                    sil: () => _sil(c['id'] as int),
+                                    yanitla: () =>
+                                        setState(() => _yanitlanan = c),
+                                  );
+                                },
+                              )),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border(top: BorderSide(color: DiziRenkler.metin12)),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        if (_yanitlanan != null)
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.reply,
+                                size: 16,
+                                color: DiziRenkler.sari,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  '@{} kullanıcısına yanıt veriyorsun'.cf([
+                                    _yanitlanan!['kullanici_adi'],
+                                  ]),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: DiziRenkler.sari,
+                                  ),
+                                ),
+                              ),
+                              InkWell(
+                                borderRadius: BorderRadius.circular(22),
+                                onTap: () => setState(() => _yanitlanan = null),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: DiziRenkler.metin38,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (_ekler.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Wrap(
+                              spacing: 8,
+                              children: [
+                                for (var i = 0; i < _ekler.length; i++)
+                                  Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: SizedBox(
+                                          width: 60,
+                                          height: 60,
+                                          child: _ekler[i]['video'] == true
+                                              ? Container(
+                                                  color: DiziRenkler.kart,
+                                                  child: Icon(
+                                                    Icons.videocam,
+                                                    color: DiziRenkler.metin54,
+                                                  ),
+                                                )
+                                              : CachedNetworkImage(
+                                                  imageUrl: dosyaUrl(
+                                                    _ekler[i]['yol'] as String,
+                                                  )!,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 0,
+                                        right: 0,
+                                        child: InkWell(
+                                          onTap: () => setState(
+                                            () => _ekler.removeAt(i),
+                                          ),
+                                          child: const CircleAvatar(
+                                            radius: 9,
+                                            backgroundColor: Colors.black87,
+                                            child: Icon(
+                                              Icons.close,
+                                              size: 12,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
+                        _emojiSatiri(),
+                        const SizedBox(height: 2),
+                        _girisSatiri(ben),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

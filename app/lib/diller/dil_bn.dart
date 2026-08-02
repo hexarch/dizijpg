@@ -441,4 +441,6 @@ const Map<String, String> cevirilerBn = {
   'Henüz yorum yok': 'এখনো কোনো মন্তব্য নেই',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'সিরিজ ও সিনেমায় লেখা তোমার মন্তব্য এখানে জমা হয়।',
+  'GIF ekle': 'GIF যোগ করুন',
+  'İlk yorumu sen yaz': 'প্রথম মন্তব্যটি আপনি করুন',
 };

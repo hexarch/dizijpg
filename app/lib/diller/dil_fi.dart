@@ -442,4 +442,6 @@ const Map<String, String> cevirilerFi = {
   'Henüz yorum yok': 'Ei vielä kommentteja',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Sarjoista ja elokuvista kirjoittamasi kommentit kootaan tänne.',
+  'GIF ekle': 'Lisää GIF',
+  'İlk yorumu sen yaz': 'Kirjoita ensimmäinen kommentti',
 };

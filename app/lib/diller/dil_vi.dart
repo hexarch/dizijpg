@@ -441,4 +441,6 @@ const Map<String, String> cevirilerVi = {
   'Henüz yorum yok': 'Chưa có bình luận',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Bình luận bạn viết cho phim bộ và phim lẻ sẽ gom về đây.',
+  'GIF ekle': 'Thêm GIF',
+  'İlk yorumu sen yaz': 'Hãy là người bình luận đầu tiên',
 };

@@ -448,4 +448,6 @@ const Map<String, String> cevirilerMy = {
   'Henüz yorum yok': 'မှတ်ချက် မရှိသေးပါ',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'စီးရီးများနှင့် ရုပ်ရှင်များအတွက် သင်ရေးသော မှတ်ချက်များ ဤနေရာတွင် စုစည်းပါသည်။',
+  'GIF ekle': 'GIF ထည့်ရန်',
+  'İlk yorumu sen yaz': 'ပထမဆုံး မှတ်ချက်ကို သင်ရေးပါ',
 };

@@ -426,4 +426,6 @@ const Map<String, String> cevirilerZh = {
   'Yorum yap': '评论',
   'Henüz yorum yok': '还没有评论',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.': '你对剧集和电影的评论都会汇集在这里。',
+  'GIF ekle': '添加 GIF',
+  'İlk yorumu sen yaz': '来写第一条评论吧',
 };

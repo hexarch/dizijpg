@@ -435,4 +435,6 @@ const Map<String, String> cevirilerTh = {
   'Henüz yorum yok': 'ยังไม่มีความคิดเห็น',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'ความคิดเห็นที่คุณเขียนถึงซีรีส์และภาพยนตร์จะรวมอยู่ที่นี่',
+  'GIF ekle': 'เพิ่ม GIF',
+  'İlk yorumu sen yaz': 'มาเป็นคนแรกที่แสดงความคิดเห็น',
 };

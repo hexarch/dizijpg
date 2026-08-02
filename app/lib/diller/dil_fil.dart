@@ -444,4 +444,6 @@ const Map<String, String> cevirilerFil = {
   'Henüz yorum yok': 'Wala pang komento',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Ang mga komento mo sa serye at pelikula ay natitipon dito.',
+  'GIF ekle': 'Magdagdag ng GIF',
+  'İlk yorumu sen yaz': 'Ikaw ang mauna magkomento',
 };

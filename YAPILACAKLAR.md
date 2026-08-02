@@ -1,6 +1,42 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Yorum sayfası yeniden tasarlandı (tam açılış + emoji satırı)
+**Kullanıcı isteği:** "yorumlar sayfası daha yukarı çıksın ve tam açılsın,
+yorumun solunda profil fotoğrafı olsun, input alanının sağında dosya ekleme /
+gif ekleme / gönder butonu olsun, yazı yazmaya başlayınca gönder açılsın dosya
+ve gif kaybolsun, üstünde de sık kullanılan 8 emoji yan yana."
+- 🚀 **Tam açılış:** `yanitlariAc`/`YanitlarSheet` (kesfet_akis.dart) eskiden
+  `height: ekran * 0.6` ile yarım kalıyordu. Artık
+  `ekran - padding.top - klavye` — durum çubuğu hariç TÜM ekran. Klavye
+  açılınca sheet kısalır, yazma kutusu klavyenin ÜSTÜNDE kalır (taşma yok).
+  Reels de aynı açılışı kullanıyor (kendi `showModalBottomSheet` çağrısı
+  silindi, tek kaynak `yanitlariAc`).
+- 🚀 **Yazma satırı:** SOLDA kullanıcının profil fotoğrafı → ortada metin alanı
+  → SAĞDA kutunun İÇİNDE ikonlar. Boşken **dosya + GIF**, yazı yazılınca
+  yalnız **GÖNDER** (yazı silinince geri döner). Dokunma hedefleri 44x44
+  (ikon 22 px, padding büyütüldü).
+- 🚀 **Sık kullanılan 8 emoji** yazma satırının üstünde. Yeni tablo YOK: sunucu
+  mevcut `yorumlar.metin` içindeki emojileri sayıyor (`GET /emojiler/sik`,
+  `backend/emoji.js`). Grafem kümesi ayıklaması: ZWJ birleşimleri (👨‍👩‍👧),
+  ten tonu, varyasyon seçici ve bayraklar TEK emoji. Kişisel liste 5 dk,
+  uygulama geneli 1 saat sunucuda önbellekli; yorum ekleme/silme kişisel
+  önbelleği düşürüyor. Kendi listen kısaysa genel liste, ikisi de boşsa sabit
+  yedek tamamlıyor — satır asla boş kalmaz. Emoji imleç konumuna eklenir.
+- 🚀 **GIF:** dış servis (Giphy/Tenor) ENTEGRE EDİLMEDİ (anahtar/gizli bilgi
+  ister, onay yok). GIF düğmesi cihazdan `.gif` seçtiriyor; sunucu sihirli
+  baytla doğrulayıp kırpmadan geçiriyor (animasyon bozulmaz).
+- 🚀 **Üç hal:** gönderirken spinner + kilit, başarıda liste tazelenip sona
+  kaydırma, hatada SnackBar. Sheet ekranı kapladığı için kök SnackBar arkada
+  kalıyordu → sheet kendi `ScaffoldMessenger`ını taşıyor. Medya yüklenirken
+  gönder'e basılırsa yükleme bitene kadar SIRAYA alınıyor, metin+medya birlikte
+  gidiyor (sohbette yaşanan medyasız gönderim hatası burada tekrarlanmasın).
+- ✅ **Kanıt:** `test/yorum_sheet_test.dart` (12 test) + `backend/emoji_test.js`
+  (12 test). Uçtan uca curl: emoji içeren test yorumu → `benim` listesi
+  `["🔥","👨‍👩‍👧","😢"]` (ZWJ bütün), test yorumları silindi. Sorgu maliyeti
+  ölçüldü: kişisel 0.3 ms (idx_yorum_kullanici), genel 4.5 ms (1500 satır,
+  pkey ters tarama) — üstelik önbellekli.
+
 ## 2026-08-02 — Tema geçişi artık ANINDA ve TAM
 **Kullanıcı bildirimi:** "koyu temadan açık temaya veya açık temadan koyu temaya
 geçişler tam olmuyor, uygulamayı yeniden başlatmak gerekiyor öyle düzeliyor."

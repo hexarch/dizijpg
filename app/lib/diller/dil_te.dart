@@ -439,4 +439,6 @@ const Map<String, String> cevirilerTe = {
   'Henüz yorum yok': 'ఇంకా వ్యాఖ్యలు లేవు',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'సిరీస్ మరియు సినిమాలపై నీ వ్యాఖ్యలు ఇక్కడ చేరతాయి.',
+  'GIF ekle': 'GIF జోడించండి',
+  'İlk yorumu sen yaz': 'మొదటి వ్యాఖ్య మీరు రాయండి',
 };

@@ -441,4 +441,6 @@ const Map<String, String> cevirilerId = {
   'Henüz yorum yok': 'Belum ada komentar',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Komentar yang kamu tulis untuk serial dan film terkumpul di sini.',
+  'GIF ekle': 'Tambahkan GIF',
+  'İlk yorumu sen yaz': 'Jadilah yang pertama berkomentar',
 };

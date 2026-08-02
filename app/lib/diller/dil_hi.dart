@@ -442,4 +442,6 @@ const Map<String, String> cevirilerHi = {
   'Henüz yorum yok': 'अभी कोई टिप्पणी नहीं',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'शो और फ़िल्मों पर लिखी तुम्हारी टिप्पणियाँ यहाँ जमा होती हैं।',
+  'GIF ekle': 'GIF जोड़ें',
+  'İlk yorumu sen yaz': 'पहली टिप्पणी आप करें',
 };

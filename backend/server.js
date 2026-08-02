@@ -13,6 +13,7 @@ import os from 'os';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
+import { emojiSay, EMOJI_YEDEK } from './emoji.js';
 import {
   mailKutulari, mailAyristir, mailKimlikCoz, gelenMailler, htmlKisirlastir,
 } from './mail_kutu.js';
@@ -2484,6 +2485,48 @@ const akisSatiri = ({ guvenli, spoiler_isaret, ...ham }) => ({
     !(guvenli || ham.tur === 'person' || ham.kullanici_adi === AI_KULLANICI),
 });
 
+// ---------- Sık kullanılan emojiler (yorum kutusunun üstündeki 8'li satır) ----
+// Yeni tablo YOK: mevcut yorum metinleri taranır (emoji.js grafem ayıklayıcı).
+// Maliyet iki nedenle küçük: (1) sorgular indeksli ve LIMIT'li, (2) sonuçlar
+// önbelleklenir — genel liste saatte bir, kişiye özel liste 5 dakikada bir.
+const EMOJI_GENEL_TARAMA = 1500; // son N yorum (id DESC = birincil anahtar taraması)
+const EMOJI_BENIM_TARAMA = 300; // kişinin son N yorumu (idx_yorum_kullanici)
+let emojiGenelOnbellek = { zaman: 0, liste: [] };
+const emojiBenimOnbellek = new Map(); // kullanici_id -> { zaman, liste }
+
+async function emojilerGenel() {
+  if (emojiGenelOnbellek.liste.length &&
+      Date.now() - emojiGenelOnbellek.zaman < 3600_000) {
+    return emojiGenelOnbellek.liste;
+  }
+  const { rows } = await havuz.query(
+    'SELECT metin FROM yorumlar ORDER BY id DESC LIMIT $1', [EMOJI_GENEL_TARAMA]);
+  emojiGenelOnbellek = { zaman: Date.now(), liste: emojiSay(rows.map((r) => r.metin)) };
+  return emojiGenelOnbellek.liste;
+}
+
+async function emojilerBenim(kullaniciId) {
+  const kayit = emojiBenimOnbellek.get(kullaniciId);
+  if (kayit && Date.now() - kayit.zaman < 300_000) return kayit.liste;
+  const { rows } = await havuz.query(
+    'SELECT metin FROM yorumlar WHERE kullanici_id=$1 ORDER BY tarih DESC LIMIT $2',
+    [kullaniciId, EMOJI_BENIM_TARAMA]);
+  const liste = emojiSay(rows.map((r) => r.metin));
+  if (emojiBenimOnbellek.size > 5000) emojiBenimOnbellek.clear();
+  emojiBenimOnbellek.set(kullaniciId, { zaman: Date.now(), liste });
+  return liste;
+}
+
+const emojiLimiti = hizLimiti(120, (req) => `em:${req.kullanici.id}`);
+app.get('/emojiler/sik', girisZorunlu, emojiLimiti, sarici(async (req, res) => {
+  const [benim, genel] = await Promise.all([
+    emojilerBenim(req.kullanici.id), emojilerGenel(),
+  ]);
+  // İstemci sırayla birleştirir: önce kendi emojilerin, eksik kalırsa uygulama
+  // geneli, o da boşsa yedek — satır asla boş görünmez.
+  res.json({ benim, genel, yedek: EMOJI_YEDEK });
+}));
+
 app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   const once = parseInt(req.query.once, 10) || null; // sayfalama: bu id'den eskiler
   const benId = req.kullanici.id;
@@ -3310,6 +3353,8 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   }
   // @etiketlenen kullanıcılara bildirim (yanıtlanan zaten 'yanit' aldıysa hariç)
   etiketBildirimleriGonder(temiz, req.kullanici.id, rows[0].id, yanitlananSahip);
+  // Yeni yorumdaki emojiler bir sonraki açılışta hızlı satırda görünsün
+  emojiBenimOnbellek.delete(req.kullanici.id);
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));
 
@@ -3322,6 +3367,8 @@ app.delete('/yorumlar/:id', girisZorunlu, sarici(async (req, res) => {
   for (const m of rows[0].medya || []) {
     fs.unlink(path.join(MEDYA_DIZIN, path.basename(m)), () => {});
   }
+  // Silinen yorumun emojileri hızlı satırda kalmasın
+  emojiBenimOnbellek.delete(req.kullanici.id);
   res.json({ tamam: true });
 }));
 

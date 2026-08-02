@@ -440,4 +440,6 @@ const Map<String, String> cevirilerSw = {
   'Henüz yorum yok': 'Bado hakuna maoni',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Maoni unayoandika kuhusu misururu na filamu hukusanywa hapa.',
+  'GIF ekle': 'Ongeza GIF',
+  'İlk yorumu sen yaz': 'Kuwa wa kwanza kutoa maoni',
 };

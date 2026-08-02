@@ -442,4 +442,6 @@ const Map<String, String> cevirilerMs = {
   'Henüz yorum yok': 'Belum ada komen',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'Komen yang kamu tulis untuk siri dan filem terkumpul di sini.',
+  'GIF ekle': 'Tambah GIF',
+  'İlk yorumu sen yaz': 'Jadilah yang pertama mengulas',
 };

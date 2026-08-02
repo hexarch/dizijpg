@@ -438,4 +438,6 @@ const Map<String, String> cevirilerGu = {
   'Henüz yorum yok': 'હજી કોઈ ટિપ્પણી નથી',
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.':
       'શ્રેણી અને ફિલ્મો પર લખેલી તારી ટિપ્પણીઓ અહીં ભેગી થાય છે.',
+  'GIF ekle': 'GIF ઉમેરો',
+  'İlk yorumu sen yaz': 'પ્રથમ ટિપ્પણી તમે લખો',
 };
