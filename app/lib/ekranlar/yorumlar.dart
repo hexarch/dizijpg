@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -89,6 +90,11 @@ class _YorumBolumuState extends State<YorumBolumu> {
   String get _sorgu => widget.sezon != null
       ? '?sezon=${widget.sezon}&bolum=${widget.bolum}'
       : '';
+
+  /// Bölüm rozetinin bağlanacağı dizi id'si — yalnız DİZİ sayfasında dolu.
+  /// (Film/kişi sayfasında bölüm kavramı yok; bölüm sayfasında rozet gereksiz.)
+  int? get _rozetDiziId =>
+      widget.tur == 'tv' && widget.sezon == null ? widget.tmdbId : null;
 
   Future<void> _yukle() async {
     try {
@@ -515,6 +521,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
               // Liste yenilenince state konuma göre değil yoruma göre eşleşsin
               key: ValueKey(y['id']),
               yorum: y as Map<String, dynamic>,
+              // Yalnız DİZİ sayfasında: bölüm yorumlarına "S9B7" rozeti çıkar.
+              // Bölüm sayfasında zaten hepsi o bölüm — rozet gürültü olurdu.
+              diziId: _rozetDiziId,
               benim: y['kullanici_id'] == benimId,
               benimId: benimId,
               sil: () => _sil(y['id'] as int),
@@ -542,6 +551,10 @@ class YorumKarti extends StatefulWidget {
   final void Function(int) yanitSil;
   final List<dynamic> yanitlar;
 
+  /// Dolu ise bölüm yorumlarında "S9B7" rozeti çizilir ve bu dizinin ilgili
+  /// bölüm sayfasına bağlanır. Bölüm/film/kişi sayfasında null gelir.
+  final int? diziId;
+
   /// Medyaya dokununca (yorum, dokunulan medyanın sırası) — Reels açar.
   final void Function(Map<String, dynamic>, int) medyaAc;
 
@@ -555,6 +568,7 @@ class YorumKarti extends StatefulWidget {
     required this.yanitSil,
     required this.yanitlar,
     required this.medyaAc,
+    this.diziId,
   });
 
   @override
@@ -630,14 +644,21 @@ class _YorumKartiState extends State<YorumKarti> {
                   yaricap: 14,
                 ),
                 const SizedBox(width: 8),
-                InkWell(
-                  onTap: () =>
-                      kullaniciyaGit(context, yorum['kullanici_adi'] as String),
-                  child: Text(
-                    '@${yorum['kullanici_adi']}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      color: DiziRenkler.sariMetin,
+                // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
+                Flexible(
+                  child: InkWell(
+                    onTap: () => kullaniciyaGit(
+                      context,
+                      yorum['kullanici_adi'] as String,
+                    ),
+                    child: Text(
+                      '@${yorum['kullanici_adi']}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: DiziRenkler.sariMetin,
+                      ),
                     ),
                   ),
                 ),
@@ -646,6 +667,14 @@ class _YorumKartiState extends State<YorumKarti> {
                   tarih,
                   style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
                 ),
+                // Bölüm yorumu dizi sayfasında da listelenir; hangi bölüme ait
+                // olduğu tarihin yanındaki rozetten anlaşılır ve oraya götürür.
+                if (widget.diziId != null && yorum['sezon'] != null)
+                  BolumRozeti(
+                    diziId: widget.diziId!,
+                    sezon: yorum['sezon'] as int,
+                    bolum: yorum['bolum'] as int,
+                  ),
                 const Spacer(),
                 if (benim)
                   InkWell(
@@ -799,6 +828,52 @@ class _YorumKartiState extends State<YorumKarti> {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Bölüm yorumunun dizi sayfasındaki rozeti ("S9B7"). Dokununca o bölümün
+/// sayfasına gider. Kendi InkWell'i olduğu için karttaki diğer dokunuşları
+/// (beğeni, yanıt, kullanıcı adı) yutmaz; onlar da rozeti yutmaz.
+class BolumRozeti extends StatelessWidget {
+  final int diziId;
+  final int sezon;
+  final int bolum;
+
+  const BolumRozeti({
+    super.key,
+    required this.diziId,
+    required this.sezon,
+    required this.bolum,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () => context.push('/dizi/$diziId/sezon/$sezon/bolum/$bolum'),
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        // Rozet küçük görünür ama dokunma alanı 44px'tir (dolgu büyütüldü,
+        // yazı değil): parmakla ıskalanmaz.
+        constraints: const BoxConstraints(minHeight: 44),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+          decoration: BoxDecoration(
+            color: DiziRenkler.sariMetin.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Text(
+            'S{}B{}'.cf([sezon, bolum]),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: DiziRenkler.sariMetin,
+            ),
+          ),
         ),
       ),
     );

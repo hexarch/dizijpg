@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Bölüm yorumları dizi sayfasında görünüyor (S9B7 rozeti)
+**Kullanıcı bildirimi:** "rick and morty 9 sezon 7 bölüme yorum yaptım ama
+dizinin kendi yorumlarında gözükmemiş; gözüksün, tarihin yanında S:9B:7 yazsın,
+tıklanınca o bölümün sayfasına gitsin."
+- 🚀 **Sunucu:** `GET /yorumlar/:tur/:tmdbId` sezon/bolum verilmediğinde
+  `sezon IS NOT DISTINCT FROM NULL` koşuluyla YALNIZ dizi geneli yorumları
+  döndürüyordu — bölüm yorumları dizi sayfasında hiç görünmüyordu. Artık
+  kapsam iki türlü: sezon+bolum verilirse yalnız o bölüm (bölüm sayfası
+  temiz kalır), verilmezse dizi geneli + tüm bölüm yorumları birlikte,
+  eskisi gibi `tarih DESC`. Limit artık ÜST yorumlara uygulanıyor, yanıtlar
+  üstünden koparılmıyor (eski düz `LIMIT 100` yanıtı alıp üstünü eleyebiliyordu).
+- 🚀 **Rozet:** kartta tarihin yanında `S9B7` (mevcut `'S{}B{}'` anahtarı —
+  45 dilde zaten var, İngilizce S9E7). Yalnız DİZİ sayfasındaki bölüm
+  yorumlarında çıkar; bölüm/film/kişi sayfasında çıkmaz. Dokunma hedefi 44 px,
+  dokununca `/dizi/:id/sezon/:s/bolum/:b`. Uzun kullanıcı adı rozeti taşırmasın
+  diye ad satırı `Flexible` + ellipsis oldu.
+- ⬜ **Spoiler notu:** bu uçta perde YALNIZ yazarın "spoiler" işaretine bakıyor
+  (akıştaki "izlemediysen bulanık" kuralı burada YOK). Yani işaretsiz bir bölüm
+  yorumu dizi sayfasında sürpriz bozabilir; otomatik perde istenirse ayrı karar.
+- ✅ **Kanıt:** `test/yorum_bolum_rozeti_test.dart` (6 test). Uçtan uca curl:
+  test hesabıyla Rick and Morty S9B7'ye yorum → dizi ucunda `sezon:9,bolum:7`
+  ile GELDİ (84 satır), bölüm ucunda dizi geneli SIZMADI (2 satır, hepsi S9B7);
+  test yorumları silindi. Kullanıcının kendi S9B7 yorumu (id 4919) artık dizi
+  sayfasında listeleniyor.
+
 ## 2026-08-02 — Yorum sayfası yeniden tasarlandı (tam açılış + emoji satırı)
 **Kullanıcı isteği:** "yorumlar sayfası daha yukarı çıksın ve tam açılsın,
 yorumun solunda profil fotoğrafı olsun, input alanının sağında dosya ekleme /

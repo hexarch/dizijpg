@@ -2282,8 +2282,21 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
     return res.status(400).json({ hata: 'Geçersiz sezon/bolum' });
   }
   const benId = req.kullanici?.id || 0;
+  // Kapsam iki türlü:
+  //  - sezon+bolum verildiyse (BÖLÜM sayfası): YALNIZ o bölümün yorumları.
+  //    Dizi geneli oraya sızmaz, bölüm sayfası çöplüğe dönmez.
+  //  - verilmediyse (DİZİ/film/kişi sayfası): dizi geneli + TÜM bölüm yorumları
+  //    birlikte, tarihe göre. Eskiden "sezon IS NOT DISTINCT FROM NULL" koşulu
+  //    bölüm yorumlarını dizi sayfasından tamamen dışarıda bırakıyordu.
+  // Limit ÜST yorumlara uygulanır; yanıtlar üstünden koparılmasın diye ayrıca
+  // toplanır (eski düz LIMIT 100 yanıtı listeye alıp üstünü dışarıda bırakabiliyordu).
   const { rows } = await havuz.query(
-    `SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
+    `WITH ustler AS (
+       SELECT y.id FROM yorumlar y
+       WHERE y.tur=$1 AND y.tmdb_id=$2 AND y.ust_id IS NULL
+         AND ($3::int IS NULL OR (y.sezon = $3 AND y.bolum = $4))
+       ORDER BY y.tarih DESC LIMIT 100)
+     SELECT y.id, y.kullanici_id, y.metin, y.medya, y.tarih, y.sezon, y.bolum,
             y.ust_id, y.goruntulenme, y.spoiler, k.kullanici_adi, k.avatar, y.kaynak_dil,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $6) AS ceviri_metin,
@@ -2291,9 +2304,9 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$5) AS begendim
      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-     WHERE y.tur=$1 AND y.tmdb_id=$2
-       AND y.sezon IS NOT DISTINCT FROM $3 AND y.bolum IS NOT DISTINCT FROM $4
-     ORDER BY y.tarih DESC LIMIT 100`,
+     WHERE y.id IN (SELECT id FROM ustler)
+        OR y.ust_id IN (SELECT id FROM ustler)
+     ORDER BY y.tarih DESC`,
     [req.params.tur, req.params.tmdbId, sezon, bolum, benId,
      istekBaglam.getStore()?.dil || 'tr'],
   );
