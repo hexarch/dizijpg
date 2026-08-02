@@ -17,9 +17,23 @@ tıklanınca o bölümün sayfasına gitsin."
   yorumlarında çıkar; bölüm/film/kişi sayfasında çıkmaz. Dokunma hedefi 44 px,
   dokununca `/dizi/:id/sezon/:s/bolum/:b`. Uzun kullanıcı adı rozeti taşırmasın
   diye ad satırı `Flexible` + ellipsis oldu.
-- ⬜ **Spoiler notu:** bu uçta perde YALNIZ yazarın "spoiler" işaretine bakıyor
-  (akıştaki "izlemediysen bulanık" kuralı burada YOK). Yani işaretsiz bir bölüm
-  yorumu dizi sayfasında sürpriz bozabilir; otomatik perde istenirse ayrı karar.
+- 🚀 **Otomatik spoiler perdesi taşındı (2026-08-02):** akıştaki kuralın bölüm
+  dalı (`AKIS_GOVDE` > `guvenli`) `GET /yorumlar/:tur/:tmdbId` ucuna alındı —
+  bölüm yorumu, o bölüm `izlemeler`de YOKSA `spoiler:true` döner. Kapsam dar:
+  yalnız dizi/film sayfası listesinde (sezon parametresi yokken) ve yalnız
+  bölüm yorumlarında. Bölüm sayfası DEĞİŞMEDİ (kullanıcı o bölüme bilerek
+  giriyor); dizi geneline yazılan yorumlarda bölüm spoilerı olmadığı için
+  akıştaki `durumlar` dalı taşınMAdı — taşınsaydı kitaplıkta olmayan her
+  dizinin tüm yorumları (ve girişsiz ziyaretçide TÜM sayfa) baştan bulanık
+  olurdu. Kendi yorumun + AI hesabı muaf. Girişsiz kullanıcı "izlememiş"
+  sayılır: bölüm yorumları perdeli, dizi geneli açık.
+  İstemcide perde artık MEDYAYI da örtüyor (akıştaki kartla aynı).
+  Maliyet: `izlenen` CTE'si tek indeks taraması — EXPLAIN ANALYZE ile eski
+  sorguyla aynı (~12 ms, tv/60625, 100 üst yorum).
+  Kanıt: `test/yorum_spoiler_perdesi_test.dart` (3 test) + uçtan uca curl
+  (izlenmemiş → `spoiler:true`, izlendi işaretlenince `false`, kendi yorumu
+  `false`, girişsizde bölüm yorumu `true` / dizi geneli `false`); test
+  yorumları, izleme ve durum kayıtları geri alındı.
 - ✅ **Kanıt:** `test/yorum_bolum_rozeti_test.dart` (6 test). Uçtan uca curl:
   test hesabıyla Rick and Morty S9B7'ye yorum → dizi ucunda `sezon:9,bolum:7`
   ile GELDİ (84 satır), bölüm ucunda dizi geneli SIZMADI (2 satır, hepsi S9B7);
