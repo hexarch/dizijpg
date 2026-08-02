@@ -252,6 +252,74 @@ void main() {
     expect(ciftDokunus, 1);
   });
 
+  // ---------------- Reels yerleşimi: Stack değil, Column içinde ----------
+  // Reels'te katman kullanıcı adı satırının ÜSTÜNDE, normal akışta (Column)
+  // duruyor. Stack kaplamasından farklı bir kısıt yolu; ayrıca test edilir.
+  testWidgets('Reels yerleşiminde (Column) çizilir ve altyazı yokken '
+      'kullanıcı adı satırını KAYDIRMAZ', (tester) async {
+    AltyaziDeposu.ekle(_url, _ornek());
+    final oynatici = SahteOynatici();
+    addTearDown(oynatici.dispose);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 18,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 14, right: 86),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          AltyaziKatmani(
+                            denetleyici: oynatici,
+                            url: _url,
+                            genislikOrani: 1,
+                            yaziBoyutu: 15,
+                            kenarBosluk: const EdgeInsets.only(bottom: 8),
+                          ),
+                          const Text('@kullanici'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Altyazı YOKKEN kullanıcı adının konumu
+    oynatici.konum(4500); // boşluk
+    await tester.pump();
+    expect(find.text('Birinci cümle'), findsNothing);
+    final altyazisizY = tester.getTopLeft(find.text('@kullanici')).dy;
+
+    // Altyazı gelince cümle görünür ve kullanıcı adı AŞAĞI kaymaz —
+    // blok alttan hizalı olduğu için altyazı YUKARI doğru büyür.
+    oynatici.konum(500);
+    await tester.pump();
+    expect(find.text('Birinci cümle'), findsOneWidget);
+    final altyaziliY = tester.getTopLeft(find.text('@kullanici')).dy;
+    expect(altyaziliY, altyazisizY);
+
+    // Altyazı kullanıcı adının ÜSTÜNDE
+    expect(
+      tester.getBottomLeft(find.text('Birinci cümle')).dy,
+      lessThanOrEqualTo(tester.getTopLeft(find.text('@kullanici')).dy),
+    );
+  });
+
   testWidgets('url null ise katman hiç çizilmez', (tester) async {
     final oynatici = SahteOynatici();
     addTearDown(oynatici.dispose);
