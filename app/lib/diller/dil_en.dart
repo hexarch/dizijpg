@@ -443,4 +443,8 @@ const Map<String, String> cevirilerEn = {
       'Comments you write on shows and movies collect here.',
   'GIF ekle': 'Add GIF',
   'İlk yorumu sen yaz': 'Be the first to comment',
+  'Video altyazıları': 'Video subtitles',
+  'Videolarda altyazı göster': 'Show subtitles on videos',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'The sentence spoken in the video is written on the screen. The text is translation: English in Turkish speech, Turkish in other languages.',
 };

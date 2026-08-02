@@ -435,4 +435,8 @@ const Map<String, String> cevirilerHe = {
       'התגובות שלך על סדרות וסרטים נאספות כאן.',
   'GIF ekle': 'הוספת GIF',
   'İlk yorumu sen yaz': 'היה הראשון להגיב',
+  'Video altyazıları': 'כתוביות וידאו',
+  'Videolarda altyazı göster': 'הצג כתוביות בסרטונים',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'המשפט הנאמר בסרטון כתוב על המסך. הטקסט הוא תרגום: אנגלית בדיבור טורקי, טורקית בשפות אחרות.',
 };

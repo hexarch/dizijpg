@@ -1,6 +1,61 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-02 — Videolarda senkron altyazı + çeviri (konuşulan cümle ekranda)
+**Kullanıcı isteği:** "videoların hepsinin izlerken ekranın sol altına ... akışta
+beğeni ve yorumun üstünde, reels modunda profil resmi ve kullanıcı adının
+üstünde, ingilizce ise türkçe çevirisini türkçe ise ingilizce çevirisini ...
+video ile konsantre bir şekilde ... cümle cümle o an sahnede konuşulan cümle
+yazılacak sonra silinecek."
+- 🚀 **Konuşma tanıma sunucuda, ANAHTARSIZ:** `whisper.cpp` (`/opt/altyazi`),
+  OpenBLAS ile derlendi. Sunucu CPU'sunda AVX/AVX2/FMA YOK (QEMU vCPU, yalnız
+  SSE4.2) — ggml'in kendi çekirdekleri bu yüzden çok yavaştı; BLAS derlemesi
+  **2-3 kat** hızlandırdı. Ölçüm (37,2 sn ses, 16 çekirdekli sunucu):
+  base 8 iplik 25,0 sn → BLAS ile **11,5 sn**; small 8 iplik 94,8 sn → BLAS ile
+  **29,7 sn**. Seçilen model **small** (base "kıvılcım"ı "kovulcum" yazıyordu).
+- 🚀 **Ölçek:** 472 video = 4,92 saat; 463'ünde ses var. Gerçek uçtan uca hız
+  (ffmpeg + tanıma + çeviri + yazma) **1,39x gerçek zaman** → tüm arşiv
+  **~6,8 saat**, tek iş + 8 iplik + `nice -n 19` (16 çekirdeğin yarısı boşta).
+  İş sırasında `/api/saglik` 200 ve ~0,3 sn kaldı.
+- 🚀 **Şema:** `video_altyazilar` (medya, sira, baslangic_ms, bitis_ms, metin,
+  orijinal, kaynak_dil, hedef_dil) + `video_altyazi_durum` (kuyruk ve durum:
+  bekliyor/isleniyor/bitti/sessiz/hata). `migrasyon-2026-08-02.sql` canlıya
+  uygulandı, `sema.sql` güncellendi.
+- 🚀 **Uç:** `GET /altyazi/:dosya` — dosya adı kalıpla doğrulanır, hız limiti
+  900/saat, altyazı yoksa **200 + boş liste** (istemci sessizce altyazısız
+  oynatır). Kısa anahtar (`b`/`s`/`m`) ile gövde küçük tutuldu.
+- 🚀 **Kuyruk:** `/medya` ucuna video yüklenince `video_altyazi_durum`'a
+  `bekliyor` satırı atılır — yükleme BEKLETİLMEZ. Sunucudaki işçi
+  (`backend/araclar/altyazi_uret.js --isle --surekli`, nohup) kuyruğu boşaltır;
+  kesilirse işlenmiş medyayı atlar, 'isleniyor'da asılı kalanları 2 saat sonra
+  geri alır.
+- 🚀 **Hedef dil kuralı** gönderi çevirisiyle AYNI: kaynak Türkçe ise İngilizce,
+  değilse Türkçe. Çeviri mevcut anahtarsız uçtan, `metin_cevirileri`
+  önbelleğine yazılarak (aynı replik onlarca videoda tekrar ediyor).
+- 🚀 **Konuşma olmayan ses elenir:** dil tespiti olasılığı < 0,40 ise video
+  'sessiz' sayılır (gerçek konuşmada p≈0,97, yalnız müzikte p≈0,26 — düşük
+  güvende model cümle UYDURUYOR). Ayrıca tamamı parantez içinde olan sahne
+  notları ([MÜZİK ÇALIYOR], (upbeat music)) ve ♪ satırları atılır.
+- 🚀 **İstemci** (`app/lib/altyazi.dart`): akışta videonun sol altında (beğeni/
+  yorum satırının hemen üstünde), Reels'te profil fotoğrafı ve kullanıcı adının
+  ÜSTÜNDE, tam ekran görüntüleyicide kontrol çubuğunun üstünde. Keşfet
+  ızgarasında GÖSTERİLMEZ (karo çok küçük, metin okunmaz).
+  Okunabilirlik: siyah %62 zemin + metin gölgesi (kontrast > 7:1), en fazla
+  3 satır, genişlik sınırlı (eylem sütununun altına girmez).
+  Başarım: konum saniyede onlarca kez değişir ama yalnız CÜMLE DEĞİŞİNCE
+  bir `ValueNotifier` güncellenir — kart yeniden çizilmez.
+  `IgnorePointer`: çift dokunuş (beğeni) ve tek dokunuş (duraklat) yutulmaz.
+  Altyazı yoksa hiçbir şey çizilmez (boş kutu / yer tutan boşluk YOK).
+- 🚀 **Ayar:** Ayarlar > Video altyazıları > "Videolarda altyazı göster"
+  (varsayılan açık), 45 dile çevrildi.
+- ✅ **Kanıt:** `test/altyazi_test.dart` — 14 test: segment seçme birim testleri
+  (tam başlangıç, tam bitiş, iki segment arası boşluk, üst üste binen
+  segmentler, aynı anda başlayanlar) + widget testleri (konum ilerledikçe doğru
+  cümle görünüp KAYBOLUYOR, altyazı yokken hiçbir şey çizilmiyor, ayar kapalı,
+  altyazı katmanı alttaki tek/çift dokunuşu YUTMUYOR). Uçtan uca curl: gerçek
+  videoda tr→en segmentler, altyazısız videoda 200 + boş liste, geçersiz adda
+  400.
+
 ## 2026-08-02 — Bölüm yorumları dizi sayfasında görünüyor (S9B7 rozeti)
 **Kullanıcı bildirimi:** "rick and morty 9 sezon 7 bölüme yorum yaptım ama
 dizinin kendi yorumlarında gözükmemiş; gözüksün, tarihin yanında S:9B:7 yazsın,

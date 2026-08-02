@@ -8,6 +8,7 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import 'altyazi.dart';
 import 'api.dart';
 import 'ceviri.dart';
 import 'push.dart';
@@ -46,6 +47,7 @@ Future<void> main() async {
     await Ceviri.yukle();
     await TemaAyar.yukle();
     await VeriTasarrufu.yukle(); // bağlantı türü + veri tasarrufu tercihleri
+    await AltyaziAyar.yukle(); // videolarda altyazı gösterilsin mi
     final oturum = Oturum();
     await oturum.yukle();
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)

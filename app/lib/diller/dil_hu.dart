@@ -446,4 +446,8 @@ const Map<String, String> cevirilerHu = {
       'A sorozatokhoz és filmekhez írt hozzászólásaid itt gyűlnek.',
   'GIF ekle': 'GIF hozzáadása',
   'İlk yorumu sen yaz': 'Legyél te az első hozzászóló',
+  'Video altyazıları': 'Videó feliratok',
+  'Videolarda altyazı göster': 'Feliratok megjelenítése a videókon',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'A videóban elhangzott mondat fel van írva a képernyőre. A szöveg fordítása: angol a török ​​beszédben, török ​​más nyelveken.',
 };

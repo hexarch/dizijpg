@@ -444,4 +444,8 @@ const Map<String, String> cevirilerTa = {
       'தொடர்கள் மற்றும் படங்களுக்கு நீ எழுதும் கருத்துகள் இங்கே சேரும்.',
   'GIF ekle': 'GIF சேர்க்கவும்',
   'İlk yorumu sen yaz': 'முதல் கருத்தை நீங்கள் எழுதுங்கள்',
+  'Video altyazıları': 'வீடியோ வசனங்கள்',
+  'Videolarda altyazı göster': 'வீடியோக்களில் வசனங்களைக் காட்டு',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'வீடியோவில் பேசப்படும் வாக்கியம் திரையில் எழுதப்பட்டுள்ளது. உரை மொழிபெயர்ப்பு: துருக்கிய பேச்சில் ஆங்கிலம், மற்ற மொழிகளில் துருக்கியம்.',
 };

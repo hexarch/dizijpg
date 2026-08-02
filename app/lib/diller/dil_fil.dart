@@ -446,4 +446,8 @@ const Map<String, String> cevirilerFil = {
       'Ang mga komento mo sa serye at pelikula ay natitipon dito.',
   'GIF ekle': 'Magdagdag ng GIF',
   'İlk yorumu sen yaz': 'Ikaw ang mauna magkomento',
+  'Video altyazıları': 'Mga subtitle ng video',
+  'Videolarda altyazı göster': 'Ipakita ang mga subtitle sa mga video',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Ang pangungusap na binibigkas sa video ay nakasulat sa screen. Ang teksto ay pagsasalin: English sa Turkish speech, Turkish sa ibang mga wika.',
 };

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
@@ -965,6 +966,42 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                         padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
                         child: Text(
                           'Açıkken fotoğraflar önceden indirilmez, yalnızca baktığın kare yüklenir.'
+                              .c,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Video altyazıları'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                Card(
+                  child: Column(
+                    children: [
+                      ValueListenableBuilder<bool>(
+                        valueListenable: AltyaziAyar.acik,
+                        builder: (context, acik, _) => SwitchListTile(
+                          value: acik,
+                          activeColor: DiziRenkler.sari,
+                          secondary: Icon(
+                            Icons.subtitles_outlined,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          title: Text('Videolarda altyazı göster'.c),
+                          onChanged: AltyaziAyar.sec,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Text(
+                          'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.'
                               .c,
                           style: TextStyle(
                             color: DiziRenkler.metin54,

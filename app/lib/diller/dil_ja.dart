@@ -431,4 +431,8 @@ const Map<String, String> cevirilerJa = {
       'ドラマや映画に書いたコメントがここに集まります。',
   'GIF ekle': 'GIFを追加',
   'İlk yorumu sen yaz': '最初のコメントを書こう',
+  'Video altyazıları': 'ビデオの字幕',
+  'Videolarda altyazı göster': '動画に字幕を表示する',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ビデオ内で話された文章が画面に書き込まれます。テキストは翻訳です: トルコ語音声で英語、他の言語でトルコ語。',
 };

@@ -444,4 +444,8 @@ const Map<String, String> cevirilerFi = {
       'Sarjoista ja elokuvista kirjoittamasi kommentit kootaan tänne.',
   'GIF ekle': 'Lisää GIF',
   'İlk yorumu sen yaz': 'Kirjoita ensimmäinen kommentti',
+  'Video altyazıları': 'Videon tekstitykset',
+  'Videolarda altyazı göster': 'Näytä tekstitykset videoissa',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Videolla puhuttu lause kirjoitetaan näytölle. Teksti on käännetty: Englanti turkin puheessa, turkki muilla kielillä.',
 };

@@ -444,4 +444,8 @@ const Map<String, String> cevirilerHi = {
       'शो और फ़िल्मों पर लिखी तुम्हारी टिप्पणियाँ यहाँ जमा होती हैं।',
   'GIF ekle': 'GIF जोड़ें',
   'İlk yorumu sen yaz': 'पहली टिप्पणी आप करें',
+  'Video altyazıları': 'वीडियो उपशीर्षक',
+  'Videolarda altyazı göster': 'वीडियो पर उपशीर्षक दिखाएँ',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'वीडियो में बोला गया वाक्य स्क्रीन पर लिखा हुआ है. पाठ का अनुवाद है: तुर्की भाषण में अंग्रेजी, अन्य भाषाओं में तुर्की।',
 };

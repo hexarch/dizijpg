@@ -442,4 +442,8 @@ const Map<String, String> cevirilerAz = {
       'Serial və filmlərə yazdığın şərhlər burada toplanır.',
   'GIF ekle': 'GIF əlavə et',
   'İlk yorumu sen yaz': 'İlk şərhi sən yaz',
+  'Video altyazıları': 'Video altyazılar',
+  'Videolarda altyazı göster': 'Videolarda subtitrləri göstərin',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Videoda deyilən cümlə ekrana yazılıb. Mətn tərcümədir: türk dilində ingiliscə, digər dillərdə türkcə.',
 };

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../altyazi.dart';
 import '../api.dart';
 import '../icerik_deposu.dart';
 import '../kitaplik_durumu.dart';
@@ -171,11 +172,16 @@ class AkisMedya extends StatefulWidget {
   /// Çift dokunuş = beğeni (Instagram davranışı). Verilmezse çift dokunuş
   /// tek dokunuş gibi davranır ve gönderi açılırdı — kullanıcı bildirdi.
   final VoidCallback? onCiftDokunus;
+
+  /// Oran BİLİNİYORSA (ör. bölüm kareleri hep 16:9) verilir: ölçüm beklenmez,
+  /// kutu ilk karede doğru yüksekliğe kurulur — yükleme sonrası zıplama olmaz.
+  final double? oran;
   const AkisMedya({
     super.key,
     required this.urller,
     this.onAc,
     this.onCiftDokunus,
+    this.oran,
   });
 
   @override
@@ -193,8 +199,9 @@ class _AkisMedyaState extends State<AkisMedya> {
   @override
   void initState() {
     super.initState();
+    _oran = widget.oran;
     // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
-    if (!_video(widget.urller.first)) {
+    if (_oran == null && !_video(widget.urller.first)) {
       final saglayici = CachedNetworkImageProvider(widget.urller.first);
       _akis = saglayici.resolve(const ImageConfiguration());
       _dinleyici = ImageStreamListener((bilgi, _) {
@@ -510,10 +517,22 @@ class _AkisVideoState extends State<AkisVideo> {
         ),
       );
     }
+    // Altyazı: videonun SOL ALTINDA, yani kartta beğeni/yorum satırının hemen
+    // ÜSTÜNDE. Kendi katmanında durur ve yalnız cümle değişince çizilir —
+    // oynatma konumu saniyede onlarca kez değişse de kart yeniden çizilmez.
+    // Sağ alttaki ses rozetinin altına girmesin diye genişlik sınırlı (0.72).
+    // IgnorePointer içinde: çift dokunuş (beğeni) ve tek dokunuş engellenmez.
+    final Widget icerik = Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(color: Colors.black, child: govde),
+        AltyaziKatmani(denetleyici: d, url: widget.url, genislikOrani: 0.72),
+      ],
+    );
     final kutu = VisibilityDetector(
       key: ValueKey('akis-video-${widget.url}'),
       onVisibilityChanged: _gorunurluk,
-      child: Container(color: Colors.black, child: govde),
+      child: icerik,
     );
     if (!widget.kendiOrani) return kutu; // kutuyu AkisMedya belirledi
     // Kutunun oranı videonun KENDİ oranı: genişlik tam dolar, yükseklik

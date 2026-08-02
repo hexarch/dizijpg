@@ -443,4 +443,8 @@ const Map<String, String> cevirilerMr = {
       'मालिका आणि चित्रपटांवरील तुझ्या टिप्पण्या इथे जमा होतात.',
   'GIF ekle': 'GIF जोडा',
   'İlk yorumu sen yaz': 'पहिली टिप्पणी तुम्ही लिहा',
+  'Video altyazıları': 'व्हिडिओ उपशीर्षके',
+  'Videolarda altyazı göster': 'व्हिडिओंवर सबटायटल्स दाखवा',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'व्हिडिओमध्ये बोललेले वाक्य स्क्रीनवर लिहिलेले आहे. मजकूर अनुवाद आहे: तुर्की भाषणात इंग्रजी, इतर भाषांमध्ये तुर्की.',
 };

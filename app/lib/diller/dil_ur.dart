@@ -442,4 +442,8 @@ const Map<String, String> cevirilerUr = {
       'سیریز اور فلموں پر تمہارے تبصرے یہاں جمع ہوتے ہیں۔',
   'GIF ekle': 'GIF شامل کریں',
   'İlk yorumu sen yaz': 'پہلا تبصرہ آپ لکھیں',
+  'Video altyazıları': 'ویڈیو سب ٹائٹلز',
+  'Videolarda altyazı göster': 'ویڈیوز پر سب ٹائٹلز دکھائیں۔',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ویڈیو میں بولا گیا جملہ سکرین پر لکھا ہوا ہے۔ متن کا ترجمہ ہے: ترکی تقریر میں انگریزی، دوسری زبانوں میں ترکی۔',
 };

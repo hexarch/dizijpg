@@ -443,4 +443,8 @@ const Map<String, String> cevirilerVi = {
       'Bình luận bạn viết cho phim bộ và phim lẻ sẽ gom về đây.',
   'GIF ekle': 'Thêm GIF',
   'İlk yorumu sen yaz': 'Hãy là người bình luận đầu tiên',
+  'Video altyazıları': 'Phụ đề video',
+  'Videolarda altyazı göster': 'Hiển thị phụ đề trên video',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Câu nói trong video được viết trên màn hình. Văn bản được dịch: tiếng Anh trong tiếng Thổ Nhĩ Kỳ, tiếng Thổ Nhĩ Kỳ bằng các ngôn ngữ khác.',
 };

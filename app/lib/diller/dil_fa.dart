@@ -442,4 +442,8 @@ const Map<String, String> cevirilerFa = {
       'نظرهایی که برای سریال‌ها و فیلم‌ها می‌نویسی اینجا جمع می‌شود.',
   'GIF ekle': 'افزودن GIF',
   'İlk yorumu sen yaz': 'اولین نظر را شما بنویسید',
+  'Video altyazıları': 'زیرنویس ویدیو',
+  'Videolarda altyazı göster': 'نمایش زیرنویس روی ویدیوها',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'جمله ای که در ویدیو گفته می شود روی صفحه نوشته می شود. متن ترجمه شده است: انگلیسی در گفتار ترکی، ترکی در زبان های دیگر.',
 };

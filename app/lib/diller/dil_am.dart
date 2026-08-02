@@ -433,4 +433,8 @@ const Map<String, String> cevirilerAm = {
       'ለተከታታዮችና ለፊልሞች የጻፍካቸው አስተያየቶች እዚህ ይሰበሰባሉ።',
   'GIF ekle': 'GIF አክል',
   'İlk yorumu sen yaz': 'መጀመሪያውን አስተያየት አንተ ጻፍ',
+  'Video altyazıları': 'የቪዲዮ የትርጉም ጽሑፎች',
+  'Videolarda altyazı göster': 'በቪዲዮዎች ላይ የትርጉም ጽሑፎችን አሳይ',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'በቪዲዮው ላይ የተነገረው ዓረፍተ ነገር በስክሪኑ ላይ ተጽፏል. ጽሑፉ ትርጉም ነው፡ እንግሊዝኛ በቱርክ ንግግር፣ ቱርክኛ በሌሎች ቋንቋዎች።',
 };

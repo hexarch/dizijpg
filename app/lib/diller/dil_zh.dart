@@ -428,4 +428,8 @@ const Map<String, String> cevirilerZh = {
   'Dizi ve filmlere yazdığın yorumlar burada toplanır.': '你对剧集和电影的评论都会汇集在这里。',
   'GIF ekle': '添加 GIF',
   'İlk yorumu sen yaz': '来写第一条评论吧',
+  'Video altyazıları': '视频字幕',
+  'Videolarda altyazı göster': '在视频上显示字幕',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      '视频中所说的句子写在屏幕上。文本翻译：土耳其语语音英语，其他语言土耳其语。',
 };

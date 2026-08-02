@@ -443,4 +443,8 @@ const Map<String, String> cevirilerBn = {
       'সিরিজ ও সিনেমায় লেখা তোমার মন্তব্য এখানে জমা হয়।',
   'GIF ekle': 'GIF যোগ করুন',
   'İlk yorumu sen yaz': 'প্রথম মন্তব্যটি আপনি করুন',
+  'Video altyazıları': 'ভিডিও সাবটাইটেল',
+  'Videolarda altyazı göster': 'ভিডিওতে সাবটাইটেল দেখান',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ভিডিওতে বলা বাক্যটি স্ক্রিনে লেখা আছে। পাঠ্যটি অনুবাদ: তুর্কি বক্তৃতায় ইংরেজি, অন্যান্য ভাষায় তুর্কি।',
 };

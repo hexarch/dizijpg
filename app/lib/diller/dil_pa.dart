@@ -442,4 +442,8 @@ const Map<String, String> cevirilerPa = {
       'ਸੀਰੀਜ਼ ਅਤੇ ਫਿਲਮਾਂ ਉੱਤੇ ਤੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਇੱਥੇ ਇਕੱਠੀਆਂ ਹੁੰਦੀਆਂ ਹਨ।',
   'GIF ekle': 'GIF ਸ਼ਾਮਲ ਕਰੋ',
   'İlk yorumu sen yaz': 'ਪਹਿਲੀ ਟਿੱਪਣੀ ਤੁਸੀਂ ਲਿਖੋ',
+  'Video altyazıları': 'ਵੀਡੀਓ ਉਪਸਿਰਲੇਖ',
+  'Videolarda altyazı göster': 'ਵੀਡੀਓਜ਼ ’ਤੇ ਉਪਸਿਰਲੇਖ ਦਿਖਾਓ',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ਵੀਡੀਓ ਵਿੱਚ ਬੋਲਿਆ ਵਾਕ ਸਕਰੀਨ ਉੱਤੇ ਲਿਖਿਆ ਹੋਇਆ ਹੈ। ਪਾਠ ਦਾ ਅਨੁਵਾਦ ਹੈ: ਤੁਰਕੀ ਭਾਸ਼ਣ ਵਿੱਚ ਅੰਗਰੇਜ਼ੀ, ਹੋਰ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਤੁਰਕੀ।',
 };

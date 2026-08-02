@@ -444,4 +444,8 @@ const Map<String, String> cevirilerMs = {
       'Komen yang kamu tulis untuk siri dan filem terkumpul di sini.',
   'GIF ekle': 'Tambah GIF',
   'İlk yorumu sen yaz': 'Jadilah yang pertama mengulas',
+  'Video altyazıları': 'Sari kata video',
+  'Videolarda altyazı göster': 'Tunjukkan sari kata pada video',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Ayat yang dituturkan dalam video itu ditulis di skrin. Teksnya ialah terjemahan: Bahasa Inggeris dalam ucapan Turki, Turki dalam bahasa lain.',
 };

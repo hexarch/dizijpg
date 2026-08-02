@@ -450,4 +450,8 @@ const Map<String, String> cevirilerMy = {
       'စီးရီးများနှင့် ရုပ်ရှင်များအတွက် သင်ရေးသော မှတ်ချက်များ ဤနေရာတွင် စုစည်းပါသည်။',
   'GIF ekle': 'GIF ထည့်ရန်',
   'İlk yorumu sen yaz': 'ပထမဆုံး မှတ်ချက်ကို သင်ရေးပါ',
+  'Video altyazıları': 'ဗီဒီယို စာတန်းထိုးများ',
+  'Videolarda altyazı göster': 'ဗီဒီယိုများတွင် စာတန်းထိုးပြပါ။',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ဗီဒီယိုတွင်ပြောသောစာကြောင်းကို စခရင်ပေါ်တွင်ရေးထားသည်။ စာသားသည် ဘာသာပြန်သည်- တူရကီစကားတွင် အင်္ဂလိပ်၊ အခြားဘာသာစကားဖြင့် တူရကီ။',
 };

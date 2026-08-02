@@ -446,4 +446,8 @@ const Map<String, String> cevirilerRo = {
       'Comentariile tale despre seriale și filme se adună aici.',
   'GIF ekle': 'Adaugă GIF',
   'İlk yorumu sen yaz': 'Fii primul care comentează',
+  'Video altyazıları': 'Subtitrări video',
+  'Videolarda altyazı göster': 'Afișați subtitrări la videoclipuri',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Propoziția rostită în videoclip este scrisă pe ecran. Textul este traducere: engleză în limba turcă, turcă în alte limbi.',
 };

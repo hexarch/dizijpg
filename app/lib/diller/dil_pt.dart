@@ -446,4 +446,8 @@ const Map<String, String> cevirilerPt = {
       'Os teus comentários sobre séries e filmes juntam-se aqui.',
   'GIF ekle': 'Adicionar GIF',
   'İlk yorumu sen yaz': 'Seja o primeiro a comentar',
+  'Video altyazıları': 'Legendas de vídeo',
+  'Videolarda altyazı göster': 'Mostrar legendas em vídeos',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'A frase falada no vídeo está escrita na tela. O texto é traduzido: inglês na língua turca, turco em outras línguas.',
 };

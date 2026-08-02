@@ -443,4 +443,8 @@ const Map<String, String> cevirilerId = {
       'Komentar yang kamu tulis untuk serial dan film terkumpul di sini.',
   'GIF ekle': 'Tambahkan GIF',
   'İlk yorumu sen yaz': 'Jadilah yang pertama berkomentar',
+  'Video altyazıları': 'Subtitle video',
+  'Videolarda altyazı göster': 'Tampilkan subtitle pada video',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Kalimat yang diucapkan dalam video tertulis di layar. Teksnya adalah terjemahan: Bahasa Inggris dalam pidato Turki, bahasa Turki dalam bahasa lain.',
 };

@@ -442,4 +442,8 @@ const Map<String, String> cevirilerSw = {
       'Maoni unayoandika kuhusu misururu na filamu hukusanywa hapa.',
   'GIF ekle': 'Ongeza GIF',
   'İlk yorumu sen yaz': 'Kuwa wa kwanza kutoa maoni',
+  'Video altyazıları': 'Manukuu ya video',
+  'Videolarda altyazı göster': 'Onyesha manukuu kwenye video',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Sentensi inayozungumzwa kwenye video imeandikwa kwenye skrini. Nakala ni tafsiri: Kiingereza katika hotuba ya Kituruki, Kituruki kwa lugha zingine.',
 };

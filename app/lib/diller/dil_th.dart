@@ -437,4 +437,8 @@ const Map<String, String> cevirilerTh = {
       'ความคิดเห็นที่คุณเขียนถึงซีรีส์และภาพยนตร์จะรวมอยู่ที่นี่',
   'GIF ekle': 'เพิ่ม GIF',
   'İlk yorumu sen yaz': 'มาเป็นคนแรกที่แสดงความคิดเห็น',
+  'Video altyazıları': 'คำบรรยายวิดีโอ',
+  'Videolarda altyazı göster': 'แสดงคำบรรยายในวิดีโอ',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'ประโยคที่พูดในวิดีโอถูกเขียนบนหน้าจอ ข้อความมีการแปล: ภาษาอังกฤษเป็นภาษาตุรกี ภาษาตุรกีในภาษาอื่นๆ',
 };

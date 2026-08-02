@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
@@ -67,22 +68,25 @@ class TekrarAyraci extends StatelessWidget {
     padding: const EdgeInsets.fromLTRB(12, 18, 12, 10),
     child: Row(
       children: [
-        const Expanded(child: Divider(color: Colors.white24)),
+        // Bu ayraç TEMA zemininin üstünde durur (Reels değil) — sabit beyaz
+        // tonlar açık temada beyaz-üstüne-beyaz olurdu. const de kaldırıldı:
+        // const alt ağaç tema değişiminde eski rengi taşırdı.
+        Expanded(child: Divider(color: DiziRenkler.metin24)),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Text(
               'Hepsini gördün, baştan gösteriyoruz'.c,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white70,
+              style: TextStyle(
+                color: DiziRenkler.metin70,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ),
-        const Expanded(child: Divider(color: Colors.white24)),
+        Expanded(child: Divider(color: DiziRenkler.metin24)),
       ],
     ),
   );
@@ -504,7 +508,15 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
               const Positioned(
                 top: 6,
                 right: 6,
-                child: Icon(Icons.play_arrow, size: 20, color: Colors.white),
+                // Gölge şart: video karesi de poster de yüklenemezse karo
+                // DiziRenkler.kart'a düşer (açık temada BEYAZ) ve gölgesiz
+                // beyaz ok kaybolurdu. Göz ikonu da aynı kalıbı kullanıyor.
+                child: Icon(
+                  Icons.play_arrow,
+                  size: 20,
+                  color: Colors.white,
+                  shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+                ),
               ),
             // Sol alt: göz + izlenme sayısı (okunurluk için gölgeli)
             Positioned(
@@ -1234,6 +1246,22 @@ class _ReelSayfaState extends State<_ReelSayfa>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    // Altyazı: profil fotoğrafı ve kullanıcı adının ÜSTÜNDE,
+                    // sol altta. Cümle bitince kendini siler ve buradan hiç
+                    // yer kaplamaz (altındaki blok yukarı kaymaz — yalnız
+                    // altyazı katmanı çizilir, sayfa yeniden kurulmaz).
+                    // Alt boşluk katmanın KENDİ kenar boşluğudur: altyazı
+                    // yokken hiç çizilmez, yer tutan boşluk kalmaz.
+                    if (_videoUrl != null)
+                      AltyaziKatmani(
+                        denetleyici: d,
+                        url: _videoUrl,
+                        // Sol 14 + sağ 86 dolgusu zaten eylem sütununu
+                        // dışarıda bırakıyor; kalan alanın tamamı kullanılır.
+                        genislikOrani: 1,
+                        yaziBoyutu: 15,
+                        kenarBosluk: const EdgeInsets.only(bottom: 8),
+                      ),
                     Row(
                       children: [
                         GestureDetector(
@@ -1245,8 +1273,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
                             url: avatar,
                             kullaniciAdi: y['kullanici_adi'] as String?,
                             yaricap: 19,
+                            // Arkaplan tema kartı (açık temada BEYAZ) olduğu
+                            // için ikon da tema tonu olmalı; sabit white54
+                            // açık temada beyaz üstünde kayboluyordu.
                             arkaplan: DiziRenkler.kart,
-                            ikonRenk: Colors.white54,
+                            ikonRenk: DiziRenkler.metin54,
                           ),
                         ),
                         const SizedBox(width: 8),

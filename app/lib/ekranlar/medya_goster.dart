@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
+import '../altyazi.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 
@@ -219,6 +220,20 @@ class _TamVideoState extends State<_TamVideo> {
               size: 72,
               color: Colors.white70,
             ),
+          // Altyazı: alt kontrol çubuğunun ÜSTÜNDE, sol altta. Çubukla
+          // çakışmasın diye bottom=86 (çubuk ~70px + boşluk).
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 86,
+            child: AltyaziKatmani(
+              denetleyici: d,
+              url: widget.url,
+              genislikOrani: 0.92,
+              yaziBoyutu: 15,
+              kenarBosluk: const EdgeInsets.only(left: 12),
+            ),
+          ),
           // Alt kontrol çubuğu: oynat/duraklat + sarma + süre + ses
           Positioned(
             left: 12,

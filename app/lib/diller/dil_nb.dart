@@ -444,4 +444,8 @@ const Map<String, String> cevirilerNb = {
       'Kommentarene dine om serier og filmer samles her.',
   'GIF ekle': 'Legg til GIF',
   'İlk yorumu sen yaz': 'Vær den første til å kommentere',
+  'Video altyazıları': 'Video undertekster',
+  'Videolarda altyazı göster': 'Vis undertekster på videoer',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'Setningen i videoen er skrevet på skjermen. Teksten er oversettelse: engelsk på tyrkisk tale, tyrkisk på andre språk.',
 };

@@ -440,4 +440,8 @@ const Map<String, String> cevirilerGu = {
       'શ્રેણી અને ફિલ્મો પર લખેલી તારી ટિપ્પણીઓ અહીં ભેગી થાય છે.',
   'GIF ekle': 'GIF ઉમેરો',
   'İlk yorumu sen yaz': 'પ્રથમ ટિપ્પણી તમે લખો',
+  'Video altyazıları': 'વિડિઓ સબટાઈટલ',
+  'Videolarda altyazı göster': 'વિડિઓઝ પર સબટાઈટલ બતાવો',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      'વીડિયોમાં બોલાયેલ વાક્ય સ્ક્રીન પર લખાયેલું છે. ટેક્સ્ટનો અનુવાદ છે: ટર્કિશ ભાષણમાં અંગ્રેજી, અન્ય ભાષાઓમાં ટર્કિશ.',
 };

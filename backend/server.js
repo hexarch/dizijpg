@@ -265,7 +265,14 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
   // gerçek dil buradan gelir. Önbellek anahtarı da dili içerdiğinden dil-başına
   // ayrı önbelleklenir. dilZorla: İngilizceye düşerken kullanılır.
   const dil = dilZorla || istekBaglam.getStore()?.tmdbDil || 'tr-TR';
-  if (/[?&]language=/.test(yol)) {
+  // /images uçlarında DİL OLMAZ: `language` görselleri dile göre süzer, bölüm
+  // kareleri ise dilsizdir (iso_639_1: null) → dil verilirse liste BOŞ döner.
+  // Görselde metin yok, tek önbellek girdisi bütün dillere hizmet eder.
+  if (/\/images(\?|$)/.test(yol)) {
+    yol = yol
+      .replace(/([?&])language=[a-zA-Z-]*&?/g, '$1')
+      .replace(/[?&]$/, '');
+  } else if (/[?&]language=/.test(yol)) {
     yol = yol.replace(/([?&]language=)[a-zA-Z-]+/, `$1${dil}`);
   } else {
     yol += (yol.includes('?') ? '&' : '?') + 'language=' + dil;
@@ -1052,6 +1059,7 @@ const TMDB_IZINLI = [
   /^\/(tv|movie)\/\d+$/,
   /^\/tv\/\d+\/season\/\d+$/,
   /^\/tv\/\d+\/season\/\d+\/episode\/\d+$/,
+  /^\/tv\/\d+\/season\/\d+\/episode\/\d+\/images$/, // bölüm kareleri (stills)
   /^\/(tv|movie)\/\d+\/(credits|videos|recommendations|similar|watch\/providers)$/,
   /^\/person\/\d+$/,
   /^\/person\/\d+\/combined_credits$/,
@@ -1111,7 +1119,14 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   }
   const parametreler = new URLSearchParams(req.query);
   parametreler.delete('dil'); // yalnız önbellek anahtarı için vardı
-  if (!parametreler.has('language')) parametreler.set('language', 'tr-TR');
+  // /images uçlarında `language` görselleri DİLE GÖRE SÜZER: bölüm kareleri
+  // dilsiz (iso_639_1: null) olduğu için language=tr-TR boş liste döndürür.
+  // Dil parametresini tamamen düşürüp tüm kareleri alıyoruz (metin yok).
+  if (/\/images$/.test(yol)) {
+    parametreler.delete('language');
+  } else if (!parametreler.has('language')) {
+    parametreler.set('language', 'tr-TR');
+  }
   // Detay sayfalarına ek verileri tek istekte iliştir.
   if (/^\/(tv|movie)\/\d+$/.test(yol) && !parametreler.has('append_to_response')) {
     parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids,watch/providers');
@@ -2196,6 +2211,17 @@ app.post('/medya',
     const videoMu = VIDEO_TURLERI.includes(tur);
     // Kare çıkarma yüklemeyi ~1 sn uzatır ama ızgarayı çok hafifletir.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
+    // Altyazı işini KUYRUĞA at — yüklemeyi BEKLETMEDEN. Konuşma tanıma
+    // dakikalar sürebilir; kullanıcı gönderisini beklemesin. Sunucudaki işçi
+    // (araclar/altyazi_uret.js --isle --surekli) kuyruğu sırayla boşaltır.
+    // Kuyruğa yazamamak yüklemeyi BOZMAZ: altyazı sonradan doldurulabilir.
+    if (videoMu) {
+      havuz.query(
+        `INSERT INTO video_altyazi_durum (medya, durum) VALUES ($1, 'bekliyor')
+         ON CONFLICT (medya) DO NOTHING`,
+        [`/medya/${dosya}`],
+      ).catch(() => {});
+    }
     res.json({
       yol: `/medya/${dosya}`,
       video: videoMu,
@@ -2204,6 +2230,40 @@ app.post('/medya',
     });
   }));
 
+
+// ---------- video altyazıları ----------
+// Oynayan videonun o anki cümlesi ekranda gösterilir (sol alt). Metin
+// ÇEVİRİDİR: kaynak Türkçe ise İngilizce, değilse Türkçe — gönderi metni
+// çevirisiyle AYNI kural. Segmentler sunucuda whisper.cpp ile ÖNCEDEN üretilir
+// (araclar/altyazi_uret.js); bu uç yalnız hazır veriyi okur, hiçbir şey üretmez.
+//
+// Altyazı YOKSA 200 + boş liste döner: istemci sessizce altyazısız oynatır,
+// 404 gürültüsü yapmaz ve her açılışta yeniden denemez.
+const ALTYAZI_DOSYA = /^m\d+-[0-9a-f]{6,32}\.(mp4|webm)$/;
+// Reels'te kullanıcı bir oturumda yüzlerce video geçebilir; sınır bol tutuldu.
+const altyaziLimiti = hizLimiti(900, (req) => `az:${req.kullanici?.id || req.ip}`);
+
+app.get('/altyazi/:dosya', girisIsteğeBagli, altyaziLimiti, sarici(async (req, res) => {
+  const dosya = String(req.params.dosya || '');
+  if (!ALTYAZI_DOSYA.test(dosya)) {
+    return res.status(400).json({ hata: 'Geçersiz medya adı' });
+  }
+  const medya = `/medya/${dosya}`;
+  const { rows } = await havuz.query(
+    `SELECT baslangic_ms, bitis_ms, metin, kaynak_dil, hedef_dil
+       FROM video_altyazilar WHERE medya = $1 ORDER BY sira LIMIT 2000`,
+    [medya],
+  );
+  // Kısa anahtar: tek videoda yüzlerce segment olabiliyor, alan adları
+  // gövdenin yarısını yiyordu. b=başlangıç ms, s=son ms, m=metin.
+  res.json({
+    kaynak_dil: rows[0]?.kaynak_dil || null,
+    hedef_dil: rows[0]?.hedef_dil || null,
+    segmentler: rows.map((r) => ({
+      b: r.baslangic_ms, s: r.bitis_ms, m: r.metin,
+    })),
+  });
+}));
 
 // Toplu içerik kartı: kitaplık/profil şeritleri 30 karo için 30 ayrı istek
 // yerine TEK istek atar. Ölçüm: tek tek 30 x ~61 KB = ~1,8 MB; buradan ~3 KB.

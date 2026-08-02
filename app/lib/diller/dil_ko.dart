@@ -431,4 +431,8 @@ const Map<String, String> cevirilerKo = {
       '시리즈와 영화에 남긴 댓글이 여기에 모여요.',
   'GIF ekle': 'GIF 추가',
   'İlk yorumu sen yaz': '첫 댓글을 남겨보세요',
+  'Video altyazıları': '비디오 자막',
+  'Videolarda altyazı göster': '비디오에 자막 표시',
+  'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
+      '영상에서 말하는 문장이 화면에 쓰여집니다. 텍스트는 번역됩니다: 터키어 음성에서는 영어, 다른 언어에서는 터키어입니다.',
 };
