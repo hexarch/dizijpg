@@ -1728,6 +1728,47 @@ oyuncu etiketleme".
   `app/test/ayarlar_sirasi_test.dart` (3 test); `masaustu_duzen_test.dart`
   yükseklik iddiaları güncellendi.
 
+## 3 Ağu — mobil tek-ay takvimi kısaldı ✅
+İstek: "takvimde tek ay gösteriminde mobilde takvim çok büyük duruyor. bence
+yükseklik olarak %35 azaltabiliriz, böylelikle aşağıda gözüken dizilere yer
+açılır." YALNIZ dar ekran; masaüstü 6 aylık kompakt ızgara DEĞİŞMEDİ.
+
+Kök sebep: gün hücresinin yüksekliği GENİŞLİKTEN türüyordu
+(`childAspectRatio: 0.82`), yani ekran büyüdükçe takvim orantısız uzuyordu —
+360 dp'de hücre 49.1x59.9, 430 dp'de 59.1x72.1. Artık satır yüksekliği sabit
+(`takvimGunYuksekligiDar = 44`).
+
+Ölçülen tek-ay bloğu (oklar + hafta başlıkları + ızgara + ayırıcı):
+
+| genişlik | satır | ESKİ | YENİ | fark |
+|---|---|---|---|---|
+| 320 dp | 6 | 416.8 | 336.0 | -%19.4 |
+| 360 dp | 6 | 458.6 | 336.0 | -%26.7 |
+| 360 dp | 5 | 398.7 | 292.0 | -%26.8 |
+| 430 dp | 6 | 531.8 | 336.0 | -%36.8 |
+
+Kazanç alttaki bölüm listesine gitti: 360x800 / 6 satırlı ayda liste alanı
+341.4 → 464.0 dp (+122.6 dp, +%35.9) — bölüm kartı 80 dp, tam görünen kart
+sayısı 4 → 5.
+
+**%35'e neden 360 dp'de ulaşılmadı (alt çubuktaki aynı çatışma):** hücreyi
+%35 kesmek 38.9 dp yapardı, 44 dp dokunma asgarisinin ALTI. Hücre 44'te
+DURDURULDU; kalan kısaltma dokunma hedefi olmayan yerlerden alındı (ok satırı
+58 → 44, hafta başlığı 12 → 11 pt, ara boşluk 4 → 2, yatay dolgu 8 → 4,
+ayırıcı 20 → 10). 6 satırlı ayda sıkıştırılamayan taban 6x44 + 44 = 308 dp;
+hafta başlıklarını ve ayırıcıyı tamamen silsek bile azami kısalma %32.8 —
+%35 dokunma asgarisi korunarak matematiksel olarak imkânsız (testle ispatlı).
+
+Yan fayda: 320 dp telefonda hücre GENİŞLİĞİ eskiden 43.4 dp idi (dokunma
+asgarisi zaten ihlal ediliyordu); yatay dolgu 8 → 4 ile 44.6 dp oldu.
+Ay adı dar ekranda tek satıra kilitlendi (FittedBox scaleDown) ki uzun
+yerelleştirmede satır 44'ün üstüne çıkmasın; rozetsiz günün yer tutucusu
+rozetle aynı yüksekliğe (15 dp) getirildi, sayılar artık aynı hizada.
+
+- Kanıt: `app/test/takvim_mobil_yukseklik_test.dart` (14 test) — 5 ve 6
+  satırlı ay, 320/360/430 dp, dokunma alanı, taşma yok, güne dokunma +
+  modal, liste büyümesi, masaüstü kompakt ızgara regresyonu.
+
 ## TAMAMLANANLAR (özet) 🚀
 Sarı tema · 45 dil (184 anahtar) · path URL + F5 kalıcılığı · service worker sökümü ·
 Akış (spoiler emniyetli) + kullanıcı arama · yorum yanıtları · 5 yıldız · çizgi-ikon

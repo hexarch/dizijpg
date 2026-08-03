@@ -24,6 +24,34 @@ const double masaustuGunSutunu = 360;
 const double takvimSayiPunto = 9;
 const double takvimSayiPuntoKompakt = 8;
 
+/// DAR EKRAN (mobil) tek-ay ızgarasında gün hücresinin SABİT yüksekliği.
+///
+/// 3 Ağu isteği: "mobilde takvim çok büyük duruyor, yükseklik olarak %35
+/// azaltabiliriz". Eskiden yükseklik `childAspectRatio: 0.82` ile GENİŞLİKTEN
+/// türüyordu: 360 dp telefonda hücre 49.1 x 59.9, 430 dp'de 59.1 x 72.1 —
+/// yani ekran büyüdükçe takvim orantısız uzuyordu. Artık satır yüksekliği
+/// ekrandan bağımsız sabit.
+///
+/// NEDEN TAM 44: dokunma hedefi asgarisi (kabuk.dart `dokunmaAsgari`). İstenen
+/// %35, ızgarayı 360 dp'de 38.9 dp hücreye düşürürdü — takvim kullanılamaz
+/// olurdu. Bu yüzden hücre 44'te DURDURULDU, kalan kısaltma başlık satırı,
+/// hafta başlıkları, yatay dolgu ve ayırıcıdan çıkarıldı.
+/// Ölçüler [takvimGunYuksekligiDar] ve kardeşleri üzerinden testlerle kilitli.
+const double takvimGunYuksekligiDar = 44;
+
+/// Dar ekranda ızgaranın yatay dolgusu (eski 8).
+/// 4'e indi ki 320 dp telefonda hücre GENİŞLİĞİ de 44'ün altına düşmesin:
+/// eskiden (320-16)/7 = 43.4 dp ile dokunma asgarisi ZATEN ihlal ediliyordu,
+/// şimdi (320-8)/7 = 44.6 dp.
+const double takvimYatayDolguDar = 4;
+
+/// Dar ekranda ay başlığı/ok satırının yüksekliği (eski 58 = 48 ikon + 10 dolgu).
+/// Oklar da birer dokunma hedefi, o yüzden burada da taban 44.
+const double takvimGezinmeYuksekligiDar = 44;
+
+/// Dar ekranda ızgara ile alttaki bölüm listesi arasındaki ayırıcı (eski 20).
+const double takvimAyiriciYuksekligiDar = 10;
+
 /// Ay-takvimi görünümü: bölümler yayın tarihlerine göre ay ızgarasında;
 /// bir güne dokununca o günün bölümleri altta listelenir.
 ///
@@ -102,7 +130,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
     final bugun = DateTime.now();
     final narrow = yerel.narrowWeekdays; // 0=Pazar
     final basliklar = [for (var i = 0; i < 7; i++) narrow[(haftaBasi + i) % 7]];
-    final yatay = kompakt ? 2.0 : 8.0;
+    final yatay = kompakt ? 2.0 : takvimYatayDolguDar;
     return Column(
       key: ValueKey(
         'takvim-ay-${ay.year.toString().padLeft(4, '0')}-'
@@ -122,7 +150,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                     child: Text(
                       b,
                       style: TextStyle(
-                        fontSize: kompakt ? 10 : 12,
+                        fontSize: kompakt ? 10 : 11,
                         color: DiziRenkler.metin70,
                         fontWeight: FontWeight.w700,
                       ),
@@ -132,7 +160,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
             ],
           ),
         ),
-        SizedBox(height: kompakt ? 2 : 4),
+        const SizedBox(height: 2),
         // Gün ızgarası
         Padding(
           padding: EdgeInsets.symmetric(horizontal: yatay),
@@ -141,7 +169,12 @@ class _AyTakvimiState extends State<AyTakvimi> {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
-              childAspectRatio: kompakt ? 1 : 0.82,
+              // Masaüstü kompakt ızgara: kare hücre (DEĞİŞMEDİ).
+              // Dar ekran: satır yüksekliği artık genişlikten türemiyor,
+              // sabit [takvimGunYuksekligiDar]. mainAxisExtent verildiğinde
+              // childAspectRatio yok sayılır, o yüzden kompaktta null.
+              childAspectRatio: 1,
+              mainAxisExtent: kompakt ? null : takvimGunYuksekligiDar,
             ),
             itemCount: oncesi + gunSayisi,
             itemBuilder: (context, i) {
@@ -158,7 +191,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
               return GestureDetector(
                 onTap: () => setState(() => _secili = tarih),
                 child: Container(
-                  margin: EdgeInsets.all(kompakt ? 1.5 : 2),
+                  margin: const EdgeInsets.all(1.5),
                   decoration: BoxDecoration(
                     color: secili
                         ? DiziRenkler.sari.withValues(alpha: 0.18)
@@ -183,7 +216,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                               : DiziRenkler.metin54,
                         ),
                       ),
-                      SizedBox(height: kompakt ? 2 : 3),
+                      const SizedBox(height: 2),
                       if (sayi > 0)
                         Container(
                           key: ValueKey('takvim-sayi-$anahtar'),
@@ -211,7 +244,11 @@ class _AyTakvimiState extends State<AyTakvimi> {
                           ),
                         )
                       else
-                        SizedBox(height: kompakt ? 9 : 11),
+                        // Rozetsiz günün yer tutucusu: rozetle AYNI yükseklik
+                        // olmalı, yoksa dolu/boş günlerin sayıları farklı
+                        // hizada durur. 44 dp'lik dar hücrede bu kayma göze
+                        // batıyor (ölçülen rozet kutusu 15 dp).
+                        SizedBox(height: kompakt ? 9 : 15),
                     ],
                   ),
                 ),
@@ -268,11 +305,18 @@ class _AyTakvimiState extends State<AyTakvimi> {
     // Masaüstünde başlık AY ARALIĞI gösterir ve oklar pencereyi bir ay kaydırır
     // (seçim yerinde kalır — altı ayın hepsi zaten ekranda). Dar ekranda eski
     // davranış: ayı değiştirir, seçimi o ayın ilk dolu gününe taşır.
+    //
+    // DAR EKRANDA SIKIŞIK: dolgular sıfırlanır, ok düğmeleri 48 yerine
+    // [takvimGezinmeYuksekligiDar] (44 = dokunma asgarisi) olur; satır 58 →
+    // 44 dp'ye iner. Masaüstünde ölçüler AYNEN kalır.
     final gezinme = Padding(
-      padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
+      padding: genis
+          ? const EdgeInsets.fromLTRB(8, 8, 8, 2)
+          : const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
           _AyOku(
+            sikisik: !genis,
             ikon: Icons.chevron_left,
             sayi: oncekiSayi,
             tooltip: 'Önceki ay'.c,
@@ -286,20 +330,33 @@ class _AyTakvimiState extends State<AyTakvimi> {
             },
           ),
           Expanded(
-            child: Text(
-              genis
-                  ? '${yerel.formatMonthYear(aylar.first)} - '
-                        '${yerel.formatMonthYear(aylar.last)}'
-                  : yerel.formatMonthYear(_ay),
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: DiziRenkler.metin,
-              ),
+            child: Builder(
+              builder: (_) {
+                final metin = Text(
+                  genis
+                      ? '${yerel.formatMonthYear(aylar.first)} - '
+                            '${yerel.formatMonthYear(aylar.last)}'
+                      : yerel.formatMonthYear(_ay),
+                  textAlign: TextAlign.center,
+                  maxLines: genis ? null : 1,
+                  softWrap: genis,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: DiziRenkler.metin,
+                  ),
+                );
+                // Dar ekranda satır yüksekliği 44'e KİLİTLİ: uzun bir ay adı
+                // (320 dp telefon, uzun yerelleştirme) iki satıra kaymamalı.
+                // Kırpmak yerine küçültüyoruz — ay adı okunur kalsın.
+                return genis
+                    ? metin
+                    : FittedBox(fit: BoxFit.scaleDown, child: metin);
+              },
             ),
           ),
           _AyOku(
+            sikisik: !genis,
             ikon: Icons.chevron_right,
             sayi: sonrakiSayi,
             tooltip: 'Sonraki ay'.c,
@@ -384,7 +441,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
             baslik: const SizedBox.shrink(),
             kompakt: false,
           ),
-          const Divider(height: 20),
+          const Divider(height: takvimAyiriciYuksekligiDar),
           Expanded(child: gunListesi),
         ],
       );
@@ -538,11 +595,16 @@ class _AyOku extends StatelessWidget {
   final int sayi;
   final String tooltip;
   final VoidCallback onTap;
+
+  /// Dar ekranda satır yüksekliğini kısaltmak için düğme 48 → 44 dp
+  /// ([takvimGezinmeYuksekligiDar]). 44 dokunma asgarisi; altına İNMEZ.
+  final bool sikisik;
   const _AyOku({
     required this.ikon,
     required this.sayi,
     required this.tooltip,
     required this.onTap,
+    this.sikisik = false,
   });
 
   @override
@@ -554,6 +616,21 @@ class _AyOku extends StatelessWidget {
         IconButton(
           tooltip: tooltip,
           onPressed: onTap,
+          padding: sikisik ? EdgeInsets.zero : null,
+          constraints: sikisik
+              ? const BoxConstraints.tightFor(
+                  width: takvimGezinmeYuksekligiDar,
+                  height: takvimGezinmeYuksekligiDar,
+                )
+              : null,
+          // IconButton varsayılanı tap hedefini 48'e YASTIKLAR; constraints
+          // tek başına satırı 44'e indirmiyor. shrinkWrap ile yastık kalkar,
+          // dokunma alanını yukarıdaki 44x44 constraints garanti eder.
+          style: sikisik
+              ? IconButton.styleFrom(
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                )
+              : null,
           icon: Icon(ikon, color: DiziRenkler.metin70),
         ),
         if (sayi > 0)
