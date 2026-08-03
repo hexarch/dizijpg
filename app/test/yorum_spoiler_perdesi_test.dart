@@ -45,7 +45,7 @@ Future<void> _kur(WidgetTester tester, {required bool spoiler}) async {
               yanitla: (_) {},
               yanitSil: (_) {},
               yanitlar: const [],
-              medyaAc: (_, _) {},
+              medyaAc: (_, _) async {},
             ),
           ),
         ),

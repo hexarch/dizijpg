@@ -171,11 +171,13 @@ class _YorumBolumuState extends State<YorumBolumu> {
 
   /// Medyaya TEK dokunuş: akıştaki gibi Reels açılır ve DOKUNULAN medyadan
   /// başlar (indeks düşürülürse kullanıcı hep ilk kareyi görür — 31 Tem hatası).
-  void _medyaAc(Map<String, dynamic> yorum, int medyaIndeks) {
+  Future<void> _medyaAc(Map<String, dynamic> yorum, int medyaIndeks) async {
     final liste = _medyaliYorumlar;
     final i = liste.indexWhere((y) => y['id'] == yorum['id']);
     if (i < 0) return;
-    Navigator.of(context, rootNavigator: true).push(
+    // Push'un Future'ı DÖNDÜRÜLÜR: kart Reels kapanınca beğeni durumunu
+    // paylaşılan haritadan tazeler.
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (_) => ReelsGorunumu(
           liste: liste,
@@ -556,7 +558,9 @@ class YorumKarti extends StatefulWidget {
   final int? diziId;
 
   /// Medyaya dokununca (yorum, dokunulan medyanın sırası) — Reels açar.
-  final void Function(Map<String, dynamic>, int) medyaAc;
+  /// Dönen Future Reels kapanınca tamamlanır: kart beğeni durumunu paylaşılan
+  /// haritadan tazeler.
+  final Future<void> Function(Map<String, dynamic>, int) medyaAc;
 
   const YorumKarti({
     super.key,
@@ -586,14 +590,38 @@ class _YorumKartiState extends State<YorumKarti> {
   @override
   void didUpdateWidget(YorumKarti eski) {
     super.didUpdateWidget(eski);
-    if (eski.yorum != widget.yorum) {
-      _begendim = widget.yorum['begendim'] == true;
-      _begeni = (widget.yorum['begeni'] as int?) ?? 0;
-      // Liste tazelenip kart başka yoruma denk gelirse perde yeniden kapanır.
-      if (eski.yorum['id'] != widget.yorum['id']) {
-        _spoilerAcik = widget.yorum['spoiler'] != true;
-      }
+    // Harita KİMLİĞİ değil DEĞERLERİ karşılaştırılır: Reels aynı harita
+    // nesnesini güncelleyebilir (kimlik aynı kalır, içerik değişir).
+    if (!_isleniyor) _haritadanTazele(kur: true);
+    // Liste tazelenip kart başka yoruma denk gelirse perde yeniden kapanır.
+    if (eski.yorum['id'] != widget.yorum['id']) {
+      _spoilerAcik = widget.yorum['spoiler'] != true;
     }
+  }
+
+  /// Yerel beğeni durumunu paylaşılan haritaya yazar (Reels aynı haritayı okur).
+  void _haritayaYaz() {
+    widget.yorum['begendim'] = _begendim;
+    widget.yorum['begeni'] = _begeni;
+  }
+
+  void _haritadanTazele({bool kur = false}) {
+    final begendim = widget.yorum['begendim'] == true;
+    final begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
+    if (begendim == _begendim && begeni == _begeni) return;
+    void ata() {
+      _begendim = begendim;
+      _begeni = begeni;
+    }
+
+    kur ? ata() : setState(ata);
+  }
+
+  /// Reels açılır, kapanınca kart haritadan tazelenir.
+  Future<void> _medyaAc(int medyaIndeks) async {
+    await widget.medyaAc(widget.yorum, medyaIndeks);
+    if (!mounted || _isleniyor) return;
+    _haritadanTazele();
   }
 
   Future<void> _begen() async {
@@ -604,20 +632,19 @@ class _YorumKartiState extends State<YorumKarti> {
       _begendim = !_begendim;
       _begeni += _begendim ? 1 : -1;
     });
+    _haritayaYaz();
     try {
       final d = await Api.yorumBegen(widget.yorum['id'] as int);
-      if (mounted) {
-        setState(() {
-          _begendim = d['begendim'] as bool;
-          _begeni = d['begeni'] as int;
-        });
-      }
+      _begendim = d['begendim'] == true;
+      _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
+      _haritayaYaz();
+      if (mounted) setState(() {});
     } catch (e) {
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1;
+      _haritayaYaz();
       if (mounted) {
-        setState(() {
-          _begendim = !_begendim;
-          _begeni += _begendim ? 1 : -1;
-        });
+        setState(() {});
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -729,7 +756,7 @@ class _YorumKartiState extends State<YorumKarti> {
               MedyaGaleri(
                 yollar: medya,
                 otomatikOynat: true,
-                onAc: (mi) => widget.medyaAc(widget.yorum, mi),
+                onAc: _medyaAc,
                 onCiftDokunus: _begen,
               ),
             ],

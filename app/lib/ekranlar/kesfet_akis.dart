@@ -957,22 +957,36 @@ class _ReelSayfaState extends State<_ReelSayfa>
     super.dispose();
   }
 
+  /// Yerel beğeni durumunu PAYLAŞILAN haritaya yazar: akış/profil kartları
+  /// aynı `Map` nesnesini okur, Reels'te atılan beğeni onlara da geçer.
+  void _haritayaYaz() {
+    widget.yorum['begendim'] = _begendim;
+    widget.yorum['begeni'] = _begeni;
+  }
+
   Future<void> _begenToggle({bool sadeceBegen = false}) async {
     if (sadeceBegen && _begendim) return;
     setState(() {
       _begendim = sadeceBegen ? true : !_begendim;
       _begeni += _begendim ? 1 : -1;
     });
+    _haritayaYaz();
     try {
-      await Api.post('/yorumlar/${widget.yorum['id']}/begen', {});
+      final d = await Api.yorumBegen(widget.yorum['id'] as int);
+      // Sunucunun doğrusu yerel sayımı ezer (başkasının beğenisi arada gelmiş
+      // olabilir); sonuç yine haritaya yazılır.
+      _begendim = d['begendim'] == true;
+      _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
+      _haritayaYaz();
+      if (!mounted) return;
+      setState(() {});
     } catch (_) {
-      // geri al
-      if (mounted) {
-        setState(() {
-          _begendim = !_begendim;
-          _begeni += _begendim ? 1 : -1;
-        });
-      }
+      // geri al — harita da eski hâline döner
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1;
+      _haritayaYaz();
+      if (!mounted) return;
+      setState(() {});
     }
   }
 
@@ -992,9 +1006,16 @@ class _ReelSayfaState extends State<_ReelSayfa>
   Future<void> _takipToggle() async {
     final ad = widget.yorum['kullanici_adi'] as String;
     setState(() => _takipte = !_takipte);
+    // Takip durumu da paylaşılan haritada tutulur (akış kartındaki "Takip Et"
+    // düğmesi aynı alanı okur).
+    if (_takipBilinir) widget.yorum['takip_ediyorum'] = _takipte;
     try {
-      await Api.takipToggle(ad);
+      final d = await Api.takipToggle(ad);
+      final takip = d['takip'] == true;
+      if (_takipBilinir) widget.yorum['takip_ediyorum'] = takip;
+      if (mounted) setState(() => _takipte = takip);
     } catch (_) {
+      if (_takipBilinir) widget.yorum['takip_ediyorum'] = !_takipte;
       if (mounted) setState(() => _takipte = !_takipte);
     }
   }

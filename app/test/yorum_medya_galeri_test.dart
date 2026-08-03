@@ -49,7 +49,7 @@ Future<List<int>> _kur(
               yanitla: (_) {},
               yanitSil: (_) {},
               yanitlar: const [],
-              medyaAc: (y, mi) => dokunulan.addAll([y['id'] as int, mi]),
+              medyaAc: (y, mi) async => dokunulan.addAll([y['id'] as int, mi]),
             ),
           ),
         ),

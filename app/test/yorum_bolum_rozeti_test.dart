@@ -63,7 +63,7 @@ Future<void> _kur(
               yanitla: (_) => _yanitCagrisi++,
               yanitSil: (_) {},
               yanitlar: const [],
-              medyaAc: (_, __) {},
+              medyaAc: (_, __) async {},
             ),
           ),
         ),

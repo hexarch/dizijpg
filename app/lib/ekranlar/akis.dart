@@ -145,9 +145,11 @@ class _AkisEkraniState extends State<AkisEkrani>
 
   /// Akıştaki medyaya dokununca: o gönderiden başlayıp tüm akışı Reels
   /// (dikey kaydırmalı, çift-dokunuş beğeni, sola kaydırma profil) modunda açar.
-  void _reelsAc(int i, int medyaIndeks) {
+  Future<void> _reelsAc(int i, int medyaIndeks) async {
     if (_akis == null) return;
-    Navigator.of(context, rootNavigator: true).push(
+    // Push'un Future'ı DÖNDÜRÜLÜR: kart Reels kapanınca beğeni/takip
+    // durumunu paylaşılan haritadan tazeler (Reels aynı haritalara yazar).
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (_) => ReelsGorunumu(
           liste: _akis!,
@@ -300,7 +302,9 @@ class AkisKarti extends StatefulWidget {
   final Map<String, dynamic> icerikler;
 
   /// Medyaya dokununca Reels aç — parametre DOKUNULAN medyanın sırası.
-  final void Function(int medyaIndeks)? onMedyaAc;
+  /// Dönen Future Reels KAPANINCA tamamlanır: kart o an paylaşılan haritadan
+  /// tazelenir (Reels'te beğenilen gönderi kartta da beğenili görünür).
+  final Future<void> Function(int medyaIndeks)? onMedyaAc;
 
   const AkisKarti({
     super.key,
@@ -334,15 +338,38 @@ class _AkisKartiState extends State<AkisKarti> {
   void didUpdateWidget(AkisKarti eski) {
     super.didUpdateWidget(eski);
     // Yenilemeden sonra (ValueKey ile State yeniden kullanılır) beğeni
-    // durumunu sunucudan gelen taze veriyle eşitle — işlem sürerken dokunma.
-    if (!_isleniyor && eski.yorum != widget.yorum) {
-      _begendim = widget.yorum['begendim'] == true;
-      _begeni = (widget.yorum['begeni'] as int?) ?? 0;
-      _yanit = (widget.yorum['yanit'] as int?) ?? 0;
-    }
-    if (!_takipIsleniyor && eski.yorum != widget.yorum) {
+    // durumunu taze veriyle eşitle — işlem sürerken dokunma.
+    // DİKKAT: harita KİMLİĞİ karşılaştırılmaz. Reels/başka bir kart AYNI
+    // harita nesnesini güncellemiş olabilir (`eski.yorum == widget.yorum`
+    // olduğu hâlde içerik değişmiştir); eskiden bu yüzden Reels'te atılan
+    // beğeni akış kartına yansımıyordu.
+    if (!_isleniyor) _haritadanTazele(kur: true);
+    if (!_takipIsleniyor) {
       _takipEdiyorum = widget.yorum['takip_ediyorum'] as bool?;
     }
+  }
+
+  /// Yerel durumu PAYLAŞILAN haritaya yazar. Reels, profil ve detay ekranları
+  /// aynı `Map` nesnesini okuduğu için tek doğru kaynak budur.
+  void _haritayaYaz() {
+    widget.yorum['begendim'] = _begendim;
+    widget.yorum['begeni'] = _begeni;
+  }
+
+  /// Haritadan yerel duruma okur. [kur] true ise setState çağrılmaz
+  /// (didUpdateWidget zaten yeniden çizim içinde).
+  void _haritadanTazele({bool kur = false}) {
+    final begendim = widget.yorum['begendim'] == true;
+    final begeni = (widget.yorum['begeni'] as num?)?.toInt() ?? 0;
+    final yanit = (widget.yorum['yanit'] as num?)?.toInt() ?? 0;
+    if (begendim == _begendim && begeni == _begeni && yanit == _yanit) return;
+    void ata() {
+      _begendim = begendim;
+      _begeni = begeni;
+      _yanit = yanit;
+    }
+
+    kur ? ata() : setState(ata);
   }
 
   /// Ortak yanıt sheet'i (Reels/profil ile AYNI). Kapanınca sayı tazelenir ki
@@ -360,6 +387,7 @@ class _AkisKartiState extends State<AkisKarti> {
       final sayi = (d['yorumlar'] as List<dynamic>)
           .where((c) => c['ust_id'] == y['id'])
           .length;
+      widget.yorum['yanit'] = sayi; // paylaşılan harita da tazelensin
       setState(() => _yanit = sayi);
     } catch (_) {
       /* sayı eski kalır; yanıt sheet'inde doğrusu zaten görüldü */
@@ -377,11 +405,14 @@ class _AkisKartiState extends State<AkisKarti> {
       _takipIsleniyor = true;
       _takipEdiyorum = true;
     });
+    widget.yorum['takip_ediyorum'] = true;
     try {
       final d = await Api.takipToggle(widget.yorum['kullanici_adi'] as String);
+      widget.yorum['takip_ediyorum'] = d['takip'] == true;
       if (!mounted) return;
       setState(() => _takipEdiyorum = d['takip'] == true);
     } catch (e) {
+      widget.yorum['takip_ediyorum'] = false;
       if (!mounted) return;
       setState(() => _takipEdiyorum = false);
       ScaffoldMessenger.of(
@@ -392,6 +423,9 @@ class _AkisKartiState extends State<AkisKarti> {
     }
   }
 
+  /// Beğeni: iyimser güncelleme + sunucu doğrulaması. HER adımda sonuç
+  /// paylaşılan haritaya yazılır — Reels ve profil aynı haritayı okuduğu için
+  /// akışta beğenilen gönderi orada da beğenili açılır.
   Future<void> _begen() async {
     if (_isleniyor) return;
     setState(() {
@@ -399,22 +433,32 @@ class _AkisKartiState extends State<AkisKarti> {
       _begendim = !_begendim;
       _begeni += _begendim ? 1 : -1;
     });
+    _haritayaYaz();
     try {
       final d = await Api.yorumBegen(widget.yorum['id'] as int);
+      _begendim = d['begendim'] == true;
+      _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
+      _haritayaYaz();
       if (!mounted) return;
-      setState(() {
-        _begendim = d['begendim'] == true;
-        _begeni = (d['begeni'] as num?)?.toInt() ?? _begeni;
-      });
+      setState(() {});
     } catch (_) {
+      // Hata: iyimser güncelleme hem yerelde hem haritada geri alınır.
+      _begendim = !_begendim;
+      _begeni += _begendim ? 1 : -1;
+      _haritayaYaz();
       if (!mounted) return;
-      setState(() {
-        _begendim = !_begendim;
-        _begeni += _begendim ? 1 : -1;
-      });
+      setState(() {});
     } finally {
       if (mounted) _isleniyor = false;
     }
+  }
+
+  /// Medyaya dokunuş: Reels açılır, KAPANINCA kart haritadan tazelenir
+  /// (Reels'te atılan beğeni/geri alma karta yansır).
+  Future<void> _medyaAc(int medyaIndeks) async {
+    await widget.onMedyaAc?.call(medyaIndeks);
+    if (!mounted || _isleniyor) return;
+    _haritadanTazele();
   }
 
   /// Yorum metnine kalan yükseklik: ekrandan kartın DİĞER parçaları düşülür.
@@ -651,7 +695,7 @@ class _AkisKartiState extends State<AkisKarti> {
                 const SizedBox(height: 6),
                 MedyaGaleri(
                   yollar: medya.cast<String>(),
-                  onAc: (mi) => widget.onMedyaAc?.call(mi),
+                  onAc: _medyaAc,
                   // Çift dokunuş beğenir; tek dokunuş DOKUNULAN kareden
                   // Reels açar (indeks düşerse ilk kareden başlardı).
                   onCiftDokunus: _begen,

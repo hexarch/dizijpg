@@ -1,6 +1,22 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Beğeni durumu görünümler arasında taşınmıyordu (DÜZELTİLDİ)
+**Kullanıcı bildirimi:** "Akışta gezerken bir posta çift tıklayıp beğendikten
+sonra tek tıkla reels moduna geçtiğimde beğendim olarak gözükmüyor."
+- 🚀 **Kök neden:** `AkisKarti` beğeniyi YALNIZ kendi State'inde tutuyordu;
+  Reels ise aynı gönderi **haritasını** (`Map`) okuyor. Harita hiç
+  güncellenmediği için Reels eski (beğenisiz) hâli gösteriyordu. Ters yön de
+  bozuktu: Reels'te atılan beğeni akış kartına dönmüyordu.
+- 🚀 **Çözüm (yeni durum katmanı YOK):** beğeni/takip değişikliği her adımda
+  (iyimser güncelleme, sunucu yanıtı, hata geri alması) **paylaşılan haritaya**
+  yazılıyor — `akis.dart`, `kesfet_akis.dart` (Reels), `yorumlar.dart`.
+  `didUpdateWidget` artık harita KİMLİĞİNİ değil DEĞERLERİNİ karşılaştırıyor;
+  Reels kapanınca kart `onMedyaAc` Future'ını bekleyip haritadan tazeleniyor.
+- 🚀 Yan düzeltmeler: yanıt sayısı ve `takip_ediyorum` da haritaya yazılıyor.
+- ✅ **6 yeni widget testi** (`test/begeni_paylasimi_test.dart`) — haritanın
+  kendisi iddia ediliyor; toplam 180 test geçiyor.
+
 ## 2026-08-03 — AKIŞ KARTI baştan tasarlandı (post dizaynı)
 **Kullanıcı isteği:** "akışta dizi film veya kişi arayı kaldır ve postun dizaynı
 şu şekilde olsun: sol yukarıda paylaşan kişinin profil resmi yanına ismi yanında

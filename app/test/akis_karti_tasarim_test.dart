@@ -135,7 +135,7 @@ Future<void> _kur(
                 AkisKarti(
                   yorum: yorum,
                   icerikler: _icerikler,
-                  onMedyaAc: (mi) => _reelsMedyaIndeks = mi,
+                  onMedyaAc: (mi) async => _reelsMedyaIndeks = mi,
                 ),
               ],
             ),
