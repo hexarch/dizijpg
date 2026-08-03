@@ -455,4 +455,10 @@ const Map<String, String> cevirilerAr = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'تعذر تحميل بعض المسلسلات، قد تكون القائمة ناقصة',
   'Yenile': 'تحديث',
+  'Devam etmek için giriş yap': 'سجل الدخول للمتابعة',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'حساب مجاني يكفي للتقييم والتعليق وبناء مكتبتك.',
+  'Şimdi değil': 'ليس الآن',
+  'Yorum yazmak için giriş yap': 'سجل الدخول لكتابة تعليق',
+  'Kişilere göndermek için giriş yap': 'سجل الدخول للإرسال إلى الأشخاص',
 };

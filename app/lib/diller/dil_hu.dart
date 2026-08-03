@@ -463,4 +463,10 @@ const Map<String, String> cevirilerHu = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Néhány sorozat nem töltődött be, a lista hiányos lehet',
   'Yenile': 'Frissítés',
+  'Devam etmek için giriş yap': 'Jelentkezz be a folytatáshoz',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Egy ingyenes fiók elég az értékeléshez, a hozzászóláshoz és a saját könyvtárad felépítéséhez.',
+  'Şimdi değil': 'Most nem',
+  'Yorum yazmak için giriş yap': 'Jelentkezz be hozzászólás írásához',
+  'Kişilere göndermek için giriş yap': 'Jelentkezz be, hogy elküldd másoknak',
 };

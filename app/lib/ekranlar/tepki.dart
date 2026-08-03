@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../tema.dart';
+import 'giris_istem.dart';
 
 /// Sunucudaki CHECK ile aynı sırada: bayılmış, gülmüş, şaşırmış, üzgün,
 /// korkmuş, sıkılmış, ağlamış, mutlu — dizi/film tepkileri.
@@ -75,6 +76,9 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
   }
 
   Future<void> _sec(String emoji) async {
+    // `/tepki` girisZorunlu: oturumsuzda iyimser güncelleme yapıp 401 ile geri
+    // almak yerine hiç başlamayız; kullanıcı doğrudan giriş istemini görür.
+    if (!girisGerekli(context)) return;
     if (_isleniyor) return;
     setState(() => _isleniyor = true);
     final yeni = _benim == emoji ? null : emoji;

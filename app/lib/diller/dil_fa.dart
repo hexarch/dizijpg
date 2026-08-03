@@ -459,4 +459,10 @@ const Map<String, String> cevirilerFa = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'برخی سریال‌ها بارگذاری نشدند، فهرست ممکن است ناقص باشد',
   'Yenile': 'تازه‌سازی',
+  'Devam etmek için giriş yap': 'برای ادامه وارد شوید',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'یک حساب رایگان برای امتیاز دادن، نظر نوشتن و ساختن کتابخانه شما کافی است.',
+  'Şimdi değil': 'الان نه',
+  'Yorum yazmak için giriş yap': 'برای نوشتن نظر وارد شوید',
+  'Kişilere göndermek için giriş yap': 'برای ارسال به افراد وارد شوید',
 };

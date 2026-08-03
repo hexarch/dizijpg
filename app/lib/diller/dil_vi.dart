@@ -460,4 +460,10 @@ const Map<String, String> cevirilerVi = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Một số phim không tải được, danh sách có thể chưa đầy đủ',
   'Yenile': 'Làm mới',
+  'Devam etmek için giriş yap': 'Đăng nhập để tiếp tục',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Một tài khoản miễn phí là đủ để chấm điểm, bình luận và xây dựng thư viện của bạn.',
+  'Şimdi değil': 'Để sau',
+  'Yorum yazmak için giriş yap': 'Đăng nhập để viết bình luận',
+  'Kişilere göndermek için giriş yap': 'Đăng nhập để gửi cho mọi người',
 };

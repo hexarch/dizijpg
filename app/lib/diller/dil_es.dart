@@ -461,4 +461,11 @@ const Map<String, String> cevirilerEs = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Algunas series no se pudieron cargar, la lista puede estar incompleta',
   'Yenile': 'Actualizar',
+  'Devam etmek için giriş yap': 'Inicia sesión para continuar',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Con una cuenta gratuita puedes puntuar, comentar y crear tu biblioteca.',
+  'Şimdi değil': 'Ahora no',
+  'Yorum yazmak için giriş yap': 'Inicia sesión para comentar',
+  'Kişilere göndermek için giriş yap':
+      'Inicia sesión para enviar a otras personas',
 };

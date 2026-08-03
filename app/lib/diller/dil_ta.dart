@@ -461,4 +461,10 @@ const Map<String, String> cevirilerTa = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'சில தொடர்கள் ஏற்றப்படவில்லை, பட்டியல் முழுமையற்றதாக இருக்கலாம்',
   'Yenile': 'புதுப்பி',
+  'Devam etmek için giriş yap': 'தொடர உள்நுழையவும்',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'மதிப்பிட, கருத்து எழுத, உங்கள் நூலகத்தை உருவாக்க இலவச கணக்கே போதும்.',
+  'Şimdi değil': 'இப்போது வேண்டாம்',
+  'Yorum yazmak için giriş yap': 'கருத்து எழுத உள்நுழையவும்',
+  'Kişilere göndermek için giriş yap': 'நபர்களுக்கு அனுப்ப உள்நுழையவும்',
 };

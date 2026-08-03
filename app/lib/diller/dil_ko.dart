@@ -448,4 +448,10 @@ const Map<String, String> cevirilerKo = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       '일부 시리즈를 불러오지 못했습니다. 목록이 불완전할 수 있습니다',
   'Yenile': '새로고침',
+  'Devam etmek için giriş yap': '계속하려면 로그인하세요',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      '무료 계정만 있으면 평점, 댓글, 내 보관함 만들기가 모두 가능합니다.',
+  'Şimdi değil': '나중에',
+  'Yorum yazmak için giriş yap': '댓글을 쓰려면 로그인',
+  'Kişilere göndermek için giriş yap': '사람들에게 보내려면 로그인',
 };

@@ -460,4 +460,10 @@ const Map<String, String> cevirilerId = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Beberapa serial gagal dimuat, daftar mungkin tidak lengkap',
   'Yenile': 'Segarkan',
+  'Devam etmek için giriş yap': 'Masuk untuk melanjutkan',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Akun gratis sudah cukup untuk memberi nilai, berkomentar, dan membangun pustakamu.',
+  'Şimdi değil': 'Nanti saja',
+  'Yorum yazmak için giriş yap': 'Masuk untuk menulis komentar',
+  'Kişilere göndermek için giriş yap': 'Masuk untuk mengirim ke orang lain',
 };

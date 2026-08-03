@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'giris_istem.dart';
 import 'ortak.dart';
 
 /// Gönderi paylaşma sayfası: üstte kişilere (mesajlaştıkların, takip
@@ -60,6 +61,10 @@ class _PaylasSheetState extends State<_PaylasSheet> {
   }
 
   Future<void> _yukle() async {
+    // `/paylas-hedefler` girisZorunlu. Oturumsuzda DM listesi yerine giriş
+    // istemi gösterilir; sistem paylaşımı ve bağlantı kopyalama ÇALIŞMAYA
+    // devam eder (paylaşım SEO'nun lehine, kısıtlamanın anlamı yok).
+    if (!Api.girisli) return;
     try {
       final d = await Api.get('/paylas-hedefler');
       if (mounted) {
@@ -158,106 +163,111 @@ class _PaylasSheetState extends State<_PaylasSheet> {
             ),
           ),
           // Kişiler: dokununca DM olarak gönderilir
-          SizedBox(
-            height: 132,
-            child: _hata != null
-                ? Center(
-                    child: Text(
-                      _hata!,
-                      style: TextStyle(color: DiziRenkler.metin54),
-                    ),
-                  )
-                : _kisiler == null
-                ? const Center(
-                    child: CircularProgressIndicator(color: DiziRenkler.sari),
-                  )
-                : _kisiler!.isEmpty
-                ? Center(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
+          if (!Api.girisli)
+            GirisIstemiKarti(metin: 'Kişilere göndermek için giriş yap'.c)
+          else
+            SizedBox(
+              height: 132,
+              child: _hata != null
+                  ? Center(
                       child: Text(
-                        'Henüz kimseyi takip etmiyorsun.'.c,
-                        textAlign: TextAlign.center,
+                        _hata!,
                         style: TextStyle(color: DiziRenkler.metin54),
                       ),
-                    ),
-                  )
-                : ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    itemCount: _kisiler!.length,
-                    itemBuilder: (context, i) {
-                      final k = _kisiler![i] as Map<String, dynamic>;
-                      final id = (k['id'] as num).toInt();
-                      final avatar = dosyaUrl(k['avatar'] as String?);
-                      final gonderildi = _gonderilen.contains(id);
-                      final gidiyor = _gonderiliyor.contains(id);
-                      return SizedBox(
-                        width: 84,
-                        child: InkWell(
-                          onTap: () => _dmGonder(k),
-                          borderRadius: BorderRadius.circular(12),
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 8),
-                              Stack(
-                                children: [
-                                  KullaniciAvatari(
-                                    url: avatar,
-                                    kullaniciAdi: k['kullanici_adi'] as String?,
-                                    yaricap: 28,
-                                    arkaplan: DiziRenkler.kart,
-                                  ),
-                                  if (gonderildi || gidiyor)
-                                    Positioned.fill(
-                                      child: DecoratedBox(
-                                        decoration: const BoxDecoration(
-                                          color: Colors.black54,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(
-                                          child: gidiyor
-                                              ? const SizedBox(
-                                                  width: 18,
-                                                  height: 18,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                        strokeWidth: 2,
-                                                        color: DiziRenkler.sari,
-                                                      ),
-                                                )
-                                              : const Icon(
-                                                  Icons.check,
-                                                  color: DiziRenkler.sari,
-                                                ),
+                    )
+                  : _kisiler == null
+                  ? const Center(
+                      child: CircularProgressIndicator(color: DiziRenkler.sari),
+                    )
+                  : _kisiler!.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          'Henüz kimseyi takip etmiyorsun.'.c,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: DiziRenkler.metin54),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      itemCount: _kisiler!.length,
+                      itemBuilder: (context, i) {
+                        final k = _kisiler![i] as Map<String, dynamic>;
+                        final id = (k['id'] as num).toInt();
+                        final avatar = dosyaUrl(k['avatar'] as String?);
+                        final gonderildi = _gonderilen.contains(id);
+                        final gidiyor = _gonderiliyor.contains(id);
+                        return SizedBox(
+                          width: 84,
+                          child: InkWell(
+                            onTap: () => _dmGonder(k),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Column(
+                              children: [
+                                const SizedBox(height: 8),
+                                Stack(
+                                  children: [
+                                    KullaniciAvatari(
+                                      url: avatar,
+                                      kullaniciAdi:
+                                          k['kullanici_adi'] as String?,
+                                      yaricap: 28,
+                                      arkaplan: DiziRenkler.kart,
+                                    ),
+                                    if (gonderildi || gidiyor)
+                                      Positioned.fill(
+                                        child: DecoratedBox(
+                                          decoration: const BoxDecoration(
+                                            color: Colors.black54,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Center(
+                                            child: gidiyor
+                                                ? const SizedBox(
+                                                    width: 18,
+                                                    height: 18,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                          strokeWidth: 2,
+                                                          color:
+                                                              DiziRenkler.sari,
+                                                        ),
+                                                  )
+                                                : const Icon(
+                                                    Icons.check,
+                                                    color: DiziRenkler.sari,
+                                                  ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '@${k['kullanici_adi']}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 11),
-                              ),
-                              if (gonderildi)
-                                Text(
-                                  'Gönderildi'.c,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: DiziRenkler.sariMetin,
-                                  ),
+                                  ],
                                 ),
-                            ],
+                                const SizedBox(height: 6),
+                                Text(
+                                  '@${k['kullanici_adi']}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 11),
+                                ),
+                                if (gonderildi)
+                                  Text(
+                                    'Gönderildi'.c,
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: DiziRenkler.sariMetin,
+                                    ),
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
+                        );
+                      },
+                    ),
+            ),
           Divider(color: DiziRenkler.metin12, height: 20),
           // Telefonun paylaşım sayfası + bağlantıyı kopyala
           Row(

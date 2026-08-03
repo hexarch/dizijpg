@@ -461,4 +461,11 @@ const Map<String, String> cevirilerFi = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Joitakin sarjoja ei voitu ladata, lista voi olla puutteellinen',
   'Yenile': 'Päivitä',
+  'Devam etmek için giriş yap': 'Kirjaudu sisään jatkaaksesi',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Ilmainen tili riittää arviointiin, kommentointiin ja oman kirjaston rakentamiseen.',
+  'Şimdi değil': 'Ei nyt',
+  'Yorum yazmak için giriş yap': 'Kirjaudu sisään kirjoittaaksesi kommentin',
+  'Kişilere göndermek için giriş yap':
+      'Kirjaudu sisään lähettääksesi ihmisille',
 };

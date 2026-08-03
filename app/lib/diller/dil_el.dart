@@ -463,4 +463,10 @@ const Map<String, String> cevirilerEl = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Ορισμένες σειρές δεν φορτώθηκαν, η λίστα ίσως είναι ελλιπής',
   'Yenile': 'Ανανέωση',
+  'Devam etmek için giriş yap': 'Συνδεθείτε για να συνεχίσετε',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Ένας δωρεάν λογαριασμός αρκεί για βαθμολογίες, σχόλια και τη δική σας βιβλιοθήκη.',
+  'Şimdi değil': 'Όχι τώρα',
+  'Yorum yazmak için giriş yap': 'Συνδεθείτε για να γράψετε σχόλιο',
+  'Kişilere göndermek için giriş yap': 'Συνδεθείτε για αποστολή σε άτομα',
 };

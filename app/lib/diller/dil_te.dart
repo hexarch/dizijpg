@@ -458,4 +458,10 @@ const Map<String, String> cevirilerTe = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'కొన్ని సిరీస్ లోడ్ కాలేదు, జాబితా అసంపూర్ణంగా ఉండవచ్చు',
   'Yenile': 'రిఫ్రెష్',
+  'Devam etmek için giriş yap': 'కొనసాగించడానికి లాగిన్ చేయండి',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'రేటింగ్ ఇవ్వడానికి, వ్యాఖ్య రాయడానికి మరియు మీ లైబ్రరీని నిర్మించడానికి ఉచిత ఖాతా చాలు.',
+  'Şimdi değil': 'ఇప్పుడు కాదు',
+  'Yorum yazmak için giriş yap': 'వ్యాఖ్య రాయడానికి లాగిన్ చేయండి',
+  'Kişilere göndermek için giriş yap': 'వ్యక్తులకు పంపడానికి లాగిన్ చేయండి',
 };

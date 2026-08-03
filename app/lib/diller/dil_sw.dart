@@ -459,4 +459,10 @@ const Map<String, String> cevirilerSw = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Baadhi ya mfululizo hazikupakiwa, orodha inaweza kuwa pungufu',
   'Yenile': 'Onyesha upya',
+  'Devam etmek için giriş yap': 'Ingia ili kuendelea',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Akaunti ya bure inatosha kukadiria, kutoa maoni na kujenga maktaba yako.',
+  'Şimdi değil': 'Si sasa',
+  'Yorum yazmak için giriş yap': 'Ingia ili kuandika maoni',
+  'Kişilere göndermek için giriş yap': 'Ingia ili kutuma kwa watu',
 };

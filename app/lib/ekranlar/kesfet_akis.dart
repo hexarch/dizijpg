@@ -15,6 +15,7 @@ import '../ceviri.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import 'etiket.dart';
+import 'giris_istem.dart';
 import 'ortak.dart';
 import 'paylas.dart';
 
@@ -965,6 +966,9 @@ class _ReelSayfaState extends State<_ReelSayfa>
   }
 
   Future<void> _begenToggle({bool sadeceBegen = false}) async {
+    // Çift dokunuş da buraya düşer: oturumsuzda kalp uçuşup geri alınmasın,
+    // doğrudan giriş istemi çıksın.
+    if (!girisGerekli(context)) return;
     if (sadeceBegen && _begendim) return;
     setState(() {
       _begendim = sadeceBegen ? true : !_begendim;
@@ -1004,6 +1008,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
   }
 
   Future<void> _takipToggle() async {
+    if (!girisGerekli(context)) return;
     final ad = widget.yorum['kullanici_adi'] as String;
     setState(() => _takipte = !_takipte);
     // Takip durumu da paylaşılan haritada tutulur (akış kartındaki "Takip Et"
@@ -1632,6 +1637,8 @@ class SikEmojiler {
 
   static Future<List<String>> getir() async {
     if (onbellek != null) return onbellek!;
+    // `/emojiler/sik` girisZorunlu: oturumsuzda 401 yerine sabit liste.
+    if (!Api.girisli) return yedek;
     try {
       final d = await Api.get('/emojiler/sik') as Map<String, dynamic>;
       final liste = birlestir(
@@ -1757,6 +1764,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
 
   /// Fotoğraf / video eki (galeri).
   Future<void> _ekSec() async {
+    if (!girisGerekli(context)) return;
     if (_ekler.length >= 4) return;
     final secim = await ImagePicker().pickMedia();
     if (secim == null) return;
@@ -1767,6 +1775,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   /// gerektirir; kullanıcının kendi galerisinden .gif seçilir. Sunucu GIF'i
   /// sihirli baytla doğrular ve kırpmadan geçirir (animasyon bozulmaz).
   Future<void> _gifSec() async {
+    if (!girisGerekli(context)) return;
     if (_ekler.length >= 4) return;
     final secim = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -1804,6 +1813,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   }
 
   Future<void> _gonder() async {
+    if (!girisGerekli(context)) return;
     final metin = _kutu.text.trim();
     if (metin.isEmpty || _gonderiliyor) return;
     if (_ekYukleniyor) {
@@ -2254,6 +2264,7 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
   }
 
   Future<void> _begen() async {
+    if (!girisGerekli(context)) return;
     if (_isleniyor) return;
     setState(() {
       _isleniyor = true;

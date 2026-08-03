@@ -461,4 +461,10 @@ const Map<String, String> cevirilerMs = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Sesetengah siri gagal dimuatkan, senarai mungkin tidak lengkap',
   'Yenile': 'Muat semula',
+  'Devam etmek için giriş yap': 'Log masuk untuk teruskan',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Akaun percuma sudah memadai untuk memberi penilaian, mengulas dan membina pustaka anda.',
+  'Şimdi değil': 'Bukan sekarang',
+  'Yorum yazmak için giriş yap': 'Log masuk untuk menulis ulasan',
+  'Kişilere göndermek için giriş yap': 'Log masuk untuk hantar kepada orang',
 };

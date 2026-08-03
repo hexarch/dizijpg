@@ -452,4 +452,10 @@ const Map<String, String> cevirilerHe = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'חלק מהסדרות לא נטענו, ייתכן שהרשימה חלקית',
   'Yenile': 'רענן',
+  'Devam etmek için giriş yap': 'התחבר כדי להמשיך',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'חשבון חינמי מספיק כדי לדרג, להגיב ולבנות את הספרייה שלך.',
+  'Şimdi değil': 'לא עכשיו',
+  'Yorum yazmak için giriş yap': 'התחבר כדי לכתוב תגובה',
+  'Kişilere göndermek için giriş yap': 'התחבר כדי לשלוח לאנשים',
 };

@@ -467,4 +467,10 @@ const Map<String, String> cevirilerMy = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'အချို့ဇာတ်လမ်းတွဲများ ဖွင့်၍မရပါ၊ စာရင်းမပြည့်စုံနိုင်ပါ',
   'Yenile': 'ပြန်လည်စတင်',
+  'Devam etmek için giriş yap': 'ဆက်လုပ်ရန် အကောင့်ဝင်ပါ',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'အဆင့်သတ်မှတ်ရန်၊ မှတ်ချက်ရေးရန်နှင့် သင့်စာကြည့်တိုက်တည်ဆောက်ရန် အခမဲ့အကောင့်တစ်ခုလုံလောက်ပါသည်။',
+  'Şimdi değil': 'ယခုမဟုတ်ပါ',
+  'Yorum yazmak için giriş yap': 'မှတ်ချက်ရေးရန် အကောင့်ဝင်ပါ',
+  'Kişilere göndermek için giriş yap': 'လူများထံပို့ရန် အကောင့်ဝင်ပါ',
 };

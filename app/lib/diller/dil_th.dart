@@ -454,4 +454,10 @@ const Map<String, String> cevirilerTh = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'บางซีรีส์โหลดไม่สำเร็จ รายการอาจไม่ครบ',
   'Yenile': 'รีเฟรช',
+  'Devam etmek için giriş yap': 'เข้าสู่ระบบเพื่อดำเนินการต่อ',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'บัญชีฟรีก็เพียงพอสำหรับการให้คะแนน แสดงความคิดเห็น และสร้างคลังของคุณ',
+  'Şimdi değil': 'ไว้ทีหลัง',
+  'Yorum yazmak için giriş yap': 'เข้าสู่ระบบเพื่อเขียนความคิดเห็น',
+  'Kişilere göndermek için giriş yap': 'เข้าสู่ระบบเพื่อส่งให้ผู้อื่น',
 };

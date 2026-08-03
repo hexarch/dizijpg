@@ -460,4 +460,10 @@ const Map<String, String> cevirilerMr = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'काही मालिका लोड होऊ शकल्या नाहीत, यादी अपूर्ण असू शकते',
   'Yenile': 'रिफ्रेश',
+  'Devam etmek için giriş yap': 'सुरू ठेवण्यासाठी लॉग इन करा',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'गुण देण्यासाठी, टिप्पणी लिहिण्यासाठी आणि तुमची लायब्ररी बनवण्यासाठी मोफत खाते पुरेसे आहे.',
+  'Şimdi değil': 'आता नको',
+  'Yorum yazmak için giriş yap': 'टिप्पणी लिहिण्यासाठी लॉग इन करा',
+  'Kişilere göndermek için giriş yap': 'लोकांना पाठवण्यासाठी लॉग इन करा',
 };

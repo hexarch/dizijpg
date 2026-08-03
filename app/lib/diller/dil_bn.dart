@@ -460,4 +460,10 @@ const Map<String, String> cevirilerBn = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'কিছু সিরিজ লোড হয়নি, তালিকা অসম্পূর্ণ হতে পারে',
   'Yenile': 'রিফ্রেশ',
+  'Devam etmek için giriş yap': 'চালিয়ে যেতে লগ ইন করুন',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'রেটিং দিতে, মন্তব্য করতে এবং নিজের লাইব্রেরি গড়তে একটি ফ্রি অ্যাকাউন্টই যথেষ্ট।',
+  'Şimdi değil': 'এখন নয়',
+  'Yorum yazmak için giriş yap': 'মন্তব্য লিখতে লগ ইন করুন',
+  'Kişilere göndermek için giriş yap': 'মানুষকে পাঠাতে লগ ইন করুন',
 };

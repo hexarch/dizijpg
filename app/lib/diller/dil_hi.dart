@@ -461,4 +461,10 @@ const Map<String, String> cevirilerHi = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'कुछ सीरीज़ लोड नहीं हो सकीं, सूची अधूरी हो सकती है',
   'Yenile': 'रिफ्रेश',
+  'Devam etmek için giriş yap': 'जारी रखने के लिए लॉग इन करें',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'रेटिंग देने, टिप्पणी करने और अपनी लाइब्रेरी बनाने के लिए एक मुफ़्त खाता काफ़ी है।',
+  'Şimdi değil': 'अभी नहीं',
+  'Yorum yazmak için giriş yap': 'टिप्पणी लिखने के लिए लॉग इन करें',
+  'Kişilere göndermek için giriş yap': 'लोगों को भेजने के लिए लॉग इन करें',
 };

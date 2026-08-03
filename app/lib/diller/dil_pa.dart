@@ -459,4 +459,10 @@ const Map<String, String> cevirilerPa = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'ਕੁਝ ਸੀਰੀਜ਼ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀਆਂ, ਸੂਚੀ ਅਧੂਰੀ ਹੋ ਸਕਦੀ ਹੈ',
   'Yenile': 'ਤਾਜ਼ਾ ਕਰੋ',
+  'Devam etmek için giriş yap': 'ਜਾਰੀ ਰੱਖਣ ਲਈ ਲਾਗ ਇਨ ਕਰੋ',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'ਰੇਟਿੰਗ ਦੇਣ, ਟਿੱਪਣੀ ਲਿਖਣ ਅਤੇ ਆਪਣੀ ਲਾਇਬ੍ਰੇਰੀ ਬਣਾਉਣ ਲਈ ਇੱਕ ਮੁਫ਼ਤ ਖਾਤਾ ਕਾਫ਼ੀ ਹੈ।',
+  'Şimdi değil': 'ਹੁਣ ਨਹੀਂ',
+  'Yorum yazmak için giriş yap': 'ਟਿੱਪਣੀ ਲਿਖਣ ਲਈ ਲਾਗ ਇਨ ਕਰੋ',
+  'Kişilere göndermek için giriş yap': 'ਲੋਕਾਂ ਨੂੰ ਭੇਜਣ ਲਈ ਲਾਗ ਇਨ ਕਰੋ',
 };

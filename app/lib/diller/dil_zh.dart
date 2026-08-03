@@ -442,4 +442,10 @@ const Map<String, String> cevirilerZh = {
   'Takvim güncellenemedi, eski liste gösteriliyor': '无法更新日历，正在显示旧列表',
   'Bazı diziler yüklenemedi, liste eksik olabilir': '部分剧集加载失败，列表可能不完整',
   'Yenile': '刷新',
+  'Devam etmek için giriş yap': '登录后继续',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      '免费账号即可评分、评论并建立你的片库。',
+  'Şimdi değil': '暂不',
+  'Yorum yazmak için giriş yap': '登录后写评论',
+  'Kişilere göndermek için giriş yap': '登录后发送给好友',
 };

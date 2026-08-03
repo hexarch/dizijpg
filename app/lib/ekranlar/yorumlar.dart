@@ -10,6 +10,7 @@ import '../ceviri.dart';
 import '../icerik_deposu.dart';
 import '../tema.dart';
 import 'etiket.dart';
+import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu;
 import 'ortak.dart';
 
@@ -73,6 +74,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   /// Yanıtla: yazma kutusunu yanıtlanana ayarla, kutuya kaydır ve klavyeyi aç
   /// (kutu ekranın üstünde olduğundan kullanıcı "bir şey olmadı" sanmasın).
   void _yanitla(Map<String, dynamic> hedef) {
+    if (!girisGerekli(context)) return;
     setState(() => _yanitlanan = hedef);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final ctx = _kutuKey.currentContext;
@@ -190,6 +192,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   }
 
   Future<void> _ekSec() async {
+    if (!girisGerekli(context)) return;
     if (_ekler.length >= enCokEk) return;
     final secim = await ImagePicker().pickMedia();
     if (secim == null) return;
@@ -213,6 +216,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   }
 
   Future<void> _gonder() async {
+    if (!girisGerekli(context)) return;
     final metin = _metin.text.trim();
     if (metin.isEmpty) return;
     setState(() => _gonderiliyor = true);
@@ -287,203 +291,209 @@ class _YorumBolumuState extends State<YorumBolumu> {
             ],
           ),
         ),
-        // Yorum yazma kutusu
-        Card(
-          key: _kutuKey,
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (_yanitlanan != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.reply,
-                          size: 16,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            '@{} kullanıcısına yanıt veriyorsun'.cf([
-                              _yanitlanan!['kullanici_adi'],
-                            ]),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: DiziRenkler.sariMetin,
-                            ),
+        // Yorum yazma kutusu. Oturumsuzda yerine giriş istemi kartı gelir:
+        // odaklanılabilen ama hiçbir zaman gönderilemeyen bir kutu, kullanıcıyı
+        // yazdırıp 401 ile karşılamak demekti.
+        if (!Api.girisli)
+          GirisIstemiKarti(metin: 'Yorum yazmak için giriş yap'.c),
+        if (Api.girisli)
+          Card(
+            key: _kutuKey,
+            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (_yanitlanan != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.reply,
+                            size: 16,
+                            color: DiziRenkler.sariMetin,
                           ),
-                        ),
-                        InkWell(
-                          borderRadius: BorderRadius.circular(16),
-                          onTap: () => setState(() => _yanitlanan = null),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.close,
-                              size: 16,
-                              color: DiziRenkler.metin38,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                EtiketliGirdi(
-                  controller: _metin,
-                  focusNode: _odak,
-                  maxLines: 3,
-                  minLines: 1,
-                  maxLength: 1000,
-                  decoration: InputDecoration(
-                    hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
-                    border: InputBorder.none,
-                  ),
-                ),
-                if (_ekler.isNotEmpty)
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (var i = 0; i < _ekler.length; i++)
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: SizedBox(
-                                width: 72,
-                                height: 72,
-                                child: _ekler[i]['video'] == true
-                                    ? Container(
-                                        color: DiziRenkler.koyuGri,
-                                        child: Icon(
-                                          Icons.videocam,
-                                          color: DiziRenkler.metin54,
-                                        ),
-                                      )
-                                    : CachedNetworkImage(
-                                        imageUrl: dosyaUrl(
-                                          _ekler[i]['yol'] as String,
-                                        )!,
-                                        fit: BoxFit.cover,
-                                      ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              '@{} kullanıcısına yanıt veriyorsun'.cf([
+                                _yanitlanan!['kullanici_adi'],
+                              ]),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DiziRenkler.sariMetin,
                               ),
                             ),
-                            Positioned(
-                              top: 0,
-                              right: 0,
-                              child: InkWell(
-                                onTap: () => setState(() => _ekler.removeAt(i)),
-                                borderRadius: BorderRadius.circular(20),
-                                // Görünmez padding: rozet küçük kalır ama
-                                // dokunma alanı 40px olur (20 avatar + 2×10)
-                                child: const Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: Colors.black87,
-                                    child: Icon(
-                                      Icons.close,
-                                      size: 13,
-                                      color: Colors.white,
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => setState(() => _yanitlanan = null),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.close,
+                                size: 16,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  EtiketliGirdi(
+                    controller: _metin,
+                    focusNode: _odak,
+                    maxLines: 3,
+                    minLines: 1,
+                    maxLength: 1000,
+                    decoration: InputDecoration(
+                      hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  if (_ekler.isNotEmpty)
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (var i = 0; i < _ekler.length; i++)
+                          Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: SizedBox(
+                                  width: 72,
+                                  height: 72,
+                                  child: _ekler[i]['video'] == true
+                                      ? Container(
+                                          color: DiziRenkler.koyuGri,
+                                          child: Icon(
+                                            Icons.videocam,
+                                            color: DiziRenkler.metin54,
+                                          ),
+                                        )
+                                      : CachedNetworkImage(
+                                          imageUrl: dosyaUrl(
+                                            _ekler[i]['yol'] as String,
+                                          )!,
+                                          fit: BoxFit.cover,
+                                        ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: InkWell(
+                                  onTap: () =>
+                                      setState(() => _ekler.removeAt(i)),
+                                  borderRadius: BorderRadius.circular(20),
+                                  // Görünmez padding: rozet küçük kalır ama
+                                  // dokunma alanı 40px olur (20 avatar + 2×10)
+                                  child: const Padding(
+                                    padding: EdgeInsets.all(10),
+                                    child: CircleAvatar(
+                                      radius: 10,
+                                      backgroundColor: Colors.black87,
+                                      child: Icon(
+                                        Icons.close,
+                                        size: 13,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                    ],
-                  ),
-                Row(
-                  children: [
-                    IconButton(
-                      onPressed: _ekYukleniyor || _ekler.length >= enCokEk
-                          ? null
-                          : _ekSec,
-                      icon: _ekYukleniyor
-                          ? const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: DiziRenkler.sari,
-                              ),
-                            )
-                          : Icon(
-                              Icons.attach_file,
-                              color: DiziRenkler.sariMetin,
-                            ),
-                      tooltip: 'Fotoğraf / video ekle'.c,
+                            ],
+                          ),
+                      ],
                     ),
-                    // Spoiler işareti: yorumu bulanık gönderir
-                    InkWell(
-                      onTap: () => setState(() => _spoiler = !_spoiler),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              _spoiler
-                                  ? Icons.visibility_off
-                                  : Icons.visibility_off_outlined,
-                              size: 20,
-                              color: _spoiler
-                                  ? DiziRenkler.sariMetin
-                                  : DiziRenkler.metin54,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              'Spoiler'.c,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: _spoiler
-                                    ? FontWeight.w700
-                                    : FontWeight.w400,
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: _ekYukleniyor || _ekler.length >= enCokEk
+                            ? null
+                            : _ekSec,
+                        icon: _ekYukleniyor
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: DiziRenkler.sari,
+                                ),
+                              )
+                            : Icon(
+                                Icons.attach_file,
+                                color: DiziRenkler.sariMetin,
+                              ),
+                        tooltip: 'Fotoğraf / video ekle'.c,
+                      ),
+                      // Spoiler işareti: yorumu bulanık gönderir
+                      InkWell(
+                        onTap: () => setState(() => _spoiler = !_spoiler),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 8,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                _spoiler
+                                    ? Icons.visibility_off
+                                    : Icons.visibility_off_outlined,
+                                size: 20,
                                 color: _spoiler
                                     ? DiziRenkler.sariMetin
                                     : DiziRenkler.metin54,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 4),
+                              Text(
+                                'Spoiler'.c,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: _spoiler
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                  color: _spoiler
+                                      ? DiziRenkler.sariMetin
+                                      : DiziRenkler.metin54,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    FilledButton(
-                      // Yükleme sürerken gönderilemez: eskiden basılınca
-                      // yorum medyasız gidiyor, video kaybediliyordu.
-                      onPressed: _gonderiliyor || _ekYukleniyor
-                          ? null
-                          : _gonder,
-                      child: _gonderiliyor
-                          ? SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: DiziRenkler.metin,
-                              ),
-                            )
-                          : Text('Gönder'.c),
-                    ),
-                  ],
-                ),
-              ],
+                      const Spacer(),
+                      FilledButton(
+                        // Yükleme sürerken gönderilemez: eskiden basılınca
+                        // yorum medyasız gidiyor, video kaybediliyordu.
+                        onPressed: _gonderiliyor || _ekYukleniyor
+                            ? null
+                            : _gonder,
+                        child: _gonderiliyor
+                            ? SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: DiziRenkler.metin,
+                                ),
+                              )
+                            : Text('Gönder'.c),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
         // Yorum listesi
         if (_yorumHatasi && _yorumlar == null)
           Padding(
@@ -625,6 +635,7 @@ class _YorumKartiState extends State<YorumKarti> {
   }
 
   Future<void> _begen() async {
+    if (!girisGerekli(context)) return;
     if (_isleniyor) return;
     setState(() {
       _isleniyor = true;
@@ -1153,6 +1164,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
   }
 
   Future<void> _begen() async {
+    if (!girisGerekli(context)) return;
     if (_isleniyor) return;
     setState(() {
       _isleniyor = true;

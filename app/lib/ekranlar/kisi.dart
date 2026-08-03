@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'giris_istem.dart';
 import 'ortak.dart';
 import 'puan_sheet.dart';
 import 'yorumlar.dart';
@@ -31,20 +32,25 @@ class _KisiEkraniState extends State<KisiEkrani> {
 
   Future<void> _puanYenile() async {
     try {
+      // `/benim/...` girisZorunlu: oturumsuzda hiç istenmez (401 gelirdi ve
+      // toplum puanı da onunla birlikte sessizce kaybolurdu).
       final sonuclar = await Future.wait([
-        Api.get('/benim/person/${widget.kisiId}'),
         Api.get('/incelemeler/person/${widget.kisiId}'),
+        if (Api.girisli) Api.get('/benim/person/${widget.kisiId}'),
       ]);
       if (mounted) {
         setState(() {
-          _benimPuan = sonuclar[0]['puan'] as Map<String, dynamic>?;
-          _toplum = sonuclar[1] as Map<String, dynamic>;
+          _toplum = sonuclar[0] as Map<String, dynamic>;
+          _benimPuan = sonuclar.length > 1
+              ? sonuclar[1]['puan'] as Map<String, dynamic>?
+              : null;
         });
       }
     } catch (_) {}
   }
 
   Future<void> _puanla() async {
+    if (!girisGerekli(context)) return;
     final kaydedildi = await puanlaVeKaydet(
       context,
       tur: 'person',
@@ -100,7 +106,10 @@ class _KisiEkraniState extends State<KisiEkrani> {
     final foto = posterUrl(k['profile_path'] as String?, boyut: 'w342');
 
     return Scaffold(
-      appBar: AppBar(title: Text(k['name'] as String? ?? '')),
+      appBar: AppBar(
+        title: Text(k['name'] as String? ?? ''),
+        actions: const [GirisEylemi()],
+      ),
       body: ListView(
         padding: EdgeInsets.fromLTRB(0, 16, 0, altGuvenli(context)),
         children: [

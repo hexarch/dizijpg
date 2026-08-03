@@ -14,6 +14,7 @@ import 'ekranlar/ayarlar.dart';
 import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
 import 'ekranlar/giris.dart';
+import 'ekranlar/giris_istem.dart';
 import 'ekranlar/gizlilik.dart';
 import 'ekranlar/gozat.dart';
 import 'ekranlar/izlediklerim.dart';
@@ -55,6 +56,31 @@ void rotayaGit(String hedef) {
   }
 }
 
+/// Oturum GEREKTİRMEYEN yol ön ekleri.
+///
+/// NEDEN: sunucu (nginx bot kuralı + `/og/...` uçları) arama motorlarına bu
+/// yollar için GERÇEK içerikli HTML döndürüyor. Oturumsuz ziyaretçi aynı
+/// adreste giriş formu görseydi bot ile kullanıcının gördüğü sayfa farklı
+/// olurdu — Google bunu "cloaking" sayar ve elle ceza verir. SEO-PLANI.md
+/// madde 0.1'in tek gerekçesi budur; liste bot kapsamıyla eşleşmelidir.
+///
+/// Kasıtlı olarak DIŞARIDA bırakılanlar:
+/// - `/kullanici/...`: profil sayfası kabuk İÇİNDE ve gizlilik tercihleri
+///   (izlenenler_gizli / yorumlar_gizli) varsayılan olarak KAPALI. Herkese
+///   açmak, kimsenin onaylamadığı bir kararla tüm profilleri dünyaya (ve iç
+///   bağlantılar üzerinden Google'a) açardı. Bot kapsamında da değil.
+/// - `/kesfet`, `/takvim`, `/akis`, `/arama`, `/profil`: kişiye özel, botun
+///   göremediği ekranlar; oturum gerektirmeleri cloaking yaratmaz.
+const acikYolOnEkleri = <String>['/icerik/', '/kisi/', '/gonderi/', '/dizi/'];
+
+/// Oturum gerektirmeyen tam yollar (ön ek DEĞİL: `/gizlilik-tercihleri` gibi
+/// ileride eklenebilecek kişisel bir ekran yanlışlıkla açılmasın).
+const acikTamYollar = <String>['/gizlilik'];
+
+/// [yol] oturumsuz ziyaretçiye açık mı?
+bool herkeseAcikMi(String yol) =>
+    acikTamYollar.contains(yol) || acikYolOnEkleri.any(yol.startsWith);
+
 /// URL tabanlı yönlendirme: web'de reload bulunulan sayfada kalır.
 GoRouter yonlendiriciOlustur(Oturum oturum) {
   // F5 güvencesi: motor başlangıç rotasını URL stratejisi kurulmadan '/'
@@ -69,15 +95,24 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
     refreshListenable: oturum,
     redirect: (context, state) {
       final girisli = oturum.girisli;
-      final giriste = state.matchedLocation == '/giris';
-      // Gizlilik politikası girişsiz de açılabilmeli (mağaza denetçileri dahil).
-      if (state.matchedLocation == '/gizlilik') return null;
-      if (!girisli) return giriste ? null : '/giris';
+      final konum = state.matchedLocation;
+      final giriste = konum == '/giris';
+      if (!girisli) {
+        if (giriste) return null;
+        // İçerik sayfaları (ve gizlilik politikası) oturumsuz açılır.
+        if (herkeseAcikMi(konum)) return null;
+        // Korumalı yol: nereye gitmek istediğini SAKLA, giriş sonrası oraya
+        // dönsün. Yoksa Google'dan gelip giriş yapan kullanıcı keşfette kalır
+        // ve tıkladığı içeriği kaybeder.
+        return girisYolu(state.uri.toString());
+      }
       // Yeni kayıt sonrası bir kez karşılama ekranı.
-      if (Oturum.karsilamaGerekli && state.matchedLocation != '/karsilama') {
+      if (Oturum.karsilamaGerekli && konum != '/karsilama') {
         return '/karsilama';
       }
-      if (giriste) return '/kesfet';
+      if (giriste) {
+        return donusHedefi(state.uri.queryParameters['donus']) ?? '/kesfet';
+      }
       return null;
     },
     routes: [

@@ -450,4 +450,10 @@ const Map<String, String> cevirilerAm = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'አንዳንድ ተከታታዮች አልተጫኑም፣ ዝርዝሩ ያልተሟላ ሊሆን ይችላል',
   'Yenile': 'አድስ',
+  'Devam etmek için giriş yap': 'ለመቀጠል ይግቡ',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'ደረጃ ለመስጠት፣ አስተያየት ለመጻፍ እና ቤተ መጻሕፍትዎን ለመገንባት ነፃ መለያ በቂ ነው።',
+  'Şimdi değil': 'አሁን አይደለም',
+  'Yorum yazmak için giriş yap': 'አስተያየት ለመጻፍ ይግቡ',
+  'Kişilere göndermek için giriş yap': 'ለሰዎች ለመላክ ይግቡ',
 };

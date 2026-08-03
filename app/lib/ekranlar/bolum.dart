@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'giris_istem.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
 import 'tepki.dart';
@@ -94,6 +95,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
   }
 
   Future<void> _izlendiToggle() async {
+    if (!girisGerekli(context)) return;
     setState(() => _izlendi = !_izlendi);
     try {
       await Api.post('/izleme/toggle', {
@@ -275,6 +277,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
     return Scaffold(
       appBar: AppBar(
         title: Text('S{} · {}. Bölüm'.cf([widget.sezonNo, widget.bolumNo])),
+        actions: const [GirisEylemi()],
       ),
       body: govde,
     );

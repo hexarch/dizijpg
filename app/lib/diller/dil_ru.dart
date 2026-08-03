@@ -462,4 +462,10 @@ const Map<String, String> cevirilerRu = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Некоторые сериалы не загрузились, список может быть неполным',
   'Yenile': 'Обновить',
+  'Devam etmek için giriş yap': 'Войдите, чтобы продолжить',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Бесплатного аккаунта достаточно, чтобы ставить оценки, писать комментарии и собирать свою библиотеку.',
+  'Şimdi değil': 'Не сейчас',
+  'Yorum yazmak için giriş yap': 'Войдите, чтобы написать комментарий',
+  'Kişilere göndermek için giriş yap': 'Войдите, чтобы отправить людям',
 };

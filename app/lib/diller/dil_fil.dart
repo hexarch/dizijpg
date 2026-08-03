@@ -463,4 +463,10 @@ const Map<String, String> cevirilerFil = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'May mga seryeng hindi na-load, maaaring kulang ang listahan',
   'Yenile': 'I-refresh',
+  'Devam etmek için giriş yap': 'Mag-log in para magpatuloy',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Sapat na ang libreng account para mag-rate, magkomento at buuin ang iyong library.',
+  'Şimdi değil': 'Hindi muna',
+  'Yorum yazmak için giriş yap': 'Mag-log in para magsulat ng komento',
+  'Kişilere göndermek için giriş yap': 'Mag-log in para ipadala sa mga tao',
 };

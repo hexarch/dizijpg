@@ -6,6 +6,7 @@ import '../api.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'giris_istem.dart';
 import 'ortak.dart';
 import 'puan_sheet.dart';
 import 'tepki.dart';
@@ -44,16 +45,22 @@ class _DetayEkraniState extends State<DetayEkrani> {
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
+      // `/benim/...` girisZorunlu bir uçtur ve oturumsuzda 401 döner. Listeye
+      // koşulsuz konsaydı Future.wait tümünü düşürür, aramadan gelen
+      // ziyaretçi içerik yerine kırmızı hata ekranı görürdü. Diğer iki uç
+      // (tmdb, incelemeler) oturum istemez.
       final sonuclar = await Future.wait([
         Api.get('/tmdb/${widget.tur}/${widget.tmdbId}'),
-        Api.get('/benim/${widget.tur}/${widget.tmdbId}'),
         Api.get('/incelemeler/${widget.tur}/${widget.tmdbId}'),
+        if (Api.girisli) Api.get('/benim/${widget.tur}/${widget.tmdbId}'),
       ]);
       if (!mounted) return;
       setState(() {
         _icerik = sonuclar[0] as Map<String, dynamic>;
-        _benim = sonuclar[1] as Map<String, dynamic>;
-        _incelemeler = sonuclar[2] as Map<String, dynamic>;
+        _incelemeler = sonuclar[1] as Map<String, dynamic>;
+        _benim = sonuclar.length > 2
+            ? sonuclar[2] as Map<String, dynamic>
+            : null;
       });
       // İzleyen sayısı sayfayı bloke etmesin: ayrı ve sessizce yüklenir
       Api.get('/izleyenler/${widget.tur}/${widget.tmdbId}')
@@ -70,6 +77,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
   }
 
   Future<void> _benimYenile() async {
+    if (!Api.girisli) return; // uç 401 döner; oturumsuzda kişisel veri yok
     try {
       final b = await Api.get('/benim/${widget.tur}/${widget.tmdbId}');
       if (mounted) setState(() => _benim = b as Map<String, dynamic>);
@@ -77,7 +85,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
   }
 
   /// Mutasyonu çalıştırır; hata olursa SnackBar gösterir.
+  /// Oturumsuzda istek HİÇ atılmaz: 401 SnackBar'ı yerine giriş istemi çıkar.
   Future<void> _mutasyon(Future<void> Function() istek) async {
+    if (!girisGerekli(context)) return;
     try {
       await istek();
     } catch (e) {
@@ -193,6 +203,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
   );
 
   Future<void> _puanla() async {
+    if (!girisGerekli(context)) return;
     final kaydedildi = await puanlaVeKaydet(
       context,
       tur: widget.tur,
@@ -213,6 +224,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
 
   /// Tüm izleme izlerini siler: hiç izlenmemiş sayılır + listelerden kalkar.
   Future<void> _sifirla() async {
+    if (!girisGerekli(context)) return;
     final onay = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -256,6 +268,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
 
   /// Bu içeriği açık profilden gizler/gösterir (iyimser, hatada geri alınır).
   Future<void> _gizleToggle() async {
+    if (!girisGerekli(context)) return;
     final eski = _benim?['gizli'] == true;
     setState(() => _benim?['gizli'] = !eski);
     try {
@@ -274,6 +287,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
   }
 
   Future<void> _listeyeEkle() async {
+    if (!girisGerekli(context)) return;
     try {
       final d = await Api.get('/listelerim');
       if (!mounted) return;
@@ -406,6 +420,9 @@ class _DetayEkraniState extends State<DetayEkrani> {
           SliverAppBar(
             expandedHeight: 220,
             pinned: true,
+            // Oturumsuz ziyaretçinin alt gezinme çubuğu yoktur (kabuk giriş
+            // ister); bu buton olmasa sayfada çıkışsız kalırdı.
+            actions: const [GirisEylemi()],
             flexibleSpace: FlexibleSpaceBar(
               background: arka == null
                   ? Container(color: DiziRenkler.kart)
@@ -1065,6 +1082,7 @@ class _SezonSatiriState extends State<_SezonSatiri> {
   }
 
   Future<void> _toggle(int bolumNo) async {
+    if (!girisGerekli(context)) return;
     try {
       await Api.post('/izleme/toggle', {
         'tmdb_id': widget.tmdbId,
@@ -1082,6 +1100,7 @@ class _SezonSatiriState extends State<_SezonSatiri> {
   }
 
   Future<void> _tumu(bool isaretle, int toplam) async {
+    if (!girisGerekli(context)) return;
     try {
       await Api.post('/izleme/sezon', {
         'tmdb_id': widget.tmdbId,

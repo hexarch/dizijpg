@@ -448,4 +448,10 @@ const Map<String, String> cevirilerJa = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       '一部の番組を読み込めませんでした。リストが不完全な可能性があります',
   'Yenile': '更新',
+  'Devam etmek için giriş yap': '続けるにはログインしてください',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      '無料アカウントがあれば、評価もコメントもライブラリ作成もできます。',
+  'Şimdi değil': '後で',
+  'Yorum yazmak için giriş yap': 'コメントするにはログイン',
+  'Kişilere göndermek için giriş yap': '相手に送るにはログイン',
 };

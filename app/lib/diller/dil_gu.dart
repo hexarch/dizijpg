@@ -457,4 +457,10 @@ const Map<String, String> cevirilerGu = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'કેટલીક સિરીઝ લોડ થઈ શકી નહીં, યાદી અધૂરી હોઈ શકે',
   'Yenile': 'રિફ્રેશ',
+  'Devam etmek için giriş yap': 'ચાલુ રાખવા લોગ ઇન કરો',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'રેટિંગ આપવા, ટિપ્પણી લખવા અને તમારી લાઇબ્રેરી બનાવવા માટે મફત ખાતું પૂરતું છે.',
+  'Şimdi değil': 'હમણાં નહીં',
+  'Yorum yazmak için giriş yap': 'ટિપ્પણી લખવા લોગ ઇન કરો',
+  'Kişilere göndermek için giriş yap': 'લોકોને મોકલવા લોગ ઇન કરો',
 };

@@ -461,4 +461,10 @@ const Map<String, String> cevirilerSr = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Неке серије нису учитане, листа може бити непотпуна',
   'Yenile': 'Освежи',
+  'Devam etmek için giriş yap': 'Пријавите се да наставите',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Бесплатан налог је довољан за оцењивање, коментарисање и прављење ваше библиотеке.',
+  'Şimdi değil': 'Не сада',
+  'Yorum yazmak için giriş yap': 'Пријавите се да напишете коментар',
+  'Kişilere göndermek için giriş yap': 'Пријавите се да пошаљете људима',
 };

@@ -463,4 +463,11 @@ const Map<String, String> cevirilerRo = {
   'Bazı diziler yüklenemedi, liste eksik olabilir':
       'Unele seriale nu au putut fi încărcate, lista poate fi incompletă',
   'Yenile': 'Reîmprospătează',
+  'Devam etmek için giriş yap': 'Conectează-te pentru a continua',
+  'Puan vermek, yorum yazmak ve kitaplığını oluşturmak için ücretsiz bir hesap yeterli.':
+      'Un cont gratuit este suficient ca să notezi, să comentezi și să îți creezi biblioteca.',
+  'Şimdi değil': 'Nu acum',
+  'Yorum yazmak için giriş yap': 'Conectează-te ca să scrii un comentariu',
+  'Kişilere göndermek için giriş yap':
+      'Conectează-te ca să trimiți altor persoane',
 };
