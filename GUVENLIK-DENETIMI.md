@@ -27,12 +27,20 @@ Hiçbir ayar değiştirilmedi, hiçbir servis durdurulmadı, veritabanına yaln�
 > basıyor. Kimlik doğrulaması gerektirmeden, tek bir HTTP isteğiyle yönetici
 > tarayıcısında JavaScript çalıştırılabilir. Günlüklerde **hiç deneme yok**
 > (0 kayıt) — yani henüz kimse fark etmemiş. Bunun kapatılması 1 numaralı iştir.
+>
+> **[x] 3 Ağu 2026 akşamı KAPATILDI.** İki katman birden uygulandı (görüntüleme
+> + sunucu), panelin TÜM kaçışsız noktaları tarandı ve düzeltildi, `esc()`/
+> `escJs()` için `backend/test/admin_kacis.test.js` yazıldı. Ayrıntı: §2.1.
 
 ---
 
 ## 2. Bulgular
 
-### 2.1 — [YÜKSEK] Yönetim panelinde kimlik doğrulamasız depolanmış XSS
+### 2.1 — [YÜKSEK] Yönetim panelinde kimlik doğrulamasız depolanmış XSS — [x] KAPATILDI (3 Ağu 2026)
+
+> **DURUM: KAPATILDI.** Aşağıdaki bulgu aynı gün canlıda yeniden üretildi,
+> iki katmanda kapatıldı ve kapandığı yine canlıda doğrulandı.
+> Yapılanlar için bu bölümün sonundaki **"Ne yapıldı"** başlığına bakın.
 
 **Ne:** Her isteğin ham yolu belleğe yazılıyor ve yönetim panelinde
 kaçırılmadan `innerHTML` ile basılıyor.
@@ -93,6 +101,89 @@ tarandı; ham `<script`/`onerror=`/`onload=`/`<img`/`<svg` içeren istek sayıs�
 (`${esc(i.yol)}`, `${esc(i.method)}`, `title="${esc(i.yol)}"`). Ek olarak
 `server.js:195`'te sunucu tarafında da kırp/temizle (ör. yalnız
 `[A-Za-z0-9/._%-]` bırak, 200 karakterle sınırla) — iki katman.
+
+#### Ne yapıldı (3 Ağu 2026, akşam)
+
+**Önce açık canlıda yeniden üretildi** (düzeltmeden ÖNCE):
+
+```
+$ curl --path-as-is "https://dizijpg.com/api/DENEME1<b>XSSISARET</b>"        -> 404
+$ (sunucuda) curl -H "x-admin-token: …" 127.0.0.1:8500/admin/istekler
+  'GET' '/DENEME1<b>XSSISARET</b>' 404      <-- HAM, kaçırılmamış
+```
+
+**1) Görüntüleme katmanı (asıl düzeltme) — `backend/admin.html`.**
+Panelin tamamı tarandı (79 `innerHTML` yazımı tek tek denetlendi, verisinin
+nereden geldiği belirlendi). Kaçışsız bulunan ve düzeltilen noktalar:
+
+| Yer | Alan | Verinin kaynağı |
+|---|---|---|
+| `akisGuncelle()` canlı akış | `i.yol` (metin **ve** `title=`), `i.method` (metin **ve** `class=`), `i.kod`, `i.sehir/i.ulke` | **kimliksiz saldırgan** — tek HTTP isteği |
+| `surumleriYukle()` hata tablosu | `h.hata` | istemci çökme raporları (kullanıcı cihazı) |
+| `satirSik()` şikayet tablosu | `s.tur` | DB enum |
+| `ulkeler()` | `u.ulke` | geoip |
+| `surumOnizle()` | `r.zorunlu/oneri/min_derleme/onerilen_derleme` | `ayarlar` tablosu (admin metni) |
+| `mailListele()` `onclick="mailAc('…','…')"` | `m.yon`, `m.id` | Maildir dosya adı |
+| 5 ayrı `onclick="kullaniciDetay('…')"` | kullanıcı adı | kullanıcı (§2.4 ile aynı kalıp) |
+
+**Öznitelik bağlamı ayrı ele alındı.** İki farklı bağlam, iki farklı kaçış:
+
+* `esc()` → metin + **tırnaklı öznitelik** (`title="…"`, `class="…"`).
+  `'` de eklendi (§2.4 önerisi): artık `&<>"'` kaçırılıyor.
+* `escJs()` (**yeni**) → `onclick="fn('…')"` gibi **öznitelik içinde JS dizesi**.
+  Burada `esc()` YETMEZ, hatta yanıltıcıdır: tarayıcı önce HTML varlıklarını
+  çözer, `&#39;` yeniden `'` olur ve dizeden çıkılır. Bu yüzden `escJs()` önce
+  JS kaçışı (`\` ve `'`), **sonra** HTML kaçışı uygular — sıra önemli.
+  Testte bu davranış "varlıkları çöz → JS dizesi olarak değerlendir" zinciriyle
+  birebir doğrulanıyor.
+
+`textContent` ile yazılan yerlerde kaçış YOK (orada `esc()` çift kaçış olur);
+`ba-kuyruk-ozet`'te yanlışlıkla duran `esc()` kaldırıldı.
+
+**2) Sunucu katmanı (derinlemesine savunma) — `backend/server.js`.**
+`yolTemiz()` + `metotTemiz()` eklendi; halkaya yalnız temizlenmiş değer yazılır
+(`yol: yolTemiz(req.path)`, `method: metotTemiz(req.method)`). Yol 200 karaktere
+kırpılır ve `[A-Za-z0-9/._~%:@+,=-]` dışındaki her şey (`<`, `>`, `"`, `'`,
+boşluk, ham UTF-8) düşürülür. Halka yalnız gösterim içindir; `/admin/kullanici/:ad`
+oradan sadece IP okur, davranış değişmedi.
+
+**3) Kapandığı canlıda doğrulandı** (düzeltmeden SONRA, aynı istek):
+
+```
+$ curl --path-as-is "https://dizijpg.com/api/DENEME2<b>XSSISARET</b>"       -> 404
+$ curl --path-as-is "https://dizijpg.com/api/z<img/src=x/onerror=XSSISARET3>" -> 404
+$ (sunucuda) curl -H "x-admin-token: …" 127.0.0.1:8500/admin/istekler
+  'GET' '/DENEME2bXSSISARET/b'            404   <-- < > düşürüldü
+  'GET' '/zimg/src=x/onerror=XSSISARET3'  404
+```
+
+Görüntüleme katmanı ayrıca **gerçek tarayıcıda**, sunucu temizliği baypas
+edilerek sınandı (panele doğrudan ham yük verildi):
+`akisGuncelle([{yol:'/DENEME<b>XSSISARET</b><img src=x onerror="…">', …}])`
+→ `window.__XSS_CALISTI = 0`, `#akis img` = 0, `#akis b` = 0, yük düz metin
+olarak göründü. Yani sunucu temizliği olmasa bile panel artık güvenli.
+
+**4) Panel bozulmadı.** Canlı panelde 8 sekmenin hepsi hatasız yüklendi
+(konsolda 0 hata): 120 yorum, 88 kullanıcı, 95 hata kaydı, 10 mail, 9 algoritma
+ağırlığı, büyüme/depolama kartları. Türkçe kesme işareti içeren gerçek yorumlar
+(`Clementine'in`, `Salāh ad-Dīn's`, `Pictures'`) ve `<3` yorumu doğru göründü;
+`&amp;`/`&#39;` gibi **çift kaçış izi yok**. `onclick` yolları hâlâ çalışıyor:
+kullanıcı satırına tıklayınca detay modalı, mail satırına tıklayınca mail modalı
+açıldı.
+
+**5) Test.** `backend/test/admin_kacis.test.js` (13 test) — `esc()`/`escJs()`
+davranışı, "tarayıcı çözünce orijinal metin geri gelir" (çift kaçış yok) özelliği,
+kritik şablon satırlarının kaçışı çağırdığı ve sunucu halkasına ham `req.path`
+yazılmadığı. Testin gerçekten koruduğu, kaçışı üç ayrı yerden geçici kaldırıp
+KIRMIZIYA döndürerek kanıtlandı (akış şablonu → 2 test kırmızı, `escJs`'in tek
+tırnak kaçışı → 2 test kırmızı, `yolTemiz` → 1 test kırmızı); hepsi geri alındı,
+73/73 test yeşil.
+
+**Kapsam notu:** `backend/` altında HTML üreten tek diğer yer `ogSayfa()` (bot/
+paylaşım kartı sayfaları). Orada zaten `htmlKacir()` var ve `&<>"'` hepsini
+kaçırıyor; canlıda hem ham yol parçasıyla (`x"><script>…` → `content="…&quot;&gt;&lt;script&gt;…"`)
+hem de `<` içeren gerçek bir kullanıcı yorumuyla (`<3` → `&lt;3`) doğrulandı.
+Değişiklik gerekmedi.
 
 ---
 
@@ -192,7 +283,13 @@ Ayrıca fail2ban `bantime`'ı 1 saatten 24 saate çıkarmak gürültüyü ciddi 
 
 ---
 
-### 2.4 — [DÜŞÜK] `esc()` tek tırnağı kaçırmıyor (şu an istismar edilemez)
+### 2.4 — [DÜŞÜK] `esc()` tek tırnağı kaçırmıyor (şu an istismar edilemez) — [x] KAPATILDI (3 Ağu 2026)
+
+> **DURUM: KAPATILDI.** `esc()`'ye `'` → `&#39;` eklendi. Ayrıca denetimin
+> işaret ettiği `onclick="kullaniciDetay('${esc(…)}')"` kalıbının **kökten
+> yanlış** olduğu görüldü: `&#39;` tarayıcıda tekrar `'`e çözülür, yani `esc()`
+> o bağlamda korumaz. Bu yüzden ayrı bir `escJs()` yardımcısı eklendi ve 5
+> `onclick` çağrısının hepsi ona geçirildi (bkz. §2.1 "Ne yapıldı").
 
 **Kanıt** (`backend/admin.html:1752`):
 
@@ -654,11 +751,11 @@ Not: dizin izni `755` — sunucuda root dışı kabuk erişimi olan biri okuyabi
 
 | # | İş | Öncelik | İş yükü | Risk |
 |---|---|---|---|---|
-| 1 | `admin.html:760-762`'de `i.yol`, `i.method`, `title` alanlarını `esc()` ile sar (§2.1) | **ACİL** | 5 dk | Yok — saf ekleme |
-| 2 | `server.js:195`'te `req.path`'i sunucu tarafında da kırp/temizle (ikinci katman) | **ACİL** | 10 dk | Düşük — panelde yol gösterimi kısalır |
+| ~~1~~ | ~~`admin.html:760-762`'de `i.yol`, `i.method`, `title` alanlarını `esc()` ile sar (§2.1)~~ | **[x] BİTTİ 3 Ağu** — panelin TAMAMI tarandı, 7 kaçışsız nokta düzeltildi, `escJs()` eklendi, test yazıldı | — | — |
+| ~~2~~ | ~~`server.js:195`'te `req.path`'i sunucu tarafında da kırp/temizle (ikinci katman)~~ | **[x] BİTTİ 3 Ağu** (`yolTemiz`/`metotTemiz`) | — | — |
 | ~~3~~ | ~~80/443'ü Cloudflare IP aralıklarına kilitle, diğerine 444 dön (§2.2)~~ | **[x] BİTTİ 3 Ağu** | — | — |
 | ~~4~~ | ~~`PasswordAuthentication no` **veya** `admin` hesabına `nologin` kabuk (§2.3)~~ | **[x] BİTTİ 3 Ağu** (ikisi de yapıldı) | — | — |
-| 5 | `esc()`'ye `'` → `&#39;` ekle (§2.4) | Düşük | 2 dk | Yok |
+| ~~5~~ | ~~`esc()`'ye `'` → `&#39;` ekle (§2.4)~~ | **[x] BİTTİ 3 Ağu** (+ `escJs()`) | — | — |
 | 6 | `Content-Security-Policy` başlığı ekle (§2.8) — XSS etkisini kökten sınırlar | Orta | 1-2 saat | Orta — Flutter web inline script kullanır, dikkatli ayarlanmalı, önce `Report-Only` ile dene |
 | 7 | `nodemailer` (YÜKSEK) + `firebase-admin` güncelle (§2.5) — `geoip-lite`'a DOKUNMA | Orta | 1-2 saat | **Orta-Yüksek** — üçü de kırıcı ana sürüm; posta ve push'u uçtan uca test et |
 | ~~8~~ | ~~fail2ban `bantime`'ı 1 saat → 24 saat~~ | **[x] BİTTİ 3 Ağu** | — | `maxretry` BİLEREK 5'te bırakıldı (§7) |

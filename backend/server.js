@@ -178,6 +178,13 @@ const ISTEK = {
   dakika: new Map(), // epoch-dakika → sayı (istek/dk grafiği)
 };
 const ISTEK_SINIR = 400;
+// GÜVENLİK (3 Ağu 2026 denetimi §2.1 — derinlemesine savunma):
+// İstek yolu ve metodu tamamen saldırgan denetimindedir ve admin panelinde
+// gösterilir. ASIL savunma görüntüleme katmanıdır (admin.html: esc()), burası
+// ikinci katman: yola yalnız gerçek URL karakterlerine izin verilir (<, >, ",
+// ', boşluk ve UTF-8 ham baytlar düşer) ve 200 karakterle sınırlanır.
+const yolTemiz = (y) => String(y ?? '').slice(0, 200).replace(/[^A-Za-z0-9/._~%:@+,=-]/g, '');
+const metotTemiz = (m) => String(m ?? '').slice(0, 12).replace(/[^A-Za-z-]/g, '').toUpperCase();
 app.use((req, res, next) => {
   if (req.method === 'OPTIONS') return next();
   const bas = Date.now();
@@ -192,8 +199,8 @@ app.use((req, res, next) => {
       if (g?.country) ISTEK.ulke.set(g.country, (ISTEK.ulke.get(g.country) || 0) + 1);
       ISTEK.son.unshift({
         ip,
-        yol: req.path,
-        method: req.method,
+        yol: yolTemiz(req.path),
+        method: metotTemiz(req.method),
         kod: res.statusCode,
         sure: Date.now() - bas,
         ts: Date.now(),

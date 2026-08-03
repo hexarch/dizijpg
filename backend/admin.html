@@ -753,15 +753,19 @@ function globeGuncelle(istekler){
   $('#globe-sayi').textContent=geo.length+' konumlu';
 }
 
-/* ---- Canlı akış ---- */
+/* ---- Canlı akış ----
+   GÜVENLİK: yol ve metot DIŞARIDAN gelir (herhangi biri `GET /api/<img …>`
+   isteğiyle buraya metin yazdırabilir) — hem metin hem title= özniteliği
+   kaçırılmak ZORUNDA. Sunucu tarafında da temizlik var (server.js: yolTemiz)
+   ama asıl savunma burasıdır. */
 function akisGuncelle(istekler){
   $('#akis').innerHTML = istekler.slice(0,60).map(i=>`
     <div class="istek">
-      <span class="yontem ${i.method}">${i.method}</span>
-      <span class="durum ${dCls(i.kod)}">${i.kod}</span>
-      <span class="yol" title="${i.yol}">${i.yol}</span>
-      <span class="konum">${bayrak(i.ulke)} ${i.sehir||i.ulke||'?'}</span>
-      <span class="sure">${i.sure}ms · ${zaman(i.ts)}</span>
+      <span class="yontem ${esc(i.method)}">${esc(i.method)}</span>
+      <span class="durum ${dCls(i.kod)}">${esc(i.kod)}</span>
+      <span class="yol" title="${esc(i.yol)}">${esc(i.yol)}</span>
+      <span class="konum">${bayrak(i.ulke)} ${esc(i.sehir||i.ulke||'?')}</span>
+      <span class="sure">${esc(i.sure)}ms · ${zaman(i.ts)}</span>
     </div>`).join('');
 }
 
@@ -802,7 +806,7 @@ function ulkeler(list){
   $('#ulkeler').innerHTML = list.slice(0,12).map(u=>`
     <div class="ulke-satir">
       <span style="font-size:16px">${bayrak(u.ulke)}</span>
-      <span style="width:34px" class="mono">${u.ulke||'??'}</span>
+      <span style="width:34px" class="mono">${esc(u.ulke||'??')}</span>
       <span class="ulke-bar"><i style="width:${u.sayi/max*100}%"></i></span>
       <span class="mono" style="color:var(--soluk);min-width:40px;text-align:right">${u.sayi}</span>
     </div>`).join('') || '<div class="bos">Henüz veri yok</div>';
@@ -821,7 +825,7 @@ function spark(seri){
 }
 
 /* ---- Son hareketler + çevrimiçi + kullanıcı detayı ---- */
-const kAd = a => `<a href="#" onclick="kullaniciDetay('${esc(a)}');return false">@${esc(a)}</a>`;
+const kAd = a => `<a href="#" onclick="kullaniciDetay('${escJs(a)}');return false">@${esc(a)}</a>`;
 function hSatir(ust, alt, sag){
   return `<div class="istek" style="display:block">
     <div style="display:flex;gap:8px;align-items:center">
@@ -837,7 +841,7 @@ async function hareketleriYukle(){
     const ic=k=>esc(d.icerikler[k]||'?');
     $('#cev-say').textContent=d.cevrimici.sayi+' kişi';
     $('#cevrimici').innerHTML = d.cevrimici.liste.map(u=>
-      `<button class="btn" onclick="kullaniciDetay('${esc(u.kullanici_adi)}')">🟢 @${esc(u.kullanici_adi)}${u.misafir?' <span style="color:var(--soluk2)">(misafir)</span>':''}</button>`
+      `<button class="btn" onclick="kullaniciDetay('${escJs(u.kullanici_adi)}')">🟢 @${esc(u.kullanici_adi)}${u.misafir?' <span style="color:var(--soluk2)">(misafir)</span>':''}</button>`
     ).join('') || '<span style="color:var(--soluk)">Şu an kimse yok</span>';
     $('#h-yorumlar').innerHTML = d.yorumlar.map(y=>hSatir(
       `${kAd(y.kullanici_adi)} → <b>${ic(y.tur+':'+y.tmdb_id)}</b>`+
@@ -901,7 +905,7 @@ async function kullaniciDetay(ad){
       <b style="font-size:12px">Son yorumları</b>
       <div style="margin-top:6px">${(k.son_yorumlar||[]).map(y=>hSatir(
         `<b>${esc(y.tur)} #${y.tmdb_id}</b>${y.sezon?` <span class="mono">S${y.sezon}B${y.bolum}</span>`:''}${y.medya_sayi?` 📎${y.medya_sayi}`:''}`+
-        ` <button class="btn tehlike" style="padding:1px 8px;font-size:11px" onclick="yorumSil(${y.id});kullaniciDetay('${esc(ad)}')">sil</button>`,
+        ` <button class="btn tehlike" style="padding:1px 8px;font-size:11px" onclick="yorumSil(${y.id});kullaniciDetay('${escJs(ad)}')">sil</button>`,
         esc(y.metin||'')+` <span class="mono" style="color:var(--soluk2)">👁${y.goruntulenme}</span>`,
         new Date(y.tarih).toLocaleDateString('tr')
       )).join('')||'<div style="color:var(--soluk)">Yorumu yok</div>'}</div>`;
@@ -1348,7 +1352,7 @@ async function surumleriYukle(){
     $('#ba-hatalar').innerHTML = d.hatalar.length? `
       <thead><tr><th>Sürüm</th><th>Hata</th><th>Son</th></tr></thead>
       <tbody>${d.hatalar.map(h=>`<tr><td class="mono">${esc(h.surum)}</td>
-        <td class="mono">${h.hata}</td>
+        <td class="mono">${esc(h.hata)}</td>
         <td class="kck mono">${new Date(h.son).toLocaleDateString('tr')}</td></tr>`).join('')}</tbody>`
       : '<tbody><tr><td class="bos">Hata yok 🎉</td></tr></tbody>';
     await surumOnizle();
@@ -1361,8 +1365,8 @@ async function surumOnizle(){
   try{
     const r=await (await fetch('/api/surum-kontrol?derleme='+Math.max(1,d-1))).json();
     $('#ba-onizleme').innerHTML=`Derleme <b>${Math.max(1,d-1)}</b> için kapı yanıtı:
-      zorunlu=<b style="color:${r.zorunlu?'var(--kirmizi)':'var(--yesil)'}">${r.zorunlu}</b> ·
-      öneri=<b>${r.oneri}</b> · min=${r.min_derleme??'—'} · önerilen=${r.onerilen_derleme??'—'}`;
+      zorunlu=<b style="color:${r.zorunlu?'var(--kirmizi)':'var(--yesil)'}">${esc(r.zorunlu)}</b> ·
+      öneri=<b>${esc(r.oneri)}</b> · min=${esc(r.min_derleme??'—')} · önerilen=${esc(r.onerilen_derleme??'—')}`;
   }catch(e){ $('#ba-onizleme').textContent='Kapı okunamadı: '+e.message; }
 }
 async function ayarKaydet(){
@@ -1393,7 +1397,9 @@ async function kuyrukYukle(){
   try{
     const d=await api(`/cevrilecek?dil=${encodeURIComponent(dil)}&limit=200`);
     const gonderi=d.metinler.reduce((t,m)=>t+m.gonderi,0);
-    $('#ba-kuyruk-ozet').textContent=`${d.adet} metin · ${gonderi} gönderi bekliyor (${esc(dil)})`;
+    // textContent kaçış İSTEMEZ — esc() burada `&#39;` gibi kaçışları harfiyen
+    // gösterirdi (çift kaçış). Kaçış yalnız innerHTML'e giden yerlerde.
+    $('#ba-kuyruk-ozet').textContent=`${d.adet} metin · ${gonderi} gönderi bekliyor (${dil})`;
     $('#ba-kuyruk').innerHTML = d.metinler.length? `
       <thead><tr><th>Metin</th><th>Kaynak</th><th>Gönderi</th></tr></thead>
       <tbody>${d.metinler.map(m=>`<tr>
@@ -1429,7 +1435,7 @@ async function kullanicilariYukle(){
     $('#ku-tablo').innerHTML = L.length? `
       <thead><tr><th>Kullanıcı</th><th>E-posta</th><th>Yorum</th><th>İzleme</th><th>Takipçi</th><th>Cihaz</th><th>Kayıt</th><th>Son görülme</th><th>Durum</th></tr></thead>
       <tbody>${L.map(k=>`
-        <tr class="satir-tikla" onclick="kullaniciDetay('${esc(k.kullanici_adi)}')">
+        <tr class="satir-tikla" onclick="kullaniciDetay('${escJs(k.kullanici_adi)}')">
           <td><b>@${esc(k.kullanici_adi)}</b>${k.ulke?` <span class="kck">${bayrak(k.ulke)}</span>`:''}</td>
           <td class="mono" style="color:var(--soluk)">${esc(k.email||'—')}</td>
           <td class="mono">${k.yorum}</td><td class="mono">${k.izleme}</td>
@@ -1485,7 +1491,7 @@ async function yorumlariYukle(){
               : `<img src="${MEDYA_TABAN+esc(m)}" loading="lazy" alt="">`).join('')}</div>`:''}
         </div>
         <div class="btnler" style="align-items:flex-start">
-          <button class="btn" onclick="kullaniciDetay('${esc(y.kullanici_adi)}')">Profil</button>
+          <button class="btn" onclick="kullaniciDetay('${escJs(y.kullanici_adi)}')">Profil</button>
           <button class="btn tehlike" onclick="yorumSilMod(${y.id})">Sil</button>
         </div>
       </div>`;}).join('')
@@ -1650,7 +1656,7 @@ function mailListele(){
   $('#mail-say').textContent=liste.length+' mail';
   const kaydir=$('#mail-liste').scrollTop; // otomatik tazelemede yer kaybolmasın
   $('#mail-liste').innerHTML = liste.length ? liste.map(m=>`
-    <div class="mail-satir ${m.okunmadi?'yeni':''}" onclick="mailAc('${m.yon}','${m.id}')">
+    <div class="mail-satir ${m.okunmadi?'yeni':''}" onclick="mailAc('${escJs(m.yon)}','${escJs(m.id)}')">
       <span class="mail-yon ${m.yon==='gelen'?'g':'c'}" title="${m.yon==='gelen'?'gelen mail':'giden mail'}">${m.yon==='gelen'?'↓':'↑'}</span>
       <span class="mail-kisi">${esc(mailKisi(m))}</span>
       <span class="mail-konu">${esc(m.konu||'(konusuz)')}
@@ -1733,7 +1739,7 @@ function satirSik(s){
     : `<button class="btn tehlike" onclick="ban(${s.hedef_id},true)">Kullanıcıyı banla</button>`;
   return `<tr>
     <td class="mono" style="color:var(--soluk)">${s.id}</td>
-    <td><span class="etiket e-incelendi">${s.tur}</span></td>
+    <td><span class="etiket e-incelendi">${esc(s.tur)}</span></td>
     <td style="max-width:280px">${esc(s.hedef_ozet||('#'+s.hedef_id))}</td>
     <td style="max-width:240px;color:var(--soluk)">${esc(s.sebep)}</td>
     <td>${s.eden?'@'+esc(s.eden):'—'}</td>
@@ -1749,7 +1755,26 @@ async function yorumSil(id){ if(!confirm('Yorum silinsin mi?'))return; await api
 async function ban(id,yasakli){ if(!confirm(yasakli?'Kullanıcı banlansın mı?':'Yasak kalksın mı?'))return; await api('/kullanici-ban',{method:'POST',body:JSON.stringify({id,yasakli})}); sikayetleriYukle(); }
 async function sikDurum(id,durum){ await api('/sikayet-durum',{method:'POST',body:JSON.stringify({id,durum})}); sikayetleriYukle(); }
 
-function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+/* ---- Kaçış yardımcıları (GÜVENLİK — 3 Ağu 2026 denetimi §2.1/§2.4) ----
+   Panelin gösterdiği her şey KULLANICI VERİSİDİR: istek yolu ve HTTP metodu
+   kimlik doğrulaması olmadan dışarıdan yazdırılabilir, yorum/bio/mail konusu
+   ise hesap sahibinin ya da yabancı bir gönderenin metnidir. İkisi de
+   innerHTML'e ham girerse yöneticinin tarayıcısında kod çalışır.
+
+   esc()   → metin ve TIRNAKLI öznitelik bağlamı (title="…", class="…").
+             ' de kaçırılır: tek tırnaklı özniteliklerde de güvenli olsun.
+   escJs() → onclick="fn('…')" gibi ÖZNİTELİK İÇİNDE JS DİZESİ bağlamı.
+             Burada esc() YETMEZ: tarayıcı önce varlıkları çözer, `&#39;`
+             tekrar `'` olur ve dizeden çıkılır. Bu yüzden önce JS kaçışı
+             (\ ve ') uygulanır, SONRA HTML kaçışı — sıra önemlidir. */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escJs(s){
+  return String(s==null?'':s)
+    .replace(/\\/g,'\\\\')
+    .replace(/'/g,"\\'")
+    .replace(/\r/g,'\\r').replace(/\n/g,'\\n')
+    .replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
 
 /* ---- Döngü ---- */
 async function tik(){

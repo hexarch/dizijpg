@@ -1,6 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — GÜVENLİK: yönetim panelindeki depolanmış XSS KAPATILDI
+Güvenlik denetiminin (`GUVENLIK-DENETIMI.md` §2.1) **1 numaralı** bulgusu.
+- 🚀 **Açık:** canlı istek akışı, dışarıdan gelen ham `req.path`/`req.method`
+  değerini kaçırmadan `innerHTML`e basıyordu → **hesabı olmayan biri**, tek bir
+  `GET /api/<img src=x onerror=…>` isteğiyle yöneticinin tarayıcısında kod
+  çalıştırabilir, admin IP kısıtını tamamen atlayabilirdi. Düzeltmeden önce
+  canlıda yeniden üretildi (`/DENEME1<b>XSSISARET</b>` yanıtta HAM dönüyordu).
+- 🚀 **Görüntüleme katmanı (asıl düzeltme):** `admin.html`deki 79 `innerHTML`
+  yazımının tamamı tarandı; kaçışsız 7 nokta düzeltildi (istek yolu + `title=`,
+  HTTP metodu + `class=`, istemci hata metni `h.hata`, şikayet türü, ülke kodu,
+  sürüm kapısı önizlemesi, mail satırı `onclick`).
+- 🚀 **Öznitelik bağlamı ayrı çözüldü:** `esc()`e `'` eklendi; `onclick="fn('…')"`
+  için **yeni `escJs()`** yazıldı (tarayıcı varlıkları çözdüğü için orada `esc()`
+  korumaz). 5 `onclick` çağrısı `escJs()`e geçti.
+- 🚀 **Sunucu katmanı (2. savunma):** `server.js`te `yolTemiz()`/`metotTemiz()`
+  — halkaya yalnız temiz, 200 karakterle sınırlı yol yazılıyor.
+- 🚀 **Kanıt:** düzeltme sonrası aynı istek `< >` düşürülmüş dönüyor; ayrıca
+  gerçek tarayıcıda sunucu temizliği baypas edilip panele ham yük verildi —
+  kod ÇALIŞMADI, düz metin olarak göründü. 8 sekme hatasız (konsol temiz),
+  kesme işaretli gerçek yorumlarda çift kaçış yok.
+- 🚀 **Test:** `backend/test/admin_kacis.test.js` (13 test). Kaçış üç yerden
+  geçici kaldırılıp testin KIRMIZIYA döndüğü doğrulandı → 73/73 yeşil.
+
 ## 2026-08-03 — PROFİL YORUMLARI: düzen TERSİNE (üstte gönderi, altta yanıtın)
 **Kullanıcı isteği:** "kendi profilimde yorumlara gittiğimde, yanıt verdiğim
 yani yorum yaptığım yorumların görünüşü kötü. orada gönderinin akıştaki gibi
