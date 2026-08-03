@@ -465,4 +465,7 @@ const Map<String, String> cevirilerFa = {
   'Şimdi değil': 'الان نه',
   'Yorum yazmak için giriş yap': 'برای نوشتن نظر وارد شوید',
   'Kişilere göndermek için giriş yap': 'برای ارسال به افراد وارد شوید',
+  'Beğenenler': 'پسندیدند',
+  'Henüz beğeni yok': 'هنوز پسندی نیست',
+  'Bu gönderiyi ilk beğenen sen ol': 'اولین نفری باشید که این پست را می پسندد',
 };

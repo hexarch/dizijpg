@@ -454,4 +454,7 @@ const Map<String, String> cevirilerJa = {
   'Şimdi değil': '後で',
   'Yorum yazmak için giriş yap': 'コメントするにはログイン',
   'Kişilere göndermek için giriş yap': '相手に送るにはログイン',
+  'Beğenenler': 'いいねした人',
+  'Henüz beğeni yok': 'まだいいねがありません',
+  'Bu gönderiyi ilk beğenen sen ol': 'この投稿に最初のいいねを',
 };

@@ -466,4 +466,7 @@ const Map<String, String> cevirilerVi = {
   'Şimdi değil': 'Để sau',
   'Yorum yazmak için giriş yap': 'Đăng nhập để viết bình luận',
   'Kişilere göndermek için giriş yap': 'Đăng nhập để gửi cho mọi người',
+  'Beğenenler': 'Luot thich',
+  'Henüz beğeni yok': 'Chua co luot thich nao',
+  'Bu gönderiyi ilk beğenen sen ol': 'Hay la nguoi dau tien thich bai nay',
 };

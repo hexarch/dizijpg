@@ -467,4 +467,7 @@ const Map<String, String> cevirilerSr = {
   'Şimdi değil': 'Не сада',
   'Yorum yazmak için giriş yap': 'Пријавите се да напишете коментар',
   'Kişilere göndermek için giriş yap': 'Пријавите се да пошаљете људима',
+  'Beğenenler': 'Свиђања',
+  'Henüz beğeni yok': 'Још нема свиђања',
+  'Bu gönderiyi ilk beğenen sen ol': 'Буди први коме се ово свиђа',
 };

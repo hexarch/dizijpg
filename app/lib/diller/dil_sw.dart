@@ -465,4 +465,7 @@ const Map<String, String> cevirilerSw = {
   'Şimdi değil': 'Si sasa',
   'Yorum yazmak için giriş yap': 'Ingia ili kuandika maoni',
   'Kişilere göndermek için giriş yap': 'Ingia ili kutuma kwa watu',
+  'Beğenenler': 'Waliopenda',
+  'Henüz beğeni yok': 'Bado hakuna anayependa',
+  'Bu gönderiyi ilk beğenen sen ol': 'Kuwa wa kwanza kupenda chapisho hili',
 };

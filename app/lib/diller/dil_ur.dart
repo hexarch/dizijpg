@@ -465,4 +465,7 @@ const Map<String, String> cevirilerUr = {
   'Şimdi değil': 'ابھی نہیں',
   'Yorum yazmak için giriş yap': 'تبصرہ لکھنے کے لیے لاگ ان کریں',
   'Kişilere göndermek için giriş yap': 'لوگوں کو بھیجنے کے لیے لاگ ان کریں',
+  'Beğenenler': 'پسند کرنے والے',
+  'Henüz beğeni yok': 'ابھی کوئی پسند نہیں',
+  'Bu gönderiyi ilk beğenen sen ol': 'اس پوسٹ کو پسند کرنے والے پہلے بنیں',
 };

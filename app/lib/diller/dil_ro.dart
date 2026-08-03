@@ -470,4 +470,7 @@ const Map<String, String> cevirilerRo = {
   'Yorum yazmak için giriş yap': 'Conectează-te ca să scrii un comentariu',
   'Kişilere göndermek için giriş yap':
       'Conectează-te ca să trimiți altor persoane',
+  'Beğenenler': 'Aprecieri',
+  'Henüz beğeni yok': 'Inca nicio apreciere',
+  'Bu gönderiyi ilk beğenen sen ol': 'Fii primul care apreciaza',
 };

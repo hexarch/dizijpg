@@ -463,4 +463,7 @@ const Map<String, String> cevirilerDa = {
   'Şimdi değil': 'Ikke nu',
   'Yorum yazmak için giriş yap': 'Log ind for at skrive en kommentar',
   'Kişilere göndermek için giriş yap': 'Log ind for at sende til personer',
+  'Beğenenler': 'Synes godt om',
+  'Henüz beğeni yok': 'Ingen synes godt om endnu',
+  'Bu gönderiyi ilk beğenen sen ol': 'Vaer den forste, der synes godt om',
 };

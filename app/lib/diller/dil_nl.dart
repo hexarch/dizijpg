@@ -468,4 +468,7 @@ const Map<String, String> cevirilerNl = {
   'Şimdi değil': 'Niet nu',
   'Yorum yazmak için giriş yap': 'Log in om een reactie te schrijven',
   'Kişilere göndermek için giriş yap': 'Log in om naar mensen te sturen',
+  'Beğenenler': 'Vind-ik-leuks',
+  'Henüz beğeni yok': 'Nog geen vind-ik-leuks',
+  'Bu gönderiyi ilk beğenen sen ol': 'Wees de eerste die dit leuk vindt',
 };

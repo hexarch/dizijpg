@@ -468,4 +468,8 @@ const Map<String, String> cevirilerBg = {
   'Şimdi değil': 'Не сега',
   'Yorum yazmak için giriş yap': 'Влезте, за да напишете коментар',
   'Kişilere göndermek için giriş yap': 'Влезте, за да изпратите на хора',
+  'Beğenenler': 'Харесвания',
+  'Henüz beğeni yok': 'Все още няма харесвания',
+  'Bu gönderiyi ilk beğenen sen ol':
+      'Бъди първият, който харесва тази публикация',
 };

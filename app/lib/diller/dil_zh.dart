@@ -448,4 +448,7 @@ const Map<String, String> cevirilerZh = {
   'Şimdi değil': '暂不',
   'Yorum yazmak için giriş yap': '登录后写评论',
   'Kişilere göndermek için giriş yap': '登录后发送给好友',
+  'Beğenenler': '点赞的人',
+  'Henüz beğeni yok': '还没有人点赞',
+  'Bu gönderiyi ilk beğenen sen ol': '成为第一个点赞的人',
 };

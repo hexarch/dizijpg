@@ -469,4 +469,7 @@ const Map<String, String> cevirilerFil = {
   'Şimdi değil': 'Hindi muna',
   'Yorum yazmak için giriş yap': 'Mag-log in para magsulat ng komento',
   'Kişilere göndermek için giriş yap': 'Mag-log in para ipadala sa mga tao',
+  'Beğenenler': 'Mga naka-like',
+  'Henüz beğeni yok': 'Wala pang like',
+  'Bu gönderiyi ilk beğenen sen ol': 'Maging unang mag-like ng post na ito',
 };

@@ -472,4 +472,7 @@ const Map<String, String> cevirilerDe = {
   'Yorum yazmak için giriş yap': 'Melde dich an, um zu kommentieren',
   'Kişilere göndermek için giriş yap':
       'Melde dich an, um an Personen zu senden',
+  'Beğenenler': 'Gefallt mir',
+  'Henüz beğeni yok': 'Noch keine Likes',
+  'Bu gönderiyi ilk beğenen sen ol': 'Sei die erste Person, der das gefallt',
 };

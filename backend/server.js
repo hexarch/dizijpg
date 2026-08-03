@@ -2561,6 +2561,86 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
   res.json({ yorum: ceviriUygula(y), icerikler });
 }));
 
+// ROTA SIRASI ONEMLI: bu uç /yorumlar/:tur/:tmdbId'den ÖNCE kaydedilmeli.
+// Sonra kaydedilseydi Express /yorumlar/4927/begenenler adresini
+// tur=4927, tmdbId='begenenler' diye eşleştirir ve 400 dönerdi
+// (3 Ağu'da tam bu oldu, uçtan uca curl yakaladı).
+// Beğeni düğmesine BASILI TUTUNCA açılan "beğenenler" listesi.
+// Oturumsuz da 200 döner (kullanıcı adları zaten herkese açık, SEO sayfaları
+// oturumsuz geziliyor); o durumda takip_ediyorum hep false olur ve istemci
+// takip düğmesi yerine giriş istemi gösterir.
+const BEGENEN_SAYFA = 30;
+const begenenLimiti = hizLimiti(300, (req) => `bg:${req.kullanici?.id || req.ip}`);
+
+app.get('/yorumlar/:id/begenenler', girisIsteğeBagli, begenenLimiti, sarici(async (req, res) => {
+  const yorumId = Number(req.params.id);
+  if (!Number.isInteger(yorumId) || yorumId <= 0) {
+    return res.status(400).json({ hata: 'Geçersiz yorum' });
+  }
+  // İmleç: "<ISO tarih>|<kullanici_id>" — son satırın anahtarı. Sıralama
+  // (tarih DESC, kullanici_id DESC) olduğu için bu ikili benzersizdir ve
+  // OFFSET'in aksine araya giren yeni beğenide satır tekrarlatmaz.
+  const ham = String(req.query.imlec || '');
+  let imlecTarih = null;
+  let imlecId = null;
+  if (ham) {
+    const ayrac = ham.lastIndexOf('|');
+    const t = ayrac > 0 ? new Date(ham.slice(0, ayrac)) : new Date(NaN);
+    const i = ayrac > 0 ? Number(ham.slice(ayrac + 1)) : NaN;
+    if (Number.isNaN(t.getTime()) || !Number.isInteger(i) || i <= 0) {
+      return res.status(400).json({ hata: 'Geçersiz imleç' });
+    }
+    imlecTarih = t.toISOString();
+    imlecId = i;
+  }
+  const benId = req.kullanici?.id || 0;
+
+  // İlk sayfada yorumun varlığı + toplam sayı da döner (modal başlığı).
+  const bas = imlecTarih
+    ? null
+    : await havuz.query(
+      `SELECT EXISTS(SELECT 1 FROM yorumlar WHERE id=$1) AS var,
+              (SELECT count(*)::int FROM yorum_begeniler WHERE yorum_id=$1) AS n`,
+      [yorumId],
+    );
+  if (bas && !bas.rows[0].var) {
+    return res.status(404).json({ hata: 'Yorum bulunamadı' });
+  }
+
+  // Bir fazlasını iste: dönen satır sayısı sayfayı aşıyorsa devamı var.
+  const { rows } = await havuz.query(
+    `SELECT k.id AS kullanici_id, k.kullanici_adi, k.avatar, b.tarih,
+            ($2::int > 0 AND EXISTS (SELECT 1 FROM takipler t
+               WHERE t.takip_eden_id=$2 AND t.takip_edilen_id=k.id)) AS takip_ediyorum,
+            (k.id = $2::int) AS ben_mi
+     FROM yorum_begeniler b
+     JOIN kullanicilar k ON k.id = b.kullanici_id
+     WHERE b.yorum_id=$1
+       AND ($3::timestamptz IS NULL
+            OR (b.tarih, b.kullanici_id) < ($3::timestamptz, $4::int))
+       AND ($2::int = 0 OR k.id NOT IN (
+              SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$2
+              UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$2))
+     ORDER BY b.tarih DESC, b.kullanici_id DESC
+     LIMIT ${BEGENEN_SAYFA + 1}`,
+    [yorumId, benId, imlecTarih, imlecId],
+  );
+  const devam = rows.length > BEGENEN_SAYFA;
+  const sayfa = devam ? rows.slice(0, BEGENEN_SAYFA) : rows;
+  const son = sayfa[sayfa.length - 1];
+  res.json({
+    begenenler: sayfa.map((r) => ({
+      kullanici_id: r.kullanici_id,
+      kullanici_adi: r.kullanici_adi,
+      avatar: r.avatar,
+      takip_ediyorum: r.takip_ediyorum,
+      ben_mi: r.ben_mi,
+    })),
+    imlec: devam ? `${new Date(son.tarih).toISOString()}|${son.kullanici_id}` : null,
+    ...(bas ? { toplam: bas.rows[0].n } : {}),
+  });
+}));
+
 app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => {
   if (!YORUM_TURLERI.includes(req.params.tur)) {
     return res.status(400).json({ hata: 'Geçersiz tür' });

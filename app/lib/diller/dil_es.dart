@@ -468,4 +468,7 @@ const Map<String, String> cevirilerEs = {
   'Yorum yazmak için giriş yap': 'Inicia sesión para comentar',
   'Kişilere göndermek için giriş yap':
       'Inicia sesión para enviar a otras personas',
+  'Beğenenler': 'Me gusta',
+  'Henüz beğeni yok': 'Aun no hay me gusta',
+  'Bu gönderiyi ilk beğenen sen ol': 'Se la primera persona en darle me gusta',
 };

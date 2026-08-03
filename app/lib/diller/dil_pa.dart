@@ -465,4 +465,7 @@ const Map<String, String> cevirilerPa = {
   'Şimdi değil': 'ਹੁਣ ਨਹੀਂ',
   'Yorum yazmak için giriş yap': 'ਟਿੱਪਣੀ ਲਿਖਣ ਲਈ ਲਾਗ ਇਨ ਕਰੋ',
   'Kişilere göndermek için giriş yap': 'ਲੋਕਾਂ ਨੂੰ ਭੇਜਣ ਲਈ ਲਾਗ ਇਨ ਕਰੋ',
+  'Beğenenler': 'ਪਸੰਦ ਕਰਨ ਵਾਲੇ',
+  'Henüz beğeni yok': 'ਹਾਲੇ ਕੋਈ ਪਸੰਦ ਨਹੀਂ',
+  'Bu gönderiyi ilk beğenen sen ol': 'ਇਸ ਪੋਸਟ ਨੂੰ ਪਸੰਦ ਕਰਨ ਵਾਲੇ ਪਹਿਲੇ ਬਣੋ',
 };

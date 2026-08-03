@@ -466,4 +466,8 @@ const Map<String, String> cevirilerId = {
   'Şimdi değil': 'Nanti saja',
   'Yorum yazmak için giriş yap': 'Masuk untuk menulis komentar',
   'Kişilere göndermek için giriş yap': 'Masuk untuk mengirim ke orang lain',
+  'Beğenenler': 'Yang menyukai',
+  'Henüz beğeni yok': 'Belum ada yang menyukai',
+  'Bu gönderiyi ilk beğenen sen ol':
+      'Jadilah yang pertama menyukai kiriman ini',
 };

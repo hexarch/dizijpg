@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'begenenler.dart';
 import 'ortak.dart';
 import 'profil.dart'
     show
@@ -801,11 +802,36 @@ class ProfilYorumKarti extends StatelessWidget {
                     style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                   ),
                   const SizedBox(width: 14),
-                  Icon(Icons.favorite, size: 15, color: DiziRenkler.sariMetin),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${yorum['begeni'] ?? 0}',
-                    style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+                  // Beğeni sayısına BASILI TUTMAK beğenenleri açar (beğeninin
+                  // göründüğü her yerde aynı sheet). onTap YOK: kısa dokunuş
+                  // karta ait — gönderi ayrıntısı açılmaya devam eder.
+                  InkWell(
+                    onLongPress: () =>
+                        begenenleriAc(context, yorum['id'] as int),
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.favorite,
+                            size: 15,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            '${yorum['begeni'] ?? 0}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -1129,11 +1155,32 @@ class _YorumDetayModal extends StatelessWidget {
                 style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
               ),
               const SizedBox(width: 14),
-              Icon(Icons.favorite, size: 15, color: DiziRenkler.sariMetin),
-              const SizedBox(width: 4),
-              Text(
-                '${yorum['begeni'] ?? 0}',
-                style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+              InkWell(
+                onLongPress: () => begenenleriAc(context, yorum['id'] as int),
+                borderRadius: BorderRadius.circular(16),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 12,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.favorite,
+                        size: 15,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${yorum['begeni'] ?? 0}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: DiziRenkler.metin38,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               const Spacer(),
               Text(

@@ -466,4 +466,7 @@ const Map<String, String> cevirilerBn = {
   'Şimdi değil': 'এখন নয়',
   'Yorum yazmak için giriş yap': 'মন্তব্য লিখতে লগ ইন করুন',
   'Kişilere göndermek için giriş yap': 'মানুষকে পাঠাতে লগ ইন করুন',
+  'Beğenenler': 'যারা পছন্দ করেছেন',
+  'Henüz beğeni yok': 'এখনো কোনো লাইক নেই',
+  'Bu gönderiyi ilk beğenen sen ol': 'এই পোস্টে প্রথম লাইক দিন',
 };

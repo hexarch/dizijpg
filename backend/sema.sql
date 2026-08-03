@@ -89,6 +89,11 @@ CREATE TABLE IF NOT EXISTS yorum_begeniler (
   tarih TIMESTAMPTZ DEFAULT now(),
   PRIMARY KEY (yorum_id, kullanici_id)
 );
+-- Beğenenler listesi (son beğenen önce) + (tarih, kullanici_id) imleci:
+-- PK (yorum_id, kullanici_id) tarih sıralamasını karşılamıyor, indekssiz
+-- her sayfa tüm tabloyu tarayıp sıralıyordu.
+CREATE INDEX IF NOT EXISTS yorum_begeni_liste
+  ON yorum_begeniler (yorum_id, tarih DESC, kullanici_id DESC);
 
 -- Takip ilişkisi: takip_eden → takip_edilen
 CREATE TABLE IF NOT EXISTS takipler (

@@ -468,4 +468,7 @@ const Map<String, String> cevirilerFi = {
   'Yorum yazmak için giriş yap': 'Kirjaudu sisään kirjoittaaksesi kommentin',
   'Kişilere göndermek için giriş yap':
       'Kirjaudu sisään lähettääksesi ihmisille',
+  'Beğenenler': 'Tykkaykset',
+  'Henüz beğeni yok': 'Ei viela tykkayksia',
+  'Bu gönderiyi ilk beğenen sen ol': 'Ole ensimmainen tykkaaja',
 };

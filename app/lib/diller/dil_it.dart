@@ -470,4 +470,7 @@ const Map<String, String> cevirilerIt = {
   'Şimdi değil': 'Non ora',
   'Yorum yazmak için giriş yap': 'Accedi per scrivere un commento',
   'Kişilere göndermek için giriş yap': 'Accedi per inviare alle persone',
+  'Beğenenler': 'Mi piace',
+  'Henüz beğeni yok': 'Ancora nessun mi piace',
+  'Bu gönderiyi ilk beğenen sen ol': 'Sii la prima persona a mettere mi piace',
 };

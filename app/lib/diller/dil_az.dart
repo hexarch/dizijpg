@@ -465,4 +465,7 @@ const Map<String, String> cevirilerAz = {
   'Şimdi değil': 'İndi yox',
   'Yorum yazmak için giriş yap': 'Şərh yazmaq üçün daxil ol',
   'Kişilere göndermek için giriş yap': 'İnsanlara göndərmək üçün daxil ol',
+  'Beğenenler': 'Beyenenler',
+  'Henüz beğeni yok': 'Hele beyeni yoxdur',
+  'Bu gönderiyi ilk beğenen sen ol': 'Bu paylasimi ilk beyenen sen ol',
 };

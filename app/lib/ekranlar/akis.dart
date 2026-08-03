@@ -11,6 +11,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../onbellek.dart';
 import '../tema.dart';
+import 'begenenler.dart';
 import 'etiket.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'ortak.dart';
@@ -720,6 +721,9 @@ class _AkisKartiState extends State<AkisKarti> {
                           : DiziRenkler.metin54,
                       ipucu: 'Beğen'.c,
                       onTap: _begen,
+                      // Basılı tut → beğenenler listesi (her yerde aynı sheet)
+                      onUzunBas: () =>
+                          begenenleriAc(context, widget.yorum['id'] as int),
                     ),
                     _EylemDugmesi(
                       ikon: Icons.mode_comment_outlined,
@@ -807,18 +811,22 @@ class _TakipDugmesi extends StatelessWidget {
 
 /// Eylem satırı düğmesi: ikon + isteğe bağlı sayı. Dokunma hedefi 44px.
 /// [onTap] yoksa (görüntülenme) yalnız gösterge olur.
+/// [onUzunBas] verilirse basılı tutmak ayrı bir eylemdir (beğenenler listesi);
+/// uzun basma tanınınca [onTap] ATEŞLENMEZ, yani kazara beğeni atılmaz.
 class _EylemDugmesi extends StatelessWidget {
   final IconData ikon;
   final String? etiket;
   final Color renk;
   final String ipucu;
   final VoidCallback? onTap;
+  final VoidCallback? onUzunBas;
   const _EylemDugmesi({
     required this.ikon,
     this.etiket,
     required this.renk,
     required this.ipucu,
     this.onTap,
+    this.onUzunBas,
   });
 
   @override
@@ -849,6 +857,7 @@ class _EylemDugmesi extends StatelessWidget {
           : InkWell(
               borderRadius: BorderRadius.circular(10),
               onTap: onTap,
+              onLongPress: onUzunBas,
               child: govde,
             ),
     );

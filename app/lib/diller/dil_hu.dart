@@ -469,4 +469,7 @@ const Map<String, String> cevirilerHu = {
   'Şimdi değil': 'Most nem',
   'Yorum yazmak için giriş yap': 'Jelentkezz be hozzászólás írásához',
   'Kişilere göndermek için giriş yap': 'Jelentkezz be, hogy elküldd másoknak',
+  'Beğenenler': 'Kedvelesek',
+  'Henüz beğeni yok': 'Meg nincs kedveles',
+  'Bu gönderiyi ilk beğenen sen ol': 'Legyel az elso, akinek tetszik',
 };

@@ -473,4 +473,7 @@ const Map<String, String> cevirilerMy = {
   'Şimdi değil': 'ယခုမဟုတ်ပါ',
   'Yorum yazmak için giriş yap': 'မှတ်ချက်ရေးရန် အကောင့်ဝင်ပါ',
   'Kişilere göndermek için giriş yap': 'လူများထံပို့ရန် အကောင့်ဝင်ပါ',
+  'Beğenenler': 'နှစ်သက်သူများ',
+  'Henüz beğeni yok': 'နှစ်သက်မှု မရှိသေးပါ',
+  'Bu gönderiyi ilk beğenen sen ol': 'ဤပို့စ်ကို ပထမဆုံး နှစ်သက်သူ ဖြစ်ပါ',
 };

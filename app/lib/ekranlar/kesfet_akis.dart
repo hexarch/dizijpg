@@ -14,6 +14,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
+import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
@@ -1493,6 +1494,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                 renk: _begendim ? Colors.redAccent : Colors.white,
                 etiket: '$_begeni',
                 onTap: _begenToggle,
+                onUzunBas: () => begenenleriAc(context, y['id'] as int),
               ),
               const SizedBox(height: 8),
               // Şikayet menüsü (kendi gönderinde ve misafirde gizli)
@@ -1553,10 +1555,15 @@ class _ReelsDugme extends StatelessWidget {
   final Color renk;
   final String etiket;
   final VoidCallback onTap;
+
+  /// Basılı tutma eylemi (beğeni düğmesinde: beğenenler listesi). Uzun basma
+  /// tanınınca [onTap] ateşlenmez — liste açmak beğeni atmaz.
+  final VoidCallback? onUzunBas;
   const _ReelsDugme({
     required this.ikon,
     required this.etiket,
     required this.onTap,
+    this.onUzunBas,
     this.renk = Colors.white,
   });
 
@@ -1565,6 +1572,7 @@ class _ReelsDugme extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(24),
       onTap: onTap,
+      onLongPress: onUzunBas,
       child: Padding(
         padding: const EdgeInsets.all(6),
         child: Column(
@@ -2373,6 +2381,8 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
                     // Dokunma hedefleri geniş padding ile ~44px
                     InkWell(
                       onTap: _begen,
+                      onLongPress: () =>
+                          begenenleriAc(context, widget.yanit['id'] as int),
                       borderRadius: BorderRadius.circular(16),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

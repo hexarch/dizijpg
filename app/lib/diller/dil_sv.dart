@@ -467,4 +467,7 @@ const Map<String, String> cevirilerSv = {
   'Şimdi değil': 'Inte nu',
   'Yorum yazmak için giriş yap': 'Logga in för att skriva en kommentar',
   'Kişilere göndermek için giriş yap': 'Logga in för att skicka till personer',
+  'Beğenenler': 'Gillar',
+  'Henüz beğeni yok': 'Inga gillamarkeringar an',
+  'Bu gönderiyi ilk beğenen sen ol': 'Bli forst med att gilla det har inlagget',
 };

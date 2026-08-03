@@ -9,6 +9,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../icerik_deposu.dart';
 import '../tema.dart';
+import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu;
@@ -788,6 +789,9 @@ class _YorumKartiState extends State<YorumKarti> {
                 const SizedBox(width: 16),
                 InkWell(
                   onTap: _begen,
+                  // Basılı tut → beğenenler listesi (akış/Reels ile aynı sheet)
+                  onLongPress: () =>
+                      begenenleriAc(context, widget.yorum['id'] as int),
                   borderRadius: BorderRadius.circular(20),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -1231,6 +1235,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
               InkWell(
                 onTap: _begen,
+                onLongPress: () =>
+                    begenenleriAc(context, widget.yanit['id'] as int),
                 borderRadius: BorderRadius.circular(16),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

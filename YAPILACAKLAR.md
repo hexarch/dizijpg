@@ -1,6 +1,37 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Beğenenler listesi (beğeni düğmesine BASILI TUT)
+**Kullanıcı isteği:** "her taraftaki gönderilerde beğeni tuşuna basılı tutunca
+beğenenleri aşağıdan yukarıya doğru modal aç ve göster, paylaştaki gibi modal
+açılacak ... solda profil resmi yanında kullanıcı adı, en sağda da takip
+ediyorsa hiçbir şey yazmayacak, takip etmiyorsa takip et buttonu olacak. bak bu
+beğeninin olduğu her yerde gözükecek"
+- 🚀 Yeni uç `GET /yorumlar/:id/begenenler` — `girisIsteğeBagli` (oturumsuz da
+  **200**), saatlik 300 istek limiti, `(tarih, kullanici_id)` imleçli sayfalama
+  (30/sayfa), engellenen kullanıcılar listede yok. İlk sayfa `toplam` da döner.
+  **ROTA SIRASI:** `/yorumlar/:tur/:tmdbId`den ÖNCE kaydedilmeli — sonra
+  kaydedildiğinde Express `tur=4927, tmdbId=begenenler` diye eşleştirip 400
+  döndürdü; uçtan uca curl yakaladı.
+- 🚀 `migrasyon-2026-08-03b.sql` + sema.sql + **canlıya uygulandı**:
+  `yorum_begeni_liste (yorum_id, tarih DESC, kullanici_id DESC)`. PK
+  (yorum_id, kullanici_id) tarih sıralamasını karşılamıyordu; indeksten sonra
+  plan **Index Only Scan**, Sort adımı YOK, imleç *Index Cond* oluyor.
+- 🚀 Tek ortak widget `ekranlar/begenenler.dart` → `begenenleriAc(context, id)`.
+  Beğeninin olduğu **6 yer** de bunu çağırıyor: akış kartı (`AkisKarti`; akış +
+  profil sekmeleri + başkasının profili), Reels (`_ReelSayfa`), keşfet yanıt
+  satırı, yorum kartı (`YorumKarti`), yanıt satırı (`_YanitSatiri`), profil
+  yorum kartı + yorum detay modalı (beğeni SAYISINA basılı tutunca).
+- 🚀 Uzun basma / kısa dokunuş ayrımı: kısa dokunuş beğenir, basılı tutmak
+  listeyi açar (Flutter uzun basmayı tanıyınca `onTap` ateşlenmez).
+- 🚀 Takip Et iyimser: satır anında güncellenir, hata olursa düğme geri gelir +
+  SnackBar. Kendi satırında ve zaten takip edilende düğme YOK. Oturumsuzda
+  düğmeye dokununca `girisIstemiGoster` açılır.
+- 🚀 3 yeni metin **45 dile** çevrildi.
+- ✅ **11 yeni widget testi** (`test/begenenler_test.dart`). Kablolama geçici
+  geri alınınca 11 testin 10'u kırmızıya döndü (kalan 1 zaten "modal AÇILMAZ"
+  iddiası). Toplam **197 test** geçiyor.
+
 ## 2026-08-03 — SEO Faz 0.1: içerik sayfaları giriş duvarının ARKASINDAN çıktı
 **Neden (SEO-PLANI.md 0.1):** sunucu Googlebot'a `/icerik`, `/kisi`, `/gonderi`
 için gerçek içerikli HTML dönüyordu ama `yonlendirme.dart` oturumsuz her

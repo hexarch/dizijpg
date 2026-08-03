@@ -463,4 +463,7 @@ const Map<String, String> cevirilerGu = {
   'Şimdi değil': 'હમણાં નહીં',
   'Yorum yazmak için giriş yap': 'ટિપ્પણી લખવા લોગ ઇન કરો',
   'Kişilere göndermek için giriş yap': 'લોકોને મોકલવા લોગ ઇન કરો',
+  'Beğenenler': 'પસંદ કરનારા',
+  'Henüz beğeni yok': 'હજી કોઈ પસંદ નથી',
+  'Bu gönderiyi ilk beğenen sen ol': 'આ પોસ્ટને પસંદ કરનારા પ્રથમ બનો',
 };

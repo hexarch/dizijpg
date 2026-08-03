@@ -454,4 +454,7 @@ const Map<String, String> cevirilerKo = {
   'Şimdi değil': '나중에',
   'Yorum yazmak için giriş yap': '댓글을 쓰려면 로그인',
   'Kişilere göndermek için giriş yap': '사람들에게 보내려면 로그인',
+  'Beğenenler': '좋아요한 사람',
+  'Henüz beğeni yok': '아직 좋아요가 없어요',
+  'Bu gönderiyi ilk beğenen sen ol': '이 게시물에 첫 좋아요를 눌러보세요',
 };
