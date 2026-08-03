@@ -1,6 +1,37 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — SEO Faz 0.1: içerik sayfaları giriş duvarının ARKASINDAN çıktı
+**Neden (SEO-PLANI.md 0.1):** sunucu Googlebot'a `/icerik`, `/kisi`, `/gonderi`
+için gerçek içerikli HTML dönüyordu ama `yonlendirme.dart` oturumsuz her
+ziyaretçiyi `/giris`e atıyordu. Bot ile kullanıcının gördüğü sayfa farklı
+olduğu için bu Google'ın **cloaking** tanımına giriyor ve tüm SEO yatırımının
+önkoşulu bunun kalkması.
+- 🚀 `herkeseAcikMi()`: `/gizlilik`, `/icerik/`, `/kisi/`, `/gonderi/`, `/dizi/`
+  oturumsuz açılır. **`/kullanici/` bilinçli olarak DIŞARIDA** — gizlilik
+  tercihleri (`izlenenler_gizli`, `yorumlar_gizli`) varsayılan KAPALI, profilleri
+  dünyaya açmak ayrı bir ürün kararı; ayrıca bot kapsamında da değil.
+  `/listeler/` planda geçiyor ama uygulamada böyle bir rota YOK (listeler profil
+  içinde) — eklenmedi.
+- 🚀 Giriş ekranına giderken gelinen adres `?donus=` ile taşınıyor, giriş sonrası
+  oraya dönülüyor. Açık yönlendirme koruması: yalnız tek eğik çizgiyle başlayan
+  uygulama içi yollar kabul edilir.
+- 🚀 `girisGerekli()` (yeni `ekranlar/giris_istem.dart`): oturumsuz kullanıcı
+  giriş gerektiren bir eyleme dokununca nazik bir alt sayfa istemi açılıyor —
+  duvar değil, kapatılabilir. Puanla, durum, favori, listeye ekle, izleme
+  işaretle, tepki, yorum yaz/beğen/yanıtla, takip, DM ile paylaş.
+- 🚀 Oturumsuzda **401 dönecek uçlar hiç çağrılmıyor**: `/benim/...` (detay +
+  kişi), `/listelerim`, `/emojiler/sik`, `/paylas-hedefler`. Detayda `/benim`
+  `Future.wait` içinde koşulsuzdu ve TÜM sayfayı hata ekranına düşürüyordu.
+- 🚀 İçerik sayfalarının üst çubuğunda küçük "Giriş Yap" çıkışı: oturumsuz
+  ziyaretçinin alt gezinme çubuğu yok (kabuk giriş ister), sayfada çıkışsız
+  kalmasın.
+- 🚀 5 yeni metin **45 dile** çevrildi.
+- ✅ **6 yeni widget testi** (`test/giris_duvari_test.dart`): içerik sayfası
+  açılıyor ve `/giris`e atılmıyor, 401 uçlarına rağmen içerik görünüyor,
+  `/takvim` hâlâ korunuyor, giriş istemi açılıyor, giriş sonrası geri dönülüyor.
+  Değişiklik geçici geri alınınca 5 test kırmızıya döndü. Toplam 186 test geçiyor.
+
 ## 2026-08-03 — Beğeni durumu görünümler arasında taşınmıyordu (DÜZELTİLDİ)
 **Kullanıcı bildirimi:** "Akışta gezerken bir posta çift tıklayıp beğendikten
 sonra tek tıkla reels moduna geçtiğimde beğendim olarak gözükmüyor."
