@@ -447,4 +447,10 @@ const Map<String, String> cevirilerId = {
   'Videolarda altyazı göster': 'Tampilkan subtitle pada video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Kalimat yang diucapkan dalam video tertulis di layar. Teksnya adalah terjemahan: Bahasa Inggris dalam pidato Turki, bahasa Turki dalam bahasa lain.',
+  "Güncelleme gerekli": "Pembaruan diperlukan",
+  "Yeni sürüm var": "Versi baru tersedia",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Instal versi baru dizi.jpg untuk melanjutkan.",
+  "Güncelle": "Perbarui",
+  "Daha sonra": "Nanti",
 };

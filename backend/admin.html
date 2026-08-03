@@ -176,6 +176,9 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <button class="sekme-btn" data-sekme="mailler">Mailler <span id="mail-rozet" class="rozet gizli">0</span></button>
     <button class="sekme-btn" data-sekme="geribildirim">Geri Bildirim <span id="gb-rozet" class="rozet gizli">0</span></button>
     <button class="sekme-btn" data-sekme="duyuru">Duyuru</button>
+    <button class="sekme-btn" data-sekme="buyume">Büyüme</button>
+    <button class="sekme-btn" data-sekme="depolama">Depolama <span id="dep-rozet" class="rozet gizli">!</span></button>
+    <button class="sekme-btn" data-sekme="bakim">Bakım</button>
     <button class="sekme-btn" data-sekme="hatalar">Hatalar</button>
     <button class="sekme-btn" data-sekme="sikayetler">Şikayetler <span id="sik-rozet" class="rozet gizli">0</span></button>
   </div>
@@ -247,6 +250,122 @@ tr:hover td{background:rgba(255,255,255,.02)}
     <div id="k-icerik" style="padding:16px"></div>
   </div>
 </div>
+
+<!-- BÜYÜME -->
+<section id="s-buyume" class="sayfa gizli">
+  <div class="kucuk-kartlar" id="bu-kartlar" style="padding:0 0 16px"></div>
+  <div class="izgara" style="padding:0 0 16px">
+    <div class="panel">
+      <h3>📈 Günlük Kayıt <span class="sag" id="bu-kayit-top">—</span></h3>
+      <div style="padding:18px"><canvas id="bu-kayit" style="width:100%;height:110px;display:block"></canvas>
+        <div class="kck" id="bu-kayit-eksen" style="display:flex;justify-content:space-between;margin-top:6px"></div></div>
+    </div>
+    <div class="panel">
+      <h3>👣 Günlük Aktif Kullanıcı <span class="sag" id="bu-aktif-top">—</span></h3>
+      <div style="padding:18px"><canvas id="bu-aktif" style="width:100%;height:110px;display:block"></canvas>
+        <div class="kck" style="margin-top:6px">İzleme, yorum veya mesaj eyleminde bulunan tekil kullanıcı</div></div>
+    </div>
+  </div>
+  <div class="izgara" style="padding:0">
+    <div class="panel">
+      <h3>🔁 Tutundurma (kayıt kohortları)</h3>
+      <div style="overflow:auto;max-height:420px"><table id="bu-tutundurma"></table></div>
+    </div>
+    <div class="panel">
+      <h3>🔥 En Çok İzlenenler <span class="sag" id="bu-gun">son 30 gün</span></h3>
+      <div style="overflow:auto;max-height:420px"><table id="bu-icerik"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPOLAMA -->
+<section id="s-depolama" class="sayfa gizli">
+  <div class="kucuk-kartlar" id="dep-kartlar" style="padding:0 0 16px"></div>
+  <div class="izgara" style="padding:0 0 16px">
+    <div class="panel">
+      <h3>🗂️ Medya Dosyaları <span class="sag" id="dep-medya-ozet">—</span></h3>
+      <div id="dep-tur" style="padding:10px 16px"></div>
+      <div class="arac" style="border-top:1px solid var(--line)">
+        <button class="btn" id="dep-tara" onclick="oksuzTara()">Öksüz dosyaları tara</button>
+        <button class="btn tehlike gizli" id="dep-sil" onclick="oksuzSil()">Öksüzleri sil</button>
+        <span class="kck" id="dep-oksuz">DB'de referansı kalmayan dosyalar (silinmiş yorumlardan artan)</span>
+      </div>
+      <div id="dep-oksuz-liste" style="max-height:260px;overflow:auto"></div>
+    </div>
+    <div class="panel">
+      <h3>💾 Yedekler <span class="sag" id="dep-yedek-ozet">—</span></h3>
+      <div class="arac">
+        <button class="btn" id="dep-yedek-al" onclick="yedekAl()">Şimdi yedek al</button>
+        <span class="kck">Gecelik yedek cron ile 04:00'te alınır</span>
+      </div>
+      <div style="overflow:auto;max-height:300px"><table id="dep-yedek-tablo"></table></div>
+      <div id="dep-yedek-gunluk" class="mono kck" style="padding:10px 16px;white-space:pre-wrap;border-top:1px solid var(--line)"></div>
+    </div>
+  </div>
+  <div class="izgara" style="padding:0">
+    <div class="panel">
+      <h3>📦 En Büyük Dosyalar</h3>
+      <div style="overflow:auto;max-height:380px"><table id="dep-buyuk"></table></div>
+    </div>
+    <div class="panel">
+      <h3>🧊 TMDB Önbelleği <span class="sag" id="dep-onbellek-ozet">—</span></h3>
+      <div class="arac">
+        <button class="btn" onclick="onbellekTemizle('eski')">7 günden eskiyi sil</button>
+        <button class="btn tehlike" onclick="onbellekTemizle('hepsi')">Tümünü sil</button>
+      </div>
+      <div style="overflow:auto;max-height:300px"><table id="dep-onbellek"></table></div>
+      <div style="overflow:auto;max-height:220px;border-top:1px solid var(--line)"><table id="dep-tablolar"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- BAKIM -->
+<section id="s-bakim" class="sayfa gizli">
+  <div class="izgara" style="padding:0 0 16px">
+    <div class="panel">
+      <h3>🚦 Sürüm Kapısı</h3>
+      <div class="d-form">
+        <div class="kck">Uygulama açılışta <span class="mono">/surum-kontrol</span> ucunu sorar.
+          Derleme numarası (pubspec'teki <span class="mono">+NN</span>) bu eşiklerin altındaysa uyarılır.</div>
+        <div>
+          <label for="ba-min">Zorunlu minimum derleme (kapatılamaz ekran)</label>
+          <input id="ba-min" inputmode="numeric" placeholder="boş = kapalı">
+        </div>
+        <div>
+          <label for="ba-oneri">Önerilen derleme (kapatılabilir uyarı)</label>
+          <input id="ba-oneri" inputmode="numeric" placeholder="boş = kapalı">
+        </div>
+        <div>
+          <label for="ba-url">Güncelleme bağlantısı</label>
+          <input id="ba-url" placeholder="https://dizijpg.com/indir">
+        </div>
+        <div>
+          <label for="ba-not">Not (isteğe bağlı, kullanıcıya gösterilir)</label>
+          <input id="ba-not" maxlength="200" placeholder="Takvim hatası düzeltildi">
+        </div>
+        <div class="btnler">
+          <button class="btn iyi" onclick="ayarKaydet()">Kaydet</button>
+          <button class="btn" onclick="surumleriYukle()">Yenile ↻</button>
+        </div>
+        <div id="ba-sonuc" class="kck"></div>
+        <div class="d-onizleme" id="ba-onizleme">—</div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>📱 Sürüm Dağılımı <span class="sag" id="ba-cihaz-ozet">—</span></h3>
+      <div style="overflow:auto;max-height:300px"><table id="ba-cihazlar"></table></div>
+      <h3 style="border-top:1px solid var(--line)">🐞 Hata Veren Sürümler (30 gün)</h3>
+      <div style="overflow:auto;max-height:260px"><table id="ba-hatalar"></table></div>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>🌐 Çeviri Durumu <span class="sag" id="ba-ceviri-ozet">—</span></h3>
+    <div class="izgara" style="padding:0">
+      <div><div style="overflow:auto;max-height:300px"><table id="ba-diller"></table></div></div>
+      <div><div style="overflow:auto;max-height:300px"><table id="ba-kaynak"></table></div></div>
+    </div>
+  </div>
+</section>
 
 <!-- KULLANICILAR -->
 <section id="s-kullanicilar" class="sayfa gizli">
@@ -432,6 +551,12 @@ document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
   $('#s-sikayetler').classList.toggle('gizli',s!=='sikayetler');
   if(s==='hareketler') hareketleriYukle();
   if(s==='mailler') mailleriYukle();
+  $('#s-buyume').classList.toggle('gizli',s!=='buyume');
+  $('#s-depolama').classList.toggle('gizli',s!=='depolama');
+  $('#s-bakim').classList.toggle('gizli',s!=='bakim');
+  if(s==='buyume') buyumeYukle();
+  if(s==='depolama') depolamaYukle();
+  if(s==='bakim') surumleriYukle();
   if(s==='kullanicilar') kullanicilariYukle();
   if(s==='yorumlar') yorumlariYukle();
   if(s==='geribildirim') geriBildirimYukle();
@@ -621,6 +746,249 @@ async function kullaniciDetay(ad){
         new Date(y.tarih).toLocaleDateString('tr')
       )).join('')||'<div style="color:var(--soluk)">Yorumu yok</div>'}</div>`;
   }catch(e){ $('#k-icerik').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+
+/* ---- Ortak: çizgi grafik ---- */
+function cizgi(id, seri, renk='#F5C518'){
+  const c=$(id); if(!c) return;
+  const dpr=devicePixelRatio||1, w=c.clientWidth, h=110;
+  c.width=w*dpr; c.height=h*dpr;
+  const x=c.getContext('2d'); x.scale(dpr,dpr); x.clearRect(0,0,w,h);
+  if(!seri.length) return;
+  const max=Math.max(1,...seri), n=seri.length, dx=n>1?w/(n-1):w;
+  const nokta=(v,i)=>[i*dx, h-6-(v/max)*(h-16)];
+  x.beginPath(); seri.forEach((v,i)=>{const [px,py]=nokta(v,i); i?x.lineTo(px,py):x.moveTo(px,py)});
+  x.lineTo(w,h); x.lineTo(0,h); x.closePath();
+  const g=x.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,renk+'59'); g.addColorStop(1,renk+'00');
+  x.fillStyle=g; x.fill();
+  x.beginPath(); seri.forEach((v,i)=>{const [px,py]=nokta(v,i); i?x.lineTo(px,py):x.moveTo(px,py)});
+  x.strokeStyle=renk; x.lineWidth=2; x.stroke();
+  // Son noktayı işaretle: "bugün nerede" bir bakışta görünsün
+  const [lx,ly]=nokta(seri[n-1],n-1);
+  x.beginPath(); x.arc(lx,ly,3,0,7); x.fillStyle=renk; x.fill();
+}
+const yuzde = (a,b) => b? Math.round(a/b*100)+'%' : '—';
+// "23s" saniye mi saat mi belli olmuyordu; yedek yaşı için açık biçim.
+const yasFmt = ts => { const dk=(Date.now()-ts)/60000;
+  return dk<60?`${Math.max(1,Math.round(dk))} dk önce`
+    : dk<2880?`${Math.round(dk/60)} saat önce`
+    : `${Math.round(dk/1440)} gün önce`; };
+
+/* ---- Büyüme ---- */
+async function buyumeYukle(){
+  try{
+    const d=await api('/buyume?gun=30');
+    const o=d.ozet, p=d.push;
+    const K=[
+      {e:'Kullanıcı',v:o.kullanici,a:o.yeni7+' son 7 günde',i:'👤',vurgu:1},
+      {e:'Aktif (7 gün)',v:o.aktif7,a:yuzde(o.aktif7,o.kullanici)+' kullanıcının',i:'🟢'},
+      {e:'Yorum',v:o.yorum.toLocaleString('tr'),a:'toplam gönderi',i:'💬'},
+      {e:'İzleme',v:o.izleme.toLocaleString('tr'),a:'toplam kayıt',i:'👁️'},
+      {e:'Push kapsama',v:yuzde(p.pushlu,p.toplam),a:p.pushlu+'/'+p.toplam+' kullanıcı · '+p.cihaz+' cihaz',i:'🔔',
+       bar:p.toplam?Math.round(p.pushlu/p.toplam*100):0},
+    ];
+    $('#bu-kartlar').innerHTML=K.map(k=>`
+      <div class="kart ${k.vurgu?'vurgu':''}"><div class="ikon">${k.i}</div>
+        <div class="etk">${k.e}</div><div class="deg">${k.v}</div><div class="alt">${k.a}</div>
+        ${k.bar!=null?`<div class="bar"><i style="width:${k.bar}%"></i></div>`:''}</div>`).join('');
+    const kayit=d.kayitlar.map(r=>r.sayi), aktif=d.aktifler.map(r=>r.sayi);
+    cizgi('#bu-kayit',kayit); cizgi('#bu-aktif',aktif,'#34d399');
+    $('#bu-kayit-top').textContent=kayit.reduce((a,b)=>a+b,0)+' kayıt / 30 gün';
+    $('#bu-aktif-top').textContent='zirve '+Math.max(0,...aktif);
+    const g=d.kayitlar;
+    $('#bu-kayit-eksen').innerHTML=g.length
+      ? `<span>${tarihKisa(g[0].gun)}</span><span>${tarihKisa(g[g.length-1].gun)}</span>` : '';
+    $('#bu-tutundurma').innerHTML = d.tutundurma.length? `
+      <thead><tr><th>Kayıt günü</th><th>Kişi</th><th>Ertesi gün</th><th>7. gün</th></tr></thead>
+      <tbody>${d.tutundurma.map(t=>`<tr>
+        <td class="kck mono">${tarihKisa(t.gun)}</td><td class="mono">${t.kayit}</td>
+        <td class="mono">${t.d1} <span class="kck">(${yuzde(t.d1,t.kayit)})</span></td>
+        <td class="mono">${t.d7} <span class="kck">(${yuzde(t.d7,t.kayit)})</span></td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Son 30 günde kayıt yok</td></tr></tbody>';
+    $('#bu-icerik').innerHTML = d.top_icerik.length? `
+      <thead><tr><th>İçerik</th><th>Kişi</th><th>İzleme</th></tr></thead>
+      <tbody>${d.top_icerik.map(t=>`<tr>
+        <td><b>${esc(d.icerik_adlari[t.tur+':'+t.tmdb_id]||('#'+t.tmdb_id))}</b>
+          <span class="kck">${t.tur==='tv'?'dizi':'film'}</span></td>
+        <td class="mono">${t.kisi}</td><td class="mono">${t.izleme}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Veri yok</td></tr></tbody>';
+  }catch(e){ $('#bu-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+
+/* ---- Depolama ---- */
+let OKSUZ=null;
+async function depolamaYukle(){
+  try{
+    const d=await api('/depolama');
+    const diskPct=d.disk?Math.round((d.disk.toplam-d.disk.bos)/d.disk.toplam*100):null;
+    const y=d.yedek, sonYedek=y.son?y.son.mtime:null;
+    // Yedek 36 saatten eskiyse cron sessizce ölmüş olabilir → uyarı rozeti
+    const yedekBayat = !sonYedek || (Date.now()-sonYedek) > 36*3600*1000;
+    const K=[
+      {e:'Disk',v:diskPct!=null?'%'+diskPct:'—',a:d.disk?bytFmt(d.disk.bos)+' boş / '+bytFmt(d.disk.toplam):'—',
+       i:'💽',bar:diskPct,uyari:diskPct>85},
+      {e:'Medya',v:bytFmt(d.medya.boyut),a:d.medya.dosya.toLocaleString('tr')+' dosya',i:'🗂️',vurgu:1},
+      {e:'Avatar/Kapak',v:bytFmt(d.avatarlar.boyut),a:d.avatarlar.dosya+' dosya',i:'🖼️'},
+      {e:'Veritabanı',v:bytFmt(d.db.boyut),a:(d.db.tablolar[0]?.tablo||'')+' en büyük tablo',i:'🗄️'},
+      // zaman() saati "23s" diye yazıyor — saniyeyle karışıyor, burada açık yaz.
+      {e:'Son yedek',v:sonYedek?yasFmt(sonYedek):'YOK',a:y.adet+' yedek · '+bytFmt(y.boyut),
+       i:'💾',uyari:yedekBayat},
+    ];
+    $('#dep-kartlar').innerHTML=K.map(k=>`
+      <div class="kart ${k.vurgu?'vurgu':''} ${k.uyari?'uyari':''}"><div class="ikon">${k.i}</div>
+        <div class="etk">${k.e}</div><div class="deg">${k.v}</div><div class="alt">${k.a}</div>
+        ${k.bar!=null?`<div class="bar ${k.bar>85?'kirmizi':''}"><i style="width:${k.bar}%"></i></div>`:''}</div>`).join('');
+    const rz=$('#dep-rozet'); rz.classList.toggle('gizli',!(yedekBayat||diskPct>85));
+    $('#dep-medya-ozet').textContent=bytFmt(d.medya.boyut)+' · '+d.medya.dosya+' dosya';
+    const enBuyukTur=Math.max(1,...d.medya.tur_dagilimi.map(t=>t.boyut));
+    $('#dep-tur').innerHTML=d.medya.tur_dagilimi.slice(0,8).map(t=>`
+      <div class="ulke-satir" style="padding:5px 0">
+        <span class="mono" style="width:56px">${esc(t.uzanti)}</span>
+        <span class="ulke-bar"><i style="width:${Math.round(t.boyut/enBuyukTur*100)}%"></i></span>
+        <span class="kck mono" style="width:120px;text-align:right">${bytFmt(t.boyut)} · ${t.dosya}</span>
+      </div>`).join('')||'<div class="kck">Dosya yok</div>';
+    $('#dep-buyuk').innerHTML = d.medya.en_buyukler.length? `
+      <thead><tr><th>Dosya</th><th>Boyut</th><th>Tarih</th></tr></thead>
+      <tbody>${d.medya.en_buyukler.map(f=>`<tr>
+        <td class="mono" style="max-width:340px;overflow:hidden;text-overflow:ellipsis">
+          <a href="${MEDYA_TABAN}/medya/${encodeURIComponent(f.ad)}" target="_blank">${esc(f.ad)}</a></td>
+        <td class="mono">${bytFmt(f.boyut)}</td>
+        <td class="kck mono">${new Date(f.mtime).toLocaleDateString('tr')}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Dosya yok</td></tr></tbody>';
+    $('#dep-yedek-ozet').textContent=y.var_mi?(y.adet+' yedek · '+bytFmt(y.boyut)):'dizin bağlı değil';
+    $('#dep-yedek-tablo').innerHTML = y.dosyalar.length? `
+      <thead><tr><th>Yedek</th><th>Boyut</th><th>Zaman</th></tr></thead>
+      <tbody>${y.dosyalar.map(f=>`<tr>
+        <td class="mono">${esc(f.ad)}</td><td class="mono">${bytFmt(f.boyut)}</td>
+        <td class="kck mono">${new Date(f.mtime).toLocaleString('tr')}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Yedek bulunamadı</td></tr></tbody>';
+    $('#dep-yedek-gunluk').textContent=(y.gunluk||[]).join('\n')||'yedek.log okunamadı';
+    await onbellekYukle(d.db.tablolar);
+  }catch(e){ $('#dep-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+async function onbellekYukle(tablolar){
+  try{
+    const o=await api('/onbellek');
+    $('#dep-onbellek-ozet').textContent=o.adet.toLocaleString('tr')+' kayıt · '+bytFmt(o.boyut);
+    $('#dep-onbellek').innerHTML=`
+      <thead><tr><th>Grup</th><th>Kayıt</th><th>Boyut</th></tr></thead>
+      <tbody>${o.gruplar.map(g=>`<tr>
+        <td class="mono">/${esc(g.grup)}</td><td class="mono">${g.adet}</td>
+        <td class="mono">${bytFmt(g.boyut)}</td></tr>`).join('')}
+        <tr><td colspan="3" class="kck">7 günden eski: ${o.eski7} kayıt · en eski ${o.en_eski?new Date(o.en_eski).toLocaleDateString('tr'):'—'}</td></tr></tbody>`;
+    if(tablolar) $('#dep-tablolar').innerHTML=`
+      <thead><tr><th>Tablo</th><th>Boyut</th></tr></thead>
+      <tbody>${tablolar.map(t=>`<tr><td class="mono">${esc(t.tablo)}</td>
+        <td class="mono">${bytFmt(t.boyut)}</td></tr>`).join('')}</tbody>`;
+  }catch(e){ $('#dep-onbellek-ozet').textContent='okunamadı'; }
+}
+async function onbellekTemizle(kapsam){
+  if(kapsam==='hepsi' && !confirm('TÜM TMDB önbelleği silinsin mi?\n\nVeri kaybı olmaz ama ilk açılışlar yavaşlar (yeniden çekilir).')) return;
+  try{ const r=await api('/onbellek-temizle',{method:'POST',body:JSON.stringify({kapsam})});
+    alert(r.silinen+' önbellek kaydı silindi.'); depolamaYukle();
+  }catch(e){ alert('Silinemedi: '+e.message); }
+}
+async function oksuzTara(){
+  const b=$('#dep-tara'); b.disabled=true; b.textContent='Taranıyor…';
+  try{
+    OKSUZ=await api('/oksuz-tara');
+    const m=OKSUZ.medya, a=OKSUZ.avatarlar;
+    const toplam=m.dosya+a.dosya;
+    $('#dep-oksuz').innerHTML=toplam
+      ? `<b style="color:var(--sari)">${toplam} öksüz dosya · ${bytFmt(m.boyut+a.boyut)}</b> geri kazanılabilir`
+      : 'Öksüz dosya yok — disk temiz';
+    $('#dep-sil').classList.toggle('gizli',!toplam);
+    $('#dep-oksuz-liste').innerHTML = toplam? `<table>
+      <thead><tr><th>Dosya</th><th>Boyut</th><th>Tarih</th></tr></thead>
+      <tbody>${[...m.ornekler,...a.ornekler].map(f=>`<tr>
+        <td class="mono" style="max-width:320px;overflow:hidden;text-overflow:ellipsis">${esc(f.ad)}</td>
+        <td class="mono">${bytFmt(f.boyut)}</td>
+        <td class="kck mono">${new Date(f.mtime).toLocaleDateString('tr')}</td></tr>`).join('')}
+        ${toplam>m.ornekler.length+a.ornekler.length?`<tr><td colspan="3" class="kck">…ve ${toplam-m.ornekler.length-a.ornekler.length} dosya daha</td></tr>`:''}
+      </tbody></table>` : '';
+  }catch(e){ $('#dep-oksuz').textContent='Tarama başarısız: '+e.message; }
+  b.disabled=false; b.textContent='Öksüz dosyaları tara';
+}
+async function oksuzSil(){
+  if(!OKSUZ) return;
+  const m=OKSUZ.medya, a=OKSUZ.avatarlar, toplam=m.dosya+a.dosya;
+  if(!confirm(`${toplam} dosya (${bytFmt(m.boyut+a.boyut)}) KALICI olarak silinecek.\n\n`
+    +`Bunlar DB'de referansı olmayan, 24 saatten eski dosyalar.\nDevam edilsin mi?`)) return;
+  const b=$('#dep-sil'); b.disabled=true; b.textContent='Siliniyor…';
+  try{
+    const r1=m.dosya?await api('/oksuz-sil',{method:'POST',body:JSON.stringify({nere:'medya',adlar:m.adlar})}):{silinen:0,boyut:0};
+    const r2=a.dosya?await api('/oksuz-sil',{method:'POST',body:JSON.stringify({nere:'avatarlar',adlar:a.adlar})}):{silinen:0,boyut:0};
+    alert(`${r1.silinen+r2.silinen} dosya silindi, ${bytFmt(r1.boyut+r2.boyut)} geri kazanıldı.`);
+    OKSUZ=null; $('#dep-sil').classList.add('gizli'); $('#dep-oksuz-liste').innerHTML='';
+    depolamaYukle();
+  }catch(e){ alert('Silinemedi: '+e.message); }
+  b.disabled=false; b.textContent='Öksüzleri sil';
+}
+async function yedekAl(){
+  if(!confirm('Şimdi tam veritabanı yedeği alınsın mı? (birkaç dakika sürebilir)')) return;
+  const b=$('#dep-yedek-al'); b.disabled=true; b.textContent='Yedekleniyor…';
+  try{ const r=await api('/yedek-al',{method:'POST',body:'{}'});
+    alert('Yedek alındı: '+r.dosya+' ('+bytFmt(r.boyut)+')'); depolamaYukle();
+  }catch(e){ alert('Yedek alınamadı: '+e.message); }
+  b.disabled=false; b.textContent='Şimdi yedek al';
+}
+
+/* ---- Bakım: sürüm kapısı + çeviri ---- */
+async function surumleriYukle(){
+  try{
+    const d=await api('/surumler');
+    const a=d.ayarlar||{};
+    $('#ba-min').value=a.min_derleme||''; $('#ba-oneri').value=a.onerilen_derleme||'';
+    $('#ba-url').value=a.guncelleme_url||''; $('#ba-not').value=a.guncelleme_notu||'';
+    const toplamCihaz=d.cihazlar.reduce((t,c)=>t+c.cihaz,0);
+    $('#ba-cihaz-ozet').textContent=toplamCihaz+' cihaz';
+    $('#ba-cihazlar').innerHTML = d.cihazlar.length? `
+      <thead><tr><th>Sürüm</th><th>Platform</th><th>Cihaz</th><th>Kişi</th><th>Son görülme</th></tr></thead>
+      <tbody>${d.cihazlar.map(c=>`<tr>
+        <td class="mono"><b>${esc(c.surum)}</b></td><td>${esc(c.platform)}</td>
+        <td class="mono">${c.cihaz}</td><td class="mono">${c.kisi}</td>
+        <td class="kck mono">${c.son?new Date(c.son).toLocaleDateString('tr'):'—'}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Kayıtlı cihaz yok</td></tr></tbody>';
+    $('#ba-hatalar').innerHTML = d.hatalar.length? `
+      <thead><tr><th>Sürüm</th><th>Hata</th><th>Son</th></tr></thead>
+      <tbody>${d.hatalar.map(h=>`<tr><td class="mono">${esc(h.surum)}</td>
+        <td class="mono">${h.hata}</td>
+        <td class="kck mono">${new Date(h.son).toLocaleDateString('tr')}</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Hata yok 🎉</td></tr></tbody>';
+    await surumOnizle();
+    await ceviriYukle();
+  }catch(e){ $('#ba-sonuc').textContent='Yüklenemedi: '+e.message; }
+}
+// Kapının gerçekten ne döndüğünü göster: yanlış eşik canlıya girmesin.
+async function surumOnizle(){
+  const d=parseInt($('#ba-min').value,10)||1;
+  try{
+    const r=await (await fetch('/api/surum-kontrol?derleme='+Math.max(1,d-1))).json();
+    $('#ba-onizleme').innerHTML=`Derleme <b>${Math.max(1,d-1)}</b> için kapı yanıtı:
+      zorunlu=<b style="color:${r.zorunlu?'var(--kirmizi)':'var(--yesil)'}">${r.zorunlu}</b> ·
+      öneri=<b>${r.oneri}</b> · min=${r.min_derleme??'—'} · önerilen=${r.onerilen_derleme??'—'}`;
+  }catch(e){ $('#ba-onizleme').textContent='Kapı okunamadı: '+e.message; }
+}
+async function ayarKaydet(){
+  const alanlar=[['min_derleme',$('#ba-min').value.trim()],['onerilen_derleme',$('#ba-oneri').value.trim()],
+    ['guncelleme_url',$('#ba-url').value.trim()],['guncelleme_notu',$('#ba-not').value.trim()]];
+  try{
+    for(const [anahtar,deger] of alanlar) await api('/ayar',{method:'POST',body:JSON.stringify({anahtar,deger})});
+    $('#ba-sonuc').innerHTML='<span style="color:var(--yesil)">Kaydedildi.</span>';
+    surumOnizle();
+  }catch(e){ $('#ba-sonuc').innerHTML='<span style="color:var(--kirmizi)">Kaydedilemedi: '+esc(e.message)+'</span>'; }
+}
+async function ceviriYukle(){
+  try{
+    const c=await api('/ceviri-durum');
+    $('#ba-ceviri-ozet').textContent=`${c.kayit.toLocaleString('tr')} çeviri · ${c.metin.toLocaleString('tr')} metin · ${bytFmt(c.boyut)} · İngilizceye bekleyen: ${c.bekleyen_en}`;
+    $('#ba-diller').innerHTML=`<thead><tr><th>Hedef dil</th><th>Çeviri</th></tr></thead>
+      <tbody>${c.diller.map(d=>`<tr><td class="mono">${esc(d.dil)}</td><td class="mono">${d.adet}</td></tr>`).join('')
+        ||'<tr><td class="bos">Çeviri yok</td></tr>'}</tbody>`;
+    $('#ba-kaynak').innerHTML=`<thead><tr><th>Gönderi kaynak dili</th><th>Gönderi</th></tr></thead>
+      <tbody>${c.kaynak_diller.map(d=>`<tr><td class="mono">${esc(d.dil)}</td><td class="mono">${d.adet}</td></tr>`).join('')}</tbody>`;
+  }catch(e){ $('#ba-ceviri-ozet').textContent='okunamadı'; }
 }
 
 /* ---- Kullanıcılar ---- */
@@ -964,7 +1332,8 @@ async function tik(){
 globeKur(); tik(); setInterval(tik,3000);
 // Mailler: rozet açılışta dolsun, dakikada bir tazelensin (ayrıştırma
 // önbellekli olduğundan tekrar maliyeti readdir+stat kadar).
-mailFiltre('hepsi'); mailleriYukle(); geriBildirimYukle(); // rozetler açılışta dolsun
+// Rozetler açılışta dolsun (mail, geri bildirim, disk/yedek uyarısı)
+mailFiltre('hepsi'); mailleriYukle(); geriBildirimYukle(); depolamaYukle();
 setInterval(()=>{ if($('#m-modal').classList.contains('gizli')) mailleriYukle(); },60000);
 </script>
 </body>

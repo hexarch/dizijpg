@@ -450,4 +450,10 @@ const Map<String, String> cevirilerFil = {
   'Videolarda altyazı göster': 'Ipakita ang mga subtitle sa mga video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Ang pangungusap na binibigkas sa video ay nakasulat sa screen. Ang teksto ay pagsasalin: English sa Turkish speech, Turkish sa ibang mga wika.',
+  "Güncelleme gerekli": "Kailangan ng update",
+  "Yeni sürüm var": "May bagong bersyon",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "I-install ang bagong bersyon ng dizi.jpg para magpatuloy.",
+  "Güncelle": "I-update",
+  "Daha sonra": "Mamaya",
 };

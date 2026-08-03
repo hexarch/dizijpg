@@ -446,4 +446,10 @@ const Map<String, String> cevirilerSw = {
   'Videolarda altyazı göster': 'Onyesha manukuu kwenye video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Sentensi inayozungumzwa kwenye video imeandikwa kwenye skrini. Nakala ni tafsiri: Kiingereza katika hotuba ya Kituruki, Kituruki kwa lugha zingine.',
+  "Güncelleme gerekli": "Sasisho linahitajika",
+  "Yeni sürüm var": "Toleo jipya linapatikana",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Sakinisha toleo jipya la dizi.jpg ili kuendelea.",
+  "Güncelle": "Sasisha",
+  "Daha sonra": "Baadaye",
 };

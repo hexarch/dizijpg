@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -31,12 +33,17 @@ class MedyaGaleri extends StatelessWidget {
 
   /// Akışta: videolar kapak yerine yerinde (sessiz) oynar.
   final bool otomatikOynat;
+
+  /// Medyanın en-boy oranı kesinleşince bildirilir (akış kartı, yorum
+  /// metnine kalan yüksekliği bununla hesaplar).
+  final ValueChanged<double>? onOranBelirlendi;
   const MedyaGaleri({
     super.key,
     required this.yollar,
     this.onAc,
     this.onCiftDokunus,
     this.otomatikOynat = false,
+    this.onOranBelirlendi,
   });
 
   static bool _video(String m) => m.endsWith('.mp4') || m.endsWith('.webm');
@@ -52,6 +59,7 @@ class MedyaGaleri extends StatelessWidget {
         urller: urller,
         onAc: onAc,
         onCiftDokunus: onCiftDokunus,
+        onOranBelirlendi: onOranBelirlendi,
       );
     }
     Widget hucre(int i) {
@@ -176,12 +184,17 @@ class AkisMedya extends StatefulWidget {
   /// Oran BİLİNİYORSA (ör. bölüm kareleri hep 16:9) verilir: ölçüm beklenmez,
   /// kutu ilk karede doğru yüksekliğe kurulur — yükleme sonrası zıplama olmaz.
   final double? oran;
+
+  /// Kesinleşen oran dışarı bildirilir. Akış kartı bunu bekler: medyanın
+  /// kapladığı yüksekliği bilmeden "yorum ekrana sığsın" hesabı yapamaz.
+  final ValueChanged<double>? onOranBelirlendi;
   const AkisMedya({
     super.key,
     required this.urller,
     this.onAc,
     this.onCiftDokunus,
     this.oran,
+    this.onOranBelirlendi,
   });
 
   @override
@@ -191,15 +204,25 @@ class AkisMedya extends StatefulWidget {
 class _AkisMedyaState extends State<AkisMedya> {
   static bool _video(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
 
+  /// Sayaç (1/3) ne kadar görünür kalır. Kullanıcı isteği: "ilk gördüğünde
+  /// 3 saniye sonra kaybolacak".
+  static const sayacSuresi = Duration(seconds: 3);
+
   double? _oran; // ilk medyanın oranı (bilinene dek 4:5)
   int _sayfa = 0;
   ImageStream? _akis;
   ImageStreamListener? _dinleyici;
+  bool _sayacGorunur = true;
+  Timer? _sayacZaman;
 
   @override
   void initState() {
     super.initState();
     _oran = widget.oran;
+    if (_oran != null) _oraniBildir(_oran!);
+    // Sayaç açılışta görünür, 3 sn sonra söner. Tek medyada sayaç zaten
+    // çizilmez → gereksiz zamanlayıcı kurulmaz.
+    if (widget.urller.length > 1) _sayaciGoster();
     // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
     if (_oran == null && !_video(widget.urller.first)) {
       final saglayici = CachedNetworkImageProvider(widget.urller.first);
@@ -208,13 +231,36 @@ class _AkisMedyaState extends State<AkisMedya> {
         if (!mounted || _oran != null) return;
         final o = bilgi.image.width / bilgi.image.height;
         setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
+        _oraniBildir(_oran!);
       }, onError: (_, _) {});
       _akis!.addListener(_dinleyici!);
     }
   }
 
+  /// Oranı üst widget'a bildirir. Görsel önbellekteyse dinleyici initState
+  /// içinde SENKRON tetiklenebilir; üst widget'ın setState'i o an çağrılamaz,
+  /// bu yüzden kare sonuna ertelenir.
+  void _oraniBildir(double o) {
+    final geri = widget.onOranBelirlendi;
+    if (geri == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) geri(o);
+    });
+  }
+
+  /// Sayacı göster ve 3 sn sonra söndür. Sayfa değişince yeniden çağrılır:
+  /// kullanıcı kaydırdığında "kaçıncı fotoğraftayım" bilgisi tekrar belirir.
+  void _sayaciGoster() {
+    _sayacZaman?.cancel();
+    if (!_sayacGorunur && mounted) setState(() => _sayacGorunur = true);
+    _sayacZaman = Timer(sayacSuresi, () {
+      if (mounted) setState(() => _sayacGorunur = false);
+    });
+  }
+
   @override
   void dispose() {
+    _sayacZaman?.cancel();
     if (_akis != null && _dinleyici != null) {
       _akis!.removeListener(_dinleyici!);
     }
@@ -224,6 +270,7 @@ class _AkisMedyaState extends State<AkisMedya> {
   void _oranBildir(double o) {
     if (!mounted || _oran != null) return;
     setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
+    _oraniBildir(_oran!);
   }
 
   @override
@@ -237,7 +284,10 @@ class _AkisMedyaState extends State<AkisMedya> {
             itemCount: widget.urller.length,
             // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir
             allowImplicitScrolling: true,
-            onPageChanged: (i) => setState(() => _sayfa = i),
+            onPageChanged: (i) {
+              setState(() => _sayfa = i);
+              _sayaciGoster(); // yeni kare → sayaç yeniden belirir, yine söner
+            },
             itemBuilder: (context, i) {
               final url = widget.urller[i];
               return GestureDetector(
@@ -275,22 +325,33 @@ class _AkisMedyaState extends State<AkisMedya> {
             },
           ),
           if (coklu) ...[
-            // Sayaç (1/3) + nokta göstergesi
+            // Sayaç (1/3): medyanın SAĞ ÜSTÜNDE, 3 sn sonra söner. Medya her
+            // temada koyu zemin üstünde durur → siyah/beyaz burada kasıtlı
+            // (tema rengi değil) ve iki temada da okunur.
             Positioned(
               top: 10,
               right: 10,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${_sayfa + 1}/${widget.urller.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
+              child: IgnorePointer(
+                child: AnimatedOpacity(
+                  opacity: _sayacGorunur ? 1 : 0,
+                  duration: const Duration(milliseconds: 250),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '${_sayfa + 1}/${widget.urller.length}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ),
                 ),
               ),

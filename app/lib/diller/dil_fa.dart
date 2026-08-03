@@ -446,4 +446,10 @@ const Map<String, String> cevirilerFa = {
   'Videolarda altyazı göster': 'نمایش زیرنویس روی ویدیوها',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'جمله ای که در ویدیو گفته می شود روی صفحه نوشته می شود. متن ترجمه شده است: انگلیسی در گفتار ترکی، ترکی در زبان های دیگر.',
+  "Güncelleme gerekli": "به‌روزرسانی لازم است",
+  "Yeni sürüm var": "نسخه جدید موجود است",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "برای ادامه، نسخه جدید dizi.jpg را نصب کن.",
+  "Güncelle": "به‌روزرسانی",
+  "Daha sonra": "بعداً",
 };

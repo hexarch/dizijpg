@@ -1,5 +1,36 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-02 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-03 — AKIŞ KARTI baştan tasarlandı (post dizaynı)
+**Kullanıcı isteği:** "akışta dizi film veya kişi arayı kaldır ve postun dizaynı
+şu şekilde olsun: sol yukarıda paylaşan kişinin profil resmi yanına ismi yanında
+takip et buttonu ... film yorumu ise film adını kullanıcı adının altına ... dizi
+bölümü yorumu ise dizi adı s4b6 gibi ... en sağına da kapak fotoğrafı ...
+fotoğrafların sağ üstünde 1/3 ... ilk gördüğünde 3 saniye sonra kaybolacak ...
+beğen ikonu yanında sayı, yorum ikonu yorum sayısı ... görüntülenme ikonunu ve
+sayısını ... paylaş ikonu, işlevi de reelsdeki gibi ... yorum ekrana sığacak
+şekilde, sığmıyorsa devam et."
+- 🚀 **Arama çubuğu akıştan kaldırıldı** — arama Ana Sayfa'da (`AramaCubugu`)
+  duruyor, akış yalnız gönderilere ayrıldı. `akis.dart`ta duran KOPYA arama
+  uygulaması (≈120 satır) silindi.
+- 🚀 **Yeni düzen** (`AkisKarti`, akis.dart): avatar + @ad + **Takip Et** /
+  altında içerik adı + **S4B6** rozeti / en sağda kapak posteri → medya →
+  beğeni-yorum-görüntülenme-paylaş → en altta "@ad yorum metni".
+- 🚀 **Takip Et** yalnız `takip_ediyorum=false` ve gönderi senin değilken çıkar;
+  takip ediyorsan düğme HİÇ çizilmez. Alan `/akis`e eklendi (AKIS_ALANLAR,
+  `/kesfet-akis`teki kopya kaldırıldı) — canlı curl ile doğrulandı.
+- 🚀 **Ayrı dokunma hedefleri:** içerik adı → `/icerik/:tur/:id`, S4B6 rozeti →
+  `/dizi/:id/sezon/:s/bolum/:b`, poster → bölüm varsa bölüme. Hepsi ≥44px.
+- 🚀 **Medya sayacı** (1/3) sağ üstte kaldı ama artık **3 sn sonra sönüyor**
+  (AnimatedOpacity); kaydırınca yeniden belirip yine sönüyor, tek medyada hiç yok.
+- 🚀 **Paylaş** akış kartına eklendi; Reels'le AYNI kod (`gonderiPaylas`,
+  paylas.dart) — Reels'in kopyası değil, ortak çağrı.
+- 🚀 **"Ekrana sığan" yorum metni:** sabit `maxLines` YOK. `LayoutBuilder` +
+  `TextPainter` ile gerçek metin ölçülüp kullanılabilir yüksekliğe kaç satır
+  sığdığı hesaplanıyor (ekran boyu − başlık − medya − eylem satırı). Taşarsa
+  **Devam et** çıkıyor. Aynı gönderi 1400px ekranda 53, 500px ekranda 8 satır.
+- ✅ **34 yeni widget testi** (`test/akis_karti_tasarim_test.dart`); toplam 162
+  test geçiyor. AkisKarti'yi kullanan profil ekranları da korundu.
 
 ## 2026-08-02 — Videolarda senkron altyazı + çeviri (konuşulan cümle ekranda)
 **Kullanıcı isteği:** "videoların hepsinin izlerken ekranın sol altına ... akışta
@@ -1439,6 +1470,33 @@ oyuncu etiketleme".
   `/admin/duyuru-onizleme`, `/admin/duyuru`. Migrasyon: 2026-08-01b.
 - ⬜ Canlıda GERÇEK duyuru hiç gönderilmedi (20 gerçek cihaza push gider —
   kullanıcı onayı bekliyor). Doğrulama dalları ve önizleme test edildi.
+
+## 2026-08-03 — Panel: Büyüme, Depolama, Bakım ✅
+- **Depolama** (`backend/depolama.js` + `/admin/depolama`): disk/medya/avatar/DB
+  boyutları, uzantı kırılımı, en büyük 20 dosya, yedek durumu (`/opt/dizijpg/yedekler`
+  salt bağlı değil — YAZILABİLİR, "Şimdi yedek al" pg_dump çalıştırır; Dockerfile'a
+  `postgresql16-client` eklendi), TMDB önbelleği + temizleme.
+  - **Öksüz tarama TUZAĞI:** video küçük resmi diskte `<video>.jpg` olarak durur ve
+    DB'de referansı YOKTUR. Referans kümesine `ad + '.jpg'` eklenmezse tarama tüm
+    video kapaklarını siler. `depolama_test.mjs` bunu ve yol kaçışını doğruluyor.
+  - Tarama 30 bin dosyada ~2.4 sn sürüyor → yanıt 60 sn önbellekli (`?tazele=1` atlar).
+  - İlk gerçek tarama: yetim medya YOK; 3788 dosya macOS `._` artığı (2.3 MB).
+    **SİLİNMEDİ** — panelden "Öksüzleri sil" ile temizlenebilir.
+- **Büyüme** (`/admin/buyume`): günlük kayıt + günlük aktif (izleme/yorum/mesaj
+  birleşimi — `son_gorulme` geçmişi tutulmuyor, bu vekil ölçü), kohort tutundurma
+  (D1/D7), en çok izlenenler, push kapsama. Kapsama TOPLAM kullanıcıya bölünür
+  (misafirlerin de token'ı var; "kayıtlı"ya bölünce %117 çıkıyordu).
+- **Bakım** (`/admin/surumler`, `/admin/ayar`, `/admin/ceviri-durum`): sürüm
+  dağılımı, hata veren sürümler, çeviri kuyruğu ve **sürüm kapısı ayarları**.
+- **Sürüm kapısı:** `ayarlar` tablosu (k/v) + public `GET /surum-kontrol?derleme=N`
+  → `{zorunlu, oneri, url, not}`. Uygulama: `lib/surum_kapisi.dart` (MaterialApp
+  **builder** katmanı — dialog DEĞİL, çünkü builder context'i Navigator'ın üstünde),
+  `cihaz-token` artık `surum` de yolluyor. 5 yeni metin 45 dile eklendi (406 anahtar).
+  - ⚠️ Kapı yalnızca 1.14.0+54 ve SONRAKİ sürümlerde çalışır (eski istemcide kod yok).
+  - Testler: `test/surum_kapisi_test.dart` (8), `test/surum_tutarlilik_test.dart` (2).
+- **Düzeltildi:** `Api.surum` 1.12.9+52'de kalmıştı (pubspec 1.14.0+54) — hata
+  günlüğü iki sürüm yanlış etiketleniyordu, kapı da yanlış derlemeyi gönderecekti.
+  Artık test bunu her koşuda doğruluyor.
 
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.

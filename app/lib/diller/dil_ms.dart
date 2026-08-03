@@ -448,4 +448,10 @@ const Map<String, String> cevirilerMs = {
   'Videolarda altyazı göster': 'Tunjukkan sari kata pada video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Ayat yang dituturkan dalam video itu ditulis di skrin. Teksnya ialah terjemahan: Bahasa Inggeris dalam ucapan Turki, Turki dalam bahasa lain.',
+  "Güncelleme gerekli": "Kemas kini diperlukan",
+  "Yeni sürüm var": "Versi baharu tersedia",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Pasang versi baharu dizi.jpg untuk meneruskan.",
+  "Güncelle": "Kemas kini",
+  "Daha sonra": "Kemudian",
 };

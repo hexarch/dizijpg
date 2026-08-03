@@ -13,6 +13,9 @@ import os from 'os';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
+import {
+  dizinOzet, turDagilimi, oksuzler, oksuzSil, yedekDurumu,
+} from './depolama.js';
 import { emojiSay, EMOJI_YEDEK } from './emoji.js';
 import {
   mailKutulari, mailAyristir, mailKimlikCoz, gelenMailler, htmlKisirlastir,
@@ -742,6 +745,33 @@ async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null)
 app.get('/saglik', sarici(async (_req, res) => {
   await havuz.query('SELECT 1');
   res.json({ durum: 'ok', servis: 'dizi.jpg API' });
+}));
+
+// Sürüm kapısı: uygulama açılışta kendi derleme numarasını sorar.
+// zorunlu=true ise kapatılamayan güncelleme ekranı, oneri=true ise
+// kapatılabilir uyarı gösterilir. Ayar yoksa ikisi de false (kimse engellenmez).
+// Ayarlar nadiren değişir; 60 sn bellek önbelleği ile her açılışta DB'ye gidilmez.
+let AYAR_ONBELLEK = { ts: 0, deger: {} };
+async function ayarlariGetir() {
+  if (Date.now() - AYAR_ONBELLEK.ts < 60000) return AYAR_ONBELLEK.deger;
+  const { rows } = await havuz.query('SELECT anahtar, deger FROM ayarlar');
+  AYAR_ONBELLEK = { ts: Date.now(), deger: Object.fromEntries(rows.map((r) => [r.anahtar, r.deger])) };
+  return AYAR_ONBELLEK.deger;
+}
+app.get('/surum-kontrol', sarici(async (req, res) => {
+  const a = await ayarlariGetir();
+  const derleme = parseInt(req.query.derleme, 10);
+  const min = parseInt(a.min_derleme, 10);
+  const oneri = parseInt(a.onerilen_derleme, 10);
+  const gecerli = Number.isInteger(derleme) && derleme > 0;
+  res.json({
+    zorunlu: gecerli && Number.isInteger(min) ? derleme < min : false,
+    oneri: gecerli && Number.isInteger(oneri) ? derleme < oneri : false,
+    min_derleme: Number.isInteger(min) ? min : null,
+    onerilen_derleme: Number.isInteger(oneri) ? oneri : null,
+    url: a.guncelleme_url || null,
+    not: a.guncelleme_notu || null,
+  });
 }));
 
 // ---------- OG / link önizleme (bot'lar için) ----------
@@ -2438,7 +2468,13 @@ const AKIS_ALANLAR = `
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
             EXISTS(SELECT 1 FROM yorum_begeniler b
-                   WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim`;
+                   WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim,
+            -- Akış kartındaki "Takip Et" düğmesi: takip ediyorsan düğme HİÇ
+            -- çizilmez. Alan burada (ortak SELECT) üretilir ki /akis ve
+            -- /kesfet-akis aynı sözleşmeyi döndürsün.
+            EXISTS(SELECT 1 FROM takipler t
+                   WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id)
+              AS takip_ediyorum`;
 // Akış uygunluk kuralı (asla boş kalmaz):
 //  - Bölüm yorumları YALNIZ o bölüm izlendiyse (spoiler: tamamen dışarıda).
 //  - Film/dizi-geneli yorumlar herkesten; kitaplıkta "guvenli" değilse istemci
@@ -2699,10 +2735,7 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   const sorgula = (gorulenHaric, katV, onceV) => havuz.query(
     `${AKIS_ALANLAR},
             ${KESFET_VIDEOLU} AS videolu,
-            ${KESFET_KAT} AS kat,
-            EXISTS (SELECT 1 FROM takipler t
-                    WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id)
-              AS takip_ediyorum
+            ${KESFET_KAT} AS kat
      ${AKIS_GOVDE}
        AND ($2::int IS NULL
             OR (${KESFET_KAT}, -y.id) > ($5::int, -$2::int))
@@ -3909,17 +3942,22 @@ app.post('/engelle/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
 
 // ---------- FCM cihaz token kaydı ----------
 app.post('/cihaz-token', girisZorunlu, sarici(async (req, res) => {
-  const { token, platform, dil } = req.body || {};
+  const { token, platform, dil, surum } = req.body || {};
   if (typeof token !== 'string' || token.length < 20 || token.length > 4096) {
     return res.status(400).json({ hata: 'Geçersiz token' });
   }
+  // surum: her açılışta yenilendiği için sürüm dağılımının doğru kaynağı burası
+  // (hatalar.surum yalnız HATA ALAN kullanıcıyı sayıyordu). Eski istemciler
+  // göndermez → NULL kalır, panelde "bilinmiyor" görünür.
   await havuz.query(
-    `INSERT INTO cihaz_tokenlari (token, kullanici_id, platform, dil, guncelleme)
-     VALUES ($1,$2,$3,$4,now())
+    `INSERT INTO cihaz_tokenlari (token, kullanici_id, platform, dil, surum, guncelleme)
+     VALUES ($1,$2,$3,$4,$5,now())
      ON CONFLICT (token) DO UPDATE
-       SET kullanici_id=$2, platform=$3, dil=$4, guncelleme=now()`,
+       SET kullanici_id=$2, platform=$3, dil=$4,
+           surum=COALESCE($5, cihaz_tokenlari.surum), guncelleme=now()`,
     [token, req.kullanici.id, String(platform || '').slice(0, 20),
-     String(dil || 'tr').slice(0, 10)],
+     String(dil || 'tr').slice(0, 10),
+     surum ? String(surum).slice(0, 40) : null],
   );
   res.json({ durum: 'kayitli' });
 }));
@@ -4237,6 +4275,312 @@ app.post('/admin/yorum-sil', adminKisit, sarici(async (req, res) => {
   await havuz.query('DELETE FROM yorumlar WHERE id=$1', [id]);
   res.json({ durum: 'ok' });
 }));
+// ---------- depolama & yedek ----------
+const YEDEK_DIZIN = process.env.YEDEK_DIZIN || '/yedekler';
+const YEDEK_GUNLUK = process.env.YEDEK_GUNLUK || '/yedekler/yedek.log';
+
+// Diskteki medyanın DB'de referansı var mı? Referans veren TÜM sütunlar:
+// yorumlar.medya[] (gönderi ekleri) + mesajlar.medya (DM) — avatar/kapak ise
+// ayrı dizinde durur, ayrı toplanır.
+async function medyaReferanslari() {
+  const [y, m] = await Promise.all([
+    havuz.query('SELECT unnest(medya) AS yol FROM yorumlar WHERE cardinality(medya) > 0'),
+    havuz.query('SELECT medya AS yol FROM mesajlar WHERE medya IS NOT NULL'),
+  ]);
+  const kume = new Set();
+  for (const r of [...y.rows, ...m.rows]) {
+    if (!r.yol) continue;
+    const ad = path.basename(String(r.yol));
+    kume.add(ad);
+    // TUZAK: video küçük resmi diskte `<video>.jpg` olarak durur ve DB'de
+    // referansı YOKTUR (videoKaresiCikar üretir). Referans saymazsak öksüz
+    // taraması tüm video kapaklarını siler ve Keşfet ızgarası çöker.
+    kume.add(`${ad}.jpg`);
+  }
+  return kume;
+}
+async function avatarReferanslari() {
+  const { rows } = await havuz.query(
+    'SELECT avatar, kapak FROM kullanicilar WHERE avatar IS NOT NULL OR kapak IS NOT NULL');
+  const kume = new Set();
+  for (const r of rows) {
+    if (r.avatar) kume.add(path.basename(String(r.avatar)));
+    if (r.kapak) kume.add(path.basename(String(r.kapak)));
+  }
+  return kume;
+}
+
+// Medya dizininde 30 bin dosya var; her taramada dosya başına statSync
+// çağrılıyor ve uç ~6 sn sürüyordu (panel açılışında da çağrılıyor). Sonuç
+// 60 sn önbelleklenir — depolama rakamları saniyesi saniyesine olmak zorunda
+// değil, `?tazele=1` ile atlanabilir.
+let DEPO_ONBELLEK = { ts: 0, deger: null };
+app.get('/admin/depolama', adminKisit, sarici(async (req, res) => {
+  if (!req.query.tazele && DEPO_ONBELLEK.deger
+      && Date.now() - DEPO_ONBELLEK.ts < 60000) {
+    return res.json({ ...DEPO_ONBELLEK.deger, onbellekten: true });
+  }
+  let disk = null;
+  try {
+    const s = fs.statfsSync('/');
+    disk = { toplam: s.blocks * s.bsize, bos: s.bfree * s.bsize };
+  } catch { /* statfs yoksa atla */ }
+  const [medya, avatarlar, dbBoyut, tablolar] = await Promise.all([
+    Promise.resolve(dizinOzet(MEDYA_DIZIN)),
+    Promise.resolve(dizinOzet(AVATAR_DIZIN, 5)),
+    havuz.query('SELECT pg_database_size(current_database())::bigint AS b'),
+    havuz.query(
+      `SELECT relname AS tablo, pg_total_relation_size(c.oid)::bigint AS boyut
+         FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE n.nspname='public' AND c.relkind='r'
+        ORDER BY 2 DESC LIMIT 12`),
+  ]);
+  const cevap = {
+    disk,
+    medya: { ...medya, tur_dagilimi: turDagilimi(MEDYA_DIZIN) },
+    avatarlar,
+    db: { boyut: Number(dbBoyut.rows[0].b), tablolar: tablolar.rows.map((t) => ({ ...t, boyut: Number(t.boyut) })) },
+    yedek: yedekDurumu(YEDEK_DIZIN, YEDEK_GUNLUK),
+  };
+  DEPO_ONBELLEK = { ts: Date.now(), deger: cevap };
+  res.json(cevap);
+}));
+
+// Öksüz tarama AYRI uçta: her panel açılışında tüm dizini + DB'yi taramak
+// gereksiz yük, kullanıcı isteyince çalışsın.
+app.get('/admin/oksuz-tara', adminKisit, sarici(async (_req, res) => {
+  const [medyaRef, avatarRef] = await Promise.all([medyaReferanslari(), avatarReferanslari()]);
+  res.json({
+    medya: oksuzler(MEDYA_DIZIN, medyaRef),
+    avatarlar: oksuzler(AVATAR_DIZIN, avatarRef),
+    not: '24 saatten yeni dosyalar öksüz sayılmaz (yükleniyor olabilir)',
+  });
+}));
+
+app.post('/admin/oksuz-sil', adminKisit, sarici(async (req, res) => {
+  const nere = req.body?.nere === 'avatarlar' ? 'avatarlar' : 'medya';
+  const adlar = Array.isArray(req.body?.adlar) ? req.body.adlar.slice(0, 5000) : null;
+  const dizin = nere === 'avatarlar' ? AVATAR_DIZIN : MEDYA_DIZIN;
+  // Referansları SİLMEDEN ÖNCE tekrar oku: tarama ile silme arasında yeni
+  // yorum eklenmiş olabilir, o dosya artık öksüz değildir.
+  const ref = nere === 'avatarlar' ? await avatarReferanslari() : await medyaReferanslari();
+  const hedef = adlar || oksuzler(dizin, ref).adlar;
+  const sonuc = oksuzSil(dizin, hedef, ref);
+  console.log(`oksuz-sil (${nere}): ${sonuc.silinen} dosya, ${sonuc.boyut} bayt`);
+  res.json({ durum: 'ok', ...sonuc });
+}));
+
+// Elle yedek: gecelik cron'un aynısını çalıştırır (aynı dizin, aynı ad kalıbı).
+// SİLME YOK — bu uç yalnızca dosya EKLER.
+app.post('/admin/yedek-al', adminKisit, sarici(async (_req, res) => {
+  let u;
+  try { u = new URL(DATABASE_URL); } catch { return res.status(500).json({ hata: 'DATABASE_URL okunamadı' }); }
+  const ts = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/(\d{8})(\d{4})/, '$1-$2');
+  const dosya = path.join(YEDEK_DIZIN, `dizijpg-${ts}-elle.sql.gz`);
+  await new Promise((coz, red) => {
+    execFile('/bin/sh', ['-c',
+      `pg_dump -h ${u.hostname} -p ${u.port || 5432} -U ${u.username} `
+      + `${u.pathname.slice(1)} | gzip > '${dosya}'`],
+    { env: { ...process.env, PGPASSWORD: decodeURIComponent(u.password) }, timeout: 240000 },
+    (e, _so, se) => (e ? red(new Error(se || e.message)) : coz()));
+  }).catch((e) => { throw Object.assign(new Error(e.message.slice(0, 300)), { status: 500 }); });
+  let boyut = null;
+  try { boyut = fs.statSync(dosya).size; } catch { /* yok */ }
+  res.json({ durum: 'ok', dosya: path.basename(dosya), boyut });
+}));
+
+// ---------- TMDB önbelleği ----------
+app.get('/admin/onbellek', adminKisit, sarici(async (_req, res) => {
+  const [ozet, yollar] = await Promise.all([
+    havuz.query(
+      `SELECT count(*)::int adet,
+              pg_total_relation_size('tmdb_onbellek')::bigint boyut,
+              min(guncelleme) en_eski, max(guncelleme) en_yeni,
+              count(*) FILTER (WHERE guncelleme < now() - interval '7 days')::int eski7
+         FROM tmdb_onbellek`),
+    havuz.query(
+      `SELECT split_part(ltrim(anahtar,'/'),'/',1) AS grup, count(*)::int adet,
+              sum(pg_column_size(veri))::bigint boyut
+         FROM tmdb_onbellek GROUP BY 1 ORDER BY 3 DESC LIMIT 15`),
+  ]);
+  res.json({
+    ...ozet.rows[0],
+    boyut: Number(ozet.rows[0].boyut),
+    gruplar: yollar.rows.map((g) => ({ ...g, boyut: Number(g.boyut) })),
+  });
+}));
+
+app.post('/admin/onbellek-temizle', adminKisit, sarici(async (req, res) => {
+  const kapsam = req.body?.kapsam;
+  let sonuc;
+  if (kapsam === 'hepsi') {
+    sonuc = await havuz.query('DELETE FROM tmdb_onbellek');
+  } else if (kapsam === 'grup') {
+    const grup = String(req.body?.grup || '').replace(/[^a-z_]/gi, '').slice(0, 30);
+    if (!grup) return res.status(400).json({ hata: 'Geçersiz grup' });
+    sonuc = await havuz.query("DELETE FROM tmdb_onbellek WHERE anahtar LIKE $1", [`/${grup}/%`]);
+  } else {
+    // Varsayılan: 7 günden eski kayıtlar (TMDB verisi zaten tazelenir).
+    sonuc = await havuz.query(
+      "DELETE FROM tmdb_onbellek WHERE guncelleme < now() - interval '7 days'");
+  }
+  res.json({ durum: 'ok', silinen: sonuc.rowCount });
+}));
+
+// ---------- büyüme / analitik ----------
+app.get('/admin/buyume', adminKisit, sarici(async (req, res) => {
+  const gun = Math.min(Math.max(parseInt(req.query.gun, 10) || 30, 7), 180);
+  const [kayitlar, aktifler, tutundurma, topIcerik, push, ozet] = await Promise.all([
+    // Günlük kayıt (boş günler 0 ile dolsun: grafikte delik olmasın)
+    havuz.query(
+      `SELECT d::date AS gun, COALESCE(k.n,0)::int AS sayi
+         FROM generate_series(now()::date - ($1::int - 1), now()::date, '1 day') d
+         LEFT JOIN (SELECT olusturma::date g, count(*) n FROM kullanicilar
+                     WHERE olusturma > now() - ($1::int || ' days')::interval
+                     GROUP BY 1) k ON k.g = d::date
+        ORDER BY 1`, [gun]),
+    // Günlük EYLEM YAPAN kullanıcı (son_gorulme geçmişi tutulmadığı için
+    // izleme/yorum/mesaj birleşimi vekil ölçüdür).
+    havuz.query(
+      `WITH eylem AS (
+         SELECT kullanici_id, tarih::date g FROM izlemeler WHERE tarih > now() - ($1::int || ' days')::interval
+         UNION ALL
+         SELECT kullanici_id, tarih::date FROM yorumlar WHERE tarih > now() - ($1::int || ' days')::interval
+         UNION ALL
+         SELECT gonderen_id, tarih::date FROM mesajlar WHERE tarih > now() - ($1::int || ' days')::interval)
+       SELECT d::date AS gun, COALESCE(e.n,0)::int AS sayi
+         FROM generate_series(now()::date - ($1::int - 1), now()::date, '1 day') d
+         LEFT JOIN (SELECT g, count(DISTINCT kullanici_id) n FROM eylem GROUP BY 1) e ON e.g = d::date
+        ORDER BY 1`, [gun]),
+    // Tutundurma: son 30 günün kohortları, kayıttan 1 ve 7 gün SONRA eylem
+    havuz.query(
+      `WITH kohort AS (
+         SELECT id, olusturma::date g FROM kullanicilar
+          WHERE NOT misafir AND olusturma > now() - interval '30 days'),
+       eylem AS (
+         SELECT kullanici_id, tarih::date g FROM izlemeler
+         UNION SELECT kullanici_id, tarih::date FROM yorumlar
+         UNION SELECT gonderen_id, tarih::date FROM mesajlar)
+       SELECT k.g AS gun, count(*)::int AS kayit,
+              count(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id AND e.g = k.g + 1))::int AS d1,
+              count(*) FILTER (WHERE EXISTS (
+                SELECT 1 FROM eylem e WHERE e.kullanici_id=k.id AND e.g BETWEEN k.g + 6 AND k.g + 8))::int AS d7
+         FROM kohort k GROUP BY 1 ORDER BY 1 DESC LIMIT 30`),
+    havuz.query(
+      `SELECT tur, tmdb_id, count(*)::int izleme, count(DISTINCT kullanici_id)::int kisi
+         FROM izlemeler WHERE tarih > now() - ($1::int || ' days')::interval
+        GROUP BY 1,2 ORDER BY kisi DESC, izleme DESC LIMIT 15`, [gun]),
+    havuz.query(
+      // Kapsama TOPLAM kullanıcıya göre: misafir hesapların da push token'ı
+      // olabiliyor, "kayıtlı"ya bölünce oran %100'ü aşıyordu (21/18).
+      `SELECT (SELECT count(*)::int FROM kullanicilar) AS toplam,
+              (SELECT count(*)::int FROM kullanicilar WHERE NOT misafir) AS kayitli,
+              (SELECT count(DISTINCT kullanici_id)::int FROM cihaz_tokenlari) AS pushlu,
+              (SELECT count(*)::int FROM cihaz_tokenlari) AS cihaz`),
+    havuz.query(
+      `SELECT (SELECT count(*)::int FROM kullanicilar) AS kullanici,
+              (SELECT count(*)::int FROM kullanicilar
+                WHERE son_gorulme > now() - interval '7 days') AS aktif7,
+              (SELECT count(*)::int FROM kullanicilar
+                WHERE olusturma > now() - interval '7 days') AS yeni7,
+              (SELECT count(*)::int FROM yorumlar) AS yorum,
+              (SELECT count(*)::int FROM izlemeler) AS izleme`),
+  ]);
+  // İçerik adları (önbellekli TMDB)
+  const adlar = {};
+  const anahtarlar = topIcerik.rows.map((r) => `${r.tur}:${r.tmdb_id}`);
+  for (let i = 0; i < anahtarlar.length; i += 8) {
+    await Promise.all(anahtarlar.slice(i, i + 8).map(async (a) => {
+      const [tur, id] = a.split(':');
+      try {
+        const v = await tmdbGetir(`/${tur}/${id}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+        adlar[a] = v.name || v.title || '?';
+      } catch { adlar[a] = '?'; }
+    }));
+  }
+  res.json({
+    gun,
+    kayitlar: kayitlar.rows,
+    aktifler: aktifler.rows,
+    tutundurma: tutundurma.rows,
+    top_icerik: topIcerik.rows,
+    icerik_adlari: adlar,
+    push: push.rows[0],
+    ozet: ozet.rows[0],
+  });
+}));
+
+// ---------- sürüm dağılımı + ayarlar ----------
+app.get('/admin/surumler', adminKisit, sarici(async (_req, res) => {
+  const [cihaz, hata, ayar] = await Promise.all([
+    havuz.query(
+      `SELECT COALESCE(surum,'bilinmiyor') surum, COALESCE(platform,'?') platform,
+              count(*)::int cihaz, count(DISTINCT kullanici_id)::int kisi,
+              max(guncelleme) son
+         FROM cihaz_tokenlari GROUP BY 1,2 ORDER BY son DESC NULLS LAST`),
+    havuz.query(
+      `SELECT COALESCE(surum,'bilinmiyor') surum, count(*)::int hata,
+              max(tarih) son
+         FROM hatalar WHERE tarih > now() - interval '30 days'
+        GROUP BY 1 ORDER BY hata DESC LIMIT 20`),
+    havuz.query('SELECT anahtar, deger FROM ayarlar'),
+  ]);
+  res.json({
+    cihazlar: cihaz.rows,
+    hatalar: hata.rows,
+    ayarlar: Object.fromEntries(ayar.rows.map((a) => [a.anahtar, a.deger])),
+  });
+}));
+
+// Panelden değiştirilebilen ayarlar — beyaz liste (rastgele anahtar yazılamaz).
+const AYAR_ANAHTARLARI = ['min_derleme', 'onerilen_derleme', 'guncelleme_url', 'guncelleme_notu'];
+app.post('/admin/ayar', adminKisit, sarici(async (req, res) => {
+  const { anahtar, deger } = req.body || {};
+  if (!AYAR_ANAHTARLARI.includes(anahtar)) {
+    return res.status(400).json({ hata: 'Bilinmeyen ayar' });
+  }
+  const d = deger === null || deger === '' ? null : String(deger).slice(0, 500);
+  if (['min_derleme', 'onerilen_derleme'].includes(anahtar) && d !== null && !/^\d{1,6}$/.test(d)) {
+    return res.status(400).json({ hata: 'Derleme numarası sayı olmalı' });
+  }
+  await havuz.query(
+    `INSERT INTO ayarlar (anahtar, deger, guncelleme) VALUES ($1,$2,now())
+     ON CONFLICT (anahtar) DO UPDATE SET deger=$2, guncelleme=now()`, [anahtar, d]);
+  AYAR_ONBELLEK = { ts: 0, deger: {} }; // /surum-kontrol anında yeni değeri görsün
+  res.json({ durum: 'ok' });
+}));
+
+// ---------- çeviri kuyruğu durumu ----------
+app.get('/admin/ceviri-durum', adminKisit, sarici(async (_req, res) => {
+  const [ozet, diller, kaynak, bekleyen] = await Promise.all([
+    havuz.query(
+      `SELECT count(*)::int kayit, count(DISTINCT ozet)::int metin,
+              pg_total_relation_size('metin_cevirileri')::bigint boyut,
+              max(olusturma) son FROM metin_cevirileri`),
+    havuz.query(
+      'SELECT dil, count(*)::int adet FROM metin_cevirileri GROUP BY 1 ORDER BY 2 DESC LIMIT 30'),
+    havuz.query(
+      `SELECT COALESCE(kaynak_dil,'bilinmiyor') dil, count(*)::int adet
+         FROM yorumlar GROUP BY 1 ORDER BY 2 DESC LIMIT 15`),
+    // En çok istenen hedef dil (en) için çevrilmemiş metin sayısı
+    havuz.query(
+      `SELECT count(*)::int adet FROM (
+         SELECT md5(btrim(metin)) o FROM yorumlar
+          WHERE metin IS NOT NULL AND length(btrim(metin)) > 2
+            AND kaynak_dil IS DISTINCT FROM 'en'
+          GROUP BY 1) t
+        WHERE NOT EXISTS (SELECT 1 FROM metin_cevirileri c WHERE c.ozet=t.o AND c.dil='en')`),
+  ]);
+  res.json({
+    ...ozet.rows[0],
+    boyut: Number(ozet.rows[0].boyut),
+    diller: diller.rows,
+    kaynak_diller: kaynak.rows,
+    bekleyen_en: bekleyen.rows[0].adet,
+  });
+}));
+
 // ---------- geri bildirimler ----------
 const GB_DURUM = ['yeni', 'okundu', 'kapatildi'];
 

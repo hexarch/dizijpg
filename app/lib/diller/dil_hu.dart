@@ -450,4 +450,10 @@ const Map<String, String> cevirilerHu = {
   'Videolarda altyazı göster': 'Feliratok megjelenítése a videókon',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'A videóban elhangzott mondat fel van írva a képernyőre. A szöveg fordítása: angol a török ​​beszédben, török ​​más nyelveken.',
+  "Güncelleme gerekli": "Frissítés szükséges",
+  "Yeni sürüm var": "Új verzió érhető el",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "A folytatáshoz telepítsd a dizi.jpg új verzióját.",
+  "Güncelle": "Frissítés",
+  "Daha sonra": "Később",
 };

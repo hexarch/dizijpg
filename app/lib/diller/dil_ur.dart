@@ -446,4 +446,10 @@ const Map<String, String> cevirilerUr = {
   'Videolarda altyazı göster': 'ویڈیوز پر سب ٹائٹلز دکھائیں۔',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'ویڈیو میں بولا گیا جملہ سکرین پر لکھا ہوا ہے۔ متن کا ترجمہ ہے: ترکی تقریر میں انگریزی، دوسری زبانوں میں ترکی۔',
+  "Güncelleme gerekli": "اپ ڈیٹ ضروری ہے",
+  "Yeni sürüm var": "نیا ورژن دستیاب ہے",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "جاری رکھنے کے لیے dizi.jpg کا نیا ورژن انسٹال کریں۔",
+  "Güncelle": "اپ ڈیٹ کریں",
+  "Daha sonra": "بعد میں",
 };

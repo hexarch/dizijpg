@@ -447,4 +447,10 @@ const Map<String, String> cevirilerVi = {
   'Videolarda altyazı göster': 'Hiển thị phụ đề trên video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Câu nói trong video được viết trên màn hình. Văn bản được dịch: tiếng Anh trong tiếng Thổ Nhĩ Kỳ, tiếng Thổ Nhĩ Kỳ bằng các ngôn ngữ khác.',
+  "Güncelleme gerekli": "Cần cập nhật",
+  "Yeni sürüm var": "Đã có phiên bản mới",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Cài đặt phiên bản mới của dizi.jpg để tiếp tục.",
+  "Güncelle": "Cập nhật",
+  "Daha sonra": "Để sau",
 };

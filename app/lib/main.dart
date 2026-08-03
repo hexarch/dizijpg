@@ -13,6 +13,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
+import 'surum_kapisi.dart';
 import 'tema.dart';
 import 'veri_tasarrufu.dart';
 import 'yonlendirme.dart';
@@ -96,6 +97,10 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
             GlobalCupertinoLocalizations.delegate,
           ],
           routerConfig: _yonlendirici,
+          // Sürüm kapısı en dışta: zorunlu güncelleme ekranı her rotanın
+          // üstünde durur ve geri tuşuyla kapatılamaz (bkz. surum_kapisi.dart).
+          builder: (context, cocuk) =>
+              SurumKapisi(cocuk: cocuk ?? const SizedBox.shrink()),
         ),
       ),
     );

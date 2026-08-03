@@ -31,6 +31,9 @@ services:
       MAIL_FROM: "dizi.jpg <noreply@dizijpg.com>"
       # Gelen kutuları (admin panelindeki Mailler sekmesi okur)
       MAIL_KUTU_KOK: /mail
+      # Yedek durumu + elle yedek (pg_dump çıktısı buraya yazılır)
+      YEDEK_DIZIN: /yedekler
+      YEDEK_GUNLUK: /yedek.log
       # Admin paneli erişimi (.env'den): izinli IP listesi + yedek token.
       # Boş kalırsa /admin ve /admin/* HERKESE 403 döner.
       ADMIN_IPLER: ${ADMIN_IPLER}
@@ -43,6 +46,11 @@ services:
       # API hiçbir koşulda posta kutusunu değiştiremez/silemez.
       - /home/admin/Maildir:/mail/admin:ro
       - /home/noreply/Maildir:/mail/noreply:ro
+      # Yedekler: panel gecelik yedeğin durumunu okur ve elle yedek ALIR.
+      # Yazılabilir olmalı (pg_dump çıktısı buraya düşer); kod bu dizinden
+      # dosya SİLMEZ, yalnızca ekler.
+      - ./yedekler:/yedekler
+      - ./yedek.log:/yedek.log:ro
     extra_hosts:
       # Konteynerden host'taki Postfix'e erişim (mail gönderimi)
       - "host.docker.internal:host-gateway"

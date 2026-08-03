@@ -448,4 +448,10 @@ const Map<String, String> cevirilerMl = {
   'Videolarda altyazı göster': 'വീഡിയോകളിൽ സബ്‌ടൈറ്റിലുകൾ കാണിക്കുക',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'വീഡിയോയിൽ പറയുന്ന വാചകം സ്ക്രീനിൽ എഴുതിയിരിക്കുന്നു. വാചകം വിവർത്തനം ആണ്: ടർക്കിഷ് ഭാഷയിൽ ഇംഗ്ലീഷ്, മറ്റ് ഭാഷകളിൽ ടർക്കിഷ്.',
+  "Güncelleme gerekli": "അപ്ഡേറ്റ് ആവശ്യമാണ്",
+  "Yeni sürüm var": "പുതിയ പതിപ്പ് ലഭ്യമാണ്",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "തുടരാൻ dizi.jpg ന്റെ പുതിയ പതിപ്പ് ഇൻസ്റ്റാൾ ചെയ്യുക.",
+  "Güncelle": "അപ്ഡേറ്റ് ചെയ്യുക",
+  "Daha sonra": "പിന്നീട്",
 };

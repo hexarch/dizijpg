@@ -454,4 +454,10 @@ const Map<String, String> cevirilerMy = {
   'Videolarda altyazı göster': 'ဗီဒီယိုများတွင် စာတန်းထိုးပြပါ။',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'ဗီဒီယိုတွင်ပြောသောစာကြောင်းကို စခရင်ပေါ်တွင်ရေးထားသည်။ စာသားသည် ဘာသာပြန်သည်- တူရကီစကားတွင် အင်္ဂလိပ်၊ အခြားဘာသာစကားဖြင့် တူရကီ။',
+  "Güncelleme gerekli": "အပ်ဒိတ် လိုအပ်သည်",
+  "Yeni sürüm var": "ဗားရှင်းအသစ် ရနိုင်ပါပြီ",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "ဆက်လုပ်ရန် dizi.jpg ၏ ဗားရှင်းအသစ်ကို ထည့်သွင်းပါ။",
+  "Güncelle": "အပ်ဒိတ်လုပ်ရန်",
+  "Daha sonra": "နောက်မှ",
 };

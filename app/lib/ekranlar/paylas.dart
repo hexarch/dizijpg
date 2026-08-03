@@ -26,6 +26,17 @@ Future<void> paylasSheet(
   builder: (_) => _PaylasSheet(url: url, metin: metin, yorumId: yorumId),
 );
 
+/// Bir GÖNDERİYİ paylaş. Akış kartı ve Reels bunu çağırır — iki yerde ayrı
+/// yazılsaydı birinde düzeltilen (bağlantı biçimi, DM'e giden kart) ötekinde
+/// kalırdı. Bağlantı içeriğe değil gönderinin kendisine gider.
+Future<void> gonderiPaylas(BuildContext context, Map<String, dynamic> yorum) =>
+    paylasSheet(
+      context,
+      url: 'https://dizijpg.com/gonderi/${yorum['id']}',
+      metin: yorum['metin'] as String?,
+      yorumId: yorum['id'] as int,
+    );
+
 class _PaylasSheet extends StatefulWidget {
   final String url;
   final String? metin;

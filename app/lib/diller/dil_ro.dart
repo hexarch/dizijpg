@@ -450,4 +450,10 @@ const Map<String, String> cevirilerRo = {
   'Videolarda altyazı göster': 'Afișați subtitrări la videoclipuri',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Propoziția rostită în videoclip este scrisă pe ecran. Textul este traducere: engleză în limba turcă, turcă în alte limbi.',
+  "Güncelleme gerekli": "Actualizare necesară",
+  "Yeni sürüm var": "Versiune nouă disponibilă",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Instalează noua versiune dizi.jpg pentru a continua.",
+  "Güncelle": "Actualizează",
+  "Daha sonra": "Mai târziu",
 };

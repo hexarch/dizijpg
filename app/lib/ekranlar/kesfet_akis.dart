@@ -1008,17 +1008,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
     return '/icerik/${y['tur']}/${y['tmdb_id']}';
   }
 
-  Future<void> _paylas() async {
-    // Paylaşım sayfası: kişilere DM olarak gönder + telefonun kendi paylaşım
-    // sayfası (WhatsApp/e-posta/Instagram...) + bağlantıyı kopyala.
-    // Bağlantı içeriğe değil bu GÖNDERİYE gider (/gonderi/:id).
-    await paylasSheet(
-      context,
-      url: 'https://dizijpg.com/gonderi/${widget.yorum['id']}',
-      metin: widget.yorum['metin'] as String?,
-      yorumId: widget.yorum['id'] as int,
-    );
-  }
+  // Paylaşım sayfası: kişilere DM olarak gönder + telefonun kendi paylaşım
+  // sayfası (WhatsApp/e-posta/Instagram...) + bağlantıyı kopyala.
+  // Akış kartı da AYNI çağrıyı yapar (gonderiPaylas).
+  Future<void> _paylas() => gonderiPaylas(context, widget.yorum);
 
   // Reels de akış kartıyla AYNI sheet'i açar (tek açılış ayarı: yanitlariAc)
   void _yanitlarAc() => yanitlariAc(context, widget.yorum);

@@ -85,6 +85,27 @@ IconData _turIkonu(String tur) => switch (tur) {
   _ => Icons.person_outline,
 };
 
+/// Metnin EKRANDA görünen hâli: `[[tv:1396|Breaking Bad]]` → `Breaking Bad`,
+/// `www.a.com.` → `www.a.com.` (adres olduğu gibi görünür). Ölçüm için gerek:
+/// akış kartı kaç satır sığdığını [TextPainter] ile hesaplarken ham metni
+/// ölçseydi etiket işaretlemesi (görünmeyen 15+ karakter) satırları şişirirdi.
+String duzMetin(String metin) {
+  final tampon = StringBuffer();
+  var i = 0;
+  for (final m in _tumEtiketler.allMatches(metin)) {
+    if (m.start > i) tampon.write(metin.substring(i, m.start));
+    if (m.namedGroup('ad') != null) {
+      // İçerik etiketi: ekranda ikon + ad görünür (ikon ~1 karakter genişlik)
+      tampon.write(' ${m.namedGroup('ad')}');
+    } else {
+      tampon.write(m[0]);
+    }
+    i = m.end;
+  }
+  if (i < metin.length) tampon.write(metin.substring(i));
+  return tampon.toString();
+}
+
 /// Metindeki @kullanici_adi ve [[tur:id|Ad]] etiketlerini sarı, tıklanır
 /// bağlantı olarak gösterir. Kullanıcı etiketi profile, içerik etiketi
 /// dizi/film sayfasına, kişi etiketi oyuncu sayfasına gider.
@@ -95,11 +116,21 @@ class EtiketliMetin extends StatefulWidget {
   /// Daima-siyah zeminde mi (Reels)? true → parlak sarı; false → tema-duyarlı
   /// sariMetin (açık temada koyu, kart zemininde okunur).
   final bool koyuZemin;
+
+  /// Verilirse metnin BAŞINA kalın, tıklanır `@kullanici_adi` eklenir
+  /// (akış kartının alt bloğu: "kullanıcı adı + yazdığı yorum" tek paragraf).
+  final String? onekKullanici;
+
+  /// Satır sınırı: aşan metin `...` ile kırpılır. Akış kartı bunu ekrana
+  /// SIĞAN satır sayısıyla doldurur (sabit değer YOK).
+  final int? maxLines;
   const EtiketliMetin(
     this.metin, {
     super.key,
     this.stil,
     this.koyuZemin = false,
+    this.onekKullanici,
+    this.maxLines,
   });
 
   @override
@@ -138,6 +169,22 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
     );
     final metin = widget.metin;
     final parcalar = <InlineSpan>[];
+    if (widget.onekKullanici != null) {
+      final taniyici = TapGestureRecognizer()
+        ..onTap = () => kullaniciyaGit(context, widget.onekKullanici!);
+      _taniyicilar.add(taniyici);
+      parcalar.add(
+        TextSpan(
+          text: '@${widget.onekKullanici}  ',
+          // Renk AÇIKÇA verilir: TextSpan tema rengini devralmaz.
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            color: taban.color ?? DiziRenkler.metin,
+          ),
+          recognizer: taniyici,
+        ),
+      );
+    }
     var i = 0;
     for (final m in _tumEtiketler.allMatches(metin)) {
       if (m.start > i) {
@@ -199,7 +246,13 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
       i = m.end;
     }
     if (i < metin.length) parcalar.add(TextSpan(text: metin.substring(i)));
-    return Text.rich(TextSpan(style: taban, children: parcalar));
+    return Text.rich(
+      TextSpan(style: taban, children: parcalar),
+      maxLines: widget.maxLines,
+      overflow: widget.maxLines == null
+          ? TextOverflow.clip
+          : TextOverflow.ellipsis,
+    );
   }
 }
 

@@ -183,11 +183,34 @@ class Api {
   }
 
   /// FCM cihaz token'ını sunucuya kaydeder (push bildirimleri için).
+  /// `surum` de gider: admin panelindeki sürüm dağılımı buradan beslenir
+  /// (hata günlüğü yalnızca HATA ALAN kullanıcıyı sayıyordu).
   static Future<void> cihazTokenKaydet(
     String token,
     String platform,
     String dil,
-  ) => post('/cihaz-token', {'token': token, 'platform': platform, 'dil': dil});
+  ) => post('/cihaz-token', {
+    'token': token,
+    'platform': platform,
+    'dil': dil,
+    'surum': surum,
+  });
+
+  /// Sürüm kapısı: sunucudaki eşiklerle kendi derleme numaramızı karşılaştırır.
+  /// Ateşle-unut mantığı — ağ yoksa/ayar yoksa uygulama normal açılır.
+  static Future<Map<String, dynamic>?> surumKontrol() async {
+    final derleme = int.tryParse(surum.split('+').last);
+    if (derleme == null) return null;
+    try {
+      final y = await _istemci
+          .get(Uri.parse('$apiTaban/surum-kontrol?derleme=$derleme'))
+          .timeout(const Duration(seconds: 8));
+      if (y.statusCode != 200) return null;
+      return jsonDecode(y.body) as Map<String, dynamic>;
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// FCM cihaz token'ını sunucudan siler.
   static Future<void> cihazTokenSil(String token) async {
@@ -230,7 +253,10 @@ class Api {
   /// Uygulama sürümü (hata bildirimlerinde etiketlenir; pubspec ile eşle).
   /// DİKKAT: pubspec version'ı artınca BURAYI da güncelle — 1.7.1'de
   /// unutulduğu için hata günlüğü üç sürüm boyunca yanlış etiketlendi.
-  static const surum = '1.12.9+52';
+  /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
+  /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
+  /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
+  static const surum = '1.14.0+54';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

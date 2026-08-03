@@ -447,4 +447,10 @@ const Map<String, String> cevirilerEn = {
   'Videolarda altyazı göster': 'Show subtitles on videos',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'The sentence spoken in the video is written on the screen. The text is translation: English in Turkish speech, Turkish in other languages.',
+  "Güncelleme gerekli": "Update required",
+  "Yeni sürüm var": "New version available",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Install the new version of dizi.jpg to continue.",
+  "Güncelle": "Update",
+  "Daha sonra": "Later",
 };

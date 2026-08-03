@@ -448,4 +448,10 @@ const Map<String, String> cevirilerFi = {
   'Videolarda altyazı göster': 'Näytä tekstitykset videoissa',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Videolla puhuttu lause kirjoitetaan näytölle. Teksti on käännetty: Englanti turkin puheessa, turkki muilla kielillä.',
+  "Güncelleme gerekli": "Päivitys vaaditaan",
+  "Yeni sürüm var": "Uusi versio saatavilla",
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
+      "Asenna dizi.jpg:n uusi versio jatkaaksesi.",
+  "Güncelle": "Päivitä",
+  "Daha sonra": "Myöhemmin",
 };
