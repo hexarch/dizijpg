@@ -101,6 +101,9 @@ flutter:
     - assets/logo.png
     - assets/google_g.svg
     - assets/tepkiler/
+    # Ülke bayrakları (profil ülke satırı). 116 PNG, toplam ~42 KB.
+    # Emoji bayrak KULLANILMIYOR: Windows hiç çizmiyor, eski Android'de eksik.
+    - assets/bayraklar/
 
   # Marka fontu: Poppins (Latin + Türkçe). Latin-dışı diller sistem fontuna düşer.
   fonts:

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
+import '../bayrak.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'begenenler.dart';
@@ -153,17 +154,19 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                 padding: const EdgeInsets.only(top: 2),
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 14,
-                                      color: DiziRenkler.sariMetin,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      p['ulke'] as String,
-                                      style: TextStyle(
-                                        color: DiziRenkler.metin54,
-                                        fontSize: 12,
+                                    UlkeBayragi(ulke: p['ulke'] as String?),
+                                    const SizedBox(width: 5),
+                                    // Uzun ülke adları ("Amerika Birleşik
+                                    // Devletleri") dar ekranda satırı taşırmasın.
+                                    Flexible(
+                                      child: Text(
+                                        p['ulke'] as String,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: DiziRenkler.metin54,
+                                          fontSize: 12,
+                                        ),
                                       ),
                                     ),
                                   ],
