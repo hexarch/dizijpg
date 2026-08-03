@@ -353,6 +353,7 @@ const Map<String, String> cevirilerZh = {
   'Beğen': '赞',
   'Görüntülenme': '浏览量',
   'Tam ekran': '全屏',
+  'Arama başarısız': '搜索失败',
   'Sonuç bulunamadı': '没有结果',
   'Dizi ve Filmler': '剧集与电影',
   'Kişiler': '人物',

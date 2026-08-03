@@ -761,10 +761,18 @@ void main() {
       expect(find.text('Dizi, film veya kişi ara...'), findsNothing);
     });
 
-    testWidgets('ANA SAYFANIN arama çubuğu duruyor', (tester) async {
+    // 3 Ağu: mobilde arama kutusu üst bara taşındı, sayfa gövdesine artık
+    // satır-içi çubuk çizilmiyor. Masaüstü genişliğinde (>= masaustuEsigi)
+    // AramaCubugu hâlâ kendi kutusunu ve üst barını kuruyor.
+    testWidgets('ANA SAYFANIN arama çubuğu MASAÜSTÜNDE duruyor', (
+      tester,
+    ) async {
       _sunucu({});
       SharedPreferences.setMockInitialValues({'token': 'sahte'});
       await Api.tokenYukle();
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(body: AramaCubugu(cocuk: SizedBox())),
@@ -772,6 +780,24 @@ void main() {
       );
       await tester.pump();
       expect(find.byType(TextField), findsOneWidget);
+    });
+
+    testWidgets('MOBİLDE gövdeye ikinci bir arama kutusu ÇİZİLMEZ', (
+      tester,
+    ) async {
+      _sunucu({});
+      SharedPreferences.setMockInitialValues({'token': 'sahte'});
+      await Api.tokenYukle();
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(body: AramaCubugu(cocuk: SizedBox())),
+        ),
+      );
+      await tester.pump();
+      expect(find.byType(TextField), findsNothing);
     });
   });
 }

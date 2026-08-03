@@ -354,6 +354,7 @@ const Map<String, String> cevirilerJa = {
   'Beğen': 'いいね',
   'Görüntülenme': '表示回数',
   'Tam ekran': '全画面',
+  'Arama başarısız': '検索に失敗しました',
   'Sonuç bulunamadı': '結果が見つかりません',
   'Dizi ve Filmler': 'ドラマ・映画',
   'Kişiler': '人物',

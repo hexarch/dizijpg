@@ -362,6 +362,7 @@ const Map<String, String> cevirilerAz = {
   'Beğen': 'Bəyən',
   'Görüntülenme': 'Baxış',
   'Tam ekran': 'Tam ekran',
+  'Arama başarısız': 'Axtarış alınmadı',
   'Sonuç bulunamadı': 'Nəticə tapılmadı',
   'Dizi ve Filmler': 'Serial və Filmlər',
   'Kişiler': 'Şəxslər',

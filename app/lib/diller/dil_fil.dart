@@ -364,6 +364,7 @@ const Map<String, String> cevirilerFil = {
   'Beğen': 'I-like',
   'Görüntülenme': 'Mga view',
   'Tam ekran': 'Fullscreen',
+  'Arama başarısız': 'Nabigo ang paghahanap',
   'Sonuç bulunamadı': 'Walang resulta',
   'Dizi ve Filmler': 'Mga serye at pelikula',
   'Kişiler': 'Mga tao',

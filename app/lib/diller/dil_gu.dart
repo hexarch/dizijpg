@@ -361,6 +361,7 @@ const Map<String, String> cevirilerGu = {
   'Beğen': 'લાઈક',
   'Görüntülenme': 'વ્યૂ',
   'Tam ekran': 'ફુલ સ્ક્રીન',
+  'Arama başarısız': 'શોધ નિષ્ફળ થઈ',
   'Sonuç bulunamadı': 'કોઈ પરિણામ મળ્યું નથી',
   'Dizi ve Filmler': 'સિરીઝ અને ફિલ્મો',
   'Kişiler': 'વ્યક્તિઓ',

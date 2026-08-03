@@ -217,38 +217,56 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       );
     }
 
-    // Marka bloğu ve eylem ikonları iki düzende de AYNI: dar ekranda AppBar'a,
-    // masaüstünde AramaCubugu'nun üst barına verilir (arama en üstte ortada).
+    final genis = masaustuMu(context);
+
+    // Marka bloğu ve eylem ikonları iki düzende de AYNI yerden gelir: dar
+    // ekranda AppBar'a, masaüstünde AramaCubugu'nun üst barına verilir.
+    //
+    // DAR EKRAN ÖLÇÜSÜ (360 dp): logo 40 + BETA 57 + sürüm 77 + boşluklar =
+    // 204 dp, iki eylem ikonu 100 dp → arama kutusuna 56 dp kalıyordu; büyüteç
+    // + tek kelimelik ipucu bile sığmaz. Bu yüzden dar ekranda logo 30'a
+    // küçültüldü ve BETA rozeti gizlendi (sürüm metni DURUYOR — kullanıcı onu
+    // referans alıyor; beta bilgisi sürümün ipucunda/erişilebilirlik
+    // etiketinde kaldı). Böylece kutuya ~127 dp açıldı.
     final marka = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Image.asset('assets/logo.png', height: 40),
-        const SizedBox(width: 8),
-        // BETA rozeti (marka sarısı pill)
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-          decoration: BoxDecoration(
-            color: DiziRenkler.sari,
-            borderRadius: BorderRadius.circular(6),
-          ),
-          child: const Text(
-            'BETA',
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.8,
+        Image.asset('assets/logo.png', height: genis ? 40 : 30),
+        SizedBox(width: genis ? 8 : 6),
+        // BETA rozeti (marka sarısı pill) — yalnız masaüstünde yer var
+        if (genis) ...[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+            decoration: BoxDecoration(
+              color: DiziRenkler.sari,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              'BETA',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.8,
+              ),
             ),
           ),
-        ),
-        const SizedBox(width: 6),
-        // Sürüm numarası (yapı numarası olmadan)
-        Text(
-          'v${Api.surum.split('+').first}',
-          style: TextStyle(
-            color: DiziRenkler.metin38,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
+          const SizedBox(width: 6),
+        ],
+        // Sürüm numarası (yapı numarası olmadan). Dar ekranda rozet
+        // gizlendiği için beta bilgisi buranın ipucuna/etiketine taşınır.
+        Tooltip(
+          message: genis ? '' : 'BETA v${Api.surum.split('+').first}',
+          child: Text(
+            'v${Api.surum.split('+').first}',
+            semanticsLabel: genis
+                ? null
+                : 'BETA v${Api.surum.split('+').first}',
+            style: TextStyle(
+              color: DiziRenkler.metin38,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ],
@@ -272,12 +290,27 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       ),
       const SizedBox(width: 4),
     ];
-    final genis = masaustuMu(context);
 
     return Scaffold(
       // Masaüstünde AppBar YOK: arama kutusu pencerenin en üst satırında,
       // yatayda tam ortada dursun diye üst bar AramaCubugu'na devredildi.
-      appBar: genis ? null : AppBar(title: marka, actions: eylemler),
+      //
+      // DAR EKRANDA arama kutusu artık üst barın İÇİNDE: marka bloğu (logo +
+      // sürüm) ile eylem ikonlarının (Gözat, Mesajlar) TAM ARASINDA. Expanded
+      // aradaki boşluğun tamamını kutuya verir; kutu ne taşar ne kırpılır.
+      appBar: genis
+          ? null
+          : AppBar(
+              titleSpacing: 12,
+              title: Row(
+                children: [
+                  marka,
+                  const SizedBox(width: 8),
+                  const Expanded(child: AramaAcmaKutusu()),
+                ],
+              ),
+              actions: eylemler,
+            ),
       // Akışla AYNI arama bileşeni (ortak widget)
       body: AramaCubugu(
         cocuk: govde,

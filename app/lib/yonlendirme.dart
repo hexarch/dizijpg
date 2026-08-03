@@ -6,6 +6,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'tema.dart';
 import 'ekranlar/akis.dart';
+import 'ekranlar/arama_cubugu.dart';
 import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
 import 'ekranlar/ozet.dart';
@@ -261,6 +262,29 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
       ),
       GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
       GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
+      // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.
+      // KABUĞUN DIŞINDA: alt gezinme çubuğu görünmez, geri tuşu (Android ve
+      // tarayıcı) aramayı kapatıp geldiği sekmeye döner.
+      GoRoute(
+        path: tamAramaYolu,
+        pageBuilder: (_, s) => CustomTransitionPage(
+          key: s.pageKey,
+          // Açılış 220 ms, kapanış 160 ms: çıkış girişten hızlı olur, "kutu
+          // büyüyüp ekranı kaplıyor" hissi verir ama abartılı değildir.
+          transitionDuration: const Duration(milliseconds: 220),
+          reverseTransitionDuration: const Duration(milliseconds: 160),
+          transitionsBuilder: (_, animasyon, __, cocuk) => FadeTransition(
+            opacity: animasyon,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.96, end: 1).animate(
+                CurvedAnimation(parent: animasyon, curve: Curves.easeOutCubic),
+              ),
+              child: cocuk,
+            ),
+          ),
+          child: const TamEkranAramaSayfasi(),
+        ),
+      ),
       GoRoute(
         path: '/ozet/:yil',
         builder: (_, s) {

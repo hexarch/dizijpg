@@ -364,6 +364,7 @@ const Map<String, String> cevirilerTa = {
   'Beğen': 'விருப்பம்',
   'Görüntülenme': 'பார்வைகள்',
   'Tam ekran': 'முழுத்திரை',
+  'Arama başarısız': 'தேடல் தோல்வியடைந்தது',
   'Sonuç bulunamadı': 'முடிவுகள் இல்லை',
   'Dizi ve Filmler': 'தொடர்கள் & படங்கள்',
   'Kişiler': 'நபர்கள்',

@@ -369,6 +369,7 @@ const Map<String, String> cevirilerMy = {
   'Beğen': 'နှစ်သက်သည်',
   'Görüntülenme': 'ကြည့်ရှုမှု',
   'Tam ekran': 'မျက်နှာပြင်အပြည့်',
+  'Arama başarısız': 'ရှာဖွေမှု မအောင်မြင်ပါ',
   'Sonuç bulunamadı': 'ရလဒ်မတွေ့ပါ',
   'Dizi ve Filmler': 'စီးရီးနှင့် ရုပ်ရှင်များ',
   'Kişiler': 'ပုဂ္ဂိုလ်များ',

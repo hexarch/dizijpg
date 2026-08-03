@@ -364,6 +364,7 @@ const Map<String, String> cevirilerHu = {
   'Beğen': 'Tetszik',
   'Görüntülenme': 'Megtekintések',
   'Tam ekran': 'Teljes képernyő',
+  'Arama başarısız': 'A keresés sikertelen',
   'Sonuç bulunamadı': 'Nincs találat',
   'Dizi ve Filmler': 'Sorozatok és filmek',
   'Kişiler': 'Személyek',

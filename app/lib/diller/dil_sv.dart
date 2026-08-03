@@ -364,6 +364,7 @@ const Map<String, String> cevirilerSv = {
   'Beğen': 'Gilla',
   'Görüntülenme': 'Visningar',
   'Tam ekran': 'Helskärm',
+  'Arama başarısız': 'Sökningen misslyckades',
   'Sonuç bulunamadı': 'Inga resultat',
   'Dizi ve Filmler': 'Serier & filmer',
   'Kişiler': 'Personer',

@@ -364,6 +364,7 @@ const Map<String, String> cevirilerMl = {
   'Beğen': 'ലൈക്ക്',
   'Görüntülenme': 'കാഴ്ചകൾ',
   'Tam ekran': 'ഫുൾസ്ക്രീൻ',
+  'Arama başarısız': 'തിരയൽ പരാജയപ്പെട്ടു',
   'Sonuç bulunamadı': 'ഫലങ്ങളൊന്നുമില്ല',
   'Dizi ve Filmler': 'സീരീസും സിനിമകളും',
   'Kişiler': 'വ്യക്തികൾ',

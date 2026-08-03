@@ -362,6 +362,7 @@ const Map<String, String> cevirilerId = {
   'Beğen': 'Suka',
   'Görüntülenme': 'Dilihat',
   'Tam ekran': 'Layar penuh',
+  'Arama başarısız': 'Pencarian gagal',
   'Sonuç bulunamadı': 'Tidak ada hasil',
   'Dizi ve Filmler': 'Serial & Film',
   'Kişiler': 'Orang',

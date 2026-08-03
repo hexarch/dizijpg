@@ -20,66 +20,67 @@ const double masaustuUstBarKenarPayi = 230;
 /// Masaüstünde arama kutusunun azami genişliği (720 masaüstünde şişkin duruyor).
 const double masaustuAramaGenisligi = 560;
 
-/// Sayfanın üstüne satır-içi arama çubuğu ekleyen sarmalayıcı.
+/// Mobilde tam ekran aramanın yolu.
 ///
-/// Akış ve Ana Sayfa AYNI bileşeni kullanır; kopyalansaydı birinde
-/// düzeltilen hata ötekinde kalırdı. Sorgu 2 karakterden kısayken [cocuk]
-/// gösterilir, uzunsa sonuçlar listelenir.
+/// KÖK seviyede bir rota (kabuğun İÇİNDE değil): böylece açılınca alt gezinme
+/// çubuğunun ÜSTÜNE değil YERİNE gelir, tarayıcı geçmişine kendi adımını
+/// bırakır ve Android geri tuşu/tarayıcı geri oku aramayı KAPATIR — sayfadan
+/// çıkarmaz.
+const String tamAramaYolu = '/tam-arama';
+
+/// Arama mantığı (sorgu, gecikme, istek, sonuç kümeleri, dört hâl).
 ///
-/// MASAÜSTÜNDE (genişlik >= [masaustuEsigi]) bileşen sayfanın üst barını da
-/// üstlenir: arama kutusu EKRANIN EN ÜSTÜNDE ve TAM ORTASINDA durur, [logo]
-/// solda, [eylemler] sağda kalır. Bu yüzden çağıran ekran masaüstünde kendi
-/// AppBar'ını kurmaz, marka bloğunu ve eylem ikonlarını buraya verir.
-/// Dar ekranda [logo]/[eylemler] YOK SAYILIR ve düzen birebir eskisi gibidir.
-class AramaCubugu extends StatefulWidget {
-  final Widget cocuk;
-  final Widget? logo;
-  final List<Widget> eylemler;
-  const AramaCubugu({
-    super.key,
-    required this.cocuk,
-    this.logo,
-    this.eylemler = const [],
-  });
-
-  @override
-  State<AramaCubugu> createState() => _AramaCubuguState();
-}
-
-class _AramaCubuguState extends State<AramaCubugu> {
-  // Satır-içi arama: sonuçlar modal/ayrı sayfa yerine çubuğun altında listelenir
-  final _aramaKutu = TextEditingController();
+/// Masaüstünün satır-içi çubuğu ([AramaCubugu]) ile mobilin tam ekran araması
+/// ([TamEkranAramaSayfasi]) AYNI mixin'i kullanır. Kopyalansaydı birinde
+/// düzeltilen hata ötekinde kalırdı.
+mixin AramaMantigi<T extends StatefulWidget> on State<T> {
+  final TextEditingController aramaKutu = TextEditingController();
   Timer? _aramaGecikme;
-  String _sorgu = '';
-  bool _araniyor = false;
+  String sorgu = '';
+  bool araniyor = false;
+  String? aramaHatasi; // sessiz başarısızlık yok: hata hâli gösterilir
   List<dynamic> _aramaIcerik = []; // dizi + film
   List<dynamic> _aramaKisiler = []; // oyuncu/yönetmen (TMDB)
   List<dynamic> _aramaKullanicilar = []; // uygulama kullanıcıları
   String? _duzeltme; // "şunu mu demek istedin" — sunucu yazım düzeltmesi
 
+  /// Sonuç göstermeye yetecek uzunlukta sorgu var mı?
+  bool get sorguYeterli => sorgu.trim().length >= 2;
+
+  bool get _sonucBos =>
+      _aramaKullanicilar.isEmpty &&
+      _aramaIcerik.isEmpty &&
+      _aramaKisiler.isEmpty;
+
   @override
   void dispose() {
     _aramaGecikme?.cancel();
-    _aramaKutu.dispose();
+    aramaKutu.dispose();
     super.dispose();
   }
 
-  void _aramaDegisti(String s) {
-    setState(() => _sorgu = s);
+  void aramaDegisti(String s) {
+    setState(() {
+      sorgu = s;
+      if (s.trim().length < 2) aramaHatasi = null;
+    });
     _aramaGecikme?.cancel();
     if (s.trim().length < 2) return;
-    _aramaGecikme = Timer(const Duration(milliseconds: 450), () => _ara(s));
+    _aramaGecikme = Timer(const Duration(milliseconds: 450), () => ara(s));
   }
 
-  Future<void> _ara(String sorgu) async {
-    setState(() => _araniyor = true);
+  Future<void> ara(String sorgu) async {
+    setState(() {
+      araniyor = true;
+      aramaHatasi = null;
+    });
     try {
       final q = Uri.encodeComponent(sorgu.trim());
       final y = await Future.wait([
         Api.get('/ara?q=$q'),
         Api.get('/kullanici-ara?q=$q').catchError((_) => <String, dynamic>{}),
       ]);
-      if (!mounted || _sorgu.trim() != sorgu.trim()) return;
+      if (!mounted || this.sorgu.trim() != sorgu.trim()) return;
       final sonuclar = (y[0]['results'] as List<dynamic>? ?? []);
       // Sunucu yazım hatasını düzeltip "duzeltme" döndürdüyse başlıkta göster
       final d = y[0]['duzeltme'] as String?;
@@ -100,19 +101,22 @@ class _AramaCubuguState extends State<AramaCubugu> {
         _aramaKullanicilar = y[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
     } catch (_) {
+      if (mounted) setState(() => aramaHatasi = 'Arama başarısız'.c);
     } finally {
-      if (mounted) setState(() => _araniyor = false);
+      if (mounted) setState(() => araniyor = false);
     }
   }
 
-  /// Arama kutusunun kendisi (mobil ve masaüstü aynı kutuyu kullanır).
-  Widget _aramaKutusu() => TextField(
-    controller: _aramaKutu,
-    onChanged: _aramaDegisti,
+  /// Arama kutusunun kendisi (masaüstü çubuğu ve tam ekran AYNI kutuyu kullanır).
+  Widget aramaKutusu({bool otomatikOdak = false}) => TextField(
+    controller: aramaKutu,
+    onChanged: aramaDegisti,
+    autofocus: otomatikOdak,
+    textInputAction: TextInputAction.search,
     decoration: InputDecoration(
       hintText: 'Dizi, film veya kişi ara...'.c,
       prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
-      suffixIcon: _araniyor
+      suffixIcon: araniyor
           ? const Padding(
               padding: EdgeInsets.all(12),
               child: SizedBox(
@@ -124,92 +128,37 @@ class _AramaCubuguState extends State<AramaCubugu> {
                 ),
               ),
             )
-          : (_sorgu.isNotEmpty
+          : (sorgu.isNotEmpty
                 ? IconButton(
                     tooltip: 'Kapat'.c,
                     icon: Icon(Icons.close, color: DiziRenkler.metin54),
                     onPressed: () {
-                      _aramaKutu.clear();
-                      setState(() => _sorgu = '');
+                      aramaKutu.clear();
+                      setState(() {
+                        sorgu = '';
+                        aramaHatasi = null;
+                      });
                     },
                   )
                 : null),
     ),
   );
 
-  /// Masaüstü üst barı: arama kutusu ekran genişliğinin TAM ORTASINDA
-  /// (Stack + Center → sol boşluk = sağ boşluk), marka solda, eylemler sağda.
-  /// Positioned'lar Stack SINIRI İÇİNDE — dışarı taşan Positioned tıklanamaz.
-  Widget _masaustuUstBar(double ekranGenisligi) {
-    final kutuGenisligi = (ekranGenisligi - masaustuUstBarKenarPayi * 2).clamp(
-      320.0,
-      masaustuAramaGenisligi,
-    );
-    return SafeArea(
-      bottom: false,
-      child: SizedBox(
-        height: masaustuUstBarYuksekligi,
-        child: Stack(
-          children: [
-            Center(
-              child: SizedBox(width: kutuGenisligi, child: _aramaKutusu()),
-            ),
-            if (widget.logo != null)
-              Positioned(
-                left: 16,
-                top: 0,
-                bottom: 0,
-                child: Center(child: widget.logo!),
-              ),
-            if (widget.eylemler.isNotEmpty)
-              Positioned(
-                right: 8,
-                top: 0,
-                bottom: 0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: widget.eylemler,
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ekranGenisligi = MediaQuery.sizeOf(context).width;
-    return Column(
-      children: [
-        // Satır-içi arama: dizi/film/kişi + kullanıcılar; sonuçlar
-        // modal yerine çubuğun hemen altında listelenir
-        if (ekranGenisligi >= masaustuEsigi)
-          _masaustuUstBar(ekranGenisligi)
-        else
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-                child: _aramaKutusu(),
-              ),
-            ),
-          ),
-        Expanded(
-          child: _sorgu.trim().length >= 2 ? _aramaSonuclari() : widget.cocuk,
-        ),
-      ],
-    );
-  }
-
-  /// Arama sonuçları: çubuğun altında bölümlü, satır tabanlı liste.
-  Widget _aramaSonuclari() {
-    final bos =
-        _aramaKullanicilar.isEmpty &&
-        _aramaIcerik.isEmpty &&
-        _aramaKisiler.isEmpty;
-    if (bos && !_araniyor) {
+  /// Arama sonuçları: bölümlü, satır tabanlı liste.
+  ///
+  /// DÖRT HÂL burada toplanır: hata (tekrar dene) → yükleniyor (spinner) →
+  /// sonuç yok (boş durum) → sonuç listesi. Boş sorgu hâli çağıranın işi
+  /// (masaüstünde sayfa içeriği, tam ekranda başlangıç ipucu).
+  Widget aramaSonuclari() {
+    if (aramaHatasi != null && _sonucBos) {
+      return HataGorunumu(mesaj: aramaHatasi!, tekrar: () => ara(sorgu));
+    }
+    if (araniyor && _sonucBos) {
+      return const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    }
+    if (_sonucBos) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -241,7 +190,12 @@ class _AramaCubuguState extends State<AramaCubugu> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
         child: ListView(
-          padding: const EdgeInsets.only(bottom: 24),
+          // Klavye açıkken listeyi sürüklemek klavyeyi kapatsın; alt dolgu
+          // klavye yüksekliğini de sayar ki son satır altında kalmasın.
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          padding: EdgeInsets.only(
+            bottom: 24 + MediaQuery.viewInsetsOf(context).bottom,
+          ),
           children: [
             if (_duzeltme != null)
               Padding(
@@ -314,6 +268,207 @@ class _AramaCubuguState extends State<AramaCubugu> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// MASAÜSTÜ (genişlik >= [masaustuEsigi]) üst barı + satır-içi arama.
+///
+/// Arama kutusu EKRANIN EN ÜSTÜNDE ve TAM ORTASINDA durur, [logo] solda,
+/// [eylemler] sağda kalır; çağıran ekran masaüstünde kendi AppBar'ını kurmaz.
+/// Sorgu 2 karakterden kısayken [cocuk], uzunsa sonuçlar gösterilir.
+///
+/// DAR EKRANDA arama artık burada DEĞİL: üst bara ([AramaAcmaKutusu]) taşındı
+/// ve dokununca [TamEkranAramaSayfasi] açılıyor. Bu yüzden dar ekranda bu
+/// sarmalayıcı yalnız [cocuk]'u geçirir — iki ayrı mobil arama kutusu olmasın.
+class AramaCubugu extends StatefulWidget {
+  final Widget cocuk;
+  final Widget? logo;
+  final List<Widget> eylemler;
+  const AramaCubugu({
+    super.key,
+    required this.cocuk,
+    this.logo,
+    this.eylemler = const [],
+  });
+
+  @override
+  State<AramaCubugu> createState() => _AramaCubuguState();
+}
+
+class _AramaCubuguState extends State<AramaCubugu> with AramaMantigi {
+  /// Masaüstü üst barı: arama kutusu ekran genişliğinin TAM ORTASINDA
+  /// (Stack + Center → sol boşluk = sağ boşluk), marka solda, eylemler sağda.
+  /// Positioned'lar Stack SINIRI İÇİNDE — dışarı taşan Positioned tıklanamaz.
+  Widget _masaustuUstBar(double ekranGenisligi) {
+    final kutuGenisligi = (ekranGenisligi - masaustuUstBarKenarPayi * 2).clamp(
+      320.0,
+      masaustuAramaGenisligi,
+    );
+    return SafeArea(
+      bottom: false,
+      child: SizedBox(
+        height: masaustuUstBarYuksekligi,
+        child: Stack(
+          children: [
+            Center(
+              child: SizedBox(width: kutuGenisligi, child: aramaKutusu()),
+            ),
+            if (widget.logo != null)
+              Positioned(
+                left: 16,
+                top: 0,
+                bottom: 0,
+                child: Center(child: widget.logo!),
+              ),
+            if (widget.eylemler.isNotEmpty)
+              Positioned(
+                right: 8,
+                top: 0,
+                bottom: 0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.eylemler,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ekranGenisligi = MediaQuery.sizeOf(context).width;
+    // Dar ekranda arama üst bara taşındı (bkz. [AramaAcmaKutusu]); burada
+    // ikinci bir kutu çizilmez, yalnız sayfa içeriği geçirilir.
+    if (ekranGenisligi < masaustuEsigi) return widget.cocuk;
+    return Column(
+      children: [
+        // Satır-içi arama: dizi/film/kişi + kullanıcılar; sonuçlar
+        // modal yerine çubuğun hemen altında listelenir
+        _masaustuUstBar(ekranGenisligi),
+        Expanded(child: sorguYeterli ? aramaSonuclari() : widget.cocuk),
+      ],
+    );
+  }
+}
+
+/// Dar ekranda ÜST BARDA duran kapalı arama kutusu.
+///
+/// Masaüstündeki "arama en üstte" düzeninin mobil karşılığı: kutu marka bloğu
+/// ile eylem ikonlarının ARASINDA durur, dokununca [tamAramaYolu] açılıp EKRANI
+/// KOMPLE KAPLAR. Üst bar dar olduğu için kapalı hâl kısadır (büyüteç + tek
+/// kelimelik ipucu); gerçek yazma işi tam ekranda yapılır.
+///
+/// Dokunma alanı 48 dp — görünen kutu 36 dp olsa da InkWell tüm yüksekliği
+/// kaplar (ui-ux-pro-max "Touch Target Size", asgari 44).
+class AramaAcmaKutusu extends StatelessWidget {
+  /// Kapalı kutunun dokunma yüksekliği (44 dp asgarisinin üstünde).
+  static const double dokunmaYuksekligi = 48;
+
+  /// Görünen hapın yüksekliği.
+  static const double kutuYuksekligi = 36;
+
+  const AramaAcmaKutusu({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'Arama'.c,
+      child: InkWell(
+        key: const Key('arama-ac'),
+        borderRadius: BorderRadius.circular(kutuYuksekligi / 2),
+        onTap: () => context.push(tamAramaYolu),
+        child: SizedBox(
+          height: dokunmaYuksekligi,
+          child: Center(
+            child: Container(
+              height: kutuYuksekligi,
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                color: DiziRenkler.kart,
+                borderRadius: BorderRadius.circular(kutuYuksekligi / 2),
+                // Açık temada kart da üst bar da beyaza yakın: kutu ancak
+                // çerçeveyle ayrışır. Renk gerçek arama alanının (input
+                // teması) çerçevesiyle AYNI — iki kutu aynı aileden görünsün.
+                border: Border.all(
+                  color: DiziRenkler.acik
+                      ? const Color(0xFFDADAE0)
+                      : DiziRenkler.metin12,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.search, size: 18, color: DiziRenkler.metin54),
+                  const SizedBox(width: 6),
+                  // Flexible + ellipsis: ipucu Türkçede kırpılmaz, çok uzun
+                  // çevirilerde de TAŞMA yerine üç nokta olur.
+                  Flexible(
+                    child: Text(
+                      'Arama'.c,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      // metin70: açık temada kart üstünde ~4.6:1 kontrast
+                      // (metin54 4.5 eşiğinin altında kalıyordu).
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: DiziRenkler.metin70,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Mobilde EKRANI KOMPLE KAPLAYAN arama.
+///
+/// Kök rota olduğu için alt gezinme çubuğu görünmez: arama odaklanmış bir mod,
+/// klavye açıkken 52 dp'lik çubuk hem yer yer hem "buradan da çıkılır" diye
+/// ikinci bir çıkış yolu sunardı. Çıkış TEK: geri oku / sistem geri tuşu.
+///
+/// Klavye açılınca Scaffold gövdeyi kısaltır (resizeToAvoidBottomInset) ve
+/// sonuç listesi klavyenin ALTINDA kalmaz.
+class TamEkranAramaSayfasi extends StatefulWidget {
+  const TamEkranAramaSayfasi({super.key});
+
+  @override
+  State<TamEkranAramaSayfasi> createState() => _TamEkranAramaSayfasiState();
+}
+
+class _TamEkranAramaSayfasiState extends State<TamEkranAramaSayfasi>
+    with AramaMantigi {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: const Key('tam-ekran-arama'),
+      appBar: AppBar(
+        // 64: kutu 56 dp yüksek, üstünde/altında 4'er dp nefes payı kalsın.
+        toolbarHeight: 64,
+        titleSpacing: 0,
+        leading: IconButton(
+          tooltip: 'Kapat'.c,
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
+        title: Padding(
+          padding: const EdgeInsets.only(right: 12),
+          child: aramaKutusu(otomatikOdak: true),
+        ),
+      ),
+      body: sorguYeterli
+          ? aramaSonuclari()
+          : BosDurum(
+              ikon: Icons.search,
+              baslik: 'Dizi, film veya kişi ara...'.c,
+            ),
     );
   }
 }

@@ -364,6 +364,7 @@ const Map<String, String> cevirilerKn = {
   'Beğen': 'ಇಷ್ಟ',
   'Görüntülenme': 'ವೀಕ್ಷಣೆಗಳು',
   'Tam ekran': 'ಪೂರ್ಣ ಪರದೆ',
+  'Arama başarısız': 'ಹುಡುಕಾಟ ವಿಫಲವಾಗಿದೆ',
   'Sonuç bulunamadı': 'ಫಲಿತಾಂಶ ಸಿಗಲಿಲ್ಲ',
   'Dizi ve Filmler': 'ಸರಣಿ & ಚಲನಚಿತ್ರಗಳು',
   'Kişiler': 'ವ್ಯಕ್ತಿಗಳು',

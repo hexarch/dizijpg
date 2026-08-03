@@ -364,6 +364,7 @@ const Map<String, String> cevirilerPt = {
   'Beğen': 'Curtir',
   'Görüntülenme': 'Visualizações',
   'Tam ekran': 'Tela cheia',
+  'Arama başarısız': 'Falha na pesquisa',
   'Sonuç bulunamadı': 'Nenhum resultado',
   'Dizi ve Filmler': 'Séries e filmes',
   'Kişiler': 'Pessoas',

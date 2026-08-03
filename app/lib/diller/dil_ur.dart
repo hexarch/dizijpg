@@ -362,6 +362,7 @@ const Map<String, String> cevirilerUr = {
   'Beğen': 'پسند',
   'Görüntülenme': 'ملاحظات',
   'Tam ekran': 'فل اسکرین',
+  'Arama başarısız': 'تلاش ناکام ہو گئی',
   'Sonuç bulunamadı': 'کوئی نتیجہ نہیں ملا',
   'Dizi ve Filmler': 'سیریز اور فلمیں',
   'Kişiler': 'افراد',

@@ -361,6 +361,7 @@ const Map<String, String> cevirilerPa = {
   'Beğen': 'ਲਾਈਕ',
   'Görüntülenme': 'ਵਿਊ',
   'Tam ekran': 'ਫੁੱਲ ਸਕ੍ਰੀਨ',
+  'Arama başarısız': 'ਖੋਜ ਅਸਫਲ ਰਹੀ',
   'Sonuç bulunamadı': 'ਕੋਈ ਨਤੀਜਾ ਨਹੀਂ ਮਿਲਿਆ',
   'Dizi ve Filmler': 'ਸੀਰੀਜ਼ ਅਤੇ ਫਿਲਮਾਂ',
   'Kişiler': 'ਵਿਅਕਤੀ',

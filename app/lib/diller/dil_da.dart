@@ -360,6 +360,7 @@ const Map<String, String> cevirilerDa = {
   'Beğen': 'Synes godt om',
   'Görüntülenme': 'Visninger',
   'Tam ekran': 'Fuld skærm',
+  'Arama başarısız': 'Søgningen mislykkedes',
   'Sonuç bulunamadı': 'Ingen resultater',
   'Dizi ve Filmler': 'Serier & film',
   'Kişiler': 'Personer',

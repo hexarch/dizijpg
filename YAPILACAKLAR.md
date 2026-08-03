@@ -1,6 +1,36 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — MOBİL: arama kutusu üst bara taşındı + tam ekran arama
+**Kullanıcı isteği (iki mesaj):** "ana sayfadaki arama çubuğu mobilde hala aynı
+yerde, neden versiyon ve kare görünümün ortasında değil" · "tıklanınca genişleyip
+o ekranı komple kaplamalı"
+- 🚀 **Kapalı kutu üst BAR SATIRINDA** (`AramaAcmaKutusu`, arama_cubugu.dart):
+  marka bloğu (logo + sürüm) ile eylem ikonlarının (Gözat = "kare görünüm",
+  Mesajlar) TAM ARASINDA, `Expanded` ile aradaki boşluğun tamamını alıyor.
+  360 dp'de kutu 115 dp, dokunma yüksekliği 48 dp (44 asgarisinin üstünde).
+- 🚀 **Dar alan çözümü — ölçüldü, tahmin edilmedi:** 360 dp'de eski marka bloğu
+  204 dp (logo 40 + BETA 57 + sürüm 77 + boşluklar), iki eylem ikonu 100 dp →
+  kutuya 56 dp kalıyordu, büyüteç + tek kelime bile sığmıyordu. Logo 40→30
+  küçültüldü ve **BETA rozeti dar ekranda gizlendi**; **sürüm metni DURUYOR**
+  (kullanıcı onu referans alıyor), beta bilgisi sürümün Tooltip'ine ve
+  erişilebilirlik etiketine ("BETA v1.18.0") taşındı. Masaüstünde rozet aynen.
+- 🚀 **Tam ekran arama** (`TamEkranAramaSayfasi` + `/tam-arama` KÖK rotası):
+  dokununca ekranı komple kaplar, klavye otomatik açılır (autofocus), sonuçlar
+  tam ekranda listelenir. Kök rota olduğu için **alt gezinme çubuğu görünmez**
+  (odaklanmış mod, tek çıkış) ve **Android/tarayıcı geri tuşu aramayı kapatıp**
+  sayfada bırakır. Geçiş 220 ms açılış / 160 ms kapanış (fade + 0.96 ölçek).
+- 🚀 **Kod KOPYALANMADI:** arama mantığı `AramaMantigi` mixin'ine çıkarıldı;
+  masaüstü satır-içi çubuğu ile tam ekran AYNI sorgu/gecikme/istek/sonuç
+  kodunu kullanıyor. Dar ekranda `AramaCubugu` artık ikinci bir kutu çizmiyor.
+- 🚀 **Dört hâl tamam:** boş sorgu (başlangıç ipucu) → yükleniyor (spinner) →
+  sonuç yok → **hata + Tekrar Dene**. Hata hâli EKSİKTİ (`catch (_) {}` sessizce
+  yutuyordu), eklendi; yeni anahtar `Arama başarısız` 45 dile çevrildi.
+- 🚀 **Klavye:** sonuç listesi klavyenin altında kalmıyor (viewInsets dolgusu +
+  sürükleyince klavye kapanır). Masaüstü düzeni (>= 900 dp) BİREBİR aynı.
+- Kanıt: `test/mobil_ust_bar_arama_test.dart` (12 test, gerçek `getRect`
+  ölçümleriyle). Toplam 240 test geçiyor.
+
 ## 2026-08-03 — Gönderi metni: MEDYANIN ALTINA taşındı + SABİT 3 satır
 **Kullanıcı isteği:** "akışta postu paylaşan kişinin yorumu, beğeni yorum yap
 gibi şeylerin üstünde görselin altında olmalı. ve yorumun ilk 3 satırı göster,

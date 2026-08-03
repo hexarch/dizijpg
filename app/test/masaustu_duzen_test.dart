@@ -206,23 +206,25 @@ void main() {
       );
     });
 
-    testWidgets('MOBİL REGRESYON: dar ekranda ESKİ yerinde ve ölçüsünde', (
+    // 3 Ağu isteği: "ana sayfadaki arama çubuğu mobilde hâlâ aynı yerde,
+    // neden versiyon ve kare görünümün ortasında değil" + "tıklanınca
+    // genişleyip o ekranı komple kaplamalı".
+    //
+    // Bu yüzden dar ekranda AramaCubugu artık SATIR-İÇİ KUTU ÇİZMEZ; kutu üst
+    // bara taşındı ve tam ekran arama açıyor. Üst bardaki gerçek konum ölçümü
+    // ve tam ekran davranışı `mobil_ust_bar_arama_test.dart` dosyasında.
+    testWidgets('dar ekranda satır-içi kutu YOK (arama üst bara taşındı)', (
       tester,
     ) async {
       _ekran(tester, _darG, _darY);
       await tester.pumpWidget(_arama(masaustu: false));
 
-      final r = tester.getRect(find.byType(TextField));
-      // Eski düzen: 12 dp yatay dolgu, tam genişlik.
-      expect(r.left, 12);
-      expect(r.width, _darG - 24);
-      expect(r.width, 336);
-      // AppBar'ın ALTINDA (masaüstündeki gibi en üste taşınmadı).
       expect(
-        r.top > 56,
-        isTrue,
-        reason: 'telefonda arama kutusu AppBar altında kalmalı (top=${r.top})',
+        find.byType(TextField),
+        findsNothing,
+        reason: 'telefonda ikinci bir arama kutusu çizilmemeli',
       );
+      expect(tester.takeException(), isNull);
     });
   });
 

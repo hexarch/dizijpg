@@ -362,6 +362,7 @@ const Map<String, String> cevirilerCs = {
   'Beğen': 'To se mi líbí',
   'Görüntülenme': 'Zobrazení',
   'Tam ekran': 'Celá obrazovka',
+  'Arama başarısız': 'Vyhledávání se nezdařilo',
   'Sonuç bulunamadı': 'Žádné výsledky',
   'Dizi ve Filmler': 'Seriály a filmy',
   'Kişiler': 'Osoby',

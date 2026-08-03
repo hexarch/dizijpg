@@ -358,6 +358,7 @@ const Map<String, String> cevirilerTh = {
   'Beğen': 'ถูกใจ',
   'Görüntülenme': 'ยอดดู',
   'Tam ekran': 'เต็มจอ',
+  'Arama başarısız': 'การค้นหาล้มเหลว',
   'Sonuç bulunamadı': 'ไม่พบผลลัพธ์',
   'Dizi ve Filmler': 'ซีรีส์และภาพยนตร์',
   'Kişiler': 'บุคคล',

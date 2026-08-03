@@ -366,6 +366,7 @@ const Map<String, String> cevirilerDe = {
   'Beğen': 'Gefällt mir',
   'Görüntülenme': 'Aufrufe',
   'Tam ekran': 'Vollbild',
+  'Arama başarısız': 'Suche fehlgeschlagen',
   'Sonuç bulunamadı': 'Keine Ergebnisse',
   'Dizi ve Filmler': 'Serien & Filme',
   'Kişiler': 'Personen',

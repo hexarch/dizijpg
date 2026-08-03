@@ -354,6 +354,7 @@ const Map<String, String> cevirilerKo = {
   'Beğen': '좋아요',
   'Görüntülenme': '조회수',
   'Tam ekran': '전체 화면',
+  'Arama başarısız': '검색에 실패했습니다',
   'Sonuç bulunamadı': '결과가 없어요',
   'Dizi ve Filmler': '시리즈 & 영화',
   'Kişiler': '인물',

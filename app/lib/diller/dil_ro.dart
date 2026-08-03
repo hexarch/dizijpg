@@ -364,6 +364,7 @@ const Map<String, String> cevirilerRo = {
   'Beğen': 'Îmi place',
   'Görüntülenme': 'Vizualizări',
   'Tam ekran': 'Ecran complet',
+  'Arama başarısız': 'Căutarea a eșuat',
   'Sonuç bulunamadı': 'Niciun rezultat',
   'Dizi ve Filmler': 'Seriale și filme',
   'Kişiler': 'Persoane',

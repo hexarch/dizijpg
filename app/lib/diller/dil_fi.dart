@@ -363,6 +363,7 @@ const Map<String, String> cevirilerFi = {
   'Beğen': 'Tykkää',
   'Görüntülenme': 'Katselukerrat',
   'Tam ekran': 'Koko näyttö',
+  'Arama başarısız': 'Haku epäonnistui',
   'Sonuç bulunamadı': 'Ei tuloksia',
   'Dizi ve Filmler': 'Sarjat ja elokuvat',
   'Kişiler': 'Henkilöt',

@@ -364,6 +364,7 @@ const Map<String, String> cevirilerPl = {
   'Beğen': 'Lubię to',
   'Görüntülenme': 'Wyświetlenia',
   'Tam ekran': 'Pełny ekran',
+  'Arama başarısız': 'Wyszukiwanie nie powiodło się',
   'Sonuç bulunamadı': 'Brak wyników',
   'Dizi ve Filmler': 'Seriale i filmy',
   'Kişiler': 'Osoby',

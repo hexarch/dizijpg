@@ -361,6 +361,7 @@ const Map<String, String> cevirilerSw = {
   'Beğen': 'Penda',
   'Görüntülenme': 'Mionekano',
   'Tam ekran': 'Skrini nzima',
+  'Arama başarısız': 'Utafutaji umeshindwa',
   'Sonuç bulunamadı': 'Hakuna matokeo',
   'Dizi ve Filmler': 'Tamthilia na Filamu',
   'Kişiler': 'Watu',
