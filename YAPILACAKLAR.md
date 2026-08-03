@@ -1,6 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — AYARLAR: alt güvenli alan + sürüm numarası
+**Kullanıcı isteği:** "ayarlardaki hesabımı sil buttonu çok aşağıda, telefon navi
+tuşlarının altında kalıyor. onu biraz yukarı al. ve onun da altına sürüm
+numarasını yaz."
+- 🚀 **KÖK NEDEN (tahmin değil, testle ölçüldü):** Ayarlar gövdesi
+  `ListView(padding: EdgeInsets.zero)`. Flutter, MediaQuery alt güvenli alanını
+  kaydırma listesine **yalnız `padding == null` iken** kendiliğinden ekler
+  (`BoxScrollView.build`); açık `EdgeInsets.zero` bu otomatiği KAPATIYOR. Liste
+  sonundaki sabit 24 dp, 48 dp'lik sistem gezinme çubuğunu karşılamıyordu →
+  "Hesabımı Sil" düğmesinin alt kenarı 776 dp, çubuk 752 dp'de başlıyor: düğme
+  çubuğun 24 dp altında, dokunulamaz hâlde. Ayarlar kabuk DIŞINDA
+  (`yonlendirme.dart` `kabukDisi`), yani yalnız sistem çubuğu payı gerekiyor.
+- 🚀 **Düzeltme:** liste sonu `SizedBox(height: altGuvenli(context, ekstra: 24))`
+  — sabit sayı yok, `MediaQuery.padding.bottom` üzerinden; jest çubuğu olan ve
+  olmayan cihazda da doğru. Düğme küçültülmedi (dokunma hedefi 48 dp).
+- 🚀 **Sürüm numarası** düğmenin altında, ortalanmış, `DiziRenkler.metin38` 12 pt:
+  `v1.19.0+61` — **yapı numarası DAHİL** (ana sayfa üst barı yer darlığından
+  atıyor; ayarlar hata bildiriminin yapıldığı yer, aynı sürümün farklı
+  derlemeleri ancak yapı numarasıyla ayrılır). Salt sürüm dizesi olduğu için
+  çeviri gerekmiyor, 45 dil dosyası değişmedi.
+- 🚀 **Kanıt** (`app/test/ayarlar_alt_guvenli_test.dart`, 3 test): 48 dp alt paylı
+  sahte telefonda liste sonuna kadar kaydırılıp `getRect().bottom <= 752` gerçek
+  konumla iddia ediliyor; sürüm metninin düğmenin ALTINDA olduğu ve `Api.surum`den
+  türetildiği (sabit dize değil) doğrulanıyor; alt pay 0 iken düzen bozulmuyor.
+  Düzeltme geçici geri alınınca test KIRMIZI (776 > 752) — koruduğu kanıtlandı.
+
 ## 2026-08-03 — MOBİL: arama kutusu üst bara taşındı + tam ekran arama
 **Kullanıcı isteği (iki mesaj):** "ana sayfadaki arama çubuğu mobilde hala aynı
 yerde, neden versiyon ve kare görünümün ortasında değil" · "tıklanınca genişleyip

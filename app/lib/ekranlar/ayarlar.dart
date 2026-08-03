@@ -12,6 +12,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
 import 'gorsel_kirp.dart';
+import 'ortak.dart' show altGuvenli;
 import 'sosyal.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
@@ -1188,7 +1189,24 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
               ],
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+          // Sürüm: hata bildiriminde kullanıcıdan istenen ilk bilgi. Ana sayfa
+          // üst barı yer darlığından yapı numarasını atıyor; burada TAM sürüm
+          // (1.19.0+61) gösteriliyor — aynı sürümün farklı derlemeleri ancak
+          // yapı numarasıyla ayrılıyor. Çeviri gerekmez: salt sürüm dizesi.
+          Center(
+            child: Text(
+              'v${Api.surum}',
+              style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
+            ),
+          ),
+          // NEDEN sabit 24 değil: ListView'e `padding: EdgeInsets.zero` verildiği
+          // an Flutter'ın MediaQuery güvenli alanını kendiliğinden eklemesi
+          // devre dışı kalır (BoxScrollView yalnız padding == null iken ekler).
+          // Bu yüzden liste sonu telefonun sistem gezinme çubuğunun ALTINDA
+          // kalıyor, "Hesabımı Sil" dokunulamıyordu. altGuvenli sistem alt
+          // payını ekler: jest çubuğu olan ve olmayan cihazda da doğru.
+          SizedBox(height: altGuvenli(context, ekstra: 24)),
         ],
       );
     }
