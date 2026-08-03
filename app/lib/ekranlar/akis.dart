@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as matematik;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -331,10 +330,6 @@ class _AkisKartiState extends State<AkisKarti> {
   bool _takipIsleniyor = false;
   bool _isleniyor = false;
 
-  /// Medyanın kesinleşen en-boy oranı: yorum metnine kaç satır kaldığını
-  /// hesaplarken medyanın kapladığı yüksekliği bilmek gerekir.
-  double? _medyaOran;
-
   @override
   void didUpdateWidget(AkisKarti eski) {
     super.didUpdateWidget(eski);
@@ -462,30 +457,6 @@ class _AkisKartiState extends State<AkisKarti> {
     _haritadanTazele();
   }
 
-  /// Yorum metnine kalan yükseklik: ekrandan kartın DİĞER parçaları düşülür.
-  /// Sabit satır sayısı YOK — aynı gönderi küçük telefonda 1, tablette 5
-  /// satır görünebilir; medyası uzun olan kartta metne daha az yer kalır.
-  double _metinButcesi(double kartGenislik, bool medyaVar) {
-    final ekran = MediaQuery.sizeOf(context).height;
-    // Üst çubuk + alt menü + güvenli alan: kartın hiç kullanamayacağı bant.
-    final gorunur =
-        ekran - _kabukYuksekligi - MediaQuery.paddingOf(context).vertical;
-    var kullanilan = _basligYukseklik + _eylemYukseklik + _kartDolgu;
-    if (medyaVar && kartGenislik > 0) {
-      // Medya kutusu: genişlik / en-boy oranı. Oran ölçülene dek 4:5 varsayılır.
-      kullanilan += kartGenislik / (_medyaOran ?? 4 / 5);
-    }
-    // En az bir satır her zaman görünür (taşarsa "Devam et" çıkar).
-    return matematik.max(gorunur - kullanilan, _enAzMetin);
-  }
-
-  // Ölçüm sabitleri: kartın metin dışındaki parçalarının yaklaşık yüksekliği.
-  static const _kabukYuksekligi = 116.0; // uygulama çubuğu + alt menü
-  static const _basligYukseklik = 104.0; // avatar/ad/takip + içerik adı satırı
-  static const _eylemYukseklik = 48.0; // beğeni-yorum-görüntülenme-paylaş
-  static const _kartDolgu = 34.0; // kart iç/dış boşlukları
-  static const _enAzMetin = 30.0; // en az bir satır
-
   @override
   Widget build(BuildContext context) {
     final y = widget.yorum;
@@ -517,266 +488,248 @@ class _AkisKartiState extends State<AkisKarti> {
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: const RoundedRectangleBorder(),
-      child: LayoutBuilder(
-        builder: (context, kisit) {
-          final butce = _metinButcesi(
-            kisit.maxWidth,
-            _spoilerAcik && medya.isNotEmpty,
-          );
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ---- 1. Üst satır: avatar + ad + Takip Et / içerik adı + S4B6
-              //      ve EN SAĞDA içeriğin kapak görseli.
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 6, 0),
-                child: Row(
-                  children: [
-                    InkWell(
-                      customBorder: const CircleBorder(),
-                      onTap: () =>
-                          context.push('/kullanici/${y['kullanici_adi']}'),
-                      child: KullaniciAvatari(
-                        url: avatar,
-                        kullaniciAdi: y['kullanici_adi'] as String?,
-                        yaricap: 20,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ---- 1. Üst satır: avatar + ad + Takip Et / içerik adı + S4B6
+          //      ve EN SAĞDA içeriğin kapak görseli.
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 6, 0),
+            child: Row(
+              children: [
+                InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () => context.push('/kullanici/${y['kullanici_adi']}'),
+                  child: KullaniciAvatari(
+                    url: avatar,
+                    kullaniciAdi: y['kullanici_adi'] as String?,
+                    yaricap: 20,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () => context.push(
-                                    '/kullanici/${y['kullanici_adi']}',
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
-                                    ),
-                                    child: Text(
-                                      '@${y['kullanici_adi']}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 14.5,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          Flexible(
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(6),
+                              onTap: () => context.push(
+                                '/kullanici/${y['kullanici_adi']}',
                               ),
-                              if (takipGoster) ...[
-                                const SizedBox(width: 8),
-                                _TakipDugmesi(
-                                  isleniyor: _takipIsleniyor,
-                                  onTap: _takipEt,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4,
                                 ),
-                              ],
-                            ],
-                          ),
-                          // Film yorumu → film adı, dizi yorumu → dizi adı,
-                          // bölüm yorumu → dizi adı + S4B6 rozeti.
-                          Row(
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () => context.push(icerikYolu),
-                                  child: Container(
-                                    // Dokunma hedefi 44px (yazı değil dolgu
-                                    // büyür): parmakla ıskalanmaz.
-                                    constraints: const BoxConstraints(
-                                      minHeight: 44,
-                                    ),
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      '${icerik['ad']}',
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: DiziRenkler.sariMetin,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
+                                child: Text(
+                                  '@${y['kullanici_adi']}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 14.5,
                                   ),
                                 ),
-                              ),
-                              if (bolumlu) ...[
-                                const SizedBox(width: 6),
-                                BolumRozeti(
-                                  diziId: y['tmdb_id'] as int,
-                                  sezon: y['sezon'] as int,
-                                  bolum: y['bolum'] as int,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    UcNoktaMenu(
-                      tur: 'yorum',
-                      hedefId: y['id'] as int,
-                      benimMi: benim,
-                      renk: DiziRenkler.metin54,
-                    ),
-                    if (poster != null)
-                      InkWell(
-                        borderRadius: BorderRadius.circular(6),
-                        onTap: () => context.push(posterYolu),
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 2, right: 6),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(6),
-                            child: SizedBox(
-                              width: 42,
-                              height: 60,
-                              child: CachedNetworkImage(
-                                imageUrl: poster,
-                                fit: BoxFit.cover,
-                                placeholder: (_, _) =>
-                                    Container(color: DiziRenkler.kart),
-                                errorWidget: (_, _, _) =>
-                                    Container(color: DiziRenkler.kart),
                               ),
                             ),
+                          ),
+                          if (takipGoster) ...[
+                            const SizedBox(width: 8),
+                            _TakipDugmesi(
+                              isleniyor: _takipIsleniyor,
+                              onTap: _takipEt,
+                            ),
+                          ],
+                        ],
+                      ),
+                      // Film yorumu → film adı, dizi yorumu → dizi adı,
+                      // bölüm yorumu → dizi adı + S4B6 rozeti.
+                      Row(
+                        children: [
+                          Flexible(
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(6),
+                              onTap: () => context.push(icerikYolu),
+                              child: Container(
+                                // Dokunma hedefi 44px (yazı değil dolgu
+                                // büyür): parmakla ıskalanmaz.
+                                constraints: const BoxConstraints(
+                                  minHeight: 44,
+                                ),
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '${icerik['ad']}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: DiziRenkler.sariMetin,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (bolumlu) ...[
+                            const SizedBox(width: 6),
+                            BolumRozeti(
+                              diziId: y['tmdb_id'] as int,
+                              sezon: y['sezon'] as int,
+                              bolum: y['bolum'] as int,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                UcNoktaMenu(
+                  tur: 'yorum',
+                  hedefId: y['id'] as int,
+                  benimMi: benim,
+                  renk: DiziRenkler.metin54,
+                ),
+                if (poster != null)
+                  InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    onTap: () => context.push(posterYolu),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2, right: 6),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(6),
+                        child: SizedBox(
+                          width: 42,
+                          height: 60,
+                          child: CachedNetworkImage(
+                            imageUrl: poster,
+                            fit: BoxFit.cover,
+                            placeholder: (_, _) =>
+                                Container(color: DiziRenkler.kart),
+                            errorWidget: (_, _, _) =>
+                                Container(color: DiziRenkler.kart),
                           ),
                         ),
                       ),
-                  ],
-                ),
-              ),
-              // ---- 2. Spoiler perdesi: açılana dek MEDYA DA METİN DE çizilmez
-              if (!_spoilerAcik)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(10),
-                    onTap: () => setState(() => _spoilerAcik = true),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: DiziRenkler.koyuGri,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.visibility_off_outlined,
-                            size: 18,
-                            color: DiziRenkler.metin54,
-                          ),
-                          const SizedBox(width: 8),
-                          Flexible(
-                            child: Text(
-                              'Spoiler olabilir — dokun ve gör'.c,
-                              style: TextStyle(color: DiziRenkler.metin54),
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
+              ],
+            ),
+          ),
+          // ---- 2. Spoiler perdesi: açılana dek MEDYA DA METİN DE çizilmez
+          if (!_spoilerAcik)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => setState(() => _spoilerAcik = true),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.koyuGri,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.visibility_off_outlined,
+                        size: 18,
+                        color: DiziRenkler.metin54,
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'Spoiler olabilir — dokun ve gör'.c,
+                          style: TextStyle(color: DiziRenkler.metin54),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              // ---- 3. Medya: sağa-sola TAM dayalı, kaydırmalı. Sayaç medyanın
-              //      sağ üstünde ve 3 sn sonra söner (AkisMedya).
-              if (_spoilerAcik && medya.isNotEmpty) ...[
-                const SizedBox(height: 6),
-                MedyaGaleri(
-                  yollar: medya.cast<String>(),
-                  onAc: _medyaAc,
-                  // Çift dokunuş beğenir; tek dokunuş DOKUNULAN kareden
-                  // Reels açar (indeks düşerse ilk kareden başlardı).
-                  onCiftDokunus: _begen,
-                  otomatikOynat: true,
-                  onOranBelirlendi: (o) {
-                    if (mounted && _medyaOran != o) {
-                      setState(() => _medyaOran = o);
-                    }
-                  },
+              ),
+            ),
+          // ---- 3. Medya: sağa-sola TAM dayalı, kaydırmalı. Sayaç medyanın
+          //      sağ üstünde ve 3 sn sonra söner (AkisMedya).
+          if (_spoilerAcik && medya.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            MedyaGaleri(
+              yollar: medya.cast<String>(),
+              onAc: _medyaAc,
+              // Çift dokunuş beğenir; tek dokunuş DOKUNULAN kareden
+              // Reels açar (indeks düşerse ilk kareden başlardı).
+              onCiftDokunus: _begen,
+              otomatikOynat: true,
+            ),
+          ],
+          // ---- 4. Gönderi metni: kullanıcı adı + yazılan yorum. MEDYANIN
+          //      ALTINDA, EYLEM SATIRININ ÜSTÜNDE durur (kullanıcı isteği,
+          //      2026-08-03): önce görsel, sonra ne dediği, sonra eylemler.
+          //      SABİT 3 satır; taşarsa sonuna `…` düşer, dokununca açılır.
+          if (_spoilerAcik && metin.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+              child: CeviriliMetin(
+                yorumId: y['id'] as int,
+                metin: metin,
+                kaynakDil: y['kaynak_dil'] as String?,
+                ceviriVar: y['ceviri_var'] == true,
+                cevrildi: y['cevrildi'] == true,
+                orijinalMetin: y['orijinal_metin'] as String?,
+                yapici: (m) => KisaltilmisYorum(
+                  metin: m,
+                  kullaniciAdi: y['kullanici_adi'] as String? ?? '',
+                ),
+              ),
+            ),
+          // ---- 5. Eylem satırı: beğeni, yorum, görüntülenme, paylaş
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              children: [
+                _EylemDugmesi(
+                  ikon: _begendim ? Icons.favorite : Icons.favorite_border,
+                  etiket: _begeni > 0 ? '$_begeni' : null,
+                  renk: _begendim ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+                  ipucu: 'Beğen'.c,
+                  onTap: _begen,
+                  // Basılı tut → beğenenler listesi (her yerde aynı sheet)
+                  onUzunBas: () =>
+                      begenenleriAc(context, widget.yorum['id'] as int),
+                ),
+                _EylemDugmesi(
+                  ikon: Icons.mode_comment_outlined,
+                  etiket: _yanit > 0 ? '$_yanit' : 'Yorum yap'.c,
+                  renk: DiziRenkler.metin54,
+                  ipucu: 'Yorum yap'.c,
+                  onTap: _yanitlariAc,
+                ),
+                _EylemDugmesi(
+                  ikon: Icons.visibility_outlined,
+                  etiket: '${y['goruntulenme'] ?? 0}',
+                  renk: DiziRenkler.metin38,
+                  ipucu: 'Görüntülenme'.c,
+                ),
+                const Spacer(),
+                Text(
+                  tarih,
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                ),
+                _EylemDugmesi(
+                  ikon: Icons.send_outlined,
+                  renk: DiziRenkler.metin54,
+                  ipucu: 'Paylaş'.c,
+                  onTap: _paylas,
                 ),
               ],
-              // ---- 4. Eylem satırı: beğeni, yorum, görüntülenme, paylaş
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 6),
-                child: Row(
-                  children: [
-                    _EylemDugmesi(
-                      ikon: _begendim ? Icons.favorite : Icons.favorite_border,
-                      etiket: _begeni > 0 ? '$_begeni' : null,
-                      renk: _begendim
-                          ? DiziRenkler.sariMetin
-                          : DiziRenkler.metin54,
-                      ipucu: 'Beğen'.c,
-                      onTap: _begen,
-                      // Basılı tut → beğenenler listesi (her yerde aynı sheet)
-                      onUzunBas: () =>
-                          begenenleriAc(context, widget.yorum['id'] as int),
-                    ),
-                    _EylemDugmesi(
-                      ikon: Icons.mode_comment_outlined,
-                      etiket: _yanit > 0 ? '$_yanit' : 'Yorum yap'.c,
-                      renk: DiziRenkler.metin54,
-                      ipucu: 'Yorum yap'.c,
-                      onTap: _yanitlariAc,
-                    ),
-                    _EylemDugmesi(
-                      ikon: Icons.visibility_outlined,
-                      etiket: '${y['goruntulenme'] ?? 0}',
-                      renk: DiziRenkler.metin38,
-                      ipucu: 'Görüntülenme'.c,
-                    ),
-                    const Spacer(),
-                    Text(
-                      tarih,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
-                    _EylemDugmesi(
-                      ikon: Icons.send_outlined,
-                      renk: DiziRenkler.metin54,
-                      ipucu: 'Paylaş'.c,
-                      onTap: _paylas,
-                    ),
-                  ],
-                ),
-              ),
-              // ---- 5. En altta: kullanıcı adı + yazılan yorum. Ekrana SIĞAN
-              //      kadarı görünür; taşarsa "Devam et".
-              if (_spoilerAcik && metin.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
-                  child: CeviriliMetin(
-                    yorumId: y['id'] as int,
-                    metin: metin,
-                    kaynakDil: y['kaynak_dil'] as String?,
-                    ceviriVar: y['ceviri_var'] == true,
-                    cevrildi: y['cevrildi'] == true,
-                    orijinalMetin: y['orijinal_metin'] as String?,
-                    yapici: (m) => SiganYorum(
-                      metin: m,
-                      kullaniciAdi: y['kullanici_adi'] as String? ?? '',
-                      kullanilabilirYukseklik: butce,
-                    ),
-                  ),
-                ),
-            ],
-          );
-        },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -864,32 +817,46 @@ class _EylemDugmesi extends StatelessWidget {
   }
 }
 
-/// Gönderi açıklaması: `@kullanici metin` tek paragraf hâlinde, VERİLEN
-/// yüksekliğe SIĞAN satır kadar gösterilir; taşarsa altında "Devam et" çıkar.
+/// Gönderi açıklaması: `@kullanici metin` tek paragraf hâlinde SABİT
+/// [satirSiniri] (3) satır gösterilir; taşan metnin sonuna `…` düşer ve
+/// dokununca metnin tamamı açılır (kullanıcı isteği, 2026-08-03).
 ///
-/// Satır sayısı SABİT DEĞİL: [TextPainter] ile gerçek metin ölçülür, kaç
-/// satırın sığdığı [kullanilabilirYukseklik] / satır yüksekliğinden bulunur.
-/// Böylece aynı gönderi küçük telefonda 1, tablette 5 satır görünebilir.
-class SiganYorum extends StatefulWidget {
+/// Kırpma işaretini Flutter'ın kendi [TextOverflow.ellipsis]'i basar: tek
+/// karakterlik `…` (U+2026). Elle yazılan `...` üç ayrı nokta olduğundan
+/// satır sonunda bölünebilir ve dar ekranda alt satıra düşerdi.
+///
+/// DOKUNMA HEDEFİ: üç noktanın kendisi ~8 px, parmakla vurulamaz. Bu yüzden
+/// dokunma alanı KIRPILMIŞ METNİN TAMAMIDIR (3 satır ≈ 60 px, 44 px kuralının
+/// çok üstünde) — Instagram'daki gibi. Metin içindeki `@etiket` ve bağlantılar
+/// tıklanabilir KALIR: [RichText]'in kendi tanıyıcıları hit-test'te daha
+/// derinde olduğundan dokunma arenasına önce girer ve üstteki genişletme
+/// dokunuşunu yener. Kartın Reels'e geçen tek-dokunuşu YALNIZ medyada
+/// olduğundan bu alan onunla çakışmaz.
+///
+/// Açılan metin geri KAPANMAZ: kullanıcı "büyüt / açılacak" dedi, kapatma
+/// istemedi; ayrıca kapatma da gizli bir dokunma hedefi olurdu (Instagram da
+/// kapatmaz). Metin değişirse (Çevir / Orijinali göster) kırpma sıfırlanır.
+class KisaltilmisYorum extends StatefulWidget {
+  /// Kırpma sınırı: ekran boyutundan BAĞIMSIZ, her yerde aynı.
+  static const satirSiniri = 3;
+
   final String metin;
   final String kullaniciAdi;
-  final double kullanilabilirYukseklik;
-  const SiganYorum({
+  const KisaltilmisYorum({
     super.key,
     required this.metin,
     required this.kullaniciAdi,
-    required this.kullanilabilirYukseklik,
   });
 
   @override
-  State<SiganYorum> createState() => _SiganYorumState();
+  State<KisaltilmisYorum> createState() => _KisaltilmisYorumState();
 }
 
-class _SiganYorumState extends State<SiganYorum> {
+class _KisaltilmisYorumState extends State<KisaltilmisYorum> {
   bool _acik = false;
 
   @override
-  void didUpdateWidget(SiganYorum eski) {
+  void didUpdateWidget(KisaltilmisYorum eski) {
     super.didUpdateWidget(eski);
     // Metin değiştiyse (Çevir/Orijinali göster) kırpma yeniden hesaplanır.
     if (eski.metin != widget.metin) _acik = false;
@@ -902,10 +869,19 @@ class _SiganYorumState extends State<SiganYorum> {
       height: 1.45,
       color: DiziRenkler.metin,
     );
+    // Açıldıktan sonra kırpma da genişletme dokunuşu da yok: düz metin.
+    if (_acik) {
+      return EtiketliMetin(
+        widget.metin,
+        stil: stil,
+        onekKullanici: widget.kullaniciAdi,
+      );
+    }
     return LayoutBuilder(
       builder: (context, kisit) {
-        // Ölçüm, EKRANDA GÖRÜNEN metinle yapılır: [[tv:1|Ad]] işaretlemesi
-        // ham hâliyle ölçülseydi satırlar olduğundan uzun sanılırdı.
+        // Taşıyor mu? Ölçüm EKRANDA GÖRÜNEN metinle yapılır: [[tv:1|Ad]]
+        // işaretlemesi ham hâliyle ölçülseydi 2 satırlık metin 3 satırı
+        // aşmış sanılır, kısa gönderilerde bile üç nokta çıkardı.
         final olcer = TextPainter(
           text: TextSpan(
             style: stil,
@@ -919,44 +895,27 @@ class _SiganYorumState extends State<SiganYorum> {
           ),
           textDirection: Directionality.of(context),
           textScaler: MediaQuery.textScalerOf(context),
+          maxLines: KisaltilmisYorum.satirSiniri,
         )..layout(maxWidth: kisit.maxWidth);
-        final satirYuk = olcer.preferredLineHeight;
-        final toplamSatir = olcer.computeLineMetrics().length;
-        // Bütçeye kaç satır sığıyor?
-        final sigan = (widget.kullanilabilirYukseklik / satirYuk).floor();
-        final tasiyor = toplamSatir > sigan;
-        // Taşıyorsa bir satır "Devam et" düğmesine ayrılır.
-        final gosterilecek = tasiyor
-            ? (sigan - 1).clamp(1, toplamSatir - 1)
-            : toplamSatir;
+        final tasiyor = olcer.didExceedMaxLines;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            EtiketliMetin(
-              widget.metin,
-              stil: stil,
-              onekKullanici: widget.kullaniciAdi,
-              maxLines: (_acik || !tasiyor) ? null : gosterilecek,
-            ),
-            if (tasiyor && !_acik)
-              InkWell(
-                borderRadius: BorderRadius.circular(6),
-                onTap: () => setState(() => _acik = true),
-                child: Container(
-                  constraints: const BoxConstraints(minHeight: 36),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'Devam et'.c,
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: DiziRenkler.metin54,
-                    ),
-                  ),
-                ),
-              ),
-          ],
+        final govde = EtiketliMetin(
+          widget.metin,
+          stil: stil,
+          onekKullanici: widget.kullaniciAdi,
+          // 3 satırdan KISA metinde sınır konmaz → üç nokta da çıkmaz.
+          maxLines: tasiyor ? KisaltilmisYorum.satirSiniri : null,
+        );
+        if (!tasiyor) return govde;
+        return Semantics(
+          button: true,
+          // Ekran okuyucuya "üç nokta" değil ne işe yaradığı söylenir.
+          label: 'Devam et'.c,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => _acik = true),
+            child: govde,
+          ),
         );
       },
     );

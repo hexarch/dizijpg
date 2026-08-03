@@ -8,6 +8,7 @@ import 'package:dizijpg/ekranlar/etiket.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/ekranlar/yorumlar.dart' show BolumRozeti;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -22,8 +23,12 @@ import 'package:visibility_detector/visibility_detector.dart';
 ///            Dizi Adı  S4B6
 ///   ┌──────────────── medya (kaydırmalı) ─────────── 1/3 ┐
 ///   └────────────────────────────────────────────────────┘
+///   @ad Yazılan yorum: SABİT 3 satır, taşarsa sonunda üç
+///   nokta çıkar ve metne dokununca tamamı açılır…
 ///   ♥ 3   💬 4   👁 9                       tarih      ↗
-///   @ad Yazılan yorum… (ekrana SIĞAN kadar)   Devam et
+///
+/// Metin MEDYANIN ALTINDA ve EYLEM SATIRININ ÜSTÜNDEDİR; satır sayısı ekran
+/// yüksekliğinden BAĞIMSIZ ve her yerde 3'tür.
 ///
 /// Buradaki testler her maddeyi ayrı ayrı kilitler; ölçüm yapılır, göz
 /// kararı yoktur.
@@ -114,8 +119,9 @@ Future<void> _kur(
   await Api.tokenYukle();
   _sonRota = null;
   _reelsMedyaIndeks = -1;
-  // MediaQuery yüksekliği KART HESABININ girdisi ("ekrana sığan satır"):
-  // setSurfaceSize MediaQuery'yi değiştirmez, view.physicalSize değiştirir.
+  // Ekran boyutu view üzerinden verilir (setSurfaceSize MediaQuery'yi
+  // değiştirmez). Metnin satır sayısı ARTIK ekrandan bağımsızdır; yükseklik
+  // yalnız kartın ekrana sığıp sığmadığını (dokunulabilirliği) belirler.
   tester.view
     ..devicePixelRatio = 1.0
     ..physicalSize = ekran;
@@ -179,6 +185,34 @@ double _sayacSaydamligi(WidgetTester tester) => tester
 /// Yorum metnini çizen widget'ın kırpma sınırı (null = tamamı görünür).
 int? _metinSatirSiniri(WidgetTester tester) =>
     tester.widget<EtiketliMetin>(find.byType(EtiketliMetin)).maxLines;
+
+/// Yorum metninin GERÇEKTEN çizilen paragrafı (ölçüm buradan yapılır).
+RenderParagraph _yorumParagrafi(WidgetTester tester) =>
+    tester.renderObject<RenderParagraph>(
+      find
+          .descendant(
+            of: find.byType(EtiketliMetin),
+            matching: find.byType(RichText),
+          )
+          .first,
+    );
+
+/// Ekranda GERÇEKTEN çizilen satır sayısı: paragrafın harf kutuları
+/// toplanır, kaç ayrı üst kenar (satır) olduğu sayılır. Kırpılan satırların
+/// kutusu hiç oluşmadığından bu sayı kırpma SONRASI değeri verir.
+int _cizilenSatir(WidgetTester tester) {
+  final p = _yorumParagrafi(tester);
+  final kutular = p.getBoxesForSelection(
+    TextSelection(baseOffset: 0, extentOffset: p.text.toPlainText().length),
+  );
+  return kutular.map((k) => k.top.round()).toSet().length;
+}
+
+/// Metin kırpıldı mı? Flutter üç noktayı (`…`) TAM BU KOŞULDA basar.
+bool _ucNoktaVar(WidgetTester tester) {
+  final p = _yorumParagrafi(tester);
+  return p.didExceedMaxLines && p.overflow == TextOverflow.ellipsis;
+}
 
 void main() {
   setUp(() {
@@ -444,63 +478,176 @@ void main() {
   });
 
   // ---------------------------------------------------------------- 8. madde
-  group('Ekrana sığan yorum metni + Devam et', () {
+  group('Gönderi metninin YERİ: medya ALTI, eylem satırı ÜSTÜ', () {
     final uzun = List.filled(120, 'çok uzun bir yorum metni').join(' ');
 
-    testWidgets('kısa metinde Devam et YOK ve metin kırpılmaz', (tester) async {
-      await _kur(tester, _gonderi(metin: 'Kısa yorum'));
-      expect(find.text('Devam et'), findsNothing);
-      expect(_metinSatirSiniri(tester), isNull);
-    });
+    /// Eylem satırının üst kenarı (beğeni ikonu ilk eleman).
+    double eylemUst(WidgetTester tester) =>
+        tester.getTopLeft(find.byIcon(Icons.favorite_border)).dy;
 
-    testWidgets('uzun metinde Devam et ÇIKAR ve metin kırpılır', (
+    testWidgets('MEDYALI kartta sıra: medya → metin → eylem satırı', (
       tester,
     ) async {
-      await _kur(tester, _gonderi(metin: uzun));
-      expect(find.text('Devam et'), findsOneWidget);
-      expect(_metinSatirSiniri(tester), isNotNull);
-    });
-
-    testWidgets('Devam ete dokununca metnin tamamı açılır', (tester) async {
-      await _kur(tester, _gonderi(metin: uzun));
-      await tester.tap(find.text('Devam et'));
-      await tester.pump();
-      expect(_metinSatirSiniri(tester), isNull, reason: 'kırpma kalkar');
-      expect(find.text('Devam et'), findsNothing);
-    });
-
-    testWidgets('SATIR SAYISI SABİT DEĞİL: yüksek ekranda daha çok satır', (
-      tester,
-    ) async {
-      await _kur(tester, _gonderi(metin: uzun), ekran: const Size(400, 1400));
-      final coksatir = _metinSatirSiniri(tester);
-      await _kur(tester, _gonderi(metin: uzun), ekran: const Size(400, 500));
-      final azSatir = _metinSatirSiniri(tester);
-      expect(coksatir, isNotNull);
-      expect(azSatir, isNotNull);
-      expect(
-        coksatir!,
-        greaterThan(azSatir!),
-        reason: 'satır sayısı kullanılabilir yükseklikten hesaplanmalı',
-      );
-    });
-
-    testWidgets('MEDYALI kartta metne daha az satır kalır', (tester) async {
-      await _kur(tester, _gonderi(metin: uzun), ekran: const Size(400, 900));
-      final medyasiz = _metinSatirSiniri(tester);
       await _kur(
         tester,
         _gonderi(metin: uzun, medya: const ['/medya/a.jpg']),
-        ekran: const Size(400, 900),
+        ekran: const Size(400, 1600),
       );
-      final medyali = _metinSatirSiniri(tester);
-      expect(medyasiz!, greaterThan(medyali!));
+      final medya = tester.getRect(find.byType(AkisMedya));
+      final yorum = tester.getRect(find.byType(EtiketliMetin));
+      final eylem = eylemUst(tester);
+      expect(
+        yorum.top,
+        greaterThanOrEqualTo(medya.bottom),
+        reason: 'metin medyanın ALTINDA olmalı',
+      );
+      expect(
+        eylem,
+        greaterThanOrEqualTo(yorum.bottom),
+        reason: 'eylem satırı metnin ALTINDA olmalı',
+      );
+    });
+
+    testWidgets('MEDYASIZ kartta da metin eylem satırının ÜSTÜNDE', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      final yorum = tester.getRect(find.byType(EtiketliMetin));
+      expect(eylemUst(tester), greaterThanOrEqualTo(yorum.bottom));
     });
 
     testWidgets('metin bloğunda kullanıcı adı da yazar', (tester) async {
       await _kur(tester, _gonderi());
       // Başlıkta bir, yorum bloğunun başında bir → iki kez geçer
       expect(find.textContaining('@thelostvibe0'), findsNWidgets(2));
+    });
+  });
+
+  // --------------------------------------------------------------- 8b. madde
+  group('Gönderi metni SABİT 3 satır + üç nokta', () {
+    final uzun = List.filled(120, 'çok uzun bir yorum metni').join(' ');
+
+    testWidgets('uzun metin TAM 3 satır çizilir ve sonunda üç nokta VAR', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      expect(_metinSatirSiniri(tester), 3);
+      expect(_cizilenSatir(tester), 3, reason: 'ekranda tam 3 satır');
+      expect(_ucNoktaVar(tester), isTrue);
+    });
+
+    testWidgets('3 satırdan KISA metinde üç nokta YOK, kırpma da yok', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: 'Kısa yorum'));
+      expect(_metinSatirSiniri(tester), isNull);
+      expect(_ucNoktaVar(tester), isFalse);
+      expect(_cizilenSatir(tester), lessThan(3));
+    });
+
+    testWidgets('TAM 3 satır dolduran metinde üç nokta YOK (sınır durumu)', (
+      tester,
+    ) async {
+      // Deneme yazı tipinde her harf 1em kare: 400 dp - 24 dp dolgu = 376 dp,
+      // 14 dp harf → satırda 26 karakter. Önek "@thelostvibe0  " 15 karakter.
+      // 12 x "abcd" = 59 karakter → önekle birlikte tam 3 satır.
+      await _kur(tester, _gonderi(metin: List.filled(12, 'abcd').join(' ')));
+      expect(_cizilenSatir(tester), 3, reason: 'tam sınırda');
+      expect(_ucNoktaVar(tester), isFalse, reason: '3 satır taşma değildir');
+      expect(_metinSatirSiniri(tester), isNull);
+    });
+
+    testWidgets('SATIR SAYISI EKRANDAN BAĞIMSIZ: alçak da yüksek de 3', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun), ekran: const Size(400, 500));
+      expect(_cizilenSatir(tester), 3);
+      await _kur(tester, _gonderi(metin: uzun), ekran: const Size(400, 1400));
+      expect(_cizilenSatir(tester), 3);
+    });
+
+    testWidgets('MEDYALI kartta da 3 satır (medya yüksekliği etkilemez)', (
+      tester,
+    ) async {
+      await _kur(
+        tester,
+        _gonderi(metin: uzun, medya: const ['/medya/a.jpg']),
+        ekran: const Size(400, 1600),
+      );
+      expect(_cizilenSatir(tester), 3);
+      expect(_ucNoktaVar(tester), isTrue);
+    });
+
+    testWidgets('üç noktaya dokununca metnin TAMAMI açılır', (tester) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      final oncekiSatir = _cizilenSatir(tester);
+      await tester.tap(find.byType(EtiketliMetin));
+      await tester.pump();
+      expect(_metinSatirSiniri(tester), isNull, reason: 'kırpma kalkar');
+      expect(_ucNoktaVar(tester), isFalse, reason: 'üç nokta gider');
+      expect(
+        _cizilenSatir(tester),
+        greaterThan(oncekiSatir),
+        reason: 'satır sayısı artmalı',
+      );
+    });
+
+    testWidgets('dokunma hedefi en az 44px ve ekran okuyucu etiketi var', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      expect(
+        tester.getSize(find.byType(EtiketliMetin)).height,
+        greaterThanOrEqualTo(44),
+        reason: 'üç nokta minik; dokunma alanı kırpılmış metnin TAMAMI',
+      );
+      expect(find.bySemanticsLabel('Devam et'), findsOneWidget);
+    });
+
+    testWidgets('eski "Devam et" DÜĞMESİ artık YOK (yerini üç nokta aldı)', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      expect(find.text('Devam et'), findsNothing);
+    });
+
+    testWidgets('metne dokunmak Reels AÇMAZ ve beğeni TETİKLEMEZ', (
+      tester,
+    ) async {
+      await _kur(
+        tester,
+        _gonderi(metin: uzun, medya: const ['/medya/a.jpg']),
+        ekran: const Size(400, 1600),
+      );
+      await tester.tap(find.byType(EtiketliMetin));
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      expect(_reelsMedyaIndeks, -1, reason: 'metne dokunmak Reels açmamalı');
+      expect(
+        find.byIcon(Icons.favorite_border),
+        findsOneWidget,
+        reason: 'beğeni tetiklenmemeli',
+      );
+      expect(_metinSatirSiniri(tester), isNull, reason: 'yalnız metin açılır');
+    });
+
+    testWidgets('kırpılmış metindeki @kullanıcı bağlantısı hâlâ tıklanır', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: uzun));
+      // İlk satırın başındaki kalın "@thelostvibe0" öneki: genişletme
+      // dokunuşunu YENMELİ (RichText tanıyıcısı arenaya önce girer).
+      final sol = tester.getTopLeft(find.byType(EtiketliMetin));
+      await tester.tapAt(sol + const Offset(30, 10));
+      await tester.pumpAndSettle();
+      expect(_sonRota, '/kullanici/thelostvibe0');
+    });
+
+    testWidgets('metin tek satırdan kısaysa dokunma alanı da YOK', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(metin: 'Kısa yorum'));
+      expect(find.bySemanticsLabel('Devam et'), findsNothing);
     });
   });
 
@@ -549,6 +696,20 @@ void main() {
       await tester.pump();
       expect(find.byType(AkisMedya), findsOneWidget);
       expect(find.byType(EtiketliMetin), findsOneWidget);
+    });
+
+    testWidgets('spoiler perdesi AÇILINCA 3 satır kuralı işler', (
+      tester,
+    ) async {
+      final uzun = List.filled(120, 'çok uzun bir yorum metni').join(' ');
+      final y = _gonderi(metin: uzun);
+      y['spoiler'] = true;
+      await _kur(tester, y);
+      expect(find.byType(EtiketliMetin), findsNothing, reason: 'perde kapalı');
+      await tester.tap(find.text('Spoiler olabilir — dokun ve gör'));
+      await tester.pump();
+      expect(_cizilenSatir(tester), 3);
+      expect(_ucNoktaVar(tester), isTrue);
     });
 
     testWidgets('içeriğin kapak görseli üst satırın EN SAĞINDA durur', (

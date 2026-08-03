@@ -34,16 +34,12 @@ class MedyaGaleri extends StatelessWidget {
   /// Akışta: videolar kapak yerine yerinde (sessiz) oynar.
   final bool otomatikOynat;
 
-  /// Medyanın en-boy oranı kesinleşince bildirilir (akış kartı, yorum
-  /// metnine kalan yüksekliği bununla hesaplar).
-  final ValueChanged<double>? onOranBelirlendi;
   const MedyaGaleri({
     super.key,
     required this.yollar,
     this.onAc,
     this.onCiftDokunus,
     this.otomatikOynat = false,
-    this.onOranBelirlendi,
   });
 
   static bool _video(String m) => m.endsWith('.mp4') || m.endsWith('.webm');
@@ -59,7 +55,6 @@ class MedyaGaleri extends StatelessWidget {
         urller: urller,
         onAc: onAc,
         onCiftDokunus: onCiftDokunus,
-        onOranBelirlendi: onOranBelirlendi,
       );
     }
     Widget hucre(int i) {
@@ -185,16 +180,12 @@ class AkisMedya extends StatefulWidget {
   /// kutu ilk karede doğru yüksekliğe kurulur — yükleme sonrası zıplama olmaz.
   final double? oran;
 
-  /// Kesinleşen oran dışarı bildirilir. Akış kartı bunu bekler: medyanın
-  /// kapladığı yüksekliği bilmeden "yorum ekrana sığsın" hesabı yapamaz.
-  final ValueChanged<double>? onOranBelirlendi;
   const AkisMedya({
     super.key,
     required this.urller,
     this.onAc,
     this.onCiftDokunus,
     this.oran,
-    this.onOranBelirlendi,
   });
 
   @override
@@ -222,7 +213,6 @@ class _AkisMedyaState extends State<AkisMedya> {
   void initState() {
     super.initState();
     _oran = widget.oran;
-    if (_oran != null) _oraniBildir(_oran!);
     // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
     if (_oran == null && !_video(widget.urller.first)) {
       final saglayici = CachedNetworkImageProvider(widget.urller.first);
@@ -231,21 +221,9 @@ class _AkisMedyaState extends State<AkisMedya> {
         if (!mounted || _oran != null) return;
         final o = bilgi.image.width / bilgi.image.height;
         setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
-        _oraniBildir(_oran!);
       }, onError: (_, _) {});
       _akis!.addListener(_dinleyici!);
     }
-  }
-
-  /// Oranı üst widget'a bildirir. Görsel önbellekteyse dinleyici initState
-  /// içinde SENKRON tetiklenebilir; üst widget'ın setState'i o an çağrılamaz,
-  /// bu yüzden kare sonuna ertelenir.
-  void _oraniBildir(double o) {
-    final geri = widget.onOranBelirlendi;
-    if (geri == null) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) geri(o);
-    });
   }
 
   /// Sayacı göster ve 3 sn sonra söndür. Sayfa değişince yeniden çağrılır:
@@ -315,7 +293,6 @@ class _AkisMedyaState extends State<AkisMedya> {
   void _oranBildir(double o) {
     if (!mounted || _oran != null) return;
     setState(() => _oran = o.clamp(0.5, 16 / 9).toDouble());
-    _oraniBildir(_oran!);
   }
 
   @override
@@ -603,8 +580,9 @@ class _AkisVideoState extends State<AkisVideo> {
         ),
       );
     }
-    // Altyazı: videonun SOL ALTINDA, yani kartta beğeni/yorum satırının hemen
-    // ÜSTÜNDE. Kendi katmanında durur ve yalnız cümle değişince çizilir —
+    // Altyazı: videonun KENDİ kutusunun sol altında (kart sıralaması değişse
+    // de yeri değişmez; 2026-08-03'te gönderi metni araya girdi).
+    // Kendi katmanında durur ve yalnız cümle değişince çizilir —
     // oynatma konumu saniyede onlarca kez değişse de kart yeniden çizilmez.
     // Sağ alttaki ses rozetinin altına girmesin diye genişlik sınırlı (0.72).
     // IgnorePointer içinde: çift dokunuş (beğeni) ve tek dokunuş engellenmez.

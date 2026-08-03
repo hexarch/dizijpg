@@ -1,6 +1,42 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Gönderi metni: MEDYANIN ALTINA taşındı + SABİT 3 satır
+**Kullanıcı isteği:** "akışta postu paylaşan kişinin yorumu, beğeni yorum yap
+gibi şeylerin üstünde görselin altında olmalı. ve yorumun ilk 3 satırı göster,
+sonuna da üç nokta ekle. o üç noktaya tıklanınca yorumu büyüt yani açılacak."
+- 🚀 **Yeni kart sırası** (`AkisKarti`, akis.dart): başlık → spoiler perdesi →
+  medya → **gönderi metni** → eylem satırı (beğeni/yorum/görüntülenme/paylaş).
+  Metin artık kartın en altında değil; önce görsel, sonra ne dediği, sonra
+  eylemler. Sıralama gerçek konum ölçümüyle test edildi (`getTopLeft().dy`).
+- 🚀 **Sabit 3 satır + üç nokta** (`KisaltilmisYorum`, eski `SiganYorum`):
+  ekran boyundan BAĞIMSIZ, her cihazda 3 satır. Üç noktayı Flutter'ın kendi
+  `TextOverflow.ellipsis`'i basıyor → tek karakterlik `…` (elle yazılan `...`
+  satır sonunda bölünebilirdi). Metin 3 satırdan kısaysa üç nokta ÇIKMAZ:
+  `TextPainter` ile `didExceedMaxLines` ölçülüyor ve `maxLines` hiç verilmiyor.
+- 🚀 **Dokunma çözümü:** üç noktanın kendisi ~8px, parmakla vurulamaz →
+  dokunma alanı KIRPILMIŞ METNİN TAMAMI (3 satır ≈ 61px, 44px kuralının
+  üstünde), Instagram'daki gibi. `@etiket`/bağlantılar tıklanır KALIYOR:
+  RichText tanıyıcıları hit-test'te daha derinde olduğu için dokunma arenasına
+  önce girip genişletmeyi yeniyor (testle kanıtlandı). Reels'e geçen tek
+  dokunuş YALNIZ medyada olduğundan çakışma yok; metne dokunmak Reels açmıyor,
+  beğeni de tetiklemiyor.
+- 🚀 **Açılan metin geri KAPANMIYOR** (Instagram davranışı): kullanıcı "büyüt"
+  dedi, kapatma istemedi; kapatma da gizli ikinci bir hedef olurdu. Metin
+  değişirse (Çevir / Orijinali göster) kırpma sıfırlanıyor.
+- 🚀 **Kaldırılan ölü kod:** ekran yüksekliğinden satır bütçesi hesaplayan
+  `_metinButcesi` + 5 ölçüm sabiti, `_medyaOran` alanı ve yalnız bu hesap için
+  var olan `MedyaGaleri/AkisMedya.onOranBelirlendi` + `_oraniBildir` zinciri.
+  "Devam et" düğmesi de gitti; anahtar ekran okuyucu etiketi olarak duruyor
+  (45 dilde zaten çevrili, yeni metin eklenmedi).
+- 🚀 Değişiklik `AkisKarti`yi kullanan HER yerde geçerli: akış, `/gonderi/:id`,
+  profil ve kullanıcı profili yorum akışları — aynı widget, ayrıştırmak
+  tutarsızlık olurdu.
+- ✅ **19 yeni/yenilenmiş widget testi**; toplam **227 test** geçiyor.
+  Kanıt: değişiklik geçici geri alındığında (metin bloğu eylem satırının altına
+  + `satirSiniri = 8`) 5 test kırmızıya döndü — sıralama testleri 618.5 < 818.0
+  ve 112.5 < 312.0, satır testleri "Expected: <3> Actual: <8>".
+
 ## 2026-08-03 — Reels içinden yapılan gezinme GÖRÜNMÜYORDU
 **Kullanıcı bildirimi:** "reels izlerken beğeni tuşuna basılı tutuyorum beğeni
 listesi açılıyor kullanıcıya tıklıyorum profiline gitmiyor ama reelsten çıkınca
@@ -137,10 +173,8 @@ sayısını ... paylaş ikonu, işlevi de reelsdeki gibi ... yorum ekrana sığa
   (AnimatedOpacity); kaydırınca yeniden belirip yine sönüyor, tek medyada hiç yok.
 - 🚀 **Paylaş** akış kartına eklendi; Reels'le AYNI kod (`gonderiPaylas`,
   paylas.dart) — Reels'in kopyası değil, ortak çağrı.
-- 🚀 **"Ekrana sığan" yorum metni:** sabit `maxLines` YOK. `LayoutBuilder` +
-  `TextPainter` ile gerçek metin ölçülüp kullanılabilir yüksekliğe kaç satır
-  sığdığı hesaplanıyor (ekran boyu − başlık − medya − eylem satırı). Taşarsa
-  **Devam et** çıkıyor. Aynı gönderi 1400px ekranda 53, 500px ekranda 8 satır.
+- ~~**"Ekrana sığan" yorum metni:** sabit `maxLines` YOK...~~ **GEÇERSİZ —**
+  aynı gün "sabit 3 satır + üç nokta" ile değiştirildi, aşağıdaki bölüme bak.
 - ✅ **34 yeni widget testi** (`test/akis_karti_tasarim_test.dart`); toplam 162
   test geçiyor. AkisKarti'yi kullanan profil ekranları da korundu.
 

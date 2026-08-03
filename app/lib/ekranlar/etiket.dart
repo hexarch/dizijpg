@@ -86,8 +86,9 @@ IconData _turIkonu(String tur) => switch (tur) {
 
 /// Metnin EKRANDA görünen hâli: `[[tv:1396|Breaking Bad]]` → `Breaking Bad`,
 /// `www.a.com.` → `www.a.com.` (adres olduğu gibi görünür). Ölçüm için gerek:
-/// akış kartı kaç satır sığdığını [TextPainter] ile hesaplarken ham metni
-/// ölçseydi etiket işaretlemesi (görünmeyen 15+ karakter) satırları şişirirdi.
+/// akış kartı metnin 3 satırı aşıp aşmadığını [TextPainter] ile ölçerken ham
+/// metni ölçseydi etiket işaretlemesi (görünmeyen 15+ karakter) satırları
+/// şişirir, kısa gönderilerde bile üç nokta çıkardı.
 String duzMetin(String metin) {
   final tampon = StringBuffer();
   var i = 0;
@@ -120,8 +121,8 @@ class EtiketliMetin extends StatefulWidget {
   /// (akış kartının alt bloğu: "kullanıcı adı + yazdığı yorum" tek paragraf).
   final String? onekKullanici;
 
-  /// Satır sınırı: aşan metin `...` ile kırpılır. Akış kartı bunu ekrana
-  /// SIĞAN satır sayısıyla doldurur (sabit değer YOK).
+  /// Satır sınırı: aşan metin tek karakterlik `…` ile kırpılır. Akış kartı
+  /// buraya SABİT 3 verir (KisaltilmisYorum), taşmayan metinde null bırakır.
   final int? maxLines;
   const EtiketliMetin(
     this.metin, {
