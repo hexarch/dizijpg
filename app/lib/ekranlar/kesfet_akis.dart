@@ -12,6 +12,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
+import '../sira_tercihi.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import 'begenenler.dart';
@@ -178,7 +179,10 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
       _yukluyor = true;
     });
     try {
-      final d = await Api.get('/kesfet-akis') as Map<String, dynamic>;
+      final sr = SiraTercihi.sorgu(SiraTercihi.anahtarKesfet);
+      final d =
+          await Api.get(sr.isEmpty ? '/kesfet-akis' : '/kesfet-akis?$sr')
+              as Map<String, dynamic>;
       if (!mounted) return;
       final gelen = d['akis'] as List<dynamic>? ?? [];
       setState(() {
@@ -208,9 +212,12 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     if (_yukluyor || _liste == null || !_sayfalama.devamVar) return;
     setState(() => _yukluyor = true);
     try {
+      final sr = SiraTercihi.sorgu(SiraTercihi.anahtarKesfet);
       final d =
           await Api.get(
-                '/kesfet-akis?imlec=${Uri.encodeQueryComponent(_sayfalama.imlec!)}',
+                '/kesfet-akis?imlec='
+                '${Uri.encodeQueryComponent(_sayfalama.imlec!)}'
+                '${sr.isEmpty ? '' : '&$sr'}',
               )
               as Map<String, dynamic>;
       if (!mounted) return;
@@ -235,6 +242,20 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
         _sayfalama.bitti = true;
       });
     }
+  }
+
+  /// Sıralama tercihi değişti: liste TAMAMEN baştan kurulur (iki sıralama
+  /// birbirine karışmasın), kaydırma başa alınır.
+  void _siraDegisti() {
+    setState(() {
+      _liste = null;
+      _icerikler = {};
+      _sayfalama.sifirla();
+      _gorunurVideolar.clear();
+      _yukluyor = false;
+    });
+    if (_kaydirma.hasClients) _kaydirma.jumpTo(0);
+    _yukle();
   }
 
   void _ac(int i) {
@@ -348,7 +369,18 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
       );
     }
     return Scaffold(
-      appBar: AppBar(title: Text('Keşfet'.c)),
+      appBar: AppBar(
+        title: Text('Keşfet'.c),
+        // Kullanıcı isteği (3 Ağu 2026): "keşfet yazısının en sağına
+        // koyabilirsin bu seçeneği". Bu ekranın kendi sıralamasını yönetir.
+        actions: [
+          SiraSecici(
+            anahtar: SiraTercihi.anahtarKesfet,
+            onDegisti: _siraDegisti,
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
       body: govde,
     );
   }

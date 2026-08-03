@@ -498,4 +498,7 @@ const Map<String, String> cevirilerRu = {
       'Ответы, которые ты пишешь на посты других людей, видны только тебе',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Показать снова комментарии, скрытые тобой в своём профиле',
+  'Sıralama': 'Сортировка',
+  'Önerilen': 'Рекомендуемое',
+  'Kronolojik': 'Хронологический',
 };

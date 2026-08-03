@@ -499,4 +499,7 @@ const Map<String, String> cevirilerPl = {
       'Odpowiedzi, które piszesz pod postami innych osób, widzisz tylko Ty',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Pokaż ponownie komentarze, które ukryłeś na swoim profilu',
+  'Sıralama': 'Sortowanie',
+  'Önerilen': 'Polecane',
+  'Kronolojik': 'Chronologicznie',
 };

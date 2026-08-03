@@ -498,4 +498,7 @@ const Map<String, String> cevirilerNl = {
       'Antwoorden die je op berichten van anderen schrijft, zijn alleen voor jou zichtbaar',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Reacties die je op je profiel hebt verborgen weer weergeven',
+  'Sıralama': 'Sorteren',
+  'Önerilen': 'Aanbevolen',
+  'Kronolojik': 'Chronologisch',
 };

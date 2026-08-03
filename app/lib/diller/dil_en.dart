@@ -496,4 +496,7 @@ const Map<String, String> cevirilerEn = {
       'Replies you write to other people posts are visible only to you',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Show the comments you hid on your profile again',
+  'Sıralama': 'Sort',
+  'Önerilen': 'Recommended',
+  'Kronolojik': 'Chronological',
 };

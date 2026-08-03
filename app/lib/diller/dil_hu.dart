@@ -499,4 +499,7 @@ const Map<String, String> cevirilerHu = {
       'A mások bejegyzéseire írt válaszaidat csak te látod',
   'Profilinde gizlediğin yorumları tekrar göster':
       'A profilodon elrejtett hozzászólások újbóli megjelenítése',
+  'Sıralama': 'Rendezés',
+  'Önerilen': 'Ajánlott',
+  'Kronolojik': 'Időrendi',
 };

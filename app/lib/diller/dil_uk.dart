@@ -496,4 +496,7 @@ const Map<String, String> cevirilerUk = {
       'Відповіді, які ти пишеш на дописи інших людей, видно лише тобі',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Показати знову коментарі, приховані тобою у своєму профілі',
+  'Sıralama': 'Сортування',
+  'Önerilen': 'Рекомендовані',
+  'Kronolojik': 'Хронологічний',
 };

@@ -495,4 +495,7 @@ const Map<String, String> cevirilerPa = {
       'ਦੂਜਿਆਂ ਦੀਆਂ ਪੋਸਟਾਂ ਤੇ ਤੂੰ ਜੋ ਜਵਾਬ ਲਿਖਦਾ ਹੈਂ ਉਹ ਸਿਰਫ਼ ਤੈਨੂੰ ਦਿਖਦੇ ਹਨ',
   'Profilinde gizlediğin yorumları tekrar göster':
       'ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੇ ਲੁਕਾਈਆਂ ਟਿੱਪਣੀਆਂ ਫਿਰ ਤੋਂ ਦਿਖਾਓ',
+  'Sıralama': 'ਕ੍ਰਮ',
+  'Önerilen': 'ਸਿਫਾਰਸ਼ ਕੀਤਾ',
+  'Kronolojik': 'ਕਾਲਕ੍ਰਮਿਕ',
 };

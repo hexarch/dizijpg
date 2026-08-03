@@ -9,6 +9,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../onbellek.dart';
+import '../sira_tercihi.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -105,15 +106,21 @@ class _AkisEkraniState extends State<AkisEkrani>
     });
   }
 
+  /// Sunucudan gelen opak sayfalama imleci (Önerilen sırada). Kronolojik
+  /// sırada null kalır ve eski `?once=<id>` imleci kullanılır.
+  String? _imlec;
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
     _rozetleriYukle();
     try {
-      final d = await Api.get('/akis');
+      final s = SiraTercihi.sorgu(SiraTercihi.anahtarAkis);
+      final d = await Api.get(s.isEmpty ? '/akis' : '/akis?$s');
       if (!mounted) return;
       setState(() {
         _akis = d['akis'] as List<dynamic>;
         _icerikler = (d['icerikler'] as Map<String, dynamic>? ?? {});
+        _imlec = d['imlec'] as String?;
         _dahaVar = (_akis!.length) >= 30;
       });
       Onbellek.yaz('akis', {'akis': _akis, 'icerikler': _icerikler});
@@ -124,18 +131,44 @@ class _AkisEkraniState extends State<AkisEkrani>
     }
   }
 
+  /// Sıralama tercihi değişti: listeyi TAMAMEN baştan kur. Eski kartların
+  /// üstüne eklemek iki sıralamayı karıştırırdı; iskelet gösterilip yeniden
+  /// yüklenir ve kaydırma başa alınır.
+  void _siraDegisti() {
+    setState(() {
+      _akis = null;
+      _icerikler = {};
+      _imlec = null;
+      _dahaVar = true;
+    });
+    if (_kaydirma.hasClients) _kaydirma.jumpTo(0);
+    _yukle();
+  }
+
   Future<void> _devamYukle() async {
     if (_yukluyor || !_dahaVar || _akis == null || _akis!.isEmpty) return;
     _yukluyor = true;
     try {
-      final sonId = (_akis!.last as Map<String, dynamic>)['id'];
-      final d = await Api.get('/akis?once=$sonId');
+      // Önerilen sırada sunucunun opak imleci kullanılır (tur tohumu:
+      // sayfalar arası tekrar/atlama olmaz). Kronolojikte ya da sunucu imleç
+      // vermediyse bugünkü `?once=<son id>` imleci — eski sürümlerle aynı yol.
+      final s = SiraTercihi.sorgu(SiraTercihi.anahtarAkis);
+      final String yol;
+      if (_imlec != null && s.isEmpty) {
+        yol = '/akis?imlec=${Uri.encodeQueryComponent(_imlec!)}';
+      } else {
+        final sonId = (_akis!.last as Map<String, dynamic>)['id'];
+        yol = '/akis?once=$sonId${s.isEmpty ? '' : '&$s'}';
+      }
+      final d = await Api.get(yol);
       if (!mounted) return;
       final yeni = d['akis'] as List<dynamic>;
       setState(() {
         _akis!.addAll(yeni);
         _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
-        _dahaVar = yeni.length >= 30;
+        _imlec = d['imlec'] as String?;
+        // Önerilen sırada sunucu imleci null verirse havuz gerçekten bitti.
+        _dahaVar = yeni.length >= 30 && (s.isNotEmpty || _imlec != null);
       });
     } catch (_) {
     } finally {
@@ -269,6 +302,8 @@ class _AkisEkraniState extends State<AkisEkrani>
           ],
         ),
         actions: [
+          // Kronolojik / Önerilen — bu ekranın KENDİ sıralamasını yönetir.
+          SiraSecici(anahtar: SiraTercihi.anahtarAkis, onDegisti: _siraDegisti),
           RozetliIkon(
             ikon: Icons.notifications_none,
             sayi: _bildirimSayi,

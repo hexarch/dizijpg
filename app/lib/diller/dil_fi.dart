@@ -497,4 +497,7 @@ const Map<String, String> cevirilerFi = {
       'Vastaukset, joita kirjoitat muiden viesteihin, näkyvät vain sinulle',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Näytä taas profiilissasi piilottamasi kommentit',
+  'Sıralama': 'Järjestys',
+  'Önerilen': 'Suositellut',
+  'Kronolojik': 'Aikajärjestys',
 };

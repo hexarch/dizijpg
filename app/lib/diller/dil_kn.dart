@@ -497,4 +497,7 @@ const Map<String, String> cevirilerKn = {
       'ಇತರರ ಪೋಸ್ಟ್‌ಗಳಿಗೆ ನೀವು ಬರೆದ ಪ್ರತ್ಯುತ್ತರಗಳು ನಿಮಗೆ ಮಾತ್ರ ಕಾಣುತ್ತವೆ',
   'Profilinde gizlediğin yorumları tekrar göster':
       'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡಿದ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಮತ್ತೆ ತೋರಿಸಿ',
+  'Sıralama': 'ಕ್ರಮ',
+  'Önerilen': 'ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ',
+  'Kronolojik': 'ಕಾಲಾನುಕ್ರಮ',
 };

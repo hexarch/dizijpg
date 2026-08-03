@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache ffmpeg postgresql16-client
 COPY package.json ./
 RUN npm install --omit=dev
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js admin.html ./
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js admin.html ./
 # dizi.jpg AI bakım araçları: imaja girsin ki her yeniden derlemede
 # elle `docker cp` gerekmesin (tohumlama + kare tekrar temizliği).
 COPY ai_tohum.js ai_kare_tazele.js ai_yorumlar.json ./

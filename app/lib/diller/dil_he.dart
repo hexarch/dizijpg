@@ -487,4 +487,7 @@ const Map<String, String> cevirilerHe = {
       'תשובות שאתה כותב לפוסטים של אחרים גלויות רק לך',
   'Profilinde gizlediğin yorumları tekrar göster':
       'הצג שוב את התגובות שהסתרת בפרופיל שלך',
+  'Sıralama': 'מיון',
+  'Önerilen': 'מומלץ',
+  'Kronolojik': 'כרונולוגי',
 };

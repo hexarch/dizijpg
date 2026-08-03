@@ -497,4 +497,7 @@ const Map<String, String> cevirilerTa = {
       'மற்றவர்களின் பதிவுகளுக்கு நீ எழுதும் பதில்கள் உனக்கு மட்டுமே தெரியும்',
   'Profilinde gizlediğin yorumları tekrar göster':
       'உன் சுயவிவரத்தில் மறைத்த கருத்துகளை மீண்டும் காட்டு',
+  'Sıralama': 'வரிசை',
+  'Önerilen': 'பரிந்துரைக்கப்பட்டது',
+  'Kronolojik': 'காலவரிசை',
 };

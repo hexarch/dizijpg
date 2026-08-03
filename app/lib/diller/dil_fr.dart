@@ -503,4 +503,7 @@ const Map<String, String> cevirilerFr = {
       'Les réponses que tu écris aux publications des autres ne sont visibles que par toi',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Afficher à nouveau les commentaires que tu as masqués sur ton profil',
+  'Sıralama': 'Tri',
+  'Önerilen': 'Recommandé',
+  'Kronolojik': 'Chronologique',
 };

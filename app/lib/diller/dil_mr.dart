@@ -496,4 +496,7 @@ const Map<String, String> cevirilerMr = {
       'इतरांच्या पोस्टवर तू लिहिलेली उत्तरे फक्त तुलाच दिसतात',
   'Profilinde gizlediğin yorumları tekrar göster':
       'तुझ्या प्रोफाइलवर लपवलेल्या कमेंट्स पुन्हा दाखवा',
+  'Sıralama': 'क्रमवारी',
+  'Önerilen': 'शिफारस केलेले',
+  'Kronolojik': 'कालक्रमानुसार',
 };

@@ -495,4 +495,7 @@ const Map<String, String> cevirilerSw = {
       'Majibu unayoandika kwenye machapisho ya wengine yanaonekana kwako pekee',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Onyesha tena maoni uliyoyaficha kwenye wasifu',
+  'Sıralama': 'Panga',
+  'Önerilen': 'Inapendekezwa',
+  'Kronolojik': 'Kwa mpangilio',
 };

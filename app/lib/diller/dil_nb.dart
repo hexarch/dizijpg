@@ -497,4 +497,7 @@ const Map<String, String> cevirilerNb = {
       'Svar du skriver på andres innlegg, er bare synlige for deg',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Vis kommentarene du har skjult på profilen din, igjen',
+  'Sıralama': 'Sortering',
+  'Önerilen': 'Anbefalt',
+  'Kronolojik': 'Kronologisk',
 };

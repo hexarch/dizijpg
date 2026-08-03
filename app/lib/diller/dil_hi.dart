@@ -497,4 +497,7 @@ const Map<String, String> cevirilerHi = {
       'दूसरों की पोस्ट पर तुम जो जवाब लिखते हो वे सिर्फ़ तुम्हें दिखते हैं',
   'Profilinde gizlediğin yorumları tekrar göster':
       'अपनी प्रोफ़ाइल पर छिपाए गए कमेंट्स फिर से दिखाएं',
+  'Sıralama': 'क्रम',
+  'Önerilen': 'अनुशंसित',
+  'Kronolojik': 'कालानुक्रमिक',
 };

@@ -489,4 +489,7 @@ const Map<String, String> cevirilerTh = {
       'การตอบกลับที่คุณเขียนในโพสต์ของผู้อื่นจะมองเห็นได้เฉพาะคุณเท่านั้น',
   'Profilinde gizlediğin yorumları tekrar göster':
       'แสดงความคิดเห็นที่คุณซ่อนไว้บนโปรไฟล์อีกครั้ง',
+  'Sıralama': 'การเรียง',
+  'Önerilen': 'แนะนำ',
+  'Kronolojik': 'ตามเวลา',
 };

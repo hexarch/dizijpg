@@ -482,4 +482,7 @@ const Map<String, String> cevirilerKo = {
   'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
       '다른 사람의 게시물에 남긴 답장은 나에게만 보입니다',
   'Profilinde gizlediğin yorumları tekrar göster': '프로필에서 숨긴 댓글 다시 표시',
+  'Sıralama': '정렬',
+  'Önerilen': '추천',
+  'Kronolojik': '최신순',
 };

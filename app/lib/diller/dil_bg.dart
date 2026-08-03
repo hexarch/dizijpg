@@ -499,4 +499,7 @@ const Map<String, String> cevirilerBg = {
       'Отговорите, които пишеш на чужди публикации, се виждат само от теб',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Покажи отново коментарите, които си скрил от профила си',
+  'Sıralama': 'Подреждане',
+  'Önerilen': 'Препоръчано',
+  'Kronolojik': 'Хронологично',
 };

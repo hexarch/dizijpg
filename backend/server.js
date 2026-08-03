@@ -18,6 +18,11 @@ import {
 } from './depolama.js';
 import { emojiSay, EMOJI_YEDEK } from './emoji.js';
 import {
+  AGIRLIK_ANAHTARLARI, SAYIM_SINYALLERI, SAYI_ALANLARI, ARSIV_YAS_SAAT,
+  VARSAYILAN_AKIS, VARSAYILAN_KESFET, ayarBirlestir, hacimUygula,
+  siralaVeKotala, imlecCoz, imlecYaz, TohumDeposu, tohumUret,
+} from './siralama.js';
+import {
   mailKutulari, mailAyristir, mailKimlikCoz, gelenMailler, htmlKisirlastir,
 } from './mail_kutu.js';
 
@@ -2773,6 +2778,269 @@ const AKIS_KURAL = `
          OR (y.sezon IS NULL AND y.tur <> 'person')
        )`;
 
+// ---------- SIRALAMA ALGORİTMASI (ALGORITMA-PLANI.md) ----------
+// Medya kategorisi: 0 videolu, 1 fotoğraflı, 2 yazılı. Eskiden Keşfet'in KATI
+// bölümlemesiydi (bütün videolar, sonra bütün fotoğraflar); artık `medya`
+// ağırlığının merdiven girdisi — çok ilgili bir fotoğraf, alakasız bir videoyu
+// geçebilir. `unnest` PAHALI (EXPLAIN'de 4.511 çağrı), bu yüzden yalnız
+// `medya` ağırlığı > 0 iken sorguya konur.
+const KESFET_VIDEOLU = `EXISTS (SELECT 1 FROM unnest(y.medya) mm
+                    WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')`;
+const KESFET_KAT = `CASE WHEN ${KESFET_VIDEOLU} THEN 0
+                         WHEN cardinality(y.medya) > 0 THEN 1 ELSE 2 END`;
+
+// Skorlanacak aday havuzunun tavanı — BÜTÜN HAVUZU KAPSAMALI.
+//
+// Plan 400 aday öneriyordu; ÖLÇÜM BUNU ÇÜRÜTTÜ ve tavan yükseltildi:
+// arşiv gönderileri (Instagram aktarımı) id aralığı 86–2280'de, güncel
+// içerik ise 4949'a kadar uzanıyor. `ORDER BY y.id DESC LIMIT 1500`
+// penceresinde arşivden **0** gönderi ve 460 videonun yalnız **33'ü** vardı.
+// Yani dar pencere, kullanıcının açıkça istediği "eski mi yeni mi" yüzdelik
+// düğmesini ANLAMSIZ kılıyordu (sıralanacak eski içerik kalmıyor) ve Keşfet
+// videolarının %93'ünü siliyordu.
+//
+// Ölçülen maliyet (EXPLAIN ANALYZE, jit off): 4.829 aday → 73,5 ms. Bu sorgu
+// tur başına BİR KEZ çalışır (sonuç 10 dk tohum önbelleğinde), sonraki
+// sayfalar yalnız id ile satır çeker (17,6 ms).
+// Plan §7.4'ün eşiği aynen geçerli: gönderi 25.000'i geçince havuz tarihe
+// göre pencerelenmeli + taban skor materyalize edilmeli (bugün 4.845).
+const ADAY_AZAMI = 25000;
+
+// Tur tohumu deposu (plan §4.5): ilk sayfada sıralı id listesi DONDURULUR.
+// 4.845 id ≈ 39 KB/oturum → 800 kayıt tavanı ≈ 31 MB en kötü hal.
+const tohumDeposu = new TohumDeposu({ ttlMs: 600000, azami: 800 });
+
+const jsonCoz = (s) => { try { return JSON.parse(s); } catch { return null; } };
+
+// Ayarlar MEVCUT `ayarlar` tablosundan okunur (yeni tablo/önbellek YOK) —
+// `ayarlariGetir()` 60 sn önbellekli ve POST /admin/ayar onu sıfırlıyor, yani
+// panelden yapılan değişiklik ANINDA etkili.
+async function algoritmaAyarlari() {
+  const a = await ayarlariGetir();
+  const acik = a.algoritma_acik !== '0';
+  return {
+    acik,
+    akis_acik: acik && a.algoritma_akis_acik !== '0',
+    kesfet_acik: acik && a.algoritma_kesfet_acik !== '0',
+    akis: ayarBirlestir(jsonCoz(a.algoritma_akis), 'akis'),
+    kesfet: ayarBirlestir(jsonCoz(a.algoritma_kesfet), 'kesfet'),
+  };
+}
+
+// Hacim ölçümleri: hangi sayım sinyalinin P95'i eşiğin altında kaldığı buradan
+// belirlenir (plan §4.3) ve panelde canlı rozet olarak gösterilir.
+// BAYAT VERİ SERVİS EDİLİR: ölçüm sorgusu birkaç yüz ms sürebiliyor, bunu bir
+// kullanıcı isteğinin önüne koymak gecikme sıçraması yaratırdı. Süresi geçince
+// eldeki değer hemen döner, tazeleme ARKADA yapılır.
+let ALG_OLCUM = { ts: 0, deger: null, calisiyor: false };
+const ALG_OLCUM_TTL = 600000;
+const ALG_OLCUM_SQL = `
+  WITH g AS (SELECT id, kullanici_id, tarih FROM yorumlar WHERE ust_id IS NULL),
+       b AS (SELECT yorum_id, count(*)::int n FROM yorum_begeniler GROUP BY yorum_id),
+       r AS (SELECT ust_id, count(*)::int n FROM yorumlar
+             WHERE ust_id IS NOT NULL GROUP BY ust_id),
+       tb AS (SELECT b2.yorum_id, count(DISTINCT b2.kullanici_id)::int n
+              FROM yorum_begeniler b2
+              JOIN takipler t ON t.takip_edilen_id = b2.kullanici_id
+              GROUP BY b2.yorum_id)
+  SELECT
+    (SELECT count(*) FROM g)::int AS gonderi,
+    (SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY COALESCE(b.n, 0))
+       FROM g LEFT JOIN b ON b.yorum_id = g.id) AS begeni_p95,
+    (SELECT count(*) FROM g WHERE NOT EXISTS
+       (SELECT 1 FROM yorum_begeniler bb WHERE bb.yorum_id = g.id))::int AS begenisiz,
+    (SELECT count(*) FROM yorum_begeniler)::int AS begeni_toplam,
+    (SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY COALESCE(r.n, 0))
+       FROM g LEFT JOIN r ON r.ust_id = g.id) AS yanit_p95,
+    (SELECT count(*) FROM yorumlar WHERE ust_id IS NOT NULL)::int AS yanit_toplam,
+    (SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY COALESCE(tb.n, 0))
+       FROM g LEFT JOIN tb ON tb.yorum_id = g.id) AS takip_begendi_p95,
+    (SELECT count(*) FROM takipler)::int AS takip_toplam,
+    (SELECT percentile_cont(0.95) WITHIN GROUP (ORDER BY populerlik)
+       FROM icerik_dizini WHERE populerlik > 0) AS icerik_pop_p95,
+    (SELECT count(*) FROM icerik_dizini)::int AS dizin,
+    (SELECT count(*) FROM (SELECT DISTINCT tur, tmdb_id FROM yorumlar
+                           WHERE ust_id IS NULL) s)::int AS yapim,
+    (SELECT count(*) FROM (SELECT DISTINCT y.tur, y.tmdb_id FROM yorumlar y
+       JOIN icerik_dizini ic ON ic.tur = y.tur AND ic.tmdb_id = y.tmdb_id
+       WHERE y.ust_id IS NULL) s)::int AS yapim_dizinde,
+    (SELECT count(*) FROM g JOIN kullanicilar k ON k.id = g.kullanici_id
+       WHERE k.kullanici_adi = $1)::int AS ai_gonderi,
+    (SELECT count(*) FROM g WHERE g.tarih < now() - make_interval(hours => $2))::int AS arsiv_gonderi,
+    (SELECT count(*) FROM yorumlar y WHERE y.ust_id IS NULL AND EXISTS
+       (SELECT 1 FROM unnest(y.medya) m WHERE m LIKE '%.mp4' OR m LIKE '%.webm'))::int AS video,
+    (SELECT count(*) FROM yorumlar y WHERE y.ust_id IS NULL
+       AND y.tarih < now() - make_interval(hours => $2) AND EXISTS
+       (SELECT 1 FROM unnest(y.medya) m WHERE m LIKE '%.mp4' OR m LIKE '%.webm'))::int AS arsiv_video`;
+
+async function olcumHesapla() {
+  const { rows } = await havuz.query(ALG_OLCUM_SQL, [AI_KULLANICI, ARSIV_YAS_SAAT]);
+  const r = rows[0] || {};
+  const say = (x) => (Number.isFinite(Number(x)) ? Number(x) : 0);
+  return {
+    ...r,
+    p95: {
+      begeni: say(r.begeni_p95),
+      yanit: say(r.yanit_p95),
+      takip_begendi: say(r.takip_begendi_p95),
+      icerik_pop: say(r.icerik_pop_p95),
+    },
+  };
+}
+
+async function algoritmaOlcumleri() {
+  const taze = ALG_OLCUM.deger && Date.now() - ALG_OLCUM.ts < ALG_OLCUM_TTL;
+  if (!taze && !ALG_OLCUM.calisiyor) {
+    ALG_OLCUM.calisiyor = true;
+    const is = olcumHesapla()
+      .then((d) => { ALG_OLCUM = { ts: Date.now(), deger: d, calisiyor: false }; return d; })
+      .catch(() => { ALG_OLCUM.calisiyor = false; return ALG_OLCUM.deger; });
+    // İlk ölçümde bekle (elde hiç veri yok); sonrakilerde bayatı servis et.
+    if (!ALG_OLCUM.deger) return (await is) || { p95: {} };
+  }
+  return ALG_OLCUM.deger || { p95: {} };
+}
+
+// Yazar kalitesi: gönderi başına beğeni. KENDİ beğenisi sayılmaz (plan §7.1 —
+// `POST /yorumlar/:id/begen` sahip kontrolü yapmıyor, tek satırlık istismar
+// yolu olurdu). Ölçüm: dizi.jpg.ai 0,018 · alcelik 1,25 (69 kat fark).
+let ALG_YAZAR = { ts: 0, harita: new Map(), calisiyor: false };
+async function yazarKaliteleri() {
+  const taze = ALG_YAZAR.ts && Date.now() - ALG_YAZAR.ts < ALG_OLCUM_TTL;
+  if (!taze && !ALG_YAZAR.calisiyor) {
+    ALG_YAZAR.calisiyor = true;
+    const is = havuz.query(
+      `SELECT y.kullanici_id, count(*)::int AS gonderi,
+              count(b.yorum_id)::int AS begeni
+         FROM yorumlar y
+         LEFT JOIN yorum_begeniler b
+           ON b.yorum_id = y.id AND b.kullanici_id <> y.kullanici_id
+        WHERE y.ust_id IS NULL
+        GROUP BY y.kullanici_id`)
+      .then(({ rows }) => {
+        const h = new Map();
+        for (const r of rows) h.set(r.kullanici_id, r.begeni / Math.max(1, r.gonderi));
+        ALG_YAZAR = { ts: Date.now(), harita: h, calisiyor: false };
+        return h;
+      })
+      .catch(() => { ALG_YAZAR.calisiyor = false; return ALG_YAZAR.harita; });
+    if (!ALG_YAZAR.ts) return await is;
+  }
+  return ALG_YAZAR.harita;
+}
+
+// Skorlanacak aday havuzu. Sert filtreler (AKIS_GOVDE + AKIS_KURAL + görülmüş)
+// DEĞİŞMEDEN uygulanır — engelleme/yasak/bölüm uygunluğu skora GİRMEZ (§7.3).
+// Susmuş sinyallerin alt sorguları SORGUYA HİÇ KONMAZ: hacim eşiği aynı
+// zamanda bir performans korumasıdır.
+async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat }) {
+  const p = hacim.pay;
+  const alan = [
+    'y.id', 'y.kullanici_id', 'y.tur', 'y.tmdb_id',
+    'y.spoiler AS spoiler_isaret',
+    // TAM SAYI saniye olarak: `EXTRACT(...)/3600` numeric döner ve satır başına
+    // ~18 baytlık ondalık metin taşır. 4.840 adayda bu boşuna aktarımdır;
+    // saat ve `arsiv` bayrağı Node'da tek bölmeyle türetilir.
+    'EXTRACT(EPOCH FROM (now() - y.tarih))::int AS yas_sn',
+    'g.guvenli',
+    '(k.kullanici_adi = $4) AS ai',
+    // KOŞULSUZ: alt sorgusu yok (saf kolon karşılaştırması), maliyeti sıfır.
+    // Ayrıca $2'yi HER ZAMAN kullanır — Postgres kullanılmayan parametrenin
+    // tipini çıkaramaz ("could not determine data type of parameter $2") ve
+    // Keşfet'te `dil` ağırlığı 0 olduğu için bu sorgu patlıyordu.
+    '(y.kaynak_dil IS NULL OR y.kaynak_dil = $2) AS dil_uygun',
+  ];
+  if (p.takip_ettigim > 0) {
+    alan.push(`EXISTS(SELECT 1 FROM takipler t
+       WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=y.kullanici_id) AS takip_ediyorum`);
+  }
+  if (p.icerik_pop > 0) {
+    alan.push(`(SELECT ic.populerlik FROM icerik_dizini ic
+       WHERE ic.tur=y.tur AND ic.tmdb_id=y.tmdb_id) AS populerlik`);
+  }
+  if (p.kitaplik > 0) {
+    alan.push(`(SELECT d.durum FROM durumlar d WHERE d.kullanici_id=$1
+       AND d.tur=y.tur AND d.tmdb_id=y.tmdb_id) AS durum`);
+  }
+  if (kat) alan.push(`${KESFET_KAT} AS kat`);
+  if (p.begeni > 0) {
+    alan.push(`(SELECT count(*)::int FROM yorum_begeniler b
+       WHERE b.yorum_id=y.id AND b.kullanici_id <> y.kullanici_id) AS begeni`);
+  }
+  if (p.yanit > 0) {
+    alan.push('(SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit');
+  }
+  if (p.takip_begendi > 0) {
+    alan.push(`(SELECT count(*)::int FROM yorum_begeniler b
+       JOIN takipler t ON t.takip_edilen_id=b.kullanici_id AND t.takip_eden_id=$1
+       WHERE b.yorum_id=y.id) AS takip_begendi`);
+  }
+  const sql = `SELECT ${alan.join(',\n           ')}
+     ${AKIS_GOVDE}
+       ${gorulenHaric
+    ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag
+           WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)` : ''}
+       ${AKIS_KURAL}
+     ORDER BY y.id DESC LIMIT ${ADAY_AZAMI}`;
+  // DİKKAT: her parametre sorguda GERÇEKTEN kullanılmalı; kullanılmayan
+  // parametrenin tipini Postgres çıkaramaz ve sorgu patlar
+  // ("could not determine data type of parameter $N").
+  const par = [benId, dil, kadro, AI_KULLANICI];
+  // JIT KAPALI — ÖLÇÜLDÜ VE ŞART: bu sorgunun maliyet tahmini 115.589,
+  // `jit_above_cost` ise 100.000. Postgres LLVM derlemesine giriyor ve
+  // EXPLAIN'de 381 ms'i SADECE kod üretimine harcıyor (toplam 545 ms).
+  // `SET LOCAL jit=off` ile aynı sorgu 41 ms. İşlem içinde LOCAL kullanılıyor
+  // ki havuzdaki bağlantıya sızmasın; sorgu salt okunur, işlem zararsız.
+  const istemci = await havuz.connect();
+  try {
+    await istemci.query('BEGIN');
+    await istemci.query('SET LOCAL jit = off');
+    const { rows } = await istemci.query(sql, par);
+    await istemci.query('COMMIT');
+    const kalite = await yazarKaliteleri();
+    for (const r of rows) {
+      r.yazar_kalite = kalite.get(r.kullanici_id) || 0;
+      r.yas_saat = r.yas_sn / 3600;
+      r.arsiv = r.yas_saat >= ARSIV_YAS_SAAT;
+    }
+    return rows;
+  } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
+    throw e;
+  } finally {
+    istemci.release();
+  }
+}
+
+// Dondurulmuş sıralı id listesini getir; yoksa hesapla ve tohuma yaz.
+async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorulenHaric }) {
+  const anahtar = `${benId}:${yuzey}:${tohum}`;
+  const eldeki = tohumDeposu.oku(anahtar);
+  if (eldeki) return eldeki;
+  const hacim = hacimUygula(ayar, olcum);
+  const adaylar = await adaylariGetir({
+    benId, dil, kadro, hacim, gorulenHaric, kat: hacim.pay.medya > 0,
+  });
+  const { idler } = siralaVeKotala(adaylar, ayar, olcum);
+  tohumDeposu.yaz(anahtar, idler);
+  return idler;
+}
+
+// Sıralı id listesinin bir dilimi için TAM satırları getir. Sert filtreler
+// BURADA DA uygulanır (savunma katmanı): liste dondurulduktan sonra kullanıcı
+// birini engellerse o gönderi yine de düşer.
+async function satirlariGetir({ benId, dil, kadro, idler, kesfet }) {
+  if (!idler.length) return [];
+  const { rows } = await havuz.query(
+    `${AKIS_ALANLAR}${kesfet ? `,\n            ${KESFET_VIDEOLU} AS videolu` : ''}
+     ${AKIS_GOVDE}
+       AND y.id = ANY($2::int[])
+       ${AKIS_KURAL}`,
+    [benId, idler, kadro, dil]);
+  const harita = new Map(rows.map((r) => [r.id, r]));
+  return idler.map((id) => harita.get(id)).filter(Boolean);
+}
+
 // Son izlenen 20 yapımın oyuncu/yönetmen TMDB id'leri (önbellekli credits).
 async function kadroKisileri(benId) {
   const kadro = new Set();
@@ -2942,17 +3210,55 @@ app.get('/emojiler/sik', girisZorunlu, emojiLimiti, sarici(async (req, res) => {
   res.json({ benim, genel, yedek: EMOJI_YEDEK });
 }));
 
+const AKIS_SAYFA = 30;
+
 app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
-  const once = parseInt(req.query.once, 10) || null; // sayfalama: bu id'den eskiler
   const benId = req.kullanici.id;
+  const dil = istekBaglam.getStore()?.dil || 'tr';
   const kadro = await kadroKisileri(benId);
+  const alg = await algoritmaAyarlari();
+  // KULLANICI SEÇİMİ (varsayılan "Önerilen"): `?sira=kronolojik` gelirse
+  // bugünkü saf id-azalan yol birebir çalışır.
+  const kronolojik = String(req.query.sira || '') === 'kronolojik';
+  const cozum = imlecCoz(req.query.imlec, req.query.once);
+
+  // ---- ÖNERİLEN (skorlu) ----
+  // GERİYE UYUM: eski istemci `?once=<id>` gönderir (opak imleç bilmez). O
+  // istek kronolojik yola düşer — akış KIRILMAZ, yalnız 2. sayfadan itibaren
+  // bugünkü sırayla devam eder (plan §4.5 "imleçte : yoksa bugünkü davranış").
+  if (alg.akis_acik && !kronolojik && cozum.bicim !== 'eski_akis') {
+    const olcum = await algoritmaOlcumleri();
+    const tohum = cozum.bicim === 'yeni' ? cozum.tohum : tohumUret(benId, 'akis');
+    const ofset = cozum.bicim === 'yeni' ? cozum.ofset : 0;
+    const idler = await turListesi({
+      benId, yuzey: 'akis', dil, kadro, ayar: alg.akis, olcum, tohum,
+      gorulenHaric: true,
+    });
+    const dilim = idler.slice(ofset, ofset + AKIS_SAYFA);
+    const satir = await satirlariGetir({ benId, dil, kadro, idler: dilim });
+    // İlk sayfa gerçekten boşsa bugünkü popüler yedeğine düşülür (aşağıdaki
+    // ortak kod yolu); dolu ise skorlu sayfa döner.
+    if (satir.length || ofset > 0) {
+      const sonrakiOfset = ofset + dilim.length;
+      return res.json({
+        kaynak: 'akis',
+        sira: 'onerilen',
+        imlec: sonrakiOfset < idler.length ? imlecYaz(tohum, sonrakiOfset) : null,
+        akis: satir.map(akisSatiri),
+        icerikler: await akisIcerikleri(satir),
+      });
+    }
+  }
+
+  // ---- KRONOLOJİK (bugünkü kod yolu, aynen korundu) ----
+  const once = cozum.bicim === 'eski_akis' ? cozum.once : null;
   let { rows } = await havuz.query(
     `${AKIS_ALANLAR} ${AKIS_GOVDE}
        AND ($2::int IS NULL OR y.id < $2)
        AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)
        ${AKIS_KURAL}
      ORDER BY y.id DESC LIMIT 30`,
-    [benId, once, kadro, istekBaglam.getStore()?.dil || 'tr'],
+    [benId, once, kadro, dil],
   );
   let kaynak = 'akis';
   // FALLBACK (yalnız ilk sayfa boşsa): günün en beğenilenleri → ayın en
@@ -2980,37 +3286,76 @@ app.get('/akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   // döner.
   res.json({
     kaynak,
+    sira: 'kronolojik',
     akis: rows.map(akisSatiri),
     icerikler: await akisIcerikleri(rows),
   });
 }));
 
-// Keşfet (Reels tarzı): akışla AYNI uygunluk/öncelik; videolu postlar önce,
-// sonra diğer medyalılar, sonra yazılı yorumlar.
-const KESFET_VIDEOLU = `EXISTS (SELECT 1 FROM unnest(y.medya) mm
-                    WHERE mm LIKE '%.mp4' OR mm LIKE '%.webm')`;
-// Sıralama kategorisi: 0 videolu, 1 fotoğraflı, 2 yazılı. Sayfalama imleci
-// (kat, id) ikilisidir — yalnız id ile sayfalamak sıralamayı bozardı, çünkü
-// yazılı yorumun id'si videolu gönderininkinden büyük olabilir.
-const KESFET_KAT = `CASE WHEN ${KESFET_VIDEOLU} THEN 0
-                         WHEN cardinality(y.medya) > 0 THEN 1 ELSE 2 END`;
+// Keşfet (Reels tarzı): akışla AYNI uygunluk kuralları.
 const KESFET_ILK = 60; // ilk sayfa: eski istemciler de aynı doluluğu görsün
 const KESFET_SAYFA = 30; // sonraki sayfalar
 
 // İki turlu akış:
 //  1. tur — görülmemişler (akis_goruldu'da olmayanlar), imleçle sayfa sayfa.
 //  2. tur — havuz tükenince BAŞTAN, görülenler dahil (`tekrar: true`).
-// `imlec` yanıtta gelir, istemci olduğu gibi geri gönderir: "<tur>:<kat>:<id>".
-// `imlec: null` → gerçekten bitti, istemci daha fazla istememeli (sonsuz döngü
-// yok: imleç her sayfada kesin ilerler, ikinci tur da havuz sonunda biter).
+// `imlec` yanıtta gelir, istemci OLDUĞU GİBİ geri gönderir — bu yüzden Keşfet
+// tarafında imleç biçimini değiştirmek eski istemcileri KIRMAZ (opak). Yine de
+// eski `<tur>:<kat>:<id>` biçimi tanınmaya devam eder: yolda olan istekler ve
+// önbellekten dönen imleçler için (plan §7.5, zorunlu madde).
+// `imlec: null` → gerçekten bitti, istemci daha fazla istememeli.
 app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
   const benId = req.kullanici.id;
+  const dil = istekBaglam.getStore()?.dil || 'tr';
   const kadro = await kadroKisileri(benId);
-  const cozum = /^([01]):(?:([0-2]):(\d{1,9}))?$/.exec(String(req.query.imlec || ''));
-  let tekrar = cozum ? cozum[1] === '1' : false;
-  const kat = cozum && cozum[2] !== undefined ? parseInt(cozum[2], 10) : null;
-  const once = cozum && cozum[3] !== undefined ? parseInt(cozum[3], 10) : null;
-  const adet = cozum ? KESFET_SAYFA : KESFET_ILK;
+  const alg = await algoritmaAyarlari();
+  const kronolojik = String(req.query.sira || '') === 'kronolojik';
+  const c = imlecCoz(req.query.imlec);
+
+  // ---- ÖNERİLEN (skorlu) ----
+  if (alg.kesfet_acik && !kronolojik && c.bicim !== 'eski_kesfet') {
+    const olcum = await algoritmaOlcumleri();
+    const ilk = c.bicim !== 'yeni';
+    let tur = ilk ? 0 : c.tur;
+    let tohum = ilk ? tohumUret(benId, 'kesfet') : c.tohum;
+    let ofset = ilk ? 0 : c.ofset;
+    const adet = ilk ? KESFET_ILK : KESFET_SAYFA;
+
+    let idler = await turListesi({
+      benId, yuzey: 'kesfet', dil, kadro, ayar: alg.kesfet, olcum, tohum,
+      gorulenHaric: tur === 0,
+    });
+    // 1. tur bitti → 2. tura geç (görülenler dahil, yeni tohum, baştan).
+    if (ofset >= idler.length && tur === 0) {
+      tur = 1; ofset = 0; tohum = `t${tohumUret(benId, 'kesfet')}`;
+      idler = await turListesi({
+        benId, yuzey: 'kesfet', dil, kadro, ayar: alg.kesfet, olcum, tohum,
+        gorulenHaric: false,
+      });
+    }
+    const dilim = idler.slice(ofset, ofset + adet);
+    const satir = await satirlariGetir({
+      benId, dil, kadro, idler: dilim, kesfet: true,
+    });
+    if (satir.length || !ilk) {
+      const sonrakiOfset = ofset + dilim.length;
+      return res.json({
+        akis: satir.map(akisSatiri),
+        icerikler: await akisIcerikleri(satir),
+        tekrar: tur === 1,
+        sira: 'onerilen',
+        imlec: sonrakiOfset < idler.length
+          ? imlecYaz(tohum, sonrakiOfset, tur)
+          : (tur === 1 ? null : imlecYaz(tohum, idler.length, 0)),
+      });
+    }
+  }
+
+  // ---- KRONOLOJİK (bugünkü kod yolu, aynen korundu) ----
+  let tekrar = c.bicim === 'eski_kesfet' ? c.tekrar : false;
+  const kat = c.bicim === 'eski_kesfet' ? c.kat : null;
+  const once = c.bicim === 'eski_kesfet' ? c.once : null;
+  const adet = c.bicim === 'eski_kesfet' ? KESFET_SAYFA : KESFET_ILK;
 
   // gorulenHaric: görülenleri hariç tut (1. tur).
   const sorgula = (gorulenHaric, katV, onceV) => havuz.query(
@@ -3026,7 +3371,7 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
        ${AKIS_KURAL}
      ORDER BY ${KESFET_KAT}, y.id DESC
      LIMIT ${adet}`,
-    [benId, onceV, kadro, istekBaglam.getStore()?.dil || 'tr', katV]);
+    [benId, onceV, kadro, dil, katV]);
 
   let { rows } = await sorgula(!tekrar, kat, once);
   // Görülmemiş havuz TAM sayfa sınırında bittiyse boş döner: hemen 2. tura geç.
@@ -3042,6 +3387,7 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
     akis: rows.map(akisSatiri),
     icerikler: await akisIcerikleri(rows),
     tekrar, // bu sayfa "daha önce görülenlerin tekrarı" mı
+    sira: 'kronolojik',
     imlec,
   });
 }));
@@ -4881,13 +5227,21 @@ app.get('/admin/surumler', adminKisit, sarici(async (_req, res) => {
 }));
 
 // Panelden değiştirilebilen ayarlar — beyaz liste (rastgele anahtar yazılamaz).
-const AYAR_ANAHTARLARI = ['min_derleme', 'onerilen_derleme', 'guncelleme_url', 'guncelleme_notu'];
+const AYAR_ANAHTARLARI = [
+  'min_derleme', 'onerilen_derleme', 'guncelleme_url', 'guncelleme_notu',
+  'algoritma_acik', 'algoritma_akis_acik', 'algoritma_kesfet_acik',
+  'algoritma_akis', 'algoritma_kesfet',
+];
+// Ağırlık seti JSON'u 500 karakteri aşıyor (ölçüm: ~420-520 bayt); kırpılırsa
+// bozuk JSON kaydedilir ve ayar sessizce varsayılana düşerdi.
+const AYAR_UZUN = new Set(['algoritma_akis', 'algoritma_kesfet']);
 app.post('/admin/ayar', adminKisit, sarici(async (req, res) => {
   const { anahtar, deger } = req.body || {};
   if (!AYAR_ANAHTARLARI.includes(anahtar)) {
     return res.status(400).json({ hata: 'Bilinmeyen ayar' });
   }
-  const d = deger === null || deger === '' ? null : String(deger).slice(0, 500);
+  const sinir = AYAR_UZUN.has(anahtar) ? 4000 : 500;
+  const d = deger === null || deger === '' ? null : String(deger).slice(0, sinir);
   if (['min_derleme', 'onerilen_derleme'].includes(anahtar) && d !== null && !/^\d{1,6}$/.test(d)) {
     return res.status(400).json({ hata: 'Derleme numarası sayı olmalı' });
   }
@@ -4896,6 +5250,136 @@ app.post('/admin/ayar', adminKisit, sarici(async (req, res) => {
      ON CONFLICT (anahtar) DO UPDATE SET deger=$2, guncelleme=now()`, [anahtar, d]);
   AYAR_ONBELLEK = { ts: 0, deger: {} }; // /surum-kontrol anında yeni değeri görsün
   res.json({ durum: 'ok' });
+}));
+
+// ---------- sıralama algoritması paneli ----------
+// GÜVENLİK: bu uçlar `/admin/...` altında olduğu için nginx'teki
+// `location ^~ /api/admin` ÖNEK bloğu tarafından otomatik korunur (IP kısıtı +
+// X-Admin-Token). Yeni nginx kuralı GEREKMEZ; `adminKisit` ikinci kapıdır.
+
+// Bir yüzeyin ayarını + canlı hacim ölçümünü + hangi sinyalin sustuğunu döner.
+function yuzeyOzeti(ayar, olcum) {
+  const h = hacimUygula(ayar, olcum);
+  return {
+    ayar,
+    pay: h.pay, // gerçek etki (yüzde) — slider ham sayı, bu normalize hali
+    susan: h.susan,
+    toplam: h.toplam,
+  };
+}
+
+app.get('/admin/algoritma', adminKisit, sarici(async (_req, res) => {
+  const [alg, olcum] = await Promise.all([algoritmaAyarlari(), algoritmaOlcumleri()]);
+  res.json({
+    acik: alg.acik,
+    akis_acik: alg.akis_acik,
+    kesfet_acik: alg.kesfet_acik,
+    akis: yuzeyOzeti(alg.akis, olcum),
+    kesfet: yuzeyOzeti(alg.kesfet, olcum),
+    varsayilan: { akis: VARSAYILAN_AKIS, kesfet: VARSAYILAN_KESFET },
+    agirliklar: AGIRLIK_ANAHTARLARI,
+    sayim_sinyalleri: SAYIM_SINYALLERI,
+    sinirlar: SAYI_ALANLARI,
+    arsiv_yas_saat: ARSIV_YAS_SAAT,
+    olcum, // panel rozetlerindeki BÜTÜN sayılar buradan — sabit yazılmaz
+    tohum_oturum: tohumDeposu.boyut,
+  });
+}));
+
+// Tüm set TEK POST ile kaydedilir: slider'lar tek tek kaydedilseydi yarı
+// uygulanmış bir ayar canlıya çıkardı (bir ağırlık yeni, diğeri eski).
+app.post('/admin/algoritma', adminKisit, sarici(async (req, res) => {
+  const { yuzey, ayar, acik, akis_acik: akisAcik, kesfet_acik: kesfetAcik } = req.body || {};
+  const yazilacak = [];
+  if (acik !== undefined) yazilacak.push(['algoritma_acik', acik ? '1' : '0']);
+  if (akisAcik !== undefined) yazilacak.push(['algoritma_akis_acik', akisAcik ? '1' : '0']);
+  if (kesfetAcik !== undefined) yazilacak.push(['algoritma_kesfet_acik', kesfetAcik ? '1' : '0']);
+  if (yuzey !== undefined) {
+    if (yuzey !== 'akis' && yuzey !== 'kesfet') {
+      return res.status(400).json({ hata: 'Bilinmeyen yüzey' });
+    }
+    const temiz = ayarBirlestir(ayar, yuzey);
+    // En az bir ağırlık > 0 olmalı (plan §5.4). ayarBirlestir zaten varsayılana
+    // düşürüyor; kullanıcıya sessiz kalmamak için burada da söylenir.
+    if (AGIRLIK_ANAHTARLARI.every((a) => Number(ayar?.[a]) === 0)) {
+      return res.status(400).json({ hata: 'En az bir ağırlık 0dan büyük olmalı' });
+    }
+    yazilacak.push([`algoritma_${yuzey}`, JSON.stringify(temiz)]);
+  }
+  if (!yazilacak.length) return res.status(400).json({ hata: 'Kaydedilecek bir şey yok' });
+  for (const [anahtar, deger] of yazilacak) {
+    await havuz.query(
+      `INSERT INTO ayarlar (anahtar, deger, guncelleme) VALUES ($1,$2,now())
+       ON CONFLICT (anahtar) DO UPDATE SET deger=$2, guncelleme=now()`, [anahtar, deger]);
+  }
+  AYAR_ONBELLEK = { ts: 0, deger: {} }; // sonraki istek yeni ağırlıklarla
+  res.json({ durum: 'ok', yazilan: yazilacak.map(([a]) => a) });
+}));
+
+app.post('/admin/algoritma-varsayilan', adminKisit, sarici(async (req, res) => {
+  const yuzey = req.body?.yuzey;
+  const hedef = (yuzey === 'akis' || yuzey === 'kesfet') ? [yuzey] : ['akis', 'kesfet'];
+  for (const y of hedef) {
+    await havuz.query(
+      `INSERT INTO ayarlar (anahtar, deger, guncelleme) VALUES ($1,$2,now())
+       ON CONFLICT (anahtar) DO UPDATE SET deger=$2, guncelleme=now()`,
+      [`algoritma_${y}`, JSON.stringify(y === 'kesfet' ? VARSAYILAN_KESFET : VARSAYILAN_AKIS)]);
+  }
+  AYAR_ONBELLEK = { ts: 0, deger: {} };
+  res.json({ durum: 'ok', yuzeyler: hedef });
+}));
+
+// KAYDETMEDEN önizleme (Bakım sekmesindeki `surumOnizle` deseninin eşi).
+// MAHREMİYET: yanıt gönderi METNİ ve MEDYASI DÖNDÜRMEZ (plan §5.2 uyarısı) —
+// yalnız id, yazar adı, yapım anahtarı ve skor kırılımı. Varsayılan kullanıcı
+// test hesabıdır; gerçek kullanıcının akışı panelde okunamaz.
+app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
+  const yuzey = req.query.yuzey === 'kesfet' ? 'kesfet' : 'akis';
+  const kimId = parseInt(req.query.kullanici, 10) || 1;
+  const adet = Math.min(50, Math.max(5, parseInt(req.query.adet, 10) || 20));
+  let ham = null;
+  if (req.query.agirliklar) {
+    ham = jsonCoz(String(req.query.agirliklar));
+    if (!ham) return res.status(400).json({ hata: 'Ağırlık JSONu çözülemedi' });
+  } else {
+    const alg = await algoritmaAyarlari();
+    ham = alg[yuzey];
+  }
+  const ayar = ayarBirlestir(ham, yuzey);
+  const olcum = await algoritmaOlcumleri();
+  const hacim = hacimUygula(ayar, olcum);
+  const t0 = Date.now();
+  const adaylar = await adaylariGetir({
+    benId: kimId, dil: 'tr', kadro: [], hacim,
+    gorulenHaric: false, kat: hacim.pay.medya > 0,
+  });
+  const sqlMs = Date.now() - t0;
+  const t1 = Date.now();
+  const { idler, kirilim } = siralaVeKotala(adaylar, ayar, olcum, { kirilimAdet: adet });
+  const skorMs = Date.now() - t1;
+  // Yazar adı + yapım anahtarı (metin/medya YOK)
+  const ust = idler.slice(0, adet);
+  const { rows } = ust.length ? await havuz.query(
+    `SELECT y.id, k.kullanici_adi, y.tur, y.tmdb_id
+       FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
+      WHERE y.id = ANY($1::int[])`, [ust]) : { rows: [] };
+  const bilgi = new Map(rows.map((r) => [r.id, r]));
+  const liste = kirilim.map((k, i) => ({ sira: i + 1, ...k, ...(bilgi.get(k.id) || {}) }));
+  const yazarlar = {};
+  for (const s of liste) yazarlar[s.kullanici_adi || '?'] = (yazarlar[s.kullanici_adi || '?'] || 0) + 1;
+  res.json({
+    yuzey,
+    kullanici: kimId,
+    aday: adaylar.length,
+    susan: hacim.susan,
+    pay: hacim.pay,
+    liste,
+    yazar_dagilimi: yazarlar,
+    farkli_yazar: Object.keys(yazarlar).length,
+    ai_orani: liste.length ? liste.filter((s) => s.ai).length / liste.length : 0,
+    arsiv_orani: liste.length ? liste.filter((s) => s.arsiv).length / liste.length : 0,
+    sure: { sql_ms: sqlMs, skor_ms: skorMs },
+  });
 }));
 
 // ---------- çeviri kuyruğu durumu ----------

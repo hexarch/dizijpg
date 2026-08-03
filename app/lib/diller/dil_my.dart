@@ -505,4 +505,7 @@ const Map<String, String> cevirilerMy = {
       'အခြားသူများ၏ ပို့စ်များတွင် သင်ရေးသော ပြန်စာများကို သင့်ကိုသာ မြင်နိုင်သည်',
   'Profilinde gizlediğin yorumları tekrar göster':
       'သင်၏ပရိုဖိုင်တွင် ဖျောက်ထားသော မှတ်ချက်များကို ပြန်ပြပါ',
+  'Sıralama': 'အစီအစဉ်',
+  'Önerilen': 'အကြံပြုထားသော',
+  'Kronolojik': 'အချိန်အလိုက်',
 };

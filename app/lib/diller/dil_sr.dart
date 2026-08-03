@@ -497,4 +497,7 @@ const Map<String, String> cevirilerSr = {
       'Odgovori koje pišeš na tuđe objave vidljivi su samo tebi',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Ponovo prikaži komentare koje si sakrio na svom profilu',
+  'Sıralama': 'Редослед',
+  'Önerilen': 'Препоручено',
+  'Kronolojik': 'Хронолошки',
 };

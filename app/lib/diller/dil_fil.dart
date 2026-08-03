@@ -499,4 +499,7 @@ const Map<String, String> cevirilerFil = {
       'Ang mga reply na isinulat mo sa post ng iba ay ikaw lang ang makakakita',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Ipakita ulit ang mga komentong itinago mo sa profile',
+  'Sıralama': 'Pagkakasunod',
+  'Önerilen': 'Inirerekomenda',
+  'Kronolojik': 'Ayon sa oras',
 };

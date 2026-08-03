@@ -8,6 +8,32 @@
 
 ---
 
+## 0. UYGULAMA DURUMU (3 Ağustos 2026 — canlıda)
+
+Motor `backend/siralama.js` (saf mantık, 51 birim testi), uçlar `server.js`,
+panel `admin.html` → **Algoritma** sekmesi, istemci `app/lib/sira_tercihi.dart`.
+
+| # | İş | Durum |
+|---|---|---|
+| 1.1 | `akis_olay` + temel çizgi ölçümü | ⬜ **YAPILMADI** — davranışsal telemetri (dwell/izlenme) hâlâ yok. Faz 2'ye kaldı; gizlilik metni gözden geçirilmeli. |
+| 1.2 | Ağırlık motoru + admin sekmesi | ✅ **BİTTİ** — formül §4.1, normalizasyon §4.2, hacim eşiği §4.3, tur tohumu §4.5, uçlar §5.2, panel §5.3, emniyet §5.4. |
+| 1.3 | Çeşitlilik + AI dengesi (Keşfet) | ✅ **BİTTİ** — yazar/içerik doygunluğu + AI payı kotası. Ölçüldü: Keşfet ilk 20 kartta **farklı yazar 1–2 → 8** (kabul kriteri ≥ 4). |
+| 1.4 | `icerik_dizini` kapsaması %16,4 → %100 | ⬜ **YAPILMADI** — 407/2.479 yapım dizinde. `icerik_pop` sinyali bugün gönderilerin yalnız %16,4'ünde çalışıyor; panelde bu oran canlı gösteriliyor. |
+| 1.5 | Akış şalterini aç | ✅ **BİTTİ** — `algoritma_akis_acik=1`; sayfalama 8 sayfa uçtan uca curl ile doğrulandı (tekrar/atlama yok). |
+| — | **Kullanıcı seçeneği: Kronolojik / Önerilen** | ✅ **BİTTİ** (planda yoktu, §9.1-1 açık sorusunun cevabı) — varsayılan Önerilen, tercih cihazda saklanıyor, 45 dile çevrildi. |
+| — | **AI oranı ve arşiv dengesi yüzdelik panel düğmesi** | ✅ **BİTTİ** (§9.1-2 ve §9.1-3'ün cevabı) — ikisi de **kota (tavan)** olarak, çarpan olarak değil. Gerekçe: kullanıcı "yüzdelik" istedi; çarpanın paya etkisi öngörülemez. |
+| 2.x / 3.x | Faz 2 ve Faz 3 | ⬜ **YAPILMADI** — tetikleyici eşikler §8.1'de duruyor. |
+
+**Plandan bilinçli sapmalar** (gerekçeleri ilgili bölümlerde):
+1. **Aday havuzu 400 değil, TÜM havuz** (§4.5 → bkz. `ADAY_AZAMI` yorumu). Ölçüm: arşiv gönderileri id 86–2280 aralığında; `id DESC LIMIT 1500` penceresinde arşivden **0**, 460 videonun yalnız **33'ü** vardı. Dar pencere hem arşiv/tazelik düğmesini anlamsız kılıyor hem Keşfet videolarının %93'ünü siliyordu.
+2. **Tur tohumu rastgele değil, kullanıcı+2 dakikalık pencere hash'i** (§4.5 zaten iki seçeneği de öneriyordu). Rastgele tohumda her ilk-sayfa isteği havuzu baştan skorluyordu (/kesfet-akis 0,65 s → 1,05 s).
+3. **`ai_carpani` ve `taban_tazelik` yerine `ai_payi` / `arsiv_payi` yüzdelik KOTA + `tazelik_gucu` yüzdesi** — kullanıcının açık isteği ("yüzdelik oranını ben oynarım").
+4. **`goruntulenme` formüle HİÇ konmadı** (§6.1 kararı aynen uygulandı) — sayaç `POST /akis/goruldu`'dan artıyor, kapalı geri besleme kurardı.
+5. **Sayım sinyallerinin alt sorguları, hacim eşiği onları susturduğunda SORGUYA HİÇ KONMUYOR** — eşik aynı zamanda bir performans koruması.
+6. **Ana şalterler `1` (açık) dağıtıldı**, plandaki "kapalı şalterle çık" adımı atlandı: kullanıcının ürün kararı varsayılanın "Önerilen" olmasıydı; şalter kapalıyken Önerilen = kronolojik olurdu. Geri alma yolu duruyor (`algoritma_acik=0`, dağıtımsız, anında).
+
+---
+
 ## 1. Yönetici Özeti
 
 Kullanıcının isteği net: *"beğeni sayısına göre şu kadar, dizi-film popülerliğine göre şu kadar, takip ettiklerinin beğendiklerine göre şu kadar öne çıksın."* Bu, standart bir ağırlıklı sıralama motorudur ve teknik olarak tamamen yapılabilir. Ama ölçüm, planı bir yerinden sertçe kırıyor:

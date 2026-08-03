@@ -495,4 +495,7 @@ const Map<String, String> cevirilerFa = {
       'پاسخ‌هایی که به پست‌های دیگران می‌نویسی فقط برای خودت نمایش داده می‌شود',
   'Profilinde gizlediğin yorumları tekrar göster':
       'نظرهایی را که از پروفایلت پنهان کرده‌ای دوباره نشان بده',
+  'Sıralama': 'مرتب‌سازی',
+  'Önerilen': 'پیشنهادی',
+  'Kronolojik': 'بر اساس زمان',
 };

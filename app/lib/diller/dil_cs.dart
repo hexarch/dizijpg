@@ -497,4 +497,7 @@ const Map<String, String> cevirilerCs = {
       'Odpovědi, které píšeš na příspěvky ostatních, vidíš jen ty',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Znovu zobrazit komentáře skryté ve svém profilu',
+  'Sıralama': 'Řazení',
+  'Önerilen': 'Doporučené',
+  'Kronolojik': 'Chronologicky',
 };

@@ -493,4 +493,7 @@ const Map<String, String> cevirilerGu = {
       'બીજાની પોસ્ટ પર તું જે જવાબો લખે છે તે ફક્ત તને જ દેખાય છે',
   'Profilinde gizlediğin yorumları tekrar göster':
       'તારી પ્રોફાઇલ પર છુપાવેલી કમેન્ટ્સ ફરીથી બતાવો',
+  'Sıralama': 'ક્રમ',
+  'Önerilen': 'ભલામણ કરેલ',
+  'Kronolojik': 'કાલક્રમિક',
 };

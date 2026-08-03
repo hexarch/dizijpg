@@ -494,4 +494,7 @@ const Map<String, String> cevirilerTe = {
       'ఇతరుల పోస్ట్‌లకు నువ్వు రాసే రిప్లైలు నీకు మాత్రమే కనిపిస్తాయి',
   'Profilinde gizlediğin yorumları tekrar göster':
       'నీ ప్రొఫైల్‌లో దాచిన కామెంట్లను మళ్ళీ చూపించు',
+  'Sıralama': 'క్రమం',
+  'Önerilen': 'సిఫార్సు చేయబడినది',
+  'Kronolojik': 'కాలక్రమానుసారం',
 };

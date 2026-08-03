@@ -502,4 +502,7 @@ const Map<String, String> cevirilerDe = {
       'Antworten, die du auf Beiträge anderer schreibst, sind nur für dich sichtbar',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Die Kommentare, die du in deinem Profil ausgeblendet hast, wieder anzeigen',
+  'Sıralama': 'Sortierung',
+  'Önerilen': 'Empfohlen',
+  'Kronolojik': 'Chronologisch',
 };

@@ -499,4 +499,7 @@ const Map<String, String> cevirilerEl = {
       'Οι απαντήσεις που γράφεις σε αναρτήσεις άλλων είναι ορατές μόνο σε εσένα',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Εμφάνισε ξανά τα σχόλια που έκρυψες από το προφίλ σου',
+  'Sıralama': 'Ταξινόμηση',
+  'Önerilen': 'Προτεινόμενα',
+  'Kronolojik': 'Χρονολογικά',
 };

@@ -500,4 +500,7 @@ const Map<String, String> cevirilerRo = {
       'Răspunsurile pe care le scrii la postările altora sunt vizibile doar pentru tine',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Arată din nou comentariile pe care le-ai ascuns din profilul tău',
+  'Sıralama': 'Sortare',
+  'Önerilen': 'Recomandat',
+  'Kronolojik': 'Cronologic',
 };

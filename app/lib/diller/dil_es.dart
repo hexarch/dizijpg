@@ -498,4 +498,7 @@ const Map<String, String> cevirilerEs = {
       'Las respuestas que escribes en publicaciones de otros solo son visibles para ti',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Mostrar de nuevo los comentarios que ocultaste en tu perfil',
+  'Sıralama': 'Orden',
+  'Önerilen': 'Recomendado',
+  'Kronolojik': 'Cronológico',
 };

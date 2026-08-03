@@ -500,4 +500,7 @@ const Map<String, String> cevirilerIt = {
       'Le risposte che scrivi ai post di altri sono visibili solo a te',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Mostra di nuovo i commenti che hai nascosto sul tuo profilo',
+  'Sıralama': 'Ordinamento',
+  'Önerilen': 'Consigliato',
+  'Kronolojik': 'Cronologico',
 };

@@ -497,4 +497,7 @@ const Map<String, String> cevirilerMl = {
       'മറ്റുള്ളവരുടെ പോസ്റ്റുകൾക്ക് നിങ്ങൾ എഴുതിയ മറുപടികൾ നിങ്ങൾക്ക് മാത്രമേ കാണാനാകൂ',
   'Profilinde gizlediğin yorumları tekrar göster':
       'നിങ്ങളുടെ പ്രൊഫൈലിൽ മറച്ച കമന്റുകൾ വീണ്ടും കാണിക്കുക',
+  'Sıralama': 'ക്രമം',
+  'Önerilen': 'ശുപാർശ ചെയ്തത്',
+  'Kronolojik': 'കാലക്രമം',
 };

@@ -498,4 +498,7 @@ const Map<String, String> cevirilerMs = {
       'Balasan yang anda tulis pada hantaran orang lain hanya kelihatan kepada anda',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Tunjukkan semula komen yang anda sembunyikan pada profil',
+  'Sıralama': 'Susunan',
+  'Önerilen': 'Disyorkan',
+  'Kronolojik': 'Kronologi',
 };

@@ -490,4 +490,7 @@ const Map<String, String> cevirilerAr = {
       'الردود التي تكتبها على منشورات الآخرين تظهر لك فقط',
   'Profilinde gizlediğin yorumları tekrar göster':
       'أظهر مجددا التعليقات التي أخفيتها من ملفك الشخصي',
+  'Sıralama': 'الترتيب',
+  'Önerilen': 'موصى به',
+  'Kronolojik': 'حسب الزمن',
 };

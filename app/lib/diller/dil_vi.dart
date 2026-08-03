@@ -496,4 +496,7 @@ const Map<String, String> cevirilerVi = {
       'Câu trả lời bạn viết trên bài viết của người khác chỉ mình bạn nhìn thấy',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Hiện lại các bình luận bạn đã ẩn trên hồ sơ',
+  'Sıralama': 'Sắp xếp',
+  'Önerilen': 'Đề xuất',
+  'Kronolojik': 'Theo thời gian',
 };

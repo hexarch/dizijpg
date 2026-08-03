@@ -13,6 +13,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
+import 'sira_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
 import 'veri_tasarrufu.dart';
@@ -49,6 +50,7 @@ Future<void> main() async {
     await TemaAyar.yukle();
     await VeriTasarrufu.yukle(); // bağlantı türü + veri tasarrufu tercihleri
     await AltyaziAyar.yukle(); // videolarda altyazı gösterilsin mi
+    await SiraTercihi.yukle(); // Akış/Keşfet: Kronolojik mi Önerilen mi
     final oturum = Oturum();
     await oturum.yukle();
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)

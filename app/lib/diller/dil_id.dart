@@ -496,4 +496,7 @@ const Map<String, String> cevirilerId = {
       'Balasan yang kamu tulis di postingan orang lain hanya terlihat oleh kamu',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Tampilkan lagi komentar yang kamu sembunyikan di profil',
+  'Sıralama': 'Urutan',
+  'Önerilen': 'Direkomendasikan',
+  'Kronolojik': 'Kronologis',
 };

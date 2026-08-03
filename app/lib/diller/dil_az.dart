@@ -494,4 +494,7 @@ const Map<String, String> cevirilerAz = {
       'Başqalarının paylaşımlarına yazdığın cavablar yalnız sənə görünür',
   'Profilinde gizlediğin yorumları tekrar göster':
       'Profilində gizlətdiyin şərhləri yenidən göstər',
+  'Sıralama': 'Sıralama',
+  'Önerilen': 'Tövsiyə edilən',
+  'Kronolojik': 'Xronoloji',
 };

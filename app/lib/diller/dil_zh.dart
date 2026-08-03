@@ -475,4 +475,7 @@ const Map<String, String> cevirilerZh = {
   'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
       '你在他人帖子下写的回复只有你自己可见',
   'Profilinde gizlediğin yorumları tekrar göster': '重新显示你在主页隐藏的评论',
+  'Sıralama': '排序',
+  'Önerilen': '推荐',
+  'Kronolojik': '按时间',
 };

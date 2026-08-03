@@ -496,4 +496,7 @@ const Map<String, String> cevirilerBn = {
       'অন্যদের পোস্টে তুমি যেসব রিপ্লাই লেখো তা শুধু তোমাকেই দেখা যায়',
   'Profilinde gizlediğin yorumları tekrar göster':
       'তোমার প্রোফাইলে লুকানো কমেন্টগুলো আবার দেখাও',
+  'Sıralama': 'সাজানো',
+  'Önerilen': 'প্রস্তাবিত',
+  'Kronolojik': 'কালানুক্রমিক',
 };

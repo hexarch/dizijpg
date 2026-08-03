@@ -485,4 +485,7 @@ const Map<String, String> cevirilerAm = {
       'በሌሎች ልጥፎች ላይ የጻፍካቸው መልሶች ለአንተ ብቻ ይታያሉ',
   'Profilinde gizlediğin yorumları tekrar göster':
       'በመገለጫህ ላይ የደበቅሃቸውን አስተያየቶች እንደገና አሳይ',
+  'Sıralama': 'ቅደም ተከተል',
+  'Önerilen': 'የሚመከር',
+  'Kronolojik': 'በጊዜ ቅደም ተከተል',
 };

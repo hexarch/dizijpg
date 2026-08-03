@@ -481,4 +481,7 @@ const Map<String, String> cevirilerJa = {
   'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
       '他のユーザーの投稿に書いた返信は自分にのみ表示されます',
   'Profilinde gizlediğin yorumları tekrar göster': 'プロフィールで非表示にしたコメントを再表示',
+  'Sıralama': '並び替え',
+  'Önerilen': 'おすすめ',
+  'Kronolojik': '新着順',
 };

@@ -495,4 +495,7 @@ const Map<String, String> cevirilerUr = {
       'تم دوسروں کی پوسٹس پر جو جوابات لکھتے ہو وہ صرف تمہیں نظر آتے ہیں',
   'Profilinde gizlediğin yorumları tekrar göster':
       'اپنی پروفائل پر چھپائے گئے تبصرے دوبارہ دکھائیں',
+  'Sıralama': 'ترتیب',
+  'Önerilen': 'تجویز کردہ',
+  'Kronolojik': 'تاریخ وار',
 };
