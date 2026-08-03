@@ -9,8 +9,19 @@ import 'profil.dart' show profilYenileTetik;
 /// 44 dp asgarisinin üstünde kalır — küçültürken buranın altına inilmemeli.
 const double masaustuCubukGenisligi = 280;
 
-/// Masaüstünde alt çubuğun yüksekliği (mobil varsayılan 80 dp).
-const double masaustuCubukYuksekligi = 56;
+/// Dokunma hedefi asgarisi (ui-ux-pro-max "Touch Target Size", severity High).
+/// Alt çubuk yüksekliği = hedeflerin dokunma yüksekliği, bunun altına İNMEZ.
+const double dokunmaAsgari = 44;
+
+/// Mobilde alt çubuğun yüksekliği. Material 3 varsayılanı 80 dp idi; 3 Ağu
+/// isteğiyle %35 kısaltıldı → 80 × 0.65 = 52 dp. 52 hâlâ [dokunmaAsgari]'nin
+/// üstünde olduğu için mobilde istenen oran BİREBİR uygulanabildi.
+const double mobilCubukYuksekligi = 52;
+
+/// Masaüstünde alt çubuğun yüksekliği. Eskiden 56 dp idi; aynı %35 kuralı
+/// 36.4 dp verirdi ve bu [dokunmaAsgari]'nin ALTINA düşerdi — erişilebilirliği
+/// bozmamak için 44 dp'de durduruldu (%21.4 kısalma).
+const double masaustuCubukYuksekligi = dokunmaAsgari;
 
 /// Masaüstünde çubuğun sol/alt kenar boşluğu.
 const double masaustuCubukKenar = 12;
@@ -64,7 +75,7 @@ Widget kabukCubugu(
     // tanıdık; yazılar çubuğu yükseltip içerik alanını daraltıyordu.
     // label'lar SİLİNMEDİ — erişilebilirlik (TalkBack) onları okuyor.
     labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-    height: genis ? masaustuCubukYuksekligi : null,
+    height: genis ? masaustuCubukYuksekligi : mobilCubukYuksekligi,
     selectedIndex: secili,
     onDestinationSelected: onSec,
     destinations: kabukHedefleri(),

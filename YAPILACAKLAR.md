@@ -1624,6 +1624,20 @@ oyuncu etiketleme".
   Push YAPILMADI — istenirse `git push` ile GitHub'a gönderilir.
 - **Sunucuya Flutter SDK** ⬜ — istenirse derlemeler tamamen sunucuya taşınır.
 
+## 3 Ağu — üç küçük düzen isteği ✅
+- **Alt gezinme çubuğu %35 kısaldı** ✅ mobil 80 → 52 dp (tam %35), masaüstü
+  adası 58 → 46 dp (çubuk 56 → 44). Masaüstünde %35 kuralı 36.4 dp verirdi ve
+  44 dp dokunma asgarisinin ALTINA düşerdi; 44'te durduruldu (%21.4 kısalma).
+  Etiketler zaten gizliydi, ikonlara dokunulmadı.
+- **Takvimde gün altındaki bölüm sayısı küçüldü** ✅ dar ekran 10 → 9 pt,
+  masaüstü kompakt ızgara 9 → 8 pt (rozet dolgusu da daraldı). Gün hücresinin
+  dokunma alanı ve sarı üstü siyah kontrast korundu.
+- **Ayarlar sırası** ✅ Bildirim Tercihleri · Gizlilik · Geri Bildirim artık
+  "Verilerim"in ÜSTÜNDE. Yalnız sıra değişti; içerik/davranış/çeviri aynı.
+- Kanıt: `app/test/alt_cubuk_takvim_olcu_test.dart` (7 test) +
+  `app/test/ayarlar_sirasi_test.dart` (3 test); `masaustu_duzen_test.dart`
+  yükseklik iddiaları güncellendi.
+
 ## TAMAMLANANLAR (özet) 🚀
 Sarı tema · 45 dil (184 anahtar) · path URL + F5 kalıcılığı · service worker sökümü ·
 Akış (spoiler emniyetli) + kullanıcı arama · yorum yanıtları · 5 yıldız · çizgi-ikon

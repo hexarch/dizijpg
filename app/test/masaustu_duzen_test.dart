@@ -125,13 +125,14 @@ void main() {
       expect(boyut.width, masaustuCubukGenisligi);
       expect(boyut.width, 280);
       expect(boyut.width < _genisG * 0.2, isTrue, reason: '280 < 288');
-      // Yükseklik mobil varsayılanın (80) altında: 56 çubuk + 2 çerçeve.
-      expect(boyut.height, 58);
-      expect(boyut.height + masaustuCubukKenar < 80, isTrue, reason: '70 < 80');
-      // İçerideki NavigationBar: 56 dp yüksek, 278 dp geniş (çerçeve içi).
+      // Yükseklik (3 Ağu kısaltması sonrası): 44 çubuk + 2 çerçeve = 46.
+      // Eskiden 56+2=58 idi; %35 kuralı 36.4 verirdi, dokunma asgarisi 44.
+      expect(boyut.height, 46);
+      expect(boyut.height + masaustuCubukKenar < 80, isTrue, reason: '58 < 80');
+      // İçerideki NavigationBar: 44 dp yüksek, 278 dp geniş (çerçeve içi).
       final ic = tester.getSize(find.byType(NavigationBar));
       expect(ic.height, masaustuCubukYuksekligi);
-      expect(ic.height, 56);
+      expect(ic.height, 44);
       expect(ic.width, 278);
       // Konum: sol alt köşe (12 dp kenar payı).
       expect(solUst.dx, masaustuCubukKenar);
@@ -159,8 +160,9 @@ void main() {
         _darY,
         reason: 'telefonda çubuk ekranın en altına yapışık',
       );
-      // Mobilde yükseklik varsayılanda (80) kalmalı — masaüstü 56'sı sızmasın.
-      expect(boyut.height, 80);
+      // Mobilde yükseklik mobil değerinde (52) kalmalı — masaüstü 44'ü sızmasın.
+      expect(boyut.height, mobilCubukYuksekligi);
+      expect(boyut.height, 52);
     });
 
     testWidgets('geniş ekranda 430 dp genişlikte hâlâ MOBİL düzen', (
@@ -174,8 +176,9 @@ void main() {
 
     test('masaüstü çubuğunda dokunma hedefi 44 dp altına düşmüyor', () {
       // 5 hedef, 280 dp → hedef başına 56 dp.
-      expect(masaustuCubukGenisligi / 5, greaterThanOrEqualTo(44));
-      expect(masaustuCubukYuksekligi, greaterThanOrEqualTo(44));
+      expect(masaustuCubukGenisligi / 5, greaterThanOrEqualTo(dokunmaAsgari));
+      expect(masaustuCubukYuksekligi, greaterThanOrEqualTo(dokunmaAsgari));
+      expect(mobilCubukYuksekligi, greaterThanOrEqualTo(dokunmaAsgari));
     });
   });
 

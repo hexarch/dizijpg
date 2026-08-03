@@ -15,6 +15,15 @@ const double masaustuAyPaneliGenisligi = 340;
 /// Masaüstünde sağdaki "seçili günün bölümleri" sütununun genişliği.
 const double masaustuGunSutunu = 360;
 
+/// Gün hücresinin altındaki "o gün kaç bölüm var" rozetinin punto'su.
+/// 3 Ağu isteğiyle küçültüldü: dar ekran 10 → [takvimSayiPunto] (9),
+/// masaüstü kompakt ızgara 9 → [takvimSayiPuntoKompakt] (8).
+/// Gövde metni DEĞİL tek/çift haneli bir yoğunluk rozeti: w800 kalınlık +
+/// sarı üstü siyah (~12.6:1) okunurluğu taşıyor, gün hücresinin dokunma
+/// alanı bundan etkilenmiyor.
+const double takvimSayiPunto = 9;
+const double takvimSayiPuntoKompakt = 8;
+
 /// Ay-takvimi görünümü: bölümler yayın tarihlerine göre ay ızgarasında;
 /// bir güne dokununca o günün bölümleri altta listelenir.
 ///
@@ -177,8 +186,9 @@ class _AyTakvimiState extends State<AyTakvimi> {
                       SizedBox(height: kompakt ? 2 : 3),
                       if (sayi > 0)
                         Container(
+                          key: ValueKey('takvim-sayi-$anahtar'),
                           padding: EdgeInsets.symmetric(
-                            horizontal: kompakt ? 4 : 5,
+                            horizontal: kompakt ? 3.5 : 4,
                             vertical: 1,
                           ),
                           decoration: BoxDecoration(
@@ -188,14 +198,20 @@ class _AyTakvimiState extends State<AyTakvimi> {
                           child: Text(
                             '$sayi',
                             style: TextStyle(
-                              fontSize: kompakt ? 9 : 10,
+                              fontSize: kompakt
+                                  ? takvimSayiPuntoKompakt
+                                  : takvimSayiPunto,
                               fontWeight: FontWeight.w800,
+                              // Rozet zemini HER İKİ TEMADA da sabit sarı
+                              // (DiziRenkler.sari) — üstündeki yazı da sabit
+                              // koyu kalmalı, yoksa açık temada sarı üstü
+                              // beyaz olup okunmaz. Kontrast ~12.6:1.
                               color: Colors.black,
                             ),
                           ),
                         )
                       else
-                        SizedBox(height: kompakt ? 10 : 13),
+                        SizedBox(height: kompakt ? 9 : 11),
                     ],
                   ),
                 ),

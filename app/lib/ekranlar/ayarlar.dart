@@ -1045,36 +1045,10 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 32),
                 Divider(color: DiziRenkler.metin12),
                 const SizedBox(height: 8),
-                Text(
-                  'Verilerim'.c,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak '
-                          'al ya da başka uygulamadan gelen ZIP\'i içe aktar.'
-                      .c,
-                  style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
-                ),
-                const SizedBox(height: 10),
-                OutlinedButton.icon(
-                  onPressed: _disaAktar,
-                  icon: Icon(Icons.upload_file, color: DiziRenkler.sariMetin),
-                  label: Text(
-                    'Verilerimi dışa aktar (e-posta)'.c,
-                    style: TextStyle(color: DiziRenkler.metin),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: _iceAktar,
-                  icon: Icon(Icons.download, color: DiziRenkler.sariMetin),
-                  label: Text(
-                    'Veri içe aktar (.zip)'.c,
-                    style: TextStyle(color: DiziRenkler.metin),
-                  ),
-                ),
-                const SizedBox(height: 16),
+                // SIRA (3 Ağu isteği): Bildirim Tercihleri · Gizlilik · Geri
+                // Bildirim ARTIK "Verilerim"in ÜSTÜNDE. Günlük kullanılan üç
+                // tercih kartı, nadiren açılan dışa/içe aktarımın altında
+                // kalmıyor. Kartların içeriği/davranışı DEĞİŞMEDİ, yalnız yer.
                 Card(
                   child: ListTile(
                     leading: Icon(
@@ -1141,6 +1115,36 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       isScrollControlled: true,
                       builder: (_) => const _GeriBildirimSheet(),
                     ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'Verilerim'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak '
+                          'al ya da başka uygulamadan gelen ZIP\'i içe aktar.'
+                      .c,
+                  style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: _disaAktar,
+                  icon: Icon(Icons.upload_file, color: DiziRenkler.sariMetin),
+                  label: Text(
+                    'Verilerimi dışa aktar (e-posta)'.c,
+                    style: TextStyle(color: DiziRenkler.metin),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: _iceAktar,
+                  icon: Icon(Icons.download, color: DiziRenkler.sariMetin),
+                  label: Text(
+                    'Veri içe aktar (.zip)'.c,
+                    style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),
                 const SizedBox(height: 32),
