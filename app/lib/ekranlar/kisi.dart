@@ -213,11 +213,11 @@ class _KisiEkraniState extends State<KisiEkrani> {
                 ),
                 if ((k['biography'] as String?)?.isNotEmpty == true) ...[
                   const SizedBox(height: 14),
-                  Text(
+                  // Biyografi 6 satırda kırpılır, taşarsa sonunda üç nokta
+                  // çıkar ve METNE DOKUNUNCA tamamı açılır (AcilirMetin).
+                  AcilirMetin(
                     k['biography'] as String,
-                    maxLines: 6,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(height: 1.5, color: DiziRenkler.metin70),
+                    stil: TextStyle(height: 1.5, color: DiziRenkler.metin70),
                   ),
                 ],
                 const SizedBox(height: 18),

@@ -1850,3 +1850,81 @@ class UcNoktaMenu extends StatelessWidget {
 /// gezinme çubuğu (3 buton / gesture) altında kalmaması için alt boşluk.
 double altGuvenli(BuildContext context, {double ekstra = 16}) =>
     MediaQuery.of(context).padding.bottom + ekstra;
+
+/// Uzun DÜZ metni ([satirSiniri]) satırda kırpar, taşarsa sonuna tek
+/// karakterlik `…` koyar ve METNE DOKUNUNCA tamamını açar (biyografi, özet).
+///
+/// Kullanıcı bildirimi (2026-08-03): "Oyuncu profillerindeki bilgi yazısı
+/// büyütülmüyor. sonuna üç nokta ekle, tıklayınca yazının devamı gözüksün."
+/// Kişi sayfasında biyografi 6 satırda kırpılıyor ama açılamıyordu.
+///
+/// DOKUNMA HEDEFİ: üç noktanın kendisi ~8 px, parmakla vurulamaz — bu yüzden
+/// dokunma alanı KIRPILMIŞ METNİN TAMAMIDIR (6 satır ≈ 120 px, 44 px kuralının
+/// çok üstünde). Açılan metin geri KAPANMAZ: kullanıcı "devamı gözüksün" dedi,
+/// kapatma istemedi; kapatma da gizli bir dokunma hedefi olurdu. Akış
+/// kartındaki KisaltilmisYorum ile aynı karar.
+///
+/// Taşmayan metinde ne üç nokta ne de dokunma vardır; metin boşsa hiçbir şey
+/// çizilmez (boş kutu / yer tutucu yok).
+class AcilirMetin extends StatefulWidget {
+  final String metin;
+
+  /// Kırpma sınırı: ekran boyutundan BAĞIMSIZ, her yerde aynı.
+  final int satirSiniri;
+  final TextStyle? stil;
+
+  const AcilirMetin(this.metin, {super.key, this.satirSiniri = 6, this.stil});
+
+  @override
+  State<AcilirMetin> createState() => _AcilirMetinState();
+}
+
+class _AcilirMetinState extends State<AcilirMetin> {
+  bool _acik = false;
+
+  @override
+  void didUpdateWidget(AcilirMetin eski) {
+    super.didUpdateWidget(eski);
+    // Metin değiştiyse (başka kişiye/bölüme geçiş) kırpma yeniden hesaplanır.
+    if (eski.metin != widget.metin) _acik = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.metin.trim().isEmpty) return const SizedBox.shrink();
+    // Ölçüm ile çizim AYNI stille yapılmalı, yoksa taşma yanlış hesaplanır.
+    final stil = DefaultTextStyle.of(context).style.merge(widget.stil);
+    if (_acik) return Text(widget.metin, style: stil);
+    return LayoutBuilder(
+      builder: (context, kisit) {
+        final olcer = TextPainter(
+          text: TextSpan(text: widget.metin, style: stil),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          maxLines: widget.satirSiniri,
+        )..layout(maxWidth: kisit.maxWidth);
+        final tasiyor = olcer.didExceedMaxLines;
+        olcer.dispose();
+
+        final govde = Text(
+          widget.metin,
+          style: stil,
+          // Sınırdan KISA metinde sınır konmaz → üç nokta da çıkmaz.
+          maxLines: tasiyor ? widget.satirSiniri : null,
+          overflow: tasiyor ? TextOverflow.ellipsis : null,
+        );
+        if (!tasiyor) return govde;
+        return Semantics(
+          button: true,
+          // Ekran okuyucuya "üç nokta" değil ne işe yaradığı söylenir.
+          label: 'Devam et'.c,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => _acik = true),
+            child: govde,
+          ),
+        );
+      },
+    );
+  }
+}

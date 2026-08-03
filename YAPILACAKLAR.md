@@ -1,6 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Kişi sayfası: biyografi artık DOKUNUNCA AÇILIYOR
+**Kullanıcı isteği:** "Oyuncu profillerindeki bilgi yazısı büyütülmüyor. sonuna
+üç nokta ekle, tıklayınca yazının devamı gözüksün."
+- 🚀 **Gerçek durum:** biyografi zaten `maxLines: 6` + `TextOverflow.ellipsis`
+  ile kırpılıyordu (üç nokta VARDI) ama hiçbir dokunma tanıyıcısı yoktu —
+  metnin devamına ulaşmanın yolu YOKTU.
+- 🚀 **Çözüm:** akış kartındaki `KisaltilmisYorum` davranışının düz metin
+  sürümü `AcilirMetin` olarak `ortak.dart`a eklendi: taşarsa 6 satırda kırpar,
+  sonunda tek karakterlik `…`, **metnin tamamı dokunma hedefi** (6 satır ≈
+  126 dp, 44 dp kuralının çok üstünde), dokununca tamamı açılır ve geri
+  KAPANMAZ. Ekran okuyucuya `Semantics(button: true, label: 'Devam et')` ile
+  bildirilir. Metin kısaysa ne üç nokta ne dokunma çıkar; biyografi boşsa
+  hiçbir şey çizilmez.
+- 🚀 **Satır sayısı 6'da bırakıldı** (akış kartında 3): biyografi tek uzun
+  paragraftır, 3 satır TMDB metinlerinin çoğunu ilk cümlede keserdi; 6 satır
+  doğum yeri/kariyer özetini gösterir ve altındaki "Yapımları" ızgarasını
+  ekrandan düşürmez.
+- 🚀 **Detay/bölüm sayfaları kontrol edildi:** oradaki `overview` HİÇ
+  kırpılmıyor (tamamı çiziliyor, kaydırılabilir sliver içinde) — aynı kusur
+  yok, dokunulmadı.
+- 🚀 **Kanıt:** `app/test/acilir_metin_test.dart` (8 test) — kırpma yüksekliği
+  ölçülerek 6 satır, `overflow == ellipsis`, kısa metinde üç nokta ve dokunma
+  YOK, dokununca satır sayısı artıyor, ikinci dokunuş kapatmıyor, boş metinde
+  yükseklik 0, dokunma hedefi ≥44 dp, üst kenardan dokunmak da açıyor,
+  `Devam et` düğme semantiği; ayrıca kişi sayfası uçtan uca (sahte TMDB
+  yanıtı) kurulup dokunuluyor. Değişiklik geri alınınca testler kırmızıya
+  dönüyor (denendi). Toplam 301 test.
+
 ## 2026-08-03 — Akış kartı başlığı: iki satır arasındaki boşluk YARIYA indi
 **Kullanıcı isteği:** "akıştaki dizi isimleri ve kullanıcı isminin arasında
 boşluk çok fazla, %50 azaltır mısın"
