@@ -826,16 +826,32 @@ function htmlKacir(s) {
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
-function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website' }) {
+// SEO — canonical TEK yerde üretilir (SEO-PLANI 0.3): her zaman apex host,
+// sorgu parametresiz ve sondaki eğik çizgi olmadan. www, trailing slash ve
+// UTM yinelemeleri böylece tek hamlede birleşir.
+const SITE_KOK = 'https://dizijpg.com';
+function kanonikUrl(url) {
+  let yol;
+  try { yol = new URL(String(url ?? ''), SITE_KOK).pathname; } catch { yol = '/'; }
+  yol = yol.replace(/\/+$/, ''); // sondaki eğik çizgi (kök hariç)
+  return SITE_KOK + (yol || '/');
+}
+
+// `indexle=false` -> noindex,follow: sayfa indekse girmez ama iç bağlantılar
+// takip edilir. Kural için `ozgunIcerikVar()`e bakınız (tek tanım noktası).
+function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
+                   canonical, indexle = true }) {
   const b = htmlKacir(baslik);
   const a = htmlKacir(String(aciklama || '').replace(/\s+/g, ' ').trim().slice(0, 200));
   const g = htmlKacir(gorsel || '');
   const u = htmlKacir(url);
+  const kan = htmlKacir(kanonikUrl(canonical || url));
   const gorselKart = g ? 'summary_large_image' : 'summary';
   return `<!doctype html><html lang="tr"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${b}</title>
 <meta name="description" content="${a}">
+<link rel="canonical" href="${kan}">${indexle ? '' : '\n<meta name="robots" content="noindex,follow">'}
 <meta property="og:type" content="${htmlKacir(tur)}">
 <meta property="og:site_name" content="dizi.jpg">
 <meta property="og:title" content="${b}">
@@ -849,11 +865,37 @@ function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website' }) {
 const tmdbGorsel = (yol, boyut = 'w780') =>
   yol ? `https://image.tmdb.org/t/p/${boyut}${yol}` : '';
 
+// SEO — "özgün içeriği var mı" kuralı TEK yerde (SEO-PLANI 0.3 + 0.2).
+// Bir sayfa yalnızca yasaklı OLMAYAN bir kullanıcının o içeriğe yazdığı en az
+// bir yorum VEYA inceleme metni varsa indekslenmeye değer sayılır. Aynı kural
+// sitemap kapsamını da belirler (SITEMAP_SORGU); iki yerde ayrı yazılırsa
+// sitemap'e girip noindex yiyen (ya da tersi) sayfalar oluşur.
+async function ozgunIcerikVar(tur, tmdbId) {
+  try {
+    const { rows } = await havuz.query(
+      `SELECT 1 WHERE EXISTS (
+         SELECT 1 FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+          WHERE y.tur = $1 AND y.tmdb_id = $2 AND NOT k.yasakli)
+        OR EXISTS (
+         SELECT 1 FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+          WHERE p.tur = $1 AND p.tmdb_id = $2 AND NOT k.yasakli
+            AND p.yorum IS NOT NULL AND btrim(p.yorum) <> '')`,
+      [tur, tmdbId]);
+    return rows.length > 0;
+  } catch (e) {
+    // DB hatasında İNDEKSLE tarafına düş: geçici bir arıza yüzünden değerli
+    // sayfaların indeksten düşmesi, birkaç ince sayfanın taranmasından pahalı.
+    console.error('ozgunIcerikVar', e.message);
+    return true;
+  }
+}
+
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
+  const id = parseInt(tmdbId, 10);
   const url = `https://dizijpg.com/icerik/${tur}/${tmdbId}`;
-  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(parseInt(tmdbId, 10))) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(id)) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
     const v = await tmdbGetir(`/${tur}/${tmdbId}`, ONBELLEK_TTL_SN.uzun);
@@ -864,17 +906,21 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       aciklama: v.overview,
       gorsel: tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280'),
       url,
+      canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
+      indexle: await ozgunIcerikVar(tur, id),
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
     }));
   } catch {
-    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+    // TMDB'de bulunamadı/erişilemedi -> indekse girmesin (soft 404).
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
 
 app.get('/og/kisi/:id', sarici(async (req, res) => {
+  const kid = parseInt(req.params.id, 10);
   const url = `https://dizijpg.com/kisi/${req.params.id}`;
-  if (!gecerliTmdb(parseInt(req.params.id, 10))) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+  if (!gecerliTmdb(kid)) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
     const v = await tmdbGetir(`/person/${req.params.id}`, ONBELLEK_TTL_SN.uzun);
@@ -883,10 +929,14 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
       aciklama: v.biography || 'dizi.jpg üzerinde keşfet.',
       gorsel: tmdbGorsel(v.profile_path, 'w500'),
       url,
+      canonical: `${SITE_KOK}/kisi/${kid}`,
+      // Kişi sayfaları da aynı kurala tabi: özgün yorum yoksa TMDB kopyasıdır,
+      // indekse girmesin ama bağlantıları takip edilsin (sınırsız tarama alanı).
+      indexle: await ozgunIcerikVar('person', kid),
       tur: 'profile',
     }));
   } catch {
-    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
 
@@ -894,7 +944,7 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const url = `https://dizijpg.com/gonderi/${req.params.id}`;
   if (!gecerliTmdb(id)) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
     const { rows } = await havuz.query(
@@ -902,7 +952,8 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
        FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
        WHERE y.id=$1 AND NOT k.yasakli`, [id]);
     if (!rows.length) {
-      return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+      // Gönderi yok / yazarı yasaklı -> indekslenecek içerik yok.
+      return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
     }
     const y = rows[0];
     // Görsel: yorumun fotoğrafı (video değil) varsa o, yoksa içeriğin posteri
@@ -920,11 +971,108 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
       aciklama: y.metin || 'dizi.jpg üzerinde bir gönderi.',
       gorsel,
       url,
+      canonical: `${SITE_KOK}/gonderi/${id}`,
+      // Gönderinin kendisi özgün içeriktir -> indekslenebilir.
       tur: 'article',
     }));
   } catch {
-    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url }));
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
+}));
+
+// ---------- Sitemap (SEO-PLANI 0.2) ----------
+// KAPSAM KURALI: yalnızca ÖZGÜN İÇERİĞİ OLAN sayfalar. Tüm TMDB kimlikleri
+// konursa Google'a sınırsız tarama alanı açılır ve ince sayfalar indekslenir.
+// Kapsam, `ozgunIcerikVar()` ile birebir aynı koşulu kullanır.
+const SITEMAP_SORGU = `
+  SELECT tur, tmdb_id, max(tarih) AS son FROM (
+    SELECT y.tur, y.tmdb_id, y.tarih
+      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     WHERE NOT k.yasakli AND y.tur IN ('tv','movie')
+    UNION ALL
+    SELECT p.tur, p.tmdb_id, p.tarih
+      FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+     WHERE NOT k.yasakli AND p.tur IN ('tv','movie')
+       AND p.yorum IS NOT NULL AND btrim(p.yorum) <> ''
+  ) t GROUP BY tur, tmdb_id ORDER BY son DESC`;
+
+const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
+const SITEMAP_TTL_MS = 6 * 3600 * 1000; // sorgu tüm yorum tablosunu tarar; her istekte çalışmasın
+let sitemapOnbellek = { ts: 0, sayfalar: [], adet: 0 };
+let sitemapUretimi = null;              // eşzamanlı istekler tek sorguyu paylaşsın
+
+const gunTarihi = (d) => new Date(d).toISOString().slice(0, 10); // W3C: YYYY-MM-DD
+
+async function sitemapUret() {
+  const { rows } = await havuz.query(SITEMAP_SORGU);
+  const sayfalar = [];
+  for (let i = 0; i < rows.length; i += SITEMAP_SAYFA_BOYU) {
+    sayfalar.push(rows.slice(i, i + SITEMAP_SAYFA_BOYU).map((r) => ({
+      loc: `${SITE_KOK}/icerik/${r.tur}/${r.tmdb_id}`,
+      lastmod: gunTarihi(r.son),
+    })));
+  }
+  if (!sayfalar.length) sayfalar.push([]);
+  return { ts: Date.now(), sayfalar, adet: rows.length };
+}
+
+async function sitemapVerisi() {
+  const taze = Date.now() - sitemapOnbellek.ts < SITEMAP_TTL_MS;
+  if (taze && sitemapOnbellek.sayfalar.length) return sitemapOnbellek;
+  if (!sitemapUretimi) {
+    sitemapUretimi = sitemapUret().then(
+      (v) => { sitemapOnbellek = v; sitemapUretimi = null; return v; },
+      (e) => {
+        sitemapUretimi = null;
+        // Üretim başarısızsa bayat önbellek, boş sitemap'ten iyidir.
+        if (sitemapOnbellek.sayfalar.length) return sitemapOnbellek;
+        throw e;
+      });
+  }
+  return sitemapUretimi;
+}
+
+function sitemapGonder(res, xml) {
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('application/xml').send(xml);
+}
+
+app.get('/sitemap.xml', sarici(async (_req, res) => {
+  const d = await sitemapVerisi();
+  const tarih = gunTarihi(d.ts || Date.now());
+  const parcalar = ['genel', ...d.sayfalar.map((_, i) => `icerik-${i + 1}`)];
+  sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${parcalar.map((p) =>
+    `  <sitemap><loc>${SITE_KOK}/sitemap-${p}.xml</loc><lastmod>${tarih}</lastmod></sitemap>`
+  ).join('\n')}
+</sitemapindex>
+`);
+}));
+
+app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
+  sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>${SITE_KOK}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
+</urlset>
+`);
+}));
+
+// Yol ".xml" ile bittiği için düz string rota yerine regex (path-to-regexp
+// nokta+parametre bileşimini beklendiği gibi ayırmıyor).
+app.get(/^\/sitemap-icerik-(\d+)\.xml$/, sarici(async (req, res) => {
+  const d = await sitemapVerisi();
+  const n = parseInt(req.params[0], 10);
+  const sayfa = d.sayfalar[n - 1];
+  if (!sayfa) return res.status(404).type('text/plain').send('yok');
+  sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sayfa.map((u) =>
+    `  <url><loc>${htmlKacir(u.loc)}</loc><lastmod>${u.lastmod}</lastmod>`
+    + `<changefreq>weekly</changefreq><priority>0.8</priority></url>`
+  ).join('\n')}
+</urlset>
+`);
 }));
 
 // İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).

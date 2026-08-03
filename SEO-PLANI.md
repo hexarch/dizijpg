@@ -431,7 +431,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 
   Ardından her ekranın oturumsuz halinde: puanla / kitaplığa ekle / yorum yaz butonları giriş modalına yönlendirsin. Boş durum metinleri 45 dile çevrilecek (CLAUDE.md madde 4).
 
-#### 0.2. Sitemap üret ve robots.txt'e bağla 🔴
+#### 0.2. Sitemap üret ve robots.txt'e bağla ✅ TAMAM (3 Ağu 2026 — robots.txt satırı hariç, kullanıcıda)
 
 - **(a) Etki:** Kritik. Keşfedilebilirliği sıfırdan tam kapsama çıkarır.
 - **(b) İş yükü:** 1 gün.
@@ -450,7 +450,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 
   **Önemli kural:** Sitemap'e **tüm TMDB ID'lerini koyma.** Sadece özgün içeriği olan sayfalar girsin. Bu, 3.3 ve 3.4'ü aynı anda çözer.
 
-#### 0.3. SSR sayfasına canonical + noindex kuralı ekle 🔴
+#### 0.3. SSR sayfasına canonical + noindex kuralı ekle ✅ TAMAM (3 Ağu 2026)
 
 - **(a) Etki:** Yüksek. Yinelenen URL'leri birleştirir, sınırsız tarama alanını kapatır.
 - **(b) İş yükü:** 0,5 gün.
@@ -470,7 +470,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 
   Canonical her zaman apex host (`https://dizijpg.com/...`), sorgu parametresiz, sondaki eğik çizgisiz üretilmeli — bu tek başına www, trailing slash ve UTM sorunlarını çözer.
 
-#### 0.4. www → apex 301 yönlendirmesi 🟡
+#### 0.4. www → apex 301 yönlendirmesi ✅ TAMAM (3 Ağu 2026)
 
 - **(a) Etki:** Orta. Link değerinin tek hostta toplanması.
 - **(b) İş yükü:** 15 dakika.
@@ -488,6 +488,27 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   ```
 
   Mevcut ana bloktan `www.dizijpg.com` çıkarılmalı. Alternatif: Cloudflare Redirect Rule (daha hızlı, origin'e hiç gitmez) — bu tercih edilir.
+
+**Uygulama notu (3 Ağu 2026, canlı):**
+
+- **0.2** — `server.js`: `/sitemap.xml` (indeks) + `/sitemap-genel.xml` + `/sitemap-icerik-N.xml`.
+  Kapsam sorgusu `SITEMAP_SORGU`: yasaklı olmayan kullanıcıların `yorumlar` kayıtları
+  **UNION** `puanlar.yorum` (inceleme metni) — `ozgunIcerikVar()` ile birebir aynı koşul.
+  Canlıda **2.479 URL**, tek içerik dosyasına sığdı (sayfa boyu 20.000).
+  `lastmod` = o içeriğin en son yorum/inceleme tarihi, `YYYY-MM-DD`.
+  Sorgu `EXPLAIN ANALYZE` ile 24 ms; yanıt 6 saat bellek içi önbellekte + `Cache-Control: public, max-age=3600`.
+  nginx: `location = /sitemap.xml` ve `location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$`, `location /` bloğundan ÖNCE, `add_header` YOK (üst seviye güvenlik başlıkları korunur).
+  **Yapılmadı (kullanıcıda):** robots.txt'e `Sitemap:` satırı ve Search Console gönderimi.
+- **0.3** — `ogSayfa()` artık `canonical` ve `indexle` parametreleri alıyor; `<link rel="canonical">`
+  her sayfada, `<meta name="robots" content="noindex,follow">` yalnız içeriksiz sayfalarda.
+  Canonical `kanonikUrl()` ile TEK yerde üretiliyor: apex host, sorgu parametresiz, sondaki eğik çizgisiz.
+  `indexle` kuralı = `ozgunIcerikVar()`; TMDB'de bulunamayan içerik ve yorumsuz kişi sayfaları da `noindex,follow`.
+- **0.4** — nginx'te ayrı `server` bloğu (80 + 443), `www.dizijpg.com` → `https://dizijpg.com$request_uri` 301.
+  Ana bloktan (ve HTTP bloğundan) `www.dizijpg.com` çıkarıldı. Yönlendirme origin'den geliyor
+  (Cloudflare atlanarak `--resolve` ile doğrulandı: `server: nginx/1.22.1`).
+- **Not:** `/robots.txt` origin'de dosya olarak YOK; nginx `location /` kuralı Flutter `index.html`'ini
+  döndürüyor ve Cloudflare yönetilen robots.txt bunu kendi içeriğinin ardına ekliyor. Yani yayınlanan
+  robots.txt'in sonunda HTML var. Ek A'daki gerçek robots.txt origin'e konmalı (`location = /robots.txt`).
 
 #### 0.5. Search Console ve Bing Webmaster kurulumu 🔴
 
