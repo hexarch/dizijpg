@@ -1,6 +1,55 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — PROFİL YORUMLARI: düzen TERSİNE (üstte gönderi, altta yanıtın)
+**Kullanıcı isteği:** "kendi profilimde yorumlara gittiğimde, yanıt verdiğim
+yani yorum yaptığım yorumların görünüşü kötü. orada gönderinin akıştaki gibi
+hali olmalı, ve altında aynı 'yanıt verdiğin gönderi' divi olan solda sarı o
+olmalı, onun içinde de yorumum yazmalı."
+- 🚀 **Düzen tersine çevrildi** (aşağıdaki 3 Ağu maddesinin 1. bendini GEÇERSİZ
+  kılar): yanıt satırında ÜSTTE yanıtlanan asıl gönderi **akıştaki tam kart**
+  (avatar, `@ad`, içerik adı + posteri, medya galerisi, beğeni/yorum/
+  görüntülenme/paylaş satırı), ALTINDA sarı sol şeritli blokta **senin yanıtın**.
+  `YanitBaglamBlogu` → **`YanitBlogu`** (artık üstün özetini değil, senin
+  yorumunu taşıyor).
+- 🚀 **İKİ KALP sorunu:** yanıt alt blokta **alıntı** olarak kalır, **kendi
+  eylem satırı YOKTUR**. Ögede tek kart, tek eylem satırı, tek kalp var; kalp
+  akıştaki gibi **asıl gönderinin**. Yanıtı beğenmek/yanıtlamak `/gonderi/:id`de.
+- 🚀 **ÇİFT MEDYA / otomatik oynatma:** yanıtın medyası galeri olarak açılmaz,
+  küçük ikonla belirtilir → **satır başına medya yüzeyi sayısı DEĞİŞMEDİ**,
+  profilde ikinci bir otomatik oynayan video oluşmuyor. Bu yüzden üstteki kartta
+  otomatik oynatma **akışla aynı bırakıldı** (aynı gönderinin iki yerde farklı
+  davranması tutarsızlık olurdu); veri harcaması zaten `VeriTasarrufu` ile
+  yönetiliyor ve `MedyaGaleri` üzerinden profile de aynen uygulanıyor.
+- 🚀 **Uzun basma menüsü DAİMA senin yorumunu hedefler** (kart asıl gönderiyi
+  çizse bile) — yanlış hedeflerse başkasının gönderisini silmeye çalışırdı.
+  Menü hem karta hem bloğa bağlı; sheet'in tepesinde **hedef yorumun metni tek
+  satır önizlenir** ki hangi ögenin silineceği belirsiz kalmasın.
+- 🚀 **Gezinme:** kartın boş alanına dokunmak `/gonderi/:ustId`, bloğa dokunmak
+  `/gonderi/:yorumId`. Kartın kendi bağlantıları (avatar, ad, içerik, medya →
+  Reels) ağaçta daha derin olduğu için dokunma arenasını onlar kazanır. Reels
+  artık **ekranda çizilen** listeyi alır, yoksa medyaya dokununca başka gönderi
+  açılırdı.
+- 🚀 **Kapsam:** başkasının profilinde de AYNI düzen (tutarlılık + ziyaretçinin
+  bağlama daha çok ihtiyacı var); tek fark uzun basma menüsünün bağlanmaması.
+  Blok başlığı bu yüzden ikinci tekil şahıs DEĞİL: **"Bu gönderiye yanıt"**
+  (45 dile çevrildi; ölü kalan "Yanıt verdiğin gönderi" kaldırıldı → 438 anahtar).
+  Üst seviye yorumda blok HİÇ çizilmez, bugünkü görünüm birebir korunur.
+- 🚀 **Sunucu:** `GET /profil/:kullaniciAdi` → `ust` artık tam kart için gereken
+  TÜM alanları döndürüyor (medya, begeni/yanit/goruntulenme, begendim, çeviri,
+  tarih, tur/tmdb_id/sezon/bolum). Üst gönderi **tek geçişte LEFT JOIN** ile
+  gelir — yanıt başına ayrı sorgu YOK. `EXPLAIN ANALYZE`: **1,95 ms / 132 tampon**
+  (eski özet sürüm 2,18 ms / 110). Yasaklı veya engelli yazarın gönderisi NULL
+  döner (`/yorum/:id` ile aynı görünürlük kuralı) ve satır eski görünüme iner;
+  `ust.tur` yoksa istemci de tam kart çizmez (eski sunucuya karşı güvenli).
+- 🚀 **Kanıt:** `app/test/profil_yorum_baglam_test.dart` (23 test) — sıralama
+  gerçek `getTopLeft().dy` ile, tek kalp/tek eylem satırı, üst seviyede blok yok,
+  menü doğru id'yi hedefliyor (sahte API), iki ayrı rota, kendi/başkası profili,
+  360 dp'de taşma yok. **Kırmızıya döndürme denendi:** sıra ters çevrilince 2
+  test, menü hedefi `ust`a kaydırılınca başka 2 test KIRMIZI. Canlı curl:
+  `/api/profil/alcelik` yanıtında `ust` içinde 17 alanın hepsi + içerik
+  anahtarı geliyor. Toplam 352 test.
+
 ## 2026-08-03 — Profil ülke satırı: konum ikonu yerine ÜLKE BAYRAĞI
 **Kullanıcı isteği:** "Profilime gittiğimde Türkiye yazıyor ya, yani verdiğim
 ülke, solunda konum ikonu var. o olmamalı. konum ikonu yerine ülke bayrağı
@@ -210,6 +259,7 @@ orada gönderinin kendisi de gözüksün... ve bu yorumlara yorum yaptığında
 profilinde gözüküp gözükmeyeceğini ayarlardan ayarlayabilelim. ve kendi
 profilimde yorumlar kısmında gönderiye basılı tutunca şunu sor: bu yorumu sil /
 bu yorumu profilimde gizle. ve ayarlar kısmında da gizlenen yorumlar olsun."
+- ⚠️ **(GEÇERSİZ — yukarıdaki 3 Ağu "düzen TERSİNE" maddesiyle değişti)**
 - 🚀 **1. Bağlam bloğu** (`YanitBaglamBlogu`, profil.dart): profildeki yorum bir
   BAŞKA gönderiye yanıtsa kartın üstünde asıl gönderinin **alıntısı** çizilir —
   avatar + `@ad` + iki satır metin + sol sarı şerit + "Yanıt verdiğin gönderi"
