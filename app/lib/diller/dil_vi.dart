@@ -359,6 +359,7 @@ const Map<String, String> cevirilerVi = {
   'Bağlantı ekle': 'Thêm liên kết',
   'Spoiler olabilir — dokun ve gör': 'Có thể chứa spoiler — chạm để xem',
   'Beğeni': 'Lượt thích',
+  'Beğen': 'Thích',
   'Görüntülenme': 'Lượt xem',
   'Tam ekran': 'Toàn màn hình',
   'Sonuç bulunamadı': 'Không có kết quả',

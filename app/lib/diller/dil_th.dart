@@ -355,6 +355,7 @@ const Map<String, String> cevirilerTh = {
   'Bağlantı ekle': 'เพิ่มลิงก์',
   'Spoiler olabilir — dokun ve gör': 'อาจมีสปอยล์ — แตะเพื่อดู',
   'Beğeni': 'ถูกใจ',
+  'Beğen': 'ถูกใจ',
   'Görüntülenme': 'ยอดดู',
   'Tam ekran': 'เต็มจอ',
   'Sonuç bulunamadı': 'ไม่พบผลลัพธ์',

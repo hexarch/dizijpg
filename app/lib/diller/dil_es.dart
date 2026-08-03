@@ -360,6 +360,7 @@ const Map<String, String> cevirilerEs = {
   'Bağlantı ekle': 'Añadir enlace',
   'Spoiler olabilir — dokun ve gör': 'Puede contener spoilers — toca para ver',
   'Beğeni': 'Me gusta',
+  'Beğen': 'Me gusta',
   'Görüntülenme': 'Visualizaciones',
   'Tam ekran': 'Pantalla completa',
   'Sonuç bulunamadı': 'Sin resultados',

@@ -359,6 +359,7 @@ const Map<String, String> cevirilerUr = {
   'Spoiler olabilir — dokun ve gör':
       'اسپائلر ہو سکتا ہے — دیکھنے کے لیے چھوئیں',
   'Beğeni': 'پسندیدگیاں',
+  'Beğen': 'پسند',
   'Görüntülenme': 'ملاحظات',
   'Tam ekran': 'فل اسکرین',
   'Sonuç bulunamadı': 'کوئی نتیجہ نہیں ملا',

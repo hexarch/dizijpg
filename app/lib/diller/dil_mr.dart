@@ -359,6 +359,7 @@ const Map<String, String> cevirilerMr = {
   'Bağlantı ekle': 'लिंक जोड',
   'Spoiler olabilir — dokun ve gör': 'स्पॉयलर असू शकतो — पाहण्यासाठी टॅप कर',
   'Beğeni': 'लाइक',
+  'Beğen': 'लाईक',
   'Görüntülenme': 'व्ह्यू',
   'Tam ekran': 'फुल स्क्रीन',
   'Sonuç bulunamadı': 'निकाल सापडला नाही',

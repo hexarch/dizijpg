@@ -353,6 +353,7 @@ const Map<String, String> cevirilerHe = {
   'Bağlantı ekle': 'הוספת קישור',
   'Spoiler olabilir — dokun ve gör': 'עשוי להכיל ספוילרים — הקש כדי לצפות',
   'Beğeni': 'לייקים',
+  'Beğen': 'אהבתי',
   'Görüntülenme': 'צפיות',
   'Tam ekran': 'מסך מלא',
   'Sonuç bulunamadı': 'אין תוצאות',

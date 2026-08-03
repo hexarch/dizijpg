@@ -359,6 +359,7 @@ const Map<String, String> cevirilerAz = {
   'Bağlantı ekle': 'Bağlantı əlavə et',
   'Spoiler olabilir — dokun ve gör': 'Spoyler ola bilər — görmək üçün toxun',
   'Beğeni': 'Bəyənmə',
+  'Beğen': 'Bəyən',
   'Görüntülenme': 'Baxış',
   'Tam ekran': 'Tam ekran',
   'Sonuç bulunamadı': 'Nəticə tapılmadı',

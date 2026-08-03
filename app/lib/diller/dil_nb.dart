@@ -359,6 +359,7 @@ const Map<String, String> cevirilerNb = {
   'Bağlantı ekle': 'Legg til lenke',
   'Spoiler olabilir — dokun ve gör': 'Kan inneholde spoilere — trykk for å se',
   'Beğeni': 'Likerklikk',
+  'Beğen': 'Liker',
   'Görüntülenme': 'Visninger',
   'Tam ekran': 'Fullskjerm',
   'Sonuç bulunamadı': 'Ingen resultater',

@@ -351,6 +351,7 @@ const Map<String, String> cevirilerJa = {
   'Bağlantı ekle': 'リンクを追加',
   'Spoiler olabilir — dokun ve gör': 'ネタバレを含む可能性があります — タップして表示',
   'Beğeni': 'いいね',
+  'Beğen': 'いいね',
   'Görüntülenme': '表示回数',
   'Tam ekran': '全画面',
   'Sonuç bulunamadı': '結果が見つかりません',

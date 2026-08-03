@@ -361,6 +361,7 @@ const Map<String, String> cevirilerPl = {
   'Spoiler olabilir — dokun ve gör':
       'Może zawierać spoilery — dotknij, aby zobaczyć',
   'Beğeni': 'Polubienia',
+  'Beğen': 'Lubię to',
   'Görüntülenme': 'Wyświetlenia',
   'Tam ekran': 'Pełny ekran',
   'Sonuç bulunamadı': 'Brak wyników',

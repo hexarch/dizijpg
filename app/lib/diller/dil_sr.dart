@@ -359,6 +359,7 @@ const Map<String, String> cevirilerSr = {
   'Spoiler olabilir — dokun ve gör':
       'Може садржати спојлере — додирни да видиш',
   'Beğeni': 'Свиђања',
+  'Beğen': 'Свиђа ми се',
   'Görüntülenme': 'Прегледи',
   'Tam ekran': 'Цео екран',
   'Sonuç bulunamadı': 'Нема резултата',

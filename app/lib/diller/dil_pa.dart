@@ -358,6 +358,7 @@ const Map<String, String> cevirilerPa = {
   'Bağlantı ekle': 'ਲਿੰਕ ਜੋੜੋ',
   'Spoiler olabilir — dokun ve gör': 'ਸਪੌਇਲਰ ਹੋ ਸਕਦਾ ਹੈ — ਦੇਖਣ ਲਈ ਟੈਪ ਕਰੋ',
   'Beğeni': 'ਲਾਈਕ',
+  'Beğen': 'ਲਾਈਕ',
   'Görüntülenme': 'ਵਿਊ',
   'Tam ekran': 'ਫੁੱਲ ਸਕ੍ਰੀਨ',
   'Sonuç bulunamadı': 'ਕੋਈ ਨਤੀਜਾ ਨਹੀਂ ਮਿਲਿਆ',

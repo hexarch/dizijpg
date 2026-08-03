@@ -358,6 +358,7 @@ const Map<String, String> cevirilerGu = {
   'Bağlantı ekle': 'લિંક ઉમેરો',
   'Spoiler olabilir — dokun ve gör': 'સ્પોઇલર હોઈ શકે — જોવા માટે ટૅપ કર',
   'Beğeni': 'લાઇક',
+  'Beğen': 'લાઈક',
   'Görüntülenme': 'વ્યૂ',
   'Tam ekran': 'ફુલ સ્ક્રીન',
   'Sonuç bulunamadı': 'કોઈ પરિણામ મળ્યું નથી',

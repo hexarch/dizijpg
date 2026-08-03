@@ -359,6 +359,7 @@ const Map<String, String> cevirilerId = {
   'Spoiler olabilir — dokun ve gör':
       'Mungkin mengandung spoiler — ketuk untuk melihat',
   'Beğeni': 'Suka',
+  'Beğen': 'Suka',
   'Görüntülenme': 'Dilihat',
   'Tam ekran': 'Layar penuh',
   'Sonuç bulunamadı': 'Tidak ada hasil',

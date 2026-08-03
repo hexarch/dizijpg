@@ -350,6 +350,7 @@ const Map<String, String> cevirilerZh = {
   'Bağlantı ekle': '添加链接',
   'Spoiler olabilir — dokun ve gör': '可能包含剧透 — 点按查看',
   'Beğeni': '点赞',
+  'Beğen': '赞',
   'Görüntülenme': '浏览量',
   'Tam ekran': '全屏',
   'Sonuç bulunamadı': '没有结果',

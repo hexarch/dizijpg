@@ -356,6 +356,7 @@ const Map<String, String> cevirilerAr = {
   'Bağlantı ekle': 'إضافة رابط',
   'Spoiler olabilir — dokun ve gör': 'قد يحتوي على حرق للأحداث — انقر للعرض',
   'Beğeni': 'الإعجابات',
+  'Beğen': 'إعجاب',
   'Görüntülenme': 'المشاهدات',
   'Tam ekran': 'ملء الشاشة',
   'Sonuç bulunamadı': 'لا توجد نتائج',

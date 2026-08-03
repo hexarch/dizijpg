@@ -361,6 +361,7 @@ const Map<String, String> cevirilerKn = {
   'Bağlantı ekle': 'ಲಿಂಕ್ ಸೇರಿಸು',
   'Spoiler olabilir — dokun ve gör': 'ಸ್ಪಾಯ್ಲರ್ ಇರಬಹುದು — ನೋಡಲು ಟ್ಯಾಪ್ ಮಾಡು',
   'Beğeni': 'ಲೈಕ್‌ಗಳು',
+  'Beğen': 'ಇಷ್ಟ',
   'Görüntülenme': 'ವೀಕ್ಷಣೆಗಳು',
   'Tam ekran': 'ಪೂರ್ಣ ಪರದೆ',
   'Sonuç bulunamadı': 'ಫಲಿತಾಂಶ ಸಿಗಲಿಲ್ಲ',

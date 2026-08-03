@@ -357,6 +357,7 @@ const Map<String, String> cevirilerDa = {
   'Bağlantı ekle': 'Tilføj link',
   'Spoiler olabilir — dokun ve gör': 'Kan indeholde spoilere — tryk for at se',
   'Beğeni': 'Synes godt om',
+  'Beğen': 'Synes godt om',
   'Görüntülenme': 'Visninger',
   'Tam ekran': 'Fuld skærm',
   'Sonuç bulunamadı': 'Ingen resultater',

@@ -361,6 +361,7 @@ const Map<String, String> cevirilerPt = {
   'Bağlantı ekle': 'Adicionar link',
   'Spoiler olabilir — dokun ve gör': 'Pode conter spoilers — toque para ver',
   'Beğeni': 'Curtidas',
+  'Beğen': 'Curtir',
   'Görüntülenme': 'Visualizações',
   'Tam ekran': 'Tela cheia',
   'Sonuç bulunamadı': 'Nenhum resultado',

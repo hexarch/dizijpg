@@ -361,6 +361,7 @@ const Map<String, String> cevirilerBg = {
   'Spoiler olabilir — dokun ve gör':
       'Може да съдържа спойлери — докосни, за да видиш',
   'Beğeni': 'Харесвания',
+  'Beğen': 'Харесай',
   'Görüntülenme': 'Показвания',
   'Tam ekran': 'Цял екран',
   'Sonuç bulunamadı': 'Няма резултати',

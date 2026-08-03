@@ -361,6 +361,7 @@ const Map<String, String> cevirilerFil = {
   'Bağlantı ekle': 'Magdagdag ng link',
   'Spoiler olabilir — dokun ve gör': 'Maaaring may spoiler — i-tap para makita',
   'Beğeni': 'Mga like',
+  'Beğen': 'I-like',
   'Görüntülenme': 'Mga view',
   'Tam ekran': 'Fullscreen',
   'Sonuç bulunamadı': 'Walang resulta',
