@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 /// Dizi/film/bölüm DETAY sayfasındaki yorum kartının medya galerisi.
 ///
@@ -60,6 +61,12 @@ Future<List<int>> _kur(
 }
 
 void main() {
+  // Medya sayacı (1/3) geri sayımı VisibilityDetector ile başlar;
+  // varsayılan 500 ms yoklama testin sonunda bekleyen timer bırakır.
+  setUp(
+    () => VisibilityDetectorController.instance.updateInterval = Duration.zero,
+  );
+
   testWidgets('10 medyalı yorum kaydırmalı galeri gösterir (ızgara değil)', (
     tester,
   ) async {

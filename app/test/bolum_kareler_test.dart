@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 /// Bölüm ekranındaki KARE (still) kaydırıcısı.
 ///
@@ -64,6 +65,12 @@ Future<void> _kur(WidgetTester tester) async {
 }
 
 void main() {
+  // Medya sayacı (1/3) geri sayımı VisibilityDetector ile başlar;
+  // varsayılan 500 ms yoklama testin sonunda bekleyen timer bırakır.
+  setUp(
+    () => VisibilityDetectorController.instance.updateInterval = Duration.zero,
+  );
+
   setUp(() async {
     SharedPreferences.setMockInitialValues({'token': 'sahte'});
     await Api.tokenYukle();

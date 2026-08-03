@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 /// Dizi sayfasındaki yorum kartının spoiler perdesi.
 ///
@@ -55,6 +56,12 @@ Future<void> _kur(WidgetTester tester, {required bool spoiler}) async {
 }
 
 void main() {
+  // Medya sayacı (1/3) geri sayımı VisibilityDetector ile başlar;
+  // varsayılan 500 ms yoklama testin sonunda bekleyen timer bırakır.
+  setUp(
+    () => VisibilityDetectorController.instance.updateInterval = Duration.zero,
+  );
+
   testWidgets('perdeli yorumda ne metin ne medya görünür', (tester) async {
     await _kur(tester, spoiler: true);
     expect(find.text('Spoiler — dokun ve gör'), findsOneWidget);

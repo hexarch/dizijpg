@@ -212,17 +212,17 @@ class _AkisMedyaState extends State<AkisMedya> {
   int _sayfa = 0;
   ImageStream? _akis;
   ImageStreamListener? _dinleyici;
-  bool _sayacGorunur = true;
-  Timer? _sayacZaman;
+
+  /// Sayacı her "göster" isteğinde artar; TweenAnimationBuilder'ın anahtarı
+  /// olduğu için geri sayım baştan başlar. 0 = henüz görülmedi.
+  int _sayacTetik = 0;
+  bool _hicGoruldu = false;
 
   @override
   void initState() {
     super.initState();
     _oran = widget.oran;
     if (_oran != null) _oraniBildir(_oran!);
-    // Sayaç açılışta görünür, 3 sn sonra söner. Tek medyada sayaç zaten
-    // çizilmez → gereksiz zamanlayıcı kurulmaz.
-    if (widget.urller.length > 1) _sayaciGoster();
     // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
     if (_oran == null && !_video(widget.urller.first)) {
       final saglayici = CachedNetworkImageProvider(widget.urller.first);
@@ -251,21 +251,66 @@ class _AkisMedyaState extends State<AkisMedya> {
   /// Sayacı göster ve 3 sn sonra söndür. Sayfa değişince yeniden çağrılır:
   /// kullanıcı kaydırdığında "kaçıncı fotoğraftayım" bilgisi tekrar belirir.
   void _sayaciGoster() {
-    _sayacZaman?.cancel();
-    if (!_sayacGorunur && mounted) setState(() => _sayacGorunur = true);
-    _sayacZaman = Timer(sayacSuresi, () {
-      if (mounted) setState(() => _sayacGorunur = false);
-    });
+    if (widget.urller.length < 2 || !mounted) return; // tek medyada sayaç yok
+    setState(() => _sayacTetik++);
+  }
+
+  /// Geri sayım kart KURULUNCA değil GERÇEKTEN GÖRÜLÜNCE başlar: liste
+  /// ilerideki kartları ~5 ekran önceden kurar (cacheExtent), sayaç orada
+  /// başlasaydı kullanıcı kaydırıp geldiğinde çoktan sönmüş olurdu.
+  void _gorunurluk(VisibilityInfo bilgi) {
+    if (_hicGoruldu || bilgi.visibleFraction < 0.5 || !mounted) return;
+    _hicGoruldu = true;
+    _sayaciGoster();
   }
 
   @override
   void dispose() {
-    _sayacZaman?.cancel();
     if (_akis != null && _dinleyici != null) {
       _akis!.removeListener(_dinleyici!);
     }
     super.dispose();
   }
+
+  /// Sayaç rozeti (1/3). Sönme bir ZAMANLAYICIYLA değil animasyonla yapılır:
+  /// bekleyen Timer, kartı 3 sn beklemeden biten her widget testinde
+  /// "A Timer is still pending" hatası verirdi.
+  Widget _sayacRozeti() {
+    // Medya her temada koyu zemin üstünde durur → siyah/beyaz burada kasıtlı
+    // (tema rengi değil) ve iki temada da okunur.
+    final rozet = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        '${_sayfa + 1}/${widget.urller.length}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+    );
+    // Henüz görülmedi: geri sayım başlamaz, rozet tam görünür bekler.
+    if (_sayacTetik == 0) return rozet;
+    return TweenAnimationBuilder<double>(
+      key: ValueKey(_sayacTetik),
+      tween: Tween(begin: 1, end: 0),
+      duration: sayacSuresi + _sonmeSuresi,
+      // İlk 3 sn tam görünür, son 250 ms'de söner.
+      curve: Interval(
+        sayacSuresi.inMilliseconds /
+            (sayacSuresi + _sonmeSuresi).inMilliseconds,
+        1,
+      ),
+      builder: (_, deger, cocuk) => Opacity(opacity: deger, child: cocuk),
+      child: rozet,
+    );
+  }
+
+  static const _sonmeSuresi = Duration(milliseconds: 250);
 
   void _oranBildir(double o) {
     if (!mounted || _oran != null) return;
@@ -276,108 +321,88 @@ class _AkisMedyaState extends State<AkisMedya> {
   @override
   Widget build(BuildContext context) {
     final coklu = widget.urller.length > 1;
-    return AspectRatio(
-      aspectRatio: _oran ?? 4 / 5,
-      child: Stack(
-        children: [
-          PageView.builder(
-            itemCount: widget.urller.length,
-            // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir
-            allowImplicitScrolling: true,
-            onPageChanged: (i) {
-              setState(() => _sayfa = i);
-              _sayaciGoster(); // yeni kare → sayaç yeniden belirir, yine söner
-            },
-            itemBuilder: (context, i) {
-              final url = widget.urller[i];
-              return GestureDetector(
-                onTap: () => widget.onAc != null
-                    ? widget.onAc!(i)
-                    : medyaGoster(context, widget.urller, baslangic: i),
-                onDoubleTap: widget.onCiftDokunus,
-                child: _video(url)
-                    ? AkisVideo(
-                        url: url,
-                        kendiOrani: false,
-                        onOran: i == 0 ? _oranBildir : null,
-                      )
-                    : Container(
-                        color: Colors.black,
-                        child: CachedNetworkImage(
-                          imageUrl: url,
-                          // İlk medya oranı kutuyu belirlediği için o tam
-                          // oturur; diğerleri kırpılmadan sığdırılır.
-                          fit: i == 0 ? BoxFit.cover : BoxFit.contain,
-                          width: double.infinity,
-                          height: double.infinity,
-                          placeholder: (_, _) =>
-                              Container(color: DiziRenkler.kart),
-                          errorWidget: (_, _, _) => Container(
-                            color: DiziRenkler.kart,
-                            child: Icon(
-                              Icons.broken_image_outlined,
-                              color: DiziRenkler.metin38,
+    return VisibilityDetector(
+      key: ValueKey('sayac-${widget.urller.first}'),
+      onVisibilityChanged: _gorunurluk,
+      child: AspectRatio(
+        aspectRatio: _oran ?? 4 / 5,
+        child: Stack(
+          children: [
+            PageView.builder(
+              itemCount: widget.urller.length,
+              // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir
+              allowImplicitScrolling: true,
+              onPageChanged: (i) {
+                setState(() => _sayfa = i);
+                _sayaciGoster(); // yeni kare → sayaç yeniden belirir, yine söner
+              },
+              itemBuilder: (context, i) {
+                final url = widget.urller[i];
+                return GestureDetector(
+                  onTap: () => widget.onAc != null
+                      ? widget.onAc!(i)
+                      : medyaGoster(context, widget.urller, baslangic: i),
+                  onDoubleTap: widget.onCiftDokunus,
+                  child: _video(url)
+                      ? AkisVideo(
+                          url: url,
+                          kendiOrani: false,
+                          onOran: i == 0 ? _oranBildir : null,
+                        )
+                      : Container(
+                          color: Colors.black,
+                          child: CachedNetworkImage(
+                            imageUrl: url,
+                            // İlk medya oranı kutuyu belirlediği için o tam
+                            // oturur; diğerleri kırpılmadan sığdırılır.
+                            fit: i == 0 ? BoxFit.cover : BoxFit.contain,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (_, _) =>
+                                Container(color: DiziRenkler.kart),
+                            errorWidget: (_, _, _) => Container(
+                              color: DiziRenkler.kart,
+                              child: Icon(
+                                Icons.broken_image_outlined,
+                                color: DiziRenkler.metin38,
+                              ),
                             ),
                           ),
                         ),
+                );
+              },
+            ),
+            if (coklu) ...[
+              // Sayaç (1/3): medyanın SAĞ ÜSTÜNDE; ilk görüldüğünde belirir,
+              // 3 sn sonra söner (kaydırınca yeniden belirir).
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IgnorePointer(child: _sayacRozeti()),
+              ),
+              Positioned(
+                bottom: 10,
+                left: 0,
+                right: 0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < widget.urller.length; i++)
+                      Container(
+                        width: 6,
+                        height: 6,
+                        margin: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: i == _sayfa ? Colors.white : Colors.white38,
+                        ),
                       ),
-              );
-            },
-          ),
-          if (coklu) ...[
-            // Sayaç (1/3): medyanın SAĞ ÜSTÜNDE, 3 sn sonra söner. Medya her
-            // temada koyu zemin üstünde durur → siyah/beyaz burada kasıtlı
-            // (tema rengi değil) ve iki temada da okunur.
-            Positioned(
-              top: 10,
-              right: 10,
-              child: IgnorePointer(
-                child: AnimatedOpacity(
-                  opacity: _sayacGorunur ? 1 : 0,
-                  duration: const Duration(milliseconds: 250),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black54,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${_sayfa + 1}/${widget.urller.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
+                  ],
                 ),
               ),
-            ),
-            Positioned(
-              bottom: 10,
-              left: 0,
-              right: 0,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < widget.urller.length; i++)
-                    Container(
-                      width: 6,
-                      height: 6,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: i == _sayfa ? Colors.white : Colors.white38,
-                      ),
-                    ),
-                ],
-              ),
-            ),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

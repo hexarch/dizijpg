@@ -103,6 +103,9 @@ Future<void> _kur(
   WidgetTester tester,
   Map<String, dynamic> yorum, {
   Size ekran = const Size(400, 900),
+  // Kartın üstüne konan boşluk: kart EKRAN DIŞINDA kurulsun diye
+  // (liste ilerideki kartları önden kurar).
+  double ustBosluk = 0,
 }) async {
   SharedPreferences.setMockInitialValues({
     'token': 'sahte',
@@ -126,10 +129,15 @@ Future<void> _kur(
         path: '/',
         builder: (_, _) => Scaffold(
           body: SingleChildScrollView(
-            child: AkisKarti(
-              yorum: yorum,
-              icerikler: _icerikler,
-              onMedyaAc: (mi) => _reelsMedyaIndeks = mi,
+            child: Column(
+              children: [
+                SizedBox(height: ustBosluk),
+                AkisKarti(
+                  yorum: yorum,
+                  icerikler: _icerikler,
+                  onMedyaAc: (mi) => _reelsMedyaIndeks = mi,
+                ),
+              ],
             ),
           ),
         ),
@@ -156,6 +164,17 @@ Future<void> _kur(
   );
   await tester.pump();
 }
+
+/// Medya sayacının EKRANDA ÇİZİLEN saydamlığı (1 = görünür, 0 = sönmüş).
+double _sayacSaydamligi(WidgetTester tester) => tester
+    .widgetList<Opacity>(
+      find.ancestor(
+        of: find.textContaining(RegExp(r'^\d+/\d+$')),
+        matching: find.byType(Opacity),
+      ),
+    )
+    .first
+    .opacity;
 
 /// Yorum metnini çizen widget'ın kırpma sınırı (null = tamamı görünür).
 int? _metinSatirSiniri(WidgetTester tester) =>
@@ -297,14 +316,11 @@ void main() {
         tester,
         _gonderi(medya: const ['/medya/a.jpg', '/medya/b.jpg', '/medya/c.jpg']),
       );
-      AnimatedOpacity kutu() => tester.widget<AnimatedOpacity>(
-        find.ancestor(of: sayac(), matching: find.byType(AnimatedOpacity)),
-      );
-      expect(kutu().opacity, 1, reason: 'ilk görüşte görünür');
+      expect(_sayacSaydamligi(tester), 1, reason: 'ilk görüşte görünür');
+      // 3 sn dolunca sönme başlar, 250 ms'de biter
       await tester.pump(const Duration(seconds: 3));
-      expect(kutu().opacity, 0, reason: '3 sn sonra söner');
       await tester.pumpAndSettle();
-      expect(kutu().opacity, 0);
+      expect(_sayacSaydamligi(tester), 0, reason: '3 sn sonra söner');
     });
 
     testWidgets('sayaç 3 sn dolmadan görünür kalır', (tester) async {
@@ -313,17 +329,43 @@ void main() {
         _gonderi(medya: const ['/medya/a.jpg', '/medya/b.jpg', '/medya/c.jpg']),
       );
       await tester.pump(const Duration(milliseconds: 2500));
-      final kutu = tester.widget<AnimatedOpacity>(
-        find.ancestor(of: sayac(), matching: find.byType(AnimatedOpacity)),
-      );
-      expect(kutu.opacity, 1);
+      expect(_sayacSaydamligi(tester), 1);
       await tester.pumpAndSettle();
     });
 
     testWidgets('TEK medyada sayaç HİÇ çıkmaz', (tester) async {
       await _kur(tester, _gonderi(medya: const ['/medya/a.jpg']));
       expect(find.text('1/1'), findsNothing);
-      expect(find.byType(AnimatedOpacity), findsNothing);
+      expect(find.byType(TweenAnimationBuilder<double>), findsNothing);
+    });
+
+    testWidgets('geri sayım kart KURULUNCA değil GÖRÜLÜNCE başlar '
+        '(liste kartları ~5 ekran önceden kurar)', (tester) async {
+      await _kur(
+        tester,
+        _gonderi(medya: const ['/medya/a.jpg', '/medya/b.jpg', '/medya/c.jpg']),
+        ekran: const Size(400, 600),
+        ustBosluk: 1500, // kart ekranın çok altında kuruldu
+      );
+      // Kullanıcı kaydırıp gelene kadar uzun süre geçsin
+      await tester.pump(const Duration(seconds: 10));
+      // Şimdi kartı ekrana getir
+      await tester.drag(
+        find.byType(SingleChildScrollView),
+        const Offset(0, -1600),
+      );
+      // pumpAndSettle sayacın 3,25 sn animasyonunu SONUNA kadar ilerletir →
+      // sınırlı pump: kaydırma otursun ama geri sayım bitmesin.
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(sayac(), findsOneWidget);
+      expect(
+        _sayacSaydamligi(tester),
+        1,
+        reason: 'kart görülene dek sayaç sönmemeli',
+      );
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pumpAndSettle();
     });
 
     testWidgets('kaydırınca sayaç yeniden belirir ve yine söner', (
@@ -333,16 +375,18 @@ void main() {
         tester,
         _gonderi(medya: const ['/medya/a.jpg', '/medya/b.jpg', '/medya/c.jpg']),
       );
-      await tester.pump(const Duration(seconds: 3)); // söndü
-      await tester.drag(find.byType(PageView), const Offset(-400, 0));
+      await tester.pump(const Duration(seconds: 3));
       await tester.pumpAndSettle();
-      final kutu = tester.widget<AnimatedOpacity>(
-        find.ancestor(
-          of: find.text('2/3'),
-          matching: find.byType(AnimatedOpacity),
-        ),
+      expect(_sayacSaydamligi(tester), 0, reason: 'önce söndü');
+      await tester.drag(find.byType(PageView), const Offset(-400, 0));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      expect(find.text('2/3'), findsOneWidget);
+      expect(
+        _sayacSaydamligi(tester),
+        1,
+        reason: 'yeni karede sayaç geri gelir',
       );
-      expect(kutu.opacity, 1, reason: 'yeni karede sayaç geri gelir');
       await tester.pump(const Duration(seconds: 3));
       await tester.pumpAndSettle();
     });
