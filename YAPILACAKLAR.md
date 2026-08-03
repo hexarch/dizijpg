@@ -1793,6 +1793,19 @@ oyuncu etiketleme".
   günlüğü iki sürüm yanlış etiketleniyordu, kapı da yanlış derlemeyi gönderecekti.
   Artık test bunu her koşuda doğruluyor.
 
+## 2026-08-03b — Gönderi bazında çeviri durumu ✅
+- **Yorumlar sekmesi:** her gönderide çeviri rozeti — `kaynak_dil → çevrildiği
+  diller` (İngilizce varsa mavi, yoksa sarı, hiç yoksa "çevrilmemiş" gri).
+  Çeviriler METNİN md5'ine bağlı olduğundan aynı metni yazan gönderiler ortak
+  çeviriyi paylaşır; rozet bunu yansıtır.
+- **"Çevrilmemiş" süzgeci:** İngilizce karşılığı olmayan (ve zaten İngilizce
+  olmayan) gönderiler. Canlıda 36 gönderi çıktı.
+- **Bakım → Çeviri Kuyruğu:** mevcut `/admin/cevrilecek` ucunun arayüzü yoktu.
+  Hedef dil seçilir, bekleyen metinler + kaç gönderiyi etkilediği listelenir.
+  Canlı: en → 30 metin/31 gönderi, tr → 10/11, de → 200+/1098 (de hiç çevrilmemiş).
+- **"Kaynak dili tespit et" düğmesi:** `/admin/dil-tespit` ucunu çalıştırır;
+  `kaynak_dil` NULL olan gönderiler çeviri kuyruğuna doğru giremiyordu.
+
 ## BEKLEYEN ALTYAPI (kullanıcı kararı / sunucu işi)
 - **Admin panel:** https://dizijpg.com/api/admin (kendi IP'inden token'sız). Token yedek .env'de.
 - **docker-compose.yml artık TAM** (ADMIN_IPLER/ADMIN_TOKEN env + firebase-admin.json

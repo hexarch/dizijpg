@@ -5039,14 +5039,25 @@ app.get('/admin/yorumlar', adminKisit, sarici(async (req, res) => {
   if (req.query.suzgec === 'sikayetli') {
     kosullar.push("EXISTS (SELECT 1 FROM sikayetler s WHERE s.tur='yorum' AND s.hedef_id=y.id)");
   }
+  // İngilizce ana hedef dil (4351 çeviriden en çoğu ona): "çevrilmemiş" =
+  // İngilizce karşılığı olmayan, zaten İngilizce OLMAYAN gönderi.
+  if (req.query.suzgec === 'cevrilmemis') {
+    kosullar.push(`y.kaynak_dil IS DISTINCT FROM 'en' AND NOT EXISTS (
+      SELECT 1 FROM metin_cevirileri c
+       WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = 'en')`);
+  }
   parametreler.push(limit);
   const { rows } = await havuz.query(
     `SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, LEFT(y.metin, 400) AS metin,
-            y.medya, y.goruntulenme, y.tarih, y.ust_id, k.kullanici_adi, k.yasakli,
-            k.id AS kullanici_id,
+            y.medya, y.goruntulenme, y.tarih, y.ust_id, y.kaynak_dil,
+            k.kullanici_adi, k.yasakli, k.id AS kullanici_id,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
             (SELECT count(*)::int FROM sikayetler s
-              WHERE s.tur='yorum' AND s.hedef_id=y.id) AS sikayet
+              WHERE s.tur='yorum' AND s.hedef_id=y.id) AS sikayet,
+            -- Çeviriler METNE bağlıdır (md5 özeti), gönderiye değil: aynı metni
+            -- yazan iki gönderi tek çeviriyi paylaşır.
+            (SELECT array_agg(c.dil ORDER BY c.dil) FROM metin_cevirileri c
+              WHERE c.ozet = md5(btrim(y.metin))) AS ceviri_diller
        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
      ${kosullar.length ? 'WHERE ' + kosullar.join(' AND ') : ''}
      ORDER BY y.id DESC LIMIT $${parametreler.length}`,

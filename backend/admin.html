@@ -358,12 +358,30 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <div style="overflow:auto;max-height:260px"><table id="ba-hatalar"></table></div>
     </div>
   </div>
-  <div class="panel">
+  <div class="panel" style="margin-bottom:16px">
     <h3>🌐 Çeviri Durumu <span class="sag" id="ba-ceviri-ozet">—</span></h3>
     <div class="izgara" style="padding:0">
       <div><div style="overflow:auto;max-height:300px"><table id="ba-diller"></table></div></div>
       <div><div style="overflow:auto;max-height:300px"><table id="ba-kaynak"></table></div></div>
     </div>
+  </div>
+  <div class="panel">
+    <h3>⏳ Çeviri Kuyruğu <span class="sag" id="ba-kuyruk-ozet">—</span></h3>
+    <div class="arac">
+      <label class="kck" for="ba-kuyruk-dil">Hedef dil</label>
+      <select id="ba-kuyruk-dil" onchange="kuyrukYukle()">
+        <option value="en">en · İngilizce</option>
+        <option value="tr">tr · Türkçe</option>
+        <option value="es">es · İspanyolca</option>
+        <option value="de">de · Almanca</option>
+        <option value="fr">fr · Fransızca</option>
+        <option value="ar">ar · Arapça</option>
+      </select>
+      <button class="btn" onclick="kuyrukYukle()">Yenile ↻</button>
+      <button class="btn" id="ba-dil-tespit" onclick="dilTespitCalistir()">Kaynak dili tespit et</button>
+      <span class="kck" id="ba-tespit-sonuc">Kaynak dili bilinmeyen gönderiler çeviri kuyruğuna doğru giremez</span>
+    </div>
+    <div style="overflow:auto;max-height:420px"><table id="ba-kuyruk"></table></div>
   </div>
 </section>
 
@@ -400,6 +418,7 @@ tr:hover td{background:rgba(255,255,255,.02)}
       <button class="btn secili" id="yf-" onclick="yorumSuzgec('')">Tümü</button>
       <button class="btn" id="yf-medyali" onclick="yorumSuzgec('medyali')">Medyalı</button>
       <button class="btn" id="yf-sikayetli" onclick="yorumSuzgec('sikayetli')">Şikayetli</button>
+      <button class="btn" id="yf-cevrilmemis" onclick="yorumSuzgec('cevrilmemis')">Çevrilmemiş</button>
     </div>
     <div id="yo-liste" style="max-height:72vh;overflow-y:auto"><div class="bos">Yükleniyor…</div></div>
   </div>
@@ -988,7 +1007,34 @@ async function ceviriYukle(){
         ||'<tr><td class="bos">Çeviri yok</td></tr>'}</tbody>`;
     $('#ba-kaynak').innerHTML=`<thead><tr><th>Gönderi kaynak dili</th><th>Gönderi</th></tr></thead>
       <tbody>${c.kaynak_diller.map(d=>`<tr><td class="mono">${esc(d.dil)}</td><td class="mono">${d.adet}</td></tr>`).join('')}</tbody>`;
+    await kuyrukYukle();
   }catch(e){ $('#ba-ceviri-ozet').textContent='okunamadı'; }
+}
+
+/* ---- Çeviri kuyruğu: hedef dile HENÜZ çevrilmemiş metinler ---- */
+async function kuyrukYukle(){
+  const dil=$('#ba-kuyruk-dil').value;
+  try{
+    const d=await api(`/cevrilecek?dil=${encodeURIComponent(dil)}&limit=200`);
+    const gonderi=d.metinler.reduce((t,m)=>t+m.gonderi,0);
+    $('#ba-kuyruk-ozet').textContent=`${d.adet} metin · ${gonderi} gönderi bekliyor (${esc(dil)})`;
+    $('#ba-kuyruk').innerHTML = d.metinler.length? `
+      <thead><tr><th>Metin</th><th>Kaynak</th><th>Gönderi</th></tr></thead>
+      <tbody>${d.metinler.map(m=>`<tr>
+        <td style="max-width:620px"><div class="y-metin">${esc(m.metin.slice(0,220))}${m.metin.length>220?'…':''}</div></td>
+        <td class="mono kck">${esc(m.kaynak_dil||'?')}</td>
+        <td class="mono">${m.gonderi}</td></tr>`).join('')}</tbody>`
+      : `<tbody><tr><td class="bos">🎉 ${esc(dil)} için bekleyen metin yok</td></tr></tbody>`;
+  }catch(e){ $('#ba-kuyruk').innerHTML='<tbody><tr><td class="bos">Yüklenemedi: '+esc(e.message)+'</td></tr></tbody>'; }
+}
+async function dilTespitCalistir(){
+  const b=$('#ba-dil-tespit'); b.disabled=true; b.textContent='Taranıyor…';
+  try{
+    const r=await api('/dil-tespit',{method:'POST',body:JSON.stringify({limit:20000})});
+    $('#ba-tespit-sonuc').innerHTML=`<span style="color:var(--yesil)">${r.bakilan} gönderiye bakıldı, ${r.isaretlenen} tanesinin dili işaretlendi.</span>`;
+    ceviriYukle();
+  }catch(e){ $('#ba-tespit-sonuc').innerHTML='<span style="color:var(--kirmizi)">Başarısız: '+esc(e.message)+'</span>'; }
+  b.disabled=false; b.textContent='Kaynak dili tespit et';
 }
 
 /* ---- Kullanıcılar ---- */
@@ -1024,7 +1070,18 @@ async function kullanicilariYukle(){
 
 /* ---- Yorum moderasyonu ---- */
 let YO_SUZGEC='', yoGecikme;
-function yorumSuzgec(s){ YO_SUZGEC=s; ['','medyali','sikayetli'].forEach(x=>$('#yf-'+x).classList.toggle('secili',x===s)); yorumlariYukle(); }
+function yorumSuzgec(s){ YO_SUZGEC=s; ['','medyali','sikayetli','cevrilmemis'].forEach(x=>$('#yf-'+x).classList.toggle('secili',x===s)); yorumlariYukle(); }
+// Gönderinin çeviri durumu: kaynak dil + hangi dillere çevrilmiş.
+// Çeviriler metnin md5'ine bağlı olduğundan aynı metni yazan gönderiler ortak.
+function ceviriRozeti(y){
+  const diller=(y.ceviri_diller||[]).filter(d=>d!==y.kaynak_dil);
+  const kaynak=y.kaynak_dil||'?';
+  if(!diller.length) return `<span class="etiket e-kapatildi" title="Bu metnin çevirisi yok">
+    ${esc(kaynak)} · çevrilmemiş</span>`;
+  const enVar=diller.includes('en');
+  return `<span class="etiket ${enVar?'e-incelendi':'e-yeni'}" title="Çevrildiği diller: ${esc(diller.join(', '))}">
+    ${esc(kaynak)} → ${esc(diller.slice(0,4).join(', '))}${diller.length>4?' +'+(diller.length-4):''}</span>`;
+}
 function yorumlariYukleGec(){ clearTimeout(yoGecikme); yoGecikme=setTimeout(yorumlariYukle,300); }
 async function yorumlariYukle(){
   try{
@@ -1042,6 +1099,7 @@ async function yorumlariYukle(){
             <span>${esc(ad)}${yer}</span>
             ${y.ust_id?'<span class="etiket e-kapatildi">yanıt</span>':''}
             ${y.sikayet?`<span class="etiket e-yeni">🚩 ${y.sikayet}</span>`:''}
+            ${ceviriRozeti(y)}
             <span class="kck mono">👍${y.begeni} 👁${y.goruntulenme} · ${new Date(y.tarih).toLocaleString('tr')}</span>
           </div>
           <div class="y-metin">${esc(y.metin)}</div>
