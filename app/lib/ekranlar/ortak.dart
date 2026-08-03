@@ -13,6 +13,7 @@ import '../icerik_deposu.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import '../veri_tasarrufu.dart';
 import 'medya_goster.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
@@ -180,12 +181,33 @@ class AkisMedya extends StatefulWidget {
   /// kutu ilk karede doğru yüksekliğe kurulur — yükleme sonrası zıplama olmaz.
   final double? oran;
 
+  /// Tüm kareler kutuyu KAPLASIN mı (BoxFit.cover). Akışta kutu ilk medyanın
+  /// oranındadır, sonrakiler kırpılmasın diye sığdırılır (contain). Detay
+  /// sayfasının başlığında ise kutu sabit yüksekliktedir ve tüm kapaklar aynı
+  /// (16:9) orandadır: contain olsaydı ilk kapak kutuyu doldurur, kaydırınca
+  /// gelenler yanlarda siyah bantla belirir — aynı boyda görseller arasında
+  /// tutarsız görünürdü.
+  final bool tumunuKapla;
+
+  /// Sayaç rozetinin üstten ek boşluğu. Rozet normalde kutunun sağ üstünde
+  /// durur; detay sayfasında görselin üstüne üst çubuk biner, rozet oraya
+  /// denk gelip "Giriş Yap" düğmesiyle çakışırdı.
+  final double sayacUstBosluk;
+
+  /// Görselin ÜSTÜNE ama nokta/sayaç göstergelerinin ALTINA çizilen katman
+  /// (detay sayfasının alta doğru koyulaşan karartması). Stack'in en üstüne
+  /// konsaydı karartmanın opak alt ucu noktaları yutardı.
+  final Widget? gorselUstu;
+
   const AkisMedya({
     super.key,
     required this.urller,
     this.onAc,
     this.onCiftDokunus,
     this.oran,
+    this.tumunuKapla = false,
+    this.sayacUstBosluk = 0,
+    this.gorselUstu,
   });
 
   @override
@@ -307,8 +329,11 @@ class _AkisMedyaState extends State<AkisMedya> {
           children: [
             PageView.builder(
               itemCount: widget.urller.length,
-              // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir
-              allowImplicitScrolling: true,
+              // Komşu sayfa önden kurulur: yana kaydırınca hazır gelir.
+              // Veri tasarrufu açıkken (varsayılan: mobil veride) kapalı —
+              // ayarın sözü "yalnız bakılan kare yüklenir"; bakılmayan komşu
+              // kapağı peşin indirmek onu bozardı.
+              allowImplicitScrolling: VeriTasarrufu.onYuklemeSerbest,
               onPageChanged: (i) {
                 setState(() => _sayfa = i);
                 _sayaciGoster(); // yeni kare → sayaç yeniden belirir, yine söner
@@ -332,7 +357,9 @@ class _AkisMedyaState extends State<AkisMedya> {
                             imageUrl: url,
                             // İlk medya oranı kutuyu belirlediği için o tam
                             // oturur; diğerleri kırpılmadan sığdırılır.
-                            fit: i == 0 ? BoxFit.cover : BoxFit.contain,
+                            fit: widget.tumunuKapla || i == 0
+                                ? BoxFit.cover
+                                : BoxFit.contain,
                             width: double.infinity,
                             height: double.infinity,
                             placeholder: (_, _) =>
@@ -349,11 +376,13 @@ class _AkisMedyaState extends State<AkisMedya> {
                 );
               },
             ),
+            if (widget.gorselUstu != null)
+              Positioned.fill(child: IgnorePointer(child: widget.gorselUstu!)),
             if (coklu) ...[
               // Sayaç (1/3): medyanın SAĞ ÜSTÜNDE; ilk görüldüğünde belirir,
               // 3 sn sonra söner (kaydırınca yeniden belirir).
               Positioned(
-                top: 10,
+                top: 10 + widget.sayacUstBosluk,
                 right: 10,
                 child: IgnorePointer(child: _sayacRozeti()),
               ),

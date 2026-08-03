@@ -1,6 +1,49 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Dizi/film detay sayfası: KAPAK GALERİSİ
+**Kullanıcı isteği:** "filmler ve dizilerin profiline gittiğimde 1 tane resim
+var. aynı olmayacak şekilde kapak resimleri minimum 3 maksimum 10 adet olacak
+şekilde resim içersin. tıklanınca da büyüsün ve kaydırınca değişsin tabi. ana
+kapak fotoğrafları her zaman ilk sırada gelecek."
+- 🚀 **Çözüm:** başlıktaki tek arka plan görseli, bölüm sayfasındaki kare
+  kaydırıcısının (`AkisMedya`) aynısıyla değiştirildi: yana kaydırılır, sağ
+  üstte `1/7` sayacı (3 sn sonra söner, kaydırınca yeniden belirir), altta
+  nokta göstergesi, dokununca tam ekran görüntüleyici **dokunulan kareden**
+  açılır.
+- 🚀 **Ana kapak HER ZAMAN ilk sırada** (`backdrop_path`), sonrası TMDB
+  `backdrops` en çok oy alandan başlayarak; aynı dosya yolu iki kez girmez,
+  **tavan 10** (`kapaklariCikar`, detay.dart).
+- 🚀 **`backdrops` seçildi, `posters` KATILMADI:** başlık geniş yatay bir
+  şerit; 2:3 afişler orada ya kırpılıp tanınmaz olur ya yanlarda kalın siyah
+  bantla durur. Afiş zaten arama/kitaplık kartlarında var.
+- 🚀 **"Minimum 3" uydurulmadı:** TMDB'de 3'ten az görseli olan yapımlar var.
+  Kaç tane varsa o gösterilir; tek görselde başlık ESKİSİ GİBİ sabit kalır
+  (kaydırıcı/sayaç/nokta çıkmaz), hiç görsel yoksa boş zemin — boş kutu ya da
+  hata metni asla çıkmaz.
+- 🚀 **Sunucuya DOKUNULMADI:** `/tmdb/tv/{id}/images` beyaz liste dışı (403).
+  Bunun yerine görseller detay isteğine iliştirildi
+  (`append_to_response=...,images&include_image_language=null`) — ana veriyle
+  TEK istekte gelir, kaydırıcı sonradan belirip içeriği zıplatmaz. `null` dil
+  = YAZISIZ kapaklar; yük gzip'li 12,6 KB → 16,9 KB.
+- 🚀 **Veri tasarrufu:** 10 kapak peşin İNDİRİLMEZ; `PageView` yalnız bakılanı
+  ve komşusunu kurar. Komşu ön yüklemesi (`allowImplicitScrolling`) artık
+  `VeriTasarrufu.onYuklemeSerbest`e bağlı — ayarın sözü "yalnız bakılan kare
+  yüklenir" idi, mobil veride bu artık akışta da geçerli.
+- 🚀 **İki ince tuzak:** (1) alta doğru koyulaşan karartma `AkisMedya`nın
+  ÜSTÜNE konsaydı opak alt ucu nokta göstergesini yutardı → yeni `gorselUstu`
+  katmanı göstergelerin ALTINA çiziliyor. (2) Sayaç rozeti üst çubuktaki
+  "Giriş Yap" düğmesiyle çakışıyordu → `sayacUstBosluk` ile çentik+araç çubuğu
+  kadar aşağı indi.
+- 🚀 **Kanıt:** `app/test/detay_kapaklar_test.dart` (10 test) — ana kapak ilk
+  sırada (kopyası EN AZ oyu alsa bile), tekrarsız, tavan 10, sayaç `1/N` →
+  kaydırınca `2/N`, tek kapakta eski görünüm, kapaksızda boş kutu/hata yok,
+  `images` alanı hiç gelmezse bozulmaz, detay ucu 500 verirse hata görünümü,
+  dokununca tam ekran DOĞRU indeksle açılıyor, yatay kaydırıcı sayfanın dikey
+  kaydırmasını yutmuyor. Dört ayrı geri alma denemesinde (ana kapak öne
+  konmuyor / tekrar elemesi+tavan yok / özellik tamamen yok / indeks hep 0)
+  testler kırmızıya döndü. Toplam 311 test.
+
 ## 2026-08-03 — Kişi sayfası: biyografi artık DOKUNUNCA AÇILIYOR
 **Kullanıcı isteği:** "Oyuncu profillerindeki bilgi yazısı büyütülmüyor. sonuna
 üç nokta ekle, tıklayınca yazının devamı gözüksün."

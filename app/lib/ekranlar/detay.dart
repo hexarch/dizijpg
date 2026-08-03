@@ -7,6 +7,7 @@ import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
+import 'medya_goster.dart';
 import 'ortak.dart';
 import 'puan_sheet.dart';
 import 'tepki.dart';
@@ -18,6 +19,44 @@ const durumSecenekleri = [
   ('bitirdim', 'Bitirdim', Icons.check_circle_outline),
   ('biraktim', 'Bıraktım', Icons.cancel_outlined),
 ];
+
+/// Detay başlığındaki kapak yolları: ANA kapak (backdrop_path) HER ZAMAN ilk
+/// sırada, ardından TMDB'nin arka plan görselleri en çok oy alandan başlayarak.
+/// Aynı yol iki kez girmez; en fazla [kapakTavani] tane.
+///
+/// Yalnız `backdrops` kullanılır, `posters` katılmaz: başlık geniş (16:9) bir
+/// şerittir, 2:3 afişler orada ya kırpılıp tanınmaz olur ya da yanlarda kalın
+/// siyah bantla durur. Afiş zaten arama/kitaplık kartlarında görünüyor.
+///
+/// TMDB'de 3'ten az görseli olan yapımlar var; görsel uyduramayız — kaç tane
+/// varsa o gösterilir, tek görselde başlık eskisi gibi sabit kalır.
+const kapakTavani = 10;
+
+List<String> kapaklariCikar(Map<String, dynamic> icerik) {
+  final yollar = <String>[];
+  final ana = icerik['backdrop_path'] as String?;
+  if (ana != null && ana.isNotEmpty) yollar.add(ana);
+  final ham = icerik['images'];
+  // Tip denetimi gevşek: TMDB alanı hiç göndermeyebilir, eski önbellekten
+  // gelen yanıtta bulunmayabilir — kapak galerisi süs veridir, sayfayı
+  // düşürmesin.
+  final gelen = ham is Map ? ham['backdrops'] : null;
+  final arkalar =
+      <Map<String, dynamic>>[
+        for (final g in gelen is List ? gelen : const [])
+          if (g is Map<String, dynamic>) g,
+      ]..sort(
+        (a, b) => ((b['vote_count'] as num?) ?? 0).compareTo(
+          (a['vote_count'] as num?) ?? 0,
+        ),
+      );
+  for (final g in arkalar) {
+    if (yollar.length >= kapakTavani) break;
+    final y = g['file_path'] as String?;
+    if (y != null && y.isNotEmpty && !yollar.contains(y)) yollar.add(y);
+  }
+  return yollar;
+}
 
 class DetayEkrani extends StatefulWidget {
   final int tmdbId;
@@ -34,7 +73,25 @@ class _DetayEkraniState extends State<DetayEkrani> {
   Map<String, dynamic>? _benim;
   Map<String, dynamic>? _incelemeler;
   Map<String, dynamic>? _izleyenler;
+
+  /// Başlıktaki kapak görselleri; ilki yapımın ANA kapağıdır (backdrop_path).
+  List<String> _kapaklar = const [];
   String? _hata;
+
+  /// Detay ucuna eklenen alt kaynaklar. `images` LİSTEYE SONRADAN EKLENDİ:
+  /// sunucu bu parametre verilmezse kendi varsayılanını koyar, verilirse
+  /// olduğu gibi kullanır — bu yüzden liste sunucudakiyle birebir aynı
+  /// olmalı, yoksa kadro/fragman gelmez.
+  static const _ekVeri =
+      'credits,videos,recommendations,external_ids,watch/providers,images';
+
+  /// Görseller ayrı bir istekle DEĞİL ana veriyle birlikte gelir: sonradan
+  /// gelseydi başlık tek kapakla çizilir, kaydırıcı ve sayaç sonradan belirirdi.
+  /// `include_image_language=null` = YAZISIZ kapaklar (üstüne dizi adı basılmış
+  /// afiş değil); TMDB ana kapağı da bunlardan seçer ve yük ~4 KB artar.
+  String get _icerikYolu =>
+      '/tmdb/${widget.tur}/${widget.tmdbId}'
+      '?append_to_response=$_ekVeri&include_image_language=null';
 
   @override
   void initState() {
@@ -50,13 +107,14 @@ class _DetayEkraniState extends State<DetayEkrani> {
       // ziyaretçi içerik yerine kırmızı hata ekranı görürdü. Diğer iki uç
       // (tmdb, incelemeler) oturum istemez.
       final sonuclar = await Future.wait([
-        Api.get('/tmdb/${widget.tur}/${widget.tmdbId}'),
+        Api.get(_icerikYolu),
         Api.get('/incelemeler/${widget.tur}/${widget.tmdbId}'),
         if (Api.girisli) Api.get('/benim/${widget.tur}/${widget.tmdbId}'),
       ]);
       if (!mounted) return;
       setState(() {
         _icerik = sonuclar[0] as Map<String, dynamic>;
+        _kapaklar = kapaklariCikar(_icerik!);
         _incelemeler = sonuclar[1] as Map<String, dynamic>;
         _benim = sonuclar.length > 2
             ? sonuclar[2] as Map<String, dynamic>
@@ -75,6 +133,26 @@ class _DetayEkraniState extends State<DetayEkrani> {
       setState(() => _hata = e.toString());
     }
   }
+
+  /// Kapakların tam adresleri. w780 idi: 3x yoğunluklu telefonda bu alan ~1290
+  /// fiziksel piksel, görsel büyütülüp gözle görülür bulanıklaşıyordu; tam
+  /// ekranda daha da belliydi. w1280 tam oturuyor ("original" birkaç MB
+  /// olabildiği için tercih edilmedi). Şeritte ve tam ekranda AYNI adres
+  /// kullanılır: ikincisi zaten önbellekten gelir, yeniden indirilmez.
+  List<String> get kapakUrlleri => [
+    for (final y in _kapaklar) posterUrl(y, boyut: 'w1280')!,
+  ];
+
+  /// Görselin altını sayfanın zeminine bağlayan karartma.
+  Widget get _karartma => Container(
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [Colors.transparent, DiziRenkler.siyah],
+      ),
+    ),
+  );
 
   Future<void> _benimYenile() async {
     if (!Api.girisli) return; // uç 401 döner; oturumsuzda kişisel veri yok
@@ -424,21 +502,44 @@ class _DetayEkraniState extends State<DetayEkrani> {
             // ister); bu buton olmasa sayfada çıkışsız kalırdı.
             actions: const [GirisEylemi()],
             flexibleSpace: FlexibleSpaceBar(
-              background: arka == null
-                  ? Container(color: DiziRenkler.kart)
+              // Kaydırma yana; şerit yukarı kayarken ölçeklenseydi kaydırıcının
+              // noktaları da kayar, parmağın altındaki kare oynardı.
+              collapseMode: CollapseMode.none,
+              // Birden çok kapak varsa yana kaydırmalı görünüm (nokta + sayaç);
+              // tek kapakta ESKİ sabit görsel, hiç kapak yoksa boş zemin —
+              // hiçbirinde boş kutu ya da hata metni çıkmaz.
+              background: _kapaklar.length > 1
+                  ? AkisMedya(
+                      urller: kapakUrlleri,
+                      tumunuKapla: true,
+                      // Rozet üst çubuğun altına insin (üstteki düğmelerle
+                      // çakışmasın); çentik/durum çubuğu da hesaba katılır.
+                      sayacUstBosluk:
+                          MediaQuery.paddingOf(context).top + kToolbarHeight,
+                      // Karartma göstergelerin ALTINA çizilir; en üste konsaydı
+                      // opak alt ucu noktaları yutardı.
+                      gorselUstu: _karartma,
+                      // DOKUNULAN kapak açılır: sabit 0 verilseydi kaydırıp
+                      // üçüncü kapağa dokunan kullanıcı birinciyi görürdü.
+                      onAc: (i) =>
+                          medyaGoster(context, kapakUrlleri, baslangic: i),
+                    )
                   : Stack(
                       fit: StackFit.expand,
                       children: [
-                        CachedNetworkImage(imageUrl: arka, fit: BoxFit.cover),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.transparent, DiziRenkler.siyah],
+                        if (arka != null)
+                          GestureDetector(
+                            onTap: () => medyaGoster(context, [arka]),
+                            child: CachedNetworkImage(
+                              imageUrl: arka,
+                              fit: BoxFit.cover,
                             ),
-                          ),
-                        ),
+                          )
+                        else
+                          Container(color: DiziRenkler.kart),
+                        // Karartma yalnız SÜStür; dokunuşu yutup görseli
+                        // açılmaz yapmasın diye tıklamaya kapalı.
+                        IgnorePointer(child: _karartma),
                       ],
                     ),
             ),
