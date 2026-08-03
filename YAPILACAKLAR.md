@@ -1,6 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Gönderi dil verisi onarımı (boş ve yanlış `kaynak_dil`)
+**Kullanıcı isteği:** "11 gönderi hiç çevrilmiyor, çeviri düğmesi çıkmıyor;
+bazı Türkçe gönderiler `en` sanılıp Türkçeden Türkçeye anlamsız çevriliyor
+(kaç verirsiniz → kaçarsınız)."
+- 🚀 **Kök neden:** çeviri ucu `sl=kaynak_dil` ile çağrılıyor. Etiket yanlışsa
+  çıktı da yanlış oluyordu: `en` sanılan Türkçe metin "kaç verirsiniz" →
+  "kaçarsınız", `nl` sanılanlarda "en eski taktik" → "ve eski taktikler"
+  (Hollandaca "en" = "ve"), `es` sanılanlarda "Güzel para" → "Güzel için".
+  Etiket boş olanlar ise hiç çevrilmiyordu (uçlar boş dilde çeviri göstermez).
+- 🚀 **`backend/araclar/dil_duzelt.js`** (yeni, kalıcı): üç sinyali birleştirir
+  — `server.js`'teki `dilTespit` (POST `/admin/dil-tespit` ucu üzerinden),
+  Google'ın anahtarsız tespit ucu, Türkçeye özgü harf/kelime/ek deseni. Etiket
+  ancak İKİ sinyal aynı dili söylerse değişir; şüpheliler ayrı listelenir ve
+  yalnız `--onay=id:dil` ile uygulanır. `yorumlar.metin`e yazmaz.
+- ✅ **19 kayıt düzeltildi:** boş → tr 4 (Harika film, izlenir, allah kahretsin,
+  Test Yorum); en → tr 1 (#1733); es → tr 5; nl → tr 6; pt/zh → en 3.
+  Dil taşımayan 12 kayda (yalnız emoji, yalnız bağlantı, "test", "Stan Lee",
+  "Hector Salamanca", e-posta) DOKUNULMADI — zorlanmış etiket yanlış çeviri
+  üretir, boş dil doğru davranıştır.
+- ✅ Kaynak dili yanlışken üretilmiş **15 önbellek satırı silindi**, doğruları
+  `ceviri_doldur.js` ile yeniden üretildi (27 çeviri). Eksik çeviri:
+  yabancı→tr 2 → 0, tr→en 5 → 0.
+- ✅ Uçtan uca: `#1733` İngilizce okuyucuda "How much would you give it out of
+  10/1?" (eskiden Türk okuyucuya "kaçarsınız" gösteriliyordu), Türkçe okuyucuda
+  orijinal metin + çeviri düğmesi yok. `/api/saglik` 200, site 200. Yedekler:
+  `/opt/dizijpg/yedekler/metin_cevirileri-2026-08-03-145601.sql.gz` (896 KB) +
+  `yorumlar-kaynak_dil-2026-08-03-145601.csv` (37 KB).
+
 ## 2026-08-03 — Dizi/film detay sayfası: KAPAK GALERİSİ
 **Kullanıcı isteği:** "filmler ve dizilerin profiline gittiğimde 1 tane resim
 var. aynı olmayacak şekilde kapak resimleri minimum 3 maksimum 10 adet olacak
