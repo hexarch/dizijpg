@@ -473,7 +473,7 @@ const Map<String, String> cevirilerHu = {
   'Beğenenler': 'Kedvelesek',
   'Henüz beğeni yok': 'Meg nincs kedveles',
   'Bu gönderiyi ilk beğenen sen ol': 'Legyel az elso, akinek tetszik',
-  'Yanıt verdiğin gönderi': 'Bejegyzés, amelyre válaszoltál',
+  'Bu gönderiye yanıt': 'Valasz erre a bejegyzesre',
   'Spoiler içeren gönderi': 'Spoileres bejegyzés',
   'Görsel gönderi': 'Fotós bejegyzés',
   'Bu yorumu profilimde gizle': 'Hozzászólás elrejtése a profilomon',

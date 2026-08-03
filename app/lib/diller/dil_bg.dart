@@ -473,7 +473,7 @@ const Map<String, String> cevirilerBg = {
   'Henüz beğeni yok': 'Все още няма харесвания',
   'Bu gönderiyi ilk beğenen sen ol':
       'Бъди първият, който харесва тази публикация',
-  'Yanıt verdiğin gönderi': 'Публикация, на която отговори',
+  'Bu gönderiye yanıt': 'Отговор на тази публикация',
   'Spoiler içeren gönderi': 'Публикация със спойлери',
   'Görsel gönderi': 'Публикация със снимка',
   'Bu yorumu profilimde gizle': 'Скрий този коментар от профила ми',

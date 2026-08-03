@@ -469,7 +469,7 @@ const Map<String, String> cevirilerSw = {
   'Beğenenler': 'Waliopenda',
   'Henüz beğeni yok': 'Bado hakuna anayependa',
   'Bu gönderiyi ilk beğenen sen ol': 'Kuwa wa kwanza kupenda chapisho hili',
-  'Yanıt verdiğin gönderi': 'Chapisho ulilojibu',
+  'Bu gönderiye yanıt': 'Jibu la chapisho hili',
   'Spoiler içeren gönderi': 'Chapisho lenye spoila',
   'Görsel gönderi': 'Chapisho la picha',
   'Bu yorumu profilimde gizle': 'Ficha maoni haya kwenye wasifu wangu',

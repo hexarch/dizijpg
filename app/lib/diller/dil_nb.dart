@@ -471,7 +471,7 @@ const Map<String, String> cevirilerNb = {
   'Beğenenler': 'Likerklikk',
   'Henüz beğeni yok': 'Ingen likerklikk enna',
   'Bu gönderiyi ilk beğenen sen ol': 'Bli den forste som liker dette innlegget',
-  'Yanıt verdiğin gönderi': 'Innlegg du svarte på',
+  'Bu gönderiye yanıt': 'Svar pa dette innlegget',
   'Spoiler içeren gönderi': 'Innlegg med spoilere',
   'Görsel gönderi': 'Bildeinnlegg',
   'Bu yorumu profilimde gizle': 'Skjul denne kommentaren på profilen min',

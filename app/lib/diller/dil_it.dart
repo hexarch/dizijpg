@@ -474,7 +474,7 @@ const Map<String, String> cevirilerIt = {
   'Beğenenler': 'Mi piace',
   'Henüz beğeni yok': 'Ancora nessun mi piace',
   'Bu gönderiyi ilk beğenen sen ol': 'Sii la prima persona a mettere mi piace',
-  'Yanıt verdiğin gönderi': 'Post a cui hai risposto',
+  'Bu gönderiye yanıt': 'Risposta a questo post',
   'Spoiler içeren gönderi': 'Post con spoiler',
   'Görsel gönderi': 'Post con foto',
   'Bu yorumu profilimde gizle': 'Nascondi questo commento sul mio profilo',

@@ -471,7 +471,7 @@ const Map<String, String> cevirilerKn = {
   'Beğenenler': 'ಇಷ್ಟಪಟ್ಟವರು',
   'Henüz beğeni yok': 'ಇನ್ನೂ ಯಾವುದೇ ಇಷ್ಟಗಳಿಲ್ಲ',
   'Bu gönderiyi ilk beğenen sen ol': 'ಈ ಪೋಸ್ಟ್ ಇಷ್ಟಪಡುವ ಮೊದಲಿಗರಾಗಿ',
-  'Yanıt verdiğin gönderi': 'ನೀವು ಪ್ರತ್ಯುತ್ತರಿಸಿದ ಪೋಸ್ಟ್',
+  'Bu gönderiye yanıt': 'ಈ ಪೋಸ್ಟ್‌ಗೆ ಪ್ರತಿಕ್ರಿಯೆ',
   'Spoiler içeren gönderi': 'ಸ್ಪಾಯಿಲರ್ ಒಳಗೊಂಡ ಪೋಸ್ಟ್',
   'Görsel gönderi': 'ಫೋಟೋ ಪೋಸ್ಟ್',
   'Bu yorumu profilimde gizle': 'ಈ ಕಾಮೆಂಟ್ ಅನ್ನು ನನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡಿ',

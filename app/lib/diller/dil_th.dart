@@ -464,7 +464,7 @@ const Map<String, String> cevirilerTh = {
   'Beğenenler': 'คนที่ถูกใจ',
   'Henüz beğeni yok': 'ยังไม่มีใครถูกใจ',
   'Bu gönderiyi ilk beğenen sen ol': 'เป็นคนแรกที่ถูกใจโพสต์นี้',
-  'Yanıt verdiğin gönderi': 'โพสต์ที่คุณตอบกลับ',
+  'Bu gönderiye yanıt': 'ตอบกลับโพสต์นี้',
   'Spoiler içeren gönderi': 'โพสต์ที่มีสปอยล์',
   'Görsel gönderi': 'โพสต์รูปภาพ',
   'Bu yorumu profilimde gizle': 'ซ่อนความคิดเห็นนี้บนโปรไฟล์ของฉัน',

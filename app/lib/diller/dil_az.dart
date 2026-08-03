@@ -469,7 +469,7 @@ const Map<String, String> cevirilerAz = {
   'Beğenenler': 'Beyenenler',
   'Henüz beğeni yok': 'Hele beyeni yoxdur',
   'Bu gönderiyi ilk beğenen sen ol': 'Bu paylasimi ilk beyenen sen ol',
-  'Yanıt verdiğin gönderi': 'Cavab verdiyin paylaşım',
+  'Bu gönderiye yanıt': 'Bu paylasima cavab',
   'Spoiler içeren gönderi': 'Spoyler olan paylaşım',
   'Görsel gönderi': 'Foto paylaşım',
   'Bu yorumu profilimde gizle': 'Bu şərhi profilimdə gizlət',

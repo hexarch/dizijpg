@@ -472,7 +472,7 @@ const Map<String, String> cevirilerFi = {
   'Beğenenler': 'Tykkaykset',
   'Henüz beğeni yok': 'Ei viela tykkayksia',
   'Bu gönderiyi ilk beğenen sen ol': 'Ole ensimmainen tykkaaja',
-  'Yanıt verdiğin gönderi': 'Viesti, johon vastasit',
+  'Bu gönderiye yanıt': 'Vastaus tahan julkaisuun',
   'Spoiler içeren gönderi': 'Viesti, jossa on spoilereita',
   'Görsel gönderi': 'Kuvaviesti',
   'Bu yorumu profilimde gizle': 'Piilota tämä kommentti profiilissani',

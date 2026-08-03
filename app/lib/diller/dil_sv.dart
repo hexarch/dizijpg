@@ -471,7 +471,7 @@ const Map<String, String> cevirilerSv = {
   'Beğenenler': 'Gillar',
   'Henüz beğeni yok': 'Inga gillamarkeringar an',
   'Bu gönderiyi ilk beğenen sen ol': 'Bli forst med att gilla det har inlagget',
-  'Yanıt verdiğin gönderi': 'Inlägg du svarade på',
+  'Bu gönderiye yanıt': 'Svar pa detta inlagg',
   'Spoiler içeren gönderi': 'Inlägg med spoilers',
   'Görsel gönderi': 'Bildinlägg',
   'Bu yorumu profilimde gizle': 'Dölj den här kommentaren på min profil',

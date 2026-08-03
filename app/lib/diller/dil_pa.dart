@@ -469,7 +469,7 @@ const Map<String, String> cevirilerPa = {
   'Beğenenler': 'ਪਸੰਦ ਕਰਨ ਵਾਲੇ',
   'Henüz beğeni yok': 'ਹਾਲੇ ਕੋਈ ਪਸੰਦ ਨਹੀਂ',
   'Bu gönderiyi ilk beğenen sen ol': 'ਇਸ ਪੋਸਟ ਨੂੰ ਪਸੰਦ ਕਰਨ ਵਾਲੇ ਪਹਿਲੇ ਬਣੋ',
-  'Yanıt verdiğin gönderi': 'ਉਹ ਪੋਸਟ ਜਿਸ ਦਾ ਤੂੰ ਜਵਾਬ ਦਿੱਤਾ',
+  'Bu gönderiye yanıt': 'ਇਸ ਪੋਸਟ ਦਾ ਜਵਾਬ',
   'Spoiler içeren gönderi': 'ਸਪੌਇਲਰ ਵਾਲੀ ਪੋਸਟ',
   'Görsel gönderi': 'ਫੋਟੋ ਪੋਸਟ',
   'Bu yorumu profilimde gizle': 'ਇਹ ਟਿੱਪਣੀ ਮੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੋਂ ਲੁਕਾਓ',

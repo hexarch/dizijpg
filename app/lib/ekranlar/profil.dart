@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
+import '../bayrak.dart';
 import '../ceviri.dart';
 import '../onbellek.dart';
 import '../tema.dart';
+import 'etiket.dart' show duzMetin;
 import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
 import 'akis.dart';
@@ -730,17 +732,21 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                               padding: const EdgeInsets.only(top: 3),
                               child: Row(
                                 children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    size: 14,
-                                    color: DiziRenkler.sariMetin,
+                                  UlkeBayragi(
+                                    ulke: _profil?['ulke'] as String?,
                                   ),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    _profil!['ulke'] as String,
-                                    style: TextStyle(
-                                      color: DiziRenkler.metin54,
-                                      fontSize: 12,
+                                  const SizedBox(width: 5),
+                                  // Uzun ülke adları ("Amerika Birleşik
+                                  // Devletleri") dar ekranda satırı taşırmasın.
+                                  Flexible(
+                                    child: Text(
+                                      _profil!['ulke'] as String,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: DiziRenkler.metin54,
+                                        fontSize: 12,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -1631,6 +1637,12 @@ class ProfilYorumAkisi extends StatelessWidget {
         ),
       );
     }
+    // EKRANDA ÇİZİLEN gönderiler: yanıt satırlarında tam kart ASIL gönderiyi
+    // çizer, üst seviye satırlarda satırın kendisini. Reels de BU listeyi alır
+    // — yoksa medyaya dokununca kartta görülenden başka bir gönderi açılırdı.
+    final gorunenler = [
+      for (final ham in yorumlar) kartGonderisi(ham as Map<String, dynamic>),
+    ];
     // Kartlar akıştakiyle BİREBİR aynı geometride durur: yatay dolgu YOK
     // (kart ekranın sağına-soluna dayanır, medya da tam yayılır), geniş
     // ekranda ise akış.dart ile aynı 720px üst sınır uygulanır.
@@ -1644,9 +1656,19 @@ class ProfilYorumAkisi extends StatelessWidget {
                 builder: (context) {
                   final y = yorumlar[i] as Map<String, dynamic>;
                   final ust = y['ust'] as Map<String, dynamic>?;
+                  final yanit = tamKartlikUst(ust);
+                  // Basılı tutma DAİMA SENİN yorumunu (y) hedefler — kart
+                  // yanıtta ASIL gönderiyi çizse bile. Bu satır yanlış
+                  // olursa menü başkasının gönderisini silmeye çalışır.
+                  final uzunBas = benimProfilim
+                      ? () => yorumEylemleriAc(context, y, onDegisti)
+                      : null;
                   final kart = AkisKarti(
+                    // Anahtar SATIRIN kimliğinden üretilir: iki ayrı yanıtın
+                    // üstü AYNI gönderi olabilir, üst kimliği kullanılsaydı
+                    // aynı Column'da çakışan anahtarlar oluşurdu.
                     key: ValueKey(y['id']),
-                    yorum: y,
+                    yorum: gorunenler[i],
                     icerikler: icerikler,
                     // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
                     // kareden başlar ve listede kaydırmaya devam edilir.
@@ -1654,26 +1676,39 @@ class ProfilYorumAkisi extends StatelessWidget {
                         Navigator.of(context, rootNavigator: true).push(
                           MaterialPageRoute(
                             builder: (_) => ReelsGorunumu(
-                              liste: yorumlar,
+                              liste: gorunenler,
                               icerikler: icerikler,
                               baslangic: i,
                               medyaBaslangic: mi,
                             ),
                           ),
                         ),
-                    onUzunBas: benimProfilim
-                        ? () => yorumEylemleriAc(context, y, onDegisti)
-                        : null,
+                    onUzunBas: uzunBas,
                   );
                   // Yanıt DEĞİLSE (dizi/filme yazılmış üst seviye gönderi)
                   // hiçbir şey eklenmez: bugünkü görünüm birebir korunur.
-                  if (ust == null) return kart;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      YanitBaglamBlogu(ust: ust),
-                      kart,
-                    ],
+                  if (!yanit) return kart;
+                  return RepaintBoundary(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Kart ASIL gönderiyi çiziyor → kartın boş bir yerine
+                        // dokunmak o gönderiyi açar. Kartın kendi bağlantıları
+                        // (avatar, kullanıcı adı, içerik adı, medya) ağaçta
+                        // DAHA DERİN olduğu için dokunma arenasını onlar
+                        // kazanır; bu sarmalayıcı yalnız artan alanı toplar.
+                        GestureDetector(
+                          behavior: HitTestBehavior.deferToChild,
+                          onTap: () => context.push('/gonderi/${ust!['id']}'),
+                          child: kart,
+                        ),
+                        YanitBlogu(yorum: y, onUzunBas: uzunBas),
+                        // Grup içi boşluk 8 (kartın alt kenar boşluğu), gruplar
+                        // arası 24 → yakınlık ilkesi blokla üstündeki kartın
+                        // TEK öge olduğunu söyler.
+                        const SizedBox(height: 16),
+                      ],
+                    ),
                   );
                 },
               ),
@@ -1684,33 +1719,61 @@ class ProfilYorumAkisi extends StatelessWidget {
   }
 }
 
-/// YANIT BAĞLAMI — profildeki yorum bir BAŞKA gönderiye yanıtsa, senin
-/// yorumunun ÜSTÜNDE duran küçük "alıntı" bloğu.
+/// `ust` alanı TAM KART çizmeye yetiyor mu?
 ///
-/// NEDEN TAM KART DEĞİL ALINTI:
-///  1. Tam kart medya galerisini de getirirdi — profilde her yanıt için ikinci
-///     bir video otomatik oynamaya başlar, liste iki katına çıkardı.
-///  2. Tam kartın kendi eylem satırı (beğeni/yanıt/paylaş) olurdu: aynı öğede
-///     İKİ kalp görünür, kullanıcı hangisini beğendiğini bilemezdi.
-///  3. Asıl soru "hangisi benim yorumum" — alıntı görsel olarak bastırılmış
-///     (küçük yazı, soluk zemin, sol sarı şerit) olunca cevap tek bakışta
-///     belli oluyor: altta duran tam kart senin.
-/// Dokununca asıl gönderiye (`/gonderi/:id`) gidilir; oradan tam kart, medya
-/// ve tüm yanıtlar zaten görülebilir.
-class YanitBaglamBlogu extends StatelessWidget {
-  final Map<String, dynamic> ust;
-  const YanitBaglamBlogu({super.key, required this.ust});
+/// Eski sunucu sürümü yalnız alıntı özeti döndürüyordu (kullanıcı adı + kısa
+/// metin + medya bayrağı); `tur` alanı o sürümde YOKTU. Web istemcisi sunucudan
+/// önce güncellenirse yanıt satırı sessizce eski görünüme (senin yorumun tam
+/// kart, bağlam bloğu yok) düşer — boş/`?` içerikli kart çizilmez.
+bool tamKartlikUst(Map<String, dynamic>? ust) =>
+    ust != null && ust['tur'] != null;
+
+/// Profil satırında EKRANDA tam kart olarak çizilecek gönderi: yanıtlarda
+/// yanıtlanan ASIL gönderi, üst seviye yorumlarda satırın kendisi.
+Map<String, dynamic> kartGonderisi(Map<String, dynamic> y) {
+  final ust = y['ust'] as Map<String, dynamic>?;
+  return tamKartlikUst(ust) ? ust! : y;
+}
+
+/// YANIT BLOĞU — profildeki satır bir başka gönderiye yanıtsa, ÜSTTEKİ tam
+/// kartın (yanıtlanan ASIL gönderi) altında duran sarı sol şeritli blok.
+/// İçinde profil sahibinin YANITI yazar.
+///
+/// Düzen 3 Ağu 2026'da kullanıcı isteğiyle TERSİNE çevrildi: eskiden üstte
+/// asıl gönderinin alıntısı, altında senin yorumun tam kart olarak duruyordu.
+///
+/// TAM KART TEK: yanıt burada alıntı biçiminde kalır, KENDİ EYLEM SATIRI
+/// (kalp/yorum/paylaş) YOKTUR. Böylece bir ögede tek kart, tek eylem satırı,
+/// tek kalp bulunur — kullanıcı hangisini beğendiğini bilir (kalp üstteki
+/// ASIL gönderinindir, akıştaki gibi). Aynı sebeple yanıtın medyası da burada
+/// galeri olarak açılmaz, yalnız küçük bir ikonla belirtilir: aksi hâlde her
+/// yanıt satırında İKİNCİ bir otomatik oynayan video olurdu.
+///
+/// Dokununca yanıtın kendi sayfasına (`/gonderi/:id`) gidilir; tam metin,
+/// medyası ve ona gelen yanıtlar orada görülür.
+class YanitBlogu extends StatelessWidget {
+  /// Profil sahibinin yorumu (yanıt satırının KENDİSİ, üstü değil).
+  final Map<String, dynamic> yorum;
+
+  /// Kendi profilinde basılı tutunca sil/gizle menüsü. Üstteki kartla AYNI
+  /// geri çağırma verilir ki grubun neresine basılırsa basılsın menü SENİN
+  /// yorumunu hedeflesin.
+  final VoidCallback? onUzunBas;
+
+  const YanitBlogu({super.key, required this.yorum, this.onUzunBas});
 
   @override
   Widget build(BuildContext context) {
+    final ust = yorum;
     final spoiler = ust['spoiler'] == true;
     final metin = (ust['metin'] as String?) ?? '';
-    final medyaVar = ust['medya_var'] == true;
+    final medyaVar = (ust['medya'] as List<dynamic>? ?? const []).isNotEmpty;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 0),
       child: InkWell(
         borderRadius: BorderRadius.circular(10),
         onTap: () => context.push('/gonderi/${ust['id']}'),
+        onLongPress: onUzunBas,
         child: Container(
           // Dokunma hedefi: blok zaten iki satır metin + başlık ile 44px'in
           // çok üstünde; yine de alt sınır konur (tek kelimelik gönderi).
@@ -1730,11 +1793,20 @@ class YanitBaglamBlogu extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(Icons.reply, size: 13, color: DiziRenkler.metin38),
+                  // Aşağı-sağa kıvrılan ok: blok üstteki gönderinin ALTINA
+                  // bağlıdır. Metin ikinci tekil şahıs DEĞİL — aynı widget
+                  // başkasının profilinde de çiziliyor, "yanıtın" orada
+                  // yanlış olurdu; kimin yanıtı olduğunu alttaki avatar ve
+                  // @kullanıcı adı zaten söylüyor.
+                  Icon(
+                    Icons.subdirectory_arrow_right,
+                    size: 13,
+                    color: DiziRenkler.metin38,
+                  ),
                   const SizedBox(width: 5),
                   Expanded(
                     child: Text(
-                      'Yanıt verdiğin gönderi'.c,
+                      'Bu gönderiye yanıt'.c,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -1773,13 +1845,16 @@ class YanitBaglamBlogu extends StatelessWidget {
                         const SizedBox(height: 2),
                         // Spoiler işaretli gönderinin metni alıntıda AÇILMAZ:
                         // akış kartındaki perdeyi burada delmek olurdu.
+                        // 6 satır: blok artık ASIL içeriği (yanıtın kendisi)
+                        // taşıyor, iki satır onu kırpardı; taşarsa dokununca
+                        // gönderi sayfasında tamamı okunur.
                         Text(
                           spoiler
                               ? 'Spoiler içeren gönderi'.c
                               : (metin.isEmpty && medyaVar
                                     ? 'Görsel gönderi'.c
                                     : metin),
-                          maxLines: 2,
+                          maxLines: 6,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontSize: 12.5,
@@ -1816,12 +1891,18 @@ class YanitBaglamBlogu extends StatelessWidget {
 ///
 /// Silme YIKICI ve geri alınamaz → ayrıca onay istenir.
 /// Gizleme geri alınabilir → onay yok, SnackBar + "Geri al".
+///
+/// [yorum] DAİMA kullanıcının kendi yorumudur. Yanıt satırlarında ekrandaki
+/// tam kart yanıtlanan ASIL gönderiyi çizdiği için hangi ögenin silineceği
+/// göz kararı belli olmaz — bu yüzden sheet'in tepesinde hedef yorumun metni
+/// tek satır önizlenir.
 Future<void> yorumEylemleriAc(
   BuildContext context,
   Map<String, dynamic> yorum,
   Future<void> Function()? onDegisti,
 ) async {
   final disBaglam = context;
+  final onizleme = duzMetin((yorum['metin'] as String?) ?? '').trim();
   final secim = await showModalBottomSheet<String>(
     context: context,
     backgroundColor: DiziRenkler.koyuGri,
@@ -1841,6 +1922,18 @@ Future<void> yorumEylemleriAc(
               borderRadius: BorderRadius.circular(2),
             ),
           ),
+          // Hedefin kanıtı: aşağıdaki iki eylem BU yorumu etkiler.
+          if (onizleme.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 2, 20, 10),
+              child: Text(
+                onizleme,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12.5),
+              ),
+            ),
           ListTile(
             leading: Icon(
               Icons.visibility_off_outlined,

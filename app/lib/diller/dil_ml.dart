@@ -471,7 +471,7 @@ const Map<String, String> cevirilerMl = {
   'Beğenenler': 'ഇഷ്ടപ്പെട്ടവർ',
   'Henüz beğeni yok': 'ഇതുവരെ ലൈക്കുകൾ ഇല്ല',
   'Bu gönderiyi ilk beğenen sen ol': 'ഈ പോസ്റ്റ് ആദ്യം ഇഷ്ടപ്പെടൂ',
-  'Yanıt verdiğin gönderi': 'നിങ്ങൾ മറുപടി നൽകിയ പോസ്റ്റ്',
+  'Bu gönderiye yanıt': 'ഈ പോസ്റ്റിനുള്ള മറുപടി',
   'Spoiler içeren gönderi': 'സ്പോയിലർ അടങ്ങിയ പോസ്റ്റ്',
   'Görsel gönderi': 'ഫോട്ടോ പോസ്റ്റ്',
   'Bu yorumu profilimde gizle': 'ഈ കമന്റ് എന്റെ പ്രൊഫൈലിൽ മറയ്ക്കുക',

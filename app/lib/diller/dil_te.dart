@@ -468,7 +468,7 @@ const Map<String, String> cevirilerTe = {
   'Beğenenler': 'ఇష్టపడినవారు',
   'Henüz beğeni yok': 'ఇంకా లైక్‌లు లేవు',
   'Bu gönderiyi ilk beğenen sen ol': 'ఈ పోస్ట్‌ను మొదట ఇష్టపడండి',
-  'Yanıt verdiğin gönderi': 'నువ్వు రిప్లై ఇచ్చిన పోస్ట్',
+  'Bu gönderiye yanıt': 'ఈ పోస్ట్‌కు ప్రత్యుత్తరం',
   'Spoiler içeren gönderi': 'స్పాయిలర్ ఉన్న పోస్ట్',
   'Görsel gönderi': 'ఫోటో పోస్ట్',
   'Bu yorumu profilimde gizle': 'ఈ కామెంట్‌ని నా ప్రొఫైల్ నుండి దాచు',

@@ -470,7 +470,7 @@ const Map<String, String> cevirilerVi = {
   'Beğenenler': 'Luot thich',
   'Henüz beğeni yok': 'Chua co luot thich nao',
   'Bu gönderiyi ilk beğenen sen ol': 'Hay la nguoi dau tien thich bai nay',
-  'Yanıt verdiğin gönderi': 'Bài viết bạn đã trả lời',
+  'Bu gönderiye yanıt': 'Tra loi bai dang nay',
   'Spoiler içeren gönderi': 'Bài viết có tiết lộ nội dung',
   'Görsel gönderi': 'Bài viết hình ảnh',
   'Bu yorumu profilimde gizle': 'Ẩn bình luận này trên hồ sơ của tôi',

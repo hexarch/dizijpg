@@ -471,7 +471,7 @@ const Map<String, String> cevirilerTa = {
   'Beğenenler': 'விரும்பியவர்கள்',
   'Henüz beğeni yok': 'இதுவரை விருப்பங்கள் இல்லை',
   'Bu gönderiyi ilk beğenen sen ol': 'இந்த இடுகையை முதலில் விரும்புங்கள்',
-  'Yanıt verdiğin gönderi': 'நீ பதிலளித்த பதிவு',
+  'Bu gönderiye yanıt': 'இந்தப் பதிவுக்கான பதில்',
   'Spoiler içeren gönderi': 'ஸ்பாய்லர் உள்ள பதிவு',
   'Görsel gönderi': 'புகைப்பட பதிவு',
   'Bu yorumu profilimde gizle': 'இந்தக் கருத்தை என் சுயவிவரத்தில் மறை',

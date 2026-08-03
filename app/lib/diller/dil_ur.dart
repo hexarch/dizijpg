@@ -469,7 +469,7 @@ const Map<String, String> cevirilerUr = {
   'Beğenenler': 'پسند کرنے والے',
   'Henüz beğeni yok': 'ابھی کوئی پسند نہیں',
   'Bu gönderiyi ilk beğenen sen ol': 'اس پوسٹ کو پسند کرنے والے پہلے بنیں',
-  'Yanıt verdiğin gönderi': 'وہ پوسٹ جس کا تم نے جواب دیا',
+  'Bu gönderiye yanıt': 'اس پوسٹ کا جواب',
   'Spoiler içeren gönderi': 'اسپائلر والی پوسٹ',
   'Görsel gönderi': 'تصویری پوسٹ',
   'Bu yorumu profilimde gizle': 'یہ تبصرہ میری پروفائل سے چھپائیں',

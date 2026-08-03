@@ -469,7 +469,7 @@ const Map<String, String> cevirilerFa = {
   'Beğenenler': 'پسندیدند',
   'Henüz beğeni yok': 'هنوز پسندی نیست',
   'Bu gönderiyi ilk beğenen sen ol': 'اولین نفری باشید که این پست را می پسندد',
-  'Yanıt verdiğin gönderi': 'پستی که به آن پاسخ دادی',
+  'Bu gönderiye yanıt': 'پاسخ به این پست',
   'Spoiler içeren gönderi': 'پست دارای اسپویل',
   'Görsel gönderi': 'پست تصویری',
   'Bu yorumu profilimde gizle': 'پنهان کردن این نظر از پروفایلم',

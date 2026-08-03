@@ -473,7 +473,7 @@ const Map<String, String> cevirilerFil = {
   'Beğenenler': 'Mga naka-like',
   'Henüz beğeni yok': 'Wala pang like',
   'Bu gönderiyi ilk beğenen sen ol': 'Maging unang mag-like ng post na ito',
-  'Yanıt verdiğin gönderi': 'Post na sinagot mo',
+  'Bu gönderiye yanıt': 'Tugon sa post na ito',
   'Spoiler içeren gönderi': 'Post na may spoiler',
   'Görsel gönderi': 'Post na may larawan',
   'Bu yorumu profilimde gizle': 'Itago ang komentong ito sa profile ko',

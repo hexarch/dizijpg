@@ -458,7 +458,7 @@ const Map<String, String> cevirilerJa = {
   'Beğenenler': 'いいねした人',
   'Henüz beğeni yok': 'まだいいねがありません',
   'Bu gönderiyi ilk beğenen sen ol': 'この投稿に最初のいいねを',
-  'Yanıt verdiğin gönderi': '返信した投稿',
+  'Bu gönderiye yanıt': 'この投稿への返信',
   'Spoiler içeren gönderi': 'ネタバレを含む投稿',
   'Görsel gönderi': '画像付き投稿',
   'Bu yorumu profilimde gizle': 'このコメントをプロフィールで非表示にする',

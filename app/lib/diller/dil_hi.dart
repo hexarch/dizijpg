@@ -471,7 +471,7 @@ const Map<String, String> cevirilerHi = {
   'Beğenenler': 'पसंद करने वाले',
   'Henüz beğeni yok': 'अभी तक कोई पसंद नहीं',
   'Bu gönderiyi ilk beğenen sen ol': 'इस पोस्ट को पसंद करने वाले पहले बनें',
-  'Yanıt verdiğin gönderi': 'जिस पोस्ट पर तुमने जवाब दिया',
+  'Bu gönderiye yanıt': 'इस पोस्ट का जवाब',
   'Spoiler içeren gönderi': 'स्पॉइलर वाली पोस्ट',
   'Görsel gönderi': 'फोटो पोस्ट',
   'Bu yorumu profilimde gizle': 'यह कमेंट मेरी प्रोफ़ाइल से छिपाएं',

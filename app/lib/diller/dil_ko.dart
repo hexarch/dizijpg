@@ -458,7 +458,7 @@ const Map<String, String> cevirilerKo = {
   'Beğenenler': '좋아요한 사람',
   'Henüz beğeni yok': '아직 좋아요가 없어요',
   'Bu gönderiyi ilk beğenen sen ol': '이 게시물에 첫 좋아요를 눌러보세요',
-  'Yanıt verdiğin gönderi': '답장한 게시물',
+  'Bu gönderiye yanıt': '이 게시물에 대한 답글',
   'Spoiler içeren gönderi': '스포일러가 포함된 게시물',
   'Görsel gönderi': '사진 게시물',
   'Bu yorumu profilimde gizle': '이 댓글을 내 프로필에서 숨기기',

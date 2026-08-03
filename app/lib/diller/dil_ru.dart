@@ -472,7 +472,7 @@ const Map<String, String> cevirilerRu = {
   'Beğenenler': 'Оценили',
   'Henüz beğeni yok': 'Пока нет отметок',
   'Bu gönderiyi ilk beğenen sen ol': 'Оцените первым',
-  'Yanıt verdiğin gönderi': 'Пост с твоим ответом',
+  'Bu gönderiye yanıt': 'Ответ на эту публикацию',
   'Spoiler içeren gönderi': 'Пост со спойлерами',
   'Görsel gönderi': 'Пост с фото',
   'Bu yorumu profilimde gizle': 'Скрыть этот комментарий в моём профиле',

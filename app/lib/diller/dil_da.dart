@@ -467,7 +467,7 @@ const Map<String, String> cevirilerDa = {
   'Beğenenler': 'Synes godt om',
   'Henüz beğeni yok': 'Ingen synes godt om endnu',
   'Bu gönderiyi ilk beğenen sen ol': 'Vaer den forste, der synes godt om',
-  'Yanıt verdiğin gönderi': 'Opslag du svarede på',
+  'Bu gönderiye yanıt': 'Svar pa dette opslag',
   'Spoiler içeren gönderi': 'Opslag med spoilere',
   'Görsel gönderi': 'Billedopslag',
   'Bu yorumu profilimde gizle': 'Skjul denne kommentar på min profil',

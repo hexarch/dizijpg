@@ -477,7 +477,7 @@ const Map<String, String> cevirilerFr = {
   'Henüz beğeni yok': 'Pas encore de mentions Jaime',
   'Bu gönderiyi ilk beğenen sen ol':
       'Sois la premiere personne a aimer ce post',
-  'Yanıt verdiğin gönderi': 'Publication à laquelle tu as répondu',
+  'Bu gönderiye yanıt': 'Reponse a cette publication',
   'Spoiler içeren gönderi': 'Publication avec spoilers',
   'Görsel gönderi': 'Publication avec photo',
   'Bu yorumu profilimde gizle': 'Masquer ce commentaire sur mon profil',

@@ -467,7 +467,7 @@ const Map<String, String> cevirilerGu = {
   'Beğenenler': 'પસંદ કરનારા',
   'Henüz beğeni yok': 'હજી કોઈ પસંદ નથી',
   'Bu gönderiyi ilk beğenen sen ol': 'આ પોસ્ટને પસંદ કરનારા પ્રથમ બનો',
-  'Yanıt verdiğin gönderi': 'જે પોસ્ટનો તેં જવાબ આપ્યો',
+  'Bu gönderiye yanıt': 'આ પોસ્ટનો જવાબ',
   'Spoiler içeren gönderi': 'સ્પોઇલરવાળી પોસ્ટ',
   'Görsel gönderi': 'ફોટો પોસ્ટ',
   'Bu yorumu profilimde gizle': 'આ કમેન્ટ મારી પ્રોફાઇલ પરથી છુપાવો',

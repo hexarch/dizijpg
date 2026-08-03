@@ -474,7 +474,7 @@ const Map<String, String> cevirilerRo = {
   'Beğenenler': 'Aprecieri',
   'Henüz beğeni yok': 'Inca nicio apreciere',
   'Bu gönderiyi ilk beğenen sen ol': 'Fii primul care apreciaza',
-  'Yanıt verdiğin gönderi': 'Postarea la care ai răspuns',
+  'Bu gönderiye yanıt': 'Raspuns la aceasta postare',
   'Spoiler içeren gönderi': 'Postare cu spoilere',
   'Görsel gönderi': 'Postare foto',
   'Bu yorumu profilimde gizle': 'Ascunde acest comentariu din profilul meu',

@@ -465,7 +465,7 @@ const Map<String, String> cevirilerAr = {
   'Beğenenler': 'الإعجابات',
   'Henüz beğeni yok': 'لا توجد إعجابات بعد',
   'Bu gönderiyi ilk beğenen sen ol': 'كن أول من يعجب بهذا المنشور',
-  'Yanıt verdiğin gönderi': 'المنشور الذي رددت عليه',
+  'Bu gönderiye yanıt': 'رد على هذا المنشور',
   'Spoiler içeren gönderi': 'منشور يحتوي على حرق أحداث',
   'Görsel gönderi': 'منشور بصورة',
   'Bu yorumu profilimde gizle': 'إخفاء هذا التعليق من ملفي الشخصي',

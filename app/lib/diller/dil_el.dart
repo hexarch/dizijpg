@@ -473,7 +473,7 @@ const Map<String, String> cevirilerEl = {
   'Beğenenler': 'Μου αρεσει',
   'Henüz beğeni yok': 'Δεν υπαρχουν ακομη',
   'Bu gönderiyi ilk beğenen sen ol': 'Γινε ο πρωτος που θα το αγαπησει',
-  'Yanıt verdiğin gönderi': 'Ανάρτηση στην οποία απάντησες',
+  'Bu gönderiye yanıt': 'Απάντηση σε αυτήν την ανάρτηση',
   'Spoiler içeren gönderi': 'Ανάρτηση με σπόιλερ',
   'Görsel gönderi': 'Ανάρτηση με φωτογραφία',
   'Bu yorumu profilimde gizle': 'Απόκρυψη αυτού του σχολίου από το προφίλ μου',

@@ -477,7 +477,7 @@ const Map<String, String> cevirilerMy = {
   'Beğenenler': 'နှစ်သက်သူများ',
   'Henüz beğeni yok': 'နှစ်သက်မှု မရှိသေးပါ',
   'Bu gönderiyi ilk beğenen sen ol': 'ဤပို့စ်ကို ပထမဆုံး နှစ်သက်သူ ဖြစ်ပါ',
-  'Yanıt verdiğin gönderi': 'သင်ပြန်စာပြန်ခဲ့သော ပို့စ်',
+  'Bu gönderiye yanıt': 'ဤပို့စ်အတွက် စာပြန်ချက်',
   'Spoiler içeren gönderi': 'စပွိုင်လာပါဝင်သော ပို့စ်',
   'Görsel gönderi': 'ဓာတ်ပုံပို့စ်',
   'Bu yorumu profilimde gizle':

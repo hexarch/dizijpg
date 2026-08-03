@@ -471,7 +471,7 @@ const Map<String, String> cevirilerUk = {
   'Beğenenler': 'Уподобали',
   'Henüz beğeni yok': 'Ще немає вподобань',
   'Bu gönderiyi ilk beğenen sen ol': 'Оцініть цей допис першим',
-  'Yanıt verdiğin gönderi': 'Допис з твоєю відповіддю',
+  'Bu gönderiye yanıt': 'Відповідь на цей допис',
   'Spoiler içeren gönderi': 'Допис зі спойлерами',
   'Görsel gönderi': 'Допис із фото',
   'Bu yorumu profilimde gizle': 'Приховати цей коментар у моєму профілі',

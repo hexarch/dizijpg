@@ -460,7 +460,7 @@ const Map<String, String> cevirilerAm = {
   'Beğenenler': 'የወደዱት',
   'Henüz beğeni yok': 'እስካሁን ምንም ውዴታ የለም',
   'Bu gönderiyi ilk beğenen sen ol': 'ይህን ልጥፍ በመጀመሪያ የወደደ ይሁኑ',
-  'Yanıt verdiğin gönderi': 'የመለስክለት ልጥፍ',
+  'Bu gönderiye yanıt': 'ለዚህ ልጥፍ ምላሽ',
   'Spoiler içeren gönderi': 'ስፖይለር ያለበት ልጥፍ',
   'Görsel gönderi': 'የፎቶ ልጥፍ',
   'Bu yorumu profilimde gizle': 'ይህን አስተያየት በመገለጫዬ ላይ ደብቅ',

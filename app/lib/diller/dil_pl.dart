@@ -473,7 +473,7 @@ const Map<String, String> cevirilerPl = {
   'Beğenenler': 'Polubienia',
   'Henüz beğeni yok': 'Brak polubien',
   'Bu gönderiyi ilk beğenen sen ol': 'Polub ten post jako pierwsza osoba',
-  'Yanıt verdiğin gönderi': 'Post, na który odpowiedziałeś',
+  'Bu gönderiye yanıt': 'Odpowiedz na ten post',
   'Spoiler içeren gönderi': 'Post ze spoilerami',
   'Görsel gönderi': 'Post ze zdjęciem',
   'Bu yorumu profilimde gizle': 'Ukryj ten komentarz na moim profilu',

@@ -471,7 +471,7 @@ const Map<String, String> cevirilerSr = {
   'Beğenenler': 'Свиђања',
   'Henüz beğeni yok': 'Још нема свиђања',
   'Bu gönderiyi ilk beğenen sen ol': 'Буди први коме се ово свиђа',
-  'Yanıt verdiğin gönderi': 'Objava na koju si odgovorio',
+  'Bu gönderiye yanıt': 'Одговор на ову објаву',
   'Spoiler içeren gönderi': 'Objava sa spojlerima',
   'Görsel gönderi': 'Objava sa slikom',
   'Bu yorumu profilimde gizle': 'Sakrij ovaj komentar na mom profilu',

@@ -472,7 +472,7 @@ const Map<String, String> cevirilerNl = {
   'Beğenenler': 'Vind-ik-leuks',
   'Henüz beğeni yok': 'Nog geen vind-ik-leuks',
   'Bu gönderiyi ilk beğenen sen ol': 'Wees de eerste die dit leuk vindt',
-  'Yanıt verdiğin gönderi': 'Bericht waarop je hebt gereageerd',
+  'Bu gönderiye yanıt': 'Reactie op dit bericht',
   'Spoiler içeren gönderi': 'Bericht met spoilers',
   'Görsel gönderi': 'Fotobericht',
   'Bu yorumu profilimde gizle': 'Deze reactie op mijn profiel verbergen',

@@ -452,7 +452,7 @@ const Map<String, String> cevirilerZh = {
   'Beğenenler': '点赞的人',
   'Henüz beğeni yok': '还没有人点赞',
   'Bu gönderiyi ilk beğenen sen ol': '成为第一个点赞的人',
-  'Yanıt verdiğin gönderi': '你回复的帖子',
+  'Bu gönderiye yanıt': '对这条帖子的回复',
   'Spoiler içeren gönderi': '含剧透的帖子',
   'Görsel gönderi': '图片帖子',
   'Bu yorumu profilimde gizle': '在我的主页隐藏这条评论',

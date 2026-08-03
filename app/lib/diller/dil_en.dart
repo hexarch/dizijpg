@@ -470,7 +470,7 @@ const Map<String, String> cevirilerEn = {
   'Beğenenler': 'Likes',
   'Henüz beğeni yok': 'No likes yet',
   'Bu gönderiyi ilk beğenen sen ol': 'Be the first to like this post',
-  'Yanıt verdiğin gönderi': 'Post you replied to',
+  'Bu gönderiye yanıt': 'Reply to this post',
   'Spoiler içeren gönderi': 'Post with spoilers',
   'Görsel gönderi': 'Photo post',
   'Bu yorumu profilimde gizle': 'Hide this comment on my profile',

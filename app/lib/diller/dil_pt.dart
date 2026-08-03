@@ -473,7 +473,7 @@ const Map<String, String> cevirilerPt = {
   'Beğenenler': 'Curtidas',
   'Henüz beğeni yok': 'Ainda sem curtidas',
   'Bu gönderiyi ilk beğenen sen ol': 'Seja a primeira pessoa a curtir',
-  'Yanıt verdiğin gönderi': 'Publicação que você respondeu',
+  'Bu gönderiye yanıt': 'Resposta a esta publicacao',
   'Spoiler içeren gönderi': 'Publicação com spoiler',
   'Görsel gönderi': 'Publicação com foto',
   'Bu yorumu profilimde gizle': 'Ocultar este comentário no meu perfil',

@@ -471,7 +471,7 @@ const Map<String, String> cevirilerId = {
   'Henüz beğeni yok': 'Belum ada yang menyukai',
   'Bu gönderiyi ilk beğenen sen ol':
       'Jadilah yang pertama menyukai kiriman ini',
-  'Yanıt verdiğin gönderi': 'Postingan yang kamu balas',
+  'Bu gönderiye yanıt': 'Balasan untuk kiriman ini',
   'Spoiler içeren gönderi': 'Postingan mengandung spoiler',
   'Görsel gönderi': 'Postingan foto',
   'Bu yorumu profilimde gizle': 'Sembunyikan komentar ini di profil saya',

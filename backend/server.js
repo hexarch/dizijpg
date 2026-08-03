@@ -4479,21 +4479,55 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
                   (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
                   EXISTS(SELECT 1 FROM yorum_begeniler b
                          WHERE b.yorum_id=y.id AND b.kullanici_id=$3) AS begendim,
-                  -- BAĞLAM: bu satır bir YANITSA yanıtlanan gönderinin özeti.
-                  -- Tam kart değil ALINTI çizilecek: yalnız yazar + kısa metin
-                  -- + medya/spoiler bayrağı yeter (metin 300 karaktere kırpılır,
-                  -- alıntı zaten 2 satır gösterir). ust_id NULL ise NULL döner
-                  -- ve istemci alıntı bloğunu HİÇ çizmez.
-                  (SELECT json_build_object(
-                            'id', u.id,
-                            'metin', LEFT(u.metin, 300),
-                            'kullanici_adi', uk.kullanici_adi,
-                            'avatar', uk.avatar,
-                            'spoiler', u.spoiler,
-                            'medya_var', COALESCE(cardinality(u.medya), 0) > 0)
-                     FROM yorumlar u JOIN kullanicilar uk ON uk.id = u.kullanici_id
-                    WHERE u.id = y.ust_id) AS ust
+                  -- BAĞLAM: bu satır bir YANITSA yanıtlanan ASIL gönderİ.
+                  -- 3 Ağu 2026'da düzen tersine çevrildi (kullanıcı isteği):
+                  -- profilde ÜSTTE asıl gönderi AKIŞTAKİ TAM KART olarak
+                  -- çizilir, altındaki sarı şeritli blokta kullanıcının yanıtı
+                  -- durur. O yüzden burada özet DEĞİL, kartın çizebilmesi için
+                  -- gereken TÜM alanlar döner (medya, sayaçlar, begendim,
+                  -- çeviri, tarih...). ust_id NULL ise NULL döner ve istemci
+                  -- bloğu HİÇ çizmez, satır bugünkü gibi tek kart kalır.
+                  --
+                  -- Ek olarak yasaklı/engelli yazarın gönderisi NULL'a düşer
+                  -- (LEFT JOIN eşleşmez): tam kart, 300 karakterlik özete göre
+                  -- çok daha fazlasını gösterdiği için /yorum/:id ile AYNI
+                  -- görünürlük kuralı uygulanır. NULL'a düşen satır sessizce
+                  -- eski görünüme (yalnız kendi yorumun) iner.
+                  -- uk üzerinden bakılır: yazar yasaklıysa uk eşleşmez, o
+                  -- zaman u dolu olsa bile kart "@null" çizilmemeli.
+                  CASE WHEN uk.id IS NULL THEN NULL ELSE json_build_object(
+                    'id', u.id,
+                    'kullanici_id', u.kullanici_id,
+                    'kullanici_adi', uk.kullanici_adi,
+                    'avatar', uk.avatar,
+                    'tur', u.tur,
+                    'tmdb_id', u.tmdb_id,
+                    'sezon', u.sezon,
+                    'bolum', u.bolum,
+                    'metin', u.metin,
+                    'medya', COALESCE(u.medya, '{}'),
+                    'spoiler', u.spoiler,
+                    'tarih', u.tarih,
+                    'kaynak_dil', u.kaynak_dil,
+                    'goruntulenme', u.goruntulenme,
+                    'ceviri_metin', (SELECT c.metin FROM metin_cevirileri c
+                                      WHERE c.ozet = md5(btrim(u.metin)) AND c.dil = $2),
+                    'begeni', (SELECT count(*)::int FROM yorum_begeniler b
+                                WHERE b.yorum_id=u.id),
+                    'yanit', (SELECT count(*)::int FROM yorumlar c
+                               WHERE c.ust_id=u.id),
+                    'begendim', EXISTS(SELECT 1 FROM yorum_begeniler b
+                                        WHERE b.yorum_id=u.id AND b.kullanici_id=$3)
+                  ) END AS ust
            FROM yorumlar y
+           -- Üst gönderi tek geçişte LEFT JOIN ile gelir: profil sayfası her
+           -- yanıt için AYRI sorgu atmaz, liste zaten LIMIT 20.
+           LEFT JOIN yorumlar u
+                  ON u.id = y.ust_id
+                 AND u.kullanici_id NOT IN (
+                       SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$3
+                       UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$3)
+           LEFT JOIN kullanicilar uk ON uk.id = u.kullanici_id AND NOT uk.yasakli
            WHERE y.kullanici_id=$1 ${yorumSuzgec} ${gizliFiltre('y')}
            ORDER BY y.tarih DESC LIMIT 20`,
           [id, istekBaglam.getStore()?.dil || 'tr', benId]),
@@ -4548,8 +4582,15 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       ortak_puan: puanUyum.rows[0].ortak_puan,
     };
   }
-  // Yorum kartları için içerik adı + poster (önbellekli TMDB)
-  const anahtarlar = [...new Set(yorumlar.rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
+  // Yorum kartları için içerik adı + poster (önbellekli TMDB).
+  // Yanıtlarda kart ASIL gönderiyi çizdiği için onun anahtarı da katılır:
+  // yanıt hedefin tur/tmdb_id'sini devraldığından (POST /yorumlar) bu pratikte
+  // aynı anahtardır ve Set onu tekilleştirir — ama eski/elle düzeltilmiş
+  // satırlar ayrışırsa kart "?" yazmasın diye açıkça eklenir.
+  const anahtarlar = [...new Set(yorumlar.rows.flatMap((y) => (
+    y.ust ? [`${y.tur}:${y.tmdb_id}`, `${y.ust.tur}:${y.ust.tmdb_id}`]
+          : [`${y.tur}:${y.tmdb_id}`]
+  )))];
   const icerikler = await icerikBilgileri(anahtarlar);
   res.json({
     ...k.rows[0],
@@ -4573,6 +4614,11 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       ...ceviriUygula(y),
       kullanici_adi: k.rows[0].kullanici_adi,
       avatar: k.rows[0].avatar,
+      // Asıl gönderi TAM KART çizileceği için çeviri onda da uygulanır
+      // (ceviri_metin -> metin + orijinal_metin/cevrildi/ceviri_var).
+      // Yayılma sırası önemli: üstteki ...ceviriUygula(y) ham `ust`u da
+      // taşır, bu satır onun üzerine yazar.
+      ust: y.ust ? ceviriUygula(y.ust) : null,
     })),
     icerikler,
     izlenenler: izlenenler.rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
