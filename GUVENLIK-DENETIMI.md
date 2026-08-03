@@ -751,6 +751,22 @@ edildi; her ikisinde de hiçbir dosya değişmedi.
 (logrotate `nginx` kuralı kapsıyor: günlük, 14 kopya). Bir şey yanlış giderse
 ilk bakılacak yer burasıdır.
 
+**TUZAK — `access_log` mirası (bu turda yaşandı ve düzeltildi):** nginx bir
+seviyeden `access_log` mirasını **yalnızca o seviyede hiç `access_log`
+tanımlanmamışsa** alır. Engellenen istek günlüğünü `server` bloğuna eklemek,
+`http` seviyesindeki `access_log /var/log/nginx/access.log;` satırını o vhost
+için **sessizce devre dışı bıraktı** — `dizijpg.com` trafiği 16 dakika boyunca
+ana erişim günlüğüne hiç yazılmadı. Site çalışmaya devam ettiği için dışarıdan
+belli olmuyordu; yalnız "sağlık cron'unun kayıtları neden durdu?" sorusu
+kovalanınca ortaya çıktı. Çözüm: her üç `dizijpg.com` bloğunda ana günlük
+satırı **açıkça tekrarlandı**. Bir vhost'a `access_log` eklerken bunu unutmayın.
+
+**Doğrulama yöntemi notu:** "Site 200 dönüyor" bu tür bir hatayı yakalamaz.
+Cloudflare arkasında origin'in gerçekten istek aldığını kanıtlamak için
+önbelleği delen benzersiz bir sorgu dizesi (`?nocache=<zaman>`) gönderip
+yanıttaki `cf-cache-status: DYNAMIC` başlığına ve **origin erişim günlüğünde o
+satırın belirdiğine** bakın.
+
 ### 7.2 §2.3 SSH sıkılaştırma — KAPATILDI
 
 - `/etc/ssh/sshd_config.d/10-dizijpg-guvenlik.conf` eklendi:
