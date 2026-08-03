@@ -190,12 +190,35 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 720),
         child: ListView(
-          // Klavye açıkken listeyi sürüklemek klavyeyi kapatsın; alt dolgu
-          // klavye yüksekliğini de sayar ki son satır altında kalmasın.
+          // Klavye açıkken listeyi sürüklemek klavyeyi kapatsın.
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.only(
-            bottom: 24 + MediaQuery.viewInsetsOf(context).bottom,
-          ),
+          // NEDEN altGuvenli, NEDEN sabit 24 değil: ListView'e AÇIK bir
+          // `padding` verildiği an Flutter'ın MediaQuery alt güvenli alanını
+          // kendiliğinden eklemesi devre dışı kalır (BoxScrollView yalnız
+          // padding == null iken ekler). Bu yüzden tam ekran aramada son sonuç
+          // satırı Android navi tuşlarının / iOS ana ekran çubuğunun ALTINDA
+          // kalıyordu.
+          //
+          // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ ÇÖZÜLÜR: aynı liste hem kabuk
+          // DIŞINDAKİ [TamEkranAramaSayfasi]nda hem kabuk İÇİNDEKİ
+          // [AramaCubugu]nda kullanılıyor; ayrımı MediaQuery zaten yapıyor.
+          //  * Kabuk içinde: [AramaCubugu] kabuğun Scaffold gövdesinin
+          //    İÇİNDEDİR; o Scaffold `bottomNavigationBar` taşıdığı için gövde
+          //    MediaQuery'sinde alt payı 0'a çeker (body slotuna
+          //    removeBottomPadding). altGuvenli 0 + 24 = 24 döner → FAZLADAN
+          //    boşluk YOK; sistem payını Scaffold zaten alt çubuğa vermiştir.
+          //  * Kabuk dışında: kök rota, üstünde alt payı yiyen kimse yok →
+          //    24 + sistem payı. Yani parametre/bayrak gereksiz.
+          //
+          // KLAVYE ÇİFT SAYILMAZ: viewInsets burada TOPLANMAZ. (1) Scaffold
+          // resizeToAvoidBottomInset ile gövdeyi zaten klavye kadar kısaltır,
+          // liste klavyenin üstünde biter. (2) Klavye açıkken sistem çubuğu
+          // klavyenin altında kaldığı için platform `padding.bottom`'ı 0 yapar
+          // (`viewPadding` korunur, bkz. FlutterView dokümanı) — yani altGuvenli
+          // o an sıfır ekler. Eski kod klavye payını AYRICA eklediği için,
+          // Scaffold'un kısalttığı listenin altında bir klavye boyu daha boşluk
+          // bırakıyordu.
+          padding: EdgeInsets.only(bottom: altGuvenli(context, ekstra: 24)),
           children: [
             if (_duzeltme != null)
               Padding(
