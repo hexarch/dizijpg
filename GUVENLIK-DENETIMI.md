@@ -96,7 +96,13 @@ tarandı; ham `<script`/`onerror=`/`onload=`/`<img`/`<svg` içeren istek sayıs�
 
 ---
 
-### 2.2 — [YÜKSEK] Cloudflare tamamen atlanabiliyor (origin IP açıkta)
+### 2.2 — [YÜKSEK] Cloudflare tamamen atlanabiliyor (origin IP açıkta) — [x] KAPATILDI (3 Ağu 2026)
+
+> **DURUM: KAPATILDI.** `dizijpg.com` ve `www.dizijpg.com`'un 80/443 trafiği
+> artık yalnız Cloudflare edge aralıklarından kabul ediliyor; dışarıdan doğrudan
+> origin'e gelen istek `444` (bağlantı kapatma) alıyor. Uygulama yeri: nginx,
+> `geo $realip_remote_addr $dizijpg_cf_disi` + `if (...) { return 444; }`.
+> Ayrıntı ve gerekçeler için §7'ye bakın.
 
 **Ne:** Origin sunucunun 80/443 portları herkese açık ve `Host` başlığıyla tüm
 siteyi servis ediyor. Origin IP'yi bulmak da önemsiz.
@@ -135,7 +141,11 @@ alınabilir bir değişikliktir.
 
 ---
 
-### 2.3 — [ORTA-YÜKSEK] SSH parola girişi açık + parolalı `admin` hesabı
+### 2.3 — [ORTA-YÜKSEK] SSH parola girişi açık + parolalı `admin` hesabı — [x] KAPATILDI (3 Ağu 2026)
+
+> **DURUM: KAPATILDI.** `PasswordAuthentication no` uygulandı, `admin` hesabının
+> kabuğu `/usr/sbin/nologin` yapıldı (parola hash'i mail için KORUNDU),
+> fail2ban `bantime` 1 saat → 24 saate çıkarıldı. Ayrıntı için §7'ye bakın.
 
 **Kanıt:**
 
@@ -226,11 +236,29 @@ firebase-admin -> uuid, gaxios, google-gax, teeny-request, retry-request,
                   @google-cloud/firestore, @google-cloud/storage
 ```
 
-Tamamı `firebase-admin` bağımlılık zincirinden geliyor (push bildirimleri için).
-Doğrudan istismar edilebilir bir uç değil, ama güncellenmeli.
+**DÜZELTME (3 Ağu 2026):** Yukarıdaki "tamamı `firebase-admin` zincirinden
+geliyor" tespiti **YANLIŞTI**. `npm audit --json` ile paket paket bakıldığında
+11 açık üç ayrı kaynaktan geliyor ve **tek YÜKSEK olan `firebase-admin` değil,
+`nodemailer`**:
 
-**Öneri:** `firebase-admin`'i güncel sürüme çek, `npm audit fix` sonrası push
-bildirimlerini test hesabıyla uçtan uca dene.
+| Kaynak | Açık | Şiddet | Kurulu | Önerilen | Not |
+|---|---|---|---|---|---|
+| `nodemailer` (doğrudan) | 1 | **YÜKSEK** | 6.10.1 | 9.0.3 | 3 ana sürüm atlar, KIRICI |
+| `firebase-admin` zinciri | 8 | orta | 12.7.0 | 14.2.0 | `uuid`, `gaxios`, `google-gax`, `teeny-request`, `retry-request`, `@google-cloud/firestore`, `@google-cloud/storage` |
+| `geoip-lite` → `ip-address` | 2 | orta | 1.4.10 | 1.2.2 | npm'in "düzeltmesi" aslında SÜRÜM DÜŞÜRME — uygulanmamalı |
+
+`nodemailer` açıklarının çoğu kullanılmayan özelliklerde: kodda tek bir
+`createTransport` var (`server.js:224`); `jsonTransport`, `raw:`, `envelope`
+ve `List-*` başlıkları **hiç kullanılmıyor**. Yani CRLF/komut enjeksiyonu
+maddelerinin pratik karşılığı yok. Kalan gerçek risk, adres ayrıştırıcısındaki
+"beklenmedik alan adına mail" ve özyinelemeli DoS maddeleridir.
+
+**Öneri (3 Ağu itibarıyla UYGULANMADI, karar ana oturuma bırakıldı):**
+Üç güncelleme de **ana sürüm atlayan kırıcı** değişiklik; ayrıca `nodemailer`
+tüm giden postayı (şifre sıfırlama, bildirim), `firebase-admin` push
+bildirimlerini besliyor. Güncelleme ayrı ve tek başına bir iş olarak, test
+hesabıyla uçtan uca doğrulanarak yapılmalı. `geoip-lite` için `npm audit fix`
+ÇALIŞTIRILMAMALI (sürümü düşürür).
 
 ---
 
@@ -628,12 +656,12 @@ Not: dizin izni `755` — sunucuda root dışı kabuk erişimi olan biri okuyabi
 |---|---|---|---|---|
 | 1 | `admin.html:760-762`'de `i.yol`, `i.method`, `title` alanlarını `esc()` ile sar (§2.1) | **ACİL** | 5 dk | Yok — saf ekleme |
 | 2 | `server.js:195`'te `req.path`'i sunucu tarafında da kırp/temizle (ikinci katman) | **ACİL** | 10 dk | Düşük — panelde yol gösterimi kısalır |
-| 3 | 80/443'ü Cloudflare IP aralıklarına kilitle, diğerine 444 dön (§2.2) | Yüksek | 30 dk | **Orta** — yanlış aralık listesi siteyi kapatır; önce `yedek-` kopyası al, `nginx -t` ile doğrula, yanında açık SSH oturumu tut |
-| 4 | `PasswordAuthentication no` **veya** `admin` hesabına `nologin` kabuk (§2.3) | Yüksek | 10 dk | Düşük — mevcut SSH oturumunu kapatma, yeni oturumla doğrula. Posta (IMAP/SMTP) etkilenmez |
+| ~~3~~ | ~~80/443'ü Cloudflare IP aralıklarına kilitle, diğerine 444 dön (§2.2)~~ | **[x] BİTTİ 3 Ağu** | — | — |
+| ~~4~~ | ~~`PasswordAuthentication no` **veya** `admin` hesabına `nologin` kabuk (§2.3)~~ | **[x] BİTTİ 3 Ağu** (ikisi de yapıldı) | — | — |
 | 5 | `esc()`'ye `'` → `&#39;` ekle (§2.4) | Düşük | 2 dk | Yok |
 | 6 | `Content-Security-Policy` başlığı ekle (§2.8) — XSS etkisini kökten sınırlar | Orta | 1-2 saat | Orta — Flutter web inline script kullanır, dikkatli ayarlanmalı, önce `Report-Only` ile dene |
-| 7 | `firebase-admin` güncelle, `npm audit fix` (§2.5) | Orta | 30 dk | Orta — push bildirimlerini test hesabıyla doğrula |
-| 8 | fail2ban `bantime`'ı 1 saat → 24 saat, `maxretry` 5 → 3 | Orta | 5 dk | Düşük — `ignoreip` kendi IP'lerimizi koruyor |
+| 7 | `nodemailer` (YÜKSEK) + `firebase-admin` güncelle (§2.5) — `geoip-lite`'a DOKUNMA | Orta | 1-2 saat | **Orta-Yüksek** — üçü de kırıcı ana sürüm; posta ve push'u uçtan uca test et |
+| ~~8~~ | ~~fail2ban `bantime`'ı 1 saat → 24 saat~~ | **[x] BİTTİ 3 Ağu** | — | `maxretry` BİLEREK 5'te bırakıldı (§7) |
 | 9 | Cloudflare SSL modunu "Full (strict)" yap + CF Origin Certificate kur (§2.8) | Düşük | 30 dk | Orta — yanlış sırayla yapılırsa 526 hatası |
 | 10 | Kullanılmayan SSH anahtarlarını sil (§2.9) | Düşük | 5 dk | Düşük — silmeden önce sahiplerini teyit et |
 | 11 | `unattended-upgrades` kur ve aç (§2.7) | Düşük | 10 dk | Düşük |
@@ -676,3 +704,144 @@ Not: dizin izni `755` — sunucuda root dışı kabuk erişimi olan biri okuyabi
 
 *Bu denetim sırasında sunucuda hiçbir değişiklik yapılmadı. Bulunan tek yüksek
 riskli açık (§2.1) istismar edilmemiş durumda ve düzeltmesi tek satırlık.*
+
+---
+
+## 7. Uygulanan düzeltmeler — 3 Ağustos 2026
+
+### 7.1 §2.2 Cloudflare atlatması — KAPATILDI
+
+**Ne yapıldı:** `dizijpg.com` ve `www.dizijpg.com` vhost'larının 80/443 trafiği
+yalnız Cloudflare edge aralıklarından (+ `127.0.0.1`, `::1`, sunucunun kendi
+IP'si `154.53.163.3`) kabul ediliyor. Dışarıdan doğrudan origin'e gelen istek
+`444` alıyor (yanıtsız bağlantı kapatma).
+
+**Neden nginx, güvenlik duvarı değil:** 80/443 portlarını `brnmedia.me` ve
+`monteqr.me` vhost'ları da paylaşıyor. `ufw`/`iptables` kuralı port bazlıdır ve
+o iki siteyi de keserdi. nginx'te vhost bazında kısıtlamak cerrahi oluyor;
+posta (25/587/993) ve PostgreSQL (5432) hiç etkilenmiyor. **Kanıt:** değişiklik
+sonrası `monteqr.me` origin'e doğrudan istekte hâlâ 200 dönüyor, `dizijpg.com`
+dönmüyor.
+
+**Neden `geo $realip_remote_addr`, `allow`/`deny` değil (ÖNEMLİ TUZAK):**
+`allow`/`deny` (access modülü) ACCESS fazında çalışır — yani realip modülü
+`CF-Connecting-IP`'yi uyguladıktan **sonraki** `$remote_addr`'a bakar. Oraya CF
+aralıklarını yazmak, gerçek ziyaretçilerin IP'siyle karşılaştırma yapar ve
+**herkesi engellerdi**. `$realip_remote_addr` ise değiştirilmeden önceki, yani
+gerçekten TCP bağlantısını kuran tarafın (CF edge) adresidir.
+
+**Kademeli uygulama:** Önce yalnız *günlükleme* açıldı (engelleme yok) ve 8
+dakika izlendi: 2.322 meşru istek CF üzerinden akarken engellenecek istek
+sayısı **yalnız 3**'tü ve üçü de doğrulama amaçlı kendi `curl`'lerimizdi.
+Dakikada bir çalışan sağlık cron'u (`/usr/local/bin/dizijpg-saglik.sh`)
+`https://dizijpg.com` adresine gittiği için CF üzerinden dönüyor ve
+**engellenmiyor** (log ile doğrulandı). Ancak yine de sunucunun kendi IP'si
+beyaz listeye alındı.
+
+**Aralık listesi tazeleme:** `set_real_ip_from` ve `geo` girdileri artık tek
+kaynaktan üretiliyor (`/etc/nginx/cloudflare/realip.conf` +
+`geo-izin.conf`) — böylece ikisi asla birbirinden kayamaz.
+`backend/araclar/cf_ip_tazele.sh` (sunucuda `/usr/local/bin/cf-ip-tazele.sh`,
+her gün 04:30 cron) listeyi tazeler. **Siteyi kapatamaz:** biçim + asgari sayı
+doğrulaması, değişiklik yoksa dokunmama, `nginx -t` başarısızsa otomatik geri
+yükleme ve her değişiklikte mail. Bozuk/kısa yanıt senaryoları canlıda test
+edildi; her ikisinde de hiçbir dosya değişmedi.
+
+**Engellenen istek günlüğü:** `/var/log/nginx/dizijpg-cf-disi.log`
+(logrotate `nginx` kuralı kapsıyor: günlük, 14 kopya). Bir şey yanlış giderse
+ilk bakılacak yer burasıdır.
+
+### 7.2 §2.3 SSH sıkılaştırma — KAPATILDI
+
+- `/etc/ssh/sshd_config.d/10-dizijpg-guvenlik.conf` eklendi:
+  `PasswordAuthentication no`, `KbdInteractiveAuthentication no`,
+  `PermitRootLogin prohibit-password`. (Ana `sshd_config`'in ilk satırı
+  `Include sshd_config.d/*.conf` olduğu ve sshd "ilk okunan değer kazanır"
+  mantığıyla çalıştığı için bu dosya ana dosyayı ezer.)
+- `admin` hesabının kabuğu `/usr/sbin/nologin` yapıldı.
+- fail2ban `bantime` 1 saat → **24 saat**.
+
+**Neden `nologin`, `passwd -l` değil (ÖNEMLİ TUZAK):** `admin`, `/home/admin/Maildir`
+sahibi bir **posta hesabı** (30 günde 6 teslimat). Dovecot `passdb { driver = pam }`
+kullanıyor, yani parolayı `/etc/shadow`'dan doğruluyor. `passwd -l` hash'in
+başına `!` koyar ve **IMAP/SMTP girişini sessizce kırardı**. `nologin` ise
+kabuğu kaldırır, hash'e dokunmaz; `pam_shells` Dovecot'un PAM yığınında **yok**
+(yalnız `/etc/pam.d/chsh`'de), dolayısıyla posta kimlik doğrulaması etkilenmez.
+**Kanıt:** değişiklik sonrası `admin@dizijpg.com`'a gönderilen test maili
+Maildir'e düştü (5 → 6 dosya), shadow hash'in md5'i aynı kaldı.
+
+`admin`'in bağımlılığı yok: `.ssh` dizini yok, `authorized_keys` yok, cron'u
+yok, adına çalışan süreç yok, 30 günde tek bir IMAP girişi ve tüm geçmişte tek
+bir SSH girişi yok. Hesap **silinmedi**.
+
+**Neden `maxretry` 5'te bırakıldı (3'e düşürülmedi):** sshd filtresinde
+`publickey = nofail` olduğu için tek tek "Failed publickey" sayılmıyor; ancak
+`Disconnecting: Too many authentication failures` koşulsuz sayılıyor. Ajanında
+çok anahtar bulunan meşru bir kullanıcı `ignoreip` dışı bir IP'den (örneğin
+mobil) bağlanırsa `MaxAuthTries=6` aşılır ve 3 denemede kendini kilitleyebilirdi.
+Gürültüyü asıl kesen `bantime`; 1h → 24h ile aynı saldırgan günde 24 kat daha
+az deneme yapabiliyor.
+
+### 7.3 §2.5 npm açıkları — UYGULANMADI (bilinçli)
+
+Durum ve önerilen sürümler §2.5'te güncellendi. Güncelleme **yapılmadı** çünkü:
+üç düzeltme de kırıcı ana sürüm atlıyor, `nodemailer` tüm giden postayı ve
+`firebase-admin` push bildirimlerini besliyor, ayrıca o sırada `backend/Dockerfile`
+ve `backend/server.js` başka bir çalışmanın altındaydı — konteyner yeniden
+derlemek yarım kalmış değişiklikleri canlıya taşırdı. Ayrı bir iş olarak
+yapılmalı.
+
+### 7.4 Yedekler ve geri alma
+
+Tüm yedekler `/root/guvenlik-yedek-20260803/` altında
+(`sites-enabled/` içine **hiçbir** yedek dosya bırakılmadı):
+
+| Dosya | İçerik |
+|---|---|
+| `dizijpg.com.nginx.orig` | nginx vhost'unun değişiklik öncesi hâli |
+| `sshd_config.orig` | ana sshd yapılandırması (bu dosya değiştirilmedi) |
+| `jail.local.orig` | fail2ban ayarları |
+| `crontab.orig` | root crontab |
+| `admin.passwd.orig`, `admin.shadow.orig` | `admin` hesabının önceki kaydı |
+
+**Geri alma (bir şey ters giderse):**
+
+```bash
+# 1) Cloudflare kilidini kaldır (site yine herkese açılır)
+cp -a /root/guvenlik-yedek-20260803/dizijpg.com.nginx.orig \
+      /etc/nginx/sites-available/dizijpg.com
+nginx -t && systemctl reload nginx
+
+# 2) SSH parola girişini geri aç
+rm -f /etc/ssh/sshd_config.d/10-dizijpg-guvenlik.conf
+sshd -t && systemctl reload ssh
+
+# 3) admin kabuğunu geri ver
+usermod -s /bin/bash admin
+
+# 4) fail2ban bantime'ı geri al
+cp -a /root/guvenlik-yedek-20260803/jail.local.orig /etc/fail2ban/jail.local
+fail2ban-client -t && systemctl reload fail2ban
+
+# 5) CF IP tazeleme cron'unu kaldır
+crontab -l | grep -v cf-ip-tazele | crontab -
+```
+
+Yalnız Cloudflare kilidini geçici olarak gevşetmek için (nginx'i tamamen geri
+almadan): `geo` bloğuna kendi IP'nizi `<IP>/32 0;` satırıyla ekleyip
+`nginx -t && systemctl reload nginx`.
+
+### 7.5 Bu turda çıkan yeni bulgular
+
+- **[ORTA] Posta kimlik doğrulamasında fail2ban jail'i YOK.** Yalnız `sshd`
+  jail'i etkin. Dovecot (993) ve Postfix SASL (587) internete açık ve **parola
+  tabanlı**; SSH parola girişi kapatıldığı için `admin` hesabının parolası artık
+  yalnız buradan denenebilir. `dovecot` ve `postfix-sasl` jail'leri eklenmeli.
+- **[BİLGİ] `brnmedia.me` Cloudflare üzerinden 523 veriyor.** Origin sağlıklı
+  (yerelde 200) ama nginx erişim günlüğünde bu alan adına ait **tek bir istek
+  bile yok** — yani CF uzun süredir bu origin'e ulaşmıyor ve `/var/www/brnmedia-next`
+  boş. Bizim değişikliğimizden önce de böyleydi; dizi.jpg ile ilgisi yok.
+- **[BİLGİ] `/etc/letsencrypt/renewal/` boş.** Bu makinede certbot ile yönetilen
+  sertifika yok; §2.8'deki "certbot timer aktif" notu yanıltıcı. Kullanıcının
+  gördüğü Let's Encrypt sertifikası Cloudflare'in edge sertifikasıdır. Origin
+  sertifikası hâlâ kendinden imzalı (§2.8, madde 9 geçerliliğini koruyor).
