@@ -465,4 +465,29 @@ const Map<String, String> cevirilerAr = {
   'Beğenenler': 'الإعجابات',
   'Henüz beğeni yok': 'لا توجد إعجابات بعد',
   'Bu gönderiyi ilk beğenen sen ol': 'كن أول من يعجب بهذا المنشور',
+  'Yanıt verdiğin gönderi': 'المنشور الذي رددت عليه',
+  'Spoiler içeren gönderi': 'منشور يحتوي على حرق أحداث',
+  'Görsel gönderi': 'منشور بصورة',
+  'Bu yorumu profilimde gizle': 'إخفاء هذا التعليق من ملفي الشخصي',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'يبقى التعليق في صفحة المسلسل أو الفيلم',
+  'Bu yorumu sil': 'حذف هذا التعليق',
+  'Yorum profilinde gizlendi': 'تم إخفاء التعليق من ملفك الشخصي',
+  'Geri al': 'تراجع',
+  'Yorum silinsin mi?': 'هل تريد حذف التعليق؟',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'سيُحذف هذا التعليق نهائيا من كل مكان. لا يمكن التراجع عن هذا الإجراء.',
+  'Yorum silindi': 'تم حذف التعليق',
+  'Yorum profilinde tekrar görünüyor': 'التعليق ظاهر مجددا في ملفك الشخصي',
+  'Gizlenen yorumun yok': 'لا توجد لديك تعليقات مخفية',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'التعليقات التي تخفيها بالضغط المطول على منشور في تبويب التعليقات في ملفك الشخصي تتجمع هنا.',
+  'Gizlenen yorumlar': 'التعليقات المخفية',
+  'Gönderiye git': 'الذهاب إلى المنشور',
+  'Tekrar göster': 'إظهار مجددا',
+  'Yanıtlarımı gizle': 'إخفاء ردودي',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'الردود التي تكتبها على منشورات الآخرين تظهر لك فقط',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'أظهر مجددا التعليقات التي أخفيتها من ملفك الشخصي',
 };

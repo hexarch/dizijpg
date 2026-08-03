@@ -306,11 +306,28 @@ class AkisKarti extends StatefulWidget {
   /// tazelenir (Reels'te beğenilen gönderi kartta da beğenili görünür).
   final Future<void> Function(int medyaIndeks)? onMedyaAc;
 
+  /// Karta BASILI TUTUNCA çalışır. Verilmezse uzun basma tanıyıcısı HİÇ
+  /// kurulmaz — kart akışta, keşfette, başkasının profilinde ve
+  /// `/gonderi/:id` ekranında bugünkü gibi davranır.
+  ///
+  /// NEDEN PARAMETRE: menüyü kartın içine gömmek onu AkisKarti'nın kullanıldığı
+  /// HER YERDE açardı (akış, Reels listesi, başkasının profili). Yetkiyi
+  /// çağırana bırakmak, "yalnız kendi profilimde" kuralını tek bir yerde
+  /// (ProfilYorumAkisi.benimProfilim) tutar.
+  ///
+  /// BEĞENİ DÜĞMESİYLE ÇAKIŞMAZ: beğeni düğmesindeki uzun basma (beğenenler
+  /// listesi) ağaçta DAHA DERİNDE bir InkWell'dedir. Flutter'ın jest arenasında
+  /// isabet testi içten dışa yürüdüğü için içteki tanıyıcı arenaya önce girer
+  /// ve süpürmede kazanır: beğeniye basılı tutmak beğenenleri, kartın
+  /// herhangi bir yerine basılı tutmak bu menüyü açar.
+  final VoidCallback? onUzunBas;
+
   const AkisKarti({
     super.key,
     required this.yorum,
     required this.icerikler,
     this.onMedyaAc,
+    this.onUzunBas,
   });
 
   @override
@@ -485,7 +502,7 @@ class _AkisKartiState extends State<AkisKarti> {
 
     // Kart ekran kenarlarına dayanır (yatay kenar boşluğu yok) ki medya
     // sağa-sola TAM otursun; köşe yuvarlaması da bu yüzden kapalı.
-    return Card(
+    final kart = Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: const RoundedRectangleBorder(),
       child: Column(
@@ -731,6 +748,16 @@ class _AkisKartiState extends State<AkisKarti> {
           ),
         ],
       ),
+    );
+    if (widget.onUzunBas == null) return kart;
+    // Yalnız uzun basma dinlenir: kartın tek dokunuşu (medyada Reels) ve çift
+    // dokunuşu (beğeni) MedyaGaleri'nin kendi tanıyıcılarında kalır, buraya
+    // hiç uğramaz. deferToChild: boş piksel değil, gerçekten karta basılması
+    // gerekir.
+    return GestureDetector(
+      behavior: HitTestBehavior.deferToChild,
+      onLongPress: widget.onUzunBas,
+      child: kart,
     );
   }
 }

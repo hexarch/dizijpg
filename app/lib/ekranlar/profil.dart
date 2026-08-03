@@ -410,6 +410,21 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     });
   }
 
+  /// Yalnız "Yorumlar" sekmesinin verisini tazeler. Bir yorum silindiğinde ya
+  /// da profilde gizlendiğinde tüm profili (kitaplık, rozetler, izlenenler)
+  /// yeniden çekmeye gerek yok; ayrıca bu Future GERÇEKTEN yeni listeyi
+  /// bekler — `_yukle`de bu çağrı bilerek beklenmeden başlatılır.
+  Future<void> _yorumlariTazele() async {
+    final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
+    if (kadi.isEmpty) return;
+    try {
+      final d = await Api.acikProfil(kadi);
+      if (mounted) setState(() => _yorumVeri = d);
+    } catch (_) {
+      /* liste eski hâliyle kalır; kullanıcı aşağı çekip yenileyebilir */
+    }
+  }
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
@@ -435,13 +450,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       // Yorumlar sekmesi: kendi yorumların + içerik adları (açık profil ucu).
       // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
       final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
-      if (kadi.isNotEmpty) {
-        Api.acikProfil(kadi)
-            .then((d) {
-              if (mounted) setState(() => _yorumVeri = d);
-            })
-            .catchError((_) {});
-      }
+      if (kadi.isNotEmpty) _yorumlariTazele();
       Onbellek.yaz('profil', {
         'istatistik': _istatistik,
         'kitaplik': _kitaplik,
@@ -913,6 +922,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                 icerikler:
                     (_yorumVeri?['icerikler'] as Map<String, dynamic>? ?? {}),
                 ipucu: 'Dizi ve filmlere yazdığın yorumlar burada toplanır.'.c,
+                // Kendi profilim: karta basılı tutunca sil/gizle menüsü açılır.
+                benimProfilim: true,
+                onDegisti: _yorumlariTazele,
               ),
               const SizedBox(height: 24),
             ] else
@@ -1589,11 +1601,22 @@ class ProfilYorumAkisi extends StatelessWidget {
   /// başkasının profilinde ikinci tekil şahıs yanlış olur → verilmez.
   final String? ipucu;
 
+  /// Bu liste OTURUM SAHİBİNİN profilinde mi çiziliyor? Yalnız true iken
+  /// karta basılı tutulunca "sil / profilimde gizle" menüsü açılır. Başkasının
+  /// profilinde (ve kartın kullanıldığı akış, Reels, /gonderi ekranlarında)
+  /// uzun basma tanıyıcısı HİÇ kurulmaz.
+  final bool benimProfilim;
+
+  /// Sil/gizle sonrası listeyi tazelemek için çağrılır (profil ekranı `_yukle`).
+  final Future<void> Function()? onDegisti;
+
   const ProfilYorumAkisi({
     super.key,
     required this.yorumlar,
     required this.icerikler,
     this.ipucu,
+    this.benimProfilim = false,
+    this.onDegisti,
   });
 
   @override
@@ -1617,27 +1640,304 @@ class ProfilYorumAkisi extends StatelessWidget {
         child: Column(
           children: [
             for (var i = 0; i < yorumlar.length; i++)
-              AkisKarti(
-                key: ValueKey((yorumlar[i] as Map<String, dynamic>)['id']),
-                yorum: yorumlar[i] as Map<String, dynamic>,
-                icerikler: icerikler,
-                // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
-                // kareden başlar ve listede kaydırmaya devam edilir.
-                onMedyaAc: (mi) =>
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (_) => ReelsGorunumu(
-                          liste: yorumlar,
-                          icerikler: icerikler,
-                          baslangic: i,
-                          medyaBaslangic: mi,
+              Builder(
+                builder: (context) {
+                  final y = yorumlar[i] as Map<String, dynamic>;
+                  final ust = y['ust'] as Map<String, dynamic>?;
+                  final kart = AkisKarti(
+                    key: ValueKey(y['id']),
+                    yorum: y,
+                    icerikler: icerikler,
+                    // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
+                    // kareden başlar ve listede kaydırmaya devam edilir.
+                    onMedyaAc: (mi) =>
+                        Navigator.of(context, rootNavigator: true).push(
+                          MaterialPageRoute(
+                            builder: (_) => ReelsGorunumu(
+                              liste: yorumlar,
+                              icerikler: icerikler,
+                              baslangic: i,
+                              medyaBaslangic: mi,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                    onUzunBas: benimProfilim
+                        ? () => yorumEylemleriAc(context, y, onDegisti)
+                        : null,
+                  );
+                  // Yanıt DEĞİLSE (dizi/filme yazılmış üst seviye gönderi)
+                  // hiçbir şey eklenmez: bugünkü görünüm birebir korunur.
+                  if (ust == null) return kart;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      YanitBaglamBlogu(ust: ust),
+                      kart,
+                    ],
+                  );
+                },
               ),
           ],
         ),
       ),
     );
+  }
+}
+
+/// YANIT BAĞLAMI — profildeki yorum bir BAŞKA gönderiye yanıtsa, senin
+/// yorumunun ÜSTÜNDE duran küçük "alıntı" bloğu.
+///
+/// NEDEN TAM KART DEĞİL ALINTI:
+///  1. Tam kart medya galerisini de getirirdi — profilde her yanıt için ikinci
+///     bir video otomatik oynamaya başlar, liste iki katına çıkardı.
+///  2. Tam kartın kendi eylem satırı (beğeni/yanıt/paylaş) olurdu: aynı öğede
+///     İKİ kalp görünür, kullanıcı hangisini beğendiğini bilemezdi.
+///  3. Asıl soru "hangisi benim yorumum" — alıntı görsel olarak bastırılmış
+///     (küçük yazı, soluk zemin, sol sarı şerit) olunca cevap tek bakışta
+///     belli oluyor: altta duran tam kart senin.
+/// Dokununca asıl gönderiye (`/gonderi/:id`) gidilir; oradan tam kart, medya
+/// ve tüm yanıtlar zaten görülebilir.
+class YanitBaglamBlogu extends StatelessWidget {
+  final Map<String, dynamic> ust;
+  const YanitBaglamBlogu({super.key, required this.ust});
+
+  @override
+  Widget build(BuildContext context) {
+    final spoiler = ust['spoiler'] == true;
+    final metin = (ust['metin'] as String?) ?? '';
+    final medyaVar = ust['medya_var'] == true;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: () => context.push('/gonderi/${ust['id']}'),
+        child: Container(
+          // Dokunma hedefi: blok zaten iki satır metin + başlık ile 44px'in
+          // çok üstünde; yine de alt sınır konur (tek kelimelik gönderi).
+          constraints: const BoxConstraints(minHeight: 44),
+          padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+          decoration: BoxDecoration(
+            color: DiziRenkler.koyuGri,
+            borderRadius: BorderRadius.circular(10),
+            // Sol şerit: klasik "alıntı" işareti — bu blok yorumun DEĞİL,
+            // yanıt verilen gönderinin.
+            border: Border(
+              left: BorderSide(color: DiziRenkler.sariMetin, width: 3),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.reply, size: 13, color: DiziRenkler.metin38),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      'Yanıt verdiğin gönderi'.c,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: DiziRenkler.metin38,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  KullaniciAvatari(
+                    url: dosyaUrl(ust['avatar'] as String?),
+                    kullaniciAdi: ust['kullanici_adi'] as String?,
+                    yaricap: 10,
+                  ),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '@${ust['kullanici_adi']}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight: FontWeight.w800,
+                            color: DiziRenkler.metin,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        // Spoiler işaretli gönderinin metni alıntıda AÇILMAZ:
+                        // akış kartındaki perdeyi burada delmek olurdu.
+                        Text(
+                          spoiler
+                              ? 'Spoiler içeren gönderi'.c
+                              : (metin.isEmpty && medyaVar
+                                    ? 'Görsel gönderi'.c
+                                    : metin),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            height: 1.35,
+                            fontStyle: spoiler ? FontStyle.italic : null,
+                            color: spoiler
+                                ? DiziRenkler.metin38
+                                : DiziRenkler.metin70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (medyaVar && !spoiler) ...[
+                    const SizedBox(width: 6),
+                    Icon(
+                      Icons.image_outlined,
+                      size: 15,
+                      color: DiziRenkler.metin38,
+                    ),
+                  ],
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// KENDİ PROFİLİNDE karta basılı tutunca açılan menü: yorumu sil / profilde
+/// gizle. Yalnız [ProfilYorumAkisi.benimProfilim] true iken bağlanır.
+///
+/// Silme YIKICI ve geri alınamaz → ayrıca onay istenir.
+/// Gizleme geri alınabilir → onay yok, SnackBar + "Geri al".
+Future<void> yorumEylemleriAc(
+  BuildContext context,
+  Map<String, dynamic> yorum,
+  Future<void> Function()? onDegisti,
+) async {
+  final disBaglam = context;
+  final secim = await showModalBottomSheet<String>(
+    context: context,
+    backgroundColor: DiziRenkler.koyuGri,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+    ),
+    builder: (sheet) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 36,
+            height: 4,
+            margin: const EdgeInsets.only(top: 10, bottom: 6),
+            decoration: BoxDecoration(
+              color: DiziRenkler.metin24,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.visibility_off_outlined,
+              color: DiziRenkler.sariMetin,
+            ),
+            title: Text(
+              'Bu yorumu profilimde gizle'.c,
+              style: TextStyle(color: DiziRenkler.metin),
+            ),
+            subtitle: Text(
+              'Yorum dizi ve film sayfasında durmaya devam eder'.c,
+              style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+            ),
+            onTap: () => Navigator.pop(sheet, 'gizle'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_outline, color: Colors.redAccent),
+            title: Text(
+              'Bu yorumu sil'.c,
+              style: const TextStyle(color: Colors.redAccent),
+            ),
+            onTap: () => Navigator.pop(sheet, 'sil'),
+          ),
+          const SizedBox(height: 8),
+        ],
+      ),
+    ),
+  );
+  if (secim == null || !disBaglam.mounted) return;
+  final id = yorum['id'] as int;
+  if (secim == 'gizle') {
+    try {
+      await Api.post('/yorumlar/$id/profilde-gizle', {'gizli': true});
+      await onDegisti?.call();
+      if (!disBaglam.mounted) return;
+      ScaffoldMessenger.of(disBaglam).showSnackBar(
+        SnackBar(
+          content: Text('Yorum profilinde gizlendi'.c),
+          action: SnackBarAction(
+            label: 'Geri al'.c,
+            onPressed: () async {
+              try {
+                await Api.post('/yorumlar/$id/profilde-gizle', {
+                  'gizli': false,
+                });
+                await onDegisti?.call();
+              } catch (_) {
+                /* geri alma başarısızsa yorum Ayarlar > Gizlenen
+                   yorumlar ekranından geri getirilebilir */
+              }
+            },
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!disBaglam.mounted) return;
+      ScaffoldMessenger.of(
+        disBaglam,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+    return;
+  }
+  // ---- Silme: geri alınamaz, önce onay.
+  final onay = await showDialog<bool>(
+    context: disBaglam,
+    builder: (dlg) => AlertDialog(
+      backgroundColor: DiziRenkler.koyuGri,
+      title: Text('Yorum silinsin mi?'.c),
+      content: Text(
+        'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.'.c,
+        style: TextStyle(color: DiziRenkler.metin70),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(dlg, false),
+          child: Text('İptal'.c),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+          onPressed: () => Navigator.pop(dlg, true),
+          child: Text('Sil'.c),
+        ),
+      ],
+    ),
+  );
+  if (onay != true || !disBaglam.mounted) return;
+  try {
+    await Api.delete('/yorumlar/$id');
+    await onDegisti?.call();
+    if (!disBaglam.mounted) return;
+    ScaffoldMessenger.of(
+      disBaglam,
+    ).showSnackBar(SnackBar(content: Text('Yorum silindi'.c)));
+  } catch (e) {
+    if (!disBaglam.mounted) return;
+    ScaffoldMessenger.of(
+      disBaglam,
+    ).showSnackBar(SnackBar(content: Text(e.toString())));
   }
 }

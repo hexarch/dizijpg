@@ -471,4 +471,30 @@ const Map<String, String> cevirilerCs = {
   'Beğenenler': 'To se mi libi',
   'Henüz beğeni yok': 'Zatim zadne to se mi libi',
   'Bu gönderiyi ilk beğenen sen ol': 'Bud prvni, komu se to bude libit',
+  'Yanıt verdiğin gönderi': 'Příspěvek s tvou odpovědí',
+  'Spoiler içeren gönderi': 'Příspěvek se spoilery',
+  'Görsel gönderi': 'Příspěvek s fotkou',
+  'Bu yorumu profilimde gizle': 'Skrýt tento komentář ve svém profilu',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Komentář zůstává na stránce seriálu a filmu',
+  'Bu yorumu sil': 'Smazat tento komentář',
+  'Yorum profilinde gizlendi': 'Komentář skrytý v tvém profilu',
+  'Geri al': 'Zpět',
+  'Yorum silinsin mi?': 'Smazat komentář?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Tento komentář bude natrvalo smazán všude. Nelze to vrátit zpět.',
+  'Yorum silindi': 'Komentář smazán',
+  'Yorum profilinde tekrar görünüyor':
+      'Komentář je znovu viditelný ve tvém profilu',
+  'Gizlenen yorumun yok': 'Žádné skryté komentáře',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Komentáře, které skryješ podržením příspěvku na kartě Komentáře ve svém profilu, se hromadí tady.',
+  'Gizlenen yorumlar': 'Skryté komentáře',
+  'Gönderiye git': 'Přejít na příspěvek',
+  'Tekrar göster': 'Zobrazit znovu',
+  'Yanıtlarımı gizle': 'Skrýt mé odpovědi',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Odpovědi, které píšeš na příspěvky ostatních, vidíš jen ty',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Znovu zobrazit komentáře skryté ve svém profilu',
 };

@@ -472,4 +472,30 @@ const Map<String, String> cevirilerRu = {
   'Beğenenler': 'Оценили',
   'Henüz beğeni yok': 'Пока нет отметок',
   'Bu gönderiyi ilk beğenen sen ol': 'Оцените первым',
+  'Yanıt verdiğin gönderi': 'Пост с твоим ответом',
+  'Spoiler içeren gönderi': 'Пост со спойлерами',
+  'Görsel gönderi': 'Пост с фото',
+  'Bu yorumu profilimde gizle': 'Скрыть этот комментарий в моём профиле',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Комментарий останется на странице сериала и фильма',
+  'Bu yorumu sil': 'Удалить этот комментарий',
+  'Yorum profilinde gizlendi': 'Комментарий скрыт в твоём профиле',
+  'Geri al': 'Отменить',
+  'Yorum silinsin mi?': 'Удалить комментарий?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Этот комментарий будет удалён навсегда везде. Отменить это будет нельзя.',
+  'Yorum silindi': 'Комментарий удалён',
+  'Yorum profilinde tekrar görünüyor':
+      'Комментарий снова виден в твоём профиле',
+  'Gizlenen yorumun yok': 'Нет скрытых комментариев',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Комментарии, которые ты скрываешь долгим нажатием на пост во вкладке Комментарии твоего профиля, собираются здесь.',
+  'Gizlenen yorumlar': 'Скрытые комментарии',
+  'Gönderiye git': 'Перейти к посту',
+  'Tekrar göster': 'Показать снова',
+  'Yanıtlarımı gizle': 'Скрыть мои ответы',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Ответы, которые ты пишешь на посты других людей, видны только тебе',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Показать снова комментарии, скрытые тобой в своём профиле',
 };

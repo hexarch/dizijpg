@@ -471,4 +471,30 @@ const Map<String, String> cevirilerKn = {
   'Beğenenler': 'ಇಷ್ಟಪಟ್ಟವರು',
   'Henüz beğeni yok': 'ಇನ್ನೂ ಯಾವುದೇ ಇಷ್ಟಗಳಿಲ್ಲ',
   'Bu gönderiyi ilk beğenen sen ol': 'ಈ ಪೋಸ್ಟ್ ಇಷ್ಟಪಡುವ ಮೊದಲಿಗರಾಗಿ',
+  'Yanıt verdiğin gönderi': 'ನೀವು ಪ್ರತ್ಯುತ್ತರಿಸಿದ ಪೋಸ್ಟ್',
+  'Spoiler içeren gönderi': 'ಸ್ಪಾಯಿಲರ್ ಒಳಗೊಂಡ ಪೋಸ್ಟ್',
+  'Görsel gönderi': 'ಫೋಟೋ ಪೋಸ್ಟ್',
+  'Bu yorumu profilimde gizle': 'ಈ ಕಾಮೆಂಟ್ ಅನ್ನು ನನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡಿ',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'ಕಾಮೆಂಟ್ ಸೀರೀಸ್ ಮತ್ತು ಚಲನಚಿತ್ರ ಪುಟದಲ್ಲಿ ಹಾಗೆಯೇ ಉಳಿಯುತ್ತದೆ',
+  'Bu yorumu sil': 'ಈ ಕಾಮೆಂಟ್ ಅಳಿಸಿ',
+  'Yorum profilinde gizlendi': 'ಕಾಮೆಂಟ್ ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡಲಾಗಿದೆ',
+  'Geri al': 'ರದ್ದುಮಾಡಿ',
+  'Yorum silinsin mi?': 'ಕಾಮೆಂಟ್ ಅಳಿಸಬೇಕೇ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ಈ ಕಾಮೆಂಟ್ ಎಲ್ಲಾ ಕಡೆಯಿಂದ ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಲ್ಪಡುತ್ತದೆ. ಇದನ್ನು ಹಿಂಪಡೆಯಲು ಸಾಧ್ಯವಿಲ್ಲ.',
+  'Yorum silindi': 'ಕಾಮೆಂಟ್ ಅಳಿಸಲಾಗಿದೆ',
+  'Yorum profilinde tekrar görünüyor':
+      'ಕಾಮೆಂಟ್ ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮತ್ತೆ ಕಾಣಿಸುತ್ತಿದೆ',
+  'Gizlenen yorumun yok': 'ಮರೆಮಾಡಿದ ಕಾಮೆಂಟ್‌ಗಳಿಲ್ಲ',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನ ಕಾಮೆಂಟ್‌ಗಳ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಪೋಸ್ಟ್ ಅನ್ನು ಒತ್ತಿ ಹಿಡಿದು ಮರೆಮಾಡಿದ ಕಾಮೆಂಟ್‌ಗಳು ಇಲ್ಲಿ ಸಂಗ್ರಹವಾಗುತ್ತವೆ.',
+  'Gizlenen yorumlar': 'ಮರೆಮಾಡಿದ ಕಾಮೆಂಟ್‌ಗಳು',
+  'Gönderiye git': 'ಪೋಸ್ಟ್‌ಗೆ ಹೋಗಿ',
+  'Tekrar göster': 'ಮತ್ತೆ ತೋರಿಸಿ',
+  'Yanıtlarımı gizle': 'ನನ್ನ ಪ್ರತ್ಯುತ್ತರಗಳನ್ನು ಮರೆಮಾಡಿ',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'ಇತರರ ಪೋಸ್ಟ್‌ಗಳಿಗೆ ನೀವು ಬರೆದ ಪ್ರತ್ಯುತ್ತರಗಳು ನಿಮಗೆ ಮಾತ್ರ ಕಾಣುತ್ತವೆ',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ಮರೆಮಾಡಿದ ಕಾಮೆಂಟ್‌ಗಳನ್ನು ಮತ್ತೆ ತೋರಿಸಿ',
 };

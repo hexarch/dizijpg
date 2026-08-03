@@ -471,4 +471,30 @@ const Map<String, String> cevirilerHi = {
   'Beğenenler': 'पसंद करने वाले',
   'Henüz beğeni yok': 'अभी तक कोई पसंद नहीं',
   'Bu gönderiyi ilk beğenen sen ol': 'इस पोस्ट को पसंद करने वाले पहले बनें',
+  'Yanıt verdiğin gönderi': 'जिस पोस्ट पर तुमने जवाब दिया',
+  'Spoiler içeren gönderi': 'स्पॉइलर वाली पोस्ट',
+  'Görsel gönderi': 'फोटो पोस्ट',
+  'Bu yorumu profilimde gizle': 'यह कमेंट मेरी प्रोफ़ाइल से छिपाएं',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'कमेंट शो और फ़िल्म के पेज पर बना रहता है',
+  'Bu yorumu sil': 'यह कमेंट डिलीट करें',
+  'Yorum profilinde gizlendi': 'कमेंट तुम्हारी प्रोफ़ाइल से छिपा दिया गया',
+  'Geri al': 'वापस लाएं',
+  'Yorum silinsin mi?': 'क्या कमेंट डिलीट करें?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'यह कमेंट हर जगह से हमेशा के लिए डिलीट हो जाएगा। इसे वापस नहीं लाया जा सकता।',
+  'Yorum silindi': 'कमेंट डिलीट हो गया',
+  'Yorum profilinde tekrar görünüyor':
+      'कमेंट तुम्हारी प्रोफ़ाइल पर फिर से दिख रहा है',
+  'Gizlenen yorumun yok': 'तुम्हारा कोई छिपा हुआ कमेंट नहीं है',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'जो कमेंट तुम अपनी प्रोफ़ाइल के कमेंट्स टैब में किसी पोस्ट को दबाकर छिपाते हो, वे यहां जमा होते हैं।',
+  'Gizlenen yorumlar': 'छिपे हुए कमेंट्स',
+  'Gönderiye git': 'पोस्ट पर जाएं',
+  'Tekrar göster': 'फिर से दिखाएं',
+  'Yanıtlarımı gizle': 'मेरे जवाब छिपाएं',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'दूसरों की पोस्ट पर तुम जो जवाब लिखते हो वे सिर्फ़ तुम्हें दिखते हैं',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'अपनी प्रोफ़ाइल पर छिपाए गए कमेंट्स फिर से दिखाएं',
 };

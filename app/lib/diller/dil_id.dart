@@ -471,4 +471,29 @@ const Map<String, String> cevirilerId = {
   'Henüz beğeni yok': 'Belum ada yang menyukai',
   'Bu gönderiyi ilk beğenen sen ol':
       'Jadilah yang pertama menyukai kiriman ini',
+  'Yanıt verdiğin gönderi': 'Postingan yang kamu balas',
+  'Spoiler içeren gönderi': 'Postingan mengandung spoiler',
+  'Görsel gönderi': 'Postingan foto',
+  'Bu yorumu profilimde gizle': 'Sembunyikan komentar ini di profil saya',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Komentar tetap ada di halaman serial dan film',
+  'Bu yorumu sil': 'Hapus komentar ini',
+  'Yorum profilinde gizlendi': 'Komentar disembunyikan di profil kamu',
+  'Geri al': 'Urungkan',
+  'Yorum silinsin mi?': 'Hapus komentar ini?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Komentar ini akan dihapus permanen dari semua tempat. Tidak dapat dibatalkan.',
+  'Yorum silindi': 'Komentar dihapus',
+  'Yorum profilinde tekrar görünüyor': 'Komentar terlihat lagi di profil kamu',
+  'Gizlenen yorumun yok': 'Tidak ada komentar yang disembunyikan',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Komentar yang kamu sembunyikan dengan menekan lama postingan di tab Komentar profil kamu akan terkumpul di sini.',
+  'Gizlenen yorumlar': 'Komentar tersembunyi',
+  'Gönderiye git': 'Buka postingan',
+  'Tekrar göster': 'Tampilkan lagi',
+  'Yanıtlarımı gizle': 'Sembunyikan balasan saya',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Balasan yang kamu tulis di postingan orang lain hanya terlihat oleh kamu',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Tampilkan lagi komentar yang kamu sembunyikan di profil',
 };

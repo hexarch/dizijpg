@@ -460,4 +460,29 @@ const Map<String, String> cevirilerAm = {
   'Beğenenler': 'የወደዱት',
   'Henüz beğeni yok': 'እስካሁን ምንም ውዴታ የለም',
   'Bu gönderiyi ilk beğenen sen ol': 'ይህን ልጥፍ በመጀመሪያ የወደደ ይሁኑ',
+  'Yanıt verdiğin gönderi': 'የመለስክለት ልጥፍ',
+  'Spoiler içeren gönderi': 'ስፖይለር ያለበት ልጥፍ',
+  'Görsel gönderi': 'የፎቶ ልጥፍ',
+  'Bu yorumu profilimde gizle': 'ይህን አስተያየት በመገለጫዬ ላይ ደብቅ',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'አስተያየቱ በተከታታይና በፊልም ገጽ ላይ ይቆያል',
+  'Bu yorumu sil': 'ይህን አስተያየት ሰርዝ',
+  'Yorum profilinde gizlendi': 'አስተያየቱ በመገለጫህ ላይ ተደብቋል',
+  'Geri al': 'ቀልብስ',
+  'Yorum silinsin mi?': 'አስተያየቱ ይሰረዝ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ይህ አስተያየት በሁሉም ቦታ ላይ በቋሚነት ይሰረዛል። መመለስ አይቻልም።',
+  'Yorum silindi': 'አስተያየቱ ተሰርዟል',
+  'Yorum profilinde tekrar görünüyor': 'አስተያየቱ በመገለጫህ ላይ እንደገና ይታያል',
+  'Gizlenen yorumun yok': 'የተደበቀ አስተያየት የለህም',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'በመገለጫህ የአስተያየቶች ትር ውስጥ ልጥፍን ተጭነህ በመያዝ የደበቅሃቸው አስተያየቶች እዚህ ይሰበሰባሉ።',
+  'Gizlenen yorumlar': 'የተደበቁ አስተያየቶች',
+  'Gönderiye git': 'ወደ ልጥፉ ሂድ',
+  'Tekrar göster': 'እንደገና አሳይ',
+  'Yanıtlarımı gizle': 'መልሶቼን ደብቅ',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'በሌሎች ልጥፎች ላይ የጻፍካቸው መልሶች ለአንተ ብቻ ይታያሉ',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'በመገለጫህ ላይ የደበቅሃቸውን አስተያየቶች እንደገና አሳይ',
 };

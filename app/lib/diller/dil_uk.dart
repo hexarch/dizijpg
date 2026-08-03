@@ -471,4 +471,29 @@ const Map<String, String> cevirilerUk = {
   'Beğenenler': 'Уподобали',
   'Henüz beğeni yok': 'Ще немає вподобань',
   'Bu gönderiyi ilk beğenen sen ol': 'Оцініть цей допис першим',
+  'Yanıt verdiğin gönderi': 'Допис з твоєю відповіддю',
+  'Spoiler içeren gönderi': 'Допис зі спойлерами',
+  'Görsel gönderi': 'Допис із фото',
+  'Bu yorumu profilimde gizle': 'Приховати цей коментар у моєму профілі',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Коментар залишається на сторінці серіалу і фільму',
+  'Bu yorumu sil': 'Видалити цей коментар',
+  'Yorum profilinde gizlendi': 'Коментар приховано в твоєму профілі',
+  'Geri al': 'Скасувати',
+  'Yorum silinsin mi?': 'Видалити коментар?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Цей коментар буде остаточно видалено всюди. Це неможливо скасувати.',
+  'Yorum silindi': 'Коментар видалено',
+  'Yorum profilinde tekrar görünüyor': 'Коментар знову видно в твоєму профілі',
+  'Gizlenen yorumun yok': 'Немає прихованих коментарів',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Коментарі, які ти приховуєш, довго натискаючи на допис у вкладці Коментарі свого профілю, збираються тут.',
+  'Gizlenen yorumlar': 'Приховані коментарі',
+  'Gönderiye git': 'Перейти до допису',
+  'Tekrar göster': 'Показати знову',
+  'Yanıtlarımı gizle': 'Приховати мої відповіді',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Відповіді, які ти пишеш на дописи інших людей, видно лише тобі',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Показати знову коментарі, приховані тобою у своєму профілі',
 };

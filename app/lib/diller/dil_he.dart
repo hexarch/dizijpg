@@ -462,4 +462,29 @@ const Map<String, String> cevirilerHe = {
   'Beğenenler': 'לייקים',
   'Henüz beğeni yok': 'אין עדיין לייקים',
   'Bu gönderiyi ilk beğenen sen ol': 'היה הראשון לסמן לייק לפוסט הזה',
+  'Yanıt verdiğin gönderi': 'הפוסט שהגבת עליו',
+  'Spoiler içeren gönderi': 'פוסט עם ספוילרים',
+  'Görsel gönderi': 'פוסט עם תמונה',
+  'Bu yorumu profilimde gizle': 'הסתר את התגובה הזו מהפרופיל שלי',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'התגובה נשארת בדף הסדרה או הסרט',
+  'Bu yorumu sil': 'מחק את התגובה הזו',
+  'Yorum profilinde gizlendi': 'התגובה הוסתרה מהפרופיל שלך',
+  'Geri al': 'בטל',
+  'Yorum silinsin mi?': 'למחוק את התגובה?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'תגובה זו תימחק לצמיתות מכל מקום. לא ניתן לבטל פעולה זו.',
+  'Yorum silindi': 'התגובה נמחקה',
+  'Yorum profilinde tekrar görünüyor': 'התגובה גלויה שוב בפרופיל שלך',
+  'Gizlenen yorumun yok': 'אין לך תגובות מוסתרות',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'תגובות שאתה מסתיר בלחיצה ארוכה על פוסט בלשונית התגובות בפרופיל שלך נאספות כאן.',
+  'Gizlenen yorumlar': 'תגובות מוסתרות',
+  'Gönderiye git': 'עבור לפוסט',
+  'Tekrar göster': 'הצג שוב',
+  'Yanıtlarımı gizle': 'הסתר את התשובות שלי',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'תשובות שאתה כותב לפוסטים של אחרים גלויות רק לך',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'הצג שוב את התגובות שהסתרת בפרופיל שלך',
 };

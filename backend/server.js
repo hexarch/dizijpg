@@ -1798,18 +1798,20 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   res.json(rows[0]);
 }));
 
-// Gizlilik tercihleri: izlenenler/yorumlar açık profilde gizli mi.
+// Gizlilik tercihleri: izlenenler/yorumlar/yanıtlar açık profilde gizli mi.
+// Üçü de NEGATİF polarite (true = gizli) ve varsayılanı false: yükseltme
+// kimsenin profilini sessizce boşaltmaz.
 app.get('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    'SELECT izlenenler_gizli, yorumlar_gizli FROM kullanicilar WHERE id=$1',
+    'SELECT izlenenler_gizli, yorumlar_gizli, yanitlar_gizli FROM kullanicilar WHERE id=$1',
     [req.kullanici.id],
   );
   res.json(rows[0] || {});
 }));
 app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const g = req.body || {};
-  // Yalnız bilinen 2 anahtar; boolean'a zorlanır (eksik = değişmez).
-  const alanlar = ['izlenenler_gizli', 'yorumlar_gizli'];
+  // Yalnız bilinen 3 anahtar; boolean'a zorlanır (eksik = değişmez).
+  const alanlar = ['izlenenler_gizli', 'yorumlar_gizli', 'yanitlar_gizli'];
   const set = [];
   const deg = [req.kullanici.id];
   for (const a of alanlar) {
@@ -1821,7 +1823,7 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
   const { rows } = await havuz.query(
     `UPDATE kullanicilar SET ${set.join(', ')} WHERE id=$1
-     RETURNING izlenenler_gizli, yorumlar_gizli`,
+     RETURNING izlenenler_gizli, yorumlar_gizli, yanitlar_gizli`,
     deg,
   );
   res.json(rows[0]);
@@ -3782,6 +3784,41 @@ app.delete('/yorumlar/:id', girisZorunlu, sarici(async (req, res) => {
   res.json({ tamam: true });
 }));
 
+// Yorumu PROFİL VİTRİNİNDEN çıkar / geri koy. SİLME DEĞİLDİR:
+// dizi/film/bölüm sayfasındaki liste (`GET /yorumlar/:tur/:tmdbId`), akış,
+// Reels, beğeniler ve yanıtlar HİÇ ETKİLENMEZ — yalnız
+// `GET /profil/:kullaniciAdi` süzer. Geri alınabilir olduğu için istemcide
+// onay istenmez, SnackBar + "Geri al" yeter.
+app.post('/yorumlar/:id/profilde-gizle', girisZorunlu, sarici(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (!Number.isInteger(id)) return res.status(400).json({ hata: 'Geçersiz yorum' });
+  const gizli = req.body?.gizli !== false; // eksik/true = gizle
+  const { rows } = await havuz.query(
+    `UPDATE yorumlar SET profilde_gizli=$3 WHERE id=$1 AND kullanici_id=$2
+     RETURNING id, profilde_gizli`,
+    [id, req.kullanici.id, gizli],
+  );
+  if (!rows.length) return res.status(404).json({ hata: 'Yorum bulunamadı' });
+  res.json(rows[0]);
+}));
+
+// Ayarlar > Gizlilik > Gizlenen yorumlar: profil vitrininden çıkarılanlar.
+// Yalnız kendi yorumların; içerik adı/posteri kart için birlikte döner.
+app.get('/gizlenen-yorumlar', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
+            y.metin, y.medya, y.tarih, y.ust_id, y.spoiler, y.kaynak_dil,
+            (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni
+     FROM yorumlar y
+     WHERE y.kullanici_id=$1 AND y.profilde_gizli
+     ORDER BY y.tarih DESC LIMIT 100`,
+    [req.kullanici.id],
+  );
+  const anahtarlar = [...new Set(rows.map((y) => `${y.tur}:${y.tmdb_id}`))];
+  const icerikler = await icerikBilgileri(anahtarlar);
+  res.json({ yorumlar: rows, icerikler });
+}));
+
 // ---------- takip ----------
 // Kullanıcı adına göre takip et / bırak
 app.post('/takip/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
@@ -4004,7 +4041,7 @@ app.post('/veri/ice-aktar',
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
     `SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma,
-            izlenenler_gizli, yorumlar_gizli
+            izlenenler_gizli, yorumlar_gizli, yanitlar_gizli
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi],
   );
@@ -4016,6 +4053,16 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const benMi = benId === id;
   const izlenenlerGizli = !benMi && k.rows[0].izlenenler_gizli === true;
   const yorumlarGizli = !benMi && k.rows[0].yorumlar_gizli === true;
+  // "Yanıtlarımı gizle" YALNIZ BAŞKALARINI etkiler (izlenenler_gizli /
+  // yorumlar_gizli ile aynı kapsam): sahibi kendi profilinde yanıtlarını
+  // görmeye devam eder, yoksa uzun-basma menüsüyle onları yönetemez ve
+  // ziyaretçinin ne gördüğünü kestiremezdi.
+  const yanitlarGizli = !benMi && k.rows[0].yanitlar_gizli === true;
+  // Tek tek "profilimde gizle" denen yorumlar SAHİBİNE DE gösterilmez:
+  // profil kullanıcının kürasyonudur, gizlediğini orada görmeyi bekler.
+  // Yönetimi Ayarlar > Gizlilik > Gizlenen yorumlar ekranında yapılır.
+  const yorumSuzgec = `AND NOT y.profilde_gizli
+    ${yanitlarGizli ? 'AND y.ust_id IS NULL' : ''}`;
   // Başkası bakıyorsa gizli içerikleri dışlayan SQL parçası ('' = filtre yok)
   const gizliFiltre = (tablo) => benMi ? '' :
     `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
@@ -4028,7 +4075,13 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
          (SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS dizi,
          (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
          (SELECT count(*)::int FROM takipler WHERE takip_eden_id=$1) AS takip_edilen,
-         (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum,
+         -- Yorum sayacı LİSTEYLE AYNI süzgeçleri kullanır: profilde gizlenen
+         -- yorumlar ve (ziyaretçi bakıyorsa) yanıtlar sayılmaz. Aksi hâlde
+         -- "12 yorum" yazıp 11 tane listelerdi; aradaki fark gizlenmiş bir
+         -- şey olduğunu da ele verirdi. toplam_begeni/goruntulenme birer
+         -- ÖMÜR BOYU toplamı, listeye bağlı değil — onlar dokunulmadı.
+         (SELECT count(*)::int FROM yorumlar y
+          WHERE y.kullanici_id=$1 ${yorumSuzgec} ${gizliFiltre('y')}) AS yorum,
          (SELECT COALESCE(sum(goruntulenme),0)::int FROM yorumlar
           WHERE kullanici_id=$1) AS toplam_goruntulenme,
          (SELECT count(*)::int FROM yorum_begeniler b
@@ -4057,15 +4110,30 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
           // gönderinde "şikayet et" menüsü çıkar. kullanici_adi/avatar
           // aşağıda profil sahibinden eklenir (hepsi aynı kişinin yorumu).
           `SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
-                  y.metin, y.medya,
+                  y.metin, y.medya, y.ust_id,
                   y.goruntulenme, y.spoiler, y.tarih, y.kaynak_dil,
                   (SELECT c.metin FROM metin_cevirileri c
                      WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri_metin,
                   (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
                   (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
                   EXISTS(SELECT 1 FROM yorum_begeniler b
-                         WHERE b.yorum_id=y.id AND b.kullanici_id=$3) AS begendim
-           FROM yorumlar y WHERE y.kullanici_id=$1 ${gizliFiltre('y')}
+                         WHERE b.yorum_id=y.id AND b.kullanici_id=$3) AS begendim,
+                  -- BAĞLAM: bu satır bir YANITSA yanıtlanan gönderinin özeti.
+                  -- Tam kart değil ALINTI çizilecek: yalnız yazar + kısa metin
+                  -- + medya/spoiler bayrağı yeter (metin 300 karaktere kırpılır,
+                  -- alıntı zaten 2 satır gösterir). ust_id NULL ise NULL döner
+                  -- ve istemci alıntı bloğunu HİÇ çizmez.
+                  (SELECT json_build_object(
+                            'id', u.id,
+                            'metin', LEFT(u.metin, 300),
+                            'kullanici_adi', uk.kullanici_adi,
+                            'avatar', uk.avatar,
+                            'spoiler', u.spoiler,
+                            'medya_var', COALESCE(cardinality(u.medya), 0) > 0)
+                     FROM yorumlar u JOIN kullanicilar uk ON uk.id = u.kullanici_id
+                    WHERE u.id = y.ust_id) AS ust
+           FROM yorumlar y
+           WHERE y.kullanici_id=$1 ${yorumSuzgec} ${gizliFiltre('y')}
            ORDER BY y.tarih DESC LIMIT 20`,
           [id, istekBaglam.getStore()?.dil || 'tr', benId]),
     havuz.query(

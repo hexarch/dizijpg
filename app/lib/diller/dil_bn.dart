@@ -470,4 +470,30 @@ const Map<String, String> cevirilerBn = {
   'Beğenenler': 'যারা পছন্দ করেছেন',
   'Henüz beğeni yok': 'এখনো কোনো লাইক নেই',
   'Bu gönderiyi ilk beğenen sen ol': 'এই পোস্টে প্রথম লাইক দিন',
+  'Yanıt verdiğin gönderi': 'যে পোস্টে তুমি রিপ্লাই দিয়েছ',
+  'Spoiler içeren gönderi': 'স্পয়লারযুক্ত পোস্ট',
+  'Görsel gönderi': 'ছবি পোস্ট',
+  'Bu yorumu profilimde gizle': 'আমার প্রোফাইল থেকে এই কমেন্ট লুকাও',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'কমেন্ট শো এবং সিনেমার পেজে থেকে যায়',
+  'Bu yorumu sil': 'এই কমেন্ট মুছে ফেলুন',
+  'Yorum profilinde gizlendi': 'কমেন্ট তোমার প্রোফাইল থেকে লুকানো হয়েছে',
+  'Geri al': 'পূর্বাবস্থায় ফেরাও',
+  'Yorum silinsin mi?': 'কমেন্ট মুছে ফেলবেন?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'এই কমেন্ট সব জায়গা থেকে চিরতরে মুছে যাবে। এটি ফেরানো যাবে না।',
+  'Yorum silindi': 'কমেন্ট মুছে ফেলা হয়েছে',
+  'Yorum profilinde tekrar görünüyor':
+      'কমেন্ট তোমার প্রোফাইলে আবার দেখা যাচ্ছে',
+  'Gizlenen yorumun yok': 'তোমার কোনো লুকানো কমেন্ট নেই',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'তোমার প্রোফাইলের কমেন্টস ট্যাবে কোনো পোস্টে চেপে ধরে যেসব কমেন্ট লুকাও, সেগুলো এখানে জমা হয়।',
+  'Gizlenen yorumlar': 'লুকানো কমেন্ট',
+  'Gönderiye git': 'পোস্টে যাও',
+  'Tekrar göster': 'আবার দেখাও',
+  'Yanıtlarımı gizle': 'আমার রিপ্লাই লুকাও',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'অন্যদের পোস্টে তুমি যেসব রিপ্লাই লেখো তা শুধু তোমাকেই দেখা যায়',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'তোমার প্রোফাইলে লুকানো কমেন্টগুলো আবার দেখাও',
 };

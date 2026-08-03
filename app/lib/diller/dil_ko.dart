@@ -458,4 +458,28 @@ const Map<String, String> cevirilerKo = {
   'Beğenenler': '좋아요한 사람',
   'Henüz beğeni yok': '아직 좋아요가 없어요',
   'Bu gönderiyi ilk beğenen sen ol': '이 게시물에 첫 좋아요를 눌러보세요',
+  'Yanıt verdiğin gönderi': '답장한 게시물',
+  'Spoiler içeren gönderi': '스포일러가 포함된 게시물',
+  'Görsel gönderi': '사진 게시물',
+  'Bu yorumu profilimde gizle': '이 댓글을 내 프로필에서 숨기기',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      '댓글은 드라마 및 영화 페이지에 그대로 남습니다',
+  'Bu yorumu sil': '이 댓글 삭제',
+  'Yorum profilinde gizlendi': '프로필에서 댓글이 숨겨졌습니다',
+  'Geri al': '실행 취소',
+  'Yorum silinsin mi?': '댓글을 삭제하시겠습니까?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      '이 댓글은 모든 곳에서 영구적으로 삭제됩니다. 되돌릴 수 없습니다.',
+  'Yorum silindi': '댓글이 삭제되었습니다',
+  'Yorum profilinde tekrar görünüyor': '댓글이 프로필에 다시 표시됩니다',
+  'Gizlenen yorumun yok': '숨긴 댓글이 없습니다',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      '프로필의 댓글 탭에서 게시물을 길게 눌러 숨기면 여기에 모입니다.',
+  'Gizlenen yorumlar': '숨긴 댓글',
+  'Gönderiye git': '게시물로 이동',
+  'Tekrar göster': '다시 표시',
+  'Yanıtlarımı gizle': '내 답장 숨기기',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      '다른 사람의 게시물에 남긴 답장은 나에게만 보입니다',
+  'Profilinde gizlediğin yorumları tekrar göster': '프로필에서 숨긴 댓글 다시 표시',
 };

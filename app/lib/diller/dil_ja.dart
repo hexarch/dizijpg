@@ -458,4 +458,27 @@ const Map<String, String> cevirilerJa = {
   'Beğenenler': 'いいねした人',
   'Henüz beğeni yok': 'まだいいねがありません',
   'Bu gönderiyi ilk beğenen sen ol': 'この投稿に最初のいいねを',
+  'Yanıt verdiğin gönderi': '返信した投稿',
+  'Spoiler içeren gönderi': 'ネタバレを含む投稿',
+  'Görsel gönderi': '画像付き投稿',
+  'Bu yorumu profilimde gizle': 'このコメントをプロフィールで非表示にする',
+  'Yorum dizi ve film sayfasında durmaya devam eder': 'コメントはドラマ・映画のページに残ります',
+  'Bu yorumu sil': 'このコメントを削除',
+  'Yorum profilinde gizlendi': 'コメントをプロフィールで非表示にしました',
+  'Geri al': '元に戻す',
+  'Yorum silinsin mi?': 'コメントを削除しますか？',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'このコメントはすべての場所から完全に削除されます。元に戻せません。',
+  'Yorum silindi': 'コメントを削除しました',
+  'Yorum profilinde tekrar görünüyor': 'コメントがプロフィールに再表示されました',
+  'Gizlenen yorumun yok': '非表示のコメントはありません',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'プロフィールの「コメント」タブで投稿を長押しして非表示にすると、ここに表示されます。',
+  'Gizlenen yorumlar': '非表示のコメント',
+  'Gönderiye git': '投稿へ移動',
+  'Tekrar göster': '再表示',
+  'Yanıtlarımı gizle': '自分の返信を非表示にする',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      '他のユーザーの投稿に書いた返信は自分にのみ表示されます',
+  'Profilinde gizlediğin yorumları tekrar göster': 'プロフィールで非表示にしたコメントを再表示',
 };

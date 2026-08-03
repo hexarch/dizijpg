@@ -473,4 +473,30 @@ const Map<String, String> cevirilerFil = {
   'Beğenenler': 'Mga naka-like',
   'Henüz beğeni yok': 'Wala pang like',
   'Bu gönderiyi ilk beğenen sen ol': 'Maging unang mag-like ng post na ito',
+  'Yanıt verdiğin gönderi': 'Post na sinagot mo',
+  'Spoiler içeren gönderi': 'Post na may spoiler',
+  'Görsel gönderi': 'Post na may larawan',
+  'Bu yorumu profilimde gizle': 'Itago ang komentong ito sa profile ko',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Mananatili ang komento sa page ng serye at pelikula',
+  'Bu yorumu sil': 'Burahin ang komentong ito',
+  'Yorum profilinde gizlendi': 'Naitago ang komento sa profile mo',
+  'Geri al': 'I-undo',
+  'Yorum silinsin mi?': 'Buburahin ba ang komento?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Permanenteng mabubura ang komentong ito sa lahat ng lugar. Hindi na ito maibabalik.',
+  'Yorum silindi': 'Nabura ang komento',
+  'Yorum profilinde tekrar görünüyor':
+      'Nakikita na ulit ang komento sa profile mo',
+  'Gizlenen yorumun yok': 'Walang nakatagong komento',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Dito napupunta ang mga komentong itinatago mo sa pamamagitan ng paghawak nang matagal sa post sa Comments tab ng profile mo.',
+  'Gizlenen yorumlar': 'Mga nakatagong komento',
+  'Gönderiye git': 'Pumunta sa post',
+  'Tekrar göster': 'Ipakita ulit',
+  'Yanıtlarımı gizle': 'Itago ang mga reply ko',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Ang mga reply na isinulat mo sa post ng iba ay ikaw lang ang makakakita',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Ipakita ulit ang mga komentong itinago mo sa profile',
 };

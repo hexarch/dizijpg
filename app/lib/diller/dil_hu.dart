@@ -473,4 +473,30 @@ const Map<String, String> cevirilerHu = {
   'Beğenenler': 'Kedvelesek',
   'Henüz beğeni yok': 'Meg nincs kedveles',
   'Bu gönderiyi ilk beğenen sen ol': 'Legyel az elso, akinek tetszik',
+  'Yanıt verdiğin gönderi': 'Bejegyzés, amelyre válaszoltál',
+  'Spoiler içeren gönderi': 'Spoileres bejegyzés',
+  'Görsel gönderi': 'Fotós bejegyzés',
+  'Bu yorumu profilimde gizle': 'Hozzászólás elrejtése a profilomon',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'A hozzászólás megmarad a sorozat és a film oldalán',
+  'Bu yorumu sil': 'Hozzászólás törlése',
+  'Yorum profilinde gizlendi': 'Hozzászólás elrejtve a profilodon',
+  'Geri al': 'Visszavonás',
+  'Yorum silinsin mi?': 'Törlöd a hozzászólást?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Ez a hozzászólás véglegesen törlődik mindenhonnan. Nem vonható vissza.',
+  'Yorum silindi': 'Hozzászólás törölve',
+  'Yorum profilinde tekrar görünüyor':
+      'A hozzászólás újra látható a profilodon',
+  'Gizlenen yorumun yok': 'Nincs elrejtett hozzászólásod',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'A profilod Hozzászólások fülén egy bejegyzés hosszú nyomva tartásával elrejtett hozzászólások itt gyűlnek össze.',
+  'Gizlenen yorumlar': 'Elrejtett hozzászólások',
+  'Gönderiye git': 'Ugrás a bejegyzéshez',
+  'Tekrar göster': 'Újra megjelenítés',
+  'Yanıtlarımı gizle': 'Válaszaim elrejtése',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'A mások bejegyzéseire írt válaszaidat csak te látod',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'A profilodon elrejtett hozzászólások újbóli megjelenítése',
 };

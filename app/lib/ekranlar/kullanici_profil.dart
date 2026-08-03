@@ -484,6 +484,11 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
               ProfilYorumAkisi(
                 yorumlar: yorumlar,
                 icerikler: p['icerikler'] as Map<String, dynamic>? ?? {},
+                // Bu ekran BAŞKASININ profili — ama /kullanici/<kendi adım>
+                // bağlantısıyla da açılabiliyor. Uzun basma menüsü sunucunun
+                // `ben_mi` yargısına bağlı: başkasının kartında ASLA çıkmaz.
+                benimProfilim: p['ben_mi'] == true,
+                onDegisti: _yukle,
               ),
               const SizedBox(height: 24),
             ],

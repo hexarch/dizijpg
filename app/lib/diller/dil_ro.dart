@@ -474,4 +474,30 @@ const Map<String, String> cevirilerRo = {
   'Beğenenler': 'Aprecieri',
   'Henüz beğeni yok': 'Inca nicio apreciere',
   'Bu gönderiyi ilk beğenen sen ol': 'Fii primul care apreciaza',
+  'Yanıt verdiğin gönderi': 'Postarea la care ai răspuns',
+  'Spoiler içeren gönderi': 'Postare cu spoilere',
+  'Görsel gönderi': 'Postare foto',
+  'Bu yorumu profilimde gizle': 'Ascunde acest comentariu din profilul meu',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Comentariul rămâne pe pagina serialului sau filmului',
+  'Bu yorumu sil': 'Șterge acest comentariu',
+  'Yorum profilinde gizlendi': 'Comentariu ascuns din profilul tău',
+  'Geri al': 'Anulează',
+  'Yorum silinsin mi?': 'Ștergi comentariul?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Acest comentariu va fi șters definitiv peste tot. Nu poate fi anulat.',
+  'Yorum silindi': 'Comentariu șters',
+  'Yorum profilinde tekrar görünüyor':
+      'Comentariul este din nou vizibil pe profilul tău',
+  'Gizlenen yorumun yok': 'Nu ai comentarii ascunse',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Comentariile pe care le ascunzi ținând apăsat pe o postare din fila Comentarii a profilului tău se adună aici.',
+  'Gizlenen yorumlar': 'Comentarii ascunse',
+  'Gönderiye git': 'Mergi la postare',
+  'Tekrar göster': 'Arată din nou',
+  'Yanıtlarımı gizle': 'Ascunde-mi răspunsurile',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Răspunsurile pe care le scrii la postările altora sunt vizibile doar pentru tine',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Arată din nou comentariile pe care le-ai ascuns din profilul tău',
 };

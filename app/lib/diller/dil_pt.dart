@@ -473,4 +473,30 @@ const Map<String, String> cevirilerPt = {
   'Beğenenler': 'Curtidas',
   'Henüz beğeni yok': 'Ainda sem curtidas',
   'Bu gönderiyi ilk beğenen sen ol': 'Seja a primeira pessoa a curtir',
+  'Yanıt verdiğin gönderi': 'Publicação que você respondeu',
+  'Spoiler içeren gönderi': 'Publicação com spoiler',
+  'Görsel gönderi': 'Publicação com foto',
+  'Bu yorumu profilimde gizle': 'Ocultar este comentário no meu perfil',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'O comentário continua na página da série e do filme',
+  'Bu yorumu sil': 'Excluir este comentário',
+  'Yorum profilinde gizlendi': 'Comentário ocultado no seu perfil',
+  'Geri al': 'Desfazer',
+  'Yorum silinsin mi?': 'Excluir comentário?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Este comentário será excluído permanentemente em todos os lugares. Não pode ser desfeito.',
+  'Yorum silindi': 'Comentário excluído',
+  'Yorum profilinde tekrar görünüyor':
+      'O comentário está visível novamente no seu perfil',
+  'Gizlenen yorumun yok': 'Nenhum comentário ocultado',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Os comentários que você oculta ao manter pressionada uma publicação na aba Comentários do seu perfil se acumulam aqui.',
+  'Gizlenen yorumlar': 'Comentários ocultados',
+  'Gönderiye git': 'Ir para a publicação',
+  'Tekrar göster': 'Mostrar novamente',
+  'Yanıtlarımı gizle': 'Ocultar minhas respostas',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'As respostas que você escreve em publicações de outras pessoas são visíveis só para você',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Mostrar novamente os comentários que você ocultou no seu perfil',
 };

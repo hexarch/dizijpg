@@ -470,4 +470,30 @@ const Map<String, String> cevirilerMr = {
   'Beğenenler': 'आवडलेले',
   'Henüz beğeni yok': 'अद्याप कोणतीही पसंती नाही',
   'Bu gönderiyi ilk beğenen sen ol': 'ही पोस्ट पसंत करणारे पहिले व्हा',
+  'Yanıt verdiğin gönderi': 'ज्या पोस्टला तू उत्तर दिलेस ती पोस्ट',
+  'Spoiler içeren gönderi': 'स्पॉयलर असलेली पोस्ट',
+  'Görsel gönderi': 'फोटो पोस्ट',
+  'Bu yorumu profilimde gizle': 'ही कमेंट माझ्या प्रोफाइलवरून लपवा',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'कमेंट शो आणि चित्रपटाच्या पेजवर राहते',
+  'Bu yorumu sil': 'ही कमेंट डिलीट करा',
+  'Yorum profilinde gizlendi': 'कमेंट तुझ्या प्रोफाइलवरून लपवली गेली',
+  'Geri al': 'पूर्ववत करा',
+  'Yorum silinsin mi?': 'कमेंट डिलीट करायची का?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ही कमेंट सगळीकडून कायमची डिलीट होईल. ती परत आणता येणार नाही.',
+  'Yorum silindi': 'कमेंट डिलीट झाली',
+  'Yorum profilinde tekrar görünüyor':
+      'कमेंट तुझ्या प्रोफाइलवर पुन्हा दिसत आहे',
+  'Gizlenen yorumun yok': 'तुझी कोणतीही लपवलेली कमेंट नाही',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'तुझ्या प्रोफाइलच्या कमेंट्स टॅबमध्ये एखाद्या पोस्टवर दाबून धरून तू ज्या कमेंट्स लपवतोस, त्या इथे जमा होतात.',
+  'Gizlenen yorumlar': 'लपवलेल्या कमेंट्स',
+  'Gönderiye git': 'पोस्टवर जा',
+  'Tekrar göster': 'पुन्हा दाखवा',
+  'Yanıtlarımı gizle': 'माझी उत्तरे लपवा',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'इतरांच्या पोस्टवर तू लिहिलेली उत्तरे फक्त तुलाच दिसतात',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'तुझ्या प्रोफाइलवर लपवलेल्या कमेंट्स पुन्हा दाखवा',
 };

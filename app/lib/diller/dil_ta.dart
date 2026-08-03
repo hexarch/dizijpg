@@ -471,4 +471,30 @@ const Map<String, String> cevirilerTa = {
   'Beğenenler': 'விரும்பியவர்கள்',
   'Henüz beğeni yok': 'இதுவரை விருப்பங்கள் இல்லை',
   'Bu gönderiyi ilk beğenen sen ol': 'இந்த இடுகையை முதலில் விரும்புங்கள்',
+  'Yanıt verdiğin gönderi': 'நீ பதிலளித்த பதிவு',
+  'Spoiler içeren gönderi': 'ஸ்பாய்லர் உள்ள பதிவு',
+  'Görsel gönderi': 'புகைப்பட பதிவு',
+  'Bu yorumu profilimde gizle': 'இந்தக் கருத்தை என் சுயவிவரத்தில் மறை',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'கருத்து தொடர் மற்றும் திரைப்பட பக்கத்தில் தொடர்ந்து இருக்கும்',
+  'Bu yorumu sil': 'இந்தக் கருத்தை நீக்கு',
+  'Yorum profilinde gizlendi': 'கருத்து உன் சுயவிவரத்தில் மறைக்கப்பட்டது',
+  'Geri al': 'செயல்தவிர்',
+  'Yorum silinsin mi?': 'கருத்தை நீக்கவா?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'இந்தக் கருத்து எல்லா இடங்களிலிருந்தும் நிரந்தரமாக நீக்கப்படும். இதை மீட்க முடியாது.',
+  'Yorum silindi': 'கருத்து நீக்கப்பட்டது',
+  'Yorum profilinde tekrar görünüyor':
+      'கருத்து உன் சுயவிவரத்தில் மீண்டும் தெரிகிறது',
+  'Gizlenen yorumun yok': 'உனக்கு மறைக்கப்பட்ட கருத்துகள் இல்லை',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'உன் சுயவிவரத்தின் கருத்துகள் தாவலில் ஒரு பதிவை அழுத்திப் பிடித்து நீ மறைக்கும் கருத்துகள் இங்கே சேரும்.',
+  'Gizlenen yorumlar': 'மறைக்கப்பட்ட கருத்துகள்',
+  'Gönderiye git': 'பதிவுக்குச் செல்',
+  'Tekrar göster': 'மீண்டும் காட்டு',
+  'Yanıtlarımı gizle': 'என் பதில்களை மறை',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'மற்றவர்களின் பதிவுகளுக்கு நீ எழுதும் பதில்கள் உனக்கு மட்டுமே தெரியும்',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'உன் சுயவிவரத்தில் மறைத்த கருத்துகளை மீண்டும் காட்டு',
 };

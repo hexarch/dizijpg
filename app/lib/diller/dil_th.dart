@@ -464,4 +464,29 @@ const Map<String, String> cevirilerTh = {
   'Beğenenler': 'คนที่ถูกใจ',
   'Henüz beğeni yok': 'ยังไม่มีใครถูกใจ',
   'Bu gönderiyi ilk beğenen sen ol': 'เป็นคนแรกที่ถูกใจโพสต์นี้',
+  'Yanıt verdiğin gönderi': 'โพสต์ที่คุณตอบกลับ',
+  'Spoiler içeren gönderi': 'โพสต์ที่มีสปอยล์',
+  'Görsel gönderi': 'โพสต์รูปภาพ',
+  'Bu yorumu profilimde gizle': 'ซ่อนความคิดเห็นนี้บนโปรไฟล์ของฉัน',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'ความคิดเห็นยังคงอยู่ในหน้าซีรีส์และภาพยนตร์',
+  'Bu yorumu sil': 'ลบความคิดเห็นนี้',
+  'Yorum profilinde gizlendi': 'ซ่อนความคิดเห็นบนโปรไฟล์แล้ว',
+  'Geri al': 'เลิกทำ',
+  'Yorum silinsin mi?': 'ลบความคิดเห็นนี้ใช่ไหม',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ความคิดเห็นนี้จะถูกลบอย่างถาวรจากทุกที่ ไม่สามารถย้อนกลับได้',
+  'Yorum silindi': 'ลบความคิดเห็นแล้ว',
+  'Yorum profilinde tekrar görünüyor': 'ความคิดเห็นแสดงบนโปรไฟล์ของคุณอีกครั้ง',
+  'Gizlenen yorumun yok': 'ไม่มีความคิดเห็นที่ซ่อนไว้',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'ความคิดเห็นที่คุณซ่อนโดยการกดค้างที่โพสต์ในแท็บความคิดเห็นบนโปรไฟล์จะรวมอยู่ที่นี่',
+  'Gizlenen yorumlar': 'ความคิดเห็นที่ซ่อนไว้',
+  'Gönderiye git': 'ไปที่โพสต์',
+  'Tekrar göster': 'แสดงอีกครั้ง',
+  'Yanıtlarımı gizle': 'ซ่อนการตอบกลับของฉัน',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'การตอบกลับที่คุณเขียนในโพสต์ของผู้อื่นจะมองเห็นได้เฉพาะคุณเท่านั้น',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'แสดงความคิดเห็นที่คุณซ่อนไว้บนโปรไฟล์อีกครั้ง',
 };

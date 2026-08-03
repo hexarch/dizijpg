@@ -477,4 +477,30 @@ const Map<String, String> cevirilerFr = {
   'Henüz beğeni yok': 'Pas encore de mentions Jaime',
   'Bu gönderiyi ilk beğenen sen ol':
       'Sois la premiere personne a aimer ce post',
+  'Yanıt verdiğin gönderi': 'Publication à laquelle tu as répondu',
+  'Spoiler içeren gönderi': 'Publication avec spoilers',
+  'Görsel gönderi': 'Publication avec photo',
+  'Bu yorumu profilimde gizle': 'Masquer ce commentaire sur mon profil',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Le commentaire reste sur la page de la série et du film',
+  'Bu yorumu sil': 'Supprimer ce commentaire',
+  'Yorum profilinde gizlendi': 'Commentaire masqué sur ton profil',
+  'Geri al': 'Annuler',
+  'Yorum silinsin mi?': 'Supprimer le commentaire ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Ce commentaire sera supprimé définitivement partout. Impossible d’annuler.',
+  'Yorum silindi': 'Commentaire supprimé',
+  'Yorum profilinde tekrar görünüyor':
+      'Le commentaire est de nouveau visible sur ton profil',
+  'Gizlenen yorumun yok': 'Aucun commentaire masqué',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Les commentaires que tu masques en appuyant longuement sur une publication dans l’onglet Commentaires de ton profil s’accumulent ici.',
+  'Gizlenen yorumlar': 'Commentaires masqués',
+  'Gönderiye git': 'Aller à la publication',
+  'Tekrar göster': 'Afficher à nouveau',
+  'Yanıtlarımı gizle': 'Masquer mes réponses',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Les réponses que tu écris aux publications des autres ne sont visibles que par toi',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Afficher à nouveau les commentaires que tu as masqués sur ton profil',
 };

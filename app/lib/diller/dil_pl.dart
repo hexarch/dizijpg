@@ -473,4 +473,30 @@ const Map<String, String> cevirilerPl = {
   'Beğenenler': 'Polubienia',
   'Henüz beğeni yok': 'Brak polubien',
   'Bu gönderiyi ilk beğenen sen ol': 'Polub ten post jako pierwsza osoba',
+  'Yanıt verdiğin gönderi': 'Post, na który odpowiedziałeś',
+  'Spoiler içeren gönderi': 'Post ze spoilerami',
+  'Görsel gönderi': 'Post ze zdjęciem',
+  'Bu yorumu profilimde gizle': 'Ukryj ten komentarz na moim profilu',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Komentarz pozostaje na stronie serialu i filmu',
+  'Bu yorumu sil': 'Usuń ten komentarz',
+  'Yorum profilinde gizlendi': 'Komentarz ukryty na Twoim profilu',
+  'Geri al': 'Cofnij',
+  'Yorum silinsin mi?': 'Usunąć komentarz?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Ten komentarz zostanie trwale usunięty wszędzie. Nie można tego cofnąć.',
+  'Yorum silindi': 'Komentarz usunięty',
+  'Yorum profilinde tekrar görünüyor':
+      'Komentarz znów jest widoczny na Twoim profilu',
+  'Gizlenen yorumun yok': 'Brak ukrytych komentarzy',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Komentarze, które ukrywasz, przytrzymując post w zakładce Komentarze na Twoim profilu, zbierają się tutaj.',
+  'Gizlenen yorumlar': 'Ukryte komentarze',
+  'Gönderiye git': 'Przejdź do posta',
+  'Tekrar göster': 'Pokaż ponownie',
+  'Yanıtlarımı gizle': 'Ukryj moje odpowiedzi',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Odpowiedzi, które piszesz pod postami innych osób, widzisz tylko Ty',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Pokaż ponownie komentarze, które ukryłeś na swoim profilu',
 };

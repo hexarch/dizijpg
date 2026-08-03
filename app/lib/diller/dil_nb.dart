@@ -471,4 +471,30 @@ const Map<String, String> cevirilerNb = {
   'Beğenenler': 'Likerklikk',
   'Henüz beğeni yok': 'Ingen likerklikk enna',
   'Bu gönderiyi ilk beğenen sen ol': 'Bli den forste som liker dette innlegget',
+  'Yanıt verdiğin gönderi': 'Innlegg du svarte på',
+  'Spoiler içeren gönderi': 'Innlegg med spoilere',
+  'Görsel gönderi': 'Bildeinnlegg',
+  'Bu yorumu profilimde gizle': 'Skjul denne kommentaren på profilen min',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Kommentaren blir værende på serie- og filmsiden',
+  'Bu yorumu sil': 'Slett denne kommentaren',
+  'Yorum profilinde gizlendi': 'Kommentar skjult på profilen din',
+  'Geri al': 'Angre',
+  'Yorum silinsin mi?': 'Slette kommentaren?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Denne kommentaren slettes permanent overalt. Det kan ikke angres.',
+  'Yorum silindi': 'Kommentar slettet',
+  'Yorum profilinde tekrar görünüyor':
+      'Kommentaren er synlig på profilen din igjen',
+  'Gizlenen yorumun yok': 'Ingen skjulte kommentarer',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Kommentarer du skjuler ved å trykke lenge på et innlegg under fanen Kommentarer på profilen din, samles her.',
+  'Gizlenen yorumlar': 'Skjulte kommentarer',
+  'Gönderiye git': 'Gå til innlegget',
+  'Tekrar göster': 'Vis igjen',
+  'Yanıtlarımı gizle': 'Skjul svarene mine',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Svar du skriver på andres innlegg, er bare synlige for deg',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Vis kommentarene du har skjult på profilen din, igjen',
 };

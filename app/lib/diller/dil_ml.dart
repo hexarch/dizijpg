@@ -471,4 +471,30 @@ const Map<String, String> cevirilerMl = {
   'Beğenenler': 'ഇഷ്ടപ്പെട്ടവർ',
   'Henüz beğeni yok': 'ഇതുവരെ ലൈക്കുകൾ ഇല്ല',
   'Bu gönderiyi ilk beğenen sen ol': 'ഈ പോസ്റ്റ് ആദ്യം ഇഷ്ടപ്പെടൂ',
+  'Yanıt verdiğin gönderi': 'നിങ്ങൾ മറുപടി നൽകിയ പോസ്റ്റ്',
+  'Spoiler içeren gönderi': 'സ്പോയിലർ അടങ്ങിയ പോസ്റ്റ്',
+  'Görsel gönderi': 'ഫോട്ടോ പോസ്റ്റ്',
+  'Bu yorumu profilimde gizle': 'ഈ കമന്റ് എന്റെ പ്രൊഫൈലിൽ മറയ്ക്കുക',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'കമന്റ് സീരീസ്, സിനിമ പേജിൽ അതേപടി തുടരും',
+  'Bu yorumu sil': 'ഈ കമന്റ് ഇല്ലാതാക്കുക',
+  'Yorum profilinde gizlendi': 'കമന്റ് നിങ്ങളുടെ പ്രൊഫൈലിൽ മറച്ചു',
+  'Geri al': 'പഴയപടിയാക്കുക',
+  'Yorum silinsin mi?': 'കമന്റ് ഇല്ലാതാക്കണോ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ഈ കമന്റ് എല്ലായിടത്തുനിന്നും ശാശ്വതമായി ഇല്ലാതാകും. തിരികെ എടുക്കാൻ കഴിയില്ല.',
+  'Yorum silindi': 'കമന്റ് ഇല്ലാതാക്കി',
+  'Yorum profilinde tekrar görünüyor':
+      'കമന്റ് നിങ്ങളുടെ പ്രൊഫൈലിൽ വീണ്ടും കാണാം',
+  'Gizlenen yorumun yok': 'മറച്ചുവെച്ച കമന്റുകൾ ഇല്ല',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'നിങ്ങളുടെ പ്രൊഫൈലിലെ കമന്റുകൾ ടാബിൽ ഒരു പോസ്റ്റ് അമർത്തിപ്പിടിച്ച് മറച്ചവ ഇവിടെ ശേഖരിക്കപ്പെടും.',
+  'Gizlenen yorumlar': 'മറച്ചുവെച്ച കമന്റുകൾ',
+  'Gönderiye git': 'പോസ്റ്റിലേക്ക് പോകുക',
+  'Tekrar göster': 'വീണ്ടും കാണിക്കുക',
+  'Yanıtlarımı gizle': 'എന്റെ മറുപടികൾ മറയ്ക്കുക',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'മറ്റുള്ളവരുടെ പോസ്റ്റുകൾക്ക് നിങ്ങൾ എഴുതിയ മറുപടികൾ നിങ്ങൾക്ക് മാത്രമേ കാണാനാകൂ',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'നിങ്ങളുടെ പ്രൊഫൈലിൽ മറച്ച കമന്റുകൾ വീണ്ടും കാണിക്കുക',
 };

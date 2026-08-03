@@ -471,4 +471,30 @@ const Map<String, String> cevirilerSr = {
   'Beğenenler': 'Свиђања',
   'Henüz beğeni yok': 'Још нема свиђања',
   'Bu gönderiyi ilk beğenen sen ol': 'Буди први коме се ово свиђа',
+  'Yanıt verdiğin gönderi': 'Objava na koju si odgovorio',
+  'Spoiler içeren gönderi': 'Objava sa spojlerima',
+  'Görsel gönderi': 'Objava sa slikom',
+  'Bu yorumu profilimde gizle': 'Sakrij ovaj komentar na mom profilu',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Komentar ostaje na stranici serije ili filma',
+  'Bu yorumu sil': 'Obriši ovaj komentar',
+  'Yorum profilinde gizlendi': 'Komentar je sakriven na tvom profilu',
+  'Geri al': 'Opozovi',
+  'Yorum silinsin mi?': 'Obrisati komentar?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Ovaj komentar će biti trajno obrisan svuda. Ne može se opozvati.',
+  'Yorum silindi': 'Komentar je obrisan',
+  'Yorum profilinde tekrar görünüyor':
+      'Komentar je ponovo vidljiv na tvom profilu',
+  'Gizlenen yorumun yok': 'Nemaš sakrivenih komentara',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Komentari koje sakriješ dugim pritiskom na objavu u kartici Komentari na tvom profilu se skupljaju ovde.',
+  'Gizlenen yorumlar': 'Sakriveni komentari',
+  'Gönderiye git': 'Idi na objavu',
+  'Tekrar göster': 'Prikaži ponovo',
+  'Yanıtlarımı gizle': 'Sakrij moje odgovore',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Odgovori koje pišeš na tuđe objave vidljivi su samo tebi',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Ponovo prikaži komentare koje si sakrio na svom profilu',
 };

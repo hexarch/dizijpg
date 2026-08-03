@@ -474,4 +474,30 @@ const Map<String, String> cevirilerIt = {
   'Beğenenler': 'Mi piace',
   'Henüz beğeni yok': 'Ancora nessun mi piace',
   'Bu gönderiyi ilk beğenen sen ol': 'Sii la prima persona a mettere mi piace',
+  'Yanıt verdiğin gönderi': 'Post a cui hai risposto',
+  'Spoiler içeren gönderi': 'Post con spoiler',
+  'Görsel gönderi': 'Post con foto',
+  'Bu yorumu profilimde gizle': 'Nascondi questo commento sul mio profilo',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Il commento resta nella pagina della serie e del film',
+  'Bu yorumu sil': 'Elimina questo commento',
+  'Yorum profilinde gizlendi': 'Commento nascosto sul tuo profilo',
+  'Geri al': 'Annulla',
+  'Yorum silinsin mi?': 'Eliminare il commento?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Questo commento verrà eliminato definitivamente ovunque. Non può essere annullato.',
+  'Yorum silindi': 'Commento eliminato',
+  'Yorum profilinde tekrar görünüyor':
+      'Il commento è di nuovo visibile sul tuo profilo',
+  'Gizlenen yorumun yok': 'Nessun commento nascosto',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'I commenti che nascondi tenendo premuto un post nella scheda Commenti del tuo profilo si accumulano qui.',
+  'Gizlenen yorumlar': 'Commenti nascosti',
+  'Gönderiye git': 'Vai al post',
+  'Tekrar göster': 'Mostra di nuovo',
+  'Yanıtlarımı gizle': 'Nascondi le mie risposte',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Le risposte che scrivi ai post di altri sono visibili solo a te',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Mostra di nuovo i commenti che hai nascosto sul tuo profilo',
 };

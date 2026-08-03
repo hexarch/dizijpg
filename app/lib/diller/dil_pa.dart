@@ -469,4 +469,30 @@ const Map<String, String> cevirilerPa = {
   'Beğenenler': 'ਪਸੰਦ ਕਰਨ ਵਾਲੇ',
   'Henüz beğeni yok': 'ਹਾਲੇ ਕੋਈ ਪਸੰਦ ਨਹੀਂ',
   'Bu gönderiyi ilk beğenen sen ol': 'ਇਸ ਪੋਸਟ ਨੂੰ ਪਸੰਦ ਕਰਨ ਵਾਲੇ ਪਹਿਲੇ ਬਣੋ',
+  'Yanıt verdiğin gönderi': 'ਉਹ ਪੋਸਟ ਜਿਸ ਦਾ ਤੂੰ ਜਵਾਬ ਦਿੱਤਾ',
+  'Spoiler içeren gönderi': 'ਸਪੌਇਲਰ ਵਾਲੀ ਪੋਸਟ',
+  'Görsel gönderi': 'ਫੋਟੋ ਪੋਸਟ',
+  'Bu yorumu profilimde gizle': 'ਇਹ ਟਿੱਪਣੀ ਮੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੋਂ ਲੁਕਾਓ',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'ਟਿੱਪਣੀ ਸ਼ੋ ਅਤੇ ਫ਼ਿਲਮ ਦੇ ਪੰਨੇ ਤੇ ਬਣੀ ਰਹਿੰਦੀ ਹੈ',
+  'Bu yorumu sil': 'ਇਹ ਟਿੱਪਣੀ ਮਿਟਾਓ',
+  'Yorum profilinde gizlendi': 'ਟਿੱਪਣੀ ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੋਂ ਲੁਕਾਈ ਗਈ',
+  'Geri al': 'ਵਾਪਸ ਲਿਆਓ',
+  'Yorum silinsin mi?': 'ਕੀ ਟਿੱਪਣੀ ਮਿਟਾਈ ਜਾਵੇ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ਇਹ ਟਿੱਪਣੀ ਹਰ ਥਾਂ ਤੋਂ ਹਮੇਸ਼ਾ ਲਈ ਮਿਟ ਜਾਵੇਗੀ। ਇਸਨੂੰ ਵਾਪਸ ਨਹੀਂ ਲਿਆਂਦਾ ਜਾ ਸਕਦਾ।',
+  'Yorum silindi': 'ਟਿੱਪਣੀ ਮਿਟਾ ਦਿੱਤੀ ਗਈ',
+  'Yorum profilinde tekrar görünüyor':
+      'ਟਿੱਪਣੀ ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੇ ਫਿਰ ਤੋਂ ਦਿਖ ਰਹੀ ਹੈ',
+  'Gizlenen yorumun yok': 'ਤੇਰੀ ਕੋਈ ਲੁਕੀ ਹੋਈ ਟਿੱਪਣੀ ਨਹੀਂ ਹੈ',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ ਦੇ ਟਿੱਪਣੀਆਂ ਟੈਬ ਵਿੱਚ ਕਿਸੇ ਪੋਸਟ ਨੂੰ ਦਬਾ ਕੇ ਰੱਖ ਕੇ ਜੋ ਟਿੱਪਣੀਆਂ ਤੂੰ ਲੁਕਾਉਂਦਾ ਹੈਂ, ਉਹ ਇੱਥੇ ਇਕੱਠੀਆਂ ਹੁੰਦੀਆਂ ਹਨ।',
+  'Gizlenen yorumlar': 'ਲੁਕੀਆਂ ਟਿੱਪਣੀਆਂ',
+  'Gönderiye git': 'ਪੋਸਟ ਤੇ ਜਾਓ',
+  'Tekrar göster': 'ਫਿਰ ਤੋਂ ਦਿਖਾਓ',
+  'Yanıtlarımı gizle': 'ਮੇਰੇ ਜਵਾਬ ਲੁਕਾਓ',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'ਦੂਜਿਆਂ ਦੀਆਂ ਪੋਸਟਾਂ ਤੇ ਤੂੰ ਜੋ ਜਵਾਬ ਲਿਖਦਾ ਹੈਂ ਉਹ ਸਿਰਫ਼ ਤੈਨੂੰ ਦਿਖਦੇ ਹਨ',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ ਤੇ ਲੁਕਾਈਆਂ ਟਿੱਪਣੀਆਂ ਫਿਰ ਤੋਂ ਦਿਖਾਓ',
 };

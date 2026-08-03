@@ -452,4 +452,27 @@ const Map<String, String> cevirilerZh = {
   'Beğenenler': '点赞的人',
   'Henüz beğeni yok': '还没有人点赞',
   'Bu gönderiyi ilk beğenen sen ol': '成为第一个点赞的人',
+  'Yanıt verdiğin gönderi': '你回复的帖子',
+  'Spoiler içeren gönderi': '含剧透的帖子',
+  'Görsel gönderi': '图片帖子',
+  'Bu yorumu profilimde gizle': '在我的主页隐藏这条评论',
+  'Yorum dizi ve film sayfasında durmaya devam eder': '评论仍会保留在剧集和电影页面上',
+  'Bu yorumu sil': '删除这条评论',
+  'Yorum profilinde gizlendi': '评论已在主页隐藏',
+  'Geri al': '撤销',
+  'Yorum silinsin mi?': '删除评论？',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      '此评论将在所有地方被永久删除，且无法恢复。',
+  'Yorum silindi': '评论已删除',
+  'Yorum profilinde tekrar görünüyor': '评论已在你的主页重新显示',
+  'Gizlenen yorumun yok': '没有隐藏的评论',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      '在主页的评论标签中长按帖子隐藏后，会显示在这里。',
+  'Gizlenen yorumlar': '隐藏的评论',
+  'Gönderiye git': '前往帖子',
+  'Tekrar göster': '重新显示',
+  'Yanıtlarımı gizle': '隐藏我的回复',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      '你在他人帖子下写的回复只有你自己可见',
+  'Profilinde gizlediğin yorumları tekrar göster': '重新显示你在主页隐藏的评论',
 };

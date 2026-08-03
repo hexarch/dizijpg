@@ -467,4 +467,30 @@ const Map<String, String> cevirilerGu = {
   'Beğenenler': 'પસંદ કરનારા',
   'Henüz beğeni yok': 'હજી કોઈ પસંદ નથી',
   'Bu gönderiyi ilk beğenen sen ol': 'આ પોસ્ટને પસંદ કરનારા પ્રથમ બનો',
+  'Yanıt verdiğin gönderi': 'જે પોસ્ટનો તેં જવાબ આપ્યો',
+  'Spoiler içeren gönderi': 'સ્પોઇલરવાળી પોસ્ટ',
+  'Görsel gönderi': 'ફોટો પોસ્ટ',
+  'Bu yorumu profilimde gizle': 'આ કમેન્ટ મારી પ્રોફાઇલ પરથી છુપાવો',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'કમેન્ટ શો અને ફિલ્મના પેજ પર રહે છે',
+  'Bu yorumu sil': 'આ કમેન્ટ ડિલીટ કરો',
+  'Yorum profilinde gizlendi': 'કમેન્ટ તારી પ્રોફાઇલ પરથી છુપાવવામાં આવી',
+  'Geri al': 'પાછું લાવો',
+  'Yorum silinsin mi?': 'શું કમેન્ટ ડિલીટ કરવી છે?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'આ કમેન્ટ દરેક જગ્યાએથી કાયમ માટે ડિલીટ થઈ જશે. તેને પાછી લાવી શકાશે નહીં.',
+  'Yorum silindi': 'કમેન્ટ ડિલીટ થઈ ગઈ',
+  'Yorum profilinde tekrar görünüyor':
+      'કમેન્ટ તારી પ્રોફાઇલ પર ફરીથી દેખાઈ રહી છે',
+  'Gizlenen yorumun yok': 'તારી પાસે કોઈ છુપાયેલી કમેન્ટ નથી',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'તારી પ્રોફાઇલના કમેન્ટ્સ ટેબમાં કોઈ પોસ્ટને દબાવી રાખીને તું જે કમેન્ટ્સ છુપાવે છે, તે અહીં ભેગી થાય છે.',
+  'Gizlenen yorumlar': 'છુપાયેલી કમેન્ટ્સ',
+  'Gönderiye git': 'પોસ્ટ પર જાઓ',
+  'Tekrar göster': 'ફરીથી બતાવો',
+  'Yanıtlarımı gizle': 'મારા જવાબો છુપાવો',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'બીજાની પોસ્ટ પર તું જે જવાબો લખે છે તે ફક્ત તને જ દેખાય છે',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'તારી પ્રોફાઇલ પર છુપાવેલી કમેન્ટ્સ ફરીથી બતાવો',
 };

@@ -477,4 +477,32 @@ const Map<String, String> cevirilerMy = {
   'Beğenenler': 'နှစ်သက်သူများ',
   'Henüz beğeni yok': 'နှစ်သက်မှု မရှိသေးပါ',
   'Bu gönderiyi ilk beğenen sen ol': 'ဤပို့စ်ကို ပထမဆုံး နှစ်သက်သူ ဖြစ်ပါ',
+  'Yanıt verdiğin gönderi': 'သင်ပြန်စာပြန်ခဲ့သော ပို့စ်',
+  'Spoiler içeren gönderi': 'စပွိုင်လာပါဝင်သော ပို့စ်',
+  'Görsel gönderi': 'ဓာတ်ပုံပို့စ်',
+  'Bu yorumu profilimde gizle':
+      'ဤမှတ်ချက်ကို ကျွန်ုပ်၏ပရိုဖိုင်တွင် ဖျောက်ထားပါ',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'မှတ်ချက်သည် ဇာတ်လမ်းတွဲနှင့် ရုပ်ရှင်စာမျက်နှာတွင် ဆက်ရှိနေမည်',
+  'Bu yorumu sil': 'ဤမှတ်ချက်ကို ဖျက်ပါ',
+  'Yorum profilinde gizlendi':
+      'မှတ်ချက်ကို သင်၏ပရိုဖိုင်တွင် ဖျောက်ထားပြီးပါပြီ',
+  'Geri al': 'ပြန်ပြင်ရန်',
+  'Yorum silinsin mi?': 'မှတ်ချက်ကို ဖျက်မလား?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ဤမှတ်ချက်ကို နေရာအနှံ့မှ အပြီးအပိုင် ဖျက်လိုက်ပါမည်။ ပြန်ရရှိနိုင်မည်မဟုတ်ပါ။',
+  'Yorum silindi': 'မှတ်ချက် ဖျက်ပြီးပါပြီ',
+  'Yorum profilinde tekrar görünüyor':
+      'မှတ်ချက်ကို သင်၏ပရိုဖိုင်တွင် ပြန်လည်တွေ့မြင်ရသည်',
+  'Gizlenen yorumun yok': 'ဖျောက်ထားသော မှတ်ချက် မရှိပါ',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'သင်၏ပရိုဖိုင်ရှိ မှတ်ချက်တဘ်တွင် ပို့စ်ကို ဖိထားခြင်းဖြင့် ဖျောက်ထားသော မှတ်ချက်များ ဤနေရာတွင် စုပုံလာမည်။',
+  'Gizlenen yorumlar': 'ဖျောက်ထားသော မှတ်ချက်များ',
+  'Gönderiye git': 'ပို့စ်သို့ သွားရန်',
+  'Tekrar göster': 'ပြန်ပြရန်',
+  'Yanıtlarımı gizle': 'ကျွန်ုပ်၏ပြန်စာများကို ဖျောက်ထားပါ',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'အခြားသူများ၏ ပို့စ်များတွင် သင်ရေးသော ပြန်စာများကို သင့်ကိုသာ မြင်နိုင်သည်',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'သင်၏ပရိုဖိုင်တွင် ဖျောက်ထားသော မှတ်ချက်များကို ပြန်ပြပါ',
 };

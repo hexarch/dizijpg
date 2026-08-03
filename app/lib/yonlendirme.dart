@@ -16,6 +16,7 @@ import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
 import 'ekranlar/giris.dart';
 import 'ekranlar/giris_istem.dart';
+import 'ekranlar/gizlenen_yorumlar.dart';
 import 'ekranlar/gizlilik.dart';
 import 'ekranlar/gozat.dart';
 import 'ekranlar/izlediklerim.dart';
@@ -46,6 +47,7 @@ void rotayaGit(String hedef) {
     '/izlediklerim',
     '/ayarlar',
     '/gizlilik',
+    '/gizlenen-yorumlar',
     '/giris',
     '/karsilama',
     '/gonderi/',
@@ -261,6 +263,12 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
         },
       ),
       GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
+      // Ayarlar > Gizlilik > Gizlenen yorumlar. Kabuğun DIŞINDA: ayarların
+      // kendisi gibi tam ekran açılır, geri tuşu ayarlara döner.
+      GoRoute(
+        path: '/gizlenen-yorumlar',
+        builder: (_, __) => const GizlenenYorumlarEkrani(),
+      ),
       GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
       // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.
       // KABUĞUN DIŞINDA: alt gezinme çubuğu görünmez, geri tuşu (Android ve

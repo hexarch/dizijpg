@@ -470,4 +470,30 @@ const Map<String, String> cevirilerEn = {
   'Beğenenler': 'Likes',
   'Henüz beğeni yok': 'No likes yet',
   'Bu gönderiyi ilk beğenen sen ol': 'Be the first to like this post',
+  'Yanıt verdiğin gönderi': 'Post you replied to',
+  'Spoiler içeren gönderi': 'Post with spoilers',
+  'Görsel gönderi': 'Photo post',
+  'Bu yorumu profilimde gizle': 'Hide this comment on my profile',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'The comment stays on the show and movie page',
+  'Bu yorumu sil': 'Delete this comment',
+  'Yorum profilinde gizlendi': 'Comment hidden on your profile',
+  'Geri al': 'Undo',
+  'Yorum silinsin mi?': 'Delete comment?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'This comment will be permanently deleted everywhere. It cannot be undone.',
+  'Yorum silindi': 'Comment deleted',
+  'Yorum profilinde tekrar görünüyor':
+      'The comment is visible on your profile again',
+  'Gizlenen yorumun yok': 'No hidden comments',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Comments you hide by long pressing a post in the Comments tab of your profile collect here.',
+  'Gizlenen yorumlar': 'Hidden comments',
+  'Gönderiye git': 'Go to post',
+  'Tekrar göster': 'Show again',
+  'Yanıtlarımı gizle': 'Hide my replies',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Replies you write to other people posts are visible only to you',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Show the comments you hid on your profile again',
 };

@@ -473,4 +473,30 @@ const Map<String, String> cevirilerEl = {
   'Beğenenler': 'Μου αρεσει',
   'Henüz beğeni yok': 'Δεν υπαρχουν ακομη',
   'Bu gönderiyi ilk beğenen sen ol': 'Γινε ο πρωτος που θα το αγαπησει',
+  'Yanıt verdiğin gönderi': 'Ανάρτηση στην οποία απάντησες',
+  'Spoiler içeren gönderi': 'Ανάρτηση με σπόιλερ',
+  'Görsel gönderi': 'Ανάρτηση με φωτογραφία',
+  'Bu yorumu profilimde gizle': 'Απόκρυψη αυτού του σχολίου από το προφίλ μου',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Το σχόλιο παραμένει στη σελίδα της σειράς ή της ταινίας',
+  'Bu yorumu sil': 'Διαγραφή αυτού του σχολίου',
+  'Yorum profilinde gizlendi': 'Το σχόλιο κρύφτηκε από το προφίλ σου',
+  'Geri al': 'Αναίρεση',
+  'Yorum silinsin mi?': 'Διαγραφή σχολίου;',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Αυτό το σχόλιο θα διαγραφεί οριστικά από παντού. Δεν μπορεί να αναιρεθεί.',
+  'Yorum silindi': 'Το σχόλιο διαγράφηκε',
+  'Yorum profilinde tekrar görünüyor':
+      'Το σχόλιο είναι ξανά ορατό στο προφίλ σου',
+  'Gizlenen yorumun yok': 'Δεν έχεις κρυμμένα σχόλια',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Τα σχόλια που κρύβεις πατώντας παρατεταμένα σε μια ανάρτηση στην καρτέλα Σχόλια του προφίλ σου συγκεντρώνονται εδώ.',
+  'Gizlenen yorumlar': 'Κρυμμένα σχόλια',
+  'Gönderiye git': 'Μετάβαση στην ανάρτηση',
+  'Tekrar göster': 'Εμφάνιση ξανά',
+  'Yanıtlarımı gizle': 'Απόκρυψη των απαντήσεών μου',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Οι απαντήσεις που γράφεις σε αναρτήσεις άλλων είναι ορατές μόνο σε εσένα',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Εμφάνισε ξανά τα σχόλια που έκρυψες από το προφίλ σου',
 };

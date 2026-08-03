@@ -469,4 +469,30 @@ const Map<String, String> cevirilerSw = {
   'Beğenenler': 'Waliopenda',
   'Henüz beğeni yok': 'Bado hakuna anayependa',
   'Bu gönderiyi ilk beğenen sen ol': 'Kuwa wa kwanza kupenda chapisho hili',
+  'Yanıt verdiğin gönderi': 'Chapisho ulilojibu',
+  'Spoiler içeren gönderi': 'Chapisho lenye spoila',
+  'Görsel gönderi': 'Chapisho la picha',
+  'Bu yorumu profilimde gizle': 'Ficha maoni haya kwenye wasifu wangu',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Maoni yanabaki kwenye ukurasa wa msululu na filamu',
+  'Bu yorumu sil': 'Futa maoni haya',
+  'Yorum profilinde gizlendi': 'Maoni yamefichwa kwenye wasifu wako',
+  'Geri al': 'Tendua',
+  'Yorum silinsin mi?': 'Ufute maoni haya?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Maoni haya yatafutwa kabisa kila mahali. Haiwezi kutenduliwa.',
+  'Yorum silindi': 'Maoni yamefutwa',
+  'Yorum profilinde tekrar görünüyor':
+      'Maoni yanaonekana tena kwenye wasifu wako',
+  'Gizlenen yorumun yok': 'Huna maoni yaliyofichwa',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Maoni unayoyaficha kwa kubonyeza na kushikilia chapisho kwenye kichupo cha Maoni cha wasifu wako hukusanyika hapa.',
+  'Gizlenen yorumlar': 'Maoni yaliyofichwa',
+  'Gönderiye git': 'Nenda kwenye chapisho',
+  'Tekrar göster': 'Onyesha tena',
+  'Yanıtlarımı gizle': 'Ficha majibu yangu',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Majibu unayoandika kwenye machapisho ya wengine yanaonekana kwako pekee',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Onyesha tena maoni uliyoyaficha kwenye wasifu',
 };

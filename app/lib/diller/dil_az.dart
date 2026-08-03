@@ -469,4 +469,29 @@ const Map<String, String> cevirilerAz = {
   'Beğenenler': 'Beyenenler',
   'Henüz beğeni yok': 'Hele beyeni yoxdur',
   'Bu gönderiyi ilk beğenen sen ol': 'Bu paylasimi ilk beyenen sen ol',
+  'Yanıt verdiğin gönderi': 'Cavab verdiyin paylaşım',
+  'Spoiler içeren gönderi': 'Spoyler olan paylaşım',
+  'Görsel gönderi': 'Foto paylaşım',
+  'Bu yorumu profilimde gizle': 'Bu şərhi profilimdə gizlət',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Şərh dizi və film səhifəsində qalmaqda davam edir',
+  'Bu yorumu sil': 'Bu şərhi sil',
+  'Yorum profilinde gizlendi': 'Şərh profilində gizlədildi',
+  'Geri al': 'Geri al',
+  'Yorum silinsin mi?': 'Şərh silinsin?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Bu şərh hər yerdən daimi olaraq silinəcək. Geri qaytarıla bilməz.',
+  'Yorum silindi': 'Şərh silindi',
+  'Yorum profilinde tekrar görünüyor': 'Şərh profilində yenidən görünür',
+  'Gizlenen yorumun yok': 'Gizlədilmiş şərhin yoxdur',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Profilindəki Şərhlər bölməsində bir paylaşıma basıb saxlayaraq gizlətdiklərin burada toplanır.',
+  'Gizlenen yorumlar': 'Gizlədilmiş şərhlər',
+  'Gönderiye git': 'Paylaşıma get',
+  'Tekrar göster': 'Yenidən göstər',
+  'Yanıtlarımı gizle': 'Cavablarımı gizlət',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Başqalarının paylaşımlarına yazdığın cavablar yalnız sənə görünür',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Profilində gizlətdiyin şərhləri yenidən göstər',
 };

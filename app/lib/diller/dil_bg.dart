@@ -473,4 +473,30 @@ const Map<String, String> cevirilerBg = {
   'Henüz beğeni yok': 'Все още няма харесвания',
   'Bu gönderiyi ilk beğenen sen ol':
       'Бъди първият, който харесва тази публикация',
+  'Yanıt verdiğin gönderi': 'Публикация, на която отговори',
+  'Spoiler içeren gönderi': 'Публикация със спойлери',
+  'Görsel gönderi': 'Публикация със снимка',
+  'Bu yorumu profilimde gizle': 'Скрий този коментар от профила ми',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Коментарът остава на страницата на сериала или филма',
+  'Bu yorumu sil': 'Изтрий този коментар',
+  'Yorum profilinde gizlendi': 'Коментарът е скрит от профила ти',
+  'Geri al': 'Отмени',
+  'Yorum silinsin mi?': 'Да се изтрие ли коментарът?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Този коментар ще бъде изтрит завинаги навсякъде. Не може да бъде възстановен.',
+  'Yorum silindi': 'Коментарът е изтрит',
+  'Yorum profilinde tekrar görünüyor':
+      'Коментарът отново се вижда в профила ти',
+  'Gizlenen yorumun yok': 'Нямаш скрити коментари',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Коментарите, които скриваш чрез задържане върху публикация в раздел Коментари на профила ти, се събират тук.',
+  'Gizlenen yorumlar': 'Скрити коментари',
+  'Gönderiye git': 'Отиди към публикацията',
+  'Tekrar göster': 'Покажи отново',
+  'Yanıtlarımı gizle': 'Скрий отговорите ми',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Отговорите, които пишеш на чужди публикации, се виждат само от теб',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Покажи отново коментарите, които си скрил от профила си',
 };

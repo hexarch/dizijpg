@@ -470,4 +470,30 @@ const Map<String, String> cevirilerVi = {
   'Beğenenler': 'Luot thich',
   'Henüz beğeni yok': 'Chua co luot thich nao',
   'Bu gönderiyi ilk beğenen sen ol': 'Hay la nguoi dau tien thich bai nay',
+  'Yanıt verdiğin gönderi': 'Bài viết bạn đã trả lời',
+  'Spoiler içeren gönderi': 'Bài viết có tiết lộ nội dung',
+  'Görsel gönderi': 'Bài viết hình ảnh',
+  'Bu yorumu profilimde gizle': 'Ẩn bình luận này trên hồ sơ của tôi',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Bình luận vẫn còn trên trang phim bộ và phim',
+  'Bu yorumu sil': 'Xóa bình luận này',
+  'Yorum profilinde gizlendi': 'Đã ẩn bình luận trên hồ sơ của bạn',
+  'Geri al': 'Hoàn tác',
+  'Yorum silinsin mi?': 'Xóa bình luận này chứ?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Bình luận này sẽ bị xóa vĩnh viễn ở mọi nơi. Không thể hoàn tác.',
+  'Yorum silindi': 'Đã xóa bình luận',
+  'Yorum profilinde tekrar görünüyor':
+      'Bình luận hiển thị lại trên hồ sơ của bạn',
+  'Gizlenen yorumun yok': 'Không có bình luận nào bị ẩn',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Các bình luận bạn ẩn bằng cách nhấn giữ một bài viết trong tab Bình luận trên hồ sơ sẽ được lưu tại đây.',
+  'Gizlenen yorumlar': 'Bình luận đã ẩn',
+  'Gönderiye git': 'Đi đến bài viết',
+  'Tekrar göster': 'Hiện lại',
+  'Yanıtlarımı gizle': 'Ẩn câu trả lời của tôi',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Câu trả lời bạn viết trên bài viết của người khác chỉ mình bạn nhìn thấy',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Hiện lại các bình luận bạn đã ẩn trên hồ sơ',
 };

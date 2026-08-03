@@ -468,4 +468,30 @@ const Map<String, String> cevirilerTe = {
   'Beğenenler': 'ఇష్టపడినవారు',
   'Henüz beğeni yok': 'ఇంకా లైక్‌లు లేవు',
   'Bu gönderiyi ilk beğenen sen ol': 'ఈ పోస్ట్‌ను మొదట ఇష్టపడండి',
+  'Yanıt verdiğin gönderi': 'నువ్వు రిప్లై ఇచ్చిన పోస్ట్',
+  'Spoiler içeren gönderi': 'స్పాయిలర్ ఉన్న పోస్ట్',
+  'Görsel gönderi': 'ఫోటో పోస్ట్',
+  'Bu yorumu profilimde gizle': 'ఈ కామెంట్‌ని నా ప్రొఫైల్ నుండి దాచు',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'కామెంట్ షో మరియు సినిమా పేజీలో అలాగే ఉంటుంది',
+  'Bu yorumu sil': 'ఈ కామెంట్‌ని తొలగించు',
+  'Yorum profilinde gizlendi': 'కామెంట్ నీ ప్రొఫైల్ నుండి దాచబడింది',
+  'Geri al': 'వెనక్కి తీసుకో',
+  'Yorum silinsin mi?': 'కామెంట్‌ని తొలగించాలా?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'ఈ కామెంట్ ప్రతిచోటా శాశ్వతంగా తొలగించబడుతుంది. దీన్ని వెనక్కి తీసుకోలేరు.',
+  'Yorum silindi': 'కామెంట్ తొలగించబడింది',
+  'Yorum profilinde tekrar görünüyor':
+      'కామెంట్ నీ ప్రొఫైల్‌లో మళ్ళీ కనిపిస్తోంది',
+  'Gizlenen yorumun yok': 'నీకు దాచిన కామెంట్లు లేవు',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'నీ ప్రొఫైల్‌లోని కామెంట్స్ ట్యాబ్‌లో ఒక పోస్ట్‌ని నొక్కి పట్టుకుని నువ్వు దాచే కామెంట్లు ఇక్కడ చేరతాయి.',
+  'Gizlenen yorumlar': 'దాచిన కామెంట్లు',
+  'Gönderiye git': 'పోస్ట్‌కి వెళ్ళు',
+  'Tekrar göster': 'మళ్ళీ చూపించు',
+  'Yanıtlarımı gizle': 'నా రిప్లైలను దాచు',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'ఇతరుల పోస్ట్‌లకు నువ్వు రాసే రిప్లైలు నీకు మాత్రమే కనిపిస్తాయి',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'నీ ప్రొఫైల్‌లో దాచిన కామెంట్లను మళ్ళీ చూపించు',
 };

@@ -1352,6 +1352,15 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
       'Profilinde izlediğin dizi ve filmler görünmez',
     ),
     ('yorumlar_gizli', 'Yorumlarımı gizle', 'Profilinde yorumların görünmez'),
+    // POLARİTE BİLEREK "gizle": kullanıcı isteği "yanıtlar görünsün" biçiminde
+    // geldi ama bu listedeki öteki iki anahtar "gizle" yönünde. Aynı listede
+    // ters yönlü bir anahtar (açık = görünür) olsaydı üç düğmenin hangisinin
+    // ne yaptığı her okumada yeniden düşünülürdü.
+    (
+      'yanitlar_gizli',
+      'Yanıtlarımı gizle',
+      'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür',
+    ),
   ];
 
   @override
@@ -1435,6 +1444,29 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                 ),
                 onChanged: (v) => _degistir(alan, v),
               ),
+            // Tek tek gizlenen yorumların yönetim yeri. Sheet ÖNCE kapanır,
+            // sonra gidilir: kullanıcı geri döndüğünde üstüne yapışmış bir
+            // sheet bulmasın (begenenler.dart'taki kalıbın aynısı).
+            ListTile(
+              leading: Icon(
+                Icons.speaker_notes_off_outlined,
+                color: DiziRenkler.sariMetin,
+              ),
+              title: Text(
+                'Gizlenen yorumlar'.c,
+                style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+              ),
+              subtitle: Text(
+                'Profilinde gizlediğin yorumları tekrar göster'.c,
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+              ),
+              trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+              onTap: () {
+                final yonlendirici = GoRouter.of(context);
+                Navigator.pop(context);
+                yonlendirici.push('/gizlenen-yorumlar');
+              },
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Row(

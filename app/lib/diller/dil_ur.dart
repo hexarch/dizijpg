@@ -469,4 +469,30 @@ const Map<String, String> cevirilerUr = {
   'Beğenenler': 'پسند کرنے والے',
   'Henüz beğeni yok': 'ابھی کوئی پسند نہیں',
   'Bu gönderiyi ilk beğenen sen ol': 'اس پوسٹ کو پسند کرنے والے پہلے بنیں',
+  'Yanıt verdiğin gönderi': 'وہ پوسٹ جس کا تم نے جواب دیا',
+  'Spoiler içeren gönderi': 'اسپائلر والی پوسٹ',
+  'Görsel gönderi': 'تصویری پوسٹ',
+  'Bu yorumu profilimde gizle': 'یہ تبصرہ میری پروفائل سے چھپائیں',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'تبصرہ ڈرامہ اور فلم کے صفحے پر موجود رہتا ہے',
+  'Bu yorumu sil': 'یہ تبصرہ حذف کریں',
+  'Yorum profilinde gizlendi': 'تبصرہ تمہاری پروفائل سے چھپا دیا گیا',
+  'Geri al': 'واپس لائیں',
+  'Yorum silinsin mi?': 'کیا تبصرہ حذف کیا جائے؟',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'یہ تبصرہ ہر جگہ سے مستقل طور پر حذف ہو جائے گا۔ اسے واپس نہیں لایا جا سکتا۔',
+  'Yorum silindi': 'تبصرہ حذف کر دیا گیا',
+  'Yorum profilinde tekrar görünüyor':
+      'تبصرہ دوبارہ تمہاری پروفائل پر نظر آ رہا ہے',
+  'Gizlenen yorumun yok': 'تمہارا کوئی چھپا ہوا تبصرہ نہیں ہے',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'وہ تبصرے جو تم اپنی پروفائل کے تبصرے ٹیب میں کسی پوسٹ کو دبا کر چھپاتے ہو یہاں جمع ہوتے ہیں۔',
+  'Gizlenen yorumlar': 'چھپے ہوئے تبصرے',
+  'Gönderiye git': 'پوسٹ پر جائیں',
+  'Tekrar göster': 'دوبارہ دکھائیں',
+  'Yanıtlarımı gizle': 'اپنے جوابات چھپائیں',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'تم دوسروں کی پوسٹس پر جو جوابات لکھتے ہو وہ صرف تمہیں نظر آتے ہیں',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'اپنی پروفائل پر چھپائے گئے تبصرے دوبارہ دکھائیں',
 };

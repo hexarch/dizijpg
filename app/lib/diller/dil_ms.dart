@@ -472,4 +472,30 @@ const Map<String, String> cevirilerMs = {
   'Henüz beğeni yok': 'Belum ada sukaan',
   'Bu gönderiyi ilk beğenen sen ol':
       'Jadi orang pertama yang menyukai kiriman ini',
+  'Yanıt verdiğin gönderi': 'Hantaran yang anda balas',
+  'Spoiler içeren gönderi': 'Hantaran mengandungi spoiler',
+  'Görsel gönderi': 'Hantaran gambar',
+  'Bu yorumu profilimde gizle': 'Sembunyikan komen ini pada profil saya',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Komen kekal berada di halaman siri dan filem',
+  'Bu yorumu sil': 'Padam komen ini',
+  'Yorum profilinde gizlendi': 'Komen disembunyikan pada profil anda',
+  'Geri al': 'Buat asal',
+  'Yorum silinsin mi?': 'Padam komen ini?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Komen ini akan dipadam secara kekal di semua tempat. Tidak boleh dibuat asal.',
+  'Yorum silindi': 'Komen dipadam',
+  'Yorum profilinde tekrar görünüyor':
+      'Komen kelihatan semula pada profil anda',
+  'Gizlenen yorumun yok': 'Tiada komen tersembunyi',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Komen yang anda sembunyikan dengan menekan lama hantaran dalam tab Komen profil anda akan terkumpul di sini.',
+  'Gizlenen yorumlar': 'Komen tersembunyi',
+  'Gönderiye git': 'Pergi ke hantaran',
+  'Tekrar göster': 'Tunjukkan semula',
+  'Yanıtlarımı gizle': 'Sembunyikan balasan saya',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Balasan yang anda tulis pada hantaran orang lain hanya kelihatan kepada anda',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Tunjukkan semula komen yang anda sembunyikan pada profil',
 };

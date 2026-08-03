@@ -472,4 +472,29 @@ const Map<String, String> cevirilerFi = {
   'Beğenenler': 'Tykkaykset',
   'Henüz beğeni yok': 'Ei viela tykkayksia',
   'Bu gönderiyi ilk beğenen sen ol': 'Ole ensimmainen tykkaaja',
+  'Yanıt verdiğin gönderi': 'Viesti, johon vastasit',
+  'Spoiler içeren gönderi': 'Viesti, jossa on spoilereita',
+  'Görsel gönderi': 'Kuvaviesti',
+  'Bu yorumu profilimde gizle': 'Piilota tämä kommentti profiilissani',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Kommentti pysyy sarjan ja elokuvan sivulla',
+  'Bu yorumu sil': 'Poista tämä kommentti',
+  'Yorum profilinde gizlendi': 'Kommentti piilotettu profiilissasi',
+  'Geri al': 'Kumoa',
+  'Yorum silinsin mi?': 'Poistetaanko kommentti?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Tämä kommentti poistetaan pysyvästi kaikkialta. Toimintoa ei voi kumota.',
+  'Yorum silindi': 'Kommentti poistettu',
+  'Yorum profilinde tekrar görünüyor': 'Kommentti näkyy taas profiilissasi',
+  'Gizlenen yorumun yok': 'Ei piilotettuja kommentteja',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Kommentit, jotka piilotat pitämällä sormea viestin päällä profiilisi Kommentit-välilehdellä, kertyvät tänne.',
+  'Gizlenen yorumlar': 'Piilotetut kommentit',
+  'Gönderiye git': 'Siirry viestiin',
+  'Tekrar göster': 'Näytä uudelleen',
+  'Yanıtlarımı gizle': 'Piilota vastaukseni',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Vastaukset, joita kirjoitat muiden viesteihin, näkyvät vain sinulle',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Näytä taas profiilissasi piilottamasi kommentit',
 };

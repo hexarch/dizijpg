@@ -476,4 +476,30 @@ const Map<String, String> cevirilerDe = {
   'Beğenenler': 'Gefallt mir',
   'Henüz beğeni yok': 'Noch keine Likes',
   'Bu gönderiyi ilk beğenen sen ol': 'Sei die erste Person, der das gefallt',
+  'Yanıt verdiğin gönderi': 'Beitrag, auf den du geantwortet hast',
+  'Spoiler içeren gönderi': 'Beitrag mit Spoilern',
+  'Görsel gönderi': 'Bildbeitrag',
+  'Bu yorumu profilimde gizle': 'Diesen Kommentar in meinem Profil ausblenden',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Der Kommentar bleibt auf der Serien- und Filmseite',
+  'Bu yorumu sil': 'Diesen Kommentar löschen',
+  'Yorum profilinde gizlendi': 'Kommentar in deinem Profil ausgeblendet',
+  'Geri al': 'Rückgängig',
+  'Yorum silinsin mi?': 'Kommentar löschen?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Dieser Kommentar wird überall dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden.',
+  'Yorum silindi': 'Kommentar gelöscht',
+  'Yorum profilinde tekrar görünüyor':
+      'Der Kommentar ist wieder auf deinem Profil sichtbar',
+  'Gizlenen yorumun yok': 'Keine ausgeblendeten Kommentare',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Kommentare, die du im Tab Kommentare deines Profils durch langes Drücken auf einen Beitrag ausblendest, sammeln sich hier.',
+  'Gizlenen yorumlar': 'Ausgeblendete Kommentare',
+  'Gönderiye git': 'Zum Beitrag',
+  'Tekrar göster': 'Wieder anzeigen',
+  'Yanıtlarımı gizle': 'Meine Antworten ausblenden',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Antworten, die du auf Beiträge anderer schreibst, sind nur für dich sichtbar',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Die Kommentare, die du in deinem Profil ausgeblendet hast, wieder anzeigen',
 };

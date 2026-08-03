@@ -471,4 +471,29 @@ const Map<String, String> cevirilerSv = {
   'Beğenenler': 'Gillar',
   'Henüz beğeni yok': 'Inga gillamarkeringar an',
   'Bu gönderiyi ilk beğenen sen ol': 'Bli forst med att gilla det har inlagget',
+  'Yanıt verdiğin gönderi': 'Inlägg du svarade på',
+  'Spoiler içeren gönderi': 'Inlägg med spoilers',
+  'Görsel gönderi': 'Bildinlägg',
+  'Bu yorumu profilimde gizle': 'Dölj den här kommentaren på min profil',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'Kommentaren finns kvar på serie- och filmsidan',
+  'Bu yorumu sil': 'Ta bort den här kommentaren',
+  'Yorum profilinde gizlendi': 'Kommentar dold på din profil',
+  'Geri al': 'Ångra',
+  'Yorum silinsin mi?': 'Ta bort kommentaren?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Den här kommentaren tas bort permanent överallt. Det går inte att ångra.',
+  'Yorum silindi': 'Kommentar borttagen',
+  'Yorum profilinde tekrar görünüyor': 'Kommentaren syns igen på din profil',
+  'Gizlenen yorumun yok': 'Inga dolda kommentarer',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Kommentarer du döljer genom att trycka länge på ett inlägg under fliken Kommentarer på din profil samlas här.',
+  'Gizlenen yorumlar': 'Dolda kommentarer',
+  'Gönderiye git': 'Gå till inlägget',
+  'Tekrar göster': 'Visa igen',
+  'Yanıtlarımı gizle': 'Dölj mina svar',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Svar du skriver på andras inlägg syns bara för dig',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Visa de kommentarer du dolt på din profil igen',
 };

@@ -472,4 +472,30 @@ const Map<String, String> cevirilerNl = {
   'Beğenenler': 'Vind-ik-leuks',
   'Henüz beğeni yok': 'Nog geen vind-ik-leuks',
   'Bu gönderiyi ilk beğenen sen ol': 'Wees de eerste die dit leuk vindt',
+  'Yanıt verdiğin gönderi': 'Bericht waarop je hebt gereageerd',
+  'Spoiler içeren gönderi': 'Bericht met spoilers',
+  'Görsel gönderi': 'Fotobericht',
+  'Bu yorumu profilimde gizle': 'Deze reactie op mijn profiel verbergen',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'De reactie blijft op de serie- en filmpagina staan',
+  'Bu yorumu sil': 'Deze reactie verwijderen',
+  'Yorum profilinde gizlendi': 'Reactie verborgen op je profiel',
+  'Geri al': 'Ongedaan maken',
+  'Yorum silinsin mi?': 'Reactie verwijderen?',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'Deze reactie wordt overal permanent verwijderd. Dit kan niet ongedaan worden gemaakt.',
+  'Yorum silindi': 'Reactie verwijderd',
+  'Yorum profilinde tekrar görünüyor':
+      'De reactie is weer zichtbaar op je profiel',
+  'Gizlenen yorumun yok': 'Geen verborgen reacties',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'Reacties die je verbergt door lang op een bericht te drukken in het tabblad Reacties van je profiel, verzamelen zich hier.',
+  'Gizlenen yorumlar': 'Verborgen reacties',
+  'Gönderiye git': 'Naar bericht',
+  'Tekrar göster': 'Opnieuw weergeven',
+  'Yanıtlarımı gizle': 'Mijn antwoorden verbergen',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'Antwoorden die je op berichten van anderen schrijft, zijn alleen voor jou zichtbaar',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'Reacties die je op je profiel hebt verborgen weer weergeven',
 };

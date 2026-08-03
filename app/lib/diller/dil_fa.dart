@@ -469,4 +469,30 @@ const Map<String, String> cevirilerFa = {
   'Beğenenler': 'پسندیدند',
   'Henüz beğeni yok': 'هنوز پسندی نیست',
   'Bu gönderiyi ilk beğenen sen ol': 'اولین نفری باشید که این پست را می پسندد',
+  'Yanıt verdiğin gönderi': 'پستی که به آن پاسخ دادی',
+  'Spoiler içeren gönderi': 'پست دارای اسپویل',
+  'Görsel gönderi': 'پست تصویری',
+  'Bu yorumu profilimde gizle': 'پنهان کردن این نظر از پروفایلم',
+  'Yorum dizi ve film sayfasında durmaya devam eder':
+      'نظر در صفحه سریال و فیلم باقی می‌ماند',
+  'Bu yorumu sil': 'حذف این نظر',
+  'Yorum profilinde gizlendi': 'نظر از پروفایل تو پنهان شد',
+  'Geri al': 'واگرد',
+  'Yorum silinsin mi?': 'نظر حذف شود؟',
+  'Bu yorum her yerden kalıcı olarak silinir. Geri alınamaz.':
+      'این نظر برای همیشه از همه جا حذف می‌شود. غیرقابل بازگشت است.',
+  'Yorum silindi': 'نظر حذف شد',
+  'Yorum profilinde tekrar görünüyor':
+      'نظر دوباره در پروفایل تو نمایش داده می‌شود',
+  'Gizlenen yorumun yok': 'نظر پنهانی نداری',
+  'Profilindeki Yorumlar sekmesinde bir gönderiye basılı tutup gizlediklerin burada birikir.':
+      'نظرهایی که با فشار طولانی روی یک پست در تب نظرات پروفایلت پنهان می‌کنی، اینجا جمع می‌شوند.',
+  'Gizlenen yorumlar': 'نظرهای پنهان',
+  'Gönderiye git': 'رفتن به پست',
+  'Tekrar göster': 'دوباره نمایش بده',
+  'Yanıtlarımı gizle': 'پاسخ‌های من را پنهان کن',
+  'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
+      'پاسخ‌هایی که به پست‌های دیگران می‌نویسی فقط برای خودت نمایش داده می‌شود',
+  'Profilinde gizlediğin yorumları tekrar göster':
+      'نظرهایی را که از پروفایلت پنهان کرده‌ای دوباره نشان بده',
 };
