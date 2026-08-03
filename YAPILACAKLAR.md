@@ -1,6 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Akış kartı başlığı: iki satır arasındaki boşluk YARIYA indi
+**Kullanıcı isteği:** "akıştaki dizi isimleri ve kullanıcı isminin arasında
+boşluk çok fazla, %50 azaltır mısın"
+- 🚀 **Boşluğun gerçek kaynağı ölçüldü** (tek bir `SizedBox` değildi):
+  1) kullanıcı adının 4 dp'lik alt dolgusu, 2) içerik adının **44 dp'lik dokunma
+  kutusunda dikey ORTALANMASINDAN** artan 12,5 dp, 3) "Takip Et" düğmeli kartta
+  düğmenin 48 dp'lik dokunma kutusu satırı şişirdiği için eklenen 9,5 dp.
+- 🚀 **Çözüm:** içerik adı 44 dp'lik kutusunun ÜSTÜNE dayandı (`Alignment
+  .topLeft`) — **kutu küçülmedi, dokunma hedefi 44 dp kaldı** — ve boşluk tek
+  yerden, kullanıcı adının dolgusundan (`_adDolgusu = 8.25`) veriliyor. Kartın
+  üst boşluğu aynı kadar kısıldı (`12 - _adDolgusu`): ad ekranda AYNI yerde
+  durur, kart uzamaz (düğmeli kart 4,25 dp kısaldı bile). `BolumRozeti`'ye
+  `hizalama` parametresi eklendi ki S4B6 rozeti içerik adıyla aynı hizada kalsın
+  (yorum listesindeki kullanım varsayılan ortalı hâliyle aynen duruyor).
+- 🚀 **Ölçüm (önce → sonra, widget testi):** takip düğmesiz kartta (akış +
+  profil ekranları + `/gonderi/:id`) **16,50 → 8,25 dp = tam %50**; düğmeli
+  kartta **26,00 → 13,50 dp = %48,1**. Düğmeli karttaki 1,9 puanlık fark bilinçli:
+  daha aşağısı 44 dp'lik dokunma hedeflerini kırardı, 44'te durduk.
+- 🚀 **Kanıt:** `app/test/akis_karti_baslik_bosluk_test.dart` (16 test) —
+  mesafe gerçek `getRect` konumlarıyla, dokunma hedefleri 44 dp, içerik adı /
+  rozet / kullanıcı adı dokunuşları doğru sayfaya, 360 dp'de taşma yok.
+  Değişiklik geri alınınca test kırmızıya dönüyor (denendi). Toplam 293 test.
+
 ## 2026-08-03 — PROFİL YORUMLARI: bağlam + gizleme + silme + gizlenenler ekranı
 **Kullanıcı isteği:** "Yorum yaptığım gönderiler yorumlar kısmımda gözüküyor ya,
 orada gönderinin kendisi de gözüksün... ve bu yorumlara yorum yaptığında

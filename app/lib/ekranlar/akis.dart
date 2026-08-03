@@ -297,6 +297,27 @@ class _AkisEkraniState extends State<AkisEkrani>
   }
 }
 
+/// Kullanıcı adı satırı ile içerik adı satırı arasındaki DİKEY boşluk
+/// (kullanıcı isteği, 3 Ağu 2026: "dizi isimleri ve kullanıcı isminin
+/// arasında boşluk çok fazla, %50 azaltır mısın").
+///
+/// ÖLÇÜM (widget testi, deneme yazı tipi): boşluk ESKİDEN takip düğmesiz
+/// kartta 16,5 dp, "Takip Et" düğmeli kartta 26,0 dp idi. Üç kaynaktan
+/// besleniyordu:
+///   1) kullanıcı adının 4 dp'lik ALT dolgusu,
+///   2) içerik adının 44 dp'lik DOKUNMA KUTUSUNDA dikey ORTALANMASINDAN
+///      artan (44 - 19) / 2 = 12,5 dp,
+///   3) düğmeli kartta ek olarak, "Takip Et"in 48 dp'lik dokunma kutusu
+///      satırı şişirdiği için kullanıcı adının altında kalan 9,5 dp.
+///
+/// ÇÖZÜM: içerik adı artık 44 dp'lik kutusunun ÜSTÜNE dayanıyor (kutu
+/// KÜÇÜLMEDİ — dokunma hedefi 44 dp olarak duruyor, erişilebilirlik feda
+/// edilmedi) ve boşluk TEK yerden, kullanıcı adının dolgusundan veriliyor.
+/// Böylece mesafe yazı tipinden ve takip düğmesinden bağımsız: 8,25 dp.
+/// Dolgu büyüdüğü için kartın üst boşluğu aynı kadar kısıldı; kullanıcı adı
+/// ekranda AYNI yerde durur, kart uzamaz.
+const double _adDolgusu = 8.25; // 16,5 / 2 → istenen %50 azalma
+
 class AkisKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
@@ -511,7 +532,9 @@ class _AkisKartiState extends State<AkisKarti> {
           // ---- 1. Üst satır: avatar + ad + Takip Et / içerik adı + S4B6
           //      ve EN SAĞDA içeriğin kapak görseli.
           Padding(
-            padding: const EdgeInsets.fromLTRB(12, 8, 6, 0),
+            // Üst boşluğun bir kısmı kullanıcı adının kendi dolgusuna taşındı
+            // (bkz. _adDolgusu): 12 - 8,25. Ad ekranda AYNI yerde durur.
+            padding: const EdgeInsets.fromLTRB(12, 12 - _adDolgusu, 6, 0),
             child: Row(
               children: [
                 InkWell(
@@ -537,8 +560,10 @@ class _AkisKartiState extends State<AkisKarti> {
                                 '/kullanici/${y['kullanici_adi']}',
                               ),
                               child: Padding(
+                                // İki satır arasındaki boşluğun TEK kaynağı;
+                                // aynı zamanda adın dokunma alanını büyütür.
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 4,
+                                  vertical: _adDolgusu,
                                 ),
                                 child: Text(
                                   '@${y['kullanici_adi']}',
@@ -575,7 +600,10 @@ class _AkisKartiState extends State<AkisKarti> {
                                 constraints: const BoxConstraints(
                                   minHeight: 44,
                                 ),
-                                alignment: Alignment.centerLeft,
+                                // ÜSTE dayalı: kutu 44 dp kalır ama artan
+                                // yükseklik kullanıcı adıyla ARAYA değil
+                                // ALTA yazılır (bkz. _adDolgusu).
+                                alignment: Alignment.topLeft,
                                 child: Text(
                                   '${icerik['ad']}',
                                   maxLines: 1,
@@ -595,6 +623,8 @@ class _AkisKartiState extends State<AkisKarti> {
                               diziId: y['tmdb_id'] as int,
                               sezon: y['sezon'] as int,
                               bolum: y['bolum'] as int,
+                              // İçerik adıyla aynı hizada dursun
+                              hizalama: Alignment.topCenter,
                             ),
                           ],
                         ],

@@ -892,11 +892,18 @@ class BolumRozeti extends StatelessWidget {
   final int sezon;
   final int bolum;
 
+  /// Rozetin 44 dp'lik DOKUNMA KUTUSU İÇİNDEKİ yeri. Varsayılan: dikey
+  /// ortada (yorum listesi). Akış kartının başlığında yanındaki içerik adı
+  /// kutusunun üstüne dayandığı için rozet de üste dayanır — yoksa rozet
+  /// adın 12 dp altında kalırdı.
+  final Alignment hizalama;
+
   const BolumRozeti({
     super.key,
     required this.diziId,
     required this.sezon,
     required this.bolum,
+    this.hizalama = Alignment.center,
   });
 
   @override
@@ -908,7 +915,7 @@ class BolumRozeti extends StatelessWidget {
         // Rozet küçük görünür ama dokunma alanı 44px'tir (dolgu büyütüldü,
         // yazı değil): parmakla ıskalanmaz.
         constraints: const BoxConstraints(minHeight: 44),
-        alignment: Alignment.center,
+        alignment: hizalama,
         padding: const EdgeInsets.symmetric(horizontal: 6),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
