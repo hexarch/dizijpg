@@ -1,6 +1,48 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — PROFİL YORUMLARI: bağlam + gizleme + silme + gizlenenler ekranı
+**Kullanıcı isteği:** "Yorum yaptığım gönderiler yorumlar kısmımda gözüküyor ya,
+orada gönderinin kendisi de gözüksün... ve bu yorumlara yorum yaptığında
+profilinde gözüküp gözükmeyeceğini ayarlardan ayarlayabilelim. ve kendi
+profilimde yorumlar kısmında gönderiye basılı tutunca şunu sor: bu yorumu sil /
+bu yorumu profilimde gizle. ve ayarlar kısmında da gizlenen yorumlar olsun."
+- 🚀 **1. Bağlam bloğu** (`YanitBaglamBlogu`, profil.dart): profildeki yorum bir
+  BAŞKA gönderiye yanıtsa kartın üstünde asıl gönderinin **alıntısı** çizilir —
+  avatar + `@ad` + iki satır metin + sol sarı şerit + "Yanıt verdiğin gönderi"
+  başlığı. **Tam kart DEĞİL:** tam kart medya galerisini (profilde ikinci bir
+  otomatik oynayan video) ve ikinci bir eylem satırını getirirdi; aynı öğede iki
+  kalp çıkar, hangi yorumun kullanıcıya ait olduğu karışırdı. Alıntı görsel
+  olarak bastırılmış olunca "alttaki tam kart senin" tek bakışta okunuyor.
+  Dokununca `/gonderi/:id`. Üst seviye yorumda blok HİÇ çizilmez. Spoiler
+  işaretli üst gönderinin metni alıntıda açılmaz.
+- 🚀 **2. Ayar** `kullanicilar.yanitlar_gizli`, **varsayılan false** (= mevcut
+  davranış; true yapmak yükseltmeyle birlikte herkesin profilini sessizce
+  boşaltırdı). **Kapsam: yalnız başkaları** — sahibi kendi yanıtlarını görmeye
+  devam eder, yoksa uzun basma menüsüyle onları yönetemez ve ziyaretçinin ne
+  gördüğünü kestiremezdi (`izlenenler_gizli`/`yorumlar_gizli` ile aynı sözleşme).
+  Gizlilik sheet'ine komşularıyla **aynı "gizle" polaritesinde** eklendi.
+- 🚀 **3. Uzun basma menüsü:** `AkisKarti`'ya `onUzunBas` parametresi eklendi;
+  **yalnız** `ProfilYorumAkisi(benimProfilim: true)` bağlar → akış, Reels,
+  başkasının profili ve `/gonderi` ekranında menü çıkmaz. **Beğeni düğmesiyle
+  çakışmaz:** oradaki uzun basma (beğenenler listesi) ağaçta daha derinde bir
+  InkWell'de; isabet testi içten dışa yürüdüğü için içteki tanıyıcı jest
+  arenasına önce girer ve süpürmede kazanır. Silme yıkıcı → onay diyaloğu;
+  gizleme geri alınabilir → SnackBar + "Geri al".
+- 🚀 **4. `yorumlar.profilde_gizli`** (migrasyon `2026-08-03c`, canlıya
+  uygulandı): **YALNIZCA** profil listesini süzer. Yorum dizi/film/bölüm
+  sayfasında, akışta ve doğrudan bağlantıda AYNEN durur — bu bir silme değil,
+  vitrinden çıkarma. Ayarlar > Gizlilik > **Gizlenen yorumlar** ekranında
+  listelenir, "Tekrar göster" ile geri gelir; boşken nazik boş durum.
+- 🚀 **Yorum sayacı listeyle aynı süzgeçleri kullanır** — "12 yorum" yazıp 11
+  tane listeleme tutarsızlığı (ve gizlenmiş bir şey olduğunun sızması) yok.
+- 🚀 **Kanıt:** `app/test/profil_yorum_baglam_test.dart` (15 test) + canlı curl:
+  gizlenen yorum profil listesinden düştü (sayaç 2 → 1) ama `/yorumlar/tv/1396`
+  ve `/yorum/4946` yanıtlarında AYNEN duruyor; `yanitlar_gizli=true` iken
+  ziyaretçi 1, sahibi 2 yorum görüyor. Özellik geçici geri alınınca 15 testin 9'u
+  KIRMIZI (kalan 6 negatif durum testi zaten yeşil kalmalı) — koruduğu kanıtlandı.
+  Test verisi (2 yorum + tercih) sonunda geri alındı, veritabanında artık kalmadı.
+
 ## 2026-08-03 — AYARLAR: alt güvenli alan + sürüm numarası
 **Kullanıcı isteği:** "ayarlardaki hesabımı sil buttonu çok aşağıda, telefon navi
 tuşlarının altında kalıyor. onu biraz yukarı al. ve onun da altına sürüm
