@@ -1,6 +1,35 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Profil ülke satırı: konum ikonu yerine ÜLKE BAYRAĞI
+**Kullanıcı isteği:** "Profilime gittiğimde Türkiye yazıyor ya, yani verdiğim
+ülke, solunda konum ikonu var. o olmamalı. konum ikonu yerine ülke bayrağı
+kullan."
+- 🚀 `Icons.location_on` iki profil ekranından da kalktı
+  (`profil.dart`, `kullanici_profil.dart`); yerine `UlkeBayragi`.
+- 🚀 **Emoji bayrak KULLANILMADI:** 🇹🇷 Windows'ta hiç çizilmiyor (harf çifti
+  görünüyor), eski Android'de eksik, web tuvalinde yazı tipine bağımlı.
+  Onun yerine `assets/bayraklar/` altına **116 PNG (80 px, toplam 42 KB)**
+  gömüldü — Flutter'ın kendi çözücüsü işliyor, her platformda aynı.
+  SVG elendi: armalı bayrakların (Meksika, Sırbistan, Türkmenistan) SVG'leri
+  yüz KB'lara çıkıp uygulamayı belirgin şişirirdi.
+- 🚀 **`ulke` alanı serbest METİNDİR** (sunucuda 60 karakter sınırı dışında
+  doğrulama yok), ama uygulamada hep `ayarlar.dart`'taki 116 adlık seçiciden
+  geliyor. `lib/bayrak.dart` adı ISO alfa-2 koda çeviriyor; büyük/küçük harf,
+  aksan ve noktalama farkını yutuyor, İngilizce adı ve iki harfli kodu da
+  kabul ediyor.
+- 🚀 **Yedek davranış:** kod çözülemezse ya da varlık yüklenemezse dünya
+  ikonuna (`Icons.public`) düşüyor, ülke metni yerinde kalıyor — satır
+  bozulmuyor. Ülke BOŞSA satır yine hiç çizilmiyor.
+- 🚀 **Yan düzeltme:** uzun ülke adı ("Amerika Birleşik Devletleri") dar
+  ekranda satırı taşırıyordu; metin `Flexible` + ellipsis oldu.
+- 🚀 **Kanıt:** `app/test/profil_ulke_bayragi_test.dart` **13 test** —
+  116 bayrağın hepsi Flutter görsel çözücüsünde açılıyor, bayrak var/konum
+  ikonu yok, boş ülkede satır yok, bilinmeyen ülkede dünya ikonu, 360 dp'de
+  taşma yok. Değişiklik geri alınınca kırmızıya dönüyor (bayrak geri alınca
+  4 test, `Flexible` geri alınca 360 testi). Canlıda doğrulandı:
+  dizijpg.com/kullanici/alcelik'te Türk bayrağı görünüyor.
+
 ## 2026-08-03 — Akış kartı başlığı: ad avatarın ORTASINDA, dizi adı avatarın ALTINDAN
 **Kullanıcı isteği:** "Akışta hala kullanıcı profil resminin hemen ortasında
 kullanıcı adı, resmin altından başlayacak şekilde de dizi filmin adı olmalı"
