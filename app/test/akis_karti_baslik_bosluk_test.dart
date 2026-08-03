@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/akis.dart';
+import 'package:dizijpg/ekranlar/ortak.dart' show KullaniciAvatari;
 import 'package:dizijpg/ekranlar/yorumlar.dart' show BolumRozeti;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,28 +14,31 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// AKIŞ KARTI BAŞLIĞINDAKİ DİKEY BOŞLUK (kullanıcı isteği, 3 Ağu 2026):
-/// "akıştaki dizi isimleri ve kullanıcı isminin arasında boşluk çok fazla,
-/// %50 azaltır mısın".
+/// AKIŞ KARTI BAŞLIĞININ HİZALAMASI (kullanıcı isteği, 3 Ağu 2026):
+/// "akışta hâlâ kullanıcı profil resminin hemen ortasında kullanıcı adı,
+/// resmin altından başlayacak şekilde de dizi filmin adı olmalı".
 ///
+/// ÖNCE (avatar dış satırda, iki metin satırı avatarın SAĞINDA):
 ///   [avatar] @kullaniciadi  [Takip Et]        [···] [kapak]
-///            Dizi Adı  S4B6
+///            Dizi Adı  S4B6      ← avatarın SAĞINA girintili
+///   ölçüm: adın merkezi avatarın merkezinden 22,0 dp YUKARIDA,
+///          içerik adının solu avatarın solundan 50,0 dp SAĞDA.
 ///
-/// ÖLÇÜLEN: `@kullaniciadi` metninin ALT kenarı ile `Dizi Adı` metninin ÜST
-/// kenarı arasındaki GERÇEK mesafe (getRect; göz kararı yok).
+/// SONRA (avatar kullanıcı adıyla AYNI satırda, içerik adı ALT satırda):
+///   [avatar] @kullaniciadi  [Takip Et]        [···] [kapak]
+///   Dizi Adı  S4B6                ← avatarın ALTINDAN, sol kenarlar eşit
+///   ölçüm: merkez farkı 0,0 dp — sol kenar farkı 0,0 dp.
 ///
-/// ÖNCE / SONRA (deneme yazı tipi, 400 dp genişlik):
-///   • takip düğmesi YOKken (akışta takip ettiklerin, profil ekranları,
-///     /gonderi/:id): 16,50 dp → 8,25 dp  (tam %50)
-///   • "Takip Et" düğmesi VARken (düğmenin 48 dp'lik dokunma kutusu satırı
-///     şişirir): 26,00 dp → 13,50 dp  (%48,1 — düğmenin 48 dp'si 44 dp
-///     kuralının ÜSTÜNDE olduğu için kalan 13,5 dp'nin altına inmek dokunma
-///     hedeflerini kırardı; erişilebilirlik feda edilmedi)
-///
-/// Boşluk artık YAZI TİPİNDEN ve takip düğmesinden bağımsız tek bir yerden
-/// (`_adDolgusu`) geliyor; içerik adının dokunma kutusu 44 dp KALDI.
+/// İKİ SATIR ARASINDAKİ BOŞLUK bu düzende geometriden doğar: ad 44 dp'lik
+/// satırın ortasında, içerik adı satırın hemen altındadır →
+/// (44 - yazıYüksekliği) / 2. Deneme yazı tipinde 11,5 dp; "Takip Et"
+/// düğmeli kartta düğmenin 48 dp'lik dokunma kutusu satırı şişirdiği için
+/// 13,5 dp. Kullanıcının bir önceki isteği olan "boşluk yarıya insin"
+/// (16,50 → 8,25) bozulmadı: eski 16,50'nin ALTINDA kalındı. Daha aşağı
+/// inmek avatarı (40 dp) ya da adın dokunma kutusunu (44 dp) küçültmeyi
+/// gerektirirdi; erişilebilirlik feda EDİLMEDİ.
 const double _oncekiDugmesiz = 16.5;
-const double _yeniDugmesiz = _oncekiDugmesiz / 2; // 8.25
+const double _yeniDugmesiz = 11.5;
 const double _oncekiDugmeli = 26.0;
 const double _yeniDugmeli = 13.5;
 
@@ -142,10 +147,16 @@ Future<void> _kur(
 /// başlık önce geldiği için ilki alınır).
 Finder _kullaniciAdi() => find.text('@thelostvibe0').first;
 Finder _icerikAdi([String ad = 'Test Dizi']) => find.text(ad);
+Finder _avatar() => find.byType(KullaniciAvatari);
 
 /// İki satır arasındaki GERÇEK dikey mesafe.
 double _bosluk(WidgetTester tester, [String ad = 'Test Dizi']) =>
     tester.getRect(_icerikAdi(ad)).top - tester.getRect(_kullaniciAdi()).bottom;
+
+/// Bir metnin ETRAFINDAKİ dokunma kutusu (44 dp'lik ConstrainedBox).
+Size _dokunmaKutusu(WidgetTester tester, Finder metin) => tester.getSize(
+  find.ancestor(of: metin, matching: find.byType(ConstrainedBox)).first,
+);
 
 void main() {
   setUp(() {
@@ -153,12 +164,104 @@ void main() {
     _sunucu();
   });
 
-  group('Kullanıcı adı ile içerik adı arasındaki boşluk YARIYA indi', () {
+  // ------------------------------------------------------------- 1. istek
+  group('Kullanıcı adı avatarın DİKEY ORTASINDA', () {
+    testWidgets('düğmesiz kartta merkezler BİREBİR aynı', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: true));
+      final avatar = tester.getRect(_avatar());
+      final ad = tester.getRect(_kullaniciAdi());
+      expect(
+        (ad.center.dy - avatar.center.dy).abs(),
+        lessThan(1.0),
+        reason: 'ad avatarın üst kenarına değil TAM ORTASINA hizalanmalı',
+      );
+    });
+
+    testWidgets('"Takip Et" düğmeli kartta da merkezler aynı', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: false));
+      expect(find.text('Takip Et'), findsOneWidget);
+      final avatar = tester.getRect(_avatar());
+      final ad = tester.getRect(_kullaniciAdi());
+      expect((ad.center.dy - avatar.center.dy).abs(), lessThan(1.0));
+    });
+
+    testWidgets('bölüm gönderisinde (S4B6 rozetli) de aynı', (tester) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final avatar = tester.getRect(_avatar());
+      final ad = tester.getRect(_kullaniciAdi());
+      expect((ad.center.dy - avatar.center.dy).abs(), lessThan(1.0));
+    });
+
+    testWidgets('kullanıcı adı avatarın SAĞINDA duruyor (yan yana)', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi());
+      expect(
+        tester.getRect(_kullaniciAdi()).left,
+        greaterThan(tester.getRect(_avatar()).right),
+      );
+    });
+  });
+
+  // ------------------------------------------------------------- 2. istek
+  group('İçerik adı AVATARIN ALTINDAN başlıyor', () {
+    testWidgets('sol kenarlar BİREBİR aynı (girinti YOK)', (tester) async {
+      await _kur(tester, _gonderi());
+      final avatar = tester.getRect(_avatar());
+      final icerik = tester.getRect(_icerikAdi());
+      expect(
+        (icerik.left - avatar.left).abs(),
+        lessThan(1.0),
+        reason: 'içerik adı avatarın sağına girintili olmamalı',
+      );
+    });
+
+    testWidgets('dikeyde avatarın ALTINDA', (tester) async {
+      await _kur(tester, _gonderi());
+      expect(
+        tester.getRect(_icerikAdi()).top,
+        greaterThanOrEqualTo(tester.getRect(_avatar()).bottom),
+      );
+    });
+
+    testWidgets('düğmeli kartta da sol kenar avatarla aynı', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: false));
+      final avatar = tester.getRect(_avatar());
+      final icerik = tester.getRect(_icerikAdi());
+      expect((icerik.left - avatar.left).abs(), lessThan(1.0));
+      expect(icerik.top, greaterThanOrEqualTo(avatar.bottom));
+    });
+
+    testWidgets('film gönderisinde de sol kenar avatarla aynı', (tester) async {
+      await _kur(tester, _gonderi(tur: 'movie', tmdbId: 500));
+      final avatar = tester.getRect(_avatar());
+      final icerik = tester.getRect(_icerikAdi('Test Film'));
+      expect((icerik.left - avatar.left).abs(), lessThan(1.0));
+    });
+
+    testWidgets('S4B6 rozeti içerik adının HEMEN YANINDA ve aynı hizada', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final ad = tester.getRect(_icerikAdi());
+      final rozet = tester.getRect(find.text('S4B6'));
+      // Alt kenarlar birebir aynı (aynı satır)
+      expect(rozet.bottom, ad.bottom);
+      expect((ad.center.dy - rozet.center.dy).abs(), lessThan(2.0));
+      // Rozet adın SAĞINDA ve yakınında (satır sonuna savrulmadı)
+      expect(rozet.left, greaterThan(ad.right));
+      expect(rozet.left - ad.right, lessThan(40.0));
+    });
+  });
+
+  // ------------------------------------------------ satırlar arası boşluk
+  group('Kullanıcı adı ile içerik adı arasındaki boşluk', () {
     testWidgets('takip düğmesiz kart: $_oncekiDugmesiz → $_yeniDugmesiz dp', (
       tester,
     ) async {
       await _kur(tester, _gonderi(takipEdiyorum: true));
       expect(_bosluk(tester), _yeniDugmesiz);
+      expect(_yeniDugmesiz, lessThan(_oncekiDugmesiz));
     });
 
     testWidgets('profil ekranı kartı (takip alanı yok) da $_yeniDugmesiz dp', (
@@ -176,7 +279,7 @@ void main() {
       expect(_bosluk(tester), _yeniDugmeli);
     });
 
-    testWidgets('bölüm gönderisinde (S4B6 rozetli) de aynı', (tester) async {
+    testWidgets('bölüm gönderisinde de aynı', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       expect(_bosluk(tester), _yeniDugmesiz);
     });
@@ -196,30 +299,19 @@ void main() {
       expect(ad.height, greaterThan(icerik.height));
     });
 
-    testWidgets('içerik adı ile S4B6 rozeti AYNI HİZADA', (tester) async {
-      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      final ad = tester.getRect(_icerikAdi());
-      final rozet = tester.getRect(find.text('S4B6'));
-      // Rozetin yazısı içerik adıyla aynı satırda (alt kenarlar eşit)
-      expect(rozet.bottom, ad.bottom);
-      expect((ad.center.dy - rozet.center.dy).abs(), lessThan(2.0));
-    });
-
-    testWidgets('kart UZAMADI (düğmeli kart kısaldı bile)', (tester) async {
+    testWidgets('kart makul yükseklikte kaldı', (tester) async {
       await _kur(tester, _gonderi(takipEdiyorum: false));
-      expect(tester.getSize(find.byType(Card)).height, lessThan(180.0));
+      expect(tester.getSize(find.byType(Card)).height, lessThan(190.0));
     });
   });
 
-  group('Dokunma hedefleri 44 dp KALDI', () {
+  group('Dokunma hedefleri 44 dp', () {
     testWidgets('içerik adının dokunma kutusu en az 44 dp', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      final kutu = tester.getSize(
-        find
-            .ancestor(of: _icerikAdi(), matching: find.byType(ConstrainedBox))
-            .first,
+      expect(
+        _dokunmaKutusu(tester, _icerikAdi()).height,
+        greaterThanOrEqualTo(44),
       );
-      expect(kutu.height, greaterThanOrEqualTo(44));
     });
 
     testWidgets('S4B6 rozetinin dokunma kutusu en az 44x44 dp', (tester) async {
@@ -229,17 +321,30 @@ void main() {
       expect(kutu.width, greaterThanOrEqualTo(44));
     });
 
-    testWidgets('kullanıcı adının dokunma alanı KÜÇÜLMEDİ (büyüdü)', (
+    testWidgets('kullanıcı adının dokunma kutusu 37,5 → 44 dp BÜYÜDÜ', (
       tester,
     ) async {
       await _kur(tester, _gonderi());
-      final kutu = tester.getSize(
-        find
-            .ancestor(of: _kullaniciAdi(), matching: find.byType(Padding))
-            .first,
+      expect(
+        _dokunmaKutusu(tester, _kullaniciAdi()).height,
+        greaterThanOrEqualTo(44),
+        reason: 'eski düzende 37,5 dp idi; yeni düzende kutu sabit 44 dp',
       );
-      // Eskiden 4 dp dolguyla 29 dp idi; boşluk oraya taşındığı için arttı.
-      expect(kutu.height, greaterThan(29.0));
+    });
+
+    testWidgets('"Takip Et" dokunma kutusu en az 44 dp', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: false));
+      expect(
+        tester
+            .getSize(
+              find.ancestor(
+                of: find.text('Takip Et'),
+                matching: find.byType(FilledButton),
+              ),
+            )
+            .height,
+        greaterThanOrEqualTo(44),
+      );
     });
   });
 
@@ -258,9 +363,7 @@ void main() {
       expect(_sonRota, '/dizi/100/sezon/4/bolum/6');
     });
 
-    testWidgets('kullanıcı adı → profil (daralan boşluk dokunuşu yutmadı)', (
-      tester,
-    ) async {
+    testWidgets('kullanıcı adı → profil', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       await tester.tap(_kullaniciAdi());
       await tester.pumpAndSettle();
@@ -273,6 +376,37 @@ void main() {
       await tester.pumpAndSettle();
       expect(_sonRota, '/kullanici/thelostvibe0');
     });
+
+    testWidgets('avatar → profil (yeni satırda da tıklanır)', (tester) async {
+      await _kur(tester, _gonderi());
+      await tester.tap(_avatar());
+      await tester.pumpAndSettle();
+      expect(_sonRota, '/kullanici/thelostvibe0');
+    });
+  });
+
+  group('Sağdaki menü ve kapak ile ÇAKIŞMA yok', () {
+    testWidgets('içerik adı sola inince ··· ve kapağın altına girmiyor', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6, tmdbId: 900));
+      final adKutu = tester.getRect(
+        find
+            .ancestor(
+              of: _icerikAdi('Posterli Dizi'),
+              matching: find.byType(ConstrainedBox),
+            )
+            .first,
+      );
+      final rozet = tester.getRect(find.byType(BolumRozeti));
+      final menu = tester.getRect(find.byIcon(Icons.more_vert));
+      final kapak = tester.getRect(find.byType(CachedNetworkImage));
+      expect(adKutu.right, lessThanOrEqualTo(menu.left));
+      expect(rozet.right, lessThanOrEqualTo(menu.left));
+      expect(menu.right, lessThanOrEqualTo(kapak.left));
+      // Sıra soldan sağa bozulmadı
+      expect(kapak.center.dx, greaterThan(menu.center.dx));
+    });
   });
 
   testWidgets('360 dp genişlikte taşma yok', (tester) async {
@@ -283,5 +417,17 @@ void main() {
     expect(find.text('S12B24'), findsOneWidget);
     expect(find.text('Posterli Dizi'), findsOneWidget);
     expect(find.text('Takip Et'), findsOneWidget);
+    // Hizalama dar ekranda da geçerli
+    final avatar = tester.getRect(_avatar());
+    expect(
+      (tester.getRect(find.text('@cokuzunbirkullaniciadi').first).center.dy -
+              avatar.center.dy)
+          .abs(),
+      lessThan(1.0),
+    );
+    expect(
+      (tester.getRect(_icerikAdi('Posterli Dizi')).left - avatar.left).abs(),
+      lessThan(1.0),
+    );
   });
 }

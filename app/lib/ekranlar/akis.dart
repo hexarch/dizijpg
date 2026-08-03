@@ -332,26 +332,37 @@ class _AkisEkraniState extends State<AkisEkrani>
   }
 }
 
-/// Kullanıcı adı satırı ile içerik adı satırı arasındaki DİKEY boşluk
-/// (kullanıcı isteği, 3 Ağu 2026: "dizi isimleri ve kullanıcı isminin
-/// arasında boşluk çok fazla, %50 azaltır mısın").
+/// Akış kartı başlığının DÜZENİ (kullanıcı isteği, 3 Ağu 2026):
+/// "kullanıcı profil resminin hemen ortasında kullanıcı adı, resmin altından
+/// başlayacak şekilde de dizi filmin adı olmalı".
 ///
-/// ÖLÇÜM (widget testi, deneme yazı tipi): boşluk ESKİDEN takip düğmesiz
-/// kartta 16,5 dp, "Takip Et" düğmeli kartta 26,0 dp idi. Üç kaynaktan
-/// besleniyordu:
-///   1) kullanıcı adının 4 dp'lik ALT dolgusu,
-///   2) içerik adının 44 dp'lik DOKUNMA KUTUSUNDA dikey ORTALANMASINDAN
-///      artan (44 - 19) / 2 = 12,5 dp,
-///   3) düğmeli kartta ek olarak, "Takip Et"in 48 dp'lik dokunma kutusu
-///      satırı şişirdiği için kullanıcı adının altında kalan 9,5 dp.
+///   [avatar] @kullaniciadi  [Takip Et]        [···] [kapak]
+///   Dizi Adı  S4B6
 ///
-/// ÇÖZÜM: içerik adı artık 44 dp'lik kutusunun ÜSTÜNE dayanıyor (kutu
-/// KÜÇÜLMEDİ — dokunma hedefi 44 dp olarak duruyor, erişilebilirlik feda
-/// edilmedi) ve boşluk TEK yerden, kullanıcı adının dolgusundan veriliyor.
-/// Böylece mesafe yazı tipinden ve takip düğmesinden bağımsız: 8,25 dp.
-/// Dolgu büyüdüğü için kartın üst boşluğu aynı kadar kısıldı; kullanıcı adı
-/// ekranda AYNI yerde durur, kart uzamaz.
-const double _adDolgusu = 8.25; // 16,5 / 2 → istenen %50 azalma
+/// ÖNCEDEN avatar dış satırdaydı; kullanıcı adı + içerik adı avatarın SAĞINDA
+/// alt alta iki satır olarak duruyordu. Sonuç: ad avatarın ortasında değil üst
+/// kenarına yakın çıkıyor, içerik adı da avatarın sağına GİRİNTİLİ başlıyordu.
+///
+/// ŞİMDİ avatar, kullanıcı adıyla AYNI Row'un içinde (Row'un varsayılan
+/// `CrossAxisAlignment.center`'ı ikisinin dikey merkezini birebir eşitler);
+/// içerik adı bu satırın ALTINDA, sol kenarı avatarın sol kenarıyla aynı
+/// hizada duran ayrı bir satırdır.
+///
+/// Kullanıcı adının dokunma kutusu bu yüzden dolguyla değil
+/// `_adDokunmaYuksekligi` ile veriliyor: dolgu yazı tipine göre değişir
+/// (deneme yazı tipinde 44, gerçek yazı tipinde 40 çıkardı), sabit kutu
+/// değişmez — her yazı tipinde 44 dp.
+const double _adDokunmaYuksekligi = 44;
+
+/// Kullanıcı adı ile içerik adı arasındaki dikey boşluk ARTIK bu düzenin
+/// GEOMETRİSİNDEN doğuyor: ad 44 dp'lik satırın ortasında, içerik adı satırın
+/// hemen altında → boşluk (44 - yazıYüksekliği) / 2. Deneme yazı tipinde
+/// 11,5 dp (takip düğmeli kartta düğmenin 48 dp'si yüzünden 13,5 dp).
+/// Kullanıcının bir önceki isteğiyle (boşluk %50 azalsın: 16,5 → 8,25)
+/// çelişmiyor: 16,5'in altında kalıyor, üstelik ad artık avatarın tam
+/// ortasında. Daha da azaltmak avatarı (40 dp) veya adın dokunma kutusunu
+/// (44 dp) küçültmeyi gerektirirdi — erişilebilirlik feda edilmedi.
+const double _kartUstDolgusu = 8;
 
 class AkisKarti extends StatefulWidget {
   final Map<String, dynamic> yorum;
@@ -567,46 +578,57 @@ class _AkisKartiState extends State<AkisKarti> {
           // ---- 1. Üst satır: avatar + ad + Takip Et / içerik adı + S4B6
           //      ve EN SAĞDA içeriğin kapak görseli.
           Padding(
-            // Üst boşluğun bir kısmı kullanıcı adının kendi dolgusuna taşındı
-            // (bkz. _adDolgusu): 12 - 8,25. Ad ekranda AYNI yerde durur.
-            padding: const EdgeInsets.fromLTRB(12, 12 - _adDolgusu, 6, 0),
+            padding: const EdgeInsets.fromLTRB(12, _kartUstDolgusu, 6, 0),
             child: Row(
               children: [
-                InkWell(
-                  customBorder: const CircleBorder(),
-                  onTap: () => context.push('/kullanici/${y['kullanici_adi']}'),
-                  child: KullaniciAvatari(
-                    url: avatar,
-                    kullaniciAdi: y['kullanici_adi'] as String?,
-                    yaricap: 20,
-                  ),
-                ),
-                const SizedBox(width: 10),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // 1a. Avatar + kullanıcı adı (+ Takip Et). Avatar bu
+                      //     satırın İÇİNDE olduğu için Row'un varsayılan
+                      //     dikey ORTALAMASI adı avatarın tam ortasına
+                      //     oturtur (kullanıcı isteği).
                       Row(
                         children: [
+                          InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () => context.push(
+                              '/kullanici/${y['kullanici_adi']}',
+                            ),
+                            child: KullaniciAvatari(
+                              url: avatar,
+                              kullaniciAdi: y['kullanici_adi'] as String?,
+                              yaricap: 20,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
                           Flexible(
                             child: InkWell(
                               borderRadius: BorderRadius.circular(6),
                               onTap: () => context.push(
                                 '/kullanici/${y['kullanici_adi']}',
                               ),
-                              child: Padding(
-                                // İki satır arasındaki boşluğun TEK kaynağı;
-                                // aynı zamanda adın dokunma alanını büyütür.
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: _adDolgusu,
+                              child: ConstrainedBox(
+                                // Dokunma hedefi 44 dp: yazı tipinden
+                                // bağımsız sabit kutu (bkz.
+                                // _adDokunmaYuksekligi).
+                                constraints: const BoxConstraints(
+                                  minHeight: _adDokunmaYuksekligi,
                                 ),
-                                child: Text(
-                                  '@${y['kullanici_adi']}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: 14.5,
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  // widthFactor: kutu yazı kadar GENİŞ kalsın,
+                                  // yoksa "Takip Et" satırın sonuna savrulur.
+                                  widthFactor: 1,
+                                  child: Text(
+                                    '@${y['kullanici_adi']}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14.5,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -621,32 +643,40 @@ class _AkisKartiState extends State<AkisKarti> {
                           ],
                         ],
                       ),
-                      // Film yorumu → film adı, dizi yorumu → dizi adı,
-                      // bölüm yorumu → dizi adı + S4B6 rozeti.
+                      // 1b. İçerik adı: AVATARIN ALTINDAN başlar, sol kenarı
+                      //     avatarın sol kenarıyla aynı hizadadır (kullanıcı
+                      //     isteği). Film yorumu → film adı, dizi yorumu →
+                      //     dizi adı, bölüm yorumu → dizi adı + S4B6 rozeti.
                       Row(
                         children: [
                           Flexible(
                             child: InkWell(
                               borderRadius: BorderRadius.circular(6),
                               onTap: () => context.push(icerikYolu),
-                              child: Container(
-                                // Dokunma hedefi 44px (yazı değil dolgu
+                              child: ConstrainedBox(
+                                // Dokunma hedefi 44px (yazı değil kutu
                                 // büyür): parmakla ıskalanmaz.
                                 constraints: const BoxConstraints(
                                   minHeight: 44,
                                 ),
-                                // ÜSTE dayalı: kutu 44 dp kalır ama artan
-                                // yükseklik kullanıcı adıyla ARAYA değil
-                                // ALTA yazılır (bkz. _adDolgusu).
-                                alignment: Alignment.topLeft,
-                                child: Text(
-                                  '${icerik['ad']}',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    color: DiziRenkler.sariMetin,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
+                                child: Align(
+                                  // ÜSTE dayalı: kutu 44 dp kalır ama artan
+                                  // yükseklik kullanıcı adıyla ARAYA değil
+                                  // ALTA yazılır.
+                                  alignment: Alignment.topLeft,
+                                  // widthFactor: kutu yazı kadar geniş kalsın
+                                  // ki S4B6 rozeti adın HEMEN yanında dursun
+                                  // (yoksa satırın sonuna savrulur).
+                                  widthFactor: 1,
+                                  child: Text(
+                                    '${icerik['ad']}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: DiziRenkler.sariMetin,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                    ),
                                   ),
                                 ),
                               ),

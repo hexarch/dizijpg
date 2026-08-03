@@ -88,6 +88,13 @@ Future<void> _kartKur(
   Map<String, dynamic> yorum, {
   Future<void> Function(int)? onMedyaAc,
 }) async {
+  // 3 Ağu: kart başlığı iki satırdan (avatar+ad / içerik adı) oluştuğu için
+  // 800x600'lük varsayılan deneme ekranında medyanın MERKEZİ ekranın altına
+  // taşıyor ve tap() ıskalıyordu. Ekran yükseltildi; ölçülen davranış aynı.
+  tester.view
+    ..devicePixelRatio = 1.0
+    ..physicalSize = const Size(800, 900);
+  addTearDown(tester.view.reset);
   final oturum = Oturum();
   await oturum.yukle();
   await tester.pumpWidget(
@@ -237,6 +244,12 @@ void main() {
     // Gerçek gezinme: kart → Reels (push) → beğen → geri. Kartın State'i
     // korunduğu için harita değişikliğini kendi kendine yakalaması gerekir.
     final y = _gonderi();
+    // Kart iki satırlı başlıkla biraz uzadı: medya varsayılan 600 dp'lik
+    // deneme ekranının altına taşıyordu (bkz. _kartKur).
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(800, 900);
+    addTearDown(tester.view.reset);
     final oturum = Oturum();
     await oturum.yukle();
     late BuildContext kok;
