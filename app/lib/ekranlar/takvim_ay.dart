@@ -5,8 +5,22 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 
+/// Masaüstünde aynı anda gösterilen ay sayısı. Dar ekranda DAİMA 1 ay.
+const int masaustuAySayisi = 6;
+
+/// Masaüstünde bir ay panelinin hedef genişliği; sütun sayısı buna göre çıkar.
+/// 340 dp panelde gün hücresi ~45 dp kalır (44 dp dokunma alanının üstünde).
+const double masaustuAyPaneliGenisligi = 340;
+
+/// Masaüstünde sağdaki "seçili günün bölümleri" sütununun genişliği.
+const double masaustuGunSutunu = 360;
+
 /// Ay-takvimi görünümü: bölümler yayın tarihlerine göre ay ızgarasında;
 /// bir güne dokununca o günün bölümleri altta listelenir.
+///
+/// MASAÜSTÜNDE (genişlik >= [masaustuEsigi]) tek dev ay yerine [masaustuAySayisi]
+/// ay yan yana/alt alta küçük paneller hâlinde, bölüm listesi de sağda ayrı
+/// sütunda gösterilir. Dar ekranda düzen birebir eskisi gibidir.
 class AyTakvimi extends StatefulWidget {
   final List<dynamic> olaylar;
   final Future<void> Function(Map<String, dynamic>) onAc;
@@ -63,29 +77,162 @@ class _AyTakvimiState extends State<AyTakvimi> {
     return m;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  /// Bir ay paneli: [baslik] + hafta başlıkları + gün ızgarası.
+  /// [kompakt] masaüstünde birden çok ay sığsın diye ölçüleri küçültür.
+  Widget _ayPaneli(
+    DateTime ay,
+    Map<String, List<Map<String, dynamic>>> gunler, {
+    required Widget baslik,
+    required bool kompakt,
+  }) {
     final yerel = MaterialLocalizations.of(context);
-    final gunler = _gunlereBol();
-    final ilkGun = DateTime(_ay.year, _ay.month, 1);
-    final gunSayisi = DateTime(_ay.year, _ay.month + 1, 0).day;
+    final ilkGun = DateTime(ay.year, ay.month, 1);
+    final gunSayisi = DateTime(ay.year, ay.month + 1, 0).day;
     final haftaBasi = yerel.firstDayOfWeekIndex; // 0=Pazar
     final oncesi = (ilkGun.weekday % 7 - haftaBasi + 7) % 7;
     final bugun = DateTime.now();
     final narrow = yerel.narrowWeekdays; // 0=Pazar
     final basliklar = [for (var i = 0; i < 7; i++) narrow[(haftaBasi + i) % 7]];
+    final yatay = kompakt ? 2.0 : 8.0;
+    return Column(
+      key: ValueKey(
+        'takvim-ay-${ay.year.toString().padLeft(4, '0')}-'
+        '${ay.month.toString().padLeft(2, '0')}',
+      ),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        baslik,
+        // Hafta başlıkları
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: yatay),
+          child: Row(
+            children: [
+              for (final b in basliklar)
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      b,
+                      style: TextStyle(
+                        fontSize: kompakt ? 10 : 12,
+                        color: DiziRenkler.metin70,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        SizedBox(height: kompakt ? 2 : 4),
+        // Gün ızgarası
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: yatay),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 7,
+              childAspectRatio: kompakt ? 1 : 0.82,
+            ),
+            itemCount: oncesi + gunSayisi,
+            itemBuilder: (context, i) {
+              if (i < oncesi) return const SizedBox();
+              final gun = i - oncesi + 1;
+              final tarih = DateTime(ay.year, ay.month, gun);
+              final anahtar = _anahtar(tarih);
+              final sayi = gunler[anahtar]?.length ?? 0;
+              final secili = _anahtar(_secili) == anahtar;
+              final buGun =
+                  tarih.year == bugun.year &&
+                  tarih.month == bugun.month &&
+                  tarih.day == bugun.day;
+              return GestureDetector(
+                onTap: () => setState(() => _secili = tarih),
+                child: Container(
+                  margin: EdgeInsets.all(kompakt ? 1.5 : 2),
+                  decoration: BoxDecoration(
+                    color: secili
+                        ? DiziRenkler.sari.withValues(alpha: 0.18)
+                        : null,
+                    borderRadius: BorderRadius.circular(kompakt ? 8 : 10),
+                    border: buGun
+                        ? Border.all(color: DiziRenkler.sari, width: 1.5)
+                        : null,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '$gun',
+                        style: TextStyle(
+                          fontSize: kompakt ? 12.5 : null,
+                          fontWeight: secili
+                              ? FontWeight.w800
+                              : FontWeight.w500,
+                          color: sayi > 0
+                              ? DiziRenkler.metin
+                              : DiziRenkler.metin54,
+                        ),
+                      ),
+                      SizedBox(height: kompakt ? 2 : 3),
+                      if (sayi > 0)
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: kompakt ? 4 : 5,
+                            vertical: 1,
+                          ),
+                          decoration: BoxDecoration(
+                            color: DiziRenkler.sari,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '$sayi',
+                            style: TextStyle(
+                              fontSize: kompakt ? 9 : 10,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black,
+                            ),
+                          ),
+                        )
+                      else
+                        SizedBox(height: kompakt ? 10 : 13),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final yerel = MaterialLocalizations.of(context);
+    final gunler = _gunlereBol();
+    final genis = masaustuMu(context);
+    // Masaüstünde gösterilen pencere: _ay'dan başlayan [masaustuAySayisi] ay.
+    final aylar = [
+      for (var i = 0; i < (genis ? masaustuAySayisi : 1); i++)
+        DateTime(_ay.year, _ay.month + i, 1),
+    ];
     final seciliBolumler = gunler[_anahtar(_secili)] ?? [];
 
-    // Diğer aylardaki bölüm sayıları (kullanıcı ileri/geri kaydırmayı görsün)
-    final ayKey =
-        '${_ay.year.toString().padLeft(4, '0')}-'
-        '${_ay.month.toString().padLeft(2, '0')}';
+    String ayAnahtari(DateTime d) =>
+        '${d.year.toString().padLeft(4, '0')}-'
+        '${d.month.toString().padLeft(2, '0')}';
+    // Görünen pencerenin DIŞINDAki bölüm sayıları (ok rozetleri): masaüstünde
+    // altı ayın tamamı görünüyorsa rozet o pencerenin dışını sayar.
+    final ilkKey = ayAnahtari(aylar.first);
+    final sonKey = ayAnahtari(aylar.last);
+    final ayKey = ilkKey;
     var oncekiSayi = 0, sonrakiSayi = 0;
     gunler.forEach((t, liste) {
       final mk = t.substring(0, 7);
-      if (mk.compareTo(ayKey) < 0) {
+      if (mk.compareTo(ilkKey) < 0) {
         oncekiSayi += liste.length;
-      } else if (mk.compareTo(ayKey) > 0) {
+      } else if (mk.compareTo(sonKey) > 0) {
         sonrakiSayi += liste.length;
       }
     });
@@ -101,197 +248,208 @@ class _AyTakvimiState extends State<AyTakvimi> {
       }
     }
 
-    return Column(
-      children: [
-        // Ay başlığı + gezinme (oklarda o yöndeki bölüm sayısı rozeti)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
-          child: Row(
-            children: [
-              _AyOku(
-                ikon: Icons.chevron_left,
-                sayi: oncekiSayi,
-                tooltip: 'Önceki ay'.c,
-                onTap: () => _ayaGit(DateTime(_ay.year, _ay.month - 1, 1)),
+    // Ay başlığı + gezinme (oklarda o yöndeki bölüm sayısı rozeti).
+    // Masaüstünde başlık AY ARALIĞI gösterir ve oklar pencereyi bir ay kaydırır
+    // (seçim yerinde kalır — altı ayın hepsi zaten ekranda). Dar ekranda eski
+    // davranış: ayı değiştirir, seçimi o ayın ilk dolu gününe taşır.
+    final gezinme = Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 2),
+      child: Row(
+        children: [
+          _AyOku(
+            ikon: Icons.chevron_left,
+            sayi: oncekiSayi,
+            tooltip: 'Önceki ay'.c,
+            onTap: () {
+              final yeni = DateTime(_ay.year, _ay.month - 1, 1);
+              if (genis) {
+                setState(() => _ay = yeni);
+              } else {
+                _ayaGit(yeni);
+              }
+            },
+          ),
+          Expanded(
+            child: Text(
+              genis
+                  ? '${yerel.formatMonthYear(aylar.first)} - '
+                        '${yerel.formatMonthYear(aylar.last)}'
+                  : yerel.formatMonthYear(_ay),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: DiziRenkler.metin,
               ),
-              Expanded(
-                child: Text(
-                  yerel.formatMonthYear(_ay),
-                  textAlign: TextAlign.center,
+            ),
+          ),
+          _AyOku(
+            ikon: Icons.chevron_right,
+            sayi: sonrakiSayi,
+            tooltip: 'Sonraki ay'.c,
+            onTap: () {
+              final yeni = DateTime(_ay.year, _ay.month + 1, 1);
+              if (genis) {
+                setState(() => _ay = yeni);
+              } else {
+                _ayaGit(yeni);
+              }
+            },
+          ),
+        ],
+      ),
+    );
+
+    // Seçili günün bölümleri (boşsa "sıradaki bölüm" gösterilir)
+    final gunListesi = seciliBolumler.isEmpty
+        ? ListView(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+            children: [
+              Text(
+                'Bu gün bölüm yok'.c,
+                style: TextStyle(color: DiziRenkler.metin54),
+              ),
+              // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
+              // yüklemedi" diye tereddüt etmesin.
+              if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
+                const SizedBox(height: 8),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 15,
+                      color: DiziRenkler.metin38,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
+                            .c,
+                        style: TextStyle(
+                          color: DiziRenkler.metin38,
+                          fontSize: 12,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (sonrakiOlay != null) ...[
+                const SizedBox(height: 18),
+                Text(
+                  'Sıradaki bölüm'.c,
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: DiziRenkler.metin54,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _bolumKarti(sonrakiOlay, tarihGoster: true),
+              ],
+            ],
+          )
+        : ListView.builder(
+            padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+            itemCount: seciliBolumler.length,
+            itemBuilder: (context, i) => _bolumKarti(seciliBolumler[i]),
+          );
+
+    // DAR EKRAN: eskisi gibi tek ay, altında seçili günün listesi.
+    if (!genis) {
+      return Column(
+        children: [
+          gezinme,
+          _ayPaneli(
+            aylar.first,
+            gunler,
+            baslik: const SizedBox.shrink(),
+            kompakt: false,
+          ),
+          const Divider(height: 20),
+          Expanded(child: gunListesi),
+        ],
+      );
+    }
+
+    // MASAÜSTÜ: solda altı aylık küçük panel ızgarası, sağda seçili günün
+    // bölümleri. Tek dev ay 1440'lık ekranda 1200 dp yükseklik kaplıyordu;
+    // aynı yerde artık altı ay birden duruyor.
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              gezinme,
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, kutu) {
+                    // Panel hedefi 340 dp: gün hücresi 44 dp altına düşmesin.
+                    final sutun = (kutu.maxWidth / masaustuAyPaneliGenisligi)
+                        .floor()
+                        .clamp(1, 3);
+                    final panelGenislik =
+                        (kutu.maxWidth - 12 * (sutun - 1) - 12) / sutun;
+                    return SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(6, 4, 6, 16),
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: [
+                          for (final ay in aylar)
+                            SizedBox(
+                              width: panelGenislik,
+                              child: _ayPaneli(
+                                ay,
+                                gunler,
+                                kompakt: true,
+                                baslik: Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Text(
+                                    yerel.formatMonthYear(ay),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w800,
+                                      color: DiziRenkler.metin70,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        const VerticalDivider(width: 1),
+        SizedBox(
+          width: masaustuGunSutunu,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Hangi günün listesi olduğu masaüstünde şart: seçili hücre altı
+              // ayın içinde kaybolabiliyor. Yerelleştirilmiş tam tarih.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+                child: Text(
+                  yerel.formatFullDate(_secili),
+                  style: TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: DiziRenkler.metin,
                   ),
                 ),
               ),
-              _AyOku(
-                ikon: Icons.chevron_right,
-                sayi: sonrakiSayi,
-                tooltip: 'Sonraki ay'.c,
-                onTap: () => _ayaGit(DateTime(_ay.year, _ay.month + 1, 1)),
-              ),
+              Expanded(child: gunListesi),
             ],
           ),
-        ),
-        // Hafta başlıkları
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            children: [
-              for (final b in basliklar)
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      b,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: DiziRenkler.metin70,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 4),
-        // Gün ızgarası
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              childAspectRatio: 0.82,
-            ),
-            itemCount: oncesi + gunSayisi,
-            itemBuilder: (context, i) {
-              if (i < oncesi) return const SizedBox();
-              final gun = i - oncesi + 1;
-              final tarih = DateTime(_ay.year, _ay.month, gun);
-              final anahtar = _anahtar(tarih);
-              final sayi = gunler[anahtar]?.length ?? 0;
-              final secili = _anahtar(_secili) == anahtar;
-              final buGun =
-                  tarih.year == bugun.year &&
-                  tarih.month == bugun.month &&
-                  tarih.day == bugun.day;
-              return GestureDetector(
-                onTap: () => setState(() => _secili = tarih),
-                child: Container(
-                  margin: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: secili
-                        ? DiziRenkler.sari.withValues(alpha: 0.18)
-                        : null,
-                    borderRadius: BorderRadius.circular(10),
-                    border: buGun
-                        ? Border.all(color: DiziRenkler.sari, width: 1.5)
-                        : null,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$gun',
-                        style: TextStyle(
-                          fontWeight: secili
-                              ? FontWeight.w800
-                              : FontWeight.w500,
-                          color: sayi > 0
-                              ? DiziRenkler.metin
-                              : DiziRenkler.metin54,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      if (sayi > 0)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 1,
-                          ),
-                          decoration: BoxDecoration(
-                            color: DiziRenkler.sari,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            '$sayi',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: Colors.black,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox(height: 13),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-        const Divider(height: 20),
-        // Seçili günün bölümleri (boşsa "sıradaki bölüm" gösterilir)
-        Expanded(
-          child: seciliBolumler.isEmpty
-              ? ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-                  children: [
-                    Text(
-                      'Bu gün bölüm yok'.c,
-                      style: TextStyle(color: DiziRenkler.metin54),
-                    ),
-                    // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
-                    // yüklemedi" diye tereddüt etmesin.
-                    if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.info_outline,
-                            size: 15,
-                            color: DiziRenkler.metin38,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
-                                  .c,
-                              style: TextStyle(
-                                color: DiziRenkler.metin38,
-                                fontSize: 12,
-                                height: 1.4,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                    if (sonrakiOlay != null) ...[
-                      const SizedBox(height: 18),
-                      Text(
-                        'Sıradaki bölüm'.c,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: DiziRenkler.metin54,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _bolumKarti(sonrakiOlay, tarihGoster: true),
-                    ],
-                  ],
-                )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
-                  itemCount: seciliBolumler.length,
-                  itemBuilder: (context, i) => _bolumKarti(seciliBolumler[i]),
-                ),
         ),
       ],
     );

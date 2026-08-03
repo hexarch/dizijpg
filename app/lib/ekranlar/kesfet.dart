@@ -217,64 +217,73 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset('assets/logo.png', height: 40),
-            const SizedBox(width: 8),
-            // BETA rozeti (marka sarısı pill)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-              decoration: BoxDecoration(
-                color: DiziRenkler.sari,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: const Text(
-                'BETA',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 0.8,
-                ),
-              ),
+    // Marka bloğu ve eylem ikonları iki düzende de AYNI: dar ekranda AppBar'a,
+    // masaüstünde AramaCubugu'nun üst barına verilir (arama en üstte ortada).
+    final marka = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset('assets/logo.png', height: 40),
+        const SizedBox(width: 8),
+        // BETA rozeti (marka sarısı pill)
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+          decoration: BoxDecoration(
+            color: DiziRenkler.sari,
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: const Text(
+            'BETA',
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
             ),
-            const SizedBox(width: 6),
-            // Sürüm numarası (yapı numarası olmadan)
-            Text(
-              'v${Api.surum.split('+').first}',
-              style: TextStyle(
-                color: DiziRenkler.metin38,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
+          ),
         ),
-        actions: [
-          // Katalog gözat (türe göre keşif)
-          IconButton(
-            tooltip: 'Gözat'.c,
-            icon: const Icon(Icons.grid_view_outlined),
-            onPressed: () => context.push('/gozat'),
+        const SizedBox(width: 6),
+        // Sürüm numarası (yapı numarası olmadan)
+        Text(
+          'v${Api.surum.split('+').first}',
+          style: TextStyle(
+            color: DiziRenkler.metin38,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
           ),
-          // Instagram tarzı DM kısayolu
-          RozetliIkon(
-            ikon: Icons.near_me_outlined,
-            sayi: _mesajSayi,
-            etiket: 'Mesajlar'.c,
-            onTap: () async {
-              await context.push('/sohbetler');
-              _mesajSayisiYukle();
-            },
-          ),
-          const SizedBox(width: 4),
-        ],
+        ),
+      ],
+    );
+    final eylemler = <Widget>[
+      // Katalog gözat (türe göre keşif)
+      IconButton(
+        tooltip: 'Gözat'.c,
+        icon: const Icon(Icons.grid_view_outlined),
+        onPressed: () => context.push('/gozat'),
       ),
+      // Instagram tarzı DM kısayolu
+      RozetliIkon(
+        ikon: Icons.near_me_outlined,
+        sayi: _mesajSayi,
+        etiket: 'Mesajlar'.c,
+        onTap: () async {
+          await context.push('/sohbetler');
+          _mesajSayisiYukle();
+        },
+      ),
+      const SizedBox(width: 4),
+    ];
+    final genis = masaustuMu(context);
+
+    return Scaffold(
+      // Masaüstünde AppBar YOK: arama kutusu pencerenin en üst satırında,
+      // yatayda tam ortada dursun diye üst bar AramaCubugu'na devredildi.
+      appBar: genis ? null : AppBar(title: marka, actions: eylemler),
       // Akışla AYNI arama bileşeni (ortak widget)
-      body: AramaCubugu(cocuk: govde),
+      body: AramaCubugu(
+        cocuk: govde,
+        logo: genis ? marka : null,
+        eylemler: genis ? eylemler : const [],
+      ),
     );
   }
 }

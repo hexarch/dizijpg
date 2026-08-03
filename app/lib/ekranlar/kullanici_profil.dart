@@ -543,7 +543,18 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
             ),
         ],
       ),
-      body: govde,
+      // Kendi profilimizle aynı kural: masaüstünde gövde ortalanır ve azami
+      // genişlikte tutulur, mobil düzen gerilmez.
+      body: masaustuMu(context)
+          ? Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: masaustuIcerikGenisligi,
+                ),
+                child: govde,
+              ),
+            )
+          : govde,
     );
   }
 

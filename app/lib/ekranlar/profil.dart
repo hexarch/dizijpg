@@ -611,6 +611,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     final oturum = context.watch<Oturum>();
     final kullaniciAdi =
         oturum.kullanici?['kullanici_adi'] as String? ?? 'kullanıcı';
+    final genis = masaustuMu(context);
 
     Widget govde;
     if (_hata != null) {
@@ -655,254 +656,252 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   ),
                 ),
               ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profil başlığı: avatar (GIF olabilir), bio, ülke
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _gorselYukleniyor
-                            ? null
-                            : () => _gorselDuzenle(false),
-                        child: CircleAvatar(
-                          radius: 38,
-                          backgroundColor: DiziRenkler.kart,
-                          backgroundImage:
-                              dosyaUrl(_profil?['avatar'] as String?) != null
-                              ? CachedNetworkImageProvider(
-                                  dosyaUrl(_profil!['avatar'] as String)!,
-                                )
-                              : null,
-                          child: _gorselYukleniyor
-                              ? const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: DiziRenkler.sari,
-                                  ),
-                                )
-                              : (_profil?['avatar'] == null
-                                    ? Icon(
-                                        Icons.person,
-                                        size: 38,
-                                        color: DiziRenkler.metin38,
-                                      )
-                                    : null),
-                        ),
+            ProfilUstBolum(
+              genis: genis,
+              kimlik: [
+                // Profil başlığı: avatar (GIF olabilir), bio, ülke
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _gorselYukleniyor
+                          ? null
+                          : () => _gorselDuzenle(false),
+                      child: CircleAvatar(
+                        radius: genis ? 52 : 38,
+                        backgroundColor: DiziRenkler.kart,
+                        backgroundImage:
+                            dosyaUrl(_profil?['avatar'] as String?) != null
+                            ? CachedNetworkImageProvider(
+                                dosyaUrl(_profil!['avatar'] as String)!,
+                              )
+                            : null,
+                        child: _gorselYukleniyor
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: DiziRenkler.sari,
+                                ),
+                              )
+                            : (_profil?['avatar'] == null
+                                  ? Icon(
+                                      Icons.person,
+                                      size: 38,
+                                      color: DiziRenkler.metin38,
+                                    )
+                                  : null),
                       ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '@$kullaniciAdi',
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w900,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '@$kullaniciAdi',
+                            style: TextStyle(
+                              fontSize: genis ? 21 : 17,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          if ((_profil?['bio'] as String?)?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Text(
+                                _profil!['bio'] as String,
+                                style: TextStyle(
+                                  color: DiziRenkler.metin70,
+                                  fontSize: 13,
+                                ),
                               ),
                             ),
-                            if ((_profil?['bio'] as String?)?.isNotEmpty ==
-                                true)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 3),
-                                child: Text(
-                                  _profil!['bio'] as String,
-                                  style: TextStyle(
-                                    color: DiziRenkler.metin70,
-                                    fontSize: 13,
+                          if ((_profil?['ulke'] as String?)?.isNotEmpty == true)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 14,
+                                    color: DiziRenkler.sariMetin,
                                   ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    _profil!['ulke'] as String,
+                                    style: TextStyle(
+                                      color: DiziRenkler.metin54,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          const SizedBox(height: 6),
+                          // Takipçi / takip (kendi listelerine gider)
+                          Row(
+                            children: [
+                              _TakipSayac(
+                                deger: '${st['takipci_sayisi'] ?? 0}',
+                                etiket: 'takipçi'.c,
+                                onTap: () => _takipListe(kullaniciAdi, true),
+                              ),
+                              const SizedBox(width: 16),
+                              _TakipSayac(
+                                deger: '${st['takip_sayisi'] ?? 0}',
+                                etiket: 'takip'.c,
+                                onTap: () => _takipListe(kullaniciAdi, false),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                // Sosyal bağlantılar (Ayarlar'dan eklenir, en fazla 3)
+                SosyalSatiri(
+                  sosyal: _profil?['sosyal'] as List<dynamic>? ?? [],
+                ),
+                const SizedBox(height: 18),
+              ],
+              olcumler: [
+                // Misafir hesabı bağlama bandı
+                if (oturum.kullanici?['misafir'] == true) ...[
+                  Card(
+                    color: DiziRenkler.sari,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(14),
+                      onTap: _hesabiBagla,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.link, color: Colors.black),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                'Misafir hesabındasın — e-postanla bağla, verilerini kaybetme!'
+                                    .c,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
-                            if ((_profil?['ulke'] as String?)?.isNotEmpty ==
-                                true)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 3),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_on,
-                                      size: 14,
-                                      color: DiziRenkler.sariMetin,
-                                    ),
-                                    const SizedBox(width: 3),
-                                    Text(
-                                      _profil!['ulke'] as String,
-                                      style: TextStyle(
-                                        color: DiziRenkler.metin54,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            const SizedBox(height: 6),
-                            // Takipçi / takip (kendi listelerine gider)
-                            Row(
-                              children: [
-                                _TakipSayac(
-                                  deger: '${st['takipci_sayisi'] ?? 0}',
-                                  etiket: 'takipçi'.c,
-                                  onTap: () => _takipListe(kullaniciAdi, true),
-                                ),
-                                const SizedBox(width: 16),
-                                _TakipSayac(
-                                  deger: '${st['takip_sayisi'] ?? 0}',
-                                  etiket: 'takip'.c,
-                                  onTap: () => _takipListe(kullaniciAdi, false),
-                                ),
-                              ],
+                            ),
+                            const Icon(
+                              Icons.chevron_right,
+                              color: Colors.black,
                             ),
                           ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                  // Sosyal bağlantılar (Ayarlar'dan eklenir, en fazla 3)
-                  SosyalSatiri(
-                    sosyal: _profil?['sosyal'] as List<dynamic>? ?? [],
+                  const SizedBox(height: 14),
+                ],
+                // İstatistik kartları (dar ekranda alt satıra kayar)
+                LayoutBuilder(
+                  builder: (context, kutu) {
+                    const bosluk = 10.0;
+                    final genislik = (kutu.maxWidth - bosluk * 3) / 4;
+                    return Wrap(
+                      spacing: bosluk,
+                      runSpacing: bosluk,
+                      children: [
+                        // Sayaçlar tıklanır: ilgili liste/modal açılır
+                        _StatKarti(
+                          genislik: genislik,
+                          deger: '${st['izlenen_bolum']}',
+                          etiket: 'Bölüm'.c,
+                          onTap: () => context.push('/izlediklerim?tur=tv'),
+                        ),
+                        _StatKarti(
+                          genislik: genislik,
+                          deger: '${st['izlenen_film']}',
+                          etiket: 'Film'.c,
+                          onTap: () => context.push('/izlediklerim?tur=movie'),
+                        ),
+                        _StatKarti(
+                          genislik: genislik,
+                          deger: '${st['takip_edilen_dizi']}',
+                          etiket: 'Dizi'.c,
+                          onTap: () => context.push('/izlediklerim?tur=tv'),
+                        ),
+                        _StatKarti(
+                          genislik: genislik,
+                          deger: '${st['yorum_sayisi'] ?? 0}',
+                          etiket: 'Yorum'.c,
+                          onTap: () => _yorumlarAc(kullaniciAdi),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 10),
+                // Toplam ekran süresi (yıl/ay/gün)
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 16,
                   ),
-                  const SizedBox(height: 18),
-                  // Misafir hesabı bağlama bandı
-                  if (oturum.kullanici?['misafir'] == true) ...[
-                    Card(
-                      color: DiziRenkler.sari,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: _hesabiBagla,
-                        child: Padding(
-                          padding: const EdgeInsets.all(14),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.link, color: Colors.black),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  'Misafir hesabındasın — e-postanla bağla, verilerini kaybetme!'
-                                      .c,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ),
-                              const Icon(
-                                Icons.chevron_right,
-                                color: Colors.black,
-                              ),
-                            ],
+                  decoration: BoxDecoration(
+                    color: DiziRenkler.kart,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: DiziRenkler.metin12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.schedule,
+                        color: DiziRenkler.sariMetin,
+                        size: 22,
+                      ),
+                      const SizedBox(width: 12),
+                      // Expanded: pl "Łączny czas przed ekranem" (25 harf)
+                      // Spacer'lı halde 360 dp altında satırı taşırıyordu.
+                      Expanded(
+                        child: Text(
+                          'Toplam İzleme Süresi'.c,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 13,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 14),
-                  ],
-                  // İstatistik kartları (dar ekranda alt satıra kayar)
-                  LayoutBuilder(
-                    builder: (context, kutu) {
-                      const bosluk = 10.0;
-                      final genislik = (kutu.maxWidth - bosluk * 3) / 4;
-                      return Wrap(
-                        spacing: bosluk,
-                        runSpacing: bosluk,
-                        children: [
-                          // Sayaçlar tıklanır: ilgili liste/modal açılır
-                          _StatKarti(
-                            genislik: genislik,
-                            deger: '${st['izlenen_bolum']}',
-                            etiket: 'Bölüm'.c,
-                            onTap: () => context.push('/izlediklerim?tur=tv'),
-                          ),
-                          _StatKarti(
-                            genislik: genislik,
-                            deger: '${st['izlenen_film']}',
-                            etiket: 'Film'.c,
-                            onTap: () =>
-                                context.push('/izlediklerim?tur=movie'),
-                          ),
-                          _StatKarti(
-                            genislik: genislik,
-                            deger: '${st['takip_edilen_dizi']}',
-                            etiket: 'Dizi'.c,
-                            onTap: () => context.push('/izlediklerim?tur=tv'),
-                          ),
-                          _StatKarti(
-                            genislik: genislik,
-                            deger: '${st['yorum_sayisi'] ?? 0}',
-                            etiket: 'Yorum'.c,
-                            onTap: () => _yorumlarAc(kullaniciAdi),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  // Toplam ekran süresi (yıl/ay/gün)
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: DiziRenkler.kart,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: DiziRenkler.metin12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.schedule,
+                      const SizedBox(width: 8),
+                      Text(
+                        sureBicimle(dakika),
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w900,
                           color: DiziRenkler.sariMetin,
-                          size: 22,
                         ),
-                        const SizedBox(width: 12),
-                        // Expanded: pl "Łączny czas przed ekranem" (25 harf)
-                        // Spacer'lı halde 360 dp altında satırı taşırıyordu.
-                        Expanded(
-                          child: Text(
-                            'Toplam İzleme Süresi'.c,
-                            style: TextStyle(
-                              color: DiziRenkler.metin54,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          sureBicimle(dakika),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w900,
-                            color: DiziRenkler.sariMetin,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 10),
-                  // Yorumlarının toplam etkileşimi (görüntülenme: foto/video
-                  // ekli yorumlar dahil — aynı sayaç)
-                  EtkilesimSatiri(
-                    begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
-                    goruntulenme:
-                        (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
-                  ),
-                  const SizedBox(height: 20),
-                  // İki sekme: boydan boya, ekranı ikiye bölen butonlar.
-                  // Kitaplık grupları ve yorum akışı aynı profilde ayrı
-                  // sekmelerde durur (kullanıcı isteği).
-                  ProfilSekmeleri(
-                    secili: _sekme,
-                    onSec: (i) => setState(() => _sekme = i),
-                  ),
-                  const SizedBox(height: 12),
-                ],
-              ),
+                ),
+                const SizedBox(height: 10),
+                // Yorumlarının toplam etkileşimi (görüntülenme: foto/video
+                // ekli yorumlar dahil — aynı sayaç)
+                EtkilesimSatiri(
+                  begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
+                  goruntulenme:
+                      (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
+                ),
+              ],
+              altBolum: [
+                const SizedBox(height: 20),
+                // İki sekme: boydan boya, ekranı ikiye bölen butonlar.
+                // Kitaplık grupları ve yorum akışı aynı profilde ayrı
+                // sekmelerde durur (kullanıcı isteği).
+                ProfilSekmeleri(
+                  secili: _sekme,
+                  onSec: (i) => setState(() => _sekme = i),
+                ),
+                const SizedBox(height: 12),
+              ],
             ),
             // Sekme içeriği gövdenin 16px yatay dolgusunun DIŞINDA durur:
             // yorum kartı akıştaki gibi ekranı sağdan sola TAM kaplasın,
@@ -1052,7 +1051,71 @@ class _ProfilEkraniState extends State<ProfilEkrani>
           ),
         ],
       ),
-      body: govde,
+      // Masaüstünde gövde ortalanır ve azami genişlikte tutulur: 1440'lık
+      // ekranda mobil düzenin gerilip poster şeritlerinin dağılmasını önler.
+      body: genis
+          ? Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: masaustuIcerikGenisligi,
+                ),
+                child: govde,
+              ),
+            )
+          : govde,
+    );
+  }
+}
+
+/// Masaüstünde profilin kimlik sütunu genişliği (avatar + ad + bio + takip).
+const double masaustuKimlikSutunu = 380;
+
+/// Profilin üst bölümü. Dar ekranda [kimlik] → [olcumler] → [altBolum] ALT
+/// ALTA dizilir (bugünkü mobil düzenin birebir aynısı). Masaüstünde kimlik
+/// solda dar sütunda, ölçüm kartları sağda geniş sütunda YAN YANA durur;
+/// sekmeler ikisinin altında tam genişlikte kalır.
+class ProfilUstBolum extends StatelessWidget {
+  final bool genis;
+  final List<Widget> kimlik;
+  final List<Widget> olcumler;
+  final List<Widget> altBolum;
+  const ProfilUstBolum({
+    super.key,
+    required this.genis,
+    required this.kimlik,
+    required this.olcumler,
+    required this.altBolum,
+  });
+
+  Widget _sutun(List<Widget> cocuklar) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    mainAxisSize: MainAxisSize.min,
+    children: cocuklar,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: genis
+            ? [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: masaustuKimlikSutunu,
+                      child: _sutun(kimlik),
+                    ),
+                    const SizedBox(width: 28),
+                    Expanded(child: _sutun(olcumler)),
+                  ],
+                ),
+                ...altBolum,
+              ]
+            : [...kimlik, ...olcumler, ...altBolum],
+      ),
     );
   }
 }

@@ -60,6 +60,28 @@ class DiziRenkler {
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
 }
 
+/// ---------------------------------------------------------------------------
+/// Masaüstü/geniş pencere düzeni
+///
+/// TEK EŞİK: pencere genişliği bu değerin ALTINDAysa uygulama BİREBİR bugünkü
+/// mobil düzeninde kalır (telefon 360-430 dp bu eşiğin çok altında). Üstündeyse
+/// masaüstü düzenine geçilir. Eşik `kIsWeb`/platform DEĞİL genişlik üzerinden:
+/// tarayıcı penceresi daraltılınca da mobil düzen geri gelmeli, telefon
+/// tarayıcısı masaüstü düzenine düşmemeli.
+///
+/// 900 seçildi çünkü uygulamada zaten kullanılan geniş-ekran eşiği bu
+/// (katalog_liste.dart, kesfet_akis.dart) ve tablet dikey (768) mobil tarafta
+/// kalır — dar sütun düzeni orada hâlâ doğru.
+const double masaustuEsigi = 900;
+
+/// Geniş (masaüstü) pencerede miyiz? Ekranlar bunu okur.
+bool masaustuMu(BuildContext context) =>
+    MediaQuery.sizeOf(context).width >= masaustuEsigi;
+
+/// Masaüstünde sayfa gövdesinin ortalandığı azami genişlik: 1440'lık ekranda
+/// mobil düzenin gerilmesini engeller.
+const double masaustuIcerikGenisligi = 1080;
+
 /// Seçilen mod + cihaz parlaklığından "açık tema mı?" kararı.
 bool temaAcikMi(String mod, Brightness cihaz) =>
     mod == 'acik' || (mod == 'sistem' && cihaz == Brightness.light);

@@ -9,14 +9,38 @@ import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
+/// Masaüstü üst barının yüksekliği.
+const double masaustuUstBarYuksekligi = 64;
+
+/// Masaüstü üst barında arama kutusunun İKİ YANINDA bırakılan pay: solda marka
+/// bloğu, sağda eylem ikonları bu payın içinde durur. Kutu genişliği buna göre
+/// hesaplandığı için kutu TAM ORTADA kalırken marka/eylemlerle ÇAKIŞMAZ.
+const double masaustuUstBarKenarPayi = 230;
+
+/// Masaüstünde arama kutusunun azami genişliği (720 masaüstünde şişkin duruyor).
+const double masaustuAramaGenisligi = 560;
+
 /// Sayfanın üstüne satır-içi arama çubuğu ekleyen sarmalayıcı.
 ///
 /// Akış ve Ana Sayfa AYNI bileşeni kullanır; kopyalansaydı birinde
 /// düzeltilen hata ötekinde kalırdı. Sorgu 2 karakterden kısayken [cocuk]
 /// gösterilir, uzunsa sonuçlar listelenir.
+///
+/// MASAÜSTÜNDE (genişlik >= [masaustuEsigi]) bileşen sayfanın üst barını da
+/// üstlenir: arama kutusu EKRANIN EN ÜSTÜNDE ve TAM ORTASINDA durur, [logo]
+/// solda, [eylemler] sağda kalır. Bu yüzden çağıran ekran masaüstünde kendi
+/// AppBar'ını kurmaz, marka bloğunu ve eylem ikonlarını buraya verir.
+/// Dar ekranda [logo]/[eylemler] YOK SAYILIR ve düzen birebir eskisi gibidir.
 class AramaCubugu extends StatefulWidget {
   final Widget cocuk;
-  const AramaCubugu({super.key, required this.cocuk});
+  final Widget? logo;
+  final List<Widget> eylemler;
+  const AramaCubugu({
+    super.key,
+    required this.cocuk,
+    this.logo,
+    this.eylemler = const [],
+  });
 
   @override
   State<AramaCubugu> createState() => _AramaCubuguState();
@@ -81,53 +105,97 @@ class _AramaCubuguState extends State<AramaCubugu> {
     }
   }
 
+  /// Arama kutusunun kendisi (mobil ve masaüstü aynı kutuyu kullanır).
+  Widget _aramaKutusu() => TextField(
+    controller: _aramaKutu,
+    onChanged: _aramaDegisti,
+    decoration: InputDecoration(
+      hintText: 'Dizi, film veya kişi ara...'.c,
+      prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
+      suffixIcon: _araniyor
+          ? const Padding(
+              padding: EdgeInsets.all(12),
+              child: SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: DiziRenkler.sari,
+                ),
+              ),
+            )
+          : (_sorgu.isNotEmpty
+                ? IconButton(
+                    tooltip: 'Kapat'.c,
+                    icon: Icon(Icons.close, color: DiziRenkler.metin54),
+                    onPressed: () {
+                      _aramaKutu.clear();
+                      setState(() => _sorgu = '');
+                    },
+                  )
+                : null),
+    ),
+  );
+
+  /// Masaüstü üst barı: arama kutusu ekran genişliğinin TAM ORTASINDA
+  /// (Stack + Center → sol boşluk = sağ boşluk), marka solda, eylemler sağda.
+  /// Positioned'lar Stack SINIRI İÇİNDE — dışarı taşan Positioned tıklanamaz.
+  Widget _masaustuUstBar(double ekranGenisligi) {
+    final kutuGenisligi = (ekranGenisligi - masaustuUstBarKenarPayi * 2).clamp(
+      320.0,
+      masaustuAramaGenisligi,
+    );
+    return SafeArea(
+      bottom: false,
+      child: SizedBox(
+        height: masaustuUstBarYuksekligi,
+        child: Stack(
+          children: [
+            Center(
+              child: SizedBox(width: kutuGenisligi, child: _aramaKutusu()),
+            ),
+            if (widget.logo != null)
+              Positioned(
+                left: 16,
+                top: 0,
+                bottom: 0,
+                child: Center(child: widget.logo!),
+              ),
+            if (widget.eylemler.isNotEmpty)
+              Positioned(
+                right: 8,
+                top: 0,
+                bottom: 0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: widget.eylemler,
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final ekranGenisligi = MediaQuery.sizeOf(context).width;
     return Column(
       children: [
         // Satır-içi arama: dizi/film/kişi + kullanıcılar; sonuçlar
         // modal yerine çubuğun hemen altında listelenir
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
-              child: TextField(
-                controller: _aramaKutu,
-                onChanged: _aramaDegisti,
-                decoration: InputDecoration(
-                  hintText: 'Dizi, film veya kişi ara...'.c,
-                  prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
-                  suffixIcon: _araniyor
-                      ? const Padding(
-                          padding: EdgeInsets.all(12),
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: DiziRenkler.sari,
-                            ),
-                          ),
-                        )
-                      : (_sorgu.isNotEmpty
-                            ? IconButton(
-                                tooltip: 'Kapat'.c,
-                                icon: Icon(
-                                  Icons.close,
-                                  color: DiziRenkler.metin54,
-                                ),
-                                onPressed: () {
-                                  _aramaKutu.clear();
-                                  setState(() => _sorgu = '');
-                                },
-                              )
-                            : null),
-                ),
+        if (ekranGenisligi >= masaustuEsigi)
+          _masaustuUstBar(ekranGenisligi)
+        else
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+                child: _aramaKutusu(),
               ),
             ),
           ),
-        ),
         Expanded(
           child: _sorgu.trim().length >= 2 ? _aramaSonuclari() : widget.cocuk,
         ),
