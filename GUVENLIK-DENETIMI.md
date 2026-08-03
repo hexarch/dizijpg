@@ -816,7 +816,8 @@ Tüm yedekler `/root/guvenlik-yedek-20260803/` altında
 |---|---|
 | `dizijpg.com.nginx.orig` | nginx vhost'unun değişiklik öncesi hâli |
 | `sshd_config.orig` | ana sshd yapılandırması (bu dosya değiştirilmedi) |
-| `jail.local.orig` | fail2ban ayarları |
+| `jail.local.orig` | fail2ban ayarları (SSH turundan önce) |
+| `jail.local.posta-oncesi` | fail2ban ayarları (posta jail'lerinden önce, §7.6) |
 | `crontab.orig` | root crontab |
 | `admin.passwd.orig`, `admin.shadow.orig` | `admin` hesabının önceki kaydı |
 
@@ -849,10 +850,11 @@ almadan): `geo` bloğuna kendi IP'nizi `<IP>/32 0;` satırıyla ekleyip
 
 ### 7.5 Bu turda çıkan yeni bulgular
 
-- **[ORTA] Posta kimlik doğrulamasında fail2ban jail'i YOK.** Yalnız `sshd`
-  jail'i etkin. Dovecot (993) ve Postfix SASL (587) internete açık ve **parola
-  tabanlı**; SSH parola girişi kapatıldığı için `admin` hesabının parolası artık
-  yalnız buradan denenebilir. `dovecot` ve `postfix-sasl` jail'leri eklenmeli.
+- **[ORTA] Posta kimlik doğrulamasında fail2ban jail'i YOK.** — [x] KAPATILDI
+  (3 Ağu 2026, bkz. §7.6). Yalnız `sshd` jail'i etkindi. Dovecot (993) ve
+  Postfix SASL (587) internete açık ve **parola tabanlı**; SSH parola girişi
+  kapatıldığı için `admin` hesabının parolası artık yalnız buradan denenebilir.
+  `dovecot` ve `postfix-sasl` jail'leri eklendi.
 - **[BİLGİ] `brnmedia.me` Cloudflare üzerinden 523 veriyor.** Origin sağlıklı
   (yerelde 200) ama nginx erişim günlüğünde bu alan adına ait **tek bir istek
   bile yok** — yani CF uzun süredir bu origin'e ulaşmıyor ve `/var/www/brnmedia-next`
@@ -861,3 +863,191 @@ almadan): `geo` bloğuna kendi IP'nizi `<IP>/32 0;` satırıyla ekleyip
   sertifika yok; §2.8'deki "certbot timer aktif" notu yanıltıcı. Kullanıcının
   gördüğü Let's Encrypt sertifikası Cloudflare'in edge sertifikasıdır. Origin
   sertifikası hâlâ kendinden imzalı (§2.8, madde 9 geçerliliğini koruyor).
+
+---
+
+## 8. Posta kimlik doğrulaması için fail2ban — 3 Ağustos 2026
+
+§7.5'te bulunan açık kapatıldı. `dovecot` ve `postfix-sasl` jail'leri etkin.
+Değiştirilen tek dosya: `/etc/fail2ban/jail.local`. Dovecot, Postfix, nginx, SSH
+ve uygulama yapılandırmalarına **dokunulmadı**; servisler **yeniden
+başlatılmadı** (`fail2ban-client reload` kullanıldı).
+
+### 8.1 Neden gerekliydi (canlı saldırı var)
+
+SSH parola girişi 3 Ağu'da kapatıldığı için `admin` hesabının parolası artık
+yalnız Dovecot (993/995/143/110) ve Postfix SASL (587) üzerinden denenebiliyordu
+ve **denenmişti de** — 14 günlük günlükte `sasl_username=admin@dizijpg.com`
+hedefli SASL denemeleri var (`185.93.89.36`).
+
+### 8.2 İki tuzak (ikisi de sessiz başarısızlığa yol açardı)
+
+**1) `logpath` çalışmaz — bu makinede rsyslog KAPALI.** `/var/log/mail.log`,
+`/var/log/mail.err`, `/var/log/auth.log`, `/var/log/syslog` **yok**; her şey
+journald'da. Stok `jail.conf` bu jail'ler için `logpath = %(dovecot_log)s`
+bekliyor. Öylece `enabled = true` yazılsaydı jail açılır ama **hiçbir satır
+okumazdı**. Her iki jail de `backend = systemd` kullanıyor.
+
+**2) Postfix `postfix@-.service` örneği olarak çalışıyor.** `postfix.service`
+yalnızca `exited` durumda bir sarmalayıcı; tüm SASL kayıtları
+`postfix@-.service` altında (14 günde **40/40** satır, `journalctl -o json` ile
+`_SYSTEMD_UNIT` sayılarak doğrulandı). Stok `filter.d/postfix.conf` ise
+`journalmatch = _SYSTEMD_UNIT=postfix.service` diyor → **sıfır eşleşme** olurdu.
+Jail'de `journalmatch` ezildi; fail2ban ikisini OR'layarak kullanıyor:
+`_SYSTEMD_UNIT=postfix.service + _SYSTEMD_UNIT=postfix@-.service`.
+
+### 8.3 Asıl karar: `findtime` 10 dk → **1 gün** (`maxretry` 5'te KALDI)
+
+14 günlük gerçek günlükte, filtrenin **eşleştiği** satırların IP başına en yoğun
+penceresi ölçüldü:
+
+| IP | eşleşen | max/10dk | max/1sa | max/24sa |
+|---|---|---|---|---|
+| `185.93.89.36` | 35 | **14** | 14 | 24 |
+| `141.147.182.224` | 20 | 2 | 2 | 20 |
+| `104.251.181.131` | 10 | 2 | 2 | 8 |
+| `104.251.181.132` | 10 | 2 | 2 | 8 |
+
+Sonuç: yavaş yayılım yapan üç IP 10 dakikada en fazla **2** vuruş yapıyor —
+yani `findtime = 10m` ile `maxretry` **5 de olsa 3 de olsa asla yakalanmazlar**.
+`maxretry`'yi düşürmenin saldırıya karşı ek faydası **sıfır**; kazandıran
+`findtime`'ı uzatmaktır. `findtime = 1d` + `maxretry = 5` ile dördü de yakalanır.
+
+**`maxretry` neden 5'te bırakıldı (3 yapılmadı):** SSH ile tutarlı olsun diye ve
+posta istemcileri (telefondaki posta uygulaması gibi) yanlış parolayı otomatik
+olarak tekrar tekrar denediği için — 3 eşiği gerçek kullanıcıyı 24 saatliğine
+kilitlerdi. Yukarıdaki ölçüme göre bunun karşılığında hiçbir güvenlik kazancı
+da yok. Ek güvence: bu sunucuda **tüm journald geçmişinde (Kas 2025'ten beri)
+tek bir başarılı IMAP/POP3 girişi yok** — yani şu an sunucuya bağlı yapılandırılmış
+bir posta istemcisi bulunmuyor, kilitlenme riski bugün zaten teorik.
+
+Yanlışlıkla kilitlenirsen: `fail2ban-client set <jail> unbanip <IP>`
+
+### 8.4 `ignoreip` kararı
+
+```
+ignoreip = 127.0.0.1/8 ::1 172.19.0.0/16 154.53.163.3 154.53.163.5
+           188.119.45.48 176.88.21.131
+```
+
+| Girdi | Neden |
+|---|---|
+| `127.0.0.1/8` | zaten vardı |
+| `::1` | **yeni** — Dovecot IPv6'da da dinliyor (`[::]:993/995/143/110`), IPv4 loopback beyaz listedeyken IPv6 loopback değildi |
+| `172.19.0.0/16` | **yeni** — `dizijpg-api` konteynerinin ağı. Uygulama postayı `host.docker.internal:25` üzerinden **SASL'sız** röle ediyor (Postfix `mynetworks` içinde). `postfix-sasl` bugün SASL hatası saymadığı için bu ağı banlayamaz; yine de "uygulamanın postası kesilir" senaryosuna karşı emniyet kemeri |
+| `154.53.163.3` | **yeni** — sunucunun kendi genel IP'si; kendi kendini banlamasın |
+| `154.53.163.5` | zaten vardı (ikinci sunucu) |
+| `188.119.45.48` | zaten vardı (Rize) |
+| `176.88.21.131` | **yeni** — Antalya/ofis; §2.10 ve §6'da "doğrulanmalı" diye işaretlenmişti, kullanıcı teyit etti |
+
+**Dinamik IP riski ve neden yine de eklendi:** 176.88.21.131 ve 188.119.45.48
+Türk Telekom dinamik adresleri olabilir, zamanla değişir. Ancak `ignoreip` bir
+**erişim izni değil**, yalnızca "otomatik banlama muafiyeti"dir — adres el
+değiştirse bile yabancının hâlâ geçerli parolaya/anahtara ihtiyacı olur. Buna
+karşılık dışarıda bırakmanın bedeli, kullanıcının kendini 24 saatliğine posta ve
+SSH dışında bırakması. Risk asimetrisi eklemekten yana. **6 ayda bir gözden
+geçirin.** (`ignoreip` `[DEFAULT]`'ta olduğu için `sshd` jail'ini de kapsar.)
+
+### 8.5 Kanıtlar
+
+**Jail'ler aktif:**
+
+```
+$ fail2ban-client status
+`- Jail list:   dovecot, postfix-sasl, sshd
+```
+
+**`fail2ban-regex` — 14 günlük gerçek günlüğe karşı (sıfır değil):**
+
+```
+dovecot        : 851 satır, 79 eşleşti   (57 pam_unix + 22 "auth failed")
+postfix[auth]  : 3929 satır, 15 eşleşti
+```
+
+`postfix-sasl` az görünüyor çünkü stok `mode=auth`, parola tahmini olmayan
+`Connection lost to authentication server` ve `Invalid authentication mechanism`
+satırlarını **bilerek** dışlıyor. Bu doğru davranış, daha az yanlış pozitif.
+
+**`fail2ban-regex` — testle üretilen TAZE günlüğe karşı (biçim gerçekten uyuyor):**
+
+```
+dovecot        : 18 satır, 18 eşleşti, 0 kaçtı
+postfix[auth]  : 18 satır,  6 eşleşti  (6 SASL hatasının 6'sı; kalan 12 satır
+                 alakasız connect/disconnect kayıtları)
+```
+
+**Devreye girdiğinin canlı kanıtı:** reload'dan hemen sonra `dovecot` jail'i,
+`findtime = 10m` ile **asla yakalanamayacak olan** üç yavaş yayılımcıyı banladı:
+
+```
+Banned IP list: 141.147.182.224 104.251.181.132 104.251.181.131
+```
+
+**Ban boru hattı `postfix-sasl` için de çalışıyor** (son 24 saatte SASL saldırısı
+olmadığı için doğal ban yoktu; rezerve TEST-NET-3 adresiyle doğrulandı):
+
+```
+$ fail2ban-client set postfix-sasl banip 203.0.113.7
+-A f2b-postfix-sasl -s 203.0.113.7/32 -j REJECT --reject-with icmp-port-unreachable
+$ fail2ban-client set postfix-sasl unbanip 203.0.113.7   # geri alındı
+```
+
+**POSTA HÂLÂ ÇALIŞIYOR (en önemli kanıt).** Geçici bir sistem hesabıyla test
+edildi; `admin` hesabının parolası **bilinçli olarak aranmadı ve kullanılmadı**.
+Hesap test biter bitmez `userdel -r` ile silindi.
+
+```
+IMAPS 993 (geçerli kimlikle):
+  a1 OK [CAPABILITY ...] Logged in
+  * LIST (\HasNoChildren) "." INBOX
+
+Submission 587 (SASL + gerçek mail):
+  235 2.7.0 Authentication successful
+  250 2.0.0 Ok: queued as AD87EA0F35
+
+Teslimat: /home/admin/Maildir/new/  6 dosya -> 7 dosya
+  Subject: fail2ban posta jail dogrulama
+  To: admin@dizijpg.com
+```
+
+**`ignoreip` çalışıyor:** localhost'tan bilerek 12 başarısız giriş yapıldı
+(6 IMAP + 6 SASL). Filtreler bunları eşleştirdi ama **hiçbir ban oluşmadı**;
+`f2b-*` zincirlerinde tek bir meşru IP yok.
+
+**Hiçbir şey bozulmadı:**
+
+| Kontrol | Sonuç |
+|---|---|
+| `/etc/shadow` md5 | değişiklik öncesi = sonrası (`98e26e16…`) — `admin` hash'ine dokunulmadı |
+| `admin` hesabı | `passwd -S admin` → `P` (parola kullanılabilir), kabuk `nologin` |
+| Dovecot / Postfix yeniden başlatıldı mı | **hayır** (`ActiveEnterTimestamp` = 30 Tem 20:09) |
+| fail2ban | `reload` (restart değil) |
+| f2b zincirlerinin dokunduğu portlar | yalnız `22` · `25,465,587,143,993,110,995` · `110,995,143,993,587,465,4190` — **8000/5432/6379/80/443 YOK** |
+| `dizijpg.com/api/saglik` | `200 {"durum":"ok"}` |
+| monteqr.me (8000) | origin `200` (dışarıdan `000` görünmesi sunucunun IPv6 çıkışı olmamasından; **önceden de öyleydi**) |
+| dopamall-redis / dizijpg-db / PostgreSQL 5432 | çalışıyor, dokunulmadı |
+| IPv6 IMAPS (`[::1]:993`) | banner dönüyor, sağlam |
+
+> **Not:** İnceleme sırasında `dizijpg-api` konteynerinin 16:09'da yeniden
+> başladığı görüldü. Bu **bu çalışmanın sonucu değildir** — `/opt/dizijpg/server.js`
+> aynı dakikada başka bir ajan tarafından güncellenmiş (`RestartCount=0`, yani
+> Docker'ın kendi yeniden başlatması değil, yeni dağıtım). fail2ban reload'ı bir
+> konteyneri yeniden başlatamaz.
+
+### 8.6 Geri alma
+
+```bash
+# Posta jail'lerini tamamen kaldır (SSH jail'i ve 24h bantime korunur)
+cp -a /root/guvenlik-yedek-20260803/jail.local.posta-oncesi /etc/fail2ban/jail.local
+fail2ban-client -t && fail2ban-client reload
+
+# Yalnız bir IP'yi serbest bırak (jail'i kaldırmadan) — kilitlenirsen bunu kullan
+fail2ban-client set dovecot      unbanip <IP>
+fail2ban-client set postfix-sasl unbanip <IP>
+
+# Yalnız bir jail'i geçici durdur
+fail2ban-client stop dovecot
+```
+
+Bir şey ters giderse ilk bakılacak yer: `/var/log/fail2ban.log` ve
+`fail2ban-client status dovecot|postfix-sasl`.
