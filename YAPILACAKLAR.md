@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Akış kartı başlığı: ad avatarın ORTASINDA, dizi adı avatarın ALTINDAN
+**Kullanıcı isteği:** "Akışta hala kullanıcı profil resminin hemen ortasında
+kullanıcı adı, resmin altından başlayacak şekilde de dizi filmin adı olmalı"
+- 🚀 **Önce:** avatar dış satırdaydı, iki metin satırı avatarın SAĞINDA alt
+  alta duruyordu → adın merkezi avatarın merkezinden **22,0 dp yukarıda**,
+  içerik adının solu avatarın solundan **50,0 dp sağda** (girintili).
+- 🚀 **Sonra:** avatar kullanıcı adıyla AYNI `Row`un içinde (Row'un varsayılan
+  dikey ortalaması merkezleri birebir eşitliyor: **fark 0,0 dp**); içerik adı
+  bu satırın ALTINDA, sol kenarı avatarın sol kenarıyla aynı (**fark 0,0 dp**).
+- 🚀 **Erişilebilirlik:** kullanıcı adının dokunma kutusu 37,5 dp'den sabit
+  **44 dp**'ye çıktı (dolgu yerine `ConstrainedBox` — dolgu yazı tipine göre
+  değişiyordu). İçerik adı 44 dp, S4B6 rozeti 44x44 dp, "Takip Et" 48 dp.
+- 🚀 **S4B6 rozeti** artık içerik adının hemen yanında: adın kutusu yazıya
+  sarılıyor (`Align(widthFactor: 1)`), yoksa satırın sonuna savruluyordu.
+- 🚀 **İki satır arası boşluk** artık geometriden doğuyor: **11,5 dp**
+  (takip düğmeli kartta 13,5 dp). Bir önceki isteğin 8,25 dp'si değil ama eski
+  16,50'nin ALTINDA; daha aşağısı avatarı (40 dp) ya da 44 dp'lik dokunma
+  kutusunu küçültmeyi gerektirirdi — 44'te durduk.
+- 🚀 **Kanıt:** `app/test/akis_karti_baslik_bosluk_test.dart` 16 → **27 test**
+  (merkez ve sol kenar hizası gerçek `getRect` konumlarıyla; menü/kapak ile
+  çakışma yok; 360 dp'de taşma yok; üç dokunuş doğru rotaya gidiyor).
+  Değişiklik geri alınınca **14 test kırmızıya dönüyor** (denendi).
+  Kart biraz uzadığı için `begeni_paylasimi_test.dart` deneme ekranı
+  800x600 → 800x900 oldu. Toplam **332 test**.
+
 ## 2026-08-03 — KEŞFET yalnız MEDYALI gönderi gösteriyor (yazı gönderileri çıktı)
 **Kullanıcı isteği:** "keşfette sadece yazı yazan yorum var, tıkladığımda
 odyssey arka planda önce de sağlam beyaz text yazıyor, böyle bir şey yapma.
