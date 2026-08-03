@@ -476,4 +476,36 @@ void main() {
     // Listeden düştü, boş duruma geçildi.
     expect(find.text('Bu dizi harikaydi 11'), findsNothing);
   });
+
+  // ----------------------------------------------------- dokunma hedefleri
+  testWidgets('DOKUNMA HEDEFLERİ >= 44 px (olculur, goz karari degil)', (
+    tester,
+  ) async {
+    _sunucu({
+      '/gizlenen-yorumlar': {
+        'yorumlar': [_ustSeviye(11)],
+        'icerikler': _icerikler,
+      },
+    });
+    await _kur(tester, const GizlenenYorumlarEkrani(), sarmala: false);
+    for (final etiket in ['Tekrar göster', 'Gönderiye git']) {
+      final kutu = tester.getSize(
+        find.ancestor(of: find.text(etiket), matching: find.byType(TextButton)),
+      );
+      expect(
+        kutu.height,
+        greaterThanOrEqualTo(44),
+        reason: '$etiket dokunma hedefi ${kutu.height} px',
+      );
+    }
+    // Alıntı bloğu: iki satır metin zaten 44 px üstünde ama alt sınır konmuş.
+    await _kur(
+      tester,
+      ProfilYorumAkisi(yorumlar: [_yanit(11)], icerikler: _icerikler),
+    );
+    expect(
+      tester.getSize(find.byType(YanitBaglamBlogu)).height,
+      greaterThanOrEqualTo(44),
+    );
+  });
 }
