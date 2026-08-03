@@ -1080,33 +1080,53 @@ class _ReelSayfaState extends State<_ReelSayfa>
         child: CachedNetworkImage(imageUrl: foto, fit: BoxFit.contain),
       );
     } else {
-      // Yazılı yorum: poster arka planlı alıntı kartı
-      zemin = Stack(
-        fit: StackFit.expand,
-        children: [
-          if (poster != null)
-            Opacity(
+      // Yazılı yorum: yalnız poster arka planı. ALINTI METNİ dokunuş
+      // katmanının ÜSTÜNDE ayrı bir katmanda çizilir (aşağıya bak) — burada
+      // kalsaydı tam ekran opak dokunuş katmanı etiketleri yutardı.
+      zemin = poster != null
+          ? Opacity(
               opacity: 0.25,
               child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
-            ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(28, 28, 28, 160),
-              child: EtiketliMetin(
-                y['metin'] as String? ?? '',
-                koyuZemin: true, // Reels daima siyah zemin → parlak sarı etiket
-                stil: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  height: 1.5,
-                  fontWeight: FontWeight.w600,
+            )
+          : const SizedBox.expand();
+    }
+
+    // Yazılı gönderinin alıntı kartı: metin dokunuş katmanının ÜSTÜNDE durur,
+    // yoksa içindeki @kullanıcı ve dizi/film etiketleri HİÇ dokunulamazdı
+    // (opak GestureDetector hepsini yutuyordu). `deferToChild`: yalnız YAZININ
+    // olduğu yer bu katmana düşer, boş alan alttaki katmana geçer — çift
+    // dokunuş/kaydırma her yerde çalışmaya devam etsin diye aynı eylemler
+    // burada da bağlanır.
+    final alintiKarti = foto == null && _videoUrl == null
+        ? Positioned.fill(
+            child: GestureDetector(
+              behavior: HitTestBehavior.deferToChild,
+              onTap: _dokunus,
+              onDoubleTapDown: (d) => _ciftDokunus(d.localPosition),
+              onDoubleTap: () {},
+              onHorizontalDragEnd: (detay) {
+                final hiz = detay.primaryVelocity ?? 0;
+                if (hiz.abs() > 250) _yanaKaydir(hiz);
+              },
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(28, 28, 28, 160),
+                  child: EtiketliMetin(
+                    y['metin'] as String? ?? '',
+                    // Reels daima siyah zemin → parlak sarı etiket
+                    koyuZemin: true,
+                    stil: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      height: 1.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
-      );
-    }
+          )
+        : null;
 
     return Stack(
       fit: StackFit.expand,
@@ -1132,6 +1152,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ),
           ),
         ),
+        if (alintiKarti != null) alintiKarti,
         // Çoklu medya sayacı sağ üstte ("3/10") — noktalar altta, alt blokta.
         if (_medya.length > 1)
           Positioned(
@@ -1543,11 +1564,6 @@ class _ReelSayfaState extends State<_ReelSayfa>
       ],
     );
   }
-}
-
-/// Kabuk-güvenli rota gezinmesi (Reels kök gezginin üstünde açık olabilir).
-void rotayaGitGuvenli(BuildContext context, String hedef) {
-  GoRouter.of(context).push(hedef);
 }
 
 class _ReelsDugme extends StatelessWidget {

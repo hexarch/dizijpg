@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
@@ -223,8 +222,9 @@ class _EtiketliMetinState extends State<EtiketliMetin> {
         final id = m.namedGroup('kimlik')!;
         final ad = m.namedGroup('ad')!;
         final yol = tur == 'person' ? '/kisi/$id' : '/icerik/$tur/$id';
+        // Reels/alt sayfa açıkken hedef katmanın ALTINDA kalmasın.
         final taniyici = TapGestureRecognizer()
-          ..onTap = () => GoRouter.of(context).push(yol);
+          ..onTap = () => rotayaGitGuvenli(context, yol);
         _taniyicilar.add(taniyici);
         parcalar.add(
           WidgetSpan(

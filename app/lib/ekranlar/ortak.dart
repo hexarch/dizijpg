@@ -1360,12 +1360,48 @@ class BolumBasligi extends StatelessWidget {
   }
 }
 
+/// Gezinmeden ÖNCE açık imperatif katmanları (Reels, alt sayfalar, tam ekran
+/// medya görüntüleyici) kapatır.
+///
+/// NEDEN: Reels `Navigator.of(context, rootNavigator: true).push(...)` ile
+/// go_router'ın SAYFA yığınının ÜSTÜNE itiliyor. O katman açıkken yapılan
+/// `context.push('/kullanici/x')` hedefi kabuğun İÇİNDEKİ gezgine iter; yeni
+/// sayfa Reels'in ALTINDA açılır ve GÖRÜNMEZ. Kullanıcı "hiçbir şey olmadı"
+/// sanır, Reels'i kapatınca kendini profilde bulur (3 Ağu 2026 bildirimi:
+/// "beğeni listesinden kullanıcıya tıklıyorum profiline gitmiyor ama reelsten
+/// çıkınca kendimi kullanıcı profilinde buluyorum").
+///
+/// Aynı tuzak alt sayfalar için de geçerli: sheet, sayfanın gezgininde
+/// yaşadığı için altına itilen sayfayı örter. O yüzden hem EN YAKIN gezgin
+/// hem de KÖK gezgin temizlenir.
+///
+/// Yalnız imperatif rotalar atılır: `settings is Page` olanlar (go_router
+/// sayfaları) ve ilk rota korunur — testlerdeki `MaterialApp(home: ...)`
+/// düzeni de sağ kalır.
+void katmanlariKapat(BuildContext context) {
+  bool sayfaMi(Route<dynamic> r) => r.settings is Page || r.isFirst;
+  Navigator.of(context).popUntil(sayfaMi);
+  Navigator.of(context, rootNavigator: true).popUntil(sayfaMi);
+}
+
+/// Katman-güvenli rota gezinmesi: Reels/alt sayfa açıkken hedef sayfa onların
+/// ALTINDA kalmasın diye önce katmanlar kapatılır, sonra push edilir.
+/// Reels'ten içerik/bölüm/kişi rozetine dokunmak buradan geçer.
+void rotayaGitGuvenli(BuildContext context, String hedef) {
+  final yonlendirici = GoRouter.of(context);
+  katmanlariKapat(context);
+  yonlendirici.push(hedef);
+}
+
 /// Kullanıcı profiline güvenli gidiş. /kullanici/:ad kabuk İÇİNDE yaşar;
 /// kabuğun üstündeki sayfalardan (detay/bölüm/kişi/özet...) push'lanırsa
 /// kabuk ikinci kez kurulur, branch GlobalKey'leri çakışır → beyaz ekran.
 /// O yüzden kabuk dışındaysak go (kabuğa dön), içindeysek push (yığın korunur).
+///
+/// Reels gibi tam ekran katmanlar da kapatılır — bkz. [katmanlariKapat].
 void kullaniciyaGit(BuildContext context, String ad) {
-  final yol = GoRouter.of(context).routerDelegate.currentConfiguration.uri.path;
+  final yonlendirici = GoRouter.of(context);
+  final yol = yonlendirici.routerDelegate.currentConfiguration.uri.path;
   const kabukDisi = [
     '/icerik/',
     '/kisi/',
@@ -1378,10 +1414,11 @@ void kullaniciyaGit(BuildContext context, String ad) {
   ];
   final disarida = kabukDisi.any(yol.startsWith);
   final hedef = '/kullanici/$ad';
+  katmanlariKapat(context);
   if (disarida) {
-    context.go(hedef);
+    yonlendirici.go(hedef);
   } else {
-    context.push(hedef);
+    yonlendirici.push(hedef);
   }
 }
 

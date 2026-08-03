@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — Reels içinden yapılan gezinme GÖRÜNMÜYORDU
+**Kullanıcı bildirimi:** "reels izlerken beğeni tuşuna basılı tutuyorum beğeni
+listesi açılıyor kullanıcıya tıklıyorum profiline gitmiyor ama reelsten çıkınca
+kendimi kullanıcı profilinde buluyorum"
+- 🚀 **Kök neden (widget testiyle kanıtlandı):** Reels dört yerden de
+  `Navigator.of(context, rootNavigator: true).push(...)` ile go_router'ın SAYFA
+  yığınının ÜSTÜNE itiliyor. `/kullanici/:ad` ise `StatefulShellRoute`un
+  İÇİNDE yaşıyor; `context.push` onu kabuğun gezginine, yani Reels'in ALTINA
+  ekliyordu. Sayfa gerçekten açılıyor ama görünmüyordu; Reels kapanınca ortaya
+  çıkıyordu. Sonda test: gezinmeden sonra `KullaniciProfilEkrani` bulunuyor
+  ama `hitTestable` DEĞİL, Reels hâlâ en üstte.
+- 🚀 `ortak.dart` → `katmanlariKapat(context)`: gezinmeden önce sayfa yığınının
+  üstündeki tüm imperatif rotalar (Reels, alt sayfalar, medya görüntüleyici)
+  hem en yakın hem kök gezginden atılır (`settings is Page || isFirst` korunur).
+  `kullaniciyaGit` ve `rotayaGitGuvenli` bunu çağırır.
+- 🚀 **Davranış kararı:** Reels'ten çıkılan HER gezinme Reels'i kapatır. İçerik/
+  bölüm/kişi rotaları zaten böyle davranıyordu (go_router sayfa eklerken
+  imperatif rotayı düşürüyor); kullanıcı adı da aynı hizaya getirildi. Geri tuşu
+  kullanıcıyı geldiği akışa/ızgaraya döndürür, alt menü geri gelir — profilden
+  geri dönünce beklenmedik bir yerde uyanmak yok.
+- 🚀 Düzeltilen gezinme noktaları: beğenenler modalı satırı, Reels kullanıcı
+  adı + avatarı, son medyadan sonra sola kaydırma, yanıtlar sheet'indeki
+  kullanıcı adları/avatarları, içerik rozeti (ad + S{}B{}), metin içindeki
+  `@kullanici` ve `[[tv:id|Ad]]` etiketleri (`etiket.dart` artık
+  `rotayaGitGuvenli` kullanıyor).
+- 🚀 **Yan bulgu, aynı turda düzeltildi:** yazılı (medyasız) Reels'te alıntı
+  metni tam ekran opak dokunuş katmanının ALTINDA kalıyordu → içindeki
+  etiketler HİÇ dokunulamıyordu. Metin katmanı dokunuş katmanının üstüne
+  taşındı (`deferToChild`: yalnız yazının olduğu yer bu katmana düşer, boş alan
+  alttakine geçer); çift dokunuş beğenisi ve yana kaydırma korundu (testli).
+- ✅ **11 yeni widget testi** (`test/reels_gezinme_test.dart`); "görünür" iddiası
+  `hitTestable()` ile kurulur. Düzeltme geçici geri alınınca 11 testin 7'si
+  kırmızıya döndü. Toplam **208 test** geçiyor.
+
 ## 2026-08-03 — Beğenenler listesi (beğeni düğmesine BASILI TUT)
 **Kullanıcı isteği:** "her taraftaki gönderilerde beğeni tuşuna basılı tutunca
 beğenenleri aşağıdan yukarıya doğru modal aç ve göster, paylaştaki gibi modal
