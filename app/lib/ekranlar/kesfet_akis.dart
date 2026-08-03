@@ -95,9 +95,12 @@ class TekrarAyraci extends StatelessWidget {
   );
 }
 
-/// Keşfet (Reels tarzı): akış öncelikleriyle gelen postlar — önce videolar,
-/// sonra fotoğraflılar, sonra yazılı yorumlar. Izgaradan birine dokununca
-/// tam ekran dikey kaydırmalı görünüm açılır.
+/// Keşfet (Reels tarzı): akış öncelikleriyle gelen postlar. YALNIZ MEDYALI
+/// gönderiler gelir (video ya da fotoğraf) — yalnız-yazı gönderileri sunucuda
+/// sert filtreyle elenir (server.js KESFET_MEDYALI, 3 Ağu 2026). Akışta ise
+/// kalırlar; oradan Reels açılınca yazı gönderisi hâlâ çizilir, bu yüzden
+/// _ReelSayfa'nın yazı yolu CANLI KOD'dur, silinmemelidir.
+/// Izgaradan birine dokununca tam ekran dikey kaydırmalı görünüm açılır.
 class KesfetAkisEkrani extends StatefulWidget {
   const KesfetAkisEkrani({super.key});
 
@@ -522,7 +525,9 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
               )
             else
               Container(color: DiziRenkler.kart),
-            // Yazılı yorum: alt yarıda metin bandı
+            // Yazılı yorum: alt yarıda metin bandı. Sunucu artık Keşfet'e
+            // medyasız gönderi DÜŞÜRMÜYOR (KESFET_MEDYALI); bu dal yalnız
+            // yedek: eski sunucu/önbellekten gelen sayfa boş karo göstermesin.
             if (medya.isEmpty)
               Align(
                 alignment: Alignment.bottomCenter,

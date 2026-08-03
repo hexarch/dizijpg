@@ -2789,6 +2789,17 @@ const KESFET_VIDEOLU = `EXISTS (SELECT 1 FROM unnest(y.medya) mm
 const KESFET_KAT = `CASE WHEN ${KESFET_VIDEOLU} THEN 0
                          WHEN cardinality(y.medya) > 0 THEN 1 ELSE 2 END`;
 
+// KEŞFET SERT FİLTRESİ (kullanıcı isteği, 3 Ağu 2026): Keşfet YALNIZ medyalı
+// (video ya da fotoğraf) gönderi gösterir. Yalnız-yazı gönderisi (kat 2) havuza
+// HİÇ girmez. Bu bir ağırlık DEĞİL, sınırdır — plan §7.3'teki sert filtre
+// yerinde (SQL WHERE'de, spoiler/engelleme filtrelerinin yanında) durur, yani
+// panelden `medya` ağırlığı yükseltilerek geri getirilemez. Gerekçe: Keşfet
+// karosu/Reels tam ekran görsel bir yüzey; metin gönderisi orada posterin
+// üstüne beyaz yazı olarak düşüyor ve okunmuyordu.
+// `medya` NULL ise `cardinality(NULL) > 0` → NULL → satır elenir (istenen).
+// AKIŞ (/akis) BU FİLTREYİ ALMAZ: yazı gönderileri akışta kalmaya devam eder.
+const KESFET_MEDYALI = 'AND cardinality(y.medya) > 0';
+
 // Skorlanacak aday havuzunun tavanı — BÜTÜN HAVUZU KAPSAMALI.
 //
 // Plan 400 aday öneriyordu; ÖLÇÜM BUNU ÇÜRÜTTÜ ve tavan yükseltildi:
@@ -2933,7 +2944,7 @@ async function yazarKaliteleri() {
 // DEĞİŞMEDEN uygulanır — engelleme/yasak/bölüm uygunluğu skora GİRMEZ (§7.3).
 // Susmuş sinyallerin alt sorguları SORGUYA HİÇ KONMAZ: hacim eşiği aynı
 // zamanda bir performans korumasıdır.
-async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat }) {
+async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat, kesfet }) {
   const p = hacim.pay;
   const alan = [
     'y.id', 'y.kullanici_id', 'y.tur', 'y.tmdb_id',
@@ -2977,6 +2988,7 @@ async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat }) {
   }
   const sql = `SELECT ${alan.join(',\n           ')}
      ${AKIS_GOVDE}
+       ${kesfet ? KESFET_MEDYALI : ''}
        ${gorulenHaric
     ? `AND NOT EXISTS (SELECT 1 FROM akis_goruldu ag
            WHERE ag.kullanici_id=$1 AND ag.yorum_id=y.id)` : ''}
@@ -3020,6 +3032,7 @@ async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorule
   const hacim = hacimUygula(ayar, olcum);
   const adaylar = await adaylariGetir({
     benId, dil, kadro, hacim, gorulenHaric, kat: hacim.pay.medya > 0,
+    kesfet: yuzey === 'kesfet', // sert filtre: Keşfet havuzunda medyasız yok
   });
   const { idler } = siralaVeKotala(adaylar, ayar, olcum);
   tohumDeposu.yaz(anahtar, idler);
@@ -3035,6 +3048,7 @@ async function satirlariGetir({ benId, dil, kadro, idler, kesfet }) {
     `${AKIS_ALANLAR}${kesfet ? `,\n            ${KESFET_VIDEOLU} AS videolu` : ''}
      ${AKIS_GOVDE}
        AND y.id = ANY($2::int[])
+       ${kesfet ? KESFET_MEDYALI : ''}
        ${AKIS_KURAL}`,
     [benId, idler, kadro, dil]);
   const harita = new Map(rows.map((r) => [r.id, r]));
@@ -3363,6 +3377,7 @@ app.get('/kesfet-akis', girisZorunlu, akisLimiti, sarici(async (req, res) => {
             ${KESFET_VIDEOLU} AS videolu,
             ${KESFET_KAT} AS kat
      ${AKIS_GOVDE}
+       ${KESFET_MEDYALI}
        AND ($2::int IS NULL
             OR (${KESFET_KAT}, -y.id) > ($5::int, -$2::int))
        ${gorulenHaric
@@ -5352,6 +5367,8 @@ app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
   const adaylar = await adaylariGetir({
     benId: kimId, dil: 'tr', kadro: [], hacim,
     gorulenHaric: false, kat: hacim.pay.medya > 0,
+    // Panel YALAN SÖYLEMEMELİ: kullanıcı yolundaki sert filtre burada da var.
+    kesfet: yuzey === 'kesfet',
   });
   const sqlMs = Date.now() - t0;
   const t1 = Date.now();

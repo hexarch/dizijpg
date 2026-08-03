@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-03 — KEŞFET yalnız MEDYALI gönderi gösteriyor (yazı gönderileri çıktı)
+**Kullanıcı isteği:** "keşfette sadece yazı yazan yorum var, tıkladığımda
+odyssey arka planda önce de sağlam beyaz text yazıyor, böyle bir şey yapma.
+sadece text içerikleri keşfete düşmemeli. akış olur ama fotoğrafsız textler
+düşmemeli keşfete."
+- 🚀 **Sert filtre `KESFET_MEDYALI` (`AND cardinality(y.medya) > 0`)** —
+  `server.js`'te spoiler/engelleme filtrelerinin yanında, SQL `WHERE`'de
+  (plan §7.3). Skor motoruna GİRMEDİ: panelden `medya` ağırlığı yükseltilerek
+  geri getirilemesin diye. `cardinality(NULL) > 0` → NULL → satır elenir.
+- 🚀 Uygulandığı **dört yol**: aday havuzu (`adaylariGetir`, `kesfet` bayrağıyla),
+  dondurulmuş listeden satır çekme (`satirlariGetir` savunma katmanı),
+  kronolojik `/kesfet-akis` sorgusu ve `/admin/algoritma-onizleme`
+  (panel yalan söylemesin — kullanıcı yoluyla aynı havuzu gösterir).
+- 🚀 **`/akis` DEĞİŞMEDİ:** yazı gönderileri akışta duruyor; akıştan Reels
+  açılınca yazı gönderisi hâlâ çiziliyor, `_ReelSayfa`'nın yazı yolu CANLI KOD.
+- ✅ **Havuz ölçümü (canlı, önce/sonra):** 4.841 → 4.823 gönderi (yazılı 18,
+  **%0,37**). Video 461, fotoğraf 4.362. Havuz pratikte küçülmedi.
+- ✅ **Kanıt:** 450 gönderi / 14 sayfa boyunca medyasız = 0 (önce ilk sayfada
+  5 taneydi). Sayfalama: 1. tur 4.822'de bitiyor → `tekrar: true` + yeni tohum,
+  2. tur sonunda `imlec: null` (sonsuz döngü yok, sayfalar arası tekrar 0).
+  Kronolojik yol da aynı (`0:1:90` → `1:` → `1:1:90` → null).
+- ✅ Test: `backend/test/kesfet_medya.test.js` (9 test) + `siralama.test.js`
+  51 test = 60 geçiyor; `flutter test` 323 geçiyor. Filtre dört yoldan tek tek
+  sökülüp + akışa sızdırılıp **altı senaryoda da KIRMIZI** olduğu doğrulandı.
+- ✅ İstemci: yalnız yorum satırı güncellendi (davranış değişmedi) — web
+  dağıtımı GEREKMEDİ.
+
 ## 2026-08-03 — Gönderi dil verisi onarımı (boş ve yanlış `kaynak_dil`)
 **Kullanıcı isteği:** "11 gönderi hiç çevrilmiyor, çeviri düğmesi çıkmıyor;
 bazı Türkçe gönderiler `en` sanılıp Türkçeden Türkçeye anlamsız çevriliyor
