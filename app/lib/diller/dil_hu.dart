@@ -457,4 +457,10 @@ const Map<String, String> cevirilerHu = {
       "A folytatáshoz telepítsd a dizi.jpg új verzióját.",
   "Güncelle": "Frissítés",
   "Daha sonra": "Később",
+  'Takvim güncelleniyor': 'Naptár frissítése folyamatban',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'A naptárt nem sikerült frissíteni, a régi lista látható',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Néhány sorozat nem töltődött be, a lista hiányos lehet',
+  'Yenile': 'Frissítés',
 };

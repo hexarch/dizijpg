@@ -453,4 +453,10 @@ const Map<String, String> cevirilerAz = {
       "Davam etmək üçün dizi.jpg-in yeni versiyasını quraşdır.",
   "Güncelle": "Yenilə",
   "Daha sonra": "Sonra",
+  'Takvim güncelleniyor': 'Təqvim yenilənir',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Təqvim yenilənə bilmədi, köhnə siyahı göstərilir',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Bəzi seriallar yüklənmədi, siyahı natamam ola bilər',
+  'Yenile': 'Yenilə',
 };

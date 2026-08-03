@@ -455,4 +455,10 @@ const Map<String, String> cevirilerSr = {
       "Инсталирај нову верзију dizi.jpg да наставиш.",
   "Güncelle": "Ажурирај",
   "Daha sonra": "Касније",
+  'Takvim güncelleniyor': 'Календар се ажурира',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Календар није могао да се ажурира, приказује се стара листа',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Неке серије нису учитане, листа може бити непотпуна',
+  'Yenile': 'Освежи',
 };

@@ -438,4 +438,8 @@ const Map<String, String> cevirilerZh = {
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.": "请安装 dizi.jpg 新版本以继续。",
   "Güncelle": "更新",
   "Daha sonra": "稍后",
+  'Takvim güncelleniyor': '正在更新日历',
+  'Takvim güncellenemedi, eski liste gösteriliyor': '无法更新日历，正在显示旧列表',
+  'Bazı diziler yüklenemedi, liste eksik olabilir': '部分剧集加载失败，列表可能不完整',
+  'Yenile': '刷新',
 };

@@ -455,4 +455,10 @@ const Map<String, String> cevirilerEs = {
       "Instala la nueva versión de dizi.jpg para continuar.",
   "Güncelle": "Actualizar",
   "Daha sonra": "Más tarde",
+  'Takvim güncelleniyor': 'Actualizando el calendario',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'No se pudo actualizar el calendario, se muestra la lista anterior',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Algunas series no se pudieron cargar, la lista puede estar incompleta',
+  'Yenile': 'Actualizar',
 };

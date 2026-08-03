@@ -442,4 +442,10 @@ const Map<String, String> cevirilerKo = {
       "계속하려면 dizi.jpg의 새 버전을 설치하세요.",
   "Güncelle": "업데이트",
   "Daha sonra": "나중에",
+  'Takvim güncelleniyor': '캘린더 업데이트 중',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      '캘린더를 업데이트하지 못했습니다. 이전 목록을 표시합니다',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      '일부 시리즈를 불러오지 못했습니다. 목록이 불완전할 수 있습니다',
+  'Yenile': '새로고침',
 };

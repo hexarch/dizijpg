@@ -453,4 +453,10 @@ const Map<String, String> cevirilerUr = {
       "جاری رکھنے کے لیے dizi.jpg کا نیا ورژن انسٹال کریں۔",
   "Güncelle": "اپ ڈیٹ کریں",
   "Daha sonra": "بعد میں",
+  'Takvim güncelleniyor': 'کیلنڈر اپ ڈیٹ ہو رہا ہے',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'کیلنڈر اپ ڈیٹ نہیں ہو سکا، پرانی فہرست دکھائی جا رہی ہے',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'کچھ سیریز لوڈ نہیں ہو سکیں، فہرست نامکمل ہو سکتی ہے',
+  'Yenile': 'ریفریش',
 };

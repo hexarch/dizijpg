@@ -455,4 +455,10 @@ const Map<String, String> cevirilerKn = {
       "ಮುಂದುವರಿಸಲು dizi.jpg ನ ಹೊಸ ಆವೃತ್ತಿಯನ್ನು ಸ್ಥಾಪಿಸಿ.",
   "Güncelle": "ಅಪ್‌ಡೇಟ್ ಮಾಡಿ",
   "Daha sonra": "ನಂತರ",
+  'Takvim güncelleniyor': 'ಕ್ಯಾಲೆಂಡರ್ ನವೀಕರಿಸಲಾಗುತ್ತಿದೆ',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'ಕ್ಯಾಲೆಂಡರ್ ನವೀಕರಿಸಲಾಗಲಿಲ್ಲ, ಹಳೆಯ ಪಟ್ಟಿ ತೋರಿಸಲಾಗುತ್ತಿದೆ',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'ಕೆಲವು ಸರಣಿಗಳು ಲೋಡ್ ಆಗಲಿಲ್ಲ, ಪಟ್ಟಿ ಅಪೂರ್ಣವಾಗಿರಬಹುದು',
+  'Yenile': 'ರಿಫ್ರೆಶ್',
 };

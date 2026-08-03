@@ -453,4 +453,10 @@ const Map<String, String> cevirilerFa = {
       "برای ادامه، نسخه جدید dizi.jpg را نصب کن.",
   "Güncelle": "به‌روزرسانی",
   "Daha sonra": "بعداً",
+  'Takvim güncelleniyor': 'در حال به‌روزرسانی تقویم',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'تقویم به‌روزرسانی نشد، فهرست قدیمی نمایش داده می‌شود',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'برخی سریال‌ها بارگذاری نشدند، فهرست ممکن است ناقص باشد',
+  'Yenile': 'تازه‌سازی',
 };

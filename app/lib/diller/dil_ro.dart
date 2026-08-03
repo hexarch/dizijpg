@@ -457,4 +457,10 @@ const Map<String, String> cevirilerRo = {
       "Instalează noua versiune dizi.jpg pentru a continua.",
   "Güncelle": "Actualizează",
   "Daha sonra": "Mai târziu",
+  'Takvim güncelleniyor': 'Calendarul se actualizează',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Calendarul nu a putut fi actualizat, se afișează lista veche',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Unele seriale nu au putut fi încărcate, lista poate fi incompletă',
+  'Yenile': 'Reîmprospătează',
 };

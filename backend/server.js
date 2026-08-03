@@ -324,6 +324,14 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
 // Çok sayıda TMDB kaydını TEK sorguda önbellekten okur; yalnız eksik olanlar
 // TMDB'ye gider. Akış/takvim gibi ekranlar 30-60 içeriği tek tek sorduğunda
 // istek başına o kadar veritabanı gidiş-gelişi oluyordu.
+//
+// Dönen Map'e iki sayaç iliştirilir (Map'in kendisi bir nesne; iterasyonu
+// etkilemez, eski çağıranlar hiç fark etmez):
+//   .eksik → hiçbir şekilde (ne taze ne bayat) elde edilemeyen yol sayısı
+//   .bayat → taze istek başarısız olduğu için ESKİ önbellekten servis edilen
+// "Bayat-veriyle-devam": TMDB bir kez tökezleyince (429/ağ/5xx) o dizi
+// takvimden SESSİZCE düşüyordu. Ayda bir yayınlanan dizinin 6 saat eski
+// sezon verisi, diziyi takvimden silmekten kat kat iyidir.
 async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = null) {
   const dil = dilZorla || istekBaglam.getStore()?.tmdbDil || 'tr-TR';
   const anahtarla = (yol) => (/[?&]language=/.test(yol)
@@ -331,6 +339,8 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZor
     : yol + (yol.includes('?') ? '&' : '?') + 'language=' + dil);
   const benzersiz = [...new Set(yollar)];
   const sonuc = new Map();
+  sonuc.eksik = 0;
+  sonuc.bayat = 0;
   if (!benzersiz.length) return sonuc;
   const anahtarlar = benzersiz.map(anahtarla);
   const { rows } = await havuz.query(
@@ -346,12 +356,44 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZor
     else eksik.push(yol);
   });
   // Eksikler: 8'li öbekler (tmdbGetir tek tek önbelleğe de yazar)
+  const basarisiz = [];
   for (let i = 0; i < eksik.length; i += 8) {
     const obek = eksik.slice(i, i + 8);
     const veriler = await Promise.all(
-      obek.map((y) => tmdbGetir(y, ttlSn, dilZorla).catch(() => null)),
+      obek.map((y) => tmdbGetir(y, ttlSn, dilZorla).catch((e) => {
+        // SESSİZ YUTMA YOK: hangi yol, hangi hata — günlüğe düşsün.
+        console.error(`tmdb hata: ${anahtarla(y)} -> ${e?.message || e}`);
+        return null;
+      })),
     );
-    obek.forEach((y, j) => { if (veriler[j] != null) sonuc.set(y, veriler[j]); });
+    obek.forEach((y, j) => {
+      if (veriler[j] != null) sonuc.set(y, veriler[j]);
+      else basarisiz.push(y);
+    });
+  }
+  // Bayat-veriyle-devam: taze istek başarısızsa TTL'i geçmiş ESKİ satırı kullan.
+  if (basarisiz.length) {
+    const bayatAnahtarlar = basarisiz.map(anahtarla);
+    let bayatHarita = new Map();
+    try {
+      const { rows: bayatSatirlar } = await havuz.query(
+        `SELECT anahtar, veri FROM tmdb_onbellek WHERE anahtar = ANY($1::text[])`,
+        [bayatAnahtarlar],
+      );
+      bayatHarita = new Map(bayatSatirlar.map((r) => [r.anahtar, r.veri]));
+    } catch (e) {
+      console.error(`tmdb bayat okuma hatasi: ${e?.message || e}`);
+    }
+    basarisiz.forEach((y, i) => {
+      const v = bayatHarita.get(bayatAnahtarlar[i]);
+      if (v !== undefined) {
+        sonuc.set(y, v);
+        sonuc.bayat++;
+      } else {
+        sonuc.eksik++;
+        console.error(`tmdb elde edilemedi (bayat kopya da yok): ${bayatAnahtarlar[i]}`);
+      }
+    });
   }
   return sonuc;
 }
@@ -2080,7 +2122,16 @@ app.get('/takvim', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
     ...yetisme,
     ...takvim.filter((t) => !t.izlendi && t.tarih > bugun),
   ].sort((a, b) => a.tarih.localeCompare(b.tarih));
-  res.json({ takvim, yetisme, yaklasan });
+  // Eksik = getirilemeyen dizi/sezon sayısı. 0 değilse bu yanıt EKSİKTİR:
+  // istemci bunu kendi önbelleğinin üstüne YAZMAMALI (eksik kopya kalıcılaşır).
+  const eksik = (diziHarita.eksik || 0) + (sezonHarita.eksik || 0);
+  const bayat = (diziHarita.bayat || 0) + (sezonHarita.bayat || 0);
+  if (eksik || bayat) {
+    console.error(
+      `takvim eksik: kullanici=${req.kullanici.id} eksik=${eksik} bayat=${bayat} dizi=${rows.length}`,
+    );
+  }
+  res.json({ takvim, yetisme, yaklasan, eksik, bayat });
 }));
 
 // ---------- profilim ----------

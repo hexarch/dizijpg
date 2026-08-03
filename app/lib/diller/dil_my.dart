@@ -461,4 +461,10 @@ const Map<String, String> cevirilerMy = {
       "ဆက်လုပ်ရန် dizi.jpg ၏ ဗားရှင်းအသစ်ကို ထည့်သွင်းပါ။",
   "Güncelle": "အပ်ဒိတ်လုပ်ရန်",
   "Daha sonra": "နောက်မှ",
+  'Takvim güncelleniyor': 'ပြက္ခဒိန် အပ်ဒိတ်လုပ်နေသည်',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'ပြက္ခဒိန်ကို အပ်ဒိတ်မလုပ်နိုင်ပါ၊ စာရင်းအဟောင်းကို ပြသနေသည်',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'အချို့ဇာတ်လမ်းတွဲများ ဖွင့်၍မရပါ၊ စာရင်းမပြည့်စုံနိုင်ပါ',
+  'Yenile': 'ပြန်လည်စတင်',
 };

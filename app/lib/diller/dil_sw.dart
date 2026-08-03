@@ -453,4 +453,10 @@ const Map<String, String> cevirilerSw = {
       "Sakinisha toleo jipya la dizi.jpg ili kuendelea.",
   "Güncelle": "Sasisha",
   "Daha sonra": "Baadaye",
+  'Takvim güncelleniyor': 'Inasasisha kalenda',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Kalenda haikuweza kusasishwa, orodha ya zamani inaonyeshwa',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Baadhi ya mfululizo hazikupakiwa, orodha inaweza kuwa pungufu',
+  'Yenile': 'Onyesha upya',
 };

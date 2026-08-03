@@ -457,4 +457,10 @@ const Map<String, String> cevirilerEl = {
       "Εγκατέστησε τη νέα έκδοση του dizi.jpg για να συνεχίσεις.",
   "Güncelle": "Ενημέρωση",
   "Daha sonra": "Αργότερα",
+  'Takvim güncelleniyor': 'Το ημερολόγιο ενημερώνεται',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Δεν ήταν δυνατή η ενημέρωση του ημερολογίου, εμφανίζεται η παλιά λίστα',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Ορισμένες σειρές δεν φορτώθηκαν, η λίστα ίσως είναι ελλιπής',
+  'Yenile': 'Ανανέωση',
 };

@@ -457,4 +457,10 @@ const Map<String, String> cevirilerFil = {
       "I-install ang bagong bersyon ng dizi.jpg para magpatuloy.",
   "Güncelle": "I-update",
   "Daha sonra": "Mamaya",
+  'Takvim güncelleniyor': 'Ina-update ang kalendaryo',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Hindi na-update ang kalendaryo, ipinapakita ang lumang listahan',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'May mga seryeng hindi na-load, maaaring kulang ang listahan',
+  'Yenile': 'I-refresh',
 };

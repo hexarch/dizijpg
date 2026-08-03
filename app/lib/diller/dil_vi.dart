@@ -454,4 +454,10 @@ const Map<String, String> cevirilerVi = {
       "Cài đặt phiên bản mới của dizi.jpg để tiếp tục.",
   "Güncelle": "Cập nhật",
   "Daha sonra": "Để sau",
+  'Takvim güncelleniyor': 'Đang cập nhật lịch',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Không thể cập nhật lịch, đang hiển thị danh sách cũ',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Một số phim không tải được, danh sách có thể chưa đầy đủ',
+  'Yenile': 'Làm mới',
 };

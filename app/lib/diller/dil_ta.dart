@@ -455,4 +455,10 @@ const Map<String, String> cevirilerTa = {
       "தொடர dizi.jpg இன் புதிய பதிப்பை நிறுவவும்.",
   "Güncelle": "புதுப்பிக்கவும்",
   "Daha sonra": "பிறகு",
+  'Takvim güncelleniyor': 'காலெண்டர் புதுப்பிக்கப்படுகிறது',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'காலெண்டரைப் புதுப்பிக்க முடியவில்லை, பழைய பட்டியல் காட்டப்படுகிறது',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'சில தொடர்கள் ஏற்றப்படவில்லை, பட்டியல் முழுமையற்றதாக இருக்கலாம்',
+  'Yenile': 'புதுப்பி',
 };

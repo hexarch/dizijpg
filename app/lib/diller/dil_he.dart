@@ -446,4 +446,10 @@ const Map<String, String> cevirilerHe = {
       "התקן את הגרסה החדשה של dizi.jpg כדי להמשיך.",
   "Güncelle": "עדכן",
   "Daha sonra": "מאוחר יותר",
+  'Takvim güncelleniyor': 'מעדכן את לוח השידורים',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'לא ניתן היה לעדכן את לוח השידורים, מוצגת הרשימה הישנה',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'חלק מהסדרות לא נטענו, ייתכן שהרשימה חלקית',
+  'Yenile': 'רענן',
 };

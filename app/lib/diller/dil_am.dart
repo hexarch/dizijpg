@@ -444,4 +444,10 @@ const Map<String, String> cevirilerAm = {
       "ለመቀጠል የdizi.jpg አዲሱን ስሪት ይጫኑ።",
   "Güncelle": "አዘምን",
   "Daha sonra": "በኋላ",
+  'Takvim güncelleniyor': 'የቀን መቁጠሪያ በመዘመን ላይ',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'የቀን መቁጠሪያውን ማዘመን አልተቻለም፣ የድሮው ዝርዝር እየታየ ነው',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'አንዳንድ ተከታታዮች አልተጫኑም፣ ዝርዝሩ ያልተሟላ ሊሆን ይችላል',
+  'Yenile': 'አድስ',
 };

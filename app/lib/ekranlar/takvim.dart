@@ -30,9 +30,24 @@ class TakvimEkrani extends StatefulWidget {
 
 class _TakvimEkraniState extends State<TakvimEkrani>
     with AutomaticKeepAliveClientMixin {
+  /// Önbellekten gelen takvim bu yaştan sonra BAYAT sayılır: sunucu TMDB
+  /// verisini 6 saatte bir tazeliyor, iki tur (12 saat) geçmiş bir kopya
+  /// kesinlikle geride kalmıştır. Bayat kopya yine gösterilir ama üstünde
+  /// "güncelleniyor" yazar; sessizce eski veri sunmayız.
+  static const Duration onbellekAzamiYas = Duration(hours: 12);
+
+  /// Bu yaştan eski kopya HİÇ gösterilmez: takvim penceresi "son 60 gün +
+  /// gelecek" olduğundan bir haftalık kopyada yayınlanmış bölümler yanlış
+  /// yerde durur, yeni duyurulan tarihler hiç yoktur. İskelet daha dürüst.
+  static const Duration onbellekSonKullanma = Duration(days: 7);
+
   List<dynamic>? _takvim; // pencere: son 60 gün + gelecek (izlendi bayraklı)
   List<dynamic>? _yetisme; // yayınlanmış izlenmemiş arşiv (dizi başına 15)
   String? _hata;
+  bool _yukleniyor = false; // taze veri yolda
+  bool _bayat = false; // ekrandaki veri önbellekten ve eski
+  bool _yenilemeHatasi = false; // taze veri alınamadı, eski gösteriliyor
+  int _eksik = 0; // sunucunun getiremediği dizi/sezon sayısı
   final Set<int> _acik = {}; // bölümleri açılmış diziler
   bool _takvimModu = false; // liste mi ay-takvimi mi (tercih kalıcı)
 
@@ -82,29 +97,104 @@ class _TakvimEkraniState extends State<TakvimEkrani>
   }
 
   /// Son başarılı takvim anında gösterilir (SWR); taze veri arkadan gelir.
+  /// Süresi dolmuş (7 günden eski / zaman damgasız) kopya GÖSTERİLMEZ;
+  /// 12 saatten eski kopya gösterilir ama "güncelleniyor" uyarısıyla.
   Future<void> _onbellektenYukle() async {
-    final d = await Onbellek.oku('takvim');
-    if (d == null || !mounted || _takvim != null) return;
+    final k = await Onbellek.okuKayit('takvim');
+    if (k == null || !mounted || _takvim != null) return;
+    if (k.bayatMi(onbellekSonKullanma)) return; // çok eski: iskelet göster
     setState(() {
-      _takvim = d['takvim'] as List<dynamic>? ?? [];
-      _yetisme = d['yetisme'] as List<dynamic>? ?? [];
+      _takvim = k.veri['takvim'] as List<dynamic>? ?? [];
+      _yetisme = k.veri['yetisme'] as List<dynamic>? ?? [];
+      _bayat = k.bayatMi(onbellekAzamiYas);
     });
   }
 
   Future<void> _yukle() async {
-    setState(() => _hata = null);
+    setState(() {
+      _hata = null;
+      _yenilemeHatasi = false;
+      _yukleniyor = true;
+    });
     try {
-      final d = await Api.get('/takvim');
+      final d = await Api.get('/takvim', zamanAsimi: Api.zamanAsimiAgir);
       if (!mounted) return;
+      final eksik = (d['eksik'] as num?)?.toInt() ?? 0;
       setState(() {
         _takvim = d['takvim'] as List<dynamic>? ?? [];
         _yetisme = d['yetisme'] as List<dynamic>? ?? [];
+        _eksik = eksik;
+        _bayat = false;
+        _yukleniyor = false;
       });
-      Onbellek.yaz('takvim', {'takvim': _takvim, 'yetisme': _yetisme});
+      // EKSİK yanıtı önbelleğe YAZMA: sunucu bazı dizileri getiremediyse bu
+      // kopya eksiktir; üstüne yazarsak eksik takvim kalıcılaşır — kullanıcının
+      // aylarca Lupin/Grey's Anatomy görememesinin sebebi tam olarak buydu.
+      if (eksik == 0) {
+        Onbellek.yaz('takvim', {'takvim': _takvim, 'yetisme': _yetisme});
+      }
     } catch (e) {
       if (!mounted) return;
-      if (_takvim == null) setState(() => _hata = e.toString());
+      setState(() {
+        _yukleniyor = false;
+        // Elimizde veri varsa ekranı boşaltma; ama SESSİZ kalma da.
+        if (_takvim == null) {
+          _hata = e.toString();
+        } else {
+          _yenilemeHatasi = true;
+        }
+      });
     }
+  }
+
+  /// Ekranın üstündeki durum şeridi: güncelleniyor / güncellenemedi / eksik.
+  /// Hiçbiri yoksa null döner (yer kaplamaz).
+  Widget? _durumSeridi() {
+    IconData ikon;
+    String metin;
+    Color renk;
+    if (_yenilemeHatasi) {
+      ikon = Icons.cloud_off;
+      metin = 'Takvim güncellenemedi, eski liste gösteriliyor'.c;
+      renk = Colors.redAccent;
+    } else if (_eksik > 0) {
+      ikon = Icons.warning_amber_rounded;
+      metin = 'Bazı diziler yüklenemedi, liste eksik olabilir'.c;
+      renk = DiziRenkler.sariMetin;
+    } else if (_bayat) {
+      ikon = Icons.sync;
+      metin = 'Takvim güncelleniyor'.c;
+      renk = DiziRenkler.sariMetin;
+    } else {
+      return null;
+    }
+    return Material(
+      color: renk.withValues(alpha: 0.14),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+        child: Row(
+          children: [
+            Icon(ikon, size: 17, color: renk),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                metin,
+                style: TextStyle(fontSize: 12.5, color: DiziRenkler.metin70),
+              ),
+            ),
+            if (!_yukleniyor)
+              TextButton(
+                onPressed: _yukle,
+                style: TextButton.styleFrom(
+                  foregroundColor: renk,
+                  minimumSize: const Size(64, 40),
+                ),
+                child: Text('Yenile'.c),
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -219,6 +309,17 @@ class _TakvimEkraniState extends State<TakvimEkrani>
             ],
           ],
         ),
+      );
+    }
+
+    // Durum şeridi (güncelleniyor / güncellenemedi / eksik) gövdenin üstünde.
+    final serit = _durumSeridi();
+    if (serit != null) {
+      govde = Column(
+        children: [
+          serit,
+          Expanded(child: govde),
+        ],
       );
     }
 

@@ -454,4 +454,10 @@ const Map<String, String> cevirilerId = {
       "Instal versi baru dizi.jpg untuk melanjutkan.",
   "Güncelle": "Perbarui",
   "Daha sonra": "Nanti",
+  'Takvim güncelleniyor': 'Memperbarui kalender',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Kalender tidak dapat diperbarui, daftar lama ditampilkan',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Beberapa serial gagal dimuat, daftar mungkin tidak lengkap',
+  'Yenile': 'Segarkan',
 };

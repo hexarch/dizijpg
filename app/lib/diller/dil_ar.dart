@@ -449,4 +449,10 @@ const Map<String, String> cevirilerAr = {
       "ثبّت الإصدار الجديد من dizi.jpg للمتابعة.",
   "Güncelle": "تحديث",
   "Daha sonra": "لاحقًا",
+  'Takvim güncelleniyor': 'جارٍ تحديث التقويم',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'تعذر تحديث التقويم، يتم عرض القائمة القديمة',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'تعذر تحميل بعض المسلسلات، قد تكون القائمة ناقصة',
+  'Yenile': 'تحديث',
 };

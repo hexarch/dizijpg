@@ -456,4 +456,10 @@ const Map<String, String> cevirilerNl = {
       "Installeer de nieuwe versie van dizi.jpg om door te gaan.",
   "Güncelle": "Bijwerken",
   "Daha sonra": "Later",
+  'Takvim güncelleniyor': 'Agenda wordt bijgewerkt',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Agenda kon niet worden bijgewerkt, oude lijst wordt getoond',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Sommige series konden niet worden geladen, de lijst is mogelijk onvolledig',
+  'Yenile': 'Vernieuwen',
 };

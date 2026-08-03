@@ -72,10 +72,22 @@ class Api {
     return '$yol${ayirac}dil=${Ceviri.dil.value}';
   }
 
-  static Future<dynamic> get(String yol) async {
+  /// Varsayılan istek zaman aşımı.
+  static const Duration zamanAsimiVarsayilan = Duration(seconds: 20);
+
+  /// Toplu TMDB çekimi yapan AĞIR uçlar için (takvim gibi) zaman aşımı.
+  /// ÖLÇÜM (3 Ağu, 69 dizilik kitaplık): soğuk önbellekte /takvim tek istekte
+  /// 312 TMDB çağrısı yapıyor ve 16,6 sn sürüyor — 20 sn sınırının hemen
+  /// altında. Mobil bağlantıda ya da TMDB 429 verip yeniden denemeye
+  /// girdiğinde 20 sn rahatlıkla aşılıyordu; aşınca istemci sessizce ESKİ
+  /// kopyayı koruyordu (bugünkü "takvimden dizi kayboldu" hatası). nginx
+  /// proxy_read_timeout 300 sn olduğu için 60 sn güvenli üst sınır.
+  static const Duration zamanAsimiAgir = Duration(seconds: 60);
+
+  static Future<dynamic> get(String yol, {Duration? zamanAsimi}) async {
     final cevap = await _istemci
         .get(Uri.parse('$apiTaban${_dilliYol(yol)}'), headers: _basliklar)
-        .timeout(const Duration(seconds: 20));
+        .timeout(zamanAsimi ?? zamanAsimiVarsayilan);
     return _isle(cevap);
   }
 
@@ -256,7 +268,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.15.0+55';
+  static const surum = '1.15.1+56';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

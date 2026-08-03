@@ -452,4 +452,10 @@ const Map<String, String> cevirilerTe = {
       "కొనసాగించడానికి dizi.jpg కొత్త వెర్షన్‌ను ఇన్‌స్టాల్ చేయండి.",
   "Güncelle": "అప్‌డేట్ చేయండి",
   "Daha sonra": "తర్వాత",
+  'Takvim güncelleniyor': 'క్యాలెండర్ నవీకరించబడుతోంది',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'క్యాలెండర్ నవీకరించలేకపోయాము, పాత జాబితా చూపబడుతోంది',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'కొన్ని సిరీస్ లోడ్ కాలేదు, జాబితా అసంపూర్ణంగా ఉండవచ్చు',
+  'Yenile': 'రిఫ్రెష్',
 };

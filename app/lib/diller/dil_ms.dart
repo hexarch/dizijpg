@@ -455,4 +455,10 @@ const Map<String, String> cevirilerMs = {
       "Pasang versi baharu dizi.jpg untuk meneruskan.",
   "Güncelle": "Kemas kini",
   "Daha sonra": "Kemudian",
+  'Takvim güncelleniyor': 'Mengemas kini kalendar',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Kalendar tidak dapat dikemas kini, senarai lama dipaparkan',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Sesetengah siri gagal dimuatkan, senarai mungkin tidak lengkap',
+  'Yenile': 'Muat semula',
 };

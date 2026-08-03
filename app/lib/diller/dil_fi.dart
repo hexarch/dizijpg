@@ -455,4 +455,10 @@ const Map<String, String> cevirilerFi = {
       "Asenna dizi.jpg:n uusi versio jatkaaksesi.",
   "Güncelle": "Päivitä",
   "Daha sonra": "Myöhemmin",
+  'Takvim güncelleniyor': 'Kalenteria päivitetään',
+  'Takvim güncellenemedi, eski liste gösteriliyor':
+      'Kalenteria ei voitu päivittää, näytetään vanha lista',
+  'Bazı diziler yüklenemedi, liste eksik olabilir':
+      'Joitakin sarjoja ei voitu ladata, lista voi olla puutteellinen',
+  'Yenile': 'Päivitä',
 };
