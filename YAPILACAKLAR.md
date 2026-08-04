@@ -1,5 +1,77 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-03 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-04 — KİTAPLIK DURUMU: filmde göz rozeti + dizi "bitirdim" otomatiği
+**Kullanıcı isteği (iki madde):** "Ana sayfada izlediğim filmlerde göz ikonu
+yok." / "Bitirdiğim diziler izliyorumda kalıyor. Tüm bölümleri izlediysem
+bitirdiğime alacaksın; 3. sezonu geldiğinde veya geleceği kesin olduğunda geri
+izliyoruma çekeceksin."
+
+### 1) Filmde göz rozeti YOKTU
+- 🚀 **Ölçülmüş kök neden:** rozet `/kitapligim` → `durumlar` tablosundan
+  okunuyor, ama film "İzledim" düğmesi YALNIZ `izlemeler`e yazıyordu. Canlı
+  sayım: **1265 film izleme kaydının 1229'unda (%97,2) `durumlar` karşılığı
+  YOK** (alcelik 376'da 374, içe aktarım hesapları 417/417 ve 417/416).
+- 🚀 **Seçilen çözüm (a):** film izlenince `durumlar`a da `bitirdim` yazılır
+  (`filmDurumunuGuncelle`), geri alınınca otomatik konan `bitirdim` silinir.
+  (b) şıkkı — `/kitapligim`in film izlemelerini de döndürmesi — REDDEDİLDİ:
+  rozeti düzeltir ama film kitaplık sekmesinde, profil sayaçlarında ve akış
+  "kitaplık" sinyalinde görünmemeye devam ederdi. `durumlar` zaten tek kaynak;
+  ters yön (`/durum` bitirdim → `izlemeler`) kodda vardı, eksik olan bu yöndü.
+- 🚀 **İçe aktarım da düzeltildi** (`veri_aktar.js` → `filmDurumlariniEsitle`):
+  Trakt/Letterboxd, TV Time CSV ve JSON geri yükleme yollarının üçü de artık
+  aktardığı filmleri kitaplığa işler. `DO NOTHING` — elle konmuş durum EZİLMEZ.
+- 🚀 **İstemci:** "İzledim" düğmesi sunucu cevabına göre `KitaplikDurumu`u
+  günceller → rozet sayfa yenilenmeden çıkar/kalkar. Aynı boşluk bölüm
+  işaretlemede de vardı (`detay.dart`, `bolum.dart`, `takvim.dart`) — kapatıldı.
+
+### 2) Dizi durum otomatiği yeniden yazıldı
+- 🚀 **Kural değişti:** "bitirdim" artık TMDB `status`e (Ended/Canceled) DEĞİL,
+  **yayınlanmış tüm bölümlerin izlenmiş olmasına** bakar. 31 Tem'deki "Silo"
+  düzeltmesi devam eden dizide yetişen kullanıcıyı sonsuza dek izliyorumda
+  bırakıyordu; kullanıcının şikâyeti tam olarak buydu.
+- 🚀 **Saf mantık ayrı dosyada:** `backend/dizi_durum.js` (`hedefDurum`). Uçlar,
+  12 saatlik tarama ve düzeltme betiği AYNI fonksiyonu çağırır.
+- 🚀 **Kararlar:** özel bölümler (sezon 0) sayılmaz (yoksa bitirdim erişilemez
+  olur); gelecek tarihli sezon/bölüm sayılmaz (`last_episode_to_air` sınırı);
+  "biraktim" MUTLAK durak, otomatik hiçbir geçiş ondan çıkmaz; geri çekme
+  yalnız **tarihi belli** yeni sezon/bölümle olur (tarihi `null` sezon kabuğu
+  geri çekmez, yoksa beklemedeki her dizi izliyoruma düşerdi).
+- 🚀 **Tamamlanma SAYIYLA değil KÜMEYLE ölçülür.** Canlı vaka (alcelik,
+  Chernobyl): izlemeler `{0,1,2,4,5}` — 5 kayıt, 5 yayınlanmış bölüm, ama
+  **3. bölüm izlenmemiş** ve sahte bir "bölüm 0" sayıyı dolduruyordu; eski
+  sayım mantığı buna "bitirdim" diyordu.
+- 🚀 **Veri uyuşmazlığı koruması.** İlk dağıtımda yakalandı: TMDB 283317
+  "Muhteşem Yüzyıl" kaydında tek "Sezon 310 / 1 bölüm" var, kullanıcıda 1-4.
+  sezonların 139 bölümü. Küme karşılaştırması doğru "bitirdim"i bozdu → **ortak
+  sezon yoksa durum DEĞİŞTİRİLMEZ** kuralı eklendi, satır elle geri alındı ve
+  taramanın bir daha düşürmediği canlıda doğrulandı.
+- 🚀 **Nerede hesaplanıyor / maliyeti:** ileri yön bölüm işaretlemede (1 önbellekli
+  TMDB çağrısı). Geri çekme kullanıcı bir şey yapmadan olduğu için **12 saatte
+  bir arka plan taraması** (`durumlariTara`), 8'li paralel. Ölçüm: bölüm takibi
+  yapılan **679 (kullanıcı,dizi) çifti = 303 farklı dizi**, tur başına en fazla
+  303 TMDB isteği. `/kitapligim`e HİÇ maliyet eklenmedi — 69 dizinin TMDB
+  verisini istek yolunda çekmek `/takvim`i 15 sn yapan hatanın ta kendisi.
+  Taramada TTL bilerek 6 saat (7 gün değil), yoksa yeni sezon bir hafta geç
+  fark edilirdi.
+- 🚀 **Geriye dönük düzeltme:** `backend/araclar/durum_duzelt.js` (kalıcı,
+  varsayılan KURU çalışma, `--uygula` ile yazar, önce yedek alır).
+  Dağıtımın kendisi (açılış taraması) **124 satır** değiştirdi: 122 izliyorum→
+  bitirdim, 2 bitirdim→izliyorum. Betik ardından **1229 film + 177 dizi**
+  satırı yazdı (dizi tarafında yalnız durumsuz/izleyeceğim kayıtlar).
+  **alcelik (id=3): 374 film + 11 dizi + taramadan 17 bitirdim/2 izliyorum.**
+  `biraktim` sayısı 17'de sabit kaldı — elle seçim hiçbir aşamada ezilmedi.
+- 🚀 **Yedekler:** `/opt/dizijpg/yedekler/durumlar-oncesi-2026-08-04-064137.sql`
+  (dağıtım öncesi, 991 satır) ve `durumlar-2026-08-04-10-48-09.sql`
+  (betiğin kendi yedeği, 957 satır).
+- 🚀 **Test:** `backend/test/dizi_durum.test.js` (29 test) → 102/102 yeşil.
+  Eski "Ended/Canceled şartı" geri konup **7 testin kırmızıya döndüğü**
+  doğrulandı. `app/test/izlendi_rozeti_test.dart` (7 test) → 359/359 yeşil;
+  istemci düzeltmesi geri alınıp testin kırmızıya döndüğü doğrulandı.
+- 🚀 **Uçtan uca curl:** film 27205 işaretle → `/kitapligim` `bitirdim`
+  döndürüyor (aynı betik dağıtımdan ÖNCE çıkış 1, sonra çıkış 0). Dizi 249042
+  "Adolescence": son bölümün işareti kalkınca `izliyorum`, geri konunca
+  `bitirdim`. Test verisi temizlendi.
 
 ## 2026-08-03 — GÜVENLİK: yönetim panelindeki depolanmış XSS KAPATILDI
 Güvenlik denetiminin (`GUVENLIK-DENETIMI.md` §2.1) **1 numaralı** bulgusu.

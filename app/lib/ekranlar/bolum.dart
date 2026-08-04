@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../kitaplik_durumu.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
@@ -98,12 +99,18 @@ class _BolumEkraniState extends State<BolumEkrani> {
     if (!girisGerekli(context)) return;
     setState(() => _izlendi = !_izlendi);
     try {
-      await Api.post('/izleme/toggle', {
+      final c = await Api.post('/izleme/toggle', {
         'tmdb_id': widget.tmdbId,
         'tur': 'tv',
         'sezon': widget.sezonNo,
         'bolum': widget.bolumNo,
       });
+      // İşaretlendiyse sunucu diziye izliyorum/bitirdim verir; poster rozeti
+      // anında görünsün (kaldırmada rozet bırakılır: başka bölümler kalmış
+      // olabilir, sunucuya sormadan silmek yanlış olurdu).
+      if (c is Map && c['izlendi'] == true) {
+        KitaplikDurumu.isaretle('tv', widget.tmdbId, true);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _izlendi = !_izlendi);

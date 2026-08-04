@@ -120,6 +120,26 @@ export async function disaAktar(havuz, userId) {
 }
 
 // Yorumu yalnızca aynısı yoksa ekler (yeniden içe aktarımda çiftlemesin).
+// Aktarılan filmleri kitaplığa da işler: izleme kaydı olan her filme
+// durum='bitirdim' verir. Filmde ara hâl yoktur, izlendiyse bitmiştir.
+//
+// NEDEN: rozet, kitaplık sekmeleri ve profil sayaçları TEK kaynaktan
+// (`durumlar`) okunur. İçe aktarım yalnız `izlemeler`e yazdığı için aktarılan
+// filmler hiçbir yerde izlenmiş görünmüyordu (4 Ağu 2026 canlı ölçüm: içe
+// aktarım hesaplarında 417+417 filmin durumu YOKTU).
+//
+// DO NOTHING: kullanıcının elle koyduğu durum (izleyecegim/biraktim) EZİLMEZ.
+async function filmDurumlariniEsitle(havuz, userId) {
+  const { rowCount } = await havuz.query(
+    `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum)
+     SELECT i.kullanici_id, 'movie', i.tmdb_id, 'bitirdim'
+     FROM izlemeler i
+     WHERE i.kullanici_id=$1 AND i.tur='movie'
+     ON CONFLICT (kullanici_id, tur, tmdb_id) DO NOTHING`,
+    [userId]);
+  return rowCount;
+}
+
 async function yorumEkleTekil(havuz, userId, tur, tmdbId, sezon, bolum, metin) {
   const mevcut = await havuz.query(
     `SELECT 1 FROM yorumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3
@@ -300,6 +320,7 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
         [userId, id, bilgi.t]);
       ozet.izleme += rowCount;
     }
+    ozet.durum += await filmDurumlariniEsitle(havuz, userId);
     return ozet;
   }
 
@@ -510,6 +531,7 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     }
   }
 
+  ozet.durum += await filmDurumlariniEsitle(havuz, userId);
   ozet.tmdb_eslesme = findSayisi;
   return ozet;
 }
@@ -604,6 +626,8 @@ async function iceAktarNative(havuz, userId, json, ozet) {
     }
     ozet.liste++;
   }
+  // Düzeltme öncesi alınmış yedeklerde film durumları eksik olabilir.
+  ozet.durum += await filmDurumlariniEsitle(havuz, userId);
   return ozet;
 }
 

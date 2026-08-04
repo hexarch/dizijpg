@@ -271,14 +271,24 @@ class _DetayEkraniState extends State<DetayEkrani> {
     }),
   );
 
-  Future<void> _filmIzlendiToggle() => _mutasyon(
-    () => Api.post('/izleme/toggle', {
+  /// Film "İzledim" düğmesi. Sunucu izleme kaydını yazar VE durumu
+  /// "bitirdim" yapar (bkz. server.js filmDurumunuGuncelle) — poster
+  /// kartlarındaki göz rozeti tek kaynaktan, `durumlar`dan okunur.
+  /// Rozet cevabı BEKLEDİKTEN sonra güncellenir: istek başarısızsa
+  /// (SnackBar) yanlış rozet yanıp sönmez, geri alma da gerekmez.
+  Future<void> _filmIzlendiToggle() => _mutasyon(() async {
+    final c = await Api.post('/izleme/toggle', {
       'tmdb_id': widget.tmdbId,
       'tur': 'movie',
       'sezon': 0,
       'bolum': 0,
-    }),
-  );
+    });
+    KitaplikDurumu.isaretle(
+      'movie',
+      widget.tmdbId,
+      (c is Map && c['izlendi'] == true),
+    );
+  });
 
   Future<void> _puanla() async {
     if (!girisGerekli(context)) return;
@@ -1185,12 +1195,18 @@ class _SezonSatiriState extends State<_SezonSatiri> {
   Future<void> _toggle(int bolumNo) async {
     if (!girisGerekli(context)) return;
     try {
-      await Api.post('/izleme/toggle', {
+      final c = await Api.post('/izleme/toggle', {
         'tmdb_id': widget.tmdbId,
         'tur': 'tv',
         'sezon': _no,
         'bolum': bolumNo,
       });
+      // Bölüm işaretlendiyse sunucu diziyi izliyorum/bitirdim yapar → poster
+      // rozeti anında çıksın. Kaldırmada rozet BIRAKILIR: başka bölümler hâlâ
+      // izlenmiş olabilir, sunucuya sormadan silmek yanlış olurdu.
+      if (c is Map && c['izlendi'] == true) {
+        KitaplikDurumu.isaretle('tv', widget.tmdbId, true);
+      }
       widget.degisti();
     } catch (e) {
       if (!mounted) return;
@@ -1209,6 +1225,7 @@ class _SezonSatiriState extends State<_SezonSatiri> {
         'bolum_sayisi': toplam,
         'isaretle': isaretle,
       });
+      if (isaretle) KitaplikDurumu.isaretle('tv', widget.tmdbId, true);
       widget.degisti();
     } catch (e) {
       if (!mounted) return;

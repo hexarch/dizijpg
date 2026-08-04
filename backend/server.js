@@ -25,6 +25,9 @@ import {
 import {
   mailKutulari, mailAyristir, mailKimlikCoz, gelenMailler, htmlKisirlastir,
 } from './mail_kutu.js';
+import {
+  hedefDurum, yayinlanmisBolumler as yayinlanmisBolumlerSaf,
+} from './dizi_durum.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -1377,97 +1380,124 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
 }));
 
 // ---------- izleme ----------
+// Bugünün tarihi "YYYY-MM-DD" — TMDB tarihleriyle metin olarak karşılaştırılır.
+const bugunIso = () => new Date().toISOString().slice(0, 10);
+
+const diziDetay = (tmdbId, ttl = ONBELLEK_TTL_SN.uzun) =>
+  tmdbGetir(`/tv/${tmdbId}?language=tr-TR`, ttl);
+
 // Bir dizinin YAYINLANMIŞ bölümleri: [sezon, bolum] çiftleri.
-// Özel sezonlar (0) hariç; last_episode_to_air'den sonrası sayılmaz.
+// Karar/gerekçeler dizi_durum.js başında; burada yalnız TMDB'yi getiriyoruz.
 async function yayinlanmisBolumler(tmdbId) {
-  const dizi = await tmdbGetir(`/tv/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-  const son = dizi.last_episode_to_air;
-  const ciftler = [];
-  for (const s of dizi.seasons || []) {
-    const no = s.season_number;
-    if (!Number.isInteger(no) || no < 1) continue;
-    let adet = s.episode_count || 0;
-    if (son && Number.isInteger(son.season_number)) {
-      if (no > son.season_number) continue;
-      if (no === son.season_number) adet = Math.min(adet, son.episode_number || adet);
-    }
-    for (let b = 1; b <= Math.min(adet, 500); b++) ciftler.push([no, b]);
-  }
-  return ciftler;
+  return yayinlanmisBolumlerSaf(await diziDetay(tmdbId), bugunIso());
 }
 
-// Dizi durumu otomatiği:
-// - En az bir bölüm izlendiyse durumu olmayan / "izleyeceğim" dizi "izliyorum" olur.
-// - "bitirdim" YALNIZ dizi gerçekten bittiyse (TMDB status Ended/Canceled) VE
-//   tüm bölümler izlendiyse verilir. Devam eden dizide yetişmiş kullanıcı
-//   "izliyorum"da kalır; yeni sezon gelen "bitirdim" de "izliyorum"a döner
-//   (ör. Silo: bitirilmişti, 3. sezon başladı → tekrar izliyorum).
-// - "bıraktım" bilinçli bir seçim: bölüm işaretlemek onu bozmaz.
-async function diziDurumunuGuncelle(kullaniciId, tmdbId) {
+// Dizi durumu otomatiği (kullanıcı kuralı, 4 Ağu 2026):
+// - Yayınlanmış TÜM bölümler izlendiyse ve yeni sezonun geleceği KESİN
+//   değilse → "bitirdim" (dizi TMDB'de "devam ediyor" görünse bile: sezon
+//   arasında yetişmiş kullanıcı bitirmiştir).
+// - Eksik bölüm varsa ya da yeni sezon/bölüm tarihi belliyse → "izliyorum"
+//   (ör. Silo: bitirilmişti, 3. sezonun tarihi açıklandı → tekrar izliyorum).
+// - "bıraktım" bilinçli bir seçim: otomatik ASLA değiştirmez.
+// Karar tamamen saf `hedefDurum` fonksiyonundan gelir; burada yalnız G/Ç var.
+async function diziDurumunuGuncelle(kullaniciId, tmdbId, ttl = ONBELLEK_TTL_SN.uzun) {
   try {
-    const { rows } = await havuz.query(
-      `SELECT count(*)::int AS n FROM izlemeler
-       WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND sezon >= 1`,
-      [kullaniciId, tmdbId],
+    const [izleme, mevcut, dizi] = await Promise.all([
+      havuz.query(
+        `SELECT sezon, bolum FROM izlemeler
+         WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND sezon >= 1`,
+        [kullaniciId, tmdbId]),
+      havuz.query(
+        `SELECT durum FROM durumlar
+         WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2`,
+        [kullaniciId, tmdbId]),
+      diziDetay(tmdbId, ttl),
+    ]);
+    const hedef = hedefDurum({
+      dizi,
+      izlenen: izleme.rows.map((r) => [r.sezon, r.bolum]),
+      mevcutDurum: mevcut.rows[0]?.durum ?? null,
+      bugunIso: bugunIso(),
+    });
+    if (!hedef) return;
+    // WHERE durumlar.durum <> 'biraktim': SELECT ile UPDATE arasında kullanıcı
+    // "bıraktım" demiş olabilir; onun seçimi bu yarışta da kazanır.
+    await havuz.query(
+      `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
+       VALUES ($1,'tv',$2,$3,now())
+       ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE
+       SET durum=$3, guncelleme=now()
+       WHERE durumlar.durum <> 'biraktim' AND durumlar.durum <> $3`,
+      [kullaniciId, tmdbId, hedef],
     );
-    if (rows[0].n > 0) {
-      await havuz.query(
-        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
-         VALUES ($1,'tv',$2,'izliyorum',now())
-         ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE
-         SET durum='izliyorum', guncelleme=now()
-         WHERE durumlar.durum = 'izleyecegim'`,
-        [kullaniciId, tmdbId],
-      );
-    }
-    const dizi = await tmdbGetir(`/tv/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-    const bitti = ['Ended', 'Canceled'].includes(dizi.status);
-    const toplam = (await yayinlanmisBolumler(tmdbId)).length;
-    if (!toplam) return;
-    if (rows[0].n >= toplam && bitti) {
-      await havuz.query(
-        `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
-         VALUES ($1,'tv',$2,'bitirdim',now())
-         ON CONFLICT (kullanici_id, tur, tmdb_id)
-         DO UPDATE SET durum='bitirdim', guncelleme=now()
-         WHERE durumlar.durum <> 'bitirdim'`,
-        [kullaniciId, tmdbId],
-      );
-    } else {
-      await havuz.query(
-        `UPDATE durumlar SET durum='izliyorum', guncelleme=now()
-         WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND durum='bitirdim'`,
-        [kullaniciId, tmdbId],
-      );
-    }
   } catch {
     // TMDB'ye ulaşılamazsa durum kendiliğinden değişmez — sorun değil
   }
 }
 
-// "Bitirdim" dizilere yeni bölüm geldiyse durumu "izliyorum"a düşür.
-// (Ör. Silo: bitirilmişti, yeni sezon başladı → tekrar izliyorum'a döner.)
-// 12 saatte bir tarama; TMDB önbelleği sayesinde ucuz, 8'li öbekle.
-async function bitenleriTara() {
+// Kullanıcı bir şey YAPMADAN da durum değişebilir: yeni sezon yayına girer
+// (bitirdim → izliyorum), ya da sezon biter ve beklenen bölüm kalmaz
+// (izliyorum → bitirdim). İkisi de bölüm işaretlemeye bağlanamaz, bu yüzden
+// periyodik tarama şart.
+//
+// NEDEN İSTEK YOLUNDA DEĞİL: `/kitapligim` her açılışta 69+ dizinin TMDB
+// verisini çekmek zorunda kalırdı — `/takvim`in 15 sn sürmesinin sebebi tam
+// olarak bu. Tarama istek dışında, 12 saatte bir, 8'li paralel öbekle çalışır.
+// MALİYET (4 Ağu 2026 canlı ölçüm): bölüm takibi yapılan 679 (kullanıcı,dizi)
+// çifti, 303 FARKLI dizi → tur başına en fazla 303 TMDB isteği; önbellek
+// paylaşıldığı için pratikte çok daha az. TMDB TTL'i burada bilerek "uzun"
+// (7 gün) değil "varsayilan" (6 saat): tarama bayat veriyle çalışırsa yeni
+// sezon 7 güne kadar fark edilmezdi.
+async function durumlariTara() {
   try {
     // Yalnız bölüm takibi YAPILAN diziler: hiç bölüm işaretlemeden elle
-    // "bitirdim" diyen kullanıcının seçimi taramayla bozulmaz.
+    // "bitirdim"/"izliyorum" diyen kullanıcının seçimi taramayla bozulmaz.
+    // "biraktim" ve "izleyecegim" hiç sorgulanmaz (dokunulmaz / kullanıcı
+    // henüz başlamamış sayılır).
     const { rows } = await havuz.query(
       `SELECT d.kullanici_id, d.tmdb_id FROM durumlar d
-       WHERE d.tur='tv' AND d.durum='bitirdim'
+       WHERE d.tur='tv' AND d.durum IN ('bitirdim','izliyorum')
          AND EXISTS (SELECT 1 FROM izlemeler i
                      WHERE i.kullanici_id=d.kullanici_id AND i.tur='tv'
                        AND i.tmdb_id=d.tmdb_id AND i.sezon>=1)`);
     for (let i = 0; i < rows.length; i += 8) {
       await Promise.all(rows.slice(i, i + 8).map((r) =>
-        diziDurumunuGuncelle(r.kullanici_id, r.tmdb_id)));
+        diziDurumunuGuncelle(r.kullanici_id, r.tmdb_id, ONBELLEK_TTL_SN.varsayilan)));
     }
   } catch {
     // tarama başarısızsa bir sonraki turda tekrar denenir
   }
 }
-setInterval(bitenleriTara, 12 * 60 * 60 * 1000);
-setTimeout(bitenleriTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
+setInterval(durumlariTara, 12 * 60 * 60 * 1000);
+setTimeout(durumlariTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
+
+// Film izleme kaydı → durum. Filmde ara hâl yoktur: izlendiyse "bitirdim".
+//
+// NEDEN GEREKLİ (4 Ağu 2026 canlı ölçüm): 1265 film izleme kaydının 1229'unun
+// `durumlar`da karşılığı YOKTU. Rozet, kitaplık sekmeleri, profil sayaçları ve
+// akış "kitaplık" sinyali hep `durumlar`dan okuduğu için izlenen film hiçbir
+// yerde izlenmiş görünmüyordu ("ana sayfada izlediğim filmlerde göz ikonu yok").
+//
+// Diziden farklı olarak burada kullanıcının kendi AÇIK eylemi vardır ("İzledim"
+// düğmesi), çıkarım değil; bu yüzden eski durumu (izleyecegim/biraktim) ezer.
+// Geri alınınca yalnız otomatik konan "bitirdim" silinir.
+async function filmDurumunuGuncelle(kullaniciId, tmdbId, izlendi) {
+  if (izlendi) {
+    await havuz.query(
+      `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
+       VALUES ($1,'movie',$2,'bitirdim',now())
+       ON CONFLICT (kullanici_id, tur, tmdb_id)
+       DO UPDATE SET durum='bitirdim', guncelleme=now()`,
+      [kullaniciId, tmdbId],
+    );
+  } else {
+    await havuz.query(
+      `DELETE FROM durumlar
+       WHERE kullanici_id=$1 AND tur='movie' AND tmdb_id=$2 AND durum='bitirdim'`,
+      [kullaniciId, tmdbId],
+    );
+  }
+}
 
 // Büyüyen tabloların günlük budaması (sınırsız şişmeyi önler). Süresi geçen
 // akış-görüldü kayıtları, eski TMDB önbelleği, görüntülenme izleri ve hata
@@ -1505,8 +1535,13 @@ app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
       [req.kullanici.id, tur, tmdb_id, sezon, bolum],
     );
   }
-  // Dizi tamamlandıysa otomatik "bitirdim" (geri alındıysa düşür)
-  if (tur === 'tv') await diziDurumunuGuncelle(req.kullanici.id, tmdb_id);
+  // Dizi tamamlandıysa otomatik "bitirdim" (geri alındıysa düşür).
+  // Filmde izleme kaydı doğrudan durumu belirler (rozet/kitaplık tek kaynaktan).
+  if (tur === 'tv') {
+    await diziDurumunuGuncelle(req.kullanici.id, tmdb_id);
+  } else {
+    await filmDurumunuGuncelle(req.kullanici.id, tmdb_id, silindi.rowCount === 0);
+  }
   res.json({ izlendi: silindi.rowCount === 0 });
 }));
 

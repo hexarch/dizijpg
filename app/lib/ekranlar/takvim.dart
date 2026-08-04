@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../kitaplik_durumu.dart';
 import '../onbellek.dart';
 import '../tema.dart';
 import 'ortak.dart';
@@ -572,12 +573,17 @@ class _BolumModaliState extends State<BolumModali> {
       _izlendi = !_izlendi;
     });
     try {
-      await Api.post('/izleme/toggle', {
+      final c = await Api.post('/izleme/toggle', {
         'tmdb_id': _tmdbId,
         'tur': 'tv',
         'sezon': _sezon,
         'bolum': _bolumNo,
       });
+      // İşaretlendiyse sunucu diziye izliyorum/bitirdim verir; poster rozeti
+      // anında görünsün (kaldırmada rozet bırakılır — bkz. bolum.dart).
+      if (c is Map && c['izlendi'] == true) {
+        KitaplikDurumu.isaretle('tv', _tmdbId, true);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _izlendi = !_izlendi);
