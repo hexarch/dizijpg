@@ -35,11 +35,50 @@ class AltyaziSegment {
 /// olmasa her karede tüm liste taranabilirdi.
 const int _geriBakis = 8;
 
+// --- okuma süresi bütçesi -------------------------------------------------
+// whisper.cpp bir segmentin BİTİŞİNİ bir sonraki repliğin BAŞLANGICINA kadar
+// uzatıyor: aradaki sessizlik/müzik önceki cümleye yazılıyor. Canlı ölçüm
+// (m42-24ae48088df35659.mp4): "İyi işe hanım." — 14 harflik, bir saniyede
+// söylenip biten replik — 22.000–48.000 ms, yani 26 SANİYE ekranda kalıyordu.
+// Genel olarak 2887 segmentin ortancası 2 sn, ama 141 tanesi 8 sn'den uzun.
+//
+// Çözüm altyazı mesleğinin standardı: metin OKUNACAK KADAR durur, fazlası
+// kalıntıdır. Böylece sessizlik anlarında ekran temizlenir ve bu, mevcut
+// kayıtları YENİDEN İŞLEMEDEN düzelir.
+
+/// Her altyazının en az kalacağı süre — göz cümleyi yakalayabilsin.
+const int _okumaTabanMs = 1200;
+
+/// Harf başına eklenen okuma payı (~14 harf/sn; çeviri okumak konuşmadan yavaş).
+const int _harfBasiMs = 70;
+
+/// Tavan: en uzun cümle bile bundan fazla asılı kalmaz (meslek ölçütü ~7-8 sn).
+const int _okumaAzamiMs = 8000;
+
+/// [metin] kaç ms ekranda kalmalı (okuma süresi bütçesi).
+@visibleForTesting
+int okumaSuresiMs(String metin) {
+  final ms = _okumaTabanMs + metin.trim().length * _harfBasiMs;
+  return ms > _okumaAzamiMs ? _okumaAzamiMs : ms;
+}
+
+/// Segmentin GERÇEKTEN ekrandan silineceği an: whisper'ın bitişi ile okuma
+/// bütçesinin bittiği andan HANGİSİ ÖNCEYSE o.
+///
+/// Başlangıca dokunulmaz: ölçüm, whisper'ın başlangıçlarının (ilk segment
+/// hariç) doğru, bitişlerinin şişik olduğunu gösterdi.
+int _gorunurBitisMs(AltyaziSegment s) {
+  final tavan = s.baslangicMs + okumaSuresiMs(s.metin);
+  return s.bitisMs < tavan ? s.bitisMs : tavan;
+}
+
 /// [konumMs] anında gösterilecek segmentin indeksi; yoksa -1.
 ///
 /// Kurallar (birim testi bunlara bakar):
-/// * Segment `[baslangicMs, bitisMs)` aralığında görünür — tam başlangıçta
-///   GÖRÜNÜR, tam bitişte GÖRÜNMEZ (sonraki cümleyle çakışmasın).
+/// * Segment `[baslangicMs, görünürBitiş)` aralığında görünür — tam
+///   başlangıçta GÖRÜNÜR, bitişte GÖRÜNMEZ (sonraki cümleyle çakışmasın).
+/// * Görünür bitiş, whisper bitişi ile okuma süresi bütçesinin küçüğüdür:
+///   sessizliğe uzatılmış segment metni okunur okunmaz kaybolur.
 /// * İki segment arasındaki boşlukta hiçbir şey gösterilmez (-1).
 /// * Üst üste binen segmentlerde EN SON BAŞLAYAN ve hâlâ süren kazanır.
 ///
@@ -60,7 +99,7 @@ int altyaziIndeks(List<AltyaziSegment> segmentler, int konumMs) {
   // Aday: alt-1'den geriye doğru, konumu hâlâ kapsayan ilk segment
   final son = alt - 1;
   for (var i = son; i >= 0 && son - i < _geriBakis; i--) {
-    if (konumMs < segmentler[i].bitisMs) return i;
+    if (konumMs < _gorunurBitisMs(segmentler[i])) return i;
   }
   return -1;
 }

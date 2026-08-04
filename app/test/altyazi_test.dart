@@ -102,16 +102,87 @@ void main() {
     });
 
     test('üst üste binen segmentlerde EN SON BAŞLAYAN kazanır', () {
-      final s = const [
-        AltyaziSegment(baslangicMs: 0, bitisMs: 10000, metin: 'uzun'),
-        AltyaziSegment(baslangicMs: 3000, bitisMs: 5000, metin: 'kisa'),
+      // Metinler okuma bütçesi tavanına (8 sn) dayanacak kadar uzun seçildi ki
+      // bu test ÜST ÜSTE BİNME kuralını ölçsün, okuma tavanını değil.
+      final s = [
+        AltyaziSegment(baslangicMs: 0, bitisMs: 8000, metin: 'u' * 200),
+        AltyaziSegment(baslangicMs: 3000, bitisMs: 5000, metin: 'k' * 200),
       ];
-      expect(s[altyaziIndeks(s, 1000)].metin, 'uzun');
-      expect(s[altyaziIndeks(s, 3000)].metin, 'kisa');
-      expect(s[altyaziIndeks(s, 4999)].metin, 'kisa');
+      expect(altyaziIndeks(s, 1000), 0);
+      expect(altyaziIndeks(s, 3000), 1);
+      expect(altyaziIndeks(s, 4999), 1);
       // Kısa olan bitti ama uzun hâlâ sürüyor → geriye bakıp uzunu bulur
-      expect(s[altyaziIndeks(s, 6000)].metin, 'uzun');
-      expect(altyaziIndeks(s, 10000), -1);
+      expect(altyaziIndeks(s, 6000), 0);
+      expect(altyaziIndeks(s, 8000), -1);
+    });
+
+    // ---- okuma süresi tavanı: sessizlikte asılı kalan altyazı hatası ----
+    // Kullanıcı şikâyeti: "konuşma daha başlamadan çeviri ekrana geliyor".
+    // Kök neden veride: whisper segmentin BİTİŞİNİ bir sonraki repliğe kadar
+    // uzatıyor, aradaki sessizlik önceki cümleye yazılıyor.
+    test('okuma süresi metin uzunluğuyla artar ve 8 sn tavanına dayanır', () {
+      expect(okumaSuresiMs(''), 1200);
+      expect(okumaSuresiMs('abc'), 1200 + 3 * 70);
+      // Boşluklar kırpılır
+      expect(okumaSuresiMs('  abc  '), 1200 + 3 * 70);
+      expect(okumaSuresiMs('x' * 1000), 8000);
+      // Tavan tam sınırda: 97 harf 7990 ms, 98 harf tavana dayanır
+      expect(okumaSuresiMs('x' * 97), 7990);
+      expect(okumaSuresiMs('x' * 98), 8000);
+    });
+
+    test('sessizliğe uzatılmış segment OKUNUNCA kaybolur, bitişi beklemez', () {
+      // Canlı veri: "İyi işe hanım." 22.000–48.000 ms, yani 26 SANİYE.
+      const metin = 'Good job maam.'; // 14 harf → 1200 + 980 = 2180 ms
+      final s = [
+        const AltyaziSegment(baslangicMs: 22000, bitisMs: 48000, metin: metin),
+      ];
+      expect(okumaSuresiMs(metin), 2180);
+      expect(altyaziIndeks(s, 22000), 0);
+      expect(altyaziIndeks(s, 24179), 0);
+      // Okuma bütçesi doldu: whisper 48.000 diyor ama ARTIK GÖRÜNMEZ
+      expect(altyaziIndeks(s, 24180), -1);
+      expect(altyaziIndeks(s, 30000), -1);
+      expect(altyaziIndeks(s, 47999), -1);
+    });
+
+    test('okuma bütçesi whisper bitişini UZATMAZ, yalnız kısaltır', () {
+      // Bütçe 8 sn ama segment 1 sn sürüyor → 1 sn'de kaybolmalı
+      final s = [
+        AltyaziSegment(baslangicMs: 0, bitisMs: 1000, metin: 'x' * 200),
+      ];
+      expect(altyaziIndeks(s, 999), 0);
+      expect(altyaziIndeks(s, 1000), -1);
+    });
+
+    test('gerçek veri: ilk segment 0 ms de başlıyorsa bile okuma bütçesi '
+        'dolunca ekran temizlenir', () {
+      // /medya/m42-24ae48088df35659.mp4 (canlı) ilk iki segmenti
+      final s = [
+        const AltyaziSegment(
+          baslangicMs: 0,
+          bitisMs: 22000,
+          metin:
+              'There was also a girl that Omer loved like crazy, a girl '
+              'he would die for because she was a slut.',
+        ),
+        const AltyaziSegment(
+          baslangicMs: 22000,
+          bitisMs: 48000,
+          metin: 'Good job maam.',
+        ),
+      ];
+      // 0. segment okuma bütçesi kadar kalır (eskiden 22 sn boyunca duruyordu)
+      final butce0 = okumaSuresiMs(s[0].metin);
+      expect(butce0, lessThanOrEqualTo(8000));
+      expect(altyaziIndeks(s, 0), 0);
+      expect(altyaziIndeks(s, butce0 - 1), 0);
+      expect(altyaziIndeks(s, butce0), -1);
+      expect(altyaziIndeks(s, 21999), -1);
+      // 1. segment 2180 ms sonra kaybolur (eskiden 26 sn duruyordu)
+      expect(altyaziIndeks(s, 22000), 1);
+      expect(altyaziIndeks(s, 24180), -1);
+      expect(altyaziIndeks(s, 40000), -1);
     });
 
     test('aynı anda başlayan segmentlerde sonuncusu kazanır', () {
@@ -161,6 +232,40 @@ void main() {
       expect(find.textContaining('cümle'), findsNothing);
     },
   );
+
+  // Kullanıcı şikâyetinin widget seviyesinde kanıtı: whisper'ın sessizliğe
+  // uzattığı segment ekranda ASILI KALMAMALI.
+  testWidgets('sessizliğe uzatılmış altyazı okuma süresi dolunca EKRANDAN '
+      'SİLİNİR (26 sn asılı kalmaz)', (tester) async {
+    const gecMetin = 'Good job maam.'; // 2180 ms okuma bütçesi
+    AltyaziDeposu.ekle(_url, const [
+      AltyaziSegment(baslangicMs: 22000, bitisMs: 48000, metin: gecMetin),
+    ]);
+    final oynatici = SahteOynatici();
+    addTearDown(oynatici.dispose);
+    await _kur(tester, oynatici);
+
+    // Segment başlamadan önce: hiçbir şey yok
+    oynatici.konum(21999);
+    await tester.pump();
+    expect(find.text(gecMetin), findsNothing);
+
+    // Başlangıçta görünür
+    oynatici.konum(22000);
+    await tester.pump();
+    expect(find.text(gecMetin), findsOneWidget);
+
+    // Okuma bütçesi dolunca SİLİNİR — whisper 48.000 dese bile
+    oynatici.konum(24180);
+    await tester.pump();
+    expect(find.text(gecMetin), findsNothing);
+    expect(find.byType(Text), findsNothing);
+
+    // 40. saniyede de yok (eski davranışta hâlâ ekrandaydı)
+    oynatici.konum(40000);
+    await tester.pump();
+    expect(find.text(gecMetin), findsNothing);
+  });
 
   testWidgets('altyazı yokken HİÇBİR ŞEY çizilmez (boş kutu/yer tutmaz)', (
     tester,

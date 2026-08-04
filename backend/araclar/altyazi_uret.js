@@ -10,6 +10,7 @@
  *   1. ffprobe   → süre + ses akışı var mı (yoksa 'sessiz', bir daha denenmez)
  *   2. ffmpeg    → 16 kHz mono WAV
  *   3. whisper   → zaman damgalı segmentler + kaynak dil tespiti
+ *                  (VAD AÇIK: sessizlik atılır, damgalar konuşmaya oturur)
  *   4. çeviri    → kaynak 'tr' ise İngilizce, değilse Türkçe
  *                  (gönderi metni çevirisiyle AYNI kural, AYNI anahtarsız uç)
  *   5. yazma     → video_altyazilar + video_altyazi_durum='bitti'
@@ -24,6 +25,7 @@
  *   node altyazi_uret.js --isle --surekli      kuyruğu işle, boşsa bekle (servis)
  *   node altyazi_uret.js --durum               ilerleme özeti
  *   Seçenekler: --model base|small|medium  --iplik 8  --limit N  --yeniden
+ *               --vadsiz  (VAD'ı kapatır; yalnız karşılaştırma/ölçüm için)
  */
 
 import { execFile, execFileSync } from 'node:child_process';
@@ -62,6 +64,29 @@ const WHISPER_IKILI = [
 ].find((p) => fs.existsSync(p));
 
 const MODEL_YOLU = path.join(WHISPER_KOK, `models/ggml-${MODEL}.bin`);
+
+/**
+ * Konuşma etkinliği tespiti (VAD) modeli — TIMING'İN ANAHTARI.
+ *
+ * VAD'siz whisper, sessizlik/müzik bölümlerini komşu cümleye yazıyordu:
+ * ilk segment DAİMA 0 ms'de başlıyor ve konuşma başlayana kadar ekranda
+ * asılı kalıyordu. Kullanıcı şikâyeti tam buydu ("konuşma 10. saniyede ama
+ * çeviri ilk saniyeden beri orada").
+ *
+ * Aynı video (m42-24ae48088df35659.mp4), aynı model (small), ölçüm:
+ *   VAD'siz : [0.000 → 22.000] "Bir de Ömer'in deliler gibi sevdiği..."
+ *   VAD'li  : [3.040 → 7.530]  "Gönül şanslı günündeyim de."   (hiç yoktu)
+ *             [7.530 → 16.920] "Bir de Ömer'in deliler gibi sevdiği,"
+ * Yani cümle GERÇEKTE 7,5. saniyede başlıyor; VAD'siz sürüm onu 0'dan
+ * gösteriyordu. VAD ayrıca HIZLANDIRIYOR — sessizlik atıldığı için bu videoda
+ * ses %74,9 kısaldı, süre 42,5 sn → 30,3 sn (%29 daha hızlı).
+ *
+ * Model yoksa üretim durmaz, VAD'siz (eski) davranışa düşer ve uyarır:
+ *   models/download-vad-model.sh silero-v5.1.2
+ */
+const VAD_MODEL_YOLU = process.env.ALTYAZI_VAD_MODEL
+  || path.join(WHISPER_KOK, 'models/ggml-silero-v5.1.2.bin');
+const VAD_VAR = fs.existsSync(VAD_MODEL_YOLU) && !bayrak('--vadsiz');
 
 // Yalnız bu biçimdeki dosya adları işlenir (yükleme ucu böyle üretir).
 const DOSYA_KALIBI = /^m\d+-[0-9a-f]{6,32}\.(mp4|webm)$/;
@@ -155,6 +180,13 @@ async function tani(wavYolu, cikisOnEk) {
     '-t', String(IPLIK),
     '-oj', '-of', cikisOnEk,
     '--language', 'auto',
+    // Konuşma dışı ses atılır → zaman damgaları GERÇEK konuşmaya oturur.
+    // -vsd 200: 200 ms sessizlik cümleyi böler (varsayılan 100 ms fazla
+    // bölüyor). -vp 100: konuşmanın ilk/son hecesi kırpılmasın diye pay.
+    ...(VAD_VAR ? [
+      '--vad', '-vm', VAD_MODEL_YOLU,
+      '-vsd', '200', '-vp', '100',
+    ] : []),
   ], { zamanAsimi: 2 * 60 * 60 * 1000 });
 
   const olasilikEsleme = /auto-detected language:\s*(\S+)\s*\(p\s*=\s*([\d.]+)\)/
@@ -371,6 +403,10 @@ async function ana() {
   if (!WHISPER_IKILI) throw new Error(`whisper-cli bulunamadı: ${WHISPER_KOK}`);
   if (!fs.existsSync(MODEL_YOLU)) throw new Error(`model yok: ${MODEL_YOLU}`);
   gunluk(`işçi başladı — model=${MODEL} iplik=${IPLIK} ikili=${WHISPER_IKILI}`);
+  gunluk(VAD_VAR
+    ? `VAD açık — ${VAD_VAR ? VAD_MODEL_YOLU : ''}`
+    : `UYARI: VAD modeli yok (${VAD_MODEL_YOLU}) — zaman damgaları sessizliğe `
+      + 'kayacak. Kur: models/download-vad-model.sh silero-v5.1.2');
 
   // Önceki çalışma yarıda kesildiyse (sunucu yeniden başladı, işçi öldürüldü)
   // 'isleniyor'da asılı kalan işler bir daha hiç seçilmezdi. En uzun video

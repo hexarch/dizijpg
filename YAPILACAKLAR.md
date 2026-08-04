@@ -1,6 +1,49 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-04 — ALTYAZI ZAMANLAMASI: çeviri konuşmadan ÖNCE ekrana geliyordu
+**Kullanıcı isteği:** "çevirmeli videolarda konuşma daha başlamadan çeviri
+ekrana geliyor. mesela konuşma videonun 10. saniyesinde ama çeviri ilk
+saniyeden beri orada"
+
+- 🚀 **İstemci SUÇSUZ (ölçüldü):** `altyaziIndeks` zaten kesin aralık
+  (`baslangic <= konum < bitis`) uyguluyordu; "en yakın segment" gibi bir yedek
+  davranış YOK. Mevcut 15 testin tamamı düzeltmeden ÖNCE de yeşildi. Kusur
+  VERİDE.
+- 🚀 **Ölçülmüş kök neden (canlı DB, 364 altyazılı video / 2887 segment):**
+  whisper.cpp VAD'siz koştuğu için sessizlik/müzik komşu cümleye yazılıyor.
+  **305 videonun (%84) ilk segmenti 0 ms'de başlıyor**, 47'si 8 sn'den uzun.
+  Segment BİTİŞİ de bir sonraki repliğe kadar uzatılıyor: 2887 segmentin
+  ortancası 2 sn ama 141'i 8 sn'den uzun.
+- 🚀 **Gerçek örnek** `/medya/m42-24ae48088df35659.mp4` — aynı video, aynı
+  model (small), VAD'li/VAD'siz karşılaştırma:
+  | VAD'siz (canlıdaki veri) | VAD'li (düzeltilmiş) |
+  |---|---|
+  | `0 → 22000` "Bir de Ömer'in deliler gibi sevdiği…" | `3040 → 7530` "Gönül şanslı günündeyim de." (hiç yakalanmamıştı) |
+  | `22000 → 48000` "İyi işe hanım." (**26 sn** ekranda) | `7530 → 16920` "Bir de Ömer'in deliler gibi sevdiği," |
+  Yani kullanıcının gördüğü cümle GERÇEKTE **7,5. saniyede** başlıyor, veri onu
+  **0. saniyeden** gösteriyordu. Şikâyet birebir bu.
+- 🚀 **İstemci düzeltmesi** (`app/lib/altyazi.dart`) — **okuma süresi bütçesi**:
+  segment `min(whisper_bitişi, başlangıç + 1200ms + 70ms×harf)` anında silinir
+  (tavan 8 sn, altyazı mesleğinin ölçütü). Sessizliğe uzatılmış cümle artık
+  okunur okunmaz kayboluyor; "İyi işe hanım." 26 sn yerine 2,18 sn duruyor.
+  **Mevcut 364 videoyu YENİDEN İŞLEMEDEN düzeltir.** Başlangıca dokunulmadı:
+  ölçüm, başlangıçların (ilk segment hariç) doğru olduğunu gösterdi.
+- 🚀 **Üretim düzeltmesi** (`backend/araclar/altyazi_uret.js`): whisper.cpp
+  **VAD açıldı** (`--vad` + silero-v5.1.2, `-vsd 200 -vp 100`). Konuşma dışı
+  ses atıldığı için damgalar gerçek konuşmaya oturuyor. Yan fayda: aynı videoda
+  ses %74,9 kısaldı, süre **42,5 sn → 30,3 sn (%29 daha hızlı)**. Model yoksa
+  üretim durmaz, uyarıp VAD'siz çalışır (`--vadsiz` ile elle kapatılabilir).
+- ⬜ **Toplu yeniden işleme BEKLİYOR (kullanıcı onayı gerekli):** ilk segmenti
+  0 ms'e çakılı 305 videonun tam düzelmesi için VAD'li yeniden üretim şart.
+  Tahmini maliyet ~4-4,5 saat (VAD %29 hızlandırdığı için ilk turdaki 6
+  saatten az). Komut: `node altyazi_uret.js --isle --yeniden`.
+- ✅ **Kanıt:** `test/altyazi_test.dart` 15 → **20 test** (okuma bütçesi
+  formülü, sessizliğe uzatılmış segmentin silinmesi, bütçenin whisper bitişini
+  UZATMADIĞI, canlı m42 verisiyle uçtan uca senaryo + widget testi). Düzeltme
+  geçici geri alındığında **3 test KIRMIZIYA döndü**, geri getirilince yeşil.
+  `flutter analyze lib test` → 0 error/warning.
+
 ## 2026-08-04 — KİTAPLIK DURUMU: filmde göz rozeti + dizi "bitirdim" otomatiği
 **Kullanıcı isteği (iki madde):** "Ana sayfada izlediğim filmlerde göz ikonu
 yok." / "Bitirdiğim diziler izliyorumda kalıyor. Tüm bölümleri izlediysem
