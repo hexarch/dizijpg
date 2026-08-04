@@ -249,6 +249,32 @@ kullan."
   4 test, `Flexible` geri alınca 360 testi). Canlıda doğrulandı:
   dizijpg.com/kullanici/alcelik'te Türk bayrağı görünüyor.
 
+## 2026-08-04 — Akış kartı: MEDYA kapak posterine yaklaştı (22 → 4 dp)
+**Kullanıcı isteği:** "akıştaki gönderilerde gönderinin resmini veya videosunu
+biraz daha yukarı çekip neredeyse dizi filmin kapak fotoğrafına dayayabilir
+misin"
+- 🚀 **Boşluğun gerçek kaynağı tek bir `SizedBox` değildi:** kapak (60 dp), iki
+  satırlık başlığın (kullanıcı adı 44/48 dp + içerik adı 44 dp) içinde `Row`
+  tarafından DİKEY ORTALANIYOR, altında **16 dp ölü alan** bırakıyordu; üstüne
+  başlık–medya arasındaki 6 dp biniyordu → **22 dp**.
+- 🚀 **Çözüm:** kapak `Stack` içinde `Positioned(bottom: 0)` ile başlığın ALT
+  kenarına yaslandı (satırda yerini 50 dp'lik boş kutu tutuyor), ayırıcı
+  6 → **4 dp**. `···` menüsünün dikey konumu ve kapağın yatay konumu (kart sağ
+  kenarından 12 dp) DEĞİŞMEDİ.
+- 🚀 **Ölçüm (widget testi, 400 dp ekran):** kapak altı → medya üstü
+  **22,0 → 4,0 dp** (takip düğmesiz kartta 20,0 → 4,0); içerik adı altı →
+  medya üstü **31,0 → 29,0 dp**.
+- 🚀 **Kalan 29 dp'nin 25 dp'si boşluk DEĞİL**, içerik adının 44 dp'lik dokunma
+  kutusudur (metin 19 dp, kutu üste yaslı). Kısaltmak dokunma hedefini 44'ün
+  altına indirirdi; o alana dokunmak içerik sayfasını açıyor (test ediliyor).
+- 🚀 **Nefes payı 0 yapılmadı:** sıfırda kapak ile tam genişlikteki medya tek
+  görsele karışır. 4 dp, Material'in 4 dp'lik ızgarasının en küçük adımı.
+- 🚀 **Kanıt:** yeni `app/test/akis_karti_medya_bosluk_test.dart` — **25 test**
+  (iki mesafe sayıyla; medyasız, spoiler perdeli, kapaksız ve 360 dp kartlar;
+  tam genişlik; dokunma hedefleri ≥ 44 dp; kapağın EN ALT pikseli hâlâ
+  tıklanıyor — `Stack` dışına taşan `Positioned` görünür ama tıklanamaz olurdu).
+  Değişiklik geri alınınca **12 test kırmızıya dönüyor** (denendi).
+
 ## 2026-08-03 — Akış kartı başlığı: ad avatarın ORTASINDA, dizi adı avatarın ALTINDAN
 **Kullanıcı isteği:** "Akışta hala kullanıcı profil resminin hemen ortasında
 kullanıcı adı, resmin altından başlayacak şekilde de dizi filmin adı olmalı"
