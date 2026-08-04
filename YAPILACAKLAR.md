@@ -1,6 +1,38 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-04 — ALT ÇUBUK ile SİSTEM GEZİNME ÇUBUĞU arasındaki renk dikişi ✅
+**Kullanıcı isteği:** "aşağıdaki ana sayfa keşfet falan ikonunun bulunduğu
+çubuğu cihazın navigasyonundaki (geri tuşu çıkma tuşu) tuşlar ile aynı renk
+yapabilir misin"
+
+- ✅ **Yön TERS çevrildi:** Flutter sistem çubuğunun rengini okuyamaz (cihaza/
+  üreticiye göre değişir); bu yüzden SİSTEM çubuğu uygulamanın rengine boyandı.
+  Renk tek kaynaktan geliyor: `Theme.navigationBarTheme.backgroundColor`
+  (= `DiziRenkler.koyuGri`; koyu `0xFF17171A`, açık `0xFFECECEF`).
+- ✅ **Android 15+ TUZAĞI:** targetSdk 36 → uygulama zorunlu uçtan uca çiziyor ve
+  `systemNavigationBarColor` YOK SAYILIYOR. İki dünya birden çözüldü:
+  Android ≤14'te renk özelliği şeridi doğrudan boyuyor; Android 15+'ta o alanı
+  zaten `NavigationBar`ın `SafeArea`+`Material`i çiziyor, tek engel olan üç
+  tuşlu gezinmedeki yarı saydam perde `systemNavigationBarContrastEnforced:
+  false` ile kapatıldı. Ayırıcı çizgi de aynı renge boyandı.
+- ✅ **Uçtan uca çizime GEÇİLMEDİ** (`setEnabledSystemUIMode` YOK): eski Android
+  sürümlerinde düzen bire bir aynı kaldı, `altGuvenli` kullanan ekranlarda alt
+  boşluk regresyonu riski sıfır.
+- ✅ **Deklaratif** `AnnotatedRegion<SystemUiOverlayStyle>` (imperatif
+  `SystemChrome` çağrısı yok): tema değişince kendiliğinden güncelleniyor,
+  web'de/masaüstünde çerçeve bu alanları hiç toplamıyor.
+- ✅ İkon parlaklığı zeminin GERÇEK parlaklığından türetiliyor → açık temada
+  sistem tuşları görünür kalıyor. Alt menüsüz (push edilen) ekranlarda sistem
+  çubuğu sayfa zeminine uyuyor (main.dart'taki taban bildirimi).
+- ✅ Kanıt: `app/test/sistem_cubuk_rengi_test.dart` (12 test) — uygulanan stil
+  çubuğun ÇİZİLEN rengiyle bire bir, açık/koyu + ikon parlaklığı, tema geçişi,
+  24/48 dp sistem çubuğu dolgusunda zeminin o alanı kaplaması, 52 dp yükseklik
+  ve 44 dp dokunma hedefleri, Android dışı hedefte sızıntı/çökme yok.
+- ⚠️ **Gerçek cihazda görülmeli:** bağlı Android cihaz yok, APK derlemek yasak.
+  Perde/renk kaynağı Android tarafında; testler stilin doğru üretilip
+  gönderildiğini kanıtlar, pikselleri değil.
+
 ## 2026-08-04 — ALTYAZI ZAMANLAMASI: çeviri konuşmadan ÖNCE ekrana geliyordu
 **Kullanıcı isteği:** "çevirmeli videolarda konuşma daha başlamadan çeviri
 ekrana geliyor. mesela konuşma videonun 10. saniyesinde ama çeviri ilk

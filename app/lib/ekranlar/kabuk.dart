@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../ceviri.dart';
@@ -57,7 +58,19 @@ List<NavigationDestination> kabukHedefleri() => [
   ),
 ];
 
+/// Alt çubuğun ZEMİN rengi. Temadan okunur (`diziTema` →
+/// `navigationBarTheme.backgroundColor` = [DiziRenkler.koyuGri]) ki sistem
+/// gezinme çubuğuna verilen renkle ASLA ayrışmasın: tek kaynak, tek renk.
+Color altCubukZemini(BuildContext context) =>
+    Theme.of(context).navigationBarTheme.backgroundColor ?? DiziRenkler.koyuGri;
+
 /// Scaffold'un `bottomNavigationBar` yuvasına konan çubuk.
+///
+/// SİSTEM ÇUBUĞU: çubuk, ekranın en altındaki [AnnotatedRegion] olduğu için
+/// Android'in gezinme çubuğu stilini O belirler (bkz. `sistemCubukStili`).
+/// Bildirim DEKLARATİFTİR — imperatif `SystemChrome` çağrısı yok; tema/düzen
+/// değişince kendiliğinden güncellenir ve web'de (SystemChrome etkisiz olduğu
+/// yerde) fazladan hiçbir şey çalışmaz.
 ///
 /// DAR EKRAN: bugünkü tam genişlikte NavigationBar (mobil düzen aynen kalır).
 /// MASAÜSTÜ: [masaustuCubukGenisligi] dp genişliğinde, sol alt köşeye oturan
@@ -80,28 +93,40 @@ Widget kabukCubugu(
     onDestinationSelected: onSec,
     destinations: kabukHedefleri(),
   );
-  if (!genis) return cubuk;
-  return Padding(
-    padding: const EdgeInsets.fromLTRB(
-      masaustuCubukKenar,
-      0,
-      masaustuCubukKenar,
-      masaustuCubukKenar,
-    ),
-    // heightFactor: 1 ŞART — Align gevşek kısıtta ekran boyunca uzamaya
-    // çalışır; 1 ile yüksekliğini çocuğuna eşitler.
-    child: Align(
-      alignment: AlignmentDirectional.centerStart,
-      heightFactor: 1,
-      child: Container(
-        key: const Key('masaustu-alt-cubuk'),
-        width: masaustuCubukGenisligi,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: DiziRenkler.metin12),
+  if (!genis) {
+    // Mobil: ekranın en altındaki renk ÇUBUĞUN zeminidir; sistem çubuğu da
+    // o renge boyanır (Android ≤14) / o rengin üstündeki perde kaldırılır (15+).
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: sistemCubukStili(altCubukZemini(context)),
+      child: cubuk,
+    );
+  }
+  return AnnotatedRegion<SystemUiOverlayStyle>(
+    // Masaüstü/büyük tablet düzeninde ekranın en altında ada DEĞİL sayfa zemini
+    // var — sistem çubuğu bu yüzden scaffold zeminine uyar.
+    value: sistemCubukStili(Theme.of(context).scaffoldBackgroundColor),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(
+        masaustuCubukKenar,
+        0,
+        masaustuCubukKenar,
+        masaustuCubukKenar,
+      ),
+      // heightFactor: 1 ŞART — Align gevşek kısıtta ekran boyunca uzamaya
+      // çalışır; 1 ile yüksekliğini çocuğuna eşitler.
+      child: Align(
+        alignment: AlignmentDirectional.centerStart,
+        heightFactor: 1,
+        child: Container(
+          key: const Key('masaustu-alt-cubuk'),
+          width: masaustuCubukGenisligi,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: DiziRenkler.metin12),
+          ),
+          child: cubuk,
         ),
-        child: cubuk,
       ),
     ),
   );

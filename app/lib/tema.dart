@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Tema tercihi: sistem / koyu / acik. Ayarlar'dan seçilir, prefs'te saklanır.
@@ -58,6 +59,49 @@ class DiziRenkler {
   static Color get metin38 => acik ? Colors.black38 : Colors.white38;
   static Color get metin24 => acik ? Colors.black26 : Colors.white24;
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
+}
+
+/// ---------------------------------------------------------------------------
+/// Sistem gezinme çubuğu (Android'in geri/ana ekran tuşları ya da jest çizgisi)
+///
+/// KULLANICI İSTEĞİ (4 Ağu): "aşağıdaki ana sayfa keşfet falan ikonunun
+/// bulunduğu çubuğu cihazın navigasyonundaki tuşlar ile aynı renk yapabilir
+/// misin" — yani uygulamanın alt çubuğu ile telefonun kendi gezinme çubuğu
+/// arasındaki renk DİKİŞİ kalksın, ikisi tek parça görünsün.
+///
+/// Flutter sistem çubuğunun rengini OKUYAMAZ (üreticiye/temaya göre değişir),
+/// bu yüzden çözüm ters yönde: sistem çubuğu uygulamanın rengine boyanır.
+/// Bunun iki ayrı Android dünyası için AYNI ANDA çalışması gerekiyor:
+///
+/// * **Android 14 ve öncesi** — uygulama uçtan uca çizmiyor; sistem çubuğu
+///   ayrı bir şerit. [SystemUiOverlayStyle.systemNavigationBarColor] burada
+///   GERÇEKTEN çalışır, şeridi doğrudan boyarız.
+/// * **Android 15+ (targetSdk 36)** — uygulamalar zorunlu uçtan uca çiziliyor;
+///   `systemNavigationBarColor` YOK SAYILIYOR. Orada rengi biz çiziyoruz:
+///   `NavigationBar` içindeki `SafeArea` sistem çubuğu kadar dolgu ekler ve
+///   çubuğun `Material` zemini o alanın ALTINA kadar uzanır. Tek engel üç
+///   tuşlu gezinmede sistemin kendiliğinden koyduğu yarı saydam perdedir
+///   (contrast scrim) — [SystemUiOverlayStyle.systemNavigationBarContrastEnforced]
+///   `false` ile kapatılır, altındaki kendi rengimiz olduğu gibi görünür.
+///   Jest çizgisinde perde zaten yoktur; ikisinde de sabit bir yükseklik
+///   varsaymayız, dolgu `MediaQuery` viewPadding'inden gelir.
+///
+/// İKON PARLAKLIĞI zeminin GERÇEK parlaklığından türetilir (tema bayrağından
+/// değil): açık zeminde koyu ikon, koyu zeminde açık ikon. Böylece renk ileride
+/// değişse bile geri/ana ekran tuşları zemine karışıp kaybolmaz.
+SystemUiOverlayStyle sistemCubukStili(Color zemin) {
+  final acikZemin = zemin.computeLuminance() > 0.5;
+  return SystemUiOverlayStyle(
+    // Android ≤14: şeridi doğrudan boyar. Android 15+: yok sayılır (zararsız).
+    systemNavigationBarColor: zemin,
+    // Ayırıcı çizgi de aynı renk: 1 px'lik çizgi de bir "dikiş"tir.
+    systemNavigationBarDividerColor: zemin,
+    systemNavigationBarIconBrightness: acikZemin
+        ? Brightness.dark
+        : Brightness.light,
+    // Android 15+ üç tuşlu gezinmedeki yarı saydam perdeyi kapatır.
+    systemNavigationBarContrastEnforced: false,
+  );
 }
 
 /// ---------------------------------------------------------------------------

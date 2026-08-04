@@ -3,6 +3,7 @@ import 'dart:ui' show PlatformDispatcher, PointerDeviceKind;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
@@ -101,8 +102,16 @@ class _DiziJpgAppState extends State<DiziJpgApp> {
           routerConfig: _yonlendirici,
           // Sürüm kapısı en dışta: zorunlu güncelleme ekranı her rotanın
           // üstünde durur ve geri tuşuyla kapatılamaz (bkz. surum_kapisi.dart).
-          builder: (context, cocuk) =>
-              SurumKapisi(cocuk: cocuk ?? const SizedBox.shrink()),
+          //
+          // AnnotatedRegion: sistem gezinme çubuğunun VARSAYILAN rengi = sayfa
+          // zemini. Alt menülü kabuk ekranlarında kabuk.dart daha içteki
+          // bildirimle bunu çubuk zeminine çevirir; alt menüsüz (push edilen)
+          // ekranlarda ise sistem çubuğu sayfanın zeminine uyar — hiçbir
+          // ekranda "önceki ekrandan kalma" renk kalmaz.
+          builder: (context, cocuk) => AnnotatedRegion<SystemUiOverlayStyle>(
+            value: sistemCubukStili(tema.scaffoldBackgroundColor),
+            child: SurumKapisi(cocuk: cocuk ?? const SizedBox.shrink()),
+          ),
         ),
       ),
     );
