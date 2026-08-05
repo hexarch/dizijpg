@@ -477,12 +477,15 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         context: context,
         isScrollControlled: true,
         backgroundColor: DiziRenkler.koyuGri,
+        // Alt pay: klavye + sistem çubuğu. Çift saymaz — klavye açıkken
+        // platform padding.bottom'ı 0'a çeker (bkz. puan_sheet.dart).
         builder: (context) => Padding(
           padding: EdgeInsets.fromLTRB(
             20,
             20,
             20,
-            MediaQuery.of(context).viewInsets.bottom + 20,
+            MediaQuery.of(context).viewInsets.bottom +
+                altGuvenli(context, ekstra: 20),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1484,7 +1487,15 @@ class _YorumlarSheetState extends State<_YorumlarSheet> {
       );
     } else {
       govde = ListView(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+        // ALT GÜVENLİ ALAN: ListeSheet ile aynı hata — açık `padding` verilince
+        // Flutter alt sistem payını kendiliğinden eklemez, son yorum kartı
+        // navi çubuğunun altında kalıyordu.
+        padding: EdgeInsets.fromLTRB(
+          14,
+          0,
+          14,
+          altGuvenli(context, ekstra: 20),
+        ),
         children: [
           for (final y in yorumlar)
             ProfilYorumKarti(

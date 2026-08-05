@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-05 — MODALLERİN ALT İÇERİĞİ SİSTEM GEZİNME ÇUBUĞUNUN ALTINDA ✅
+**Hata:** 360x800 / 48 dp navi çubuğunda (güvenli sınır y=752) üç modalin en alt
+içeriği çubuğun ALTINDA kalıp dokunulamıyordu: `ListeSheet` 780, takvim
+`BolumModali` 776, `puanlaVeKaydet` 763.
+
+- ✅ **Kök neden ayarlar.dart/arama_cubugu.dart ile AYNI:** bir BoxScrollView'e
+  AÇIK `padding` verildiği an Flutter alt güvenli alanı KENDİLİĞİNDEN eklemez
+  (yalnız `padding == null` iken ekler). Puan sheet'inde ise alt boşluk sabit
+  yazılmıştı. Çözüm üçünde de `altGuvenli(context, ekstra: N)` — yardımcının
+  KENDİSİNE DOKUNULMADI, 12+ ekran onu kullanıyor.
+- ✅ **KARAR — `useSafeArea: true` DEĞİL:** Flutter kaynağında
+  `useSafeArea ? SafeArea(bottom: false, child: content) : ...` — alt kenara
+  hiç dokunmaz. 20 çağrıya eklemek sorunu çözmez, üst davranışı değiştirirdi.
+  Alt payı sheet'in İÇERİĞİ hallediyor.
+- ✅ **Çağıran-farkındalığı parametresiz:** `ListeSheet` hem kabuk içinden
+  (profil sekmesi, iç Navigator → Scaffold alt payı zaten 0'a çekmiş) hem
+  kabuk kökünden açılıyor; `altGuvenli` MediaQuery'ye baktığı için ikisinde de
+  doğru — kabuk içinde FAZLADAN boşluk oluşmadığı testle kilitlendi.
+- ✅ **Klavye/sistem payı ÇİFT SAYILMIYOR:** klavye açıkken platform
+  `padding.bottom`u 0'a çeker (`viewPadding` korunur), yani `viewInsets +
+  altGuvenli` toplamında ikisi aynı anda >0 olamaz.
+- ✅ **TARAMA:** 28 `showModalBottomSheet` çağrısının hepsi gezildi; bildirilen
+  üçünün dışında dört tane daha aynı hatayı taşıyordu ve düzeltildi:
+  profil.dart `_YorumlarSheet` + `_hesabiBagla`, giris.dart şifre sıfırlama
+  sheet'i, kullanici_profil.dart yorum detay modalı. Ayrıca `gorselKirp`
+  kırpma yüzeyi sheet'in dibine kadar uzuyordu (alt kadraj tutamakları
+  yakalanamıyordu) — yüzey sistem payı kadar yukarı çekildi. Geri kalan
+  çağrılar temiz: ya `SafeArea` var ya da `padding` verilmemiş bir
+  `ListView.builder` (Flutter payı kendisi ekliyor).
+- ✅ **Kanıt:** `test/modal_alt_guvenli_test.dart` (8) +
+  `test/modal_alt_guvenli_ek_test.dart` (4). Gerçek konum `getRect` ile
+  ölçülüyor; düzeltmeler geçici geri alınınca testler KIRMIZIYA döndü
+  (780 / 768 / 780 / 763.5 / 800), geri getirilince yeşil (732 / 720 / 732).
+
 ## 2026-08-05 — SOHBET: SAAT BALONDAN SAĞDAKİ SÜRÜKLEME SÜTUNUNA 🚀
 **Kullanıcı isteği:** "mesajlaşma ekranında mesajın dakikası saati mesajın
 altında yazmasın. ekranı sağa kaydırınca sağ tarafta göster. ama kullanıcı sağa

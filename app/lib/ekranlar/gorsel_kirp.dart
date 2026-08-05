@@ -75,15 +75,25 @@ Future<Uint8List?> gorselKirp(
                   ],
                 ),
               ),
+              // ALT GÜVENLİ ALAN: kırpma yüzeyi sheet'in en altına kadar
+              // uzuyordu; 48 dp navi çubuğu olan telefonda kadrajın ALT
+              // TUTAMAKLARI çubuğun altında kalıp parmakla yakalanamıyordu.
+              // Yüzeyi sistem payı kadar yukarı çekiyoruz (payı olmayan
+              // cihazda 0 → düzen değişmez).
               Expanded(
-                child: Crop(
-                  image: veri,
-                  controller: kontrol,
-                  aspectRatio: oran,
-                  withCircleUi: daire,
-                  baseColor: DiziRenkler.siyah,
-                  maskColor: Colors.black54,
-                  onCropped: (kirpik) => Navigator.pop(context, kirpik),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).padding.bottom,
+                  ),
+                  child: Crop(
+                    image: veri,
+                    controller: kontrol,
+                    aspectRatio: oran,
+                    withCircleUi: daire,
+                    baseColor: DiziRenkler.siyah,
+                    maskColor: Colors.black54,
+                    onCropped: (kirpik) => Navigator.pop(context, kirpik),
+                  ),
                 ),
               ),
             ],

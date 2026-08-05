@@ -1054,7 +1054,14 @@ class _YorumDetayModal extends StatelessWidget {
       maxChildSize: 0.9,
       builder: (context, kontrol) => ListView(
         controller: kontrol,
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        // ALT GÜVENLİ ALAN: takvimdeki BolumModali ile aynı hata — açık
+        // `padding` Flutter'ın otomatik alt payını kapatıyor.
+        padding: EdgeInsets.fromLTRB(
+          16,
+          12,
+          16,
+          altGuvenli(context, ekstra: 24),
+        ),
         children: [
           Center(
             child: Container(

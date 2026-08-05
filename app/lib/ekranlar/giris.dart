@@ -9,6 +9,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
 import '../tema.dart';
+import 'ortak.dart' show altGuvenli;
 
 /// Google OAuth web istemcisi (dizi-jpg-7b723). Android'de serverClientId,
 /// web'de clientId olarak kullanılır; gizli değildir.
@@ -103,12 +104,15 @@ class _GirisEkraniState extends State<GirisEkrani> {
         isScrollControlled: true,
         backgroundColor: DiziRenkler.koyuGri,
         builder: (context) => StatefulBuilder(
+          // Alt pay: klavye + sistem çubuğu. Çift saymaz — klavye açıkken
+          // platform padding.bottom'ı 0'a çeker (bkz. puan_sheet.dart).
           builder: (context, setSheet) => Padding(
             padding: EdgeInsets.fromLTRB(
               20,
               20,
               20,
-              MediaQuery.of(context).viewInsets.bottom + 20,
+              MediaQuery.of(context).viewInsets.bottom +
+                  altGuvenli(context, ekstra: 20),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

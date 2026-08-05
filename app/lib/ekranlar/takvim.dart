@@ -607,7 +607,17 @@ class _BolumModaliState extends State<BolumModali> {
       maxChildSize: 0.95,
       builder: (context, kontrol) => ListView(
         controller: kontrol,
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        // ALT GÜVENLİ ALAN: AÇIK `padding` verilince Flutter alt sistem payını
+        // kendiliğinden EKLEMEZ (BoxScrollView yalnız padding == null iken
+        // ekler). Sabit 24 ile 360x800 / 48 dp navi çubuğunda modalın son
+        // öğesinin alt kenarı 776'ya, çubuğun ALTINA düşüyordu (sınır 752).
+        // `useSafeArea` çözmez: Flutter onu `SafeArea(bottom: false)` uygular.
+        padding: EdgeInsets.fromLTRB(
+          16,
+          12,
+          16,
+          altGuvenli(context, ekstra: 24),
+        ),
         children: [
           Center(
             child: Container(

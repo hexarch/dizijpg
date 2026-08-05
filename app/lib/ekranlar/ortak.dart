@@ -1630,7 +1630,27 @@ class _ListeSheetState extends State<ListeSheet> {
       );
     } else {
       govde = GridView.builder(
-        padding: const EdgeInsets.fromLTRB(14, 0, 14, 20),
+        // ALT GÜVENLİ ALAN: GridView de bir BoxScrollView — AÇIK `padding`
+        // verildiği an Flutter'ın MediaQuery alt payını kendiliğinden ekleme
+        // davranışı kapanır (yalnız padding == null iken ekler). Sabit 20 ile
+        // 360x800 / 48 dp navi çubuğu olan telefonda son poster sırasının alt
+        // kenarı 780'e, yani çubuğun ALTINA düşüyordu (güvenli sınır 752).
+        //
+        // `useSafeArea: true` BU İŞİ ÇÖZMEZ: Flutter kaynağında
+        // `SafeArea(bottom: false, ...)` — alt kenara hiç dokunmaz.
+        // Alt payı sheet'in İÇERİĞİ halletmeli.
+        //
+        // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ: bu sheet hem kabuk İÇİNDEN
+        // (profil sekmesi) hem de kabuk kökünden açılıyor. Ayrımı MediaQuery
+        // zaten yapar — kabuğun Scaffold'u `bottomNavigationBar` taşıdığı için
+        // gövdesine verdiği MediaQuery'de alt pay ZATEN 0'dır, orada
+        // altGuvenli 0 + 20 = 20 döner → FAZLADAN boşluk YOK.
+        padding: EdgeInsets.fromLTRB(
+          14,
+          0,
+          14,
+          altGuvenli(context, ekstra: 20),
+        ),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           childAspectRatio: 2 / 3,
