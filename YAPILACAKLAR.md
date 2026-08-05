@@ -1,6 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-05 — SOHBET: SAAT BALONDAN SAĞDAKİ SÜRÜKLEME SÜTUNUNA 🚀
+**Kullanıcı isteği:** "mesajlaşma ekranında mesajın dakikası saati mesajın
+altında yazmasın. ekranı sağa kaydırınca sağ tarafta göster. ama kullanıcı sağa
+kaydırarak tutmak zorunda olsun, mesaj başına kaydırmayacak. ekranı sağa
+kaydırınca en sağda o mesajın saati ve dakikası yazacak."
+
+- 🚀 **Saat balondan kalktı.** `_MesajBaloncugu` altındaki footer satırında artık
+  yalnız "düzenlendi" ve okundu/iletildi tiki var; saat `mesajSaati()` ile
+  satırın SAĞINDAKİ gizli sütuna taşındı. Alt bilgi hiç yoksa balonun alt
+  dolgusu 6 → 8 dp olur (saatin bıraktığı boşluk kapanır).
+- 🚀 **Jest: sohbetin TAMAMI kayar, mesaj başına sürükleme YOK.** Liste
+  `RawGestureDetector` + `HorizontalDragGestureRecognizer` ile sarıldı; her
+  satır `_ZamanliSatir` ile `Transform.translate` edilir. Tavan =
+  `saatSutunuGenisligi` (**64 dp**), bırakınca 220 ms `easeOutCubic` ile 0'a
+  yaylanır. Kalıcı mod değil.
+- 🚀 **KARAR — yön:** "sağa kaydırma" = GÖRÜŞ ALANI sağa kayar (parmak sola).
+  Saat sütunu sağda olduğu için tek tutarlı geometri bu; WhatsApp/Telegram da
+  böyle. Parmağı sağa çekmek soldan boşluk açardı, saat sütunu sağda kalırdı.
+- 🚀 **KARAR — geri jestiyle çakışma:** özel tanıcı `isPointerAllowed` ile sol
+  **24 dp** şeridinde başlayan parmağı reddeder → o parmak için jest arenasına
+  HİÇ katılmaz, iOS kenar-geri jesti rakipsiz kalır (test kilitliyor).
+- 🚀 **TUZAK — `DragStartBehavior.start` (varsayılan) jesti kazandıran ilk
+  hareketi YUTUYOR.** Boş alanda çalışıyor, balonun üstünde başlayan sürükleme
+  hiç açılmıyordu (kullanıcı parmağını çoğunlukla mesajın üstüne koyar).
+  `DragStartBehavior.down` ile düzeldi; gerileme testi yazıldı.
+- 🚀 **Dikey kaydırma yutulmuyor:** jest arenası ekseni ayırıyor; 150 dp dikey
+  sürükleme ölçülerek (20 dp dokunma toleransı düşülmüş 130 dp) kanıtlandı ve
+  aynı sürüklemenin saat sütununu AÇMADIĞI da iddia edildi.
+- 🚀 **Erişilebilirlik:** saat görsel olarak gizlendiği ve ekran okuyucu
+  kullanan biri sürükleyemeyeceği için balonun etiketinin SONUNA eklendi
+  (`Semantics(label: saat)` → "selam / 21:45"). Uzun basma eylemi korundu.
+- 🚀 **Renk:** saat `DiziRenkler.metin70` (sabit beyaz/siyah YOK), tabular
+  rakamlar; iki temada da okunur.
+- 🚀 **Kanıt:** `app/test/sohbet_saat_sutunu_test.dart` — 13 test (gizli saat,
+  hizalama, geri dönüş, tavan, dikey kaydırma, balon üstü sürükleme, kenar
+  payı, gönderilen+alınan, 7 balon türü, ekran okuyucu, 360 dp taşma, tema).
+  Değişiklik geçici geri alındığında 10/13 ve (ikinci geri almada) 5/13 test
+  kırmızıya döndü.
+
 ## 2026-08-05 — MESAJLAR EKRANI: SADE LİSTE + ÇEVRİMİÇİ + MESAJ İSTEKLERİ 🚀
 **Kullanıcı isteği:** "Mesajlar kısmında kişilerin arasında space var ve arka
 planda hafif grimsi ton var ya, onları kaldır. direkt mesaj, kullanıcı adı,

@@ -3,6 +3,8 @@ import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/gestures.dart'
+    show DragStartBehavior, HorizontalDragGestureRecognizer, PointerEvent;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -30,6 +32,117 @@ const cevrimiciEsikSn = 180;
 /// Satır yüksekliği = 44 (avatar) + 2*8 (dikey dolgu) = 60 dp (>= 44 dp).
 const double _avatarCap = 44;
 const double _satirDikeyDolgu = 8;
+
+/// Gizli saat sütununun genişliği (dp) = SÜRÜKLEME TAVANI.
+///
+/// KULLANICI İSTEĞİ (5 Ağu 2026): "mesajın dakikası saati mesajın altında
+/// yazmasın. ekranı sağa kaydırınca sağ tarafta göster. ama kullanıcı sağa
+/// kaydırarak tutmak zorunda olsun, mesaj başına kaydırmayacak."
+///
+/// Yani WhatsApp/Telegram jesti: SOHBETİN TAMAMI sola ötelenir (görüş alanı
+/// sağa kayar), sağ kenarda o mesajın saati belirir; parmak kalkınca yaylanıp
+/// geri döner. 64 dp "14:32" (~30 dp) + nefes payı için yeter ve balonun
+/// kırpılan sol kenarını en aza indirir.
+const double saatSutunuGenisligi = 64;
+
+/// Sol kenarın bu şeridinde BAŞLAYAN sürüklemeler yok sayılır.
+///
+/// iOS'ta "geri" kenar jesti (CupertinoPageRoute) tam orada yaşıyor ve aynı
+/// parmağı iki tanıcı paylaşamaz: kenardan başlayan sürüklemeye hiç girmezsek
+/// jest arenasına da katılmayız, geri gitme bozulmaz. Android'de kenar
+/// jestini zaten sistem yutar; bu pay orada da zararsız.
+const double saatJestKenarPayi = 24;
+
+/// Yalnız EKRANIN İÇİNDEN başlayan yatay sürüklemeleri dinleyen tanıcı.
+///
+/// [isPointerAllowed] false dönerse tanıcı o parmak için jest arenasına HİÇ
+/// katılmaz — kenar jesti (geri) rakipsiz kalır.
+class _SaatSuruklemeTanicisi extends HorizontalDragGestureRecognizer {
+  _SaatSuruklemeTanicisi({super.debugOwner});
+
+  @override
+  bool isPointerAllowed(PointerEvent event) =>
+      event.position.dx > saatJestKenarPayi && super.isPointerAllowed(event);
+}
+
+/// Mesaj satırı + sağında normalde GÖRÜNMEYEN saat sütunu.
+///
+/// [kaydirma] 0..[saatSutunuGenisligi]: 0'da saat kırpma dikdörtgeninin
+/// DIŞINDA kalır (ağaca hiç eklenmez), tavanda sağ kenara oturur.
+///
+/// Balon yeniden ÖLÇÜLMEZ, yalnız `Transform` ile ötelenir: saat sütunu
+/// yüzünden balonun genişliği/satır kırılımı değişmez, sürükleme boyunca
+/// metin yeniden akmaz.
+class _ZamanliSatir extends StatelessWidget {
+  final Animation<double> kaydirma;
+  final String? saat;
+  final String? saatAnahtari;
+  final Widget child;
+
+  const _ZamanliSatir({
+    required this.kaydirma,
+    required this.child,
+    this.saat,
+    this.saatAnahtari,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: AnimatedBuilder(
+        animation: kaydirma,
+        child: child,
+        builder: (context, cocuk) {
+          final k = kaydirma.value;
+          return Stack(
+            children: [
+              // Ölçüyü bu çocuk belirler: Stack satır boyu kadar olur.
+              Transform.translate(offset: Offset(-k, 0), child: cocuk),
+              if (saat != null && saat!.isNotEmpty && k > 0)
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Transform.translate(
+                        // k=0'da sütun genişliği kadar sağda (kırpılır),
+                        // tavanda tam sağ kenarda.
+                        offset: Offset(saatSutunuGenisligi - k, 0),
+                        child: Opacity(
+                          opacity: (k / saatSutunuGenisligi).clamp(0.0, 1.0),
+                          child: Text(
+                            saat!,
+                            key: saatAnahtari == null
+                                ? null
+                                : Key(saatAnahtari!),
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              // Sabit beyaz/siyah DEĞİL: iki temada da okunur.
+                              color: DiziRenkler.metin70,
+                              fontFeatures: const [
+                                FontFeature.tabularFigures(),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Mesajın "SS:DD" saati. Sunucu ISO damga gönderir; biçim eskisiyle AYNI
+/// (ham damganın 11..16 aralığı) — yalnız gösterildiği YER değişti.
+String mesajSaati(Map<String, dynamic> m) {
+  final t = m['tarih'] as String? ?? '';
+  return t.length >= 16 ? t.substring(11, 16) : '';
+}
 
 /// Sohbet listesi: partner başına son mesaj + okunmamış rozeti.
 ///
@@ -421,7 +534,8 @@ class SohbetEkrani extends StatefulWidget {
   State<SohbetEkrani> createState() => _SohbetEkraniState();
 }
 
-class _SohbetEkraniState extends State<SohbetEkrani> {
+class _SohbetEkraniState extends State<SohbetEkrani>
+    with SingleTickerProviderStateMixin {
   List<dynamic> _mesajlar = [];
   final Map<String, dynamic> _icerikler = {};
   final Map<String, dynamic> _gonderiler = {};
@@ -437,6 +551,15 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
   Timer? _sayac;
+
+  /// Saat sütununun açılma miktarı (0 = kapalı, tavan = tam görünür).
+  /// Kalıcı bir mod DEĞİL: parmak kalkınca 0'a geri yaylanır.
+  late final AnimationController _saatKaydirici = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 220),
+    lowerBound: 0,
+    upperBound: saatSutunuGenisligi,
+  );
   // Sesli mesaj kaydı
   // Web'de mikrofon gizli; kaydediciyi hiç kurma ki eklenti kanalı
   // MissingPluginException gürültüsü üretmesin (hata günlüğü #8-16).
@@ -477,7 +600,34 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
     _kaydedici?.dispose();
     _metin.dispose();
     _kaydirma.dispose();
+    _saatKaydirici.dispose();
     super.dispose();
+  }
+
+  // ---- Saat sütunu jesti ----
+  // Yatay tanıcı DİKEY kaydırmayı yutmaz: `HorizontalDragGestureRecognizer`
+  // yalnız yatay eşiği aşan parmakta arenayı kazanır, dikey harekette
+  // ListView'in dikey tanıcısı kazanır (jest arenası ekseni ayırır).
+
+  void _saatSuruklemeBasla(DragStartDetails _) => _saatKaydirici.stop();
+
+  void _saatSurukle(DragUpdateDetails d) {
+    // Parmak SOLA gidince (dx < 0) görüş alanı SAĞA kayar ve saat sütunu
+    // açılır. clamp: kullanıcı ekranı sütun genişliğinden fazla çekemez.
+    final yeni = (_saatKaydirici.value - d.delta.dx).clamp(
+      0.0,
+      saatSutunuGenisligi,
+    );
+    if (yeni != _saatKaydirici.value) _saatKaydirici.value = yeni;
+  }
+
+  void _saatBirak([DragEndDetails? _]) {
+    if (_saatKaydirici.value == 0) return;
+    _saatKaydirici.animateBack(
+      0,
+      duration: const Duration(milliseconds: 220),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   // ---- Sesli mesaj kaydı ----
@@ -850,83 +1000,119 @@ class _SohbetEkraniState extends State<SohbetEkrani> {
                         mesaj: _hata!,
                         tekrar: () => _yukle(ilk: true),
                       )
-                    : ListView.builder(
-                        controller: _kaydirma,
-                        padding: const EdgeInsets.all(12),
-                        itemCount: _mesajlar.length,
-                        itemBuilder: (context, i) {
-                          final m = _mesajlar[i] as Map<String, dynamic>;
-                          final gun = (m['tarih'] as String? ?? '')
-                              .split('T')
-                              .first;
-                          final oncekiGun = i > 0
-                              ? ((_mesajlar[i - 1]
-                                                as Map<
-                                                  String,
-                                                  dynamic
-                                                >)['tarih']
-                                            as String? ??
-                                        '')
-                                    .split('T')
-                                    .first
-                              : null;
-                          final benimMi = m['gonderen_id'] == benimId;
-                          final metinMi =
-                              (m['metin'] as String?)?.isNotEmpty == true &&
-                              m['medya'] == null &&
-                              m['icerik_tur'] == null;
-                          final baloncuk = _MesajBaloncugu(
-                            // Poll (5sn) listeyi yenilerken baloncuk id ile
-                            // eşleşsin: medya yeniden yüklenip kaymasın.
-                            key: ValueKey(m['id'] ?? 'm$i'),
-                            mesaj: m,
-                            benim: benimMi,
-                            icerikler: _icerikler,
-                            gonderiler: _gonderiler,
-                            yanitla: m['id'] != null
-                                ? () => _yanitBaslat(m)
-                                : null,
-                            sil: benimMi && m['id'] != null
-                                ? () => _mesajSil((m['id'] as num).toInt())
-                                : null,
-                            duzenle: benimMi && metinMi
-                                ? () => _duzenlemeBaslat(m)
-                                : null,
-                          );
-                          if (gun == oncekiGun || gun.isEmpty) return baloncuk;
-                          // Tarih ayracı: gün değişince ortada küçük rozet
-                          final p = gun.split('-');
-                          final etiket = p.length == 3
-                              ? '${p[2]}.${p[1]}.${p[0]}'
-                              : gun;
-                          return Column(
-                            children: [
-                              Center(
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(
-                                    vertical: 10,
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: DiziRenkler.koyuGri,
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Text(
-                                    etiket,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: DiziRenkler.metin54,
+                    : RawGestureDetector(
+                        // Saat sütunu jesti: LİSTENİN TAMAMI kayar (mesaj
+                        // başına ayrı sürükleme YOK). Kenar payı geri
+                        // jestini korur, dikey kaydırma arenada kazanır.
+                        gestures: {
+                          _SaatSuruklemeTanicisi:
+                              GestureRecognizerFactoryWithHandlers<
+                                _SaatSuruklemeTanicisi
+                              >(
+                                () => _SaatSuruklemeTanicisi(debugOwner: this),
+                                (t) => t
+                                  // .down: jesti kazandiran ilk hareket de
+                                  // rapor edilir. Varsayilan .start'ta o
+                                  // hareket YUTULUYOR ve balonun ustunde
+                                  // baslayan surukleme hic acilmiyordu.
+                                  ..dragStartBehavior = DragStartBehavior.down
+                                  ..onStart = _saatSuruklemeBasla
+                                  ..onUpdate = _saatSurukle
+                                  ..onEnd = _saatBirak
+                                  ..onCancel = _saatBirak,
+                              ),
+                        },
+                        child: ListView.builder(
+                          controller: _kaydirma,
+                          padding: const EdgeInsets.all(12),
+                          itemCount: _mesajlar.length,
+                          itemBuilder: (context, i) {
+                            final m = _mesajlar[i] as Map<String, dynamic>;
+                            final gun = (m['tarih'] as String? ?? '')
+                                .split('T')
+                                .first;
+                            final oncekiGun = i > 0
+                                ? ((_mesajlar[i - 1]
+                                                  as Map<
+                                                    String,
+                                                    dynamic
+                                                  >)['tarih']
+                                              as String? ??
+                                          '')
+                                      .split('T')
+                                      .first
+                                : null;
+                            final benimMi = m['gonderen_id'] == benimId;
+                            final metinMi =
+                                (m['metin'] as String?)?.isNotEmpty == true &&
+                                m['medya'] == null &&
+                                m['icerik_tur'] == null;
+                            final baloncuk = _MesajBaloncugu(
+                              // Poll (5sn) listeyi yenilerken baloncuk id ile
+                              // eşleşsin: medya yeniden yüklenip kaymasın.
+                              key: ValueKey(m['id'] ?? 'm$i'),
+                              mesaj: m,
+                              benim: benimMi,
+                              icerikler: _icerikler,
+                              gonderiler: _gonderiler,
+                              yanitla: m['id'] != null
+                                  ? () => _yanitBaslat(m)
+                                  : null,
+                              sil: benimMi && m['id'] != null
+                                  ? () => _mesajSil((m['id'] as num).toInt())
+                                  : null,
+                              duzenle: benimMi && metinMi
+                                  ? () => _duzenlemeBaslat(m)
+                                  : null,
+                            );
+                            // Saat balonun ALTINDA değil, satırın SAĞINDAKİ
+                            // gizli sütunda; sürükleme boyunca açılır.
+                            final satir = _ZamanliSatir(
+                              kaydirma: _saatKaydirici,
+                              saat: mesajSaati(m),
+                              saatAnahtari: 'mesaj-saat-${m['id'] ?? i}',
+                              child: baloncuk,
+                            );
+                            if (gun == oncekiGun || gun.isEmpty) return satir;
+                            // Tarih ayracı: gün değişince ortada küçük rozet
+                            final p = gun.split('-');
+                            final etiket = p.length == 3
+                                ? '${p[2]}.${p[1]}.${p[0]}'
+                                : gun;
+                            return Column(
+                              children: [
+                                // Ayraç da SATIRLARLA BİRLİKTE kayar (saatsiz),
+                                // yoksa sürüklemede yerinde çakılı kalırdı.
+                                _ZamanliSatir(
+                                  kaydirma: _saatKaydirici,
+                                  child: Center(
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        vertical: 10,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: DiziRenkler.koyuGri,
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Text(
+                                        etiket,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: DiziRenkler.metin54,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              baloncuk,
-                            ],
-                          );
-                        },
+                                satir,
+                              ],
+                            );
+                          },
+                        ),
                       ),
               ),
               // Yanıt / düzenleme kutusu (giriş alanının hemen üstünde)
@@ -1311,12 +1497,13 @@ class _MesajBaloncugu extends StatelessWidget {
     final gonderi = gonderiId != null
         ? gonderiler['$gonderiId'] as Map<String, dynamic>?
         : null;
-    final saat = (m['tarih'] as String? ?? '');
-    final saatKisa = saat.length >= 16 ? saat.substring(11, 16) : '';
+    final saatKisa = mesajSaati(m);
     final yaziRengi = benim ? Colors.black : DiziRenkler.metin;
 
     final yanitId = m['yanit_id'];
     final duzenlendi = m['duzenlendi'] == true;
+    // Balonun altında yalnız "düzenlendi" + okundu tiki kalır; saat gitti.
+    final altBilgi = duzenlendi || benim;
 
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
@@ -1327,7 +1514,9 @@ class _MesajBaloncugu extends StatelessWidget {
             : () => _menuAc(context),
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 3),
-          padding: const EdgeInsets.fromLTRB(12, 8, 12, 6),
+          // Alt bilgi satırı (düzenlendi/tik) yoksa saatin bıraktığı boşluk
+          // kapansın diye alt dolgu üstle eşitlenir.
+          padding: EdgeInsets.fromLTRB(12, 8, 12, altBilgi ? 6 : 8),
           constraints: BoxConstraints(
             // PC'de dev baloncuk olmasın: dar ekranda %75, genişte 420px tavan
             maxWidth: MediaQuery.of(context).size.width > 560
@@ -1584,46 +1773,43 @@ class _MesajBaloncugu extends StatelessWidget {
                   ),
                 if (metin != null && metin.isNotEmpty)
                   Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (duzenlendi) ...[
-                        Text(
-                          'düzenlendi'.c,
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontStyle: FontStyle.italic,
-                            color: yaziRengi.withValues(alpha: 0.5),
+                // Saat GÖRSEL OLARAK GİZLİ (sağdaki sürükleme sütununda).
+                // Ekran okuyucu kullanan biri sürükleme yapamaz, o yüzden
+                // balonun erişilebilirlik etiketinin SONUNA eklenir:
+                // görsel kayıp var, BİLGİ kaybı yok.
+                Semantics(label: saatKisa, child: const SizedBox.shrink()),
+                if (altBilgi)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (duzenlendi) ...[
+                          Text(
+                            'düzenlendi'.c,
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontStyle: FontStyle.italic,
+                              color: yaziRengi.withValues(alpha: 0.5),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 5),
+                          if (benim) const SizedBox(width: 5),
+                        ],
+                        if (benim)
+                          // WhatsApp geleneği: ✓ gönderildi, ✓✓ soluk
+                          // iletildi (push cihaza ulaştı), ✓✓ MAVİ okundu.
+                          Icon(
+                            m['okundu'] == true || m['iletildi'] == true
+                                ? Icons.done_all
+                                : Icons.done,
+                            size: 13,
+                            color: m['okundu'] == true
+                                ? const Color(0xFF1976D2)
+                                : yaziRengi.withValues(alpha: 0.55),
+                          ),
                       ],
-                      Text(
-                        saatKisa,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: yaziRengi.withValues(alpha: 0.55),
-                        ),
-                      ),
-                      if (benim) ...[
-                        const SizedBox(width: 3),
-                        // WhatsApp geleneği: ✓ gönderildi, ✓✓ soluk iletildi
-                        // (push cihaza ulaştı), ✓✓ MAVİ okundu.
-                        Icon(
-                          m['okundu'] == true || m['iletildi'] == true
-                              ? Icons.done_all
-                              : Icons.done,
-                          size: 13,
-                          color: m['okundu'] == true
-                              ? const Color(0xFF1976D2)
-                              : yaziRengi.withValues(alpha: 0.55),
-                        ),
-                      ],
-                    ],
+                    ),
                   ),
-                ),
               ],
             ),
           ),
