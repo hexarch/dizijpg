@@ -500,4 +500,11 @@ const Map<String, String> cevirilerVi = {
   'Önerilen': 'Đề xuất',
   'Kronolojik': 'Theo thời gian',
   'Dizi jpg aile üyesi': 'Thành viên gia đình Dizi jpg',
+  'Gelen mesaj istekleri': 'Yêu cầu tin nhắn đến',
+  'Mesaj isteğin yok': 'Không có yêu cầu tin nhắn',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Tin nhắn từ những người bạn không theo dõi sẽ xuất hiện ở đây.',
+  'Çevrimiçi durumumu gizle': 'Ẩn trạng thái trực tuyến của tôi',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Người khác sẽ không thấy trạng thái trực tuyến và lần cuối hoạt động của bạn trong tin nhắn',
 };

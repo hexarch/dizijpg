@@ -477,3 +477,19 @@ ALTER TABLE kullanicilar
 -- depoya hiç girmez), sonra sunucu yalnız boolean'ı okur.
 ALTER TABLE kullanicilar
   ADD COLUMN IF NOT EXISTS testci BOOLEAN NOT NULL DEFAULT false;
+
+-- ---------------------------------------------------------------------------
+-- 5 Ağu 2026 — çevrimiçi durumu gizlilik tercihi (migrasyon-2026-08-05b.sql)
+--
+-- Mesajlar listesinde çevrimiçi kullanıcının avatarının sağ altında yeşil
+-- nokta çıkar. "Çevrimiçi" = son_gorulme son 180 sn içinde (server.js
+-- CEVRIMICI_ESIK_SN); damga kullanıcı başına en fazla 60 sn'de bir yazılır.
+--
+-- Bu tercih true iken GET /sohbetler o kullanıcı için cevrimici=false döner
+-- ve GET /mesajlar/:ad partner.son_gorulme'yi NULL yapar — yani sohbet
+-- başlığındaki "son görülme ..." satırı da kalkar.
+-- Varsayılan false: yanındaki üç tercihle aynı polarite; ayrıca "son görülme"
+-- bugün zaten kapatılamadan gösteriliyordu, bu sütun gizliliği ARTIRIYOR.
+-- TEK YÖNLÜ: gizleyen kullanıcı başkalarının durumunu görmeye devam eder.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS cevrimici_gizli BOOLEAN NOT NULL DEFAULT false;

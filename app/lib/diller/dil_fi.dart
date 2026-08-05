@@ -501,4 +501,11 @@ const Map<String, String> cevirilerFi = {
   'Önerilen': 'Suositellut',
   'Kronolojik': 'Aikajärjestys',
   'Dizi jpg aile üyesi': 'Dizi jpg -perheenjäsen',
+  'Gelen mesaj istekleri': 'Saapuneet viestipyynnöt',
+  'Mesaj isteğin yok': 'Ei viestipyyntöjä',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Viestit henkilöiltä, joita et seuraa, näkyvät täällä.',
+  'Çevrimiçi durumumu gizle': 'Piilota online-tilani',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Muut eivät näe online-tilaasi eivätkä viimeksi nähty -aikaasi viesteissä',
 };

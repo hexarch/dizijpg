@@ -507,4 +507,11 @@ const Map<String, String> cevirilerFr = {
   'Önerilen': 'Recommandé',
   'Kronolojik': 'Chronologique',
   'Dizi jpg aile üyesi': 'Membre de la famille Dizi jpg',
+  'Gelen mesaj istekleri': 'Demandes de message reçues',
+  'Mesaj isteğin yok': 'Aucune demande de message',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Les messages des personnes que vous ne suivez pas apparaissent ici.',
+  'Çevrimiçi durumumu gizle': 'Masquer mon statut en ligne',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Les autres ne verront pas votre statut en ligne ni votre dernière connexion dans les messages',
 };

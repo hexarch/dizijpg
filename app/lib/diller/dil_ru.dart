@@ -502,4 +502,11 @@ const Map<String, String> cevirilerRu = {
   'Önerilen': 'Рекомендуемое',
   'Kronolojik': 'Хронологический',
   'Dizi jpg aile üyesi': 'Член семьи Dizi jpg',
+  'Gelen mesaj istekleri': 'Входящие запросы на переписку',
+  'Mesaj isteğin yok': 'Нет запросов на переписку',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Здесь появляются сообщения от людей, на которых вы не подписаны.',
+  'Çevrimiçi durumumu gizle': 'Скрыть мой статус в сети',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Другие не увидят ваш статус в сети и время последнего посещения в сообщениях',
 };

@@ -182,6 +182,10 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
                 builder: (_, __) => const SohbetlerEkrani(),
               ),
               GoRoute(
+                path: '/mesaj-istekleri',
+                builder: (_, __) => const MesajIstekleriEkrani(),
+              ),
+              GoRoute(
                 path: '/sohbet/:ad',
                 builder: (_, s) =>
                     SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),

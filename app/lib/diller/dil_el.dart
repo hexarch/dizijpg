@@ -503,4 +503,11 @@ const Map<String, String> cevirilerEl = {
   'Önerilen': 'Προτεινόμενα',
   'Kronolojik': 'Χρονολογικά',
   'Dizi jpg aile üyesi': 'Μέλος της οικογένειας Dizi jpg',
+  'Gelen mesaj istekleri': 'Εισερχόμενα αιτήματα μηνύματος',
+  'Mesaj isteğin yok': 'Δεν έχεις αιτήματα μηνύματος',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Τα μηνύματα από άτομα που δεν ακολουθείς εμφανίζονται εδώ.',
+  'Çevrimiçi durumumu gizle': 'Απόκρυψη της κατάστασης σύνδεσής μου',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Οι άλλοι δεν θα βλέπουν την κατάσταση σύνδεσης και την τελευταία σου εμφάνιση στα μηνύματα',
 };

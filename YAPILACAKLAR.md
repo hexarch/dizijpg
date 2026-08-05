@@ -1,6 +1,93 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-05 — MESAJLAR EKRANI: SADE LİSTE + ÇEVRİMİÇİ + MESAJ İSTEKLERİ 🚀
+**Kullanıcı isteği:** "Mesajlar kısmında kişilerin arasında space var ve arka
+planda hafif grimsi ton var ya, onları kaldır. direkt mesaj, kullanıcı adı,
+profil resmi olsun. ve kullanıcıların çevrimiçi durumu olmalı: eğer çevrimiçi
+ise profil fotoğrafının sağ altında yeşil nokta olacak. sağ yukarıda da 'gelen
+mesaj istekleri' yazısı olsun, tıklayınca o kullanıcının takip etmediği
+kişiden gelen mesajlar oraya düşecek."
+
+- 🚀 **Sadeleştirme (ölçüldü):** her satır `Card`+`ListTile` idi; Card teması
+  satır başına `vertical: 4` kenar boşluğu (satır arası **8 dp**) ve
+  `DiziRenkler.kart` zemini (koyu temada #1F1F23, ana zemin #0B0B0D üstünde
+  "hafif grimsi ton") veriyordu. İkisi de kalktı → satır arası **0 dp**, zemin
+  yok. Satır yüksekliği 44 dp altına DÜŞMEDİ: 44 (avatar) + 2x8 = **60 dp**.
+- 🚀 **Çevrimiçi göstergesi:** avatarın SAĞ ALTINDA yeşil nokta. `son_gorulme`
+  altyapısı zaten vardı; eşik ve seyreltme `backend/cevrimici.js`e SAF modül
+  olarak çıkarıldı (testler gerçek fonksiyonu çağırsın diye).
+- 🚀 **KARAR — eşik 180 sn (3 dk):** yazma seyreltmesi 60 sn olduğu için damga
+  en kötü 60 sn bayat; eşik seyreltmeden BÜYÜK olmak zorunda, küçük olsaydı
+  aralıksız gezinen kullanıcıda bile nokta yanıp sönerdi. Uygulama açıkken
+  istek atmadan okunan uzun bir gönderi ~2 dk sürer, 180 sn bunu tolere eder;
+  uygulamayı kapatanın noktası en geç 180-240 sn içinde söner. Admin panelinin
+  "şu an çevrimiçi" sayacı da aynı 3 dakikayı kullanıyordu — TEK tanım oldu.
+  Sohbet başlığındaki "çevrimiçi/son görülme" satırı da 60 sn'den 180 sn'ye
+  çekildi (aynı kişi listede çevrimiçi, sohbette "2 dk önce" görünmesin).
+- 🚀 **KARAR — yazma seyreltmesi 20 sn → 60 sn (MALİYET ÖLÇÜLDÜ):** eşik 180 sn
+  olduğu için 60 sn bayatlık göstergeyi bozmuyor. Dakikada 30 istek atan bir
+  kullanıcı: seyreltmesiz saatte 1800 UPDATE, 60 sn ile **60 UPDATE** (30 kat
+  az; eski 20 sn'ye göre 3 kat az). Test bunu sayarak kilitliyor.
+  `son_gorulme`ye indeks BİLEREK konulmadı: sohbet listesi partnere birincil
+  anahtarla ulaşıyor, indeks yalnız en sık yazılan sütuna bakım maliyeti
+  eklerdi (seyreltmeyle kazanılan geri verilirdi).
+- 🚀 **KARAR — `cevrimici_gizli` tercihi, varsayılan false (görünür):** yanındaki
+  üç tercih (izlenenler/yorumlar/yanitlar_gizli) de negatif polarite + false;
+  tek anahtarın ters varsayılanı gizlilik sayfasını her okumada yeniden
+  çözülür hale getirirdi. Ayrıca "son görülme" BUGÜNE KADAR kapatılamadan
+  gösteriliyordu — bu sütun gizliliği ARTIRIYOR, varsayılanı true yapmak yeni
+  bir şey korumaz, yalnız istenen göstergeyi doğuştan ölü bırakırdı.
+- 🚀 **KARAR — tercih TEK YÖNLÜ:** gizleyen kullanıcı başkalarının durumunu
+  görmeye DEVAM EDER (izlenenler_gizli/yorumlar_gizli ile aynı kapsam).
+  Karşılıklılık şartı olsaydı kullanıcı tercihini gerçek isteğine göre değil,
+  bilgi kaybetme korkusuyla seçerdi. Canlıda curl ile doğrulandı.
+- 🚀 **Gizlilik sunucuda uygulanıyor:** `GET /sohbetler` ham `son_gorulme`
+  göndermiyor, yalnız boolean `cevrimici`; `GET /mesajlar/:ad` gizleyenin
+  damgasını NULL yapıyor (yoksa tercih sohbeti açan herkesçe aşılırdı).
+- 🚀 **KARAR — istek/ana liste ayrım kuralı:** ana liste ⇔ **takip ediyorum
+  YA DA o sohbete kendim yazmışım**; istekler ⇔ ikisi de değil. "Cevap
+  verdiysem" şartı şart: cevap vermek zaten kabuldür, yoksa yazıştığım biri
+  her açılışta istek kutusuna düşerdi; ayrıca takip etmediğim birine BEN
+  yazmışsam sohbet "bana gelen istek" diye görünürdü. Takip tek yön yeter
+  (karşılıklılık aranmaz). Kural DURUMDAN türetiliyor, kalıcı "kabul edildi"
+  bayrağı tutulmuyor → takipten çıkıp hiç yazmadıysam sohbet isteklere geri
+  düşer, fazladan tablo/senkron derdi yok.
+- 🚀 **KARAR — rozet VAR ama sarı, kırmızı değil:** istekler ana listeden
+  çıkarıldığı için yeni istek başka hiçbir yerde görünmezdi; rozet şart.
+  Ama istek kutusu düşük öncelikli — alarm rengi değil marka sarısı. Sayı =
+  **okunmamışı olan** istek adedi (açılmış ama cevaplanmamış eski istek
+  rozeti şişirmesin).
+- 🚀 **KARAR — sağ üstteki giriş yazı + ikon, 168 dp sınırlı, 2 satıra sarar:**
+  kullanıcı "yazısı olsun" dedi; Almanca "Eingegangene Nachrichtenanfragen"
+  360 dp'de başlığı taşırmasın diye sarma + ellipsis. Dokunma alanı ≥44 dp.
+- 🚀 **Yeşil nokta iki temada:** koyu #3DDC6B, açık #1B9E4B (aynı ton açık
+  zeminde 2.0:1 ile erirdi; koyulaştırılmış yeşil 3.4:1 — grafik nesne eşiği
+  3:1). Nokta zemin renginde 2 dp konturla çevrili: koyu da olsa açık da olsa
+  avatar fotoğrafından ayrışıyor. `Positioned` avatarın SINIRLARI İÇİNDE
+  (taşan Positioned görünür ama tıklanamaz olurdu).
+- 🚀 ENGELLEME davranışı bilerek DEĞİŞTİRİLMEDİ: `/sohbetler` eskiden de
+  engellenenleri ayıklamıyordu (engel yalnız POST /mesajlar'da). Test bunu
+  kilitliyor ki ayrım kuralı eklenirken sessizce filtre girmesin.
+- 🚀 5 yeni metin 45 dile çevrildi (439 → **444 anahtar**, 45 dosya senkron).
+- 🚀 Kanıt: `app/test/mesajlar_ekrani_test.dart` (15 test) — satır arası 0 dp
+  ve satır 60 dp ölçülüyor, Card/ListTile yok, noktanın avatarın sağ-alt
+  köşesine yapıştığı konumla iddia ediliyor, gizleyende nokta yok, iki tema
+  rengi, istek/ana liste ayrımı, boş durum, 360 dp taşma yok.
+  `backend/test/mesaj_istekleri.test.js` (23 test) — eşik sınırları, seyreltme
+  (maliyet sayarak), gizlilik, ayrım ve geçiş matrisi, uç sözleşmesi.
+  KIRMIZIYA DÖNDÜRME kanıtlandı: Card geri konunca / nokta sağ üste alınınca /
+  eşik 30 sn yapılınca / seyreltme, gizlilik ve `ben_yazdim` kaldırılınca
+  ilgili testler kırmızıya döndü, geri alınca yeşile döndü.
+- 🚀 Uçtan uca canlı curl (emma.watches ↔ testkullanici): takip etmeyene gelen
+  mesaj → İSTEK (rozet 1, cevrimici=true) → takip et → ANA LİSTE → takipten çık
+  → İSTEK → cevap yaz → ANA LİSTE. Gizlilik açılınca cevrimici=false ve
+  başlıkta son_gorulme=null; gizleyen karşı tarafı görmeye devam etti.
+  Test verisi (2 mesaj, takip, tercih) SONUNDA temizlendi, başlangıç durumu
+  birebir geri geldi.
+- 🚀 Migrasyon: `backend/migrasyon-2026-08-05b.sql` canlıya uygulandı.
+  Yedek: `/opt/dizijpg/yedekler/kullanicilar-2026-08-05-0707.sql`
+
 ## 2026-08-05 — TESTÇİ PROFİLİNDE "dizi.jpg aile üyesi" ROZETİ 🚀
 **Kullanıcı isteği:** "tester olarak eklediğimiz mail adresinden kayıt olan
 kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu koy ve yanına

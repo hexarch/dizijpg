@@ -499,4 +499,11 @@ const Map<String, String> cevirilerFa = {
   'Önerilen': 'پیشنهادی',
   'Kronolojik': 'بر اساس زمان',
   'Dizi jpg aile üyesi': 'عضو خانواده Dizi jpg',
+  'Gelen mesaj istekleri': 'درخواست‌های پیام دریافتی',
+  'Mesaj isteğin yok': 'درخواست پیامی ندارید',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'پیام‌های افرادی که دنبال نمی‌کنید اینجا نمایش داده می‌شود.',
+  'Çevrimiçi durumumu gizle': 'پنهان کردن وضعیت آنلاین من',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'دیگران وضعیت آنلاین و آخرین بازدید شما را در پیام‌ها نمی‌بینند',
 };

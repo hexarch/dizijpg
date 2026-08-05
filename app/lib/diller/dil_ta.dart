@@ -501,4 +501,11 @@ const Map<String, String> cevirilerTa = {
   'Önerilen': 'பரிந்துரைக்கப்பட்டது',
   'Kronolojik': 'காலவரிசை',
   'Dizi jpg aile üyesi': 'Dizi jpg குடும்ப உறுப்பினர்',
+  'Gelen mesaj istekleri': 'வந்த செய்தி கோரிக்கைகள்',
+  'Mesaj isteğin yok': 'செய்தி கோரிக்கை இல்லை',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'நீங்கள் பின்தொடராதவர்களின் செய்திகள் இங்கே தோன்றும்.',
+  'Çevrimiçi durumumu gizle': 'என் ஆன்லைன் நிலையை மறை',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'மற்றவர்கள் செய்திகளில் உங்கள் ஆன்லைன் நிலையையும் கடைசியாக பார்த்த நேரத்தையும் காண முடியாது',
 };

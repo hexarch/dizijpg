@@ -509,4 +509,11 @@ const Map<String, String> cevirilerMy = {
   'Önerilen': 'အကြံပြုထားသော',
   'Kronolojik': 'အချိန်အလိုက်',
   'Dizi jpg aile üyesi': 'Dizi jpg မိသားစုဝင်',
+  'Gelen mesaj istekleri': 'ဝင်လာသော မက်ဆေ့ခ်ျ တောင်းဆိုမှုများ',
+  'Mesaj isteğin yok': 'မက်ဆေ့ခ်ျ တောင်းဆိုမှု မရှိပါ',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'သင်မလိုက်ကြည့်သူများထံမှ မက်ဆေ့ခ်ျများ ဤနေရာတွင် ပေါ်ပါမည်။',
+  'Çevrimiçi durumumu gizle': 'ကျွန်ုပ်၏ အွန်လိုင်းအခြေအနေကို ဖျောက်ထားရန်',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'အခြားသူများသည် မက်ဆေ့ခ်ျများတွင် သင့်အွန်လိုင်းအခြေအနေနှင့် နောက်ဆုံးတွေ့ချိန်ကို မမြင်ရပါ',
 };

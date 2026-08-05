@@ -499,4 +499,11 @@ const Map<String, String> cevirilerPa = {
   'Önerilen': 'ਸਿਫਾਰਸ਼ ਕੀਤਾ',
   'Kronolojik': 'ਕਾਲਕ੍ਰਮਿਕ',
   'Dizi jpg aile üyesi': 'Dizi jpg ਪਰਿਵਾਰ ਦਾ ਮੈਂਬਰ',
+  'Gelen mesaj istekleri': 'ਆਈਆਂ ਸੁਨੇਹਾ ਬੇਨਤੀਆਂ',
+  'Mesaj isteğin yok': 'ਕੋਈ ਸੁਨੇਹਾ ਬੇਨਤੀ ਨਹੀਂ',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'ਜਿਨ੍ਹਾਂ ਨੂੰ ਤੁਸੀਂ ਫਾਲੋ ਨਹੀਂ ਕਰਦੇ ਉਨ੍ਹਾਂ ਦੇ ਸੁਨੇਹੇ ਇੱਥੇ ਦਿਸਦੇ ਹਨ।',
+  'Çevrimiçi durumumu gizle': 'ਮੇਰੀ ਆਨਲਾਈਨ ਸਥਿਤੀ ਲੁਕਾਓ',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'ਹੋਰ ਲੋਕ ਸੁਨੇਹਿਆਂ ਵਿੱਚ ਤੁਹਾਡੀ ਆਨਲਾਈਨ ਸਥਿਤੀ ਅਤੇ ਆਖਰੀ ਵਾਰ ਵੇਖੇ ਜਾਣ ਦਾ ਸਮਾਂ ਨਹੀਂ ਵੇਖਣਗੇ',
 };

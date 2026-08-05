@@ -479,4 +479,11 @@ const Map<String, String> cevirilerZh = {
   'Önerilen': '推荐',
   'Kronolojik': '按时间',
   'Dizi jpg aile üyesi': 'Dizi jpg 家庭成员',
+  'Gelen mesaj istekleri': '收到的消息请求',
+  'Mesaj isteğin yok': '没有消息请求',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      '你未关注的人发来的消息会显示在这里。',
+  'Çevrimiçi durumumu gizle': '隐藏我的在线状态',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      '其他人将看不到你在消息中的在线状态和最后上线时间',
 };

@@ -28,6 +28,9 @@ import {
 import {
   hedefDurum, yayinlanmisBolumler as yayinlanmisBolumlerSaf,
 } from './dizi_durum.js';
+import {
+  CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, sohbetleriAyir, istekRozeti,
+} from './cevrimici.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -569,17 +572,18 @@ async function sifreSurumuGecerli(id, tokenSv) {
 // Şifre değişince önbelleği hemen düşür (yeni token anında geçerli olsun).
 function sifreSurumOnbellekSil(id) { sifreSurumOnbellek.delete(id); }
 
-// Çevrimiçi göstergesi için son_gorulme; her istekte değil, kullanıcı başına
-// en fazla 20 sn'de bir DB'ye yazılır (yazma yükünü azaltır).
+// ---------- çevrimiçi durumu ----------
+// Eşik + seyreltme kararı ve gerekçeleri `cevrimici.js` içinde (testler
+// gerçek fonksiyonları çağırabilsin diye saf modüle ayrıldı).
 const sonGorulmeYazildi = new Map();
 function sonGorulmeGuncelle(kullaniciId) {
   const simdi = Date.now();
-  if (simdi - (sonGorulmeYazildi.get(kullaniciId) || 0) < 20000) return;
-  sonGorulmeYazildi.set(kullaniciId, simdi);
+  if (!sonGorulmeYazilmali(sonGorulmeYazildi, kullaniciId, simdi)) return;
   havuz.query('UPDATE kullanicilar SET son_gorulme=now() WHERE id=$1', [kullaniciId])
     .catch(() => {});
   if (sonGorulmeYazildi.size > 10000) {
-    const esik = simdi - 60000;
+    // Seyreltme penceresini geçmiş kayıtlar zaten etkisiz — atılabilirler.
+    const esik = simdi - 60_000;
     for (const [k, t] of sonGorulmeYazildi) if (t < esik) sonGorulmeYazildi.delete(k);
   }
 }
@@ -1845,23 +1849,37 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   res.json(rows[0]);
 }));
 
-// Gizlilik tercihleri: izlenenler/yorumlar/yanıtlar açık profilde gizli mi.
-// Üçü de NEGATİF polarite (true = gizli) ve varsayılanı false: yükseltme
+// Gizlilik tercihleri: izlenenler/yorumlar/yanıtlar açık profilde gizli mi,
+// çevrimiçi durumu başkalarına görünüyor mu.
+// Dördü de NEGATİF polarite (true = gizli) ve varsayılanı false: yükseltme
 // kimsenin profilini sessizce boşaltmaz.
+//
+// cevrimici_gizli VARSAYILANI NEDEN false:
+//  1) Öteki üç anahtarla aynı yön — karışık varsayılan olsaydı "hangisi açık
+//     geliyordu" her okumada yeniden düşünülürdü.
+//  2) Uygulama BUGÜN de sohbet başlığında "son görülme ..." gösteriyor ve
+//     bunun kapatma düğmesi YOK. Bu tercih mevcut duruma göre gizliliği
+//     ARTIRIYOR; varsayılanı true yapmak yeni bir şey korumaz, yalnızca
+//     kullanıcının istediği göstergeyi ölü doğurur.
+// TEK YÖNLÜ (gizleyen, başkalarınınkini görmeye DEVAM EDER): izlenenler_gizli
+// ve yorumlar_gizli de tek yönlü. Karşılıklılık şartı koysaydık kullanıcı
+// tercihini gerçek isteğine göre değil, bilgi kaybetme korkusuyla seçerdi.
+const GIZLILIK_ALANLARI = [
+  'izlenenler_gizli', 'yorumlar_gizli', 'yanitlar_gizli', 'cevrimici_gizli',
+];
 app.get('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    'SELECT izlenenler_gizli, yorumlar_gizli, yanitlar_gizli FROM kullanicilar WHERE id=$1',
+    `SELECT ${GIZLILIK_ALANLARI.join(', ')} FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
   res.json(rows[0] || {});
 }));
 app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const g = req.body || {};
-  // Yalnız bilinen 3 anahtar; boolean'a zorlanır (eksik = değişmez).
-  const alanlar = ['izlenenler_gizli', 'yorumlar_gizli', 'yanitlar_gizli'];
+  // Yalnız bilinen anahtarlar; boolean'a zorlanır (eksik = değişmez).
   const set = [];
   const deg = [req.kullanici.id];
-  for (const a of alanlar) {
+  for (const a of GIZLILIK_ALANLARI) {
     if (typeof g[a] === 'boolean') {
       deg.push(g[a]);
       set.push(`${a}=$${deg.length}`);
@@ -1870,7 +1888,7 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
   const { rows } = await havuz.query(
     `UPDATE kullanicilar SET ${set.join(', ')} WHERE id=$1
-     RETURNING izlenenler_gizli, yorumlar_gizli, yanitlar_gizli`,
+     RETURNING ${GIZLILIK_ALANLARI.join(', ')}`,
     deg,
   );
   res.json(rows[0]);
@@ -3632,12 +3650,28 @@ app.post('/bildirimler/okundu', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // ---------- özel mesajlar ----------
-// Sohbet listesi: partner başına son mesaj + okunmamış sayısı.
+// Ana liste / mesaj isteği ayrımı `cevrimici.js` -> sohbetleriAyir.
+//
+// ENGELLEME: bu uç eskiden de engellenenleri ayıklamıyordu (engel yalnız
+// mesaj GÖNDERİMİNDE, POST /mesajlar'da uygulanıyor). Davranış bilerek
+// DEĞİŞTİRİLMEDİ; ayrım kuralı engellemeden bağımsız çalışır.
+//
+// Sohbet listesi: partner başına son mesaj + okunmamış sayısı + çevrimiçi.
 app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT DISTINCT ON (LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id))
             m.id, m.metin, m.medya, m.icerik_tur, m.tarih, m.gonderen_id,
             k.id AS partner_id, k.kullanici_adi AS partner, k.avatar AS partner_avatar,
+            -- Çevrimiçi HESABI SUNUCUDA yapılır: gizleyen kullanıcının
+            -- son_gorulme damgası istemciye HİÇ gitmez (gizlilik tercihi
+            -- istemci tarafında uygulansaydı ham damga sızardı).
+            COALESCE(NOT k.cevrimici_gizli
+                     AND k.son_gorulme > now() - ($2 * interval '1 second'),
+                     false) AS cevrimici,
+            EXISTS (SELECT 1 FROM takipler t
+                    WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=k.id) AS takip_ediyorum,
+            EXISTS (SELECT 1 FROM mesajlar b
+                    WHERE b.gonderen_id=$1 AND b.alici_id=k.id) AS ben_yazdim,
             (SELECT count(*)::int FROM mesajlar o
              WHERE o.alici_id=$1 AND o.gonderen_id=k.id AND NOT o.okundu) AS okunmamis
      FROM mesajlar m
@@ -3645,13 +3679,22 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
        ON k.id = CASE WHEN m.gonderen_id=$1 THEN m.alici_id ELSE m.gonderen_id END
      WHERE m.gonderen_id=$1 OR m.alici_id=$1
      ORDER BY LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id), m.id DESC`,
-    [req.kullanici.id],
+    [req.kullanici.id, CEVRIMICI_ESIK_SN],
   );
   rows.sort((a, b) => b.id - a.id);
+  const { sohbetler, istekler } = sohbetleriAyir(rows);
   const toplam = await havuz.query(
     'SELECT count(*)::int AS adet FROM mesajlar WHERE alici_id=$1 AND NOT okundu',
     [req.kullanici.id]);
-  res.json({ sohbetler: rows, okunmamis: toplam.rows[0].adet });
+  res.json({
+    sohbetler,
+    istekler,
+    // Rozet SAYISI = okunmamışı olan istek sayısı (açılmış ama cevaplanmamış
+    // eski istekler rozeti şişirmesin). `okunmamis` alanı GERİYE DÖNÜK
+    // uyumluluk için TOPLAM kalır — eski istemciler onu okuyor.
+    istek_okunmamis: istekRozeti(istekler),
+    okunmamis: toplam.rows[0].adet,
+  });
 }));
 
 // Paylaşım hedefleri: mesajlaştıkların ÖNCE, sonra takip ettiklerin, sonra
@@ -3708,8 +3751,11 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
 
 // Bir kullanıcıyla mesajlaşma geçmişi; gelenler okundu işaretlenir.
 app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
+  // Çevrimiçi durumunu gizleyenin son_gorulme damgası HİÇ gönderilmez —
+  // yoksa tercih sohbeti açan herkes tarafından kolayca aşılırdı.
   const k = await havuz.query(
-    `SELECT id, kullanici_adi, avatar, son_gorulme
+    `SELECT id, kullanici_adi, avatar,
+            CASE WHEN cevrimici_gizli THEN NULL ELSE son_gorulme END AS son_gorulme
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
@@ -4858,7 +4904,9 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
 }));
 
 // Son hareketler: yorumlar, izlemeler, durum eklemeleri, yeni kayıtlar +
-// çevrimiçi kullanıcılar (son_gorulme ≤ 3 dk; yazım aralığı 20 sn).
+// çevrimiçi kullanıcılar (son_gorulme ≤ 3 dk = cevrimici.js
+// CEVRIMICI_ESIK_SN; yazım aralığı 60 sn). Burası MODERASYON görünümü:
+// cevrimici_gizli tercihi UYGULANMAZ, admin gerçek durumu görür.
 app.get('/admin/hareketler', adminKisit, sarici(async (_req, res) => {
   const [yorumlar, izlemeler, durumlar, yeniler, cevrimici] = await Promise.all([
     havuz.query(

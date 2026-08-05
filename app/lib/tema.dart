@@ -68,6 +68,14 @@ class DiziRenkler {
   static Color get metin38 => acik ? Colors.black38 : Colors.white38;
   static Color get metin24 => acik ? Colors.black26 : Colors.white24;
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
+
+  /// Çevrimiçi noktası (avatarın sağ altı). İki temada AYRI ton: koyu temada
+  /// parlak yeşil siyah zeminde patlar, açık temada aynı ton kırık beyaz
+  /// üzerinde erirdi (2.0:1) — koyulaştırılmış yeşil 3.4:1 verir; grafik
+  /// nesneler için WCAG eşiği 3:1. Nokta ayrıca zemin renginde 2 dp konturla
+  /// çevrilir: koyu/açık AVATAR fotoğrafı üstünde de sınırı görünür kalsın.
+  static Color get cevrimiciYesil =>
+      acik ? const Color(0xFF1B9E4B) : const Color(0xFF3DDC6B);
 }
 
 /// ---------------------------------------------------------------------------

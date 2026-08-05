@@ -489,4 +489,11 @@ const Map<String, String> cevirilerAm = {
   'Önerilen': 'የሚመከር',
   'Kronolojik': 'በጊዜ ቅደም ተከተል',
   'Dizi jpg aile üyesi': 'Dizi jpg የቤተሰብ አባል',
+  'Gelen mesaj istekleri': 'የገቡ የመልእክት ጥያቄዎች',
+  'Mesaj isteğin yok': 'የመልእክት ጥያቄ የለም',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'የማትከታተላቸው ሰዎች መልእክቶች እዚህ ይታያሉ።',
+  'Çevrimiçi durumumu gizle': 'የመስመር ላይ ሁኔታዬን ደብቅ',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'ሌሎች በመልእክቶች ውስጥ የመስመር ላይ ሁኔታህንና መጨረሻ የታየህበትን ጊዜ አያዩም',
 };

@@ -501,4 +501,11 @@ const Map<String, String> cevirilerKn = {
   'Önerilen': 'ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ',
   'Kronolojik': 'ಕಾಲಾನುಕ್ರಮ',
   'Dizi jpg aile üyesi': 'Dizi jpg ಕುಟುಂಬ ಸದಸ್ಯ',
+  'Gelen mesaj istekleri': 'ಬಂದ ಸಂದೇಶ ವಿನಂತಿಗಳು',
+  'Mesaj isteğin yok': 'ಸಂದೇಶ ವಿನಂತಿ ಇಲ್ಲ',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'ನೀವು ಅನುಸರಿಸದವರ ಸಂದೇಶಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.',
+  'Çevrimiçi durumumu gizle': 'ನನ್ನ ಆನ್‌ಲೈನ್ ಸ್ಥಿತಿಯನ್ನು ಮರೆಮಾಡಿ',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'ಇತರರು ಸಂದೇಶಗಳಲ್ಲಿ ನಿಮ್ಮ ಆನ್‌ಲೈನ್ ಸ್ಥಿತಿ ಮತ್ತು ಕೊನೆಯ ಬಾರಿ ಕಂಡ ಸಮಯವನ್ನು ನೋಡಲಾರರು',
 };

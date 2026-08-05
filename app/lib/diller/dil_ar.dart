@@ -494,4 +494,11 @@ const Map<String, String> cevirilerAr = {
   'Önerilen': 'موصى به',
   'Kronolojik': 'حسب الزمن',
   'Dizi jpg aile üyesi': 'Dizi jpg عضو العائلة',
+  'Gelen mesaj istekleri': 'طلبات الرسائل الواردة',
+  'Mesaj isteğin yok': 'ليس لديك طلبات رسائل',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'تظهر هنا رسائل الأشخاص الذين لا تتابعهم.',
+  'Çevrimiçi durumumu gizle': 'إخفاء حالة الاتصال',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'لن يرى الآخرون حالة اتصالك أو آخر ظهور لك في الرسائل',
 };

@@ -500,4 +500,11 @@ const Map<String, String> cevirilerBn = {
   'Önerilen': 'প্রস্তাবিত',
   'Kronolojik': 'কালানুক্রমিক',
   'Dizi jpg aile üyesi': 'Dizi jpg পরিবারের সদস্য',
+  'Gelen mesaj istekleri': 'আসা বার্তা অনুরোধ',
+  'Mesaj isteğin yok': 'কোনো বার্তা অনুরোধ নেই',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'আপনি যাদের অনুসরণ করেন না তাদের বার্তা এখানে দেখা যায়।',
+  'Çevrimiçi durumumu gizle': 'আমার অনলাইন অবস্থা লুকান',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'অন্যরা বার্তায় আপনার অনলাইন অবস্থা ও শেষ দেখার সময় দেখতে পাবে না',
 };

@@ -1361,6 +1361,14 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
       'Yanıtlarımı gizle',
       'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür',
     ),
+    // Kapatınca mesaj listesindeki yeşil nokta VE sohbet başlığındaki
+    // "son görülme ..." satırı başkalarına görünmez. TEK YÖNLÜ: sen
+    // başkalarının durumunu görmeye devam edersin (öteki üç anahtar gibi).
+    (
+      'cevrimici_gizli',
+      'Çevrimiçi durumumu gizle',
+      'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez',
+    ),
   ];
 
   @override

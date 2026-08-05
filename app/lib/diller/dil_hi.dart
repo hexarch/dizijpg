@@ -501,4 +501,11 @@ const Map<String, String> cevirilerHi = {
   'Önerilen': 'अनुशंसित',
   'Kronolojik': 'कालानुक्रमिक',
   'Dizi jpg aile üyesi': 'Dizi jpg परिवार का सदस्य',
+  'Gelen mesaj istekleri': 'आने वाले संदेश अनुरोध',
+  'Mesaj isteğin yok': 'कोई संदेश अनुरोध नहीं',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'जिन लोगों को आप फॉलो नहीं करते उनके संदेश यहाँ दिखते हैं।',
+  'Çevrimiçi durumumu gizle': 'मेरी ऑनलाइन स्थिति छिपाएँ',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'दूसरे लोग संदेशों में आपकी ऑनलाइन स्थिति और अंतिम बार देखा गया समय नहीं देख पाएंगे',
 };

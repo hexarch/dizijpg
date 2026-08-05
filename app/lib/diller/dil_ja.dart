@@ -485,4 +485,11 @@ const Map<String, String> cevirilerJa = {
   'Önerilen': 'おすすめ',
   'Kronolojik': '新着順',
   'Dizi jpg aile üyesi': 'Dizi jpg ファミリーメンバー',
+  'Gelen mesaj istekleri': '受信したメッセージリクエスト',
+  'Mesaj isteğin yok': 'メッセージリクエストはありません',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'フォローしていない人からのメッセージはここに表示されます。',
+  'Çevrimiçi durumumu gizle': 'オンライン状態を非表示にする',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      '他のユーザーはメッセージであなたのオンライン状態と最終ログイン時刻を見られません',
 };

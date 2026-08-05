@@ -497,4 +497,11 @@ const Map<String, String> cevirilerGu = {
   'Önerilen': 'ભલામણ કરેલ',
   'Kronolojik': 'કાલક્રમિક',
   'Dizi jpg aile üyesi': 'Dizi jpg પરિવારના સભ્ય',
+  'Gelen mesaj istekleri': 'આવેલી સંદેશ વિનંતીઓ',
+  'Mesaj isteğin yok': 'કોઈ સંદેશ વિનંતી નથી',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'તમે અનુસરતા ન હો તેવા લોકોના સંદેશા અહીં દેખાય છે.',
+  'Çevrimiçi durumumu gizle': 'મારી ઓનલાઇન સ્થિતિ છુપાવો',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'બીજા લોકો સંદેશામાં તમારી ઓનલાઇન સ્થિતિ અને છેલ્લે જોયાનો સમય જોઈ શકશે નહીં',
 };

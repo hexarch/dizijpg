@@ -19,7 +19,29 @@ import 'medya_goster.dart';
 import 'ortak.dart';
 import 'ses.dart';
 
+/// Çevrimiçi eşiği (saniye) — sunucudaki `CEVRIMICI_ESIK_SN` ile AYNI OLMALI.
+/// Liste satırındaki yeşil noktayı sunucu hesaplar (`cevrimici` alanı); bu
+/// sabit yalnız sohbet BAŞLIĞINDAKİ "çevrimiçi / son görülme" satırı içindir.
+/// İkisi ayrı eşik kullansaydı aynı kişi listede çevrimiçi, sohbeti açınca
+/// "son görülme 2 dk önce" görünebilirdi.
+const cevrimiciEsikSn = 180;
+
+/// Avatar boyu ve satır dolgusu — testler bu sabitleri ölçer.
+/// Satır yüksekliği = 44 (avatar) + 2*8 (dikey dolgu) = 60 dp (>= 44 dp).
+const double _avatarCap = 44;
+const double _satirDikeyDolgu = 8;
+
 /// Sohbet listesi: partner başına son mesaj + okunmamış rozeti.
+///
+/// KULLANICI İSTEĞİ (5 Ağu 2026): "Mesajlar kısmında kişilerin arasında space
+/// var ve arka planda hafif grimsi ton var ya, onları kaldır. direkt mesaj,
+/// kullanıcı adı, profil resmi olsun."
+///
+/// Eskiden her satır bir `Card` + `ListTile` idi: Card teması satır başına
+/// `EdgeInsets.symmetric(vertical: 4)` kenar boşluğu (yani satır arası 8 dp)
+/// ve `DiziRenkler.kart` zemini (koyu temada #1F1F23, ana zemin #0B0B0D'nin
+/// üstünde "hafif grimsi ton") veriyordu. İkisi de kalktı: satırlar artık
+/// zeminsiz, aralıksız, düz bir liste.
 class SohbetlerEkrani extends StatefulWidget {
   const SohbetlerEkrani({super.key});
 
@@ -29,6 +51,7 @@ class SohbetlerEkrani extends StatefulWidget {
 
 class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
   List<dynamic>? _sohbetler;
+  List<dynamic> _istekler = const [];
   String? _hata;
 
   @override
@@ -42,7 +65,11 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
     try {
       final d = await Api.get('/sohbetler');
       if (!mounted) return;
-      setState(() => _sohbetler = d['sohbetler'] as List<dynamic>);
+      setState(() {
+        _sohbetler = d['sohbetler'] as List<dynamic>;
+        // Eski sunucu `istekler` göndermez -> bölüm boş kalır, çökme olmaz.
+        _istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+      });
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
@@ -67,72 +94,319 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
         color: DiziRenkler.sari,
         onRefresh: _yukle,
         child: ListView.builder(
-          padding: const EdgeInsets.all(12),
+          // Yatay dolgu SATIRIN İÇİNDE (dokunma alanı kenara kadar sürsün),
+          // listede yalnız uçlarda küçük bir nefes payı kalır.
+          padding: const EdgeInsets.symmetric(vertical: 4),
           itemCount: _sohbetler!.length,
-          itemBuilder: (context, i) {
-            final s = _sohbetler![i] as Map<String, dynamic>;
-            final avatar = dosyaUrl(s['partner_avatar'] as String?);
-            final okunmamis = (s['okunmamis'] as int?) ?? 0;
-            return Card(
-              child: ListTile(
-                leading: KullaniciAvatari(
-                  url: avatar,
-                  kullaniciAdi: s['partner'] as String?,
-                ),
-                title: Text(
-                  '@${s['partner']}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.w700),
-                ),
-                subtitle: Builder(
-                  builder: (_) {
-                    // Metinsiz son mesaj: "·" yerine türünü söyle (ses/foto/…)
-                    final ozet = mesajOzeti(s);
-                    final yazi = Text(
-                      ozet.metin,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(color: DiziRenkler.metin54),
-                    );
-                    if (ozet.ikon == null) return yazi;
-                    return Row(
-                      children: [
-                        Icon(ozet.ikon, size: 14, color: DiziRenkler.metin54),
-                        const SizedBox(width: 4),
-                        Expanded(child: yazi),
-                      ],
-                    );
-                  },
-                ),
-                trailing: okunmamis > 0
-                    ? CircleAvatar(
-                        radius: 11,
-                        backgroundColor: DiziRenkler.sari,
-                        child: Text(
-                          '$okunmamis',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.black,
-                          ),
-                        ),
-                      )
-                    : null,
-                onTap: () async {
-                  await context.push('/sohbet/${s['partner']}');
-                  _yukle();
-                },
-              ),
-            );
-          },
+          itemBuilder: (context, i) => SohbetSatiri(
+            sohbet: _sohbetler![i] as Map<String, dynamic>,
+            onTap: () async {
+              await context.push('/sohbet/${_sohbetler![i]['partner']}');
+              _yukle();
+            },
+          ),
         ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Mesajlar'.c)),
+      appBar: AppBar(
+        title: Text('Mesajlar'.c),
+        actions: [
+          MesajIstekleriDugmesi(
+            okunmamisIstek: _istekler
+                .where((s) => ((s['okunmamis'] as int?) ?? 0) > 0)
+                .length,
+            onTap: () async {
+              await context.push('/mesaj-istekleri');
+              _yukle(); // istekten cevap verildiyse sohbet ana listeye geçer
+            },
+          ),
+        ],
+      ),
       body: govde,
+    );
+  }
+}
+
+/// Sağ üstteki "Gelen mesaj istekleri" girişi (kullanıcı isteği: yazı olsun).
+///
+/// Neden ikon değil de YAZI + ikon: kullanıcı açıkça "yazısı olsun" dedi.
+/// Genişlik 168 dp ile sınırlı ve metin İKİ SATIRA sarabiliyor — Almanca
+/// "Eingegangene Nachrichtenanfragen" gibi uzun çeviriler 360 dp'de başlığı
+/// taşırmasın diye. Dokunma alanı en az 44 dp yüksekliğinde.
+class MesajIstekleriDugmesi extends StatelessWidget {
+  final int okunmamisIstek;
+  final VoidCallback onTap;
+  const MesajIstekleriDugmesi({
+    super.key,
+    required this.okunmamisIstek,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          constraints: const BoxConstraints(minHeight: 44, maxWidth: 168),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.mark_email_unread_outlined,
+                size: 18,
+                color: DiziRenkler.sariMetin,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  'Gelen mesaj istekleri'.c,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.15,
+                    fontWeight: FontWeight.w600,
+                    color: DiziRenkler.sariMetin,
+                  ),
+                ),
+              ),
+              // Rozet KIRMIZI değil marka sarısı: istek kutusu düşük öncelikli,
+              // alarm değil. Rozet olmasaydı yeni istek hiçbir yerde
+              // görünmezdi (istekler ana listeden çıkarıldı).
+              if (okunmamisIstek > 0) ...[
+                const SizedBox(width: 6),
+                OkunmamisRozeti(adet: okunmamisIstek),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Takip edilmeyen kişilerden gelen, hiç cevaplanmamış sohbetler.
+class MesajIstekleriEkrani extends StatefulWidget {
+  const MesajIstekleriEkrani({super.key});
+
+  @override
+  State<MesajIstekleriEkrani> createState() => _MesajIstekleriEkraniState();
+}
+
+class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani> {
+  List<dynamic>? _istekler;
+  String? _hata;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    setState(() => _hata = null);
+    try {
+      final d = await Api.get('/sohbetler');
+      if (!mounted) return;
+      setState(() => _istekler = (d['istekler'] as List<dynamic>?) ?? const []);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _hata = e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget govde;
+    if (_hata != null) {
+      govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
+    } else if (_istekler == null) {
+      govde = const IskeletListe();
+    } else if (_istekler!.isEmpty) {
+      govde = BosDurum(
+        ikon: Icons.mark_email_unread_outlined,
+        baslik: 'Mesaj isteğin yok'.c,
+        ipucu: 'Takip etmediğin kişilerden gelen mesajlar burada görünür.'.c,
+      );
+    } else {
+      govde = RefreshIndicator(
+        color: DiziRenkler.sari,
+        onRefresh: _yukle,
+        child: ListView.builder(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          itemCount: _istekler!.length,
+          itemBuilder: (context, i) => SohbetSatiri(
+            sohbet: _istekler![i] as Map<String, dynamic>,
+            onTap: () async {
+              await context.push('/sohbet/${_istekler![i]['partner']}');
+              // Cevap verildiyse ya da kişi takip edildiyse sohbet ana listeye
+              // geçer ve buradan DÜŞER — o yüzden dönüşte yeniden çekilir.
+              _yukle();
+            },
+          ),
+        ),
+      );
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: Text('Gelen mesaj istekleri'.c)),
+      body: govde,
+    );
+  }
+}
+
+/// Tek sohbet satırı: [avatar (+yeşil nokta)] @ad / son mesaj [okunmamış].
+/// Kart YOK, ayraç YOK, satır arası boşluk YOK — düz liste.
+class SohbetSatiri extends StatelessWidget {
+  final Map<String, dynamic> sohbet;
+  final VoidCallback onTap;
+  const SohbetSatiri({super.key, required this.sohbet, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final okunmamis = (sohbet['okunmamis'] as int?) ?? 0;
+    final ozet = mesajOzeti(sohbet);
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: _satirDikeyDolgu,
+        ),
+        child: Row(
+          children: [
+            CevrimiciAvatar(
+              url: dosyaUrl(sohbet['partner_avatar'] as String?),
+              kullaniciAdi: sohbet['partner'] as String?,
+              cevrimici: sohbet['cevrimici'] == true,
+            ),
+            const SizedBox(width: 12),
+            // Expanded: uzun kullanıcı adı ve uzun son mesaj 360 dp'de
+            // taşmaz, tek satırda kırpılır.
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '@${sohbet['partner']}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      // Metinsiz son mesaj: türünü söyle (ses/foto/video/içerik)
+                      if (ozet.ikon != null) ...[
+                        Icon(ozet.ikon, size: 14, color: DiziRenkler.metin54),
+                        const SizedBox(width: 4),
+                      ],
+                      Expanded(
+                        child: Text(
+                          ozet.metin,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: DiziRenkler.metin54,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            if (okunmamis > 0) ...[
+              const SizedBox(width: 8),
+              OkunmamisRozeti(adet: okunmamis),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Okunmamış sayısı rozeti (sarı zemin üstüne DAİMA koyu yazı).
+class OkunmamisRozeti extends StatelessWidget {
+  final int adet;
+  const OkunmamisRozeti({super.key, required this.adet});
+
+  @override
+  Widget build(BuildContext context) => CircleAvatar(
+    radius: 11,
+    backgroundColor: DiziRenkler.sari,
+    child: Text(
+      '$adet',
+      style: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        // Sarı zemin İKİ TEMADA DA aynı olduğu için üstündeki koyu ton da
+        // sabittir (tema-duyarlı olsaydı açık temada sarı üstü beyaz olurdu).
+        color: DiziRenkler.markaKoyu,
+      ),
+    ),
+  );
+}
+
+/// 44x44 avatar; kullanıcı çevrimiçiyse SAĞ ALT köşede yeşil nokta.
+///
+/// Nokta `Stack`in SINIRLARI İÇİNDE (right:0, bottom:0 -> 30..44 aralığı):
+/// dışarı taşan `Positioned` görünür ama tıklanamaz olurdu.
+class CevrimiciAvatar extends StatelessWidget {
+  final String? url;
+  final String? kullaniciAdi;
+  final bool cevrimici;
+  const CevrimiciAvatar({
+    super.key,
+    required this.url,
+    required this.kullaniciAdi,
+    required this.cevrimici,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: _avatarCap,
+      height: _avatarCap,
+      child: Stack(
+        children: [
+          KullaniciAvatari(
+            url: url,
+            kullaniciAdi: kullaniciAdi,
+            yaricap: _avatarCap / 2,
+          ),
+          if (cevrimici)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Container(
+                key: const Key('cevrimici-nokta'),
+                width: 14,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: DiziRenkler.cevrimiciYesil,
+                  shape: BoxShape.circle,
+                  // Zemin renginde kontur: nokta koyu da olsa açık da olsa
+                  // avatar fotoğrafından ayrışır.
+                  border: Border.all(color: DiziRenkler.siyah, width: 2),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
@@ -884,8 +1158,10 @@ class _KayitNabziState extends State<_KayitNabzi>
   );
 }
 
-/// Başlıktaki durum satırı: son 60 sn içinde aktifse "çevrimiçi", değilse
-/// "son görülme ...". son_gorulme ISO zaman damgası (UTC) beklenir.
+/// Başlıktaki durum satırı: son [cevrimiciEsikSn] sn içinde aktifse
+/// "çevrimiçi", değilse "son görülme ...". son_gorulme ISO zaman damgası
+/// (UTC) beklenir; kullanıcı çevrimiçi durumunu gizliyorsa sunucu bu alanı
+/// NULL gönderir ve satır hiç çizilmez.
 class _DurumSatiri extends StatelessWidget {
   final String? sonGorulme;
   const _DurumSatiri({this.sonGorulme});
@@ -896,7 +1172,7 @@ class _DurumSatiri extends StatelessWidget {
     final an = DateTime.tryParse(sonGorulme!)?.toLocal();
     if (an == null) return const SizedBox.shrink();
     final fark = DateTime.now().difference(an);
-    final cevrimici = fark.inSeconds < 60;
+    final cevrimici = fark.inSeconds < cevrimiciEsikSn;
     final String etiket;
     if (cevrimici) {
       etiket = 'çevrimiçi'.c;

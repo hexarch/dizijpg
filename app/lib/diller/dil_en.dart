@@ -500,4 +500,11 @@ const Map<String, String> cevirilerEn = {
   'Önerilen': 'Recommended',
   'Kronolojik': 'Chronological',
   'Dizi jpg aile üyesi': 'Dizi jpg family member',
+  'Gelen mesaj istekleri': 'Incoming message requests',
+  'Mesaj isteğin yok': 'No message requests',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Messages from people you do not follow appear here.',
+  'Çevrimiçi durumumu gizle': 'Hide my online status',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Others will not see your online status or last seen time in messages',
 };

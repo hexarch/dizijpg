@@ -500,4 +500,11 @@ const Map<String, String> cevirilerId = {
   'Önerilen': 'Direkomendasikan',
   'Kronolojik': 'Kronologis',
   'Dizi jpg aile üyesi': 'Anggota keluarga Dizi jpg',
+  'Gelen mesaj istekleri': 'Permintaan pesan masuk',
+  'Mesaj isteğin yok': 'Tidak ada permintaan pesan',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Pesan dari orang yang tidak kamu ikuti muncul di sini.',
+  'Çevrimiçi durumumu gizle': 'Sembunyikan status online saya',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Orang lain tidak akan melihat status online dan terakhir dilihat kamu di pesan',
 };

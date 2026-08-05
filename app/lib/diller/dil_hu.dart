@@ -503,4 +503,11 @@ const Map<String, String> cevirilerHu = {
   'Önerilen': 'Ajánlott',
   'Kronolojik': 'Időrendi',
   'Dizi jpg aile üyesi': 'Dizi jpg családtag',
+  'Gelen mesaj istekleri': 'Beérkezett üzenetkérelmek',
+  'Mesaj isteğin yok': 'Nincs üzenetkérelmed',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Az általad nem követett emberek üzenetei itt jelennek meg.',
+  'Çevrimiçi durumumu gizle': 'Online állapotom elrejtése',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Mások nem látják az online állapotodat és az utolsó látogatásod az üzenetekben',
 };

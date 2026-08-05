@@ -503,4 +503,11 @@ const Map<String, String> cevirilerFil = {
   'Önerilen': 'Inirerekomenda',
   'Kronolojik': 'Ayon sa oras',
   'Dizi jpg aile üyesi': 'Kasapi ng pamilyang Dizi jpg',
+  'Gelen mesaj istekleri': 'Mga natanggap na hiling na mensahe',
+  'Mesaj isteğin yok': 'Walang hiling na mensahe',
+  'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
+      'Lumalabas dito ang mga mensahe mula sa mga taong hindi mo sinusundan.',
+  'Çevrimiçi durumumu gizle': 'Itago ang aking online status',
+  'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
+      'Hindi makikita ng iba ang iyong online status at huling nakita sa mga mensahe',
 };

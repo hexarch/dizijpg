@@ -6,7 +6,7 @@ WORKDIR /app
 RUN apk add --no-cache ffmpeg postgresql16-client
 COPY package.json ./
 RUN npm install --omit=dev
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js admin.html ./
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js admin.html ./
 # Kitaplık durumu geriye dönük düzeltme aracı (docker exec ... node araclar/...)
 COPY araclar/durum_duzelt.js ./araclar/
 # dizi.jpg AI bakım araçları: imaja girsin ki her yeniden derlemede
