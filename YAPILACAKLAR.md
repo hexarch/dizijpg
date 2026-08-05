@@ -34,9 +34,13 @@ kaydırınca en sağda o mesajın saati ve dakikası yazacak."
   (`Semantics(label: saat)` → "selam / 21:45"). Uzun basma eylemi korundu.
 - 🚀 **Renk:** saat `DiziRenkler.metin70` (sabit beyaz/siyah YOK), tabular
   rakamlar; iki temada da okunur.
-- 🚀 **Kanıt:** `app/test/sohbet_saat_sutunu_test.dart` — 13 test (gizli saat,
-  hizalama, geri dönüş, tavan, dikey kaydırma, balon üstü sürükleme, kenar
-  payı, gönderilen+alınan, 7 balon türü, ekran okuyucu, 360 dp taşma, tema).
+- 🚀 **Web/masaüstü:** tanıcının `supportedDevices`i boş bırakıldı → FARE ile
+  basılı tutup sürükleme ve TRACKPAD iki parmak yatay kaydırma da açıyor
+  (ikisi de testle kilitli).
+- 🚀 **Kanıt:** `app/test/sohbet_saat_sutunu_test.dart` — 15 test (gizli saat,
+  hizalama, geri dönüş, tavan, dikey kaydırma, balon üstü sürükleme, fare,
+  trackpad, kenar payı, gönderilen+alınan, 7 balon türü, ekran okuyucu,
+  360 dp taşma, tema).
   Değişiklik geçici geri alındığında 10/13 ve (ikinci geri almada) 5/13 test
   kırmızıya döndü.
 

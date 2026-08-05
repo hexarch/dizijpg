@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
 import 'package:dizijpg/tema.dart';
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -326,6 +327,46 @@ void main() {
     expect(find.byKey(const Key('mesaj-saat-2')), findsOneWidget);
     await jest2.up();
     await tester.pumpAndSettle();
+    await _kapat(tester);
+  });
+
+  testWidgets('WEB/masaüstü: FARE ile basılı tutup sürükleyince de açılır', (
+    tester,
+  ) async {
+    // Tarayıcıda parmak yok: kullanıcı sol tuşa basılı tutup sola sürükler.
+    // Tanıcının `supportedDevices`i boş bırakıldığı için fare de kabul edilir.
+    await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
+
+    final fare = await tester.startGesture(
+      const Offset(200, 400),
+      kind: PointerDeviceKind.mouse,
+    );
+    await tester.pump(const Duration(milliseconds: 16));
+    await fare.moveBy(const Offset(-120, 0));
+    await tester.pump();
+    expect(_saat(1), findsOneWidget);
+
+    await fare.up();
+    await tester.pumpAndSettle();
+    expect(_saat(1), findsNothing); // tuş bırakılınca kapanır
+    await _kapat(tester);
+  });
+
+  testWidgets('WEB/masaüstü: TRACKPAD iki parmak yatay kaydırma da açar', (
+    tester,
+  ) async {
+    await _kur(tester, [_mesaj(1, metin: 'selam', benim: false)]);
+
+    final iz = await tester.createGesture(kind: PointerDeviceKind.trackpad);
+    await iz.panZoomStart(const Offset(200, 400));
+    await tester.pump(const Duration(milliseconds: 16));
+    await iz.panZoomUpdate(const Offset(200, 400), pan: const Offset(-120, 0));
+    await tester.pump();
+    expect(_saat(1), findsOneWidget);
+
+    await iz.panZoomEnd();
+    await tester.pumpAndSettle();
+    expect(_saat(1), findsNothing);
     await _kapat(tester);
   });
 
