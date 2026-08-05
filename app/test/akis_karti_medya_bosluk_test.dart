@@ -15,32 +15,55 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// AKIŞ KARTINDA MEDYA BAŞLIĞA YAKLAŞTI (kullanıcı isteği, 4 Ağu 2026):
-/// "akıştaki gönderilerde gönderinin resmini veya videosunu biraz daha yukarı
-/// çekip neredeyse dizi filmin kapak fotoğrafına dayayabilir misin".
+/// MEDYA DİZİ ADINA DAYANDI — 4 Ağu'daki YANLIŞ ANLAŞILMIŞ düzeltme geri
+/// alındı (kullanıcı, 5 Ağu 2026):
+///   "sen gidip dizi film kapağını aşağı çekmişsin, tam tersi olmalıydı.
+///    görsel veya videoyu yukarı çekip dizi adına dayaman gerekiyordu"
 ///
-/// BOŞLUĞUN GERÇEK KAYNAĞI TEK BİR SizedBox DEĞİLDİ:
-///   • Başlık satırı iki satır yüksekliğindedir (kullanıcı adı 44/48 dp +
-///     içerik adı 44 dp = 88/92 dp), kapak ise 60 dp. Row kapağı DİKEY
-///     ORTALADIĞI için kapağın ALTINDA 16 dp ölü alan kalıyordu.
-///   • Üstüne başlık ile medya arasındaki 6 dp'lik SizedBox biniyordu.
-///   → kapak ile medya arası 22 dp.
-/// Kapak artık Stack içinde başlığın ALT kenarına yaslı; geriye yalnız 4 dp
-/// nefes payı kaldı.
+/// 4 AĞU'DA NE YAPILMIŞTI: kapak `Stack` + `Positioned(bottom: 0)` ile başlığın
+/// ALT kenarına yaslanmış (eskiden Row onu DİKEY ORTALIYORDU), ayırıcı 6 → 4 dp
+/// olmuştu. Kapak ile medya arası 22 → 4 dp indi ama İÇERİK ADI ile medya arası
+/// 31 → 29 dp'de takıldı: kapak aşağı inmişti, medya yukarı ÇIKMAMIŞTI.
 ///
-/// İÇERİK ADI ile medya arasındaki 29 dp'nin 25 dp'si BOŞLUK DEĞİL, içerik
-/// adının 44 dp'lik DOKUNMA KUTUSUDUR (metin 19 dp, kutu 44 dp, metin kutunun
-/// üstüne yaslı). Orayı kısaltmak dokunma hedefini 44 dp'nin altına indirirdi;
-/// erişilebilirlik feda edilmedi — o alana dokunmak içerik sayfasını açar
-/// ("o alana dokunmak İÇERİK SAYFASINI açar" testi bunu kanıtlar).
-const double _oncekiKapakBosluk = 22.0;
-const double _yeniKapakBosluk = 4.0;
-const double _oncekiAdBosluk = 31.0;
-const double _yeniAdBosluk = 29.0;
+/// ŞİMDİ: kapak yine satırın içinde ve DİKEY ORTALI; medyayı yukarı çeken şey
+/// başlığın SON satırının kısalmasıdır (içerik adının dokunma kutusu 44 → 24
+/// dp, rozet de aynı kutuya indi).
+///
+/// ÜÇ İSTEK AYNI ANDA SAĞLANAMAZDI — ölçülmüş çakışma:
+///   başlık = kullanıcı adı satırı (44/48 dp) + içerik adı satırı.
+///   İçerik adının metni 19 dp; kutusu 44 dp ve metin ÜSTE yaslı olduğu için
+///   metnin ALTINDA 25 dp dokunulabilir ama BOŞ görünen pay kalıyordu.
+///   • Kutuyu 44'te tutup metni kutunun ALTINA yaslamak → kullanıcı adı ile
+///     içerik adı arası 11,5 → 36,5 dp olurdu (3 Ağu'da kullanıcı bunu
+///     yarıya indirtmişti; bozulurdu).
+///   • Kutuyu 44'te tutup medyanın ÜSTÜNE bindirmek → medyanın sol üst
+///     şeridindeki dokunuş yutulur, Reels yerine içerik sayfası açılırdı
+///     (hit-test tuzağı). "medyanın üst şeridi MEDYANINDIR" testi bunun
+///     yapılmadığını kanıtlar.
+///   • Kalan tek yol kutuyu kısaltmaktı: 44 (WCAG SC 2.5.5 AAA) yerine
+///     24 dp (WCAG 2.2 SC 2.5.8 AA normatif tabanı). Kutu ALÇALDI ama
+///     genişliği 44 dp'nin üstünde kaldı ve aynı sayfaya giden 50x60 dp'lik
+///     kapak posteri "eşdeğer hedef" olarak duruyor (SC 2.5.8 istisnası).
+///     Aşağıdaki "erişilebilirlik bedeli" grubu bunların hepsini ölçer.
+///
+/// ÖLÇÜM (400 dp ekran, deneme yazı tipi):
+///   içerik adı ↔ medya : 29,0 → 9,0 dp   (asıl hedef)
+///   kapak ↔ medya      : 4,0 → 10,0 dp   (kapak ortaya döndüğü için ARTTI;
+///                                          4 Ağu ÖNCESİ 22,0 dp idi)
+///   kullanıcı adı ↔ içerik adı : 13,5 dp — DEĞİŞMEDİ
+const double _oncekiAdBosluk = 29.0;
+const double _yeniAdBosluk = 9.0;
 
-/// Takip düğmesiz kartta (düğmenin 48 dp'lik kutusu satırı şişirmez) önceki
-/// değer 20 dp idi; yeni değer düğmeliyle AYNI 4 dp.
-const double _oncekiKapakBoslukDugmesiz = 20.0;
+/// Kapak ↔ medya: kapak dikey ortaya döndüğü için 4 → 10 dp (düğmesiz kartta
+/// 8 dp). Yine de 4 Ağu ÖNCESİNDEN (22 / 20 dp) çok daha dar: başlığın son
+/// satırı kısaldıkça ortalanan kapak da aşağı iner.
+const double _yeniKapakBosluk = 10.0;
+const double _yeniKapakBoslukDugmesiz = 8.0;
+const double _dortAgustusOncesiKapakBosluk = 22.0;
+
+/// İçerik adının ve bölüm rozetinin dokunma kutusu (bkz. akis.dart
+/// `_icerikAdiDokunmaYuksekligi`). WCAG 2.2 SC 2.5.8 (AA) tabanı 24x24.
+const double _adKutusu = 24.0;
 
 const _benimId = 7;
 
@@ -154,79 +177,124 @@ Finder _kapak() => find
     .first;
 Finder _medya() => find.byType(AkisMedya);
 
-/// (1) Kapağın ALT kenarı ↔ medyanın ÜST kenarı.
+/// Kapağın DOKUNMA kutusu: dolgu InkWell'in içinde olduğu için 42 değil 50 dp.
+Finder _kapakDokunma() =>
+    find.ancestor(of: _kapak(), matching: find.byType(InkWell)).first;
+
+/// İçerik adının dokunma kutusu.
+Finder _adKutusuF([String ad = 'Posterli Dizi']) => find
+    .ancestor(of: find.text(ad), matching: find.byType(ConstrainedBox))
+    .first;
+
+/// (1) ASIL HEDEF: içerik adı METNİNİN alt kenarı ↔ medyanın üst kenarı.
+double _adBosluk(WidgetTester tester, [String ad = 'Posterli Dizi']) =>
+    tester.getRect(_medya()).top - tester.getRect(find.text(ad)).bottom;
+
+/// (2) Kapağın ALT kenarı ↔ medyanın ÜST kenarı.
 double _kapakBosluk(WidgetTester tester) =>
     tester.getRect(_medya()).top - tester.getRect(_kapak()).bottom;
 
-/// (2) İçerik adı satırının ALT kenarı ↔ medyanın ÜST kenarı.
-double _adBosluk(WidgetTester tester, [String ad = 'Posterli Dizi']) =>
-    tester.getRect(_medya()).top - tester.getRect(find.text(ad)).bottom;
+/// (3) Kullanıcı adının altı ↔ içerik adının üstü (3 Ağu'da kilitlenen değer).
+double _satirBoslugu(WidgetTester tester, [String ad = 'Posterli Dizi']) =>
+    tester.getRect(find.text(ad)).top -
+    tester.getRect(find.text('@thelostvibe0').first).bottom;
 
 void main() {
   setUp(() {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
-  group('(1) Kapak ↔ medya: $_oncekiKapakBosluk → $_yeniKapakBosluk dp', () {
+  group('(1) İçerik adı ↔ medya: $_oncekiAdBosluk → $_yeniAdBosluk dp', () {
     testWidgets('bölüm gönderisi (Takip Et düğmeli)', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      expect(_kapakBosluk(tester), _yeniKapakBosluk);
-      expect(_yeniKapakBosluk, lessThan(_oncekiKapakBosluk));
+      expect(_adBosluk(tester), _yeniAdBosluk);
+      expect(_yeniAdBosluk, lessThan(_oncekiAdBosluk));
     });
 
-    testWidgets(
-      'takip düğmesiz kart: $_oncekiKapakBoslukDugmesiz → $_yeniKapakBosluk dp',
-      (tester) async {
-        await _kur(tester, _gonderi(takipEdiyorum: true));
-        expect(find.text('Takip Et'), findsNothing);
-        expect(_kapakBosluk(tester), _yeniKapakBosluk);
-        expect(_yeniKapakBosluk, lessThan(_oncekiKapakBoslukDugmesiz));
-      },
-    );
+    testWidgets('takip düğmesiz kartta da aynı', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: true));
+      expect(find.text('Takip Et'), findsNothing);
+      expect(_adBosluk(tester), _yeniAdBosluk);
+    });
 
     testWidgets('profil kartında (takip alanı yok) da aynı', (tester) async {
       await _kur(tester, _gonderi(takipEdiyorum: null));
-      expect(_kapakBosluk(tester), _yeniKapakBosluk);
+      expect(_adBosluk(tester), _yeniAdBosluk);
     });
 
     testWidgets('film gönderisinde de aynı', (tester) async {
       await _kur(tester, _gonderi(tur: 'movie', tmdbId: 500));
-      expect(_kapakBosluk(tester), _yeniKapakBosluk);
+      expect(_adBosluk(tester, 'Test Film'), _yeniAdBosluk);
     });
 
-    testWidgets('NEFES PAYI: sıfır DEĞİL, kapak medyaya değmiyor', (
+    testWidgets('NEFES PAYI: sıfır DEĞİL, metin medyaya yapışmıyor', (
       tester,
     ) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       expect(
-        _kapakBosluk(tester),
+        _adBosluk(tester),
         greaterThan(0),
-        reason: 'sıfır olsaydı kapak ile gönderi görseli tek görsele karışırdı',
+        reason: 'sıfır olsaydı yazı görselin kenarına yapışık okunurdu',
       );
       expect(
-        tester.getRect(_kapak()).bottom,
+        tester.getRect(_adKutusuF()).bottom,
         lessThanOrEqualTo(tester.getRect(_medya()).top),
-        reason: 'kapak medyanın üstüne binmemeli',
+        reason: 'adın dokunma kutusu medyanın üstüne BİNMEMELİ',
       );
     });
 
-    testWidgets('kapak artık başlığın ALT kenarına yaslı (ortalı değil)', (
+    testWidgets('boşluğun tamamı görünür boşluk: ölü dokunma payı 5 dp', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final kutu = tester.getRect(_adKutusuF());
+      final metin = tester.getRect(find.text('Posterli Dizi'));
+      // Eskiden metnin altında 25 dp'lik kutu payı vardı; artık 5 dp.
+      expect(kutu.bottom - metin.bottom, 5.0);
+      // Medya bu kutunun hemen altından başlar: arada başka boşluk YOK.
+      expect(tester.getRect(_medya()).top - kutu.bottom, 4.0);
+    });
+  });
+
+  group('(2) Kapak DİKEY ORTALI konumuna DÖNDÜ', () {
+    testWidgets('kapağın üstündeki ve altındaki pay EŞİT (ortalı)', (
       tester,
     ) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       final kapak = tester.getRect(_kapak());
-      final ad = tester.getRect(find.text('Posterli Dizi'));
-      // Eskiden kapak dikey ORTALIYDI: alt kenarı içerik adı satırının
-      // ortalarında kalıyordu. Artık o satırın da ALTINA iniyor.
+      final ad = tester.getRect(find.text('@thelostvibe0').first);
+      // Başlık bloğunun sınırları: kartın üst dolgusu 8 dp, altı ad kutusu.
+      final baslikUst = tester.getRect(find.byType(Card)).top + 8;
+      final baslikAlt = tester.getRect(_adKutusuF()).bottom;
       expect(
-        kapak.bottom,
-        greaterThan(ad.bottom),
-        reason: 'kapağın altı içerik adının altından da aşağıda olmalı',
+        (kapak.top - baslikUst) - (baslikAlt - kapak.bottom),
+        closeTo(0, 0.01),
+        reason: '4 Ağu\'da alta yaslanmıştı; kullanıcı "tam tersi" dedi',
       );
-      expect(
-        kapak.top,
-        greaterThan(tester.getRect(find.byType(Card)).top + 30),
-      );
+      // Ortalıysa kapağın üstü kullanıcı adı satırının içindedir.
+      expect(kapak.top, lessThan(ad.bottom));
+    });
+
+    testWidgets('kapağın altı artık içerik adının ALTINDA DEĞİL', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final kapak = tester.getRect(_kapak());
+      final adKutusu = tester.getRect(_adKutusuF());
+      // 4 Ağu düzeninde kapak.bottom == adKutusu.bottom idi (alta yaslıydı).
+      expect(kapak.bottom, lessThan(adKutusu.bottom));
+    });
+
+    testWidgets('kapak ↔ medya: $_yeniKapakBosluk dp (4 Ağu öncesi '
+        '$_dortAgustusOncesiKapakBosluk dp)', (tester) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      expect(_kapakBosluk(tester), _yeniKapakBosluk);
+      expect(_yeniKapakBosluk, lessThan(_dortAgustusOncesiKapakBosluk));
+    });
+
+    testWidgets('düğmesiz kartta $_yeniKapakBoslukDugmesiz dp', (tester) async {
+      await _kur(tester, _gonderi(takipEdiyorum: true));
+      expect(_kapakBosluk(tester), _yeniKapakBoslukDugmesiz);
     });
 
     testWidgets('kapak 42x60 kaldı ve hâlâ sağ uçta', (tester) async {
@@ -238,73 +306,159 @@ void main() {
       // Soldan sağa sıra bozulmadı: içerik adı → ··· → kapak
       expect(menu.center.dx, greaterThan(ad.center.dx));
       expect(kapak.left, greaterThanOrEqualTo(menu.right));
-      // Kartın sağ kenarından 12 dp içeride (eski konumla birebir aynı)
+      // Kartın sağ kenarından 12 dp içeride (4 Ağu öncesiyle birebir aynı)
       expect(tester.getRect(find.byType(Card)).right - kapak.right, 12);
     });
   });
 
-  group('(2) İçerik adı ↔ medya: $_oncekiAdBosluk → $_yeniAdBosluk dp', () {
-    testWidgets('bölüm gönderisi (Takip Et düğmeli)', (tester) async {
+  group('(3) Kullanıcı adı ↔ içerik adı boşluğu DEĞİŞMEDİ', () {
+    testWidgets('düğmeli kartta 13,5 dp', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      expect(_adBosluk(tester), _yeniAdBosluk);
-      expect(_yeniAdBosluk, lessThan(_oncekiAdBosluk));
+      expect(_satirBoslugu(tester), 13.5);
     });
 
-    testWidgets('takip düğmesiz kartta da aynı', (tester) async {
+    testWidgets('düğmesiz kartta 11,5 dp', (tester) async {
       await _kur(tester, _gonderi(takipEdiyorum: true));
-      expect(_adBosluk(tester), _yeniAdBosluk);
+      expect(_satirBoslugu(tester), 11.5);
     });
 
-    testWidgets('kalan boşluğun 25 dp\'si içerik adının DOKUNMA KUTUSU', (
-      tester,
-    ) async {
+    testWidgets('içerik adı metninin yeri hiç oynamadı', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      final kutu = tester.getRect(
-        find
-            .ancestor(
-              of: find.text('Posterli Dizi'),
-              matching: find.byType(ConstrainedBox),
-            )
-            .first,
-      );
-      final metin = tester.getRect(find.text('Posterli Dizi'));
-      expect(kutu.height, greaterThanOrEqualTo(44));
-      // Metnin ALTINDAKİ alan dokunulabilir: boş piksel değil.
-      expect(kutu.bottom - metin.bottom, greaterThan(20));
-      // Medya bu kutunun hemen altından başlar: arada başka boşluk YOK.
-      expect(tester.getRect(_medya()).top - kutu.bottom, _yeniKapakBosluk);
-    });
-
-    testWidgets('o alana dokunmak İÇERİK SAYFASINI açar (ölü alan değil)', (
-      tester,
-    ) async {
-      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      final metin = tester.getRect(find.text('Posterli Dizi'));
-      // Metnin 15 dp ALTINA dokun: kutunun içi
-      await tester.tapAt(Offset(metin.center.dx, metin.bottom + 15));
-      await tester.pumpAndSettle();
-      expect(_sonRota, '/icerik/tv/900');
+      // 4 Ağu düzeninde de metin tam buradaydı: kısalan kutunun ALTIDIR,
+      // metin AŞAĞI/YUKARI kaymadı — yalnız medya yukarı geldi.
+      expect(tester.getRect(find.text('Posterli Dizi')).top, 56.0);
     });
   });
 
-  group('Kapak Stack\'e taşındı ama HÂLÂ TIKLANIR', () {
-    testWidgets('bölüm gönderisinde kapak → bölüm sayfası', (tester) async {
+  group('ERİŞİLEBİLİRLİK BEDELİ: 44 → 24 dp ve telafisi', () {
+    testWidgets('içerik adının kutusu $_adKutusu dp (WCAG 2.2 AA tabanı)', (
+      tester,
+    ) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      await tester.tap(_kapak());
-      await tester.pumpAndSettle();
-      expect(_sonRota, '/dizi/900/sezon/4/bolum/6');
+      final kutu = tester.getSize(_adKutusuF());
+      expect(kutu.height, _adKutusu);
+      expect(
+        kutu.height,
+        greaterThanOrEqualTo(24),
+        reason: 'WCAG 2.2 SC 2.5.8 (AA) normatif taban 24x24',
+      );
     });
 
-    testWidgets('dizi gönderisinde kapak → içerik sayfası', (tester) async {
+    testWidgets('kutu ALÇALDI ama 44x44\'ten GENİŞ: alan küçülmedi', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final kutu = tester.getSize(_adKutusuF());
+      expect(kutu.width, greaterThanOrEqualTo(44));
+      expect(
+        kutu.width * kutu.height,
+        greaterThan(44 * 44),
+        reason: 'daralan tek boyut yükseklik; hedefin ALANI 44x44\'ün üstünde',
+      );
+    });
+
+    testWidgets('rozet de aynı kutuya indi ama genişliği 44 dp\'nin üstünde', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final rozet = tester.getSize(find.byType(BolumRozeti));
+      expect(rozet.height, _adKutusu);
+      expect(rozet.width, greaterThanOrEqualTo(44));
+    });
+
+    testWidgets('TELAFİ: kapağın dokunma alanı 50x60 (44 dp kuralına uyar)', (
+      tester,
+    ) async {
       await _kur(tester, _gonderi());
-      await tester.tap(_kapak());
+      final dokunma = tester.getSize(_kapakDokunma());
+      expect(dokunma.width, greaterThanOrEqualTo(44));
+      expect(dokunma.height, greaterThanOrEqualTo(44));
+      expect(dokunma, const Size(50, 60));
+    });
+
+    testWidgets('TELAFİ: dizi gönderisinde kapak da İÇERİK SAYFASINA gider '
+        '(eşdeğer hedef)', (tester) async {
+      await _kur(tester, _gonderi());
+      await tester.tap(_kapakDokunma());
       await tester.pumpAndSettle();
       expect(_sonRota, '/icerik/tv/900');
     });
 
-    testWidgets('kapağın EN ALT pikseli de tıklanır (Stack sınırı içinde)', (
+    testWidgets('kullanıcı adının kutusu 44 dp KALDI (dokunulmadı)', (
       tester,
     ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      expect(
+        tester
+            .getSize(
+              find
+                  .ancestor(
+                    of: find.text('@thelostvibe0').first,
+                    matching: find.byType(ConstrainedBox),
+                  )
+                  .first,
+            )
+            .height,
+        greaterThanOrEqualTo(44),
+      );
+    });
+
+    testWidgets('yorum listelerindeki rozet 44x44 KALDI (varsayılan)', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp.router(
+          routerConfig: GoRouter(
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (_, _) => const Scaffold(
+                  body: BolumRozeti(diziId: 1, sezon: 2, bolum: 3),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+      final rozet = tester.getSize(find.byType(BolumRozeti));
+      expect(
+        rozet.height,
+        greaterThanOrEqualTo(44),
+        reason: 'kısaltma YALNIZ akış kartının başlığına özeldir',
+      );
+    });
+  });
+
+  group('HİT-TEST: kimin pikseli kimin', () {
+    testWidgets('metnin ALTINDAKİ 5 dp hâlâ içerik sayfasını açar', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final metin = tester.getRect(find.text('Posterli Dizi'));
+      await tester.tapAt(Offset(metin.center.dx, metin.bottom + 2));
+      await tester.pumpAndSettle();
+      expect(_sonRota, '/icerik/tv/900');
+    });
+
+    testWidgets('medyanın ÜST ŞERİDİ MEDYANINDIR (ad kutusu yutmuyor)', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      final metin = tester.getRect(find.text('Posterli Dizi'));
+      final medya = tester.getRect(_medya());
+      // Adın tam altındaki x'te, medyanın en üst pikseline dokun.
+      await tester.tapAt(Offset(metin.center.dx, medya.top + 2));
+      await tester.pumpAndSettle();
+      expect(
+        _sonRota,
+        isNull,
+        reason:
+            'ad kutusu medyaya bindirilseydi burada içerik sayfası açılırdı '
+            '— medyanın dokunuşu yutulmuş olurdu',
+      );
+    });
+
+    testWidgets('kapağın EN ALT pikseli de tıklanır', (tester) async {
       await _kur(tester, _gonderi());
       final kapak = tester.getRect(_kapak());
       await tester.tapAt(Offset(kapak.center.dx, kapak.bottom - 1));
@@ -316,11 +470,27 @@ void main() {
       );
     });
 
+    testWidgets('bölüm gönderisinde kapak → bölüm sayfası', (tester) async {
+      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
+      await tester.tap(_kapakDokunma());
+      await tester.pumpAndSettle();
+      expect(_sonRota, '/dizi/900/sezon/4/bolum/6');
+    });
+
     testWidgets('rozet dokunuşu bozulmadı', (tester) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       await tester.tap(find.byType(BolumRozeti));
       await tester.pumpAndSettle();
       expect(_sonRota, '/dizi/900/sezon/4/bolum/6');
+    });
+
+    testWidgets('içerik adının metnine dokunmak da içerik sayfasını açar', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(tur: 'movie', tmdbId: 500));
+      await tester.tap(find.text('Test Film'));
+      await tester.pumpAndSettle();
+      expect(_sonRota, '/icerik/movie/500');
     });
   });
 
@@ -342,8 +512,13 @@ void main() {
       final bosluk =
           tester.getRect(find.byType(EtiketliMetin)).top -
           tester.getRect(_kapak()).bottom;
-      expect(bosluk, 8, reason: 'metin bloğunun kendi 8 dp üst dolgusu');
       expect(bosluk, greaterThan(0));
+      // Ad kutusunun altı + metin bloğunun kendi 8 dp üst dolgusu
+      expect(
+        tester.getRect(find.byType(EtiketliMetin)).top -
+            tester.getRect(_adKutusuF()).bottom,
+        8,
+      );
     });
 
     testWidgets('metinsiz ve medyasız kartta da hata yok', (tester) async {
@@ -373,25 +548,22 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets(
-      'perde açılınca medya yine kapağın $_yeniKapakBosluk dp altında',
-      (tester) async {
-        await _kur(tester, _gonderi(spoiler: true, sezon: 4, bolum: 6));
-        await tester.tap(find.text('Spoiler olabilir — dokun ve gör'));
-        await tester.pump();
-        expect(_medya(), findsOneWidget);
-        expect(_kapakBosluk(tester), _yeniKapakBosluk);
-        expect(_adBosluk(tester), _yeniAdBosluk);
-      },
-    );
+    testWidgets('perde açılınca medya yine adın $_yeniAdBosluk dp altında', (
+      tester,
+    ) async {
+      await _kur(tester, _gonderi(spoiler: true, sezon: 4, bolum: 6));
+      await tester.tap(find.text('Spoiler olabilir — dokun ve gör'));
+      await tester.pump();
+      expect(_medya(), findsOneWidget);
+      expect(_adBosluk(tester), _yeniAdBosluk);
+      expect(_kapakBosluk(tester), _yeniKapakBosluk);
+    });
   });
 
   group('KAPAKSIZ içerikte düzen bozulmadı', () {
-    testWidgets('kapak yoksa medya başlığın hemen altında', (tester) async {
+    testWidgets('kapak yoksa medya yine adın hemen altında', (tester) async {
       await _kur(tester, _gonderi(tmdbId: 100));
-      final ad = tester.getRect(find.text('Kapaksız Dizi'));
-      final medya = tester.getRect(_medya());
-      expect(medya.top - ad.bottom, _yeniAdBosluk);
+      expect(_adBosluk(tester, 'Kapaksız Dizi'), _yeniAdBosluk);
       // Kapak yokken sağda ayrılan 50 dp'lik yer de YOK: menü sağ uca yaklaşır
       final menu = tester.getRect(find.byIcon(Icons.more_vert));
       expect(
@@ -412,35 +584,14 @@ void main() {
       expect(medya.width, 400);
     });
 
-    testWidgets('dokunma hedefleri hâlâ >= 44 dp', (tester) async {
-      await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      for (final metin in [
-        find.text('Posterli Dizi'),
-        find.text('@thelostvibe0').first,
-      ]) {
-        expect(
-          tester
-              .getSize(
-                find
-                    .ancestor(of: metin, matching: find.byType(ConstrainedBox))
-                    .first,
-              )
-              .height,
-          greaterThanOrEqualTo(44),
-        );
-      }
-      final rozet = tester.getSize(find.byType(BolumRozeti));
-      expect(rozet.height, greaterThanOrEqualTo(44));
-      expect(rozet.width, greaterThanOrEqualTo(44));
-    });
-
-    testWidgets('360 dp genişlikte taşma yok, mesafe aynı', (tester) async {
+    testWidgets('360 dp genişlikte taşma yok, mesafeler aynı', (tester) async {
       final y = _gonderi(sezon: 12, bolum: 24)
         ..['kullanici_adi'] = 'cokuzunbirkullaniciadi';
       await _kur(tester, y, ekran: const Size(360, 1200));
       expect(tester.takeException(), isNull);
       expect(find.text('S12B24'), findsOneWidget);
       expect(find.text('Takip Et'), findsOneWidget);
+      expect(_adBosluk(tester), _yeniAdBosluk);
       expect(_kapakBosluk(tester), _yeniKapakBosluk);
       final kapak = tester.getRect(_kapak());
       expect(kapak.right, 360 - 12);
@@ -452,9 +603,10 @@ void main() {
       );
     });
 
-    testWidgets('kart makul yükseklikte kaldı (kısaldı)', (tester) async {
+    testWidgets('kart 4 Ağu düzeninden de KISALDI', (tester) async {
       await _kur(tester, _gonderi(medya: const []));
-      expect(tester.getSize(find.byType(Card)).height, lessThan(190.0));
+      // 4 Ağu düzeninde 190 dp'nin altındaydı; 20 dp'lik ölü pay gidince daha da
+      expect(tester.getSize(find.byType(Card)).height, lessThan(170.0));
     });
   });
 }

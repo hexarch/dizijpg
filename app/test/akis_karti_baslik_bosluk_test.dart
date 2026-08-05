@@ -305,19 +305,31 @@ void main() {
     });
   });
 
-  group('Dokunma hedefleri 44 dp', () {
-    testWidgets('içerik adının dokunma kutusu en az 44 dp', (tester) async {
+  group('Dokunma hedefleri', () {
+    // İÇERİK ADI ve ROZET 5 Ağu 2026'da 44 → 24 dp'ye İNDİ. Sebebi ve
+    // ölçümü akis_karti_medya_bosluk_test.dart'ta: başlığın SON satırı
+    // 44 dp kaldıkça medya, içerik adından 25 dp uzakta kalıyordu
+    // (kullanıcı: "görsel veya videoyu yukarı çekip dizi adına dayaman
+    // gerekiyordu"). 24 dp, WCAG 2.2 SC 2.5.8 (AA) normatif tabanıdır;
+    // 44 dp AAA'dır (SC 2.5.5). İki hedefin de GENİŞLİĞİ 44 dp'nin
+    // üstünde kaldı ve aynı sayfalara giden 50x60 dp'lik kapak posteri
+    // eşdeğer hedef olarak duruyor.
+    testWidgets('içerik adının dokunma kutusu en az 24 dp (WCAG AA)', (
+      tester,
+    ) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
-      expect(
-        _dokunmaKutusu(tester, _icerikAdi()).height,
-        greaterThanOrEqualTo(44),
-      );
+      final kutu = _dokunmaKutusu(tester, _icerikAdi());
+      expect(kutu.height, greaterThanOrEqualTo(24));
+      // Yükseklikten verilen, genişlikten geri alındı: alan 44x44'ün üstünde
+      expect(kutu.width, greaterThanOrEqualTo(44));
     });
 
-    testWidgets('S4B6 rozetinin dokunma kutusu en az 44x44 dp', (tester) async {
+    testWidgets('S4B6 rozeti en az 24 dp yüksek ve 44 dp geniş', (
+      tester,
+    ) async {
       await _kur(tester, _gonderi(sezon: 4, bolum: 6));
       final kutu = tester.getSize(find.byType(BolumRozeti));
-      expect(kutu.height, greaterThanOrEqualTo(44));
+      expect(kutu.height, greaterThanOrEqualTo(24));
       expect(kutu.width, greaterThanOrEqualTo(44));
     });
 

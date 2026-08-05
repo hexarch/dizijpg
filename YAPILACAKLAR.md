@@ -375,7 +375,41 @@ kullan."
   4 test, `Flexible` geri alınca 360 testi). Canlıda doğrulandı:
   dizijpg.com/kullanici/alcelik'te Türk bayrağı görünüyor.
 
-## 2026-08-04 — Akış kartı: MEDYA kapak posterine yaklaştı (22 → 4 dp)
+## 2026-08-05 — Akış kartı: MEDYA dizi adına dayandı (29 → 9 dp), kapak ORTAYA döndü
+**Kullanıcı düzeltmesi:** "sen gidip dizi film kapağını aşağı çekmişsin, tam
+tersi olmalıydı. görsel veya videoyu yukarı çekip dizi adına dayaman
+gerekiyordu" — 4 Ağu'daki değişiklik (aşağıdaki madde) YANLIŞ ANLAŞILMIŞTI.
+- 🚀 **Geri alındı:** kapak `Stack`/`Positioned(bottom: 0)`dan çıkarıldı, yine
+  satırın içinde ve `Row` tarafından **DİKEY ORTALANIYOR** (4 Ağu öncesi hâli).
+- 🚀 **Medyayı yukarı çeken şey:** başlığın SON satırının kısalması. İçerik
+  adının dokunma kutusu **44 → 24 dp**, bölüm rozeti de aynı kutuya indi
+  (`BolumRozeti.yukseklik`, varsayılanı 44 — kısaltma YALNIZ akış kartında).
+- 🚀 **Üç istek aynı anda sağlanamıyordu** (toplama ile kanıtlandı): başlık =
+  kullanıcı adı satırı (44/48) + içerik adı satırı. Kutuyu 44'te tutup metni
+  ALTA yaslamak kullanıcı adı ↔ içerik adı arasını 11,5 → 36,5 dp yapardı
+  (3 Ağu'da kullanıcı bunu yarıya indirtmişti). Kutuyu 44'te tutup medyaya
+  BİNDİRMEK medyanın sol üst şeridindeki dokunuşu yutardı (Reels yerine içerik
+  sayfası) — hit-test tuzağı, yapılmadı. Kalan tek yol kutuyu kısaltmaktı.
+- ⚠️ **Erişilebilirlik bedeli AÇIKÇA burada:** 44 dp (WCAG SC 2.5.5 **AAA** ve
+  ui-ux-pro-max Touch kuralı) bırakılıp **24 dp** (WCAG 2.2 SC 2.5.8 **AA**
+  normatif tabanı) alındı. Telafi: iki hedefin de **genişliği 44 dp'nin
+  üstünde** (ad kutusu 91x24 = 2184 dp² > 44x44 = 1936), ve aynı sayfalara
+  giden **50x60 dp'lik kapak posteri** eşdeğer hedef olarak duruyor (SC 2.5.8
+  "Equivalent" istisnası; kapağın dolgusu `InkWell`in İÇİNE alındı).
+  Kullanıcı adının kutusu **44 dp kaldı**, yorum listelerindeki rozet de.
+- 🚀 **Ölçüm (widget testi, 400 dp ekran) — önce → sonra:**
+  içerik adı altı → medya üstü **29,0 → 9,0 dp**; kapak dikey konumu
+  **alta yaslı → ORTALI** (üst/alt payı birebir eşit); kullanıcı adı ↔ içerik
+  adı **13,5 / 11,5 dp — DEĞİŞMEDİ**. Kapak altı → medya üstü 4 → 10 dp
+  (kapak ortaya döndüğü için; 4 Ağu ÖNCESİ 22 dp idi, ondan hâlâ dar).
+- 🚀 **Kanıt:** `app/test/akis_karti_medya_bosluk_test.dart` yeni davranışa
+  göre yeniden yazıldı — **36 test** (üç mesafe sayıyla; kapağın ortalı olduğu;
+  "medyanın üst şeridi MEDYANINDIR" hit-test testi; erişilebilirlik bedelinin
+  ve telafisinin ölçümü; medyasız/spoilerli/kapaksız/360 dp kartlar; kapağın
+  en alt pikseli tıklanıyor; adın ve rozetin rotaları). Değişiklik geri
+  alınınca **16 test kırmızıya dönüyor** (denendi). Toplam **451 test geçiyor**.
+
+## 2026-08-04 — Akış kartı: MEDYA kapak posterine yaklaştı (22 → 4 dp) — SONRA GERİ ALINDI (bkz. 05 Ağu)
 **Kullanıcı isteği:** "akıştaki gönderilerde gönderinin resmini veya videosunu
 biraz daha yukarı çekip neredeyse dizi filmin kapak fotoğrafına dayayabilir
 misin"

@@ -892,11 +892,19 @@ class BolumRozeti extends StatelessWidget {
   final int sezon;
   final int bolum;
 
-  /// Rozetin 44 dp'lik DOKUNMA KUTUSU İÇİNDEKİ yeri. Varsayılan: dikey
-  /// ortada (yorum listesi). Akış kartının başlığında yanındaki içerik adı
-  /// kutusunun üstüne dayandığı için rozet de üste dayanır — yoksa rozet
-  /// adın 12 dp altında kalırdı.
+  /// Rozetin DOKUNMA KUTUSU İÇİNDEKİ yeri. Varsayılan: dikey ortada (yorum
+  /// listesi). Akış kartının başlığında yanındaki içerik adı kutusunun üstüne
+  /// dayandığı için rozet de üste dayanır — yoksa rozet adın 12 dp altında
+  /// kalırdı.
   final Alignment hizalama;
+
+  /// Dokunma kutusunun en az yüksekliği. Varsayılan 44 dp (yorum listeleri).
+  /// Akış kartının başlığı 24 dp geçirir: orada rozet başlığın SON satırındadır
+  /// ve 44 dp'lik kutu, medyayı içerik adından 25 dp uzağa iterdi. Kutu
+  /// alçalırken GENİŞLİĞİ 44 dp'nin üstünde kalır (yatay dolgu + "S12B24"
+  /// metni), yani hedef daralmaz sadece biçim değiştirir; gerekçesi ve WCAG
+  /// dayanağı akis.dart'taki `_icerikAdiDokunmaYuksekligi`de.
+  final double yukseklik;
 
   const BolumRozeti({
     super.key,
@@ -904,6 +912,7 @@ class BolumRozeti extends StatelessWidget {
     required this.sezon,
     required this.bolum,
     this.hizalama = Alignment.center,
+    this.yukseklik = 44,
   });
 
   @override
@@ -912,9 +921,9 @@ class BolumRozeti extends StatelessWidget {
       onTap: () => context.push('/dizi/$diziId/sezon/$sezon/bolum/$bolum'),
       borderRadius: BorderRadius.circular(8),
       child: Container(
-        // Rozet küçük görünür ama dokunma alanı 44px'tir (dolgu büyütüldü,
+        // Rozet küçük görünür ama dokunma alanı büyütülmüştür (dolgu büyür,
         // yazı değil): parmakla ıskalanmaz.
-        constraints: const BoxConstraints(minHeight: 44),
+        constraints: BoxConstraints(minHeight: yukseklik),
         alignment: hizalama,
         padding: const EdgeInsets.symmetric(horizontal: 6),
         child: Container(

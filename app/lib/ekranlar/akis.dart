@@ -365,24 +365,45 @@ const double _adDokunmaYuksekligi = 44;
 const double _kartUstDolgusu = 8;
 
 /// Başlığın sağ ucundaki içerik kapağı (2:3'e yakın minik poster).
+/// Satırın İÇİNDE durur ve Row tarafından DİKEY ORTALANIR (kullanıcı isteği,
+/// 5 Ağu 2026: "sen gidip dizi film kapağını aşağı çekmişsin, tam tersi
+/// olmalıydı"). 4 Ağu'da kapak `Stack` + `Positioned(bottom: 0)` ile satırın
+/// alt kenarına yaslanmıştı; o düzeltme YANLIŞ ANLAŞILMIŞTI ve geri alındı.
 const double _kapakGenisligi = 42;
 const double _kapakYuksekligi = 60;
 
-/// Kapağın satırda TUTTUĞU yatay yer: 2 (sol) + 42 (kapak) + 6 (sağ).
-/// Kapak Stack'te konumlandırıldığı için satıra bu genişlikte boş bir kutu
-/// konur; sayı buradan tek yerden gelir ki ikisi ayrışmasın.
-const double _kapakYatayYer = _kapakGenisligi + 8;
-
-/// Başlık bloğu ile medyanın ARASINDAKİ TEK boşluk (kullanıcı isteği,
-/// 4 Ağu 2026: "gönderinin resmini biraz daha yukarı çekip neredeyse kapak
-/// fotoğrafına dayayabilir misin").
+/// İÇERİK ADININ DOKUNMA KUTUSU — 44 dp DEĞİL, 24 dp. Bilerek, ölçerek.
 ///
-/// ÖNCE 6 dp idi ama asıl boşluk buradan gelmiyordu: kapak, başlık satırında
-/// DİKEY ORTALIYDI. Başlık iki satır (kullanıcı adı 44/48 dp + içerik adı
-/// 44 dp) yüksekliğinde, kapak ise 60 dp; ortalama kapağın ALTINDA 16 dp ölü
-/// alan bırakıyordu → 16 + 6 = 22 dp. Kapak artık Stack içinde başlığın ALT
-/// kenarına yaslı (aşağıdaki `Positioned(bottom: 0)`), geriye yalnız bu nefes
-/// payı kalıyor.
+/// Kullanıcının isteği (5 Ağu 2026): "görsel veya videoyu yukarı çekip dizi
+/// adına dayaman gerekiyordu". Ölçüm, adın altındaki 29 dp'nin yalnız 4'ünün
+/// gerçek boşluk olduğunu gösterdi; 25 dp'si adın 44 dp'lik dokunma
+/// kutusunun metin ALTINDA kalan payıydı (metin 19 dp, kutu üste yaslı).
+///
+/// ÜÇ İSTEK AYNI ANDA SAĞLANAMIYOR — kanıtı basit bir toplama:
+/// başlık = kullanıcı adı satırı (44/48 dp) + içerik adı satırı. Medyanın
+/// adın dibine gelmesi için ikinci satırın ~19 dp'ye inmesi gerekir. Kutuyu
+/// 44'te tutup boşluğu YUKARI itmek (metni kutunun altına yaslamak) kullanıcı
+/// adı ↔ içerik adı arasını 11,5'ten 36,5 dp'ye çıkarırdı — kullanıcının
+/// 3 Ağu'daki "bu boşluk yarıya insin" isteğini bozardı. Kutuyu 44'te tutup
+/// medyanın üstüne BİNDİRMEK ise medyanın sol üst şeridindeki dokunuşu yutar
+/// (Reels yerine içerik sayfası açılır) — hit-test tuzağı, yapılmadı.
+/// Geriye tek seçenek kutuyu kısaltmak kaldı.
+///
+/// NEDEN TAM 24: WCAG 2.2 SC 2.5.8 "Target Size (Minimum)" AA düzeyinin
+/// normatif tabanı 24x24 CSS px'tir; 44x44 ise AAA (SC 2.5.5) ve
+/// ui-ux-pro-max Touch/Touch Target Size kuralıdır. Yani AAA'dan AA'ya
+/// inildi, standart DIŞINA çıkılmadı. Kutu 24 dp YÜKSEK ama metin kadar
+/// GENİŞ: "Posterli Dizi" için 91x24 = 2184 dp², 44x44'ün (1936 dp²)
+/// ÜSTÜNDE — daralan tek şey yükseklik.
+///
+/// TELAFİ (SC 2.5.8'in "Equivalent" istisnası): aynı başlıkta, aynı sayfaya
+/// giden 50x60 dp'lik kapak posteri duruyor (dolgusu InkWell'in İÇİNDE, bu
+/// yüzden dokunma alanı 42 değil 50 dp geniş). Dizi/film gönderisinde kapak
+/// da içerik sayfasına gider; bölüm gönderisinde bölüm sayfasına, yani
+/// rozetin eşdeğeri olur. Her iki hedefin de 44 dp'lik bir karşılığı var.
+const double _icerikAdiDokunmaYuksekligi = 24;
+
+/// Başlık bloğu ile medyanın ARASINDAKİ nefes payı.
 ///
 /// NEDEN 0 DEĞİL: kapağın köşesi 6 dp yuvarlatılmış; sıfır boşlukta poster ile
 /// tam genişlikteki medya tek bir görsele karışır, kullanıcı hangisinin kapak
@@ -392,11 +413,11 @@ const double _kapakYatayYer = _kapakGenisligi + 8;
 ///
 /// NEDEN 8 DEĞİL: kapak da medya da DOKUNULABİLİR; "komşu dokunma hedefleri
 /// arasında en az 8 dp" kuralı (ui-ux-pro-max, Touch/Touch Spacing, orta
-/// önem) burada yumuşatıldı — iki hedef de büyük (42x60 ve tam genişlik x
+/// önem) burada yumuşatıldı — iki hedef de büyük (50x60 ve tam genişlik x
 /// yüzlerce dp), kutuları ÇAKIŞMIYOR ve yanlış dokunuşun bedeli geri
 /// dönülebilir (Reels yerine içerik sayfası). Kullanıcının isteği ise
-/// açıkça "neredeyse dayasın"; aynı kartın örneği olan Instagram'da başlık
-/// ile fotoğraf arasında boşluk hiç yoktur.
+/// açıkça "dayasın"; aynı kartın örneği olan Instagram'da başlık ile
+/// fotoğraf arasında boşluk hiç yoktur.
 const double _kapakMedyaBoslugu = 4;
 
 class AkisKarti extends StatefulWidget {
@@ -614,153 +635,152 @@ class _AkisKartiState extends State<AkisKarti> {
           //      ve EN SAĞDA içeriğin kapak görseli.
           Padding(
             padding: const EdgeInsets.fromLTRB(12, _kartUstDolgusu, 6, 0),
-            // KAPAK NEDEN STACK'TE: satırın içinde dururken Row onu DİKEY
-            // ORTALIYORDU (satır 88-92 dp, kapak 60 dp → altında 16 dp ölü
-            // alan). Stack'te `bottom: 0` ile başlığın alt kenarına yaslanır,
-            // medya da hemen altından başlar. Row'un kendi hizalaması
-            // değişmedi: ··· menüsü eskisi gibi başlığın dikey ortasındadır.
-            // Kapak Stack'in SINIRLARI İÇİNDE kalır (başlık en az 88 dp, kapak
-            // 60 dp) — taşsaydı görünür ama TIKLANAMAZ olurdu.
-            child: Stack(
+            // Kapak satırın İÇİNDEDİR: Row'un varsayılan
+            // `CrossAxisAlignment.center`'ı onu ve ··· menüsünü başlığın dikey
+            // ORTASINA oturtur. (4 Ağu'da kapak Stack + `Positioned(bottom: 0)`
+            // ile alta yaslanmıştı; kullanıcı "tam tersi olmalıydı" dedi, geri
+            // alındı. Medyayı yukarı çeken şey artık içerik adı satırının
+            // kısalması — bkz. _icerikAdiDokunmaYuksekligi.)
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 1a. Avatar + kullanıcı adı (+ Takip Et). Avatar bu
+                      //     satırın İÇİNDE olduğu için Row'un varsayılan
+                      //     dikey ORTALAMASI adı avatarın tam ortasına
+                      //     oturtur (kullanıcı isteği).
+                      Row(
                         children: [
-                          // 1a. Avatar + kullanıcı adı (+ Takip Et). Avatar bu
-                          //     satırın İÇİNDE olduğu için Row'un varsayılan
-                          //     dikey ORTALAMASI adı avatarın tam ortasına
-                          //     oturtur (kullanıcı isteği).
-                          Row(
-                            children: [
-                              InkWell(
-                                customBorder: const CircleBorder(),
-                                onTap: () => context.push(
-                                  '/kullanici/${y['kullanici_adi']}',
-                                ),
-                                child: KullaniciAvatari(
-                                  url: avatar,
-                                  kullaniciAdi: y['kullanici_adi'] as String?,
-                                  yaricap: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Flexible(
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () => context.push(
-                                    '/kullanici/${y['kullanici_adi']}',
-                                  ),
-                                  child: ConstrainedBox(
-                                    // Dokunma hedefi 44 dp: yazı tipinden
-                                    // bağımsız sabit kutu (bkz.
-                                    // _adDokunmaYuksekligi).
-                                    constraints: const BoxConstraints(
-                                      minHeight: _adDokunmaYuksekligi,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      // widthFactor: kutu yazı kadar GENİŞ kalsın,
-                                      // yoksa "Takip Et" satırın sonuna savrulur.
-                                      widthFactor: 1,
-                                      child: Text(
-                                        '@${y['kullanici_adi']}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 14.5,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (takipGoster) ...[
-                                const SizedBox(width: 8),
-                                _TakipDugmesi(
-                                  isleniyor: _takipIsleniyor,
-                                  onTap: _takipEt,
-                                ),
-                              ],
-                            ],
+                          InkWell(
+                            customBorder: const CircleBorder(),
+                            onTap: () => context.push(
+                              '/kullanici/${y['kullanici_adi']}',
+                            ),
+                            child: KullaniciAvatari(
+                              url: avatar,
+                              kullaniciAdi: y['kullanici_adi'] as String?,
+                              yaricap: 20,
+                            ),
                           ),
-                          // 1b. İçerik adı: AVATARIN ALTINDAN başlar, sol kenarı
-                          //     avatarın sol kenarıyla aynı hizadadır (kullanıcı
-                          //     isteği). Film yorumu → film adı, dizi yorumu →
-                          //     dizi adı, bölüm yorumu → dizi adı + S4B6 rozeti.
-                          Row(
-                            children: [
-                              Flexible(
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(6),
-                                  onTap: () => context.push(icerikYolu),
-                                  child: ConstrainedBox(
-                                    // Dokunma hedefi 44px (yazı değil kutu
-                                    // büyür): parmakla ıskalanmaz.
-                                    constraints: const BoxConstraints(
-                                      minHeight: 44,
-                                    ),
-                                    child: Align(
-                                      // ÜSTE dayalı: kutu 44 dp kalır ama artan
-                                      // yükseklik kullanıcı adıyla ARAYA değil
-                                      // ALTA yazılır.
-                                      alignment: Alignment.topLeft,
-                                      // widthFactor: kutu yazı kadar geniş kalsın
-                                      // ki S4B6 rozeti adın HEMEN yanında dursun
-                                      // (yoksa satırın sonuna savrulur).
-                                      widthFactor: 1,
-                                      child: Text(
-                                        '${icerik['ad']}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: DiziRenkler.sariMetin,
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
+                          const SizedBox(width: 10),
+                          Flexible(
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(6),
+                              onTap: () => context.push(
+                                '/kullanici/${y['kullanici_adi']}',
+                              ),
+                              child: ConstrainedBox(
+                                // Dokunma hedefi 44 dp: yazı tipinden
+                                // bağımsız sabit kutu (bkz.
+                                // _adDokunmaYuksekligi).
+                                constraints: const BoxConstraints(
+                                  minHeight: _adDokunmaYuksekligi,
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  // widthFactor: kutu yazı kadar GENİŞ kalsın,
+                                  // yoksa "Takip Et" satırın sonuna savrulur.
+                                  widthFactor: 1,
+                                  child: Text(
+                                    '@${y['kullanici_adi']}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 14.5,
                                     ),
                                   ),
                                 ),
                               ),
-                              if (bolumlu) ...[
-                                const SizedBox(width: 6),
-                                BolumRozeti(
-                                  diziId: y['tmdb_id'] as int,
-                                  sezon: y['sezon'] as int,
-                                  bolum: y['bolum'] as int,
-                                  // İçerik adıyla aynı hizada dursun
-                                  hizalama: Alignment.topCenter,
-                                ),
-                              ],
-                            ],
+                            ),
                           ),
+                          if (takipGoster) ...[
+                            const SizedBox(width: 8),
+                            _TakipDugmesi(
+                              isleniyor: _takipIsleniyor,
+                              onTap: _takipEt,
+                            ),
+                          ],
                         ],
                       ),
-                    ),
-                    UcNoktaMenu(
-                      tur: 'yorum',
-                      hedefId: y['id'] as int,
-                      benimMi: benim,
-                      renk: DiziRenkler.metin54,
-                    ),
-                    // Kapak Stack'te çizildiği için satırda yalnız YERİ ayrılır:
-                    // olmasaydı metin sütunu kapağın altına taşardı.
-                    if (poster != null) const SizedBox(width: _kapakYatayYer),
-                  ],
+                      // 1b. İçerik adı: AVATARIN ALTINDAN başlar, sol kenarı
+                      //     avatarın sol kenarıyla aynı hizadadır (kullanıcı
+                      //     isteği). Film yorumu → film adı, dizi yorumu →
+                      //     dizi adı, bölüm yorumu → dizi adı + S4B6 rozeti.
+                      //     BAŞLIĞIN SON SATIRIDIR: yüksekliği doğrudan
+                      //     medyanın nereden başlayacağını belirler.
+                      Row(
+                        children: [
+                          Flexible(
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(6),
+                              onTap: () => context.push(icerikYolu),
+                              child: ConstrainedBox(
+                                // Dokunma kutusu 24 dp — NEDEN 44 DEĞİL,
+                                // hangi standarda dayandığı ve telafisi:
+                                // bkz. _icerikAdiDokunmaYuksekligi.
+                                constraints: const BoxConstraints(
+                                  minHeight: _icerikAdiDokunmaYuksekligi,
+                                ),
+                                child: Align(
+                                  // ÜSTE dayalı: kutunun metinden ARTAN payı
+                                  // kullanıcı adıyla ARAYA değil ALTA yazılır
+                                  // (üstteki 11,5/13,5 dp'lik boşluk korunur).
+                                  alignment: Alignment.topLeft,
+                                  // widthFactor: kutu yazı kadar geniş kalsın
+                                  // ki S4B6 rozeti adın HEMEN yanında dursun
+                                  // (yoksa satırın sonuna savrulur).
+                                  widthFactor: 1,
+                                  child: Text(
+                                    '${icerik['ad']}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: DiziRenkler.sariMetin,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (bolumlu) ...[
+                            const SizedBox(width: 6),
+                            BolumRozeti(
+                              diziId: y['tmdb_id'] as int,
+                              sezon: y['sezon'] as int,
+                              bolum: y['bolum'] as int,
+                              // İçerik adıyla aynı hizada dursun
+                              hizalama: Alignment.topCenter,
+                              // Rozet 44 dp kalsaydı satırı O şişirirdi ve
+                              // medya yukarı gelemezdi; adla aynı kutuya
+                              // indirildi (genişliği 44+ dp kalır).
+                              yukseklik: _icerikAdiDokunmaYuksekligi,
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                UcNoktaMenu(
+                  tur: 'yorum',
+                  hedefId: y['id'] as int,
+                  benimMi: benim,
+                  renk: DiziRenkler.metin54,
                 ),
                 if (poster != null)
-                  Positioned(
-                    // right: 6 → dış dolgunun 6 dp'siyle birlikte kartın sağ
-                    // kenarından 12 dp içeride (eski `only(right: 6)` ile aynı).
-                    right: 6,
-                    bottom: 0,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(6),
-                      onTap: () => context.push(posterYolu),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(6),
+                    onTap: () => context.push(posterYolu),
+                    // Dolgu InkWell'in İÇİNDE: dokunma alanı 42 değil 50 dp
+                    // geniş olur (44 dp kuralı) — içerik adının kısalan
+                    // kutusunun "eşdeğer hedef" telafisi budur.
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 2, right: 6),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(6),
                         child: SizedBox(
