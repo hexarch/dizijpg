@@ -499,4 +499,5 @@ const Map<String, String> cevirilerVi = {
   'Sıralama': 'Sắp xếp',
   'Önerilen': 'Đề xuất',
   'Kronolojik': 'Theo thời gian',
+  'Dizi jpg aile üyesi': 'Thành viên gia đình Dizi jpg',
 };

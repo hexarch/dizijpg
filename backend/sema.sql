@@ -464,3 +464,16 @@ CREATE INDEX IF NOT EXISTS yorumlar_profilde_gizli
 
 ALTER TABLE kullanicilar
   ADD COLUMN IF NOT EXISTS yanitlar_gizli BOOLEAN NOT NULL DEFAULT false;
+
+-- ---------------------------------------------------------------------------
+-- 5 Ağu 2026 — "dizi.jpg aile üyesi" rozeti (migrasyon-2026-08-05.sql)
+--
+-- Kapalı test (Play Console) listesindeki e-postayla kayıt olmuş hesaplar
+-- profillerinde dizi.jpg logosu + "Dizi jpg aile üyesi" satırı görür.
+--
+-- NEDEN SÜTUN: test listesi Play Console'da yaşar, uygulama onu göremez;
+-- ayrıca e-postalar kişisel veridir ve kaynak koda GİREMEZ. Bayrak
+-- `araclar/testci_isaretle.js` ile listeden ÜRETİLİR (e-posta dosyadan okunur,
+-- depoya hiç girmez), sonra sunucu yalnız boolean'ı okur.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS testci BOOLEAN NOT NULL DEFAULT false;

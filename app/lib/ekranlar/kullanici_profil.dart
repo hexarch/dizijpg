@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
@@ -149,26 +150,27 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                 fontWeight: FontWeight.w900,
                               ),
                             ),
-                            if ((p['ulke'] as String?)?.isNotEmpty == true)
+                            // Ülke + "dizi.jpg aile üyesi" rozeti aynı satırda.
+                            // Rozet ülkeye BAĞLI DEĞİL: testçilerin çoğunun
+                            // ülkesi boş ve o satır ülke yoksa hiç çizilmiyordu
+                            // — rozet ülkeye bağlansaydı hak edenlerin çoğu onu
+                            // hiç göremezdi. Ülke varsa istendiği gibi bayrağın
+                            // yanında durur, yoksa tek başına çizilir.
+                            // Wrap (Row değil): 360 dp'de uzun ülke adı + rozet
+                            // yan yana sığmazsa rozet alt satıra iner; taşma yok.
+                            if ((p['ulke'] as String?)?.isNotEmpty == true ||
+                                p['testci'] == true)
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
-                                child: Row(
+                                child: Wrap(
+                                  spacing: 8,
+                                  runSpacing: 2,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
-                                    UlkeBayragi(ulke: p['ulke'] as String?),
-                                    const SizedBox(width: 5),
-                                    // Uzun ülke adları ("Amerika Birleşik
-                                    // Devletleri") dar ekranda satırı taşırmasın.
-                                    Flexible(
-                                      child: Text(
-                                        p['ulke'] as String,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: DiziRenkler.metin54,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
+                                    if ((p['ulke'] as String?)?.isNotEmpty ==
+                                        true)
+                                      UlkeSatiri(ulke: p['ulke'] as String),
+                                    if (p['testci'] == true) const AileRozeti(),
                                   ],
                                 ),
                               ),

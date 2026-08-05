@@ -508,4 +508,5 @@ const Map<String, String> cevirilerMy = {
   'Sıralama': 'အစီအစဉ်',
   'Önerilen': 'အကြံပြုထားသော',
   'Kronolojik': 'အချိန်အလိုက်',
+  'Dizi jpg aile üyesi': 'Dizi jpg မိသားစုဝင်',
 };

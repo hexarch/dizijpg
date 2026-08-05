@@ -498,4 +498,5 @@ const Map<String, String> cevirilerPa = {
   'Sıralama': 'ਕ੍ਰਮ',
   'Önerilen': 'ਸਿਫਾਰਸ਼ ਕੀਤਾ',
   'Kronolojik': 'ਕਾਲਕ੍ਰਮਿਕ',
+  'Dizi jpg aile üyesi': 'Dizi jpg ਪਰਿਵਾਰ ਦਾ ਮੈਂਬਰ',
 };

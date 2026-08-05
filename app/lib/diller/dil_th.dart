@@ -492,4 +492,5 @@ const Map<String, String> cevirilerTh = {
   'Sıralama': 'การเรียง',
   'Önerilen': 'แนะนำ',
   'Kronolojik': 'ตามเวลา',
+  'Dizi jpg aile üyesi': 'สมาชิกครอบครัว Dizi jpg',
 };

@@ -38,6 +38,15 @@ class DiziRenkler {
   /// (Daima-siyah zeminlerde — Reels, poster rozeti — yine `sari` kalır.)
   static Color get sariMetin => acik ? const Color(0xFF8A6D00) : sari;
 
+  /// DAİMA KOYU marka zemini (temayla DEĞİŞMEZ).
+  /// Yalnız `assets/logo.png` gibi koyu zemin için çizilmiş marka varlıklarının
+  /// altına konur: logonun "DİZİ" harfleri açık gri + ince siyah konturdur,
+  /// küçültülünce kontur kaybolur ve harfler açık temanın kırık beyaz zemininde
+  /// erir (ölçüm: açık zeminde piksellerin %10'u 3:1 kontrasta ulaşıyor, koyu
+  /// zeminde %60). Koyu temada bu renk ana zeminle aynıdır — pul görünmez,
+  /// logo çıplak durur; açık temada küçük bir marka pulu belirir.
+  static const markaKoyu = Color(0xFF0B0B0D);
+
   // --- Zeminler ---
   /// Ana zemin (koyu: gerçek siyah, açık: kırık beyaz)
   static Color get siyah =>

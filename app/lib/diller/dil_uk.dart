@@ -499,4 +499,5 @@ const Map<String, String> cevirilerUk = {
   'Sıralama': 'Сортування',
   'Önerilen': 'Рекомендовані',
   'Kronolojik': 'Хронологічний',
+  'Dizi jpg aile üyesi': 'Член родини Dizi jpg',
 };

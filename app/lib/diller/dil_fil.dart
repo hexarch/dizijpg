@@ -502,4 +502,5 @@ const Map<String, String> cevirilerFil = {
   'Sıralama': 'Pagkakasunod',
   'Önerilen': 'Inirerekomenda',
   'Kronolojik': 'Ayon sa oras',
+  'Dizi jpg aile üyesi': 'Kasapi ng pamilyang Dizi jpg',
 };

@@ -497,4 +497,5 @@ const Map<String, String> cevirilerAz = {
   'Sıralama': 'Sıralama',
   'Önerilen': 'Tövsiyə edilən',
   'Kronolojik': 'Xronoloji',
+  'Dizi jpg aile üyesi': 'Dizi jpg ailə üzvü',
 };

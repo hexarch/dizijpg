@@ -499,4 +499,5 @@ const Map<String, String> cevirilerEn = {
   'Sıralama': 'Sort',
   'Önerilen': 'Recommended',
   'Kronolojik': 'Chronological',
+  'Dizi jpg aile üyesi': 'Dizi jpg family member',
 };

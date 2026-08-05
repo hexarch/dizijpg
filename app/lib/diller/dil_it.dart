@@ -503,4 +503,5 @@ const Map<String, String> cevirilerIt = {
   'Sıralama': 'Ordinamento',
   'Önerilen': 'Consigliato',
   'Kronolojik': 'Cronologico',
+  'Dizi jpg aile üyesi': 'Membro della famiglia Dizi jpg',
 };

@@ -497,4 +497,5 @@ const Map<String, String> cevirilerTe = {
   'Sıralama': 'క్రమం',
   'Önerilen': 'సిఫార్సు చేయబడినది',
   'Kronolojik': 'కాలక్రమానుసారం',
+  'Dizi jpg aile üyesi': 'Dizi jpg కుటుంబ సభ్యుడు',
 };

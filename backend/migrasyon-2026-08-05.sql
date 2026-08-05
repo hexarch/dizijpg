@@ -1,0 +1,17 @@
+-- 5 Ağu 2026 — "dizi.jpg aile üyesi" rozeti
+--
+-- KULLANICI İSTEĞİ: "tester olarak eklediğimiz mail adresinden kayıt olan
+-- kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu koy ve yanına
+-- 'Dizi jpg aile üyesi' yaz"
+--
+-- NEDEN KALICI SÜTUN, NEDEN ÇALIŞMA ANINDA E-POSTA LİSTESİ DEĞİL:
+--  1) Test listesi Play Console'da yaşar; uygulama/sunucu onu göremez, elle
+--     senkron tutulması gerekirdi.
+--  2) Liste kişisel veridir — kaynak koda gömülemez, depoya giremez. Kalıcı
+--     bayrak sayesinde e-postalar YALNIZ işaretleme anında, dosyadan okunur.
+--  3) Her profil isteğinde 28 adresle karşılaştırma yapmak gereksiz iş; ayrıca
+--     bir testçi e-postasını değiştirirse rozeti sessizce kaybederdi.
+--  4) Bayrak elle de verilebilir olmalı (ekibe sonradan katılan biri).
+--
+-- Varsayılan false: mevcut satırların hiçbiri etkilenmez.
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS testci BOOLEAN NOT NULL DEFAULT false;

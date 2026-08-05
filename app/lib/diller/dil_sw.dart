@@ -498,4 +498,5 @@ const Map<String, String> cevirilerSw = {
   'Sıralama': 'Panga',
   'Önerilen': 'Inapendekezwa',
   'Kronolojik': 'Kwa mpangilio',
+  'Dizi jpg aile üyesi': 'Mwanafamilia wa Dizi jpg',
 };

@@ -499,4 +499,5 @@ const Map<String, String> cevirilerBn = {
   'Sıralama': 'সাজানো',
   'Önerilen': 'প্রস্তাবিত',
   'Kronolojik': 'কালানুক্রমিক',
+  'Dizi jpg aile üyesi': 'Dizi jpg পরিবারের সদস্য',
 };

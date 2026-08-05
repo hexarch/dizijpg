@@ -499,4 +499,5 @@ const Map<String, String> cevirilerSv = {
   'Sıralama': 'Sortering',
   'Önerilen': 'Rekommenderat',
   'Kronolojik': 'Kronologisk',
+  'Dizi jpg aile üyesi': 'Dizi jpg-familjemedlem',
 };

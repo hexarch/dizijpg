@@ -2357,7 +2357,10 @@ function sosyalDogrula(sosyal) {
 
 app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal
+    // testci de gelir: kendi profil ekranı (profil.dart) başlığını `/profilim`
+    // ile çizer, `/profil/:kullaniciAdi` ile değil — rozet orada da görünmeli.
+    `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal,
+            testci
      FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
@@ -4443,8 +4446,10 @@ app.post('/veri/ice-aktar',
 // ---------- herkese açık profil ----------
 app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
+    // testci: kapalı test ekibi rozeti ("dizi.jpg aile üyesi"). Herkese açık
+    // bir nişan olduğu için ziyaretçiye de gönderilir; e-posta ASLA dönmez.
     `SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma,
-            izlenenler_gizli, yorumlar_gizli, yanitlar_gizli
+            izlenenler_gizli, yorumlar_gizli, yanitlar_gizli, testci
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi],
   );

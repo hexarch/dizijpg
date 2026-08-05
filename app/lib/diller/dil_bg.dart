@@ -502,4 +502,5 @@ const Map<String, String> cevirilerBg = {
   'Sıralama': 'Подреждане',
   'Önerilen': 'Препоръчано',
   'Kronolojik': 'Хронологично',
+  'Dizi jpg aile üyesi': 'Член на семейството Dizi jpg',
 };

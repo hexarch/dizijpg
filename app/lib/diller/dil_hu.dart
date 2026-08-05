@@ -502,4 +502,5 @@ const Map<String, String> cevirilerHu = {
   'Sıralama': 'Rendezés',
   'Önerilen': 'Ajánlott',
   'Kronolojik': 'Időrendi',
+  'Dizi jpg aile üyesi': 'Dizi jpg családtag',
 };

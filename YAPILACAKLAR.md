@@ -1,5 +1,44 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-04 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-05 — TESTÇİ PROFİLİNDE "dizi.jpg aile üyesi" ROZETİ 🚀
+**Kullanıcı isteği:** "tester olarak eklediğimiz mail adresinden kayıt olan
+kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu koy ve yanına
+'Dizi jpg aile üyesi' yaz"
+
+- 🚀 **Veri modeli: kalıcı `kullanicilar.testci` bayrağı** (migrasyon-2026-08-05.sql
+  + sema.sql, canlıya uygulandı). Çalışma anında e-posta listesi kontrolü
+  YAPILMADI: Play Console listesini uygulama göremez, adresler kişisel veridir
+  ve koda giremez, her istekte 28 adres karşılaştırmak kırılgan olurdu.
+- 🚀 `backend/araclar/testci_isaretle.js` — listeyi **dosyadan** okur (koda
+  gömülü DEĞİL), varsayılan **kuru çalışma**, `--uygula` ile yazar ve önce
+  `kullanicilar` tablosunun tarihli yedeğini alır. Raporda e-postalar
+  maskelenir. Yeni testçi eklendiğinde tekrar çalıştırılır.
+  Canlı: 91 kayıttan **8 hesap** işaretlendi (id 1, 3, 13, 36, 37, 66, 79, 92).
+- 🚀 `GET /profil/:kullaniciAdi` ve `GET /profilim` yanıtlarına `testci` eklendi
+  (kendi profil ekranının başlığı `/profilim` okuduğu için ikisi de şart).
+- 🚀 **KARAR — rozet ülkeden BAĞIMSIZ:** ülke satırı ülke boşken hiç çizilmiyor;
+  işaretlenen 8 hesabın **6'sının ülkesi boş**. Rozet ülkeye bağlansaydı hak
+  edenlerin çoğu onu hiç göremezdi. Ülke varsa istendiği gibi bayrağın yanında
+  durur, yoksa tek başına çizilir.
+- 🚀 **KARAR — Row yerine Wrap:** 360 dp ekranda uzun ülke adı ("Amerika
+  Birleşik Devletleri") + rozet yan yana sığmıyor; kırpmak yerine rozet alt
+  satıra iner. Taşma yok, iki bilgi de okunur kalır.
+- 🚀 **KARAR — logo DAİMA koyu pulun üstünde:** `assets/logo.png` koyu zemin için
+  çizilmiş (DİZİ harfleri açık gri + ince siyah kontur). Rozet boyutunda kontur
+  piksel altına iniyor; ölçüldü: açık temanın kırık beyaz zemininde harf
+  piksellerinin yalnız %10'u 3:1 kontrasta ulaşıyor (koyu zeminde %60). Bu
+  yüzden `DiziRenkler.markaKoyu` pulu eklendi — koyu temada zeminle aynı renk
+  olduğu için görünmez, açık temada küçük bir marka pulu belirir. Tarayıcıda
+  iki temada da doğrulandı.
+- 🚀 Metin 45 dile çevrildi (marka adı çevrilmedi), renkler `DiziRenkler`den
+  (`sariMetin` açık temada hardal, koyu temada marka sarısı). Rozet tıklanabilir
+  değil.
+- 🚀 Kanıt: `app/test/aile_rozeti_test.dart` (15 test) — varlık kırpma sabitleri
+  gerçek PNG ile doğrulanıyor, testci true/false/eksik, ülkesi boş testçi, iki
+  profil ekranı, açık/koyu tema rengi, 360 dp taşma yok. `backend/test/
+  testci_rozeti.test.js` (6 test) — uç sözleşmesi, sema/migrasyon, e-postanın
+  koda sızmadığı. Değişiklik geri alınınca 8 test kırmızıya döndü.
 
 ## 2026-08-04 — ALT ÇUBUK ile SİSTEM GEZİNME ÇUBUĞU arasındaki renk dikişi ✅
 **Kullanıcı isteği:** "aşağıdaki ana sayfa keşfet falan ikonunun bulunduğu

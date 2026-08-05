@@ -498,4 +498,5 @@ const Map<String, String> cevirilerUr = {
   'Sıralama': 'ترتیب',
   'Önerilen': 'تجویز کردہ',
   'Kronolojik': 'تاریخ وار',
+  'Dizi jpg aile üyesi': 'Dizi jpg خاندان کا رکن',
 };

@@ -498,4 +498,5 @@ const Map<String, String> cevirilerFa = {
   'Sıralama': 'مرتب‌سازی',
   'Önerilen': 'پیشنهادی',
   'Kronolojik': 'بر اساس زمان',
+  'Dizi jpg aile üyesi': 'عضو خانواده Dizi jpg',
 };

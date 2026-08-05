@@ -493,4 +493,5 @@ const Map<String, String> cevirilerAr = {
   'Sıralama': 'الترتيب',
   'Önerilen': 'موصى به',
   'Kronolojik': 'حسب الزمن',
+  'Dizi jpg aile üyesi': 'Dizi jpg عضو العائلة',
 };

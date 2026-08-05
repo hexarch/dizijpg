@@ -484,4 +484,5 @@ const Map<String, String> cevirilerJa = {
   'Sıralama': '並び替え',
   'Önerilen': 'おすすめ',
   'Kronolojik': '新着順',
+  'Dizi jpg aile üyesi': 'Dizi jpg ファミリーメンバー',
 };

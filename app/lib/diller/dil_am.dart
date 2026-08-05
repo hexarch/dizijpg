@@ -488,4 +488,5 @@ const Map<String, String> cevirilerAm = {
   'Sıralama': 'ቅደም ተከተል',
   'Önerilen': 'የሚመከር',
   'Kronolojik': 'በጊዜ ቅደም ተከተል',
+  'Dizi jpg aile üyesi': 'Dizi jpg የቤተሰብ አባል',
 };

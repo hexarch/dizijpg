@@ -500,4 +500,5 @@ const Map<String, String> cevirilerHi = {
   'Sıralama': 'क्रम',
   'Önerilen': 'अनुशंसित',
   'Kronolojik': 'कालानुक्रमिक',
+  'Dizi jpg aile üyesi': 'Dizi jpg परिवार का सदस्य',
 };

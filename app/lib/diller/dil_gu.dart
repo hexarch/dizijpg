@@ -496,4 +496,5 @@ const Map<String, String> cevirilerGu = {
   'Sıralama': 'ક્રમ',
   'Önerilen': 'ભલામણ કરેલ',
   'Kronolojik': 'કાલક્રમિક',
+  'Dizi jpg aile üyesi': 'Dizi jpg પરિવારના સભ્ય',
 };

@@ -485,4 +485,5 @@ const Map<String, String> cevirilerKo = {
   'Sıralama': '정렬',
   'Önerilen': '추천',
   'Kronolojik': '최신순',
+  'Dizi jpg aile üyesi': 'Dizi jpg 패밀리 멤버',
 };

@@ -351,3 +351,35 @@ class UlkeBayragi extends StatelessWidget {
   Widget _yedek() =>
       Icon(Icons.public, size: yukseklik + 2, color: DiziRenkler.sariMetin);
 }
+
+/// Profil başlığındaki "bayrak + ülke adı" ikilisi.
+///
+/// Kendi profilim (profil.dart) ve başkasının profili (kullanici_profil.dart)
+/// aynı satırı çizdiği için tek yerde durur: biri değişip diğeri unutulmasın.
+/// `mainAxisSize.min` + `Flexible`: kısa adlarda kendi genişliğinde kalır, uzun
+/// adlarda ("Amerika Birleşik Devletleri") verilen genişliği aşmadan üç noktayla
+/// kısalır — yanına başka bir şey (aile rozeti) konsa da satır TAŞMAZ.
+class UlkeSatiri extends StatelessWidget {
+  const UlkeSatiri({super.key, required this.ulke});
+
+  final String ulke;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        UlkeBayragi(ulke: ulke),
+        const SizedBox(width: 5),
+        Flexible(
+          child: Text(
+            ulke,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+          ),
+        ),
+      ],
+    );
+  }
+}

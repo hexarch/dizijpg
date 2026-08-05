@@ -496,4 +496,5 @@ const Map<String, String> cevirilerDa = {
   'Sıralama': 'Sortering',
   'Önerilen': 'Anbefalet',
   'Kronolojik': 'Kronologisk',
+  'Dizi jpg aile üyesi': 'Dizi jpg-familiemedlem',
 };

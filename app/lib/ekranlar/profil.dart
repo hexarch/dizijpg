@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
@@ -727,28 +728,27 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 ),
                               ),
                             ),
-                          if ((_profil?['ulke'] as String?)?.isNotEmpty == true)
+                          // Ülke + "dizi.jpg aile üyesi" rozeti (gerekçe ve
+                          // Wrap kararı kullanici_profil.dart'ta anlatıldı:
+                          // rozet ülkeden bağımsız, taşma yerine alt satır).
+                          if ((_profil?['ulke'] as String?)?.isNotEmpty ==
+                                  true ||
+                              _profil?['testci'] == true)
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
-                              child: Row(
+                              child: Wrap(
+                                spacing: 8,
+                                runSpacing: 2,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
-                                  UlkeBayragi(
-                                    ulke: _profil?['ulke'] as String?,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  // Uzun ülke adları ("Amerika Birleşik
-                                  // Devletleri") dar ekranda satırı taşırmasın.
-                                  Flexible(
-                                    child: Text(
-                                      _profil!['ulke'] as String,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        color: DiziRenkler.metin54,
-                                        fontSize: 12,
-                                      ),
+                                  if ((_profil?['ulke'] as String?)
+                                          ?.isNotEmpty ==
+                                      true)
+                                    UlkeSatiri(
+                                      ulke: _profil!['ulke'] as String,
                                     ),
-                                  ),
+                                  if (_profil?['testci'] == true)
+                                    const AileRozeti(),
                                 ],
                               ),
                             ),

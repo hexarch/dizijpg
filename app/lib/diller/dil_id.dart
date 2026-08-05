@@ -499,4 +499,5 @@ const Map<String, String> cevirilerId = {
   'Sıralama': 'Urutan',
   'Önerilen': 'Direkomendasikan',
   'Kronolojik': 'Kronologis',
+  'Dizi jpg aile üyesi': 'Anggota keluarga Dizi jpg',
 };
