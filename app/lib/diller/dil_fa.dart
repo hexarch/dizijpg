@@ -498,7 +498,6 @@ const Map<String, String> cevirilerFa = {
   'Sıralama': 'مرتب‌سازی',
   'Önerilen': 'پیشنهادی',
   'Kronolojik': 'بر اساس زمان',
-  'Dizi jpg aile üyesi': 'عضو خانواده Dizi jpg',
   'Gelen mesaj istekleri': 'درخواست‌های پیام دریافتی',
   'Mesaj isteğin yok': 'درخواست پیامی ندارید',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -506,4 +505,8 @@ const Map<String, String> cevirilerFa = {
   'Çevrimiçi durumumu gizle': 'پنهان کردن وضعیت آنلاین من',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'دیگران وضعیت آنلاین و آخرین بازدید شما را در پیام‌ها نمی‌بینند',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'یکی از نخستین کاربران ما. بازخوردهای او کمک کرد تا برنامه به شکل امروزی درآید.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'تو یکی از نخستین کاربران ما هستی. بازخوردهای تو کمک کرد تا برنامه به شکل امروزی درآید.',
 };

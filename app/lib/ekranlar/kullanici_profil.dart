@@ -170,7 +170,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                     if ((p['ulke'] as String?)?.isNotEmpty ==
                                         true)
                                       UlkeSatiri(ulke: p['ulke'] as String),
-                                    if (p['testci'] == true) const AileRozeti(),
+                                    // Bu ekran KENDİ kullanıcı adınla da
+                                    // açılabiliyor; "kendi profilim mi" kararı
+                                    // ekranın türünden değil sunucunun `ben_mi`
+                                    // yargısından gelir (uzun basma menüsü de
+                                    // aynı alanı kullanıyor).
+                                    if (p['testci'] == true)
+                                      AileRozeti(benMi: p['ben_mi'] == true),
                                   ],
                                 ),
                               ),

@@ -747,8 +747,11 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                     UlkeSatiri(
                                       ulke: _profil!['ulke'] as String,
                                     ),
+                                  // Bu ekran DAİMA kendi profilim (`/profilim`
+                                  // ile çizilir), o yüzden rozet modalı ikinci
+                                  // tekil şahıs varyantını gösterir.
                                   if (_profil?['testci'] == true)
-                                    const AileRozeti(),
+                                    const AileRozeti(benMi: true),
                                 ],
                               ),
                             ),

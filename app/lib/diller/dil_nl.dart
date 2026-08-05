@@ -501,7 +501,6 @@ const Map<String, String> cevirilerNl = {
   'Sıralama': 'Sorteren',
   'Önerilen': 'Aanbevolen',
   'Kronolojik': 'Chronologisch',
-  'Dizi jpg aile üyesi': 'Dizi jpg-familielid',
   'Gelen mesaj istekleri': 'Ontvangen berichtverzoeken',
   'Mesaj isteğin yok': 'Geen berichtverzoeken',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -509,4 +508,8 @@ const Map<String, String> cevirilerNl = {
   'Çevrimiçi durumumu gizle': 'Mijn onlinestatus verbergen',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Anderen zien je onlinestatus en laatst gezien niet in berichten',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Een van onze eerste gebruikers. Zijn feedback heeft de app gemaakt tot wat die vandaag is.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Jij bent een van onze eerste gebruikers. Jouw feedback heeft de app gemaakt tot wat die vandaag is.',
 };

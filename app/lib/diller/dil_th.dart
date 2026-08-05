@@ -492,7 +492,6 @@ const Map<String, String> cevirilerTh = {
   'Sıralama': 'การเรียง',
   'Önerilen': 'แนะนำ',
   'Kronolojik': 'ตามเวลา',
-  'Dizi jpg aile üyesi': 'สมาชิกครอบครัว Dizi jpg',
   'Gelen mesaj istekleri': 'คำขอข้อความที่เข้ามา',
   'Mesaj isteğin yok': 'ไม่มีคำขอข้อความ',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -500,4 +499,8 @@ const Map<String, String> cevirilerTh = {
   'Çevrimiçi durumumu gizle': 'ซ่อนสถานะออนไลน์ของฉัน',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'คนอื่นจะไม่เห็นสถานะออนไลน์และเวลาที่เห็นล่าสุดของคุณในข้อความ',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'หนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นของเขาช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'คุณคือหนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นของคุณช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
 };

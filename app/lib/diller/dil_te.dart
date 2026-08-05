@@ -497,7 +497,6 @@ const Map<String, String> cevirilerTe = {
   'Sıralama': 'క్రమం',
   'Önerilen': 'సిఫార్సు చేయబడినది',
   'Kronolojik': 'కాలక్రమానుసారం',
-  'Dizi jpg aile üyesi': 'Dizi jpg కుటుంబ సభ్యుడు',
   'Gelen mesaj istekleri': 'వచ్చిన సందేశ అభ్యర్థనలు',
   'Mesaj isteğin yok': 'సందేశ అభ్యర్థనలు లేవు',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -505,4 +504,8 @@ const Map<String, String> cevirilerTe = {
   'Çevrimiçi durumumu gizle': 'నా ఆన్‌లైన్ స్థితిని దాచు',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'ఇతరులు సందేశాలలో మీ ఆన్‌లైన్ స్థితిని మరియు చివరిగా చూసిన సమయాన్ని చూడలేరు',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'మా మొదటి వినియోగదారులలో ఒకరు. వారి అభిప్రాయాలు యాప్ ఈరోజు ఉన్నట్టుగా మారడానికి సహాయపడ్డాయి.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'నువ్వు మా మొదటి వినియోగదారులలో ఒకరు. నీ అభిప్రాయాలు యాప్ ఈరోజు ఉన్నట్టుగా మారడానికి సహాయపడ్డాయి.',
 };

@@ -488,7 +488,6 @@ const Map<String, String> cevirilerAm = {
   'Sıralama': 'ቅደም ተከተል',
   'Önerilen': 'የሚመከር',
   'Kronolojik': 'በጊዜ ቅደም ተከተል',
-  'Dizi jpg aile üyesi': 'Dizi jpg የቤተሰብ አባል',
   'Gelen mesaj istekleri': 'የገቡ የመልእክት ጥያቄዎች',
   'Mesaj isteğin yok': 'የመልእክት ጥያቄ የለም',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -496,4 +495,8 @@ const Map<String, String> cevirilerAm = {
   'Çevrimiçi durumumu gizle': 'የመስመር ላይ ሁኔታዬን ደብቅ',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'ሌሎች በመልእክቶች ውስጥ የመስመር ላይ ሁኔታህንና መጨረሻ የታየህበትን ጊዜ አያዩም',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'ከመጀመሪያዎቹ ተጠቃሚዎቻችን አንዱ። አስተያየቶቹ መተግበሪያው ዛሬ ያለበት ደረጃ እንዲደርስ ረድተዋል።',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'አንተ ከመጀመሪያዎቹ ተጠቃሚዎቻችን አንዱ ነህ። አስተያየቶችህ መተግበሪያው ዛሬ ያለበት ደረጃ እንዲደርስ ረድተዋል።',
 };

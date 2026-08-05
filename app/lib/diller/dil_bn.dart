@@ -499,7 +499,6 @@ const Map<String, String> cevirilerBn = {
   'Sıralama': 'সাজানো',
   'Önerilen': 'প্রস্তাবিত',
   'Kronolojik': 'কালানুক্রমিক',
-  'Dizi jpg aile üyesi': 'Dizi jpg পরিবারের সদস্য',
   'Gelen mesaj istekleri': 'আসা বার্তা অনুরোধ',
   'Mesaj isteğin yok': 'কোনো বার্তা অনুরোধ নেই',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -507,4 +506,8 @@ const Map<String, String> cevirilerBn = {
   'Çevrimiçi durumumu gizle': 'আমার অনলাইন অবস্থা লুকান',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'অন্যরা বার্তায় আপনার অনলাইন অবস্থা ও শেষ দেখার সময় দেখতে পাবে না',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'আমাদের প্রথম ব্যবহারকারীদের একজন। তার মতামত অ্যাপটিকে আজকের রূপ দিতে সাহায্য করেছে।',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'তুমি আমাদের প্রথম ব্যবহারকারীদের একজন। তোমার মতামত অ্যাপটিকে আজকের রূপ দিতে সাহায্য করেছে।',
 };

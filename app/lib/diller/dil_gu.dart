@@ -496,7 +496,6 @@ const Map<String, String> cevirilerGu = {
   'Sıralama': 'ક્રમ',
   'Önerilen': 'ભલામણ કરેલ',
   'Kronolojik': 'કાલક્રમિક',
-  'Dizi jpg aile üyesi': 'Dizi jpg પરિવારના સભ્ય',
   'Gelen mesaj istekleri': 'આવેલી સંદેશ વિનંતીઓ',
   'Mesaj isteğin yok': 'કોઈ સંદેશ વિનંતી નથી',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -504,4 +503,8 @@ const Map<String, String> cevirilerGu = {
   'Çevrimiçi durumumu gizle': 'મારી ઓનલાઇન સ્થિતિ છુપાવો',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'બીજા લોકો સંદેશામાં તમારી ઓનલાઇન સ્થિતિ અને છેલ્લે જોયાનો સમય જોઈ શકશે નહીં',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'અમારા પ્રથમ વપરાશકર્તાઓમાંના એક. તેમના પ્રતિસાદથી એપ આજે છે તેવી બની.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'તું અમારા પ્રથમ વપરાશકર્તાઓમાંનો એક છે. તારા પ્રતિસાદથી એપ આજે છે તેવી બની.',
 };

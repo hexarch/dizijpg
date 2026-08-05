@@ -500,7 +500,6 @@ const Map<String, String> cevirilerFi = {
   'Sıralama': 'Järjestys',
   'Önerilen': 'Suositellut',
   'Kronolojik': 'Aikajärjestys',
-  'Dizi jpg aile üyesi': 'Dizi jpg -perheenjäsen',
   'Gelen mesaj istekleri': 'Saapuneet viestipyynnöt',
   'Mesaj isteğin yok': 'Ei viestipyyntöjä',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -508,4 +507,8 @@ const Map<String, String> cevirilerFi = {
   'Çevrimiçi durumumu gizle': 'Piilota online-tilani',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Muut eivät näe online-tilaasi eivätkä viimeksi nähty -aikaasi viesteissä',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Yksi ensimmäisistä käyttäjistämme. Hänen palautteensa auttoi tekemään sovelluksesta sen, mikä se on tänään.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Olet yksi ensimmäisistä käyttäjistämme. Palautteesi auttoi tekemään sovelluksesta sen, mikä se on tänään.',
 };

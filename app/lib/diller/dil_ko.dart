@@ -485,7 +485,6 @@ const Map<String, String> cevirilerKo = {
   'Sıralama': '정렬',
   'Önerilen': '추천',
   'Kronolojik': '최신순',
-  'Dizi jpg aile üyesi': 'Dizi jpg 패밀리 멤버',
   'Gelen mesaj istekleri': '받은 메시지 요청',
   'Mesaj isteğin yok': '메시지 요청이 없습니다',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -493,4 +492,8 @@ const Map<String, String> cevirilerKo = {
   'Çevrimiçi durumumu gizle': '온라인 상태 숨기기',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       '다른 사람은 메시지에서 내 온라인 상태와 마지막 접속 시간을 볼 수 없습니다',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      '우리의 첫 사용자 중 한 명입니다. 그 피드백 덕분에 앱이 지금의 모습이 되었습니다.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      '너는 우리의 첫 사용자 중 한 명이야. 네 피드백 덕분에 앱이 지금의 모습이 되었어.',
 };

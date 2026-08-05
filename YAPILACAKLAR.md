@@ -88,6 +88,43 @@ kişiden gelen mesajlar oraya düşecek."
 - 🚀 Migrasyon: `backend/migrasyon-2026-08-05b.sql` canlıya uygulandı.
   Yedek: `/opt/dizijpg/yedekler/kullanicilar-2026-08-05-0707.sql`
 
+## 2026-08-05 — ROZET "Founding Member" OLDU + DOKUNUNCA AÇIKLAMA MODALI 🚀
+**Kullanıcı isteği:** rozet etiketi `Founding Member` olsun; rozete dokununca
+kişinin ilk kullanıcılardan biri olduğunu ve katkısını anlatan bir modal açılsın.
+
+- 🚀 **Etiket değişti:** `Dizi jpg aile üyesi` → `Founding Member`. Unvan olduğu
+  için `dizi.jpg` gibi **marka terimi** sayıldı ve **45 dile çevrilmedi** —
+  `AileRozeti.etiket` sabiti, `.c` YOK. Ölü `Dizi jpg aile üyesi` anahtarı 45
+  dosyadan da **silindi** (artık hiçbir yerde kullanılmıyor).
+- 🚀 **Modal:** `aileRozetiSheet()` — projedeki alttan açılan sayfa kalıbının
+  aynısı (`begenenler.dart`/`paylas.dart`): yuvarlatılmış üst köşeler, sürükleme
+  tutamağı ve **SafeArea**. SafeArea şart: bu hafta üç modalde (ListeSheet,
+  takvim gün detayı, puan verme) alt içerik sistem gezinme çubuğunun altında
+  kalmıştı. Kapanma: sürükle + dışına dokun + "Kapat".
+- 🚀 **KARAR — kendi/başkası ayrımı sunucunun `ben_mi` yargısıyla:** gövde cümlesi
+  başkasında üçüncü şahıs ("...biri ... katkı sağladı"), kendi profilinde ikinci
+  tekil ("...birisin ... katkı sağladın"). `kullanici_profil.dart` KENDİ kullanıcı
+  adınla da açılabildiği için ekranın türüne bakmak yetmez — uzun basma menüsü de
+  aynı alanı kullanıyor.
+- 🚀 **KARAR — modalda avatar/kullanıcı adı YOK:** modal zaten kullanıcı adının
+  hemen altındaki rozetten açılıyor, bağlam belli; avatar için `kullanici_profil`
+  → `AileRozeti` arasına veri taşımak gerekirdi. Metinde de `{}` yer tutucusu yok.
+- 🚀 **KARAR — rozet artık TIKLANABİLİR, bu yüzden 44 dp:** mürekkep ~15 dp kaldı
+  (yazı da 12 punto kaldı), etrafındaki **dolgu** satırı 44 dp'ye tamamlıyor.
+  Dolgu dışına taşan dokunma alanı denenmedi: Flutter'da ebeveyn sınırının
+  dışı çizilse bile hit-test almaz.
+- 🚀 İki gövde cümlesi 45 dile çevrildi; **hiçbirinde apostrof yok** (fr/it gibi
+  dillerde cümle bilerek apostrofsuz kuruldu: "l'application" yerine "cette
+  application") — dil dosyaları tek tırnaklı Dart string'i, apostrof dosyayı bozar.
+  Doğrulandı: 45/45 dosyada iki anahtar da var, dosya başına 445 anahtar.
+- 🚀 Kanıt: `app/test/aile_rozeti_test.dart` **15 → 24 test**. Yeni 9 test: dokunma
+  hedefi ≥44 dp (yazı büyümeden), modal açılıyor, iki gövde varyantı **ayrı ayrı**
+  iddia ediliyor, `ben_mi: true` ile açılan kullanıcı profilinde ikinci tekil
+  çıkıyor, testçi olmayanda modal yok, SafeArea var, "Kapat" ve barrier ile
+  kapanıyor, 360 dp'de taşma yok. Kırmızıya döndürme: tıklanabilirlik sökülünce
+  8 test, `ben_mi` sabitlenince 1, gövde varyantı sabitlenince 2, SafeArea
+  sökülünce 1 test kırmızıya döndü. Backend değişmedi (`testci` zaten dönüyor).
+
 ## 2026-08-05 — TESTÇİ PROFİLİNDE "dizi.jpg aile üyesi" ROZETİ 🚀
 **Kullanıcı isteği:** "tester olarak eklediğimiz mail adresinden kayıt olan
 kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu koy ve yanına
@@ -120,7 +157,8 @@ kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu koy ve yan
   iki temada da doğrulandı.
 - 🚀 Metin 45 dile çevrildi (marka adı çevrilmedi), renkler `DiziRenkler`den
   (`sariMetin` açık temada hardal, koyu temada marka sarısı). Rozet tıklanabilir
-  değil.
+  değil. **(GÜNCELLENDİ aynı gün: etiket `Founding Member` oldu, rozet
+  tıklanabilir hâle geldi ve açıklama modalı eklendi — üstteki bölüme bak.)**
 - 🚀 Kanıt: `app/test/aile_rozeti_test.dart` (15 test) — varlık kırpma sabitleri
   gerçek PNG ile doğrulanıyor, testci true/false/eksik, ülkesi boş testçi, iki
   profil ekranı, açık/koyu tema rengi, 360 dp taşma yok. `backend/test/

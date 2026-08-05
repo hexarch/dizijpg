@@ -502,7 +502,6 @@ const Map<String, String> cevirilerHu = {
   'Sıralama': 'Rendezés',
   'Önerilen': 'Ajánlott',
   'Kronolojik': 'Időrendi',
-  'Dizi jpg aile üyesi': 'Dizi jpg családtag',
   'Gelen mesaj istekleri': 'Beérkezett üzenetkérelmek',
   'Mesaj isteğin yok': 'Nincs üzenetkérelmed',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -510,4 +509,8 @@ const Map<String, String> cevirilerHu = {
   'Çevrimiçi durumumu gizle': 'Online állapotom elrejtése',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Mások nem látják az online állapotodat és az utolsó látogatásod az üzenetekben',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Egyike az első felhasználóinknak. A visszajelzései segítettek abban, hogy az alkalmazás azzá váljon, ami ma.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Te vagy az egyik első felhasználónk. A visszajelzéseid segítettek abban, hogy az alkalmazás azzá váljon, ami ma.',
 };

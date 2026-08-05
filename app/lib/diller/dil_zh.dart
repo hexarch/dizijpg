@@ -478,7 +478,6 @@ const Map<String, String> cevirilerZh = {
   'Sıralama': '排序',
   'Önerilen': '推荐',
   'Kronolojik': '按时间',
-  'Dizi jpg aile üyesi': 'Dizi jpg 家庭成员',
   'Gelen mesaj istekleri': '收到的消息请求',
   'Mesaj isteğin yok': '没有消息请求',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -486,4 +485,8 @@ const Map<String, String> cevirilerZh = {
   'Çevrimiçi durumumu gizle': '隐藏我的在线状态',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       '其他人将看不到你在消息中的在线状态和最后上线时间',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      '我们最早的用户之一。他的反馈帮助这款应用成为今天的样子。',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      '你是我们最早的用户之一。你的反馈帮助这款应用成为今天的样子。',
 };

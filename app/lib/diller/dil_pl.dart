@@ -502,7 +502,6 @@ const Map<String, String> cevirilerPl = {
   'Sıralama': 'Sortowanie',
   'Önerilen': 'Polecane',
   'Kronolojik': 'Chronologicznie',
-  'Dizi jpg aile üyesi': 'Członek rodziny Dizi jpg',
   'Gelen mesaj istekleri': 'Otrzymane prośby o wiadomość',
   'Mesaj isteğin yok': 'Brak próśb o wiadomość',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -510,4 +509,8 @@ const Map<String, String> cevirilerPl = {
   'Çevrimiçi durumumu gizle': 'Ukryj mój status online',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Inni nie zobaczą Twojego statusu online ani ostatniej aktywności w wiadomościach',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Jeden z naszych pierwszych użytkowników. Jego opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Jesteś jednym z naszych pierwszych użytkowników. Twoje opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
 };

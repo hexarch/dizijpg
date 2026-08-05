@@ -500,7 +500,6 @@ const Map<String, String> cevirilerKn = {
   'Sıralama': 'ಕ್ರಮ',
   'Önerilen': 'ಶಿಫಾರಸು ಮಾಡಲಾಗಿದೆ',
   'Kronolojik': 'ಕಾಲಾನುಕ್ರಮ',
-  'Dizi jpg aile üyesi': 'Dizi jpg ಕುಟುಂಬ ಸದಸ್ಯ',
   'Gelen mesaj istekleri': 'ಬಂದ ಸಂದೇಶ ವಿನಂತಿಗಳು',
   'Mesaj isteğin yok': 'ಸಂದೇಶ ವಿನಂತಿ ಇಲ್ಲ',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -508,4 +507,8 @@ const Map<String, String> cevirilerKn = {
   'Çevrimiçi durumumu gizle': 'ನನ್ನ ಆನ್‌ಲೈನ್ ಸ್ಥಿತಿಯನ್ನು ಮರೆಮಾಡಿ',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'ಇತರರು ಸಂದೇಶಗಳಲ್ಲಿ ನಿಮ್ಮ ಆನ್‌ಲೈನ್ ಸ್ಥಿತಿ ಮತ್ತು ಕೊನೆಯ ಬಾರಿ ಕಂಡ ಸಮಯವನ್ನು ನೋಡಲಾರರು',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'ನಮ್ಮ ಮೊದಲ ಬಳಕೆದಾರರಲ್ಲಿ ಒಬ್ಬರು. ಅವರ ಪ್ರತಿಕ್ರಿಯೆಯಿಂದ ಅಪ್ಲಿಕೇಶನ್ ಇಂದು ಇರುವಂತೆ ರೂಪುಗೊಂಡಿತು.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'ನೀನು ನಮ್ಮ ಮೊದಲ ಬಳಕೆದಾರರಲ್ಲಿ ಒಬ್ಬ. ನಿನ್ನ ಪ್ರತಿಕ್ರಿಯೆಯಿಂದ ಅಪ್ಲಿಕೇಶನ್ ಇಂದು ಇರುವಂತೆ ರೂಪುಗೊಂಡಿತು.',
 };

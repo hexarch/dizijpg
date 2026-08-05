@@ -497,7 +497,6 @@ const Map<String, String> cevirilerAz = {
   'Sıralama': 'Sıralama',
   'Önerilen': 'Tövsiyə edilən',
   'Kronolojik': 'Xronoloji',
-  'Dizi jpg aile üyesi': 'Dizi jpg ailə üzvü',
   'Gelen mesaj istekleri': 'Gələn mesaj istəkləri',
   'Mesaj isteğin yok': 'Mesaj istəyin yoxdur',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -505,4 +504,8 @@ const Map<String, String> cevirilerAz = {
   'Çevrimiçi durumumu gizle': 'Onlayn statusumu gizlət',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Başqaları mesajlarda onlayn statusunu və son görülmə vaxtını görməyəcək',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'İlk istifadəçilərimizdən biri. Onun rəyləri tətbiqin bugünkü halına gəlməsinə kömək etdi.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Sən ilk istifadəçilərimizdən birisən. Sənin rəylərin tətbiqin bugünkü halına gəlməsinə kömək etdi.',
 };

@@ -502,7 +502,6 @@ const Map<String, String> cevirilerFil = {
   'Sıralama': 'Pagkakasunod',
   'Önerilen': 'Inirerekomenda',
   'Kronolojik': 'Ayon sa oras',
-  'Dizi jpg aile üyesi': 'Kasapi ng pamilyang Dizi jpg',
   'Gelen mesaj istekleri': 'Mga natanggap na hiling na mensahe',
   'Mesaj isteğin yok': 'Walang hiling na mensahe',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -510,4 +509,8 @@ const Map<String, String> cevirilerFil = {
   'Çevrimiçi durumumu gizle': 'Itago ang aking online status',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Hindi makikita ng iba ang iyong online status at huling nakita sa mga mensahe',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Isa sa aming mga unang user. Nakatulong ang kanyang feedback para maging ganito ang app ngayon.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Isa ka sa aming mga unang user. Nakatulong ang feedback mo para maging ganito ang app ngayon.',
 };

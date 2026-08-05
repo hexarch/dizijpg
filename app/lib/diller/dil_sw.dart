@@ -498,7 +498,6 @@ const Map<String, String> cevirilerSw = {
   'Sıralama': 'Panga',
   'Önerilen': 'Inapendekezwa',
   'Kronolojik': 'Kwa mpangilio',
-  'Dizi jpg aile üyesi': 'Mwanafamilia wa Dizi jpg',
   'Gelen mesaj istekleri': 'Maombi ya ujumbe yaliyofika',
   'Mesaj isteğin yok': 'Huna maombi ya ujumbe',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -506,4 +505,8 @@ const Map<String, String> cevirilerSw = {
   'Çevrimiçi durumumu gizle': 'Ficha hali yangu ya mtandaoni',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Wengine hawataona hali yako ya mtandaoni wala muda wa mwisho kuonekana katika ujumbe',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Mmoja wa watumiaji wetu wa kwanza. Maoni yake yalisaidia programu kuwa ilivyo leo.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Wewe ni mmoja wa watumiaji wetu wa kwanza. Maoni yako yalisaidia programu kuwa ilivyo leo.',
 };

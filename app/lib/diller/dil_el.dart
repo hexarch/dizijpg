@@ -502,7 +502,6 @@ const Map<String, String> cevirilerEl = {
   'Sıralama': 'Ταξινόμηση',
   'Önerilen': 'Προτεινόμενα',
   'Kronolojik': 'Χρονολογικά',
-  'Dizi jpg aile üyesi': 'Μέλος της οικογένειας Dizi jpg',
   'Gelen mesaj istekleri': 'Εισερχόμενα αιτήματα μηνύματος',
   'Mesaj isteğin yok': 'Δεν έχεις αιτήματα μηνύματος',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -510,4 +509,8 @@ const Map<String, String> cevirilerEl = {
   'Çevrimiçi durumumu gizle': 'Απόκρυψη της κατάστασης σύνδεσής μου',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Οι άλλοι δεν θα βλέπουν την κατάσταση σύνδεσης και την τελευταία σου εμφάνιση στα μηνύματα',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Ένας από τους πρώτους χρήστες μας. Τα σχόλιά του βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Είσαι ένας από τους πρώτους χρήστες μας. Τα σχόλιά σου βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
 };

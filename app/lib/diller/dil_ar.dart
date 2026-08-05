@@ -493,7 +493,6 @@ const Map<String, String> cevirilerAr = {
   'Sıralama': 'الترتيب',
   'Önerilen': 'موصى به',
   'Kronolojik': 'حسب الزمن',
-  'Dizi jpg aile üyesi': 'Dizi jpg عضو العائلة',
   'Gelen mesaj istekleri': 'طلبات الرسائل الواردة',
   'Mesaj isteğin yok': 'ليس لديك طلبات رسائل',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -501,4 +500,8 @@ const Map<String, String> cevirilerAr = {
   'Çevrimiçi durumumu gizle': 'إخفاء حالة الاتصال',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'لن يرى الآخرون حالة اتصالك أو آخر ظهور لك في الرسائل',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'أحد أوائل مستخدمينا. ساعدت ملاحظاته في جعل التطبيق كما هو اليوم.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'أنت أحد أوائل مستخدمينا. ساعدت ملاحظاتك في جعل التطبيق كما هو اليوم.',
 };

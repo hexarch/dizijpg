@@ -498,7 +498,6 @@ const Map<String, String> cevirilerUr = {
   'Sıralama': 'ترتیب',
   'Önerilen': 'تجویز کردہ',
   'Kronolojik': 'تاریخ وار',
-  'Dizi jpg aile üyesi': 'Dizi jpg خاندان کا رکن',
   'Gelen mesaj istekleri': 'موصولہ پیغام درخواستیں',
   'Mesaj isteğin yok': 'کوئی پیغام درخواست نہیں',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -506,4 +505,8 @@ const Map<String, String> cevirilerUr = {
   'Çevrimiçi durumumu gizle': 'میری آن لائن حالت چھپائیں',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'دوسرے لوگ پیغامات میں آپ کی آن لائن حالت اور آخری بار دیکھے جانے کا وقت نہیں دیکھ سکیں گے',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'ہمارے پہلے صارفین میں سے ایک۔ ان کی رائے نے ایپ کو آج کی شکل دی۔',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'تم ہمارے پہلے صارفین میں سے ایک ہو۔ تمہاری رائے نے ایپ کو آج کی شکل دی۔',
 };

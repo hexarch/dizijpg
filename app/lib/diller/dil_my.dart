@@ -508,7 +508,6 @@ const Map<String, String> cevirilerMy = {
   'Sıralama': 'အစီအစဉ်',
   'Önerilen': 'အကြံပြုထားသော',
   'Kronolojik': 'အချိန်အလိုက်',
-  'Dizi jpg aile üyesi': 'Dizi jpg မိသားစုဝင်',
   'Gelen mesaj istekleri': 'ဝင်လာသော မက်ဆေ့ခ်ျ တောင်းဆိုမှုများ',
   'Mesaj isteğin yok': 'မက်ဆေ့ခ်ျ တောင်းဆိုမှု မရှိပါ',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -516,4 +515,8 @@ const Map<String, String> cevirilerMy = {
   'Çevrimiçi durumumu gizle': 'ကျွန်ုပ်၏ အွန်လိုင်းအခြေအနေကို ဖျောက်ထားရန်',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'အခြားသူများသည် မက်ဆေ့ခ်ျများတွင် သင့်အွန်လိုင်းအခြေအနေနှင့် နောက်ဆုံးတွေ့ချိန်ကို မမြင်ရပါ',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'ကျွန်ုပ်တို့၏ ပထမဆုံး အသုံးပြုသူများထဲမှ တစ်ဦးဖြစ်သည်။ သူ၏ တုံ့ပြန်ချက်များက အက်ပ်ကို ယနေ့ပုံစံဖြစ်လာစေခဲ့သည်။',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'သင်သည် ကျွန်ုပ်တို့၏ ပထမဆုံး အသုံးပြုသူများထဲမှ တစ်ဦးဖြစ်သည်။ သင်၏ တုံ့ပြန်ချက်များက အက်ပ်ကို ယနေ့ပုံစံဖြစ်လာစေခဲ့သည်။',
 };

@@ -501,7 +501,6 @@ const Map<String, String> cevirilerRu = {
   'Sıralama': 'Сортировка',
   'Önerilen': 'Рекомендуемое',
   'Kronolojik': 'Хронологический',
-  'Dizi jpg aile üyesi': 'Член семьи Dizi jpg',
   'Gelen mesaj istekleri': 'Входящие запросы на переписку',
   'Mesaj isteğin yok': 'Нет запросов на переписку',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -509,4 +508,8 @@ const Map<String, String> cevirilerRu = {
   'Çevrimiçi durumumu gizle': 'Скрыть мой статус в сети',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Другие не увидят ваш статус в сети и время последнего посещения в сообщениях',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Один из наших первых пользователей. Его отзывы помогли приложению стать таким, какое оно сегодня.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Ты один из наших первых пользователей. Твои отзывы помогли приложению стать таким, какое оно сегодня.',
 };

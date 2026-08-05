@@ -18,7 +18,8 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 /// KULLANICI İSTEĞİ (5 Ağu 2026): "tester olarak eklediğimiz mail adresinden
 /// kayıt olan kullanıcıların profilinde ülke bayrağı yanında dizi.jpg logosu
-/// koy ve yanına 'Dizi jpg aile üyesi' yaz"
+/// koy ve yanına yaz" — etiket aynı gün "Founding Member" olarak sabitlendi,
+/// ardından "rozete dokununca ne olduğunu anlatan modal açılsın" istendi.
 ///
 /// Bu testler rozeti kilitler:
 ///  - `testci: true` → logo + metin görünür; `false`/eksik → GÖRÜNMEZ,
@@ -28,15 +29,21 @@ import 'package:visibility_detector/visibility_detector.dart';
 ///  - hem kendi profilinde hem başkasınınkinde,
 ///  - 360 dp'de en uzun ülke adıyla birlikte bile TAŞMA YOK (Wrap alt satıra
 ///    indirir),
-///  - logo varlığının kırpma sabitleri gerçek PNG ile uyuşuyor.
-const String _metin = 'Dizi jpg aile üyesi';
+///  - logo varlığının kırpma sabitleri gerçek PNG ile uyuşuyor,
+///  - DOKUNMA: hedef ≥44 dp, modal açılıyor, gövde cümlesi `ben_mi`ye göre
+///    ikinci tekil şahsa dönüyor, modal kapanıyor.
+const String _metin = AileRozeti.etiket;
 const double _darEkran = 360;
 
 /// 600: tek-boşluklu deneme yazı tipinde sekme etiketleri 360'ta taşıyor
 /// (gerçek yazı tipinde taşma yok). Rozet ölçümleri buradan yapılır.
 const Size _ekran = Size(600, 900);
 
-Map<String, dynamic> _acikProfil({String? ulke, bool? testci}) => {
+Map<String, dynamic> _acikProfil({
+  String? ulke,
+  bool? testci,
+  bool benMi = false,
+}) => {
   'id': 7,
   'kullanici_adi': 'thelostvibe0',
   'avatar': null,
@@ -45,7 +52,7 @@ Map<String, dynamic> _acikProfil({String? ulke, bool? testci}) => {
   'ulke': ulke,
   if (testci != null) 'testci': testci,
   'sosyal': <dynamic>[],
-  'ben_mi': false,
+  'ben_mi': benMi,
   'takip_ediyorum': false,
   'yorumlar_gizli': false,
   'istatistik': {
@@ -91,8 +98,9 @@ Future<void> _baskasi(
   String? ulke,
   bool? testci,
   Size? boyut,
+  bool benMi = false,
 }) async {
-  _sunucu({'/profil/': _acikProfil(ulke: ulke, testci: testci)});
+  _sunucu({'/profil/': _acikProfil(ulke: ulke, testci: testci, benMi: benMi)});
   await _kur(
     tester,
     const KullaniciProfilEkrani(kullaniciAdi: 'thelostvibe0'),
@@ -456,5 +464,153 @@ void main() {
         reason: 'beklenmeyen istisna: $istisna',
       );
     }
+  });
+
+  // ---------------------------------------------------------------------
+  // DOKUNMA HEDEFİ
+  // ---------------------------------------------------------------------
+  testWidgets('DOKUNMA HEDEFİ: rozet en az 44x44 dp (yazı büyütülmeden)', (
+    tester,
+  ) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    final hedef = tester.getRect(find.byType(AileRozeti));
+    expect(
+      hedef.height,
+      greaterThanOrEqualTo(44),
+      reason: 'dokunma hedefi 44 dp altına düştü: ${hedef.height}',
+    );
+    expect(hedef.width, greaterThanOrEqualTo(44));
+    // Hedef DOLGUYLA büyüdü, YAZIYLA değil: etiket hâlâ 12 punto.
+    expect(tester.widget<Text>(find.text(_metin)).style!.fontSize, 12);
+    // Logo da büyümedi (mürekkep 11 + 2x2 dolgu = 15 dp pul).
+    expect(tester.getRect(find.byType(DiziLogosu)).height, lessThan(22));
+  });
+
+  // ---------------------------------------------------------------------
+  // MODAL: kendi profilim / başkasının profili ayrımı
+  // ---------------------------------------------------------------------
+  testWidgets('BAŞKASININ PROFİLİ: dokununca ÜÇÜNCÜ ŞAHIS cümlesi açılır', (
+    tester,
+  ) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    // Modal daha açılmadı.
+    expect(find.text(aileRozetiBaskasi), findsNothing);
+
+    await tester.tap(find.byType(AileRozeti));
+    await tester.pumpAndSettle();
+
+    expect(find.text(AileRozeti.etiket), findsWidgets); // rozet + modal başlığı
+    expect(find.text(aileRozetiBaskasi), findsOneWidget);
+    // KENDİ profil varyantı burada ASLA çıkmaz.
+    expect(find.text(aileRozetiBenim), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('KENDİ PROFİLİM: dokununca İKİNCİ TEKİL ŞAHIS cümlesi açılır', (
+    tester,
+  ) async {
+    await _kendim(tester, ulke: 'Almanya', testci: true);
+    await tester.tap(find.byType(AileRozeti));
+    await tester.pumpAndSettle();
+
+    expect(find.text(aileRozetiBenim), findsOneWidget);
+    expect(find.text(aileRozetiBaskasi), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+    'KENDİ KULLANICI ADIMLA açılan kullanıcı profili: ayrım ekranın türünden '
+    'değil sunucunun ben_mi yargısından gelir',
+    (tester) async {
+      // kullanici_profil.dart kendi kullanıcı adınla da açılabiliyor. Ekran
+      // türüne bakılsaydı burada yanlışlıkla üçüncü şahıs cümlesi çıkardı.
+      await _baskasi(tester, ulke: 'Türkiye', testci: true, benMi: true);
+      await tester.tap(find.byType(AileRozeti));
+      await tester.pumpAndSettle();
+
+      expect(find.text(aileRozetiBenim), findsOneWidget);
+      expect(find.text(aileRozetiBaskasi), findsNothing);
+    },
+  );
+
+  testWidgets('TESTÇİ DEĞİL: rozet yok, dolayısıyla açılacak modal da yok', (
+    tester,
+  ) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: false);
+    expect(find.byType(AileRozeti), findsNothing);
+    // Dokunulacak bir şey yok; iki gövde varyantı da hiçbir yerde çizilmedi.
+    expect(find.text(aileRozetiBaskasi), findsNothing);
+    expect(find.text(aileRozetiBenim), findsNothing);
+  });
+
+  // ---------------------------------------------------------------------
+  // MODAL: kalıp / kapanma
+  // ---------------------------------------------------------------------
+  testWidgets(
+    'MODAL: SafeArea var (alt içerik gezinme çubuğu altında kalmaz)',
+    (tester) async {
+      // Bu hafta üç modalde (ListeSheet, takvim gün detayı, puan verme) alt
+      // içerik sistem gezinme çubuğunun altında kalmıştı. Burası o hatayı
+      // tekrarlamadığımızı kilitler.
+      await _baskasi(tester, ulke: 'Türkiye', testci: true);
+      await tester.tap(find.byType(AileRozeti));
+      await tester.pumpAndSettle();
+
+      final sheet = find.ancestor(
+        of: find.text(aileRozetiBaskasi),
+        matching: find.byType(SafeArea),
+      );
+      expect(sheet, findsWidgets, reason: 'modal SafeArea içinde değil');
+      // Alttan açılan sayfa kalıbı: sürükleme tutamağı + BottomSheet.
+      expect(find.byType(BottomSheet), findsOneWidget);
+    },
+  );
+
+  testWidgets('MODAL: "Kapat" ile kapanıyor', (tester) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    await tester.tap(find.byType(AileRozeti));
+    await tester.pumpAndSettle();
+    expect(find.text(aileRozetiBaskasi), findsOneWidget);
+
+    await tester.tap(find.text('Kapat'));
+    await tester.pumpAndSettle();
+    expect(find.text(aileRozetiBaskasi), findsNothing);
+    // Rozet yerinde duruyor, tekrar açılabilir.
+    expect(find.byType(AileRozeti), findsOneWidget);
+  });
+
+  testWidgets('MODAL: dışına dokununca kapanıyor (barrier)', (tester) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    await tester.tap(find.byType(AileRozeti));
+    await tester.pumpAndSettle();
+    expect(find.text(aileRozetiBaskasi), findsOneWidget);
+
+    // Sayfanın en üstü: alt sayfanın DIŞI (barrier).
+    await tester.tapAt(const Offset(300, 20));
+    await tester.pumpAndSettle();
+    expect(find.text(aileRozetiBaskasi), findsNothing);
+  });
+
+  testWidgets('MODAL: 360 dp genişlikte taşma yok', (tester) async {
+    await _baskasi(
+      tester,
+      ulke: 'Amerika Birleşik Devletleri',
+      testci: true,
+      boyut: const Size(_darEkran, 800),
+    );
+    // Ekranın kendi sekme etiketi taşmasını (deneme yazı tipi gürültüsü)
+    // modalı açmadan ÖNCE temizle ki kalan taşma yalnız modaldan gelsin.
+    tester.takeException();
+
+    await tester.tap(find.byType(AileRozeti));
+    await tester.pumpAndSettle();
+
+    expect(find.text(aileRozetiBaskasi), findsOneWidget);
+    final govde = tester.getRect(find.text(aileRozetiBaskasi));
+    expect(govde.left, greaterThanOrEqualTo(0));
+    expect(govde.right, lessThanOrEqualTo(_darEkran + 0.01));
+    expect(govde.height, greaterThan(0));
+    // ASIL İDDİA: modal 360 dp'de tek bir taşma bile üretmiyor.
+    expect(tester.takeException(), isNull);
   });
 }

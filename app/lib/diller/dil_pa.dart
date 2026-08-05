@@ -498,7 +498,6 @@ const Map<String, String> cevirilerPa = {
   'Sıralama': 'ਕ੍ਰਮ',
   'Önerilen': 'ਸਿਫਾਰਸ਼ ਕੀਤਾ',
   'Kronolojik': 'ਕਾਲਕ੍ਰਮਿਕ',
-  'Dizi jpg aile üyesi': 'Dizi jpg ਪਰਿਵਾਰ ਦਾ ਮੈਂਬਰ',
   'Gelen mesaj istekleri': 'ਆਈਆਂ ਸੁਨੇਹਾ ਬੇਨਤੀਆਂ',
   'Mesaj isteğin yok': 'ਕੋਈ ਸੁਨੇਹਾ ਬੇਨਤੀ ਨਹੀਂ',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -506,4 +505,8 @@ const Map<String, String> cevirilerPa = {
   'Çevrimiçi durumumu gizle': 'ਮੇਰੀ ਆਨਲਾਈਨ ਸਥਿਤੀ ਲੁਕਾਓ',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'ਹੋਰ ਲੋਕ ਸੁਨੇਹਿਆਂ ਵਿੱਚ ਤੁਹਾਡੀ ਆਨਲਾਈਨ ਸਥਿਤੀ ਅਤੇ ਆਖਰੀ ਵਾਰ ਵੇਖੇ ਜਾਣ ਦਾ ਸਮਾਂ ਨਹੀਂ ਵੇਖਣਗੇ',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'ਸਾਡੇ ਪਹਿਲੇ ਵਰਤੋਂਕਾਰਾਂ ਵਿੱਚੋਂ ਇੱਕ। ਉਹਨਾਂ ਦੇ ਸੁਝਾਵਾਂ ਨੇ ਐਪ ਨੂੰ ਅੱਜ ਵਾਲਾ ਰੂਪ ਦਿੱਤਾ।',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'ਤੂੰ ਸਾਡੇ ਪਹਿਲੇ ਵਰਤੋਂਕਾਰਾਂ ਵਿੱਚੋਂ ਇੱਕ ਹੈਂ। ਤੇਰੇ ਸੁਝਾਵਾਂ ਨੇ ਐਪ ਨੂੰ ਅੱਜ ਵਾਲਾ ਰੂਪ ਦਿੱਤਾ।',
 };

@@ -499,7 +499,6 @@ const Map<String, String> cevirilerSv = {
   'Sıralama': 'Sortering',
   'Önerilen': 'Rekommenderat',
   'Kronolojik': 'Kronologisk',
-  'Dizi jpg aile üyesi': 'Dizi jpg-familjemedlem',
   'Gelen mesaj istekleri': 'Inkomna meddelandeförfrågningar',
   'Mesaj isteğin yok': 'Inga meddelandeförfrågningar',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -507,4 +506,8 @@ const Map<String, String> cevirilerSv = {
   'Çevrimiçi durumumu gizle': 'Dölj min onlinestatus',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Andra ser inte din onlinestatus eller när du senast var aktiv i meddelanden',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'En av våra första användare. Med sin återkoppling hjälpte hen appen att bli det den är i dag.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Du är en av våra första användare. Med din återkoppling hjälpte du appen att bli det den är i dag.',
 };

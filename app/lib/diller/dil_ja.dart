@@ -484,7 +484,6 @@ const Map<String, String> cevirilerJa = {
   'Sıralama': '並び替え',
   'Önerilen': 'おすすめ',
   'Kronolojik': '新着順',
-  'Dizi jpg aile üyesi': 'Dizi jpg ファミリーメンバー',
   'Gelen mesaj istekleri': '受信したメッセージリクエスト',
   'Mesaj isteğin yok': 'メッセージリクエストはありません',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -492,4 +491,8 @@ const Map<String, String> cevirilerJa = {
   'Çevrimiçi durumumu gizle': 'オンライン状態を非表示にする',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       '他のユーザーはメッセージであなたのオンライン状態と最終ログイン時刻を見られません',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      '最初のユーザーのひとりです。そのフィードバックのおかげで、アプリは今の形になりました。',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'あなたは最初のユーザーのひとりです。あなたのフィードバックのおかげで、アプリは今の形になりました。',
 };

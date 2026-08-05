@@ -499,7 +499,6 @@ const Map<String, String> cevirilerUk = {
   'Sıralama': 'Сортування',
   'Önerilen': 'Рекомендовані',
   'Kronolojik': 'Хронологічний',
-  'Dizi jpg aile üyesi': 'Член родини Dizi jpg',
   'Gelen mesaj istekleri': 'Вхідні запити на повідомлення',
   'Mesaj isteğin yok': 'Немає запитів на повідомлення',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -507,4 +506,8 @@ const Map<String, String> cevirilerUk = {
   'Çevrimiçi durumumu gizle': 'Приховати мій статус у мережі',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Інші не бачитимуть ваш статус у мережі та час останньої активності в повідомленнях',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Один з наших перших користувачів. Його відгуки допомогли застосунку стати таким, яким він є сьогодні.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Ти один з наших перших користувачів. Твої відгуки допомогли застосунку стати таким, яким він є сьогодні.',
 };

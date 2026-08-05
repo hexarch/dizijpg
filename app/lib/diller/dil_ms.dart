@@ -501,7 +501,6 @@ const Map<String, String> cevirilerMs = {
   'Sıralama': 'Susunan',
   'Önerilen': 'Disyorkan',
   'Kronolojik': 'Kronologi',
-  'Dizi jpg aile üyesi': 'Ahli keluarga Dizi jpg',
   'Gelen mesaj istekleri': 'Permintaan mesej masuk',
   'Mesaj isteğin yok': 'Tiada permintaan mesej',
   'Takip etmediğin kişilerden gelen mesajlar burada görünür.':
@@ -509,4 +508,8 @@ const Map<String, String> cevirilerMs = {
   'Çevrimiçi durumumu gizle': 'Sembunyikan status dalam talian saya',
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Orang lain tidak akan melihat status dalam talian dan kali terakhir anda dilihat dalam mesej',
+  'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
+      'Salah seorang pengguna pertama kami. Maklum balasnya membantu aplikasi ini menjadi seperti hari ini.',
+  'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
+      'Kamu salah seorang pengguna pertama kami. Maklum balas kamu membantu aplikasi ini menjadi seperti hari ini.',
 };
