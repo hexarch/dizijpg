@@ -589,7 +589,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 - **(c) Risk:** Düşük. Ancak `AggregateRating`, sayfada **görünen** bir puanla eşleşmeli; yoksa "yapısal veri politikası ihlali" uyarısı gelir. 1.1 maddesi puanı sayfaya bastığı için bu koşul sağlanır.
 - **(d) Adım:** Bkz. Ek B. `TVSeries` / `Movie` + `Review` + `AggregateRating` + `BreadcrumbList`. Rich Results Test ile doğrula.
 
-#### 1.3. Bot kapsamını eksik rotalara genişlet 🟡
+#### 1.3. Bot kapsamını eksik rotalara genişlet ✅ TAMAM (6 Ağu 2026 — `/kullanici/` hariç)
 
 - **(a) Etki:** Yüksek — özellikle bölüm sayfaları. Uzun kuyruk aramaların ana hedefi.
 - **(b) İş yükü:** 2–3 gün.
@@ -600,7 +600,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   3. Bölüm sayfası içeriği: bölüm adı, TMDB bölüm özeti, o bölüme ait yorumlar (`yorumlar` tablosunda `sezon`/`bolum` alanları zaten var), diziye ve komşu bölümlere bağlantılar.
   4. Kullanıcı profili sayfaları için **gizlilik kontrolü zorunlu**: `gizlilik-tercihleri` (server.js:1566) ayarına saygı gösterilmeli; gizli profiller `noindex` almalı. Bu madde gizlilik açısından en riskli olanı, dikkatle yapılmalı.
 
-#### 1.4. Ana sayfa ve keşif sayfaları için SSR 🟡
+#### 1.4. Ana sayfa ve keşif sayfaları için SSR ✅ TAMAM (6 Ağu 2026 — ana sayfa; `/gozat`, `/kesfet` yapılmadı)
 
 - **(a) Etki:** Orta–yüksek. "dizi.jpg" marka aramasında düzgün bir açılış; ayrıca ana sayfa iç bağlantı merkezi (hub) olarak sitemap'i destekler.
 - **(b) İş yükü:** 1 gün.
@@ -627,6 +627,36 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   3. `main.dart.js` için `no-store`'u kaldırmak istiyorsanız önce dosya adına build hash'i ekleyin (`flutter build web` çıktısını post-process eden bir adım) ve `index.html`'i `no-store` bırakın. Hash'siz haliyle `no-store` **doğru** karardır — dokunmayın.
   4. Brotli: Cloudflare panelinde Brotli'yi aç. `main.dart.js` için ~250–300 KB beklenen tasarruf. **[DOĞRULANMALI: CF Brotli ayarının durumu; ölçümde `content-encoding: gzip` döndü.]**
   5. `flutter build web --wasm` ile skwasm derlemesini değerlendir — CanvasKit'ten daha küçük ilk yük verebilir, ancak tarayıcı desteği ve görsel regresyon testi gerekir. **[DOĞRULANMALI: projede denenip denenmediği.]**
+
+**Uygulama notu (6 Ağu 2026, canlı) — 1.3 + 1.4 + IndexNow:**
+
+- nginx bot kapsamı: `^/(icerik|gonderi|kisi|dizi|listeler)/`. Ana sayfa için ayrı
+  `location = /` → `@og_ana`. **Tuzak:** adlandırılmış location'da `proxy_pass`
+  STATİK URI parçası alamaz (`@og`'daki `/og$uri` değişken taşıdığı için geçerli);
+  `rewrite ^ /og/ana break;` + URI'siz `proxy_pass` ile çözüldü.
+- `/og/dizi/:id/sezon/:s/bolum/:b` — TVEpisode JSON-LD, önceki/sonraki bölüm ve
+  diziye bağlantı. **Kural: yalnız o bölüme ait yayına değer yorum varsa indexle.**
+  6 Ağu itibarıyla hiçbir bölümde eşiği geçen yorum yok → hepsi `noindex,follow`.
+  Bu doğru davranış: kullanıcı bölüm yorumu yazdıkça sayfalar kendiliğinden açılacak.
+- `/og/listeler/:id` — `herkese_acik` olmayan liste indekse GİRMEZ. Ayrıca
+  `SEO_LISTE_MIN = 3`: ilk testte 1 öğelik misafir listesi indekslenebilir çıkmıştı.
+- `/og/ana` — marka sayfası + son yorumlanan 60 içeriğe bağlantı (iç bağlantı merkezi),
+  `WebSite` + `Organization` JSON-LD. **`SearchAction` bilerek YOK:** `/arama` rotası
+  sorgu parametresi almıyor, çalışmayan arama URL'i bildirmek yapısal veri hatası olur.
+- **IndexNow** (planda yoktu, Bing kurulumunda eklendi): `/b81003368ba94ba0ff8597b05833fe8d.txt`
+  Node'dan servis ediliyor — Flutter web dağıtımı (`scp build/web/*`) dosyayı silemesin diye.
+  Yeni yorum yazıldığında ateşle-ve-unut bildirim; aynı URL için 10 dk bastırma.
+  Yalnız ≥80 karakter özlü metinler tetikler. Canlı test: `POST api.indexnow.org` → **202**.
+- robots.txt: `/tam-arama` eklendi, `/api/medya/` + `/api/avatarlar/` için `Allow`
+  istisnası (aksi halde `Disallow: /api/` gönderi görsellerini de kapatıyordu),
+  **Google-Extended bloğu kaldırıldı** (AI Overviews'da kaynak gösterilme izni;
+  GPTBot/ClaudeBot/CCBot kapalı kaldı — eğitim izni verilmiyor).
+  **[AÇIK İŞ] Cloudflare yönetilen robots.txt hâlâ kendi `Google-Extended: Disallow`
+  bloğunu ÖNE ekliyor; origin değişikliği tek başına yetmiyor. CF panelinden
+  AI Crawl Control ayarı değişmeli.**
+- **[YAPILMADI] `/kullanici/:ad`** — gizlilik tercihleri (`server.js` gizlilik-tercihleri)
+  kontrolü gerektiriyor, planın en riskli maddesi; ayrı ele alınmalı.
+  **[YAPILMADI] `/gozat`, `/kesfet`** liste sayfaları.
 
 **Uygulama notu (6 Ağu 2026, canlı) — 1.1 + 1.2:**
 
