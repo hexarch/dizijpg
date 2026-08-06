@@ -856,10 +856,26 @@ function kanonikUrl(url) {
   return SITE_KOK + (yol || '/');
 }
 
+// JSON-LD gövdeye string olarak gömülür; `</script>` ve HTML ayraçları kaçırılmalı
+// yoksa bir kullanıcı yorumu script bloğunu erkenden kapatıp XSS'e dönüşür.
+// Metinler ELLE birleştirilmez, JSON.stringify üretir (SEO-PLANI Ek B kuralı).
+function jsonLdGom(nesne) {
+  if (!nesne) return '';
+  const s = JSON.stringify(nesne)
+    .replace(/</g, '\\u003c').replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026').replace(/\u2028|\u2029/g, '');
+  return `\n<script type="application/ld+json">${s}</script>`;
+}
+
 // `indexle=false` -> noindex,follow: sayfa indekse girmez ama iç bağlantılar
 // takip edilir. Kural için `ozgunIcerikVar()`e bakınız (tek tanım noktası).
+//
+// `h1`   : gövdedeki başlık; verilmezse `baslik` kullanılır. İçerik sayfalarında
+//          <title> "… — dizi.jpg" ile biterken <h1> marka ekisiz olsun diye var.
+// `govde`: <h1>/<p> sonrasına eklenen HAZIR HTML (çağıran htmlKacir'lamış olmalı).
+// `jsonLd`: yapısal veri nesnesi (SEO-PLANI 1.2).
 function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
-                   canonical, indexle = true }) {
+                   canonical, indexle = true, h1 = null, govde = '', jsonLd = null }) {
   const b = htmlKacir(baslik);
   const a = htmlKacir(String(aciklama || '').replace(/\s+/g, ' ').trim().slice(0, 200));
   const g = htmlKacir(gorsel || '');
@@ -878,27 +894,47 @@ function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
 <meta property="og:url" content="${u}">
 <meta name="twitter:card" content="${gorselKart}">
 <meta name="twitter:title" content="${b}">
-<meta name="twitter:description" content="${a}">${g ? `\n<meta name="twitter:image" content="${g}">` : ''}
-</head><body><h1>${b}</h1><p>${a}</p><p><a href="${u}">dizi.jpg</a></p></body></html>`;
+<meta name="twitter:description" content="${a}">${g ? `\n<meta name="twitter:image" content="${g}">` : ''}${jsonLdGom(jsonLd)}
+</head><body><h1>${htmlKacir(h1 ?? baslik)}</h1><p>${a}</p>${govde}
+<p><a href="${u}">dizi.jpg</a></p></body></html>`;
 }
 const tmdbGorsel = (yol, boyut = 'w780') =>
   yol ? `https://image.tmdb.org/t/p/${boyut}${yol}` : '';
 
-// SEO — "özgün içeriği var mı" kuralı TEK yerde (SEO-PLANI 0.3 + 0.2).
-// Bir sayfa yalnızca yasaklı OLMAYAN bir kullanıcının o içeriğe yazdığı en az
-// bir yorum VEYA inceleme metni varsa indekslenmeye değer sayılır. Aynı kural
-// sitemap kapsamını da belirler (SITEMAP_SORGU); iki yerde ayrı yazılırsa
-// sitemap'e girip noindex yiyen (ya da tersi) sayfalar oluşur.
+// SEO — "özgün içeriği var mı" kuralı TEK yerde (SEO-PLANI 0.3 + 0.2 + 1.1).
+// ÜÇ yer bu tanımı paylaşmak ZORUNDA, yoksa sistem kendi kendisiyle çelişir:
+//   1. ogSayfa `indexle`   (ozgunIcerikVar)
+//   2. sitemap kapsamı     (SITEMAP_SORGU)
+//   3. sayfaya BASILAN metin (seoIcerikVerisi)
+// Üçü ayrışırsa sitemap'te olup noindex yiyen ya da indekslenip gövdesi boş
+// kalan sayfalar oluşur — ikisi de tarama bütçesi israfı.
+//
+// UZUNLUK EŞİĞİ: ilk denemede sayfaya "test", "#breakingbad", "Yo yo yo" gibi
+// sosyal gönderiler düştü ve JSON-LD'ye `Review` olarak girdi. Bu hem zayıf
+// içerik (thin content) sinyali hem yapısal veri politikası ihlali — `Review`
+// gerçek bir değerlendirme olmalı. Ölçüm etiket/bahsetme/bağlantı ATILDIKTAN
+// sonra yapılır, yoksa yalnızca hashtag yığını olan gönderi eşiği geçiyor.
+const SEO_YORUM_LIMIT = 20;
+const SEO_YORUM_MIN = 80;      // sosyal gönderi eşiği (AI incelemeleri ~450)
+const SEO_INCELEME_MIN = 40;   // puanla yazılan inceleme; bilinçli metin
+const seoOzUzunluk = (sutun) =>
+  `length(btrim(regexp_replace(${sutun}, '(#|@)[[:alnum:]_]+|https?://[^[:space:]]+', '', 'g')))`;
+// Yorum ve inceleme tarafının paylaştığı "yayına değer metin" koşulu.
+const SEO_YORUM_KOSUL =
+  `NOT k.yasakli AND NOT y.spoiler AND ${seoOzUzunluk('y.metin')} >= ${SEO_YORUM_MIN}`;
+const SEO_INCELEME_KOSUL =
+  `NOT k.yasakli AND p.yorum IS NOT NULL AND ${seoOzUzunluk('p.yorum')} >= ${SEO_INCELEME_MIN}`;
+
 async function ozgunIcerikVar(tur, tmdbId) {
   try {
     const { rows } = await havuz.query(
       `SELECT 1 WHERE EXISTS (
          SELECT 1 FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-          WHERE y.tur = $1 AND y.tmdb_id = $2 AND NOT k.yasakli)
+          WHERE y.tur = $1 AND y.tmdb_id = $2 AND y.sezon IS NULL
+            AND ${SEO_YORUM_KOSUL})
         OR EXISTS (
          SELECT 1 FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-          WHERE p.tur = $1 AND p.tmdb_id = $2 AND NOT k.yasakli
-            AND p.yorum IS NOT NULL AND btrim(p.yorum) <> '')`,
+          WHERE p.tur = $1 AND p.tmdb_id = $2 AND ${SEO_INCELEME_KOSUL})`,
       [tur, tmdbId]);
     return rows.length > 0;
   } catch (e) {
@@ -909,6 +945,138 @@ async function ozgunIcerikVar(tur, tmdbId) {
   }
 }
 
+// ---------- SEO 1.1: indekslenen sayfaya ÖZGÜN içerik ----------
+// Bot sayfası bugüne dek TMDB özetinin birebir kopyasıydı; aynı metin onlarca
+// sitede olduğu için sıralanma gerekçesi yoktu. Sitenin gerçek SEO sermayesi
+// kullanıcı/AI yorumları ve puanları — ikisi de zaten kimlik doğrulamasız
+// public uçlarda (`/yorumlar/:tur/:tmdbId`, `/incelemeler/:tur/:tmdbId`).
+//
+// HARİÇ TUTULANLAR: spoiler işaretli yorumlar (sayfa kalitesi + kullanıcıya
+// zarar), yasaklı kullanıcıların metinleri (/og/gonderi de böyle yapıyor) ve
+// uzunluk eşiğini geçemeyen sosyal gönderiler. Koşullar ozgunIcerikVar ile
+// ORTAK sabitlerden gelir (SEO_YORUM_KOSUL / SEO_INCELEME_KOSUL).
+//
+// SIRALAMA: tarih değil UZUNLUK. Bu sayfa bir akış değil, "en iyi
+// değerlendirmeler" vitrini; en doyurucu metin en üstte olmalı.
+async function seoIcerikVerisi(tur, tmdbId) {
+  const [yorum, inceleme, puan] = await Promise.all([
+    havuz.query(
+      `SELECT y.metin, y.tarih, k.kullanici_adi
+         FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+        WHERE y.tur = $1 AND y.tmdb_id = $2 AND y.sezon IS NULL
+          AND ${SEO_YORUM_KOSUL}
+        ORDER BY length(y.metin) DESC LIMIT $3`, [tur, tmdbId, SEO_YORUM_LIMIT]),
+    havuz.query(
+      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
+         FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+        WHERE p.tur = $1 AND p.tmdb_id = $2 AND ${SEO_INCELEME_KOSUL}
+        ORDER BY length(p.yorum) DESC LIMIT $3`, [tur, tmdbId, SEO_YORUM_LIMIT]),
+    havuz.query(
+      `SELECT round(avg(puan)::numeric, 1)::float AS ortalama, count(puan)::int AS adet
+         FROM puanlar WHERE tur = $1 AND tmdb_id = $2`, [tur, tmdbId]),
+  ]);
+  return {
+    yorumlar: yorum.rows,
+    incelemeler: inceleme.rows,
+    ortalama: puan.rows[0]?.ortalama ?? null,
+    adet: puan.rows[0]?.adet ?? 0,
+  };
+}
+
+const seoGun = (t) => {
+  const d = t instanceof Date ? t : new Date(t);
+  return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
+};
+const seoMetin = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
+
+// Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
+// reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
+function seoYorumHtml({ kullanici_adi, metin, tarih, puan }) {
+  const t = seoGun(tarih);
+  return `<article><h3>@${htmlKacir(kullanici_adi)}`
+    + `${puan ? ` — ${htmlKacir(puan)}/10` : ''}</h3>`
+    + `<p>${htmlKacir(seoMetin(metin))}</p>`
+    + `${t ? `<time datetime="${t}">${t}</time>` : ''}</article>`;
+}
+
+function seoBaglantiListesi(baslik, ogeler) {
+  if (!ogeler.length) return '';
+  const li = ogeler
+    .map((o) => `<li><a href="${htmlKacir(o.yol)}">${htmlKacir(o.ad)}</a></li>`)
+    .join('');
+  return `\n<h2>${htmlKacir(baslik)}</h2>\n<ul>${li}</ul>`;
+}
+
+// SEO 1.2 — yapısal veri. AggregateRating YALNIZCA gerçekten puan varsa basılır
+// (ratingCount: 0 ile basmak politika ihlali) ve değeri sayfadaki metinle birebir
+// aynıdır. Spoiler/yasaklı metinler seoIcerikVerisi'nde zaten elenmiş durumda.
+function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
+  const dizi = tur === 'tv';
+  const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
+  const oyuncular = (v.credits?.cast || []).slice(0, 10).map((o) => ({
+    '@type': 'Person', name: o.name, url: `${SITE_KOK}/kisi/${o.id}`,
+  }));
+  const degerlendirmeler = [
+    ...seo.incelemeler.map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.kullanici_adi },
+      datePublished: seoGun(r.tarih),
+      reviewBody: seoMetin(r.yorum),
+      ...(r.puan ? {
+        reviewRating: {
+          '@type': 'Rating', ratingValue: String(r.puan),
+          bestRating: '10', worstRating: '1',
+        },
+      } : {}),
+    })),
+    ...seo.yorumlar.map((r) => ({
+      '@type': 'Review',
+      author: { '@type': 'Person', name: r.kullanici_adi },
+      datePublished: seoGun(r.tarih),
+      reviewBody: seoMetin(r.metin),
+    })),
+  ].slice(0, 10);
+
+  const ana = {
+    '@type': dizi ? 'TVSeries' : 'Movie',
+    '@id': `${url}#icerik`,
+    name: ad,
+    url,
+    ...(gorsel ? { image: gorsel } : {}),
+    ...(ozet ? { description: seoMetin(ozet) } : {}),
+    ...(tarih ? { datePublished: tarih } : {}),
+    ...(v.genres?.length ? { genre: v.genres.map((g) => g.name) } : {}),
+    ...(dizi && v.number_of_seasons ? { numberOfSeasons: v.number_of_seasons } : {}),
+    ...(dizi && v.number_of_episodes ? { numberOfEpisodes: v.number_of_episodes } : {}),
+    ...(!dizi && v.runtime ? { duration: `PT${v.runtime}M` } : {}),
+    ...(oyuncular.length ? { actor: oyuncular } : {}),
+    ...(seo.adet > 0 && seo.ortalama ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: String(seo.ortalama),
+        ratingCount: seo.adet,
+        bestRating: '10', worstRating: '1',
+      },
+    } : {}),
+    ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
+  };
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [ana, {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+        {
+          '@type': 'ListItem', position: 2,
+          name: dizi ? 'Diziler' : 'Filmler', item: `${SITE_KOK}/gozat`,
+        },
+        { '@type': 'ListItem', position: 3, name: ad },
+      ],
+    }],
+  };
+}
+
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
   const id = parseInt(tmdbId, 10);
@@ -917,17 +1085,44 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
-    const v = await tmdbGetir(`/${tur}/${tmdbId}`, ONBELLEK_TTL_SN.uzun);
+    // credits/similar tek istekte gelir: iç bağlantılar bu maddenin gizli değeri,
+    // onlar olmadan tarama derinliği 1'de kalıyor.
+    const v = await tmdbGetir(
+      `/${tur}/${tmdbId}?append_to_response=credits,similar`, ONBELLEK_TTL_SN.uzun);
     const ad = v.name || v.title || 'dizi.jpg';
     const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
+    const adYil = `${ad}${yil ? ` (${yil})` : ''}`;
+    const gorsel = tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280');
+    const seo = await seoIcerikVerisi(tur, id);
+
+    const puanBlok = seo.adet > 0 && seo.ortalama
+      ? `\n<p>dizi.jpg puanı: ${htmlKacir(seo.ortalama)} / 10`
+        + ` (${htmlKacir(seo.adet)} puan)</p>` : '';
+    const incelemeBlok = seo.incelemeler.length
+      ? `\n<h2>${htmlKacir(adYil)} incelemeleri</h2>\n`
+        + seo.incelemeler.map(seoYorumHtml).join('\n') : '';
+    const yorumBlok = seo.yorumlar.length
+      ? `\n<h2>dizi.jpg kullanıcılarının yorumları</h2>\n`
+        + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
+    const oyuncuBlok = seoBaglantiListesi('Oyuncular',
+      (v.credits?.cast || []).slice(0, 10)
+        .map((o) => ({ ad: o.name, yol: `/kisi/${o.id}` })));
+    const benzerBlok = seoBaglantiListesi(tur === 'tv' ? 'Benzer diziler' : 'Benzer filmler',
+      (v.similar?.results || []).slice(0, 8)
+        .filter((b) => b.name || b.title)
+        .map((b) => ({ ad: b.name || b.title, yol: `/icerik/${tur}/${b.id}` })));
+
     res.type('html').send(ogSayfa({
-      baslik: `${ad}${yil ? ` (${yil})` : ''} — dizi.jpg`,
+      baslik: `${adYil} — dizi.jpg`,
+      h1: adYil,
       aciklama: v.overview,
-      gorsel: tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280'),
+      gorsel,
       url,
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
       indexle: await ozgunIcerikVar(tur, id),
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
+      govde: puanBlok + incelemeBlok + yorumBlok + oyuncuBlok + benzerBlok,
+      jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
   } catch {
     // TMDB'de bulunamadı/erişilemedi -> indekse girmesin (soft 404).
@@ -1007,12 +1202,11 @@ const SITEMAP_SORGU = `
   SELECT tur, tmdb_id, max(tarih) AS son FROM (
     SELECT y.tur, y.tmdb_id, y.tarih
       FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-     WHERE NOT k.yasakli AND y.tur IN ('tv','movie')
+     WHERE y.tur IN ('tv','movie') AND y.sezon IS NULL AND ${SEO_YORUM_KOSUL}
     UNION ALL
     SELECT p.tur, p.tmdb_id, p.tarih
       FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-     WHERE NOT k.yasakli AND p.tur IN ('tv','movie')
-       AND p.yorum IS NOT NULL AND btrim(p.yorum) <> ''
+     WHERE p.tur IN ('tv','movie') AND ${SEO_INCELEME_KOSUL}
   ) t GROUP BY tur, tmdb_id ORDER BY son DESC`;
 
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)

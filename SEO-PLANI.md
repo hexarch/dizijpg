@@ -544,7 +544,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 
 ### FAZ 1 — 1–3 Ay (içerik: özgünlük ve derinlik)
 
-#### 1.1. SSR sayfasına özgün içeriği bas 🔴 — *planın en yüksek getirili maddesi*
+#### 1.1. SSR sayfasına özgün içeriği bas ✅ TAMAM (6 Ağu 2026) — *planın en yüksek getirili maddesi*
 
 - **(a) Etki:** Çok yüksek. TMDB kopyası olan sayfayı, Türkiye'de eşi az bulunan özgün Türkçe inceleme sayfasına dönüştürür. Sıralanabilirliğin asıl kaynağı bu.
 - **(b) İş yükü:** 2–3 gün.
@@ -582,7 +582,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 
   Not: HTML'i mümkün olduğunca sade tut — bu sayfa botlar için, kullanıcılar Flutter uygulamasını görüyor. Ancak 3.1 sonrası kullanıcı da bu URL'e gelebileceği için içerik uyumu korunmalı (aynı bilgi Flutter'da da görünüyor olmalı).
 
-#### 1.2. JSON-LD yapısal veri 🟡
+#### 1.2. JSON-LD yapısal veri ✅ TAMAM (6 Ağu 2026)
 
 - **(a) Etki:** Yüksek. `AggregateRating` ile SERP'te yıldız gösterimi tıklama oranını belirgin artırır (sektör ortalaması %10–30 aralığında bildirilir; **kendi verinizle ölçülmeli**).
 - **(b) İş yükü:** 1 gün.
@@ -627,6 +627,34 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   3. `main.dart.js` için `no-store`'u kaldırmak istiyorsanız önce dosya adına build hash'i ekleyin (`flutter build web` çıktısını post-process eden bir adım) ve `index.html`'i `no-store` bırakın. Hash'siz haliyle `no-store` **doğru** karardır — dokunmayın.
   4. Brotli: Cloudflare panelinde Brotli'yi aç. `main.dart.js` için ~250–300 KB beklenen tasarruf. **[DOĞRULANMALI: CF Brotli ayarının durumu; ölçümde `content-encoding: gzip` döndü.]**
   5. `flutter build web --wasm` ile skwasm derlemesini değerlendir — CanvasKit'ten daha küçük ilk yük verebilir, ancak tarayıcı desteği ve görsel regresyon testi gerekir. **[DOĞRULANMALI: projede denenip denenmediği.]**
+
+**Uygulama notu (6 Ağu 2026, canlı) — 1.1 + 1.2:**
+
+- `ogSayfa()` üç yeni parametre aldı: `h1` (gövde başlığı; `<title>` marka ekli kalırken
+  `<h1>` "Breaking Bad (2008)" oluyor), `govde` (hazır HTML) ve `jsonLd`.
+  JSON-LD `jsonLdGom()` ile basılıyor: `JSON.stringify` + `<`/`>`/`&` kaçırma —
+  elle string birleştirme YOK, yoksa bir kullanıcı yorumu `</script>` yazıp XSS'e dönüşür.
+- `/og/icerik/:tur/:tmdbId` artık TMDB'yi `append_to_response=credits,similar` ile çekiyor
+  ve gövdeye şunları basıyor: puan ortalaması, incelemeler, kullanıcı yorumları,
+  **Oyuncular** (→ `/kisi/:id`) ve **Benzer diziler/filmler** (→ `/icerik/:tur/:id`).
+  Ölçüm: Breaking Bad sayfası **1.805 → 7.473 bayt**, 16 iç bağlantı, 3 özgün metin.
+  Tarama derinliği 1'den çıktı.
+- JSON-LD: `TVSeries`/`Movie` + `genre`/`numberOfSeasons`/`numberOfEpisodes`/`duration`
+  + `actor` (8) + `aggregateRating` + `review` (≤10) + `BreadcrumbList`.
+  `aggregateRating` YALNIZ puan varsa basılıyor ve değeri sayfada görünen satırla birebir aynı.
+- **KALİTE FİLTRESİ (ilk denemede yakalandı):** filtre olmadan sayfaya "test",
+  "#breakingbad", "Yo yo yo 🗣️" gibi sosyal gönderiler düştü ve JSON-LD'ye `Review`
+  olarak girdi — hem thin content hem yapısal veri politikası ihlali. Eklenen kural:
+  etiket/bahsetme/bağlantı ATILDIKTAN sonra metin ≥ 80 karakter (inceleme için ≥ 40).
+  Sıralama tarih değil **uzunluk**: bu sayfa akış değil, "en iyi değerlendirmeler" vitrini.
+- **TEK TANIM NOKTASI:** `SEO_YORUM_KOSUL` / `SEO_INCELEME_KOSUL` sabitleri artık ÜÇ yeri
+  birden besliyor — `ozgunIcerikVar()` (indexle), `SITEMAP_SORGU` (kapsam) ve
+  `seoIcerikVerisi()` (basılan metin). Ayrışırlarsa sitemap'te olup noindex yiyen ya da
+  indekslenip gövdesi boş kalan sayfalar oluşuyordu.
+  Sonuç: sitemap **2.483 → 2.427 URL** (56 ince sayfa düştü, AI korpusu kapsamı korundu).
+- Regresyon: `/og/kisi`, `/og/gonderi`, film sayfası, geçersiz id (`noindex,follow`),
+  normal tarayıcıya Flutter kabuğu, `/api/yorumlar`, `/api/incelemeler`, `/sitemap.xml`
+  — hepsi curl ile doğrulandı.
 
 **Faz 1 toplamı: ~7–9 adam-günü.**
 
