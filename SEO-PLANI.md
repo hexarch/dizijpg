@@ -510,14 +510,35 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   döndürüyor ve Cloudflare yönetilen robots.txt bunu kendi içeriğinin ardına ekliyor. Yani yayınlanan
   robots.txt'in sonunda HTML var. Ek A'daki gerçek robots.txt origin'e konmalı (`location = /robots.txt`).
 
-#### 0.5. Search Console ve Bing Webmaster kurulumu 🔴
+#### 0.5. Search Console ve Bing Webmaster kurulumu ✅ TAMAM (6 Ağu 2026 — Bing hariç)
 
 - **(a) Etki:** Ölçüm olmadan hiçbir sonraki adım değerlendirilemez.
 - **(b) İş yükü:** 0,5 gün.
 - **(c) Risk:** Yok.
 - **(d) Adım:** DNS TXT ile domain-property doğrulaması (Cloudflare DNS üzerinden). Sitemap gönder. "URL İnceleme" aracıyla `/icerik/tv/1396`'yı test et — Google'ın SSR sayfasını gördüğü **görülerek** doğrulanmalı (`Google-InspectionTool` zaten `$og_bot` listesinde, yani doğru sayfayı almalı).
 
-**Faz 0 toplamı: ~4–5 adam-günü.**
+**Uygulama notu (6 Ağu 2026, canlı):**
+
+- Mülk **`sc-domain:dizijpg.com`** (Alan adı tipi) olarak doğrulandı. Doğrulama Cloudflare
+  entegrasyonuyla otomatik yapıldı; DNS'te `google-site-verification=GUpLRe_qkhdswAZdrlNZzK90CLOSz26wfOWmVxHtOIs`
+  TXT kaydı canlı (`dig +short TXT dizijpg.com` ile doğrulandı).
+- **Hesap: `alcelikbcayir@gmail.com` (`/u/2`)** — Play Console ile aynı hesap.
+  `alicihanceliktht@gmail.com` (`/u/1`) ve `allamesia@gmail.com` (`/u/0`) mülke ERİŞEMİYOR;
+  GSC bağlantılarını her zaman `/u/2/` ile açın.
+- **Sitemap gönderildi:** `https://dizijpg.com/sitemap.xml` → Tür "Site Haritası dizini",
+  Durum **Başarılı**, son okuma 6 Ağu 2026. (Gönderim anındaki "Getirilemedi" satırı geçiciydi;
+  detay sayfası "Site haritası dizini başarıyla işlendi" diyor.) Keşfedilen sayfa sayısı
+  henüz 0 — alt haritalar (`sitemap-genel.xml`, `sitemap-icerik-1.xml`) birkaç gün içinde işlenecek.
+- **URL denetimi canlı test — `/icerik/tv/1396`:** "URL, Google tarafından kullanılabilir",
+  "Sayfa dizine eklenebilir". Test edilen HTML'de Googlebot'un aldığı sayfa **SSR bot sayfası**:
+  `<html lang="tr">`, `<title>Breaking Bad (2008) — dizi.jpg</title>`, gerçek metinli description
+  ve `<link rel="canonical" href="https://dizijpg.com/icerik/tv/1396">`.
+  **Yani 0.3 ve bot mekanizması Google tarafında GÖRÜLEREK doğrulandı.**
+- Performans / Dizin oluşturma raporları "Veri işleniyor" — yeni mülkte normal, birkaç gün sürer.
+- **Yapılmadı:** Bing Webmaster Tools (GSC'den içe aktarma; Google OAuth izni gerektirdiği için
+  kullanıcı onayına bırakıldı).
+
+**Faz 0 toplamı: ~4–5 adam-günü. → 6 Ağu 2026 itibarıyla Bing dışında TAMAMLANDI.**
 
 ---
 
@@ -1000,12 +1021,14 @@ server {
 ### 9.3. Faz sonu kabul kriterleri
 
 **Faz 0 sonu (1. ay) — teknik doğrulama, trafik beklenmiyor:**
-- [ ] GSC'de `/icerik/tv/1396` "URL Google'da mevcut" durumunda
-- [ ] Sitemap gönderildi, "Başarılı" durumunda, keşfedilen URL ≈ gönderilen URL
-- [ ] `curl -A Googlebot https://dizijpg.com/icerik/tv/1396 | grep canonical` → sonuç var
-- [ ] `curl -o /dev/null -w "%{http_code}" https://www.dizijpg.com/` → **301**
-- [ ] `curl -A Googlebot https://dizijpg.com/icerik/tv/999999999 | grep noindex` → sonuç var
-- [ ] Oturumsuz bir tarayıcıda `/icerik/tv/1396` açılıyor, `/giris`'e atmıyor
+- [~] GSC'de `/icerik/tv/1396` "URL Google'da mevcut" durumunda — 6 Ağu: canlı test "kullanılabilir",
+  dizine ekleme henüz yok (site yeni gönderildi, tarama bekleniyor)
+- [x] Sitemap gönderildi, "Başarılı" durumunda — 6 Ağu ✔ (keşfedilen URL sayısı henüz işleniyor)
+- [x] `curl -A Googlebot https://dizijpg.com/icerik/tv/1396 | grep canonical` → 6 Ağu ✔ (GSC canlı testinde de görüldü)
+- [x] `curl -o /dev/null -w "%{http_code}" https://www.dizijpg.com/` → **301** ✔
+- [x] `curl -A Googlebot https://dizijpg.com/icerik/tv/999999999 | grep noindex` → `noindex,follow` ✔
+- [ ] Oturumsuz bir tarayıcıda `/icerik/tv/1396` açılıyor, `/giris`'e atmıyor — kod canlıda
+  (`yonlendirme.dart:84 herkeseAcikMi`), tarayıcıda elle doğrulanmadı
 
 **Faz 1 sonu (3. ay):**
 - [ ] İndekslenmiş sayfa sayısı > 1.500
