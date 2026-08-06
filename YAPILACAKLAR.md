@@ -1,5 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-05 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-06 — ARAMADAN KULLANICIYA DOKUNUNCA SİMSİYAH EKRAN ✅
+**Kullanıcı bildirimi (birebir):** "uygulamada arama kısmına alcelik yazıyorum,
+gelen kullanıcıya tıklıyorum, alcelik profili açılmıyor, simsiyah ekran
+açılıyor"
+
+- ✅ **Kök neden — kopyalanmış ve BAYATLAMIŞ "kabuk dışı yollar" listesi.**
+  Mobilde arama, kabuğun DIŞINDA kök bir rotadır (`/tam-arama`, 3 Ağu'da
+  eklendi). `/kullanici/:ad` ise kabuğun (StatefulShellRoute) İÇİNDE yaşar.
+  `kullaniciyaGit` "kabuk dışında mıyım" kararını elle yazılmış bir yol
+  listesiyle veriyordu; listeye `/tam-arama` EKLENMEMİŞTİ → `push` seçiliyor,
+  kabuk İKİNCİ kez kuruluyor, sayfa anahtarları çakışıyor
+  (`!keyReservation.contains(key)`) ve Flutter hata widget'ı = SİYAH EKRAN
+  basıyordu. Aynı liste `yonlendirme.dart`'ta bir kez daha kopyalanmıştı
+  (bildirim dokunuşları) ve orada da `/tam-arama`, `/gozat` eksikti.
+- ✅ **Çözüm — liste bakımı bitti.** Karar artık yönlendiricinin KENDİ eşleşme
+  ağacından okunuyor: `kabukIcindeMi()` son eşleşme `ShellRouteMatch` mi diye
+  bakar. Yeni kök rota eklendiğinde hiçbir listeyi güncellemek gerekmez.
+- ✅ **Bonus — geri tuşu artık uygulamayı KAPATMIYOR.** Kabuk dışından hedefe
+  doğrudan `go` etmek geriye poplanacak sayfa bırakmıyordu (Android geri =
+  uygulamadan çık). `kabugaDon()` önce kabuğun DURDUĞU sekmeye döner, sonra
+  push edilir: geri tuşu profili kapatıp kullanıcıyı geldiği sekmede bırakır.
+- ✅ **Backend temiz:** `/api/kullanici-ara?q=alcelik` ve `/api/profil/alcelik`
+  canlıda 200 dönüyor; hata tamamen istemci tarafı yönlendirmedeydi.
+- ✅ **Kanıt:** `test/arama_kullanici_gezinme_test.dart` (3 test) — tam ekran
+  arama → kullanıcı → profil GÖRÜNÜR + istisna YOK + kabuk TEK, sistem geri
+  tuşu, masaüstü satır-içi arama regresyonu. Düzeltme öncesi 1. test
+  `!keyReservation.contains(key)` ile KIRMIZIYDI. Tüm paket: 481 test yeşil.
 
 ## 2026-08-05 — MODALLERİN ALT İÇERİĞİ SİSTEM GEZİNME ÇUBUĞUNUN ALTINDA ✅
 **Hata:** 360x800 / 48 dp navi çubuğunda (güvenli sınır y=752) üç modalin en alt

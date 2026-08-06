@@ -26,6 +26,7 @@ import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
 import 'ekranlar/kitaplik_liste.dart';
 import 'ekranlar/kullanici_profil.dart';
+import 'ekranlar/ortak.dart' show kabugaDon, kabukIcindeMi;
 import 'ekranlar/profil.dart';
 import 'ekranlar/takvim.dart';
 
@@ -34,28 +35,18 @@ import 'ekranlar/takvim.dart';
 GoRouter? sonYonlendirici;
 
 /// Kabuk-güvenli gezinme: kabuk-içi rotaya kabuk DIŞINDAN push yapılırsa
-/// kabuk ikinci kez kurulur (GlobalKey çakışması → beyaz ekran); o durumda go.
+/// kabuk ikinci kez kurulur (sayfa anahtarı/GlobalKey çakışması → boş, siyah
+/// ekran); o durumda go. "Kabuk dışı" kararı elle tutulan yol listesiyle
+/// DEĞİL, yönlendiricinin kendi eşleşme ağacıyla verilir — bkz.
+/// [kabukIcindeMi]; eski kopyalanmış liste yeni kök rotalarda güncellenmeyip
+/// siyah ekran üretiyordu.
 void rotayaGit(String hedef) {
   final y = sonYonlendirici;
   if (y == null) return;
-  final yol = y.routerDelegate.currentConfiguration.uri.path;
-  const kabukDisi = [
-    '/icerik/',
-    '/kisi/',
-    '/dizi/',
-    '/ozet/',
-    '/izlediklerim',
-    '/ayarlar',
-    '/gizlilik',
-    '/gizlenen-yorumlar',
-    '/giris',
-    '/karsilama',
-    '/gonderi/',
-  ];
-  if (kabukDisi.any(yol.startsWith)) {
-    y.go(hedef);
-  } else {
+  if (kabukIcindeMi(y) || kabugaDon(y)) {
     y.push(hedef);
+  } else {
+    y.go(hedef);
   }
 }
 

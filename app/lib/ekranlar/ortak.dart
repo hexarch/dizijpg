@@ -1400,32 +1400,62 @@ void rotayaGitGuvenli(BuildContext context, String hedef) {
   yonlendirici.push(hedef);
 }
 
+/// Şu an EN ÜSTTEKİ sayfa kabuğun (StatefulShellRoute) İÇİNDE mi?
+///
+/// NEDEN ELLE YOL LİSTESİ DEĞİL: eskiden burada '/icerik/', '/kisi/', ...
+/// diye kabuk DIŞI yolların sabit listesi vardı ve iki ayrı dosyada
+/// KOPYALANMIŞTI. Yeni bir kök rota eklenince listeye yazmayı unutmak sessizce
+/// SİYAH EKRAN üretiyordu (6 Ağu 2026: mobil tam ekran arama `/tam-arama`
+/// listede yoktu — arama sonucundaki kullanıcıya dokununca kabuk ikinci kez
+/// kurulup sayfa anahtarları çakışıyordu).
+///
+/// Yönlendiricinin KENDİ eşleşme ağacı sorulursa liste bakımı biter: go_router
+/// kabuk içi sayfaları [ShellRouteMatch] altında toplar, kabuğun üstüne itilen
+/// kök rotalar ise düz [RouteMatch] olarak listenin SONUNA eklenir.
+bool kabukIcindeMi(GoRouter yonlendirici) {
+  final eslesmeler = yonlendirici.routerDelegate.currentConfiguration.matches;
+  return eslesmeler.isNotEmpty && eslesmeler.last is ShellRouteMatch;
+}
+
+/// Kabuğun ÜSTÜNE itilmiş kök sayfaları (detay, kişi, tam ekran arama...)
+/// kapatıp kabuğun DURDUĞU sekmeye döner; kabuk hiç kurulmamışsa (derin
+/// bağlantıyla doğrudan gelinmişse) false döner.
+///
+/// NEDEN doğrudan hedefe `go` DEĞİL: hedefe go, kabuğu hedef sayfayla
+/// KURDUĞU için geriye poplanacak sayfa bırakmaz — Android geri tuşu o
+/// sayfadan uygulamayı KAPATIRDI. Önce kabuğun kendi konumuna dönüp SONRA
+/// push edince yığın iki katlı olur: geri tuşu sayfayı kapatır, kullanıcı
+/// geldiği sekmede kalır.
+bool kabugaDon(GoRouter yonlendirici) {
+  final eslesmeler = yonlendirici.routerDelegate.currentConfiguration.matches;
+  for (final eslesme in eslesmeler) {
+    if (eslesme is! ShellRouteMatch) continue;
+    RouteMatchBase yaprak = eslesme;
+    while (yaprak is ShellRouteMatch) {
+      yaprak = yaprak.matches.last;
+    }
+    yonlendirici.go(yaprak.matchedLocation);
+    return true;
+  }
+  return false;
+}
+
 /// Kullanıcı profiline güvenli gidiş. /kullanici/:ad kabuk İÇİNDE yaşar;
-/// kabuğun üstündeki sayfalardan (detay/bölüm/kişi/özet...) push'lanırsa
-/// kabuk ikinci kez kurulur, branch GlobalKey'leri çakışır → beyaz ekran.
-/// O yüzden kabuk dışındaysak go (kabuğa dön), içindeysek push (yığın korunur).
+/// kabuğun üstündeki sayfalardan (detay/bölüm/kişi/özet/tam ekran arama...)
+/// push'lanırsa kabuk ikinci kez kurulur, sayfa anahtarları ve branch
+/// GlobalKey'leri çakışır → boş/siyah ekran.
+/// O yüzden kabuk dışındaysak önce kabuğa dönülür ([kabugaDon]), sonra push
+/// edilir; kabuk hiç kurulmamışsa (derin bağlantı) go ile kurulur.
 ///
 /// Reels gibi tam ekran katmanlar da kapatılır — bkz. [katmanlariKapat].
 void kullaniciyaGit(BuildContext context, String ad) {
   final yonlendirici = GoRouter.of(context);
-  final yol = yonlendirici.routerDelegate.currentConfiguration.uri.path;
-  const kabukDisi = [
-    '/icerik/',
-    '/kisi/',
-    '/dizi/',
-    '/ozet/',
-    '/izlediklerim',
-    '/ayarlar',
-    '/gizlilik',
-    '/gonderi/',
-  ];
-  final disarida = kabukDisi.any(yol.startsWith);
   final hedef = '/kullanici/$ad';
   katmanlariKapat(context);
-  if (disarida) {
-    yonlendirici.go(hedef);
-  } else {
+  if (kabukIcindeMi(yonlendirici) || kabugaDon(yonlendirici)) {
     yonlendirici.push(hedef);
+  } else {
+    yonlendirici.go(hedef);
   }
 }
 
