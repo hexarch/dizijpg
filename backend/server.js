@@ -917,6 +917,7 @@ const tmdbGorsel = (yol, boyut = 'w780') =>
 const SEO_YORUM_LIMIT = 20;
 const SEO_YORUM_MIN = 80;      // sosyal gönderi eşiği (AI incelemeleri ~450)
 const SEO_INCELEME_MIN = 40;   // puanla yazılan inceleme; bilinçli metin
+const SEO_LISTE_MIN = 3;       // bu sayının altındaki liste ince sayfa sayılır
 const seoOzUzunluk = (sutun) =>
   `length(btrim(regexp_replace(${sutun}, '(#|@)[[:alnum:]_]+|https?://[^[:space:]]+', '', 'g')))`;
 // Yorum ve inceleme tarafının paylaştığı "yayına değer metin" koşulu.
@@ -1193,6 +1194,238 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
+
+// ---------- SEO 1.3: bot kapsamı — bölüm ve liste sayfaları ----------
+// "[dizi adı] [n]. sezon [m]. bölüm" Türkiye dizi aramalarının en kalabalık
+// kuyruğu ve bu rota bugüne dek bota tamamen kapalıydı.
+//
+// KURAL: bölüm sayfası YALNIZCA o bölüme ait yayına değer yorum varsa
+// indekslenir. Aksi halde tek bir dizi için binlerce ince sayfa açılır ve
+// tarama bütçesi boşa gider — bu maddenin tek gerçek riski budur.
+async function seoBolumYorumlari(tmdbId, sezon, bolum) {
+  const { rows } = await havuz.query(
+    `SELECT y.metin, y.tarih, k.kullanici_adi
+       FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+      WHERE y.tur = 'tv' AND y.tmdb_id = $1 AND y.sezon = $2 AND y.bolum = $3
+        AND ${SEO_YORUM_KOSUL}
+      ORDER BY length(y.metin) DESC LIMIT $4`,
+    [tmdbId, sezon, bolum, SEO_YORUM_LIMIT]);
+  return rows;
+}
+
+app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const s = parseInt(req.params.sezon, 10);
+  const b = parseInt(req.params.bolum, 10);
+  const url = `${SITE_KOK}/dizi/${req.params.id}`
+    + `/sezon/${req.params.sezon}/bolum/${req.params.bolum}`;
+  const gecersiz = !gecerliTmdb(id)
+    || !Number.isInteger(s) || s < 0 || s > 100
+    || !Number.isInteger(b) || b < 1 || b > 2000;
+  if (gecersiz) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+  }
+  try {
+    const [dizi, bol] = await Promise.all([
+      tmdbGetir(`/tv/${id}`, ONBELLEK_TTL_SN.uzun),
+      tmdbGetir(`/tv/${id}/season/${s}/episode/${b}`, ONBELLEK_TTL_SN.uzun),
+    ]);
+    const diziAd = dizi.name || 'dizi.jpg';
+    const bolumAd = bol.name || `${b}. Bölüm`;
+    const h1 = `${diziAd} ${s}. Sezon ${b}. Bölüm — ${bolumAd}`;
+    const yorumlar = await seoBolumYorumlari(id, s, b);
+
+    const yorumBlok = yorumlar.length
+      ? `\n<h2>Bu bölüm hakkında yorumlar</h2>\n`
+        + yorumlar.map(seoYorumHtml).join('\n') : '';
+    const komsu = [{ ad: `${diziAd} — tüm bölümler`, yol: `/icerik/tv/${id}` }];
+    if (b > 1) {
+      komsu.push({ ad: `${s}. Sezon ${b - 1}. Bölüm`, yol: `/dizi/${id}/sezon/${s}/bolum/${b - 1}` });
+    }
+    komsu.push({ ad: `${s}. Sezon ${b + 1}. Bölüm`, yol: `/dizi/${id}/sezon/${s}/bolum/${b + 1}` });
+
+    res.type('html').send(ogSayfa({
+      baslik: `${diziAd} ${s}. sezon ${b}. bölüm: ${bolumAd} — dizi.jpg`,
+      h1,
+      aciklama: bol.overview || `${diziAd} ${s}. sezon ${b}. bölüm — dizi.jpg`,
+      gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
+      url,
+      canonical: `${SITE_KOK}/dizi/${id}/sezon/${s}/bolum/${b}`,
+      indexle: yorumlar.length > 0,
+      tur: 'video.episode',
+      govde: yorumBlok + seoBaglantiListesi('Bağlantılar', komsu),
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'TVEpisode',
+        name: bolumAd,
+        episodeNumber: b,
+        ...(bol.air_date ? { datePublished: String(bol.air_date).slice(0, 10) } : {}),
+        ...(bol.overview ? { description: seoMetin(bol.overview) } : {}),
+        partOfSeason: { '@type': 'TVSeason', seasonNumber: s },
+        partOfSeries: {
+          '@type': 'TVSeries', name: diziAd, url: `${SITE_KOK}/icerik/tv/${id}`,
+        },
+      },
+    }));
+  } catch {
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+  }
+}));
+
+// Listeler ("En iyi 20 Türk dizisi" tipi) hem uzun kuyruk hem paylaşım formatı.
+// GİZLİLİK: `herkese_acik` olmayan liste indekse GİRMEZ ve içeriği basılmaz —
+// /listeler/:id ucundaki kuralın birebir aynısı.
+app.get('/og/listeler/:id', sarici(async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  const url = `${SITE_KOK}/listeler/${req.params.id}`;
+  if (!gecerliTmdb(id)) {
+    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+  }
+  try {
+    const { rows } = await havuz.query(
+      `SELECT l.ad, l.aciklama, l.herkese_acik, k.kullanici_adi
+         FROM listeler l JOIN kullanicilar k ON k.id = l.kullanici_id
+        WHERE l.id = $1 AND NOT k.yasakli`, [id]);
+    if (!rows.length || !rows[0].herkese_acik) {
+      return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    }
+    const l = rows[0];
+    const { rows: ogeler } = await havuz.query(
+      `SELECT tmdb_id, tur FROM liste_ogeleri WHERE liste_id = $1
+        ORDER BY eklenme DESC LIMIT 100`, [id]);
+    const harita = await tmdbTopluGetir(
+      ogeler.map((o) => `/${o.tur}/${o.tmdb_id}`), ONBELLEK_TTL_SN.uzun);
+    const baglantilar = ogeler.map((o) => {
+      const v = harita.get(`/${o.tur}/${o.tmdb_id}`);
+      return v && (v.name || v.title)
+        ? { ad: v.name || v.title, yol: `/icerik/${o.tur}/${o.tmdb_id}` } : null;
+    }).filter(Boolean);
+
+    res.type('html').send(ogSayfa({
+      baslik: `${l.ad} — @${l.kullanici_adi} listesi — dizi.jpg`,
+      h1: l.ad,
+      aciklama: l.aciklama || `@${l.kullanici_adi} kullanıcısının dizi.jpg listesi.`,
+      url,
+      canonical: `${SITE_KOK}/listeler/${id}`,
+      // Tek-iki içerikli liste ince sayfadır (ilk testte "En sevdiklerim" adlı
+      // 1 öğelik misafir listesi indekslenebilir çıkmıştı). Eşik: en az 3.
+      indexle: baglantilar.length >= SEO_LISTE_MIN,
+      tur: 'article',
+      govde: seoBaglantiListesi(`Listedeki ${baglantilar.length} içerik`, baglantilar),
+      jsonLd: baglantilar.length ? {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: l.ad,
+        ...(l.aciklama ? { description: seoMetin(l.aciklama) } : {}),
+        numberOfItems: baglantilar.length,
+        itemListElement: baglantilar.slice(0, 30).map((x, i) => ({
+          '@type': 'ListItem', position: i + 1, name: x.ad, url: SITE_KOK + x.yol,
+        })),
+      } : null,
+    }));
+  } catch {
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+  }
+}));
+
+// SEO 1.4 — ana sayfa. Marka aramasında ("dizi.jpg", "dizijpg") boş Flutter
+// kabuğu dönmek en ucuz ve en utandırıcı kayıptı. Ayrıca bu sayfa iç bağlantı
+// merkezi (hub): sitemap'i tamamlar, tarama derinliğini besler.
+// NOT: `SearchAction` BASILMIYOR — /arama rotası sorgu parametresi almıyor,
+// çalışmayan bir arama URL'i bildirmek yapısal veri hatası olur.
+app.get('/og/ana', sarici(async (_req, res) => {
+  const url = `${SITE_KOK}/`;
+  let baglantilar = [];
+  try {
+    const d = await sitemapVerisi();
+    const ilk = (d.sayfalar[0] || []).slice(0, 60);        // en son etkinlik sırasında
+    const yollar = ilk.map((x) => {
+      const m = x.loc.match(/\/icerik\/(tv|movie)\/(\d+)$/);
+      return m ? `/${m[1]}/${m[2]}` : null;
+    }).filter(Boolean);
+    const harita = await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun);
+    baglantilar = yollar.map((y) => {
+      const v = harita.get(y);
+      return v && (v.name || v.title)
+        ? { ad: v.name || v.title, yol: `/icerik${y}` } : null;
+    }).filter(Boolean);
+  } catch (e) {
+    // Bağlantı listesi üretilemese bile marka sayfası dönmeli.
+    console.error('og/ana', e.message);
+  }
+  res.type('html').send(ogSayfa({
+    baslik: 'dizi.jpg — Dizi ve Film Takip Uygulaması',
+    h1: 'dizi.jpg',
+    aciklama: 'İzlediğin dizileri ve filmleri takip et, puanla, yorumla; '
+      + 'arkadaşlarının ne izlediğini gör. Türkçe dizi ve film takip uygulaması.',
+    url,
+    canonical: `${SITE_KOK}/`,
+    tur: 'website',
+    govde: seoBaglantiListesi('Son yorumlanan diziler ve filmler', baglantilar),
+    jsonLd: {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          '@id': `${SITE_KOK}/#site`,
+          name: 'dizi.jpg',
+          url: `${SITE_KOK}/`,
+          inLanguage: 'tr',
+        },
+        {
+          '@type': 'Organization',
+          '@id': `${SITE_KOK}/#kurum`,
+          name: 'dizi.jpg',
+          url: `${SITE_KOK}/`,
+          logo: `${SITE_KOK}/icons/Icon-192.png`,
+        },
+      ],
+    },
+  }));
+}));
+
+// ---------- IndexNow: yeni içeriği Bing/Yandex'e ANINDA bildir ----------
+// Sitemap taraması haftalar sürebiliyor; IndexNow ile yeni yorum yazılan sayfa
+// saniyeler içinde kuyruğa giriyor. Anahtar GİZLİ DEĞİLDİR — protokol gereği
+// `https://dizijpg.com/<anahtar>.txt` adresinden herkese açık servis edilir,
+// sahiplik kanıtı bu dosyanın varlığıdır. Bu yüzden .env'de değil burada.
+const INDEXNOW_ANAHTAR = 'b81003368ba94ba0ff8597b05833fe8d';
+const INDEXNOW_ANAHTAR_URL = `${SITE_KOK}/${INDEXNOW_ANAHTAR}.txt`;
+
+app.get(`/${INDEXNOW_ANAHTAR}.txt`, (_req, res) => {
+  res.type('text/plain').send(INDEXNOW_ANAHTAR);
+});
+
+// Aynı içeriğe arka arkaya yorum gelince tek bildirim yeter; 10 dakikalık
+// bastırma hem gereksiz istekten hem de "spam" görünmekten korur.
+const indexNowSonGonderim = new Map();
+const INDEXNOW_BASTIRMA_MS = 10 * 60 * 1000;
+
+function indexNowBildir(yollar) {
+  const simdi = Date.now();
+  const urlList = [...new Set(yollar)]
+    .filter((y) => {
+      const son = indexNowSonGonderim.get(y) || 0;
+      if (simdi - son < INDEXNOW_BASTIRMA_MS) return false;
+      indexNowSonGonderim.set(y, simdi);
+      return true;
+    })
+    .map((y) => SITE_KOK + y);
+  if (!urlList.length) return;
+  // Ateşle-ve-unut: SEO bildirimi yüzünden kullanıcının yorum isteği beklemesin
+  // ya da hata almasın.
+  fetch('https://api.indexnow.org/indexnow', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json; charset=utf-8' },
+    body: JSON.stringify({
+      host: 'dizijpg.com',
+      key: INDEXNOW_ANAHTAR,
+      keyLocation: INDEXNOW_ANAHTAR_URL,
+      urlList,
+    }),
+    signal: AbortSignal.timeout(8000),
+  }).catch((e) => console.error('indexnow', e?.message || e));
+}
 
 // ---------- Sitemap (SEO-PLANI 0.2) ----------
 // KAPSAM KURALI: yalnızca ÖZGÜN İÇERİĞİ OLAN sayfalar. Tüm TMDB kimlikleri
@@ -4413,6 +4646,16 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
   etiketBildirimleriGonder(temiz, req.kullanici.id, rows[0].id, yanitlananSahip);
   // Yeni yorumdaki emojiler bir sonraki açılışta hızlı satırda görünsün
   emojiBenimOnbellek.delete(req.kullanici.id);
+  // SEO: yorum eklenen sayfa (ve varsa bölüm sayfası) arama motorlarına bildirilsin.
+  // Yalnız yayına değer uzunluktaki metinler — kısa gönderiler zaten noindex.
+  if (['tv', 'movie'].includes(tur)
+      && temiz.replace(/(#|@)[\p{L}\p{N}_]+|https?:\/\/\S+/gu, '').trim().length >= 80) {
+    const bildirilecek = [`/icerik/${tur}/${tmdb_id}`];
+    if (tur === 'tv' && sezon != null && bolum != null) {
+      bildirilecek.push(`/dizi/${tmdb_id}/sezon/${sezon}/bolum/${bolum}`);
+    }
+    indexNowBildir(bildirilecek);
+  }
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));
 
