@@ -12,9 +12,9 @@
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import { spawn } from 'child_process';
 import bcrypt from 'bcryptjs';
 import pg from 'pg';
+import { imzaCikar, ayniGorsel } from './kare_imza.js';
 const { Pool } = pg;
 
 const { DATABASE_URL, TMDB_TOKEN, MEDYA_DIZIN, AVATAR_DIZIN, AI_SIFRE } = process.env;
@@ -86,41 +86,12 @@ async function kullaniciHazirla() {
 }
 
 // --- ALGISAL TEKRAR KONTROLÜ ---------------------------------------------
-// TMDB aynı görseli farklı kırpım/renk varyantlarıyla AYRI backdrop olarak
-// sunuyor; dosyalar byte olarak farklı olduğu için md5 yakalamaz. ffmpeg ile
-// dHash üretip (9x8 gri → komşu piksel karşılaştırması → 64 bit) Hamming
-// mesafesi ESIK'in altındakileri aynı görsel sayıyoruz.
-// EŞİK gözle kalibre edildi (2026-08-01): 0-11 arası çiftler hep aynı
-// görselin varyantı çıktı, 12'de farklı görseller yakalanmaya başladı
-// (Schindler'de iki ayrı afiş) → bir basamak emniyetle 10.
-const TEKRAR_ESIK = 10;
-
-function dhash(dosyaYolu) {
-  return new Promise((coz) => {
-    const p = spawn('ffmpeg', ['-v', 'error', '-i', dosyaYolu,
-      '-vf', 'scale=9:8,format=gray', '-f', 'rawvideo', '-']);
-    const parcalar = [];
-    p.stdout.on('data', (d) => parcalar.push(d));
-    p.on('error', () => coz(null));
-    p.on('close', () => {
-      const b = Buffer.concat(parcalar);
-      if (b.length < 72) return coz(null);
-      let h = 0n;
-      for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
-          h = (h << 1n) | (b[y * 9 + x] > b[y * 9 + x + 1] ? 1n : 0n);
-        }
-      }
-      coz(h);
-    });
-  });
-}
-
-const mesafe = (a, b) => {
-  let x = a ^ b, n = 0;
-  while (x) { n += Number(x & 1n); x >>= 1n; }
-  return n;
-};
+// TMDB aynı görseli farklı kırpım/renk/yazı varyantlarıyla AYRI backdrop
+// olarak sunuyor; dosyalar byte olarak farklı olduğu için md5 yakalamaz.
+// Süzgeç kare_imza.js'te: dHash + pHash + hizalı korelasyon (üç ölçütün
+// gerekçesi ve gözle kalibre edilmiş eşikleri o dosyanın başında yazılı).
+// Tek başına dHash yetmiyordu: 2026-08-06 taramasında atılan 1.335 karenin
+// 1.119'unu YALNIZ hizalı ölçüt yakaladı (kırpım/renk varyantları).
 
 async function indirVeHashle(kullaniciId, b) {
   const dosya = `m${kullaniciId}-${crypto.randomBytes(8).toString('hex')}.jpg`;
@@ -130,8 +101,8 @@ async function indirVeHashle(kullaniciId, b) {
   } catch {
     return null;
   }
-  const h = await dhash(tamYol);
-  return { yol: `/medya/${dosya}`, tamYol, hash: h };
+  const imza = await imzaCikar(tamYol);
+  return { yol: `/medya/${dosya}`, tamYol, imza };
 }
 
 // Yapımın en oylanan sahne karelerinden BİRBİRİNDEN FARKLI olan KARE_SAYISI
@@ -148,9 +119,9 @@ async function kareIndir(kullaniciId, tur, tmdbId, mevcut = []) {
     .slice(0, KARE_SAYISI * 3);
   if (!havuz.length && veri.posters?.length) havuz = [veri.posters[0]];
 
-  // Elde tutulan karelerin hash'leri (onarım durumunda dolu gelir)
-  const tutulanHash = (await Promise.all(mevcut.map(
-    (m) => dhash(path.join(medyaDizin, path.basename(m)))))).filter((h) => h !== null);
+  // Elde tutulan karelerin imzaları (onarım durumunda dolu gelir)
+  const tutulanImza = (await Promise.all(mevcut.map(
+    (m) => imzaCikar(path.join(medyaDizin, path.basename(m)))))).filter(Boolean);
   const secilen = [...mevcut];
 
   // 10'arlı öbekler halinde indir: hedefe ulaşınca kalan adaylar hiç inmez.
@@ -159,14 +130,13 @@ async function kareIndir(kullaniciId, tur, tmdbId, mevcut = []) {
     const inen = (await Promise.all(
       obek.map((b) => indirVeHashle(kullaniciId, b)))).filter(Boolean);
     for (const k of inen) {
-      const tekrar = k.hash === null
-        ? false // hash alınamadıysa eleme, kareyi kaybetme
-        : tutulanHash.some((t) => mesafe(t, k.hash) <= TEKRAR_ESIK);
+      // imza alınamadıysa eleme, kareyi kaybetme
+      const tekrar = k.imza && tutulanImza.some((t) => ayniGorsel(t, k.imza));
       if (tekrar || secilen.length >= KARE_SAYISI) {
         fs.unlink(k.tamYol, () => {});
         continue;
       }
-      if (k.hash !== null) tutulanHash.push(k.hash);
+      if (k.imza) tutulanImza.push(k.imza);
       secilen.push(k.yol);
     }
   }
@@ -210,17 +180,17 @@ async function ana() {
         // TMDB'nin kullanılmamış karelerinden tamamlanır.
         const y = mevcut.rows[0];
         const eski = y.medya || [];
-        // Hash'ler PARALEL üretilir (2400 yorum × 10 kare seri hashlenirse
-        // yalnız denetim yarım saati bulur); karşılaştırma sırayla yapılır.
-        const hashlar = await Promise.all(eski.map(
-          (m) => dhash(path.join(medyaDizin, path.basename(m)))));
+        // İmzalar PARALEL üretilir (2400 yorum × 10 kare seri işlenirse yalnız
+        // denetim yarım saati bulur); karşılaştırma sırayla yapılır.
+        const imzalar = await Promise.all(eski.map(
+          (m) => imzaCikar(path.join(medyaDizin, path.basename(m)))));
         const tut = [], at = [];
-        const tutHash = [];
+        const tutImza = [];
         eski.forEach((m, k) => {
-          const h = hashlar[k];
-          if (h === null) { tut.push(m); return; } // okunamadıysa dokunma
-          if (tutHash.some((t) => mesafe(t, h) <= TEKRAR_ESIK)) { at.push(m); return; }
-          tutHash.push(h);
+          const im = imzalar[k];
+          if (!im) { tut.push(m); return; } // okunamadıysa dokunma
+          if (tutImza.some((t) => ayniGorsel(t, im))) { at.push(m); return; }
+          tutImza.push(im);
           tut.push(m);
         });
         if (!at.length && tut.length >= KARE_SAYISI) { atlandi++; continue; }

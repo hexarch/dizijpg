@@ -1,5 +1,310 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-06 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-07 — ANDROID FOTOĞRAF SEÇİCİ'YE GEÇİŞ (Play reddi düzeltmesi) ✅
+**Neden:** AAB **1.26.0+69** Play Console'a yüklendi ve **REDDEDİLDİ**:
+"Fotoğraf ve video izinlerine erişmek isteyen tüm geliştiricilerin, Google
+Play'i uygulamalarının temel işlevi hakkında bilgilendirmeleri gerekir."
+Google geniş medya erişimini yalnız temel işlevi bu olan uygulamalara
+(galeri/yedekleme/foto düzenleyici) veriyor; "ara sıra medya ekleyen"
+uygulamaları **Android Fotoğraf Seçici**'ye yönlendiriyor. Uygulama üretim
+başvurusunun ortasında (14 günlük kapalı testin 6. günü, 12 testçi) politika
+riski alınmadı. **Sürüm 1.26.1+70'e çıkarıldı** (69 tekrar yüklenemez).
+
+- ✅ **Seçim SİSTEME devredildi.** Yeni ekran
+  `app/lib/ekranlar/medya_inceleme.dart`, tek giriş noktası
+  `medyaSec(context, azami:) → Future<List<XFile>>`. Akış: sistem Fotoğraf
+  Seçici açılır → dönen dosyalar **bizim inceleme ekranımıza** düşer.
+- ✅ **Bayrak DOĞRULANDI, varsayılmadı.** `image_picker_android`ın
+  `useAndroidPhotoPicker` alanı **varsayılan `false`**
+  (`image_picker_android-0.8.13+19/lib/image_picker_android.dart:23`) ve
+  `false`ken `ImagePickerDelegate.java:332` `ACTION_GET_CONTENT` açıyor —
+  yani README'nin "Android 13+ zaten Fotoğraf Seçici kullanır" cümlesinin
+  kodda karşılığı YOK. Bayrağı `lib/foto_secici_io.dart` açıyor (koşullu
+  içe aktarım; web sapı hiçbir şey yapmaz) ve sistem seçicisi açılmadan
+  HEMEN ÖNCE çağrılıyor. Kanıt: `test/medya_inceleme_test.dart` içinde
+  gerçek bir `ImagePickerAndroid` örneğiyle üç test.
+- ✅ **KORUNAN EKRAN (emek çöpe gitmedi):** büyük önizleme (video
+  oynatılabilir), altta küçük resim şeridi + kaldırma çarpısı + "daha fazla
+  ekle" karesi + `n/azami` sayacı, görselde **kalem** (`pro_image_editor`),
+  videoda **makas** (`pro_video_editor` trim), sağ üstte "İleri".
+- ✅ **Tür SİHİRLİ BAYTTAN okunuyor** (uzantıdan değil, `server.js` ile aynı
+  kural): JPEG/PNG/WebP → kalem, MP4/WebM → makas, **GIF → hiçbiri**
+  (animasyon ölürdü), tanınmayan → düğme yok ama dosya yine de yüklenir.
+  Dosyanın yalnız ilk 16 baytı okunuyor.
+- ✅ **SİLİNDİ:** `photo_manager` paketi, `ekranlar/galeri_secici.dart`,
+  `galeri_kaynak.dart` + `_io` + `_stub`, `galeri_varlik.dart`,
+  `galeri_onizleme.dart`, `test/galeri_secici_test.dart`.
+- ✅ **YENİ:** `foto_secici.dart` + `_io` + `_stub` (Fotoğraf Seçici bayrağı),
+  `yerel_gorsel.dart` + `_io` + `_stub` (yerel dosyadan `ImageProvider`;
+  10 fotoğrafın baytını belleğe almamak için `FileImage`+`ResizeImage`).
+- ✅ **İZİNLER GİTTİ.** AndroidManifest'ten `READ_MEDIA_IMAGES`,
+  `READ_MEDIA_VIDEO`, `READ_MEDIA_VISUAL_USER_SELECTED`,
+  `READ_EXTERNAL_STORAGE` kaldırıldı. `RECORD_AUDIO` kaldı (sesli mesaj).
+  **Kanıt (birleştirilmiş manifest + APK ikili manifesti):**
+  `aapt2 dump permissions app-release.apk` → yalnız INTERNET,
+  POST_NOTIFICATIONS, RECORD_AUDIO, ACCESS_NETWORK_STATE, WAKE_LOCK,
+  VIBRATE, c2dm.RECEIVE. `grep READ_MEDIA` = **0 eşleşme**.
+- ✅ **iOS `NSPhotoLibraryUsageDescription` KALDI.** Dağıtım hedefi iOS 13.0,
+  `image_picker_ios` ise PHPicker'ı `@available(iOS 14, *)` ile koruyor
+  (`FLTImagePickerPlugin.m:114/188`) → iOS 13'te UIImagePickerController'a
+  düşüyor ve anahtar olmadan çöker. Ayrıca avatar/kapak akışı hâlâ
+  `pickImage(source: gallery)` kullanıyor. Bu anahtar Play politikası
+  kapsamında değil.
+- ✅ **HATA DÜZELTİLDİ (widget testiyle yakalandı):** şerit karesi 74 dp'ydi
+  ve kaldırma çarpısının 44 dp'lik görünmez dokunma alanı x=30'dan
+  başlıyordu — yani küçük resmin TAM ORTASINA dokunan kullanıcı odaklamak
+  yerine öğeyi SİLİYORDU. Kare 78 dp'ye çıkarıldı. Aynı hata eski
+  `galeri_secici.dart`te de vardı.
+- ✅ **Çeviri:** 17 ölü anahtar 45 dosyadan silindi (albüm/izin/kamera
+  ekranına aitti), 6 yeni anahtar 45 dile eklendi. **525 → 514, 45/45 eşit.**
+- ✅ **Kanıt:** `test/medya_inceleme_test.dart` (29 test, sıfırdan yazıldı),
+  `gorsel_duzenle_test.dart` ve `video_duzenle_test.dart` yeni ekrana
+  uyarlandı. `flutter test` **611 yeşil** (613'tü; ızgara/albüm/izin/kamera
+  testleri o ekranla birlikte gitti). `flutter analyze lib test` 0
+  hata/uyarı. `flutter build web --release` ve `flutter build apk --release`
+  geçti. **APK 77.865.122 → 77.441.688 bayt (-423 KB, photo_manager çıktı).**
+- ⬜ **Dağıtım YAPILMADI** — AAB derlemesi ve Play yüklemesi bekliyor.
+- ⬜ **CİHAZDA ELLE TEST GEREKLİ:** gerçek Android 13+ telefonda yoruma ek
+  eklerken (a) izin diyaloğu ÇIKMAMALI, (b) açılan ekran Google'ın Fotoğraf
+  Seçici'si olmalı (uygulama teması değil, sistem teması), (c) çoklu seçim
+  sonrası inceleme ekranı gelmeli, (d) kalem/makas doğru medyada çıkmalı.
+
+## 2026-08-07 — AI KARELERİNDE KALAN TEKRARLAR TEMİZLENDİ 🚀
+**Şikâyet:** "hâlâ benzer resimler var". Doğruydu: 1 Ağustos'taki dHash süzgeci
+tekrarların yalnız küçük bir kısmını yakalıyormuş.
+- 🔍 **Ölçüm:** AI'ın 2.401 gönderisindeki 22.856 kare, 99.742 yorum içi çift
+  olarak tarandı (ffmpeg ile 64×64 ham gri imza, host'ta 16 paralel işçi).
+  Eski ölçüt (dHash ≤ 10) bu 99.742 çiftin yalnız **136'sını** yakalıyordu.
+- 🔍 **Kök neden — üç ayrı tekrar sınıfı var, dHash yalnız birini görüyor:**
+  (1) birebir/çok yakın varyant → dHash yakalar; (2) aynı görselin üstüne
+  **yazı/logo/dil** basılmış hali → yazı kenar yapısını bozduğu için dHash
+  kaçırır, **pHash** yakalar; (3) aynı görselin **kırpımı/yakınlaştırması/renk
+  derecelendirmesi** → ikisi de kaçırır, **hizalı korelasyon** gerekir.
+- 🚀 **Yeni süzgeç `backend/kare_imza.js` (YENİ):** dHash ≤ 10 **veya**
+  pHash ≤ 12 **veya** hizalı skor ≥ 0,85. Hizalı skor: kare griye çevrilip
+  64×64'e indirgenir, 151 kırpım penceresi (tam kare + 6 ölçek × 5×5 konum)
+  16×16'ya düşürülüp **ortalaması sıfır / normu bir** yapılır (bu normalizasyon
+  parlaklık-kontrast farkını eler), en yüksek iç çarpım skordur.
+- 🔍 **Eşikler GÖZLE kalibre edildi** (kontak sayfaları, bant bant): pHash 0-8
+  → 10/10 tekrar, 9-12 → 8/8; hizalı 0,88+ → 12/12, 0,85-0,88 → 10/12,
+  0,78-0,82 → 3/12 (yani eşiğin altı çoğunlukla gerçekten farklı görsel).
+  Denenip **elenen** yollar: ham dHash'i gevşetmek (15-20 bandı çoğunlukla
+  farklı çıktı), sabit merkez kırpım (ağır kırpımları kaçırdı), 32×32
+  korelasyon (doğru tekrarları eliyordu — 0,74 altı bant 12/12 gerçek tekrardı).
+- 🚀 **Uygulandı:** 941 yorumdan **1.335 kare** düştü (114'ü dHash, 102'si
+  pHash, **1.119'u yalnız hizalı ölçütle** yakalandı — tek ölçütün neden
+  yetmediğinin sayısal kanıtı). Kare toplamı 22.866 → **21.531**.
+  Sonrası: 1.219 yorumda 10, 631'inde 9, kalanında daha az kare.
+- 🔒 **Dosyalar SİLİNMEDİ, karantinaya taşındı:** `<volume>/karantina-2026-08-06`
+  (230 MB, 1.335 dosya) — geri alınabilir. Instagram köprüsüyle aktarılan
+  11 gönderi plana hiç girmedi (karuselleri TMDB karesi değil).
+- ✅ **Kanıt:** temizlik sonrası veri baştan tarandı → **0 tekrar** (2.400
+  yorum, 0 aday). Karantinadakilere kalan DB referansı 0; kalan 2.000 kare
+  diskte tam; canlı `GET /yorumlar/tv/1396` → 9 kare, 9'u da 200 image/jpeg.
+- 🚀 **Tohumlama kökten düzeltildi:** `ai_tohum.js` artık `kare_imza.js`
+  kullanıyor (hem yeni kare indirirken hem mevcut yorumları onarırken), yani
+  yeni parti eklenince sorun geri gelmez. Betikten eski `dhash`/`TEKRAR_ESIK`
+  tamamen kalktı. `ai_kare_tazele.js` + `ai_kare_dhash.sh` zaten atıldı sayılıyor.
+- ✅ **Test:** `backend/test/kare_imza.test.js` (6 test) — sentetik ffmpeg
+  görselleriyle kırpım/renk/yazı varyantı tekrar sayılıyor, farklı görsel
+  sayılmıyor, bozuk dosya null dönüp çökmüyor. Backend toplam **205 yeşil**.
+
+## 2026-08-07 — G1: GÖRSEL DÜZENLEME ADIMI ✅ (canlıda DEĞİL)
+`MEDYA-EDITOR-PLANI.md` §G1. `pro_image_editor 13.3.0`, sunucuda sıfır değişiklik.
+
+- ✅ `app/lib/ekranlar/gorsel_duzenle.dart` (YENİ) — tek giriş noktası
+  `gorselDuzenle(context, bytes) → bytes?`. Kırp/döndür/yansıt, çizim
+  (**bulanıklaştır + pikselleştir** = spoiler/yüz gizleme), metin, emoji.
+  Çıktı **JPEG q92, en çok 2000×2000**; dönen baytlar sunucunun sihirli bayt
+  kapısının (`server.js:3096` `RESIM_TURLERI`) istemci ikiziyle doğrulanıyor.
+- ✅ `galeri_secici.dart` — önizlemenin sağ üstünde **isteğe bağlı** kalem
+  düğmesi (44 dp, erişilebilir etiket). Çoklu seçimde her görsel tek tek
+  düzenlenebilir; düzenlenen kare şeritte rozet alır. Video → düğme hiç
+  çizilmez. GIF → editör açılmaz, "GIF düzenlenemez" (animasyon korunur).
+- ✅ 44 yeni anahtar × 45 dil (paketin 145 dizelik i18n yüzeyinden yalnız
+  EKRANDA GÖRÜNENLER; filtre/ton/sticker sekmeleri kapatılarak 63 dize,
+  kullanılmayan çizim araçlarıyla 8 dize daha düşürüldü). 45/45 dosyada
+  514 anahtar, hepsi eşit.
+- ✅ Kanıt: `app/test/gorsel_duzenle_test.dart` (17 test) — toplam 574 yeşil.
+  8 ana davranış tek tek bozulup KIRMIZI olduğu gösterildi ve geri alındı
+  (sha1 doğrulandı). Çıktının JPEG olduğu paketin **gerçek kodlayıcısı**
+  çalıştırılarak ölçüldü (`FF D8 FF`).
+- Ölçüm: evrensel APK 72.146.179 → **77.180.427 bayt (+4,80 MB)**; bunun
+  Dart AOT payı arm64'te 1.079.539 bayt, yani üç ABI'lik evrensel APK'da
+  ~3,2 MB. Play'de AAB ABI'ye bölündüğü için **kullanıcının indirdiği artış
+  ~1,1 MB**. Web `main.dart.js` 6.388.451 → 6.534.944 (gzip **+31 KB**).
+- ⬜ Web'de editör YOK: uygulama içi seçici ekranı web'de hiç açılmıyor
+  (galeri API'si yok), kalem de orada yaşıyor. `gorselDuzenle` web uyumlu ve
+  `flutter build web --release` geçiyor — bağlanması ayrı iş.
+- ⬜ G2/G3 (filtre/ton/sticker) planda, sırada.
+
+## 2026-08-07 — V1: VİDEO KIRPMA + OTOMATİK SIKIŞTIRMA ✅ (canlıda DEĞİL)
+`MEDYA-EDITOR-PLANI.md` §V1. `pro_video_editor 2.11.1` (Android **Media3
+Transformer 1.10.1** / iOS AVFoundation — **ffmpeg YOK, GPL YOK**), sunucuda
+sıfır değişiklik.
+
+- ✅ Derleme sondajı ÖNCE yapıldı (kod yazmadan): `pub get` → `analyze`
+  (0 error/warning) → `build apk --release` → `build web --release` →
+  `flutter test` (574). Dördü de geçti. AGP 9 kanıtı sahada da doğrulandı:
+  derlemenin KGP uyarı listesinde (`file_picker`, `photo_manager`,
+  `record_android`, `share_plus`) **`pro_video_editor` YOK**.
+- ✅ `app/lib/video_islem_ortak.dart` + `video_islem.dart` +
+  `video_islem_stub.dart` / `_io.dart` (YENİ) — koşullu-import üçlüsü
+  (`galeri_kaynak.dart` kalıbı). **Stub paketi hiç import etmez**: web
+  paketinde `pro_video_editor` 0 kez geçiyor (ölçüldü).
+- ✅ `app/lib/ekranlar/video_duzenle.dart` (YENİ) — iki giriş noktası:
+  `videoDuzenle()` trim ekranını açıp KARARI döner (hiçbir şey kodlamaz),
+  `videoHazirla()` yükleme öncesi tek noktada kodlar. Kare şeridi, çift
+  tutamak (44 dp), oynat/duraklat, süre etiketi, ses kapatma, 60 sn sınırı.
+- ✅ **İlerleme + gerçek İPTAL**: yüzde hem çubuk hem METİN, `PopScope` ile
+  kaçış yok, İptal motora `cancel(taskId)` gönderiyor ve **geçici dosyayı
+  siliyor**. İptal → hiçbir dosya yüklenmiyor, seçici açık kalıyor.
+- ✅ **Otomatik sıkıştırma** (görünmez): dosya > 20 MB ise 1280×720 kutusuna
+  + 5 Mbps. Ölçek preset'e BIRAKILMADI — paketin `p720High`'ı dikey 1080×1920
+  bir Reels'i 405×720'ye düşürüyordu; `videoOlcek()` kısa kenarı 720 yapıyor.
+- ✅ **30 MB / 100 MB uyumsuzluğu düzeltildi** (§3.5): `yorumlar.dart`
+  `_ekAzamiBayt` artık `videoAzamiBayt` (100 MB) — sunucudaki
+  `express.raw({limit:'100mb'})` ile aynı sabit. 40-70 MB'lık videolar artık
+  sebepsiz reddedilmiyor. Backend'e DOKUNULMADI.
+- ✅ **Çıktı sözleşmesi kontrol ediliyor, varsayılmıyor**: `videoTuru()`
+  sunucunun sırasını (RESİM → SES → VİDEO) taklit ediyor; `ftyp` + `M4A`
+  markalı bir çıktı sunucuda `.m4a` olacağı için REDDEDİLİYOR.
+- ✅ OOM kalkanı: girdi > 300 MB ya da > 10 dk → "Video çok büyük", hiç
+  denenmiyor. Sessiz çökme yok.
+- ✅ Web: motor `null` → düğme HİÇ çizilmiyor, `videoHazirla` orijinali
+  döndürüyor (bugünkü davranış, regresyon yok).
+- ✅ 11 yeni anahtar × 45 dil → 45/45 dosyada **525 anahtar**, hepsi eşit.
+- ✅ Kanıt: `app/test/video_duzenle_test.dart` (39 test) — toplam **613 yeşil**.
+  **15 ana davranış tek tek bozulup KIRMIZI olduğu gösterildi**, geri alma
+  sha1 ile doğrulandı. Testler iki gerçek hata yakaladı: (a) sürükleme
+  deltası yeniden çizim zamanlamasına bağlıydı (parmak 100 px, tutamak
+  40 px), (b) sınır uyarısı yanlış yönde tetikleniyordu.
+- Ölçüm: evrensel APK 77.180.427 → **77.865.122 bayt (+684.695 = +0,65 MB)**.
+  Media3 **yeni `.so` getirmiyor** (saf Java/Kotlin + MediaCodec) → dex payı
+  ABI'ye çoğaltılmıyor; artışın 307.827 baytı paketin kendisi, kalanı bizim
+  Dart kodumuz (o kısım `libapp.so`da, 3 ABI'ye çoğalıyor). Web
+  `main.dart.js` gzip 1.674.020 → **1.678.353 (+4.333 bayt)**.
+- ⬜ CİHAZDA elle doğrulanacak: gerçek Media3 çıktısının `/medya`'dan 200
+  dönmesi, trim/sıkıştırma süresi, düşük segment telefonda bellek.
+
+## 2026-08-07 — SEO DENETİMİ SONRASI ÜÇ HATA ✅ (canlıda DEĞİL)
+
+### 1. `/listeler/:id` rotası hiç yoktu ✅
+Sunucu `/og/listeler/:id` için indekslenebilir SSR sayfası basıyor ve nginx
+bot kuralı (`^/(icerik|gonderi|kisi|dizi|listeler)/`) zaten listeleri
+kapsıyordu; uygulamada karşılığı YOKTU. Girişli kullanıcı "Bağlantı geçersiz",
+oturumsuz ziyaretçi `/giris?donus=...` görüyordu → bot ile insan farklı sayfa
+= CLOAKING.
+- ✅ `ekranlar/liste.dart` → `ListeEkrani` (tam sayfa, kabuk DIŞINDA).
+- ✅ `ortak.dart` → `ListeIcerigi` ortak parçaya çıkarıldı; `ListeSheet` artık
+  onu sarmalıyor (kod KOPYALANMADI). Izgara `PosterIzgarasi` kullanıyor.
+- ✅ `yonlendirme.dart` → rota + `acikYolOnEkleri`'ne `/listeler/`.
+- ✅ `api.dart` → `ApiHata.kod` (HTTP durumu): 404 "bulunamadı/gizli" hâli ile
+  ağ arızası ayrışıyor. Gizli listede boş beyaz ekran değil nazik sayfa.
+- Kanıt: `app/test/liste_sayfasi_test.dart` (6 test) + tarayıcı ekran görüntüsü.
+
+### 2. `/kisi/6193` beyaz sayfa — YENİDEN ÜRETİLEMEDİ ⬜
+Canlıda girişli/oturumsuz, soğuk/sıcak, Chrome UA / Googlebot / WhatsApp UA
+denendi: sayfa her seferinde ÇİZİLDİ. Sunucu hata günlüğünde (`/admin/hatalar`)
+6-7 Ağu'ya ait web istemci hatası yok, `main.<hash>.dart.js` 200, service
+worker kaydı yok. Kök neden KANITLANAMADI.
+- ✅ Yan bulgu (gerçek): `kisi.dart` `_BilgiSatiri` uzun doğum yerinde 360-500
+  dp telefonda satırı 74 px TAŞIRIYORDU (sarı-siyah şerit) → `Flexible` +
+  ellipsis.
+- ✅ Sertleştirme: `main.dart` açılış adımları tek tek yalıtıldı
+  (`acilisAdimi`). Eskiden TEK bir hazırlık adımı patlarsa `runApp` hiç
+  çağrılmıyor → bembeyaz sayfa; `PlatformDispatcher.onError` `true` döndüğü
+  için konsolda da iz kalmıyordu. Artık hem yazdırıyor hem uygulama açılıyor.
+- Kanıt: `app/test/kisi_dogrudan_test.dart` (5), `acilis_dayaniklilik_test.dart` (3).
+
+### 3. Puan ölçeği uyumsuzluğu (10 vs 5) ✅ uygulama tarafı
+DB `puanlar.puan` 1-10; uygulama 5 yıldız. Dönüşüm altı dosyada kopyalanmıştı.
+- ✅ `lib/puan.dart` TEK KAYNAK: `yildiza` / `yildizOrtalamaMetni` / `dbPuani`.
+  detay, kisi, ozet, tepki, puan_sheet oradan geçiyor.
+- ✅ TMDB'nin 10'luk notu ayrı: "8.4 TMDB" / "5.0 dizi.jpg" etiketli.
+- ⬜ SUNUCU TARAFI BEKLİYOR (`backend/server.js`, ana oturum uygulayacak):
+  satır 1015, 1045-1046, 1074-1076, 1117 — bkz. rapor.
+- Kanıt: `app/test/puan_olcegi_test.dart` (6, kaynak taraması dahil).
+
+## 2026-08-07 — MASAÜSTÜNDE KAPAK GÖRSELLERİ ✅ (canlıda DEĞİL)
+**Kullanıcı isteği (birebir):** "masaüstü görünüşte film dizi kapak görselleri
+çok kötü duruyor"
+
+**Ölçüm (canlı dizijpg.com, pencere 1512 dp, devicePixelRatio 2):**
+- Ağ isteklerinin TAMAMI `image.tmdb.org/t/p/w342/…` — kart genişliğinden
+  bağımsız SABİT 342 px.
+- Kitaplık / izlediklerim / arama / kişi ızgaraları `crossAxisCount: 3`e
+  sabitti → kart ~486 dp → 972 fiziksel piksel gerekiyor, 342 px geliyordu:
+  **2,84 kat büyütme**. `/gozat` 6 sütunda kart 241 dp → 482 px gerek (1,41x).
+- `childAspectRatio: 0.5` sabiti hücreyi kart genişliğinin 2 KATI yapıyordu;
+  poster (1,5x) + başlık toplamı dolduramayınca satır altında ~80 dp ölü
+  boşluk kalıyordu (ekran görüntüsünde satır araları kocaman).
+- `karsilama.dart` hücresi 0.62 oranındaydı, poster 0.667 → `BoxFit.cover`
+  her posteri yanlardan ~%7 KIRPIYORDU.
+
+**Yapılanlar**
+- ✅ `api.dart` → `posterBoyutu(genislikDp, pikselOrani)`: TMDB boyutu kart
+  genişliği × piksel yoğunluğundan seçilir (taban w342, w500, tavan w780;
+  `original` asla). %15 büyütme toleransı → 3x telefonda 118 dp kart hâlâ
+  w342 çeker, mobil veri artmaz.
+- ✅ `ortak.dart` → `PosterIzgarasi` (özel `SliverGridDelegate`): sütun sayısı
+  ızgaranın ÖLÇÜLEN genişliğinden (`constraints.crossAxisExtent`) türetilir,
+  hücre yüksekliği = kart × 1,5 + 46 (başlık payı). Ölü boşluk yok.
+  Telefonda alt sınır 3 sütun → 360-430 dp'de düzen BİREBİR aynı.
+- ✅ `PosterKarti` artık `LayoutBuilder` ile gerçek genişliğini ölçüp boyutu
+  ona göre istiyor (ızgarada `genislik: double.infinity` geliyordu).
+- ✅ Yatay şeritler masaüstünde 118 → 168 dp'ye büyüdü; telefonda 118/236 aynı.
+- ✅ Ekranlar: `kitaplik_liste`, `izlediklerim`, `katalog_liste`, `gozat`,
+  `arama`, `kisi`, `karsilama` tek ızgara tanımına geçti (sabit 3/4/6 gitti).
+- ✅ Kanıt: `test/masaustu_kapak_test.dart` (24 test, `tester.getRect` ile
+  gerçek ölçüm) + üç ayrı geri-alma denemesinde testler KIRMIZI.
+- ⬜ **Dağıtım YAPILMADI** — değişiklik çalışma ağacında bekliyor.
+- ⬜ Atlanan: `memCacheWidth` (karta göre kod çözme) — Flutter web'de gerçek
+  tarayıcıda doğrulanamadığı için eklenmedi, yalnız bellek optimizasyonuydu.
+
+## 2026-08-07 — YORUMA MEDYA EKLERKEN UYGULAMA İÇİ GALERİ SEÇİCİ ❌ GERİ ALINDI
+> **Bu bölüm ARTIK GEÇERSİZ.** Play Console AAB 69'u medya izinleri
+> yüzünden reddetti; ızgara/albüm/izin ekranı ve `photo_manager`
+> tümüyle kaldırıldı. Yerine geçen çözüm için aşağıdaki
+> "ANDROID FOTOĞRAF SEÇİCİ" maddesine bak. Tarihsel kayıt olarak
+> bırakılıyor.
+
+**Kullanıcı isteği (birebir):** "projede dizi ve filmlere yorum yapma kısmında
+video yüklenen alanı bul, orada video yüklemeye basınca ekrana telefondaki
+dosyalar kısmını açıyor; onun yerine Instagram post paylaşma kısmı gibi bir
+ekran aç"
+
+- ✅ **Yeni ekran `ekranlar/galeri_secici.dart`.** Üstte büyük önizleme (video
+  ise dokununca yerinde oynar), altta 3 sütunlu ızgara (60'lık sayfalarla
+  sonsuz kaydırma), üstte albüm açılır seçicisi (kök albüm "Tümü"), sağ üstte
+  "İleri", sol üstte kapat, ızgaranın ilk hücresinde kamera kısayolu
+  (fotoğraf/video çek). Tek giriş noktası `galeriSecici(context)` →
+  `Future<XFile?>`; sohbet/Reels yanıtı da ileride aynı çağrıyı kullanabilir.
+- ✅ **Cihaz galerisi soyutlandı** (`galeri_varlik.dart` + koşullu
+  `galeri_kaynak.dart`): native'de `photo_manager` 3.11.0, WEB'de stub null
+  döner ve akış eski `ImagePicker().pickMedia()` davranışına düşer.
+  `dosya_oku.dart` ile aynı koşullu-içe-aktarım kalıbı; web paketinde
+  photo_manager izi YOK (`grep photo_manager build/web/main.dart.js` = 0).
+- ✅ **photo_manager 3.11.0 ŞART:** Gradle 9 yapılandırma hatalarını ve
+  `android.builtInKotlin` ayarsızken yanlış Kotlin seçimini bu sürüm düzeltti.
+  AGP 9.0.1 + Kotlin 2.3.20 + Gradle 9.1 ile `:photo_manager:assembleDebug`
+  BUILD SUCCESSFUL.
+- ✅ **İzinler:** AndroidManifest'e READ_MEDIA_IMAGES / READ_MEDIA_VIDEO /
+  READ_MEDIA_VISUAL_USER_SELECTED + READ_EXTERNAL_STORAGE (maxSdk 32);
+  Info.plist'e NSPhotoLibraryUsageDescription, NSCameraUsageDescription ve
+  (eksik olan) NSMicrophoneUsageDescription. İzin reddedilirse boş durum +
+  "Ayarları aç" + "Dosyalardan seç" (sistem seçicisi yedeği); sınırlı
+  erişimde uyarı şeridi + "Daha fazla seç".
+- ✅ **Yükleme hattı DEĞİŞMEDİ:** `XFile` → `readAsBytes()` → `Api.medyaYukle`;
+  30 MB sınırı, video/foto ayrımı ve sunucu tarafı aynen duruyor.
+- ✅ **Çeviri:** 18 yeni anahtar × 45 dil; her dosyada 463 anahtar, kümeler
+  birebir aynı.
+- ✅ **Kanıt:** `test/galeri_secici_test.dart` (15 test, sahte `GaleriKaynak`
+  ile — gerçek cihaz galerisine bağlı değil). Değişiklik geçici geri
+  alınınca "web yedeği" ve "yorumda ek düğmesi uygulama içi seçiciyi açar"
+  testleri KIRMIZIYA döndü. `flutter analyze lib test` 0 error/warning,
+  `flutter test` 520/520 yeşil, `flutter build web --release` başarılı.
 
 ## 2026-08-06 — ARAMADAN KULLANICIYA DOKUNUNCA SİMSİYAH EKRAN ✅
 **Kullanıcı bildirimi (birebir):** "uygulamada arama kısmına alcelik yazıyorum,
