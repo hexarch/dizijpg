@@ -238,8 +238,13 @@ test('ENGELLEME davranışı değişmedi: /sohbetler engelli filtresi eklemedi',
   const govde = SERVER.slice(bas, SERVER.indexOf('app.get(', bas + 10));
   assert.doesNotMatch(govde, /engellemeler/);
   const gonder = SERVER.indexOf("app.post('/mesajlar'");
+  // Sabit karakter penceresi (eskiden 3000) KIRILGANDI: uca birkaç satır yorum
+  // eklenince `FROM engellemeler` pencerenin dışına taşıyor ve test, kontrol
+  // hâlâ yerinde dururken KIRMIZI yanıyordu (8 Ağu 2026'da tam bu oldu).
+  // Artık ucun GERÇEK sonuna kadar bakılıyor: bir sonraki route tanımı.
+  const sonrakiUc = SERVER.indexOf('\napp.', gonder + 10);
   assert.match(
-    SERVER.slice(gonder, gonder + 3000),
+    SERVER.slice(gonder, sonrakiUc === -1 ? undefined : sonrakiUc),
     /FROM engellemeler/,
     'mesaj gönderiminde engel kontrolü kayboldu',
   );

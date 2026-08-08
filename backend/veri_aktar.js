@@ -24,7 +24,11 @@ export async function disaAktar(havuz, userId) {
       havuz.query('SELECT id, kullanici_adi, email, bio, ulke, olusturma FROM kullanicilar WHERE id=$1', [userId]),
       havuz.query('SELECT tur, tmdb_id, durum, guncelleme FROM durumlar WHERE kullanici_id=$1', [userId]),
       havuz.query('SELECT tur, tmdb_id, sezon, bolum, tarih FROM izlemeler WHERE kullanici_id=$1', [userId]),
-      havuz.query('SELECT tur, tmdb_id, puan, yorum, tarih FROM puanlar WHERE kullanici_id=$1', [userId]),
+      // sezon/bolum (8 Ağu 2026-d): bölüm puanları da KULLANICININ VERİSİDİR,
+      // KVKK/GDPR dışa aktarımında eksik kalamaz ve geri yüklemede kaybolamaz.
+      havuz.query(
+        'SELECT tur, tmdb_id, sezon, bolum, puan, yorum, tarih FROM puanlar WHERE kullanici_id=$1',
+        [userId]),
       havuz.query('SELECT id, tur, tmdb_id, sezon, bolum, metin, tarih FROM yorumlar WHERE kullanici_id=$1', [userId]),
       havuz.query('SELECT id, ad, aciklama, herkese_acik, olusturma FROM listeler WHERE kullanici_id=$1', [userId]),
       havuz.query(
@@ -72,9 +76,13 @@ export async function disaAktar(havuz, userId) {
     })),
   ));
   zip.file('ratings.csv', csvYap(
-    ['user_id', 'type', 'tmdb_id', 'rating', 'review', 'created_at'],
+    ['user_id', 'type', 'tmdb_id', 'season_number', 'episode_number',
+      'rating', 'review', 'created_at'],
     puanlar.rows.map((p) => ({
-      user_id: k.id, type: p.tur, tmdb_id: p.tmdb_id, rating: p.puan,
+      user_id: k.id, type: p.tur, tmdb_id: p.tmdb_id,
+      // comments.csv ile AYNI sözleşme: boş hücre = içeriğin GENELİ.
+      season_number: p.sezon ?? '', episode_number: p.bolum ?? '',
+      rating: p.puan,
       review: p.yorum || '', created_at: p.tarih?.toISOString?.() || '',
     })),
   ));
@@ -590,10 +598,26 @@ async function iceAktarNative(havuz, userId, json, ozet) {
     const puan = tamsayi(p.puan);
     if (!puan || puan < 1 || puan > 10) { ozet.atlanan++; continue; }
     const yorum = typeof p.yorum === 'string' ? p.yorum.slice(0, 2000) : null;
+    // BÖLÜM HEDEFİ (8 Ağu 2026-d): sezon+bolum ya İKİSİ birden ya hiç; bölüm
+    // yalnız 'tv'de olur. Yarım/geçersiz hedef DB'deki CHECK'lere takılıp tüm
+    // içe aktarımı düşüreceği için burada içerik GENELİNE indirgenir.
+    let sezon = tamsayi(p.sezon);
+    let bolum = tamsayi(p.bolum);
+    if (sezon == null || bolum == null || sezon < 0 || bolum < 0
+        || p.tur !== 'tv') {
+      sezon = null;
+      bolum = null;
+    }
+    // ON CONFLICT artık İFADELİ: `puanlar_pkey` yerini `puanlar_tekil`
+    // (COALESCE(sezon,-1), COALESCE(bolum,-1)) tekil indeksine bıraktı. Eski
+    // sütun listesi yazılırsa PostgreSQL 42P10 verir ve içe aktarım komple
+    // düşer — test/bolum_puani.test.js bu satırı denetler.
     await havuz.query(
-      `INSERT INTO puanlar (kullanici_id, tur, tmdb_id, puan, yorum)
-       VALUES ($1,$2,$3,$4,$5) ON CONFLICT (kullanici_id, tur, tmdb_id) DO NOTHING`,
-      [userId, p.tur, p.tmdb_id, puan, yorum]);
+      `INSERT INTO puanlar (kullanici_id, tur, tmdb_id, sezon, bolum, puan, yorum)
+       VALUES ($1,$2,$3,$4,$5,$6,$7)
+       ON CONFLICT (kullanici_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1))
+       DO NOTHING`,
+      [userId, p.tur, p.tmdb_id, sezon, bolum, puan, yorum]);
     ozet.puan++;
   }
   for (const y of (veri.yorumlar || []).slice(0, 5000)) {

@@ -1,0 +1,110 @@
+# dizi.jpg — robots.txt (origin)
+#
+# BU DOSYA DEPONUN KAYNAGIDIR. 6 Agu 2026'ya kadar yalnizca sunucuda
+# (/var/www/dizijpg/robots.txt) duruyordu; depoda kopyasi yoktu, yani her
+# degisiklik izsiz kaliyordu. Artik Node servis ediyor (app.get('/robots.txt')),
+# IndexNow anahtar dosyasiyla ayni gerekcyeyle: Flutter web dagitimi
+# (scp build/web/*) dosyayi silemesin / eski surumle ezmesin.
+#
+# Cloudflare yonetilen robots.txt bu dosyanin ONUNE kendi bloklarini ekler.
+# CF panelinde AI Crawl Control kapatilmadikca origin degisikligi tek basina
+# yetmez (SEO-PLANI 1.3 uygulama notu).
+
+User-agent: *
+Allow: /
+# Icerik sinyali (Cloudflare'in yonetilen blogundan devralindi, 8 Agu 2026):
+# aramaya ACIK, model EGITIMINE kapali, yanit icinde KAYNAK gostermeye acik.
+# Bu satir robots.txt'e yeni eklenen bir standart; anlamayan tarayici yok sayar.
+Content-Signal: search=yes,ai-train=no,use=reference
+
+# ---------------------------------------------------------------------------
+# KULLANICI PROFILLERI: ASLA INDEKSLENMEZ (kullanici karari, 6 Agu 2026)
+# ---------------------------------------------------------------------------
+# Profil sayfasi kullanicinin izleme gecmisi, yorumlari, takipci/takip
+# listeleri ve bio'sudur; yani projenin en hassas verisi. Karar: bu yuzey
+# arama motorlarina HIC acilmaz. Uc katmanli guvence:
+#   1) Burada Disallow (bot hic istemez),
+#   2) server.js'te /og/kullanici DIYE BIR UC YOK (bot istese bile icerik yok;
+#      nginx bot regex'i de `kullanici` icermez -> bos Flutter kabugu doner),
+#   3) sitemap yalniz /icerik/:tur/:id uretir; hicbir SSR sayfasi profile
+#      BAGLANTI vermez (@kullanici_adi duz metin basilir, <a> degil).
+# Uc katman da testle kilitlidir: backend/test/seo_gizlilik.test.js
+Disallow: /kullanici/
+
+# Uygulama ici, indekslenmesi anlamsiz veya kisisel alanlar
+Disallow: /giris
+Disallow: /karsilama
+Disallow: /ayarlar
+Disallow: /bildirimler
+Disallow: /profil
+Disallow: /izlediklerim
+Disallow: /sohbetler
+Disallow: /sohbet/
+Disallow: /mesaj-istekleri
+Disallow: /kitaplik/
+# 8 Agu 2026: favori oyuncular ve "oyuncunun yapimlarindan kacini izledim"
+# listesi. Ikisi de KISIYE OZEL (oturum zorunlu, icerik kullaniciya gore
+# degisir) — indekslenecek bir sey yok, tarama butcesi israfi olur.
+# /yapimlar/:id bilerek KOK yol: /kisi/*/yapimlar joker gerektirirdi ve bu
+# dosyadaki Disallow kurallari joker ICERMEZ (bkz. seo_gizlilik.test.js).
+Disallow: /favori-oyuncular
+Disallow: /yapimlar/
+Disallow: /gizlenen-yorumlar
+Disallow: /akis
+Disallow: /takvim
+Disallow: /ozet/
+Disallow: /arama
+Disallow: /tam-arama
+Disallow: /kisi-ara
+Disallow: /api/
+
+# Gorseller taranabilsin: /api/ topluca kapali ama gonderi kartlarinin
+# og:image'i ve avatarlar bu yolun altinda. Kapali kalirsa Google gorsel
+# aramada hicbir seyimizi gosteremez.
+Allow: /api/medya/
+Allow: /api/avatarlar/
+
+# Takip parametreleri ayri URL uretmesin
+Disallow: /*?utm_
+Disallow: /*?fbclid=
+
+# ---------------------------------------------------------------------------
+# AI EGITIM BOTLARI: icerik EGITIME verilmiyor.
+# ---------------------------------------------------------------------------
+# 8 Agu 2026: bu liste Cloudflare'in "Managed robots.txt" ozelligi KAPATILIRKEN
+# genisletildi. O ozellik kendi blogunu bizim dosyamizin ONUNE ekliyordu ve
+# icinde `Google-Extended: Disallow` vardi — yani 6 Agu'da bilerek verdigimiz
+# "AI Overviews'da kaynak gosterilebilir" iznini sessizce iptal ediyordu.
+# Ozelligi kapatinca CF'in engelledigi digerlerini KAYBETMEMEK icin ayni
+# botlari buraya tasidik. Tek fark: Google-Extended bizde ACIK.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /
+
+# Icerik sinyalleri (Cloudflare'in yonetilen blogundan devralindi):
+# aramaya ACIK, egitime KAPALI, yanit icinde kaynak gostermeye ACIK.
+# `User-agent: *` blogunun altinda anlamli oldugu icin yukarida degil burada
+# tekrarlanmaz; asil beyan yukaridaki `User-agent: *` blogundadir.
+
+# Google-Extended BILEREK ACIK (6 Agu 2026): egitim degil, AI Overviews ve
+# Gemini yanitlarinda KAYNAK GOSTERILME iznidir. Yeni bir alan adi icin en ucuz
+# gorunurluk kanali. Kapatmak istenirse buraya "Disallow: /" eklemek yeterli.
+
+Sitemap: https://dizijpg.com/sitemap.xml

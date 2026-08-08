@@ -31,6 +31,28 @@ import {
 import {
   CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, sohbetleriAyir, istekRozeti,
 } from './cevrimici.js';
+import {
+  yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
+} from './kisi_izlenme.js';
+// Özel mesajların durağan şifrelemesi (AES-256-GCM). `cozGoster` ASLA
+// fırlatmaz: tek bozuk satır yüzünden sohbetin tamamı 500 dönmesin.
+// DİKKAT: `anahtarlar` İÇE AKTARILMAZ — GET /mesajlar/:ad içinde aynı adda
+// yerel değişken var, çakışırsa süreç SyntaxError ile hiç açılmaz.
+import { baslat as kriptoBaslat, sifrele, cozGoster } from './kripto.js';
+import {
+  anahtarTuret as medyaAnahtarTuret, imzali as medyaImzali,
+  imzaDogrula as medyaImzaDogrula, imzaAyristir as medyaImzaAyristir,
+  yoluNormalle as medyaYoluNormalle,
+} from './medya_imza.js';
+// Ban / ceza sistemi + güven skoru (saf modül; Express ve pg bilmez).
+// DÜRÜSTLÜK NOTLARI yasak.js'in başında: cihaz banı GARANTİ DEĞİL, güven
+// skoru KENDİ BAŞINA CEZA VERMEZ.
+import {
+  SURE_BIRIMLERI, bitisHesapla, yasakAktif, yasakYuku, yazmaYasakli,
+  cihazKimlikGecerli, guvenUygula, guvenEtiketi, guvenGuncel, ihlalSaatiIlerlet,
+  itirazMetni,
+  otoBanAyari, otoBanOnerisi, sebepTemizle,
+} from './yasak.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -63,6 +85,22 @@ const {
 
 if (!DATABASE_URL || !JWT_SECRET || !TMDB_TOKEN) {
   console.error('Eksik ortam değişkeni (DATABASE_URL / JWT_SECRET / TMDB_TOKEN)');
+  process.exit(1);
+}
+
+// Özel mesajların durağan şifrelemesi. ANAHTAR YOKSA AÇILMIYORUZ.
+// Gerekçe: sessizce düz metne düşmek en tehlikeli sonuçtur — şifreleme
+// kapanır, hiçbir uç hata vermez, gece yedeği yine düz metin dolar ve aylarca
+// kimse fark etmez. Bilinçli kaçış yolu var: .env'e `MESAJ_SIFRELEME=kapali`.
+try {
+  const kriptoTakim = kriptoBaslat(process.env);
+  console.log(kriptoTakim.acik
+    ? `Mesaj şifreleme AÇIK — aktif anahtar ${kriptoTakim.aktif.kimlik}, ` +
+      `okunabilir: ${[...kriptoTakim.hepsi.keys()].join(',')}`
+    : 'UYARI: Mesaj şifreleme KAPALI (MESAJ_SIFRELEME=kapali) — ' +
+      'DM metinleri veritabanına DÜZ yazılıyor.');
+} catch (e) {
+  console.error('Mesaj şifreleme kurulamadı, açılış durduruldu:\n' + e.message);
   process.exit(1);
 }
 
@@ -121,16 +159,117 @@ function videoKaresiCikar(dosyaYolu) {
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
 const statikSecenek = { maxAge: '365d', immutable: true, fallthrough: false };
+
+// ---------- ÖZEL (DM) MEDYA KORUMASI ----------
+// Denetim §2.1: `/medya` kimlik doğrulamasız; DM fotoğrafı/sesi de dahil her
+// dosya oturumsuz açılıyordu ve Cloudflare bunları PUBLIC önbelleğe alıyordu.
+//
+// KAPSAM BİLİNÇLİ OLARAK DAR: yalnız DM'e iliştirilmiş medya korunur. Yorum/
+// akış medyası (25.339 dosya) zaten HALKA AÇIK içeriktir — onu imzalamak hem
+// gereksiz, hem de `akis` önbelleğinde (app/lib/ekranlar/akis.dart:100, TTL'siz)
+// süresi dolmuş URL bırakacağı için KIRILGAN olurdu. DM medyası ise bugün
+// yalnız 9 dosya: değişimin patlama yarıçapı çok küçük.
+//
+// ÖZEL KÜME neden bellekte: hangi dosyanın DM'e ait olduğu `mesajlar.medya`
+// kolonundan bilinir. Her statik istekte DB'ye gitmek kabul edilemez (statik
+// yol senkron olmalı), bu yüzden açılışta bir kez yüklenip mesaj eklendikçe/
+// silindikçe güncellenen bir Set tutulur. Küme YALNIZCA büyür/küçülür; kaçırılan
+// bir güncelleme en kötü ihtimalle dosyayı "genel" sayar, yani ESKİ davranışa
+// düşer — hiçbir zaman meşru erişimi engellemez.
+const OZEL_MEDYA = new Set();
+// Video kapağı da özeldir: `<dosya>.jpg` DM videosunun İLK KARESİDİR.
+// Atlanırsa "video korumalı ama önizlemesi herkese açık" gibi bir delik kalır.
+const ozelMedyaEkle = (yol) => {
+  const ad = typeof yol === 'string' && yol.startsWith('/medya/')
+    ? yol.slice('/medya/'.length) : null;
+  if (!ad) return;
+  OZEL_MEDYA.add(ad);
+  OZEL_MEDYA.add(`${ad}.jpg`);
+};
+async function ozelMedyaYukle() {
+  try {
+    // Aynı dosya hem DM'de hem halka açık bir yorumda geçiyorsa GENEL sayılır:
+    // yorum akışında 403 vermek görünür bir bozulma olurdu. (2026-08-08:
+    // kesişim canlıda 0 satır; kural yine de ileriye dönük duruyor.)
+    const { rows } = await havuz.query(
+      `SELECT DISTINCT medya FROM mesajlar WHERE medya IS NOT NULL
+       EXCEPT SELECT DISTINCT unnest(medya) FROM yorumlar WHERE medya IS NOT NULL`,
+    );
+    OZEL_MEDYA.clear();
+    for (const r of rows) ozelMedyaEkle(r.medya);
+    console.log(`Özel (DM) medya kümesi yüklendi: ${rows.length} dosya`);
+  } catch (e) {
+    // Yükleyemezsek küme BOŞ kalır -> her şey genel görünür (eski davranış).
+    // Bilinçli: açılışı bir DB gecikmesi yüzünden durdurmuyoruz.
+    console.error('özel medya kümesi yüklenemedi:', e.message);
+  }
+}
+
+// İmzalama anahtarı: ayrı bir sır yönetmemek için JWT sırrından alan ayrımıyla
+// türetilir (bkz. medya_imza.js). `MEDYA_IMZA_ANAHTARI` ile ezilebilir.
+const MEDYA_IMZA_ANAHTARI = medyaAnahtarTuret(
+  process.env.MEDYA_IMZA_ANAHTARI || JWT_SECRET);
+
+// GÖÇ ANAHTARI. Varsayılan KAPALI.
+//   kapalı (bugün): imzasız istek de servis edilir -> yayındaki ESKİ APK'lar
+//     çalışmaya devam eder. Kazanç yine de gerçek: özel medya artık
+//     `Cache-Control: private, no-store` ile döner, yani Cloudflare edge'de
+//     public kopya BİRİKMEZ ve sızan URL en azından önbellekten servis edilmez.
+//   açık (istemci güncellendikten sonra): imzasız özel medya 403.
+// Ayrıntılı göç planı: YAPILACAKLAR.md + güvenlik raporu.
+const MEDYA_IMZA_ZORUNLU = process.env.MEDYA_IMZA_ZORUNLU === '1';
+// Ölçüm: zorunlu kılmadan ÖNCE "kaç istek hâlâ imzasız geliyor" bilinmeli.
+const MEDYA_SAYAC = { imzali: 0, imzasiz_ozel: 0, suresi_dolmus: 0, imza_hatali: 0 };
+
 // DİKKAT: statik sunucu yalnızca GET/HEAD'e bakmalı; aksi halde POST /medya
 // (yükleme ucu) 405 ile burada ölür ve route'a hiç ulaşmaz.
 const avatarStatik = express.static(AVATAR_DIZIN, statikSecenek);
-const medyaStatik = express.static(MEDYA_DIZIN, statikSecenek);
+const medyaStatik = express.static(MEDYA_DIZIN, {
+  ...statikSecenek,
+  // Özel medya PUBLIC önbelleğe girmemeli. `send` önce kendi
+  // `Cache-Control`ünü yazar, sonra bu kancayı çağırır — burada yazılan KAZANIR.
+  setHeaders: (res, dosyaYolu) => {
+    if (OZEL_MEDYA.has(path.basename(dosyaYolu))) {
+      res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+      res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+    }
+  },
+});
 const yalnizGet = (statik) => (req, res, next) =>
   (req.method === 'GET' || req.method === 'HEAD')
     ? statik(req, res, next)
     : next();
 app.use('/avatarlar', yalnizGet(avatarStatik));
-app.use('/medya', yalnizGet(medyaStatik));
+
+// İmza kapısı: statik sunucudan ÖNCE. İmzalı yolu (`/i/<exp>/<imza>/<dosya>`)
+// çözer ve `req.url`i sade dosya adına indirger; statik katman imzayı hiç görmez.
+app.use('/medya', (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+  const imzaVar = medyaImzaAyristir(req.url) != null;
+  if (imzaVar) {
+    const sonuc = medyaImzaDogrula(req.url, MEDYA_IMZA_ANAHTARI);
+    if (!sonuc.gecerli) {
+      MEDYA_SAYAC[sonuc.sebep === 'suresi_doldu' ? 'suresi_dolmus' : 'imza_hatali']++;
+      // 403 + no-store: süresi dolmuş bir yanıt hiçbir yerde önbelleğe girmesin.
+      res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+      return res.status(403).json({ hata: 'Medya bağlantısının süresi dolmuş' });
+    }
+    MEDYA_SAYAC.imzali++;
+    req.url = `/${sonuc.dosya}`; // statik katmana sade ad ver
+    return next();
+  }
+  // İmzasız istek: dosya ÖZEL mi?
+  const ad = path.basename(req.url.split('?')[0]);
+  if (OZEL_MEDYA.has(ad)) {
+    MEDYA_SAYAC.imzasiz_ozel++;
+    if (MEDYA_IMZA_ZORUNLU) {
+      res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+      return res.status(403).json({ hata: 'Bu medya için imzalı bağlantı gerekli' });
+    }
+    // Göç dönemi: servis et ama PUBLIC ÖNBELLEĞE ALDIRMA (setHeaders halleder).
+  }
+  next();
+}, yalnizGet(medyaStatik));
 
 // CORS: yalnız kendi web kökenlerimize izin ver (mobil uygulama native HTTP
 // kullanır, CORS'a tabi değildir; bu yüzden kısıtlamak mobili etkilemez).
@@ -548,18 +687,30 @@ function jwtUret(kullanici) {
   );
 }
 
-// Şifre sürümü önbelleği (id → {sv, zaman}): her istekte DB'ye gitmemek için
-// 30 sn TTL. Şifre değişince DB'deki sürüm artar; önbellek en geç 30 sn'de
-// yenilenir, böylece çalınmış eski token'lar kısa sürede reddedilir.
+// Kullanıcı durumu önbelleği (id → {sv, yasakli, yasak_bitis, yasak_sebep,
+// zaman}): her istekte DB'ye gitmemek için 30 sn TTL.
+//
+// İki iş görür:
+//  1) Şifre sürümü — şifre değişince DB'deki sürüm artar; önbellek en geç
+//     30 sn'de yenilenir, böylece çalınmış eski token'lar kısa sürede reddedilir.
+//  2) YASAK DURUMU — ban kararı her istekte `yasak.js/yasakAktif()` ile
+//     VERİLİR. Bitiş DAMGASI önbellekte durduğu için süre dolumu 30 sn'lik
+//     TTL'den ETKİLENMEZ: karşılaştırma her istekte `Date.now()` ile yapılır,
+//     yani süreli ban saniyesi saniyesine biter (cron'a gerek yok). Yeni
+//     VERİLEN ban ise en geç 30 sn'de görünür — ama admin ucu önbelleği hemen
+//     düşürdüğü için pratikte anında.
 const sifreSurumOnbellek = new Map();
-async function sifreSurumuGecerli(id, tokenSv) {
+async function kullaniciDurumu(id) {
   const simdi = Date.now();
   let e = sifreSurumOnbellek.get(id);
   if (!e || simdi - e.zaman > 30000) {
     const { rows } = await havuz.query(
-      'SELECT sifre_surumu FROM kullanicilar WHERE id=$1', [id]);
-    if (!rows.length) return false; // hesap silinmiş
-    e = { sv: rows[0].sifre_surumu, zaman: simdi };
+      `SELECT sifre_surumu, yasakli, yasak_bitis, yasak_sebep
+       FROM kullanicilar WHERE id=$1`, [id]);
+    if (!rows.length) return null; // hesap silinmiş
+    e = { sv: rows[0].sifre_surumu, yasakli: rows[0].yasakli,
+          yasak_bitis: rows[0].yasak_bitis, yasak_sebep: rows[0].yasak_sebep,
+          zaman: simdi };
     sifreSurumOnbellek.set(id, e);
     if (sifreSurumOnbellek.size > 20000) {
       for (const [k, v] of sifreSurumOnbellek) {
@@ -567,10 +718,51 @@ async function sifreSurumuGecerli(id, tokenSv) {
       }
     }
   }
+  return e;
+}
+async function sifreSurumuGecerli(id, tokenSv) {
+  const e = await kullaniciDurumu(id);
+  if (!e) return false;
   return (tokenSv ?? 0) === e.sv;
 }
-// Şifre değişince önbelleği hemen düşür (yeni token anında geçerli olsun).
+// Şifre/yasak değişince önbelleği hemen düşür (yeni durum anında geçerli olsun).
 function sifreSurumOnbellekSil(id) { sifreSurumOnbellek.delete(id); }
+
+// ---------- süresi dolan yasakları süpürme (CRON YOK) ----------
+// Süreli ban bitince kullanıcı `yasakAktif()` sayesinde ANINDA serbesttir;
+// ama `kullanicilar.yasakli` bayrağı DB'de hâlâ true durur ve server.js'teki
+// 15+ `NOT k.yasakli` filtresi (akış, arama, profil, SEO) onun içeriğini
+// gizlemeye devam eder. Bu süpürme bayrağı indirir.
+//
+// Neden ayrı bir zamanlayıcı değil de istek üzerinde tetikleme: konteyner tek
+// süreç; setInterval açılışta kurulsa da idle konteynerde boşuna DB'ye vurur.
+// En fazla 60 sn'de bir, ilk kimlik doğrulamalı istekte, ATEŞLE-UNUT çalışır.
+let sonYasakSupurme = 0;
+async function yasaklariSupur() {
+  const { rows } = await havuz.query(
+    `UPDATE kullanicilar SET yasakli=false
+     WHERE yasakli AND yasak_bitis IS NOT NULL AND yasak_bitis <= now()
+     RETURNING id, yasak_bitis, yasak_sebep`);
+  for (const r of rows) {
+    sifreSurumOnbellekSil(r.id);
+    await havuz.query(
+      `INSERT INTO yasak_kayitlari (kullanici_id, eylem, kalici, bitis, sebep, yonetici)
+       VALUES ($1,'suresi_doldu',false,$2,$3,'sistem')`,
+      [r.id, r.yasak_bitis, r.yasak_sebep],
+    ).catch(() => {});
+  }
+  // Cihaz banları da süresi dolunca düşer (aynı gerekçe).
+  await havuz.query(
+    `UPDATE cihazlar SET yasakli=false
+     WHERE yasakli AND yasak_bitis IS NOT NULL AND yasak_bitis <= now()`);
+  return rows.length;
+}
+function yasakSupurmeTetikle() {
+  const simdi = Date.now();
+  if (simdi - sonYasakSupurme < 60000) return;
+  sonYasakSupurme = simdi;
+  yasaklariSupur().catch((e) => console.error('yasaklariSupur', e.message));
+}
 
 // ---------- çevrimiçi durumu ----------
 // Eşik + seyreltme kararı ve gerekçeleri `cevrimici.js` içinde (testler
@@ -588,6 +780,62 @@ function sonGorulmeGuncelle(kullaniciId) {
   }
 }
 
+// ---------- cihaz (KURULUM) kimliği ----------
+// DÜRÜSTLÜK: bu kimlik DONANIMDAN OKUNMAZ. İstemci kurulum başına 16 rastgele
+// bayt üretip yerelde saklar ve `X-Cihaz` başlığıyla yollar. Uygulama silinip
+// kurulursa, veri temizlenirse, başka cihaza geçilirse ya da istemci başlığı
+// hiç göndermezse (web, eski sürümler) kimlik DEĞİŞİR/YOKTUR. Cihaz banı bu
+// yüzden bir KİLİT değil CAYDIRICI bir sürtünme katmanıdır; "bir daha asla
+// hesap açamaz" GARANTİSİ VERMEZ. (Play politikası kalıcı donanım
+// tanımlayıcısı okumayı zaten yasaklıyor.)
+function cihazKimligi(req) {
+  const k = String(req.headers['x-cihaz'] || '').trim().toLowerCase();
+  return cihazKimlikGecerli(k) ? k : null;
+}
+
+// Cihaz kaydı yazma seyreltmesi: her istekte iki UPSERT yapmayalım.
+const cihazYazildi = new Map();
+function cihazKaydet(req, kullaniciId = null) {
+  const kimlik = cihazKimligi(req);
+  if (!kimlik) return null;
+  const anahtar = `${kimlik}:${kullaniciId ?? 0}`;
+  const simdi = Date.now();
+  const son = cihazYazildi.get(anahtar) || 0;
+  if (simdi - son < 300_000) return kimlik;      // 5 dk'da bir yeter
+  cihazYazildi.set(anahtar, simdi);
+  if (cihazYazildi.size > 20000) {
+    for (const [k, t] of cihazYazildi) if (simdi - t > 600_000) cihazYazildi.delete(k);
+  }
+  const platform = String(req.headers['x-platform'] || '').slice(0, 20) || null;
+  const surum = String(req.headers['x-surum'] || '').slice(0, 40) || null;
+  havuz.query(
+    `INSERT INTO cihazlar (kimlik, platform, son_ip, son_surum, son_gorulme)
+     VALUES ($1,$2,$3,$4,now())
+     ON CONFLICT (kimlik) DO UPDATE SET
+       platform=COALESCE(EXCLUDED.platform, cihazlar.platform),
+       son_ip=EXCLUDED.son_ip,
+       son_surum=COALESCE(EXCLUDED.son_surum, cihazlar.son_surum),
+       son_gorulme=now()`,
+    [kimlik, platform, gercekIp(req), surum],
+  ).then(() => {
+    if (!kullaniciId) return null;
+    return havuz.query(
+      `INSERT INTO cihaz_kullanici (kimlik, kullanici_id) VALUES ($1,$2)
+       ON CONFLICT (kimlik, kullanici_id) DO UPDATE SET son_gorulme=now()`,
+      [kimlik, kullaniciId]);
+  }).catch((e) => console.error('cihazKaydet', e.message));
+  return kimlik;
+}
+
+/** Cihaz ŞU AN yasaklı mı? (kimlik yoksa false — başlıksız istemciyi kilitlemeyiz) */
+async function cihazYasakliMi(kimlik) {
+  if (!kimlik) return null;
+  const { rows } = await havuz.query(
+    'SELECT yasakli, yasak_bitis, yasak_sebep FROM cihazlar WHERE kimlik=$1', [kimlik]);
+  if (!rows.length) return null;
+  return yasakAktif(rows[0]) ? yasakYuku(rows[0]) : null;
+}
+
 async function girisZorunlu(req, res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
@@ -599,11 +847,35 @@ async function girisZorunlu(req, res, next) {
     return res.status(401).json({ hata: 'Geçersiz oturum' });
   }
   // Şifre değiştiyse (veya hesap silindiyse) eski token reddedilir.
-  if (!(await sifreSurumuGecerli(kimlik.id, kimlik.sv))) {
+  const durum = await kullaniciDurumu(kimlik.id);
+  if (!durum || (kimlik.sv ?? 0) !== durum.sv) {
     return res.status(401).json({ hata: 'Oturum sonlandı, tekrar giriş yap' });
   }
   req.kullanici = kimlik;
+
+  // ---- YASAK KAPISI (TEK KONTROL NOKTASI) ----
+  // Kimlik doğrulaması gerektiren HER yazma ucu `girisZorunlu`dan geçiyor
+  // (POST /medya, /profilim/avatar, /veri/ice-aktar dahil — hepsi bu
+  // middleware'i kullanıyor). Kontrolü uçlara tek tek kopyalasaydık yarın
+  // eklenen bir uç unutulur ve yasaklı kullanıcı oradan yazardı.
+  //
+  // KARAR: yasaklı kullanıcı GİREBİLİR ve OKUYABİLİR, herkese açık hiçbir şey
+  // YAZAMAZ. Gerekçe (uzunu yasak.js'te): cezayı ve kalan süreyi uygulama
+  // İÇİNDE görebilmesi gerekir; izleme geçmişi kendi kişisel verisidir; ama
+  // banın amacı BAŞKALARINI korumaktır, yani başkasına ulaşan her eylem kapalı.
+  req.yasak = yasakAktif(durum) ? yasakYuku(durum) : null;
+  if (req.yasak && yazmaYasakli(req.method, req.path)) {
+    return res.status(403).json({
+      hata: req.yasak.kalici
+        ? 'Hesabın kalıcı olarak askıya alındı'
+        : 'Hesabın geçici olarak askıya alındı',
+      yasak: req.yasak,
+    });
+  }
+
   sonGorulmeGuncelle(req.kullanici.id);
+  cihazKaydet(req, req.kullanici.id);
+  yasakSupurmeTetikle();
   next();
 }
 
@@ -656,9 +928,25 @@ function hizLimiti(limit, anahtarUret) {
 }
 const yuklemeLimiti = hizLimiti(40, (req) => `y:${req.kullanici.id}`);
 const authLimiti = hizLimiti(30, (req) => `a:${req.ip}`);
+// Şifre sıfırlama KODU İSTEME: hesap başına saatte 5. İki işi birden yapar:
+//  1) e-posta bombardımanını engeller (her istek kurbanın kutusuna posta atar),
+//  2) aşağıdaki deneme kilidinin "yeni kod isteyip sayacı sıfırla" kaçamağını
+//     daraltır — saldırgan saatte en çok 5 kod x 5 deneme = 25 tahmin yapabilir.
+// Anahtar e-postadır: IP limiti dağıtık saldırıda tek başına yetmiyor.
+// HESAP VARLIĞI SIZMAZ: sayaç e-postanın hesaba karşılık gelip gelmediğine
+// BAKMADAN, gönderilen dizeye göre işler. Var olmayan bir adresi 6 kez deneyen
+// de aynı 429'u alır; 429'un kendisi "bu hesap var" demez.
+const sifirlamaIstekLimiti = hizLimiti(5,
+  (req) => `sf:${String(req.body?.email || '').toLowerCase()}`);
+/** Bir kod kaç YANLIŞ denemeden sonra tamamen iptal edilir. */
+const SIFIRLAMA_MAX_DENEME = 5;
 const veriLimiti = hizLimiti(6, (req) => `v:${req.kullanici.id}`);
 const tmdbLimiti = hizLimiti(600, (req) => `t:${req.ip}`);
 const takvimLimiti = hizLimiti(60, (req) => `k:${req.kullanici.id}`);
+// Favori oyuncular / oyuncu izlenme oranı: ikisi de TMDB'ye dokunabiliyor
+// (önbellek soğukken). Saatte 240 — normal gezinmede bir oyuncu sayfası 1
+// istek, ama önbelleği ısıtmak için bot gibi gezene fren.
+const kisiLimiti = hizLimiti(240, (req) => `ko:${req.kullanici.id}`);
 const akisLimiti = hizLimiti(240, (req) => `f:${req.kullanici.id}`);
 const mesajLimiti = hizLimiti(300, (req) => `m:${req.kullanici.id}`);
 // Yorum spam + @etiket bildirim seli koruması
@@ -808,6 +1096,92 @@ app.get('/saglik', sarici(async (_req, res) => {
   res.json({ durum: 'ok', servis: 'dizi.jpg API' });
 }));
 
+// ---------- CSP ihlal toplayıcı ----------
+// Denetim §4.3: sitede Content-Security-Policy başlığı YOK. Başlığı doğrudan
+// zorunlu koymak siteyi beyaz ekrana düşürebilir (Flutter CanvasKit WASM
+// derliyor, Google ile giriş kendi script/iframe'ini enjekte ediyor), bu yüzden
+// önce `Content-Security-Policy-Report-Only` ile ÖLÇÜLÜR. Tarayıcı ihlalleri
+// buraya POST eder; hiçbir şey engellenmez.
+//
+// Bu uç KİMLİK DOĞRULAMASIZ olmak ZORUNDA: raporu tarayıcı kendi gönderir,
+// oturumu yoktur. Kötüye kullanıma karşı üç sınır var: (1) IP başına hız
+// limiti, (2) 16 KB gövde tavanı, (3) sabit kapasiteli özet — sınırsız
+// büyüyen bir yapı yok, disk/DB'ye HİÇBİR ŞEY yazılmaz.
+const CSP_OZET = new Map(); // "direktif|kaynak" -> { adet, ilk, son, ornekYol }
+const CSP_SINIR = 200;      // en çok bu kadar AYRI ihlal türü tutulur
+let CSP_TOPLAM = 0;
+let CSP_TASTI = 0;          // sınır dolduktan sonra atılan ihlal sayısı
+const cspLimiti = hizLimiti(120, (req) => `csp:${req.ip}`);
+
+app.post('/csp-rapor',
+  cspLimiti,
+  // Tarayıcılar iki farklı içerik türü kullanır: klasik `application/csp-report`
+  // (report-uri) ve yeni `application/reports+json` (report-to). İkisi de
+  // kabul edilir, yoksa gövde hiç ayrıştırılmaz ve rapor sessizce kaybolur.
+  express.json({
+    type: ['application/csp-report', 'application/reports+json', 'application/json'],
+    limit: '16kb',
+  }),
+  (req, res) => {
+    // Yanıt HER ZAMAN 204: tarayıcıya geri bildirim gerekmez ve hata döndürmek
+    // konsolu ikinci bir hatayla kirletir.
+    try {
+      const govde = req.body;
+      // report-to bir DİZİ gönderir, report-uri tek nesne. İkisini de düzle.
+      const kayitlar = Array.isArray(govde) ? govde : [govde];
+      for (const k of kayitlar.slice(0, 20)) {
+        const r = k?.['csp-report'] || k?.body || k || {};
+        const direktif = String(
+          r['effective-directive'] || r.effectiveDirective
+          || r['violated-directive'] || r.violatedDirective || '?',
+        ).slice(0, 80);
+        // Yalnız KÖKEN tutulur, tam URL değil: rapor gövdesinde kullanıcıya
+        // ait bir medya yolu gelebilir, onu loglamak yeni bir sızıntı olurdu.
+        const ham = String(r['blocked-uri'] || r.blockedURL || '?').slice(0, 300);
+        let kaynak = ham;
+        try { kaynak = ham.startsWith('http') ? new URL(ham).origin : ham.split('?')[0]; }
+        catch { /* şema değil (inline/eval/data) — olduğu gibi kalsın */ }
+        const anahtar = `${direktif}|${kaynak.slice(0, 120)}`;
+        CSP_TOPLAM++;
+        const v = CSP_OZET.get(anahtar);
+        if (v) { v.adet++; v.son = Date.now(); continue; }
+        if (CSP_OZET.size >= CSP_SINIR) { CSP_TASTI++; continue; }
+        CSP_OZET.set(anahtar, {
+          adet: 1, ilk: Date.now(), son: Date.now(),
+          ornekYol: String(r['document-uri'] || r.documentURL || '')
+            .replace(/^https?:\/\/[^/]+/, '').slice(0, 120),
+        });
+      }
+    } catch { /* bozuk rapor toplayıcıyı düşürmesin */ }
+    res.status(204).end();
+  });
+
+// Özet: report-only ölçümünün karar noktası. `toplam: 0` ise CSP zorunlu
+// yapılabilir. Admin IP kısıtlı (nginx /api/admin bloğu + adminKisit).
+app.get('/admin/csp', adminKisit, (_req, res) => {
+  const ihlaller = [...CSP_OZET.entries()]
+    .map(([anahtar, v]) => {
+      const [direktif, kaynak] = anahtar.split('|');
+      return { direktif, kaynak, ...v };
+    })
+    .sort((a, b) => b.adet - a.adet);
+  res.json({
+    toplam: CSP_TOPLAM,
+    ayri_tur: ihlaller.length,
+    tasan: CSP_TASTI,
+    // Sayaçlar BELLEKTE: konteyner yeniden başlarsa sıfırlanır. Ölçüm
+    // penceresini bir dağıtımdan SONRA başlatmak gerekir.
+    not: 'Sayaçlar bellek içidir; konteyner yeniden başlarsa sıfırlanır.',
+    ihlaller,
+  });
+});
+
+// Ölçüm penceresini elle sıfırla (ör. bir direktifi düzelttikten sonra).
+app.post('/admin/csp/sifirla', adminKisit, (_req, res) => {
+  CSP_OZET.clear(); CSP_TOPLAM = 0; CSP_TASTI = 0;
+  res.json({ durum: 'ok' });
+});
+
 // Sürüm kapısı: uygulama açılışta kendi derleme numarasını sorar.
 // zorunlu=true ise kapatılamayan güncelleme ekranı, oneri=true ise
 // kapatılabilir uyarı gösterilir. Ayar yoksa ikisi de false (kimse engellenmez).
@@ -920,11 +1294,28 @@ const SEO_INCELEME_MIN = 40;   // puanla yazılan inceleme; bilinçli metin
 const SEO_LISTE_MIN = 3;       // bu sayının altındaki liste ince sayfa sayılır
 const seoOzUzunluk = (sutun) =>
   `length(btrim(regexp_replace(${sutun}, '(#|@)[[:alnum:]_]+|https?://[^[:space:]]+', '', 'g')))`;
+
+// GİZLİLİK (6 Ağu 2026 denetimi): "bu içeriği gizle" (POST /gizle →
+// `gizli_icerikler`) diyen kullanıcının metni SEO yüzeyine ÇIKMAZ.
+//
+// Neden: uç bugün de o metni /yorumlar listesinde gösteriyor (yani teknik
+// olarak zaten public) ama tercih kullanıcıya "bu dizi/film bende görünmesin"
+// diye sunuluyor. Aynı satırı adıyla birlikte Google'a, JSON-LD'ye ve
+// IndexNow bildirimine koymak erişimi kat kat büyütür — kullanıcının
+// okuduğu vaadin ötesine geçer. Kullanıcı verisi bu projenin en yüksek
+// önceliği olduğu için ölçü, "public mi" değil "kullanıcı görünmek istiyor mu".
+const SEO_GIZLI_ICERIK_YOK = (alias) =>
+  `NOT EXISTS (SELECT 1 FROM gizli_icerikler g
+        WHERE g.kullanici_id = ${alias}.kullanici_id
+          AND g.tur = ${alias}.tur AND g.tmdb_id = ${alias}.tmdb_id)`;
+
 // Yorum ve inceleme tarafının paylaştığı "yayına değer metin" koşulu.
 const SEO_YORUM_KOSUL =
-  `NOT k.yasakli AND NOT y.spoiler AND ${seoOzUzunluk('y.metin')} >= ${SEO_YORUM_MIN}`;
+  `NOT k.yasakli AND NOT y.spoiler AND ${SEO_GIZLI_ICERIK_YOK('y')}`
+  + ` AND ${seoOzUzunluk('y.metin')} >= ${SEO_YORUM_MIN}`;
 const SEO_INCELEME_KOSUL =
-  `NOT k.yasakli AND p.yorum IS NOT NULL AND ${seoOzUzunluk('p.yorum')} >= ${SEO_INCELEME_MIN}`;
+  `NOT k.yasakli AND p.yorum IS NOT NULL AND ${SEO_GIZLI_ICERIK_YOK('p')}`
+  + ` AND ${seoOzUzunluk('p.yorum')} >= ${SEO_INCELEME_MIN}`;
 
 async function ozgunIcerikVar(tur, tmdbId) {
   try {
@@ -935,7 +1326,8 @@ async function ozgunIcerikVar(tur, tmdbId) {
             AND ${SEO_YORUM_KOSUL})
         OR EXISTS (
          SELECT 1 FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-          WHERE p.tur = $1 AND p.tmdb_id = $2 AND ${SEO_INCELEME_KOSUL})`,
+          WHERE p.tur = $1 AND p.tmdb_id = $2 AND p.sezon IS NULL
+            AND ${SEO_INCELEME_KOSUL})`,
       [tur, tmdbId]);
     return rows.length > 0;
   } catch (e) {
@@ -968,13 +1360,20 @@ async function seoIcerikVerisi(tur, tmdbId) {
           AND ${SEO_YORUM_KOSUL}
         ORDER BY length(y.metin) DESC LIMIT $3`, [tur, tmdbId, SEO_YORUM_LIMIT]),
     havuz.query(
+      // `p.sezon IS NULL` (8 Ağu 2026-d): bölüm puanları/incelemeleri DİZİNİN
+      // sayfasına girmez — bu vitrin dizinin/filmin kendisi hakkındadır.
       `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
          FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-        WHERE p.tur = $1 AND p.tmdb_id = $2 AND ${SEO_INCELEME_KOSUL}
+        WHERE p.tur = $1 AND p.tmdb_id = $2 AND p.sezon IS NULL
+          AND ${SEO_INCELEME_KOSUL}
         ORDER BY length(p.yorum) DESC LIMIT $3`, [tur, tmdbId, SEO_YORUM_LIMIT]),
+    // aggregateRating YALNIZ dizi geneli puanlarından hesaplanır: JSON-LD
+    // TVSeries'i tanımlar ve sayfada GÖRÜNEN değerle birebir aynı olmak
+    // zorundadır (bölüm puanları bu sayfada hiç gösterilmiyor).
     havuz.query(
       `SELECT round(avg(puan)::numeric, 1)::float AS ortalama, count(puan)::int AS adet
-         FROM puanlar WHERE tur = $1 AND tmdb_id = $2`, [tur, tmdbId]),
+         FROM puanlar WHERE tur = $1 AND tmdb_id = $2 AND sezon IS NULL`,
+      [tur, tmdbId]),
   ]);
   return {
     yorumlar: yorum.rows,
@@ -989,13 +1388,19 @@ const seoGun = (t) => {
   return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
 };
 const seoMetin = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
+// DB puanı 1-10 tutar ama KULLANICI 5 yıldız görür (app/lib/puan.dart ile
+// birebir aynı dönüşüm). Bot sayfası 10'luk basarsa arama sonucunda ★10 görüp
+// uygulamada 5.0 gören kullanıcı çıkar; yapısal veri de sayfada görünen
+// değerden farklı olamaz.
+const seoYildiz = (p) => Math.min(5, Math.max(0, Math.round(Number(p) / 2)));
+const seoYildizOrt = (p) => Math.min(5, Number(p) / 2).toFixed(1);
 
 // Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
 // reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
 function seoYorumHtml({ kullanici_adi, metin, tarih, puan }) {
   const t = seoGun(tarih);
   return `<article><h3>@${htmlKacir(kullanici_adi)}`
-    + `${puan ? ` — ${htmlKacir(puan)}/10` : ''}</h3>`
+    + `${puan ? ` — ${htmlKacir(seoYildiz(puan))}/5` : ''}</h3>`
     + `<p>${htmlKacir(seoMetin(metin))}</p>`
     + `${t ? `<time datetime="${t}">${t}</time>` : ''}</article>`;
 }
@@ -1025,8 +1430,8 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
       reviewBody: seoMetin(r.yorum),
       ...(r.puan ? {
         reviewRating: {
-          '@type': 'Rating', ratingValue: String(r.puan),
-          bestRating: '10', worstRating: '1',
+          '@type': 'Rating', ratingValue: String(seoYildiz(r.puan)),
+          bestRating: '5', worstRating: '1',
         },
       } : {}),
     })),
@@ -1054,9 +1459,11 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
     ...(seo.adet > 0 && seo.ortalama ? {
       aggregateRating: {
         '@type': 'AggregateRating',
-        ratingValue: String(seo.ortalama),
+        // 1138'deki sayfa metniyle AYNI fonksiyondan geçmeli: JSON-LD ile
+        // görünen değer birebir aynı olmak zorunda (yapısal veri politikası).
+        ratingValue: seoYildizOrt(seo.ortalama),
         ratingCount: seo.adet,
-        bestRating: '10', worstRating: '1',
+        bestRating: '5', worstRating: '1',
       },
     } : {}),
     ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
@@ -1097,7 +1504,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     const seo = await seoIcerikVerisi(tur, id);
 
     const puanBlok = seo.adet > 0 && seo.ortalama
-      ? `\n<p>dizi.jpg puanı: ${htmlKacir(seo.ortalama)} / 10`
+      ? `\n<p>dizi.jpg puanı: ${htmlKacir(seoYildizOrt(seo.ortalama))} / 5`
         + ` (${htmlKacir(seo.adet)} puan)</p>` : '';
     const incelemeBlok = seo.incelemeler.length
       ? `\n<h2>${htmlKacir(adYil)} incelemeleri</h2>\n`
@@ -1162,12 +1569,21 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
     return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
+    // GİZLİLİK (6 Ağu 2026 denetimi) — iki sızıntı burada kapatıldı:
+    //  1) `NOT y.spoiler`: spoiler işaretli gönderi uygulamada perde ARKASINDA
+    //     duruyor ama bu uç metni og:description'a basıyordu; WhatsApp/Twitter
+    //     önizlemesi spoiler'ı tıklamadan gösteriyordu. Kullanıcının "spoiler"
+    //     kutusunu işaretlemesinin tek anlamı "metnim açıkta durmasın".
+    //  2) `gizli_icerikler`: yazarın "bu dizi/film bende görünmesin" dediği
+    //     içerikteki gönderi paylaşım/arama yüzeyine çıkmaz (SEO_GIZLI_ICERIK_YOK
+    //     ile aynı gerekçe).
     const { rows } = await havuz.query(
       `SELECT y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi
        FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
-       WHERE y.id=$1 AND NOT k.yasakli`, [id]);
+       WHERE y.id=$1 AND NOT k.yasakli AND NOT y.spoiler
+         AND ${SEO_GIZLI_ICERIK_YOK('y')}`, [id]);
     if (!rows.length) {
-      // Gönderi yok / yazarı yasaklı -> indekslenecek içerik yok.
+      // Gönderi yok / yazarı yasaklı / spoiler / gizlenmiş -> içerik basılmaz.
       return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
     }
     const y = rows[0];
@@ -1384,6 +1800,201 @@ app.get('/og/ana', sarici(async (_req, res) => {
   }));
 }));
 
+// ---------- SEO 1.4 (kalan): /gozat ve /kesfet liste sayfaları ----------
+//
+// CLOAKING KİLİDİ — bu sabit `false` doğdu ve bilerek öyle:
+// `app/lib/yonlendirme.dart` içindeki `acikYolOnEkleri` listesinde '/gozat' ve
+// '/kesfet' YOK; oturumsuz ziyaretçi bu adreslerde /giris'e atılıyor. Sayfaları
+// bugün indekslersek bot içerik, kullanıcı giriş formu görür — SEO-PLANI 3.1'de
+// "diğer tüm SEO yatırımlarını riske atar" denen cloaking'in ta kendisi.
+// Bu yüzden sayfalar `noindex,follow` doğar: Google gövdeyi tarar, iç
+// bağlantıları takip eder (asıl değer bu — 200 içerik sayfasına köprü), ama
+// indekse girmez. Flutter tarafı iki rotayı oturumsuz açtığı gün bu sabit
+// `true` yapılır; TEK satırlık değişiklik, başka hiçbir yere dokunulmaz.
+const SEO_KESIF_INDEKS = false;
+const SEO_KESIF_OGE = 8;    // blok başına bağlantı
+const SEO_KESIF_MIN = 24;   // bu sayının altında sayfa "ince" sayılır -> noindex
+
+// /kesfet = uygulamanın Ana Sayfası. `app/lib/ekranlar/kesfet.dart` içindeki
+// `anaSayfaRaflari` ile AYNI raflar ve AYNI TMDB yolları — bot ile kullanıcının
+// gördüğü sayfa içerik olarak örtüşsün diye (3.1 kabul kriteri). Rafların
+// seçimi editöryeldir ("Türk Dizileri", "Kült Filmler"): TMDB'de böyle bir
+// derleme yok, sayfanın özgünlük gerekçesi bu.
+const SEO_KESFET_RAFLARI = [
+  { baslik: 'Haftanın Dizileri', tur: 'tv', yol: '/trending/tv/week' },
+  { baslik: 'Haftanın Filmleri', tur: 'movie', yol: '/trending/movie/week' },
+  { baslik: 'Türk Dizileri', tur: 'tv', yol: '/discover/tv?sort_by=popularity.desc&with_original_language=tr' },
+  { baslik: 'Türk Filmleri', tur: 'movie', yol: '/discover/movie?sort_by=popularity.desc&with_original_language=tr' },
+  { baslik: 'En Yüksek Puanlı Filmler', tur: 'movie', yol: '/discover/movie?sort_by=vote_average.desc&vote_count.gte=3000' },
+  { baslik: 'En Yüksek Puanlı Diziler', tur: 'tv', yol: '/discover/tv?sort_by=vote_average.desc&vote_count.gte=1000' },
+  { baslik: 'En Çok İzlenen Filmler', tur: 'movie', yol: '/discover/movie?sort_by=popularity.desc&vote_count.gte=500' },
+  { baslik: 'Popüler Diziler', tur: 'tv', yol: '/discover/tv?sort_by=popularity.desc&vote_count.gte=200' },
+  { baslik: 'En Çok Kazanan Filmler', tur: 'movie', yol: '/discover/movie?sort_by=revenue.desc&vote_count.gte=500' },
+  { baslik: 'Kült Filmler', tur: 'movie', yol: '/discover/movie?sort_by=vote_count.desc&vote_average.gte=7.5&primary_release_date.lte=2005-12-31' },
+  { baslik: 'Tüm Zamanların En İyileri', tur: 'movie', yol: '/discover/movie?sort_by=vote_count.desc&vote_average.gte=8' },
+  { baslik: 'Yeni Diziler', tur: 'tv', yol: '/discover/tv?sort_by=first_air_date.desc&vote_count.gte=20' },
+  { baslik: 'Yeni Filmler', tur: 'movie', yol: '/discover/movie?sort_by=primary_release_date.desc&vote_count.gte=100' },
+];
+
+// /gozat = katalog. Flutter ekranı (gozat.dart) tür çipleriyle süzülen bir
+// popülerlik ızgarası; sorgusu birebir `sort_by=popularity.desc&vote_count.gte=80
+// &with_genres=X`. Bot sayfası aynı sorguyu TÜR TÜR açar, yani /kesfet'in
+// editöryel raflarıyla ÇAKIŞMAZ: orası "haftanın/en iyisi", burası "türe göre
+// katalog". Tür kimlikleri TMDB'de sabittir; başlıklar sayfanın diliyle (tr)
+// yazılır. Tür sayfası diye bir ROTA OLMADIĞI için tür adları bağlantı DEĞİL
+// başlıktır — /og/ana'da SearchAction'ın basılmama gerekçesiyle aynı kural:
+// olmayan URL'i botla paylaşma.
+const SEO_GOZAT_KATALOG = [
+  { baslik: 'Dram dizileri', tur: 'tv', genre: 18 },
+  { baslik: 'Komedi dizileri', tur: 'tv', genre: 35 },
+  { baslik: 'Suç dizileri', tur: 'tv', genre: 80 },
+  { baslik: 'Aksiyon ve macera dizileri', tur: 'tv', genre: 10759 },
+  { baslik: 'Bilim kurgu ve fantastik diziler', tur: 'tv', genre: 10765 },
+  { baslik: 'Gizem dizileri', tur: 'tv', genre: 9648 },
+  { baslik: 'Dram filmleri', tur: 'movie', genre: 18 },
+  { baslik: 'Komedi filmleri', tur: 'movie', genre: 35 },
+  { baslik: 'Aksiyon filmleri', tur: 'movie', genre: 28 },
+  { baslik: 'Korku filmleri', tur: 'movie', genre: 27 },
+  { baslik: 'Bilim kurgu filmleri', tur: 'movie', genre: 878 },
+  { baslik: 'Romantik filmler', tur: 'movie', genre: 10749 },
+].map((t) => ({
+  ...t,
+  yol: `/discover/${t.tur}?sort_by=popularity.desc&vote_count.gte=80`
+    + `&with_genres=${t.genre}`,
+}));
+
+// Tanımları TMDB'den doldurup {baslik, ogeler[]} bloklarına çevirir.
+// `tmdbTopluGetir`: 13 yol tek DB sorgusunda önbellekten okunur, yalnız eksikler
+// TMDB'ye gider (8'li öbek). Boş kalan blok DÜŞER — başlığı olup listesi
+// olmayan bölüm ince içeriktir.
+async function seoKesifBloklari(tanimlar) {
+  const harita = await tmdbTopluGetir(
+    tanimlar.map((t) => t.yol), ONBELLEK_TTL_SN.uzun);
+  return tanimlar.map((t) => ({
+    baslik: t.baslik,
+    // poster_path süzgeci gozat.dart'takinin aynısı: postersiz kayıt
+    // uygulamada da listelenmiyor, bot sayfası ondan fazlasını göstermesin.
+    ogeler: ((harita.get(t.yol) || {}).results || [])
+      .filter((r) => r && r.poster_path && (r.name || r.title))
+      .slice(0, SEO_KESIF_OGE)
+      .map((r) => ({ ad: r.name || r.title, yol: `/icerik/${t.tur}/${r.id}` })),
+  })).filter((b) => b.ogeler.length > 0);
+}
+
+const seoKesifGovde = (bloklar) =>
+  bloklar.map((b) => seoBaglantiListesi(b.baslik, b.ogeler)).join('');
+
+const seoKesifAdet = (bloklar) =>
+  bloklar.reduce((n, b) => n + b.ogeler.length, 0);
+
+// CollectionPage + blok başına bir ItemList (`hasPart`). ItemList'ler sayfada
+// GÖRÜNEN listelerin birebir karşılığıdır; görünmeyen öğe yapısal veriye
+// girmez (yapısal veri politikası).
+function seoKesifJsonLd({ url, ad, aciklama, kirintiAd, bloklar }) {
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'CollectionPage',
+        '@id': `${url}#sayfa`,
+        name: ad,
+        url,
+        description: aciklama,
+        inLanguage: 'tr',
+        isPartOf: { '@id': `${SITE_KOK}/#site` },
+        hasPart: bloklar.map((b) => ({
+          '@type': 'ItemList',
+          name: b.baslik,
+          numberOfItems: b.ogeler.length,
+          itemListElement: b.ogeler.map((o, i) => ({
+            '@type': 'ListItem', position: i + 1, name: o.ad, url: SITE_KOK + o.yol,
+          })),
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { '@type': 'ListItem', position: 2, name: kirintiAd },
+        ],
+      },
+    ],
+  };
+}
+
+// Ortak gövde: iki sayfa da aynı iskeleti kullanır, farkı tanım listesi ve
+// metinleridir. TMDB düşerse marka sayfası yine döner ama İNDEKSE GİRMEZ —
+// boş bir liste sayfasını indekslemek soft 404 üretir.
+function ogKesifUcu({ yol, tanimlar, baslik, h1, aciklama, kirintiAd, altMetin }) {
+  return sarici(async (_req, res) => {
+    const url = `${SITE_KOK}${yol}`;
+    let bloklar = [];
+    try {
+      bloklar = await seoKesifBloklari(tanimlar);
+    } catch (e) {
+      console.error(`og${yol}`, e.message);
+    }
+    const adet = seoKesifAdet(bloklar);
+    res.type('html').send(ogSayfa({
+      baslik,
+      h1,
+      aciklama,
+      url,
+      canonical: url,
+      tur: 'website',
+      indexle: SEO_KESIF_INDEKS && adet >= SEO_KESIF_MIN,
+      govde: `\n<p>${htmlKacir(altMetin)}</p>` + seoKesifGovde(bloklar),
+      jsonLd: bloklar.length
+        ? seoKesifJsonLd({ url, ad: h1, aciklama, kirintiAd, bloklar })
+        : null,
+    }));
+  });
+}
+
+app.get('/og/kesfet', ogKesifUcu({
+  yol: '/kesfet',
+  tanimlar: SEO_KESFET_RAFLARI,
+  baslik: 'Ana Sayfa — dizi.jpg',
+  h1: 'dizi.jpg Ana Sayfa',
+  aciklama: 'Haftanın dizileri ve filmleri, Türk yapımları, en yüksek puanlı '
+    + 've kült başlıklar — dizi.jpg ana sayfasının derlediği raflar.',
+  kirintiAd: 'Ana Sayfa',
+  altMetin: 'dizi.jpg ana sayfası; haftanın öne çıkanlarından Türk '
+    + 'yapımlarına, en yüksek puanlılardan kült başlıklara kadar derlenmiş '
+    + 'raflar. Her başlığa tıklayıp puanları, incelemeleri ve kullanıcı '
+    + 'yorumlarını okuyabilirsiniz.',
+}));
+
+app.get('/og/gozat', ogKesifUcu({
+  yol: '/gozat',
+  tanimlar: SEO_GOZAT_KATALOG,
+  baslik: 'Gözat — Türlerine göre dizi ve film kataloğu — dizi.jpg',
+  h1: 'Gözat: türlerine göre diziler ve filmler',
+  aciklama: 'Dram, komedi, suç, bilim kurgu, korku ve daha fazlası — '
+    + 'dizi.jpg kataloğunda türüne göre popüler dizi ve filmler.',
+  kirintiAd: 'Gözat',
+  altMetin: 'dizi.jpg kataloğu: dizileri ve filmleri türüne göre gezin. '
+    + 'Her tür, en az 80 oy almış yapımlar arasından popülerlik sırasıyla '
+    + 'listelenir; başlığa girince dizi.jpg puanını ve kullanıcı yorumlarını '
+    + 'görürsünüz.',
+}));
+
+// robots.txt Node'dan servis edilir (IndexNow anahtarıyla aynı gerekçe):
+// Flutter web dağıtımı `scp build/web/*` ile /var/www/dizijpg'yi ezdiği için
+// oraya konan dosya her dağıtımda kaybolma riski taşıyordu ve depoda kopyası
+// yoktu — yani kimse hangi kuralın ne zaman eklendiğini göremiyordu.
+// Dosya başlangıçta bir kez okunur; yoksa uç 404 döner (nginx statik dosyaya
+// düşer, yani eski davranış korunur).
+const ROBOTS_YOL = path.join(import.meta.dirname, 'robots.txt');
+let robotsMetin = null;
+try { robotsMetin = fs.readFileSync(ROBOTS_YOL, 'utf8'); } catch { robotsMetin = null; }
+
+app.get('/robots.txt', (_req, res) => {
+  if (!robotsMetin) return res.status(404).type('text/plain').send('yok');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.type('text/plain').send(robotsMetin);
+});
+
 // ---------- IndexNow: yeni içeriği Bing/Yandex'e ANINDA bildir ----------
 // Sitemap taraması haftalar sürebiliyor; IndexNow ile yeni yorum yazılan sayfa
 // saniyeler içinde kuyruğa giriyor. Anahtar GİZLİ DEĞİLDİR — protokol gereği
@@ -1439,7 +2050,7 @@ const SITEMAP_SORGU = `
     UNION ALL
     SELECT p.tur, p.tmdb_id, p.tarih
       FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-     WHERE p.tur IN ('tv','movie') AND ${SEO_INCELEME_KOSUL}
+     WHERE p.tur IN ('tv','movie') AND p.sezon IS NULL AND ${SEO_INCELEME_KOSUL}
   ) t GROUP BY tur, tmdb_id ORDER BY son DESC`;
 
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
@@ -1544,7 +2155,37 @@ app.post('/hata-bildir', hataLimiti, girisIsteğeBagli, sarici(async (req, res) 
 }));
 
 // ---------- auth ----------
+// ---------- cihaz banı kapısı (YALNIZ HESAP AÇMA) ----------
+// "Kullandığı cihazı da banlayabilmeliyiz, o cihazdan bir daha bizde hesap
+// açamamalı." — YAPILAN BU, ama İKİ SINIRI AÇIKÇA YAZIYORUZ:
+//
+// SINIR 1 — KAPSAM: kapı YALNIZ YENİ HESAP AÇMAYA kapalı, GİRİŞE DEĞİL.
+//   Kullanıcının kararı (8 Ağu): ailede paylaşılan telefon/tablette masum
+//   kişi kilitlenmesin. Cihaz kimliği kişiyi değil CİHAZI tanır; aynı evde
+//   yaşayan kardeş, eş ya da çocuk aynı kimliği taşır. Girişi de kesmek,
+//   ihlal etmemiş insanların hesabını rehin almak olurdu.
+//   Banın ASIL amacı — ceza yiyenin YENİ HESAPLA geri dönmesi — yine
+//   engelleniyor: eski hesabı zaten yasaklı (kullanıcı banı), yenisini de
+//   açamıyor. TEST BU AYRIMI KİLİTLİYOR; "tutarlılık" gerekçesiyle girişe de
+//   uygulanırsa kırmızıya döner.
+//
+// SINIR 2 — GÜÇ: kimlik istemcinin ürettiği bir KURULUM kimliğidir; uygulama
+//   silinip kurulunca değişir. Yani bu kapı sıradan tekrar-kayıtçıyı durdurur,
+//   kararlı birini YALNIZCA YAVAŞLATIR.
+//
+// Başlık göndermeyen istemci (web, eski sürüm) engellenmez — engelleseydik
+// bugün çalışan tüm web kullanıcılarını kilitlemiş olurduk.
+async function cihazKapisi(req, res) {
+  const kimlik = cihazKaydet(req, null);
+  if (!kimlik) return false;
+  const yasak = await cihazYasakliMi(kimlik);
+  if (!yasak) return false;
+  res.status(403).json({ hata: 'Bu cihazdan yeni hesap açılamıyor', yasak });
+  return true;
+}
+
 app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
+  if (await cihazKapisi(req, res)) return;
   const { email, kullanici_adi, sifre } = req.body || {};
   if (!email?.includes('@') || !kullanici_adi || (sifre || '').length < 6) {
     return res.status(400).json({ hata: 'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli' });
@@ -1571,7 +2212,8 @@ app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
 
 // Misafir girişi: hesap anında oluşur, veri toplamaya hemen başlanır.
 // Kullanıcı isterse sonradan /auth/bagla ile e-postaya bağlar.
-app.post('/auth/misafir', authLimiti, sarici(async (_req, res) => {
+app.post('/auth/misafir', authLimiti, sarici(async (req, res) => {
+  if (await cihazKapisi(req, res)) return;
   for (let deneme = 0; deneme < 5; deneme++) {
     const ad = 'misafir_' + crypto.randomBytes(4).toString('hex');
     try {
@@ -1623,6 +2265,11 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
 }));
 
 app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
+  // CİHAZ BANI KAPISI BURADA BİLEREK YOK — bkz. cihazKapisi() SINIR 1.
+  // Yasaklı cihazdan MEVCUT hesaba giriş yapılabilir; yalnız YENİ hesap
+  // açılamaz. Cihazı yine de kaydediyoruz: hangi hesabın hangi cihazdan
+  // girdiği moderasyon sinyali (aynı cihazda N hesap) olarak gerekiyor.
+  cihazKaydet(req, null);
   const { email, sifre } = req.body || {};
   const { rows } = await havuz.query(
     'SELECT * FROM kullanicilar WHERE email = lower($1) OR kullanici_adi = $1',
@@ -1632,13 +2279,19 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
       !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
     return res.status(401).json({ hata: 'E-posta/kullanıcı adı veya şifre hatalı' });
   }
-  if (rows[0].yasakli) {
-    return res.status(403).json({ hata: 'Hesabın askıya alındı' });
-  }
+  // YASAKLI KULLANICI GİREBİLİR — bilerek. Sebebi ve kalan süreyi UYGULAMA
+  // İÇİNDE görmesi gerekiyor; giriş kapısında "askıya alındı" deyip kesmek
+  // ona ne olduğunu, ne zaman biteceğini ve nereye itiraz edeceğini
+  // öğretmiyordu. Yazma uçları `girisZorunlu` içindeki tek kapıda kapalı.
+  // Yanıta `yasak` yükü eklenir: istemci giriş biter bitmez uyarıyı gösterir.
+  // (Süreli banı süresi dolmuşsa `yasakAktif` false döner ve yük hiç konmaz —
+  // kullanıcı kendiliğinden serbest kalmıştır.)
+  const yasak = yasakYuku(rows[0]);
   const { id, kullanici_adi, email: eposta, misafir } = rows[0];
   res.json({
     token: jwtUret(rows[0]),
     kullanici: { id, kullanici_adi, email: eposta, misafir },
+    ...(yasak ? { yasak } : {}),
   });
 }));
 
@@ -1649,6 +2302,7 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
 const GOOGLE_ISTEMCI = '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
 
 app.post('/auth/google', authLimiti, sarici(async (req, res) => {
+  if (await cihazKapisi(req, res)) return;
   const { kimlik, erisim } = req.body || {};
   let bilgi = null;
   try {
@@ -1687,12 +2341,15 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
     'SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
   if (mevcut.rows.length) {
     const k = mevcut.rows[0];
-    if (k.yasakli) return res.status(403).json({ hata: 'Hesabın askıya alındı' });
+    // /auth/giris ile aynı karar: yasaklı kullanıcı girer, cezasını görür,
+    // yazamaz (bkz. girisZorunlu içindeki tek kapı).
+    const yasak = yasakYuku(k);
     const { id, kullanici_adi, email: eposta, misafir } = k;
     return res.json({
       token: jwtUret(k),
       kullanici: { id, kullanici_adi, email: eposta, misafir },
       yeni: false,
+      ...(yasak ? { yasak } : {}),
     });
   }
   // Yeni hesap: ad e-postanın ön ekinden türetilir, çakışırsa sonek eklenir.
@@ -2143,53 +2800,147 @@ app.get('/izleyenler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) =
   });
 }));
 
-app.post('/puan', girisZorunlu, sarici(async (req, res) => {
-  const { tmdb_id, tur, puan, yorum = null } = req.body || {};
-  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) {
-    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+// ---------- puan: dizi/film/kişi geneli VEYA tek bölüm ----------
+//
+// 8 Ağu 2026 (d) — BÖLÜM BAZLI PUANLAMA (istek md. 11).
+// Hedef sözleşmesi `tepkiHedef` ile BİREBİR aynı: sezon+bolum ya İKİSİ birden
+// gelir (o bölüme puan) ya HİÇ gelmez (dizi/film/kişi geneli). Fark: bölüm
+// yalnız 'tv' türünde olur (film ve kişinin bölümü yoktur).
+function puanHedef(govde) {
+  const { tmdb_id, tur } = govde || {};
+  let { sezon = null, bolum = null } = govde || {};
+  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
+  if ((sezon == null) !== (bolum == null)) return null;
+  if (sezon != null) {
+    if (tur !== 'tv') return null;
+    if (!Number.isInteger(sezon) || !Number.isInteger(bolum)
+        || sezon < 0 || bolum < 0) return null;
   }
+  return { tur, tmdb_id, sezon, bolum };
+}
+
+app.post('/puan', girisZorunlu, sarici(async (req, res) => {
+  const hedef = puanHedef(req.body);
+  if (!hedef) return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  const { tur, tmdb_id, sezon, bolum } = hedef;
+  const { puan, yorum = null } = req.body || {};
   if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 10)) {
     return res.status(400).json({ hata: 'Puan 1-10 arası olmalı' });
   }
   if (yorum != null && String(yorum).length > 2000) {
     return res.status(400).json({ hata: 'İnceleme en fazla 2000 karakter olabilir' });
   }
+  // COALESCE(-1): tekil indeksle AYNI ifade — dizi geneli satırı bölüm
+  // satırıyla, S1B2 satırı S1B3 satırıyla asla karışmaz.
+  const anahtar = [req.kullanici.id, tur, tmdb_id, sezon ?? -1, bolum ?? -1];
   if (!puan) {
     await havuz.query(
-      'DELETE FROM puanlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3',
-      [req.kullanici.id, tur, tmdb_id],
+      `DELETE FROM puanlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3
+         AND COALESCE(sezon,-1)=$4 AND COALESCE(bolum,-1)=$5`,
+      anahtar,
     );
+    // Puan SİLİNİRKEN izleme kaydına DOKUNULMAZ (aşağıdaki asimetri notu).
     return res.json({ silindi: true });
   }
   await havuz.query(
-    `INSERT INTO puanlar (kullanici_id, tur, tmdb_id, puan, yorum, tarih)
-     VALUES ($1,$2,$3,$4,$5,now())
-     ON CONFLICT (kullanici_id, tur, tmdb_id) DO UPDATE SET puan=$4, yorum=$5, tarih=now()`,
-    [req.kullanici.id, tur, tmdb_id, puan, yorum],
+    `INSERT INTO puanlar (kullanici_id, tur, tmdb_id, sezon, bolum, puan, yorum, tarih)
+     VALUES ($1,$2,$3,$4,$5,$6,$7,now())
+     ON CONFLICT (kullanici_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1))
+     DO UPDATE SET puan=$6, yorum=$7, tarih=now()`,
+    [req.kullanici.id, tur, tmdb_id, sezon, bolum, puan, yorum],
   );
-  res.json({ tamam: true });
+  // BÖLÜME PUAN = O BÖLÜMÜ İZLEDİM (kullanıcı kararı, 8 Ağu 2026-d).
+  // Görmediğin bölüme puan veremezsin; kayıt düşülmezse bölüm takvimde
+  // "izlenecek" olarak durmaya devam eder ve dizi durumu (izliyorum/bitirdim)
+  // yanlış kalır. `/izleme/toggle` ile AYNI iki adım yapılır: izlemeler satırı
+  // + `diziDurumunuGuncelle`.
+  // ASİMETRİ (bilinçli): puanı SİLMEK izleme kaydını KALDIRMAZ — bölümü
+  // izlediğin gerçeği puanını geri almanla ortadan kalkmaz. `/izleme/toggle`
+  // de "kaldırmada rozet bırakılır" diyerek aynı yönde davranıyor.
+  let izlendi = null;
+  if (sezon != null) {
+    const e = await havuz.query(
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+       VALUES ($1,'tv',$2,$3,$4) ON CONFLICT DO NOTHING`,
+      [req.kullanici.id, tmdb_id, sezon, bolum],
+    );
+    if (e.rowCount > 0) await diziDurumunuGuncelle(req.kullanici.id, tmdb_id);
+    izlendi = true;
+  }
+  res.json({ tamam: true, ...(izlendi != null ? { izlendi } : {}) });
 }));
 
-// Bir içeriğin herkese açık incelemeleri
+// Bir içeriğin herkese açık incelemeleri.
+// `sezon IS NULL`: bu uç dizi/film SAYFASINI besler; bölüm incelemeleri
+// bölümün kendi ucundan (`/bolum-puanlari/...`) gelir.
 app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
      FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-     WHERE p.tur=$1 AND p.tmdb_id=$2 AND p.yorum IS NOT NULL AND p.yorum != ''
+     WHERE p.tur=$1 AND p.tmdb_id=$2 AND p.sezon IS NULL
+       AND p.yorum IS NOT NULL AND p.yorum != ''
      ORDER BY p.tarih DESC LIMIT 50`,
     [req.params.tur, req.params.tmdbId],
   );
   const ort = await havuz.query(
     `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*) AS adet
-     FROM puanlar WHERE tur=$1 AND tmdb_id=$2`,
+     FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL`,
     [req.params.tur, req.params.tmdbId],
   );
   res.json({ incelemeler: rows, ...ort.rows[0] });
 }));
 
+// Bir SEZONUN bütün bölüm puanları TEK istekte: kullanıcının kendi puanı +
+// herkesin ortalaması/sayısı. N bölüm için N istek atılmasın diye sezon
+// kapsamlı: bölüm sayfası açılışta yalnız kendi bölümünü okur ama sezon
+// listesi ileride aynı yanıtı tekrar kullanabilir.
+//
+// HIZ LİMİTİ YOK — bilinçli: kardeş herkese açık okuma uçları
+// (`/tepkiler/...`, `/incelemeler/...`, `/yorumlar/...`) de limitsiz ve bu uç
+// `puanlar_bolum_hedef` kısmi indeksi üzerinden en fazla iki küçük sorgu
+// yapıyor, dış servise (TMDB) hiç çıkmıyor. Limit eklenecekse üçü BİRDEN
+// eklenmeli; yalnız bunu sınırlamak tutarsızlık olurdu.
+app.get('/bolum-puanlari/:tmdbId/:sezon', girisIsteğeBagli, sarici(async (req, res) => {
+  const tmdbId = Number(req.params.tmdbId);
+  const sezon = Number(req.params.sezon);
+  if (!gecerliTmdb(tmdbId) || !Number.isInteger(sezon) || sezon < 0) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id/sezon' });
+  }
+  const [genel, benim] = await Promise.all([
+    havuz.query(
+      `SELECT bolum, round(avg(puan)::numeric, 1)::float AS ortalama,
+              count(puan)::int AS adet
+         FROM puanlar
+        WHERE tur='tv' AND tmdb_id=$1 AND sezon=$2 AND puan IS NOT NULL
+        GROUP BY bolum`,
+      [tmdbId, sezon]),
+    req.kullanici
+      ? havuz.query(
+          `SELECT bolum, puan, yorum FROM puanlar
+            WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2 AND sezon=$3`,
+          [req.kullanici.id, tmdbId, sezon])
+      : { rows: [] },
+  ]);
+  // Bölüm no -> {ortalama, adet, benim, yorum}. Anahtarlar METİN (JSON nesnesi).
+  const bolumler = {};
+  for (const r of genel.rows) {
+    bolumler[r.bolum] = { ortalama: r.ortalama, adet: r.adet, benim: null };
+  }
+  for (const r of benim.rows) {
+    bolumler[r.bolum] = {
+      ortalama: null, adet: 0, ...(bolumler[r.bolum] || {}),
+      benim: r.puan, yorum: r.yorum,
+    };
+  }
+  res.json({ sezon, bolumler });
+}));
+
+// 'person' 8 Ağu 2026'da eklendi: oyuncu da favorilenebiliyor (favori oyuncu
+// listesi). CHECK kısıtı migrasyon-2026-08-08.sql ile genişletildi — bu satır
+// migrasyonsuz sunucuda 23514 (check_violation) verir.
 app.post('/favori/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur } = req.body || {};
-  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) {
+  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) {
     return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   }
   const silindi = await havuz.query(
@@ -2205,13 +2956,91 @@ app.post('/favori/toggle', girisZorunlu, sarici(async (req, res) => {
   res.json({ favori: silindi.rowCount === 0 });
 }));
 
+// ---------- favori oyuncular + oyuncunun izlenme oranı ----------
+
+// Kullanıcının favori oyuncuları, adı ve fotoğrafıyla (yeniden eskiye).
+//
+// ÖNBELLEK: her kişi için TMDB `/person/:id` gerekiyor. `tmdbGetir` yanıtı
+// `tmdb_onbellek` tablosuna yazar; TTL "uzun" (7 gün) çünkü bir oyuncunun adı
+// ve fotoğrafı gün içinde değişmez. Yani liste ilk açılışta favori sayısı
+// kadar TMDB isteği yapar, sonraki 7 gün boyunca SIFIR. Önbellek kullanıcıya
+// değil ANAHTARA bağlı: bir oyuncuyu favorileyen ikinci kullanıcı da bedava
+// yararlanır.
+//
+// 8'Lİ ÖBEK: TMDB tek IP'den saniyede ~50 istek kabul ediyor; 200 favorili bir
+// hesapta hepsini birden atmak 429 yerdi. Öbekler sırayla beklenir, nginx'in
+// 300 sn `proxy_read_timeout`'una rahat sığar (200 kişi / 8 = 25 tur).
+// LIMIT 200: favori oyuncu sayısı bunu aşarsa liste kırpılır — 200 satır zaten
+// kaydırılabilir bir ekranın çok üstünde.
+app.get('/favori-kisiler', girisZorunlu, kisiLimiti, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT tmdb_id, tarih FROM favoriler
+     WHERE kullanici_id=$1 AND tur='person' ORDER BY tarih DESC LIMIT 200`,
+    [req.kullanici.id],
+  );
+  const kisiler = [];
+  for (let i = 0; i < rows.length; i += 8) {
+    const parca = await Promise.all(rows.slice(i, i + 8).map(async (r) => {
+      try {
+        const k = await tmdbGetir(`/person/${r.tmdb_id}`, ONBELLEK_TTL_SN.uzun);
+        return {
+          tmdb_id: r.tmdb_id,
+          ad: k?.name || '',
+          poster: k?.profile_path || null,
+          bilinen: k?.known_for_department || null,
+        };
+      } catch {
+        // Tek kişi çekilemezse (TMDB 404/502) liste komple düşmesin:
+        // adsız satır kullanıcıya en azından "favorim burada" der.
+        return { tmdb_id: r.tmdb_id, ad: '', poster: null, bilinen: null };
+      }
+    }));
+    kisiler.push(...parca);
+  }
+  res.json({ kisiler });
+}));
+
+// Bir oyuncunun yapımlarından kullanıcının kaçını izlediği + tam liste.
+//
+// TMDB MALİYETİ: TEK istek (`/person/:id/combined_credits`) — oyuncunun bütün
+// dizi/filmleri o tek yanıtta ad + poster + tarihle birlikte geliyor, tek tek
+// `/tv/:id` çekmeye GEREK YOK. TTL "uzun" (7 gün), önbellek kullanıcıdan
+// bağımsız paylaşılır: aynı oyuncuyu açan ikinci kullanıcı TMDB'ye hiç gitmez.
+// Kullanıcıya özel kısım yalnız 2 DB sorgusu.
+//
+// Karar/gerekçeler (izlendi kuralı, payda, sıra) kisi_izlenme.js başında.
+app.get('/kisi/:id/izlenme', girisZorunlu, kisiLimiti, sarici(async (req, res) => {
+  const kisiId = Number(req.params.id);
+  if (!gecerliTmdb(kisiId)) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id' });
+  }
+  const [krediler, durumlar, izlemeler] = await Promise.all([
+    tmdbGetir(`/person/${kisiId}/combined_credits`, ONBELLEK_TTL_SN.uzun),
+    havuz.query(
+      'SELECT tur, tmdb_id, durum FROM durumlar WHERE kullanici_id=$1',
+      [req.kullanici.id]),
+    havuz.query(
+      'SELECT DISTINCT tur, tmdb_id FROM izlemeler WHERE kullanici_id=$1',
+      [req.kullanici.id]),
+  ]);
+  const ozet = izlenmeOzeti(
+    yapimlariCikar(krediler),
+    izlenenAnahtarlar(durumlar.rows, izlemeler.rows),
+  );
+  res.json(ozet);
+}));
+
 // İçerik hakkında kullanıcının tüm durumu (tek istekte)
 app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
   const p = [req.kullanici.id, req.params.tur, req.params.tmdbId];
   const [izleme, durum, puan, favori, kaynak, gizli] = await Promise.all([
     havuz.query('SELECT sezon, bolum FROM izlemeler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT durum, tekrar FROM durumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
-    havuz.query('SELECT puan, yorum FROM puanlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    // sezon IS NULL: bu uç içeriğin GENEL durumunu döner; bölüm puanları
+    // `/bolum-puanlari/:tmdbId/:sezon` ucundan okunur.
+    havuz.query(
+      `SELECT puan, yorum FROM puanlar
+        WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3 AND sezon IS NULL`, p),
     havuz.query('SELECT 1 FROM favoriler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT platform FROM izleme_kaynaklari WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT 1 FROM gizli_icerikler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
@@ -2810,7 +3639,11 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
     [req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
-  res.json(rows[0]);
+  // Yasak yükü BURADA da veriliyor: yalnız okuyan (hiç yazmayan) yasaklı
+  // kullanıcı 403 görmez ve cezasından haberi olmazdı. `/profilim` uygulama
+  // açılışında çağrılıyor — uyarı orada çıkar. GÜVEN SKORU BİLEREK YOK
+  // (kullanıcı skorunu görürse oyunlaştırır; gerekçe raporda).
+  res.json({ ...rows[0], ...(req.yasak ? { yasak: req.yasak } : {}) });
 }));
 
 app.post('/profilim', girisZorunlu, sarici(async (req, res) => {
@@ -4109,6 +4942,16 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     [req.kullanici.id, CEVRIMICI_ESIK_SN],
   );
   rows.sort((a, b) => b.id - a.id);
+  // Önizleme metni DB'den ŞİFRELİ gelir; istemciye çözülmüş gider. Atlanırsa
+  // mesajlar listesindeki her satırda ham zarf (v1.k1.…) görünür.
+  for (const r of rows) {
+    r.metin = cozGoster(r.metin);
+    // Sohbet listesinde `medya` yalnız önizleme ETİKETİ için okunur
+    // ("Fotoğraf" / "Video" / "Sesli mesaj" — sohbet.dart:1523) ve indirilmez.
+    // Yine de imzalanır: aynı alanın iki uçta iki farklı biçimde dönmesi
+    // ileride kolayca gözden kaçacak bir tutarsızlık olurdu.
+    r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
+  }
   const { sohbetler, istekler } = sohbetleriAyir(rows);
   const toplam = await havuz.query(
     'SELECT count(*)::int AS adet FROM mesajlar WHERE alici_id=$1 AND NOT okundu',
@@ -4201,6 +5044,18 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
      ORDER BY m.id DESC LIMIT 50`,
     [req.kullanici.id, partnerId, once],
   );
+  // Mesaj metni VE alıntılanan mesajın metni şifreli gelir; İKİSİ de çözülür.
+  // yanit_metin atlanırsa alıntı baloncuğunda ham zarf görünür (kolayca
+  // gözden kaçar, çünkü asıl baloncuklar düzgün görünmeye devam eder).
+  for (const r of rows) {
+    r.metin = cozGoster(r.metin);
+    r.yanit_metin = cozGoster(r.yanit_metin);
+    // DM medyası İMZALI-SÜRELİ yolla gider (denetim §2.1). İmza YOL SEGMENTİ
+    // olduğu için yol hâlâ uzantıyla biter -> yayındaki istemcilerin
+    // `endsWith('.mp4')` / `endsWith('.ogg')` türü tür tespiti bozulmaz.
+    r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
+    r.yanit_medya = medyaImzali(r.yanit_medya, MEDYA_IMZA_ANAHTARI);
+  }
   // Paylaşılan içerik kartları için ad + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(rows
     .filter((r) => r.icerik_tur && r.icerik_id)
@@ -4265,9 +5120,16 @@ app.post('/mesajlar/iletildi', girisZorunlu, sarici(async (req, res) => {
 
 app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   const {
-    kullanici_adi, metin, medya = null, ses_dalga = null,
+    kullanici_adi, metin, medya: medyaHam = null, ses_dalga = null,
     icerik_tur = null, icerik_id = null, yanit_id = null, yorum_id = null,
   } = req.body || {};
+  // İmzalı yolu KANONİK hâle getir. Bugünün istemcisi yükleme ucundan aldığı
+  // imzasız yolu gönderiyor, ama okuma uçları artık imzalı yol döndürdüğü için
+  // ileride bir "ilet/yeniden gönder" akışı imzalı yolu geri yollayabilir.
+  // Normalleştirmezsek aşağıdaki sahiplik regex'i onu haksız yere reddederdi.
+  // DB'ye HER ZAMAN imzasız yol yazılır: imza bir sunum detayıdır, kalıcı
+  // veride durursa süresi dolduğunda kayıt kalıcı olarak bozulur.
+  const medya = medyaYoluNormalle(medyaHam);
   const temiz = String(metin || '').trim();
   if (temiz.length > 2000) {
     return res.status(400).json({ hata: 'Mesaj en fazla 2000 karakter olabilir' });
@@ -4337,10 +5199,16 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     `INSERT INTO mesajlar (gonderen_id, alici_id, metin, medya, ses_dalga,
                            icerik_tur, icerik_id, yanit_id, yorum_id)
      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING id, tarih`,
-    [req.kullanici.id, aliciId, temiz || null, medya, sesMi ? ses_dalga : null,
+    // temiz.length > 2000 doğrulaması YUKARIDA, şifrelemeden ÖNCE yapılır:
+    // DB'deki CHECK kısıtı zarf uzunluğu yüzünden kalktı, tek savunma o.
+    [req.kullanici.id, aliciId, sifrele(temiz || null), medya, sesMi ? ses_dalga : null,
      icerikVar ? icerik_tur : null, icerikVar ? icerik_id : null, gecerliYanit,
      yorum_id ?? null],
   );
+  // Dosya bu andan itibaren ÖZEL: bir sonraki isteğinde public önbelleğe
+  // girmesin. Kümeye eklemek yalnız bellek işidir; açılışta DB'den yeniden
+  // kurulur, yani kalıcılığı `mesajlar.medya` kolonu sağlar.
+  ozelMedyaEkle(medya);
   // Push gövdesinde mesajın kendisi görünsün (boşsa şablona düşer)
   bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
     temiz ? { metin: temiz } : null);
@@ -4361,7 +5229,8 @@ app.patch('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
     `UPDATE mesajlar SET metin=$1, duzenlendi=true
      WHERE id=$2 AND gonderen_id=$3 AND medya IS NULL AND icerik_tur IS NULL
      RETURNING id`,
-    [temiz, id, req.kullanici.id],
+    // Uzunluk kontrolü yukarıda, düz metin üzerinde yapıldı.
+    [sifrele(temiz), id, req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı veya düzenlenemez' });
   res.json({ tamam: true });
@@ -4377,28 +5246,37 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
   );
   if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
   if (rows[0].medya) {
-    fs.unlink(path.join(MEDYA_DIZIN, path.basename(rows[0].medya)), () => {});
+    const ad = path.basename(rows[0].medya);
+    fs.unlink(path.join(MEDYA_DIZIN, ad), () => {});
+    // Dosya gittiği için kümede kalması zararsız olurdu (404 döner) ama küme
+    // sonsuza dek büyümesin: kaydı da düş. Video kapağı da aynı anda gider.
+    OZEL_MEDYA.delete(ad);
+    OZEL_MEDYA.delete(`${ad}.jpg`);
   }
   res.json({ tamam: true });
 }));
 
 // ---------- şifre sıfırlama ----------
-app.post('/auth/sifre-sifirla-istek', authLimiti, sarici(async (req, res) => {
-  const { email } = req.body || {};
-  // Hesap var/yok bilgisi sızdırılmaz: her durumda aynı cevap.
-  const cevap = { mesaj: 'Hesap varsa sıfırlama kodu e-postana gönderildi' };
-  const { rows } = await havuz.query(
-    'SELECT id FROM kullanicilar WHERE email=$1 AND NOT misafir', [email]);
-  if (!rows.length) return res.json(cevap);
-  // Kripto-güvenli 6 haneli kod (Math.random tahmin edilebilir PRNG'dir).
-  const kod = String(crypto.randomInt(100000, 1000000));
-  const hash = await bcrypt.hash(kod, 10);
-  await havuz.query(
-    `INSERT INTO sifirlama_kodlari (kullanici_id, kod_hash, bitis)
-     VALUES ($1,$2, now() + interval '15 minutes')
-     ON CONFLICT (kullanici_id) DO UPDATE SET kod_hash=$2, bitis=now() + interval '15 minutes'`,
-    [rows[0].id, hash],
-  );
+app.post('/auth/sifre-sifirla-istek', authLimiti, sifirlamaIstekLimiti,
+  sarici(async (req, res) => {
+    const { email } = req.body || {};
+    // Hesap var/yok bilgisi sızdırılmaz: her durumda aynı cevap.
+    const cevap = { mesaj: 'Hesap varsa sıfırlama kodu e-postana gönderildi' };
+    const { rows } = await havuz.query(
+      'SELECT id FROM kullanicilar WHERE email=$1 AND NOT misafir', [email]);
+    if (!rows.length) return res.json(cevap);
+    // Kripto-güvenli 6 haneli kod (Math.random tahmin edilebilir PRNG'dir).
+    const kod = String(crypto.randomInt(100000, 1000000));
+    const hash = await bcrypt.hash(kod, 10);
+    // deneme=0: YENİ kod, yeni 5 hak. Eski kodun tüketilmiş hakları taşınmaz —
+    // taşınsaydı meşru kullanıcı "yeni kod iste" deyip yine kilitli kalırdı.
+    await havuz.query(
+      `INSERT INTO sifirlama_kodlari (kullanici_id, kod_hash, bitis, deneme)
+     VALUES ($1,$2, now() + interval '15 minutes', 0)
+     ON CONFLICT (kullanici_id) DO UPDATE
+       SET kod_hash=$2, bitis=now() + interval '15 minutes', deneme=0`,
+      [rows[0].id, hash],
+    );
   mailGonder({
     to: email,
     subject: 'dizi.jpg şifre sıfırlama kodun',
@@ -4414,13 +5292,34 @@ app.post('/auth/sifre-sifirla', authLimiti, sarici(async (req, res) => {
     return res.status(400).json({ hata: 'Şifre en az 6 karakter olmalı' });
   }
   const { rows } = await havuz.query(
-    `SELECT k.id, k.kullanici_adi, s.kod_hash, s.bitis
+    `SELECT k.id, k.kullanici_adi, s.kod_hash, s.bitis, s.deneme
      FROM kullanicilar k JOIN sifirlama_kodlari s ON s.kullanici_id=k.id
      WHERE k.email=$1`, [email]);
   const kayit = rows[0];
-  if (!kayit || new Date(kayit.bitis) < new Date()
-      || !(await bcrypt.compare(String(kod || ''), kayit.kod_hash))) {
-    return res.status(400).json({ hata: 'Kod geçersiz veya süresi dolmuş' });
+  // TEK MESAJ, TEK DURUM KODU. "Kod yanlış" / "süresi doldu" / "çok denedin"
+  // ayrımı yapılmaz: ayrım yapsaydık saldırgan hangi hesabın açık bir sıfırlama
+  // kodu olduğunu (ve kilide ne kadar kaldığını) ölçebilirdi.
+  const gecersiz = () =>
+    res.status(400).json({ hata: 'Kod geçersiz veya süresi dolmuş' });
+  if (!kayit || new Date(kayit.bitis) < new Date()) return gecersiz();
+  // Kilit: sayaç sınırı GEÇMİŞSE kodu hiç karşılaştırma bile — bcrypt maliyeti
+  // de boşa gitmesin, doğru kodu bilse bile artık kabul edilmesin.
+  if (kayit.deneme >= SIFIRLAMA_MAX_DENEME) {
+    await havuz.query('DELETE FROM sifirlama_kodlari WHERE kullanici_id=$1', [kayit.id]);
+    return gecersiz();
+  }
+  if (!(await bcrypt.compare(String(kod || ''), kayit.kod_hash))) {
+    // YANLIŞ kod: sayacı artır. Sınıra ULAŞTIYSA kodu ANINDA iptal et —
+    // "5 hak" ile "5. hakta hâlâ geçerli" arasındaki farkı bırakmayalım.
+    const { rows: d } = await havuz.query(
+      `UPDATE sifirlama_kodlari SET deneme = deneme + 1
+       WHERE kullanici_id=$1 RETURNING deneme`,
+      [kayit.id],
+    );
+    if ((d[0]?.deneme ?? 0) >= SIFIRLAMA_MAX_DENEME) {
+      await havuz.query('DELETE FROM sifirlama_kodlari WHERE kullanici_id=$1', [kayit.id]);
+    }
+    return gecersiz();
   }
   const hash = await bcrypt.hash(sifre, 10);
   // Şifre sürümünü artır: eski JWT'ler (çalınmış olabilir) geçersiz olsun.
@@ -4487,8 +5386,12 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
        WHERE kullanici_id=$1 AND tur='tv' AND date_part('year', tarih)=$2
        GROUP BY tmdb_id ORDER BY adet DESC LIMIT 5`, p),
     havuz.query(
+      // sezon IS NULL: yıl özeti BAŞLIK sayar. Tek dizinin 200 bölümüne puan
+      // veren biri "bu yıl 200 yapım puanladın" görmemeli, ortalaması da
+      // bölümlerin ağırlığıyla kaymamalı.
       `SELECT count(*)::int AS adet, coalesce(avg(puan),0)::float AS ortalama
-       FROM puanlar WHERE kullanici_id=$1 AND date_part('year', tarih)=$2`, p),
+       FROM puanlar
+       WHERE kullanici_id=$1 AND sezon IS NULL AND date_part('year', tarih)=$2`, p),
     havuz.query(
       `SELECT count(*)::int AS adet FROM yorumlar
        WHERE kullanici_id=$1 AND date_part('year', tarih)=$2`, p),
@@ -4523,7 +5426,10 @@ async function rozetleriHesapla(kullaniciId) {
        (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
        (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='movie') AS film,
        (SELECT count(*)::int FROM yorumlar WHERE kullanici_id=$1) AS yorum,
-       (SELECT count(*)::int FROM puanlar WHERE kullanici_id=$1) AS puan,
+       -- sezon IS NULL: puan_10/50/100 rozetleri BAŞLIK puanı sayar; tek
+       -- diziyi bölüm bölüm puanlayan biri üç rozeti birden alamasın.
+       (SELECT count(*)::int FROM puanlar
+         WHERE kullanici_id=$1 AND sezon IS NULL) AS puan,
        (SELECT count(*)::int FROM takipler WHERE takip_edilen_id=$1) AS takipci,
        (SELECT count(*)::int FROM durumlar WHERE kullanici_id=$1 AND durum='bitirdim') AS bitirilen,
        (SELECT count(*)::int FROM yorum_begeniler b
@@ -4988,8 +5894,12 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     yorumlarGizli
       ? Promise.resolve({ rows: [] })
       : havuz.query(
+          // sezon IS NULL: profil vitrini kartı içeriğe (dizi/film) götürür,
+          // bölüm bağlamını çizemez — bölüm incelemesi burada "hangi bölüm?"
+          // sorusuna cevapsız bir kart olurdu.
           `SELECT tur, tmdb_id, puan, yorum, tarih FROM puanlar
-           WHERE kullanici_id=$1 AND yorum IS NOT NULL ${gizliFiltre('puanlar')}
+           WHERE kullanici_id=$1 AND sezon IS NULL AND yorum IS NOT NULL
+             ${gizliFiltre('puanlar')}
            ORDER BY tarih DESC LIMIT 10`,
           [id]),
     // Kullanıcının yorumları, beğeni ve görüntülenme sayılarıyla
@@ -5099,9 +6009,14 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       havuz.query(
         `SELECT round(avg(1 - abs(a.puan - b.puan) / 9.0) * 100)::int AS yuzde,
                 count(*)::int AS ortak_puan
+         -- sezon IS NULL (İKİ TARAFTA DA): süzgeçsiz JOIN "senin S1B4 puanın"
+         -- ile "onun dizi geneli puanını" eşleştirir ve aynı diziyi bölüm
+         -- sayısı kadar KARTEZYEN çoğaltırdı — uyum yüzdesi tek diziye
+         -- kilitlenirdi.
          FROM puanlar a JOIN puanlar b
            ON a.tur=b.tur AND a.tmdb_id=b.tmdb_id
          WHERE a.kullanici_id=$1 AND b.kullanici_id=$2
+           AND a.sezon IS NULL AND b.sezon IS NULL
            AND a.puan IS NOT NULL AND b.puan IS NOT NULL`,
         [benId, id]),
     ]);
@@ -5183,11 +6098,124 @@ app.post('/sikayet', girisZorunlu, sikayetLimiti, sarici(async (req, res) => {
   }
   const metin = String(sebep || '').slice(0, 500).trim();
   if (!metin) return res.status(400).json({ hata: 'Sebep gerekli' });
+  // GÜVENLİK — MESAJ ŞİKAYETİ SAHİPLİK KONTROLÜ:
+  // Mesaj şikayeti yöneticiye o mesajın ÇÖZÜLMÜŞ metnini gösterir
+  // (`GET /admin/mesaj-sikayet/:id`). Doğrulama olmasaydı herhangi bir
+  // kullanıcı rastgele mesaj id'leri şikayet ederek YABANCILARIN özel
+  // yazışmalarını moderasyon kuyruğuna düşürebilirdi — şikayet mekanizması
+  // gözetleme aracına dönerdi. Yalnız MESAJIN ALICISI şikayet edebilir;
+  // kendi gönderdiği mesajı şikayet etmek de anlamsız.
+  if (tur === 'mesaj') {
+    const { rows } = await havuz.query(
+      'SELECT gonderen_id, alici_id FROM mesajlar WHERE id=$1', [hedef_id]);
+    if (!rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+    if (rows[0].alici_id !== req.kullanici.id ||
+        rows[0].gonderen_id === req.kullanici.id) {
+      return res.status(403).json({ hata: 'Yalnız sana gelen mesajı şikayet edebilirsin' });
+    }
+  }
   await havuz.query(
     'INSERT INTO sikayetler (sikayet_eden_id, tur, hedef_id, sebep) VALUES ($1,$2,$3,$4)',
     [req.kullanici.id, tur, hedef_id, metin],
   );
   res.json({ durum: 'alindi' });
+}));
+
+// ---------- ceza itirazı (uygulama içi; E-POSTA KUTUSUNA BAĞIMLILIK YOK) ----------
+//
+// TARİHÇE: ban ekranı önce "itiraz için iletisim@dizijpg.com" diyordu. O kutu
+// sunucuda AÇILMAMIŞTI, yani ceza fiilen itiraz edilemez durumdaydı. İtiraz
+// artık uygulamadan gönderiliyor ve yönetim panelinde kuyruğa düşüyor.
+//
+// ⚠ `/itiraz` `yasak.js/YASAK_MUAF` listesindedir. Olmasaydı yazma kapısı
+// (varsayılan-ret) yasaklı kullanıcının itirazını da reddederdi ve sistem
+// kendi kendini kilitlerdi. O satırı silmeyin.
+const itirazLimiti = hizLimiti(5, (req) => `it:${req.kullanici.id}`);
+
+/** Kullanıcının ŞU ANKİ cezasını veren denetim izi satırı (yoksa null). */
+async function aktifYasakKaydi(kullaniciId) {
+  const { rows } = await havuz.query(
+    `SELECT id FROM yasak_kayitlari
+     WHERE kullanici_id=$1 AND eylem IN ('ban','oto_ban')
+     ORDER BY id DESC LIMIT 1`, [kullaniciId]);
+  return rows[0]?.id ?? null;
+}
+
+// İtiraz durumu: form mu gösterilecek, "incelemede" mi, "reddedildi" mi?
+app.get('/itirazim', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT id, durum, metin, karar_notu, tarih, karar_tarihi
+     FROM itirazlar WHERE kullanici_id=$1 ORDER BY id DESC LIMIT 1`,
+    [req.kullanici.id]);
+  const yasakId = req.yasak ? await aktifYasakKaydi(req.kullanici.id) : null;
+  const son = rows[0] ?? null;
+  // Bu CEZA için daha önce karar verilmiş mi? (tekrar itiraz kuralı)
+  const ayniCeza = son && (son.durum !== 'bekliyor')
+    ? (await havuz.query(
+      `SELECT 1 FROM itirazlar
+       WHERE kullanici_id=$1 AND durum='ret'
+         AND yasak_id IS NOT DISTINCT FROM $2 LIMIT 1`,
+      [req.kullanici.id, yasakId])).rows.length > 0
+    : false;
+  res.json({
+    itiraz: son,
+    // İstemci formu buna göre çizer; kural sunucuda, istemci yalnız yansıtır.
+    yazabilir: !!req.yasak && !(son && son.durum === 'bekliyor') && !ayniCeza,
+  });
+}));
+
+app.post('/itiraz', girisZorunlu, itirazLimiti, sarici(async (req, res) => {
+  // 1) Yalnız CEZASI OLAN itiraz edebilir. Aksi halde bu kuyruk genel destek
+  //    kutusuna dönerdi — onun için ayrı bir uç var (`POST /geri-bildirim`).
+  if (!req.yasak) {
+    return res.status(400).json({ hata: 'İtiraz edilecek aktif bir ceza yok' });
+  }
+  const { tamam, metin, hata } = itirazMetni(req.body?.metin);
+  if (!tamam) return res.status(400).json({ hata });
+
+  const yasakId = await aktifYasakKaydi(req.kullanici.id);
+
+  // 2) Aynı anda TEK AÇIK itiraz.
+  const acik = await havuz.query(
+    "SELECT id FROM itirazlar WHERE kullanici_id=$1 AND durum='bekliyor'",
+    [req.kullanici.id]);
+  if (acik.rows.length) {
+    return res.status(409).json({ hata: 'Zaten incelenmeyi bekleyen bir itirazın var' });
+  }
+
+  // 3) TEKRAR İTİRAZ KURALI — karar ve gerekçe:
+  //    AYNI CEZA için itiraz BİR KEZ yapılır; reddedilirse tekrar edilemez.
+  //    YENİ bir ceza verilirse (yeni `yasak_kayitlari` satırı) itiraz hakkı
+  //    YENİDEN doğar.
+  //    Neden böyle: "reddedilince bir daha asla" kullanıcıyı sonsuza susturur;
+  //    "sınırsız tekrar" ise yöneticiyi aynı metinle boğar ve gerçek itirazları
+  //    gömer. Kararın bağlandığı şey CEZA olunca ikisi de olmuyor: her ceza
+  //    kendi itirazını hak ediyor, her itiraz bir kez inceleniyor.
+  //    NOT: migrasyondan ÖNCE banlanmış hesaplarda `yasak_kayitlari` satırı
+  //    yoktur (yasakId = null); onlar da "kaydı olmayan ceza" için bir kez
+  //    itiraz eder. Yönetici gerekirse yasağı kaldırıp yeniden vererek yeni
+  //    hak açabilir.
+  const reddedilmis = await havuz.query(
+    `SELECT id FROM itirazlar
+     WHERE kullanici_id=$1 AND durum='ret' AND yasak_id IS NOT DISTINCT FROM $2
+     LIMIT 1`, [req.kullanici.id, yasakId]);
+  if (reddedilmis.rows.length) {
+    return res.status(409).json({ hata: 'Bu ceza için itirazın zaten incelendi' });
+  }
+
+  try {
+    const { rows } = await havuz.query(
+      `INSERT INTO itirazlar (kullanici_id, yasak_id, metin)
+       VALUES ($1,$2,$3) RETURNING id, durum, metin, tarih`,
+      [req.kullanici.id, yasakId, metin]);
+    res.json({ durum: 'alindi', itiraz: rows[0] });
+  } catch (e) {
+    // Kısmi eşsiz indeks (itirazlar_tek_acik): iki hızlı dokunuşun yarışı.
+    if (e.code === '23505') {
+      return res.status(409).json({ hata: 'Zaten incelenmeyi bekleyen bir itirazın var' });
+    }
+    throw e;
+  }
 }));
 
 // Kullanıcıyı engelle/engeli kaldır (toggle).
@@ -5394,7 +6422,8 @@ app.get('/admin/hareketler', adminKisit, sarici(async (_req, res) => {
 // Kullanıcı detayı: moderasyon için tam profil + etkileşim + son IP'ler.
 app.get('/admin/kullanici/:ad', adminKisit, sarici(async (req, res) => {
   const k = await havuz.query(
-    `SELECT id, kullanici_adi, email, misafir, yasakli, bio, ulke, sosyal,
+    `SELECT id, kullanici_adi, email, misafir, yasakli, yasak_bitis, yasak_sebep,
+            guven_skoru, guven_ihlal, bio, ulke, sosyal,
             olusturma, son_gorulme FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.ad]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
@@ -5436,12 +6465,42 @@ app.get('/admin/kullanici/:ad', adminKisit, sarici(async (req, res) => {
     ipler.push({ ip: i.ip, ulke: i.ulke, sehir: i.sehir, ts: i.ts });
     if (ipler.length >= 10) break;
   }
+  // Ban geçmişi (denetim izi), güven olayları ve KURULUM kimlikleri.
+  // Cihaz listesi yalnız yöneticiye gösterilir ve kimlik DONANIMDAN OKUNMAZ
+  // (kurulum başına rastgele üretilir; uygulama silinip kurulunca değişir).
+  const [iz, guven, cihazlar] = await Promise.all([
+    havuz.query(
+      `SELECT id, eylem, kalici, bitis, sebep, yonetici, tarih
+       FROM yasak_kayitlari WHERE kullanici_id=$1 ORDER BY id DESC LIMIT 30`, [id]),
+    havuz.query(
+      `SELECT id, olay, degisim, sonuc, aciklama, yonetici, tarih
+       FROM guven_olaylari WHERE kullanici_id=$1 ORDER BY id DESC LIMIT 30`, [id]),
+    havuz.query(
+      `SELECT c.kimlik, c.platform, c.son_ip, c.son_surum, c.yasakli,
+              c.yasak_bitis, ck.son_gorulme,
+              (SELECT count(*)::int FROM cihaz_kullanici x WHERE x.kimlik=c.kimlik)
+                AS hesap_sayisi
+       FROM cihaz_kullanici ck JOIN cihazlar c ON c.kimlik=ck.kimlik
+       WHERE ck.kullanici_id=$1 ORDER BY ck.son_gorulme DESC LIMIT 20`, [id]),
+  ]);
   res.json({
     ...k.rows[0],
+    yasak: yasakYuku(k.rows[0]),
+    // GÖSTERİLEN skor TOPARLANMA DAHİL: kolon yalnız "son yazma tabanı"dır,
+    // gerçek değer okuma anında hesaplanır (cron yok). Ban sürerken saat
+    // durduğu için yasaklıda taban = güncel.
+    guven_skoru: guvenGuncel(k.rows[0]).skor,
+    guven_taban: k.rows[0].guven_skoru ?? 100,
+    guven_toparlanma: guvenGuncel(k.rows[0]).toparlanma,
+    guven_donuk: guvenGuncel(k.rows[0]).donuk,
+    guven_etiket: guvenEtiketi(guvenGuncel(k.rows[0]).skor),
     istatistik: ist.rows[0],
     sikayet: sikayet.rows[0],
     son_yorumlar: yorumlar.rows,
     son_ipler: ipler,
+    yasak_izi: iz.rows,
+    guven_olaylari: guven.rows,
+    cihazlar: cihazlar.rows,
   });
 }));
 
@@ -5520,17 +6579,50 @@ app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
      ${filtre ? 'WHERE s.durum=$1' : ''} ORDER BY s.id DESC LIMIT 300`,
     filtre ? [durum] : [],
   );
-  // Hedefleri toplu çöz: yorum metni + kullanıcı adı.
+  // Hedefleri toplu çöz: yorum metni + kullanıcı adı + MESAJ metni.
   const yorumIds = rows.filter((r) => r.tur === 'yorum').map((r) => r.hedef_id);
   const kulIds = rows.filter((r) => r.tur === 'kullanici').map((r) => r.hedef_id);
-  const yorumlar = yorumIds.length
-    ? (await havuz.query('SELECT id, metin, kullanici_id FROM yorumlar WHERE id = ANY($1)', [yorumIds])).rows
-    : [];
-  const kullar = kulIds.length
-    ? (await havuz.query('SELECT id, kullanici_adi, yasakli FROM kullanicilar WHERE id = ANY($1)', [kulIds])).rows
-    : [];
+  const mesajIds = rows.filter((r) => r.tur === 'mesaj').map((r) => r.hedef_id);
+  const listeIds = rows.filter((r) => r.tur === 'liste').map((r) => r.hedef_id);
+  const [yorumlar, kullar, mesajlar, listeler] = await Promise.all([
+    yorumIds.length
+      ? havuz.query('SELECT id, metin, kullanici_id FROM yorumlar WHERE id = ANY($1)', [yorumIds]).then((r) => r.rows)
+      : [],
+    kulIds.length
+      ? havuz.query(`SELECT id, kullanici_adi, yasakli, yasak_bitis, guven_skoru, guven_ihlal
+                     FROM kullanicilar WHERE id = ANY($1)`, [kulIds]).then((r) => r.rows)
+      : [],
+    // MESAJ ŞİKAYETİ (7 Ağu öncesi panelde HİÇ çözülmüyordu; şikayet
+    // kuyruğunda "#123" diye duruyordu ve yönetici neye baktığını bilmiyordu).
+    // Metin ŞİFRELİ gelir; `cozGoster` ile burada çözülür — istemciye ham zarf
+    // ASLA gitmez. Gizlilik gerekçesi GET /admin/mesaj-sikayet/:id başlığında.
+    mesajIds.length
+      ? havuz.query('SELECT id, metin, gonderen_id, medya FROM mesajlar WHERE id = ANY($1)', [mesajIds]).then((r) => r.rows)
+      : [],
+    listeIds.length
+      ? havuz.query('SELECT id, ad, kullanici_id FROM listeler WHERE id = ANY($1)', [listeIds]).then((r) => r.rows)
+      : [],
+  ]);
   const yMap = new Map(yorumlar.map((y) => [y.id, y]));
   const kMap = new Map(kullar.map((k) => [k.id, k]));
+  const mMap = new Map(mesajlar.map((m) => [m.id, m]));
+  const lMap = new Map(listeler.map((l) => [l.id, l]));
+  // Şikayet edilen kullanıcı yasaklı mı: hem 'kullanici' hem yorum/mesaj/liste
+  // sahipleri için lazım (panelde doğru butonu — banla / yasağı kaldır — basmak
+  // için). Tek sorguda toplanır.
+  const sahipIds = new Set();
+  for (const r of rows) {
+    if (r.tur === 'yorum') { const y = yMap.get(r.hedef_id); if (y) sahipIds.add(y.kullanici_id); }
+    else if (r.tur === 'mesaj') { const m = mMap.get(r.hedef_id); if (m) sahipIds.add(m.gonderen_id); }
+    else if (r.tur === 'liste') { const l = lMap.get(r.hedef_id); if (l) sahipIds.add(l.kullanici_id); }
+  }
+  const sahipler = sahipIds.size
+    ? (await havuz.query(
+      `SELECT id, kullanici_adi, yasakli, yasak_bitis, guven_skoru, guven_ihlal
+       FROM kullanicilar WHERE id = ANY($1)`,
+      [[...sahipIds]])).rows
+    : [];
+  const sMap = new Map(sahipler.map((k) => [k.id, k]));
   for (const r of rows) {
     if (r.tur === 'yorum') {
       const y = yMap.get(r.hedef_id);
@@ -5540,9 +6632,356 @@ app.get('/admin/sikayetler', adminKisit, sarici(async (req, res) => {
       const k = kMap.get(r.hedef_id);
       r.hedef_ozet = k ? '@' + k.kullanici_adi : '(silinmiş kullanıcı)';
       r.hedef_yasakli = k?.yasakli ?? null;
+      r.hedef_kullanici_id = k?.id ?? null;
+      r.hedef_kullanici_adi = k?.kullanici_adi ?? null;
+      r.hedef_guven = k ? guvenGuncel(k).skor : null;
+    } else if (r.tur === 'mesaj') {
+      const m = mMap.get(r.hedef_id);
+      if (!m) {
+        r.hedef_ozet = '(silinmiş mesaj)';
+      } else {
+        const acik = cozGoster(m.metin);
+        r.hedef_ozet = acik
+          ? String(acik).slice(0, 200)
+          : (m.medya ? '(medya mesajı)' : '(metin çözülemedi)');
+      }
+      r.hedef_kullanici_id = m?.gonderen_id ?? null;
+    } else if (r.tur === 'liste') {
+      const l = lMap.get(r.hedef_id);
+      r.hedef_ozet = l ? l.ad : '(silinmiş liste)';
+      r.hedef_kullanici_id = l?.kullanici_id ?? null;
+    }
+    const sahip = r.hedef_kullanici_id != null ? sMap.get(r.hedef_kullanici_id) : null;
+    if (sahip) {
+      r.hedef_kullanici_adi = sahip.kullanici_adi;
+      r.hedef_yasakli = sahip.yasakli;
+      r.hedef_guven = guvenGuncel(sahip).skor;
     }
   }
   res.json({ sikayetler: rows });
+}));
+
+// Şikayet edilen MESAJIN incelenmesi (çözülmüş metinle).
+//
+// GİZLİLİK — bilerek verilmiş bir karar, sessizce yapılan bir şey değil:
+//  * DM'ler 7 Ağu'dan beri DURAĞAN ŞİFRELİ (AES-256-GCM, kripto.js) ama
+//    UÇTAN UCA ŞİFRELİ DEĞİL. kripto.js'in kendi başlığı bunu açıkça yazıyor:
+//    "sunucu içeriği çözebilir (moderasyon, push önizlemesi, ...)". Şifreleme
+//    çalınmış veritabanı dökümüne karşıdır, moderasyona karşı değil.
+//  * Bu uç YALNIZ VAR OLAN BİR ŞİKAYET ÜZERİNDEN okur: parametre mesaj id'si
+//    değil ŞİKAYET id'sidir. Yani yönetici "şu kişinin DM'lerini göster"
+//    diyemez; yalnız ALICISININ şikayet ettiği mesajı görebilir (şikayeti
+//    ancak alıcı açabiliyor, bkz. POST /sikayet sahiplik kontrolü).
+//  * BAĞLAM: şikayet edilen mesajdan ÖNCEKİ en fazla 5 mesaj da gösterilir.
+//    Gerekçe: tek satır bağlamsız okunduğunda mağdurun karşılık verdiği cümle
+//    saldırgan görünebilir. Sonrası GÖSTERİLMEZ (şikayet anından ileriye
+//    okumak gözetleme olurdu).
+//  * Erişim `adminKisit` arkasındadır (IP + sabit-zamanlı X-Admin-Token).
+app.get('/admin/mesaj-sikayet/:id', adminKisit, sarici(async (req, res) => {
+  const id = Number.parseInt(req.params.id, 10);
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const s = await havuz.query(
+    "SELECT * FROM sikayetler WHERE id=$1 AND tur='mesaj'", [id]);
+  if (!s.rows.length) return res.status(404).json({ hata: 'Mesaj şikayeti bulunamadı' });
+  const hedef = s.rows[0].hedef_id;
+  const m = await havuz.query(
+    `SELECT m.id, m.gonderen_id, m.alici_id, m.metin, m.medya, m.tarih,
+            g.kullanici_adi AS gonderen, a.kullanici_adi AS alici
+     FROM mesajlar m
+       LEFT JOIN kullanicilar g ON g.id=m.gonderen_id
+       LEFT JOIN kullanicilar a ON a.id=m.alici_id
+     WHERE m.id=$1`, [hedef]);
+  if (!m.rows.length) {
+    return res.json({ sikayet: s.rows[0], mesaj: null, baglam: [] });
+  }
+  const mes = m.rows[0];
+  const baglam = await havuz.query(
+    `SELECT m.id, m.gonderen_id, m.metin, m.tarih, k.kullanici_adi AS gonderen
+     FROM mesajlar m LEFT JOIN kullanicilar k ON k.id=m.gonderen_id
+     WHERE LEAST(m.gonderen_id,m.alici_id)=LEAST($1::int,$2::int)
+       AND GREATEST(m.gonderen_id,m.alici_id)=GREATEST($1::int,$2::int)
+       AND m.id < $3
+     ORDER BY m.id DESC LIMIT 5`,
+    [mes.gonderen_id, mes.alici_id, mes.id]);
+  // Çözme YALNIZ BURADA: şifreli zarf istemciye ASLA ham gitmez, panele de
+  // çözülmüş gider. `cozGoster` fırlatmaz — bozuk satır null olur.
+  const coz = (t) => cozGoster(t);
+  res.json({
+    sikayet: s.rows[0],
+    mesaj: { ...mes, metin: coz(mes.metin) },
+    baglam: baglam.rows.reverse().map((b) => ({ ...b, metin: coz(b.metin) })),
+  });
+}));
+
+// ---------- güven skoru (yalnız yönetici doğrulamasıyla değişir) ----------
+// Ham şikayet SAYISI skora GİRMEZ: girseydi beş kişilik bir grup masum bir
+// kullanıcıyı dakikalar içinde dibe çekerdi. Skor ancak bir yönetici olayı
+// DOĞRULAYINCA düşer (şikayeti 'incelendi' yapmak, gönderiyi silmek, ban).
+async function guvenIsle(kullaniciId, olay, { elle = 0, aciklama = null, yonetici = null } = {}) {
+  if (!kullaniciId) return null;
+  const { rows } = await havuz.query(
+    `SELECT guven_skoru, guven_ihlal, yasakli, yasak_bitis
+     FROM kullanicilar WHERE id=$1`, [kullaniciId]);
+  if (!rows.length) return null;
+  // TOPARLANMAYI ÖNCE GÖM: skor kolonu "son yazma anındaki taban"dır, gerçek
+  // skor okuma anında hesaplanır. Olayı ham tabana uygulasaydık kullanıcının
+  // aylardır biriktirdiği toparlanma sessizce yanardı.
+  const g = guvenGuncel(rows[0]);
+  const mevcut = g.skor;
+  const yeni = guvenUygula(mevcut, olay, elle);
+  const degisim = yeni - mevcut;
+  // Saat: ihlalde SIFIRLANIR; ihlal değilse yalnız TÜKETİLEN tam dönem kadar
+  // ilerler (kısmi günler korunur, aynı toparlanma iki kez sayılmaz).
+  let yeniIhlal;
+  if (degisim < 0) {
+    yeniIhlal = new Date();
+  } else {
+    const ms = ihlalSaatiIlerlet(rows[0].guven_ihlal, g.toparlanma);
+    yeniIhlal = ms == null ? (rows[0].guven_ihlal ?? null) : new Date(ms);
+  }
+  await havuz.query(
+    'UPDATE kullanicilar SET guven_skoru=$1, guven_ihlal=$2 WHERE id=$3',
+    [yeni, yeniIhlal, kullaniciId]);
+  await havuz.query(
+    `INSERT INTO guven_olaylari (kullanici_id, olay, degisim, sonuc, aciklama, yonetici)
+     VALUES ($1,$2,$3,$4,$5,$6)`,
+    [kullaniciId, olay, degisim, yeni, aciklama, yonetici],
+  );
+
+  // OTOMATİK BAN — VARSAYILAN KAPALI (GUVEN_OTO_BAN=acik yazılmadıkça).
+  // Skor tek başına ASLA ceza vermez; bu dal yalnız .env'e bilerek bayrak
+  // yazılmışsa çalışır ve o zaman bile SÜRELİ ban verir, kalıcı ASLA.
+  const oneri = otoBanOnerisi(yeni, otoBanAyari(process.env));
+  if (oneri.uygula) {
+    const bitis = new Date(bitisHesapla('gun', oneri.gun));
+    await banYaz(kullaniciId, {
+      kalici: false, bitis, sebep: oneri.sebep, yonetici: 'oto', eylem: 'oto_ban',
+    });
+  }
+  return { onceki: mevcut, skor: yeni, etiket: guvenEtiketi(yeni), oneri };
+}
+
+// ---------- ban yazma (tek yer; denetim izi HER ZAMAN yazılır) ----------
+function yoneticiEtiketi(req) {
+  const ip = gercekIp(req);
+  const yol = req.headers['x-admin-token'] ? 'token' : 'ip';
+  return `${yol}:${ip}`.slice(0, 100);
+}
+
+async function banYaz(id, { kalici, bitis, sebep, yonetici, eylem = 'ban' }) {
+  await havuz.query(
+    `UPDATE kullanicilar SET yasakli=true, yasak_bitis=$2, yasak_sebep=$3 WHERE id=$1`,
+    [id, kalici ? null : bitis, sebep],
+  );
+  sifreSurumOnbellekSil(id);   // yeni ceza ANINDA geçerli olsun
+  await havuz.query(
+    `INSERT INTO yasak_kayitlari (kullanici_id, eylem, kalici, bitis, sebep, yonetici)
+     VALUES ($1,$2,$3,$4,$5,$6)`,
+    [id, eylem, !!kalici, kalici ? null : bitis, sebep, yonetici],
+  );
+}
+
+// Ban ver: süreli (dakika/saat/gun/yil) ya da kalıcı.
+app.post('/admin/yasak', adminKisit, sarici(async (req, res) => {
+  const { id, kalici, birim, miktar, sebep } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const temizSebep = sebepTemizle(sebep);
+  // Sebep ZORUNLU: kullanıcıya gösterilecek ve denetim izine yazılacak.
+  // Sebepsiz ban, itiraz edilemeyen bir cezadır.
+  if (!temizSebep) return res.status(400).json({ hata: 'Sebep gerekli' });
+  let bitis = null;
+  if (!kalici) {
+    if (!(birim in SURE_BIRIMLERI)) {
+      return res.status(400).json({ hata: 'Geçersiz süre birimi (dakika|saat|gun|yil)' });
+    }
+    try {
+      bitis = new Date(bitisHesapla(birim, miktar));
+    } catch (e) {
+      return res.status(400).json({ hata: e.message });
+    }
+  }
+  const yonetici = yoneticiEtiketi(req);
+  await banYaz(id, { kalici: !!kalici, bitis, sebep: temizSebep, yonetici });
+  const guven = await guvenIsle(id, kalici ? 'ban_kalici' : 'ban_sureli',
+    { aciklama: temizSebep, yonetici });
+  res.json({ durum: 'ok', kalici: !!kalici, bitis, guven });
+}));
+
+// Ban kaldır (geri alınabilirlik): iz de yazılır, kim kaldırdı belli olur.
+app.post('/admin/yasak-kaldir', adminKisit, sarici(async (req, res) => {
+  const { id, sebep, guven_iade } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  await havuz.query(
+    'UPDATE kullanicilar SET yasakli=false, yasak_bitis=NULL, yasak_sebep=NULL WHERE id=$1',
+    [id]);
+  sifreSurumOnbellekSil(id);
+  const yonetici = yoneticiEtiketi(req);
+  await havuz.query(
+    `INSERT INTO yasak_kayitlari (kullanici_id, eylem, sebep, yonetici)
+     VALUES ($1,'kaldir',$2,$3)`,
+    [id, sebepTemizle(sebep) || null, yonetici]);
+  // Yanlış verilmiş ceza geri alınıyorsa skoru da iade et — aksi halde
+  // "ban kalktı ama skor dipte" durumu kalıcı bir görünmez ceza olurdu.
+  const guven = guven_iade
+    ? await guvenIsle(id, 'itiraz_kabul', { aciklama: sebepTemizle(sebep) || 'yasak kaldırıldı', yonetici })
+    : null;
+  res.json({ durum: 'ok', guven });
+}));
+
+// Aktif yasaklar + son denetim izi.
+app.get('/admin/yasaklar', adminKisit, sarici(async (_req, res) => {
+  // Süresi dolanları önce süpür ki panelde "aktif" görünen gerçekten aktif olsun.
+  await yaklasikSupur();
+  const [aktif, iz, cihaz] = await Promise.all([
+    havuz.query(
+      `SELECT id, kullanici_adi, yasakli, yasak_bitis, yasak_sebep,
+              guven_skoru, guven_ihlal
+       FROM kullanicilar WHERE yasakli ORDER BY yasak_bitis NULLS FIRST, id DESC LIMIT 200`),
+    havuz.query(
+      `SELECT y.*, k.kullanici_adi FROM yasak_kayitlari y
+         LEFT JOIN kullanicilar k ON k.id=y.kullanici_id
+       ORDER BY y.id DESC LIMIT 200`),
+    havuz.query(
+      `SELECT kimlik, platform, son_ip, yasak_bitis, yasak_sebep, son_gorulme
+       FROM cihazlar WHERE yasakli ORDER BY son_gorulme DESC LIMIT 200`),
+  ]);
+  res.json({ aktif: aktif.rows, iz: iz.rows, cihazlar: cihaz.rows });
+}));
+async function yaklasikSupur() {
+  try { await yasaklariSupur(); } catch (e) { console.error('supur', e.message); }
+}
+
+// Cihaz banı ver/kaldır.
+// DÜRÜSTLÜK: kimlik istemcinin ürettiği KURULUM kimliğidir — uygulama silinip
+// kurulunca değişir. "Bir daha asla açamaz" GARANTİSİ YOKTUR.
+app.post('/admin/cihaz-yasak', adminKisit, sarici(async (req, res) => {
+  const { kimlik, yasakli, birim, miktar, kalici, sebep } = req.body || {};
+  if (!cihazKimlikGecerli(String(kimlik || '').toLowerCase())) {
+    return res.status(400).json({ hata: 'Geçersiz cihaz kimliği' });
+  }
+  const k = String(kimlik).toLowerCase();
+  const yonetici = yoneticiEtiketi(req);
+  if (!yasakli) {
+    await havuz.query(
+      'UPDATE cihazlar SET yasakli=false, yasak_bitis=NULL, yasak_sebep=NULL WHERE kimlik=$1', [k]);
+    await havuz.query(
+      `INSERT INTO yasak_kayitlari (cihaz_kimlik, eylem, sebep, yonetici)
+       VALUES ($1,'cihaz_kaldir',$2,$3)`, [k, sebepTemizle(sebep) || null, yonetici]);
+    return res.json({ durum: 'ok', yasakli: false });
+  }
+  const temizSebep = sebepTemizle(sebep);
+  if (!temizSebep) return res.status(400).json({ hata: 'Sebep gerekli' });
+  let bitis = null;
+  if (!kalici) {
+    if (!(birim in SURE_BIRIMLERI)) {
+      return res.status(400).json({ hata: 'Geçersiz süre birimi (dakika|saat|gun|yil)' });
+    }
+    try { bitis = new Date(bitisHesapla(birim, miktar)); }
+    catch (e) { return res.status(400).json({ hata: e.message }); }
+  }
+  await havuz.query(
+    `INSERT INTO cihazlar (kimlik, yasakli, yasak_bitis, yasak_sebep)
+     VALUES ($1,true,$2,$3)
+     ON CONFLICT (kimlik) DO UPDATE
+       SET yasakli=true, yasak_bitis=EXCLUDED.yasak_bitis, yasak_sebep=EXCLUDED.yasak_sebep`,
+    [k, bitis, temizSebep]);
+  await havuz.query(
+    `INSERT INTO yasak_kayitlari (cihaz_kimlik, eylem, kalici, bitis, sebep, yonetici)
+     VALUES ($1,'cihaz_ban',$2,$3,$4,$5)`,
+    [k, !!kalici, bitis, temizSebep, yonetici]);
+  res.json({ durum: 'ok', yasakli: true, kalici: !!kalici, bitis });
+}));
+
+// ---------- itiraz kuyruğu (yönetici) ----------
+// Yönetici kararı BAĞLAMLA vermeli: itiraz metninin yanında cezanın kendisi,
+// ceza geçmişi ve güven skoru aynı satırda gelir. Bunlar ayrı ekranlarda
+// olsaydı "metni oku, sekme değiştir, geçmişi ara" döngüsü yüzünden itirazlar
+// ya aceleye gelir ya hiç bakılmazdı.
+app.get('/admin/itirazlar', adminKisit, sarici(async (req, res) => {
+  const durum = req.query.durum;
+  const filtre = ['bekliyor', 'kabul', 'ret'].includes(durum);
+  const { rows } = await havuz.query(
+    `SELECT i.*, k.kullanici_adi, k.yasakli, k.yasak_bitis, k.yasak_sebep,
+            k.guven_skoru, k.guven_ihlal,
+            y.eylem AS yasak_eylem, y.kalici AS yasak_kalici,
+            y.sebep AS yasak_kayit_sebep, y.yonetici AS yasak_yonetici,
+            y.tarih AS yasak_tarihi,
+            (SELECT count(*)::int FROM yasak_kayitlari z
+             WHERE z.kullanici_id = i.kullanici_id
+               AND z.eylem IN ('ban','oto_ban')) AS gecmis_ban,
+            (SELECT count(*)::int FROM itirazlar t
+             WHERE t.kullanici_id = i.kullanici_id) AS gecmis_itiraz
+     FROM itirazlar i
+       JOIN kullanicilar k ON k.id = i.kullanici_id
+       LEFT JOIN yasak_kayitlari y ON y.id = i.yasak_id
+     ${filtre ? 'WHERE i.durum=$1' : ''} ORDER BY i.id DESC LIMIT 200`,
+    filtre ? [durum] : [],
+  );
+  for (const r of rows) {
+    // Panelde gösterilen skor TOPARLANMA DAHİL (kolon yalnız taban).
+    r.guven_guncel = guvenGuncel(r).skor;
+    r.yasak = yasakYuku(r);
+  }
+  const bekleyen = await havuz.query(
+    "SELECT count(*)::int n FROM itirazlar WHERE durum='bekliyor'");
+  res.json({ itirazlar: rows, bekleyen: bekleyen.rows[0].n });
+}));
+
+// İtirazı KARARA bağla.
+//   kabul -> ban KALKAR + güven skoru +15 (itiraz_kabul) + denetim izi
+//   ret   -> yalnız durum güncellenir; ceza sürer
+app.post('/admin/itiraz-karar', adminKisit, sarici(async (req, res) => {
+  const { id, karar, not } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  if (!['kabul', 'ret'].includes(karar)) {
+    return res.status(400).json({ hata: 'Karar kabul ya da ret olmalı' });
+  }
+  const { rows } = await havuz.query(
+    'SELECT kullanici_id, durum FROM itirazlar WHERE id=$1', [id]);
+  if (!rows.length) return res.status(404).json({ hata: 'İtiraz bulunamadı' });
+  if (rows[0].durum !== 'bekliyor') {
+    return res.status(409).json({ hata: 'Bu itiraz zaten karara bağlanmış' });
+  }
+  const kullaniciId = rows[0].kullanici_id;
+  const yonetici = yoneticiEtiketi(req);
+  const kararNotu = sebepTemizle(not) || null;
+
+  await havuz.query(
+    `UPDATE itirazlar SET durum=$1, karar_notu=$2, yonetici=$3, karar_tarihi=now()
+     WHERE id=$4`, [karar, kararNotu, yonetici, id]);
+
+  let guven = null;
+  if (karar === 'kabul') {
+    // Ceza YANLIŞ verilmiş demektir: yasak kalkar VE skor iade edilir.
+    // İadesiz kaldırma, "ban bitti ama skor dipte" diye görünmez bir ceza
+    // bırakırdı (bir sonraki ihlalde daha ağır sonuç doğururdu).
+    await havuz.query(
+      'UPDATE kullanicilar SET yasakli=false, yasak_bitis=NULL, yasak_sebep=NULL WHERE id=$1',
+      [kullaniciId]);
+    sifreSurumOnbellekSil(kullaniciId);
+    await havuz.query(
+      `INSERT INTO yasak_kayitlari (kullanici_id, eylem, sebep, yonetici)
+       VALUES ($1,'kaldir',$2,$3)`,
+      [kullaniciId, `itiraz #${id} kabul edildi${kararNotu ? ': ' + kararNotu : ''}`,
+        yonetici]);
+    guven = await guvenIsle(kullaniciId, 'itiraz_kabul',
+      { aciklama: `itiraz #${id} kabul edildi`, yonetici });
+  }
+  res.json({ durum: 'ok', karar, guven });
+}));
+
+// Güven skorunu ELLE düzelt (+/-). Otomatik ceza yok; bu yönetici kararıdır.
+app.post('/admin/guven', adminKisit, sarici(async (req, res) => {
+  const { id, degisim, aciklama } = req.body || {};
+  if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const d = Math.trunc(Number(degisim));
+  if (!Number.isFinite(d) || d === 0 || Math.abs(d) > 100) {
+    return res.status(400).json({ hata: 'Değişim -100..100 arası, sıfır olmayan tam sayı olmalı' });
+  }
+  const guven = await guvenIsle(id, 'manuel',
+    { elle: d, aciklama: sebepTemizle(aciklama) || null, yonetici: yoneticiEtiketi(req) });
+  if (!guven) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  res.json({ durum: 'ok', guven });
 }));
 
 // Moderasyon aksiyonları.
@@ -5552,14 +6991,54 @@ app.post('/admin/sikayet-durum', adminKisit, sarici(async (req, res) => {
   if (!['yeni', 'incelendi', 'kapatildi'].includes(durum)) {
     return res.status(400).json({ hata: 'Geçersiz durum' });
   }
+  const onceki = await havuz.query(
+    'SELECT tur, hedef_id, durum FROM sikayetler WHERE id=$1', [id]);
   await havuz.query('UPDATE sikayetler SET durum=$1 WHERE id=$2', [durum, id]);
-  res.json({ durum: 'ok' });
+  // 'incelendi' = YÖNETİCİ ŞİKAYETİ HAKLI BULDU. Güven skoru YALNIZ burada
+  // düşer (ham şikayet sayısında değil). 'kapatildi' = asılsız/işlem yok →
+  // skora DOKUNULMAZ. Aynı şikayet iki kez 'incelendi' yapılırsa skor iki kez
+  // düşmesin diye önceki durum kontrol edilir.
+  let guven = null;
+  if (durum === 'incelendi' && onceki.rows.length && onceki.rows[0].durum !== 'incelendi') {
+    const s = onceki.rows[0];
+    const sahip = await sikayetHedefSahibi(s.tur, s.hedef_id);
+    if (sahip) {
+      guven = await guvenIsle(sahip, 'sikayet_dogrulandi',
+        { aciklama: `şikayet #${id} haklı bulundu`, yonetici: yoneticiEtiketi(req) });
+    }
+  }
+  res.json({ durum: 'ok', guven });
 }));
+
+/** Şikayet hedefinin SAHİBİ hangi kullanıcı? (skor ona işlenir) */
+async function sikayetHedefSahibi(tur, hedefId) {
+  if (tur === 'kullanici') return hedefId;
+  if (tur === 'yorum') {
+    const { rows } = await havuz.query('SELECT kullanici_id FROM yorumlar WHERE id=$1', [hedefId]);
+    return rows[0]?.kullanici_id ?? null;
+  }
+  if (tur === 'mesaj') {
+    const { rows } = await havuz.query('SELECT gonderen_id FROM mesajlar WHERE id=$1', [hedefId]);
+    return rows[0]?.gonderen_id ?? null;
+  }
+  if (tur === 'liste') {
+    const { rows } = await havuz.query('SELECT kullanici_id FROM listeler WHERE id=$1', [hedefId]);
+    return rows[0]?.kullanici_id ?? null;
+  }
+  return null;
+}
+
 app.post('/admin/yorum-sil', adminKisit, sarici(async (req, res) => {
   const id = req.body?.id;
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  // Sahibi silmeden ÖNCE okunur: silindikten sonra kime ceza yazılacağı bilinemez.
+  const { rows } = await havuz.query('SELECT kullanici_id FROM yorumlar WHERE id=$1', [id]);
   await havuz.query('DELETE FROM yorumlar WHERE id=$1', [id]);
-  res.json({ durum: 'ok' });
+  const guven = rows.length
+    ? await guvenIsle(rows[0].kullanici_id, 'yorum_silindi',
+      { aciklama: `gönderi #${id} yönetici tarafından kaldırıldı`, yonetici: yoneticiEtiketi(req) })
+    : null;
+  res.json({ durum: 'ok', guven });
 }));
 // ---------- depolama & yedek ----------
 const YEDEK_DIZIN = process.env.YEDEK_DIZIN || '/yedekler';
@@ -5665,13 +7144,25 @@ app.post('/admin/yedek-al', adminKisit, sarici(async (_req, res) => {
   const dosya = path.join(YEDEK_DIZIN, `dizijpg-${ts}-elle.sql.gz`);
   await new Promise((coz, red) => {
     execFile('/bin/sh', ['-c',
-      `pg_dump -h ${u.hostname} -p ${u.port || 5432} -U ${u.username} `
+      // umask 077: dosya DOĞRUDAN 600 doğsun. Sonradan chmod yarış koşulu
+      // bırakır — dosya bir an 644 olarak var olur ve o an okunabilir.
+      // (Denetim §3.2: yedekler dünyaya-okunurdu.)
+      // pipefail: pg_dump çökerse gzip yine 0 döndürür ve BOŞ bir "yedek"
+      // başarı sanılırdı.
+      `set -o pipefail 2>/dev/null || true; umask 077; `
+      + `pg_dump -h ${u.hostname} -p ${u.port || 5432} -U ${u.username} `
       + `${u.pathname.slice(1)} | gzip > '${dosya}'`],
     { env: { ...process.env, PGPASSWORD: decodeURIComponent(u.password) }, timeout: 240000 },
     (e, _so, se) => (e ? red(new Error(se || e.message)) : coz()));
   }).catch((e) => { throw Object.assign(new Error(e.message.slice(0, 300)), { status: 500 }); });
   let boyut = null;
   try { boyut = fs.statSync(dosya).size; } catch { /* yok */ }
+  // Kemer + askı: umask zaten 600 doğurur, ama volume seçenekleri ya da farklı
+  // bir kabuk umask'ı yok sayarsa dosya yine dünyaya-okunur kalmasın.
+  try { fs.chmodSync(dosya, 0o600); } catch { /* dosya yoksa zaten hata döndü */ }
+  // NOT: panelden alınan bu yedek ŞİFRESİZDİR — konteynerde gpg yok. Gece
+  // çalışan /opt/dizijpg/yedek.sh dizindeki şifresiz dökümleri en geç 24 saat
+  // içinde şifreler. Bu aradaki pencerede koruma yalnız 600 iznidir.
   res.json({ durum: 'ok', dosya: path.basename(dosya), boyut });
 }));
 
@@ -6231,17 +7722,33 @@ app.post('/admin/duyuru', adminKisit, sarici(async (req, res) => {
   res.json({ durum: 'ok', ...rows[0], temizlenen: gecersiz.length });
 }));
 
+// ESKİ UÇ — GERİYE DÖNÜK UYUM. Panelin eski sürümü ve dışarıdaki betikler
+// hâlâ bunu çağırıyor olabilir; kaldırmadık, YENİ SİSTEME BAĞLADIK:
+//   yasakli:true  -> KALICI ban (eski davranışın birebir anlamı)
+//   yasakli:false -> yasağı kaldır
+// Fark: artık denetim izi yazılıyor, sebep saklanıyor ve güven skoru işleniyor.
+//
+// DAVRANIŞ DEĞİŞİKLİĞİ (bilerek): eskiden ban `sifre_surumu`nu artırıp tüm
+// oturumları düşürüyordu. ARTIK ARTIRMIYOR — çünkü yasaklı kullanıcının
+// GİREBİLMESİ ve cezasını, sebebini, kalan süresini uygulama içinde GÖRMESİ
+// gerekiyor. Yazma yolları `girisZorunlu` içindeki tek kapıda zaten kapalı,
+// yani token'ın ayakta kalması yetki kazandırmıyor.
 app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
-  const { id, yasakli } = req.body || {};
+  const { id, yasakli, sebep } = req.body || {};
   if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+  const yonetici = yoneticiEtiketi(req);
   if (yasakli) {
-    await havuz.query(
-      'UPDATE kullanicilar SET yasakli=true, sifre_surumu=sifre_surumu+1 WHERE id=$1', [id],
-    );
-  } else {
-    await havuz.query('UPDATE kullanicilar SET yasakli=false WHERE id=$1', [id]);
+    const temizSebep = sebepTemizle(sebep) || 'Topluluk kurallarının ihlali';
+    await banYaz(id, { kalici: true, bitis: null, sebep: temizSebep, yonetici });
+    const guven = await guvenIsle(id, 'ban_kalici', { aciklama: temizSebep, yonetici });
+    return res.json({ durum: 'ok', kalici: true, guven });
   }
+  await havuz.query(
+    'UPDATE kullanicilar SET yasakli=false, yasak_bitis=NULL, yasak_sebep=NULL WHERE id=$1', [id]);
   sifreSurumOnbellekSil(id);
+  await havuz.query(
+    `INSERT INTO yasak_kayitlari (kullanici_id, eylem, sebep, yonetici)
+     VALUES ($1,'kaldir',$2,$3)`, [id, sebepTemizle(sebep) || null, yonetici]);
   res.json({ durum: 'ok' });
 }));
 
@@ -6257,4 +7764,26 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-app.listen(PORT, '0.0.0.0', () => console.log(`dizi.jpg API ${PORT} portunda`));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`dizi.jpg API ${PORT} portunda`);
+  // Açılışta bir kez süpür: konteyner kapalıyken süresi dolan banlar varsa
+  // ilk isteği beklemeden düşsün. Hata konteyneri ÖLDÜRMEZ (tablo henüz
+  // migrasyonla gelmemişse burada patlayıp servisi kilitlemesin).
+  yasaklariSupur().catch((e) => console.error('açılış yasak süpürme:', e.message));
+  // Özel (DM) medya kümesini doldur. Hata konteyneri ÖLDÜRMEZ: küme boş
+  // kalırsa davranış eski hâline (her şey genel) döner, servis ayakta kalır.
+  ozelMedyaYukle();
+  // Güvenlik ağı: bellek içi küme ile DB'nin ayrışabileceği tek durum, bu
+  // süreç dışından yapılan bir müdahaledir (elle SQL, bakım betiği). Saatte bir
+  // tam yeniden yükleme bunu kendiliğinden düzeltir; 9 satırlık sorgu ucuzdur.
+  setInterval(() => { ozelMedyaYukle(); }, 60 * 60 * 1000);
+  console.log(MEDYA_IMZA_ZORUNLU
+    ? 'Medya imzası ZORUNLU — imzasız özel medya isteği 403 alır.'
+    : 'Medya imzası GÖÇ modunda — imzasız özel medya hâlâ servis ediliyor '
+      + '(ama private/no-store). Zorunlu kılmak için MEDYA_IMZA_ZORUNLU=1.');
+  const oto = otoBanAyari(process.env);
+  if (oto.acik) {
+    console.warn(`UYARI: GUVEN_OTO_BAN AÇIK — skor < ${oto.esik} olunca ` +
+      `${oto.gun} günlük OTOMATİK ban veriliyor. Yanlış pozitif riski sizde.`);
+  }
+});

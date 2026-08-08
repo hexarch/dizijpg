@@ -1,0 +1,48 @@
+-- 2026-08-08c: ŞİFRE SIFIRLAMA — HESAP BAŞINA DENEME KİLİDİ
+--
+-- KAYNAK: GUVENLIK-DENETIMI-2026-08-07.md §4.4 [SARI-düşük]
+--   "Doğrulama ucu yalnız authLimiti (IP başına 30/saat) ile korunuyor; yanlış
+--    kod sayısına göre hesabı kilitleyen / kodu iptal eden sayaç yok."
+--
+-- ÖNCE: `migrasyon-2026-08-08.sql` ve `-08b.sql` uygulanmış olmalı.
+--
+-- ---------------------------------------------------------------------------
+-- NE YAPAR
+-- ---------------------------------------------------------------------------
+-- `sifirlama_kodlari` tablosuna `deneme` sayacı ekler. Sunucu her YANLIŞ kod
+-- denemesinde bu sayacı 1 artırır; 5'e ulaşınca satırı SİLER (kod iptal olur ve
+-- kullanıcı yeni kod istemek zorunda kalır).
+--
+-- NEDEN SAYAÇ TABLODA, BELLEKTE DEĞİL: hız limiti (`hizLimiti`) bellek içi bir
+-- Map; konteyner her yeniden başladığında sıfırlanır ve ileride ikinci bir API
+-- kopyası çalışırsa hiç paylaşılmaz. Deneme kilidi bir GÜVENLİK sınırı olduğu
+-- için kodun kendisiyle AYNI satırda, aynı ömürle durmalı: kod yenilenince
+-- (ON CONFLICT DO UPDATE) sayaç da sıfırlanır, kod silinince sayaç da gider.
+--
+-- ---------------------------------------------------------------------------
+-- NEYİ KORUR / NEYİ KORUMAZ (abartma)
+-- ---------------------------------------------------------------------------
+-- KORUR: tek bir sıfırlama kodunu deneyerek kırma. 10^6 kod uzayında saldırgana
+--        kod başına 5 hak kalır; dağıtık (botnet) bir saldırı IP limitini aşsa
+--        bile bir kodu kırma olasılığı 5/10^6'dır.
+-- KORUMAZ: saldırgan sürekli YENİ kod isteyip her seferinde 5 hak kazanabilir.
+--        Bunun maliyeti kurbanın gelen kutusuna giden bir e-postadır (çok
+--        gürültülü) ve her yeni kod BAŞKA bir rastgele sayıdır — yani denemeler
+--        birikmez, beklenen deneme sayısı 200.000 e-postadır. Ayrıca sunucu
+--        tarafında hesap başına saatte 5 kod isteği sınırı eklendi
+--        (`sifirlamaIstekLimiti`, server.js).
+--
+-- ---------------------------------------------------------------------------
+
+ALTER TABLE sifirlama_kodlari
+  ADD COLUMN IF NOT EXISTS deneme INT NOT NULL DEFAULT 0;
+
+-- Doğrulama (uygulamadan sonra çalıştır; beklenen: deneme | integer | 0):
+--   \d sifirlama_kodlari
+--   SELECT column_name, data_type, column_default
+--     FROM information_schema.columns
+--    WHERE table_name='sifirlama_kodlari' AND column_name='deneme';
+--
+-- GERİ ALMA (gerekirse):
+--   ALTER TABLE sifirlama_kodlari DROP COLUMN IF EXISTS deneme;
+--   (server.js'in eski sürümü bu kolonu hiç okumaz; kolon dursa da zarar vermez.)

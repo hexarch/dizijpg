@@ -1,0 +1,99 @@
+-- 7 Ağu 2026 — Özel mesajların DURAĞAN ŞİFRELENMESİ (at-rest)
+--
+-- KARAR: Uçtan uca şifreleme (E2E) iptal edildi; yerine "bizim tarafta
+-- şifrele" seçildi (bkz. E2E-SIFRELEME-PLANI.md, en üstteki 7 Ağu notu).
+-- Sunucu içeriği ÇÖZEBİLİR — moderasyon, push önizlemesi, sohbet listesi
+-- önizlemesi ve web istemcisi aynen çalışır. Korunan senaryo: ÇALINMIŞ
+-- veritabanı dökümü / çalınmış gece yedeği / diske erişen ama uygulama
+-- sırlarına erişemeyen saldırgan. Sunucunun tamamen ele geçirilmesine karşı
+-- koruma İDDİA EDİLMİYOR.
+--
+-- BU MİGRASYONUN TEK İŞİ: metin kolonunu şifreli zarfın SIĞACAĞI hâle
+-- getirmek. Yeni kolon YOK — zarf kendini tanıtır (`v1.k1.<iv>.<etiket>.
+-- <şifreli>`), dolayısıyla "bu satır şifreli mi" bilgisini ayrı bir kolonda
+-- tutmaya gerek yok. Ayrı bayrak kolonu olsaydı satırla bayrak arasında
+-- senkron kaçma riski doğardı (bayrak true, değer düz metin -> okunmaz mesaj).
+--
+-- -------------------------------------------------------------------------
+-- 1) CHECK KISITINI KALDIR — bu migrasyonun ZORUNLU parçası
+-- -------------------------------------------------------------------------
+-- Kolon bugün şöyle: metin TEXT CHECK (char_length(metin) BETWEEN 1 AND 2000)
+-- (NOT NULL 22 Tem'de düşürülmüştü; kısıtın canlıdaki adı `mesajlar_metin_check`
+--  — 7 Ağu'da pg_constraint'ten doğrulandı.)
+--
+-- Şifreli zarf düz metinden UZUNDUR:
+--   sabit başlık ("v1.k1.") 6 karakter
+--   + IV      12 bayt  -> base64url 16 karakter
+--   + etiket  16 bayt  -> base64url 22 karakter
+--   + 3 ayraç nokta
+--   + gövde: UTF-8 baytların base64url'ü = ceil(bayt/3)*4  (~%33 şişme)
+-- Yani en kötü hâlde (2000 karakterin tamamı 4 baytlık emoji = 8000 bayt)
+-- zarf ~10 715 karakter olur; en iyi hâlde (2000 ASCII karakter) ~2 715.
+-- 2000'lik ÜST SINIR bu yüzden kalkmak ZORUNDA: kalsaydı ilk uzun mesajda
+-- INSERT hata verir, kullanıcı "mesaj gönderilemedi" görürdü.
+--
+-- ALT SINIR (>=1) da kalkıyor: sınır kalsa bile bir zarf hiçbir zaman boş
+-- olmaz, ama kısıt bir bütün olarak tanımlı; parçalı düşürmek mümkün değil.
+-- Kaybedilen koruma nedir? Hiçbiri: uzunluk doğrulaması ZATEN uygulamada,
+-- ŞİFRELEMEDEN ÖNCE, KULLANICININ YAZDIĞI metin üzerinde yapılıyor
+-- (POST /mesajlar: `temiz.length > 2000` -> 400; PATCH /mesajlar/:id:
+-- `!temiz || temiz.length > 2000` -> 400). DB kısıtı ikinci savunma hattıydı
+-- ve şifreli değere UYGULANAMAZ — çünkü DB düz metnin uzunluğunu göremez.
+ALTER TABLE mesajlar DROP CONSTRAINT IF EXISTS mesajlar_metin_check;
+
+-- -------------------------------------------------------------------------
+-- 2) TİP DEĞİŞİKLİĞİ GEREKMİYOR
+-- -------------------------------------------------------------------------
+-- Kolon zaten TEXT: PostgreSQL'de TEXT sınırsızdır (pratik tavan ~1 GB) ve
+-- VARCHAR(n)'den performans farkı yoktur. ~10 KB'lik en kötü zarf TOAST
+-- eşiğinin (2 KB) üzerine çıkabilir; PostgreSQL bunu kendisi sıkıştırıp
+-- yan tabloya alır, ek işlem gerekmez. Bu yüzden ALTER TYPE YOK.
+--
+-- İNDEKS DE GEREKMİYOR: `mesajlar.metin` üzerinde arama/LIKE/sıralama yapan
+-- TEK BİR SORGU YOK (7 Ağu'da server.js ve app/lib tarandı: metin yalnız
+-- SELECT ile okunuyor, WHERE'e hiç girmiyor; admin panelindeki LIKE aramaları
+-- `yorumlar.metin` ve `kullanicilar` üzerinde). Şifreli veri üzerinde arama
+-- yapılamaz kısıtı bu projede HİÇBİR ÖZELLİĞİ bozmuyor.
+
+-- -------------------------------------------------------------------------
+-- 3) ŞİFRELENMEYEN ALANLAR — gerekçeleriyle
+-- -------------------------------------------------------------------------
+-- mesajlar.medya      : ŞİFRELENMEZ. Değer bir DOSYA YOLU (/medya/mN-<16hex>.
+--   <uzantı>) ve yolun kendisi sır değil; asıl sır DOSYANIN İÇERİĞİ, o ise
+--   diskte durur ve HTTP'den kimliksiz servis edilir (GUVENLIK-DENETIMI ve
+--   E2E-SIFRELEME-PLANI §2.5). Yolu şifrelemek dökümü okuyanı 5 dakika
+--   yavaşlatır, dosyayı korumaz — ama karşılığında `medyaReferanslari()`
+--   (yetim medya temizliği, server.js) ve DELETE /mesajlar/:id'in dosya
+--   silme yolu bozulur. Doğru çözüm medya için AYRI ve daha büyük bir iş:
+--   medya uçlarına kimlik doğrulama + dosyaların diskte şifrelenmesi.
+--   Bu migrasyonun kapsamı DIŞINDA, YAPILACAKLAR'a yazılmalı.
+-- mesajlar.ses_dalga  : ŞİFRELENMEZ. "<saniye>:<en çok 64 örnek>" — sesin
+--   uzunluğu ve kabaca genlik profili. Üstveri sızıntısıdır ama içerik değil;
+--   buna karşılık POST /mesajlar biçimini regex'le DOĞRULUYOR ve istemci
+--   dalga formunu çiziyor. Şifrelenirse doğrulama düz metin üzerinde
+--   yapılabilir (yazmadan önce) ama okuma yolunda her satır için ekstra çözme
+--   maliyeti doğar. Kazanç/maliyet oranı düşük -> hayır. (İstenirse ikinci
+--   turda eklenebilir; kripto.js `satirCoz(satir, ['metin','ses_dalga'])` ile
+--   hazır.)
+-- mesajlar.icerik_tur/icerik_id/yorum_id/yanit_id : ŞİFRELENEMEZ. icerik_id
+--   TMDB kimliği ve sunucu ondan poster çözüyor (icerikBilgileri); yorum_id
+--   ve yanit_id FOREIGN KEY. Şifreli bir FK olmaz.
+-- bildirimler tablosu : ŞİFRELENECEK BİR ŞEY YOK — 7 Ağu'da doğrulandı:
+--   kolonları (kullanici_id, tur, aktor_id, yorum_id, okundu, tarih) mesaj
+--   METNİ İÇERMİYOR. `bildirimEkle(aliciId,'mesaj',...,{metin})` içindeki
+--   metin YALNIZ push gövdesine gidiyor (pushBildirim -> FCM data.metin),
+--   veritabanına YAZILMIYOR. (Not: o kopya Google FCM'e düz gidiyor —
+--   at-rest şifrelemenin kapsamı DEĞİL, E2E'nin işiydi.)
+-- mailler tablosu     : ŞİFRELENMEZ (bu turda). `govde` sistem e-postalarının
+--   metni (şifre sıfırlama — kod zaten maskeli, dışa aktarım bildirimi);
+--   özel mesaj İÇERMİYOR. Ayrı bir gizlilik konusu, ayrı karar.
+-- yorumlar / incelemeler : ŞİFRELENMEZ — HALKA AÇIK içerik, SEO sayfaları
+--   sunucu tarafında basıyor. Şifrelense hem SEO ölür hem anlamsız olur.
+
+-- -------------------------------------------------------------------------
+-- 4) GERİ ALMA
+-- -------------------------------------------------------------------------
+-- Kısıtı geri koymak İSTENİRSE (önce mesaj_sifrele_geri_doldur.js --geri ile
+-- tüm satırlar düz metne döndürülmeli, yoksa uzun zarflar kısıtı ihlal eder):
+--   ALTER TABLE mesajlar ADD CONSTRAINT mesajlar_metin_check
+--     CHECK (char_length(metin) BETWEEN 1 AND 2000);

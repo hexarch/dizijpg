@@ -45,15 +45,27 @@ CREATE TABLE IF NOT EXISTS durumlar (
 );
 
 -- Puan (1-10) ve isteğe bağlı inceleme. person = oyuncu/yönetmen puanı.
+-- sezon/bolum NULL = dizi/film/kişi GENELİ; dolu = O BÖLÜM (8 Ağu 2026-d,
+-- `yorumlar`/`tepkiler` ile aynı kalıp). Ayrıntılar migrasyon-2026-08-08d.sql.
 CREATE TABLE IF NOT EXISTS puanlar (
-  kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
   tmdb_id INT NOT NULL,
   tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
+  sezon INT,
+  bolum INT,
   puan INT CHECK (puan BETWEEN 1 AND 10),
   yorum TEXT,
   tarih TIMESTAMPTZ DEFAULT now(),
-  PRIMARY KEY (kullanici_id, tur, tmdb_id)
+  CONSTRAINT puanlar_bolum_ciftli CHECK ((sezon IS NULL) = (bolum IS NULL)),
+  CONSTRAINT puanlar_bolum_yalniz_tv CHECK (sezon IS NULL OR tur = 'tv'),
+  CONSTRAINT puanlar_bolum_pozitif
+    CHECK (sezon IS NULL OR (sezon >= 0 AND bolum >= 0))
 );
+-- PK DEĞİL tekil İNDEKS: PostgreSQL ifadeli (COALESCE) sütunla PK kuramaz.
+CREATE UNIQUE INDEX IF NOT EXISTS puanlar_tekil
+  ON puanlar (kullanici_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1));
+CREATE INDEX IF NOT EXISTS puanlar_bolum_hedef
+  ON puanlar (tur, tmdb_id, sezon, bolum) WHERE sezon IS NOT NULL;
 
 -- Yorumlar: dizi/film/kişi geneli veya belirli bir bölüm (sezon+bolum dolu).
 -- medya: /medya/... yolları (fotoğraf veya video), en fazla 4.
@@ -105,13 +117,17 @@ CREATE TABLE IF NOT EXISTS takipler (
 );
 CREATE INDEX IF NOT EXISTS idx_takip_edilen ON takipler(takip_edilen_id);
 
+-- Favoriler: dizi/film VE kişi (oyuncu/yönetmen). 'person' 2026-08-08'de
+-- eklendi (migrasyon-2026-08-08.sql) — "favori oyuncu listesi" isteği için.
 CREATE TABLE IF NOT EXISTS favoriler (
   kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
   tmdb_id INT NOT NULL,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
   tarih TIMESTAMPTZ DEFAULT now(),
   PRIMARY KEY (kullanici_id, tur, tmdb_id)
 );
+CREATE INDEX IF NOT EXISTS favoriler_kullanici_tarih
+  ON favoriler (kullanici_id, tur, tarih DESC);
 
 CREATE TABLE IF NOT EXISTS listeler (
   id SERIAL PRIMARY KEY,
@@ -203,7 +219,11 @@ CREATE INDEX IF NOT EXISTS mesajlar_okunmamis ON mesajlar (alici_id) WHERE NOT o
 CREATE TABLE IF NOT EXISTS sifirlama_kodlari (
   kullanici_id INT PRIMARY KEY REFERENCES kullanicilar(id) ON DELETE CASCADE,
   kod_hash TEXT NOT NULL,
-  bitis TIMESTAMPTZ NOT NULL
+  bitis TIMESTAMPTZ NOT NULL,
+  -- 2026-08-08c: hesap başına yanlış deneme sayacı. 5'te kod İPTAL edilir
+  -- (satır silinir). Bellek içi hız limiti yeniden başlatmada sıfırlandığı için
+  -- kilit kodun kendisiyle aynı satırda, aynı ömürde tutulur.
+  deneme INT NOT NULL DEFAULT 0
 );
 -- 2026-07-22: mesajlara medya (foto/GIF) ve içerik paylaşımı (dizi/film kartı)
 ALTER TABLE mesajlar ADD COLUMN IF NOT EXISTS medya TEXT;
@@ -251,7 +271,12 @@ CREATE TABLE IF NOT EXISTS cihaz_tokenlari (
   dil TEXT DEFAULT 'tr',
   guncelleme TIMESTAMPTZ DEFAULT now()
 );
-CREATE INDEX IF NOT EXISTS cihaz_kullanici ON cihaz_tokenlari (kullanici_id);
+-- 8 Ağu 2026: adı `cihaz_kullanici` idi; aynı ad ban sisteminde TABLO olarak
+-- kullanılıyor ve PostgreSQL'de tablo/indeks ad uzayı ORTAK — sıfırdan kurulan
+-- bir veritabanı "cannot open relation ... not supported for indexes" ile
+-- patlıyordu. Ad kapsamına uygun hale getirildi.
+CREATE INDEX IF NOT EXISTS cihaz_tokenlari_kullanici_idx
+  ON cihaz_tokenlari (kullanici_id);
 
 -- Akışta gösterilenler (popüler fallback "gördüğünü tekrar gösterme" kuralı)
 CREATE TABLE IF NOT EXISTS akis_goruldu (
@@ -493,3 +518,150 @@ ALTER TABLE kullanicilar
 -- TEK YÖNLÜ: gizleyen kullanıcı başkalarının durumunu görmeye devam eder.
 ALTER TABLE kullanicilar
   ADD COLUMN IF NOT EXISTS cevrimici_gizli BOOLEAN NOT NULL DEFAULT false;
+
+-- ---------------------------------------------------------------------------
+-- 7 Ağu 2026 — özel mesajlarda durağan şifreleme (migrasyon-2026-08-07.sql)
+--
+-- `mesajlar.metin` artık ŞİFRELİ ZARF tutabilir:
+--     v1.k1.<iv>.<etiket>.<sifreli>      (parçalar base64url, dolgusuz)
+-- Şifreleme AES-256-GCM; anahtar /opt/dizijpg/.env -> MESAJ_ANAHTARI
+-- (base64, 32 bayt). Mantık `backend/kripto.js`, testi `test/kripto.test.js`.
+--
+-- YENİ KOLON YOK: zarf kendini ön ekinden tanıtır, "şifreli mi" bayrağı ayrı
+-- kolonda tutulsaydı bayrakla değer arasında senkron kaçma riski olurdu.
+-- Karışık dönem desteklenir: geri doldurma bitene kadar eski DÜZ METİN
+-- satırlar ve yeni ZARF satırlar aynı kolonda yaşar; `coz()` zarf görmediği
+-- değeri aynen döndürür.
+--
+-- CHECK KISITI DÜŞÜRÜLÜYOR: şifreli zarf düz metinden ~%33 (base64) daha uzun
+-- + 48 karakter sabit başlık; 2000 karakterlik emojili bir mesaj ~10 700
+-- karaktere çıkar ve `char_length BETWEEN 1 AND 2000` kısıtı INSERT'i
+-- reddederdi. 1-2000 doğrulaması ZATEN uygulamada, şifrelemeden ÖNCE,
+-- kullanıcının yazdığı metin üzerinde yapılıyor (POST /mesajlar ve
+-- PATCH /mesajlar/:id -> 400). Kolon TEXT kalıyor: TEXT sınırsız, tip
+-- değişikliği gerekmiyor; uzun zarfı PostgreSQL kendisi TOAST'lar.
+--
+-- ŞİFRELENMEYEN alanlar ve gerekçeleri migrasyon-2026-08-07.sql'de.
+ALTER TABLE mesajlar DROP CONSTRAINT IF EXISTS mesajlar_metin_check;
+
+-- ---------------------------------------------------------------------------
+-- 8 Ağu 2026 — BAN / CEZA SİSTEMİ + GÜVEN SKORU (migrasyon-2026-08-08b.sql)
+--
+-- `kullanicilar.yasakli` DEĞİŞMEDİ ("şu anda yasaklı"); server.js'teki 15+
+-- `NOT k.yasakli` filtresi aynen çalışır. Yeni sütunlar EK bilgi getirir:
+--   yasak_bitis NULL  + yasakli -> KALICI (eski satırların davranışı birebir)
+--   yasak_bitis dolu  + yasakli -> SÜRELİ; bitiş gelince kendiliğinden serbest
+-- Süre dolumu CRON'suz çözülür: (1) okuma anında `yasak.js/yasakAktif()`
+-- kesin karar verir, (2) en geç ~60 sn'de bir süpürme bayrağı indirir.
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS yasak_bitis TIMESTAMPTZ;
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS yasak_sebep TEXT;
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS guven_skoru INT NOT NULL DEFAULT 100;
+ALTER TABLE kullanicilar DROP CONSTRAINT IF EXISTS kullanicilar_guven_araligi;
+ALTER TABLE kullanicilar ADD CONSTRAINT kullanicilar_guven_araligi
+  CHECK (guven_skoru BETWEEN 0 AND 100);
+-- Son İHLAL anı: güven skoru son ihlalden sonra her 30 günde +1 toparlanır
+-- (tavan 100). CRON YOK — okuma anında hesaplanır (yasak.js/guvenGuncel);
+-- `guven_skoru` son yazma anındaki TABAN'dır. Aktif ban süresince saat DURUR.
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS guven_ihlal TIMESTAMPTZ;
+CREATE INDEX IF NOT EXISTS kullanicilar_yasak_bitis
+  ON kullanicilar (yasak_bitis) WHERE yasakli AND yasak_bitis IS NOT NULL;
+
+-- Denetim izi (SALT-EKLEME): kim, kimi, ne zaman, neden, ne kadar banladı.
+CREATE TABLE IF NOT EXISTS yasak_kayitlari (
+  id BIGSERIAL PRIMARY KEY,
+  kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  cihaz_kimlik TEXT,
+  eylem TEXT NOT NULL CHECK (eylem IN
+    ('ban','kaldir','suresi_doldu','cihaz_ban','cihaz_kaldir','oto_ban')),
+  kalici BOOLEAN NOT NULL DEFAULT false,
+  bitis TIMESTAMPTZ,
+  sebep TEXT,
+  yonetici TEXT,
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS yasak_kayitlari_kullanici
+  ON yasak_kayitlari (kullanici_id, id DESC);
+CREATE INDEX IF NOT EXISTS yasak_kayitlari_zaman ON yasak_kayitlari (id DESC);
+
+-- Cihaz (KURULUM) kimlikleri. DONANIMDAN OKUNMAZ: istemci kurulum başına 16
+-- rastgele bayt üretir, yerelde saklar, `X-Cihaz` başlığıyla yollar. Uygulama
+-- silinip kurulunca kimlik DEĞİŞİR — cihaz banı bir KİLİT değil, CAYDIRICI
+-- sürtünmedir ve "bir daha asla açamaz" GARANTİSİ VERMEZ.
+CREATE TABLE IF NOT EXISTS cihazlar (
+  kimlik TEXT PRIMARY KEY CHECK (kimlik ~ '^[0-9a-f]{32}$'),
+  platform TEXT,
+  son_ip TEXT,
+  son_surum TEXT,
+  yasakli BOOLEAN NOT NULL DEFAULT false,
+  yasak_bitis TIMESTAMPTZ,
+  yasak_sebep TEXT,
+  ilk_gorulme TIMESTAMPTZ DEFAULT now(),
+  son_gorulme TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS cihazlar_yasak_bitis
+  ON cihazlar (yasak_bitis) WHERE yasakli AND yasak_bitis IS NOT NULL;
+CREATE INDEX IF NOT EXISTS cihazlar_ip ON cihazlar (son_ip);
+
+CREATE TABLE IF NOT EXISTS cihaz_kullanici (
+  kimlik TEXT NOT NULL REFERENCES cihazlar(kimlik) ON DELETE CASCADE,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  ilk_gorulme TIMESTAMPTZ DEFAULT now(),
+  son_gorulme TIMESTAMPTZ DEFAULT now(),
+  PRIMARY KEY (kimlik, kullanici_id)
+);
+CREATE INDEX IF NOT EXISTS cihaz_kullanici_kul ON cihaz_kullanici (kullanici_id);
+
+-- Güven skoru olayları. Skor YALNIZ yönetici doğrulamasıyla düşer; ham
+-- şikayet sayısı skora GİRMEZ (örgütlü şikayet silaha dönüşmesin).
+CREATE TABLE IF NOT EXISTS guven_olaylari (
+  id BIGSERIAL PRIMARY KEY,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  olay TEXT NOT NULL,
+  degisim INT NOT NULL,
+  sonuc INT NOT NULL,
+  aciklama TEXT,
+  yonetici TEXT,
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS guven_olaylari_kullanici
+  ON guven_olaylari (kullanici_id, id DESC);
+
+-- Mesaj şikayeti incelemesi: (tur, hedef_id) ile mesaja hızlı gitmek için.
+CREATE INDEX IF NOT EXISTS sikayetler_tur_hedef ON sikayetler (tur, hedef_id);
+
+-- İtirazlar: cezaya UYGULAMA İÇİNDEN itiraz (migrasyon-2026-08-08b.sql).
+-- E-posta kutusuna bağımlılık YOK; itiraz yönetim panelinde kuyruğa düşer.
+-- `yasak_id` itirazın hangi cezaya yapıldığını söyler: tekrar itiraz kuralı
+-- buna dayanır (aynı ceza için bir kez, yeni ceza = yeni itiraz hakkı).
+CREATE TABLE IF NOT EXISTS itirazlar (
+  id BIGSERIAL PRIMARY KEY,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  yasak_id BIGINT REFERENCES yasak_kayitlari(id) ON DELETE SET NULL,
+  metin TEXT NOT NULL CHECK (char_length(metin) BETWEEN 10 AND 2000),
+  durum TEXT NOT NULL DEFAULT 'bekliyor'
+    CHECK (durum IN ('bekliyor','kabul','ret')),
+  karar_notu TEXT,
+  yonetici TEXT,
+  karar_tarihi TIMESTAMPTZ,
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS itirazlar_kuyruk ON itirazlar (durum, id DESC);
+CREATE INDEX IF NOT EXISTS itirazlar_kullanici ON itirazlar (kullanici_id, id DESC);
+-- Aynı anda tek açık itiraz (yarış durumuna karşı kesin güvence).
+CREATE UNIQUE INDEX IF NOT EXISTS itirazlar_tek_acik
+  ON itirazlar (kullanici_id) WHERE durum = 'bekliyor';
+
+-- ---------------------------------------------------------------------------
+-- 8 Ağu 2026 (d) — BÖLÜM BAZLI PUANLAMA (migrasyon-2026-08-08d.sql)
+--
+-- `puanlar.sezon/bolum` yukarıdaki CREATE TABLE'a işlendi (sıfırdan kurulan
+-- veritabanı doğru şemayı alır). MEVCUT kurulumlar için ALTER'lar migrasyon
+-- dosyasındadır; PRIMARY KEY -> `puanlar_tekil` tekil indeksine dönüştü.
+--
+-- KRİTİK SÖZLEŞME: `puanlar` üzerinde DİZİ/FİLM GENELİNİ kasteden HER sorgu
+-- `AND sezon IS NULL` YAZMAK ZORUNDADIR. Yazmayan sorgu bölüm puanlarını
+-- sessizce dizi ortalamasına karıştırır (SEO aggregateRating, rozet sayaçları,
+-- puan uyumu...). test/bolum_puani.test.js bu süzgeci kaynak üzerinden
+-- DENETLER — yeni bir `FROM puanlar` sorgusu süzgeçsiz eklenirse test kırmızıya
+-- döner.
+-- ---------------------------------------------------------------------------

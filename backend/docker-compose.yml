@@ -23,6 +23,16 @@ services:
       DATABASE_URL: postgres://dizijpg:${DB_SIFRE}@db:5432/dizijpg
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
+      # Özel mesajların DURAĞAN şifrelemesi (AES-256-GCM, backend/kripto.js).
+      # base64, 32 bayt: `openssl rand -base64 32`.
+      # YOKSA API AÇILMAZ (bilinçli: sessizce düz metne düşmek en tehlikelisi).
+      # Bilerek şifresiz çalışılacaksa .env'e MESAJ_SIFRELEME=kapali yazılır.
+      # ANAHTARI KAYBETMEK = TÜM MESAJLARI KAYBETMEK. Parola yöneticisine kopyala.
+      MESAJ_ANAHTARI: ${MESAJ_ANAHTARI:-}
+      # Anahtar döndürülünce ESKİ anahtar buraya taşınır (yalnız OKUMA için),
+      # kimlikli ve virgülle ayrılmış: "k1:<base64>,k2:<base64>".
+      MESAJ_ANAHTARI_ESKI: ${MESAJ_ANAHTARI_ESKI:-}
+      MESAJ_SIFRELEME: ${MESAJ_SIFRELEME:-}
       PORT: 8500
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya

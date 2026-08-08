@@ -56,6 +56,8 @@ header .sag{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;justify-content
 /* Ana ızgara */
 .izgara{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;padding:4px 24px 24px}
 @media(max-width:1000px){.izgara{grid-template-columns:1fr}}
+/* İtiraz kartı: dar ekranda metin ve ceza alt alta (yatay kaydırma OLMAZ) */
+@media(max-width:820px){.itr-izgara{grid-template-columns:1fr!important}}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden}
 .panel h3{font-size:13px;font-weight:700;padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;color:var(--metin)}
 .panel h3 .sag{margin-left:auto;font-size:11px;color:var(--soluk);font-weight:500}
@@ -227,6 +229,8 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     <button class="sekme-btn" data-sekme="bakim">Bakım</button>
     <button class="sekme-btn" data-sekme="hatalar">Hatalar</button>
     <button class="sekme-btn" data-sekme="sikayetler">Şikayetler <span id="sik-rozet" class="rozet gizli">0</span></button>
+    <button class="sekme-btn" data-sekme="yasaklar">Yasaklar <span id="yas-rozet" class="rozet gizli">0</span></button>
+    <button class="sekme-btn" data-sekme="itirazlar">İtirazlar <span id="itr-rozet" class="rozet gizli">0</span></button>
   </div>
 </header>
 
@@ -677,6 +681,92 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
   </div>
 </section>
 
+<!-- YASAKLAR -->
+<section id="s-yasaklar" class="sayfa gizli">
+  <div class="panel">
+    <h3>⛔ Aktif yasaklar <span class="sag" id="yas-say">—</span></h3>
+    <div style="overflow:auto"><table id="yas-tablo"></table></div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>📱 Yasaklı cihazlar <span class="sag" id="cih-say">—</span></h3>
+    <p style="font-size:12px;color:var(--soluk);margin:0 0 8px">
+      Cihaz kimliği DONANIMDAN OKUNMAZ: uygulamanın kurulum başına ürettiği
+      rastgele bir kimliktir. Uygulama silinip kurulunca, veriler temizlenince
+      ya da başka cihaza geçilince DEĞİŞİR. Bu yüzden cihaz banı bir kilit
+      değil, <b>caydırıcı</b> bir katmandır — “bir daha asla hesap açamaz”
+      garantisi vermez. Web istemcisi kimlik göndermez.
+    </p>
+    <div style="overflow:auto"><table id="cih-tablo"></table></div>
+  </div>
+  <div class="panel" style="margin-top:14px">
+    <h3>🧾 Denetim izi <span class="sag">son 200 karar</span></h3>
+    <div style="overflow:auto"><table id="iz-tablo"></table></div>
+  </div>
+</section>
+
+<!-- ITIRAZLAR -->
+<section id="s-itirazlar" class="sayfa gizli">
+  <div class="panel">
+    <h3>⚖️ Ceza itirazları <span class="sag" id="itr-say">—</span></h3>
+    <p style="font-size:12px;color:var(--soluk);margin:0 0 10px">
+      İtirazlar uygulama içinden geliyor (e-posta kutusu YOK). Kabul edersen
+      yasak kalkar, güven skoru +15 iade edilir ve denetim izine yazılır.
+      Reddedersen ceza sürer ve kullanıcı <b>aynı ceza için</b> tekrar itiraz
+      edemez; yeni bir ceza verilirse itiraz hakkı yeniden doğar.
+    </p>
+    <div class="btnler" style="margin-bottom:10px">
+      <button class="btn" id="if-bekliyor" onclick="itirazSuzgec('bekliyor')">Bekleyenler</button>
+      <button class="btn" id="if-" onclick="itirazSuzgec('')">Hepsi</button>
+      <button class="btn" id="if-kabul" onclick="itirazSuzgec('kabul')">Kabul</button>
+      <button class="btn" id="if-ret" onclick="itirazSuzgec('ret')">Ret</button>
+    </div>
+    <div id="itr-liste"></div>
+  </div>
+</section>
+
+<!-- BAN MODALI -->
+<div id="ban-modal" class="gizli" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)this.classList.add('gizli')">
+  <div class="panel" style="width:min(540px,100%);max-height:88vh;overflow-y:auto">
+    <h3>⛔ <span id="ban-baslik">Yasakla</span>
+      <span class="sag"><button class="btn" onclick="$('#ban-modal').classList.add('gizli')">Kapat ✕</button></span></h3>
+    <div class="d-form" style="padding:16px;display:grid;gap:12px">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <span style="font-size:12px;color:var(--soluk)">Süre</span>
+        <input id="ban-miktar" type="number" min="1" max="10000" value="7" style="width:100px;flex:none" oninput="banOnizle()">
+        <select id="ban-birim" style="width:auto;flex:none" onchange="banOnizle()">
+          <option value="dakika">dakika</option>
+          <option value="saat">saat</option>
+          <option value="gun" selected>gün</option>
+          <option value="yil">yıl</option>
+        </select>
+        <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
+          <input id="ban-kalici" type="checkbox" style="width:auto" onchange="banOnizle()"> kalıcı (perma)
+        </label>
+      </div>
+      <div>
+        <div style="font-size:12px;color:var(--soluk);margin-bottom:4px">
+          Sebep (ZORUNLU — kullanıcıya AYNEN gösterilir)
+        </div>
+        <input id="ban-sebep" maxlength="500" placeholder="Örn: tekrarlanan taciz mesajları">
+      </div>
+      <div id="ban-onizle" style="font-size:12px;color:var(--soluk)"></div>
+      <div class="btnler">
+        <button class="btn tehlike" onclick="banGonder()">Yasakla</button>
+        <button class="btn" onclick="$('#ban-modal').classList.add('gizli')">Vazgeç</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MESAJ ŞİKAYETİ MODALI -->
+<div id="msj-modal" class="gizli" style="position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px" onclick="if(event.target===this)this.classList.add('gizli')">
+  <div class="panel" style="width:min(680px,100%);max-height:88vh;overflow-y:auto">
+    <h3>✉️ Şikayet edilen mesaj
+      <span class="sag"><button class="btn" onclick="$('#msj-modal').classList.add('gizli')">Kapat ✕</button></span></h3>
+    <div id="msj-icerik" style="padding:16px"></div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/globe.gl@2.34.4/dist/globe.gl.min.js"></script>
 <script>
 const TOKEN = new URLSearchParams(location.search).get('token') || '';
@@ -707,6 +797,10 @@ document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
   $('#s-duyuru').classList.toggle('gizli',s!=='duyuru');
   $('#s-hatalar').classList.toggle('gizli',s!=='hatalar');
   $('#s-sikayetler').classList.toggle('gizli',s!=='sikayetler');
+  $('#s-yasaklar').classList.toggle('gizli',s!=='yasaklar');
+  $('#s-itirazlar').classList.toggle('gizli',s!=='itirazlar');
+  if(s==='yasaklar') yasaklariYukle();
+  if(s==='itirazlar') itirazlariYukle();
   if(s==='hareketler') hareketleriYukle();
   if(s==='mailler') mailleriYukle();
   $('#s-buyume').classList.toggle('gizli',s!=='buyume');
@@ -870,7 +964,9 @@ async function hareketleriYukle(){
 // Sekme açıkken 15 sn'de bir tazele
 setInterval(()=>{ if(!$('#s-hareketler').classList.contains('gizli')) hareketleriYukle(); },15000);
 
+let SON_KULLANICI=null;
 async function kullaniciDetay(ad){
+  SON_KULLANICI=ad;
   $('#k-modal').classList.remove('gizli');
   $('#k-baslik').textContent='@'+ad;
   $('#k-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
@@ -883,10 +979,20 @@ async function kullaniciDetay(ad){
         <span>id: <b class="mono">${k.id}</b></span>
         <span>e-posta: <b>${esc(k.email||'—')}</b></span>
         <span>${k.misafir?'🕶 misafir':'✅ kayıtlı'}</span>
-        <span>${k.yasakli?'⛔ <b style="color:var(--kirmizi)">YASAKLI</b>':'🟢 aktif'}</span>
+        <span>${k.yasak
+          ? (k.yasak.kalici
+            ? '⛔ <b style="color:var(--kirmizi)">KALICI YASAK</b>'
+            : `⛔ <b style="color:var(--kirmizi)">YASAKLI</b> · bitiş ${esc(new Date(k.yasak.bitis).toLocaleString('tr'))}`)
+          : (k.yasakli ? '🕓 yasak süresi doldu (süpürme bekliyor)' : '🟢 aktif')}</span>
+        <span>güven: <b class="etiket ${guvenSinif(k.guven_skoru??100)}">${k.guven_skoru??100}</b> ${esc(k.guven_etiket||'')}${
+          k.guven_donuk ? ' <span title="Ban sürerken toparlanma saati durur" style="color:var(--soluk2)">(donuk)</span>'
+          : (k.guven_toparlanma ? ` <span title="son ihlalden bu yana 30 günde +1" style="color:var(--yesil)">+${k.guven_toparlanma}</span>` : '')}</span>
         <span>kayıt: ${new Date(k.olusturma).toLocaleString('tr')}</span>
         <span>son görülme: ${k.son_gorulme?new Date(k.son_gorulme).toLocaleString('tr'):'—'}</span>
       </div>
+      ${k.yasak?`<div style="margin-bottom:10px;padding:10px 12px;border:1px solid var(--kirmizi);border-radius:10px;background:rgba(248,113,113,.08)">
+        <b style="font-size:12px">Ceza sebebi (kullanıcıya böyle görünüyor):</b>
+        <div style="white-space:pre-wrap">${esc(k.yasak.sebep||'—')}</div></div>`:''}
       ${k.bio?`<div style="margin-bottom:10px;color:var(--soluk)">bio: ${esc(k.bio)}</div>`:''}
       ${(k.sosyal||[]).length?`<div style="margin-bottom:10px;font-size:12px">sosyal: ${k.sosyal.map(x=>`<span class="etiket e-incelendi">${esc(x.platform)}: ${esc(x.deger)}</span>`).join(' ')}</div>`:''}
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:14px">
@@ -896,12 +1002,42 @@ async function kullaniciDetay(ad){
       </div>
       <div class="btnler" style="margin-bottom:14px">
         ${k.yasakli
-          ?`<button class="btn iyi" onclick="ban(${k.id},false);$('#k-modal').classList.add('gizli')">Yasağı kaldır</button>`
-          :`<button class="btn tehlike" onclick="ban(${k.id},true);$('#k-modal').classList.add('gizli')">Kullanıcıyı banla</button>`}
+          ?`<button class="btn iyi" onclick="yasakKaldir(${k.id},()=>kullaniciDetay('${escJs(ad)}'))">Yasağı kaldır</button>`
+          :`<button class="btn tehlike" onclick="banAc(${k.id},'${escJs(ad)}',()=>kullaniciDetay('${escJs(ad)}'))">Yasakla… (süreli / kalıcı)</button>`}
+        <button class="btn" onclick="guvenDuzelt(${k.id},'${escJs(ad)}')">Güven skorunu düzelt</button>
       </div>
       ${(k.son_ipler||[]).length?`<div style="margin-bottom:14px"><b style="font-size:12px">Son IP'ler</b>
         <div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:6px">${k.son_ipler.map(p=>
           `<span class="etiket e-kapatildi mono">${esc(p.ip)} ${bayrak(p.ulke)} ${esc(p.sehir||'')}</span>`).join('')}</div></div>`:''}
+      ${(k.cihazlar||[]).length?`<div style="margin-bottom:14px">
+        <b style="font-size:12px">Cihazlar (kurulum kimliği — donanımdan OKUNMAZ, silip kurunca değişir)</b>
+        <div style="margin-top:6px;display:grid;gap:6px">${k.cihazlar.map(c=>`
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:12px">
+            <span class="mono" style="font-size:11px">${esc(c.kimlik)}</span>
+            <span style="color:var(--soluk)">${esc(c.platform||'—')} · ${esc(c.son_ip||'—')} · ${esc(c.son_surum||'—')}</span>
+            ${c.hesap_sayisi>1?`<span class="etiket e-yeni">bu cihazda ${c.hesap_sayisi} hesap</span>`:''}
+            ${c.yasakli
+              ?`<button class="btn iyi" onclick="cihazYasak('${escJs(c.kimlik)}',false)">Cihaz banını kaldır</button>`
+              :`<button class="btn tehlike" onclick="cihazYasak('${escJs(c.kimlik)}',true)">Cihazı banla</button>`}
+          </div>`).join('')}</div></div>`:''}
+      ${(k.yasak_izi||[]).length?`<div style="margin-bottom:14px"><b style="font-size:12px">Ceza geçmişi (denetim izi)</b>
+        <div style="margin-top:6px;display:grid;gap:4px;font-size:12px">${k.yasak_izi.map(z=>`
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="mono" style="color:var(--soluk2)">${esc(new Date(z.tarih).toLocaleString('tr'))}</span>
+            <b>${esc(z.eylem)}</b>${z.kalici?' <span class="etiket e-yeni">KALICI</span>':''}
+            ${z.bitis?`<span class="mono">→ ${esc(new Date(z.bitis).toLocaleString('tr'))}</span>`:''}
+            <span style="color:var(--soluk)">${esc(z.sebep||'—')}</span>
+            <span class="mono" style="color:var(--soluk2)">${esc(z.yonetici||'—')}</span>
+          </div>`).join('')}</div></div>`:''}
+      ${(k.guven_olaylari||[]).length?`<div style="margin-bottom:14px"><b style="font-size:12px">Güven skoru geçmişi</b>
+        <div style="margin-top:6px;display:grid;gap:4px;font-size:12px">${k.guven_olaylari.map(g=>`
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <span class="mono" style="color:var(--soluk2)">${esc(new Date(g.tarih).toLocaleString('tr'))}</span>
+            <b>${esc(g.olay)}</b>
+            <span class="mono" style="color:${g.degisim<0?'var(--kirmizi)':'var(--yesil)'}">${g.degisim>0?'+':''}${g.degisim}</span>
+            <span class="mono">→ ${g.sonuc}</span>
+            <span style="color:var(--soluk)">${esc(g.aciklama||'')}</span>
+          </div>`).join('')}</div></div>`:''}
       <b style="font-size:12px">Son yorumları</b>
       <div style="margin-top:6px">${(k.son_yorumlar||[]).map(y=>hSatir(
         `<b>${esc(y.tur)} #${y.tmdb_id}</b>${y.sezon?` <span class="mono">S${y.sezon}B${y.bolum}</span>`:''}${y.medya_sayi?` 📎${y.medya_sayi}`:''}`+
@@ -1732,28 +1868,263 @@ async function sikayetleriYukle(){
 function satirSik(s){
   const dm={yeni:'e-yeni',incelendi:'e-incelendi',kapatildi:'e-kapatildi'};
   const dl={yeni:'Yeni',incelendi:'İncelendi',kapatildi:'Kapatıldı'};
-  let islem='';
-  if(s.tur==='yorum') islem=`<button class="btn tehlike" onclick="yorumSil(${s.hedef_id})">Yorumu sil</button>`;
-  if(s.tur==='kullanici') islem=s.hedef_yasakli
-    ? `<button class="btn iyi" onclick="ban(${s.hedef_id},false)">Yasağı kaldır</button>`
-    : `<button class="btn tehlike" onclick="ban(${s.hedef_id},true)">Kullanıcıyı banla</button>`;
+  const islem=[];
+  if(s.tur==='yorum') islem.push(`<button class="btn tehlike" onclick="yorumSil(${s.hedef_id})">Yorumu sil</button>`);
+  // MESAJ ŞİKAYETİ: eskiden panelde HİÇ çözülmüyordu (kuyrukta "#123" duruyordu).
+  // Artık özet çözülmüş metinden gelir; "İncele" bağlamıyla birlikte açar.
+  if(s.tur==='mesaj') islem.push(`<button class="btn" onclick="mesajSikayetAc(${s.id})">Mesajı incele</button>`);
+  // Hedefin SAHİBİ kim olursa olsun (yorum/mesaj/liste/kullanıcı) ban butonu
+  // aynı yere bağlanır — süreli/kalıcı seçimi ban modalinde yapılır.
+  if(s.hedef_kullanici_id!=null){
+    islem.push(s.hedef_yasakli
+      ? `<button class="btn iyi" onclick="yasakKaldir(${s.hedef_kullanici_id},sikayetleriYukle)">Yasağı kaldır</button>`
+      : `<button class="btn tehlike" onclick="banAc(${s.hedef_kullanici_id},'${escJs(s.hedef_kullanici_adi||('#'+s.hedef_kullanici_id))}',sikayetleriYukle)">Banla…</button>`);
+  }
+  const guven=s.hedef_guven==null?'':` <span class="etiket ${guvenSinif(s.hedef_guven)}">güven ${s.hedef_guven}</span>`;
   return `<tr>
     <td class="mono" style="color:var(--soluk)">${s.id}</td>
     <td><span class="etiket e-incelendi">${esc(s.tur)}</span></td>
-    <td style="max-width:280px">${esc(s.hedef_ozet||('#'+s.hedef_id))}</td>
+    <td style="max-width:280px">${esc(s.hedef_ozet||('#'+s.hedef_id))}${guven}</td>
     <td style="max-width:240px;color:var(--soluk)">${esc(s.sebep)}</td>
     <td>${s.eden?'@'+esc(s.eden):'—'}</td>
     <td><span class="etiket ${dm[s.durum]}">${dl[s.durum]}</span></td>
     <td><div class="btnler">
-      ${islem}
+      ${islem.join('')}
       ${s.durum!=='incelendi'?`<button class="btn" onclick="sikDurum(${s.id},'incelendi')">İncelendi</button>`:''}
       ${s.durum!=='kapatildi'?`<button class="btn" onclick="sikDurum(${s.id},'kapatildi')">Kapat</button>`:''}
     </div></td>
   </tr>`;
 }
 async function yorumSil(id){ if(!confirm('Yorum silinsin mi?'))return; await api('/yorum-sil',{method:'POST',body:JSON.stringify({id})}); sikayetleriYukle(); }
-async function ban(id,yasakli){ if(!confirm(yasakli?'Kullanıcı banlansın mı?':'Yasak kalksın mı?'))return; await api('/kullanici-ban',{method:'POST',body:JSON.stringify({id,yasakli})}); sikayetleriYukle(); }
-async function sikDurum(id,durum){ await api('/sikayet-durum',{method:'POST',body:JSON.stringify({id,durum})}); sikayetleriYukle(); }
+async function sikDurum(id,durum){
+  if(durum==='incelendi'&&!confirm('Şikayet HAKLI bulundu olarak işaretlensin mi?\n(Hedefin güven skoru düşer. Asılsız şikayetler için "Kapat" kullan.)'))return;
+  await api('/sikayet-durum',{method:'POST',body:JSON.stringify({id,durum})}); sikayetleriYukle();
+}
+
+/* ---- Şikayet edilen mesajı incele (çözülmüş metinle) ----
+   GİZLİLİK: DM'ler durağan şifrelidir ama UÇTAN UCA DEĞİLDİR — sunucu
+   moderasyon için çözebilir (bkz. kripto.js başlığı ve gizlilik politikası).
+   Bu uç yalnız VAR OLAN bir şikayet üzerinden okur; şikayeti de yalnız
+   mesajın ALICISI açabilir. Bağlam olarak şikayetten ÖNCEKİ 5 mesaj gelir. */
+async function mesajSikayetAc(sikayetId){
+  $('#msj-modal').classList.remove('gizli');
+  $('#msj-icerik').innerHTML='<div class="bos">Yükleniyor…</div>';
+  try{
+    const d=await api('/mesaj-sikayet/'+sikayetId);
+    const m=d.mesaj;
+    if(!m){ $('#msj-icerik').innerHTML='<div class="bos">Mesaj silinmiş</div>'; return; }
+    const balon=(x,vurgu)=>`<div style="margin:6px 0;padding:8px 12px;border-radius:10px;border:1px solid ${vurgu?'var(--kirmizi)':'var(--line)'};background:var(--panel2)">
+        <div style="font-size:11px;color:var(--soluk)">@${esc(x.gonderen||'—')} · ${new Date(x.tarih).toLocaleString('tr')}</div>
+        <div style="white-space:pre-wrap;word-break:break-word">${esc(x.metin==null?'(metin yok / çözülemedi)':x.metin)}</div>
+      </div>`;
+    $('#msj-icerik').innerHTML=`
+      <div style="font-size:12px;color:var(--soluk);margin-bottom:10px">
+        Şikayet #${d.sikayet.id} · sebep: <b>${esc(d.sikayet.sebep)}</b><br>
+        gönderen @${esc(m.gonderen||'—')} → alıcı @${esc(m.alici||'—')}
+      </div>
+      ${d.baglam.length?`<div style="font-size:11px;color:var(--soluk2);margin-bottom:4px">önceki ${d.baglam.length} mesaj (bağlam)</div>`:''}
+      ${d.baglam.map(b=>balon(b,false)).join('')}
+      <div style="font-size:11px;color:var(--kirmizi);margin:10px 0 4px">şikayet edilen mesaj</div>
+      ${balon(m,true)}
+      <div class="btnler" style="margin-top:14px">
+        <button class="btn tehlike" onclick="$('#msj-modal').classList.add('gizli');banAc(${m.gonderen_id},'${escJs(m.gonderen||('#'+m.gonderen_id))}',sikayetleriYukle)">Göndereni banla…</button>
+        <button class="btn" onclick="$('#msj-modal').classList.add('gizli');sikDurum(${d.sikayet.id},'incelendi')">Haklı bulundu</button>
+        <button class="btn" onclick="$('#msj-modal').classList.add('gizli');sikDurum(${d.sikayet.id},'kapatildi')">Asılsız · kapat</button>
+      </div>`;
+  }catch(e){ $('#msj-icerik').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+
+/* ---- Ban modali (süreli: dakika/saat/gün/yıl · kalıcı) ---- */
+let BAN_HEDEF=null, BAN_SONRA=null;
+function banAc(id,ad,sonra){
+  BAN_HEDEF=id; BAN_SONRA=sonra||null;
+  $('#ban-baslik').textContent='@'+ad+' yasakla';
+  $('#ban-sebep').value=''; $('#ban-kalici').checked=false;
+  $('#ban-miktar').value=7; $('#ban-birim').value='gun';
+  banOnizle();
+  $('#ban-modal').classList.remove('gizli');
+}
+function banOnizle(){
+  const kalici=$('#ban-kalici').checked;
+  $('#ban-miktar').disabled=kalici; $('#ban-birim').disabled=kalici;
+  if(kalici){
+    $('#ban-onizle').innerHTML='<b style="color:var(--kirmizi)">KALICI</b> — süresiz. Yalnız elle kaldırılır.';
+    return;
+  }
+  const n=parseInt($('#ban-miktar').value,10);
+  const birim=$('#ban-birim').value;
+  const ms={dakika:60000,saat:3600000,gun:86400000,yil:365*86400000}[birim];
+  if(!(n>0)){ $('#ban-onizle').textContent='Süre 1 ve üzeri olmalı.'; return; }
+  const bitis=new Date(Date.now()+n*ms);
+  $('#ban-onizle').textContent='Bitiş: '+bitis.toLocaleString('tr')+' — süre dolunca hesap KENDİLİĞİNDEN açılır.';
+}
+async function banGonder(){
+  const sebep=$('#ban-sebep').value.trim();
+  if(!sebep){ alert('Sebep zorunlu — kullanıcıya aynen gösterilecek.'); return; }
+  const kalici=$('#ban-kalici').checked;
+  const govde={id:BAN_HEDEF,kalici,sebep};
+  if(!kalici){ govde.birim=$('#ban-birim').value; govde.miktar=parseInt($('#ban-miktar').value,10); }
+  try{
+    await api('/yasak',{method:'POST',body:JSON.stringify(govde)});
+    $('#ban-modal').classList.add('gizli');
+    if(BAN_SONRA) BAN_SONRA();
+    if(!$('#s-yasaklar').classList.contains('gizli')) yasaklariYukle();
+  }catch(e){ alert('Yasaklanamadı: '+e.message); }
+}
+async function yasakKaldir(id,sonra){
+  const sebep=prompt('Yasak neden kaldırılıyor? (denetim izine yazılır)','itiraz kabul edildi');
+  if(sebep===null) return;
+  const iade=confirm('Ceza YANLIŞ verilmişti ise güven skoru da iade edilsin mi?\nTamam = iade et · İptal = skora dokunma');
+  await api('/yasak-kaldir',{method:'POST',body:JSON.stringify({id,sebep,guven_iade:iade})});
+  if(sonra) sonra();
+  if(!$('#s-yasaklar').classList.contains('gizli')) yasaklariYukle();
+}
+/* Eski çağrı yolu (kullanıcı detayındaki tek tuş) — kalıcı ban/kaldır. */
+async function ban(id,yasakli){
+  if(!yasakli) return yasakKaldir(id,sikayetleriYukle);
+  banAc(id,'#'+id,sikayetleriYukle);
+}
+const guvenSinif = s => s>=80?'e-kapatildi':s>=50?'e-incelendi':'e-yeni';
+
+/* ---- İtiraz kuyruğu ----
+   XSS: `i.metin` TAMAMEN kullanıcı denetiminde (banlı kullanıcının yazdığı
+   serbest metin) ve doğrudan innerHTML'e giriyor — metin bağlamında esc(),
+   onclick içindeki her değerde escJs() ŞART. */
+let ITR_SUZGEC='bekliyor';
+function itirazSuzgec(d){
+  ITR_SUZGEC=d;
+  ['bekliyor','','kabul','ret'].forEach(x=>{
+    const b=$('#if-'+x); if(b) b.classList.toggle('secili',x===d);
+  });
+  itirazlariYukle();
+}
+async function itirazlariYukle(){
+  try{
+    const d=await api('/itirazlar'+(ITR_SUZGEC?'?durum='+encodeURIComponent(ITR_SUZGEC):''));
+    $('#itr-say').textContent=d.itirazlar.length+' kayıt · '+d.bekleyen+' bekliyor';
+    const rz=$('#itr-rozet'); rz.textContent=d.bekleyen; rz.classList.toggle('gizli',!d.bekleyen);
+    const dm={bekliyor:'e-yeni',kabul:'e-kapatildi',ret:'e-incelendi'};
+    const dl={bekliyor:'Bekliyor',kabul:'Kabul edildi',ret:'Reddedildi'};
+    $('#itr-liste').innerHTML = d.itirazlar.length
+      ? d.itirazlar.map(i=>`
+        <div class="kart" style="padding:14px;margin-bottom:10px">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+            <a href="#" onclick="kullaniciDetay('${escJs(i.kullanici_adi)}');return false"><b>@${esc(i.kullanici_adi)}</b></a>
+            <span class="etiket ${dm[i.durum]}">${dl[i.durum]}</span>
+            <span class="etiket ${guvenSinif(i.guven_guncel)}">güven ${i.guven_guncel}</span>
+            <span style="font-size:12px;color:var(--soluk)">geçmiş: ${i.gecmis_ban} ban · ${i.gecmis_itiraz} itiraz</span>
+            <span class="mono" style="font-size:11px;color:var(--soluk2);margin-left:auto">${esc(new Date(i.tarih).toLocaleString('tr'))}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px" class="itr-izgara">
+            <div>
+              <div style="font-size:11px;color:var(--soluk);margin-bottom:3px">İtiraz metni</div>
+              <div style="white-space:pre-wrap;word-break:break-word;padding:10px;background:var(--panel2);border-radius:10px;border:1px solid var(--line)">${esc(i.metin)}</div>
+            </div>
+            <div>
+              <div style="font-size:11px;color:var(--soluk);margin-bottom:3px">İtiraz edilen ceza</div>
+              <div style="padding:10px;background:var(--panel2);border-radius:10px;border:1px solid var(--line);font-size:13px">
+                ${i.yasak
+                  ? `<b style="color:var(--kirmizi)">${i.yasak.kalici?'KALICI':'SÜRELİ'}</b>`
+                    + (i.yasak.bitis?` · bitiş ${esc(new Date(i.yasak.bitis).toLocaleString('tr'))}`:'')
+                    + `<div style="margin-top:4px">${esc(i.yasak.sebep||'—')}</div>`
+                  : '<span style="color:var(--soluk)">Ceza şu an aktif değil (kalkmış ya da süresi dolmuş)</span>'}
+                ${i.yasak_eylem?`<div style="margin-top:6px;font-size:11px;color:var(--soluk2)" class="mono">${esc(i.yasak_eylem)} · ${esc(i.yasak_yonetici||'—')} · ${esc(new Date(i.yasak_tarihi).toLocaleString('tr'))}</div>`:''}
+              </div>
+            </div>
+          </div>
+          ${i.durum==='bekliyor'
+            ? `<div class="btnler" style="margin-top:10px">
+                 <button class="btn iyi" onclick="itirazKarar(${i.id},'kabul')">Kabul et · yasağı kaldır</button>
+                 <button class="btn tehlike" onclick="itirazKarar(${i.id},'ret')">Reddet</button>
+               </div>`
+            : `<div style="margin-top:8px;font-size:12px;color:var(--soluk)">
+                 karar: <b>${dl[i.durum]}</b>${i.karar_notu?' · '+esc(i.karar_notu):''}
+                 · <span class="mono">${esc(i.yonetici||'—')}</span>
+                 · ${i.karar_tarihi?esc(new Date(i.karar_tarihi).toLocaleString('tr')):'—'}
+               </div>`}
+        </div>`).join('')
+      : '<div class="bos">🎉 İtiraz yok</div>';
+  }catch(e){ $('#itr-liste').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+async function itirazKarar(id,karar){
+  const uyari = karar==='kabul'
+    ? 'İtiraz KABUL edilsin mi?\nYasak kalkacak, güven skoru +15 iade edilecek.'
+    : 'İtiraz REDDEDİLSİN mi?\nCeza sürer; kullanıcı AYNI ceza için tekrar itiraz edemez.';
+  if(!confirm(uyari)) return;
+  const not=prompt('Karar notu (denetim izine ve kullanıcıya görünür):','')||'';
+  try{
+    await api('/itiraz-karar',{method:'POST',body:JSON.stringify({id,karar,not})});
+    itirazlariYukle();
+  }catch(e){ alert('Olmadı: '+e.message); }
+}
+
+/* ---- Yasaklar sekmesi ---- */
+async function yasaklariYukle(){
+  try{
+    const d=await api('/yasaklar');
+    $('#yas-say').textContent=d.aktif.length+' aktif';
+    const rz=$('#yas-rozet'); rz.textContent=d.aktif.length; rz.classList.toggle('gizli',!d.aktif.length);
+    $('#yas-tablo').innerHTML = d.aktif.length? `
+      <thead><tr><th>Kullanıcı</th><th>Tür</th><th>Bitiş</th><th>Sebep</th><th>Güven</th><th>İşlem</th></tr></thead>
+      <tbody>${d.aktif.map(k=>`<tr>
+        <td><a href="#" onclick="kullaniciDetay('${escJs(k.kullanici_adi)}');return false">@${esc(k.kullanici_adi)}</a></td>
+        <td>${k.yasak_bitis?'<span class="etiket e-incelendi">süreli</span>':'<span class="etiket e-yeni">KALICI</span>'}</td>
+        <td class="mono">${k.yasak_bitis?esc(new Date(k.yasak_bitis).toLocaleString('tr')):'—'}</td>
+        <td style="max-width:280px">${esc(k.yasak_sebep||'—')}</td>
+        <td><span class="etiket ${guvenSinif(k.guven_skoru)}">${k.guven_skoru}</span></td>
+        <td><button class="btn iyi" onclick="yasakKaldir(${k.id},yasaklariYukle)">Kaldır</button></td>
+      </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">🎉 Aktif yasak yok</td></tr></tbody>';
+    $('#cih-say').textContent=d.cihazlar.length+' cihaz';
+    $('#cih-tablo').innerHTML = d.cihazlar.length? `
+      <thead><tr><th>Kimlik</th><th>Platform</th><th>Son IP</th><th>Bitiş</th><th>Sebep</th><th>İşlem</th></tr></thead>
+      <tbody>${d.cihazlar.map(c=>`<tr>
+        <td class="mono" style="font-size:11px">${esc(c.kimlik)}</td>
+        <td>${esc(c.platform||'—')}</td>
+        <td class="mono">${esc(c.son_ip||'—')}</td>
+        <td class="mono">${c.yasak_bitis?esc(new Date(c.yasak_bitis).toLocaleString('tr')):'KALICI'}</td>
+        <td style="max-width:240px">${esc(c.yasak_sebep||'—')}</td>
+        <td><button class="btn iyi" onclick="cihazYasak('${escJs(c.kimlik)}',false)">Kaldır</button></td>
+      </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Yasaklı cihaz yok</td></tr></tbody>';
+    const eAd={ban:'ban',kaldir:'kaldırıldı',suresi_doldu:'süresi doldu',cihaz_ban:'cihaz banı',cihaz_kaldir:'cihaz banı kalktı',oto_ban:'OTOMATİK ban'};
+    $('#iz-tablo').innerHTML = d.iz.length? `
+      <thead><tr><th>Zaman</th><th>Eylem</th><th>Hedef</th><th>Süre</th><th>Sebep</th><th>Yönetici</th></tr></thead>
+      <tbody>${d.iz.map(i=>`<tr>
+        <td class="mono" style="color:var(--soluk)">${esc(new Date(i.tarih).toLocaleString('tr'))}</td>
+        <td><span class="etiket ${i.eylem==='kaldir'||i.eylem==='cihaz_kaldir'||i.eylem==='suresi_doldu'?'e-kapatildi':'e-yeni'}">${esc(eAd[i.eylem]||i.eylem)}</span></td>
+        <td>${i.kullanici_adi?`<a href="#" onclick="kullaniciDetay('${escJs(i.kullanici_adi)}');return false">@${esc(i.kullanici_adi)}</a>`:(i.cihaz_kimlik?`<span class="mono" style="font-size:11px">${esc(i.cihaz_kimlik)}</span>`:'—')}</td>
+        <td>${i.kalici?'KALICI':(i.bitis?esc(new Date(i.bitis).toLocaleString('tr')):'—')}</td>
+        <td style="max-width:260px">${esc(i.sebep||'—')}</td>
+        <td class="mono" style="font-size:11px;color:var(--soluk)">${esc(i.yonetici||'—')}</td>
+      </tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Kayıt yok</td></tr></tbody>';
+  }catch(e){ $('#yas-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi: '+esc(e.message)+'</td></tr></tbody>'; }
+}
+async function cihazYasak(kimlik,yasakli){
+  if(yasakli){
+    const sebep=prompt('Cihaz banı sebebi (ZORUNLU):','ban kaçağı — tekrar tekrar hesap açma');
+    if(!sebep) return;
+    if(!confirm('DİKKAT: cihaz kimliği kurulum başına üretilir. Uygulama silinip kurulunca DEĞİŞİR — bu ban “bir daha asla açamaz” demek DEĞİLDİR.\nDevam edilsin mi?')) return;
+    await api('/cihaz-yasak',{method:'POST',body:JSON.stringify({kimlik,yasakli:true,kalici:true,sebep})});
+  }else{
+    if(!confirm('Cihaz banı kalksın mı?')) return;
+    await api('/cihaz-yasak',{method:'POST',body:JSON.stringify({kimlik,yasakli:false})});
+  }
+  yasaklariYukle();
+  if(!$('#k-modal').classList.contains('gizli')&&SON_KULLANICI) kullaniciDetay(SON_KULLANICI);
+}
+async function guvenDuzelt(id,ad){
+  const d=prompt('Güven skoru değişimi (-100..100, örn -10 ya da +15):','+10');
+  if(d===null) return;
+  const n=parseInt(d,10);
+  if(!Number.isInteger(n)||n===0){ alert('Sıfır olmayan tam sayı gir.'); return; }
+  const not=prompt('Açıklama (denetim izine yazılır):','')||'';
+  try{
+    await api('/guven',{method:'POST',body:JSON.stringify({id,degisim:n,aciklama:not})});
+    if(ad) kullaniciDetay(ad);
+  }catch(e){ alert('Olmadı: '+e.message); }
+}
 
 /* ---- Kaçış yardımcıları (GÜVENLİK — 3 Ağu 2026 denetimi §2.1/§2.4) ----
    Panelin gösterdiği her şey KULLANICI VERİSİDİR: istek yolu ve HTTP metodu
@@ -1793,6 +2164,8 @@ globeKur(); tik(); setInterval(tik,3000);
 // önbellekli olduğundan tekrar maliyeti readdir+stat kadar).
 // Rozetler açılışta dolsun (mail, geri bildirim, disk/yedek uyarısı)
 mailFiltre('hepsi'); mailleriYukle(); geriBildirimYukle(); depolamaYukle();
+// İtiraz rozeti açılışta dolsun: bekleyen itiraz gözden kaçmasın.
+itirazlariYukle();
 setInterval(()=>{ if($('#m-modal').classList.contains('gizli')) mailleriYukle(); },60000);
 </script>
 </body>
