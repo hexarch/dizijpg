@@ -146,13 +146,14 @@ class _KarsilamaEkraniState extends State<KarsilamaEkrani> {
                   ? const Center(child: CircularProgressIndicator())
                   : GridView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            childAspectRatio: 0.62,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                          ),
+                      // Hücre BİREBİR 2:3 (başlık yok → pay 0). Eskiden
+                      // `childAspectRatio: 0.62` idi; poster 0.667 olduğu için
+                      // BoxFit.cover her posteri yanlardan ~%7 KIRPIYORDU.
+                      gridDelegate: const PosterIzgarasi(
+                        bosluk: 10,
+                        satirBoslugu: 10,
+                        baslikYuksekligi: 0,
+                      ),
                       itemCount: _icerikler.length,
                       itemBuilder: (context, i) {
                         final ic = _icerikler[i];

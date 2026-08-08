@@ -120,6 +120,18 @@ class _BolumEkraniState extends State<BolumEkrani> {
     }
   }
 
+  /// Bölüme puan verilince sunucu bölümü "izledim" işaretler (POST /puan
+  /// `izlendi: true` döner). Yan etki SESSİZ kalmamalı: buton anında "İzledin"
+  /// olur ve kullanıcıya ne olduğu söylenir.
+  void _puanlaIzlendi() {
+    if (_izlendi) return;
+    setState(() => _izlendi = true);
+    KitaplikDurumu.isaretle('tv', widget.tmdbId, true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Bölüm izlendi olarak işaretlendi'.c)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget govde;
@@ -193,6 +205,19 @@ class _BolumEkraniState extends State<BolumEkrani> {
                       : null,
                   icon: Icon(_izlendi ? Icons.check_circle : Icons.visibility),
                   label: Text(_izlendi ? 'İzledin'.c : 'İzledim'.c),
+                ),
+                // BÖLÜM PUANI (8 Ağu 2026-d) — bölümün ASIL evi burası.
+                // "İzledim"in hemen altında: izleme → değerlendirme sırası
+                // kullanıcının doğal akışı. Dizinin GENEL puanı bu ekranda
+                // YOK; o dizi sayfasında durur, ikisi ayrı satırdır.
+                const SizedBox(height: 14),
+                Center(
+                  child: BolumPuani(
+                    tmdbId: widget.tmdbId,
+                    sezon: widget.sezonNo,
+                    bolum: widget.bolumNo,
+                    izlendiIsaretlendi: _puanlaIzlendi,
+                  ),
                 ),
                 if ((b['overview'] as String?)?.isNotEmpty == true) ...[
                   const SizedBox(height: 14),

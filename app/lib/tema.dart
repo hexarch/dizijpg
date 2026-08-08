@@ -140,8 +140,46 @@ bool masaustuMu(BuildContext context) =>
     MediaQuery.sizeOf(context).width >= masaustuEsigi;
 
 /// Masaüstünde sayfa gövdesinin ortalandığı azami genişlik: 1440'lık ekranda
-/// mobil düzenin gerilmesini engeller.
+/// mobil düzenin gerilmesini engeller. İKİ SÜTUNLU içerik içindir (profil
+/// üst bölümü: kimlik + ölçümler yan yana).
 const double masaustuIcerikGenisligi = 1080;
+
+/// Masaüstünde TEK SÜTUNLU okuma kolonunun azami genişliği: akış kartları,
+/// profil/kullanıcı yorumları, takvim listesi, uzun metin sayfaları.
+///
+/// NEDEN 720: `ui-ux-pro-max` → Layout / "Container Width" (severity Medium):
+/// *"Do: Limit max-width for text content (65-75ch) — Don't: Let text span
+/// full viewport width"*. 15-16 px gövde metninde 65-75ch ≈ 585-675 px; kart
+/// iç dolgusu (2×16) düşülünce 720 dp'lik kolon tam bu aralığa oturur.
+///
+/// Değerin kendisi YENİ DEĞİL: akış (`akis.dart`) ve profil yorumları
+/// (`profil.dart`) 3 Ağu'dan beri elle yazılmış `maxWidth: 720` kullanıyordu.
+/// Burada yalnız TEK KAYNAĞA taşındı; o iki ekranın davranışı değişmedi.
+const double masaustuKolonGenisligi = 720;
+
+/// Geniş ekranda içeriği ORTALAYAN ve [azami] genişlikte sınırlayan sarmalayıcı.
+///
+/// Dört ekranda dört ayrı sabit yerine tek kalıp: [masaustuKolonGenisligi]
+/// (okuma kolonu), [masaustuIcerikGenisligi] (iki sütunlu içerik) ya da ekranın
+/// kendi gerekçeli sabiti verilir.
+///
+/// ÜST SINIR, sabit genişlik DEĞİL: pencere sınırın altına inince kısıt
+/// bağlayıcı olmaz ve içerik eskisi gibi tam genişlikte kalır — telefon
+/// düzeni birebir korunur (`ui-ux-pro-max`, Responsive: "Fixed px container
+/// widths" bir anti-desendir).
+class OrtaKolon extends StatelessWidget {
+  final double azami;
+  final Widget cocuk;
+  const OrtaKolon({super.key, required this.azami, required this.cocuk});
+
+  @override
+  Widget build(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: azami),
+      child: cocuk,
+    ),
+  );
+}
 
 /// Seçilen mod + cihaz parlaklığından "açık tema mı?" kararı.
 bool temaAcikMi(String mod, Brightness cihaz) =>

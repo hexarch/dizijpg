@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
+import '../puan.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
@@ -602,10 +603,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           ),
                           child: Text(
                             '{} dizi.jpg'.cf([
-                              ((num.tryParse('${_incelemeler!['ortalama']}') ??
-                                          0) /
-                                      2)
-                                  .toStringAsFixed(1),
+                              yildizOrtalamaMetni(_incelemeler!['ortalama']),
                             ]),
                             style: const TextStyle(
                               color: Colors.black,
@@ -936,7 +934,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                             ),
                             if (benimPuan != null)
                               Text(
-                                ' ${(benimPuan / 2).round()}',
+                                ' ${yildiza(benimPuan)}',
                                 style: TextStyle(
                                   color: DiziRenkler.sariMetin,
                                   fontWeight: FontWeight.w800,
@@ -1113,7 +1111,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                   size: 14,
                                 ),
                                 Text(
-                                  ' ${(((inc['puan'] as num?) ?? 0) / 2).round()}',
+                                  ' ${yildiza(inc['puan'])}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.w700,
                                   ),

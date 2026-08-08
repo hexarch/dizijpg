@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
+import 'package:dizijpg/ceviri.dart';
 import 'package:dizijpg/ekranlar/takvim.dart';
 import 'package:dizijpg/onbellek.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Bu testler 2. kusuru kilitler: eksik yanıt önbelleğe YAZILMAZ, süresi
 /// dolmuş kopya gösterilmez, damgasız eski kayıt çökme yerine bayat sayılır.
+///
+/// NOT (8 Ağu 2026): önbellek anahtarları artık dil kodu taşıyor
+/// (`onb_takvim@tr`) — dil değişince eski dildeki gövde boyanmasın diye.
+/// Ham kayıt kuran testler [_anahtar] ile üretiyor; anahtar biçimi tek
+/// yerden değişsin (ayrıntı: lib/onbellek.dart, test/onbellek_dil_test.dart).
+/// Onbellek'in prefs anahtarı: `onb_<anahtar>@<dil>`.
+String _anahtar(String ad) => 'onb_$ad@${Ceviri.dil.value}';
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -41,7 +50,7 @@ void main() {
     test('damgasız ESKİ biçim kayıt çökmez, bayat sayılır', () async {
       // 1.15.0 öncesi sürümlerin bıraktığı ham kayıt (zarfsız).
       SharedPreferences.setMockInitialValues({
-        'onb_t': jsonEncode({
+        _anahtar('t'): jsonEncode({
           'takvim': [1],
         }),
       });
@@ -60,7 +69,7 @@ void main() {
     test('yaş eşiği: damganın kendisine göre bayatlar', () async {
       final eski = DateTime.now().subtract(const Duration(hours: 20));
       SharedPreferences.setMockInitialValues({
-        'onb_t': jsonEncode({
+        _anahtar('t'): jsonEncode({
           'z': eski.millisecondsSinceEpoch,
           'v': {'takvim': []},
         }),
@@ -72,7 +81,7 @@ void main() {
     });
 
     test('bozuk kayıt null döner, çökmez', () async {
-      SharedPreferences.setMockInitialValues({'onb_t': 'bu json degil'});
+      SharedPreferences.setMockInitialValues({_anahtar('t'): 'bu json degil'});
       expect(await Onbellek.okuKayit('t'), isNull);
     });
   });
@@ -201,7 +210,7 @@ void main() {
     ) async {
       final cokEski = DateTime.now().subtract(const Duration(days: 9));
       SharedPreferences.setMockInitialValues({
-        'onb_takvim': jsonEncode({
+        _anahtar('takvim'): jsonEncode({
           'z': cokEski.millisecondsSinceEpoch,
           'v': {
             'takvim': [bolum(96677, 'Lupin', '2020-01-01')],

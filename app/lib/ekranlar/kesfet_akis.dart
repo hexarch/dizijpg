@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart' show Uint8List, listEquals;
+import 'package:flutter/foundation.dart' show listEquals, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,12 +14,14 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
+import '../medya_yukle.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
+import 'medya_inceleme.dart';
 import 'ortak.dart';
 import 'paylas.dart';
 
@@ -101,6 +105,29 @@ class TekrarAyraci extends StatelessWidget {
 /// kalırlar; oradan Reels açılınca yazı gönderisi hâlâ çizilir, bu yüzden
 /// _ReelSayfa'nın yazı yolu CANLI KOD'dur, silinmemelidir.
 /// Izgaradan birine dokununca tam ekran dikey kaydırmalı görünüm açılır.
+/// Keşfet karoları arasındaki boşluk (yatay = dikey) ve karo en/boy oranı.
+/// Tek yerde: iskelet ızgara ile gerçek ızgara AYNI ölçüyü kullanmalı, yoksa
+/// içerik gelince sayfa zıplar (`ui-ux-pro-max` → Layout / "Content Jumping",
+/// severity High: *"Do: Reserve space for async content"*).
+const double kesfetKaroBoslugu = 2;
+const double kesfetKaroOrani = 0.66;
+
+/// Keşfet ızgarasının sütun sayısı: ÖLÇÜLEN kolon genişliğinden türer.
+///
+/// Sabit "geniş ekranda 5 sütun" kuralı kaldırıldı: ızgara artık ekranın
+/// tamamına değil [masaustuKolonGenisligi] kolonuna sığıyor ve 5 sütun orada
+/// sıkışırdı. Hesap, poster ızgaralarının kanıtlanmış kalıbıyla AYNI
+/// fonksiyondan gelir ([posterSutunlari], ortak.dart) — kalıp yeniden
+/// icat edilmedi: hedef kart genişliği [posterKartHedefGenisligi] (168) ve
+/// alt sınır 3, yani 360-430 dp telefonlarda sonuç bugünküyle BİREBİR aynı
+/// (3 sütun).
+int kesfetSutunlari(double kolonGenisligi) => posterSutunlari(
+  // Izgaranın kendi dolgusu (her iki yandan) düşülür: karo genişliği
+  // gerçekten kullanılabilir alandan hesaplansın.
+  kolonGenisligi - kesfetKaroBoslugu * 2,
+  bosluk: kesfetKaroBoslugu,
+);
+
 class KesfetAkisEkrani extends StatefulWidget {
   const KesfetAkisEkrani({super.key});
 
@@ -279,9 +306,9 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   Widget _izgara(int bas, int son, int sutun) => SliverGrid.builder(
     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: sutun,
-      mainAxisSpacing: 2,
-      crossAxisSpacing: 2,
-      childAspectRatio: 0.66,
+      mainAxisSpacing: kesfetKaroBoslugu,
+      crossAxisSpacing: kesfetKaroBoslugu,
+      childAspectRatio: kesfetKaroOrani,
     ),
     itemCount: son - bas,
     itemBuilder: (context, j) {
@@ -306,18 +333,25 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_liste == null) {
-      govde = GridView.builder(
-        padding: const EdgeInsets.all(2),
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 2,
-          crossAxisSpacing: 2,
-          childAspectRatio: 0.66,
+      // İskelet de AYNI kolona ve AYNI sütun hesabına oturur: içerik gelince
+      // karolar yerinden oynamasın.
+      govde = OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: LayoutBuilder(
+          builder: (context, kisit) => GridView.builder(
+            padding: const EdgeInsets.all(kesfetKaroBoslugu),
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: kesfetSutunlari(kisit.maxWidth),
+              mainAxisSpacing: kesfetKaroBoslugu,
+              crossAxisSpacing: kesfetKaroBoslugu,
+              childAspectRatio: kesfetKaroOrani,
+            ),
+            itemCount: 12,
+            itemBuilder: (context, i) =>
+                const IskeletKutu(genislik: 120, yukseklik: 180),
+          ),
         ),
-        itemCount: 12,
-        itemBuilder: (context, i) =>
-            const IskeletKutu(genislik: 120, yukseklik: 180),
       );
     } else if (_liste!.isEmpty) {
       govde = BosDurum(
@@ -328,46 +362,62 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
                 .c,
       );
     } else {
-      final genis = MediaQuery.of(context).size.width > 900;
-      final sutun = genis ? 5 : 3;
       final tekrarBasi = _sayfalama.tekrarBasi;
+      // PC'de ızgara ekranın iki ucuna dayanmasın: akış/takvim/profil ile AYNI
+      // ortalanmış kolon ([masaustuKolonGenisligi], tema.dart). Kullanıcı
+      // isteği (8 Ağu 2026): "reels videolarının bulunduğu ekranı da akış ve
+      // takvim gibi ortaya alacaktın almamışsın".
+      //
+      // Sütun sayısı ARTIK SABİT DEĞİL: kolon daraldığı için 5 sütun sıkışırdı;
+      // [kesfetSutunlari] ölçülen kolon genişliğinden türetir (LayoutBuilder —
+      // `ui-ux-pro-max` flutter/Layout: *"LayoutBuilder for adaptive layouts —
+      // Don't: fixed sizes for responsive"*). Telefonda sonuç değişmez (3).
+      //
       // Görülmemişler → ayraç → tekrar gösterilenler. Tek ızgara yerine iki
       // sliver: ayraç tam genişlikte durur, indeksler global kalır.
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: CustomScrollView(
-          controller: _kaydirma,
-          slivers: [
-            SliverPadding(
-              padding: const EdgeInsets.all(2),
-              sliver: _izgara(0, tekrarBasi ?? _liste!.length, sutun),
-            ),
-            if (tekrarBasi != null) ...[
-              const SliverToBoxAdapter(child: TekrarAyraci()),
-              SliverPadding(
-                padding: const EdgeInsets.all(2),
-                sliver: _izgara(tekrarBasi, _liste!.length, sutun),
-              ),
-            ],
-            // Sonraki sayfa yüklenirken alt tarafta dönen gösterge
-            if (_yukluyor)
-              const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 18),
-                  child: Center(
-                    child: SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: DiziRenkler.sari,
+        child: OrtaKolon(
+          azami: masaustuKolonGenisligi,
+          cocuk: LayoutBuilder(
+            builder: (context, kisit) {
+              final sutun = kesfetSutunlari(kisit.maxWidth);
+              return CustomScrollView(
+                controller: _kaydirma,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(kesfetKaroBoslugu),
+                    sliver: _izgara(0, tekrarBasi ?? _liste!.length, sutun),
+                  ),
+                  if (tekrarBasi != null) ...[
+                    const SliverToBoxAdapter(child: TekrarAyraci()),
+                    SliverPadding(
+                      padding: const EdgeInsets.all(kesfetKaroBoslugu),
+                      sliver: _izgara(tekrarBasi, _liste!.length, sutun),
+                    ),
+                  ],
+                  // Sonraki sayfa yüklenirken alt tarafta dönen gösterge
+                  if (_yukluyor)
+                    const SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 18),
+                        child: Center(
+                          child: SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: DiziRenkler.sari,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-          ],
+                ],
+              );
+            },
+          ),
         ),
       );
     }
@@ -707,6 +757,91 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
 }
 
 /// Tam ekran dikey kaydırmalı Reels görünümü.
+/// Masaüstünde Reels sahnesinin ORANI: dikey video çerçevesi (9:16).
+///
+/// NEDEN ORAN, NEDEN SABİT PİKSEL DEĞİL: Reels bir metin kolonu değil, tam
+/// ekran DİKEY VİDEO. Ona 720 dp'lik okuma kolonunu vermek 1080 dp yüksekliğe
+/// 720 dp genişlik demek olurdu (2:3) — video yine ortada durur ama üst/alt
+/// katmanlar (kullanıcı adı, eylem sütunu, ilerleme çubuğu) videonun siyah
+/// kenarlarına taşardı. Genişliği YÜKSEKLİKTEN türetince tuval telefondaki
+/// çerçevenin aynısı olur: bindirmeler videonun kenarına oturur.
+/// (`ui-ux-pro-max` → flutter/Layout: *"LayoutBuilder for adaptive layouts —
+/// Don't: fixed sizes for responsive"*.)
+const double reelsTuvalOrani = 9 / 16;
+
+/// Tuvalin genişleyebileceği EN YATAY oran (16:9).
+///
+/// NEDEN GENİŞLEYEBİLİYOR (8 Ağu 2026 ölçümü): 9:16 tuval yalnız DİKEY medya
+/// için doğru. 1568×764'lük pencerede tuval 430 dp; içine 16:9 bir kare
+/// (dizi/film ekran görüntüsü — Keşfet'in en sık içeriği) `BoxFit.contain` ile
+/// oturunca yüksekliğin ancak **%31,6**'sını dolduruyordu: üstte ve altta
+/// ~261 dp siyah boşluk, metin ve eylem sütunu medyanın çok altında.
+///
+/// Çözüm: tuvalin ORANI ekrandaki medyanın oranını izler (alt sınır 9:16 —
+/// dikey videoda bugünkü çerçeve birebir korunur, üst sınır 16:9). Kırpma YOK
+/// (`BoxFit.cover` seçilseydi 16:9 bir karenin genişliğinin ~%68'i kesilirdi),
+/// medya küçültülmez; yalnız çerçeve içeriğe uyar.
+const double reelsAzamiTuvalOrani = 16 / 9;
+
+/// Tuvalin masaüstünde alabileceği EN BÜYÜK genişlik.
+///
+/// Oran serbest bırakılırsa 16:9 medyada tuval 1358 dp'ye çıkar ve 7 Ağu'da
+/// düzeltilen sorun geri gelir (kullanıcı adı solda, eylem sütunu çok uzakta).
+/// Sitenin kendi içerik genişliği ([masaustuIcerikGenisligi], 1080) tavan
+/// olarak kullanılır: bindirmeler hiçbir zaman içerik kolonundan geniş yayılmaz.
+const double reelsAzamiTuvalGenisligi = masaustuIcerikGenisligi;
+
+/// Verilen sahne ölçüsünde Reels tuvalinin genişliği.
+/// Yüksekliğe sığan [oran] çerçevesi; ekran ondan darsa (mobil) tam genişlik.
+///
+/// [oran] verilmezse 9:16 — yani ÖLÇÜLMEMİŞ/dikey medyada davranış eskisiyle
+/// birebir aynıdır (telefon düzeni bu yoldan hiç etkilenmez).
+double reelsTuvalGenisligi(
+  double genislik,
+  double yukseklik, {
+  double oran = reelsTuvalOrani,
+}) {
+  if (!genislik.isFinite || genislik <= 0) return genislik;
+  if (!yukseklik.isFinite || yukseklik <= 0) return genislik;
+  final o = (oran.isFinite && oran > 0 ? oran : reelsTuvalOrani).clamp(
+    reelsTuvalOrani,
+    reelsAzamiTuvalOrani,
+  );
+  final oranli = yukseklik * o;
+  final sigan = oranli < genislik ? oranli : genislik;
+  return sigan < reelsAzamiTuvalGenisligi ? sigan : reelsAzamiTuvalGenisligi;
+}
+
+/// Bir fotoğrafın GERÇEK en/boy oranını ölçer (görsel zaten önbellekte;
+/// ölçüm ek indirme yapmaz). Testlerde değiştirilebilsin diye değişken.
+@visibleForTesting
+Future<double?> Function(String url) reelsFotoOraniOlcer = _fotoOraniniOlc;
+
+Future<double?> _fotoOraniniOlc(String url) {
+  final tamam = Completer<double?>();
+  final akis = CachedNetworkImageProvider(
+    url,
+  ).resolve(ImageConfiguration.empty);
+  late final ImageStreamListener dinleyici;
+  void bitir(double? o) {
+    if (tamam.isCompleted) return;
+    akis.removeListener(dinleyici);
+    tamam.complete(o);
+  }
+
+  dinleyici = ImageStreamListener(
+    (bilgi, _) => bitir(
+      bilgi.image.height == 0
+          ? null
+          : bilgi.image.width / bilgi.image.height.toDouble(),
+    ),
+    // Görsel inmezse ölçüm de yoktur: tuval 9:16 kalır (bugünkü davranış).
+    onError: (_, _) => bitir(null),
+  );
+  akis.addListener(dinleyici);
+  return tamam.future;
+}
+
 class ReelsGorunumu extends StatefulWidget {
   final List<dynamic> liste;
   final Map<String, dynamic> icerikler;
@@ -742,6 +877,23 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
   late int _aktif = widget.baslangic; // yalnız aktif sayfa oynar/işaretlenir
   bool _getiriyor = false;
 
+  /// Masaüstü tuvalinin oranı: EKRANDAKİ medyanın ölçülen oranı (bilinmiyorsa
+  /// 9:16). Yalnız aktif sayfa bildirir.
+  double _oran = reelsTuvalOrani;
+
+  /// Aktif sayfa medyasının oranını bildirdi.
+  ///
+  /// Kare sırasında `setState` çağrılmaz (çocuk `initState`/`didUpdateWidget`
+  /// içinden bildirebilir) → kare sonrasına ertelenir.
+  void _oranGeldi(int sayfa, double o) {
+    if (sayfa != _aktif || !o.isFinite || o <= 0) return;
+    if ((o - _oran).abs() < 0.001) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || sayfa != _aktif || (o - _oran).abs() < 0.001) return;
+      setState(() => _oran = o);
+    });
+  }
+
   @override
   void dispose() {
     _sayfa.dispose();
@@ -764,34 +916,65 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
 
   @override
   Widget build(BuildContext context) {
+    final sayfalar = PageView.builder(
+      controller: _sayfa,
+      scrollDirection: Axis.vertical,
+      itemCount: widget.liste.length,
+      // Komşu sayfalar ÖNDEN kurulur → sıradaki video kaydırmadan önce
+      // yüklenmeye başlar (bunsuz her kaydırışta bekleniyordu).
+      allowImplicitScrolling: true,
+      // Aktif sayfa değişince: yalnız görünen sayfa video oynatır ve
+      // "görüldü" işaretlenir (komşu sayfalar önden kurulsa da sessiz).
+      onPageChanged: (i) {
+        setState(() => _aktif = i);
+        if (i >= widget.liste.length - 3) _dahaGetir();
+      },
+      itemBuilder: (context, i) => _ReelSayfa(
+        // Tekrar turunda aynı id iki kez bulunabilir → indeks de girer.
+        key: ValueKey('$i-${(widget.liste[i] as Map)['id']}'),
+        yorum: widget.liste[i] as Map<String, dynamic>,
+        icerikler: widget.icerikler,
+        aktif: i == _aktif,
+        onOran: (o) => _oranGeldi(i, o),
+        // Yalnız açılış gönderisi dokunulan medyadan başlar; diğerleri
+        // her zaman baştan.
+        medyaBaslangic: i == widget.baslangic ? widget.medyaBaslangic : 0,
+      ),
+    );
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          PageView.builder(
-            controller: _sayfa,
-            scrollDirection: Axis.vertical,
-            itemCount: widget.liste.length,
-            // Komşu sayfalar ÖNDEN kurulur → sıradaki video kaydırmadan önce
-            // yüklenmeye başlar (bunsuz her kaydırışta bekleniyordu).
-            allowImplicitScrolling: true,
-            // Aktif sayfa değişince: yalnız görünen sayfa video oynatır ve
-            // "görüldü" işaretlenir (komşu sayfalar önden kurulsa da sessiz).
-            onPageChanged: (i) {
-              setState(() => _aktif = i);
-              if (i >= widget.liste.length - 3) _dahaGetir();
-            },
-            itemBuilder: (context, i) => _ReelSayfa(
-              // Tekrar turunda aynı id iki kez bulunabilir → indeks de girer.
-              key: ValueKey('$i-${(widget.liste[i] as Map)['id']}'),
-              yorum: widget.liste[i] as Map<String, dynamic>,
-              icerikler: widget.icerikler,
-              aktif: i == _aktif,
-              // Yalnız açılış gönderisi dokunulan medyadan başlar; diğerleri
-              // her zaman baştan.
-              medyaBaslangic: i == widget.baslangic ? widget.medyaBaslangic : 0,
-            ),
-          ),
+          // MASAÜSTÜ: sahne dikey tuvale sığdırılıp ORTALANIR — 1920 dp'lik
+          // ekranda kullanıcı adı solda, eylem sütunu 1900 dp ötede sağdaydı.
+          // Tuvalin İÇİ değişmez: video oranı, `PointerInterceptor`lu dokunuş
+          // katmanı ve sağdaki eylem sütunu sayfanın kendi Stack'inde kalır,
+          // yalnız sayfanın genişliği değişir.
+          //
+          // Tuvalin ORANI ekrandaki medyayı izler ([reelsAzamiTuvalOrani]):
+          // dikey videoda 9:16 (değişiklik yok), YATAY medyada çerçeve genişler
+          // ve siyah boşluk kapanır. Geçiş 200 ms yumuşatılır — anlık zıplama
+          // `ui-ux-pro-max` → Animation/"Instant state changes (0ms)" karşıtı.
+          // MOBİL: [masaustuMu] false → sayfa doğrudan çizilir, hiçbir
+          // sarmalayıcı eklenmez (bugünkü ağaç birebir aynı).
+          if (masaustuMu(context))
+            Center(
+              child: LayoutBuilder(
+                builder: (context, kisit) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOut,
+                  width: reelsTuvalGenisligi(
+                    kisit.maxWidth,
+                    kisit.maxHeight,
+                    oran: _oran,
+                  ),
+                  child: sayfalar,
+                ),
+              ),
+            )
+          else
+            sayfalar,
           SafeArea(
             child: Align(
               alignment: Alignment.topLeft,
@@ -818,12 +1001,18 @@ class _ReelSayfa extends StatefulWidget {
   final Map<String, dynamic> icerikler;
   final bool aktif; // ekranda görünen sayfa mı (yalnız o oynar/işaretlenir)
   final int medyaBaslangic; // açılışta gösterilecek medyanın sırası
+
+  /// Ekrandaki medyanın en/boy oranı bilinince çağrılır (masaüstü tuvali
+  /// çerçeveyi buna göre kurar). Yalnız AKTİF sayfa bildirir.
+  final ValueChanged<double>? onOran;
+
   const _ReelSayfa({
     super.key,
     required this.yorum,
     required this.icerikler,
     this.aktif = true,
     this.medyaBaslangic = 0,
+    this.onOran,
   });
 
   @override
@@ -876,6 +1065,35 @@ class _ReelSayfaState extends State<_ReelSayfa>
     return (m != null && !_videoMu(m)) ? m : null;
   }
 
+  /// Ekrandaki medyanın ÖLÇÜLEN en/boy oranı (video: oynatıcıdan, fotoğraf:
+  /// görselin kendi ölçüsünden). Bilinmiyorsa null → tuval 9:16 kalır.
+  double? _medyaOrani;
+
+  /// Fotoğraf ölçüm sırası: yana kaydırılınca eski ölçüm geç gelirse yanlış
+  /// orana düşülmesin.
+  int _olcumSirasi = 0;
+
+  /// Oranı üst görünüme bildirir. Medyalı gönderide ÖLÇÜM GELMEDEN bildirim
+  /// yapılmaz: aksi halde tuval önce 9:16'ya daralır, ölçüm gelince genişler
+  /// (iki zıplama). Medyasız (yazılı) gönderide oran doğrudan 9:16'dır.
+  void _oranBildir() {
+    if (!widget.aktif) return;
+    final o = _medyaOrani ?? (_medya.isEmpty ? reelsTuvalOrani : null);
+    if (o != null) widget.onOran?.call(o);
+  }
+
+  /// Ekrandaki medya fotoğrafsa oranını ölçtürür (video oranı oynatıcı
+  /// kurulunca gelir).
+  Future<void> _oraniOlc() async {
+    final f = _fotoUrl;
+    if (f == null) return;
+    final sira = ++_olcumSirasi;
+    final o = await reelsFotoOraniOlcer(f);
+    if (!mounted || sira != _olcumSirasi || o == null || o <= 0) return;
+    _medyaOrani = o;
+    _oranBildir();
+  }
+
   bool _isaretlendi = false;
 
   /// Bu gönderiyi gördü → bir daha akış/keşfette gösterilmesin (yalnız bir kez,
@@ -904,7 +1122,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
     super.didUpdateWidget(eski);
     if (widget.aktif && !eski.aktif) _isaretle();
     if (widget.aktif != eski.aktif) _videoDurumGuncelle();
-    if (widget.aktif && !eski.aktif) _medyaOnbellekle();
+    if (widget.aktif && !eski.aktif) {
+      _medyaOnbellekle();
+      // Bu sayfa aktif oldu: tuval oranını (biliniyorsa) hemen bildir.
+      _oranBildir();
+    }
   }
 
   @override
@@ -916,6 +1138,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
     );
     if (widget.aktif) _isaretle();
     _videoKur();
+    _oraniOlc();
+    _oranBildir();
     if (widget.aktif) _medyaOnbellekle();
   }
 
@@ -963,6 +1187,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
             return;
           }
           setState(() => _d = d);
+          // Videonun GERÇEK oranı: masaüstü tuvali çerçeveyi buna göre kurar.
+          final vo = d.value.aspectRatio;
+          if (vo.isFinite && vo > 0) {
+            _medyaOrani = vo;
+            _oranBildir();
+          }
           d.setLooping(true);
           _videoDurumGuncelle(); // yalnız aktifse oynar
           d.addListener(() {
@@ -979,14 +1209,22 @@ class _ReelSayfaState extends State<_ReelSayfa>
     if (hiz < 0) {
       if (_medyaSayfa < _medya.length - 1) {
         setState(() => _medyaSayfa++);
-        _videoKur();
+        _medyaDegisti();
       } else {
         kullaniciyaGit(context, y['kullanici_adi'] as String);
       }
     } else if (hiz > 0 && _medyaSayfa > 0) {
       setState(() => _medyaSayfa--);
-      _videoKur();
+      _medyaDegisti();
     }
+  }
+
+  /// Çoklu gönderide ekrandaki medya değişti: oynatıcı yenilenir ve tuval
+  /// oranı yeni medyaya göre baştan ölçülür.
+  void _medyaDegisti() {
+    _videoKur();
+    _medyaOrani = null;
+    _oraniOlc();
   }
 
   @override
@@ -1652,6 +1890,11 @@ Future<void> yanitlariAc(BuildContext context, Map<String, dynamic> yorum) =>
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
+      // Yorumlar da bir OKUMA kolonu: masaüstünde sheet 1920 dp'ye yayılınca
+      // avatar solda, saat sağda, arası bomboş kalıyordu. Akışla AYNI genişlik
+      // ([masaustuKolonGenisligi]) — sheet o zaman yatayda ortalanır.
+      // MOBİLDE ETKİSİZ: 360-430 dp ekranda kısıt bağlamaz, sheet tam genişlik.
+      constraints: const BoxConstraints(maxWidth: masaustuKolonGenisligi),
       backgroundColor: DiziRenkler.koyuGri,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
@@ -1728,6 +1971,14 @@ TextEditingValue emojiEkle(TextEditingValue deger, String emoji) {
   );
 }
 
+/// Bir Reels yanıtına eklenebilecek en çok medya.
+///
+/// SUNUCU TAVANI 10 (`POST /yorumlar`, `medya.length > 10` → 400); buradaki 4
+/// bilinçli olarak daha düşük: yanıt kutusu klavyenin üstünde dar bir sheet'in
+/// dibinde duruyor ve 60 dp'lik ek karoları 360 dp genişlikte tek satıra ancak
+/// 4 tane sığıyor. Ana yorum kutusunda (tam sayfa) tavan `enCokEk` = 10.
+const enCokYanitEk = 4;
+
 /// Bir gönderinin yanıtları + yazma kutusu. Reels ve profil yorum akışı
 /// AYNI sheet'i kullanır: beğeni ve yanıtlar tek veri kaynağından geldiği için
 /// nerede atılırsa atılsın her iki tarafta da görünür.
@@ -1749,6 +2000,10 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   bool _gonderiliyor = false;
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
+  // Çoklu yüklemede ilerleme ("3/5"): kullanıcı takıldı sanmasın
+  // (ui-ux-pro-max, Feedback/Progress Indicators).
+  int _ekToplam = 0;
+  int _ekBiten = 0;
   // Medya yüklenirken gönder'e basıldı: yükleme bitince metin+medya BİRLİKTE
   // gider (sohbet ekranında medyasız gönderim hatası buradan çıkmıştı).
   bool _gonderBekliyor = false;
@@ -1823,53 +2078,103 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
     }
   }
 
-  /// Fotoğraf / video eki (galeri).
+  /// Fotoğraf / video eki: sistem Fotoğraf Seçici → **inceleme/düzenleme
+  /// ekranı** (kalem = görsel editörü, makas = video trim) → yükleme.
+  ///
+  /// ÇOKLU SEÇİM AÇIK — veri modeli destekliyor: Reels yanıtı da bir
+  /// YORUMDUR, `POST /yorumlar`a gider (aşağıdaki [_gonder]) ve
+  /// `yorumlar.medya` kolonu **TEXT[]**'tir (`backend/sema.sql:68`); sunucu
+  /// tek istekte 10 medyaya kadar kabul eder (`server.js:4884`). Sohbetteki
+  /// tek dosya sınırı buraya UYGULANMAZ, çünkü orada kolon TEXT.
+  ///
+  /// Buradaki tavan [enCokYanitEk] (4), sunucununkinden (10) bilerek düşük:
+  /// yanıt kutusu dar bir sheet'in dibinde ve karolar tek satıra sığmalı.
   Future<void> _ekSec() async {
     if (!girisGerekli(context)) return;
-    if (_ekler.length >= 4) return;
-    final secim = await ImagePicker().pickMedia();
-    if (secim == null) return;
-    await _ekYukle(() => secim.readAsBytes());
+    final kalan = enCokYanitEk - _ekler.length;
+    if (kalan <= 0 || _ekYukleniyor) return;
+    final secim = await medyaSec(context, azami: kalan);
+    if (secim.isEmpty || !mounted) return;
+    await _ekYukle(secim);
   }
 
   /// GIF eki. Dış GIF servisi (Giphy/Tenor) YOK — anahtar/gizli bilgi
-  /// gerektirir; kullanıcının kendi galerisinden .gif seçilir. Sunucu GIF'i
+  /// gerektirir; kullanıcının kendi dosyalarından .gif seçilir. Sunucu GIF'i
   /// sihirli baytla doğrular ve kırpmadan geçirir (animasyon bozulmaz).
+  ///
+  /// NEDEN HÂLÂ `FilePicker`, NEDEN [medyaSec] DEĞİL (7 Ağu 2026 kararı):
+  /// [medyaSec] GIF'i *kapsıyor* (Fotoğraf Seçici GIF'leri görsel olarak
+  /// listeler, inceleme ekranı GIF'i sihirli bayttan tanıyıp editörü hiç
+  /// açmaz), ama iki şeyi KAPSAMIYOR:
+  ///   1. **Uzantıya göre filtre.** Android Fotoğraf Seçici yalnız
+  ///      "görsel/video" ayrımı yapar; "yalnız GIF göster" diye bir kip yok.
+  ///      Bu düğmenin tek varlık nedeni o filtre.
+  ///   2. **MediaStore dışındaki dosyalar.** Tarayıcıdan indirilen GIF'ler
+  ///      çoğu cihazda galeriye değil `Downloads`a düşer; Fotoğraf Seçici
+  ///      onları göstermez, SAF (`ACTION_GET_CONTENT`) gösterir.
+  /// İzin açısından risk yok: `file_picker` de SAF kullanır, `READ_MEDIA_*`
+  /// istemez — Play reddine yol açan şey uygulama içi galeri ızgarasıydı.
+  /// Yükleme/sınır/hata yolu ise artık ORTAK ([medyalariYukle]).
   Future<void> _gifSec() async {
     if (!girisGerekli(context)) return;
-    if (_ekler.length >= 4) return;
+    if (_ekler.length >= enCokYanitEk || _ekYukleniyor) return;
     final secim = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['gif'],
       withData: true,
     );
     final veri = secim?.files.single.bytes;
-    if (veri == null) return;
-    await _ekYukle(() async => veri);
+    if (veri == null || !mounted) return;
+    await _ekYukle([
+      XFile.fromData(
+        veri,
+        mimeType: 'image/gif',
+        name: secim!.files.single.name,
+        length: veri.length,
+      ),
+    ]);
   }
 
-  Future<void> _ekYukle(Future<Uint8List> Function() oku) async {
-    setState(() => _ekYukleniyor = true);
+  /// Seçilen dosyaları SIRAYLA yükler ve ek karolarına ekler.
+  ///
+  /// KISMİ BAŞARI: bir dosya patlarsa geri kalanı yüklenmeye devam eder ve
+  /// sonunda kaçının yüklendiği/yüklenemediği söylenir — sessiz kayıp YOK
+  /// (`yorumlar.dart` ile aynı kalıp, kod ORTAK: [medyalariYukle]).
+  Future<void> _ekYukle(List<XFile> dosyalar) async {
+    setState(() {
+      _ekYukleniyor = true;
+      _ekToplam = dosyalar.length;
+      _ekBiten = 0;
+    });
+    MedyaYuklemeSonuc sonuc;
     try {
-      final veri = await oku();
-      if (veri.length > 30 * 1024 * 1024) {
-        throw ApiHata('Dosya en fazla {}MB olabilir'.cf([30]));
-      }
-      final d = await Api.medyaYukle(veri);
-      if (!mounted) return;
-      setState(() => _ekler.add({'yol': d['yol'], 'video': d['video']}));
-    } catch (e) {
-      if (!mounted) return;
-      _gonderBekliyor = false; // yükleme başarısız: bekleyen gönderim iptal
-      _uyar(e.toString());
+      sonuc = await medyalariYukle(
+        dosyalar,
+        adim: (biten) {
+          if (mounted) setState(() => _ekBiten = biten);
+        },
+      );
     } finally {
-      if (mounted) setState(() => _ekYukleniyor = false);
-      // Yükleme sürerken gönder'e basılmışsa şimdi gönder: metin de medya da
-      // kaybolmaz.
-      if (mounted && _gonderBekliyor) {
-        _gonderBekliyor = false;
-        await _gonder();
+      if (mounted) {
+        setState(() {
+          _ekYukleniyor = false;
+          _ekToplam = 0;
+          _ekBiten = 0;
+        });
       }
+    }
+    if (!mounted) return;
+    setState(() => _ekler.addAll(sonuc.yuklenen));
+    final bildirim = sonuc.bildirim;
+    if (bildirim != null) {
+      _gonderBekliyor = false; // yükleme aksadı: bekleyen gönderim iptal
+      _uyar(bildirim);
+    }
+    // Yükleme sürerken gönder'e basılmışsa şimdi gönder: metin de medya da
+    // kaybolmaz.
+    if (_gonderBekliyor) {
+      _gonderBekliyor = false;
+      await _gonder();
     }
   }
 
@@ -2007,7 +2312,8 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
             maxLines: 4,
             minLines: 1,
             decoration: InputDecoration(
-              hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
+              // KULLANICI İSTEĞİ (7 Ağu): "(@ ile etiketle)" ipucundan çıktı.
+              hintText: 'Yorum yaz...'.c,
               isDense: true,
               contentPadding: const EdgeInsets.fromLTRB(14, 10, 4, 10),
               suffixIconConstraints: const BoxConstraints(
@@ -2034,14 +2340,16 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                           _kutuIkonu(
                             ipucu: 'Fotoğraf / video ekle'.c,
                             ikon: Icons.attach_file,
-                            kapali: _ekYukleniyor || _ekler.length >= 4,
+                            kapali:
+                                _ekYukleniyor || _ekler.length >= enCokYanitEk,
                             yukleniyor: _ekYukleniyor,
                             onTap: _ekSec,
                           ),
                           _kutuIkonu(
                             ipucu: 'GIF ekle'.c,
                             ikon: Icons.gif_box_outlined,
-                            kapali: _ekYukleniyor || _ekler.length >= 4,
+                            kapali:
+                                _ekYukleniyor || _ekler.length >= enCokYanitEk,
                             onTap: _gifSec,
                           ),
                         ],
@@ -2220,6 +2528,39 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                                 ),
                               ),
                             ],
+                          ),
+                        // Çok dosya yüklenirken BELİRLİ ilerleme çubuğu +
+                        // "3/5" (ui-ux-pro-max, Feedback/Progress Indicators:
+                        // "Step 2 of 4 indicator" / "Don't: No indication of
+                        // progress"). Tek dosyada çıkmaz: ataç ikonundaki
+                        // spinner zaten yeterli, dar sheet'te fazlalık olur.
+                        if (_ekYukleniyor && _ekToplam > 1)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(3),
+                                    child: LinearProgressIndicator(
+                                      value: _ekBiten / _ekToplam,
+                                      minHeight: 4,
+                                      backgroundColor: DiziRenkler.metin12,
+                                      color: DiziRenkler.sari,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '$_ekBiten/$_ekToplam',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    color: DiziRenkler.metin70,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         if (_ekler.isNotEmpty)
                           Padding(

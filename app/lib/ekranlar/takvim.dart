@@ -205,35 +205,39 @@ class _TakvimEkraniState extends State<TakvimEkrani>
     if (_hata != null) {
       govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
     } else if (_takvim == null) {
-      // İskelet satırlar
-      govde = ListView(
-        padding: const EdgeInsets.all(12),
-        physics: const NeverScrollableScrollPhysics(),
-        children: [
-          for (var i = 0; i < 5; i++)
-            const Card(
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    IskeletKutu(genislik: 42, yukseklik: 62),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          IskeletKutu(genislik: 160, yukseklik: 14),
-                          SizedBox(height: 8),
-                          IskeletKutu(genislik: 110, yukseklik: 11),
-                        ],
+      // İskelet satırlar — gerçek listeyle AYNI kolonda (yükleme→dolu geçişinde
+      // içerik yana zıplamasın).
+      govde = OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: ListView(
+          padding: const EdgeInsets.all(12),
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            for (var i = 0; i < 5; i++)
+              const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      IskeletKutu(genislik: 42, yukseklik: 62),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            IskeletKutu(genislik: 160, yukseklik: 14),
+                            SizedBox(height: 8),
+                            IskeletKutu(genislik: 110, yukseklik: 11),
+                          ],
+                        ),
                       ),
-                    ),
-                    IskeletKutu(genislik: 74, yukseklik: 26),
-                  ],
+                      IskeletKutu(genislik: 74, yukseklik: 26),
+                    ],
+                  ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       );
     } else if (_takvimModu) {
       // Ay-takvimi görünümü: gerçek pencere (geçmiş ✓ + gelecek)
@@ -294,21 +298,29 @@ class _TakvimEkraniState extends State<TakvimEkrani>
           ],
         ),
       );
+      // Masaüstünde liste tüm genişliğe yayılmasın: akış/profil ile AYNI
+      // ortalanmış okuma kolonu (`OrtaKolon` + [masaustuKolonGenisligi]).
+      // 1920 dp'lik ekranda satırlar 1920 px uzuyordu: poster solda, tarih
+      // çipi sağda, arası devasa boşluk — göz her satırda baştan sona
+      // taranıyordu (ui-ux-pro-max, Layout/"Container Width").
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: ListView(
-          padding: const EdgeInsets.all(12),
-          children: [
-            if (yaklasanlar.isNotEmpty) ...[
-              baslik(Icons.upcoming_outlined, 'Yaklaşan Bölümler'.c),
-              for (final b in yaklasanlar) _yaklasanSatiri(b),
+        child: OrtaKolon(
+          azami: masaustuKolonGenisligi,
+          cocuk: ListView(
+            padding: const EdgeInsets.all(12),
+            children: [
+              if (yaklasanlar.isNotEmpty) ...[
+                baslik(Icons.upcoming_outlined, 'Yaklaşan Bölümler'.c),
+                for (final b in yaklasanlar) _yaklasanSatiri(b),
+              ],
+              if (sira.isNotEmpty) ...[
+                baslik(Icons.playlist_add_check, 'Yetişme Listesi'.c),
+                for (final id in sira) _diziKarti(id, gruplar[id]!),
+              ],
             ],
-            if (sira.isNotEmpty) ...[
-              baslik(Icons.playlist_add_check, 'Yetişme Listesi'.c),
-              for (final id in sira) _diziKarti(id, gruplar[id]!),
-            ],
-          ],
+          ),
         ),
       );
     }
@@ -508,8 +520,10 @@ class BolumModali extends StatefulWidget {
 }
 
 class _BolumModaliState extends State<BolumModali> {
-  int? _benimPuan; // sunucu ölçeği (1-10)
-  bool _puanYuklendi = false;
+  // `_benimPuan` (dizinin GENEL puanı) 8 Ağu 2026-d'de KALDIRILDI: modal
+  // bölüm bağlamıdır, yıldızlar artık `BolumPuani` içinde ve o kendi puanını
+  // `/bolum-puanlari` ucundan okur.
+  bool _durumYuklendi = false;
   bool _izlendi = false;
   bool _izleIsleniyor = false;
 
@@ -520,24 +534,24 @@ class _BolumModaliState extends State<BolumModali> {
   @override
   void initState() {
     super.initState();
-    _puanYukle();
+    _durumYukle();
   }
 
-  Future<void> _puanYukle() async {
+  /// Bu bölüm izlenmiş mi (İzledim butonunun başlangıç hâli).
+  Future<void> _durumYukle() async {
     try {
       final d = await Api.get('/benim/tv/$_tmdbId') as Map<String, dynamic>;
       if (!mounted) return;
       setState(() {
-        _benimPuan = (d['puan']?['puan'] as num?)?.toInt();
         _izlendi = (d['izlenenler'] as List<dynamic>? ?? []).any(
           (r) =>
               (r['sezon'] as num?)?.toInt() == _sezon &&
               (r['bolum'] as num?)?.toInt() == _bolumNo,
         );
-        _puanYuklendi = true;
+        _durumYuklendi = true;
       });
     } catch (_) {
-      if (mounted) setState(() => _puanYuklendi = true);
+      if (mounted) setState(() => _durumYuklendi = true);
     }
   }
 
@@ -593,6 +607,17 @@ class _BolumModaliState extends State<BolumModali> {
     } finally {
       if (mounted) setState(() => _izleIsleniyor = false);
     }
+  }
+
+  /// Bölüme puan verilince sunucu bölümü "izledim" işaretler; buton anında
+  /// güncellensin (sessiz yan etki yok) — bolum.dart ile aynı davranış.
+  void _puanlaIzlendi() {
+    if (_izlendi) return;
+    setState(() => _izlendi = true);
+    KitaplikDurumu.isaretle('tv', _tmdbId, true);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Bölüm izlendi olarak işaretlendi'.c)),
+    );
   }
 
   @override
@@ -718,7 +743,7 @@ class _BolumModaliState extends State<BolumModali> {
           ),
           const SizedBox(height: 12),
           // Bu bölümü izledim işareti
-          if (_puanYuklendi)
+          if (_durumYuklendi)
             Center(
               child: FilledButton.icon(
                 onPressed: _izleToggle,
@@ -735,15 +760,22 @@ class _BolumModaliState extends State<BolumModali> {
               ),
             ),
           const SizedBox(height: 10),
-          // Doğrudan 5 yıldız (diziye puan)
-          if (_puanYuklendi)
-            Center(
-              child: YildizPuan(
-                tur: 'tv',
-                tmdbId: _tmdbId,
-                baslangicPuan: _benimPuan,
-              ),
+          // BU BÖLÜME puan (8 Ağu 2026-d).
+          //
+          // HATA DÜZELTMESİ: burada eskiden `YildizPuan(tur:'tv', tmdbId:...)`
+          // vardı — yani modalın geri kalanı (tepki, izledim, yorumlar) BÖLÜME
+          // aitken yıldızlar sessizce DİZİNİN TAMAMINA puan veriyordu. Bir
+          // bölümü beğenmeyip 1 yıldız veren kullanıcı diziyi 1 yıldıza
+          // düşürüyordu. Modal baştan sona bölüm bağlamıdır; dizinin genel
+          // puanı "Diziye git" ile açılan sayfada durur.
+          Center(
+            child: BolumPuani(
+              tmdbId: _tmdbId,
+              sezon: _sezon,
+              bolum: _bolumNo,
+              izlendiIsaretlendi: _puanlaIzlendi,
             ),
+          ),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,

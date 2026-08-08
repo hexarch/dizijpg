@@ -2,6 +2,19 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- MEDYA İZNİ YOK, BİLEREK (7 Ağu 2026).
+         Dört medya/depolama izni buradan KALDIRILDI: Play Console AAB 69'u
+         "Fotoğraf ve video izinlerine erişmek isteyen tüm geliştiricilerin,
+         Google Play'i uygulamalarının temel işlevi hakkında bilgilendirmeleri
+         gerekir" gerekçesiyle reddetti. Google geniş medya erişimini yalnız
+         temel işlevi bu olan uygulamalara veriyor; "ara sıra medya ekleyen"
+         uygulamalar Android Fotoğraf Seçici'ye yönlendiriliyor.
+         Yorum eki artık sistem Fotoğraf Seçici'sinden geliyor
+         (lib/ekranlar/medya_inceleme.dart + lib/foto_secici_io.dart);
+         ACTION_PICK_IMAGES HİÇBİR izin istemez.
+         HİÇBİR MEDYA/DEPOLAMA İZNİ GERİ EKLENMEYECEK — sürüm yine reddedilir.
+         (İzin adları burada bilerek YAZILMADI: birleştirilmiş manifest'te
+         "izin var mı" grep'i yanlış pozitif vermesin.) -->
     <application
         android:label="dizi.jpg"
         android:name="${applicationName}"

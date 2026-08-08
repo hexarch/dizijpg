@@ -63,12 +63,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
     } else if (_ogeler == null) {
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 14,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.5,
-        ),
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 14, bosluk: 10),
         itemCount: 9,
         itemBuilder: (_, __) => const IskeletKutu(genislik: double.infinity),
       );
@@ -81,12 +76,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
     } else {
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 14,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.5,
-        ),
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 14, bosluk: 10),
         itemCount: _ogeler!.length,
         itemBuilder: (context, i) {
           final o = _ogeler![i] as Map<String, dynamic>;

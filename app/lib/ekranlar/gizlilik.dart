@@ -29,115 +29,113 @@ class GizlilikEkrani extends StatelessWidget {
           style: TextStyle(color: DiziRenkler.metin),
         ),
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
-          child: ListView(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              16,
-              20,
-              24 + MediaQuery.of(context).padding.bottom,
-            ),
-            children: [
-              Text(
-                'Son güncelleme: {}'.cf([gizlilikGuncelleme]),
-                style: TextStyle(color: DiziRenkler.metin54, fontSize: 13),
-              ),
-              const SizedBox(height: 12),
-              _Govde(
-                'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini '
-                'kullandığında hangi verilerin toplandığını, nasıl '
-                'kullanıldığını ve haklarının neler olduğunu açıklar.',
-              ),
-              _Baslik('Topladığımız Veriler'),
-              _Madde(
-                'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri '
-                'döndürülemez şekilde özetlenerek saklanır; misafir hesaplar '
-                'e-postasız kullanılabilir.',
-              ),
-              _Madde(
-                'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi '
-                'seçtiğin bilgiler.',
-              ),
-              _Madde(
-                'Kullanım: izleme geçmişin, puanların, yorumların, '
-                'listelerin, tepkilerin ve favorilerin.',
-              ),
-              _Madde(
-                'Mesajlar: yazılı, görselli ve sesli mesajların '
-                'sunucularımızda saklanır. Mesajlar uçtan uca şifreli '
-                'değildir; yalnızca şikayet edilirse moderasyon amacıyla '
-                'incelenir.',
-              ),
-              _Madde(
-                'Yüklenen medya: profiline, yorumlarına ve mesajlarına '
-                'eklediğin fotoğraf, GIF, video ve ses kayıtları.',
-              ),
-              _Madde(
-                'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz '
-                'platformu, uygulama sürümü ve hata kayıtları. Bunlar '
-                'güvenlik ve hata ayıklama için tutulur.',
-              ),
-              _Madde(
-                'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '
-                'tercihin saklanır. Bildirimleri cihazının ayarlarından '
-                'istediğin zaman kapatabilirsin.',
-              ),
-              _Baslik('Verileri Nasıl Kullanırız'),
-              _Govde(
-                'Verilerini yalnızca hizmeti sunmak, hesabını korumak, '
-                'bildirim göndermek, hataları gidermek ve kötüye kullanımı '
-                'önlemek için kullanırız. Verilerini satmayız, reklam '
-                'amacıyla kimseyle paylaşmayız.',
-              ),
-              _Baslik('Çerezler ve Yerel Depolama'),
-              _Govde(
-                'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini '
-                'hatırlamak için yerel depolama kullanırız. Reklam veya '
-                'izleme çerezi yoktur.',
-              ),
-              _Baslik('Üçüncü Taraf Hizmetler'),
-              _Govde(
-                'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi '
-                'JustWatch\'tan alınır. Push bildirimleri Google Firebase '
-                'üzerinden iletilir, site trafiği Cloudflare tarafından '
-                'korunur. Bu hizmetler kendi gizlilik politikalarına '
-                'tabidir.',
-              ),
-              _Baslik('Saklama ve Silme'),
-              _Govde(
-                'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki '
-                '"Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; '
-                'verilerin anında, yedeklerdeki kopyaları en geç 14 gün '
-                'içinde silinir. Hata kayıtları 30 gün sonra otomatik '
-                'silinir.',
-              ),
-              _Govde(
-                'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; '
-                'arşiv e-posta adresine gönderilir.',
-              ),
-              _Baslik('Güvenlik'),
-              _Govde(
-                'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve '
-                'erişimi sınırlı sunucularda saklanır.',
-              ),
-              _Baslik('Çocukların Gizliliği'),
-              _Govde('dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.'),
-              _Baslik('Hakların'),
-              _Govde(
-                'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme '
-                've taşıma hakkına sahipsin. Bu haklar için bize '
-                'yazabilirsin: {}',
-                args: [gizlilikIletisim],
-              ),
-              _Baslik('Değişiklikler'),
-              _Govde(
-                'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve '
-                'güncelleme tarihi yenilenir.',
-              ),
-            ],
+      body: OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: ListView(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            16,
+            20,
+            24 + MediaQuery.of(context).padding.bottom,
           ),
+          children: [
+            Text(
+              'Son güncelleme: {}'.cf([gizlilikGuncelleme]),
+              style: TextStyle(color: DiziRenkler.metin54, fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            _Govde(
+              'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini '
+              'kullandığında hangi verilerin toplandığını, nasıl '
+              'kullanıldığını ve haklarının neler olduğunu açıklar.',
+            ),
+            _Baslik('Topladığımız Veriler'),
+            _Madde(
+              'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri '
+              'döndürülemez şekilde özetlenerek saklanır; misafir hesaplar '
+              'e-postasız kullanılabilir.',
+            ),
+            _Madde(
+              'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi '
+              'seçtiğin bilgiler.',
+            ),
+            _Madde(
+              'Kullanım: izleme geçmişin, puanların, yorumların, '
+              'listelerin, tepkilerin ve favorilerin.',
+            ),
+            _Madde(
+              'Mesajlar: yazılı, görselli ve sesli mesajların '
+              'sunucularımızda saklanır. Mesajlar uçtan uca şifreli '
+              'değildir; yalnızca şikayet edilirse moderasyon amacıyla '
+              'incelenir.',
+            ),
+            _Madde(
+              'Yüklenen medya: profiline, yorumlarına ve mesajlarına '
+              'eklediğin fotoğraf, GIF, video ve ses kayıtları.',
+            ),
+            _Madde(
+              'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz '
+              'platformu, uygulama sürümü ve hata kayıtları. Bunlar '
+              'güvenlik ve hata ayıklama için tutulur.',
+            ),
+            _Madde(
+              'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '
+              'tercihin saklanır. Bildirimleri cihazının ayarlarından '
+              'istediğin zaman kapatabilirsin.',
+            ),
+            _Baslik('Verileri Nasıl Kullanırız'),
+            _Govde(
+              'Verilerini yalnızca hizmeti sunmak, hesabını korumak, '
+              'bildirim göndermek, hataları gidermek ve kötüye kullanımı '
+              'önlemek için kullanırız. Verilerini satmayız, reklam '
+              'amacıyla kimseyle paylaşmayız.',
+            ),
+            _Baslik('Çerezler ve Yerel Depolama'),
+            _Govde(
+              'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini '
+              'hatırlamak için yerel depolama kullanırız. Reklam veya '
+              'izleme çerezi yoktur.',
+            ),
+            _Baslik('Üçüncü Taraf Hizmetler'),
+            _Govde(
+              'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi '
+              'JustWatch\'tan alınır. Push bildirimleri Google Firebase '
+              'üzerinden iletilir, site trafiği Cloudflare tarafından '
+              'korunur. Bu hizmetler kendi gizlilik politikalarına '
+              'tabidir.',
+            ),
+            _Baslik('Saklama ve Silme'),
+            _Govde(
+              'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki '
+              '"Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; '
+              'verilerin anında, yedeklerdeki kopyaları en geç 14 gün '
+              'içinde silinir. Hata kayıtları 30 gün sonra otomatik '
+              'silinir.',
+            ),
+            _Govde(
+              'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; '
+              'arşiv e-posta adresine gönderilir.',
+            ),
+            _Baslik('Güvenlik'),
+            _Govde(
+              'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve '
+              'erişimi sınırlı sunucularda saklanır.',
+            ),
+            _Baslik('Çocukların Gizliliği'),
+            _Govde('dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.'),
+            _Baslik('Hakların'),
+            _Govde(
+              'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme '
+              've taşıma hakkına sahipsin. Bu haklar için bize '
+              'yazabilirsin: {}',
+              args: [gizlilikIletisim],
+            ),
+            _Baslik('Değişiklikler'),
+            _Govde(
+              'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve '
+              'güncelleme tarihi yenilenir.',
+            ),
+          ],
         ),
       ),
     );

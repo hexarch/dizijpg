@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
-import 'giris_istem.dart';
 import 'ortak.dart';
+import 'takip_dugmesi.dart';
 
 /// BEĞENENLER LİSTESİ — beğeni düğmesine BASILI TUTUNCA açılır.
 ///
@@ -40,8 +40,12 @@ Future<void> begenenleriAc(BuildContext context, int yorumId) {
 }
 
 /// Beğenenler alt sayfası: solda avatar, yanında kullanıcı adı, en sağda
-/// takip durumu. Zaten takip ediyorsan (ya da kendi satırınsa) sağda HİÇBİR
-/// ŞEY olmaz; etmiyorsan "Takip Et" düğmesi çıkar.
+/// takip düğmesi ([TakipDugmesi]). Takip etmiyorsan "Takip Et", ediyorsan
+/// "Takibi Bırak" çıkar; yalnız KENDİ satırında hiçbir şey olmaz.
+///
+/// (3 Ağu'da "takip ediyorsan hiçbir şey yazmasın" istenmişti; 8 Ağu'da
+/// kullanıcı listelerinin tamamı için "takip ediyorsam takibi bırak butonu
+/// olmalı" denince kural her listede aynı hâle getirildi.)
 class BegenenlerSheet extends StatefulWidget {
   final int yorumId;
 
@@ -64,9 +68,6 @@ class _BegenenlerSheetState extends State<BegenenlerSheet> {
   bool _ilkYuklendi = false;
   bool _yukleniyor = false;
   String? _hata;
-
-  /// Takip isteği süren kullanıcılar (çift dokunuş çift istek atmasın).
-  final _takipIsleniyor = <int>{};
 
   @override
   void initState() {
@@ -123,35 +124,6 @@ class _BegenenlerSheetState extends State<BegenenlerSheet> {
     }
   }
 
-  /// Takip et: satır ANINDA güncellenir (düğme kaybolur), sunucu hata dönerse
-  /// geri gelir + SnackBar (skill madde 3 — sessiz başarısızlık yok).
-  Future<void> _takipEt(Map<String, dynamic> k) async {
-    if (!girisGerekli(context)) return; // oturumsuz → giriş istemi
-    final id = (k['kullanici_id'] as num).toInt();
-    if (_takipIsleniyor.contains(id)) return;
-    setState(() {
-      _takipIsleniyor.add(id);
-      k['takip_ediyorum'] = true;
-    });
-    try {
-      final d = await Api.takipToggle(k['kullanici_adi'] as String);
-      if (!mounted) return;
-      setState(() {
-        k['takip_ediyorum'] = d['takip'] == true;
-        _takipIsleniyor.remove(id);
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        k['takip_ediyorum'] = false;
-        _takipIsleniyor.remove(id);
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -175,11 +147,19 @@ class _BegenenlerSheetState extends State<BegenenlerSheet> {
                 children: [
                   Icon(Icons.favorite, size: 20, color: DiziRenkler.sariMetin),
                   const SizedBox(width: 8),
-                  Text(
-                    'Beğenenler'.c,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w800,
+                  // Flexible + ellipsis: Tamilce "விரும்பியவர்கள்" gibi uzun
+                  // çeviriler 320dp telefonda başlığı taşırıyordu
+                  // (RenderFlex overflow, 8 Ağu'da takip düğmesi testleri
+                  // yakaladı).
+                  Flexible(
+                    child: Text(
+                      'Beğenenler'.c,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                   if (_toplam != null && _toplam! > 0) ...[
@@ -247,8 +227,6 @@ class _BegenenlerSheetState extends State<BegenenlerSheet> {
         return _BegenenSatiri(
           key: ValueKey(id),
           kullanici: k,
-          isleniyor: _takipIsleniyor.contains(id),
-          onTakip: () => _takipEt(k),
           onKullanici: widget.onKullanici,
         );
       },
@@ -256,30 +234,20 @@ class _BegenenlerSheetState extends State<BegenenlerSheet> {
   }
 }
 
-/// Tek satır: [avatar] [kullanıcı adı] .......... [Takip Et?]
+/// Tek satır: [avatar] [kullanıcı adı] .......... [Takip Et / Takibi Bırak]
 ///
 /// Avatara ya da ada dokununca o kişinin profiline gider. Satır yüksekliği
 /// 56px — dokunma hedefi 44px asgarisinin üstünde.
 class _BegenenSatiri extends StatelessWidget {
   final Map<String, dynamic> kullanici;
-  final bool isleniyor;
-  final VoidCallback onTakip;
   final void Function(String kullaniciAdi)? onKullanici;
-  const _BegenenSatiri({
-    super.key,
-    required this.kullanici,
-    required this.isleniyor,
-    required this.onTakip,
-    this.onKullanici,
-  });
+  const _BegenenSatiri({super.key, required this.kullanici, this.onKullanici});
 
   @override
   Widget build(BuildContext context) {
     final ad = kullanici['kullanici_adi'] as String? ?? '';
-    // Kendi satırında ve zaten takip ettiklerinde düğme HİÇ çizilmez.
+    // Kendi satırında düğme HİÇ çizilmez (kendini takip edemezsin).
     final benMi = kullanici['ben_mi'] == true;
-    final takipEdiyorum = kullanici['takip_ediyorum'] == true;
-    final dugmeVar = !benMi && !takipEdiyorum;
     return InkWell(
       onTap: () =>
           onKullanici == null ? kullaniciyaGit(context, ad) : onKullanici!(ad),
@@ -306,29 +274,16 @@ class _BegenenSatiri extends StatelessWidget {
                 ),
               ),
             ),
-            // Dokunma hedefleri arası boşluk (>=8px)
-            if (dugmeVar) ...[
+            // Dokunma hedefleri arası boşluk (>=8px): satırın kendisi de
+            // tıklanabilir olduğu için yanlışlıkla basmayı zorlaştırır.
+            if (!benMi) ...[
               const SizedBox(width: 12),
-              FilledButton(
-                onPressed: isleniyor ? null : onTakip,
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(0, 32),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  textStyle: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                child: isleniyor
-                    ? const SizedBox(
-                        width: 12,
-                        height: 12,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text('Takip Et'.c),
+              TakipDugmesi(
+                kullaniciAdi: ad,
+                takipEdiyorum: kullanici['takip_ediyorum'] == true,
+                // Sonuç paylaşılan haritaya yazılır: sayfalama satırı yeniden
+                // kurarsa (ya da liste tazelenirse) doğru hâlde açılır.
+                onDegisti: (v) => kullanici['takip_ediyorum'] = v,
               ),
             ],
           ],

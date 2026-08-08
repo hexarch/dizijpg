@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -5,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ceviri.dart';
+import 'cihaz_kimlik.dart';
 import 'icerik_deposu.dart';
 import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
@@ -16,13 +18,61 @@ const String apiTaban = 'https://dizijpg.com/api';
 String? posterUrl(String? yol, {String boyut = 'w342'}) =>
     yol == null ? null : 'https://image.tmdb.org/t/p/$boyut$yol';
 
+/// Poster kartları için TMDB boyutunu KART GENİŞLİĞİ ve PİKSEL YOĞUNLUĞUNA
+/// göre seçer.
+///
+/// NEDEN: her yerde sabit `w342` isteniyordu. Telefonda (105-118 dp kart) bu
+/// doğru; masaüstünde ızgara kartı 240-490 dp'ye çıkıyor ve `devicePixelRatio`
+/// 2 olan ekranda 480-980 FİZİKSEL piksel gerekiyor — 342 px'lik görsel 1,4x
+/// ile 2,9x arası büyütülüp gözle görülür bulanıklaşıyordu.
+///
+/// KURALLAR:
+///  * Taban `w342`. Bunun ALTINA İNİLMEZ — bugünkü mobil kalite ve mobil veri
+///    kullanımı birebir korunsun (küçük kartta w185'e düşürmek 6 Ağu'da
+///    denenmiş ve geri alınmıştı, bkz. `PosterKarti`).
+///  * Gerekli piksel taban boyutu [_azamiBuyutme] kadarını da aşıyorsa bir üst
+///    basamağa çıkılır: w500 → w780.
+///  * Tavan `w780`. `original` ÇEKİLMEZ: poster başına birkaç MB eder,
+///    ızgarada 30 poster = onlarca MB — bant genişliği israfı.
+///
+/// [_azamiBuyutme] 1.15: %15'e kadar büyütme gözle ayırt edilmiyor, ama bir
+/// üst basamak ~2 kat bayt demek. Örn. 3x yoğunluklu telefonda 118 dp kart
+/// 354 px ister; w342 (1.035x büyütme) yeterlidir, w500 israf olurdu.
+const double _azamiBuyutme = 1.15;
+
+/// Poster kartı için TMDB boyut adı ('w342' | 'w500' | 'w780').
+///
+/// [genislikDp] kartın MANTIKSAL genişliği, [pikselOrani] ekranın
+/// `devicePixelRatio` değeri.
+String posterBoyutu(double genislikDp, double pikselOrani) {
+  // Bozuk/ölçülemeyen genişlikte (sonsuz, NaN, sıfır) tabana düş.
+  if (!genislikDp.isFinite || genislikDp <= 0) return 'w342';
+  final oran = (pikselOrani.isFinite && pikselOrani > 0) ? pikselOrani : 1.0;
+  final gerekli = genislikDp * oran;
+  if (gerekli <= 342 * _azamiBuyutme) return 'w342';
+  if (gerekli <= 500 * _azamiBuyutme) return 'w500';
+  return 'w780';
+}
+
 /// Sunucudaki dosya yolları (avatar, yorum medyası) → tam URL
 String? dosyaUrl(String? yol) =>
     yol == null ? null : (yol.startsWith('http') ? yol : '$apiTaban$yol');
 
 class ApiHata implements Exception {
   final String mesaj;
-  ApiHata(this.mesaj);
+
+  /// HTTP durum kodu — yalnız sunucudan gelen hatalarda dolu.
+  ///
+  /// NEDEN: "bulunamadı/gizli" (404) ile "ağ/sunucu arızası" farklı EKRAN
+  /// ister: birincisinde tekrar denemek anlamsızdır, ikincisinde şart. Mesaj
+  /// metnine bakarak ayırmak çeviri değişince kırılırdı.
+  final int? kod;
+
+  /// Hesap askıya alındıysa cezanın ayrıntısı: `{kalici, bitis, kalan_sn,
+  /// sebep}`. Yalnız 403 + yasak yanıtlarında dolu olur.
+  final Map<String, dynamic>? yasak;
+
+  ApiHata(this.mesaj, {this.kod, this.yasak});
   @override
   String toString() => mesaj;
 }
@@ -60,8 +110,32 @@ class Api {
     'Content-Type': 'application/json',
     // İçerik dili: TMDB başlık/özet/tür bu dilde gelsin
     'X-Dil': Ceviri.dil.value,
+    // KURULUM kimliği (moderasyon). DONANIMDAN OKUNMAZ — uygulamanın kendi
+    // ürettiği rastgele bir etiket; silinip kurulunca değişir. Ayrıntı ve
+    // sınırları `cihaz_kimlik.dart` başlığında.
+    if (CihazKimlik.kimlik != null) 'X-Cihaz': CihazKimlik.kimlik!,
     if (_token != null) 'Authorization': 'Bearer $_token',
   };
+
+  /// Hesap askıya alındıysa sunucudan gelen ceza bilgisi
+  /// (`{kalici, bitis, kalan_sn, sebep}`), yoksa null.
+  ///
+  /// NEDEN GLOBAL BİR NOTIFIER: ceza her yanıtta gelebilir — 403 gövdesinde,
+  /// giriş yanıtında ya da `/profilim` içinde. Her çağrı yerinde ayrı ayrı
+  /// yakalamak yerine tek yerde toplanıp ekranlar bunu DİNLİYOR; böylece
+  /// kullanıcı hangi ekranda olursa olsun uyarıyı görüyor. Sessizce çalışmayan
+  /// bir uygulama en kötü deneyimdir.
+  static final ValueNotifier<Map<String, dynamic>?> yasak = ValueNotifier(null);
+
+  /// Yanıt gövdesindeki `yasak` alanını yakalar (varsa) ve bildiriyi günceller.
+  /// Ceza kalkmışsa (sunucu artık yasak göndermiyorsa) uyarı da kalkar.
+  static void _yasakOku(dynamic govde, {bool temizle = false}) {
+    if (govde is Map && govde['yasak'] is Map) {
+      yasak.value = Map<String, dynamic>.from(govde['yasak'] as Map);
+    } else if (temizle) {
+      yasak.value = null;
+    }
+  }
 
   /// Katalog (TMDB) isteklerine dili ADRESE ekler: Cloudflare önbelleği
   /// yalnız URL'e bakar, başlığa değil — dil adreste olmasaydı kenar
@@ -123,10 +197,18 @@ class Api {
   static dynamic _isle(http.Response cevap) {
     final govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
     if (cevap.statusCode >= 400) {
+      // 403 + `yasak` = hesap askıda. Bilgiyi yakala ki ekranlar sebebi ve
+      // kalan süreyi gösterebilsin; hata yine de fırlatılır (çağıran akış
+      // "başarılı" sanmasın).
+      _yasakOku(govde);
       throw ApiHata(
         govde is Map && govde['hata'] != null
             ? govde['hata'] as String
             : 'Sunucu hatası ({})'.cf([cevap.statusCode]),
+        kod: cevap.statusCode,
+        yasak: govde is Map && govde['yasak'] is Map
+            ? Map<String, dynamic>.from(govde['yasak'] as Map)
+            : null,
       );
     }
     return govde;
@@ -150,6 +232,10 @@ class Api {
   static Future<Map<String, dynamic>> giris(String email, String sifre) async {
     final d = await post('/auth/giris', {'email': email, 'sifre': sifre});
     await _tokenKaydet(d['token'] as String);
+    // Yasaklı kullanıcı GİREBİLİR (cezasını uygulama içinde görsün diye);
+    // yanıtta ceza varsa hemen yakalanır. `temizle: true`: ceza kalkmışsa
+    // önceki oturumdan kalan uyarı da düşer.
+    _yasakOku(d, temizle: true);
     return d['kullanici'] as Map<String, dynamic>;
   }
 
@@ -170,6 +256,7 @@ class Api {
       if (erisim != null) 'erisim': erisim,
     });
     await _tokenKaydet(d['token'] as String);
+    _yasakOku(d, temizle: true);
     return d;
   }
 
@@ -268,7 +355,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.24.0+67';
+  static const surum = '1.30.0+74';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -294,8 +381,28 @@ class Api {
   static Future<void> tokenKaydet(String token) => _tokenKaydet(token);
 
   // ---- profil ----
-  static Future<Map<String, dynamic>> profilim() async =>
-      await get('/profilim') as Map<String, dynamic>;
+  // ---- ceza itirazı (uygulama içi; e-posta kutusuna bağımlılık YOK) ----
+
+  /// `{itiraz, yazabilir}` — ban ekranı formu mu, durumu mu çizeceğini
+  /// buradan öğrenir. Kural SUNUCUDA (tek açık itiraz, aynı ceza için bir
+  /// kez); istemci onu yalnız yansıtır, kendi kopyasını tutmaz.
+  static Future<Map<String, dynamic>> itirazDurumu() async =>
+      await get('/itirazim') as Map<String, dynamic>;
+
+  /// Cezaya itiraz gönderir. `POST /itiraz` yazma yasağından MUAFTIR
+  /// (backend `yasak.js/YASAK_MUAF`) — olmasaydı yasaklı kullanıcı itiraz
+  /// edemez, sistem kendi kendini kilitlerdi.
+  static Future<Map<String, dynamic>> itirazGonder(String metin) async =>
+      await post('/itiraz', {'metin': metin}) as Map<String, dynamic>;
+
+  static Future<Map<String, dynamic>> profilim() async {
+    final d = await get('/profilim') as Map<String, dynamic>;
+    // Hiç YAZMAYAN yasaklı kullanıcı 403 görmez; cezasını burada öğrenir.
+    // `temizle: true`: ceza kalkmışsa (süre doldu / yönetici kaldırdı) uyarı da
+    // kalksın — aksi halde serbest kalan kullanıcıda banner asılı kalırdı.
+    _yasakOku(d, temizle: true);
+    return d;
+  }
 
   static Future<Map<String, dynamic>> profilGuncelle({
     required String bio,
@@ -417,6 +524,52 @@ class Oturum extends ChangeNotifier {
     await prefs.setString('kullanici', jsonEncode(k));
     KitaplikDurumu.yukle(); // poster kartlarındaki "izledin" rozeti için
     notifyListeners();
+    // GİRİŞ YANITINDA AVATAR YOK — bu yüzden hemen `/profilim` ile tazelenir.
+    // Ayrıntı `tazele()` başlığında; buradaki koşul "gelen harita bir GİRİŞ
+    // yanıtı mı yoksa yerel bir birleştirme mi" ayrımıdır: `avatar` anahtarı
+    // hiç yoksa sunucudan taze bilgi gerekiyor demektir. (Ayarlar'daki
+    // `{...?oturum.kullanici, 'avatar': yol}` birleştirmelerinde anahtar
+    // DAİMA var — orada gereksiz istek atılmaz.)
+    if (!k.containsKey('avatar')) unawaited(tazele());
+  }
+
+  /// Oturum nesnesini `/profilim` ile tazeler (avatar, kapak, bio, ülke,
+  /// testçi bayrağı...).
+  ///
+  /// --- HANGİ HATAYI ÇÖZÜYOR (7 Ağu 2026) ---
+  /// Kullanıcı bildirdi: "yorum yazmadaki sol taraftaki avatarda profil resmim
+  /// gözükmüyor". Kök neden `dosyaUrl()` ya da widget DEĞİL, oturum nesnesi:
+  ///
+  ///   backend/server.js:1888-1891 → POST /auth/giris yanıtı
+  ///     const { id, kullanici_adi, email: eposta, misafir } = rows[0];
+  ///     res.json({ token: ..., kullanici: { id, kullanici_adi, email, misafir } });
+  ///
+  /// `avatar` o dört alanın arasında YOK. `Oturum.kullanici` yalnız bu yanıtla
+  /// (ve prefs'teki kopyasıyla) doluyordu, `yukle()` da sunucuya hiç sormuyor.
+  /// Sonuç: giriş yapan herkesin `kullanici['avatar']` alanı **null**;
+  /// `kesfet_akis.dart` yorum satırındaki avatar da `KullaniciAvatari(url: null)`
+  /// alıp kişi ikonuna düşüyordu. Avatar oturuma yalnız kullanıcı O CİHAZDA
+  /// Ayarlar'dan yeni bir fotoğraf yüklerse giriyordu (`ayarlar.dart:212`) —
+  /// yani "fotoğrafım vardı, yeni cihazda kayboldu" tam olarak bu.
+  ///
+  /// `GET /profilim` avatarı DÖNÜYOR (server.js:3053-3058), yani sunucuya
+  /// dokunmadan çözülür — düzeltme tamamen istemcide.
+  ///
+  /// Sessizce yutulan hata bilinçli: çevrimdışı açılışta eldeki oturumla devam
+  /// edilir, kullanıcıya gösterilecek bir eylem yok.
+  Future<void> tazele() async {
+    if (!Api.girisli) return;
+    try {
+      final p = await Api.profilim();
+      // Birleştirme (atama değil): giriş yanıtındaki `email`/`misafir` gibi
+      // `/profilim`de olmayan alanlar korunur.
+      kullanici = {...?kullanici, ...p};
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('kullanici', jsonEncode(kullanici));
+      notifyListeners();
+    } catch (_) {
+      // ağ/oturum hatası: eldeki bilgiyle devam
+    }
   }
 
   Future<void> cikis() async {

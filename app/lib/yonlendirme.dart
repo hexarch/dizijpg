@@ -19,11 +19,14 @@ import 'ekranlar/giris_istem.dart';
 import 'ekranlar/gizlenen_yorumlar.dart';
 import 'ekranlar/gizlilik.dart';
 import 'ekranlar/gozat.dart';
+import 'ekranlar/favori_oyuncular.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/karsilama.dart';
 import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
+import 'ekranlar/kisi_yapimlar.dart';
+import 'ekranlar/liste.dart';
 import 'ekranlar/kitaplik_liste.dart';
 import 'ekranlar/kullanici_profil.dart';
 import 'ekranlar/ortak.dart' show kabugaDon, kabukIcindeMi;
@@ -65,7 +68,20 @@ void rotayaGit(String hedef) {
 ///   bağlantılar üzerinden Google'a) açardı. Bot kapsamında da değil.
 /// - `/kesfet`, `/takvim`, `/akis`, `/arama`, `/profil`: kişiye özel, botun
 ///   göremediği ekranlar; oturum gerektirmeleri cloaking yaratmaz.
-const acikYolOnEkleri = <String>['/icerik/', '/kisi/', '/gonderi/', '/dizi/'];
+///
+/// `/listeler/` 7 Ağu 2026'da eklendi: nginx'in bot kuralı zaten
+/// `^/(icerik|gonderi|kisi|dizi|listeler)/` idi ve `/og/listeler/:id`
+/// indekslenebilir HTML basıyordu — yani bot içeriği, insan giriş formunu
+/// görüyordu (tam tanımıyla cloaking). GİZLİLİK: sunucu `herkese_acik=false`
+/// listeyi sahibi olmayana 404 verir, yani liste rotasının açık olması gizli
+/// listeleri açmaz (bkz. server.js `GET /listeler/:id`).
+const acikYolOnEkleri = <String>[
+  '/icerik/',
+  '/kisi/',
+  '/gonderi/',
+  '/dizi/',
+  '/listeler/',
+];
 
 /// Oturum gerektirmeyen tam yollar (ön ek DEĞİL: `/gizlilik-tercihleri` gibi
 /// ileride eklenebilecek kişisel bir ekran yanlışlıkla açılmasın).
@@ -203,6 +219,13 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
                 builder: (_, s) =>
                     KitaplikListesiEkrani(durum: s.pathParameters['durum']!),
               ),
+              // Favori oyuncular: profil sekmesinin İÇİNDE (alt gezinme
+              // çubuğu kaybolmasın, geri tuşu profile dönsün) —
+              // `/kitaplik/:durum` ile aynı kalıp.
+              GoRoute(
+                path: '/favori-oyuncular',
+                builder: (_, _) => const FavoriOyuncularEkrani(),
+              ),
             ],
           ),
         ],
@@ -228,6 +251,17 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           return id == null
               ? const _GecersizBaglanti()
               : KisiEkrani(kisiId: id);
+        },
+      ),
+      // Paylaşılan liste — SSR sayfası (`/og/listeler/:id`) bu adrese
+      // götürüyor. Kabuğun DIŞINDA: oturumsuz ziyaretçinin kabuğu yoktur.
+      GoRoute(
+        path: '/listeler/:id',
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : ListeEkrani(listeId: id);
         },
       ),
       // Paylaşılan gönderi (reel/yorum) — tam ekran tek gönderi
@@ -298,6 +332,27 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
       GoRoute(
         path: '/izlediklerim',
         builder: (_, s) => IzlenenlerEkrani(tur: s.uri.queryParameters['tur']),
+      ),
+      // Oyuncunun yapımları + izlendi/izlenmedi listesi.
+      //
+      // NEDEN `/kisi/:id/yapimlar` DEĞİL: liste KİŞİYE ÖZEL (kimin neyi
+      // izlediği) ve oturum ister; robots.txt ile kapatılması gerekiyor.
+      // `Disallow` kuralları bu projede joker İÇERMEZ (bkz.
+      // backend/test/seo_gizlilik.test.js `kapali`), yani `/kisi/*/yapimlar`
+      // yazılamaz; `/kisi/` ön ekini kapatmak ise SSR ile indekslenen oyuncu
+      // sayfalarını kapatırdı. Kök yol olunca `Disallow: /yapimlar/` yetiyor
+      // ve `/izlediklerim` ile aynı kalıba oturuyor.
+      // Yan fayda: `acikYolOnEkleri` dışında kaldığı için oturumsuz ziyaretçi
+      // `/giris?donus=/yapimlar/500`e gider, hedefini kaybetmez.
+      // `extra`: oyuncunun adı (başlık için); yoksa "Yapımları" yazar.
+      GoRoute(
+        path: '/yapimlar/:id',
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : KisiYapimlariEkrani(kisiId: id, kisiAdi: s.extra as String?);
+        },
       ),
     ],
     // Eşleşmeyen rota (bozuk/eski bağlantı): hata ekranı yerine nazik sayfa

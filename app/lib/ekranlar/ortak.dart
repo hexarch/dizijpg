@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+// PosterIzgarasi kendi SliverGridLayout'unu üretiyor: SliverConstraints,
+// SliverGridLayout ve SliverGridRegularTileLayout material'dan gelmiyor.
+import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
@@ -805,6 +808,115 @@ class IzlendiRozeti extends StatelessWidget {
   }
 }
 
+/// ---------------------------------------------------------------------------
+/// POSTER ÖLÇÜLERİ (tek kaynak)
+///
+/// Şikâyet (6 Ağu 2026): "masaüstü görünüşte film dizi kapak görselleri çok
+/// kötü duruyor". ÖLÇÜM: ızgaraların hepsinde `crossAxisCount` 3'e SABİTLENMİŞ
+/// (kitaplık, izlediklerim, arama, kişi, karşılama). 1512 dp'lik bir pencerede
+/// bu, kart başına ~486 dp genişlik demek; `devicePixelRatio` 2 ile 972
+/// fiziksel piksel gerekirken TMDB'den 342 px çekiliyordu → 2,84x büyütme.
+/// Üstelik `childAspectRatio: 0.5` sabiti kart genişledikçe hücrenin ALTINDA
+/// 80 dp'ye varan boşluk bırakıyordu (poster 2:3 + başlık, hücrenin yarısı).
+///
+/// Çözüm iki parça: (1) sütun sayısı genişlikten türetilir, (2) hücre yüksekliği
+/// posterin GERÇEK 2:3 oranından hesaplanır. TMDB boyutu ise [posterBoyutu] ile
+/// ölçülen kart genişliğinden seçilir.
+/// ---------------------------------------------------------------------------
+
+/// Masaüstünde bir poster kartının hedeflenen genişliği (dp).
+///
+/// 168 dp → 252 dp poster yüksekliği; 2x ekranda 336 fiziksel piksel, yani
+/// TMDB `w342` TAM oturur (büyütme yok). Daha geniş kart w500'e çıkar ve bant
+/// genişliğini ~2 katına taşır, daha darı masaüstünde minik görünür.
+const double posterKartHedefGenisligi = 168;
+
+/// Poster kartında başlık bloğunun ayırdığı yükseklik (dp).
+///
+/// `SizedBox(height: 6)` + 12 pt, EN FAZLA 2 satır başlık. Poppins'te satır
+/// yüksekliği ~18 dp → 6 + 36 = 42; test ortamında yedek yazı tipiyle ~34.
+/// 46 seçildi: ikisini de taşırmadan, hücrede 4 dp'den fazla ölü boşluk
+/// bırakmadan karşılar. (Eskiden `childAspectRatio` sabitiyle bu pay kart
+/// genişliğine ORANTILI büyüyordu; masaüstünde 80 dp boşluk oradan geliyordu.)
+const double posterBaslikYuksekligi = 46;
+
+/// Yatay poster şeridinde TELEFON kart genişliği (dp) — [PosterKarti]'nın
+/// varsayılanı ve şeridin bugünkü ölçüsü. Değiştirme: mobil düzen buna bağlı.
+const double seritKartGenisligi = 118;
+
+/// Şerit yüksekliğinde posterin altına bırakılan pay (dp).
+/// 118 * 1.5 + 59 = 236 → BUGÜNKÜ şerit yüksekliğinin birebir aynısı.
+const double seritBaslikPayi = 59;
+
+/// Yatay şeritteki kart genişliği. Masaüstünde büyür — 1512 dp'lik pencerede
+/// 118 dp'lik telefon kartından 12 tane yan yana dizilince posterler pul gibi
+/// kalıyordu. İSKELET DE bunu kullanmalı, yoksa içerik gelince düzen zıplar.
+double seritKartiGenisligi(BuildContext context) =>
+    masaustuMu(context) ? posterKartHedefGenisligi : seritKartGenisligi;
+
+/// Poster ızgarasında sütun sayısı.
+///
+/// [kullanilabilirGenislik] ızgaranın YATAY DOLGU ÇIKARILMIŞ genişliği.
+///
+/// TELEFON DEĞİŞMEZ: [masaustuEsigi] mantığıyla aynı sonuç için alt sınır 3 —
+/// 360-430 dp telefonlarda hesap 2 çıkar ve 3'e sabitlenir, yani bugünkü
+/// düzenin AYNISI. Geniş ekranda kart genişliği hedefe en yakın kalacak sütun
+/// sayısı seçilir (aşağı yuvarlama devasa kartlar bırakıyordu → `round`).
+int posterSutunlari(double kullanilabilirGenislik, {double bosluk = 10}) {
+  if (!kullanilabilirGenislik.isFinite || kullanilabilirGenislik <= 0) return 3;
+  final adet =
+      (kullanilabilirGenislik + bosluk) / (posterKartHedefGenisligi + bosluk);
+  return adet.round().clamp(3, 12);
+}
+
+/// Poster ızgarası: sütun sayısını GERÇEK ızgara genişliğinden türetir, hücre
+/// yüksekliğini posterin 2:3 oranı + [posterBaslikYuksekligi] kadar verir.
+///
+/// `SliverGridDelegateWithFixedCrossAxisCount` yerine bu kullanılıyor çünkü
+/// oradaki `crossAxisCount` ve `childAspectRatio` SABİT: ekran genişliğini
+/// ancak `MediaQuery` ile tahmin edebilir, ızgaranın kendi dolgusunu bilemez.
+/// `getLayout` ise `constraints.crossAxisExtent` ile ÖLÇÜLMÜŞ genişliği alır.
+class PosterIzgarasi extends SliverGridDelegate {
+  /// Sütunlar arası boşluk.
+  final double bosluk;
+
+  /// Satırlar arası boşluk.
+  final double satirBoslugu;
+
+  /// Kartın posterin altında başlığa ayırdığı yükseklik. Başlıksız ızgaralarda
+  /// (karşılama ekranı gibi) 0 verilir → hücre birebir 2:3 olur.
+  final double baslikYuksekligi;
+
+  const PosterIzgarasi({
+    this.bosluk = 10,
+    this.satirBoslugu = 14,
+    this.baslikYuksekligi = posterBaslikYuksekligi,
+  });
+
+  @override
+  SliverGridLayout getLayout(SliverConstraints constraints) {
+    final genislik = constraints.crossAxisExtent;
+    final sutun = posterSutunlari(genislik, bosluk: bosluk);
+    final kart = (genislik - bosluk * (sutun - 1)) / sutun;
+    // Poster 2:3 → yükseklik = genişlik * 1.5. Kırpma/gerilme YOK.
+    final yukseklik = kart * 1.5 + baslikYuksekligi;
+    return SliverGridRegularTileLayout(
+      crossAxisCount: sutun,
+      mainAxisStride: yukseklik + satirBoslugu,
+      crossAxisStride: kart + bosluk,
+      childMainAxisExtent: yukseklik,
+      childCrossAxisExtent: kart,
+      reverseCrossAxis: axisDirectionIsReversed(constraints.crossAxisDirection),
+    );
+  }
+
+  @override
+  bool shouldRelayout(PosterIzgarasi eski) =>
+      eski.bosluk != bosluk ||
+      eski.satirBoslugu != satirBoslugu ||
+      eski.baslikYuksekligi != baslikYuksekligi;
+}
+
 class PosterKarti extends StatelessWidget {
   final Map<String, dynamic> icerik;
   final String? turZorla; // multi aramada media_type gelir; trendlerde belli
@@ -821,110 +933,145 @@ class PosterKarti extends StatelessWidget {
   Widget build(BuildContext context) {
     final tur = turZorla ?? icerik['media_type'] as String? ?? 'tv';
     final ad = icerik['name'] ?? icerik['title'] ?? '?';
-    // DİKKAT: burada w185 denendi ve GERİ ALINDI — 3x ekranda 118dp kart 354
-    // fiziksel piksel demek; w185 büyütülüp gözle görülür bulanıklaşıyor.
-    // Bant genişliği kazancı kaliteye değmez.
-    final posterYolu = posterUrl(icerik['poster_path'] as String?);
     final puan = (icerik['vote_average'] as num?)?.toDouble() ?? 0;
-
     final tmdbId = (icerik['id'] as num?)?.toInt();
+
+    // TMDB boyutu ÖLÇÜLEN kart genişliğinden seçilir; [genislik] ızgaralarda
+    // `double.infinity` geldiği için tek başına yeterli değil — hücrenin
+    // gerçek genişliğini yalnız LayoutBuilder bilir.
+    //
+    // DİKKAT: taban w342'nin ALTINA inilmez ([posterBoyutu]); burada w185
+    // denenmiş ve GERİ ALINMIŞTI — 3x ekranda 118 dp kart 354 fiziksel piksel
+    // demek, w185 büyütülüp gözle görülür bulanıklaşıyor.
     return SizedBox(
       width: genislik,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push('/icerik/$tur/${icerik['id']}'),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: AspectRatio(
-                    aspectRatio: 2 / 3,
-                    child: posterYolu == null
-                        ? Container(
+      child: LayoutBuilder(
+        builder: (context, kisit) => _kart(
+          context,
+          kisit.maxWidth.isFinite && kisit.maxWidth > 0
+              ? kisit.maxWidth
+              : genislik,
+          tur,
+          ad,
+          puan,
+          tmdbId,
+        ),
+      ),
+    );
+  }
+
+  Widget _kart(
+    BuildContext context,
+    double kartGenisligi,
+    String tur,
+    Object ad,
+    double puan,
+    int? tmdbId,
+  ) {
+    final pikselOrani = MediaQuery.maybeDevicePixelRatioOf(context) ?? 1.0;
+    final posterYolu = posterUrl(
+      icerik['poster_path'] as String?,
+      boyut: posterBoyutu(kartGenisligi, pikselOrani),
+    );
+    // NOT: `memCacheWidth` (karta göre kod çözme) denendi ve ŞİMDİLİK
+    // ELENDİ — Flutter web'de ResizeImage yolunu gerçek tarayıcıda
+    // doğrulayamadım (yerel ölçüm düzeneğinde poster katmanı hiç boyanmıyor,
+    // bu değişiklikten BAĞIMSIZ olarak). Doğru boyutu ZATEN sunucudan
+    // istediğimiz için görsel kazanç yok; yalnız bellek optimizasyonu olurdu.
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: () => context.push('/icerik/$tur/${icerik['id']}'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: AspectRatio(
+                  aspectRatio: 2 / 3,
+                  child: posterYolu == null
+                      ? Container(
+                          color: DiziRenkler.kart,
+                          child: Icon(
+                            Icons.movie,
+                            color: DiziRenkler.metin24,
+                            size: 40,
+                          ),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: posterYolu,
+                          fit: BoxFit.cover,
+                          placeholder: (_, __) =>
+                              Container(color: DiziRenkler.kart),
+                          errorWidget: (_, __, ___) => Container(
                             color: DiziRenkler.kart,
                             child: Icon(
-                              Icons.movie,
+                              Icons.broken_image,
                               color: DiziRenkler.metin24,
-                              size: 40,
-                            ),
-                          )
-                        : CachedNetworkImage(
-                            imageUrl: posterYolu,
-                            fit: BoxFit.cover,
-                            placeholder: (_, __) =>
-                                Container(color: DiziRenkler.kart),
-                            errorWidget: (_, __, ___) => Container(
-                              color: DiziRenkler.kart,
-                              child: Icon(
-                                Icons.broken_image,
-                                color: DiziRenkler.metin24,
-                              ),
                             ),
                           ),
+                        ),
+                ),
+              ),
+              // Sağ üst: bu içeriği izlediysen göz rozeti. Kitaplık
+              // değişince (izlemeye başla/bırak) anında güncellenir.
+              if (tmdbId != null)
+                Positioned(
+                  top: 5,
+                  right: 5,
+                  child: ValueListenableBuilder<int>(
+                    valueListenable: KitaplikDurumu.surum,
+                    builder: (context, _, _) =>
+                        KitaplikDurumu.izlendiMi(tur, tmdbId)
+                        ? const IzlendiRozeti()
+                        : const SizedBox.shrink(),
                   ),
                 ),
-                // Sağ üst: bu içeriği izlediysen göz rozeti. Kitaplık
-                // değişince (izlemeye başla/bırak) anında güncellenir.
-                if (tmdbId != null)
-                  Positioned(
-                    top: 5,
-                    right: 5,
-                    child: ValueListenableBuilder<int>(
-                      valueListenable: KitaplikDurumu.surum,
-                      builder: (context, _, _) =>
-                          KitaplikDurumu.izlendiMi(tur, tmdbId)
-                          ? const IzlendiRozeti()
-                          : const SizedBox.shrink(),
+              if (puan > 0)
+                Positioned(
+                  top: 6,
+                  left: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black87,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.star,
+                          color: DiziRenkler.sari,
+                          size: 12,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          puan.toStringAsFixed(1),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                if (puan > 0)
-                  Positioned(
-                    top: 6,
-                    left: 6,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black87,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: DiziRenkler.sari,
-                            size: 12,
-                          ),
-                          const SizedBox(width: 2),
-                          Text(
-                            puan.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              ad as String,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-            ),
-          ],
-        ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            ad as String,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          ),
+        ],
       ),
     );
   }
@@ -1059,18 +1206,25 @@ class PosterSeridi extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
-          height: 236,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            itemCount: icerikler.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 10),
-            itemBuilder: (context, i) => PosterKarti(
-              icerik: icerikler[i] as Map<String, dynamic>,
-              turZorla: turZorla,
-            ),
-          ),
+        Builder(
+          builder: (context) {
+            // Telefonda ölçüler BİREBİR aynı kalır (118 / 236).
+            final kart = seritKartiGenisligi(context);
+            return SizedBox(
+              height: kart * 1.5 + seritBaslikPayi,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: icerikler.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 10),
+                itemBuilder: (context, i) => PosterKarti(
+                  icerik: icerikler[i] as Map<String, dynamic>,
+                  turZorla: turZorla,
+                  genislik: kart,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -1463,16 +1617,66 @@ void kullaniciyaGit(BuildContext context, String ad) {
 /// sarı çerçeve + çerçevenin altına oturan "AI" rozetiyle çizilir.
 const String aiKullaniciAdi = 'dizi.jpg.ai';
 
+/// Ağdan gelen görseli DAİRE içinde çizen, ANİMASYONU KORUYAN gösterim.
+///
+/// `CircleAvatar(backgroundImage:)` yerine bunu kullan: orası görseli
+/// `DecorationImage` olarak alır ve animasyonlu GIF'in yalnız ilk karesini
+/// boyar. Burada `Image` widget'ı (CachedNetworkImage) ağaçta olduğu için
+/// kareler akar. Kanıt: test/gif_animasyon_test.dart.
+class DaireGorsel extends StatelessWidget {
+  final String url;
+  final double cap;
+  final Color arkaplan;
+  final Color ikonRenk;
+  const DaireGorsel({
+    super.key,
+    required this.url,
+    required this.cap,
+    required this.arkaplan,
+    required this.ikonRenk,
+  });
+
+  @override
+  Widget build(BuildContext context) => ClipOval(
+    child: SizedBox(
+      width: cap,
+      height: cap,
+      child: CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.cover,
+        // Üç hâl: yükleniyor → görsel → hata. Sessiz boşluk bırakma.
+        placeholder: (_, _) => Container(color: arkaplan),
+        errorWidget: (_, _, _) => Container(
+          color: arkaplan,
+          child: Icon(Icons.person, size: cap * 0.5, color: ikonRenk),
+        ),
+      ),
+    ),
+  );
+}
+
 /// Kullanıcı avatarı. [kullaniciAdi] AI hesabıysa sarı çerçeve ve altına
 /// bindirilmiş "AI" rozeti ekler; diğer herkes için düz CircleAvatar'dır.
 /// Rozetli halde bileşen çerçeve + rozet payı kadar büyür; rozet Stack
 /// SINIRLARI İÇİNDE kalır (dışarı taşan Positioned tıklama almaz).
+///
+/// [hareketli] — animasyonlu GIF avatarların OYNAMASI isteniyorsa true.
+/// NEDEN AYRI BAYRAK (8 Ağu 2026 hatası): `CircleAvatar(backgroundImage:)`
+/// görseli bir `DecorationImage` olarak boyar ve animasyonlu görselin
+/// YALNIZ İLK KARESİNİ çizer; animasyon için `Image` widget'ının kendisi
+/// ağaçta olmalıdır (piksel kanıtı: test/gif_animasyon_test.dart).
+/// Varsayılan `false`, çünkü akış/yorum/sohbet/takipçi listelerinde aynı
+/// anda onlarca avatar bulunur: her biri saniyede ~10 kez kare çözer ve
+/// tüm yüzeyi yeniden boyatır. Animasyon yalnız avatarın BÜYÜK gösterildiği
+/// yerlerde (profil başlığı, ayarlar) açılır — kullanıcı GIF'ini orada seçer
+/// ve orada görmek ister; listede durağan ilk kare hem yeterli hem ucuzdur.
 class KullaniciAvatari extends StatelessWidget {
   final String? url; // dosyaUrl'den geçmiş TAM adres; null = kişi ikonu
   final String? kullaniciAdi;
   final double yaricap;
   final Color? arkaplan;
   final Color? ikonRenk;
+  final bool hareketli;
   const KullaniciAvatari({
     super.key,
     required this.url,
@@ -1480,22 +1684,32 @@ class KullaniciAvatari extends StatelessWidget {
     this.yaricap = 20,
     this.arkaplan,
     this.ikonRenk,
+    this.hareketli = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final avatar = CircleAvatar(
-      radius: yaricap,
-      backgroundColor: arkaplan ?? DiziRenkler.koyuGri,
-      backgroundImage: url != null ? CachedNetworkImageProvider(url!) : null,
-      child: url == null
-          ? Icon(
-              Icons.person,
-              size: yaricap,
-              color: ikonRenk ?? DiziRenkler.metin38,
-            )
-          : null,
-    );
+    final Widget avatar = (hareketli && url != null)
+        ? DaireGorsel(
+            url: url!,
+            cap: yaricap * 2,
+            arkaplan: arkaplan ?? DiziRenkler.koyuGri,
+            ikonRenk: ikonRenk ?? DiziRenkler.metin38,
+          )
+        : CircleAvatar(
+            radius: yaricap,
+            backgroundColor: arkaplan ?? DiziRenkler.koyuGri,
+            backgroundImage: url != null
+                ? CachedNetworkImageProvider(url!)
+                : null,
+            child: url == null
+                ? Icon(
+                    Icons.person,
+                    size: yaricap,
+                    color: ikonRenk ?? DiziRenkler.metin38,
+                  )
+                : null,
+          );
     if (kullaniciAdi != aiKullaniciAdi) return avatar;
     final kenar = (yaricap * 0.09).clamp(1.2, 2.0);
     final halka = yaricap * 2 + 2 * (kenar + 1.5);
@@ -1594,9 +1808,140 @@ class RozetliIkon extends StatelessWidget {
   }
 }
 
-/// Liste içeriği modalı: 3'lü poster ızgarası, dokununca detaya gider.
+/// Liste içeriği: 3'lü poster ızgarası + yükleniyor / hata / bulunamadı-gizli
+/// / boş hâlleri.
+///
+/// TEK KAYNAK: hem profil modalindeki [ListeSheet] hem `/listeler/:id` tam
+/// sayfası ([ListeEkrani], ekranlar/liste.dart) bunu kullanır. İki ayrı kopya
+/// tutulsaydı "gizli liste" hâli yalnız birinde düzelirdi.
+class ListeIcerigi extends StatefulWidget {
+  final int listeId;
+
+  /// Modal içinde mi çiziliyor? Poster dokunuşunda modalin kapanması gerekir,
+  /// ve "Keşfet'e dön" çıkışı modalde anlamsızdır (kapatmak zaten yeterli).
+  final bool modalIcinde;
+
+  /// Liste kaydı çözülünce çağrılır — tam sayfa başlığı buradan beslenir.
+  final ValueChanged<Map<String, dynamic>>? onListe;
+
+  const ListeIcerigi({
+    super.key,
+    required this.listeId,
+    this.modalIcinde = false,
+    this.onListe,
+  });
+
+  @override
+  State<ListeIcerigi> createState() => _ListeIcerigiState();
+}
+
+class _ListeIcerigiState extends State<ListeIcerigi> {
+  List<dynamic>? _ogeler;
+  String? _hata;
+  int? _kod;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    setState(() {
+      _hata = null;
+      _kod = null;
+    });
+    try {
+      final d = await Api.get('/listeler/${widget.listeId}');
+      if (!mounted) return;
+      final liste = d as Map<String, dynamic>;
+      setState(() => _ogeler = (liste['ogeler'] as List<dynamic>?) ?? const []);
+      widget.onListe?.call(liste);
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _hata = e.mesaj;
+        _kod = e.kod;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _hata = e.toString());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Sunucu, GİZLİ listeyi sahibi olmayana 404 verir (herkese_acik=false).
+    // Ziyaretçi için "yok" ile "gizli" ayrımı zaten yapılamaz; ikisi de aynı
+    // nazik sayfayı görür — boş beyaz ekran DEĞİL.
+    if (_kod == 404) {
+      return BosDurum(
+        ikon: Icons.link_off,
+        baslik: 'Bağlantı geçersiz veya sayfa bulunamadı'.c,
+        aksiyon: widget.modalIcinde
+            ? null
+            : FilledButton(
+                onPressed: () => GoRouter.of(context).go('/kesfet'),
+                child: Text('Keşfet\'e dön'.c),
+              ),
+      );
+    }
+    if (_hata != null) return HataGorunumu(mesaj: _hata!, tekrar: _yukle);
+    if (_ogeler == null) {
+      return const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    }
+    if (_ogeler!.isEmpty) {
+      return Center(
+        child: Text(
+          'Liste boş.'.c,
+          style: TextStyle(color: DiziRenkler.metin38),
+        ),
+      );
+    }
+    return GridView.builder(
+      // ALT GÜVENLİ ALAN: GridView de bir BoxScrollView — AÇIK `padding`
+      // verildiği an Flutter'ın MediaQuery alt payını kendiliğinden ekleme
+      // davranışı kapanır (yalnız padding == null iken ekler). Sabit 20 ile
+      // 360x800 / 48 dp navi çubuğu olan telefonda son poster sırasının alt
+      // kenarı 780'e, yani çubuğun ALTINA düşüyordu (güvenli sınır 752).
+      //
+      // `useSafeArea: true` BU İŞİ ÇÖZMEZ: Flutter kaynağında
+      // `SafeArea(bottom: false, ...)` — alt kenara hiç dokunmaz.
+      // Alt payı sheet'in İÇERİĞİ halletmeli.
+      //
+      // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ: bu ızgara hem kabuk İÇİNDEN
+      // (profil sekmesi) hem de kabuk kökünden açılıyor. Ayrımı MediaQuery
+      // zaten yapar — kabuğun Scaffold'u `bottomNavigationBar` taşıdığı için
+      // gövdesine verdiği MediaQuery'de alt pay ZATEN 0'dır, orada
+      // altGuvenli 0 + 20 = 20 döner → FAZLADAN boşluk YOK.
+      padding: EdgeInsets.fromLTRB(14, 0, 14, altGuvenli(context, ekstra: 20)),
+      // Sütun sayısı SABİT 3 değil: `/listeler/:id` tam sayfası masaüstünde
+      // 1400 dp genişliğe açılıyor ve 3 sütunda poster 460 dp'ye şişiyordu.
+      // [PosterIzgarasi] ölçülen genişlikten türetir; başlık yok, hücre
+      // birebir 2:3 (baslikYuksekligi: 0).
+      gridDelegate: const PosterIzgarasi(
+        satirBoslugu: 10,
+        bosluk: 10,
+        baslikYuksekligi: 0,
+      ),
+      itemCount: _ogeler!.length,
+      itemBuilder: (context, i) {
+        final o = _ogeler![i] as Map<String, dynamic>;
+        return _ListeOgeKart(
+          tur: o['tur'] as String,
+          tmdbId: (o['tmdb_id'] as num).toInt(),
+          modalIcinde: widget.modalIcinde,
+        );
+      },
+    );
+  }
+}
+
+/// Liste içeriği modalı: [ListeIcerigi]'ni başlıklı bir alt sayfaya sarar.
 /// Hem kendi profilinden hem başkasının profilinden açılır.
-class ListeSheet extends StatefulWidget {
+class ListeSheet extends StatelessWidget {
   final int listeId;
   final String ad;
 
@@ -1616,88 +1961,7 @@ class ListeSheet extends StatefulWidget {
   }
 
   @override
-  State<ListeSheet> createState() => _ListeSheetState();
-}
-
-class _ListeSheetState extends State<ListeSheet> {
-  List<dynamic>? _ogeler;
-  String? _hata;
-
-  @override
-  void initState() {
-    super.initState();
-    _yukle();
-  }
-
-  Future<void> _yukle() async {
-    try {
-      final d = await Api.get('/listeler/${widget.listeId}');
-      if (!mounted) return;
-      setState(() => _ogeler = d['ogeler'] as List<dynamic>);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _hata = e.toString());
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Widget govde;
-    if (_hata != null) {
-      govde = Center(
-        child: Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
-      );
-    } else if (_ogeler == null) {
-      govde = const Center(
-        child: CircularProgressIndicator(color: DiziRenkler.sari),
-      );
-    } else if (_ogeler!.isEmpty) {
-      govde = Center(
-        child: Text(
-          'Liste boş.'.c,
-          style: TextStyle(color: DiziRenkler.metin38),
-        ),
-      );
-    } else {
-      govde = GridView.builder(
-        // ALT GÜVENLİ ALAN: GridView de bir BoxScrollView — AÇIK `padding`
-        // verildiği an Flutter'ın MediaQuery alt payını kendiliğinden ekleme
-        // davranışı kapanır (yalnız padding == null iken ekler). Sabit 20 ile
-        // 360x800 / 48 dp navi çubuğu olan telefonda son poster sırasının alt
-        // kenarı 780'e, yani çubuğun ALTINA düşüyordu (güvenli sınır 752).
-        //
-        // `useSafeArea: true` BU İŞİ ÇÖZMEZ: Flutter kaynağında
-        // `SafeArea(bottom: false, ...)` — alt kenara hiç dokunmaz.
-        // Alt payı sheet'in İÇERİĞİ halletmeli.
-        //
-        // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ: bu sheet hem kabuk İÇİNDEN
-        // (profil sekmesi) hem de kabuk kökünden açılıyor. Ayrımı MediaQuery
-        // zaten yapar — kabuğun Scaffold'u `bottomNavigationBar` taşıdığı için
-        // gövdesine verdiği MediaQuery'de alt pay ZATEN 0'dır, orada
-        // altGuvenli 0 + 20 = 20 döner → FAZLADAN boşluk YOK.
-        padding: EdgeInsets.fromLTRB(
-          14,
-          0,
-          14,
-          altGuvenli(context, ekstra: 20),
-        ),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          childAspectRatio: 2 / 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        itemCount: _ogeler!.length,
-        itemBuilder: (context, i) {
-          final o = _ogeler![i] as Map<String, dynamic>;
-          return _ListeOgeKart(
-            tur: o['tur'] as String,
-            tmdbId: (o['tmdb_id'] as num).toInt(),
-          );
-        },
-      );
-    }
-
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
@@ -1710,7 +1974,7 @@ class _ListeSheetState extends State<ListeSheet> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    widget.ad,
+                    ad,
                     style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
@@ -1720,7 +1984,7 @@ class _ListeSheetState extends State<ListeSheet> {
               ],
             ),
           ),
-          Expanded(child: govde),
+          Expanded(child: ListeIcerigi(listeId: listeId, modalIcinde: true)),
         ],
       ),
     );
@@ -1732,7 +1996,15 @@ class _ListeOgeKart extends StatefulWidget {
   final String tur;
   final int tmdbId;
 
-  const _ListeOgeKart({required this.tur, required this.tmdbId});
+  /// Modalden açıldıysa detaya gitmeden ÖNCE modal kapatılır; tam sayfada
+  /// kapatılacak bir şey yoktur (pop, listenin kendisini kapatırdı).
+  final bool modalIcinde;
+
+  const _ListeOgeKart({
+    required this.tur,
+    required this.tmdbId,
+    required this.modalIcinde,
+  });
 
   @override
   State<_ListeOgeKart> createState() => _ListeOgeKartState();
@@ -1762,7 +2034,7 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
       onTap: () {
         // Yönlendiriciyi modal kapanmadan ÖNCE al (ölü context tuzağı)
         final yonlendirici = GoRouter.of(context);
-        Navigator.pop(context);
+        if (widget.modalIcinde) Navigator.pop(context);
         yonlendirici.push('/icerik/${widget.tur}/${widget.tmdbId}');
       },
       child: ClipRRect(

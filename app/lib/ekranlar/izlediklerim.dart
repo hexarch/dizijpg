@@ -51,12 +51,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
       // İskelet ızgara: bekleme yerine içerik şekli belirir (premium his)
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 12,
-          childAspectRatio: 0.5,
-        ),
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 16, bosluk: 12),
         itemCount: 9,
         itemBuilder: (_, __) => const IskeletKutu(
           genislik: double.infinity,
@@ -72,12 +67,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
     } else {
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 16,
-          crossAxisSpacing: 12,
-          childAspectRatio: 0.5,
-        ),
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 16, bosluk: 12),
         itemCount: ogeler.length,
         itemBuilder: (context, i) {
           final o = ogeler[i] as Map<String, dynamic>;

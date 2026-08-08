@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'profil.dart' show profilYenileTetik;
+import 'yasakli.dart';
 
 /// Masaüstünde alt çubuğun genişliği: 5 hedef × 56 dp. 56 dp dokunma alanı
 /// 44 dp asgarisinin üstünde kalır — küçültürken buranın altına inilmemeli.
@@ -141,7 +142,12 @@ class KabukEkrani extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: shell,
+      // Hesap askıya alındıysa üstte ince bir şerit çıkar (dokununca sebep +
+      // kalan süre). Yasak yokken hiçbir yer kaplamaz — kabuk aynen eskisi
+      // gibi çizilir. Buraya konmasının sebebi: kullanıcı hangi sekmede olursa
+      // olsun cezasından haberdar olmalı; tek bir ekrana koysaydık oraya hiç
+      // uğramayan kullanıcı sessizce kısıtlanmış olurdu.
+      body: YasakSeridi(child: shell),
       bottomNavigationBar: kabukCubugu(
         context,
         secili: shell.currentIndex,

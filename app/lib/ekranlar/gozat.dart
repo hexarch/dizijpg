@@ -109,12 +109,9 @@ class _GozatEkraniState extends State<GozatEkrani> {
 
   @override
   Widget build(BuildContext context) {
-    final genis = MediaQuery.of(context).size.width;
-    final sutun = genis > 900
-        ? 6
-        : genis > 600
-        ? 4
-        : 3;
+    // Sütun sayısı artık burada hesaplanmıyor: [PosterIzgarasi] ızgaranın
+    // ÖLÇÜLEN genişliğinden türetiyor (dolgu/boşluk dahil), MediaQuery tahmini
+    // ve sabit basamaklar (3/4/6) gerekmiyor.
     return Scaffold(
       appBar: AppBar(
         title: Text('Gözat'.c),
@@ -177,12 +174,7 @@ class _GozatEkraniState extends State<GozatEkrani> {
           ? GridView.builder(
               padding: const EdgeInsets.all(8),
               physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: sutun,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.5,
-              ),
+              gridDelegate: const PosterIzgarasi(satirBoslugu: 10, bosluk: 10),
               itemCount: 12,
               itemBuilder: (_, _) =>
                   const IskeletKutu(genislik: double.infinity),
@@ -196,12 +188,7 @@ class _GozatEkraniState extends State<GozatEkrani> {
           : GridView.builder(
               controller: _kaydirma,
               padding: EdgeInsets.fromLTRB(8, 8, 8, altGuvenli(context)),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: sutun,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-                childAspectRatio: 0.5,
-              ),
+              gridDelegate: const PosterIzgarasi(satirBoslugu: 10, bosluk: 10),
               itemCount: _sonuc.length,
               itemBuilder: (context, i) => PosterKarti(
                 icerik: _sonuc[i] as Map<String, dynamic>,

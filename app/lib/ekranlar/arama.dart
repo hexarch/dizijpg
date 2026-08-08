@@ -243,13 +243,10 @@ class _AramaEkraniState extends State<AramaEkrani>
                       Expanded(
                         child: GridView.builder(
                           padding: const EdgeInsets.all(16),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                mainAxisSpacing: 14,
-                                crossAxisSpacing: 10,
-                                childAspectRatio: 0.53,
-                              ),
+                          gridDelegate: const PosterIzgarasi(
+                            satirBoslugu: 14,
+                            bosluk: 10,
+                          ),
                           itemCount: _sonuclar.length,
                           itemBuilder: (context, i) {
                             final r = _sonuclar[i] as Map<String, dynamic>;

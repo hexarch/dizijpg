@@ -252,41 +252,41 @@ class _AkisEkraniState extends State<AkisEkrani>
         ),
       );
     } else {
-      // PC'de kartlar tüm genişliğe yayılmasın: 720px ortalanmış kolon
+      // PC'de kartlar tüm genişliğe yayılmasın: ortalanmış okuma kolonu
+      // ([masaustuKolonGenisligi], tema.dart — takvim/Reels/profil de aynı
+      // kalıbı kullanır).
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
         onRefresh: _yukle,
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: ListView.builder(
-              controller: _kaydirma,
-              // Yatay dolgu YOK: medya sağa-sola tam dayanır (kart kenarları
-              // ekrana yaslı; başlık/metin kendi iç dolgusunu alır).
-              padding: const EdgeInsets.only(top: 8, bottom: 24),
-              // İlerideki kartlar önden kurulur → videoları erkenden yüklenir
-              cacheExtent: 4000,
-              itemCount: _akis!.length,
-              itemBuilder: (context, i) {
-                final y = _akis![i] as Map<String, dynamic>;
-                // "Görüldü": kart GERÇEKTEN ekranda (>%60) belirince işaretle —
-                // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
-                return VisibilityDetector(
-                  key: ValueKey('gor-${y['id']}'),
-                  onVisibilityChanged: (info) {
-                    if (info.visibleFraction > 0.6) {
-                      _kartGorundu(y['id'] as int);
-                    }
-                  },
-                  child: AkisKarti(
-                    key: ValueKey(y['id']),
-                    yorum: y,
-                    icerikler: _icerikler,
-                    onMedyaAc: (mi) => _reelsAc(i, mi),
-                  ),
-                );
-              },
-            ),
+        child: OrtaKolon(
+          azami: masaustuKolonGenisligi,
+          cocuk: ListView.builder(
+            controller: _kaydirma,
+            // Yatay dolgu YOK: medya sağa-sola tam dayanır (kart kenarları
+            // ekrana yaslı; başlık/metin kendi iç dolgusunu alır).
+            padding: const EdgeInsets.only(top: 8, bottom: 24),
+            // İlerideki kartlar önden kurulur → videoları erkenden yüklenir
+            cacheExtent: 4000,
+            itemCount: _akis!.length,
+            itemBuilder: (context, i) {
+              final y = _akis![i] as Map<String, dynamic>;
+              // "Görüldü": kart GERÇEKTEN ekranda (>%60) belirince işaretle —
+              // build ≈ görüldü DEĞİL (ListView ekran dışı kartları da kurar).
+              return VisibilityDetector(
+                key: ValueKey('gor-${y['id']}'),
+                onVisibilityChanged: (info) {
+                  if (info.visibleFraction > 0.6) {
+                    _kartGorundu(y['id'] as int);
+                  }
+                },
+                child: AkisKarti(
+                  key: ValueKey(y['id']),
+                  yorum: y,
+                  icerikler: _icerikler,
+                  onMedyaAc: (mi) => _reelsAc(i, mi),
+                ),
+              );
+            },
           ),
         ),
       );

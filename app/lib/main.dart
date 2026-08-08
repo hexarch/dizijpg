@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'altyazi.dart';
 import 'api.dart';
 import 'ceviri.dart';
+import 'cihaz_kimlik.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
 import 'sira_tercihi.dart';
@@ -31,6 +32,26 @@ class FareKaydirma extends MaterialScrollBehavior {
   };
 }
 
+/// Açılış adımını çalıştırır; PATLASA DA yukarı taşımaz.
+///
+/// NEDEN: `main` içindeki her `await` doğrudan `runZonedGuarded`'ın hata
+/// işleyicisine düşüyordu — yani TEK bir hazırlık adımı (Firebase çekirdeği,
+/// çeviri dosyası, SharedPreferences) patladığında `runApp` HİÇ çağrılmıyor,
+/// kullanıcı BEMBEYAZ bir sayfa görüyordu. Üstelik konsolda da bir şey
+/// çıkmıyordu: `PlatformDispatcher.onError` `true` döndürdüğü için varsayılan
+/// yazdırıcı devre dışı kalıyor. Bu sarmalayıcı ile eksik kalan tek şey o
+/// adımın kendisi olur (ör. varsayılan dil), uygulama yine açılır.
+///
+/// Test edilebilirlik için public: test/acilis_dayaniklilik_test.dart.
+Future<void> acilisAdimi(String ad, Future<void> Function() calistir) async {
+  try {
+    await calistir();
+  } catch (hata, yigin) {
+    debugPrint('Açılış adımı başarısız ($ad): $hata');
+    Api.hataBildir(hata, yigin, yol: 'acilis/$ad');
+  }
+}
+
 Future<void> main() async {
   // Yakalanan Flutter hataları önce konsola, sonra sunucuya (self-hosted günlük).
   FlutterError.onError = (ayrinti) {
@@ -38,7 +59,11 @@ Future<void> main() async {
     Api.hataBildir(ayrinti.exception, ayrinti.stack);
   };
   // Widget ağacı dışındaki (platform/async) hatalar.
+  // `true` dönmek varsayılan yazdırıcıyı devre dışı bırakır; konsol sessiz
+  // kalmasın diye ÖNCE kendimiz yazdırıyoruz (7 Ağu'daki "beyaz sayfa ama
+  // konsolda hata yok" bildirimi tam da bu sessizlik yüzünden izlenemedi).
   PlatformDispatcher.instance.onError = (hata, yigin) {
+    debugPrint('Yakalanmayan hata: $hata\n$yigin');
     Api.hataBildir(hata, yigin);
     return true;
   };
@@ -46,17 +71,32 @@ Future<void> main() async {
     // Web'de #'sız temiz URL; F5 aynı sayfayı açar (nginx try_files ile).
     usePathUrlStrategy();
     WidgetsFlutterBinding.ensureInitialized();
-    await pushCekirdek(); // Firebase çekirdeği + arka plan mesaj işleyicisi
-    await Ceviri.yukle();
-    await TemaAyar.yukle();
-    await VeriTasarrufu.yukle(); // bağlantı türü + veri tasarrufu tercihleri
-    await AltyaziAyar.yukle(); // videolarda altyazı gösterilsin mi
-    await SiraTercihi.yukle(); // Akış/Keşfet: Kronolojik mi Önerilen mi
+    // Firebase çekirdeği + arka plan mesaj işleyicisi
+    await acilisAdimi('push', pushCekirdek);
+    await acilisAdimi('ceviri', Ceviri.yukle);
+    // KURULUM kimliği: ilk açılışta üretilir, sonraki açılışlarda okunur.
+    // DONANIMDAN OKUNMAZ (Play politikası + gizlilik); yalnız moderasyon
+    // için `X-Cihaz` başlığıyla gider. Ayrıntı: lib/cihaz_kimlik.dart
+    await acilisAdimi('cihaz-kimlik', CihazKimlik.yukle);
+    await acilisAdimi('tema', TemaAyar.yukle);
+    // bağlantı türü + veri tasarrufu tercihleri
+    await acilisAdimi('veri-tasarrufu', VeriTasarrufu.yukle);
+    // videolarda altyazı gösterilsin mi
+    await acilisAdimi('altyazi', AltyaziAyar.yukle);
+    // Akış/Keşfet: Kronolojik mi Önerilen mi
+    await acilisAdimi('sira', SiraTercihi.yukle);
     final oturum = Oturum();
-    await oturum.yukle();
+    await acilisAdimi('oturum', oturum.yukle);
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)
     if (oturum.girisli) pushBaslat();
     if (oturum.girisli) KitaplikDurumu.yukle();
+    // Oturumu `/profilim` ile tazele. ŞART: giriş yanıtında `avatar` YOK
+    // (backend/server.js:1888) ve `oturum.yukle()` yalnız prefs'i okur — yani
+    // ZATEN girişli olan herkesin avatarı bu çağrı olmadan null kalır ve
+    // yorum kutusundaki avatar kişi ikonuna düşer (bkz. `Oturum.tazele`).
+    // Beklenmez: açılış bir ağ isteği kadar gecikmesin, tazelenince
+    // notifyListeners ile ekranlar kendiliğinden güncellenir.
+    if (oturum.girisli) unawaited(oturum.tazele());
     runApp(
       ChangeNotifierProvider.value(value: oturum, child: const DiziJpgApp()),
     );

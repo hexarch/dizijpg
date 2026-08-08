@@ -18,6 +18,7 @@ import 'profil.dart'
         ProfilSekmeleri,
         ProfilYorumAkisi;
 import 'sosyal.dart';
+import 'takip_dugmesi.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
 class KullaniciProfilEkrani extends StatefulWidget {
@@ -137,48 +138,52 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         kullaniciAdi: p['kullanici_adi'] as String?,
                         yaricap: 40,
                         arkaplan: DiziRenkler.kart,
+                        // Profil başlığı: GIF avatar BURADA oynasın.
+                        hareketli: true,
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '@${p['kullanici_adi']}',
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                              ),
+                            // Kullanıcı adı + (testçiyse) altın onay tiki.
+                            // KULLANICI İSTEĞİ (7 Ağu): tik kullanıcı adının
+                            // HEMEN YANINDA olacak; eski "Founding Member"
+                            // yazısı + dizi.jpg logosu kaldırıldı.
+                            // Flexible + ellipsis: uzun kullanıcı adı tiki
+                            // ekran dışına itmesin, adın sonu üç noktaya
+                            // dönsün (tik daima görünür kalır).
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    '@${p['kullanici_adi']}',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                                // Bu ekran KENDİ kullanıcı adınla da
+                                // açılabiliyor; "kendi profilim mi" kararı
+                                // ekranın türünden değil sunucunun `ben_mi`
+                                // yargısından gelir (uzun basma menüsü de
+                                // aynı alanı kullanıyor).
+                                if (p['testci'] == true)
+                                  AileRozeti(
+                                    benMi: p['ben_mi'] == true,
+                                    olcu: 19,
+                                  ),
+                              ],
                             ),
-                            // Ülke + "dizi.jpg aile üyesi" rozeti aynı satırda.
-                            // Rozet ülkeye BAĞLI DEĞİL: testçilerin çoğunun
-                            // ülkesi boş ve o satır ülke yoksa hiç çizilmiyordu
-                            // — rozet ülkeye bağlansaydı hak edenlerin çoğu onu
-                            // hiç göremezdi. Ülke varsa istendiği gibi bayrağın
-                            // yanında durur, yoksa tek başına çizilir.
-                            // Wrap (Row değil): 360 dp'de uzun ülke adı + rozet
-                            // yan yana sığmazsa rozet alt satıra iner; taşma yok.
-                            if ((p['ulke'] as String?)?.isNotEmpty == true ||
-                                p['testci'] == true)
+                            // Ülke satırı. Rozet buradan ÇIKTI (artık adın
+                            // yanında) — ülke tek başına kaldı.
+                            if ((p['ulke'] as String?)?.isNotEmpty == true)
                               Padding(
                                 padding: const EdgeInsets.only(top: 2),
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 2,
-                                  crossAxisAlignment: WrapCrossAlignment.center,
-                                  children: [
-                                    if ((p['ulke'] as String?)?.isNotEmpty ==
-                                        true)
-                                      UlkeSatiri(ulke: p['ulke'] as String),
-                                    // Bu ekran KENDİ kullanıcı adınla da
-                                    // açılabiliyor; "kendi profilim mi" kararı
-                                    // ekranın türünden değil sunucunun `ben_mi`
-                                    // yargısından gelir (uzun basma menüsü de
-                                    // aynı alanı kullanıyor).
-                                    if (p['testci'] == true)
-                                      AileRozeti(benMi: p['ben_mi'] == true),
-                                  ],
-                                ),
+                                child: UlkeSatiri(ulke: p['ulke'] as String),
                               ),
                           ],
                         ),
@@ -877,21 +882,62 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
   List<dynamic>? _liste;
   String? _hata;
 
+  /// Giriş yapanın takip ettiklerinin kullanıcı adları. null = bilinmiyor
+  /// (o hâlde satırlarda düğme çizilmez — bkz. [takipKumesiGetir]).
+  Set<String>? _takiptekiler;
+
   @override
   void initState() {
     super.initState();
     _yukle();
   }
 
+  /// İki istek PARALEL gider (`Future.wait`): görüntülenen liste + giriş
+  /// yapanın takip ettikleri. Satır başına sorgu (N+1) YOK — 500 satırlık
+  /// listede bile toplam 2 istek.
+  ///
+  /// Kendi "takip ettiklerim" listemde ikinci istek hiç atılmaz: o listedeki
+  /// herkesi tanım gereği takip ediyorum.
   Future<void> _yukle() async {
+    final benimAdim =
+        context.read<Oturum>().kullanici?['kullanici_adi'] as String?;
+    final hepsiTakipte =
+        !widget.takipciler &&
+        benimAdim != null &&
+        benimAdim == widget.kullaniciAdi;
     try {
-      final l = widget.takipciler
-          ? await Api.takipciler(widget.kullaniciAdi)
-          : await Api.takipEdilenler(widget.kullaniciAdi);
-      if (mounted) setState(() => _liste = l);
+      final sonuc = await Future.wait([
+        widget.takipciler
+            ? Api.takipciler(widget.kullaniciAdi)
+            : Api.takipEdilenler(widget.kullaniciAdi),
+        if (!hepsiTakipte)
+          takipKumesiGetir(benimAdim)
+        else
+          Future<Set<String>?>.value(const <String>{}),
+      ]);
+      final liste = sonuc[0] as List<dynamic>;
+      if (!mounted) return;
+      setState(() {
+        _liste = liste;
+        _takiptekiler = hepsiTakipte
+            ? {
+                for (final u in liste)
+                  (u as Map<String, dynamic>)['kullanici_adi'] as String,
+              }
+            : sonuc[1] as Set<String>?;
+      });
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
     }
+  }
+
+  /// Bir satırın düğmesine basılınca kümeyi de güncelle: liste kaydırılıp
+  /// satır yeniden kurulduğunda (ListView geri dönüşümü) düğme doğru hâlde
+  /// açılsın.
+  void _kumeyeYaz(String ad, bool takipte) {
+    final k = _takiptekiler;
+    if (k == null) return;
+    takipte ? k.add(ad) : k.remove(ad);
   }
 
   @override
@@ -911,8 +957,23 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
         ),
       );
     } else {
+      final kume = _takiptekiler;
       govde = ListView(
-        children: [for (final u in _liste!) KullaniciSatiri(kullanici: u)],
+        children: [
+          for (final u in _liste!)
+            Builder(
+              builder: (context) {
+                final ad =
+                    (u as Map<String, dynamic>)['kullanici_adi'] as String;
+                return KullaniciSatiri(
+                  key: ValueKey(ad),
+                  kullanici: u,
+                  takipEdiyorum: kume == null ? null : kume.contains(ad),
+                  onTakipDegisti: (v) => _kumeyeYaz(ad, v),
+                );
+              },
+            ),
+        ],
       );
     }
 
@@ -925,22 +986,49 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
   }
 }
 
-/// Kullanıcı listelerinde tek satır (avatar + ad + bio), profile götürür.
+/// Kullanıcı listelerinde tek satır: [avatar] [ad + bio] ... [takip düğmesi].
+/// Satıra dokunmak profile götürür; sağdaki düğme dokunuşu YUTAR (satır
+/// gezinmesini tetiklemez).
+///
+/// [takipEdiyorum] **null** ise durum bilinmiyordur (sunucu bu uçlarda
+/// `takip_ediyorum` döndürmüyor, toplu sorgu da başarısız oldu) ve düğme HİÇ
+/// çizilmez: `POST /takip/:ad` bir TOGGLE olduğundan yanlış başlangıç
+/// durumuyla çizilen düğme "takip et" sanılan dokunuşta takibi BIRAKIRDI.
 class KullaniciSatiri extends StatelessWidget {
   final Map<String, dynamic> kullanici;
-  const KullaniciSatiri({super.key, required this.kullanici});
+
+  /// Giriş yapan kişi bu satırdakini takip ediyor mu? null = bilinmiyor.
+  final bool? takipEdiyorum;
+
+  /// Durum değişince çağrılır (liste sahibinin kendi kaydını tazelemesi için).
+  final ValueChanged<bool>? onTakipDegisti;
+
+  const KullaniciSatiri({
+    super.key,
+    required this.kullanici,
+    this.takipEdiyorum,
+    this.onTakipDegisti,
+  });
 
   @override
   Widget build(BuildContext context) {
     final avatar = dosyaUrl(kullanici['avatar'] as String?);
+    final ad = kullanici['kullanici_adi'] as String? ?? '';
+    // Kendi satırım mı? Sunucu bu uçlarda `ben_mi` döndürmüyor, oturumdaki
+    // kullanıcı adıyla karşılaştırılır (kendini takip edemezsin).
+    final benimAdim =
+        context.watch<Oturum>().kullanici?['kullanici_adi'] as String?;
+    final benMi = benimAdim != null && benimAdim == ad;
     return ListTile(
       leading: KullaniciAvatari(
         url: avatar,
-        kullaniciAdi: kullanici['kullanici_adi'] as String?,
+        kullaniciAdi: ad,
         arkaplan: DiziRenkler.kart,
       ),
       title: Text(
-        '@${kullanici['kullanici_adi']}',
+        '@$ad',
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: const TextStyle(fontWeight: FontWeight.w700),
       ),
       subtitle: (kullanici['bio'] as String?)?.isNotEmpty == true
@@ -950,7 +1038,21 @@ class KullaniciSatiri extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             )
           : null,
-      onTap: () => context.push('/kullanici/${kullanici['kullanici_adi']}'),
+      // Ad ile düğme arasında ≥12px: yanlışlıkla basmayı zorlaştırır.
+      contentPadding: const EdgeInsets.only(left: 16, right: 12),
+      horizontalTitleGap: 12,
+      minVerticalPadding: 10,
+      trailing: (takipEdiyorum == null || benMi)
+          ? null
+          : Padding(
+              padding: const EdgeInsets.only(left: 12),
+              child: TakipDugmesi(
+                kullaniciAdi: ad,
+                takipEdiyorum: takipEdiyorum!,
+                onDegisti: onTakipDegisti,
+              ),
+            ),
+      onTap: () => context.push('/kullanici/$ad'),
     );
   }
 }
@@ -967,6 +1069,20 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
   final _arama = TextEditingController();
   List<dynamic> _sonuc = [];
   bool _yukleniyor = false;
+
+  /// Takip ettiklerim — ekran açılırken BİR KEZ alınır. Her tuş vuruşunda
+  /// yeniden istenseydi arama uçtan uca iki katı istek atardı.
+  Set<String>? _takiptekiler;
+
+  @override
+  void initState() {
+    super.initState();
+    final benimAdim =
+        context.read<Oturum>().kullanici?['kullanici_adi'] as String?;
+    takipKumesiGetir(benimAdim).then((k) {
+      if (mounted) setState(() => _takiptekiler = k);
+    });
+  }
 
   @override
   void dispose() {
@@ -1016,7 +1132,24 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
               ),
             )
           : ListView(
-              children: [for (final u in _sonuc) KullaniciSatiri(kullanici: u)],
+              children: [
+                for (final u in _sonuc)
+                  Builder(
+                    builder: (context) {
+                      final ad =
+                          (u as Map<String, dynamic>)['kullanici_adi']
+                              as String;
+                      final kume = _takiptekiler;
+                      return KullaniciSatiri(
+                        key: ValueKey(ad),
+                        kullanici: u,
+                        takipEdiyorum: kume == null ? null : kume.contains(ad),
+                        onTakipDegisti: (v) =>
+                            v ? kume?.add(ad) : kume?.remove(ad),
+                      );
+                    },
+                  ),
+              ],
             ),
     );
   }

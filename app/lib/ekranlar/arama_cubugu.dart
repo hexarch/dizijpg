@@ -186,110 +186,107 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
         ],
       ),
     );
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 720),
-        child: ListView(
-          // Klavye açıkken listeyi sürüklemek klavyeyi kapatsın.
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          // NEDEN altGuvenli, NEDEN sabit 24 değil: ListView'e AÇIK bir
-          // `padding` verildiği an Flutter'ın MediaQuery alt güvenli alanını
-          // kendiliğinden eklemesi devre dışı kalır (BoxScrollView yalnız
-          // padding == null iken ekler). Bu yüzden tam ekran aramada son sonuç
-          // satırı Android navi tuşlarının / iOS ana ekran çubuğunun ALTINDA
-          // kalıyordu.
-          //
-          // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ ÇÖZÜLÜR: aynı liste hem kabuk
-          // DIŞINDAKİ [TamEkranAramaSayfasi]nda hem kabuk İÇİNDEKİ
-          // [AramaCubugu]nda kullanılıyor; ayrımı MediaQuery zaten yapıyor.
-          //  * Kabuk içinde: [AramaCubugu] kabuğun Scaffold gövdesinin
-          //    İÇİNDEDİR; o Scaffold `bottomNavigationBar` taşıdığı için gövde
-          //    MediaQuery'sinde alt payı 0'a çeker (body slotuna
-          //    removeBottomPadding). altGuvenli 0 + 24 = 24 döner → FAZLADAN
-          //    boşluk YOK; sistem payını Scaffold zaten alt çubuğa vermiştir.
-          //  * Kabuk dışında: kök rota, üstünde alt payı yiyen kimse yok →
-          //    24 + sistem payı. Yani parametre/bayrak gereksiz.
-          //
-          // KLAVYE ÇİFT SAYILMAZ: viewInsets burada TOPLANMAZ. (1) Scaffold
-          // resizeToAvoidBottomInset ile gövdeyi zaten klavye kadar kısaltır,
-          // liste klavyenin üstünde biter. (2) Klavye açıkken sistem çubuğu
-          // klavyenin altında kaldığı için platform `padding.bottom`'ı 0 yapar
-          // (`viewPadding` korunur, bkz. FlutterView dokümanı) — yani altGuvenli
-          // o an sıfır ekler. Eski kod klavye payını AYRICA eklediği için,
-          // Scaffold'un kısalttığı listenin altında bir klavye boyu daha boşluk
-          // bırakıyordu.
-          padding: EdgeInsets.only(bottom: altGuvenli(context, ekstra: 24)),
-          children: [
-            if (_duzeltme != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
-                child: RichText(
-                  text: TextSpan(
-                    style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
-                    children: [
-                      TextSpan(text: '${'Şunu mu demek istedin'.c}: '),
-                      TextSpan(
-                        text: _duzeltme,
-                        style: TextStyle(
-                          color: DiziRenkler.sariMetin,
-                          fontWeight: FontWeight.w700,
-                        ),
+    return OrtaKolon(
+      azami: masaustuKolonGenisligi,
+      cocuk: ListView(
+        // Klavye açıkken listeyi sürüklemek klavyeyi kapatsın.
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        // NEDEN altGuvenli, NEDEN sabit 24 değil: ListView'e AÇIK bir
+        // `padding` verildiği an Flutter'ın MediaQuery alt güvenli alanını
+        // kendiliğinden eklemesi devre dışı kalır (BoxScrollView yalnız
+        // padding == null iken ekler). Bu yüzden tam ekran aramada son sonuç
+        // satırı Android navi tuşlarının / iOS ana ekran çubuğunun ALTINDA
+        // kalıyordu.
+        //
+        // ÇAĞIRAN-FARKINDALIĞI PARAMETRESİZ ÇÖZÜLÜR: aynı liste hem kabuk
+        // DIŞINDAKİ [TamEkranAramaSayfasi]nda hem kabuk İÇİNDEKİ
+        // [AramaCubugu]nda kullanılıyor; ayrımı MediaQuery zaten yapıyor.
+        //  * Kabuk içinde: [AramaCubugu] kabuğun Scaffold gövdesinin
+        //    İÇİNDEDİR; o Scaffold `bottomNavigationBar` taşıdığı için gövde
+        //    MediaQuery'sinde alt payı 0'a çeker (body slotuna
+        //    removeBottomPadding). altGuvenli 0 + 24 = 24 döner → FAZLADAN
+        //    boşluk YOK; sistem payını Scaffold zaten alt çubuğa vermiştir.
+        //  * Kabuk dışında: kök rota, üstünde alt payı yiyen kimse yok →
+        //    24 + sistem payı. Yani parametre/bayrak gereksiz.
+        //
+        // KLAVYE ÇİFT SAYILMAZ: viewInsets burada TOPLANMAZ. (1) Scaffold
+        // resizeToAvoidBottomInset ile gövdeyi zaten klavye kadar kısaltır,
+        // liste klavyenin üstünde biter. (2) Klavye açıkken sistem çubuğu
+        // klavyenin altında kaldığı için platform `padding.bottom`'ı 0 yapar
+        // (`viewPadding` korunur, bkz. FlutterView dokümanı) — yani altGuvenli
+        // o an sıfır ekler. Eski kod klavye payını AYRICA eklediği için,
+        // Scaffold'un kısalttığı listenin altında bir klavye boyu daha boşluk
+        // bırakıyordu.
+        padding: EdgeInsets.only(bottom: altGuvenli(context, ekstra: 24)),
+        children: [
+          if (_duzeltme != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
+              child: RichText(
+                text: TextSpan(
+                  style: TextStyle(fontSize: 13, color: DiziRenkler.metin54),
+                  children: [
+                    TextSpan(text: '${'Şunu mu demek istedin'.c}: '),
+                    TextSpan(
+                      text: _duzeltme,
+                      style: TextStyle(
+                        color: DiziRenkler.sariMetin,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            if (_aramaKullanicilar.isNotEmpty) ...[
-              baslik(Icons.people_outline, 'Kullanıcılar'.c),
-              for (final k in _aramaKullanicilar.take(6))
-                _AramaSatiri(
-                  gorselUrl: dosyaUrl(
-                    (k as Map<String, dynamic>)['avatar'] as String?,
-                  ),
-                  yuvarlak: true,
-                  kullaniciAdi: k['kullanici_adi'] as String?,
-                  ad: '@${k['kullanici_adi']}',
-                  altYazi: (k['bio'] as String?) ?? '',
-                  onTap: () =>
-                      kullaniciyaGit(context, k['kullanici_adi'] as String),
+            ),
+          if (_aramaKullanicilar.isNotEmpty) ...[
+            baslik(Icons.people_outline, 'Kullanıcılar'.c),
+            for (final k in _aramaKullanicilar.take(6))
+              _AramaSatiri(
+                gorselUrl: dosyaUrl(
+                  (k as Map<String, dynamic>)['avatar'] as String?,
                 ),
-            ],
-            if (_aramaIcerik.isNotEmpty) ...[
-              baslik(Icons.local_movies_outlined, 'Dizi ve Filmler'.c),
-              for (final r in _aramaIcerik.take(12))
-                _AramaSatiri(
-                  gorselUrl: posterUrl(
-                    (r as Map<String, dynamic>)['poster_path'] as String?,
-                    boyut: 'w185',
-                  ),
-                  ad: (r['name'] ?? r['title'] ?? '?') as String,
-                  altYazi: [
-                    ((r['first_air_date'] ?? r['release_date']) as String? ??
-                            '')
-                        .split('-')
-                        .first,
-                    r['media_type'] == 'tv' ? 'Dizi'.c : 'Film'.c,
-                  ].where((p) => p.isNotEmpty).join(' · '),
-                  onTap: () =>
-                      context.push('/icerik/${r['media_type']}/${r['id']}'),
-                ),
-            ],
-            if (_aramaKisiler.isNotEmpty) ...[
-              baslik(Icons.person_outline, 'Kişiler'.c),
-              for (final r in _aramaKisiler.take(8))
-                _AramaSatiri(
-                  gorselUrl: posterUrl(
-                    (r as Map<String, dynamic>)['profile_path'] as String?,
-                    boyut: 'w185',
-                  ),
-                  yuvarlak: true,
-                  ad: (r['name'] ?? '?') as String,
-                  altYazi: '',
-                  onTap: () => context.push('/kisi/${r['id']}'),
-                ),
-            ],
+                yuvarlak: true,
+                kullaniciAdi: k['kullanici_adi'] as String?,
+                ad: '@${k['kullanici_adi']}',
+                altYazi: (k['bio'] as String?) ?? '',
+                onTap: () =>
+                    kullaniciyaGit(context, k['kullanici_adi'] as String),
+              ),
           ],
-        ),
+          if (_aramaIcerik.isNotEmpty) ...[
+            baslik(Icons.local_movies_outlined, 'Dizi ve Filmler'.c),
+            for (final r in _aramaIcerik.take(12))
+              _AramaSatiri(
+                gorselUrl: posterUrl(
+                  (r as Map<String, dynamic>)['poster_path'] as String?,
+                  boyut: 'w185',
+                ),
+                ad: (r['name'] ?? r['title'] ?? '?') as String,
+                altYazi: [
+                  ((r['first_air_date'] ?? r['release_date']) as String? ?? '')
+                      .split('-')
+                      .first,
+                  r['media_type'] == 'tv' ? 'Dizi'.c : 'Film'.c,
+                ].where((p) => p.isNotEmpty).join(' · '),
+                onTap: () =>
+                    context.push('/icerik/${r['media_type']}/${r['id']}'),
+              ),
+          ],
+          if (_aramaKisiler.isNotEmpty) ...[
+            baslik(Icons.person_outline, 'Kişiler'.c),
+            for (final r in _aramaKisiler.take(8))
+              _AramaSatiri(
+                gorselUrl: posterUrl(
+                  (r as Map<String, dynamic>)['profile_path'] as String?,
+                  boyut: 'w185',
+                ),
+                yuvarlak: true,
+                ad: (r['name'] ?? '?') as String,
+                altYazi: '',
+                onTap: () => context.push('/kisi/${r['id']}'),
+              ),
+          ],
+        ],
       ),
     );
   }

@@ -102,26 +102,20 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
       govde = GridView.builder(
         padding: const EdgeInsets.all(12),
         physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.5,
-        ),
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
         itemCount: 9,
-        itemBuilder: (_, _) => const IskeletKutu(genislik: 110, yukseklik: 210),
+        itemBuilder: (_, _) => const IskeletKutu(
+          genislik: double.infinity,
+          yukseklik: double.infinity,
+        ),
       );
     } else {
-      final genis = MediaQuery.of(context).size.width > 900;
       govde = GridView.builder(
         controller: _kaydirma,
         padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: genis ? 6 : 3,
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 10,
-          childAspectRatio: 0.5,
-        ),
+        // Sütun sayısı ARTIK sabit değil (eskiden geniş ekranda 6): ızgaranın
+        // ölçülen genişliğinden türetilir, kart hedef bantta kalır.
+        gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
         // Son karo: sayfa yüklenirken dönen gösterge
         itemCount: _icerikler.length + (_yukluyor ? 1 : 0),
         itemBuilder: (context, i) {

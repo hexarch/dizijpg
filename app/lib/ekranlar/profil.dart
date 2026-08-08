@@ -20,8 +20,12 @@ import 'sosyal.dart';
 
 /// Dakikayı insancıl süreye çevirir: "1 yıl 2 ay 3 gün" (en anlamlı 3 birim).
 /// Küçük süreler için saat/dakika gösterir. Yaklaşık: yıl=365g, ay=30g.
+///
+/// Birimler `.cs(n)` ile basılır: sayı 1 ise dilin TEKİL biçimi seçilir.
+/// `.cf([n])` kullanılırsa İngilizce'de "1 years" çıkar (8 Ağu 2026 hatası) —
+/// kanıt ve kapsam sınırı: test/sure_cogul_test.dart, [Ceviri.cogul].
 String sureBicimle(int dakika) {
-  if (dakika <= 0) return '{} dk'.cf([0]);
+  if (dakika <= 0) return '{} dk'.cs(0);
   var kalan = dakika;
   final yil = kalan ~/ 525600;
   kalan %= 525600; // 365*24*60
@@ -32,15 +36,15 @@ String sureBicimle(int dakika) {
   final saat = kalan ~/ 60;
   final dk = kalan % 60;
   final parcalar = <String>[];
-  if (yil > 0) parcalar.add('{} yıl'.cf([yil]));
-  if (ay > 0) parcalar.add('{} ay'.cf([ay]));
-  if (gun > 0) parcalar.add('{} gün'.cf([gun]));
+  if (yil > 0) parcalar.add('{} yıl'.cs(yil));
+  if (ay > 0) parcalar.add('{} ay'.cs(ay));
+  if (gun > 0) parcalar.add('{} gün'.cs(gun));
   // Yıl/ay yoksa daha küçük birimleri de göster
   if (yil == 0 && ay == 0) {
-    if (saat > 0) parcalar.add('{} saat'.cf([saat]));
-    if (gun == 0 && dk > 0) parcalar.add('{} dk'.cf([dk]));
+    if (saat > 0) parcalar.add('{} saat'.cs(saat));
+    if (gun == 0 && dk > 0) parcalar.add('{} dk'.cs(dk));
   }
-  return parcalar.isEmpty ? '{} dk'.cf([dk]) : parcalar.take(3).join(' ');
+  return parcalar.isEmpty ? '{} dk'.cs(dk) : parcalar.take(3).join(' ');
 }
 
 /// Yorumların toplam beğeni + görüntülenme şeridi. Görüntülenme, foto/video
@@ -681,31 +685,43 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       onTap: _gorselYukleniyor
                           ? null
                           : () => _gorselDuzenle(false),
-                      child: CircleAvatar(
-                        radius: genis ? 52 : 38,
-                        backgroundColor: DiziRenkler.kart,
-                        backgroundImage:
-                            dosyaUrl(_profil?['avatar'] as String?) != null
-                            ? CachedNetworkImageProvider(
-                                dosyaUrl(_profil!['avatar'] as String)!,
-                              )
-                            : null,
+                      // GIF avatar profil başlığında OYNAMALI: bu yüzden
+                      // CircleAvatar(backgroundImage:) DEĞİL, ClipOval +
+                      // Image (DaireGorsel). DecorationImage animasyonlu
+                      // görselin ilk karesinde donar —
+                      // kanıt: test/gif_animasyon_test.dart.
+                      child: SizedBox(
+                        width: (genis ? 52 : 38) * 2,
+                        height: (genis ? 52 : 38) * 2,
                         child: _gorselYukleniyor
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: DiziRenkler.sari,
+                            ? CircleAvatar(
+                                radius: genis ? 52 : 38,
+                                backgroundColor: DiziRenkler.kart,
+                                child: const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: DiziRenkler.sari,
+                                  ),
                                 ),
                               )
-                            : (_profil?['avatar'] == null
-                                  ? Icon(
-                                      Icons.person,
-                                      size: 38,
-                                      color: DiziRenkler.metin38,
-                                    )
-                                  : null),
+                            : dosyaUrl(_profil?['avatar'] as String?) != null
+                            ? DaireGorsel(
+                                url: dosyaUrl(_profil!['avatar'] as String)!,
+                                cap: (genis ? 52 : 38) * 2,
+                                arkaplan: DiziRenkler.kart,
+                                ikonRenk: DiziRenkler.metin38,
+                              )
+                            : CircleAvatar(
+                                radius: genis ? 52 : 38,
+                                backgroundColor: DiziRenkler.kart,
+                                child: Icon(
+                                  Icons.person,
+                                  size: 38,
+                                  color: DiziRenkler.metin38,
+                                ),
+                              ),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -713,12 +729,28 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            '@$kullaniciAdi',
-                            style: TextStyle(
-                              fontSize: genis ? 21 : 17,
-                              fontWeight: FontWeight.w900,
-                            ),
+                          // Kullanıcı adı + (testçiyse) altın onay tiki.
+                          // KULLANICI İSTEĞİ (7 Ağu): tik adın hemen yanında;
+                          // "Founding Member" yazısı + dizi.jpg logosu gitti.
+                          // Bu ekran DAİMA kendi profilim (`/profilim` ile
+                          // çizilir), o yüzden modal ikinci tekil şahıs
+                          // varyantını gösterir.
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  '@$kullaniciAdi',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: genis ? 21 : 17,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                              if (_profil?['testci'] == true)
+                                AileRozeti(benMi: true, olcu: genis ? 22 : 19),
+                            ],
                           ),
                           if ((_profil?['bio'] as String?)?.isNotEmpty == true)
                             Padding(
@@ -731,31 +763,13 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 ),
                               ),
                             ),
-                          // Ülke + "dizi.jpg aile üyesi" rozeti (gerekçe ve
-                          // Wrap kararı kullanici_profil.dart'ta anlatıldı:
-                          // rozet ülkeden bağımsız, taşma yerine alt satır).
-                          if ((_profil?['ulke'] as String?)?.isNotEmpty ==
-                                  true ||
-                              _profil?['testci'] == true)
+                          // Ülke satırı. Rozet buradan ÇIKTI (artık kullanıcı
+                          // adının yanında) — ülke tek başına kaldı.
+                          if ((_profil?['ulke'] as String?)?.isNotEmpty == true)
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
-                              child: Wrap(
-                                spacing: 8,
-                                runSpacing: 2,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  if ((_profil?['ulke'] as String?)
-                                          ?.isNotEmpty ==
-                                      true)
-                                    UlkeSatiri(
-                                      ulke: _profil!['ulke'] as String,
-                                    ),
-                                  // Bu ekran DAİMA kendi profilim (`/profilim`
-                                  // ile çizilir), o yüzden rozet modalı ikinci
-                                  // tekil şahıs varyantını gösterir.
-                                  if (_profil?['testci'] == true)
-                                    const AileRozeti(benMi: true),
-                                ],
+                              child: UlkeSatiri(
+                                ulke: _profil!['ulke'] as String,
                               ),
                             ),
                           const SizedBox(height: 6),
@@ -1044,6 +1058,44 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       ),
                       const SizedBox(height: 12),
                     ],
+                    // Favori oyuncular — kitaplık sekmesinin sabit girişi.
+                    // KOŞULSUZ: sayısı burada bilinmiyor (ayrı uçtan gelir) ve
+                    // özelliğin KEŞFEDİLEBİLİR olması gerekiyor; boş liste
+                    // ekranı ne yapılacağını anlatan bir boş durum gösterir.
+                    InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () => context.push('/favori-oyuncular'),
+                      child: Padding(
+                        // 10+10+~22 = 42 → satır 44 dp'lik dokunma hedefini
+                        // metin yüksekliğiyle birlikte karşılar.
+                        padding: const EdgeInsets.symmetric(vertical: 11),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.favorite,
+                              size: 17,
+                              color: Colors.redAccent,
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Favori oyuncular'.c,
+                                style: const TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.chevron_right,
+                              size: 16,
+                              color: DiziRenkler.metin38,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
                     for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
                     const SizedBox(height: 24),
@@ -1659,75 +1711,73 @@ class ProfilYorumAkisi extends StatelessWidget {
     ];
     // Kartlar akıştakiyle BİREBİR aynı geometride durur: yatay dolgu YOK
     // (kart ekranın sağına-soluna dayanır, medya da tam yayılır), geniş
-    // ekranda ise akış.dart ile aynı 720px üst sınır uygulanır.
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 720),
-        child: Column(
-          children: [
-            for (var i = 0; i < yorumlar.length; i++)
-              Builder(
-                builder: (context) {
-                  final y = yorumlar[i] as Map<String, dynamic>;
-                  final ust = y['ust'] as Map<String, dynamic>?;
-                  final yanit = tamKartlikUst(ust);
-                  // Basılı tutma DAİMA SENİN yorumunu (y) hedefler — kart
-                  // yanıtta ASIL gönderiyi çizse bile. Bu satır yanlış
-                  // olursa menü başkasının gönderisini silmeye çalışır.
-                  final uzunBas = benimProfilim
-                      ? () => yorumEylemleriAc(context, y, onDegisti)
-                      : null;
-                  final kart = AkisKarti(
-                    // Anahtar SATIRIN kimliğinden üretilir: iki ayrı yanıtın
-                    // üstü AYNI gönderi olabilir, üst kimliği kullanılsaydı
-                    // aynı Column'da çakışan anahtarlar oluşurdu.
-                    key: ValueKey(y['id']),
-                    yorum: gorunenler[i],
-                    icerikler: icerikler,
-                    // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
-                    // kareden başlar ve listede kaydırmaya devam edilir.
-                    onMedyaAc: (mi) =>
-                        Navigator.of(context, rootNavigator: true).push(
-                          MaterialPageRoute(
-                            builder: (_) => ReelsGorunumu(
-                              liste: gorunenler,
-                              icerikler: icerikler,
-                              baslangic: i,
-                              medyaBaslangic: mi,
-                            ),
+    // ekranda ise akış ile AYNI okuma kolonu ([masaustuKolonGenisligi]).
+    return OrtaKolon(
+      azami: masaustuKolonGenisligi,
+      cocuk: Column(
+        children: [
+          for (var i = 0; i < yorumlar.length; i++)
+            Builder(
+              builder: (context) {
+                final y = yorumlar[i] as Map<String, dynamic>;
+                final ust = y['ust'] as Map<String, dynamic>?;
+                final yanit = tamKartlikUst(ust);
+                // Basılı tutma DAİMA SENİN yorumunu (y) hedefler — kart
+                // yanıtta ASIL gönderiyi çizse bile. Bu satır yanlış
+                // olursa menü başkasının gönderisini silmeye çalışır.
+                final uzunBas = benimProfilim
+                    ? () => yorumEylemleriAc(context, y, onDegisti)
+                    : null;
+                final kart = AkisKarti(
+                  // Anahtar SATIRIN kimliğinden üretilir: iki ayrı yanıtın
+                  // üstü AYNI gönderi olabilir, üst kimliği kullanılsaydı
+                  // aynı Column'da çakışan anahtarlar oluşurdu.
+                  key: ValueKey(y['id']),
+                  yorum: gorunenler[i],
+                  icerikler: icerikler,
+                  // Medyaya dokununca Reels: akışta olduğu gibi, dokunulan
+                  // kareden başlar ve listede kaydırmaya devam edilir.
+                  onMedyaAc: (mi) =>
+                      Navigator.of(context, rootNavigator: true).push(
+                        MaterialPageRoute(
+                          builder: (_) => ReelsGorunumu(
+                            liste: gorunenler,
+                            icerikler: icerikler,
+                            baslangic: i,
+                            medyaBaslangic: mi,
                           ),
                         ),
-                    onUzunBas: uzunBas,
-                  );
-                  // Yanıt DEĞİLSE (dizi/filme yazılmış üst seviye gönderi)
-                  // hiçbir şey eklenmez: bugünkü görünüm birebir korunur.
-                  if (!yanit) return kart;
-                  return RepaintBoundary(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Kart ASIL gönderiyi çiziyor → kartın boş bir yerine
-                        // dokunmak o gönderiyi açar. Kartın kendi bağlantıları
-                        // (avatar, kullanıcı adı, içerik adı, medya) ağaçta
-                        // DAHA DERİN olduğu için dokunma arenasını onlar
-                        // kazanır; bu sarmalayıcı yalnız artan alanı toplar.
-                        GestureDetector(
-                          behavior: HitTestBehavior.deferToChild,
-                          onTap: () => context.push('/gonderi/${ust!['id']}'),
-                          child: kart,
-                        ),
-                        YanitBlogu(yorum: y, onUzunBas: uzunBas),
-                        // Grup içi boşluk 8 (kartın alt kenar boşluğu), gruplar
-                        // arası 24 → yakınlık ilkesi blokla üstündeki kartın
-                        // TEK öge olduğunu söyler.
-                        const SizedBox(height: 16),
-                      ],
-                    ),
-                  );
-                },
-              ),
-          ],
-        ),
+                      ),
+                  onUzunBas: uzunBas,
+                );
+                // Yanıt DEĞİLSE (dizi/filme yazılmış üst seviye gönderi)
+                // hiçbir şey eklenmez: bugünkü görünüm birebir korunur.
+                if (!yanit) return kart;
+                return RepaintBoundary(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Kart ASIL gönderiyi çiziyor → kartın boş bir yerine
+                      // dokunmak o gönderiyi açar. Kartın kendi bağlantıları
+                      // (avatar, kullanıcı adı, içerik adı, medya) ağaçta
+                      // DAHA DERİN olduğu için dokunma arenasını onlar
+                      // kazanır; bu sarmalayıcı yalnız artan alanı toplar.
+                      GestureDetector(
+                        behavior: HitTestBehavior.deferToChild,
+                        onTap: () => context.push('/gonderi/${ust!['id']}'),
+                        child: kart,
+                      ),
+                      YanitBlogu(yorum: y, onUzunBas: uzunBas),
+                      // Grup içi boşluk 8 (kartın alt kenar boşluğu), gruplar
+                      // arası 24 → yakınlık ilkesi blokla üstündeki kartın
+                      // TEK öge olduğunu söyler.
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                );
+              },
+            ),
+        ],
       ),
     );
   }

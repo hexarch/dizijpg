@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'diller/diller.dart';
@@ -86,6 +87,39 @@ class Ceviri {
   }
 
   static String metin(String tr) => _harita[tr] ?? tr;
+
+  /// Çoğul biçim anahtarlarının son eki: `'{} yıl'` → `'{} yıl$tekilEki'`.
+  /// Kullanıcıya ASLA görünmez; yalnız harita anahtarını ayırır.
+  static const String tekilEki = '~tekil';
+
+  /// [temel] anahtarının [n] sayısına uygun biçimini döndürür.
+  ///
+  /// NEDEN BÖYLE (8 Ağu 2026, "1 years 2 months 14 days"):
+  /// Çeviri anahtarları Türkçe ve Türkçede sayıdan sonra çokluk eki YOKTUR
+  /// ("1 yıl", "2 yıl") — bu yüzden hata Türkçede görünmüyordu ama İngilizce
+  /// "1 years" basıyordu. Artık her birimin bir de "tekil" anahtarı var ve
+  /// hangisinin kullanılacağına dilin CLDR çoğul kuralı karar veriyor
+  /// (`Intl.pluralLogic`; Rusça'da 1/21/31… "one", İngilizce'de yalnız 1).
+  ///
+  /// SINIR: iki biçim tutuluyor (tekil + diğer). Rusça/Lehçe/Sırpça'nın
+  /// "few" (2-4) ve Arapça'nın ikil biçimi kapsanmıyor; bu dillerin çeviri
+  /// haritaları süre birimlerinde zaten çekim almayan kısaltmalar kullanıyor
+  /// (ru "{} мес.", pl "{} godz."), tek sapma yıl sözcüğü. Altı CLDR
+  /// kategorisini 45 dile açmak 25 anahtar/dil demekti; kazanç bunu
+  /// karşılamıyor. Genişletmek gerekirse: burada `few:` dalını ekleyip
+  /// birim başına bir anahtar daha tanımlamak yeterli.
+  static String cogul(String temel, num n) {
+    final tekilMi = Intl.pluralLogic<bool>(
+      n,
+      one: true,
+      other: false,
+      locale: dil.value,
+    );
+    if (!tekilMi) return metin(temel);
+    // Dilde tekil biçim tanımlı değilse (Türkçe/Japonca gibi eksiz diller ya
+    // da eksik çeviri) temel biçime düş — anahtar işaretçisi SIZMAZ.
+    return _harita['$temel$tekilEki'] ?? metin(temel);
+  }
 }
 
 extension CeviriMetin on String {
@@ -101,4 +135,9 @@ extension CeviriMetin on String {
     }
     return m;
   }
+
+  /// Sayıya göre TEKİL/ÇOĞUL biçimi seçip `{}` yerine sayıyı koyar:
+  /// `'{} yıl'.cs(1)` → "1 year", `'{} yıl'.cs(2)` → "2 years".
+  /// Ayrıntı ve kapsam sınırı için [Ceviri.cogul].
+  String cs(int n) => Ceviri.cogul(this, n).replaceFirst('{}', '$n');
 }

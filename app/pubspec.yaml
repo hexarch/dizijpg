@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.24.0+67
+version: 1.30.0+74
 
 environment:
   sdk: ^3.12.2
@@ -57,12 +57,33 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   image_picker: ^1.2.3
+  # Android SİSTEM Fotoğraf Seçici'si (ACTION_PICK_IMAGES) için DOĞRUDAN
+  # gerekli: `image_picker_android.useAndroidPhotoPicker` VARSAYILAN OLARAK
+  # FALSE ve o bayrak açılmazsa paket ACTION_GET_CONTENT'e düşer
+  # (image_picker_android-0.8.13+19/lib/image_picker_android.dart:23 +
+  # ImagePickerDelegate.java:317). Yalnız `foto_secici_io.dart` içinden,
+  # koşullu içe aktarmayla kullanılır. Sürüm KİLİTLENMEZ: image_picker'ın
+  # kendi çözdüğü uygulamayla aynı sürüm olmalı.
+  image_picker_android: ^0.8.13+19
+  image_picker_platform_interface: ^2.11.1
   video_player: ^2.13.0
   # 11.x AGP 9'da Kotlin'i kendisi uygulamıyor (builtInKotlin=false ile derlenmiyor); 10.x'te sabit
   file_picker: 10.3.10
   go_router: ^17.3.0
   flutter_svg: ^2.2.0
   crop_your_image: ^1.1.0
+  # SONDAJ (7 Ağu 2026): görsel editör. Saf Dart — native modül yok, AGP 9'da
+  # kırılan paketlerimizin hepsi native yüzünden kırılmıştı. Derleme geçmezse
+  # bu satır GERİ ALINIR; ffmpeg tabanlı alternatifler zaten elendi (emekli
+  # paket + GPL lisansı + 39-109 MB boyut).
+  pro_image_editor: ^13.3.0
+  # SONDAJ (7 Ağu 2026): video editör (trim + sıkıştırma). Motor: Android
+  # Media3 Transformer 1.10.1 / iOS-macOS AVFoundation — ffmpeg YOK, GPL YOK.
+  # AGP 9 kanıtı: PR #172 (7 Tem 2026) "keeps it building under AGP 9+",
+  # örnek uygulamanın gradle.properties'i bizimkiyle birebir aynı
+  # (builtInKotlin=false, newDsl=false). Web'de trim desteklenmiyor →
+  # lib/video_islem_stub.dart bu paketi HİÇ import etmez.
+  pro_video_editor: ^2.11.1
   simple_icons: ^16.23.0
   url_launcher: ^6.3.2
   # Telefonun kendi paylaşım sayfası (WhatsApp, e-posta, Instagram...)

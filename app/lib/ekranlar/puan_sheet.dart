@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../puan.dart';
 import '../tema.dart';
 import 'ortak.dart' show altGuvenli;
 
@@ -15,8 +16,8 @@ Future<bool> puanlaVeKaydet(
   String? mevcutYorum,
 }) async {
   final yorumKutusu = TextEditingController(text: mevcutYorum ?? '');
-  // 5 yıldız ölçeği; sunucuda 1-10 tutulur (yıldız × 2)
-  var secilen = ((mevcutPuan ?? 0) / 2).round();
+  // 5 yıldız ölçeği; sunucuda 1-10 tutulur (bkz. lib/puan.dart)
+  var secilen = yildiza(mevcutPuan);
   var kaydediyor = false;
 
   try {
@@ -33,7 +34,7 @@ Future<bool> puanlaVeKaydet(
               await Api.post('/puan', {
                 'tmdb_id': tmdbId,
                 'tur': tur,
-                'puan': secilen == 0 ? null : secilen * 2,
+                'puan': secilen == 0 ? null : dbPuani(secilen),
                 'yorum': yorumKutusu.text.trim().isEmpty
                     ? null
                     : yorumKutusu.text.trim(),

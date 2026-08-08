@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui' as ui;
 
 import 'package:dizijpg/aile_rozeti.dart';
 import 'package:dizijpg/api.dart';
@@ -8,7 +7,7 @@ import 'package:dizijpg/ekranlar/kullanici_profil.dart';
 import 'package:dizijpg/ekranlar/profil.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/semantics.dart' show SemanticsFlag;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -21,18 +20,22 @@ import 'package:visibility_detector/visibility_detector.dart';
 /// koy ve yanına yaz" — etiket aynı gün "Founding Member" olarak sabitlendi,
 /// ardından "rozete dokununca ne olduğunu anlatan modal açılsın" istendi.
 ///
-/// Bu testler rozeti kilitler:
-///  - `testci: true` → logo + metin görünür; `false`/eksik → GÖRÜNMEZ,
-///  - ÜLKESİ BOŞ testçide de görünür (karar: rozet ülkeye BAĞLI DEĞİL —
-///    canlıda 8 testçinin 3'ünün ülkesi boş, bağlansa onlar rozeti hiç
-///    göremezdi; ülke varsa istendiği gibi bayrağın yanında durur),
+/// KULLANICI İSTEĞİ (7 Ağu 2026): "Profildeki fonding member yazısını ve dizi
+/// jpg yazısını kaldır, kullanıcı adının yanına gold renkde onaylı iconu koy
+/// (tabi sadece test kullanıcı olarak belirlediğimiz kişilerde bunlar olacak)"
+///
+/// Rozet METİNSİZ bir onay tikine indi ve ülke satırından çıkıp KULLANICI
+/// ADININ yanına taşındı. Bu testler yeni hâli kilitler:
+///  - `testci: true` → tik görünür; `false`/eksik → GÖRÜNMEZ,
+///  - tik kullanıcı adının YANINDA (ülke satırında DEĞİL) ve ülkeden bağımsız
+///    (canlıda 8 testçinin 3'ünün ülkesi boş — ülkeye bağlansa göremezlerdi),
 ///  - hem kendi profilinde hem başkasınınkinde,
-///  - 360 dp'de en uzun ülke adıyla birlikte bile TAŞMA YOK (Wrap alt satıra
-///    indirir),
-///  - logo varlığının kırpma sabitleri gerçek PNG ile uyuşuyor,
+///  - metinli rozet ve dizi.jpg logosu ARTIK ÇİZİLMİYOR (gerileme koruması),
+///  - renk her iki temada da `sariMetin` (marka sarısı açık temada 1,51:1 ile
+///    grafik nesne eşiğinin altında kalıyordu),
+///  - 360 dp'de uzun kullanıcı adıyla bile tik ekran dışına taşmıyor,
 ///  - DOKUNMA: hedef ≥44 dp, modal açılıyor, gövde cümlesi `ben_mi`ye göre
 ///    ikinci tekil şahsa dönüyor, modal kapanıyor.
-const String _metin = AileRozeti.etiket;
 const double _darEkran = 360;
 
 /// 600: tek-boşluklu deneme yazı tipinde sekme etiketleri 360'ta taşıyor
@@ -150,12 +153,19 @@ Future<void> _kur(WidgetTester tester, Widget ekran, Size? boyut) async {
   }
 }
 
-/// Rozet içindeki dizi.jpg logosu (varlık adına bakar, kod çözmeyi beklemez).
+/// Eski tasarımın dizi.jpg logosu. ARTIK ÇİZİLMEMELİ — gerileme koruması
+/// olarak duruyor: rozet metinsiz tike indi, logo tamamen kalktı.
 final Finder _logoGorseli = find.byWidgetPredicate((w) {
   if (w is! Image) return false;
   final k = w.image;
   return k is AssetImage && k.assetName == 'assets/logo.png';
 }, description: 'assets/logo.png');
+
+/// Onay tiki (rozetin İÇİNDEKİ ikon).
+final Finder _tik = find.descendant(
+  of: find.byType(AileRozeti),
+  matching: find.byIcon(Icons.verified),
+);
 
 void main() {
   setUp(() async {
@@ -171,61 +181,15 @@ void main() {
   tearDown(() => DiziRenkler.acik = false);
 
   // ---------------------------------------------------------------------
-  // Varlık: kırpma sabitleri gerçekten logo.png ile uyuşuyor mu?
-  // ---------------------------------------------------------------------
-  testWidgets('VARLIK: logo.png kırpma sabitleri gerçek mürekkeple uyuşuyor', (
-    tester,
-  ) async {
-    // DiziLogosu, saydam kenar boşluğunu kırpmak için ölçülmüş bir dikdörtgen
-    // kullanıyor. Logo yeniden çizilirse (kenar boşluğu değişirse) rozet ya
-    // kayar ya kırpılır — burası o anda kırmızıya döner.
-    final kutu = await tester.runAsync(() async {
-      final veri = await rootBundle.load('assets/logo.png');
-      final kodlayici = await ui.instantiateImageCodec(
-        veri.buffer.asUint8List(),
-      );
-      final kare = await kodlayici.getNextFrame();
-      final resim = kare.image;
-      final bayt = await resim.toByteData(format: ui.ImageByteFormat.rawRgba);
-      final p = bayt!.buffer.asUint8List();
-      int solx = resim.width, ustx = resim.height, sagx = -1, altx = -1;
-      for (var y = 0; y < resim.height; y++) {
-        for (var x = 0; x < resim.width; x++) {
-          if (p[(y * resim.width + x) * 4 + 3] > 16) {
-            if (x < solx) solx = x;
-            if (x > sagx) sagx = x;
-            if (y < ustx) ustx = y;
-            if (y > altx) altx = y;
-          }
-        }
-      }
-      final olcu = Size(resim.width.toDouble(), resim.height.toDouble());
-      resim.dispose();
-      kodlayici.dispose();
-      return (
-        olcu,
-        Rect.fromLTRB(solx.toDouble(), ustx.toDouble(), sagx + 1.0, altx + 1.0),
-      );
-    });
-    expect(kutu!.$1.width, DiziLogosu.tuval);
-    expect(kutu.$1.height, DiziLogosu.tuval);
-    expect(kutu.$2, DiziLogosu.murekkep);
-  });
-
-  // ---------------------------------------------------------------------
   // Görünürlük
   // ---------------------------------------------------------------------
-  testWidgets('BAŞKASININ PROFİLİ: testci true → logo + metin görünür', (
+  testWidgets('BAŞKASININ PROFİLİ: testci true → onay tiki görünür', (
     tester,
   ) async {
     await _baskasi(tester, ulke: 'Türkiye', testci: true);
     expect(find.byType(AileRozeti), findsOneWidget);
-    expect(find.text(_metin), findsOneWidget);
-    expect(
-      find.descendant(of: find.byType(AileRozeti), matching: _logoGorseli),
-      findsOneWidget,
-    );
-    // Ülke satırı yerinde duruyor; rozet onun yanında.
+    expect(_tik, findsOneWidget);
+    // Ülke satırı yerinde duruyor ama rozet ARTIK ORADA DEĞİL.
     expect(find.byType(UlkeBayragi), findsOneWidget);
     expect(find.text('Türkiye'), findsOneWidget);
   });
@@ -233,8 +197,7 @@ void main() {
   testWidgets('BAŞKASININ PROFİLİ: testci false → rozet YOK', (tester) async {
     await _baskasi(tester, ulke: 'Türkiye', testci: false);
     expect(find.byType(AileRozeti), findsNothing);
-    expect(find.text(_metin), findsNothing);
-    expect(_logoGorseli, findsNothing);
+    expect(_tik, findsNothing);
     // Ülke satırı bozulmadı.
     expect(find.byType(UlkeBayragi), findsOneWidget);
     expect(find.text('Türkiye'), findsOneWidget);
@@ -248,50 +211,81 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('KENDİ PROFİLİM: testci true → logo + metin görünür', (
+  testWidgets('KENDİ PROFİLİM: testci true → onay tiki görünür', (
     tester,
   ) async {
     await _kendim(tester, ulke: 'Almanya', testci: true);
     expect(find.byType(AileRozeti), findsOneWidget);
-    expect(find.text(_metin), findsOneWidget);
-    expect(
-      find.descendant(of: find.byType(AileRozeti), matching: _logoGorseli),
-      findsOneWidget,
-    );
+    expect(_tik, findsOneWidget);
   });
 
   testWidgets('KENDİ PROFİLİM: testci false → rozet YOK', (tester) async {
     await _kendim(tester, ulke: 'Almanya', testci: false);
     expect(find.byType(AileRozeti), findsNothing);
-    expect(find.text(_metin), findsNothing);
   });
 
   // ---------------------------------------------------------------------
-  // KARAR: rozet ülkeden BAĞIMSIZ görünür
+  // GERİLEME: eski metinli rozet geri gelmesin
   // ---------------------------------------------------------------------
-  testWidgets('ÜLKESİ BOŞ testçi: rozet GÖRÜNÜR, ülke parçası çizilmez', (
+  testWidgets('metinli rozet ve dizi.jpg logosu ARTIK ÇİZİLMİYOR', (
+    tester,
+  ) async {
+    // 7 Ağu'ya kadar rozet "Founding Member" yazısı + dizi.jpg logosuydu.
+    // Kullanıcı ikisinin de kaldırılmasını istedi. Etiket sabiti duruyor ama
+    // yalnız MODAL BAŞLIĞINDA kullanılıyor; profilde hiçbir yerde yazmıyor.
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    expect(find.text(AileRozeti.etiket), findsNothing);
+    expect(_logoGorseli, findsNothing);
+    // Tik ise yerinde.
+    expect(_tik, findsOneWidget);
+  });
+
+  // ---------------------------------------------------------------------
+  // KONUM: tik kullanıcı adının yanında, ülke satırında DEĞİL
+  // ---------------------------------------------------------------------
+  testWidgets('tik kullanıcı adının SAĞINDA ve onunla aynı hizada', (
+    tester,
+  ) async {
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    final tik = tester.getRect(find.byType(AileRozeti));
+    // Kullanıcı adı İKİ yerde çiziliyor: profil başlığı (18 punto, w900) ve
+    // üst bar. Ölçüm başlıktakinden yapılmalı — tik onun yanında duruyor.
+    final ad = tester.getRect(
+      find.byWidgetPredicate(
+        (w) =>
+            w is Text && w.data == '@thelostvibe0' && w.style?.fontSize != null,
+        description: 'profil başlığındaki kullanıcı adı',
+      ),
+    );
+    // Adın sağında.
+    expect(tik.left, greaterThanOrEqualTo(ad.right - 0.01));
+    // Aynı satırda: dikey merkezler yakın.
+    expect((tik.center.dy - ad.center.dy).abs(), lessThan(4));
+    // Ve ülke satırının ÜSTÜNDE (artık oraya ait değil).
+    final ulke = tester.getRect(find.byType(UlkeSatiri));
+    expect(tik.center.dy, lessThan(ulke.top));
+  });
+
+  testWidgets('ÜLKESİ BOŞ testçi: tik yine görünür, ülke satırı çizilmez', (
     tester,
   ) async {
     // Canlıda işaretlenen 8 hesabın 3'ünün ülkesi boş. Rozet ülke satırına
-    // bağlansaydı bu kişiler onu hiç göremezdi — istek "testçilerin
-    // profilinde rozet olsun"du, "ülkesi olan testçilerin" değil.
+    // bağlı OLSAYDI bu kişiler onu hiç göremezdi.
     await _baskasi(tester, ulke: null, testci: true);
-    expect(find.byType(AileRozeti), findsOneWidget);
-    expect(find.text(_metin), findsOneWidget);
+    expect(_tik, findsOneWidget);
     expect(find.byType(UlkeSatiri), findsNothing);
     expect(find.byType(UlkeBayragi), findsNothing);
   });
 
-  testWidgets(
-    'ÜLKESİ BOŞ METİN olan testçi: rozet yine görünür (kendi profil)',
-    (tester) async {
-      await _kendim(tester, ulke: '', testci: true);
-      expect(find.byType(AileRozeti), findsOneWidget);
-      expect(find.byType(UlkeSatiri), findsNothing);
-    },
-  );
+  testWidgets('ÜLKESİ BOŞ METİN olan testçi: tik yine görünür (kendi profil)', (
+    tester,
+  ) async {
+    await _kendim(tester, ulke: '', testci: true);
+    expect(_tik, findsOneWidget);
+    expect(find.byType(UlkeSatiri), findsNothing);
+  });
 
-  testWidgets('ülkesi boş + testçi DEĞİL: satırın tamamı çizilmez', (
+  testWidgets('ülkesi boş + testçi DEĞİL: ne tik ne ülke satırı', (
     tester,
   ) async {
     await _baskasi(tester, ulke: null, testci: false);
@@ -300,145 +294,29 @@ void main() {
   });
 
   // ---------------------------------------------------------------------
-  // Ölçü / hizalama
+  // Renk: grafik nesne kontrastı (WCAG 1.4.11, eşik 3:1)
   // ---------------------------------------------------------------------
-  testWidgets('logo metinle aynı hizada ve okunur boyutta', (tester) async {
-    await _baskasi(tester, ulke: 'Türkiye', testci: true);
-    final logo = tester.getRect(find.byType(DiziLogosu));
-    final metinKutu = tester.getRect(find.text(_metin));
-    // Mürekkep 11 dp + 2 dp dolgu (üst/alt) = 15 dp pul yüksekliği.
-    expect(logo.height, greaterThan(10));
-    expect(logo.height, lessThan(22));
-    // Dikey merkezler birbirine yakın (aynı satırda duruyor).
-    expect((logo.center.dy - metinKutu.center.dy).abs(), lessThan(3));
-    // Logo metnin SOLUNDA.
-    expect(logo.right, lessThanOrEqualTo(metinKutu.left + 0.01));
-  });
-
-  testWidgets('AÇIK TEMA: logo daima koyu pulun üstünde çizilir', (
-    tester,
-  ) async {
-    // logo.png koyu zemin için çizilmiş (DİZİ harfleri açık gri + ince siyah
-    // kontur). Rozet boyutunda kontur kaybolduğu için açık temanın kırık beyaz
-    // zemininde erirdi; bu yüzden altına DAİMA koyu pul konur.
-    DiziRenkler.acik = true;
-    await _baskasi(tester, ulke: 'Türkiye', testci: true);
-    final kutu = tester.widget<DecoratedBox>(
-      find
-          .descendant(
-            of: find.byType(DiziLogosu),
-            matching: find.byType(DecoratedBox),
-          )
-          .first,
-    );
-    final sekil = kutu.decoration as BoxDecoration;
-    expect(sekil.color, DiziRenkler.markaKoyu);
-    // Pul gerçekten koyu: parlaklığı düşük olmalı.
-    expect(sekil.color!.computeLuminance(), lessThan(0.05));
-    // Açık temada metin de okunur tonda (sarıMetin hardal, marka sarısı değil).
-    final metin = tester.widget<Text>(find.text(_metin));
-    expect(metin.style!.color, DiziRenkler.sariMetin);
-    expect(metin.style!.color, isNot(DiziRenkler.sari));
-  });
-
-  testWidgets('KOYU TEMA: metin marka sarısına döner', (tester) async {
+  testWidgets('KOYU TEMA: tik sariMetin ile boyanır', (tester) async {
     DiziRenkler.acik = false;
     await _baskasi(tester, ulke: 'Türkiye', testci: true);
-    final metin = tester.widget<Text>(find.text(_metin));
-    expect(metin.style!.color, DiziRenkler.sari);
+    expect(tester.widget<Icon>(_tik).color, DiziRenkler.sariMetin);
+  });
+
+  testWidgets('AÇIK TEMA: tik MARKA SARISI değil, sariMetin', (tester) async {
+    // Marka sarısı (#F5C518) açık temanın kırık beyaz zemininde 1,51:1 —
+    // grafik nesne eşiği 3:1'in ÇOK altında, tik kaybolur. Tema-duyarlı
+    // sariMetin her iki temada da geçiyor.
+    DiziRenkler.acik = true;
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    final renk = tester.widget<Icon>(_tik).color;
+    expect(renk, DiziRenkler.sariMetin);
+    expect(renk, isNot(DiziRenkler.sari));
   });
 
   // ---------------------------------------------------------------------
   // Dar ekran: taşma yok
   // ---------------------------------------------------------------------
-  testWidgets('360 dp: rozet + EN UZUN ülke adı — hiç taşma yok (izole)', (
-    tester,
-  ) async {
-    // Profil ekranının tamamı 360 dp'de deneme yazı tipiyle sekme etiketlerini
-    // taşırıyor (gerçek yazı tipinde olmayan, rozetle ilgisiz bir gürültü —
-    // profil_ulke_bayragi_test.dart'ta da belgelenmiş). Bu yüzden "hiç taşma
-    // yok" iddiası, ekrandaki DÜZENİN AYNISI kurularak burada ölçülür:
-    // gerçek UlkeSatiri + gerçek AileRozeti, aynı Wrap parametreleriyle.
-    await tester.binding.setSurfaceSize(const Size(_darEkran, 200));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                const SizedBox(width: 80 + 16), // avatar + boşluk
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 2,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          UlkeSatiri(ulke: 'Amerika Birleşik Devletleri'),
-                          AileRozeti(),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-    await tester.pump(const Duration(milliseconds: 50));
-    // ASIL İDDİA: tek bir taşma bile yok.
-    expect(tester.takeException(), isNull);
-
-    // İkisi de ekranda ve ekranın içinde.
-    expect(find.byType(UlkeBayragi), findsOneWidget);
-    expect(find.byType(AileRozeti), findsOneWidget);
-    final rozet = tester.getRect(find.byType(AileRozeti));
-    final ulke = tester.getRect(find.byType(UlkeSatiri));
-    expect(ulke.left, greaterThanOrEqualTo(0));
-    expect(ulke.right, lessThanOrEqualTo(_darEkran + 0.01));
-    expect(rozet.right, lessThanOrEqualTo(_darEkran + 0.01));
-    expect(rozet.width, greaterThan(0));
-    // Yer kalmadığı için rozet ALT SATIRA indi (kırpılmadı, taşmadı).
-    expect(rozet.top, greaterThanOrEqualTo(ulke.bottom - 0.01));
-    // Rozet metni gerçekten görünür (sıfır genişliğe ezilmedi).
-    expect(tester.getRect(find.text(_metin)).width, greaterThan(0));
-  });
-
-  testWidgets('360 dp: kısa ülke adında rozet AYNI satırda kalır', (
-    tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(_darEkran, 200));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: Wrap(
-            spacing: 8,
-            runSpacing: 2,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              UlkeSatiri(ulke: 'Çin'),
-              AileRozeti(),
-            ],
-          ),
-        ),
-      ),
-    );
-    await tester.pump(const Duration(milliseconds: 50));
-    expect(tester.takeException(), isNull);
-    final rozet = tester.getRect(find.byType(AileRozeti));
-    final ulke = tester.getRect(find.byType(UlkeSatiri));
-    expect(rozet.left, greaterThan(ulke.right - 0.01));
-    expect((rozet.center.dy - ulke.center.dy).abs(), lessThan(3));
-  });
-
-  testWidgets('360 dp gerçek ekran: rozet ekranın dışına taşmıyor', (
+  testWidgets('360 dp: uzun kullanıcı adında tik ekran dışına taşmıyor', (
     tester,
   ) async {
     await _baskasi(
@@ -448,14 +326,15 @@ void main() {
       boyut: const Size(_darEkran, 800),
     );
     expect(find.byType(AileRozeti), findsOneWidget);
-    final rozet = tester.getRect(find.byType(AileRozeti));
-    expect(rozet.left, greaterThanOrEqualTo(0));
-    expect(rozet.right, lessThanOrEqualTo(_darEkran + 0.01));
-    expect(tester.getRect(find.text(_metin)).width, greaterThan(0));
+    final tik = tester.getRect(find.byType(AileRozeti));
+    expect(tik.left, greaterThanOrEqualTo(0));
+    expect(tik.right, lessThanOrEqualTo(_darEkran + 0.01));
+    // Tik sıfır genişliğe ezilmedi.
+    expect(tik.width, greaterThan(0));
 
     // Bu ekranda 360 dp'de KALAN tek taşma sekme etiketlerinden gelir (deneme
-    // yazı tipi; ülke/rozet satırı olmasa da oluşur — üstteki izole test o
-    // satırda hiç taşma olmadığını kanıtlıyor).
+    // yazı tipi gürültüsü; rozetle ilgisi yok, profil_ulke_bayragi_test.dart'ta
+    // da belgelenmiş).
     final istisna = tester.takeException();
     if (istisna != null) {
       expect(
@@ -466,10 +345,42 @@ void main() {
     }
   });
 
+  testWidgets('360 dp: çok uzun ad tiki EZMEZ (ad kısalır, tik kalır)', (
+    tester,
+  ) async {
+    // İzole düzen: ekranın sekme gürültüsü olmadan yalnız ad+tik satırı.
+    // Ad `Expanded`+ellipsis olduğu için tik daima tam boyutunda kalmalı.
+    await tester.binding.setSurfaceSize(const Size(_darEkran, 200));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  '@cokcokcokuzunbirkullaniciadibudurgercekten',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              AileRozeti(),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+    expect(tester.takeException(), isNull);
+    final tik = tester.getRect(find.byType(AileRozeti));
+    expect(tik.width, AileRozeti.hedef);
+    expect(tik.right, lessThanOrEqualTo(_darEkran + 0.01));
+  });
+
   // ---------------------------------------------------------------------
   // DOKUNMA HEDEFİ
   // ---------------------------------------------------------------------
-  testWidgets('DOKUNMA HEDEFİ: rozet en az 44x44 dp (yazı büyütülmeden)', (
+  testWidgets('DOKUNMA HEDEFİ: tik en az 44x44 dp (mürekkep büyümeden)', (
     tester,
   ) async {
     await _baskasi(tester, ulke: 'Türkiye', testci: true);
@@ -480,10 +391,19 @@ void main() {
       reason: 'dokunma hedefi 44 dp altına düştü: ${hedef.height}',
     );
     expect(hedef.width, greaterThanOrEqualTo(44));
-    // Hedef DOLGUYLA büyüdü, YAZIYLA değil: etiket hâlâ 12 punto.
-    expect(tester.widget<Text>(find.text(_metin)).style!.fontSize, 12);
-    // Logo da büyümedi (mürekkep 11 + 2x2 dolgu = 15 dp pul).
-    expect(tester.getRect(find.byType(DiziLogosu)).height, lessThan(22));
+    // Hedef DOLGUYLA büyüdü, ikonla değil: mürekkep 22 dp'nin altında kalır.
+    expect(tester.widget<Icon>(_tik).size, lessThan(24));
+  });
+
+  testWidgets('ERİŞİLEBİLİRLİK: ikon-only tikin okunacak bir adı var', (
+    tester,
+  ) async {
+    // İkon-only düğme ekran okuyucuda "düğme" diye okunursa kullanıcı ne
+    // olduğunu anlamaz.
+    await _baskasi(tester, ulke: 'Türkiye', testci: true);
+    final anlam = tester.getSemantics(find.byType(AileRozeti));
+    expect(anlam.label, isNotEmpty);
+    expect(anlam.hasFlag(SemanticsFlag.isButton), isTrue);
   });
 
   // ---------------------------------------------------------------------

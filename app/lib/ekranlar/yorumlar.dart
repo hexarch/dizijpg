@@ -1,23 +1,35 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
 import '../icerik_deposu.dart';
+import '../medya_yukle.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
+import 'medya_inceleme.dart';
 import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu;
 import 'ortak.dart';
 
-/// Bir yoruma eklenebilecek en çok medya (sunucu tavanıyla aynı).
-/// Galeri artık kaydırmalı olduğu için 10 medya da sırayla görünür.
+/// Bir yoruma eklenebilecek en çok medya.
+///
+/// 10 KEYFİ DEĞİL: sunucu tavanıyla birebir aynı — `POST /yorumlar`
+/// `medya.length > 10` olduğunda 400 döner (backend/server.js). Burada daha
+/// büyük bir sayı vermek kullanıcıyı 11 dosya yükletip sonra reddedilen bir
+/// gönderiye sürüklerdi. Galeri kaydırmalı olduğu için 10 medya da sırayla
+/// görünür.
 const enCokEk = 10;
+
+/// Dosya sınırları ARTIK ORTAK: `medya_yukle.dart`
+/// ([medyaAzamiBayt] = 100 MB / dosya, [medyaToplamAzamiBayt] = 100 MB /
+/// gönderi). Burada ayrı bir sabit tutmak sohbet ve Reels yanıtındaki
+/// 30 MB'lık kopyaların ayrışmasına yol açmıştı (7 Ağu 2026,
+/// MEDYA-EDITOR-PLANI §3.5).
 
 /// Dizi/film/kişi geneli veya tek bölüm (sezon+bolum) yorumları:
 /// liste + fotoğraf/video ekli yorum yazma.
@@ -52,6 +64,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
   final _kutuKey = GlobalKey(); // Yanıtla → kutuya kaydır
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
+  int _ekToplam =
+      0; // bu turda yüklenecek dosya sayısı (ilerleme: _ekBiten/_ekToplam)
+  int _ekBiten = 0;
   bool _gonderiliyor = false;
   bool _spoiler = false; // "spoiler içerir" işareti
   Map<String, dynamic>? _yanitlanan; // yanıt modundaki üst yorum
@@ -192,27 +207,55 @@ class _YorumBolumuState extends State<YorumBolumu> {
     );
   }
 
+  /// Galeriden ÇOKLU seçim → sırayla yükleme.
+  ///
+  /// SIRAYLA (paralel değil): 10 dosya × 30 MB'ı aynı anda belleğe alıp
+  /// paralel POST etmek düşük bellekli Android'de uygulamayı öldürür ve
+  /// sunucunun yükleme hız limitini tetikler. Sıralı akış ayrıca "3/5" gibi
+  /// dürüst bir ilerleme göstergesi verir.
+  ///
+  /// KISMİ BAŞARI: bir dosya patlarsa geri kalanı yüklenmeye devam eder ve
+  /// sonunda kaçının yüklendiği/yüklenemediği söylenir — sessiz kayıp YOK.
   Future<void> _ekSec() async {
     if (!girisGerekli(context)) return;
-    if (_ekler.length >= enCokEk) return;
-    final secim = await ImagePicker().pickMedia();
-    if (secim == null) return;
-    setState(() => _ekYukleniyor = true);
+    final kalan = enCokEk - _ekler.length;
+    if (kalan <= 0) return;
+    // Sistem Fotoğraf Seçici (Android 13+ ACTION_PICK_IMAGES) → bizim
+    // inceleme/düzenleme ekranımız. Geniş galeri izni İSTENMEZ.
+    final secim = await medyaSec(context, azami: kalan);
+    if (secim.isEmpty || !mounted) return;
+
+    setState(() {
+      _ekYukleniyor = true;
+      _ekToplam = secim.length;
+      _ekBiten = 0;
+    });
+    MedyaYuklemeSonuc sonuc;
     try {
-      final veri = await secim.readAsBytes();
-      if (veri.length > 30 * 1024 * 1024) {
-        throw ApiHata('Dosya en fazla 30MB olabilir'.c);
+      sonuc = await medyalariYukle(
+        secim,
+        adim: (biten) {
+          if (mounted) setState(() => _ekBiten = biten);
+        },
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _ekYukleniyor = false;
+          _ekToplam = 0;
+          _ekBiten = 0;
+        });
       }
-      final d = await Api.medyaYukle(veri);
-      if (!mounted) return;
-      setState(() => _ekler.add({'yol': d['yol'], 'video': d['video']}));
-    } catch (e) {
-      if (!mounted) return;
+    }
+    if (!mounted) return;
+    setState(() => _ekler.addAll(sonuc.yuklenen));
+    // Başarıda SnackBar yok (karolar zaten göründü); kısmi/tam başarısızlıkta
+    // sessiz kayıp da yok.
+    final bildirim = sonuc.bildirim;
+    if (bildirim != null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    } finally {
-      if (mounted) setState(() => _ekYukleniyor = false);
+      ).showSnackBar(SnackBar(content: Text(bildirim)));
     }
   }
 
@@ -352,7 +395,10 @@ class _YorumBolumuState extends State<YorumBolumu> {
                     minLines: 1,
                     maxLength: 1000,
                     decoration: InputDecoration(
-                      hintText: 'Yorumunu yaz... (@ ile etiketle)'.c,
+                      // KULLANICI İSTEĞİ (7 Ağu): "(@ ile etiketle)" ipucundan
+                      // çıktı — etiketleme zaten @ yazınca beliren listeyle
+                      // kendini anlatıyor, ipucu ise dar ekranda kırpılıyordu.
+                      hintText: 'Yorum yaz...'.c,
                       border: InputBorder.none,
                     ),
                   ),
@@ -411,6 +457,40 @@ class _YorumBolumuState extends State<YorumBolumu> {
                             ],
                           ),
                       ],
+                    ),
+                  // Çok dosya yüklenirken BELİRLİ ilerleme çubuğu + "3/5":
+                  // kullanıcı takıldı sanmasın ve ne kadar kaldığını görsün
+                  // (ui-ux-pro-max, Feedback/Progress Indicators: "Step 2 of 4
+                  // indicator", "Don't: No indication of progress"). Kendi
+                  // satırında: düğme sırasına sıkıştırılınca dar telefonda
+                  // taşıyordu.
+                  if (_ekYukleniyor && _ekToplam > 1)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4, bottom: 2),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(3),
+                              child: LinearProgressIndicator(
+                                value: _ekBiten / _ekToplam,
+                                minHeight: 4,
+                                backgroundColor: DiziRenkler.metin12,
+                                color: DiziRenkler.sari,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '$_ekBiten/$_ekToplam',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: DiziRenkler.metin70,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   Row(
                     children: [

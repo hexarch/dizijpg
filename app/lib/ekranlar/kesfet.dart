@@ -172,15 +172,19 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
                 child: IskeletKutu(genislik: 150, yukseklik: 18),
               ),
             ),
+            // İskelet ölçüsü GERÇEK şeritle aynı olmalı: masaüstünde şerit
+            // kartı 168 dp'ye büyüdü, iskelet 118'de kalsaydı içerik gelince
+            // düzen zıplardı (CLS).
             SizedBox(
-              height: 236,
+              height: seritKartiGenisligi(context) * 1.5 + seritBaslikPayi,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: 5,
                 separatorBuilder: (_, __) => const SizedBox(width: 10),
-                itemBuilder: (_, __) => const IskeletKutu(genislik: 118),
+                itemBuilder: (_, __) =>
+                    IskeletKutu(genislik: seritKartiGenisligi(context)),
               ),
             ),
           ],

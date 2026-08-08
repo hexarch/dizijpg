@@ -15,6 +15,29 @@ const double masaustuAyPaneliGenisligi = 340;
 /// Masaüstünde sağdaki "seçili günün bölümleri" sütununun genişliği.
 const double masaustuGunSutunu = 360;
 
+/// Masaüstünde ay ızgarası + gün sütununun ORTALANDIĞI azami genişlik.
+///
+/// Takvim tek sütunlu bir OKUMA kolonu değil, iki bölmeli bir araç: solda
+/// [masaustuAySayisi] aylık ızgara, sağda seçili günün listesi. Bu yüzden
+/// akış/profilin [masaustuKolonGenisligi] (720) kolonuna sığmaz; sınır
+/// "3 sütun × [masaustuAyPaneliGenisligi] + boşluklar + ayırıcı + gün sütunu"
+/// toplamıdır (1417 dp).
+///
+/// NEDEN GEREKLİ (ölçüldü): sınırsızken panel genişliği ekranla birlikte
+/// büyüyordu — 1440 dp'de 347,7 dp, **1920 dp'de 507,7 dp**; gün hücresi 72
+/// dp'ye çıkıp ızgara sağa-sola yayılıyordu. Sınırla panel her iki ekranda da
+/// 340 dp'de kalır (gün hücresi 48,6 dp — `dokunmaAsgari` 44'ün üstünde) ve
+/// blok ekranda ortalanır.
+///
+/// 1440 dp'de kısıt neredeyse hiç bağlamaz (1417 ≈ 1440): "altı ay birden
+/// ekrana sığar" garantisi (3 Ağu isteği) korunur.
+const double masaustuTakvimGenisligi =
+    masaustuAyPaneliGenisligi * 3 + // üç panel
+    12 * 2 + // panel araları
+    12 + // ızgaranın yatay dolgusu (6+6)
+    1 + // dikey ayırıcı
+    masaustuGunSutunu;
+
 /// Gün hücresinin altındaki "o gün kaç bölüm var" rozetinin punto'su.
 /// 3 Ağu isteğiyle küçültüldü: dar ekran 10 → [takvimSayiPunto] (9),
 /// masaüstü kompakt ızgara 9 → [takvimSayiPuntoKompakt] (8).
@@ -450,81 +473,87 @@ class _AyTakvimiState extends State<AyTakvimi> {
     // MASAÜSTÜ: solda altı aylık küçük panel ızgarası, sağda seçili günün
     // bölümleri. Tek dev ay 1440'lık ekranda 1200 dp yükseklik kaplıyordu;
     // aynı yerde artık altı ay birden duruyor.
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: Column(
-            children: [
-              gezinme,
-              Expanded(
-                child: LayoutBuilder(
-                  builder: (context, kutu) {
-                    // Panel hedefi 340 dp: gün hücresi 44 dp altına düşmesin.
-                    final sutun = (kutu.maxWidth / masaustuAyPaneliGenisligi)
-                        .floor()
-                        .clamp(1, 3);
-                    final panelGenislik =
-                        (kutu.maxWidth - 12 * (sutun - 1) - 12) / sutun;
-                    return SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(6, 4, 6, 16),
-                      child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: [
-                          for (final ay in aylar)
-                            SizedBox(
-                              width: panelGenislik,
-                              child: _ayPaneli(
-                                ay,
-                                gunler,
-                                kompakt: true,
-                                baslik: Padding(
-                                  padding: const EdgeInsets.only(bottom: 4),
-                                  child: Text(
-                                    yerel.formatMonthYear(ay),
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w800,
-                                      color: DiziRenkler.metin70,
+    //
+    // Blok ORTALANIR ve [masaustuTakvimGenisligi] ile sınırlanır (akış/profil
+    // ile aynı `OrtaKolon` kalıbı, yalnız azami değeri takvime özgü).
+    return OrtaKolon(
+      azami: masaustuTakvimGenisligi,
+      cocuk: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              children: [
+                gezinme,
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, kutu) {
+                      // Panel hedefi 340 dp: gün hücresi 44 dp altına düşmesin.
+                      final sutun = (kutu.maxWidth / masaustuAyPaneliGenisligi)
+                          .floor()
+                          .clamp(1, 3);
+                      final panelGenislik =
+                          (kutu.maxWidth - 12 * (sutun - 1) - 12) / sutun;
+                      return SingleChildScrollView(
+                        padding: const EdgeInsets.fromLTRB(6, 4, 6, 16),
+                        child: Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            for (final ay in aylar)
+                              SizedBox(
+                                width: panelGenislik,
+                                child: _ayPaneli(
+                                  ay,
+                                  gunler,
+                                  kompakt: true,
+                                  baslik: Padding(
+                                    padding: const EdgeInsets.only(bottom: 4),
+                                    child: Text(
+                                      yerel.formatMonthYear(ay),
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w800,
+                                        color: DiziRenkler.metin70,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        const VerticalDivider(width: 1),
-        SizedBox(
-          width: masaustuGunSutunu,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Hangi günün listesi olduğu masaüstünde şart: seçili hücre altı
-              // ayın içinde kaybolabiliyor. Yerelleştirilmiş tam tarih.
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-                child: Text(
-                  yerel.formatFullDate(_secili),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w800,
-                    color: DiziRenkler.metin,
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
-              ),
-              Expanded(child: gunListesi),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
+          const VerticalDivider(width: 1),
+          SizedBox(
+            width: masaustuGunSutunu,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Hangi günün listesi olduğu masaüstünde şart: seçili hücre altı
+                // ayın içinde kaybolabiliyor. Yerelleştirilmiş tam tarih.
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+                  child: Text(
+                    yerel.formatFullDate(_secili),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                ),
+                Expanded(child: gunListesi),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 

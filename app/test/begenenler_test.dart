@@ -23,7 +23,11 @@ import 'package:visibility_detector/visibility_detector.dart';
 ///
 /// Bu testler dört şeyi kilitler:
 ///   1. UZUN BASMA modalı açar, KISA DOKUNUŞ beğenir — ikisi çakışmaz.
-///   2. Sağdaki takip düğmesi yalnız "takip etmiyorum + ben değilim" hâlinde.
+///   2. Sağdaki takip düğmesi KENDİ satırım dışında her satırda; etiketi
+///      takip durumuna göre değişir. (8 Ağu güncellemesi: "takip ediyorsan
+///      hiçbir şey yazmasın" kuralı, kullanıcının tüm listeler için istediği
+///      "takip ediyorsam Takibi Bırak" kuralıyla değişti — ayrıntılı vakalar
+///      test/takip_dugmesi_test.dart içinde.)
 ///   3. Takip Et iyimser çalışır; sunucu hata dönerse düğme GERİ GELİR.
 ///   4. Beğeninin olduğu ÜÇ ayrı ekranda (akış kartı, Reels, yorum kartı)
 ///      aynı sheet açılır — kod tekrarı yok, tek `begenenleriAc`.
@@ -256,9 +260,8 @@ void main() {
   });
 
   // ------------------------------------------------------ 2. takip düğmesi
-  testWidgets('takip edilende düğme YOK, edilmeyende VAR, kendinde YOK', (
-    tester,
-  ) async {
+  testWidgets('takip edilende "Takibi Bırak", edilmeyende "Takip Et", '
+      'kendinde HİÇBİRİ', (tester) async {
     _sunucu(
       begenenler: [
         _begenen(11, 'takipettigim', takip: true),
@@ -272,8 +275,9 @@ void main() {
     expect(find.text('@takipettigim'), findsOneWidget);
     expect(find.text('@yabanci'), findsOneWidget);
     expect(find.text('@ben'), findsOneWidget);
-    // Üç satır var ama TEK bir Takip Et düğmesi çizilmeli (yabanci).
+    // Üç satır: yabanci → Takip Et, takipettigim → Takibi Bırak, ben → yok.
     expect(find.text('Takip Et'), findsOneWidget);
+    expect(find.text('Takibi Bırak'), findsOneWidget);
     expect(
       find.descendant(
         of: find.ancestor(
@@ -287,7 +291,7 @@ void main() {
     );
   });
 
-  testWidgets('Takip Et e dokununca düğme kaybolur', (tester) async {
+  testWidgets('Takip Et e dokununca düğme "Takibi Bırak" olur', (tester) async {
     _sunucu(begenenler: [_begenen(12, 'yabanci')]);
     await _kartKur(tester, _gonderi());
     await _uzunBas(tester, find.byIcon(Icons.favorite_border));
@@ -298,6 +302,11 @@ void main() {
 
     expect(_takipCagri, 1);
     expect(find.text('Takip Et'), findsNothing, reason: 'artık takiptesin');
+    expect(
+      find.text('Takibi Bırak'),
+      findsOneWidget,
+      reason: 'geri alınabilir',
+    );
     expect(find.text('@yabanci'), findsOneWidget, reason: 'satır kalmalı');
   });
 

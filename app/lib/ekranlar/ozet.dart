@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../puan.dart';
 import '../tema.dart';
 import 'ortak.dart';
 import 'profil.dart' show sureBicimle;
@@ -61,7 +62,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
         (Icons.star_outline_rounded, '${o['puan_sayisi']}', 'Verdiğin puan'.c),
         (
           Icons.star_half_rounded,
-          (((o['puan_ortalama'] as num?) ?? 0) / 2).toStringAsFixed(1),
+          yildizOrtalamaMetni(o['puan_ortalama']),
           'Ortalama puanın'.c,
         ),
         (Icons.chat_bubble_outline, '${o['yorum']}', 'Yorum'.c),

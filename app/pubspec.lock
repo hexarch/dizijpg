@@ -542,7 +542,7 @@ packages:
     source: hosted
     version: "1.2.3"
   image_picker_android:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image_picker_android
       sha256: "6f3a1995eafb000333174fae92202622033b0ee7fd917a6cd3730295264df84a"
@@ -582,7 +582,7 @@ packages:
     source: hosted
     version: "0.2.2+1"
   image_picker_platform_interface:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: image_picker_platform_interface
       sha256: "567e056716333a1647c64bb6bd873cff7622233a5c3f694be28a583d4715690c"
@@ -869,6 +869,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.5.0"
+  pro_image_editor:
+    dependency: "direct main"
+    description:
+      name: pro_image_editor
+      sha256: b75e82792ff9d3c51d6627558b4d916e5da7bc1dfaeb59d17b296fc5ae03d773
+      url: "https://pub.dev"
+    source: hosted
+    version: "13.3.0"
+  pro_video_editor:
+    dependency: "direct main"
+    description:
+      name: pro_video_editor
+      sha256: b460f17b884e3e6d2f24a9bcc55909acd9f62d9fc819ed2a6973acbf60898e0b
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.11.1"
   provider:
     dependency: "direct main"
     description:

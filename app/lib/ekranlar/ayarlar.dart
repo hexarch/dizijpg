@@ -12,7 +12,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
 import 'gorsel_kirp.dart';
-import 'ortak.dart' show altGuvenli;
+import 'ortak.dart' show DaireGorsel, altGuvenli;
 import 'sosyal.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
@@ -733,20 +733,26 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                           CircleAvatar(
                             radius: 52,
                             backgroundColor: DiziRenkler.siyah,
-                            child: CircleAvatar(
-                              radius: 48,
-                              backgroundColor: DiziRenkler.kart,
-                              backgroundImage: avatar != null
-                                  ? NetworkImage(avatar)
-                                  : null,
-                              child: avatar == null
-                                  ? Icon(
+                            // GIF avatar burada da OYNAMALI (kullanıcı
+                            // görselini tam burada seçiyor): DecorationImage
+                            // yerine ClipOval + Image —
+                            // kanıt: test/gif_animasyon_test.dart.
+                            child: avatar != null
+                                ? DaireGorsel(
+                                    url: avatar,
+                                    cap: 96,
+                                    arkaplan: DiziRenkler.kart,
+                                    ikonRenk: DiziRenkler.metin38,
+                                  )
+                                : CircleAvatar(
+                                    radius: 48,
+                                    backgroundColor: DiziRenkler.kart,
+                                    child: Icon(
                                       Icons.person,
                                       size: 48,
                                       color: DiziRenkler.metin38,
-                                    )
-                                  : null,
-                            ),
+                                    ),
+                                  ),
                           ),
                           Positioned(
                             right: 0,

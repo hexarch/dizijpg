@@ -7,7 +7,6 @@ import 'package:flutter/gestures.dart'
     show DragStartBehavior, HorizontalDragGestureRecognizer, PointerEvent;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:record/record.dart';
@@ -15,9 +14,11 @@ import 'package:record/record.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../dosya_oku.dart';
+import '../medya_yukle.dart';
 import '../push.dart';
 import '../tema.dart';
 import 'medya_goster.dart';
+import 'medya_inceleme.dart';
 import 'ortak.dart';
 import 'ses.dart';
 
@@ -547,6 +548,22 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Map<String, dynamic>? _partner; // avatar + son_gorulme
   Map<String, dynamic>? _yanitlanan; // alıntılanan mesaj (yanıt modu)
   int? _duzenlenenId; // düzenlenen mesajın id'si (düzenleme modu)
+
+  /// Seçilmiş ama HENÜZ GÖNDERİLMEMİŞ dizi/film kartı (TMDB arama sonucu).
+  ///
+  /// KULLANICI İSTEĞİ (7 Ağu 2026): "sohbette dizi gönderince direk gidiyor
+  /// onun yerine metin kısmının üstünde dizi kapak fotoğrafını koy, mesajı
+  /// yazmaya devam etsin, mesaj ile aynı divde gitsin film dizi".
+  ///
+  /// Eskiden `_IcerikSecSheet`ten seçim yapılır yapılmaz mesaj gidiyordu; artık
+  /// seçim burada BEKLER, giriş kutusunun üstünde şerit olarak görünür ve
+  /// Gönder'e basılınca metinle **TEK** mesaj olarak gider.
+  ///
+  /// Sunucu değişikliği GEREKMEDİ: `POST /mesajlar` `metin` + `icerik_tur` +
+  /// `icerik_id` alanlarını birlikte kabul edip tek satır INSERT ediyor
+  /// (backend/server.js:4526-4607) — `if (!temiz && !medya && !icerikVar ...)`
+  /// koşulu da yalnız üçü de boşsa 400 veriyor.
+  Map<String, dynamic>? _bekleyenIcerik;
   DateTime _sonYaziyorBildirimi = DateTime.fromMillisecondsSinceEpoch(0);
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
@@ -554,12 +571,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
   /// Saat sütununun açılma miktarı (0 = kapalı, tavan = tam görünür).
   /// Kalıcı bir mod DEĞİL: parmak kalkınca 0'a geri yaylanır.
-  late final AnimationController _saatKaydirici = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 220),
-    lowerBound: 0,
-    upperBound: saatSutunuGenisligi,
-  );
+  ///
+  /// [initState]'te KURULUR, alan başlatıcısında DEĞİL (7 Ağu 2026): `late
+  /// final X = ...` TEMBELDİR ve bu denetleyiciye yalnızca mesaj listesinin
+  /// `itemBuilder`ı dokunuyor. HİÇ MESAJI OLMAYAN bir sohbette builder hiç
+  /// çalışmaz, denetleyici doğmaz ve [dispose] içindeki `_saatKaydirici`
+  /// erişimi onu ELEMENT SÖKÜLÜRKEN kurmaya kalkar:
+  ///   "Looking up a deactivated widget's ancestor is unsafe"
+  ///   (AnimationController → SingleTickerProviderStateMixin.createTicker →
+  ///    TickerMode.getValuesNotifier(context))
+  /// Yani "yeni açılan boş sohbetten geri çık" = hata ayıklama kipinde
+  /// assertion. Erken kurulum hem onu bitirir hem de dispose'u dürüst yapar.
+  late final AnimationController _saatKaydirici;
   // Sesli mesaj kaydı
   // Web'de mikrofon gizli; kaydediciyi hiç kurma ki eklenti kanalı
   // MissingPluginException gürültüsü üretmesin (hata günlüğü #8-16).
@@ -586,6 +609,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   @override
   void initState() {
     super.initState();
+    _saatKaydirici = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 220),
+      lowerBound: 0,
+      upperBound: saatSutunuGenisligi,
+    );
     _yukle(ilk: true);
     _sayac = Timer.periodic(const Duration(seconds: 5), (_) => _yukle());
     // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
@@ -833,6 +862,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       await _duzenlemeyiKaydet(metin ?? '');
       return;
     }
+    // Bekleyen dizi/film kartı varsa AYNI mesaja biner (kullanıcı isteği,
+    // 7 Ağu). Çağıran açıkça bir içerik verdiyse o kazanır.
+    final bekleyen = _bekleyenIcerik;
+    final tur = icerikTur ?? (bekleyen?['media_type'] as String?) ?? 'tv';
+    final kimlik = icerikId ?? (bekleyen?['id'] as num?)?.toInt();
+    final icerikVar = icerikId != null || bekleyen != null;
     setState(() => _gonderiliyor = true);
     try {
       await Api.post('/mesajlar', {
@@ -840,13 +875,16 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         if (metin != null && metin.isNotEmpty) 'metin': metin,
         if (medya != null) 'medya': medya,
         if (sesDalga != null) 'ses_dalga': sesDalga,
-        if (icerikTur != null) 'icerik_tur': icerikTur,
-        if (icerikId != null) 'icerik_id': icerikId,
+        if (icerikVar) 'icerik_tur': tur,
+        if (icerikVar && kimlik != null) 'icerik_id': kimlik,
         if (_yanitlanan != null)
           'yanit_id': (_yanitlanan!['id'] as num).toInt(),
       });
       _metin.clear();
-      setState(() => _yanitlanan = null);
+      setState(() {
+        _yanitlanan = null;
+        _bekleyenIcerik = null;
+      });
       await _yukle();
       _sonaKaydir();
     } catch (e) {
@@ -907,28 +945,47 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
-  /// Galeriden fotoğraf/GIF/video seç, yükle ve mesaj olarak gönder.
+  /// Galeriden fotoğraf/GIF/video seç → **inceleme/düzenleme ekranı** →
+  /// yükle → mesaj olarak gönder.
+  ///
+  /// TEK DOSYA (`azami: 1`) — KEYFİ DEĞİL, VERİ MODELİ BÖYLE: `mesajlar.medya`
+  /// kolonu **TEXT**'tir (`backend/sema.sql:209`), `yorumlar.medya` gibi
+  /// `TEXT[]` değil; `POST /mesajlar` gövdesinde `medya` tek bir string bekler
+  /// ve tek satır INSERT eder (`server.js:4528, 4539, 4596`). Çoklu seçim
+  /// açmak kullanıcıya 5 fotoğraf seçtirip 4'ünü sessizce çöpe atmak olurdu.
+  /// (Sunucuyu diziye çevirmek ayrı bir iş: kolon + okuma uçları + baloncuk
+  /// çizimi + eski mesajların göçü.)
+  ///
+  /// Seçim sisteme (Android Fotoğraf Seçici) devredildiği için geniş galeri
+  /// izni İSTENMEZ — `medya_inceleme.dart` başındaki Play reddi notu.
   Future<void> _fotoGonder() async {
-    final secim = await ImagePicker().pickMedia();
-    if (secim == null) return;
+    final secim = await medyaSec(context, azami: 1);
+    if (secim.isEmpty || !mounted) return;
     setState(() => _ekYukleniyor = true);
+    MedyaYuklemeSonuc sonuc;
     try {
-      final veri = await secim.readAsBytes();
-      if (veri.length > 30 * 1024 * 1024) {
-        throw ApiHata('Dosya en fazla 30MB olabilir'.c);
-      }
-      final d = await Api.medyaYukle(veri);
-      // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince
-      // kutudaki yazı sessizce kayboluyordu.
-      await _gonder(medya: d['yol'] as String, metin: _metin.text.trim());
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      // Sınır ARTIK ORTAK sabitten (100 MB = sunucunun `/medya` sınırı).
+      // Buradaki eski 30 MB, sunucu kabul edecekken 40-70 MB'lık videoları
+      // istemcide sebepsiz reddediyordu; 20 MB üstü video zaten inceleme
+      // ekranında cihazda sıkıştırılıyor (`videoHazirla`).
+      sonuc = await medyalariYukle(secim, toplamAzamiBayt: null);
     } finally {
       if (mounted) setState(() => _ekYukleniyor = false);
     }
+    if (!mounted) return;
+    final bildirim = sonuc.bildirim;
+    if (bildirim != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(bildirim)));
+      return; // yüklenmeyen medyayla mesaj göndermeyiz
+    }
+    // Yazılmış metin de gitsin: eskiden fotoğraf/video eklenince
+    // kutudaki yazı sessizce kayboluyordu.
+    await _gonder(
+      medya: sonuc.yuklenen.first['yol'] as String,
+      metin: _metin.text.trim(),
+    );
   }
 
   /// Dizi/film arayıp kart olarak gönder.
@@ -940,13 +997,76 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       builder: (_) => const _IcerikSecSheet(),
     );
     if (secilen == null) return;
-    final tur = (secilen['media_type'] as String?) ?? 'tv';
-    // Dizi/film kartıyla birlikte yazılmış metin de gönderilir
-    // (kullanıcı bildirdi: kart gidiyor, mesaj kayboluyordu).
-    await _gonder(
-      icerikTur: tur,
-      icerikId: (secilen['id'] as num).toInt(),
-      metin: _metin.text.trim(),
+    // GÖNDERMİYORUZ: seçim giriş kutusunun üstünde BEKLER, kullanıcı yazmaya
+    // devam eder, Gönder'e basınca metinle tek mesaj olarak gider.
+    if (!mounted) return;
+    setState(() => _bekleyenIcerik = secilen);
+  }
+
+  /// Bekleyen dizi/film kartını kaldırır (şeritteki çarpı).
+  void _bekleyenIcerikKaldir() => setState(() => _bekleyenIcerik = null);
+
+  /// Giriş kutusunun üstünde duran "gönderilmeyi bekleyen dizi/film" şeridi.
+  ///
+  /// Kapak + ad + kaldırma çarpısı. Yanıt/düzenleme kutusuyla AYNI kalıbı
+  /// izler (aynı zemin, aynı dolgu, sağda `Icons.close`) — kullanıcı iki
+  /// şeridi de aynı şekilde iptal edebilsin diye.
+  Widget _bekleyenIcerikSeridi() {
+    final s = _bekleyenIcerik!;
+    final ad = (s['name'] ?? s['title'] ?? '') as String;
+    final poster = posterUrl(s['poster_path'] as String?, boyut: 'w154');
+    final yil = ((s['first_air_date'] ?? s['release_date'] ?? '') as String);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 8, 8, 8),
+      color: DiziRenkler.koyuGri,
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: SizedBox(
+              width: 32,
+              height: 48,
+              child: poster == null
+                  ? Container(
+                      color: DiziRenkler.kart,
+                      child: Icon(
+                        Icons.movie_outlined,
+                        size: 16,
+                        color: DiziRenkler.metin54,
+                      ),
+                    )
+                  : Image.network(poster, fit: BoxFit.cover),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Mesaja eklenecek'.c,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: DiziRenkler.sariMetin,
+                  ),
+                ),
+                Text(
+                  yil.length >= 4 ? '$ad (${yil.substring(0, 4)})' : ad,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: _bekleyenIcerikKaldir,
+            icon: Icon(Icons.close, color: DiziRenkler.metin54),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1064,6 +1184,13 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                               duzenle: benimMi && metinMi
                                   ? () => _duzenlemeBaslat(m)
                                   : null,
+                              sikayet: !benimMi && m['id'] != null
+                                  ? () => sikayetEtSheet(
+                                      context,
+                                      'mesaj',
+                                      (m['id'] as num).toInt(),
+                                    )
+                                  : null,
                             );
                             // Saat balonun ALTINDA değil, satırın SAĞINDAKİ
                             // gizli sütunda; sürükleme boyunca açılır.
@@ -1115,6 +1242,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                         ),
                       ),
               ),
+              // Bekleyen dizi/film kartı: seçildi ama HENÜZ gönderilmedi.
+              // Yanıt kutusuyla aynı kalıp (aynı yer, aynı zemin, aynı çarpı).
+              if (_bekleyenIcerik != null) _bekleyenIcerikSeridi(),
               // Yanıt / düzenleme kutusu (giriş alanının hemen üstünde)
               if (_yanitlanan != null || _duzenlenenId != null)
                 Container(
@@ -1420,6 +1550,11 @@ class _MesajBaloncugu extends StatelessWidget {
   final VoidCallback? yanitla;
   final VoidCallback? duzenle;
 
+  /// Karsi tarafin mesajini sikayet et. Kendi mesajimizda null olur —
+  /// kendini sikayet etmek anlamsiz. Backend de yalniz ALICININ sikayet
+  /// etmesine izin veriyor (POST /sikayet sahiplik kontrolu).
+  final VoidCallback? sikayet;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -1428,6 +1563,7 @@ class _MesajBaloncugu extends StatelessWidget {
     this.sil,
     this.yanitla,
     this.duzenle,
+    this.sikayet,
     this.gonderiler = const {},
   });
 
@@ -1473,6 +1609,22 @@ class _MesajBaloncugu extends StatelessWidget {
                   sil!();
                 },
               ),
+            // DM sikayet yolu. Buraya kadar `sikayetEtSheet` 'mesaj' turunu
+            // destekliyordu ama ISTEMCIDE CAGIRAN KOD YOKTU: kullanicinin
+            // taciz mesajini bildirmesinin hicbir yolu yoktu, dolayisiyla
+            // "sikayet et -> incele -> banla" zinciri kopuktu.
+            if (sikayet != null)
+              ListTile(
+                leading: const Icon(
+                  Icons.flag_outlined,
+                  color: Colors.orangeAccent,
+                ),
+                title: Text('Şikayet et'.c),
+                onTap: () {
+                  Navigator.pop(sheetCtx);
+                  sikayet!();
+                },
+              ),
           ],
         ),
       ),
@@ -1509,7 +1661,11 @@ class _MesajBaloncugu extends StatelessWidget {
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
         // Uzun bas → Yanıtla / Düzenle / Sil menüsü
-        onLongPress: (yanitla == null && duzenle == null && sil == null)
+        onLongPress:
+            (yanitla == null &&
+                duzenle == null &&
+                sil == null &&
+                sikayet == null)
             ? null
             : () => _menuAc(context),
         child: Container(
