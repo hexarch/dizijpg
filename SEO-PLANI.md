@@ -330,6 +330,34 @@ Bu, Google'ın spam politikalarındaki **cloaking** tanımının tam karşılı�
 
 **Bu engel çözülmeden diğer tüm SEO yatırımları riske atılmış olur.** Çözüm, indekslenen sayfaların oturumsuz da okunabilir olması: `/icerik/`, `/kisi/`, `/gonderi/`, `/dizi/.../bolum/...` ve `/listeler/` rotaları `redirect` istisnasına alınmalı; içerik okunabilir, ancak puanlama/yorum/kitaplığa ekleme gibi eylemler giriş isteyen bir çağrıya dönüşmeli. Bu aynı zamanda ürün açısından da doğru: "önce göster, sonra kaydettir" dönüşüm oranını artırır.
 
+**6 Ağu 2026 ölçümü (Chrome, oturumsuz — canlı site).** Ana engel çözülmüş
+durumda: `/icerik/tv/1396` giriş ekranına atmıyor, tam sayfa geliyor. Ama üç
+uyumsuzluk kaldı. Üçünün de düzeltmesi **Flutter tarafında**, bu turun kapsamı
+dışında — buraya iş kalemi olarak yazılıyor:
+
+1. **[KIRMIZI] `/listeler/:id` hâlâ cloaking üretiyor — üstelik iki katmanlı.**
+   Ölçüm: oturumsuz `https://dizijpg.com/listeler/1` → `/giris?donus=/listeler/1`.
+   Yani `/og/listeler/:id` (herkese açık + ≥3 öğeli listeler için **indekslenebilir**
+   basılıyor) ile kullanıcının gördüğü sayfa taban tabana zıt. Dahası:
+   **`yonlendirme.dart`'ta `/listeler/:id` diye bir rota HİÇ YOK** — oturum açsa
+   bile kullanıcı `errorBuilder`'a, yani "Bağlantı geçersiz veya sayfa bulunamadı"
+   ekranına düşer. Google'dan gelen ziyaretçi için sayfa iki kez kırık.
+   **Yapılacak:** ya `/listeler/:id` rotası + `acikYolOnEkleri`'ne `'/listeler/'`
+   eklenmeli, ya da `/og/listeler/:id` geçici olarak `indexle: false` yapılmalı.
+   Şu an sitemap'te olmadığı için hasar sınırlı (yalnız paylaşılan bağlantılardan
+   keşfedilebilir), ama iç bağlantı verilirse büyür.
+2. **[SARI] Puan ölçeği bot ile kullanıcıda farklı.** Bot sayfası ve JSON-LD
+   `AggregateRating` "10 / 10" diyor (`bestRating: 10`); `detay.dart:605` aynı
+   değeri **2'ye bölüp** "5.0 dizi.jpg" rozetini basıyor. SSR sayfası kendi
+   içinde tutarlı olduğu için Google'ın "puan sayfada görünmeli" şartı teknik
+   olarak sağlanıyor, ama SERP'te ★10/10 görüp uygulamada 5.0 gören kullanıcı
+   için tutarsız. **Yapılacak:** iki yüzeyden biri seçilmeli (10'luk ölçek
+   uygulamada da gösterilmeli ya da JSON-LD `bestRating: 5` + `ratingValue/2`).
+3. **[YEŞİL/bilinçli] `/gozat` ve `/kesfet` oturumsuz açılmıyor** (ölçüldü:
+   `/giris?donus=/gozat`). Bu yüzden yeni SSR sayfaları `SEO_KESIF_INDEKS = false`
+   ile `noindex,follow` doğdu — cloaking üretmiyorlar. Rotalar oturumsuz açılırsa
+   sabit `true` yapılabilir.
+
 ### 3.2. [KIRMIZI] Keşfedilebilirlik sıfır: sitemap yok + iç bağlantı yok
 
 `/sitemap.xml` → Flutter kabuğu. robots.txt'de `Sitemap:` satırı yok. SSR sayfalarında tek bağlantı sayfanın kendisine.
@@ -589,25 +617,52 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 - **(c) Risk:** Düşük. Ancak `AggregateRating`, sayfada **görünen** bir puanla eşleşmeli; yoksa "yapısal veri politikası ihlali" uyarısı gelir. 1.1 maddesi puanı sayfaya bastığı için bu koşul sağlanır.
 - **(d) Adım:** Bkz. Ek B. `TVSeries` / `Movie` + `Review` + `AggregateRating` + `BreadcrumbList`. Rich Results Test ile doğrula.
 
-#### 1.3. Bot kapsamını eksik rotalara genişlet ✅ TAMAM (6 Ağu 2026 — `/kullanici/` hariç)
+#### 1.3. Bot kapsamını eksik rotalara genişlet ✅ TAMAM (6 Ağu 2026) — `/og/kullanici/:ad` **İPTAL**
 
 - **(a) Etki:** Yüksek — özellikle bölüm sayfaları. Uzun kuyruk aramaların ana hedefi.
 - **(b) İş yükü:** 2–3 gün.
 - **(c) Risk:** Orta. Bölüm sayfaları için binlerce yeni URL açılıyor; her birinin özgün içeriği yoksa thin content üretir. Kural: **yalnızca o bölüme ait yorum varsa indexle**, yoksa `noindex,follow`.
 - **(d) Adım:**
   1. nginx regex'ini genişlet: `location ~ ^/(icerik|gonderi|kisi|dizi|kullanici|listeler)/`
-  2. `server.js`'e ekle: `/og/dizi/:id/sezon/:s/bolum/:b`, `/og/kullanici/:ad`, `/og/listeler/:id`.
+  2. `server.js`'e ekle: `/og/dizi/:id/sezon/:s/bolum/:b`, ~~`/og/kullanici/:ad`~~, `/og/listeler/:id`.
   3. Bölüm sayfası içeriği: bölüm adı, TMDB bölüm özeti, o bölüme ait yorumlar (`yorumlar` tablosunda `sezon`/`bolum` alanları zaten var), diziye ve komşu bölümlere bağlantılar.
-  4. Kullanıcı profili sayfaları için **gizlilik kontrolü zorunlu**: `gizlilik-tercihleri` (server.js:1566) ayarına saygı gösterilmeli; gizli profiller `noindex` almalı. Bu madde gizlilik açısından en riskli olanı, dikkatle yapılmalı.
+  4. ~~Kullanıcı profili sayfaları için gizlilik kontrolü~~ → **İPTAL, aşağıya bakınız.**
 
-#### 1.4. Ana sayfa ve keşif sayfaları için SSR ✅ TAMAM (6 Ağu 2026 — ana sayfa; `/gozat`, `/kesfet` yapılmadı)
+> ### 🚫 `/og/kullanici/:ad` — İPTAL: kullanıcı kararı, profiller asla indekslenmeyecek
+>
+> **Karar (6 Ağu 2026, kullanıcı):** Kullanıcı profilleri **hiçbir koşulda**
+> arama motorlarına açılmayacak. Madde plandan düşürüldü; yerine profillerin
+> indekslenMEdiğini garanti eden iş yapıldı.
+>
+> **Gerekçe.** Profil sayfası bu projenin en hassas yüzeyi: izleme geçmişi,
+> yorumlar, takipçi/takip listeleri, bio. Planın kendi metni de bunu "gizlilik
+> açısından en riskli madde" diye işaretlemişti. `gizlilik-tercihleri`ne saygı
+> gösteren bir uygulama teknik olarak mümkün ama kırılgandır: tercihlerin
+> **varsayılanı kapalı** (`izlenenler_gizli`/`yorumlar_gizli` = false), yani
+> hiç kimsenin onaylamadığı bir kararla bugünkü tüm profiller dünyaya açılırdı.
+> Ayrıca tek bir gelecekteki sorgu hatası ya da yeni bir profil alanı sessizce
+> kişisel veri sızdırabilirdi. Kazanç (uzun kuyruk "@kullanıcı" aramaları)
+> riskin yanında ölçülemeyecek kadar küçük. **Kullanıcı verisi bu projenin en
+> yüksek önceliğidir.**
+>
+> **Bunun yerine yapılan üç katmanlı güvence** (6 Ağu 2026):
+> 1. `robots.txt` → `Disallow: /kullanici/` (bot sayfayı hiç istemez).
+> 2. `server.js`'te `/og/kullanici` **diye bir uç yok**, nginx bot regex'i de
+>    `kullanici` içermiyor → bot istese bile boş Flutter kabuğu alır.
+> 3. Hiçbir SSR sayfası profile **bağlantı vermiyor**; `@kullanici_adi` her
+>    yerde düz metin. Sitemap yalnız `/icerik/:tur/:id` üretiyor.
+>
+> Üç katman da `backend/test/seo_gizlilik.test.js` ile kilitli; biri gevşerse
+> test kırmızıya döner (her biri tek tek sökülüp kırmızıya döndürüldü).
+
+#### 1.4. Ana sayfa ve keşif sayfaları için SSR ✅ TAMAM (ana sayfa 6 Ağu; `/gozat` + `/kesfet` 6 Ağu, dağıtım bekliyor)
 
 - **(a) Etki:** Orta–yüksek. "dizi.jpg" marka aramasında düzgün bir açılış; ayrıca ana sayfa iç bağlantı merkezi (hub) olarak sitemap'i destekler.
 - **(b) İş yükü:** 1 gün.
 - **(c) Risk:** Düşük.
 - **(d) Adım:** nginx'e `location = / { if ($og_bot) { ... } }` ekle; `/og/` ucu markayı anlatan bir sayfa + popüler/yeni yorumlanan 50–100 içeriğe bağlantı listesi dönsün. `/gozat`, `/kesfet` için de benzer liste sayfaları.
 
-#### 1.5. Performans: Cloudflare önbelleğini devreye al 🟡
+#### 1.5. Performans: Cloudflare önbelleğini devreye al 🟡 (yama hazır, uygulanmadı → `backend/nginx-seo-20260806.parca.conf`)
 
 - **(a) Etki:** Orta–yüksek (kullanıcı deneyimi ve CWV). Origin yükünde de belirgin düşüş.
 - **(b) İş yükü:** 0,5–1 gün.
@@ -685,6 +740,88 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 - Regresyon: `/og/kisi`, `/og/gonderi`, film sayfası, geçersiz id (`noindex,follow`),
   normal tarayıcıya Flutter kabuğu, `/api/yorumlar`, `/api/incelemeler`, `/sitemap.xml`
   — hepsi curl ile doğrulandı.
+
+**Uygulama notu (6 Ağu 2026, YEREL — henüz dağıtılmadı) — 1.3 iptali + 1.4 kalanı + 1.5 yaması + gizlilik denetimi:**
+
+*Kanıt: `node --check backend/server.js` ✔, `cd backend && node --test test/*.test.js` →
+**162 test / 162 geçti** (önceki 131 + yeni 31). Yeni 31 testin her koruması tek tek
+sökülüp KIRMIZIYA döndürüldü (18 senaryo), sonra geri alındı.*
+
+- **`/og/kullanici/:ad` İPTAL** — yukarıdaki 🚫 kutusuna bakınız. Yerine üç katmanlı
+  "asla indekslenmez" güvencesi + test kilidi kondu.
+
+- **robots.txt'in gerçek kaynağı bulundu: DEPODA YOKTU.** Dosya yalnızca sunucuda
+  `/var/www/dizijpg/robots.txt` olarak duruyordu (nginx `location = /robots.txt`
+  statik servis ediyor), yani her değişiklik izsiz kalıyordu ve Flutter dağıtımı
+  klasörü ezdiği için kaybolma riski taşıyordu. Artık `backend/robots.txt` depoda
+  ve Node servis ediyor (`GET /robots.txt`) — IndexNow anahtar dosyasıyla aynı
+  gerekçe. Dockerfile'a `COPY robots.txt ./` eklendi (test bunu da kilitliyor).
+  **Eklenen kurallar:** `/kullanici/`, `/mesaj-istekleri`, `/gizlenen-yorumlar`,
+  `/akis`, `/takvim`. Test `yonlendirme.dart`'ı okuyup HER rotayı denetliyor:
+  gelecekte kişisel bir ekran eklenip robots.txt unutulursa kırmızıya döner.
+
+- **Kişisel veri denetimi — iki gerçek sızıntı bulundu ve kapatıldı:**
+  1. **`/og/gonderi/:id` spoiler süzmüyordu.** Uygulamada perde arkasında duran
+     spoiler metni `og:description`'a basılıyordu; WhatsApp/Twitter önizlemesi
+     spoiler'ı tıklamadan gösteriyordu. `NOT y.spoiler` eklendi.
+  2. **"Bu içeriği gizle" (`gizli_icerikler`) tercihi SEO yüzeyinde yok sayılıyordu.**
+     Metin teknik olarak `/yorumlar` ucunda zaten public; ama tercih kullanıcıya
+     "bu dizi/film bende görünmesin" diye sunuluyor. Aynı satırı adıyla birlikte
+     Google'a + JSON-LD'ye + IndexNow bildirimine koymak erişimi kat kat büyütür.
+     `SEO_GIZLI_ICERIK_YOK()` yardımcısı `SEO_YORUM_KOSUL`, `SEO_INCELEME_KOSUL`
+     ve `/og/gonderi`ye eklendi — yani ozgunIcerikVar/sitemap/basılan metin üçlüsü
+     yine tek tanım noktasından besleniyor. **Yan etki: sitemap kapsamı bu tercihi
+     kullanan içerikler kadar daralacak (dağıtım sonrası ölçülmeli).**
+
+  **Temiz çıkanlar:** SSR sayfalarının bastığı alanlar yalnız `kullanici_adi`,
+  `metin`/`yorum`, `puan`, `tarih` (SADECE gün — saat basılmıyor). E-posta, IP,
+  `son_gorulme`, `bio`, `ulke`, bildirim/gizlilik tercihleri, DM, engelleme
+  listesi ve hesap durumu (`yasakli`) hiçbir SELECT listesinde yok — `yasakli`
+  yalnız WHERE süzgecinde. Yasaklı kullanıcının metni zaten hiçbir yüzeye
+  düşmüyordu (`/og/icerik`, `/og/gonderi`, `/og/listeler`, bölüm sayfası — dördü de
+  süzüyor). Bunların hepsi artık testle kilitli.
+
+- **Spam yüzeyi (`rel="nofollow ugc"`): gerek yok, daha güçlüsü var.** Ölçüm:
+  kullanıcı üretimi metin hiçbir yerde bağlantıya çevrilmiyor — `seoYorumHtml`
+  metni `htmlKacir()`'dan geçirip düz metin basıyor, `<a>` üretmiyor. Yani sayfada
+  UGC kaynaklı dış bağlantı **hiç yok**; `nofollow ugc` verilecek bir hedef de yok.
+  Test bunu iki yönden kilitliyor: (a) kaynağa linkleştirme yardımcısı girerse,
+  (b) bir yorum metninden `<a` üretilirse kırmızıya döner.
+
+- **`/og/gozat` + `/og/kesfet`** — ortak `ogKesifUcu()` iskeleti, `CollectionPage`
+  + blok başına `ItemList` (`hasPart`) + `BreadcrumbList`, canonical, `htmlKacir`
+  + `jsonLdGom`. İki sayfanın **içerik gerekçesi ayrı** ve tanımları çakışmıyor
+  (test bunu doğruluyor):
+  - `/kesfet` = uygulamanın Ana Sayfası; `kesfet.dart`'taki `anaSayfaRaflari` ile
+    **birebir aynı 13 editöryel raf** ("Türk Dizileri", "Kült Filmler", …). Bu
+    derleme TMDB'de yok; sayfanın özgünlük gerekçesi seçimin kendisi.
+  - `/gozat` = katalog; `gozat.dart`'ın sorgusuyla aynı (`popularity.desc` +
+    `vote_count.gte=80`) ama **tür tür açılmış** 12 blok. Raflarla tek bir TMDB
+    sorgusu paylaşmıyorlar.
+  - İnce sayfa koruması: blok başına 8 öğe, toplam < 24 bağlantı ise `noindex`;
+    boş blok tamamen düşer; TMDB düşerse sayfa döner ama indekse girmez.
+  - **Tür adları bağlantı DEĞİL başlık** — tür sayfası rotası yok. `/og/ana`'da
+    `SearchAction`'ın basılmama gerekçesiyle aynı kural: olmayan URL'i bota verme.
+
+- **🔒 CLOAKING KİLİDİ — `SEO_KESIF_INDEKS = false` doğdu, bilerek.** Tarayıcıda
+  ölçüldü (6 Ağu, oturumsuz): `https://dizijpg.com/gozat` → `/giris?donus=/gozat`.
+  `yonlendirme.dart`'taki `acikYolOnEkleri` bu iki rotayı içermiyor. Bugün
+  indekseseydik bot içerik, kullanıcı giriş formu görürdü — madde 3.1'in ta
+  kendisi. Sayfalar `noindex,follow` doğuyor: tarama ve iç bağlantı değeri var,
+  indeks yok. Flutter iki rotayı oturumsuz açtığı gün sabit `true` yapılır (TEK
+  satır) — test, sabit `true` iken `yonlendirme.dart` hâlâ kapalıysa kırmızıya döner.
+
+- **nginx yaması ÜRETİLDİ ama UYGULANMADI:** `backend/nginx-seo-20260806.parca.conf`
+  (canvaskit immutable, assets 30 gün, `/gozat|/kesfet` bot location, `/kullanici/`
+  için `X-Robots-Tag: noindex`, robots.txt→Node). Canlı conf ssh ile OKUNARAK
+  yazıldı; uygulama/doğrulama/geri alma adımları dosyanın içinde.
+  **Ölçüm düzeltmesi:** planın "assets `max-age=14400`" ve "canvaskit önbelleksiz"
+  saptamaları nginx kaynaklı DEĞİL — nginx'te `assets/` ve `canvaskit/` blokları
+  hiç yok; 14400 Cloudflare'in varsayılan Browser Cache TTL'i, canvaskit.wasm ise
+  bugün zaten `HIT` + `max-age=31536000` + `br`. Yani yamanın işlevi "hızlandırmak"
+  değil, **bu davranışı CF panelindeki bir ayara bağlı olmaktan çıkarıp origin'e
+  sabitlemek**. `assets/` için yama TEK BAŞINA yetmez: CF Browser Cache TTL
+  "Respect Existing Headers" olmadıkça origin başlığını ezer.
 
 **Faz 1 toplamı: ~7–9 adam-günü.**
 
@@ -783,6 +920,12 @@ ASO, SEO'dan ayrı bir disiplin ve farklı bir algoritma; ancak iki nokta birbir
 ## 8. Teknik Ekler
 
 ### Ek A — Örnek robots.txt
+
+> **GÜNCEL DURUM (6 Ağu 2026): aşağıdaki blok artık yalnızca TARİHSEL örnektir.**
+> Gerçek dosya depoda: **`backend/robots.txt`**, Node servis ediyor
+> (`GET /robots.txt`). Değişiklik oraya yapılır; buradaki örnek güncellenmez.
+> Canlı `/var/www/dizijpg/robots.txt` nginx yaması uygulanana kadar hâlâ statik
+> servis ediliyor — bkz. `backend/nginx-seo-20260806.parca.conf` 5. blok.
 
 Mevcut Cloudflare yönetilen dosyanın yerine veya ona ek olarak:
 
@@ -1085,8 +1228,11 @@ server {
 - [x] `curl -A Googlebot https://dizijpg.com/icerik/tv/1396 | grep canonical` → 6 Ağu ✔ (GSC canlı testinde de görüldü)
 - [x] `curl -o /dev/null -w "%{http_code}" https://www.dizijpg.com/` → **301** ✔
 - [x] `curl -A Googlebot https://dizijpg.com/icerik/tv/999999999 | grep noindex` → `noindex,follow` ✔
-- [ ] Oturumsuz bir tarayıcıda `/icerik/tv/1396` açılıyor, `/giris`'e atmıyor — kod canlıda
-  (`yonlendirme.dart:84 herkeseAcikMi`), tarayıcıda elle doğrulanmadı
+- [x] Oturumsuz bir tarayıcıda `/icerik/tv/1396` açılıyor, `/giris`'e atmıyor — **6 Ağu 2026
+  tarayıcıda DOĞRULANDI** (Chrome, oturum askıya alınarak): sayfa tam yükleniyor, sağ üstte
+  "Giriş Yap" düğmesiyle; başlık, puan rozeti, özet, "Nerede İzlenir", sezon listesi görünüyor.
+  Yönlendirme yok. **Ancak aynı testte İKİ YENİ UYUMSUZLUK bulundu — bkz. 3.1 altındaki
+  "6 Ağu ölçümü" bloğu (`/listeler/:id` ve puan ölçeği).**
 
 **Faz 1 sonu (3. ay):**
 - [ ] İndekslenmiş sayfa sayısı > 1.500
@@ -1114,6 +1260,38 @@ server {
 8. `flutter build web --wasm` (skwasm) denendi mi; görsel regresyon var mı?
 9. AI botlarının (`GPTBot`, `ClaudeBot`, `Google-Extended`) engellenmesi bilinçli bir karar mı, Cloudflare varsayılanı mı?
 10. Gerçek CWV saha verisi (CrUX) — site yeterli trafiğe sahipse GSC'de görünecek.
+
+### 10.1. DAĞITIM SONRASINA KALAN doğrulamalar (6 Ağu 2026 yerel çalışması)
+
+Bu turda yazılan kod **canlıya çıkmadı**, bu yüzden `curl -A Googlebot` ölçümleri
+hâlâ ESKİ davranışı gösteriyor. Test katmanı (162 test, 18 kırmızıya döndürme
+senaryosu) mantığı kanıtlıyor; aşağıdakiler yalnızca dağıtımdan sonra ölçülebilir.
+Sıra: **önce backend (server.js + robots.txt + Dockerfile), sonra nginx yaması.**
+
+| # | Doğrulama | Komut / yer |
+|---|---|---|
+| 1 | robots.txt canlıda yeni kuralları veriyor | `curl -s https://dizijpg.com/robots.txt \| grep -c 'kullanici\|mesaj-istekleri\|gizlenen-yorumlar\|akis\|takvim'` → 5 |
+| 2 | robots.txt'i Node veriyor (nginx yaması sonrası) | `curl -sI https://dizijpg.com/robots.txt \| grep -i cache-control` → `public, max-age=3600` |
+| 3 | `/gozat` bot sayfası dolu ve **noindex** | `curl -s -A Googlebot https://dizijpg.com/gozat \| grep -c 'href="/icerik/'` → >24 ve `name="robots"` → `noindex,follow` |
+| 4 | `/kesfet` aynı | `curl -s -A Googlebot https://dizijpg.com/kesfet \| grep -o '"@type":"CollectionPage"'` |
+| 5 | JSON-LD geçerli | Rich Results Test: `/icerik/tv/1396` (TVSeries+AggregateRating) ve `/gozat` (CollectionPage) |
+| 6 | Spoiler gönderi artık önizleme basmıyor | Spoiler işaretli bir gönderi id'siyle `curl -s -A Twitterbot .../gonderi/<id> \| grep og:description` → jenerik metin |
+| 7 | **Sitemap daralması ölçülmeli** | `curl -s https://dizijpg.com/sitemap-icerik-1.xml \| grep -c '<url>'` — `gizli_icerikler` süzgeci eklendiği için 2.427'den DÜŞMESİ beklenir; düşüş büyükse tercih beklenenden yaygın demektir |
+| 8 | canvaskit/assets önbelleği | `backend/nginx-seo-20260806.parca.conf` içindeki DOĞRULAMA bloğu |
+| 9 | `/kullanici/` X-Robots-Tag | `curl -sI https://dizijpg.com/kullanici/testkullanici \| grep -i x-robots-tag` |
+| 10 | Regresyon: 1.1/1.2 sayfası bozulmadı | `curl -s -A Googlebot https://dizijpg.com/icerik/tv/1396 \| grep -c '<article>'` → ≥3 |
+
+### 10.2. Cloudflare panelinde YAPILACAKLAR (nginx'in erişemediği ayarlar)
+
+1. **AI Crawl Control** — CF yönetilen robots.txt bloğu kapatılmalı; yoksa CF kendi
+   `Google-Extended: Disallow` bloğunu bizim dosyamızın ÖNÜNE ekliyor ve origin
+   robots.txt'i tek başına yetmiyor (6 Ağu'dan beri açık iş).
+2. **Caching > Configuration > Browser Cache TTL = "Respect Existing Headers"** —
+   olmadan `assets/` yaması etkisiz kalır (CF `max-age=14400`'ü dayatmaya devam eder).
+3. **Cache Rules: `.wasm`** — bugün `HIT` geliyor ama panelde açık bir kural yoksa
+   varsayılana bağlı; açık kural + Edge TTL 1 yıl yazılmalı.
+4. **Speed > Optimization > Brotli: AÇIK** — ölçüm (6 Ağu): `canvaskit.wasm` `br`
+   alıyor ama `main.<hash>.dart.js` ve `/assets/` hâlâ `gzip`. ~250–300 KB kayıp.
 
 ---
 

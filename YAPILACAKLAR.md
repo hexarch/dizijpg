@@ -1,5 +1,624 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-07 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-08 (f) — ARAMA: TURN ALTYAPISI HAZIRLIĞI + API SÖZLEŞMESİ 🔨 (kod YOK, kurulum YOK)
+İstek listesi md. 7 (sesli + görüntülü arama). **`server.js`, `sema.sql` ve
+`app/**` DEĞİŞTİRİLMEDİ** (başka ajanlar orada). Sunucuya yalnız **salt okuma**
+SSH: paket kurulmadı, port açılmadı, DNS eklenmedi, servis başlatılmadı.
+Sürüm ARTIRILMADI (1.29.0+73), dağıtım YOK, commit YOK.
+
+### Üretilen dosyalar
+| Dosya | Ne |
+|---|---|
+| `backend/turn/turnserver.conf` | Üretime hazır coturn yapılandırması, tam gerekçeli |
+| `backend/turn/coturn-systemd-override.conf` | systemd drop-in (sertleştirme + kaynak sınırları) |
+| `backend/turn/coturn-sertifika-kancasi.sh` | Let's Encrypt yenileme kancası |
+| `backend/turn/KURULUM.md` | Sıralı canlı adımlar + port kanıtı + güvenlik duvarı + geri alma |
+| `backend/ARAMA-API-SOZLESMESI.md` | Uçlar, yetki, hız limiti, üstveri, kill switch, FCM |
+| `backend/migrasyon-2026-08-08e.sql` | `aramalar` tablosu + bildirim kısıtı + tercih + bayraklar |
+| `ARAMA-PLANI.md` §13 | Bu turun kararları ve düzeltmeleri |
+
+### Ölçüm — port çakışması YOK (kanıt)
+`ss -lntup`: **3478 ve 5349 boş**, **20000-32767 aralığında hiçbir dinleyici
+yok**. Mevcut servisler (nginx 80/443, postfix 25/587, dovecot, postgres 5432,
+dopamall-redis 6379, sshd 22, 127.0.0.1'de 3000/8000/8001/8500/8891/39217)
+seçilen portlarla çakışmıyor. UFW `inactive`, `INPUT` politikası ACCEPT.
+
+### Planda bulunan iki hata (düzeltildi)
+- 🛠 **Röle port aralığı yanlıştı.** Plan 49152-65535 diyordu;
+  `net.ipv4.ip_local_port_range = 32768 60999` ölçüldü → aralığın büyük kısmı
+  çekirdeğin efemeral penceresiyle çakışıyor (**`avahi-daemon` şu anda UDP
+  51666'da** — kanıt). Çakışma "arama bağlandı ama ses yok" hatası üretir.
+  **24000-24499** (500 port) ile değiştirildi: tepe yükün ~35 katı, güvenlik
+  duvarı deliği 32 kat küçük.
+- 🛠 **TURN sırrı JWT_SECRET'ten TÜRETİLMEYECEK.** `medya_imza.js` kalıbı
+  burada uygulanmaz: sır coturn'ün conf dosyasına düz metin yazılmak zorunda,
+  JWT rotasyonu TURN'ü SESSİZCE bozar ve sır bağımsız iptal edilebilmeli.
+  Ayrı `TURN_SIR` `.env` değişkeni.
+
+### Kararlar
+- **apt + systemd**, Docker DEĞİL (geniş UDP aralığı Docker köprüsünde port
+  başına iptables kuralı + proxy süreci üretir; `network_mode: host` izolasyonu
+  zaten bitirir; güvenlik yamaları `apt`tan gelir).
+- **TURNS (5349) açılır**, Let's Encrypt ile — certbot zaten kurulu,
+  `/etc/letsencrypt/live` boş. Arıza modu nazik: sertifika ölürse yalnız TURNS
+  ölür, 3478 çalışır. **443'e konulamaz** (nginx tutuyor).
+- **STUN: kendi coturn'ümüz birincil, Google yedek** (dışa bağımlılık sıfır,
+  ama tek kesinti tüm aramaları düşürmesin).
+- **UFW AÇILMAZ** — TURN portları için DROP kuralı yok, ek kural gerekmiyor;
+  `ufw enable` INPUT DROP kurup canlı posta/web trafiğini riske atardı.
+- **Sinyalleşme: yoklama + FCM**, WebSocket yok. Trickle ICE yok.
+- **`USE_FULL_SCREEN_INTENT` İSTENMEYECEK** — AAB 69 + az önceki ikinci izin
+  reddi. Yedek plan (`Importance.MAX` + `CATEGORY_CALL` + `setOngoing` +
+  Cevapla/Reddet eylemleri) **varsayılan** yapıldı; telefon çalar, kilit
+  ekranını kaplamaz.
+- **Üstveri saklama 90 gün**, `tablolariBuda()`ya tek satır.
+- **`gorusmeLimiti`** (30/saat) — `aramaLimiti` adı `server.js:955`'te
+  *search* için kullanılıyor, gölgelenirdi.
+- **`/arama/bitir` `YASAK_MUAF`'a eklenecek** — yoksa aramanın ortasında ban
+  yiyen kullanıcı temiz kapatamaz, karşı taraf hayalet aramada kalır.
+- **Ücretli servis YOK.** Lisanslar: coturn BSD-3, `flutter_webrtc` MIT,
+  libwebrtc BSD-3 — GPL bulaşması yok.
+
+### SSRF — somut risk (yapılandırma bunu kapatıyor)
+`denied-peer-ip` olmasaydı TURN üzerinden erişilebilecekti:
+`127.0.0.1:8500` (**dizijpg API'nin kendisi**, nginx ve Cloudflare atlanarak),
+gunicorn 8000/8001, next-server 3000, opendkim 8891, containerd 39217,
+`172.16.0.0/12` (**docker ağı — iptables kuralı 4 Redis'i bu bloğa AÇIKÇA
+açıyor**), `169.254.169.254`, ve kendi genel IP üzerinden postfix 25/587.
+`KURULUM.md` adım 9 engellemeyi `turnutils_uclient` ile **kanıtlamayı zorunlu**
+kılıyor.
+
+### Sıradaki (ana oturum)
+⬜ `KURULUM.md` adımları canlıya (DNS → apt → conf → sır → systemd → doğrula
+→ certbot → TURNS → SSRF kanıtı) · ⬜ `migrasyon-2026-08-08e.sql` uygula ·
+⬜ `sema.sql`e üç ekleme (sözleşme §10.3) · ⬜ `server.js` uçları ·
+⬜ Flutter tarafı · ⬜ gizlilik metni (3 yer × 45 dil) — **özellik canlıya
+çıkmadan ÖNCE**
+
+## 2026-08-08 (e) — KEŞFET IZGARASI ORTALANDI + REELS TUVALİ MEDYAYI İZLİYOR ✅ (canlıda DEĞİL)
+Kullanıcı: "masaüstü web görünüşte reels videolarının bulunduğu ekranı da akış
+ve takvim gibi ortaya alacaktın almamışsın". 7 Ağu'da akış/takvim/Reels
+OYNATICISI ortalanmıştı; Keşfet'in GİRİŞ IZGARASI atlanmıştı.
+Sürüm ARTIRILMADI (1.29.0+73), dağıtım YOK, commit YOK.
+Yalnız `app/lib/ekranlar/kesfet_akis.dart` + yeni test
+`app/test/kesfet_izgara_masaustu_test.dart` (15 test).
+
+### Izgara — ölçüm (tester.getRect)
+| ekran | ÖNCE | SONRA |
+|---|---|---|
+| 1440 dp | 1436 dp, kenardan kenara, **5 sütun**, kart 285,6 | **716 dp ortalanmış**, 4 sütun, kart 177,5 |
+| 1920 dp | 1916 dp, 5 sütun, kart 381,6 | 716 dp ortalanmış, 4 sütun, kart 177,5 |
+| 1568 dp | 1564 dp, 5 sütun, kart 311,2 | 716 dp ortalanmış, 4 sütun, kart 177,5 |
+| 390 dp | 3 sütun, kart 127,3 × 192,9 | **BİREBİR AYNI** |
+| 360 dp | 3 sütun, kart 117,3 × 177,8 | **BİREBİR AYNI** |
+
+Kolon = ortak `OrtaKolon` + `masaustuKolonGenisligi` (720). Sütun sayısı artık
+sabit değil: `kesfetSutunlari()` → poster ızgaralarının kanıtlanmış
+`posterSutunlari()` fonksiyonunu ÖLÇÜLEN kolon genişliğiyle çağırır (hedef kart
+168 dp, alt sınır 3 → telefonda sonuç değişmez). İskelet ızgara da aynı hesabı
+kullanır (içerik gelince zıplama yok).
+
+### Reels tuvali — yatay medyadaki boşluk
+1568×764 pencerede tuval 430 dp'ydi; 16:9 bir kare (dizi ekran görüntüsü)
+`contain` ile oturunca yüksekliğin **%31,6**'sını dolduruyor, üstte+altta
+~522 dp siyah kalıyor, metin/eylem sütunu medyadan kopuyordu.
+Tuvalin ORANI artık ekrandaki medyayı izliyor (`reelsTuvalGenisligi(..., oran:)`,
+alt sınır 9:16, üst sınır 16:9, genişlik tavanı `masaustuIcerikGenisligi` 1080):
+dikey videoda çerçeve AYNI (430 dp), 16:9 medyada 1080 dp → **doluluk %79,6**,
+4:3 medyada %100. Kırpma YOK (`cover` seçilseydi 16:9 karenin ~%68'i giderdi),
+telefonda hiçbir değişiklik yok (`masaustuMu` false → sarmalayıcı hiç kurulmaz).
+Video oranı oynatıcıdan, fotoğraf oranı `reelsFotoOraniOlcer` ile önbellekteki
+görselden ölçülür (ek indirme yok); ölçüm gelmezse 9:16'da kalır.
+Genişlik değişimi 200 ms yumuşatılır. `PointerInterceptor` yerinde.
+
+### Kanıt
+`flutter analyze lib test` 0 error/warning · `flutter test` **773 yeşil**
+(15'i yeni) · `flutter build web --release` geçti · yeni kullanıcı metni YOK
+(çeviri gerekmedi). Kırmızıya döndürme: eski davranış geri konunca (OrtaKolon
+kısıtı + 5 sabit sütun + sabit 9:16 oran) 7 test kırmızı — ızgara 1436/1916/1564
+dp ve tuval 429,75/506,25/607,5 dp olarak ölçüldü; sabotaj sha1 ile geri alındı.
+
+## 2026-08-08 (d) — BÖLÜM BAZLI PUANLAMA ✅ (canlıda DEĞİL, migrasyon UYGULANMADI)
+İstek listesi md. 11 · kullanıcı: "dizilerde bölümlere puan verme yok olmalı".
+Sürüm ARTIRILMADI (1.29.0+73), dağıtım YOK, commit YOK.
+`node --test backend/test/*.test.js` **350 yeşil** (önce 333) ·
+`flutter analyze lib test` 0 error/warning · `flutter test` **773 yeşil** ·
+`flutter build web --release` geçti · 45 dil x **551 anahtar** (548 + 3).
+
+### Şema — `puanlar` tablosuna `sezon`/`bolum` (migrasyon-2026-08-08d.sql)
+`yorumlar`/`tepkiler` ile AYNI kalıp: NULL = dizi/film/kişi geneli, dolu = o
+bölüm. `NOT NULL DEFAULT 0` REDDEDİLDİ — sezon 0 gerçek bir değerdir (TMDB
+"özel bölümler"), dizi geneli puanıyla ayırt edilemezdi.
+PRIMARY KEY -> `puanlar_tekil` ifadeli tekil indeksi
+(`COALESCE(sezon,-1), COALESCE(bolum,-1)`), tıpkı `tepkiler_tekil` gibi.
+Mevcut 265 satır (canlı ölçüm) DOKUNULMADAN kalır: DEFAULT'suz ADD COLUMN
+katalog işlemidir, yeni indeksin anahtar kümesi eski PK ile birebir aynıdır,
+`puanlar`a başvuran yabancı anahtar yoktur. Geri alma yolu migrasyonun
+başında yazılı.
+
+### Karar: bölüm puanı dizinin ORTALAMASINA GİRMEZ
+`puanlar` üzerindeki mevcut 9 sorgunun HEPSİ `sezon IS NULL` ile daraltıldı:
+SEO `aggregateRating` + inceleme vitrini, `ozgunIcerikVar`, sitemap kapsamı,
+`/incelemeler`, `/benim`, yıl özeti, `puan_10/50/100` rozetleri, profil
+inceleme vitrini, puan uyumu JOIN'i. Gerekçe: JSON-LD `aggregateRating`
+TVSeries'i tanımlar ve sayfada GÖRÜNEN değerle aynı olmak zorundadır; ayrıca
+tek dizinin 200 bölümü rozet ve uyum sayaçlarını anlamsızlaştırırdı.
+`test/bolum_puani.test.js` bu süzgeci KAYNAK ÜZERİNDEN denetler — süzgeçsiz
+yeni bir `FROM puanlar` sorgusu eklenirse test kırmızıya döner.
+
+### Yerleşim
+- **Bölüm sayfası** (`bolum.dart`): "İzledim" butonunun hemen altında.
+- **Takvim bölüm modalı** (`takvim.dart`): **HATA DÜZELTİLDİ** — oradaki
+  yıldızlar bölüme değil DİZİNİN TAMAMINA puan veriyordu (modalın tepki,
+  izledim ve yorumları bölüm bağlamındayken). Artık bölüme yazıyor.
+- **Dizi detayındaki sezon listesi: BİLEREK YOK.** Satırda zaten bir izleme
+  düğmesi var; 360 dp genişlikte 5 yıldız 44 dp dokunma hedefiyle sığmıyor ve
+  20 satırlık liste yıldız gürültüsüne boğuluyordu. Bölüm sayfası tek dokunuş.
+
+### Yan etki: bölüme puan = o bölümü izledim
+`POST /puan` bölüm hedefliyse `izlemeler` satırını atar ve
+`diziDurumunuGuncelle` çalıştırır (`/izleme/toggle` ile aynı iki adım).
+Görmediğin bölüme puan veremezsin; kayıt düşülmezse bölüm takvimde kalır.
+ASİMETRİ (bilinçli): puanı SİLMEK izleme kaydını kaldırmaz. Yan etki sessiz
+değil — sunucu `izlendi: true` döner, buton "İzledin" olur, SnackBar çıkar.
+
+### Yeni uç
+`GET /bolum-puanlari/:tmdbId/:sezon` — sezonun tüm bölümlerinin ortalaması +
+kullanıcının kendi puanı, TEK istekte (girişsiz de çalışır).
+
+### Kalan
+- [ ] Migrasyon canlıya UYGULANMADI: `migrasyon-2026-08-08d.sql`.
+      Sıra: migrasyon -> server.js -> web. Migrasyonsuz yeni server.js
+      `sezon` sütununu bulamaz ve `/puan` 42703 ile düşer.
+
+## 2026-08-08 — ÜÇ HATA: GIF avatar, çoğul ek, dile göre önbellek ✅ (canlıda DEĞİL)
+Sürüm ARTIRILMADI, dağıtım YOK, commit YOK. `flutter analyze lib test` 0
+error/warning · `flutter test` **747 yeşil** · `flutter build web --release`
+geçti · 45 dil × **548 anahtar** (543 + 5 tekil biçim).
+
+### 1) GIF avatar/kapak oynamıyordu (kullanıcı: "alcelik profilinde gifler oynamıyor")
+Kök neden PİKSEL DÜZEYİNDE kanıtlandı (`test/gif_animasyon_test.dart`):
+`CircleAvatar(backgroundImage:)` görseli `DecorationImage` olarak boyar ve
+animasyonlu GIF'in **yalnız ilk karesini** çizer; animasyon için `Image`
+widget'ının kendisi ağaçta olmalı. Kapaklar zaten `CachedNetworkImage`
+(widget) ile çiziliyordu, **avatarlar değildi**.
+- `ortak.dart`: yeni `DaireGorsel` (ClipOval + CachedNetworkImage) +
+  `KullaniciAvatari(hareketli:)` bayrağı.
+- Hareketli açılan yerler: açık profil başlığı, kendi profil başlığı, ayarlar.
+- **Bilinçli sınır:** akış/yorum/sohbet/takipçi **listelerinde** avatar
+  durağan ilk kare kalır (varsayılan `hareketli: false`). Listede onlarca
+  GIF saniyede ~10 kez kare çözer ve tüm yüzeyi boyatır; kaydırma bunu
+  kaldırmaz. Twitter/X de animasyonlu avatarı yalnız profilde oynatır.
+
+### 2) "1 years 2 months 14 days"
+`sureBicimle` her birimi tek anahtarla basıyordu. Türkçe anahtar olduğu için
+hata Türkçede görünmüyordu (Türkçede sayıdan sonra çokluk eki yok).
+- `Ceviri.cogul` + `String.cs(n)`: biçimi `Intl.pluralLogic` (CLDR) seçiyor.
+- 45 dile 5 yeni anahtar: `'{} yıl~tekil'`, `~ay`, `~gün`, `~saat`, `~dk`.
+- **Sınır (bilinçli):** iki biçim (tekil + diğer). Rusça/Lehçe'nin "few"
+  (2-4) ve Arapça ikil biçimi kapsam dışı — bu diller süre birimlerinde
+  zaten çekimsiz kısaltma kullanıyor (`{} мес.`, `{} godz.`), tek sapma yıl
+  sözcüğü. Altı CLDR kategorisi 45 dile 25 anahtar/dil demekti.
+  Genişletmek gerekirse `Ceviri.cogul` içine `few:` dalı eklemek yeterli.
+
+### 3) Dil değişince önbellek eski dili gösteriyordu
+`Onbellek` anahtarları dilsizdi (`onb_takvim`) ama gövde dile bağlı
+(`X-Dil` başlığı → TMDB başlık/özetleri o dilde). SWR "önce önbellek"
+kuralıyla ekran eski dilde boyanıyordu.
+- Anahtar artık `onb_takvim@en`. Yazarken aynı kaydın **diğer dillerdeki ve
+  dilsiz eski** kopyaları siliniyor.
+- **Neden dil başına biriktirmiyoruz:** /takvim gövdesi yüzlerce TMDB kaydı;
+  web'de SharedPreferences = localStorage, kota köken başına ~5 MB.
+
+### Yeni/değişen dosyalar
+| Dosya | Ne |
+|---|---|
+| `app/lib/ekranlar/ortak.dart` | `DaireGorsel` (YENİ) + `KullaniciAvatari.hareketli` |
+| `app/lib/ekranlar/profil.dart` | başlık avatarı `DaireGorsel`; `sureBicimle` → `.cs(n)` |
+| `app/lib/ekranlar/kullanici_profil.dart` | başlık avatarı `hareketli: true` |
+| `app/lib/ekranlar/ayarlar.dart` | avatar `DaireGorsel` (ayrıca `NetworkImage` → önbellekli) |
+| `app/lib/ceviri.dart` | `Ceviri.cogul`, `String.cs(n)` |
+| `app/lib/onbellek.dart` | anahtara dil kodu + eski kopya budama |
+| `app/lib/diller/dil_*.dart` (45) | 5 tekil anahtar → 548 |
+| `app/test/gif_animasyon_test.dart` **(YENİ)** | 10 test (piksel kanıtı + gerileme koruması) |
+| `app/test/sure_cogul_test.dart` **(YENİ)** | 6 test |
+| `app/test/onbellek_dil_test.dart` **(YENİ)** | 6 test |
+| `app/test/takvim_onbellek_test.dart` | yeni anahtar biçimine uyarlandı |
+
+### ÇÖZÜLEMEYEN
+Tarayıcıda GIF'in oynadığı **görsel olarak** doğrulanamadı: otomasyonun
+kullandığı sekme Chrome'da daima arka planda (`document.hidden === true`),
+Flutter o durumda kare üretmiyor (kontrol ölçümü: yükleme spinner'ı ekrandayken
+bile 5 sn'de 0 `requestAnimationFrame`). macOS ekran kaydı izni yok
+(`screencapture` "could not create image"), AppleScript otomasyonu zaman aşımına
+uğruyor. Kanıt bu yüzden `flutter test` içinde GERÇEK piksel okumasıyla
+(`RenderRepaintBoundary.toImage`) verildi — CLAUDE.md md.7'nin kabul ettiği yol.
+**Kullanıcının gözle doğrulaması iyi olur.**
+
+## 2026-08-08 — GÜVENLİK DENETİMİ DÜZELTMELERİ ✅ (canlıda DEĞİL)
+Kaynak: `GUVENLIK-DENETIMI-2026-08-07.md` — beş SARI bulgu. Kod yazıldı ve
+test edildi; **canlıya hiçbir şey uygulanmadı**. Backend testleri 286 → **333**
+(+47). `node --check` temiz. Sürüm ARTIRILMADI, commit YOK, `app/**` DEĞİŞMEDİ.
+
+### Yeni/değişen dosyalar
+| Dosya | Ne |
+|---|---|
+| `backend/medya_imza.js` **(YENİ)** | DM medyası için imzalı-süreli URL (saf modül). **Dockerfile COPY listesine EKLENDİ.** |
+| `backend/test/medya_imza.test.js` **(YENİ)** | 33 test |
+| `backend/test/sifre_sifirlama.test.js` **(YENİ)** | 14 test |
+| `backend/server.js` | özel medya kapısı, DM medyası imzalama, sıfırlama deneme kilidi, CSP ihlal toplayıcı, elle yedek 600 |
+| `backend/migrasyon-2026-08-08c.sql` **(YENİ)** | `sifirlama_kodlari.deneme` |
+| `backend/sema.sql` | aynı kolon |
+| `backend/yedek.sh` **(YENİ, depoda kanonik)** | 700/600 + gpg AES-256 + doğrulama |
+| `backend/yedek-ac.sh` **(YENİ)** | geri yükleme / açılabilirlik testi |
+| `backend/db-rol-en-az-yetki-20260808.sql` **(YENİ)** | DML-only `dizijpg_app` rolü |
+| `backend/db-rol-dogrula.sh` **(YENİ)** | rolün uygulamayı kırmadığını ölçer |
+| `backend/nginx-guvenlik-20260808.parca.conf` **(YENİ)** | CSP yaması (report-only) |
+| `backend/test/mesaj_istekleri.test.js` | kırılgan 3000-karakter penceresi düzeltildi |
+
+### CANLIYA UYGULAMA — SIRAYLA
+Her adım bağımsız geri alınabilir. Adımlar arasında `curl /api/saglik` çalıştır.
+
+**1) Migrasyon + backend (en düşük risk, önce bu).**
+```
+scp backend/server.js backend/medya_imza.js backend/Dockerfile \
+    backend/migrasyon-2026-08-08c.sql root@154.53.163.3:/opt/dizijpg/
+ssh root@154.53.163.3 'cd /opt/dizijpg && \
+  docker exec -i dizijpg-db psql -U dizijpg -d dizijpg < migrasyon-2026-08-08c.sql && \
+  docker-compose up -d --build'
+ssh root@154.53.163.3 'docker logs --tail 20 dizijpg-api | grep -iE "medya imza|özel"'
+```
+Beklenen log: `Özel (DM) medya kümesi yüklendi: N dosya` + `Medya imzası GÖÇ modunda`.
+`Cannot find module './medya_imza.js'` görürsen COPY satırı gitmemiştir.
+Doğrulama:
+```
+curl -sI https://dizijpg.com/api/medya/<DM_dosyasi>  | grep -i cache-control  # private, no-store
+curl -sI https://dizijpg.com/api/medya/<yorum_dosyasi> | grep -i cache-control # public, immutable
+```
+GERİ ALMA: eski `server.js`i geri koy + `docker-compose up -d --build`.
+(`deneme` kolonu kalsa da eski kod onu okumaz, zararsız.)
+
+**2) Yedekler (bağımsız, uygulaması en kolay kazanç).**
+```
+ssh root@154.53.163.3 'head -c 32 /dev/urandom | base64 > /opt/dizijpg/yedek-anahtar.key && chmod 600 /opt/dizijpg/yedek-anahtar.key && cat /opt/dizijpg/yedek-anahtar.key'
+```
+⚠ Çıkan anahtarı **parola yöneticisine KAYDET.** Sunucu kaybolursa şifreli
+yedekleri açmanın başka yolu yoktur. Kaydetmeden devam etme.
+```
+scp backend/yedek.sh backend/yedek-ac.sh root@154.53.163.3:/opt/dizijpg/
+ssh root@154.53.163.3 'chmod 700 /opt/dizijpg/yedek.sh /opt/dizijpg/yedek-ac.sh /opt/dizijpg/yedekler && \
+  chmod 600 /opt/dizijpg/yedekler/* && /opt/dizijpg/yedek.sh'
+```
+İlk çalıştırma mevcut 26 şifresiz yedeği de şifreler (~560 MB, birkaç dakika).
+Doğrulama: `ssh root@154.53.163.3 '/opt/dizijpg/yedek-ac.sh --dogrula /opt/dizijpg/yedekler/<en-yeni>.sql.gz.gpg'`
+GERİ ALMA: `SIFRELE=0 /opt/dizijpg/yedek.sh` (şifreleme kapalı); eski dosyalar
+`yedek-ac.sh` ile açılabilir durumda kalır.
+
+**3) DB rolü (en dikkat isteyen).**
+```
+openssl rand -hex 32           # parolayı üret, .env'e yazacaksın
+scp backend/db-rol-en-az-yetki-20260808.sql backend/db-rol-dogrula.sh root@154.53.163.3:/opt/dizijpg/
+ssh root@154.53.163.3 'docker exec -i dizijpg-db psql -U dizijpg -d dizijpg \
+  -v app_sifre="<PAROLA>" -f - < /opt/dizijpg/db-rol-en-az-yetki-20260808.sql'
+ssh root@154.53.163.3 'PGPASSWORD="<PAROLA>" bash /opt/dizijpg/db-rol-dogrula.sh'
+```
+`KALDI=0` görmeden **.env'e DOKUNMA**. Sonra `.env`de `DATABASE_URL`in
+kullanıcısını `dizijpg` → `dizijpg_app` yap + `docker-compose up -d`.
+GERİ ALMA: `.env`i eski hâline döndür + `docker-compose up -d`. Rolün varlığı
+uygulamayı etkilemez.
+⚠ **`ALTER ROLE dizijpg NOSUPERUSER` ASLA ÇALIŞTIRMA** — `dizijpg` kümedeki
+TEK süper kullanıcı (`postgres` rolü yok); demote edilirse küme kilitlenir.
+
+**4) CSP (report-only → ölç → zorunlu).** Adımları
+`backend/nginx-guvenlik-20260808.parca.conf` içinde tam komutlarıyla yazılı.
+Özet: yedek al → 7 yere CSP satırı → `nginx -t` → `reload` → 48 saat
+`GET /api/admin/csp` izle → `toplam: 0` ise `-Report-Only` ekini kaldır.
+
+### KAPSAM DIŞI (bilinçli, gerekçeli)
+- **JWT 90 gün + localStorage.** Ömrü kısaltmak ya da refresh eklemek istemci
+  değişikliği ister; `app/**` bu turda başka ajanlarda. CSP tarafı yapıldı.
+- **Sunucu dışına yedek kopyalama.** Dayanıklılık kararı + kimlik bilgisi
+  gerektirir; kullanıcıya ait. Şifreleme hazır olduğu için kopyalama artık güvenli.
+- **Halka açık yorum/akış medyası.** Bilerek korunmadı: zaten kamuya açık
+  içerik, 25.339 dosya ve `akis` önbelleği TTL'siz — imzalamak kırılganlık
+  yaratırdı, güvenlik kazancı sıfırdı.
+
+### İSTEMCİ İŞİ — ayrı ajana verilecek (medya imzasını ZORUNLU kılmadan önce)
+`MEDYA_IMZA_ZORUNLU=1` yapılmadan önce şunlar düzeltilmeli, yoksa güncel
+istemcilerde DM medyası kırılır. Yol-içi imza sayesinde bunların **hiçbiri
+bugün acil değil** (uzantı sonda kaldığı için `endsWith` çalışıyor):
+1. `app/lib/ekranlar/sohbet.dart:1733` — `ValueKey('ses-$medya')` yerine
+   `m['id']` tabanlı anahtar. Yoksa kova sınırında (12 saatte bir) çalan
+   sesli mesaj kesilir.
+2. `app/lib/ekranlar/sohbet.dart:1766` — `CachedNetworkImage`e imzasız yolu
+   `cacheKey:` olarak ver. Yoksa kova değişince fotoğraf yeniden iner.
+3. Uzantı kontrollerini `Uri.parse(u).path` üzerinden yap (örnek:
+   `app/lib/altyazi.dart:135`) — ileride query'li imzaya geçilirse diye.
+
+## 2026-08-08 — KULLANICI LİSTELERİNDE TAKİP / TAKİBİ BIRAK DÜĞMESİ ✅ (canlıda DEĞİL)
+**Kullanıcı isteği:** "Profilimden takipçilerime baktığımda solda profil resmi
+yanında isim görüyorum ya, sağda da takip etmiyorsam 'takip et' butonu, takip
+ediyorsam 'takibi bırak' butonu olmalı. Aynı şekilde takip ettiklerimde de
+olacak. Ve başkasının profilinden takipçilerine ve takip ettiklerine
+baktığımda da aynı şekilde olacak. Bir gönderiyi beğenenlere baktığımda falan
+da aynı şekilde olacak."
+Sürüm ARTIRILMADI (1.28.0+72), dağıtım yapılmadı, backend'e DOKUNULMADI.
+
+### Ortak parça — `app/lib/ekranlar/takip_dugmesi.dart` (YENİ)
+`TakipDugmesi`: iyimser güncelleme → hata olursa GERİ ALMA + SnackBar, işlem
+sürerken kilit + spinner, oturumsuzda giriş istemi. Kendi satırında hiç
+çizilmez. Takip etmiyorken BİRİNCİL (sarı dolgu), ediyorken İKİNCİL
+(kenarlıklı) — "bağı kopar" geri planda kalsın diye. Dokunma hedefi 48dp
+(`MaterialTapTargetSize.padded`), etiket `FittedBox(scaleDown)` + 156dp
+sınırıyla uzun çevirilerde (Lehçe/Tamilce) taşmıyor. Onay modalı YOK.
+
+### Eklendiği ekranlar
+- Gönderiyi beğenenler (`begenenler.dart`) — eskiden takip edilende düğme
+  hiç çizilmiyordu, artık "Takibi Bırak" çıkıyor.
+- Takipçiler / Takip edilenler (`KullaniciListesiEkrani`) — kendi profilim ve
+  başkasının profili, dört kombinasyon.
+- Kullanıcı arama (`KullaniciAramaEkrani`).
+- Kapsam DIŞI: akış kartı ve Reels'teki takip düğmesi (liste satırı değil,
+  kart başlığı; takip edilince kaybolması istenen davranış), `paylas.dart` DM
+  alıcı seçici (seçim arayüzü), arama ekranlarındaki yatay avatar şeridi.
+
+### SUNUCU EKSİĞİ — ana oturumun yapması gereken
+`/takipciler/:ad`, `/takipedilenler/:ad` ve `/kullanici-ara` satır başına
+`takip_ediyorum` (+ `ben_mi`) DÖNDÜRMÜYOR; üçü de `girisIsteğeBagli` bile
+değil. İstemci şimdilik listeyle PARALEL tek bir ek istekle
+(`/takipedilenler/<kendi adım>`) küme kuruyor — N+1 yok ama uç `LIMIT 500`
+uyguladığı için 500'den fazla kişi takip eden hesapta sonrası yanlış görünür.
+Bu üç uca `girisIsteğeBagli` + `takip_ediyorum` + `ben_mi` eklenince
+`takipKumesiGetir()` silinebilir (`/yorumlar/:id/begenenler` zaten döndürüyor,
+örnek orada).
+
+### Yan düzeltme
+Beğenenler sheet başlığı Tamilce'de 320dp ekranda taşıyordu (RenderFlex
+overflow) → `Flexible` + ellipsis.
+
+### Kanıt
+`app/test/takip_dugmesi_test.dart` (22 vaka: beş liste türü, iyimser/geri
+alma, kilit, ≥44dp, 5 dilde taşma, N+1 yok, durum bilinmiyorsa düğme yok).
+`flutter test` 703 → 725. Altı mutasyonla kırmızıya döndürüldü, sha1+diff ile
+geri alma doğrulandı. `flutter analyze lib test` 0 error/warning,
+`flutter build web --release` geçti. Yeni çeviri anahtarı GEREKMEDİ ("Takip
+Et" / "Takibi Bırak" 45 dilde zaten vardı; 543 anahtar eşit).
+
+## 2026-08-08 — BAN / CEZA SİSTEMİ + GÜVEN SKORU ✅ (canlıda DEĞİL)
+**Kullanıcı isteği:** "güzel ban sistemleri olmalı, kullanıcıyı sistemden
+banlayabileceğiz saat ve dakika gün yıl olarak. Bu ban kullanıcı banı da
+olacak, perma ban da olacak. Kullandığı cihazı da banlayabilmeliyiz, o
+cihazdan bir daha bizde hesap açamamalı. Her kullanıcının güven skoru olmalı,
+ihlaller sonucu bu skor düşmeli."
+Sürüm ARTIRILMADI (1.27.0+71), dağıtım yapılmadı, migrasyon UYGULANMADI.
+
+### Veri modeli — `backend/migrasyon-2026-08-08b.sql` (+ `sema.sql`)
+- `kullanicilar`: `yasak_bitis`, `yasak_sebep`, `guven_skoru` (0-100, vars. 100).
+  **`yasakli` SÜTUNU DEĞİŞMEDİ** — server.js'teki 15+ `NOT k.yasakli` filtresi
+  aynen çalışıyor. `yasakli=true` + `yasak_bitis=NULL` = KALICI, yani bugünkü
+  canlı satırların anlamı BİREBİR korunuyor; göç adımı YOK.
+- Yeni tablolar: `yasak_kayitlari` (salt-ekleme denetim izi), `cihazlar`,
+  `cihaz_kullanici`, `guven_olaylari`. Yeni indeks `sikayetler (tur, hedef_id)`.
+
+### Süre dolumu — CRON YOK
+1. Okuma anında kesin karar: `yasak.js/yasakAktif()` her istekte `Date.now()`
+   ile karşılaştırır → süreli ban saniyesi saniyesine biter.
+2. En geç ~60 sn'de bir süpürme `yasakli` bayrağını indirir ki BAŞKALARININ
+   sorgularındaki `NOT k.yasakli` de doğrulansın (yorumları akışa dönsün).
+
+### Yasaklı ne yapabilir — TEK KONTROL NOKTASI (`girisZorunlu`)
+GİRER + OKUR, herkese açık hiçbir şey YAZAMAZ. Muaf liste kısa ve
+VARSAYILAN-RET: yarın eklenen bilinmeyen bir yazma ucu otomatik kapalı.
+Muaf: `/auth/*`, kişisel takip (izleme/durum/puan/favori/rewatch), tercihler,
+`/sikayet`, `/engelle/*`, `/veri/disa-aktar`, `DELETE /hesabim`, `/cihaz-token`,
+`/hata-bildir`.
+
+### Cihaz banı — DÜRÜSTLÜK SINIRI + KAPSAM
+Kimlik DONANIMDAN OKUNMUYOR (Play politikası yasaklıyor): uygulama kurulum
+başına 16 rastgele bayt üretip `X-Cihaz` ile yolluyor. Silip kurunca DEĞİŞİR.
+Yani KİLİT değil CAYDIRICI katman; kullanıcıya "bir daha asla" DENMİYOR.
+**KAPSAM (kullanıcı kararı, 8 Ağu): YALNIZ HESAP AÇMA kapalı, GİRİŞ AÇIK.**
+Ailede paylaşılan telefon/tablette masum kişi kilitlenmesin — cihaz kimliği
+kişiyi değil CİHAZI tanır. Banın asıl amacı (ceza yiyenin yeni hesapla dönmesi)
+yine engelleniyor. Kapı `/auth/kayit`, `/auth/misafir`, `/auth/google`te;
+`/auth/giris`te BİLEREK YOK (test bu ayrımı kilitliyor).
+Başlık göndermeyen istemci (web, eski sürüm) ENGELLENMİYOR.
+
+### Güven skoru — OTOMATİK CEZA YOK, ZAMANLA TOPARLANIR
+Skor YALNIZ yönetici doğrulamasıyla düşer (şikayet `incelendi` -5, gönderi
+silme -10, süreli ban -20, kalıcı ban 0, itiraz kabul +15). Ham şikayet SAYISI
+skora GİRMEZ. `GUVEN_OTO_BAN` bayrağı VARSAYILAN KAPALI; açık olsa bile yalnız
+SÜRELİ ban verir, kalıcı ASLA. Skor kullanıcıya GÖSTERİLMİYOR (oyunlaştırma).
+
+**TOPARLANMA (kullanıcı kararı, 8 Ağu): son İHLALDEN sonra her 30 günde +1,
+tavan 100.** CRON YOK — `yasakAktif()` kalıbı: değer okuma anında hesaplanır
+(`guvenGuncel`), `kullanicilar.guven_skoru` yalnız "son yazma tabanı"dır,
+`guven_ihlal` saati tutar.
+- Saat SON İHLALDEN sayılır, son OLAYDAN değil: iyi niyetli bir elle +5 ya da
+  itiraz iadesi saati sıfırlasaydı ödül cezaya dönüşürdü.
+- AKTİF BANDA (süreli ya da kalıcı) saat DURUR: ban süresince kullanıcı yazamaz,
+  yani ödüllendirilecek davranış üretmez; kalıcı banlı hesap aylar sonra "temiz"
+  görünmemeli. Ban kalkınca saat işlemeye başlar.
+- Yazma anında toparlanma tabana GÖMÜLÜR ve saat yalnız TÜKETİLEN tam dönem
+  kadar ilerler (`ihlalSaatiIlerlet`) — kısmi günler kaybolmaz, iki kez sayılmaz.
+
+### DM şikayeti — zincir kapatıldı
+- İstemcide `sikayetEtSheet('mesaj', …)` HİÇ çağrılmıyordu; artık sohbet
+  balonuna uzun basınca "Şikayet et" çıkıyor (kendi mesajında çıkmaz).
+- GÜVENLİK: `POST /sikayet` artık mesajı yalnız ALICISININ şikayet etmesine
+  izin veriyor — yoksa rastgele mesaj id'leri şikayet edilerek yabancıların
+  DM'leri moderasyon kuyruğuna düşürülebilirdi.
+- `GET /admin/mesaj-sikayet/:id` (ŞİKAYET id'siyle) çözülmüş metni + önceki 5
+  mesajı gösteriyor (`kripto.cozGoster`). DM'ler durağan şifreli ama E2E
+  DEĞİL — kripto.js zaten "moderasyon" istisnasını yazıyor.
+
+### İtiraz akışı — E-POSTA KUTUSUNA BAĞIMLILIK YOK
+Ban ekranı önce "itiraz için `iletisim@dizijpg.com`" diyordu; o kutu sunucuda
+AÇILMAMIŞTI (27 Tem'den beri), yani ceza fiilen İTİRAZ EDİLEMEZ durumdaydı.
+Kullanıcı kararı: itiraz uygulama içinden gönderilsin, panelde kuyruğa düşsün.
+- `itirazlar` tablosu + `POST /itiraz` + `GET /itirazim`.
+- ⚠ `/itiraz` `YASAK_MUAF` listesinde — yazma kapısı VARSAYILAN-RET olduğu için
+  olmasaydı yasaklı kullanıcı itiraz edemez, sistem kendini kilitlerdi.
+  Ayrı bir test kilitliyor (sabotajla kırmızıya döndürüldü).
+- Koruma: yalnız aktif cezası olan itiraz eder; aynı anda tek açık itiraz
+  (uygulama + kısmi eşsiz indeks); 5/saat; metin 10-2000.
+- Tekrar itiraz CEZAYA bağlı (`itirazlar.yasak_id`): aynı ceza için bir kez,
+  YENİ ceza = yeni itiraz hakkı. "Bir daha asla" sonsuza susturur, "sınırsız"
+  yöneticiyi boğar; cezaya bağlayınca ikisi de olmuyor.
+- Kabul → yasak kalkar + güven +15 (`itiraz_kabul`) + denetim izi. Ret → ceza sürer.
+- Flutter: ban kartında e-posta yerine itiraz formu; bekleyen itiraz varsa
+  form yerine "İtirazın incelemede", reddedilmişse karar notu görünür.
+
+### Admin paneli
+Yeni "Yasaklar" sekmesi (aktif yasaklar + yasaklı cihazlar + denetim izi),
+"İtirazlar" kuyruğu (itiraz metni + itiraz edilen ceza + ceza geçmişi + güven
+skoru YAN YANA; kabul/ret tek tuş),
+süre seçicili ban modali (dakika/saat/gün/yıl + kalıcı, sebep ZORUNLU),
+kullanıcı detayında ceza geçmişi/güven geçmişi/cihazlar, şikayet kuyruğunda
+mesaj şikayeti incelenebiliyor. Tüm yeni kullanıcı verisi `esc()`/`escJs()`.
+
+### Kanıt
+backend 224 → **286** test, Flutter 678 → **703** test, `flutter analyze lib
+test` 0 error/warning, `flutter build web --release` geçti, 45 dil × **543**
+anahtar eşit. 16 sabotaj kırmızıya döndürüldü ve sha1 ile geri alındı.
+
+### CANLIYA UYGULAMA (ana oturum)
+1. `migrasyon-2026-08-08.sql` (favori-person) — henüz uygulanmamış
+2. `migrasyon-2026-08-08b.sql`
+3. `scp server.js yasak.js admin.html Dockerfile` + `docker compose up -d --build`
+   (yasak.js Dockerfile COPY listesinde; unutulursa konteyner açılmaz)
+4. ~~`iletisim@dizijpg.com` posta kutusunu aç~~ — **GEREKMİYOR.** İtiraz artık
+   uygulama içinden gidiyor ve panelde kuyruğa düşüyor; ban akışının hiçbir
+   dış posta bağımlılığı KALMADI. (Kutu başka amaçlarla hâlâ açılabilir ama
+   ceza sistemi onu beklemiyor.)
+5. Dağıtımdan sonra panelde **İtirazlar** sekmesini aç ve rozeti kontrol et:
+   bekleyen itiraz gözden kaçmasın.
+
+## 2026-08-08 — FAVORİ OYUNCULAR + OYUNCU İZLENME ORANI ✅ (canlıda DEĞİL)
+**Kullanıcı isteği:** "Favori oyuncu listesi de olmalı, oraya favorilere
+eklediği oyuncular olmalı. Bir oyuncu profili ziyaret edildiğinde o oyuncunun
+oynadığı kaç dizi/film izlendi onu da oyuncu profilinde puanla yazısının
+altında göstermeli, mesela 10/20 gibi. Tıklayınca da list view halinde solda
+dizi filmin kapak resmi, yanında ismi ve en sağında tik işareti olmalı;
+izlemediklerinde de çarpı."
+Sürüm ARTIRILMADI (1.27.0+71), dağıtım yapılmadı.
+
+### Veri modeli — MİGRASYON GEREKTİ
+- `favoriler.tur` CHECK'i yalnız `('tv','movie')` idi (canlıda doğrulandı:
+  `favoriler_tur_check`, 16 tv + 18 movie satır). `puanlar`/`yorumlar` ise
+  2026-07-16'dan beri `person` kabul ediyordu — yani oyuncu puanlanabiliyor
+  ama FAVORİLENEMİYORDU.
+- ✅ `backend/migrasyon-2026-08-08.sql`: CHECK `('tv','movie','person')`e
+  genişletildi + `favoriler_kullanici_tarih` indeksi. `sema.sql` güncellendi.
+  **CANLIYA UYGULANMADI** — ana oturum uygulayacak (server.js'siz çalışmaz:
+  `/favori/toggle` 'person' ile 23514 verir).
+
+### "İzlendi" kuralı (tek kaynak: `backend/kisi_izlenme.js` başı)
+- `durum IN ('izliyorum','bitirdim','biraktim')` **VEYA** `izlemeler`de en az
+  bir kayıt. `izleyecegim` sayılmaz.
+- Gerekçe: poster kartlarındaki göz rozeti (`kitaplik_durumu.dart`) ZATEN bu
+  kümeyi kullanıyor; başka bir kural aynı posteri bir ekranda gözlü, bir
+  ekranda çarpılı gösterirdi. Test bu iki dosyayı birbirine kilitliyor.
+- Payda: `combined_credits.cast`, `media_type ∈ {tv,movie}`, `poster_path` var,
+  `(tur,id)` tekilleştirilmiş (aynı dizide iki rol paydayı şişirmesin).
+
+### Yeni uçlar (ikisi de `girisZorunlu` + `kisiLimiti` 240/saat)
+- `GET /kisi/:id/izlenme` → `{izlenen, toplam, yapimlar[{tur,tmdb_id,ad,poster,
+  yil,izlendi}]}`. **TEK TMDB isteği** (`/person/:id/combined_credits`,
+  TTL 7 gün, kullanıcıdan bağımsız paylaşılan önbellek) + 2 DB sorgusu.
+  Tek tek `/tv/:id` çekilmiyor — ad ve poster o tek yanıtta zaten var.
+- `GET /favori-kisiler` → favori oyuncular, ad+fotoğrafla. Kişi başına
+  `/person/:id` (TTL 7 gün), **8'li paralel öbek**, `LIMIT 200`. İlk açılışta
+  favori sayısı kadar istek, sonraki 7 gün SIFIR. Tek kişi düşerse liste
+  komple düşmüyor.
+- `POST /favori/toggle` artık `person` kabul ediyor (mevcut uç, yenisi yok).
+
+### Flutter
+- `kisi.dart`: sağ üstte **favori kalbi** (dizi/filmdekiyle aynı yer/renk,
+  iyimser güncelleme + hata olursa geri alma + SnackBar) ve **puanın ALTINDA**
+  `IzlenmeOraniSatiri` — "10/20 izledin", 44 dp hedef, chevron.
+- `kisi_yapimlar.dart` (YENİ): tam sayfa liste — solda kapak (44×66), ortada
+  ad + Dizi/Film · yıl, sağda **tik / çarpı** (44 dp kutu + Semantics etiketi:
+  renk tek başına anlatmıyor). Başta "20 yapımdan 10 tanesini izledin" +
+  ilerleme çubuğu. İzlenenler listenin başında.
+- `favori_oyuncular.dart` (YENİ): yuvarlak fotoğraf ızgarası (detay.dart kadro
+  şeridiyle aynı görsel dil), profil sekmesinin içinde.
+- Giriş: **Profil > Kitaplık sekmesi > "Favori oyuncular"** satırı.
+- Rotalar: `/favori-oyuncular` (profil kabuk dalında) ve **`/yapimlar/:id`**.
+  Yapımlar listesi bilerek `/kisi/:id/yapimlar` DEĞİL: kişiye özel olduğu için
+  robots.txt ile kapatılması gerekiyordu, bu dosyadaki Disallow kuralları ise
+  joker içermiyor (`seo_gizlilik.test.js` `kapali`) ve `/kisi/` ön ekini
+  kapatmak SSR ile indekslenen oyuncu sayfalarını kapatırdı.
+- `robots.txt`: `Disallow: /favori-oyuncular` + `Disallow: /yapimlar/`
+  (mevcut SEO testi eksikliği YAKALADI, tahminle değil).
+- Üç hâl her ekranda: iskelet → içerik → hata (Tekrar Dene). Boş durumlar:
+  favori yoksa "Henüz favori oyuncun yok" + Gözat düğmesi.
+
+### Kanıt
+- `app/test/favori_oyuncu_izlenme_test.dart` — **15 widget testi**
+  (flutter test 663 → **678**, 0 hata).
+- `backend/test/kisi_izlenme.test.js` — **19 test** (node --test 205 → **224**).
+- ⚠️ Test `kisi_izlenme.js`in **Dockerfile COPY listesinde olmadığını** yakaladı
+  (konteyner "Cannot find module" ile açılışta ölürdü, kripto.js ile aynı
+  tuzak). Düzeltildi + artık server.js'in import ettiği HER yerel modül
+  otomatik denetleniyor.
+- Kırmızıya döndürme: 7 backend + 5 Flutter + 1 robots.txt sabotajı; her biri
+  beklenen testi düşürdü, hepsi sha1 doğrulamasıyla geri alındı.
+- `flutter analyze lib test` 0 error/warning · `flutter build web --release`
+  geçti · `node --check backend/server.js` temiz.
+- Çeviri: **9 yeni anahtar**, 45 dilde 515 → **524** (hepsi eşit).
+
+### ANA OTURUMUN CANLIYA YAPACAKLARI
+1. `scp backend/migrasyon-2026-08-08.sql` + `psql -f` (server.js'ten ÖNCE).
+2. `scp backend/server.js backend/kisi_izlenme.js backend/robots.txt`
+   + `backend/Dockerfile` (COPY satırına `kisi_izlenme.js` eklendi — bu dosya
+   dağıtılmazsa konteyner açılışta ölür) + docker-compose rebuild.
+3. Web dağıtımı (SW sökücü + `araclar/web_hashla.js` atlanmaz).
+4. Uçtan uca curl: `/api/favori-kisiler`, `/api/kisi/500/izlenme`,
+   `POST /api/favori/toggle {"tur":"person"}` — testkullanici ile.
+
+## 2026-08-08 — YORUM KUTUSU AVATARI + MASAÜSTÜ ORTA KOLON ✅
+**İki kullanıcı bildirimi.** Sürüm ARTIRILMADI (1.27.0+71), dağıtım yapılmadı.
+
+### A) "yorumlara yorum yapmadaki sol taraftaki avatarda profil resmim gözükmüyor"
+- ✅ **KÖK NEDEN OTURUM NESNESİ** (canlı API ile kanıtlandı, tahmin değil):
+  * `GET /api/profil/alcelik` → `"avatar":"/avatarlar/avatar3-1786094173967.gif"`
+    — resim **sunucuda var**.
+  * `dosyaUrl()` de doğru: ürettiği adres HTTP **200 · image/gif · 238 KB**.
+  * Kopan yer: `POST /auth/giris` yanıtı yalnız
+    `{id, kullanici_adi, email, misafir}` döndürüyor (`backend/server.js:1888-1891`),
+    **`avatar` yok**; `Oturum.yukle()` de yalnız SharedPreferences okuyor.
+    Sonuç `Oturum.kullanici['avatar'] == null` → `KullaniciAvatari(url: null)`
+    → kişi ikonu. Yani hata `dosyaUrl()`de de widget'ta da değildi.
+- ✅ **Düzeltme tamamen istemcide** (backend'e dokunulmadı): `Oturum.tazele()`
+  (`/profilim` ile birleştirme), `girisYapildi` avatarsız yanıtta bunu tetikler,
+  `main.dart` açılışta **zaten girişli** kullanıcı için çağırır.
+- ✅ **Test:** `app/test/oturum_avatar_test.dart` (9 test) — giriş yolu, açılış
+  yolu, gereksiz istek atılmaması, widget'ın resim/yedek ikon davranışı ve
+  Reels yanıt sayfasındaki yazma satırının uçtan uca doğrulaması.
+  Kırmızıya döndürme yapıldı: düzeltme kaldırılınca avatar `null` düşüyor.
+
+### B) "takvim ve reels masaüstünde profil/akış gibi ortada olmalı"
+- ✅ **Ortak kalıp:** `OrtaKolon` + `masaustuKolonGenisligi` (720) `tema.dart`e
+  taşındı; elle yazılmış `maxWidth: 720` sabitleri kaldırıldı
+  (`akis.dart`, `profil.dart`, `gizlilik.dart`, `arama_cubugu.dart`).
+  720 gerekçesi: ui-ux-pro-max → Layout/"Container Width" (65-75ch).
+- ✅ **Takvim/liste** 720'lik ortalanmış kolona alındı (iskelet dahil).
+- ✅ **Takvim/ay** `masaustuTakvimGenisligi` (1417 = 3 panel + boşluklar +
+  ayırıcı + gün sütunu) ile sınırlandı ve ortalandı. Ölçüm: panel 1920 dp'de
+  **507,7 → 340** dp; 1440'ta düzen pratikte aynı, "altı ay birden ekranda"
+  garantisi korundu, gün hücresi 48,6 dp (≥44).
+- ✅ **Reels** masaüstünde **9:16 ortalanmış tuval**: genişlik yükseklikten
+  türer (1920×1080 → 607,5 dp). Video oranı, `PointerInterceptor`lu dokunuş
+  katmanı ve sağdaki eylem sütunu bozulmadı; bindirmeler artık tuvalin
+  kenarına oturuyor (eskiden 1900 dp arayla ekranın iki ucundaydı).
+- ✅ **Yorum sheet'i** de aynı 720 kolonla ortalandı (Reels ve akıştan açılan
+  yanıt sayfası).
+- ✅ **Mobil (<900 dp) birebir aynı** — her madde için 360/390 dp regresyon
+  testi var. Test: `app/test/masaustu_orta_kolon_test.dart` (17 test, hepsi
+  `tester.getRect` ile gerçek ölçüm). Kırmızıya döndürme: üç düzeltme
+  kaldırılınca 6 geniş-ekran testi düşüyor, mobil testler yeşil kalıyor.
 
 ## 2026-08-07 — ANDROID FOTOĞRAF SEÇİCİ'YE GEÇİŞ (Play reddi düzeltmesi) ✅
 **Neden:** AAB **1.26.0+69** Play Console'a yüklendi ve **REDDEDİLDİ**:
@@ -69,6 +688,61 @@ riski alınmadı. **Sürüm 1.26.1+70'e çıkarıldı** (69 tekrar yüklenemez).
   eklerken (a) izin diyaloğu ÇIKMAMALI, (b) açılan ekran Google'ın Fotoğraf
   Seçici'si olmalı (uygulama teması değil, sistem teması), (c) çoklu seçim
   sonrası inceleme ekranı gelmeli, (d) kalem/makas doğru medyada çıkmalı.
+
+## 2026-08-07 — DM + REELS YANITLARI DA YENİ MEDYA HATTINA BAĞLANDI ✅
+Yorum eki bugün `medyaSec` + inceleme/editör ekranına taşınmıştı ama iki ekran
+eski akışta kalmıştı: **sohbet** (`ImagePicker().pickMedia()`) ve **Reels
+yanıtı** (`pickMedia` + `FilePicker`). Önizleme yok, kalem/makas yok, 30 MB'lık
+ölü sınır, kısmi başarı kavramı yok.
+
+- ✅ **VERİ MODELİ ÖNCE DOĞRULANDI (uydurulmadı, koddan okundu):**
+  `mesajlar.medya` **TEXT** (`backend/sema.sql:209`) ve `POST /mesajlar` tek
+  string kabul edip tek satır INSERT ediyor (`server.js:4528/4539/4596`) →
+  **DM'de çoklu seçim AÇILMADI**, `medyaSec(context, azami: 1)`.
+  `yorumlar.medya` ise **TEXT[]** (`sema.sql:68`), sunucu istekte 10 medyaya
+  kadar kabul ediyor (`server.js:4884`) → Reels yanıtında **çoklu AÇIK**
+  (sheet tavanı `enCokYanitEk` = 4, dar kutuda tek satıra sığan sayı).
+  Sunucuda **sıfır değişiklik**.
+- ✅ **Ortak yükleyici:** `app/lib/medya_yukle.dart` — `medyalariYukle()` +
+  `MedyaYuklemeSonuc`. Sıralı yükleme, tek dosya/toplam sınırı, ilerleme
+  geri çağrısı, **kısmi başarı**: hiç fırlatmaz, `bildirim` başarıda `null`,
+  kısmide "1 medya eklendi, 1 yüklenemedi", tamamen başarısızda SOMUT hata.
+  Üç ekran (yorum kutusu, sohbet, Reels yanıtı) artık aynı kodu çağırıyor.
+- ✅ **30 MB ÖLDÜ.** Sohbet ve Reels yanıtı 30 MB'da kesiyordu, sunucu 100 MB
+  kabul ediyor. Tek kaynak: `medyaAzamiBayt` = `videoAzamiBayt` = 100 MB.
+  DM'de video artık trim + 20 MB üstü otomatik sıkıştırmadan da geçiyor.
+- ✅ **`FilePicker` (GIF düğmesi) BIRAKILDI, gerekçesi yazıldı:** `medyaSec`
+  GIF'i kapsıyor ama (1) Fotoğraf Seçici'de "yalnız GIF" filtresi yok,
+  (2) tarayıcıdan inen GIF'ler `Downloads`ta durur ve Fotoğraf Seçici onları
+  göstermez — SAF gösterir. İzin riski yok (`file_picker` de SAF kullanır).
+  Yükleme/sınır/hata yolu yine de ortak fonksiyona bağlandı.
+- ✅ **Yan ürün — gerçek bir hata düzeltildi:** `sohbet.dart`taki saat sütunu
+  `AnimationController`ı `late final ... = ...` (TEMBEL) idi ve ona yalnız
+  mesaj listesinin `itemBuilder`ı dokunuyordu. **Hiç mesajı olmayan** bir
+  sohbette denetleyici doğmuyor, `dispose()` onu element sökülürken kurmaya
+  kalkıyor ve "Looking up a deactivated widget's ancestor is unsafe"
+  assertion'ı atıyordu. Artık `initState`te kuruluyor; regresyon testi var.
+- ✅ **Çeviri:** **yeni anahtar AÇILMADI** — mevcut anahtarlarla çözüldü.
+  **514 anahtar, 45/45 eşit.**
+- ✅ **Kanıt:** `test/dm_reels_medya_test.dart` (19 test). `flutter test`
+  **611 → 630 yeşil**, `flutter analyze lib test` 0 hata/uyarı,
+  `flutter build web --release` geçti. Kırmızıya döndürme yapıldı (DM tavanı
+  1→10, Reels tavanı kalan→1, `bildirim` sessize alındı): **19'un 9'u
+  kırmızıya döndü**, sabotaj geri alındı ve dört dosyanın **sha1'i birebir**
+  eşleşti.
+- ⬜ **Dağıtım YAPILMADI**, sürüm **1.26.1+70'te bırakıldı** (Play'de inceleme).
+- ⬜ **CİHAZDA ELLE TEST:** (a) sohbette ataç → sistem Fotoğraf Seçici, izin
+  diyaloğu YOK, tek dosya seçtiriyor; (b) fotoğrafta kalem çalışıyor, çıkan
+  düzenlenmiş görsel baloncukta görünüyor; (c) videoda makas + 20 MB üstü
+  sıkıştırma, mesaj olarak gidiyor; (d) GIF'te editör açılmıyor, baloncukta
+  ANİMASYON oynuyor; (e) Reels yanıtında 2-3 medya seçip gönderme, biri
+  patlarsa SnackBar; (f) Reels yanıtındaki GIF düğmesi hâlâ çalışıyor.
+- ⚠️ **Bilinen sınır:** inceleme ekranının KENDİ "N dosya okunamadı" uyarısı
+  kök `ScaffoldMessenger`a düşüyor; Reels yanıtı tam ekran bir sheet olduğu
+  için o mesaj sheet'in ARKASINDA kalabilir. Yükleme yolundaki uyarılar
+  (bizim bastıklarımız) sheet'in kendi `_mesajci`sinden geçiyor, onlar
+  görünür. Nadir bir hâl (dosya okunamadı) — düzeltmesi `medyaSec`in mesaj
+  sözleşmesini değiştirmeyi gerektirir.
 
 ## 2026-08-07 — AI KARELERİNDE KALAN TEKRARLAR TEMİZLENDİ 🚀
 **Şikâyet:** "hâlâ benzer resimler var". Doğruydu: 1 Ağustos'taki dHash süzgeci

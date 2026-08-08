@@ -1,0 +1,53 @@
+{
+  "basladi": "2026-08-08T18:59:50.268Z",
+  "gecenDk": 171.8,
+  "hedef": {
+    "dil": 46,
+    "ekran": 6,
+    "gorsel": 276
+  },
+  "tamamlanan": 30,
+  "basarisiz": 5,
+  "dogrulamaReddi": 0,
+  "gizlilikUyarisi": [],
+  "diller": {
+    "tr": "zaten var",
+    "ar": "zaten var",
+    "ja": "zaten var",
+    "he": "zaten var",
+    "my": "zaten var",
+    "am": "zaten var",
+    "th": "zaten var",
+    "ur": "zaten var",
+    "fa": "zaten var",
+    "zh": "zaten var",
+    "ko": "zaten var",
+    "hi": "zaten var",
+    "bn": "zaten var",
+    "ta": "zaten var",
+    "te": "zaten var",
+    "kn": "zaten var",
+    "ml": "zaten var",
+    "mr": "zaten var",
+    "gu": "zaten var",
+    "pa": "zaten var",
+    "el": "zaten var",
+    "ru": "ATLANDI: Ayarlarda dil satırı bulunamadı.",
+    "uk": "zaten var",
+    "bg": "ATLANDI: Ayarlarda dil satırı bulunamadı.",
+    "sr": "bitti",
+    "en": "bitti",
+    "es": "bitti",
+    "fr": "bitti",
+    "pt": "bitti",
+    "de": "işleniyor"
+  },
+  "hatalar": [
+    "ru/dizi-detay: dil kurulamadı: Ayarlarda dil satırı bulunamadı.",
+    "bg/profil: dil kurulamadı: Ayarlarda dil satırı bulunamadı.",
+    "bg/ayarlar: dil kurulamadı: Ayarlarda dil satırı bulunamadı.",
+    "bg/dizi-detay: dil kurulamadı: Ayarlarda dil satırı bulunamadı.",
+    "bg/yorum-yaz: dil kurulamadı: Ayarlarda dil satırı bulunamadı."
+  ],
+  "guncellendi": "2026-08-08T21:51:39.356Z"
+}

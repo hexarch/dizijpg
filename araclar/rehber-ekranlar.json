@@ -1,0 +1,147 @@
+{
+  "_aciklama": [
+    "dizi.jpg rehber ekran görüntüsü tanımları. Bunu rehber_gorsel.mjs okur.",
+    "",
+    "SEÇİCİ FELSEFESİ — sabit koordinat YOK:",
+    "  dokunCeviri : Türkçe çeviri anahtarı; betik lib/diller/dil_<kod>.dart'tan",
+    "                hedef dildeki karşılığını bulur. 46 dilde tek tanım yeter.",
+    "  dokunGeo    : salt geometrik (arama çubuğu gibi metinsiz öğeler için).",
+    "  sekme       : alt sekme çubuğu, indeksle (0=Ana 1=Takvim 2=Akış 3=Keşfet 4=Profil).",
+    "                Sekmeler konumdan bulunur, metinden değil.",
+    "  ilkKart     : içerik ızgarasındaki ilk poster (content-desc 'puan\\nbaşlık').",
+    "",
+    "ARAMA SONUCUNA DOKUNMA — neden başlıkla eşleşmiyoruz:",
+    "  TMDB dizi adını da yerelleştiriyor: ja'da 'Ted Lasso' değil",
+    "  'テッド・ラッソ：破天荒コーチがゆく' yazıyor. '^Ted Lasso' seçicisi bu yüzden",
+    "  ja/dizi-detay ve ja/yorum-yaz'da zaman aşımına düştü. Sonuç satırının",
+    "  YAPISI ise dilden bağımsız: '<yerel ad>\\n2020 · <tür>'. Yıl + ' · '",
+    "  ayracını çıpalıyoruz; 46 dilde de ilk sonuca dokunur.",
+    "",
+    "DOĞRULAMA — her görüntüden ÖNCE çalışır, geçmezse görüntü kaydedilmez:",
+    "  ceviriGerekli : anahtarın hedef dildeki karşılığı ekranda OLMALI",
+    "                  (hem 'doğru ekran mı' hem 'dil gerçekten değişti mi' testi)",
+    "  gerekli       : dilden bağımsız regex (başlık, yıl, puan, sayı…)",
+    "  ceviriOlmamali / olmamali : yanlış ekrandaysak görünecek ayırt ediciler",
+    "  seciliSekme   : alt çubukta hangi sekme seçili (selected=true)",
+    "  sekmeCubugu   : true = kök sekmedeyiz, false = tam sayfa rotadayız",
+    "",
+    "EKRAN SEÇİMİ GEREKÇESİ (bu turda 6 ekran):",
+    "  Uygulamanın tam döngüsünü kapsar: keşfet → takip et → katkı ver → yapılandır.",
+    "  Akış (sekme 2) ve Mesajlar BİLEREK DIŞARIDA: başka kullanıcıların gönderileri",
+    "  ve özel mesajları görünür; rehber görselinde gerçek kişisel veri olamaz.",
+    "  Keşfet (sekme 3) de dışarıda: Ana sayfa ile büyük ölçüde örtüşüyor."
+  ],
+
+  "kalite": 82,
+  "izinliKullanicilar": ["dizi.jpg.ai"],
+
+  "ekranlar": [
+    {
+      "ad": "anasayfa",
+      "aciklama": "Ana sayfa — 'Senin İçin' önerileri, haftanın dizileri ve filmleri. Rehberin açılış görseli: uygulamanın ne olduğunu tek bakışta anlatır.",
+      "git": [{ "tur": "sekme", "indeks": 0 }],
+      "bekle": 2500,
+      "dogrula": {
+        "ceviriGerekli": ["Sana Özel", "Haftanın Dizileri"],
+        "gerekli": ["\\d+([.,]\\d+)?\\n.+"],
+        "seciliSekme": 0,
+        "sekmeCubugu": true,
+        "enAzDugum": 15
+      }
+    },
+    {
+      "ad": "takvim",
+      "aciklama": "Takvim — takip edilen dizilerin yayın günleri. Uygulamanın ayırt edici özelliği; rehberde 'ne zaman yayınlanıyor' sorusunu karşılar.",
+      "git": [
+        { "tur": "sekme", "indeks": 1 },
+        { "tur": "tazele", "ms": 9000 }
+      ],
+      "bekle": 2500,
+      "dogrula": {
+        "ceviriGerekli": ["Takvim"],
+        "trOlmamali": ["\\d+\\. Bölüm"],
+        "seciliSekme": 1,
+        "sekmeCubugu": true,
+        "enAzDugum": 10
+      }
+    },
+    {
+      "ad": "profil",
+      "aciklama": "Profil — izleme istatistikleri, rozetler, kitaplık. 'Bu uygulama bana ne veriyor' sorusunun cevabı. Test hesabının kendi verisi; üçüncü kişi verisi yok.",
+      "git": [
+        { "tur": "sekme", "indeks": 4 },
+        { "tur": "tazele", "ms": 5000 }
+      ],
+      "bekle": 2000,
+      "dogrula": {
+        "ceviriGerekli": ["Rozetler", "Toplam İzleme Süresi"],
+        "gerekli": ["@testkullanici"],
+        "seciliSekme": 4,
+        "sekmeCubugu": true,
+        "enAzDugum": 15
+      }
+    },
+    {
+      "ad": "ayarlar",
+      "aciklama": "Ayarlar — dil, tema ve hesap ayarları. Rehberin 'uygulamayı kendi diline al' bölümünün görseli; 45 dilin nerede seçildiğini gösterir.",
+      "git": [
+        { "tur": "ayarlar" },
+        { "tur": "bekle", "ms": 1500 },
+        { "tur": "kaydirHedef", "anahtar": "Dil", "ustSinir": 350, "altSinir": 800 }
+      ],
+      "bekle": 1500,
+      "dogrula": {
+        "ceviriGerekli": ["Dil", "Tema"],
+        "sekmeCubugu": false,
+        "enAzDugum": 10
+      }
+    },
+    {
+      "ad": "dizi-detay",
+      "aciklama": "Dizi detay sayfası (Ted Lasso) — puan, durum düğmeleri (izleyeceğim/izliyorum/bitirdim/bıraktım), tepki emojileri, nerede izlenir. Uygulamanın merkezî nesnesi.",
+      "git": [
+        { "tur": "sekme", "indeks": 0 },
+        { "tur": "dokunGeo", "ustte": 250, "enAz": 500, "ms": 2000 },
+        { "tur": "yazAscii", "metin": "Ted Lasso" },
+        { "tur": "bekle", "ms": 2500 },
+        { "tur": "dokunDesen", "desen": "\\n(19|20)\\d\\d · ", "ms": 4000 }
+      ],
+      "bekle": 2500,
+      "dogrula": {
+        "_not": "'Nerede İzlenir' GEREKLİ DEĞİL: bölüm yalnız o dil/bölge için TMDB'de sağlayıcı varsa çiziliyor; ru'da hiç gelmedi ve 3 denemede de görüntü kaydedilmedi. Kimlik doğrulaması için yıl + TMDB puanı + durum düğmeleri yeterli.",
+        "ceviriGerekli": ["İzleyeceğim", "Bitirdim"],
+        "gerekli": ["2020", "8\\.\\d TMDB"],
+        "sekmeCubugu": false,
+        "enAzDugum": 20
+      }
+    },
+    {
+      "ad": "yorum-yaz",
+      "aciklama": "Yorum yazma — metin alanı, fotoğraf/video ekleme, spoiler işareti ve gönder. Uygulamanın ana katkı eylemi; rehberde 'nasıl yorum yaparım' adımı. Görünen tek diğer hesap @dizi.jpg.ai (uygulamanın kendi AI incelemesi), gerçek kişi değil.",
+      "git": [
+        { "tur": "sekme", "indeks": 0 },
+        { "tur": "dokunGeo", "ustte": 250, "enAz": 500, "ms": 2000 },
+        { "tur": "yazAscii", "metin": "Ted Lasso" },
+        { "tur": "bekle", "ms": 2500 },
+        { "tur": "dokunDesen", "desen": "\\n(19|20)\\d\\d · ", "ms": 4000 },
+        { "tur": "dokunCeviri", "anahtar": "Yorum yap", "kaydirarak": 8, "ms": 2500 },
+        { "tur": "dokunGoreli", "anahtar": "Fotoğraf / video ekle", "x": 540, "ofsetY": -70 },
+        {
+          "tur": "yazAscii",
+          "metinler": {
+            "tr": "Harika bir dizi, herkese tavsiye ederim!",
+            "en": "A genuinely heartwarming show. Highly recommended!"
+          }
+        },
+        { "tur": "bekle", "ms": 800 }
+      ],
+      "bekle": 1200,
+      "dogrula": {
+        "ceviriGerekli": ["Fotoğraf / video ekle", "Gönder", "Spoiler"],
+        "ceviriOlmamali": ["Nerede İzlenir"],
+        "sekmeCubugu": false,
+        "enAzDugum": 6
+      }
+    }
+  ]
+}
