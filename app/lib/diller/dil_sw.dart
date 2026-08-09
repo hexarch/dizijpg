@@ -624,4 +624,62 @@ const Map<String, String> cevirilerSw = {
   '{} kişi puanladı': 'Watu {} wamekadiria',
   'Bölüm izlendi olarak işaretlendi':
       'Kipindi kimewekwa alama kuwa kimetazamwa',
+  'Sesli ara': 'Simu ya sauti',
+  'Görüntülü ara': 'Simu ya video',
+  'Çalıyor...': 'Inaita...',
+  'Bağlanıyor...': 'Inaunganisha...',
+  'Cevapla': 'Pokea',
+  'Reddet': 'Kataa',
+  'Sessize al': 'Zima sauti',
+  'Hoparlör': 'Spika',
+  'Kamerayı kapat': 'Zima kamera',
+  'Kamerayı çevir': 'Badilisha kamera',
+  'Cevap yok': 'Hakuna jibu',
+  'Arama reddedildi': 'Simu imekataliwa',
+  'Meşgul': 'Ana shughuli',
+  'Bağlanılamadı': 'Imeshindwa kuunganisha',
+  'Arama iptal edildi': 'Simu imeghairiwa',
+  'Arama geçmişi': 'Historia ya simu',
+  'Gelen arama': 'Simu inayoingia',
+  'Giden arama': 'Simu inayotoka',
+  'Cevapsız arama': 'Simu isiyojibiwa',
+  'Arama şu anda kullanılamıyor': 'Simu hazipatikani kwa sasa',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Simu za video zimezimwa kwa sasa, unaweza kupiga simu ya sauti',
+  'Bu kullanıcıyı arayamazsın': 'Huwezi kumpigia mtumiaji huyu',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Mnahitaji kufuatana ili kupigiana simu',
+  'Bu kullanıcı şu anda aranamıyor': 'Mtumiaji huyu hawezi kupigiwa kwa sasa',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Simu nyingi sana ambazo hazikujibiwa. Jaribu tena baada ya {}',
+  'Zaten bir aramadasın': 'Tayari upo kwenye simu',
+  'Arama için mikrofon izni gerekiyor':
+      'Ruhusa ya kipaza sauti inahitajika kupiga simu',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Ruhusa ya kamera na kipaza sauti inahitajika kwa simu za video',
+  'Arama başlatılamadı': 'Imeshindwa kuanzisha simu',
+  'Kullanıcı bulunamadı': 'Mtumiaji hakupatikana',
+  'Kendini arayamazsın': 'Huwezi kujipigia mwenyewe',
+  'Arama artık geçerli değil': 'Simu hii haifai tena',
+  'Bu aramanın tarafı değilsin': 'Wewe si sehemu ya simu hii',
+  'Arama bulunamadı': 'Simu haikupatikana',
+  'Çok fazla istek, biraz bekle': 'Maombi mengi mno, subiri kidogo',
+  'Bağlantı koptu': 'Muunganisho umekatika',
+  'Arama süre sınırına ulaştı': 'Simu imefikia kikomo cha muda',
+  'Arama en fazla 4 saat sürebilir': 'Simu inaweza kudumu saa 4 kwa juu zaidi',
+  'Arama sona erdi': 'Simu imeisha',
+  'Sesli arama': 'Simu ya sauti',
+  'Görüntülü arama': 'Simu ya video',
+  'Gelen aramalar': 'Simu zinazoingia',
+  'Sesli ve görüntülü arama bildirimleri': 'Arifa za simu za sauti na video',
+  '{} sa': 'saa {}',
+  'Sesli ve Görüntülü Aramalar': 'Simu za Sauti na Video',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Maudhui ya simu hayarekodiwi kamwe. Sauti na video husafiri kati ya vifaa zikiwa zimesimbwa kwa njia ya mwisho-hadi-mwisho (DTLS-SRTP); seva zetu haziwezi kuzifungua, kuzisikiliza wala kuzihifadhi.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Metadata pekee ya simu huhifadhiwa: na nani, mwelekeo gani, lini na kwa muda gani. Kumbukumbu hizi hufutwa kiotomatiki baada ya siku 90.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Ikiwa muunganisho wa moja kwa moja hauwezekani, sauti na video hupita kwenye seva ya kupitisha (TURN) zikiwa zimesimbwa. Seva hiyo pia haiwezi kufungua wala kurekodi maudhui.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Kipaza sauti hutumika tu wakati wa simu ya sauti au video, na kamera tu wakati wa simu ya video. Vyote viwili huzimwa simu inapoisha.',
 };

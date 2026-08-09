@@ -631,4 +631,65 @@ const Map<String, String> cevirilerFil = {
   'Bu bölüme puan ver': 'I-rate ang episode na ito',
   '{} kişi puanladı': '{} tao ang nag-rate',
   'Bölüm izlendi olarak işaretlendi': 'Namarkahan ang episode bilang napanood',
+  'Sesli ara': 'Voice call',
+  'Görüntülü ara': 'Video call',
+  'Çalıyor...': 'Tumatawag...',
+  'Bağlanıyor...': 'Kumokonekta...',
+  'Cevapla': 'Sagutin',
+  'Reddet': 'Tanggihan',
+  'Sessize al': 'I-mute',
+  'Hoparlör': 'Speaker',
+  'Kamerayı kapat': 'Patayin ang camera',
+  'Kamerayı çevir': 'Palitan ang camera',
+  'Cevap yok': 'Walang sumasagot',
+  'Arama reddedildi': 'Tinanggihan ang tawag',
+  'Meşgul': 'Busy',
+  'Bağlanılamadı': 'Hindi makakonekta',
+  'Arama iptal edildi': 'Kinansela ang tawag',
+  'Arama geçmişi': 'Kasaysayan ng tawag',
+  'Gelen arama': 'Papasok na tawag',
+  'Giden arama': 'Palabas na tawag',
+  'Cevapsız arama': 'Hindi nasagot na tawag',
+  'Arama şu anda kullanılamıyor': 'Hindi available ang pagtawag ngayon',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Naka-off ang video call ngayon, puwede kang tumawag gamit ang boses',
+  'Bu kullanıcıyı arayamazsın': 'Hindi mo puwedeng tawagan ang user na ito',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Kailangan ninyong mag-follow sa isat isa para makatawag',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Hindi puwedeng tawagan ang user na ito ngayon',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Masyadong maraming hindi nasagot na tawag. Subukan ulit pagkatapos ng {}',
+  'Zaten bir aramadasın': 'Nasa tawag ka na',
+  'Arama için mikrofon izni gerekiyor':
+      'Kailangan ng pahintulot sa mikropono para makatawag',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Kailangan ng pahintulot sa camera at mikropono para sa video call',
+  'Arama başlatılamadı': 'Hindi masimulan ang tawag',
+  'Kullanıcı bulunamadı': 'Hindi nakita ang user',
+  'Kendini arayamazsın': 'Hindi mo puwedeng tawagan ang sarili mo',
+  'Arama artık geçerli değil': 'Hindi na valid ang tawag na ito',
+  'Bu aramanın tarafı değilsin': 'Hindi ka bahagi ng tawag na ito',
+  'Arama bulunamadı': 'Hindi nakita ang tawag',
+  'Çok fazla istek, biraz bekle': 'Masyadong maraming request, maghintay muna',
+  'Bağlantı koptu': 'Nawala ang koneksyon',
+  'Arama süre sınırına ulaştı': 'Naabot na ng tawag ang limitasyon sa oras',
+  'Arama en fazla 4 saat sürebilir':
+      'Ang tawag ay puwedeng tumagal nang hanggang 4 na oras',
+  'Arama sona erdi': 'Tapos na ang tawag',
+  'Sesli arama': 'Voice call',
+  'Görüntülü arama': 'Video call',
+  'Gelen aramalar': 'Mga papasok na tawag',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Mga abiso para sa voice at video call',
+  '{} sa': '{} oras',
+  'Sesli ve Görüntülü Aramalar': 'Voice at Video Call',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Hindi kailanman nirerekord ang laman ng tawag. Ang audio at video ay dumadaloy nang end-to-end encrypted (DTLS-SRTP) sa pagitan ng mga device; hindi ito kayang i-decrypt, pakinggan o itago ng aming mga server.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Metadata lang ng tawag ang itinatago: kanino, anong direksyon, kailan at gaano katagal. Awtomatikong binubura ang mga talaang ito pagkatapos ng 90 araw.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Kapag hindi posible ang direktang koneksyon, dumadaan ang audio at video sa isang relay server (TURN) habang naka-encrypt. Hindi rin kayang i-decrypt o i-record ng relay ang laman.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Ginagamit ang mikropono tuwing voice o video call lang, at ang camera tuwing video call lang. Parehong nakakasara ang mga ito pagkatapos ng tawag.',
 };

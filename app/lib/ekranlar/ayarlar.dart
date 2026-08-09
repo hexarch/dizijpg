@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../push.dart';
 import 'gorsel_kirp.dart';
-import 'ortak.dart' show DaireGorsel, altGuvenli;
+import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
@@ -659,12 +658,13 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     child: Container(
                       color: DiziRenkler.kart,
                       child: kapak != null
-                          ? CachedNetworkImage(
-                              imageUrl: kapak,
-                              fit: BoxFit.cover,
-                              placeholder: (_, _) =>
-                                  Container(color: DiziRenkler.kart),
-                              errorWidget: (_, _, _) => Center(
+                          // Kapak GIF olabilir ve OYNAMALI: web'de
+                          // CachedNetworkImage <img> yolundan tek kareye
+                          // düşüyor (bkz. AgGorsel).
+                          ? AgGorsel(
+                              url: kapak,
+                              yerTutucu: Container(color: DiziRenkler.kart),
+                              hata: Center(
                                 child: Icon(
                                   Icons.broken_image_outlined,
                                   color: DiziRenkler.metin38,

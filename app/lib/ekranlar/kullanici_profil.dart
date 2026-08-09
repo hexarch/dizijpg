@@ -119,11 +119,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
               SizedBox(
                 height: 130,
                 width: double.infinity,
-                child: CachedNetworkImage(
-                  imageUrl: kapak,
-                  fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) =>
-                      Container(color: DiziRenkler.koyuGri),
+                // Kapak GIF olabilir ve OYNAMALI: web'de CachedNetworkImage
+                // <img> yolundan tek kareye düşüyor (bkz. AgGorsel).
+                child: AgGorsel(
+                  url: kapak,
+                  yerTutucu: Container(color: DiziRenkler.koyuGri),
+                  hata: Container(color: DiziRenkler.koyuGri),
                 ),
               ),
             Padding(

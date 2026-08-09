@@ -627,4 +627,64 @@ const Map<String, String> cevirilerFi = {
   'Bu bölüme puan ver': 'Arvioi tämä jakso',
   '{} kişi puanladı': '{} henkilöä arvioi',
   'Bölüm izlendi olarak işaretlendi': 'Jakso merkitty katsotuksi',
+  'Sesli ara': 'Äänipuhelu',
+  'Görüntülü ara': 'Videopuhelu',
+  'Çalıyor...': 'Soi...',
+  'Bağlanıyor...': 'Yhdistetään...',
+  'Cevapla': 'Vastaa',
+  'Reddet': 'Hylkää',
+  'Sessize al': 'Mykistä',
+  'Hoparlör': 'Kaiutin',
+  'Kamerayı kapat': 'Sammuta kamera',
+  'Kamerayı çevir': 'Vaihda kamera',
+  'Cevap yok': 'Ei vastausta',
+  'Arama reddedildi': 'Puhelu hylättiin',
+  'Meşgul': 'Varattu',
+  'Bağlanılamadı': 'Yhteyttä ei saatu',
+  'Arama iptal edildi': 'Puhelu peruutettiin',
+  'Arama geçmişi': 'Puheluhistoria',
+  'Gelen arama': 'Saapuva puhelu',
+  'Giden arama': 'Lähtevä puhelu',
+  'Cevapsız arama': 'Vastaamaton puhelu',
+  'Arama şu anda kullanılamıyor': 'Puhelut eivät ole juuri nyt käytettävissä',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Videopuhelut ovat nyt pois käytöstä, voit soittaa äänipuhelun',
+  'Bu kullanıcıyı arayamazsın': 'Et voi soittaa tälle käyttäjälle',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Teidän on seurattava toisianne voidaksenne soittaa',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Tälle käyttäjälle ei voi soittaa juuri nyt',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Liian monta vastaamatonta puhelua. Yritä uudelleen {} kuluttua',
+  'Zaten bir aramadasın': 'Olet jo puhelussa',
+  'Arama için mikrofon izni gerekiyor':
+      'Soittaminen vaatii mikrofonin käyttöoikeuden',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Videopuhelu vaatii kameran ja mikrofonin käyttöoikeudet',
+  'Arama başlatılamadı': 'Puhelua ei voitu aloittaa',
+  'Kullanıcı bulunamadı': 'Käyttäjää ei löytynyt',
+  'Kendini arayamazsın': 'Et voi soittaa itsellesi',
+  'Arama artık geçerli değil': 'Tämä puhelu ei ole enää voimassa',
+  'Bu aramanın tarafı değilsin': 'Et ole tämän puhelun osapuoli',
+  'Arama bulunamadı': 'Puhelua ei löytynyt',
+  'Çok fazla istek, biraz bekle': 'Liian monta pyyntöä, odota hetki',
+  'Bağlantı koptu': 'Yhteys katkesi',
+  'Arama süre sınırına ulaştı': 'Puhelu saavutti aikarajan',
+  'Arama en fazla 4 saat sürebilir': 'Puhelu voi kestää enintään 4 tuntia',
+  'Arama sona erdi': 'Puhelu päättyi',
+  'Sesli arama': 'Äänipuhelu',
+  'Görüntülü arama': 'Videopuhelu',
+  'Gelen aramalar': 'Saapuvat puhelut',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Ääni- ja videopuheluiden ilmoitukset',
+  '{} sa': '{} t',
+  'Sesli ve Görüntülü Aramalar': 'Ääni- ja videopuhelut',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Puheluiden sisältöä ei koskaan tallenneta. Ääni ja kuva kulkevat laitteiden välillä päästä päähän salattuina (DTLS-SRTP); palvelimemme eivät voi purkaa, kuunnella tai säilyttää tätä liikennettä.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Vain puhelun metatiedot säilytetään: kenen kanssa, kumpaan suuntaan, milloin ja kuinka kauan. Nämä merkinnät poistetaan automaattisesti 90 päivän kuluttua.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Jos suoraa yhteyttä ei saada, ääni ja kuva kulkevat salattuina välityspalvelimen (TURN) kautta. Sekään ei voi purkaa tai tallentaa sisältöä.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofonia käytetään vain ääni- tai videopuhelun aikana ja kameraa vain videopuhelun aikana. Molemmat sammutetaan puhelun päätyttyä.',
 };

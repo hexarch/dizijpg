@@ -623,4 +623,63 @@ const Map<String, String> cevirilerFa = {
   'Bu bölüme puan ver': 'به این قسمت امتیاز دهید',
   '{} kişi puanladı': '{} نفر امتیاز دادند',
   'Bölüm izlendi olarak işaretlendi': 'قسمت به عنوان دیده شده علامت خورد',
+  'Sesli ara': 'تماس صوتی',
+  'Görüntülü ara': 'تماس تصویری',
+  'Çalıyor...': 'در حال زنگ خوردن...',
+  'Bağlanıyor...': 'در حال اتصال...',
+  'Cevapla': 'پاسخ',
+  'Reddet': 'رد کردن',
+  'Sessize al': 'بی‌صدا',
+  'Hoparlör': 'بلندگو',
+  'Kamerayı kapat': 'خاموش کردن دوربین',
+  'Kamerayı çevir': 'تعویض دوربین',
+  'Cevap yok': 'پاسخی داده نشد',
+  'Arama reddedildi': 'تماس رد شد',
+  'Meşgul': 'مشغول',
+  'Bağlanılamadı': 'اتصال برقرار نشد',
+  'Arama iptal edildi': 'تماس لغو شد',
+  'Arama geçmişi': 'تاریخچه تماس‌ها',
+  'Gelen arama': 'تماس ورودی',
+  'Giden arama': 'تماس خروجی',
+  'Cevapsız arama': 'تماس بی‌پاسخ',
+  'Arama şu anda kullanılamıyor': 'تماس در حال حاضر در دسترس نیست',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'تماس تصویری فعلاً غیرفعال است، می‌توانید تماس صوتی بگیرید',
+  'Bu kullanıcıyı arayamazsın': 'نمی‌توانید با این کاربر تماس بگیرید',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'برای تماس باید یکدیگر را دنبال کنید',
+  'Bu kullanıcı şu anda aranamıyor':
+      'در حال حاضر نمی‌توان با این کاربر تماس گرفت',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'تماس‌های بی‌پاسخ زیاد است. {} دیگر دوباره تلاش کنید',
+  'Zaten bir aramadasın': 'شما هم‌اکنون در یک تماس هستید',
+  'Arama için mikrofon izni gerekiyor':
+      'برای تماس، اجازه دسترسی به میکروفون لازم است',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'برای تماس تصویری، اجازه دسترسی به دوربین و میکروفون لازم است',
+  'Arama başlatılamadı': 'تماس آغاز نشد',
+  'Kullanıcı bulunamadı': 'کاربر پیدا نشد',
+  'Kendini arayamazsın': 'نمی‌توانید با خودتان تماس بگیرید',
+  'Arama artık geçerli değil': 'این تماس دیگر معتبر نیست',
+  'Bu aramanın tarafı değilsin': 'شما بخشی از این تماس نیستید',
+  'Arama bulunamadı': 'تماس پیدا نشد',
+  'Çok fazla istek, biraz bekle': 'درخواست‌های بیش از حد، کمی صبر کنید',
+  'Bağlantı koptu': 'اتصال قطع شد',
+  'Arama süre sınırına ulaştı': 'تماس به محدودیت زمانی رسید',
+  'Arama en fazla 4 saat sürebilir': 'هر تماس حداکثر ۴ ساعت می‌تواند طول بکشد',
+  'Arama sona erdi': 'تماس پایان یافت',
+  'Sesli arama': 'تماس صوتی',
+  'Görüntülü arama': 'تماس تصویری',
+  'Gelen aramalar': 'تماس‌های ورودی',
+  'Sesli ve görüntülü arama bildirimleri': 'اعلان تماس‌های صوتی و تصویری',
+  '{} sa': '{} ساعت',
+  'Sesli ve Görüntülü Aramalar': 'تماس‌های صوتی و تصویری',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'محتوای تماس‌ها هرگز ضبط نمی‌شود. صدا و تصویر با رمزگذاری سرتاسری (DTLS-SRTP) میان دستگاه‌ها جریان می‌یابد؛ سرورهای ما نمی‌توانند این ترافیک را رمزگشایی، شنود یا ذخیره کنند.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'فقط فراداده تماس نگهداری می‌شود: با چه کسی، در چه جهتی، چه زمانی و چه مدت. این سوابق پس از ۹۰ روز به‌طور خودکار حذف می‌شوند.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'اگر اتصال مستقیم ممکن نباشد، صدا و تصویر به‌صورت رمزگذاری‌شده از یک سرور بازپخش (TURN) عبور می‌کنند. آن سرور نیز نمی‌تواند محتوا را رمزگشایی یا ضبط کند.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'میکروفون فقط هنگام تماس صوتی یا تصویری و دوربین فقط هنگام تماس تصویری استفاده می‌شود. با پایان تماس هر دو خاموش می‌شوند.',
 };

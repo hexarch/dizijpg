@@ -1105,3 +1105,82 @@ ile **kanıtlamayı zorunlu** kılıyor.
 3. **iOS bu turda kapsamda mı?** Makinede derlenemiyor; F4 ayrı bir tur.
 4. **Yeni:** TURN eşik uyarısı **200 GB/ay** olarak önerildi (mevcut taban
    ~26 GB/ay). Bu eşik doğru mu, yoksa daha erken mi uyarmalı?
+
+---
+
+## 14. F1-backend turu çıktıları (9 Ağu 2026, 3. tur)
+
+**Bu turda `app/**` ve `sema.sql` DEĞİŞTİRİLMEDİ** (başka ajanlar orada).
+Sunucuya SSH **yapılmadı**; dağıtım, commit, sürüm artırma **yok**.
+Migrasyon `-08e` **hâlâ canlıya uygulanmadı**.
+
+### 14.1 Yazılanlar
+
+| Dosya | Ne | Satır |
+|---|---|---|
+| `backend/arama.js` | **YENİ saf modül**: sinyalleşme deposu, TURN kimlik bilgisi, yetki zinciri, kill switch, sessizleştirme, üstveri | ~560 |
+| `backend/server.js` | 8 uç, 3 hız limiti, `engelliMi()`/`karsilikliTakipMi()` yardımcıları, FCM `arama` dalı, PUSH_SABLON × 16 dil, 90 gün budama, trafik eşiği | +~330 |
+| `backend/yasak.js` | `YASAK_MUAF`'a `'/arama/bitir'` | +9 |
+| `backend/Dockerfile` | COPY listesine `arama.js` | +5 |
+| `backend/test/arama.test.js` | **YENİ**, 77 test | ~600 |
+| `backend/test/mesaj_istekleri.test.js` | `engelliMi()` çıkarması sonrası kalıp güncellendi | ±10 |
+| `backend/turn/turnserver.conf` | `denied-peer-ip=::` **çıkarıldı** (§14.4) | ±11 |
+| `backend/ARAMA-API-SOZLESMESI.md` | §13 sapmalar + §14 Flutter yapılacakları | +200 |
+
+**Neden ayrı bir saf modül:** `yasak.js`/`kripto.js`/`medya_imza.js` kalıbı.
+`arama.js` ne Express ne `pg` ne `process.env` bilir; testler **gerçek
+fonksiyonları** çağırıp davranışı ölçer, kaynak metnine regex tutturmaz.
+Yetki zinciri **callback alır** (`hedefBul`, `engelliMi`, `karsilikliMi`,
+`sessizKalanSn`, `mesgulMu`) — böylece §5'teki **sıra** gerçekten test
+edilebiliyor ve testin ölçtüğü sıra üretimde çalışan sıranın ta kendisi.
+
+### 14.2 Kanıt
+
+* `node --test test/*.test.js` → **427 geçti, 0 kaldı** (taban 350 + 77 yeni).
+* **Kırmızıya döndürme: 11/11.** Her sabotaj tek tek uygulandı, testin kırmızı
+  yandığı görüldü, geri alındı; dört dosyanın sha1'i **başlangıçla birebir aynı**.
+  Sabotajlar: `/arama/bitir` muafiyetinin silinmesi · `arama.js`in Dockerfile
+  COPY listesinden çıkarılması · HMAC-SHA1 → SHA256 · kill switch kontrolünün
+  silinmesi · `ustveri()`ye SDP alanı eklenmesi (içerik sızıntısı) · 90 günlük
+  budamanın silinmesi · `gorusmeLimiti`nin `aramaLimiti` olarak yeniden
+  adlandırılması (gölgeleme) · yetki sırasının bozulması · FCM `ttl`inin
+  silinmesi · karşılıklı takip kapısının kaldırılması · `/mesajlar`daki
+  engelleme kontrolünün silinmesi.
+* **UÇTAN UCA, GERÇEK POSTGRES:** yerel tek kullanımlık veritabanına `sema.sql`
+  + `migrasyon-2026-08-08e.sql` uygulandı, gerçek `server.js` başlatıldı,
+  altı test kullanıcısıyla **42 doğrulama** çalıştırıldı — hepsi geçti.
+  İçinde **gerçek 58 saniyelik bekleme** ile 45 sn çalma sınırının süpürüldüğü,
+  `cevapsiz` satırının yazıldığı, kaçırılan arama bildiriminin düştüğü ve iki
+  tarafın da serbest kaldığı ölçüldü. Veritabanı sonra **düşürüldü**.
+  TURN kimlik bilgisi **canlı uçtan** alınıp `base64(HMAC-SHA1(sır, username))`
+  ile bağımsız olarak yeniden hesaplanarak karşılaştırıldı (sahte sırla).
+
+### 14.3 Sözleşmeden sapmalar
+
+On bir kalem `backend/ARAMA-API-SOZLESMESI.md` **§13**'te tek tek gerekçelendi.
+En önemli ikisi:
+
+1. **`baglaniyor → cevaplandi` geçişini sunucu göremez** — bağlantı kurulunca
+   yoklama duruyor, bunu bildiren uç yok. Karar `POST /arama/bitir`in `sebep`
+   alanına bağlandı. **İstemci ICE başarısızlığında `ice_basarisiz` göndermek
+   ZORUNDA**, yoksa röle oranı ölçümü sessizce bozulur.
+2. **Kurulmuş aramaya 4 saatlik sert üst sınır** eklendi. `bitir` bir istemci
+   eylemidir; istemci çökerse hiç gelmez ve iki kullanıcı `ZATEN_ARAMADA` ile
+   **kalıcı olarak kilitlenirdi**.
+
+### 14.4 `denied-peer-ip=::` — depo kopyası da düzeltildi
+
+Canlıda tespit edilip kaldırılan bu satır **`backend/turn/turnserver.conf`ta
+hâlâ duruyordu**; bir sonraki dağıtımda arıza geri gelirdi ("kimlik doğrulaması
+geçiyor, ayırma başarılı görünüyor, ama hiçbir röle kurulamıyor"). Depo
+kopyasından çıkarıldı, yerine geri eklenmemesi gerektiğini anlatan bir yorum
+bloğu kondu.
+
+### 14.5 Bu turda YAPILMAYANLAR
+
+* **Flutter tarafı** — sözleşme §14'te madde madde yazıldı, sonraki tur.
+* **Admin paneli "Aramalar" sekmesi** (§10.2) — F5. Backend ucu yok.
+* **45 dilde istemci çevirisi** (28 anahtar) — Flutter turunda.
+* **`sema.sql`e `aramalar` tablosunun işlenmesi** — sözleşme §10.3'teki
+  talimat duruyor; o dosyada başka bir ajan çalışıyordu.
+* **Şikayet–arama bağlantısı** (§7.3c) — F5.

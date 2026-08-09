@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'api.dart';
 import 'ceviri.dart';
 import 'tema.dart';
+import 'gorusme/gelen_arama_ekrani.dart';
+import 'gorusme/gorusme_ekrani.dart';
 import 'ekranlar/akis.dart';
 import 'ekranlar/arama_cubugu.dart';
 import 'ekranlar/kesfet_akis.dart';
@@ -36,6 +38,15 @@ import 'ekranlar/takvim.dart';
 /// Son kurulan yönlendirici — push bildirimi dokunuşları buradan gezinir
 /// (bildirim işleyicilerinin BuildContext'i yoktur).
 GoRouter? sonYonlendirici;
+
+/// Gelen arama ekranının yolu.
+///
+/// DİKKAT — bu `/arama` DEĞİL: `/arama` bu projede **dizi/film keşfi**
+/// (Reels sekmesi) ve `tamAramaYolu` da tam ekran ARAMA KUTUSU. Sesli/görüntülü
+/// arama başka bir şey; dosya adları `gorusme*`, yollar `arama-gelen` /
+/// `gorusme`. Backend de aynı çarpışmayı yaşayıp hız limitine `gorusmeLimiti`
+/// demişti (server.js:955 `aramaLimiti` = search).
+const String gelenAramaYolu = '/arama-gelen';
 
 /// Kabuk-güvenli gezinme: kabuk-içi rotaya kabuk DIŞINDAN push yapılırsa
 /// kabuk ikinci kez kurulur (sayfa anahtarı/GlobalKey çakışması → boş, siyah
@@ -290,6 +301,24 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
             izlendi: (s.extra as bool?) ?? false,
           );
         },
+      ),
+      // --- Sesli/görüntülü arama (KABUĞUN DIŞINDA: tam ekran, alt menü yok) ---
+      // Giden arama. `tur` sorgu parametresi ('ses' | 'goruntu'), `extra`
+      // karşı tarafın avatar yolu (varsa; yoksa harf baş harfi çizilir).
+      GoRoute(
+        path: '/gorusme/:ad',
+        builder: (_, s) => GidenAramaSayfasi(
+          kullaniciAdi: s.pathParameters['ad']!,
+          tur: s.uri.queryParameters['tur'] == 'goruntu' ? 'goruntu' : 'ses',
+          avatar: s.extra as String?,
+        ),
+      ),
+      // Gelen arama. Parametre YOK: teklif SDP'si bildirime sığmaz (FCM veri
+      // sınırı 4 KB), ekran açılınca `GET /arama/gelen` ile çekilir. Böylece
+      // bildirimden açılan yol ile ön plan yoklamasının açtığı yol AYNI.
+      GoRoute(
+        path: gelenAramaYolu,
+        builder: (_, _) => const GelenAramaSayfasi(),
       ),
       GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
       // Ayarlar > Gizlilik > Gizlenen yorumlar. Kabuğun DIŞINDA: ayarların

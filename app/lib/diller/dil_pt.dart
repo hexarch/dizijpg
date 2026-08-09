@@ -632,4 +632,64 @@ const Map<String, String> cevirilerPt = {
   'Bu bölüme puan ver': 'Avalie este episódio',
   '{} kişi puanladı': '{} pessoas avaliaram',
   'Bölüm izlendi olarak işaretlendi': 'Episódio marcado como visto',
+  'Sesli ara': 'Chamada de voz',
+  'Görüntülü ara': 'Videochamada',
+  'Çalıyor...': 'Chamando...',
+  'Bağlanıyor...': 'Conectando...',
+  'Cevapla': 'Atender',
+  'Reddet': 'Recusar',
+  'Sessize al': 'Silenciar',
+  'Hoparlör': 'Alto-falante',
+  'Kamerayı kapat': 'Desligar câmera',
+  'Kamerayı çevir': 'Virar câmera',
+  'Cevap yok': 'Sem resposta',
+  'Arama reddedildi': 'Chamada recusada',
+  'Meşgul': 'Ocupado',
+  'Bağlanılamadı': 'Não foi possível conectar',
+  'Arama iptal edildi': 'Chamada cancelada',
+  'Arama geçmişi': 'Histórico de chamadas',
+  'Gelen arama': 'Chamada recebida',
+  'Giden arama': 'Chamada realizada',
+  'Cevapsız arama': 'Chamada perdida',
+  'Arama şu anda kullanılamıyor': 'As chamadas estão indisponíveis no momento',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'As videochamadas estão desativadas, você pode fazer uma chamada de voz',
+  'Bu kullanıcıyı arayamazsın': 'Você não pode ligar para este usuário',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Vocês precisam seguir um ao outro para ligar',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Não é possível ligar para este usuário agora',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Muitas chamadas perdidas. Tente novamente em {}',
+  'Zaten bir aramadasın': 'Você já está em uma chamada',
+  'Arama için mikrofon izni gerekiyor':
+      'É necessária permissão de microfone para ligar',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'É necessária permissão de câmera e microfone para videochamadas',
+  'Arama başlatılamadı': 'Não foi possível iniciar a chamada',
+  'Kullanıcı bulunamadı': 'Usuário não encontrado',
+  'Kendini arayamazsın': 'Você não pode ligar para si mesmo',
+  'Arama artık geçerli değil': 'Esta chamada não é mais válida',
+  'Bu aramanın tarafı değilsin': 'Você não faz parte desta chamada',
+  'Arama bulunamadı': 'Chamada não encontrada',
+  'Çok fazla istek, biraz bekle': 'Muitas solicitações, aguarde um pouco',
+  'Bağlantı koptu': 'Conexão perdida',
+  'Arama süre sınırına ulaştı': 'A chamada atingiu o limite de tempo',
+  'Arama en fazla 4 saat sürebilir': 'Uma chamada pode durar no máximo 4 horas',
+  'Arama sona erdi': 'A chamada terminou',
+  'Sesli arama': 'Chamada de voz',
+  'Görüntülü arama': 'Videochamada',
+  'Gelen aramalar': 'Chamadas recebidas',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notificações de chamadas de voz e vídeo',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Chamadas de voz e vídeo',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'O conteúdo das chamadas nunca é gravado. Áudio e vídeo trafegam com criptografia de ponta a ponta (DTLS-SRTP) entre os dispositivos; nossos servidores não conseguem descriptografar, ouvir ou armazenar esse tráfego.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Somente os metadados da chamada são guardados: com quem, em qual direção, quando e quanto durou. Esses registros são apagados automaticamente após 90 dias.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Se não for possível estabelecer uma conexão direta, áudio e vídeo passam criptografados por um servidor de retransmissão (TURN). Esse servidor também não consegue descriptografar nem gravar o conteúdo.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'O microfone é usado apenas durante uma chamada de voz ou vídeo, e a câmera apenas durante uma videochamada. Ambos são desligados quando a chamada termina.',
 };

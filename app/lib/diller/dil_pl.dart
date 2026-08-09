@@ -631,4 +631,64 @@ const Map<String, String> cevirilerPl = {
   'Bu bölüme puan ver': 'Oceń ten odcinek',
   '{} kişi puanladı': 'Oceniło {} osób',
   'Bölüm izlendi olarak işaretlendi': 'Odcinek oznaczony jako obejrzany',
+  'Sesli ara': 'Połączenie głosowe',
+  'Görüntülü ara': 'Połączenie wideo',
+  'Çalıyor...': 'Dzwoni...',
+  'Bağlanıyor...': 'Łączenie...',
+  'Cevapla': 'Odbierz',
+  'Reddet': 'Odrzuć',
+  'Sessize al': 'Wycisz',
+  'Hoparlör': 'Głośnik',
+  'Kamerayı kapat': 'Wyłącz kamerę',
+  'Kamerayı çevir': 'Przełącz kamerę',
+  'Cevap yok': 'Brak odpowiedzi',
+  'Arama reddedildi': 'Połączenie odrzucone',
+  'Meşgul': 'Zajęte',
+  'Bağlanılamadı': 'Nie udało się połączyć',
+  'Arama iptal edildi': 'Połączenie anulowane',
+  'Arama geçmişi': 'Historia połączeń',
+  'Gelen arama': 'Połączenie przychodzące',
+  'Giden arama': 'Połączenie wychodzące',
+  'Cevapsız arama': 'Nieodebrane połączenie',
+  'Arama şu anda kullanılamıyor': 'Połączenia są chwilowo niedostępne',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Połączenia wideo są teraz wyłączone, możesz zadzwonić głosowo',
+  'Bu kullanıcıyı arayamazsın': 'Nie możesz zadzwonić do tego użytkownika',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Aby dzwonić, musicie obserwować się nawzajem',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Do tego użytkownika nie można teraz zadzwonić',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Zbyt wiele nieodebranych połączeń. Spróbuj ponownie za {}',
+  'Zaten bir aramadasın': 'Jesteś już w trakcie połączenia',
+  'Arama için mikrofon izni gerekiyor':
+      'Do dzwonienia potrzebne jest pozwolenie na mikrofon',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Do połączeń wideo potrzebne są pozwolenia na kamerę i mikrofon',
+  'Arama başlatılamadı': 'Nie udało się rozpocząć połączenia',
+  'Kullanıcı bulunamadı': 'Nie znaleziono użytkownika',
+  'Kendini arayamazsın': 'Nie możesz zadzwonić do siebie',
+  'Arama artık geçerli değil': 'To połączenie nie jest już aktualne',
+  'Bu aramanın tarafı değilsin': 'Nie jesteś uczestnikiem tego połączenia',
+  'Arama bulunamadı': 'Nie znaleziono połączenia',
+  'Çok fazla istek, biraz bekle': 'Zbyt wiele żądań, poczekaj chwilę',
+  'Bağlantı koptu': 'Utracono połączenie',
+  'Arama süre sınırına ulaştı': 'Rozmowa osiągnęła limit czasu',
+  'Arama en fazla 4 saat sürebilir': 'Rozmowa może trwać maksymalnie 4 godziny',
+  'Arama sona erdi': 'Połączenie zakończone',
+  'Sesli arama': 'Połączenie głosowe',
+  'Görüntülü arama': 'Połączenie wideo',
+  'Gelen aramalar': 'Połączenia przychodzące',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Powiadomienia o połączeniach głosowych i wideo',
+  '{} sa': '{} godz.',
+  'Sesli ve Görüntülü Aramalar': 'Połączenia głosowe i wideo',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Treść rozmów nigdy nie jest nagrywana. Dźwięk i obraz płyną między urządzeniami z szyfrowaniem end-to-end (DTLS-SRTP); nasze serwery nie mogą tego ruchu odszyfrować, podsłuchać ani przechować.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Przechowywane są wyłącznie metadane połączenia: z kim, w którą stronę, kiedy i jak długo trwało. Te zapisy są automatycznie usuwane po 90 dniach.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Jeśli bezpośrednie połączenie nie jest możliwe, dźwięk i obraz przechodzą w postaci zaszyfrowanej przez serwer przekaźnikowy (TURN). On również nie może odszyfrować ani nagrać treści.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofon jest używany tylko podczas rozmowy głosowej lub wideo, a kamera tylko podczas rozmowy wideo. Po zakończeniu rozmowy oba są wyłączane.',
 };

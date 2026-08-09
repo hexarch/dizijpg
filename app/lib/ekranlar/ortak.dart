@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 // PosterIzgarasi kendi SliverGridLayout'unu üretiyor: SliverConstraints,
 // SliverGridLayout ve SliverGridRegularTileLayout material'dan gelmiyor.
@@ -1617,12 +1618,97 @@ void kullaniciyaGit(BuildContext context, String ad) {
 /// sarı çerçeve + çerçevenin altına oturan "AI" rozetiyle çizilir.
 const String aiKullaniciAdi = 'dizi.jpg.ai';
 
+/// Kullanıcının yüklediği görseli (avatar/kapak) ağdan çizer.
+/// **WEB'de `Image.network`, mobilde `CachedNetworkImage`.**
+///
+/// NEDEN AYRIM — 9 Ağu 2026, "GIF hâlâ oynamıyor" hatasının GERÇEK kökü:
+/// `CachedNetworkImage` web'de varsayılan olarak
+/// `ImageRenderMethodForWeb.HtmlImage` kullanır. O yol
+/// `ui_web.createImageCodecFromUrl` → CanvasKit `CkImageElementCodec`
+/// demektir; bu kodek `HtmlImageElementCodec`ten türer ve
+/// `frameCount => 1` bildirir. Yani görsel bir `<img>` öğesiyle indirilip
+/// TEK KAREYE çevrilir: GIF ilk karesinde donar. `Image` widget'ını
+/// kullanmak tek başına YETMİYOR (8 Ağu'daki eksik düzeltme buydu) —
+/// belirleyici olan ImageProvider'ın ürettiği kodek.
+/// Tarayıcı ölçümü: canlı sitede avatar/kapak isteklerinin
+/// `PerformanceResourceTiming.initiatorType` değeri "img" çıkıyordu.
+///
+/// Flutter'ın kendi `NetworkImage`i (web uygulaması) baytları XHR ile
+/// indirip `ui.ImmutableBuffer` üzerinden çözer → çok kareli kodek →
+/// animasyon oynar. Mobilde böyle bir sorun yok, orada disk önbelleği
+/// değerli olduğu için `CachedNetworkImage` kalır.
+///
+/// ÖNBELLEK KAYBI YOK: avatar/kapak sunucudan
+/// `cache-control: public, max-age=31536000, immutable` ile geliyor (curl ve
+/// tarayıcı ile doğrulandı), XHR tarayıcının HTTP önbelleğini kullanır;
+/// ayrıca Flutter'ın `imageCache`i çözülmüş kareyi bellekte tutar.
+class AgGorsel extends StatelessWidget {
+  final String url;
+  final BoxFit fit;
+
+  /// Görsel inerken çizilecek yüzey (sessiz boşluk bırakma).
+  final Widget? yerTutucu;
+
+  /// İndirme/çözme başarısızsa çizilecek yüzey.
+  final Widget? hata;
+
+  const AgGorsel({
+    super.key,
+    required this.url,
+    this.fit = BoxFit.cover,
+    this.yerTutucu,
+    this.hata,
+  });
+
+  @override
+  Widget build(BuildContext context) => agGorselKur(
+    web: kIsWeb,
+    url: url,
+    fit: fit,
+    yerTutucu: yerTutucu,
+    hata: hata,
+  );
+}
+
+/// [AgGorsel]'in saf kurucusu — `web` bayrağı DIŞARIDAN verilir ki
+/// `flutter test` (her zaman VM'de, `kIsWeb == false`) web yolunu da
+/// doğrulayabilsin. 8 Ağu'daki düzeltme tam burada gözden kaçtı: test yalnız
+/// VM yolunu görüyordu, hata ise SADECE web yolundaydı.
+@visibleForTesting
+Widget agGorselKur({
+  required bool web,
+  required String url,
+  BoxFit fit = BoxFit.cover,
+  Widget? yerTutucu,
+  Widget? hata,
+}) {
+  if (web) {
+    return Image.network(
+      url,
+      fit: fit,
+      // Kare değişiminde beyaz parlama olmasın.
+      gaplessPlayback: true,
+      loadingBuilder: yerTutucu == null
+          ? null
+          : (_, cocuk, ilerleme) => ilerleme == null ? cocuk : yerTutucu,
+      errorBuilder: hata == null ? null : (_, _, _) => hata,
+    );
+  }
+  return CachedNetworkImage(
+    imageUrl: url,
+    fit: fit,
+    placeholder: yerTutucu == null ? null : (_, _) => yerTutucu,
+    errorWidget: hata == null ? null : (_, _, _) => hata,
+  );
+}
+
 /// Ağdan gelen görseli DAİRE içinde çizen, ANİMASYONU KORUYAN gösterim.
 ///
 /// `CircleAvatar(backgroundImage:)` yerine bunu kullan: orası görseli
 /// `DecorationImage` olarak alır ve animasyonlu GIF'in yalnız ilk karesini
-/// boyar. Burada `Image` widget'ı (CachedNetworkImage) ağaçta olduğu için
-/// kareler akar. Kanıt: test/gif_animasyon_test.dart.
+/// boyar. Burada [AgGorsel] ağaçta olduğu için kareler akar — web'de
+/// tek kareye düşen kodek sorunu için [AgGorsel] belgesine bak.
+/// Kanıt: test/gif_animasyon_test.dart.
 class DaireGorsel extends StatelessWidget {
   final String url;
   final double cap;
@@ -1641,12 +1727,11 @@ class DaireGorsel extends StatelessWidget {
     child: SizedBox(
       width: cap,
       height: cap,
-      child: CachedNetworkImage(
-        imageUrl: url,
-        fit: BoxFit.cover,
+      child: AgGorsel(
+        url: url,
         // Üç hâl: yükleniyor → görsel → hata. Sessiz boşluk bırakma.
-        placeholder: (_, _) => Container(color: arkaplan),
-        errorWidget: (_, _, _) => Container(
+        yerTutucu: Container(color: arkaplan),
+        hata: Container(
           color: arkaplan,
           child: Icon(Icons.person, size: cap * 0.5, color: ikonRenk),
         ),

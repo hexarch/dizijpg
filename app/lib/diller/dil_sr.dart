@@ -625,4 +625,64 @@ const Map<String, String> cevirilerSr = {
   'Bu bölüme puan ver': 'Оцените ову епизоду',
   '{} kişi puanladı': 'Оценило {} људи',
   'Bölüm izlendi olarak işaretlendi': 'Епизода означена као одгледана',
+  'Sesli ara': 'Гласовни позив',
+  'Görüntülü ara': 'Видео позив',
+  'Çalıyor...': 'Звони...',
+  'Bağlanıyor...': 'Повезивање...',
+  'Cevapla': 'Јави се',
+  'Reddet': 'Одбиј',
+  'Sessize al': 'Искључи звук',
+  'Hoparlör': 'Звучник',
+  'Kamerayı kapat': 'Искључи камеру',
+  'Kamerayı çevir': 'Промени камеру',
+  'Cevap yok': 'Нема одговора',
+  'Arama reddedildi': 'Позив је одбијен',
+  'Meşgul': 'Заузето',
+  'Bağlanılamadı': 'Повезивање није успело',
+  'Arama iptal edildi': 'Позив је отказан',
+  'Arama geçmişi': 'Историја позива',
+  'Gelen arama': 'Долазни позив',
+  'Giden arama': 'Одлазни позив',
+  'Cevapsız arama': 'Пропуштен позив',
+  'Arama şu anda kullanılamıyor': 'Позиви тренутно нису доступни',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Видео позиви су тренутно искључени, можеш да упутиш гласовни позив',
+  'Bu kullanıcıyı arayamazsın': 'Не можеш да позовеш овог корисника',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Морате да пратите једно друго да бисте се звали',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Овог корисника тренутно није могуће позвати',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Превише пропуштених позива. Покушај поново за {}',
+  'Zaten bir aramadasın': 'Већ си у позиву',
+  'Arama için mikrofon izni gerekiyor':
+      'За позив је потребна дозвола за микрофон',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'За видео позив су потребне дозволе за камеру и микрофон',
+  'Arama başlatılamadı': 'Позив није могао да се започне',
+  'Kullanıcı bulunamadı': 'Корисник није пронађен',
+  'Kendini arayamazsın': 'Не можеш да позовеш самог себе',
+  'Arama artık geçerli değil': 'Овај позив више није важећи',
+  'Bu aramanın tarafı değilsin': 'Ниси учесник овог позива',
+  'Arama bulunamadı': 'Позив није пронађен',
+  'Çok fazla istek, biraz bekle': 'Превише захтева, сачекај мало',
+  'Bağlantı koptu': 'Веза је прекинута',
+  'Arama süre sınırına ulaştı': 'Позив је достигао временско ограничење',
+  'Arama en fazla 4 saat sürebilir': 'Позив може да траје највише 4 сата',
+  'Arama sona erdi': 'Позив је завршен',
+  'Sesli arama': 'Гласовни позив',
+  'Görüntülü arama': 'Видео позив',
+  'Gelen aramalar': 'Долазни позиви',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Обавештења о гласовним и видео позивима',
+  '{} sa': '{} ч',
+  'Sesli ve Görüntülü Aramalar': 'Гласовни и видео позиви',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Садржај позива се никада не снима. Звук и слика путују између уређаја шифровани с краја на крај (DTLS-SRTP); наши сервери не могу да их дешифрују, прислушкују нити чувају.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Чувају се само метаподаци позива: с ким, у ком смеру, када и колико је трајао. Ови записи се аутоматски бришу после 90 дана.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Ако директна веза није могућа, звук и слика пролазе шифровани кроз релејни сервер (TURN). Ни он не може да дешифрује нити сними садржај.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Микрофон се користи само током гласовног или видео позива, а камера само током видео позива. Оба се искључују када се позив заврши.',
 };

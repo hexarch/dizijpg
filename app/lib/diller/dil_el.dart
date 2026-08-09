@@ -631,4 +631,65 @@ const Map<String, String> cevirilerEl = {
   'Bu bölüme puan ver': 'Βαθμολογήστε αυτό το επεισόδιο',
   '{} kişi puanladı': '{} άτομα βαθμολόγησαν',
   'Bölüm izlendi olarak işaretlendi': 'Το επεισόδιο σημειώθηκε ως προβεβλημένο',
+  'Sesli ara': 'Φωνητική κλήση',
+  'Görüntülü ara': 'Βιντεοκλήση',
+  'Çalıyor...': 'Καλεί...',
+  'Bağlanıyor...': 'Σύνδεση...',
+  'Cevapla': 'Απάντηση',
+  'Reddet': 'Απόρριψη',
+  'Sessize al': 'Σίγαση',
+  'Hoparlör': 'Ηχείο',
+  'Kamerayı kapat': 'Απενεργοποίηση κάμερας',
+  'Kamerayı çevir': 'Εναλλαγή κάμερας',
+  'Cevap yok': 'Καμία απάντηση',
+  'Arama reddedildi': 'Η κλήση απορρίφθηκε',
+  'Meşgul': 'Απασχολημένος',
+  'Bağlanılamadı': 'Δεν ήταν δυνατή η σύνδεση',
+  'Arama iptal edildi': 'Η κλήση ακυρώθηκε',
+  'Arama geçmişi': 'Ιστορικό κλήσεων',
+  'Gelen arama': 'Εισερχόμενη κλήση',
+  'Giden arama': 'Εξερχόμενη κλήση',
+  'Cevapsız arama': 'Αναπάντητη κλήση',
+  'Arama şu anda kullanılamıyor':
+      'Οι κλήσεις δεν είναι διαθέσιμες αυτή τη στιγμή',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Οι βιντεοκλήσεις είναι απενεργοποιημένες, μπορείς να κάνεις φωνητική κλήση',
+  'Bu kullanıcıyı arayamazsın': 'Δεν μπορείς να καλέσεις αυτόν τον χρήστη',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Πρέπει να ακολουθείτε ο ένας τον άλλον για να καλέσετε',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Δεν μπορείς να καλέσεις αυτόν τον χρήστη αυτή τη στιγμή',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Πάρα πολλές αναπάντητες κλήσεις. Δοκίμασε ξανά σε {}',
+  'Zaten bir aramadasın': 'Βρίσκεσαι ήδη σε κλήση',
+  'Arama için mikrofon izni gerekiyor': 'Για κλήση απαιτείται άδεια μικροφώνου',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Για βιντεοκλήση απαιτείται άδεια κάμερας και μικροφώνου',
+  'Arama başlatılamadı': 'Δεν ήταν δυνατή η έναρξη της κλήσης',
+  'Kullanıcı bulunamadı': 'Ο χρήστης δεν βρέθηκε',
+  'Kendini arayamazsın': 'Δεν μπορείς να καλέσεις τον εαυτό σου',
+  'Arama artık geçerli değil': 'Αυτή η κλήση δεν ισχύει πλέον',
+  'Bu aramanın tarafı değilsin': 'Δεν συμμετέχεις σε αυτή την κλήση',
+  'Arama bulunamadı': 'Η κλήση δεν βρέθηκε',
+  'Çok fazla istek, biraz bekle': 'Πάρα πολλά αιτήματα, περίμενε λίγο',
+  'Bağlantı koptu': 'Η σύνδεση χάθηκε',
+  'Arama süre sınırına ulaştı': 'Η κλήση έφτασε στο χρονικό όριο',
+  'Arama en fazla 4 saat sürebilir':
+      'Μια κλήση μπορεί να διαρκέσει το πολύ 4 ώρες',
+  'Arama sona erdi': 'Η κλήση τελείωσε',
+  'Sesli arama': 'Φωνητική κλήση',
+  'Görüntülü arama': 'Βιντεοκλήση',
+  'Gelen aramalar': 'Εισερχόμενες κλήσεις',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Ειδοποιήσεις φωνητικών κλήσεων και βιντεοκλήσεων',
+  '{} sa': '{} ώ',
+  'Sesli ve Görüntülü Aramalar': 'Φωνητικές κλήσεις και βιντεοκλήσεις',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Το περιεχόμενο των κλήσεων δεν καταγράφεται ποτέ. Ο ήχος και το βίντεο ταξιδεύουν κρυπτογραφημένα από άκρο σε άκρο (DTLS-SRTP) μεταξύ των συσκευών· οι διακομιστές μας δεν μπορούν να τα αποκρυπτογραφήσουν, να τα ακούσουν ή να τα αποθηκεύσουν.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Διατηρούνται μόνο τα μεταδεδομένα της κλήσης: με ποιον, προς ποια κατεύθυνση, πότε και πόσο διήρκεσε. Αυτές οι εγγραφές διαγράφονται αυτόματα μετά από 90 ημέρες.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Αν δεν είναι δυνατή η απευθείας σύνδεση, ήχος και βίντεο περνούν κρυπτογραφημένα από έναν διακομιστή αναμετάδοσης (TURN). Ούτε αυτός μπορεί να αποκρυπτογραφήσει ή να καταγράψει το περιεχόμενο.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Το μικρόφωνο χρησιμοποιείται μόνο κατά τη διάρκεια φωνητικής κλήσης ή βιντεοκλήσης και η κάμερα μόνο κατά τη διάρκεια βιντεοκλήσης. Και τα δύο απενεργοποιούνται όταν τελειώσει η κλήση.',
 };

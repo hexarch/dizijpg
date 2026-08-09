@@ -627,4 +627,63 @@ const Map<String, String> cevirilerUr = {
   'Bu bölüme puan ver': 'اس قسط کو ریٹ کریں',
   '{} kişi puanladı': '{} افراد نے ریٹ کیا',
   'Bölüm izlendi olarak işaretlendi': 'قسط دیکھی گئی کے طور پر نشان زد',
+  'Sesli ara': 'وائس کال',
+  'Görüntülü ara': 'ویڈیو کال',
+  'Çalıyor...': 'گھنٹی بج رہی ہے...',
+  'Bağlanıyor...': 'جڑ رہا ہے...',
+  'Cevapla': 'جواب دیں',
+  'Reddet': 'مسترد کریں',
+  'Sessize al': 'خاموش',
+  'Hoparlör': 'اسپیکر',
+  'Kamerayı kapat': 'کیمرہ بند کریں',
+  'Kamerayı çevir': 'کیمرہ بدلیں',
+  'Cevap yok': 'کوئی جواب نہیں',
+  'Arama reddedildi': 'کال مسترد کر دی گئی',
+  'Meşgul': 'مصروف',
+  'Bağlanılamadı': 'رابطہ نہیں ہو سکا',
+  'Arama iptal edildi': 'کال منسوخ ہو گئی',
+  'Arama geçmişi': 'کال کی تاریخ',
+  'Gelen arama': 'آنے والی کال',
+  'Giden arama': 'جانے والی کال',
+  'Cevapsız arama': 'مِسڈ کال',
+  'Arama şu anda kullanılamıyor': 'کالنگ اس وقت دستیاب نہیں',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'ویڈیو کالز فی الحال بند ہیں، آپ وائس کال کر سکتے ہیں',
+  'Bu kullanıcıyı arayamazsın': 'آپ اس صارف کو کال نہیں کر سکتے',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'کال کرنے کے لیے آپ دونوں کو ایک دوسرے کو فالو کرنا ہوگا',
+  'Bu kullanıcı şu anda aranamıyor': 'اس صارف کو ابھی کال نہیں کی جا سکتی',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'بہت زیادہ مِسڈ کالز۔ {} بعد دوبارہ کوشش کریں',
+  'Zaten bir aramadasın': 'آپ پہلے ہی ایک کال پر ہیں',
+  'Arama için mikrofon izni gerekiyor':
+      'کال کے لیے مائیکروفون کی اجازت درکار ہے',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'ویڈیو کال کے لیے کیمرہ اور مائیکروفون کی اجازت درکار ہے',
+  'Arama başlatılamadı': 'کال شروع نہیں ہو سکی',
+  'Kullanıcı bulunamadı': 'صارف نہیں ملا',
+  'Kendini arayamazsın': 'آپ خود کو کال نہیں کر سکتے',
+  'Arama artık geçerli değil': 'یہ کال اب درست نہیں رہی',
+  'Bu aramanın tarafı değilsin': 'آپ اس کال کا حصہ نہیں ہیں',
+  'Arama bulunamadı': 'کال نہیں ملی',
+  'Çok fazla istek, biraz bekle': 'بہت زیادہ درخواستیں، تھوڑا انتظار کریں',
+  'Bağlantı koptu': 'رابطہ منقطع ہو گیا',
+  'Arama süre sınırına ulaştı': 'کال وقت کی حد تک پہنچ گئی',
+  'Arama en fazla 4 saat sürebilir':
+      'ایک کال زیادہ سے زیادہ 4 گھنٹے چل سکتی ہے',
+  'Arama sona erdi': 'کال ختم ہو گئی',
+  'Sesli arama': 'وائس کال',
+  'Görüntülü arama': 'ویڈیو کال',
+  'Gelen aramalar': 'آنے والی کالیں',
+  'Sesli ve görüntülü arama bildirimleri': 'وائس اور ویڈیو کال اطلاعات',
+  '{} sa': '{} گھنٹے',
+  'Sesli ve Görüntülü Aramalar': 'وائس اور ویڈیو کالیں',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'کال کا مواد کبھی ریکارڈ نہیں کیا جاتا۔ آڈیو اور ویڈیو آلات کے درمیان اینڈ ٹو اینڈ خفیہ کاری (DTLS-SRTP) کے ساتھ چلتے ہیں؛ ہمارے سرورز اس ٹریفک کو ڈی کرپٹ، سن یا محفوظ نہیں کر سکتے۔',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'صرف کال میٹا ڈیٹا رکھا جاتا ہے: کس کے ساتھ، کس سمت میں، کب اور کتنی دیر۔ یہ ریکارڈ 90 دن بعد خود بخود حذف ہو جاتے ہیں۔',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'اگر براہِ راست رابطہ نہ بن سکے تو آڈیو اور ویڈیو خفیہ حالت میں ایک ریلے سرور (TURN) سے گزرتے ہیں۔ ریلے سرور بھی مواد کو ڈی کرپٹ یا ریکارڈ نہیں کر سکتا۔',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'مائیکروفون صرف وائس یا ویڈیو کال کے دوران اور کیمرہ صرف ویڈیو کال کے دوران استعمال ہوتا ہے۔ کال ختم ہوتے ہی دونوں بند ہو جاتے ہیں۔',
 };

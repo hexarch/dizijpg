@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.30.0+74
+version: 1.30.1+75
 
 environment:
   sdk: ^3.12.2
@@ -90,6 +90,16 @@ dependencies:
   share_plus: ^10.1.4
   pointer_interceptor: ^0.10.1+2
   visibility_detector: ^0.4.0+2
+  # Sesli/görüntülü arama (WebRTC). SÜRÜM KİLİTLİ (^ YOK): 1.6.0 sondajı
+  # geçti — AGP 9 ile derleniyor, MIT lisanslı, arm64 APK'ya +11,5 MiB
+  # ekliyor. Bir üst yama sürümü native Android/iOS kodu taşıdığı için
+  # kendiliğinden yükselmesi derlemeyi sessizce kırabilir; yükseltme
+  # BİLİNÇLİ bir karar olsun.
+  #
+  # Medya DTLS-SRTP ile UÇTAN UCA şifreli akar; sunucu yalnız SDP/ICE
+  # alışverişine aracılık eder ve onları da diske yazmaz
+  # (backend/ARAMA-API-SOZLESMESI.md §0).
+  flutter_webrtc: 1.6.0
 
 dev_dependencies:
   flutter_test:

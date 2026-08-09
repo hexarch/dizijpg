@@ -72,7 +72,25 @@ class ApiHata implements Exception {
   /// sebep}`. Yalnız 403 + yasak yanıtlarında dolu olur.
   final Map<String, dynamic>? yasak;
 
-  ApiHata(this.mesaj, {this.kod, this.yasak});
+  /// Sunucunun MAKİNE hata kodu (`{"hata": "...", "kod": "TAKIP_YOK"}`).
+  ///
+  /// NEDEN AYRI ALAN: arama uçları 13 ayrı hata durumunu tek tek ayırt
+  /// etmemizi istiyor (backend/ARAMA-API-SOZLESMESI.md §8) ve bunların
+  /// çoğu AYNI HTTP kodunu paylaşıyor — `ENGELLI`, `TAKIP_YOK` ve
+  /// `ALICI_YASAKLI` üçü de 403. Türkçe [mesaj] metnine göre dallanmak ise
+  /// sunucu metnini değiştirdiği gün sessizce kırılır. `kod` sabittir ve
+  /// ÇEVRİLMEZ; istemci ona karşılık gelen kendi 45 dilli metnini basar.
+  ///
+  /// Hız limiti yanıtlarında (`hizLimiti()`, server.js:907) `kod` alanı
+  /// YOKTUR — o durumda null kalır ve çağıran [kod] (HTTP) değerine düşer.
+  final String? makineKodu;
+
+  /// Hata gövdesinin tamamı. Bazı kodlar metne girecek EK ALAN taşır —
+  /// `COK_FAZLA_CEVAPSIZ` gövdesindeki `kalan_sn` gibi. Alan başına yeni bir
+  /// özellik açmak yerine ham harita saklanır; okuyan kendi kodunu bilir.
+  final Map<String, dynamic>? govde;
+
+  ApiHata(this.mesaj, {this.kod, this.yasak, this.makineKodu, this.govde});
   @override
   String toString() => mesaj;
 }
@@ -209,6 +227,10 @@ class Api {
         yasak: govde is Map && govde['yasak'] is Map
             ? Map<String, dynamic>.from(govde['yasak'] as Map)
             : null,
+        makineKodu: govde is Map && govde['kod'] is String
+            ? govde['kod'] as String
+            : null,
+        govde: govde is Map ? Map<String, dynamic>.from(govde) : null,
       );
     }
     return govde;
@@ -355,7 +377,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.30.0+74';
+  static const surum = '1.30.1+75';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

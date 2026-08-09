@@ -33,6 +33,20 @@ services:
       # kimlikli ve virgülle ayrılmış: "k1:<base64>,k2:<base64>".
       MESAJ_ANAHTARI_ESKI: ${MESAJ_ANAHTARI_ESKI:-}
       MESAJ_SIFRELEME: ${MESAJ_SIFRELEME:-}
+      # ---- Sesli/görüntülü arama ----
+      # TURN kimlik bilgisi üretimi (coturn `use-auth-secret` kipi). Bu satır
+      # UNUTULDUĞU için 9 Ağu'da API "TURN_SIR tanımsız" uyarısıyla açıldı:
+      # .env'de değişken VARDI ama compose onu konteynere AKTARMIYORDU, yani
+      # aramalar sessizce yalnız STUN'a düşecekti (röle gerektiren ~%20 arama
+      # hiç bağlanmaz, kullanıcı bunu "uygulama bozuk" diye okur).
+      TURN_SIR: ${TURN_SIR:-}
+      # TURN sunucusunun alan adı; verilmezse kod turn.dizijpg.com varsayar.
+      TURN_ALAN: ${TURN_ALAN:-}
+      # Kırılacak cam: DB'deki `ayarlar` bayraklarını EZER. Fatura sürprizinde
+      # veritabanına erişilemese bile aramayı kapatmanın tek kaldıracı.
+      ARAMA_KAPALI: ${ARAMA_KAPALI:-}
+      ARAMA_GORUNTULU: ${ARAMA_GORUNTULU:-}
+      ARAMA_TRAFIK_ESIK_GB: ${ARAMA_TRAFIK_ESIK_GB:-}
       PORT: 8500
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya

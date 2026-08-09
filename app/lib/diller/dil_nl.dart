@@ -629,4 +629,63 @@ const Map<String, String> cevirilerNl = {
   'Bu bölüme puan ver': 'Beoordeel deze aflevering',
   '{} kişi puanladı': '{} mensen beoordeelden',
   'Bölüm izlendi olarak işaretlendi': 'Aflevering gemarkeerd als bekeken',
+  'Sesli ara': 'Spraakoproep',
+  'Görüntülü ara': 'Video-oproep',
+  'Çalıyor...': 'Gaat over...',
+  'Bağlanıyor...': 'Verbinden...',
+  'Cevapla': 'Opnemen',
+  'Reddet': 'Weigeren',
+  'Sessize al': 'Dempen',
+  'Hoparlör': 'Luidspreker',
+  'Kamerayı kapat': 'Camera uitzetten',
+  'Kamerayı çevir': 'Camera wisselen',
+  'Cevap yok': 'Geen gehoor',
+  'Arama reddedildi': 'Oproep geweigerd',
+  'Meşgul': 'Bezet',
+  'Bağlanılamadı': 'Verbinden mislukt',
+  'Arama iptal edildi': 'Oproep geannuleerd',
+  'Arama geçmişi': 'Oproepgeschiedenis',
+  'Gelen arama': 'Inkomende oproep',
+  'Giden arama': 'Uitgaande oproep',
+  'Cevapsız arama': 'Gemiste oproep',
+  'Arama şu anda kullanılamıyor': 'Bellen is momenteel niet beschikbaar',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Video-oproepen staan nu uit, je kunt wel spraakbellen',
+  'Bu kullanıcıyı arayamazsın': 'Je kunt deze gebruiker niet bellen',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Jullie moeten elkaar volgen om te kunnen bellen',
+  'Bu kullanıcı şu anda aranamıyor': 'Deze gebruiker kan nu niet gebeld worden',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Te veel gemiste oproepen. Probeer het over {} opnieuw',
+  'Zaten bir aramadasın': 'Je bent al in gesprek',
+  'Arama için mikrofon izni gerekiyor':
+      'Voor bellen is toestemming voor de microfoon nodig',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Voor video-oproepen is toestemming voor camera en microfoon nodig',
+  'Arama başlatılamadı': 'Oproep kon niet worden gestart',
+  'Kullanıcı bulunamadı': 'Gebruiker niet gevonden',
+  'Kendini arayamazsın': 'Je kunt jezelf niet bellen',
+  'Arama artık geçerli değil': 'Deze oproep is niet meer geldig',
+  'Bu aramanın tarafı değilsin': 'Je hoort niet bij deze oproep',
+  'Arama bulunamadı': 'Oproep niet gevonden',
+  'Çok fazla istek, biraz bekle': 'Te veel verzoeken, wacht even',
+  'Bağlantı koptu': 'Verbinding verbroken',
+  'Arama süre sınırına ulaştı': 'De oproep heeft de tijdslimiet bereikt',
+  'Arama en fazla 4 saat sürebilir': 'Een oproep duurt maximaal 4 uur',
+  'Arama sona erdi': 'De oproep is beëindigd',
+  'Sesli arama': 'Spraakoproep',
+  'Görüntülü arama': 'Video-oproep',
+  'Gelen aramalar': 'Inkomende oproepen',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Meldingen voor spraak- en video-oproepen',
+  '{} sa': '{} u',
+  'Sesli ve Görüntülü Aramalar': 'Spraak- en video-oproepen',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'De inhoud van gesprekken wordt nooit opgenomen. Audio en video gaan end-to-end versleuteld (DTLS-SRTP) tussen de apparaten; onze servers kunnen dit verkeer niet ontsleutelen, afluisteren of bewaren.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Alleen metadata van de oproep worden bewaard: met wie, in welke richting, wanneer en hoe lang. Deze gegevens worden na 90 dagen automatisch verwijderd.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Als er geen directe verbinding mogelijk is, gaan audio en video versleuteld via een relayserver (TURN). Ook die kan de inhoud niet ontsleutelen of opnemen.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'De microfoon wordt alleen tijdens een spraak- of video-oproep gebruikt en de camera alleen tijdens een video-oproep. Beide gaan uit zodra de oproep eindigt.',
 };

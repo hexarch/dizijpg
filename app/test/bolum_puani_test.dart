@@ -70,10 +70,8 @@ Finder get _yildizAlanlari => find.descendant(
 /// Dosyanın `//` yorumları çıkarılmış hâli. Kaynak taraması yorum METNİNDE
 /// geçen bir adı kod sanmasın (bu dosyanın kendi gerekçe yorumları da
 /// `YildizPuan`dan söz ediyor).
-String _yorumsuz(File d) => d
-    .readAsLinesSync()
-    .where((s) => !s.trimLeft().startsWith('//'))
-    .join('\n');
+String _yorumsuz(File d) =>
+    d.readAsLinesSync().where((s) => !s.trimLeft().startsWith('//')).join('\n');
 
 Future<void> _bekle(WidgetTester tester) async {
   for (var i = 0; i < 8; i++) {
@@ -141,19 +139,21 @@ void main() {
     expect(gonderilen['puan'], 10);
   });
 
-  testWidgets('aynı yıldıza tekrar dokunmak puanı SİLER (bölüm hedefi korunur)',
-      (tester) async {
-    await tester.pumpWidget(
-      _kabuk(const BolumPuani(tmdbId: 1399, sezon: 1, bolum: 9)),
-    );
-    await _bekle(tester);
-    await tester.tap(_yildizAlanlari.at(2)); // mevcut puan zaten 3 yıldız
-    await _bekle(tester);
-    final g = kayit.govdeler.last;
-    expect(g['puan'], isNull, reason: 'aynı yıldız = silme');
-    expect(g['sezon'], 1, reason: 'silme de bölüm hedefli olmalı');
-    expect(g['bolum'], 9);
-  });
+  testWidgets(
+    'aynı yıldıza tekrar dokunmak puanı SİLER (bölüm hedefi korunur)',
+    (tester) async {
+      await tester.pumpWidget(
+        _kabuk(const BolumPuani(tmdbId: 1399, sezon: 1, bolum: 9)),
+      );
+      await _bekle(tester);
+      await tester.tap(_yildizAlanlari.at(2)); // mevcut puan zaten 3 yıldız
+      await _bekle(tester);
+      final g = kayit.govdeler.last;
+      expect(g['puan'], isNull, reason: 'aynı yıldız = silme');
+      expect(g['sezon'], 1, reason: 'silme de bölüm hedefli olmalı');
+      expect(g['bolum'], 9);
+    },
+  );
 
   testWidgets('DİZİ GENELİ puanı bölümle karışmaz (sezon/bolum GİTMEZ)', (
     tester,
@@ -170,25 +170,27 @@ void main() {
     expect(g['tmdb_id'], 1399);
   });
 
-  testWidgets('bölüme puan verince "izlendi" yan etkisi ÜST EKRANA bildirilir',
-      (tester) async {
-    var izlendiHaberi = 0;
-    await tester.pumpWidget(
-      _kabuk(
-        BolumPuani(
-          tmdbId: 1399,
-          sezon: 1,
-          bolum: 9,
-          izlendiIsaretlendi: () => izlendiHaberi++,
+  testWidgets(
+    'bölüme puan verince "izlendi" yan etkisi ÜST EKRANA bildirilir',
+    (tester) async {
+      var izlendiHaberi = 0;
+      await tester.pumpWidget(
+        _kabuk(
+          BolumPuani(
+            tmdbId: 1399,
+            sezon: 1,
+            bolum: 9,
+            izlendiIsaretlendi: () => izlendiHaberi++,
+          ),
         ),
-      ),
-    );
-    await _bekle(tester);
-    await tester.tap(_yildizAlanlari.at(4));
-    await _bekle(tester);
-    // Sunucu `izlendi: true` döndü → yan etki sessiz kalmadı.
-    expect(izlendiHaberi, 1);
-  });
+      );
+      await _bekle(tester);
+      await tester.tap(_yildizAlanlari.at(4));
+      await _bekle(tester);
+      // Sunucu `izlendi: true` döndü → yan etki sessiz kalmadı.
+      expect(izlendiHaberi, 1);
+    },
+  );
 
   testWidgets('DOKUNMA HEDEFİ: her yıldız en az 44x44 dp', (tester) async {
     await tester.pumpWidget(
@@ -246,24 +248,26 @@ void main() {
   // -------------------------------------------------------------------------
   // Kaynak taraması: yıldızın YERLEŞİMİ ve bölüm hedefi
   // -------------------------------------------------------------------------
-  test('takvim modalındaki yıldızlar BÖLÜME puan verir (eski hata geri gelmesin)',
-      () {
-    final kaynak = _yorumsuz(File('lib/ekranlar/takvim.dart'));
-    // Modal artık ortak `BolumPuani` bloğunu kullanır; ham YildizPuan ile
-    // dizi geneline puan veren eski çağrı DÖNMEMELİ.
-    expect(
-      kaynak.contains('BolumPuani('),
-      isTrue,
-      reason: 'takvim modalı bölüm puanı bloğunu kullanmalı',
-    );
-    expect(
-      RegExp(r'YildizPuan\(').hasMatch(kaynak),
-      isFalse,
-      reason:
-          'takvim modalında ham YildizPuan = dizinin TAMAMINA puan; '
-          'bölüm bağlamında yanlış (8 Ağu 2026-d düzeltmesi)',
-    );
-  });
+  test(
+    'takvim modalındaki yıldızlar BÖLÜME puan verir (eski hata geri gelmesin)',
+    () {
+      final kaynak = _yorumsuz(File('lib/ekranlar/takvim.dart'));
+      // Modal artık ortak `BolumPuani` bloğunu kullanır; ham YildizPuan ile
+      // dizi geneline puan veren eski çağrı DÖNMEMELİ.
+      expect(
+        kaynak.contains('BolumPuani('),
+        isTrue,
+        reason: 'takvim modalı bölüm puanı bloğunu kullanmalı',
+      );
+      expect(
+        RegExp(r'YildizPuan\(').hasMatch(kaynak),
+        isFalse,
+        reason:
+            'takvim modalında ham YildizPuan = dizinin TAMAMINA puan; '
+            'bölüm bağlamında yanlış (8 Ağu 2026-d düzeltmesi)',
+      );
+    },
+  );
 
   test('bölüm sayfası bölüm puanı bloğunu içerir', () {
     final kaynak = File('lib/ekranlar/bolum.dart').readAsStringSync();

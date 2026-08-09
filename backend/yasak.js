@@ -154,6 +154,15 @@ export const YASAK_MUAF = Object.freeze([
   '/bildirim-tercihleri', '/gizlilik-tercihleri', '/gizle',
   // Bildirim okundu işareti + mesaj "iletildi" tiki: yeni içerik ÜRETMEZ
   '/bildirimler/okundu', '/mesajlar/iletildi',
+  // ***** ARAMAYI KAPATMA — BU SATIRI ASLA SİLME *****
+  // Aramanın ORTASINDA ban yiyen kullanıcı `/arama/bitir`den 403 alırsa
+  // aramayı TEMİZ KAPATAMAZ: karşı taraf hayalet bir aramada kalır, süre
+  // sayacı akmaya devam eder, üstveri satırı `bitis`siz kalır ve iki kullanıcı
+  // birden "zaten aramadasın" kilidine düşer. Yukarıdaki iki satırla AYNI
+  // gerekçe: bu uç yeni içerik ÜRETMEZ, TÜKETİMİ BİTİRİR.
+  // `/arama/baslat` ve `/arama/yanit` ise BİLEREK muaf DEĞİL — ban süresince
+  // iletişim kapalıdır. `backend/test/arama.test.js` ikisini de kilitliyor.
+  '/arama/bitir',
   // Kendini koruma ve moderasyona yardım: engelleme + şikayet açık kalır
   '/engelle/', '/sikayet',
   // ***** İTİRAZ — BU SATIRI ASLA SİLME *****

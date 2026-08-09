@@ -622,4 +622,63 @@ const Map<String, String> cevirilerDa = {
   'Bu bölüme puan ver': 'Bedøm dette afsnit',
   '{} kişi puanladı': '{} personer har bedømt',
   'Bölüm izlendi olarak işaretlendi': 'Afsnittet er markeret som set',
+  'Sesli ara': 'Taleopkald',
+  'Görüntülü ara': 'Videoopkald',
+  'Çalıyor...': 'Ringer...',
+  'Bağlanıyor...': 'Opretter forbindelse...',
+  'Cevapla': 'Besvar',
+  'Reddet': 'Afvis',
+  'Sessize al': 'Slå lyd fra',
+  'Hoparlör': 'Højttaler',
+  'Kamerayı kapat': 'Sluk kameraet',
+  'Kamerayı çevir': 'Skift kamera',
+  'Cevap yok': 'Intet svar',
+  'Arama reddedildi': 'Opkaldet blev afvist',
+  'Meşgul': 'Optaget',
+  'Bağlanılamadı': 'Kunne ikke oprette forbindelse',
+  'Arama iptal edildi': 'Opkaldet blev annulleret',
+  'Arama geçmişi': 'Opkaldshistorik',
+  'Gelen arama': 'Indgående opkald',
+  'Giden arama': 'Udgående opkald',
+  'Cevapsız arama': 'Ubesvaret opkald',
+  'Arama şu anda kullanılamıyor': 'Opkald er ikke tilgængelige lige nu',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Videoopkald er slået fra lige nu, du kan foretage et taleopkald',
+  'Bu kullanıcıyı arayamazsın': 'Du kan ikke ringe til denne bruger',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'I skal følge hinanden for at kunne ringe',
+  'Bu kullanıcı şu anda aranamıyor': 'Denne bruger kan ikke ringes op lige nu',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'For mange ubesvarede opkald. Prøv igen om {}',
+  'Zaten bir aramadasın': 'Du er allerede i et opkald',
+  'Arama için mikrofon izni gerekiyor':
+      'Der kræves mikrofontilladelse for at ringe',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Der kræves kamera- og mikrofontilladelse til videoopkald',
+  'Arama başlatılamadı': 'Opkaldet kunne ikke startes',
+  'Kullanıcı bulunamadı': 'Brugeren blev ikke fundet',
+  'Kendini arayamazsın': 'Du kan ikke ringe til dig selv',
+  'Arama artık geçerli değil': 'Dette opkald er ikke længere gyldigt',
+  'Bu aramanın tarafı değilsin': 'Du er ikke en del af dette opkald',
+  'Arama bulunamadı': 'Opkaldet blev ikke fundet',
+  'Çok fazla istek, biraz bekle': 'For mange anmodninger, vent lidt',
+  'Bağlantı koptu': 'Forbindelsen blev afbrudt',
+  'Arama süre sınırına ulaştı': 'Opkaldet nåede tidsgrænsen',
+  'Arama en fazla 4 saat sürebilir': 'Et opkald kan højst vare 4 timer',
+  'Arama sona erdi': 'Opkaldet er afsluttet',
+  'Sesli arama': 'Taleopkald',
+  'Görüntülü arama': 'Videoopkald',
+  'Gelen aramalar': 'Indgående opkald',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notifikationer om tale- og videoopkald',
+  '{} sa': '{} t',
+  'Sesli ve Görüntülü Aramalar': 'Tale- og videoopkald',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Indholdet af opkald optages aldrig. Lyd og video sendes end-to-end-krypteret (DTLS-SRTP) mellem enhederne; vores servere kan hverken dekryptere, aflytte eller gemme denne trafik.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Kun opkaldets metadata gemmes: med hvem, i hvilken retning, hvornår og hvor længe. Disse poster slettes automatisk efter 90 dage.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Hvis en direkte forbindelse ikke kan oprettes, sendes lyd og video krypteret gennem en relæserver (TURN). Den kan heller ikke dekryptere eller optage indholdet.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofonen bruges kun under et tale- eller videoopkald, og kameraet kun under et videoopkald. Begge slukkes, når opkaldet slutter.',
 };

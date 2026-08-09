@@ -13,6 +13,7 @@ import 'altyazi.dart';
 import 'api.dart';
 import 'ceviri.dart';
 import 'cihaz_kimlik.dart';
+import 'gorusme/arama_servisi.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
 import 'sira_tercihi.dart';
@@ -90,6 +91,19 @@ Future<void> main() async {
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)
     if (oturum.girisli) pushBaslat();
     if (oturum.girisli) KitaplikDurumu.yukle();
+    if (oturum.girisli) {
+      // Arama özellik bayrakları + ICE/TURN kimliği: açılışta BİR KEZ
+      // (sözleşme §14.1). Yalnız BELLEKTE tutulur. Beklenmez — ağ yoksa
+      // arama düğmeleri gizli kalır, uygulamanın geri kalanı etkilenmez.
+      unawaited(
+        AramaServisi.baslat().then((_) {
+          // Gelen aramanın ASIL yolu FCM; bu 4 sn'lik yoklama onun YEDEĞİ
+          // (sözleşme §1). Web'de ikisi de yok — bkz. arama_servisi.dart.
+          AramaServisi.gelenAramaGeldi = (_) => rotayaGit(gelenAramaYolu);
+          AramaServisi.gelenYoklamaBaslat();
+        }),
+      );
+    }
     // Oturumu `/profilim` ile tazele. ŞART: giriş yanıtında `avatar` YOK
     // (backend/server.js:1888) ve `oturum.yukle()` yalnız prefs'i okur — yani
     // ZATEN girişli olan herkesin avatarı bu çağrı olmadan null kalır ve

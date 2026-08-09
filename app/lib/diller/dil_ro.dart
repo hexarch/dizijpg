@@ -630,4 +630,63 @@ const Map<String, String> cevirilerRo = {
   'Bu bölüme puan ver': 'Evaluează acest episod',
   '{} kişi puanladı': '{} persoane au evaluat',
   'Bölüm izlendi olarak işaretlendi': 'Episod marcat ca vizionat',
+  'Sesli ara': 'Apel vocal',
+  'Görüntülü ara': 'Apel video',
+  'Çalıyor...': 'Sună...',
+  'Bağlanıyor...': 'Se conectează...',
+  'Cevapla': 'Răspunde',
+  'Reddet': 'Respinge',
+  'Sessize al': 'Oprește microfonul',
+  'Hoparlör': 'Difuzor',
+  'Kamerayı kapat': 'Oprește camera',
+  'Kamerayı çevir': 'Schimbă camera',
+  'Cevap yok': 'Fără răspuns',
+  'Arama reddedildi': 'Apel respins',
+  'Meşgul': 'Ocupat',
+  'Bağlanılamadı': 'Conectarea nu a reușit',
+  'Arama iptal edildi': 'Apel anulat',
+  'Arama geçmişi': 'Istoric apeluri',
+  'Gelen arama': 'Apel primit',
+  'Giden arama': 'Apel efectuat',
+  'Cevapsız arama': 'Apel pierdut',
+  'Arama şu anda kullanılamıyor': 'Apelurile nu sunt disponibile momentan',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Apelurile video sunt dezactivate acum, poți suna vocal',
+  'Bu kullanıcıyı arayamazsın': 'Nu poți suna acest utilizator',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Trebuie să vă urmăriți reciproc pentru a suna',
+  'Bu kullanıcı şu anda aranamıyor': 'Acest utilizator nu poate fi apelat acum',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Prea multe apeluri pierdute. Încearcă din nou peste {}',
+  'Zaten bir aramadasın': 'Ești deja într-un apel',
+  'Arama için mikrofon izni gerekiyor':
+      'Pentru apeluri este necesară permisiunea pentru microfon',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Pentru apeluri video sunt necesare permisiunile pentru cameră și microfon',
+  'Arama başlatılamadı': 'Apelul nu a putut fi inițiat',
+  'Kullanıcı bulunamadı': 'Utilizatorul nu a fost găsit',
+  'Kendini arayamazsın': 'Nu te poți suna pe tine',
+  'Arama artık geçerli değil': 'Acest apel nu mai este valid',
+  'Bu aramanın tarafı değilsin': 'Nu faci parte din acest apel',
+  'Arama bulunamadı': 'Apelul nu a fost găsit',
+  'Çok fazla istek, biraz bekle': 'Prea multe cereri, așteaptă puțin',
+  'Bağlantı koptu': 'Conexiune pierdută',
+  'Arama süre sınırına ulaştı': 'Apelul a atins limita de timp',
+  'Arama en fazla 4 saat sürebilir': 'Un apel poate dura cel mult 4 ore',
+  'Arama sona erdi': 'Apelul s-a încheiat',
+  'Sesli arama': 'Apel vocal',
+  'Görüntülü arama': 'Apel video',
+  'Gelen aramalar': 'Apeluri primite',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notificări pentru apeluri vocale și video',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Apeluri vocale și video',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Conținutul apelurilor nu este niciodată înregistrat. Audio și video circulă criptate cap-la-cap (DTLS-SRTP) între dispozitive; serverele noastre nu pot decripta, asculta sau stoca acest trafic.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Se păstrează doar metadatele apelului: cu cine, în ce direcție, când și cât a durat. Aceste înregistrări sunt șterse automat după 90 de zile.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Dacă nu se poate stabili o conexiune directă, audio și video trec criptate printr-un server releu (TURN). Nici acesta nu poate decripta sau înregistra conținutul.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Microfonul este folosit doar în timpul unui apel vocal sau video, iar camera doar în timpul unui apel video. Ambele sunt oprite la finalul apelului.',
 };

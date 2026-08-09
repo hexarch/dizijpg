@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'api.dart';
 import 'ceviri.dart';
+import 'gorusme/arama_bildirim.dart';
 import 'yonlendirme.dart';
 
 final FlutterLocalNotificationsPlugin _yerel =
@@ -191,6 +192,38 @@ Future<bool> _yanitIsle(NotificationResponse yanit) async {
   return true;
 }
 
+/// Gelen arama bildirimindeki Cevapla/Reddet eylemlerini işler.
+///
+/// **Reddet burada BİTİRİLİR** (uygulamayı açmadan): `POST /arama/yanit
+/// {kabul:false}` gider. Yalnız bildirimi kapatmak, arayanın 45 saniye
+/// boyunca "Çalıyor..." görmesi demekti — kullanıcı reddetti sanıyor, karşı
+/// taraf çalmaya devam ediyor.
+///
+/// **Cevapla** ise uygulamayı açar: medya izni, kamera ve `RTCPeerConnection`
+/// bir arka plan izolatında kurulamaz.
+Future<bool> _aramaEylemiIsle(NotificationResponse yanit) async {
+  final eylem = yanit.actionId;
+  if (eylem != AramaBildirim.cevaplaEylemi &&
+      eylem != AramaBildirim.reddetEylemi) {
+    return false;
+  }
+  await AramaBildirim.kapat(_yerel);
+  if (eylem == AramaBildirim.cevaplaEylemi) {
+    rotayaGit(gelenAramaYolu);
+    return true;
+  }
+  try {
+    final veri = jsonDecode(yanit.payload ?? '{}') as Map<String, dynamic>;
+    final id = veri['arama_id'] as String? ?? '';
+    if (id.isEmpty) return true;
+    if (!Api.girisli) await Api.tokenYukle();
+    await Api.post('/arama/yanit', {'arama_id': id, 'kabul': false});
+  } catch (_) {
+    // Arayan çoktan kapatmış olabilir (409); yapılacak bir şey yok.
+  }
+  return true;
+}
+
 /// Bildirimden yanıt, uygulama KAPALIYKEN ayrı izolatta gelir (top-level).
 @pragma('vm:entry-point')
 Future<void> bildirimYanitArkaplan(NotificationResponse yanit) async {
@@ -201,6 +234,7 @@ Future<void> bildirimYanitArkaplan(NotificationResponse yanit) async {
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
     );
+    if (await _aramaEylemiIsle(yanit)) return;
     await _yanitIsle(yanit);
   } catch (_) {}
 }
@@ -221,14 +255,24 @@ Future<void> mesajBildirimleriniTemizle(String ad) async {
 /// 'mesaj' türünü burada avatarlı yerel bildirime çeviririz.
 @pragma('vm:entry-point')
 Future<void> pushArkaplan(RemoteMessage mesaj) async {
-  if (mesaj.data['tur'] != 'mesaj') return;
+  final tur = mesaj.data['tur'];
+  if (tur != 'mesaj' && tur != 'arama') return;
   try {
+    // Arka plan izolatında eklenti kanalları KENDİLİĞİNDEN kaydolmaz.
     DartPluginRegistrant.ensureInitialized();
     await _yerel.initialize(
       const InitializationSettings(
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
     );
+    if (tur == 'arama') {
+      // Bildirim metni sunucudan alıcının dilinde geliyor (PUSH_SABLON);
+      // ama kanal adı ve eylem etiketleri İSTEMCİDEN gidiyor ve bu izolatta
+      // `Ceviri` henüz yüklenmedi — yükle, yoksa Cevapla/Reddet Türkçe kalır.
+      await Ceviri.yukle();
+      await AramaBildirim.goster(_yerel, mesaj.data);
+      return;
+    }
     await mesajBildirimiGoster(mesaj.data);
   } catch (_) {}
 }
@@ -238,6 +282,14 @@ void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
   final tur = veri['tur'] as String? ?? '';
   final ad = veri['ad'] as String? ?? '';
   switch (tur) {
+    case 'arama':
+      // Teklif SDP'si bildirimde YOK (FCM veri sınırı 4 KB, SDP 64 KB'a
+      // kadar): ekran açılınca `GET /arama/gelen` ile çekilir.
+      rotayaGit(gelenAramaYolu);
+    case 'kacirilan_arama':
+      // Kaçırılan aramada doğal eylem geri aramaktır; sohbet ekranında arama
+      // düğmeleri zaten duruyor.
+      if (ad.isNotEmpty) rotayaGit('/sohbet/$ad');
     case 'mesaj':
       if (ad.isNotEmpty) rotayaGit('/sohbet/$ad');
     case 'takip':
@@ -287,6 +339,7 @@ Future<void> pushBaslat() async {
         ),
         // Yanıtla aksiyonuysa mesajı gönder; değilse ilgili sayfaya git
         onDidReceiveNotificationResponse: (yanit) async {
+          if (await _aramaEylemiIsle(yanit)) return;
           if (await _yanitIsle(yanit)) return;
           _payloadIleGit(yanit.payload);
         },
@@ -301,6 +354,18 @@ Future<void> pushBaslat() async {
 
       // Uygulama açıkken gelen bildirim
       FirebaseMessaging.onMessage.listen((m) {
+        if (m.data['tur'] == 'arama') {
+          // ÖN PLAN BASTIRMA (sözleşme §7.4): kullanıcı zaten gelen arama
+          // ekranındaysa ikinci bir bildirim çizilmez — ekran çalıyor,
+          // bildirim de çalarsa iki zil üst üste biner.
+          final yol =
+              sonYonlendirici?.routerDelegate.currentConfiguration.uri.path;
+          if (yol == gelenAramaYolu) return;
+          // Ön planda BİLDİRİM DEĞİL, doğrudan tam ekran gelen arama:
+          // uygulama zaten kullanıcının elinde.
+          rotayaGit(gelenAramaYolu);
+          return;
+        }
         if (m.data['tur'] == 'mesaj') {
           // Zaten o sohbetteyse bildirim basma (5 sn'lik poll gösterir)
           final ad = m.data['ad'] as String? ?? '';

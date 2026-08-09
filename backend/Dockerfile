@@ -13,7 +13,11 @@ RUN npm install --omit=dev
 # medya_imza.js: DM medyasi icin imzali-sureli URL. server.js onu import
 # ediyor; imaja GIRMEZSE konteyner "Cannot find module './medya_imza.js'" ile
 # acilista olur (kripto.js ile ayni tuzak). test/medya_imza.test.js denetler.
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js mesaj_sifrele_geri_doldur.js admin.html ./
+# arama.js: sesli/goruntulu arama (sinyallesme deposu + TURN kimlik bilgisi +
+# yetki zinciri). server.js onu import ediyor; imaja GIRMEZSE konteyner
+# "Cannot find module './arama.js'" ile acilista olur ve restart dongusune
+# girer — kripto.js / medya_imza.js ile AYNI tuzak. test/arama.test.js denetler.
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js mesaj_sifrele_geri_doldur.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./

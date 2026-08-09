@@ -632,4 +632,64 @@ const Map<String, String> cevirilerIt = {
   'Bu bölüme puan ver': 'Vota questo episodio',
   '{} kişi puanladı': '{} persone hanno votato',
   'Bölüm izlendi olarak işaretlendi': 'Episodio segnato come visto',
+  'Sesli ara': 'Chiamata vocale',
+  'Görüntülü ara': 'Videochiamata',
+  'Çalıyor...': 'Sta squillando...',
+  'Bağlanıyor...': 'Connessione...',
+  'Cevapla': 'Rispondi',
+  'Reddet': 'Rifiuta',
+  'Sessize al': 'Disattiva microfono',
+  'Hoparlör': 'Altoparlante',
+  'Kamerayı kapat': 'Spegni fotocamera',
+  'Kamerayı çevir': 'Cambia fotocamera',
+  'Cevap yok': 'Nessuna risposta',
+  'Arama reddedildi': 'Chiamata rifiutata',
+  'Meşgul': 'Occupato',
+  'Bağlanılamadı': 'Impossibile connettersi',
+  'Arama iptal edildi': 'Chiamata annullata',
+  'Arama geçmişi': 'Cronologia chiamate',
+  'Gelen arama': 'Chiamata in arrivo',
+  'Giden arama': 'Chiamata in uscita',
+  'Cevapsız arama': 'Chiamata persa',
+  'Arama şu anda kullanılamıyor': 'Le chiamate non sono disponibili al momento',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Le videochiamate sono disattivate, puoi fare una chiamata vocale',
+  'Bu kullanıcıyı arayamazsın': 'Non puoi chiamare questo utente',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Dovete seguirvi a vicenda per chiamarvi',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Questo utente non può essere chiamato ora',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Troppe chiamate perse. Riprova tra {}',
+  'Zaten bir aramadasın': 'Sei già in una chiamata',
+  'Arama için mikrofon izni gerekiyor':
+      'Per chiamare serve il permesso del microfono',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Per le videochiamate servono i permessi di fotocamera e microfono',
+  'Arama başlatılamadı': 'Impossibile avviare la chiamata',
+  'Kullanıcı bulunamadı': 'Utente non trovato',
+  'Kendini arayamazsın': 'Non puoi chiamare te stesso',
+  'Arama artık geçerli değil': 'Questa chiamata non è più valida',
+  'Bu aramanın tarafı değilsin': 'Non fai parte di questa chiamata',
+  'Arama bulunamadı': 'Chiamata non trovata',
+  'Çok fazla istek, biraz bekle': 'Troppe richieste, attendi un momento',
+  'Bağlantı koptu': 'Connessione persa',
+  'Arama süre sınırına ulaştı': 'La chiamata ha raggiunto il limite di tempo',
+  'Arama en fazla 4 saat sürebilir': 'Una chiamata può durare al massimo 4 ore',
+  'Arama sona erdi': 'La chiamata è terminata',
+  'Sesli arama': 'Chiamata vocale',
+  'Görüntülü arama': 'Videochiamata',
+  'Gelen aramalar': 'Chiamate in arrivo',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notifiche di chiamate vocali e video',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Chiamate vocali e video',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Il contenuto delle chiamate non viene mai registrato. Audio e video viaggiano cifrati end-to-end (DTLS-SRTP) tra i dispositivi; i nostri server non possono decifrare, ascoltare o conservare questo traffico.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Vengono conservati solo i metadati della chiamata: con chi, in quale direzione, quando e quanto è durata. Questi dati vengono eliminati automaticamente dopo 90 giorni.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Se non è possibile stabilire una connessione diretta, audio e video passano cifrati attraverso un server di inoltro (TURN). Nemmeno quel server può decifrare o registrare il contenuto.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Il microfono viene usato solo durante una chiamata vocale o video, la fotocamera solo durante una videochiamata. Entrambi vengono spenti al termine della chiamata.',
 };

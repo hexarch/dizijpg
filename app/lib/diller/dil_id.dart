@@ -626,4 +626,65 @@ const Map<String, String> cevirilerId = {
   'Bu bölüme puan ver': 'Beri nilai episode ini',
   '{} kişi puanladı': '{} orang menilai',
   'Bölüm izlendi olarak işaretlendi': 'Episode ditandai sudah ditonton',
+  'Sesli ara': 'Panggilan suara',
+  'Görüntülü ara': 'Panggilan video',
+  'Çalıyor...': 'Berdering...',
+  'Bağlanıyor...': 'Menghubungkan...',
+  'Cevapla': 'Jawab',
+  'Reddet': 'Tolak',
+  'Sessize al': 'Bisukan',
+  'Hoparlör': 'Speaker',
+  'Kamerayı kapat': 'Matikan kamera',
+  'Kamerayı çevir': 'Balik kamera',
+  'Cevap yok': 'Tidak dijawab',
+  'Arama reddedildi': 'Panggilan ditolak',
+  'Meşgul': 'Sibuk',
+  'Bağlanılamadı': 'Tidak dapat terhubung',
+  'Arama iptal edildi': 'Panggilan dibatalkan',
+  'Arama geçmişi': 'Riwayat panggilan',
+  'Gelen arama': 'Panggilan masuk',
+  'Giden arama': 'Panggilan keluar',
+  'Cevapsız arama': 'Panggilan tak terjawab',
+  'Arama şu anda kullanılamıyor': 'Panggilan sedang tidak tersedia',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Panggilan video sedang dimatikan, kamu bisa melakukan panggilan suara',
+  'Bu kullanıcıyı arayamazsın': 'Kamu tidak bisa menelepon pengguna ini',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Kalian harus saling mengikuti untuk menelepon',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Pengguna ini tidak bisa ditelepon sekarang',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Terlalu banyak panggilan tak terjawab. Coba lagi dalam {}',
+  'Zaten bir aramadasın': 'Kamu sudah dalam panggilan',
+  'Arama için mikrofon izni gerekiyor':
+      'Izin mikrofon diperlukan untuk menelepon',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Izin kamera dan mikrofon diperlukan untuk panggilan video',
+  'Arama başlatılamadı': 'Panggilan tidak dapat dimulai',
+  'Kullanıcı bulunamadı': 'Pengguna tidak ditemukan',
+  'Kendini arayamazsın': 'Kamu tidak bisa menelepon dirimu sendiri',
+  'Arama artık geçerli değil': 'Panggilan ini sudah tidak berlaku',
+  'Bu aramanın tarafı değilsin': 'Kamu bukan bagian dari panggilan ini',
+  'Arama bulunamadı': 'Panggilan tidak ditemukan',
+  'Çok fazla istek, biraz bekle': 'Terlalu banyak permintaan, tunggu sebentar',
+  'Bağlantı koptu': 'Koneksi terputus',
+  'Arama süre sınırına ulaştı': 'Panggilan mencapai batas waktu',
+  'Arama en fazla 4 saat sürebilir':
+      'Panggilan dapat berlangsung maksimal 4 jam',
+  'Arama sona erdi': 'Panggilan telah berakhir',
+  'Sesli arama': 'Panggilan suara',
+  'Görüntülü arama': 'Panggilan video',
+  'Gelen aramalar': 'Panggilan masuk',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notifikasi panggilan suara dan video',
+  '{} sa': '{} jam',
+  'Sesli ve Görüntülü Aramalar': 'Panggilan Suara dan Video',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Isi panggilan tidak pernah direkam. Audio dan video mengalir terenkripsi ujung ke ujung (DTLS-SRTP) antar perangkat; server kami tidak dapat mendekripsi, mendengarkan, atau menyimpan lalu lintas ini.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Hanya metadata panggilan yang disimpan: dengan siapa, ke arah mana, kapan, dan berapa lama. Catatan ini dihapus otomatis setelah 90 hari.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Jika koneksi langsung tidak dapat dibuat, audio dan video melewati server relai (TURN) dalam keadaan terenkripsi. Server relai juga tidak dapat mendekripsi atau merekam isinya.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofon hanya digunakan selama panggilan suara atau video, dan kamera hanya selama panggilan video. Keduanya dimatikan saat panggilan berakhir.',
 };

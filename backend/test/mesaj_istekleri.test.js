@@ -243,9 +243,18 @@ test('ENGELLEME davranışı değişmedi: /sohbetler engelli filtresi eklemedi',
   // hâlâ yerinde dururken KIRMIZI yanıyordu (8 Ağu 2026'da tam bu oldu).
   // Artık ucun GERÇEK sonuna kadar bakılıyor: bir sonraki route tanımı.
   const sonrakiUc = SERVER.indexOf('\napp.', gonder + 10);
+  // 9 Ağu 2026: satır içi SQL `engelliMi()` yardımcısına ÇIKARILDI (arama
+  // özelliği üçüncü bir kopya yazmasın diye). Kontrol AYNI ve ÇİFT YÖNLÜ —
+  // yalnız çağrı biçimi değişti, o yüzden testin aradığı kalıp güncellendi.
   assert.match(
     SERVER.slice(gonder, sonrakiUc === -1 ? undefined : sonrakiUc),
-    /FROM engellemeler/,
+    /await engelliMi\(req\.kullanici\.id, aliciId\)/,
     'mesaj gönderiminde engel kontrolü kayboldu',
   );
+  // Yardımcının kendisi hâlâ çift yönlü sorguyu yapıyor mu?
+  const yardimci = SERVER.slice(SERVER.indexOf('async function engelliMi('),
+    SERVER.indexOf('async function karsilikliTakipMi('));
+  assert.match(yardimci, /FROM engellemeler/);
+  assert.match(yardimci, /engelleyen_id=\$1 AND engellenen_id=\$2/);
+  assert.match(yardimci, /engelleyen_id=\$2 AND engellenen_id=\$1/);
 });

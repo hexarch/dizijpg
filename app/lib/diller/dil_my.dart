@@ -636,4 +636,64 @@ const Map<String, String> cevirilerMy = {
   '{} kişi puanladı': '{} ဦး အဆင့်သတ်မှတ်ပြီး',
   'Bölüm izlendi olarak işaretlendi':
       'အပိုင်းကို ကြည့်ပြီးအဖြစ် မှတ်သားလိုက်ပါပြီ',
+  'Sesli ara': 'အသံခေါ်ဆိုမှု',
+  'Görüntülü ara': 'ဗီဒီယိုခေါ်ဆိုမှု',
+  'Çalıyor...': 'ခေါ်နေသည်...',
+  'Bağlanıyor...': 'ချိတ်ဆက်နေသည်...',
+  'Cevapla': 'ဖြေပါ',
+  'Reddet': 'ငြင်းပယ်ပါ',
+  'Sessize al': 'အသံပိတ်',
+  'Hoparlör': 'စပီကာ',
+  'Kamerayı kapat': 'ကင်မရာပိတ်ပါ',
+  'Kamerayı çevir': 'ကင်မရာပြောင်းပါ',
+  'Cevap yok': 'အဖြေမရှိပါ',
+  'Arama reddedildi': 'ခေါ်ဆိုမှု ငြင်းပယ်ခံရသည်',
+  'Meşgul': 'အလုပ်များနေသည်',
+  'Bağlanılamadı': 'ချိတ်ဆက်၍မရပါ',
+  'Arama iptal edildi': 'ခေါ်ဆိုမှု ပယ်ဖျက်ခဲ့သည်',
+  'Arama geçmişi': 'ခေါ်ဆိုမှု မှတ်တမ်း',
+  'Gelen arama': 'အဝင်ခေါ်ဆိုမှု',
+  'Giden arama': 'အထွက်ခေါ်ဆိုမှု',
+  'Cevapsız arama': 'လွတ်သွားသော ခေါ်ဆိုမှု',
+  'Arama şu anda kullanılamıyor': 'ခေါ်ဆိုမှုကို ယခု မရနိုင်ပါ',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'ဗီဒီယိုခေါ်ဆိုမှု ယခု ပိတ်ထားသည်၊ အသံဖြင့် ခေါ်နိုင်သည်',
+  'Bu kullanıcıyı arayamazsın': 'ဤအသုံးပြုသူကို ခေါ်၍မရပါ',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'ခေါ်ဆိုရန် နှစ်ဦးစလုံး အပြန်အလှန် စောင့်ကြည့်ရမည်',
+  'Bu kullanıcı şu anda aranamıyor': 'ဤအသုံးပြုသူကို ယခု ခေါ်၍မရပါ',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'လွတ်သွားသော ခေါ်ဆိုမှု များလွန်းသည်။ {} အကြာတွင် ပြန်ကြိုးစားပါ',
+  'Zaten bir aramadasın': 'သင် ခေါ်ဆိုမှုတစ်ခုတွင် ရှိနေပြီးဖြစ်သည်',
+  'Arama için mikrofon izni gerekiyor':
+      'ခေါ်ဆိုရန် မိုက်ခရိုဖုန်း ခွင့်ပြုချက် လိုအပ်သည်',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'ဗီဒီယိုခေါ်ဆိုရန် ကင်မရာနှင့် မိုက်ခရိုဖုန်း ခွင့်ပြုချက် လိုအပ်သည်',
+  'Arama başlatılamadı': 'ခေါ်ဆိုမှု မစတင်နိုင်ပါ',
+  'Kullanıcı bulunamadı': 'အသုံးပြုသူ မတွေ့ပါ',
+  'Kendini arayamazsın': 'ကိုယ့်ကိုယ်ကို ခေါ်၍မရပါ',
+  'Arama artık geçerli değil': 'ဤခေါ်ဆိုမှု အကျုံးမဝင်တော့ပါ',
+  'Bu aramanın tarafı değilsin': 'သင် ဤခေါ်ဆိုမှု၏ အစိတ်အပိုင်း မဟုတ်ပါ',
+  'Arama bulunamadı': 'ခေါ်ဆိုမှု မတွေ့ပါ',
+  'Çok fazla istek, biraz bekle': 'တောင်းဆိုမှု များလွန်းသည်၊ ခဏစောင့်ပါ',
+  'Bağlantı koptu': 'ချိတ်ဆက်မှု ပြတ်တောက်သွားသည်',
+  'Arama süre sınırına ulaştı': 'ခေါ်ဆိုမှု အချိန်ကန့်သတ်ချက်သို့ ရောက်ပြီ',
+  'Arama en fazla 4 saat sürebilir':
+      'ခေါ်ဆိုမှုတစ်ခု အများဆုံး ၄ နာရီ ကြာနိုင်သည်',
+  'Arama sona erdi': 'ခေါ်ဆိုမှု ပြီးဆုံးသွားပြီ',
+  'Sesli arama': 'အသံခေါ်ဆိုမှု',
+  'Görüntülü arama': 'ဗီဒီယိုခေါ်ဆိုမှု',
+  'Gelen aramalar': 'အဝင်ခေါ်ဆိုမှုများ',
+  'Sesli ve görüntülü arama bildirimleri':
+      'အသံနှင့် ဗီဒီယိုခေါ်ဆိုမှု အသိပေးချက်များ',
+  '{} sa': '{} နာရီ',
+  'Sesli ve Görüntülü Aramalar': 'အသံနှင့် ဗီဒီယိုခေါ်ဆိုမှုများ',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'ခေါ်ဆိုမှု အကြောင်းအရာကို ဘယ်တော့မှ မှတ်တမ်းမတင်ပါ။ အသံနှင့် ဗီဒီယိုသည် စက်များအကြား အစအဆုံး ကုဒ်ဝှက်ထားပြီး (DTLS-SRTP) စီးဆင်းသည်။ ကျွန်ုပ်တို့၏ ဆာဗာများသည် ၎င်းကို ဖော်ထုတ်၊ နားထောင်၊ သိမ်းဆည်း၍ မရပါ။',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'ခေါ်ဆိုမှု မက်တာဒေတာသာ သိမ်းထားသည်- မည်သူနှင့်၊ မည်သည့်ဦးတည်ချက်၊ မည်သည့်အချိန်နှင့် မည်မျှကြာသည်။ ဤမှတ်တမ်းများသည် ၉၀ ရက်အကြာတွင် အလိုအလျောက် ဖျက်သွားသည်။',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'တိုက်ရိုက်ချိတ်ဆက်၍ မရပါက အသံနှင့် ဗီဒီယိုသည် ကုဒ်ဝှက်ထားသည့်အတိုင်း ထပ်ဆင့်ဆာဗာ (TURN) မှတစ်ဆင့် ဖြတ်သွားသည်။ ထပ်ဆင့်ဆာဗာကလည်း အကြောင်းအရာကို ဖော်ထုတ်၊ မှတ်တမ်းတင်၍ မရပါ။',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'မိုက်ခရိုဖုန်းကို အသံ သို့မဟုတ် ဗီဒီယိုခေါ်ဆိုစဉ်တွင်သာ၊ ကင်မရာကို ဗီဒီယိုခေါ်ဆိုစဉ်တွင်သာ အသုံးပြုသည်။ ခေါ်ဆိုမှု ပြီးလျှင် နှစ်ခုစလုံး ပိတ်သွားသည်။',
 };

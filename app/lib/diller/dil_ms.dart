@@ -629,4 +629,65 @@ const Map<String, String> cevirilerMs = {
   'Bu bölüme puan ver': 'Nilaikan episod ini',
   '{} kişi puanladı': '{} orang menilai',
   'Bölüm izlendi olarak işaretlendi': 'Episod ditanda sudah ditonton',
+  'Sesli ara': 'Panggilan suara',
+  'Görüntülü ara': 'Panggilan video',
+  'Çalıyor...': 'Berdering...',
+  'Bağlanıyor...': 'Menyambung...',
+  'Cevapla': 'Jawab',
+  'Reddet': 'Tolak',
+  'Sessize al': 'Bisukan',
+  'Hoparlör': 'Pembesar suara',
+  'Kamerayı kapat': 'Matikan kamera',
+  'Kamerayı çevir': 'Tukar kamera',
+  'Cevap yok': 'Tiada jawapan',
+  'Arama reddedildi': 'Panggilan ditolak',
+  'Meşgul': 'Sibuk',
+  'Bağlanılamadı': 'Tidak dapat disambungkan',
+  'Arama iptal edildi': 'Panggilan dibatalkan',
+  'Arama geçmişi': 'Sejarah panggilan',
+  'Gelen arama': 'Panggilan masuk',
+  'Giden arama': 'Panggilan keluar',
+  'Cevapsız arama': 'Panggilan tidak dijawab',
+  'Arama şu anda kullanılamıyor': 'Panggilan tidak tersedia buat masa ini',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Panggilan video dimatikan buat masa ini, anda boleh membuat panggilan suara',
+  'Bu kullanıcıyı arayamazsın': 'Anda tidak boleh memanggil pengguna ini',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Anda berdua perlu saling mengikuti untuk membuat panggilan',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Pengguna ini tidak boleh dipanggil sekarang',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Terlalu banyak panggilan tidak dijawab. Cuba lagi dalam {}',
+  'Zaten bir aramadasın': 'Anda sudah berada dalam panggilan',
+  'Arama için mikrofon izni gerekiyor':
+      'Kebenaran mikrofon diperlukan untuk membuat panggilan',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Kebenaran kamera dan mikrofon diperlukan untuk panggilan video',
+  'Arama başlatılamadı': 'Panggilan tidak dapat dimulakan',
+  'Kullanıcı bulunamadı': 'Pengguna tidak dijumpai',
+  'Kendini arayamazsın': 'Anda tidak boleh memanggil diri sendiri',
+  'Arama artık geçerli değil': 'Panggilan ini tidak lagi sah',
+  'Bu aramanın tarafı değilsin': 'Anda bukan sebahagian daripada panggilan ini',
+  'Arama bulunamadı': 'Panggilan tidak dijumpai',
+  'Çok fazla istek, biraz bekle': 'Terlalu banyak permintaan, tunggu sebentar',
+  'Bağlantı koptu': 'Sambungan terputus',
+  'Arama süre sınırına ulaştı': 'Panggilan mencapai had masa',
+  'Arama en fazla 4 saat sürebilir':
+      'Satu panggilan boleh bertahan maksimum 4 jam',
+  'Arama sona erdi': 'Panggilan telah tamat',
+  'Sesli arama': 'Panggilan suara',
+  'Görüntülü arama': 'Panggilan video',
+  'Gelen aramalar': 'Panggilan masuk',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Pemberitahuan panggilan suara dan video',
+  '{} sa': '{} jam',
+  'Sesli ve Görüntülü Aramalar': 'Panggilan Suara dan Video',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Kandungan panggilan tidak pernah dirakam. Audio dan video mengalir dengan penyulitan hujung ke hujung (DTLS-SRTP) antara peranti; pelayan kami tidak dapat menyahsulit, mendengar atau menyimpan trafik ini.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Hanya metadata panggilan disimpan: dengan siapa, arah mana, bila dan berapa lama. Rekod ini dipadam secara automatik selepas 90 hari.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Jika sambungan terus tidak dapat dibuat, audio dan video melalui pelayan geganti (TURN) dalam keadaan tersulit. Pelayan geganti juga tidak dapat menyahsulit atau merakam kandungan.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofon hanya digunakan semasa panggilan suara atau video, dan kamera hanya semasa panggilan video. Kedua-duanya dimatikan apabila panggilan tamat.',
 };

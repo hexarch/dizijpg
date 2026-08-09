@@ -625,4 +625,63 @@ const Map<String, String> cevirilerCs = {
   'Bu bölüme puan ver': 'Ohodnoťte tuto epizodu',
   '{} kişi puanladı': 'Ohodnotilo {} lidí',
   'Bölüm izlendi olarak işaretlendi': 'Epizoda označena jako zhlédnutá',
+  'Sesli ara': 'Hlasový hovor',
+  'Görüntülü ara': 'Videohovor',
+  'Çalıyor...': 'Vyzvání...',
+  'Bağlanıyor...': 'Připojování...',
+  'Cevapla': 'Přijmout',
+  'Reddet': 'Odmítnout',
+  'Sessize al': 'Ztlumit',
+  'Hoparlör': 'Reproduktor',
+  'Kamerayı kapat': 'Vypnout kameru',
+  'Kamerayı çevir': 'Přepnout kameru',
+  'Cevap yok': 'Žádná odpověď',
+  'Arama reddedildi': 'Hovor odmítnut',
+  'Meşgul': 'Obsazeno',
+  'Bağlanılamadı': 'Nepodařilo se připojit',
+  'Arama iptal edildi': 'Hovor zrušen',
+  'Arama geçmişi': 'Historie hovorů',
+  'Gelen arama': 'Příchozí hovor',
+  'Giden arama': 'Odchozí hovor',
+  'Cevapsız arama': 'Zmeškaný hovor',
+  'Arama şu anda kullanılamıyor': 'Volání je momentálně nedostupné',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Videohovory jsou teď vypnuté, můžeš zavolat hlasově',
+  'Bu kullanıcıyı arayamazsın': 'Tomuto uživateli nemůžeš zavolat',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Abyste si mohli volat, musíte se navzájem sledovat',
+  'Bu kullanıcı şu anda aranamıyor': 'Tomuto uživateli teď nelze zavolat',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Příliš mnoho zmeškaných hovorů. Zkus to znovu za {}',
+  'Zaten bir aramadasın': 'Už jsi v hovoru',
+  'Arama için mikrofon izni gerekiyor':
+      'K volání je potřeba oprávnění k mikrofonu',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'K videohovoru je potřeba oprávnění ke kameře a mikrofonu',
+  'Arama başlatılamadı': 'Hovor se nepodařilo zahájit',
+  'Kullanıcı bulunamadı': 'Uživatel nenalezen',
+  'Kendini arayamazsın': 'Nemůžeš zavolat sám sobě',
+  'Arama artık geçerli değil': 'Tento hovor už není platný',
+  'Bu aramanın tarafı değilsin': 'Nejsi účastníkem tohoto hovoru',
+  'Arama bulunamadı': 'Hovor nenalezen',
+  'Çok fazla istek, biraz bekle': 'Příliš mnoho požadavků, chvíli počkej',
+  'Bağlantı koptu': 'Spojení přerušeno',
+  'Arama süre sınırına ulaştı': 'Hovor dosáhl časového limitu',
+  'Arama en fazla 4 saat sürebilir': 'Hovor může trvat nejvýše 4 hodiny',
+  'Arama sona erdi': 'Hovor skončil',
+  'Sesli arama': 'Hlasový hovor',
+  'Görüntülü arama': 'Videohovor',
+  'Gelen aramalar': 'Příchozí hovory',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Oznámení o hlasových hovorech a videohovorech',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Hlasové hovory a videohovory',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Obsah hovorů se nikdy nenahrává. Zvuk i obraz putují mezi zařízeními koncově šifrované (DTLS-SRTP); naše servery tento provoz nedokážou dešifrovat, poslouchat ani uchovávat.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Uchovávají se pouze metadata hovoru: s kým, jakým směrem, kdy a jak dlouho trval. Tyto záznamy se po 90 dnech automaticky mažou.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Pokud přímé spojení nelze navázat, zvuk a obraz projdou šifrované přes přenosový server (TURN). Ani ten obsah nedokáže dešifrovat ani nahrát.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Mikrofon se používá jen během hlasového nebo videohovoru a kamera jen během videohovoru. Po skončení hovoru se oba vypnou.',
 };

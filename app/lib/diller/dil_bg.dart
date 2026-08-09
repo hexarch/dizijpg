@@ -627,4 +627,65 @@ const Map<String, String> cevirilerBg = {
   'Bu bölüme puan ver': 'Оценете този епизод',
   '{} kişi puanladı': '{} души оцениха',
   'Bölüm izlendi olarak işaretlendi': 'Епизодът е отбелязан като гледан',
+  'Sesli ara': 'Гласово обаждане',
+  'Görüntülü ara': 'Видеообаждане',
+  'Çalıyor...': 'Звъни...',
+  'Bağlanıyor...': 'Свързване...',
+  'Cevapla': 'Отговори',
+  'Reddet': 'Отхвърли',
+  'Sessize al': 'Заглуши',
+  'Hoparlör': 'Високоговорител',
+  'Kamerayı kapat': 'Изключи камерата',
+  'Kamerayı çevir': 'Смени камерата',
+  'Cevap yok': 'Няма отговор',
+  'Arama reddedildi': 'Обаждането е отхвърлено',
+  'Meşgul': 'Заето',
+  'Bağlanılamadı': 'Свързването не бе успешно',
+  'Arama iptal edildi': 'Обаждането е отменено',
+  'Arama geçmişi': 'История на обажданията',
+  'Gelen arama': 'Входящо обаждане',
+  'Giden arama': 'Изходящо обаждане',
+  'Cevapsız arama': 'Пропуснато обаждане',
+  'Arama şu anda kullanılamıyor': 'Обажданията в момента не са налични',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Видеообажданията са изключени, можеш да се обадиш гласово',
+  'Bu kullanıcıyı arayamazsın': 'Не можеш да се обадиш на този потребител',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Трябва да се следвате взаимно, за да се обаждате',
+  'Bu kullanıcı şu anda aranamıyor':
+      'На този потребител не може да се звъни в момента',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Твърде много пропуснати обаждания. Опитай отново след {}',
+  'Zaten bir aramadasın': 'Вече си в разговор',
+  'Arama için mikrofon izni gerekiyor':
+      'За обаждане е нужно разрешение за микрофона',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'За видеообаждане са нужни разрешения за камерата и микрофона',
+  'Arama başlatılamadı': 'Обаждането не можа да започне',
+  'Kullanıcı bulunamadı': 'Потребителят не е намерен',
+  'Kendini arayamazsın': 'Не можеш да се обадиш на себе си',
+  'Arama artık geçerli değil': 'Това обаждане вече не е валидно',
+  'Bu aramanın tarafı değilsin': 'Не си участник в това обаждане',
+  'Arama bulunamadı': 'Обаждането не е намерено',
+  'Çok fazla istek, biraz bekle': 'Твърде много заявки, изчакай малко',
+  'Bağlantı koptu': 'Връзката прекъсна',
+  'Arama süre sınırına ulaştı': 'Обаждането достигна времевото ограничение',
+  'Arama en fazla 4 saat sürebilir':
+      'Едно обаждане може да продължи най-много 4 часа',
+  'Arama sona erdi': 'Обаждането приключи',
+  'Sesli arama': 'Гласово обаждане',
+  'Görüntülü arama': 'Видеообаждане',
+  'Gelen aramalar': 'Входящи обаждания',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Известия за гласови и видеообаждания',
+  '{} sa': '{} ч',
+  'Sesli ve Görüntülü Aramalar': 'Гласови и видеообаждания',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Съдържанието на разговорите никога не се записва. Звукът и видеото се предават между устройствата с шифроване от край до край (DTLS-SRTP); нашите сървъри не могат да ги дешифрират, подслушват или съхраняват.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Съхраняват се само метаданните на обаждането: с кого, в каква посока, кога и колко е продължило. Тези записи се изтриват автоматично след 90 дни.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Ако не може да се установи пряка връзка, звукът и видеото преминават шифровани през ретранслиращ сървър (TURN). И той не може да дешифрира или запише съдържанието.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Микрофонът се използва само по време на гласово или видеообаждане, а камерата само по време на видеообаждане. И двете се изключват след края на разговора.',
 };

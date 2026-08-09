@@ -53,6 +53,15 @@ import {
   itirazMetni,
   otoBanAyari, otoBanOnerisi, sebepTemizle,
 } from './yasak.js';
+// Sesli/görüntülü arama (saf modül; Express ve pg bilmez).
+// İÇERİK KAYDI YOK: SDP/ICE yalnız `AramaDeposu`nun belleğinde yaşar.
+import {
+  KOD as ARAMA_KOD, CALMA_MS, SAKLAMA_GUN as ARAMA_SAKLAMA_GUN,
+  KACIRILAN_DURUMLAR, CEVAPSIZ_DURUMLAR,
+  buzSunuculari, ozellikBayraklari, sebepGecerliMi,
+  adaylariTemizle, olcumTemizle, baslatYetki, yanitYetki, gecmisYon, ustveri,
+  AramaDeposu, SessizDepo,
+} from './arama.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -956,25 +965,46 @@ const aramaLimiti = hizLimiti(120, (req) => `s:${req.ip}`);
 // İstemci hata bildirimi seli koruması: IP başına
 const hataLimiti = hizLimiti(60, (req) => `h:${req.ip}`);
 
+// ---- SESLİ/GÖRÜNTÜLÜ ARAMA limitleri (sözleşme §9) ----
+// *** ADI `aramaLimiti` OLAMAZ *** — o ad yukarıda *search* için kullanılıyor
+// (`s:` öneki). Aynı adı yeniden tanımlamak sessizce gölgeleme yapardı.
+//
+// ANAHTAR `req.kullanici.id`, `req.ip` DEĞİL: aramalar zaten kimlik
+// doğrulaması gerektiriyor ve CGNAT arkasındaki binlerce mobil kullanıcı AYNI
+// IP'yi paylaşır (Türkiye'de yaygın). IP anahtarı tek bir tacizciyi
+// durdururken aynı operatördeki HERKESİ keserdi.
+//
+// GÖRÜŞME başlatma: saatte 30. Taciz amaçlı sürekli aramanın ilk katmanı;
+// asıl koruma çift bazlı sessizleştirmedir (§9.1, `sessizDepo`).
+const gorusmeLimiti = hizLimiti(30, (req) => `gr:${req.kullanici.id}`);
+// Sinyalleşme yoklaması + yanıt/aday/bitir/geçmiş.
+// Boyutlandırma: 1 sn'lik özel yoklama 45 sn çalar -> arama başına ~45 istek.
+// Saatte 30 arama x 45 = 1.350; aranan taraf olarak da benzeri; ön plan
+// yoklaması (4 sn) saatte 900. Toplam ~3.600'e 3.000 dar gelir -> 5.000.
+const gorusmeDurumLimiti = hizLimiti(5000, (req) => `gd:${req.kullanici.id}`);
+// TURN kimlik bilgisi: TTL 12 saat, uygulama açılışında bir kez alınır.
+// Sırla HMAC üreten bir ucu sınırsız bırakmak CPU tüketimine davetiyedir.
+const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
+
 // Bildirim ekler; kendi eylemine bildirim düşmez, hata akışı bozmaz.
 // Push bildirim şablonları (alıcının diline göre; {ad} = @kullanıcı).
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt' },
-  fr: { takip: '{ad} a commencé à te suivre', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: '{ad} t\'a mentionné dans un commentaire' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: '{ad} ti ha menzionato in un commento' },
-  ru: { takip: '{ad} подписался на тебя', begeni: '{ad} оценил твой комментарий', yanit: '{ad} ответил на твой комментарий', mesaj: '{ad} отправил тебе сообщение', etiket: '{ad} упомянул тебя в комментарии' },
-  ar: { takip: '{ad} بدأ بمتابعتك', begeni: '{ad} أعجب بتعليقك', yanit: '{ad} رد على تعليقك', mesaj: '{ad} أرسل لك رسالة', etiket: '{ad} أشار إليك في تعليق' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie' },
-  pl: { takip: '{ad} zaczął cię obserwować', begeni: '{ad} polubił twój komentarz', yanit: '{ad} odpowiedział na twój komentarz', mesaj: '{ad} wysłał ci wiadomość', etiket: '{ad} wspomniał o tobie w komentarzu' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen' },
+  fr: { takip: '{ad} a commencé à te suivre', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: '{ad} t\'a mentionné dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: '{ad} t\'a appelé' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: '{ad} ti ha menzionato in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: '{ad} ti ha chiamato' },
+  ru: { takip: '{ad} подписался на тебя', begeni: '{ad} оценил твой комментарий', yanit: '{ad} ответил на твой комментарий', mesaj: '{ad} отправил тебе сообщение', etiket: '{ad} упомянул тебя в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: '{ad} звонил тебе' },
+  ar: { takip: '{ad} بدأ بمتابعتك', begeni: '{ad} أعجب بتعليقك', yanit: '{ad} رد على تعليقك', mesaj: '{ad} أرسل لك رسالة', etiket: '{ad} أشار إليك في تعليق', arama: '{ad} يتصل بك', kacirilan_arama: '{ad} اتصل بك' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} आपको कॉल कर रहे हैं', kacirilan_arama: '{ad} ने आपको कॉल किया' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld' },
+  pl: { takip: '{ad} zaczął cię obserwować', begeni: '{ad} polubił twój komentarz', yanit: '{ad} odpowiedział na twój komentarz', mesaj: '{ad} wysłał ci wiadomość', etiket: '{ad} wspomniał o tobie w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: '{ad} dzwonił do ciebie' },
 };
 
 // Alıcının cihazlarına anlık push gönderir (fire-and-forget, hata yutulur).
@@ -1003,7 +1033,29 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
     // Beğeni/yanıt/etiket: dokununca doğrudan o gönderiye gidilebilsin
     if (ekstra?.yorum_id) veri.yorum_id = String(ekstra.yorum_id);
     let paket;
-    if (tur === 'mesaj') {
+    if (tur === 'arama') {
+      // GELEN ARAMA — data-only (mesajla aynı kalıp): istemci kendi tam ekran
+      // arama bildirimini kurar (`Importance.MAX`, `CATEGORY_CALL`,
+      // Cevapla/Reddet eylemleri). `notification` alanı olsaydı sistem sıradan
+      // bir bildirim basar, zil sesi ve eylemler özelleşemezdi.
+      //
+      // *** ttl ŞART *** — FCM varsayılan TTL'i 4 HAFTA. Cihaz kapalıyken
+      // biriken bir arama push'u telefon açıldığında İKİ GÜN SONRA çalar;
+      // kullanıcı için hem kafa karıştırıcı hem ürkütücü. TTL çalma süresiyle
+      // AYNI olmalı (firebase-admin `android.ttl` MİLİSANİYEDİR).
+      paket = {
+        tokens,
+        data: {
+          ...veri,
+          arama_id: String(ekstra?.arama_id || ''),
+          arama_turu: String(ekstra?.arama_turu || 'ses'),
+          sona_erme: String(ekstra?.sona_erme || ''),
+          baslik: ad,
+          metin: govde,
+        },
+        android: { priority: 'high', ttl: CALMA_MS },
+      };
+    } else if (tur === 'mesaj') {
       // Veri-mesajı: istemci gönderenin avatarıyla, mesaj İÇERİKLİ yerel
       // bildirim kurar ve dokununca sohbeti açar. notification alanı olsaydı
       // sistem kendisi basar, avatar/derin bağlantı özelleşemezdi.
@@ -1047,6 +1099,12 @@ const BILDIRIM_TERCIH_KOLON = {
   takip: 'bildir_takip',
   mesaj: 'bildir_mesaj',
   etiket: 'bildir_etiket',
+  // *** KASITLI BOŞLUK ***: `bildir_arama` YALNIZ KAÇIRILAN ARAMA bildirimini
+  // kapatır. Aramanın KENDİSİ bir bildirim tercihi değildir — "kim arayabilir"
+  // sorusunun cevabı karşılıklı takip kapısıdır. Çalan telefonu bir bildirim
+  // onay kutusuna bağlamak, kullanıcının "bildirimleri kapattım" diye
+  // aramaları da kapattığını SANMASINA yol açardı.
+  kacirilan_arama: 'bildir_arama',
 };
 
 async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = null) {
@@ -1065,6 +1123,40 @@ async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = 
   ).catch(() => {});
   // Push data'sına yorum_id de gider (dokununca doğrudan gönderiye)
   pushBildirim(aliciId, tur, aktorId, { ...(pushEkstra || {}), yorum_id: yorumId });
+}
+
+/**
+ * İki kullanıcı arasında ÇİFT YÖNLÜ engelleme var mı?
+ *
+ * Bu kontrol daha önce `POST /mesajlar` içinde SATIR İÇİ yazılıydı; arama için
+ * üçüncü bir kopya yazmak yerine buraya çıkarıldı. (`/paylas-hedefler`teki
+ * üçüncü kullanım bir LİSTE sorgusudur — tek çiftlik bu yardımcıya
+ * indirgenemez, o yüzden orada SQL alt sorgusu olarak kaldı.)
+ *
+ * Engelleme bugün yalnız GÖNDERMEDE zorlanıyor, OKUMADA değil (bilinçli).
+ * ARAMADA bu gevşeklik kabul edilemez — telefon çalıyor.
+ */
+async function engelliMi(aId, bId) {
+  const { rows } = await havuz.query(
+    `SELECT 1 FROM engellemeler
+     WHERE (engelleyen_id=$1 AND engellenen_id=$2)
+        OR (engelleyen_id=$2 AND engellenen_id=$1) LIMIT 1`,
+    [aId, bId],
+  );
+  return rows.length > 0;
+}
+
+/** Karşılıklı takip: A→B ve B→A. `takipler` PK'si (eden, edilen), ters yön
+ *  `idx_takip_edilen` ile indeksli — sorgu iki indeks aramasıdır. */
+async function karsilikliTakipMi(aId, bId) {
+  const { rows } = await havuz.query(
+    `SELECT 1 FROM takipler a
+       JOIN takipler b ON b.takip_eden_id = a.takip_edilen_id
+                      AND b.takip_edilen_id = a.takip_eden_id
+     WHERE a.takip_eden_id=$1 AND a.takip_edilen_id=$2 LIMIT 1`,
+    [aId, bId],
+  );
+  return rows.length > 0;
 }
 
 // Metindeki @kullanici_adi etiketlerini bulup 'etiket' bildirimi gönderir.
@@ -2596,9 +2688,56 @@ async function tablolariBuda() {
     `DELETE FROM tmdb_onbellek WHERE guncelleme < now() - interval '30 days'`,
     `DELETE FROM yorum_goruntuleyen WHERE tarih < now() - interval '90 days'`,
     `DELETE FROM hatalar WHERE tarih < now() - interval '30 days'`,
+    // Arama ÜSTVERİSİ 90 gün (KVKK ölçülülük + `yorum_goruntuleyen` emsali +
+    // röle oranı ölçümünün istediği "3 ay veri" ile birebir). İçerik zaten
+    // hiç yazılmıyor; burada silinen yalnız "kim, kimi, ne zaman, ne kadar".
+    `DELETE FROM aramalar WHERE baslangic < now() - interval '${ARAMA_SAKLAMA_GUN} days'`,
   ];
   for (const sql of isler) {
     try { await havuz.query(sql); } catch (e) { console.error('buda:', e.message); }
+  }
+  await aramaTrafigiKontrol();
+}
+
+/**
+ * Arama trafiği eşik uyarısı (sözleşme §6.3).
+ *
+ * Mevcut taban ~26 GB/ay. Varsayılan eşik 200 GB — tabanın ~8 katı, yani
+ * "özellik tuttu" ile "bir şeyler ters gitti" arasındaki çizgiyi geçer, ama
+ * 1.000 görüntülü arama/gün senaryosundaki 675 GB'ın çok altında kalarak
+ * FATURA OLUŞMADAN ÖNCE uyarır.
+ *
+ * *** OTOMATİK KAPATMA YOK — BİLİNÇLİ. *** `role_bayt` istemci beyanıdır ve
+ * GÜVENİLMEZ; bir ölçüm hatasının tüm kullanıcılara arama kesintisi yaşatması
+ * kabul edilemez. Uyarı insana gider, kararı insan verir; kaldıraç kill
+ * switch'tir (`ayarlar.arama_acik` / `ARAMA_GORUNTULU=kapali`).
+ *
+ * `/proc/net/dev` OKUNMAZ: Node `dizijpg-api` konteynerinin içinde çalışıyor,
+ * oradan okunan `eth0` (veth çifti) host'un `ens18`'i DEĞİLDİR. Yanlış sayı,
+ * doğru sanılır. Ayı kapatırken host üzerinde elle çapraz kontrol yapılır.
+ */
+async function aramaTrafigiKontrol() {
+  const esikGb = Number.parseInt(process.env.ARAMA_TRAFIK_ESIK_GB ?? '200', 10);
+  if (!Number.isInteger(esikGb) || esikGb <= 0) return;
+  try {
+    const { rows } = await havuz.query(
+      `SELECT COALESCE(sum(role_bayt),0)::bigint AS bayt
+       FROM aramalar
+       WHERE durum='cevaplandi' AND baslangic >= date_trunc('month', now())`);
+    const gb = Number(rows[0]?.bayt || 0) / 1024 ** 3;
+    if (gb < esikGb) return;
+    const ay = new Date().toISOString().slice(0, 7);
+    console.error(`ARAMA TRAFİK UYARISI: ${ay} ayında röle trafiği `
+      + `${gb.toFixed(1)} GB (eşik ${esikGb} GB)`);
+    await havuz.query(
+      `INSERT INTO ayarlar (anahtar, deger) VALUES ('arama_trafik_uyari', $1)
+       ON CONFLICT (anahtar) DO UPDATE SET deger=$1`,
+      [`${ay}:${gb.toFixed(1)}`],
+    );
+  } catch (e) {
+    // Tablo henüz yoksa (migrasyon uygulanmadıysa) sessizce geç: budama işi
+    // bu yüzden kırılmamalı.
+    if (!/does not exist/i.test(e.message)) console.error('arama trafik:', e.message);
   }
 }
 setInterval(tablolariBuda, 24 * 60 * 60 * 1000);
@@ -5176,13 +5315,9 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
     return res.status(400).json({ hata: 'Kendine mesaj gönderemezsin' });
   }
   // Engelleme: taraflardan biri diğerini engellediyse mesaj gitmez.
-  const engel = await havuz.query(
-    `SELECT 1 FROM engellemeler
-     WHERE (engelleyen_id=$1 AND engellenen_id=$2)
-        OR (engelleyen_id=$2 AND engellenen_id=$1) LIMIT 1`,
-    [req.kullanici.id, aliciId],
-  );
-  if (engel.rows.length) {
+  // (Satır içi kopya `engelliMi()` yardımcısına çıkarıldı — aynı kontrol
+  // `/arama/baslat` ve `/arama/yanit`ta da kullanılıyor.)
+  if (await engelliMi(req.kullanici.id, aliciId)) {
     return res.status(403).json({ hata: 'Bu kullanıcıyla mesajlaşamazsın' });
   }
   // Alıntılanan mesaj bu iki kişiye ait olmalı (başka sohbetten alıntı olmaz)
@@ -6293,6 +6428,294 @@ app.get('/engellenenler', girisZorunlu, sarici(async (req, res) => {
     [req.kullanici.id],
   );
   res.json({ kullanicilar: rows });
+}));
+
+// ===========================================================================
+// SESLİ / GÖRÜNTÜLÜ ARAMA
+// ===========================================================================
+// Sözleşme: `backend/ARAMA-API-SOZLESMESI.md` · Karar: `ARAMA-PLANI.md`
+//
+// *** İÇERİK KAYDI YOK. *** SDP ve ICE adayları YALNIZ `aramaDeposu`nun
+// belleğinde yaşar ve arama uçlaştığı anda silinir. `aramalar` tablosuna
+// giden tek nesne `ustveri()`nin döndürdüğüdür: kim, kimi, ne zaman, ne kadar.
+// Medya DTLS-SRTP ile uçtan uca şifreli; sunucu kaydetmek istese bile çözemez.
+//
+// Sinyalleşme YOKLAMA + FCM ile (WebSocket YOK) ve trickle ICE KULLANILMIYOR:
+// istemci `iceGatheringState==='complete'` olmasını bekler, tüm adayları tek
+// SDP paketinde yollar. Alışveriş tek gidiş-gelişe iner; bağlantı kurulunca
+// yoklama TAMAMEN DURUR (medya P2P akıyor, sunucunun haberi olmasına gerek yok).
+const aramaDeposu = new AramaDeposu();
+const sessizDepo = new SessizDepo();
+/** TURN sırrı .env'den. YOKSA ÇÖKME YOK: yalnız STUN dönülür, aramaların
+ *  ~%80'i (P2P bağlanabilenler) çalışmaya devam eder. Bu, `MESAJ_ANAHTARI`nın
+ *  "anahtarsız açılış REDDEDİLİR" davranışından KASTEN farklıdır: orada anahtar
+ *  kaybı VERİ KAYBIDIR, burada yalnız bir özelliğin bozulmasıdır. */
+const TURN_SIR = process.env.TURN_SIR || '';
+const TURN_ALAN = process.env.TURN_ALAN || 'turn.dizijpg.com';
+if (!TURN_SIR) {
+  console.warn('UYARI: TURN_SIR tanımsız — arama yalnız STUN ile çalışacak, '
+    + 'röleye ihtiyaç duyan aramalar bağlanamaz.');
+}
+
+/** Kill switch: `ayarlar` tablosu + ortam değişkeni (ortam EZER). */
+async function aramaBayraklari() {
+  return ozellikBayraklari(await ayarlariGetir(), process.env);
+}
+
+/** Uçlaşan aramayı `aramalar` tablosuna yazar, kaçırılan arama bildirimini
+ *  gönderir ve çift bazlı sessizleştirme sayacını günceller. */
+async function aramaUclandi(satir) {
+  try {
+    await havuz.query(
+      `INSERT INTO aramalar (arayan_id, aranan_id, tur, durum, baslangic, bitis,
+                             saniye, role_dustu, role_bayt, sonlandiran_id)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [satir.arayan_id, satir.aranan_id, satir.tur, satir.durum, satir.baslangic,
+        satir.bitis, satir.saniye, satir.role_dustu, satir.role_bayt,
+        satir.sonlandiran_id],
+    );
+  } catch (e) {
+    console.error('arama üstveri:', e.message);
+  }
+  if (CEVAPSIZ_DURUMLAR.includes(satir.durum)) {
+    sessizDepo.cevapsizKaydet(satir.arayan_id, satir.aranan_id);
+  } else if (satir.durum === 'cevaplandi') {
+    // Konuşma gerçekleşti: soğuma penceresi SIFIRLANIR (iki arkadaşın arka
+    // arkaya araması cezalandırılmamalı).
+    sessizDepo.sifirla(satir.arayan_id, satir.aranan_id);
+  }
+  if (KACIRILAN_DURUMLAR.includes(satir.durum)) {
+    bildirimEkle(satir.aranan_id, 'kacirilan_arama', satir.arayan_id);
+  }
+}
+
+// 45 saniyelik ÇALMA SINIRININ SUNUCU TARAFINDA ZORLANMASI. Yoksa iki taraf da
+// uygulamayı kapatınca "sonsuza kadar çalıyor" hayalet kayıtlar kalır ve o
+// kullanıcılar bir daha arama yapamaz (`ZATEN_ARAMADA` kilidi).
+setInterval(() => {
+  for (const { satir } of aramaDeposu.supur()) aramaUclandi(satir);
+}, 10_000).unref?.();
+
+// ---------- GET /arama/buz-sunuculari ----------
+app.get('/arama/buz-sunuculari', girisZorunlu, buzLimiti, sarici(async (req, res) => {
+  const { aramaAcik, goruntuluAcik } = await aramaBayraklari();
+  const { buz_sunuculari, gecerlilik_sn } = buzSunuculari({
+    sir: TURN_SIR, kullaniciId: req.kullanici.id, alan: TURN_ALAN,
+  });
+  res.json({
+    buz_sunuculari,
+    gecerlilik_sn,
+    arama_acik: aramaAcik,
+    goruntulu_acik: goruntuluAcik,
+    calma_saniye: Math.round(CALMA_MS / 1000),
+  });
+}));
+
+// ---------- POST /arama/baslat ----------
+// Yasak kapısı: POST ve YASAK_MUAF'ta DEĞİL → yasaklı kullanıcı 403 alır.
+// Bu DOĞRU davranıştır: arama, mesajdan daha müdahaleci bir iletişimdir;
+// mesaj yazamayan biri telefon çaldıramamalı.
+app.post('/arama/baslat', girisZorunlu, gorusmeLimiti, sarici(async (req, res) => {
+  const { aramaAcik, goruntuluAcik } = await aramaBayraklari();
+  const benId = req.kullanici.id;
+  const { kullanici_adi, tur, sdp } = req.body || {};
+
+  // Yetki zinciri — SIRA BAĞLAYICIDIR (sözleşme §5). Kontroller `arama.js`te,
+  // sorgular burada: modül `pg` bilmez, sıra tek yerde ve test edilebilir.
+  const karar = await baslatYetki(
+    { aramaAcik, goruntuluAcik, benId, kullaniciAdi: kullanici_adi, tur, sdp },
+    {
+      hedefBul: async (ad) => {
+        const { rows } = await havuz.query(
+          `SELECT id, yasakli, yasak_bitis FROM kullanicilar
+           WHERE kullanici_adi=$1 AND misafir=false`, [ad]);
+        if (!rows.length) return null;
+        // Süresi dolmuş ban "yasaklı" saymaz (yasakAktif okuma anında karar verir).
+        return { id: rows[0].id, yasakli: yasakAktif(rows[0]) };
+      },
+      engelliMi: (a, b) => engelliMi(a, b),
+      karsilikliMi: (a, b) => karsilikliTakipMi(a, b),
+      sessizKalanSn: (a, b) => sessizDepo.kalanSn(a, b),
+      mesgulMu: (id) => aramaDeposu.mesgulMu(id),
+    },
+  );
+  if (!karar.tamam) {
+    const { http, ...govde } = karar;
+    delete govde.tamam;
+    return res.status(http).json(govde);
+  }
+
+  // Aranan zaten aramada: HATA DEĞİL, aramanın normal bir sonucu. Üstveriye
+  // `mesgul` yazılır ve kaçırılan arama bildirimi düşer.
+  if (karar.mesgul) {
+    await aramaUclandi(ustveri(
+      { arayanId: benId, arananId: karar.hedef.id, tur, baslangic: Date.now() },
+      'mesgul', { bitis: Date.now() },
+    ));
+    return res.json({ arama_id: null, durum: 'mesgul', sona_erme: null, tur });
+  }
+
+  const kayit = aramaDeposu.olustur(
+    { arayanId: benId, arananId: karar.hedef.id, tur, teklifSdp: sdp });
+  const sonaErme = Math.floor(kayit.sonaErme / 1000);
+  // Arka planda tek yol FCM'dir; ön plandaki istemci ayrıca `/arama/gelen`
+  // yokluyor (yedek, alternatif değil).
+  pushBildirim(karar.hedef.id, 'arama', benId, {
+    arama_id: kayit.id, arama_turu: tur, sona_erme: sonaErme,
+  });
+  res.json({ arama_id: kayit.id, durum: 'caliyor', sona_erme: sonaErme, tur });
+}));
+
+// ---------- GET /arama/durum/:arama_id ----------
+// GET olması BİLİNÇLİDİR: `yasak.js` yazma kapısı GET'i hiç görmez, dolayısıyla
+// aramanın ortasında ban yiyen kullanıcı da durumu okuyabilir.
+app.get('/arama/durum/:aramaId', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const kayit = aramaDeposu.getir(String(req.params.aramaId || ''));
+  // Taraf değilse 404 — 403 "böyle bir arama VAR" bilgisini sızdırırdı.
+  if (!kayit || !aramaDeposu.tarafMi(kayit, req.kullanici.id)) {
+    return res.status(404).json({ hata: 'Arama bulunamadı', kod: ARAMA_KOD.ARAMA_YOK });
+  }
+  res.json({
+    arama_id: kayit.id,
+    durum: kayit.durum,
+    tur: kayit.tur,
+    // BİR KEZ dolu: okuyan aldıktan sonra bellekten silinir. İstemci bunu
+    // idempotent ele almalı (SDP'yi zaten uyguladıysa yoksay).
+    sdp: aramaDeposu.cevapAl(kayit, req.kullanici.id),
+    adaylar: aramaDeposu.adaylariAl(kayit, req.kullanici.id),
+    sona_erme: Math.floor(kayit.sonaErme / 1000),
+  });
+}));
+
+// ---------- GET /arama/gelen ----------
+// Ön plandayken gelen aramayı yakalayan 4 sn'lik yoklama. FCM'in YEDEĞİ,
+// alternatifi değil. `son_gorulme` zaten `girisZorunlu` içinde yan etki olarak
+// güncelleniyor; ayrı bir kalp atışı turu harcanmıyor.
+app.get('/arama/gelen', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const kayit = aramaDeposu.gelenBul(req.kullanici.id);
+  if (!kayit) return res.json({ arama: null });
+  const { rows } = await havuz.query(
+    'SELECT kullanici_adi, avatar FROM kullanicilar WHERE id=$1', [kayit.arayanId]);
+  res.json({
+    arama: {
+      arama_id: kayit.id,
+      tur: kayit.tur,
+      arayan: {
+        kullanici_adi: rows[0]?.kullanici_adi || '',
+        avatar: rows[0]?.avatar || null,
+      },
+      sdp: kayit.teklifSdp,
+      sona_erme: Math.floor(kayit.sonaErme / 1000),
+    },
+  });
+}));
+
+// ---------- POST /arama/yanit ----------
+// Yasak kapısı: POST, muaf DEĞİL → yasaklı kullanıcı cevap VEREMEZ.
+// Ban süresince iletişim kapalıdır; bu bilinçlidir.
+app.post('/arama/yanit', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const { aramaAcik, goruntuluAcik } = await aramaBayraklari();
+  const benId = req.kullanici.id;
+  const { arama_id, kabul, sdp } = req.body || {};
+  const kayit = aramaDeposu.getir(String(arama_id || ''));
+
+  const karar = await yanitYetki(
+    { aramaAcik, goruntuluAcik, benId, kayit, kabul: kabul === true, sdp },
+    { engelliMi: (a, b) => engelliMi(a, b), karsilikliMi: (a, b) => karsilikliTakipMi(a, b) },
+  );
+  if (!karar.tamam) {
+    const { http, ...govde } = karar;
+    delete govde.tamam;
+    return res.status(http).json(govde);
+  }
+
+  if (kabul !== true) {
+    // `sdp` YOK SAYILIR; kayıt uçlaşır.
+    await aramaUclandi(aramaDeposu.uclastir(kayit, 'reddedildi', { sonlandiranId: benId }));
+    return res.json({ durum: 'reddedildi' });
+  }
+  aramaDeposu.kabulEt(kayit, sdp);
+  res.json({ durum: 'baglaniyor' });
+}));
+
+// ---------- POST /arama/aday (ICE yeniden başlatma) ----------
+// Normal akışta KULLANILMAZ (trickle yok). Yalnız ağ değişince (Wi-Fi →
+// hücresel) taraflardan biri yeni aday üretirse devreye girer.
+app.post('/arama/aday', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const { aramaAcik } = await aramaBayraklari();
+  if (!aramaAcik) {
+    return res.status(503).json({ hata: 'Arama şu anda kapalı', kod: ARAMA_KOD.ARAMA_KAPALI });
+  }
+  const kayit = aramaDeposu.getir(String(req.body?.arama_id || ''));
+  if (!kayit || !aramaDeposu.tarafMi(kayit, req.kullanici.id)) {
+    return res.status(404).json({ hata: 'Arama bulunamadı', kod: ARAMA_KOD.ARAMA_YOK });
+  }
+  if (kayit.durum !== 'baglaniyor' && kayit.durum !== 'cevaplandi') {
+    return res.status(409).json({ hata: 'Arama uygun durumda değil', kod: ARAMA_KOD.DURUM_UYGUN_DEGIL });
+  }
+  const t = adaylariTemizle(req.body?.adaylar);
+  if (!t.tamam) {
+    return res.status(400).json({ hata: `Geçersiz adaylar: ${t.hata}`, kod: ARAMA_KOD.GECERSIZ_ISTEK });
+  }
+  aramaDeposu.adayEkle(kayit, req.kullanici.id, t.adaylar);
+  res.json({ tamam: true });
+}));
+
+// ---------- POST /arama/bitir ----------
+// *** `YASAK_MUAF`'A EKLENDİ (yasak.js) — BU SATIR ATLANAMAZ. ***
+// Aramanın ortasında ban yiyen kullanıcı buradan 403 alırsa aramayı TEMİZ
+// KAPATAMAZ: karşı taraf hayalet bir aramada kalır, kaynak sızar, üstveri
+// satırı `bitis`siz kalır. `/mesajlar/iletildi` ve `/bildirimler/okundu` zaten
+// aynı gerekçeyle muaf — "yeni içerik ÜRETMEZ". Aramayı kapatmak da üretmez,
+// TÜKETİMİ BİTİRİR.
+//
+// Kill switch de burada zorlanmaz: özellik kapatıldığında devam eden aramalar
+// da kapatılabilmeli.
+app.post('/arama/bitir', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const benId = req.kullanici.id;
+  const kayit = aramaDeposu.getir(String(req.body?.arama_id || ''));
+  // İDEMPOTENT: zaten uçlaşmış aramada da 200 döner (istemci ağ hatasında
+  // tekrar gönderebilsin). Sunucu yeniden başladıysa da buraya düşer — istemci
+  // bunu HATA OLARAK GÖSTERMEZ, sessizce arama ekranını kapatır.
+  if (!kayit) return res.json({ durum: null, saniye: null });
+  if (!aramaDeposu.tarafMi(kayit, benId)) {
+    return res.status(403).json({ hata: 'Bu aramanın tarafı değilsin', kod: ARAMA_KOD.TARAF_DEGIL });
+  }
+  const sebep = sebepGecerliMi(req.body?.sebep) ? req.body.sebep : 'kullanici';
+  const sonuc = aramaDeposu.bitir(kayit, benId, sebep, olcumTemizle(req.body?.olcum));
+  await aramaUclandi(sonuc.satir);
+  res.json({ durum: sonuc.durum, saniye: sonuc.saniye });
+}));
+
+// ---------- GET /arama/gecmis ----------
+// KAYIT YOK, SÜRE VE DURUM VAR. `yon`u sunucu hesaplar; istemci `arayan_id`
+// görmez.
+app.get('/arama/gecmis', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, res) => {
+  const benId = req.kullanici.id;
+  const once = parseInt(req.query.once, 10) || null;
+  const adet = Math.min(50, Math.max(5, parseInt(req.query.adet, 10) || 30));
+  const { rows } = await havuz.query(
+    `SELECT a.id, a.arayan_id, a.tur, a.durum, a.saniye, a.baslangic,
+            k.kullanici_adi, k.avatar
+     FROM aramalar a
+     JOIN kullanicilar k
+       ON k.id = CASE WHEN a.arayan_id=$1 THEN a.aranan_id ELSE a.arayan_id END
+     WHERE (a.arayan_id=$1 OR a.aranan_id=$1)
+       AND ($2::int IS NULL OR a.id < $2)
+     ORDER BY a.id DESC LIMIT $3`,
+    [benId, once, adet],
+  );
+  res.json({
+    aramalar: rows.map((r) => ({
+      id: r.id,
+      yon: gecmisYon(r, benId),
+      partner: { kullanici_adi: r.kullanici_adi, avatar: r.avatar },
+      tur: r.tur,
+      durum: r.durum,
+      saniye: r.saniye,
+      baslangic: r.baslangic,
+    })),
+  });
 }));
 
 // ---------- admin panel (IP kısıtlı) ----------

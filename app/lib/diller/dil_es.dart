@@ -630,4 +630,64 @@ const Map<String, String> cevirilerEs = {
   'Bu bölüme puan ver': 'Puntúa este episodio',
   '{} kişi puanladı': '{} personas puntuaron',
   'Bölüm izlendi olarak işaretlendi': 'Episodio marcado como visto',
+  'Sesli ara': 'Llamada de voz',
+  'Görüntülü ara': 'Videollamada',
+  'Çalıyor...': 'Llamando...',
+  'Bağlanıyor...': 'Conectando...',
+  'Cevapla': 'Responder',
+  'Reddet': 'Rechazar',
+  'Sessize al': 'Silenciar',
+  'Hoparlör': 'Altavoz',
+  'Kamerayı kapat': 'Apagar cámara',
+  'Kamerayı çevir': 'Cambiar cámara',
+  'Cevap yok': 'Sin respuesta',
+  'Arama reddedildi': 'Llamada rechazada',
+  'Meşgul': 'Ocupado',
+  'Bağlanılamadı': 'No se pudo conectar',
+  'Arama iptal edildi': 'Llamada cancelada',
+  'Arama geçmişi': 'Historial de llamadas',
+  'Gelen arama': 'Llamada entrante',
+  'Giden arama': 'Llamada saliente',
+  'Cevapsız arama': 'Llamada perdida',
+  'Arama şu anda kullanılamıyor': 'Las llamadas no están disponibles ahora',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Las videollamadas están desactivadas, puedes hacer una llamada de voz',
+  'Bu kullanıcıyı arayamazsın': 'No puedes llamar a este usuario',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Debéis seguiros mutuamente para llamar',
+  'Bu kullanıcı şu anda aranamıyor': 'No se puede llamar a este usuario ahora',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Demasiadas llamadas perdidas. Inténtalo de nuevo en {}',
+  'Zaten bir aramadasın': 'Ya estás en una llamada',
+  'Arama için mikrofon izni gerekiyor':
+      'Se necesita permiso de micrófono para llamar',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Se necesita permiso de cámara y micrófono para videollamadas',
+  'Arama başlatılamadı': 'No se pudo iniciar la llamada',
+  'Kullanıcı bulunamadı': 'Usuario no encontrado',
+  'Kendini arayamazsın': 'No puedes llamarte a ti mismo',
+  'Arama artık geçerli değil': 'Esta llamada ya no es válida',
+  'Bu aramanın tarafı değilsin': 'No formas parte de esta llamada',
+  'Arama bulunamadı': 'Llamada no encontrada',
+  'Çok fazla istek, biraz bekle': 'Demasiadas solicitudes, espera un momento',
+  'Bağlantı koptu': 'Se perdió la conexión',
+  'Arama süre sınırına ulaştı': 'La llamada alcanzó su límite de tiempo',
+  'Arama en fazla 4 saat sürebilir':
+      'Una llamada puede durar como máximo 4 horas',
+  'Arama sona erdi': 'La llamada ha terminado',
+  'Sesli arama': 'Llamada de voz',
+  'Görüntülü arama': 'Videollamada',
+  'Gelen aramalar': 'Llamadas entrantes',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notificaciones de llamadas de voz y vídeo',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Llamadas de voz y vídeo',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'El contenido de las llamadas nunca se graba. El audio y el vídeo viajan cifrados de extremo a extremo (DTLS-SRTP) entre los dispositivos; nuestros servidores no pueden descifrar, escuchar ni almacenar ese tráfico.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Solo se guardan los metadatos de la llamada: con quién, en qué dirección, cuándo y cuánto duró. Estos registros se eliminan automáticamente a los 90 días.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Si no se puede establecer una conexión directa, el audio y el vídeo pasan cifrados por un servidor de retransmisión (TURN). Ese servidor tampoco puede descifrar ni grabar el contenido.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'El micrófono solo se usa durante una llamada de voz o vídeo, y la cámara solo durante una videollamada. Ambos se apagan al terminar la llamada.',
 };

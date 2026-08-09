@@ -1,9 +1,14 @@
 # dizi.jpg — Sesli/Görüntülü Arama API Sözleşmesi
 
-**Sürüm:** 1 (taslak) · **Tarih:** 8 Ağu 2026
+**Sürüm:** 2 · **Tarih:** 9 Ağu 2026 (sürüm 1: 8 Ağu, taslak)
 **Kaynak karar belgesi:** `ARAMA-PLANI.md`
-**Durum:** `server.js`'e **HİÇBİR KOD YAZILMADI**. Bu belge, Flutter ve backend
-ajanlarının aynı şeyi yazması için sözleşmedir.
+**Durum:** ***BACKEND YAZILDI VE TESTLİ.*** Sekiz ucun hepsi `server.js`te,
+mantık `backend/arama.js` (saf modül) içinde, 77 test `backend/test/arama.test.js`
+içinde. **Canlıya UYGULANMADI** — migrasyon `-08e` hâlâ bekliyor (§13).
+Flutter tarafı **yazılmadı**; istemcinin ne yapması gerektiği §14'te.
+
+> **Sürüm 1 ile sürüm 2 arasındaki farklar §13'te tek tek listelendi.** Sözleşme
+> kodu değil, **kod sözleşmeyi** izledi; sapmalar yazılmadan önce buraya işlendi.
 
 > **Bu belgeyi okuyan Flutter ajanına:** aşağıdaki gövde/yanıt alan adları
 > bağlayıcıdır. Değiştirmen gerekiyorsa önce bu belgeyi güncelle, sonra kodu.
@@ -931,3 +936,225 @@ bildirimi gönderilir, bellekten silinir). Bu, 45 saniyelik çalma sınırının
 | 6 | `getStats()`in `bytesSent/bytesReceived`inin `flutter_webrtc` 1.6.0'daki tam alan adları | Paket API'si okunmalı |
 | 7 | Play Data Safety formunun tam alan adları | Console'dan |
 | 8 | 200 GB eşiğinin doğru büyüklük olması | İlk ayın gerçek verisi |
+
+---
+
+## 13. Uygulama turu — sözleşmeden SAPMALAR ve netleştirmeler (9 Ağu 2026)
+
+Backend yazıldı. Aşağıdaki on bir kalem sürüm 1'de ya **belirsizdi** ya da
+**uygulanamazdı**; her biri kod yazılmadan önce burada karara bağlandı.
+**Flutter ajanı bu bölümü sürüm 1'in üstüne okumalıdır.**
+
+### 13.1 `baglaniyor → cevaplandi` geçişini sunucu ASLA göremez — `sebep` alanı karar veriyor
+
+§2'deki durum makinesi bu geçişi "ICE bağlandı" diye yazmış, ama **bunu
+sunucuya bildiren bir uç YOK**: §1'e göre bağlantı kurulunca yoklama *tamamen
+durur*. Yani sunucunun medyanın aktığını öğrenmesinin hiçbir yolu yoktur.
+
+**Karar:** tek dürüst kaynak `POST /arama/bitir`in `sebep` alanıdır.
+
+| `bitir` anında durum | `sebep` | Yazılan uç durum | `saniye` |
+|---|---|---|---|
+| `caliyor`, çağıran = arayan | (herhangi) | `iptal` | — |
+| `caliyor`, çağıran = aranan | (herhangi) | `reddedildi` | — |
+| `baglaniyor` | `ice_basarisiz` | `basarisiz` | — |
+| `baglaniyor` | diğer hepsi | `cevaplandi` | kabul anından itibaren |
+
+> **İSTEMCİ İÇİN BAĞLAYICI:** ICE gerçekten kurulamadıysa `sebep:'ice_basarisiz'`
+> göndermek **zorunludur**. Göndermezsen bağlanamamış bir arama veritabanına
+> `cevaplandi` olarak yazılır ve röle oranı ölçümü (§6.1) sessizce bozulur.
+
+### 13.2 Kurulmuş aramaya 4 saatlik SERT ÜST SINIR eklendi
+
+Sözleşmede yalnız 45 saniyelik çalma TTL'i vardı. Ama `POST /arama/bitir` bir
+**istemci eylemidir**: istemci çökerse, pil biterse ya da ağ kalıcı koparsa o
+istek **hiç gelmez**. Üst sınır olmasaydı kayıt `aktifArama` haritasında
+sonsuza kadar kalır ve o iki kullanıcı **bir daha asla arama yapamaz/alamazdı**
+(`ZATEN_ARAMADA` kilidi). Süpürme 4 saati aşan kurulmuş aramaları
+`cevaplandi` (süre = 4 saat) olarak kapatır. `AZAMI_ARAMA_MS`, `arama.js`.
+
+### 13.3 `mesgul` yanıtının tam gövdesi
+
+§5.4 yalnız "200 + `durum:'mesgul'`" diyordu. Bellekte kayıt oluşturulmadığı
+için kimlik de yoktur:
+
+```json
+{ "arama_id": null, "durum": "mesgul", "sona_erme": null, "tur": "ses" }
+```
+
+İstemci `durum === 'mesgul'` görünce **yoklamaya hiç başlamaz** (`arama_id`
+null); doğrudan "Meşgul" gösterip ekranı kapatır.
+
+### 13.4 `POST /arama/yanit` `kabul:false` yanıtı
+
+§4.5 yalnız kabul halini yazmıştı. Ret hali: **200** `{ "durum": "reddedildi" }`.
+
+### 13.5 `olcum.bayt_*` iki alan, `role_bayt` tek sütun
+
+İstemci `bayt_gonderilen` + `bayt_alinan` yollar; sunucu **toplayıp** tek
+`role_bayt` sütununa yazar (röle iki yönü de taşır, kapasite planlaması toplamı
+ister). Negatif, sayı olmayan ve 50 GB üstü değerler `null`'a düşürülür.
+
+### 13.6 Kill switch hangi uçlarda zorlanıyor
+
+§6.2 "tüm arama uçları 503" diyordu; bu, **devam eden aramayı kapatılamaz**
+hale getirirdi.
+
+| Uç | `arama_acik=0` | Gerekçe |
+|---|---|---|
+| `/arama/baslat`, `/arama/yanit`, `/arama/aday` | **503** | Yeni arama/kurulum |
+| **`/arama/bitir`** | **200** | Kapatma her zaman mümkün olmalı (`YASAK_MUAF` ile aynı mantık) |
+| `/arama/durum`, `/gelen`, `/gecmis`, `/buz-sunuculari` | **200** | Okuma; `buz-sunuculari` bayrağın kendisini taşıyor |
+
+`tur='goruntu'` ayrıca `/arama/yanit`ta da kontrol edilir: arama çalarken
+görüntülü kapatılırsa kabul edilemez.
+
+### 13.7 `ARAMA_KAPALI=kapali` — ikinci kırılacak cam
+
+§6.2 yalnız `ARAMA_GORUNTULU=kapali` tanımlıyordu. Simetri için
+`ARAMA_KAPALI=kapali` de eklendi: veritabanı erişilemezken **tüm** özelliği
+kapatmanın tek yolu. İkisi de veritabanını **ezer**.
+
+### 13.8 Çift bazlı sessizleştirme SIFIRLAMASI çift yönlü
+
+Bir `cevaplandi` yalnız kendi yönünü değil **ters yönü de** sıfırlar: konuşma
+gerçekleşmişse bu karşılıklı bir rıza sinyalidir. Ayrıca ceza **yönlüdür** —
+A→B cezası B'nin A'yı geri aramasını engellemez (kurban susturulmamalı).
+
+### 13.9 `POST /arama/aday` 404'ü
+
+§4.6 yalnız 409'dan bahsediyordu. Arama yoksa ya da çağıran taraf değilse
+**404 `ARAMA_YOK`** (`/arama/durum` ile aynı sızıntı gerekçesi).
+
+### 13.10 `POST /arama/bitir` bilinmeyen kimlikte 200
+
+İdempotent davranışın uç hali: sunucu yeniden başladıysa kayıt yoktur.
+`{ "durum": null, "saniye": null }` + **200**. İstemci bunu **hata olarak
+göstermez**, sessizce arama ekranını kapatır.
+
+### 13.11 `denied-peer-ip=::` — YAPILANDIRMADAN ÇIKARILDI
+
+`backend/turn/turnserver.conf` satır 233'teki bu satır, canlıda **IPv4 dahil
+tüm hedefleri** engellediği tespit edilip kaldırılmıştı; **depo kopyası hâlâ
+taşıyordu** ve bir sonraki dağıtımda arıza geri gelirdi. Bu turda depo
+kopyasından da çıkarıldı, yerine neden geri eklenmemesi gerektiğini anlatan bir
+yorum bloğu kondu. SSRF engellemesi bu satır olmadan da tam çalışıyor (canlıda
+doğrulandı: dış hedefler geçiyor; 127.0.0.1, 172.16/12, 10.x, 192.168.x,
+169.254.169.254 → 403).
+
+---
+
+## 14. Flutter ajanına: istemcinin yapması gerekenler
+
+Backend hazır ve **sözleşmeye harfiyen uyuyor**. Aşağıdakiler istemci tarafında
+kalan işlerdir.
+
+> ### ⬛ DURUM (9 Ağu 2026): §14 UYGULANDI — `app/lib/gorusme/`
+>
+> `flutter_webrtc` 1.6.0 (sürüm kilitli). `flutter build web` ve
+> `flutter build apk` geçti. **Dağıtım YOK, sürüm artırılmadı, commit YOK.**
+>
+> | §14 maddesi | Nerede |
+> |---|---|
+> | 14.1 akış | `gorusme_denetci.dart` (`aramaBaslat`, `kabulEt`, `_yoklamaTuru`, `_bitir`) |
+> | 14.1 md.1 ICE ayarı, yalnız bellek | `arama_servisi.dart` (`SharedPreferences`'a yazılmadığı testle kilitli) |
+> | 14.1 md.7 bağlanınca yoklama DUR | `_halleriDinle` → `_yoklamaDur()`; test: "BAĞLANINCA YOKLAMA TAMAMEN DURUR" |
+> | 14.1 md.8 `sebep` | `bitirSebebi()` **saf fonksiyon**; hem birim hem HTTP-gövdesi testi |
+> | 14.1 md.9 ICE yeniden başlatma | **YAPILMADI** — F2 (gerekçe `gorusme_denetci.dart` sonundaki not) |
+> | 14.2 kodlara göre dallanma | `aramaHatasiCozumle()`; 13 kod + kodsuz 429 test edildi |
+> | 14.3 çeviri | 45 dosya 551 → **600 anahtar** (+49) |
+> | 14.4 `USE_FULL_SCREEN_INTENT` yok | `arama_bildirim.dart`; manifest testle kilitli |
+> | 14.5 UI notları | PiP `Stack` içinde, metin renkleri açık, Material ikon, üç hâl, ölçülmüş kontrast |
+> | 14.6 gizlilik | `gizlilik.dart` + `web/gizlilik.html` + tarih 09.08.2026 |
+>
+> **Sözleşmede olmayan, istemcinin ÇIKARSAMAK ZORUNDA KALDIĞI iki nokta:**
+>
+> 1. **Giden aramada "reddedildi" ile "cevapsız" ayırt edilemiyor.** Uç duruma
+>    gelen kayıt bellekten siliniyor (`uclastir`), `GET /arama/durum` 404
+>    `ARAMA_YOK` dönüyor ve **neden bittiğini taşımıyor**. İstemci ayrımı
+>    zamanlamadan çıkarıyor (`reddedildiMi()`: 404 `sona_erme`den önce geldiyse
+>    ret, sonra geldiyse cevapsız). Sunucu arama çalarken yeniden başlarsa bu
+>    çıkarım yanılır. **Sunucu tarafı düzeltme önerisi (F2):** uçlaşmış kaydın
+>    son durumunu kısa süre (ör. 60 sn) bir "mezarlık" haritasında tutup
+>    `/arama/durum`da `{durum:'reddedildi', ...}` döndürmek.
+> 2. **Karşılıklı takibi tek çağrıda veren uç yok.** İstemci
+>    `GET /profil/:ad` (`takip_ediyorum`) + `GET /takipedilenler/:ad`
+>    (listede kendini arama) birleştiriyor; ikinci liste sunucuda `LIMIT 500`.
+>    Sınıra dayanmış listede istemci "bilinmiyor" sayıp düğmeyi GÖSTERİYOR ve
+>    kararı sunucuya bırakıyor. **Öneri (F2):** `GET /profil/:ad` yanıtına
+>    `karsilikli` alanı (tek `EXISTS` sorgusu, §5.1'deki SQL zaten yazılı).
+
+### 14.1 Akış
+
+1. **Açılışta bir kez** `GET /arama/buz-sunuculari`. Sonucu **yalnız bellekte**
+   tut (`SharedPreferences`'a **YAZMA** — cihaz yedeğine sızmasın).
+   `arama_acik:false` ise arama düğmelerini **hiç gösterme**;
+   `goruntulu_acik:false` ise yalnız görüntülü düğmesini gizle.
+   `gecerlilik_sn < 3600` kaldıysa arama başlatmadan önce **tazele**.
+2. **Arayan:** `RTCPeerConnection` kur → `createOffer` →
+   `iceGatheringState === 'complete'` olmasını **BEKLE** (trickle YOK) →
+   `POST /arama/baslat {kullanici_adi, tur, sdp}`.
+3. `durum:'caliyor'` gelirse **1 sn**lik `GET /arama/durum/:id` yoklamasına
+   başla. `durum:'mesgul'` gelirse yoklama **YOK** (§13.3).
+4. **Aranan:** FCM `data.tur === 'arama'` ile uyanır **ya da** ön plandaki
+   **4 sn**lik `GET /arama/gelen` yoklaması yakalar. Teklif SDP gövdededir.
+5. Kabul: `createAnswer` → ICE toplama **complete** → `POST /arama/yanit
+   {arama_id, kabul:true, sdp}`. Ret: `{arama_id, kabul:false}`.
+6. Arayan yoklamada `sdp` dolu gelince `setRemoteDescription`. **İdempotent
+   ele al**: aynı SDP bir daha gelmez (`null` döner), zaten uygulandıysa yoksay.
+7. **ICE bağlanınca YOKLAMAYI TAMAMEN DURDUR.** Bu bir öneri değil; sunucu
+   boyutlandırması buna göre yapıldı.
+8. Kapatırken `POST /arama/bitir {arama_id, sebep, olcum}`. **`sebep` doğru
+   olmalı** (§13.1). `olcum` `getStats()`ten: `role_dustu` = seçili aday
+   çiftinin türü `relay` mi, `bayt_gonderilen`/`bayt_alinan`.
+9. Ağ değişirse (Wi-Fi ↔ hücresel) ICE yeniden başlat ve yeni adayları
+   `POST /arama/aday` ile yolla (en çok 20, her biri ≤512 B).
+
+### 14.2 Hata kodlarına göre dallan — **Türkçe metne göre DEĞİL**
+
+§8'deki 13 kod + hız limiti 429'u (kodsuz). Her kod için **45 dilde** kendi
+metnini bas. `kod` yoksa HTTP durumuna düş.
+
+### 14.3 Yeni çeviri anahtarları (bu turda EKLENMEDİ — Flutter turunda)
+
+Tahmini **28 anahtar × 45 dil**. Asgari liste:
+
+`arama_sesli`, `arama_goruntulu`, `arama_caliyor`, `arama_baglaniyor`,
+`arama_cevapla`, `arama_reddet`, `arama_kapat`, `arama_sessize_al`,
+`arama_hoparlor`, `arama_kamera_kapat`, `arama_kamera_cevir`,
+`arama_cevap_yok`, `arama_reddedildi`, `arama_mesgul`, `arama_baglanilamadi`,
+`arama_iptal`, `arama_gecmisi`, `arama_gelen`, `arama_giden`, `arama_kacirilan`,
+`arama_kapali`, `arama_goruntulu_kapali`, `arama_engelli`, `arama_takip_yok`,
+`arama_alici_yasakli`, `arama_cok_fazla_cevapsiz`, `arama_zaten_aramada`,
+`arama_mikrofon_izni`, `arama_kamera_izni`.
+
+> **Sunucu tarafı şablonlar (`PUSH_SABLON`, 16 dil) BU TURDA EKLENDİ** —
+> `arama` ve `kacirilan_arama`. Flutter turunda tekrar eklenmeyecek.
+
+### 14.4 Android — `USE_FULL_SCREEN_INTENT` **İSTENMEYECEK**
+
+§7.3'teki yedek plan **varsayılandır ve değişmedi**: `dizijpg_arama` kanalı,
+`Importance.MAX`, `setCategory(CATEGORY_CALL)`, `setOngoing(true)`, özel zil +
+titreşim, **metin etiketli** Cevapla/Reddet eylemleri (≥44×44). Telefon çalar
+ve titrer; yalnız kilit ekranını kaplamaz.
+
+`FOREGROUND_SERVICE_MICROPHONE` / `_CAMERA` yine gerekir ve Play Console her
+ön plan servis türü için **gösterim videosu** ister.
+
+### 14.5 UI notları (proje skill'i)
+
+* `Stack` sınırı dışına taşan `Positioned` **tıklanamaz** — yerel video
+  önizlemesi (PiP) tam bu tuzağa aday.
+* `RichText`/`TextSpan` tema rengini **devralmaz** — süre/isim metinlerinde
+  rengi açıkça ver.
+* Emoji değil **Material ikon**.
+* Üç hal zorunlu: çalıyor → bağlanıyor (spinner) → bağlandı; her hatada
+  SnackBar. **Sessiz başarısızlık yasak** (bugün `sohbet.dart`taki mikrofon
+  izni reddi sessizce `return` ediyor — arama ekranında kabul edilemez).
+* Kilit ekranı: koyu zeminde "Reddet" kontrastı ≥4.5:1 **ölçülmeli**.
+
+### 14.6 Ölçüm ve gizlilik
+
+* Gizlilik metni **F1 ile birlikte** gitmeli (3 yer × 45 dil): arama üstverisi
+  90 gün saklanır, **arama içeriği kaydedilmez** (DTLS-SRTP).
+* `gizlilikGuncelleme` sabiti iki yerde birden güncellenir.

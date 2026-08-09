@@ -5,7 +5,10 @@ import '../ceviri.dart';
 import '../tema.dart';
 
 /// Politika sabitleri: statik sayfa (web/gizlilik.html) ile aynı kalmalı.
-const gizlilikGuncelleme = '27.07.2026';
+/// 09.08.2026: sesli/görüntülü arama bölümü eklendi (üstveri 90 gün, içerik
+/// KAYDEDİLMİYOR). `web/gizlilik.html` içindeki `GUNCELLEME` de aynı tarihe
+/// çekildi — `test/gizlilik_arama_test.dart` ikisinin eşitliğini doğruluyor.
+const gizlilikGuncelleme = '09.08.2026';
 const gizlilikIletisim = 'iletisim@dizijpg.com';
 
 /// Gizlilik politikası — girişsiz de erişilebilir (yonlendirme beyaz listesi).
@@ -82,6 +85,32 @@ class GizlilikEkrani extends StatelessWidget {
               'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '
               'tercihin saklanır. Bildirimleri cihazının ayarlarından '
               'istediğin zaman kapatabilirsin.',
+            ),
+            // SESLİ/GÖRÜNTÜLÜ ARAMA — Play Data Safety ile birebir aynı
+            // beyan: "İçerik kaydedilmiyor, yalnız üstveri 90 gün."
+            // Sözleşme §0 bunun bir politika değil MİMARİ zorunluluk
+            // olduğunu söylüyor: medya DTLS-SRTP ile uçtan uca şifreli,
+            // sunucu kaydetmek istese bile ÇÖZEMEZ.
+            _Baslik('Sesli ve Görüntülü Aramalar'),
+            _Madde(
+              'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar '
+              'arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu '
+              'trafiği çözemez, dinleyemez ve saklayamaz.',
+            ),
+            _Madde(
+              'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne '
+              'zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik '
+              'silinir.',
+            ),
+            _Madde(
+              'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde '
+              'bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da '
+              'içeriği çözemez ve kaydetmez.',
+            ),
+            _Madde(
+              'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera '
+              'ise yalnızca görüntülü arama sırasında kullanılır. Arama '
+              'bitince ikisi de kapatılır.',
             ),
             _Baslik('Verileri Nasıl Kullanırız'),
             _Govde(

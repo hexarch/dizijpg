@@ -630,4 +630,64 @@ const Map<String, String> cevirilerTa = {
   'Bu bölüme puan ver': 'இந்த அத்தியாயத்தை மதிப்பிடுங்கள்',
   '{} kişi puanladı': '{} பேர் மதிப்பிட்டனர்',
   'Bölüm izlendi olarak işaretlendi': 'அத்தியாயம் பார்த்ததாக குறிக்கப்பட்டது',
+  'Sesli ara': 'குரல் அழைப்பு',
+  'Görüntülü ara': 'வீடியோ அழைப்பு',
+  'Çalıyor...': 'ஒலிக்கிறது...',
+  'Bağlanıyor...': 'இணைக்கிறது...',
+  'Cevapla': 'பதிலளி',
+  'Reddet': 'நிராகரி',
+  'Sessize al': 'ஒலியடக்கு',
+  'Hoparlör': 'ஸ்பீக்கர்',
+  'Kamerayı kapat': 'கேமராவை அணை',
+  'Kamerayı çevir': 'கேமராவை மாற்று',
+  'Cevap yok': 'பதில் இல்லை',
+  'Arama reddedildi': 'அழைப்பு நிராகரிக்கப்பட்டது',
+  'Meşgul': 'பிஸி',
+  'Bağlanılamadı': 'இணைக்க முடியவில்லை',
+  'Arama iptal edildi': 'அழைப்பு ரத்து செய்யப்பட்டது',
+  'Arama geçmişi': 'அழைப்பு வரலாறு',
+  'Gelen arama': 'உள்வரும் அழைப்பு',
+  'Giden arama': 'வெளிச்செல்லும் அழைப்பு',
+  'Cevapsız arama': 'தவறிய அழைப்பு',
+  'Arama şu anda kullanılamıyor': 'அழைப்பு தற்போது கிடைக்கவில்லை',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'வீடியோ அழைப்புகள் தற்போது அணைக்கப்பட்டுள்ளன, நீங்கள் குரல் அழைப்பு செய்யலாம்',
+  'Bu kullanıcıyı arayamazsın': 'இந்தப் பயனரை அழைக்க முடியாது',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'அழைக்க இருவரும் ஒருவரையொருவர் பின்தொடர வேண்டும்',
+  'Bu kullanıcı şu anda aranamıyor': 'இந்தப் பயனரை இப்போது அழைக்க முடியாது',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'தவறிய அழைப்புகள் அதிகம். {} கழித்து மீண்டும் முயற்சிக்கவும்',
+  'Zaten bir aramadasın': 'நீங்கள் ஏற்கனவே ஓர் அழைப்பில் உள்ளீர்கள்',
+  'Arama için mikrofon izni gerekiyor': 'அழைக்க மைக்ரோஃபோன் அனுமதி தேவை',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'வீடியோ அழைப்புக்கு கேமரா மற்றும் மைக்ரோஃபோன் அனுமதி தேவை',
+  'Arama başlatılamadı': 'அழைப்பைத் தொடங்க முடியவில்லை',
+  'Kullanıcı bulunamadı': 'பயனர் கிடைக்கவில்லை',
+  'Kendini arayamazsın': 'உங்களை நீங்களே அழைக்க முடியாது',
+  'Arama artık geçerli değil': 'இந்த அழைப்பு இனி செல்லுபடியாகாது',
+  'Bu aramanın tarafı değilsin': 'நீங்கள் இந்த அழைப்பின் பங்கேற்பாளர் அல்ல',
+  'Arama bulunamadı': 'அழைப்பு கிடைக்கவில்லை',
+  'Çok fazla istek, biraz bekle':
+      'கோரிக்கைகள் மிக அதிகம், சிறிது காத்திருங்கள்',
+  'Bağlantı koptu': 'இணைப்பு துண்டிக்கப்பட்டது',
+  'Arama süre sınırına ulaştı': 'அழைப்பு நேர வரம்பை எட்டியது',
+  'Arama en fazla 4 saat sürebilir':
+      'ஓர் அழைப்பு அதிகபட்சம் 4 மணி நேரம் நீடிக்கும்',
+  'Arama sona erdi': 'அழைப்பு முடிந்தது',
+  'Sesli arama': 'குரல் அழைப்பு',
+  'Görüntülü arama': 'வீடியோ அழைப்பு',
+  'Gelen aramalar': 'உள்வரும் அழைப்புகள்',
+  'Sesli ve görüntülü arama bildirimleri':
+      'குரல் மற்றும் வீடியோ அழைப்பு அறிவிப்புகள்',
+  '{} sa': '{} ம.நே',
+  'Sesli ve Görüntülü Aramalar': 'குரல் மற்றும் வீடியோ அழைப்புகள்',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'அழைப்பின் உள்ளடக்கம் ஒருபோதும் பதிவு செய்யப்படுவதில்லை. ஒலியும் காணொலியும் சாதனங்களுக்கு இடையே முனை-முதல்-முனை மறையாக்கத்துடன் (DTLS-SRTP) பாய்கின்றன; எங்கள் சேவையகங்களால் இதை மறைநீக்கவோ, கேட்கவோ, சேமிக்கவோ முடியாது.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'அழைப்பின் மேல்தரவு மட்டுமே வைக்கப்படுகிறது: யாருடன், எந்தத் திசையில், எப்போது, எவ்வளவு நேரம். இந்தப் பதிவுகள் 90 நாட்களுக்குப் பிறகு தானாக நீக்கப்படும்.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'நேரடி இணைப்பு சாத்தியமில்லை எனில், ஒலியும் காணொலியும் மறையாக்கப்பட்ட நிலையில் ஒரு பரிமாற்றச் சேவையகம் (TURN) வழியாகச் செல்கின்றன. அந்தச் சேவையகத்தாலும் உள்ளடக்கத்தை மறைநீக்கவோ பதிவு செய்யவோ முடியாது.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'மைக்ரோஃபோன் குரல் அல்லது வீடியோ அழைப்பின்போது மட்டும், கேமரா வீடியோ அழைப்பின்போது மட்டும் பயன்படுத்தப்படும். அழைப்பு முடிந்ததும் இரண்டும் அணைக்கப்படும்.',
 };

@@ -2,6 +2,44 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- GÖRÜNTÜLÜ ARAMA (9 Ağu 2026).
+         CAMERA, Play'in "Kısıtlı İzinler" listesinde DEĞİLDİR (o liste
+         SMS/Arama Kaydı/Erişilebilirlik/Tüm Dosyalar/Konum ve geniş medya
+         izinleridir) — ayrı bir beyan formu gerekmiyor. Yine de belirgin
+         açıklama + gizlilik politikası ŞART: kamera YALNIZ kullanıcı
+         görüntülü arama başlattığında ya da kabul ettiğinde açılır
+         (lib/gorusme/gorusme_surucu.dart: sesli aramada getUserMedia'ya
+         'video': false gider, izin HİÇ istenmez).
+
+         *** USE_FULL_SCREEN_INTENT BİLEREK YOK ***
+         Android 14+ hedefleyen uygulamalarda bu izin yalnız arama/alarm
+         uygulamalarına varsayılan veriliyor; diğerleri Play Console beyanı
+         doldurmak zorunda ve ölçütü karşılamayanların yayını engelleniyor.
+         dizi.jpg'nin temel işlevi dizi takibi: AAB 69 tam bu mantıkla
+         reddedildi, ardından bir sürüm daha izin yüzünden reddedildi.
+         Yerine gelen plan: Importance.MAX kanal + CATEGORY_CALL +
+         setOngoing (lib/gorusme/arama_bildirim.dart). Telefon çalar ve
+         titrer; yalnız kilit ekranını kaplamaz.
+         BU İZİN GERİ EKLENMEYECEK — test/arama_bildirim_test.dart bunu
+         manifest üzerinden doğruluyor.
+
+         Ön plan servisi (FOREGROUND_SERVICE_MICROPHONE / _CAMERA) BU TURDA
+         EKLENMEDİ: her ön plan servis türü Play Console'da ayrı bir
+         "gösterim videosu" beyanı istiyor. Bugünkü davranış — uygulama arka
+         plana alınınca arama düşebilir — eksik bir özelliktir, sessiz bir
+         arıza değil; F2'de beyanla birlikte gelir. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false"/>
+    <!-- WebRTC ses yönlendirmesi (hoparlör/ahize) ve ağ değişimi izleme.
+         İkisi de "normal" izin: kullanıcıya sorulmaz, Play beyanı istemez.
+         Bluetooth izinleri BİLEREK YOK: Bluetooth kulaklığa yönlendirme
+         (SCO) Android 12+ta BLUETOOTH_CONNECT çalışma zamanı izni ister ve
+         bu turda o özellik yok — istemediğimiz bir izni manifestte
+         taşımak, mağaza incelemesinde açıklamak zorunda kalacağımız boş bir
+         yüzeydir. -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- MEDYA İZNİ YOK, BİLEREK (7 Ağu 2026).
          Dört medya/depolama izni buradan KALDIRILDI: Play Console AAB 69'u
          "Fotoğraf ve video izinlerine erişmek isteyen tüm geliştiricilerin,

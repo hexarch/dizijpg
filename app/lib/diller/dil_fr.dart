@@ -637,4 +637,65 @@ const Map<String, String> cevirilerFr = {
   'Bu bölüme puan ver': 'Notez cet épisode',
   '{} kişi puanladı': '{} personnes ont noté',
   'Bölüm izlendi olarak işaretlendi': 'Épisode marqué comme vu',
+  'Sesli ara': 'Appel audio',
+  'Görüntülü ara': 'Appel vidéo',
+  'Çalıyor...': 'Sonnerie...',
+  'Bağlanıyor...': 'Connexion...',
+  'Cevapla': 'Répondre',
+  'Reddet': 'Refuser',
+  'Sessize al': 'Couper le micro',
+  'Hoparlör': 'Haut-parleur',
+  'Kamerayı kapat': 'Couper la caméra',
+  'Kamerayı çevir': 'Changer de caméra',
+  'Cevap yok': 'Pas de réponse',
+  'Arama reddedildi': 'Appel refusé',
+  'Meşgul': 'Occupé',
+  'Bağlanılamadı': 'Connexion impossible',
+  'Arama iptal edildi': 'Appel annulé',
+  'Arama geçmişi': 'Historique des appels',
+  'Gelen arama': 'Appel entrant',
+  'Giden arama': 'Appel sortant',
+  'Cevapsız arama': 'Appel manqué',
+  'Arama şu anda kullanılamıyor':
+      'Les appels sont indisponibles pour le moment',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Les appels vidéo sont désactivés, tu peux passer un appel audio',
+  'Bu kullanıcıyı arayamazsın': 'Tu ne peux pas appeler cet utilisateur',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Vous devez vous suivre mutuellement pour vous appeler',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Cet utilisateur ne peut pas être appelé pour le moment',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Trop d’appels manqués. Réessaie dans {}',
+  'Zaten bir aramadasın': 'Tu es déjà en appel',
+  'Arama için mikrofon izni gerekiyor':
+      'L’autorisation du microphone est nécessaire pour appeler',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'L’autorisation de la caméra et du microphone est nécessaire pour les appels vidéo',
+  'Arama başlatılamadı': 'Impossible de démarrer l’appel',
+  'Kullanıcı bulunamadı': 'Utilisateur introuvable',
+  'Kendini arayamazsın': 'Tu ne peux pas t’appeler toi-même',
+  'Arama artık geçerli değil': 'Cet appel n’est plus valide',
+  'Bu aramanın tarafı değilsin': 'Tu ne fais pas partie de cet appel',
+  'Arama bulunamadı': 'Appel introuvable',
+  'Çok fazla istek, biraz bekle': 'Trop de requêtes, patiente un peu',
+  'Bağlantı koptu': 'Connexion perdue',
+  'Arama süre sınırına ulaştı': 'L’appel a atteint sa limite de durée',
+  'Arama en fazla 4 saat sürebilir': 'Un appel peut durer au maximum 4 heures',
+  'Arama sona erdi': 'L’appel est terminé',
+  'Sesli arama': 'Appel audio',
+  'Görüntülü arama': 'Appel vidéo',
+  'Gelen aramalar': 'Appels entrants',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Notifications d’appels audio et vidéo',
+  '{} sa': '{} h',
+  'Sesli ve Görüntülü Aramalar': 'Appels audio et vidéo',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Le contenu des appels n’est jamais enregistré. L’audio et la vidéo circulent chiffrés de bout en bout (DTLS-SRTP) entre les appareils ; nos serveurs ne peuvent ni déchiffrer, ni écouter, ni conserver ce trafic.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Seules les métadonnées de l’appel sont conservées : avec qui, dans quel sens, quand et pendant combien de temps. Ces enregistrements sont supprimés automatiquement au bout de 90 jours.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Si une connexion directe est impossible, l’audio et la vidéo transitent chiffrés par un serveur relais (TURN). Ce relais ne peut pas non plus déchiffrer ni enregistrer le contenu.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Le microphone n’est utilisé que pendant un appel audio ou vidéo, et la caméra uniquement pendant un appel vidéo. Les deux sont coupés à la fin de l’appel.',
 };

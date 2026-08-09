@@ -635,4 +635,65 @@ const Map<String, String> cevirilerDe = {
   'Bu bölüme puan ver': 'Bewerte diese Folge',
   '{} kişi puanladı': '{} Personen haben bewertet',
   'Bölüm izlendi olarak işaretlendi': 'Folge als gesehen markiert',
+  'Sesli ara': 'Sprachanruf',
+  'Görüntülü ara': 'Videoanruf',
+  'Çalıyor...': 'Es klingelt...',
+  'Bağlanıyor...': 'Verbindung wird hergestellt...',
+  'Cevapla': 'Annehmen',
+  'Reddet': 'Ablehnen',
+  'Sessize al': 'Stummschalten',
+  'Hoparlör': 'Lautsprecher',
+  'Kamerayı kapat': 'Kamera ausschalten',
+  'Kamerayı çevir': 'Kamera wechseln',
+  'Cevap yok': 'Keine Antwort',
+  'Arama reddedildi': 'Anruf abgelehnt',
+  'Meşgul': 'Besetzt',
+  'Bağlanılamadı': 'Verbindung nicht möglich',
+  'Arama iptal edildi': 'Anruf abgebrochen',
+  'Arama geçmişi': 'Anrufverlauf',
+  'Gelen arama': 'Eingehender Anruf',
+  'Giden arama': 'Ausgehender Anruf',
+  'Cevapsız arama': 'Verpasster Anruf',
+  'Arama şu anda kullanılamıyor': 'Anrufe sind derzeit nicht verfügbar',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Videoanrufe sind gerade deaktiviert, du kannst einen Sprachanruf starten',
+  'Bu kullanıcıyı arayamazsın': 'Du kannst diesen Nutzer nicht anrufen',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Ihr müsst euch gegenseitig folgen, um anzurufen',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Dieser Nutzer kann gerade nicht angerufen werden',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Zu viele verpasste Anrufe. Versuch es in {} erneut',
+  'Zaten bir aramadasın': 'Du bist bereits in einem Anruf',
+  'Arama için mikrofon izni gerekiyor':
+      'Für Anrufe wird die Mikrofonberechtigung benötigt',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Für Videoanrufe werden Kamera- und Mikrofonberechtigung benötigt',
+  'Arama başlatılamadı': 'Anruf konnte nicht gestartet werden',
+  'Kullanıcı bulunamadı': 'Nutzer nicht gefunden',
+  'Kendini arayamazsın': 'Du kannst dich nicht selbst anrufen',
+  'Arama artık geçerli değil': 'Dieser Anruf ist nicht mehr gültig',
+  'Bu aramanın tarafı değilsin': 'Du gehörst nicht zu diesem Anruf',
+  'Arama bulunamadı': 'Anruf nicht gefunden',
+  'Çok fazla istek, biraz bekle': 'Zu viele Anfragen, bitte kurz warten',
+  'Bağlantı koptu': 'Verbindung verloren',
+  'Arama süre sınırına ulaştı': 'Der Anruf hat sein Zeitlimit erreicht',
+  'Arama en fazla 4 saat sürebilir':
+      'Ein Anruf kann höchstens 4 Stunden dauern',
+  'Arama sona erdi': 'Der Anruf ist beendet',
+  'Sesli arama': 'Sprachanruf',
+  'Görüntülü arama': 'Videoanruf',
+  'Gelen aramalar': 'Eingehende Anrufe',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Benachrichtigungen für Sprach- und Videoanrufe',
+  '{} sa': '{} Std.',
+  'Sesli ve Görüntülü Aramalar': 'Sprach- und Videoanrufe',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Anrufinhalte werden niemals aufgezeichnet. Audio und Video fließen Ende-zu-Ende-verschlüsselt (DTLS-SRTP) zwischen den Geräten; unsere Server können diesen Datenverkehr weder entschlüsseln noch mithören oder speichern.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Es werden nur Anruf-Metadaten gespeichert: mit wem, in welche Richtung, wann und wie lange. Diese Einträge werden nach 90 Tagen automatisch gelöscht.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Wenn keine direkte Verbindung möglich ist, laufen Audio und Video verschlüsselt über einen Relay-Server (TURN). Auch dieser kann die Inhalte weder entschlüsseln noch aufzeichnen.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Das Mikrofon wird nur während eines Sprach- oder Videoanrufs verwendet, die Kamera nur während eines Videoanrufs. Beide werden nach dem Anruf ausgeschaltet.',
 };

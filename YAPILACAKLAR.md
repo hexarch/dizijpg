@@ -1,5 +1,126 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-08 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-09 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-09 (b) — ARAMA F1: FLUTTER TARAFI YAZILDI 🔨 (dağıtım YOK)
+Sözleşme `backend/ARAMA-API-SOZLESMESI.md` §14. **`backend/**` DEĞİŞTİRİLMEDİ**
+(yalnız okundu). Sürüm ARTIRILMADI (1.30.1+75), dağıtım YOK, commit YOK.
+Sunucudaki `arama_acik`/`arama_goruntulu_acik` bayrakları **hâlâ KAPALI** —
+açılması ana oturumun işi.
+
+### Paket
+`flutter_webrtc` **1.6.0**, sürüm KİLİTLİ (`^` yok — yama sürümü native kod
+taşıyor, kendiliğinden yükselmesi derlemeyi sessizce kırabilir).
+
+| Derleme | Sonuç |
+|---|---|
+| `flutter build web --release` | ✅ geçti |
+| `flutter build apk --release` | ✅ geçti |
+| APK (universal, 3 ABI) | 77.900.740 → 113.579.177 bayt (**+34,0 MiB**) |
+| Gerçek kullanıcı artışı (AAB, arm64) | `libjingle_peerconnection_so.so` = **+11,5 MiB** (sondajın rakamı birebir doğrulandı) |
+
+### Yeni dosyalar (`app/lib/gorusme/`)
+| Dosya | İş |
+|---|---|
+| `gorusme_api.dart` | 8 ucun sarmalayıcısı + 13 hata kodu → 45 dilli metin + `BuzAyari` |
+| `gorusme_surucu.dart` | `flutter_webrtc` SOYUTLAMASI (testte sahte sürücü takılabilsin) |
+| `gorusme_denetci.dart` | Durum makinesi, 1 sn yoklama, `bitirSebebi()` **saf fonksiyon** |
+| `gorusme_ekrani.dart` | Giden/kurulmuş arama ekranı + ölçülmüş kontrast sabitleri |
+| `gelen_arama_ekrani.dart` | Gelen arama tam ekran (SDP'yi `GET /arama/gelen`den çeker) |
+| `arama_servisi.dart` | Bayraklar, ICE ayarı (yalnız BELLEK), 4 sn ön plan yoklaması, karşılıklı takip |
+| `arama_dugmeleri.dart` | Sohbet başlığındaki sesli/görüntülü düğmeleri |
+| `arama_bildirim.dart` | `dizijpg_arama` kanalı — `Importance.MAX`, `CATEGORY_CALL`, `setOngoing` |
+
+Dokunulan mevcut dosyalar: `api.dart` (`ApiHata.makineKodu` + `govde`),
+`push.dart` (`tur=='arama'` + bildirim eylemleri), `yonlendirme.dart` (2 rota),
+`main.dart` (açılış), `ekranlar/sohbet.dart` (başlık düğmeleri),
+`ekranlar/gizlilik.dart` + `web/gizlilik.html` (arama gizlilik bölümü),
+`AndroidManifest.xml` (CAMERA + MODIFY_AUDIO_SETTINGS + ACCESS_NETWORK_STATE).
+
+### Kritik kararlar
+- **`ice_basarisiz` garantisi**: karar tek bir SAF fonksiyonda
+  (`bitirSebebi()`), tek çıkış yolu `_bitir()`. Hem fonksiyon hem de
+  **gerçek HTTP gövdesi** test edilmiş — sözleşme §13.1 "sessizce bozulur"
+  uyarısına karşı çift kilit.
+- **Web'de arama TAMAMEN KAPALI.** Gerekçe `arama_servisi.dart` başlığında:
+  web'de push yok → gelen arama yalnız sekme ön plandayken duyulur →
+  aramaların çoğu `cevapsiz` biter → §9.1'deki çift bazlı sessizleştirme
+  **arayanı** cezalandırır. Web kullanıcısı ulaşılmaz kalmıyor; FCM telefonuna
+  gidiyor.
+- **`USE_FULL_SCREEN_INTENT` İSTENMEDİ.** Manifest testi bunu kilitliyor.
+- **4 saatlik üst sınır** istemcide de var: son 5 dakikada uyarı şeridi, süre
+  dolunca `zaman_asimi` ile temiz kapanış.
+
+### Çeviri
+45 dosya × **551 → 600 anahtar** (+49, 2.205 çeviri). Sözleşme §14.3'ün 29
+anahtarının tamamı + uygulamanın kullandığı 17 ek metin + gizlilik metninin 5
+dizesi. `web/gizlilik.html` 46 dil × 29 → 34 dize. `gizlilikGuncelleme`
+27.07.2026 → **09.08.2026** (iki yerde birden).
+
+### Kanıt
+`flutter analyze lib test` 0 error/warning (85 info, taban ile aynı) ·
+`flutter test` **779 → 892** (+113) · beş ayrı sabotaj kırmızıya döndürüldü ve
+sha1 ile geri alındığı doğrulandı.
+
+### F2'ye kalanlar (bilinçli)
+ICE yeniden başlatma (`POST /arama/aday` bağlanmadı — ağ değişince arama
+`ag_koptu` ile temiz kapanıyor) · ön plan servisi
+(`FOREGROUND_SERVICE_MICROPHONE/_CAMERA`, Play gösterim videosu istiyor) ·
+arama geçmişi ekranı (`GET /arama/gecmis` hazır, çeviri anahtarları hazır) ·
+iOS CallKit · giden arama zil sesi.
+
+## 2026-08-09 — ARAMA F1: BACKEND YAZILDI 🔨 (canlıya UYGULANMADI)
+İstek listesi md. 7. **`app/**` ve `sema.sql` DEĞİŞTİRİLMEDİ** (başka ajanlar
+orada). Sunucuya SSH **yapılmadı**. Sürüm ARTIRILMADI (1.29.0+73), dağıtım YOK,
+commit YOK. **Migrasyon `-08e` hâlâ canlıya uygulanmadı.**
+
+### ✅ Yazılan uçlar (8/8, sözleşmeye uygun)
+`GET /arama/buz-sunuculari` · `POST /arama/baslat` · `GET /arama/durum/:id` ·
+`GET /arama/gelen` · `POST /arama/yanit` · `POST /arama/aday` ·
+`POST /arama/bitir` · `GET /arama/gecmis`
+
+### ✅ Dosyalar
+| Dosya | Ne |
+|---|---|
+| `backend/arama.js` | **YENİ saf modül** — depo, TURN kimliği, yetki zinciri, kill switch, sessizleştirme, üstveri |
+| `backend/server.js` | 8 uç, `gorusmeLimiti`/`gorusmeDurumLimiti`/`buzLimiti`, `engelliMi()`+`karsilikliTakipMi()`, FCM `arama` dalı, PUSH_SABLON ×16 dil, 90 gün budama, trafik eşiği |
+| `backend/yasak.js` | `YASAK_MUAF` += `'/arama/bitir'` |
+| `backend/Dockerfile` | COPY listesi += `arama.js` (test denetliyor) |
+| `backend/test/arama.test.js` | **YENİ, 77 test** |
+| `backend/turn/turnserver.conf` | 🛠 `denied-peer-ip=::` **ÇIKARILDI** — depo kopyası hâlâ taşıyordu, dağıtımda arıza geri gelirdi |
+| `backend/ARAMA-API-SOZLESMESI.md` | §13 sapmalar (11 kalem) + §14 Flutter yapılacakları |
+
+### ✅ Kanıt
+- `node --test test/*.test.js` → **427 geçti / 0 kaldı** (taban 350 + 77).
+- **Kırmızıya döndürme 11/11**, dört dosyanın sha1'i geri almadan sonra birebir aynı.
+- **Uçtan uca gerçek Postgres**: tek kullanımlık DB + `sema.sql` + `-08e`,
+  gerçek `server.js`, 6 kullanıcı, **42 doğrulama geçti** — içinde **gerçek 58 sn
+  bekleme** ile 45 sn çalma sınırının süpürüldüğü ölçüldü. DB düşürüldü.
+
+### 🛠 Sözleşmeden iki kritik sapma (§13'te 11 kalem)
+- **`baglaniyor → cevaplandi` geçişini sunucu GÖREMEZ** (bağlanınca yoklama
+  duruyor). Karar `POST /arama/bitir`in `sebep` alanına bağlandı. **İstemci ICE
+  başarısızlığında `ice_basarisiz` göndermek ZORUNDA**, yoksa röle oranı ölçümü
+  sessizce bozulur.
+- **Kurulmuş aramaya 4 saatlik sert üst sınır**: `bitir` hiç gelmezse iki
+  kullanıcı `ZATEN_ARAMADA` ile **kalıcı kilitlenirdi**.
+
+### ⬜ Canlıya uygulama sırası (ana oturum)
+1. `psql -f backend/migrasyon-2026-08-08e.sql` + dosyanın sonundaki DOĞRULAMA sorguları
+2. `backend/turn/KURULUM.md` — coturn kurulumu **zaten yapıldı**; yalnız
+   `denied-peer-ip=::` satırının canlıda da olmadığını doğrula
+3. `.env`e `TURN_SIR` **zaten var**; istenirse `TURN_ALAN`, `ARAMA_TRAFIK_ESIK_GB`
+4. scp `server.js` + `arama.js` + `yasak.js` + `Dockerfile` → `docker compose build && up -d`
+5. `curl /api/saglik` + `/api/arama/buz-sunuculari` test hesabıyla
+6. `ayarlar`da `arama_acik`/`arama_goruntulu_acik` **kapalı kalsın** — Flutter hazır olunca açılır
+
+### ⬜ Sonraki tur (Flutter)
+Sözleşme **§14** madde madde: akış, hata kodu dallanması, 28 çeviri anahtarı ×
+45 dil, Android bildirim kanalı (`USE_FULL_SCREEN_INTENT` **İSTENMEYECEK**),
+UI tuzakları, gizlilik metni (3 yer × 45 dil).
+
+### ⬜ F5'e kalanlar
+Admin paneli "Aramalar" sekmesi · şikayet–arama bağlantısı · `sema.sql`e
+`aramalar` tablosunun işlenmesi (sözleşme §10.3) · "Beni kim arayabilir" ayarı
 
 ## 2026-08-08 (f) — ARAMA: TURN ALTYAPISI HAZIRLIĞI + API SÖZLEŞMESİ 🔨 (kod YOK, kurulum YOK)
 İstek listesi md. 7 (sesli + görüntülü arama). **`server.js`, `sema.sql` ve
@@ -171,6 +292,53 @@ kullanıcının kendi puanı, TEK istekte (girişsiz de çalışır).
 - [ ] Migrasyon canlıya UYGULANMADI: `migrasyon-2026-08-08d.sql`.
       Sıra: migrasyon -> server.js -> web. Migrasyonsuz yeni server.js
       `sezon` sütununu bulamaz ve `/puan` 42703 ile düşer.
+
+## 2026-08-09 — GIF avatar/kapak WEB'DE HÂLÂ DONUKTU: asıl kök neden ✅ (canlıda DEĞİL)
+Sürüm ARTIRILMADI (1.30.0+74), dağıtım YOK, commit YOK.
+`flutter analyze lib test` 0 error/warning · `flutter test` **779 yeşil**
+(önce 772 + 1 kırmızı) · `flutter build web --release` geçti.
+
+**8 Ağu'daki düzeltme eksikti.** `Image` widget'ını ağaca koymak YETMİYOR;
+belirleyici olan ImageProvider'ın ürettiği kodeğin kaç kare bildirdiği.
+`CachedNetworkImage` web'de varsayılan `ImageRenderMethodForWeb.HtmlImage`
+kullanır:
+`CachedNetworkImageProvider` → `ui_web.createImageCodecFromUrl` → CanvasKit
+`skiaInstantiateWebImageCodec` → `CkImageElementCodec` (`HtmlImageElementCodec`)
+→ **`frameCount == 1`**. Görsel bir `<img>` öğesine indirilip tek kareye
+çevriliyor, GIF donuyor. Mobilde bu yol yok, orada sorun yoktu.
+
+**Tarayıcı kanıtı (gerçek Chrome, ölçüm):**
+- Canlı sitede avatar/kapak isteklerinin `initiatorType` değeri **"img"**;
+  3 sn arayla iki ekran görüntüsü **piksel piksel aynı** (0/1.196.076 değişen).
+- Yan yana deney (aynı sekme, aynı GIF, 4 kareli): sol `CachedNetworkImage`
+  3 örnekte **1 farklı kare** (donuk), sağ `Image.network` **3 farklı kare**
+  (kırmızı→mavi→yeşil→sarı). Aynı koşullar → sekme arka planda diye kare
+  üretilmiyor bahanesi elendi.
+
+**Düzeltme** — `ortak.dart`'a `AgGorsel` + `agGorselKur(web:)`:
+web'de `Image.network` (XHR + `ImmutableBuffer` → çok kareli kodek),
+mobilde `CachedNetworkImage` (disk önbelleği). Avatar (`DaireGorsel`) ve
+**üç ekranın kapağı** (profil, kullanıcı profili, ayarlar) buradan geçiyor.
+
+**Önbellek kaybı YOK (ölçüldü):** avatar `cache-control: public,
+max-age=31536000, immutable` ile geliyor; tarayıcıda arka arkaya iki XHR
+`transferSize: 0` verdi — tamamı HTTP önbelleğinden. Ayrıca Flutter'ın
+`imageCache`i çözülmüş kareyi bellekte tutar. CORS sorunu yok: uygulama ve
+`/api/avatarlar` aynı köken (www 301 → apex).
+
+**Performans kararı korundu:** animasyon yalnız BÜYÜK gösterimlerde
+(profil başlıkları, ayarlar); akış/yorum/sohbet/takipçi listelerinde avatar
+durağan ilk kare (`hareketli: false`), posterler `CachedNetworkImage`.
+
+**Dünkü test neden yakalamadı:** (a) animasyon kanıtı `MemoryImage` ile
+yapılmıştı — o zaten bayttan çözer, her platformda oynar; (b) sarmalayıcı
+testi yalnız `find.byType(Image)` bakıyordu, **provider'a bakmıyordu**;
+(c) `flutter test` daima VM'de koşar (`kIsWeb == false`), hatanın olduğu dal
+test edilen dal değildi. Artık `agGorselKur` `web` bayrağını **parametre**
+alıyor, test iki dalı da doğruluyor.
+`test/gif_animasyon_test.dart` 10 → **16 test**; düzeltme geri alınınca
+"WEB: Image.network" ve "profil.dart: kapak AgGorsel ile çiziliyor"
+testleri kırmızıya döndü, geri yükleme sha1 ile doğrulandı.
 
 ## 2026-08-08 — ÜÇ HATA: GIF avatar, çoğul ek, dile göre önbellek ✅ (canlıda DEĞİL)
 Sürüm ARTIRILMADI, dağıtım YOK, commit YOK. `flutter analyze lib test` 0

@@ -14,6 +14,7 @@ import 'package:record/record.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../dosya_oku.dart';
+import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
 import '../push.dart';
 import '../tema.dart';
@@ -1101,6 +1102,15 @@ class _SohbetEkraniState extends State<SohbetEkrani>
             ],
           ),
         ),
+        // Sesli/görüntülü arama. Yalnız karşılıklı takipleşmede ve arama
+        // özelliği açıkken çizilir; web'de hiç görünmez (gerekçe:
+        // lib/gorusme/arama_servisi.dart başlığı).
+        actions: [
+          AramaDugmeleri(
+            kullaniciAdi: widget.kullaniciAdi,
+            avatar: _partner?['avatar'] as String?,
+          ),
+        ],
       ),
       body: Center(
         child: ConstrainedBox(

@@ -1,20 +1,34 @@
-// GIF AVATAR/KAPAK OYNAMIYOR (8 Ağu 2026 kullanıcı şikâyeti):
-// "alcelik profiline gittiğimde profil resmindeki ve kapak fotoğrafındaki
-//  gifler oynamıyor".
+// GIF AVATAR/KAPAK OYNAMIYOR — İKİ AŞAMALI HATA.
 //
-// KÖK NEDEN — bu dosyanın ilk testi PİKSEL DÜZEYİNDE kanıtlıyor:
-//   * `Image` widget'ı ağaçtayken animasyonlu GIF'in kareleri değişir.
-//   * `BoxDecoration(image: DecorationImage(...))` — ve onu kullanan
-//     `CircleAvatar(backgroundImage:)` — YALNIZ İLK KAREYİ boyar.
-// Avatarlar her yerde `CircleAvatar(backgroundImage:)` ile çiziliyordu.
+// 8 Ağu 2026 (BİRİNCİ, EKSİK TESPİT): avatarlar
+// `CircleAvatar(backgroundImage:)` ile çiziliyordu; o da görseli
+// `DecorationImage` olarak boyar ve YALNIZ İLK KAREYİ çizer. Düzeltme
+// `Image` widget'ını (o gün `CachedNetworkImage`) ağaca koymaktı.
 //
-// Bu dosya hem Flutter'ın bu davranışını kilitler (Flutter sürümü değişip
-// DecorationImage animasyonu desteklerse test bize haber verir) hem de
-// büyük avatarların `Image` ile çizildiğini GERİLEME KORUMASI olarak sabitler.
+// 9 Ağu 2026 (ASIL KÖK NEDEN — kullanıcı "hâlâ oynamıyor" dedi):
+// `Image` widget'ı olması YETMİYOR. Belirleyici olan ImageProvider'ın
+// ürettiği KODEK'in kaç kare bildirdiği. `CachedNetworkImage` web'de
+// varsayılan `ImageRenderMethodForWeb.HtmlImage` ile çalışır:
+//   CachedNetworkImageProvider → ui_web.createImageCodecFromUrl
+//   → CanvasKit skiaInstantiateWebImageCodec → CkImageElementCodec
+//   → HtmlImageElementCodec.frameCount == 1   ⇒ GIF DONAR.
+// Yani görsel bir <img> öğesine indirilip tek kareye çevriliyordu.
+// Tarayıcı ölçümü (canlı site, 9 Ağu): avatar/kapak isteklerinin
+// `PerformanceResourceTiming.initiatorType` değeri "img".
+// Flutter'ın kendi `NetworkImage`i web'de baytları XHR ile indirip
+// `ui.ImmutableBuffer` üzerinden çözer → ÇOK KARELİ kodek → animasyon oynar.
+//
+// DÜNKÜ TEST NEDEN YAKALAMADI: (1) animasyon kanıtı `MemoryImage` ile
+// yapılmıştı — o zaten bayttan çözer, her platformda oynar; (2) sarmalayıcı
+// testi yalnız `find.byType(Image)` bakıyordu, PROVIDER'a bakmıyordu;
+// (3) `flutter test` daima VM'de koşar, `kIsWeb == false` — hatanın olduğu
+// dal test edilen dal DEĞİLDİ. Bu yüzden `agGorselKur` web bayrağını
+// parametre alır: aşağıdaki testler artık web dalını da doğruluyor.
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +141,71 @@ void main() {
     });
   });
 
+  group('ASIL KÖK NEDEN: web dalı hangi ImageProvider\'ı kullanıyor', () {
+    const ornek = 'https://dizijpg.com/api/avatarlar/avatar3.gif';
+
+    test(
+      'WEB: Image.network (Flutter NetworkImage) — bayttan çözer, oynar',
+      () {
+        final w = agGorselKur(web: true, url: ornek);
+        expect(
+          w,
+          isA<Image>(),
+          reason: 'web dalı doğrudan Image widget\'ı döndürmeli',
+        );
+        final saglayici = (w as Image).image;
+        expect(
+          saglayici,
+          isA<NetworkImage>(),
+          reason:
+              'Flutter\'ın NetworkImage\'i web\'de XHR + ImmutableBuffer ile '
+              'çok kareli kodek üretir; GIF oynar.',
+        );
+        expect(
+          saglayici,
+          isNot(isA<CachedNetworkImageProvider>()),
+          reason:
+              'CachedNetworkImageProvider web\'de <img> yoluna düşüp kodeği '
+              'TEK KAREYE indiriyor — 9 Ağu 2026 hatasının kökü buydu.',
+        );
+        expect(
+          (saglayici as NetworkImage).url,
+          ornek,
+          reason: 'URL aynen geçmeli (önbellek anahtarı bu)',
+        );
+      },
+    );
+
+    test('MOBİL: CachedNetworkImage korunur (disk önbelleği değerli)', () {
+      final w = agGorselKur(web: false, url: ornek);
+      expect(
+        w,
+        isA<CachedNetworkImage>(),
+        reason:
+            'Mobilde <img> yolu yok, kodek bayttan çözülür: animasyon zaten '
+            'oynar. Disk önbelleğini kaybetmemek için CachedNetworkImage kalır.',
+      );
+      expect((w as CachedNetworkImage).imageUrl, ornek);
+    });
+
+    test('paket varsayılanı hâlâ HtmlImage — web dalı GEREKLİ', () {
+      // Bu test bir GERÇEĞİ kilitler: cached_network_image web'de varsayılan
+      // olarak <img> yolunu seçiyor. Paket bunu HttpGet yapar (ya da kodek
+      // çok kareli olur) ise test kırmızıya döner ve web dalını
+      // kaldırabileceğimizi haber verir.
+      const saglayici = CachedNetworkImageProvider(ornek);
+      // Enum türü paketten dışa açılmıyor (platform_interface'te), adına
+      // bakıyoruz.
+      expect(
+        saglayici.imageRenderMethodForWeb.name,
+        'HtmlImage',
+        reason:
+            'Varsayılan değiştiyse AgGorsel\'in web dalı yeniden '
+            'değerlendirilmeli.',
+      );
+    });
+  });
+
   group('GERİLEME KORUMASI: büyük avatar Image ile çizilir', () {
     Widget sar(Widget c) => MaterialApp(
       theme: diziTema(acik: false),
@@ -146,9 +225,18 @@ void main() {
           ),
         ),
       );
-      // Görselin KENDİSİ ağaçta olmalı (animasyonun tek koşulu).
+      // Görselin KENDİSİ ağaçta olmalı (animasyonun tek koşulu)...
       expect(find.byType(Image), findsWidgets);
       expect(find.byType(ClipOval), findsWidgets);
+      // ...ve GERÇEKTEN KULLANILAN sarmalayıcı AgGorsel olmalı. 8 Ağu'daki
+      // eksik test tam burada duruyordu: `Image` var diye geçiyordu, oysa
+      // web'de o Image'ın provider'ı tek kare üretiyordu.
+      expect(
+        find.byType(AgGorsel),
+        findsOneWidget,
+        reason:
+            'Hareketli avatar AgGorsel\'den geçmeli — web/mobil ayrımı orada.',
+      );
       for (final a in tester.widgetList<CircleAvatar>(
         find.byType(CircleAvatar),
       )) {
@@ -231,19 +319,45 @@ void main() {
       });
     }
 
-    test('kapaklar Image tabanlı CachedNetworkImage ile çiziliyor', () {
-      for (final yol in [
-        'lib/ekranlar/profil.dart',
-        'lib/ekranlar/kullanici_profil.dart',
-        'lib/ekranlar/ayarlar.dart',
-      ]) {
-        final kaynak = File(yol).readAsStringSync();
+    // 8 Ağu'daki test burada yalnız "CachedNetworkImage( geçiyor mu" diye
+    // bakıyordu — ve tam da o widget web'de GIF'i donduran widget'tı.
+    // Yeni kural: KAPAK URL'si asla `imageUrl:` parametresine gitmez,
+    // AgGorsel'den geçer.
+    for (final yol in dosyalar) {
+      test('$yol: kapak AgGorsel ile çiziliyor', () {
+        final kod = kodSatirlari(yol);
         expect(
-          kaynak.contains('CachedNetworkImage('),
-          isTrue,
-          reason: '$yol: kapak widget tabanlı gösterimle çizilmeli',
+          kod.where((s) => s.contains('AgGorsel(')),
+          isNotEmpty,
+          reason: '$yol: kapak/avatar AgGorsel ile çizilmeli',
         );
-      }
+        expect(
+          kod.where((s) => s.contains('imageUrl:') && s.contains('kapak')),
+          isEmpty,
+          reason:
+              '$yol: kapak doğrudan CachedNetworkImage(imageUrl:) ile '
+              'çiziliyor — web\'de <img> yoluna düşer ve GIF donar.',
+        );
+      });
+    }
+
+    test('DaireGorsel CachedNetworkImage\'i doğrudan çağırmıyor', () {
+      final kod = kodSatirlari('lib/ekranlar/ortak.dart');
+      final daire = kod.indexWhere((s) => s.contains('class DaireGorsel'));
+      expect(daire, greaterThan(-1));
+      final govde = kod.sublist(daire, daire + 40).join('\n');
+      expect(
+        govde.contains('AgGorsel('),
+        isTrue,
+        reason: 'DaireGorsel AgGorsel kullanmalı (web/mobil ayrımı orada)',
+      );
+      expect(
+        govde.contains('CachedNetworkImage('),
+        isFalse,
+        reason:
+            'DaireGorsel doğrudan CachedNetworkImage kullanırsa web\'de GIF '
+            'yine donar.',
+      );
     });
   });
 }

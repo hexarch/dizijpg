@@ -627,4 +627,64 @@ const Map<String, String> cevirilerUk = {
   'Bu bölüme puan ver': 'Оцініть цю серію',
   '{} kişi puanladı': 'Оцінили: {}',
   'Bölüm izlendi olarak işaretlendi': 'Серію позначено як переглянуту',
+  'Sesli ara': 'Голосовий виклик',
+  'Görüntülü ara': 'Відеовиклик',
+  'Çalıyor...': 'Дзвонимо...',
+  'Bağlanıyor...': 'Підключення...',
+  'Cevapla': 'Відповісти',
+  'Reddet': 'Відхилити',
+  'Sessize al': 'Вимкнути мікрофон',
+  'Hoparlör': 'Динамік',
+  'Kamerayı kapat': 'Вимкнути камеру',
+  'Kamerayı çevir': 'Змінити камеру',
+  'Cevap yok': 'Немає відповіді',
+  'Arama reddedildi': 'Виклик відхилено',
+  'Meşgul': 'Зайнято',
+  'Bağlanılamadı': 'Не вдалося зʼєднатися',
+  'Arama iptal edildi': 'Виклик скасовано',
+  'Arama geçmişi': 'Історія викликів',
+  'Gelen arama': 'Вхідний виклик',
+  'Giden arama': 'Вихідний виклик',
+  'Cevapsız arama': 'Пропущений виклик',
+  'Arama şu anda kullanılamıyor': 'Виклики зараз недоступні',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'Відеовиклики зараз вимкнено, ти можеш зателефонувати голосом',
+  'Bu kullanıcıyı arayamazsın': 'Ти не можеш зателефонувати цьому користувачу',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'Щоб телефонувати, ви маєте підписатися одне на одного',
+  'Bu kullanıcı şu anda aranamıyor':
+      'Цьому користувачу зараз не можна зателефонувати',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'Забагато пропущених викликів. Спробуй за {}',
+  'Zaten bir aramadasın': 'Ти вже на виклику',
+  'Arama için mikrofon izni gerekiyor':
+      'Для виклику потрібен дозвіл на мікрофон',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'Для відеовиклику потрібні дозволи на камеру та мікрофон',
+  'Arama başlatılamadı': 'Не вдалося почати виклик',
+  'Kullanıcı bulunamadı': 'Користувача не знайдено',
+  'Kendini arayamazsın': 'Не можна телефонувати самому собі',
+  'Arama artık geçerli değil': 'Цей виклик більше не дійсний',
+  'Bu aramanın tarafı değilsin': 'Ти не учасник цього виклику',
+  'Arama bulunamadı': 'Виклик не знайдено',
+  'Çok fazla istek, biraz bekle': 'Забагато запитів, зачекай трохи',
+  'Bağlantı koptu': 'Зʼєднання втрачено',
+  'Arama süre sınırına ulaştı': 'Виклик досяг ліміту часу',
+  'Arama en fazla 4 saat sürebilir': 'Виклик може тривати щонайбільше 4 години',
+  'Arama sona erdi': 'Виклик завершено',
+  'Sesli arama': 'Голосовий виклик',
+  'Görüntülü arama': 'Відеовиклик',
+  'Gelen aramalar': 'Вхідні виклики',
+  'Sesli ve görüntülü arama bildirimleri':
+      'Сповіщення про голосові та відеовиклики',
+  '{} sa': '{} год',
+  'Sesli ve Görüntülü Aramalar': 'Голосові та відеовиклики',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'Вміст викликів ніколи не записується. Аудіо та відео передаються між пристроями з наскрізним шифруванням (DTLS-SRTP); наші сервери не можуть їх розшифрувати, прослухати чи зберегти.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'Зберігаються лише метадані виклику: з ким, у якому напрямку, коли й скільки тривав. Ці записи автоматично видаляються через 90 днів.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'Якщо пряме зʼєднання неможливе, аудіо та відео проходять у зашифрованому вигляді через сервер ретрансляції (TURN). Він також не може розшифрувати чи записати вміст.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'Мікрофон використовується лише під час голосового або відеовиклику, а камера — лише під час відеовиклику. Після завершення виклику обидва вимикаються.',
 };

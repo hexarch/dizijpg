@@ -667,11 +667,12 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                 child: SizedBox(
                   height: 130,
                   width: double.infinity,
-                  child: CachedNetworkImage(
-                    imageUrl: dosyaUrl(_profil!['kapak'] as String)!,
-                    fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) =>
-                        Container(color: DiziRenkler.koyuGri),
+                  // Kapak GIF olabilir ve OYNAMALI: web'de CachedNetworkImage
+                  // <img> yolundan tek kareye düşüyor (bkz. AgGorsel).
+                  child: AgGorsel(
+                    url: dosyaUrl(_profil!['kapak'] as String)!,
+                    yerTutucu: Container(color: DiziRenkler.koyuGri),
+                    hata: Container(color: DiziRenkler.koyuGri),
                   ),
                 ),
               ),

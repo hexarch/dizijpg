@@ -622,4 +622,63 @@ const Map<String, String> cevirilerTe = {
   'Bu bölüme puan ver': 'ఈ ఎపిసోడ్‌ను రేట్ చేయండి',
   '{} kişi puanladı': '{} మంది రేట్ చేశారు',
   'Bölüm izlendi olarak işaretlendi': 'ఎపిసోడ్ చూసినట్లు గుర్తించబడింది',
+  'Sesli ara': 'వాయిస్ కాల్',
+  'Görüntülü ara': 'వీడియో కాల్',
+  'Çalıyor...': 'రింగ్ అవుతోంది...',
+  'Bağlanıyor...': 'కనెక్ట్ అవుతోంది...',
+  'Cevapla': 'సమాధానం ఇవ్వండి',
+  'Reddet': 'తిరస్కరించు',
+  'Sessize al': 'మ్యూట్',
+  'Hoparlör': 'స్పీకర్',
+  'Kamerayı kapat': 'కెమెరా ఆఫ్ చేయి',
+  'Kamerayı çevir': 'కెమెరా మార్చు',
+  'Cevap yok': 'సమాధానం లేదు',
+  'Arama reddedildi': 'కాల్ తిరస్కరించబడింది',
+  'Meşgul': 'బిజీ',
+  'Bağlanılamadı': 'కనెక్ట్ కాలేదు',
+  'Arama iptal edildi': 'కాల్ రద్దు చేయబడింది',
+  'Arama geçmişi': 'కాల్ చరిత్ర',
+  'Gelen arama': 'ఇన్‌కమింగ్ కాల్',
+  'Giden arama': 'అవుట్‌గోయింగ్ కాల్',
+  'Cevapsız arama': 'మిస్డ్ కాల్',
+  'Arama şu anda kullanılamıyor': 'కాలింగ్ ప్రస్తుతం అందుబాటులో లేదు',
+  'Görüntülü arama şu anda kapalı, sesli arayabilirsin':
+      'వీడియో కాల్‌లు ప్రస్తుతం ఆఫ్‌లో ఉన్నాయి, మీరు వాయిస్ కాల్ చేయవచ్చు',
+  'Bu kullanıcıyı arayamazsın': 'మీరు ఈ వినియోగదారుకు కాల్ చేయలేరు',
+  'Aramak için karşılıklı takipleşmelisiniz':
+      'కాల్ చేయడానికి మీరిద్దరూ ఒకరినొకరు అనుసరించాలి',
+  'Bu kullanıcı şu anda aranamıyor': 'ఈ వినియోగదారుకు ప్రస్తుతం కాల్ చేయలేము',
+  'Çok fazla cevapsız arama. {} sonra tekrar dene':
+      'చాలా మిస్డ్ కాల్‌లు. {} తర్వాత మళ్లీ ప్రయత్నించండి',
+  'Zaten bir aramadasın': 'మీరు ఇప్పటికే కాల్‌లో ఉన్నారు',
+  'Arama için mikrofon izni gerekiyor':
+      'కాల్ చేయడానికి మైక్రోఫోన్ అనుమతి అవసరం',
+  'Görüntülü arama için kamera ve mikrofon izni gerekiyor':
+      'వీడియో కాల్‌కు కెమెరా మరియు మైక్రోఫోన్ అనుమతి అవసరం',
+  'Arama başlatılamadı': 'కాల్ ప్రారంభించలేకపోయాం',
+  'Kullanıcı bulunamadı': 'వినియోగదారు కనబడలేదు',
+  'Kendini arayamazsın': 'మీరు మీకే కాల్ చేయలేరు',
+  'Arama artık geçerli değil': 'ఈ కాల్ ఇక చెల్లదు',
+  'Bu aramanın tarafı değilsin': 'మీరు ఈ కాల్‌లో భాగం కాదు',
+  'Arama bulunamadı': 'కాల్ కనబడలేదు',
+  'Çok fazla istek, biraz bekle': 'చాలా ఎక్కువ అభ్యర్థనలు, కొంచెం ఆగండి',
+  'Bağlantı koptu': 'కనెక్షన్ తెగింది',
+  'Arama süre sınırına ulaştı': 'కాల్ సమయ పరిమితికి చేరుకుంది',
+  'Arama en fazla 4 saat sürebilir': 'ఒక కాల్ గరిష్టంగా 4 గంటలు ఉండగలదు',
+  'Arama sona erdi': 'కాల్ ముగిసింది',
+  'Sesli arama': 'వాయిస్ కాల్',
+  'Görüntülü arama': 'వీడియో కాల్',
+  'Gelen aramalar': 'ఇన్‌కమింగ్ కాల్‌లు',
+  'Sesli ve görüntülü arama bildirimleri':
+      'వాయిస్ మరియు వీడియో కాల్ నోటిఫికేషన్లు',
+  '{} sa': '{} గం',
+  'Sesli ve Görüntülü Aramalar': 'వాయిస్ మరియు వీడియో కాల్‌లు',
+  'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu trafiği çözemez, dinleyemez ve saklayamaz.':
+      'కాల్ కంటెంట్ ఎప్పుడూ రికార్డ్ చేయబడదు. ఆడియో మరియు వీడియో పరికరాల మధ్య ఎండ్-టు-ఎండ్ ఎన్‌క్రిప్టెడ్ (DTLS-SRTP) గా ప్రవహిస్తాయి; మా సర్వర్లు ఈ ట్రాఫిక్‌ను డీక్రిప్ట్ చేయలేవు, వినలేవు లేదా నిల్వ చేయలేవు.',
+  'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik silinir.':
+      'కాల్ మెటాడేటా మాత్రమే ఉంచబడుతుంది: ఎవరితో, ఏ దిశలో, ఎప్పుడు మరియు ఎంతసేపు. ఈ రికార్డులు 90 రోజుల తర్వాత ఆటోమేటిక్‌గా తొలగించబడతాయి.',
+  'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği çözemez ve kaydetmez.':
+      'ప్రత్యక్ష కనెక్షన్ సాధ్యం కాకపోతే, ఆడియో మరియు వీడియో ఎన్‌క్రిప్ట్ చేయబడిన స్థితిలో రిలే సర్వర్ (TURN) ద్వారా వెళ్తాయి. రిలే సర్వర్ కూడా కంటెంట్‌ను డీక్రిప్ట్ లేదా రికార్డ్ చేయలేదు.',
+  'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
+      'మైక్రోఫోన్ వాయిస్ లేదా వీడియో కాల్ సమయంలో మాత్రమే, కెమెరా వీడియో కాల్ సమయంలో మాత్రమే ఉపయోగించబడతాయి. కాల్ ముగిసిన వెంటనే రెండూ ఆఫ్ అవుతాయి.',
 };
