@@ -681,4 +681,11 @@ const Map<String, String> cevirilerGu = {
       'સીધું કનેક્શન શક્ય ન હોય તો ઑડિયો અને વિડિયો એન્ક્રિપ્ટેડ સ્વરૂપે રિલે સર્વર (TURN) મારફતે પસાર થાય છે. રિલે સર્વર પણ સામગ્રી ડિક્રિપ્ટ કે રેકોર્ડ કરી શકતું નથી.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'માઇક્રોફોન ફક્ત વૉઇસ કે વિડિયો કૉલ દરમિયાન અને કૅમેરા ફક્ત વિડિયો કૉલ દરમિયાન વપરાય છે. કૉલ પૂરો થતાં બંને બંધ થઈ જાય છે.',
+  'Takip ettiğin {} kişi izledi': 'તમે ફોલો કરો છો તેમાંથી {} લોકોએ જોયું',
+  'Yorum yaz...': 'ટિપ્પણી લખો...',
+  'Sıradaki bölüm': 'આગળનો એપિસોડ',
+  'Doğrulanmış testçi': 'ચકાસાયેલ પરીક્ષક',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ફોલો, લાઇક, જવાબ, સંદેશ અને ટૅગની સૂચનાઓ',
+  'Sen': 'તમે',
 };

@@ -675,4 +675,11 @@ const Map<String, String> cevirilerAr = {
       'إذا تعذر إنشاء اتصال مباشر، يمر الصوت والفيديو مشفرين عبر خادم ترحيل (TURN). ولا يستطيع خادم الترحيل أيضًا فك تشفير المحتوى أو تسجيله.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'يُستخدم الميكروفون فقط أثناء المكالمة الصوتية أو المرئية، وتُستخدم الكاميرا فقط أثناء مكالمة الفيديو. ويتم إيقافهما معًا عند انتهاء المكالمة.',
+  'Takip ettiğin {} kişi izledi': 'شاهده {} من الأشخاص الذين تتابعهم',
+  'Yorum yaz...': 'اكتب تعليقًا...',
+  'Sıradaki bölüm': 'الحلقة التالية',
+  'Doğrulanmış testçi': 'مختبِر موثّق',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'إشعارات المتابعة والإعجاب والرد والرسائل والإشارات',
+  'Sen': 'أنت',
 };

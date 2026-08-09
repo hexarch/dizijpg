@@ -684,4 +684,12 @@ const Map<String, String> cevirilerPa = {
       'ਜੇ ਸਿੱਧਾ ਕਨੈਕਸ਼ਨ ਸੰਭਵ ਨਾ ਹੋਵੇ ਤਾਂ ਆਡੀਓ ਅਤੇ ਵੀਡੀਓ ਐਨਕ੍ਰਿਪਟਡ ਰੂਪ ਵਿੱਚ ਰਿਲੇ ਸਰਵਰ (TURN) ਰਾਹੀਂ ਲੰਘਦੇ ਹਨ। ਰਿਲੇ ਸਰਵਰ ਵੀ ਸਮੱਗਰੀ ਡੀਕ੍ਰਿਪਟ ਜਾਂ ਰਿਕਾਰਡ ਨਹੀਂ ਕਰ ਸਕਦਾ।',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'ਮਾਈਕ੍ਰੋਫੋਨ ਸਿਰਫ਼ ਵੌਇਸ ਜਾਂ ਵੀਡੀਓ ਕਾਲ ਦੌਰਾਨ ਅਤੇ ਕੈਮਰਾ ਸਿਰਫ਼ ਵੀਡੀਓ ਕਾਲ ਦੌਰਾਨ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। ਕਾਲ ਖ਼ਤਮ ਹੁੰਦੇ ਹੀ ਦੋਵੇਂ ਬੰਦ ਹੋ ਜਾਂਦੇ ਹਨ।',
+  'Takip ettiğin {} kişi izledi':
+      'ਤੁਸੀਂ ਜਿਨ੍ਹਾਂ ਨੂੰ ਫਾਲੋ ਕਰਦੇ ਹੋ ਉਹਨਾਂ ਵਿੱਚੋਂ {} ਨੇ ਵੇਖਿਆ',
+  'Yorum yaz...': 'ਟਿੱਪਣੀ ਲਿਖੋ...',
+  'Sıradaki bölüm': 'ਅਗਲਾ ਐਪੀਸੋਡ',
+  'Doğrulanmış testçi': 'ਪੁਸ਼ਟੀ ਕੀਤਾ ਟੈਸਟਰ',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ਫਾਲੋ, ਲਾਈਕ, ਜਵਾਬ, ਸੁਨੇਹਾ ਅਤੇ ਟੈਗ ਸੂਚਨਾਵਾਂ',
+  'Sen': 'ਤੁਸੀਂ',
 };

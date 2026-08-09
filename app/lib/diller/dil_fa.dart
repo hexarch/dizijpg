@@ -682,4 +682,12 @@ const Map<String, String> cevirilerFa = {
       'اگر اتصال مستقیم ممکن نباشد، صدا و تصویر به‌صورت رمزگذاری‌شده از یک سرور بازپخش (TURN) عبور می‌کنند. آن سرور نیز نمی‌تواند محتوا را رمزگشایی یا ضبط کند.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'میکروفون فقط هنگام تماس صوتی یا تصویری و دوربین فقط هنگام تماس تصویری استفاده می‌شود. با پایان تماس هر دو خاموش می‌شوند.',
+  'Takip ettiğin {} kişi izledi':
+      '{} نفر از کسانی که دنبال می‌کنی آن را دیده‌اند',
+  'Yorum yaz...': 'دیدگاهی بنویس...',
+  'Sıradaki bölüm': 'قسمت بعدی',
+  'Doğrulanmış testçi': 'آزمایش‌کننده تأییدشده',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'اعلان‌های دنبال کردن، پسند، پاسخ، پیام و برچسب',
+  'Sen': 'تو',
 };

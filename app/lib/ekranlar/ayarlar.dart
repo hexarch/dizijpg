@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../altyazi.dart';
 import '../api.dart';
+import '../bayrak.dart' show ulkeAdi;
 import '../ceviri.dart';
 import '../push.dart';
 import 'gorsel_kirp.dart';
@@ -253,9 +254,17 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     }
   }
 
+  /// Ülke seçici.
+  ///
+  /// SAKLANAN DEĞER TÜRKÇE KALIR: listede görünen ad seçili dile çevrilir
+  /// ([ulkeAdi]) ama seçilince `_ulke`ye — ve oradan sunucuya — [ulkeler]
+  /// listesindeki TÜRKÇE karşılık yazılır. `ulke` alanı serbest metindir;
+  /// çevrilmişini saklamak hem mevcut kayıtlarla tutarsız olurdu hem de
+  /// `bayrak.dart`ın ad→ISO eşlemesini kırıp bayrakları kaybettirirdi.
   Future<void> _ulkeSec() async {
     final secilen = await _aramaliSecim(
-      secenekler: ulkeler,
+      secenekler: [for (final u in ulkeler) ulkeAdi(u)],
+      degerler: ulkeler,
       secili: _ulke,
       ipucu: 'Ülke ara...'.c,
     );
@@ -342,72 +351,30 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   }
 
   /// Arama kutulu seçim sayfası (ülke ve dil için ortak).
+  ///
+  /// [secenekler] EKRANDA GÖRÜNEN adlardır. [degerler] verilirse dönen (ve
+  /// saklanan) değer oradan gelir — ülke seçicide görünen ad çevrilidir ama
+  /// saklanan Türkçe kalır. Verilmezse görünen ad aynı zamanda değerdir
+  /// (dil seçici: adlar zaten yerel, çevrilmiyor).
   Future<String?> _aramaliSecim({
     required List<String> secenekler,
     required String? secili,
     required String ipucu,
-  }) async {
-    final arama = TextEditingController();
-    try {
-      return await _aramaliSecimGoster(arama, secenekler, secili, ipucu);
-    } finally {
-      arama.dispose();
-    }
-  }
-
-  Future<String?> _aramaliSecimGoster(
-    TextEditingController arama,
-    List<String> secenekler,
-    String? secili,
-    String ipucu,
-  ) {
+    List<String>? degerler,
+  }) {
+    assert(
+      degerler == null || degerler.length == secenekler.length,
+      'degerler ve secenekler aynı uzunlukta olmalı',
+    );
     return showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       backgroundColor: DiziRenkler.koyuGri,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setSheet) {
-          final filtreli = secenekler
-              .where(
-                (u) =>
-                    u.toLowerCase().contains(arama.text.toLowerCase().trim()),
-              )
-              .toList();
-          return SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: TextField(
-                    controller: arama,
-                    autofocus: false,
-                    onChanged: (_) => setSheet(() {}),
-                    decoration: InputDecoration(
-                      hintText: ipucu,
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: filtreli.length,
-                    itemBuilder: (context, i) => ListTile(
-                      title: Text(filtreli[i]),
-                      trailing: filtreli[i] == secili
-                          ? Icon(Icons.check, color: DiziRenkler.sariMetin)
-                          : null,
-                      onTap: () => Navigator.pop(context, filtreli[i]),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+      builder: (_) => _AramaliSecimSayfasi(
+        secenekler: secenekler,
+        degerler: degerler,
+        secili: secili,
+        ipucu: ipucu,
       ),
     );
   }
@@ -820,7 +787,8 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   child: ListTile(
                     leading: Icon(Icons.public, color: DiziRenkler.sariMetin),
                     title: Text(
-                      _ulke ?? 'Ülke seç'.c,
+                      // Saklanan değer Türkçe; satırda seçili dilde görünür.
+                      _ulke == null ? 'Ülke seç'.c : ulkeAdi(_ulke),
                       style: TextStyle(
                         color: _ulke == null
                             ? DiziRenkler.metin38
@@ -1613,6 +1581,102 @@ class _GeriBildirimSheetState extends State<_GeriBildirimSheet> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Arama kutulu seçim sayfası (ülke ve dil seçicilerinin ortak gövdesi).
+///
+/// NEDEN AYRI WIDGET (ve `StatefulBuilder` + dışarıda tutulan denetleyici
+/// DEĞİL): denetleyici sayfayı AÇAN metotta kurulup `finally`de atılıyordu.
+/// `showModalBottomSheet`in future'ı sayfa POP edilir edilmez tamamlanır ama
+/// KAPANMA ANİMASYONU sürer ve TextField o sırada hâlâ yeniden kurulur —
+/// sonuç: "A TextEditingController was used after being disposed" (ülke/dil
+/// seçilir seçilmez, her seferinde). Denetleyici artık kendi State'inde
+/// yaşıyor: ömrü tam olarak widget'ın ömrü kadar.
+///
+/// [secenekler] EKRANDA GÖRÜNEN adlardır. [degerler] verilirse seçim sonucu
+/// oradan döner — ülke seçicide görünen ad çevrilidir ama SAKLANAN DEĞER
+/// TÜRKÇE kalır (bkz. `_ulkeSec`). Verilmezse görünen ad değerin kendisidir
+/// (dil seçici: adlar zaten yerel, çevrilmez).
+class _AramaliSecimSayfasi extends StatefulWidget {
+  const _AramaliSecimSayfasi({
+    required this.secenekler,
+    required this.degerler,
+    required this.secili,
+    required this.ipucu,
+  });
+
+  final List<String> secenekler;
+  final List<String>? degerler;
+  final String? secili;
+  final String ipucu;
+
+  @override
+  State<_AramaliSecimSayfasi> createState() => _AramaliSecimSayfasiState();
+}
+
+class _AramaliSecimSayfasiState extends State<_AramaliSecimSayfasi> {
+  final _arama = TextEditingController();
+
+  @override
+  void dispose() {
+    _arama.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final secenekler = widget.secenekler;
+    final degerler = widget.degerler;
+    final sorgu = _arama.text.toLowerCase().trim();
+    // DİZİN üzerinden süz: görünen ad ile saklanan değer ÇİFT kalsın
+    // (ayrı ayrı süzülse ülke seçiminde eşleşme kayardı).
+    // Arama ikisini de tarar — İspanyolca arayüzde "Alemania" yazan da,
+    // ezberinden "Almanya" yazan da ülkeyi bulur.
+    final filtreli = [
+      for (var i = 0; i < secenekler.length; i++)
+        if (sorgu.isEmpty ||
+            secenekler[i].toLowerCase().contains(sorgu) ||
+            (degerler?[i].toLowerCase().contains(sorgu) ?? false))
+          i,
+    ];
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: TextField(
+              controller: _arama,
+              autofocus: false,
+              onChanged: (_) => setState(() {}),
+              decoration: InputDecoration(
+                hintText: widget.ipucu,
+                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin38),
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: filtreli.length,
+              itemBuilder: (context, i) {
+                final j = filtreli[i];
+                // Ekranda görünen ad çevrili; geri dönen değer saklanan
+                // (ülkede Türkçe) karşılık.
+                final deger = degerler?[j] ?? secenekler[j];
+                return ListTile(
+                  title: Text(secenekler[j]),
+                  trailing: deger == widget.secili
+                      ? Icon(Icons.check, color: DiziRenkler.sariMetin)
+                      : null,
+                  onTap: () => Navigator.pop(context, deger),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

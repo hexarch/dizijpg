@@ -687,4 +687,11 @@ const Map<String, String> cevirilerId = {
       'Jika koneksi langsung tidak dapat dibuat, audio dan video melewati server relai (TURN) dalam keadaan terenkripsi. Server relai juga tidak dapat mendekripsi atau merekam isinya.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofon hanya digunakan selama panggilan suara atau video, dan kamera hanya selama panggilan video. Keduanya dimatikan saat panggilan berakhir.',
+  'Takip ettiğin {} kişi izledi': '{} orang yang kamu ikuti sudah menontonnya',
+  'Yorum yaz...': 'Tulis komentar...',
+  'Sıradaki bölüm': 'Episode berikutnya',
+  'Doğrulanmış testçi': 'Penguji terverifikasi',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Notifikasi ikuti, suka, balasan, pesan, dan tag',
+  'Sen': 'Kamu',
 };

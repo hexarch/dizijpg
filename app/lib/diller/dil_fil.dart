@@ -692,4 +692,11 @@ const Map<String, String> cevirilerFil = {
       'Kapag hindi posible ang direktang koneksyon, dumadaan ang audio at video sa isang relay server (TURN) habang naka-encrypt. Hindi rin kayang i-decrypt o i-record ng relay ang laman.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Ginagamit ang mikropono tuwing voice o video call lang, at ang camera tuwing video call lang. Parehong nakakasara ang mga ito pagkatapos ng tawag.',
+  'Takip ettiğin {} kişi izledi': '{} taong sinusundan mo ang nanood nito',
+  'Yorum yaz...': 'Magsulat ng komento...',
+  'Sıradaki bölüm': 'Susunod na episode',
+  'Doğrulanmış testçi': 'Beripikadong tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Mga abiso para sa follow, like, sagot, mensahe at tag',
+  'Sen': 'Ikaw',
 };

@@ -668,4 +668,11 @@ const Map<String, String> cevirilerAm = {
       'ቀጥተኛ ግንኙነት ካልተቻለ ድምፅና ቪዲዮ ተመስጥረው በማስተላለፊያ አገልጋይ (TURN) ያልፋሉ። ማስተላለፊያው ደግሞ ይዘቱን መፍታት ወይም መቅዳት አይችልም።',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'ማይክሮፎን የሚሠራው በድምፅ ወይም በቪዲዮ ጥሪ ወቅት ብቻ ሲሆን ካሜራ ደግሞ በቪዲዮ ጥሪ ወቅት ብቻ ነው። ጥሪው ሲያልቅ ሁለቱም ይጠፋሉ።',
+  'Takip ettiğin {} kişi izledi': 'የምትከታተላቸው {} ሰዎች ተመልክተውታል',
+  'Yorum yaz...': 'አስተያየት ጻፍ...',
+  'Sıradaki bölüm': 'ቀጣዩ ክፍል',
+  'Doğrulanmış testçi': 'የተረጋገጠ ሞካሪ',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'የመከተል፣ የመውደድ፣ የመልስ፣ የመልእክት እና የመለያ ማሳወቂያዎች',
+  'Sen': 'እርስዎ',
 };

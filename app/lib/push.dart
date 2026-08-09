@@ -16,10 +16,24 @@ import 'yonlendirme.dart';
 
 final FlutterLocalNotificationsPlugin _yerel =
     FlutterLocalNotificationsPlugin();
-const AndroidNotificationChannel _kanal = AndroidNotificationChannel(
+
+/// Bildirim kanalı — adı ve açıklaması Android'in **sistem ayarlarında**
+/// görünür, yani ÇEVRİLMESİ gerekir.
+///
+/// NEDEN `const` DEĞİL: `.c` çalışma zamanında seçili dile bakar, sabit
+/// ifadede kullanılamaz. Kanal nesnesi ucuzdur, her erişimde yeniden kurulur.
+///
+/// DİL NE ZAMAN BELLİ: kanal yalnız [pushBaslat] içinde OLUŞTURULUR; o da
+/// `main()`de `Ceviri.yukle()`den (main.dart) ve girişten SONRA çağrılır —
+/// yani kanal kurulurken seçili dil hazırdır. Android kanal adı/açıklamasını
+/// aynı kimlikle yeniden oluşturulduğunda GÜNCELLER, bu yüzden kullanıcı dili
+/// değiştirdiğinde metinler bir sonraki açılışta kendiliğinden düzelir.
+/// (Bildirim BASARKEN verilen ad/açıklamayı Android yok sayar; kayıtlı kanal
+/// ayarları geçerlidir — bu yüzden çeviri yalnız oluşturma anında önemlidir.)
+AndroidNotificationChannel get _kanal => AndroidNotificationChannel(
   'dizijpg_bildirim',
-  'Bildirimler',
-  description: 'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri',
+  'Bildirimler'.c,
+  description: 'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri'.c,
   importance: Importance.high,
 );
 bool _kuruldu = false;
@@ -110,7 +124,9 @@ Future<void> bildirimCiz(String ad) async {
     } catch (_) {}
   }
 
-  const ben = Person(name: 'Sen', key: 'ben');
+  // "Sen" bildirimde GÖRÜNÜR (MessagingStyle kendi satırlarını böyle etiketler)
+  // — çevrilmeli, bu yüzden const değil.
+  final ben = Person(name: 'Sen'.c, key: 'ben');
   final gonderen = Person(name: baslik, key: ad, icon: kisiIkon);
   await _yerel.show(
     // Kişi başına tek bildirim; içeriği MessagingStyle ile birikir
@@ -235,6 +251,9 @@ Future<void> bildirimYanitArkaplan(NotificationResponse yanit) async {
       ),
     );
     if (await _aramaEylemiIsle(yanit)) return;
+    // Yanıt bildirimi YENİDEN ÇİZİLİYOR (`bildirimCiz`): "Yanıtla", "Sen" ve
+    // yanıt kutusu ipucu istemciden gidiyor — bu izolatta Çeviri yüklü değil.
+    await Ceviri.yukle();
     await _yanitIsle(yanit);
   } catch (_) {}
 }
@@ -265,11 +284,14 @@ Future<void> pushArkaplan(RemoteMessage mesaj) async {
         android: AndroidInitializationSettings('@mipmap/ic_launcher'),
       ),
     );
+    // Bildirim GÖVDESİ sunucudan alıcının dilinde geliyor (PUSH_SABLON); ama
+    // eylem etiketleri İSTEMCİDEN gidiyor ve bu izolatta `Ceviri` henüz
+    // yüklenmedi — yükle, yoksa Cevapla/Reddet ("arama") ve Yanıtla /
+    // "Mesajını yaz..." ("mesaj") Türkçe kalır. İKİ TÜR İÇİN DE gerekli:
+    // önceden yalnız "arama" dalında çağrılıyordu, bu yüzden uygulama
+    // kapalıyken gelen mesaj bildirimindeki yanıt kutusu Türkçe basıyordu.
+    await Ceviri.yukle();
     if (tur == 'arama') {
-      // Bildirim metni sunucudan alıcının dilinde geliyor (PUSH_SABLON);
-      // ama kanal adı ve eylem etiketleri İSTEMCİDEN gidiyor ve bu izolatta
-      // `Ceviri` henüz yüklenmedi — yükle, yoksa Cevapla/Reddet Türkçe kalır.
-      await Ceviri.yukle();
       await AramaBildirim.goster(_yerel, mesaj.data);
       return;
     }

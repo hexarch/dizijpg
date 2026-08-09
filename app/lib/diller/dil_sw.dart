@@ -682,4 +682,11 @@ const Map<String, String> cevirilerSw = {
       'Ikiwa muunganisho wa moja kwa moja hauwezekani, sauti na video hupita kwenye seva ya kupitisha (TURN) zikiwa zimesimbwa. Seva hiyo pia haiwezi kufungua wala kurekodi maudhui.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Kipaza sauti hutumika tu wakati wa simu ya sauti au video, na kamera tu wakati wa simu ya video. Vyote viwili huzimwa simu inapoisha.',
+  'Takip ettiğin {} kişi izledi': 'Watu {} unaowafuata wameitazama',
+  'Yorum yaz...': 'Andika maoni...',
+  'Sıradaki bölüm': 'Kipindi kinachofuata',
+  'Doğrulanmış testçi': 'Mjaribu aliyethibitishwa',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Arifa za kufuata, kupenda, majibu, jumbe na kutajwa',
+  'Sen': 'Wewe',
 };

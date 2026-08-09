@@ -686,4 +686,11 @@ const Map<String, String> cevirilerSv = {
       'Om en direktanslutning inte kan upprättas passerar ljud och video krypterat via en reläserver (TURN). Inte heller den kan dekryptera eller spela in innehållet.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofonen används bara under ett röst- eller videosamtal och kameran bara under ett videosamtal. Båda stängs av när samtalet avslutas.',
+  'Takip ettiğin {} kişi izledi': '{} personer du följer har sett det',
+  'Yorum yaz...': 'Skriv en kommentar...',
+  'Sıradaki bölüm': 'Nästa avsnitt',
+  'Doğrulanmış testçi': 'Verifierad testare',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Aviseringar om följare, gillanden, svar, meddelanden och omnämnanden',
+  'Sen': 'Du',
 };

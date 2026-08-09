@@ -684,4 +684,11 @@ const Map<String, String> cevirilerCs = {
       'Pokud přímé spojení nelze navázat, zvuk a obraz projdou šifrované přes přenosový server (TURN). Ani ten obsah nedokáže dešifrovat ani nahrát.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofon se používá jen během hlasového nebo videohovoru a kamera jen během videohovoru. Po skončení hovoru se oba vypnou.',
+  'Takip ettiğin {} kişi izledi': 'Sledovalo to {} lidí, které sleduješ',
+  'Yorum yaz...': 'Napiš komentář...',
+  'Sıradaki bölüm': 'Další epizoda',
+  'Doğrulanmış testçi': 'Ověřený tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Oznámení o sledování, lajcích, odpovědích, zprávách a označeních',
+  'Sen': 'Ty',
 };

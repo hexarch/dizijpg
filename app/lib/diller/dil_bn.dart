@@ -684,4 +684,11 @@ const Map<String, String> cevirilerBn = {
       'সরাসরি সংযোগ সম্ভব না হলে অডিও ও ভিডিও এনক্রিপ্টেড অবস্থায় একটি রিলে সার্ভারের (TURN) মধ্য দিয়ে যায়। রিলে সার্ভারও বিষয়বস্তু ডিক্রিপ্ট বা রেকর্ড করতে পারে না।',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'মাইক্রোফোন শুধু ভয়েস বা ভিডিও কলের সময় এবং ক্যামেরা শুধু ভিডিও কলের সময় ব্যবহার হয়। কল শেষ হলে দুটোই বন্ধ হয়ে যায়।',
+  'Takip ettiğin {} kişi izledi': 'তুমি যাদের ফলো করো তাদের {} জন দেখেছে',
+  'Yorum yaz...': 'মন্তব্য লেখো...',
+  'Sıradaki bölüm': 'পরবর্তী এপিসোড',
+  'Doğrulanmış testçi': 'যাচাই করা টেস্টার',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ফলো, লাইক, উত্তর, বার্তা ও ট্যাগের বিজ্ঞপ্তি',
+  'Sen': 'তুমি',
 };

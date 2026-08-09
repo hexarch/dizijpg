@@ -687,4 +687,11 @@ const Map<String, String> cevirilerUk = {
       'Якщо пряме зʼєднання неможливе, аудіо та відео проходять у зашифрованому вигляді через сервер ретрансляції (TURN). Він також не може розшифрувати чи записати вміст.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Мікрофон використовується лише під час голосового або відеовиклику, а камера — лише під час відеовиклику. Після завершення виклику обидва вимикаються.',
+  'Takip ettiğin {} kişi izledi': 'Переглянули {} людей із твоїх підписок',
+  'Yorum yaz...': 'Напиши коментар...',
+  'Sıradaki bölüm': 'Наступний епізод',
+  'Doğrulanmış testçi': 'Перевірений тестувальник',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Сповіщення про підписки, вподобання, відповіді, повідомлення та згадки',
+  'Sen': 'Ти',
 };

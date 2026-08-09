@@ -675,4 +675,11 @@ const Map<String, String> cevirilerTh = {
       'หากเชื่อมต่อโดยตรงไม่ได้ เสียงและวิดีโอจะผ่านเซิร์ฟเวอร์รีเลย์ (TURN) ในสถานะที่เข้ารหัสไว้ เซิร์ฟเวอร์รีเลย์ก็ถอดรหัสหรือบันทึกเนื้อหาไม่ได้เช่นกัน',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'ไมโครโฟนถูกใช้เฉพาะระหว่างสายเสียงหรือสายวิดีโอ และกล้องเฉพาะระหว่างสายวิดีโอ ทั้งคู่จะถูกปิดเมื่อวางสาย',
+  'Takip ettiğin {} kişi izledi': 'มี {} คนที่คุณติดตามดูแล้ว',
+  'Yorum yaz...': 'เขียนความคิดเห็น...',
+  'Sıradaki bölüm': 'ตอนถัดไป',
+  'Doğrulanmış testçi': 'ผู้ทดสอบที่ยืนยันแล้ว',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'การแจ้งเตือนการติดตาม ถูกใจ ตอบกลับ ข้อความ และการแท็ก',
+  'Sen': 'คุณ',
 };

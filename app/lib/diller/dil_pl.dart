@@ -691,4 +691,11 @@ const Map<String, String> cevirilerPl = {
       'Jeśli bezpośrednie połączenie nie jest możliwe, dźwięk i obraz przechodzą w postaci zaszyfrowanej przez serwer przekaźnikowy (TURN). On również nie może odszyfrować ani nagrać treści.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofon jest używany tylko podczas rozmowy głosowej lub wideo, a kamera tylko podczas rozmowy wideo. Po zakończeniu rozmowy oba są wyłączane.',
+  'Takip ettiğin {} kişi izledi': 'Obejrzało to {} osób, które obserwujesz',
+  'Yorum yaz...': 'Napisz komentarz...',
+  'Sıradaki bölüm': 'Następny odcinek',
+  'Doğrulanmış testçi': 'Zweryfikowany tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Powiadomienia o obserwacjach, polubieniach, odpowiedziach, wiadomościach i oznaczeniach',
+  'Sen': 'Ty',
 };

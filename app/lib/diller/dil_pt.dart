@@ -692,4 +692,11 @@ const Map<String, String> cevirilerPt = {
       'Se não for possível estabelecer uma conexão direta, áudio e vídeo passam criptografados por um servidor de retransmissão (TURN). Esse servidor também não consegue descriptografar nem gravar o conteúdo.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'O microfone é usado apenas durante uma chamada de voz ou vídeo, e a câmera apenas durante uma videochamada. Ambos são desligados quando a chamada termina.',
+  'Takip ettiğin {} kişi izledi': '{} pessoas que você segue assistiram',
+  'Yorum yaz...': 'Escreva um comentário...',
+  'Sıradaki bölüm': 'Próximo episódio',
+  'Doğrulanmış testçi': 'Testador verificado',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Notificações de seguidores, curtidas, respostas, mensagens e menções',
+  'Sen': 'Você',
 };

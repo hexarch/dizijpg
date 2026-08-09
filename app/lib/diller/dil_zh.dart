@@ -651,4 +651,10 @@ const Map<String, String> cevirilerZh = {
       '如果无法建立直连，音频和视频会以加密状态经过中继服务器（TURN）。中继服务器同样无法解密或记录内容。',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       '麦克风仅在语音或视频通话期间使用，摄像头仅在视频通话期间使用。通话结束后两者都会关闭。',
+  'Takip ettiğin {} kişi izledi': '你关注的 {} 人看过',
+  'Yorum yaz...': '写评论…',
+  'Sıradaki bölüm': '下一集',
+  'Doğrulanmış testçi': '已验证测试员',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri': '关注、点赞、回复、消息和标记通知',
+  'Sen': '我',
 };

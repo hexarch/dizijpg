@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'ceviri.dart';
+import 'diller/ulkeler.dart';
 import 'tema.dart';
 
 /// Ülke adı → bayrak görseli.
@@ -310,6 +312,25 @@ String? ulkeKodu(String? ad) {
   return null;
 }
 
+/// Ham `ulke` değerinin SEÇİLİ DİLDEKİ görünen adı ("İspanya" → es: "España").
+///
+/// --- SAKLANAN DEĞER ÇEVRİLMEZ ---
+/// `ulke` sunucuda SERBEST METİN (60 karakter, başka doğrulama yok) ve TÜRKÇE
+/// saklanır. Saklanan değeri çevirmek iki şeyi birden kırardı: mevcut
+/// kullanıcıların ülkesi (herkes farklı dilde yazardı) ve [ulkeKodu]'nun
+/// ad→ISO eşlemesi — yani bayraklar kaybolurdu. Bu yüzden çeviri YALNIZ
+/// görüntüleme anında yapılır: ham değer önce ISO koduna indirgenir, ad
+/// [ulkeAdlari]'ndan okunur.
+///
+/// Türkçe'de ve ad çözülemediğinde ham değer olduğu gibi döner — uygulama
+/// dışından gelmiş serbest metin ("Somewhere") EKRANDA KAYBOLMAZ.
+String ulkeAdi(String? ham) {
+  final metin = ham ?? '';
+  final kod = ulkeKodu(metin);
+  if (kod == null) return metin;
+  return ulkeAdlari[Ceviri.dil.value]?[kod] ?? metin;
+}
+
 /// Profil ülke satırındaki bayrak. Konum iğnesinin (Icons.location_on) yerini
 /// alır. Bayrak bulunamazsa satır BOZULMAZ: yerine dünya ikonu çizilir, ülke
 /// metni yanında olduğu gibi kalır.
@@ -373,7 +394,8 @@ class UlkeSatiri extends StatelessWidget {
         const SizedBox(width: 5),
         Flexible(
           child: Text(
-            ulke,
+            // Saklanan değer Türkçe kalır; ekranda seçili dilde görünür.
+            ulkeAdi(ulke),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),

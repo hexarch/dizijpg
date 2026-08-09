@@ -689,4 +689,11 @@ const Map<String, String> cevirilerRo = {
       'Dacă nu se poate stabili o conexiune directă, audio și video trec criptate printr-un server releu (TURN). Nici acesta nu poate decripta sau înregistra conținutul.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Microfonul este folosit doar în timpul unui apel vocal sau video, iar camera doar în timpul unui apel video. Ambele sunt oprite la finalul apelului.',
+  'Takip ettiğin {} kişi izledi': '{} persoane pe care le urmărești l-au văzut',
+  'Yorum yaz...': 'Scrie un comentariu...',
+  'Sıradaki bölüm': 'Episodul următor',
+  'Doğrulanmış testçi': 'Tester verificat',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Notificări pentru urmăriri, aprecieri, răspunsuri, mesaje și etichetări',
+  'Sen': 'Tu',
 };

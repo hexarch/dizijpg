@@ -661,4 +661,11 @@ const Map<String, String> cevirilerJa = {
       '直接接続できない場合、音声と映像は暗号化されたまま中継サーバー（TURN）を経由します。中継サーバーも内容を復号したり記録したりはできません。',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'マイクは音声通話またはビデオ通話中のみ、カメラはビデオ通話中のみ使用されます。通話が終わると両方ともオフになります。',
+  'Takip ettiğin {} kişi izledi': 'フォロー中の{}人が視聴しました',
+  'Yorum yaz...': 'コメントを書く…',
+  'Sıradaki bölüm': '次のエピソード',
+  'Doğrulanmış testçi': '認証済みテスター',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'フォロー、いいね、返信、メッセージ、メンションの通知',
+  'Sen': '自分',
 };

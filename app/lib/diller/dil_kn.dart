@@ -684,4 +684,11 @@ const Map<String, String> cevirilerKn = {
       'ನೇರ ಸಂಪರ್ಕ ಸಾಧ್ಯವಾಗದಿದ್ದರೆ ಆಡಿಯೊ ಮತ್ತು ವೀಡಿಯೊ ಎನ್‌ಕ್ರಿಪ್ಟ್ ಆದ ಸ್ಥಿತಿಯಲ್ಲಿ ರಿಲೇ ಸರ್ವರ್ (TURN) ಮೂಲಕ ಹಾದುಹೋಗುತ್ತವೆ. ರಿಲೇ ಸರ್ವರ್ ಕೂಡ ವಿಷಯವನ್ನು ಡೀಕ್ರಿಪ್ಟ್ ಅಥವಾ ರೆಕಾರ್ಡ್ ಮಾಡಲಾಗದು.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'ಮೈಕ್ರೊಫೋನ್ ಧ್ವನಿ ಅಥವಾ ವೀಡಿಯೊ ಕರೆಯ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ, ಕ್ಯಾಮೆರಾ ವೀಡಿಯೊ ಕರೆಯ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ ಬಳಕೆಯಾಗುತ್ತದೆ. ಕರೆ ಮುಗಿದ ಕೂಡಲೇ ಎರಡೂ ಆಫ್ ಆಗುತ್ತವೆ.',
+  'Takip ettiğin {} kişi izledi': 'ನೀವು ಅನುಸರಿಸುವ {} ಜನರು ನೋಡಿದ್ದಾರೆ',
+  'Yorum yaz...': 'ಕಾಮೆಂಟ್ ಬರೆಯಿರಿ...',
+  'Sıradaki bölüm': 'ಮುಂದಿನ ಎಪಿಸೋಡ್',
+  'Doğrulanmış testçi': 'ಪರಿಶೀಲಿಸಿದ ಪರೀಕ್ಷಕ',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ಫಾಲೋ, ಲೈಕ್, ಉತ್ತರ, ಸಂದೇಶ ಮತ್ತು ಟ್ಯಾಗ್ ಅಧಿಸೂಚನೆಗಳು',
+  'Sen': 'ನೀವು',
 };

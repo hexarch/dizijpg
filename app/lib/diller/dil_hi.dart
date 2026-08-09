@@ -685,4 +685,12 @@ const Map<String, String> cevirilerHi = {
       'यदि सीधा कनेक्शन नहीं बन पाता, तो ऑडियो और वीडियो एन्क्रिप्टेड रूप में एक रिले सर्वर (TURN) से गुज़रते हैं। रिले सर्वर भी सामग्री को डिक्रिप्ट या रिकॉर्ड नहीं कर सकता।',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'माइक्रोफ़ोन केवल वॉइस या वीडियो कॉल के दौरान और कैमरा केवल वीडियो कॉल के दौरान उपयोग होता है। कॉल खत्म होते ही दोनों बंद हो जाते हैं।',
+  'Takip ettiğin {} kişi izledi':
+      'आप जिन्हें फ़ॉलो करते हैं उनमें से {} ने देखा',
+  'Yorum yaz...': 'टिप्पणी लिखो...',
+  'Sıradaki bölüm': 'अगला एपिसोड',
+  'Doğrulanmış testçi': 'सत्यापित परीक्षक',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'फ़ॉलो, लाइक, जवाब, संदेश और टैग की सूचनाएँ',
+  'Sen': 'तुम',
 };

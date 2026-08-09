@@ -688,4 +688,11 @@ const Map<String, String> cevirilerBg = {
       'Ако не може да се установи пряка връзка, звукът и видеото преминават шифровани през ретранслиращ сървър (TURN). И той не може да дешифрира или запише съдържанието.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Микрофонът се използва само по време на гласово или видеообаждане, а камерата само по време на видеообаждане. И двете се изключват след края на разговора.',
+  'Takip ettiğin {} kişi izledi': '{} души, които следваш, го гледаха',
+  'Yorum yaz...': 'Напиши коментар...',
+  'Sıradaki bölüm': 'Следващ епизод',
+  'Doğrulanmış testçi': 'Потвърден тестер',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Известия за следване, харесване, отговор, съобщение и споменаване',
+  'Sen': 'Ти',
 };

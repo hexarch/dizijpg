@@ -662,4 +662,11 @@ const Map<String, String> cevirilerKo = {
       '직접 연결이 불가능하면 오디오와 영상은 암호화된 상태로 중계 서버(TURN)를 거쳐요. 중계 서버 역시 내용을 복호화하거나 기록할 수 없어요.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       '마이크는 음성 또는 영상 통화 중에만, 카메라는 영상 통화 중에만 사용돼요. 통화가 끝나면 둘 다 꺼져요.',
+  'Takip ettiğin {} kişi izledi': '팔로우 중인 {}명이 시청했어요',
+  'Yorum yaz...': '댓글 쓰기...',
+  'Sıradaki bölüm': '다음 에피소드',
+  'Doğrulanmış testçi': '인증된 테스터',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      '팔로우, 좋아요, 답글, 메시지, 태그 알림',
+  'Sen': '나',
 };

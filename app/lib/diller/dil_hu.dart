@@ -688,4 +688,11 @@ const Map<String, String> cevirilerHu = {
       'Ha közvetlen kapcsolat nem hozható létre, a hang és a kép titkosítva halad át egy továbbító kiszolgálón (TURN). Az sem tudja visszafejteni vagy rögzíteni a tartalmat.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'A mikrofont csak hang- vagy videohívás közben, a kamerát csak videohívás közben használjuk. A hívás végén mindkettő kikapcsol.',
+  'Takip ettiğin {} kişi izledi': '{} ember, akit követsz, megnézte',
+  'Yorum yaz...': 'Írj egy hozzászólást...',
+  'Sıradaki bölüm': 'Következő epizód',
+  'Doğrulanmış testçi': 'Ellenőrzött tesztelő',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Értesítések követésekről, kedvelésekről, válaszokról, üzenetekről és említésekről',
+  'Sen': 'Te',
 };

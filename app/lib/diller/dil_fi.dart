@@ -687,4 +687,11 @@ const Map<String, String> cevirilerFi = {
       'Jos suoraa yhteyttä ei saada, ääni ja kuva kulkevat salattuina välityspalvelimen (TURN) kautta. Sekään ei voi purkaa tai tallentaa sisältöä.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofonia käytetään vain ääni- tai videopuhelun aikana ja kameraa vain videopuhelun aikana. Molemmat sammutetaan puhelun päätyttyä.',
+  'Takip ettiğin {} kişi izledi': '{} seuraamaasi käyttäjää on katsonut tämän',
+  'Yorum yaz...': 'Kirjoita kommentti...',
+  'Sıradaki bölüm': 'Seuraava jakso',
+  'Doğrulanmış testçi': 'Vahvistettu testaaja',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Seuraamis-, tykkäys-, vastaus-, viesti- ja merkintäilmoitukset',
+  'Sen': 'Sinä',
 };

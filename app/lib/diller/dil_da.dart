@@ -681,4 +681,11 @@ const Map<String, String> cevirilerDa = {
       'Hvis en direkte forbindelse ikke kan oprettes, sendes lyd og video krypteret gennem en relæserver (TURN). Den kan heller ikke dekryptere eller optage indholdet.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofonen bruges kun under et tale- eller videoopkald, og kameraet kun under et videoopkald. Begge slukkes, når opkaldet slutter.',
+  'Takip ettiğin {} kişi izledi': '{} personer, du følger, har set det',
+  'Yorum yaz...': 'Skriv en kommentar...',
+  'Sıradaki bölüm': 'Næste afsnit',
+  'Doğrulanmış testçi': 'Verificeret tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Notifikationer om følgere, likes, svar, beskeder og tags',
+  'Sen': 'Du',
 };

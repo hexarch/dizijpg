@@ -686,4 +686,11 @@ const Map<String, String> cevirilerEn = {
       'If a direct connection cannot be established, audio and video pass through a relay server (TURN) while still encrypted. The relay cannot decrypt or record the content either.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'The microphone is used only during a voice or video call, and the camera only during a video call. Both are turned off when the call ends.',
+  'Takip ettiğin {} kişi izledi': '{} people you follow watched it',
+  'Yorum yaz...': 'Write a comment...',
+  'Sıradaki bölüm': 'Next episode',
+  'Doğrulanmış testçi': 'Verified tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Follow, like, reply, message and mention notifications',
+  'Sen': 'You',
 };

@@ -685,4 +685,11 @@ const Map<String, String> cevirilerSr = {
       'Ако директна веза није могућа, звук и слика пролазе шифровани кроз релејни сервер (TURN). Ни он не може да дешифрује нити сними садржај.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Микрофон се користи само током гласовног или видео позива, а камера само током видео позива. Оба се искључују када се позив заврши.',
+  'Takip ettiğin {} kişi izledi': 'Гледало је {} људи које пратиш',
+  'Yorum yaz...': 'Напиши коментар...',
+  'Sıradaki bölüm': 'Следећа епизода',
+  'Doğrulanmış testçi': 'Верификовани тестер',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Обавештења о праћењима, свиђањима, одговорима, порукама и означавањима',
+  'Sen': 'Ти',
 };

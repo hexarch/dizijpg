@@ -688,4 +688,11 @@ const Map<String, String> cevirilerNl = {
       'Als er geen directe verbinding mogelijk is, gaan audio en video versleuteld via een relayserver (TURN). Ook die kan de inhoud niet ontsleutelen of opnemen.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'De microfoon wordt alleen tijdens een spraak- of video-oproep gebruikt en de camera alleen tijdens een video-oproep. Beide gaan uit zodra de oproep eindigt.',
+  'Takip ettiğin {} kişi izledi': '{} mensen die je volgt hebben dit gekeken',
+  'Yorum yaz...': 'Schrijf een reactie...',
+  'Sıradaki bölüm': 'Volgende aflevering',
+  'Doğrulanmış testçi': 'Geverifieerde tester',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Meldingen over volgers, vind-ik-leuks, reacties, berichten en vermeldingen',
+  'Sen': 'Jij',
 };

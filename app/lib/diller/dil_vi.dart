@@ -683,4 +683,11 @@ const Map<String, String> cevirilerVi = {
       'Nếu không thể kết nối trực tiếp, âm thanh và hình ảnh sẽ đi qua máy chủ chuyển tiếp (TURN) ở dạng đã mã hóa. Máy chủ chuyển tiếp cũng không thể giải mã hay ghi lại nội dung.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Micrô chỉ được dùng trong cuộc gọi thoại hoặc video, còn camera chỉ dùng trong cuộc gọi video. Cả hai đều tắt khi cuộc gọi kết thúc.',
+  'Takip ettiğin {} kişi izledi': '{} người bạn theo dõi đã xem',
+  'Yorum yaz...': 'Viết bình luận...',
+  'Sıradaki bölüm': 'Tập tiếp theo',
+  'Doğrulanmış testçi': 'Người thử nghiệm đã xác minh',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Thông báo theo dõi, thích, trả lời, tin nhắn và gắn thẻ',
+  'Sen': 'Bạn',
 };

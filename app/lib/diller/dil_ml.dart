@@ -686,4 +686,11 @@ const Map<String, String> cevirilerMl = {
       'നേരിട്ടുള്ള കണക്ഷൻ സാധ്യമല്ലെങ്കിൽ ഓഡിയോയും വീഡിയോയും എൻക്രിപ്റ്റ് ചെയ്ത നിലയിൽ ഒരു റിലേ സെർവർ (TURN) വഴി കടന്നുപോകും. റിലേ സെർവറിനും ഉള്ളടക്കം ഡീക്രിപ്റ്റ് ചെയ്യാനോ റെക്കോർഡ് ചെയ്യാനോ കഴിയില്ല.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'മൈക്രോഫോൺ വോയ്‌സ് അല്ലെങ്കിൽ വീഡിയോ കോൾ സമയത്തും ക്യാമറ വീഡിയോ കോൾ സമയത്തും മാത്രമേ ഉപയോഗിക്കൂ. കോൾ കഴിഞ്ഞാൽ രണ്ടും ഓഫാകും.',
+  'Takip ettiğin {} kişi izledi': 'നിങ്ങൾ പിന്തുടരുന്ന {} പേർ കണ്ടു',
+  'Yorum yaz...': 'അഭിപ്രായം എഴുതൂ...',
+  'Sıradaki bölüm': 'അടുത്ത എപ്പിസോഡ്',
+  'Doğrulanmış testçi': 'സ്ഥിരീകരിച്ച ടെസ്റ്റർ',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ഫോളോ, ലൈക്ക്, മറുപടി, സന്ദേശം, ടാഗ് അറിയിപ്പുകൾ',
+  'Sen': 'നിങ്ങൾ',
 };

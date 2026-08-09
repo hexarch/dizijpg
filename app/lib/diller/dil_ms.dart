@@ -690,4 +690,11 @@ const Map<String, String> cevirilerMs = {
       'Jika sambungan terus tidak dapat dibuat, audio dan video melalui pelayan geganti (TURN) dalam keadaan tersulit. Pelayan geganti juga tidak dapat menyahsulit atau merakam kandungan.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofon hanya digunakan semasa panggilan suara atau video, dan kamera hanya semasa panggilan video. Kedua-duanya dimatikan apabila panggilan tamat.',
+  'Takip ettiğin {} kişi izledi': '{} orang yang anda ikuti telah menontonnya',
+  'Yorum yaz...': 'Tulis komen...',
+  'Sıradaki bölüm': 'Episod seterusnya',
+  'Doğrulanmış testçi': 'Penguji disahkan',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'Pemberitahuan ikutan, suka, balasan, mesej dan tag',
+  'Sen': 'Anda',
 };

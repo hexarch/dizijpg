@@ -681,4 +681,11 @@ const Map<String, String> cevirilerTe = {
       'ప్రత్యక్ష కనెక్షన్ సాధ్యం కాకపోతే, ఆడియో మరియు వీడియో ఎన్‌క్రిప్ట్ చేయబడిన స్థితిలో రిలే సర్వర్ (TURN) ద్వారా వెళ్తాయి. రిలే సర్వర్ కూడా కంటెంట్‌ను డీక్రిప్ట్ లేదా రికార్డ్ చేయలేదు.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'మైక్రోఫోన్ వాయిస్ లేదా వీడియో కాల్ సమయంలో మాత్రమే, కెమెరా వీడియో కాల్ సమయంలో మాత్రమే ఉపయోగించబడతాయి. కాల్ ముగిసిన వెంటనే రెండూ ఆఫ్ అవుతాయి.',
+  'Takip ettiğin {} kişi izledi': 'మీరు అనుసరించే {} మంది చూశారు',
+  'Yorum yaz...': 'వ్యాఖ్య రాయి...',
+  'Sıradaki bölüm': 'తదుపరి ఎపిసోడ్',
+  'Doğrulanmış testçi': 'ధృవీకరించిన పరీక్షకుడు',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'ఫాలో, లైక్, బదులు, సందేశం మరియు ట్యాగ్ నోటిఫికేషన్‌లు',
+  'Sen': 'మీరు',
 };

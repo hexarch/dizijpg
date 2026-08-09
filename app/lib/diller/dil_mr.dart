@@ -683,4 +683,11 @@ const Map<String, String> cevirilerMr = {
       'थेट कनेक्शन शक्य नसल्यास ऑडिओ आणि व्हिडिओ एन्क्रिप्टेड स्वरूपात रिले सर्व्हरमधून (TURN) जातात. रिले सर्व्हरही मजकूर डिक्रिप्ट किंवा रेकॉर्ड करू शकत नाही.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'मायक्रोफोन फक्त व्हॉइस किंवा व्हिडिओ कॉलदरम्यान आणि कॅमेरा फक्त व्हिडिओ कॉलदरम्यान वापरला जातो. कॉल संपल्यावर दोन्ही बंद होतात.',
+  'Takip ettiğin {} kişi izledi': 'तू फॉलो करतोस त्यांपैकी {} जणांनी पाहिले',
+  'Yorum yaz...': 'टिप्पणी लिही...',
+  'Sıradaki bölüm': 'पुढील एपिसोड',
+  'Doğrulanmış testçi': 'सत्यापित परीक्षक',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'फॉलो, लाइक, उत्तर, संदेश आणि टॅग सूचना',
+  'Sen': 'तू',
 };

@@ -686,4 +686,12 @@ const Map<String, String> cevirilerUr = {
       'اگر براہِ راست رابطہ نہ بن سکے تو آڈیو اور ویڈیو خفیہ حالت میں ایک ریلے سرور (TURN) سے گزرتے ہیں۔ ریلے سرور بھی مواد کو ڈی کرپٹ یا ریکارڈ نہیں کر سکتا۔',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'مائیکروفون صرف وائس یا ویڈیو کال کے دوران اور کیمرہ صرف ویڈیو کال کے دوران استعمال ہوتا ہے۔ کال ختم ہوتے ہی دونوں بند ہو جاتے ہیں۔',
+  'Takip ettiğin {} kişi izledi':
+      'آپ جن کو فالو کرتے ہیں ان میں سے {} نے دیکھا',
+  'Yorum yaz...': 'تبصرہ لکھیں...',
+  'Sıradaki bölüm': 'اگلی قسط',
+  'Doğrulanmış testçi': 'تصدیق شدہ ٹیسٹر',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'فالو، پسند، جواب، پیغام اور ٹیگ کی اطلاعات',
+  'Sen': 'آپ',
 };

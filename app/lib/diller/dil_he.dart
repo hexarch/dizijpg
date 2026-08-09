@@ -672,4 +672,11 @@ const Map<String, String> cevirilerHe = {
       'אם לא ניתן ליצור חיבור ישיר, האודיו והווידאו עוברים מוצפנים דרך שרת ממסר (TURN). גם הוא אינו יכול לפענח או להקליט את התוכן.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'המיקרופון פועל רק במהלך שיחה קולית או שיחת וידאו, והמצלמה רק במהלך שיחת וידאו. שניהם נכבים בתום השיחה.',
+  'Takip ettiğin {} kişi izledi': '{} אנשים שאתה עוקב אחריהם צפו בזה',
+  'Yorum yaz...': 'כתוב תגובה...',
+  'Sıradaki bölüm': 'הפרק הבא',
+  'Doğrulanmış testçi': 'בודק מאומת',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'התראות על מעקב, לייקים, תגובות, הודעות ותיוגים',
+  'Sen': 'אתה',
 };

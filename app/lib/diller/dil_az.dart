@@ -679,4 +679,11 @@ const Map<String, String> cevirilerAz = {
       'Birbaşa bağlantı qurmaq mümkün olmasa, səs və video şifrələnmiş halda ötürücü serverdən (TURN) keçir. Ötürücü server də məzmunu deşifrə və ya qeyd edə bilmir.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Mikrofon yalnız səsli və ya video zəng zamanı, kamera isə yalnız video zəng zamanı istifadə olunur. Zəng bitəndə hər ikisi söndürülür.',
+  'Takip ettiğin {} kişi izledi': 'İzlədiyin {} nəfər baxıb',
+  'Yorum yaz...': 'Şərh yaz...',
+  'Sıradaki bölüm': 'Növbəti epizod',
+  'Doğrulanmış testçi': 'Doğrulanmış sınaqçı',
+  'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
+      'İzləmə, bəyənmə, cavab, mesaj və etiket bildirişləri',
+  'Sen': 'Sən',
 };
