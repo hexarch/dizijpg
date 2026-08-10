@@ -58,11 +58,17 @@ class _ListeEkraniState extends State<ListeEkrani> {
         // sayfada çıkışsız kalırdı (içerik sayfalarındaki kalıbın aynısı).
         actions: const [GirisEylemi()],
       ),
-      body: ListeIcerigi(
-        listeId: widget.listeId,
-        onListe: (l) {
-          if (mounted) setState(() => _liste = l);
-        },
+      // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
+      // (madde 26); mobilde kısıt bağlamaz. Profildeki [ListeSheet] kendi
+      // genişliğini modal olarak yönetir, o yüzden kısıt yalnız TAM SAYFADA.
+      body: OrtaKolon(
+        azami: masaustuIcerikGenisligi,
+        cocuk: ListeIcerigi(
+          listeId: widget.listeId,
+          onListe: (l) {
+            if (mounted) setState(() => _liste = l);
+          },
+        ),
       ),
     );
   }

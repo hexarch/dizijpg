@@ -137,6 +137,9 @@ flutter:
     - assets/logo.png
     - assets/google_g.svg
     - assets/tepkiler/
+    # Giden/gelen arama zil (ringback) sesi. 450 Hz, 2 sn cal/4 sn sus, mono
+    # 8 kHz WAV; audioplayers ReleaseMode.loop ile donguye alinir.
+    - assets/sesler/
     # Ülke bayrakları (profil ülke satırı). 116 PNG, toplam ~42 KB.
     # Emoji bayrak KULLANILMIYOR: Windows hiç çizmiyor, eski Android'de eksik.
     - assets/bayraklar/

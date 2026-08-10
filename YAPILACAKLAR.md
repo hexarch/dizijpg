@@ -1,6 +1,52 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-10 (gece) — ARAMA KALİTE TURU (md. 42) + MASAÜSTÜ ORTAKOLON (md. 26) 🔨
+**Dağıtım YOK · sürüm 1.32.0+77 (artırılmadı) · yalnız istemci, `backend/` kod
+DEĞİŞMEDİ** (yalnız sözleşme belgesine §14.7 eklendi).
+
+### Arama kalite turu — kullanıcının iki telefonlu testindeki 4 şikâyet
+Ayrıntı ve gerekçeler: `backend/ARAMA-API-SOZLESMESI.md` **§14.7**.
+1. **Zil + haptik** — yeni `app/lib/gorusme/arama_efekti.dart` +
+   `assets/sesler/zil.wav` (450 Hz, 2 sn çal/4 sn sus, mono 8 kHz, ~94 KB).
+   Giden aramada ringback (`caliyor`→çal, cevap gelince sus), gelen aramada
+   ön plan zili (bildirim bastırıldığı için tek çaldıran yer gelen arama
+   ekranı). `SessizEfekti` varsayılan → 1010 testin hiçbiri ses çalmıyor.
+   Yeni paket EKLENMEDİ (audioplayers zaten vardı).
+2. **Ses** — `getUserMedia`ya echoCancellation/noiseSuppression/autoGainControl
+   açıkça verildi; SDP'de opus `useinbandfec=1;usedtx=0;maxaveragebitrate=32000`
+   (`opusAyarla`, saf+testli). Sesli arama AHİZE, görüntülü HOPARLÖR.
+3. **⚠ SÖZLEŞME SAPMASI** — ICE toplama beklemesi 6 sn → **2 sn üst süre**
+   (`buzToplamasiniBekle`, iki yönü de testli). Kurulum yavaşlığının köküydü.
+4. **Avatar nabzı** — `AramaNabzi`: çalarken genişleyip solan halkalar;
+   `disableAnimations` açıksa hiç dönmez, halkalar `IgnorePointer`.
+
+### Masaüstü OrtaKolon toplu geçişi (md. 26)
+15 ekran `OrtaKolon`a alındı: detay, bolum, kisi, kisi_yapimlar, ayarlar,
+bildirimler, ozet, izlediklerim, liste/katalog_liste/kitaplik_liste, gozat
+(1080 geniş ızgara), favori_oyuncular, gizlenen_yorumlar, kullanici_profil
+(+takipçi listeleri +kullanıcı arama). Bilerek dışarıda: sheet'ler, tam ekran
+medya editörleri, giriş/karşılama, sohbet (kendi 800 kısıtı), akış/reels/
+takvim/keşfet (md. 9'da yapılmıştı). `ekranlar/arama.dart` ÖLÜ KOD (hiçbir
+rotadan çağrılmıyor) — bilerek dokunulmadı.
+NOT: `dart format` `detay.dart`/`kisi.dart`ı yeniden girintiledi (OrtaKolon
+sarması bir kademe içeri aldı) — diff büyük ama davranış değişikliği yok.
+
+### Kanıt
+`flutter test` **1010 yeşil** (990 + 20: zil 7 · ses/ICE 9 · nabız 3 + gelen
+zil) · `flutter analyze lib test` 0 hata/uyarı (88 info, hepsi eski) ·
+`flutter build web --release` geçti (yalnız doğrulama; dağıtım derlemesi
+`--pwa-strategy=none` + SW sökücü + web_hashla ile AYRICA yapılacak).
+
+### ANA OTURUMUN YAPACAKLARI (dağıtım)
+1. Sürüm artır (pubspec + `Api.surum` BİRLİKTE, 1.32.0+77 → 1.33.0+78)
+2. Web dağıtım ritüeli (SW sökücü + web_hashla, `rsync --delete` YOK)
+3. APK + AAB derle, iki telefona kur; Play'e AAB
+4. İki telefonla gerçek test — zil, bağlanma hızı (§12 hedefi 3-6 sn
+   `[DOĞRULANMALI]`), FARKLI AĞ senaryosu (md. 7 turu hâlâ geçerli)
+⚠ 10 Ağu gece: canlıda afiş/placeholder sorunu bildirildi, BAŞKA oturum
+bakıyor — dağıtımdan önce canlının sağlıklı olduğu doğrulanmalı.
+
 ## 2026-08-10 — MADDE 38: KULLANICI BAŞINA SESLİ/GÖRÜNTÜLÜ ARAMA AÇMA-KAPAMA 🔨
 **Dağıtım YOK · migrasyon CANLIYA UYGULANMADI · commit YOK · sürüm 1.30.1+75 (artırılmadı).**
 Madde 7 ile **AYNI dağıtımda** çıkacak: arama bu özellik olmadan canlıya

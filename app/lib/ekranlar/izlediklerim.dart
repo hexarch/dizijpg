@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../tema.dart';
 import 'ortak.dart';
 
 /// Otomatik "İzlediklerim": izlenen tüm film ve dizilerin ızgarası.
@@ -95,7 +96,12 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
                     (ogeler != null ? ' (${ogeler.length})' : ''),
         ),
       ),
-      body: govde,
+      // PC'de ızgara ekranın tamamına yayılmasın: ortalanmış ve [masaustuIcerik
+      // Genisligi] (1080) ile sınırlı — okuma kolonundan (720) geniş, çünkü
+      // poster ızgarası 2 boyutlu ve dar kolonda sıkışır (madde 26/9). Sütun
+      // sayısı ölçülen genişlikten türer ([PosterIzgarasi]); mobilde kısıt
+      // bağlamaz, tam genişlik korunur.
+      body: OrtaKolon(azami: masaustuIcerikGenisligi, cocuk: govde),
     );
   }
 }

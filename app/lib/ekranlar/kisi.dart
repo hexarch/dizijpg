@@ -170,156 +170,161 @@ class _KisiEkraniState extends State<KisiEkrani> {
           const GirisEylemi(),
         ],
       ),
-      body: ListView(
-        padding: EdgeInsets.fromLTRB(0, 16, 0, altGuvenli(context)),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: SizedBox(
-                        width: 110,
-                        height: 165,
-                        child: foto == null
-                            ? Container(
-                                color: DiziRenkler.kart,
-                                child: Icon(
-                                  Icons.person,
-                                  color: DiziRenkler.metin24,
+      // PC'de akış/detay ile AYNI ortalanmış okuma kolonu (madde 26); mobilde
+      // kısıt bağlamaz, tam genişlik korunur.
+      body: OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: ListView(
+          padding: EdgeInsets.fromLTRB(0, 16, 0, altGuvenli(context)),
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: SizedBox(
+                          width: 110,
+                          height: 165,
+                          child: foto == null
+                              ? Container(
+                                  color: DiziRenkler.kart,
+                                  child: Icon(
+                                    Icons.person,
+                                    color: DiziRenkler.metin24,
+                                  ),
+                                )
+                              : CachedNetworkImage(
+                                  imageUrl: foto,
+                                  fit: BoxFit.cover,
                                 ),
-                              )
-                            : CachedNetworkImage(
-                                imageUrl: foto,
-                                fit: BoxFit.cover,
-                              ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            k['name'] as String? ?? '',
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          if (k['birthday'] != null)
-                            _BilgiSatiri(
-                              ikon: Icons.cake_outlined,
-                              metin: '${k['birthday']}',
-                            ),
-                          if ((k['place_of_birth'] as String?)?.isNotEmpty ==
-                              true)
-                            _BilgiSatiri(
-                              ikon: Icons.location_on_outlined,
-                              metin: k['place_of_birth'] as String,
-                            ),
-                          _BilgiSatiri(
-                            ikon: Icons.movie_outlined,
-                            metin: '{}+ yapım'.cf([_isler.length]),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              OutlinedButton.icon(
-                                onPressed: _puanla,
-                                icon: Icon(
-                                  _benimPuan != null
-                                      ? Icons.star
-                                      : Icons.star_border,
-                                  size: 18,
-                                  color: DiziRenkler.sari,
-                                ),
-                                label: Text(
-                                  _benimPuan != null
-                                      ? '${yildiza(_benimPuan!['puan'])}/$yildizAzami'
-                                      : 'Puanla'.c,
-                                  style: TextStyle(
-                                    color: DiziRenkler.sariMetin,
-                                  ),
-                                ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              k['name'] as String? ?? '',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w900,
                               ),
-                              if (_toplum?['ortalama'] != null) ...[
-                                const SizedBox(width: 8),
-                                Text(
-                                  'ort. {}'.cf([
-                                    yildizOrtalamaMetni(_toplum!['ortalama']),
-                                  ]),
-                                  style: TextStyle(
-                                    color: DiziRenkler.metin54,
-                                    fontSize: 12,
+                            ),
+                            const SizedBox(height: 6),
+                            if (k['birthday'] != null)
+                              _BilgiSatiri(
+                                ikon: Icons.cake_outlined,
+                                metin: '${k['birthday']}',
+                              ),
+                            if ((k['place_of_birth'] as String?)?.isNotEmpty ==
+                                true)
+                              _BilgiSatiri(
+                                ikon: Icons.location_on_outlined,
+                                metin: k['place_of_birth'] as String,
+                              ),
+                            _BilgiSatiri(
+                              ikon: Icons.movie_outlined,
+                              metin: '{}+ yapım'.cf([_isler.length]),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                OutlinedButton.icon(
+                                  onPressed: _puanla,
+                                  icon: Icon(
+                                    _benimPuan != null
+                                        ? Icons.star
+                                        : Icons.star_border,
+                                    size: 18,
+                                    color: DiziRenkler.sari,
+                                  ),
+                                  label: Text(
+                                    _benimPuan != null
+                                        ? '${yildiza(_benimPuan!['puan'])}/$yildizAzami'
+                                        : 'Puanla'.c,
+                                    style: TextStyle(
+                                      color: DiziRenkler.sariMetin,
+                                    ),
                                   ),
                                 ),
+                                if (_toplum?['ortalama'] != null) ...[
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'ort. {}'.cf([
+                                      yildizOrtalamaMetni(_toplum!['ortalama']),
+                                    ]),
+                                    style: TextStyle(
+                                      color: DiziRenkler.metin54,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
                               ],
-                            ],
-                          ),
-                          // İSTEK: "puanla yazısının ALTINDA 10/20 gibi".
-                          // Oturumsuzda ve oran gelmeden hiç çizilmez.
-                          if (_izlenme != null && _izlenme!.$2 > 0)
-                            IzlenmeOraniSatiri(
-                              izlenen: _izlenme!.$1,
-                              toplam: _izlenme!.$2,
-                              onTap: () => context.push(
-                                '/yapimlar/${widget.kisiId}',
-                                extra: k['name'] as String?,
-                              ),
                             ),
-                        ],
+                            // İSTEK: "puanla yazısının ALTINDA 10/20 gibi".
+                            // Oturumsuzda ve oran gelmeden hiç çizilmez.
+                            if (_izlenme != null && _izlenme!.$2 > 0)
+                              IzlenmeOraniSatiri(
+                                izlenen: _izlenme!.$1,
+                                toplam: _izlenme!.$2,
+                                onTap: () => context.push(
+                                  '/yapimlar/${widget.kisiId}',
+                                  extra: k['name'] as String?,
+                                ),
+                              ),
+                          ],
+                        ),
                       ),
+                    ],
+                  ),
+                  if ((k['biography'] as String?)?.isNotEmpty == true) ...[
+                    const SizedBox(height: 14),
+                    // Biyografi 6 satırda kırpılır, taşarsa sonunda üç nokta
+                    // çıkar ve METNE DOKUNUNCA tamamı açılır (AcilirMetin).
+                    AcilirMetin(
+                      k['biography'] as String,
+                      stil: TextStyle(height: 1.5, color: DiziRenkler.metin70),
                     ),
                   ],
-                ),
-                if ((k['biography'] as String?)?.isNotEmpty == true) ...[
-                  const SizedBox(height: 14),
-                  // Biyografi 6 satırda kırpılır, taşarsa sonunda üç nokta
-                  // çıkar ve METNE DOKUNUNCA tamamı açılır (AcilirMetin).
-                  AcilirMetin(
-                    k['biography'] as String,
-                    stil: TextStyle(height: 1.5, color: DiziRenkler.metin70),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Yapımları'.c,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const PosterIzgarasi(
+                      satirBoslugu: 14,
+                      bosluk: 10,
+                    ),
+                    itemCount: _isler.length,
+                    itemBuilder: (context, i) =>
+                        PosterKarti(icerik: _isler[i] as Map<String, dynamic>),
                   ),
                 ],
-                const SizedBox(height: 18),
-                Text(
-                  'Yapımları'.c,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const PosterIzgarasi(
-                    satirBoslugu: 14,
-                    bosluk: 10,
-                  ),
-                  itemCount: _isler.length,
-                  itemBuilder: (context, i) =>
-                      PosterKarti(icerik: _isler[i] as Map<String, dynamic>),
-                ),
-              ],
+              ),
             ),
-          ),
-          // Kişi kartı Reels'e buradan verilir: /icerikler ucu yalnız dizi/film
-          // bilir, kişi adı olmadan Reels üstünde "?" görünürdü.
-          YorumBolumu(
-            tur: 'person',
-            tmdbId: widget.kisiId,
-            icerik: {'ad': k['name'], 'poster': k['profile_path']},
-          ),
-          const SizedBox(height: 16),
-        ],
+            // Kişi kartı Reels'e buradan verilir: /icerikler ucu yalnız dizi/film
+            // bilir, kişi adı olmadan Reels üstünde "?" görünürdü.
+            YorumBolumu(
+              tur: 'person',
+              tmdbId: widget.kisiId,
+              icerik: {'ad': k['name'], 'poster': k['profile_path']},
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
       ),
     );
   }

@@ -127,7 +127,9 @@ class _KisiYapimlariEkraniState extends State<KisiYapimlariEkrani> {
           widget.kisiAdi?.isNotEmpty == true ? widget.kisiAdi! : 'Yapımları'.c,
         ),
       ),
-      body: govde,
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }

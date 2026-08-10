@@ -150,7 +150,9 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
         ),
       ),
-      body: govde,
+      // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
+      // (madde 26); mobilde kısıt bağlamaz.
+      body: OrtaKolon(azami: masaustuIcerikGenisligi, cocuk: govde),
     );
   }
 }

@@ -90,7 +90,123 @@ abstract class GorusmeSurucu {
 /// Sınırsız beklemek "arama tuşuna bastım, hiçbir şey olmadı" demektir.
 /// Süre dolunca elde toplanmış adaylarla devam edilir: eksik aday çiftiyle
 /// bağlanma ihtimali, hiç davet göndermemekten daima yüksektir.
-const Duration buzToplamaSuresi = Duration(seconds: 6);
+///
+/// ***6 sn → 2 sn (10 Ağu 2026, kalite turu).*** İki gerçek telefonda yapılan
+/// testte kurulum "çok yavaş" bulundu. Kök: STUN/TURN yanıtı gecikince toplama
+/// `complete`i saniyelerce beklerdi ve trickle KAPALI olduğu için (sözleşme §1)
+/// davet o ana kadar HİÇ gönderilmezdi. İlk ~1,5 sn'de host + sunucu-refleksif
+/// adaylar zaten toplanıyor; röle adayı gecikse bile onsuz davet göndermek,
+/// kullanıcıyı bekletmekten iyidir (röle adayı gelirse ICE yeniden başlatma —
+/// F2 — devreye girer, ama o ayrı tur). Sözleşme §1 "complete BEKLE" diyordu;
+/// bu bilinçli sapma §14.1'e işlendi (istemci kararı — sunucu SDP içeriğini
+/// umursamıyor). `complete` 2 sn'den önce gelirse (hızlı ağ) ANINDA devam eder.
+const Duration buzToplamaSuresi = Duration(seconds: 2);
+
+/// ICE toplama bekleme kararı — SAF FONKSİYON, `flutter test` VM'de sınanır.
+///
+/// İKİ YÖN de burada kilitlenir (sözleşme kalite turu §3):
+///   * **Erken tamamlanınca beklemez:** [zatenTamam] ise ANINDA döner; ayrıca
+///     [tamamlandi] [sure] dolmadan tamamlanırsa (hızlı ağ) hemen döner.
+///   * **Zaman aşımında ilerler:** [tamamlandi] hiç tamamlanmazsa [sure] sonunda
+///     istisna FIRLATMADAN döner — eldeki adaylarla davet gönderilir.
+@visibleForTesting
+Future<void> buzToplamasiniBekle({
+  required bool zatenTamam,
+  required Future<void> tamamlandi,
+  Duration sure = buzToplamaSuresi,
+}) async {
+  if (zatenTamam) return;
+  await tamamlandi.timeout(sure, onTimeout: () {});
+}
+
+/// Yerel mikrofon ses işleme kısıtları (sözleşme kalite turu §2).
+///
+/// Üçü de VARSAYILAN AÇIK sanılır ama `getUserMedia`ya AÇIKÇA verilmezse bazı
+/// Android WebView/cihazlarda kapalı kalır — testte "yankı/uğultu" şikâyetinin
+/// kaynağı buydu. `echoCancellation`: hoparlör→mikrofon yankısını keser
+/// (görüntülüde şart). `noiseSuppression`: arka plan uğultusu. `autoGainControl`:
+/// kısık/gür sesi dengeler.
+const Map<String, dynamic> sesKisitlari = {
+  'echoCancellation': true,
+  'noiseSuppression': true,
+  'autoGainControl': true,
+};
+
+/// Opus kodek parametrelerini SDP'ye yazar (sözleşme kalite turu §2). SAF
+/// FONKSİYON — `flutter test` VM'de doğrudan sınanır.
+///
+/// * `useinbandfec=1` — İLERİ HATA DÜZELTME: paket kaybını bant içi yedekle
+///   gizler; kayıplı hücresel ağda "kesik kesik ses"i azaltır.
+/// * `usedtx=0` — süreksiz iletimi KAPAT: sessizlikte konfor gürültüsü yerine
+///   gerçek ses; sözcük başlarının yutulmasını önler.
+/// * `maxaveragebitrate=32000` — sese 32 kbps tavan: mono konuşma için fazlasıyla
+///   yeterli, görüntülü aramada ses videoya bant genişliği bırakır.
+///
+/// libwebrtc opus için zaten bir `a=fmtp` üretir; iş onun üzerine yazmaktır.
+/// Opus kodek yoksa SDP DEĞİŞMEDEN döner.
+@visibleForTesting
+String opusAyarla(String sdp) {
+  final satirlar = sdp.split('\r\n');
+  final rtpmap = RegExp(r'^a=rtpmap:(\d+) opus/48000');
+  final ptler = <String>{
+    for (final s in satirlar)
+      if (rtpmap.firstMatch(s)?.group(1) case final pt?) pt,
+  };
+  if (ptler.isEmpty) return sdp;
+
+  const istenen = {
+    'useinbandfec': '1',
+    'usedtx': '0',
+    'maxaveragebitrate': '32000',
+  };
+
+  final fmtpVar = <String>{
+    for (final s in satirlar)
+      for (final pt in ptler)
+        if (s.startsWith('a=fmtp:$pt ')) pt,
+  };
+
+  final cikti = <String>[];
+  for (final s in satirlar) {
+    var islendi = false;
+    for (final pt in ptler) {
+      if (s.startsWith('a=fmtp:$pt ')) {
+        final param = s.substring('a=fmtp:$pt '.length);
+        cikti.add('a=fmtp:$pt ${_fmtpBirlestir(param, istenen)}');
+        islendi = true;
+        break;
+      }
+    }
+    if (islendi) continue;
+    cikti.add(s);
+    // fmtp satırı hiç olmayan opus pt: rtpmap'in hemen ardına yeni fmtp ekle.
+    final pt = rtpmap.firstMatch(s)?.group(1);
+    if (pt != null && !fmtpVar.contains(pt)) {
+      cikti.add('a=fmtp:$pt ${_fmtpBirlestir('', istenen)}');
+    }
+  }
+  return cikti.join('\r\n');
+}
+
+/// `a=fmtp` parametre dizesine [istenen]leri yazar (varsa üzerine yazar, yoksa
+/// ekler); mevcut öteki parametreler (örn. `minptime`) korunur.
+String _fmtpBirlestir(String mevcut, Map<String, String> istenen) {
+  final harita = <String, String>{};
+  for (final p in mevcut.split(';')) {
+    final t = p.trim();
+    if (t.isEmpty) continue;
+    final e = t.indexOf('=');
+    if (e < 0) {
+      harita[t] = '';
+    } else {
+      harita[t.substring(0, e)] = t.substring(e + 1);
+    }
+  }
+  harita.addAll(istenen);
+  return harita.entries
+      .map((e) => e.value.isEmpty ? e.key : '${e.key}=${e.value}')
+      .join(';');
+}
 
 /// `flutter_webrtc` tabanlı gerçek sürücü.
 class WebrtcSurucu implements GorusmeSurucu {
@@ -138,7 +254,9 @@ class WebrtcSurucu implements GorusmeSurucu {
     };
 
     _yerel = await navigator.mediaDevices.getUserMedia({
-      'audio': true,
+      // Yankı engelleme / gürültü bastırma / otomatik kazanç AÇIKÇA verilir
+      // (varsayılana güvenilmez, bkz. [sesKisitlari]).
+      'audio': sesKisitlari,
       // Sesli aramada 'video': false — KAMERA İZNİ HİÇ İSTENMEZ.
       'video': goruntu
           ? {
@@ -159,15 +277,21 @@ class WebrtcSurucu implements GorusmeSurucu {
       await _uzakCizer!.initialize();
       _uzakCizer!.srcObject = _uzak;
     }
+    // SES YÖNLENDİRME (sözleşme kalite turu §2): sesli arama AHİZE (kulaklık),
+    // görüntülü HOPARLÖR. Görüntülüde telefon yüzden uzakta tutulur, ahizeden
+    // duyulmaz; sesli aramada ise hoparlör baştan açık olursa kullanıcı
+    // konuşmayı herkese duyurur. `hoparlor(bool)` ile sonradan değiştirilebilir.
+    try {
+      await Helper.setSpeakerphoneOn(goruntu);
+    } catch (_) {
+      // Web/masaüstünde yönlendirme yok; sessizce geç.
+    }
   }
 
   /// `iceGatheringState == complete` olmasını bekler; [buzToplamaSuresi]
-  /// dolarsa eldekiyle devam eder.
-  Future<void> _buzToplamayiBekle(RTCPeerConnection es) async {
-    if (es.iceGatheringState ==
-        RTCIceGatheringState.RTCIceGatheringStateComplete) {
-      return;
-    }
+  /// dolarsa eldekiyle devam eder. Karar mantığı [buzToplamasiniBekle]'de
+  /// (saf, test edilebilir); burada yalnız `RTCPeerConnection`a bağlanır.
+  Future<void> _buzToplamayiBekle(RTCPeerConnection es) {
     final tamam = Completer<void>();
     es.onIceGatheringState = (durum) {
       if (durum == RTCIceGatheringState.RTCIceGatheringStateComplete &&
@@ -175,7 +299,12 @@ class WebrtcSurucu implements GorusmeSurucu {
         tamam.complete();
       }
     };
-    await tamam.future.timeout(buzToplamaSuresi, onTimeout: () {});
+    return buzToplamasiniBekle(
+      zatenTamam:
+          es.iceGatheringState ==
+          RTCIceGatheringState.RTCIceGatheringStateComplete,
+      tamamlandi: tamam.future,
+    );
   }
 
   @override
@@ -184,7 +313,8 @@ class WebrtcSurucu implements GorusmeSurucu {
     final teklif = await es.createOffer({});
     await es.setLocalDescription(teklif);
     await _buzToplamayiBekle(es);
-    return (await es.getLocalDescription())?.sdp ?? teklif.sdp!;
+    final sdp = (await es.getLocalDescription())?.sdp ?? teklif.sdp!;
+    return opusAyarla(sdp);
   }
 
   @override
@@ -194,7 +324,8 @@ class WebrtcSurucu implements GorusmeSurucu {
     final cevap = await es.createAnswer({});
     await es.setLocalDescription(cevap);
     await _buzToplamayiBekle(es);
-    return (await es.getLocalDescription())?.sdp ?? cevap.sdp!;
+    final sdp = (await es.getLocalDescription())?.sdp ?? cevap.sdp!;
+    return opusAyarla(sdp);
   }
 
   @override

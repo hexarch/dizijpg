@@ -5,6 +5,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import '../ekranlar/ortak.dart' show KullaniciAvatari;
+import 'arama_efekti.dart';
 import 'arama_servisi.dart';
 import 'gorusme_api.dart';
 import 'gorusme_denetci.dart';
@@ -44,6 +45,111 @@ String aramaSuresiMetni(Duration d) {
   final dd = d.inMinutes.remainder(60).toString().padLeft(2, '0');
   if (d.inHours > 0) return '${d.inHours}:$dd:$ss';
   return '${d.inMinutes}:$ss';
+}
+
+/// Çalarken avatarın ardında genişleyip solan halkalar — "telefon çalıyor"
+/// görsel hissi (kalite turu §4: iki gerçek telefonda "arama hissi yok"
+/// şikâyetinin görsel ayağı). Ses ve haptikle birlikte, aramanın gerçekten
+/// çaldığını üç kanaldan bildirir.
+///
+/// ERİŞİLEBİLİRLİK (ui-ux-pro-max öncelik 7 + priority 1 reduced-motion):
+/// kullanıcı "hareketi azalt" açtıysa (`MediaQuery.disableAnimations`) halka
+/// HİÇ çizilmez ve denetleyici HİÇ dönmez — yalnız [child] kalır. Tek animasyonlu
+/// öğe (ui-ux-pro-max: "1-2 key element max"); eğri `easeOut`.
+class AramaNabzi extends StatefulWidget {
+  const AramaNabzi({
+    super.key,
+    required this.child,
+    required this.aktif,
+    required this.cap,
+    this.renk = Colors.white,
+  });
+
+  /// Ortada duran içerik (avatar).
+  final Widget child;
+
+  /// Nabız çalışsın mı (yalnız arama çalarken true).
+  final bool aktif;
+
+  /// Halkanın taban çapı (avatar çapı) — buradan büyüyerek solar.
+  final double cap;
+  final Color renk;
+
+  @override
+  State<AramaNabzi> createState() => _AramaNabziState();
+}
+
+class _AramaNabziState extends State<AramaNabzi>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _denetleyici = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1800),
+  );
+  bool _hareketKapali = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _hareketKapali = MediaQuery.of(context).disableAnimations;
+    _guncelle();
+  }
+
+  @override
+  void didUpdateWidget(AramaNabzi eski) {
+    super.didUpdateWidget(eski);
+    _guncelle();
+  }
+
+  /// Denetleyiciyi ISTENEN hâle getirir: yalnız aktif VE hareket açıkken döner.
+  void _guncelle() {
+    final donsun = widget.aktif && !_hareketKapali;
+    if (donsun && !_denetleyici.isAnimating) {
+      _denetleyici.repeat();
+    } else if (!donsun && _denetleyici.isAnimating) {
+      _denetleyici.stop();
+    }
+  }
+
+  @override
+  void dispose() {
+    _denetleyici.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.aktif || _hareketKapali) return widget.child;
+    return Stack(
+      alignment: Alignment.center,
+      clipBehavior: Clip.none,
+      children: [_halka(0), _halka(0.5), widget.child],
+    );
+  }
+
+  /// [faz] 0..1: iki halka yarım devir kaydırılınca sürekli akan nabız çıkar.
+  Widget _halka(double faz) => IgnorePointer(
+    child: AnimatedBuilder(
+      animation: _denetleyici,
+      builder: (context, _) {
+        final t = (_denetleyici.value + faz) % 1.0;
+        final egri = Curves.easeOut.transform(t);
+        return Opacity(
+          opacity: (1.0 - egri) * 0.30,
+          child: Transform.scale(
+            scale: 1.0 + egri * 0.9,
+            child: Container(
+              width: widget.cap,
+              height: widget.cap,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: widget.renk,
+              ),
+            ),
+          ),
+        );
+      },
+    ),
+  );
 }
 
 /// Metin etiketli yuvarlak eylem düğmesi.
@@ -253,10 +359,15 @@ class _GorusmeEkraniState extends State<GorusmeEkrani> {
                 children: [
                   const SizedBox(height: 32),
                   if (uzak == null) ...[
-                    KullaniciAvatari(
-                      url: dosyaUrl(d.karsiAvatar),
-                      kullaniciAdi: d.karsiTaraf,
-                      yaricap: 52,
+                    AramaNabzi(
+                      // Yalnız GİDEN arama çalarken nabız atar; bağlanınca durur.
+                      aktif: d.durum == GorusmeDurum.caliyor,
+                      cap: 104,
+                      child: KullaniciAvatari(
+                        url: dosyaUrl(d.karsiAvatar),
+                        kullaniciAdi: d.karsiTaraf,
+                        yaricap: 52,
+                      ),
                     ),
                     const SizedBox(height: 20),
                   ],
@@ -416,6 +527,7 @@ class GidenAramaSayfasi extends StatefulWidget {
     required this.tur,
     this.avatar,
     this.surucuUret,
+    this.efektUret,
   });
 
   final String kullaniciAdi;
@@ -425,6 +537,9 @@ class GidenAramaSayfasi extends StatefulWidget {
   /// YALNIZ TEST: sahte sürücü tak.
   final GorusmeSurucu Function()? surucuUret;
 
+  /// YALNIZ TEST: sahte efekt (zil/haptik) tak.
+  final AramaEfekti Function()? efektUret;
+
   @override
   State<GidenAramaSayfasi> createState() => _GidenAramaSayfasiState();
 }
@@ -432,6 +547,7 @@ class GidenAramaSayfasi extends StatefulWidget {
 class _GidenAramaSayfasiState extends State<GidenAramaSayfasi> {
   late final GorusmeDenetci _denetci = GorusmeDenetci(
     surucu: (widget.surucuUret ?? WebrtcSurucu.new)(),
+    efekt: (widget.efektUret ?? CihazEfekti.new)(),
     karsiTaraf: widget.kullaniciAdi,
     karsiAvatar: widget.avatar,
     tur: widget.tur,

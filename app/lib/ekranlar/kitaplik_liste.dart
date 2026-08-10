@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../tema.dart';
 import 'ortak.dart';
 
 /// Bir kitaplık durumunun (izliyorum/bitirdim/...) TAM listesi, dikey ızgara.
@@ -97,7 +98,9 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
               (_ogeler != null ? ' (${_ogeler!.length})' : ''),
         ),
       ),
-      body: govde,
+      // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
+      // (madde 26); mobilde kısıt bağlamaz.
+      body: OrtaKolon(azami: masaustuIcerikGenisligi, cocuk: govde),
     );
   }
 }

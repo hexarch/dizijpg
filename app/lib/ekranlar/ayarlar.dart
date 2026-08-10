@@ -1191,7 +1191,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Ayarlar'.c)),
-      body: govde,
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }

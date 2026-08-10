@@ -1449,6 +1449,50 @@ ve titrer; yalnız kilit ekranını kaplamaz.
   90 gün saklanır, **arama içeriği kaydedilmez** (DTLS-SRTP).
 * `gizlilikGuncelleme` sabiti iki yerde birden güncellenir.
 
+### 14.7 KALİTE TURU (10 Ağu 2026) — istemci-yalnız değişiklikler ve BİR SAPMA
+
+> Kullanıcı iki gerçek telefonda test etti ve dört şikâyet bildirdi: (1) zil/arama
+> hissi yok, (2) ses kalitesi/gecikme, (3) bağlantı yavaş, (4) ekran tasarımı
+> zayıf. Aşağıdakiler **yalnız `app/lib/gorusme/`** içindedir; **`backend/`
+> DEĞİŞMEDİ**, sunucu SDP içeriğini zaten umursamıyor.
+
+**① Zil (ringback) + haptik — yeni `arama_efekti.dart`.** GİDEN aramada
+`caliyor` hâlinde `assets/sesler/zil.wav` (450 Hz, 2 sn çal / 4 sn sus, mono
+8 kHz) `ReleaseMode.loop` ile çalar; karşı taraf cevaplayınca (`baglaniyor`)
+ve bağlanınca SUSAR. GELEN arama ön planda (bildirim bastırıldığı için, push.dart
+§7.4) tek çaldıran yerdir — ekran zili çalar. Durum geçişlerinde haptik. `audioplayers`
+projede zaten vardı; **yeni paket eklenmedi.** `SessizEfekti` varsayılan (test
+güvenli); ekranlar `CihazEfekti` takar.
+
+**② Ses işleme + kodek — `getUserMedia` ve SDP.** `getUserMedia` sesine
+`echoCancellation`/`noiseSuppression`/`autoGainControl` **açıkça** verildi
+(varsayılana güvenilmiyordu — bazı Android'de kapalı kalıyor). SDP'de opus
+`a=fmtp`'ye `useinbandfec=1;usedtx=0;maxaveragebitrate=32000` yazılıyor
+(`opusAyarla`, saf fonksiyon, testli). **Ses yönlendirme:** sesli arama AHİZE,
+görüntülü HOPARLÖR (`Helper.setSpeakerphoneOn(goruntu)`).
+
+**③ ⚠ SÖZLEŞME SAPMASI — ICE toplama üst süresi 6 sn → 2 sn.** §1
+"`iceGatheringState === 'complete'` olmasını BEKLE (trickle YOK)" diyor. Kurulum
+yavaşlığının kökü buydu: STUN/TURN gecikince toplama `complete`i saniyelerce
+bekliyor ve davet o ana kadar HİÇ gitmiyordu. İlk ~1,5 sn'de host +
+sunucu-refleksif adaylar zaten toplanıyor; **süre dolunca eldeki adaylarla davet
+gönderiliyor** (`buzToplamaSuresi = 2 sn`; `buzToplamasiniBekle` saf fonksiyon,
+iki yön de testli: erken tamamlanınca beklemez, zaman aşımında istisna atmadan
+ilerler). `complete` 2 sn'den önce gelirse ANINDA devam eder — yani hızlı ağ
+cezalandırılmıyor. **Bu bir istemci kararıdır:** sunucu SDP içeriğine bakmıyor,
+sözleşmenin hiçbir ucu değişmedi. Röle adayı geç kalırsa çözüm ICE yeniden
+başlatmadır (§14.1 md.9, hâlâ F2). §12 hedefi (3-6 sn) için gerçek cihaz ölçümü
+`[DOĞRULANMALI]` kalıyor; bu değişiklik tavanı 4 sn düşürüyor.
+
+**④ Ekran — avatar nabzı (`AramaNabzi`).** Çalarken avatarın ardında genişleyip
+solan halkalar; `MediaQuery.disableAnimations` açıksa HİÇ dönmez (reduced-motion).
+Halkalar `IgnorePointer` (proje tuzağı: görünüp dokunuşu yutan katman). Kontrast,
+dokunma hedefi, Material ikon kuralları §14.5'ten korunuyor.
+
+**Testler:** `arama_zili_test.dart` (zil/haptik), `arama_ses_kalitesi_test.dart`
+(opus + ses kısıtları + ICE üst süresi iki yön), `arama_nabiz_test.dart` (nabız +
+reduced-motion), `gorusme_ekrani_test.dart` (gelen zil).
+
 ---
 
 ## 15. İSTEMCİ HATASI (sürüm 4) — sunucunun sebebi kullanıcıya ULAŞMIYORDU

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import 'arama_efekti.dart';
 import 'gorusme_api.dart';
 import 'gorusme_surucu.dart';
 
@@ -104,9 +105,17 @@ class GorusmeDenetci extends ChangeNotifier {
     this.aramaId,
     this.gelenTeklifSdp,
     this.calmaSaniye = 45,
+    this.efekt = const SessizEfekti(),
   });
 
   final GorusmeSurucu surucu;
+
+  /// Zil (ringback) + haptik. Varsayılan [SessizEfekti] (testlerde ve efektsiz
+  /// akışta güvenli); ekranlar [CihazEfekti] takar. GİDEN aramada zil `caliyor`
+  /// hâlinde çalar, karşı taraf cevaplayınca (`baglaniyor`) SUSAR; bağlanınca ve
+  /// kapanınca haptik verilir. Zil YALNIZ giden aramada çalar — `caliyor` hâline
+  /// yalnız [aramaBaslat] (arayan) girer, [kabulEt] doğrudan `baglaniyor`a geçer.
+  final AramaEfekti efekt;
 
   /// Karşı tarafın kullanıcı adı (başlıkta gösterilir).
   final String karsiTaraf;
@@ -219,6 +228,9 @@ class GorusmeDenetci extends ChangeNotifier {
           // buna göre yapıldı; medya P2P akıyor, sunucunun haberi olmasına
           // gerek yok.
           _yoklamaDur();
+          // Zil SUSAR (bağlandık) + "bağlandı" haptiği: geçiş hissedilsin.
+          unawaited(efekt.zilDurdur());
+          unawaited(efekt.haptik(AramaHaptik.baglandi));
           durum = GorusmeDurum.konusuyor;
           baglandiAn = DateTime.now();
           _sureSayaci = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -259,6 +271,9 @@ class GorusmeDenetci extends ChangeNotifier {
     try {
       _halleriDinle();
       await surucu.kur(buzSunuculari: buz.sunucular, goruntu: tur == 'goruntu');
+      // Görüntülü aramada sürücü HOPARLÖRÜ açtı (sesli aramada AHİZE); düğme
+      // durumu bunu yansıtsın (sözleşme kalite turu §2, ses yönlendirme).
+      if (tur == 'goruntu') hoparlor = true;
       return null;
     } catch (_) {
       final h = AramaHatasi(
@@ -314,6 +329,12 @@ class GorusmeDenetci extends ChangeNotifier {
         await _bitir(sunucuyaBildir: true, metin: metin, hata: true);
         return AramaHatasi(null, metin, AramaTepkisi.kapat);
       }
+      // ZİL BURADA BAŞLAR: davet karşıya ulaştı ve gerçekten çalıyor. Daha
+      // erken (durum=caliyor anında) başlatmıyoruz — `_iceKoptu` yukarıda
+      // aramayı kapatabilirdi ve o zaman bir an bile zil çalması yanıltıcı olur.
+      // Zil YALNIZ giden aramada duyulur: bu akışa (arayan) özgü.
+      unawaited(efekt.haptik(AramaHaptik.caliyor));
+      unawaited(efekt.zilCal());
       _yoklamaBaslat();
       _calmaSayaci = Timer(Duration(seconds: calmaSaniye + 2), () {
         if (durum != GorusmeDurum.caliyor) return;
@@ -355,6 +376,9 @@ class GorusmeDenetci extends ChangeNotifier {
         _cevapUygulandi = true;
         durum = GorusmeDurum.baglaniyor;
         _calmaSayaci?.cancel();
+        // Karşı taraf CEVAPLADI: zil susar (telefon disiplini — ringback,
+        // aranan açınca kesilir). Medya birazdan akacak, "Bağlanıyor..." görünür.
+        unawaited(efekt.zilDurdur());
         _bildir();
         await surucu.uzakCevabiUygula(sdp);
         _baglantiBeklemeBaslat();
@@ -462,6 +486,10 @@ class GorusmeDenetci extends ChangeNotifier {
     _calmaSayaci?.cancel();
     _baglantiBekleme?.cancel();
     _sureSayaci?.cancel();
+    // Zil her hâlde SUSAR (idempotent) + kapanış haptiği. Susmayan zil, hiç
+    // olmayan zilden beterdir.
+    unawaited(efekt.zilDurdur());
+    unawaited(efekt.haptik(AramaHaptik.kapandi));
     await _halAbonelik?.cancel();
 
     final id = aramaId;
@@ -518,6 +546,9 @@ class GorusmeDenetci extends ChangeNotifier {
     _baglantiBekleme?.cancel();
     _sureSayaci?.cancel();
     _halAbonelik?.cancel();
+    // Oynatıcıyı bırak (zil kaynağını kapat). `_bitir` zaten susturdu; bu son
+    // temizlik.
+    efekt.bosalt();
     super.dispose();
   }
 }

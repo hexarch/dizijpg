@@ -150,7 +150,9 @@ class _OzetEkraniState extends State<OzetEkrani> {
 
     return Scaffold(
       appBar: AppBar(title: Text('{} özetin'.cf([widget.yil]))),
-      body: govde,
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }

@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:dizijpg/api.dart';
+import 'package:dizijpg/gorusme/arama_efekti.dart';
 import 'package:dizijpg/gorusme/arama_servisi.dart';
 import 'package:dizijpg/gorusme/gelen_arama_ekrani.dart';
 import 'package:dizijpg/gorusme/gorusme_api.dart';
@@ -22,6 +23,7 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'sahte_arama_efekti.dart';
 import 'sahte_gorusme_surucu.dart';
 
 // ---------------------------------------------------------------------------
@@ -64,7 +66,19 @@ Widget _rota(Widget cocuk) => MaterialApp.router(
       GoRoute(
         path: '/baslangic',
         builder: (_, _) => const Scaffold(body: Text('baslangic')),
-        routes: [GoRoute(path: 'arama', builder: (_, _) => cocuk)],
+        // Hareketi azalt: çalarken avatar nabzı (AramaNabzi) sonsuz döner ve
+        // `pumpAndSettle`i asla oturtmazdı. Reduced-motion yolu zaten üretimde
+        // de destekleniyor; nabzın döndüğü hâl ayrı bir testte (bounded pump)
+        // sınanıyor.
+        routes: [
+          GoRoute(
+            path: 'arama',
+            builder: (context, _) => MediaQuery(
+              data: MediaQuery.of(context).copyWith(disableAnimations: true),
+              child: cocuk,
+            ),
+          ),
+        ],
       ),
     ],
   ),
@@ -176,6 +190,35 @@ void main() {
       await kur(t, tur: 'goruntu');
       expect(find.text('@alcelik'), findsOneWidget);
       expect(find.text('Görüntülü arama'), findsOneWidget);
+    });
+
+    testWidgets('GELEN ARAMA çalınca ZİL çalar, reddedince SUSAR', (t) async {
+      final e = SahteEfekti();
+      await t.pumpWidget(
+        _rota(
+          GelenAramaSayfasi(
+            surucuUret: SahteSurucu.new,
+            efektUret: () => e,
+            gelenGetir: () async => {
+              'arama_id': 'x1',
+              'tur': 'ses',
+              'arayan': {'kullanici_adi': 'alcelik', 'avatar': null},
+              'sdp': 'v=0\r\nteklif',
+              'sona_erme': DateTime.now().millisecondsSinceEpoch ~/ 1000 + 45,
+            },
+          ),
+        ),
+      );
+      final ctx = t.element(find.text('baslangic'));
+      GoRouter.of(ctx).push('/baslangic/arama');
+      await t.pumpAndSettle();
+
+      expect(e.zilCaliyor, isTrue, reason: 'gelen arama çalarken zil çalmalı');
+      expect(e.haptikler, contains(AramaHaptik.caliyor));
+
+      await t.tap(find.byKey(const Key('arama-reddet')));
+      await t.pumpAndSettle();
+      expect(e.zilCaliyor, isFalse, reason: 'reddedince zil susmalı');
     });
 
     testWidgets('arama sona ermişse ekran kapanır, mesaj çıkar', (t) async {

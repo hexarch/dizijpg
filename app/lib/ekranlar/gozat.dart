@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../tema.dart';
 import 'ortak.dart';
 
 /// Katalog "Gözat": dizi/film seç, türe göre süz, popülerlik sırasına göre
@@ -168,33 +169,44 @@ class _GozatEkraniState extends State<GozatEkrani> {
           ),
         ),
       ),
-      body: _hata != null
-          ? HataGorunumu(mesaj: _hata!, tekrar: () => _yukle(ilk: true))
-          : (_sonuc.isEmpty && _yukleniyor)
-          ? GridView.builder(
-              padding: const EdgeInsets.all(8),
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const PosterIzgarasi(satirBoslugu: 10, bosluk: 10),
-              itemCount: 12,
-              itemBuilder: (_, _) =>
-                  const IskeletKutu(genislik: double.infinity),
-            )
-          : _sonuc.isEmpty
-          ? BosDurum(
-              ikon: Icons.movie_filter_outlined,
-              baslik: 'Sonuç bulunamadı'.c,
-              ipucu: 'Farklı bir tür seç.'.c,
-            )
-          : GridView.builder(
-              controller: _kaydirma,
-              padding: EdgeInsets.fromLTRB(8, 8, 8, altGuvenli(context)),
-              gridDelegate: const PosterIzgarasi(satirBoslugu: 10, bosluk: 10),
-              itemCount: _sonuc.length,
-              itemBuilder: (context, i) => PosterKarti(
-                icerik: _sonuc[i] as Map<String, dynamic>,
-                turZorla: _tur,
+      // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
+      // (madde 26); mobilde kısıt bağlamaz.
+      body: OrtaKolon(
+        azami: masaustuIcerikGenisligi,
+        cocuk: _hata != null
+            ? HataGorunumu(mesaj: _hata!, tekrar: () => _yukle(ilk: true))
+            : (_sonuc.isEmpty && _yukleniyor)
+            ? GridView.builder(
+                padding: const EdgeInsets.all(8),
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const PosterIzgarasi(
+                  satirBoslugu: 10,
+                  bosluk: 10,
+                ),
+                itemCount: 12,
+                itemBuilder: (_, _) =>
+                    const IskeletKutu(genislik: double.infinity),
+              )
+            : _sonuc.isEmpty
+            ? BosDurum(
+                ikon: Icons.movie_filter_outlined,
+                baslik: 'Sonuç bulunamadı'.c,
+                ipucu: 'Farklı bir tür seç.'.c,
+              )
+            : GridView.builder(
+                controller: _kaydirma,
+                padding: EdgeInsets.fromLTRB(8, 8, 8, altGuvenli(context)),
+                gridDelegate: const PosterIzgarasi(
+                  satirBoslugu: 10,
+                  bosluk: 10,
+                ),
+                itemCount: _sonuc.length,
+                itemBuilder: (context, i) => PosterKarti(
+                  icerik: _sonuc[i] as Map<String, dynamic>,
+                  turZorla: _tur,
+                ),
               ),
-            ),
+      ),
     );
   }
 }

@@ -982,7 +982,9 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
       appBar: AppBar(
         title: Text(widget.takipciler ? 'Takipçiler'.c : 'Takip Edilenler'.c),
       ),
-      body: govde,
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }
@@ -1121,37 +1123,44 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
           ),
         ),
       ),
-      body: _yukleniyor
-          ? const Center(
-              child: CircularProgressIndicator(color: DiziRenkler.sari),
-            )
-          : _sonuc.isEmpty
-          ? Center(
-              child: Text(
-                'En az 2 harf yaz'.c,
-                style: TextStyle(color: DiziRenkler.metin38),
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(
+        azami: masaustuKolonGenisligi,
+        cocuk: _yukleniyor
+            ? const Center(
+                child: CircularProgressIndicator(color: DiziRenkler.sari),
+              )
+            : _sonuc.isEmpty
+            ? Center(
+                child: Text(
+                  'En az 2 harf yaz'.c,
+                  style: TextStyle(color: DiziRenkler.metin38),
+                ),
+              )
+            : ListView(
+                children: [
+                  for (final u in _sonuc)
+                    Builder(
+                      builder: (context) {
+                        final ad =
+                            (u as Map<String, dynamic>)['kullanici_adi']
+                                as String;
+                        final kume = _takiptekiler;
+                        return KullaniciSatiri(
+                          key: ValueKey(ad),
+                          kullanici: u,
+                          takipEdiyorum: kume == null
+                              ? null
+                              : kume.contains(ad),
+                          onTakipDegisti: (v) =>
+                              v ? kume?.add(ad) : kume?.remove(ad),
+                        );
+                      },
+                    ),
+                ],
               ),
-            )
-          : ListView(
-              children: [
-                for (final u in _sonuc)
-                  Builder(
-                    builder: (context) {
-                      final ad =
-                          (u as Map<String, dynamic>)['kullanici_adi']
-                              as String;
-                      final kume = _takiptekiler;
-                      return KullaniciSatiri(
-                        key: ValueKey(ad),
-                        kullanici: u,
-                        takipEdiyorum: kume == null ? null : kume.contains(ad),
-                        onTakipDegisti: (v) =>
-                            v ? kume?.add(ad) : kume?.remove(ad),
-                      );
-                    },
-                  ),
-              ],
-            ),
+      ),
     );
   }
 }

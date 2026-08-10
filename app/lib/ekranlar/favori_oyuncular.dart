@@ -112,7 +112,9 @@ class _FavoriOyuncularEkraniState extends State<FavoriOyuncularEkrani> {
               (_kisiler != null ? ' (${_kisiler!.length})' : ''),
         ),
       ),
-      body: govde,
+      // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
+      // (madde 26); mobilde kısıt bağlamaz.
+      body: OrtaKolon(azami: masaustuIcerikGenisligi, cocuk: govde),
     );
   }
 

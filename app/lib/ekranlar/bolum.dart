@@ -311,7 +311,9 @@ class _BolumEkraniState extends State<BolumEkrani> {
         title: Text('S{} · {}. Bölüm'.cf([widget.sezonNo, widget.bolumNo])),
         actions: const [GirisEylemi()],
       ),
-      body: govde,
+      // PC'de akış/detay ile AYNI ortalanmış okuma kolonu (madde 26); mobilde
+      // kısıt bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }

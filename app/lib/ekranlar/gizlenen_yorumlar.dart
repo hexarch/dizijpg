@@ -124,7 +124,9 @@ class _GizlenenYorumlarEkraniState extends State<GizlenenYorumlarEkrani> {
     }
     return Scaffold(
       appBar: AppBar(title: Text('Gizlenen yorumlar'.c)),
-      body: govde,
+      // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
+      // bağlamaz.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }
