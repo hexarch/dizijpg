@@ -701,6 +701,54 @@ export class AramaDeposu {
    * TARAFINDA ZORLANMA BİÇİMİ budur.
    * @returns {Array<{durum:string, satir:object, kayit:object}>}
    */
+  /**
+   * ZARİF KAPANMA (yapilacaklar2 B2): bellekteki TÜM aramaları uçlaştırır ve
+   * `aramalar` tablosuna yazılacak satırları döndürür. Süre sınırına BAKMAZ.
+   *
+   * NEDEN KAPANIRKEN KAYIT DÜŞÜYORUZ (karar ve gerekçesi):
+   *   · `caliyor`: kimse konuşmadı. Kayıt DÜŞMEZSEK aranan kişi "kaçırılan
+   *     arama" bildirimini HİÇ ALMAZ ve arama geçmişinde iz kalmaz — yani
+   *     kullanıcı, birinin kendisini aradığını asla öğrenemez. Oysa `supur()`
+   *     zaten en geç 45. saniyede aynı kaydı `cevapsiz` olarak yazacaktı;
+   *     kapanış bunu yalnızca ERKENE ALIR. Anlam değişmiyor, veri kurtuluyor.
+   *   · `baglaniyor`: medya P2P (DTLS-SRTP) akıyor, SUNUCU YENİDEN BAŞLASA DA
+   *     KONUŞMA KESİLMEZ (bu sınıfın başındaki nota bakınız). Ama süreç
+   *     ölünce bellekteki kayıt gider ve istemcinin sonraki `POST /arama/bitir`
+   *     çağrısı `ARAMA_YOK` alır → arama geçmişte HİÇ GÖRÜNMEZ. Bu yüzden
+   *     kapanış anına kadarki süreyle `cevaplandi` yazılır. Süre GERÇEKTEN
+   *     KONUŞULANDAN KISA olabilir (konuşma dağıtımdan sonra da sürer) ve bu
+   *     bilinçli bir kayıptır: eksik süreli bir kayıt, hiç olmayan bir
+   *     kayıttan iyidir. 4 saatlik süpürme de zaten TAHMİNİ süre yazıyor,
+   *     yani kabul edilmiş bir davranış.
+   *
+   * *** KAPANMA DEVAM EDEN ARAMAYI BEKLEMEZ. *** Bir arama 4 saat sürebilir;
+   * kapanışı ona bağlamak her dağıtımı süresiz kilitlerdi. Beklenen tek şey
+   * uçuştaki HTTP istekleridir.
+   *
+   * BİLİNEN EKSİK: `role_dustu`/`role_bayt` bu satırlarda `null` kalır —
+   * o ölçümü istemci `bitir` çağrısında bildiriyor ve o çağrı artık gelmeyecek.
+   * D4'teki röle oranı ölçümü, dağıtım anındaki aramaları görmez. Dağıtım
+   * seyrek olduğu için örneklem kaybı ihmal edilebilir; abartmamak için yazıldı.
+   */
+  hepsiniUclastir(simdi = Date.now()) {
+    const cikti = [];
+    for (const kayit of [...this.aramalar.values()]) {
+      if (kayit.durum === 'caliyor') {
+        cikti.push({
+          durum: 'cevapsiz', kayit,
+          satir: this.uclastir(kayit, 'cevapsiz', {}, simdi),
+        });
+      } else {
+        const saniye = Math.max(0, Math.round((simdi - (kayit.kabulZamani ?? simdi)) / 1000));
+        cikti.push({
+          durum: 'cevaplandi', kayit,
+          satir: this.uclastir(kayit, 'cevaplandi', { saniye }, simdi),
+        });
+      }
+    }
+    return cikti;
+  }
+
   supur(simdi = Date.now()) {
     const cikti = [];
     for (const kayit of [...this.aramalar.values()]) {

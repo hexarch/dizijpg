@@ -17,7 +17,12 @@ RUN npm install --omit=dev
 # yetki zinciri). server.js onu import ediyor; imaja GIRMEZSE konteyner
 # "Cannot find module './arama.js'" ile acilista olur ve restart dongusune
 # girer — kripto.js / medya_imza.js ile AYNI tuzak. test/arama.test.js denetler.
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js mesaj_sifrele_geri_doldur.js admin.html ./
+# gunluk.js: yapilandirilmis (JSON) hata logu + sizinti suzgeci. server.js onu
+# import ediyor; imaja GIRMEZSE konteyner "Cannot find module './gunluk.js'"
+# ile acilista olur ve restart dongusune girer — kripto.js / medya_imza.js /
+# arama.js ile AYNI tuzak. test/arama.test.js bu listeyi otomatik denetliyor
+# (bu satir eklenmeden once testi KIRMIZIYA dondurdu, yani denetim calisiyor).
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js gunluk.js mesaj_sifrele_geri_doldur.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./

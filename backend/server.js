@@ -62,6 +62,11 @@ import {
   adaylariTemizle, olcumTemizle, baslatYetki, yanitYetki, gecmisYon, ustveri,
   AramaDeposu, SessizDepo,
 } from './arama.js';
+// Yapılandırılmış (JSON) log + sızıntı süzgeci. SAF modül; sızıntı testleri
+// (`test/gunluk.test.js`) sunucu ayağa kalkmadan çalışır.
+// KURAL: hata loglarına şifre/token/Authorization/mesaj içeriği/e-posta/SDP
+// GEÇMEZ. Sızdırmamanın yolu ALMAMAKTIR — gunluk.js başındaki iki katman notu.
+import { yaz as logYaz, olumcul as logOlumcul } from './gunluk.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -145,6 +150,32 @@ const TMDB_DIL = {
 // nginx arkasındayız: req.ip gerçek istemci IP'sini (X-Forwarded-For) yansıtsın,
 // yoksa tüm kullanıcılar hız limitinde tek IP gibi görünür.
 app.set('trust proxy', 1);
+
+// ---------------------------------------------------------------------------
+// ZARİF KAPANMA KAPISI + İSTEK KİMLİĞİ   (yapilacaklar2 B2 / C1)
+// ---------------------------------------------------------------------------
+// `kapaniyor`, SIGTERM alındığı anda true olur. O andan sonra gelen YENİ
+// istekler 503 alır ve `Connection: close` ile bağlantı kapanır; UÇUŞTAKİ
+// istekler ise sonuna kadar çalışır (bkz. dosya sonundaki `kapan()`).
+//
+// NEDEN EN ÜSTTE: gövde ayrıştırıcıdan (express.json) ÖNCE olmalı. Kapanırken
+// reddedeceğimiz bir isteğin 1 MB'lık gövdesini okumanın anlamı yok.
+let kapaniyor = false;
+app.use((req, res, next) => {
+  // İstek kimliği: hata logundaki satırla kullanıcının gördüğü yanıtı
+  // birbirine bağlar. Kullanıcı "şu kodu aldım" dediğinde `docker logs |
+  // grep <kod>` tek satırda olayı bulur. 8 karakter 8000+ satırlık bir
+  // sunucunun günlük hacmi için fazlasıyla ayırt edici.
+  req.istekId = crypto.randomUUID().slice(0, 8);
+  res.set('X-Istek-Kimlik', req.istekId);
+  if (!kapaniyor) return next();
+  res.set('Connection', 'close');
+  // 503 + Retry-After: istemci ve Cloudflare bunu "geçici" olarak okur.
+  // Dağıtım birkaç saniye sürer; 5 saniye sonra yeni konteyner ayaktadır.
+  res.set('Retry-After', '5');
+  return res.status(503).json({ hata: 'Sunucu yeniden başlatılıyor, birazdan tekrar dene' });
+});
+
 app.use(express.json({ limit: '1mb' }));
 
 // Avatar ve yorum medyası (compose'ta kalıcı volume'a bağlanır)
@@ -917,10 +948,25 @@ async function girisIsteğeBagli(req, _res, next) {
   next();
 }
 
+// Uç sarmalayıcı: async bir uçtaki her reddetme BURADA yakalanır — yani
+// unutulmuş bir `await` süreci öldürmez, tek istek 500 alır.
+// ESKİ HÂL yalnız `req.path` + `e.message` yazıyordu: yığın izi yok, metot
+// yok, kullanıcı yok. 500 aldığımızda elimizde tek satır kalıyordu ve nerede
+// olduğunu bilmiyorduk (yapilacaklar2 C1).
 const sarici = (fn) => (req, res) =>
   fn(req, res).catch((e) => {
-    console.error(req.path, e.message);
-    res.status(e.status || 500).json({ hata: e.status ? e.message : 'Sunucu hatası' });
+    const kod = e.status || 500;
+    // 4xx BEKLENEN akıştır (geçersiz girdi, yetkisiz): yığın izi basmak
+    // logu gürültüye boğar ve gerçek 500'leri görünmez kılar. Yalnız 5xx
+    // tam bağlamla loglanır.
+    if (kod >= 500) logYaz({ olay: 'uc_hatasi', req, kod, hata: e });
+    res.status(kod).json({
+      hata: e.status ? e.message : 'Sunucu hatası',
+      // İstek kimliği yanıta da konur: kullanıcı ekran görüntüsü gönderince
+      // logdaki satır saniyeler içinde bulunur. Kimlik rastgeledir, hiçbir
+      // bilgi taşımaz — sızıntı riski yok.
+      ...(kod >= 500 && req.istekId ? { istek: req.istekId } : {}),
+    });
   });
 
 // Basit bellek içi hız limiti: anahtar başına saatte en fazla `limit` istek.
@@ -8300,17 +8346,22 @@ app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
 
 // Son durak hata yakalayıcı: varsayılan Express işleyicisi yığın izi
 // sızdırmasın (statik 404, gövde limiti aşımı vb. buraya düşer).
-app.use((err, _req, res, _next) => {
+//
+// C1: eskiden yalnız `err.message` yazıyordu. Artık yol, metot, durum kodu,
+// kullanıcı, istek kimliği ve YIĞIN İZİ tek satırlık JSON olarak düşüyor.
+// İSTEMCİYE GİDEN GÖVDE DEĞİŞMEDİ — yığın izi hâlâ dışarı çıkmıyor.
+app.use((err, req, res, _next) => {
   const kod = err.status || err.statusCode || 500;
-  if (kod >= 500) console.error(err.message);
+  if (kod >= 500) logYaz({ olay: 'son_durak_hatasi', req, kod, hata: err });
   res.status(kod).json({
     hata: kod === 404 ? 'Bulunamadı'
         : err.type === 'entity.too.large' ? 'Dosya çok büyük'
         : kod >= 500 ? 'Sunucu hatası' : 'Geçersiz istek',
+    ...(kod >= 500 && req?.istekId ? { istek: req.istekId } : {}),
   });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+const sunucu = app.listen(PORT, '0.0.0.0', () => {
   console.log(`dizi.jpg API ${PORT} portunda`);
   // Açılışta bir kez süpür: konteyner kapalıyken süresi dolan banlar varsa
   // ilk isteği beklemeden düşsün. Hata konteyneri ÖLDÜRMEZ (tablo henüz
@@ -8333,3 +8384,118 @@ app.listen(PORT, '0.0.0.0', () => {
       `${oto.gun} günlük OTOMATİK ban veriliyor. Yanlış pozitif riski sizde.`);
   }
 });
+
+// ===========================================================================
+// ÇÖKME KALKANI + ZARİF KAPANMA          (yapilacaklar2 B1 / B2)
+// ===========================================================================
+// Tek süreç çalışıyoruz: bu süreç ölürse o an HERKES etkilenir. 8000+ satırda
+// unutulmuş TEK bir `await` ya da bir zamanlayıcı geri çağrısındaki tek bir
+// `undefined` okuması, modern Node'da SÜRECİ ÖLDÜRÜR.
+//
+// 10 Ağustos'ta sesli/görüntülü arama canlıya çıktı: sinyalleşme, yoklama ve
+// zaman aşımlarıyla birlikte sunucuya bir yığın YENİ ASENKRON kod girdi.
+// Kalkanı bugün kurmamızın sebebi bu.
+
+/** Uçuştaki isteklerin bitmesi için tanınan azami süre. Sonsuz bekleyen bir
+ *  kapanma dağıtımı kilitler; 15 sn en yavaş ucumuzdan (TMDB proxy) uzun,
+ *  Docker'ın `stop_grace_period: 30s` tavanından kısadır. */
+const KAPANMA_AZAMI_MS = Number(process.env.KAPANMA_AZAMI_MS || 15_000);
+/** Kapanışta arama üstverisini yazmak için ayrılan pay (DB yanıt vermezse
+ *  kapanma burada asılı kalmasın). */
+const KAPANMA_ARAMA_MS = 3_000;
+
+let kapanmaBasladi = false;
+
+/**
+ * Bellekteki aramaları `aramalar` tablosuna işler.
+ * Karar ve gerekçesi `arama.js` → `hepsiniUclastir()` başlığındadır:
+ *   çalan → `cevapsiz` (kaçırılan arama bildirimi düşer),
+ *   bağlı → o ana kadarki süreyle `cevaplandi` (konuşma P2P sürüyor).
+ */
+async function aramalariKapat() {
+  const kapananlar = aramaDeposu.hepsiniUclastir();
+  if (!kapananlar.length) return 0;
+  await Promise.race([
+    // allSettled: bir INSERT patlarsa diğerleri yine yazılsın.
+    Promise.allSettled(kapananlar.map(({ satir }) => aramaUclandi(satir))),
+    new Promise((c) => { setTimeout(c, KAPANMA_ARAMA_MS).unref?.(); }),
+  ]);
+  return kapananlar.length;
+}
+
+/**
+ * Zarif kapanma: YENİ İSTEK ALMA → UÇUŞTAKİLERİ BİTİR → KAPAN.
+ * Şu ana kadar her dağıtımda o anki istekler yarıda kesiliyordu; kullanıcı
+ * tarafında bu "yorumum kayboldu", "mesajım gitmedi" olarak görünüyordu.
+ */
+async function kapan(sebep, cikisKodu = 0) {
+  if (kapanmaBasladi) return;
+  kapanmaBasladi = true;
+  kapaniyor = true; // ← yukarıdaki kapı: yeni istekler artık 503 + Connection: close
+  logOlumcul({ seviye: 'bilgi', olay: 'kapanma_basladi', sebep, azami_ms: KAPANMA_AZAMI_MS });
+
+  // Zorla çıkış saati. `unref()`: tek kalan iş buysa süreç zaten çıksın.
+  const sonSure = setTimeout(() => {
+    logOlumcul({ olay: 'kapanma_zaman_asimi', sebep, ms: KAPANMA_AZAMI_MS });
+    // Hâlâ konuşan soketleri kes, yoksa `process.exit` bile beklenebilir.
+    sunucu.closeAllConnections?.();
+    process.exit(cikisKodu);
+  }, KAPANMA_AZAMI_MS);
+  sonSure.unref?.();
+
+  // Dinleyici soketi kapat: yeni BAĞLANTI kabul edilmez.
+  const kapandi = new Promise((c) => sunucu.close(c));
+  // KRİTİK: keep-alive ile AÇIK AMA BOŞTA duran bağlantılar `close()`in geri
+  // çağrısını tetiklemez. Bunlar kapatılmazsa her dağıtım tam zaman aşımı
+  // kadar (15 sn) beklerdi — yani "zarif kapanma" pratikte "yavaş kapanma"
+  // olurdu. `closeIdleConnections` yalnız BOŞTAKİLERİ keser; istek işleyen
+  // bağlantıya dokunmaz.
+  sunucu.closeIdleConnections?.();
+  await kapandi;
+
+  const aramaSayi = await aramalariKapat().catch(() => -1);
+  await havuz.end().catch(() => {});
+  clearTimeout(sonSure);
+  logOlumcul({ seviye: 'bilgi', olay: 'kapanma_bitti', sebep, arama_kaydi: aramaSayi });
+  process.exit(cikisKodu);
+}
+
+// ---------- B1: yakalanmamış promise reddi ----------
+// Node 15'ten beri VARSAYILAN DAVRANIŞ ZATEN ÇÖKMEK. Yani buradaki kazanç
+// "çökmeyi önlemek" değil, ÇÖKERKEN GERİDE KAYIT BIRAKMAK ve açık istekleri
+// yarıda kesmemektir.
+//
+// HATAYI YUTMUYORUZ (bilinçli): reddetmeyi loglayıp yaşamaya devam etmek,
+// yarım kalmış bir işlemin ardından BOZUK DURUMDA çalışmak demektir — yarısı
+// yazılmış bir mesaj, düşmemiş bir kilit, kapanmamış bir işlem. Bu, çökmekten
+// TEHLİKELİDİR: Docker `restart: unless-stopped` çökmeyi 2 saniyede onarır,
+// sessizce bozulmuş veriyi hiçbir şey onarmaz.
+process.on('unhandledRejection', (sebep, sozVerme) => {
+  logOlumcul({ olay: 'yakalanmamis_reddetme', hata: sebep, soz: String(sozVerme) });
+  // Süreç durumu burada hâlâ TUTARLI (yalnız bir promise zinciri koptu),
+  // o yüzden tam zarif kapanma uygulanır: uçuştaki istekler bitirilir.
+  kapan('unhandledRejection', 1);
+});
+
+// ---------- B1: yakalanmamış istisna ----------
+// Node belgesi açıktır: bu noktadan sonra süreç TANIMSIZ DURUMDADIR
+// ("the process is in an undefined state"). Yığın çözülürken hangi
+// `finally`in çalıştığı, hangi kilidin bırakıldığı bilinmez.
+//
+// Bu yüzden BURADA ZARİF KAPANMA UYGULANMAZ — uçuştaki istekleri bitirmeye
+// çalışmak, güvenilmez bir süreçle veritabanına yazmak demektir. Kayıt düşülür
+// ve DERHAL çıkılır. `logOlumcul` senkron (`fs.writeSync`) yazar: `console.error`
+// Docker'da boruya ASENKRON yazdığı için `process.exit` ile birlikte satır
+// kaybolurdu — kalkan tam da işe yaraması gereken anda sessiz kalırdı.
+process.on('uncaughtException', (hata, koken) => {
+  logOlumcul({ olay: 'yakalanmamis_istisna', koken: String(koken), hata });
+  process.exit(1);
+});
+
+// ---------- B2: kapanma sinyalleri ----------
+// Docker `stop` önce SIGTERM yollar, `stop_grace_period` dolunca SIGKILL.
+// Dockerfile'da CMD exec biçiminde (`["node","server.js"]`) olduğu için node
+// PID 1'dir ve sinyali DOĞRUDAN alır — kabuk sarmalayıcı olsaydı sinyal
+// node'a hiç ulaşmaz, bu blok hiç çalışmazdı.
+process.on('SIGTERM', () => kapan('SIGTERM', 0));
+process.on('SIGINT', () => kapan('SIGINT', 0));

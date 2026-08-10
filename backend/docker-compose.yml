@@ -11,6 +11,13 @@ services:
     volumes:
       - dizijpg_pg:/var/lib/postgresql/data
       - ./sema.sql:/docker-entrypoint-initdb.d/01-sema.sql:ro
+    # C2: log boyut sınırı. Sınırsız json-file logu diski doldurup HER ŞEYİ
+    # durdurabilir (sessiz disk tuzağı). 50m × 5 = servis başına en çok 250 MB.
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
     # Dışarı port AÇMIYORUZ; yalnızca compose ağı içinden erişilir.
 
   api:
@@ -81,6 +88,13 @@ services:
     ports:
       # Yalnızca yerelden: dışarıya nginx üzerinden (SSL ile) açılır.
       - "127.0.0.1:8500:8500"
+    # C2: log boyut sınırı (bkz. db servisi). API JSON hata logu buraya akıyor;
+    # 50m × 5 = en çok 250 MB, eskisi otomatik döner (dönderme).
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"
 
 volumes:
   dizijpg_pg:
