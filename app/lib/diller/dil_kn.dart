@@ -706,4 +706,7 @@ const Map<String, String> cevirilerKn = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'ವೀಡಿಯೊ ಕರೆ ಆಫ್ ಆಗಿದೆ. ಸೆಟ್ಟಿಂಗ್‌ಗಳು > ಗೌಪ್ಯತೆ ಯಿಂದ ಆನ್ ಮಾಡಬಹುದು.',
   'Sesli ve görüntülü arama': 'ಧ್ವನಿ ಮತ್ತು ವೀಡಿಯೊ ಕರೆ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'ಅತಿಥಿ ಖಾತೆಗಳು ಕರೆ ಮಾಡಲಾಗದು. ಖಾತೆ ರಚಿಸಿದರೆ ಬಳಸಬಹುದು.',
+  'Misafir hesaplar aranamaz': 'ಅತಿಥಿ ಖಾತೆಗಳಿಗೆ ಕರೆ ಮಾಡಲಾಗದು',
 };

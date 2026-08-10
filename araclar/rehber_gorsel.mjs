@@ -17,7 +17,7 @@
  * NOT: Uygulama kodunu değiştirmez. Yalnız adb üzerinden sürer.
  */
 
-import { execFile } from 'node:child_process';
+import { execFile, spawn } from 'node:child_process';
 import { promisify } from 'node:util';
 import { readFile, writeFile, mkdir, rm, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -32,6 +32,9 @@ const BURASI = path.dirname(fileURLToPath(import.meta.url));
 
 const ADB = process.env.ADB_YOLU ||
   path.join(os.homedir(), 'Library/Android/sdk/platform-tools/adb');
+const EMULATOR = process.env.EMULATOR_YOLU ||
+  path.join(os.homedir(), 'Library/Android/sdk/emulator/emulator');
+const AVD = process.env.REHBER_AVD || 'Medium_Phone_API_36.1';
 const PAKET = 'com.dizijpg.dizijpg';
 const ETKINLIK = `${PAKET}/.MainActivity`;
 const CIKTI = path.join(BURASI, 'rehber-gorsel');
@@ -56,20 +59,114 @@ const bekle = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // ─────────────────────────────────────────────────────────── adb katmanı
 
-async function adb(...args) {
-  const { stdout } = await calis(ADB, args, { maxBuffer: 64 * 1024 * 1024, encoding: 'utf8' });
+/** Tek seferlik, KURTARMASIZ adb çağrısı. Nöbetçinin kendisi bunu kullanır. */
+async function adbCiplak(args, encoding = 'utf8', maxBuffer = 64 * 1024 * 1024) {
+  const { stdout } = await calis(ADB, args, { maxBuffer, encoding });
   return stdout;
+}
+
+// ── cihaz nöbetçisi ─────────────────────────────────────────
+//
+// 8 Ağu koşusunda emülatör 3. saatte kayboldu ve GERİYE KALAN 14 DİL (84
+// görüntü) saniyeler içinde "adb: no devices/emulators found" ile atlandı:
+// ilerleme dosyasındaki 90 hatanın 85'i tek bir cihaz kaybının yankısıydı.
+// Betikte hiçbir kurtarma yoktu; ilk adb hatası tüm kuyruğu düşürüyordu.
+// Artık cihaz kaybı GEÇİCİ bir arıza sayılır: adb sunucusu tazelenir, gerekirse
+// AVD yeniden açılır, açılış beklenir, cihaz hazırlanır ve komut tekrarlanır.
+const CIHAZ_KAYIP = /no devices\/emulators found|device (?:'[^']*' )?not found|device offline|device unauthorized|protocol fault|error: closed|cannot connect to daemon|daemon not running/i;
+
+async function cihazVarMi() {
+  try { return /\tdevice$/m.test(await adbCiplak(['devices'])); } catch { return false; }
+}
+
+async function acilisBekle(sure = 420000) {
+  const bitis = Date.now() + sure;
+  while (Date.now() < bitis) {
+    if (await cihazVarMi()) {
+      try {
+        if ((await adbCiplak(['shell', 'getprop', 'sys.boot_completed'])).trim() === '1') {
+          await bekle(5000);
+          return true;
+        }
+      } catch { /* kabuk henüz hazır değil */ }
+    }
+    await bekle(5000);
+  }
+  return false;
+}
+
+/**
+ * ANR/çökme diyalogları uiautomator'un önünü kesiyor. 8 Ağu koşusunda SystemUI
+ * defalarca ANR verdi; "System UI isn't responding" penceresi odağı çalınca
+ * ayarlar ekranı hiç okunamıyor ve `dilSec` "dil satırı bulunamadı" diyordu.
+ * `hide_error_dialogs` bu pencereleri tamamen kaldırır (uygulama arkada devam
+ * eder). Animasyonları da kapatıyoruz: hem hızlanır hem de yarım çizilmiş
+ * geçiş karesi yakalama riski düşer.
+ */
+async function cihazHazirla() {
+  const komutlar = [
+    'settings put global hide_error_dialogs 1',
+    'settings put secure anr_show_background 0',
+    'settings put global window_animation_scale 0',
+    'settings put global transition_animation_scale 0',
+    'settings put global animator_duration_scale 0',
+  ];
+  for (const k of komutlar) await adbCiplak(['shell', k]).catch(() => {});
+}
+
+let _kurtariliyor = false;
+async function cihazKurtar() {
+  if (_kurtariliyor) { await bekle(15000); return cihazVarMi(); }
+  _kurtariliyor = true;
+  try {
+    await calis(ADB, ['kill-server']).catch(() => {});
+    await bekle(2000);
+    await calis(ADB, ['start-server']).catch(() => {});
+    await bekle(3000);
+    if (!(await cihazVarMi())) {
+      uyari(`emülatör yok — "${AVD}" yeniden başlatılıyor…`);
+      const cocuk = spawn(EMULATOR, ['-avd', AVD, '-memory', '4096',
+        '-no-snapshot-save', '-no-boot-anim', '-no-audio'], { detached: true, stdio: 'ignore' });
+      cocuk.unref();
+      await bekle(10000);
+    }
+    if (!(await acilisBekle())) return false;
+    await cihazHazirla();
+    await adbCiplak(['shell', `am start -n ${ETKINLIK}`]).catch(() => {});
+    await bekle(8000);
+    tamam('cihaz kurtarıldı');
+    return true;
+  } finally {
+    _kurtariliyor = false;
+  }
+}
+
+async function adbDene(args, encoding, maxBuffer) {
+  for (let i = 0; ; i++) {
+    try { return await adbCiplak(args, encoding, maxBuffer); } catch (e) {
+      const ileti = `${e.message || ''}\n${e.stderr || ''}`;
+      if (!CIHAZ_KAYIP.test(ileti) || i >= 2) throw e;
+      uyari(`adb bağlantısı koptu — cihaz kurtarılıyor (${ileti.trim().split('\n').pop().slice(0, 90)})`);
+      if (!(await cihazKurtar())) throw new Error(`Emülatör kurtarılamadı: ${ileti.trim().slice(0, 160)}`);
+    }
+  }
+}
+
+async function adb(...args) {
+  return adbDene(args, 'utf8', 64 * 1024 * 1024);
 }
 async function kabuk(cmd) {
   return adb('shell', cmd);
 }
 /** Ham (binary) çıktı — screencap için. */
 async function adbHam(...args) {
-  const { stdout } = await calis(ADB, args, { maxBuffer: 256 * 1024 * 1024, encoding: 'buffer' });
-  return stdout;
+  return adbDene(args, 'buffer', 256 * 1024 * 1024);
 }
 
 async function emulatorVarMi() {
+  if (!(await cihazVarMi()) && !(await cihazKurtar())) {
+    throw new Error('Bağlı emülatör/cihaz yok ve başlatılamadı.');
+  }
   const c = await adb('devices');
   const satirlar = c.split('\n').filter((s) => /\tdevice$/.test(s.trim()));
   if (!satirlar.length) throw new Error('Bağlı emülatör/cihaz yok (adb devices boş).');
@@ -158,6 +255,55 @@ function ara(dugumler, desen, sec = {}) {
   if (sec.sinif) liste = liste.filter((d) => d.sinif.includes(sec.sinif));
   if (sec.enAz) liste = liste.filter((d) => d.en >= sec.enAz);
   return liste;
+}
+
+// ── kaydırarak arama ────────────────────────────────────────
+//
+// Kaydırmanın iki tuzağı var ve ikisi de 8 Ağu koşusunda görüntü kaybettirdi:
+//  1) HIZLI sürükleme (≤400 ms) FIRLATMA sayılır; momentumla bir ekran boyundan
+//     fazla gidip aranan satırı iki okuma arasında atlar.
+//  2) Tek yönlü tarama, atlanan satırı bir daha göremez.
+// Bu yüzden adımlar 450 px / 800 ms (momentumsuz) ve tarama önce aşağı, sonra
+// yukarı. Liste dibe/başa dayandığında ağaç imzası donar; oradan yön değişir.
+
+const KAYDIRMA_ADIMI = 450;
+const KAYDIRMA_SURESI = 800;
+const imzaAl = (d) => d.map((n) => `${n.y1}:${gövdeMetni(n).trim()}`).join('|');
+
+/** Eşleşen düğümü bulana kadar listeyi yavaşça iki yöne tarar. */
+async function tarayarakBul(esles, { enCok = 16, adim = KAYDIRMA_ADIMI } = {}) {
+  for (const yon of ['asagi', 'yukari']) {
+    let onceki = '';
+    for (let i = 0; i < enCok; i++) {
+      if (yon === 'asagi') await kaydir(540, 1500, 1500 - adim, KAYDIRMA_SURESI);
+      else await kaydir(540, 1000, 1000 + adim, KAYDIRMA_SURESI);
+      const d = await agac();
+      const bulunan = d.find(esles);
+      if (bulunan) { ayrinti(`tarama (${yon}) ${i + 1}. adımda buldu`); return bulunan; }
+      const im = imzaAl(d);
+      if (im === onceki) { ayrinti(`tarama (${yon}) dibe dayandı`); break; }
+      onceki = im;
+    }
+  }
+  return null;
+}
+
+/**
+ * Bulunan düğümü DOKUNULABİLİR banda çeker. Ekranın en dibinde (gezinme
+ * çubuğunun üstünde) duran bir satıra dokunmak sistem çubuğuna gidiyor;
+ * alt sayfa açılmıyor ve hata bambaşka bir yerde patlıyordu.
+ */
+async function bandaGetir(esles, mevcut, { ust = 320, alt = 2050 } = {}) {
+  let n = mevcut;
+  for (let i = 0; i < 6; i++) {
+    if (!n) return mevcut;
+    if (n.my >= ust && n.my <= alt) return n;
+    const fark = n.my > alt ? Math.min(700, n.my - alt + 250) : Math.min(700, ust - n.my + 250);
+    if (n.my > alt) await kaydir(540, 1500, 1500 - fark, KAYDIRMA_SURESI);
+    else await kaydir(540, 1000, 1000 + fark, KAYDIRMA_SURESI);
+    n = (await agac()).find(esles) || null;
+  }
+  return n || mevcut;
 }
 
 /** Koşul sağlanana kadar ağacı yeniden okur. */
@@ -407,15 +553,16 @@ async function cikisYap() {
   // Uygulamanın o an hangi dilde olduğunu bilmiyoruz → 46 dilin hepsindeki
   // "Çıkış Yap" karşılığını kabul et.
   const adaylar = await herDildeki('Çıkış Yap');
-  await ayarlaraGit();
-  for (let i = 0; i < 16; i++) {
-    const d = await agac();
-    const cikis = d.find((n) => n.tiklanabilir &&
-      gövdeMetni(n).split('\n').some((s) => adaylar.has(s.trim())));
-    if (cikis) { await dokun(cikis); await bekle(3000); return true; }
-    await kaydir(540, 1900, 700);
-  }
-  throw new Error('Ayarlarda "Çıkış Yap" bulunamadı.');
+  const d0 = await ayarlaraGit();
+  const cikisMi = (n) => n.tiklanabilir &&
+    gövdeMetni(n).split('\n').some((s) => adaylar.has(s.trim()));
+  // Fırlatma yerine yavaş, çift yönlü tarama — bkz. tarayarakBul.
+  let cikis = d0.find(cikisMi) || await tarayarakBul(cikisMi, { enCok: 18 });
+  if (!cikis) throw new Error('Ayarlarda "Çıkış Yap" bulunamadı.');
+  cikis = await bandaGetir(cikisMi, cikis);
+  await dokun(cikis);
+  await bekle(3000);
+  return true;
 }
 
 async function girisYap() {
@@ -549,6 +696,53 @@ function cev(harita, anahtar) {
   return harita.get(anahtar) ?? anahtar;
 }
 
+// ── demo içeriğinin dili ────────────────────────────────────
+//
+// Arayüzü İspanyolca'ya çevirmek yetmiyor: kullanıcı İspanyolca karede
+// profildeki BİYOGRAFİNİN ve ÜLKENİN hâlâ Türkçe olduğunu fark etti. Üç
+// içerik parçasının üçü de farklı yoldan hizalanıyor:
+//   • ülke  → app/lib/diller/ulkeler.dart (ham değer ISO koduna indirgenip
+//             görünen ad o dilde yazılıyor) — uygulama kendi hallediyor.
+//   • yorum → sunucudaki `metin_cevirileri` önbelleği. GET /ceviri/:id?dil=xx
+//             ile 46 dil için önceden ısıtıldı; `ceviriUygula` hazır çeviriyi
+//             kendiliğinden uyguluyor (backend/server.js:4627).
+//   • bio   → burada. Sunucuda tek bir serbest metin alanı; her dil turundan
+//             önce o dildeki karşılığıyla değiştiriliyor.
+const API_TABAN = process.env.REHBER_API || 'https://dizijpg.com/api';
+const BIO_DOSYA = path.join(BURASI, 'rehber-bio.json');
+let _biolar = null;
+let _jeton = null;
+
+async function jetonAl() {
+  if (_jeton) return _jeton;
+  const c = await fetch(`${API_TABAN}/auth/giris`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: TEST_KULLANICI, sifre: TEST_SIFRE }),
+  });
+  const d = await c.json().catch(() => ({}));
+  if (!c.ok || !d.token) throw new Error(`API girişi başarısız (${c.status}): ${d.hata || ''}`);
+  _jeton = d.token;
+  return _jeton;
+}
+
+/** Demo hesabın biyografisini hedef dile çevirir. Başarısızlık koşuyu düşürmez. */
+async function demoBioAyarla(kod) {
+  if (!_biolar) {
+    _biolar = JSON.parse(await readFile(BIO_DOSYA, 'utf8'));
+  }
+  const bio = _biolar[kod];
+  if (!bio) { uyari(`${kod}: rehber-bio.json'da bio yok — bio değiştirilmedi`); return; }
+  const jeton = await jetonAl();
+  const c = await fetch(`${API_TABAN}/profilim`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${jeton}` },
+    body: JSON.stringify({ bio }),
+  });
+  if (!c.ok) throw new Error(`bio yazılamadı (${c.status})`);
+  ayrinti(`bio → ${bio.slice(0, 48)}…`);
+}
+
 async function dilSec(kod) {
   const hedef = YEREL_ADLAR[kod];
   if (!hedef) throw new Error(`Bilinmeyen dil kodu: ${kod}`);
@@ -557,13 +751,22 @@ async function dilSec(kod) {
   const d0 = await ayarlaraGit();
 
   // Dil satırı: başlığı bir YEREL dil adı olan tıklanabilir satır.
-  let satir = null;
-  for (let i = 0; i < 12 && !satir; i++) {
-    const d = i === 0 ? d0 : await agac();
-    satir = d.find((n) => n.tiklanabilir && tumAdlar.includes(gövdeMetni(n).trim()));
-    if (!satir) await kaydir(540, 1800, 900);
-  }
+  //
+  // KÖK NEDEN (8 Ağu: ru ve bg "Ayarlarda dil satırı bulunamadı" ile düştü):
+  // burası eskiden 900 px'i 400 ms'de alan FIRLATMALARLA yalnız AŞAĞI tarıyordu.
+  // Fırlatmanın momentumu bir ekran boyundan fazla kaydırabildiği için Dil
+  // satırı iki ağaç okuması ARASINDA atlanabiliyor; döngü hiç yukarı dönmediği
+  // için satır bir daha görülmüyordu. Nereden başlandığı bir önceki dilin metin
+  // uzunluklarına bağlı olduğundan hata dile göre değişiyor ve rastgele
+  // görünüyordu. Çözüm: yavaş (momentumsuz) küçük adımlar + ÇİFT YÖNLÜ tarama +
+  // liste dibe dayandığında yön değiştirme.
+  const dilSatiriMi = (n) => n.tiklanabilir && !n.sinif.includes('EditText') &&
+    tumAdlar.includes(gövdeMetni(n).trim());
+  let satir = d0.find(dilSatiriMi) || await tarayarakBul(dilSatiriMi);
   if (!satir) throw new Error('Ayarlarda dil satırı bulunamadı.');
+  // Satır ekranın en dibinde (gezinme çubuğu bandında) kalmış olabilir; oraya
+  // dokunmak sistem çubuğuna gider ve alt sayfa hiç açılmaz.
+  satir = await bandaGetir(dilSatiriMi, satir);
 
   const mevcut = gövdeMetni(satir).trim();
   if (mevcut === hedef) { tamam(`dil zaten ${hedef} (${kod})`); await geri(); await bekle(1200); return; }
@@ -580,21 +783,15 @@ async function dilSec(kod) {
   //
   // DİKKAT: arama kutusunun metni de bir dil adı olabilir. EditText'leri
   // ELEMEZSEK betik kutuya dokunup dili değiştirmeden "değişti" sanır.
+  //
+  // Kaydırma burada da YAVAŞ ve ÇİFT YÖNLÜ: 46 satırlık listede 650 px'lik
+  // fırlatma bir ekranı aşıp hedef dili atlayabiliyordu ve döngü yalnız aşağı
+  // gittiği için dil bir daha görünmüyordu ("Dil listesi sonuna gelindi").
   const listeOgesi = (n) => n.tiklanabilir && !n.sinif.includes('EditText');
-  let secenek = null;
-  let oncekiImza = '';
-  let durgun = 0;
-  for (let i = 0; i < 30 && !secenek; i++) {
-    const d = await agac();
-    secenek = d.find((n) => listeOgesi(n) && gövdeMetni(n).trim() === hedef);
-    if (secenek) break;
-    const imza = d.filter(listeOgesi).map((n) => gövdeMetni(n).trim()).join('|');
-    durgun = imza === oncekiImza ? durgun + 1 : 0;
-    if (durgun >= 2) throw new Error(`Dil listesi sonuna gelindi, "${hedef}" yok.`);
-    oncekiImza = imza;
-    await kaydir(540, 1800, 1150, 300);
-  }
+  const secenekMi = (n) => listeOgesi(n) && gövdeMetni(n).trim() === hedef;
+  let secenek = (await agac()).find(secenekMi) || await tarayarakBul(secenekMi, { enCok: 26 });
   if (!secenek) throw new Error(`Dil listesinde "${hedef}" bulunamadı.`);
+  secenek = await bandaGetir(secenekMi, secenek, { ust: 420 });
   await dokun(secenek);
   await bekle(2500);
 
@@ -901,6 +1098,7 @@ async function cek(sec) {
   await mkdir(GECICI, { recursive: true });
   const rapor = [];
 
+  if (!sec.kuru) { await cihazHazirla(); bilgi('cihaz hazırlandı (hata diyalogları kapalı, animasyon yok)'); }
   if (!sec.kuru && !sec.demoYok) { await durumCubuguSabitle(); bilgi('durum çubuğu sabitlendi (12:00, pil dolu, wifi tam)'); }
   if (!sec.kuru) await oturumHazirla({ kuru: sec.kuru });
   else bilgi('[kuru] oturum hazırlığı atlandı');
@@ -955,6 +1153,12 @@ async function cek(sec) {
       }
       if (dilHatasi) throw dilHatasi;
 
+      // Bio'yu SOĞUK BAŞLATMADAN ÖNCE yaz ki uygulama açılışta zaten hedef
+      // dildeki metni çeksin (profil ayrıca `tazele` ile bir kez daha yeniler).
+      if (!sec.icerikYok) {
+        await demoBioAyarla(dil).catch((e) => uyari(`${dil}: bio ayarlanamadı — ${e.message}`));
+      }
+
       // DİL DEĞİŞİMİNDEN SONRA SOĞUK BAŞLATMA — şart.
       // Uygulama kabuğu (üst bardaki arama hapı) çalışırken dil değişince
       // YENİDEN KURULMUYOR: 'Arama'.c eski dilde donup kalıyor. Kanıt: tr, ar
@@ -989,9 +1193,13 @@ async function cek(sec) {
           const dugumler = await agac();
           const { sorunlar, yabanci } = await dogrula(ekran, dugumler, baglam, veri.izinliKullanicilar || []);
           if (sorunlar.length) { sayac.dogrulamaRed++; throw new Error(`doğrulama başarısız → ${sorunlar.join(' | ')}`); }
+          // GİZLİLİK — SERT RED. Bu görüntüler sunucuda YAYIMLANIYOR; kadraja
+          // giren her @ad tüm kullanıcılara gösterilecek demektir. Eskiden
+          // yalnız uyarı basılıp kare yine de kaydediliyordu; "sonra gözden
+          // geçiririm" 276 karede işlemez. Artık kare atılır ve yeniden denenir.
           if (yabanci.length) {
-            uyari(`${etiket}: yabancı kullanıcı adı görünüyor (@${yabanci.join(', @')}) — kaydediliyor ama gözden geçir`);
             sayac.gizlilikUyarisi.push(`${etiket}: @${yabanci.join(', @')}`);
+            throw new Error(`GİZLİLİK: kadrajda izinsiz hesap (@${yabanci.join(', @')}) — kare atıldı`);
           }
 
           const png = path.join(GECICI, `${dil}-${ekran.ad}.png`);
@@ -1023,7 +1231,25 @@ async function cek(sec) {
 }
 
 /** Bilinen köke dön: uygulamayı öne al, açık sayfa/sheet varsa kapat, ana sekme. */
+/**
+ * ANR/çökme penceresi odağı çalmışsa kapatır. `hide_error_dialogs` bunları
+ * normalde hiç göstermiyor ama SystemUI kendini yeniden kurduğunda ayar
+ * sıfırlanabiliyor; o zaman uiautomator uygulamayı değil diyaloğu okuyor.
+ */
+async function anrGec() {
+  const o = await odak().catch(() => '');
+  if (!/Not Responding|has stopped|keeps stopping/i.test(o)) return false;
+  uyari(`hata penceresi açık (${o.slice(0, 60)}) — kapatılıyor`);
+  await cihazHazirla();
+  const d = await agac().catch(() => []);
+  const dugme = d.find((n) => n.tiklanabilir && /^(Wait|Bekle|Close app|Uygulamayı kapat|OK|Tamam)$/i.test(gövdeMetni(n).trim()));
+  if (dugme) await dokun(dugme); else await geri();
+  await bekle(1500);
+  return true;
+}
+
 async function tabanaDon() {
+  await anrGec();
   if (!(await uygulamaOnde())) await uygulamaBaslat({ temiz: false });
   for (let i = 0; i < 6; i++) {
     const d = await agac().catch(() => []);
@@ -1081,6 +1307,7 @@ function argCoz(argv) {
     else if (a === '--cikti') sec.cikti = argv[++i];
     else if (a === '--deneme') sec.deneme = Number(argv[++i]);
     else if (a === '--demoyok') sec.demoYok = true;
+    else if (a === '--icerikyok') sec.icerikYok = true;
   }
   return sec;
 }

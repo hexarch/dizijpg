@@ -706,4 +706,7 @@ const Map<String, String> cevirilerPa = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'ਵੀਡੀਓ ਕਾਲ ਬੰਦ ਹੈ। ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ ਤੋਂ ਚਾਲੂ ਕਰ ਸਕਦੇ ਹੋ।',
   'Sesli ve görüntülü arama': 'ਵੌਇਸ ਅਤੇ ਵੀਡੀਓ ਕਾਲ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'ਮਹਿਮਾਨ ਖਾਤੇ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦੇ। ਖਾਤਾ ਬਣਾਉਣ \'ਤੇ ਵਰਤ ਸਕੋਗੇ।',
+  'Misafir hesaplar aranamaz': 'ਮਹਿਮਾਨ ਖਾਤਿਆਂ ਨੂੰ ਕਾਲ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ',
 };

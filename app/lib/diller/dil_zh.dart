@@ -670,4 +670,7 @@ const Map<String, String> cevirilerZh = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       '视频通话已关闭。可在设置 > 隐私中开启。',
   'Sesli ve görüntülü arama': '语音和视频通话',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      '访客账号无法拨打通话。创建账号后即可使用。',
+  'Misafir hesaplar aranamaz': '无法呼叫访客账号',
 };

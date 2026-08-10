@@ -703,4 +703,7 @@ const Map<String, String> cevirilerTe = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'వీడియో కాల్ ఆఫ్‌లో ఉంది. సెట్టింగ్‌లు > గోప్యత నుండి ఆన్ చేయవచ్చు.',
   'Sesli ve görüntülü arama': 'వాయిస్ మరియు వీడియో కాల్',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'అతిథి ఖాతాలు కాల్ చేయలేవు. ఖాతా సృష్టిస్తే ఉపయోగించవచ్చు.',
+  'Misafir hesaplar aranamaz': 'అతిథి ఖాతాలకు కాల్ చేయలేరు',
 };

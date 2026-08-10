@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.31.0+76
+version: 1.32.0+77
 
 environment:
   sdk: ^3.12.2
@@ -43,8 +43,13 @@ dependencies:
   # Push bildirimleri (yalnız Android/iOS; web'de devre dışı)
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.5
-  # Google ile giriş: Android id_token, web erişim token'ı → /auth/google
+  # Google ile giriş: Android id_token, web'de GIS düğmesinin id_token'ı
+  # → /auth/google
   google_sign_in: ^6.3.0
+  # Webde Google'ın KENDİ düğmesi (`renderButton`) için DOĞRUDAN bağımlılık —
+  # paketin kendi belgesi bunu şart koşuyor. Web dışı derlemelere girmez;
+  # kod da `google_kapisi.dart` içinde koşullu import ile ayrılmıştır.
+  google_sign_in_web: ^0.12.4+4
   # Bağlantı türü (Wi-Fi / mobil veri) → veri tasarrufu kararları
   connectivity_plus: ^6.1.0
   flutter_local_notifications: ^18.0.1

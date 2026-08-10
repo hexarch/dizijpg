@@ -148,6 +148,35 @@ class GorusmeDenetci extends ChangeNotifier {
   bool _kapaniyor = false;
   bool _cevapUygulandi = false;
 
+  /// Arama KURULUMU sürüyor: [aramaBaslat] ya da [kabulEt] hâlâ çalışıyor.
+  ///
+  /// *** BU BAYRAK BİR HATA DÜZELTMESİDİR (10 Ağu 2026). ***
+  ///
+  /// Ne oluyordu: kurulum sırasında (teklif/cevap üretilirken ya da
+  /// `POST /arama/baslat` uçarken) medya katmanı `koptu` derse
+  /// (`RTCPeerConnectionState` -> failed/closed; ağ değişimi, TURN'e
+  /// erişilememesi, eş bağlantının erken kapanması) [_halleriDinle] hemen
+  /// `kapat(metin: 'Bağlanılamadı')` çağırıyordu. O çağrı [_bitir]'i
+  /// çalıştırıp `_kapaniyor`u true yapıyor ve [sonucMetni]'ni GENEL metne
+  /// sabitliyordu. Saniyeler sonra sunucunun ÖZEL cevabı
+  /// (`ALICI_MISAFIR`, `ALICI_SESLI_KAPALI`, `TAKIP_YOK`...) gelip
+  /// [aramaBaslat]'ın `catch`ine düşüyor, orada DOĞRU metne çevriliyor — ama
+  /// ikinci [_bitir] çağrısı `if (_kapaniyor) return` ile geri dönüyordu.
+  /// Sonuç: sunucu sebebi söylüyor, kullanıcı "Bağlanılamadı" görüyor.
+  /// (`test/misafir_arama_test.dart` -> "YARIŞ" testleri bunu kilitliyor.)
+  ///
+  /// Neden ÇÖZÜM BURADA, `_bitir`de değil: kurulum sürerken taşıma katmanının
+  /// GENEL hatası kullanıcıya SEBEP olarak gösterilemez. Davet daha karşıya
+  /// ulaşmadan "bağlanılamadı" demek zaten anlamsız — kurulacak bir bağlantı
+  /// yok. Otoriter cevap kurulum akışından gelir; `koptu` yalnız kaydedilir
+  /// ([_iceKoptu]) ve iki yerde kullanılır: `POST /arama/bitir`in `sebep`
+  /// alanı, ve kurulum BAŞARIYLA bittiğinde "aslında medya öldü" kararı.
+  ///
+  /// *** ERTELEME UNUTULAMAZ ***: kurulum başarılı biterse [_iceKoptu] orada
+  /// tekrar okunup arama kapatılıyor. Yoksa ekran 45 saniye "Çalıyor..."
+  /// gösterir, sonra "Cevap yok" der — kullanıcıya YANLIŞ sebep.
+  bool _kurulumSuruyor = false;
+
   /// [dispose] çağrıldı mı.
   ///
   /// GEREKLİ: ekran kapanırken `dispose()` önce `kapat()`i (ASENKRON) sonra
@@ -204,6 +233,12 @@ class GorusmeDenetci extends ChangeNotifier {
         case BaglantiHali.koptu:
           _iceKoptu = true;
           if (_kapaniyor) return;
+          // Kurulum SÜRÜYORSA sebebi kurulum akışı söyler; genel
+          // "Bağlanılamadı" metni onu ezmemeli (bkz. [_kurulumSuruyor]).
+          // `_iceKoptu` yukarıda zaten kaydedildi: `POST /arama/bitir`in
+          // `sebep` alanı da, kurulum sonundaki erteleme kontrolü de ondan
+          // besleniyor, yani hiçbir bilgi kaybolmuyor.
+          if (_kurulumSuruyor) return;
           kapat(
             metin: _hicBaglandi ? 'Bağlantı koptu'.c : 'Bağlanılamadı'.c,
             hata: true,
@@ -246,9 +281,13 @@ class GorusmeDenetci extends ChangeNotifier {
   /// Hata olursa [sonucMetni] doldurulur ve durum `bitti` olur; **sessizce
   /// dönmez** — arama ekranında sessiz başarısızlık kabul edilemez.
   Future<AramaHatasi?> aramaBaslat(BuzAyari buz) async {
-    final izin = await _medyayiAc(buz);
-    if (izin != null) return izin;
+    // Bayrak `_medyayiAc`ten ÖNCE kalkıyor: `koptu`, teklif üretilirken de
+    // (ICE toplama 6 sn'ye kadar sürebiliyor) gelebilir ve o an da otoriter
+    // sebep bu akıştadır — izin reddiyse "mikrofon izni gerekiyor".
+    _kurulumSuruyor = true;
     try {
+      final izin = await _medyayiAc(buz);
+      if (izin != null) return izin;
       final sdp = await surucu.teklifUret();
       final d = await GorusmeApi.baslat(
         kullaniciAdi: karsiTaraf,
@@ -266,6 +305,15 @@ class GorusmeDenetci extends ChangeNotifier {
       );
       durum = GorusmeDurum.caliyor;
       _bildir();
+      // Kurulum sırasında gelen `koptu` ERTELENMİŞTİ ([_kurulumSuruyor]);
+      // davet başarılı olduğuna göre artık otoriter bir sunucu sebebi yok ve
+      // medya gerçekten ölü. Ele almazsak ekran 45 saniye "Çalıyor..."
+      // gösterir, sonra "Cevap yok" der — kullanıcıya YANLIŞ sebep.
+      if (_iceKoptu) {
+        final metin = 'Bağlanılamadı'.c;
+        await _bitir(sunucuyaBildir: true, metin: metin, hata: true);
+        return AramaHatasi(null, metin, AramaTepkisi.kapat);
+      }
       _yoklamaBaslat();
       _calmaSayaci = Timer(Duration(seconds: calmaSaniye + 2), () {
         if (durum != GorusmeDurum.caliyor) return;
@@ -277,6 +325,10 @@ class GorusmeDenetci extends ChangeNotifier {
       final h = aramaHatasiCozumle(e);
       await _bitir(sunucuyaBildir: aramaId != null, metin: h.metin, hata: true);
       return h;
+    } finally {
+      // Hata yolunda da inmeli: yoksa sonraki her `koptu` sonsuza kadar
+      // yutulur ve arama ekranı bir daha hiç kapanmaz.
+      _kurulumSuruyor = false;
     }
   }
 
@@ -332,26 +384,38 @@ class GorusmeDenetci extends ChangeNotifier {
   /// Aranan akışı: medya aç → cevap üret (ICE toplama tamam) →
   /// `POST /arama/yanit {kabul:true}`.
   Future<AramaHatasi?> kabulEt(BuzAyari buz) async {
-    final izin = await _medyayiAc(buz);
-    if (izin != null) {
-      // İzin verilmediyse arayan sonsuza kadar çalmasın: aramayı REDDET.
-      // Sessizce dönmek, arayanın 45 sn boyunca "Çalıyor..." görmesi demekti.
-      try {
-        await GorusmeApi.yanit(aramaId: aramaId!, kabul: false);
-      } catch (_) {}
-      return izin;
-    }
+    // Giden aramadaki ile AYNI gerekçe (bkz. [_kurulumSuruyor]): cevap
+    // üretilirken gelen `koptu`, sunucunun söyleyeceği sebebi
+    // (409 DURUM_UYGUN_DEGIL, 403 TAKIP_YOK/ENGELLI...) ezmemeli.
+    _kurulumSuruyor = true;
     try {
+      final izin = await _medyayiAc(buz);
+      if (izin != null) {
+        // İzin verilmediyse arayan sonsuza kadar çalmasın: aramayı REDDET.
+        // Sessizce dönmek, arayanın 45 sn boyunca "Çalıyor..." görmesi demekti.
+        try {
+          await GorusmeApi.yanit(aramaId: aramaId!, kabul: false);
+        } catch (_) {}
+        return izin;
+      }
       final sdp = await surucu.cevapUret(gelenTeklifSdp!);
       await GorusmeApi.yanit(aramaId: aramaId!, kabul: true, sdp: sdp);
       durum = GorusmeDurum.baglaniyor;
       _bildir();
+      // Ertelenmiş `koptu` (bkz. [aramaBaslat]'taki aynı blok).
+      if (_iceKoptu) {
+        final metin = 'Bağlanılamadı'.c;
+        await _bitir(sunucuyaBildir: true, metin: metin, hata: true);
+        return AramaHatasi(null, metin, AramaTepkisi.kapat);
+      }
       _baglantiBeklemeBaslat();
       return null;
     } catch (e) {
       final h = aramaHatasiCozumle(e);
       await _bitir(sunucuyaBildir: true, metin: h.metin, hata: true);
       return h;
+    } finally {
+      _kurulumSuruyor = false;
     }
   }
 

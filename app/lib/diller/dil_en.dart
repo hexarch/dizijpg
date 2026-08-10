@@ -708,4 +708,7 @@ const Map<String, String> cevirilerEn = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Video calls are off. You can turn them on in Settings > Privacy.',
   'Sesli ve görüntülü arama': 'Voice and video calls',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Guest accounts can’t make calls. Create an account to use this.',
+  'Misafir hesaplar aranamaz': 'Guest accounts can’t be called',
 };

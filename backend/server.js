@@ -714,11 +714,17 @@ async function kullaniciDurumu(id) {
   let e = sifreSurumOnbellek.get(id);
   if (!e || simdi - e.zaman > 30000) {
     const { rows } = await havuz.query(
-      `SELECT sifre_surumu, yasakli, yasak_bitis, yasak_sebep
+      // `misafir` (sürüm 4): JWT'ye KOYULMADI, bilerek. Token 90 gün geçerli;
+      // misafir hesabını `/auth/bagla` ile bağlayan kullanıcı üç ay boyunca
+      // "misafir" muamelesi görürdü. Buraya konunca yenilenmesi 30 sn sürer,
+      // `/auth/bagla` da önbelleği hemen düşürdüğü için pratikte anında.
+      // Ek sorgu maliyeti YOK: bu satır zaten her istekte okunuyor.
+      `SELECT sifre_surumu, yasakli, yasak_bitis, yasak_sebep, misafir
        FROM kullanicilar WHERE id=$1`, [id]);
     if (!rows.length) return null; // hesap silinmiş
     e = { sv: rows[0].sifre_surumu, yasakli: rows[0].yasakli,
           yasak_bitis: rows[0].yasak_bitis, yasak_sebep: rows[0].yasak_sebep,
+          misafir: rows[0].misafir === true,
           zaman: simdi };
     sifreSurumOnbellek.set(id, e);
     if (sifreSurumOnbellek.size > 20000) {
@@ -861,6 +867,11 @@ async function girisZorunlu(req, res, next) {
     return res.status(401).json({ hata: 'Oturum sonlandı, tekrar giriş yap' });
   }
   req.kullanici = kimlik;
+  // Hesap TÜRÜ (sürüm 4). `req.kullanici` JWT yüküdür ve misafirlik orada YOK
+  // (token 90 gün yaşıyor, hesap bağlanınca bayat kalırdı) — canlı kaynak
+  // `kullaniciDurumu` önbelleğidir. Misafir hesaplar arama yapamaz
+  // (`/arama/baslat`) ve arama tercihlerini açamaz (`/gizlilik-tercihleri`).
+  req.misafir = durum.misafir === true;
 
   // ---- YASAK KAPISI (TEK KONTROL NOKTASI) ----
   // Kimlik doğrulaması gerektiren HER yazma ucu `girisZorunlu`dan geçiyor
@@ -2347,6 +2358,11 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
        RETURNING id, kullanici_adi, email, misafir`,
       [email, hash, kullanici_adi || null, req.kullanici.id],
     );
+    // `misafir` artık `kullaniciDurumu` önbelleğinde taşınıyor (30 sn TTL) ve
+    // misafirlik arama uçlarını KAPATIYOR. Önbelleği düşürmezsek hesabını yeni
+    // bağlamış kullanıcı yarım dakika boyunca "misafir hesaplar arama yapamaz"
+    // görürdü — üstelik tam da o kısıttan kurtulmak için hesap açmışken.
+    sifreSurumOnbellekSil(req.kullanici.id);
     res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
   } catch (e) {
     if (e.code === '23505') {
@@ -3282,23 +3298,56 @@ const GIZLILIK_ALANLARI = [
 const ARAMA_TERCIH_ALANLARI = ['sesli_arama_acik', 'goruntulu_arama_acik'];
 
 const TERCIH_ALANLARI = [...GIZLILIK_ALANLARI, ...ARAMA_TERCIH_ALANLARI];
+
+/**
+ * Bu istekte hangi tercih alanları YAZILABİLİR (sürüm 4).
+ *
+ * Misafir hesaplar arama tercihlerini AÇAMAZ (kullanıcı kararı, 10 Ağu).
+ * Sebebi: misafir aranamıyor (`ALICI_MISAFIR`) ve arayamıyor
+ * (`MISAFIR_ARAMA_YOK`); açılmış bir bayrak HİÇBİR ŞEY yapmaz, yalnız
+ * kullanıcıya "açtım ama çalışmıyor" dedirtir. Canlıda `misafir_9427a460`
+ * hesabında ikisi de `t` idi — uç bunu engellemiyordu.
+ *
+ * DİĞER GİZLİLİK TERCİHLERİ ETKİLENMEZ: `izlenenler_gizli` ve arkadaşlarının
+ * misafirlikle ilgisi yok ve misafirin de gizlilik hakkı var.
+ */
+function yazilabilirTercihler(misafirMi) {
+  return misafirMi
+    ? GIZLILIK_ALANLARI
+    : TERCIH_ALANLARI;
+}
+
 app.get('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
     `SELECT ${TERCIH_ALANLARI.join(', ')} FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
-  res.json(rows[0] || {});
+  // OKUMA kısıtlanmaz: istemci anahtarı KİLİTLİ çizip sebebini yazabilsin
+  // diye mevcut değeri (misafirde daima false) görmeli. `misafir` alanı
+  // yanıta ekleniyor ki ayarlar ekranı ayrı bir tur atmasın.
+  res.json({ ...(rows[0] || {}), misafir: req.misafir === true });
 }));
 app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const g = req.body || {};
+  const izinli = yazilabilirTercihler(req.misafir === true);
   // Yalnız bilinen anahtarlar; boolean'a zorlanır (eksik = değişmez).
   const set = [];
   const deg = [req.kullanici.id];
-  for (const a of TERCIH_ALANLARI) {
+  for (const a of izinli) {
     if (typeof g[a] === 'boolean') {
       deg.push(g[a]);
       set.push(`${a}=$${deg.length}`);
     }
+  }
+  // Misafir YALNIZ arama alanlarını yollamışsa: sessizce "tamam" demek yerine
+  // SEBEBİNİ söyle (kullanıcı kararı: "sebebini de onlara söyle"). Sessiz
+  // yok sayma, anahtarın açık kalıp sonra kendiliğinden kapanması demekti.
+  if (!set.length && req.misafir === true
+      && ARAMA_TERCIH_ALANLARI.some((a) => typeof g[a] === 'boolean')) {
+    return res.status(403).json({
+      hata: 'Misafir hesaplar arama ayarlarını açamaz; hesap oluşturunca kullanabilirsin',
+      kod: 'MISAFIR_ARAMA_YOK',
+    });
   }
   if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
   const { rows } = await havuz.query(
@@ -3306,7 +3355,7 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
      RETURNING ${TERCIH_ALANLARI.join(', ')}`,
     deg,
   );
-  res.json(rows[0]);
+  res.json({ ...rows[0], misafir: req.misafir === true });
 }));
 
 // İçerik bazlı gizleme: bu dizi/film açık profildeki izlenen şeritlerinde,
@@ -5992,8 +6041,16 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const k = await havuz.query(
     // testci: kapalı test ekibi rozeti ("dizi.jpg aile üyesi"). Herkese açık
     // bir nişan olduğu için ziyaretçiye de gönderilir; e-posta ASLA dönmez.
+    // misafir (sürüm 4): hesap TÜRÜ, gizli bir alan değil — misafir kullanıcı
+    // adı sunucunun ürettiği `misafir_<8 hex>` kalıbı olduğu ve adı
+    // değiştirmenin tek yolu (`/auth/bagla`) aynı anda misafirliği kaldırdığı
+    // için bu bayrak kullanıcı adından ZATEN okunabiliyor. Yanıta konmasının
+    // sebebi istemcinin sohbet başlığındaki arama düğmelerini EK BİR İSTEK
+    // ATMADAN gizleyebilmesi: `AramaServisi.karsilikliTakipMi` bu ucu zaten
+    // çağırıyor. Aksi hâlde düğme çizilir, kullanıcı basar ve kesin
+    // başarısız olan bir eylemin hata mesajını okur.
     `SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma,
-            izlenenler_gizli, yorumlar_gizli, yanitlar_gizli, testci
+            izlenenler_gizli, yorumlar_gizli, yanitlar_gizli, testci, misafir
      FROM kullanicilar WHERE kullanici_adi=$1`,
     [req.params.kullaniciAdi],
   );
@@ -6540,8 +6597,14 @@ app.get('/arama/buz-sunuculari', girisZorunlu, buzLimiti, sarici(async (req, res
     gecerlilik_sn,
     arama_acik: aramaAcik,
     goruntulu_acik: goruntuluAcik,
-    kendi_sesli_acik: rows[0]?.sesli_arama_acik === true,
-    kendi_goruntulu_acik: rows[0]?.goruntulu_arama_acik === true,
+    // Misafirde DAİMA false: migrasyon açık kalmış bayrakları kapatıyor ama
+    // bu satır migrasyondan bağımsız garanti. Yoksa bayat bir bayrak yüzünden
+    // istemci düğmeyi aktif çizer, kullanıcı basar ve 403 `MISAFIR_ARAMA_YOK`
+    // yer — tam da kaçınmaya çalıştığımız "kesin başarısız olacak düğme".
+    kendi_sesli_acik: !req.misafir && rows[0]?.sesli_arama_acik === true,
+    kendi_goruntulu_acik: !req.misafir && rows[0]?.goruntulu_arama_acik === true,
+    // İstemci kendi anahtarlarını KİLİTLİ çizip sebebini yazabilsin diye.
+    misafir: req.misafir === true,
     calma_saniye: Math.round(CALMA_MS / 1000),
   });
 }));
@@ -6558,22 +6621,36 @@ app.post('/arama/baslat', girisZorunlu, gorusmeLimiti, sarici(async (req, res) =
   // Yetki zinciri — SIRA BAĞLAYICIDIR (sözleşme §5). Kontroller `arama.js`te,
   // sorgular burada: modül `pg` bilmez, sıra tek yerde ve test edilebilir.
   const karar = await baslatYetki(
-    { aramaAcik, goruntuluAcik, benId, kullaniciAdi: kullanici_adi, tur, sdp },
+    {
+      aramaAcik, goruntuluAcik, benId,
+      // Sürüm 4: misafir hesaplar ARAYAMAZ. Kaynak `kullaniciDurumu`
+      // önbelleği (girisZorunlu), ek sorgu yok.
+      benMisafir: req.misafir === true,
+      kullaniciAdi: kullanici_adi, tur, sdp,
+    },
     {
       hedefBul: async (ad) => {
         const { rows } = await havuz.query(
-          `SELECT id, yasakli, yasak_bitis, sesli_arama_acik, goruntulu_arama_acik
+          // *** `AND misafir=false` BURADAN KALDIRILDI (sürüm 4) — GERİ EKLEME. ***
+          // O koşul misafir hedefi "yok" gösteriyordu ve zincir 404
+          // `KULLANICI_YOK` dönüyordu. 10 Ağu'da canlıda gerçek bir kullanıcı
+          // sohbet ettiği misafiri arayıp "kullanıcı bulunamadı" gördü: kural
+          // doğru, sebep yanlıştı. Kural artık adım 8'de, 403 `ALICI_MISAFIR`
+          // ile ve KENDİ ADIYLA duruyor.
+          `SELECT id, misafir, yasakli, yasak_bitis,
+                  sesli_arama_acik, goruntulu_arama_acik
            FROM kullanicilar
-           WHERE kullanici_adi=$1 AND misafir=false`, [ad]);
+           WHERE kullanici_adi=$1`, [ad]);
         if (!rows.length) return null;
         // Süresi dolmuş ban "yasaklı" saymaz (yasakAktif okuma anında karar verir).
         //
         // `kabul*`: ARANANIN KENDİ tercihi (md. 38, migrasyon-2026-08-10.sql).
-        // Varsayılan false; `baslatYetki` adım 10 bunu VARSAYILAN-RET okur, yani
+        // Varsayılan false; `baslatYetki` adım 12 bunu VARSAYILAN-RET okur, yani
         // sütun okunamazsa da arama başlamaz. Aynı sorguya bindirildi — ayrı bir
         // tur atmıyoruz.
         return {
           id: rows[0].id,
+          misafir: rows[0].misafir === true,
           yasakli: yasakAktif(rows[0]),
           kabulSesli: rows[0].sesli_arama_acik === true,
           kabulGoruntulu: rows[0].goruntulu_arama_acik === true,

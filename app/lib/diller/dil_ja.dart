@@ -681,4 +681,7 @@ const Map<String, String> cevirilerJa = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'ビデオ通話はオフです。設定 > プライバシー からオンにできます。',
   'Sesli ve görüntülü arama': '音声通話とビデオ通話',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'ゲストアカウントは通話できません。アカウントを作成すると利用できます。',
+  'Misafir hesaplar aranamaz': 'ゲストアカウントには発信できません',
 };

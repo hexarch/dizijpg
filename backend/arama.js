@@ -87,6 +87,27 @@ export const KOD = Object.freeze({
   ARAMA_KAPALI: 'ARAMA_KAPALI',
   GORUNTULU_KAPALI: 'GORUNTULU_KAPALI',
   GECERSIZ_ISTEK: 'GECERSIZ_ISTEK',
+
+  // ---- MİSAFİR HESAPLAR (sürüm 4, kullanıcı kararı 10 Ağu) ----
+  // "misafir hesaplar aranamasın ve bu ayarları açamasınlar, sebebini de
+  // onlara söyle." İki YÖN, iki AYRI kod — çünkü kullanıcıya gösterilecek
+  // metin de, yapması gereken de farklı:
+  //   · MISAFIR_ARAMA_YOK → ARAYAN misafir. Çözüm ONDA: hesap oluştursun.
+  //   · ALICI_MISAFIR     → ARANAN misafir. Çözüm onda DEĞİL; yapabileceği
+  //                          tek şey karşı tarafa hesap açmasını söylemek.
+  // Tek kod kullansaydık istemci hangi tarafın eksik olduğunu bilemez,
+  // "hesap oluştur" derdi — arayan zaten kayıtlıyken.
+  MISAFIR_ARAMA_YOK: 'MISAFIR_ARAMA_YOK',
+
+  // *** BU KOD `KULLANICI_YOK`UN YERİNİ ALIR. ***
+  // Önceki davranış: `hedefBul` sorgusu `AND misafir=false` içerdiği için
+  // misafir hedef HİÇ BULUNAMIYOR ve 404 `KULLANICI_YOK` dönüyordu. Kullanıcı
+  // ekranda "Kullanıcı bulunamadı" görüyordu — ama kullanıcı VARDI, karşısında
+  // duruyordu, sohbet ediyordu. Yanlış sebep, "uygulama bozuk" algısı yaratır
+  // (sözleşme §5.0 bunu zaten yazıyor). Artık hedef BULUNUR ve doğru sebep
+  // döner.
+  ALICI_MISAFIR: 'ALICI_MISAFIR',
+
   KULLANICI_YOK: 'KULLANICI_YOK',
   KENDINE_ARAMA: 'KENDINE_ARAMA',
   ENGELLI: 'ENGELLI',
@@ -287,15 +308,27 @@ export function olcumTemizle(ham) {
  * sıra, üretimde çalışan sıradır. Sorguları burada yapsaydık modül `pg`ye
  * bağlanır ve saflığını kaybederdi.
  *
- * @param {object} girdi {aramaAcik, goruntuluAcik, benId, kullaniciAdi, tur, sdp}
+ * @param {object} girdi {aramaAcik, goruntuluAcik, benId, benMisafir,
+ *   kullaniciAdi, tur, sdp}
+ *   `benMisafir` ARAYANIN misafir olup olmadığıdır (sürüm 4). VARSAYILAN-RET
+ *   DEĞİL, varsayılan-geçer (`=== true` diye bakılır): bilinmiyorsa arama
+ *   engellenmez. Yönü bilinçli — burada yanlış "engelle" kararı GERÇEK
+ *   kullanıcıları susturur, yanlış "geçir" kararı ise yalnız bir misafirin
+ *   arama başlatmasına izin verir ve o arama zaten ALICI tarafında hiçbir
+ *   veri kaybına yol açmaz. (Adım 12'deki tercih okumasının tersi: orada
+ *   bilinmeyeni "açık" saymak HERKESİ aranabilir yapardı.)
  * @param {object} kaynak {hedefBul, engelliMi, karsilikliMi, sessizKalanSn, mesgulMu}
- *   `hedefBul(ad)` -> `{id, yasakli, kabulSesli, kabulGoruntulu}`. Son iki alan
- *   ARANANIN KENDİ tercihidir (`kullanicilar.sesli_arama_acik` /
+ *   `hedefBul(ad)` -> `{id, misafir, yasakli, kabulSesli, kabulGoruntulu}`.
+ *   `kabul*` ARANANIN KENDİ tercihidir (`kullanicilar.sesli_arama_acik` /
  *   `goruntulu_arama_acik`); eksikse arama REDDEDİLİR (varsayılan-ret, aşağıda).
+ *   `misafir` ise hedefin hesap TÜRÜdür — `hedefBul` artık misafirleri
+ *   SÜZMEZ, çünkü süzmek onları "yok" gösteriyordu (bkz. `ALICI_MISAFIR`).
  * @returns {Promise<{tamam:true, hedef:object, mesgul:boolean}|{tamam:false,http,kod,hata}>}
  */
 export async function baslatYetki(girdi, kaynak) {
-  const { aramaAcik, goruntuluAcik, benId, kullaniciAdi, tur, sdp } = girdi || {};
+  const {
+    aramaAcik, goruntuluAcik, benId, benMisafir, kullaniciAdi, tur, sdp,
+  } = girdi || {};
 
   // 2 — özellik kapalı
   if (!aramaAcik) return hata(503, KOD.ARAMA_KAPALI, 'Arama şu anda kapalı');
@@ -303,38 +336,83 @@ export async function baslatYetki(girdi, kaynak) {
   if (tur === 'goruntu' && !goruntuluAcik) {
     return hata(503, KOD.GORUNTULU_KAPALI, 'Görüntülü arama şu anda kapalı');
   }
-  // 4 — alan doğrulama (DB'ye hiç gitmeden)
+  // 4 — ARAYAN MİSAFİR (sürüm 4). Kullanıcı kararı: "misafir hesaplar
+  //     aranamasın ve bu ayarları açamasınlar, sebebini de onlara söyle."
+  //
+  // NEDEN TAM BURADA (sıra bağlayıcı):
+  //  · Kill switch'lerden (2,3) SONRA: özellik sunucu genelinde kapalıysa
+  //    hesap türünü tartışmanın anlamı yok; "şu anda kapalı" daha doğru.
+  //  · Alan doğrulamasından (5) ÖNCE: bu kontrol ne gövdeyi ayrıştırmayı ne
+  //    de veritabanını gerektirir — zincirin EN UCUZ adımı.
+  //  · Hedefe bakan her şeyden (6+) ÖNCE: misafir bir arayan hiç kimse
+  //    hakkında bilgi almamalı. Sonraya bıraksaydık misafir bir hesap
+  //    `KULLANICI_YOK`/`TAKIP_YOK` farkından kullanıcı adı numaralandırabilirdi.
+  //
+  // BİLGİ SIZINTISI YOK: kullanıcı kendi hesabının misafir olduğunu zaten
+  // biliyor (uygulamada "hesabını bağla" çağrısını görüyor).
+  if (benMisafir === true) {
+    return hata(403, KOD.MISAFIR_ARAMA_YOK,
+      'Misafir hesaplar arama yapamaz; hesap oluşturunca kullanabilirsin');
+  }
+  // 5 — alan doğrulama (DB'ye hiç gitmeden)
   if (!turGecerliMi(tur) || !sdpGecerliMi(sdp)
       || typeof kullaniciAdi !== 'string' || !kullaniciAdi.trim()) {
     return hata(400, KOD.GECERSIZ_ISTEK, 'Geçersiz kullanici_adi/tur/sdp');
   }
-  // 5 — kullanıcı var mı
+  // 6 — kullanıcı var mı
   const hedef = await kaynak.hedefBul(kullaniciAdi);
   if (!hedef) return hata(404, KOD.KULLANICI_YOK, 'Kullanıcı bulunamadı');
-  // 6 — kendini arama
+  // 7 — kendini arama
   if (hedef.id === benId) return hata(400, KOD.KENDINE_ARAMA, 'Kendini arayamazsın');
-  // 7 — engelleme (ÇİFT YÖNLÜ). Bugün engelleme yalnız GÖNDERMEDE zorlanıyor,
+  // 8 — ARANAN MİSAFİR (sürüm 4).
+  //
+  // ESKİDEN NE OLUYORDU: `hedefBul` sorgusu `AND misafir=false` içeriyordu,
+  // hedef hiç bulunamıyor ve adım 6'da 404 `KULLANICI_YOK` dönüyordu. 10 Ağu'da
+  // canlıda yaşanan olay bu: gerçek bir kullanıcı, sohbet ettiği misafiri
+  // aradı ve "kullanıcı bulunamadı" gördü. Kural doğruydu, SEBEBİ yanlıştı.
+  //
+  // NEDEN ENGELLEME (9) VE KARŞILIKLI TAKİP (10) ÖNCESİNDE — adım 12'nin
+  // (kendi tercihi) TERSİ yönde bir karar, ve bilinçli:
+  //  · Misafirlik bir TERCİH DEĞİL, hesap TÜRÜdür. Adım 12 "bu kişi ayarından
+  //    kapatmış" der ve o bir ifşadır; burada ifşa edilecek bir ayar yok.
+  //  · `TAKIP_YOK` ÖNCE dönseydi kullanıcıya YAPILAMAZ bir iş önerirdik:
+  //    "karşılıklı takipleşin" deyip takipleşse bile arama yine olmayacaktı.
+  //    Kurtarma yolu göstermeyen mesaj kötüdür; YANLIŞ kurtarma yolu gösteren
+  //    mesaj daha kötüdür.
+  //  · Bir sorgu da tasarruf ediyor: `engelliMi` ve `karsilikliMi` hiç
+  //    çalışmıyor.
+  //
+  // BİLGİ SIZINTISI DEĞERLENDİRMESİ (bilerek yazıldı, §5.0.2):
+  // "Bu hesap misafir" demek yeni bir bilgi vermiyor. Misafir kullanıcı adı
+  // SUNUCUNUN ürettiği `misafir_<8 hex>` kalıbıdır (`/auth/misafir`) ve adı
+  // değiştirmenin TEK yolu `/auth/bagla`dır — o da aynı UPDATE içinde
+  // `misafir=false` yapar. Yani `misafir=true` ⟺ ad `misafir_` ile başlar,
+  // ve kullanıcı adları zaten herkese açık. Sızan sıfır bit var.
+  if (hedef.misafir === true) {
+    return hata(403, KOD.ALICI_MISAFIR, 'Misafir hesaplar aranamaz');
+  }
+  // 9 — engelleme (ÇİFT YÖNLÜ). Bugün engelleme yalnız GÖNDERMEDE zorlanıyor,
   //     okumada değil. Aramada bu gevşeklik kabul edilemez — telefon çalıyor.
   if (await kaynak.engelliMi(benId, hedef.id)) {
     return hata(403, KOD.ENGELLI, 'Bu kullanıcıyı arayamazsın');
   }
-  // 8 — karşılıklı takip (kullanıcı kararı; tartışma kapalı).
+  // 10 — karşılıklı takip (kullanıcı kararı; tartışma kapalı).
   //     İstenmeyen mesaj bir rahatsızlık, istenmeyen arama bir ihlaldir.
   if (!await kaynak.karsilikliMi(benId, hedef.id)) {
     return hata(403, KOD.TAKIP_YOK, 'Aramak için karşılıklı takipleşmelisiniz');
   }
-  // 9 — aranan yasaklı
+  // 11 — aranan yasaklı
   if (hedef.yasakli) return hata(403, KOD.ALICI_YASAKLI, 'Bu hesap şu anda aranamıyor');
-  // 10 — ARANANIN KENDİ TERCİHİ (madde 38). Varsayılan KAPALI.
+  // 12 — ARANANIN KENDİ TERCİHİ (madde 38). Varsayılan KAPALI.
   //
   // NEDEN BURADA (sıra bağlayıcı, sözleşme §5):
-  //  · Karşılıklı takip (8) ve engelleme (7) SONRASI: "bu kişide arama kapalı"
+  //  · Karşılıklı takip (10) ve engelleme (9) SONRASI: "bu kişide arama kapalı"
   //    demek başkasının ayarını ifşa etmektir. Yalnız karşılıklı takipleştiğin
   //    biri hakkında öğrenebilirsin. (İfşa BİLİNÇLİ: alternatif "bağlanılamadı"
   //    demekti, o da kullanıcıya uygulamayı bozuk gösterirdi.)
-  //  · `ALICI_YASAKLI` (9) SONRASI: yasaklı bir hesapta tercihini de sızdırmak
+  //  · `ALICI_YASAKLI` (11) SONRASI: yasaklı bir hesapta tercihini de sızdırmak
   //    gereksiz — genel "şu anda aranamıyor" yeterli.
-  //  · Sessizleştirme (11) ÖNCESİ: kapalı olması KALICI bir engel, sessizleştirme
+  //  · Sessizleştirme (13) ÖNCESİ: kapalı olması KALICI bir engel, sessizleştirme
   //    geçici bir soğuma. Kalıcı sebep önce söylenir.
   //
   // *** SESSİZLEŞTİRME MUAFİYETİ BURADAN GELİYOR ***: burada dönmek demek
@@ -355,17 +433,17 @@ export async function baslatYetki(girdi, kaynak) {
   if (tur === 'goruntu' && hedef.kabulGoruntulu !== true) {
     return hata(403, KOD.ALICI_GORUNTULU_KAPALI, 'Bu kullanıcıda görüntülü arama kapalı');
   }
-  // 11 — çift bazlı sessizleştirme
+  // 13 — çift bazlı sessizleştirme
   const kalan = await kaynak.sessizKalanSn(benId, hedef.id);
   if (kalan > 0) {
     return hata(429, KOD.COK_FAZLA_CEVAPSIZ,
       'Bu kişiye çok fazla cevapsız arama yaptın', { kalan_sn: kalan });
   }
-  // 12 — arayan zaten bir aramada (istemci hatası: kendi ekranında arama var)
+  // 14 — arayan zaten bir aramada (istemci hatası: kendi ekranında arama var)
   if (await kaynak.mesgulMu(benId)) {
     return hata(409, KOD.ZATEN_ARAMADA, 'Zaten bir aramadasın');
   }
-  // 13 — aranan zaten bir aramada. HATA DEĞİL: aramanın normal bir sonucu.
+  // 15 — aranan zaten bir aramada. HATA DEĞİL: aramanın normal bir sonucu.
   //      200 + durum:'mesgul' döner ve üstveriye `mesgul` olarak yazılır.
   const mesgul = await kaynak.mesgulMu(hedef.id);
   return { tamam: true, hedef, mesgul };

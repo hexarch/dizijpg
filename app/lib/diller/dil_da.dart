@@ -703,4 +703,7 @@ const Map<String, String> cevirilerDa = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Videoopkald er slået fra. Du kan slå dem til under Indstillinger > Privatliv.',
   'Sesli ve görüntülü arama': 'Tale- og videoopkald',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Gæstekonti kan ikke ringe op. Opret en konto for at bruge det.',
+  'Misafir hesaplar aranamaz': 'Der kan ikke ringes til gæstekonti',
 };

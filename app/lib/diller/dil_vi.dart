@@ -704,4 +704,7 @@ const Map<String, String> cevirilerVi = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Cuộc gọi video đang tắt. Bạn có thể bật trong Cài đặt > Quyền riêng tư.',
   'Sesli ve görüntülü arama': 'Cuộc gọi thoại và video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Tài khoản khách không thể gọi. Hãy tạo tài khoản để dùng tính năng này.',
+  'Misafir hesaplar aranamaz': 'Không thể gọi tài khoản khách',
 };

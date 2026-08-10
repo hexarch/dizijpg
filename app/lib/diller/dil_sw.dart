@@ -704,4 +704,7 @@ const Map<String, String> cevirilerSw = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Simu za video zimezimwa. Unaweza kuziwasha katika Mipangilio > Faragha.',
   'Sesli ve görüntülü arama': 'Simu za sauti na video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Akaunti za mgeni haziwezi kupiga simu. Fungua akaunti ili kutumia hii.',
+  'Misafir hesaplar aranamaz': 'Akaunti za mgeni haziwezi kupigiwa simu',
 };

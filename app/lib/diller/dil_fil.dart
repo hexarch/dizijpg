@@ -714,4 +714,7 @@ const Map<String, String> cevirilerFil = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Naka-off ang video call. Puwede mong i-on sa Mga Setting > Privacy.',
   'Sesli ve görüntülü arama': 'Voice at video call',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Hindi makakatawag ang guest account. Gumawa ng account para magamit ito.',
+  'Misafir hesaplar aranamaz': 'Hindi matatawagan ang guest account',
 };

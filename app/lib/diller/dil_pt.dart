@@ -714,4 +714,7 @@ const Map<String, String> cevirilerPt = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'As chamadas de vídeo estão desativadas. Você pode ativá-las em Configurações > Privacidade.',
   'Sesli ve görüntülü arama': 'Chamadas de voz e vídeo',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Contas de convidado não podem ligar. Cria uma conta para usar isto.',
+  'Misafir hesaplar aranamaz': 'Não é possível ligar para contas de convidado',
 };

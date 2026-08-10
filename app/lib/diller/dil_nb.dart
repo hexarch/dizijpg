@@ -705,4 +705,7 @@ const Map<String, String> cevirilerNb = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Videoanrop er av. Du kan slå dem på i Innstillinger > Personvern.',
   'Sesli ve görüntülü arama': 'Tale- og videoanrop',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Gjestekontoer kan ikke ringe. Opprett en konto for å bruke det.',
+  'Misafir hesaplar aranamaz': 'Gjestekontoer kan ikke ringes',
 };

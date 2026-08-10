@@ -705,4 +705,7 @@ const Map<String, String> cevirilerFa = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'تماس تصویری خاموش است. می‌توانید از تنظیمات > حریم خصوصی آن را روشن کنید.',
   'Sesli ve görüntülü arama': 'تماس صوتی و تصویری',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'حساب‌های مهمان نمی‌توانند تماس بگیرند. برای استفاده، حساب بساز.',
+  'Misafir hesaplar aranamaz': 'به حساب‌های مهمان نمی‌توان تماس گرفت',
 };

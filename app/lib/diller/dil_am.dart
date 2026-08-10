@@ -688,4 +688,7 @@ const Map<String, String> cevirilerAm = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'የቪዲዮ ጥሪ ጠፍቷል። ከቅንብሮች > ግላዊነት ማብራት ትችላለህ።',
   'Sesli ve görüntülü arama': 'የድምፅ እና ቪዲዮ ጥሪ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'የእንግዳ መለያዎች ጥሪ ማድረግ አይችሉም። መለያ ከፈጠርክ መጠቀም ትችላለህ።',
+  'Misafir hesaplar aranamaz': 'የእንግዳ መለያዎች ሊጠሩ አይችሉም',
 };

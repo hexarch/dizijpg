@@ -263,6 +263,111 @@ test('ARANAN YASAKLI ise arama başlamaz (403 ALICI_YASAKLI)', async () => {
   assert.equal(r.kod, KOD.ALICI_YASAKLI);
 });
 
+// ===========================================================================
+// 3b. MİSAFİR HESAPLAR (sürüm 4) — kullanıcı kararı 10 Ağu
+// ===========================================================================
+// "misafir hesaplar aranamasın ve bu ayarları açamasınlar, sebebini de onlara
+// söyle."
+//
+// İKİ YÖN AYRI AYRI KİLİTLENİYOR:
+//   (a) misafir ARAYAMAZ  -> 403 MISAFIR_ARAMA_YOK (adım 4)
+//   (b) misafir ARANAMAZ  -> 403 ALICI_MISAFIR     (adım 8)
+// (a) 10 Ağu'ya kadar HİÇ KONTROL EDİLMİYORDU: `baslatYetki` yalnız hedefe
+// bakıyordu, arayanın hesap türüne bakmıyordu. Yani misafir hesaplar gerçek
+// kullanıcıların telefonunu çaldırabiliyordu.
+// (b) kontrol ediliyordu ama YANLIŞ SEBEPLE: `hedefBul` sorgusundaki
+// `AND misafir=false` yüzünden hedef "yok" görünüyor ve 404 KULLANICI_YOK
+// dönüyordu — kullanıcı var, sohbet ekranı açık, ekranda "kullanıcı bulunamadı".
+
+test('sürüm 4 (a): MİSAFİR ARAYAMAZ — 403 ve HİÇBİR sorgu atılmaz', async () => {
+  const k = kaynakYap();
+  const r = await baslatYetki(girdiYap({ benMisafir: true }), k);
+  assert.equal(r.tamam, false);
+  assert.equal(r.http, 403);
+  assert.equal(r.kod, KOD.MISAFIR_ARAMA_YOK);
+  // Zincirin EN UCUZ adımı olmalı: hedef hakkında tek satır bile okunmamalı.
+  // Yoksa misafir bir hesap `KULLANICI_YOK`/`TAKIP_YOK` farkından kullanıcı
+  // adı numaralandırabilirdi.
+  assert.deepEqual(k.izler, [], 'misafir arayan için veritabanına gidildi');
+});
+
+test('sürüm 4 (a): misafir kontrolü KILL SWITCH SONRASI, doğrulama ÖNCESİ', async () => {
+  // Özellik sunucu genelinde kapalıysa hesap türünü tartışmanın anlamı yok.
+  const kapali = await baslatYetki(
+    girdiYap({ benMisafir: true, aramaAcik: false }), kaynakYap());
+  assert.equal(kapali.kod, KOD.ARAMA_KAPALI);
+  // Ama bozuk gövde misafiri kurtarmaz: misafirlik önce söylenir.
+  const bozuk = await baslatYetki(
+    girdiYap({ benMisafir: true, tur: 'video', sdp: 'merhaba' }), kaynakYap());
+  assert.equal(bozuk.kod, KOD.MISAFIR_ARAMA_YOK);
+});
+
+test('sürüm 4 (a): VARSAYILAN GEÇER — bilinmeyen `benMisafir` aramayı ENGELLEMEZ', async () => {
+  // Adım 12'deki tercih okumasının BİLİNÇLİ TERSİ. Orada bilinmeyeni "açık"
+  // saymak HERKESİ aranabilir yapardı (sessiz ve geniş zarar). Burada
+  // bilinmeyeni "misafir" saymak GERÇEK kullanıcıları susturur — çok daha
+  // pahalı. `=== true` yalnız kesin bilgide engeller.
+  for (const v of [undefined, null, false, 0, '', 'true']) {
+    const r = await baslatYetki(girdiYap({ benMisafir: v }), kaynakYap());
+    assert.equal(r.tamam, true, `benMisafir=${JSON.stringify(v)} aramayı engelledi`);
+  }
+});
+
+test('sürüm 4 (b): MİSAFİR ARANAMAZ — 403 ALICI_MISAFIR, 404 KULLANICI_YOK DEĞİL', async () => {
+  const k = kaynakYap({
+    hedefBul: async () => ({ id: 2, misafir: true, yasakli: false }),
+  });
+  const r = await baslatYetki(girdiYap(), k);
+  assert.equal(r.http, 403, '404 dönüyor: eski `AND misafir=false` süzgeci geri gelmiş olabilir');
+  assert.equal(r.kod, KOD.ALICI_MISAFIR);
+  assert.notEqual(r.kod, KOD.KULLANICI_YOK,
+    'kullanıcı VAR; "bulunamadı" demek 10 Ağu\'daki hatanın ta kendisiydi');
+});
+
+test('sürüm 4 (b): ALICI_MISAFIR, ENGELLİ ve TAKİP_YOK\'tan ÖNCE gelir', async () => {
+  // Gerekçe: `TAKIP_YOK` önce dönseydi kullanıcıya YAPILAMAZ bir iş önerirdik
+  // — "karşılıklı takipleşin" deyip takipleştikten sonra arama yine olmazdı.
+  // Yanlış kurtarma yolu, kurtarma yolu olmamasından kötüdür.
+  const k = kaynakYap({
+    hedefBul: async () => ({ id: 2, misafir: true, yasakli: false }),
+    engelliMi: async () => true,
+    karsilikliMi: async () => false,
+  });
+  const r = await baslatYetki(girdiYap(), k);
+  assert.equal(r.kod, KOD.ALICI_MISAFIR);
+  assert.deepEqual(k.izler, [],
+    'misafir hedefte engelleme/takip sorguları boşuna atılıyor');
+});
+
+test('sürüm 4 (b): hedef misafir DEĞİLSE zincir bozulmaz (gerçek kullanıcılar etkilenmez)', async () => {
+  for (const v of [undefined, null, false]) {
+    const r = await baslatYetki(girdiYap(),
+      kaynakYap({
+        hedefBul: async () => ({
+          id: 2, misafir: v, yasakli: false, kabulSesli: true, kabulGoruntulu: true,
+        }),
+      }));
+    assert.equal(r.tamam, true, `misafir=${JSON.stringify(v)} gerçek kullanıcıyı engelledi`);
+  }
+});
+
+test('sürüm 4: `hedefBul` sorgusu misafirleri SÜZMÜYOR (regresyon kilidi)', () => {
+  const blok = SERVER.slice(SERVER.indexOf("app.post('/arama/baslat'"),
+    SERVER.indexOf("app.get('/arama/durum/:aramaId'"));
+  const sorgu = blok.slice(blok.indexOf('hedefBul: async'), blok.indexOf('engelliMi:'));
+  // Yorumlar ayıklanır: bu dosyadaki AÇIKLAMA metni de "AND misafir=false"
+  // ifadesini geçiriyor (kasten — geri eklenmemesi gerektiğini anlatıyor).
+  const kod = sorgu.replace(/\/\/.*$/gm, '');
+  assert.ok(!/misafir\s*=\s*false/.test(kod),
+    '`AND misafir=false` geri gelmiş: misafir hedef yine 404 KULLANICI_YOK verecek');
+  assert.match(kod, /WHERE kullanici_adi=\$1`/,
+    'hedef sorgusunun WHERE\'ine yeni bir süzgeç eklenmiş');
+  assert.match(sorgu, /SELECT id, misafir, yasakli/);
+  assert.match(sorgu, /misafir: rows\[0\]\.misafir === true/);
+  // Arayanın hesap türü ek sorgu atmadan, `girisZorunlu`nun okuduğu önbellekten.
+  assert.match(blok, /benMisafir: req\.misafir === true/);
+});
+
 test('GEÇERSİZ tur/sdp 400 — ve VERİTABANINA HİÇ GİDİLMEZ', async () => {
   for (const u of [{ tur: 'video' }, { tur: null }, { sdp: 'merhaba' },
     { sdp: '' }, { kullaniciAdi: '' }, { kullaniciAdi: null },
@@ -814,8 +919,13 @@ test('SDP/ICE hiçbir yere YAZILMIYOR (INSERT/console yalnız üstveri taşır)'
   assert.ok(!/console\.(log|error|warn)\([^)]*sdp/i.test(blok), 'SDP günlüğe basılıyor');
 });
 
-test('sözleşmedeki 15 hata kodunun HEPSİ tanımlı ve çevrilmez sabit', () => {
-  const bekleniyor = ['ARAMA_KAPALI', 'GORUNTULU_KAPALI', 'GECERSIZ_ISTEK', 'KULLANICI_YOK',
+test('sözleşmedeki 17 hata kodunun HEPSİ tanımlı ve çevrilmez sabit', () => {
+  const bekleniyor = ['ARAMA_KAPALI', 'GORUNTULU_KAPALI', 'GECERSIZ_ISTEK',
+    // Sürüm 4 — misafir hesaplar. İKİ AYRI kod, tek kod DEĞİL: biri arayana
+    // "hesap oluştur" dedirtir, öteki aranan hakkındadır ve arayanın
+    // yapabileceği bir şey yoktur. Tek kodla istemci yanlış öneri basardı.
+    'MISAFIR_ARAMA_YOK', 'ALICI_MISAFIR',
+    'KULLANICI_YOK',
     'KENDINE_ARAMA', 'ENGELLI', 'TAKIP_YOK', 'ALICI_YASAKLI',
     // md. 38 — kullanıcı başına tercih. SUNUCU GENELİ kill switch kodlarından
     // (`ARAMA_KAPALI`/`GORUNTULU_KAPALI`) AYRI olmak zorunda: istemci "aradığın
@@ -1036,16 +1146,65 @@ test('md.38 tercih okuma/yazma ucu: /gizlilik-tercihleri iki alanı da tanıyor'
   // kapalı bilir.
   assert.equal((blok.match(/TERCIH_ALANLARI\.join\(', '\)/g) || []).length, 2,
     'SELECT ve RETURNING geniş listeyi kullanmıyor');
-  assert.match(blok, /for \(const a of TERCIH_ALANLARI\)/);
   assert.ok(!/GIZLILIK_ALANLARI\.join/.test(blok),
     'sorgulardan biri dar listede kalmış: yeni tercih okunmaz/yazılmaz');
+  // Sürüm 4: POST döngüsü artık sabit listeyi değil, HESAP TÜRÜNE göre
+  // hesaplanan listeyi geziyor (`yazilabilirTercihler`). Döngü yine geniş
+  // listeye dayanmalı — misafir olmayan kullanıcıda TERCIH_ALANLARI dönüyor.
+  assert.match(blok, /for \(const a of izinli\)/);
+  assert.match(blok, /const izinli = yazilabilirTercihler\(req\.misafir === true\)/);
+  assert.match(blok, /misafirMi\s*\?\s*GIZLILIK_ALANLARI\s*:\s*TERCIH_ALANLARI/,
+    'misafir dar listeye, kayıtlı kullanıcı geniş listeye düşmeli');
+});
+
+// --- sürüm 4: misafir hesaplar arama tercihlerini AÇAMAZ ------------------
+// Kullanıcı kararı (10 Ağu): "misafir hesaplar aranamasın ve bu ayarları
+// açamasınlar, sebebini de onlara söyle."
+//
+// Canlıda `misafir_9427a460` hesabında İKİSİ DE `t` idi — uç misafiri hiç
+// süzmüyordu. Zorlama `/arama/baslat`ta olsa bile açık kalan bayrak yalan
+// söyler: kullanıcı "açtım" sanır, arama yine olmaz.
+test('sürüm 4 misafir /gizlilik-tercihleri: arama alanları REDDEDİLİYOR, ötekiler değil', () => {
+  const blok = SERVER.slice(SERVER.indexOf('function yazilabilirTercihler'),
+    SERVER.indexOf("app.post('/gizle'"));
+  // Misafire verilen liste ARAMA alanlarını içermiyor.
+  assert.ok(/misafirMi\s*\?\s*GIZLILIK_ALANLARI/.test(blok));
+  // ...ama ÖTEKİ gizlilik tercihleri (izlenenler_gizli vb.) etkilenmiyor:
+  // misafire dönen liste tam olarak GIZLILIK_ALANLARI, boş liste değil.
+  assert.ok(!/misafirMi\s*\?\s*\[\]/.test(blok),
+    'misafirin TÜM gizlilik tercihleri kapatılmış — istenen bu değil');
+  // SESSİZ yok sayma YASAK: sebebi söyleyen 403 dönmeli.
+  assert.match(blok, /kod: 'MISAFIR_ARAMA_YOK'/);
+  assert.match(blok, /res\.status\(403\)/);
+});
+
+test('sürüm 4 misafir bayrağı JWT\'de DEĞİL (90 günlük token bayat kalırdı)', () => {
+  const jwtBlok = SERVER.slice(SERVER.indexOf('return jwt.sign('),
+    SERVER.indexOf('const sifreSurumOnbellek'));
+  assert.ok(!/misafir/.test(jwtBlok),
+    'misafir bayrağı JWT yüküne konmuş: hesabını bağlayan kullanıcı 90 gün misafir sayılır');
+  // Canlı kaynak: her istekte okunan `kullaniciDurumu` önbelleği (30 sn TTL).
+  const durumBlok = SERVER.slice(SERVER.indexOf('async function kullaniciDurumu'),
+    SERVER.indexOf('async function sifreSurumuGecerli'));
+  assert.match(durumBlok, /yasak_sebep, misafir/);
+  assert.match(durumBlok, /misafir: rows\[0\]\.misafir === true/);
+  // `/auth/bagla` önbelleği DÜŞÜRMELİ, yoksa yeni bağlanan hesap 30 sn boyunca
+  // "misafir hesaplar arama yapamaz" yer.
+  const baglaBlok = SERVER.slice(SERVER.indexOf("app.post('/auth/bagla'"),
+    SERVER.indexOf("app.post('/auth/giris'"));
+  assert.match(baglaBlok, /sifreSurumOnbellekSil\(req\.kullanici\.id\)/);
 });
 
 test('md.38 istemci kendi tercihini buz-sunuculari ile alıyor (düğmeyi pasif çizmek için)', () => {
   const blok = SERVER.slice(SERVER.indexOf("app.get('/arama/buz-sunuculari'"),
     SERVER.indexOf("app.post('/arama/baslat'"));
-  assert.match(blok, /kendi_sesli_acik:\s*rows\[0\]\?\.sesli_arama_acik === true/);
-  assert.match(blok, /kendi_goruntulu_acik:\s*rows\[0\]\?\.goruntulu_arama_acik === true/);
+  // Sürüm 4: misafirde İKİSİ DE zorla false. Migrasyon veriyi temizliyor ama
+  // bu satır ondan bağımsız garanti — bayat bir bayrak düğmeyi aktif çizerse
+  // kullanıcı kesin başarısız olacak bir eyleme yönlendirilir.
+  assert.match(blok, /kendi_sesli_acik:\s*!req\.misafir && rows\[0\]\?\.sesli_arama_acik === true/);
+  assert.match(blok, /kendi_goruntulu_acik:\s*!req\.misafir && rows\[0\]\?\.goruntulu_arama_acik === true/);
+  // İstemci kendi anahtarını KİLİTLİ çizip sebebini yazabilsin diye.
+  assert.match(blok, /misafir: req\.misafir === true/);
   // Sunucu geneli bayraklar AYRI kalmalı — istemci ikisini karıştırırsa
   // kullanıcıya yanlış sebep gösterir.
   assert.match(blok, /arama_acik: aramaAcik/);

@@ -714,4 +714,7 @@ const Map<String, String> cevirilerIt = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Le videochiamate sono disattivate. Puoi attivarle in Impostazioni > Privacy.',
   'Sesli ve görüntülü arama': 'Chiamate vocali e video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Gli account ospite non possono chiamare. Crea un account per usarlo.',
+  'Misafir hesaplar aranamaz': 'Non puoi chiamare un account ospite',
 };

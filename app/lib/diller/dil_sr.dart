@@ -707,4 +707,7 @@ const Map<String, String> cevirilerSr = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Видео позиви су искључени. Можеш их укључити у Подешавања > Приватност.',
   'Sesli ve görüntülü arama': 'Гласовни и видео позиви',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Гостујући налози не могу да зову. Направи налог да би користио ово.',
+  'Misafir hesaplar aranamaz': 'Гостујућим налозима се не може звати',
 };

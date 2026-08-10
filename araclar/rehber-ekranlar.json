@@ -54,15 +54,17 @@
       "aciklama": "Takvim — takip edilen dizilerin yayın günleri. Uygulamanın ayırt edici özelliği; rehberde 'ne zaman yayınlanıyor' sorusunu karşılar.",
       "git": [
         { "tur": "sekme", "indeks": 1 },
-        { "tur": "tazele", "ms": 9000 }
+        { "tur": "tazele", "ms": 15000 }
       ],
-      "bekle": 2500,
+      "bekle": 4000,
       "dogrula": {
+        "_not": "İSKELET TUZAĞI: /takvim ağır bir uç ve emülatörde 9 sn'de dönmüyordu. Ekran `_takvim == null` iken boş gri kartlar (iskelet) çiziyor; başlık 'Takvim' yerinde olduğu için eski doğrulama bunu GEÇİRİYORDU — 31 takvim görüntüsünün 28'i iskeletti (13-15 KB, ja/ar/he ise ~100 KB dolu). Gerçek satırın kanıtı: `tarihKisa` (takvim.dart:17) her dilde GG.AA.YYYY basar; bir tane bile varsa liste dolmuş demektir.",
         "ceviriGerekli": ["Takvim"],
+        "gerekli": ["\\d\\d\\.\\d\\d\\.20\\d\\d"],
         "trOlmamali": ["\\d+\\. Bölüm"],
         "seciliSekme": 1,
         "sekmeCubugu": true,
-        "enAzDugum": 10
+        "enAzDugum": 20
       }
     },
     {
@@ -137,7 +139,9 @@
       ],
       "bekle": 1200,
       "dogrula": {
+        "_not": "@dizi.jpg.ai GEREKLİ: karenin alt üçte ikisini o inceleme kartı dolduruyor. Yüklenmeden çekilirse elde yalnız boş bir metin kutusu kalır. Ayrıca yorum metni sunucudaki `metin_cevirileri` önbelleğinden HEDEF DİLDE geliyor (46 dil için önceden ısıtıldı); kart yoksa dil tutarlılığı da doğrulanamaz.",
         "ceviriGerekli": ["Fotoğraf / video ekle", "Gönder", "Spoiler"],
+        "gerekli": ["@dizi\\.jpg\\.ai"],
         "ceviriOlmamali": ["Nerede İzlenir"],
         "sekmeCubugu": false,
         "enAzDugum": 6

@@ -321,7 +321,9 @@ void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
       final yorumId = veri['yorum_id'] as String?;
       rotayaGit(
         (yorumId != null && yorumId.isNotEmpty)
-            ? '/gonderi/$yorumId'
+            // Yanıt bildiriminde id YANITIN kendisidir: ekran üst gönderiyi
+            // çözüp normal yorum ekranını açsın (md.15, bkz. [gonderiYolu]).
+            ? gonderiYolu(yorumId, yanit: tur == 'yanit')
             : '/bildirimler',
       );
   }

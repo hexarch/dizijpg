@@ -709,4 +709,7 @@ const Map<String, String> cevirilerFi = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Videopuhelut ovat pois päältä. Voit ottaa ne käyttöön kohdassa Asetukset > Yksityisyys.',
   'Sesli ve görüntülü arama': 'Ääni- ja videopuhelut',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Vierastilit eivät voi soittaa. Luo tili, niin voit käyttää tätä.',
+  'Misafir hesaplar aranamaz': 'Vierastileille ei voi soittaa',
 };

@@ -98,6 +98,18 @@ const acikYolOnEkleri = <String>[
 /// ileride eklenebilecek kişisel bir ekran yanlışlıkla açılmasın).
 const acikTamYollar = <String>['/gizlilik'];
 
+/// Tek gönderi adresi. [yanit] TRUE ise `?yanit=1` eklenir.
+///
+/// NEDEN BAYRAK VAR (10 Ağu 2026, md.15): "yanıt" bildirimindeki `yorum_id`
+/// yanıtın KENDİ id'sidir, üst gönderinin değil. `/gonderi/:id` ise gelen
+/// yorumu tam ekran Reels sayfası olarak çizer; yanıtın medyası olmadığı için
+/// ekranda dev puntolu tek bir yazı kalıyordu ("koca ekran"). Bayrak, ekrana
+/// "bu id bir YANIT, üstünü çöz ve normal yorum ekranını aç" der.
+/// Paylaşım bağlantıları (`/gonderi/123`) bu bayrağı taşımaz, davranışları
+/// birebir aynıdır — ek istek de atılmaz.
+String gonderiYolu(String yorumId, {bool yanit = false}) =>
+    yanit ? '/gonderi/$yorumId?yanit=1' : '/gonderi/$yorumId';
+
 /// [yol] oturumsuz ziyaretçiye açık mı?
 bool herkeseAcikMi(String yol) =>
     acikTamYollar.contains(yol) || acikYolOnEkleri.any(yol.startsWith);
@@ -282,7 +294,11 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
               ? const _GecersizBaglanti()
-              : GonderiEkrani(yorumId: id);
+              : GonderiEkrani(
+                  yorumId: id,
+                  // Bildirimden gelen yanıt yolu — bkz. [gonderiYolu].
+                  yanitBildirimi: s.uri.queryParameters['yanit'] == '1',
+                );
         },
       ),
       GoRoute(

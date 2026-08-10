@@ -1,23 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:provider/provider.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../google_kapisi.dart';
 import '../push.dart';
 import '../tema.dart';
 import 'ortak.dart' show altGuvenli;
 
-/// Google OAuth web istemcisi (dizi-jpg-7b723). Android'de serverClientId,
-/// web'de clientId olarak kullanılır; gizli değildir.
-const _googleIstemci =
-    '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
+/// Formun azami genişliği. Google'ın kendi düğmesi 400 px'ten geniş
+/// ÇİZİLMEZ (marka kuralı); form masaüstünde tüm ekranı kaplasaydı Google
+/// düğmesi diğerlerinden dar kalır, ekran iki farklı düğme genişliği
+/// gösterirdi. Aynı sınır giriş formunu masaüstünde de okunur tutuyor.
+const double _formGenisligi = 400;
 
 class GirisEkrani extends StatefulWidget {
-  const GirisEkrani({super.key});
+  const GirisEkrani({super.key, bool? web, this.googleKapisi})
+    : web = web ?? kIsWeb;
+
+  /// Web dalı mı? PARAMETRE: `flutter test` daima `kIsWeb == false` ile koşar;
+  /// bayrak gömülü olsaydı testler web dalını hiç gezemezdi.
+  final bool web;
+
+  /// YALNIZ TEST: sahte Google kapısı. Null ise [web] değerine göre kurulur.
+  final GoogleKapisi? googleKapisi;
 
   @override
   State<GirisEkrani> createState() => _GirisEkraniState();
@@ -30,8 +41,22 @@ class _GirisEkraniState extends State<GirisEkrani> {
   final _kullaniciAdi = TextEditingController();
   final _sifre = TextEditingController();
 
+  late final GoogleKapisi _kapi;
+  StreamSubscription<GoogleKimligi>? _googleAbonesi;
+
+  @override
+  void initState() {
+    super.initState();
+    _kapi = widget.googleKapisi ?? googleKapisiOlustur(web: widget.web);
+    // Web'de giriş Google'ın kendi düğmesinden başlar ve sonuç BU AKIŞTAN
+    // gelir; mobilde akış boştur (giriş `_googleGiris` ile başlar).
+    _googleAbonesi = _kapi.akis.listen(_googleSunucuya, onError: _googleHatasi);
+  }
+
   @override
   void dispose() {
+    _googleAbonesi?.cancel();
+    _kapi.birak();
     _email.dispose();
     _kullaniciAdi.dispose();
     _sifre.dispose();
@@ -55,40 +80,63 @@ class _GirisEkraniState extends State<GirisEkrani> {
     }
   }
 
-  /// Google ile giriş/kayıt: hesap yoksa oluşturulur (yeni → karşılama akışı).
+  /// MOBİL dal: kendi düğmemiz Google hesap seçicisini açar.
+  /// (Webde bu yol KULLANILMAZ — bkz. google_kapisi_web.dart'taki not.)
   Future<void> _googleGiris() async {
     setState(() => _yukleniyor = true);
     try {
-      final google = GoogleSignIn(
-        clientId: kIsWeb ? _googleIstemci : null,
-        serverClientId: kIsWeb ? null : _googleIstemci,
-        scopes: const ['email'],
-      );
-      final hesap = await google.signIn();
-      if (hesap == null) return; // kullanıcı pencereyi kapattı
-      final yetki = await hesap.authentication;
-      // Android id_token verir; web (GIS) yalnız erişim token'ı verir.
-      final d = yetki.idToken != null
-          ? await Api.googleGiris(kimlik: yetki.idToken)
-          : await Api.googleGiris(erisim: yetki.accessToken);
-      if (!mounted) return;
-      if (d['yeni'] == true) Oturum.karsilamaGerekli = true;
-      await context.read<Oturum>().girisYapildi(
-        d['kullanici'] as Map<String, dynamic>,
-      );
-      pushBaslat(); // push izni + token kaydı
+      final kimlik = await _kapi.dokun();
+      if (kimlik == null || kimlik.bos) return; // kullanıcı vazgeçti
+      await _girisiTamamla(kimlik);
     } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e is ApiHata ? e.toString() : 'Google girişi başarısız'.c,
-          ),
-        ),
-      );
+      _googleHatasi(e);
     } finally {
       if (mounted) setState(() => _yukleniyor = false);
     }
+  }
+
+  /// WEB dalı: Google'ın düğmesinden kimlik gelince sunucuya götürür.
+  Future<void> _googleSunucuya(GoogleKimligi kimlik) async {
+    if (kimlik.bos) {
+      _googleHatasi(null);
+      return;
+    }
+    setState(() => _yukleniyor = true);
+    try {
+      await _girisiTamamla(kimlik);
+    } catch (e) {
+      _googleHatasi(e);
+    } finally {
+      if (mounted) setState(() => _yukleniyor = false);
+    }
+  }
+
+  /// İki dalın ORTAK son adımı: hesap yoksa oluşturulur (yeni → karşılama).
+  Future<void> _girisiTamamla(GoogleKimligi kimlik) async {
+    // Android id_token verir; webde GIS düğmesi de id_token verir. Sunucu
+    // ikisini de kabul ediyor (`kimlik` / `erisim`, backend/server.js).
+    final d = kimlik.idToken != null
+        ? await Api.googleGiris(kimlik: kimlik.idToken)
+        : await Api.googleGiris(erisim: kimlik.erisimToken);
+    if (!mounted) return;
+    if (d['yeni'] == true) Oturum.karsilamaGerekli = true;
+    await context.read<Oturum>().girisYapildi(
+      d['kullanici'] as Map<String, dynamic>,
+    );
+    pushBaslat(); // push izni + token kaydı
+  }
+
+  /// Google girişinin HER başarısızlığı kullanıcıya söylenir: sessiz
+  /// başarısızlık (hiçbir şey olmaması) bu hatanın ta kendisiydi.
+  void _googleHatasi(Object? e) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          e is ApiHata ? e.toString() : 'Google girişi başarısız'.c,
+        ),
+      ),
+    );
   }
 
   /// İki adımlı şifre sıfırlama: e-postaya kod → kod + yeni şifre.
@@ -248,107 +296,133 @@ class _GirisEkraniState extends State<GirisEkrani> {
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Logo
-                Image.asset('assets/logo.png', height: 130),
-                const SizedBox(height: 8),
-                Text(
-                  'Dizi ve filmlerini takip et'.c,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: DiziRenkler.metin54),
-                ),
-                const SizedBox(height: 36),
-                TextField(
-                  controller: _email,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: _kayitModu
-                        ? 'E-posta'.c
-                        : 'E-posta veya kullanıcı adı'.c,
-                  ),
-                ),
-                if (_kayitModu) ...[
-                  const SizedBox(height: 12),
-                  TextField(
-                    controller: _kullaniciAdi,
-                    decoration: InputDecoration(
-                      labelText: 'Kullanıcı adı (küçük harf)'.c,
-                    ),
-                  ),
-                ],
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _sifre,
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: 'Şifre'.c),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _yukleniyor ? null : _gonder,
-                  child: _yukleniyor
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
-                        )
-                      : Text(
-                          _kayitModu ? 'Hesap Oluştur'.c : 'Giriş Yap'.c,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                ),
-                if (_kayitModu) _gizlilikSatiri(),
-                if (!_kayitModu)
-                  TextButton(
-                    onPressed: _sifremiUnuttum,
-                    child: Text(
-                      'Şifreni mi unuttun?'.c,
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: _formGenisligi),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Logo
+                    Image.asset('assets/logo.png', height: 130),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Dizi ve filmlerini takip et'.c,
+                      textAlign: TextAlign.center,
                       style: TextStyle(color: DiziRenkler.metin54),
                     ),
-                  ),
-                TextButton(
-                  onPressed: () => setState(() => _kayitModu = !_kayitModu),
-                  child: Text(
-                    _kayitModu
-                        ? 'Zaten hesabın var mı? Giriş yap'.c
-                        : 'Hesabın yok mu? Kayıt ol'.c,
-                    style: TextStyle(color: DiziRenkler.sariMetin),
-                  ),
+                    const SizedBox(height: 36),
+                    TextField(
+                      controller: _email,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: InputDecoration(
+                        labelText: _kayitModu
+                            ? 'E-posta'.c
+                            : 'E-posta veya kullanıcı adı'.c,
+                      ),
+                    ),
+                    if (_kayitModu) ...[
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller: _kullaniciAdi,
+                        decoration: InputDecoration(
+                          labelText: 'Kullanıcı adı (küçük harf)'.c,
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _sifre,
+                      obscureText: true,
+                      decoration: InputDecoration(labelText: 'Şifre'.c),
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton(
+                      onPressed: _yukleniyor ? null : _gonder,
+                      child: _yukleniyor
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.black,
+                              ),
+                            )
+                          : Text(
+                              _kayitModu ? 'Hesap Oluştur'.c : 'Giriş Yap'.c,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                    ),
+                    if (_kayitModu) _gizlilikSatiri(),
+                    if (!_kayitModu)
+                      TextButton(
+                        onPressed: _sifremiUnuttum,
+                        child: Text(
+                          'Şifreni mi unuttun?'.c,
+                          style: TextStyle(color: DiziRenkler.metin54),
+                        ),
+                      ),
+                    TextButton(
+                      onPressed: () => setState(() => _kayitModu = !_kayitModu),
+                      child: Text(
+                        _kayitModu
+                            ? 'Zaten hesabın var mı? Giriş yap'.c
+                            : 'Hesabın yok mu? Kayıt ol'.c,
+                        style: TextStyle(color: DiziRenkler.sariMetin),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // WEB: Google'ın KENDİ düğmesi. Google, web'de uygulamanın
+                    // kendi düğmesinden giriş başlatmasına izin vermiyor; eski
+                    // `signIn()` yolu açılır pencereyi açıp sonsuza kadar
+                    // bekliyordu. Düğmenin görünümünü Google belirler.
+                    // MOBİL: kendi düğmemiz (Android yolu değişmedi).
+                    _googleDugmesi(),
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      onPressed: _yukleniyor ? null : _misafirGiris,
+                      icon: Icon(
+                        Icons.person_outline,
+                        color: DiziRenkler.metin70,
+                      ),
+                      label: Text(
+                        'Misafir olarak devam et'.c,
+                        style: TextStyle(color: DiziRenkler.metin70),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                // Web'de de açık: OAuth web istemcisine yetkili JavaScript
-                // kaynağı olarak https://dizijpg.com (+www) eklendi.
-                OutlinedButton.icon(
-                  onPressed: _yukleniyor ? null : _googleGiris,
-                  icon: SvgPicture.asset(
-                    'assets/google_g.svg',
-                    width: 18,
-                    height: 18,
-                  ),
-                  label: Text(
-                    'Google ile devam et'.c,
-                    style: TextStyle(color: DiziRenkler.metin70),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton.icon(
-                  onPressed: _yukleniyor ? null : _misafirGiris,
-                  icon: Icon(Icons.person_outline, color: DiziRenkler.metin70),
-                  label: Text(
-                    'Misafir olarak devam et'.c,
-                    style: TextStyle(color: DiziRenkler.metin70),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  /// Google düğmesi: webde Google'ın kendisi, mobilde bizimki.
+  ///
+  /// İstek sürerken Google'ın düğmesi YERİNE kilitli eşdeğeri çizilir —
+  /// HtmlElementView tıklamaları DOM'da alır, üstüne perde koymak onu
+  /// durdurmaz; tek güvenilir kilit düğmeyi kaldırmaktır.
+  Widget _googleDugmesi() {
+    final googleninki = _yukleniyor ? null : _kapi.dugme(context);
+    if (googleninki != null) return googleninki;
+    final dugme = OutlinedButton.icon(
+      // Webde bu düğme yalnız yükleme sırasında görünür ve KİLİTLİDİR:
+      // giriş Google'ın düğmesinden başlar.
+      onPressed: _yukleniyor || widget.web ? null : _googleGiris,
+      icon: SvgPicture.asset('assets/google_g.svg', width: 18, height: 18),
+      label: Text(
+        'Google ile devam et'.c,
+        style: TextStyle(
+          color: _yukleniyor ? DiziRenkler.metin54 : DiziRenkler.metin70,
+        ),
+      ),
+    );
+    // Webde Google'ın düğmesiyle aynı yüksekliği tutar → yer değişmez.
+    return widget.web
+        ? SizedBox(height: googleDugmeYuksekligi, child: dugme)
+        : dugme;
   }
 
   /// Kayıt modunda gizlilik onay satırı; tamamı dokunulabilir.

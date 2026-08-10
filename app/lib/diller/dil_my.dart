@@ -718,4 +718,7 @@ const Map<String, String> cevirilerMy = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'ဗီဒီယိုခေါ်ဆိုမှု ပိတ်ထားသည်။ ဆက်တင်များ > ကိုယ်ရေးအချက်အလက် မှ ဖွင့်နိုင်သည်။',
   'Sesli ve görüntülü arama': 'အသံနှင့် ဗီဒီယိုခေါ်ဆိုမှု',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'ဧည့်သည်အကောင့်များ ခေါ်ဆိုလို့မရပါ။ အကောင့်ဖွင့်ပါက သုံးနိုင်ပါသည်။',
+  'Misafir hesaplar aranamaz': 'ဧည့်သည်အကောင့်များကို ခေါ်ဆိုလို့မရပါ',
 };

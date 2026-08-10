@@ -654,9 +654,19 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
 
 /// Tek gönderi ekranı (paylaşılan link → /gonderi/:id): yorumu çekip
 /// Reels görünümünde tek sayfa olarak tam ekran açar.
+///
+/// [yanitBildirimi] TRUE ise ([gonderiYolu] `?yanit=1`) gelen id bir YANITTIR:
+/// ekran üst gönderiyi çözer, TAM EKRAN onu gösterir ve üstüne normal yorum
+/// ekranını ([yanitlariAc]) açar — akış kartındaki konuşma balonuna basmakla
+/// AYNI yüzey. Bkz. [_ustuCoz].
 class GonderiEkrani extends StatefulWidget {
   final int yorumId;
-  const GonderiEkrani({super.key, required this.yorumId});
+  final bool yanitBildirimi;
+  const GonderiEkrani({
+    super.key,
+    required this.yorumId,
+    this.yanitBildirimi = false,
+  });
 
   @override
   State<GonderiEkrani> createState() => _GonderiEkraniState();
@@ -666,6 +676,10 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
   Map<String, dynamic>? _yorum;
   Map<String, dynamic> _icerikler = {};
   String? _hata;
+
+  /// Yanıt bildiriminden gelindi ve üst gönderi çözüldü: ilk karede yorum
+  /// ekranı açılacak. Tek seferlik — sheet kapanınca yeniden açılmaz.
+  bool _yorumlarAcilacak = false;
 
   @override
   void initState() {
@@ -683,14 +697,76 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
     try {
       final d = await Api.get('/yorum/${widget.yorumId}');
       if (!mounted) return;
+      var yorum = d['yorum'] as Map<String, dynamic>;
+      var icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
+      var yorumlarAc = false;
+      if (widget.yanitBildirimi) {
+        final ust = await _ustuCoz(yorum);
+        if (!mounted) return;
+        if (ust != null) {
+          yorum = ust['yorum'] as Map<String, dynamic>;
+          icerikler = {
+            ...icerikler,
+            ...(ust['icerikler'] as Map<String, dynamic>? ?? {}),
+          };
+          yorumlarAc = true;
+        }
+      }
       setState(() {
-        _yorum = d['yorum'] as Map<String, dynamic>;
-        _icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
+        _yorum = yorum;
+        _icerikler = icerikler;
+        _yorumlarAcilacak = yorumlarAc;
       });
       _devamYukle();
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
+    }
+  }
+
+  /// [y] bir YANITSA üst gönderisini (`{yorum, icerikler}`) döndürür; üst
+  /// bulunamazsa `null` — o durumda ekran bugünkü davranışında kalır.
+  ///
+  /// NEDEN İKİ İSTEK: `GET /yorum/:id` `ust_id` alanını DÖNDÜRMÜYOR, yani
+  /// yanıtın üstünü tek başına söyleyen bir uç yok. `GET /yorumlar/:tur/:tmdbId`
+  /// hem `ust_id`yi hem de üst gönderiyi zaten taşıdığı için bağ oradan
+  /// kurulur, sonra üst gönderi `GET /yorum/:ustId` ile TAM alanlarıyla
+  /// (medya, sayaçlar, `icerikler` haritası — Reels'in beklediği biçim) çekilir.
+  /// Sunucuya `ust_id` eklenirse ilk istek kendiliğinden atlanır (aşağıdaki
+  /// `y['ust_id']` dalı) ve bu yol tek isteğe iner.
+  ///
+  /// MALİYET: yalnız `?yanit=1` yolunda çalışır. Paylaşım bağlantısıyla açılan
+  /// gönderi hiç ek istek atmaz.
+  Future<Map<String, dynamic>?> _ustuCoz(Map<String, dynamic> y) async {
+    final tur = y['tur'], tmdb = y['tmdb_id'];
+    if (tur == null || tmdb == null) return null;
+    var ustId = y['ust_id'] as int?;
+    if (ustId == null) {
+      // Yanıt, üstüyle AYNI kapsamda listelenir: bölüm yanıtı bölüm
+      // listesinde, dizi geneli yanıtı dizi listesinde.
+      final sorgu = y['sezon'] != null
+          ? '?sezon=${y['sezon']}&bolum=${y['bolum']}'
+          : '';
+      try {
+        final d = await Api.get('/yorumlar/$tur/$tmdb$sorgu');
+        for (final c in (d['yorumlar'] as List<dynamic>? ?? const [])) {
+          if (c is Map && c['id'] == y['id']) {
+            ustId = c['ust_id'] as int?;
+            break;
+          }
+        }
+      } catch (_) {
+        return null; // liste gelmezse tek gönderi olarak kalır
+      }
+    }
+    if (ustId == null) return null;
+    try {
+      final d = await Api.get('/yorum/$ustId');
+      return d is Map<String, dynamic> && d['yorum'] is Map<String, dynamic>
+          ? d
+          : null;
+    } catch (_) {
+      return null;
     }
   }
 
@@ -747,6 +823,15 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
         backgroundColor: Colors.black,
         body: Center(child: CircularProgressIndicator(color: DiziRenkler.sari)),
       );
+    }
+    // Yanıt bildiriminden gelindiyse üst gönderinin yorum ekranı AÇILIR.
+    // Kare içinde `showModalBottomSheet` çağrılamaz → kare sonrasına ertelenir.
+    if (_yorumlarAcilacak) {
+      _yorumlarAcilacak = false;
+      final yorum = _yorum!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) yanitlariAc(context, yorum);
+      });
     }
     return ReelsGorunumu(
       liste: [_yorum!, ..._devam],
@@ -1047,7 +1132,6 @@ class _ReelSayfaState extends State<_ReelSayfa>
     _medya.isEmpty ? 0 : _medya.length - 1,
   );
   String? _kuruluUrl; // oynatıcının kurulu olduğu video adresi
-  bool _metinAcik = false; // uzun yorum metni açıldı mı ("... devamı")
 
   static bool _videoMu(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
 
@@ -1594,6 +1678,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
                             // açık temada beyaz üstünde kayboluyordu.
                             arkaplan: DiziRenkler.kart,
                             ikonRenk: DiziRenkler.metin54,
+                            // GIF avatar Reels'te de OYNAR (md.13, 10 Ağu).
+                            hareketli: true,
                           ),
                         ),
                         const SizedBox(width: 8),
@@ -1637,54 +1723,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
                           ),
                       ],
                     ),
-                    // Yorum metni: uzunsa İKİ SATIR + "... devamı"; dokununca
-                    // tamamı açılır (üstteki kullanıcı satırı yukarı kayar, uzun
-                    // metin ekranı taşırmasın diye kendi içinde kaydırılır).
-                    if ((y['metin'] as String?)?.isNotEmpty == true &&
+                    // Yorum metni: uzunsa İKİ SATIR + "devamı"; dokununca
+                    // tamamı açılır. Kırpma kararı ÖLÇÜLÜR — bkz. [ReelsMetni].
+                    if ((y['metin'] as String?)?.trim().isNotEmpty == true &&
                         (foto != null || _videoUrl != null)) ...[
                       const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () => setState(() => _metinAcik = !_metinAcik),
-                        behavior: HitTestBehavior.opaque,
-                        child: _metinAcik
-                            ? ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height * 0.42,
-                                ),
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                    y['metin'] as String,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      height: 1.35,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : Text.rich(
-                                TextSpan(
-                                  children: [
-                                    TextSpan(text: y['metin'] as String),
-                                    TextSpan(
-                                      text: '  ${'devamı'.c}',
-                                      style: TextStyle(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.75,
-                                        ),
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  height: 1.35,
-                                ),
-                              ),
-                      ),
+                      ReelsMetni(y['metin'] as String),
                     ],
                     const SizedBox(height: 8),
                     // İçerik rozeti → içerik sayfası
@@ -1837,6 +1881,129 @@ class _ReelSayfaState extends State<_ReelSayfa>
             ),
           ),
       ],
+    );
+  }
+}
+
+/// Reels / tek gönderi ekranındaki altyazı (gönderi metni).
+///
+/// En çok [satirSiniri] satır çizilir. Metin GERÇEKTEN kesiliyorsa altına
+/// "devamı" bağlantısı düşer ve dokununca metnin tamamı (kendi içinde
+/// kaydırılan bir kutuda) açılır; tekrar dokunulunca kapanır.
+///
+/// KÖK NEDEN (10 Ağu 2026, kullanıcı isteği md.14 — "içerik '.' bile olsa
+/// devamı çıkıyor"): eski kod kırpma kararını HİÇBİR ŞEYE bakmadan veriyordu.
+/// "devamı" metnin sonuna KOŞULSUZ eklenen bir [TextSpan]'dı ve bütün span
+/// `maxLines: 2 + TextOverflow.ellipsis` ile çiziliyordu. Bunun sonucu tam
+/// TERSİNEydi:
+///   · metin KISAYSA ("." gibi) span iki satıra rahat sığar → "devamı" görünür,
+///     oysa gösterilecek devamı YOKTUR;
+///   · metin UZUNSA ellipsis ikinci satırın sonunda keser ve "devamı"nın
+///     kendisi de kesilir → gerçekten devamı olan gönderide ipucu GÖRÜNMEZ.
+/// Yani etiket, doğru olduğu her durumda gizleniyor, yanlış olduğu her durumda
+/// gösteriliyordu. Düzeltme: kırpma [TextPainter] ile ÖLÇÜLÜR
+/// (`didExceedMaxLines`) — akıştaki [KisaltilmisYorum] ve [AcilirMetin] ile
+/// aynı kalıp — ve "devamı" kırpılmış gövdenin ALTINA, ayrı bir satıra konur;
+/// böylece ellipsis onu yiyemez.
+///
+/// SINIR DURUMLARI (test/reels_devami_test.dart):
+///   · tek nokta / tek emoji / yalnız boşluk → "devamı" YOK
+///   · tam iki satır dolduran metin → "devamı" YOK (kesilmiyor)
+///   · iki satıra sığan ama satır sonu (\n) içeren metin → "devamı" YOK
+///   · üç satıra taşan metin (\n ile ya da uzunlukla) → "devamı" VAR
+class ReelsMetni extends StatefulWidget {
+  /// Kırpma sınırı: Reels'te altyazı medyayı boğmasın diye iki satır.
+  static const satirSiniri = 2;
+
+  final String metin;
+  const ReelsMetni(this.metin, {super.key});
+
+  @override
+  State<ReelsMetni> createState() => _ReelsMetniState();
+}
+
+class _ReelsMetniState extends State<ReelsMetni> {
+  static const _stil = TextStyle(color: Colors.white, height: 1.35);
+
+  bool _acik = false;
+
+  /// EKRANDA GERÇEKTEN kullanılacak stil. [Text] verilen stili ortamdaki
+  /// [DefaultTextStyle] üstüne bindirir; ölçüm de AYNI bindirmeyi yapmalı,
+  /// yoksa (ör. yazı boyutu ortamdan geliyorsa) taşma yanlış hesaplanır.
+  TextStyle _cizimStili(BuildContext context) =>
+      DefaultTextStyle.of(context).style.merge(_stil);
+
+  @override
+  void didUpdateWidget(ReelsMetni eski) {
+    super.didUpdateWidget(eski);
+    // PageView sayfa öğelerini geri dönüştürebilir: başka gönderinin metni
+    // geldiyse açık/kapalı durum devralınmamalı.
+    if (eski.metin != widget.metin) _acik = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Yalnız boşluktan ibaret metin hiç çizilmez (boş kutu / yer tutucu yok).
+    if (widget.metin.trim().isEmpty) return const SizedBox.shrink();
+    final stil = _cizimStili(context);
+
+    if (_acik) {
+      return GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() => _acik = false),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.42,
+          ),
+          child: SingleChildScrollView(child: Text(widget.metin, style: stil)),
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, kisit) {
+        // Ölçüm ile çizim AYNI stil, AYNI genişlik ve AYNI metin scaler'ıyla
+        // yapılmalı; yoksa taşma yanlış hesaplanır.
+        final olcer = TextPainter(
+          text: TextSpan(text: widget.metin, style: stil),
+          textDirection: Directionality.of(context),
+          textScaler: MediaQuery.textScalerOf(context),
+          maxLines: ReelsMetni.satirSiniri,
+        )..layout(maxWidth: kisit.maxWidth);
+        final tasiyor = olcer.didExceedMaxLines;
+        olcer.dispose();
+
+        final govde = Text(
+          widget.metin,
+          style: stil,
+          maxLines: ReelsMetni.satirSiniri,
+          // Sınırdan KISA metinde ellipsis konmaz → üç nokta da çıkmaz.
+          overflow: tasiyor ? TextOverflow.ellipsis : TextOverflow.clip,
+        );
+        if (!tasiyor) return govde;
+
+        return Semantics(
+          button: true,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => setState(() => _acik = true),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                govde,
+                Text(
+                  'devamı'.c,
+                  style: stil.copyWith(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -2302,6 +2469,8 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
             kullaniciAdi: ben?['kullanici_adi'] as String?,
             yaricap: 16,
             arkaplan: DiziRenkler.kart,
+            // Yanıt yazma satırı Reels yüzeyinin parçası (md.13).
+            hareketli: true,
           ),
         ),
         const SizedBox(width: 8),
@@ -2713,6 +2882,8 @@ class _KesfetYanitSatiriState extends State<_KesfetYanitSatiri> {
               kullaniciAdi: c['kullanici_adi'] as String?,
               yaricap: 14,
               arkaplan: DiziRenkler.kart,
+              // Reels yanıt satırı (md.13).
+              hareketli: true,
             ),
           ),
           const SizedBox(width: 10),

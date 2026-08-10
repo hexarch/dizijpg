@@ -708,4 +708,7 @@ const Map<String, String> cevirilerSv = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Videosamtal är av. Du kan slå på dem i Inställningar > Integritet.',
   'Sesli ve görüntülü arama': 'Röst- och videosamtal',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Gästkonton kan inte ringa. Skapa ett konto för att använda det.',
+  'Misafir hesaplar aranamaz': 'Det går inte att ringa gästkonton',
 };

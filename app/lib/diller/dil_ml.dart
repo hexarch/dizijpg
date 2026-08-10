@@ -708,4 +708,7 @@ const Map<String, String> cevirilerMl = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'വീഡിയോ കോൾ ഓഫാണ്. ക്രമീകരണങ്ങൾ > സ്വകാര്യത എന്നതിൽ നിന്ന് ഓണാക്കാം.',
   'Sesli ve görüntülü arama': 'വോയ്‌സ്, വീഡിയോ കോൾ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'അതിഥി അക്കൗണ്ടുകൾക്ക് വിളിക്കാനാകില്ല. അക്കൗണ്ട് ഉണ്ടാക്കിയാൽ ഉപയോഗിക്കാം.',
+  'Misafir hesaplar aranamaz': 'അതിഥി അക്കൗണ്ടുകളെ വിളിക്കാനാകില്ല',
 };

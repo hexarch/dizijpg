@@ -1662,13 +1662,26 @@ class AgGorsel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => agGorselKur(
-    web: kIsWeb,
+    web: agGorselWebZorla ?? kIsWeb,
     url: url,
     fit: fit,
     yerTutucu: yerTutucu,
     hata: hata,
   );
 }
+
+/// YALNIZ TEST: [AgGorsel]'in platform dalını zorlar (`true` = web dalı).
+///
+/// NEDEN VAR — 13. maddenin (10 Ağu 2026) test tuzağı: `flutter test` DAİMA
+/// VM'de koşar, `kIsWeb` orada HEP `false`'tur. Hata ise SADECE web dalındaydı,
+/// yani ekranları (akış/yorumlar/Reels) ayağa kaldıran testler hatanın olduğu
+/// dalı HİÇ gezemiyordu. [agGorselKur] bayrağı parametre olarak alıyor ama
+/// ekran testleri o kurucuyu doğrudan çağırmaz — widget ağacından geçerler.
+/// Bu kanca ağacın İÇİNDEN geçen yolu da iki dalda gezilebilir yapar.
+/// `null` bırakıldığında (üretim) davranış birebir eskisidir: `kIsWeb`.
+/// Test `tearDown`'ında `null`'a döndürülmeli.
+@visibleForTesting
+bool? agGorselWebZorla;
 
 /// [AgGorsel]'in saf kurucusu — `web` bayrağı DIŞARIDAN verilir ki
 /// `flutter test` (her zaman VM'de, `kIsWeb == false`) web yolunu da
@@ -1750,11 +1763,18 @@ class DaireGorsel extends StatelessWidget {
 /// görseli bir `DecorationImage` olarak boyar ve animasyonlu görselin
 /// YALNIZ İLK KARESİNİ çizer; animasyon için `Image` widget'ının kendisi
 /// ağaçta olmalıdır (piksel kanıtı: test/gif_animasyon_test.dart).
-/// Varsayılan `false`, çünkü akış/yorum/sohbet/takipçi listelerinde aynı
-/// anda onlarca avatar bulunur: her biri saniyede ~10 kez kare çözer ve
-/// tüm yüzeyi yeniden boyatır. Animasyon yalnız avatarın BÜYÜK gösterildiği
-/// yerlerde (profil başlığı, ayarlar) açılır — kullanıcı GIF'ini orada seçer
-/// ve orada görmek ister; listede durağan ilk kare hem yeterli hem ucuzdur.
+/// Varsayılan `false`: arama sonucu, beğenenler, takipçi ve sohbet
+/// listelerinde aynı anda onlarca avatar bulunur ve orada durağan ilk kare
+/// hem yeterli hem ucuzdur.
+///
+/// AMA ÜÇ YÜZEYDE AÇIKTIR (10 Ağu 2026, kullanıcı isteği md.13): **akış,
+/// dizi/film yorumları ve Reels**. Kullanıcı GIF avatarını tam da bu üç
+/// yüzeyde donmuş görüyordu; "profilde oynuyor, akışta oynamıyor" tutarsızdı.
+/// Maliyet sanıldığı kadar büyük değil: GIF OLMAYAN avatar (jpg/png/webp —
+/// çoğunluk) tek karelidir, `Image` widget'ı onu bir kez çözer ve bir daha
+/// boyamaz; ek yük yalnız GERÇEKTEN animasyonlu avatarlar kadardır.
+/// Hatırlatma: `hareketli: true` tek başına web'de YETMEZ, çünkü belirleyici
+/// olan ImageProvider'ın ürettiği kodektir — bkz. [AgGorsel].
 class KullaniciAvatari extends StatelessWidget {
   final String? url; // dosyaUrl'den geçmiş TAM adres; null = kişi ikonu
   final String? kullaniciAdi;

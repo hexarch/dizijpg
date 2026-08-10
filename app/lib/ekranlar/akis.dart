@@ -662,6 +662,9 @@ class _AkisKartiState extends State<AkisKarti> {
                               url: avatar,
                               kullaniciAdi: y['kullanici_adi'] as String?,
                               yaricap: 20,
+                              // GIF avatar akışta da OYNAR (md.13, 10 Ağu):
+                              // eskiden yalnız profil başlığında oynuyordu.
+                              hareketli: true,
                             ),
                           ),
                           const SizedBox(width: 10),

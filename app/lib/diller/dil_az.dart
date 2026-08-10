@@ -701,4 +701,7 @@ const Map<String, String> cevirilerAz = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Video zənglər söndürülüb. Parametrlər > Məxfilik bölməsindən aça bilərsən.',
   'Sesli ve görüntülü arama': 'Səsli və video zəng',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Qonaq hesabları zəng edə bilməz. Hesab yaratsan istifadə edə bilərsən.',
+  'Misafir hesaplar aranamaz': 'Qonaq hesablarına zəng edilə bilməz',
 };

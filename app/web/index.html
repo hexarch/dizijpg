@@ -47,10 +47,16 @@
   <title>dizi.jpg</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- Google ile giriş (GIS); istemci kimliği Dart tarafında da veriliyor -->
+  <!-- Google ile giriş (GIS); istemci kimliği Dart tarafında da veriliyor.
+       SDK BETİĞİ BURADA YÜKLENMEZ: `google_sign_in_web` eklentisi betiği
+       kendisi enjekte ediyor. Elle de eklenince sayfada İKİ kopya çalışıyordu
+       (ölçüldü: `script[src*="gsi/client"]` iki tane) ve hangisinin en son
+       çalıştığına göre `google.accounts` nesnesi yeniden kuruluyor —
+       eklentinin kaydettiği kimlik geri çağırması bu yarışta kaybolabilir.
+       Eklenti kendi betiğinin `onGoogleLibraryLoad`unu beklediği için tek
+       kopya doğru olanı. -->
   <meta name="google-signin-client_id"
         content="1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
   <!--

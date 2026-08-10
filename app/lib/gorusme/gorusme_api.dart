@@ -13,11 +13,44 @@ library;
 import '../api.dart';
 import '../ceviri.dart';
 
+/// Misafir hesaba gösterilecek SEBEP — tek cümle, TEK YERDE.
+///
+/// Kullanıcı kararı (10 Ağu): "misafir hesaplar aranamasın ve bu ayarları
+/// açamasınlar, ***sebebini de onlara söyle***."
+///
+/// Üç yerde birden basılıyor ve **aynı** olmak zorunda:
+///   1. Ayarlar > Gizlilik'teki kilitli anahtarın alt satırı ve dokunma
+///      açıklaması (`ayarlar.dart`),
+///   2. sunucunun `MISAFIR_ARAMA_YOK` reddi ([aramaHatasiCozumle]),
+///   3. (dolaylı) sohbette düğmenin neden hiç çizilmediğinin cevabı.
+/// Ayrı ayrı yazılsalardı biri güncellenip öteki kalırdı; kullanıcı aynı
+/// kısıt için iki farklı cümle okur ve hangisinin doğru olduğunu bilemezdi.
+///
+/// İki cümle: ne olduğu + ÇIKIŞ YOLU. Yalnız "yapamazsın" demek, kurtarma yolu
+/// olmayan bir hata mesajıdır.
+const misafirAramaSebebi =
+    'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.';
+
 /// Sunucunun makine hata kodları (sözleşme §8). **Çevrilmez, sabittir.**
 class AramaKod {
   static const aramaKapali = 'ARAMA_KAPALI';
   static const goruntuluKapali = 'GORUNTULU_KAPALI';
   static const gecersizIstek = 'GECERSIZ_ISTEK';
+
+  /// ARAYAN misafir hesap (sözleşme sürüm 4). Çözüm ONDA: hesap oluşturursa
+  /// kullanabilir — metin bunu SÖYLEMEK zorunda (kullanıcı kararı, 10 Ağu:
+  /// "sebebini de onlara söyle").
+  static const misafirAramaYok = 'MISAFIR_ARAMA_YOK';
+
+  /// ARANAN misafir hesap. [misafirAramaYok] ile aynı metni BASMAZ: burada
+  /// eksik olan arayanın hesabı değil karşı tarafınki, "hesap oluştur" demek
+  /// yanlış öneri olurdu.
+  ///
+  /// Bu kod `KULLANICI_YOK`UN YERİNİ ALIR. Eskiden sunucu misafir hedefi hiç
+  /// bulamıyor ve 404 dönüyordu; kullanıcı sohbet ettiği kişi için "kullanıcı
+  /// bulunamadı" görüyordu (10 Ağu, canlı).
+  static const aliciMisafir = 'ALICI_MISAFIR';
+
   static const kullaniciYok = 'KULLANICI_YOK';
   static const kendineArama = 'KENDINE_ARAMA';
   static const engelli = 'ENGELLI';
@@ -99,6 +132,24 @@ AramaHatasi aramaHatasiCozumle(Object hata) {
         AramaKod.gecersizIstek,
         'Arama başlatılamadı'.c,
         AramaTepkisi.kapat,
+      );
+    // Sürüm 4 — misafir hesaplar. İKİ AYRI metin ZORUNLU: biri kullanıcının
+    // KENDİ hesabı hakkında ve bir çıkış yolu sunuyor, öteki karşı taraf
+    // hakkında ve kullanıcının yapabileceği bir şey yok. Tek metin basmak,
+    // arayana zaten sahip olduğu hesabı açtırmaya çalışmak olurdu.
+    case AramaKod.misafirAramaYok:
+      return AramaHatasi(
+        AramaKod.misafirAramaYok,
+        misafirAramaSebebi.c,
+        // `uyar`: kullanıcı sohbette kalır. Arama ekranı zaten açılmadı ve
+        // sohbetten atılmak cezalandırıcı olurdu.
+        AramaTepkisi.uyar,
+      );
+    case AramaKod.aliciMisafir:
+      return AramaHatasi(
+        AramaKod.aliciMisafir,
+        'Misafir hesaplar aranamaz'.c,
+        AramaTepkisi.uyar,
       );
     case AramaKod.kullaniciYok:
       return AramaHatasi(
@@ -216,6 +267,16 @@ class BuzAyari {
   final bool kendiSesliAcik;
   final bool kendiGoruntuluAcik;
 
+  /// Bu hesap MİSAFİR mi (sözleşme sürüm 4).
+  ///
+  /// Misafir hesap ne arayabilir (403 `MISAFIR_ARAMA_YOK`) ne aranabilir
+  /// (403 `ALICI_MISAFIR`), yani özellik onun için gerçekten YOK. Bu yüzden
+  /// [kendiSesliAcik]/[kendiGoruntuluAcik] gibi "çiz ama pasif" değil,
+  /// sunucu kill switch'i gibi "HİÇ ÇİZME" davranışı doğru olan: pasif düğme
+  /// bir davettir ("ayarlardan açabilirsin"), burada açılacak bir şey yok.
+  /// Sebep kullanıcıya Ayarlar > Gizlilik'teki KİLİTLİ anahtarda yazıyor.
+  final bool misafir;
+
   final int calmaSaniye;
 
   /// Alındığı an — [tazelenmeli] bunun üstünden karar verir.
@@ -230,6 +291,7 @@ class BuzAyari {
     required this.alindi,
     this.kendiSesliAcik = false,
     this.kendiGoruntuluAcik = false,
+    this.misafir = false,
   });
 
   /// Ayarlardan tercih değişince yeni bir istek atmadan güncellemek için.
@@ -244,6 +306,7 @@ class BuzAyari {
     alindi: alindi,
     kendiSesliAcik: sesli ?? kendiSesliAcik,
     kendiGoruntuluAcik: goruntulu ?? kendiGoruntuluAcik,
+    misafir: misafir,
   );
 
   factory BuzAyari.json(Map<String, dynamic> d, {DateTime? simdi}) => BuzAyari(
@@ -259,6 +322,12 @@ class BuzAyari {
     // okur), tersi olsaydı düğme aktif görünüp sunucu 403 verirdi.
     kendiSesliAcik: d['kendi_sesli_acik'] == true,
     kendiGoruntuluAcik: d['kendi_goruntulu_acik'] == true,
+    // Eksik alan = misafir DEĞİL. Buradaki varsayılan-ret olamaz: alanı
+    // göndermeyen eski bir sunucuda herkesi misafir sayıp özelliği toptan
+    // kapatırdık. Yanlış yönde hata burada GÜRÜLTÜLÜdür (düğme çizilir,
+    // sunucu 403 `MISAFIR_ARAMA_YOK` ile doğru sebebi söyler); ters yön
+    // sessizce özelliği yok ederdi.
+    misafir: d['misafir'] == true,
     calmaSaniye: (d['calma_saniye'] as num?)?.toInt() ?? 45,
     alindi: simdi ?? DateTime.now(),
   );

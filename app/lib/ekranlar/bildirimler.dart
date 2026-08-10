@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import '../yonlendirme.dart';
 import 'ortak.dart';
 
 /// Bildirimler: yanıt, beğeni, takip, mesaj. Açılınca tümü okundu sayılır.
@@ -61,12 +62,15 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
   ///    (eskiden yalnız yorumun içeriğine/dizisine gidiyordu; hedef yorumu
   ///    bulmak zordu)
   ///  - yorumsuz (takip) → aktörün profili
+  ///  - YANIT bildiriminde adrese `?yanit=1` eklenir; bkz. [gonderiYolu].
   String _hedef(Map<String, dynamic> b) {
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
     // yorum silinmişse (JOIN'de yorum_tur null) gönderi 404 verir → profile git
     final silinmis = b['yorum_tur'] == null;
-    if (yorumId != null && !silinmis) return '/gonderi/$yorumId';
+    if (yorumId != null && !silinmis) {
+      return gonderiYolu('$yorumId', yanit: b['tur'] == 'yanit');
+    }
     return '/kullanici/${b['aktor']}';
   }
 

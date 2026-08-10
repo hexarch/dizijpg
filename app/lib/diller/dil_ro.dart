@@ -711,4 +711,7 @@ const Map<String, String> cevirilerRo = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Apelurile video sunt dezactivate. Le poți activa în Setări > Confidențialitate.',
   'Sesli ve görüntülü arama': 'Apeluri vocale și video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Conturile de invitat nu pot apela. Creează un cont ca să folosești asta.',
+  'Misafir hesaplar aranamaz': 'Conturile de invitat nu pot fi apelate',
 };

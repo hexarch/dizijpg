@@ -11,6 +11,9 @@ import '../api.dart';
 import '../bayrak.dart' show ulkeAdi;
 import '../ceviri.dart';
 import '../gorusme/arama_servisi.dart';
+// `misafirAramaSebebi`: kilitli anahtarın altında ve dokunma açıklamasında
+// gösterilen sebep, sunucunun `MISAFIR_ARAMA_YOK` reddiyle AYNI cümle olsun.
+import '../gorusme/gorusme_api.dart' show misafirAramaSebebi;
 import '../push.dart';
 import 'gorsel_kirp.dart';
 import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
@@ -1406,6 +1409,89 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
     }
   }
 
+  /// Bu hesap misafir mi. `GET /gizlilik-tercihleri` yanıtından gelir; AYRI
+  /// BİR İSTEK ATILMAZ (sunucu bu alanı tam da bunun için ekledi).
+  ///
+  /// `Oturum.kullanici['misafir']` de okunabilirdi ama o değer GİRİŞ ANINDAKİ
+  /// kopyadır: kullanıcı `/auth/bagla` ile hesabını bağladıktan sonra uygulama
+  /// yeniden başlatılana kadar bayat kalabilir ve anahtarlar boşuna kilitli
+  /// görünürdü. Sheet her açılışta tercihleri zaten çekiyor.
+  bool get _misafir => _tercih?['misafir'] == true;
+
+  /// MİSAFİR HESAPTA arama anahtarı: KİLİTLİ ve SEBEBİ YAZILI.
+  ///
+  /// Kullanıcı kararı (10 Ağu): "misafir hesaplar aranamasın ve bu ayarları
+  /// açamasınlar, ***sebebini de onlara söyle***."
+  ///
+  /// NEDEN `SwitchListTile(onChanged: null)` DEĞİL: devre dışı bir
+  /// `SwitchListTile` dokunuşu hiç almaz, dolayısıyla "kilitli anahtara
+  /// dokununca da aynı açıklama görünsün" isteği yerine getirilemezdi.
+  /// Buradaki `Switch` görsel olarak kilitli (`onChanged: null`), satırın
+  /// KENDİSİ ise tıklanabilir ve açıklamayı tekrar gösteriyor.
+  ///
+  /// Sebep hem ALT SATIRDA sürekli duruyor (dokunmadan da okunur) hem de
+  /// dokununca SnackBar'da tekrar ediyor + hesap oluşturmaya götürüyor:
+  /// kurtarma yolu olmayan bir "kapalı" mesajı kötü mesajdır.
+  /// `ui-ux-pro-max` sorgularından uygulananlar:
+  ///   * *Disabled States* ("clearly indicate non-interactive elements"):
+  ///     kilit ÜÇ ayrı sinyalle anlatılıyor — kilit ikonu, devre dışı `Switch`
+  ///     ve soluk başlık. Tek sinyal (yalnız renk) yetmez.
+  ///   * *Error Recovery* ("provide clear next steps"): açıklama yalnız
+  ///     "yapamazsın" demiyor, hesap bağlamaya götüren bir eylem sunuyor.
+  ///   * *Semantics* (Flutter yığın kuralı, önem: yüksek): [MergeSemantics]
+  ///     olmadan ekran okuyucu "etiket", "sebep" ve "kapalı anahtar"ı ÜÇ AYRI
+  ///     düğüm olarak okur ve aralarındaki bağ kaybolur. `SwitchListTile`
+  ///     bunu kendi içinde yapıyor; elle kurulan bu satırda açıkça gerekiyor.
+  ///
+  /// **Başlık `metin38` DEĞİL `metin54`:** `metin38` (white38) koyu sheet
+  /// zemininde (0xFF17171A) kontrastı 4,5:1'in altına düşürür ve buradaki
+  /// metin okunması GEREKEN bir metin — dekoratif bir pasiflik göstergesi
+  /// değil. Pasiflik hissini kilit ikonu ve devre dışı anahtar veriyor;
+  /// okunabilirlikten ödün verilmiyor. (`sohbet` başlığındaki pasif ikon
+  /// `metin38` kalabilir: orada metin değil, ikon var.)
+  Widget _kilitliAramaSatiri(String alan, String etiket) => MergeSemantics(
+    child: ListTile(
+      key: Key('gizlilik-$alan'),
+      leading: Icon(Icons.lock_outline, color: DiziRenkler.metin54, size: 20),
+      title: Text(
+        etiket.c,
+        style: TextStyle(color: DiziRenkler.metin54, fontSize: 15),
+      ),
+      subtitle: Text(
+        misafirAramaSebebi.c,
+        style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+      ),
+      // `Switch` kapalı ve devre dışı: kilit yalnız ikonla değil, anahtarın
+      // kendi görünümüyle de anlatılıyor.
+      trailing: const Switch(value: false, onChanged: null),
+      onTap: _misafirAciklamasi,
+    ),
+  );
+
+  void _misafirAciklamasi() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(misafirAramaSebebi.c),
+        // 5 sn: iki satırlık açıklama + eylem düğmesi için 4 sn kısa kalıyor
+        // (sohbetteki pasif düğme açıklamasıyla aynı ölçü).
+        duration: const Duration(seconds: 5),
+        // Kurtarma yolu: hesabı bağlama bandı PROFİL sayfasında duruyor
+        // (`profil.dart`, "Misafir hesabındasın — e-postanla bağla"). Ayrı bir
+        // "hesap oluştur" rotası YOK; olmayan bir yola göndermektense var olan
+        // tek yere götürüyoruz. Sheet ÖNCE kapanır (projedeki kalıp), yoksa
+        // kullanıcı geri döndüğünde üstüne yapışmış bir sheet bulur.
+        action: SnackBarAction(
+          label: 'Profil'.c,
+          onPressed: () {
+            final yonlendirici = GoRouter.of(context);
+            Navigator.pop(context);
+            yonlendirici.go('/profil');
+          },
+        ),
+      ),
+    );
+  }
+
   /// Arama tercihi değiştiyse bellekteki kopyayı da güncelle — açık sohbet
   /// ekranlarındaki düğmeler anında pasif/aktif olsun. (Öteki `_gizli`
   /// alanlarında karşılığı yok; onlar sunucudan okunuyor.)
@@ -1508,20 +1594,26 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                 ),
               ),
               for (final (alan, etiket, aciklama) in _aramaAlanlari)
-                SwitchListTile(
-                  key: Key('gizlilik-$alan'),
-                  value: _tercih![alan] == true,
-                  activeColor: DiziRenkler.sari,
-                  title: Text(
-                    etiket.c,
-                    style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                if (_misafir)
+                  _kilitliAramaSatiri(alan, etiket)
+                else
+                  SwitchListTile(
+                    key: Key('gizlilik-$alan'),
+                    value: _tercih![alan] == true,
+                    activeColor: DiziRenkler.sari,
+                    title: Text(
+                      etiket.c,
+                      style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                    ),
+                    subtitle: Text(
+                      aciklama.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    onChanged: (v) => _degistir(alan, v),
                   ),
-                  subtitle: Text(
-                    aciklama.c,
-                    style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
-                  ),
-                  onChanged: (v) => _degistir(alan, v),
-                ),
               // Tek tek gizlenen yorumların yönetim yeri. Sheet ÖNCE kapanır,
               // sonra gidilir: kullanıcı geri döndüğünde üstüne yapışmış bir
               // sheet bulmasın (begenenler.dart'taki kalıbın aynısı).

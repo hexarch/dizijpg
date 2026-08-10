@@ -695,4 +695,7 @@ const Map<String, String> cevirilerTh = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'การโทรวิดีโอปิดอยู่ เปิดได้ที่ การตั้งค่า > ความเป็นส่วนตัว',
   'Sesli ve görüntülü arama': 'การโทรด้วยเสียงและวิดีโอ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'บัญชีผู้เยี่ยมชมโทรออกไม่ได้ สร้างบัญชีเพื่อใช้งาน',
+  'Misafir hesaplar aranamaz': 'โทรหาบัญชีผู้เยี่ยมชมไม่ได้',
 };

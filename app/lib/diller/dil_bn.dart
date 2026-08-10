@@ -706,4 +706,7 @@ const Map<String, String> cevirilerBn = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'ভিডিও কল বন্ধ আছে। সেটিংস > গোপনীয়তা থেকে চালু করতে পারেন।',
   'Sesli ve görüntülü arama': 'ভয়েস ও ভিডিও কল',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'অতিথি অ্যাকাউন্ট কল করতে পারে না। অ্যাকাউন্ট তৈরি করলে ব্যবহার করতে পারবে।',
+  'Misafir hesaplar aranamaz': 'অতিথি অ্যাকাউন্টে কল করা যায় না',
 };

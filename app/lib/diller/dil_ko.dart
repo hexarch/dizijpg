@@ -682,4 +682,7 @@ const Map<String, String> cevirilerKo = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       '영상 통화가 꺼져 있습니다. 설정 > 개인정보 보호에서 켤 수 있습니다.',
   'Sesli ve görüntülü arama': '음성 및 영상 통화',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      '게스트 계정은 통화할 수 없습니다. 계정을 만들면 사용할 수 있어요.',
+  'Misafir hesaplar aranamaz': '게스트 계정에는 전화할 수 없습니다',
 };

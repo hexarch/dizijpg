@@ -714,4 +714,8 @@ const Map<String, String> cevirilerEl = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Οι βιντεοκλήσεις είναι ανενεργές. Ενεργοποίησέ τες από Ρυθμίσεις > Απόρρητο.',
   'Sesli ve görüntülü arama': 'Φωνητικές κλήσεις και βιντεοκλήσεις',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Οι λογαριασμοί επισκέπτη δεν μπορούν να καλούν. Δημιούργησε λογαριασμό για να το χρησιμοποιήσεις.',
+  'Misafir hesaplar aranamaz':
+      'Δεν μπορείτε να καλέσετε λογαριασμούς επισκέπτη',
 };

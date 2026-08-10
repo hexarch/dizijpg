@@ -1,5 +1,74 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-09 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-10 — MADDE 38: KULLANICI BAŞINA SESLİ/GÖRÜNTÜLÜ ARAMA AÇMA-KAPAMA 🔨
+**Dağıtım YOK · migrasyon CANLIYA UYGULANMADI · commit YOK · sürüm 1.30.1+75 (artırılmadı).**
+Madde 7 ile **AYNI dağıtımda** çıkacak: arama bu özellik olmadan canlıya
+çıkarsa kullanıcılar kapatma imkânı olmadan aranabilir hâle gelir.
+
+### Şema
+`backend/migrasyon-2026-08-10.sql` — `kullanicilar`a iki sütun,
+**ikisi de `BOOLEAN NOT NULL DEFAULT false`** (kullanıcı kararı: otomatik KAPALI):
+`sesli_arama_acik`, `goruntulu_arama_acik`. `sema.sql`e de işlendi.
+Polarite POZİTİF (`_acik`), yanındaki `_gizli` sütunlarının TERSİ; ad yönü
+taşıdığı için aynı uçtan yönetilmeleri karışıklık yaratmıyor.
+
+### Sunucu
+| Ne | Nerede |
+|---|---|
+| İki yeni hata kodu `ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI` (403) | `arama.js` `KOD` (13 → **15**) |
+| Zorlama — `baslatYetki` **adım 10**, karşılıklı takip kapısının yanında | `arama.js` |
+| Tercihi aynı sorguda okuma (ek tur yok) | `server.js` `hedefBul` |
+| Kendi tercihini istemciye taşıma: `kendi_sesli_acik` / `kendi_goruntulu_acik` | `GET /arama/buz-sunuculari` |
+| Okuma/yazma ucu | `GET\|POST /gizlilik-tercihleri` (`GIZLILIK_ALANLARI` → `TERCIH_ALANLARI`) |
+
+**VARSAYILAN-RET (`!== true`)**: tercih okunamazsa, migrasyon uygulanmamışsa ya
+da sorgu alanı seçmeyi unutmuşsa arama BAŞLAMAZ. Ters yön sessiz arızadır.
+
+**ÜÇ KATMAN, ÖNCELİK NET:** (1) sunucu bayrağı `ARAMA_KAPALI`/`GORUNTULU_KAPALI`
+(503) → (2) engelleme/karşılıklı takip `ENGELLI`/`TAKIP_YOK` (403) →
+(3) kendi tercihi `ALICI_*_KAPALI` (403) → (4) sessizleştirme (429).
+Tercih kontrolü takip kapısından SONRA: "bu kişide arama kapalı" demek
+başkasının ayarını ifşa etmek; yalnız karşılıklı takipleştiğin biri hakkında
+öğrenilebiliyor. (İfşa bilinçli — alternatifi "bağlanılamadı" demekti.)
+
+**⚠ SESSİZLEŞTİRME MUAFİYETİ (sözleşme §5.0.1):** kapalı reddi 15dk/3-cevapsız
+sayacına GİRMEZ. Mekanizma: red `AramaDeposu.olustur()`tan ÖNCE dönüyor, kayıt
+hiç doğmuyor, `cevapsizKaydet` yalnız `aramaUclandi` içinden çağrılıyor.
+İki testle kilitli (biri sayaç davranışı, biri `cevapsizKaydet`in TEK çağrı
+noktası olduğu).
+
+### İstemci
+* Ayarlar > Gizlilik: ayrı "Sesli ve görüntülü arama" başlığı altında iki anahtar.
+* Sohbette düğmeler: kendi tercihi kapalıyken **PASİF (gizli DEĞİL)**, tıklanınca
+  açıklama + "Ayarlar" kısayolu. `onPressed` null bırakılmadı — null olsaydı
+  dokunuş hiç alınmaz ve açıklama gösterilemezdi.
+* Arayan tarafında TÜR BAZLI mesaj (sesli/görüntülü ayrı).
+* **9 yeni anahtar × 45 dil = 405 çeviri.** 45 dosya 611 → **620**, tam eşit.
+
+### Yan düzeltmeler (bu turda çıkan gerçek hatalar)
+1. **Gizlilik sheet'i TAŞIYORDU** — iki anahtar eklenince `Column` 600 dp'de
+   50 px taştı (sarı-siyah bant). `SingleChildScrollView`e alındı; kısa
+   ekranlarda ve büyük yazı ölçeğinde son öğeler artık kesilmiyor.
+2. **`robots.txt`te `/gorusme/` kapalı değildi** — rota kullanıcı adı taşıyor.
+   `backend/test/seo_gizlilik.test.js` bu yüzden 9 Ağu'dan beri KIRMIZIydı.
+
+### Testler
+| | Önce | Sonra |
+|---|---|---|
+| `flutter test` | 908 | **930** |
+| `node --test backend/test/*.test.js` | 427 (1 kırmızı) | **439 (0 kırmızı)** |
+| `flutter analyze lib test` | 85 info | 86 info (yeni `activeColor`, mevcut 6 kullanımla aynı) · 0 hata/uyarı |
+
+### ANA OTURUMUN YAPACAKLARI
+1. `backend/migrasyon-2026-08-10.sql`i **canlıya uygula** (yeni server.js
+   migrasyonsuz başlatılmamalı — varsayılan-ret herkesin aramasını keser).
+2. Madde 7'nin 5 adımı (sürüm artır → web → APK/AAB → bayrakları aç → elle test).
+3. **AÇIK BORÇ (md. 7'ye ait, bu turda kapatılmadı):**
+   `migrasyon-2026-08-08e.sql` içeriği (`aramalar` tablosu, `bildirimler.tur`
+   kısıtı, `kullanicilar.bildir_arama`) **`sema.sql`e hâlâ işlenmedi**.
+   Sıfırdan kurulan bir veritabanı `aramalar` tablosunu ALMIYOR. Sözleşme
+   §10.3'te nereye gireceği yazılı.
 
 ## 2026-08-09 (b) — ARAMA F1: FLUTTER TARAFI YAZILDI 🔨 (dağıtım YOK)
 Sözleşme `backend/ARAMA-API-SOZLESMESI.md` §14. **`backend/**` DEĞİŞTİRİLMEDİ**
@@ -3722,6 +3791,51 @@ rozetle aynı yüksekliğe (15 dp) getirildi, sayılar artık aynı hizada.
 - Kanıt: `app/test/takvim_mobil_yukseklik_test.dart` (14 test) — 5 ve 6
   satırlı ay, 320/360/430 dp, dokunma alanı, taşma yok, güne dokunma +
   modal, liste büyümesi, masaüstü kompakt ızgara regresyonu.
+
+## MİSAFİR HESAPLAR ARAMA DIŞINDA (10 Ağu 2026) — sözleşme sürüm 4
+
+Kullanıcı kararı (aynen): *"misafir hesaplar aranamasın ve bu ayarları
+açamasınlar, sebebini de onlara söyle."*
+
+**Tetikleyen olay (canlıda):** `alcelik` sohbet ettiği bir misafiri aradı;
+`hedefBul` sorgusundaki `AND misafir=false` yüzünden hedef bulunamadı ve
+404 `KULLANICI_YOK` döndü. Kullanıcı, karşısında duran biri için
+"kullanıcı bulunamadı" gördü. Kural doğruydu, **sebep** yanlıştı — üstelik
+arayüz düğmeyi yine de göstermişti.
+
+**Bulunan iki ek boşluk:**
+- Misafirin **ARAYAN** olmasını engelleyen hiçbir kontrol yoktu (`baslatYetki`
+  yalnız hedefe bakıyordu) → misafirler gerçek kullanıcıları arayabiliyordu.
+- `POST /gizlilik-tercihleri` misafiri süzmüyordu; canlıda `misafir_9427a460`
+  hesabında iki arama bayrağı da `t` idi.
+
+**Sunucu:** yeni kodlar `MISAFIR_ARAMA_YOK` (adım 4, arayan) ve `ALICI_MISAFIR`
+(adım 8, aranan); zincir 13 → 15 adım, kod tablosu 15 → 17.
+`req.misafir` `kullaniciDurumu` önbelleğinden (JWT'ye konmadı — 90 günlük token
+bayat kalırdı; `/auth/bagla` önbelleği düşürüyor). `/profil/:ad` ve
+`/arama/buz-sunuculari` yanıtlarına `misafir` alanı.
+
+**İstemci:** misafirle sohbette arama düğmeleri **hiç çizilmiyor** (ek istek
+YOK — `/profil/:ad` yanıtındaki alandan; üstelik `takipedilenler` isteği de
+tasarruf ediliyor). Kendisi misafirse özellik tamamen kapalı ve Ayarlar >
+Gizlilik'te iki anahtar **kilitli** + **sebebi yazılı** + dokununca aynı
+açıklama ve hesap bağlamaya götüren eylem.
+
+**AYRI VE ÖNEMLİ HATA — sunucunun sebebi kullanıcıya ULAŞMIYORDU:** kurulum
+sırasında gelen `koptu`, `GorusmeDenetci._bitir`i genel "Bağlanılamadı"
+metniyle çalıştırıyor, saniyeler sonra gelen ÖZEL sunucu kodu doğru metne
+çevriliyor ama ikinci `_bitir` çağrısı `if (_kapaniyor) return` ile dönüyordu.
+Düzeltme: `_kurulumSuruyor` bayrağı — kurulum sürerken `koptu` aramayı
+kapatmaz, yalnız `_iceKoptu` olarak kaydedilir; kurulum başarıyla biterse
+orada okunup arama kapatılır (yoksa ekran 45 sn "Çalıyor..." gösterirdi).
+Ayrıntı: `backend/ARAMA-API-SOZLESMESI.md` §15.
+
+- Migrasyon: `backend/migrasyon-2026-08-10b.sql` — **CANLIYA UYGULANMADI**.
+- Kanıt: `app/test/misafir_arama_test.dart` (18 test) + `backend/test/arama.test.js`
+  (+9 test). Flutter 990 test / analyze 0 hata-uyarı, backend 448 test.
+  8 senaryoda kırmızıya döndürme + sha1 geri alma doğrulaması yapıldı.
+- Çeviri: 2 yeni anahtar × 45 dil (620 → 622, 45/45 eşit).
+- **Dağıtım YOK, sürüm artırılmadı (1.31.0+76), commit YOK.**
 
 ## TAMAMLANANLAR (özet) 🚀
 Sarı tema · 45 dil (184 anahtar) · path URL + F5 kalıcılığı · service worker sökümü ·

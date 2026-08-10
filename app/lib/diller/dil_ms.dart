@@ -712,4 +712,7 @@ const Map<String, String> cevirilerMs = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Panggilan video dimatikan. Anda boleh hidupkannya di Tetapan > Privasi.',
   'Sesli ve görüntülü arama': 'Panggilan suara dan video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Akaun tetamu tidak boleh membuat panggilan. Cipta akaun untuk menggunakannya.',
+  'Misafir hesaplar aranamaz': 'Akaun tetamu tidak boleh dipanggil',
 };

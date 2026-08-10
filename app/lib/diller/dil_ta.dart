@@ -712,4 +712,7 @@ const Map<String, String> cevirilerTa = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'வீடியோ அழைப்பு அணைக்கப்பட்டுள்ளது. அமைப்புகள் > தனியுரிமை என்பதில் இயக்கலாம்.',
   'Sesli ve görüntülü arama': 'குரல் மற்றும் வீடியோ அழைப்பு',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'விருந்தினர் கணக்குகள் அழைக்க முடியாது. கணக்கு உருவாக்கினால் பயன்படுத்தலாம்.',
+  'Misafir hesaplar aranamaz': 'விருந்தினர் கணக்குகளை அழைக்க முடியாது',
 };

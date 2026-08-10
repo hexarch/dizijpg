@@ -702,4 +702,7 @@ const Map<String, String> cevirilerGu = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'વિડિયો કૉલ બંધ છે. સેટિંગ્સ > ગોપનીયતામાંથી ચાલુ કરી શકો છો.',
   'Sesli ve görüntülü arama': 'વોઇસ અને વિડિયો કૉલ',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'મહેમાન ખાતાં કૉલ કરી શકતાં નથી. ખાતું બનાવશો તો વાપરી શકશો.',
+  'Misafir hesaplar aranamaz': 'મહેમાન ખાતાંને કૉલ કરી શકાતો નથી',
 };

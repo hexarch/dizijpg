@@ -697,4 +697,7 @@ const Map<String, String> cevirilerAr = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'مكالمات الفيديو موقوفة. يمكنك تفعيلها من الإعدادات > الخصوصية.',
   'Sesli ve görüntülü arama': 'المكالمات الصوتية والمرئية',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'لا يمكن لحسابات الضيوف إجراء مكالمات. أنشئ حسابًا لتتمكن من استخدامها.',
+  'Misafir hesaplar aranamaz': 'لا يمكن الاتصال بحسابات الضيوف',
 };

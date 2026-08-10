@@ -709,4 +709,7 @@ const Map<String, String> cevirilerId = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Panggilan video mati. Kamu bisa mengaktifkannya di Pengaturan > Privasi.',
   'Sesli ve görüntülü arama': 'Panggilan suara dan video',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Akun tamu tidak bisa menelepon. Buat akun untuk memakainya.',
+  'Misafir hesaplar aranamaz': 'Akun tamu tidak bisa ditelepon',
 };

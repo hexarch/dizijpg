@@ -720,4 +720,7 @@ const Map<String, String> cevirilerFr = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Les appels vidéo sont désactivés. Tu peux les activer dans Paramètres > Confidentialité.',
   'Sesli ve görüntülü arama': 'Appels vocaux et vidéo',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Les comptes invités ne peuvent pas appeler. Crée un compte pour l’utiliser.',
+  'Misafir hesaplar aranamaz': 'Impossible d’appeler un compte invité',
 };

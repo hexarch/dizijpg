@@ -710,4 +710,7 @@ const Map<String, String> cevirilerBg = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Видеообажданията са изключени. Можеш да ги включиш от Настройки > Поверителност.',
   'Sesli ve görüntülü arama': 'Гласови и видеообаждания',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Гостуващите профили не могат да се обаждат. Създай профил, за да ги ползваш.',
+  'Misafir hesaplar aranamaz': 'На гостуващи профили не може да се звъни',
 };

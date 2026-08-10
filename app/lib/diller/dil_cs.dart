@@ -706,4 +706,7 @@ const Map<String, String> cevirilerCs = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Videohovory jsou vypnuté. Zapneš je v Nastavení > Soukromí.',
   'Sesli ve görüntülü arama': 'Hlasové a videohovory',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Hostovské účty nemohou volat. Po vytvoření účtu to půjde.',
+  'Misafir hesaplar aranamaz': 'Hostovským účtům nelze volat',
 };

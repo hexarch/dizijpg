@@ -710,4 +710,7 @@ const Map<String, String> cevirilerHu = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'A videohívás ki van kapcsolva. Bekapcsolhatod a Beállítások > Adatvédelem alatt.',
   'Sesli ve görüntülü arama': 'Hang- és videohívás',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Vendégfiókok nem hívhatnak. Hozz létre fiókot a használatához.',
+  'Misafir hesaplar aranamaz': 'Vendégfiókok nem hívhatók',
 };

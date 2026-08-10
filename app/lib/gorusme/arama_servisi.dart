@@ -53,8 +53,22 @@ class AramaServisi {
   /// hatasında kullanıcıyı mevcut arama ekranına döndürmek için tutulur.
   static String? aktifAramaId;
 
-  /// Arama özelliği bu cihazda kullanılabilir mi (platform + sunucu bayrağı).
-  static bool get kullanilabilir => !webMi && _buz != null && _buz!.aramaAcik;
+  /// Arama özelliği bu cihazda kullanılabilir mi (platform + sunucu bayrağı +
+  /// hesap türü).
+  ///
+  /// **Misafir hesapta false** (sözleşme sürüm 4, kullanıcı kararı 10 Ağu):
+  /// misafir ne arayabilir (`MISAFIR_ARAMA_YOK`) ne aranabilir
+  /// (`ALICI_MISAFIR`). Buradan false dönmesi hem sohbet başlığındaki
+  /// düğmeleri hiç çizdirmez hem de 4 sn'lik `GET /arama/gelen` yoklamasını
+  /// hiç başlatmaz — gelmesi imkânsız bir arama için tur harcanmaz.
+  ///
+  /// Sebep kullanıcıdan SAKLANMIYOR: Ayarlar > Gizlilik'te iki anahtar
+  /// KİLİTLİ görünüyor ve altında neden kilitli olduğu yazıyor.
+  static bool get kullanilabilir =>
+      !webMi && _buz != null && _buz!.aramaAcik && !_buz!.misafir;
+
+  /// Bu hesap misafir mi (sunucudan; `GET /arama/buz-sunuculari`).
+  static bool get kendiMisafir => _buz?.misafir == true;
 
   /// Görüntülü arama açık mı (sunucu bayrağı; kill switch).
   static bool get goruntuluAcik => kullanilabilir && _buz!.goruntuluAcik;
@@ -133,7 +147,7 @@ class AramaServisi {
 
   // ---------------- Karşılıklı takip ----------------
 
-  /// Kullanıcı adı → karşılıklı takipleşiyor muyuz (oturum boyu önbellek).
+  /// Kullanıcı adı → düğme gösterilsin mi (oturum boyu önbellek).
   static final Map<String, bool> _karsilikli = {};
 
   @visibleForTesting
@@ -141,12 +155,23 @@ class AramaServisi {
 
   /// Arama düğmesi gösterilmeli mi.
   ///
-  /// Sunucu zaten `TAKIP_YOK` ile reddediyor (sözleşme §5.1), ama tıklanabilir
-  /// görünüp reddedilen bir düğme kötü deneyimdir.
+  /// Sunucu zaten `TAKIP_YOK` / `ALICI_MISAFIR` ile reddediyor (sözleşme §5.1
+  /// ve §5 adım 8), ama tıklanabilir görünüp KESİN reddedilen bir düğme kötü
+  /// deneyimdir — 10 Ağu'daki hatanın özü tam buydu: iki taraf da doğru
+  /// ayarlanmıştı, kod izin vermiyordu, arayüz düğmeyi yine de GÖSTERDİ.
   ///
   /// **Neden iki istek:** karşılıklı takibi TEK çağrıda veren bir uç YOK.
   /// `GET /profil/:ad` yalnız `takip_ediyorum` döndürür (ben → o); ters yön
   /// için `GET /takipedilenler/:ad` listesinde kendimi ararım.
+  ///
+  /// **Misafir hedef:** aynı `GET /profil/:ad` yanıtındaki `misafir` alanından
+  /// okunuyor — **EK İSTEK YOK**. Misafirle arama HİÇBİR koşulda mümkün
+  /// olmadığı için ikinci istek de atılmıyor: karşılıklı takip sorusunun
+  /// cevabı ne olursa olsun sonuç değişmez.
+  ///
+  /// Eski sunucu `misafir` alanını göndermezse (`!= true`) düğme çizilir ve
+  /// karar sunucuya kalır — kullanıcı bu kez ÇEVRİLMİŞ "Misafir hesaplar
+  /// aranamaz" metnini görür, eskisi gibi "Kullanıcı bulunamadı"yı değil.
   static Future<bool> karsilikliTakipMi(
     String kullaniciAdi,
     String? benimAd,
@@ -160,6 +185,9 @@ class AramaServisi {
       if (profil['engelledim'] == true) {
         return _karsilikli[kullaniciAdi] = false;
       }
+      // MİSAFİR HEDEF: arama hiçbir koşulda kurulamaz (403 ALICI_MISAFIR).
+      // Takip sorgusundan ÖNCE bakılıyor — ikinci istek boşuna atılmasın.
+      if (profil['misafir'] == true) return _karsilikli[kullaniciAdi] = false;
       // Ben onu takip etmiyorsam karşılıklı OLAMAZ — ikinci istek gereksiz.
       if (profil['takip_ediyorum'] != true) {
         return _karsilikli[kullaniciAdi] = false;
@@ -170,6 +198,8 @@ class AramaServisi {
       // Ağ hatasında düğmeyi GİZLEME: sunucu son sözü söylüyor ve reddederse
       // kullanıcı çevrilmiş "karşılıklı takipleşmelisiniz" metnini görüyor.
       // Sessizce kaybolan bir düğme, hata veren bir düğmeden kötüdür.
+      // (Sonuç ÖNBELLEĞE ALINMIYOR: geçici bir ağ hatası oturum boyunca
+      // yanlış bir karara dönüşmemeli.)
       return true;
     }
   }

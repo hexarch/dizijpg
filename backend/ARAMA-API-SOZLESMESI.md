@@ -1,6 +1,6 @@
 # dizi.jpg — Sesli/Görüntülü Arama API Sözleşmesi
 
-**Sürüm:** 3 · **Tarih:** 10 Ağu 2026 (sürüm 2: 9 Ağu · sürüm 1: 8 Ağu, taslak)
+**Sürüm:** 4 · **Tarih:** 10 Ağu 2026 (sürüm 3: 10 Ağu · sürüm 2: 9 Ağu · sürüm 1: 8 Ağu, taslak)
 **Kaynak karar belgesi:** `ARAMA-PLANI.md`
 **Durum:** ***BACKEND YAZILDI VE TESTLİ.*** Sekiz ucun hepsi `server.js`te,
 mantık `backend/arama.js` (saf modül) içinde, 77 test `backend/test/arama.test.js`
@@ -9,6 +9,44 @@ Flutter tarafı **yazılmadı**; istemcinin ne yapması gerektiği §14'te.
 
 > **Sürüm 1 ile sürüm 2 arasındaki farklar §13'te tek tek listelendi.** Sözleşme
 > kodu değil, **kod sözleşmeyi** izledi; sapmalar yazılmadan önce buraya işlendi.
+
+> ### SÜRÜM 4 (10 Ağu 2026) — MİSAFİR HESAPLAR ARAMA DIŞINDA
+>
+> **Kullanıcı kararı (aynen):** *"misafir hesaplar aranamasın ve bu ayarları
+> açamasınlar, sebebini de onlara söyle."*
+>
+> **Değişenler:** §5 yetki tablosuna **iki yeni adım** — **4** (arayan misafir)
+> ve **8** (aranan misafir); sonraki adımlar bir kaydı (10→12, 11→13, 12→14,
+> 13→15) · **yeni §5.0.2** (bilgi sızıntısı değerlendirmesi) · §8'e **iki yeni
+> kod** (`MISAFIR_ARAMA_YOK`, `ALICI_MISAFIR`; toplam 15 → **17**) · §4.1
+> yanıtına `misafir` · §4.9 (`/gizlilik-tercihleri`) yeni bölüm · §14.2c
+> istemci sözleşmesi · §15 (istemci hatası: özel kod genel bağlantı hatasına
+> düşüyordu).
+>
+> **NEDEN GEREKLİYDİ — 10 Ağu'da canlıda yaşanan olay:** `alcelik` (gerçek
+> kullanıcı) sohbet ettiği bir misafir hesabı aradı. `hedefBul` sorgusundaki
+> `AND misafir=false` yüzünden hedef HİÇ BULUNAMADI ve 404 `KULLANICI_YOK`
+> döndü. Kullanıcı ekranda, karşısında duran ve mesajlaştığı biri için
+> "kullanıcı bulunamadı" gördü. **Kural doğruydu, SEBEP yanlıştı** — ve arayüz
+> düğmeyi yine de göstermişti.
+>
+> **İki boşluk daha aynı turda kapandı:**
+> 1. **Misafirin ARAYAN olmasını engelleyen HİÇBİR KONTROL YOKTU.**
+>    `baslatYetki` yalnız hedefe bakıyordu. Yani misafir hesaplar gerçek
+>    kullanıcıların telefonunu çaldırabiliyordu (karşılıklı takip + hedefin
+>    tercihi açık olmak kaydıyla).
+> 2. **`POST /gizlilik-tercihleri` misafiri süzmüyordu.** Canlıda
+>    `misafir_9427a460` hesabında `sesli_arama_acik=t, goruntulu_arama_acik=t`
+>    ölçüldü — kullanıcının hiçbir işe yaramayan bir ayarı açmasına izin
+>    verilmişti.
+>
+> **Migrasyon:** `backend/migrasyon-2026-08-10b.sql` — mevcut misafir
+> hesaplarda iki bayrağı `false`a çeker. ***CANLIYA UYGULANMADI.***
+>
+> **`req.misafir`:** hesap türü JWT'ye KONMADI (token 90 gün yaşıyor;
+> `/auth/bagla` ile hesabını bağlayan kullanıcı üç ay "misafir" sayılırdı).
+> Kaynak `kullaniciDurumu` önbelleği (30 sn TTL, zaten her istekte okunuyor —
+> **ek sorgu yok**); `/auth/bagla` önbelleği hemen düşürüyor.
 
 > ### SÜRÜM 3 (10 Ağu 2026) — kullanıcı başına açma/kapama (istek listesi md. 38)
 >
@@ -247,6 +285,7 @@ başlatmayı `/arama/baslat` engeller)
   "goruntulu_acik": true,
   "kendi_sesli_acik": false,
   "kendi_goruntulu_acik": false,
+  "misafir": false,
   "calma_saniye": 45
 }
 ```
@@ -267,6 +306,14 @@ başlatmayı `/arama/baslat` engeller)
   zaten açılışta bir kez çağrılıyor.
 * Karşı tarafın tercihi burada **YOKTUR ve olmayacaktır** — başkasının ayarı
   ancak arama denendiğinde ve yalnız karşılıklı takipleşiliyorsa (§5) öğrenilir.
+* **`misafir` (sürüm 4):** çağıranın hesap türü. `true` ise istemci arama
+  özelliğini **tamamen kapatır** — düğmeler hiç çizilmez ve `GET /arama/gelen`
+  yoklaması hiç başlamaz (misafiri kimse arayamayacağı için gelmesi imkânsız
+  bir arama için tur harcanmaz). `kendi_*` bayrakları misafirde **daima
+  `false`** döner; migrasyon `-08-10b` veriyi de temizliyor ama sunucu bundan
+  bağımsız garanti veriyor.
+  **Sebep kullanıcıdan saklanmıyor:** Ayarlar > Gizlilik'teki iki anahtar
+  KİLİTLİ görünür ve altında neden kilitli olduğu yazar (§4.9, §14.2c).
 
 ---
 
@@ -464,6 +511,37 @@ tekrar gönderebilsin). Uç durum ve süre **değişmez**.
 
 ---
 
+### 4.9 `GET|POST /gizlilik-tercihleri` (mevcut uç, sürüm 3'te genişledi)
+
+**Ara katman:** `girisZorunlu`
+**Alanlar:** `TERCIH_ALANLARI` = `GIZLILIK_ALANLARI` (`izlenenler_gizli`,
+`yorumlar_gizli`, `yanitlar_gizli`, `cevrimici_gizli`) + `ARAMA_TERCIH_ALANLARI`
+(`sesli_arama_acik`, `goruntulu_arama_acik`).
+
+**GET 200:** tüm alanlar + **`misafir`** (sürüm 4). `misafir` yanıta konuyor ki
+ayarlar ekranı anahtarı KİLİTLİ çizip sebebini yazabilsin — **ayrı bir istek
+turu harcanmadan**.
+
+**POST — sürüm 4 kısıtı:** çağıran misafirse yazılabilir alanlar yalnız
+`GIZLILIK_ALANLARI`dır.
+
+| Gövde (misafir çağıran) | Yanıt |
+|---|---|
+| Yalnız `izlenenler_gizli` vb. | **200**, normal (misafirin de gizlilik hakkı var) |
+| Yalnız `sesli_arama_acik` / `goruntulu_arama_acik` | **403 `MISAFIR_ARAMA_YOK`** |
+| Karışık | **200**; arama alanları **yok sayılır**, ötekiler yazılır |
+
+**Neden sessizce yok saymak yerine 403:** kullanıcı kararı "sebebini de onlara
+söyle" idi. Sessiz yok sayma, anahtarın bir an açık görünüp sonra kendiliğinden
+kapanması demekti — kullanıcı bunu bir arıza sanardı.
+
+**Neden veritabanı CHECK kısıtı değil:** `/auth/bagla` misafirliği kaldırırken
+aynı satırı güncelliyor ve ileride eklenecek toplu bir UPDATE kısıta çarpıp 500
+verebilirdi. Zorlama uygulama katmanında ve testli; migrasyon `-08-10b` yalnız
+**mevcut** bozuk veriyi temizliyor.
+
+---
+
 ## 5. Yetki kuralları — sıra bağlayıcıdır
 
 `POST /arama/baslat` şu sırayla kontrol eder. **Sıra önemlidir:** ucuz ve
@@ -474,17 +552,25 @@ bilgi sızdırmayan kontroller önce.
 | 1 | Yasak kapısı (`girisZorunlu` içinde, uç kodu çalışmadan) | 403 | *(yasak.js gövdesi)* |
 | 2 | Özellik kapalı (`arama_acik=0`) | 503 | `ARAMA_KAPALI` |
 | 3 | Görüntülü kapalı ve `tur='goruntu'` | 503 | `GORUNTULU_KAPALI` |
-| 4 | Geçersiz `tur`/`sdp`/`kullanici_adi` | 400 | `GECERSIZ_ISTEK` |
-| 5 | Kullanıcı yok | 404 | `KULLANICI_YOK` |
-| 6 | Kendini arama | 400 | `KENDINE_ARAMA` |
-| 7 | **Engelleme (çift yönlü)** | 403 | `ENGELLI` |
-| 8 | **Karşılıklı takip yok** | 403 | `TAKIP_YOK` |
-| 9 | Aranan yasaklı (`kullanicilar.yasakli`) | 403 | `ALICI_YASAKLI` |
-| 10 | **Arananın KENDİ tercihi kapalı** (`tur='ses'`) | 403 | `ALICI_SESLI_KAPALI` |
-| 10 | **Arananın KENDİ tercihi kapalı** (`tur='goruntu'`) | 403 | `ALICI_GORUNTULU_KAPALI` |
-| 11 | Çift bazlı sessizleştirme aktif | 429 | `COK_FAZLA_CEVAPSIZ` |
-| 12 | **Arayan zaten bir aramada** | 409 | `ZATEN_ARAMADA` |
-| 13 | **Aranan zaten bir aramada** | 200 + `durum:"mesgul"` | — |
+| **4** | **ARAYAN misafir** (sürüm 4) | 403 | `MISAFIR_ARAMA_YOK` |
+| 5 | Geçersiz `tur`/`sdp`/`kullanici_adi` | 400 | `GECERSIZ_ISTEK` |
+| 6 | Kullanıcı yok | 404 | `KULLANICI_YOK` |
+| 7 | Kendini arama | 400 | `KENDINE_ARAMA` |
+| **8** | **ARANAN misafir** (sürüm 4) | 403 | `ALICI_MISAFIR` |
+| 9 | **Engelleme (çift yönlü)** | 403 | `ENGELLI` |
+| 10 | **Karşılıklı takip yok** | 403 | `TAKIP_YOK` |
+| 11 | Aranan yasaklı (`kullanicilar.yasakli`) | 403 | `ALICI_YASAKLI` |
+| 12 | **Arananın KENDİ tercihi kapalı** (`tur='ses'`) | 403 | `ALICI_SESLI_KAPALI` |
+| 12 | **Arananın KENDİ tercihi kapalı** (`tur='goruntu'`) | 403 | `ALICI_GORUNTULU_KAPALI` |
+| 13 | Çift bazlı sessizleştirme aktif | 429 | `COK_FAZLA_CEVAPSIZ` |
+| 14 | **Arayan zaten bir aramada** | 409 | `ZATEN_ARAMADA` |
+| 15 | **Aranan zaten bir aramada** | 200 + `durum:"mesgul"` | — |
+
+> **Adım 4 ve 8 `/arama/yanit`ta TEKRARLANMAZ** — bilinçli. Karşılıklı takip ve
+> engelleme 45 saniyelik pencerede DEĞİŞEBİLDİĞİ için orada tekrarlanıyor
+> (§5.1); misafirlik değişemez. Geçiş **tek yönlüdür** (misafir → kayıtlı,
+> `/auth/bagla`) ve o yön kısıtı gevşetir. Yani yanıt anında yeniden bakmanın
+> engelleyebileceği hiçbir hâl yoktur.
 
 ### 5.0 Kullanıcı başına açma-kapama (md. 38) — üç katmanın en ortası
 
@@ -537,6 +623,71 @@ Testle kilitli (`test/arama.test.js`):
 reddedilen arayanın cezası 0 kalıyor **ve** `sessizKalanSn` sorgusuna hiç
 girilmiyor) + `md.38 sessizleştirme sayacı YALNIZ uçlaşan kayıttan besleniyor`
 (`cevapsizKaydet` server.js'te tek çağrı ve o çağrı `aramaUclandi` içinde).
+
+### 5.0.2 Misafir hesaplar (sürüm 4) — sıra gerekçesi ve BİLGİ SIZINTISI
+
+**Kural:** misafir hesap ne arayabilir (adım 4) ne aranabilir (adım 8).
+`kullanicilar.misafir` sütunu; `/auth/misafir` ile açılan, e-postasız ve
+şifresiz hesap türü.
+
+#### Adım 4 (ARAYAN misafir) neden tam orada
+
+* **Kill switch'lerden (2, 3) SONRA.** Özellik sunucu genelinde kapalıysa hesap
+  türünü tartışmanın anlamı yok; "şu anda kapalı" daha doğru bir cevaptır.
+* **Alan doğrulamasından (5) ÖNCE.** Ne gövde ayrıştırmayı ne veritabanını
+  gerektiriyor — zincirin **en ucuz** adımı.
+* **Hedefe bakan her şeyden (6+) ÖNCE.** Misafir bir arayan, başka hiç kimse
+  hakkında bilgi almamalı. Sonraya bırakılsaydı bir misafir hesap,
+  `KULLANICI_YOK` (404) ile `TAKIP_YOK` (403) farkından **kullanıcı adı
+  numaralandırabilirdi**. (Testle kilitli: misafir arayanda `hedefBul` dahil
+  hiçbir sorgu atılmıyor.)
+
+#### Adım 8 (ARANAN misafir) neden ENGELLEME ve TAKİP'ten ÖNCE
+
+Bu, adım 12'nin (arananın kendi tercihi) **bilinçli tersi** bir karardır:
+
+* **Misafirlik bir TERCİH DEĞİL, hesap TÜRÜdür.** Adım 12 "bu kişi ayarından
+  kapatmış" der ve o gerçek bir ifşadır — bu yüzden karşılıklı takip kapısının
+  arkasında durur. Burada ifşa edilecek bir ayar yok.
+* **`TAKIP_YOK` önce dönseydi kullanıcıya YAPILAMAZ bir iş önerirdik:**
+  "karşılıklı takipleşin" deyip takipleşse bile arama yine olmayacaktı. Kurtarma
+  yolu göstermeyen mesaj kötüdür; **yanlış** kurtarma yolu gösteren mesaj daha
+  kötüdür.
+* Bir de sorgu tasarrufu: `engelliMi` ve `karsilikliMi` hiç çalışmıyor.
+
+#### ⚠ BİLGİ SIZINTISI DEĞERLENDİRMESİ — sızan SIFIR bit
+
+Soru şuydu: "bu hesap misafir" demek, "böyle bir kullanıcı yok" demekten daha
+fazla bilgi verir mi?
+
+**Vermiyor, çünkü misafirlik zaten kullanıcı adından okunabiliyor:**
+
+1. Misafir kullanıcı adını **sunucu üretiyor**: `/auth/misafir` →
+   `'misafir_' + crypto.randomBytes(4).toString('hex')`, yani daima
+   `misafir_[0-9a-f]{8}`.
+2. Kullanıcı adını değiştirmenin **tek yolu** `POST /auth/bagla`, ve o uç
+   **aynı UPDATE içinde `misafir=false`** yapıyor.
+3. Dolayısıyla veritabanı düzeyinde bir eşdeğerlik geçerli:
+   **`misafir = true` ⟺ kullanıcı adı `misafir_` ile başlıyor.**
+4. Kullanıcı adları **herkese açık** (profil sayfaları, arama, akış) ve bu uca
+   ulaşmak için zaten **tam kullanıcı adını bilmek** gerekiyor.
+
+Yani `ALICI_MISAFIR`, saldırganın kullanıcı adına bakarak zaten bildiği bir
+şeyi tekrar ediyor. **Alternatifi (404 `KULLANICI_YOK` demeye devam etmek)
+hiçbir şey gizlemiyor, yalnız gerçek kullanıcıya yalan söylüyordu.**
+
+> **Bu eşdeğerlik kırılırsa bu karar yeniden değerlendirilmeli:** misafirlere
+> kullanıcı adı seçtiren ya da `misafir=false` yapmadan ad değiştiren bir uç
+> eklenirse, `ALICI_MISAFIR` gerçek bir ifşaya dönüşür ve adım 8'in yeri
+> (karşılıklı takip kapısının arkasına) tartışılmalıdır.
+
+#### Misafir kendi tercihini AÇAMAZ
+
+`POST /gizlilik-tercihleri` misafirden gelen `sesli_arama_acik` /
+`goruntulu_arama_acik` alanlarını **reddeder** (§4.9). Öteki gizlilik
+tercihleri (`izlenenler_gizli` vb.) etkilenmez — misafirin de gizlilik hakkı
+var. Zaten kimse onu arayamayacağı için açık bir bayrak **hiçbir şey yapmaz**,
+yalnız "açtım ama çalışmıyor" dedirtir.
 
 ### 5.1 Karşılıklı takip (kullanıcı kararı, tartışma kapalı)
 
@@ -813,6 +964,8 @@ gösterilmez; istemci `kod`a karşılık gelen **kendi 45 dilli metnini** basar.
 | `ARAMA_KAPALI` | 503 | Özellik sunucudan kapalı | Arama düğmelerini gizle, SnackBar |
 | `GORUNTULU_KAPALI` | 503 | Yalnız görüntülü kapalı | "Sesli ara" öner |
 | `GECERSIZ_ISTEK` | 400 | Alan doğrulama | Geliştirici hatası; genel SnackBar |
+| `MISAFIR_ARAMA_YOK` | 403 | **ARAYAN misafir hesap** | "Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin." + hesap bağlamaya götür |
+| `ALICI_MISAFIR` | 403 | **ARANAN misafir hesap** | "Misafir hesaplar aranamaz" — düğme zaten çizilmemeliydi |
 | `KULLANICI_YOK` | 404 | Kullanıcı silinmiş | Sohbeti kapat |
 | `KENDINE_ARAMA` | 400 | — | Düğme hiç gösterilmemeliydi |
 | `ENGELLI` | 403 | Taraflardan biri diğerini engellemiş | "Bu kullanıcıyı arayamazsın" |
@@ -1229,6 +1382,29 @@ hata mesajıdır.
 > ekranında PASİF gözükmeli bu buttonlar üstüne tıklayınca nereden aktif
 > edeceğini söyle."*
 
+### 14.2c Misafir hesaplar (sürüm 4) — İSTEMCİ SÖZLEŞMESİ
+
+| Durum | Sohbet başlığındaki düğmeler | Ayarlar > Gizlilik |
+|---|---|---|
+| **Kendim misafirim** (`misafir: true`) | **HİÇ ÇİZİLMEZ** + `GET /arama/gelen` yoklaması hiç başlamaz | İki anahtar **KİLİTLİ** (`Switch.onChanged == null`) + kilit ikonu + **SEBEP alt satırda yazılı** + dokununca aynı sebep SnackBar'da ve hesap bağlamaya götüren bir eylem |
+| **Karşı taraf misafir** | **HİÇ ÇİZİLMEZ** | — |
+
+**"Çiz ama pasif" DEĞİL, "hiç çizme" — md. 38'in tersi ve bilinçli.** Pasif
+düğme bir davettir ("ayarlardan açabilirsin"); misafirde açılacak bir şey yok.
+Sunucu kill switch'iyle aynı mantık: özellik gerçekten YOK.
+
+**Karşı tarafın misafir olduğu NEREDEN biliniyor — EK İSTEK YOK.**
+`GET /profil/:ad` yanıtına `misafir` alanı eklendi (sürüm 4) ve istemci bu ucu
+karşılıklı takip kontrolü için **zaten çağırıyordu**
+(`AramaServisi.karsilikliTakipMi`). Üstelik bir istek de **tasarruf ediliyor**:
+hedef misafirse `GET /takipedilenler/:ad` hiç atılmıyor, çünkü karşılıklı takip
+sorusunun cevabı ne olursa olsun sonuç değişmez.
+
+Alan yoksa (eski sunucu) düğme çizilir ve karar sunucuya kalır — kullanıcı bu
+kez **çevrilmiş** `ALICI_MISAFIR` metnini görür, eskisi gibi "Kullanıcı
+bulunamadı"yı değil. Yön bilinçli: burada varsayılan-ret, alanı göndermeyen bir
+sunucuda özelliği sessizce yok ederdi.
+
 ### 14.3 Yeni çeviri anahtarları (bu turda EKLENMEDİ — Flutter turunda)
 
 Tahmini **28 anahtar × 45 dil**. Asgari liste:
@@ -1272,3 +1448,56 @@ ve titrer; yalnız kilit ekranını kaplamaz.
 * Gizlilik metni **F1 ile birlikte** gitmeli (3 yer × 45 dil): arama üstverisi
   90 gün saklanır, **arama içeriği kaydedilmez** (DTLS-SRTP).
 * `gizlilikGuncelleme` sabiti iki yerde birden güncellenir.
+
+---
+
+## 15. İSTEMCİ HATASI (sürüm 4) — sunucunun sebebi kullanıcıya ULAŞMIYORDU
+
+10 Ağu'daki olayın **ikinci yarısı** ve misafir kuralından **bağımsız** bir
+hata. Sunucu doğru kodu döndürüyordu, istemcinin kod eşlemesi de doğruydu;
+**metin ekrana hiç gelmiyordu.**
+
+### Kök neden
+
+`GorusmeDenetci._bitir()` ilk çağrıda `_kapaniyor = true` yapıp sonraki
+çağrılarda `if (_kapaniyor) return` ile dönüyor. Kurulum sırasında (teklif/cevap
+üretilirken ya da `POST /arama/baslat` uçarken) medya katmanı `koptu` derse —
+`RTCPeerConnectionState` → `failed`/`closed`; ağ değişimi, TURN'e
+erişilememesi, eş bağlantının erken kapanması — `_halleriDinle` hemen
+`kapat(metin: 'Bağlanılamadı')` çağırıyordu. Bu çağrı `sonucMetni`'ni **GENEL**
+metne sabitliyor ve ekran (`GorusmeEkrani._degisti`) onu SnackBar'a basıp
+kapanıyordu.
+
+Saniyeler sonra gelen **özel** sunucu cevabı (`ALICI_MISAFIR`,
+`ALICI_SESLI_KAPALI`, `TAKIP_YOK`…) `aramaBaslat`'ın `catch`ine düşüyor, orada
+`aramaHatasiCozumle` ile **doğru** metne çevriliyor — ama ikinci `_bitir`
+çağrısı erken dönüyor ve o metin **hiçbir yere yazılmıyordu**.
+
+> Yani hata `gorusme_api.dart`ta (kod eşlemesi) **değildi**; hatanın yeri
+> `gorusme_denetci.dart`ın kapanış sırasıydı.
+
+### Düzeltme
+
+`GorusmeDenetci._kurulumSuruyor` bayrağı: `aramaBaslat`/`kabulEt` çalıştığı
+sürece `koptu` **aramayı kapatmaz**, yalnız `_iceKoptu` olarak kaydedilir.
+Otoriter sebep kurulum akışından gelir.
+
+* **Kurulum HATAYLA biterse:** `catch` sunucunun özel metnini yazar. ✔
+* **Kurulum BAŞARIYLA biterse:** ertelenen `_iceKoptu` orada tekrar okunur ve
+  arama "Bağlanılamadı" ile kapatılır. Bu adım atlansaydı ekran 45 saniye
+  "Çalıyor…" gösterip sonra "Cevap yok" derdi — kullanıcıya **yine yanlış
+  sebep**.
+* `POST /arama/bitir`in `sebep` alanı etkilenmez: `_iceKoptu` her hâlde
+  kaydediliyor, yani §13.1'deki `ice_basarisiz`/`ag_koptu` kararı bozulmuyor.
+
+Testler: `app/test/misafir_arama_test.dart` → *"YARIŞ"* öbeği (üç test:
+sebep ezilmiyor · arama askıda kalmıyor · normal `koptu` yolu bozulmuyor).
+
+> **Test ortamı tuzağı — yazana not:** `_bitir()` içindeki
+> `await _halAbonelik?.cancel()` çağrısı `testWidgets`in sahte zaman ekseninde
+> **asla tamamlanmaz** (Flutter test binding'inin bilinen davranışı). Bu yüzden
+> ekran seviyesindeki arama-hatası testleri `tester.runAsync(...)` içinde
+> beklemek zorunda; yalnız `pump()` ile beklenirse ekran sonsuza kadar
+> "Bağlanıyor…" görünür ve test yanlışlıkla "hata gösterilmiyor" der.
+> Bu bir üretim hatası DEĞİLDİR — düz `test()` ortamında `cancel()` normal
+> tamamlanıyor (ölçüldü).

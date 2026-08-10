@@ -768,6 +768,8 @@ class _YorumKartiState extends State<YorumKarti> {
                   url: avatar,
                   kullaniciAdi: yorum['kullanici_adi'] as String?,
                   yaricap: 14,
+                  // GIF avatar dizi/film yorumlarında da OYNAR (md.13).
+                  hareketli: true,
                 ),
                 const SizedBox(width: 8),
                 // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
@@ -1308,6 +1310,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                 url: avatar,
                 kullaniciAdi: y['kullanici_adi'] as String?,
                 yaricap: 10,
+                // Yanıt satırı da yorum yüzeyinin parçası (md.13).
+                hareketli: true,
               ),
               const SizedBox(width: 6),
               InkWell(

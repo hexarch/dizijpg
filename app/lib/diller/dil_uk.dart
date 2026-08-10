@@ -709,4 +709,7 @@ const Map<String, String> cevirilerUk = {
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Відеодзвінки вимкнено. Увімкнути можна в Налаштування > Конфіденційність.',
   'Sesli ve görüntülü arama': 'Голосові та відеодзвінки',
+  'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
+      'Гостьові акаунти не можуть телефонувати. Створи акаунт, щоб користуватися.',
+  'Misafir hesaplar aranamaz': 'Гостьовим акаунтам не можна зателефонувати',
 };
