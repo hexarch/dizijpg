@@ -25,6 +25,15 @@
 #
 # Kullanım:  ./mac-yedek-cek.sh [hedef_dizin]
 #   Varsayılan hedef: ~/dizijpg-yedekler
+#
+# ⚠ ÇALIŞAN KOPYA BURASI DEĞİL: ~/.dizijpg/mac-yedek-cek.sh
+#   Sebep: macOS koruması (TCC) arka plan görevlerinin ~/Desktop altındaki
+#   dosyaları çalıştırmasına izin vermiyor — depo Desktop'ta olduğu için
+#   launchd doğrudan buradan çalıştıramadı ("Operation not permitted", 126).
+#   BU DOSYA KANONİK. Değiştirdikten sonra çalışan kopyayı tazele:
+#       cp araclar/mac-yedek-cek.sh ~/.dizijpg/mac-yedek-cek.sh
+#   Zamanlama: ~/Library/LaunchAgents/com.dizijpg.yedekcek.plist (her gün 05:30)
+#   Günlük: ~/dizijpg-yedekler/cekme.log
 
 set -uo pipefail
 
