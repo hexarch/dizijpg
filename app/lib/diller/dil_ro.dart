@@ -696,4 +696,19 @@ const Map<String, String> cevirilerRo = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Notificări pentru urmăriri, aprecieri, răspunsuri, mesaje și etichetări',
   'Sen': 'Tu',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Apelurile vocale sunt dezactivate la această persoană',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Apelurile video sunt dezactivate la această persoană',
+  'Sesli aramalara izin ver': 'Permite apeluri vocale',
+  'Görüntülü aramalara izin ver': 'Permite apeluri video',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Când e dezactivat, nimeni nu te poate suna vocal; apelantul vede un anunț',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Când e dezactivat, nimeni nu te poate suna video; apelantul vede un anunț',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Apelurile vocale sunt dezactivate. Le poți activa în Setări > Confidențialitate.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Apelurile video sunt dezactivate. Le poți activa în Setări > Confidențialitate.',
+  'Sesli ve görüntülü arama': 'Apeluri vocale și video',
 };

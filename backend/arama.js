@@ -92,6 +92,15 @@ export const KOD = Object.freeze({
   ENGELLI: 'ENGELLI',
   TAKIP_YOK: 'TAKIP_YOK',
   ALICI_YASAKLI: 'ALICI_YASAKLI',
+  // Aranan kullanıcının KENDİ tercihi kapalı (`kullanicilar.sesli_arama_acik` /
+  // `goruntulu_arama_acik`, ikisi de VARSAYILAN false). `ARAMA_KAPALI` /
+  // `GORUNTULU_KAPALI` ile KARIŞTIRILMAMALI: onlar sunucu geneli kill
+  // switch'tir, bunlar tek bir kullanıcının kararıdır. Ayrı kod olmasının
+  // sebebi tam da bu — istemci "aradığınız kişide ... devre dışı" derken
+  // "uygulama şu an kapalı" demek zorunda kalmasın (yanlış sebep, "uygulama
+  // bozuk" algısı yaratır).
+  ALICI_SESLI_KAPALI: 'ALICI_SESLI_KAPALI',
+  ALICI_GORUNTULU_KAPALI: 'ALICI_GORUNTULU_KAPALI',
   COK_FAZLA_CEVAPSIZ: 'COK_FAZLA_CEVAPSIZ',
   ZATEN_ARAMADA: 'ZATEN_ARAMADA',
   DURUM_UYGUN_DEGIL: 'DURUM_UYGUN_DEGIL',
@@ -280,6 +289,9 @@ export function olcumTemizle(ham) {
  *
  * @param {object} girdi {aramaAcik, goruntuluAcik, benId, kullaniciAdi, tur, sdp}
  * @param {object} kaynak {hedefBul, engelliMi, karsilikliMi, sessizKalanSn, mesgulMu}
+ *   `hedefBul(ad)` -> `{id, yasakli, kabulSesli, kabulGoruntulu}`. Son iki alan
+ *   ARANANIN KENDİ tercihidir (`kullanicilar.sesli_arama_acik` /
+ *   `goruntulu_arama_acik`); eksikse arama REDDEDİLİR (varsayılan-ret, aşağıda).
  * @returns {Promise<{tamam:true, hedef:object, mesgul:boolean}|{tamam:false,http,kod,hata}>}
  */
 export async function baslatYetki(girdi, kaynak) {
@@ -313,17 +325,47 @@ export async function baslatYetki(girdi, kaynak) {
   }
   // 9 — aranan yasaklı
   if (hedef.yasakli) return hata(403, KOD.ALICI_YASAKLI, 'Bu hesap şu anda aranamıyor');
-  // 10 — çift bazlı sessizleştirme
+  // 10 — ARANANIN KENDİ TERCİHİ (madde 38). Varsayılan KAPALI.
+  //
+  // NEDEN BURADA (sıra bağlayıcı, sözleşme §5):
+  //  · Karşılıklı takip (8) ve engelleme (7) SONRASI: "bu kişide arama kapalı"
+  //    demek başkasının ayarını ifşa etmektir. Yalnız karşılıklı takipleştiğin
+  //    biri hakkında öğrenebilirsin. (İfşa BİLİNÇLİ: alternatif "bağlanılamadı"
+  //    demekti, o da kullanıcıya uygulamayı bozuk gösterirdi.)
+  //  · `ALICI_YASAKLI` (9) SONRASI: yasaklı bir hesapta tercihini de sızdırmak
+  //    gereksiz — genel "şu anda aranamıyor" yeterli.
+  //  · Sessizleştirme (11) ÖNCESİ: kapalı olması KALICI bir engel, sessizleştirme
+  //    geçici bir soğuma. Kalıcı sebep önce söylenir.
+  //
+  // *** SESSİZLEŞTİRME MUAFİYETİ BURADAN GELİYOR ***: burada dönmek demek
+  // bellekte kayıt OLUŞMAMASI, dolayısıyla hiçbir uç durumun (`cevapsiz`/
+  // `reddedildi`) yazılmaması demektir. `cevapsizKaydet` yalnız uçlaşan bir
+  // kayıtla çağrılır; kayıt hiç doğmadığı için sayaç ARTMAZ. Yoksa özelliği
+  // kapatan kişi, kendisini arayan masum kullanıcıyı 1 saat susturmuş olurdu.
+  // Testle kilitli ("KAPALI reddi sessizleştirme sayacına GİRMEZ").
+  // VARSAYILAN-RET (`!== true`, `=== false` DEĞİL): tercih okunamadıysa,
+  // sütun yoksa ya da `hedefBul` alanı yollamayı unuttuysa arama BAŞLAMAZ.
+  // Kullanıcı kararı "otomatik olarak KAPALI" idi; bilinmeyeni "açık" saymak o
+  // kararı sessizce tersine çevirirdi. Ters yönde hata gürültülüdür (kimse
+  // aranamaz, hemen fark edilir), bu yönde hata SESSİZDİR (herkes aranabilir,
+  // kimse fark etmez).
+  if (tur === 'ses' && hedef.kabulSesli !== true) {
+    return hata(403, KOD.ALICI_SESLI_KAPALI, 'Bu kullanıcıda sesli arama kapalı');
+  }
+  if (tur === 'goruntu' && hedef.kabulGoruntulu !== true) {
+    return hata(403, KOD.ALICI_GORUNTULU_KAPALI, 'Bu kullanıcıda görüntülü arama kapalı');
+  }
+  // 11 — çift bazlı sessizleştirme
   const kalan = await kaynak.sessizKalanSn(benId, hedef.id);
   if (kalan > 0) {
     return hata(429, KOD.COK_FAZLA_CEVAPSIZ,
       'Bu kişiye çok fazla cevapsız arama yaptın', { kalan_sn: kalan });
   }
-  // 11 — arayan zaten bir aramada (istemci hatası: kendi ekranında arama var)
+  // 12 — arayan zaten bir aramada (istemci hatası: kendi ekranında arama var)
   if (await kaynak.mesgulMu(benId)) {
     return hata(409, KOD.ZATEN_ARAMADA, 'Zaten bir aramadasın');
   }
-  // 12 — aranan zaten bir aramada. HATA DEĞİL: aramanın normal bir sonucu.
+  // 13 — aranan zaten bir aramada. HATA DEĞİL: aramanın normal bir sonucu.
   //      200 + durum:'mesgul' döner ve üstveriye `mesgul` olarak yazılır.
   const mesgul = await kaynak.mesgulMu(hedef.id);
   return { tamam: true, hedef, mesgul };

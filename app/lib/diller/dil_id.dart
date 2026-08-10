@@ -694,4 +694,19 @@ const Map<String, String> cevirilerId = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Notifikasi ikuti, suka, balasan, pesan, dan tag',
   'Sen': 'Kamu',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Panggilan suara dinonaktifkan pada orang ini',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Panggilan video dinonaktifkan pada orang ini',
+  'Sesli aramalara izin ver': 'Izinkan panggilan suara',
+  'Görüntülü aramalara izin ver': 'Izinkan panggilan video',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Saat mati, tidak ada yang bisa menelepon suara kamu; penelepon melihat pemberitahuan',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Saat mati, tidak ada yang bisa melakukan panggilan video ke kamu; penelepon melihat pemberitahuan',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Panggilan suara mati. Kamu bisa mengaktifkannya di Pengaturan > Privasi.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Panggilan video mati. Kamu bisa mengaktifkannya di Pengaturan > Privasi.',
+  'Sesli ve görüntülü arama': 'Panggilan suara dan video',
 };

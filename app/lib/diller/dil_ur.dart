@@ -694,4 +694,18 @@ const Map<String, String> cevirilerUr = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'فالو، پسند، جواب، پیغام اور ٹیگ کی اطلاعات',
   'Sen': 'آپ',
+  'Aradığınız kişide sesli arama devre dışı': 'اس شخص کے لیے صوتی کال بند ہے',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'اس شخص کے لیے ویڈیو کال بند ہے',
+  'Sesli aramalara izin ver': 'صوتی کالز کی اجازت دیں',
+  'Görüntülü aramalara izin ver': 'ویڈیو کالز کی اجازت دیں',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'بند ہونے پر کوئی آپ کو صوتی کال نہیں کر سکتا؛ کال کرنے والے کو اطلاع نظر آتی ہے',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'بند ہونے پر کوئی آپ کو ویڈیو کال نہیں کر سکتا؛ کال کرنے والے کو اطلاع نظر آتی ہے',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'صوتی کال بند ہے۔ اسے ترتیبات > رازداری سے آن کر سکتے ہیں۔',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ویڈیو کال بند ہے۔ اسے ترتیبات > رازداری سے آن کر سکتے ہیں۔',
+  'Sesli ve görüntülü arama': 'صوتی اور ویڈیو کال',
 };

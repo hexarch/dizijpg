@@ -688,4 +688,18 @@ const Map<String, String> cevirilerGu = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ફોલો, લાઇક, જવાબ, સંદેશ અને ટૅગની સૂચનાઓ',
   'Sen': 'તમે',
+  'Aradığınız kişide sesli arama devre dışı': 'આ વ્યક્તિ માટે વોઇસ કૉલ બંધ છે',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'આ વ્યક્તિ માટે વિડિયો કૉલ બંધ છે',
+  'Sesli aramalara izin ver': 'વોઇસ કૉલની મંજૂરી આપો',
+  'Görüntülü aramalara izin ver': 'વિડિયો કૉલની મંજૂરી આપો',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'બંધ હોય ત્યારે કોઈ તમને વોઇસ કૉલ કરી શકતું નથી; કૉલ કરનારને સૂચના દેખાય છે',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'બંધ હોય ત્યારે કોઈ તમને વિડિયો કૉલ કરી શકતું નથી; કૉલ કરનારને સૂચના દેખાય છે',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'વોઇસ કૉલ બંધ છે. સેટિંગ્સ > ગોપનીયતામાંથી ચાલુ કરી શકો છો.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'વિડિયો કૉલ બંધ છે. સેટિંગ્સ > ગોપનીયતામાંથી ચાલુ કરી શકો છો.',
+  'Sesli ve görüntülü arama': 'વોઇસ અને વિડિયો કૉલ',
 };

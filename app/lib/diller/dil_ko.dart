@@ -669,4 +669,17 @@ const Map<String, String> cevirilerKo = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       '팔로우, 좋아요, 답글, 메시지, 태그 알림',
   'Sen': '나',
+  'Aradığınız kişide sesli arama devre dışı': '상대방이 음성 통화를 사용 중지했습니다',
+  'Aradığınız kişide görüntülü arama devre dışı': '상대방이 영상 통화를 사용 중지했습니다',
+  'Sesli aramalara izin ver': '음성 통화 허용',
+  'Görüntülü aramalara izin ver': '영상 통화 허용',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      '끄면 아무도 음성 통화를 걸 수 없습니다. 거는 사람에게 안내가 표시됩니다',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      '끄면 아무도 영상 통화를 걸 수 없습니다. 거는 사람에게 안내가 표시됩니다',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      '음성 통화가 꺼져 있습니다. 설정 > 개인정보 보호에서 켤 수 있습니다.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      '영상 통화가 꺼져 있습니다. 설정 > 개인정보 보호에서 켤 수 있습니다.',
+  'Sesli ve görüntülü arama': '음성 및 영상 통화',
 };

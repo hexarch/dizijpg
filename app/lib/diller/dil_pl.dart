@@ -698,4 +698,19 @@ const Map<String, String> cevirilerPl = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Powiadomienia o obserwacjach, polubieniach, odpowiedziach, wiadomościach i oznaczeniach',
   'Sen': 'Ty',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Połączenia głosowe są wyłączone u tej osoby',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Połączenia wideo są wyłączone u tej osoby',
+  'Sesli aramalara izin ver': 'Zezwalaj na połączenia głosowe',
+  'Görüntülü aramalara izin ver': 'Zezwalaj na połączenia wideo',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Gdy wyłączone, nikt nie może do ciebie zadzwonić; dzwoniący zobaczy powiadomienie',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Gdy wyłączone, nikt nie może zadzwonić do ciebie z wideo; dzwoniący zobaczy powiadomienie',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Połączenia głosowe są wyłączone. Możesz je włączyć w Ustawienia > Prywatność.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Połączenia wideo są wyłączone. Możesz je włączyć w Ustawienia > Prywatność.',
+  'Sesli ve görüntülü arama': 'Połączenia głosowe i wideo',
 };

@@ -692,4 +692,19 @@ const Map<String, String> cevirilerSr = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Обавештења о праћењима, свиђањима, одговорима, порукама и означавањима',
   'Sen': 'Ти',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Гласовни позиви су искључени код ове особе',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Видео позиви су искључени код ове особе',
+  'Sesli aramalara izin ver': 'Дозволи гласовне позиве',
+  'Görüntülü aramalara izin ver': 'Дозволи видео позиве',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Када је искључено, нико не може да те позове гласовно; позивалац види обавештење',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Када је искључено, нико не може да те позове видеом; позивалац види обавештење',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Гласовни позиви су искључени. Можеш их укључити у Подешавања > Приватност.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Видео позиви су искључени. Можеш их укључити у Подешавања > Приватност.',
+  'Sesli ve görüntülü arama': 'Гласовни и видео позиви',
 };

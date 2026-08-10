@@ -675,4 +675,17 @@ const Map<String, String> cevirilerAm = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'የመከተል፣ የመውደድ፣ የመልስ፣ የመልእክት እና የመለያ ማሳወቂያዎች',
   'Sen': 'እርስዎ',
+  'Aradığınız kişide sesli arama devre dışı': 'ለዚህ ሰው የድምፅ ጥሪ ተሰናክሏል',
+  'Aradığınız kişide görüntülü arama devre dışı': 'ለዚህ ሰው የቪዲዮ ጥሪ ተሰናክሏል',
+  'Sesli aramalara izin ver': 'የድምፅ ጥሪዎችን ፍቀድ',
+  'Görüntülü aramalara izin ver': 'የቪዲዮ ጥሪዎችን ፍቀድ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ሲጠፋ ማንም በድምፅ ሊደውልልህ አይችልም፤ ደዋዩ ማሳወቂያ ያያል',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ሲጠፋ ማንም በቪዲዮ ሊደውልልህ አይችልም፤ ደዋዩ ማሳወቂያ ያያል',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'የድምፅ ጥሪ ጠፍቷል። ከቅንብሮች > ግላዊነት ማብራት ትችላለህ።',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'የቪዲዮ ጥሪ ጠፍቷል። ከቅንብሮች > ግላዊነት ማብራት ትችላለህ።',
+  'Sesli ve görüntülü arama': 'የድምፅ እና ቪዲዮ ጥሪ',
 };

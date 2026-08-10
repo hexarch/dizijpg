@@ -10,6 +10,7 @@ import '../altyazi.dart';
 import '../api.dart';
 import '../bayrak.dart' show ulkeAdi;
 import '../ceviri.dart';
+import '../gorusme/arama_servisi.dart';
 import '../push.dart';
 import 'gorsel_kirp.dart';
 import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
@@ -1345,6 +1346,32 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
     ),
   ];
 
+  /// Sesli/görüntülü arama izinleri (istek listesi md. 38).
+  ///
+  /// POLARİTE YUKARIDAKİLERİN TERSİ ve bu BİLİNÇLİ: yukarıdakiler "gizle"
+  /// (true = kapat), bunlar "izin ver" (true = aç). Aynı listeye karıştırılıp
+  /// tek `for` ile çizilmiyor, ayrı başlık altında duruyorlar — kullanıcı
+  /// "izin ver"i kapalı görünce ne olduğunu düşünmek zorunda kalmasın.
+  ///
+  /// >>> İKİSİ DE VARSAYILAN KAPALI <<< (kullanıcı kararı, 10 Ağu). Yani bu
+  /// ekranı hiç açmayan kimse aranamaz. Yan faydası: arama bayraklarını
+  /// canlıda açmak riskisiz — kimse istemeden aranabilir hâle gelmiyor.
+  ///
+  /// Bedeli de gerçek: kimse bilmezse kimse açmaz. Bu yüzden sohbetteki pasif
+  /// düğme tıklanınca buraya yönlendiren bir açıklama gösteriyor.
+  static const _aramaAlanlari = [
+    (
+      'sesli_arama_acik',
+      'Sesli aramalara izin ver',
+      'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür',
+    ),
+    (
+      'goruntulu_arama_acik',
+      'Görüntülü aramalara izin ver',
+      'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür',
+    ),
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -1363,11 +1390,15 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
   Future<void> _degistir(String alan, bool deger) async {
     final eski = _tercih![alan];
     setState(() => _tercih![alan] = deger); // iyimser
+    _aramaServisineYansit(alan, deger);
     try {
       await Api.post('/gizlilik-tercihleri', {alan: deger});
     } catch (e) {
       if (mounted) {
         setState(() => _tercih![alan] = eski); // geri al
+        // Arama düğmeleri de geri alınmalı: yoksa sunucu "kapalı" bilirken
+        // sohbette düğme AKTİF görünür ve kullanıcı 403 yer. Sessiz tutarsızlık.
+        _aramaServisineYansit(alan, eski == true);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -1375,107 +1406,173 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
     }
   }
 
+  /// Arama tercihi değiştiyse bellekteki kopyayı da güncelle — açık sohbet
+  /// ekranlarındaki düğmeler anında pasif/aktif olsun. (Öteki `_gizli`
+  /// alanlarında karşılığı yok; onlar sunucudan okunuyor.)
+  void _aramaServisineYansit(String alan, bool deger) {
+    if (alan == 'sesli_arama_acik') {
+      AramaServisi.kendiTercihiKur(sesli: deger);
+    } else if (alan == 'goruntulu_arama_acik') {
+      AramaServisi.kendiTercihiKur(goruntulu: deger);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // KAYDIRILABİLİR OLMAK ZORUNDA. md. 38'in iki anahtarı eklenince bu sheet
+    // 600 dp yükseklikte 50 px TAŞTI (sarı-siyah çizgili hata bandı) — kısa
+    // ekranlarda ve büyük yazı tipi ölçeğinde son öğeler kesilirdi.
+    // `mainAxisSize: min` içerik sığdığında sheet'i yine kısa tutuyor; taşınca
+    // artık kırpmak yerine kayıyor. (`showModalBottomSheet` zaten
+    // `isScrollControlled: true` ile açılıyor.)
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.visibility_off_outlined,
-                  size: 20,
-                  color: DiziRenkler.sariMetin,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'Gizlilik'.c,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          if (_hata != null)
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
             Padding(
-              padding: const EdgeInsets.all(24),
-              child: Text(_hata!, style: TextStyle(color: DiziRenkler.metin54)),
-            )
-          else if (_tercih == null)
-            const Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(color: DiziRenkler.sari),
-            )
-          else ...[
-            for (final (alan, etiket, aciklama) in _alanlar)
-              SwitchListTile(
-                value: _tercih![alan] == true,
-                activeColor: DiziRenkler.sari,
-                title: Text(
-                  etiket.c,
-                  style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
-                ),
-                subtitle: Text(
-                  aciklama.c,
-                  style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
-                ),
-                onChanged: (v) => _degistir(alan, v),
-              ),
-            // Tek tek gizlenen yorumların yönetim yeri. Sheet ÖNCE kapanır,
-            // sonra gidilir: kullanıcı geri döndüğünde üstüne yapışmış bir
-            // sheet bulmasın (begenenler.dart'taki kalıbın aynısı).
-            ListTile(
-              leading: Icon(
-                Icons.speaker_notes_off_outlined,
-                color: DiziRenkler.sariMetin,
-              ),
-              title: Text(
-                'Gizlenen yorumlar'.c,
-                style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
-              ),
-              subtitle: Text(
-                'Profilinde gizlediğin yorumları tekrar göster'.c,
-                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
-              ),
-              trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
-              onTap: () {
-                final yonlendirici = GoRouter.of(context);
-                Navigator.pop(context);
-                yonlendirici.push('/gizlenen-yorumlar');
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
                 children: [
                   Icon(
-                    Icons.info_outline,
-                    size: 15,
-                    color: DiziRenkler.metin38,
+                    Icons.visibility_off_outlined,
+                    size: 20,
+                    color: DiziRenkler.sariMetin,
                   ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.'
-                          .c,
-                      style: TextStyle(
-                        color: DiziRenkler.metin38,
-                        fontSize: 12,
-                        height: 1.4,
-                      ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Gizlilik'.c,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],
               ),
             ),
+            if (_hata != null)
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  _hata!,
+                  style: TextStyle(color: DiziRenkler.metin54),
+                ),
+              )
+            else if (_tercih == null)
+              const Padding(
+                padding: EdgeInsets.all(24),
+                child: CircularProgressIndicator(color: DiziRenkler.sari),
+              )
+            else ...[
+              for (final (alan, etiket, aciklama) in _alanlar)
+                SwitchListTile(
+                  value: _tercih![alan] == true,
+                  activeColor: DiziRenkler.sari,
+                  title: Text(
+                    etiket.c,
+                    style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                  ),
+                  subtitle: Text(
+                    aciklama.c,
+                    style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+                  ),
+                  onChanged: (v) => _degistir(alan, v),
+                ),
+              // --- Aramalar (md. 38) ---
+              // Ayrı başlık: bu iki anahtarın polaritesi yukarıdakilerin TERSİ
+              // ("izin ver" / "gizle") ve ikisi de VARSAYILAN KAPALI. Aynı
+              // öbekte, ayrımsız çizilselerdi kullanıcı hangi yönün ne demek
+              // olduğunu her okuyuşta yeniden düşünürdü.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.call_outlined,
+                      size: 18,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      // "Aramalar" TEK BAŞINA KULLANILMADI: bu projede "arama"
+                      // hem dizi araması hem telefon araması demek. Ayarlar
+                      // ekranında kısa hâli okuyanı yanıltırdı.
+                      'Sesli ve görüntülü arama'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              for (final (alan, etiket, aciklama) in _aramaAlanlari)
+                SwitchListTile(
+                  key: Key('gizlilik-$alan'),
+                  value: _tercih![alan] == true,
+                  activeColor: DiziRenkler.sari,
+                  title: Text(
+                    etiket.c,
+                    style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                  ),
+                  subtitle: Text(
+                    aciklama.c,
+                    style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+                  ),
+                  onChanged: (v) => _degistir(alan, v),
+                ),
+              // Tek tek gizlenen yorumların yönetim yeri. Sheet ÖNCE kapanır,
+              // sonra gidilir: kullanıcı geri döndüğünde üstüne yapışmış bir
+              // sheet bulmasın (begenenler.dart'taki kalıbın aynısı).
+              ListTile(
+                leading: Icon(
+                  Icons.speaker_notes_off_outlined,
+                  color: DiziRenkler.sariMetin,
+                ),
+                title: Text(
+                  'Gizlenen yorumlar'.c,
+                  style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Profilinde gizlediğin yorumları tekrar göster'.c,
+                  style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+                ),
+                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+                onTap: () {
+                  final yonlendirici = GoRouter.of(context);
+                  Navigator.pop(context);
+                  yonlendirici.push('/gizlenen-yorumlar');
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      size: 15,
+                      color: DiziRenkler.metin38,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.'
+                            .c,
+                        style: TextStyle(
+                          color: DiziRenkler.metin38,
+                          fontSize: 12,
+                          height: 1.4,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
           ],
-          const SizedBox(height: 16),
-        ],
+        ),
       ),
     );
   }

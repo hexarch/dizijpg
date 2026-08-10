@@ -1,0 +1,72 @@
+-- ---------------------------------------------------------------------------
+-- 10 Ağu 2026 — KULLANICI BAŞINA SESLİ/GÖRÜNTÜLÜ ARAMA AÇMA-KAPAMA
+--               (istek listesi md. 38; md. 7 ile AYNI DAĞITIMDA çıkmalı)
+--
+-- API sözleşmesi: backend/ARAMA-API-SOZLESMESI.md §4.2 / §5 / §8
+--
+-- ÖNCE: `migrasyon-2026-08-08e.sql` uygulanmış olmalı. Teknik bir bağımlılık
+--       YOK (o dosya `aramalar` tablosunu kurar, burası `kullanicilar`a sütun
+--       ekler); sıra yalnız kronolojiyi korumak için.
+--
+-- ===========================================================================
+-- KARAR — İKİ SÜTUN, İKİSİ DE `DEFAULT false` (KULLANICI KARARI)
+-- ===========================================================================
+-- Kullanıcının kendi sözleri (10 Ağu): "bu özellik OTOMATİK OLARAK KAPALI
+-- olmalı". Yani hiç kimse, ayarlara girip açmadıkça aranabilir hâle gelmez.
+--
+-- Bu, projedeki öteki tercih sütunlarının varsayılanından BİLEREK farklıdır:
+--   · `izlenenler_gizli`, `yorumlar_gizli`, `yanitlar_gizli`, `cevrimici_gizli`
+--     -> DEFAULT false, ama polariteleri NEGATİF (false = gizli DEĞİL = açık).
+--   · `bildir_*`                    -> DEFAULT true (bildirimler açık gelir).
+--   · BURASI                        -> DEFAULT false ve polarite POZİTİF
+--                                      (false = arama KAPALI).
+-- Sütun adları polariteyi taşıyor (`_acik`), bu yüzden aynı uçta (`/gizlilik-
+-- tercihleri`) `_gizli` sütunlarıyla yan yana durmaları karışıklık yaratmıyor:
+-- adı okuyan yönü biliyor.
+--
+-- NEDEN "otomatik kapalı" DOĞRU KARAR: arama bayraklarını (`arama_acik`,
+-- `arama_goruntulu_acik`) canlıda açmak RİSKSİZ hâle geliyor — bayrak açıldığı
+-- an kimse istemeden aranabilir duruma gelmiyor. Bedeli: özelliği kimse
+-- bilmezse kimse açmaz; bu yüzden rehberde (md. 5) ve ilk açılış akışında
+-- (md. 25) tanıtılacak.
+--
+-- ===========================================================================
+-- ZORLAMA SUNUCUDA — BU SÜTUNLAR SÜS DEĞİL
+-- ===========================================================================
+-- `POST /arama/baslat` bu iki sütunu OKUR ve kapalıysa aramayı hiç başlatmaz
+-- (`ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI`, 403). İstemcide düğmeyi
+-- pasif yapmak yeterli DEĞİLDİR: değiştirilmiş bir istemci yine `/arama/baslat`
+-- çağırabilir. Kontrol, karşılıklı takip kapısının hemen yanındadır
+-- (`arama.js` -> `baslatYetki`, adım 10).
+--
+-- ÖNEMLİ YAN SÖZLEŞME: bu reddediş bellekte KAYIT OLUŞTURMAZ, dolayısıyla
+-- `aramalar` tablosuna satır yazılmaz ve çift bazlı sessizleştirme sayacı
+-- (§9.1: 15 dk'da 3 cevapsız -> 1 saat yasak) ARTMAZ. Aksi hâlde özelliği
+-- kapatan kişi, kendisini arayan masum kullanıcıyı susturmuş olurdu.
+--
+-- GERİ ALMA (gerekirse):
+--   ALTER TABLE kullanicilar DROP COLUMN IF EXISTS sesli_arama_acik;
+--   ALTER TABLE kullanicilar DROP COLUMN IF EXISTS goruntulu_arama_acik;
+-- Veri kaybı yalnız kullanıcıların açtığı tercihlerdir; sütunlar geri
+-- eklendiğinde herkes yeniden "kapalı" başlar — güvenli yön.
+-- ---------------------------------------------------------------------------
+
+-- Sesli arama: bu kullanıcı ARANABİLİR mi (kendi kararı).
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS sesli_arama_acik BOOLEAN NOT NULL DEFAULT false;
+
+-- Görüntülü arama: ayrı anahtar. Sesliyi açıp görüntülüyü kapalı bırakmak
+-- geçerli ve beklenen bir kombinasyondur (kullanıcı sesini paylaşmaya razı
+-- ama kamerasını açmaya değil).
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS goruntulu_arama_acik BOOLEAN NOT NULL DEFAULT false;
+
+-- DOĞRULAMA (uygulayan çalıştırsın; ikisi de `false` ve `NOT NULL` olmalı):
+--   SELECT column_name, data_type, is_nullable, column_default
+--     FROM information_schema.columns
+--    WHERE table_name='kullanicilar'
+--      AND column_name IN ('sesli_arama_acik','goruntulu_arama_acik');
+--
+-- MEVCUT KULLANICILAR: `NOT NULL DEFAULT false` geriye dönük olarak da false
+-- yazar — yani bugünkü hiçbir hesap aranabilir hâle GELMEZ. Bu istenen
+-- davranıştır; kimseye sormadan telefonunu çaldırılabilir yapmıyoruz.

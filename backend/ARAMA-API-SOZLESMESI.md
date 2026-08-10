@@ -1,6 +1,6 @@
 # dizi.jpg — Sesli/Görüntülü Arama API Sözleşmesi
 
-**Sürüm:** 2 · **Tarih:** 9 Ağu 2026 (sürüm 1: 8 Ağu, taslak)
+**Sürüm:** 3 · **Tarih:** 10 Ağu 2026 (sürüm 2: 9 Ağu · sürüm 1: 8 Ağu, taslak)
 **Kaynak karar belgesi:** `ARAMA-PLANI.md`
 **Durum:** ***BACKEND YAZILDI VE TESTLİ.*** Sekiz ucun hepsi `server.js`te,
 mantık `backend/arama.js` (saf modül) içinde, 77 test `backend/test/arama.test.js`
@@ -9,6 +9,21 @@ Flutter tarafı **yazılmadı**; istemcinin ne yapması gerektiği §14'te.
 
 > **Sürüm 1 ile sürüm 2 arasındaki farklar §13'te tek tek listelendi.** Sözleşme
 > kodu değil, **kod sözleşmeyi** izledi; sapmalar yazılmadan önce buraya işlendi.
+
+> ### SÜRÜM 3 (10 Ağu 2026) — kullanıcı başına açma/kapama (istek listesi md. 38)
+>
+> **Değişenler:** §4.1 yanıtına `kendi_sesli_acik` / `kendi_goruntulu_acik` ·
+> §5 yetki tablosuna **adım 10** (sonrakiler bir kaydı) · **yeni §5.0** (üç
+> katman ve öncelik) · **yeni §5.0.1** (sessizleştirme muafiyeti — bağlayıcı) ·
+> §8'e **iki yeni kod** (`ALICI_SESLI_KAPALI`, `ALICI_GORUNTULU_KAPALI`; toplam
+> 13 → **15**) · §9.1'e muafiyet notu · §14.2'ye istemci sözleşmesi.
+>
+> **Migrasyon:** `backend/migrasyon-2026-08-10.sql` — `kullanicilar`a
+> `sesli_arama_acik` ve `goruntulu_arama_acik`, **ikisi de
+> `BOOLEAN NOT NULL DEFAULT false`**. ***CANLIYA UYGULANMADI.***
+>
+> **Tercih ucu:** `GET|POST /gizlilik-tercihleri` (mevcut uç; alan listesi
+> `GIZLILIK_ALANLARI` → `TERCIH_ALANLARI` olarak genişledi).
 
 > **Bu belgeyi okuyan Flutter ajanına:** aşağıdaki gövde/yanıt alan adları
 > bağlayıcıdır. Değiştirmen gerekiyorsa önce bu belgeyi güncelle, sonra kodu.
@@ -230,6 +245,8 @@ başlatmayı `/arama/baslat` engeller)
   "gecerlilik_sn": 43200,
   "arama_acik": true,
   "goruntulu_acik": true,
+  "kendi_sesli_acik": false,
+  "kendi_goruntulu_acik": false,
   "calma_saniye": 45
 }
 ```
@@ -240,6 +257,16 @@ başlatmayı `/arama/baslat` engeller)
   alanları **hiç bulunmaz**.
 * `goruntulu_acik: false` ise istemci görüntülü arama düğmesini **gizler**;
   ama asıl zorlama sunucudadır (§4.2).
+* **`kendi_*` (sürüm 3, md. 38) `arama_acik`/`goruntulu_acik` İLE AYNI ŞEY
+  DEĞİLDİR.** İlk ikisi **sunucu geneli** kill switch, `kendi_*` **çağıran
+  kullanıcının kendi tercihidir** (`kullanicilar.sesli_arama_acik` /
+  `goruntulu_arama_acik`, **ikisi de DEFAULT false**). İstemci bunları yalnız
+  **kendi** arama düğmelerini **pasif** çizmek için kullanır — düğme
+  **GİZLENMEZ**, pasif görünür ve tıklanınca nereden açılacağını söyler.
+  Burada taşınmalarının tek sebebi ayrı bir istek turu harcamamaktır; bu uç
+  zaten açılışta bir kez çağrılıyor.
+* Karşı tarafın tercihi burada **YOKTUR ve olmayacaktır** — başkasının ayarı
+  ancak arama denendiğinde ve yalnız karşılıklı takipleşiliyorsa (§5) öğrenilir.
 
 ---
 
@@ -453,9 +480,63 @@ bilgi sızdırmayan kontroller önce.
 | 7 | **Engelleme (çift yönlü)** | 403 | `ENGELLI` |
 | 8 | **Karşılıklı takip yok** | 403 | `TAKIP_YOK` |
 | 9 | Aranan yasaklı (`kullanicilar.yasakli`) | 403 | `ALICI_YASAKLI` |
-| 10 | Çift bazlı sessizleştirme aktif | 429 | `COK_FAZLA_CEVAPSIZ` |
-| 11 | **Arayan zaten bir aramada** | 409 | `ZATEN_ARAMADA` |
-| 12 | **Aranan zaten bir aramada** | 200 + `durum:"mesgul"` | — |
+| 10 | **Arananın KENDİ tercihi kapalı** (`tur='ses'`) | 403 | `ALICI_SESLI_KAPALI` |
+| 10 | **Arananın KENDİ tercihi kapalı** (`tur='goruntu'`) | 403 | `ALICI_GORUNTULU_KAPALI` |
+| 11 | Çift bazlı sessizleştirme aktif | 429 | `COK_FAZLA_CEVAPSIZ` |
+| 12 | **Arayan zaten bir aramada** | 409 | `ZATEN_ARAMADA` |
+| 13 | **Aranan zaten bir aramada** | 200 + `durum:"mesgul"` | — |
+
+### 5.0 Kullanıcı başına açma-kapama (md. 38) — üç katmanın en ortası
+
+**Üç katman var ve öncelik yukarıdaki tablodadır:**
+
+| # | Katman | Kapalıysa `kod` | Nerede |
+|---|---|---|---|
+| 1 | Sunucu geneli kill switch | `ARAMA_KAPALI` / `GORUNTULU_KAPALI` (503) | `ayarlar` tablosu + `.env` (§6.2) |
+| 2 | **Kullanıcının kendi tercihi** | `ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI` (403) | `kullanicilar.sesli_arama_acik` / `goruntulu_arama_acik` |
+| 3 | Karşılıklı takip | `TAKIP_YOK` (403) | `takipler` (§5.1) |
+
+Herhangi biri kapalıysa arama olmaz, **ama gösterilen mesaj hangi sebeple
+engellendiğini doğru söylemek zorundadır.** Yanlış sebep göstermek "uygulama
+bozuk" algısı yaratır — bu yüzden kodlar ayrı.
+
+**`sesli_arama_acik` / `goruntulu_arama_acik` — `NOT NULL DEFAULT false`**
+(migrasyon `backend/migrasyon-2026-08-10.sql`). Varsayılan **KAPALI**: kimse,
+ayarlara girip açmadıkça aranabilir hâle gelmez (kullanıcı kararı, 10 Ağu).
+
+**Okuma VARSAYILAN-RET'tir.** `baslatYetki` alanı `!== true` diye kontrol eder:
+sütun okunamazsa, migrasyon uygulanmamışsa ya da sorgu alanı seçmeyi unutmuşsa
+arama **başlamaz**. Ters yön (bilinmeyeni "açık" saymak) sessiz bir arızadır —
+herkes aranabilir olur ve kimse fark etmez.
+
+**Sıra neden tam orada:**
+
+* **Engelleme (7) ve karşılıklı takip (8) SONRASI.** "Bu kişide arama kapalı"
+  demek **başkasının ayarını ifşa etmektir**. Bu ifşa **bilinçli** (alternatifi
+  "bağlanılamadı" demekti, o da uygulamayı bozuk gösterirdi), ama bedeli en aza
+  indiriliyor: yalnız **karşılıklı takipleştiğin** biri hakkında öğrenebilirsin.
+* **`ALICI_YASAKLI` (9) SONRASI.** Yasaklı hesabın tercihini ayrıca sızdırmak
+  gereksiz; genel "şu anda aranamıyor" yeterli.
+* **Sessizleştirme (11) ÖNCESİ.** Kapalı olmak **kalıcı** bir engel,
+  sessizleştirme **geçici** bir soğuma; kalıcı sebep önce söylenir.
+
+### 5.0.1 ⚠ OTOMATİK RED, ARAYANI CEZALANDIRMAZ — bağlayıcı
+
+§9.1'deki "15 dakikada 3 cevapsız → o kişiye 1 saat arama yasağı" kuralına
+**`ALICI_*_KAPALI` reddi GİRMEZ.** Girseydi, özelliği kapatan kişi kendisini
+arayan **masum kullanıcıyı 1 saat susturmuş** olurdu.
+
+**Nasıl garanti altına alındı — mekanizma, dikkat değil:** bu red
+`baslatYetki` içinde, `AramaDeposu.olustur()` çağrılmadan **önce** döner. Kayıt
+hiç doğmadığı için uçlaşma da olmaz; `sessizDepo.cevapsizKaydet()` ise
+**yalnız** `aramaUclandi(satir)` içinden, yani gerçekten oluşmuş ve uçlaşmış bir
+kayıtla çağrılır. Sayaca ulaşan başka yol **yoktur**.
+
+Testle kilitli (`test/arama.test.js`):
+`*** md.38 KAPALI REDDİ SESSİZLEŞTİRME SAYACINA GİRMEZ ***` (10 kez üst üste
+reddedilen arayanın cezası 0 kalıyor **ve** `sessizKalanSn` sorgusuna hiç
+girilmiyor) + `md.38 sessizleştirme sayacı YALNIZ uçlaşan kayıttan besleniyor`
+(`cevapsizKaydet` server.js'te tek çağrı ve o çağrı `aramaUclandi` içinde).
 
 ### 5.1 Karşılıklı takip (kullanıcı kararı, tartışma kapalı)
 
@@ -737,6 +818,8 @@ gösterilmez; istemci `kod`a karşılık gelen **kendi 45 dilli metnini** basar.
 | `ENGELLI` | 403 | Taraflardan biri diğerini engellemiş | "Bu kullanıcıyı arayamazsın" |
 | `TAKIP_YOK` | 403 | Karşılıklı takip yok | "Aramak için karşılıklı takipleşmelisiniz" |
 | `ALICI_YASAKLI` | 403 | Aranan hesap yasaklı | Genel "şu an aranamıyor" |
+| `ALICI_SESLI_KAPALI` | 403 | **Aranan kendi ayarından sesli aramayı kapatmış** | "Aradığınız kişide sesli arama devre dışı" |
+| `ALICI_GORUNTULU_KAPALI` | 403 | **Aranan kendi ayarından görüntülü aramayı kapatmış** | "Aradığınız kişide görüntülü arama devre dışı" |
 | `COK_FAZLA_CEVAPSIZ` | 429 | Çift bazlı sessizleştirme | "Bir süre sonra tekrar dene" + kalan süre |
 | `ZATEN_ARAMADA` | 409 | Arayan başka aramada | Mevcut arama ekranına dön |
 | `DURUM_UYGUN_DEGIL` | 409 | Yanıt/aday geç kaldı | Arama ekranını kapat |
@@ -790,6 +873,9 @@ Saatlik genel limit tacizi durdurmaz: **tacizci zaten tek kişiyi arıyor.**
 * Yalnız **cevapsız** sayılır (`cevapsiz`, `reddedildi`, `iptal`). Karşılıklı
   konuşan iki arkadaşın arka arkaya araması cezalandırılmamalı — **bir
   `cevaplandi` sayacı SIFIRLAR.**
+* **`ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI` reddi bu sayaca GİRMEZ**
+  (§5.0.1). Kayıt hiç oluşmadığı için uçlaşma da olmaz; sayaç yalnız uçlaşan
+  kayıttan beslenir. Özelliği kapatan kişi, kendisini arayanı susturamaz.
 * Bellek içi `Map<"arayan:aranan", number[]>` (`yaziyorlar` kalıbı,
   `server.js:4999`). Kalıcılık gerekmiyor: sunucu yeniden başlarsa sayaç
   sıfırlanır — kabul edilebilir, çünkü bu bir ceza değil bir **soğuma
@@ -1112,8 +1198,36 @@ kalan işlerdir.
 
 ### 14.2 Hata kodlarına göre dallan — **Türkçe metne göre DEĞİL**
 
-§8'deki 13 kod + hız limiti 429'u (kodsuz). Her kod için **45 dilde** kendi
+§8'deki **15** kod + hız limiti 429'u (kodsuz). Her kod için **45 dilde** kendi
 metnini bas. `kod` yoksa HTTP durumuna düş.
+
+**`ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI` (sürüm 3) — tür bazlı metin
+ZORUNLU.** Sesli aradıysa "aradığınız kişide **sesli** arama devre dışı",
+görüntülü aradıysa "**görüntülü**". Tek bir genel metin basmak kullanıcıya
+"peki sesliyi denesem olur mu" sorusunu sordurur; kod zaten türü söylüyor.
+
+### 14.2b Kendi tercihi: düğme **PASİF**, gizli DEĞİL (md. 38)
+
+| Durum | Düğme |
+|---|---|
+| `arama_acik: false` (sunucu geneli) | **HİÇ ÇİZİLMEZ** (§14.1 md.1) |
+| `goruntulu_acik: false` (sunucu geneli) | görüntülü düğmesi **HİÇ ÇİZİLMEZ** |
+| `kendi_sesli_acik: false` | **ÇİZİLİR, PASİF görünür**, tıklanınca açıklama |
+| `kendi_goruntulu_acik: false` | **ÇİZİLİR, PASİF görünür**, tıklanınca açıklama |
+| Karşılıklı takip yok | çizilmez (mevcut davranış) |
+
+Ayrım bilinçli: sunucu bayrağı kapalıyken özellik **yok** — olmayan bir şeyi
+göstermek yanıltır. Kullanıcının kendi tercihi kapalıyken özellik **var ama
+kapalı** — gizlemek özelliği keşfedilemez kılar ve varsayılan KAPALI olduğu
+için *hiç kimse* açmaz. Pasif düğme, açıklamasıyla birlikte, tanıtımın kendisi.
+
+Açıklama **nereden açılacağını söylemeli** (Ayarlar → Gizlilik) ve oraya
+götüren bir eylem sunmalı; "kapalı" demekle bırakmak kurtarma yolu olmayan bir
+hata mesajıdır.
+
+> **Bu üç satır kullanıcının kendi ifadesidir (10 Ağu):** *"kullanıcıda sohbet
+> ekranında PASİF gözükmeli bu buttonlar üstüne tıklayınca nereden aktif
+> edeceğini söyle."*
 
 ### 14.3 Yeni çeviri anahtarları (bu turda EKLENMEDİ — Flutter turunda)
 

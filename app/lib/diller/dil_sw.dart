@@ -689,4 +689,19 @@ const Map<String, String> cevirilerSw = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Arifa za kufuata, kupenda, majibu, jumbe na kutajwa',
   'Sen': 'Wewe',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Simu za sauti zimezimwa kwa mtu huyu',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Simu za video zimezimwa kwa mtu huyu',
+  'Sesli aramalara izin ver': 'Ruhusu simu za sauti',
+  'Görüntülü aramalara izin ver': 'Ruhusu simu za video',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Ikizimwa, hakuna anayeweza kukupigia simu ya sauti; anayepiga ataona taarifa',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Ikizimwa, hakuna anayeweza kukupigia simu ya video; anayepiga ataona taarifa',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Simu za sauti zimezimwa. Unaweza kuziwasha katika Mipangilio > Faragha.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Simu za video zimezimwa. Unaweza kuziwasha katika Mipangilio > Faragha.',
+  'Sesli ve görüntülü arama': 'Simu za sauti na video',
 };

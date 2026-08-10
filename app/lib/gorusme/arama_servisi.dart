@@ -59,6 +59,41 @@ class AramaServisi {
   /// Görüntülü arama açık mı (sunucu bayrağı; kill switch).
   static bool get goruntuluAcik => kullanilabilir && _buz!.goruntuluAcik;
 
+  // ---------------- Kendi tercihim (md. 38) ----------------
+  //
+  // ÜÇ KATMAN VAR, KARIŞTIRILMAMALI (sözleşme §5.0):
+  //   1) [kullanilabilir] / [goruntuluAcik] — SUNUCU GENELİ kill switch.
+  //      Kapalıysa özellik YOK: düğme hiç çizilmez.
+  //   2) BURASI — kullanıcının KENDİ kararı, varsayılan KAPALI.
+  //      Kapalıysa özellik VAR ama kapalı: düğme çizilir, PASİF görünür ve
+  //      tıklanınca nereden açılacağını söyler.
+  //   3) Karşılıklı takip — düğme çizilmez (mevcut davranış).
+  //
+  // Gizlemek yerine pasif çizmenin sebebi: varsayılan KAPALI olduğu için,
+  // gizlenirse özelliğin VARLIĞINDAN kimse haberdar olmaz ve hiç kimse açmaz.
+  // Pasif düğme + açıklaması, tanıtımın kendisidir.
+
+  /// Kendi ayarımdan sesli aramaya izin verdim mi.
+  static bool get kendiSesliAcik => _buz?.kendiSesliAcik == true;
+
+  /// Kendi ayarımdan görüntülü aramaya izin verdim mi.
+  static bool get kendiGoruntuluAcik => _buz?.kendiGoruntuluAcik == true;
+
+  /// Ayarlar ekranı anahtarı çevirince çağırır: bellekteki kopyayı günceller ve
+  /// açık sohbet ekranlarındaki düğmeleri yeniden çizdirir.
+  ///
+  /// **Sunucuya YAZMAZ** — yazma `/gizlilik-tercihleri` ucundan, ayarlar
+  /// ekranındaki mevcut iyimser-güncelleme kalıbıyla yapılır. Burada yalnız
+  /// yerel yansıma var; sunucu yazması başarısız olursa ayarlar ekranı bunu da
+  /// geri alır.
+  static void kendiTercihiKur({bool? sesli, bool? goruntulu}) {
+    final b = _buz;
+    // Web ya da bayrak hiç alınmamış: gösterilecek düğme yok.
+    if (b == null) return;
+    _buz = b.kendiTercihle(sesli: sesli, goruntulu: goruntulu);
+    surum.value++;
+  }
+
   static int get calmaSaniye => _buz?.calmaSaniye ?? 45;
 
   @visibleForTesting

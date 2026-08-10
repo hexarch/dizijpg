@@ -1,12 +1,15 @@
-// Sözleşme §8'deki 13 hata kodu + kodsuz 429.
+// Sözleşme §8'deki 15 hata kodu + kodsuz 429.
 //
 // KİLİTLENEN DAVRANIŞ: istemci **Türkçe metne göre DEĞİL `kod` alanına göre**
 // dallanır (§14.2). Sunucunun `hata` metni insan içindir ve değişebilir;
 // aşağıdaki testler her kod için hem doğru KULLANICI METNİNİ hem de doğru
 // EKRAN TEPKİSİNİ (uyar / kapat / mevcut aramaya dön) kilitliyor.
 //
-// Üç kod aynı HTTP durumunu paylaşıyor (403: ENGELLI, TAKIP_YOK,
-// ALICI_YASAKLI) — yani HTTP koduna bakan bir istemci bu üçünü ayıramaz.
+// BEŞ kod aynı HTTP durumunu paylaşıyor (403: ENGELLI, TAKIP_YOK,
+// ALICI_YASAKLI, ALICI_SESLI_KAPALI, ALICI_GORUNTULU_KAPALI) — yani HTTP
+// koduna bakan bir istemci bu beşini AYIRAMAZ. Son ikisi md. 38 ile geldi
+// (kullanıcı başına açma/kapama) ve metinleri TÜR BAZINDA farklı olmak
+// zorunda: sesli aradıysa "sesli", görüntülü aradıysa "görüntülü".
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
 import 'package:dizijpg/gorusme/gorusme_api.dart';
@@ -24,7 +27,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  test('13 kodun HEPSİ tanınır ve sunucunun Türkçe metnini KULLANMAZ', () {
+  test('15 kodun HEPSİ tanınır ve sunucunun Türkçe metnini KULLANMAZ', () {
     const kodlar = [
       AramaKod.aramaKapali,
       AramaKod.goruntuluKapali,
@@ -34,13 +37,15 @@ void main() {
       AramaKod.engelli,
       AramaKod.takipYok,
       AramaKod.aliciYasakli,
+      AramaKod.aliciSesliKapali,
+      AramaKod.aliciGoruntuluKapali,
       AramaKod.cokFazlaCevapsiz,
       AramaKod.zatenAramada,
       AramaKod.durumUygunDegil,
       AramaKod.tarafDegil,
       AramaKod.aramaYok,
     ];
-    expect(kodlar.length, 13);
+    expect(kodlar.length, 15);
     for (final k in kodlar) {
       final h = aramaHatasiCozumle(_hata(k, 400));
       expect(h.kod, k, reason: k);
@@ -142,6 +147,52 @@ void main() {
     await Ceviri.sec('en');
     final h = aramaHatasiCozumle(_hata(AramaKod.takipYok, 403));
     expect(h.metin, isNot('Aramak için karşılıklı takipleşmelisiniz'));
+    await Ceviri.sec('tr');
+  });
+
+  // ==========================================================================
+  // md. 38 — KULLANICI BAŞINA AÇMA/KAPAMA (aranan tarafın tercihi)
+  // ==========================================================================
+  // Kullanıcının kendi cümlesi (10 Ağu): "arayanın ekranında şunu diyecek:
+  // 'aradığınız kişide sesli arama' — görüntülüyse 'görüntülü arama' —
+  // 'özelliği devre dışı'".
+  test('ALICI_SESLI_KAPALI → SESLİ metni, ekranda kal', () {
+    final h = aramaHatasiCozumle(_hata(AramaKod.aliciSesliKapali, 403));
+    expect(h.metin, 'Aradığınız kişide sesli arama devre dışı');
+    // `uyar`: arama ekranı hiç açılmadı, kullanıcı sohbette kalmalı.
+    expect(h.tepki, AramaTepkisi.uyar);
+  });
+
+  test('ALICI_GORUNTULU_KAPALI → GÖRÜNTÜLÜ metni, ekranda kal', () {
+    final h = aramaHatasiCozumle(_hata(AramaKod.aliciGoruntuluKapali, 403));
+    expect(h.metin, 'Aradığınız kişide görüntülü arama devre dışı');
+    expect(h.tepki, AramaTepkisi.uyar);
+  });
+
+  test('md.38: sesli ve görüntülü metinleri BİRBİRİNDEN FARKLI', () {
+    // Aynı metni basmak "peki ötekini denesem olur mu" sorusunu doğurur.
+    final s = aramaHatasiCozumle(_hata(AramaKod.aliciSesliKapali, 403)).metin;
+    final g = aramaHatasiCozumle(
+      _hata(AramaKod.aliciGoruntuluKapali, 403),
+    ).metin;
+    expect(s, isNot(g));
+  });
+
+  test('md.38 kodları SUNUCU GENELİ kill switch kodlarıyla KARIŞMIYOR', () {
+    // Yanlış sebep göstermek "uygulama bozuk" algısı yaratır (sözleşme §5.0).
+    final kendi = aramaHatasiCozumle(_hata(AramaKod.aliciSesliKapali, 403));
+    final genel = aramaHatasiCozumle(_hata(AramaKod.aramaKapali, 503));
+    expect(kendi.metin, isNot(genel.metin));
+    // Genel bayrak ekranı KAPATIR (özellik yok), kişisel tercih KAPATMAZ.
+    expect(genel.tepki, AramaTepkisi.kapat);
+    expect(kendi.tepki, AramaTepkisi.uyar);
+  });
+
+  test('md.38 metinleri de çeviri katmanından geçiyor (45 dil)', () async {
+    await Ceviri.sec('en');
+    final h = aramaHatasiCozumle(_hata(AramaKod.aliciSesliKapali, 403));
+    expect(h.metin, isNot('Aradığınız kişide sesli arama devre dışı'));
+    expect(h.metin, isNotEmpty);
     await Ceviri.sec('tr');
   });
 }

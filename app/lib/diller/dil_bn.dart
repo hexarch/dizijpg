@@ -691,4 +691,19 @@ const Map<String, String> cevirilerBn = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ফলো, লাইক, উত্তর, বার্তা ও ট্যাগের বিজ্ঞপ্তি',
   'Sen': 'তুমি',
+  'Aradığınız kişide sesli arama devre dışı':
+      'এই ব্যক্তির জন্য ভয়েস কল বন্ধ আছে',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'এই ব্যক্তির জন্য ভিডিও কল বন্ধ আছে',
+  'Sesli aramalara izin ver': 'ভয়েস কলের অনুমতি দিন',
+  'Görüntülü aramalara izin ver': 'ভিডিও কলের অনুমতি দিন',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'বন্ধ থাকলে কেউ আপনাকে ভয়েস কল করতে পারবে না; কলকারী একটি বার্তা দেখবে',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'বন্ধ থাকলে কেউ আপনাকে ভিডিও কল করতে পারবে না; কলকারী একটি বার্তা দেখবে',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ভয়েস কল বন্ধ আছে। সেটিংস > গোপনীয়তা থেকে চালু করতে পারেন।',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ভিডিও কল বন্ধ আছে। সেটিংস > গোপনীয়তা থেকে চালু করতে পারেন।',
+  'Sesli ve görüntülü arama': 'ভয়েস ও ভিডিও কল',
 };

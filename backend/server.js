@@ -3262,9 +3262,29 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
 const GIZLILIK_ALANLARI = [
   'izlenenler_gizli', 'yorumlar_gizli', 'yanitlar_gizli', 'cevrimici_gizli',
 ];
+
+// Kullanıcı başına sesli/görüntülü arama açma-kapama (istek listesi md. 38).
+//
+// POLARİTE POZİTİF ve VARSAYILAN false — yukarıdaki dört `_gizli` alanının
+// TERSİ yönde. Aynı uçtan yönetiliyorlar çünkü ikisi de "beni başkalarına ne
+// kadar açıyorum" sorusunun cevabı ve kullanıcı ikisini de Ayarlar > Gizlilik
+// altında arıyor. Karışıklık riski YOK: sütun adı yönü taşıyor (`_gizli` =
+// kapatır, `_acik` = açar) ve istemci etiketleri de öyle yazılmış.
+//
+// VARSAYILAN NEDEN KAPALI (kullanıcı kararı, 10 Ağu): "bu özellik OTOMATİK
+// OLARAK KAPALI olmalı". Yan faydası büyük — `arama_acik` bayrağını canlıda
+// açmak riskisiz hâle geliyor, kimse istemeden aranabilir duruma gelmiyor.
+//
+// *** BU UÇ YALNIZ TERCİHİ SAKLAR, ZORLAMAZ. *** Zorlama `POST /arama/baslat`
+// içindedir (arama.js -> baslatYetki adım 10, 403 ALICI_SESLI_KAPALI /
+// ALICI_GORUNTULU_KAPALI). İstemcide düğmeyi pasif çizmek yeterli değildir:
+// değiştirilmiş bir istemci yine arama başlatabilir.
+const ARAMA_TERCIH_ALANLARI = ['sesli_arama_acik', 'goruntulu_arama_acik'];
+
+const TERCIH_ALANLARI = [...GIZLILIK_ALANLARI, ...ARAMA_TERCIH_ALANLARI];
 app.get('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    `SELECT ${GIZLILIK_ALANLARI.join(', ')} FROM kullanicilar WHERE id=$1`,
+    `SELECT ${TERCIH_ALANLARI.join(', ')} FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
   res.json(rows[0] || {});
@@ -3274,7 +3294,7 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   // Yalnız bilinen anahtarlar; boolean'a zorlanır (eksik = değişmez).
   const set = [];
   const deg = [req.kullanici.id];
-  for (const a of GIZLILIK_ALANLARI) {
+  for (const a of TERCIH_ALANLARI) {
     if (typeof g[a] === 'boolean') {
       deg.push(g[a]);
       set.push(`${a}=$${deg.length}`);
@@ -3283,7 +3303,7 @@ app.post('/gizlilik-tercihleri', girisZorunlu, sarici(async (req, res) => {
   if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
   const { rows } = await havuz.query(
     `UPDATE kullanicilar SET ${set.join(', ')} WHERE id=$1
-     RETURNING ${GIZLILIK_ALANLARI.join(', ')}`,
+     RETURNING ${TERCIH_ALANLARI.join(', ')}`,
     deg,
   );
   res.json(rows[0]);
@@ -6502,11 +6522,26 @@ app.get('/arama/buz-sunuculari', girisZorunlu, buzLimiti, sarici(async (req, res
   const { buz_sunuculari, gecerlilik_sn } = buzSunuculari({
     sir: TURN_SIR, kullaniciId: req.kullanici.id, alan: TURN_ALAN,
   });
+  // Kullanıcının KENDİ tercihi (md. 38) buraya bindirildi: istemci bu ucu zaten
+  // açılışta bir kez çağırıyor ve sonucu bellekte tutuyor. Ayrı bir
+  // `/gizlilik-tercihleri` turu, yalnız sohbet başlığındaki düğmeleri PASİF
+  // çizmek için harcanmasın.
+  //
+  // `arama_acik`/`goruntulu_acik` ile KARIŞTIRILMAMALI — onlar SUNUCU GENELİ
+  // kill switch, bunlar tek kullanıcının kararı. Adlardaki `kendi_` öneki bu
+  // ayrımı taşıyor; üç katmanın (sunucu bayrağı / kendi tercihi / karşılıklı
+  // takip) hangisinin engellediğini istemcinin doğru söylemesi buna bağlı.
+  const { rows } = await havuz.query(
+    'SELECT sesli_arama_acik, goruntulu_arama_acik FROM kullanicilar WHERE id=$1',
+    [req.kullanici.id],
+  );
   res.json({
     buz_sunuculari,
     gecerlilik_sn,
     arama_acik: aramaAcik,
     goruntulu_acik: goruntuluAcik,
+    kendi_sesli_acik: rows[0]?.sesli_arama_acik === true,
+    kendi_goruntulu_acik: rows[0]?.goruntulu_arama_acik === true,
     calma_saniye: Math.round(CALMA_MS / 1000),
   });
 }));
@@ -6527,11 +6562,22 @@ app.post('/arama/baslat', girisZorunlu, gorusmeLimiti, sarici(async (req, res) =
     {
       hedefBul: async (ad) => {
         const { rows } = await havuz.query(
-          `SELECT id, yasakli, yasak_bitis FROM kullanicilar
+          `SELECT id, yasakli, yasak_bitis, sesli_arama_acik, goruntulu_arama_acik
+           FROM kullanicilar
            WHERE kullanici_adi=$1 AND misafir=false`, [ad]);
         if (!rows.length) return null;
         // Süresi dolmuş ban "yasaklı" saymaz (yasakAktif okuma anında karar verir).
-        return { id: rows[0].id, yasakli: yasakAktif(rows[0]) };
+        //
+        // `kabul*`: ARANANIN KENDİ tercihi (md. 38, migrasyon-2026-08-10.sql).
+        // Varsayılan false; `baslatYetki` adım 10 bunu VARSAYILAN-RET okur, yani
+        // sütun okunamazsa da arama başlamaz. Aynı sorguya bindirildi — ayrı bir
+        // tur atmıyoruz.
+        return {
+          id: rows[0].id,
+          yasakli: yasakAktif(rows[0]),
+          kabulSesli: rows[0].sesli_arama_acik === true,
+          kabulGoruntulu: rows[0].goruntulu_arama_acik === true,
+        };
       },
       engelliMi: (a, b) => engelliMi(a, b),
       karsilikliMi: (a, b) => karsilikliTakipMi(a, b),

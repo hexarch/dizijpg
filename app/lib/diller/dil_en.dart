@@ -693,4 +693,19 @@ const Map<String, String> cevirilerEn = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Follow, like, reply, message and mention notifications',
   'Sen': 'You',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Voice calling is disabled for this person',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Video calling is disabled for this person',
+  'Sesli aramalara izin ver': 'Allow voice calls',
+  'Görüntülü aramalara izin ver': 'Allow video calls',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'When off, nobody can voice call you; callers see a notice',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'When off, nobody can video call you; callers see a notice',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Voice calls are off. You can turn them on in Settings > Privacy.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Video calls are off. You can turn them on in Settings > Privacy.',
+  'Sesli ve görüntülü arama': 'Voice and video calls',
 };

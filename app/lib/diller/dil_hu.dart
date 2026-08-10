@@ -695,4 +695,19 @@ const Map<String, String> cevirilerHu = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Értesítések követésekről, kedvelésekről, válaszokról, üzenetekről és említésekről',
   'Sen': 'Te',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Ennél a személynél a hanghívás ki van kapcsolva',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Ennél a személynél a videohívás ki van kapcsolva',
+  'Sesli aramalara izin ver': 'Hanghívások engedélyezése',
+  'Görüntülü aramalara izin ver': 'Videohívások engedélyezése',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Kikapcsolva senki sem hívhat fel hanggal; a hívó értesítést lát',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Kikapcsolva senki sem hívhat fel videóval; a hívó értesítést lát',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'A hanghívás ki van kapcsolva. Bekapcsolhatod a Beállítások > Adatvédelem alatt.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'A videohívás ki van kapcsolva. Bekapcsolhatod a Beállítások > Adatvédelem alatt.',
+  'Sesli ve görüntülü arama': 'Hang- és videohívás',
 };

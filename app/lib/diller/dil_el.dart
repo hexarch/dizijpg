@@ -699,4 +699,19 @@ const Map<String, String> cevirilerEl = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Ειδοποιήσεις για ακολουθήσεις, «μου αρέσει», απαντήσεις, μηνύματα και αναφορές',
   'Sen': 'Εσύ',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Οι φωνητικές κλήσεις είναι απενεργοποιημένες για αυτό το άτομο',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Οι βιντεοκλήσεις είναι απενεργοποιημένες για αυτό το άτομο',
+  'Sesli aramalara izin ver': 'Να επιτρέπονται φωνητικές κλήσεις',
+  'Görüntülü aramalara izin ver': 'Να επιτρέπονται βιντεοκλήσεις',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει φωνητικά· ο καλών βλέπει ειδοποίηση',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει με βίντεο· ο καλών βλέπει ειδοποίηση',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Οι φωνητικές κλήσεις είναι ανενεργές. Ενεργοποίησέ τες από Ρυθμίσεις > Απόρρητο.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Οι βιντεοκλήσεις είναι ανενεργές. Ενεργοποίησέ τες από Ρυθμίσεις > Απόρρητο.',
+  'Sesli ve görüntülü arama': 'Φωνητικές κλήσεις και βιντεοκλήσεις',
 };

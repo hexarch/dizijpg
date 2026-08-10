@@ -703,4 +703,19 @@ const Map<String, String> cevirilerMy = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'စောင့်ကြည့်ခြင်း၊ နှစ်သက်ခြင်း၊ ပြန်စာ၊ စာနှင့် တဂ် အကြောင်းကြားချက်များ',
   'Sen': 'သင်',
+  'Aradığınız kişide sesli arama devre dışı':
+      'ဤသူထံတွင် အသံခေါ်ဆိုမှု ပိတ်ထားသည်',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'ဤသူထံတွင် ဗီဒီယိုခေါ်ဆိုမှု ပိတ်ထားသည်',
+  'Sesli aramalara izin ver': 'အသံခေါ်ဆိုမှုများကို ခွင့်ပြုရန်',
+  'Görüntülü aramalara izin ver': 'ဗီဒီယိုခေါ်ဆိုမှုများကို ခွင့်ပြုရန်',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ပိတ်ထားပါက မည်သူမျှ သင့်ကို အသံဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် အသိပေးချက်ကို မြင်ရမည်',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ပိတ်ထားပါက မည်သူမျှ သင့်ကို ဗီဒီယိုဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် အသိပေးချက်ကို မြင်ရမည်',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'အသံခေါ်ဆိုမှု ပိတ်ထားသည်။ ဆက်တင်များ > ကိုယ်ရေးအချက်အလက် မှ ဖွင့်နိုင်သည်။',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ဗီဒီယိုခေါ်ဆိုမှု ပိတ်ထားသည်။ ဆက်တင်များ > ကိုယ်ရေးအချက်အလက် မှ ဖွင့်နိုင်သည်။',
+  'Sesli ve görüntülü arama': 'အသံနှင့် ဗီဒီယိုခေါ်ဆိုမှု',
 };

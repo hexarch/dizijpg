@@ -699,4 +699,19 @@ const Map<String, String> cevirilerIt = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Notifiche di follow, mi piace, risposte, messaggi e menzioni',
   'Sen': 'Tu',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Le chiamate vocali sono disattivate per questa persona',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Le videochiamate sono disattivate per questa persona',
+  'Sesli aramalara izin ver': 'Consenti chiamate vocali',
+  'Görüntülü aramalara izin ver': 'Consenti videochiamate',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Se disattivato, nessuno può chiamarti in voce; chi chiama vede un avviso',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Se disattivato, nessuno può videochiamarti; chi chiama vede un avviso',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Le chiamate vocali sono disattivate. Puoi attivarle in Impostazioni > Privacy.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Le videochiamate sono disattivate. Puoi attivarle in Impostazioni > Privacy.',
+  'Sesli ve görüntülü arama': 'Chiamate vocali e video',
 };

@@ -693,4 +693,19 @@ const Map<String, String> cevirilerMl = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ഫോളോ, ലൈക്ക്, മറുപടി, സന്ദേശം, ടാഗ് അറിയിപ്പുകൾ',
   'Sen': 'നിങ്ങൾ',
+  'Aradığınız kişide sesli arama devre dışı':
+      'ഈ വ്യക്തിക്ക് വോയ്‌സ് കോൾ പ്രവർത്തനരഹിതമാണ്',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'ഈ വ്യക്തിക്ക് വീഡിയോ കോൾ പ്രവർത്തനരഹിതമാണ്',
+  'Sesli aramalara izin ver': 'വോയ്‌സ് കോളുകൾ അനുവദിക്കുക',
+  'Görüntülü aramalara izin ver': 'വീഡിയോ കോളുകൾ അനുവദിക്കുക',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ഓഫ് ആയിരിക്കുമ്പോൾ ആർക്കും നിങ്ങളെ വോയ്‌സ് കോൾ ചെയ്യാനാവില്ല; വിളിക്കുന്നയാൾ അറിയിപ്പ് കാണും',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ഓഫ് ആയിരിക്കുമ്പോൾ ആർക്കും നിങ്ങളെ വീഡിയോ കോൾ ചെയ്യാനാവില്ല; വിളിക്കുന്നയാൾ അറിയിപ്പ് കാണും',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'വോയ്‌സ് കോൾ ഓഫാണ്. ക്രമീകരണങ്ങൾ > സ്വകാര്യത എന്നതിൽ നിന്ന് ഓണാക്കാം.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'വീഡിയോ കോൾ ഓഫാണ്. ക്രമീകരണങ്ങൾ > സ്വകാര്യത എന്നതിൽ നിന്ന് ഓണാക്കാം.',
+  'Sesli ve görüntülü arama': 'വോയ്‌സ്, വീഡിയോ കോൾ',
 };

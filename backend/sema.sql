@@ -665,3 +665,36 @@ CREATE UNIQUE INDEX IF NOT EXISTS itirazlar_tek_acik
 -- DENETLER — yeni bir `FROM puanlar` sorgusu süzgeçsiz eklenirse test kırmızıya
 -- döner.
 -- ---------------------------------------------------------------------------
+
+-- ---------------------------------------------------------------------------
+-- 10 Ağu 2026 — KULLANICI BAŞINA SESLİ/GÖRÜNTÜLÜ ARAMA TERCİHİ
+--               (migrasyon-2026-08-10.sql · istek listesi md. 38)
+--
+-- İki ayrı anahtar, İKİSİ DE VARSAYILAN KAPALI (kullanıcı kararı: "bu özellik
+-- OTOMATİK OLARAK KAPALI olmalı"). Hiç kimse, ayarlara girip açmadıkça
+-- aranabilir hâle gelmez.
+--
+-- POLARİTE POZİTİF (`_acik`): true = aranabilir. Yanındaki `_gizli`
+-- sütunlarının polaritesi negatiftir; ad her ikisinde de yönü taşıdığı için
+-- aynı uçtan (`/gizlilik-tercihleri`) yönetilmeleri karışıklık yaratmaz.
+--
+-- ZORLAMA SUNUCUDADIR: `POST /arama/baslat` (arama.js -> baslatYetki adım 10)
+-- kapalıysa 403 `ALICI_SESLI_KAPALI` / `ALICI_GORUNTULU_KAPALI` döner ve
+-- BELLEKTE KAYIT OLUŞTURMAZ — böylece `aramalar` tablosuna satır yazılmaz ve
+-- çift bazlı sessizleştirme sayacı (§9.1) ARTMAZ. Aksi hâlde özelliği kapatan
+-- kişi, kendisini arayan masum kullanıcıyı 1 saat susturmuş olurdu.
+--
+-- OKUMA/YAZMA UCU: `GET|POST /gizlilik-tercihleri` (TERCIH_ALANLARI).
+-- Kullanıcının KENDİ değeri ayrıca `GET /arama/buz-sunuculari` yanıtında
+-- `kendi_sesli_acik` / `kendi_goruntulu_acik` olarak döner — sohbet
+-- başlığındaki düğmeleri PASİF çizmek için (ek istek harcanmasın diye).
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS sesli_arama_acik BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS goruntulu_arama_acik BOOLEAN NOT NULL DEFAULT false;
+
+-- ⚠ AÇIK BORÇ (bu turda kapatılmadı, md. 7'ye ait): `migrasyon-2026-08-08e.sql`
+--   içeriği — `aramalar` tablosu, `bildirimler.tur` kısıtına `kacirilan_arama`
+--   ve `kullanicilar.bildir_arama` — sema.sql'e HÂLÂ İŞLENMEDİ. Sözleşme
+--   §10.3'te nereye gireceği yazılı. Sıfırdan kurulan bir veritabanı o zamana
+--   kadar `aramalar` tablosunu ALMAZ.

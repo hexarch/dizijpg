@@ -682,4 +682,17 @@ const Map<String, String> cevirilerTh = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'การแจ้งเตือนการติดตาม ถูกใจ ตอบกลับ ข้อความ และการแท็ก',
   'Sen': 'คุณ',
+  'Aradığınız kişide sesli arama devre dışı': 'บุคคลนี้ปิดการโทรด้วยเสียงไว้',
+  'Aradığınız kişide görüntülü arama devre dışı': 'บุคคลนี้ปิดการโทรวิดีโอไว้',
+  'Sesli aramalara izin ver': 'อนุญาตการโทรด้วยเสียง',
+  'Görüntülü aramalara izin ver': 'อนุญาตการโทรวิดีโอ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'เมื่อปิดอยู่ จะไม่มีใครโทรหาคุณด้วยเสียงได้ ผู้โทรจะเห็นข้อความแจ้ง',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'เมื่อปิดอยู่ จะไม่มีใครโทรวิดีโอหาคุณได้ ผู้โทรจะเห็นข้อความแจ้ง',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'การโทรด้วยเสียงปิดอยู่ เปิดได้ที่ การตั้งค่า > ความเป็นส่วนตัว',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'การโทรวิดีโอปิดอยู่ เปิดได้ที่ การตั้งค่า > ความเป็นส่วนตัว',
+  'Sesli ve görüntülü arama': 'การโทรด้วยเสียงและวิดีโอ',
 };

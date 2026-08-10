@@ -699,4 +699,19 @@ const Map<String, String> cevirilerFil = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Mga abiso para sa follow, like, sagot, mensahe at tag',
   'Sen': 'Ikaw',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Naka-off ang voice call sa taong ito',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Naka-off ang video call sa taong ito',
+  'Sesli aramalara izin ver': 'Payagan ang voice call',
+  'Görüntülü aramalara izin ver': 'Payagan ang video call',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Kapag naka-off, walang makakatawag sa iyo gamit ang boses; may makikitang paalala ang tumatawag',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Kapag naka-off, walang makakatawag sa iyo gamit ang video; may makikitang paalala ang tumatawag',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Naka-off ang voice call. Puwede mong i-on sa Mga Setting > Privacy.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Naka-off ang video call. Puwede mong i-on sa Mga Setting > Privacy.',
+  'Sesli ve görüntülü arama': 'Voice at video call',
 };

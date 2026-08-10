@@ -690,4 +690,19 @@ const Map<String, String> cevirilerNb = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Varsler om følging, likerklikk, svar, meldinger og merkinger',
   'Sen': 'Du',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Taleanrop er slått av hos denne personen',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Videoanrop er slått av hos denne personen',
+  'Sesli aramalara izin ver': 'Tillat taleanrop',
+  'Görüntülü aramalara izin ver': 'Tillat videoanrop',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Når det er av, kan ingen ringe deg; den som ringer ser en melding',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Når det er av, kan ingen videoringe deg; den som ringer ser en melding',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Taleanrop er av. Du kan slå dem på i Innstillinger > Personvern.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Videoanrop er av. Du kan slå dem på i Innstillinger > Personvern.',
+  'Sesli ve görüntülü arama': 'Tale- og videoanrop',
 };

@@ -686,4 +686,19 @@ const Map<String, String> cevirilerAz = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'İzləmə, bəyənmə, cavab, mesaj və etiket bildirişləri',
   'Sen': 'Sən',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Bu şəxsdə səsli zənglər deaktivdir',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Bu şəxsdə video zənglər deaktivdir',
+  'Sesli aramalara izin ver': 'Səsli zənglərə icazə ver',
+  'Görüntülü aramalara izin ver': 'Video zənglərə icazə ver',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Söndürüldükdə heç kim sənə səsli zəng edə bilməz; zəng edən bildiriş görür',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Söndürüldükdə heç kim sənə video zəng edə bilməz; zəng edən bildiriş görür',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Səsli zənglər söndürülüb. Parametrlər > Məxfilik bölməsindən aça bilərsən.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Video zənglər söndürülüb. Parametrlər > Məxfilik bölməsindən aça bilərsən.',
+  'Sesli ve görüntülü arama': 'Səsli və video zəng',
 };

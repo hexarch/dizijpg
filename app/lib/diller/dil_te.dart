@@ -688,4 +688,19 @@ const Map<String, String> cevirilerTe = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ఫాలో, లైక్, బదులు, సందేశం మరియు ట్యాగ్ నోటిఫికేషన్‌లు',
   'Sen': 'మీరు',
+  'Aradığınız kişide sesli arama devre dışı':
+      'ఈ వ్యక్తికి వాయిస్ కాల్ నిలిపివేయబడింది',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'ఈ వ్యక్తికి వీడియో కాల్ నిలిపివేయబడింది',
+  'Sesli aramalara izin ver': 'వాయిస్ కాల్‌లను అనుమతించు',
+  'Görüntülü aramalara izin ver': 'వీడియో కాల్‌లను అనుమతించు',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వాయిస్ కాల్ చేయలేరు; కాల్ చేసేవారికి సూచన కనిపిస్తుంది',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వీడియో కాల్ చేయలేరు; కాల్ చేసేవారికి సూచన కనిపిస్తుంది',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'వాయిస్ కాల్ ఆఫ్‌లో ఉంది. సెట్టింగ్‌లు > గోప్యత నుండి ఆన్ చేయవచ్చు.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'వీడియో కాల్ ఆఫ్‌లో ఉంది. సెట్టింగ్‌లు > గోప్యత నుండి ఆన్ చేయవచ్చు.',
+  'Sesli ve görüntülü arama': 'వాయిస్ మరియు వీడియో కాల్',
 };

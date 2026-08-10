@@ -39,7 +39,13 @@ function kaynakYap(uzer = {}) {
   const izler = [];
   const k = {
     izler,
-    hedefBul: async (ad) => { izler.push('hedefBul'); return { id: 2, yasakli: false, ad }; },
+    // `kabulSesli`/`kabulGoruntulu` (md. 38) BİLEREK açık: bu yardımcı "her
+    // kontrolü GEÇEN" kaynağı temsil ediyor. Gerçek varsayılan KAPALI'dır ve
+    // onu ayrı testler ölçüyor (§"kullanıcı başına arama tercihi").
+    hedefBul: async (ad) => {
+      izler.push('hedefBul');
+      return { id: 2, yasakli: false, ad, kabulSesli: true, kabulGoruntulu: true };
+    },
     engelliMi: async () => { izler.push('engelliMi'); return false; },
     karsilikliMi: async () => { izler.push('karsilikliMi'); return true; },
     sessizKalanSn: async () => { izler.push('sessizKalanSn'); return 0; },
@@ -808,11 +814,18 @@ test('SDP/ICE hiçbir yere YAZILMIYOR (INSERT/console yalnız üstveri taşır)'
   assert.ok(!/console\.(log|error|warn)\([^)]*sdp/i.test(blok), 'SDP günlüğe basılıyor');
 });
 
-test('sözleşmedeki 14 hata kodunun HEPSİ tanımlı ve çevrilmez sabit', () => {
+test('sözleşmedeki 15 hata kodunun HEPSİ tanımlı ve çevrilmez sabit', () => {
   const bekleniyor = ['ARAMA_KAPALI', 'GORUNTULU_KAPALI', 'GECERSIZ_ISTEK', 'KULLANICI_YOK',
-    'KENDINE_ARAMA', 'ENGELLI', 'TAKIP_YOK', 'ALICI_YASAKLI', 'COK_FAZLA_CEVAPSIZ',
+    'KENDINE_ARAMA', 'ENGELLI', 'TAKIP_YOK', 'ALICI_YASAKLI',
+    // md. 38 — kullanıcı başına tercih. SUNUCU GENELİ kill switch kodlarından
+    // (`ARAMA_KAPALI`/`GORUNTULU_KAPALI`) AYRI olmak zorunda: istemci "aradığın
+    // kişide kapalı" ile "özellik şu an kapalı"yı karıştırırsa kullanıcı
+    // uygulamayı bozuk sanır.
+    'ALICI_SESLI_KAPALI', 'ALICI_GORUNTULU_KAPALI',
+    'COK_FAZLA_CEVAPSIZ',
     'ZATEN_ARAMADA', 'DURUM_UYGUN_DEGIL', 'TARAF_DEGIL', 'ARAMA_YOK'];
   for (const k of bekleniyor) assert.equal(KOD[k], k, `hata kodu eksik/yanlış: ${k}`);
+  assert.equal(Object.keys(KOD).length, bekleniyor.length, 'sözleşmede olmayan kod eklenmiş');
   assert.equal(Object.isFrozen(KOD), true);
 });
 
@@ -823,4 +836,218 @@ test('SDP tavanı 64 KB (sınırsız SDP bellek şişirme yolu)', () => {
   assert.equal(sdpGecerliMi(`v=0${'x'.repeat(SDP_AZAMI_BAYT)}`), false);
   assert.equal(sdpGecerliMi(null), false);
   assert.equal(sdpGecerliMi(123), false);
+});
+
+// ===========================================================================
+// 13. KULLANICI BAŞINA ARAMA TERCİHİ (istek listesi md. 38)
+// ===========================================================================
+// Kullanıcının kendi sözleri (10 Ağu): "sesli ve görüntülü aramalar devre dışı
+// bırakma özelliği olmalı ve bu özellik OTOMATİK OLARAK KAPALI olmalı ...
+// aranan otomatik olarak çağrıyı reddedecek ve arayanın ekranında şunu
+// diyecek: 'aradığınız kişide sesli arama özelliği devre dışı'".
+//
+// Üç şeyi birden kilitliyoruz:
+//   (a) varsayılan KAPALI ve VARSAYILAN-RET okunuyor,
+//   (b) tür bazlı DOĞRU kod dönüyor (sesli/görüntülü karışmıyor),
+//   (c) *** bu red, arayanı SESSİZLEŞTİRME sayacına sokmuyor ***.
+// (c) sessiz bozulur ve kimse fark etmez: özelliği kapatan kişi, kendisini
+// arayan masum kullanıcıyı 1 saat susturmuş olur.
+
+/** Aranan tarafın tercihini ayarlayan `hedefBul`. */
+const hedefTercih = (sesli, goruntulu) => async () =>
+  ({ id: 2, yasakli: false, kabulSesli: sesli, kabulGoruntulu: goruntulu });
+
+test('md.38 VARSAYILAN KAPALI: tercih hiç yollanmazsa arama BAŞLAMAZ', async () => {
+  // Sütunu okumayı unutan bir sorgu ya da migrasyonsuz bir veritabanı tam
+  // olarak bu şekli üretir. VARSAYILAN-RET olmasaydı özelliğin yokluğu
+  // "herkes aranabilir" diye SESSİZCE yorumlanırdı.
+  const bos = async () => ({ id: 2, yasakli: false });
+  const s = await baslatYetki(girdiYap({ tur: 'ses' }), kaynakYap({ hedefBul: bos }));
+  assert.equal(s.http, 403);
+  assert.equal(s.kod, KOD.ALICI_SESLI_KAPALI);
+
+  const g = await baslatYetki(girdiYap({ tur: 'goruntu' }), kaynakYap({ hedefBul: bos }));
+  assert.equal(g.http, 403);
+  assert.equal(g.kod, KOD.ALICI_GORUNTULU_KAPALI);
+});
+
+test('md.38 TÜR BAZLI: sesli açık + görüntülü kapalı -> yalnız görüntülü reddedilir', async () => {
+  const kaynak = () => kaynakYap({ hedefBul: hedefTercih(true, false) });
+  const s = await baslatYetki(girdiYap({ tur: 'ses' }), kaynak());
+  assert.equal(s.tamam, true, 'sesli açıkken sesli arama engellendi');
+
+  const g = await baslatYetki(girdiYap({ tur: 'goruntu' }), kaynak());
+  assert.equal(g.kod, KOD.ALICI_GORUNTULU_KAPALI);
+  // Kullanıcı "sesli arama devre dışı" görmemeli — yanlış sebep, yanlış eylem.
+  assert.notEqual(g.kod, KOD.ALICI_SESLI_KAPALI);
+});
+
+test('md.38 TÜR BAZLI: görüntülü açık + sesli kapalı -> yalnız sesli reddedilir', async () => {
+  const kaynak = () => kaynakYap({ hedefBul: hedefTercih(false, true) });
+  const g = await baslatYetki(girdiYap({ tur: 'goruntu' }), kaynak());
+  assert.equal(g.tamam, true, 'görüntülü açıkken görüntülü arama engellendi');
+
+  const s = await baslatYetki(girdiYap({ tur: 'ses' }), kaynak());
+  assert.equal(s.kod, KOD.ALICI_SESLI_KAPALI);
+  assert.notEqual(s.kod, KOD.ALICI_GORUNTULU_KAPALI);
+});
+
+test('*** md.38 KAPALI REDDİ SESSİZLEŞTİRME SAYACINA GİRMEZ ***', async () => {
+  // Sözleşme §9.1: 15 dk'da 3 cevapsız -> o kişiye 1 saat arama yasağı.
+  // Kapalı olduğu için reddedilen arama bu sayaca GİRMEMELİ.
+  const depo = new SessizDepo();
+  const kaynak = kaynakYap({
+    hedefBul: hedefTercih(false, false),
+    sessizKalanSn: async (a, b) => depo.kalanSn(a, b),
+  });
+
+  // Eşiğin (3) çok üstünde deneme:
+  for (let i = 0; i < 10; i++) {
+    const r = await baslatYetki(girdiYap(), kaynak);
+    assert.equal(r.kod, KOD.ALICI_SESLI_KAPALI);
+  }
+  assert.equal(depo.kalanSn(1, 2), 0,
+    'kapalı reddi ceza doğurdu: özelliği kapatan kişi arayanı susturmuş olur');
+
+  // ZİNCİRİN KENDİSİ KANIT: tercih kontrolü sessizleştirme sorgusundan ÖNCE
+  // dönüyor, yani ceza yolu HİÇ AÇILMIYOR (kayıt oluşmuyor -> uçlaşma yok ->
+  // `cevapsizKaydet` çağrılmıyor).
+  assert.ok(!kaynak.izler.includes('sessizKalanSn'),
+    'kapalı kullanıcıda sessizleştirme yoluna girildi');
+  assert.ok(!kaynak.izler.includes('mesgulMu'),
+    'kapalı kullanıcıda kayıt oluşturma yoluna yaklaşıldı');
+
+  // Ve karşı taraf tercihini AÇTIĞI AN arama mümkün — gecikmiş ceza yok.
+  const acik = kaynakYap({ sessizKalanSn: async (a, b) => depo.kalanSn(a, b) });
+  assert.equal((await baslatYetki(girdiYap(), acik)).tamam, true);
+});
+
+test('md.38 sessizleştirme sayacı YALNIZ uçlaşan kayıttan besleniyor', () => {
+  // Yapısal güvence: `cevapsizKaydet` server.js'te TEK yerde çağrılıyor ve
+  // orası `aramaUclandi` — yani ancak GERÇEKTEN oluşmuş bir arama kaydı
+  // uçlaştığında. `/arama/baslat` erken dönüşleri oraya hiç uğramaz.
+  const cagrilar = SERVER.match(/sessizDepo\.cevapsizKaydet\(/g) || [];
+  assert.equal(cagrilar.length, 1,
+    'cevapsizKaydet birden fazla yerden çağrılıyor: muafiyet sessizce delinebilir');
+  const uclandi = SERVER.slice(SERVER.indexOf('function aramaUclandi'));
+  assert.ok(uclandi.slice(0, uclandi.indexOf('\n}\n')).includes('sessizDepo.cevapsizKaydet('),
+    'cevapsizKaydet aramaUclandi dışına taşınmış');
+});
+
+test('md.38 ÜÇ KATMAN AYRI AYRI DOĞRU KODU VERİYOR (yanlış sebep = "uygulama bozuk")', async () => {
+  // 1) Sunucu geneli bayrak
+  const k1 = await baslatYetki(girdiYap({ aramaAcik: false }), kaynakYap());
+  assert.equal(k1.http, 503);
+  assert.equal(k1.kod, KOD.ARAMA_KAPALI);
+
+  const k1g = await baslatYetki(
+    girdiYap({ goruntuluAcik: false, tur: 'goruntu' }), kaynakYap());
+  assert.equal(k1g.http, 503);
+  assert.equal(k1g.kod, KOD.GORUNTULU_KAPALI);
+
+  // 2) Kullanıcının kendi tercihi
+  const k2 = await baslatYetki(girdiYap(), kaynakYap({ hedefBul: hedefTercih(false, false) }));
+  assert.equal(k2.http, 403);
+  assert.equal(k2.kod, KOD.ALICI_SESLI_KAPALI);
+
+  // 3) Karşılıklı takip
+  const k3 = await baslatYetki(girdiYap(), kaynakYap({ karsilikliMi: async () => false }));
+  assert.equal(k3.http, 403);
+  assert.equal(k3.kod, KOD.TAKIP_YOK);
+
+  // Dördü de FARKLI kod: istemci hangi katmanın engellediğini ayırt edebiliyor.
+  const kodlar = [k1.kod, k1g.kod, k2.kod, k3.kod];
+  assert.equal(new Set(kodlar).size, 4, `kodlar çakışıyor: ${kodlar}`);
+});
+
+test('md.38 ÖNCELİK SIRASI: sunucu bayrağı > takip/engel > kendi tercihi > sessizleştirme', async () => {
+  const kapaliHedef = { hedefBul: hedefTercih(false, false) };
+
+  // Sunucu bayrağı kapalıysa tercih hiç okunmaz (503 önce gelir):
+  const a = await baslatYetki(girdiYap({ aramaAcik: false }), kaynakYap(kapaliHedef));
+  assert.equal(a.kod, KOD.ARAMA_KAPALI);
+
+  // Karşılıklı takip yoksa tercih SIZDIRILMAZ: "bu kişide arama kapalı" demek
+  // başkasının ayarını ifşa etmektir; yalnız karşılıklı takipleştiğin biri
+  // hakkında öğrenilebilir.
+  const b = await baslatYetki(girdiYap(),
+    kaynakYap({ ...kapaliHedef, karsilikliMi: async () => false }));
+  assert.equal(b.kod, KOD.TAKIP_YOK);
+
+  // Engellemede de sızmaz.
+  const c = await baslatYetki(girdiYap(),
+    kaynakYap({ ...kapaliHedef, engelliMi: async () => true }));
+  assert.equal(c.kod, KOD.ENGELLI);
+
+  // Yasaklı hesapta da sızmaz — genel "şu anda aranamıyor" yeterli.
+  const d = await baslatYetki(girdiYap(),
+    kaynakYap({ hedefBul: async () => ({ id: 2, yasakli: true, kabulSesli: false }) }));
+  assert.equal(d.kod, KOD.ALICI_YASAKLI);
+
+  // Sessizleştirme cezası VARKEN bile kalıcı sebep (kapalı) önce söylenir.
+  const e = await baslatYetki(girdiYap(),
+    kaynakYap({ ...kapaliHedef, sessizKalanSn: async () => 3600 }));
+  assert.equal(e.kod, KOD.ALICI_SESLI_KAPALI);
+});
+
+test('md.38 zincir sırası: tercih kontrolü YASAKLI ile SESSİZLEŞTİRME arasında', async () => {
+  const k = kaynakYap({ hedefBul: hedefTercih(false, false) });
+  await baslatYetki(girdiYap(), k);
+  // (`hedefBul` üzerine yazıldığı için ize düşmüyor; ölçtüğümüz ondan SONRAKİ
+  //  zincir.) Engel ve takip kontrolleri ÖNCE koşmuş, sessizleştirme ve
+  //  meşgul sorguları HİÇ atılmamış olmalı.
+  assert.deepEqual(k.izler, ['engelliMi', 'karsilikliMi'],
+    'tercih kontrolü sözleşme §5 sırasının dışına kaymış');
+});
+
+// ---------------------------------------------------------------------------
+// 13b. BAĞLANTI — sütunlar gerçekten okunuyor mu, migrasyon doğru mu
+// ---------------------------------------------------------------------------
+const MIG_38 = fs.readFileSync(path.join(KOK, 'migrasyon-2026-08-10.sql'), 'utf8');
+const SEMA = fs.readFileSync(path.join(KOK, 'sema.sql'), 'utf8');
+
+test('md.38 migrasyon: iki sütun da NOT NULL DEFAULT false (varsayılan KAPALI)', () => {
+  for (const s of ['sesli_arama_acik', 'goruntulu_arama_acik']) {
+    const re = new RegExp(`ADD COLUMN IF NOT EXISTS ${s} BOOLEAN NOT NULL DEFAULT false`);
+    assert.match(MIG_38, re, `migrasyonda eksik/yanlış sütun: ${s}`);
+    assert.match(SEMA, re, `sema.sql'e işlenmemiş sütun: ${s}`);
+  }
+  // DEFAULT true yazılırsa kullanıcı kararı SESSİZCE tersine döner.
+  assert.doesNotMatch(MIG_38, /(sesli|goruntulu)_arama_acik BOOLEAN NOT NULL DEFAULT true/);
+});
+
+test('md.38 /arama/baslat tercihi AYNI sorguda okuyor (ek tur yok)', () => {
+  const blok = SERVER.slice(SERVER.indexOf("app.post('/arama/baslat'"),
+    SERVER.indexOf("app.get('/arama/durum/:aramaId'"));
+  assert.ok(/hedefBul[\s\S]{0,600}sesli_arama_acik[\s\S]{0,80}goruntulu_arama_acik/.test(blok),
+    'hedefBul sorgusu tercih sütunlarını seçmiyor -> varsayılan-ret herkesi keser');
+  assert.match(blok, /kabulSesli:\s*rows\[0\]\.sesli_arama_acik === true/);
+  assert.match(blok, /kabulGoruntulu:\s*rows\[0\]\.goruntulu_arama_acik === true/);
+});
+
+test('md.38 tercih okuma/yazma ucu: /gizlilik-tercihleri iki alanı da tanıyor', () => {
+  const blok = SERVER.slice(SERVER.indexOf('const GIZLILIK_ALANLARI'),
+    SERVER.indexOf("app.post('/gizle'"));
+  assert.match(blok, /ARAMA_TERCIH_ALANLARI = \['sesli_arama_acik', 'goruntulu_arama_acik'\]/);
+  assert.match(blok, /TERCIH_ALANLARI = \[\.\.\.GIZLILIK_ALANLARI, \.\.\.ARAMA_TERCIH_ALANLARI\]/);
+  // GET'in SELECT'i, POST'un döngüsü ve UPDATE'in RETURNING'i ÜÇÜ DE geniş
+  // listeyi kullanmalı; biri dar listede (`GIZLILIK_ALANLARI`) kalırsa tercih
+  // ya okunamaz ya yazılamaz ve arıza SESSİZDİR — anahtar açık görünür, sunucu
+  // kapalı bilir.
+  assert.equal((blok.match(/TERCIH_ALANLARI\.join\(', '\)/g) || []).length, 2,
+    'SELECT ve RETURNING geniş listeyi kullanmıyor');
+  assert.match(blok, /for \(const a of TERCIH_ALANLARI\)/);
+  assert.ok(!/GIZLILIK_ALANLARI\.join/.test(blok),
+    'sorgulardan biri dar listede kalmış: yeni tercih okunmaz/yazılmaz');
+});
+
+test('md.38 istemci kendi tercihini buz-sunuculari ile alıyor (düğmeyi pasif çizmek için)', () => {
+  const blok = SERVER.slice(SERVER.indexOf("app.get('/arama/buz-sunuculari'"),
+    SERVER.indexOf("app.post('/arama/baslat'"));
+  assert.match(blok, /kendi_sesli_acik:\s*rows\[0\]\?\.sesli_arama_acik === true/);
+  assert.match(blok, /kendi_goruntulu_acik:\s*rows\[0\]\?\.goruntulu_arama_acik === true/);
+  // Sunucu geneli bayraklar AYRI kalmalı — istemci ikisini karıştırırsa
+  // kullanıcıya yanlış sebep gösterir.
+  assert.match(blok, /arama_acik: aramaAcik/);
+  assert.match(blok, /goruntulu_acik: goruntuluAcik/);
 });

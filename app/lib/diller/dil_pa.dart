@@ -692,4 +692,18 @@ const Map<String, String> cevirilerPa = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ਫਾਲੋ, ਲਾਈਕ, ਜਵਾਬ, ਸੁਨੇਹਾ ਅਤੇ ਟੈਗ ਸੂਚਨਾਵਾਂ',
   'Sen': 'ਤੁਸੀਂ',
+  'Aradığınız kişide sesli arama devre dışı': 'ਇਸ ਵਿਅਕਤੀ ਲਈ ਵੌਇਸ ਕਾਲ ਬੰਦ ਹੈ',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'ਇਸ ਵਿਅਕਤੀ ਲਈ ਵੀਡੀਓ ਕਾਲ ਬੰਦ ਹੈ',
+  'Sesli aramalara izin ver': 'ਵੌਇਸ ਕਾਲਾਂ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ',
+  'Görüntülü aramalara izin ver': 'ਵੀਡੀਓ ਕਾਲਾਂ ਦੀ ਇਜਾਜ਼ਤ ਦਿਓ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੌਇਸ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੀਡੀਓ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ਵੌਇਸ ਕਾਲ ਬੰਦ ਹੈ। ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ ਤੋਂ ਚਾਲੂ ਕਰ ਸਕਦੇ ਹੋ।',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ਵੀਡੀਓ ਕਾਲ ਬੰਦ ਹੈ। ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ ਤੋਂ ਚਾਲੂ ਕਰ ਸਕਦੇ ਹੋ।',
+  'Sesli ve görüntülü arama': 'ਵੌਇਸ ਅਤੇ ਵੀਡੀਓ ਕਾਲ',
 };

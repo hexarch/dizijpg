@@ -56,6 +56,11 @@ Disallow: /ozet/
 Disallow: /arama
 Disallow: /tam-arama
 Disallow: /kisi-ara
+# 10 Agu 2026: sesli/goruntulu arama ekrani (md. 7). Yol `/gorusme/:ad` —
+# kullanici adi TASIYOR, yani /kullanici/ ile ayni hassasiyette. `/arama-gelen`
+# yukaridaki `Disallow: /arama` on ekine zaten giriyor, `/gorusme/` girmiyordu.
+# seo_gizlilik.test.js bu satir olmadan KIRMIZI donuyordu.
+Disallow: /gorusme/
 Disallow: /api/
 
 # Gorseller taranabilsin: /api/ topluca kapali ama gonderi kartlarinin

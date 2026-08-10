@@ -23,6 +23,15 @@ class AramaKod {
   static const engelli = 'ENGELLI';
   static const takipYok = 'TAKIP_YOK';
   static const aliciYasakli = 'ALICI_YASAKLI';
+
+  /// Aranan kişi KENDİ ayarından sesli/görüntülü aramayı kapatmış (md. 38).
+  ///
+  /// [aramaKapali]/[goruntuluKapali] ile KARIŞTIRILMAMALI: onlar sunucu geneli
+  /// kill switch'tir ("özellik şu an kapalı"), bunlar tek bir kullanıcının
+  /// kararıdır ("aradığın kişide kapalı"). Yanlış sebep göstermek kullanıcıya
+  /// uygulamayı bozuk gösterir — sözleşme §5.0.
+  static const aliciSesliKapali = 'ALICI_SESLI_KAPALI';
+  static const aliciGoruntuluKapali = 'ALICI_GORUNTULU_KAPALI';
   static const cokFazlaCevapsiz = 'COK_FAZLA_CEVAPSIZ';
   static const zatenAramada = 'ZATEN_ARAMADA';
   static const durumUygunDegil = 'DURUM_UYGUN_DEGIL';
@@ -121,6 +130,24 @@ AramaHatasi aramaHatasiCozumle(Object hata) {
         'Bu kullanıcı şu anda aranamıyor'.c,
         AramaTepkisi.uyar,
       );
+    // md. 38 — TÜR BAZLI metin ZORUNLU. Tek bir genel metin ("bu kişi aranamıyor")
+    // kullanıcıya "peki ötekini denesem olur mu" sorusunu sordurur; sunucu türü
+    // zaten söylüyor, saklamanın anlamı yok.
+    //
+    // `uyar` (kapat DEĞİL): kullanıcı sohbet ekranında kalır. Arama ekranı
+    // hiç açılmadı; kapatılacak bir şey yok ve sohbetten atılmak cezalandırıcı.
+    case AramaKod.aliciSesliKapali:
+      return AramaHatasi(
+        AramaKod.aliciSesliKapali,
+        'Aradığınız kişide sesli arama devre dışı'.c,
+        AramaTepkisi.uyar,
+      );
+    case AramaKod.aliciGoruntuluKapali:
+      return AramaHatasi(
+        AramaKod.aliciGoruntuluKapali,
+        'Aradığınız kişide görüntülü arama devre dışı'.c,
+        AramaTepkisi.uyar,
+      );
     case AramaKod.cokFazlaCevapsiz:
       return AramaHatasi(
         AramaKod.cokFazlaCevapsiz,
@@ -179,6 +206,16 @@ class BuzAyari {
   final int gecerlilikSn;
   final bool aramaAcik;
   final bool goruntuluAcik;
+
+  /// **KENDİ** tercihim (md. 38) — yukarıdaki iki bayrakla AYNI ŞEY DEĞİL.
+  ///
+  /// `aramaAcik`/`goruntuluAcik` sunucu geneli kill switch'tir; kapalıysa düğme
+  /// **hiç çizilmez**. Bunlar ise kullanıcının kendi kararıdır (varsayılan
+  /// **kapalı**) ve kapalıyken düğme **çizilir ama PASİF görünür** — tıklanınca
+  /// nereden açılacağını söyler. Sözleşme §14.2b.
+  final bool kendiSesliAcik;
+  final bool kendiGoruntuluAcik;
+
   final int calmaSaniye;
 
   /// Alındığı an — [tazelenmeli] bunun üstünden karar verir.
@@ -191,7 +228,23 @@ class BuzAyari {
     required this.goruntuluAcik,
     required this.calmaSaniye,
     required this.alindi,
+    this.kendiSesliAcik = false,
+    this.kendiGoruntuluAcik = false,
   });
+
+  /// Ayarlardan tercih değişince yeni bir istek atmadan güncellemek için.
+  /// TURN kimliği ve `alindi` KORUNUR — yoksa her anahtar dokunuşu kimliği
+  /// "taze" sanıp bayat kimlikle arama başlatma riskini geri getirirdi.
+  BuzAyari kendiTercihle({bool? sesli, bool? goruntulu}) => BuzAyari(
+    sunucular: sunucular,
+    gecerlilikSn: gecerlilikSn,
+    aramaAcik: aramaAcik,
+    goruntuluAcik: goruntuluAcik,
+    calmaSaniye: calmaSaniye,
+    alindi: alindi,
+    kendiSesliAcik: sesli ?? kendiSesliAcik,
+    kendiGoruntuluAcik: goruntulu ?? kendiGoruntuluAcik,
+  );
 
   factory BuzAyari.json(Map<String, dynamic> d, {DateTime? simdi}) => BuzAyari(
     sunucular: [
@@ -201,6 +254,11 @@ class BuzAyari {
     gecerlilikSn: (d['gecerlilik_sn'] as num?)?.toInt() ?? 0,
     aramaAcik: d['arama_acik'] == true,
     goruntuluAcik: d['goruntulu_acik'] == true,
+    // Eksik alan = KAPALI. Sunucuyla aynı varsayılan-ret yönü: eski bir
+    // sunucudan yanıt gelirse düğmeler pasif görünür (kullanıcı sebebini
+    // okur), tersi olsaydı düğme aktif görünüp sunucu 403 verirdi.
+    kendiSesliAcik: d['kendi_sesli_acik'] == true,
+    kendiGoruntuluAcik: d['kendi_goruntulu_acik'] == true,
     calmaSaniye: (d['calma_saniye'] as num?)?.toInt() ?? 45,
     alindi: simdi ?? DateTime.now(),
   );

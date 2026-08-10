@@ -697,4 +697,19 @@ const Map<String, String> cevirilerTa = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'பின்தொடர்தல், லைக், பதில், செய்தி மற்றும் குறிப்பு அறிவிப்புகள்',
   'Sen': 'நீங்கள்',
+  'Aradığınız kişide sesli arama devre dışı':
+      'இந்த நபருக்கு குரல் அழைப்பு முடக்கப்பட்டுள்ளது',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'இந்த நபருக்கு வீடியோ அழைப்பு முடக்கப்பட்டுள்ளது',
+  'Sesli aramalara izin ver': 'குரல் அழைப்புகளை அனுமதி',
+  'Görüntülü aramalara izin ver': 'வீடியோ அழைப்புகளை அனுமதி',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'அணைத்திருந்தால் யாரும் உங்களை குரலில் அழைக்க முடியாது; அழைப்பவருக்கு அறிவிப்பு தெரியும்',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'அணைத்திருந்தால் யாரும் உங்களை வீடியோவில் அழைக்க முடியாது; அழைப்பவருக்கு அறிவிப்பு தெரியும்',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'குரல் அழைப்பு அணைக்கப்பட்டுள்ளது. அமைப்புகள் > தனியுரிமை என்பதில் இயக்கலாம்.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'வீடியோ அழைப்பு அணைக்கப்பட்டுள்ளது. அமைப்புகள் > தனியுரிமை என்பதில் இயக்கலாம்.',
+  'Sesli ve görüntülü arama': 'குரல் மற்றும் வீடியோ அழைப்பு',
 };

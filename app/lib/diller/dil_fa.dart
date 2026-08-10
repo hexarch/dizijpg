@@ -690,4 +690,19 @@ const Map<String, String> cevirilerFa = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'اعلان‌های دنبال کردن، پسند، پاسخ، پیام و برچسب',
   'Sen': 'تو',
+  'Aradığınız kişide sesli arama devre dışı':
+      'تماس صوتی برای این شخص غیرفعال است',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'تماس تصویری برای این شخص غیرفعال است',
+  'Sesli aramalara izin ver': 'اجازه تماس صوتی',
+  'Görüntülü aramalara izin ver': 'اجازه تماس تصویری',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'وقتی خاموش باشد کسی نمی‌تواند با شما تماس صوتی بگیرد؛ تماس‌گیرنده اعلانی می‌بیند',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'وقتی خاموش باشد کسی نمی‌تواند با شما تماس تصویری بگیرد؛ تماس‌گیرنده اعلانی می‌بیند',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'تماس صوتی خاموش است. می‌توانید از تنظیمات > حریم خصوصی آن را روشن کنید.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'تماس تصویری خاموش است. می‌توانید از تنظیمات > حریم خصوصی آن را روشن کنید.',
+  'Sesli ve görüntülü arama': 'تماس صوتی و تصویری',
 };

@@ -71,6 +71,26 @@ const ekAnahtarlar = <String>[
   '{} dk',
 ];
 
+/// md. 38 — kullanıcı başına sesli/görüntülü arama açma-kapama metinleri.
+///
+/// Sözleşme §14.3'ün listesinde YOKLAR çünkü o liste 9 Ağu'da yazıldı; md. 38
+/// 10 Ağu'da geldi. Ayrı sabit tutuluyor ki hangi anahtarın hangi işten
+/// geldiği kaybolmasın.
+const md38Anahtarlari = <String>[
+  // Arayan tarafında TÜR BAZLI mesaj (kullanıcının kendi cümlesi).
+  'Aradığınız kişide sesli arama devre dışı',
+  'Aradığınız kişide görüntülü arama devre dışı',
+  // Ayarlar > Gizlilik > iki anahtar + başlığı + alt açıklamaları.
+  'Sesli ve görüntülü arama',
+  'Sesli aramalara izin ver',
+  'Görüntülü aramalara izin ver',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür',
+  // Sohbetteki PASİF düğmeye dokununca çıkan açıklama.
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.',
+];
+
 /// Gizlilik politikasının arama bölümü (gizlilik.dart ile BİREBİR aynı).
 const gizlilikAramaMetinleri = <String>[
   'Sesli ve Görüntülü Aramalar',
@@ -115,6 +135,35 @@ void main() {
     }
     expect(eksikler, isEmpty, reason: eksikler.take(10).join('\n'));
   });
+
+  test('md.38: 9 yeni anahtarın hepsi 45 dilde VAR (harita üzerinden)', () {
+    // DOSYA GREP'İ DEĞİL, YÜKLENMİŞ HARİTA: dosyalar tek ve çift tırnaklı
+    // anahtarları KARIŞIK kullanıyor, grep biçime takılır. `tumCeviriler`
+    // uygulamanın çalışma anında okuduğu şeyin ta kendisi.
+    expect(md38Anahtarlari.length, 9);
+    final eksikler = <String>[];
+    for (final giris in tumCeviriler.entries) {
+      for (final a in md38Anahtarlari) {
+        if (!giris.value.containsKey(a)) eksikler.add('${giris.key}: $a');
+      }
+    }
+    expect(eksikler, isEmpty, reason: eksikler.take(10).join('\n'));
+  });
+
+  test(
+    'md.38: çeviriler Türkçe anahtarın KOPYASI değil (gerçekten çevrilmiş)',
+    () {
+      // Betiğin anahtarı değere kopyalaması sessiz bir arıza olurdu: test yeşil,
+      // arayüz Türkçe. Latin olmayan alfabelerde de bu kontrol geçerli.
+      final kopyalar = <String>[];
+      for (final giris in tumCeviriler.entries) {
+        for (final a in md38Anahtarlari) {
+          if (giris.value[a] == a) kopyalar.add('${giris.key}: $a');
+        }
+      }
+      expect(kopyalar, isEmpty, reason: kopyalar.take(10).join('\n'));
+    },
+  );
 
   test('gizlilik metninin arama bölümü 45 dilde VAR', () {
     final eksikler = <String>[];

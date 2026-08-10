@@ -694,4 +694,19 @@ const Map<String, String> cevirilerUk = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Сповіщення про підписки, вподобання, відповіді, повідомлення та згадки',
   'Sen': 'Ти',
+  'Aradığınız kişide sesli arama devre dışı':
+      'У цього користувача голосові дзвінки вимкнено',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'У цього користувача відеодзвінки вимкнено',
+  'Sesli aramalara izin ver': 'Дозволити голосові дзвінки',
+  'Görüntülü aramalara izin ver': 'Дозволити відеодзвінки',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Коли вимкнено, ніхто не подзвонить тобі голосом; той, хто дзвонить, побачить сповіщення',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Коли вимкнено, ніхто не подзвонить тобі по відео; той, хто дзвонить, побачить сповіщення',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Голосові дзвінки вимкнено. Увімкнути можна в Налаштування > Конфіденційність.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Відеодзвінки вимкнено. Увімкнути можна в Налаштування > Конфіденційність.',
+  'Sesli ve görüntülü arama': 'Голосові та відеодзвінки',
 };

@@ -695,4 +695,19 @@ const Map<String, String> cevirilerNl = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Meldingen over volgers, vind-ik-leuks, reacties, berichten en vermeldingen',
   'Sen': 'Jij',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Spraakoproepen zijn uitgeschakeld voor deze persoon',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Video-oproepen zijn uitgeschakeld voor deze persoon',
+  'Sesli aramalara izin ver': 'Spraakoproepen toestaan',
+  'Görüntülü aramalara izin ver': 'Video-oproepen toestaan',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Als dit uit staat, kan niemand je bellen; bellers zien een melding',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Als dit uit staat, kan niemand je videobellen; bellers zien een melding',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Spraakoproepen staan uit. Je kunt ze aanzetten bij Instellingen > Privacy.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Video-oproepen staan uit. Je kunt ze aanzetten bij Instellingen > Privacy.',
+  'Sesli ve görüntülü arama': 'Spraak- en video-oproepen',
 };

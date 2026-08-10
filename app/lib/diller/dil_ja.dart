@@ -668,4 +668,17 @@ const Map<String, String> cevirilerJa = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'フォロー、いいね、返信、メッセージ、メンションの通知',
   'Sen': '自分',
+  'Aradığınız kişide sesli arama devre dışı': '相手は音声通話をオフにしています',
+  'Aradığınız kişide görüntülü arama devre dışı': '相手はビデオ通話をオフにしています',
+  'Sesli aramalara izin ver': '音声通話を許可',
+  'Görüntülü aramalara izin ver': 'ビデオ通話を許可',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'オフのときは誰もあなたに音声通話できません。発信者には通知が表示されます',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'オフのときは誰もあなたにビデオ通話できません。発信者には通知が表示されます',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      '音声通話はオフです。設定 > プライバシー からオンにできます。',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ビデオ通話はオフです。設定 > プライバシー からオンにできます。',
+  'Sesli ve görüntülü arama': '音声通話とビデオ通話',
 };

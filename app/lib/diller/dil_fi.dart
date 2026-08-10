@@ -694,4 +694,19 @@ const Map<String, String> cevirilerFi = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Seuraamis-, tykkäys-, vastaus-, viesti- ja merkintäilmoitukset',
   'Sen': 'Sinä',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Tällä henkilöllä äänipuhelut ovat pois käytöstä',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Tällä henkilöllä videopuhelut ovat pois käytöstä',
+  'Sesli aramalara izin ver': 'Salli äänipuhelut',
+  'Görüntülü aramalara izin ver': 'Salli videopuhelut',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Kun pois päältä, kukaan ei voi soittaa sinulle; soittaja näkee ilmoituksen',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Kun pois päältä, kukaan ei voi soittaa sinulle videolla; soittaja näkee ilmoituksen',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Äänipuhelut ovat pois päältä. Voit ottaa ne käyttöön kohdassa Asetukset > Yksityisyys.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Videopuhelut ovat pois päältä. Voit ottaa ne käyttöön kohdassa Asetukset > Yksityisyys.',
+  'Sesli ve görüntülü arama': 'Ääni- ja videopuhelut',
 };

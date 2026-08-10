@@ -690,4 +690,18 @@ const Map<String, String> cevirilerVi = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Thông báo theo dõi, thích, trả lời, tin nhắn và gắn thẻ',
   'Sen': 'Bạn',
+  'Aradığınız kişide sesli arama devre dışı': 'Người này đã tắt cuộc gọi thoại',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Người này đã tắt cuộc gọi video',
+  'Sesli aramalara izin ver': 'Cho phép cuộc gọi thoại',
+  'Görüntülü aramalara izin ver': 'Cho phép cuộc gọi video',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Khi tắt, không ai có thể gọi thoại cho bạn; người gọi sẽ thấy thông báo',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Khi tắt, không ai có thể gọi video cho bạn; người gọi sẽ thấy thông báo',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Cuộc gọi thoại đang tắt. Bạn có thể bật trong Cài đặt > Quyền riêng tư.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Cuộc gọi video đang tắt. Bạn có thể bật trong Cài đặt > Quyền riêng tư.',
+  'Sesli ve görüntülü arama': 'Cuộc gọi thoại và video',
 };

@@ -690,4 +690,19 @@ const Map<String, String> cevirilerMr = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'फॉलो, लाइक, उत्तर, संदेश आणि टॅग सूचना',
   'Sen': 'तू',
+  'Aradığınız kişide sesli arama devre dışı':
+      'या व्यक्तीसाठी व्हॉइस कॉल बंद आहे',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'या व्यक्तीसाठी व्हिडिओ कॉल बंद आहे',
+  'Sesli aramalara izin ver': 'व्हॉइस कॉलला परवानगी द्या',
+  'Görüntülü aramalara izin ver': 'व्हिडिओ कॉलला परवानगी द्या',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'बंद असल्यास कोणीही तुम्हाला व्हॉइस कॉल करू शकत नाही; कॉल करणाऱ्याला सूचना दिसते',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'बंद असल्यास कोणीही तुम्हाला व्हिडिओ कॉल करू शकत नाही; कॉल करणाऱ्याला सूचना दिसते',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'व्हॉइस कॉल बंद आहे. सेटिंग्ज > गोपनीयता मधून चालू करू शकता.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'व्हिडिओ कॉल बंद आहे. सेटिंग्ज > गोपनीयता मधून चालू करू शकता.',
+  'Sesli ve görüntülü arama': 'व्हॉइस आणि व्हिडिओ कॉल',
 };

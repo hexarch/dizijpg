@@ -691,4 +691,19 @@ const Map<String, String> cevirilerKn = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'ಫಾಲೋ, ಲೈಕ್, ಉತ್ತರ, ಸಂದೇಶ ಮತ್ತು ಟ್ಯಾಗ್ ಅಧಿಸೂಚನೆಗಳು',
   'Sen': 'ನೀವು',
+  'Aradığınız kişide sesli arama devre dışı':
+      'ಈ ವ್ಯಕ್ತಿಗೆ ಧ್ವನಿ ಕರೆ ನಿಷ್ಕ್ರಿಯವಾಗಿದೆ',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'ಈ ವ್ಯಕ್ತಿಗೆ ವೀಡಿಯೊ ಕರೆ ನಿಷ್ಕ್ರಿಯವಾಗಿದೆ',
+  'Sesli aramalara izin ver': 'ಧ್ವನಿ ಕರೆಗಳಿಗೆ ಅನುಮತಿಸಿ',
+  'Görüntülü aramalara izin ver': 'ವೀಡಿಯೊ ಕರೆಗಳಿಗೆ ಅನುಮತಿಸಿ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'ಆಫ್ ಆಗಿದ್ದರೆ ಯಾರೂ ನಿಮಗೆ ಧ್ವನಿ ಕರೆ ಮಾಡಲಾಗದು; ಕರೆ ಮಾಡುವವರಿಗೆ ಸೂಚನೆ ಕಾಣುತ್ತದೆ',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'ಆಫ್ ಆಗಿದ್ದರೆ ಯಾರೂ ನಿಮಗೆ ವೀಡಿಯೊ ಕರೆ ಮಾಡಲಾಗದು; ಕರೆ ಮಾಡುವವರಿಗೆ ಸೂಚನೆ ಕಾಣುತ್ತದೆ',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ಧ್ವನಿ ಕರೆ ಆಫ್ ಆಗಿದೆ. ಸೆಟ್ಟಿಂಗ್‌ಗಳು > ಗೌಪ್ಯತೆ ಯಿಂದ ಆನ್ ಮಾಡಬಹುದು.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'ವೀಡಿಯೊ ಕರೆ ಆಫ್ ಆಗಿದೆ. ಸೆಟ್ಟಿಂಗ್‌ಗಳು > ಗೌಪ್ಯತೆ ಯಿಂದ ಆನ್ ಮಾಡಬಹುದು.',
+  'Sesli ve görüntülü arama': 'ಧ್ವನಿ ಮತ್ತು ವೀಡಿಯೊ ಕರೆ',
 };

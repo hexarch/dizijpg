@@ -693,4 +693,19 @@ const Map<String, String> cevirilerSv = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Aviseringar om följare, gillanden, svar, meddelanden och omnämnanden',
   'Sen': 'Du',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Röstsamtal är avstängda för den här personen',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Videosamtal är avstängda för den här personen',
+  'Sesli aramalara izin ver': 'Tillåt röstsamtal',
+  'Görüntülü aramalara izin ver': 'Tillåt videosamtal',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'När det är av kan ingen ringa dig med röst; den som ringer ser ett meddelande',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'När det är av kan ingen videoringa dig; den som ringer ser ett meddelande',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Röstsamtal är av. Du kan slå på dem i Inställningar > Integritet.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Videosamtal är av. Du kan slå på dem i Inställningar > Integritet.',
+  'Sesli ve görüntülü arama': 'Röst- och videosamtal',
 };

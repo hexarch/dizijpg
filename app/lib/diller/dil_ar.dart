@@ -682,4 +682,19 @@ const Map<String, String> cevirilerAr = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'إشعارات المتابعة والإعجاب والرد والرسائل والإشارات',
   'Sen': 'أنت',
+  'Aradığınız kişide sesli arama devre dışı':
+      'المكالمات الصوتية معطّلة لدى هذا الشخص',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'مكالمات الفيديو معطّلة لدى هذا الشخص',
+  'Sesli aramalara izin ver': 'السماح بالمكالمات الصوتية',
+  'Görüntülü aramalara izin ver': 'السماح بمكالمات الفيديو',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'عند الإيقاف لا يمكن لأحد الاتصال بك صوتيًا؛ يرى المتصل تنبيهًا',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'عند الإيقاف لا يمكن لأحد الاتصال بك بالفيديو؛ يرى المتصل تنبيهًا',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'المكالمات الصوتية موقوفة. يمكنك تفعيلها من الإعدادات > الخصوصية.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'مكالمات الفيديو موقوفة. يمكنك تفعيلها من الإعدادات > الخصوصية.',
+  'Sesli ve görüntülü arama': 'المكالمات الصوتية والمرئية',
 };

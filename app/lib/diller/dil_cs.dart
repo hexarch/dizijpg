@@ -691,4 +691,19 @@ const Map<String, String> cevirilerCs = {
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
       'Oznámení o sledování, lajcích, odpovědích, zprávách a označeních',
   'Sen': 'Ty',
+  'Aradığınız kişide sesli arama devre dışı':
+      'Hlasové hovory jsou u této osoby vypnuté',
+  'Aradığınız kişide görüntülü arama devre dışı':
+      'Videohovory jsou u této osoby vypnuté',
+  'Sesli aramalara izin ver': 'Povolit hlasové hovory',
+  'Görüntülü aramalara izin ver': 'Povolit videohovory',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      'Když je vypnuto, nikdo ti nemůže zavolat; volající uvidí upozornění',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      'Když je vypnuto, nikdo ti nemůže zavolat přes video; volající uvidí upozornění',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Hlasové hovory jsou vypnuté. Zapneš je v Nastavení > Soukromí.',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      'Videohovory jsou vypnuté. Zapneš je v Nastavení > Soukromí.',
+  'Sesli ve görüntülü arama': 'Hlasové a videohovory',
 };

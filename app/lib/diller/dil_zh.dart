@@ -657,4 +657,17 @@ const Map<String, String> cevirilerZh = {
   'Doğrulanmış testçi': '已验证测试员',
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri': '关注、点赞、回复、消息和标记通知',
   'Sen': '我',
+  'Aradığınız kişide sesli arama devre dışı': '对方已关闭语音通话',
+  'Aradığınız kişide görüntülü arama devre dışı': '对方已关闭视频通话',
+  'Sesli aramalara izin ver': '允许语音通话',
+  'Görüntülü aramalara izin ver': '允许视频通话',
+  'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
+      '关闭后没人能给你打语音电话；来电者会看到提示',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
+      '关闭后没人能给你打视频电话；来电者会看到提示',
+  'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      '语音通话已关闭。可在设置 > 隐私中开启。',
+  'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
+      '视频通话已关闭。可在设置 > 隐私中开启。',
+  'Sesli ve görüntülü arama': '语音和视频通话',
 };
