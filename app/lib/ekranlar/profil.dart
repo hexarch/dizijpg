@@ -1742,13 +1742,24 @@ class ProfilSekmeleri extends StatelessWidget {
                             : DiziRenkler.metin54,
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        etiket.c,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: secili == i
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.metin54,
+                      // Flexible + FittedBox: uzun çeviri (hu "Sorozatok és
+                      // filmek", fi "Sarjat ja elokuvat") dar telefonda yarım
+                      // sekmeye sığmayınca taşmak yerine bir miktar küçülür;
+                      // etiket tek satırda TAM okunur kalır.
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            etiket.c,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: secili == i
+                                  ? DiziRenkler.sariMetin
+                                  : DiziRenkler.metin54,
+                            ),
+                          ),
                         ),
                       ),
                     ],

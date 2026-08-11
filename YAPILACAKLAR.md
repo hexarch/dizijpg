@@ -1,6 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (b) — MD. 46 ÇEVİRİ TAŞMALARI 🚀 (1.34.1+80) + ALTYAPI C2/C3 ✅
+**Webde CANLIDA** (ajan yaptı, ana oturum doğrulayıp dağıttı). İstemci-yalnız.
+Güncel paketler: `projeler/dizijpg.apk` + `projeler/dizijpg-1.34.1+80.aab`
+(79 ve 78 AAB'leri silindi — Play'e hiç gitmemişlerdi; telefonlara ve Play'e
+BU sürüm gidecek).
+
+### md. 46 — uzun çeviri taşma ailesi (6 dosya)
+Ortak kalıp: çevrilen metin sabit/dar kutuda esneme payı olmadan duruyordu.
+Çözüm FittedBox(scaleDown)+tek satır (segment/sekme etiketleri: metin tam
+kalır, gerekirse küçülür — ellipsis anlam bozardı) ya da Expanded/Flexible
+(başlık/özet satırları: sararak sığar). Dokunulan yerler: ayarlar tema
+segmentleri + 3 sheet başlığı + arama başlığı, profil sekmeleri (açık profili
+de kapsar), gözat segmentleri, kişi-yapımlar izlenme özeti, gelen arama
+ekranı alt satırı. Şüpheli bulunup bilinçli DOKUNULMAYANLAR: kesfet_akis
+'Yanıtlar' başlığı (tam genişlik, risk yok), arama.dart @kullanıcıadı
+(çeviri değil), sosyal.dart dialog (zaten Expanded).
+KANIT: `test/uzun_ceviri_tasma_test.dart` — 6 test, 320 dp, fi/hu/pl GERÇEK
+çeviri metinleriyle; stash'le doğrulandı (düzeltmesiz 6/6 kırmızı).
+`flutter test` **1024 yeşil** · analyze 0 hata/uyarı (85 info taban).
+Dağıtım kanıtı: version.json 1.34.1+80 · site/paket/robots 200 · bootstrap
+`main.adfe17f8e737.dart.js` (eski b8ad7767a588 silindi) · SW sökücü yerinde.
+
+### Altyapı (yapilacaklar2): C2 ✅ (bayat madde — zaten uygulanmıştı,
+docker inspect ile iki konteynerde 50m×5 doğrulandı) · C3 ✅ journald
+SystemMaxUse=500M → journal 2,1 GB'den 460 MB'a indi, API etkilenmedi.
+
 ## 2026-08-12 — MD. 47 İZLİYORUM YANLIŞ DÜŞME + MD. 16 DAĞITIMI 🚀 (1.34.0+79)
 **Webde CANLIDA.** İstemci-yalnız; backend değişmedi, migrasyon yok.
 APK/AAB derlendi: `projeler/dizijpg.apk` + `projeler/dizijpg-1.34.0+79.aab`

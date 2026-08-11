@@ -140,6 +140,14 @@ const List<String> ulkeler = [
   'Yunanistan',
 ];
 
+/// Segment düğmesi etiketi: uzun çeviri dar hücrede satır KIRMAZ ("Syste/m"
+/// hatası, Almanca tema seçici), sığmazsa yazı bir miktar küçülür. 45 dilin
+/// en uzunu bile (fi "Järjestelmä") tek satırda kalır.
+Widget _segmentEtiket(String metin) => FittedBox(
+  fit: BoxFit.scaleDown,
+  child: Text(metin, maxLines: 1, softWrap: false),
+);
+
 class AyarlarEkrani extends StatefulWidget {
   const AyarlarEkrani({super.key});
 
@@ -870,24 +878,28 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                             valueListenable: TemaAyar.mod,
                             builder: (context, mod, _) =>
                                 SegmentedButton<String>(
+                                  // Etiketler [_segmentEtiket] ile sarılı:
+                                  // uzun çeviriler ("System" → "Syste/m",
+                                  // fi "Järjestelmä") dar hücrede satır
+                                  // KIRMAZ, gerekirse küçülür.
                                   segments: [
                                     ButtonSegment(
                                       value: 'sistem',
-                                      label: Text('Sistem'.c),
+                                      label: _segmentEtiket('Sistem'.c),
                                       icon: const Icon(
                                         Icons.settings_suggest_outlined,
                                       ),
                                     ),
                                     ButtonSegment(
                                       value: 'koyu',
-                                      label: Text('Koyu'.c),
+                                      label: _segmentEtiket('Koyu'.c),
                                       icon: const Icon(
                                         Icons.dark_mode_outlined,
                                       ),
                                     ),
                                     ButtonSegment(
                                       value: 'acik',
-                                      label: Text('Açık'.c),
+                                      label: _segmentEtiket('Açık'.c),
                                       icon: const Icon(
                                         Icons.light_mode_outlined,
                                       ),
@@ -1270,11 +1282,14 @@ class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
                     color: DiziRenkler.sariMetin,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Bildirim Tercihleri'.c,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                  // Expanded: uzun çeviri dar ekranda taşmak yerine sarar.
+                  Expanded(
+                    child: Text(
+                      'Bildirim Tercihleri'.c,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ],
@@ -1528,11 +1543,14 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                     color: DiziRenkler.sariMetin,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    'Gizlilik'.c,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
+                  // Expanded: uzun çeviri dar ekranda taşmak yerine sarar.
+                  Expanded(
+                    child: Text(
+                      'Gizlilik'.c,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                 ],
@@ -1581,15 +1599,18 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                       color: DiziRenkler.sariMetin,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      // "Aramalar" TEK BAŞINA KULLANILMADI: bu projede "arama"
-                      // hem dizi araması hem telefon araması demek. Ayarlar
-                      // ekranında kısa hâli okuyanı yanıltırdı.
-                      'Sesli ve görüntülü arama'.c,
-                      style: TextStyle(
-                        color: DiziRenkler.metin,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
+                    // Expanded: uzun çeviri dar ekranda taşmak yerine sarar.
+                    Expanded(
+                      child: Text(
+                        // "Aramalar" TEK BAŞINA KULLANILMADI: bu projede
+                        // "arama" hem dizi araması hem telefon araması demek.
+                        // Ayarlar ekranında kısa hâli okuyanı yanıltırdı.
+                        'Sesli ve görüntülü arama'.c,
+                        style: TextStyle(
+                          color: DiziRenkler.metin,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                     ),
                   ],
@@ -1737,11 +1758,14 @@ class _GeriBildirimSheetState extends State<_GeriBildirimSheet> {
                   color: DiziRenkler.sariMetin,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Geri Bildirim'.c,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
+                // Expanded: uzun çeviri dar ekranda taşmak yerine sarar.
+                Expanded(
+                  child: Text(
+                    'Geri Bildirim'.c,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ],

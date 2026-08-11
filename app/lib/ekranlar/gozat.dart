@@ -124,9 +124,24 @@ class _GozatEkraniState extends State<GozatEkrani> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                 child: SegmentedButton<String>(
+                  // FittedBox: uzun çeviri dar hücrede satır kırmaz,
+                  // sığmazsa yazı küçülür (ayarlar tema seçicisiyle aynı
+                  // "Syste/m" ailesi).
                   segments: [
-                    ButtonSegment(value: 'tv', label: Text('Diziler'.c)),
-                    ButtonSegment(value: 'movie', label: Text('Filmler'.c)),
+                    ButtonSegment(
+                      value: 'tv',
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('Diziler'.c, maxLines: 1, softWrap: false),
+                      ),
+                    ),
+                    ButtonSegment(
+                      value: 'movie',
+                      label: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('Filmler'.c, maxLines: 1, softWrap: false),
+                      ),
+                    ),
                   ],
                   selected: {_tur},
                   onSelectionChanged: (s) => _turDegis(s.first),

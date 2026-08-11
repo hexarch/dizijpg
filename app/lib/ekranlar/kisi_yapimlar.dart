@@ -160,9 +160,13 @@ class IzlenmeOzetSeridi extends StatelessWidget {
             children: [
               Icon(Icons.check_circle, size: 18, color: DiziRenkler.sariMetin),
               const SizedBox(width: 6),
-              Text(
-                '{} yapımdan {} tanesini izledin'.cf([toplam, izlenen]),
-                style: const TextStyle(fontWeight: FontWeight.w700),
+              // Expanded: uzun çeviri + çok haneli sayılar dar ekranda
+              // taşmak yerine ikinci satıra sarar.
+              Expanded(
+                child: Text(
+                  '{} yapımdan {} tanesini izledin'.cf([toplam, izlenen]),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),

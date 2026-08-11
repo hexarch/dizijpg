@@ -209,11 +209,15 @@ class _GelenAramaSayfasiState extends State<GelenAramaSayfasi> {
                         color: Colors.white70,
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        goruntulu ? 'Görüntülü arama'.c : 'Sesli arama'.c,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 15,
+                      // Flexible: uzun çeviri dar ekranda taşmak yerine sarar
+                      // (ortalı satır olduğu için görünümü değiştirmez).
+                      Flexible(
+                        child: Text(
+                          goruntulu ? 'Görüntülü arama'.c : 'Sesli arama'.c,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 15,
+                          ),
                         ),
                       ),
                     ],
