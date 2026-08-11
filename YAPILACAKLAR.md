@@ -1,5 +1,30 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-11 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-11 — MD. 16 FAVORİ OYUNCU ŞERİDİ ✅ (dağıtım yok) + AUTH 429 OLAYI ✅
+### Favori oyuncular şeridi (md. 16, ajan yaptı)
+`profil.dart`: favoriler doluysa metin satırı yerine "İzlediğim" şeritleriyle
+aynı dilde yatay şerit (`FavoriOyuncuKarti` yeniden kullanıldı; kart 96 dp,
+şerit 124 dp — ızgaranın `mainAxisExtent`'iyle birebir). 30 kart önizleme,
+başlık gerçek toplam, boş/hata durumunda eski kompakt satır. Veri profili
+bekletmeden ayrı çekilir; SWR önbelleğine `favori_kisiler` eklendi. Yeni
+çeviri anahtarı YOK. `profil_favori_serit_test.dart` (6 test) → **1016 yeşil**,
+analyze 0 hata/uyarı (85 info). Açık profillerde gösterim YOK (uç da vermiyor)
+— bilinçli kapsam dışı.
+
+### Auth 429 olayı (kullanıcı bildirimi: "Google girişi çok fazla istek diyor")
+KÖK NEDEN: Mac'teki `insta_kopru.mjs --izle` (launchd `com.dizijpg.instakopru`,
+KeepAlive) her 60 sn'lik turda `/auth/giris` ile sıfırdan giriş yapıyordu →
+60/sa > authLimiti 30/sa → ev IP'sinin kovası doluyor, aynı ağdaki tüm
+girişler 429. Köprü de her saatin yarısında kilitliydi (günlerdir yarım
+kapasite). ÇÖZÜM: token turlar arası önbelleklenir, 401'de düşürülüp yeniden
+girilir (`hata.durum` alanı eklendi). API restart ile sayaç temizlendi;
+kullanıcının Google girişi 04:03'te 200 (nginx log). DERS: (1) süreç launchd
+yönetiminde — elle ikinci kopya başlatma; (2) authLimiti başarılı girişleri
+de sayıyor, tasarım sorusu istek listesinde (md. 45).
+Yan temizlik: dünkü teşhis oturumundan kalan sahipsiz frontend_server
+(afis-teshis worktree'si) öldürüldü; `flutter clean` sonrası yeniden üretilen
+iOS `Package.resolved` pin'leri commit'lendi.
 
 ## 2026-08-10 (gece) — ARAMA KALİTE TURU (md. 42) + MASAÜSTÜ ORTAKOLON (md. 26) 🚀
 **11 Ağu sabahı CANLIYA ÇIKTI — sürüm 1.33.0+78.** Web ritüeli tam uygulandı:

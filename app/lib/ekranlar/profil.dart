@@ -11,6 +11,7 @@ import '../ceviri.dart';
 import '../onbellek.dart';
 import '../tema.dart';
 import 'etiket.dart' show duzMetin;
+import 'favori_oyuncular.dart' show FavoriOyuncuKarti;
 import 'gorsel_kirp.dart';
 import 'kullanici_profil.dart' show ProfilYorumKarti;
 import 'akis.dart';
@@ -127,6 +128,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   Map<String, dynamic>? _yorumVeri;
   List<dynamic> _listeler = [];
   List<dynamic> _izlenenler = [];
+
+  /// Favori oyuncular (madde 16). null = henüz gelmedi (kompakt satır
+  /// gösterilir); boş liste = favori yok (yine kompakt satır); dolu = şerit.
+  List<dynamic>? _favoriKisiler;
   List<dynamic> _rozetler = [];
   String? _hata;
   bool _gorselYukleniyor = false;
@@ -264,7 +269,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: grup.$3.length > 30 ? 30 : grup.$3.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 10),
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
               itemBuilder: (context, i) {
                 final o = grup.$3[i] as Map<String, dynamic>;
                 return MiniIcerik(
@@ -414,7 +419,38 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       _profil = d['profil'] as Map<String, dynamic>?;
       _izlenenler = (d['izlenenler'] as List<dynamic>?) ?? _izlenenler;
       _rozetler = (d['rozetler'] as List<dynamic>?) ?? _rozetler;
+      // Favoriler de aynı kayıttan: şerit ikinci açılışta ANINDA çizilir,
+      // kompakt satır → şerit zıplaması yalnız ilk ziyarette olur.
+      _favoriKisiler =
+          (d['favori_kisiler'] as List<dynamic>?) ?? _favoriKisiler;
     });
+  }
+
+  /// Favori oyuncuları çeker (madde 16 şeridi). Ana `_yukle`den AYRI ve
+  /// beklenmeden koşar: uç, soğuk TMDB önbelleğinde 200 kişiye kadar dış
+  /// istek zinciri yürütebilir — profil açılışını buna bekletmek olmaz.
+  /// Hata sessiz yutulur: şerit yerine kompakt satır kalır, o da çalışır.
+  Future<void> _favorileriTazele() async {
+    try {
+      final d = await Api.get('/favori-kisiler');
+      if (!mounted) return;
+      setState(
+        () => _favoriKisiler = (d['kisiler'] as List<dynamic>?) ?? const [],
+      );
+      // Ana kayıt az önce yazıldı; favoriler gelince üstüne tam haliyle
+      // yeniden yazılır ki SWR açılışı şeridi de kapsasın.
+      Onbellek.yaz('profil', {
+        'istatistik': _istatistik,
+        'kitaplik': _kitaplik,
+        'listeler': _listeler,
+        'profil': _profil,
+        'izlenenler': _izlenenler,
+        'rozetler': _rozetler,
+        'favori_kisiler': _favoriKisiler,
+      });
+    } catch (_) {
+      /* kompakt satır davranışı korunur */
+    }
   }
 
   /// Yalnız "Yorumlar" sekmesinin verisini tazeler. Bir yorum silindiğinde ya
@@ -458,6 +494,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
       final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
       if (kadi.isNotEmpty) _yorumlariTazele();
+      // Favori oyuncu şeridi de ayrı yürür (gerekçe metodun başında).
+      _favorileriTazele();
       Onbellek.yaz('profil', {
         'istatistik': _istatistik,
         'kitaplik': _kitaplik,
@@ -465,6 +503,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         'profil': _profil,
         'izlenenler': _izlenenler,
         'rozetler': _rozetler,
+        'favori_kisiler': _favoriKisiler,
       });
     } catch (e) {
       if (!mounted) return;
@@ -1004,8 +1043,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         child: ListView.separated(
                           scrollDirection: Axis.horizontal,
                           itemCount: e.value.length,
-                          separatorBuilder: (_, __) =>
-                              const SizedBox(width: 10),
+                          separatorBuilder: (_, _) => const SizedBox(width: 10),
                           itemBuilder: (context, i) {
                             final d = e.value[i] as Map<String, dynamic>;
                             return MiniIcerik(
@@ -1059,43 +1097,105 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       ),
                       const SizedBox(height: 12),
                     ],
-                    // Favori oyuncular — kitaplık sekmesinin sabit girişi.
-                    // KOŞULSUZ: sayısı burada bilinmiyor (ayrı uçtan gelir) ve
-                    // özelliğin KEŞFEDİLEBİLİR olması gerekiyor; boş liste
-                    // ekranı ne yapılacağını anlatan bir boş durum gösterir.
-                    InkWell(
-                      borderRadius: BorderRadius.circular(8),
-                      onTap: () => context.push('/favori-oyuncular'),
-                      child: Padding(
-                        // 10+10+~22 = 42 → satır 44 dp'lik dokunma hedefini
-                        // metin yüksekliğiyle birlikte karşılar.
-                        padding: const EdgeInsets.symmetric(vertical: 11),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.favorite,
-                              size: 17,
-                              color: Colors.redAccent,
-                            ),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                'Favori oyuncular'.c,
-                                style: const TextStyle(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w600,
+                    // Favori oyuncular (madde 16) — dolu ise "İzlediğim
+                    // Diziler/Filmler" gibi yatay şerit (fotoğraf + ad),
+                    // boş/yüklenmemişse eski kompakt satır KALIR: özellik
+                    // keşfedilebilir olmalı ve boş liste ekranı ne yapılacağını
+                    // anlatan boş durumu gösterir.
+                    if (_favoriKisiler == null || _favoriKisiler!.isEmpty)
+                      InkWell(
+                        borderRadius: BorderRadius.circular(8),
+                        onTap: () => context.push('/favori-oyuncular'),
+                        child: Padding(
+                          // 10+10+~22 = 42 → satır 44 dp'lik dokunma hedefini
+                          // metin yüksekliğiyle birlikte karşılar.
+                          padding: const EdgeInsets.symmetric(vertical: 11),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.favorite,
+                                size: 17,
+                                color: Colors.redAccent,
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  'Favori oyuncular'.c,
+                                  style: const TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 16,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    else ...[
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.favorite,
+                            size: 19,
+                            color: Colors.redAccent,
+                          ),
+                          const SizedBox(width: 6),
+                          // Expanded (Flexible+Spacer değil): uzun çevirilerde
+                          // taşma yerine sarma — İzlediğim başlıklarıyla aynı.
+                          Expanded(
+                            child: Text(
+                              '${'Favori oyuncular'.c} (${_favoriKisiler!.length})',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                              ),
                             ),
-                            Icon(
-                              Icons.chevron_right,
-                              size: 16,
-                              color: DiziRenkler.metin38,
+                          ),
+                          TextButton(
+                            onPressed: () => context.push('/favori-oyuncular'),
+                            child: Text(
+                              'Tümünü gör'.c,
+                              style: TextStyle(
+                                color: DiziRenkler.sariMetin,
+                                fontSize: 12,
+                              ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        // 76 avatar + 8 boşluk + 40 ad — favori_oyuncular.dart
+                        // ızgarasının mainAxisExtent'iyle AYNI, kart iki yerde
+                        // aynı boyda görünür.
+                        height: 124,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          // İzlediğim şeritleriyle aynı önizleme tavanı (30);
+                          // tamamı "Tümünü gör" ekranında.
+                          itemCount: _favoriKisiler!.length > 30
+                              ? 30
+                              : _favoriKisiler!.length,
+                          separatorBuilder: (_, _) => const SizedBox(width: 10),
+                          itemBuilder: (context, i) {
+                            final k =
+                                _favoriKisiler![i] as Map<String, dynamic>;
+                            return SizedBox(
+                              width: 96,
+                              child: FavoriOyuncuKarti(
+                                key: ValueKey(k['tmdb_id']),
+                                kisi: k,
+                              ),
+                            );
+                          },
                         ),
                       ),
-                    ),
+                    ],
                     const SizedBox(height: 12),
                     // Bölümler kullanıcı sırasına göre (Ayarlar > Profil düzeni)
                     for (final bolum in _bolumSirasi) ..._bolumUret(bolum),
@@ -1419,7 +1519,7 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
 class RozetCipi extends StatelessWidget {
   final Map<String, dynamic> rozet;
 
-  const RozetCipi({required this.rozet});
+  const RozetCipi({super.key, required this.rozet});
 
   static const _bilgi = {
     'ilk_bolum': (Icons.play_arrow_rounded, 'İlk Bölüm'),
