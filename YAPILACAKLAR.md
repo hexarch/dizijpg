@@ -1,9 +1,16 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-10 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-10 (gece) — ARAMA KALİTE TURU (md. 42) + MASAÜSTÜ ORTAKOLON (md. 26) 🔨
-**Dağıtım YOK · sürüm 1.32.0+77 (artırılmadı) · yalnız istemci, `backend/` kod
-DEĞİŞMEDİ** (yalnız sözleşme belgesine §14.7 eklendi).
+## 2026-08-10 (gece) — ARAMA KALİTE TURU (md. 42) + MASAÜSTÜ ORTAKOLON (md. 26) 🚀
+**11 Ağu sabahı CANLIYA ÇIKTI — sürüm 1.33.0+78.** Web ritüeli tam uygulandı:
+`--pwa-strategy=none` derleme → SW sökücü yazıldı → `web_hashla`
+(`main.0720f12cb33a.dart.js`, eski `a7141f1aa447` sunucudan silindi) → scp
+(robots.txt yerinde) → doğrulama: site 200 · `/api/saglik` ok · version.json
+1.33.0+78 · bootstrap yeni hash'i gösteriyor · paket CF'den `immutable` 200 ·
+SW sökücü yerinde. APK (115 MB) + AAB (96 MB) derlendi →
+`projeler/dizijpg.apk` + `projeler/dizijpg-1.33.0+78.aab`.
+KALAN: iki telefonda arama testi (kullanıcı) + Play'e AAB (kullanıcı).
+Yalnız istemci, `backend/` kod DEĞİŞMEDİ (sözleşmeye §14.7 eklendi).
 
 ### Arama kalite turu — kullanıcının iki telefonlu testindeki 4 şikâyet
 Ayrıntı ve gerekçeler: `backend/ARAMA-API-SOZLESMESI.md` **§14.7**.
@@ -44,8 +51,10 @@ zil) · `flutter analyze lib test` 0 hata/uyarı (88 info, hepsi eski) ·
 3. APK + AAB derle, iki telefona kur; Play'e AAB
 4. İki telefonla gerçek test — zil, bağlanma hızı (§12 hedefi 3-6 sn
    `[DOĞRULANMALI]`), FARKLI AĞ senaryosu (md. 7 turu hâlâ geçerli)
-⚠ 10 Ağu gece: canlıda afiş/placeholder sorunu bildirildi, BAŞKA oturum
-bakıyor — dağıtımdan önce canlının sağlıklı olduğu doğrulanmalı.
+NOT (10 Ağu gece): "canlıda afişler boş" bildirimi YANLIŞ ALARM çıktı —
+başka oturum ölçtü: site ve 14:04 dağıtımı sağlam; sorun kullanıcının kendi
+Chrome profilindeki bir EKLENTİNİN istekleri engellemesiydi (temiz profilde
+kusursuz). Dağıtım önünde engel yok.
 
 ## 2026-08-10 — MADDE 38: KULLANICI BAŞINA SESLİ/GÖRÜNTÜLÜ ARAMA AÇMA-KAPAMA 🔨
 **Dağıtım YOK · migrasyon CANLIYA UYGULANMADI · commit YOK · sürüm 1.30.1+75 (artırılmadı).**
