@@ -90,7 +90,11 @@ async function api(yol, { yontem = 'GET', token, govde, ham, tip } = {}) {
   const c = await fetch(`${API}${yol}`, { method: yontem, headers: baslik, body: icerik });
   const metin = await c.text();
   let veri; try { veri = JSON.parse(metin); } catch { veri = metin; }
-  if (!c.ok) throw new Error(`${yontem} ${yol} → ${c.status} ${JSON.stringify(veri).slice(0, 200)}`);
+  if (!c.ok) {
+    const hata = new Error(`${yontem} ${yol} → ${c.status} ${JSON.stringify(veri).slice(0, 200)}`);
+    hata.durum = c.status; // 401'de oturum düşürülüp yeniden girilebilsin
+    throw hata;
+  }
   return veri;
 }
 
@@ -176,16 +180,26 @@ function metinKur(kullaniciNotu, aciklama, yaratici, kisaKod) {
   return govde ? `${govde}\n\n${atif}` : atif;
 }
 
+// Oturum turlar arası YAŞAR. Her turda /auth/giris çağrılırsa --izle kipinde
+// saatte 60 giriş olur; sunucudaki authLimiti (IP başına 30/sa) dolar ve AYNI
+// ev ağındaki gerçek kullanıcıların girişi de "Çok fazla istek" ile kilitlenir
+// (11 Ağu'da yaşandı — köprünün kendisi de her saatin yarısında 429 yiyordu).
+// Token süresi dolarsa (401) oturum düşürülür, sonraki tur yeniden girer.
+let oturum = null;
+
 async function tur() {
   cerezleriHazirla();
   const durum = durumOku();
   const islenen = new Set(durum.islenen);
   const kodlar = new Set(durum.kodlar); // paylaşılmış Instagram kısa kodları
-  const giris = await api('/auth/giris', {
-    yontem: 'POST', govde: { email: BOT_EMAIL, sifre: sifreOku() },
-  });
-  const token = giris.token;
-  const benId = giris.kullanici?.id;
+  if (!oturum) {
+    const giris = await api('/auth/giris', {
+      yontem: 'POST', govde: { email: BOT_EMAIL, sifre: sifreOku() },
+    });
+    oturum = { token: giris.token, benId: giris.kullanici?.id };
+  }
+  const token = oturum.token;
+  const benId = oturum.benId;
 
   const { sohbetler = [] } = await api('/sohbetler', { token });
   let yeni = 0;
@@ -262,7 +276,10 @@ if (izle) {
   console.log('İzleme başladı (60 sn aralık). Durdurmak için Ctrl+C.');
   for (;;) {
     try { const n = await tur(); if (n) console.log(`${n} gönderi paylaşıldı`); }
-    catch (e) { console.error('tur hatası:', e.message); }
+    catch (e) {
+      console.error('tur hatası:', e.message);
+      if (e.durum === 401) oturum = null; // token öldü: sonraki tur yeniden girer
+    }
     await new Promise((r) => setTimeout(r, 60_000));
   }
 } else {
