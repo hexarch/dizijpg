@@ -73,6 +73,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
         itemBuilder: (context, i) {
           final o = ogeler[i] as Map<String, dynamic>;
           return MiniIcerik(
+            key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
             tmdbId: o['tmdb_id'] as int,
             tur: o['tur'] as String,
             genislik: double.infinity,

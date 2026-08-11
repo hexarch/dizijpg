@@ -1260,10 +1260,33 @@ class _MiniIcerikState extends State<MiniIcerik> {
   @override
   void initState() {
     super.initState();
+    _getir();
+  }
+
+  @override
+  void didUpdateWidget(MiniIcerik eski) {
+    super.didUpdateWidget(eski);
+    // Anahtarsız listelerde eleman geri dönüşümü state'i taşır: liste
+    // kısalınca karo ESKİ içeriği göstermeye devam eder (md. 47 —
+    // "İzliyorum"dan yanlış dizi düşmüş görünüyordu). Kimlik değiştiyse
+    // eski veriyi at, yeniden çek.
+    if (eski.tur != widget.tur || eski.tmdbId != widget.tmdbId) {
+      setState(() {
+        _icerik = null;
+        _hata = false;
+      });
+      _getir();
+    }
+  }
+
+  void _getir() {
     // Tek tek /tmdb/{tur}/{id} çağırmak yerine toplu depo: aynı karedeki
     // tüm karolar TEK istekte alınır (61 KB/karo yerine ~150 bayt).
-    IcerikDeposu.getir(widget.tur, widget.tmdbId).then((d) {
-      if (!mounted) return;
+    final tur = widget.tur;
+    final id = widget.tmdbId;
+    IcerikDeposu.getir(tur, id).then((d) {
+      // Yanıt gelene dek kimlik değişmiş olabilir — bayat yanıtı yazma.
+      if (!mounted || tur != widget.tur || id != widget.tmdbId) return;
       // Bulunamadıysa sonsuz iskelet yerine kırık görsel göster
       setState(() => d == null ? _hata = true : _icerik = d);
     });

@@ -82,6 +82,7 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
         itemBuilder: (context, i) {
           final o = _ogeler![i] as Map<String, dynamic>;
           return MiniIcerik(
+            key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
             tmdbId: (o['tmdb_id'] as num).toInt(),
             tur: o['tur'] as String,
             genislik: double.infinity,

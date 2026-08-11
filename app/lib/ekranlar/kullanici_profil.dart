@@ -414,6 +414,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             itemBuilder: (context, i) {
                               final o = grup.$3[i] as Map<String, dynamic>;
                               return MiniIcerik(
+                                key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
                                 tmdbId: (o['tmdb_id'] as num).toInt(),
                                 tur: o['tur'] as String,
                                 izlenenSayi: (o['sayi'] as num?)?.toInt(),

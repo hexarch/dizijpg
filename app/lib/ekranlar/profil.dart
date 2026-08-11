@@ -273,6 +273,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
               itemBuilder: (context, i) {
                 final o = grup.$3[i] as Map<String, dynamic>;
                 return MiniIcerik(
+                  key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
                   tmdbId: o['tmdb_id'] as int,
                   tur: o['tur'] as String,
                   izlenenSayi: (o['sayi'] as num?)?.toInt(),
@@ -1047,6 +1048,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           itemBuilder: (context, i) {
                             final d = e.value[i] as Map<String, dynamic>;
                             return MiniIcerik(
+                              key: ValueKey('${d['tur']}-${d['tmdb_id']}'),
                               tmdbId: d['tmdb_id'] as int,
                               tur: d['tur'] as String,
                             );

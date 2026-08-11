@@ -1,5 +1,34 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-11 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-12 — MD. 47 İZLİYORUM YANLIŞ DÜŞME + MD. 16 DAĞITIMI 🚀 (1.34.0+79)
+**Webde CANLIDA.** İstemci-yalnız; backend değişmedi, migrasyon yok.
+APK/AAB derlendi: `projeler/dizijpg.apk` + `projeler/dizijpg-1.34.0+79.aab`
+(1.33.0+78 paketleri Play'e hiç gitmedi; bunlar onların yerine geçer).
+
+### md. 47 — "İzliyorum"dan yanlış dizi düşüyor (bayat-state ailesi)
+Kullanıcının "aç-kapa düzeltiyor" gözlemi doğruydu: veri değil GÖSTERİM
+hatası. `MiniIcerik` içeriği yalnız `initState`'te çekiyordu ve 5 çağrı
+yerinin hiçbiri key vermiyordu → liste kısalınca Flutter 0. elemanı geri
+dönüştürüyor, karo ESKİ dizinin state'ini gösteriyordu (silinen ekranda
+kalır, kalan "silinmiş" görünür). Düzeltme İKİ KATMAN:
+1. `ortak.dart` `_MiniIcerikState.didUpdateWidget` — tur/tmdbId değişince
+   eski veriyi atıp yeniden çeker; `_getir` bayat yanıtı da yazmaz
+   (yanıt gelene dek kimlik değişmişse düşürülür).
+2. 5 çağrı yerine `ValueKey('tur-tmdb_id')` kalıbı: profil kitaplık şeridi,
+   profil İzlediğim şeritleri, izlediklerim, kitaplik_liste, kullanici_profil.
+KANIT: `test/izliyorum_dusme_test.dart` (2 test) — uçtan uca profil
+senaryosu ("sunucu sırası [102,101] → [101]; 101 durur, 102 kalkar") +
+MiniIcerik slot-kimlik testi. Düzeltme stash'lenip İKİSİNİN DE KIRMIZI
+olduğu doğrulandı. `flutter test` **1018 yeşil**, analyze 0 hata/uyarı
+(85 info, taban).
+
+### Dağıtım kanıtı
+version.json 1.34.0+79 · site/paket/robots 200 · `/api/saglik` ok ·
+bootstrap `main.b8ad7767a588.dart.js`'i gösteriyor (eski `0720f12cb33a`
+sunucudan silindi) · SW sökücü yerinde.
+KALAN (kullanıcı): APK'yı telefonlara kur; Play'e 1.34.0+79 AAB'yi yükle
+(arama testi turu md. 42'de bekliyor).
 
 ## 2026-08-11 — MD. 16 FAVORİ OYUNCU ŞERİDİ ✅ (dağıtım yok) + AUTH 429 OLAYI ✅
 ### Favori oyuncular şeridi (md. 16, ajan yaptı)
