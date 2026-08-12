@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (e) — ALTYAPI D1+D2+D3: KÜMELEME + MEDYA NGINX'E + PG AYARI 🚀
+Üçü de canlıda (commit'ler 82ab96b, 5bf1f2e, 3f4402b):
+- **D3:** dizijpg-db 1GB shared_buffers / 16MB work_mem / rpc 1.1 (SHOW doğrulandı).
+- **D1:** kume.js ile 4 işçi; havuz işçi başına 20 (4×20=80 testli); arama
+  sinyali "sahip işçi + iç vekil" (SDP/ICE diske yazılmaz kuralı korundu);
+  yaziyor/özel-medya/şifre-sürümü/tohum IPC yayını; merkezi auth limiti;
+  X-Isci dağılımı + küme zarif kapanması CANLIDA kanıtlı. NODE_ISCI=0 geri dönüş.
+- **D2:** X-Accel-Redirect — kontroller Node'da, baytlar nginx sendfile;
+  /srv/dizijpg-veri bind mount (fstab); genel medya CF HIT, DM private+BYPASS
+  +noindex, Range 206, POST 401 canlıda doğrulandı. MEDYA_XACCEL=0 geri dönüş.
+Backend testi 489 → **525** (36 yeni). nginx conf yedeği:
+dizijpg.com.yedek-20260812-d2.
+
 ## 2026-08-12 (d) — ALTYAPI E1+E2+E3: GÜVENLİK DUVARI AKTİF 🚀
 ufw canlıda: deny incoming varsayılan; açık olanlar 22/80/443, posta
 (25/587/110/143/993/995), TURN (3478 tcp+udp, 5349, 24000-24499/udp),
