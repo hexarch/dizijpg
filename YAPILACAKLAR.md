@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (d) — ALTYAPI E1+E2+E3: GÜVENLİK DUVARI AKTİF 🚀
+ufw canlıda: deny incoming varsayılan; açık olanlar 22/80/443, posta
+(25/587/110/143/993/995), TURN (3478 tcp+udp, 5349, 24000-24499/udp),
+docker→Postfix 25 (mail hattı, konteynerden test edildi), PG 5432 yalnız
+iki istemci IP. Redis 6379: Docker yayını ufw'yi baypas ettiği için
+DOCKER-USER zincirinde ens18→DROP (dopamall'a dokunulmadı; parolasız ama
+4 anahtar, dış istemci yok). Güvenli sıra: kurallar inaktifken + 5 dk
+ölü-adam sigortası; dıştan doğrulama (SSH yeni bağlantı, site/API 200,
+TURN açık, 5432+6379 artık kapalı) sonrası sigorta iptal. fail2ban sağlam.
+DERS: ufw config ASCII ister — Türkçe karakter UnicodeEncodeError verdi.
+Betik: `araclar/e1-guvenlik-duvari.sh`. Kalan (dopamall sahibi): Redis'i
+compose'da 127.0.0.1'e bağla + requirepass.
+
 ## 2026-08-12 (c) — ALTYAPI B1+B2+C1: API ÇÖKME KALKANI + ZARİF KAPANMA + BAĞLAMLI LOG 🚀
 **CANLIDA** (ajan yazdı-testledi, ana oturum doğrulayıp dağıttı). Backend-yalnız;
 app sürümü değişmedi. İskelet önceki oturumdan vardı (gunluk.js + yakalayıcılar);
