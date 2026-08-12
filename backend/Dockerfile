@@ -26,7 +26,7 @@ RUN npm install --omit=dev
 # NOKTASIDIR (CMD), kume_ipc/kume_yardimci'yi server.js import ediyor;
 # herhangi biri imaja GIRMEZSE konteyner "Cannot find module" ile açılışta
 # ölür ve restart döngüsüne girer (kripto.js ile AYNI tuzak).
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js gunluk.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js admin.html ./
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js medya_xaccel.js arama.js gunluk.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./

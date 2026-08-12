@@ -45,6 +45,10 @@ import {
   imzaDogrula as medyaImzaDogrula, imzaAyristir as medyaImzaAyristir,
   yoluNormalle as medyaYoluNormalle,
 } from './medya_imza.js';
+// D2: dosya baytlarını nginx'e devretme katmanı (X-Accel-Redirect).
+// İmza/özel-medya kapısına DOKUNMAZ; kapıdan geçen isteğin yalnız dosya
+// gönderimini devralır. MEDYA_XACCEL=1 değilse tamamen saydamdır.
+import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
 // Ban / ceza sistemi + güven skoru (saf modül; Express ve pg bilmez).
 // DÜRÜSTLÜK NOTLARI yasak.js'in başında: cihaz banı GARANTİ DEĞİL, güven
 // skoru KENDİ BAŞINA CEZA VERMEZ.
@@ -382,7 +386,27 @@ const yalnizGet = (statik) => (req, res, next) =>
   (req.method === 'GET' || req.method === 'HEAD')
     ? statik(req, res, next)
     : next();
-app.use('/avatarlar', yalnizGet(avatarStatik));
+
+// D2 — DOSYA GÖNDERİMİNİ NGINX'E DEVRET (X-Accel-Redirect). Varsayılan KAPALI.
+//   kapalı (bugün): aşağıdaki express.static'ler baytları kendisi okur; nginx
+//     conf'suz dağıtım HİÇBİR ŞEYİ kırmaz (geri dönüş anahtarı bu).
+//   açık (MEDYA_XACCEL=1, nginx-medya.conf.ornek uygulandıktan SONRA): imza
+//     kapısı ve OZEL_MEDYA kontrolü AYNEN yukarıda/aşağıda Node'da koşar;
+//     kontrolleri geçen istekte Node dosyayı OKUMAZ, yanıt yalnız
+//     `X-Accel-Redirect` + bugünküyle birebir Cache-Control/Content-Type taşır,
+//     baytları nginx sendfile ile yollar. Reddedilen istek (403) bu katmana
+//     hiç ulaşmadan kapıda döner; diskte olmayan/kalıp dışı ad express.static'e
+//     düşer (404 dahil bugünkü davranış).
+const MEDYA_XACCEL = process.env.MEDYA_XACCEL === '1';
+const medyaXaccel = medyaXaccelKatman({
+  // ozelKume CANLI referans: IPC 'ozel_medya_ekle/sil' beslemesi anında görülür.
+  acik: MEDYA_XACCEL, dizin: MEDYA_DIZIN, altDizin: 'medya', ozelKume: OZEL_MEDYA,
+});
+const avatarXaccel = medyaXaccelKatman({
+  acik: MEDYA_XACCEL, dizin: AVATAR_DIZIN, altDizin: 'avatarlar',
+});
+
+app.use('/avatarlar', avatarXaccel, yalnizGet(avatarStatik));
 
 // İmza kapısı: statik sunucudan ÖNCE. İmzalı yolu (`/i/<exp>/<imza>/<dosya>`)
 // çözer ve `req.url`i sade dosya adına indirger; statik katman imzayı hiç görmez.
@@ -412,7 +436,7 @@ app.use('/medya', (req, res, next) => {
     // Göç dönemi: servis et ama PUBLIC ÖNBELLEĞE ALDIRMA (setHeaders halleder).
   }
   next();
-}, yalnizGet(medyaStatik));
+}, medyaXaccel, yalnizGet(medyaStatik));
 
 // CORS: yalnız kendi web kökenlerimize izin ver (mobil uygulama native HTTP
 // kullanır, CORS'a tabi değildir; bu yüzden kısıtlamak mobili etkilemez).

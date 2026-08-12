@@ -1,0 +1,140 @@
+# dizi.jpg — nginx MEDYA parcasi: X-Accel-Redirect (D2)      [HENUZ UYGULANMADI]
+# ===========================================================================
+# Hedef dosya: /etc/nginx/sites-available/dizijpg.com  (443 `dizijpg.com` blogu)
+# DIKKAT: /etc/nginx/sites-available/dizijpg AYRI ve TERK EDILMIS eski sitedir;
+#         sites-enabled'da yoktur, ELLEME.
+#
+# KAYNAK: yapilacaklar2 D2 — "medyayi Node servis ediyor". Her foto/video bayti
+# Node olay dongusunden geciyordu; bu parca dosya GONDERIMINI nginx sendfile'a
+# devreder. GUVENLIK MANTIGI NODE'DA KALIR:
+#   istek -> nginx -> Node (bugunku proxy, degismiyor)
+#   Node: imza kapisi + OZEL_MEDYA + yalnizGet kontrolleri AYNEN kosar;
+#         gecemeyen istek 403/404 ile NODE'dan doner, buraya hic gelmez.
+#   Node: gecen istekte dosyayi OKUMAZ; yanita X-Accel-Redirect + Content-Type
+#         + Cache-Control koyar (backend/medya_xaccel.js).
+#   nginx: asagidaki internal location ile dosyayi sendfile'la yollar
+#          (Range/video seeking otomatik calisir).
+#
+# Bu dosya calisan bir conf DEGIL; elle kopyalanacak bloklarin listesidir.
+# Uygulama sirasi + dogrulama + geri alma EN ALTTA.
+#
+# ---------------------------------------------------------------------------
+# MEDYA_KOK — DAGITIMDA DOGRULANACAK TEK DEGISKEN
+# ---------------------------------------------------------------------------
+# Konteynerde medya koku /veri (MEDYA_DIZIN=/veri/medya,
+# AVATAR_DIZIN=/veri/avatarlar), docker volume: dizijpg_dosyalar.
+# Host'taki gercek yol MUHTEMELEN asagidaki gibidir ama TAHMINLE YAZILMAZ:
+#
+#   docker volume inspect dizijpg_dosyalar --format '{{ .Mountpoint }}'
+#   # beklenen: /var/lib/docker/volumes/dizijpg_dosyalar/_data
+#   ls <cikan yol>          # icinde medya/ ve avatarlar/ gorunmeli
+#
+# Cikan yolu asagida __MEDYA_KOK__ yazan IKI yere koy (sonda / BIRAKARAK).
+# Ayrica nginx worker'i (www-data) o dizini OKUYABILMELI:
+#   sudo -u www-data ls /var/lib/docker/volumes/dizijpg_dosyalar/_data/medya | head
+#   (docker volume _data dizinleri cogunlukla root:root 755'tir; okunamiyorsa
+#    dizin izinlerini ACMAK yerine nginx'i devreye ALMA — MEDYA_XACCEL kapali
+#    kaldigi surece hicbir sey bozulmaz.)
+#
+# ---------------------------------------------------------------------------
+# 1) NEREYE: server bloguna, mevcut `location /` proxy blogunun YANINA
+# ---------------------------------------------------------------------------
+# GENEL medya + avatarlar. Node `X-Accel-Redirect: /ic-dosya/medya/<ad>` ya da
+# `/ic-dosya/avatarlar/<ad>` basar; alias kok oldugu icin tek blok ikisini kapsar.
+#
+#     # D2: Node'un X-Accel-Redirect ile isaret ettigi dosyayi sendfile'la yolla.
+#     # `internal`: disaridan /ic-dosya/... istenirse nginx 404 verir; bu yol
+#     # YALNIZ Node yanitindaki baslikla girilebilir. Guvenlik kararlari
+#     # (imza, ozel medya) Node'da coktan verilmis olur.
+#     location /ic-dosya/ {
+#         internal;
+#         alias __MEDYA_KOK__;            # ornr: /var/lib/docker/volumes/dizijpg_dosyalar/_data/
+#         # Content-Type ve Cache-Control NODE'DAN GELIR ve nginx ic
+#         # yonlendirmede ust yanitin su basliklarini KORUR: Content-Type,
+#         # Cache-Control, Expires, Content-Disposition, Set-Cookie, X-Accel-*.
+#         # Bu yuzden burada `types`/`add_header Cache-Control` GEREKMEZ —
+#         # eklersen Node'un basligiyla CIFT baslik olusur, EKLEME.
+#         # add_header KULLANMADIGI icin server duzeyindeki add_header'lar
+#         # (HSTS, nosniff, ...) MIRAS ALINIR — bugunku yanitla ayni kalir.
+#     }
+#
+# ---------------------------------------------------------------------------
+# 2) NEREYE: hemen altina — OZEL (DM) medya icin ayri blok
+# ---------------------------------------------------------------------------
+# Neden ayri: Node ozel medyaya `X-Robots-Tag: noindex, nofollow` basar ama bu
+# baslik nginx ic yonlendirme beyaz listesinde YOKTUR, dusurulur. Burada
+# yeniden eklenir. Cache-Control yine NODE'dan gelir (private, no-store,
+# max-age=0) — Cloudflare bu yaniti onbellege ALMAZ, bugunku gizlilik karari
+# birebir surer.
+#
+#     location /ic-ozel/ {
+#         internal;
+#         alias __MEDYA_KOK__medya/;      # ozel dosyalar yalniz medya/ altinda
+#         add_header X-Robots-Tag "noindex, nofollow" always;
+#         # !!! nginx'te add_header MIRAS ALINMAZ: yukaridaki satir bu blok
+#         # icin server duzeyindeki TUM add_header'lari iptal eder. Canli
+#         # conf'un server duzeyinde ne varsa (8 Agu okumasina gore HSTS,
+#         # X-Content-Type-Options, X-Frame-Options, Referrer-Policy,
+#         # Permissions-Policy, CSP-Report-Only) BURAYA AYNEN KOPYALA:
+#         # add_header Strict-Transport-Security "..." always;
+#         # add_header X-Content-Type-Options "nosniff" always;
+#         # ... (dagitim gunu canli conf'tan birebir al)
+#     }
+#
+# ---------------------------------------------------------------------------
+# 3) KONTROL: proxy blogu X-Accel-Redirect'i YUTMASIN
+# ---------------------------------------------------------------------------
+# X-Accel-Redirect'i nginx, proxy'lenen yanitta OTOMATIK isler — ek ayar
+# gerekmez. Tek istisna: `location /` (ya da /medya'yi kapsayan blok) icinde
+#   proxy_ignore_headers X-Accel-Redirect;
+# satiri varsa mekanizma calismaz. Dagitimdan once ara:
+#   grep -n proxy_ignore_headers /etc/nginx/sites-available/dizijpg.com
+# (Bulunursa o satirdan X-Accel-Redirect'i cikar.)
+#
+# ---------------------------------------------------------------------------
+# CLOUDFLARE / BASLIK PARITESI (neden hicbir sey degismez)
+# ---------------------------------------------------------------------------
+# - GENEL medya bugun: `Cache-Control: public, max-age=31536000, immutable`
+#   (express.static maxAge 365d). medya_xaccel.js AYNI dizeyi basar; nginx
+#   ic yonlendirmede korur -> Cloudflare edge onbellegi bugunku gibi calisir.
+# - OZEL (DM) medya bugun: `private, no-store, max-age=0` -> CF'e GIRMEZ.
+#   X-Accel yolunda da ayni dize Node'dan gelir; degismez.
+# - Content-Type: dosya adlari uzanti tasir (m<id>-<hex>.<uzanti>); Node ayni
+#   mime tablosuyla (send/express.static'inki) basar, nginx mime.types HIC
+#   DEVREYE GIRMEZ (ust yanitin Content-Type'i korunur).
+# - Tek gorunur fark: ETag zayif (W/"...", express) yerine guclu ("hex-hex",
+#   nginx) olur ve Last-Modified/Content-Length'i artik nginx uretir. Ilk
+#   istekte bir kez yeniden dogrulama olur, sonrasi ayni. Range/206 iki tarafta
+#   da var; nginx'te sendfile ile.
+#
+# ---------------------------------------------------------------------------
+# UYGULAMA SIRASI (ana oturum; ssh gerektirir)
+# ---------------------------------------------------------------------------
+# 0) docker volume inspect ile __MEDYA_KOK__'u dogrula + www-data okuma testi
+#    (yukarida). OKUNAMIYORSA DUR: conf'u ekleme, MEDYA_XACCEL'i acma.
+# 1) Yeni server.js + medya_xaccel.js + Dockerfile ile imaji yeniden kur,
+#    MEDYA_XACCEL'e DOKUNMADAN cikar. Bayrak yokken davranis birebir eski
+#    davranistir (testle kilitli) — bu adim tek basina guvenlidir.
+# 2) Iki location'i conf'a ekle; `nginx -t` && `systemctl reload nginx`.
+#    (internal bloklar bayrak kapaliyken OLU KODDUR, hicbir istegi degistirmez.
+#    Dis test: `curl -I https://dizijpg.com/ic-dosya/medya/x` -> 404 olmali.)
+# 3) compose'ta api servisine `MEDYA_XACCEL=1` ekle, konteyneri yeniden baslat.
+# 4) UCTAN UCA DOGRULAMA (Cloudflare uzerinden, gercek kullanici yolu):
+#    a) curl -sI https://dizijpg.com/medya/<gercek dosya>       -> 200,
+#       cache-control: public, max-age=31536000, immutable;
+#       content-type dogru; yanitta X-Accel-Redirect GORUNMEMELI
+#       (gorunuyorsa nginx islememis demektir -> madde 3'teki grep).
+#    b) ayni istek `-H 'Range: bytes=0-99'` ile                 -> 206 (video seeking)
+#    c) curl -sI https://dizijpg.com/avatarlar/<gercek dosya>   -> 200, ayni kontroller
+#    d) suresi dolmus imzali URL                                 -> 403 JSON,
+#       cache-control: private, no-store, max-age=0
+#    e) DM medyasi (OZEL_MEDYA'daki bir ad, imzali URL ile)      -> 200,
+#       cache-control: private, no-store, max-age=0; cf-cache-status: BYPASS/DYNAMIC
+#       + x-robots-tag: noindex, nofollow
+#    f) POST /medya (tokenli, kucuk resim)                       -> yukleme hala calisiyor
+#    g) sekmede bir video ac, ileri sar (Range/sendfile gercek testi)
+# 5) Gozlem: `docker stats` ile Node CPU'sunun medya trafiginde dusmesi beklenir.
+#
+# GERI ALMA: compose'tan MEDYA_XACCEL'i sil (ya da 0 yap) + konteyneri baslat.
+# nginx bloklarini sokmek GEREKMEZ (internal bloklar kendi basina zararsizdir),
+# ama istenirse silinip reload edilebilir.

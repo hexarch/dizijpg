@@ -72,6 +72,10 @@ services:
       NODE_ISCI: ${NODE_ISCI:-4}
       PG_HAVUZ_MAX: ${PG_HAVUZ_MAX:-}
       ARAMA_IC_PORT: ${ARAMA_IC_PORT:-}
+      # D2 (12 Ağu 2026): medya gönderimi nginx'e (X-Accel-Redirect).
+      # 0/boş = eski yol (Node okur). nginx'te /ic-dosya + /ic-ozel internal
+      # blokları ve /srv/dizijpg-veri bind mount'u gerektirir (fstab'da).
+      MEDYA_XACCEL: ${MEDYA_XACCEL:-1}
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya
       MAIL_HOST: host.docker.internal
