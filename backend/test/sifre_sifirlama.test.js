@@ -116,7 +116,10 @@ test('YENİ kod istenince sayaç SIFIRLANIYOR (meşru kullanıcı kilitli kalmas
 });
 
 test('hesap başına kod İSTEME limiti var (sayaç sıfırlama kaçamağını daraltır)', () => {
-  assert.match(SERVER, /const sifirlamaIstekLimiti = hizLimiti\(5,/);
+  // D1 kümelemeden sonra MERKEZİ limit: hizLimitiMerkezi, işçi başına yerel
+  // sayacın ÜSTÜNE birincildeki küme-geneli sayacı ekler — 5/saat sınırı
+  // N işçide N×5'e gevşemez. Sınırın kendisi (5) değişmedi.
+  assert.match(SERVER, /const sifirlamaIstekLimiti = hizLimitiMerkezi\(5,/);
   assert.match(SERVER, /app\.post\('\/auth\/sifre-sifirla-istek', authLimiti, sifirlamaIstekLimiti/,
     'limit tanımlı ama uca BAĞLANMAMIŞ');
 });

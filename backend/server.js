@@ -10,6 +10,7 @@ import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
+import http from 'http';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
@@ -67,6 +68,14 @@ import {
 // KURAL: hata loglarına şifre/token/Authorization/mesaj içeriği/e-posta/SDP
 // GEÇMEZ. Sızdırmamanın yolu ALMAMAKTIR — gunluk.js başındaki iki katman notu.
 import { yaz as logYaz, olumcul as logOlumcul } from './gunluk.js';
+// Küme (D1): bu süreç `kume.js`in forkladığı bir İŞÇİ olabilir. kume_ipc
+// kümesizken (node server.js, testler) tamamen etkisizdir: yayinla no-op,
+// RPC'ler null döner — yani tek-süreç davranışı BİREBİR korunur.
+import {
+  kumelenmisMi, isciSira, yayinla, abone, sayacArtir,
+  istekKaydet, istekOzet,
+} from './kume_ipc.js';
+import { havuzMax } from './kume_yardimci.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -122,12 +131,23 @@ try {
 // sorgu açtığından varsayılan max=10 tek istekte tükeniyordu. Postgres
 // max_connections=100 içinde güvenli tavan + timeout'lar (asılı bağlantı yerine
 // hızlı hata).
+//
+// KÜME (D1) HAVUZ HESABI: max:30 TEK SÜREÇ içindi. N işçide 30 kalsaydı
+// 4×30=120 > max_connections(100) olur, bağlantı tükenir ve her uç 500
+// vermeye başlardı. Kural kume_yardimci.havuzMax'ta: işçi başına
+// min(30, floor(80/N)); PG_HAVUZ_MAX ile ezilebilir ama toplam 80'i aşamaz.
+// Kümesizken (ISCI_SAYISI yok) N=1 → min(30,80) = 30, yani BUGÜNKÜ DEĞER.
+const ISCI_SAYISI = kumelenmisMi()
+  ? Math.max(1, parseInt(process.env.ISCI_SAYISI, 10) || 1) : 1;
+const HAVUZ_MAX = havuzMax(process.env, ISCI_SAYISI);
 const havuz = new pg.Pool({
   connectionString: DATABASE_URL,
-  max: 30,
+  max: HAVUZ_MAX,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 5000,
 });
+console.log(`pg havuzu: işçi başına max=${HAVUZ_MAX} `
+  + `(işçi ${ISCI_SAYISI} × ${HAVUZ_MAX} = ${ISCI_SAYISI * HAVUZ_MAX} ≤ 80)`);
 const app = express();
 
 // İstek başına TMDB dili: istemci X-Dil başlığıyla uygulama dilini gönderir,
@@ -168,6 +188,10 @@ app.use((req, res, next) => {
   // sunucunun günlük hacmi için fazlasıyla ayırt edici.
   req.istekId = crypto.randomUUID().slice(0, 8);
   res.set('X-Istek-Kimlik', req.istekId);
+  // Kümede hangi işçinin yanıtladığı: dağıtımın gerçekten dağıttığını ve
+  // /arama/* vekilliğinin sahibe (sıra 1) gittiğini dışarıdan doğrulamanın
+  // tek yolu. Sıra numarası bilgi sızdırmaz.
+  if (kumelenmisMi()) res.set('X-Isci', isciSira());
   if (!kapaniyor) return next();
   res.set('Connection', 'close');
   // 503 + Retry-After: istemci ve Cloudflare bunu "geçici" olarak okur.
@@ -175,6 +199,74 @@ app.use((req, res, next) => {
   res.set('Retry-After', '5');
   return res.status(503).json({ hata: 'Sunucu yeniden başlatılıyor, birazdan tekrar dene' });
 });
+
+// ---------------------------------------------------------------------------
+// ARAMA SAHİPLİĞİ (D1) — /arama/* trafiği TEK işçide toplanır.
+// ---------------------------------------------------------------------------
+// Sinyalleşme (SDP/ICE) BİLEREK bellekte yaşar (arama.js "İÇERİK KAYDI YOK"
+// mutlak kuralı: SDP, istemci IP'si taşıyan ICE adayları hiçbir tabloya/
+// dosyaya yazılmaz — PG'ye taşımak gece yedeğine SDP düşürmek olurdu).
+// Round-robin küme bunu KIRAR: teklif işçi A'nın belleğinde kalır, arananın
+// /arama/gelen yoklaması işçi B'ye düşer ve telefon HİÇ ÇALMAZ.
+//
+// Çözüm: sıra-1 işçisi "arama sahibi"dir; AramaDeposu ve SessizDepo yalnız
+// onda dolar. Diğer işçiler her /arama/* isteğini 127.0.0.1'deki iç porta
+// ham vekiller (gövde ayrıştırılmadan — bu blok express.json'dan ÖNCE).
+// Kazanç sadece tutarlılık değil: gorusme* hız limitleri ve çift bazlı
+// sessizleştirme de tüm arama trafiğini tek işçide gördüğü için küme
+// geneline gevşemeden çalışmaya devam eder.
+//
+// Sahip işçi ölürse: birincil aynı sırayla yeniden doğurur; aradaki birkaç
+// saniyede vekil 503 döner ve bellekteki sinyal kaybı bugünkü "sunucu
+// yeniden başladı" davranışının aynısıdır (arama.js AramaDeposu başlığı:
+// medya P2P aktığı için KONUŞMA KESİLMEZ, yalnız kayıt düşmeyebilir).
+//
+// İç port YALNIZ 127.0.0.1 dinler; konteyner dışına açılmaz.
+const ARAMA_IC_PORT = Number(process.env.ARAMA_IC_PORT || 0) || (Number(PORT) + 1);
+const ARAMA_SAHIBI = !kumelenmisMi() || isciSira() === '1';
+if (kumelenmisMi() && !ARAMA_SAHIBI) {
+  const aramaAjan = new http.Agent({ keepAlive: true, maxSockets: 64 });
+  app.use('/arama', (req, res) => {
+    const basliklar = { ...req.headers };
+    // Hop-by-hop başlıklar iletilmez (RFC 7230 §6.1).
+    delete basliklar.connection;
+    delete basliklar['keep-alive'];
+    delete basliklar['proxy-connection'];
+    const vekil = http.request({
+      host: '127.0.0.1',
+      port: ARAMA_IC_PORT,
+      method: req.method,
+      path: req.originalUrl, // app.use önek soyar; tam yol originalUrl'de
+      headers: basliklar,
+      agent: aramaAjan,
+    }, (cevap) => {
+      const geri = { ...cevap.headers };
+      delete geri.connection;
+      delete geri['keep-alive'];
+      delete geri['transfer-encoding']; // Node kendi çerçevelemesini kurar
+      // Sahibin istek kimliği/işçi başlığı kalsın (onun loglarıyla eşleşir).
+      res.removeHeader('X-Istek-Kimlik');
+      res.removeHeader('X-Isci');
+      res.writeHead(cevap.statusCode, geri);
+      cevap.pipe(res);
+    });
+    vekil.on('error', () => {
+      // Sahip işçi yeniden doğuyor: istemci arama yoklamasını zaten
+      // tekrarlıyor. 503 + Retry-After, kapanma kapısıyla aynı dil.
+      if (!res.headersSent) {
+        res.set('Retry-After', '2');
+        res.status(503).json({ hata: 'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene' });
+      } else {
+        res.destroy();
+      }
+    });
+    req.pipe(vekil);
+  });
+}
+// Periyodik tek-koşucu görevler (durumlariTara, tablolariBuda) da sıra-1
+// işçisinde: N işçide N kez koşmaları TMDB'ye ve DB'ye aynı işi N kez
+// yaptırmaktan başka bir şey değildi. Kümesizken her zamanki gibi bu süreçte.
+const ISCI_GOREVLI = !kumelenmisMi() || isciSira() === '1';
 
 app.use(express.json({ limit: '1mb' }));
 
@@ -226,6 +318,17 @@ const ozelMedyaEkle = (yol) => {
   OZEL_MEDYA.add(ad);
   OZEL_MEDYA.add(`${ad}.jpg`);
 };
+// KÜME: küme GİZLİLİK sınırıdır ve işçiler arasında anında eşitlenmek
+// zorundadır — DM medyası işçi A'da kümeye girerken B/C/D onu "genel" sayar
+// ve saatlik tam yüklemeye kadar public önbellek başlığıyla servis ederdi.
+// Yayın kanalları mesaj gönderme/silme uçlarında beslenir; saatlik
+// ozelMedyaYukle() her işçide ayrıca güvenlik ağı olarak kalır.
+abone('ozel_medya_ekle', (yol) => ozelMedyaEkle(yol));
+abone('ozel_medya_sil', (ad) => {
+  if (typeof ad !== 'string' || !ad) return;
+  OZEL_MEDYA.delete(ad);
+  OZEL_MEDYA.delete(`${ad}.jpg`);
+});
 async function ozelMedyaYukle() {
   try {
     // Aynı dosya hem DM'de hem halka açık bir yorumda geçiyorsa GENEL sayılır:
@@ -395,10 +498,31 @@ app.use((req, res, next) => {
         kullanici: req.kullanici?.id || null,
       });
       if (ISTEK.son.length > ISTEK_SINIR) ISTEK.son.length = ISTEK_SINIR;
+      // KÜME: admin panelin grafiği/globe'u işçi başına 1/N'lik halkalardan
+      // beslenemez (her yenilemede başka işçiye düşer, sayılar zıplar).
+      // Az önce halkaya konan TEMİZLENMİŞ kayıt birincile de gönderilir;
+      // panel birleşik halkayı okur (istekVerisi). Yerel halka, birincile
+      // ulaşılamayan anın yedeğidir.
+      istekKaydet(ISTEK.son[0]);
     } catch { /* takip asla isteği bozmasın */ }
   });
   next();
 });
+
+// Admin uçlarının okuyacağı istek telemetrisi: kümede birincildeki birleşik
+// halka (tüm işçilerin toplamı), kümesizken ya da birincile ulaşılamazsa bu
+// işçinin yerel halkası. Dönen nesnenin şekli ISTEK ile birebir aynıdır.
+async function istekVerisi() {
+  if (!kumelenmisMi()) return ISTEK;
+  const o = await istekOzet();
+  if (!o) return ISTEK;
+  return {
+    toplam: o.toplam || 0,
+    ulke: new Map(o.ulke || []),
+    dakika: new Map(o.dakika || []),
+    son: Array.isArray(o.son) ? o.son : [],
+  };
+}
 
 // Sayısal yol parametreleri INT kolonlara bağlanıyor: harf içeren veya taşan
 // değer 500 yerine 400 dönsün (1-9 haneli → int4 taşması da engellenir).
@@ -772,7 +896,14 @@ async function sifreSurumuGecerli(id, tokenSv) {
   return (tokenSv ?? 0) === e.sv;
 }
 // Şifre/yasak değişince önbelleği hemen düşür (yeni durum anında geçerli olsun).
-function sifreSurumOnbellekSil(id) { sifreSurumOnbellek.delete(id); }
+// KÜME: "hemen" sözü işçiler arasında da tutulmalı — şifre değişimi/ban işçi
+// A'da işlenirken B'deki 30 sn'lik kopya eski token'ı kabul etmeye devam
+// ederdi. Yayın bunu kapatır; yayın kaçarsa 30 sn'lik TTL yine üst sınırdır.
+function sifreSurumOnbellekSil(id) {
+  sifreSurumOnbellek.delete(id);
+  yayinla('sv_sil', id);
+}
+abone('sv_sil', (id) => sifreSurumOnbellek.delete(id));
 
 // ---------- süresi dolan yasakları süpürme (CRON YOK) ----------
 // Süreli ban bitince kullanıcı `yasakAktif()` sayesinde ANINDA serbesttir;
@@ -995,8 +1126,34 @@ function hizLimiti(limit, anahtarUret) {
     next();
   };
 }
+// KÜME GENELİ hız limiti — yalnız GÜVENLİK limitleri için (auth kaba kuvvet,
+// şifre sıfırlama e-posta bombardımanı). N işçide işçi-başına sayaçlar limiti
+// fiilen N katına gevşetir: 30/sa'lık şifre denemesi 4 işçide 120/sa olurdu.
+// İKİ KATMAN birden çalışır:
+//   · yerel katman (yukarıdaki hizLimiti): işçi başına 30 — birincile
+//     ulaşılamayan anda bile hiçbir işçi başıboş kalmaz,
+//   · merkez katman: birincildeki tek sayaç — küme genelinde 30, yani
+//     bugünkü tek-süreç anlamının aynısı.
+// Merkez sayaç FAIL-OPEN'dır (ulaşamazsa yerel katmana güvenir): buradaki
+// yanlış "kapat" kararı GERÇEK kullanıcıların girişini keserdi; yanlış "geçir"
+// kararı ise en kötü ihtimalle bugünkü işçi-başına gevşekliğe düşer.
+// Diğer 20+ limit (akış, TMDB, mesaj...) DoS yumuşatıcıdır ve işçi-başına
+// kalması kabul edilir — her isteğe IPC turu bindirmeye değmez.
+function hizLimitiMerkezi(limit, anahtarUret) {
+  const yerel = hizLimiti(limit, anahtarUret);
+  return (req, res, next) => yerel(req, res, () => {
+    if (!kumelenmisMi()) return next();
+    // sayacArtir asla reject etmez (kume_ipc sözleşmesi); null → fail-open.
+    sayacArtir(anahtarUret(req)).then((sayi) => {
+      if (sayi !== null && sayi > limit) {
+        return res.status(429).json({ hata: 'Çok fazla istek; biraz sonra tekrar dene' });
+      }
+      return next();
+    });
+  });
+}
 const yuklemeLimiti = hizLimiti(40, (req) => `y:${req.kullanici.id}`);
-const authLimiti = hizLimiti(30, (req) => `a:${req.ip}`);
+const authLimiti = hizLimitiMerkezi(30, (req) => `a:${req.ip}`);
 // Şifre sıfırlama KODU İSTEME: hesap başına saatte 5. İki işi birden yapar:
 //  1) e-posta bombardımanını engeller (her istek kurbanın kutusuna posta atar),
 //  2) aşağıdaki deneme kilidinin "yeni kod isteyip sayacı sıfırla" kaçamağını
@@ -1005,7 +1162,7 @@ const authLimiti = hizLimiti(30, (req) => `a:${req.ip}`);
 // HESAP VARLIĞI SIZMAZ: sayaç e-postanın hesaba karşılık gelip gelmediğine
 // BAKMADAN, gönderilen dizeye göre işler. Var olmayan bir adresi 6 kez deneyen
 // de aynı 429'u alır; 429'un kendisi "bu hesap var" demez.
-const sifirlamaIstekLimiti = hizLimiti(5,
+const sifirlamaIstekLimiti = hizLimitiMerkezi(5,
   (req) => `sf:${String(req.body?.email || '').toLowerCase()}`);
 /** Bir kod kaç YANLIŞ denemeden sonra tamamen iptal edilir. */
 const SIFIRLAMA_MAX_DENEME = 5;
@@ -2713,8 +2870,12 @@ async function durumlariTara() {
     // tarama başarısızsa bir sonraki turda tekrar denenir
   }
 }
-setInterval(durumlariTara, 12 * 60 * 60 * 1000);
-setTimeout(durumlariTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
+// KÜME: yalnız görevli işçi (sıra 1) — N işçide N kez koşmak aynı TMDB
+// taramasını ve aynı UPDATE'leri N kez yapmaktı. Kümesizken davranış aynı.
+if (ISCI_GOREVLI) {
+  setInterval(durumlariTara, 12 * 60 * 60 * 1000);
+  setTimeout(durumlariTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
+}
 
 // Film izleme kaydı → durum. Filmde ara hâl yoktur: izlendiyse "bitirdim".
 //
@@ -2805,8 +2966,12 @@ async function aramaTrafigiKontrol() {
     if (!/does not exist/i.test(e.message)) console.error('arama trafik:', e.message);
   }
 }
-setInterval(tablolariBuda, 24 * 60 * 60 * 1000);
-setTimeout(tablolariBuda, 5 * 60 * 1000); // açılıştan 5 dk sonra
+// KÜME: yalnız görevli işçi (sıra 1) — budama DELETE'leri idempotent ama
+// N kez koşmaları boşuna DB yüküdür. Kümesizken davranış aynı.
+if (ISCI_GOREVLI) {
+  setInterval(tablolariBuda, 24 * 60 * 60 * 1000);
+  setTimeout(tablolariBuda, 5 * 60 * 1000); // açılıştan 5 dk sonra
+}
 
 app.post('/izleme/toggle', girisZorunlu, sarici(async (req, res) => {
   const { tmdb_id, tur, sezon = 0, bolum = 0 } = req.body || {};
@@ -4400,6 +4565,15 @@ const ADAY_AZAMI = 25000;
 // Tur tohumu deposu (plan §4.5): ilk sayfada sıralı id listesi DONDURULUR.
 // 4.845 id ≈ 39 KB/oturum → 800 kayıt tavanı ≈ 31 MB en kötü hal.
 const tohumDeposu = new TohumDeposu({ ttlMs: 600000, azami: 800 });
+// KÜME: dondurulmuş sıralı id listesi işçiler arasında paylaşılmazsa sayfa 2
+// başka bir işçiye düşünce liste YENİDEN hesaplanır — arada "görüldü"
+// işaretlenenler havuzdan düştüğü için ofset artık başka gönderileri
+// gösterir (tekrar/atlama: tam da tohum mekanizmasının önlediği şey).
+// İlk sayfayı hesaplayan işçi listeyi yayınlar; kardeşler kendi deposuna
+// yazar. Yayın kaçarsa davranış bugünkü "önbellek soğuk" yoluna düşer.
+abone('tohum', (v) => {
+  if (v && typeof v.a === 'string' && Array.isArray(v.i)) tohumDeposu.yaz(v.a, v.i);
+});
 
 const jsonCoz = (s) => { try { return JSON.parse(s); } catch { return null; } };
 
@@ -4616,6 +4790,7 @@ async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorule
   });
   const { idler } = siralaVeKotala(adaylar, ayar, olcum);
   tohumDeposu.yaz(anahtar, idler);
+  yayinla('tohum', { a: anahtar, i: idler }); // kardeş işçilere (gerekçe yukarıda)
   return idler;
 }
 
@@ -5259,19 +5434,31 @@ app.get('/paylas-hedefler', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // "Yazıyor..." durumu: bellek içi, kalıcı değil. gonderen:alici -> zaman
+// KÜME: ping işçi A'ya, sohbeti okuyan 5 sn'lik yoklama işçi B'ye düşer —
+// yayınlanmazsa gösterge işçi sayısı kadar seyrek yanar (fiilen bozulur).
+// Damga kardeş işçilere yayınlanır; kalıcılık yine YOK ve İSTENMİYOR.
 const yaziyorlar = new Map();
+function yaziyorIsaretle(anahtar, zaman = Date.now()) {
+  yaziyorlar.set(anahtar, zaman);
+  if (yaziyorlar.size > 5000) {
+    const esik = Date.now() - 60_000;
+    for (const [k, z] of yaziyorlar) {
+      if (z < esik) yaziyorlar.delete(k);
+    }
+  }
+}
+abone('yaziyor', (v) => {
+  if (v && typeof v.a === 'string' && Number.isFinite(v.z)) yaziyorIsaretle(v.a, v.z);
+});
 app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
   const k = await havuz.query(
     'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
     [req.body?.kullanici_adi]);
   if (k.rows.length) {
-    yaziyorlar.set(`${req.kullanici.id}:${k.rows[0].id}`, Date.now());
-    if (yaziyorlar.size > 5000) {
-      const esik = Date.now() - 60_000;
-      for (const [anahtar, zaman] of yaziyorlar) {
-        if (zaman < esik) yaziyorlar.delete(anahtar);
-      }
-    }
+    const anahtar = `${req.kullanici.id}:${k.rows[0].id}`;
+    const zaman = Date.now();
+    yaziyorIsaretle(anahtar, zaman);
+    yayinla('yaziyor', { a: anahtar, z: zaman });
   }
   res.json({ tamam: true });
 }));
@@ -5461,7 +5648,9 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   // Dosya bu andan itibaren ÖZEL: bir sonraki isteğinde public önbelleğe
   // girmesin. Kümeye eklemek yalnız bellek işidir; açılışta DB'den yeniden
   // kurulur, yani kalıcılığı `mesajlar.medya` kolonu sağlar.
+  // Kardeş işçilere de duyurulur (gizlilik gerekçesi abone bloğunda).
   ozelMedyaEkle(medya);
+  yayinla('ozel_medya_ekle', medya);
   // Push gövdesinde mesajın kendisi görünsün (boşsa şablona düşer)
   bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
     temiz ? { metin: temiz } : null);
@@ -5505,6 +5694,7 @@ app.delete('/mesajlar/:id', girisZorunlu, sarici(async (req, res) => {
     // sonsuza dek büyümesin: kaydı da düş. Video kapağı da aynı anda gider.
     OZEL_MEDYA.delete(ad);
     OZEL_MEDYA.delete(`${ad}.jpg`);
+    yayinla('ozel_medya_sil', ad);
   }
   res.json({ tamam: true });
 }));
@@ -6928,10 +7118,11 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     havuz.query('SELECT count(*)::int n FROM sikayetler'),
     havuz.query("SELECT count(*)::int n FROM kullanicilar WHERE son_gorulme > now() - interval '3 minutes'"),
   ]);
+  const IST = await istekVerisi(); // kümede birleşik, kümesizken yerel halka
   const simdiDk = Math.floor(Date.now() / 60000);
   const seri = [];
-  for (let i = 59; i >= 0; i--) seri.push(ISTEK.dakika.get(simdiDk - i) || 0);
-  const ulkeler = [...ISTEK.ulke.entries()]
+  for (let i = 59; i >= 0; i--) seri.push(IST.dakika.get(simdiDk - i) || 0);
+  const ulkeler = [...IST.ulke.entries()]
     .map(([ulke, sayi]) => ({ ulke, sayi }))
     .sort((a, b) => b.sayi - a.sayi)
     .slice(0, 40);
@@ -6948,7 +7139,7 @@ app.get('/admin/ozet', adminKisit, sarici(async (_req, res) => {
     hataToplam: hT.rows[0].n,
     sikayetYeni: sy.rows[0].n,
     sikayetToplam: sT.rows[0].n,
-    istekToplam: ISTEK.toplam,
+    istekToplam: IST.toplam,
     istekSeri: seri,
     ulkeler,
     sistem: {
@@ -7052,9 +7243,10 @@ app.get('/admin/kullanici/:ad', adminKisit, sarici(async (req, res) => {
       [id]).catch(() => ({ rows: [{ hakkinda: null, yorum_sikayet: null, ettigi: null }] })),
   ]);
   // Bellek-içi istek halkasından bu kullanıcının son IP'leri
+  // (kümede birincildeki birleşik halka — tek işçininki 1/N'lik görürdü)
   const ipler = [];
   const gorulenIp = new Set();
-  for (const i of ISTEK.son) {
+  for (const i of (await istekVerisi()).son) {
     if (i.kullanici !== id || gorulenIp.has(i.ip)) continue;
     gorulenIp.add(i.ip);
     ipler.push({ ip: i.ip, ulke: i.ulke, sehir: i.sehir, ts: i.ts });
@@ -7099,10 +7291,10 @@ app.get('/admin/kullanici/:ad', adminKisit, sarici(async (req, res) => {
   });
 }));
 
-// Son istekler (3D globe + canlı akış için).
-app.get('/admin/istekler', adminKisit, (_req, res) => {
-  res.json({ istekler: ISTEK.son.slice(0, 250) });
-});
+// Son istekler (3D globe + canlı akış için; kümede birleşik halka).
+app.get('/admin/istekler', adminKisit, sarici(async (_req, res) => {
+  res.json({ istekler: (await istekVerisi()).son.slice(0, 250) });
+}));
 
 // Hata günlüğü.
 app.get('/admin/hatalar', adminKisit, sarici(async (req, res) => {
@@ -8389,6 +8581,16 @@ const sunucu = app.listen(PORT, '0.0.0.0', () => {
   }
 });
 
+// ARAMA SAHİBİ (D1): sıra-1 işçisi, kardeşlerin /arama/* vekil isteklerini
+// alacağı İÇ dinleyiciyi açar — YALNIZ 127.0.0.1, konteyner dışına kapalı.
+// Aynı `app` nesnesi: kapanma kapısı, hız limitleri ve loglar aynen geçerli.
+// Kümesizken null kalır ve hiçbir şey değişmez.
+const aramaIcSunucu = (kumelenmisMi() && ARAMA_SAHIBI)
+  ? app.listen(ARAMA_IC_PORT, '127.0.0.1', () => {
+    console.log(`arama iç dinleyicisi 127.0.0.1:${ARAMA_IC_PORT} (sıra ${isciSira()})`);
+  })
+  : null;
+
 // ===========================================================================
 // ÇÖKME KALKANI + ZARİF KAPANMA          (yapilacaklar2 B1 / B2)
 // ===========================================================================
@@ -8443,12 +8645,17 @@ async function kapan(sebep, cikisKodu = 0) {
     logOlumcul({ olay: 'kapanma_zaman_asimi', sebep, ms: KAPANMA_AZAMI_MS });
     // Hâlâ konuşan soketleri kes, yoksa `process.exit` bile beklenebilir.
     sunucu.closeAllConnections?.();
+    aramaIcSunucu?.closeAllConnections?.();
     process.exit(cikisKodu);
   }, KAPANMA_AZAMI_MS);
   sonSure.unref?.();
 
-  // Dinleyici soketi kapat: yeni BAĞLANTI kabul edilmez.
+  // Dinleyici soketi kapat: yeni BAĞLANTI kabul edilmez. Arama sahibinin
+  // iç dinleyicisi de (varsa) aynı disiplinle kapanır — kardeş işçilerin
+  // vekil bağlantıları keep-alive'da beklediği için süpürgeye o da dahil.
   const kapandi = new Promise((c) => sunucu.close(c));
+  const kapandiIc = aramaIcSunucu
+    ? new Promise((c) => aramaIcSunucu.close(c)) : null;
   // KRİTİK: keep-alive ile AÇIK AMA BOŞTA duran bağlantılar `close()`in geri
   // çağrısını tetiklemez. Bunlar kapatılmazsa her dağıtım tam zaman aşımı
   // kadar (15 sn) beklerdi — yani "zarif kapanma" pratikte "yavaş kapanma"
@@ -8462,9 +8669,11 @@ async function kapan(sebep, cikisKodu = 0) {
   // (prova: 5 sn'lik istek bitti, süreç yine tam 8 sn bekleyip zorla çıktı).
   // Boştakiler kapanış bitene dek yarım saniyede bir süpürülür.
   sunucu.closeIdleConnections?.();
-  const supurge = setInterval(() => sunucu.closeIdleConnections?.(), 500);
+  aramaIcSunucu?.closeIdleConnections?.();
+  const supurge = setInterval(() => { sunucu.closeIdleConnections?.(); aramaIcSunucu?.closeIdleConnections?.(); }, 500);
   supurge.unref?.();
   await kapandi;
+  if (kapandiIc) await kapandiIc;
   clearInterval(supurge);
 
   const aramaSayi = await aramalariKapat().catch(() => -1);

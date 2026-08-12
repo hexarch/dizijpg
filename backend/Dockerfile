@@ -22,7 +22,11 @@ RUN npm install --omit=dev
 # ile acilista olur ve restart dongusune girer — kripto.js / medya_imza.js /
 # arama.js ile AYNI tuzak. test/arama.test.js bu listeyi otomatik denetliyor
 # (bu satir eklenmeden once testi KIRMIZIYA dondurdu, yani denetim calisiyor).
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js gunluk.js mesaj_sifrele_geri_doldur.js admin.html ./
+# kume.js / kume_ipc.js / kume_yardimci.js: D1 kümeleme — kume.js GİRİŞ
+# NOKTASIDIR (CMD), kume_ipc/kume_yardimci'yi server.js import ediyor;
+# herhangi biri imaja GIRMEZSE konteyner "Cannot find module" ile açılışta
+# ölür ve restart döngüsüne girer (kripto.js ile AYNI tuzak).
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js kripto.js kisi_izlenme.js yasak.js medya_imza.js arama.js gunluk.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./
@@ -32,4 +36,8 @@ COPY araclar/durum_duzelt.js ./araclar/
 # elle `docker cp` gerekmesin (tohumlama + kare tekrar temizliği).
 COPY ai_tohum.js ai_kare_tazele.js ai_yorumlar.json ./
 EXPOSE 8500
-CMD ["node", "server.js"]
+# D1: giriş noktası kume.js — birincil süreç NODE_ISCI işçi forklar
+# (varsayılan min(4, çekirdek)). NODE_ISCI=0 eski tek-süreç davranışına
+# döner. exec biçimi ŞART: birincil PID 1 olur ve docker stop'un
+# SIGTERM'ini doğrudan alıp işçilere iletir (zarif kapanma zinciri).
+CMD ["node", "kume.js"]

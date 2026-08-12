@@ -65,6 +65,13 @@ services:
       ARAMA_GORUNTULU: ${ARAMA_GORUNTULU:-}
       ARAMA_TRAFIK_ESIK_GB: ${ARAMA_TRAFIK_ESIK_GB:-}
       PORT: 8500
+      # D1 (12 Ağu 2026): Node kümeleme. NODE_ISCI=0 geri dönüş anahtarıdır
+      # (eski tek-süreç davranışı). İşçi başına pg havuzu floor(80/N) —
+      # kume_yardimci.js hesaplar, PG_HAVUZ_MAX ezebilir ama tavana kırpılır.
+      # ARAMA_IC_PORT (varsayılan PORT+1) konteyner içi 127.0.0.1 — publish YOK.
+      NODE_ISCI: ${NODE_ISCI:-4}
+      PG_HAVUZ_MAX: ${PG_HAVUZ_MAX:-}
+      ARAMA_IC_PORT: ${ARAMA_IC_PORT:-}
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya
       MAIL_HOST: host.docker.internal
