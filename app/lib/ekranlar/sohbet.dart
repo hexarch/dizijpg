@@ -18,6 +18,7 @@ import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
 import '../push.dart';
 import '../tema.dart';
+import 'tepki.dart';
 import 'medya_goster.dart';
 import 'medya_inceleme.dart';
 import 'ortak.dart';
@@ -811,6 +812,82 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
+  /// Md. 43 — mesaja tepki ver / kaldır (`emoji: null` = kaldır).
+  ///
+  /// İYİMSER: rozet dokunur dokunmaz güncellenir, sunucu hata verirse liste
+  /// eski hâline döner + SnackBar. Beş saniyelik yoklama zaten sonra gerçek
+  /// hâli getiriyor; kullanıcı o kadar beklemesin.
+  Future<void> _tepkiVer(int mesajId, String? emoji) async {
+    final yedek = List<dynamic>.from(_mesajlar);
+    setState(() {
+      _mesajlar = [
+        for (final ham in _mesajlar)
+          if (ham is Map<String, dynamic> &&
+              (ham['id'] as num?)?.toInt() == mesajId)
+            {...ham, 'tepkiler': _tepkileriUygula(ham['tepkiler'], emoji)}
+          else
+            ham,
+      ];
+    });
+    try {
+      final d = await Api.post('/mesaj-tepki', {
+        'mesaj_id': mesajId,
+        'emoji': emoji,
+      });
+      // Sunucu KESİN listeyi döner (aynı biçim): karşı taraf aynı anda tepki
+      // vermişse sayaç 5 sn'lik yoklamayı beklemeden düzelir. Alan yoksa
+      // (eski sunucu) iyimser hâl korunur.
+      final kesin = (d as Map<String, dynamic>?)?['tepkiler'];
+      if (kesin is List && mounted) {
+        setState(() {
+          _mesajlar = [
+            for (final ham in _mesajlar)
+              if (ham is Map<String, dynamic> &&
+                  (ham['id'] as num?)?.toInt() == mesajId)
+                {...ham, 'tepkiler': kesin}
+              else
+                ham,
+          ];
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _mesajlar = yedek);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  /// İyimser tepki listesi: kendi tepkini kaldırır, yenisini ekler, sayaçları
+  /// düzeltir. Sunucu yanıtıyla aynı biçimi üretir (`emoji`/`adet`/`benim`).
+  List<Map<String, dynamic>> _tepkileriUygula(Object? ham, String? yeni) {
+    final liste = <Map<String, dynamic>>[
+      for (final t in (ham as List<dynamic>? ?? const []))
+        if (t is Map<String, dynamic>) Map<String, dynamic>.from(t),
+    ];
+    // Önce eski tepkini düş
+    for (final t in List<Map<String, dynamic>>.from(liste)) {
+      if (t['benim'] != true) continue;
+      final kalan = ((t['adet'] as num?)?.toInt() ?? 1) - 1;
+      if (kalan <= 0) {
+        liste.remove(t);
+      } else {
+        t['adet'] = kalan;
+        t['benim'] = false;
+      }
+    }
+    if (yeni == null) return liste;
+    final mevcut = liste.where((t) => t['emoji'] == yeni).firstOrNull;
+    if (mevcut == null) {
+      liste.add({'emoji': yeni, 'adet': 1, 'benim': true});
+    } else {
+      mevcut['adet'] = ((mevcut['adet'] as num?)?.toInt() ?? 0) + 1;
+      mevcut['benim'] = true;
+    }
+    return liste;
+  }
+
   /// Yazma kutusunun içindeki kompakt eylem ikonu (foto / içerik / ses /
   /// gönder). IconButton'un 48px dokunma alanı kutuyu şişirdiği için
   /// InkWell + sıkı padding kullanılır; hedef yine ~36px kalır.
@@ -1201,6 +1278,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                       (m['id'] as num).toInt(),
                                     )
                                   : null,
+                              // Henüz gönderilmemiş (id'siz) iyimser satıra
+                              // tepki verilemez: sunucuda karşılığı yok.
+                              tepkiVer: m['id'] == null
+                                  ? null
+                                  : (emoji) => _tepkiVer(
+                                      (m['id'] as num).toInt(),
+                                      emoji,
+                                    ),
                             );
                             // Saat balonun ALTINDA değil, satırın SAĞINDAKİ
                             // gizli sütunda; sürükleme boyunca açılır.
@@ -1565,6 +1650,10 @@ class _MesajBaloncugu extends StatelessWidget {
   /// etmesine izin veriyor (POST /sikayet sahiplik kontrolu).
   final VoidCallback? sikayet;
 
+  /// Md. 43 — mesaja emoji tepkisi. `null` emoji = tepkiyi kaldır.
+  /// Mesajın id'si yoksa (henüz gönderilmemiş iyimser satır) null gelir.
+  final void Function(String? emoji)? tepkiVer;
+
   const _MesajBaloncugu({
     super.key,
     required this.mesaj,
@@ -1574,10 +1663,33 @@ class _MesajBaloncugu extends StatelessWidget {
     this.yanitla,
     this.duzenle,
     this.sikayet,
+    this.tepkiVer,
     this.gonderiler = const {},
   });
 
-  /// Uzun basınca: Yanıtla / Düzenle / Sil (uygun olanlar). Telegram tarzı menü.
+  /// Kullanıcının bu mesaja verdiği tepki (yoksa null).
+  String? get _benimTepkim {
+    for (final t in (mesaj['tepkiler'] as List<dynamic>? ?? const [])) {
+      if (t is Map && t['benim'] == true) return t['emoji'] as String?;
+    }
+    return null;
+  }
+
+  /// Çift tıklama: kalp. Zaten kalp verdiysen KALDIRIR (aynı jest geri alır —
+  /// Instagram/WhatsApp davranışı; kullanıcı yanlışlıkla basınca kilitlenmesin).
+  void _kalpDegistir() {
+    if (tepkiVer == null) return;
+    tepkiVer!(_benimTepkim == '❤️' ? null : '❤️');
+  }
+
+  /// Uzun basınca: TEPKİ ŞERİDİ + Yanıtla / Düzenle / Sil (uygun olanlar).
+  /// Telegram tarzı menü.
+  ///
+  /// TEPKİ ŞERİDİ MENÜNÜN ÜSTÜNE EKLENDİ, basılı tutma İŞLEVİ DEĞİŞMEDİ:
+  /// bu jest zaten Yanıtla/Düzenle/Sil menüsüne bağlıydı (md. 43'ün notu da
+  /// "çakışma önce kontrol edilmeli" diyordu). Menüyü emoji seçiciyle
+  /// değiştirmek üç eylemi erişilemez kılardı; WhatsApp/Telegram da tepkileri
+  /// aynı menünün başında gösterir.
   void _menuAc(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1586,6 +1698,42 @@ class _MesajBaloncugu extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (tepkiVer != null) ...[
+              // YATAY KAYDIRILIR: 9 emoji 390 dp'de 27 px taşıyordu (testte
+              // yakalandı) ve 320 dp telefonlar daha da dar. Küçültmek yerine
+              // kaydırma: dokunma hedefi 44 dp'nin altına düşmesin.
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.fromLTRB(8, 12, 8, 4),
+                child: Row(
+                  children: [
+                    for (final e in mesajTepkiEmojileri)
+                      InkWell(
+                        borderRadius: BorderRadius.circular(24),
+                        onTap: () {
+                          Navigator.pop(sheetCtx);
+                          // Aynı emojiye tekrar basmak tepkiyi kaldırır.
+                          tepkiVer!(_benimTepkim == e ? null : e);
+                        },
+                        child: Container(
+                          // 44 dp dokunma hedefi: 26 + 2×9 dolgu.
+                          padding: const EdgeInsets.all(9),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: _benimTepkim == e
+                                ? DiziRenkler.sari.withValues(alpha: 0.20)
+                                : Colors.transparent,
+                          ),
+                          // Seçici açılınca hepsi BİR KEZ oynar (canlı durur,
+                          // sonra dinlenir) — sonsuz döngü değil.
+                          child: TepkiIkonu(e, boyut: 26, acilistaOynat: true),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Divider(color: DiziRenkler.metin12, height: 12),
+            ],
             if (yanitla != null)
               ListTile(
                 leading: Icon(Icons.reply, color: DiziRenkler.sariMetin),
@@ -1666,18 +1814,28 @@ class _MesajBaloncugu extends StatelessWidget {
     final duzenlendi = m['duzenlendi'] == true;
     // Balonun altında yalnız "düzenlendi" + okundu tiki kalır; saat gitti.
     final altBilgi = duzenlendi || benim;
+    // Md. 43 — sunucudan mesajla BİRLİKTE gelen tepkiler (ayrı istek yok).
+    final tepkiler = <Map<String, dynamic>>[
+      for (final t in (m['tepkiler'] as List<dynamic>? ?? const []))
+        if (t is Map<String, dynamic>) t,
+    ];
 
     return Align(
       alignment: benim ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
-        // Uzun bas → Yanıtla / Düzenle / Sil menüsü
+        // Uzun bas → tepki şeridi + Yanıtla / Düzenle / Sil menüsü
         onLongPress:
             (yanitla == null &&
                 duzenle == null &&
                 sil == null &&
-                sikayet == null)
+                sikayet == null &&
+                tepkiVer == null)
             ? null
             : () => _menuAc(context),
+        // Çift tık → kalp (md. 43). Tek tık BOŞ bırakıldı: baloncuğun içinde
+        // zaten tıklanabilir öğeler var (içerik kartı, medya, paylaşılan
+        // gönderi) ve tek tıkı yakalamak onları çalışmaz hâle getirirdi.
+        onDoubleTap: tepkiVer == null ? null : _kalpDegistir,
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 3),
           // Alt bilgi satırı (düzenlendi/tik) yoksa saatin bıraktığı boşluk
@@ -1976,9 +2134,103 @@ class _MesajBaloncugu extends StatelessWidget {
                       ],
                     ),
                   ),
+                // Md. 43 — tepki rozetleri baloncuğun İÇİNDE, en altta.
+                // Dışında (üste taşan bir pul olarak) denenmedi: baloncuk
+                // Align+IntrinsicWidth içinde, taşan Positioned tıklanamaz
+                // olurdu (projedeki bilinen hit-test tuzağı).
+                if (tepkiler.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Wrap(
+                      spacing: 4,
+                      runSpacing: 4,
+                      children: [
+                        for (final t in tepkiler)
+                          _TepkiRozeti(
+                            emoji: t['emoji'] as String? ?? '',
+                            adet: (t['adet'] as num?)?.toInt() ?? 0,
+                            benim: t['benim'] == true,
+                            koyuZemin: benim,
+                            // Kendi tepkine dokunmak kaldırır, başkasınınkine
+                            // dokunmak seni de ekler (WhatsApp davranışı).
+                            onTap: tepkiVer == null
+                                ? null
+                                : () => tepkiVer!(
+                                    t['benim'] == true
+                                        ? null
+                                        : t['emoji'] as String?,
+                                  ),
+                          ),
+                      ],
+                    ),
+                  ),
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Baloncuğun altındaki tek tepki rozeti: hareketli emoji + sayı.
+///
+/// Sayı HER ZAMAN yazılı (yalnız emoji gösterip sayıyı gizlemek, iki kişinin
+/// aynı tepkiyi vermesini görünmez kılardı). Kendi tepkin çerçeveli.
+class _TepkiRozeti extends StatelessWidget {
+  final String emoji;
+  final int adet;
+  final bool benim;
+
+  /// Baloncuk sarı zeminli mi (kendi mesajın) — kontrast buna göre kurulur.
+  final bool koyuZemin;
+  final VoidCallback? onTap;
+
+  const _TepkiRozeti({
+    required this.emoji,
+    required this.adet,
+    required this.benim,
+    required this.koyuZemin,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final metinRengi = koyuZemin ? Colors.black : DiziRenkler.metin;
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: (koyuZemin ? Colors.black : DiziRenkler.metin).withValues(
+            alpha: 0.08,
+          ),
+          borderRadius: BorderRadius.circular(12),
+          border: benim
+              ? Border.all(
+                  color: koyuZemin ? Colors.black54 : DiziRenkler.sari,
+                  width: 1.2,
+                )
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Rozette animasyon DÖNMEZ: bir sohbette onlarca rozet olabilir.
+            TepkiIkonu(emoji, boyut: 14),
+            if (adet > 1) ...[
+              const SizedBox(width: 3),
+              Text(
+                '$adet',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: metinRengi.withValues(alpha: 0.75),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );

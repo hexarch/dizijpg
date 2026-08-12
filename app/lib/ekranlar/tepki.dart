@@ -25,7 +25,16 @@ const _tepkiDosyalari = {
   '😂': '1f602',
   '😱': '1f631',
   '😍': '1f60d',
+  // Yalnız MESAJ tepkilerinde (md. 43): çift tıklama kısayolu.
+  '❤️': '2764_fe0f',
 };
+
+/// Mesaj (DM) tepkileri: içerik seti + başa KALP.
+///
+/// Kalp içerik tepkilerine EKLENMEDİ — orada 8'lik küme sunucudaki CHECK ile
+/// birebir; mesajlarınki ayrı tablo, ayrı CHECK (9). Çift tıklama kalbi
+/// seçer (Instagram/WhatsApp alışkanlığı), basılı tutmak tümünü açar.
+const mesajTepkiEmojileri = ['❤️', ...tepkiEmojileri];
 
 /// Tepki emojisini HAREKETLİ çizer (Noto Animated Emoji, CC BY 4.0 — Lottie).
 ///
@@ -50,6 +59,13 @@ class TepkiIkonu extends StatefulWidget {
   /// Sürekli oynasın mı (kullanıcının SEÇİLİ tepkisi).
   final bool oynat;
 
+  /// İlk çizimde BİR KEZ oynasın mı (emoji seçici gibi kısa ömürlü yüzeyler).
+  ///
+  /// NEDEN [oynat] DEĞİL: 9 emojiyi sonsuz döndürmek hem düşük donanımda boş
+  /// CPU hem de ekranın HİÇ DURULMAMASI demek (`pumpAndSettle` sonsuza
+  /// bekliyordu — testte yakalandı; gerçek karşılığı pil).
+  final bool acilistaOynat;
+
   /// Bir kez oynatmak için artırılan sayaç: değeri her değiştiğinde animasyon
   /// baştan çalar. (Fonksiyon geri çağırmak yerine sayaç: widget yeniden
   /// kurulmadan da tetiklenebilsin.)
@@ -60,6 +76,7 @@ class TepkiIkonu extends StatefulWidget {
     super.key,
     this.boyut = 20,
     this.oynat = false,
+    this.acilistaOynat = false,
     this.vurus = 0,
   });
 
@@ -106,14 +123,22 @@ class _TepkiIkonuState extends State<TepkiIkonu>
     if (widget.oynat != eski.oynat) _akisiAyarla();
   }
 
+  /// `acilistaOynat` yalnız BİR KEZ çalışsın (didChangeDependencies her tema/
+  /// ölçü değişiminde de tetiklenir).
+  bool _acilisOynadi = false;
+
   void _akisiAyarla() {
     if (!mounted) return;
     if (widget.oynat && !_hareketKapali) {
       _denetci.repeat();
-    } else {
-      _denetci
-        ..stop()
-        ..value = 0; // durağan hâl = ilk kare
+      return;
+    }
+    _denetci
+      ..stop()
+      ..value = 0; // durağan hâl = ilk kare
+    if (widget.acilistaOynat && !_acilisOynadi && !_hareketKapali) {
+      _acilisOynadi = true;
+      _denetci.forward();
     }
   }
 

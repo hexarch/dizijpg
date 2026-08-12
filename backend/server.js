@@ -5522,6 +5522,168 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
   res.json({ tamam: true });
 }));
 
+// ---------- özel mesajlara emoji tepkisi (istek listesi md. 43) ----------
+//
+// ***** TEPKİ EMOJİSİ BİLEREK ŞİFRELENMEZ (AÇIK ÜSTVERİ) *****
+// `mesajlar.metin` durağan şifreli tutuluyor (AES-256-GCM, `kripto.js`;
+// okuma uçları `cozGoster` ile çözüyor). Tepki emojisi AYNI korumaya
+// ALINMADI ve bu bir eksiklik DEĞİL, karardır:
+//   * Şifreleme mesaj METNİNİ korur — serbest metin, sınırsız entropi. Tepki
+//     ise 9 ELEMANLI, SABİT ve HERKESE AÇIK bir kümeden tek değerdir; şifreli
+//     saklansa bile DB dökümü senaryosunda 9 olasılık frekans analiziyle
+//     ayrılır. Gerçek gizlilik kazancı ~0.
+//   * Buna karşılık şifreleme sayaçları SUNUCUDA saymayı (GROUP BY emoji)
+//     İMKÂNSIZ kılardı: sayfadaki her mesaj için satırları çözüp uygulamada
+//     saymak gerekirdi.
+//   * DB kim-kiminle-ne-zaman üstverisini (gonderen_id, alici_id, tarih)
+//     ZATEN açık tutuyor; tepki bundan daha azını açığa çıkarır.
+//
+// EMOJİ KÜMESİ: ilki KALP (baloncuğa çift tıklama kısayolu), kalan 8'i
+// `TEPKI_EMOJILERI` (içerik tepkileri) ile AYNI KÜME. SIRA farklıdır ve
+// öyle kalmalı: DM şeridinde kalbin ardından duygu yoğunluğuna göre
+// (😍😂😮😢😱🥱😭😄) diziliyor, içerik şeridi ise 21 Tem'den beri kendi
+// sırasında ve o sıra yayındaki istemcilerde donmuş durumda.
+//
+// Liste BİLEREK ayrı bir sabit: içerik şeridinde kalp YOK (favori yıldızıyla
+// karışırdı) ve `TEPKI_EMOJILERI`ni 9'a çıkarmak dizi/film sayfalarındaki
+// 8 hücreli şeridi bozardı. İki listeyi tek sabite indirgemeye çalışan
+// gelecekteki bir "sadeleştirme" bu yorumu okumadan yapılmamalı.
+const MESAJ_TEPKI_EMOJILERI = ['❤️', '😍', '😂', '😮', '😢', '😱', '🥱', '😭', '😄'];
+
+/**
+ * Gelen emojiyi KANONİK hâle getirir; kümede yoksa `undefined`.
+ *
+ * Neden sade `includes` yetmiyor: ❤️ iki kod noktasıdır (U+2764 + U+FE0F
+ * VARYASYON SEÇİCİ). Bazı klavyeler/istemciler seçiciyi göndermez, bazıları
+ * metni NFC/NFD normalleştirir. Ham karşılaştırma bu isteklere haksız yere
+ * 400 verir ve hata "bazen kalp çalışmıyor" diye geri gelirdi. Seçiciyi
+ * ATARAK karşılaştırıp DB'ye HER ZAMAN listedeki kanonik biçimi yazıyoruz —
+ * aksi hâlde aynı kalp iki ayrı satır/iki ayrı sayaç olurdu.
+ */
+function mesajTepkiEmojisi(deger) {
+  if (typeof deger !== 'string') return undefined;
+  // U+FE0F KAÇIŞLA yazılıyor: ham karakter GÖRÜNMEZDİR ve bir düzenleyici
+  // "gereksiz boşluk" sanıp silse regex sessizce her şeyi eşlemeye başlardı.
+  const sade = (s) => s.normalize('NFC').replace(/\uFE0F/g, '');
+  return MESAJ_TEPKI_EMOJILERI.find((e) => sade(e) === sade(deger));
+}
+
+/**
+ * GROUP BY satırlarını mesaj_id -> tepki dizisi haritasına çevirir (SAF).
+ * Ayrı fonksiyon: biçim istemci sözleşmesidir ve testten geçmesi gerekir.
+ */
+function mesajTepkiHarita(satirlar) {
+  const harita = {};
+  for (const r of satirlar) {
+    (harita[r.mesaj_id] ||= []).push({
+      emoji: r.emoji,
+      adet: r.adet,
+      // pg BOOLEAN'ı JS boolean verir; yine de kesinleştiriyoruz — istemci
+      // `benim` üzerinde üç durumlu (null) mantık kurmasın.
+      benim: r.benim === true,
+    });
+  }
+  return harita;
+}
+
+/**
+ * Sayfadaki TÜM mesajların tepkileri TEK sorguda (N+1 YOK).
+ *
+ * Sohbet ekranı 5 sn'de bir yokluyor ve sayfa 50 mesaj: mesaj başına sorgu
+ * atsaydık her yoklama 50 gidiş-dönüş olurdu (kullanıcı başına dakikada 600).
+ * Sayım da uygulamada değil SQL'de yapılıyor — `emoji` şifresiz olduğu için
+ * GROUP BY mümkün (yukarıdaki karara bak).
+ */
+async function mesajTepkileri(mesajIdler, benId) {
+  if (!mesajIdler.length) return {};
+  const { rows } = await havuz.query(
+    `SELECT mesaj_id, emoji, count(*)::int AS adet,
+            bool_or(kullanici_id = $2) AS benim
+     FROM mesaj_tepkileri
+     WHERE mesaj_id = ANY($1::int[])
+     GROUP BY mesaj_id, emoji
+     ORDER BY mesaj_id, adet DESC, emoji`,
+    [mesajIdler, benId],
+  );
+  return mesajTepkiHarita(rows);
+}
+
+// Tepki bir DOKUNUŞTUR ve gidip gelir (kalp bırak -> kaldır -> yine bırak),
+// yani mesaj göndermekten çok daha sık tetiklenir; `mesajLimiti`nin 300'ü
+// hareketli bir sohbette gün ortasında biterdi. Öte yandan tepki tek satırlık
+// bir UPSERT'tir, BİLDİRİM ÜRETMEZ (aşağıya bak) ve karşı tarafa ancak 5
+// sn'lik yoklamayla ulaşır — yani taciz değil, yalnız DoS boyutu var.
+// Saatte 600 = dakikada 10 sürekli dokunuş: insan davranışının çok üstünde,
+// betiğin çok altında.
+const mesajTepkiLimiti = hizLimiti(600, (req) => `mt:${req.kullanici.id}`);
+
+// Tepki bırak / değiştir / kaldır. `emoji: null` = KALDIR (POST /tepki ile
+// aynı sözleşme). Aynı kullanıcının ikinci emojisi mevcut satırı DEĞİŞTİRİR.
+//
+// BİLDİRİM YOK (bilinçli): sohbet ekranı zaten 5 sn'de bir tazeleniyor, yani
+// tepki karşı tarafa kendiliğinden ulaşır. `bildirimler.tur` CHECK'ini
+// genişletmek + 45 dilde push şablonu yazmak ayrı bir iştir.
+app.post('/mesaj-tepki', girisZorunlu, mesajTepkiLimiti, sarici(async (req, res) => {
+  const { mesaj_id: mesajId, emoji: emojiHam = null } = req.body || {};
+  if (!Number.isInteger(mesajId) || mesajId <= 0) {
+    return res.status(400).json({ hata: 'Geçersiz mesaj_id' });
+  }
+  // `undefined` = kümede yok -> 400. `null` = kaldırma isteği (geçerli).
+  const emoji = emojiHam == null ? null : mesajTepkiEmojisi(emojiHam);
+  if (emoji === undefined) return res.status(400).json({ hata: 'Geçersiz emoji' });
+
+  // ***** YETKİ — BU BLOK SİLİNEMEZ *****
+  // Kullanıcı YALNIZ KENDİ sohbetindeki mesaja tepki verebilir. Kontrol
+  // olmasaydı bir saldırgan mesaj id'lerini tarayarak (a) hangi id'lerin VAR
+  // olduğunu öğrenir (varlık kâhini), (b) hiç tanımadığı iki kişinin
+  // sohbetine kendi verisini sokardı — o sohbetin iki tarafı da `GET
+  // /mesajlar/:ad` yanıtında bu tepkiyi GÖRÜRDÜ.
+  //
+  // 403 DEĞİL 404: 403 "bu id'de bir mesaj var ama senin değil" bilgisini
+  // verir ve id taramasıyla mesaj varlığı/hacmi ölçülebilirdi. 404 hem hiç
+  // olmayan hem başkasına ait id için AYNI cevabı döner. (Aynı gerekçeyle
+  // PATCH/DELETE /mesajlar/:id de "başkasının mesajı"na 404 veriyor.)
+  const m = await havuz.query(
+    `SELECT gonderen_id, alici_id FROM mesajlar
+     WHERE id=$1 AND (gonderen_id=$2 OR alici_id=$2)`,
+    [mesajId, req.kullanici.id],
+  );
+  if (!m.rows.length) return res.status(404).json({ hata: 'Mesaj bulunamadı' });
+  const partnerId = m.rows[0].gonderen_id === req.kullanici.id
+    ? m.rows[0].alici_id
+    : m.rows[0].gonderen_id;
+
+  // Engelleme: mesaj GÖNDEREMEDİĞİN kişiye tepki de bırakamazsın — tepki de
+  // karşı tarafın ekranında beliren bir iletişimdir (POST /mesajlar ile aynı
+  // kapı, aynı `engelliMi` yardımcısı). KALDIRMA (emoji=null) bilerek serbest:
+  // `/arama/bitir` ile aynı gerekçe — temizleyici eylem, yeni içerik ÜRETMEZ.
+  // Engellenmeden ÖNCE bırakılmış bir tepkiyi geri alamamak tuzak olurdu.
+  //
+  // YASAKLI (banlı) hesap ayrıca `girisZorunlu` kapısında durur: kapı
+  // VARSAYILAN-RET'tir ve `/mesaj-tepki` YASAK_MUAF listesinde DEĞİLDİR.
+  if (emoji != null && await engelliMi(req.kullanici.id, partnerId)) {
+    return res.status(403).json({ hata: 'Bu kullanıcıyla mesajlaşamazsın' });
+  }
+
+  if (emoji == null) {
+    await havuz.query(
+      'DELETE FROM mesaj_tepkileri WHERE mesaj_id=$1 AND kullanici_id=$2',
+      [mesajId, req.kullanici.id],
+    );
+  } else {
+    await havuz.query(
+      `INSERT INTO mesaj_tepkileri (mesaj_id, kullanici_id, emoji)
+       VALUES ($1,$2,$3)
+       ON CONFLICT (mesaj_id, kullanici_id) DO UPDATE SET emoji=$3, tarih=now()`,
+      [mesajId, req.kullanici.id, emoji],
+    );
+  }
+  // Yanıt biçimi `GET /mesajlar/:ad`taki `tepkiler` alanıyla BİREBİR aynı:
+  // istemci iki yerde iki ayrı çözümleyici yazmasın.
+  const harita = await mesajTepkileri([mesajId], req.kullanici.id);
+  res.json({ mesaj_id: mesajId, tepkiler: harita[mesajId] || [] });
+}));
+
 // Bir kullanıcıyla mesajlaşma geçmişi; gelenler okundu işaretlenir.
 app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // Çevrimiçi durumunu gizleyenin son_gorulme damgası HİÇ gönderilmez —
@@ -5559,6 +5721,13 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
     r.yanit_medya = medyaImzali(r.yanit_medya, MEDYA_IMZA_ANAHTARI);
   }
+  // Emoji tepkileri (md. 43) AYRI BİR UÇTAN DEĞİL, mesajlarla BİRLİKTE gelir:
+  // sohbet ekranı zaten 5 sn'de bir yokluyor, ikinci bir uç yoklama yükünü
+  // ikiye katlardı. Sayfadaki 50 mesajın hepsi TEK sorguda toplanır.
+  const tepkiHaritasi = await mesajTepkileri(rows.map((r) => r.id), req.kullanici.id);
+  // Tepkisi olmayan mesaj da `tepkiler: []` alır: istemci alanın VAR olduğuna
+  // güvenebilsin (null denetimi unutulan bir yerde çökme olmasın).
+  for (const r of rows) r.tepkiler = tepkiHaritasi[r.id] || [];
   // Paylaşılan içerik kartları için ad + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(rows
     .filter((r) => r.icerik_tur && r.icerik_id)

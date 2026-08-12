@@ -59,9 +59,10 @@ void main() {
     await Api.tokenYukle();
   });
 
-  test('8 emojinin de animasyon dosyası var ve GEÇERLİ Lottie', () {
+  test('her tepki emojisinin animasyon dosyası var ve GEÇERLİ Lottie', () {
     // Kod noktası eşlemesi tepki.dart'ın içinde özel; burada dosyaların
-    // varlığını emoji SAYISI üzerinden denetliyoruz.
+    // varlığını emoji SAYISI üzerinden denetliyoruz. Ölçüt MESAJ seti:
+    // içerik seti (8) + kalp (md. 43, yalnız mesajlarda) = 9.
     final dizin = Directory('assets/tepkiler');
     final dosyalar = dizin
         .listSync()
@@ -70,15 +71,15 @@ void main() {
         .toList();
     expect(
       dosyalar.length,
-      tepkiEmojileri.length,
+      mesajTepkiEmojileri.length,
       reason: 'her tepki emojisi için bir animasyon dosyası olmalı',
     );
     for (final f in dosyalar) {
       final ad = f.uri.pathSegments.last;
-      // Ad Unicode kod noktası olmalı (ör. 1f60d.json) — emoji karakteri ya da
-      // eski OpenMoji adı (o_1f60d.svg) kalmışsa yakala.
+      // Ad Unicode kod noktası olmalı (ör. 1f60d.json, 2764_fe0f.json) —
+      // emoji karakteri ya da eski OpenMoji adı (o_1f60d.svg) kalmışsa yakala.
       expect(
-        RegExp(r'^[0-9a-f]{4,6}\.json$').hasMatch(ad),
+        RegExp(r'^[0-9a-f]{4,6}(_[0-9a-f]{4})?\.json$').hasMatch(ad),
         isTrue,
         reason: 'beklenmeyen varlık adı: $ad',
       );
@@ -91,10 +92,9 @@ void main() {
   });
 
   test('eski OpenMoji SVG artıkları temizlendi', () {
-    final artik = Directory('assets/tepkiler')
-        .listSync()
-        .where((f) => f.path.endsWith('.svg'))
-        .toList();
+    final artik = Directory(
+      'assets/tepkiler',
+    ).listSync().where((f) => f.path.endsWith('.svg')).toList();
     expect(artik, isEmpty, reason: 'ölü SVG varlıkları hâlâ paketleniyor');
   });
 

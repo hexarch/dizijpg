@@ -1,6 +1,61 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (h) — MD. 43 MESAJLARA EMOJİ TEPKİSİ 🚀 (1.37.0+83)
+Çift tık → ❤️ · basılı tutma → 9'luk hareketli şerit (menünün BAŞINDA).
+
+### Jest çakışması (maddenin kendi uyarısı doğru çıktı)
+Basılı tutma BOŞ DEĞİLDİ: Yanıtla/Düzenle/Sil/Şikayet menüsüne bağlıydı.
+Menüyü seçiciyle DEĞİŞTİRMEK üç eylemi erişilemez kılardı → şerit menünün
+başına eklendi (WhatsApp/Telegram da böyle). Gerileme testi menüyü kilitliyor.
+Tek tık BİLEREK boş bırakıldı: baloncuk içinde zaten tıklanabilir öğeler var
+(içerik kartı, medya, paylaşılan gönderi).
+
+### Şifreleme kararı: tepki AÇIK üstveri
+Mesaj metni AES-256-GCM ile şifreli KALIR. Tepki 9 elemanlı SABİT ve herkese
+açık bir kümeden tek değerdir; şifrelemek DB-dökümü senaryosunda frekans
+analizine karşı gerçek koruma vermez ama sayaçları sunucuda saymayı imkânsız
+kılardı. DB zaten kim-kiminle-ne-zaman üstverisini açık tutuyor.
+
+### Sunucu (ajan)
+`mesaj_tepkileri` (UNIQUE(mesaj_id,kullanici_id)) + `POST /mesaj-tepki`
+(`emoji:null` = kaldır, UPSERT). Tepkiler AYRI UÇ DEĞİL `GET /mesajlar`
+yanıtıyla: `tepkiler: [{emoji, adet, benim}]`, her zaman dizi, sıra
+`adet DESC, emoji`. 5 sn'lik yoklama iki katına çıkmasın diye böyle; tek
+sorguda toplanıyor (N+1 yok — PG sorgu günlüğüyle kanıtlandı: 33 mesaj için
+`mesaj_id = ANY(...)` tek sorgu).
+**YETKİ 404, 403 DEĞİL:** `WHERE id=$1 AND (gonderen_id=$2 OR alici_id=$2)`
+boşsa 404 — 403 "bu id var ama senin değil" derdi, id tarayan biri mesaj
+varlığını/hacmini ölçerdi (varlık kâhini). Engelleme/ban 403 (bilinen
+durumlar); tepki KALDIRMA engelliyken de serbest (temizleyici eylem).
+VS16'sız kalp (`❤`) kabul edilip kanonikleştiriliyor — DB CHECK'i onu
+reddediyordu, "bazen kalp çalışmıyor" hatası doğardı. Limit 600/sa (kullanıcı
+bazlı; mesajınki 300 ama tepki tek satırlık UPSERT, bildirim üretmiyor).
+Bildirim EKLENMEDİ (bilinçli: sohbet zaten 5 sn'de tazeleniyor; `bildirimler`
+CHECK'i + 45 dilde şablon ayrı iş).
+
+### İstemci
+`sohbet.dart`: `_tepkiVer` iyimser + hatada geri alma + SnackBar; sunucunun
+KESİN listesi yanıttan uygulanıyor (karşı taraf aynı anda tepki verdiyse
+sayaç yoklamayı beklemeden düzelir). Rozetler baloncuğun İÇİNDE en altta —
+dışında Positioned ile taşırılmadı (taşan Positioned tıklanamaz, bilinen
+hit-test tuzağı). Mesaj seti `mesajTepkiEmojileri` = kalp + içerik seti (9);
+içerik setine kalp EKLENMEDİ (oradaki 8 sunucudaki CHECK ile birebir).
+
+### Kanıt
+`test/mesaj_tepkisi_test.dart` (7) + backend `test/mesaj_tepkisi.test.js` (29).
+Testler ÜÇ GERÇEK HATA yakaladı: (1) şerit 390 dp'de **27 px taşıyordu** →
+yatay kaydırma + 44 dp dokunma hedefi; (2) 9 sonsuz animasyon ekranı hiç
+durulmuyordu (`pumpAndSettle` sonsuza bekledi) → `acilistaOynat` ile bir kez
+oynayıp dinleniyorlar (pil karşılığı da var); (3) iyimser kare ölçülemiyordu
+(sahte sunucuya gecikme eklendi).
+`flutter test` **1051** · `npm test` **569** · analyze 0 hata/uyarı (85 info).
+Dağıtım: migrasyon → server.js → web (ters sıra `GET /mesajlar`ı 500 yapardı,
+sohbet ekranı komple kapanırdı). Canlı: `/mesaj-tepki` tokensiz 401,
+`mesaj_tepkileri` tablosu yerinde, log temiz, version.json 1.37.0+83,
+bootstrap `main.a3951bc02bde.dart.js` (eski 72a322922b12 silindi),
+kalp varlığı `/assets/assets/tepkiler/2764_fe0f.json` 200.
+
 ## 2026-08-12 (g) — HAREKETLİ TEPKİ EMOJİLERİ + KİŞİYE TEPKİ 🚀 (1.36.0+82)
 Kullanıcı isteği: "emoji kütüphanesi olarak hareketli emojileri kullan" +
 "oyuncuları falan da unutma, puan gibi emoji verilen her yerde".

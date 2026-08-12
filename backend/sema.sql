@@ -706,3 +706,55 @@ ALTER TABLE kullanicilar
 --   ve `kullanicilar.bildir_arama` — sema.sql'e HÂLÂ İŞLENMEDİ. Sözleşme
 --   §10.3'te nereye gireceği yazılı. Sıfırdan kurulan bir veritabanı o zamana
 --   kadar `aramalar` tablosunu ALMAZ.
+
+-- ---------------------------------------------------------------------------
+-- 12 Ağu 2026 (b) — ÖZEL MESAJLARA (DM) EMOJİ TEPKİSİ
+--                   (migrasyon-2026-08-12b.sql · istek listesi md. 43)
+--
+-- ***** TEPKİ EMOJİSİ BİLEREK ŞİFRELENMEZ (AÇIK ÜSTVERİ) *****
+-- `mesajlar.metin` 7 Ağu'dan beri durağan şifreli (AES-256-GCM, `kripto.js`).
+-- Tepki emojisi AYNI KORUMAYA ALINMADI ve bu bir eksiklik DEĞİL, karardır:
+--   * Şifreleme mesaj METNİNİ korur — serbest metin, sınırsız entropi.
+--     Tepki ise 9 ELEMANLI, SABİT ve HERKESE AÇIK bir kümeden tek değerdir.
+--     Şifreli saklansaydı bile DB dökümü senaryosunda saldırgan 9 olasılığı
+--     frekans/uzunluk analiziyle ayırırdı: gerçek gizlilik kazancı ~0.
+--   * Buna karşılık şifreleme, sayaçları SUNUCUDA saymayı (GROUP BY emoji)
+--     İMKÂNSIZ kılardı — her sayfa için tüm satırları çözüp uygulamada
+--     saymak gerekirdi.
+--   * DB zaten kim-kiminle-ne-zaman üstverisini (mesajlar.gonderen_id,
+--     alici_id, tarih) AÇIK tutuyor; tepki bundan daha az açığa çıkarır.
+--
+-- EMOJİ KÜMESİ (9): ilki KALP (çift tıklama kısayolu), kalan 8'i `tepkiler`
+-- tablosundaki içerik tepkileriyle AYNI KÜME (sıra farklı — DM şeridi kalpten
+-- sonra kendi sırasında dizilir). Liste BİLEREK AYRI yazılır: `tepkiler`in
+-- listesinde kalp YOKTUR ve orayı bozmamalıyız (içerik emoji şeridi 8 hücreye
+-- göre çiziliyor).
+--
+-- TEK TEPKİ: kullanıcı başına mesaj başına bir satır (`tepkiler_tekil`
+-- kalıbı). İkinci emoji seçimi UPSERT ile mevcut satırı değiştirir.
+--
+-- YETKİ SUNUCUDADIR: `POST /mesaj-tepki` yalnız KENDİ sohbetindeki mesaja
+-- (gonderen_id=ben OR alici_id=ben) yazdırır; aksi hâlde 404 (403 DEĞİL —
+-- gerekçe server.js'te: 403 "bu id'de bir mesaj VAR" derdi, varlık kâhini).
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS mesaj_tepkileri (
+  mesaj_id INT NOT NULL REFERENCES mesajlar(id) ON DELETE CASCADE,
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  emoji TEXT NOT NULL
+    CHECK (emoji IN ('❤️','😍','😂','😮','😢','😱','🥱','😭','😄')),
+  tarih TIMESTAMPTZ DEFAULT now()
+);
+-- Kullanıcı başına mesaj başına TEK tepki (`tepkiler_tekil` ile aynı üslup).
+-- `POST /mesaj-tepki` ON CONFLICT çıkarımını BU indeks üzerinden yapar.
+CREATE UNIQUE INDEX IF NOT EXISTS mesaj_tepkileri_tekil
+  ON mesaj_tepkileri (mesaj_id, kullanici_id);
+-- OKUMA İNDEKSİ AYRICA GEREKMEZ: `GET /mesajlar/:ad` tepkileri
+-- `WHERE mesaj_id = ANY($1)` ile çeker ve `mesaj_tepkileri_tekil`in ÖNCÜ
+-- sütunu zaten mesaj_id'dir. Ayrı bir (mesaj_id) indeksi aynı işi yapan
+-- ikinci bir ağaç olurdu (her yazmada iki kat bakım, sıfır kazanç).
+-- Bu indeks ise FK CASCADE içindir: hesap silinince (DELETE /hesabim)
+-- PostgreSQL `kullanici_id` üzerinden siler; indekssiz her silme tam tarama
+-- yapardı (`tepkiler`de bu iş `tepkiler_tekil`in öncü sütunuyla çözülüyor,
+-- burada sıra ters olduğu için ayrı indeks şart).
+CREATE INDEX IF NOT EXISTS mesaj_tepkileri_kullanici
+  ON mesaj_tepkileri (kullanici_id);
