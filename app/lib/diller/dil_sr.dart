@@ -710,4 +710,6 @@ const Map<String, String> cevirilerSr = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Гостујући налози не могу да зову. Направи налог да би користио ово.',
   'Misafir hesaplar aranamaz': 'Гостујућим налозима се не може звати',
+  'Puan dağılımı': 'Расподела оцена',
+  '{} yıldız': '{} звездица',
 };

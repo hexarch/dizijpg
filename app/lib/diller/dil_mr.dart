@@ -708,4 +708,6 @@ const Map<String, String> cevirilerMr = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'अतिथी खाती कॉल करू शकत नाहीत. खाते तयार केल्यास वापरता येईल.',
   'Misafir hesaplar aranamaz': 'अतिथी खात्यांना कॉल करता येत नाही',
+  'Puan dağılımı': 'रेटिंग वितरण',
+  '{} yıldız': '{} स्टार',
 };

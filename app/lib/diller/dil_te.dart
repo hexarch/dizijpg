@@ -706,4 +706,6 @@ const Map<String, String> cevirilerTe = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'అతిథి ఖాతాలు కాల్ చేయలేవు. ఖాతా సృష్టిస్తే ఉపయోగించవచ్చు.',
   'Misafir hesaplar aranamaz': 'అతిథి ఖాతాలకు కాల్ చేయలేరు',
+  'Puan dağılımı': 'రేటింగ్ పంపిణీ',
+  '{} yıldız': '{} స్టార్‌లు',
 };

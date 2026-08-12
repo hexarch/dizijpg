@@ -708,4 +708,6 @@ const Map<String, String> cevirilerNb = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Gjestekontoer kan ikke ringe. Opprett en konto for å bruke det.',
   'Misafir hesaplar aranamaz': 'Gjestekontoer kan ikke ringes',
+  'Puan dağılımı': 'Fordeling av vurderinger',
+  '{} yıldız': '{} stjerner',
 };

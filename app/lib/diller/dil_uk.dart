@@ -712,4 +712,6 @@ const Map<String, String> cevirilerUk = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Гостьові акаунти не можуть телефонувати. Створи акаунт, щоб користуватися.',
   'Misafir hesaplar aranamaz': 'Гостьовим акаунтам не можна зателефонувати',
+  'Puan dağılımı': 'Розподіл оцінок',
+  '{} yıldız': '{} зірок',
 };

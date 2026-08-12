@@ -709,4 +709,6 @@ const Map<String, String> cevirilerCs = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Hostovské účty nemohou volat. Po vytvoření účtu to půjde.',
   'Misafir hesaplar aranamaz': 'Hostovským účtům nelze volat',
+  'Puan dağılımı': 'Rozložení hodnocení',
+  '{} yıldız': '{} hvězd',
 };

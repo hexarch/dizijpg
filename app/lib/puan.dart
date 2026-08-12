@@ -49,3 +49,24 @@ String yildizOrtalamaMetni(Object? dbOrtalama) =>
 
 /// Yıldız (0-5) → DB puanı (0-10). Sunucuya YAZARKEN kullanılır.
 int dbPuani(int yildiz) => yildiz.clamp(0, yildizAzami) * 2;
+
+/// Sunucunun ham puan dağılımını (`[{puan: 1-10, adet: n}, ...]`) yıldız
+/// kovalarına toplar. Anahtarlar HER ZAMAN 1..5, boş kovalar 0 ile doludur.
+///
+/// Kovalama [yildiza] ile yapılır — yani ekranda görünen yıldızla kovanın
+/// yıldızı aynı işlevden çıkar. Sunucu bilerek ham ölçek gönderir: yuvarlamayı
+/// orada da yapsaydık çeviri ikinci bir yerde yaşar ve iki taraf ayrışabilirdi
+/// (bu dosyanın başlığındaki hatanın aynısı).
+Map<int, int> yildizDagilimi(Object? ham) {
+  final kovalar = <int, int>{for (var y = 1; y <= yildizAzami; y++) y: 0};
+  if (ham is! List) return kovalar;
+  for (final satir in ham) {
+    if (satir is! Map) continue;
+    final yildiz = yildiza(satir['puan']);
+    // 0 = puansız/bozuk satır; kovası yok, sayılmaz.
+    if (yildiz < 1) continue;
+    final adet = (puanSayisi(satir['adet']) ?? 0).toInt();
+    if (adet > 0) kovalar[yildiz] = kovalar[yildiz]! + adet;
+  }
+  return kovalar;
+}

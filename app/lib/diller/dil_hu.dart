@@ -713,4 +713,6 @@ const Map<String, String> cevirilerHu = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Vendégfiókok nem hívhatnak. Hozz létre fiókot a használatához.',
   'Misafir hesaplar aranamaz': 'Vendégfiókok nem hívhatók',
+  'Puan dağılımı': 'Értékelések eloszlása',
+  '{} yıldız': '{} csillag',
 };

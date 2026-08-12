@@ -3267,20 +3267,41 @@ app.post('/puan', girisZorunlu, sarici(async (req, res) => {
 // `sezon IS NULL`: bu uç dizi/film SAYFASINI besler; bölüm incelemeleri
 // bölümün kendi ucundan (`/bolum-puanlari/...`) gelir.
 app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
-  const { rows } = await havuz.query(
-    `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
-     FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-     WHERE p.tur=$1 AND p.tmdb_id=$2 AND p.sezon IS NULL
-       AND p.yorum IS NOT NULL AND p.yorum != ''
-     ORDER BY p.tarih DESC LIMIT 50`,
-    [req.params.tur, req.params.tmdbId],
-  );
-  const ort = await havuz.query(
-    `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*) AS adet
-     FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL`,
-    [req.params.tur, req.params.tmdbId],
-  );
-  res.json({ incelemeler: rows, ...ort.rows[0] });
+  const olcut = [req.params.tur, req.params.tmdbId];
+  // Üç sorgu PARALEL (eskiden sıra sıra bekleniyordu): aynı satırları
+  // tarıyorlar, tur beklemenin karşılığı yok.
+  const [liste, ort, dagilim] = await Promise.all([
+    havuz.query(
+      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
+       FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+       WHERE p.tur=$1 AND p.tmdb_id=$2 AND p.sezon IS NULL
+         AND p.yorum IS NOT NULL AND p.yorum != ''
+       ORDER BY p.tarih DESC LIMIT 50`,
+      olcut,
+    ),
+    havuz.query(
+      `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*) AS adet
+       FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL`,
+      olcut,
+    ),
+    // Madde 17 — puan dağılımı (IMDb tarzı). HAM DB ÖLÇEĞİNDE (1-10) döner;
+    // 5 yıldıza kovalamayı İSTEMCİ yapar (`puan.dart` → `yildizDagilimi`).
+    // Sunucu burada yuvarlasaydı ölçek çevirisi ikinci bir yerde daha
+    // yaşardı ve iki taraf farklı kovaya düşebilirdi (puan.dart'ın başlığı
+    // tam da bu hatanın tarihçesi). Ortalama/adet ile aynı WHERE — toplam
+    // her zaman `adet`e eşit.
+    havuz.query(
+      `SELECT puan, count(*)::int AS adet
+       FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL
+       GROUP BY puan ORDER BY puan`,
+      olcut,
+    ),
+  ]);
+  res.json({
+    incelemeler: liste.rows,
+    ...ort.rows[0],
+    dagilim: dagilim.rows,
+  });
 }));
 
 // Bir SEZONUN bütün bölüm puanları TEK istekte: kullanıcının kendi puanı +

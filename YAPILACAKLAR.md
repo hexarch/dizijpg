@@ -1,6 +1,44 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (f) — MD. 17 PUAN DAĞILIMI (IMDb tarzı) 🚀 (1.35.0+81)
+**Webde CANLIDA.** Sunucu + istemci; migrasyon YOK (veri zaten `puanlar`da).
+
+### Sunucu
+`/incelemeler/:tur/:tmdbId` yanıtına `dagilim` eklendi — YENİ UÇ AÇILMADI,
+detay sayfası bu ucu zaten çağırıyor (ek tur yok, yeni hız limiti gerekmez).
+Üç sorgu artık `Promise.all` ile paralel (eskiden sıra sıra bekliyordu).
+`GROUP BY puan` + `sezon IS NULL` → toplam her zaman `adet`e eşit; canlıda
+doğrulandı (movie/550: ham [8:1, 9:1, 10:1], adet 3).
+**Dağılım HAM DB ölçeğinde (1-10) döner.** Kovalama bilerek sunucuda YAPILMAZ:
+ölçek çevirisi `app/lib/puan.dart`ın tekelinde (o dosyanın başlığı, çevirinin
+altı yere kopyalanmasından doğan "10/10 vs 5.0" hatasının tarihçesi). Sunucu
+da yuvarlasaydı çeviri ikinci bir yerde yaşardı.
+
+### İstemci
+`puan.dart` → `yildizDagilimi()` (kovalama `yildiza` ile AYNI işlevden),
+yeni `ekranlar/puan_dagilimi.dart` (sheet + grafik). Detaydaki sarı rozet
+dokunulabilir oldu; dokunma hedefi 21 → **44 dp** (`ortak.dart` →
+`dokunmaHedefi` sabiti). Yanındaki izleyen sayacı 22 dp'ydi — aynı yüksekliğe
+alındı (eski eksik; satır tırtıklı görünmesin).
+Tasarım (ui-ux-pro-max): yatay çubuk (≤15 kategori), her çubukta SAYI yazılı
+(uzunluk/renk tek başına bilgi taşımaz), 5→1 sıra — "değere göre azalan
+sırala" kuralı NOMİNAL kategoriler içindir, yıldız SIRALI ölçektir. Kendi
+puanın renk + ikon + kalın sayı ile üç ayrı işaretle belli. Hareket azaltma
+açıkken çubuklar animasyonsuz.
+
+### Kanıt
+`test/puan_dagilimi_test.dart` **13 test** — kova sınırları (DB 1-10 → 1-5,
+`yildiza` ile birebir), 5→1 sıra, sayıların yazılı olduğu, çubuk orantısı,
+0/0 bölme, kendi puan işareti, hareket-azaltma (+ karşı kanıtı AYRI testte:
+aynı testte ikinci pumpWidget elemanı geri dönüştürüp animasyonu gizlerdi —
+md. 47 ailesi), boş veride sheet açılmaması, 44 dp + dokununca açılma.
+`flutter test` **1037 yeşil** · analyze 0 hata/uyarı (85 info, taban) ·
+`npm test` 525 yeşil. Çeviri: **2 yeni anahtar × 45 dil → 624**
+(`{} kişi puanladı` ZATEN VARDI — ajan yakaladı, yinelenen anahtar hatası
+önlendi). Dağıtım kanıtı: version.json 1.35.0+81 · site/paket/robots 200 ·
+bootstrap `main.9326b4743d8e.dart.js` (eski adfe17f8e737 silindi) · SW sökücü.
+
 ## 2026-08-12 (e) — ALTYAPI D1+D2+D3: KÜMELEME + MEDYA NGINX'E + PG AYARI 🚀
 Üçü de canlıda (commit'ler 82ab96b, 5bf1f2e, 3f4402b):
 - **D3:** dizijpg-db 1GB shared_buffers / 16MB work_mem / rpc 1.1 (SHOW doğrulandı).

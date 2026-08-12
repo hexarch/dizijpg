@@ -708,4 +708,6 @@ const Map<String, String> cevirilerFa = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'حساب‌های مهمان نمی‌توانند تماس بگیرند. برای استفاده، حساب بساز.',
   'Misafir hesaplar aranamaz': 'به حساب‌های مهمان نمی‌توان تماس گرفت',
+  'Puan dağılımı': 'توزیع امتیازها',
+  '{} yıldız': '{} ستاره',
 };

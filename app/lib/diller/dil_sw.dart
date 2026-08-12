@@ -707,4 +707,6 @@ const Map<String, String> cevirilerSw = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Akaunti za mgeni haziwezi kupiga simu. Fungua akaunti ili kutumia hii.',
   'Misafir hesaplar aranamaz': 'Akaunti za mgeni haziwezi kupigiwa simu',
+  'Puan dağılımı': 'Mgawanyo wa alama',
+  '{} yıldız': 'nyota {}',
 };

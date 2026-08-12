@@ -673,4 +673,6 @@ const Map<String, String> cevirilerZh = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       '访客账号无法拨打通话。创建账号后即可使用。',
   'Misafir hesaplar aranamaz': '无法呼叫访客账号',
+  'Puan dağılımı': '评分分布',
+  '{} yıldız': '{} 星',
 };

@@ -2325,6 +2325,11 @@ class UcNoktaMenu extends StatelessWidget {
   }
 }
 
+/// Dokunulabilir öğe için asgari kenar (dp). iOS 44 / Android 48 kuralının
+/// ortak alt sınırı; küçük rozet/ikonlar GÖRÜNÜMÜ büyütülmeden bu yüksekliğe
+/// sarılır (`SizedBox(height: dokunmaHedefi)` + ortalama).
+const double dokunmaHedefi = 44;
+
 /// Push edilen (alt menüsüz) ekranlarda kaydırma sonunun telefonun sistem
 /// gezinme çubuğu (3 buton / gesture) altında kalmaması için alt boşluk.
 double altGuvenli(BuildContext context, {double ekstra = 16}) =>

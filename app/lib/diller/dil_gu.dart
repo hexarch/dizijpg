@@ -705,4 +705,6 @@ const Map<String, String> cevirilerGu = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'મહેમાન ખાતાં કૉલ કરી શકતાં નથી. ખાતું બનાવશો તો વાપરી શકશો.',
   'Misafir hesaplar aranamaz': 'મહેમાન ખાતાંને કૉલ કરી શકાતો નથી',
+  'Puan dağılımı': 'રેટિંગ વિતરણ',
+  '{} yıldız': '{} સ્ટાર',
 };

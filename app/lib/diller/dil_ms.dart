@@ -715,4 +715,6 @@ const Map<String, String> cevirilerMs = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Akaun tetamu tidak boleh membuat panggilan. Cipta akaun untuk menggunakannya.',
   'Misafir hesaplar aranamaz': 'Akaun tetamu tidak boleh dipanggil',
+  'Puan dağılımı': 'Taburan penilaian',
+  '{} yıldız': '{} bintang',
 };

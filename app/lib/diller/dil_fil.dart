@@ -717,4 +717,6 @@ const Map<String, String> cevirilerFil = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Hindi makakatawag ang guest account. Gumawa ng account para magamit ito.',
   'Misafir hesaplar aranamaz': 'Hindi matatawagan ang guest account',
+  'Puan dağılımı': 'Distribusyon ng rating',
+  '{} yıldız': '{} bituin',
 };

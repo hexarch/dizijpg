@@ -712,4 +712,6 @@ const Map<String, String> cevirilerId = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Akun tamu tidak bisa menelepon. Buat akun untuk memakainya.',
   'Misafir hesaplar aranamaz': 'Akun tamu tidak bisa ditelepon',
+  'Puan dağılımı': 'Distribusi rating',
+  '{} yıldız': '{} bintang',
 };

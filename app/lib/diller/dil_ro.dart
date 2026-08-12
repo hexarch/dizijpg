@@ -714,4 +714,6 @@ const Map<String, String> cevirilerRo = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Conturile de invitat nu pot apela. Creează un cont ca să folosești asta.',
   'Misafir hesaplar aranamaz': 'Conturile de invitat nu pot fi apelate',
+  'Puan dağılımı': 'Distribuția notelor',
+  '{} yıldız': '{} stele',
 };

@@ -10,6 +10,7 @@ import '../tema.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
+import 'puan_dagilimi.dart';
 import 'puan_sheet.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
@@ -605,23 +606,58 @@ class _DetayEkraniState extends State<DetayEkrani> {
                         ),
                         if (_incelemeler?['ortalama'] != null) ...[
                           const SizedBox(width: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 2,
+                          // Madde 17: rozete dokununca puan dağılımı açılır
+                          // (IMDb'de de puan grafiğe kapı olur). Rozetin
+                          // KENDİSİ 21 dp; dokunma hedefi [dokunmaHedefi] ile
+                          // 44 dp'ye çıkarılır — rozet ortalanır, görünümü
+                          // değişmez. Yanındaki izleyen sayacı da aynı
+                          // yüksekliği alır ki satır tırtıklı görünmesin.
+                          InkWell(
+                            borderRadius: BorderRadius.circular(8),
+                            onTap: () => puanDagilimiAc(
+                              context,
+                              dagilim: _incelemeler?['dagilim'],
+                              ortalama: _incelemeler?['ortalama'],
+                              benimDbPuani: _benim?['puan']?['puan'] as int?,
                             ),
-                            decoration: BoxDecoration(
-                              color: DiziRenkler.sari,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '{} dizi.jpg'.cf([
-                                yildizOrtalamaMetni(_incelemeler!['ortalama']),
-                              ]),
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 12,
+                            child: SizedBox(
+                              height: dokunmaHedefi,
+                              child: Center(
+                                widthFactor: 1,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: DiziRenkler.sari,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        '{} dizi.jpg'.cf([
+                                          yildizOrtalamaMetni(
+                                            _incelemeler!['ortalama'],
+                                          ),
+                                        ]),
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      // Dokunulabilirliğin görünür ipucu.
+                                      const SizedBox(width: 3),
+                                      const Icon(
+                                        Icons.bar_chart,
+                                        size: 13,
+                                        color: Colors.black,
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -632,28 +668,32 @@ class _DetayEkraniState extends State<DetayEkrani> {
                           InkWell(
                             borderRadius: BorderRadius.circular(8),
                             onTap: _izleyenlerAc,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 2,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.visibility_outlined,
-                                    size: 18,
-                                    color: DiziRenkler.metin70,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    '${_izleyenler!['sayi']}',
-                                    style: TextStyle(
+                            // 22 dp'lik dokunma hedefi vardı (44 asgarisinin
+                            // yarısı) — puan rozetiyle aynı yüksekliğe alındı.
+                            child: SizedBox(
+                              height: dokunmaHedefi,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.visibility_outlined,
+                                      size: 18,
                                       color: DiziRenkler.metin70,
-                                      fontWeight: FontWeight.w700,
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      '${_izleyenler!['sayi']}',
+                                      style: TextStyle(
+                                        color: DiziRenkler.metin70,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

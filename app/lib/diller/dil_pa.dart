@@ -709,4 +709,6 @@ const Map<String, String> cevirilerPa = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'ਮਹਿਮਾਨ ਖਾਤੇ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦੇ। ਖਾਤਾ ਬਣਾਉਣ \'ਤੇ ਵਰਤ ਸਕੋਗੇ।',
   'Misafir hesaplar aranamaz': 'ਮਹਿਮਾਨ ਖਾਤਿਆਂ ਨੂੰ ਕਾਲ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ',
+  'Puan dağılımı': 'ਰੇਟਿੰਗ ਵੰਡ',
+  '{} yıldız': '{} ਸਟਾਰ',
 };

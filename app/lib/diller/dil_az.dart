@@ -704,4 +704,6 @@ const Map<String, String> cevirilerAz = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Qonaq hesabları zəng edə bilməz. Hesab yaratsan istifadə edə bilərsən.',
   'Misafir hesaplar aranamaz': 'Qonaq hesablarına zəng edilə bilməz',
+  'Puan dağılımı': 'Qiymət paylanması',
+  '{} yıldız': '{} ulduz',
 };

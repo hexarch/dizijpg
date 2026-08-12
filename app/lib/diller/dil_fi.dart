@@ -712,4 +712,6 @@ const Map<String, String> cevirilerFi = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Vierastilit eivät voi soittaa. Luo tili, niin voit käyttää tätä.',
   'Misafir hesaplar aranamaz': 'Vierastileille ei voi soittaa',
+  'Puan dağılımı': 'Arvosanojen jakauma',
+  '{} yıldız': '{} tähteä',
 };

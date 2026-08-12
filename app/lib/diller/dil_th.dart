@@ -698,4 +698,6 @@ const Map<String, String> cevirilerTh = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'บัญชีผู้เยี่ยมชมโทรออกไม่ได้ สร้างบัญชีเพื่อใช้งาน',
   'Misafir hesaplar aranamaz': 'โทรหาบัญชีผู้เยี่ยมชมไม่ได้',
+  'Puan dağılımı': 'การกระจายคะแนน',
+  '{} yıldız': '{} ดาว',
 };

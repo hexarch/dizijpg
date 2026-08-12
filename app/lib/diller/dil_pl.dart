@@ -716,4 +716,6 @@ const Map<String, String> cevirilerPl = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Konta gościa nie mogą dzwonić. Załóż konto, aby z tego korzystać.',
   'Misafir hesaplar aranamaz': 'Do kont gościa nie można zadzwonić',
+  'Puan dağılımı': 'Rozkład ocen',
+  '{} yıldız': '{} gwiazdek',
 };

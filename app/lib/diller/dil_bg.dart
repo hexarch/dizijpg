@@ -713,4 +713,6 @@ const Map<String, String> cevirilerBg = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'Гостуващите профили не могат да се обаждат. Създай профил, за да ги ползваш.',
   'Misafir hesaplar aranamaz': 'На гостуващи профили не може да се звъни',
+  'Puan dağılımı': 'Разпределение на оценките',
+  '{} yıldız': '{} звезди',
 };

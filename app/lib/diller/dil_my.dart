@@ -721,4 +721,6 @@ const Map<String, String> cevirilerMy = {
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
       'ဧည့်သည်အကောင့်များ ခေါ်ဆိုလို့မရပါ။ အကောင့်ဖွင့်ပါက သုံးနိုင်ပါသည်။',
   'Misafir hesaplar aranamaz': 'ဧည့်သည်အကောင့်များကို ခေါ်ဆိုလို့မရပါ',
+  'Puan dağılımı': 'အမှတ် ဖြန့်ဝေမှု',
+  '{} yıldız': 'ကြယ် {} ပွင့်',
 };
