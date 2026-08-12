@@ -4,6 +4,11 @@ services:
     image: postgres:16-alpine
     container_name: dizijpg-db
     restart: unless-stopped
+    # D3 (12 Ağu 2026): varsayılanlar 131 GB RAM'li makinede cimriydi
+    # (shared_buffers ~160MB, work_mem 4MB, random_page_cost 4 = döner disk
+    # varsayımı). Makine paylaşımlı (başka projeler var) — kasıtlı ölçülü:
+    # 1GB tampon bugünkü 359MB veriyi tamamen tutar, büyümeye de yer var.
+    command: postgres -c shared_buffers=1GB -c effective_cache_size=6GB -c work_mem=16MB -c maintenance_work_mem=256MB -c random_page_cost=1.1
     environment:
       POSTGRES_DB: dizijpg
       POSTGRES_USER: dizijpg
