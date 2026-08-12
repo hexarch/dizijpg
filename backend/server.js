@@ -49,6 +49,9 @@ import {
 // İmza/özel-medya kapısına DOKUNMAZ; kapıdan geçen isteğin yalnız dosya
 // gönderimini devralır. MEDYA_XACCEL=1 değilse tamamen saydamdır.
 import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
+// TMDB arama önbelleğinin İÇERİĞE bakan ömrü: sonuçsuz sorgu dakikalar,
+// dolu sonuç saatler/günler yaşar. Gerekçe onbellek_ttl.js başında.
+import { tmdbSonucSayisi, aramaTtlSecici, ttlCoz } from './onbellek_ttl.js';
 // Ban / ceza sistemi + güven skoru (saf modül; Express ve pg bilmez).
 // DÜRÜSTLÜK NOTLARI yasak.js'in başında: cihaz banı GARANTİ DEĞİL, güven
 // skoru KENDİ BAŞINA CEZA VERMEZ.
@@ -80,6 +83,10 @@ import {
   istekKaydet, istekOzet,
 } from './kume_ipc.js';
 import { havuzMax } from './kume_yardimci.js';
+// Admin paneli · cihaz dağılımı (md. 37). SAF modül: User-Agent → üç kapalı
+// sözlükten birer değer. HAM UA HİÇBİR YERE YAZILMAZ — gerekçesi ve sınırları
+// `cihaz_sinif.js` başlığında; testleri `test/cihaz_dagilimi.test.js`.
+import { CihazSayaci, bugunUtc } from './cihaz_sinif.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
 const FIREBASE_SA_YOL = process.env.FIREBASE_SA_YOL || '/app/firebase-admin.json';
@@ -533,6 +540,68 @@ app.use((req, res, next) => {
   next();
 });
 
+// ---------- cihaz dağılımı sayacı (admin md. 37) ----------
+// AYRI bir ara katman: yukarıdaki ISTEK telemetrisi bellek içi ve KALICI
+// DEĞİL; cihaz dağılımı ise "geçen ay hangi platformdaydık" sorusuna cevap
+// vermeli, yani günlere yazılmalı. İkisini karıştırmak, halkadaki her kayda
+// cihaz alanı eklemek (ve onu admin paneline ham göndermek) demekti.
+//
+// GİZLİLİK: `req.headers['user-agent']` BURADAN ÖTEYE GEÇMEZ. `sayac.ekle()`
+// onu üç kapalı sözlükten birer değere indirger (cihaz_sinif.js), ham metin
+// hiçbir değişkende tutulmaz, DB'ye ve loga YAZILMAZ. Biriken tek şey
+// (gün, tur, os, tarayici) → adet sayacıdır.
+const CIHAZ_SAYAC = new CihazSayaci();
+// Kendi panelimizin trafiği sayılmaz: admin bir masaüstü tarayıcıdan girer ve
+// panel 5 sn'de bir yenilenir — sayılsaydı dağılım "masaüstü Chrome"a boğulur,
+// ölçtüğümüz şey kendimiz olurdu. Sağlık yoklaması da kullanıcı değildir.
+const CIHAZ_SAYMA_HARIC = /^\/(admin|saglik|metrik)\b/;
+app.use((req, _res, next) => {
+  try {
+    if (req.method !== 'OPTIONS' && !CIHAZ_SAYMA_HARIC.test(req.path)) {
+      CIHAZ_SAYAC.ekle(req.headers['user-agent']);
+    }
+  } catch { /* sayaç asla isteği bozmasın */ }
+  cihazSayaciBosalt(); // ateşle-unut; içinde 60 sn freni var
+  next();
+});
+
+// Tamponu DB'ye yazar. NEDEN setInterval DEĞİL: konteyner tek süreç, idle
+// konteynerde zamanlayıcı boşuna DB'ye vurur (aynı gerekçe `yasaklariSupur`
+// başlığında). En fazla 60 sn'de bir, ilk istekte, ATEŞLE-UNUT çalışır.
+//
+// UPSERT `adet = adet + $5` olduğu için kümedeki her işçi kendi tamponunu
+// bağımsızca yazabilir; toplama DB'de olur, IPC gerekmez.
+let cihazSonYazma = 0;
+let cihazSonBudama = '';
+const CIHAZ_YAZMA_ARALIK_MS = 60_000;
+const CIHAZ_SAKLAMA_GUN = 400; // yıllık karşılaştırma yapılabilsin, süresiz olmasın
+function cihazSayaciBosalt() {
+  const simdi = Date.now();
+  if (simdi - cihazSonYazma < CIHAZ_YAZMA_ARALIK_MS) return;
+  if (!CIHAZ_SAYAC.boyut) return;
+  cihazSonYazma = simdi;
+  const satirlar = CIHAZ_SAYAC.bosalt();
+  (async () => {
+    for (const [gun, tur, os, tarayici, adet] of satirlar) {
+      await havuz.query(
+        `INSERT INTO cihaz_sayaclari (gun, tur, os, tarayici, adet)
+         VALUES ($1,$2,$3,$4,$5)
+         ON CONFLICT (gun, tur, os, tarayici)
+           DO UPDATE SET adet = cihaz_sayaclari.adet + $5`,
+        [gun, tur, os, tarayici, adet],
+      );
+    }
+    const bugun = bugunUtc();
+    if (cihazSonBudama !== bugun) {
+      cihazSonBudama = bugun;
+      await havuz.query(
+        `DELETE FROM cihaz_sayaclari WHERE gun < (now() AT TIME ZONE 'utc')::date - $1::int`,
+        [CIHAZ_SAKLAMA_GUN],
+      );
+    }
+  })().catch((e) => console.error('cihaz sayaci:', e.message));
+}
+
 // Admin uçlarının okuyacağı istek telemetrisi: kümede birincildeki birleşik
 // halka (tüm işçilerin toplamı), kümesizken ya da birincile ulaşılamazsa bu
 // işçinin yerel halkası. Dönen nesnenin şekli ISTEK ile birebir aynıdır.
@@ -606,8 +675,19 @@ async function mailGonder(secenekler, bilgi = {}) {
 
 // ---------- yardımcılar ----------
 const TMDB = 'https://api.themoviedb.org/3';
-const ONBELLEK_TTL_SN = { varsayilan: 6 * 3600, uzun: 7 * 24 * 3600 };
+// kisa/orta YALNIZ arama uçlarında ve YALNIZ yanıt boş/kıl payı doluysa
+// kullanılır (bkz. aramaTtlSecici). Katalog detay TTL'lerine dokunulmaz.
+const ONBELLEK_TTL_SN = {
+  varsayilan: 6 * 3600, uzun: 7 * 24 * 3600, kisa: 15 * 60, orta: 30 * 60,
+};
+/// Arama uçlarının TTL'i: sonuç yoksa 15 dk, 1-2 sonuç varsa 30 dk, doluysa
+/// çağıranın verdiği süre. `dolu`yu çağıran seçer (uç bazında değişiyor).
+const aramaTtl = (dolu, azEsigi = 3) => aramaTtlSecici({
+  dolu, kisa: ONBELLEK_TTL_SN.kisa, orta: ONBELLEK_TTL_SN.orta, azEsigi,
+});
 
+// `ttlSn` bir SAYI ya da yanıt gövdesine bakan bir SEÇİCİ olabilir
+// (geriye uyumlu: mevcut çağıranların hepsi sayı veriyor).
 async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = null) {
   // İçerik dilini isteğin diline göre ayarla: çağrılar 'language=tr-TR' yazsa da
   // gerçek dil buradan gelir. Önbellek anahtarı da dili içerdiğinden dil-başına
@@ -626,12 +706,25 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
     yol += (yol.includes('?') ? '&' : '?') + 'language=' + dil;
   }
   const anahtar = yol;
-  const { rows } = await havuz.query(
-    `SELECT veri FROM tmdb_onbellek
-     WHERE anahtar = $1 AND guncelleme > now() - ($2 || ' seconds')::interval`,
-    [anahtar, ttlSn],
-  );
-  if (rows.length) return rows[0].veri;
+  // TTL seçici verildiyse tazelik SQL'de SÜZÜLEMEZ: süre satırın İÇERİĞİNDEN
+  // çıkıyor, içerik de okunmadan bilinmiyor. Bu yüzden satır yaşıyla birlikte
+  // okunur, karşılaştırma burada yapılır. Yan fayda: önbellekte ŞU AN duran
+  // eski sıfır sonuçlu satırlar da geriye dönük kısa ömürlü sayılır.
+  const secici = typeof ttlSn === 'function';
+  const { rows } = secici
+    ? await havuz.query(
+      `SELECT veri, EXTRACT(EPOCH FROM (now() - guncelleme)) AS yas
+         FROM tmdb_onbellek WHERE anahtar = $1`,
+      [anahtar],
+    )
+    : await havuz.query(
+      `SELECT veri FROM tmdb_onbellek
+       WHERE anahtar = $1 AND guncelleme > now() - ($2 || ' seconds')::interval`,
+      [anahtar, ttlSn],
+    );
+  if (rows.length && (!secici || Number(rows[0].yas) < ttlCoz(ttlSn, rows[0].veri))) {
+    return rows[0].veri;
+  }
 
   // Geçici ağ hatalarına ve rate-limit'e (429) karşı yeniden dene.
   let cevap;
@@ -688,12 +781,23 @@ async function tmdbTopluGetir(yollar, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZor
   sonuc.bayat = 0;
   if (!benzersiz.length) return sonuc;
   const anahtarlar = benzersiz.map(anahtarla);
-  const { rows } = await havuz.query(
-    `SELECT anahtar, veri FROM tmdb_onbellek
-     WHERE anahtar = ANY($1::text[]) AND guncelleme > now() - ($2 || ' seconds')::interval`,
-    [anahtarlar, ttlSn],
-  );
-  const onbellek = new Map(rows.map((r) => [r.anahtar, r.veri]));
+  // Sayı TTL: tazeliği SQL süzer (mevcut davranış, bayat satırlar hiç okunmaz).
+  // Seçici TTL: süre içerikten çıktığı için satır yaşıyla okunup burada süzülür.
+  const secici = typeof ttlSn === 'function';
+  const { rows } = secici
+    ? await havuz.query(
+      `SELECT anahtar, veri, EXTRACT(EPOCH FROM (now() - guncelleme)) AS yas
+         FROM tmdb_onbellek WHERE anahtar = ANY($1::text[])`,
+      [anahtarlar],
+    )
+    : await havuz.query(
+      `SELECT anahtar, veri FROM tmdb_onbellek
+       WHERE anahtar = ANY($1::text[]) AND guncelleme > now() - ($2 || ' seconds')::interval`,
+      [anahtarlar, ttlSn],
+    );
+  const onbellek = new Map(rows
+    .filter((r) => !secici || Number(r.yas) < ttlCoz(ttlSn, r.veri))
+    .map((r) => [r.anahtar, r.veri]));
   const eksik = [];
   benzersiz.forEach((yol, i) => {
     const v = onbellek.get(anahtarlar[i]);
@@ -2820,8 +2924,11 @@ const TMDB_IZINLI = [
 // TheTVDB dizi id'sinden TMDB tv id'si bul (veri içe aktarımı için, önbellekli).
 async function tvdbdenTmdb(tvdbId) {
   if (!/^\d+$/.test(String(tvdbId))) return null;
+  // azEsigi=1: /find TEK sonuç döndüğünde bu TAM İSABETTİR ("neredeyse
+  // sonuçsuz" sayılmaz) — yalnız gerçekten BOŞ yanıt kısa ömürlüdür.
   const veri = await tmdbGetir(
-    `/find/${tvdbId}?external_source=tvdb_id&language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+    `/find/${tvdbId}?external_source=tvdb_id&language=tr-TR`,
+    aramaTtl(ONBELLEK_TTL_SN.uzun, 1));
   return veri?.tv_results?.[0]?.id || null;
 }
 
@@ -2844,7 +2951,7 @@ function enIyiEslesme(sonuclar, sorgu) {
 async function isimdenTmdbTv(isim) {
   const q = encodeURIComponent(String(isim).slice(0, 100));
   const veri = await tmdbGetir(
-    `/search/tv?query=${q}&language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+    `/search/tv?query=${q}&language=tr-TR`, aramaTtl(ONBELLEK_TTL_SN.uzun));
   return enIyiEslesme(veri?.results, isim)?.id || null;
 }
 
@@ -2858,7 +2965,7 @@ async function tmdbBolumSayisi(tmdbId) {
 async function isimdenTmdbFilm(isim) {
   const q = encodeURIComponent(String(isim).slice(0, 100));
   const veri = await tmdbGetir(
-    `/search/movie?query=${q}&language=tr-TR`, ONBELLEK_TTL_SN.uzun);
+    `/search/movie?query=${q}&language=tr-TR`, aramaTtl(ONBELLEK_TTL_SN.uzun));
   return enIyiEslesme(veri?.results, isim)?.id || null;
 }
 
@@ -2883,15 +2990,28 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   }
   const tam = `${yol}?${parametreler.toString()}`;
   const uzunTtl = /^\/(tv|movie|person)\//.test(yol);
+  // ARAMA/eşleme uçları (`/search/*`, `/find/*`) İÇERİĞE bakan TTL kullanır:
+  // TMDB katalogu topluluk doldurduğu için bugün eklenen yapım, sonuçsuz
+  // sorgunun önbelleğinde saatlerce "yok" olarak kalmasın.
+  const aramaMi = /^\/(search|find)\//.test(yol);
+  const azEsigi = /^\/find\//.test(yol) ? 1 : 3;
+  const ttl = aramaMi
+    ? aramaTtl(ONBELLEK_TTL_SN.varsayilan, azEsigi)
+    : (uzunTtl ? ONBELLEK_TTL_SN.uzun : ONBELLEK_TTL_SN.varsayilan);
+  const veri = await latinAdaDus(await tmdbGetir(tam, ttl), tam, ttl);
   // Katalog verisi herkeste AYNI (kişiye özel alan yok) → Cloudflare kenarında
   // önbelleklensin: istek Amerika'daki sunucuya gitmeden en yakın kenardan
   // döner. Dil adreste (?dil=xx) taşındığı için diller karışmaz.
+  // İSTİSNA: sonuçsuz arama kenarda da UZUN yaşamamalı — Cloudflare 6 saat
+  // "yok" servis ederse sunucudaki kısa TTL hiç devreye girmez.
+  const bosArama = aramaMi && tmdbSonucSayisi(veri) < azEsigi;
   res.set(
     'Cache-Control',
-    `public, max-age=${uzunTtl ? 86400 : 3600}, s-maxage=${uzunTtl ? 604800 : 21600}`,
+    bosArama
+      ? 'public, max-age=60, s-maxage=900'
+      : `public, max-age=${uzunTtl ? 86400 : 3600}, s-maxage=${uzunTtl ? 604800 : 21600}`,
   );
-  const ttl = uzunTtl ? ONBELLEK_TTL_SN.uzun : ONBELLEK_TTL_SN.varsayilan;
-  res.json(await latinAdaDus(await tmdbGetir(tam, ttl), tam, ttl));
+  res.json(veri);
 }));
 
 // ---------- izleme ----------
@@ -4165,9 +4285,12 @@ app.get('/listeler/:id', sarici(async (req, res) => {
 }));
 
 // ---------- kitaplığım / istatistik / takvim ----------
+// `tekrar`: yeniden izleme sayısı (POST /rewatch). Poster kartlarındaki göz
+// rozetinin yanında "×2" olarak çizilir — istemci bu alanı BURADAN okur,
+// içerik başına ayrı istek atmaz.
 app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    `SELECT tur, tmdb_id, durum, guncelleme FROM durumlar
+    `SELECT tur, tmdb_id, durum, tekrar, guncelleme FROM durumlar
      WHERE kullanici_id=$1 ORDER BY guncelleme DESC`,
     [req.kullanici.id],
   );
@@ -4178,8 +4301,63 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
   res.json({ durumlar: rows, favoriler: favoriler.rows });
 }));
 
+// ---------------------------------------------------------------------------
+// EKRAN SÜRESİ — TEK KAYNAK (istek listesi md. 22, "tekrar izleme")
+//
+// Formül üç ayrı uçta (kendi istatistiğin, açık profil, yıl özeti) kopyala-
+// yapıştır duruyordu. Aynı hata bu projede daha önce puanlamada yaşandı
+// ("10/10 vs 5.0", bkz. `app/lib/puan.dart`): kopyanın biri güncellenir,
+// diğeri unutulur, iki ekran farklı sayı gösterir. Artık sabitler ve toplama
+// YALNIZ burada; uçlar `tahminiDakika`/`izlemeDakikasi` çağırır.
+//
+// TEKRAR İZLEME: `durumlar.tekrar` o BAŞLIĞIN yeniden izlenme sayısıdır
+// (0 = bir kez izlendi). Tekrar, o başlığın KAYITLI izleme süresini katlar:
+// bir dizi için N × (izlenen bölüm sayısı × 42), film için N × 110. Yani
+// çarpan `1 + tekrar`.
+//
+// KENAR DURUMLAR (bilinçli kararlar):
+//  1. Süre `izlemeler` satırlarından türer, TMDB'nin bölüm sayısından DEĞİL.
+//     Zaten taban sayaç da öyle: "bitirdim" işaretlemek yayınlanmış bölümleri
+//     `izlemeler`e yazar (POST /durum), yani normal akışta satır vardır.
+//     TMDB'ye ulaşılamadığı için satırı olmayan bir başlık tabana 0 dakika
+//     katıyorsa, tekrarına da 0 katmalı — aksi hâlde ilk izleme 0 dk, ikinci
+//     izleme 220 dk sayılırdı.
+//  2. `tekrar` NULL olamaz (NOT NULL DEFAULT 0), ama `durumlar` satırı hiç
+//     olmayabilir (film yalnız `izlemeler`e yazılmış olabilir) → LEFT JOIN +
+//     COALESCE. Negatif/bozuk değer de kırpılır.
+//  3. `durum='bitirdim'` SÜZGECİ BİLEREK YOK. /rewatch yalnız "bitirdim"de
+//     yazar, ama kullanıcı sonradan yeni sezon için "izliyorum"a dönebilir;
+//     o an geçmişte GERÇEKTEN izlenmiş tekrarların süresi silinmemeli.
+//     Durum tamamen kaldırılırsa satır silinir, tekrar da doğal olarak düşer.
+const SURE_DK = { tv: 42, movie: 110 }; // bölüm ~42 dk, film ~110 dk
+
+/// [{ tur, adet, tekrar }] satırlarından toplam dakika.
+function izlemeDakikasi(satirlar) {
+  return (satirlar || []).reduce((toplam, s) => {
+    const birim = SURE_DK[s?.tur] || 0;
+    const adet = Math.max(0, Number(s?.adet) || 0);
+    const tekrar = Math.max(0, Number(s?.tekrar) || 0);
+    return toplam + birim * adet * (1 + tekrar);
+  }, 0);
+}
+
+// Tür + tekrar sayısına göre öbeklenmiş izleme satırları: sonuç en fazla
+// birkaç satır (tür × farklı tekrar değeri), tüm kitaplık taşınmaz.
+async function tahminiDakika(kullaniciId) {
+  const { rows } = await havuz.query(
+    `SELECT i.tur, COALESCE(d.tekrar, 0) AS tekrar, count(*)::int AS adet
+       FROM izlemeler i
+       LEFT JOIN durumlar d ON d.kullanici_id = i.kullanici_id
+                           AND d.tur = i.tur AND d.tmdb_id = i.tmdb_id
+      WHERE i.kullanici_id = $1
+      GROUP BY i.tur, COALESCE(d.tekrar, 0)`,
+    [kullaniciId],
+  );
+  return izlemeDakikasi(rows);
+}
+
 app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
-  const [bolum, film, dizi, yorum, sosyal, etkilesim] = await Promise.all([
+  const [bolum, film, dizi, yorum, sosyal, etkilesim, dakika] = await Promise.all([
     havuz.query(
       `SELECT count(*)::int AS adet FROM izlemeler WHERE kullanici_id=$1 AND tur='tv'`,
       [req.kullanici.id]),
@@ -4207,6 +4385,7 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
           JOIN yorumlar y ON y.id=b.yorum_id
           WHERE y.kullanici_id=$1) AS begeni`,
       [req.kullanici.id]),
+    tahminiDakika(req.kullanici.id),
   ]);
   res.json({
     izlenen_bolum: bolum.rows[0].adet,
@@ -4217,8 +4396,8 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
     takip_sayisi: sosyal.rows[0].takip,
     toplam_goruntulenme: etkilesim.rows[0].goruntulenme,
     toplam_begeni: etkilesim.rows[0].begeni,
-    // Yaklaşık süreler: bölüm ~42 dk, film ~110 dk
-    tahmini_dakika: bolum.rows[0].adet * 42 + film.rows[0].adet * 110,
+    // Yaklaşık ekran süresi — tekrar izlemeler dahil (bkz. `tahminiDakika`)
+    tahmini_dakika: dakika,
   });
 }));
 
@@ -6422,7 +6601,14 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
     yil,
     bolum: bolum.rows[0].adet,
     film: film.rows[0].adet,
-    dakika: bolum.rows[0].adet * 42 + film.rows[0].adet * 110,
+    // TEKRAR İZLEMELER BİLEREK HARİÇ (tekrar: 0): `durumlar.tekrar` tek bir
+    // sayaçtır, tekrarın HANGİ YILDA yapıldığı kayıtlı değil. Katsayı burada
+    // uygulanırsa 2026'da yapılan bir tekrar 2019 özetini de şişirirdi.
+    // Sabitler yine ortak yardımcıdan gelir (bkz. `izlemeDakikasi`).
+    dakika: izlemeDakikasi([
+      { tur: 'tv', adet: bolum.rows[0].adet, tekrar: 0 },
+      { tur: 'movie', adet: film.rows[0].adet, tekrar: 0 },
+    ]),
     puan_sayisi: puanlar.rows[0].adet,
     puan_ortalama: puanlar.rows[0].ortalama,
     yorum: yorum.rows[0].adet,
@@ -6719,9 +6905,12 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   const sonuclar = new Map();
   await Promise.all([...varyantlar].map(async (v) => {
     try {
+      // TTL yanıta göre: sonuçsuz varyant 15 dk, kıl payı dolu (1-2) 30 dk,
+      // dolu varyant 6 saat. Varyantlar AYRI önbellek satırları olduğundan
+      // her biri kendi doluluğuna göre yaşar.
       const d = await tmdbGetir(
         `/search/multi?query=${encodeURIComponent(v)}`,
-        ONBELLEK_TTL_SN.varsayilan,
+        aramaTtl(ONBELLEK_TTL_SN.varsayilan),
       );
       for (const r of (d.results || [])) {
         const k = `${r.media_type}:${r.id}`;
@@ -6885,7 +7074,8 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const gizliFiltre = (tablo) => benMi ? '' :
     `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
        WHERE g.kullanici_id=$1 AND g.tur=${tablo}.tur AND g.tmdb_id=${tablo}.tmdb_id)`;
-  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetler] = await Promise.all([
+  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetler,
+    dakika] = await Promise.all([
     havuz.query(
       `SELECT
          (SELECT count(*)::int FROM izlemeler WHERE kullanici_id=$1 AND tur='tv') AS bolum,
@@ -7010,6 +7200,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
            ORDER BY son DESC, tmdb_id DESC`,
           [id]),
     rozetleriHesapla(id),
+    tahminiDakika(id),
   ]);
   // Uyum: giriş yapan başka bir kullanıcı bu profile bakıyorsa, ortak izlenen
   // içerik sayısı + puan uyumu (ikisinin de puanladığı içeriklerde puanların
@@ -7066,9 +7257,10 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     uyum,
     istatistik: {
       ...istatistik.rows[0],
-      // Yaklaşık ekran süresi (bölüm ~42 dk, film ~110 dk) — açık profilde de görünür
-      tahmini_dakika:
-        istatistik.rows[0].bolum * 42 + istatistik.rows[0].film * 110,
+      // Yaklaşık ekran süresi, tekrar izlemeler dahil — açık profilde de
+      // görünür. /istatistiklerim ile AYNI yardımcıyı çağırır: iki ekranın
+      // aynı kullanıcı için farklı sayı göstermesi imkânsız.
+      tahmini_dakika: dakika,
     },
     // Açık profilde yalnız kazanılan rozetler gösterilir
     rozetler: rozetler.filter((r) => r.kazanildi),
@@ -8664,6 +8856,98 @@ app.get('/admin/surumler', adminKisit, sarici(async (_req, res) => {
     cihazlar: cihaz.rows,
     hatalar: hata.rows,
     ayarlar: Object.fromEntries(ayar.rows.map((a) => [a.anahtar, a.deger])),
+  });
+}));
+
+// ---------- cihaz dağılımı (md. 37) ----------
+//
+// *** BU UÇ AGREGATTIR: "kim hangi cihazı kullanıyor" LİSTESİ DÖNMEZ. ***
+// Aşağıdaki hiçbir sorgu kullanici_id/token/IP SEÇMEZ; hepsi GROUP BY + count
+// ile yalnız SAYI döndürür (`test/cihaz_dagilimi.test.js` bunu kaynak üzerinde
+// denetler — biri buraya kullanıcı listesi eklerse test kırmızıya döner).
+//
+// İki AYRI kaynak birleştirilir, çünkü ikisinin de körlüğü var ve panelde
+// ayrı ayrı gösterilmeleri gerekiyor:
+//
+//   1) cihaz_sayaclari — istek başlığından türetilmiş kaba sınıf (tur/os/
+//      tarayici). Masaüstü/mobil/tablet ve TARAYICI dağılımının TEK kaynağı.
+//      KÖRLÜĞÜ: İSTEK sayar, kişi saymaz; ve mobil uygulamanın UA'sında
+//      işletim sistemi yoktur → hepsi tur='uygulama' altında toplanır.
+//   2) cihaz_tokenlari — push kaydı. Sürüm/dil/platform dağılımının KİŞİ
+//      bazında sayılabildiği tek yer. KÖRLÜĞÜ: yalnız BİLDİRİME İZİN VEREN
+//      mobil kullanıcılar; web kullanıcısı bu tabloda HİÇ YOK.
+//
+// Panel bu körlükleri kullanıcıya (yani sana) yazıyla söyler; `kapsam`
+// alanındaki sayılar o uyarının somut halidir.
+app.get('/admin/cihazlar', adminKisit, sarici(async (req, res) => {
+  const gun = Math.min(365, Math.max(1, Number.parseInt(req.query.gun, 10) || 30));
+  const [sinif, gunluk, platform, surum, dil, kullanici, pushlu] = await Promise.all([
+    // ≤336 satır (6×7×8 kapalı sözlük) — kırılımlar JS'te çıkarılır, tek tur.
+    // GÜN PENCERESİ UTC: sayaç UTC gününe yazıyor (bugunUtc). `current_date`
+    // kullanılsaydı, veritabanı sunucusu UTC dışı bir TZ'deyse pencere bir gün
+    // kayar ve "bugün" satırı hiç görünmezdi.
+    havuz.query(
+      `SELECT tur, os, tarayici, sum(adet)::bigint adet
+         FROM cihaz_sayaclari WHERE gun >= (now() AT TIME ZONE 'utc')::date - $1::int
+        GROUP BY 1,2,3`, [gun]),
+    // to_char: DATE'i JS'e Date olarak verirsek `toISOString()` yerel gece
+    // yarısını UTC'ye çevirip günü BİR GERİ kaydırıyor (UTC+3'te ölçüldü).
+    havuz.query(
+      `SELECT to_char(gun,'YYYY-MM-DD') gun, tur, sum(adet)::bigint adet
+         FROM cihaz_sayaclari WHERE gun >= (now() AT TIME ZONE 'utc')::date - $1::int
+        GROUP BY 1,2 ORDER BY 1`, [gun]),
+    havuz.query(
+      `SELECT COALESCE(NULLIF(platform,''),'bilinmiyor') ad,
+              count(*)::int cihaz, count(DISTINCT kullanici_id)::int kisi
+         FROM cihaz_tokenlari GROUP BY 1 ORDER BY cihaz DESC`),
+    havuz.query(
+      `SELECT COALESCE(NULLIF(surum,''),'bilinmiyor') ad,
+              count(*)::int cihaz, count(DISTINCT kullanici_id)::int kisi
+         FROM cihaz_tokenlari GROUP BY 1 ORDER BY cihaz DESC LIMIT 30`),
+    havuz.query(
+      `SELECT COALESCE(NULLIF(dil,''),'bilinmiyor') ad,
+              count(*)::int cihaz, count(DISTINCT kullanici_id)::int kisi
+         FROM cihaz_tokenlari GROUP BY 1 ORDER BY cihaz DESC LIMIT 50`),
+    havuz.query('SELECT count(*)::int n FROM kullanicilar WHERE NOT misafir'),
+    havuz.query('SELECT count(DISTINCT kullanici_id)::int n FROM cihaz_tokenlari'),
+  ]);
+
+  // Tek turdan üç kırılım. `bot` payı AYRI tutulur: Googlebot/önizleme
+  // çekicileri "kullanıcıların cihaz dağılımı" sorusunun cevabını bozar.
+  const sayi = (r) => Number(r.adet) || 0;
+  const insan = sinif.rows.filter((r) => r.tur !== 'bot');
+  const topla = (satirlar, alan) => {
+    const m = new Map();
+    for (const r of satirlar) m.set(r[alan], (m.get(r[alan]) || 0) + sayi(r));
+    return [...m].map(([ad, adet]) => ({ ad, adet })).sort((a, b) => b.adet - a.adet);
+  };
+  const toplam = insan.reduce((t, r) => t + sayi(r), 0);
+
+  res.json({
+    gun,
+    sinif: {
+      toplam, // bot HARİÇ istek adedi
+      bot: sinif.rows.filter((r) => r.tur === 'bot').reduce((t, r) => t + sayi(r), 0),
+      tur: topla(insan, 'tur'),
+      os: topla(insan, 'os'),
+      tarayici: topla(insan, 'tarayici'),
+      // Çapraz tablo: "Windows'ta hangi tarayıcı" gibi soruların cevabı.
+      capraz: insan.map((r) => ({ tur: r.tur, os: r.os, tarayici: r.tarayici, adet: sayi(r) }))
+        .sort((a, b) => b.adet - a.adet).slice(0, 25),
+      gunluk: gunluk.rows.map((r) => ({ gun: r.gun, tur: r.tur, adet: sayi(r) })),
+    },
+    push: {
+      platform: platform.rows,
+      surum: surum.rows,
+      dil: dil.rows,
+      cihaz: platform.rows.reduce((t, r) => t + r.cihaz, 0),
+      kisi: pushlu.rows[0].n,
+    },
+    kapsam: {
+      kullanici: kullanici.rows[0].n, // misafir olmayan kayıtlı kullanıcı
+      pushlu: pushlu.rows[0].n,
+      saklama_gun: CIHAZ_SAKLAMA_GUN,
+    },
   });
 }));
 

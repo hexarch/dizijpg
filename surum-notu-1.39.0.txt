@@ -1,5 +1,5 @@
-Play Console kapalı test (Alpha) sürüm notu — 1.38.0 (84)
-Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 14 derleme birikti.
+Play Console kapalı test (Alpha) sürüm notu — 1.39.0 (85)
+Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 15 derleme birikti.
 ⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI
    (sunucu kill switch). Kapalı özelliği sürüm notunda anmıyoruz.
 --------------------------------------------------------------------
@@ -13,6 +13,9 @@ KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
 • İzlediğin dizinin yeni bölümü çıkınca bildirim (yalnız bir öncekini
   izlediysen; ayarlardan kapatabilirsin).
 • Bildirim metinleri artık kimseye cinsiyet atfetmiyor.
+• Tekrar izlediklerin artık sayılıyor: göz rozetinde kaçıncı izleyişin
+  olduğu yazıyor, toplam izleme süren de ona göre artıyor.
+• Yeni çıkan yapımlar aramada çok daha çabuk görünüyor.
 • Webde Google ile giriş.
 • Profil, takvim ve masaüstü görünümünde çok sayıda iyileştirme;
   uygulama belirgin şekilde hızlandı.
@@ -25,6 +28,9 @@ KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
 • Get notified when a new episode of a show you watch is out (only if you
   watched the previous one; you can turn it off in settings).
 • Notification texts no longer assume anyone's gender.
+• Rewatches now count: the watched badge shows how many times you've seen
+  it, and your total watch time goes up accordingly.
+• Newly released titles show up in search much sooner.
 • Sign in with Google on the web.
 • Many improvements to profile, calendar and desktop layout; the app is
   noticeably faster.

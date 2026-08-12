@@ -787,23 +787,85 @@ class _CeviriliMetinState extends State<CeviriliMetin> {
 
 /// Poster kartı: dokununca detaya gider.
 
+/// Göz rozetindeki sayı etiketi (istek listesi md. 22).
+///
+/// [tekrar] = YENİDEN izleme sayısı (`durumlar.tekrar`); toplam izleme
+/// sayısı `tekrar + 1`'dir — detay ekranındaki "{}. kez izlendi" ile AYNI
+/// sayıyı gösterir, kullanıcı iki yerde farklı rakam görmez.
+///
+/// BİÇİM: 10'dan azsa gerçek sayı ("×2"), 10 ve üstü "×10+" olur. Üst sınır
+/// posterin dörtte birini kaplayan bir şerit oluşmasın diye var (sunucuda
+/// tekrar 99'a kadar çıkabiliyor); TAM sayı her zaman detay sayfasında yazar.
+String izlemeSayisiEtiketi(int tekrar) {
+  final toplam = (tekrar < 0 ? 0 : tekrar) + 1;
+  return toplam >= 10 ? '×10+' : '×$toplam';
+}
+
 /// "Bunu izledin" rozeti: poster kartlarının sağ üstünde.
 ///
 /// ÇİFT RENK: arkada biraz büyük SİYAH ikon, önde BEYAZ ikon. Poster açık da
 /// olsa koyu da olsa okunur — tek renk ikon bazı posterlerde kayboluyordu.
+///
+/// TEKRAR İZLEME ([tekrar] > 0): göz ikonunun YANINA izleme sayısı yazılır.
+/// Metin çift-ikon numarasıyla okunmaz (harfin kenarı ikonunki kadar kalın
+/// değil), o yüzden sayı çıkınca rozet sol üstteki PUAN ŞERİDİYLE aynı dile
+/// döner: siyah87 zemin + beyaz kalın metin (kontrast ~15:1, WCAG AA fazlası).
+/// Bilgi rengin kendisinde değil METİNDE — renk körlüğünde de okunur.
+/// [tekrar] 0 iken rozet birebir eskisi gibi kalır.
 class IzlendiRozeti extends StatelessWidget {
   final double boyut;
-  const IzlendiRozeti({super.key, this.boyut = 17});
+
+  /// Yeniden izleme sayısı; 0 ise yalnız göz ikonu çizilir.
+  final int tekrar;
+
+  const IzlendiRozeti({super.key, this.boyut = 17, this.tekrar = 0});
 
   @override
   Widget build(BuildContext context) {
-    return IgnorePointer(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Icon(Icons.remove_red_eye, size: boyut + 3, color: Colors.black87),
-          Icon(Icons.remove_red_eye, size: boyut, color: Colors.white),
-        ],
+    if (tekrar <= 0) {
+      return IgnorePointer(
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Icon(Icons.remove_red_eye, size: boyut + 3, color: Colors.black87),
+            Icon(Icons.remove_red_eye, size: boyut, color: Colors.white),
+          ],
+        ),
+      );
+    }
+    // Semantics IgnorePointer'ın DIŞINDA: `ignoring: true` alt ağacın
+    // semantiğini de düşürür, etiket içeride kalsa ekran okuyucu "×2"yi hiç
+    // görmezdi.
+    return Semantics(
+      label: '{}. kez izlendi'.cf([tekrar + 1]),
+      child: IgnorePointer(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+          decoration: BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.remove_red_eye,
+                size: boyut * 0.75,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 2),
+              Text(
+                izlemeSayisiEtiketi(tekrar),
+                style: TextStyle(
+                  fontSize: boyut * 0.65,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1016,7 +1078,8 @@ class PosterKarti extends StatelessWidget {
                 ),
               ),
               // Sağ üst: bu içeriği izlediysen göz rozeti. Kitaplık
-              // değişince (izlemeye başla/bırak) anında güncellenir.
+              // değişince (izlemeye başla/bırak, yeniden izle) anında
+              // güncellenir. Tekrar izlendiyse rozetin yanına sayı gelir.
               if (tmdbId != null)
                 Positioned(
                   top: 5,
@@ -1025,7 +1088,9 @@ class PosterKarti extends StatelessWidget {
                     valueListenable: KitaplikDurumu.surum,
                     builder: (context, _, _) =>
                         KitaplikDurumu.izlendiMi(tur, tmdbId)
-                        ? const IzlendiRozeti()
+                        ? IzlendiRozeti(
+                            tekrar: KitaplikDurumu.tekrarSayisi(tur, tmdbId),
+                          )
                         : const SizedBox.shrink(),
                   ),
                 ),

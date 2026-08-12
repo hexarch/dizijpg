@@ -224,6 +224,7 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     <button class="sekme-btn" data-sekme="geribildirim">Geri Bildirim <span id="gb-rozet" class="rozet gizli">0</span></button>
     <button class="sekme-btn" data-sekme="duyuru">Duyuru</button>
     <button class="sekme-btn" data-sekme="buyume">Büyüme</button>
+    <button class="sekme-btn" data-sekme="cihazlar">Cihazlar</button>
     <button class="sekme-btn" data-sekme="depolama">Depolama <span id="dep-rozet" class="rozet gizli">!</span></button>
     <button class="sekme-btn" data-sekme="algoritma">Algoritma</button>
     <button class="sekme-btn" data-sekme="bakim">Bakım</button>
@@ -324,6 +325,53 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     <div class="panel">
       <h3>🔥 En Çok İzlenenler <span class="sag" id="bu-gun">son 30 gün</span></h3>
       <div style="overflow:auto;max-height:420px"><table id="bu-icerik"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- CİHAZLAR (md. 37) — AGREGAT. Kişi bazlı cihaz listesi YOKTUR. -->
+<section id="s-cihazlar" class="sayfa gizli">
+  <div class="panel" style="margin-bottom:16px">
+    <div class="arac" style="border-bottom:none">
+      <label class="kck" for="ci-gun">Dönem</label>
+      <select id="ci-gun" onchange="cihazlariYukle()">
+        <option value="7">son 7 gün</option>
+        <option value="30" selected>son 30 gün</option>
+        <option value="90">son 90 gün</option>
+        <option value="365">son 1 yıl</option>
+      </select>
+      <button class="btn" onclick="cihazlariYukle()">Yenile ↻</button>
+      <span class="kck" id="ci-durum"></span>
+    </div>
+  </div>
+  <div class="kucuk-kartlar" id="ci-kartlar" style="padding:0 0 16px"></div>
+  <div class="panel" id="ci-kapsam" style="margin:0 0 16px;padding:14px 18px"></div>
+  <div class="izgara" style="padding:0 0 16px">
+    <div class="panel">
+      <h3>💻 Cihaz Türü <span class="sag" id="ci-tur-ozet">—</span></h3>
+      <div id="ci-tur" style="padding:10px 18px"></div>
+      <h3 style="border-top:1px solid var(--line)">🧩 İşletim Sistemi</h3>
+      <div id="ci-os" style="padding:10px 18px"></div>
+      <h3 style="border-top:1px solid var(--line)">🌐 Tarayıcı</h3>
+      <div id="ci-tarayici" style="padding:10px 18px"></div>
+    </div>
+    <div class="panel">
+      <h3>🔔 Push Kayıtlı Cihazlar <span class="sag" id="ci-push-ozet">—</span></h3>
+      <div id="ci-platform" style="padding:10px 18px"></div>
+      <h3 style="border-top:1px solid var(--line)">🏷️ Uygulama Sürümü</h3>
+      <div style="overflow:auto;max-height:260px"><table id="ci-surum"></table></div>
+      <h3 style="border-top:1px solid var(--line)">🗣️ Uygulama Dili</h3>
+      <div style="overflow:auto;max-height:240px"><table id="ci-dil"></table></div>
+    </div>
+  </div>
+  <div class="izgara" style="padding:0">
+    <div class="panel">
+      <h3>🧮 Çapraz Kırılım <span class="sag">tür · işletim · tarayıcı</span></h3>
+      <div style="overflow:auto;max-height:380px"><table id="ci-capraz"></table></div>
+    </div>
+    <div class="panel">
+      <h3>📆 Günlük Eğilim <span class="sag" id="ci-gunluk-ozet">—</span></h3>
+      <div style="overflow:auto;max-height:380px;padding:10px 18px" id="ci-gunluk"></div>
     </div>
   </div>
 </section>
@@ -804,11 +852,13 @@ document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
   if(s==='hareketler') hareketleriYukle();
   if(s==='mailler') mailleriYukle();
   $('#s-buyume').classList.toggle('gizli',s!=='buyume');
+  $('#s-cihazlar').classList.toggle('gizli',s!=='cihazlar');
   $('#s-depolama').classList.toggle('gizli',s!=='depolama');
   $('#s-bakim').classList.toggle('gizli',s!=='bakim');
   $('#s-algoritma').classList.toggle('gizli',s!=='algoritma');
   if(s==='algoritma') algYukle();
   if(s==='buyume') buyumeYukle();
+  if(s==='cihazlar') cihazlariYukle();
   if(s==='depolama') depolamaYukle();
   if(s==='bakim') surumleriYukle();
   if(s==='kullanicilar') kullanicilariYukle();
@@ -1114,6 +1164,120 @@ async function buyumeYukle(){
         <td class="mono">${t.kisi}</td><td class="mono">${t.izleme}</td></tr>`).join('')}</tbody>`
       : '<tbody><tr><td class="bos">Veri yok</td></tr></tbody>';
   }catch(e){ $('#bu-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>'; }
+}
+
+/* ---- Cihaz dağılımı (md. 37) ----------------------------------------------
+   AGREGAT: uç yalnız SAYI döner, kişi bazlı cihaz listesi YOKTUR ve olmayacak.
+   İki kaynak AYRI panellerde gösterilir çünkü ikisinin körlüğü farklı:
+     · sol panel  = istek başlığından türetilen kaba sınıf → İSTEK sayar
+     · sağ panel  = push kaydı → KİŞİ sayar ama yalnız bildirime izin veren
+                    mobil kullanıcıyı görür (web bu tabloda hiç yok)
+   "Örneklem eksik" uyarısı #ci-kapsam kutusunda BASILIR — sayıya bakan kişi
+   neyi görmediğini de görsün. */
+const CI_TUR={masaustu:'Masaüstü',mobil:'Mobil',tablet:'Tablet',uygulama:'Mobil uygulama',bot:'Bot',diger:'Diğer'};
+const CI_OS={android:'Android',ios:'iOS',windows:'Windows',macos:'macOS',linux:'Linux',chromeos:'ChromeOS',diger:'Diğer'};
+const CI_TAR={chrome:'Chrome',safari:'Safari',firefox:'Firefox',edge:'Edge',opera:'Opera',samsung:'Samsung Internet',uygulama:'Uygulama (tarayıcı değil)',diger:'Diğer'};
+const CI_RENK={masaustu:'var(--mavi)',mobil:'var(--sari)',tablet:'var(--mor)',uygulama:'var(--yesil)',diger:'var(--soluk2)',bot:'var(--kirmizi)'};
+// Etiket sözlükte yoksa ham anahtar gösterilir — esc() ile (uç kapalı sözlük
+// döndürüyor ama panel sunucuya GÜVENMEZ; XSS savunması görüntüleme katmanında).
+const ciAd=(sozluk,k)=>esc(sozluk[k]||k||'—');
+
+function ciBarListe(hedef, liste, toplam, sozluk){
+  const en=Math.max(1,...liste.map(x=>x.adet));
+  $(hedef).innerHTML = liste.length? liste.map(x=>`
+    <div class="ulke-satir" style="padding:5px 0">
+      <span style="width:150px">${ciAd(sozluk,x.ad)}</span>
+      <span class="ulke-bar"><i style="width:${Math.round(x.adet/en*100)}%"></i></span>
+      <span class="kck mono" style="width:118px;text-align:right">
+        ${(toplam?Math.round(x.adet/toplam*1000)/10:0)}% · ${x.adet.toLocaleString('tr')}</span>
+    </div>`).join('') : '<div class="bos">Henüz veri yok</div>';
+}
+
+async function cihazlariYukle(){
+  const gun=$('#ci-gun').value;
+  $('#ci-durum').textContent='yükleniyor…';
+  try{
+    const d=await api('/cihazlar?gun='+encodeURIComponent(gun));
+    $('#ci-durum').textContent='';
+    const s=d.sinif, p=d.push, k=d.kapsam;
+    const enCok=(l)=>l.length?l[0]:null;
+    const tepe=(sozluk,l)=>{const t=enCok(l); return t?ciAd(sozluk,t.ad)+' · %'+(s.toplam?Math.round(t.adet/s.toplam*100):0):'—';};
+    $('#ci-kartlar').innerHTML=[
+      {e:'Sınıflanan istek',v:s.toplam.toLocaleString('tr'),a:'son '+d.gun+' gün · bot hariç',i:'📊'},
+      {e:'En yaygın tür',v:tepe(CI_TUR,s.tur),a:'istek payı',i:'💻'},
+      {e:'En yaygın sistem',v:tepe(CI_OS,s.os),a:'istek payı',i:'🧩'},
+      {e:'En yaygın tarayıcı',v:tepe(CI_TAR,s.tarayici),a:'istek payı',i:'🌐'},
+      {e:'Push kayıtlı kişi',v:p.kisi,a:p.cihaz+' cihaz · '+(k.kullanici?Math.round(p.kisi/k.kullanici*100):0)+'% kapsama',i:'🔔'},
+      {e:'Bot isteği',v:s.bot.toLocaleString('tr'),a:'sayımdan çıkarıldı',i:'🤖'},
+    ].map(c=>`<div class="kart"><div class="ikon">${c.i}</div>
+      <div class="etk">${c.e}</div><div class="deg" style="font-size:${String(c.v).length>9?'18px':'28px'}">${c.v}</div>
+      <div class="alt">${c.a}</div></div>`).join('');
+
+    // ÖRNEKLEM UYARISI — sayıyı okuyan neyi GÖRMEDİĞİNİ de görsün.
+    $('#ci-kapsam').innerHTML=`<div class="kck" style="line-height:1.75">
+      <b style="color:var(--sari)">⚠ Örneklem sınırları — bu sayılar bir anket değil, ölçüm artığıdır.</b><br>
+      · <b>Sol sütun İSTEK sayar, kişi saymaz.</b> Çok gezen bir kullanıcı dağılımda daha ağır basar.
+        Tekilleştirme kişi başına kimlik tutmayı gerektirirdi; bilerek yapılmıyor.<br>
+      · <b>Mobil uygulama işletim sistemini bildirmez</b> (istemci başlığında yok) — bu istekler
+        “Mobil uygulama” türünde toplanır, Android/iOS kırılımı sağdaki push tablosundan okunur.<br>
+      · <b>Sağ sütun yalnız bildirime izin verenleri görür:</b> ${p.kisi} kişi / ${k.kullanici} kayıtlı kullanıcı
+        (%${k.kullanici?Math.round(p.kisi/k.kullanici*100):0}). <b>Web kullanıcısı bu tabloda hiç yoktur</b>
+        (webde push kurulmuyor), yani sürüm/dil dağılımı mobil tarafın fotoğrafıdır.<br>
+      · iPadOS masaüstü Safari kimliği gönderir; iPad'lerin bir kısmı “masaüstü/macOS” sayılır (Apple böyle yapıyor, ayrıştırılamaz).<br>
+      · Ham cihaz kimliği <b>saklanmıyor</b>: yalnız gün + kaba sınıf + adet. Sayaç ${k.saklama_gun} gün sonra silinir.</div>`;
+
+    $('#ci-tur-ozet').textContent='son '+d.gun+' gün · istek payı';
+    ciBarListe('#ci-tur', s.tur, s.toplam, CI_TUR);
+    ciBarListe('#ci-os', s.os, s.toplam, CI_OS);
+    ciBarListe('#ci-tarayici', s.tarayici, s.toplam, CI_TAR);
+
+    $('#ci-push-ozet').textContent=p.cihaz+' cihaz · '+p.kisi+' kişi';
+    ciBarListe('#ci-platform', p.platform.map(x=>({ad:x.ad,adet:x.cihaz})), p.cihaz, CI_OS);
+    $('#ci-surum').innerHTML = p.surum.length? `
+      <thead><tr><th>Sürüm</th><th>Cihaz</th><th>Kişi</th><th>Pay</th></tr></thead>
+      <tbody>${p.surum.map(v=>`<tr><td class="mono"><b>${esc(v.ad)}</b></td>
+        <td class="mono">${v.cihaz}</td><td class="mono">${v.kisi}</td>
+        <td class="kck mono">${p.cihaz?Math.round(v.cihaz/p.cihaz*100):0}%</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Kayıtlı cihaz yok</td></tr></tbody>';
+    $('#ci-dil').innerHTML = p.dil.length? `
+      <thead><tr><th>Dil</th><th>Cihaz</th><th>Kişi</th><th>Pay</th></tr></thead>
+      <tbody>${p.dil.map(v=>`<tr><td class="mono"><b>${esc(v.ad)}</b></td>
+        <td class="mono">${v.cihaz}</td><td class="mono">${v.kisi}</td>
+        <td class="kck mono">${p.cihaz?Math.round(v.cihaz/p.cihaz*100):0}%</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Kayıtlı cihaz yok</td></tr></tbody>';
+
+    $('#ci-capraz').innerHTML = s.capraz.length? `
+      <thead><tr><th>Tür</th><th>Sistem</th><th>Tarayıcı</th><th>İstek</th><th>Pay</th></tr></thead>
+      <tbody>${s.capraz.map(c=>`<tr>
+        <td>${ciAd(CI_TUR,c.tur)}</td><td>${ciAd(CI_OS,c.os)}</td><td>${ciAd(CI_TAR,c.tarayici)}</td>
+        <td class="mono">${c.adet.toLocaleString('tr')}</td>
+        <td class="kck mono">${s.toplam?Math.round(c.adet/s.toplam*1000)/10:0}%</td></tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">Henüz veri yok — sayaç yeni açıldıysa ilk satır bir dakika içinde düşer</td></tr></tbody>';
+
+    // Günlük eğilim: gün başına YIĞILI çubuk. Yüzde gösterir (mutlak sayı
+    // günden güne trafikle zıplar, oysa merak edilen KARIŞIMIN kayması).
+    const gunler=new Map();
+    for(const r of s.gunluk){
+      if(r.tur==='bot') continue; // kartlarda ayrı sayılıyor, karışımı bozmasın
+      if(!gunler.has(r.gun)) gunler.set(r.gun,{t:0,p:{}});
+      const g=gunler.get(r.gun); g.t+=r.adet; g.p[r.tur]=(g.p[r.tur]||0)+r.adet;
+    }
+    const sirali=[...gunler.entries()].sort((a,b)=>b[0].localeCompare(a[0]));
+    $('#ci-gunluk-ozet').textContent=sirali.length+' gün';
+    const turSira=['masaustu','mobil','tablet','uygulama','diger'];
+    $('#ci-gunluk').innerHTML = sirali.length? sirali.map(([g,v])=>`
+      <div class="ulke-satir" style="padding:4px 0">
+        <span class="kck mono" style="width:78px">${esc(g)}</span>
+        <span class="ulke-bar" style="display:flex">${turSira.filter(t=>v.p[t]).map(t=>
+          `<i style="width:${v.t?v.p[t]/v.t*100:0}%;background:${CI_RENK[t]}" title="${ciAd(CI_TUR,t)}"></i>`).join('')}</span>
+        <span class="kck mono" style="width:80px;text-align:right">${v.t.toLocaleString('tr')}</span>
+      </div>`).join('')+`<div class="kck" style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap">${
+        turSira.map(t=>`<span><i style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${CI_RENK[t]}"></i> ${ciAd(CI_TUR,t)}</span>`).join('')}</div>`
+      : '<div class="bos">Henüz veri yok</div>';
+  }catch(e){
+    $('#ci-durum').textContent='';
+    $('#ci-kartlar').innerHTML='<div class="bos">Yüklenemedi: '+esc(e.message)+'</div>';
+  }
 }
 
 /* ---- Depolama ---- */

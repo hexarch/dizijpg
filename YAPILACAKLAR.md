@@ -1,6 +1,51 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — ✅ MD. 22 TEKRAR İZLEME (yerelde, dağıtım BEKLİYOR)
+İstek birebir: "Bir dizi/film tekrar izlenebilmeli. Göz işaretinin yanında
+1-2-3...10 gibi sayı olacak, sayı şekillenecek; izlenme saati de ona göre
+artacak."
+
+**ŞEMA DEĞİŞMEDİ.** `durumlar.tekrar` (migrasyon-2026-07-28d) zaten vardı ve
+`POST /rewatch` onu yazıyordu; eksik olan (a) sayının POSTER rozetinde
+görünmesi, (b) süreye yansımasıydı. `izlemeler`e tekrar SATIRI ATILMADI —
+o tablo bölüm sayaçlarının (rozet, kitaplık, uyum, md. 27 "öncekini izledi
+mi") kaynağı; çoğaltmak hepsini şişirirdi. Migrasyon YOK.
+
+**Süre — TEK KAYNAK:** formül ÜÇ ayrı uçta kopyala-yapıştır duruyordu
+(`/istatistiklerim`, `/profil/:ad`, `/ozet/:yil`). Artık sabitler `SURE_DK`
+(tv 42 / movie 110), toplama `izlemeDakikasi`, sorgu `tahminiDakika`.
+Formül: `Σ (birim × izlenen_satır × (1 + tekrar))` — tekrar, o başlığın
+KAYITLI süresini katlar. `izlemeler ⟕ durumlar` (LEFT JOIN; filmin
+`durumlar` satırı olmayabilir), tür+tekrar öbekli, `durum='bitirdim'`
+süzgeci BİLEREK YOK (yeni sezon için "izliyorum"a dönen kullanıcı geçmiş
+tekrarlarının süresini kaybetmemeli). **Yıl özetinde tekrar SAYILMAZ:**
+tekrarın hangi yılda yapıldığı hiçbir yerde kayıtlı değil.
+Kenar durum kararı: süre `izlemeler` satırlarından türer, TMDB bölüm
+sayısından değil — tabana 0 dk katan başlık tekrarına da 0 katar.
+
+**UI:** `IzlendiRozeti` (poster kartlarının sağ üstündeki göz) `tekrar > 0`
+iken sol üstteki PUAN ŞERİDİYLE aynı dile döner: siyah87 zemin + beyaz kalın
+"×2" (kontrast ~15:1). tekrar=0'da rozet BİREBİR eskisi gibi. Biçim: toplam
+izleme (tekrar+1), 10 ve üstü "×10+" (tam sayı hep detayda yazar). Veri
+`/kitapligim` → `KitaplikDurumu` üzerinden; uç yanıtına `tekrar` eklendi,
+kart başına ek istek YOK. `PosterKarti`den beslendiği için `MiniIcerik`
+kullanan her ekranda (kitaplık, izlediklerim, arama, kişi, karşılama, profil
+şeritleri) çıkar. `/rewatch` yanıtı `KitaplikDurumu.tekrarAyarla` ile anında
+yansır (iyimser DEĞİL, sunucu değeriyle).
+Ek UX düzeltmesi: detaydaki geri-alma ikonunun dokunma hedefi 32 → 44 px,
+ikon büyütülmeden; ayrıca "Geri al" tooltip'i (ikon tek başına konuşmuyordu).
+
+**Çeviri: YENİ ANAHTAR YOK** — sayı+× dilden bağımsız, ekran okuyucu etiketi
+mevcut `'{}. kez izlendi'`, tooltip mevcut `'Geri al'`.
+
+**Kanıt:** `backend/test/tekrar_izleme.test.js` (20 test) +
+`app/test/tekrar_izleme_test.dart` (17 test). Kopya formül nöbeti var:
+`* 42`/`* 110` kaynağa geri yazılırsa test KIRILIR (kırmızıya döndürülerek
+doğrulandı; dokunma hedefi ve `/rewatch` bağlantısı da mutasyonla sınandı).
+Backend 699/699, Flutter 1136/1136, analyze 85 info (taban), 0 hata/uyarı.
+**Dağıtım YOK, sürüm artırılmadı, commit YOK.**
+
 ## 2026-08-13 — ✅ CİNSİYETSİZ DİL (kullanıcı kararı)
 "Kimseye cinsiyete göre hitap etmeyelim — cinsiyetsiz seçerse ne yapacağız."
 Uygulama cinsiyet SORMUYOR/SAKLAMIYOR ama 25 dilde kullanıcıya atıfla eril
@@ -19,6 +64,75 @@ uyumu (bunlar kişiye değil ADA göre çekimlenir).
 **KİLİT:** `backend/test/cinsiyetsiz_dil.test.js` (4 test) ve
 `app/test/cinsiyetsiz_dil_test.dart` (4 test) — ileride biri eril metin
 eklerse yakalar; nesne kaynaklı çekimin "düzeltilmesini" de engeller.
+
+## 2026-08-13 (b) — MD. 37 CİHAZ DAĞILIMI + MD. 22 TEKRAR İZLEME + ARAMA
+## ÖNBELLEĞİ 🚀 (1.39.0+85)
+Üç ajan paralel; her birine `server.js`te AYRI BÖLGE verildi (admin uçları /
+TMDB önbellek / istatistik+rewatch) ve "Write ile baştan yazma" kuralı kondu —
+çakışma olmadı.
+
+### Md. 37 — admin panelinde cihaz dağılımı
+ENVANTER: `cihaz_tokenlari` yalnız android/ios ve yalnız bildirime izin
+verenleri görüyordu (push.dart webde token kaydetmiyor → **web kullanıcısı o
+tabloda HİÇ YOK**). Tarayıcı/OS/tür verisi ise HİÇ YOKTU (`User-Agent`
+kaydedilmiyordu).
+⚠ **YENİ VERİ TOPLAMA — KULLANICI KARARI GEREKİYOR** (aşağıda).
+Tasarım: ham UA HİÇBİR YERE yazılmıyor; tek istek içinde üç KAPALI sözlükten
+birer değere indirgeniyor (tur/os/tarayıcı ≈ 9 bit) ve `cihaz_sayaclari
+(gun,tur,os,tarayici,adet)` sayacına ekleniyor. `kullanici_id` yok, IP yok,
+saat yok → kişi bazlı sorgu teknik olarak imkânsız. CHECK kısıtları sözlüğü
+DB düzeyinde de zorluyor (kodda hata olsa bile serbest metin yazılamaz).
+Tekilleştirme BİLEREK yok (kişi başına anahtar tutmak tam da kaçınılan şey)
+→ sayaç İSTEK sayar, kişi saymaz; panel bunu yazıyla söylüyor. 400 gün sonra
+otomatik siliniyor. Admin/sağlık uçları ve botlar sayımdan düşülüyor.
+Panelde yeni "Cihazlar" sekmesi (mevcut kart/çubuk kalıbıyla) + sarı örneklem
+uyarı kutusu. Yetki mevcut `adminKisit` kapısı; bir test TÜM /admin uçlarının
+o kapıdan geçtiğini doğruluyor.
+AJANIN YAKALADIĞI GERÇEK HATA: sayaç UTC gününe yazarken sorgu `current_date`
+(DB yereli) okuyordu → UTC+3'te "bugün" satırı panelde hiç görünmüyordu.
+
+### Md. 22 — tekrar izleme
+Şema DEĞİŞMEDİ (`durumlar.tekrar` + `/rewatch` zaten vardı); `izlemeler`e
+tekrar satırı ATILMADI — o tablo bölüm sayaçlarının (rozet, kitaplık, uyum,
+md.27 "bir öncekini izledi mi") kaynağı, çoğaltmak hepsini bozardı.
+Süre formülü **iki değil ÜÇ** yerde kopyaymış (ajan `/ozet/:yil`i de buldu);
+üçü tek yardımcıya indi: `Σ birim(tür) × izlenen_satır × (1+tekrar)`.
+`LEFT JOIN durumlar` (INNER olsaydı durum satırı olmayan filmler süreden
+düşerdi). `bitirdim` süzgeci BİLEREK yok: kullanıcı yeni sezon için
+"izliyorum"a dönünce geçmiş tekrarların süresi silinmemeli. **Yıl özeti
+tekrarı SAYMAZ** — tekrarın hangi yıl yapıldığı kayıtlı değil, yoksa 2026'daki
+tekrar 2019 özetini şişirirdi.
+UI: poster kartındaki GÖZ rozetine toplam izleme sayısı (`tekrar+1`), 10+ için
+`×10+`; `tekrar=0`da rozet birebir eski hâlinde. Veri `/kitapligim` yanıtına
+eklendi — kart başına EK İSTEK YOK. Yeni çeviri anahtarı gerekmedi.
+Ek UX: detaydaki geri-alma ikonunun dokunma hedefi 32 → 44 dp.
+
+### Arama önbelleği (Castle Walls dersi)
+Sıfır sonuçlu aramalar 7 GÜN önbellekleniyordu → TMDB'ye eklenen yapım bir
+haftaya kadar görünmüyordu. Artık sonuç sayısına göre kademeli: 0 → 15 dk,
+1-2 → 30 dk, 3+ → eski uzun TTL. TTL satırda SAKLANMIYOR, okuyan karar
+veriyor (`onbellek_ttl.js`) — yan faydası: önbellekte DURAN eski boş kayıtlar
+geriye dönük bayat sayıldı, elle temizlik gerekmedi.
+AJANIN YAKALADIĞI İKİNCİ HATA: `/tmdb/*` yanıtları Cloudflare'a
+`s-maxage=21600` ile gidiyordu — sunucudaki kısa TTL kenarda 6 saat etkisiz
+kalırdı. Boş aramada başlık artık `max-age=60, s-maxage=900`; CANLIDA
+doğrulandı.
+
+### Kanıt ve dağıtım
+`npm test` **699** · `flutter test` **1136** · analyze 0 hata/uyarı (85 info).
+Sıra: migrasyon-2026-08-13b → server.js+sema.sql+Dockerfile+admin.html+
+cihaz_sinif.js+onbellek_ttl.js (COPY listesi değişti → REBUILD şart) → web.
+Canlı: log temiz, `cihaz_sayaclari` yazmaya başladı, boş arama başlığı
+doğrulandı, version.json 1.39.0+85, bootstrap `main.132531e4015d.dart.js`.
+Paketler: `dizijpg.apk` + `dizijpg-1.39.0+85.aab`, not: `surum-notu-1.39.0.txt`.
+
+### ⬜ KULLANICI KARARI BEKLİYOR — gizlilik
+Cihaz sayaçları YENİ bir toplama. Ham UA saklanmıyor, kişiye bağlanamıyor,
+yalnız günlük agregat sayı tutuluyor; Android uygulaması YENİ bir veri
+GÖNDERMİYOR (UA zaten her HTTP isteğinin standart parçası, biz saklamıyoruz).
+Bu yüzden Play Data Safety beyanının değişmesi GEREKMEYEBİLİR; yine de
+gizlilik politikasına "site kullanım istatistikleri (agregat)" cümlesi
+eklemek dürüst ve ucuz. KARAR KULLANICININ.
 
 ## 2026-08-13 — MD. 27 YENİ BÖLÜM BİLDİRİMİ + CİNSİYETSİZ DİL 🚀 (1.38.0+84)
 Dört ajan paralel çalıştı; ana oturum birleştirip dağıttı.

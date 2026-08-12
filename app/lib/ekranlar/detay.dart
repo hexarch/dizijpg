@@ -195,13 +195,17 @@ class _DetayEkraniState extends State<DetayEkrani> {
   });
 
   /// Yeniden izleme sayacı (+1 / -1); yalnız "bitirdim" durumunda çalışır.
-  Future<void> _rewatch(int deger) => _mutasyon(
-    () => Api.post('/rewatch', {
+  Future<void> _rewatch(int deger) => _mutasyon(() async {
+    final c = await Api.post('/rewatch', {
       'tmdb_id': widget.tmdbId,
       'tur': widget.tur,
       'deger': deger,
-    }),
-  );
+    });
+    // Poster kartlarındaki göz rozetinin yanındaki sayı (×2) anında
+    // güncellensin — sunucunun döndürdüğü değerle, iyimser tahminle DEĞİL.
+    final t = c is Map ? (c['tekrar'] as num?)?.toInt() : null;
+    if (t != null) KitaplikDurumu.tekrarAyarla(widget.tur, widget.tmdbId, t);
+  });
 
   /// İzleyenler listesi: avatar + kullanıcı adı, dokununca profile gider.
   void _izleyenlerAc() {
@@ -892,15 +896,22 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            InkWell(
-                              onTap: () => _rewatch(-1),
-                              borderRadius: BorderRadius.circular(16),
-                              child: Padding(
-                                padding: const EdgeInsets.all(8),
-                                child: Icon(
-                                  Icons.remove_circle_outline,
-                                  size: 16,
-                                  color: DiziRenkler.metin38,
+                            // Geri alma. İkon 16 px kalır ama dokunma hedefi
+                            // 44 px'e çıkar (16 + 2×14) — ikonu büyütmeden
+                            // padding'le, UX kuralı gereği. Tooltip/Semantics
+                            // olmadan ikon tek başına ne yaptığını söylemiyordu.
+                            Tooltip(
+                              message: 'Geri al'.c,
+                              child: InkWell(
+                                onTap: () => _rewatch(-1),
+                                borderRadius: BorderRadius.circular(22),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Icon(
+                                    Icons.remove_circle_outline,
+                                    size: 16,
+                                    color: DiziRenkler.metin38,
+                                  ),
                                 ),
                               ),
                             ),

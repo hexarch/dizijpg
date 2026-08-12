@@ -286,6 +286,38 @@ CREATE TABLE IF NOT EXISTS cihaz_tokenlari (
 CREATE INDEX IF NOT EXISTS cihaz_tokenlari_kullanici_idx
   ON cihaz_tokenlari (kullanici_id);
 
+-- ---------------------------------------------------------------------------
+-- 13 Ağu 2026 (migrasyon-2026-08-13b) — ADMİN: CİHAZ DAĞILIMI SAYAÇLARI
+--
+-- Masaüstü/mobil/tablet ayrımı, işletim sistemi ve TARAYICI dağılımı mevcut
+-- hiçbir kaynaktan çıkarılamıyordu: `cihaz_tokenlari` yalnız bildirime izin
+-- veren MOBİL kullanıcıyı görüyor (webde push hiç kurulmuyor), `hatalar`
+-- yalnız hata alanı görüyor, bellek içi ISTEK telemetrisi cihaz bilgisi
+-- tutmuyor.
+--
+-- ***** SATIR DEĞİL SAYAÇ *****
+-- Birincil anahtar (gun, tur, os, tarayici); tek ölçü `adet`. kullanici_id
+-- YOK, IP YOK, oturum YOK, zaman damgası YOK. "Kim hangi cihazı kullanıyor"
+-- sorusu bu tablodan CEVAPLANAMAZ.
+--
+-- ***** HAM User-Agent SAKLANMAZ *****
+-- UA yalnız bellekte, tek istek boyunca görülür; `cihaz_sinif.js` üç KAPALI
+-- SÖZLÜĞE indirger, ham metin atılır. Aşağıdaki CHECK'ler sözlüğü VERİTABANI
+-- düzeyinde de zorlar: koddaki bir hata bile serbest metin yazamaz.
+--
+-- `adet` İSTEK sayar, KİŞİ saymaz (tekilleştirme kişi başına anahtar tutmayı
+-- gerektirirdi — tam da kaçındığımız şey). Kişi boyutu cihaz_tokenlari'ndan
+-- okunur; panel ikisini AYRI gösterir ve örneklem uyarısını basar.
+-- ---------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS cihaz_sayaclari (
+  gun      DATE NOT NULL,
+  tur      TEXT NOT NULL CHECK (tur IN ('bot','uygulama','mobil','tablet','masaustu','diger')),
+  os       TEXT NOT NULL CHECK (os  IN ('android','ios','windows','macos','linux','chromeos','diger')),
+  tarayici TEXT NOT NULL CHECK (tarayici IN ('chrome','safari','firefox','edge','opera','samsung','uygulama','diger')),
+  adet     BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (gun, tur, os, tarayici)
+);
+
 -- Akışta gösterilenler (popüler fallback "gördüğünü tekrar gösterme" kuralı)
 CREATE TABLE IF NOT EXISTS akis_goruldu (
   kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
