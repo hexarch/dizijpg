@@ -1,0 +1,43 @@
+Play Console kapalı test (Alpha) sürüm notu — 1.37.0 (83)
+Önceki yükleme: 1.26.1 (70), 7 Ağustos. Arada 13 derleme birikti.
+--------------------------------------------------------------------
+KISA (Play'in "Yenilikler" alanına yapıştırılabilir, ~490 karakter):
+
+• Sesli ve görüntülü arama geldi: sohbetten tek dokunuşla ara, zil ve
+  titreşim var, ayarlardan tamamen kapatabilirsin.
+• Mesajlara emoji tepkisi: çift dokun kalp bırak, basılı tut 9 hareketli
+  emojiden seç.
+• Emojiler artık hareketli — dizi, film ve oyuncu sayfalarında.
+• Puanlara dokununca IMDb tarzı puan dağılımı grafiği açılıyor.
+• Webde Google ile giriş, misafir girişi düzenlemeleri.
+• Profil, takvim ve masaüstü görünümünde çok sayıda iyileştirme;
+  uygulama belirgin şekilde hızlandı.
+
+--------------------------------------------------------------------
+UZUN (istersen buradan kısaltarak kullan):
+
+YENİ ÖZELLİKLER
+• Sesli/görüntülü arama (kendi TURN sunucumuz; içerik kaydedilmiyor).
+  Ayarlar > Gizlilik'ten kişi başına açıp kapatabilirsin, varsayılan kapalı.
+• Arama kalite turu: zil sesi + titreşim, yankı/gürültü engelleme,
+  bağlanma süresi kısaldı, çalarken avatarda nabız halkaları.
+• Mesajlara emoji tepkisi (çift dokunuş = kalp, basılı tutunca seçici).
+• Hareketli emoji seti (Noto Animated Emoji) — tepki verilen her yerde.
+• Oyuncu/kişi sayfalarına da emoji tepkisi eklendi.
+• Puan dağılımı grafiği: puan rozetine dokun, kim kaç yıldız vermiş gör.
+• Profilde favori oyuncular artık kapak şeridi olarak görünüyor.
+• Webde Google ile giriş.
+• Bölümlere puan verme, kullanıcı başına arama tercihleri.
+
+DÜZELTMELER
+• Profilde "İzliyorum"dan yanlış dizinin düşmüş görünmesi düzeltildi.
+• Uzun çevirilerde taşan yazılar (tema seçici, profil sekmeleri vb.).
+• Eksik çeviriler tamamlandı; 116 ülke adı 45 dile çevrildi.
+• Giriş sırasında "çok fazla istek" hatasına yol açan sorun giderildi.
+
+PERFORMANS VE ALTYAPI (kullanıcıya yansıyan tarafı)
+• Sunucu 4 işçiyle çalışıyor: uygulama daha hızlı yanıt veriyor.
+• Fotoğraf ve videolar artık doğrudan web sunucusundan geliyor.
+• Veritabanı ayarları büyütüldü; listeler daha çabuk açılıyor.
+• Beklenmedik hatalarda sunucu artık kendini toparlıyor, dağıtım
+  sırasında gönderdiğin mesaj/yorum yarıda kesilmiyor.
