@@ -1,6 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (c) — ALTYAPI B1+B2+C1: API ÇÖKME KALKANI + ZARİF KAPANMA + BAĞLAMLI LOG 🚀
+**CANLIDA** (ajan yazdı-testledi, ana oturum doğrulayıp dağıttı). Backend-yalnız;
+app sürümü değişmedi. İskelet önceki oturumdan vardı (gunluk.js + yakalayıcılar);
+bu turda PROVA yapılırken 3 gerçek hata bulundu ve kapatıldı:
+1. **C1:** durum kodu `kod` adıyla loglanınca gizli-alan süzgeci "[gizli]"
+   basıyordu → `durum` adına çevrildi (2 logYaz çağrısı), ad tuzağı testli.
+2. **B2:** tek seferlik `closeIdleConnections` nginx keep-alive'ı kaçırıyordu →
+   `server.close` geri çağrısı gelmiyor, `havuz.end` HİÇ çalışmıyordu (her
+   dağıtım zaman aşımına sarkardı). → kapanana dek 500 ms'lik periyodik süpürge.
+3. **B2:** compose'ta `stop_grace_period` yoktu (10 sn varsayılan) ama kapanma
+   payı 15 sn → SIGKILL ortada basardı. → api'ye `stop_grace_period: 30s`;
+   `kapanma.test.js` iki değeri birbirine kilitler.
+Yeni: `backend/test/kapanma.test.js` (9 test; 1'i GERÇEK entegrasyon — ayrı
+süreç, gerçek SIGTERM, kimlik zinciri X-Istek-Kimlik↔gövde↔log) +
+`gunluk.test.js`e 2 test + package.json'a `npm test` script'i.
+**npm test 489/489** · node --check temiz.
+DAĞITIM: server.js+gunluk.js+package.json+docker-compose.yml scp →
+`up -d --build api` (compose diff önce kontrol edildi, tek fark bizim ekleme).
+Doğrulama: saglik 200 · `StopTimeout=30` + log sınırı inspect'te · kontrollü
+restart'ta CANLI kanıt: `kapanma_basladi` → `kapanma_bitti` (SIGTERM, 10 ms,
+zaman aşımsız temiz çıkış). yapilacaklar2'de B1/B2/C1 kapatıldı.
+
 ## 2026-08-12 (b) — MD. 46 ÇEVİRİ TAŞMALARI 🚀 (1.34.1+80) + ALTYAPI C2/C3 ✅
 **Webde CANLIDA** (ajan yaptı, ana oturum doğrulayıp dağıttı). İstemci-yalnız.
 Güncel paketler: `projeler/dizijpg.apk` + `projeler/dizijpg-1.34.1+80.aab`

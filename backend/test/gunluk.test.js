@@ -359,7 +359,48 @@ test('olumcul() — seviye olumcul, süzülmüş ve geçerli JSON', () => {
 });
 
 // ===========================================================================
-// 12. KONTEYNER / SAFLIK TUZAĞI (yasak.test.js disipliniyle)
+// 12. C1 — HATA SATIRI ALAN SETİ
+// ===========================================================================
+// server.js'in son durak yakalayıcısı ve `sarici` tam bu çağrı biçimini
+// kullanır. Alanlardan biri düşerse (ya da süzgece takılıp "[gizli]" olursa)
+// 500 teşhisi yine körleşir — set burada kilitlenir.
+test('C1 alan seti: zaman/seviye/olay/istek/yol/metot/kullanici/durum/hata tam', () => {
+  const err = new Error('patladı');
+  const kayit = JSON.parse(satir(kayitYap({
+    olay: 'son_durak_hatasi',
+    req: {
+      istekId: 'abc12345',
+      path: '/icerik/123/yorumlar',
+      method: 'POST',
+      kullanici: { id: 42 },
+    },
+    durum: 500,
+    hata: err,
+  })));
+  assert.match(kayit.ts, /^\d{4}-\d{2}-\d{2}T/, 'ISO zaman damgası yok');
+  assert.equal(kayit.seviye, 'hata');
+  assert.equal(kayit.olay, 'son_durak_hatasi');
+  assert.equal(kayit.istek, 'abc12345');
+  assert.equal(kayit.yol, '/icerik/123/yorumlar');
+  assert.equal(kayit.metot, 'POST');
+  assert.equal(kayit.kullanici, 42);
+  assert.equal(kayit.durum, 500, 'durum kodu düşmüş ya da süzgece takılmış');
+  assert.equal(kayit.hata.ad, 'Error');
+  assert.equal(kayit.hata.mesaj, 'patladı');
+  assert.ok(Array.isArray(kayit.hata.yigin) && kayit.hata.yigin.length > 0, 'yığın izi yok');
+});
+
+test('C1 ad tuzağı: `kod` alanı [gizli]lenir, `durum` geçer — çağrı yerleri durum kullanmalı', () => {
+  // `kod` GIZLI_TAM listesinde (doğrulama kodu varsayımı). HTTP durum kodunu
+  // `kod` adıyla loglayan çağrı "[gizli]" basar ve kimse fark etmez —
+  // yaşandı. kapanma.test.js server.js'teki çağrıları ayrıca tarar.
+  const kayit = JSON.parse(satir(kayitYap({ olay: 'x', kod: 500, durum: 500 })));
+  assert.equal(kayit.kod, '[gizli]', '`kod` artık süzülmüyorsa GIZLI_TAM değişmiş — doğrulama kodları sızar');
+  assert.equal(kayit.durum, 500, '`durum` süzgece takılıyor — durum kodu loglanamaz olur');
+});
+
+// ===========================================================================
+// 13. KONTEYNER / SAFLIK TUZAĞI (yasak.test.js disipliniyle)
 // ===========================================================================
 test('gunluk.js Dockerfile COPY listesinde (yoksa konteyner hiç açılmaz)', () => {
   const dockerfile = fs.readFileSync(path.join(KOK, 'Dockerfile'), 'utf8');

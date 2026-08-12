@@ -959,7 +959,10 @@ const sarici = (fn) => (req, res) =>
     // 4xx BEKLENEN akıştır (geçersiz girdi, yetkisiz): yığın izi basmak
     // logu gürültüye boğar ve gerçek 500'leri görünmez kılar. Yalnız 5xx
     // tam bağlamla loglanır.
-    if (kod >= 500) logYaz({ olay: 'uc_hatasi', req, kod, hata: e });
+    // Alan adı `durum` (kod DEĞİL): `kod` gunluk.js'in hassas-anahtar
+    // listesinde (doğrulama kodu diye) ve değeri "[gizli]"ye çevrilir —
+    // yani durum kodu loga hiç düşmezdi.
+    if (kod >= 500) logYaz({ olay: 'uc_hatasi', req, durum: kod, hata: e });
     res.status(kod).json({
       hata: e.status ? e.message : 'Sunucu hatası',
       // İstek kimliği yanıta da konur: kullanıcı ekran görüntüsü gönderince
@@ -8352,7 +8355,8 @@ app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
 // İSTEMCİYE GİDEN GÖVDE DEĞİŞMEDİ — yığın izi hâlâ dışarı çıkmıyor.
 app.use((err, req, res, _next) => {
   const kod = err.status || err.statusCode || 500;
-  if (kod >= 500) logYaz({ olay: 'son_durak_hatasi', req, kod, hata: err });
+  // Alan adı `durum`: `kod` gunluk.js süzgecine takılıp "[gizli]" olur (bkz. sarici).
+  if (kod >= 500) logYaz({ olay: 'son_durak_hatasi', req, durum: kod, hata: err });
   res.status(kod).json({
     hata: kod === 404 ? 'Bulunamadı'
         : err.type === 'entity.too.large' ? 'Dosya çok büyük'
@@ -8450,8 +8454,18 @@ async function kapan(sebep, cikisKodu = 0) {
   // kadar (15 sn) beklerdi — yani "zarif kapanma" pratikte "yavaş kapanma"
   // olurdu. `closeIdleConnections` yalnız BOŞTAKİLERİ keser; istek işleyen
   // bağlantıya dokunmaz.
+  //
+  // VE TEK SÜPÜRME YETMEZ: o an istek işleyen bir bağlantı (ör. nginx'in
+  // upstream keep-alive'ı) yanıtını verdiği anda BOŞTA kalır ama ilk
+  // süpürmeyi çoktan kaçırmıştır — `close()` geri çağrısı hiç gelmez,
+  // kapanma her seferinde zaman aşımına sarkar ve `havuz.end()` HİÇ çalışmaz
+  // (prova: 5 sn'lik istek bitti, süreç yine tam 8 sn bekleyip zorla çıktı).
+  // Boştakiler kapanış bitene dek yarım saniyede bir süpürülür.
   sunucu.closeIdleConnections?.();
+  const supurge = setInterval(() => sunucu.closeIdleConnections?.(), 500);
+  supurge.unref?.();
   await kapandi;
+  clearInterval(supurge);
 
   const aramaSayi = await aramalariKapat().catch(() => -1);
   await havuz.end().catch(() => {});
