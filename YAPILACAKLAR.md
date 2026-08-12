@@ -1,6 +1,71 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-12 (g) — HAREKETLİ TEPKİ EMOJİLERİ + KİŞİYE TEPKİ 🚀 (1.36.0+82)
+Kullanıcı isteği: "emoji kütüphanesi olarak hareketli emojileri kullan" +
+"oyuncuları falan da unutma, puan gibi emoji verilen her yerde".
+
+### Set seçimi: Noto Animated Emoji (CC BY 4.0), Lottie
+Aynı setin animasyonlu **WebP'si emoji başına 443 KB** (8 emoji = 3,5 MB) ve
+mount edilir edilmez sonsuz döner — oynatma denetlenemez. **Lottie 19-120 KB**
+(8 emoji ≈ 466 KB), VEKTÖR (20 dp çipte de tam ekranda da keskin) ve
+denetlenebilir. `lottie: ^3.5.1` eklendi; web derlemesi doğrulandı (varlıklar
+472 KB olarak paketleniyor — file_picker dersi: yeni paket ÖNCE web'de denendi).
+Lisans atfı `main.dart`ta `LicenseRegistry` ile (Flutter'ın lisans sayfasında
+görünür) — CC BY atıf ŞART koşuyor.
+
+### Oynatma kuralı (performans + rahatsız etmeme)
+Varsayılan DURAĞAN (ilk kare) · SEÇİLİ olan döner · dokununca bir kez oynar
+(seçme ve seçimi kaldırma, ikisi de) · hareket azaltma açıksa HİÇ oynamaz.
+8 animasyonun aynı anda dönmesi hem görsel gürültü hem boş CPU olurdu.
+DB YİNE EMOJİ KARAKTERİ saklar; kod noktası eşlemesi yalnız görünüm katmanında
+(`_tepkiDosyalari`) — set değişimi şema değişikliği gerektirmesin.
+
+### Kişi (oyuncu) tepkisi
+`kisi.dart`a `TepkiSatiri(tur: 'person')` eklendi (puan düğmesinin altında —
+ikisi de "senin girdin" kuşağı). Sunucu tarafı `tepkiler` CHECK'i yalnız
+('tv','movie') kabul ediyordu → migrasyon + doğrulama genişletildi (ajan).
+
+### KAPSAM DIŞI (bilinçli)
+Yorum kutusunun üstündeki hızlı emoji satırı (`SikEmojiler`, kesfet_akis.dart)
+DOKUNULMADI: oradaki emojiler yoruma METİN olarak ekleniyor ve kullanıcının
+geçmişinden gelen HERHANGİ bir emoji olabiliyor (8'lik sabit set değil).
+Animasyona çevirmek ~1000 varlık paketlemek ya da CDN'e bağımlı olmak demekti.
+
+### Kanıt
+`test/hareketli_tepki_test.dart` (7 test) — 8 varlığın varlığı + GEÇERLİ Lottie
+olduğu (bozuk/HTML indirilmişse yakalar), ölü OpenMoji SVG'lerinin silindiği,
+satırın 8'ini de hareketli çizdiği, YALNIZ seçilinin döndüğü, bilinmeyen
+emojinin sistem fontuna düştüğü, kişi tepkisinin `person` turuyla istendiği.
+**Test İKİ GERÇEK HATA yakaladı:** (1) `MediaQuery` geri çağrılardan
+okunuyordu → "deactivated widget's ancestor" (didChangeDependencies'te
+önbelleklendi); (2) `late final` denetleyici sistem-fontu yolunda hiç
+kurulmuyor, İLK ERİŞİM `dispose()` oluyordu → ölmekte olan elemanda ticker
+kurulumu (initState'e alındı).
+`flutter test` **1044 yeşil** · analyze 0 hata/uyarı (85 info, taban) ·
+backend `npm test` **540 yeşil** (15 yeni).
+
+### Backend (ajan): tepkilere `person`
+`migrasyon-2026-08-12.sql` — `tepkiler_tur_check` → ('tv','movie','person');
+ayrıca tepkiler'de HİÇ OLMAYAN bölüm kısıtları eklendi (`bolum_ciftli`,
+`bolum_yalniz_tv`, `bolum_pozitif`) — kural şimdiye dek yalnız `tepkiHedef`
+kodunda duruyordu. Bölüm kısıtları **NOT VALID** eklenip DO bloğunda temizse
+VALIDATE ediliyor: canlıda elle atılmış tuhaf bir satır varsa dağıtım
+PATLAMASIN, yeni satırlar yine korunsun. Ajan migrasyonu gerçek PostgreSQL'de
+(geçici DB) iki kez çalıştırıp idempotent olduğunu kanıtladı.
+`tepkiHedef` artık `puanHedef` ile aynı sözleşme; kişi/filme sezon gelirse 400
+(eskiden filme sezon yazılabiliyordu — sessiz veri hatası kapandı).
+CANLI KANIT: `GET /tepkiler/person/287` 200 · `?sezon=1&bolum=1` **400** ·
+`GET /tepkiler/tv/1396` 200 · migrasyon çıktısı "person eklendi, bolum
+kisitlari VALIDATE edildi".
+
+### Dağıtım kanıtı
+Sıra: migrasyon → server.js+sema.sql → web (ters sıra 23514 verirdi).
+version.json 1.36.0+82 · site/paket/robots 200 · emoji varlığı
+(`/assets/assets/tepkiler/1f60d.json`) 200 · bootstrap
+`main.72a322922b12.dart.js` (eski 9326b4743d8e silindi) · SW sökücü yerinde.
+Paketler: `projeler/dizijpg.apk` + `projeler/dizijpg-1.36.0+82.aab`.
+
 ## 2026-08-12 (f) — MD. 17 PUAN DAĞILIMI (IMDb tarzı) 🚀 (1.35.0+81)
 **Webde CANLIDA.** Sunucu + istemci; migrasyon YOK (veri zaten `puanlar`da).
 

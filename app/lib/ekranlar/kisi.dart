@@ -9,6 +9,7 @@ import '../tema.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
 import 'puan_sheet.dart';
+import 'tepki.dart';
 import 'yorumlar.dart';
 
 class KisiEkrani extends StatefulWidget {
@@ -267,6 +268,13 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                 ],
                               ],
                             ),
+                            // Tepki satırı (12 Ağu): kullanıcı "oyuncuları da
+                            // unutma, puan gibi emoji verilen her yerde" dedi.
+                            // Puan düğmesinin hemen altında — ikisi de "senin
+                            // girdin" kuşağı. Sunucu tarafı `tur='person'`
+                            // kabul eder (migrasyon-2026-08-12).
+                            const SizedBox(height: 10),
+                            TepkiSatiri(tur: 'person', tmdbId: widget.kisiId),
                             // İSTEK: "puanla yazısının ALTINDA 10/20 gibi".
                             // Oturumsuzda ve oran gelmeden hiç çizilmez.
                             if (_izlenme != null && _izlenme!.$2 > 0)

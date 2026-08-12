@@ -72,6 +72,18 @@ Future<void> main() async {
     // Web'de #'sız temiz URL; F5 aynı sayfayı açar (nginx try_files ile).
     usePathUrlStrategy();
     WidgetsFlutterBinding.ensureInitialized();
+    // Tepki emojileri Noto Animated Emoji (CC BY 4.0) — lisans ATIF ŞART
+    // koşuyor. Flutter'ın yerleşik lisans sayfasına eklenir (showLicensePage).
+    LicenseRegistry.addLicense(() async* {
+      yield const LicenseEntryWithLineBreaks(
+        ['Noto Animated Emoji'],
+        'Tepki animasyonları (assets/tepkiler/*.json): Noto Animated Emoji, '
+        'Google. Creative Commons Attribution 4.0 International '
+        '(CC BY 4.0) altında kullanılmıştır.\n'
+        'https://googlefonts.github.io/noto-emoji-animation/\n'
+        'https://creativecommons.org/licenses/by/4.0/',
+      );
+    });
     // Firebase çekirdeği + arka plan mesaj işleyicisi
     await acilisAdimi('push', pushCekirdek);
     await acilisAdimi('ceviri', Ceviri.yukle);

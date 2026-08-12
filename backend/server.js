@@ -3662,13 +3662,27 @@ app.post('/geri-bildirim', girisZorunlu, geriBildirimLimiti, sarici(async (req, 
 const TEPKI_EMOJILERI = ['😄', '😢', '😮', '🥱', '😭', '😂', '😱', '😍'];
 
 // Hedef doğrulama: tur/tmdb_id zorunlu; sezon+bolum ya ikisi birden ya hiç.
+//
+// 12 Ağu 2026 — 'person' (oyuncu/yönetmen) eklendi: "puan gibi emoji verilen
+// her yer" kişiyi de kapsıyor (`puanlar`/`yorumlar`/`favoriler` zaten
+// kabul ediyordu). Tür listesi BİLEREK bu fonksiyona ÖZELDİR: /durum,
+// /kaynak, /izleme/* gibi uçların kendi ['tv','movie'] listeleri vardır ve
+// kişiyi kabul ETMEMELİDİR (kişi izlenmez, kişinin platformu olmaz).
+//
+// Bölüm hedefi artık `puanHedef` ile BİREBİR aynı: sezon YALNIZ dizide olur.
+// Film/kişi için sezon gelirse SESSİZCE YOK SAYILMAZ, hedef null döner ve uç
+// 400 verir — sessiz yok sayma, kullanıcının bölüm tepkisini dizi geneline
+// yazıp yanlış sayacı doğru sanmasına yol açardı.
 function tepkiHedef(govde) {
   const { tmdb_id, tur } = govde || {};
   let { sezon = null, bolum = null } = govde || {};
-  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
+  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
   if ((sezon == null) !== (bolum == null)) return null;
-  if (sezon != null && (!Number.isInteger(sezon) || !Number.isInteger(bolum)
-      || sezon < 0 || bolum < 0)) return null;
+  if (sezon != null) {
+    if (tur !== 'tv') return null;
+    if (!Number.isInteger(sezon) || !Number.isInteger(bolum)
+        || sezon < 0 || bolum < 0) return null;
+  }
   return { tur, tmdb_id, sezon, bolum };
 }
 

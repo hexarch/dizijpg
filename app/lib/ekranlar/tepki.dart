@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
@@ -7,20 +8,165 @@ import '../tema.dart';
 import 'giris_istem.dart';
 
 /// Sunucudaki CHECK ile aynı sırada: bayılmış, gülmüş, şaşırmış, üzgün,
-/// korkmuş, sıkılmış, ağlamış, mutlu — dizi/film tepkileri.
+/// korkmuş, sıkılmış, ağlamış, mutlu — dizi/film/kişi tepkileri.
 const tepkiEmojileri = ['😍', '😂', '😮', '😢', '😱', '🥱', '😭', '😄'];
 
-/// Tepki emojisini RENKLİ çizer (sistem emoji fontu; karanlık temada canlı durur).
-class TepkiIkonu extends StatelessWidget {
+/// Emoji karakteri → Noto Animated Emoji dosya adı (Unicode kod noktası).
+///
+/// VERİTABANI YİNE EMOJİ KARAKTERİ SAKLAR (sunucudaki CHECK listesi aynı) —
+/// bu harita yalnız GÖRÜNÜM katmanıdır. Kod noktası tabloya girseydi görsel
+/// setini değiştirmek şema değişikliği gerektirirdi.
+const _tepkiDosyalari = {
+  '😄': '1f604',
+  '😢': '1f622',
+  '😮': '1f62e',
+  '🥱': '1f971',
+  '😭': '1f62d',
+  '😂': '1f602',
+  '😱': '1f631',
+  '😍': '1f60d',
+};
+
+/// Tepki emojisini HAREKETLİ çizer (Noto Animated Emoji, CC BY 4.0 — Lottie).
+///
+/// Kullanıcı isteği (12 Ağu): "emoji kütüphanesi olarak hareketli emojileri
+/// kullan... puan gibi emoji verilen her yerde".
+///
+/// NEDEN LOTTIE, NEDEN WEBP DEĞİL: aynı setin animasyonlu WebP'si emoji başına
+/// 443 KB (8 emoji = 3,5 MB); Lottie 19-120 KB ve VEKTÖR — 20 dp çipte de tam
+/// ekranda da keskin. Ayrıca oynatma DENETLENEBİLİR; WebP mount edilir edilmez
+/// sonsuz döner, 8 tanesi listede sürekli boyanırdı.
+///
+/// OYNATMA KURALI (performans + rahatsız etmeme):
+///  * Varsayılan DURAĞAN (ilk kare) — 8 emoji aynı anda dönmez.
+///  * SEÇİLİ olan döner: kendi tepkin canlı durur.
+///  * Dokununca bir kez oynar (seçme anının ödülü).
+///  * Hareket azaltma açıksa HİÇ oynamaz (yalnız ilk kare).
+/// Dosya bulunamazsa sistem emoji fontuna düşer — tepki satırı kaybolmaz.
+class TepkiIkonu extends StatefulWidget {
   final String emoji;
   final double boyut;
-  final Color? renk; // artık kullanılmıyor (emoji kendi renginde) — uyumluluk
 
-  const TepkiIkonu(this.emoji, {super.key, this.boyut = 20, this.renk});
+  /// Sürekli oynasın mı (kullanıcının SEÇİLİ tepkisi).
+  final bool oynat;
+
+  /// Bir kez oynatmak için artırılan sayaç: değeri her değiştiğinde animasyon
+  /// baştan çalar. (Fonksiyon geri çağırmak yerine sayaç: widget yeniden
+  /// kurulmadan da tetiklenebilsin.)
+  final int vurus;
+
+  const TepkiIkonu(
+    this.emoji, {
+    super.key,
+    this.boyut = 20,
+    this.oynat = false,
+    this.vurus = 0,
+  });
+
+  @override
+  State<TepkiIkonu> createState() => _TepkiIkonuState();
+}
+
+class _TepkiIkonuState extends State<TepkiIkonu>
+    with SingleTickerProviderStateMixin {
+  /// `late final ... = AnimationController(...)` KULLANMA: sistem fontuna
+  /// düşen (animasyonsuz) durumda build denetleyiciye hiç dokunmaz, ilk erişim
+  /// `dispose()` olur ve denetleyici ÖLMEKTE OLAN elemanda kurulmaya çalışır —
+  /// ticker TickerMode'u arar, "deactivated widget's ancestor" patlar
+  /// (test/hareketli_tepki_test.dart bunu yakaladı).
+  late final AnimationController _denetci;
+  bool _yuklenemedi = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _denetci = AnimationController(vsync: this);
+  }
+
+  /// "Hareketi azalt" tercihi ÖNBELLEKLENİR, geri çağrılardan okunmaz:
+  /// `onLoaded` animasyon yüklendiğinde (widget çoktan ağaçtan düşmüş
+  /// olabilir) çalışıyor ve orada MediaQuery aramak "deactivated widget's
+  /// ancestor" hatası veriyor — testte yakalandı.
+  bool _hareketKapali = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final yeni = MediaQuery.disableAnimationsOf(context);
+    if (yeni != _hareketKapali) {
+      _hareketKapali = yeni;
+      _akisiAyarla();
+    }
+  }
+
+  @override
+  void didUpdateWidget(TepkiIkonu eski) {
+    super.didUpdateWidget(eski);
+    if (widget.vurus != eski.vurus) _tekSeferOynat();
+    if (widget.oynat != eski.oynat) _akisiAyarla();
+  }
+
+  void _akisiAyarla() {
+    if (!mounted) return;
+    if (widget.oynat && !_hareketKapali) {
+      _denetci.repeat();
+    } else {
+      _denetci
+        ..stop()
+        ..value = 0; // durağan hâl = ilk kare
+    }
+  }
+
+  void _tekSeferOynat() {
+    if (!mounted || _hareketKapali) return;
+    _denetci
+      ..reset()
+      ..forward();
+  }
+
+  @override
+  void dispose() {
+    _denetci.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Text(emoji, style: TextStyle(fontSize: boyut, height: 1.1));
+    final dosya = _tepkiDosyalari[widget.emoji];
+    if (dosya == null || _yuklenemedi) {
+      // Bilinmeyen emoji (sunucu listesi genişlemiş olabilir) ya da bozuk
+      // varlık: sessizce sistem fontuna düş.
+      return Text(
+        widget.emoji,
+        style: TextStyle(fontSize: widget.boyut, height: 1.1),
+      );
+    }
+    return SizedBox(
+      width: widget.boyut * 1.25,
+      height: widget.boyut * 1.25,
+      child: Lottie.asset(
+        'assets/tepkiler/$dosya.json',
+        controller: _denetci,
+        fit: BoxFit.contain,
+        // Ekran okuyucuya "😍" diye okutmak anlamsız; etiketi satır veriyor.
+        addRepaintBoundary: true,
+        onLoaded: (kompozisyon) {
+          if (!mounted) return;
+          _denetci.duration = kompozisyon.duration;
+          _akisiAyarla();
+        },
+        errorBuilder: (_, _, _) {
+          // build sırasında setState yasak — kareden sonra düş.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _yuklenemedi = true);
+          });
+          return Text(
+            widget.emoji,
+            style: TextStyle(fontSize: widget.boyut, height: 1.1),
+          );
+        },
+      ),
+    );
   }
 }
 
@@ -47,6 +193,11 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
   Map<String, int> _sayilar = {};
   String? _benim;
   bool _isleniyor = false;
+
+  /// Emoji başına "bir kez oynat" sayacı: dokunulan emoji animasyonunu baştan
+  /// çalsın diye artırılır (seçmek de, seçimi kaldırmak da oynatır — dokunuşun
+  /// karşılığı her iki yönde de görünür olsun).
+  final Map<String, int> _vuruslar = {};
 
   String get _sorgu => widget.sezon != null
       ? '?sezon=${widget.sezon}&bolum=${widget.bolum}'
@@ -82,7 +233,10 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
     // almak yerine hiç başlamayız; kullanıcı doğrudan giriş istemini görür.
     if (!girisGerekli(context)) return;
     if (_isleniyor) return;
-    setState(() => _isleniyor = true);
+    setState(() {
+      _isleniyor = true;
+      _vuruslar[emoji] = (_vuruslar[emoji] ?? 0) + 1;
+    });
     final yeni = _benim == emoji ? null : emoji;
     // İyimser güncelleme
     setState(() {
@@ -138,7 +292,14 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  TepkiIkonu(e, boyut: 20),
+                  TepkiIkonu(
+                    e,
+                    boyut: 20,
+                    // Kendi tepkin sürekli döner; ötekiler durağan (8 emoji
+                    // aynı anda oynasa hem gürültü hem boş CPU olurdu).
+                    oynat: _benim == e,
+                    vurus: _vuruslar[e] ?? 0,
+                  ),
                   if ((_sayilar[e] ?? 0) > 0) ...[
                     const SizedBox(width: 5),
                     Text(

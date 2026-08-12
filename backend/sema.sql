@@ -159,17 +159,25 @@ CREATE INDEX IF NOT EXISTS idx_puan_icerik ON puanlar(tur, tmdb_id);
 CREATE INDEX IF NOT EXISTS idx_onbellek_zaman ON tmdb_onbellek(guncelleme);
 -- 2026-07-21: emoji tepkileri + "nereden izledin" platform kaydı
 
--- Emoji tepkisi: dizi/film geneli (sezon/bolum NULL) veya tek bölüm.
+-- Emoji tepkisi: dizi/film/kişi geneli (sezon/bolum NULL) veya tek bölüm.
 -- Kullanıcı başına hedef başına tek tepki.
+-- person = oyuncu/yönetmen tepkisi (12 Ağu 2026, migrasyon-2026-08-12.sql):
+-- `puanlar`/`yorumlar`/`favoriler` 'person'ı zaten kabul ediyordu, tepkiler
+-- tek başına ('tv','movie') kalmıştı. Bölüm kısıtları da `puanlar` ile aynı
+-- kalıba getirildi: kişinin ve filmin bölümü YOKTUR.
 CREATE TABLE IF NOT EXISTS tepkiler (
   id SERIAL PRIMARY KEY,
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
   tmdb_id INT NOT NULL,
   sezon INT,
   bolum INT,
   emoji TEXT NOT NULL CHECK (emoji IN ('😄','😢','😮','🥱','😭','😂','😱','😍')),
-  tarih TIMESTAMPTZ DEFAULT now()
+  tarih TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT tepkiler_bolum_ciftli CHECK ((sezon IS NULL) = (bolum IS NULL)),
+  CONSTRAINT tepkiler_bolum_yalniz_tv CHECK (sezon IS NULL OR tur = 'tv'),
+  CONSTRAINT tepkiler_bolum_pozitif
+    CHECK (sezon IS NULL OR (sezon >= 0 AND bolum >= 0))
 );
 CREATE UNIQUE INDEX IF NOT EXISTS tepkiler_tekil
   ON tepkiler (kullanici_id, tur, tmdb_id, COALESCE(sezon,-1), COALESCE(bolum,-1));
