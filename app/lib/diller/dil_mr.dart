@@ -181,7 +181,7 @@ const Map<String, String> cevirilerMr = {
   'Mesajını yaz...': 'संदेश लिही...',
   'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.':
       'अजून चॅट नाहीत.\nप्रोफाइलवर जाऊन संदेश पाठव.',
-  'Şifreni mi unuttun?': 'पासवर्ड विसरलास?',
+  'Şifreni mi unuttun?': 'पासवर्ड आठवत नाही?',
   'Şifreyi Sıfırla': 'पासवर्ड रीसेट करा',
   'E-postadaki kod': 'ईमेलमधील कोड',
   'Yeni şifre': 'नवा पासवर्ड',
@@ -414,7 +414,7 @@ const Map<String, String> cevirilerMr = {
   'Bu kullanıcı henüz bir şey izlememiş.':
       'या वापरकर्त्याने अद्याप काहीही पाहिलेले नाही.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'हा वापरकर्ता आपल्या कमेंट खाजगी ठेवणे पसंत करतो.',
+      'या वापरकर्त्याच्या कमेंट खाजगी आहेत.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'डेटा: JustWatch',
   'Web Sitesi': 'वेबसाइट',
@@ -683,7 +683,7 @@ const Map<String, String> cevirilerMr = {
       'थेट कनेक्शन शक्य नसल्यास ऑडिओ आणि व्हिडिओ एन्क्रिप्टेड स्वरूपात रिले सर्व्हरमधून (TURN) जातात. रिले सर्व्हरही मजकूर डिक्रिप्ट किंवा रेकॉर्ड करू शकत नाही.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'मायक्रोफोन फक्त व्हॉइस किंवा व्हिडिओ कॉलदरम्यान आणि कॅमेरा फक्त व्हिडिओ कॉलदरम्यान वापरला जातो. कॉल संपल्यावर दोन्ही बंद होतात.',
-  'Takip ettiğin {} kişi izledi': 'तू फॉलो करतोस त्यांपैकी {} जणांनी पाहिले',
+  'Takip ettiğin {} kişi izledi': 'तू फॉलो करत असलेल्यांपैकी {} जणांनी पाहिले',
   'Yorum yaz...': 'टिप्पणी लिही...',
   'Sıradaki bölüm': 'पुढील एपिसोड',
   'Doğrulanmış testçi': 'सत्यापित परीक्षक',
@@ -710,4 +710,8 @@ const Map<String, String> cevirilerMr = {
   'Misafir hesaplar aranamaz': 'अतिथी खात्यांना कॉल करता येत नाही',
   'Puan dağılımı': 'रेटिंग वितरण',
   '{} yıldız': '{} स्टार',
+  'Yakında gelecek': 'लवकरच येत आहे',
+  '{} {} yayınlandı': '{} {} प्रदर्शित झाला',
+  'Yeni bölüm yayınlandı': 'नवीन एपिसोड प्रदर्शित झाला',
+  'Yeni bölümler': 'नवीन एपिसोड',
 };

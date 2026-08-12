@@ -47,7 +47,7 @@ const Map<String, String> cevirilerUr = {
   'Kaydet': 'محفوظ کریں',
   'Kendinden bahset...': 'اپنے بارے میں بتائیں...',
   'Keşfet': 'دریافت',
-  'Kimseyi takip etmiyor': 'کسی کو فالو نہیں کرتے',
+  'Kimseyi takip etmiyor': 'کسی کو فالو نہیں',
   'Kişi ara': 'شخصیت تلاش کریں',
   'Kişi yorumu': 'شخصیت پر تبصرہ',
   'Konuk Oyuncular': 'مہمان اداکار',
@@ -165,7 +165,7 @@ const Map<String, String> cevirilerUr = {
   'Listeleri ({})': 'ان کی فہرستیں ({})',
   'Liste boş.': 'یہ فہرست خالی ہے۔',
   'Yanıtla': 'جواب دیں',
-  '@{} kullanıcısına yanıt veriyorsun': '@{} کو جواب دے رہے ہیں',
+  '@{} kullanıcısına yanıt veriyorsun': '@{} کو جواب',
   'İzlediğim Diziler ({})': 'میرے دیکھے شوز ({})',
   'İzlediğim Filmler ({})': 'میری دیکھی فلمیں ({})',
   'Tümünü gör': 'سب دیکھیں',
@@ -181,7 +181,7 @@ const Map<String, String> cevirilerUr = {
   'Mesajını yaz...': 'پیغام لکھیں...',
   'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.':
       'ابھی کوئی چیٹ نہیں۔\nکسی پروفائل پر جا کر پیغام بھیجیں۔',
-  'Şifreni mi unuttun?': 'پاس ورڈ بھول گئے؟',
+  'Şifreni mi unuttun?': 'پاس ورڈ یاد نہیں؟',
   'Şifreyi Sıfırla': 'پاس ورڈ ری سیٹ کریں',
   'E-postadaki kod': 'ای میل والا کوڈ',
   'Yeni şifre': 'نیا پاس ورڈ',
@@ -218,7 +218,7 @@ const Map<String, String> cevirilerUr = {
   '50 Dizi Bitirdin': '50 شوز مکمل',
   '10 Beğeni': '10 لائیکس',
   '100 Beğeni': '100 لائیکس',
-  'yazıyor...': 'لکھ رہے ہیں...',
+  'yazıyor...': 'لکھا جا رہا ہے...',
   'Profil düzeni': 'پروفائل ترتیب',
   'Konumla ve kırp': 'پوزیشن سیٹ کریں اور کراپ کریں',
   'Listeye eklendi': 'فہرست میں شامل ہو گیا',
@@ -413,7 +413,7 @@ const Map<String, String> cevirilerUr = {
   'Yorumları': 'اس پر تبصرے',
   'Bu kullanıcı henüz bir şey izlememiş.': 'اس صارف نے ابھی تک کچھ نہیں دیکھا۔',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'یہ صارف اپنے تبصرے چھپا کر رکھنا پسند کرتا ہے۔',
+      'اس صارف کے تبصرے چھپے ہوئے ہیں۔',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ڈیٹا: JustWatch',
   'Web Sitesi': 'ویب سائٹ',
@@ -592,7 +592,7 @@ const Map<String, String> cevirilerUr = {
   'Henüz favori oyuncun yok': 'ابھی کوئی پسندیدہ اداکار نہیں',
   'Bir oyuncunun sayfasını aç ve sağ üstteki kalbe dokun; buraya eklensin.':
       'کسی اداکار کا صفحہ کھولیں اور اوپر دائیں دل کو دبائیں؛ یہاں شامل ہو جائے گا۔',
-  '{} yapımdan {} tanesini izledin': '{} میں سے {} دیکھ چکے ہیں',
+  '{} yapımdan {} tanesini izledin': '{} میں سے {} دیکھے',
   'izledin': 'دیکھے',
   'İzlemedin': 'نہیں دیکھا',
   'Yapım bulunamadı': 'کوئی عنوان نہیں ملا',
@@ -686,8 +686,7 @@ const Map<String, String> cevirilerUr = {
       'اگر براہِ راست رابطہ نہ بن سکے تو آڈیو اور ویڈیو خفیہ حالت میں ایک ریلے سرور (TURN) سے گزرتے ہیں۔ ریلے سرور بھی مواد کو ڈی کرپٹ یا ریکارڈ نہیں کر سکتا۔',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'مائیکروفون صرف وائس یا ویڈیو کال کے دوران اور کیمرہ صرف ویڈیو کال کے دوران استعمال ہوتا ہے۔ کال ختم ہوتے ہی دونوں بند ہو جاتے ہیں۔',
-  'Takip ettiğin {} kişi izledi':
-      'آپ جن کو فالو کرتے ہیں ان میں سے {} نے دیکھا',
+  'Takip ettiğin {} kişi izledi': 'آپ کے فالو کیے گئے لوگوں میں سے {} نے دیکھا',
   'Yorum yaz...': 'تبصرہ لکھیں...',
   'Sıradaki bölüm': 'اگلی قسط',
   'Doğrulanmış testçi': 'تصدیق شدہ ٹیسٹر',
@@ -713,4 +712,8 @@ const Map<String, String> cevirilerUr = {
   'Misafir hesaplar aranamaz': 'مہمان اکاؤنٹس کو کال نہیں کی جا سکتی',
   'Puan dağılımı': 'ریٹنگ کی تقسیم',
   '{} yıldız': '{} ستارے',
+  'Yakında gelecek': 'جلد آ رہا ہے',
+  '{} {} yayınlandı': '{} {} آ گئی',
+  'Yeni bölüm yayınlandı': 'نئی قسط آ گئی',
+  'Yeni bölümler': 'نئی قسطیں',
 };

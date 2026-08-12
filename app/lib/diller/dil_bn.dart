@@ -711,4 +711,8 @@ const Map<String, String> cevirilerBn = {
   'Misafir hesaplar aranamaz': 'অতিথি অ্যাকাউন্টে কল করা যায় না',
   'Puan dağılımı': 'রেটিং বণ্টন',
   '{} yıldız': '{}টা তারা',
+  'Yakında gelecek': 'শীঘ্রই আসছে',
+  '{} {} yayınlandı': '{} {} প্রকাশিত হয়েছে',
+  'Yeni bölüm yayınlandı': 'নতুন এপিসোড প্রকাশিত হয়েছে',
+  'Yeni bölümler': 'নতুন এপিসোড',
 };

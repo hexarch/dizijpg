@@ -175,7 +175,7 @@ const Map<String, String> cevirilerFr = {
   'Henüz bildirim yok': 'Pas encore de notifications',
   '@{} yorumuna yanıt verdi': '@{} a répondu à ton commentaire',
   '@{} yorumunu beğendi': '@{} a aimé ton commentaire',
-  '@{} seni takip etti': '@{} t\'a suivi',
+  '@{} seni takip etti': '@{} te suit maintenant',
   '@{} sana mesaj gönderdi': '@{} t\'a envoyé un message',
   'Mesajlar': 'Messages',
   'Mesaj': 'Message',
@@ -237,7 +237,7 @@ const Map<String, String> cevirilerFr = {
   'İzleyenler': 'Spectateurs',
   'Yorumunu yaz... (@ ile etiketle)':
       'Écris ton commentaire... (@ pour identifier)',
-  '@{} bir yorumda seni etiketledi': '@{} t\'a identifié dans un commentaire',
+  '@{} bir yorumda seni etiketledi': 'Mention de @{} dans un commentaire',
   'Mesajı sil': 'Supprimer le message',
   'Mesaj silinemedi': 'Impossible de supprimer le message',
   'Bağlantı geçersiz veya sayfa bulunamadı':
@@ -251,9 +251,9 @@ const Map<String, String> cevirilerFr = {
   'Video': 'Vidéo',
   'İçerik': 'Contenu',
   'çevrimiçi': 'en ligne',
-  'son görülme {} dk önce': 'vu il y a {} min',
-  'son görülme {} saat önce': 'vu il y a {} h',
-  'son görülme {} gün önce': 'vu il y a {} j',
+  'son görülme {} dk önce': 'en ligne il y a {} min',
+  'son görülme {} saat önce': 'en ligne il y a {} h',
+  'son görülme {} gün önce': 'en ligne il y a {} j',
   'Yorumlar yüklenemedi': 'Impossible de charger les commentaires',
   'Favori': 'Favori',
   'Listeye ekle': 'Ajouter à la liste',
@@ -520,9 +520,9 @@ const Map<String, String> cevirilerFr = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Les autres ne verront pas votre statut en ligne ni votre dernière connexion dans les messages',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Un de nos premiers utilisateurs. Ses retours ont aidé cette application à devenir ce que nous avons maintenant.',
+      'Fait partie de nos premiers utilisateurs. Ses retours ont aidé cette application à devenir ce que nous avons maintenant.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Tu es un de nos premiers utilisateurs. Tes retours ont aidé cette application à devenir ce que nous avons maintenant.',
+      'Tu fais partie de nos premiers utilisateurs. Tes retours ont aidé cette application à devenir ce que nous avons maintenant.',
   'İleri': 'Suivant',
   'Seçilen dosya okunamadı': 'Impossible de lire le fichier sélectionné',
   'Video açılamadı': 'Impossible d’ouvrir la vidéo',
@@ -725,4 +725,8 @@ const Map<String, String> cevirilerFr = {
   'Misafir hesaplar aranamaz': 'Impossible d’appeler un compte invité',
   'Puan dağılımı': 'Répartition des notes',
   '{} yıldız': '{} étoiles',
+  'Yakında gelecek': 'Bientôt disponible',
+  '{} {} yayınlandı': '{} {} est disponible',
+  'Yeni bölüm yayınlandı': 'Nouvel épisode disponible',
+  'Yeni bölümler': 'Nouveaux épisodes',
 };

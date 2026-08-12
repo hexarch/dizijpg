@@ -47,7 +47,7 @@ const Map<String, String> cevirilerGu = {
   'Kaydet': 'સેવ કરો',
   'Kendinden bahset...': 'તમારા વિશે જણાવો...',
   'Keşfet': 'ડિસ્કવર',
-  'Kimseyi takip etmiyor': 'કોઈને ફોલો કરતા નથી',
+  'Kimseyi takip etmiyor': 'કોઈને ફોલો કરતાં નથી',
   'Kişi ara': 'વ્યક્તિ શોધો',
   'Kişi yorumu': 'વ્યક્તિ પર કૉમેન્ટ',
   'Konuk Oyuncular': 'મહેમાન કલાકારો',
@@ -165,7 +165,7 @@ const Map<String, String> cevirilerGu = {
   'Listeleri ({})': 'તેમની યાદીઓ ({})',
   'Liste boş.': 'આ યાદી ખાલી છે.',
   'Yanıtla': 'જવાબ આપો',
-  '@{} kullanıcısına yanıt veriyorsun': '@{}ને જવાબ આપી રહ્યા છો',
+  '@{} kullanıcısına yanıt veriyorsun': '@{}ને જવાબ',
   'İzlediğim Diziler ({})': 'મેં જોયેલા શો ({})',
   'İzlediğim Filmler ({})': 'મેં જોયેલી ફિલ્મો ({})',
   'Tümünü gör': 'બધું જુઓ',
@@ -181,7 +181,7 @@ const Map<String, String> cevirilerGu = {
   'Mesajını yaz...': 'સંદેશ લખો...',
   'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.':
       'હજી કોઈ ચેટ નથી.\nપ્રોફાઇલ ખોલી સંદેશ મોકલો.',
-  'Şifreni mi unuttun?': 'પાસવર્ડ ભૂલી ગયા?',
+  'Şifreni mi unuttun?': 'પાસવર્ડ યાદ નથી?',
   'Şifreyi Sıfırla': 'પાસવર્ડ રીસેટ કરો',
   'E-postadaki kod': 'ઈમેલમાંનો કોડ',
   'Yeni şifre': 'નવો પાસવર્ડ',
@@ -218,7 +218,7 @@ const Map<String, String> cevirilerGu = {
   '50 Dizi Bitirdin': '50 શો પૂરા',
   '10 Beğeni': '10 લાઇક',
   '100 Beğeni': '100 લાઇક',
-  'yazıyor...': 'લખી રહ્યા છે...',
+  'yazıyor...': 'લખાઈ રહ્યું છે...',
   'Profil düzeni': 'પ્રોફાઇલ લેઆઉટ',
   'Konumla ve kırp': 'સ્થિતિ ગોઠવો અને કાપો',
   'Listeye eklendi': 'યાદીમાં ઉમેરાયું',
@@ -512,7 +512,7 @@ const Map<String, String> cevirilerGu = {
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
       'અમારા પ્રથમ વપરાશકર્તાઓમાંના એક. તેમના પ્રતિસાદથી એપ આજે છે તેવી બની.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'તું અમારા પ્રથમ વપરાશકર્તાઓમાંનો એક છે. તારા પ્રતિસાદથી એપ આજે છે તેવી બની.',
+      'તું અમારા પ્રથમ વપરાશકર્તાઓમાં છે. તારા પ્રતિસાદથી એપ આજે છે તેવી બની.',
   'İleri': 'આગળ',
   'Seçilen dosya okunamadı': 'પસંદ કરેલી ફાઇલ વાંચી શકાઈ નથી',
   'Video açılamadı': 'વીડિયો ખૂલી શક્યો નથી',
@@ -707,4 +707,8 @@ const Map<String, String> cevirilerGu = {
   'Misafir hesaplar aranamaz': 'મહેમાન ખાતાંને કૉલ કરી શકાતો નથી',
   'Puan dağılımı': 'રેટિંગ વિતરણ',
   '{} yıldız': '{} સ્ટાર',
+  'Yakında gelecek': 'ટૂંક સમયમાં આવી રહ્યું છે',
+  '{} {} yayınlandı': '{} {} રિલીઝ થયો',
+  'Yeni bölüm yayınlandı': 'નવો એપિસોડ રિલીઝ થયો',
+  'Yeni bölümler': 'નવા એપિસોડ',
 };

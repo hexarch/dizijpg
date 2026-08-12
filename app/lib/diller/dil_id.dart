@@ -714,4 +714,8 @@ const Map<String, String> cevirilerId = {
   'Misafir hesaplar aranamaz': 'Akun tamu tidak bisa ditelepon',
   'Puan dağılımı': 'Distribusi rating',
   '{} yıldız': '{} bintang',
+  'Yakında gelecek': 'Segera hadir',
+  '{} {} yayınlandı': '{} {} sudah tayang',
+  'Yeni bölüm yayınlandı': 'Episode baru sudah tayang',
+  'Yeni bölümler': 'Episode baru',
 };

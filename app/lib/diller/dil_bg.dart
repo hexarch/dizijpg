@@ -249,9 +249,9 @@ const Map<String, String> cevirilerBg = {
   'Video': 'Видео',
   'İçerik': 'Съдържание',
   'çevrimiçi': 'на линия',
-  'son görülme {} dk önce': 'видян преди {} мин',
-  'son görülme {} saat önce': 'видян преди {} ч',
-  'son görülme {} gün önce': 'видян преди {} д',
+  'son görülme {} dk önce': 'онлайн преди {} мин',
+  'son görülme {} saat önce': 'онлайн преди {} ч',
+  'son görülme {} gün önce': 'онлайн преди {} д',
   'Yorumlar yüklenemedi': 'Коментарите не можаха да се заредят',
   'Favori': 'Любимо',
   'Listeye ekle': 'Добави в списък',
@@ -268,7 +268,7 @@ const Map<String, String> cevirilerBg = {
   'Abonelik': 'Абонамент',
   'Kirala': 'Наем',
   'Satın al': 'Купуване',
-  'Hoş geldin!': 'Добре дошъл!',
+  'Hoş geldin!': 'Добре дошли!',
   'İzlemek istediğin dizi ve filmleri seç':
       'Избери сериали и филми, които искаш да гледаш',
   'Seçtiklerin "İzleyeceğim" listene eklenir':
@@ -477,8 +477,7 @@ const Map<String, String> cevirilerBg = {
   'Kişilere göndermek için giriş yap': 'Влезте, за да изпратите на хора',
   'Beğenenler': 'Харесвания',
   'Henüz beğeni yok': 'Все още няма харесвания',
-  'Bu gönderiyi ilk beğenen sen ol':
-      'Бъди първият, който харесва тази публикация',
+  'Bu gönderiyi ilk beğenen sen ol': 'Дай първото харесване на тази публикация',
   'Bu gönderiye yanıt': 'Отговор на тази публикация',
   'Spoiler içeren gönderi': 'Публикация със спойлери',
   'Görsel gönderi': 'Публикация със снимка',
@@ -504,7 +503,7 @@ const Map<String, String> cevirilerBg = {
   'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
       'Отговорите, които пишеш на чужди публикации, се виждат само от теб',
   'Profilinde gizlediğin yorumları tekrar göster':
-      'Покажи отново коментарите, които си скрил от профила си',
+      'Покажи отново коментарите, скрити в профила ти',
   'Sıralama': 'Подреждане',
   'Önerilen': 'Препоръчано',
   'Kronolojik': 'Хронологично',
@@ -516,9 +515,9 @@ const Map<String, String> cevirilerBg = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Другите няма да виждат статуса ти онлайн и последното ти влизане в съобщенията',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Един от първите ни потребители. Обратната му връзка помогна на приложението да стане това, което е днес.',
+      'Сред първите ни потребители. Обратната им връзка помогна на приложението да стане това, което е днес.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Ти си един от първите ни потребители. Твоята обратна връзка помогна на приложението да стане това, което е днес.',
+      'Ти си сред първите ни потребители. Твоята обратна връзка помогна на приложението да стане това, което е днес.',
   'İleri': 'Напред',
   'Seçilen dosya okunamadı': 'Избраният файл не можа да бъде прочетен',
   'Video açılamadı': 'Видеото не можа да се отвори',
@@ -715,4 +714,8 @@ const Map<String, String> cevirilerBg = {
   'Misafir hesaplar aranamaz': 'На гостуващи профили не може да се звъни',
   'Puan dağılımı': 'Разпределение на оценките',
   '{} yıldız': '{} звезди',
+  'Yakında gelecek': 'Очаквайте скоро',
+  '{} {} yayınlandı': '{} {} излезе',
+  'Yeni bölüm yayınlandı': 'Излезе нов епизод',
+  'Yeni bölümler': 'Нови епизоди',
 };

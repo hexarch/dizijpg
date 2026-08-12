@@ -299,34 +299,83 @@ Future<void> pushArkaplan(RemoteMessage mesaj) async {
   } catch (_) {}
 }
 
-/// Bildirim verisinden hedefe gider (dokunma / açılış).
-void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
-  final tur = veri['tur'] as String? ?? '';
-  final ad = veri['ad'] as String? ?? '';
+/// Bildirim verisindeki bir alanı METİN olarak okur.
+///
+/// NEDEN `as String?` DEĞİL: FCM `data` değerleri kablo üzerinde hep metindir
+/// ama aynı çözümleyici YEREL bildirim yükünü de (kendi ürettiğimiz JSON) ve
+/// ileride sunucunun sayı gönderebileceği alanları da okuyor —
+/// `/bildirimler` uçları `sezon`/`bolum`u SAYI döndürüyor. Sert dönüşüm o
+/// durumda `TypeError` fırlatır; `onMessageOpenedApp` dinleyicisinde bu hata
+/// yakalanmaz ve bildirime dokunmak hiçbir yere GİTMEZ. Metne çevirmek her iki
+/// biçimi de doğru çalıştırır.
+String _alan(Map<String, dynamic> veri, String anahtar) {
+  final deger = veri[anahtar];
+  return deger == null ? '' : '$deger'.trim();
+}
+
+/// Bildirim verisinin götüreceği YOL; gidilecek yer yoksa `null`.
+///
+/// AYRI FONKSİYON: gezinmenin kendisi ([rotayaGit]) canlı bir GoRouter ister,
+/// hedef HESABI istemez — böylece kural testten doğrudan okunabiliyor.
+@visibleForTesting
+String? bildirimHedefi(Map<String, dynamic> veri) {
+  final tur = _alan(veri, 'tur');
+  final ad = _alan(veri, 'ad');
   switch (tur) {
     case 'arama':
       // Teklif SDP'si bildirimde YOK (FCM veri sınırı 4 KB, SDP 64 KB'a
       // kadar): ekran açılınca `GET /arama/gelen` ile çekilir.
-      rotayaGit(gelenAramaYolu);
+      return gelenAramaYolu;
     case 'kacirilan_arama':
       // Kaçırılan aramada doğal eylem geri aramaktır; sohbet ekranında arama
       // düğmeleri zaten duruyor.
-      if (ad.isNotEmpty) rotayaGit('/sohbet/$ad');
+      return ad.isEmpty ? null : '/sohbet/$ad';
     case 'mesaj':
-      if (ad.isNotEmpty) rotayaGit('/sohbet/$ad');
+      return ad.isEmpty ? null : '/sohbet/$ad';
     case 'takip':
-      if (ad.isNotEmpty) rotayaGit('/kullanici/$ad');
+      return ad.isEmpty ? null : '/kullanici/$ad';
+    case 'bolum':
+      // Md. 27 — yeni bölüm: doğrudan bölüm sayfasına. Alanlar FCM data'sında
+      // STRING gelir; biri eksikse bildirim listesine düş (yanlış rotaya
+      // gitmektense liste güvenli).
+      final tmdb = _alan(veri, 'tmdb_id');
+      final sezon = _alan(veri, 'sezon');
+      final bolum = _alan(veri, 'bolum');
+      return tmdb.isNotEmpty && sezon.isNotEmpty && bolum.isNotEmpty
+          ? '/dizi/$tmdb/sezon/$sezon/bolum/$bolum'
+          : '/bildirimler';
     case 'begeni' || 'yanit' || 'etiket':
       // yorum_id varsa doğrudan o gönderiye; yoksa bildirim listesine
-      final yorumId = veri['yorum_id'] as String?;
-      rotayaGit(
-        (yorumId != null && yorumId.isNotEmpty)
-            // Yanıt bildiriminde id YANITIN kendisidir: ekran üst gönderiyi
-            // çözüp normal yorum ekranını açsın (md.15, bkz. [gonderiYolu]).
-            ? gonderiYolu(yorumId, yanit: tur == 'yanit')
-            : '/bildirimler',
-      );
+      final yorumId = _alan(veri, 'yorum_id');
+      return yorumId.isEmpty
+          ? '/bildirimler'
+          // Yanıt bildiriminde id YANITIN kendisidir: ekran üst gönderiyi
+          // çözüp normal yorum ekranını açsın (md.15, bkz. [gonderiYolu]).
+          : gonderiYolu(yorumId, yanit: tur == 'yanit');
   }
+  return null;
+}
+
+/// Ön planda BASILAN yerel bildirimin yükü.
+///
+/// FCM `data`sının TAMAMI taşınır. ESKİDEN yalnız `{tur, ad}` yazılıyordu ve
+/// ön planda gelen bildirime dokunmak `yorum_id` (beğeni/yanıt/etiket) ile
+/// `tmdb_id/sezon/bolum` (md.27) yükte OLMADIĞI için hedefi kaybediyor,
+/// kullanıcıyı `/bildirimler` listesine bırakıyordu — AYNI bildirime uygulama
+/// ARKA PLANDAYKEN dokunulduğunda doğru sayfa açıldığı hâlde. İki yol artık
+/// aynı veriyi görür.
+///
+/// Değerler metne çevrilir: JSON'a girmeyen bir tür (ya da `null`) yükü
+/// bozmasın, çözerken [_alan] ile aynı biçimde okunabilsin.
+@visibleForTesting
+String bildirimYuku(Map<String, dynamic> veri) => jsonEncode({
+  for (final g in veri.entries) g.key: g.value == null ? '' : '${g.value}',
+});
+
+/// Bildirim verisinden hedefe gider (dokunma / açılış).
+void _bildirimVerisiyleGit(Map<String, dynamic> veri) {
+  final hedef = bildirimHedefi(veri);
+  if (hedef != null) rotayaGit(hedef);
 }
 
 void _payloadIleGit(String? payload) {
@@ -415,7 +464,8 @@ Future<void> pushBaslat() async {
               icon: '@mipmap/ic_launcher',
             ),
           ),
-          payload: jsonEncode({'tur': m.data['tur'], 'ad': m.data['ad']}),
+          // Yük = FCM data'sının TAMAMI; gerekçe [bildirimYuku].
+          payload: bildirimYuku(m.data),
         );
       });
 

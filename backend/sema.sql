@@ -758,3 +758,60 @@ CREATE UNIQUE INDEX IF NOT EXISTS mesaj_tepkileri_tekil
 -- burada sıra ters olduğu için ayrı indeks şart).
 CREATE INDEX IF NOT EXISTS mesaj_tepkileri_kullanici
   ON mesaj_tepkileri (kullanici_id);
+
+-- ---------------------------------------------------------------------------
+-- 13 Ağu 2026 — YENİ BÖLÜM BİLDİRİMİ (SIRA FARKINDALIKLI)
+--                (migrasyon-2026-08-13.sql · istek listesi md. 27)
+--
+-- "İzlediğim dizinin yeni bölümü çıkınca haber ver" — AMA kullanıcı BİR
+-- ÖNCEKİ BÖLÜMÜ İZLEMİŞSE. 1. sezondaki kullanıcıya 10. sezonun bölümü için
+-- bildirim GİTMEZ. Kural sunucudadır (`bolumBildirilsinMi`, server.js);
+-- burada yalnız o kuralın ihtiyaç duyduğu şema var.
+--
+-- ***** TEKRAR ÖNLEME "GÖNDERİLDİ" TABLOSU DEĞİL, KISMİ TEKİL İNDEKS *****
+-- Görev 6 saatte bir koşup 14 GÜNLÜK pencereye baktığı için aynı bölüm bir
+-- pencerede ~56 kez değerlendirilir; ikinci bildirim ASLA gitmemeli.
+-- Bildirim SATIRININ KENDİSİ bu bilgiyi zaten taşıdığından ayrı bir tablo
+-- ikinci bir doğruluk kaynağı olurdu. Kayıt kalıcıdır: `tablolariBuda()`
+-- `bildirimler`e DOKUNMAZ (akis_goruldu / tmdb_onbellek / yorum_goruntuleyen
+-- / hatalar / aramalar budanır, bildirimler budanmaz).
+-- İndeks aynı zamanda server.js'teki
+--   INSERT ... ON CONFLICT (kullanici_id, tmdb_id, sezon, bolum)
+--              WHERE tur='bolum' DO NOTHING
+-- ifadesinin ÇIKARIM HEDEFİDİR — indeks yoksa görev 42P10 ile patlar. Push
+-- yalnız GERÇEKTEN satır yazıldıysa (rowCount=1) gider, böylece iki işçi
+-- yarışsa bile tek push çıkar.
+--
+-- ***** HEDEF SÜTUNLARI AYRI TABLOYA DEĞİL, `bildirimler`E EKLENDİ *****
+-- `GET /bildirimler` tek sorguda, tek sıralamayla (id DESC) KARIŞIK bir kutu
+-- döndürüyor. Ayrı tablo her sayfalama için iki sorgu + uygulamada birleştirme
+-- + ikinci bir "okundu" mekanizması demekti. Üç sütun da NULLABLE'dır: diğer
+-- altı bildirim türü onları NULL bırakır.
+--
+-- NOT (açık borç, bu turda KISMEN kapandı): aşağıdaki CHECK, 8 Ağu'da
+-- migrasyonla eklenip sema.sql'e işlenmemiş olan 'kacirilan_arama' türünü de
+-- İÇERİR — yoksa sıfırdan kurulan bir veritabanında kaçırılan arama bildirimi
+-- yazılamazdı. `aramalar` tablosu ve `kullanicilar.bildir_arama` borcu HÂLÂ
+-- açıktır (migrasyon-2026-08-08e.sql).
+-- ---------------------------------------------------------------------------
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
+  CHECK (tur IN ('yanit','begeni','takip','mesaj','etiket','kacirilan_arama','bolum'));
+
+-- Bölüm hedefi: YALNIZ tur='bolum' doldurur. `yorum_id` gibi FK YOKTUR —
+-- sezon/bolum TMDB verisidir, bizde karşılık tablosu yok.
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS tmdb_id INT;
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS sezon INT;
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS bolum INT;
+
+-- KISMİ (`WHERE tur='bolum'`) olması ŞART: kısıtsız indeks üç sütunu da NULL
+-- olan diğer altı türü de kapsar, milyonlarca gereksiz girdi tutardı.
+CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_bolum_tekil
+  ON bildirimler (kullanici_id, tmdb_id, sezon, bolum) WHERE tur = 'bolum';
+
+-- Tercih: diğer bildir_* ile aynı polarite ve varsayılan. false olsaydı
+-- özellik kimse ayarlara girmedikçe hiç çalışmazdı. İKİ YERDE zorlanır:
+-- görevin aday sorgusundaki JOIN'de (kapalı kullanıcı hacim frenini
+-- harcamasın) ve `bolumBildirimiEkle()` içinde.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS bildir_bolum BOOLEAN NOT NULL DEFAULT true;

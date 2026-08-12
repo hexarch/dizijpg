@@ -710,4 +710,8 @@ const Map<String, String> cevirilerFa = {
   'Misafir hesaplar aranamaz': 'به حساب‌های مهمان نمی‌توان تماس گرفت',
   'Puan dağılımı': 'توزیع امتیازها',
   '{} yıldız': '{} ستاره',
+  'Yakında gelecek': 'به‌زودی',
+  '{} {} yayınlandı': '{} {} منتشر شد',
+  'Yeni bölüm yayınlandı': 'قسمت جدید منتشر شد',
+  'Yeni bölümler': 'قسمت‌های جدید',
 };

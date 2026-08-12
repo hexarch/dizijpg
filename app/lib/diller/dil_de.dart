@@ -419,7 +419,7 @@ const Map<String, String> cevirilerDe = {
   'Bu kullanıcı henüz bir şey izlememiş.':
       'Dieser Nutzer hat noch nichts gesehen.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'Dieser Nutzer hält seine Kommentare lieber privat.',
+      'Dieser Nutzer hält die Kommentare lieber privat.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Daten: JustWatch',
   'Web Sitesi': 'Website',
@@ -519,9 +519,9 @@ const Map<String, String> cevirilerDe = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Andere sehen deinen Online-Status und deine letzte Aktivität in Nachrichten nicht',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Einer unserer ersten Nutzer. Sein Feedback hat die App zu dem gemacht, was sie heute ist.',
+      'Gehört zu unseren ersten Nutzern. Dieses Feedback hat die App zu dem gemacht, was sie heute ist.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Du bist einer unserer ersten Nutzer. Dein Feedback hat die App zu dem gemacht, was sie heute ist.',
+      'Du gehörst zu unseren ersten Nutzern. Dein Feedback hat die App zu dem gemacht, was sie heute ist.',
   'İleri': 'Weiter',
   'Seçilen dosya okunamadı':
       'Die ausgewählte Datei konnte nicht gelesen werden',
@@ -724,4 +724,8 @@ const Map<String, String> cevirilerDe = {
   'Misafir hesaplar aranamaz': 'Gastkonten können nicht angerufen werden',
   'Puan dağılımı': 'Bewertungsverteilung',
   '{} yıldız': '{} Sterne',
+  'Yakında gelecek': 'Bald verfügbar',
+  '{} {} yayınlandı': '{} {} ist da',
+  'Yeni bölüm yayınlandı': 'Neue Episode ist da',
+  'Yeni bölümler': 'Neue Episoden',
 };

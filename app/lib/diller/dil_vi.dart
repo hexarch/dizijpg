@@ -709,4 +709,8 @@ const Map<String, String> cevirilerVi = {
   'Misafir hesaplar aranamaz': 'Không thể gọi tài khoản khách',
   'Puan dağılımı': 'Phân bố điểm',
   '{} yıldız': '{} sao',
+  'Yakında gelecek': 'Sắp ra mắt',
+  '{} {} yayınlandı': '{} {} đã lên sóng',
+  'Yeni bölüm yayınlandı': 'Tập mới đã lên sóng',
+  'Yeni bölümler': 'Tập mới',
 };

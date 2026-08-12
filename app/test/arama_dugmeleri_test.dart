@@ -5,7 +5,10 @@
 //     tıklanabilir görünüp reddedilen düğme kötü deneyimdir),
 //   * ben onu takip etmiyorsam İKİNCİ İSTEK HİÇ ATILMAZ (karşılıklı olamaz),
 //   * `goruntulu_acik:false` ise yalnız görüntülü düğmesi gizlenir,
-//   * `arama_acik:false` ya da web ise ikisi de gizlenir,
+//   * web ise ikisi de gizlenir,
+//   * `arama_acik:false` (kill switch) ise düğmeler ARTIK GİZLENMİYOR: pasif
+//     çizilip "Yakında gelecek" diyorlar — kullanıcı kararı 13 Ağu. O modun
+//     bütün kilitleri `test/arama_yakinda_test.dart`ta.
 //   * dokunma hedefleri >= 44 dp,
 //   * md. 38: KENDİ tercihim kapalıysa düğme GİZLENMEZ, PASİF görünür ve
 //     tıklanınca nereden açılacağını söyleyen bir açıklama çıkar.
@@ -15,6 +18,7 @@ import 'package:dizijpg/api.dart';
 import 'package:dizijpg/gorusme/arama_dugmeleri.dart';
 import 'package:dizijpg/gorusme/arama_servisi.dart';
 import 'package:dizijpg/gorusme/gorusme_api.dart';
+import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -177,13 +181,21 @@ void main() {
     expect(find.byKey(const Key('sohbet-goruntulu-ara')), findsNothing);
   });
 
-  testWidgets('ARAMA KILL SWITCH kapalı: hiçbir düğme yok', (t) async {
+  testWidgets('ARAMA KILL SWITCH kapalı: düğmeler PASİF (gizli DEĞİL)', (
+    t,
+  ) async {
+    // 13 Ağu'ya kadar burada `findsNothing` yazıyordu. Kullanıcı kararı
+    // değişti: bayrak kapalıyken düğmeler görünsün ve dokununca "Yakında
+    // gelecek" desin. Arama YİNE BAŞLAMIYOR — `kullanilabilir` hâlâ false.
     AramaServisi.ayariKur(_buz(aramaAcik: false));
     _sunucu(takipEdiyorum: true, geriTakip: true);
     await t.pumpWidget(_sar(const AramaDugmeleri(kullaniciAdi: 'alcelik')));
     await t.pumpAndSettle();
 
-    expect(find.byKey(const Key('sohbet-sesli-ara')), findsNothing);
+    expect(find.byKey(const Key('sohbet-sesli-ara')), findsOneWidget);
+    expect(AramaServisi.kullanilabilir, isFalse);
+    expect(AramaServisi.yakindaModu, isTrue);
+    expect(_ikonRengi(t, 'sohbet-sesli-ara'), DiziRenkler.metin38);
   });
 
   testWidgets('WEB: arama düğmeleri hiç çizilmez', (t) async {

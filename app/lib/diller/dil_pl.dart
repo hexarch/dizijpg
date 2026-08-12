@@ -1,7 +1,7 @@
 /// Otomatik üretilen çeviri haritası (pl).
 const Map<String, String> cevirilerPl = {
   'Hepsini gördün, baştan gösteriyoruz':
-      'Widziałeś to wszystko, pokażemy Ci od początku',
+      'To już wszystko, pokażemy Ci od początku',
   'Aktarılacak tanınan veri bulunamadı.':
       'Nie znaleziono rozpoznanych danych do importu.',
   'Arama': 'Szukaj',
@@ -153,7 +153,7 @@ const Map<String, String> cevirilerPl = {
   'Yorumlar ({})': 'Komentarze ({})',
   'Yorumları ({})': 'Komentarze ({})',
   'Listelerim': 'Moje listy',
-  'Nereden izledin?': 'Gdzie to oglądałeś?',
+  'Nereden izledin?': 'Gdzie to oglądano?',
   'Diziye git': 'Przejdź do serialu',
   'TV / Kanal': 'TV / Kanał',
   'Sinema': 'Kino',
@@ -162,7 +162,7 @@ const Map<String, String> cevirilerPl = {
   'Akış': 'Feed',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'Twój feed jest pusty.\nGdy ktoś skomentuje seriale i filmy, które oglądasz, pojawi się tutaj.',
-  'Listeleri ({})': 'Listy użytkownika ({})',
+  'Listeleri ({})': 'Listy ({})',
   'Liste boş.': 'Ta lista jest pusta.',
   'Yanıtla': 'Odpowiedz',
   '@{} kullanıcısına yanıt veriyorsun': 'Odpowiadasz @{}',
@@ -171,10 +171,10 @@ const Map<String, String> cevirilerPl = {
   'Tümünü gör': 'Zobacz wszystko',
   'Bildirimler': 'Powiadomienia',
   'Henüz bildirim yok': 'Brak powiadomień',
-  '@{} yorumuna yanıt verdi': '@{} odpowiedział na twój komentarz',
-  '@{} yorumunu beğendi': '@{} polubił twój komentarz',
-  '@{} seni takip etti': '@{} zaczął cię obserwować',
-  '@{} sana mesaj gönderdi': '@{} wysłał ci wiadomość',
+  '@{} yorumuna yanıt verdi': 'Nowa odpowiedź na twój komentarz: @{}',
+  '@{} yorumunu beğendi': '@{} lubi twój komentarz',
+  '@{} seni takip etti': '@{} obserwuje cię teraz',
+  '@{} sana mesaj gönderdi': 'Nowa wiadomość od @{}',
   'Mesajlar': 'Wiadomości',
   'Mesaj': 'Wiadomość',
   'Mesaja eklenecek': 'Zostanie dodane do wiadomosci',
@@ -202,7 +202,7 @@ const Map<String, String> cevirilerPl = {
   '10 Puan': '10 ocen',
   'İlk Takipçi': 'Pierwszy obserwujący',
   '10 Dizi Bitirdin': '10 ukończonych seriali',
-  'İzlemeyi Bıraktım': 'Przestałem oglądać',
+  'İzlemeyi Bıraktım': 'Już nie oglądam',
   'İzlediği Diziler ({})': 'Obejrzane seriale ({})',
   'İzlediği Filmler ({})': 'Obejrzane filmy ({})',
   '500 Bölüm': '500 odcinków',
@@ -234,7 +234,7 @@ const Map<String, String> cevirilerPl = {
   'Açık': 'Jasny',
   'İzleyenler': 'Widzowie',
   'Yorumunu yaz... (@ ile etiketle)': 'Napisz komentarz... (@ aby oznaczyć)',
-  '@{} bir yorumda seni etiketledi': '@{} oznaczył Cię w komentarzu',
+  '@{} bir yorumda seni etiketledi': 'Wzmianka od @{} w komentarzu',
   'Mesajı sil': 'Usuń wiadomość',
   'Mesaj silinemedi': 'Nie udało się usunąć wiadomości',
   'Bağlantı geçersiz veya sayfa bulunamadı':
@@ -417,7 +417,7 @@ const Map<String, String> cevirilerPl = {
   'Bu kullanıcı henüz bir şey izlememiş.':
       'Ten użytkownik nie obejrzał jeszcze niczego.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'Ten użytkownik woli, by jego komentarze pozostały prywatne.',
+      'Ten użytkownik woli, by komentarze pozostały prywatne.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Dane: JustWatch',
   'Web Sitesi': 'Strona internetowa',
@@ -504,7 +504,7 @@ const Map<String, String> cevirilerPl = {
   'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür':
       'Odpowiedzi, które piszesz pod postami innych osób, widzisz tylko Ty',
   'Profilinde gizlediğin yorumları tekrar göster':
-      'Pokaż ponownie komentarze, które ukryłeś na swoim profilu',
+      'Pokaż ponownie komentarze ukryte na twoim profilu',
   'Sıralama': 'Sortowanie',
   'Önerilen': 'Polecane',
   'Kronolojik': 'Chronologicznie',
@@ -516,9 +516,9 @@ const Map<String, String> cevirilerPl = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Inni nie zobaczą Twojego statusu online ani ostatniej aktywności w wiadomościach',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Jeden z naszych pierwszych użytkowników. Jego opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
+      'Należy do naszych pierwszych użytkowników. Te opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Jesteś jednym z naszych pierwszych użytkowników. Twoje opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
+      'Należysz do naszych pierwszych użytkowników. Twoje opinie pomogły aplikacji stać się tym, czym jest dzisiaj.',
   'İleri': 'Dalej',
   'Seçilen dosya okunamadı': 'Nie udało się odczytać wybranego pliku',
   'Video açılamadı': 'Nie udało się otworzyć filmu',
@@ -594,7 +594,7 @@ const Map<String, String> cevirilerPl = {
   'Henüz favori oyuncun yok': 'Brak ulubionych aktorow',
   'Bir oyuncunun sayfasını aç ve sağ üstteki kalbe dokun; buraya eklensin.':
       'Otworz strone aktora i dotknij serca w prawym gornym rogu, aby go tu dodac.',
-  '{} yapımdan {} tanesini izledin': 'Obejrzales {} z {} tytulow',
+  '{} yapımdan {} tanesini izledin': 'Obejrzano {} z {} tytułów',
   'izledin': 'obejrzane',
   'İzlemedin': 'Nieobejrzane',
   'Yapım bulunamadı': 'Nie znaleziono tytulow',
@@ -718,4 +718,8 @@ const Map<String, String> cevirilerPl = {
   'Misafir hesaplar aranamaz': 'Do kont gościa nie można zadzwonić',
   'Puan dağılımı': 'Rozkład ocen',
   '{} yıldız': '{} gwiazdek',
+  'Yakında gelecek': 'Wkrótce',
+  '{} {} yayınlandı': '{} {} już dostępny',
+  'Yeni bölüm yayınlandı': 'Nowy odcinek już dostępny',
+  'Yeni bölümler': 'Nowe odcinki',
 };

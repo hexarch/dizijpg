@@ -686,4 +686,8 @@ const Map<String, String> cevirilerJa = {
   'Misafir hesaplar aranamaz': 'ゲストアカウントには発信できません',
   'Puan dağılımı': '評価の分布',
   '{} yıldız': '星{}つ',
+  'Yakında gelecek': '近日公開予定',
+  '{} {} yayınlandı': '{} {} が公開されました',
+  'Yeni bölüm yayınlandı': '新しいエピソードが公開されました',
+  'Yeni bölümler': '新しいエピソード',
 };

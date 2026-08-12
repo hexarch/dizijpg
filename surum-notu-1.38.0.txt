@@ -1,0 +1,31 @@
+Play Console kapalı test (Alpha) sürüm notu — 1.38.0 (84)
+Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 14 derleme birikti.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI
+   (sunucu kill switch). Kapalı özelliği sürüm notunda anmıyoruz.
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
+
+<tr-TR>
+• Mesajlara emoji tepkisi: çift dokun kalp bırak, basılı tut hareketli
+  emojilerden seç.
+• Emojiler artık hareketli — dizi, film ve oyuncu sayfalarında.
+• Puana dokununca IMDb tarzı puan dağılımı grafiği açılıyor.
+• İzlediğin dizinin yeni bölümü çıkınca bildirim (yalnız bir öncekini
+  izlediysen; ayarlardan kapatabilirsin).
+• Bildirim metinleri artık kimseye cinsiyet atfetmiyor.
+• Webde Google ile giriş.
+• Profil, takvim ve masaüstü görünümünde çok sayıda iyileştirme;
+  uygulama belirgin şekilde hızlandı.
+</tr-TR>
+<en-US>
+• React to messages: double-tap to drop a heart, long-press to pick an
+  animated emoji.
+• Emojis are animated now — on shows, movies and cast pages.
+• Tap a rating to see an IMDb-style rating distribution.
+• Get notified when a new episode of a show you watch is out (only if you
+  watched the previous one; you can turn it off in settings).
+• Notification texts no longer assume anyone's gender.
+• Sign in with Google on the web.
+• Many improvements to profile, calendar and desktop layout; the app is
+  noticeably faster.
+</en-US>

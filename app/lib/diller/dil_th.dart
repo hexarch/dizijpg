@@ -161,7 +161,7 @@ const Map<String, String> cevirilerTh = {
   'Akış': 'ฟีด',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'ฟีดของคุณว่างเปล่า\nเมื่อมีคนคอมเมนต์ซีรีส์และหนังที่คุณดู จะแสดงที่นี่',
-  'Listeleri ({})': 'ลิสต์ของเขา ({})',
+  'Listeleri ({})': 'ลิสต์ ({})',
   'Liste boş.': 'ลิสต์นี้ว่างเปล่า',
   'Yanıtla': 'ตอบกลับ',
   '@{} kullanıcısına yanıt veriyorsun': 'กำลังตอบกลับ @{}',
@@ -202,8 +202,8 @@ const Map<String, String> cevirilerTh = {
   'İlk Takipçi': 'ผู้ติดตามคนแรก',
   '10 Dizi Bitirdin': 'ดูจบ 10 เรื่อง',
   'İzlemeyi Bıraktım': 'เลิกดูแล้ว',
-  'İzlediği Diziler ({})': 'ซีรีส์ที่เขาดู ({})',
-  'İzlediği Filmler ({})': 'หนังที่เขาดู ({})',
+  'İzlediği Diziler ({})': 'ซีรีส์ที่ดูแล้ว ({})',
+  'İzlediği Filmler ({})': 'หนังที่ดูแล้ว ({})',
   '500 Bölüm': '500 ตอน',
   '5000 Bölüm': '5000 ตอน',
   '10 Film': 'หนัง 10 เรื่อง',
@@ -506,7 +506,7 @@ const Map<String, String> cevirilerTh = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'คนอื่นจะไม่เห็นสถานะออนไลน์และเวลาที่เห็นล่าสุดของคุณในข้อความ',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'หนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นของเขาช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
+      'หนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นเหล่านั้นช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'คุณคือหนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นของคุณช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
   'İleri': 'ถัดไป',
@@ -700,4 +700,8 @@ const Map<String, String> cevirilerTh = {
   'Misafir hesaplar aranamaz': 'โทรหาบัญชีผู้เยี่ยมชมไม่ได้',
   'Puan dağılımı': 'การกระจายคะแนน',
   '{} yıldız': '{} ดาว',
+  'Yakında gelecek': 'เร็ว ๆ นี้',
+  '{} {} yayınlandı': '{} {} มาแล้ว',
+  'Yeni bölüm yayınlandı': 'ตอนใหม่มาแล้ว',
+  'Yeni bölümler': 'ตอนใหม่',
 };

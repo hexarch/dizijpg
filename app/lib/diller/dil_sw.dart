@@ -709,4 +709,8 @@ const Map<String, String> cevirilerSw = {
   'Misafir hesaplar aranamaz': 'Akaunti za mgeni haziwezi kupigiwa simu',
   'Puan dağılımı': 'Mgawanyo wa alama',
   '{} yıldız': 'nyota {}',
+  'Yakında gelecek': 'Inakuja hivi karibuni',
+  '{} {} yayınlandı': '{} {} kimetoka',
+  'Yeni bölüm yayınlandı': 'Kipindi kipya kimetoka',
+  'Yeni bölümler': 'Vipindi vipya',
 };

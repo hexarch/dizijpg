@@ -1229,32 +1229,63 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 
 // Bildirim ekler; kendi eylemine bildirim düşmez, hata akışı bozmaz.
 // Push bildirim şablonları (alıcının diline göre; {ad} = @kullanıcı).
+//
+// `bolum` (md. 27, yeni bölüm bildirimi) TEK AKTÖRSÜZ TÜRDÜR: onu bir kullanıcı
+// değil, TMDB takvimi doğurur. Bu yüzden yer tutucusu {ad} değil,
+// {dizi} = dizi adı ve {sb} = "S5B3" biçiminde sezon/bölüm etiketidir.
+//
+// *** CİNSİYETSİZ DİL (13 Ağu 2026, kullanıcı kararı) *** Uygulama kimsenin
+// cinsiyetini SORMUYOR ve SAKLAMIYOR; o yüzden hiçbir gövde gövdedeki KİŞİYE
+// (aktör {ad} ya da alıcı "sen") göre çekimlenmiş fiil/sıfat içeremez. Eskiden
+// ru '{ad} подписался на тебя' kadın aktör için yanlıştı (подписалась olurdu);
+// çözüm çift biçim ('подписался(ась)' — çirkin ve ekran okuyucuda kötü) DEĞİL,
+// çekimden KAÇAN isim öbeğidir: 'Новый подписчик: {ad}'.
+// AYRIM: nesneden gelen çekim DOĞRUDUR ve dokunulmaz — ru 'Вышла серия'
+// (özne "серия", dişil), ar 'صدرت' (özne "حلقة", dişil).
+// Kilit: test/cinsiyetsiz_dil.test.js.
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen' },
-  fr: { takip: '{ad} a commencé à te suivre', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: '{ad} t\'a mentionné dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: '{ad} t\'a appelé' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: '{ad} ti ha menzionato in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: '{ad} ti ha chiamato' },
-  ru: { takip: '{ad} подписался на тебя', begeni: '{ad} оценил твой комментарий', yanit: '{ad} ответил на твой комментарий', mesaj: '{ad} отправил тебе сообщение', etiket: '{ad} упомянул тебя в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: '{ad} звонил тебе' },
-  ar: { takip: '{ad} بدأ بمتابعتك', begeni: '{ad} أعجب بتعليقك', yanit: '{ad} رد على تعليقك', mesaj: '{ad} أرسل لك رسالة', etiket: '{ad} أشار إليك في تعليق', arama: '{ad} يتصل بك', kacirilan_arama: '{ad} اتصل بك' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} आपको कॉल कर रहे हैं', kacirilan_arama: '{ad} ने आपको कॉल किया' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld' },
-  pl: { takip: '{ad} zaczął cię obserwować', begeni: '{ad} polubił twój komentarz', yanit: '{ad} odpowiedział na twój komentarz', mesaj: '{ad} wysłał ci wiadomość', etiket: '{ad} wspomniał o tobie w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: '{ad} dzwonił do ciebie' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da' },
+  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile' },
+  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}' },
+  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit' },
+  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest' },
 };
+
+/**
+ * {sb} yer tutucusunun değeri: "S5B3" (tr) / "S5E3" (diğer diller).
+ * Türkçede B = Bölüm, diğer dillerde E = Episode/Episodio/Épisode…; "B" harfi
+ * yalnız Türkçede anlamlıdır ve bir İngiliz kullanıcıya "S5B3" anlamsız gelir.
+ * Değer YALNIZ push gövdesinde kullanılır; uygulama içi bildirimde istemci
+ * kendi yerelleştirmesini `sezon`/`bolum` alanlarından kurar.
+ */
+const sbEtiketi = (dil, sezon, bolum) => `S${sezon}${dil === 'tr' ? 'B' : 'E'}${bolum}`;
 
 // Alıcının cihazlarına anlık push gönderir (fire-and-forget, hata yutulur).
 // ekstra.metin: mesaj bildiriminde gövdede gösterilecek içerik.
+//
+// AKTÖRSÜZ TÜR ('bolum', md. 27): `aktorId` null gelir. O yüzden (a) kullanıcı
+// sorgusu HİÇ yapılmaz — null id ile boş dönecek bir sorgu her bildirimde
+// boşuna DB'ye vurmaktı; (b) gövde {ad} yerine {dizi}/{sb} ile kurulur;
+// (c) data yükü tmdb_id/sezon/bolum taşır ki istemci dokununca
+// /dizi/:id/sezon/:s/bolum/:b sayfasını açabilsin.
 async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
   if (!fcmHazir || !aliciId || aliciId === aktorId) return;
   try {
     const [akt, tok] = await Promise.all([
-      havuz.query('SELECT kullanici_adi, avatar FROM kullanicilar WHERE id=$1', [aktorId]),
+      aktorId
+        ? havuz.query('SELECT kullanici_adi, avatar FROM kullanicilar WHERE id=$1', [aktorId])
+        : Promise.resolve({ rows: [] }),
       havuz.query('SELECT token, dil FROM cihaz_tokenlari WHERE kullanici_id=$1', [aliciId]),
     ]);
     if (!tok.rows.length) return;
@@ -1262,7 +1293,11 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
     const ad = '@' + aktorAdi;
     const dil = tok.rows[0].dil || 'tr';
     const sablon = PUSH_SABLON[dil] || PUSH_SABLON.en;
-    const govde = (sablon[tur] || '').replace('{ad}', ad);
+    const govde = tur === 'bolum'
+      ? (sablon.bolum || '')
+        .replace('{dizi}', String(ekstra?.dizi_adi || '').slice(0, 100))
+        .replace('{sb}', sbEtiketi(dil, ekstra?.sezon, ekstra?.bolum))
+      : (sablon[tur] || '').replace('{ad}', ad);
     if (!govde) return;
     const tokens = tok.rows.map((r) => r.token);
     // Derin bağlantı + görsel için ortak veri (FCM data değerleri string olmalı)
@@ -1273,6 +1308,12 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
     };
     // Beğeni/yanıt/etiket: dokununca doğrudan o gönderiye gidilebilsin
     if (ekstra?.yorum_id) veri.yorum_id = String(ekstra.yorum_id);
+    // Yeni bölüm: dokununca bölüm sayfasına (FCM data değerleri STRING olmalı)
+    if (tur === 'bolum') {
+      veri.tmdb_id = String(ekstra?.tmdb_id ?? '');
+      veri.sezon = String(ekstra?.sezon ?? '');
+      veri.bolum = String(ekstra?.bolum ?? '');
+    }
     let paket;
     if (tur === 'arama') {
       // GELEN ARAMA — data-only (mesajla aynı kalıp): istemci kendi tam ekran
@@ -1346,6 +1387,9 @@ const BILDIRIM_TERCIH_KOLON = {
   // onay kutusuna bağlamak, kullanıcının "bildirimleri kapattım" diye
   // aramaları da kapattığını SANMASINA yol açardı.
   kacirilan_arama: 'bildir_arama',
+  // md. 27 — izlenen dizinin yeni bölümü. Varsayılan açık (bkz.
+  // migrasyon-2026-08-13.sql karar 4).
+  bolum: 'bildir_bolum',
 };
 
 async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = null) {
@@ -1364,6 +1408,51 @@ async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = 
   ).catch(() => {});
   // Push data'sına yorum_id de gider (dokununca doğrudan gönderiye)
   pushBildirim(aliciId, tur, aktorId, { ...(pushEkstra || {}), yorum_id: yorumId });
+}
+
+/**
+ * YENİ BÖLÜM bildirimi yazar (md. 27). `bildirimEkle` KULLANILMAZ — GEREKÇE:
+ *
+ *  1) `bildirimEkle` AKTÖR VARSAYAR: ilk satırı `aliciId === aktorId` ise
+ *     döner ve imzasının üçüncü parametresi zorunlu bir kullanıcı id'sidir.
+ *     Yeni bölüm bildiriminin aktörü YOKTUR (kaynağı TMDB takvimidir).
+ *  2) `bildirimEkle` INSERT'ü `.catch(() => {})` ile YUTAR ve ARDINDAN
+ *     KOŞULSUZ push atar. Burada tam tersi gerekiyor: push YALNIZ satır
+ *     GERÇEKTEN yazıldıysa gitmeli. Tekrar önleme kısmi tekil indekstedir
+ *     (bildirimler_bolum_tekil) ve çakışan INSERT rowCount=0 döner; koşulsuz
+ *     push, aynı bölüm için 6 saatte bir yeniden push atmak demekti.
+ *  3) Sütunlar farklı: yorum_id yerine tmdb_id/sezon/bolum.
+ *
+ * `bildirimEkle`yi bu üç ayrımı taşıyacak şekilde genişletmek, altı türün
+ * ortak yolunu üç ayrı dallanmayla kirletirdi; iki fonksiyon ayrı yaşıyor.
+ * ORTAK KALAN: tercih kapısı (BILDIRIM_TERCIH_KOLON) ve `pushBildirim`.
+ *
+ * @returns {Promise<boolean>} bildirim GERÇEKTEN yazıldı mı (hacim freni sayar)
+ */
+async function bolumBildirimiEkle(aliciId, tmdbId, sezon, bolum, diziAdi) {
+  if (!aliciId || !gecerliTmdb(tmdbId) || !(sezon >= 1) || !(bolum >= 1)) return false;
+  // Tercih kapısı. Görevin aday sorgusu bunu JOIN ile zaten süzüyor; buradaki
+  // ikinci kontrol fonksiyonun TEK BAŞINA doğru olmasını sağlar (ileride
+  // başka bir yerden çağrılırsa tercih yine zorlanır). Maliyeti bildirim
+  // BAŞINA tek PK aramasıdır, aday BAŞINA değil.
+  const t = await havuz
+    .query('SELECT bildir_bolum AS ac FROM kullanicilar WHERE id=$1', [aliciId])
+    .catch(() => ({ rows: [] }));
+  if (t.rows.length && t.rows[0].ac === false) return false;
+  // ON CONFLICT çıkarımı `bildirimler_bolum_tekil` kısmi indeksine dayanır;
+  // WHERE yan tümcesi indeksin yüklemiyle BİREBİR aynı olmak zorunda.
+  const y = await havuz.query(
+    `INSERT INTO bildirimler (kullanici_id, tur, tmdb_id, sezon, bolum)
+     VALUES ($1,'bolum',$2,$3,$4)
+     ON CONFLICT (kullanici_id, tmdb_id, sezon, bolum) WHERE tur='bolum'
+     DO NOTHING`,
+    [aliciId, tmdbId, sezon, bolum],
+  ).catch((e) => { console.error('bolum bildirimi:', e.message); return { rowCount: 0 }; });
+  if (!y.rowCount) return false; // zaten bildirilmiş → push da YOK
+  pushBildirim(aliciId, 'bolum', null, {
+    tmdb_id: tmdbId, sezon, bolum, dizi_adi: diziAdi,
+  });
+  return true;
 }
 
 /**
@@ -2901,6 +2990,223 @@ if (ISCI_GOREVLI) {
   setTimeout(durumlariTara, 60 * 1000); // açılıştan 1 dk sonra ilk tarama
 }
 
+// ===========================================================================
+// md. 27 — YENİ BÖLÜM BİLDİRİMİ (SIRA FARKINDALIKLI)
+// ===========================================================================
+// KULLANICI KURALI (pazarlıksız): izlediği dizinin yeni bölümü çıkınca bildirim
+// gider — AMA ANCAK BİR ÖNCEKİ BÖLÜMÜ İZLEMİŞSE. 1. sezondaki kullanıcıya 10.
+// sezonun bölümü için bildirim GİTMEZ. Bu kural aşağıdaki SAF fonksiyonlarda
+// yaşıyor (`bolumBildirilsinMi`, `oncekiBolum`, `yeniBolumAdayi`); DB/TMDB G/Ç
+// yalnız `yeniBolumleriBildir()` içinde. Testler saf kısmı DB'siz koşar.
+//
+// NEDEN 14 GÜN (`YENI_BOLUM_PENCERE_GUN`):
+//  * MALİYET FRENİ: pencere dışındaki dizi için kullanıcı satırlarına HİÇ
+//    bakılmaz — yayını bitmiş/aralıkta olan yüzlerce dizi tek bir tarih
+//    karşılaştırmasıyla elenir.
+//  * NEDEN KISA DEĞİL (ör. 1 gün): görev 6 saatte bir koşuyor ama TMDB
+//    tökezleyebilir, konteyner yeniden başlayabilir, kullanıcı hacim frenine
+//    takılıp bir sonraki tura ertelenebilir. Dar pencere "bildirimi kaçırdık,
+//    bir daha da denemeyeceğiz" demekti. Tekrar zaten kısmi tekil indeksle
+//    imkânsız olduğu için GENİŞ pencere BEDAVA sigortadır.
+//  * NEDEN UZUN DEĞİL (ör. 90 gün): 3 ay önce son bölümünü vermiş bir diziye
+//    bugün yetişen kullanıcıya "yeni bölüm çıktı" demek yalan olurdu.
+//  * PATLAMA RİSKİ YOK: kural gereği kullanıcıya YALNIZ tam bir önceki bölümü
+//    izlediği bölüm bildirilir. Haftalık bir dizide 14 günde 2 bölüm çıksa
+//    bile, N+1'i bildirmek için N'i izlemiş olması gerekir — yani dizi başına
+//    turda EN FAZLA BİR bildirim üretilebilir. Kural kendi kendini sınırlar.
+const YENI_BOLUM_PENCERE_GUN = 14;
+//
+// HACİM FRENİ: tek turda kullanıcı başına en fazla bu kadar bildirim. 30 dizi
+// izleyen ve hepsi aynı gün bölüm veren bir kullanıcının telefonu patlamasın.
+// 3 seçildi çünkü: (a) tur 6 saatte bir → günde en fazla 12, kilit ekranını
+// boğmayan bir tavan; (b) ERTELEME KAYIP DEĞİL — frene takılan bölüm için
+// SATIR YAZILMAZ, yani bir sonraki turda yeniden değerlendirilir ve 14 günlük
+// pencere bitmeden mutlaka sırası gelir; (c) aç gözlü sıra (tmdb_id artan)
+// açlığa yol açmaz, çünkü bildirilen bölüm bir daha aday olmaz.
+const YENI_BOLUM_TUR_SINIRI = 3;
+
+/** "YYYY-MM-DD" + gün (negatif olabilir) → "YYYY-MM-DD". Saf; geçersizse null. */
+function gunEkle(iso, gun) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(iso))) return null;
+  const d = new Date(`${iso}T00:00:00Z`);
+  if (Number.isNaN(d.getTime())) return null;
+  d.setUTCDate(d.getUTCDate() + gun);
+  return d.toISOString().slice(0, 10);
+}
+
+/** `[[s,b],...]` / `[{sezon,bolum},...]` / Set("s:b") → Set("s:b"). */
+function bolumKumesi(izlenen) {
+  if (izlenen instanceof Set) return izlenen;
+  const k = new Set();
+  for (const it of izlenen || []) {
+    const s = Array.isArray(it) ? it[0] : it.sezon;
+    const b = Array.isArray(it) ? it[1] : it.bolum;
+    k.add(`${s}:${b}`);
+  }
+  return k;
+}
+
+/**
+ * Dizinin SON YAYINLANMIŞ bölümü "yeni" mi? Dizi başına TEK TMDB gövdesinden
+ * (`/tv/{id}` → `last_episode_to_air`) karar verilir; kullanıcı başına DEĞİL.
+ * Özel sezonlar (sezon 0) sayılmaz — `dizi_durum.js` karar 2 ile aynı çizgi.
+ * @returns {{sezon:number,bolum:number,tarih:string}|null}
+ */
+function yeniBolumAdayi(dizi, bugun, pencereGun = YENI_BOLUM_PENCERE_GUN) {
+  const son = dizi?.last_episode_to_air;
+  const s = son?.season_number;
+  const b = son?.episode_number;
+  if (!Number.isInteger(s) || s < 1 || !Number.isInteger(b) || b < 1) return null;
+  const tarih = String(son.air_date || '');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(tarih)) return null;
+  if (tarih > bugun) return null; // TMDB ileri tarih yazmışsa henüz çıkmamıştır
+  const bas = gunEkle(bugun, -pencereGun);
+  return !bas || tarih < bas ? null : { sezon: s, bolum: b, tarih };
+}
+
+/**
+ * (sezon, bolum)'dan HEMEN ÖNCEKİ bölüm. Kuralın tamamı buradan çıkar:
+ *  · bolum > 1  → (sezon, bolum-1)
+ *  · bolum == 1 → BİR ÖNCEKİ SEZONUN SON BÖLÜMÜ. Sezon numarası sezon-1 diye
+ *    VARSAYILMAZ: TMDB'de sezon numaraları atlayabilir (0 özel sezonu, iptal
+ *    edilip listeden düşmüş sezonlar). Bu sezondan KÜÇÜK en büyük sezon alınır.
+ *    Bölüm sayısı `seasons[].episode_count`tan gelir — YENİ TMDB ÇAĞRISI YOK,
+ *    `/tv/{id}` gövdesinde zaten var (`dizi_durum.js`in kullandığı alanın
+ *    aynısı, aynı önbellek satırı).
+ *  · Öncesi yoksa (dizinin ilk bölümü, S1B1) → null. Kural gereği bildirim
+ *    GİTMEZ: "izliyorum" diyen biri zaten başlamıştır ve öncesi olmayan bölüm
+ *    "bir öncekini izledi mi" sorusunun dışındadır.
+ *  · Önceki sezonun bölüm sayısı bilinmiyorsa (0/eksik) → null. SESSİZ KALMAK,
+ *    yanlış bölümü sormaktan iyidir.
+ */
+function oncekiBolum(dizi, sezon, bolum) {
+  if (!Number.isInteger(sezon) || sezon < 1) return null;
+  if (!Number.isInteger(bolum) || bolum < 1) return null;
+  if (bolum > 1) return { sezon, bolum: bolum - 1 };
+  const onc = (dizi?.seasons || [])
+    .filter((s) => Number.isInteger(s?.season_number)
+      && s.season_number >= 1 && s.season_number < sezon)
+    .sort((a, b) => b.season_number - a.season_number)[0];
+  const adet = Number.isInteger(onc?.episode_count) ? onc.episode_count : 0;
+  return adet >= 1 ? { sezon: onc.season_number, bolum: adet } : null;
+}
+
+/**
+ * *** KULLANICI KURALININ KENDİSİ (saf, DB'siz test edilebilir) ***
+ * @param izlenen bu kullanıcının bu dizide izlediği bölümler
+ * @param sezon,bolum yeni çıkan bölüm
+ * @param onceki `oncekiBolum()` sonucu (null = öncesi yok/bilinmiyor)
+ */
+function bolumBildirilsinMi({ izlenen, sezon, bolum, onceki }) {
+  if (!Number.isInteger(sezon) || sezon < 1) return false;
+  if (!Number.isInteger(bolum) || bolum < 1) return false;
+  // Öncesi olmayan bölüm (S1B1) ya da doğrulanamayan önceki sezon: bildirme.
+  if (!Number.isInteger(onceki?.sezon) || !Number.isInteger(onceki?.bolum)) return false;
+  const k = bolumKumesi(izlenen);
+  if (k.has(`${sezon}:${bolum}`)) return false; // zaten izlemiş
+  return k.has(`${onceki.sezon}:${onceki.bolum}`); // ASIL KURAL
+}
+
+/**
+ * Periyodik görev: yeni bölüm bildirimlerini üretir (6 saatte bir).
+ *
+ * NEDEN 6 SAAT: bölümler gün içine yayılıyor (ABD akşamı = TR sabahı, Japon
+ * yayını, Netflix'in 00:00 UTC'si). 24 saat olsaydı bildirim yarım gün gecikir,
+ * 1 saat olsaydı aynı TMDB taramasını 24 kez yapardık.
+ *
+ * SORGU KALIBI (`durumlariTara` ile aynı disiplin):
+ *  · ADAY DİZİLER dizi BAŞINA gruplanır — TMDB çağrısı DİZİ başınadır,
+ *    (kullanıcı,dizi) çifti başına değil. 679 çift / 303 dizi ölçümünde bu
+ *    yarıdan fazla tasarruf demek.
+ *  · `EXISTS (izlemeler ... sezon>=1)`: "izliyorum" deyip hiç bölüm
+ *    işaretlememiş kullanıcı hiç taranmaz (kuralı zaten geçemezdi).
+ *  · `bildir_bolum` JOIN'de süzülür: tercihi kapalı kullanıcı ne sorgulanır
+ *    ne de hacim frenini harcar. (İkinci kapı `bolumBildirimiEkle` içinde.)
+ *  · Bir dizinin izleme kayıtları TEK sorguda (`kullanici_id = ANY(...)`)
+ *    okunur — kullanıcı başına sorgu YOK.
+ *
+ * DAYANIKLILIK: tek dizinin hatası (bozuk TMDB gövdesi, geçici DB hatası) o
+ * dizide kalır, tur devam eder; tur tamamen düşse bile 6 saat sonra tekrar
+ * denenir ve satır yazılmadığı için hiçbir bildirim kalıcı olarak kaybolmaz.
+ */
+async function yeniBolumleriBildir() {
+  try {
+    const { rows } = await havuz.query(
+      `SELECT d.tmdb_id, array_agg(d.kullanici_id) AS kullanicilar
+         FROM durumlar d
+         JOIN kullanicilar k ON k.id = d.kullanici_id
+                            AND k.bildir_bolum AND NOT k.yasakli
+        WHERE d.tur='tv' AND d.durum='izliyorum'
+          AND EXISTS (SELECT 1 FROM izlemeler i
+                      WHERE i.kullanici_id = d.kullanici_id AND i.tur='tv'
+                        AND i.tmdb_id = d.tmdb_id AND i.sezon >= 1)
+        GROUP BY d.tmdb_id`);
+    if (!rows.length) return;
+    const bugun = bugunIso();
+    const yol = (id) => `/tv/${id}?language=tr-TR`;
+    // Dizi başına TEK çağrı; toplu getirici benzersizleştirir, önbelleği tek
+    // sorguda okur ve YALNIZ eksikleri 8'li öbeklerle TMDB'den çeker.
+    // TTL "uzun" (7 gün) DEĞİL "varsayilan" (6 saat): bayat veriyle çalışan bir
+    // tarama yeni bölümü günlerce fark etmezdi (durumlariTara ile aynı gerekçe).
+    const harita = await tmdbTopluGetir(
+      rows.map((r) => yol(r.tmdb_id)), ONBELLEK_TTL_SN.varsayilan);
+    const sayac = new Map(); // kullanici_id -> bu turda atılan bildirim (fren)
+    let toplam = 0;
+    for (const r of rows) {
+      try {
+        const dizi = harita.get(yol(r.tmdb_id));
+        const aday = yeniBolumAdayi(dizi, bugun);
+        if (!aday) continue; // pencere dışı/özel sezon: kullanıcılara HİÇ bakma
+        const onceki = oncekiBolum(dizi, aday.sezon, aday.bolum);
+        if (!onceki) continue; // S1B1 ya da önceki sezon verisi güvenilmez
+        const adaylar = r.kullanicilar.filter(
+          (id) => (sayac.get(id) || 0) < YENI_BOLUM_TUR_SINIRI);
+        if (!adaylar.length) continue;
+        const izl = await havuz.query(
+          `SELECT kullanici_id, sezon, bolum FROM izlemeler
+            WHERE tur='tv' AND tmdb_id=$1 AND sezon >= 1
+              AND kullanici_id = ANY($2::int[])`,
+          [r.tmdb_id, adaylar]);
+        const kume = new Map();
+        for (const i of izl.rows) {
+          let k = kume.get(i.kullanici_id);
+          if (!k) kume.set(i.kullanici_id, k = new Set());
+          k.add(`${i.sezon}:${i.bolum}`);
+        }
+        for (const id of adaylar) {
+          const izlenen = kume.get(id);
+          if (!izlenen) continue; // hiç bölüm işaretlememiş
+          if (!bolumBildirilsinMi({ izlenen, sezon: aday.sezon, bolum: aday.bolum, onceki })) {
+            continue;
+          }
+          // Yazıldıysa (tekil indeks çakışmadıysa) sayaç artar; çakıştıysa
+          // kullanıcının kotası boşa gitmez.
+          if (await bolumBildirimiEkle(id, r.tmdb_id, aday.sezon, aday.bolum, dizi?.name)) {
+            sayac.set(id, (sayac.get(id) || 0) + 1);
+            toplam++;
+          }
+        }
+      } catch (e) {
+        console.error(`yeni bolum (tv/${r.tmdb_id}):`, e.message);
+      }
+    }
+    if (toplam) console.log(`yeni bolum bildirimi: ${toplam} adet`);
+  } catch (e) {
+    // Tur düştüyse 6 saat sonra tekrar denenir; satır yazılmadığı için
+    // hiçbir bildirim kalıcı olarak kaybolmaz.
+    console.error('yeni bolum taramasi:', e.message);
+  }
+}
+// KÜME: yalnız görevli işçi (sıra 1) — N işçide N kez koşmak aynı TMDB
+// taramasını N kez yapmaktı. (Bildirimin KENDİSİ zaten kısmi tekil indeksle
+// korunuyor; bu kapı push'u değil, boşuna TMDB/DB yükünü engelliyor.)
+if (ISCI_GOREVLI) {
+  setInterval(yeniBolumleriBildir, 6 * 60 * 60 * 1000);
+  // Açılıştan 3 dk sonra ilk tur: durumlariTara (1 dk) ile tablolariBuda
+  // (5 dk) arasına serpiştirildi ki üçü aynı anda TMDB'ye/DB'ye yüklenmesin.
+  setTimeout(yeniBolumleriBildir, 3 * 60 * 1000);
+}
+
 // Film izleme kaydı → durum. Filmde ara hâl yoktur: izlendiyse "bitirdim".
 //
 // NEDEN GEREKLİ (4 Ağu 2026 canlı ölçüm): 1265 film izleme kaydının 1229'unun
@@ -3491,20 +3797,32 @@ app.post('/rewatch', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // #9 Bildirim tercihleri: hangi bildirim türleri açık.
+//
+// TEK LİSTE: GET'in seçtiği, POST'un kabul ettiği ve POST'un geri döndürdüğü
+// alanlar AYNI diziden üretilir. Eskiden üç yerde elle yazılıydı; 13 Ağu'da
+// `bildir_bolum` eklenirken üçünden birini atlamak sessiz bir hata olurdu
+// (istemci anahtarı yollar, sunucu yok sayar, kullanıcı "kapattım" sanır).
+//
+// `bildir_arama` BİLEREK BU LİSTEDE DEĞİL: 8 Ağu'da eklendi ama uygulamada
+// karşılığı olan ayar ekranı henüz yayında değil. Buraya eklemek, istemcinin
+// bilmediği bir anahtarı yanıtta göstermek olurdu — ayrı bir tur işi.
+const BILDIRIM_TERCIH_ALANLARI = [
+  'bildir_begeni', 'bildir_yanit', 'bildir_takip', 'bildir_mesaj', 'bildir_etiket',
+  'bildir_bolum', // md. 27 — izlenen dizinin yeni bölümü
+];
 app.get('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
-    'SELECT bildir_begeni, bildir_yanit, bildir_takip, bildir_mesaj, bildir_etiket FROM kullanicilar WHERE id=$1',
+    `SELECT ${BILDIRIM_TERCIH_ALANLARI.join(', ')} FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
   res.json(rows[0] || {});
 }));
 app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const g = req.body || {};
-  // Yalnız bilinen 5 anahtar; her biri boolean'a zorlanır (eksik = değişmez).
-  const alanlar = ['bildir_begeni', 'bildir_yanit', 'bildir_takip', 'bildir_mesaj', 'bildir_etiket'];
+  // Yalnız bilinen anahtarlar; her biri boolean olmalı (eksik = değişmez).
   const set = [];
   const deg = [req.kullanici.id];
-  for (const a of alanlar) {
+  for (const a of BILDIRIM_TERCIH_ALANLARI) {
     if (typeof g[a] === 'boolean') {
       deg.push(g[a]);
       set.push(`${a}=$${deg.length}`);
@@ -3513,7 +3831,7 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   if (!set.length) return res.status(400).json({ hata: 'Değiştirilecek tercih yok' });
   const { rows } = await havuz.query(
     `UPDATE kullanicilar SET ${set.join(', ')} WHERE id=$1
-     RETURNING bildir_begeni, bildir_yanit, bildir_takip, bildir_mesaj, bildir_etiket`,
+     RETURNING ${BILDIRIM_TERCIH_ALANLARI.join(', ')}`,
     deg,
   );
   res.json(rows[0]);
@@ -5374,10 +5692,20 @@ app.post('/admin/dil-tespit', adminKisit, sarici(async (req, res) => {
 }));
 
 // ---------- bildirimler ----------
+// 'bolum' TÜRÜ (md. 27): satır yalnız (tmdb_id, sezon, bolum) taşır; `aktor` /
+// `aktor_avatar` NULL kalır (aktörü yoktur, kaynağı TMDB takvimidir). Kutuda
+// "Poster + dizi adı + S5B3" çizilebilmesi için dizi adı/posteri BURADA
+// zenginleştirilir.
+//
+// N+1 YOK: sayfadaki TÜM bölüm bildirimleri için TEK `tmdbTopluGetir` çağrısı
+// yapılır — o da benzersizleştirip tek DB sorgusuyla önbellekten okur, yalnız
+// eksikleri 8'li öbeklerle TMDB'den çeker. Dizi adı isteğin diline gelir
+// (`istekBaglam.tmdbDil`), push gövdesinden farklı olarak.
 app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
   const [liste, okunmamis] = await Promise.all([
     havuz.query(
       `SELECT b.id, b.tur, b.yorum_id, b.okundu, b.tarih,
+              b.tmdb_id, b.sezon, b.bolum,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
               y.tur AS yorum_tur, y.tmdb_id AS yorum_tmdb,
               y.sezon AS yorum_sezon, y.bolum AS yorum_bolum
@@ -5390,6 +5718,20 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
       'SELECT count(*)::int AS adet FROM bildirimler WHERE kullanici_id=$1 AND NOT okundu',
       [req.kullanici.id]),
   ]);
+  const bolumler = liste.rows.filter((r) => r.tur === 'bolum' && r.tmdb_id);
+  if (bolumler.length) {
+    const yol = (id) => `/tv/${id}?language=tr-TR`; // dil tmdbTopluGetir'de değişir
+    // TMDB tökezlerse bildirim kutusu HİÇ AÇILMAMALI değil: ad/poster null
+    // kalır, satır yine de listelenir (istemci id ile bölüme gidebilir).
+    const harita = await tmdbTopluGetir(
+      bolumler.map((r) => yol(r.tmdb_id)), ONBELLEK_TTL_SN.uzun,
+    ).catch(() => new Map());
+    for (const r of bolumler) {
+      const d = harita.get(yol(r.tmdb_id));
+      r.dizi_adi = d?.name || null;
+      r.poster = d?.poster_path || null;
+    }
+  }
   res.json({ bildirimler: liste.rows, okunmamis: okunmamis.rows[0].adet });
 }));
 

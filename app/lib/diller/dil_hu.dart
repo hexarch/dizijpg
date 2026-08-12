@@ -715,4 +715,8 @@ const Map<String, String> cevirilerHu = {
   'Misafir hesaplar aranamaz': 'Vendégfiókok nem hívhatók',
   'Puan dağılımı': 'Értékelések eloszlása',
   '{} yıldız': '{} csillag',
+  'Yakında gelecek': 'Hamarosan',
+  '{} {} yayınlandı': '{} {} megjelent',
+  'Yeni bölüm yayınlandı': 'Megjelent az új epizód',
+  'Yeni bölümler': 'Új epizódok',
 };

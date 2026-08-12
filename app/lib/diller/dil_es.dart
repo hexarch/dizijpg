@@ -249,9 +249,9 @@ const Map<String, String> cevirilerEs = {
   'Video': 'Video',
   'İçerik': 'Contenido',
   'çevrimiçi': 'en línea',
-  'son görülme {} dk önce': 'visto hace {} min',
-  'son görülme {} saat önce': 'visto hace {} h',
-  'son görülme {} gün önce': 'visto hace {} d',
+  'son görülme {} dk önce': 'en línea hace {} min',
+  'son görülme {} saat önce': 'en línea hace {} h',
+  'son görülme {} gün önce': 'en línea hace {} d',
   'Yorumlar yüklenemedi': 'No se pudieron cargar los comentarios',
   'Favori': 'Favorito',
   'Listeye ekle': 'Añadir a lista',
@@ -268,7 +268,7 @@ const Map<String, String> cevirilerEs = {
   'Abonelik': 'Suscripción',
   'Kirala': 'Alquilar',
   'Satın al': 'Comprar',
-  'Hoş geldin!': '¡Bienvenido!',
+  'Hoş geldin!': '¡Te damos la bienvenida!',
   'İzlemek istediğin dizi ve filmleri seç':
       'Elige series y películas que quieras ver',
   'Seçtiklerin "İzleyeceğim" listene eklenir':
@@ -515,9 +515,9 @@ const Map<String, String> cevirilerEs = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Los demás no verán tu estado en línea ni tu última conexión en los mensajes',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Uno de nuestros primeros usuarios. Sus comentarios ayudaron a que la aplicación sea lo que es hoy.',
+      'De nuestros primeros usuarios. Sus comentarios ayudaron a que la aplicación sea lo que es hoy.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Eres uno de nuestros primeros usuarios. Tus comentarios ayudaron a que la aplicación sea lo que es hoy.',
+      'Estás entre nuestros primeros usuarios. Tus comentarios ayudaron a que la aplicación sea lo que es hoy.',
   'İleri': 'Siguiente',
   'Seçilen dosya okunamadı': 'No se pudo leer el archivo seleccionado',
   'Video açılamadı': 'No se pudo abrir el vídeo',
@@ -717,4 +717,8 @@ const Map<String, String> cevirilerEs = {
   'Misafir hesaplar aranamaz': 'No se puede llamar a cuentas de invitado',
   'Puan dağılımı': 'Distribución de puntuaciones',
   '{} yıldız': '{} estrellas',
+  'Yakında gelecek': 'Próximamente',
+  '{} {} yayınlandı': '{} {} ya está disponible',
+  'Yeni bölüm yayınlandı': 'Nuevo episodio disponible',
+  'Yeni bölümler': 'Nuevos episodios',
 };

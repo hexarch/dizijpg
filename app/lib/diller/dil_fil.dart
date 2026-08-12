@@ -719,4 +719,8 @@ const Map<String, String> cevirilerFil = {
   'Misafir hesaplar aranamaz': 'Hindi matatawagan ang guest account',
   'Puan dağılımı': 'Distribusyon ng rating',
   '{} yıldız': '{} bituin',
+  'Yakında gelecek': 'Malapit nang dumating',
+  '{} {} yayınlandı': 'Lumabas na ang {} {}',
+  'Yeni bölüm yayınlandı': 'Lumabas na ang bagong episode',
+  'Yeni bölümler': 'Mga bagong episode',
 };

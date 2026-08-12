@@ -21,6 +21,13 @@ import 'arama_servisi.dart';
 /// (gerekçe orada). Yani hata yönü bilinçli seçildi: yanlışlıkla görünen bir
 /// düğme çevrilmiş bir uyarı verir, yanlışlıkla gizlenen düğme SESSİZCE
 /// özelliği yok eder.
+///
+/// ### "Yakında gelecek" (sunucu bayrağı kapalıyken)
+///
+/// [AramaServisi.yakindaModu] açıkken düğmeler HERKESTE, her sohbette pasif
+/// olarak çizilir ve dokunuşa "Yakında gelecek" der. Bu daldan hiçbir ağ
+/// isteği çıkmaz: ne karşılıklı takip sorgusu ([_sor] zaten döner) ne de
+/// arama başlatma. Düğmeler bu modda özelliğin DUYURUSUDUR.
 class AramaDugmeleri extends StatefulWidget {
   const AramaDugmeleri({super.key, required this.kullaniciAdi, this.avatar});
 
@@ -42,6 +49,9 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
   }
 
   Future<void> _sor() async {
+    // `yakindaModu`da da buradan ÇIKILIR (o modda `kullanilabilir` false):
+    // özellik kimsede açık olmadığına göre karşılıklı takip sorgusu (1-2 GET)
+    // yalnız "yakında gelecek" yazan bir düğmeyi çizmek için harcanırdı.
     if (!AramaServisi.kullanilabilir) return;
     final benimAd =
         context.read<Oturum>().kullanici?['kullanici_adi'] as String?;
@@ -73,7 +83,31 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
       ? 'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.'.c
       : 'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.'.c;
 
-  void _kapaliAciklama(String tur) {
+  /// Pasif düğmenin metni. İKİ AYRI SEBEP, İKİ AYRI CÜMLE:
+  ///   * [AramaServisi.yakindaModu] — özellik HENÜZ yok; kullanıcının
+  ///     yapabileceği bir şey yok, yalnız haber veriyoruz.
+  ///   * kendi tercihi kapalı (md. 38) — özellik VAR; nereden açacağı yazılı.
+  /// Tek metne indirilseydi biri ötekini yalanlardı: "Ayarlar'dan aç" diyen
+  /// bir metin, anahtarın hiçbir şeyi çalıştırmadığı bir dönemde yanlıştır.
+  ///
+  /// Anahtar TEK YERDE ([yakindaAnahtar]): tooltip ile SnackBar'ın metni
+  /// ayrışırsa çeviri dosyalarında iki ayrı satır aranır ve biri unutulur.
+  String _pasifMetin(String tur) =>
+      AramaServisi.yakindaModu ? yakindaAnahtar.c : kapaliMetni(tur);
+
+  /// Çeviri anahtarı (45 dil `lib/diller/` altında).
+  static const yakindaAnahtar = 'Yakında gelecek';
+
+  void _pasifAciklama(String tur) {
+    if (AramaServisi.yakindaModu) {
+      // Eylem düğmesi YOK: Ayarlar'a götürmenin anlamı olmaz, oradaki anahtar
+      // bayrak kapalıyken hiçbir şeyi çalıştırmıyor. Kurtarma yolu olmayan bir
+      // mesaj değil bu — yapılacak tek şey beklemek.
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(yakindaAnahtar.c)));
+      return;
+    }
     final mesaj = kapaliMetni(tur);
     // `maybeOf`, `of` DEĞİL: `of` yönlendirici yoksa FIRLATIR ve o an asıl
     // iş olan AÇIKLAMA da gösterilemez. Kurtarma kısayolu kaybolabilir,
@@ -117,9 +151,9 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
       // Pasif hâlde tooltip = açıklamanın kendisi. Ekran okuyucu için tek
       // erişilebilir ipucu budur: renk farkı (metin38) sesli okunmaz, "Sesli
       // ara" desek kullanıcı basar ve neden çalışmadığını anlamaz.
-      tooltip: acik ? etiket : kapaliMetni(tur),
+      tooltip: acik ? etiket : _pasifMetin(tur),
       icon: Icon(ikon, color: acik ? DiziRenkler.metin : DiziRenkler.metin38),
-      onPressed: acik ? () => _ara(tur) : () => _kapaliAciklama(tur),
+      onPressed: acik ? () => _ara(tur) : () => _pasifAciklama(tur),
     );
   }
 
@@ -128,6 +162,34 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
     return ValueListenableBuilder<int>(
       valueListenable: AramaServisi.surum,
       builder: (context, _, _) {
+        // YAKINDA GELECEK (sunucu bayrağı kapalı, platform+hesap uygun):
+        // iki düğme de ÇİZİLİR ama pasiftir ve hiçbir ağ isteği atmaz.
+        //
+        // Karşılıklı takip BURADA SORULMUYOR: özellik kimsede açık değil,
+        // dolayısıyla "bu kişiyi arayabilir miydim" sorusunun cevabı düğmenin
+        // ne yapacağını değiştirmiyor — iki durumda da "Yakında gelecek"
+        // diyor. Sormak, sohbet açılışında boşuna 1-2 GET demekti.
+        if (AramaServisi.yakindaModu) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _dugme(
+                anahtar: const Key('sohbet-sesli-ara'),
+                ikon: Icons.call,
+                etiket: 'Sesli ara'.c,
+                tur: 'ses',
+                acik: false,
+              ),
+              _dugme(
+                anahtar: const Key('sohbet-goruntulu-ara'),
+                ikon: Icons.videocam,
+                etiket: 'Görüntülü ara'.c,
+                tur: 'goruntu',
+                acik: false,
+              ),
+            ],
+          );
+        }
         if (!AramaServisi.kullanilabilir || !_sorgulandi || !_karsilikli) {
           return const SizedBox.shrink();
         }

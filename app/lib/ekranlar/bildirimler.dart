@@ -64,6 +64,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
   ///  - yorumsuz (takip) → aktörün profili
   ///  - YANIT bildiriminde adrese `?yanit=1` eklenir; bkz. [gonderiYolu].
   String _hedef(Map<String, dynamic> b) {
+    // Md. 27 — yeni bölüm bildiriminin AKTÖRÜ YOK (sistem üretir); hedefi
+    // bölümün kendi sayfasıdır.
+    if (b['tur'] == 'bolum') {
+      return '/dizi/${b['tmdb_id']}/sezon/${b['sezon']}/bolum/${b['bolum']}';
+    }
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
     // yorum silinmişse (JOIN'de yorum_tur null) gönderi 404 verir → profile git
@@ -73,6 +78,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
     }
     return '/kullanici/${b['aktor']}';
   }
+
+  /// "S5B3" etiketi — `S{}B{}` anahtarı ZATEN VAR (bölüm yorumlarında
+  /// kullanılıyor), yeni çeviri anahtarı açılmadı.
+  String _sezonBolum(Map<String, dynamic> b) =>
+      'S{}B{}'.cf([b['sezon'], b['bolum']]);
 
   (IconData, String) _gorunum(Map<String, dynamic> b) {
     switch (b['tur'] as String?) {
@@ -89,6 +99,16 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         return (Icons.person_add, '@{} seni takip etti'.cf([b['aktor']]));
       case 'mesaj':
         return (Icons.mail, '@{} sana mesaj gönderdi'.cf([b['aktor']]));
+      case 'bolum':
+        // Aktörsüz bildirim: "@" ile başlayan kalıba GİRMEZ, dizi adını yazar.
+        // Dizi adı sunucudan gelmezse (TMDB önbelleği ıskaladı) sayı biçimi
+        // tek başına anlamlı kalsın diye ad yerine "Yeni bölüm" denir.
+        return (
+          Icons.new_releases_outlined,
+          (b['dizi_adi'] as String?)?.isNotEmpty == true
+              ? '{} {} yayınlandı'.cf([b['dizi_adi'], _sezonBolum(b)])
+              : 'Yeni bölüm yayınlandı'.c,
+        );
       default:
         return (Icons.notifications, '@${b['aktor']}');
     }
@@ -129,7 +149,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
           itemBuilder: (context, i) {
             final b = _bildirimler![i] as Map<String, dynamic>;
             final (ikon, metin) = _gorunum(b);
-            final avatar = dosyaUrl(b['aktor_avatar'] as String?);
+            // Bölüm bildiriminde avatar yerine DİZİNİN POSTERİ durur: aktörü
+            // olmayan tek tür bu, kişi ikonu koymak yanıltıcı olurdu.
+            final avatar = b['tur'] == 'bolum'
+                ? posterUrl(b['poster'] as String?, boyut: 'w185')
+                : dosyaUrl(b['aktor_avatar'] as String?);
             final tarih = (b['tarih'] as String? ?? '').split('T').first;
             return Card(
               child: ListTile(
@@ -141,7 +165,12 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                           ? CachedNetworkImageProvider(avatar)
                           : null,
                       child: avatar == null
-                          ? Icon(Icons.person, color: DiziRenkler.metin38)
+                          ? Icon(
+                              b['tur'] == 'bolum'
+                                  ? Icons.tv_outlined
+                                  : Icons.person,
+                              color: DiziRenkler.metin38,
+                            )
                           : null,
                     ),
                     Positioned(

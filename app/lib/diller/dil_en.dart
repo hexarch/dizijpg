@@ -713,4 +713,8 @@ const Map<String, String> cevirilerEn = {
   'Misafir hesaplar aranamaz': 'Guest accounts can’t be called',
   'Puan dağılımı': 'Rating distribution',
   '{} yıldız': '{} stars',
+  'Yakında gelecek': 'Coming soon',
+  '{} {} yayınlandı': '{} {} is out',
+  'Yeni bölüm yayınlandı': 'New episode is out',
+  'Yeni bölümler': 'New episodes',
 };

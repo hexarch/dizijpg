@@ -706,4 +706,8 @@ const Map<String, String> cevirilerAz = {
   'Misafir hesaplar aranamaz': 'Qonaq hesablarına zəng edilə bilməz',
   'Puan dağılımı': 'Qiymət paylanması',
   '{} yıldız': '{} ulduz',
+  'Yakında gelecek': 'Tezliklə',
+  '{} {} yayınlandı': '{} {} yayımlandı',
+  'Yeni bölüm yayınlandı': 'Yeni epizod yayımlandı',
+  'Yeni bölümler': 'Yeni epizodlar',
 };

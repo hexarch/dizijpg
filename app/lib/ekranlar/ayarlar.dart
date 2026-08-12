@@ -1230,6 +1230,8 @@ class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
     ('bildir_takip', 'Yeni takipçiler'),
     ('bildir_mesaj', 'Mesajlar'),
     ('bildir_etiket', 'Etiketlenmeler'),
+    // Md. 27: izlediğin dizinin yeni bölümü (yalnız bir öncekini izlediysen).
+    ('bildir_bolum', 'Yeni bölümler'),
   ];
 
   @override

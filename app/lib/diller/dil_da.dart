@@ -708,4 +708,8 @@ const Map<String, String> cevirilerDa = {
   'Misafir hesaplar aranamaz': 'Der kan ikke ringes til gæstekonti',
   'Puan dağılımı': 'Fordeling af bedømmelser',
   '{} yıldız': '{} stjerner',
+  'Yakında gelecek': 'Kommer snart',
+  '{} {} yayınlandı': '{} {} er ude',
+  'Yeni bölüm yayınlandı': 'Nyt afsnit er ude',
+  'Yeni bölümler': 'Nye afsnit',
 };

@@ -47,7 +47,7 @@ const Map<String, String> cevirilerPa = {
   'Kaydet': 'ਸੇਵ ਕਰੋ',
   'Kendinden bahset...': 'ਆਪਣੇ ਬਾਰੇ ਦੱਸੋ...',
   'Keşfet': 'ਡਿਸਕਵਰ',
-  'Kimseyi takip etmiyor': 'ਕਿਸੇ ਨੂੰ ਫਾਲੋ ਨਹੀਂ ਕਰਦੇ',
+  'Kimseyi takip etmiyor': 'ਕਿਸੇ ਨੂੰ ਫਾਲੋ ਨਹੀਂ',
   'Kişi ara': 'ਲੋਕ ਖੋਜੋ',
   'Kişi yorumu': 'ਵਿਅਕਤੀ ਬਾਰੇ ਕਮੈਂਟ',
   'Konuk Oyuncular': 'ਮਹਿਮਾਨ ਕਲਾਕਾਰ',
@@ -165,7 +165,7 @@ const Map<String, String> cevirilerPa = {
   'Listeleri ({})': 'ਉਹਨਾਂ ਦੀਆਂ ਸੂਚੀਆਂ ({})',
   'Liste boş.': 'ਇਹ ਸੂਚੀ ਖਾਲੀ ਹੈ।',
   'Yanıtla': 'ਜਵਾਬ ਦਿਓ',
-  '@{} kullanıcısına yanıt veriyorsun': '@{} ਨੂੰ ਜਵਾਬ ਦੇ ਰਹੇ ਹੋ',
+  '@{} kullanıcısına yanıt veriyorsun': '@{} ਨੂੰ ਜਵਾਬ',
   'İzlediğim Diziler ({})': 'ਮੇਰੇ ਦੇਖੇ ਸ਼ੋਅ ({})',
   'İzlediğim Filmler ({})': 'ਮੇਰੀਆਂ ਦੇਖੀਆਂ ਫ਼ਿਲਮਾਂ ({})',
   'Tümünü gör': 'ਸਭ ਦੇਖੋ',
@@ -181,7 +181,7 @@ const Map<String, String> cevirilerPa = {
   'Mesajını yaz...': 'ਸੁਨੇਹਾ ਲਿਖੋ...',
   'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.':
       'ਹਾਲੇ ਕੋਈ ਗੱਲਬਾਤ ਨਹੀਂ।\nਪ੍ਰੋਫਾਈਲ ਖੋਲ੍ਹ ਕੇ ਸੁਨੇਹਾ ਭੇਜੋ।',
-  'Şifreni mi unuttun?': 'ਪਾਸਵਰਡ ਭੁੱਲ ਗਏ?',
+  'Şifreni mi unuttun?': 'ਪਾਸਵਰਡ ਯਾਦ ਨਹੀਂ?',
   'Şifreyi Sıfırla': 'ਪਾਸਵਰਡ ਰੀਸੈੱਟ ਕਰੋ',
   'E-postadaki kod': 'ਈਮੇਲ ਵਾਲਾ ਕੋਡ',
   'Yeni şifre': 'ਨਵਾਂ ਪਾਸਵਰਡ',
@@ -218,7 +218,7 @@ const Map<String, String> cevirilerPa = {
   '50 Dizi Bitirdin': '50 ਸ਼ੋਅ ਪੂਰੇ',
   '10 Beğeni': '10 ਲਾਈਕ',
   '100 Beğeni': '100 ਲਾਈਕ',
-  'yazıyor...': 'ਲਿਖ ਰਹੇ ਹਨ...',
+  'yazıyor...': 'ਲਿਖਿਆ ਜਾ ਰਿਹਾ ਹੈ...',
   'Profil düzeni': 'ਪ੍ਰੋਫਾਈਲ ਲੇਆਉਟ',
   'Konumla ve kırp': 'ਸਥਿਤੀ ਸੈੱਟ ਕਰੋ ਅਤੇ ਕੱਟੋ',
   'Listeye eklendi': 'ਸੂਚੀ ਵਿੱਚ ਜੋੜਿਆ ਗਿਆ',
@@ -413,7 +413,7 @@ const Map<String, String> cevirilerPa = {
   'Bu kullanıcı henüz bir şey izlememiş.':
       'ਇਸ ਵਰਤੋਂਕਾਰ ਨੇ ਹਾਲੇ ਕੁਝ ਨਹੀਂ ਦੇਖਿਆ।',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'ਇਹ ਵਰਤੋਂਕਾਰ ਆਪਣੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾ ਕੇ ਰੱਖਣਾ ਪਸੰਦ ਕਰਦਾ ਹੈ।',
+      'ਇਸ ਵਰਤੋਂਕਾਰ ਦੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾਈਆਂ ਹੋਈਆਂ ਹਨ।',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'ਡੇਟਾ: JustWatch',
   'Web Sitesi': 'ਵੈੱਬਸਾਈਟ',
@@ -684,8 +684,7 @@ const Map<String, String> cevirilerPa = {
       'ਜੇ ਸਿੱਧਾ ਕਨੈਕਸ਼ਨ ਸੰਭਵ ਨਾ ਹੋਵੇ ਤਾਂ ਆਡੀਓ ਅਤੇ ਵੀਡੀਓ ਐਨਕ੍ਰਿਪਟਡ ਰੂਪ ਵਿੱਚ ਰਿਲੇ ਸਰਵਰ (TURN) ਰਾਹੀਂ ਲੰਘਦੇ ਹਨ। ਰਿਲੇ ਸਰਵਰ ਵੀ ਸਮੱਗਰੀ ਡੀਕ੍ਰਿਪਟ ਜਾਂ ਰਿਕਾਰਡ ਨਹੀਂ ਕਰ ਸਕਦਾ।',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'ਮਾਈਕ੍ਰੋਫੋਨ ਸਿਰਫ਼ ਵੌਇਸ ਜਾਂ ਵੀਡੀਓ ਕਾਲ ਦੌਰਾਨ ਅਤੇ ਕੈਮਰਾ ਸਿਰਫ਼ ਵੀਡੀਓ ਕਾਲ ਦੌਰਾਨ ਵਰਤਿਆ ਜਾਂਦਾ ਹੈ। ਕਾਲ ਖ਼ਤਮ ਹੁੰਦੇ ਹੀ ਦੋਵੇਂ ਬੰਦ ਹੋ ਜਾਂਦੇ ਹਨ।',
-  'Takip ettiğin {} kişi izledi':
-      'ਤੁਸੀਂ ਜਿਨ੍ਹਾਂ ਨੂੰ ਫਾਲੋ ਕਰਦੇ ਹੋ ਉਹਨਾਂ ਵਿੱਚੋਂ {} ਨੇ ਵੇਖਿਆ',
+  'Takip ettiğin {} kişi izledi': 'ਤੁਹਾਡੇ ਫਾਲੋ ਕੀਤਿਆਂ ਵਿੱਚੋਂ {} ਨੇ ਵੇਖਿਆ',
   'Yorum yaz...': 'ਟਿੱਪਣੀ ਲਿਖੋ...',
   'Sıradaki bölüm': 'ਅਗਲਾ ਐਪੀਸੋਡ',
   'Doğrulanmış testçi': 'ਪੁਸ਼ਟੀ ਕੀਤਾ ਟੈਸਟਰ',
@@ -711,4 +710,8 @@ const Map<String, String> cevirilerPa = {
   'Misafir hesaplar aranamaz': 'ਮਹਿਮਾਨ ਖਾਤਿਆਂ ਨੂੰ ਕਾਲ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ',
   'Puan dağılımı': 'ਰੇਟਿੰਗ ਵੰਡ',
   '{} yıldız': '{} ਸਟਾਰ',
+  'Yakında gelecek': 'ਜਲਦੀ ਆ ਰਿਹਾ ਹੈ',
+  '{} {} yayınlandı': '{} {} ਰਿਲੀਜ਼ ਹੋ ਗਿਆ',
+  'Yeni bölüm yayınlandı': 'ਨਵਾਂ ਐਪੀਸੋਡ ਰਿਲੀਜ਼ ਹੋ ਗਿਆ',
+  'Yeni bölümler': 'ਨਵੇਂ ਐਪੀਸੋਡ',
 };

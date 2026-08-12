@@ -723,4 +723,8 @@ const Map<String, String> cevirilerMy = {
   'Misafir hesaplar aranamaz': 'ဧည့်သည်အကောင့်များကို ခေါ်ဆိုလို့မရပါ',
   'Puan dağılımı': 'အမှတ် ဖြန့်ဝေမှု',
   '{} yıldız': 'ကြယ် {} ပွင့်',
+  'Yakında gelecek': 'မကြာမီ လာမည်',
+  '{} {} yayınlandı': '{} {} ထွက်ပြီ',
+  'Yeni bölüm yayınlandı': 'အပိုင်းအသစ် ထွက်ပြီ',
+  'Yeni bölümler': 'အပိုင်းအသစ်များ',
 };

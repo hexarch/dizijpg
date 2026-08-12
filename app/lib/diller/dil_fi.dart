@@ -714,4 +714,8 @@ const Map<String, String> cevirilerFi = {
   'Misafir hesaplar aranamaz': 'Vierastileille ei voi soittaa',
   'Puan dağılımı': 'Arvosanojen jakauma',
   '{} yıldız': '{} tähteä',
+  'Yakında gelecek': 'Tulossa pian',
+  '{} {} yayınlandı': '{} {} on julkaistu',
+  'Yeni bölüm yayınlandı': 'Uusi jakso on julkaistu',
+  'Yeni bölümler': 'Uudet jaksot',
 };

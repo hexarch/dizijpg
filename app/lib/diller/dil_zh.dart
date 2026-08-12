@@ -492,7 +492,7 @@ const Map<String, String> cevirilerZh = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       '其他人将看不到你在消息中的在线状态和最后上线时间',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      '我们最早的用户之一。他的反馈帮助这款应用成为今天的样子。',
+      '我们最早的用户之一。TA的反馈帮助这款应用成为今天的样子。',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       '你是我们最早的用户之一。你的反馈帮助这款应用成为今天的样子。',
   'İleri': '下一步',
@@ -675,4 +675,8 @@ const Map<String, String> cevirilerZh = {
   'Misafir hesaplar aranamaz': '无法呼叫访客账号',
   'Puan dağılımı': '评分分布',
   '{} yıldız': '{} 星',
+  'Yakında gelecek': '即将推出',
+  '{} {} yayınlandı': '{} {} 已上线',
+  'Yeni bölüm yayınlandı': '新一集已上线',
+  'Yeni bölümler': '新剧集',
 };

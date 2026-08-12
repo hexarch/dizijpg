@@ -163,7 +163,7 @@ const Map<String, String> cevirilerPt = {
   'Akış': 'Feed',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'Seu feed está vazio.\nQuando comentarem nas séries e filmes que você assiste, aparecerá aqui.',
-  'Listeleri ({})': 'Listas dele(a) ({})',
+  'Listeleri ({})': 'Listas ({})',
   'Liste boş.': 'Esta lista está vazia.',
   'Yanıtla': 'Responder',
   '@{} kullanıcısına yanıt veriyorsun': 'Respondendo a @{}',
@@ -250,9 +250,9 @@ const Map<String, String> cevirilerPt = {
   'Video': 'Vídeo',
   'İçerik': 'Conteúdo',
   'çevrimiçi': 'online',
-  'son görülme {} dk önce': 'visto há {} min',
-  'son görülme {} saat önce': 'visto há {} h',
-  'son görülme {} gün önce': 'visto há {} d',
+  'son görülme {} dk önce': 'online há {} min',
+  'son görülme {} saat önce': 'online há {} h',
+  'son görülme {} gün önce': 'online há {} d',
   'Yorumlar yüklenemedi': 'Não foi possível carregar os comentários',
   'Favori': 'Favorito',
   'Listeye ekle': 'Adicionar à lista',
@@ -269,7 +269,7 @@ const Map<String, String> cevirilerPt = {
   'Abonelik': 'Assinatura',
   'Kirala': 'Alugar',
   'Satın al': 'Comprar',
-  'Hoş geldin!': 'Bem-vindo!',
+  'Hoş geldin!': 'Boas-vindas!',
   'İzlemek istediğin dizi ve filmleri seç':
       'Escolha séries e filmes que quer assistir',
   'Seçtiklerin "İzleyeceğim" listene eklenir':
@@ -516,9 +516,9 @@ const Map<String, String> cevirilerPt = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Os outros não verão seu status online nem sua última visualização nas mensagens',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Um dos nossos primeiros usuários. Os comentários dele ajudaram o aplicativo a se tornar o que é hoje.',
+      'Entre os nossos primeiros usuários. Os comentários ajudaram o aplicativo a se tornar o que é hoje.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Você é um dos nossos primeiros usuários. Seus comentários ajudaram o aplicativo a se tornar o que é hoje.',
+      'Você está entre os nossos primeiros usuários. Seus comentários ajudaram o aplicativo a se tornar o que é hoje.',
   'İleri': 'Avançar',
   'Seçilen dosya okunamadı': 'Não foi possível ler o arquivo selecionado',
   'Video açılamadı': 'Não foi possível abrir o vídeo',
@@ -719,4 +719,8 @@ const Map<String, String> cevirilerPt = {
   'Misafir hesaplar aranamaz': 'Não é possível ligar para contas de convidado',
   'Puan dağılımı': 'Distribuição das notas',
   '{} yıldız': '{} estrelas',
+  'Yakında gelecek': 'Em breve',
+  '{} {} yayınlandı': '{} {} já saiu',
+  'Yeni bölüm yayınlandı': 'Novo episódio já saiu',
+  'Yeni bölümler': 'Novos episódios',
 };

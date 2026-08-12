@@ -1,5 +1,106 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-12 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-13 — ✅ CİNSİYETSİZ DİL (kullanıcı kararı)
+"Kimseye cinsiyete göre hitap etmeyelim — cinsiyetsiz seçerse ne yapacağız."
+Uygulama cinsiyet SORMUYOR/SAKLAMIYOR ama 25 dilde kullanıcıya atıfla eril
+çekim varsayılmıştı (ru `подписался`, pl `zaczął`, he `עוקב`, sr `Одгледао/ла`…).
+
+**YAPILDI (yerelde, dağıtım BEKLİYOR):** `backend/server.js` → `PUSH_SABLON`
+(fr/it/ru/ar/hi/pl, 19 gövde) + `app/lib/diller/dil_XX.dart` (25 dil, 221 metin).
+Yöntem: çekimden kaçan isim öbeği / edilgen yapı ("Новый подписчик: {ad}").
+Çift biçim (`подписался(ась)`, `Одгледао/ла`) KULLANILMADI — ekran okuyucuda kötü.
+
+**DOKUNULMADI (bilerek):** cinsiyeti NESNEDEN gelen çekimler — ru `Вышла серия`
+/ `вышел` (özne "серия"/"эпизод"), ar `صدرت`/`متاحة` (özne "حلقة"). Ayrıca
+"пользователь / utente / Nutzer" gibi genel rol adlarının dilbilgisel eril
+uyumu (bunlar kişiye değil ADA göre çekimlenir).
+
+**KİLİT:** `backend/test/cinsiyetsiz_dil.test.js` (4 test) ve
+`app/test/cinsiyetsiz_dil_test.dart` (4 test) — ileride biri eril metin
+eklerse yakalar; nesne kaynaklı çekimin "düzeltilmesini" de engeller.
+
+## 2026-08-13 — MD. 27 YENİ BÖLÜM BİLDİRİMİ + CİNSİYETSİZ DİL 🚀 (1.38.0+84)
+Dört ajan paralel çalıştı; ana oturum birleştirip dağıttı.
+
+### Md. 27 — yeni bölüm bildirimi (sıra farkındalıklı)
+Kural: yeni bölüm çıkınca bildir, AMA ancak BİR ÖNCEKİ bölüm izlenmişse.
+Saf fonksiyonlar `oncekiBolum()` + `bolumBildirilsinMi()`; sezon geçişinde
+"sezon-1" VARSAYILMIYOR (TMDB'de numara atlar), önceki sezonun bölüm sayısı
+`/tv/{id}` gövdesindeki `seasons[].episode_count`tan — ek TMDB çağrısı yok.
+Tekrar imkânsız: kısmi tekil indeks `(kullanici_id,tmdb_id,sezon,bolum)
+WHERE tur='bolum'`; push YALNIZ satır gerçekten yazıldıysa gidiyor
+(`bildirimEkle` genişletilmedi — o INSERT hatasını yutup koşulsuz push atıyor,
+burada tam tersi gerekiyordu). 6 saatte bir, görevli işçide; pencere 14 gün;
+tur başına kullanıcı başına 3 bildirim freni. `bildir_bolum` tercihi.
+İstemci: bildirim kartında dizi POSTERİ + "Dizi S5B3 yayınlandı", dokununca
+bölüm sayfası; push derin bağlantısı; Ayarlar > "Yeni bölümler".
+İSTEMCİ TESTLERİ İKİ GERÇEK HATA BULDU (push.dart, MEVCUT bildirimleri de
+etkiliyordu): (1) uygulama AÇIKKEN bildirime dokununca hedef kayboluyordu
+(beğeni/yanıt/etiket dahil → `/bildirimler`e düşüyordu) çünkü ön plan yükü
+yalnız `tur`+`ad` taşıyordu; (2) sunucu sezon/bölümü SAYI, push METİN
+gönderiyor — sert `as String?` dönüşümü çöküyor, dokunuş hiçbir şey
+yapmıyordu. İkisi de düzeltildi (`bildirimHedefi`/`bildirimYuku` ayrıldı).
+
+### Cinsiyetsiz dil (kullanıcı kararı)
+"Kimseye cinsiyete göre hitap etmeyelim — cinsiyetsiz seçerse ne yapacağız."
+Uygulama cinsiyet SORMUYOR ama Slav/Sami dillerinde fiiller eril çekilmişti
+(ru `подписался`, pl `zaczął`, he/ar/sr...). **25 dilde 221 metin + 6 dilde
+19 push gövdesi** ad öbeğine/edilgene çevrildi (`Новый подписчик: {ad}`).
+Çift biçim (`подписался(ась)`, `Одгледао/ла`) KULLANILMADI, mevcutlar da
+kaldırıldı — ekran okuyucuda kötü ve yine cinsiyet varsayıyor.
+DOKUNULMAYANLAR (kullanıcı cinsiyeti DEĞİL, nesne cinsiyeti): `{} {}
+yayınlandı`da ru `вышел` (özne "эпизод"), ar `متاحة` (özne "حلقة"); ru
+`понравился` (özne "комментарий"); hint dillerindeki ergatif yapılar.
+Kilit testleri: `backend/test/cinsiyetsiz_dil.test.js` + `app/test/
+cinsiyetsiz_dil_test.dart` — ileride biri eril çekim eklerse kırmızıya döner.
+
+### "Yakında gelecek" (arama kapalıyken)
+Kill switch kapalıyken düğmeler artık GİZLENMİYOR: pasif çiziliyor, dokununca
+"Yakında gelecek" diyor, HİÇBİR ağ isteği atmıyor (gelen-arama yoklaması da
+başlamıyor). Web/misafirde davranış değişmedi (orada özellik "yakında" değil,
+bilinçli olarak yok). `yakindaModu` = mobil + bayrak alınmış + kapalı +
+misafir değil; bayrak hiç alınamadıysa duyuru YAPILMAZ.
+
+### Kanıt ve dağıtım
+`npm test` **628** · `flutter test` **1119** · analyze 0 hata/uyarı (85 info).
+Sıra: migrasyon-2026-08-13 → server.js+sema.sql → web. Canlı: şema üç sütun +
+`bildir_bolum` (138 kullanıcıda varsayılan açık), log temiz, version.json
+1.38.0+84, bootstrap `main.a1c39a4aed5c.dart.js` (eski a3951bc02bde silindi).
+Paketler: `projeler/dizijpg.apk` + `projeler/dizijpg-1.38.0+84.aab`.
+Sürüm notu: `surum-notu-1.38.0.txt` — ARAMA BİLEREK ANILMIYOR (kapalı).
+
+## 2026-08-13 — ⚠ SESLİ/GÖRÜNTÜLÜ ARAMA HERKESTE KAPATILDI (kullanıcı kararı)
+"Sesli ve görüntülü aramayı şu an herkeste devre dışı bırakalım, üstüne
+tıkladıklarında yakında gelecek yazsın."
+
+**CANLIDA KAPALI.** `/opt/dizijpg/.env`e iki satır eklendi ve API yeniden
+başlatıldı:
+```
+ARAMA_KAPALI=kapali
+ARAMA_GORUNTULU=kapali
+```
+Yedek: `/opt/dizijpg/.env.yedek-20260813`. Konteynerden doğrulandı
+(`printenv` → kapali/kapali). **Zorlama SUNUCUDA** (arama.js `ozellikBayraklari`,
+env katmanı DB'yi EZER) — yani yayındaki ESKİ APK'lar da arama başlatamaz,
+kimse güncelleme yapmasa bile özellik kapalı. GERİ AÇMAK: bu iki satırı sil,
+`docker-compose up -d api`.
+
+DİKKAT — sürüm notu: kapalı bir özelliği duyurma. 1.37.0 için hazırlanan
+`surum-notu-1.37.0.txt` dosyasındaki ARAMA maddeleri, yükleme yapılmadan önce
+çıkarılmalı (Play taslağı kullanıcı tarafından iptal edildi, AAB işler bitince
+yeniden derlenecek).
+
+İSTEMCİ TARAFI (ajan) ✅: bayrak kapalıyken düğmeler artık ÇİZİLİYOR, pasif
+görünüyor ve dokununca "Yakında gelecek" diyor. Yeni durum
+`AramaServisi.yakindaModu` (= mobil + kayıtlı hesap + `arama_acik:false`);
+`kullanilabilir` semantiği KORUNDU — o hâlâ "gerçekten arayabilir miyim"in
+cevabı ve 4 sn'lik gelen arama yoklamasını da o tetikliyor, dolayısıyla bu
+modda ne yoklama turu ne de karşılıklı takip sorgusu atılıyor (SIFIR istek).
+Web ve misafirde düğme yine YOK (orada özellik "yakında" değil, hiç gelmeyecek).
+Kanıt: `app/test/arama_yakinda_test.dart` (20 test).
+Md. 33 (görüntülü aramada efektler) arama kapalı kaldığı sürece ANLAMSIZ —
+beklemeye alındı. Kullanıcının "iki telefonla arama testi" görevi de askıda.
 
 ## 2026-08-12 (h) — MD. 43 MESAJLARA EMOJİ TEPKİSİ 🚀 (1.37.0+83)
 Çift tık → ❤️ · basılı tutma → 9'luk hareketli şerit (menünün BAŞINDA).

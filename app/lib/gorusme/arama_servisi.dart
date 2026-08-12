@@ -56,6 +56,9 @@ class AramaServisi {
   /// Arama özelliği bu cihazda kullanılabilir mi (platform + sunucu bayrağı +
   /// hesap türü).
   ///
+  /// Bu alan tek bir soruya cevap verir: **gerçekten arayabilir/aranabilir
+  /// miyim?** Düğmenin ÇİZİLİP çizilmeyeceği ayrı bir sorudur ([yakindaModu]).
+  ///
   /// **Misafir hesapta false** (sözleşme sürüm 4, kullanıcı kararı 10 Ağu):
   /// misafir ne arayabilir (`MISAFIR_ARAMA_YOK`) ne aranabilir
   /// (`ALICI_MISAFIR`). Buradan false dönmesi hem sohbet başlığındaki
@@ -67,6 +70,27 @@ class AramaServisi {
   static bool get kullanilabilir =>
       !webMi && _buz != null && _buz!.aramaAcik && !_buz!.misafir;
 
+  /// "YAKINDA GELECEK" modu: platform ve hesap uygun ama SUNUCU bayrağı
+  /// kapalı (`arama_acik:false`, `.env`teki `ARAMA_KAPALI`).
+  ///
+  /// Kullanıcı kararı (13 Ağu): "sesli ve görüntülü aramayı şu an herkeste
+  /// devre dışı bırakalım, üstüne tıkladıklarında 'yakında gelecek' yazsın."
+  /// Yani bayrak kapalıyken düğmeler artık YOK OLMUYOR: çiziliyor, pasif
+  /// görünüyor ve dokununca ne olduğunu söylüyor.
+  ///
+  /// **Neden [kullanilabilir] değiştirilmedi:** o alan "arayabilir miyim"in
+  /// cevabıdır ve 4 sn'lik `GET /arama/gelen` yoklamasının turunu da o
+  /// tetikliyor (`_gelenTur`). Bu modda arama GELEMEZ — bayrak kapalıyken
+  /// sunucu kimseye arama kurdurmuyor — dolayısıyla yoklama tur harcamamalı.
+  /// Düğmeyi görünür yapmak için `kullanilabilir`i gevşetmek, gelmesi imkânsız
+  /// bir arama için sonsuza kadar 4 sn'de bir istek atmak demekti.
+  ///
+  /// **Web ve misafirde bu mod da YOK:** orada özellik "yakında" değil, hiç
+  /// gelmeyecek (web kararı bu dosyanın başında, misafir kararı sözleşme
+  /// sürüm 4). Tutulamayacak bir söz verilmiyor.
+  static bool get yakindaModu =>
+      !webMi && _buz != null && !_buz!.aramaAcik && !_buz!.misafir;
+
   /// Bu hesap misafir mi (sunucudan; `GET /arama/buz-sunuculari`).
   static bool get kendiMisafir => _buz?.misafir == true;
 
@@ -75,13 +99,23 @@ class AramaServisi {
 
   // ---------------- Kendi tercihim (md. 38) ----------------
   //
-  // ÜÇ KATMAN VAR, KARIŞTIRILMAMALI (sözleşme §5.0):
+  // DÖRT KATMAN VAR, KARIŞTIRILMAMALI (sözleşme §5.0):
   //   1) [kullanilabilir] / [goruntuluAcik] — SUNUCU GENELİ kill switch.
-  //      Kapalıysa özellik YOK: düğme hiç çizilmez.
-  //   2) BURASI — kullanıcının KENDİ kararı, varsayılan KAPALI.
+  //      AÇIKSA özellik gerçekten çalışır: düğme aktif çizilir, arama kurulur,
+  //      gelen arama yoklaması döner.
+  //   2) [yakindaModu] — kill switch KAPALI ama platform ve hesap uygun.
+  //      Özellik HENÜZ yok: düğme yine çizilir, PASİF görünür ve dokununca
+  //      "Yakında gelecek" der. Hiçbir ağ isteği atılmaz (ne arama, ne
+  //      karşılıklı takip sorgusu, ne de gelen arama yoklaması).
+  //      Web'de ve misafir hesapta bu katman da çalışmaz: orada özellik
+  //      "yakında" değil, HİÇ gelmeyecek.
+  //   3) BURASI — kullanıcının KENDİ kararı, varsayılan KAPALI.
   //      Kapalıysa özellik VAR ama kapalı: düğme çizilir, PASİF görünür ve
   //      tıklanınca nereden açılacağını söyler.
-  //   3) Karşılıklı takip — düğme çizilmez (mevcut davranış).
+  //   4) Karşılıklı takip — düğme çizilmez (mevcut davranış).
+  //
+  // 2 ve 3 aynı GÖRÜNÜR (pasif düğme) ama farklı METİN verir: 2'de yapılacak
+  // bir şey yok (beklenecek), 3'te kullanıcının kendi açacağı bir anahtar var.
   //
   // Gizlemek yerine pasif çizmenin sebebi: varsayılan KAPALI olduğu için,
   // gizlenirse özelliğin VARLIĞINDAN kimse haberdar olmaz ve hiç kimse açmaz.
@@ -245,7 +279,10 @@ class AramaServisi {
   }
 
   static Future<void> _gelenTur() async {
-    // Zaten bir aramadaysak ya da özellik kapalıysa tur harcanmaz.
+    // Zaten bir aramadaysak ya da özellik kapalıysa tur harcanmaz. Bilerek
+    // [kullanilabilir]'e bakılıyor, [yakindaModu]'na DEĞİL: "yakında gelecek"
+    // düğmesi görünürken bile arama GELEMEZ, dolayısıyla tek bir istek bile
+    // atılmamalı.
     if (!kullanilabilir || aktifAramaId != null || !Api.girisli) return;
     try {
       final arama = await GorusmeApi.gelen();

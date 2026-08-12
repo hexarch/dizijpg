@@ -687,4 +687,8 @@ const Map<String, String> cevirilerKo = {
   'Misafir hesaplar aranamaz': '게스트 계정에는 전화할 수 없습니다',
   'Puan dağılımı': '평점 분포',
   '{} yıldız': '별 {}개',
+  'Yakında gelecek': '곧 공개돼요',
+  '{} {} yayınlandı': '{} {} 공개됐어요',
+  'Yeni bölüm yayınlandı': '새 에피소드가 공개됐어요',
+  'Yeni bölümler': '새 에피소드',
 };

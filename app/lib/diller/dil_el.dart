@@ -162,19 +162,19 @@ const Map<String, String> cevirilerEl = {
   'Akış': 'Ροή',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
       'Η ροή σου είναι άδεια.\nΌταν σχολιάσουν τις σειρές και ταινίες που βλέπεις, θα εμφανιστεί εδώ.',
-  'Listeleri ({})': 'Οι λίστες του ({})',
+  'Listeleri ({})': 'Λίστες ({})',
   'Liste boş.': 'Αυτή η λίστα είναι άδεια.',
   'Yanıtla': 'Απάντηση',
-  '@{} kullanıcısına yanıt veriyorsun': 'Απαντάς στον @{}',
+  '@{} kullanıcısına yanıt veriyorsun': 'Απάντηση σε @{}',
   'İzlediğim Diziler ({})': 'Σειρές που είδα ({})',
   'İzlediğim Filmler ({})': 'Ταινίες που είδα ({})',
   'Tümünü gör': 'Δες όλα',
   'Bildirimler': 'Ειδοποιήσεις',
   'Henüz bildirim yok': 'Καμία ειδοποίηση ακόμα',
-  '@{} yorumuna yanıt verdi': 'Ο @{} απάντησε στο σχόλιό σου',
-  '@{} yorumunu beğendi': 'Στον @{} άρεσε το σχόλιό σου',
-  '@{} seni takip etti': 'Ο @{} σε ακολούθησε',
-  '@{} sana mesaj gönderdi': 'Ο @{} σου έστειλε μήνυμα',
+  '@{} yorumuna yanıt verdi': '@{} απάντησε στο σχόλιό σου',
+  '@{} yorumunu beğendi': 'Νέο «μου αρέσει» στο σχόλιό σου: @{}',
+  '@{} seni takip etti': '@{} σε ακολούθησε',
+  '@{} sana mesaj gönderdi': 'Νέο μήνυμα από @{}',
   'Mesajlar': 'Μηνύματα',
   'Mesaj': 'Μήνυμα',
   'Mesaja eklenecek': 'Θα προστεθεί στο μήνυμα',
@@ -235,7 +235,7 @@ const Map<String, String> cevirilerEl = {
   'İzleyenler': 'Θεατές',
   'Yorumunu yaz... (@ ile etiketle)':
       'Γράψε το σχόλιό σου... (@ για επισήμανση)',
-  '@{} bir yorumda seni etiketledi': 'Ο/Η @{} σε επισήμανε σε σχόλιο',
+  '@{} bir yorumda seni etiketledi': 'Επισήμανση από @{} σε σχόλιο',
   'Mesajı sil': 'Διαγραφή μηνύματος',
   'Mesaj silinemedi': 'Δεν ήταν δυνατή η διαγραφή του μηνύματος',
   'Bağlantı geçersiz veya sayfa bulunamadı':
@@ -417,7 +417,7 @@ const Map<String, String> cevirilerEl = {
   'Bu kullanıcı henüz bir şey izlememiş.':
       'Αυτός ο χρήστης δεν έχει δει τίποτα ακόμη.',
   'Bu kullanıcı yorumlarını gizli tutmayı tercih ediyor.':
-      'Αυτός ο χρήστης προτιμά να κρατά τα σχόλιά του ιδιωτικά.',
+      'Αυτός ο χρήστης προτιμά να κρατά τα σχόλια ιδιωτικά.',
   'S{}B{}': 'S{}E{}',
   'Veri: JustWatch': 'Δεδομένα: JustWatch',
   'Web Sitesi': 'Ιστότοπος',
@@ -478,7 +478,7 @@ const Map<String, String> cevirilerEl = {
   'Kişilere göndermek için giriş yap': 'Συνδεθείτε για αποστολή σε άτομα',
   'Beğenenler': 'Μου αρεσει',
   'Henüz beğeni yok': 'Δεν υπαρχουν ακομη',
-  'Bu gönderiyi ilk beğenen sen ol': 'Γινε ο πρωτος που θα το αγαπησει',
+  'Bu gönderiyi ilk beğenen sen ol': 'Κάνε το πρώτο like σε αυτή τη δημοσίευση',
   'Bu gönderiye yanıt': 'Απάντηση σε αυτήν την ανάρτηση',
   'Spoiler içeren gönderi': 'Ανάρτηση με σπόιλερ',
   'Görsel gönderi': 'Ανάρτηση με φωτογραφία',
@@ -516,9 +516,9 @@ const Map<String, String> cevirilerEl = {
   'Mesajlarda çevrimiçi olduğun ve son görülme zamanın başkalarına görünmez':
       'Οι άλλοι δεν θα βλέπουν την κατάσταση σύνδεσης και την τελευταία σου εμφάνιση στα μηνύματα',
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
-      'Ένας από τους πρώτους χρήστες μας. Τα σχόλιά του βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
+      'Από τους πρώτους χρήστες μας. Τα σχόλιά τους βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'Είσαι ένας από τους πρώτους χρήστες μας. Τα σχόλιά σου βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
+      'Είσαι από τους πρώτους χρήστες μας. Τα σχόλιά σου βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
   'İleri': 'Επόμενο',
   'Seçilen dosya okunamadı':
       'Δεν ήταν δυνατή η ανάγνωση του επιλεγμένου αρχείου',
@@ -720,4 +720,8 @@ const Map<String, String> cevirilerEl = {
       'Δεν μπορείτε να καλέσετε λογαριασμούς επισκέπτη',
   'Puan dağılımı': 'Κατανομή βαθμολογιών',
   '{} yıldız': '{} αστέρια',
+  'Yakında gelecek': 'Έρχεται σύντομα',
+  '{} {} yayınlandı': '{} {} κυκλοφόρησε',
+  'Yeni bölüm yayınlandı': 'Κυκλοφόρησε νέο επεισόδιο',
+  'Yeni bölümler': 'Νέα επεισόδια',
 };

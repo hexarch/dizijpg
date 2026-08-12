@@ -516,7 +516,7 @@ const Map<String, String> cevirilerKn = {
   'İlk kullanıcılarımızdan biri. Geri bildirimleriyle uygulamanın bugün olduğu hale gelmesine katkı sağladı.':
       'ನಮ್ಮ ಮೊದಲ ಬಳಕೆದಾರರಲ್ಲಿ ಒಬ್ಬರು. ಅವರ ಪ್ರತಿಕ್ರಿಯೆಯಿಂದ ಅಪ್ಲಿಕೇಶನ್ ಇಂದು ಇರುವಂತೆ ರೂಪುಗೊಂಡಿತು.',
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
-      'ನೀನು ನಮ್ಮ ಮೊದಲ ಬಳಕೆದಾರರಲ್ಲಿ ಒಬ್ಬ. ನಿನ್ನ ಪ್ರತಿಕ್ರಿಯೆಯಿಂದ ಅಪ್ಲಿಕೇಶನ್ ಇಂದು ಇರುವಂತೆ ರೂಪುಗೊಂಡಿತು.',
+      'ನೀನು ನಮ್ಮ ಮೊದಲ ಬಳಕೆದಾರರಲ್ಲಿ ಒಬ್ಬರು. ನಿನ್ನ ಪ್ರತಿಕ್ರಿಯೆಯಿಂದ ಅಪ್ಲಿಕೇಶನ್ ಇಂದು ಇರುವಂತೆ ರೂಪುಗೊಂಡಿತು.',
   'İleri': 'ಮುಂದೆ',
   'Seçilen dosya okunamadı': 'ಆಯ್ಕೆಮಾಡಿದ ಫೈಲ್ ಓದಲಾಗಲಿಲ್ಲ',
   'Video açılamadı': 'ವಿಡಿಯೋ ತೆರೆಯಲಾಗಲಿಲ್ಲ',
@@ -711,4 +711,8 @@ const Map<String, String> cevirilerKn = {
   'Misafir hesaplar aranamaz': 'ಅತಿಥಿ ಖಾತೆಗಳಿಗೆ ಕರೆ ಮಾಡಲಾಗದು',
   'Puan dağılımı': 'ರೇಟಿಂಗ್ ವಿತರಣೆ',
   '{} yıldız': '{} ಸ್ಟಾರ್',
+  'Yakında gelecek': 'ಶೀಘ್ರದಲ್ಲೇ ಬರಲಿದೆ',
+  '{} {} yayınlandı': '{} {} ಬಿಡುಗಡೆಯಾಗಿದೆ',
+  'Yeni bölüm yayınlandı': 'ಹೊಸ ಎಪಿಸೋಡ್ ಬಿಡುಗಡೆಯಾಗಿದೆ',
+  'Yeni bölümler': 'ಹೊಸ ಎಪಿಸೋಡ್‌ಗಳು',
 };

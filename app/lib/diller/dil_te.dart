@@ -708,4 +708,8 @@ const Map<String, String> cevirilerTe = {
   'Misafir hesaplar aranamaz': 'అతిథి ఖాతాలకు కాల్ చేయలేరు',
   'Puan dağılımı': 'రేటింగ్ పంపిణీ',
   '{} yıldız': '{} స్టార్‌లు',
+  'Yakında gelecek': 'త్వరలో వస్తుంది',
+  '{} {} yayınlandı': '{} {} విడుదలైంది',
+  'Yeni bölüm yayınlandı': 'కొత్త ఎపిసోడ్ విడుదలైంది',
+  'Yeni bölümler': 'కొత్త ఎపిసోడ్‌లు',
 };
