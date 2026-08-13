@@ -985,4 +985,24 @@ const Map<String, String> cevirilerHu = {
       'Ha elveszíted a hozzáférést az e-mail-címedhez, nem tudsz belépni.',
   'İki adımlı doğrulama açıldı': 'A kétlépcsős azonosítás bekapcsolva',
   'İki adımlı doğrulama kapatıldı': 'A kétlépcsős azonosítás kikapcsolva',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Mennyit néztek a videóból',
+  'Videoyu başlatanlar': 'Elindították a videót',
+  'videonun %{} noktasına ulaştı': 'eljutott a videó {}%-áig',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'A nézők fele legalább a videó {}%-át látta.',
+  'Sonuna kadar izleyen: %{}': 'Végignézők: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'A görbéhez legalább {} megtekintés kell; jelenleg {} van.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'A görbe {} megtekintésből készült, és a kiválasztott időszak nem hat rá.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'A megtekintési időt {} óta mérjük; a régebbi megtekintések nem számítanak bele.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} megtekintés. A videó feléig {}%, a végéig {}% jutott el.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

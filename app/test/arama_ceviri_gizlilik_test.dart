@@ -228,25 +228,62 @@ void main() {
       expect(veri.length, 46);
       final uzunluklar = veri.values.map((v) => (v as List).length).toSet();
       expect(uzunluklar.length, 1, reason: 'diller arasında uzunluk farkı var');
-      // 34 → 35: md.37'nin kullanım istatistikleri maddesi 10. indekse girdi,
-      // arama bölümü bir basamak kaydı (29-33 → 30-34).
-      // 35 → 37: md.23'ün İKİ gönderi istatistiği maddesi 11-12. indekse
-      // girdi, arama bölümü iki basamak daha kaydı (30-34 → 32-36).
+      // 34 → 35: md.37'nin kullanım istatistikleri maddesi 10. indekse girdi.
+      // 35 → 37: md.23'ün İKİ gönderi istatistiği maddesi 11-12. indekse girdi.
+      // 37 → 38: md.23'ün video elde tutma maddesi 13. indekse girdi.
       expect(
         uzunluklar.first,
-        37,
-        reason: '29 + 5 + 1 + 2 yeni dize bekleniyor',
+        38,
+        reason: '29 + 5 + 1 + 2 + 1 yeni dize bekleniyor',
       );
     });
 
     test('web YAPI dizilimi yeni bölümü ÇİZİYOR', () {
+      // İNDEKS SABİT YAZILMIYOR (13 Ağu 2026): politikaya her yeni madde
+      // eklendiğinde sonraki her şey kayıyor ve bu test her seferinde
+      // ANLAMSIZ YERE kırılıyordu (34→35→37→38). Artık indeks BAŞLIĞIN
+      // METNİNDEN bulunuyor; test yalnız GERÇEK bir gerileme olduğunda —
+      // yani başlık ya da dört maddesinden biri çizilmediğinde — kırılır.
+      final vm = RegExp(
+        r'var VERI=(\{.*?\});\n',
+        dotAll: true,
+      ).firstMatch(html);
+      final veri = jsonDecode(vm!.group(1)!) as Map<String, dynamic>;
+      final tr = (veri['tr'] as List).cast<String>();
+      final bas = tr.indexOf('Sesli ve Görüntülü Aramalar');
+      expect(bas, isNot(-1), reason: 'arama başlığı politikadan düşmüş');
+
       final m = RegExp(r'var YAPI=(\[.*?\]);', dotAll: true).firstMatch(html);
       final yapi = m!.group(1)!;
-      // Başlık (32) + dört madde (33-36) — md.23'ün iki maddesi 11-12'ye
-      // girince arama bölümü 30-34'ten 32-36'ya kaydı.
-      expect(yapi.contains('["h",32]'), isTrue);
-      for (var i = 33; i <= 36; i++) {
+      expect(yapi.contains('["h",$bas]'), isTrue, reason: 'başlık çizilmiyor');
+      for (var i = bas + 1; i <= bas + 4; i++) {
         expect(yapi.contains('["li",$i]'), isTrue, reason: 'madde $i yok');
+      }
+    });
+
+    test('video elde tutma maddesi 46 dilde VAR ve ÇİZİLİYOR', () {
+      // md. 23 (13 Ağu): "videonun hangi bölümüne kadar izlendiği kimliksiz
+      // ve toplu olarak sayılır" — yeni veri topluyoruz, politikada durmalı.
+      final vm = RegExp(
+        r'var VERI=(\{.*?\});\n',
+        dotAll: true,
+      ).firstMatch(html);
+      final veri = jsonDecode(vm!.group(1)!) as Map<String, dynamic>;
+      final tr = (veri['tr'] as List).cast<String>();
+      final i = tr.indexWhere((x) => x.contains('videonun hangi bölümüne'));
+      expect(i, isNot(-1), reason: 'Türkçe madde yok');
+      final yapi = RegExp(
+        r'var YAPI=(\[.*?\]);',
+        dotAll: true,
+      ).firstMatch(html)!.group(1)!;
+      expect(yapi.contains('["li",$i]'), isTrue, reason: 'madde çizilmiyor');
+      // Hiçbir dilde Türkçe sızıntısı ya da boş dize kalmamalı.
+      for (final e in veri.entries) {
+        final s = (e.value as List)[i] as String;
+        expect(s.trim(), isNotEmpty, reason: '${e.key}: boş');
+        if (e.key != 'tr') {
+          expect(s, isNot(tr[i]), reason: '${e.key}: Türkçe kalmış');
+        }
       }
     });
 

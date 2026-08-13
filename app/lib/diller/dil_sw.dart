@@ -980,4 +980,23 @@ const Map<String, String> cevirilerSw = {
       'Bila ufikiaji wa barua pepe yako, huwezi kuingia kwenye akaunti.',
   'İki adımlı doğrulama açıldı': 'Uthibitishaji wa hatua mbili umewashwa',
   'İki adımlı doğrulama kapatıldı': 'Uthibitishaji wa hatua mbili umezimwa',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Sehemu ya video iliyotazamwa',
+  'Videoyu başlatanlar': 'walianza kutazama video',
+  'videonun %{} noktasına ulaştı': 'walifika {}% ya video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Nusu ya watazamaji walitazama angalau {}% ya video.',
+  'Sonuna kadar izleyen: %{}': 'Walitazama hadi mwisho: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Grafu inahitaji angalau mionekano {}; sasa kuna {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Grafu imetokana na mionekano {} na haibadiliki na kipindi kilichochaguliwa.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Muda wa kutazama unapimwa tangu {}; mionekano ya zamani haihesabiwi hapa.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      'Mionekano {}. {}% walifika katikati ya video, {}% hadi mwisho.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

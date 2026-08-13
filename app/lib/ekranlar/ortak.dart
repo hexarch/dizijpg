@@ -18,6 +18,7 @@ import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
+import '../video_kova.dart';
 import 'medya_goster.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
@@ -39,12 +40,16 @@ class MedyaGaleri extends StatelessWidget {
   /// Akışta: videolar kapak yerine yerinde (sessiz) oynar.
   final bool otomatikOynat;
 
+  /// md. 23 — elde tutma ölçüsünün yazılacağı gönderi. Verilmezse ölçüm kapalı.
+  final Object? gonderiId;
+
   const MedyaGaleri({
     super.key,
     required this.yollar,
     this.onAc,
     this.onCiftDokunus,
     this.otomatikOynat = false,
+    this.gonderiId,
   });
 
   static bool _video(String m) => m.endsWith('.mp4') || m.endsWith('.webm');
@@ -60,6 +65,7 @@ class MedyaGaleri extends StatelessWidget {
         urller: urller,
         onAc: onAc,
         onCiftDokunus: onCiftDokunus,
+        gonderiId: gonderiId,
       );
     }
     Widget hucre(int i) {
@@ -70,7 +76,7 @@ class MedyaGaleri extends StatelessWidget {
             : medyaGoster(context, urller, baslangic: i),
         child: video
             ? (otomatikOynat
-                  ? AkisVideo(url: urller[i])
+                  ? AkisVideo(url: urller[i], gonderiId: gonderiId)
                   // Video kapağı: koyu zemin + beyaz oynat (tema-bağımsız,
                   // videolar koyu görünür — açık temada da görünür kalır)
                   : Container(
@@ -106,7 +112,7 @@ class MedyaGaleri extends StatelessWidget {
       if (video) {
         // AkisVideo oranını oynatıcıdan verir; kapak modunda oran bilinmez → 16:9
         icerik = otomatikOynat
-            ? AkisVideo(url: urller[0])
+            ? AkisVideo(url: urller[0], gonderiId: gonderiId)
             : AspectRatio(
                 aspectRatio: 16 / 9,
                 child: Container(
@@ -203,6 +209,10 @@ class AkisMedya extends StatefulWidget {
   /// konsaydı karartmanın opak alt ucu noktaları yutardı.
   final Widget? gorselUstu;
 
+  /// md. 23 — elde tutma ölçüsünün yazılacağı gönderi. Verilmezse ölçüm
+  /// kapalı: bu widget bölüm karelerinde ve detay başlığında da kullanılıyor.
+  final Object? gonderiId;
+
   const AkisMedya({
     super.key,
     required this.urller,
@@ -212,6 +222,7 @@ class AkisMedya extends StatefulWidget {
     this.tumunuKapla = false,
     this.sayacUstBosluk = 0,
     this.gorselUstu,
+    this.gonderiId,
   });
 
   @override
@@ -354,6 +365,7 @@ class _AkisMedyaState extends State<AkisMedya> {
                           url: url,
                           kendiOrani: false,
                           onOran: i == 0 ? _oranBildir : null,
+                          gonderiId: widget.gonderiId,
                         )
                       : Container(
                           color: Colors.black,
@@ -434,11 +446,17 @@ class AkisVideo extends StatefulWidget {
   /// Oran öğrenilince bildirilir (post yüksekliğini belirlemek için).
   final ValueChanged<double>? onOran;
 
+  /// md. 23 — ELDE TUTMA ÖLÇÜSÜ hangi gönderiye yazılsın. VERİLMEZSE ÖLÇÜM
+  /// KAPALI: aynı widget bölüm kareleri ve dizi kapakları gibi gönderiyle
+  /// ilgisi olmayan yerlerde de kullanılıyor, oralarda ölçü anlamsız olurdu.
+  final Object? gonderiId;
+
   const AkisVideo({
     super.key,
     required this.url,
     this.kendiOrani = true,
     this.onOran,
+    this.gonderiId,
   });
 
   @override
@@ -461,6 +479,23 @@ class _AkisVideoState extends State<AkisVideo> {
   Future<void>? _kurulum;
   bool _hata = false;
   bool _sayildi = false; // bu kart hazır sayacına dahil edildi mi
+
+  /// md. 23 — bu izlemenin elde tutma ölçüsü. Kart ekrandan kalkınca (dispose)
+  /// TEK istek gider; hiç oynamadıysa hiç gitmez.
+  late final _kova = VideoKovaIzleyici(widget.gonderiId);
+
+  /// Oynatıcının konumunu dinler. `ValueListenableBuilder` zaten kurulu ama o
+  /// ÇİZİM içindir; ölçü çizimden bağımsız olmalı (kart ekran dışındayken de
+  /// oynayabilir, oynamıyorsa da bu geri çağırma hiç tetiklenmez).
+  void _konumDinle() {
+    final d = _d;
+    if (d == null || !d.value.isInitialized) return;
+    _kova.guncelle(
+      url: widget.url,
+      konum: d.value.position,
+      sure: d.value.duration,
+    );
+  }
 
   @override
   void initState() {
@@ -523,6 +558,7 @@ class _AkisVideoState extends State<AkisVideo> {
         return;
       }
       d.setLooping(true);
+      if (_kova.acik) d.addListener(_konumDinle);
       setState(() => _d = d);
       // Postun yüksekliği videonun kendi oranından belirlensin
       if (d.value.aspectRatio > 0) widget.onOran?.call(d.value.aspectRatio);
@@ -541,6 +577,9 @@ class _AkisVideoState extends State<AkisVideo> {
     _adaylar.remove(this);
     if (_aktif == this) _aktif = null;
     if (_sayildi) _hazirSayi--; // yer aç: sıradaki kart önden kurulabilsin
+    // ÖLÇÜ ÖNCE GİDER: `dispose()` sonrası denetleyici okunamaz.
+    _kova.gonder();
+    _d?.removeListener(_konumDinle);
     _d?.dispose();
     // Liste karttan kurtulduysa sıradaki görünür video devralsın
     _secimiUygula();

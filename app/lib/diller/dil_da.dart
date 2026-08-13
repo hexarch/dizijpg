@@ -979,4 +979,22 @@ const Map<String, String> cevirilerDa = {
       'Uden adgang til din mail kan du ikke logge ind.',
   'İki adımlı doğrulama açıldı': 'Bekræftelse i to trin er slået til',
   'İki adımlı doğrulama kapatıldı': 'Bekræftelse i to trin er slået fra',
+  'Videonun ne kadarı izlendi': 'Hvor meget af videoen blev set',
+  'Videoyu başlatanlar': 'Startede videoen',
+  'videonun %{} noktasına ulaştı': 'nåede {} % af videoen',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Halvdelen af publikum så mindst {} % af videoen.',
+  'Sonuna kadar izleyen: %{}': 'Set helt til slut: {} %',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Kurven kræver mindst {} afspilninger; der er {} lige nu.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Kurven bygger på {} afspilninger og påvirkes ikke af den valgte periode.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Visningstiden er målt siden {}; ældre visninger tæller ikke med.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} afspilninger. {} % nåede halvvejs, {} % nåede slutningen.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{} %',
 };

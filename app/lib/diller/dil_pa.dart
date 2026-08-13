@@ -979,4 +979,23 @@ const Map<String, String> cevirilerPa = {
       'ਈਮੇਲ ਤੱਕ ਪਹੁੰਚ ਨਾ ਹੋਵੇ ਤਾਂ ਖਾਤੇ ਵਿੱਚ ਦਾਖ਼ਲ ਨਹੀਂ ਹੋਇਆ ਜਾ ਸਕਦਾ।',
   'İki adımlı doğrulama açıldı': 'ਦੋ-ਪੜਾਵੀ ਤਸਦੀਕ ਚਾਲੂ ਹੋ ਗਈ',
   'İki adımlı doğrulama kapatıldı': 'ਦੋ-ਪੜਾਵੀ ਤਸਦੀਕ ਬੰਦ ਹੋ ਗਈ',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'ਵੀਡੀਓ ਕਿੰਨਾ ਵੇਖਿਆ ਗਿਆ',
+  'Videoyu başlatanlar': 'ਵੀਡੀਓ ਸ਼ੁਰੂ ਕੀਤਾ',
+  'videonun %{} noktasına ulaştı': 'ਵੀਡੀਓ ਦੇ {}% ਤੱਕ ਪਹੁੰਚੇ',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'ਵੇਖਣ ਵਾਲਿਆਂ ਵਿੱਚੋਂ ਅੱਧਿਆਂ ਨੇ ਵੀਡੀਓ ਦਾ ਘੱਟੋ-ਘੱਟ {}% ਵੇਖਿਆ।',
+  'Sonuna kadar izleyen: %{}': 'ਅੰਤ ਤੱਕ ਵੇਖਣ ਵਾਲੇ: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'ਕਰਵ ਲਈ ਘੱਟੋ-ਘੱਟ {} ਵਿਊਜ਼ ਚਾਹੀਦੇ ਹਨ; ਹੁਣ {} ਵਿਊਜ਼ ਹਨ।',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'ਕਰਵ {} ਵਿਊਜ਼ ਤੋਂ ਬਣਿਆ ਹੈ ਅਤੇ ਚੁਣੀ ਮਿਆਦ ਨਾਲ ਨਹੀਂ ਬਦਲਦਾ।',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'ਵੇਖਣ ਦਾ ਸਮਾਂ {} ਤੋਂ ਮਾਪਿਆ ਜਾ ਰਿਹਾ ਹੈ; ਇਸ ਤੋਂ ਪੁਰਾਣੇ ਵਿਊਜ਼ ਇਸ ਗਿਣਤੀ ਵਿੱਚ ਨਹੀਂ ਆਉਂਦੇ।',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} ਵਿਊਜ਼। ਵੀਡੀਓ ਦੇ ਅੱਧ ਤੱਕ {}%, ਅੰਤ ਤੱਕ {}% ਪਹੁੰਚੇ।',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

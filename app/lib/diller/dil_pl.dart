@@ -990,4 +990,23 @@ const Map<String, String> cevirilerPl = {
       'Bez dostępu do e-maila logowanie nie będzie możliwe.',
   'İki adımlı doğrulama açıldı': 'Weryfikacja dwuetapowa włączona',
   'İki adımlı doğrulama kapatıldı': 'Weryfikacja dwuetapowa wyłączona',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Obejrzana część wideo',
+  'Videoyu başlatanlar': 'zaczęło oglądać wideo',
+  'videonun %{} noktasına ulaştı': 'dotarło do {}% wideo',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Połowa widzów obejrzała co najmniej {}% wideo.',
+  'Sonuna kadar izleyen: %{}': 'Dotarło do końca: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Krzywa wymaga co najmniej {} wyświetleń; teraz jest ich {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Krzywa uwzględnia wszystkie wyświetlenia ({}) i nie zależy od wybranego okresu.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Czas oglądania jest mierzony od {}; starsze wyświetlenia nie są liczone.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      'Wyświetlenia: {}. Do połowy wideo dotarło {}%, do końca {}%.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

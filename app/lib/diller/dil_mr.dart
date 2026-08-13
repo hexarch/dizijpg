@@ -975,4 +975,24 @@ const Map<String, String> cevirilerMr = {
       'ईमेल उपलब्ध नसल्यास खात्यात लॉग इन करता येणार नाही.',
   'İki adımlı doğrulama açıldı': 'दोन टप्प्यांची पडताळणी सुरू झाली',
   'İki adımlı doğrulama kapatıldı': 'दोन टप्प्यांची पडताळणी बंद झाली',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'व्हिडिओ किती पाहिला गेला',
+  'Videoyu başlatanlar': 'व्हिडिओ सुरू करणारे',
+  'videonun %{} noktasına ulaştı': 'व्हिडिओच्या {}% पर्यंत पोहोचले',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'पाहणाऱ्यांपैकी निम्म्यांनी व्हिडिओचा किमान {}% भाग पाहिला.',
+  'Sonuna kadar izleyen: %{}': 'शेवटपर्यंत पाहणारे: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'वक्रासाठी किमान {} व्ह्यूज लागतात; सध्या {} व्ह्यूज आहेत.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'वक्र {} व्ह्यूजवर आधारित आहे आणि निवडलेल्या कालावधीने बदलत नाही.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'वॉच टाइम {} पासून मोजला जातो; त्याआधीचे व्ह्यूज या आकड्यात येत नाहीत.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} व्ह्यूज. व्हिडिओच्या अर्ध्यापर्यंत {}%, शेवटपर्यंत {}% पोहोचले.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

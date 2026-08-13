@@ -978,4 +978,24 @@ const Map<String, String> cevirilerKn = {
       'ಇಮೇಲ್ ಬಳಸಲು ಆಗದಿದ್ದರೆ ಖಾತೆಗೆ ಲಾಗಿನ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.',
   'İki adımlı doğrulama açıldı': 'ಎರಡು ಹಂತದ ಪರಿಶೀಲನೆ ಆನ್ ಆಗಿದೆ',
   'İki adımlı doğrulama kapatıldı': 'ಎರಡು ಹಂತದ ಪರಿಶೀಲನೆ ಆಫ್ ಆಗಿದೆ',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'ವೀಡಿಯೊ ಎಷ್ಟು ನೋಡಲಾಗಿದೆ',
+  'Videoyu başlatanlar': 'ವೀಡಿಯೊ ಆರಂಭಿಸಿದವರು',
+  'videonun %{} noktasına ulaştı': 'ವೀಡಿಯೊದ {}% ವರೆಗೆ ತಲುಪಿದ್ದಾರೆ',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'ನೋಡಿದವರಲ್ಲಿ ಅರ್ಧದಷ್ಟು ಜನ ವೀಡಿಯೊದ ಕನಿಷ್ಠ {}% ನೋಡಿದ್ದಾರೆ.',
+  'Sonuna kadar izleyen: %{}': 'ಕೊನೆಯವರೆಗೆ ನೋಡಿದವರು: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'ರೇಖೆಗೆ ಕನಿಷ್ಠ {} ವೀಕ್ಷಣೆಗಳು ಬೇಕು; ಸದ್ಯ {} ವೀಕ್ಷಣೆಗಳಿವೆ.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'ರೇಖೆ {} ವೀಕ್ಷಣೆಗಳಿಂದ ರಚಿತವಾಗಿದೆ ಮತ್ತು ಆಯ್ದ ಅವಧಿಯಿಂದ ಬದಲಾಗುವುದಿಲ್ಲ.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'ವೀಕ್ಷಣಾ ಸಮಯವನ್ನು {} ರಿಂದ ಅಳೆಯಲಾಗುತ್ತಿದೆ; ಅದಕ್ಕೂ ಹಳೆಯ ವೀಕ್ಷಣೆಗಳು ಈ ಸಂಖ್ಯೆಯಲ್ಲಿ ಸೇರುವುದಿಲ್ಲ.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} ವೀಕ್ಷಣೆಗಳು. ವೀಡಿಯೊದ ಅರ್ಧದವರೆಗೆ {}%, ಕೊನೆಯವರೆಗೆ {}% ತಲುಪಿದ್ದಾರೆ.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

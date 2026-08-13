@@ -983,4 +983,22 @@ const Map<String, String> cevirilerFi = {
   'İki adımlı doğrulama açıldı': 'Kaksivaiheinen vahvistus otettiin käyttöön',
   'İki adımlı doğrulama kapatıldı':
       'Kaksivaiheinen vahvistus poistettiin käytöstä',
+  'Videonun ne kadarı izlendi': 'Videon katselun eteneminen',
+  'Videoyu başlatanlar': 'Aloittivat videon',
+  'videonun %{} noktasına ulaştı': 'pääsi videon kohtaan {} %',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Puolet yleisöstä katsoi videosta vähintään {} %.',
+  'Sonuna kadar izleyen: %{}': 'Katsoi loppuun asti: {} %',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Käyrä vaatii vähintään {} katselukertaa; nyt niitä on {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Käyrä perustuu {} katselukertaan eikä muutu valitun ajanjakson mukaan.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Katseluaikaa on mitattu {} alkaen; sitä vanhemmat katselut eivät ole mukana.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} katselukertaa. {} % pääsi puoliväliin, {} % loppuun.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{} %',
 };

@@ -174,6 +174,22 @@ CREATE TABLE IF NOT EXISTS gonderi_sayac (
   PRIMARY KEY (gonderi_id, olcu)
 );
 
+-- md. 23 — VİDEO İZLENME SÜRESİ / ELDE TUTMA (migrasyon-2026-08-14g).
+-- (gönderi, kova) → adet. `kova` = bir izlemede ULAŞILAN EN YÜKSEK yirmide
+-- bir dilim (0 = %0-5, 19 = %95-100); istemci oynatma bitince/karttan çıkınca
+-- TEK istekle bildirir, saniyede olay yoktur. Gönderi başına EN ÇOK 20 SATIR:
+-- satır sayısı trafikle BÜYÜMEZ.
+-- KİŞİ İÇERMEZ: kullanıcı kimliği, IP, oturum, cihaz ve ZAMAN DAMGASI sütunu
+-- yok — "kim nereye kadar izledi" bu şemada şeklen sorulamaz.
+-- `kova` KAPALI SÖZLÜK: değer istemci beyanıdır, CHECK sunucudaki beyaz
+-- listenin ikinci kalkanıdır.
+CREATE TABLE IF NOT EXISTS video_kova (
+  gonderi_id INT      NOT NULL REFERENCES yorumlar(id) ON DELETE CASCADE,
+  kova       SMALLINT NOT NULL CHECK (kova BETWEEN 0 AND 19),
+  adet       BIGINT   NOT NULL DEFAULT 0,
+  PRIMARY KEY (gonderi_id, kova)
+);
+
 -- Takip ilişkisi: takip_eden → takip_edilen
 CREATE TABLE IF NOT EXISTS takipler (
   takip_eden_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,

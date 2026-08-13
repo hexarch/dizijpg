@@ -933,4 +933,22 @@ const Map<String, String> cevirilerZh = {
   'E-postana erişemezsen hesabına giremezsin.': '若无法访问邮箱，将无法登录账号。',
   'İki adımlı doğrulama açıldı': '两步验证已开启',
   'İki adımlı doğrulama kapatıldı': '两步验证已关闭',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': '观众看到了哪里',
+  'Videoyu başlatanlar': '开始观看视频',
+  'videonun %{} noktasına ulaştı': '看到了视频的 {}%',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.': '一半观众至少看了视频的 {}%。',
+  'Sonuna kadar izleyen: %{}': '看到结尾：{}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      '曲线至少需要 {} 次观看，目前有 {} 次。',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      '曲线基于 {} 次观看，不受所选时间范围影响。',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      '观看时长自 {} 起开始统计，更早的观看不计入。',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} 次观看。{}% 看到视频一半，{}% 看到结尾。',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

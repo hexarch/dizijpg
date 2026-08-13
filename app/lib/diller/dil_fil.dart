@@ -991,4 +991,22 @@ const Map<String, String> cevirilerFil = {
       'Kung mawalan ka ng access sa email mo, hindi ka makakapasok sa account mo.',
   'İki adımlı doğrulama açıldı': 'Naka-on na ang two-step verification',
   'İki adımlı doğrulama kapatıldı': 'Naka-off na ang two-step verification',
+  'Videonun ne kadarı izlendi': 'Gaano kalayo ang napanood',
+  'Videoyu başlatanlar': 'Nagsimula ng video',
+  'videonun %{} noktasına ulaştı': 'umabot sa {}% ng video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Napanood ng kalahati ng manonood ang hindi bababa sa {}% ng video.',
+  'Sonuna kadar izleyen: %{}': 'Napanood hanggang dulo: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Kailangan ng kurba ng hindi bababa sa {} view; {} pa lang ngayon.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Batay ang kurba sa {} view at hindi ito naaapektuhan ng piniling panahon.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Sinusukat ang oras ng panonood mula {}; hindi kasama ang mas lumang mga view.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} view. {}% ang umabot sa kalahati, {}% sa dulo.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

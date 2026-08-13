@@ -19,6 +19,7 @@ import '../medya_yukle.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
+import '../video_kova.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
@@ -1153,6 +1154,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
   );
   String? _kuruluUrl; // oynatıcının kurulu olduğu video adresi
 
+  /// md. 23 — bu izlemenin elde tutma ölçüsü. Sayfa bırakılınca TEK istek
+  /// gider; video hiç oynamadıysa (komşu sayfa hazırlandı ama görülmedi) hiç
+  /// gitmez.
+  late final _kova = VideoKovaIzleyici(widget.yorum['id']);
+
   static bool _videoMu(String u) => u.endsWith('.mp4') || u.endsWith('.webm');
 
   /// Ekranda duran medya (çoklu gönderide kaydırmayla değişir)
@@ -1303,6 +1309,13 @@ class _ReelSayfaState extends State<_ReelSayfa>
           d.setLooping(true);
           _videoDurumGuncelle(); // yalnız aktifse oynar
           d.addListener(() {
+            // md. 23 ÖLÇÜSÜ ÇİZİMDEN ÖNCE: `setState` kart koparıldıysa
+            // atlanır, ölçü ise her konum değişiminde güncellenmeli.
+            _kova.guncelle(
+              url: v,
+              konum: d.value.position,
+              sure: d.value.duration,
+            );
             if (mounted) setState(() {});
           });
         })
@@ -1337,6 +1350,9 @@ class _ReelSayfaState extends State<_ReelSayfa>
   @override
   void dispose() {
     _kalpAnim.dispose();
+    // ÖLÇÜ ÖNCE GİDER: `dispose()` sonrası denetleyici okunamaz. Tek gönderim
+    // güvencesi izleyicinin kendisinde (ikinci çağrı istek çıkarmaz).
+    _kova.gonder();
     _d?.dispose();
     super.dispose();
   }

@@ -156,17 +156,17 @@ void main() {
     final kayit = await _kur(tester);
 
     for (final beklenen in const [
-      ('Son 90 gün', '90'),
-      ('Son 120 gün', '120'),
-      ('Tümü', '0'),
-      ('Son 60 gün', '60'),
+      (90, '90'),
+      (120, '120'),
+      (0, '0'),
+      (60, '60'),
     ]) {
       await tester.tap(find.byKey(Key('pencere-${beklenen.$1}')));
       await tester.pumpAndSettle();
       expect(
         kayit.last.queryParameters['gun'],
         beklenen.$2,
-        reason: '"${beklenen.$1}" için yanlış pencere istendi',
+        reason: '${beklenen.$1} günlük pencere için yanlış istek gitti',
       );
     }
   });
@@ -177,7 +177,7 @@ void main() {
 
     // 30 gün → 300 görüntülenme (sahte sunucu n*10 veriyor).
     expect(find.text('300'), findsOneWidget);
-    await tester.tap(find.byKey(const Key('pencere-Son 90 gün')));
+    await tester.tap(find.byKey(const Key('pencere-90')));
     await tester.pumpAndSettle();
     expect(find.text('900'), findsOneWidget);
     expect(find.text('300'), findsNothing);
@@ -187,7 +187,7 @@ void main() {
     ekran(tester);
     await _kur(tester);
 
-    await tester.tap(find.byKey(const Key('pencere-Tümü')));
+    await tester.tap(find.byKey(const Key('pencere-0')));
     await tester.pumpAndSettle();
     // 1.234.567 hem "Tüm zamanlar" kutusunda hem seçili pencerede.
     expect(find.text(sayiBicimle(1234567)), findsNWidgets(2));
@@ -279,9 +279,13 @@ void main() {
     ekran(tester);
     await _kur(tester);
 
-    for (final ad in const ['Son 30 gün', 'Son 120 gün', 'Tümü']) {
-      final boy = tester.getSize(find.byKey(Key('pencere-$ad'))).height;
-      expect(boy, greaterThanOrEqualTo(44.0), reason: '$ad çipi küçük');
+    for (final gun in const [30, 120, 0]) {
+      final boy = tester.getSize(find.byKey(Key('pencere-$gun'))).height;
+      expect(
+        boy,
+        greaterThanOrEqualTo(44.0),
+        reason: '$gun günlük segment küçük',
+      );
     }
   });
 

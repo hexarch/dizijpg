@@ -421,6 +421,134 @@ export function gunEkle(gun, n) {
   return new Date(t + n * 86_400_000).toISOString().slice(0, 10);
 }
 
+// ===========================================================================
+// md. 23 — VİDEO İZLENME SÜRESİ (ELDE TUTMA) EĞRİSİ
+// ===========================================================================
+// İSTEK: "Videolarda ekstra: %100'den başlayıp saniye ilerledikçe azalan
+// izlenme süresi eğrisi."
+//
+// VERİ: `video_kova(gonderi_id, kova, adet)` — istemci videonun süresini 20
+// eşit kovaya böler, ULAŞTIĞI EN YÜKSEK KOVAYI oynatma bitince/karttan
+// çıkınca TEK istekte bildirir. Satır "en yüksek kovası k olan kaç izleme
+// vardı" sayacıdır; gönderi başına en çok 20 satır, KİŞİ YOK.
+//
+// EĞRİ: elde tutma[k] = (kova ≥ k olanlar) / (kova ≥ 0 olanlar) — yani
+// SONEK TOPLAMI ÷ TOPLAM. Tanımı gereği elde tutma[0] = 1 (tam %100) ve dizi
+// MONOTON AZALIR: sonek toplamı k büyüdükçe küçülür. Kullanıcının tarif ettiği
+// şeklin ta kendisi ve YUMUŞATMA GEREKMEZ — tek bir sayı bile bozulmuyor.
+
+/** Kova sayısı: video süresi 20 eşit dilime bölünür (%0, %5, …, %95). */
+export const VIDEO_KOVA_SAYISI = 20;
+
+/**
+ * EĞRİNİN ÇİZİLMESİ İÇİN GEREKEN EN AZ İZLEME — ALT EŞİK.
+ *
+ * NEDEN 20 (ve neden "3 kişi" yetmez): eğrinin her noktası n izleme üzerinden
+ * bir orandır, yani tek bir izleyici noktayı 1/n kadar oynatır. Eğrinin kendi
+ * ÇÖZÜNÜRLÜĞÜ %5'tir (20 kova). Tek bir izleyicinin bir noktayı bir kova
+ * genişliğinden (%5) FAZLA oynatamaması için n ≥ 20 gerekir; n = 10'da bir
+ * kişi eğriyi %10 sıçratır, yani gürültü ölçünün çözünürlüğünü aşar ve
+ * kullanıcı olmayan bir "düşüş" görür.
+ *
+ * Bu bir kesinlik sözü DEĞİL (n=20'de en kötü standart hata ~%11'dir); eğrinin
+ * ŞEKLİNİN — düşüşün NEREDE olduğunun — okunabildiği alt sınırdır. Ekran bunu
+ * saklamaz: eşiğin altında eğri hiç çizilmez ve kaç izlemenin biriktiği
+ * AÇIKÇA yazılır (md. 24'ün dürüstlük kalıbı).
+ */
+export const VIDEO_KOVA_EN_AZ = 20;
+
+/** İstemciden gelen kova geçerli mi? (0..19 tamsayı — KAPALI SÖZLÜK) */
+export function gecerliKova(deger) {
+  return Number.isInteger(deger) && deger >= 0 && deger < VIDEO_KOVA_SAYISI;
+}
+
+/**
+ * KOVA YAZMA. $1 = gönderi, $2 = kova (0..19).
+ *
+ * `SELECT ... FROM yorumlar` ile yazılıyor, düz `VALUES` ile değil: WHERE
+ * koşulu hem gönderinin VAR olduğunu hem de GERÇEKTEN VİDEOLU olduğunu
+ * doğruluyor. Videosuz bir gönderiye kova yazdırmak (elle atılan bir istekle)
+ * ekranda olmayan bir bölümü doğurmazdı ama tabloyu kirletirdi; burada satır
+ * hiç açılmıyor. Gönderi yoksa da FK ihlali yerine SIFIR SATIR çıkar.
+ *
+ * `videolu` tanımı `TEKIL_TEMEL_SQL` ile AYNI (.mp4/.webm): ekran bölümü
+ * "videolu mu" diye oraya bakıyor, iki tanım kayarsa kova yazılan bir gönderi
+ * ekranda videosuz görünürdü.
+ */
+export const VIDEO_KOVA_YAZ_SQL = `
+INSERT INTO video_kova (gonderi_id, kova, adet)
+SELECT y.id, $2::smallint, 1
+  FROM yorumlar y
+ WHERE y.id = $1::int
+   AND EXISTS (SELECT 1 FROM unnest(y.medya) m
+                WHERE m LIKE '%.mp4' OR m LIKE '%.webm')
+ON CONFLICT (gonderi_id, kova)
+  DO UPDATE SET adet = video_kova.adet + 1`;
+
+/** Gönderinin kova sayaçları. $1 = gönderi. Kişi bilgisi YOK. */
+export const VIDEO_KOVA_OKU_SQL = `
+SELECT kova::int AS kova, adet::int AS adet
+  FROM video_kova WHERE gonderi_id=$1 ORDER BY kova`;
+
+/**
+ * ELDE TUTMA EĞRİSİ — kova sayaçlarından çizilebilir diziye.
+ *
+ * @param {Array<{kova:number,adet:number}>} satirlar `VIDEO_KOVA_OKU_SQL` çıktısı
+ * @returns {{gorunum:number, en_az:number, kova_sayisi:number,
+ *            egri:number[]|null, tamamlama:number|null, ortanca:number|null}}
+ *
+ *  · `gorunum`   — eğriye giren izleme sayısı (eşiğin altındayken de dolu:
+ *                  ekran "şu an 7 izleme" diyebilsin).
+ *  · `egri`      — 20 elemanlı 0..1 dizisi; eşiğin ALTINDA null (yarım eğri
+ *                  çizmektense hiç çizmemek — "3 kişide %67 elde tutma"
+ *                  anlamsızdır ve kullanıcı sayıya güvenir).
+ *  · `tamamlama` — son kovaya (%95-100) ulaşanların oranı.
+ *  · `ortanca`   — elde tutmanın hâlâ ≥ %50 olduğu EN BÜYÜK kovanın yüzdesi:
+ *                  "izleyicilerin yarısı videonun en az %X'ini gördü". egri[0]
+ *                  daima 1 olduğu için TANIMSIZ KALAMAZ.
+ *
+ * Bozuk satır (sözlük dışı kova, negatif adet) SESSİZCE ATILIR: veri yalnız
+ * bizim yazdığımız uçtan gelir, ama bir gün elle düzeltilmiş bir satır
+ * eğriyi monotonluktan çıkarmasın.
+ */
+export function eldeTutmaEgrisi(satirlar) {
+  const kovalar = new Array(VIDEO_KOVA_SAYISI).fill(0);
+  for (const s of satirlar || []) {
+    const k = Number(s?.kova);
+    const a = Number(s?.adet);
+    if (!gecerliKova(k) || !Number.isFinite(a) || a <= 0) continue;
+    kovalar[k] += Math.floor(a);
+  }
+  const gorunum = kovalar.reduce((t, a) => t + a, 0);
+  const temel = {
+    gorunum,
+    en_az: VIDEO_KOVA_EN_AZ,
+    kova_sayisi: VIDEO_KOVA_SAYISI,
+  };
+  if (gorunum < VIDEO_KOVA_EN_AZ) {
+    return { ...temel, egri: null, tamamlama: null, ortanca: null };
+  }
+  // SONEK TOPLAMI: sondan başa yürüyerek "kova ≥ k olanlar".
+  const egri = new Array(VIDEO_KOVA_SAYISI).fill(0);
+  let sonek = 0;
+  for (let k = VIDEO_KOVA_SAYISI - 1; k >= 0; k -= 1) {
+    sonek += kovalar[k];
+    // 4 hane: yuvarlama MONOTON bir işlemdir, azalan diziyi artan yapamaz.
+    egri[k] = Math.round((sonek / gorunum) * 10_000) / 10_000;
+  }
+  let ortanca = 0;
+  for (let k = VIDEO_KOVA_SAYISI - 1; k >= 0; k -= 1) {
+    if (egri[k] >= 0.5) { ortanca = k; break; }
+  }
+  return {
+    ...temel,
+    egri,
+    tamamlama: egri[VIDEO_KOVA_SAYISI - 1],
+    // Kovanın BAŞLADIĞI yüzde: 19. kova "en az %95" demektir.
+    ortanca: Math.round((ortanca / VIDEO_KOVA_SAYISI) * 100),
+  };
+}
+
 /**
  * ZİRVE — "en çok ilk 24 saatte" cümlesinin verisi.
  *

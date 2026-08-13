@@ -988,4 +988,23 @@ const Map<String, String> cevirilerRo = {
       'Fără acces la e-mail, conectarea la cont nu mai este posibilă.',
   'İki adımlı doğrulama açıldı': 'Verificarea în doi pași este activată',
   'İki adımlı doğrulama kapatıldı': 'Verificarea în doi pași este dezactivată',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Cât s-a văzut din videoclip',
+  'Videoyu başlatanlar': 'au început videoclipul',
+  'videonun %{} noktasına ulaştı': 'au ajuns la {}% din videoclip',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Jumătate din vizionări au ajuns la cel puțin {}% din videoclip.',
+  'Sonuna kadar izleyen: %{}': 'Vizionat până la final: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Curba are nevoie de cel puțin {} vizionări; acum sunt {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Curba este calculată din {} vizionări și nu depinde de perioada aleasă.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Timpul de vizionare se măsoară din {}; vizionările mai vechi nu intră aici.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} vizionări. {}% au ajuns la jumătatea videoclipului, {}% la final.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

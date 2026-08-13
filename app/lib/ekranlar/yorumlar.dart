@@ -855,6 +855,8 @@ class _YorumKartiState extends State<YorumKarti> {
                 otomatikOynat: true,
                 onAc: _medyaAc,
                 onCiftDokunus: _begen,
+                // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
+                gonderiId: yorum['id'],
               ),
             ],
             const SizedBox(height: 8),
@@ -1426,6 +1428,8 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                 otomatikOynat: true,
                 onAc: (mi) => widget.medyaAc(y, mi),
                 onCiftDokunus: _begen,
+                // md. 23 — yanıt da bir gönderidir; kendi eğrisini alır.
+                gonderiId: y['id'],
               ),
             ),
         ],

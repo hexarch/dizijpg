@@ -942,4 +942,24 @@ const Map<String, String> cevirilerJa = {
   'E-postana erişemezsen hesabına giremezsin.': 'メールを利用できなくなると、ログインできなくなります。',
   'İki adımlı doğrulama açıldı': '2段階認証をオンにしました',
   'İki adımlı doğrulama kapatıldı': '2段階認証をオフにしました',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': '動画のどこまで見られたか',
+  'Videoyu başlatanlar': '動画を再生した人',
+  'videonun %{} noktasına ulaştı': '動画の {}% 地点まで到達',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      '視聴した人の半数が動画の {}% 以上を見ています。',
+  'Sonuna kadar izleyen: %{}': '最後まで視聴: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      '曲線には再生数が {} 回以上必要です。現在は {} 回です。',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      '曲線は {} 回の再生から作成され、選択中の期間の影響を受けません。',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      '視聴時間は {} から計測しています。それ以前の再生はこの数に含まれません。',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} 回の再生。動画の半分まで到達 {}%、最後まで到達 {}%。',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

@@ -980,4 +980,22 @@ const Map<String, String> cevirilerCs = {
       'Bez přístupu k e-mailu se do účtu nedostaneš.',
   'İki adımlı doğrulama açıldı': 'Dvoufázové ověření je zapnuté',
   'İki adımlı doğrulama kapatıldı': 'Dvoufázové ověření je vypnuté',
+  'Videonun ne kadarı izlendi': 'Kolik z videa se přehrálo',
+  'Videoyu başlatanlar': 'Spustili video',
+  'videonun %{} noktasına ulaştı': 'dosáhlo {} % videa',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Polovina publika viděla aspoň {} % videa.',
+  'Sonuna kadar izleyen: %{}': 'Zhlédnuto do konce: {} %',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Křivka potřebuje aspoň {} zhlédnutí; teď jich je {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Křivka vychází z {} zhlédnutí a nemění se podle zvoleného období.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Doba sledování se měří od {}; starší zhlédnutí se nepočítají.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} zhlédnutí. {} % dosáhlo poloviny, {} % konce.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{} %',
 };

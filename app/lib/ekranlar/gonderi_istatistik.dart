@@ -264,6 +264,12 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
       const SizedBox(height: 10),
       _grafikBolumu(),
 
+      // --- VİDEO ELDE TUTMA ------------------------------------------------
+      // YALNIZ VİDEOLU GÖNDERİDE. Sunucu videosuz gönderide `video` alanını
+      // null döndürür ve bu bölüm HİÇ çizilmez — fotoğraflı bir gönderide
+      // "izlenme süresi: veri yok" yazmak anlamsız bir boşluk olurdu.
+      ..._videoEgrisi(),
+
       // --- KAYNAKLAR -------------------------------------------------------
       const SizedBox(height: 20),
       _Baslik('Görüntülenme nereden geldi'.c),
@@ -336,6 +342,85 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
         ],
       ],
     );
+  }
+
+  /// VİDEO İZLENME SÜRESİ (ELDE TUTMA) EĞRİSİ.
+  ///
+  /// ÜÇ DURUM, ÜÇÜ DE AÇIKÇA SÖYLENİR:
+  ///  1. Gönderi VİDEOSUZ (`video == null`) → bölüm HİÇ ÇİZİLMEZ.
+  ///  2. Videolu ama örneklem ALT EŞİĞİN ALTINDA (`egri == null`) → eğri
+  ///     çizilmez, kaç izlemenin biriktiği ve kaç gerektiği YAZILIR. "3
+  ///     izlemede %67 elde tutma" bir ölçü değil tesadüftür; çizmek
+  ///     kullanıcının güveneceği yanlış bir sayı üretirdi.
+  ///  3. Eğri var → çizilir + iki cümlelik okuma (ortanca, tamamlama) ve
+  ///     ölçünün NE ZAMANDAN BERİ biriktiği notu.
+  List<Widget> _videoEgrisi() {
+    final v = (_veri!['video'] as Map?)?.cast<String, dynamic>();
+    if (v == null) return const []; // videosuz gönderi
+    final gorunum = v['gorunum'] as int? ?? 0;
+    final enAz = v['en_az'] as int? ?? 20;
+    final bas = v['baslangic'] as String?;
+    final ham = v['egri'] as List<dynamic>?;
+    final egri = ham
+        ?.map((x) => (x as num).toDouble().clamp(0.0, 1.0))
+        .toList();
+
+    final basliklar = <Widget>[
+      const SizedBox(height: 20),
+      _Baslik('Videonun ne kadarı izlendi'.c),
+    ];
+
+    if (egri == null || egri.length < 2) {
+      return [
+        ...basliklar,
+        _BosGrafik(
+          mesaj: 'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.'
+              .cf([enAz, gorunum]),
+        ),
+        if (bas != null) ...[
+          const SizedBox(height: 6),
+          _KapsamNotu(
+            'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.'
+                .cf([tarihBicimle(bas)]),
+          ),
+        ],
+      ];
+    }
+
+    final ortanca = v['ortanca'] as int? ?? 0;
+    final tamamlama = (v['tamamlama'] as num?)?.toDouble() ?? 0;
+    return [
+      ...basliklar,
+      _EldeTutmaGrafigi(egri: egri, gorunum: gorunum),
+      const SizedBox(height: 8),
+      _Ipucu(
+        ikon: Icons.timelapse,
+        metin: 'İzleyenlerin yarısı videonun en az %{} kadarını gördü.'.cf([
+          ortanca,
+        ]),
+      ),
+      const SizedBox(height: 6),
+      _Ipucu(
+        ikon: Icons.flag_outlined,
+        metin: 'Sonuna kadar izleyen: %{}'.cf([(tamamlama * 100).round()]),
+      ),
+      const SizedBox(height: 6),
+      // ZAMAN ARALIĞI SEÇİCİSİ BU EĞRİYİ ETKİLEMEZ: ölçü ömür boyudur (kova
+      // tablosunda tarih yok — tarih tutmak tek izleyicili bir gönderide kişiyi
+      // işaret ederdi). Kullanıcı yukarıda "Son 7 gün" seçiliyken bu eğrinin de
+      // 7 günlük olduğunu sanmasın.
+      _KapsamNotu(
+        'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.'
+            .cf([gorunum]),
+      ),
+      if (bas != null) ...[
+        const SizedBox(height: 6),
+        _KapsamNotu(
+          'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.'
+              .cf([tarihBicimle(bas)]),
+        ),
+      ],
+    ];
   }
 
   /// Kaynak kırılımı — TEK ÖLÇÜ, birçok kategori ⇒ hepsi AYNI renk.
@@ -1109,6 +1194,297 @@ class _CizgiCizer extends CustomPainter {
   bool shouldRepaint(_CizgiCizer eski) =>
       eski.secili != secili ||
       eski.seri != seri ||
+      eski.cizgi != cizgi ||
+      eski.zemin != zemin;
+}
+
+/// VİDEO ELDE TUTMA EĞRİSİ — "%100'den başlayıp azalan izlenme süresi eğrisi".
+///
+/// ===========================================================================
+/// NEDEN BU EĞRİ YUMUŞATILMIYOR
+/// ===========================================================================
+/// elde tutma[k] = (videonun k. yirmide birine ULAŞAN izleme sayısı) ÷ (hiç
+/// oynayan izleme sayısı). Bu bir SONEK TOPLAMI oranıdır: matematiksel olarak
+/// elde tutma[0] tam 1'dir ve dizi ARTAMAZ. Yani kullanıcının istediği şekil
+/// (soldan %100, sağa doğru azalan) veriden DOĞRUDAN çıkar — kümülatif
+/// görüntülenme çizgisiyle aynı karar: tek bir sayı bile bozulmuyor.
+///
+/// ===========================================================================
+/// EKSEN KARARLARI
+/// ===========================================================================
+/// * Y EKSENİ SABİT %0–%100. Diğer grafikte taban EN KÜÇÜK DEĞERdi (kümülatif
+///   sayı sıfırdan başlamayabilir); burada tam tersi: oranın anlamı ölçeğin
+///   kendisinde. Ekrana sığdırmak için tabanı %40'a çekmek, %60'ta biten iyi
+///   bir videoyu "dibe vurmuş" gibi gösterirdi.
+/// * X EKSENİ videonun KENDİ yüzdesi (%0 → %95): son nokta 19. kova, yani
+///   "%95'i geçenler". "%100" yazmak son kovayı bitirenlerle karıştırırdı.
+/// * ÇÖZÜNÜRLÜK 20 KOVA: veriyi olduğundan ince göstermemek için noktalar
+///   ARALARI DÜZ ÇİZGİYLE birleştirilir, eğri (spline) çizilmez.
+/// * TEK SERİ ⇒ efsane YOK, başlık serinin adıdır (dataviz kuralı). Renk tek
+///   başına anlam TAŞIMAZ: okunan değer grafiğin üstünde YAZIYLA durur ve
+///   ekran okuyucu için Semantics özeti verilir (tuval okunamaz).
+class _EldeTutmaGrafigi extends StatefulWidget {
+  /// 0..1 arası, MONOTON AZALAN, en az 2 elemanlı dizi (sunucu böyle üretir).
+  final List<double> egri;
+
+  /// Örneklem — erişilebilir özette ve ipucunda geçer.
+  final int gorunum;
+
+  const _EldeTutmaGrafigi({required this.egri, required this.gorunum});
+
+  @override
+  State<_EldeTutmaGrafigi> createState() => _EldeTutmaGrafigiState();
+}
+
+class _EldeTutmaGrafigiState extends State<_EldeTutmaGrafigi> {
+  /// Seçili kova (imleç). null = imleç kapalı, BAŞLANGIÇ değeri etiketlenir.
+  int? _secili;
+
+  void _konumdanSec(Offset yerel, double genislik) {
+    final n = widget.egri.length;
+    if (n < 2 || genislik <= 0) return;
+    final x =
+        (yerel.dx - _EldeTutmaCizer.solDolgu) /
+        math.max(
+          1,
+          genislik - _EldeTutmaCizer.solDolgu - _EldeTutmaCizer.sagDolgu,
+        );
+    final i = (x * (n - 1)).round().clamp(0, n - 1);
+    if (i != _secili) setState(() => _secili = i);
+  }
+
+  /// Kovanın videodaki yüzde karşılığı (0 → %0, 19 → %95).
+  int _yuzde(int kova) => (kova * 100 / widget.egri.length).round();
+
+  @override
+  Widget build(BuildContext context) {
+    final egri = widget.egri;
+    final i = _secili ?? 0;
+    final deger = (egri[i] * 100).round();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // OKUNAN DEĞER GRAFİĞİN ÜSTÜNDE: mobilde parmak grafiğin üstünde
+        // durur, ipucu balonu tam parmağın altında kalırdı.
+        Row(
+          children: [
+            Text(
+              // YÜZDE İŞARETİ DİLE GÖRE YER DEĞİŞTİRİR — sabit yazılamaz.
+              // Türkçe "%45", İngilizce "45%", Almanca/Fransızca/Rusça
+              // "45 %", Farsça "45٪". Burası '%$deger' diye sabitti ve bu
+              // sayı, hemen sağındaki çeviriyle tek cümle olarak okunuyor
+              // ("%45 videonun %60 noktasına ulaştı") — yani yanlış taraftaki
+              // işaret cümlenin tamamını bozuyordu (13 Ağu, çeviri turunda
+              // yakalandı). Kalıplar CLDR'den çıkarıldı: `tool/yuzde_kalibi.dart`.
+              '%{}'.cf([deger]),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: DiziRenkler.metin,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                _secili == null
+                    ? 'Videoyu başlatanlar'.c
+                    : 'videonun %{} noktasına ulaştı'.cf([_yuzde(i)]),
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        LayoutBuilder(
+          builder: (context, kisit) => GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (d) => _konumdanSec(d.localPosition, kisit.maxWidth),
+            onHorizontalDragUpdate: (d) =>
+                _konumdanSec(d.localPosition, kisit.maxWidth),
+            onHorizontalDragEnd: (_) => setState(() => _secili = null),
+            onTapUp: (_) => setState(() => _secili = null),
+            onTapCancel: () => setState(() => _secili = null),
+            child: Semantics(
+              // Ekran okuyucu tuvali okuyamaz: eğrinin ÖZETİ metin olarak.
+              label:
+                  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.'
+                      .cf([
+                        widget.gorunum,
+                        (egri[egri.length ~/ 2] * 100).round(),
+                        (egri.last * 100).round(),
+                      ]),
+              excludeSemantics: true,
+              child: SizedBox(
+                // Testin dokunacağı tuval: ekranda başka CustomPaint'ler de
+                // var (görüntülenme grafiği, Material'in kendi çizimleri).
+                key: const Key('elde-tutma-tuval'),
+                height: 160,
+                width: double.infinity,
+                child: CustomPaint(
+                  painter: _EldeTutmaCizer(
+                    egri: egri,
+                    secili: _secili,
+                    cizgi: DiziRenkler.sariMetin,
+                    izgara: DiziRenkler.metin12,
+                    yazi: DiziRenkler.metin54,
+                    zemin: DiziRenkler.kart,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _EldeTutmaCizer extends CustomPainter {
+  /// Y ekseni etiketleri için sol dolgu; imleç eşlemesi de bunu kullanır.
+  static const double solDolgu = 40;
+  static const double sagDolgu = 8;
+  static const double ustDolgu = 8;
+  static const double altDolgu = 20;
+
+  final List<double> egri;
+  final int? secili;
+  final Color cizgi;
+  final Color izgara;
+  final Color yazi;
+  final Color zemin;
+
+  const _EldeTutmaCizer({
+    required this.egri,
+    required this.secili,
+    required this.cizgi,
+    required this.izgara,
+    required this.yazi,
+    required this.zemin,
+  });
+
+  @override
+  void paint(Canvas tuval, Size boyut) {
+    final n = egri.length;
+    if (n < 2) return;
+    final sol = solDolgu;
+    final sag = boyut.width - sagDolgu;
+    final ust = ustDolgu;
+    final alt = boyut.height - altDolgu;
+    if (sag <= sol || alt <= ust) return;
+
+    double xKonum(int i) => sol + (sag - sol) * (i / (n - 1));
+    // SABİT ÖLÇEK: 0 = alt kenar, 1 = üst kenar. Veriye göre esnemez.
+    double yKonum(double oran) => alt - (alt - ust) * oran.clamp(0.0, 1.0);
+
+    // --- IZGARA + Y ETİKETLERİ (%0 / %50 / %100, geri planda) -------------
+    final izgaraKalem = Paint()
+      ..color = izgara
+      ..strokeWidth = 1;
+    for (final oran in const [0.0, 0.5, 1.0]) {
+      final y = yKonum(oran);
+      tuval.drawLine(Offset(sol, y), Offset(sag, y), izgaraKalem);
+      _yaz(
+        tuval,
+        '%${(oran * 100).round()}',
+        Offset(0, y - 6),
+        10,
+        yazi,
+        sol - 6,
+      );
+    }
+
+    // --- DOLGU (tek seri: alan çizgiyi destekler, kimlik taşımaz) ---------
+    final yol = Path()..moveTo(xKonum(0), yKonum(egri[0]));
+    for (var i = 1; i < n; i++) {
+      yol.lineTo(xKonum(i), yKonum(egri[i]));
+    }
+    final dolgu = Path.from(yol)
+      ..lineTo(xKonum(n - 1), alt)
+      ..lineTo(xKonum(0), alt)
+      ..close();
+    tuval.drawPath(dolgu, Paint()..color = cizgi.withValues(alpha: 0.12));
+
+    // --- ÇİZGİ (2 px, yuvarlak uç) ----------------------------------------
+    tuval.drawPath(
+      yol,
+      Paint()
+        ..color = cizgi
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+
+    // --- BAŞLANGIÇ NOKTASI: eğrinin %100'den başladığını gösteren çıpa -----
+    tuval.drawCircle(
+      Offset(xKonum(0), yKonum(egri[0])),
+      5,
+      Paint()..color = zemin,
+    );
+    tuval.drawCircle(
+      Offset(xKonum(0), yKonum(egri[0])),
+      3.5,
+      Paint()..color = cizgi,
+    );
+
+    // --- İMLEÇ -------------------------------------------------------------
+    if (secili != null && secili! >= 0 && secili! < n) {
+      final x = xKonum(secili!);
+      final y = yKonum(egri[secili!]);
+      tuval.drawLine(
+        Offset(x, ust),
+        Offset(x, alt),
+        Paint()
+          ..color = cizgi.withValues(alpha: 0.5)
+          ..strokeWidth = 1,
+      );
+      tuval.drawCircle(Offset(x, y), 6, Paint()..color = zemin);
+      tuval.drawCircle(Offset(x, y), 4, Paint()..color = cizgi);
+    }
+
+    // --- X ETİKETLERİ: yalnız iki uç (ara etiketler üst üste binerdi) -----
+    // Sağ uç "%95": son kova videonun %95'ini GEÇENLERİ sayar, bitirenleri
+    // değil — "%100" yazmak eğrinin son noktasını yanlış okuturdu.
+    _yaz(tuval, '%0', Offset(sol, alt + 4), 10, yazi, 40);
+    final sonYuzde = ((n - 1) * 100 / n).round();
+    _yaz(
+      tuval,
+      '%$sonYuzde',
+      Offset(sag - 40, alt + 4),
+      10,
+      yazi,
+      40,
+      sag: true,
+    );
+  }
+
+  void _yaz(
+    Canvas tuval,
+    String metin,
+    Offset konum,
+    double boy,
+    Color renk,
+    double genislik, {
+    bool sag = false,
+  }) {
+    final tp = TextPainter(
+      text: TextSpan(
+        text: metin,
+        style: TextStyle(color: renk, fontSize: boy),
+      ),
+      textDirection: TextDirection.ltr,
+      textAlign: sag ? TextAlign.right : TextAlign.left,
+    )..layout(maxWidth: math.max(1, genislik));
+    tp.paint(
+      tuval,
+      sag ? Offset(konum.dx + genislik - tp.width, konum.dy) : konum,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_EldeTutmaCizer eski) =>
+      eski.secili != secili ||
+      eski.egri != egri ||
       eski.cizgi != cizgi ||
       eski.zemin != zemin;
 }

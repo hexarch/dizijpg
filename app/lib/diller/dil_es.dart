@@ -989,4 +989,22 @@ const Map<String, String> cevirilerEs = {
       'Si pierdes el acceso a tu correo, no podrás entrar en tu cuenta.',
   'İki adımlı doğrulama açıldı': 'Verificación en dos pasos activada',
   'İki adımlı doğrulama kapatıldı': 'Verificación en dos pasos desactivada',
+  'Videonun ne kadarı izlendi': 'Cuánto se vio del video',
+  'Videoyu başlatanlar': 'Empezaron el video',
+  'videonun %{} noktasına ulaştı': 'llegaron al {}% del video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'La mitad del público vio al menos el {}% del video.',
+  'Sonuna kadar izleyen: %{}': 'Vieron hasta el final: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'La curva necesita al menos {} reproducciones; ahora hay {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'La curva se basa en {} reproducciones y no cambia con el periodo seleccionado.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'El tiempo de reproducción se mide desde el {}; las visualizaciones anteriores no cuentan.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} reproducciones. El {}% llegó a la mitad y el {}% al final.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

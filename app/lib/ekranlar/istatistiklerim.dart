@@ -198,23 +198,7 @@ class _IstatistiklerimEkraniState extends State<IstatistiklerimEkrani> {
 
       // --- ZAMAN KIRILIMI -------------------------------------------------
       _Baslik('Zaman kırılımı'.c),
-      Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          for (final g in const [30, 60, 90, 120])
-            _PencereCipi(
-              etiket: 'Son {} gün'.cf([g]),
-              secili: _gun == g,
-              onSec: () => _pencereSec(g),
-            ),
-          _PencereCipi(
-            etiket: 'Tümü'.c,
-            secili: tumZaman,
-            onSec: () => _pencereSec(0),
-          ),
-        ],
-      ),
+      _PencereSecici(secili: _gun, onSec: _pencereSec),
       const SizedBox(height: 10),
       Row(
         children: [
@@ -444,16 +428,75 @@ class _Sayac extends StatelessWidget {
   }
 }
 
-/// Pencere seçici çipi. `ChoiceChip` yerine elle çizildi: dokunma hedefi
-/// 44 px'e ancak dış dolguyla çıkıyor ve seçili durum RENKTEN BAŞKA bir
-/// işaretle (kalın çerçeve + kalın yazı) de belli olmalı.
-class _PencereCipi extends StatelessWidget {
+/// Pencere seçici: BEŞ SEÇENEK TEK SATIRDA.
+///
+/// NEDEN ROW, NEDEN WRAP DEĞİL (13 Ağu 2026 — kullanıcı: "saçma yer kaplıyor"):
+/// Eskiden çipler bir `Wrap` içindeydi ve her çip `Container(alignment: ...)`
+/// kullanıyordu. `alignment` verilen bir Container child'ını `Align`a sarar;
+/// `Align` da GEVŞEK kısıtta ELİNDEKİ TÜM GENİŞLİĞİ kaplar. Yani her çip
+/// satırın tamamını yiyordu ve beş çip ALT ALTA beş satır oluyordu: 360 dp'de
+/// 252 dp yükseklik (5×44 + 4×8). İskeletin bu bloğa 44 dp ayırmış olması
+/// (bkz. [_Iskelet]) tek satırın en baştaki niyet olduğunu gösteriyor —
+/// bu bir tasarım tercihi değil, sessiz bir yerleşim hatasıydı.
+///
+/// Şimdi beş eşit segment tek `Row`da: blok 252 → 44 dp.
+///
+/// ETİKET KISALTMASI: görünen yazı `'{} gün'` anahtarından ("30 gün",
+/// "30 days", "30 Tg.", "30 pv") — bu anahtar 45 dilde ZATEN var (profil ve
+/// yasaklı ekranları kullanıyor), yani yeni çeviri borcu YOK. "30g" gibi bir
+/// kısaltma seçilmedi: gün birimi Türkçe'de "g", İngilizce'de "d", Fince'de
+/// "pv", Japonca'da "日" — tek harfe indirgemek 45 dilin çoğunda anlamsız ya
+/// da çevrilemez olurdu. Ekran okuyucu ise kısaltılmış yazıyı DEĞİL, tam
+/// cümleyi ("Son 30 gün") duyar; kısalma yalnız GÖZE yapılan bir kısalmadır.
+class _PencereSecici extends StatelessWidget {
+  /// Seçili pencere (gün); 0 = tüm zamanlar.
+  final int secili;
+  final ValueChanged<int> onSec;
+
+  const _PencereSecici({required this.secili, required this.onSec});
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      for (final g in const [30, 60, 90, 120, 0]) ...[
+        if (g != 30) const SizedBox(width: 5),
+        Expanded(
+          child: _PencereSegmenti(
+            gun: g,
+            etiket: g == 0 ? 'Tümü'.c : '{} gün'.cf([g]),
+            sesli: g == 0 ? 'Tümü'.c : 'Son {} gün'.cf([g]),
+            secili: secili == g,
+            onSec: () => onSec(g),
+          ),
+        ),
+      ],
+    ],
+  );
+}
+
+/// Seçicinin tek segmenti.
+///
+/// DOKUNMA HEDEFİ 44 dp KALIYOR ama GÖRSEL yükseklik 34 dp: aradaki 10 dp
+/// saydam dolgu. Böylece satır hafif görünürken parmak hedefi küçülmüyor.
+///
+/// SEÇİLİ DURUM RENKTEN BAŞKA İŞARET TAŞIR (erişilebilirlik): 2 px çerçeve
+/// (seçilmemişte 1 px) + w800 yazı (seçilmemişte w500). Gri tonlamalı bir
+/// ekranda ya da renk körlüğünde de hangisinin açık olduğu okunur.
+class _PencereSegmenti extends StatelessWidget {
+  final int gun;
+
+  /// Gözle okunan KISA etiket ("30 gün").
   final String etiket;
+
+  /// Ekran okuyucunun duyduğu TAM etiket ("Son 30 gün").
+  final String sesli;
   final bool secili;
   final VoidCallback onSec;
 
-  const _PencereCipi({
+  const _PencereSegmenti({
+    required this.gun,
     required this.etiket,
+    required this.sesli,
     required this.secili,
     required this.onSec,
   });
@@ -462,28 +505,44 @@ class _PencereCipi extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     button: true,
     selected: secili,
+    label: sesli,
+    excludeSemantics: true,
     child: InkWell(
-      key: Key('pencere-$etiket'),
+      // Anahtar ÇEVİRİYE DEĞİL sayıya bağlı: dil değişince test/otomasyon
+      // hedefi kaymasın ('pencere-0' = tümü).
+      key: Key('pencere-$gun'),
       onTap: onSec,
       borderRadius: BorderRadius.circular(22),
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 44),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: secili ? DiziRenkler.sari.withValues(alpha: 0.16) : null,
-          border: Border.all(
-            color: secili ? DiziRenkler.sari : DiziRenkler.metin12,
-            width: secili ? 2 : 1,
-          ),
-          borderRadius: BorderRadius.circular(22),
-        ),
-        child: Text(
-          etiket,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: secili ? FontWeight.w800 : FontWeight.w500,
-            color: secili ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+      child: SizedBox(
+        height: 44,
+        child: Center(
+          child: Container(
+            height: 34,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: secili ? DiziRenkler.sari.withValues(alpha: 0.16) : null,
+              border: Border.all(
+                color: secili ? DiziRenkler.sari : DiziRenkler.metin12,
+                width: secili ? 2 : 1,
+              ),
+              borderRadius: BorderRadius.circular(17),
+            ),
+            // FittedBox: en uzun çevirilerde (it "120 giorni", el
+            // "120 μέρες") yazı taşmak yerine bir tık küçülür — segment
+            // genişliği sabit kaldığı için satır ASLA ikiye çıkmaz.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                etiket,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: secili ? FontWeight.w800 : FontWeight.w500,
+                  color: secili ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+                ),
+              ),
+            ),
           ),
         ),
       ),

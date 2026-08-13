@@ -968,4 +968,23 @@ const Map<String, String> cevirilerTh = {
       'หากเข้าถึงอีเมลไม่ได้ จะลงชื่อเข้าใช้บัญชีไม่ได้',
   'İki adımlı doğrulama açıldı': 'เปิดการยืนยันแบบ 2 ขั้นตอนแล้ว',
   'İki adımlı doğrulama kapatıldı': 'ปิดการยืนยันแบบ 2 ขั้นตอนแล้ว',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'ดูวิดีโอไปได้ถึงไหน',
+  'Videoyu başlatanlar': 'เริ่มดูวิดีโอ',
+  'videonun %{} noktasına ulaştı': 'ดูถึง {}% ของวิดีโอ',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'ครึ่งหนึ่งของผู้ชมดูอย่างน้อย {}% ของวิดีโอ',
+  'Sonuna kadar izleyen: %{}': 'ดูจนจบ: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'กราฟต้องมียอดดูอย่างน้อย {} ครั้ง ตอนนี้มี {} ครั้ง',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'กราฟคำนวณจากยอดดู {} ครั้ง และไม่เปลี่ยนตามช่วงเวลาที่เลือก',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'เวลาที่ดูวัดตั้งแต่ {} เป็นต้นมา การดูก่อนหน้านั้นไม่นับรวม',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      'ยอดดู {} ครั้ง {}% ดูถึงครึ่งวิดีโอ {}% ดูจนจบ',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

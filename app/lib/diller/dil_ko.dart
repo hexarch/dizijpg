@@ -944,4 +944,24 @@ const Map<String, String> cevirilerKo = {
       '이메일을 이용할 수 없으면 계정에 로그인할 수 없습니다.',
   'İki adımlı doğrulama açıldı': '2단계 인증을 켰습니다',
   'İki adımlı doğrulama kapatıldı': '2단계 인증을 껐습니다',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': '동영상을 어디까지 봤나요',
+  'Videoyu başlatanlar': '동영상을 시작한 사람',
+  'videonun %{} noktasına ulaştı': '동영상의 {}% 지점에 도달',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      '시청자의 절반이 동영상의 {}% 이상을 봤어요.',
+  'Sonuna kadar izleyen: %{}': '끝까지 시청: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      '곡선을 그리려면 조회수가 최소 {}회 필요해요. 지금은 {}회예요.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      '곡선은 조회수 {}회를 바탕으로 하며 선택한 기간에 영향받지 않아요.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      '시청 시간은 {}부터 측정하고 있어요. 그 이전 조회는 이 수치에 포함되지 않아요.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '조회수 {}회. 동영상 중간까지 도달 {}%, 끝까지 도달 {}%.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

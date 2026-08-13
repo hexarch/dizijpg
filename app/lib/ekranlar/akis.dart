@@ -868,6 +868,8 @@ class _AkisKartiState extends State<AkisKarti> {
               // Reels açar (indeks düşerse ilk kareden başlardı).
               onCiftDokunus: _begen,
               otomatikOynat: true,
+              // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
+              gonderiId: y['id'],
             ),
           ],
           // ---- 4. Gönderi metni: kullanıcı adı + yazılan yorum. MEDYANIN

@@ -990,4 +990,24 @@ const Map<String, String> cevirilerMy = {
       'အီးမေးလ်ကို မသုံးနိုင်တော့ပါက အကောင့်သို့ ဝင်၍ မရတော့ပါ။',
   'İki adımlı doğrulama açıldı': 'နှစ်ဆင့် အတည်ပြုခြင်း ဖွင့်ပြီးပါပြီ',
   'İki adımlı doğrulama kapatıldı': 'နှစ်ဆင့် အတည်ပြုခြင်း ပိတ်ပြီးပါပြီ',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'ဗီဒီယိုကို ဘယ်လောက်ကြည့်ကြသလဲ',
+  'Videoyu başlatanlar': 'ဗီဒီယိုစတင်ကြည့်သူများ',
+  'videonun %{} noktasına ulaştı': 'ဗီဒီယို၏ {}% အထိ ရောက်ခဲ့သည်',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'ကြည့်သူတစ်ဝက်သည် ဗီဒီယို၏ အနည်းဆုံး {}% ကို ကြည့်ခဲ့သည်။',
+  'Sonuna kadar izleyen: %{}': 'အဆုံးထိ ကြည့်သူ: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'မျဉ်းကွေးအတွက် ကြည့်ရှုမှု အနည်းဆုံး {} ကြိမ်လိုသည်။ ယခု {} ကြိမ်ရှိသည်။',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'မျဉ်းကွေးကို ကြည့်ရှုမှု {} ကြိမ်မှ ရေးဆွဲထားပြီး ရွေးထားသည့် ကာလက ၎င်းကို မပြောင်းလဲစေပါ။',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'ကြည့်ရှုချိန်ကို {} မှစ၍ တိုင်းတာသည်။ ထိုမတိုင်မီ ကြည့်ရှုမှုများ ဤအရေအတွက်တွင် မပါဝင်ပါ။',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      'ကြည့်ရှုမှု {} ကြိမ်။ ဗီဒီယိုတစ်ဝက်အထိ {}%၊ အဆုံးအထိ {}% ရောက်ခဲ့သည်။',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

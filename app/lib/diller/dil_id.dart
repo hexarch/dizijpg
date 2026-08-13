@@ -981,4 +981,24 @@ const Map<String, String> cevirilerId = {
       'Tanpa akses ke email, kamu tidak bisa masuk ke akunmu.',
   'İki adımlı doğrulama açıldı': 'Verifikasi dua langkah aktif',
   'İki adımlı doğrulama kapatıldı': 'Verifikasi dua langkah nonaktif',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Seberapa jauh video ditonton',
+  'Videoyu başlatanlar': 'Memulai video',
+  'videonun %{} noktasına ulaştı': 'mencapai {}% video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Separuh penonton menonton setidaknya {}% video.',
+  'Sonuna kadar izleyen: %{}': 'Menonton sampai habis: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Kurva memerlukan minimal {} tayangan; saat ini ada {} tayangan.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Kurva dihitung dari {} tayangan dan tidak terpengaruh rentang tanggal yang dipilih.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Durasi tontonan diukur sejak {}; tayangan yang lebih lama tidak termasuk dalam angka ini.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} tayangan. {}% mencapai tengah video, {}% mencapai akhir.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

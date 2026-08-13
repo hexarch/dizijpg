@@ -994,4 +994,22 @@ const Map<String, String> cevirilerEl = {
   'İki adımlı doğrulama açıldı': 'Η επαλήθευση σε δύο βήματα ενεργοποιήθηκε',
   'İki adımlı doğrulama kapatıldı':
       'Η επαλήθευση σε δύο βήματα απενεργοποιήθηκε',
+  'Videonun ne kadarı izlendi': 'Πόσο είδαν από το βίντεο',
+  'Videoyu başlatanlar': 'Ξεκίνησαν το βίντεο',
+  'videonun %{} noktasına ulaştı': 'έφτασαν στο {}% του βίντεο',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Το μισό κοινό είδε τουλάχιστον το {}% του βίντεο.',
+  'Sonuna kadar izleyen: %{}': 'Είδαν μέχρι το τέλος: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Η καμπύλη χρειάζεται τουλάχιστον {} προβολές· τώρα υπάρχουν {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Η καμπύλη βασίζεται σε {} προβολές και δεν επηρεάζεται από την επιλεγμένη περίοδο.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Ο χρόνος παρακολούθησης μετριέται από τις {}· οι παλαιότερες προβολές δεν προσμετρώνται.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} προβολές. Το {}% έφτασε στα μισά, το {}% στο τέλος.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

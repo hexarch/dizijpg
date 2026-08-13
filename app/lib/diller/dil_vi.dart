@@ -981,4 +981,23 @@ const Map<String, String> cevirilerVi = {
       'Nếu mất quyền truy cập email thì không thể đăng nhập vào tài khoản.',
   'İki adımlı doğrulama açıldı': 'Đã bật xác minh 2 bước',
   'İki adımlı doğrulama kapatıldı': 'Đã tắt xác minh 2 bước',
+  // --- Video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Xem đến đâu trong video',
+  'Videoyu başlatanlar': 'đã bắt đầu video',
+  'videonun %{} noktasına ulaştı': 'đã xem đến {}% video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'Một nửa người xem đã xem ít nhất {}% video.',
+  'Sonuna kadar izleyen: %{}': 'Xem đến hết: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'Đường cong cần ít nhất {} lượt xem; hiện có {} lượt.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'Đường cong dựa trên {} lượt xem và không đổi theo khoảng thời gian đã chọn.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Thời lượng xem được đo từ {}; các lượt xem cũ hơn không được tính.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} lượt xem. {}% xem đến giữa video, {}% xem đến hết.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

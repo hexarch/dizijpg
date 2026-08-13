@@ -34,6 +34,8 @@ import {
   GONDERI_GUNLUK_SAKLAMA, kaynakOlcu, GORUNUM_SAYAC_SQL, GORUNTULEYEN_SQL,
   SAYAC_ARTIR_SQL, TEKIL_TEMEL_SQL, TEKIL_SAYAC_SQL, ETKILESIM_ORTALAMA_SQL,
   ETKILESIM_EN_AZ_GONDERI, seriSql, seriDoldur, gunEkle, zirveBul,
+  VIDEO_KOVA_SAYISI, VIDEO_KOVA_EN_AZ, gecerliKova, eldeTutmaEgrisi,
+  VIDEO_KOVA_YAZ_SQL, VIDEO_KOVA_OKU_SQL,
 } from '../gonderi_istatistik.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -43,6 +45,9 @@ const MIG24 = fs.readFileSync(
   path.join(KOK, 'migrasyon-2026-08-14c.sql'), 'utf8');
 const MIG23 = fs.readFileSync(
   path.join(KOK, 'migrasyon-2026-08-14d.sql'), 'utf8');
+// md. 23 · video elde tutma (izlenme süresi eğrisi) — ayrı migrasyon.
+const MIG_VIDEO = fs.readFileSync(
+  path.join(KOK, 'migrasyon-2026-08-14g.sql'), 'utf8');
 
 // ---------------------------------------------------------------------------
 // 0) SAF MANTIK — veritabanı gerekmez
@@ -287,13 +292,156 @@ test('yanıt verinin NE ZAMANDAN BERİ biriktiğini söylüyor (md. 24 kalıbı)
   assert.ok(MIG23.includes("'gonderi_olcu_baslangic'"));
 });
 
-test('video izlenme süresi: YAPILMADI ama PLAN yazılı', () => {
-  // Kapsam yönetimi kararının izi kodda kalmalı; yoksa bir sonraki tur
-  // sıfırdan tasarlar.
-  assert.match(SERVER, /VİDEO İZLENME SÜRESİ EĞRİSİ — BU TURDA YAPILMADI/);
-  assert.match(SERVER, /video_kova\(gonderi_id, kova,/);
-  // Şu an hiçbir yerde toplanmıyor: yanlışlıkla yarım uygulanmadığını kanıtla.
-  assert.ok(!/CREATE TABLE[^;]*video_kova/.test(SEMA));
+// ---------------------------------------------------------------------------
+// 1b) VİDEO İZLENME SÜRESİ (ELDE TUTMA) EĞRİSİ — md. 23'ün ertelenen parçası
+// ---------------------------------------------------------------------------
+// NE KORUNUYOR:
+//  a. EĞRİNİN ŞEKLİ: %100'den başlar ve MONOTON AZALIR. Kullanıcının istediği
+//     şey budur ve tanım gereği doğrudur — bir gün biri "yumuşatma" eklerse
+//     ya da payı/paydayı karıştırırsa bu testler kırılır.
+//  b. ALT EŞİK: az izlenen videoda eğri YANILTIR ("3 kişide %67 elde tutma"),
+//     o yüzden eşiğin altında eğri HİÇ DÖNMEZ.
+//  c. KAPALI SÖZLÜK: kova 0..19; sözlük dışı değer hem sunucuda hem DB'de
+//     reddedilir.
+//  d. GİZLİLİK: tabloda kişisel sütun yok, uç yanıtında kimlik yok.
+test('video eğrisi UYGULANDI: plan da, şema da, sorgular da yerinde', () => {
+  assert.match(SERVER, /VİDEO İZLENME SÜRESİ EĞRİSİ \(ELDE TUTMA\) — UYGULANDI/);
+  assert.match(SEMA, /CREATE TABLE IF NOT EXISTS video_kova/);
+  assert.match(MIG_VIDEO, /CREATE TABLE IF NOT EXISTS video_kova/);
+  // Kova sözlüğü DB'de de kapalı.
+  for (const metin of [SEMA, MIG_VIDEO]) {
+    assert.match(metin, /CHECK \(kova BETWEEN 0 AND 19\)/);
+    assert.match(metin, /PRIMARY KEY \(gonderi_id, kova\)/);
+  }
+});
+
+test('kova sözlüğü: yalnız 0..19 TAMSAYI kabul (istemci beyanı)', () => {
+  assert.equal(VIDEO_KOVA_SAYISI, 20);
+  for (let k = 0; k < VIDEO_KOVA_SAYISI; k += 1) assert.ok(gecerliKova(k));
+  for (const kotu of [-1, 20, 21, 1.5, NaN, Infinity, '3', null, undefined,
+    true, [], {}, '3; DROP TABLE yorumlar']) {
+    assert.ok(!gecerliKova(kotu), `sızan kova: ${String(kotu)}`);
+  }
+});
+
+test('EĞRİ %100\'DEN BAŞLAR ve MONOTON AZALIR (yumuşatma gerekmiyor)', () => {
+  // 10 izleme baştan bıraktı, 10'u yarıda, 20'si sonuna kadar gitti.
+  const c = eldeTutmaEgrisi([
+    { kova: 0, adet: 10 }, { kova: 9, adet: 10 }, { kova: 19, adet: 20 },
+  ]);
+  assert.equal(c.gorunum, 40);
+  assert.equal(c.egri.length, VIDEO_KOVA_SAYISI);
+  assert.equal(c.egri[0], 1, 'eğri TAM %100\'den başlamalı');
+  for (let k = 1; k < c.egri.length; k += 1) {
+    assert.ok(c.egri[k] <= c.egri[k - 1],
+      `eğri ${k}. kovada ARTTI: ${c.egri[k - 1]} → ${c.egri[k]}`);
+    assert.ok(c.egri[k] >= 0 && c.egri[k] <= 1, 'oran 0..1 dışında');
+  }
+  // 30/40 = 0.75 (kova ≥ 1 olanlar), 20/40 = 0.5 (kova ≥ 10 olanlar).
+  assert.equal(c.egri[1], 0.75);
+  assert.equal(c.egri[10], 0.5);
+  assert.equal(c.tamamlama, 0.5);
+});
+
+test('EĞRİ: tek kovada toplanan izlemede de monotonluk bozulmaz', () => {
+  const c = eldeTutmaEgrisi([{ kova: 19, adet: 25 }]);
+  // Herkes sonuna kadar izledi ⇒ düz %100 çizgi.
+  assert.deepEqual(c.egri, new Array(VIDEO_KOVA_SAYISI).fill(1));
+  assert.equal(c.tamamlama, 1);
+  assert.equal(c.ortanca, 95, 'yarısı en az %95\'ini gördü');
+});
+
+test('ALT EŞİK: az izlenen videoda EĞRİ DÖNMEZ (yanıltıcı olurdu)', () => {
+  assert.equal(VIDEO_KOVA_EN_AZ, 20);
+  // Kullanıcının verdiği örnek: 3 kişide "%67 elde tutma" bir ölçü değildir.
+  const az = eldeTutmaEgrisi([{ kova: 0, adet: 1 }, { kova: 19, adet: 2 }]);
+  assert.equal(az.egri, null);
+  assert.equal(az.tamamlama, null);
+  assert.equal(az.ortanca, null);
+  // Ama SAYI dönmeli: ekran "şu an 3 izlenme var" diyebilmeli.
+  assert.equal(az.gorunum, 3);
+  assert.equal(az.en_az, VIDEO_KOVA_EN_AZ);
+  // Eşiğin TAM ALTI hâlâ çizilmez, TAM ÜSTÜ çizilir (kapalı/açık sınır).
+  assert.equal(eldeTutmaEgrisi([{ kova: 0, adet: 19 }]).egri, null);
+  assert.notEqual(eldeTutmaEgrisi([{ kova: 0, adet: 20 }]).egri, null);
+});
+
+test('EĞRİ: hiç veri yokken null döner, patlamaz', () => {
+  for (const bos of [[], null, undefined]) {
+    const c = eldeTutmaEgrisi(bos);
+    assert.equal(c.gorunum, 0);
+    assert.equal(c.egri, null);
+  }
+});
+
+test('EĞRİ: bozuk satır (sözlük dışı kova, negatif adet) SESSİZCE atılır', () => {
+  const c = eldeTutmaEgrisi([
+    { kova: 0, adet: 20 },
+    { kova: 20, adet: 999 },   // sözlük dışı
+    { kova: -1, adet: 999 },   // sözlük dışı
+    { kova: 5, adet: -5 },     // negatif
+    { kova: 'x', adet: 3 },    // tip dışı
+  ]);
+  assert.equal(c.gorunum, 20, 'bozuk satırlar paydayı şişirmemeli');
+  assert.deepEqual(c.egri.slice(1), new Array(VIDEO_KOVA_SAYISI - 1).fill(0));
+});
+
+test('ORTANCA: elde tutmanın hâlâ %50 olduğu EN BÜYÜK kova', () => {
+  // 20 izlemenin 10'u 5. kovada, 10'u 15. kovada bıraktı.
+  const c = eldeTutmaEgrisi([{ kova: 5, adet: 10 }, { kova: 15, adet: 10 }]);
+  // kova ≤ 5 için oran 1; 6..15 için 0.5; sonrası 0 ⇒ en büyük ≥0.5 kova 15.
+  assert.equal(c.egri[15], 0.5);
+  assert.equal(c.ortanca, 75, '15/20 = %75');
+  // Herkes hemen bıraktıysa ortanca %0'dır (TANIMSIZ KALAMAZ: egri[0]=1).
+  assert.equal(eldeTutmaEgrisi([{ kova: 0, adet: 20 }]).ortanca, 0);
+});
+
+test('uç: kova bildirimi girisZorunlu + hız limitli, BEYAZ LİSTEDEN geçiyor', () => {
+  assert.ok(SERVER.includes(
+    "app.post('/gonderi/:id/video-kova', girisZorunlu, videoKovaLimiti,"));
+  assert.match(SERVER, /if \(!gecerliKova\(kova\)\) \{/);
+  // Kova limiti gönderi olay limitiyle AYNI sayacı paylaşmamalı.
+  assert.match(SERVER, /hizLimiti\(600, \(req\) => `vk:\$\{req\.kullanici\.id\}`\)/);
+});
+
+test('kova YAZMA sorgusu: videosuz gönderiye satır AÇMAZ', () => {
+  // WHERE içinde hem varlık hem VİDEOLULUK kontrolü var; düz VALUES olsaydı
+  // elle atılan bir istek fotoğraflı gönderiye kova yazdırabilirdi.
+  assert.match(VIDEO_KOVA_YAZ_SQL, /FROM yorumlar y/);
+  assert.match(VIDEO_KOVA_YAZ_SQL, /m LIKE '%\.mp4' OR m LIKE '%\.webm'/);
+  assert.match(VIDEO_KOVA_YAZ_SQL,
+    /DO UPDATE SET adet = video_kova\.adet \+ 1/);
+  // "videolu" tanımı ekranın baktığı tanımla AYNI olmalı.
+  assert.match(TEKIL_TEMEL_SQL, /m LIKE '%\.mp4' OR m LIKE '%\.webm'/);
+});
+
+test('kova sorguları KİMLİK seçmiyor (agregat sözü)', () => {
+  for (const sql of [VIDEO_KOVA_YAZ_SQL, VIDEO_KOVA_OKU_SQL]) {
+    assert.ok(!/kullanici_id|izleyen|\bavatar\b|\bip\b|oturum/.test(sql),
+      `kova sorgusu kimlik taşıyor:\n${sql}`);
+  }
+});
+
+test('video_kova ŞEMASINDA kişisel sütun YOK (zaman damgası dahil)', () => {
+  const t = SEMA.slice(SEMA.indexOf('CREATE TABLE IF NOT EXISTS video_kova'));
+  const govde = t.slice(0, t.indexOf('\n);'));
+  const sutunlar = govde.split('\n').slice(1)
+    .map((s) => s.trim().split(/[\s(]/)[0])
+    .filter((s) => /^[a-z_]+$/.test(s) && !['primary', 'check'].includes(s));
+  assert.deepEqual(sutunlar, ['gonderi_id', 'kova', 'adet']);
+  for (const yasak of ['kullanici_id', 'izleyen', 'ip', 'oturum', 'cihaz',
+    'tarih']) {
+    assert.ok(!sutunlar.includes(yasak), `kova tablosunda kişisel sütun: ${yasak}`);
+  }
+});
+
+test('gizlilik politikasına eklenecek cümle migrasyonda YAZILI', () => {
+  // Çeviri turunda unutulmasın diye kaynakta duruyor (46 dil ayrı işlem).
+  // Satır sarması olabilir: yorum işaretleri ve boşluklar tek boşluğa indirgenir.
+  const duz = MIG_VIDEO.replace(/\n--\s*/g, ' ').replace(/\s+/g, ' ');
+  assert.ok(duz.includes(
+    'videonun hangi bölümüne kadar izlendiği kimliksiz ve toplu olarak sayılır'),
+  'gizlilik cümlesi migrasyonda yazılı değil');
 });
 
 // ---------------------------------------------------------------------------
@@ -351,6 +499,7 @@ async function kur() {
   // MİGRASYONLARIN KENDİSİ koşuyor: dosya geçerli SQL değilse test patlar.
   await db.query(MIG24);
   await db.query(MIG23);
+  await db.query(MIG_VIDEO);
   await db.query(`
     INSERT INTO yorumlar (id, kullanici_id, tur, tmdb_id, metin, goruntulenme,
                           spoiler, medya, tarih)
@@ -619,6 +768,115 @@ test('MİGRASYON: eski biçimli (ham kimlikli) satır varsa TEMİZLENİR',
       await db.query(MIG23);
       const r = await db.query('SELECT izleyen FROM yorum_goruntuleyen');
       assert.deepEqual(r.rows.map((x) => x.izleyen), ['h:eeeeeeeeeeeeeeeeeeeeee']);
+    } finally { await bitir(); }
+  });
+
+// ---------------------------------------------------------------------------
+// 3) VİDEO KOVA — GERÇEK POSTGRES
+// ---------------------------------------------------------------------------
+test('KOVA CHECK: 0..19 DIŞI reddedilir (istemci beyanının ikinci kalkanı)',
+  { skip: atla }, async () => {
+    await kur();
+    try {
+      for (const kotu of [-1, 20, 99]) {
+        await assert.rejects(
+          () => db.query(
+            'INSERT INTO video_kova (gonderi_id, kova, adet) VALUES (102,$1,1)',
+            [kotu]),
+          /check constraint|kısıt/i, `kova ${kotu} kabul edildi`);
+      }
+      // Sözlük içindeki her değer kabul edilmeli.
+      for (let k = 0; k < VIDEO_KOVA_SAYISI; k += 1) {
+        await db.query(VIDEO_KOVA_YAZ_SQL, [102, k]);
+      }
+      const n = await db.query(
+        'SELECT count(*)::int n FROM video_kova WHERE gonderi_id=102');
+      assert.equal(n.rows[0].n, VIDEO_KOVA_SAYISI,
+        'gönderi başına EN ÇOK 20 satır');
+    } finally { await bitir(); }
+  });
+
+test('KOVA YAZMA: aynı kova ÜSTÜNE EKLER; satır sayısı TRAFİKLE BÜYÜMEZ',
+  { skip: atla }, async () => {
+    await kur();
+    try {
+      for (let i = 0; i < 50; i += 1) await db.query(VIDEO_KOVA_YAZ_SQL, [102, 7]);
+      const r = await db.query(VIDEO_KOVA_OKU_SQL, [102]);
+      assert.equal(r.rows.length, 1, '50 izleme TEK satır olmalı');
+      assert.deepEqual(r.rows[0], { kova: 7, adet: 50 });
+    } finally { await bitir(); }
+  });
+
+test('KOVA YAZMA: VİDEOSUZ gönderiye ve OLMAYAN gönderiye satır AÇILMAZ',
+  { skip: atla }, async () => {
+    await kur();
+    try {
+      // 101 fotoğrafsız/videosuz, 9999 hiç yok. İkisi de sessizce 0 satır.
+      for (const id of [101, 103, 9999]) {
+        const r = await db.query(VIDEO_KOVA_YAZ_SQL, [id, 5]);
+        assert.equal(r.rowCount, 0, `videosuz/olmayan gönderiye yazıldı: ${id}`);
+      }
+      assert.equal((await db.query('SELECT count(*)::int n FROM video_kova'))
+        .rows[0].n, 0);
+      // 102 videolu (medya '{/medya/a.mp4}') → yazılır.
+      assert.equal((await db.query(VIDEO_KOVA_YAZ_SQL, [102, 5])).rowCount, 1);
+    } finally { await bitir(); }
+  });
+
+test('AGREGASYON: DB\'den okunan satırlar eğriye çevrilince MONOTON AZALIR',
+  { skip: atla }, async () => {
+    await kur();
+    try {
+      // 12 izleme 0. kovada, 8 izleme 19. kovada bıraktı (toplam 20 = eşik).
+      for (let i = 0; i < 12; i += 1) await db.query(VIDEO_KOVA_YAZ_SQL, [102, 0]);
+      for (let i = 0; i < 8; i += 1) await db.query(VIDEO_KOVA_YAZ_SQL, [102, 19]);
+      const c = eldeTutmaEgrisi((await db.query(VIDEO_KOVA_OKU_SQL, [102])).rows);
+      assert.equal(c.gorunum, 20);
+      assert.equal(c.egri[0], 1);
+      for (let k = 1; k < c.egri.length; k += 1) {
+        assert.ok(c.egri[k] <= c.egri[k - 1], `eğri ${k}. kovada arttı`);
+      }
+      assert.equal(c.egri[1], 0.4, '8/20');
+      assert.equal(c.tamamlama, 0.4);
+    } finally { await bitir(); }
+  });
+
+test('KOVA: başka gönderinin izlemeleri KARIŞMAZ', { skip: atla }, async () => {
+  await kur();
+  try {
+    await db.query(`UPDATE yorumlar SET medya='{"/medya/b.mp4"}' WHERE id=201`);
+    for (let i = 0; i < 5; i += 1) await db.query(VIDEO_KOVA_YAZ_SQL, [102, 3]);
+    for (let i = 0; i < 9; i += 1) await db.query(VIDEO_KOVA_YAZ_SQL, [201, 9]);
+    assert.equal(eldeTutmaEgrisi(
+      (await db.query(VIDEO_KOVA_OKU_SQL, [102])).rows).gorunum, 5);
+    assert.equal(eldeTutmaEgrisi(
+      (await db.query(VIDEO_KOVA_OKU_SQL, [201])).rows).gorunum, 9);
+  } finally { await bitir(); }
+});
+
+test('KOVA: gönderi silinince kovalar da gider (CASCADE)', { skip: atla },
+  async () => {
+    await kur();
+    try {
+      await db.query(VIDEO_KOVA_YAZ_SQL, [102, 4]);
+      await db.query('DELETE FROM yorumlar WHERE id=102');
+      assert.equal((await db.query(
+        'SELECT 1 FROM video_kova WHERE gonderi_id=102')).rows.length, 0);
+    } finally { await bitir(); }
+  });
+
+test('KOVA MİGRASYONU İDEMPOTENT: iki kez koşmak sayacı bozmuyor',
+  { skip: atla }, async () => {
+    await kur();
+    try {
+      await db.query(VIDEO_KOVA_YAZ_SQL, [102, 11]);
+      await db.query(MIG_VIDEO);
+      const r = await db.query(VIDEO_KOVA_OKU_SQL, [102]);
+      assert.deepEqual(r.rows, [{ kova: 11, adet: 1 }]);
+      // Ölçüm başlangıcı İLK yazandan kalmalı (ON CONFLICT DO NOTHING).
+      const a = await db.query(
+        `SELECT deger FROM ayarlar WHERE anahtar='video_kova_baslangic'`);
+      assert.match(a.rows[0].deger, /^\d{4}-\d{2}-\d{2}$/);
     } finally { await bitir(); }
   });
 

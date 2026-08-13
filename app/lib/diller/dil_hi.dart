@@ -976,4 +976,24 @@ const Map<String, String> cevirilerHi = {
       'ईमेल तक पहुँच न रहने पर अकाउंट में लॉग इन नहीं हो पाएगा।',
   'İki adımlı doğrulama açıldı': '2-स्टेप वेरिफ़िकेशन चालू हुआ',
   'İki adımlı doğrulama kapatıldı': '2-स्टेप वेरिफ़िकेशन बंद हुआ',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'वीडियो कितना देखा गया',
+  'Videoyu başlatanlar': 'वीडियो शुरू करने वाले',
+  'videonun %{} noktasına ulaştı': 'वीडियो के {}% तक पहुँचे',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'देखने वालों में से आधों ने वीडियो का कम से कम {}% हिस्सा देखा।',
+  'Sonuna kadar izleyen: %{}': 'आखिर तक देखने वाले: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'कर्व के लिए कम से कम {} व्यू चाहिए; अभी {} व्यू हैं।',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'कर्व {} व्यू पर बना है और चुनी गई समय अवधि से नहीं बदलता।',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'वॉच टाइम {} से मापा जा रहा है; उससे पुराने व्यू इस गिनती में नहीं हैं।',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} व्यू। वीडियो के आधे तक {}% और आखिर तक {}% पहुँचे।',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

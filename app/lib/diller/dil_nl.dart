@@ -984,4 +984,24 @@ const Map<String, String> cevirilerNl = {
       'Zonder toegang tot je e-mail kun je niet meer inloggen.',
   'İki adımlı doğrulama açıldı': 'Tweestapsverificatie staat aan',
   'İki adımlı doğrulama kapatıldı': 'Tweestapsverificatie staat uit',
+
+  // --- md.24 video elde tutma eğrisi ---
+  'Videonun ne kadarı izlendi': 'Hoeveel van de video is gezien',
+  'Videoyu başlatanlar': 'Startte de video',
+  'videonun %{} noktasına ulaştı': 'kwam tot {}% van de video',
+  'İzleyenlerin yarısı videonun en az %{} kadarını gördü.':
+      'De helft van de kijkers zag minstens {}% van de video.',
+  'Sonuna kadar izleyen: %{}': 'Tot het einde bekeken: {}%',
+  'Eğri için en az {} izlenme gerekiyor; şu an {} izlenme var.':
+      'De curve heeft minstens {} weergaven nodig; er zijn er nu {}.',
+  'Eğri {} izlenmeden çıkarıldı ve seçili zaman aralığından etkilenmez.':
+      'De curve is gebaseerd op {} weergaven en verandert niet met het gekozen tijdvak.',
+  'İzlenme süresi {} tarihinden beri ölçülüyor; daha eski görüntülenmeler bu sayıya girmez.':
+      'Kijktijd wordt gemeten sinds {}; oudere weergaven tellen niet mee in dit getal.',
+  '{} izlenme. Videonun yarısına ulaşan %{}, sonuna ulaşan %{}.':
+      '{} weergaven. {}% kwam tot halverwege de video, {}% tot het einde.',
+  // Yüzde işaretinin YERİ dile göre değişir; sayı tek başına
+  // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
+  // kendi mevcut yüzde çevirilerinden çıkarıldı.
+  '%{}': '{}%',
 };

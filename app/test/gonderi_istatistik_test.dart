@@ -41,11 +41,32 @@ List<Map<String, dynamic>> _seri(int n, {int gunluk = 10}) {
   return liste;
 }
 
+/// Elde tutma eğrisi üretir: [n] izleme, tam yarısı videonun ortasında bıraktı.
+/// Sunucunun `eldeTutmaEgrisi` çıktısıyla aynı şekil (monoton azalan, 1'den
+/// başlar).
+Map<String, dynamic> _video({
+  int gorunum = 40,
+  bool egriVar = true,
+  String? baslangic = '2026-08-14',
+}) => {
+  'gorunum': gorunum,
+  'en_az': 20,
+  'kova_sayisi': 20,
+  'egri': egriVar
+      ? [for (var k = 0; k < 20; k++) k == 0 ? 1.0 : (k <= 10 ? 0.75 : 0.25)]
+      : null,
+  'tamamlama': egriVar ? 0.25 : null,
+  'ortanca': egriVar ? 50 : null,
+  'baslangic': baslangic,
+};
+
 Map<String, dynamic> _yanit({
   int gun = 30,
   int goruntulenme = 1234,
   int goruntuleyen = 812,
   bool spoiler = false,
+  bool videolu = false,
+  Map<String, dynamic>? video,
   List<Map<String, dynamic>>? seri,
   Map<String, dynamic>? etkilesim = const {
     'oran': 0.034,
@@ -70,9 +91,11 @@ Map<String, dynamic> _yanit({
     'gun': '2026-08-01',
     'tarih': '2026-08-01T09:00:00Z',
     'spoiler': spoiler,
-    'videolu': false,
+    'videolu': videolu,
     'medya_sayi': 1,
   },
+  // VİDEOSUZ GÖNDERİDE SUNUCU null DÖNER — ekran bölümü hiç çizmemeli.
+  'video': video,
   'olcu': {
     'begeni': 40,
     'yanit': 2,
@@ -375,6 +398,115 @@ void main() {
     ekran(tester);
     await _kur(tester);
     expect(find.textContaining('14.08.2026'), findsWidgets);
+  });
+
+  // -------------------------------------------------------------------------
+  // VİDEO ELDE TUTMA EĞRİSİ (md. 23'ün ertelenen parçası)
+  // -------------------------------------------------------------------------
+  testWidgets('*** VİDEOSUZ gönderide eğri bölümü HİÇ ÇİZİLMEZ ***', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(tester); // varsayılan yanıt: videolu=false, video=null
+    expect(find.text('Videonun ne kadarı izlendi'), findsNothing);
+    expect(find.textContaining('Sonuna kadar izleyen'), findsNothing);
+    expect(find.textContaining('izlenme gerekiyor'), findsNothing);
+  });
+
+  testWidgets('videolu gönderide eğri ÇİZİLİR ve %100\'den başlar', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(tester, sabit: _yanit(videolu: true, video: _video()));
+    expect(tester.takeException(), isNull);
+    expect(find.text('Videonun ne kadarı izlendi'), findsOneWidget);
+    // İmleç kapalıyken BAŞLANGIÇ değeri okunur: tanım gereği %100.
+    expect(find.text('%100'), findsOneWidget);
+    expect(find.text('Videoyu başlatanlar'), findsOneWidget);
+    expect(find.byType(CustomPaint), findsWidgets);
+  });
+
+  testWidgets(
+    'eğrinin iki okuması yazıyla da veriliyor (renk tek başına yetmez)',
+    (tester) async {
+      ekran(tester);
+      await _kur(tester, sabit: _yanit(videolu: true, video: _video()));
+      expect(find.textContaining('en az %50'), findsOneWidget);
+      expect(find.textContaining('Sonuna kadar izleyen: %25'), findsOneWidget);
+    },
+  );
+
+  testWidgets('ALT EŞİĞİN ALTINDA eğri çizilmez, sebebi AÇIKÇA yazılır', (
+    tester,
+  ) async {
+    ekran(tester);
+    // Kullanıcının örneği: 3 izlemede "%67 elde tutma" anlamsızdır.
+    await _kur(
+      tester,
+      sabit: _yanit(videolu: true, video: _video(gorunum: 3, egriVar: false)),
+    );
+    expect(tester.takeException(), isNull);
+    expect(find.text('Videonun ne kadarı izlendi'), findsOneWidget);
+    // Eğri yok: ne yüzde okuması ne cümleler.
+    expect(find.text('Videoyu başlatanlar'), findsNothing);
+    expect(find.textContaining('Sonuna kadar izleyen'), findsNothing);
+    // Ama NEDEN olmadığı ve kaç izlemenin biriktiği YAZIYOR.
+    expect(find.textContaining('en az 20 izlenme gerekiyor'), findsOneWidget);
+    expect(find.textContaining('şu an 3 izlenme'), findsOneWidget);
+  });
+
+  testWidgets('GERİYE DÖNÜK VERİ YOK: ölçümün başladığı tarih yazılı', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(tester, sabit: _yanit(videolu: true, video: _video()));
+    expect(
+      find.textContaining('İzlenme süresi 14.08.2026 tarihinden beri'),
+      findsOneWidget,
+    );
+    // Eğri zaman aralığı seçicisinden ETKİLENMEZ; ekran bunu söylemeli.
+    expect(
+      find.textContaining('seçili zaman aralığından etkilenmez'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('eğriye dokununca o noktanın yüzdesi okunur', (tester) async {
+    ekran(tester);
+    await _kur(tester, sabit: _yanit(videolu: true, video: _video()));
+    // Yatay sürükleme imleci açar (basit `press` tap arenasını kazanmıyor).
+    final tuval = find.byKey(const Key('elde-tutma-tuval'));
+    final hareket = await tester.startGesture(tester.getCenter(tuval));
+    await tester.pump(const Duration(milliseconds: 100));
+    await hareket.moveBy(const Offset(-40, 0));
+    await tester.pump();
+    // İkinci hareket: ilk hareket dokunma arenasını çözerken `onTapCancel`
+    // imleci kapatabilir; sürükleme kazandıktan SONRAKİ güncelleme ölçülür.
+    await hareket.moveBy(const Offset(-20, 0));
+    await tester.pump();
+    expect(find.textContaining('noktasına ulaştı'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    // Parmak kalkınca imleç kapanır, başlangıç değeri geri gelir.
+    await hareket.up();
+    await tester.pump();
+    expect(find.text('Videoyu başlatanlar'), findsOneWidget);
+  });
+
+  testWidgets('eğri BOZUK gelirse (tek nokta / boş) ekran çökmez', (
+    tester,
+  ) async {
+    ekran(tester);
+    for (final bozuk in [
+      <double>[],
+      <double>[1.0],
+    ]) {
+      final v = _video();
+      v['egri'] = bozuk;
+      await _kur(tester, sabit: _yanit(videolu: true, video: v));
+      expect(tester.takeException(), isNull);
+      // İki noktadan azı çizgi değildir → eşik mesajına düşer.
+      expect(find.textContaining('izlenme gerekiyor'), findsOneWidget);
+    }
   });
 
   // -------------------------------------------------------------------------

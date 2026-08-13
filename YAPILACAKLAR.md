@@ -1,6 +1,86 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — 🚀 VİDEO ELDE TUTMA EĞRİSİ + İSTATİSTİK SEÇİCİ (1.45.0+92)
+
+### Md. 23'ün ertelenen parçası: VİDEO ELDE TUTMA EĞRİSİ
+İstek: "%100'den başlayıp saniye ilerledikçe azalan izlenme süresi eğrisi."
+Planı Ağustos'ta `server.js`'e yazıp ertelemiştik; bu tur uygulandı.
+* **Saniyede olay YOK**: video 20 eşit kovaya bölünüyor, kullanıcı karttan
+  çıkarken YALNIZ ULAŞTIĞI EN YÜKSEK KOVA tek istekte gidiyor
+  (`{kova: 13}`). Görüntülenme başına EN FAZLA 1 istek.
+* `video_kova(gonderi_id, kova, adet)` — gönderi başına EN ÇOK 20 satır,
+  **kişisel sütun YOK (kullanıcı/IP/oturum/TARİH hiçbiri)**. Satır sayısı
+  trafikle BÜYÜMEZ. `CHECK (kova BETWEEN 0 AND 19)`.
+* Eğri = sonek toplamı ÷ toplam → `egri[0]` tam 1, monoton azalır,
+  **yumuşatma gerekmiyor** (kullanıcının tarif ettiği şeklin tanımı bu).
+* **ALT EŞİK 20 İZLENME, gerekçesi ölçülü**: eğrinin çözünürlüğü %5 (20 kova),
+  tek izleyici bir noktayı 1/n oynatır; tek kişinin eğriyi bir kovadan fazla
+  oynatamaması için n ≥ 20. Altındayken eğri HİÇ dönmüyor, ekran
+  "en az 20 izlenme gerekiyor; şu an 3 izlenme var" diyor.
+* **Eğri zaman aralığı seçicisinden ETKİLENMİYOR** — tabloda tarih yok, çünkü
+  tarih tutmak tek izleyicili gönderide kişiyi işaret ederdi. Ekran bunu yazıyor.
+* Yazma sorgusu gönderinin GERÇEKTEN videolu olduğunu doğruluyor
+  (`unnest(medya)` LIKE mp4/webm) → videosuz gönderiye elle satır yazdırılamaz.
+* Çoklu videolu gönderide YALNIZ ilk oynayan ölçülüyor ("1 istek" sözü için);
+  Keşfet ızgarasındaki sessiz önizleme sayılmıyor (bilinçli izleme değil).
+* Migrasyon `migrasyon-2026-08-14g.sql` — **CANLIYA UYGULANDI**, doğrulama
+  bloğunu geçti; `ayarlar.video_kova_baslangic = 2026-08-13`.
+* Gizlilik politikasına madde eklendi (46 dil, indeks 13).
+
+### YÜZDE İŞARETİ HATASI (çeviri turunda yakalandı)
+Eğrinin okunan değeri `'%$deger'` diye SABİT yazılmıştı. Türkçede doğru
+("%45") ama İngilizcede `45%`, Almanca/Fransızca/İsveççede `45 %`, Farsçada
+`45٪` olmalı — üstelik bu sayı hemen sağındaki çeviriyle TEK CÜMLE okunuyor,
+yani yanlış taraftaki işaret cümlenin tamamını bozuyordu.
+* Yeni `'%{}'` anahtarı. Kalıp **CLDR'den DEĞİL, her dilin KENDİ mevcut yüzde
+  çevirilerinden** çıkarıldı (`%{}` içeren 6 anahtarın 5'i her dilde aynı
+  sonucu verdi) — asıl gereklilik uygulamanın kendi içinde TUTARLI olması.
+  CLDR ile karşılaştırma için `app/tool/yuzde_kalibi.dart` duruyor.
+* Kanıt: `app/test/yuzde_kalibi_test.dart` (6 test).
+
+### İSTATİSTİKLERİM ZAMAN SEÇİCİSİ (kullanıcı şikâyeti)
+"Zaman kırılımı butonları saçma yer kaplıyor."
+* **ÖLÇÜM ŞİKÂYETTEN KÖTÜ ÇIKTI**: çipler 2-3 satıra sarmıyordu, **BEŞ AYRI
+  TAM GENİŞLİK SATIR** oluyordu — blok 360 dp'de **281 dp**, yani görünür
+  alanın ~%39'u. Sebep `_PencereCipi`deki `Container(alignment:)`: `alignment`
+  çocuğu `Align`a sarar, `Align` de gevşek kısıtta TÜM genişliği kaplar,
+  `Wrap` da her çipe satırın tamamını verir.
+* Bunun KAZA olduğunun kanıtı dosyanın kendi içindeydi: `_Iskelet` bu bloğa
+  `IskeletKutu(yukseklik: 44)` — yani **tek satır** en baştaki niyetti.
+* **281 → 73 dp** (blokta %74, seçicide %83 kazanç). 45 dilin hepsinde aynı.
+* Dokunma hedefi **44 dp KALDI**: dış kabuk 44, görünen hap 34, arası saydam
+  dolgu. Test hem hedefin ≥44 hem görselin hedeften KISA olduğunu doğruluyor.
+* **`30g` kısaltması REDDEDİLDİ**: gün birimi tr'de "g", en'de "d", fi'de "pv",
+  ja'da "日" — tek harfe indirmek çoğu dilde çevrilemez olurdu. Zaten 45 dilde
+  var olan `'{} gün'` anahtarı kullanıldı → **çeviri borcu SIFIR**.
+  Ekran okuyucu kısaltmayı değil TAM cümleyi duyuyor.
+* Ölçüm için teste uygulamanın **gerçek fontu** yüklendi — Flutter'ın test
+  fontu her karakteri kare çizip gerçeğin ~2 katını ölçüyor, ilk ölçümler
+  anlamsızdı.
+* Test anahtarları çeviriye bağlıydı (`Key('pencere-Son 30 gün')`), dil
+  değişince kayıyordu → sayıya bağlandı (`pencere-30`).
+
+### GİZLİLİK POLİTİKASI TUZAĞI (yakalandı)
+`gizlilik.html`de sayfayı çizen `var YAPI=[["li",12],...]` **sabit indeks
+haritası** var. Yalnız VERI'ye eklenseydi 13'ten sonraki her madde kayacak,
+"Bildirimler" maddesi kaybolacaktı. YAPI da kaydırıldı.
+* `arama_ceviri_gizlilik_test.dart` bu yüzden her eklemede ANLAMSIZ YERE
+  kırılıyordu (34→35→37→38). **İndeksler artık BAŞLIK METNİNDEN bulunuyor**;
+  test yalnız gerçek bir gerilemede kırılır. Yeni madde için ayrı test eklendi
+  (46 dilde var mı, çiziliyor mu, Türkçe sızıntısı var mı).
+
+### Kanıt ve dağıtım
+* `flutter test` **1505** · `npm test` **1073** · analyze 0 error / 0 warning.
+* Çeviri: 9 + 1 anahtar × 45 dil, **831 → 841**.
+* **CANLI UÇTAN UCA CURL**: kova 20 → `Geçersiz kova` · kova -1 → `Geçersiz
+  kova` · videosuz gönderiye geçerli kova → `{tamam:true}` ama **DB'de satır
+  AÇILMADI (count 0)** · canlı gizlilik sayfası 46 dil × 38 madde, hiçbirinde
+  Türkçe kalmamış.
+* Web `main.d2d5ce41ce8e.dart.js` (eski hash silindi), SW sökücü yerinde.
+  `server.js` yedeği: `server.js.yedek-videoegri-20260813`.
+* APK: `~/Desktop/dizijpg-1.45.0+92.apk`. **AAB kullanıcı kararıyla beklemede.**
+
 ## 2026-08-13 — 🚀 MD. 52 İKİ ADIMLI DOĞRULAMA (2FA) + DAĞITIM 1.44.0+91
 İstek: "Çift doğrulama yöntemi açılabilsin (sadece mail ile)." TOTP/SMS YOK.
 

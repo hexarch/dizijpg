@@ -108,6 +108,7 @@ import {
   kaynakOlcu, GORUNUM_SAYAC_SQL, GORUNTULEYEN_SQL, SAYAC_ARTIR_SQL,
   TEKIL_TEMEL_SQL, TEKIL_SAYAC_SQL, ETKILESIM_ORTALAMA_SQL,
   ETKILESIM_EN_AZ_GONDERI, seriSql, seriDoldur, zirveBul,
+  gecerliKova, VIDEO_KOVA_YAZ_SQL, VIDEO_KOVA_OKU_SQL, eldeTutmaEgrisi,
 } from './gonderi_istatistik.js';
 
 // ---------- FCM push (servis hesabı varsa etkin) ----------
@@ -11344,21 +11345,18 @@ app.get('/istatistiklerim/gonderiler', girisZorunlu, sarici(async (req, res) => 
 //     (md. 19'da alınan karar).
 //
 // ---------------------------------------------------------------------------
-// md. 23 · VİDEO İZLENME SÜRESİ EĞRİSİ — BU TURDA YAPILMADI, PLAN BURADA
+// md. 23 · VİDEO İZLENME SÜRESİ EĞRİSİ (ELDE TUTMA) — UYGULANDI
 // ---------------------------------------------------------------------------
 // İSTEK: "Videolarda ekstra: %100'den başlayıp saniye ilerledikçe azalan
 // izlenme süresi eğrisi (elde tutma eğrisi)."
 //
-// NEDEN ŞİMDİ DEĞİL: elimizdeki HİÇBİR veri oynatma ilerlemesini bilmiyor;
-// bu, ekranın geri kalanından bağımsız ve en ağır parça. Yarım çalışan bir
-// eğri, hiç olmayan eğriden kötüdür (kullanıcı sayıya güvenir).
-//
-// YAPILDIĞINDA ŞÖYLE YAPILACAK:
+// Planlandığı gibi yapıldı (veri katmanı: migrasyon-2026-08-14g.sql, sorgu ve
+// eğri matematiği: gonderi_istatistik.js, istemci: app/lib/video_kova.dart):
 //  · OLAY: istemci `VideoPlayerController` konumunu dinler ve videonun
 //    süresini 20 EŞİT KOVAYA böler (%0,%5,…,%95). Bir kova ilk kez geçildiğinde
 //    işaretlenir; oynatma bitince/karttan çıkılınca ULAŞILAN EN YÜKSEK KOVA
 //    tek istekte gönderilir. Saniyede olay YOK — 30 sn'lik bir videoda en
-//    fazla 1 istek, gövdesi `{kova: 13}`.
+//    fazla 1 istek, gövdesi `{kova: 13}` (POST /gonderi/:id/video-kova).
 //  · SIKLIK/HACİM: görüntülenme başına EN FAZLA 1 istek (bugünkü
 //    `/akis/goruldu` ile aynı mertebe). Yazma: `video_kova(gonderi_id, kova,
 //    adet)` — gönderi başına EN ÇOK 20 satır, AGREGAT, kişi YOK. 100.000
@@ -11371,6 +11369,16 @@ app.get('/istatistiklerim/gonderiler', girisZorunlu, sarici(async (req, res) => 
 //  · GİZLİLİK: kişi bazlı satır YOK; "kim nereye kadar izledi" hiçbir yerde
 //    durmaz. Gizlilik politikasına eklenecek cümle: "Videolu gönderilerde,
 //    videonun hangi bölümüne kadar izlendiği kimliksiz ve toplu olarak sayılır."
+//
+// PLANA SONRADAN EKLENEN İKİ DÜRÜSTLÜK KARARI:
+//  · ALT EŞİK (`VIDEO_KOVA_EN_AZ` = 20): az izlenen videoda eğri YANILTIR —
+//    3 izlemede "%67 elde tutma" bir ölçü değil, bir tesadüftür. 20'nin altında
+//    eğri HİÇ dönmez; ekran kaç izleme biriktiğini yazar. Gerekçenin tamamı
+//    `gonderi_istatistik.js` içinde (tek izleyici eğriyi bir kova genişliğinden
+//    fazla oynatamamalı ⇒ n ≥ 20).
+//  · GERİYE DÖNÜK VERİ YOK: eğri yalnız `video_kova_baslangic` gününden
+//    sonraki izlemeleri kapsar ve ESKİ görüntülenme sayısıyla ORANLANMAZ
+//    (o sayı izleme süresini hiç bilmiyordu). Ekran tarihi yazar.
 // ---------------------------------------------------------------------------
 
 // İstemci bildirimli sayaçlar için hız limiti. Bunlar VANITY ölçülerdir ve
@@ -11406,6 +11414,44 @@ app.post('/gonderi/:id/olay', girisZorunlu, gonderiOlayLimiti, sarici(async (req
   res.json({ tamam: true });
 }));
 
+// Video kova bildirimi için AYRI limit: bu uç izleme başına bir kez çağrılır,
+// yani Reels'te hızlı kaydıran biri saatte yüzlerce meşru istek üretir.
+// 600/sa = dakikada 10 video — insan hızının üstünde ama şişirmeyi "elle 600
+// video izleyecek kadar sıkılan biri" seviyesine indiriyor. Sayacı `gonderiOlay
+// Limiti` ile PAYLAŞMIYOR: paylaşsalardı normal Reels kullanımı paylaşım/profil
+// ziyareti gibi bambaşka ölçüleri de 429'a düşürürdü.
+const videoKovaLimiti = hizLimiti(600, (req) => `vk:${req.kullanici.id}`);
+
+/**
+ * POST /gonderi/:id/video-kova  { kova: 0..19 }
+ *
+ * "Bu izlemede videonun ULAŞILAN EN YÜKSEK yirmide bir dilimi şuydu."
+ * İzleme başına EN FAZLA BİR istek (tek gönderim güvencesi İSTEMCİDE:
+ * `VideoKovaIzleyici` bir kez gönderir); sunucu tarafında hız limiti ikinci
+ * kalkandır.
+ *
+ * KİMİN bildirdiği YAZILMAZ — tabloya yalnız (gönderi, kova) → adet gider.
+ * `girisZorunlu`: anonim trafiğe açık bir sayaç tek satır curl ile doldurulur
+ * (POST /gonderi/:id/olay ile aynı gerekçe). Bunun bedeli, eğrinin YALNIZ
+ * girişli izleyicileri kapsaması; eğri kendi içinde oranlandığı için (payda da
+ * aynı küme) bu şeklini bozmaz, yalnız örneklemi küçültür.
+ */
+app.post('/gonderi/:id/video-kova', girisZorunlu, videoKovaLimiti,
+  sarici(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (!gecerliTmdb(id)) return res.status(400).json({ hata: 'Geçersiz id' });
+    const kova = req.body?.kova;
+    // KAPALI SÖZLÜK: 0..19 tamsayı. DB'deki CHECK ikinci kalkan ama sözlük
+    // dışı bir değerin oraya kadar gitmesine gerek yok.
+    if (!gecerliKova(kova)) {
+      return res.status(400).json({ hata: 'Geçersiz kova' });
+    }
+    // Gönderi yoksa ya da VİDEOSUZSA sorgu sıfır satır yazar (WHERE içinde);
+    // sessizce yutulur — sayaç isteği gönderinin silinmesiyle yarışabilir.
+    await havuz.query(VIDEO_KOVA_YAZ_SQL, [id, kova]).catch(() => {});
+    res.json({ tamam: true });
+  }));
+
 const gonderiIstatistikLimiti = hizLimiti(300, (req) => `gi:${req.kullanici.id}`);
 
 /**
@@ -11433,13 +11479,17 @@ app.get('/gonderi/:id/istatistik', girisZorunlu, gonderiIstatistikLimiti,
     const y = temel.rows[0];
 
     const seriSorgu = seriSql(gun);
-    const [sayaclar, seriSatir, ortalama, kapsam] = await Promise.all([
+    const [sayaclar, seriSatir, ortalama, kapsam, kovalar] = await Promise.all([
       havuz.query(TEKIL_SAYAC_SQL, [id]),
       havuz.query(seriSorgu.sql, seriSorgu.parametreliMi ? [id, bugun] : [id]),
       havuz.query(ETKILESIM_ORTALAMA_SQL, [kid]),
       havuz.query(
         `SELECT anahtar, deger FROM ayarlar
-          WHERE anahtar IN ('gonderi_gunluk_baslangic','gonderi_olcu_baslangic')`),
+          WHERE anahtar IN ('gonderi_gunluk_baslangic','gonderi_olcu_baslangic',
+                            'video_kova_baslangic')`),
+      // VİDEOSUZ GÖNDERİDE SORGU HİÇ AÇILMAZ: gönderilerin çoğu videosuz ve
+      // orada bu tablo her zaman boş döner — ekran da bölümü çizmeyecek.
+      y.videolu ? havuz.query(VIDEO_KOVA_OKU_SQL, [id]) : null,
     ]);
 
     const s = Object.fromEntries(sayaclar.rows.map((r) => [r.olcu, r.adet]));
@@ -11476,6 +11526,15 @@ app.get('/gonderi/:id/istatistik', girisZorunlu, gonderiIstatistikLimiti,
     const seri = seriDoldur(seriSatir.rows, bugun);
     const ayar = Object.fromEntries(kapsam.rows.map((r) => [r.anahtar, r.deger]));
 
+    // VİDEO ELDE TUTMA. Videosuz gönderide alan NULL'dur ve ekran bölümü HİÇ
+    // çizmez — "izlenme süresi: veri yok" yazmak videosuz bir gönderide
+    // anlamsız bir boşluk olurdu. Eğri ZAMAN PENCERESİNDEN ETKİLENMEZ
+    // (`?gun=`): tabloda tarih yok, ölçü ömür boyudur; ekran bunu yazar.
+    const video = y.videolu ? {
+      ...eldeTutmaEgrisi(kovalar?.rows || []),
+      baslangic: ayar.video_kova_baslangic || null,
+    } : null;
+
     res.set('Cache-Control', 'private, no-store');
     // *** BU NESNEDE KİMLİK YOKTUR *** — kullanici_id / kullanici_adi / avatar
     // / izleyen alanı bilerek DIŞARIDA. Ekleyen olursa test kırılır.
@@ -11510,6 +11569,8 @@ app.get('/gonderi/:id/istatistik', girisZorunlu, gonderiIstatistikLimiti,
       },
       etkilesim,
       seri,
+      // Videosuz gönderide null (ekran bölümü çizmez); videoda eğri + örneklem.
+      video,
       zirve: zirveBul(seri, y.gun),
       // DÜRÜSTLÜK (md. 24 kalıbı): hangi ölçü ne zamandan beri birikiyor.
       // Ekran bunu sayının yanına yazar; eksik geçmiş TAHMİN EDİLMEZ.
