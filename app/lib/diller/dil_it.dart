@@ -884,4 +884,57 @@ const Map<String, String> cevirilerIt = {
       'Questo utente preferisce tenere privati i propri follower.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Questo utente preferisce tenere privati i profili che segue.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statistiche del post',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Puoi vedere le statistiche solo dei tuoi post.',
+  'Erişim': 'Copertura',
+  'Görüntüleyen': 'Visualizzatori',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Quante persone diverse l’hanno visto (ultimi {} giorni)',
+  'Paylaşım': 'Condivisioni',
+  'Bu gönderiden sonra': 'Dopo questo post',
+  'Profil ziyareti': 'Visite al profilo',
+  'Yeni takip': 'Nuovi follower',
+  'İçeriğe tıklama': 'Tocchi sul contenuto',
+  'Spoiler perdesini açan': 'Hanno rivelato lo spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Condivisioni, visite al profilo, follower, tocchi sul contenuto, ripartizione per origine e misure sullo spoiler si accumulano dal {}; quanto precede non è stato misurato.',
+  'Zamana yayılmış görüntülenme': 'Visualizzazioni nel tempo',
+  'Görüntülenme nereden geldi': 'Da dove arrivano le visualizzazioni',
+  'Kimler gördü': 'Chi l’ha visto',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'I dati giornalieri non hanno ancora iniziato ad accumularsi.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Il grafico richiede almeno due giorni di dati. I dati si accumulano dal {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'La maggior parte delle visualizzazioni è arrivata il {}° giorno dopo la pubblicazione: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Le visualizzazioni giornaliere si accumulano dal {}; quanto precede non è stato misurato.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'La ripartizione per origine ha appena iniziato a essere misurata; questo post non ha ancora ricevuto una visualizzazione etichettata.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'La ripartizione tra follower e scoperta ha appena iniziato a essere misurata; non ci sono ancora dati.',
+  'Takip edenler': 'Follower',
+  'Keşiften gelenler': 'Da Scopri',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Pagina serie/film',
+  'Paylaşılan bağlantı': 'Link condiviso',
+  'yeni ölçülüyor': 'misura recente',
+  'Kendi ortalamanla aynı düzeyde': 'In linea con la tua media',
+  'Kendi ortalamanın %{} üstünde': '{}% sopra la tua media',
+  'Kendi ortalamanın %{} altında': '{}% sotto la tua media',
+  'Etkileşim oranı': 'Tasso di interazione',
+  '(beğeni + yorum) ÷ görüntülenme': '(mi piace + commenti) ÷ visualizzazioni',
+  'Toplam görüntülenme': 'Visualizzazioni totali',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Tra il {} e il {}: {} visualizzazioni in totale',
+  'İstatistikleri gör': 'Vedi statistiche',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Per le statistiche mostrate a chi ha pubblicato, vengono conservati come contatori aggregati: quante volte e da quale superficie (feed, profilo, feed a schermo intero, pagina serie/film, link condiviso) il post è stato visualizzato, se chi lo ha visto seguiva in quel momento chi ha pubblicato, il passaggio dal post al profilo o al contenuto, i follow nati dal post, le condivisioni e l’apertura del velo dello spoiler. Questi contatori non contengono identità utente, indirizzo IP né marca temporale; non è possibile sapere chi ha fatto cosa.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Per poter contare quante persone diverse hanno visto un post, per ogni persona che lo ha visto viene conservata per 90 giorni una sintesi con chiave non reversibile (una riduzione crittografica derivata dall’identità utente o dall’indirizzo IP). A chi ha pubblicato viene mostrato solo il numero; l’identità di chi ha visto il post non viene condivisa in nessun caso.',
 };

@@ -878,4 +878,58 @@ const Map<String, String> cevirilerSv = {
       'Den här användaren föredrar att hålla sina följare privata.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Den här användaren föredrar att hålla privat vilka hen följer.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Inläggsstatistik',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Du kan bara se statistik för dina egna inlägg.',
+  'Erişim': 'Räckvidd',
+  'Görüntüleyen': 'Visare',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Hur många olika personer som såg det (senaste {} dagarna)',
+  'Paylaşım': 'Delningar',
+  'Bu gönderiden sonra': 'Efter det här inlägget',
+  'Profil ziyareti': 'Profilbesök',
+  'Yeni takip': 'Nya följare',
+  'İçeriğe tıklama': 'Tryck på innehåll',
+  'Spoiler perdesini açan': 'Avslöjade spoilern',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Delningar, profilbesök, följare, tryck på innehåll, källfördelning och spoilermätningar samlas sedan {}; allt dessförinnan mättes inte.',
+  'Zamana yayılmış görüntülenme': 'Visningar över tid',
+  'Görüntülenme nereden geldi': 'Var visningarna kom ifrån',
+  'Kimler gördü': 'Vilka som såg det',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Dagliga data har inte börjat samlas in ännu.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Diagrammet behöver minst två dagars data. Data samlas sedan {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Flest visningar kom dag {} efter publiceringen: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Dagliga visningar samlas sedan {}; allt dessförinnan mättes inte.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Källfördelningen har precis börjat mätas; det här inlägget har ännu inte fått någon taggad visning.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Fördelningen mellan följare och utforska har precis börjat mätas; det finns ingen data ännu.',
+  'Takip edenler': 'Följare',
+  'Keşiften gelenler': 'Från Utforska',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Serie-/filmsida',
+  'Paylaşılan bağlantı': 'Delad länk',
+  'yeni ölçülüyor': 'nyligen uppmätt',
+  'Kendi ortalamanla aynı düzeyde': 'I nivå med ditt eget snitt',
+  'Kendi ortalamanın %{} üstünde': '{} % över ditt eget snitt',
+  'Kendi ortalamanın %{} altında': '{} % under ditt eget snitt',
+  'Etkileşim oranı': 'Interaktionsgrad',
+  '(beğeni + yorum) ÷ görüntülenme':
+      '(gilla-markeringar + kommentarer) ÷ visningar',
+  'Toplam görüntülenme': 'Totalt antal visningar',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Mellan {} och {}: totalt {} visningar',
+  'İstatistikleri gör': 'Visa statistik',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'För statistiken som visas för den som publicerat sparas som aggregerade räknare: hur många gånger och från vilken yta (flöde, profil, helskärmsflöde, serie-/filmsida, delad länk) inlägget visades, om den som såg det följde publiceraren just då, övergången från inlägget till en profil eller till innehåll, följningar som startade från inlägget, delningar och öppnandet av spoilerridån. Dessa räknare innehåller ingen användaridentitet, IP-adress eller tidsstämpel; det går inte att fråga vem som gjorde vad.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'För att kunna räkna hur många olika personer som såg ett inlägg sparas per person som såg det en oåterkallelig nyckelbaserad sammanfattning (en kryptografisk förkortning härledd ur användaridentiteten eller IP-adressen) i 90 dagar. Den som publicerat ser bara antalet; identiteten hos dem som såg inlägget delas aldrig under några omständigheter.',
 };

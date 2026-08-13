@@ -875,4 +875,57 @@ const Map<String, String> cevirilerCs = {
       'Tento uživatel si přeje nechat své sledující skryté.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Tento uživatel si přeje nechat skryté, koho sleduje.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statistiky příspěvku',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Statistiky jsou dostupné jen u tvých vlastních příspěvků.',
+  'Erişim': 'Dosah',
+  'Görüntüleyen': 'Diváci',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Kolik různých lidí to vidělo (posledních {} dní)',
+  'Paylaşım': 'Sdílení',
+  'Bu gönderiden sonra': 'Po tomto příspěvku',
+  'Profil ziyareti': 'Návštěvy profilu',
+  'Yeni takip': 'Nová sledování',
+  'İçeriğe tıklama': 'Klepnutí na obsah',
+  'Spoiler perdesini açan': 'Odkryli spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Sdílení, návštěvy profilu, sledování, klepnutí na obsah, rozpad podle zdrojů a měření spoileru se sbírají od {}; starší údaje se neměřily.',
+  'Zamana yayılmış görüntülenme': 'Zobrazení v čase',
+  'Görüntülenme nereden geldi': 'Odkud přišla zobrazení',
+  'Kimler gördü': 'Kdo to viděl',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Denní data se zatím nezačala hromadit.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Graf potřebuje data alespoň za dva dny. Data se sbírají od {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Nejvíc zobrazení přišlo {}. den po zveřejnění: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Denní zobrazení se sbírají od {}; starší údaje se neměřily.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Rozpad podle zdrojů se začal měřit teprve nedávno; tento příspěvek zatím nedostal označené zobrazení.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Rozpad na sledující a objevování se začal měřit teprve nedávno; zatím nejsou data.',
+  'Takip edenler': 'Sledující',
+  'Keşiften gelenler': 'Z objevování',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Stránka seriálu/filmu',
+  'Paylaşılan bağlantı': 'Sdílený odkaz',
+  'yeni ölçülüyor': 'nově měřeno',
+  'Kendi ortalamanla aynı düzeyde': 'Na úrovni tvého průměru',
+  'Kendi ortalamanın %{} üstünde': 'O {} % nad tvým průměrem',
+  'Kendi ortalamanın %{} altında': 'O {} % pod tvým průměrem',
+  'Etkileşim oranı': 'Míra zapojení',
+  '(beğeni + yorum) ÷ görüntülenme': '(lajky + komentáře) ÷ zobrazení',
+  'Toplam görüntülenme': 'Celkem zobrazení',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Od {} do {}: celkem {} zobrazení',
+  'İstatistikleri gör': 'Zobrazit statistiky',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Pro statistiky zobrazované autorovi příspěvku se jako souhrnné čítače uchovává: kolikrát a z jaké plochy (kanál, profil, celoobrazovkový kanál, stránka seriálu/filmu, sdílený odkaz) byl příspěvek zobrazen, zda ten, kdo si jej prohlížel, v tu chvíli autora sledoval, přechod z příspěvku na profil nebo k obsahu, sledování vzniklá přes příspěvek, sdílení a odkrytí spoilerové clony. Tyto čítače neobsahují identitu uživatele, IP adresu ani časové razítko; nelze zjistit, kdo co udělal.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Aby bylo možné spočítat, kolik různých lidí příspěvek vidělo, uchovává se pro každého, kdo si jej prohlédl, po dobu 90 dnů nevratný otisk s klíčem (kryptografické zkrácení odvozené z identity uživatele nebo z IP adresy). Autorovi příspěvku se zobrazuje pouze číslo; totožnost těch, kdo příspěvek viděli, se za žádných okolností nesdílí.',
 };

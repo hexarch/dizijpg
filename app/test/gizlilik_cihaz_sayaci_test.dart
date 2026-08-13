@@ -64,8 +64,10 @@ void main() {
       }
     });
 
-    test('"Son güncelleme" 13.08.2026\'ya çekildi', () {
-      expect(gizlilikGuncelleme, '13.08.2026');
+    // 14.08.2026 (md. 23): gönderi istatistikleri iki yeni madde ekledi;
+    // tarih ileri çekildi. Sabit BİLEREK güncellendi, kilit korunuyor.
+    test('"Son güncelleme" 14.08.2026\'ya çekildi', () {
+      expect(gizlilikGuncelleme, '14.08.2026');
     });
 
     test('gizlilik.dart dosyası maddeyi İÇERİYOR', () {
@@ -203,7 +205,7 @@ void main() {
     test('web sayfasının güncelleme tarihi gizlilik.dart ile AYNI', () {
       final m = RegExp(r'var GUNCELLEME="([^"]+)"').firstMatch(html);
       expect(m!.group(1), gizlilikGuncelleme);
-      expect(m.group(1), '13.08.2026');
+      expect(m.group(1), '14.08.2026');
     });
   });
 }

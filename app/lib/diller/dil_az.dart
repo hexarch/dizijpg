@@ -870,4 +870,56 @@ const Map<String, String> cevirilerAz = {
       'Bu istifadəçi izləyicilərini gizli saxlamağa üstünlük verir.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Bu istifadəçi kimləri izlədiyini gizli saxlamağa üstünlük verir.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Paylaşım statistikası',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Yalnız öz paylaşımlarının statistikasını görə bilərsən.',
+  'Erişim': 'Əhatə',
+  'Görüntüleyen': 'Baxanlar',
+  'Kaç farklı kişi gördü (son {} gün)': 'Neçə fərqli adam gördü (son {} gün)',
+  'Paylaşım': 'Paylaşmalar',
+  'Bu gönderiden sonra': 'Bu paylaşımdan sonra',
+  'Profil ziyareti': 'Profil ziyarətləri',
+  'Yeni takip': 'Yeni izləmələr',
+  'İçeriğe tıklama': 'Məzmuna toxunuşlar',
+  'Spoiler perdesini açan': 'Spoyleri açanlar',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Paylaşmalar, profil ziyarətləri, izləmələr, məzmuna toxunuşlar, mənbə bölgüsü və spoyler ölçüləri {} tarixindən bəri toplanır; ondan əvvəlki ölçülməyib.',
+  'Zamana yayılmış görüntülenme': 'Zamana görə baxışlar',
+  'Görüntülenme nereden geldi': 'Baxışlar haradan gəldi',
+  'Kimler gördü': 'Kim gördü',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Gündəlik məlumat hələ toplanmağa başlamayıb.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Qrafik üçün ən azı iki günlük məlumat lazımdır. Məlumat {} tarixindən bəri toplanır.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Ən çox baxış paylaşımdan sonrakı {}-ci gün gəldi: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Gündəlik baxışlar {} tarixindən bəri toplanır; ondan əvvəlki ölçülməyib.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Mənbə bölgüsü yenicə ölçülməyə başlayıb; bu paylaşım hələ etiketlənmiş baxış almayıb.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'İzləyici/kəşf bölgüsü yenicə ölçülməyə başlayıb; hələ məlumat yoxdur.',
+  'Takip edenler': 'İzləyicilər',
+  'Keşiften gelenler': 'Kəşfdən',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Serial/film səhifəsi',
+  'Paylaşılan bağlantı': 'Paylaşılan keçid',
+  'yeni ölçülüyor': 'yeni ölçülür',
+  'Kendi ortalamanla aynı düzeyde': 'Öz ortalamanla eyni səviyyədə',
+  'Kendi ortalamanın %{} üstünde': 'Öz ortalamandan {}% yuxarı',
+  'Kendi ortalamanın %{} altında': 'Öz ortalamandan {}% aşağı',
+  'Etkileşim oranı': 'Qarşılıqlı əlaqə nisbəti',
+  '(beğeni + yorum) ÷ görüntülenme': '(bəyənmə + şərh) ÷ baxış',
+  'Toplam görüntülenme': 'Ümumi baxışlar',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} ilə {} arasında ümumilikdə {} baxış',
+  'İstatistikleri gör': 'Statistikaya bax',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Paylaşımın sahibinə göstərilən statistika üçün toplu sayğaclar şəklində saxlanılır: paylaşımın neçə dəfə və hansı səthdən (lent, profil, tam ekran lent, serial/film səhifəsi, paylaşılan keçid) baxıldığı, baxanın həmin anda paylaşım sahibini izləyib-izləmədiyi, paylaşımdan profilə/məzmuna keçid, paylaşım vasitəsilə yaranan izləmə, paylaşma və spoyler pərdəsinin açılması. Bu sayğaclarda istifadəçi kimliyi, IP ünvanı və ya zaman möhürü yoxdur; kimin nə etdiyini soruşmaq mümkün deyil.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Bir paylaşımı neçə fərqli adamın gördüyünü saya bilmək üçün hər baxan üçün geri çevrilə bilməyən açarlı bir xülasə (istifadəçi kimliyindən və ya IP ünvanından törədilən kriptoqrafik qısaltma) 90 gün saxlanılır. Paylaşım sahibinə yalnız say göstərilir; baxanların kimliyi heç bir halda paylaşılmır.',
 };

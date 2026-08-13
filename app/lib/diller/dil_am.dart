@@ -854,4 +854,54 @@ const Map<String, String> cevirilerAm = {
       'ይህ ተጠቃሚ ተከታዮቻቸውን በሚስጥር መያዝ ይመርጣሉ።',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ይህ ተጠቃሚ የሚከታተሏቸውን በሚስጥር መያዝ ይመርጣሉ።',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'የልጥፍ ስታቲስቲክስ',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'የራስህን ልጥፎች ስታቲስቲክስ ብቻ ማየት ትችላለህ።',
+  'Erişim': 'ተደራሽነት',
+  'Görüntüleyen': 'ተመልካቾች',
+  'Kaç farklı kişi gördü (son {} gün)': 'ስንት የተለያዩ ሰዎች አዩት (ያለፉት {} ቀናት)',
+  'Paylaşım': 'ማጋራቶች',
+  'Bu gönderiden sonra': 'ከዚህ ልጥፍ በኋላ',
+  'Profil ziyareti': 'የመገለጫ ጉብኝቶች',
+  'Yeni takip': 'አዲስ ክትትሎች',
+  'İçeriğe tıklama': 'የይዘት ንክኪዎች',
+  'Spoiler perdesini açan': 'ስፖይለሩን የከፈቱ',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'ማጋራቶች፣ የመገለጫ ጉብኝቶች፣ ክትትሎች፣ የይዘት ንክኪዎች፣ የምንጭ ክፍፍልና የስፖይለር መለኪያዎች ከ{} ጀምሮ እየተከማቹ ናቸው፤ ከዚያ በፊት ያለው አልተለካም።',
+  'Zamana yayılmış görüntülenme': 'በጊዜ ሂደት እይታዎች',
+  'Görüntülenme nereden geldi': 'እይታዎቹ ከየት መጡ',
+  'Kimler gördü': 'ማን አየው',
+  'Günlük veri henüz birikmeye başlamadı.': 'የዕለት መረጃ ገና መከማቸት አልጀመረም።',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ገበታው ቢያንስ የሁለት ቀን መረጃ ይፈልጋል። መረጃው ከ{} ጀምሮ እየተከማቸ ነው።',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'በጣም ብዙ እይታዎች ከተለጠፈ በኋላ በ{}ኛው ቀን መጡ፦ {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'የዕለት እይታዎች ከ{} ጀምሮ እየተከማቹ ናቸው፤ ከዚያ በፊት ያለው አልተለካም።',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'የምንጭ ክፍፍል መለካት አሁን ነው የጀመረው፤ ይህ ልጥፍ እስካሁን ምልክት የተደረገበት እይታ አላገኘም።',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'የተከታይ/ማሰስ ክፍፍል መለካት አሁን ነው የጀመረው፤ እስካሁን መረጃ የለም።',
+  'Takip edenler': 'ተከታዮች',
+  'Keşiften gelenler': 'ከማሰስ',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'የተከታታይ/ፊልም ገጽ',
+  'Paylaşılan bağlantı': 'የተጋራ አገናኝ',
+  'yeni ölçülüyor': 'አዲስ ልኬት',
+  'Kendi ortalamanla aynı düzeyde': 'ከራስህ አማካይ ጋር እኩል',
+  'Kendi ortalamanın %{} üstünde': 'ከራስህ አማካይ በ{}% ከፍ ያለ',
+  'Kendi ortalamanın %{} altında': 'ከራስህ አማካይ በ{}% ያነሰ',
+  'Etkileşim oranı': 'የተሳትፎ መጠን',
+  '(beğeni + yorum) ÷ görüntülenme': '(ወዳጆች + አስተያየቶች) ÷ እይታዎች',
+  'Toplam görüntülenme': 'ጠቅላላ እይታዎች',
+  '{} ile {} arasında toplam {} görüntülenme': 'ከ{} እስከ {} ጠቅላላ {} እይታዎች',
+  'İstatistikleri gör': 'ስታቲስቲክስ ይመልከቱ',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'ለልጥፉ ባለቤት ለሚታየው ስታቲስቲክስ እንደ ጥቅል ቆጣሪዎች ይቀመጣል፦ ልጥፉ ስንት ጊዜና ከየትኛው ገጽታ (ምግብ፣ መገለጫ፣ ሙሉ ስክሪን ምግብ፣ የተከታታይ/ፊልም ገጽ፣ የተጋራ አገናኝ) እንደታየ፣ ተመልካቹ በዚያ ወቅት የልጥፉን ባለቤት ይከታተል እንደነበር፣ ከልጥፉ ወደ መገለጫ/ይዘት መሸጋገር፣ በልጥፉ በኩል የተፈጠረ ክትትል፣ ማጋራትና የስፖይለር መጋረጃ መከፈት። በእነዚህ ቆጣሪዎች ውስጥ የተጠቃሚ መታወቂያ፣ የIP አድራሻ ወይም የጊዜ ማህተም የለም፤ ማን ምን እንዳደረገ መጠየቅ አይቻልም።',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'አንድ ልጥፍ ስንት የተለያዩ ሰዎች እንዳዩት መቁጠር እንዲቻል፣ ለእያንዳንዱ ተመልካች የማይመለስ በቁልፍ የተሰራ አጭር ማጠቃለያ (ከተጠቃሚ መታወቂያ ወይም ከIP አድራሻ የተገኘ የምስጠራ ማሳጠሪያ) ለ90 ቀናት ይቀመጣል። ለልጥፉ ባለቤት ቁጥሩ ብቻ ይታያል፤ የተመልካቾች ማንነት በምንም ሁኔታ አይጋራም።',
 };

@@ -876,4 +876,56 @@ const Map<String, String> cevirilerUr = {
       'اس صارف کے فالوورز چھپے ہوئے ہیں۔',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'یہ صارف کن کو فالو کرتا ہے، یہ چھپا ہوا ہے۔',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'پوسٹ کے اعداد و شمار',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'آپ صرف اپنی پوسٹس کے اعداد و شمار دیکھ سکتے ہیں۔',
+  'Erişim': 'رسائی',
+  'Görüntüleyen': 'دیکھنے والے',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'کتنے مختلف لوگوں نے دیکھا (پچھلے {} دن)',
+  'Paylaşım': 'شیئرز',
+  'Bu gönderiden sonra': 'اس پوسٹ کے بعد',
+  'Profil ziyareti': 'پروفائل وزٹ',
+  'Yeni takip': 'نئے فالو',
+  'İçeriğe tıklama': 'مواد پر ٹیپ',
+  'Spoiler perdesini açan': 'اسپائلر کھولا',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'شیئرز، پروفائل وزٹ، فالو، مواد پر ٹیپ، ذرائع کی تقسیم اور اسپائلر کی پیمائش {} سے جمع ہو رہی ہے؛ اس سے پہلے کی پیمائش نہیں کی گئی۔',
+  'Zamana yayılmış görüntülenme': 'وقت کے ساتھ ویوز',
+  'Görüntülenme nereden geldi': 'ویوز کہاں سے آئے',
+  'Kimler gördü': 'کس نے دیکھا',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'روزانہ کا ڈیٹا ابھی جمع ہونا شروع نہیں ہوا۔',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'گراف کے لیے کم از کم دو دن کا ڈیٹا درکار ہے۔ ڈیٹا {} سے جمع ہو رہا ہے۔',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'سب سے زیادہ ویوز پوسٹ کے {} ویں دن آئے: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'روزانہ ویوز {} سے جمع ہو رہے ہیں؛ اس سے پہلے کی پیمائش نہیں کی گئی۔',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'ذرائع کی تقسیم کی پیمائش ابھی شروع ہوئی ہے؛ اس پوسٹ کو ابھی تک کوئی ٹیگ شدہ ویو نہیں ملا۔',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'فالوور/دریافت کی تقسیم کی پیمائش ابھی شروع ہوئی ہے؛ ابھی کوئی ڈیٹا نہیں۔',
+  'Takip edenler': 'فالوورز',
+  'Keşiften gelenler': 'دریافت سے',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'سیریز/فلم صفحہ',
+  'Paylaşılan bağlantı': 'شیئر کیا گیا لنک',
+  'yeni ölçülüyor': 'نئی پیمائش',
+  'Kendi ortalamanla aynı düzeyde': 'تمہارے اپنے اوسط کے برابر',
+  'Kendi ortalamanın %{} üstünde': 'تمہارے اپنے اوسط سے {}% زیادہ',
+  'Kendi ortalamanın %{} altında': 'تمہارے اپنے اوسط سے {}% کم',
+  'Etkileşim oranı': 'مشغولیت کی شرح',
+  '(beğeni + yorum) ÷ görüntülenme': '(لائکس + تبصرے) ÷ ویوز',
+  'Toplam görüntülenme': 'کل ویوز',
+  '{} ile {} arasında toplam {} görüntülenme': '{} اور {} کے درمیان کل {} ویوز',
+  'İstatistikleri gör': 'اعداد و شمار دیکھیں',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'پوسٹ کے مالک کو دکھائے جانے والے اعداد و شمار کے لیے مجموعی کاؤنٹرز کے طور پر رکھا جاتا ہے: پوسٹ کتنی بار اور کس سطح سے (فیڈ، پروفائل، فل اسکرین فیڈ، سیریز/فلم صفحہ، شیئر کیا گیا لنک) دیکھی گئی، دیکھنے والا اس وقت پوسٹ کے مالک کو فالو کر رہا تھا یا نہیں، پوسٹ سے پروفائل/مواد پر جانا، پوسٹ کے ذریعے بننے والا فالو، شیئر اور اسپائلر پردے کا کھلنا۔ ان کاؤنٹرز میں صارف کی شناخت، IP پتہ یا ٹائم اسٹیمپ نہیں ہوتا؛ کس نے کیا کیا، یہ معلوم نہیں کیا جا سکتا۔',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'یہ گننے کے لیے کہ کسی پوسٹ کو کتنے مختلف لوگوں نے دیکھا، ہر دیکھنے والے کے لیے ایک ناقابلِ واپسی کلیدی خلاصہ (صارف کی شناخت یا IP پتے سے اخذ کردہ خفیہ نگاری کا اختصار) 90 دن تک محفوظ رکھا جاتا ہے۔ پوسٹ کے مالک کو صرف تعداد دکھائی جاتی ہے؛ دیکھنے والوں کی شناخت کسی بھی صورت میں شیئر نہیں کی جاتی۔',
 };

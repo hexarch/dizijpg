@@ -230,15 +230,22 @@ void main() {
       expect(uzunluklar.length, 1, reason: 'diller arasında uzunluk farkı var');
       // 34 → 35: md.37'nin kullanım istatistikleri maddesi 10. indekse girdi,
       // arama bölümü bir basamak kaydı (29-33 → 30-34).
-      expect(uzunluklar.first, 35, reason: '29 + 5 + 1 yeni dize bekleniyor');
+      // 35 → 37: md.23'ün İKİ gönderi istatistiği maddesi 11-12. indekse
+      // girdi, arama bölümü iki basamak daha kaydı (30-34 → 32-36).
+      expect(
+        uzunluklar.first,
+        37,
+        reason: '29 + 5 + 1 + 2 yeni dize bekleniyor',
+      );
     });
 
     test('web YAPI dizilimi yeni bölümü ÇİZİYOR', () {
       final m = RegExp(r'var YAPI=(\[.*?\]);', dotAll: true).firstMatch(html);
       final yapi = m!.group(1)!;
-      // Başlık (30) + dört madde (31-34)
-      expect(yapi.contains('["h",30]'), isTrue);
-      for (var i = 31; i <= 34; i++) {
+      // Başlık (32) + dört madde (33-36) — md.23'ün iki maddesi 11-12'ye
+      // girince arama bölümü 30-34'ten 32-36'ya kaydı.
+      expect(yapi.contains('["h",32]'), isTrue);
+      for (var i = 33; i <= 36; i++) {
         expect(yapi.contains('["li",$i]'), isTrue, reason: 'madde $i yok');
       }
     });

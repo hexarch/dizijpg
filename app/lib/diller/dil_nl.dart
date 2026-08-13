@@ -881,4 +881,57 @@ const Map<String, String> cevirilerNl = {
       'Deze gebruiker houdt de volgerslijst liever privé.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Deze gebruiker houdt liever privé wie hij volgt.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statistieken van het bericht',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Je kunt alleen statistieken van je eigen berichten zien.',
+  'Erişim': 'Bereik',
+  'Görüntüleyen': 'Kijkers',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Hoeveel verschillende mensen het zagen (laatste {} dagen)',
+  'Paylaşım': 'Gedeeld',
+  'Bu gönderiden sonra': 'Na dit bericht',
+  'Profil ziyareti': 'Profielbezoeken',
+  'Yeni takip': 'Nieuwe volgers',
+  'İçeriğe tıklama': 'Tikken op inhoud',
+  'Spoiler perdesini açan': 'Spoiler onthuld',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Delingen, profielbezoeken, volgers, tikken op inhoud, bronverdeling en spoilermetingen worden verzameld sinds {}; alles daarvoor is niet gemeten.',
+  'Zamana yayılmış görüntülenme': 'Weergaven in de tijd',
+  'Görüntülenme nereden geldi': 'Waar de weergaven vandaan kwamen',
+  'Kimler gördü': 'Wie het zag',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'De dagelijkse gegevens zijn nog niet opgebouwd.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'De grafiek heeft minstens twee dagen aan gegevens nodig. Gegevens worden verzameld sinds {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'De meeste weergaven kwamen op dag {} na het plaatsen: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Dagelijkse weergaven worden verzameld sinds {}; alles daarvoor is niet gemeten.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'De bronverdeling wordt pas net gemeten; dit bericht heeft nog geen gelabelde weergave gekregen.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'De verdeling tussen volgers en ontdekken wordt pas net gemeten; er zijn nog geen gegevens.',
+  'Takip edenler': 'Volgers',
+  'Keşiften gelenler': 'Via Ontdekken',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Serie-/filmpagina',
+  'Paylaşılan bağlantı': 'Gedeelde link',
+  'yeni ölçülüyor': 'nieuw gemeten',
+  'Kendi ortalamanla aynı düzeyde': 'Op het niveau van je eigen gemiddelde',
+  'Kendi ortalamanın %{} üstünde': '{}% boven je eigen gemiddelde',
+  'Kendi ortalamanın %{} altında': '{}% onder je eigen gemiddelde',
+  'Etkileşim oranı': 'Interactiepercentage',
+  '(beğeni + yorum) ÷ görüntülenme': '(likes + reacties) ÷ weergaven',
+  'Toplam görüntülenme': 'Totaal aantal weergaven',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Tussen {} en {}: in totaal {} weergaven',
+  'İstatistikleri gör': 'Statistieken bekijken',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Voor de statistieken die aan de plaatser van een bericht worden getoond, worden als geaggregeerde tellers bewaard: hoe vaak en vanaf welk oppervlak (feed, profiel, schermvullende feed, serie-/filmpagina, gedeelde link) het bericht is bekeken, of de kijker op dat moment de plaatser volgde, de overgang van het bericht naar een profiel of naar inhoud, volgacties die via het bericht ontstonden, delingen en het openen van het spoilergordijn. Deze tellers bevatten geen gebruikersidentiteit, IP-adres of tijdstempel; wie wat deed, is niet op te vragen.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Om te kunnen tellen hoeveel verschillende mensen een bericht hebben gezien, wordt per kijker 90 dagen lang een onomkeerbare samenvatting met sleutel bewaard (een cryptografische verkorting afgeleid van de gebruikersidentiteit of het IP-adres). Aan de plaatser van het bericht wordt alleen het aantal getoond; de identiteit van kijkers wordt onder geen enkele omstandigheid gedeeld.',
 };

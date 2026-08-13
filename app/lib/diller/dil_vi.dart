@@ -873,4 +873,57 @@ const Map<String, String> cevirilerVi = {
       'Người dùng này muốn giữ kín danh sách người theo dõi.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Người dùng này muốn giữ kín những người mình theo dõi.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Thống kê bài đăng',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Bạn chỉ có thể xem thống kê của bài đăng của chính mình.',
+  'Erişim': 'Phạm vi tiếp cận',
+  'Görüntüleyen': 'Người xem',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Bao nhiêu người khác nhau đã xem ({} ngày qua)',
+  'Paylaşım': 'Lượt chia sẻ',
+  'Bu gönderiden sonra': 'Sau bài đăng này',
+  'Profil ziyareti': 'Lượt xem trang cá nhân',
+  'Yeni takip': 'Lượt theo dõi mới',
+  'İçeriğe tıklama': 'Lượt nhấn vào nội dung',
+  'Spoiler perdesini açan': 'Đã mở spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Lượt chia sẻ, lượt xem trang cá nhân, lượt theo dõi, lượt nhấn vào nội dung, phân tích nguồn và số liệu spoiler được tích lũy từ {}; trước đó không được đo.',
+  'Zamana yayılmış görüntülenme': 'Lượt xem theo thời gian',
+  'Görüntülenme nereden geldi': 'Lượt xem đến từ đâu',
+  'Kimler gördü': 'Ai đã xem',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Dữ liệu hằng ngày chưa bắt đầu tích lũy.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Biểu đồ cần dữ liệu của ít nhất hai ngày. Dữ liệu được tích lũy từ {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Lượt xem nhiều nhất đến vào ngày thứ {} sau khi đăng: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Lượt xem hằng ngày được tích lũy từ {}; trước đó không được đo.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Phân tích nguồn chỉ mới bắt đầu được đo; bài đăng này chưa nhận được lượt xem có gắn thẻ nào.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Phân tích người theo dõi/khám phá chỉ mới bắt đầu được đo; chưa có dữ liệu.',
+  'Takip edenler': 'Người theo dõi',
+  'Keşiften gelenler': 'Từ Khám phá',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Trang phim/series',
+  'Paylaşılan bağlantı': 'Liên kết đã chia sẻ',
+  'yeni ölçülüyor': 'mới bắt đầu đo',
+  'Kendi ortalamanla aynı düzeyde': 'Ngang với mức trung bình của bạn',
+  'Kendi ortalamanın %{} üstünde': 'Cao hơn {}% so với mức trung bình của bạn',
+  'Kendi ortalamanın %{} altında': 'Thấp hơn {}% so với mức trung bình của bạn',
+  'Etkileşim oranı': 'Tỷ lệ tương tác',
+  '(beğeni + yorum) ÷ görüntülenme': '(lượt thích + bình luận) ÷ lượt xem',
+  'Toplam görüntülenme': 'Tổng lượt xem',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Từ {} đến {}: tổng cộng {} lượt xem',
+  'İstatistikleri gör': 'Xem thống kê',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Đối với thống kê hiển thị cho chủ bài đăng, các bộ đếm tổng hợp được lưu: bài đăng được xem bao nhiêu lần và từ bề mặt nào (bảng tin, trang cá nhân, bảng tin toàn màn hình, trang phim/series, liên kết đã chia sẻ), người xem có đang theo dõi chủ bài đăng vào thời điểm đó hay không, việc chuyển từ bài đăng sang trang cá nhân hoặc nội dung, lượt theo dõi phát sinh từ bài đăng, lượt chia sẻ và việc mở lớp che spoiler. Các bộ đếm này không chứa danh tính người dùng, địa chỉ IP hay dấu thời gian; không thể truy vấn ai đã làm gì.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Để có thể đếm được bao nhiêu người khác nhau đã xem một bài đăng, một bản tóm lược có khóa không thể đảo ngược cho mỗi người xem (một dạng rút gọn mật mã suy ra từ danh tính người dùng hoặc địa chỉ IP) được lưu trong 90 ngày. Chủ bài đăng chỉ được xem con số; danh tính của người xem không bao giờ được chia sẻ trong bất kỳ trường hợp nào.',
 };

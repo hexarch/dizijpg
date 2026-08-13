@@ -863,4 +863,55 @@ const Map<String, String> cevirilerAr = {
       'قائمة متابعي هذا المستخدم مخفية.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'قائمة المتابَعين لدى هذا المستخدم مخفية.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'إحصائيات المنشور',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'يمكنك رؤية إحصائيات منشوراتك فقط.',
+  'Erişim': 'الوصول',
+  'Görüntüleyen': 'المشاهِدون',
+  'Kaç farklı kişi gördü (son {} gün)': 'كم شخصًا مختلفًا شاهده (آخر {} يوم)',
+  'Paylaşım': 'المشاركات',
+  'Bu gönderiden sonra': 'بعد هذا المنشور',
+  'Profil ziyareti': 'زيارات الملف الشخصي',
+  'Yeni takip': 'متابعات جديدة',
+  'İçeriğe tıklama': 'النقر على المحتوى',
+  'Spoiler perdesini açan': 'كشفوا الحرق',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'المشاركات وزيارات الملف الشخصي والمتابعات والنقر على المحتوى وتوزيع المصادر وقياسات الحرق تتراكم منذ {}؛ وما قبل ذلك لم يُقَس.',
+  'Zamana yayılmış görüntülenme': 'المشاهدات عبر الزمن',
+  'Görüntülenme nereden geldi': 'من أين جاءت المشاهدات',
+  'Kimler gördü': 'مَن شاهده',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'لم تبدأ البيانات اليومية بالتراكم بعد.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'يحتاج الرسم البياني إلى بيانات يومين على الأقل. تتراكم البيانات منذ {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'جاءت أكثر المشاهدات في اليوم {} بعد النشر: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'المشاهدات اليومية تتراكم منذ {}؛ وما قبل ذلك لم يُقَس.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'بدأ قياس توزيع المصادر حديثًا؛ لم يتلقَّ هذا المنشور مشاهدة موسومة بعد.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'بدأ قياس توزيع المتابعين/الاستكشاف حديثًا؛ لا توجد بيانات بعد.',
+  'Takip edenler': 'المتابِعون',
+  'Keşiften gelenler': 'من الاستكشاف',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'صفحة المسلسل/الفيلم',
+  'Paylaşılan bağlantı': 'رابط مُشارَك',
+  'yeni ölçülüyor': 'قياس جديد',
+  'Kendi ortalamanla aynı düzeyde': 'على مستوى متوسطك المعتاد',
+  'Kendi ortalamanın %{} üstünde': 'أعلى من متوسطك بنسبة {}%',
+  'Kendi ortalamanın %{} altında': 'أقل من متوسطك بنسبة {}%',
+  'Etkileşim oranı': 'معدل التفاعل',
+  '(beğeni + yorum) ÷ görüntülenme': '(الإعجابات + التعليقات) ÷ المشاهدات',
+  'Toplam görüntülenme': 'إجمالي المشاهدات',
+  '{} ile {} arasında toplam {} görüntülenme': 'بين {} و{}: {} مشاهدة إجمالًا',
+  'İstatistikleri gör': 'عرض الإحصائيات',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'من أجل الإحصائيات المعروضة لصاحب المنشور، تُحفَظ كعدّادات مجمَّعة: كم مرة ومن أي واجهة (الموجز، الملف الشخصي، الموجز بملء الشاشة، صفحة المسلسل/الفيلم، الرابط المُشارَك) شُوهد المنشور، وما إذا كان من شاهده يتابع صاحب المنشور في تلك اللحظة، والانتقال من المنشور إلى الملف الشخصي أو المحتوى، والمتابعات التي بدأت من المنشور، والمشاركات، وكشف ستار الحرق. لا تحتوي هذه العدّادات على هوية مستخدم ولا عنوان IP ولا طابع زمني؛ ولا يمكن الاستعلام عمّن فعل ماذا.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'لكي يتسنى إحصاء عدد الأشخاص المختلفين الذين شاهدوا منشورًا، يُحفَظ لكل مشاهِد ملخّص مفتاحي غير قابل للعكس (اختزال تشفيري مشتق من هوية المستخدم أو عنوان IP) لمدة 90 يومًا. ولا يُعرَض لصاحب المنشور سوى العدد؛ ولا تُشارَك هوية المشاهِدين تحت أي ظرف.',
 };

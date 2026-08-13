@@ -879,4 +879,57 @@ const Map<String, String> cevirilerId = {
       'Pengguna ini memilih menyembunyikan pengikutnya.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Pengguna ini memilih menyembunyikan siapa yang diikutinya.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statistik postingan',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Kamu hanya bisa melihat statistik postingan sendiri.',
+  'Erişim': 'Jangkauan',
+  'Görüntüleyen': 'Penonton',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Berapa orang berbeda yang melihat ({} hari terakhir)',
+  'Paylaşım': 'Dibagikan',
+  'Bu gönderiden sonra': 'Setelah postingan ini',
+  'Profil ziyareti': 'Kunjungan profil',
+  'Yeni takip': 'Pengikut baru',
+  'İçeriğe tıklama': 'Ketukan konten',
+  'Spoiler perdesini açan': 'Membuka spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Dibagikan, kunjungan profil, pengikut, ketukan konten, rincian sumber, dan pengukuran spoiler terkumpul sejak {}; sebelumnya tidak diukur.',
+  'Zamana yayılmış görüntülenme': 'Tayangan dari waktu ke waktu',
+  'Görüntülenme nereden geldi': 'Dari mana tayangan berasal',
+  'Kimler gördü': 'Siapa yang melihat',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Data harian belum mulai terkumpul.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Grafik memerlukan data minimal dua hari. Data terkumpul sejak {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Tayangan terbanyak datang pada hari ke-{} setelah diposting: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Tayangan harian terkumpul sejak {}; sebelumnya tidak diukur.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Rincian sumber baru mulai diukur; postingan ini belum menerima tayangan bertanda.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Rincian pengikut/jelajah baru mulai diukur; belum ada data.',
+  'Takip edenler': 'Pengikut',
+  'Keşiften gelenler': 'Dari Jelajahi',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Halaman serial/film',
+  'Paylaşılan bağlantı': 'Tautan yang dibagikan',
+  'yeni ölçülüyor': 'baru diukur',
+  'Kendi ortalamanla aynı düzeyde': 'Setara dengan rata-ratamu',
+  'Kendi ortalamanın %{} üstünde': '{}% di atas rata-ratamu',
+  'Kendi ortalamanın %{} altında': '{}% di bawah rata-ratamu',
+  'Etkileşim oranı': 'Tingkat interaksi',
+  '(beğeni + yorum) ÷ görüntülenme': '(suka + komentar) ÷ tayangan',
+  'Toplam görüntülenme': 'Total tayangan',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Antara {} dan {}: total {} tayangan',
+  'İstatistikleri gör': 'Lihat statistik',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Untuk statistik yang ditampilkan kepada pemilik postingan, disimpan sebagai penghitung agregat: berapa kali dan dari permukaan mana (feed, profil, feed layar penuh, halaman serial/film, tautan yang dibagikan) postingan dilihat, apakah penonton saat itu mengikuti pemilik postingan, perpindahan dari postingan ke profil atau konten, pengikut yang terbentuk lewat postingan, pembagian, dan pembukaan tirai spoiler. Penghitung ini tidak memuat identitas pengguna, alamat IP, atau stempel waktu; siapa melakukan apa tidak dapat ditelusuri.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Agar dapat menghitung berapa banyak orang berbeda yang melihat sebuah postingan, ringkasan berkunci yang tidak dapat dibalik untuk setiap penonton (pemadatan kriptografis yang diturunkan dari identitas pengguna atau alamat IP) disimpan selama 90 hari. Kepada pemilik postingan hanya ditampilkan angkanya; identitas penonton tidak pernah dibagikan dalam keadaan apa pun.',
 };

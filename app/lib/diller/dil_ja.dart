@@ -846,4 +846,54 @@ const Map<String, String> cevirilerJa = {
       'このユーザーはフォロワーを非公開にしています。',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'このユーザーはフォロー中の一覧を非公開にしています。',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': '投稿の統計',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      '統計は自分の投稿のみ表示できます。',
+  'Erişim': 'リーチ',
+  'Görüntüleyen': '閲覧者数',
+  'Kaç farklı kişi gördü (son {} gün)': '何人の異なる人が見たか（過去 {} 日）',
+  'Paylaşım': 'シェア数',
+  'Bu gönderiden sonra': 'この投稿のあと',
+  'Profil ziyareti': 'プロフィール訪問',
+  'Yeni takip': '新しいフォロー',
+  'İçeriğe tıklama': '作品タップ',
+  'Spoiler perdesini açan': 'ネタバレを表示した人',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'シェア、プロフィール訪問、フォロー、作品タップ、流入元の内訳、ネタバレの計測は {} から蓄積されています。それ以前は計測されていません。',
+  'Zamana yayılmış görüntülenme': '時間ごとの表示回数',
+  'Görüntülenme nereden geldi': '表示回数の流入元',
+  'Kimler gördü': '誰が見たか',
+  'Günlük veri henüz birikmeye başlamadı.': '日次データはまだ蓄積が始まっていません。',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'グラフには最低2日分のデータが必要です。データは {} から蓄積されています。',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      '表示回数が最も多かったのは投稿から {} 日目です: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      '日次の表示回数は {} から蓄積されています。それ以前は計測されていません。',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      '流入元の内訳は計測を始めたばかりです。この投稿にはまだタグ付きの表示がありません。',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'フォロワー／発見の内訳は計測を始めたばかりです。まだデータがありません。',
+  'Takip edenler': 'フォロワー',
+  'Keşiften gelenler': '発見から',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': '作品ページ',
+  'Paylaşılan bağlantı': '共有リンク',
+  'yeni ölçülüyor': '計測開始',
+  'Kendi ortalamanla aynı düzeyde': '自分の平均と同じ水準',
+  'Kendi ortalamanın %{} üstünde': '自分の平均より {}% 高い',
+  'Kendi ortalamanın %{} altında': '自分の平均より {}% 低い',
+  'Etkileşim oranı': 'エンゲージメント率',
+  '(beğeni + yorum) ÷ görüntülenme': '(いいね + コメント) ÷ 表示回数',
+  'Toplam görüntülenme': '合計表示回数',
+  '{} ile {} arasında toplam {} görüntülenme': '{} から {} までで合計 {} 回の表示',
+  'İstatistikleri gör': '統計を見る',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      '投稿者に表示される統計のために、投稿が何回どの画面（フィード、プロフィール、全画面フィード、作品ページ、共有リンク）から表示されたか、閲覧した人がその時点で投稿者をフォローしていたか、投稿からプロフィールや作品への移動、投稿を通じて生まれたフォロー、シェア、ネタバレの覆いを開いた回数を、集計カウンターとして保持します。これらのカウンターにはユーザー識別子、IP アドレス、タイムスタンプは含まれません。誰が何をしたかを問い合わせることはできません。',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ある投稿を何人の異なる人が見たかを数えられるようにするため、閲覧者ごとに不可逆な鍵付きダイジェスト（ユーザー識別子または IP アドレスから導かれる暗号学的な短縮値）を 90 日間保存します。投稿者には数だけが表示されます。閲覧者の身元はいかなる場合も共有されません。',
 };

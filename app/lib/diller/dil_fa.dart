@@ -872,4 +872,57 @@ const Map<String, String> cevirilerFa = {
       'این کاربر ترجیح می‌دهد دنبال‌کنندگانش پنهان بمانند.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'این کاربر ترجیح می‌دهد کسانی که دنبال می‌کند پنهان بمانند.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'آمار پست',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'فقط می‌توانی آمار پست‌های خودت را ببینی.',
+  'Erişim': 'دسترسی',
+  'Görüntüleyen': 'بینندگان',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'چند نفر متفاوت آن را دیدند ({} روز اخیر)',
+  'Paylaşım': 'اشتراک‌گذاری‌ها',
+  'Bu gönderiden sonra': 'پس از این پست',
+  'Profil ziyareti': 'بازدید پروفایل',
+  'Yeni takip': 'دنبال‌کردن‌های جدید',
+  'İçeriğe tıklama': 'ضربه روی محتوا',
+  'Spoiler perdesini açan': 'اسپویل را باز کردند',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'اشتراک‌گذاری‌ها، بازدید پروفایل، دنبال‌کردن‌ها، ضربه روی محتوا، تفکیک منابع و سنجش اسپویل از {} انباشته می‌شوند؛ پیش از آن سنجیده نشده است.',
+  'Zamana yayılmış görüntülenme': 'بازدیدها در طول زمان',
+  'Görüntülenme nereden geldi': 'بازدیدها از کجا آمدند',
+  'Kimler gördü': 'چه کسانی دیدند',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'داده‌های روزانه هنوز شروع به انباشته‌شدن نکرده است.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'نمودار دست‌کم به داده‌های دو روز نیاز دارد. داده‌ها از {} انباشته می‌شوند.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'بیشترین بازدید در روز {}اُم پس از انتشار بود: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'بازدیدهای روزانه از {} انباشته می‌شوند؛ پیش از آن سنجیده نشده است.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'تفکیک منابع تازه شروع به سنجش شده است؛ این پست هنوز بازدید برچسب‌خورده‌ای نگرفته است.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'تفکیک دنبال‌کنندگان/کاوش تازه شروع به سنجش شده است؛ هنوز داده‌ای نیست.',
+  'Takip edenler': 'دنبال‌کنندگان',
+  'Keşiften gelenler': 'از کاوش',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'صفحهٔ سریال/فیلم',
+  'Paylaşılan bağlantı': 'پیوند به‌اشتراک‌گذاشته',
+  'yeni ölçülüyor': 'سنجش تازه',
+  'Kendi ortalamanla aynı düzeyde': 'هم‌سطح میانگین خودت',
+  'Kendi ortalamanın %{} üstünde': '{}٪ بالاتر از میانگین خودت',
+  'Kendi ortalamanın %{} altında': '{}٪ پایین‌تر از میانگین خودت',
+  'Etkileşim oranı': 'نرخ تعامل',
+  '(beğeni + yorum) ÷ görüntülenme': '(پسندها + دیدگاه‌ها) ÷ بازدیدها',
+  'Toplam görüntülenme': 'کل بازدیدها',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'بین {} و {}: در مجموع {} بازدید',
+  'İstatistikleri gör': 'دیدن آمار',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'برای آماری که به صاحب پست نشان داده می‌شود، به‌صورت شمارنده‌های تجمیعی نگهداری می‌شود: پست چند بار و از کدام سطح (خوراک، پروفایل، خوراک تمام‌صفحه، صفحهٔ سریال/فیلم، پیوند به‌اشتراک‌گذاشته) دیده شده است، آیا بیننده در آن لحظه صاحب پست را دنبال می‌کرده است، رفتن از پست به پروفایل یا محتوا، دنبال‌کردنی که از طریق پست شکل گرفته، اشتراک‌گذاری و باز شدن پردهٔ اسپویل. در این شمارنده‌ها شناسهٔ کاربر، نشانی IP یا مهر زمانی وجود ندارد؛ نمی‌توان پرسید چه کسی چه کاری کرده است.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'برای اینکه بتوان شمرد چند نفر متفاوت یک پست را دیده‌اند، برای هر بیننده یک چکیدهٔ کلیددار برگشت‌ناپذیر (کوتاه‌سازی رمزنگاشتی برگرفته از شناسهٔ کاربر یا نشانی IP) به مدت ۹۰ روز نگهداری می‌شود. به صاحب پست فقط عدد نشان داده می‌شود؛ هویت بینندگان تحت هیچ شرایطی به اشتراک گذاشته نمی‌شود.',
 };

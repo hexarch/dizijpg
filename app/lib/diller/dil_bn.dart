@@ -874,4 +874,55 @@ const Map<String, String> cevirilerBn = {
       'এই ব্যবহারকারী তার ফলোয়ার গোপন রাখতে পছন্দ করেন।',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'এই ব্যবহারকারী কাদের ফলো করেন তা গোপন রাখতে পছন্দ করেন।',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'পোস্টের পরিসংখ্যান',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'আপনি কেবল নিজের পোস্টের পরিসংখ্যান দেখতে পারেন।',
+  'Erişim': 'নাগাল',
+  'Görüntüleyen': 'দর্শক',
+  'Kaç farklı kişi gördü (son {} gün)': 'কতজন আলাদা মানুষ দেখেছেন (গত {} দিন)',
+  'Paylaşım': 'শেয়ার',
+  'Bu gönderiden sonra': 'এই পোস্টের পরে',
+  'Profil ziyareti': 'প্রোফাইল ভিজিট',
+  'Yeni takip': 'নতুন ফলো',
+  'İçeriğe tıklama': 'কনটেন্টে ট্যাপ',
+  'Spoiler perdesini açan': 'স্পয়লার খুলেছেন',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'শেয়ার, প্রোফাইল ভিজিট, ফলো, কনটেন্টে ট্যাপ, উৎসের বিভাজন আর স্পয়লারের হিসাব {} থেকে জমছে; এর আগেরটা মাপা হয়নি।',
+  'Zamana yayılmış görüntülenme': 'সময়ের সাথে ভিউ',
+  'Görüntülenme nereden geldi': 'ভিউ কোথা থেকে এল',
+  'Kimler gördü': 'কারা দেখেছে',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'দৈনিক ডেটা এখনও জমা হতে শুরু করেনি।',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'গ্রাফের জন্য অন্তত দুই দিনের ডেটা দরকার। ডেটা {} থেকে জমছে।',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'সবচেয়ে বেশি ভিউ এসেছে পোস্টের {} তম দিনে: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'দৈনিক ভিউ {} থেকে জমছে; এর আগেরটা মাপা হয়নি।',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'উৎসের বিভাজন সবে মাপা শুরু হয়েছে; এই পোস্ট এখনও কোনো ট্যাগ করা ভিউ পায়নি।',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ফলোয়ার/ডিসকভার বিভাজন সবে মাপা শুরু হয়েছে; এখনও কোনো ডেটা নেই।',
+  'Takip edenler': 'ফলোয়ার',
+  'Keşiften gelenler': 'ডিসকভার থেকে',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'সিরিজ/সিনেমা পেজ',
+  'Paylaşılan bağlantı': 'শেয়ার করা লিঙ্ক',
+  'yeni ölçülüyor': 'নতুন মাপা হচ্ছে',
+  'Kendi ortalamanla aynı düzeyde': 'তোমার নিজের গড়ের সমান',
+  'Kendi ortalamanın %{} üstünde': 'তোমার নিজের গড়ের চেয়ে {}% বেশি',
+  'Kendi ortalamanın %{} altında': 'তোমার নিজের গড়ের চেয়ে {}% কম',
+  'Etkileşim oranı': 'এনগেজমেন্ট হার',
+  '(beğeni + yorum) ÷ görüntülenme': '(লাইক + কমেন্ট) ÷ ভিউ',
+  'Toplam görüntülenme': 'মোট ভিউ',
+  '{} ile {} arasında toplam {} görüntülenme': '{} থেকে {} এর মধ্যে মোট {} ভিউ',
+  'İstatistikleri gör': 'পরিসংখ্যান দেখুন',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'পোস্টের মালিককে দেখানো পরিসংখ্যানের জন্য সমষ্টিগত কাউন্টার হিসেবে রাখা হয়: পোস্টটি কতবার এবং কোন পৃষ্ঠ থেকে (ফিড, প্রোফাইল, ফুল-স্ক্রিন ফিড, সিরিজ/সিনেমা পেজ, শেয়ার করা লিঙ্ক) দেখা হয়েছে, দেখার সময় দর্শক পোস্টের মালিককে ফলো করছিলেন কি না, পোস্ট থেকে প্রোফাইল/কনটেন্টে যাওয়া, পোস্টের মাধ্যমে হওয়া ফলো, শেয়ার এবং স্পয়লার পর্দা খোলা। এই কাউন্টারে ব্যবহারকারীর পরিচয়, IP ঠিকানা বা টাইমস্ট্যাম্প থাকে না; কে কী করেছে তা জিজ্ঞেস করা যায় না।',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'একটি পোস্ট কতজন আলাদা মানুষ দেখেছেন তা গুনতে পারার জন্য, প্রতি দর্শকের জন্য একটি অপরিবর্তনীয় কি-যুক্ত ডাইজেস্ট (ব্যবহারকারীর পরিচয় বা IP ঠিকানা থেকে উদ্ভূত ক্রিপ্টোগ্রাফিক সংক্ষেপ) ৯০ দিন রাখা হয়। পোস্টের মালিককে কেবল সংখ্যাটি দেখানো হয়; দর্শকদের পরিচয় কোনো অবস্থাতেই শেয়ার করা হয় না।',
 };

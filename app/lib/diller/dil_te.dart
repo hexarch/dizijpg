@@ -872,4 +872,57 @@ const Map<String, String> cevirilerTe = {
       'ఈ వినియోగదారు తన ఫాలోవర్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ఈ వినియోగదారు ఎవరిని ఫాలో అవుతున్నారో గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'పోస్ట్ గణాంకాలు',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'మీరు మీ సొంత పోస్ట్‌ల గణాంకాలను మాత్రమే చూడగలరు.',
+  'Erişim': 'రీచ్',
+  'Görüntüleyen': 'వీక్షకులు',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'ఎంతమంది వేర్వేరు వ్యక్తులు చూశారు (గత {} రోజులు)',
+  'Paylaşım': 'షేర్‌లు',
+  'Bu gönderiden sonra': 'ఈ పోస్ట్ తర్వాత',
+  'Profil ziyareti': 'ప్రొఫైల్ సందర్శనలు',
+  'Yeni takip': 'కొత్త ఫాలోలు',
+  'İçeriğe tıklama': 'కంటెంట్ ట్యాప్‌లు',
+  'Spoiler perdesini açan': 'స్పాయిలర్ తెరిచారు',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'షేర్‌లు, ప్రొఫైల్ సందర్శనలు, ఫాలోలు, కంటెంట్ ట్యాప్‌లు, మూలాల విభజన మరియు స్పాయిలర్ కొలతలు {} నుండి పోగవుతున్నాయి; అంతకు ముందువి కొలవబడలేదు.',
+  'Zamana yayılmış görüntülenme': 'కాలక్రమేణా వీక్షణలు',
+  'Görüntülenme nereden geldi': 'వీక్షణలు ఎక్కడి నుండి వచ్చాయి',
+  'Kimler gördü': 'ఎవరు చూశారు',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'రోజువారీ డేటా ఇంకా పోగవడం మొదలవలేదు.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'గ్రాఫ్‌కు కనీసం రెండు రోజుల డేటా అవసరం. డేటా {} నుండి పోగవుతోంది.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'అత్యధిక వీక్షణలు పోస్ట్ చేసిన {}వ రోజున వచ్చాయి: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'రోజువారీ వీక్షణలు {} నుండి పోగవుతున్నాయి; అంతకు ముందువి కొలవబడలేదు.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'మూలాల విభజన ఇప్పుడే కొలవడం మొదలైంది; ఈ పోస్ట్‌కు ఇంకా ట్యాగ్ చేసిన వీక్షణ రాలేదు.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ఫాలోవర్/అన్వేషణ విభజన ఇప్పుడే కొలవడం మొదలైంది; ఇంకా డేటా లేదు.',
+  'Takip edenler': 'ఫాలోవర్లు',
+  'Keşiften gelenler': 'అన్వేషణ నుండి',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'సిరీస్/సినిమా పేజీ',
+  'Paylaşılan bağlantı': 'షేర్ చేసిన లింక్',
+  'yeni ölçülüyor': 'కొత్తగా కొలుస్తున్నాం',
+  'Kendi ortalamanla aynı düzeyde': 'నీ సొంత సగటుతో సమానం',
+  'Kendi ortalamanın %{} üstünde': 'నీ సొంత సగటు కంటే {}% ఎక్కువ',
+  'Kendi ortalamanın %{} altında': 'నీ సొంత సగటు కంటే {}% తక్కువ',
+  'Etkileşim oranı': 'ఎంగేజ్‌మెంట్ రేటు',
+  '(beğeni + yorum) ÷ görüntülenme': '(లైక్‌లు + వ్యాఖ్యలు) ÷ వీక్షణలు',
+  'Toplam görüntülenme': 'మొత్తం వీక్షణలు',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} నుండి {} మధ్య మొత్తం {} వీక్షణలు',
+  'İstatistikleri gör': 'గణాంకాలు చూడండి',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'పోస్ట్ యజమానికి చూపే గణాంకాల కోసం సమష్టి కౌంటర్లుగా నిల్వ చేయబడతాయి: పోస్ట్ ఎన్నిసార్లు మరియు ఏ ఉపరితలం నుండి (ఫీడ్, ప్రొఫైల్, పూర్తి స్క్రీన్ ఫీడ్, సిరీస్/సినిమా పేజీ, షేర్ చేసిన లింక్) చూడబడింది, చూసిన వ్యక్తి ఆ సమయంలో పోస్ట్ యజమానిని ఫాలో అవుతున్నారా, పోస్ట్ నుండి ప్రొఫైల్/కంటెంట్‌కు వెళ్లడం, పోస్ట్ ద్వారా ఏర్పడిన ఫాలో, షేర్ మరియు స్పాయిలర్ తెర తెరవడం. ఈ కౌంటర్లలో వినియోగదారు గుర్తింపు, IP చిరునామా లేదా టైమ్‌స్టాంప్ ఉండవు; ఎవరు ఏమి చేశారో ప్రశ్నించలేము.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ఒక పోస్ట్‌ను ఎంతమంది వేర్వేరు వ్యక్తులు చూశారో లెక్కించగలిగేందుకు, ప్రతి వీక్షకుడికి ఒక తిరిగి మార్చలేని కీ ఆధారిత సంక్షిప్తం (వినియోగదారు గుర్తింపు లేదా IP చిరునామా నుండి ఉత్పన్నమైన క్రిప్టోగ్రాఫిక్ కుదింపు) 90 రోజులు నిల్వ ఉంచబడుతుంది. పోస్ట్ యజమానికి కేవలం సంఖ్య మాత్రమే చూపబడుతుంది; వీక్షకుల గుర్తింపు ఏ పరిస్థితిలోనూ పంచుకోబడదు.',
 };

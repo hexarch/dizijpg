@@ -861,4 +861,56 @@ const Map<String, String> cevirilerHe = {
       'רשימת העוקבים של המשתמש הזה מוסתרת.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'רשימת הנעקבים של המשתמש הזה מוסתרת.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'סטטיסטיקת הפוסט',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'אפשר לראות סטטיסטיקה רק של הפוסטים שלך.',
+  'Erişim': 'טווח הגעה',
+  'Görüntüleyen': 'צופים',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'כמה אנשים שונים ראו (‏{} הימים האחרונים)',
+  'Paylaşım': 'שיתופים',
+  'Bu gönderiden sonra': 'אחרי הפוסט הזה',
+  'Profil ziyareti': 'ביקורים בפרופיל',
+  'Yeni takip': 'עוקבים חדשים',
+  'İçeriğe tıklama': 'הקשות על התוכן',
+  'Spoiler perdesini açan': 'חשפו את הספוילר',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'שיתופים, ביקורים בפרופיל, עוקבים, הקשות על התוכן, פילוח מקורות ומדידות ספוילר נאספים מאז {}; מה שקדם לכך לא נמדד.',
+  'Zamana yayılmış görüntülenme': 'צפיות לאורך זמן',
+  'Görüntülenme nereden geldi': 'מאיפה הגיעו הצפיות',
+  'Kimler gördü': 'מי ראה',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'הנתונים היומיים עדיין לא התחילו להצטבר.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'לתרשים דרושים נתונים של יומיים לפחות. הנתונים נאספים מאז {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'רוב הצפיות הגיעו ביום ה-{} אחרי הפרסום: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'הצפיות היומיות נאספות מאז {}; מה שקדם לכך לא נמדד.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'פילוח המקורות רק התחיל להימדד; הפוסט הזה עדיין לא קיבל צפייה מתויגת.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'פילוח העוקבים/הגילוי רק התחיל להימדד; אין עדיין נתונים.',
+  'Takip edenler': 'עוקבים',
+  'Keşiften gelenler': 'מהגילוי',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'עמוד סדרה/סרט',
+  'Paylaşılan bağlantı': 'קישור ששותף',
+  'yeni ölçülüyor': 'נמדד לאחרונה',
+  'Kendi ortalamanla aynı düzeyde': 'ברמת הממוצע שלך',
+  'Kendi ortalamanın %{} üstünde': '{}% מעל הממוצע שלך',
+  'Kendi ortalamanın %{} altında': '{}% מתחת לממוצע שלך',
+  'Etkileşim oranı': 'שיעור מעורבות',
+  '(beğeni + yorum) ÷ görüntülenme': '(לייקים + תגובות) ÷ צפיות',
+  'Toplam görüntülenme': 'סך הצפיות',
+  '{} ile {} arasında toplam {} görüntülenme': 'בין {} ל-{}: {} צפיות בסך הכול',
+  'İstatistikleri gör': 'הצג סטטיסטיקה',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'עבור הסטטיסטיקה שמוצגת לבעלי הפוסט נשמרים כמונים מצטברים: כמה פעמים ומאיזה משטח (פיד, פרופיל, פיד במסך מלא, עמוד סדרה/סרט, קישור ששותף) הפוסט נצפה, האם הצופה עקב באותו רגע אחרי בעלי הפוסט, מעבר מהפוסט לפרופיל או לתוכן, מעקבים שנוצרו דרך הפוסט, שיתופים ופתיחת מסך הספוילר. במונים האלה אין מזהה משתמש, כתובת IP או חותמת זמן; לא ניתן לברר מי עשה מה.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'כדי לאפשר לספור כמה אנשים שונים ראו פוסט, נשמר לכל צופה תקציר עם מפתח בלתי הפיך (קיצור קריפטוגרפי הנגזר ממזהה המשתמש או מכתובת ה-IP) למשך 90 יום. לבעלי הפוסט מוצג רק המספר; זהות הצופים אינה משותפת בשום מצב.',
 };

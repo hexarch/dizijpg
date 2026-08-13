@@ -11,7 +11,10 @@ import '../tema.dart';
 /// 13.08.2026 (md. 37): yönetim panelindeki günlük AGREGAT cihaz sayaçları
 /// beyan edildi — ham User-Agent hiçbir yere yazılmıyor, sayılar kişiye
 /// bağlanamıyor.
-const gizlilikGuncelleme = '13.08.2026';
+/// 14.08.2026 (md. 23): gönderi istatistiklerinin topladığı AGREGAT sayaçlar
+/// ve tekil görüntüleyen sayımı için tutulan geri çevrilemez anahtarlı özet
+/// (90 gün) beyan edildi — gönderi sahibine yalnız SAYI gösterilir.
+const gizlilikGuncelleme = '14.08.2026';
 const gizlilikIletisim = 'iletisim@dizijpg.com';
 
 /// Gizlilik politikası — girişsiz de erişilebilir (yonlendirme beyaz listesi).
@@ -94,6 +97,30 @@ class GizlilikEkrani extends StatelessWidget {
               'tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam '
               'sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu '
               'sayılar kişilere bağlanamaz.',
+            ),
+            // md. 23 — GÖNDERİ İSTATİSTİKLERİ.
+            // Sayaçlar AGREGAT: satır başına kullanıcı kimliği/IP/saat
+            // YAZILMAZ, yalnız gönderi başına toplam artırılır. Tekil
+            // görüntüleyen sayısı için görüntüleyen başına GERİ
+            // ÇEVRİLEMEZ anahtarlı özet 90 gün tutulur; sahibine yalnız
+            // SAYI gösterilir, kimlik hiçbir koşulda paylaşılmaz.
+            _Madde(
+              'Gönderi sahibine gösterilen istatistikler için, gönderinin '
+              'kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, '
+              'dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, '
+              'görüntüleyenin o an gönderi sahibini takip edip etmediği, '
+              'gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan '
+              'takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar '
+              'olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi '
+              'veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.',
+            ),
+            _Madde(
+              'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, '
+              'görüntüleyen başına geri çevrilemez bir anahtarlı özet '
+              '(kullanıcı kimliğinden veya IP adresinden türetilen '
+              'kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine '
+              'yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir '
+              'koşulda paylaşılmaz.',
             ),
             _Madde(
               'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '

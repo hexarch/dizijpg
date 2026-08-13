@@ -886,4 +886,57 @@ const Map<String, String> cevirilerFil = {
       'Mas gusto ng user na ito na itago ang mga follower niya.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Mas gusto ng user na ito na itago kung sino ang sinusundan niya.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Istatistika ng post',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Makikita mo lang ang istatistika ng sarili mong mga post.',
+  'Erişim': 'Abot',
+  'Görüntüleyen': 'Mga nakakita',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Ilang magkakaibang tao ang nakakita (huling {} araw)',
+  'Paylaşım': 'Mga share',
+  'Bu gönderiden sonra': 'Pagkatapos ng post na ito',
+  'Profil ziyareti': 'Mga pagbisita sa profile',
+  'Yeni takip': 'Mga bagong follow',
+  'İçeriğe tıklama': 'Mga tap sa content',
+  'Spoiler perdesini açan': 'Binuksan ang spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Ang mga share, pagbisita sa profile, follow, tap sa content, breakdown ng pinagmulan at sukat ng spoiler ay naiipon mula {}; hindi sinukat ang mas maaga rito.',
+  'Zamana yayılmış görüntülenme': 'Mga view sa paglipas ng panahon',
+  'Görüntülenme nereden geldi': 'Saan nanggaling ang mga view',
+  'Kimler gördü': 'Sino ang nakakita',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Hindi pa nagsisimulang maipon ang pang-araw-araw na data.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Kailangan ng chart ng data ng hindi bababa sa dalawang araw. Naiipon ang data mula {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Pinakamaraming view ang dumating sa ika-{} araw pagkatapos i-post: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Naiipon ang pang-araw-araw na mga view mula {}; hindi sinukat ang mas maaga rito.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Kasisimula pa lang sukatin ang breakdown ng pinagmulan; wala pang natatanggap na naka-tag na view ang post na ito.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Kasisimula pa lang sukatin ang breakdown ng follower/pagtuklas; wala pa ring data.',
+  'Takip edenler': 'Mga follower',
+  'Keşiften gelenler': 'Mula sa Tuklasin',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Pahina ng serye/pelikula',
+  'Paylaşılan bağlantı': 'Na-share na link',
+  'yeni ölçülüyor': 'bagong sinusukat',
+  'Kendi ortalamanla aynı düzeyde': 'Katulad ng sarili mong average',
+  'Kendi ortalamanın %{} üstünde': '{}% na mas mataas sa sarili mong average',
+  'Kendi ortalamanın %{} altında': '{}% na mas mababa sa sarili mong average',
+  'Etkileşim oranı': 'Rate ng engagement',
+  '(beğeni + yorum) ÷ görüntülenme': '(mga like + komento) ÷ mga view',
+  'Toplam görüntülenme': 'Kabuuang mga view',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Sa pagitan ng {} at {}: {} view sa kabuuan',
+  'İstatistikleri gör': 'Tingnan ang istatistika',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Para sa istatistikang ipinapakita sa may-ari ng post, iniingatan bilang pinagsama-samang counter: ilang beses at mula sa aling surface (feed, profile, full-screen na feed, pahina ng serye/pelikula, na-share na link) tiningnan ang post, kung sinusundan ba ng nanood ang may-ari ng post sa sandaling iyon, ang paglipat mula sa post papunta sa profile o content, ang mga follow na nabuo sa pamamagitan ng post, ang mga share, at ang pagbukas ng takip ng spoiler. Walang taglay na pagkakakilanlan ng user, IP address o timestamp ang mga counter na ito; hindi matutunton kung sino ang gumawa ng ano.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Upang mabilang kung ilang magkakaibang tao ang nakakita ng isang post, isang hindi na maibabalik na keyed digest kada manonood (isang cryptographic na pagpapaikli na hango sa pagkakakilanlan ng user o sa IP address) ang iniingatan nang 90 araw. Ang bilang lamang ang ipinapakita sa may-ari ng post; hindi kailanman ibinabahagi ang pagkakakilanlan ng mga nanood sa anumang pagkakataon.',
 };

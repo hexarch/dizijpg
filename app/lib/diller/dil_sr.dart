@@ -876,4 +876,57 @@ const Map<String, String> cevirilerSr = {
       'Овај корисник радије држи своје пратиоце скривеним.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Овај корисник радије држи скривеним кога прати.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Статистика објаве',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Статистика је доступна само за твоје сопствене објаве.',
+  'Erişim': 'Досег',
+  'Görüntüleyen': 'Гледаоци',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Колико различитих људи је видело (последњих {} дана)',
+  'Paylaşım': 'Дељења',
+  'Bu gönderiden sonra': 'После ове објаве',
+  'Profil ziyareti': 'Посете профилу',
+  'Yeni takip': 'Нова праћења',
+  'İçeriğe tıklama': 'Додири на садржај',
+  'Spoiler perdesini açan': 'Открили спојлер',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Дељења, посете профилу, праћења, додири на садржај, расподела по изворима и мерења спојлера сакупљају се од {}; старије није мерено.',
+  'Zamana yayılmış görüntülenme': 'Прегледи кроз време',
+  'Görüntülenme nereden geldi': 'Одакле су дошли прегледи',
+  'Kimler gördü': 'Ко је видео',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Дневни подаци још нису почели да се сакупљају.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Графикону су потребни подаци за најмање два дана. Подаци се сакупљају од {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Највише прегледа стигло је {}. дана након објаве: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Дневни прегледи сакупљају се од {}; старије није мерено.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Расподела по изворима тек је почела да се мери; ова објава још није добила означени преглед.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Расподела пратиоци/откривање тек је почела да се мери; података још нема.',
+  'Takip edenler': 'Пратиоци',
+  'Keşiften gelenler': 'Из откривања',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Страница серије/филма',
+  'Paylaşılan bağlantı': 'Подељена веза',
+  'yeni ölçülüyor': 'ново мерење',
+  'Kendi ortalamanla aynı düzeyde': 'На нивоу твог просека',
+  'Kendi ortalamanın %{} üstünde': '{}% изнад твог просека',
+  'Kendi ortalamanın %{} altında': '{}% испод твог просека',
+  'Etkileşim oranı': 'Стопа интеракције',
+  '(beğeni + yorum) ÷ görüntülenme': '(свиђања + коментари) ÷ прегледи',
+  'Toplam görüntülenme': 'Укупно прегледа',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Између {} и {}: укупно {} прегледа',
+  'İstatistikleri gör': 'Погледај статистику',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'За статистику која се приказује власнику објаве чувају се као збирни бројачи: колико пута и са које површине (фид, профил, фид преко целог екрана, страница серије/филма, подељена веза) је објава прегледана, да ли је гледалац у том тренутку пратио власника објаве, прелазак са објаве на профил или садржај, праћења настала преко објаве, дељења и откривање спојлер завесе. Ови бројачи не садрже идентитет корисника, IP адресу нити временску ознаку; не може се утврдити ко је шта урадио.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Да би се могло избројати колико различитих људи је видело објаву, за сваког гледаоца се 90 дана чува неповратни сажетак са кључем (криптографско скраћење изведено из идентитета корисника или IP адресе). Власнику објаве приказује се само број; идентитет гледалаца се ни под којим условима не дели.',
 };

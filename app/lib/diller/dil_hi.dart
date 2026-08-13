@@ -874,4 +874,56 @@ const Map<String, String> cevirilerHi = {
       'इस यूज़र के फ़ॉलोअर छिपे हुए हैं।',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'यह यूज़र किसे फ़ॉलो करता है यह छिपा हुआ है।',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'पोस्ट के आँकड़े',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'आप केवल अपनी पोस्ट के आँकड़े देख सकते हैं।',
+  'Erişim': 'पहुँच',
+  'Görüntüleyen': 'देखने वाले',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'कितने अलग-अलग लोगों ने देखा (पिछले {} दिन)',
+  'Paylaşım': 'शेयर',
+  'Bu gönderiden sonra': 'इस पोस्ट के बाद',
+  'Profil ziyareti': 'प्रोफ़ाइल विज़िट',
+  'Yeni takip': 'नए फ़ॉलो',
+  'İçeriğe tıklama': 'कंटेंट पर टैप',
+  'Spoiler perdesini açan': 'स्पॉइलर परदा हटाया',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'शेयर, प्रोफ़ाइल विज़िट, फ़ॉलो, कंटेंट पर टैप, स्रोत विवरण और स्पॉइलर माप {} से जमा हो रहे हैं; उससे पहले का मापा नहीं गया।',
+  'Zamana yayılmış görüntülenme': 'समय के साथ व्यू',
+  'Görüntülenme nereden geldi': 'व्यू कहाँ से आए',
+  'Kimler gördü': 'किसने देखा',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'दैनिक डेटा अभी जमा होना शुरू नहीं हुआ है।',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ग्राफ़ के लिए कम से कम दो दिन का डेटा चाहिए। डेटा {} से जमा हो रहा है।',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'सबसे ज़्यादा व्यू पोस्ट करने के {} वें दिन आए: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'दैनिक व्यू {} से जमा हो रहे हैं; उससे पहले का मापा नहीं गया।',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'स्रोत विवरण अभी मापा जाना शुरू हुआ है; इस पोस्ट को अभी तक कोई टैग किया गया व्यू नहीं मिला।',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'फ़ॉलोअर/डिस्कवर विवरण अभी मापा जाना शुरू हुआ है; अभी कोई डेटा नहीं है।',
+  'Takip edenler': 'फ़ॉलोअर',
+  'Keşiften gelenler': 'डिस्कवर से',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'सीरीज़/फ़िल्म पेज',
+  'Paylaşılan bağlantı': 'शेयर किया गया लिंक',
+  'yeni ölçülüyor': 'नया मापा जा रहा',
+  'Kendi ortalamanla aynı düzeyde': 'तुम्हारे अपने औसत के बराबर',
+  'Kendi ortalamanın %{} üstünde': 'तुम्हारे अपने औसत से {}% ऊपर',
+  'Kendi ortalamanın %{} altında': 'तुम्हारे अपने औसत से {}% नीचे',
+  'Etkileşim oranı': 'एंगेजमेंट दर',
+  '(beğeni + yorum) ÷ görüntülenme': '(लाइक + कमेंट) ÷ व्यू',
+  'Toplam görüntülenme': 'कुल व्यू',
+  '{} ile {} arasında toplam {} görüntülenme': '{} और {} के बीच कुल {} व्यू',
+  'İstatistikleri gör': 'आँकड़े देखें',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'पोस्ट के मालिक को दिखाए जाने वाले आँकड़ों के लिए, यह सामूहिक काउंटर के रूप में रखा जाता है कि पोस्ट कितनी बार और किस सतह से (फ़ीड, प्रोफ़ाइल, फ़ुल-स्क्रीन फ़ीड, सीरीज़/फ़िल्म पेज, शेयर किया गया लिंक) देखी गई, देखने वाला उस समय पोस्ट के मालिक को फ़ॉलो कर रहा था या नहीं, पोस्ट से प्रोफ़ाइल/कंटेंट पर जाना, पोस्ट के ज़रिए बना फ़ॉलो, शेयर और स्पॉइलर परदे का खुलना। इन काउंटरों में उपयोगकर्ता पहचान, IP पता या टाइमस्टैम्प नहीं होता; किसने क्या किया, यह पूछा नहीं जा सकता।',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'यह गिनने के लिए कि किसी पोस्ट को कितने अलग-अलग लोगों ने देखा, प्रति दर्शक एक अपरिवर्तनीय कुंजीबद्ध डाइजेस्ट (उपयोगकर्ता पहचान या IP पते से व्युत्पन्न क्रिप्टोग्राफ़िक संक्षेपण) 90 दिनों तक रखा जाता है। पोस्ट के मालिक को केवल संख्या दिखाई जाती है; देखने वालों की पहचान किसी भी परिस्थिति में साझा नहीं की जाती।',
 };

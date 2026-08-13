@@ -873,4 +873,57 @@ const Map<String, String> cevirilerSw = {
       'Mtumiaji huyu anapendelea kuficha wanaomfuata.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Mtumiaji huyu anapendelea kuficha anaowafuata.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Takwimu za chapisho',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Unaweza kuona takwimu za machapisho yako pekee.',
+  'Erişim': 'Ufikiaji',
+  'Görüntüleyen': 'Watazamaji',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Watu tofauti wangapi waliona (siku {} zilizopita)',
+  'Paylaşım': 'Kushirikiwa',
+  'Bu gönderiden sonra': 'Baada ya chapisho hili',
+  'Profil ziyareti': 'Ziara za wasifu',
+  'Yeni takip': 'Wafuasi wapya',
+  'İçeriğe tıklama': 'Mibofyo ya maudhui',
+  'Spoiler perdesini açan': 'Walifungua spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Kushirikiwa, ziara za wasifu, wafuasi, mibofyo ya maudhui, mchanganuo wa vyanzo na vipimo vya spoiler vinakusanywa tangu {}; kabla ya hapo havikupimwa.',
+  'Zamana yayılmış görüntülenme': 'Mionekano kwa muda',
+  'Görüntülenme nereden geldi': 'Mionekano ilitoka wapi',
+  'Kimler gördü': 'Nani aliona',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Data ya kila siku bado haijaanza kukusanywa.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Chati inahitaji data ya angalau siku mbili. Data inakusanywa tangu {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Mionekano mingi ilikuja siku ya {} baada ya kuchapisha: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Mionekano ya kila siku inakusanywa tangu {}; kabla ya hapo haikupimwa.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Mchanganuo wa vyanzo umeanza kupimwa hivi karibuni; chapisho hili bado halijapata mwonekano uliotambulishwa.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Mchanganuo wa wafuasi/ugunduzi umeanza kupimwa hivi karibuni; bado hakuna data.',
+  'Takip edenler': 'Wafuasi',
+  'Keşiften gelenler': 'Kutoka Gundua',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Ukurasa wa mfululizo/filamu',
+  'Paylaşılan bağlantı': 'Kiungo kilichoshirikiwa',
+  'yeni ölçülüyor': 'kipimo kipya',
+  'Kendi ortalamanla aynı düzeyde': 'Sawa na wastani wako',
+  'Kendi ortalamanın %{} üstünde': '{}% juu ya wastani wako',
+  'Kendi ortalamanın %{} altında': '{}% chini ya wastani wako',
+  'Etkileşim oranı': 'Kiwango cha mwingiliano',
+  '(beğeni + yorum) ÷ görüntülenme': '(mapendekezo + maoni) ÷ mionekano',
+  'Toplam görüntülenme': 'Jumla ya mionekano',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Kati ya {} na {}: jumla ya mionekano {}',
+  'İstatistikleri gör': 'Tazama takwimu',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Kwa takwimu zinazoonyeshwa kwa mwenye chapisho, huhifadhiwa kama vihesabu vya jumla: chapisho lilitazamwa mara ngapi na kutoka uso upi (mlisho, wasifu, mlisho wa skrini nzima, ukurasa wa mfululizo/filamu, kiungo kilichoshirikiwa), kama aliyetazama alikuwa akimfuata mwenye chapisho wakati huo, kuhama kutoka chapisho kwenda wasifu au maudhui, ufuasi ulioanzishwa kupitia chapisho, kushirikiwa, na kufunguliwa kwa pazia la spoiler. Vihesabu hivi havina kitambulisho cha mtumiaji, anwani ya IP wala alama ya wakati; haiwezekani kuuliza nani alifanya nini.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Ili kuweza kuhesabu ni watu wangapi tofauti walioona chapisho, muhtasari wenye ufunguo usioweza kutenduliwa kwa kila mtazamaji (ufupisho wa kikriptografia unaotokana na kitambulisho cha mtumiaji au anwani ya IP) huhifadhiwa kwa siku 90. Mwenye chapisho huonyeshwa idadi pekee; utambulisho wa watazamaji hausambazwi kwa hali yoyote.',
 };

@@ -879,4 +879,57 @@ const Map<String, String> cevirilerBg = {
       'Този потребител предпочита да пази последователите си скрити.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Този потребител предпочита да пази скрито кого следва.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Статистика на публикацията',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Статистиката е достъпна само за твоите собствени публикации.',
+  'Erişim': 'Обхват',
+  'Görüntüleyen': 'Зрители',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Колко различни хора са видели (последните {} дни)',
+  'Paylaşım': 'Споделяния',
+  'Bu gönderiden sonra': 'След тази публикация',
+  'Profil ziyareti': 'Посещения на профила',
+  'Yeni takip': 'Нови последвания',
+  'İçeriğe tıklama': 'Докосвания на съдържанието',
+  'Spoiler perdesini açan': 'Разкриха спойлера',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Споделянията, посещенията на профила, последванията, докосванията на съдържанието, разбивката по източници и измерванията за спойлер се натрупват от {}; по-ранното не е измервано.',
+  'Zamana yayılmış görüntülenme': 'Показвания във времето',
+  'Görüntülenme nereden geldi': 'Откъде дойдоха показванията',
+  'Kimler gördü': 'Кой го е видял',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Дневните данни още не са започнали да се натрупват.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Графиката се нуждае от данни поне за два дни. Данните се натрупват от {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Най-много показвания дойдоха на {}-ия ден след публикуването: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Дневните показвания се натрупват от {}; по-ранното не е измервано.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Разбивката по източници едва започна да се измерва; тази публикация още не е получила отбелязано показване.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Разбивката последователи/откриване едва започна да се измерва; още няма данни.',
+  'Takip edenler': 'Последователи',
+  'Keşiften gelenler': 'От Открий',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Страница на сериал/филм',
+  'Paylaşılan bağlantı': 'Споделен линк',
+  'yeni ölçülüyor': 'ново измерване',
+  'Kendi ortalamanla aynı düzeyde': 'На нивото на твоята средна стойност',
+  'Kendi ortalamanın %{} üstünde': 'С {}% над твоята средна стойност',
+  'Kendi ortalamanın %{} altında': 'С {}% под твоята средна стойност',
+  'Etkileşim oranı': 'Ниво на взаимодействие',
+  '(beğeni + yorum) ÷ görüntülenme': '(харесвания + коментари) ÷ показвания',
+  'Toplam görüntülenme': 'Общо показвания',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Между {} и {}: общо {} показвания',
+  'İstatistikleri gör': 'Виж статистиката',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'За статистиката, показвана на автора на публикацията, се пазят като обобщени броячи: колко пъти и от коя повърхност (емисия, профил, емисия на цял екран, страница на сериал/филм, споделен линк) е разгледана публикацията, дали разглеждащият е следвал автора в този момент, преминаването от публикацията към профил или съдържание, последванията, започнали през публикацията, споделянията и отварянето на спойлер завесата. Тези броячи не съдържат идентичност на потребител, IP адрес или времеви печат; не може да се провери кой какво е направил.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'За да може да се преброи колко различни хора са видели дадена публикация, за всеки разглеждащ се пази 90 дни необратима извадка с ключ (криптографско съкращение, изведено от идентичността на потребителя или от IP адреса). На автора на публикацията се показва само числото; самоличността на разглеждащите не се споделя при никакви обстоятелства.',
 };

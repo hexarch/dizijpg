@@ -881,4 +881,57 @@ const Map<String, String> cevirilerTa = {
       'இந்தப் பயனர் தன் பின்தொடர்பவர்களை மறைத்து வைக்க விரும்புகிறார்.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'இந்தப் பயனர் தான் பின்தொடர்பவர்களை மறைத்து வைக்க விரும்புகிறார்.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'இடுகை புள்ளிவிவரங்கள்',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'உங்கள் சொந்த இடுகைகளின் புள்ளிவிவரங்களை மட்டுமே பார்க்க முடியும்.',
+  'Erişim': 'சென்றடைவு',
+  'Görüntüleyen': 'பார்வையாளர்கள்',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'எத்தனை வெவ்வேறு நபர்கள் பார்த்தனர் (கடந்த {} நாட்கள்)',
+  'Paylaşım': 'பகிர்வுகள்',
+  'Bu gönderiden sonra': 'இந்த இடுகைக்குப் பிறகு',
+  'Profil ziyareti': 'சுயவிவரப் பார்வைகள்',
+  'Yeni takip': 'புதிய பின்தொடர்வுகள்',
+  'İçeriğe tıklama': 'உள்ளடக்கத் தட்டல்கள்',
+  'Spoiler perdesini açan': 'ஸ்பாய்லரைத் திறந்தவர்கள்',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'பகிர்வுகள், சுயவிவரப் பார்வைகள், பின்தொடர்வுகள், உள்ளடக்கத் தட்டல்கள், மூல பகுப்பாய்வு மற்றும் ஸ்பாய்லர் அளவீடுகள் {} முதல் சேர்ந்து வருகின்றன; அதற்கு முந்தையவை அளவிடப்படவில்லை.',
+  'Zamana yayılmış görüntülenme': 'காலப்போக்கில் பார்வைகள்',
+  'Görüntülenme nereden geldi': 'பார்வைகள் எங்கிருந்து வந்தன',
+  'Kimler gördü': 'யார் பார்த்தார்கள்',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'தினசரி தரவு இன்னும் சேரத் தொடங்கவில்லை.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'வரைபடத்திற்கு குறைந்தது இரண்டு நாட்களின் தரவு தேவை. தரவு {} முதல் சேர்ந்து வருகிறது.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'அதிக பார்வைகள் இடுகையிட்ட {}ஆம் நாளில் வந்தன: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'தினசரி பார்வைகள் {} முதல் சேர்ந்து வருகின்றன; அதற்கு முந்தையவை அளவிடப்படவில்லை.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'மூல பகுப்பாய்வு இப்போதுதான் அளவிடத் தொடங்கியுள்ளது; இந்த இடுகைக்கு இன்னும் குறியிடப்பட்ட பார்வை வரவில்லை.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'பின்தொடர்பவர்/கண்டறிதல் பகுப்பாய்வு இப்போதுதான் அளவிடத் தொடங்கியுள்ளது; இன்னும் தரவு இல்லை.',
+  'Takip edenler': 'பின்தொடர்பவர்கள்',
+  'Keşiften gelenler': 'கண்டறிதலிலிருந்து',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'தொடர்/திரைப்படப் பக்கம்',
+  'Paylaşılan bağlantı': 'பகிரப்பட்ட இணைப்பு',
+  'yeni ölçülüyor': 'புதிதாக அளக்கப்படுகிறது',
+  'Kendi ortalamanla aynı düzeyde': 'உங்கள் சராசரிக்கு இணையாக',
+  'Kendi ortalamanın %{} üstünde': 'உங்கள் சராசரியை விட {}% அதிகம்',
+  'Kendi ortalamanın %{} altında': 'உங்கள் சராசரியை விட {}% குறைவு',
+  'Etkileşim oranı': 'ஈடுபாட்டு விகிதம்',
+  '(beğeni + yorum) ÷ görüntülenme': '(விருப்பங்கள் + கருத்துகள்) ÷ பார்வைகள்',
+  'Toplam görüntülenme': 'மொத்தப் பார்வைகள்',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} முதல் {} வரை மொத்தம் {} பார்வைகள்',
+  'İstatistikleri gör': 'புள்ளிவிவரங்களைப் பார்',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'இடுகையின் உரிமையாளருக்குக் காட்டப்படும் புள்ளிவிவரங்களுக்காக, இடுகை எத்தனை முறை, எந்த மேற்பரப்பிலிருந்து (ஊட்டம், சுயவிவரம், முழுத்திரை ஊட்டம், தொடர்/திரைப்படப் பக்கம், பகிரப்பட்ட இணைப்பு) பார்க்கப்பட்டது, பார்த்தவர் அப்போது இடுகையின் உரிமையாளரைப் பின்தொடர்ந்தாரா, இடுகையிலிருந்து சுயவிவரம்/உள்ளடக்கத்திற்குச் செல்வது, இடுகை வழியாக ஏற்பட்ட பின்தொடர்வு, பகிர்வு மற்றும் ஸ்பாய்லர் திரை திறப்பு ஆகியவை மொத்தக் கணக்கிகளாகச் சேமிக்கப்படுகின்றன. இந்தக் கணக்கிகளில் பயனர் அடையாளம், IP முகவரி அல்லது நேர முத்திரை இல்லை; யார் என்ன செய்தார் என்பதை வினவ முடியாது.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ஒரு இடுகையை எத்தனை வெவ்வேறு நபர்கள் பார்த்தார்கள் என்பதை எண்ண முடிவதற்காக, ஒவ்வொரு பார்வையாளருக்கும் ஒரு மீளமுடியாத விசைச் சுருக்கம் (பயனர் அடையாளம் அல்லது IP முகவரியிலிருந்து பெறப்பட்ட மறையியல் சுருக்கம்) 90 நாட்கள் சேமிக்கப்படுகிறது. இடுகையின் உரிமையாளருக்கு எண் மட்டுமே காட்டப்படுகிறது; பார்வையாளர்களின் அடையாளம் எந்தச் சூழ்நிலையிலும் பகிரப்படுவதில்லை.',
 };

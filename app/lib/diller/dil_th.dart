@@ -862,4 +862,55 @@ const Map<String, String> cevirilerTh = {
       'ผู้ใช้รายนี้เลือกที่จะซ่อนผู้ติดตามของตน',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ผู้ใช้รายนี้เลือกที่จะซ่อนคนที่ตนติดตาม',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'สถิติโพสต์',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'คุณดูสถิติได้เฉพาะโพสต์ของตัวเองเท่านั้น',
+  'Erişim': 'การเข้าถึง',
+  'Görüntüleyen': 'ผู้ชม',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'มีคนต่างกันกี่คนที่เห็น ({} วันล่าสุด)',
+  'Paylaşım': 'การแชร์',
+  'Bu gönderiden sonra': 'หลังจากโพสต์นี้',
+  'Profil ziyareti': 'การเข้าชมโปรไฟล์',
+  'Yeni takip': 'การติดตามใหม่',
+  'İçeriğe tıklama': 'การแตะเนื้อหา',
+  'Spoiler perdesini açan': 'เปิดดูสปอยล์',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'การแชร์ การเข้าชมโปรไฟล์ การติดตาม การแตะเนื้อหา สัดส่วนแหล่งที่มา และการวัดสปอยล์ สะสมมาตั้งแต่ {} ส่วนก่อนหน้านั้นไม่ได้วัดไว้',
+  'Zamana yayılmış görüntülenme': 'ยอดดูตามช่วงเวลา',
+  'Görüntülenme nereden geldi': 'ยอดดูมาจากที่ใด',
+  'Kimler gördü': 'ใครเห็นบ้าง',
+  'Günlük veri henüz birikmeye başlamadı.': 'ข้อมูลรายวันยังไม่เริ่มสะสม',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'กราฟต้องใช้ข้อมูลอย่างน้อยสองวัน ข้อมูลสะสมมาตั้งแต่ {}',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'ยอดดูสูงสุดมาในวันที่ {} หลังโพสต์: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'ยอดดูรายวันสะสมมาตั้งแต่ {} ส่วนก่อนหน้านั้นไม่ได้วัดไว้',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'เพิ่งเริ่มวัดสัดส่วนแหล่งที่มา โพสต์นี้ยังไม่ได้รับยอดดูที่ระบุแหล่งที่มา',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'เพิ่งเริ่มวัดสัดส่วนผู้ติดตาม/การสำรวจ ยังไม่มีข้อมูล',
+  'Takip edenler': 'ผู้ติดตาม',
+  'Keşiften gelenler': 'จากสำรวจ',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'หน้าซีรีส์/ภาพยนตร์',
+  'Paylaşılan bağlantı': 'ลิงก์ที่แชร์',
+  'yeni ölçülüyor': 'เพิ่งเริ่มวัด',
+  'Kendi ortalamanla aynı düzeyde': 'เท่ากับค่าเฉลี่ยของคุณเอง',
+  'Kendi ortalamanın %{} üstünde': 'สูงกว่าค่าเฉลี่ยของคุณเอง {}%',
+  'Kendi ortalamanın %{} altında': 'ต่ำกว่าค่าเฉลี่ยของคุณเอง {}%',
+  'Etkileşim oranı': 'อัตราการมีส่วนร่วม',
+  '(beğeni + yorum) ÷ görüntülenme': '(ถูกใจ + ความคิดเห็น) ÷ ยอดดู',
+  'Toplam görüntülenme': 'ยอดดูทั้งหมด',
+  '{} ile {} arasında toplam {} görüntülenme': 'ระหว่าง {} ถึง {} รวม {} ยอดดู',
+  'İstatistikleri gör': 'ดูสถิติ',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'สำหรับสถิติที่แสดงแก่เจ้าของโพสต์ ระบบเก็บเป็นตัวนับรวมว่า โพสต์ถูกดูกี่ครั้งและจากพื้นผิวใด (ฟีด โปรไฟล์ ฟีดเต็มจอ หน้าซีรีส์/ภาพยนตร์ ลิงก์ที่แชร์) ผู้ดูกำลังติดตามเจ้าของโพสต์อยู่ในขณะนั้นหรือไม่ การย้ายจากโพสต์ไปยังโปรไฟล์หรือเนื้อหา การติดตามที่เกิดขึ้นผ่านโพสต์ การแชร์ และการเปิดม่านสปอยล์ ตัวนับเหล่านี้ไม่มีอัตลักษณ์ผู้ใช้ ที่อยู่ IP หรือประทับเวลา จึงไม่สามารถสืบค้นได้ว่าใครทำอะไร',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'เพื่อให้นับได้ว่ามีคนต่างกันกี่คนที่เห็นโพสต์หนึ่ง ระบบจะเก็บค่าย่อยแบบมีกุญแจที่ย้อนกลับไม่ได้สำหรับผู้ชมแต่ละคน (ค่าย่อทางวิทยาการเข้ารหัสลับที่ได้จากอัตลักษณ์ผู้ใช้หรือที่อยู่ IP) ไว้ 90 วัน เจ้าของโพสต์จะเห็นเพียงตัวเลขเท่านั้น ตัวตนของผู้ชมจะไม่ถูกเปิดเผยไม่ว่ากรณีใด',
 };

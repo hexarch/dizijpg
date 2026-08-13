@@ -875,4 +875,57 @@ const Map<String, String> cevirilerDa = {
       'Denne bruger foretrækker at holde sine følgere private.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Denne bruger foretrækker at holde privat, hvem vedkommende følger.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statistik for opslaget',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Du kan kun se statistik for dine egne opslag.',
+  'Erişim': 'Rækkevidde',
+  'Görüntüleyen': 'Seere',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Hvor mange forskellige personer der så det (seneste {} dage)',
+  'Paylaşım': 'Delinger',
+  'Bu gönderiden sonra': 'Efter dette opslag',
+  'Profil ziyareti': 'Profilbesøg',
+  'Yeni takip': 'Nye følgere',
+  'İçeriğe tıklama': 'Tryk på indhold',
+  'Spoiler perdesini açan': 'Afslørede spoileren',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Delinger, profilbesøg, følgere, tryk på indhold, kildefordeling og spoilermålinger samles fra {}; alt før det blev ikke målt.',
+  'Zamana yayılmış görüntülenme': 'Visninger over tid',
+  'Görüntülenme nereden geldi': 'Hvor visningerne kom fra',
+  'Kimler gördü': 'Hvem der så det',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'De daglige data er endnu ikke begyndt at samle sig.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Diagrammet kræver data for mindst to dage. Data samles fra {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Flest visninger kom på dag {} efter opslaget: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Daglige visninger samles fra {}; alt før det blev ikke målt.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Kildefordelingen er lige begyndt at blive målt; dette opslag har endnu ikke fået en tagget visning.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Fordelingen mellem følgere og udforsk er lige begyndt at blive målt; der er ingen data endnu.',
+  'Takip edenler': 'Følgere',
+  'Keşiften gelenler': 'Fra Udforsk',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Serie-/filmside',
+  'Paylaşılan bağlantı': 'Delt link',
+  'yeni ölçülüyor': 'nyligt målt',
+  'Kendi ortalamanla aynı düzeyde': 'På niveau med dit eget gennemsnit',
+  'Kendi ortalamanın %{} üstünde': '{} % over dit eget gennemsnit',
+  'Kendi ortalamanın %{} altında': '{} % under dit eget gennemsnit',
+  'Etkileşim oranı': 'Interaktionsrate',
+  '(beğeni + yorum) ÷ görüntülenme': '(likes + kommentarer) ÷ visninger',
+  'Toplam görüntülenme': 'Visninger i alt',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Mellem {} og {}: {} visninger i alt',
+  'İstatistikleri gör': 'Se statistik',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Til statistikken, der vises til den, der har lavet opslaget, gemmes som samlede tællere: hvor mange gange og fra hvilken flade (feed, profil, fuldskærmsfeed, serie-/filmside, delt link) opslaget blev set, om den, der så det, fulgte opslagets ejer på det tidspunkt, skiftet fra opslaget til en profil eller til indhold, følgninger opstået via opslaget, delinger og åbning af spoilersløret. Disse tællere indeholder ingen brugeridentitet, IP-adresse eller tidsstempel; det kan ikke slås op, hvem der gjorde hvad.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'For at kunne tælle, hvor mange forskellige personer der har set et opslag, gemmes der pr. seer et uigenkaldeligt nøglebaseret sammendrag (en kryptografisk forkortelse afledt af brugeridentiteten eller IP-adressen) i 90 dage. Opslagets ejer får kun vist tallet; seernes identitet deles under ingen omstændigheder.',
 };

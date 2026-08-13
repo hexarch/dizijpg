@@ -881,4 +881,57 @@ const Map<String, String> cevirilerRo = {
       'Acest utilizator preferă să-și țină urmăritorii privați.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Acest utilizator preferă să țină privat pe cine urmărește.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statisticile postării',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Poți vedea statisticile doar pentru propriile postări.',
+  'Erişim': 'Acoperire',
+  'Görüntüleyen': 'Vizualizatori',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Câți oameni diferiți au văzut (ultimele {} zile)',
+  'Paylaşım': 'Distribuiri',
+  'Bu gönderiden sonra': 'După această postare',
+  'Profil ziyareti': 'Vizite pe profil',
+  'Yeni takip': 'Urmăriri noi',
+  'İçeriğe tıklama': 'Atingeri pe conținut',
+  'Spoiler perdesini açan': 'Au dezvăluit spoilerul',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Distribuirile, vizitele pe profil, urmăririle, atingerile pe conținut, defalcarea pe surse și măsurătorile de spoiler se acumulează din {}; ce a fost înainte nu a fost măsurat.',
+  'Zamana yayılmış görüntülenme': 'Vizualizări în timp',
+  'Görüntülenme nereden geldi': 'De unde au venit vizualizările',
+  'Kimler gördü': 'Cine a văzut',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Datele zilnice încă nu au început să se acumuleze.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Graficul are nevoie de cel puțin două zile de date. Datele se acumulează din {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Cele mai multe vizualizări au venit în ziua {} după publicare: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Vizualizările zilnice se acumulează din {}; ce a fost înainte nu a fost măsurat.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Defalcarea pe surse abia a început să fie măsurată; această postare nu a primit încă o vizualizare etichetată.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Defalcarea urmăritori/descoperire abia a început să fie măsurată; încă nu există date.',
+  'Takip edenler': 'Urmăritori',
+  'Keşiften gelenler': 'Din Descoperă',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Pagina serialului/filmului',
+  'Paylaşılan bağlantı': 'Link distribuit',
+  'yeni ölçülüyor': 'măsurare nouă',
+  'Kendi ortalamanla aynı düzeyde': 'La nivelul mediei tale',
+  'Kendi ortalamanın %{} üstünde': 'Cu {}% peste media ta',
+  'Kendi ortalamanın %{} altında': 'Cu {}% sub media ta',
+  'Etkileşim oranı': 'Rata de interacțiune',
+  '(beğeni + yorum) ÷ görüntülenme': '(aprecieri + comentarii) ÷ vizualizări',
+  'Toplam görüntülenme': 'Total vizualizări',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Între {} și {}: {} vizualizări în total',
+  'İstatistikleri gör': 'Vezi statisticile',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Pentru statisticile arătate persoanei care a publicat, se păstrează sub formă de contoare agregate: de câte ori și de pe ce suprafață (flux, profil, flux pe ecran complet, pagina serialului/filmului, link distribuit) a fost vizualizată postarea, dacă persoana care a vizualizat urmărea în acel moment autorul postării, trecerea de la postare la profil sau la conținut, urmăririle începute din postare, distribuirile și deschiderea cortinei de spoiler. Aceste contoare nu conțin identitate de utilizator, adresă IP sau marcaj de timp; nu se poate afla cine ce a făcut.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Pentru a putea număra câți oameni diferiți au văzut o postare, pentru fiecare persoană care a vizualizat-o se păstrează 90 de zile un rezumat cu cheie ireversibil (o condensare criptografică derivată din identitatea de utilizator sau din adresa IP). Persoanei care a publicat i se arată doar numărul; identitatea celor care au vizualizat nu este partajată în nicio situație.',
 };

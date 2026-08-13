@@ -878,4 +878,57 @@ const Map<String, String> cevirilerUk = {
       'Цей користувач воліє тримати своїх підписників прихованими.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Цей користувач воліє тримати свої підписки прихованими.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Статистика допису',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Статистика доступна лише для твоїх власних дописів.',
+  'Erişim': 'Охоплення',
+  'Görüntüleyen': 'Глядачі',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Скільки різних людей побачили (останні {} дн.)',
+  'Paylaşım': 'Поширення',
+  'Bu gönderiden sonra': 'Після цього допису',
+  'Profil ziyareti': 'Переходи в профіль',
+  'Yeni takip': 'Нові підписки',
+  'İçeriğe tıklama': 'Переходи до контенту',
+  'Spoiler perdesini açan': 'Відкрили спойлер',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Поширення, переходи в профіль, підписки, переходи до контенту, розподіл за джерелами та вимірювання спойлера накопичуються з {}; раніше це не вимірювалося.',
+  'Zamana yayılmış görüntülenme': 'Перегляди за часом',
+  'Görüntülenme nereden geldi': 'Звідки прийшли перегляди',
+  'Kimler gördü': 'Хто побачив',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Щоденні дані ще не почали накопичуватися.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Для графіка потрібні дані щонайменше за два дні. Дані накопичуються з {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Найбільше переглядів припало на {}-й день після публікації: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Щоденні перегляди накопичуються з {}; раніше це не вимірювалося.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Розподіл за джерелами почали вимірювати щойно; цей допис ще не отримав жодного позначеного перегляду.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Розподіл «підписники/огляд» почали вимірювати щойно; даних поки немає.',
+  'Takip edenler': 'Підписники',
+  'Keşiften gelenler': 'З огляду',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Сторінка серіалу/фільму',
+  'Paylaşılan bağlantı': 'Надіслане посилання',
+  'yeni ölçülüyor': 'нове вимірювання',
+  'Kendi ortalamanla aynı düzeyde': 'На рівні твого середнього',
+  'Kendi ortalamanın %{} üstünde': 'На {}% вище твого середнього',
+  'Kendi ortalamanın %{} altında': 'На {}% нижче твого середнього',
+  'Etkileşim oranı': 'Рівень залученості',
+  '(beğeni + yorum) ÷ görüntülenme': '(вподобання + коментарі) ÷ перегляди',
+  'Toplam görüntülenme': 'Усього переглядів',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'З {} по {}: усього {} переглядів',
+  'İstatistikleri gör': 'Переглянути статистику',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Для статистики, яку бачить автор допису, у вигляді зведених лічильників зберігається: скільки разів і з якої поверхні (стрічка, профіль, повноекранна стрічка, сторінка серіалу/фільму, надіслане посилання) допис переглянули, чи був глядач у той момент підписаний на автора, переходи з допису в профіль або до контенту, підписки, оформлені через допис, поширення та відкриття спойлерної завіси. У цих лічильниках немає ані ідентифікатора користувача, ані IP-адреси, ані позначки часу; дізнатися, хто що зробив, неможливо.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Щоб можна було порахувати, скільки різних людей побачили допис, для кожного глядача на 90 днів зберігається незворотна згортка з ключем (криптографічне скорочення, виведене з ідентифікатора користувача або IP-адреси). Автору допису показується лише число; особи глядачів не розкриваються за жодних обставин.',
 };

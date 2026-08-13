@@ -870,4 +870,56 @@ const Map<String, String> cevirilerGu = {
       'આ યુઝર પોતાના ફોલોઅર ખાનગી રાખવાનું પસંદ કરે છે.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'આ યુઝર કોને ફોલો કરે છે એ ખાનગી રાખવાનું પસંદ કરે છે.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'પોસ્ટના આંકડા',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'તમે ફક્ત તમારી પોતાની પોસ્ટના આંકડા જોઈ શકો છો.',
+  'Erişim': 'પહોંચ',
+  'Görüntüleyen': 'જોનારા',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'કેટલા જુદા જુદા લોકોએ જોયું (છેલ્લા {} દિવસ)',
+  'Paylaşım': 'શેર',
+  'Bu gönderiden sonra': 'આ પોસ્ટ પછી',
+  'Profil ziyareti': 'પ્રોફાઇલ મુલાકાત',
+  'Yeni takip': 'નવા ફોલો',
+  'İçeriğe tıklama': 'કન્ટેન્ટ પર ટૅપ',
+  'Spoiler perdesini açan': 'સ્પોઇલર ખોલ્યું',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'શેર, પ્રોફાઇલ મુલાકાત, ફોલો, કન્ટેન્ટ પર ટૅપ, સ્રોત વિભાજન અને સ્પોઇલર માપ {} થી એકઠા થાય છે; તે પહેલાંનું માપવામાં આવ્યું નથી.',
+  'Zamana yayılmış görüntülenme': 'સમય સાથે વ્યૂ',
+  'Görüntülenme nereden geldi': 'વ્યૂ ક્યાંથી આવ્યા',
+  'Kimler gördü': 'કોણે જોયું',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'દૈનિક ડેટા હજી એકઠો થવા લાગ્યો નથી.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ગ્રાફ માટે ઓછામાં ઓછા બે દિવસનો ડેટા જોઈએ. ડેટા {} થી એકઠો થાય છે.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'સૌથી વધુ વ્યૂ પોસ્ટ કર્યાના {} મા દિવસે આવ્યા: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'દૈનિક વ્યૂ {} થી એકઠા થાય છે; તે પહેલાંનું માપવામાં આવ્યું નથી.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'સ્રોત વિભાજન હમણાં જ માપવાનું શરૂ થયું છે; આ પોસ્ટને હજી સુધી કોઈ ટૅગ કરેલ વ્યૂ મળ્યો નથી.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ફોલોઅર/ડિસ્કવર વિભાજન હમણાં જ માપવાનું શરૂ થયું છે; હજી કોઈ ડેટા નથી.',
+  'Takip edenler': 'ફોલોઅર',
+  'Keşiften gelenler': 'ડિસ્કવરમાંથી',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'સિરીઝ/ફિલ્મ પેજ',
+  'Paylaşılan bağlantı': 'શેર કરેલી લિંક',
+  'yeni ölçülüyor': 'નવું માપન',
+  'Kendi ortalamanla aynı düzeyde': 'તારા પોતાના સરેરાશ જેટલું',
+  'Kendi ortalamanın %{} üstünde': 'તારા પોતાના સરેરાશ કરતાં {}% વધુ',
+  'Kendi ortalamanın %{} altında': 'તારા પોતાના સરેરાશ કરતાં {}% ઓછું',
+  'Etkileşim oranı': 'એંગેજમેન્ટ દર',
+  '(beğeni + yorum) ÷ görüntülenme': '(લાઇક + કમેન્ટ) ÷ વ્યૂ',
+  'Toplam görüntülenme': 'કુલ વ્યૂ',
+  '{} ile {} arasında toplam {} görüntülenme': '{} અને {} વચ્ચે કુલ {} વ્યૂ',
+  'İstatistikleri gör': 'આંકડા જુઓ',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'પોસ્ટના માલિકને બતાવાતા આંકડા માટે સામૂહિક કાઉન્ટર તરીકે રખાય છે: પોસ્ટ કેટલી વાર અને કઈ સપાટીથી (ફીડ, પ્રોફાઇલ, ફુલ-સ્ક્રીન ફીડ, સિરીઝ/ફિલ્મ પેજ, શેર કરેલી લિંક) જોવાઈ, જોનાર તે સમયે પોસ્ટના માલિકને ફોલો કરતો હતો કે નહીં, પોસ્ટથી પ્રોફાઇલ/કન્ટેન્ટ પર જવું, પોસ્ટ દ્વારા થયેલો ફોલો, શેર અને સ્પોઇલર પડદો ખૂલવો. આ કાઉન્ટરમાં વપરાશકર્તાની ઓળખ, IP સરનામું કે ટાઇમસ્ટેમ્પ હોતું નથી; કોણે શું કર્યું તે પૂછી શકાતું નથી.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'કોઈ પોસ્ટ કેટલા જુદા જુદા લોકોએ જોઈ તે ગણી શકાય તે માટે, દરેક જોનાર માટે એક અપરિવર્તનીય કી-આધારિત સારાંશ (વપરાશકર્તાની ઓળખ કે IP સરનામાંમાંથી મેળવેલ ક્રિપ્ટોગ્રાફિક સંક્ષેપ) 90 દિવસ સાચવવામાં આવે છે. પોસ્ટના માલિકને ફક્ત સંખ્યા બતાવાય છે; જોનારાઓની ઓળખ કોઈ પણ સંજોગોમાં શેર કરાતી નથી.',
 };

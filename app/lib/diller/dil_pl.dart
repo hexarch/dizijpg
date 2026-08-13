@@ -882,4 +882,57 @@ const Map<String, String> cevirilerPl = {
       'Ten użytkownik woli, by lista obserwujących pozostała prywatna.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Ten użytkownik woli, by lista obserwowanych pozostała prywatna.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Statystyki posta',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Statystyki są widoczne tylko dla twoich własnych postów.',
+  'Erişim': 'Zasięg',
+  'Görüntüleyen': 'Oglądający',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Ile różnych osób to zobaczyło (ostatnie {} dni)',
+  'Paylaşım': 'Udostępnienia',
+  'Bu gönderiden sonra': 'Po tym poście',
+  'Profil ziyareti': 'Wizyty w profilu',
+  'Yeni takip': 'Nowe obserwacje',
+  'İçeriğe tıklama': 'Kliknięcia treści',
+  'Spoiler perdesini açan': 'Odkryli spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Udostępnienia, wizyty w profilu, obserwacje, kliknięcia treści, podział na źródła i pomiary spoilera gromadzą się od {}; wcześniejsze nie były mierzone.',
+  'Zamana yayılmış görüntülenme': 'Wyświetlenia w czasie',
+  'Görüntülenme nereden geldi': 'Skąd pochodzą wyświetlenia',
+  'Kimler gördü': 'Kto to zobaczył',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Dane dzienne jeszcze się nie zaczęły gromadzić.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Wykres wymaga danych z co najmniej dwóch dni. Dane gromadzą się od {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Najwięcej wyświetleń przyszło {}. dnia po opublikowaniu: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Dzienne wyświetlenia gromadzą się od {}; wcześniejsze nie były mierzone.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Podział na źródła dopiero zaczął być mierzony; ten post nie otrzymał jeszcze oznaczonego wyświetlenia.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Podział na obserwujących i odkrywanie dopiero zaczął być mierzony; nie ma jeszcze danych.',
+  'Takip edenler': 'Obserwujący',
+  'Keşiften gelenler': 'Z odkrywania',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Strona serialu/filmu',
+  'Paylaşılan bağlantı': 'Udostępniony link',
+  'yeni ölçülüyor': 'nowy pomiar',
+  'Kendi ortalamanla aynı düzeyde': 'Na poziomie twojej średniej',
+  'Kendi ortalamanın %{} üstünde': '{}% powyżej twojej średniej',
+  'Kendi ortalamanın %{} altında': '{}% poniżej twojej średniej',
+  'Etkileşim oranı': 'Wskaźnik zaangażowania',
+  '(beğeni + yorum) ÷ görüntülenme': '(polubienia + komentarze) ÷ wyświetlenia',
+  'Toplam görüntülenme': 'Łączne wyświetlenia',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Od {} do {}: łącznie {} wyświetleń',
+  'İstatistikleri gör': 'Zobacz statystyki',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Na potrzeby statystyk pokazywanych osobie, która opublikowała post, przechowywane są jako zbiorcze liczniki: ile razy i z jakiej powierzchni (kanał, profil, kanał pełnoekranowy, strona serialu/filmu, udostępniony link) post został wyświetlony, czy osoba oglądająca obserwowała w tym momencie autora posta, przejścia z posta do profilu lub treści, obserwacje rozpoczęte przez post, udostępnienia oraz odsłonięcia kurtyny spoilera. Te liczniki nie zawierają identyfikatora użytkownika, adresu IP ani znacznika czasu; nie da się sprawdzić, kto co zrobił.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Aby móc policzyć, ile różnych osób zobaczyło post, dla każdej osoby oglądającej przechowywany jest przez 90 dni nieodwracalny skrót z kluczem (kryptograficzne skrócenie wyprowadzone z identyfikatora użytkownika lub adresu IP). Autorowi posta pokazywana jest wyłącznie liczba; tożsamość osób oglądających nie jest udostępniana w żadnych okolicznościach.',
 };

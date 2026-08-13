@@ -878,4 +878,56 @@ const Map<String, String> cevirilerMl = {
       'ഈ ഉപയോക്താവ് ഫോളോവർമാരെ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ഈ ഉപയോക്താവ് താൻ ഫോളോ ചെയ്യുന്നവരെ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'പോസ്റ്റ് സ്ഥിതിവിവരക്കണക്കുകൾ',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'നിങ്ങളുടെ സ്വന്തം പോസ്റ്റുകളുടെ സ്ഥിതിവിവരക്കണക്കുകൾ മാത്രമേ കാണാനാകൂ.',
+  'Erişim': 'എത്തിച്ചേരൽ',
+  'Görüntüleyen': 'കണ്ടവർ',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'എത്ര വ്യത്യസ്ത ആളുകൾ കണ്ടു (കഴിഞ്ഞ {} ദിവസം)',
+  'Paylaşım': 'പങ്കിടലുകൾ',
+  'Bu gönderiden sonra': 'ഈ പോസ്റ്റിന് ശേഷം',
+  'Profil ziyareti': 'പ്രൊഫൈൽ സന്ദർശനങ്ങൾ',
+  'Yeni takip': 'പുതിയ ഫോളോകൾ',
+  'İçeriğe tıklama': 'ഉള്ളടക്ക ടാപ്പുകൾ',
+  'Spoiler perdesini açan': 'സ്പോയിലർ തുറന്നവർ',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'പങ്കിടലുകൾ, പ്രൊഫൈൽ സന്ദർശനങ്ങൾ, ഫോളോകൾ, ഉള്ളടക്ക ടാപ്പുകൾ, ഉറവിട വിഭജനം, സ്പോയിലർ അളവുകൾ എന്നിവ {} മുതൽ ശേഖരിക്കപ്പെടുന്നു; അതിനു മുൻപുള്ളത് അളന്നിട്ടില്ല.',
+  'Zamana yayılmış görüntülenme': 'കാലക്രമേണയുള്ള കാഴ്ചകൾ',
+  'Görüntülenme nereden geldi': 'കാഴ്ചകൾ എവിടെ നിന്നു വന്നു',
+  'Kimler gördü': 'ആരു കണ്ടു',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'ദൈനംദിന ഡാറ്റ ഇതുവരെ ശേഖരിക്കപ്പെടാൻ തുടങ്ങിയിട്ടില്ല.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ഗ്രാഫിന് കുറഞ്ഞത് രണ്ട് ദിവസത്തെ ഡാറ്റ വേണം. ഡാറ്റ {} മുതൽ ശേഖരിക്കപ്പെടുന്നു.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'ഏറ്റവും കൂടുതൽ കാഴ്ചകൾ പോസ്റ്റ് ചെയ്ത് {}-ാം ദിവസം വന്നു: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'ദൈനംദിന കാഴ്ചകൾ {} മുതൽ ശേഖരിക്കപ്പെടുന്നു; അതിനു മുൻപുള്ളത് അളന്നിട്ടില്ല.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'ഉറവിട വിഭജനം അളക്കാൻ ഇപ്പോൾ മാത്രമാണ് തുടങ്ങിയത്; ഈ പോസ്റ്റിന് ഇതുവരെ ടാഗ് ചെയ്ത കാഴ്ച ലഭിച്ചിട്ടില്ല.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ഫോളോവർ/കണ്ടെത്തൽ വിഭജനം അളക്കാൻ ഇപ്പോൾ മാത്രമാണ് തുടങ്ങിയത്; ഇതുവരെ ഡാറ്റ ഇല്ല.',
+  'Takip edenler': 'ഫോളോവർമാർ',
+  'Keşiften gelenler': 'കണ്ടെത്തലിൽ നിന്ന്',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'സീരീസ്/സിനിമ പേജ്',
+  'Paylaşılan bağlantı': 'പങ്കിട്ട ലിങ്ക്',
+  'yeni ölçülüyor': 'പുതുതായി അളക്കുന്നു',
+  'Kendi ortalamanla aynı düzeyde': 'നിങ്ങളുടെ ശരാശരിക്ക് ഒപ്പം',
+  'Kendi ortalamanın %{} üstünde': 'നിങ്ങളുടെ ശരാശരിയെക്കാൾ {}% കൂടുതൽ',
+  'Kendi ortalamanın %{} altında': 'നിങ്ങളുടെ ശരാശരിയെക്കാൾ {}% കുറവ്',
+  'Etkileşim oranı': 'ഇടപഴകൽ നിരക്ക്',
+  '(beğeni + yorum) ÷ görüntülenme': '(ലൈക്കുകൾ + കമന്റുകൾ) ÷ കാഴ്ചകൾ',
+  'Toplam görüntülenme': 'ആകെ കാഴ്ചകൾ',
+  '{} ile {} arasında toplam {} görüntülenme': '{} മുതൽ {} വരെ ആകെ {} കാഴ്ചകൾ',
+  'İstatistikleri gör': 'സ്ഥിതിവിവരക്കണക്ക് കാണുക',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'പോസ്റ്റിന്റെ ഉടമയ്ക്ക് കാണിക്കുന്ന സ്ഥിതിവിവരക്കണക്കുകൾക്കായി സമാഹൃത കൗണ്ടറുകളായി സൂക്ഷിക്കുന്നു: പോസ്റ്റ് എത്ര തവണ, ഏത് പ്രതലത്തിൽ നിന്ന് (ഫീഡ്, പ്രൊഫൈൽ, പൂർണ്ണസ്ക്രീൻ ഫീഡ്, സീരീസ്/സിനിമ പേജ്, പങ്കിട്ട ലിങ്ക്) കണ്ടു, കണ്ടയാൾ അപ്പോൾ പോസ്റ്റിന്റെ ഉടമയെ ഫോളോ ചെയ്തിരുന്നോ, പോസ്റ്റിൽ നിന്ന് പ്രൊഫൈലിലേക്കോ ഉള്ളടക്കത്തിലേക്കോ പോകൽ, പോസ്റ്റ് വഴി ഉണ്ടായ ഫോളോ, പങ്കിടൽ, സ്പോയിലർ മറ തുറക്കൽ. ഈ കൗണ്ടറുകളിൽ ഉപയോക്തൃ ഐഡന്റിറ്റിയോ IP വിലാസമോ ടൈംസ്റ്റാമ്പോ ഇല്ല; ആരു എന്തു ചെയ്തു എന്ന് ചോദിക്കാനാവില്ല.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ഒരു പോസ്റ്റ് എത്ര വ്യത്യസ്ത ആളുകൾ കണ്ടു എന്ന് എണ്ണാൻ കഴിയാൻ, ഓരോ കാഴ്ചക്കാരനും ഒരു തിരിച്ചെടുക്കാനാവാത്ത കീ അധിഷ്ഠിത സംഗ്രഹം (ഉപയോക്തൃ ഐഡന്റിറ്റിയിൽ നിന്നോ IP വിലാസത്തിൽ നിന്നോ ഉരുത്തിരിഞ്ഞ ക്രിപ്റ്റോഗ്രാഫിക് ചുരുക്കം) 90 ദിവസം സൂക്ഷിക്കുന്നു. പോസ്റ്റിന്റെ ഉടമയ്ക്ക് എണ്ണം മാത്രമേ കാണിക്കൂ; കാഴ്ചക്കാരുടെ ഐഡന്റിറ്റി ഒരു സാഹചര്യത്തിലും പങ്കിടില്ല.',
 };

@@ -872,4 +872,56 @@ const Map<String, String> cevirilerPa = {
       'ਇਸ ਵਰਤੋਂਕਾਰ ਦੇ ਫਾਲੋਅਰ ਲੁਕਾਏ ਹੋਏ ਹਨ।',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ਇਹ ਵਰਤੋਂਕਾਰ ਕਿਸ ਨੂੰ ਫਾਲੋ ਕਰਦਾ ਹੈ, ਇਹ ਲੁਕਾਇਆ ਹੋਇਆ ਹੈ।',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'ਪੋਸਟ ਦੇ ਅੰਕੜੇ',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'ਤੁਸੀਂ ਸਿਰਫ਼ ਆਪਣੀਆਂ ਪੋਸਟਾਂ ਦੇ ਅੰਕੜੇ ਦੇਖ ਸਕਦੇ ਹੋ।',
+  'Erişim': 'ਪਹੁੰਚ',
+  'Görüntüleyen': 'ਦੇਖਣ ਵਾਲੇ',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'ਕਿੰਨੇ ਵੱਖ-ਵੱਖ ਲੋਕਾਂ ਨੇ ਦੇਖਿਆ (ਪਿਛਲੇ {} ਦਿਨ)',
+  'Paylaşım': 'ਸਾਂਝੇ',
+  'Bu gönderiden sonra': 'ਇਸ ਪੋਸਟ ਤੋਂ ਬਾਅਦ',
+  'Profil ziyareti': 'ਪ੍ਰੋਫਾਈਲ ਫੇਰੀਆਂ',
+  'Yeni takip': 'ਨਵੇਂ ਫਾਲੋ',
+  'İçeriğe tıklama': 'ਸਮੱਗਰੀ ਉੱਤੇ ਟੈਪ',
+  'Spoiler perdesini açan': 'ਸਪੌਇਲਰ ਖੋਲ੍ਹਿਆ',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'ਸਾਂਝੇ, ਪ੍ਰੋਫਾਈਲ ਫੇਰੀਆਂ, ਫਾਲੋ, ਸਮੱਗਰੀ ਉੱਤੇ ਟੈਪ, ਸਰੋਤਾਂ ਦੀ ਵੰਡ ਅਤੇ ਸਪੌਇਲਰ ਮਾਪ {} ਤੋਂ ਇਕੱਠੇ ਹੋ ਰਹੇ ਹਨ; ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਮਾਪਿਆ ਨਹੀਂ ਗਿਆ।',
+  'Zamana yayılmış görüntülenme': 'ਸਮੇਂ ਨਾਲ ਵਿਊਜ਼',
+  'Görüntülenme nereden geldi': 'ਵਿਊਜ਼ ਕਿੱਥੋਂ ਆਏ',
+  'Kimler gördü': 'ਕਿਸ ਨੇ ਦੇਖਿਆ',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'ਰੋਜ਼ਾਨਾ ਡਾਟਾ ਹਾਲੇ ਇਕੱਠਾ ਹੋਣਾ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਇਆ।',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ਗ੍ਰਾਫ਼ ਲਈ ਘੱਟੋ-ਘੱਟ ਦੋ ਦਿਨ ਦਾ ਡਾਟਾ ਚਾਹੀਦਾ ਹੈ। ਡਾਟਾ {} ਤੋਂ ਇਕੱਠਾ ਹੋ ਰਿਹਾ ਹੈ।',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'ਸਭ ਤੋਂ ਵੱਧ ਵਿਊਜ਼ ਪੋਸਟ ਕਰਨ ਦੇ {} ਵੇਂ ਦਿਨ ਆਏ: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'ਰੋਜ਼ਾਨਾ ਵਿਊਜ਼ {} ਤੋਂ ਇਕੱਠੇ ਹੋ ਰਹੇ ਹਨ; ਇਸ ਤੋਂ ਪਹਿਲਾਂ ਦਾ ਮਾਪਿਆ ਨਹੀਂ ਗਿਆ।',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'ਸਰੋਤਾਂ ਦੀ ਵੰਡ ਹੁਣੇ ਮਾਪੀ ਜਾਣੀ ਸ਼ੁਰੂ ਹੋਈ ਹੈ; ਇਸ ਪੋਸਟ ਨੂੰ ਹਾਲੇ ਤੱਕ ਕੋਈ ਟੈਗ ਕੀਤਾ ਵਿਊ ਨਹੀਂ ਮਿਲਿਆ।',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ਫਾਲੋਅਰ/ਡਿਸਕਵਰ ਵੰਡ ਹੁਣੇ ਮਾਪੀ ਜਾਣੀ ਸ਼ੁਰੂ ਹੋਈ ਹੈ; ਹਾਲੇ ਕੋਈ ਡਾਟਾ ਨਹੀਂ।',
+  'Takip edenler': 'ਫਾਲੋਅਰ',
+  'Keşiften gelenler': 'ਡਿਸਕਵਰ ਤੋਂ',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'ਸੀਰੀਜ਼/ਫ਼ਿਲਮ ਪੰਨਾ',
+  'Paylaşılan bağlantı': 'ਸਾਂਝਾ ਕੀਤਾ ਲਿੰਕ',
+  'yeni ölçülüyor': 'ਨਵਾਂ ਮਾਪ',
+  'Kendi ortalamanla aynı düzeyde': 'ਤੁਹਾਡੀ ਆਪਣੀ ਔਸਤ ਦੇ ਬਰਾਬਰ',
+  'Kendi ortalamanın %{} üstünde': 'ਤੁਹਾਡੀ ਆਪਣੀ ਔਸਤ ਤੋਂ {}% ਵੱਧ',
+  'Kendi ortalamanın %{} altında': 'ਤੁਹਾਡੀ ਆਪਣੀ ਔਸਤ ਤੋਂ {}% ਘੱਟ',
+  'Etkileşim oranı': 'ਸ਼ਮੂਲੀਅਤ ਦਰ',
+  '(beğeni + yorum) ÷ görüntülenme': '(ਲਾਈਕ + ਟਿੱਪਣੀਆਂ) ÷ ਵਿਊਜ਼',
+  'Toplam görüntülenme': 'ਕੁੱਲ ਵਿਊਜ਼',
+  '{} ile {} arasında toplam {} görüntülenme': '{} ਅਤੇ {} ਵਿਚਕਾਰ ਕੁੱਲ {} ਵਿਊਜ਼',
+  'İstatistikleri gör': 'ਅੰਕੜੇ ਦੇਖੋ',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਦਿਖਾਏ ਜਾਂਦੇ ਅੰਕੜਿਆਂ ਲਈ ਸਮੂਹਿਕ ਕਾਊਂਟਰਾਂ ਵਜੋਂ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ: ਪੋਸਟ ਕਿੰਨੀ ਵਾਰ ਅਤੇ ਕਿਸ ਸਤਹ ਤੋਂ (ਫੀਡ, ਪ੍ਰੋਫਾਈਲ, ਪੂਰੀ ਸਕਰੀਨ ਫੀਡ, ਸੀਰੀਜ਼/ਫ਼ਿਲਮ ਪੰਨਾ, ਸਾਂਝਾ ਕੀਤਾ ਲਿੰਕ) ਦੇਖੀ ਗਈ, ਦੇਖਣ ਵਾਲਾ ਉਸ ਵੇਲੇ ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਫਾਲੋ ਕਰ ਰਿਹਾ ਸੀ ਜਾਂ ਨਹੀਂ, ਪੋਸਟ ਤੋਂ ਪ੍ਰੋਫਾਈਲ/ਸਮੱਗਰੀ ਉੱਤੇ ਜਾਣਾ, ਪੋਸਟ ਰਾਹੀਂ ਬਣਿਆ ਫਾਲੋ, ਸਾਂਝ ਅਤੇ ਸਪੌਇਲਰ ਪਰਦੇ ਦਾ ਖੁੱਲ੍ਹਣਾ। ਇਹਨਾਂ ਕਾਊਂਟਰਾਂ ਵਿੱਚ ਵਰਤੋਂਕਾਰ ਦੀ ਪਛਾਣ, IP ਪਤਾ ਜਾਂ ਟਾਈਮਸਟੈਂਪ ਨਹੀਂ ਹੁੰਦਾ; ਕਿਸ ਨੇ ਕੀ ਕੀਤਾ, ਇਹ ਪੁੱਛਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ।',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ਕਿਸੇ ਪੋਸਟ ਨੂੰ ਕਿੰਨੇ ਵੱਖ-ਵੱਖ ਲੋਕਾਂ ਨੇ ਦੇਖਿਆ, ਇਹ ਗਿਣਨ ਲਈ ਹਰ ਦੇਖਣ ਵਾਲੇ ਵਾਸਤੇ ਇੱਕ ਨਾ-ਪਲਟਣਯੋਗ ਕੁੰਜੀ-ਅਧਾਰਿਤ ਸਾਰ (ਵਰਤੋਂਕਾਰ ਦੀ ਪਛਾਣ ਜਾਂ IP ਪਤੇ ਤੋਂ ਲਿਆ ਕ੍ਰਿਪਟੋਗ੍ਰਾਫਿਕ ਸੰਖੇਪ) 90 ਦਿਨ ਸੰਭਾਲਿਆ ਜਾਂਦਾ ਹੈ। ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਸਿਰਫ਼ ਗਿਣਤੀ ਦਿਖਾਈ ਜਾਂਦੀ ਹੈ; ਦੇਖਣ ਵਾਲਿਆਂ ਦੀ ਪਛਾਣ ਕਿਸੇ ਵੀ ਹਾਲਤ ਵਿੱਚ ਸਾਂਝੀ ਨਹੀਂ ਕੀਤੀ ਜਾਂਦੀ।',
 };

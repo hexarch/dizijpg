@@ -877,4 +877,57 @@ const Map<String, String> cevirilerRu = {
       'Этот пользователь предпочитает не показывать своих подписчиков.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Этот пользователь предпочитает не показывать свои подписки.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Статистика публикации',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Статистика доступна только для твоих собственных публикаций.',
+  'Erişim': 'Охват',
+  'Görüntüleyen': 'Зрители',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Сколько разных людей увидели (последние {} дн.)',
+  'Paylaşım': 'Репосты',
+  'Bu gönderiden sonra': 'После этой публикации',
+  'Profil ziyareti': 'Переходы в профиль',
+  'Yeni takip': 'Новые подписки',
+  'İçeriğe tıklama': 'Переходы к контенту',
+  'Spoiler perdesini açan': 'Открыли спойлер',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Репосты, переходы в профиль, подписки, переходы к контенту, разбивка по источникам и данные о спойлере накапливаются с {}; более раннее не измерялось.',
+  'Zamana yayılmış görüntülenme': 'Просмотры по времени',
+  'Görüntülenme nereden geldi': 'Откуда пришли просмотры',
+  'Kimler gördü': 'Кто увидел',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Ежедневные данные ещё не начали накапливаться.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Для графика нужны данные минимум за два дня. Данные накапливаются с {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Больше всего просмотров пришло на {}-й день после публикации: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Ежедневные просмотры накапливаются с {}; более раннее не измерялось.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Разбивка по источникам начала измеряться только сейчас; у этой публикации ещё нет ни одного размеченного просмотра.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Разбивка «подписчики/обзор» начала измеряться только сейчас; данных пока нет.',
+  'Takip edenler': 'Подписчики',
+  'Keşiften gelenler': 'Из обзора',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Страница сериала/фильма',
+  'Paylaşılan bağlantı': 'Отправленная ссылка',
+  'yeni ölçülüyor': 'новое измерение',
+  'Kendi ortalamanla aynı düzeyde': 'На уровне твоего среднего',
+  'Kendi ortalamanın %{} üstünde': 'На {}% выше твоего среднего',
+  'Kendi ortalamanın %{} altında': 'На {}% ниже твоего среднего',
+  'Etkileşim oranı': 'Уровень вовлечённости',
+  '(beğeni + yorum) ÷ görüntülenme': '(лайки + комментарии) ÷ просмотры',
+  'Toplam görüntülenme': 'Всего просмотров',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'С {} по {}: всего {} просмотров',
+  'İstatistikleri gör': 'Посмотреть статистику',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Для статистики, которая показывается автору публикации, в виде агрегированных счётчиков хранится: сколько раз и с какой поверхности (лента, профиль, полноэкранная лента, страница сериала/фильма, отправленная ссылка) публикацию просмотрели, был ли зритель в тот момент подписан на автора, переходы из публикации в профиль или к контенту, подписки, оформленные через публикацию, репосты и раскрытие спойлерной шторки. В этих счётчиках нет ни идентификатора пользователя, ни IP-адреса, ни отметки времени; узнать, кто что сделал, невозможно.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Чтобы можно было посчитать, сколько разных людей увидели публикацию, для каждого зрителя на 90 дней сохраняется необратимая свёртка с ключом (криптографическое сокращение, выведенное из идентификатора пользователя или IP-адреса). Автору публикации показывается только число; личность зрителей не раскрывается ни при каких обстоятельствах.',
 };

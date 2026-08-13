@@ -875,4 +875,57 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಬಳಕೆದಾರ ತನ್ನ ಫಾಲೋವರ್‌ಗಳನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ಈ ಬಳಕೆದಾರ ಯಾರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತಾರೆಂಬುದನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'ಪೋಸ್ಟ್ ಅಂಕಿಅಂಶಗಳು',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'ನಿಮ್ಮ ಸ್ವಂತ ಪೋಸ್ಟ್‌ಗಳ ಅಂಕಿಅಂಶಗಳನ್ನು ಮಾತ್ರ ನೋಡಬಹುದು.',
+  'Erişim': 'ತಲುಪುವಿಕೆ',
+  'Görüntüleyen': 'ವೀಕ್ಷಕರು',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'ಎಷ್ಟು ಬೇರೆ ಬೇರೆ ಜನ ನೋಡಿದರು (ಕಳೆದ {} ದಿನ)',
+  'Paylaşım': 'ಹಂಚಿಕೆಗಳು',
+  'Bu gönderiden sonra': 'ಈ ಪೋಸ್ಟ್ ನಂತರ',
+  'Profil ziyareti': 'ಪ್ರೊಫೈಲ್ ಭೇಟಿಗಳು',
+  'Yeni takip': 'ಹೊಸ ಫಾಲೋಗಳು',
+  'İçeriğe tıklama': 'ವಿಷಯ ಟ್ಯಾಪ್‌ಗಳು',
+  'Spoiler perdesini açan': 'ಸ್ಪಾಯ್ಲರ್ ತೆರೆದವರು',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'ಹಂಚಿಕೆಗಳು, ಪ್ರೊಫೈಲ್ ಭೇಟಿಗಳು, ಫಾಲೋಗಳು, ವಿಷಯ ಟ್ಯಾಪ್‌ಗಳು, ಮೂಲಗಳ ವಿಂಗಡಣೆ ಮತ್ತು ಸ್ಪಾಯ್ಲರ್ ಅಳತೆಗಳು {} ರಿಂದ ಸಂಗ್ರಹವಾಗುತ್ತಿವೆ; ಅದಕ್ಕೂ ಹಿಂದಿನದನ್ನು ಅಳೆಯಲಾಗಿಲ್ಲ.',
+  'Zamana yayılmış görüntülenme': 'ಕಾಲಾನಂತರ ವೀಕ್ಷಣೆಗಳು',
+  'Görüntülenme nereden geldi': 'ವೀಕ್ಷಣೆಗಳು ಎಲ್ಲಿಂದ ಬಂದವು',
+  'Kimler gördü': 'ಯಾರು ನೋಡಿದರು',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'ದೈನಂದಿನ ದತ್ತಾಂಶ ಇನ್ನೂ ಸಂಗ್ರಹವಾಗಲು ಪ್ರಾರಂಭಿಸಿಲ್ಲ.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ಗ್ರಾಫ್‌ಗೆ ಕನಿಷ್ಠ ಎರಡು ದಿನಗಳ ದತ್ತಾಂಶ ಬೇಕು. ದತ್ತಾಂಶ {} ರಿಂದ ಸಂಗ್ರಹವಾಗುತ್ತಿದೆ.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'ಅತಿ ಹೆಚ್ಚು ವೀಕ್ಷಣೆಗಳು ಪೋಸ್ಟ್ ಮಾಡಿದ {}ನೇ ದಿನ ಬಂದವು: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'ದೈನಂದಿನ ವೀಕ್ಷಣೆಗಳು {} ರಿಂದ ಸಂಗ್ರಹವಾಗುತ್ತಿವೆ; ಅದಕ್ಕೂ ಹಿಂದಿನದನ್ನು ಅಳೆಯಲಾಗಿಲ್ಲ.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'ಮೂಲಗಳ ವಿಂಗಡಣೆಯನ್ನು ಈಗಷ್ಟೇ ಅಳೆಯಲು ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ; ಈ ಪೋಸ್ಟ್‌ಗೆ ಇನ್ನೂ ಟ್ಯಾಗ್ ಮಾಡಿದ ವೀಕ್ಷಣೆ ಬಂದಿಲ್ಲ.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'ಫಾಲೋವರ್/ಅನ್ವೇಷಣೆ ವಿಂಗಡಣೆಯನ್ನು ಈಗಷ್ಟೇ ಅಳೆಯಲು ಪ್ರಾರಂಭಿಸಲಾಗಿದೆ; ಇನ್ನೂ ದತ್ತಾಂಶ ಇಲ್ಲ.',
+  'Takip edenler': 'ಫಾಲೋವರ್‌ಗಳು',
+  'Keşiften gelenler': 'ಅನ್ವೇಷಣೆಯಿಂದ',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'ಸರಣಿ/ಚಲನಚಿತ್ರ ಪುಟ',
+  'Paylaşılan bağlantı': 'ಹಂಚಿದ ಲಿಂಕ್',
+  'yeni ölçülüyor': 'ಹೊಸದಾಗಿ ಅಳೆಯುತ್ತಿದೆ',
+  'Kendi ortalamanla aynı düzeyde': 'ನಿಮ್ಮ ಸ್ವಂತ ಸರಾಸರಿಗೆ ಸಮ',
+  'Kendi ortalamanın %{} üstünde': 'ನಿಮ್ಮ ಸ್ವಂತ ಸರಾಸರಿಗಿಂತ {}% ಹೆಚ್ಚು',
+  'Kendi ortalamanın %{} altında': 'ನಿಮ್ಮ ಸ್ವಂತ ಸರಾಸರಿಗಿಂತ {}% ಕಡಿಮೆ',
+  'Etkileşim oranı': 'ತೊಡಗಿಸಿಕೊಳ್ಳುವಿಕೆ ದರ',
+  '(beğeni + yorum) ÷ görüntülenme': '(ಇಷ್ಟಗಳು + ಕಾಮೆಂಟ್‌ಗಳು) ÷ ವೀಕ್ಷಣೆಗಳು',
+  'Toplam görüntülenme': 'ಒಟ್ಟು ವೀಕ್ಷಣೆಗಳು',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} ರಿಂದ {} ನಡುವೆ ಒಟ್ಟು {} ವೀಕ್ಷಣೆಗಳು',
+  'İstatistikleri gör': 'ಅಂಕಿಅಂಶ ನೋಡಿ',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'ಪೋಸ್ಟ್ ಮಾಲೀಕರಿಗೆ ತೋರಿಸುವ ಅಂಕಿಅಂಶಗಳಿಗಾಗಿ ಸಮಷ್ಟಿ ಕೌಂಟರ್‌ಗಳಾಗಿ ಇರಿಸಲಾಗುತ್ತದೆ: ಪೋಸ್ಟ್ ಎಷ್ಟು ಬಾರಿ ಮತ್ತು ಯಾವ ಮೇಲ್ಮೈಯಿಂದ (ಫೀಡ್, ಪ್ರೊಫೈಲ್, ಪೂರ್ಣ ಪರದೆ ಫೀಡ್, ಸರಣಿ/ಚಲನಚಿತ್ರ ಪುಟ, ಹಂಚಿದ ಲಿಂಕ್) ವೀಕ್ಷಿಸಲಾಯಿತು, ವೀಕ್ಷಿಸಿದವರು ಆ ಕ್ಷಣದಲ್ಲಿ ಪೋಸ್ಟ್ ಮಾಲೀಕರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತಿದ್ದರೇ, ಪೋಸ್ಟ್‌ನಿಂದ ಪ್ರೊಫೈಲ್/ವಿಷಯಕ್ಕೆ ಹೋಗುವುದು, ಪೋಸ್ಟ್ ಮೂಲಕ ಆದ ಫಾಲೋ, ಹಂಚಿಕೆ ಮತ್ತು ಸ್ಪಾಯ್ಲರ್ ಪರದೆ ತೆರೆಯುವಿಕೆ. ಈ ಕೌಂಟರ್‌ಗಳಲ್ಲಿ ಬಳಕೆದಾರ ಗುರುತು, IP ವಿಳಾಸ ಅಥವಾ ಸಮಯಮುದ್ರೆ ಇರುವುದಿಲ್ಲ; ಯಾರು ಏನು ಮಾಡಿದರು ಎಂದು ಪ್ರಶ್ನಿಸಲಾಗದು.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ಒಂದು ಪೋಸ್ಟ್ ಅನ್ನು ಎಷ್ಟು ಬೇರೆ ಬೇರೆ ಜನ ನೋಡಿದರು ಎಂಬುದನ್ನು ಎಣಿಸಲು, ಪ್ರತಿ ವೀಕ್ಷಕರಿಗೆ ಒಂದು ಹಿಂತಿರುಗಿಸಲಾಗದ ಕೀ ಆಧಾರಿತ ಸಾರಾಂಶವನ್ನು (ಬಳಕೆದಾರ ಗುರುತು ಅಥವಾ IP ವಿಳಾಸದಿಂದ ಪಡೆದ ಗೂಢಲಿಪಿ ಸಂಕ್ಷೇಪ) 90 ದಿನ ಸಂಗ್ರಹಿಸಲಾಗುತ್ತದೆ. ಪೋಸ್ಟ್ ಮಾಲೀಕರಿಗೆ ಕೇವಲ ಸಂಖ್ಯೆ ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತದೆ; ವೀಕ್ಷಕರ ಗುರುತನ್ನು ಯಾವುದೇ ಸಂದರ್ಭದಲ್ಲಿಯೂ ಹಂಚಲಾಗುವುದಿಲ್ಲ.',
 };

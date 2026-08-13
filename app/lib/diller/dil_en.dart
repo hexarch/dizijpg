@@ -875,4 +875,57 @@ const Map<String, String> cevirilerEn = {
       'This user prefers to keep their followers private.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'This user prefers to keep who they follow private.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Post statistics',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'You can only see statistics for your own posts.',
+  'Erişim': 'Reach',
+  'Görüntüleyen': 'Viewers',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'How many different people saw it (last {} days)',
+  'Paylaşım': 'Shares',
+  'Bu gönderiden sonra': 'After this post',
+  'Profil ziyareti': 'Profile visits',
+  'Yeni takip': 'New follows',
+  'İçeriğe tıklama': 'Content taps',
+  'Spoiler perdesini açan': 'Revealed the spoiler',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Shares, profile visits, follows, content taps, source breakdown and spoiler measurements have been accumulating since {}; anything earlier was not measured.',
+  'Zamana yayılmış görüntülenme': 'Views over time',
+  'Görüntülenme nereden geldi': 'Where views came from',
+  'Kimler gördü': 'Who saw it',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Daily data hasn’t started building up yet.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'The chart needs at least two days of data. Data has been accumulating since {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Most views came on day {} after posting: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Daily views have been accumulating since {}; anything earlier was not measured.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'The source breakdown has only just started being measured; this post hasn’t received a tagged view yet.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'The follower/discovery breakdown has only just started being measured; there is no data yet.',
+  'Takip edenler': 'Followers',
+  'Keşiften gelenler': 'From discovery',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Show/movie page',
+  'Paylaşılan bağlantı': 'Shared link',
+  'yeni ölçülüyor': 'newly measured',
+  'Kendi ortalamanla aynı düzeyde': 'On par with your own average',
+  'Kendi ortalamanın %{} üstünde': '{}% above your own average',
+  'Kendi ortalamanın %{} altında': '{}% below your own average',
+  'Etkileşim oranı': 'Engagement rate',
+  '(beğeni + yorum) ÷ görüntülenme': '(likes + comments) ÷ views',
+  'Toplam görüntülenme': 'Total views',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Between {} and {}: {} views in total',
+  'İstatistikleri gör': 'View statistics',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'For the statistics shown to a post’s owner, aggregate counters are kept of how many times and from which surface (feed, profile, full-screen feed, show/movie page, shared link) the post was viewed, whether the viewer was following the post’s owner at that moment, moves from the post to a profile or to content, follows started from the post, shares and openings of the spoiler cover. These counters contain no user identity, IP address or timestamp; who did what cannot be queried.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'In order to count how many different people saw a post, an irreversible keyed digest per viewer (a cryptographic condensation derived from the user identity or the IP address) is stored for 90 days. Only the number is shown to the post’s owner; the identity of viewers is never shared under any circumstances.',
 };

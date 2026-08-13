@@ -878,4 +878,57 @@ const Map<String, String> cevirilerFi = {
       'Tämä käyttäjä haluaa pitää seuraajansa yksityisinä.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Tämä käyttäjä haluaa pitää yksityisenä, keitä hän seuraa.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Julkaisun tilastot',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Näet tilastot vain omista julkaisuistasi.',
+  'Erişim': 'Kattavuus',
+  'Görüntüleyen': 'Katsojat',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Kuinka moni eri henkilö näki (viimeiset {} päivää)',
+  'Paylaşım': 'Jaot',
+  'Bu gönderiden sonra': 'Tämän julkaisun jälkeen',
+  'Profil ziyareti': 'Profiilikäynnit',
+  'Yeni takip': 'Uudet seuraukset',
+  'İçeriğe tıklama': 'Sisällön napautukset',
+  'Spoiler perdesini açan': 'Paljastivat spoilerin',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Jaot, profiilikäynnit, seuraukset, sisällön napautukset, lähdejakauma ja spoilerimittaukset kertyvät {} alkaen; sitä aiempaa ei mitattu.',
+  'Zamana yayılmış görüntülenme': 'Katselut ajan mittaan',
+  'Görüntülenme nereden geldi': 'Mistä katselut tulivat',
+  'Kimler gördü': 'Ketkä näkivät',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Päivittäistä dataa ei ole vielä alkanut kertyä.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Kaavio tarvitsee vähintään kahden päivän datan. Dataa kertyy {} alkaen.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Eniten katseluja tuli {}. päivänä julkaisun jälkeen: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Päivittäiset katselut kertyvät {} alkaen; sitä aiempaa ei mitattu.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Lähdejakaumaa on alettu mitata vasta äsken; tämä julkaisu ei ole vielä saanut merkittyä katselua.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Seuraaja-/löytöjakaumaa on alettu mitata vasta äsken; dataa ei ole vielä.',
+  'Takip edenler': 'Seuraajat',
+  'Keşiften gelenler': 'Löydä-osiosta',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Sarja-/elokuvasivu',
+  'Paylaşılan bağlantı': 'Jaettu linkki',
+  'yeni ölçülüyor': 'uusi mittaus',
+  'Kendi ortalamanla aynı düzeyde': 'Oman keskiarvosi tasolla',
+  'Kendi ortalamanın %{} üstünde': '{} % oman keskiarvosi yläpuolella',
+  'Kendi ortalamanın %{} altında': '{} % oman keskiarvosi alapuolella',
+  'Etkileşim oranı': 'Vuorovaikutusaste',
+  '(beğeni + yorum) ÷ görüntülenme': '(tykkäykset + kommentit) ÷ katselut',
+  'Toplam görüntülenme': 'Katselut yhteensä',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Välillä {} – {}: yhteensä {} katselua',
+  'İstatistikleri gör': 'Näytä tilastot',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Julkaisun tekijälle näytettäviä tilastoja varten säilytetään koostettuina laskureina: kuinka monta kertaa ja miltä pinnalta (syöte, profiili, koko näytön syöte, sarja-/elokuvasivu, jaettu linkki) julkaisua katsottiin, seurasiko katsoja julkaisun tekijää sillä hetkellä, siirtymä julkaisusta profiiliin tai sisältöön, julkaisun kautta syntyneet seuraukset, jaot ja spoilerverhon avaaminen. Näissä laskureissa ei ole käyttäjätunnistetta, IP-osoitetta eikä aikaleimaa; kuka teki mitä, ei ole selvitettävissä.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Jotta voidaan laskea, kuinka moni eri henkilö näki julkaisun, kutakin katsojaa kohden säilytetään 90 päivän ajan peruuttamaton avaimellinen tiiviste (käyttäjätunnisteesta tai IP-osoitteesta johdettu kryptografinen lyhennys). Julkaisun tekijälle näytetään vain lukumäärä; katsojien henkilöllisyyttä ei jaeta missään olosuhteissa.',
 };

@@ -847,4 +847,54 @@ const Map<String, String> cevirilerKo = {
       '이 사용자는 팔로워를 비공개로 유지하고 있어요.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       '이 사용자는 팔로잉 목록을 비공개로 유지하고 있어요.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': '게시물 통계',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      '본인 게시물의 통계만 볼 수 있어요.',
+  'Erişim': '도달',
+  'Görüntüleyen': '조회한 사람',
+  'Kaç farklı kişi gördü (son {} gün)': '몇 명의 서로 다른 사람이 봤는지 (최근 {}일)',
+  'Paylaşım': '공유 수',
+  'Bu gönderiden sonra': '이 게시물 이후',
+  'Profil ziyareti': '프로필 방문',
+  'Yeni takip': '새 팔로우',
+  'İçeriğe tıklama': '콘텐츠 탭',
+  'Spoiler perdesini açan': '스포일러를 연 사람',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      '공유, 프로필 방문, 팔로우, 콘텐츠 탭, 유입 경로 분석, 스포일러 측정은 {}부터 쌓이고 있어요. 그 이전은 측정되지 않았어요.',
+  'Zamana yayılmış görüntülenme': '시간에 따른 조회수',
+  'Görüntülenme nereden geldi': '조회수 유입 경로',
+  'Kimler gördü': '누가 봤는지',
+  'Günlük veri henüz birikmeye başlamadı.': '일별 데이터가 아직 쌓이기 시작하지 않았어요.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      '그래프에는 최소 이틀치 데이터가 필요해요. 데이터는 {}부터 쌓이고 있어요.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      '조회수가 가장 많았던 날은 게시 후 {}일째예요: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      '일별 조회수는 {}부터 쌓이고 있어요. 그 이전은 측정되지 않았어요.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      '유입 경로 분석은 이제 막 측정을 시작했어요. 이 게시물은 아직 태그된 조회를 받지 않았어요.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      '팔로워/둘러보기 분석은 이제 막 측정을 시작했어요. 아직 데이터가 없어요.',
+  'Takip edenler': '팔로워',
+  'Keşiften gelenler': '둘러보기에서',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': '작품 페이지',
+  'Paylaşılan bağlantı': '공유된 링크',
+  'yeni ölçülüyor': '측정 시작',
+  'Kendi ortalamanla aynı düzeyde': '평소 평균과 같은 수준',
+  'Kendi ortalamanın %{} üstünde': '평소 평균보다 {}% 높음',
+  'Kendi ortalamanın %{} altında': '평소 평균보다 {}% 낮음',
+  'Etkileşim oranı': '참여율',
+  '(beğeni + yorum) ÷ görüntülenme': '(좋아요 + 댓글) ÷ 조회수',
+  'Toplam görüntülenme': '총 조회수',
+  '{} ile {} arasında toplam {} görüntülenme': '{}부터 {}까지 총 {}회 조회',
+  'İstatistikleri gör': '통계 보기',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      '게시물 작성자에게 보여 주는 통계를 위해, 게시물이 몇 번 어느 화면(피드, 프로필, 전체 화면 피드, 작품 페이지, 공유된 링크)에서 조회됐는지, 조회한 사람이 그 시점에 작성자를 팔로우하고 있었는지, 게시물에서 프로필이나 콘텐츠로 이동한 횟수, 게시물을 통해 이뤄진 팔로우, 공유, 스포일러 가림막을 연 횟수를 집계 카운터로 보관해요. 이 카운터에는 사용자 식별자, IP 주소, 타임스탬프가 없어요. 누가 무엇을 했는지 조회할 수 없어요.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      '한 게시물을 몇 명의 서로 다른 사람이 봤는지 셀 수 있도록, 조회한 사람마다 되돌릴 수 없는 키 기반 요약값(사용자 식별자나 IP 주소에서 파생한 암호학적 축약값)을 90일 동안 보관해요. 게시물 작성자에게는 숫자만 보여 줘요. 조회한 사람의 신원은 어떤 경우에도 공유되지 않아요.',
 };

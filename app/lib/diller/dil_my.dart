@@ -887,4 +887,57 @@ const Map<String, String> cevirilerMy = {
       'ဤအသုံးပြုသူသည် မိမိ၏ စောင့်ကြည့်သူများကို လျှို့ဝှက်ထားလိုသည်။',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'ဤအသုံးပြုသူသည် မိမိ စောင့်ကြည့်နေသူများကို လျှို့ဝှက်ထားလိုသည်။',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'ပို့စ် စာရင်းအင်းများ',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'ကိုယ်ပိုင်ပို့စ်များ၏ စာရင်းအင်းများကိုသာ ကြည့်နိုင်သည်။',
+  'Erişim': 'ရောက်ရှိမှု',
+  'Görüntüleyen': 'ကြည့်ရှုသူများ',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'မတူညီသူ ဘယ်နှစ်ဦး မြင်ခဲ့သလဲ (နောက်ဆုံး {} ရက်)',
+  'Paylaşım': 'မျှဝေမှုများ',
+  'Bu gönderiden sonra': 'ဤပို့စ်ပြီးနောက်',
+  'Profil ziyareti': 'ပရိုဖိုင် ဝင်ကြည့်မှု',
+  'Yeni takip': 'စောင့်ကြည့်မှုအသစ်',
+  'İçeriğe tıklama': 'အကြောင်းအရာ နှိပ်မှု',
+  'Spoiler perdesini açan': 'စပွိုင်လာ ဖွင့်ကြည့်သူများ',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'မျှဝေမှုများ၊ ပရိုဖိုင်ဝင်ကြည့်မှု၊ စောင့်ကြည့်မှု၊ အကြောင်းအရာနှိပ်မှု၊ ရင်းမြစ်ခွဲခြမ်းမှုနှင့် စပွိုင်လာတိုင်းတာမှုများကို {} မှစ၍ စုဆောင်းနေသည်။ ထိုမတိုင်မီအရာများကို မတိုင်းတာခဲ့ပါ။',
+  'Zamana yayılmış görüntülenme': 'အချိန်အလိုက် ကြည့်ရှုမှု',
+  'Görüntülenme nereden geldi': 'ကြည့်ရှုမှုများ မည်သည့်နေရာမှ လာသလဲ',
+  'Kimler gördü': 'မည်သူများ မြင်ခဲ့သလဲ',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'နေ့စဉ်ဒေတာ စုဆောင်းမှု မစတင်သေးပါ။',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'ဂရပ်အတွက် အနည်းဆုံး နှစ်ရက်စာ ဒေတာလိုအပ်သည်။ ဒေတာကို {} မှစ၍ စုဆောင်းနေသည်။',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'ကြည့်ရှုမှုအများဆုံးမှာ တင်ပြီး {} ရက်မြောက်နေ့တွင် ဖြစ်သည်: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'နေ့စဉ်ကြည့်ရှုမှုများကို {} မှစ၍ စုဆောင်းနေသည်။ ထိုမတိုင်မီအရာများကို မတိုင်းတာခဲ့ပါ။',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'ရင်းမြစ်ခွဲခြမ်းမှုကို ယခုမှစ၍ တိုင်းတာနေသည်။ ဤပို့စ်သည် အမှတ်အသားပါသော ကြည့်ရှုမှု မရရှိသေးပါ။',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'စောင့်ကြည့်သူ/စူးစမ်းမှု ခွဲခြမ်းမှုကို ယခုမှစ၍ တိုင်းတာနေသည်။ ဒေတာ မရှိသေးပါ။',
+  'Takip edenler': 'စောင့်ကြည့်သူများ',
+  'Keşiften gelenler': 'စူးစမ်းမှုမှ',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'ဇာတ်လမ်းတွဲ/ရုပ်ရှင် စာမျက်နှာ',
+  'Paylaşılan bağlantı': 'မျှဝေထားသော လင့်ခ်',
+  'yeni ölçülüyor': 'အသစ်တိုင်းတာဆဲ',
+  'Kendi ortalamanla aynı düzeyde': 'ကိုယ့်ပျမ်းမျှနှင့် တူညီသည်',
+  'Kendi ortalamanın %{} üstünde': 'ကိုယ့်ပျမ်းမျှထက် {}% ပိုမြင့်',
+  'Kendi ortalamanın %{} altında': 'ကိုယ့်ပျမ်းမျှထက် {}% ပိုနိမ့်',
+  'Etkileşim oranı': 'ပါဝင်ဆက်နွှယ်မှုနှုန်း',
+  '(beğeni + yorum) ÷ görüntülenme': '(နှစ်သက်မှု + မှတ်ချက်) ÷ ကြည့်ရှုမှု',
+  'Toplam görüntülenme': 'စုစုပေါင်း ကြည့်ရှုမှု',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} မှ {} အတွင်း စုစုပေါင်း ကြည့်ရှုမှု {} ကြိမ်',
+  'İstatistikleri gör': 'စာရင်းအင်းများ ကြည့်ရန်',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'ပို့စ်ပိုင်ရှင်အား ပြသသည့် စာရင်းအင်းများအတွက် စုပေါင်းရေတွက်ကိရိယာများအဖြစ် သိမ်းဆည်းသည်— ပို့စ်ကို အကြိမ်မည်မျှ၊ မည်သည့်မျက်နှာပြင်မှ (ဖိဒ်၊ ပရိုဖိုင်၊ မျက်နှာပြင်အပြည့်ဖိဒ်၊ ဇာတ်လမ်းတွဲ/ရုပ်ရှင်စာမျက်နှာ၊ မျှဝေထားသောလင့်ခ်) ကြည့်ရှုခဲ့သည်၊ ကြည့်ရှုသူသည် ထိုအချိန်တွင် ပို့စ်ပိုင်ရှင်ကို စောင့်ကြည့်နေခဲ့သလား၊ ပို့စ်မှ ပရိုဖိုင်/အကြောင်းအရာသို့ ကူးပြောင်းမှု၊ ပို့စ်မှတစ်ဆင့် ဖြစ်ပေါ်လာသော စောင့်ကြည့်မှု၊ မျှဝေမှုနှင့် စပွိုင်လာအကာ ဖွင့်ခြင်း။ ဤရေတွက်ကိရိယာများတွင် အသုံးပြုသူ အမှတ်အသား၊ IP လိပ်စာ သို့မဟုတ် အချိန်တံဆိပ် မပါဝင်ပါ။ မည်သူက မည်သည်ကို ပြုလုပ်ခဲ့သည်ကို စုံစမ်း၍ မရပါ။',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'ပို့စ်တစ်ခုကို မတူညီသူ ဘယ်နှစ်ဦး မြင်ခဲ့သည်ကို ရေတွက်နိုင်ရန်အတွက် ကြည့်ရှုသူတစ်ဦးလျှင် ပြန်လည်ပြောင်းလဲ၍မရသော သော့ပါအကျဉ်းချုပ်တစ်ခု (အသုံးပြုသူအမှတ်အသား သို့မဟုတ် IP လိပ်စာမှ ဆင်းသက်လာသော စာဝှက်ပညာဆိုင်ရာ အကျဉ်းချုံ့မှု) ကို ရက် ၉၀ သိမ်းဆည်းသည်။ ပို့စ်ပိုင်ရှင်အား အရေအတွက်ကိုသာ ပြသသည်။ ကြည့်ရှုသူများ၏ မည်သူမည်ဝါဖြစ်ကြောင်းကို မည်သည့်အခြေအနေတွင်မျှ မမျှဝေပါ။',
 };

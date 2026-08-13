@@ -873,4 +873,57 @@ const Map<String, String> cevirilerMr = {
       'या वापरकर्त्याचे फॉलोअर खाजगी आहेत.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'हा वापरकर्ता कोणाला फॉलो करतो हे खाजगी आहे.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'पोस्टची आकडेवारी',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'तुम्ही फक्त तुमच्या स्वतःच्या पोस्टची आकडेवारी पाहू शकता.',
+  'Erişim': 'पोहोच',
+  'Görüntüleyen': 'पाहणारे',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'किती वेगवेगळ्या लोकांनी पाहिले (मागील {} दिवस)',
+  'Paylaşım': 'शेअर',
+  'Bu gönderiden sonra': 'या पोस्टनंतर',
+  'Profil ziyareti': 'प्रोफाइल भेटी',
+  'Yeni takip': 'नवीन फॉलो',
+  'İçeriğe tıklama': 'कंटेंटवर टॅप',
+  'Spoiler perdesini açan': 'स्पॉयलर उघडले',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'शेअर, प्रोफाइल भेटी, फॉलो, कंटेंटवर टॅप, स्रोत विभाजन आणि स्पॉयलर मोजमापे {} पासून जमा होत आहेत; त्याआधीचे मोजले गेले नाही.',
+  'Zamana yayılmış görüntülenme': 'कालानुसार व्ह्यूज',
+  'Görüntülenme nereden geldi': 'व्ह्यूज कुठून आले',
+  'Kimler gördü': 'कोणी पाहिले',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'दैनंदिन डेटा अद्याप जमा होऊ लागलेला नाही.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'आलेखासाठी किमान दोन दिवसांचा डेटा लागतो. डेटा {} पासून जमा होत आहे.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'सर्वाधिक व्ह्यूज पोस्ट केल्यानंतर {} व्या दिवशी आले: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'दैनंदिन व्ह्यूज {} पासून जमा होत आहेत; त्याआधीचे मोजले गेले नाही.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'स्रोत विभाजन नुकतेच मोजले जाऊ लागले आहे; या पोस्टला अद्याप टॅग केलेला व्ह्यू मिळालेला नाही.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'फॉलोअर/डिस्कव्हर विभाजन नुकतेच मोजले जाऊ लागले आहे; अद्याप डेटा नाही.',
+  'Takip edenler': 'फॉलोअर',
+  'Keşiften gelenler': 'डिस्कव्हरमधून',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'मालिका/चित्रपट पान',
+  'Paylaşılan bağlantı': 'शेअर केलेली लिंक',
+  'yeni ölçülüyor': 'नवीन मोजले जात',
+  'Kendi ortalamanla aynı düzeyde': 'तुझ्या स्वतःच्या सरासरीइतकेच',
+  'Kendi ortalamanın %{} üstünde': 'तुझ्या स्वतःच्या सरासरीपेक्षा {}% जास्त',
+  'Kendi ortalamanın %{} altında': 'तुझ्या स्वतःच्या सरासरीपेक्षा {}% कमी',
+  'Etkileşim oranı': 'सहभाग दर',
+  '(beğeni + yorum) ÷ görüntülenme': '(लाइक + कमेंट) ÷ व्ह्यूज',
+  'Toplam görüntülenme': 'एकूण व्ह्यूज',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} ते {} दरम्यान एकूण {} व्ह्यूज',
+  'İstatistikleri gör': 'आकडेवारी पहा',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'पोस्टच्या मालकाला दाखवल्या जाणाऱ्या आकडेवारीसाठी एकत्रित काउंटर म्हणून ठेवले जाते: पोस्ट किती वेळा आणि कोणत्या पृष्ठभागावरून (फीड, प्रोफाइल, पूर्ण स्क्रीन फीड, मालिका/चित्रपट पान, शेअर केलेली लिंक) पाहिली गेली, पाहणारा त्या वेळी पोस्टच्या मालकाला फॉलो करत होता की नाही, पोस्टवरून प्रोफाइल/कंटेंटवर जाणे, पोस्टद्वारे झालेला फॉलो, शेअर आणि स्पॉयलर पडदा उघडणे. या काउंटरमध्ये वापरकर्ता ओळख, IP पत्ता किंवा टाइमस्टॅम्प नसतो; कोणी काय केले हे विचारता येत नाही.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'एखादी पोस्ट किती वेगवेगळ्या लोकांनी पाहिली हे मोजता यावे म्हणून, प्रत्येक पाहणाऱ्यासाठी एक अपरिवर्तनीय कीयुक्त सारांश (वापरकर्ता ओळख किंवा IP पत्त्यापासून तयार केलेला क्रिप्टोग्राफिक संक्षेप) ९० दिवस ठेवला जातो. पोस्टच्या मालकाला फक्त संख्या दाखवली जाते; पाहणाऱ्यांची ओळख कोणत्याही परिस्थितीत सामायिक केली जात नाही.',
 };

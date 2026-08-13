@@ -887,4 +887,57 @@ const Map<String, String> cevirilerEl = {
       'Αυτός ο χρήστης προτιμά να κρατά τους ακολούθους ιδιωτικούς.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Αυτός ο χρήστης προτιμά να κρατά ιδιωτικούς όσους ακολουθεί.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Στατιστικά δημοσίευσης',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Μπορείς να δεις στατιστικά μόνο για τις δικές σου δημοσιεύσεις.',
+  'Erişim': 'Απήχηση',
+  'Görüntüleyen': 'Θεατές',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Πόσα διαφορετικά άτομα το είδαν (τελευταίες {} ημέρες)',
+  'Paylaşım': 'Κοινοποιήσεις',
+  'Bu gönderiden sonra': 'Μετά από αυτή τη δημοσίευση',
+  'Profil ziyareti': 'Επισκέψεις προφίλ',
+  'Yeni takip': 'Νέες ακολουθήσεις',
+  'İçeriğe tıklama': 'Πατήματα στο περιεχόμενο',
+  'Spoiler perdesini açan': 'Αποκάλυψαν το σπόιλερ',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'Οι κοινοποιήσεις, οι επισκέψεις προφίλ, οι ακολουθήσεις, τα πατήματα στο περιεχόμενο, η ανάλυση πηγών και οι μετρήσεις σπόιλερ συσσωρεύονται από {}· ό,τι προηγήθηκε δεν μετρήθηκε.',
+  'Zamana yayılmış görüntülenme': 'Προβολές στον χρόνο',
+  'Görüntülenme nereden geldi': 'Από πού ήρθαν οι προβολές',
+  'Kimler gördü': 'Ποιοι το είδαν',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'Τα ημερήσια δεδομένα δεν έχουν αρχίσει ακόμα να συσσωρεύονται.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'Το γράφημα χρειάζεται δεδομένα τουλάχιστον δύο ημερών. Τα δεδομένα συσσωρεύονται από {}.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'Οι περισσότερες προβολές ήρθαν την {}η ημέρα μετά τη δημοσίευση: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'Οι ημερήσιες προβολές συσσωρεύονται από {}· ό,τι προηγήθηκε δεν μετρήθηκε.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'Η ανάλυση πηγών μόλις άρχισε να μετριέται· αυτή η δημοσίευση δεν έχει λάβει ακόμη προβολή με ετικέτα.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'Η ανάλυση ακολούθων/ανακάλυψης μόλις άρχισε να μετριέται· δεν υπάρχουν ακόμη δεδομένα.',
+  'Takip edenler': 'Ακόλουθοι',
+  'Keşiften gelenler': 'Από την Ανακάλυψη',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Σελίδα σειράς/ταινίας',
+  'Paylaşılan bağlantı': 'Κοινοποιημένος σύνδεσμος',
+  'yeni ölçülüyor': 'νέα μέτρηση',
+  'Kendi ortalamanla aynı düzeyde': 'Στο επίπεδο του δικού σου μέσου όρου',
+  'Kendi ortalamanın %{} üstünde': '{}% πάνω από τον δικό σου μέσο όρο',
+  'Kendi ortalamanın %{} altında': '{}% κάτω από τον δικό σου μέσο όρο',
+  'Etkileşim oranı': 'Ποσοστό αλληλεπίδρασης',
+  '(beğeni + yorum) ÷ görüntülenme': '(μου αρέσει + σχόλια) ÷ προβολές',
+  'Toplam görüntülenme': 'Συνολικές προβολές',
+  '{} ile {} arasında toplam {} görüntülenme':
+      'Από {} έως {}: {} προβολές συνολικά',
+  'İstatistikleri gör': 'Δες τα στατιστικά',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'Για τα στατιστικά που εμφανίζονται σε όποιον δημοσίευσε, τηρούνται ως συγκεντρωτικοί μετρητές: πόσες φορές και από ποια επιφάνεια (ροή, προφίλ, ροή πλήρους οθόνης, σελίδα σειράς/ταινίας, κοινοποιημένος σύνδεσμος) προβλήθηκε η δημοσίευση, αν όποιος την είδε ακολουθούσε εκείνη τη στιγμή τον δημιουργό της, η μετάβαση από τη δημοσίευση στο προφίλ ή στο περιεχόμενο, οι ακολουθήσεις που ξεκίνησαν από τη δημοσίευση, οι κοινοποιήσεις και το άνοιγμα του πέπλου σπόιλερ. Αυτοί οι μετρητές δεν περιέχουν ταυτότητα χρήστη, διεύθυνση IP ή χρονοσήμανση· δεν μπορεί να αναζητηθεί ποιος έκανε τι.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Για να μπορεί να μετρηθεί πόσα διαφορετικά άτομα είδαν μια δημοσίευση, για κάθε άτομο που την είδε φυλάσσεται για 90 ημέρες μια μη αναστρέψιμη σύνοψη με κλειδί (κρυπτογραφική συμπύκνωση που προκύπτει από την ταυτότητα χρήστη ή τη διεύθυνση IP). Σε όποιον δημοσίευσε εμφανίζεται μόνο ο αριθμός· η ταυτότητα όσων είδαν τη δημοσίευση δεν κοινοποιείται σε καμία περίπτωση.',
 };

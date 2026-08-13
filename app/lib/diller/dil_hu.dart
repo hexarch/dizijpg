@@ -881,4 +881,58 @@ const Map<String, String> cevirilerHu = {
       'Ez a felhasználó inkább priváton tartja a követőit.',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       'Ez a felhasználó inkább priváton tartja, kiket követ.',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': 'Bejegyzés statisztikái',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.':
+      'Csak a saját bejegyzéseid statisztikáit láthatod.',
+  'Erişim': 'Elérés',
+  'Görüntüleyen': 'Megtekintők',
+  'Kaç farklı kişi gördü (son {} gün)':
+      'Hány különböző ember látta (utolsó {} nap)',
+  'Paylaşım': 'Megosztások',
+  'Bu gönderiden sonra': 'A bejegyzés után',
+  'Profil ziyareti': 'Profilmegtekintések',
+  'Yeni takip': 'Új követések',
+  'İçeriğe tıklama': 'Tartalomkoppintások',
+  'Spoiler perdesini açan': 'Felfedték a spoilert',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      'A megosztások, profilmegtekintések, követések, tartalomkoppintások, forrásbontás és spoilermérések {} óta gyűlnek; az ez előttieket nem mértük.',
+  'Zamana yayılmış görüntülenme': 'Megtekintések időben',
+  'Görüntülenme nereden geldi': 'Honnan jöttek a megtekintések',
+  'Kimler gördü': 'Kik látták',
+  'Günlük veri henüz birikmeye başlamadı.':
+      'A napi adatok még nem kezdtek gyűlni.',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      'A diagramhoz legalább két nap adata kell. Az adatok {} óta gyűlnek.',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      'A legtöbb megtekintés a közzététel utáni {}. napon érkezett: {}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      'A napi megtekintések {} óta gyűlnek; az ez előttieket nem mértük.',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      'A forrásbontás mérése épp csak elindult; ez a bejegyzés még nem kapott címkézett megtekintést.',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      'A követői/felfedezési bontás mérése épp csak elindult; még nincs adat.',
+  'Takip edenler': 'Követők',
+  'Keşiften gelenler': 'A Felfedezésből',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': 'Sorozat-/filmoldal',
+  'Paylaşılan bağlantı': 'Megosztott hivatkozás',
+  'yeni ölçülüyor': 'új mérés',
+  'Kendi ortalamanla aynı düzeyde': 'A saját átlagod szintjén',
+  'Kendi ortalamanın %{} üstünde': '{}%-kal a saját átlagod felett',
+  'Kendi ortalamanın %{} altında': '{}%-kal a saját átlagod alatt',
+  'Etkileşim oranı': 'Interakciós arány',
+  '(beğeni + yorum) ÷ görüntülenme':
+      '(kedvelések + hozzászólások) ÷ megtekintések',
+  'Toplam görüntülenme': 'Összes megtekintés',
+  '{} ile {} arasında toplam {} görüntülenme':
+      '{} és {} között összesen {} megtekintés',
+  'İstatistikleri gör': 'Statisztikák megtekintése',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      'A bejegyzés közzétevőjének megjelenített statisztikákhoz összesített számlálóként tároljuk: hányszor és melyik felületről (hírfolyam, profil, teljes képernyős hírfolyam, sorozat-/filmoldal, megosztott hivatkozás) tekintették meg a bejegyzést, a megtekintő abban a pillanatban követte-e a közzétevőt, a bejegyzésből a profilba vagy a tartalomhoz való átlépést, a bejegyzésen keresztül létrejött követéseket, a megosztásokat és a spoilerfüggöny felfedését. Ezek a számlálók nem tartalmaznak felhasználói azonosítót, IP-címet vagy időbélyeget; nem kérdezhető le, ki mit tett.',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      'Annak megszámolásához, hogy hány különböző ember látott egy bejegyzést, megtekintőnként 90 napig tárolunk egy visszafordíthatatlan, kulcsolt kivonatot (a felhasználói azonosítóból vagy az IP-címből származtatott kriptográfiai rövidítést). A közzétevőnek csak a szám jelenik meg; a megtekintők személyazonosságát semmilyen körülmények között nem osztjuk meg.',
 };

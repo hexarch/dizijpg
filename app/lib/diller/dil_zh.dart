@@ -833,4 +833,53 @@ const Map<String, String> cevirilerZh = {
   'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.': '该用户选择不公开自己的粉丝。',
   'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
       '该用户选择不公开自己关注的人。',
+
+  // --- md.23 gönderi istatistikleri ---
+  'Gönderi istatistikleri': '帖子数据',
+  'Yalnız kendi gönderilerinin istatistiklerini görebilirsin.': '你只能查看自己帖子的数据。',
+  'Erişim': '触达',
+  'Görüntüleyen': '观看人数',
+  'Kaç farklı kişi gördü (son {} gün)': '有多少不同的人看过（最近 {} 天）',
+  'Paylaşım': '分享次数',
+  'Bu gönderiden sonra': '看完这条帖子后',
+  'Profil ziyareti': '主页访问',
+  'Yeni takip': '新增关注',
+  'İçeriğe tıklama': '内容点击',
+  'Spoiler perdesini açan': '揭开剧透遮罩',
+  'Paylaşım, profil ziyareti, takip, içeriğe tıklama, kaynak kırılımı ve spoiler ölçüleri {} tarihinden beri birikiyor; daha eskisi ölçülmedi.':
+      '分享、主页访问、关注、内容点击、来源明细和剧透数据自 {} 起开始累积；更早的数据未被统计。',
+  'Zamana yayılmış görüntülenme': '随时间变化的观看',
+  'Görüntülenme nereden geldi': '观看来自哪里',
+  'Kimler gördü': '谁看到了',
+  'Günlük veri henüz birikmeye başlamadı.': '每日数据尚未开始累积。',
+  'Grafik için en az iki günlük veri gerekiyor. Veri {} tarihinden beri birikiyor.':
+      '图表至少需要两天的数据。数据自 {} 起开始累积。',
+  'En çok görüntülenme paylaşımdan sonraki {}. gün geldi: {}':
+      '观看最多的是发布后第 {} 天：{}',
+  'Günlük görüntülenme {} tarihinden beri birikiyor; öncesi ölçülmedi.':
+      '每日观看数据自 {} 起开始累积；更早的数据未被统计。',
+  'Kaynak kırılımı yeni ölçülmeye başladı; bu gönderi henüz etiketli bir görüntülenme almadı.':
+      '来源明细刚开始统计；这条帖子还没有收到带标记的观看。',
+  'Takipçi/keşif kırılımı yeni ölçülmeye başladı; henüz veri yok.':
+      '关注者／发现来源明细刚开始统计；目前还没有数据。',
+  'Takip edenler': '关注者',
+  'Keşiften gelenler': '来自发现',
+  'Reels': 'Reels',
+  'Dizi/film sayfası': '剧集/电影页面',
+  'Paylaşılan bağlantı': '分享的链接',
+  'yeni ölçülüyor': '新开始统计',
+  'Kendi ortalamanla aynı düzeyde': '与你的平均水平持平',
+  'Kendi ortalamanın %{} üstünde': '比你的平均水平高 {}%',
+  'Kendi ortalamanın %{} altında': '比你的平均水平低 {}%',
+  'Etkileşim oranı': '互动率',
+  '(beğeni + yorum) ÷ görüntülenme': '（点赞 + 评论）÷ 观看',
+  'Toplam görüntülenme': '总观看次数',
+  '{} ile {} arasında toplam {} görüntülenme': '{} 至 {} 期间共 {} 次观看',
+  'İstatistikleri gör': '查看数据',
+
+  // --- md.23 gizlilik politikası ---
+  'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o an gönderi sahibini takip edip etmediği, gönderiden profile/içeriğe geçiş, gönderi üzerinden kurulan takip, paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman damgası bulunmaz; kimin ne yaptığı sorgulanamaz.':
+      '为了向帖子作者展示数据，我们以汇总计数器的形式记录：帖子被观看了多少次、来自哪个界面（信息流、个人主页、全屏信息流、剧集/电影页面、分享的链接），观看者当时是否关注了帖子作者，从帖子跳转到主页或内容，通过帖子建立的关注，分享，以及剧透遮罩被揭开的次数。这些计数器不包含用户身份、IP 地址或时间戳；无法查询谁做了什么。',
+  'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
+      '为了统计有多少不同的人看过某条帖子，每位观看者的一个不可逆的带密钥摘要（由用户身份或 IP 地址派生的加密缩略值）会保存 90 天。只向帖子作者展示数字；观看者的身份在任何情况下都不会被分享。',
 };
