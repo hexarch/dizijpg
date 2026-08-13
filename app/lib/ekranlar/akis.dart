@@ -8,6 +8,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gonderi_olcu.dart';
 import '../onbellek.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
@@ -70,7 +71,13 @@ class _AkisEkraniState extends State<AkisEkrani>
     if (_goruldu.isEmpty) return;
     final idler = _goruldu.toList();
     _goruldu.clear();
-    Api.post('/akis/goruldu', {'idler': idler}).catchError((_) => null);
+    // KAYNAK (md. 23): bu uç akış/keşfet/profil/Reels tarafından ORTAK
+    // kullanılıyor; hangisi olduğunu yalnız istemci bilir. Etiketsiz
+    // gönderilirse sunucu "Diğer" kovasına koyar ve kırılım işe yaramaz.
+    Api.post('/akis/goruldu', {
+      'idler': idler,
+      'kaynak': GonderiOlcu.kaynakAkis,
+    }).catchError((_) => null);
   }
 
   @override
@@ -543,7 +550,11 @@ class _AkisKartiState extends State<AkisKarti> {
     });
     widget.yorum['takip_ediyorum'] = true;
     try {
-      final d = await Api.takipToggle(widget.yorum['kullanici_adi'] as String);
+      final d = await Api.takipToggle(
+        widget.yorum['kullanici_adi'] as String,
+        // md. 23 atfı: bu takip AKIŞ KARTINDAN geldi.
+        kaynakGonderi: widget.yorum['id'] as int?,
+      );
       widget.yorum['takip_ediyorum'] = d['takip'] == true;
       if (!mounted) return;
       setState(() => _takipEdiyorum = d['takip'] == true);
@@ -655,9 +666,7 @@ class _AkisKartiState extends State<AkisKarti> {
                         children: [
                           InkWell(
                             customBorder: const CircleBorder(),
-                            onTap: () => context.push(
-                              '/kullanici/${y['kullanici_adi']}',
-                            ),
+                            onTap: () => gonderidenProfile(context, y),
                             child: KullaniciAvatari(
                               url: avatar,
                               kullaniciAdi: y['kullanici_adi'] as String?,
@@ -671,9 +680,7 @@ class _AkisKartiState extends State<AkisKarti> {
                           Flexible(
                             child: InkWell(
                               borderRadius: BorderRadius.circular(6),
-                              onTap: () => context.push(
-                                '/kullanici/${y['kullanici_adi']}',
-                              ),
+                              onTap: () => gonderidenProfile(context, y),
                               child: ConstrainedBox(
                                 // Dokunma hedefi 44 dp: yazı tipinden
                                 // bağımsız sabit kutu (bkz.
@@ -719,7 +726,8 @@ class _AkisKartiState extends State<AkisKarti> {
                           Flexible(
                             child: InkWell(
                               borderRadius: BorderRadius.circular(6),
-                              onTap: () => context.push(icerikYolu),
+                              onTap: () =>
+                                  gonderidenIcerige(context, y, icerikYolu),
                               child: ConstrainedBox(
                                 // Dokunma kutusu 24 dp — NEDEN 44 DEĞİL,
                                 // hangi standarda dayandığı ve telafisi:
@@ -778,7 +786,7 @@ class _AkisKartiState extends State<AkisKarti> {
                 if (poster != null)
                   InkWell(
                     borderRadius: BorderRadius.circular(6),
-                    onTap: () => context.push(posterYolu),
+                    onTap: () => gonderidenIcerige(context, y, posterYolu),
                     // Dolgu InkWell'in İÇİNDE: dokunma alanı 42 değil 50 dp
                     // geniş olur (44 dp kuralı) — içerik adının kısalan
                     // kutusunun "eşdeğer hedef" telafisi budur.
@@ -810,7 +818,15 @@ class _AkisKartiState extends State<AkisKarti> {
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
               child: InkWell(
                 borderRadius: BorderRadius.circular(10),
-                onTap: () => setState(() => _spoilerAcik = true),
+                onTap: () {
+                  setState(() => _spoilerAcik = true);
+                  // md. 23: "spoiler perdesini kaç kişi açtı" AGREGAT sayacı.
+                  // Kim açtı YAZILMAZ; sunucuya yalnız (gönderi, ölçü) +1 gider.
+                  GonderiOlcu.bildir(
+                    widget.yorum['id'],
+                    GonderiOlcu.spoilerAcildi,
+                  );
+                },
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
@@ -896,11 +912,20 @@ class _AkisKartiState extends State<AkisKarti> {
                   ipucu: 'Yorum yap'.c,
                   onTap: _yanitlariAc,
                 ),
+                // GÖZ İKONU — KENDİ gönderinde "istatistikleri gör" girişi
+                // (md. 23). Başkasının gönderisinde salt bilgi olarak kalır:
+                // uç zaten yalnız sahibine cevap veriyor, dokunulabilir
+                // görünüp 404 almak kullanıcıyı yanıltırdı.
                 _EylemDugmesi(
                   ikon: Icons.visibility_outlined,
                   etiket: '${y['goruntulenme'] ?? 0}',
-                  renk: DiziRenkler.metin38,
-                  ipucu: 'Görüntülenme'.c,
+                  renk: benim ? DiziRenkler.sariMetin : DiziRenkler.metin38,
+                  ipucu: benim ? 'İstatistikleri gör'.c : 'Görüntülenme'.c,
+                  onTap: benim
+                      ? () => GoRouter.of(
+                          context,
+                        ).push('/gonderi-istatistik/${y['id']}')
+                      : null,
                 ),
                 const Spacer(),
                 Text(

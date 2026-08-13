@@ -1,0 +1,92 @@
+-- ---------------------------------------------------------------------------
+-- 14 Ağu 2026 — ANONİMLİK / GİZLİLİK SEÇENEKLERİ (istek listesi md. 21)
+--
+-- "Kullanıcıya daha fazla saklanma alanı: yorumlarımı profilimde gizle,
+--  takipçilerimi gizle, takip ettiklerimi gizle, izlediklerimi gizle vb."
+--
+-- Bu, 8 Ağu'da alınan "kullanıcı profilleri ARAMA MOTORLARINDA indekslenmez"
+-- kararının KULLANICI TARAFINDAKİ karşılığıdır: orada Google'a, burada öteki
+-- kullanıcılara karşı saklanma.
+--
+-- ===========================================================================
+-- ZATEN VAR OLANLAR — bu migrasyon onlara DOKUNMAZ
+-- ===========================================================================
+--   kullanicilar.izlenenler_gizli   (sema.sql, 26 Tem)  · izlediklerim
+--   kullanicilar.yorumlar_gizli     (sema.sql, 26 Tem)  · yorumlarım
+--   kullanicilar.yanitlar_gizli     (3 Ağu)             · yanıtlarım
+--   kullanicilar.cevrimici_gizli    (5 Ağu)             · çevrimiçi/son görülme
+--   yorumlar.profilde_gizli         (3 Ağu)             · TEK yorum
+-- İstek listesindeki dört maddeden ikisi (yorumlar, izlenenler) bu sütunlarla
+-- KARŞILANIYOR; yeni sütun açmak onları ÇAKIŞTIRIRDI. Eksik olan yalnız
+-- TAKİP GRAFİĞİYDİ ve aşağıdaki iki sütun tam olarak onu kapatır.
+--
+-- ===========================================================================
+-- YENİ İKİ SÜTUN
+-- ===========================================================================
+-- POLARİTE NEGATİF (`_gizli`, true = gizli) ve VARSAYILAN false: yanındaki
+-- dört tercihle aynı sözleşme. Varsayılanı true yapmak, yükseltmeyle birlikte
+-- HERKESİN takipçi listesini sessizce kapatırdı — kullanıcının istemediği bir
+-- kararı sunucunun onun adına vermesi olurdu.
+--
+-- İKİSİ AYRI SÜTUN, tek "takip_grafigi_gizli" DEĞİL: iki listenin mahremiyeti
+-- farklıdır. "Kimi takip ediyorum" bir ZEVK BEYANIDIR (kimi izliyorum,
+-- neyle ilgileniyorum); "kim beni takip ediyor" ise BAŞKALARININ kararıdır ve
+-- kişi onu saklamak isterken kendi takip listesini açık bırakmak isteyebilir
+-- (ya da tam tersi). Tek anahtar, iki isteği birbirine rehin alırdı.
+--
+-- TEK YÖNLÜ (öteki dört tercihle aynı): listesini gizleyen kullanıcı
+-- BAŞKALARININ listelerini görmeye DEVAM EDER. Karşılıklılık şartı koysaydık
+-- kullanıcı tercihini gerçek isteğine göre değil, "ben de göremem" korkusuyla
+-- seçerdi.
+--
+-- ===========================================================================
+-- ZORLAMA SUNUCUDADIR (istemcide gizlemek YETMEZ)
+-- ===========================================================================
+--   GET /takipciler/:ad        -> takipciler_gizli
+--   GET /takipedilenler/:ad    -> takip_edilenler_gizli
+-- İkisi de `takipListesi()` üzerinden geçer; gizliyken sorgu `AND ku.id=<ben>`
+-- ile daraltılır ve yanıta `gizli: true` eklenir.
+--
+-- *** GİZLİ LİSTEDE İSTEYENİN KENDİ SATIRI KALIR *** ve bu bilinçlidir:
+-- "A, B'yi takip ediyor" bilgisi ZATEN A'nın kendi verisidir (kendi takip
+-- listesinde durur, B'ye 'takip' bildirimi de gitmiştir). Onu A'dan saklamak
+-- kimseyi korumaz, ama BİR ŞEYİ BOZARDI: `AramaServisi.karsilikliTakipMi`
+-- karşılıklı takibi tam da bu listede kendini arayarak doğruluyor
+-- (arama_servisi.dart) — kural olmasaydı, takip listesini gizleyen kullanıcı
+-- kendi sesli/görüntülü arama düğmesini de kaybederdi.
+--
+-- Oturumsuz okumada `<ben>` = 0'dır, hiçbir satırla eşleşmez: liste tamamen
+-- boş döner.
+--
+-- ENGELLEME İLE İLİŞKİ (md. 19, 13 Ağu) — İKİSİ AYRI EKSEN, VE İLE BİRLEŞİR:
+--   engelleme = KİŞİYE ÖZEL   (X'in listesinden Y düşer, Z görmeye devam eder)
+--   gizlilik  = HERKESE KARŞI (sahibi hariç)
+-- Sorguda `AND engelSuzgec(...)` ile `AND ku.id=<ben>` YAN YANA durur; biri
+-- ötekini gevşetmez. Kendi satırı gizlilikten muaftır ama ENGELDEN muaf
+-- DEĞİLDİR — pratikte fark etmez, çünkü kimse kendini engelleyemez
+-- (`POST /engelle`, 400 "Kendini engelleyemezsin").
+--
+-- ===========================================================================
+-- GÜVENLİK / VERİ
+-- ===========================================================================
+-- Hiçbir satır SİLİNMEZ/DEĞİŞMEZ; yalnız iki kolon eklenir, ikisi de false.
+-- Yeniden çalıştırılabilir (idempotent): ADD COLUMN IF NOT EXISTS.
+-- İNDEKS GEREKMEZ: sütunlar HER ZAMAN tek satırlık `WHERE kullanici_adi=$1`
+-- aramasının yanında okunur (liste sorgusunun WHERE'ine hiç girmez).
+--
+-- UYGULAMA:
+--   docker compose exec -T db psql -U dizijpg -d dizijpg < migrasyon-2026-08-14.sql
+--
+-- GERİ ALMA (gerekirse):
+--   ALTER TABLE kullanicilar DROP COLUMN IF EXISTS takipciler_gizli;
+--   ALTER TABLE kullanicilar DROP COLUMN IF EXISTS takip_edilenler_gizli;
+-- ---------------------------------------------------------------------------
+
+-- Kim beni takip ediyor: liste başkalarına kapanır (sayaç açık kalır, bkz.
+-- server.js'teki "SAYAÇ SÜZÜLMEZ" gerekçesi).
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS takipciler_gizli BOOLEAN NOT NULL DEFAULT false;
+
+-- Kimi takip ediyorum: liste başkalarına kapanır.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS takip_edilenler_gizli BOOLEAN NOT NULL DEFAULT false;

@@ -2217,8 +2217,12 @@ class _TepkiRozeti extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Rozette animasyon DÖNMEZ: bir sohbette onlarca rozet olabilir.
-            TepkiIkonu(emoji, boyut: 14),
+            // Rozet BELİRİNCE bir kez oynar (kullanıcı bildirimi 14 Ağu:
+            // "mesaja bırakılan emojiler hareketli değil" — eskiden hiç
+            // oynamıyordu). SÜREKLİ dönmez: bir sohbette onlarca rozet olur,
+            // hepsi sonsuz dönseydi ekran titrer ve pil yanardı. KENDİ
+            // tepkin döner: sohbette en çok birkaç tane olur.
+            TepkiIkonu(emoji, boyut: 14, acilistaOynat: true, oynat: benim),
             if (adet > 1) ...[
               const SizedBox(width: 3),
               Text(

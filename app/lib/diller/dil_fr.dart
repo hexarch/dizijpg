@@ -943,4 +943,12 @@ const Map<String, String> cevirilerFr = {
       'Pour les statistiques présentées à la personne propriétaire d’une publication, sont conservés sous forme de compteurs agrégés : combien de fois et depuis quelle surface (fil, profil, fil en plein écran, page série/film, lien partagé) la publication a été vue, si la personne qui l’a vue suivait alors la personne propriétaire, le passage de la publication au profil ou au contenu, les abonnements créés depuis la publication, les partages et l’ouverture du voile de spoiler. Ces compteurs ne contiennent ni identité d’utilisateur, ni adresse IP, ni horodatage ; il est impossible de savoir qui a fait quoi.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Afin de pouvoir compter combien de personnes différentes ont vu une publication, un condensé à clé irréversible par personne l’ayant vue (une réduction cryptographique dérivée de l’identité d’utilisateur ou de l’adresse IP) est conservé pendant 90 jours. Seul le nombre est présenté à la personne propriétaire de la publication ; l’identité de celles qui l’ont vue n’est en aucun cas partagée.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Déplacer vers « À voir » ?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Un titre est soit à voir, soit vu. Si tu continues, tes {} marques de visionnage sur cette série seront supprimées.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Un titre est soit à voir, soit vu. Si tu continues, ta marque « Vu » sur ce film sera retirée.',
+  'Sil ve taşı': 'Supprimer et déplacer',
 };

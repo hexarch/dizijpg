@@ -8,6 +8,7 @@ import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
+import '../gonderi_olcu.dart';
 import '../onbellek.dart';
 import '../tema.dart';
 import 'etiket.dart' show duzMetin;
@@ -1859,6 +1860,9 @@ class ProfilYorumAkisi extends StatelessWidget {
                             icerikler: icerikler,
                             baslangic: i,
                             medyaBaslangic: mi,
+                            // md. 23: profil ızgarasından açılan görüntülenme
+                            // "profil" kovasına yazılır.
+                            kaynak: GonderiOlcu.kaynakProfil,
                           ),
                         ),
                       ),

@@ -926,4 +926,12 @@ const Map<String, String> cevirilerMr = {
       'पोस्टच्या मालकाला दाखवल्या जाणाऱ्या आकडेवारीसाठी एकत्रित काउंटर म्हणून ठेवले जाते: पोस्ट किती वेळा आणि कोणत्या पृष्ठभागावरून (फीड, प्रोफाइल, पूर्ण स्क्रीन फीड, मालिका/चित्रपट पान, शेअर केलेली लिंक) पाहिली गेली, पाहणारा त्या वेळी पोस्टच्या मालकाला फॉलो करत होता की नाही, पोस्टवरून प्रोफाइल/कंटेंटवर जाणे, पोस्टद्वारे झालेला फॉलो, शेअर आणि स्पॉयलर पडदा उघडणे. या काउंटरमध्ये वापरकर्ता ओळख, IP पत्ता किंवा टाइमस्टॅम्प नसतो; कोणी काय केले हे विचारता येत नाही.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'एखादी पोस्ट किती वेगवेगळ्या लोकांनी पाहिली हे मोजता यावे म्हणून, प्रत्येक पाहणाऱ्यासाठी एक अपरिवर्तनीय कीयुक्त सारांश (वापरकर्ता ओळख किंवा IP पत्त्यापासून तयार केलेला क्रिप्टोग्राफिक संक्षेप) ९० दिवस ठेवला जातो. पोस्टच्या मालकाला फक्त संख्या दाखवली जाते; पाहणाऱ्यांची ओळख कोणत्याही परिस्थितीत सामायिक केली जात नाही.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“बघायचं आहे”मध्ये हलवायचं?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'एखादं टायटल एकतर बघायचं असतं, नाहीतर बघून झालेलं असतं. पुढे गेल्यास या सीरीजमधल्या तुझ्या {} बघितल्याच्या खुणा मिटतील.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'एखादं टायटल एकतर बघायचं असतं, नाहीतर बघून झालेलं असतं. पुढे गेल्यास या सिनेमावरची तुझी “पाहिलं” ही खूण निघेल.',
+  'Sil ve taşı': 'मिटवून हलवा',
 };

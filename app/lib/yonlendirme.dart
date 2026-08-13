@@ -21,8 +21,11 @@ import 'ekranlar/giris_istem.dart';
 import 'ekranlar/engellenen_kullanicilar.dart';
 import 'ekranlar/gizlenen_yorumlar.dart';
 import 'ekranlar/gizlilik.dart';
+import 'ekranlar/gonderi_istatistik.dart';
 import 'ekranlar/gozat.dart';
+import 'ekranlar/hareketlerim.dart';
 import 'ekranlar/favori_oyuncular.dart';
+import 'ekranlar/istatistiklerim.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/karsilama.dart';
@@ -302,6 +305,26 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
                 );
         },
       ),
+      // Kendi gönderinin istatistikleri (md. 23) — göz ikonunun yanındaki
+      // "istatistikleri gör" girişi buraya gelir. Kabuğun DIŞINDA tam ekran,
+      // geri tuşu gönderiye döner. Uç yalnız SAHİBİNE cevap verir; başkası
+      // derin bağlantıyla girerse ekran "gönderi bulunamadı" der (404 —
+      // 403 varlığı ele verirdi).
+      //
+      // NEDEN `/gonderi/:id/istatistik` DEĞİL: robots.txt ön ek kuralları
+      // JOKER İÇERMİYOR (seo_gizlilik.test.js bunu kilitliyor) ve id ORTADA
+      // olan bir yol ön ekle kapatılamaz — `Disallow: /gonderi/` yazsaydık
+      // SSR ile indekslenen `/gonderi/123` sayfası da kapanırdı. Kök yol,
+      // `/favori-oyuncular` ve `/yapimlar/` ile aynı gerekçe.
+      GoRoute(
+        path: '/gonderi-istatistik/:id',
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : GonderiIstatistikEkrani(gonderiId: id);
+        },
+      ),
       GoRoute(
         path: '/dizi/:id/sezon/:sezon/bolum/:bolum',
         builder: (_, s) {
@@ -349,6 +372,20 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
       GoRoute(
         path: '/engellenenler',
         builder: (_, _) => const EngellenenKullanicilarEkrani(),
+      ),
+      // Ayarlar > İstatistiklerim (md. 24). Gizlenen yorumlar/engellenenler ile
+      // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
+      GoRoute(
+        path: '/istatistiklerim',
+        builder: (_, _) => const IstatistiklerimEkrani(),
+      ),
+      // Ayarlar > Hareketlerim (md. 20). Gizlenen yorumlar/engellenenler ile
+      // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
+      // `?tur=` süzgeci derin bağlantıyla açılabilir (/hareketlerim?tur=begeni).
+      GoRoute(
+        path: '/hareketlerim',
+        builder: (_, s) =>
+            HareketlerimEkrani(tur: s.uri.queryParameters['tur']),
       ),
       GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
       // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.

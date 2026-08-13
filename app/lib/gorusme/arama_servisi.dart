@@ -226,7 +226,11 @@ class AramaServisi {
       if (profil['takip_ediyorum'] != true) {
         return _karsilikli[kullaniciAdi] = false;
       }
-      final liste = await Api.takipEdilenler(kullaniciAdi);
+      // Md. 21: uç {kullanicilar, gizli} döner. Karşı taraf takip listesini
+      // GİZLEMİŞ olsa bile KENDİ satırımız listede kalır (sunucu kuralı) —
+      // yoksa listesini gizleyen kullanıcı arama düğmesini kaybederdi.
+      final yanit = await Api.takipEdilenler(kullaniciAdi);
+      final liste = yanit['kullanicilar'] as List<dynamic>? ?? const [];
       return _karsilikli[kullaniciAdi] = geriTakipEdiyorMu(liste, benimAd);
     } catch (_) {
       // Ağ hatasında düğmeyi GİZLEME: sunucu son sözü söylüyor ve reddederse

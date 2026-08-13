@@ -928,4 +928,12 @@ const Map<String, String> cevirilerCs = {
       'Pro statistiky zobrazované autorovi příspěvku se jako souhrnné čítače uchovává: kolikrát a z jaké plochy (kanál, profil, celoobrazovkový kanál, stránka seriálu/filmu, sdílený odkaz) byl příspěvek zobrazen, zda ten, kdo si jej prohlížel, v tu chvíli autora sledoval, přechod z příspěvku na profil nebo k obsahu, sledování vzniklá přes příspěvek, sdílení a odkrytí spoilerové clony. Tyto čítače neobsahují identitu uživatele, IP adresu ani časové razítko; nelze zjistit, kdo co udělal.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Aby bylo možné spočítat, kolik různých lidí příspěvek vidělo, uchovává se pro každého, kdo si jej prohlédl, po dobu 90 dnů nevratný otisk s klíčem (kryptografické zkrácení odvozené z identity uživatele nebo z IP adresy). Autorovi příspěvku se zobrazuje pouze číslo; totožnost těch, kdo příspěvek viděli, se za žádných okolností nesdílí.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Přesunout do „Chci vidět“?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Titul je buď k zhlédnutí, nebo zhlédnutý. Když budeš pokračovat, tvé značky zhlédnutí u tohoto seriálu ({}) budou smazány.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Titul je buď k zhlédnutí, nebo zhlédnutý. Když budeš pokračovat, tvá značka „Zhlédnuto“ u tohoto filmu bude odstraněna.',
+  'Sil ve taşı': 'Smazat a přesunout',
 };

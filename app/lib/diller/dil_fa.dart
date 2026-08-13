@@ -925,4 +925,12 @@ const Map<String, String> cevirilerFa = {
       'برای آماری که به صاحب پست نشان داده می‌شود، به‌صورت شمارنده‌های تجمیعی نگهداری می‌شود: پست چند بار و از کدام سطح (خوراک، پروفایل، خوراک تمام‌صفحه، صفحهٔ سریال/فیلم، پیوند به‌اشتراک‌گذاشته) دیده شده است، آیا بیننده در آن لحظه صاحب پست را دنبال می‌کرده است، رفتن از پست به پروفایل یا محتوا، دنبال‌کردنی که از طریق پست شکل گرفته، اشتراک‌گذاری و باز شدن پردهٔ اسپویل. در این شمارنده‌ها شناسهٔ کاربر، نشانی IP یا مهر زمانی وجود ندارد؛ نمی‌توان پرسید چه کسی چه کاری کرده است.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'برای اینکه بتوان شمرد چند نفر متفاوت یک پست را دیده‌اند، برای هر بیننده یک چکیدهٔ کلیددار برگشت‌ناپذیر (کوتاه‌سازی رمزنگاشتی برگرفته از شناسهٔ کاربر یا نشانی IP) به مدت ۹۰ روز نگهداری می‌شود. به صاحب پست فقط عدد نشان داده می‌شود؛ هویت بینندگان تحت هیچ شرایطی به اشتراک گذاشته نمی‌شود.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'به «خواهم دید» منتقل شود؟',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'هر اثری یا دیده می‌شود یا دیده شده است. اگر ادامه بدهی، {} نشانهٔ تماشای تو در این سریال حذف می‌شود.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'هر اثری یا دیده می‌شود یا دیده شده است. اگر ادامه بدهی، نشانهٔ «دیدم» تو در این فیلم برداشته می‌شود.',
+  'Sil ve taşı': 'حذف و انتقال',
 };

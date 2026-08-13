@@ -42,6 +42,17 @@ CREATE TABLE IF NOT EXISTS izlemeler (
 );
 
 -- İçerik durumu: izleyeceğim / izliyorum / bitirdim / bıraktım
+--
+-- *** TABLOLAR ARASI KURAL (kullanıcı, 14 Ağu 2026): "ya izleyecektir ya
+-- izlemiştir" — `durum='izleyecegim'` ile aynı (kullanici_id, tur, tmdb_id)
+-- için `izlemeler`de satır bulunması AYNI ANDA OLAMAZ. ***
+-- Kural İKİ TABLOYU birden ilgilendirdiği için CHECK ile ifade EDİLEMEZ
+-- (CHECK tek satırlıdır) ve trigger tercih edilmedi: yazan uçların hepsi
+-- server.js'te ve orada zorlanıyor (bkz. `izleyecegimdenCikar` üstündeki
+-- kural bloğu + POST /durum'daki 409 IZLEME_KAYDI_VAR kapısı). Geriye dönük
+-- düzeltme: migrasyon-2026-08-14e.sql.
+-- Diğer üç durum kuralın DIŞINDADIR — özellikle 'biraktim': 20 bölüm izleyip
+-- bırakmak tutarlıdır, izleme kaydıyla çelişmez.
 CREATE TABLE IF NOT EXISTS durumlar (
   kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
   tmdb_id INT NOT NULL,
@@ -93,8 +104,13 @@ CREATE TABLE IF NOT EXISTS yorumlar (
 CREATE INDEX IF NOT EXISTS idx_yorum_icerik ON yorumlar(tur, tmdb_id, sezon, bolum, tarih DESC);
 CREATE INDEX IF NOT EXISTS idx_yorum_kullanici ON yorumlar(kullanici_id, tarih DESC);
 
--- Yorum görüntüleyenler: kişi başı tek görüntülenme için.
--- izleyen = 'u:<kullanici_id>' (girişli) veya 'ip:<adres>' (anonim).
+-- Yorum görüntüleyenler: "kaç FARKLI kişi gördü" sayacı (md. 23).
+-- izleyen = 'h:<base64url>' — HMAC-SHA256(sunucu sırrı, "u:<id>"|"ip:<adres>")
+-- ilk 22 karakter. HAM kullanıcı kimliği ve HAM IP YAZILMAZ; satır geri
+-- çevrilemez. "Kaç farklı kişi" sorusu kişi başına bir satır olmadan
+-- cevaplanamadığı için bu tablo agregat DEĞİLDİR — kalkanlar: anahtarlı özet,
+-- 90 gün budama (tablolariBuda) ve uçtan yalnız count(*) çıkması.
+-- GÖNDERİ SAHİBİNE KİMLİK GÖSTERİLMEZ (md. 21 gizlilik tercihleriyle çakışırdı).
 CREATE TABLE IF NOT EXISTS yorum_goruntuleyen (
   yorum_id INT REFERENCES yorumlar(id) ON DELETE CASCADE,
   izleyen TEXT NOT NULL,
@@ -114,6 +130,49 @@ CREATE TABLE IF NOT EXISTS yorum_begeniler (
 -- her sayfa tüm tabloyu tarayıp sıralıyordu.
 CREATE INDEX IF NOT EXISTS yorum_begeni_liste
   ON yorum_begeniler (yorum_id, tarih DESC, kullanici_id DESC);
+
+-- ---------------------------------------------------------------------------
+-- md. 24 — GÖNDERİ GÖRÜNTÜLENMESİNİN GÜNLÜK ANLIK GÖRÜNTÜSÜ
+-- (migrasyon-2026-08-14c.sql — tam gerekçe orada)
+-- ---------------------------------------------------------------------------
+-- NEDEN VAR: `yorumlar.goruntulenme` yalnız bir sayaç; ARTIŞIN NE ZAMAN
+-- olduğu hiçbir yerde yazılı değil. "Son 30 gün kaç görüntülenme" sorusu bu
+-- tablo olmadan CEVAPLANAMAZ (geçmişe dönük de üretilemez — o yüzden ekranda
+-- verinin hangi günden beri biriktiği yazar).
+--
+-- NEDEN BEĞENİ BURADA YOK: `yorum_begeniler.tarih` zaten var, kırılım oradan
+-- doğrudan çıkıyor. Buraya kopyalansaydı beğeni geri alındığında (satır
+-- silinir) günlük toplam yerinde kalır, "tüm zamanlar" ile "son 30 gün"
+-- birbirini tutmazdı.
+--
+-- NEDEN GÖNDERİ BAZLI: md. 23 (gönderi bazında istatistik) aynı tabloyu
+-- `WHERE gonderi_id=$1` ile kullanacak; kullanıcı bazlı tutulsaydı tek
+-- gönderinin serisi çıkarılamazdı.
+CREATE TABLE IF NOT EXISTS gonderi_gunluk (
+  gonderi_id   INT  NOT NULL REFERENCES yorumlar(id) ON DELETE CASCADE,
+  gun          DATE NOT NULL,
+  goruntulenme INT  NOT NULL DEFAULT 0,  -- o günkü ARTIŞ (delta)
+  toplam       INT  NOT NULL DEFAULT 0,  -- gün sonundaki kümülatif sayaç (ÇIPA)
+  PRIMARY KEY (gonderi_id, gun)
+);
+CREATE INDEX IF NOT EXISTS gonderi_gunluk_gun ON gonderi_gunluk (gun);
+
+-- md. 23 — GÖNDERİ BAZINDA AGREGAT SAYAÇLAR (migrasyon-2026-08-14d).
+-- (gönderi, ölçü) → adet. KİŞİ İÇERMEZ: kullanıcı kimliği, IP, oturum, zaman
+-- damgası yok; kişi düzeyinde sorgu ŞEKLEN yapılamaz. `olcu` KAPALI SÖZLÜK —
+-- değerin bir kısmı istemci beyanıdır (kaynak etiketi, paylaşım/ziyaret
+-- bildirimi), CHECK sunucudaki beyaz listenin ikinci kalkanıdır.
+CREATE TABLE IF NOT EXISTS gonderi_sayac (
+  gonderi_id INT NOT NULL REFERENCES yorumlar(id) ON DELETE CASCADE,
+  olcu TEXT NOT NULL CHECK (olcu IN (
+    'kaynak_akis','kaynak_profil','kaynak_reels','kaynak_dizi',
+    'kaynak_paylasim','kaynak_diger',
+    'izleyici_takipci','izleyici_disari',
+    'paylasim','profil_ziyaret','icerik_tikla','takip','spoiler_acildi'
+  )),
+  adet BIGINT NOT NULL DEFAULT 0,
+  PRIMARY KEY (gonderi_id, olcu)
+);
 
 -- Takip ilişkisi: takip_eden → takip_edilen
 CREATE TABLE IF NOT EXISTS takipler (
@@ -921,3 +980,54 @@ ALTER TABLE favoriler
 ALTER TABLE favoriler DROP CONSTRAINT IF EXISTS favoriler_bildirim_check;
 ALTER TABLE favoriler ADD CONSTRAINT favoriler_bildirim_check
   CHECK (bildirim IN ('acik','uygulama','kapali'));
+
+-- ---------------------------------------------------------------------------
+-- 14 Ağu 2026 — TAKİP GRAFİĞİ GİZLİLİĞİ (migrasyon-2026-08-14.sql · md. 21)
+--
+-- "Takipçilerimi gizle / takip ettiklerimi gizle." Aynı maddedeki öteki iki
+-- istek (yorumlarım, izlediklerim) `yorumlar_gizli` ve `izlenenler_gizli` ile
+-- ZATEN karşılanıyordu — bu yüzden burada YALNIZ iki yeni sütun var.
+--
+-- POLARİTE NEGATİF, VARSAYILAN false: yanındaki dört `_gizli` sütunuyla aynı
+-- sözleşme. Varsayılanı true yapmak, yükseltmeyle birlikte herkesin takipçi
+-- listesini sessizce kapatırdı.
+--
+-- İKİ AYRI SÜTUN: "kimi takip ediyorum" bir zevk beyanıdır, "kim beni takip
+-- ediyor" başkalarının kararıdır. Tek anahtar iki isteği birbirine rehin
+-- alırdı.
+--
+-- ZORLAMA: `takipListesi()` (server.js) — GET /takipciler/:ad ve
+-- GET /takipedilenler/:ad. Gizliyken sorgu `AND ku.id=<ben>` ile daraltılır,
+-- yani listede YALNIZ İSTEYENİN KENDİ SATIRI kalır ("A, B'yi takip ediyor"
+-- bilgisi A'nın kendi verisi; ayrıca `AramaServisi.karsilikliTakipMi` bu
+-- listeye bakarak arama düğmesini çiziyor). Yanıta `gizli: true` eklenir.
+--
+-- SAYAÇLAR SÜZÜLMEZ (istatistik.takipci / takip_edilen): gizlenen şey KİMLİK
+-- listesidir. `POST /takip` yanıtı zaten güncel takipçi sayısını döndürüyor,
+-- sayacı burada saklamak yalnız iki ucun farklı sayı göstermesine yarardı.
+-- Aynı karar `/izleyenler`de de verilmişti (liste süzülür, `sayi` süzülmez).
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS takipciler_gizli BOOLEAN NOT NULL DEFAULT false;
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS takip_edilenler_gizli BOOLEAN NOT NULL DEFAULT false;
+
+-- 2026-08-14 (b): HAREKETLERİM (istek md. 20) — `GET /hareketlerim` sekiz
+-- tabloyu UNION ALL ile birleştirip "(sahip, tarih DESC)" sırasında sayfalar.
+-- Her dal kendi indeksinden LIMIT'li çıkabilsin diye (bkz.
+-- migrasyon-2026-08-14b.sql). `yorumlar` zaten idx_yorum_kullanici ile hazırdı.
+CREATE INDEX IF NOT EXISTS yorum_begeniler_kullanici_tarih
+  ON yorum_begeniler (kullanici_id, tarih DESC);
+CREATE INDEX IF NOT EXISTS izlemeler_kullanici_tarih
+  ON izlemeler (kullanici_id, tarih DESC);
+CREATE INDEX IF NOT EXISTS takipler_eden_tarih
+  ON takipler (takip_eden_id, tarih DESC);
+CREATE INDEX IF NOT EXISTS puanlar_kullanici_tarih
+  ON puanlar (kullanici_id, tarih DESC);
+CREATE INDEX IF NOT EXISTS durumlar_kullanici_guncelleme
+  ON durumlar (kullanici_id, guncelleme DESC);
+CREATE INDEX IF NOT EXISTS tepkiler_kullanici_tarih
+  ON tepkiler (kullanici_id, tarih DESC);
+CREATE INDEX IF NOT EXISTS listeler_kullanici
+  ON listeler (kullanici_id);
+CREATE INDEX IF NOT EXISTS liste_ogeleri_eklenme
+  ON liste_ogeleri (liste_id, eklenme DESC);

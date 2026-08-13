@@ -937,4 +937,12 @@ const Map<String, String> cevirilerIt = {
       'Per le statistiche mostrate a chi ha pubblicato, vengono conservati come contatori aggregati: quante volte e da quale superficie (feed, profilo, feed a schermo intero, pagina serie/film, link condiviso) il post è stato visualizzato, se chi lo ha visto seguiva in quel momento chi ha pubblicato, il passaggio dal post al profilo o al contenuto, i follow nati dal post, le condivisioni e l’apertura del velo dello spoiler. Questi contatori non contengono identità utente, indirizzo IP né marca temporale; non è possibile sapere chi ha fatto cosa.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Per poter contare quante persone diverse hanno visto un post, per ogni persona che lo ha visto viene conservata per 90 giorni una sintesi con chiave non reversibile (una riduzione crittografica derivata dall’identità utente o dall’indirizzo IP). A chi ha pubblicato viene mostrato solo il numero; l’identità di chi ha visto il post non viene condivisa in nessun caso.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Spostare in «Da vedere»?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Un titolo o è da vedere o è visto. Se continui, i tuoi {} segni di visione su questa serie verranno eliminati.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Un titolo o è da vedere o è visto. Se continui, il tuo segno «Visto» su questo film verrà rimosso.',
+  'Sil ve taşı': 'Elimina e sposta',
 };

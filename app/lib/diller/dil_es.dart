@@ -937,4 +937,12 @@ const Map<String, String> cevirilerEs = {
       'Para las estadísticas que se muestran a la persona propietaria de una publicación, se guardan como contadores agregados: cuántas veces y desde qué superficie (feed, perfil, feed a pantalla completa, página de serie/película, enlace compartido) se vio la publicación, si quien la vio seguía en ese momento a la persona propietaria, el paso de la publicación al perfil o al contenido, los seguimientos iniciados desde la publicación, los compartidos y la apertura del velo de spoiler. Estos contadores no contienen identidad de usuario, dirección IP ni marca de tiempo; no se puede consultar quién hizo qué.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Para poder contar cuántas personas distintas vieron una publicación, se conserva durante 90 días un resumen con clave irreversible por cada persona que la vio (una condensación criptográfica derivada de la identidad de usuario o de la dirección IP). A la persona propietaria de la publicación solo se le muestra el número; la identidad de quienes la vieron no se comparte bajo ninguna circunstancia.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '¿Mover a «Pendiente»?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Un título o está pendiente o ya está visto. Si continúas, se eliminarán tus {} marcas de visto en esta serie.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Un título o está pendiente o ya está visto. Si continúas, se quitará tu marca «Visto» en esta película.',
+  'Sil ve taşı': 'Eliminar y mover',
 };

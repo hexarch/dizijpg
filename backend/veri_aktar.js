@@ -148,6 +148,28 @@ async function filmDurumlariniEsitle(havuz, userId) {
   return rowCount;
 }
 
+// TEKİLLİK KURALI (14 Ağu 2026, bkz. server.js `izleyecegimdenCikar` bloğu):
+// "ya izleyecektir ya izlemiştir". İçe aktarımda ONAY SORULACAK KİMSE YOK ve
+// `izlemeler` satırları OLGUDUR (izleme gerçekten olmuş), `durum` ise bir
+// NİYETTİR. Bu yüzden çelişkiyi kayıt SİLEREK değil, DURUMU İLERLETEREK
+// çözüyoruz: hiçbir bölüm işareti kaybolmaz.
+//   film → 'bitirdim' (film izlemesinin ara hâli yok)
+//   dizi → 'izliyorum' (12 saatlik `durumlariTara` gerekirse 'bitirdim'e çeker)
+// TV Time / Letterboxd dışa aktarımları ile DÜZELTME ÖNCESİ alınmış dizi.jpg
+// yedekleri çelişkili çift taşıyabilir; bu adım olmadan hata geri gelirdi.
+async function izleyecegimCelikisiniCoz(havuz, userId) {
+  const { rowCount } = await havuz.query(
+    `UPDATE durumlar d
+        SET durum = CASE WHEN d.tur='movie' THEN 'bitirdim' ELSE 'izliyorum' END,
+            guncelleme = now()
+      WHERE d.kullanici_id=$1 AND d.durum='izleyecegim'
+        AND EXISTS (SELECT 1 FROM izlemeler i
+                     WHERE i.kullanici_id=d.kullanici_id
+                       AND i.tur=d.tur AND i.tmdb_id=d.tmdb_id)`,
+    [userId]);
+  return rowCount;
+}
+
 async function yorumEkleTekil(havuz, userId, tur, tmdbId, sezon, bolum, metin) {
   const mevcut = await havuz.query(
     `SELECT 1 FROM yorumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3
@@ -329,6 +351,7 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       ozet.izleme += rowCount;
     }
     ozet.durum += await filmDurumlariniEsitle(havuz, userId);
+  await izleyecegimCelikisiniCoz(havuz, userId);
     return ozet;
   }
 
@@ -540,6 +563,7 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   }
 
   ozet.durum += await filmDurumlariniEsitle(havuz, userId);
+  await izleyecegimCelikisiniCoz(havuz, userId);
   ozet.tmdb_eslesme = findSayisi;
   return ozet;
 }
@@ -652,6 +676,7 @@ async function iceAktarNative(havuz, userId, json, ozet) {
   }
   // Düzeltme öncesi alınmış yedeklerde film durumları eksik olabilir.
   ozet.durum += await filmDurumlariniEsitle(havuz, userId);
+  await izleyecegimCelikisiniCoz(havuz, userId);
   return ozet;
 }
 

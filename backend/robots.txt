@@ -53,6 +53,24 @@ Disallow: /gizlenen-yorumlar
 # 13 Agu 2026 (md. 19): engellenen kullanicilar ekrani. Kisiye ozel olmasinin
 # otesinde HASSAS bir liste — "kim kimi engellemis" hicbir kosulda taranmamali.
 Disallow: /engellenenler
+# 14 Agu 2026 (md. 20): "Hareketlerim" — kisinin begeni/yorum/izleme/takip
+# gecmisinin tek akisi. Profil sayfasindan bile hassas: gizlilik tercihiyle
+# kisilamayan HAM kayit. Oturum zorunlu, indekslenecek hicbir seyi yok.
+Disallow: /hareketlerim
+# 14 Agu 2026 (md. 24): "Istatistiklerim" — kisinin kendi gonderilerinin
+# goruntulenme/begeni sayilari ve 30/60/90/120 gunluk kirilimi. Oturum
+# zorunlu, icerik tamamen kisiye ozel; taranacak hicbir seyi yok.
+Disallow: /istatistiklerim
+# 15 Agu 2026 (md. 23): tek gonderinin istatistik ekrani — goruntulenme,
+# TEKIL goruntuleyen sayisi, kaynak kirilimi, profil ziyareti/takip atiflari.
+# Yalniz gonderinin SAHIBI gorebiliyor (uc baskasina 404 doner), yani botun
+# alacagi hicbir sey yok; taranmasi da istenmiyor.
+#
+# YOL NEDEN KOK: robots.txt on ek kurallari joker ICERMIYOR (bu dosyanin
+# kurali, seo_gizlilik.test.js kilitliyor). Ekran `/gonderi/:id/istatistik`
+# olsaydi ancak `Disallow: /gonderi/` ile kapanirdi ve o da SSR ile
+# INDEKSLENEN `/gonderi/123` sayfasini kapatirdi.
+Disallow: /gonderi-istatistik
 Disallow: /akis
 Disallow: /takvim
 Disallow: /ozet/

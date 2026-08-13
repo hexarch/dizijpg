@@ -926,4 +926,12 @@ const Map<String, String> cevirilerHi = {
       'पोस्ट के मालिक को दिखाए जाने वाले आँकड़ों के लिए, यह सामूहिक काउंटर के रूप में रखा जाता है कि पोस्ट कितनी बार और किस सतह से (फ़ीड, प्रोफ़ाइल, फ़ुल-स्क्रीन फ़ीड, सीरीज़/फ़िल्म पेज, शेयर किया गया लिंक) देखी गई, देखने वाला उस समय पोस्ट के मालिक को फ़ॉलो कर रहा था या नहीं, पोस्ट से प्रोफ़ाइल/कंटेंट पर जाना, पोस्ट के ज़रिए बना फ़ॉलो, शेयर और स्पॉइलर परदे का खुलना। इन काउंटरों में उपयोगकर्ता पहचान, IP पता या टाइमस्टैम्प नहीं होता; किसने क्या किया, यह पूछा नहीं जा सकता।',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'यह गिनने के लिए कि किसी पोस्ट को कितने अलग-अलग लोगों ने देखा, प्रति दर्शक एक अपरिवर्तनीय कुंजीबद्ध डाइजेस्ट (उपयोगकर्ता पहचान या IP पते से व्युत्पन्न क्रिप्टोग्राफ़िक संक्षेपण) 90 दिनों तक रखा जाता है। पोस्ट के मालिक को केवल संख्या दिखाई जाती है; देखने वालों की पहचान किसी भी परिस्थिति में साझा नहीं की जाती।',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“देखना है” में ले जाएँ?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'कोई भी टाइटल या तो देखना बाकी होता है या देखा जा चुका होता है। आगे बढ़ने पर इस सीरीज़ में तुम्हारे {} देखने के निशान हट जाएँगे।',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'कोई भी टाइटल या तो देखना बाकी होता है या देखा जा चुका होता है। आगे बढ़ने पर इस फ़िल्म पर तुम्हारा “देख लिया” निशान हट जाएगा।',
+  'Sil ve taşı': 'हटाकर ले जाओ',
 };

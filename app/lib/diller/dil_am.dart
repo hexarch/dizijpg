@@ -904,4 +904,12 @@ const Map<String, String> cevirilerAm = {
       'ለልጥፉ ባለቤት ለሚታየው ስታቲስቲክስ እንደ ጥቅል ቆጣሪዎች ይቀመጣል፦ ልጥፉ ስንት ጊዜና ከየትኛው ገጽታ (ምግብ፣ መገለጫ፣ ሙሉ ስክሪን ምግብ፣ የተከታታይ/ፊልም ገጽ፣ የተጋራ አገናኝ) እንደታየ፣ ተመልካቹ በዚያ ወቅት የልጥፉን ባለቤት ይከታተል እንደነበር፣ ከልጥፉ ወደ መገለጫ/ይዘት መሸጋገር፣ በልጥፉ በኩል የተፈጠረ ክትትል፣ ማጋራትና የስፖይለር መጋረጃ መከፈት። በእነዚህ ቆጣሪዎች ውስጥ የተጠቃሚ መታወቂያ፣ የIP አድራሻ ወይም የጊዜ ማህተም የለም፤ ማን ምን እንዳደረገ መጠየቅ አይቻልም።',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'አንድ ልጥፍ ስንት የተለያዩ ሰዎች እንዳዩት መቁጠር እንዲቻል፣ ለእያንዳንዱ ተመልካች የማይመለስ በቁልፍ የተሰራ አጭር ማጠቃለያ (ከተጠቃሚ መታወቂያ ወይም ከIP አድራሻ የተገኘ የምስጠራ ማሳጠሪያ) ለ90 ቀናት ይቀመጣል። ለልጥፉ ባለቤት ቁጥሩ ብቻ ይታያል፤ የተመልካቾች ማንነት በምንም ሁኔታ አይጋራም።',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'ወደ «አያለሁ» ይዛወር?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'አንድ ይዘት ወይ ይታያል ወይ ታይቷል። ከቀጠሉ በዚህ ተከታታይ ድራማ ላይ ያሉ {} የእይታ ምልክቶች ይሰረዛሉ።',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'አንድ ይዘት ወይ ይታያል ወይ ታይቷል። ከቀጠሉ በዚህ ፊልም ላይ ያለው «አይቻለሁ» ምልክት ይነሳል።',
+  'Sil ve taşı': 'ሰርዞ ማዛወር',
 };

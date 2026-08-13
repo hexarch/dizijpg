@@ -897,4 +897,12 @@ const Map<String, String> cevirilerKo = {
       '게시물 작성자에게 보여 주는 통계를 위해, 게시물이 몇 번 어느 화면(피드, 프로필, 전체 화면 피드, 작품 페이지, 공유된 링크)에서 조회됐는지, 조회한 사람이 그 시점에 작성자를 팔로우하고 있었는지, 게시물에서 프로필이나 콘텐츠로 이동한 횟수, 게시물을 통해 이뤄진 팔로우, 공유, 스포일러 가림막을 연 횟수를 집계 카운터로 보관해요. 이 카운터에는 사용자 식별자, IP 주소, 타임스탬프가 없어요. 누가 무엇을 했는지 조회할 수 없어요.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       '한 게시물을 몇 명의 서로 다른 사람이 봤는지 셀 수 있도록, 조회한 사람마다 되돌릴 수 없는 키 기반 요약값(사용자 식별자나 IP 주소에서 파생한 암호학적 축약값)을 90일 동안 보관해요. 게시물 작성자에게는 숫자만 보여 줘요. 조회한 사람의 신원은 어떤 경우에도 공유되지 않아요.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“볼래요”로 옮길까요?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      '작품은 볼 예정이거나 이미 본 것, 둘 중 하나입니다. 계속하면 이 드라마의 시청 기록 {}개가 삭제됩니다.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      '작품은 볼 예정이거나 이미 본 것, 둘 중 하나입니다. 계속하면 이 영화의 “봤어요” 표시가 사라집니다.',
+  'Sil ve taşı': '삭제하고 옮기기',
 };

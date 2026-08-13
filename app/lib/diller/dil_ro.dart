@@ -934,4 +934,12 @@ const Map<String, String> cevirilerRo = {
       'Pentru statisticile arătate persoanei care a publicat, se păstrează sub formă de contoare agregate: de câte ori și de pe ce suprafață (flux, profil, flux pe ecran complet, pagina serialului/filmului, link distribuit) a fost vizualizată postarea, dacă persoana care a vizualizat urmărea în acel moment autorul postării, trecerea de la postare la profil sau la conținut, urmăririle începute din postare, distribuirile și deschiderea cortinei de spoiler. Aceste contoare nu conțin identitate de utilizator, adresă IP sau marcaj de timp; nu se poate afla cine ce a făcut.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Pentru a putea număra câți oameni diferiți au văzut o postare, pentru fiecare persoană care a vizualizat-o se păstrează 90 de zile un rezumat cu cheie ireversibil (o condensare criptografică derivată din identitatea de utilizator sau din adresa IP). Persoanei care a publicat i se arată doar numărul; identitatea celor care au vizualizat nu este partajată în nicio situație.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Mutăm în „O să mă uit”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Un titlu e ori de văzut, ori văzut. Dacă continui, cele {} marcaje de vizionare ale tale din acest serial vor fi șterse.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Un titlu e ori de văzut, ori văzut. Dacă continui, marcajul tău „Am văzut” de la acest film va fi scos.',
+  'Sil ve taşı': 'Șterge și mută',
 };

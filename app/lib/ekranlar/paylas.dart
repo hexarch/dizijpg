@@ -5,6 +5,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gonderi_olcu.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
@@ -87,6 +88,9 @@ class _PaylasSheetState extends State<_PaylasSheet> {
         if (widget.yorumId != null) 'yorum_id': widget.yorumId,
         if (widget.yorumId == null) 'metin': widget.url,
       });
+      // md. 23 paylaşım sayacı — YALNIZ mesaj GERÇEKTEN gittiyse. Sheet
+      // açılınca saymak, vazgeçen kullanıcıyı da paylaşmış gösterirdi.
+      GonderiOlcu.bildir(widget.yorumId, GonderiOlcu.paylasim);
       if (!mounted) return;
       setState(() {
         _gonderiliyor.remove(id);
@@ -103,6 +107,7 @@ class _PaylasSheetState extends State<_PaylasSheet> {
 
   Future<void> _kopyala() async {
     await Clipboard.setData(ClipboardData(text: widget.url));
+    GonderiOlcu.bildir(widget.yorumId, GonderiOlcu.paylasim);
     if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(
@@ -119,10 +124,12 @@ class _PaylasSheetState extends State<_PaylasSheet> {
         : '$gonderi\n\n${widget.url}';
     try {
       await Share.share(govde);
+      GonderiOlcu.bildir(widget.yorumId, GonderiOlcu.paylasim);
       if (mounted) Navigator.pop(context);
     } catch (_) {
       // Paylaşım sayfası açılamadıysa (ör. masaüstü web) panoya kopyala
       await Clipboard.setData(ClipboardData(text: widget.url));
+      GonderiOlcu.bildir(widget.yorumId, GonderiOlcu.paylasim);
       if (!mounted) return;
       Navigator.pop(context);
       messenger.showSnackBar(

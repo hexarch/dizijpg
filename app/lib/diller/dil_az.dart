@@ -922,4 +922,12 @@ const Map<String, String> cevirilerAz = {
       'Paylaşımın sahibinə göstərilən statistika üçün toplu sayğaclar şəklində saxlanılır: paylaşımın neçə dəfə və hansı səthdən (lent, profil, tam ekran lent, serial/film səhifəsi, paylaşılan keçid) baxıldığı, baxanın həmin anda paylaşım sahibini izləyib-izləmədiyi, paylaşımdan profilə/məzmuna keçid, paylaşım vasitəsilə yaranan izləmə, paylaşma və spoyler pərdəsinin açılması. Bu sayğaclarda istifadəçi kimliyi, IP ünvanı və ya zaman möhürü yoxdur; kimin nə etdiyini soruşmaq mümkün deyil.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Bir paylaşımı neçə fərqli adamın gördüyünü saya bilmək üçün hər baxan üçün geri çevrilə bilməyən açarlı bir xülasə (istifadəçi kimliyindən və ya IP ünvanından törədilən kriptoqrafik qısaltma) 90 gün saxlanılır. Paylaşım sahibinə yalnız say göstərilir; baxanların kimliyi heç bir halda paylaşılmır.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '«İzləyəcəyəm»ə köçürülsün?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Bir məzmun ya izləniləcək, ya da izlənilib. Davam etsən bu serialdakı {} izləmə işarən silinəcək.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Bir məzmun ya izləniləcək, ya da izlənilib. Davam etsən bu filmdəki «İzlədim» işarən götürüləcək.',
+  'Sil ve taşı': 'Sil və köçür',
 };

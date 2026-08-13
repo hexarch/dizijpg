@@ -1,5 +1,5 @@
-Play Console kapalı test (Alpha) sürüm notu — 1.40.0 (86)
-Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 16 derleme birikti.
+Play Console kapalı test (Alpha) sürüm notu — 1.41.0 (88)
+Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 2 derleme birikti (86 → 88).
 ⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI
    (sunucu kill switch). Kapalı özelliği sürüm notunda anmıyoruz.
 --------------------------------------------------------------------

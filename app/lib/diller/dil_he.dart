@@ -913,4 +913,12 @@ const Map<String, String> cevirilerHe = {
       'עבור הסטטיסטיקה שמוצגת לבעלי הפוסט נשמרים כמונים מצטברים: כמה פעמים ומאיזה משטח (פיד, פרופיל, פיד במסך מלא, עמוד סדרה/סרט, קישור ששותף) הפוסט נצפה, האם הצופה עקב באותו רגע אחרי בעלי הפוסט, מעבר מהפוסט לפרופיל או לתוכן, מעקבים שנוצרו דרך הפוסט, שיתופים ופתיחת מסך הספוילר. במונים האלה אין מזהה משתמש, כתובת IP או חותמת זמן; לא ניתן לברר מי עשה מה.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'כדי לאפשר לספור כמה אנשים שונים ראו פוסט, נשמר לכל צופה תקציר עם מפתח בלתי הפיך (קיצור קריפטוגרפי הנגזר ממזהה המשתמש או מכתובת ה-IP) למשך 90 יום. לבעלי הפוסט מוצג רק המספר; זהות הצופים אינה משותפת בשום מצב.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'להעביר ל"אצפה"?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'כותר הוא או לצפייה או שכבר נצפה. המשך הפעולה ימחק את סימוני הצפייה שלך בסדרה הזו ({}).',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'כותר הוא או לצפייה או שכבר נצפה. המשך הפעולה יסיר את סימון "צפיתי" שלך בסרט הזה.',
+  'Sil ve taşı': 'מחק והעבר',
 };

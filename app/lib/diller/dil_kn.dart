@@ -928,4 +928,12 @@ const Map<String, String> cevirilerKn = {
       'ಪೋಸ್ಟ್ ಮಾಲೀಕರಿಗೆ ತೋರಿಸುವ ಅಂಕಿಅಂಶಗಳಿಗಾಗಿ ಸಮಷ್ಟಿ ಕೌಂಟರ್‌ಗಳಾಗಿ ಇರಿಸಲಾಗುತ್ತದೆ: ಪೋಸ್ಟ್ ಎಷ್ಟು ಬಾರಿ ಮತ್ತು ಯಾವ ಮೇಲ್ಮೈಯಿಂದ (ಫೀಡ್, ಪ್ರೊಫೈಲ್, ಪೂರ್ಣ ಪರದೆ ಫೀಡ್, ಸರಣಿ/ಚಲನಚಿತ್ರ ಪುಟ, ಹಂಚಿದ ಲಿಂಕ್) ವೀಕ್ಷಿಸಲಾಯಿತು, ವೀಕ್ಷಿಸಿದವರು ಆ ಕ್ಷಣದಲ್ಲಿ ಪೋಸ್ಟ್ ಮಾಲೀಕರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತಿದ್ದರೇ, ಪೋಸ್ಟ್‌ನಿಂದ ಪ್ರೊಫೈಲ್/ವಿಷಯಕ್ಕೆ ಹೋಗುವುದು, ಪೋಸ್ಟ್ ಮೂಲಕ ಆದ ಫಾಲೋ, ಹಂಚಿಕೆ ಮತ್ತು ಸ್ಪಾಯ್ಲರ್ ಪರದೆ ತೆರೆಯುವಿಕೆ. ಈ ಕೌಂಟರ್‌ಗಳಲ್ಲಿ ಬಳಕೆದಾರ ಗುರುತು, IP ವಿಳಾಸ ಅಥವಾ ಸಮಯಮುದ್ರೆ ಇರುವುದಿಲ್ಲ; ಯಾರು ಏನು ಮಾಡಿದರು ಎಂದು ಪ್ರಶ್ನಿಸಲಾಗದು.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'ಒಂದು ಪೋಸ್ಟ್ ಅನ್ನು ಎಷ್ಟು ಬೇರೆ ಬೇರೆ ಜನ ನೋಡಿದರು ಎಂಬುದನ್ನು ಎಣಿಸಲು, ಪ್ರತಿ ವೀಕ್ಷಕರಿಗೆ ಒಂದು ಹಿಂತಿರುಗಿಸಲಾಗದ ಕೀ ಆಧಾರಿತ ಸಾರಾಂಶವನ್ನು (ಬಳಕೆದಾರ ಗುರುತು ಅಥವಾ IP ವಿಳಾಸದಿಂದ ಪಡೆದ ಗೂಢಲಿಪಿ ಸಂಕ್ಷೇಪ) 90 ದಿನ ಸಂಗ್ರಹಿಸಲಾಗುತ್ತದೆ. ಪೋಸ್ಟ್ ಮಾಲೀಕರಿಗೆ ಕೇವಲ ಸಂಖ್ಯೆ ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತದೆ; ವೀಕ್ಷಕರ ಗುರುತನ್ನು ಯಾವುದೇ ಸಂದರ್ಭದಲ್ಲಿಯೂ ಹಂಚಲಾಗುವುದಿಲ್ಲ.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“ನೋಡುತ್ತೇನೆ” ಗೆ ಸರಿಸಬೇಕೆ?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'ಒಂದು ಶೀರ್ಷಿಕೆ ಒಂದೋ ನೋಡಬೇಕಾದದ್ದು, ಇಲ್ಲವೇ ನೋಡಿದ್ದು. ಮುಂದುವರಿದರೆ ಈ ಸೀರೀಸ್‌ನಲ್ಲಿ ನಿನ್ನ {} ನೋಡಿದ ಗುರುತುಗಳು ಅಳಿಸಲ್ಪಡುತ್ತವೆ.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'ಒಂದು ಶೀರ್ಷಿಕೆ ಒಂದೋ ನೋಡಬೇಕಾದದ್ದು, ಇಲ್ಲವೇ ನೋಡಿದ್ದು. ಮುಂದುವರಿದರೆ ಈ ಸಿನಿಮಾದಲ್ಲಿ ನಿನ್ನ “ನೋಡಿದ್ದೇನೆ” ಗುರುತು ತೆಗೆಯಲಾಗುತ್ತದೆ.',
+  'Sil ve taşı': 'ಅಳಿಸಿ ಸರಿಸು',
 };

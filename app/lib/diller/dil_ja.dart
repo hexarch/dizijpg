@@ -896,4 +896,12 @@ const Map<String, String> cevirilerJa = {
       '投稿者に表示される統計のために、投稿が何回どの画面（フィード、プロフィール、全画面フィード、作品ページ、共有リンク）から表示されたか、閲覧した人がその時点で投稿者をフォローしていたか、投稿からプロフィールや作品への移動、投稿を通じて生まれたフォロー、シェア、ネタバレの覆いを開いた回数を、集計カウンターとして保持します。これらのカウンターにはユーザー識別子、IP アドレス、タイムスタンプは含まれません。誰が何をしたかを問い合わせることはできません。',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'ある投稿を何人の異なる人が見たかを数えられるようにするため、閲覧者ごとに不可逆な鍵付きダイジェスト（ユーザー識別子または IP アドレスから導かれる暗号学的な短縮値）を 90 日間保存します。投稿者には数だけが表示されます。閲覧者の身元はいかなる場合も共有されません。',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '「見たい」に移しますか？',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      '作品はこれから見るか、もう見たかのどちらかです。続けると、このドラマの視聴記録 {} 件が削除されます。',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      '作品はこれから見るか、もう見たかのどちらかです。続けると、この映画の「視聴済み」の記録が削除されます。',
+  'Sil ve taşı': '削除して移動',
 };

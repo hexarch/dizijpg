@@ -924,4 +924,12 @@ const Map<String, String> cevirilerPa = {
       'ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਦਿਖਾਏ ਜਾਂਦੇ ਅੰਕੜਿਆਂ ਲਈ ਸਮੂਹਿਕ ਕਾਊਂਟਰਾਂ ਵਜੋਂ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ: ਪੋਸਟ ਕਿੰਨੀ ਵਾਰ ਅਤੇ ਕਿਸ ਸਤਹ ਤੋਂ (ਫੀਡ, ਪ੍ਰੋਫਾਈਲ, ਪੂਰੀ ਸਕਰੀਨ ਫੀਡ, ਸੀਰੀਜ਼/ਫ਼ਿਲਮ ਪੰਨਾ, ਸਾਂਝਾ ਕੀਤਾ ਲਿੰਕ) ਦੇਖੀ ਗਈ, ਦੇਖਣ ਵਾਲਾ ਉਸ ਵੇਲੇ ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਫਾਲੋ ਕਰ ਰਿਹਾ ਸੀ ਜਾਂ ਨਹੀਂ, ਪੋਸਟ ਤੋਂ ਪ੍ਰੋਫਾਈਲ/ਸਮੱਗਰੀ ਉੱਤੇ ਜਾਣਾ, ਪੋਸਟ ਰਾਹੀਂ ਬਣਿਆ ਫਾਲੋ, ਸਾਂਝ ਅਤੇ ਸਪੌਇਲਰ ਪਰਦੇ ਦਾ ਖੁੱਲ੍ਹਣਾ। ਇਹਨਾਂ ਕਾਊਂਟਰਾਂ ਵਿੱਚ ਵਰਤੋਂਕਾਰ ਦੀ ਪਛਾਣ, IP ਪਤਾ ਜਾਂ ਟਾਈਮਸਟੈਂਪ ਨਹੀਂ ਹੁੰਦਾ; ਕਿਸ ਨੇ ਕੀ ਕੀਤਾ, ਇਹ ਪੁੱਛਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ।',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'ਕਿਸੇ ਪੋਸਟ ਨੂੰ ਕਿੰਨੇ ਵੱਖ-ਵੱਖ ਲੋਕਾਂ ਨੇ ਦੇਖਿਆ, ਇਹ ਗਿਣਨ ਲਈ ਹਰ ਦੇਖਣ ਵਾਲੇ ਵਾਸਤੇ ਇੱਕ ਨਾ-ਪਲਟਣਯੋਗ ਕੁੰਜੀ-ਅਧਾਰਿਤ ਸਾਰ (ਵਰਤੋਂਕਾਰ ਦੀ ਪਛਾਣ ਜਾਂ IP ਪਤੇ ਤੋਂ ਲਿਆ ਕ੍ਰਿਪਟੋਗ੍ਰਾਫਿਕ ਸੰਖੇਪ) 90 ਦਿਨ ਸੰਭਾਲਿਆ ਜਾਂਦਾ ਹੈ। ਪੋਸਟ ਦੇ ਮਾਲਕ ਨੂੰ ਸਿਰਫ਼ ਗਿਣਤੀ ਦਿਖਾਈ ਜਾਂਦੀ ਹੈ; ਦੇਖਣ ਵਾਲਿਆਂ ਦੀ ਪਛਾਣ ਕਿਸੇ ਵੀ ਹਾਲਤ ਵਿੱਚ ਸਾਂਝੀ ਨਹੀਂ ਕੀਤੀ ਜਾਂਦੀ।',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“ਦੇਖਣਾ ਹੈ” ਵਿੱਚ ਭੇਜਣਾ ਹੈ?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'ਕੋਈ ਵੀ ਟਾਈਟਲ ਜਾਂ ਤਾਂ ਦੇਖਣਾ ਬਾਕੀ ਹੁੰਦਾ ਹੈ ਜਾਂ ਦੇਖਿਆ ਜਾ ਚੁੱਕਾ ਹੁੰਦਾ ਹੈ। ਅੱਗੇ ਵਧਣ ’ਤੇ ਇਸ ਸੀਰੀਜ਼ ਵਿੱਚ ਤੇਰੇ {} ਦੇਖਣ ਦੇ ਨਿਸ਼ਾਨ ਮਿਟ ਜਾਣਗੇ।',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'ਕੋਈ ਵੀ ਟਾਈਟਲ ਜਾਂ ਤਾਂ ਦੇਖਣਾ ਬਾਕੀ ਹੁੰਦਾ ਹੈ ਜਾਂ ਦੇਖਿਆ ਜਾ ਚੁੱਕਾ ਹੁੰਦਾ ਹੈ। ਅੱਗੇ ਵਧਣ ’ਤੇ ਇਸ ਫ਼ਿਲਮ ਉੱਤੇ ਤੇਰਾ “ਦੇਖ ਲਿਆ” ਨਿਸ਼ਾਨ ਹਟ ਜਾਵੇਗਾ।',
+  'Sil ve taşı': 'ਮਿਟਾ ਕੇ ਭੇਜੋ',
 };

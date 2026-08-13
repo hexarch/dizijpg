@@ -926,4 +926,12 @@ const Map<String, String> cevirilerSw = {
       'Kwa takwimu zinazoonyeshwa kwa mwenye chapisho, huhifadhiwa kama vihesabu vya jumla: chapisho lilitazamwa mara ngapi na kutoka uso upi (mlisho, wasifu, mlisho wa skrini nzima, ukurasa wa mfululizo/filamu, kiungo kilichoshirikiwa), kama aliyetazama alikuwa akimfuata mwenye chapisho wakati huo, kuhama kutoka chapisho kwenda wasifu au maudhui, ufuasi ulioanzishwa kupitia chapisho, kushirikiwa, na kufunguliwa kwa pazia la spoiler. Vihesabu hivi havina kitambulisho cha mtumiaji, anwani ya IP wala alama ya wakati; haiwezekani kuuliza nani alifanya nini.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Ili kuweza kuhesabu ni watu wangapi tofauti walioona chapisho, muhtasari wenye ufunguo usioweza kutenduliwa kwa kila mtazamaji (ufupisho wa kikriptografia unaotokana na kitambulisho cha mtumiaji au anwani ya IP) huhifadhiwa kwa siku 90. Mwenye chapisho huonyeshwa idadi pekee; utambulisho wa watazamaji hausambazwi kwa hali yoyote.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Uhamishwe kwenye “Nitatazama”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Kichwa ni cha kutazamwa au kimeshatazamwa. Ukiendelea, alama {} za kutazama ulizoweka kwenye mfululizo huu zitafutwa.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Kichwa ni cha kutazamwa au kimeshatazamwa. Ukiendelea, alama yako ya “Nimetazama” kwenye filamu hii itaondolewa.',
+  'Sil ve taşı': 'Futa na uhamishe',
 };

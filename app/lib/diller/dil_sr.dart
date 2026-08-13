@@ -929,4 +929,12 @@ const Map<String, String> cevirilerSr = {
       'За статистику која се приказује власнику објаве чувају се као збирни бројачи: колико пута и са које површине (фид, профил, фид преко целог екрана, страница серије/филма, подељена веза) је објава прегледана, да ли је гледалац у том тренутку пратио власника објаве, прелазак са објаве на профил или садржај, праћења настала преко објаве, дељења и откривање спојлер завесе. Ови бројачи не садрже идентитет корисника, IP адресу нити временску ознаку; не може се утврдити ко је шта урадио.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Да би се могло избројати колико различитих људи је видело објаву, за сваког гледаоца се 90 дана чува неповратни сажетак са кључем (криптографско скраћење изведено из идентитета корисника или IP адресе). Власнику објаве приказује се само број; идентитет гледалаца се ни под којим условима не дели.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Преместити у „Гледаћу“?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Наслов је или за гледање или одгледан. Ако наставиш, твоје ознаке гледања у овој серији ({}) биће обрисане.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Наслов је или за гледање или одгледан. Ако наставиш, твоја ознака „Одгледано“ за овај филм биће уклоњена.',
+  'Sil ve taşı': 'Обриши и премести',
 };

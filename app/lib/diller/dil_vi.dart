@@ -926,4 +926,12 @@ const Map<String, String> cevirilerVi = {
       'Đối với thống kê hiển thị cho chủ bài đăng, các bộ đếm tổng hợp được lưu: bài đăng được xem bao nhiêu lần và từ bề mặt nào (bảng tin, trang cá nhân, bảng tin toàn màn hình, trang phim/series, liên kết đã chia sẻ), người xem có đang theo dõi chủ bài đăng vào thời điểm đó hay không, việc chuyển từ bài đăng sang trang cá nhân hoặc nội dung, lượt theo dõi phát sinh từ bài đăng, lượt chia sẻ và việc mở lớp che spoiler. Các bộ đếm này không chứa danh tính người dùng, địa chỉ IP hay dấu thời gian; không thể truy vấn ai đã làm gì.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Để có thể đếm được bao nhiêu người khác nhau đã xem một bài đăng, một bản tóm lược có khóa không thể đảo ngược cho mỗi người xem (một dạng rút gọn mật mã suy ra từ danh tính người dùng hoặc địa chỉ IP) được lưu trong 90 ngày. Chủ bài đăng chỉ được xem con số; danh tính của người xem không bao giờ được chia sẻ trong bất kỳ trường hợp nào.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Chuyển sang “Sẽ xem”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Một tựa phim hoặc là sẽ xem, hoặc là đã xem. Nếu bạn tiếp tục, {} dấu đã xem của bạn ở phim bộ này sẽ bị xóa.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Một tựa phim hoặc là sẽ xem, hoặc là đã xem. Nếu bạn tiếp tục, dấu “Đã xem” của bạn ở phim này sẽ bị gỡ.',
+  'Sil ve taşı': 'Xóa và chuyển',
 };

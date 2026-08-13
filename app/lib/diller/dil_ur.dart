@@ -928,4 +928,12 @@ const Map<String, String> cevirilerUr = {
       'پوسٹ کے مالک کو دکھائے جانے والے اعداد و شمار کے لیے مجموعی کاؤنٹرز کے طور پر رکھا جاتا ہے: پوسٹ کتنی بار اور کس سطح سے (فیڈ، پروفائل، فل اسکرین فیڈ، سیریز/فلم صفحہ، شیئر کیا گیا لنک) دیکھی گئی، دیکھنے والا اس وقت پوسٹ کے مالک کو فالو کر رہا تھا یا نہیں، پوسٹ سے پروفائل/مواد پر جانا، پوسٹ کے ذریعے بننے والا فالو، شیئر اور اسپائلر پردے کا کھلنا۔ ان کاؤنٹرز میں صارف کی شناخت، IP پتہ یا ٹائم اسٹیمپ نہیں ہوتا؛ کس نے کیا کیا، یہ معلوم نہیں کیا جا سکتا۔',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'یہ گننے کے لیے کہ کسی پوسٹ کو کتنے مختلف لوگوں نے دیکھا، ہر دیکھنے والے کے لیے ایک ناقابلِ واپسی کلیدی خلاصہ (صارف کی شناخت یا IP پتے سے اخذ کردہ خفیہ نگاری کا اختصار) 90 دن تک محفوظ رکھا جاتا ہے۔ پوسٹ کے مالک کو صرف تعداد دکھائی جاتی ہے؛ دیکھنے والوں کی شناخت کسی بھی صورت میں شیئر نہیں کی جاتی۔',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'دیکھنے کی فہرست میں منتقل کریں؟',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'کوئی بھی مواد یا تو دیکھنا باقی ہوتا ہے یا دیکھا جا چکا ہوتا ہے۔ آگے بڑھنے پر اس سیریز میں تمہارے {} دیکھنے کے نشان مٹ جائیں گے۔',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'کوئی بھی مواد یا تو دیکھنا باقی ہوتا ہے یا دیکھا جا چکا ہوتا ہے۔ آگے بڑھنے پر اس فلم پر تمہارا “دیکھ لیا” نشان ہٹ جائے گا۔',
+  'Sil ve taşı': 'حذف کر کے منتقل کریں',
 };

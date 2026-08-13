@@ -1036,6 +1036,63 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                 const SizedBox(height: 32),
                 Divider(color: DiziRenkler.metin12),
                 const SizedBox(height: 8),
+                // HAREKETLERİM (md. 20): beğeni/yorum/izleme/takip/puan/liste
+                // hareketlerinin TEK zaman akışı. Ayarların en üst tercih
+                // kartlarının hemen üstünde: kişinin KENDİ kaydı, tercih değil.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-hareketlerim'),
+                    leading: Icon(Icons.timeline, color: DiziRenkler.sariMetin),
+                    title: Text(
+                      'Hareketlerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Beğenilerin, yorumların, izlemelerin tek akışta'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => GoRouter.of(context).push('/hareketlerim'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // İSTATİSTİKLERİM (md. 24): kendi gönderilerinin görüntülenme
+                // ve beğeni sayıları + 30/60/90/120 günlük kırılım.
+                // Hareketlerim'in HEMEN ALTINDA çünkü ikisi de "tercih" değil
+                // KİŞİNİN KENDİ KAYDI: biri ne yaptığını, öbürü ne kadar
+                // ulaştığını gösteriyor.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-istatistiklerim'),
+                    leading: Icon(
+                      Icons.insights_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'İstatistiklerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Gönderilerinin görüntülenmesi ve beğenisi'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => GoRouter.of(context).push('/istatistiklerim'),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 // SIRA (3 Ağu isteği): Bildirim Tercihleri · Gizlilik · Geri
                 // Bildirim ARTIK "Verilerim"in ÜSTÜNDE. Günlük kullanılan üç
                 // tercih kartı, nadiren açılan dışa/içe aktarımın altında
@@ -1346,10 +1403,14 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
   String? _hata;
 
   static const _alanlar = [
+    // Açıklama 14 Ağu'da GENİŞLETİLDİ çünkü ZORLAMA genişledi: şeritler zaten
+    // gizleniyordu ama Bölüm/Film sayaçları, ekran süresi kartı, uyum kartı ve
+    // "5.000 bölüm" rozeti açık kalıyordu — gizlenen şeyin BOYUTU
+    // gizlenmiyordu. Artık hepsi düşüyor ve metin bunu söylüyor.
     (
       'izlenenler_gizli',
       'İzlediklerimi gizle',
-      'Profilinde izlediğin dizi ve filmler görünmez',
+      'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez',
     ),
     ('yorumlar_gizli', 'Yorumlarımı gizle', 'Profilinde yorumların görünmez'),
     // POLARİTE BİLEREK "gizle": kullanıcı isteği "yanıtlar görünsün" biçiminde
@@ -1361,9 +1422,28 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
       'Yanıtlarımı gizle',
       'Başkalarının gönderilerine yazdığın yanıtlar yalnız sana görünür',
     ),
+    // --- Takip grafiği (14 Ağu 2026, md. 21) ---
+    // İKİ AYRI ANAHTAR, tek "takip grafiğimi gizle" DEĞİL: "kimi takip
+    // ediyorum" bir zevk beyanıdır, "kim beni takip ediyor" başkalarının
+    // kararıdır — kişi birini saklarken ötekini açık bırakmak isteyebilir.
+    //
+    // Açıklamalarda SAYININ AÇIK KALDIĞI açıkça yazıyor: sunucu listeyi
+    // süzer ama sayacı süzmez (`POST /takip` yanıtı zaten güncel sayıyı
+    // döndürüyor). Yazılmasaydı kullanıcı anahtarı açar, profilinde "128
+    // Takipçi" yazısını görür ve ayarın çalışmadığını sanırdı.
+    (
+      'takipciler_gizli',
+      'Takipçi listemi gizle',
+      'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder',
+    ),
+    (
+      'takip_edilenler_gizli',
+      'Takip ettiklerimi gizle',
+      'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder',
+    ),
     // Kapatınca mesaj listesindeki yeşil nokta VE sohbet başlığındaki
     // "son görülme ..." satırı başkalarına görünmez. TEK YÖNLÜ: sen
-    // başkalarının durumunu görmeye devam edersin (öteki üç anahtar gibi).
+    // başkalarının durumunu görmeye devam edersin (öteki anahtarlar gibi).
     (
       'cevrimici_gizli',
       'Çevrimiçi durumumu gizle',
@@ -1577,6 +1657,10 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
             else ...[
               for (final (alan, etiket, aciklama) in _alanlar)
                 SwitchListTile(
+                  // Anahtar, aşağıdaki arama satırlarıyla AYNI kalıpta
+                  // (`gizlilik-<alan>`): widget testi altı anahtarı da adıyla
+                  // bulabilsin, sıra değişince test kırılmasın.
+                  key: Key('gizlilik-$alan'),
                   value: _tercih![alan] == true,
                   activeColor: DiziRenkler.sari,
                   title: Text(

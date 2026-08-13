@@ -230,7 +230,12 @@ Future<Set<String>?> takipKumesiGetir(String? benimKullaniciAdim) async {
     return Api.girisli ? null : <String>{};
   }
   try {
-    final l = await Api.takipEdilenler(benimKullaniciAdim);
+    // Md. 21: uç artık {kullanicilar, gizli} döner. Bu çağrı KENDİ listemiz
+    // için — sahibine gizlilik uygulanmaz, liste hep dolu gelir.
+    final l =
+        (await Api.takipEdilenler(benimKullaniciAdim))['kullanicilar']
+            as List<dynamic>? ??
+        const [];
     return {
       for (final u in l)
         if ((u as Map<String, dynamic>)['kullanici_adi'] is String)

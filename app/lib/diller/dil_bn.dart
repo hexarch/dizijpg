@@ -925,4 +925,12 @@ const Map<String, String> cevirilerBn = {
       'পোস্টের মালিককে দেখানো পরিসংখ্যানের জন্য সমষ্টিগত কাউন্টার হিসেবে রাখা হয়: পোস্টটি কতবার এবং কোন পৃষ্ঠ থেকে (ফিড, প্রোফাইল, ফুল-স্ক্রিন ফিড, সিরিজ/সিনেমা পেজ, শেয়ার করা লিঙ্ক) দেখা হয়েছে, দেখার সময় দর্শক পোস্টের মালিককে ফলো করছিলেন কি না, পোস্ট থেকে প্রোফাইল/কনটেন্টে যাওয়া, পোস্টের মাধ্যমে হওয়া ফলো, শেয়ার এবং স্পয়লার পর্দা খোলা। এই কাউন্টারে ব্যবহারকারীর পরিচয়, IP ঠিকানা বা টাইমস্ট্যাম্প থাকে না; কে কী করেছে তা জিজ্ঞেস করা যায় না।',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'একটি পোস্ট কতজন আলাদা মানুষ দেখেছেন তা গুনতে পারার জন্য, প্রতি দর্শকের জন্য একটি অপরিবর্তনীয় কি-যুক্ত ডাইজেস্ট (ব্যবহারকারীর পরিচয় বা IP ঠিকানা থেকে উদ্ভূত ক্রিপ্টোগ্রাফিক সংক্ষেপ) ৯০ দিন রাখা হয়। পোস্টের মালিককে কেবল সংখ্যাটি দেখানো হয়; দর্শকদের পরিচয় কোনো অবস্থাতেই শেয়ার করা হয় না।',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“দেখব”-তে সরানো হবে?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'একটি কনটেন্ট হয় দেখা হবে, নয়তো দেখা হয়ে গেছে। চালিয়ে গেলে এই সিরিজে তোমার {}টি দেখার চিহ্ন মুছে যাবে।',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'একটি কনটেন্ট হয় দেখা হবে, নয়তো দেখা হয়ে গেছে। চালিয়ে গেলে এই সিনেমায় তোমার “দেখেছি” চিহ্ন উঠে যাবে।',
+  'Sil ve taşı': 'মুছে সরাও',
 };

@@ -14,6 +14,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
+import '../gonderi_olcu.dart';
 import '../medya_yukle.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
@@ -695,7 +696,11 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
   Future<void> _yukle() async {
     setState(() => _hata = null);
     try {
-      final d = await Api.get('/yorum/${widget.yorumId}');
+      // KAYNAK: bu GET görüntülenmeyi de +1 yapıyor (sunucu tarafı), etiket
+      // olmadan "Diğer" kovasına düşerdi.
+      final d = await Api.get(
+        '/yorum/${widget.yorumId}?kaynak=${GonderiOlcu.kaynakPaylasim}',
+      );
       if (!mounted) return;
       var yorum = d['yorum'] as Map<String, dynamic>;
       var icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
@@ -837,6 +842,9 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
       liste: [_yorum!, ..._devam],
       icerikler: _icerikler,
       baslangic: 0,
+      // Bu ekran `/gonderi/:id` bağlantısının indiği yer: görüntülenme
+      // "paylaşılan bağlantı" kovasına yazılır (md. 23).
+      kaynak: GonderiOlcu.kaynakPaylasim,
     );
   }
 }
@@ -942,6 +950,12 @@ class ReelsGorunumu extends StatefulWidget {
   /// (tek gönderi ekranı).
   final Future<void> Function()? dahaGetir;
 
+  /// Görüntülenme KAYNAK etiketi (md. 23). Reels aynı bileşenle akıştan,
+  /// keşfetten, PROFİLDEN ve dizi sayfasından açılıyor; kaynağı yalnız
+  /// çağıran bilir. Varsayılan 'reels' — açan yer söylemezse görüntülenme
+  /// yine de doğru kovaya (tam ekran akış) düşer.
+  final String kaynak;
+
   const ReelsGorunumu({
     super.key,
     required this.liste,
@@ -949,6 +963,7 @@ class ReelsGorunumu extends StatefulWidget {
     required this.baslangic,
     this.medyaBaslangic = 0,
     this.dahaGetir,
+    this.kaynak = GonderiOlcu.kaynakReels,
   });
 
   @override
@@ -1024,6 +1039,7 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
         // Yalnız açılış gönderisi dokunulan medyadan başlar; diğerleri
         // her zaman baştan.
         medyaBaslangic: i == widget.baslangic ? widget.medyaBaslangic : 0,
+        kaynak: widget.kaynak,
       ),
     );
 
@@ -1091,6 +1107,9 @@ class _ReelSayfa extends StatefulWidget {
   /// çerçeveyi buna göre kurar). Yalnız AKTİF sayfa bildirir.
   final ValueChanged<double>? onOran;
 
+  /// Görüntülenme kaynak etiketi — `ReelsGorunumu.kaynak`tan gelir.
+  final String kaynak;
+
   const _ReelSayfa({
     super.key,
     required this.yorum,
@@ -1098,6 +1117,7 @@ class _ReelSayfa extends StatefulWidget {
     this.aktif = true,
     this.medyaBaslangic = 0,
     this.onOran,
+    this.kaynak = GonderiOlcu.kaynakReels,
   });
 
   @override
@@ -1185,8 +1205,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
   void _isaretle() {
     if (_isaretlendi) return;
     _isaretlendi = true;
+    // KAYNAK (md. 23): tam ekran dikey akış = 'reels'. Etiketsiz gitseydi
+    // Reels'ten gelen görüntülenmeler "Diğer" kovasına düşerdi.
     Api.post('/akis/goruldu', {
       'idler': [widget.yorum['id']],
+      'kaynak': widget.kaynak,
     }).catchError((_) => null);
   }
 
@@ -1375,7 +1398,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
     // düğmesi aynı alanı okur).
     if (_takipBilinir) widget.yorum['takip_ediyorum'] = _takipte;
     try {
-      final d = await Api.takipToggle(ad);
+      final d = await Api.takipToggle(
+        ad,
+        // md. 23 atfı: bu takip TAM EKRAN GÖNDERİDEN geldi.
+        kaynakGonderi: widget.yorum['id'] as int?,
+      );
       final takip = d['takip'] == true;
       if (_takipBilinir) widget.yorum['takip_ediyorum'] = takip;
       if (mounted) setState(() => _takipte = takip);
@@ -1421,6 +1448,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
     // Android'in alt sistem çubuğu (geri/ana/menü tuşları) sabit olduğundan
     // alt bilgiler (kullanıcı/süre) ve ilerleme çubuğu onun ALTINDA kalmasın.
     final altInset = MediaQuery.of(context).padding.bottom;
+    // Gönderi benim mi? İKİ yer kullanıyor: göz ikonunun "istatistikleri gör"
+    // girişi (md. 23) ve üç nokta menüsünün şikâyet/sil ayrımı.
+    final benimGonderi =
+        y['kullanici_id'] == context.read<Oturum>().kullanici?['id'];
 
     Widget zemin;
     if (d != null && d.value.isInitialized) {
@@ -1558,6 +1589,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
             onTap: () {
               setState(() => _spoilerAcik = true);
               _d?.play();
+              // md. 23 agregat spoiler sayacı (kim açtı YAZILMAZ).
+              GonderiOlcu.bildir(widget.yorum['id'], GonderiOlcu.spoilerAcildi);
             },
             child: Container(
               color: Colors.black.withValues(alpha: 0.85),
@@ -1802,31 +1835,27 @@ class _ReelSayfaState extends State<_ReelSayfa>
           ),
         ),
         // Sağ alt: görüntülenme / beğeni / yorum / paylaş
+        // (`benimGonderi` yukarıda hesaplandı: hem istatistik girişi hem üç
+        // nokta menüsü aynı kararı kullanır.)
         Positioned(
           right: 10,
           bottom: 30 + altInset,
           child: Column(
             children: [
-              // Görüntülenme (salt bilgi, buton değil)
-              Padding(
-                padding: const EdgeInsets.all(6),
-                child: Column(
-                  children: [
-                    const Icon(
-                      Icons.remove_red_eye_outlined,
-                      size: 28,
-                      color: Colors.white70,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      '${(y['goruntulenme'] as num?)?.toInt() ?? 0}',
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ],
-                ),
+              // Görüntülenme. KENDİ gönderinde "istatistikleri gör" düğmesi
+              // olur (md. 23), başkasınınkinde salt bilgi kalır — uç zaten
+              // yalnız sahibine cevap veriyor, dokunulur görünüp 404 almak
+              // kullanıcıyı yanıltırdı.
+              _ReelsDugme(
+                ikon: Icons.remove_red_eye_outlined,
+                renk: benimGonderi ? DiziRenkler.sari : Colors.white70,
+                etiketRenk: Colors.white70,
+                etiket: '${(y['goruntulenme'] as num?)?.toInt() ?? 0}',
+                onTap: benimGonderi
+                    ? () => GoRouter.of(
+                        context,
+                      ).push('/gonderi-istatistik/${y['id']}')
+                    : null,
               ),
               const SizedBox(height: 16),
               _ReelsDugme(
@@ -1841,9 +1870,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
               UcNoktaMenu(
                 tur: 'yorum',
                 hedefId: y['id'] as int,
-                benimMi:
-                    y['kullanici_id'] ==
-                    context.read<Oturum>().kullanici?['id'],
+                benimMi: benimGonderi,
               ),
               const SizedBox(height: 16),
               _ReelsDugme(
@@ -2011,8 +2038,16 @@ class _ReelsMetniState extends State<ReelsMetni> {
 class _ReelsDugme extends StatelessWidget {
   final IconData ikon;
   final Color renk;
+
+  /// Etiket rengi ikondan AYRI: beğenilen kalp kırmızı olurken sayısı beyaz
+  /// kalır. Görüntülenme sayacı ise geri planda durmalı (white70).
+  final Color etiketRenk;
   final String etiket;
-  final VoidCallback onTap;
+
+  /// null → düğme SALT BİLGİDİR (dokunulamaz). Başkasının gönderisindeki
+  /// görüntülenme sayısı böyle çizilir: dokunulur görünüp 404 almak
+  /// kullanıcıyı yanıltırdı.
+  final VoidCallback? onTap;
 
   /// Basılı tutma eylemi (beğeni düğmesinde: beğenenler listesi). Uzun basma
   /// tanınınca [onTap] ateşlenmez — liste açmak beğeni atmaz.
@@ -2020,9 +2055,10 @@ class _ReelsDugme extends StatelessWidget {
   const _ReelsDugme({
     required this.ikon,
     required this.etiket,
-    required this.onTap,
+    this.onTap,
     this.onUzunBas,
     this.renk = Colors.white,
+    this.etiketRenk = Colors.white,
   });
 
   @override
@@ -2037,10 +2073,7 @@ class _ReelsDugme extends StatelessWidget {
           children: [
             Icon(ikon, size: 30, color: renk),
             const SizedBox(height: 3),
-            Text(
-              etiket,
-              style: const TextStyle(color: Colors.white, fontSize: 11),
-            ),
+            Text(etiket, style: TextStyle(color: etiketRenk, fontSize: 11)),
           ],
         ),
       ),

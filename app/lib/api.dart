@@ -377,7 +377,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.40.0+86';
+  static const surum = '1.41.0+88';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -479,15 +479,35 @@ class Api {
   static Future<Map<String, dynamic>> acikProfil(String kullaniciAdi) async =>
       await get('/profil/$kullaniciAdi') as Map<String, dynamic>;
 
-  static Future<Map<String, dynamic>> takipToggle(String kullaniciAdi) async =>
-      await post('/takip/$kullaniciAdi', {}) as Map<String, dynamic>;
+  /// Takip et / takipten çık.
+  ///
+  /// [kaynakGonderi] — md. 23: "bu gönderiden kaç kişi takip etti". Bir
+  /// GÖNDERİ KARTINDAKİ takip düğmesinden çağrılıyorsa gönderinin id'si
+  /// verilir. Sunucu bunu YALNIZ gerçekten yeni takip satırı açıldığında
+  /// sayar; takip-bırak-takip döngüsü sayacı şişiremez. Sayaç AGREGATTIR:
+  /// kimin takip ettiği yazılmaz.
+  static Future<Map<String, dynamic>> takipToggle(
+    String kullaniciAdi, {
+    int? kaynakGonderi,
+  }) async {
+    // Gövde koşullu ELEMANLA değil, iki satırla kuruluyor: koleksiyon-if
+    // burada `use_null_aware_elements` uyarısı doğuruyor ve bu dosyada YENİ
+    // uyarı bırakmamak proje kuralı.
+    final govde = <String, dynamic>{};
+    if (kaynakGonderi != null) govde['kaynak_gonderi'] = kaynakGonderi;
+    return await post('/takip/$kullaniciAdi', govde) as Map<String, dynamic>;
+  }
 
-  static Future<List<dynamic>> takipciler(String kullaniciAdi) async =>
-      (await get('/takipciler/$kullaniciAdi'))['kullanicilar'] as List<dynamic>;
+  /// Takipçi/takip listesi. YANITIN TAMAMI döner: md. 21'den beri sunucu
+  /// `{kullanicilar, gizli}` gönderiyor ve `gizli:true` "liste boş" DEĞİL
+  /// "kullanıcı gizlemeyi seçti" demek — yalnız `kullanicilar` okunursa ekran
+  /// gizli listeyi "Takipçi yok" diye yanlış anlatır.
+  static Future<Map<String, dynamic>> takipciler(String kullaniciAdi) async =>
+      await get('/takipciler/$kullaniciAdi') as Map<String, dynamic>;
 
-  static Future<List<dynamic>> takipEdilenler(String kullaniciAdi) async =>
-      (await get('/takipedilenler/$kullaniciAdi'))['kullanicilar']
-          as List<dynamic>;
+  static Future<Map<String, dynamic>> takipEdilenler(
+    String kullaniciAdi,
+  ) async => await get('/takipedilenler/$kullaniciAdi') as Map<String, dynamic>;
 
   static Future<List<dynamic>> kullaniciAra(String q) async =>
       (await get(

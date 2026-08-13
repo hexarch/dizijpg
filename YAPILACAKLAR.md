@@ -1,5 +1,105 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-14 — MD. 20/21/23/24 + İKİ HATA DÜZELTMESİ 🚀 (1.41.0+88)
+Beş ajan paralel; `server.js`te herkese ayrı bölge verildi, çakışma olmadı.
+
+### Md. 20 Hareketlerim · Md. 21 Gizlilik · Md. 24 İstatistiklerim
+Ayrıntı `projeler/yapilacaklar` içinde. Öne çıkanlar:
+- **21'in bulgusu:** `izlenenler_gizli` YARIM zorlanıyormuş — şerit gizleniyor
+  ama istatistik sayaçları, ekran süresi, uyum kartı ve rozetler AÇIK
+  kalıyordu. Gizlediğini sanan kullanıcının verisi başka yerden görünüyordu.
+- **20:** sekiz tablo UNION ALL, imleç (tarih, anahtar) — eş tarihli satırlar
+  (toplu içe aktarım tek `now()` yazıyor) tekrar/atlama yapmasın diye.
+  9 indeks; 120 bin satırlı kullanıcıda 10 sayfa 51 ms.
+- **24:** görüntülenme kırılımı geriye dönük ÜRETİLEMEZ (sayaç tarihsiz);
+  günlük anlık görüntü tablosu kuruldu ve ekran bunu açıkça söylüyor.
+
+### Md. 23 Gönderi istatistikleri
+Kullanıcı "tam profesyonel olsun" dedi; sorulup eklenenler: etkileşim oranı +
+kendi ortalamanla kıyas, spoiler perdesi açılma oranı, içeriğe tıklama,
+takipçi/keşif kırılımı, 7/30/90/tümü seçici, zirve zamanı.
+"Görüntüleyenler" YALNIZ SAYI (kullanıcı kararı) — md.21'deki gizlilik sözüyle
+çelişmesin. Tekil sayım için kişi-bazlı satır ANAHTARLI ÖZET, 90 gün, uç
+kimlik döndürmüyor. Grafik KÜMÜLATİF: günlük artış zikzak yapardı, tek çare
+yumuşatmaktı, o da sayıyı bozmaktı. Paylaşımın hiç sayılmadığı bulundu.
+Video izlenme eğrisi sonraki tura (planı kodda).
+
+### Hata 1 — emoji animasyonu (kullanıcı bildirimi)
+"Dizi/film/oyuncu profilinde ve mesajlarda emojiler hareketli değil."
+Mekanizma çalışıyordu; iki yer BİLEREK durağandı: mesaj rozetleri hiç
+oynamıyordu, içerik satırında yalnız SEÇİLİ emoji dönüyordu. İkisi de artık
+belirdiğinde BİR KEZ oynuyor; kendi tepkin sürekli dönüyor (sonsuz döngü
+herkese açılmadı: bir sohbette onlarca rozet olur).
+NOT: cihazda "Animatör süre ölçeği kapalı" / "Animasyonları kaldır" açıksa
+uygulama bunu bilerek dinliyor ve hiçbir emoji oynamıyor.
+
+### Hata 2 — "izledim" ve "izleyeceğim" aynı anda (kullanıcı bildirimi)
+KÖK: çelişki `durumlar` içinde değil, `izlemeler` ⨯ `durumlar` ARASINDA.
+"İzledim" hem kayıt yazıyor hem durumu bitirdim yapıyor; sonra "izleyeceğim"
+seçilince yalnız durum değişiyor, kayıt kalıyordu. Ajan üç kaynak daha buldu
+(TMDB'ye ulaşılamayan hâller, bölüme puan verme, `tekrar` sayacı).
+KURAL: izleme kaydı varken "izleyeceğim" olamaz. İki yön, iki çözüm —
+kayıt silinecekse ONAY (409 + sayı), niyet değişecekse sessiz ilerleme.
+CANLI TEMİZLİK yönü TERSİNE çevrildi: toplu düzeltmede soracak kimse yok →
+hiçbir kayıt silinmedi, yalnız durum ilerletildi (kayıt olgu, durum niyet).
+ÖLÇÜM: 7 çelişkili satır / 6 kullanıcı (biri 154 bölümlük dizi) düzeltildi;
+`izlemeler` 46.332 → 46.332, tek kayıt kaybı yok. `biraktim` dokunulmadı.
+
+### Kanıt ve dağıtım
+`npm test` **964** · `flutter test` **1287** · analyze 0 hata/uyarı.
+Migrasyonlar: 14, 14b, 14c, 14d, 14e uygulandı. Çeviri **794 anahtar × 45 dil**.
+Gizlilik politikasına md.23 için iki madde (46 dil), tarih 14.08.2026.
+version.json 1.41.0+88 · bootstrap `main.73fbeb5be2d4.dart.js`.
+Paketler: `dizijpg.apk` + `dizijpg-1.41.0+88.aab`, not `surum-notu-1.41.0.txt`.
+
+### ⬜ KULLANICIYA KALAN
+- Play'e 1.41.0+88 AAB + **Play Data Safety beyanı gözden geçirilmeli**
+  (md.23 gerçekten yeni veri topluyor; politika metni hazır).
+- `ur` dilinde "İzleyeceğim" etiketinin mevcut çevirisi eril (`دیکھوں گا`) —
+  bu turun kapsamı dışındaydı, ayrı turda düzeltilebilir.
+
+## 2026-08-14 — ✅ MD. 24 AYARLARDA TOPLU İSTATİSTİKLER (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
+İstek: "Kullanıcının kendi genel istatistikleri: tüm zamanların görüntülenmesi,
+30 / 60 / 90 / 120 günlük görüntülenme; beğenilerde aynı kırılım." Amaç:
+"neyini tutuyorsak en net şekilde verelim ki kendi paylaşımlarının kalitesini
+artırsın."
+
+**ENVANTER (kritik bulgu):** `yorum_begeniler.tarih` VAR → beğeni kırılımı
+GERİYE DÖNÜK tam. `yorumlar.goruntulenme` yalnız bir SAYAÇ, artışın ne zaman
+olduğu HİÇBİR YERDE yazılı değil → görüntülenmenin zaman kırılımı geçmişe
+dönük ÜRETİLEMEZ. (`yorum_goruntuleyen` şemada duruyor ama server.js ona hiç
+YAZMIYOR — ölü tablo.)
+
+**ÇÖZÜM:** `gonderi_gunluk(gonderi_id, gun, goruntulenme, toplam)` —
+günlük ANLIK GÖRÜNTÜ (migrasyon-2026-08-14c.sql). Olay tablosu yazılmadı:
+sayaç akış çekilince TOPLU artıyor (`WHERE id = ANY(...)`), olay başına satır
+günde milyonlara çıkardı. Görev `ISCI_GOREVLI` kapısında, 6 saatte bir; delta
+her turda çıpadan YENİDEN hesaplanıp ÜZERİNE yazılıyor → iki kez koşmak çift
+saymıyor. İlk (taban) tur 0 delta yazar: ömür boyu sayacı "bugünün artışı"
+saymak açılış gününde SAHTE ZİRVE olurdu. Budama 130 gün ama gönderinin SON
+satırını (çıpa) asla silmez. Hacim: N + 130·A satır (N=gönderi, A=günlük aktif).
+
+**DÜRÜSTLÜK:** eksik kapsam tahminle DOLDURULMUYOR; uç `goruntulenme_tam` /
+`begeni_tam` + `goruntulenme_baslangic` döndürüyor, ekran "Görüntülenme
+geçmişi 14 Ağustos 2026'dan beri birikiyor (19 günlük veri var), bu yüzden 30
+günlük sayı henüz eksik." satırını basıyor ve kısmi sayıyı kum saati ikonuyla
+işaretliyor.
+
+* Uç: `GET /istatistiklerim/gonderiler?gun=30|60|90|120|0` (`girisZorunlu`,
+  yalnız kendi verisi, kullanıcı seçme parametresi YOK).
+* SQL'ler `backend/gonderi_istatistik.js`te — GERÇEK Postgres'e karşı sınanıyor.
+* Ekran `app/lib/ekranlar/istatistiklerim.dart` (Ayarlar > İstatistiklerim),
+  rota `/istatistiklerim` (robots.txt'te Disallow).
+* **Md. 23 (gönderi bazında istatistik) BU ALTYAPIYI KULLANACAK:** aynı tablo
+  `WHERE gonderi_id=$1` ile tek gönderinin gün gün serisini verir; beğeni
+  serisi `yorum_begeniler`den `date_trunc('day', tarih)` ile çıkar.
+* Kanıt: `backend/test/gonderi_istatistik.test.js` (25 test, 11'i gerçek DB) +
+  `app/test/istatistiklerim_test.dart` (13 test). Mutasyonla doğrulandı.
+  Backend 906/906, Flutter 1246/1246, analyze 85 info (taban), 0 hata/uyarı.
+* **BEKLEYEN:** 15 yeni çeviri anahtarı 45 dile eklenmeli (liste raporda).
+  Ay adları YENİ DEĞİL: karşılama akışının 12 anahtarı yeniden kullanıldı.
+* **Dağıtım YOK, sürüm artırılmadı, commit YOK.**
 
 ## 2026-08-13 — ✅ MD. 25 İLK AÇILIŞ KARŞILAMA AKIŞI (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
 İstek birebir: girişten SONRA ilk açılışta sırayla (1) doğum tarihi, (2) dışarıdan

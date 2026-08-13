@@ -922,4 +922,12 @@ const Map<String, String> cevirilerGu = {
       'પોસ્ટના માલિકને બતાવાતા આંકડા માટે સામૂહિક કાઉન્ટર તરીકે રખાય છે: પોસ્ટ કેટલી વાર અને કઈ સપાટીથી (ફીડ, પ્રોફાઇલ, ફુલ-સ્ક્રીન ફીડ, સિરીઝ/ફિલ્મ પેજ, શેર કરેલી લિંક) જોવાઈ, જોનાર તે સમયે પોસ્ટના માલિકને ફોલો કરતો હતો કે નહીં, પોસ્ટથી પ્રોફાઇલ/કન્ટેન્ટ પર જવું, પોસ્ટ દ્વારા થયેલો ફોલો, શેર અને સ્પોઇલર પડદો ખૂલવો. આ કાઉન્ટરમાં વપરાશકર્તાની ઓળખ, IP સરનામું કે ટાઇમસ્ટેમ્પ હોતું નથી; કોણે શું કર્યું તે પૂછી શકાતું નથી.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'કોઈ પોસ્ટ કેટલા જુદા જુદા લોકોએ જોઈ તે ગણી શકાય તે માટે, દરેક જોનાર માટે એક અપરિવર્તનીય કી-આધારિત સારાંશ (વપરાશકર્તાની ઓળખ કે IP સરનામાંમાંથી મેળવેલ ક્રિપ્ટોગ્રાફિક સંક્ષેપ) 90 દિવસ સાચવવામાં આવે છે. પોસ્ટના માલિકને ફક્ત સંખ્યા બતાવાય છે; જોનારાઓની ઓળખ કોઈ પણ સંજોગોમાં શેર કરાતી નથી.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“જોવું છે”માં ખસેડવું?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'કોઈ પણ ટાઇટલ કાં તો જોવાનું બાકી હોય છે કાં તો જોવાઈ ગયું હોય છે. આગળ વધશો તો આ સિરીઝમાં તમારાં {} જોયાનાં નિશાન કાઢી નાખવામાં આવશે.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'કોઈ પણ ટાઇટલ કાં તો જોવાનું બાકી હોય છે કાં તો જોવાઈ ગયું હોય છે. આગળ વધશો તો આ ફિલ્મ પરનું તમારું “જોયું” નિશાન નીકળી જશે.',
+  'Sil ve taşı': 'કાઢીને ખસેડો',
 };

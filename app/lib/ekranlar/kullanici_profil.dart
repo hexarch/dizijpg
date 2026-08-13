@@ -214,12 +214,16 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       _Sayac(
                         deger: '${st['takipci']}',
                         etiket: 'Takipçi'.c,
-                        onTap: () => _liste(true),
+                        onTap: (!benMi && p['takipciler_gizli'] == true)
+                            ? null
+                            : () => _liste(true),
                       ),
                       _Sayac(
                         deger: '${st['takip_edilen']}',
                         etiket: 'Takip'.c,
-                        onTap: () => _liste(false),
+                        onTap: (!benMi && p['takip_edilenler_gizli'] == true)
+                            ? null
+                            : () => _liste(false),
                       ),
                       _Sayac(deger: '${st['yorum']}', etiket: 'Yorum'.c),
                       _Sayac(deger: '${st['film']}', etiket: 'Film'.c),
@@ -1020,6 +1024,10 @@ class KullaniciListesiEkrani extends StatefulWidget {
 
 class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
   List<dynamic>? _liste;
+
+  /// Md. 21 — kullanıcı bu listeyi gizlemeyi seçtiyse sunucu boş liste +
+  /// `gizli:true` döner. "Kimse yok" ile "gösterilmiyor" AYNI ŞEY DEĞİL.
+  bool _gizli = false;
   String? _hata;
 
   /// Giriş yapanın takip ettiklerinin kullanıcı adları. null = bilinmiyor
@@ -1055,9 +1063,12 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
         else
           Future<Set<String>?>.value(const <String>{}),
       ]);
-      final liste = sonuc[0] as List<dynamic>;
+      final yanit = sonuc[0] as Map<String, dynamic>;
+      final liste = yanit['kullanicilar'] as List<dynamic>? ?? const [];
       if (!mounted) return;
       setState(() {
+        // Md. 21: gizli liste BOŞ liste değildir; ayrı bir metin gerekiyor.
+        _gizli = yanit['gizli'] == true;
         _liste = liste;
         _takiptekiler = hepsiTakipte
             ? {
@@ -1088,6 +1099,18 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
     } else if (_liste == null) {
       govde = const Center(
         child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    } else if (_gizli) {
+      // Md. 21 — gizlenen liste: sebebi SÖYLENİR (yorumlarını gizleyen
+      // kullanıcı için zaten aynı kalıp var). Kilit ikonu, "yok" demiyor.
+      govde = Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        child: BosDurum(
+          ikon: Icons.lock_outline,
+          baslik: widget.takipciler
+              ? 'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.'.c
+              : 'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.'.c,
+        ),
       );
     } else if (_liste!.isEmpty) {
       govde = Center(

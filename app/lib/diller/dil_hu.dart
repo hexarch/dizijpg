@@ -935,4 +935,12 @@ const Map<String, String> cevirilerHu = {
       'A bejegyzés közzétevőjének megjelenített statisztikákhoz összesített számlálóként tároljuk: hányszor és melyik felületről (hírfolyam, profil, teljes képernyős hírfolyam, sorozat-/filmoldal, megosztott hivatkozás) tekintették meg a bejegyzést, a megtekintő abban a pillanatban követte-e a közzétevőt, a bejegyzésből a profilba vagy a tartalomhoz való átlépést, a bejegyzésen keresztül létrejött követéseket, a megosztásokat és a spoilerfüggöny felfedését. Ezek a számlálók nem tartalmaznak felhasználói azonosítót, IP-címet vagy időbélyeget; nem kérdezhető le, ki mit tett.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Annak megszámolásához, hogy hány különböző ember látott egy bejegyzést, megtekintőnként 90 napig tárolunk egy visszafordíthatatlan, kulcsolt kivonatot (a felhasználói azonosítóból vagy az IP-címből származtatott kriptográfiai rövidítést). A közzétevőnek csak a szám jelenik meg; a megtekintők személyazonosságát semmilyen körülmények között nem osztjuk meg.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Áthelyezés a „Megnézem majd” közé?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Egy cím vagy megnézendő, vagy már megnézett. Ha folytatod, törlődik {} megtekintésjelölésed ebben a sorozatban.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Egy cím vagy megnézendő, vagy már megnézett. Ha folytatod, lekerül a „Láttam” jelölésed erről a filmről.',
+  'Sil ve taşı': 'Törlés és áthelyezés',
 };

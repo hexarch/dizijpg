@@ -914,4 +914,12 @@ const Map<String, String> cevirilerAr = {
       'من أجل الإحصائيات المعروضة لصاحب المنشور، تُحفَظ كعدّادات مجمَّعة: كم مرة ومن أي واجهة (الموجز، الملف الشخصي، الموجز بملء الشاشة، صفحة المسلسل/الفيلم، الرابط المُشارَك) شُوهد المنشور، وما إذا كان من شاهده يتابع صاحب المنشور في تلك اللحظة، والانتقال من المنشور إلى الملف الشخصي أو المحتوى، والمتابعات التي بدأت من المنشور، والمشاركات، وكشف ستار الحرق. لا تحتوي هذه العدّادات على هوية مستخدم ولا عنوان IP ولا طابع زمني؛ ولا يمكن الاستعلام عمّن فعل ماذا.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'لكي يتسنى إحصاء عدد الأشخاص المختلفين الذين شاهدوا منشورًا، يُحفَظ لكل مشاهِد ملخّص مفتاحي غير قابل للعكس (اختزال تشفيري مشتق من هوية المستخدم أو عنوان IP) لمدة 90 يومًا. ولا يُعرَض لصاحب المنشور سوى العدد؛ ولا تُشارَك هوية المشاهِدين تحت أي ظرف.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'نقله إلى «سأشاهده»؟',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'العمل إمّا للمشاهدة وإمّا مُشاهَد. المتابعة ستحذف علامات المشاهدة في هذا المسلسل ({}).',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'العمل إمّا للمشاهدة وإمّا مُشاهَد. المتابعة ستزيل علامة «شاهدته» في هذا الفيلم.',
+  'Sil ve taşı': 'حذف ونقل',
 };

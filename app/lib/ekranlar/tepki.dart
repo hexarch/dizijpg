@@ -320,8 +320,13 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
                   TepkiIkonu(
                     e,
                     boyut: 20,
-                    // Kendi tepkin sürekli döner; ötekiler durağan (8 emoji
-                    // aynı anda oynasa hem gürültü hem boş CPU olurdu).
+                    // Satır AÇILINCA hepsi BİR KEZ oynar (kullanıcı bildirimi
+                    // 14 Ağu: "diziye emoji bırakınca animasyon oynamıyor" —
+                    // eskiden yalnız seçili olan dönüyordu, hiç tepki
+                    // vermemiş kullanıcı hiçbir hareket görmüyordu).
+                    // Kendi tepkin SÜREKLİ döner; ötekiler bir kez oynayıp
+                    // dinlenir (8 emoji sonsuz dönseydi gürültü + boş CPU).
+                    acilistaOynat: true,
                     oynat: _benim == e,
                     vurus: _vuruslar[e] ?? 0,
                   ),

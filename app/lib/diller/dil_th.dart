@@ -913,4 +913,12 @@ const Map<String, String> cevirilerTh = {
       'สำหรับสถิติที่แสดงแก่เจ้าของโพสต์ ระบบเก็บเป็นตัวนับรวมว่า โพสต์ถูกดูกี่ครั้งและจากพื้นผิวใด (ฟีด โปรไฟล์ ฟีดเต็มจอ หน้าซีรีส์/ภาพยนตร์ ลิงก์ที่แชร์) ผู้ดูกำลังติดตามเจ้าของโพสต์อยู่ในขณะนั้นหรือไม่ การย้ายจากโพสต์ไปยังโปรไฟล์หรือเนื้อหา การติดตามที่เกิดขึ้นผ่านโพสต์ การแชร์ และการเปิดม่านสปอยล์ ตัวนับเหล่านี้ไม่มีอัตลักษณ์ผู้ใช้ ที่อยู่ IP หรือประทับเวลา จึงไม่สามารถสืบค้นได้ว่าใครทำอะไร',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'เพื่อให้นับได้ว่ามีคนต่างกันกี่คนที่เห็นโพสต์หนึ่ง ระบบจะเก็บค่าย่อยแบบมีกุญแจที่ย้อนกลับไม่ได้สำหรับผู้ชมแต่ละคน (ค่าย่อทางวิทยาการเข้ารหัสลับที่ได้จากอัตลักษณ์ผู้ใช้หรือที่อยู่ IP) ไว้ 90 วัน เจ้าของโพสต์จะเห็นเพียงตัวเลขเท่านั้น ตัวตนของผู้ชมจะไม่ถูกเปิดเผยไม่ว่ากรณีใด',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'ย้ายไป “จะดู” ไหม',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'เรื่องหนึ่งจะอยู่ในสถานะจะดูหรือดูแล้วอย่างใดอย่างหนึ่ง ถ้าไปต่อ เครื่องหมายการดู {} รายการของคุณในซีรีส์นี้จะถูกลบ',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'เรื่องหนึ่งจะอยู่ในสถานะจะดูหรือดูแล้วอย่างใดอย่างหนึ่ง ถ้าไปต่อ เครื่องหมาย “ดูแล้ว” ของคุณในหนังเรื่องนี้จะถูกเอาออก',
+  'Sil ve taşı': 'ลบและย้าย',
 };

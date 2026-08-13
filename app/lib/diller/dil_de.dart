@@ -946,4 +946,12 @@ const Map<String, String> cevirilerDe = {
       'Für die Statistiken, die den Verfassenden eines Beitrags angezeigt werden, werden als aggregierte Zähler gespeichert: wie oft und von welcher Oberfläche (Feed, Profil, Vollbild-Feed, Serien-/Filmseite, geteilter Link) der Beitrag aufgerufen wurde, ob die betrachtende Person den Verfassenden zu diesem Zeitpunkt gefolgt ist, der Wechsel vom Beitrag zum Profil oder zum Inhalt, über den Beitrag entstandene Follows, Teilungen und das Aufdecken des Spoiler-Vorhangs. Diese Zähler enthalten keine Nutzerkennung, keine IP-Adresse und keinen Zeitstempel; wer was getan hat, lässt sich nicht abfragen.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Um zählen zu können, wie viele verschiedene Personen einen Beitrag gesehen haben, wird pro betrachtender Person 90 Tage lang eine nicht umkehrbare Prüfsumme mit Schlüssel gespeichert (eine kryptografische Verkürzung, abgeleitet aus der Nutzerkennung oder der IP-Adresse). Den Verfassenden wird nur die Zahl angezeigt; die Identität der betrachtenden Personen wird unter keinen Umständen weitergegeben.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Zu „Will ich sehen“ verschieben?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Ein Titel ist entweder noch zu sehen oder schon gesehen. Wenn du fortfährst, werden deine {} Sehmarkierungen in dieser Serie gelöscht.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Ein Titel ist entweder noch zu sehen oder schon gesehen. Wenn du fortfährst, wird deine Markierung „Gesehen“ bei diesem Film entfernt.',
+  'Sil ve taşı': 'Löschen und verschieben',
 };

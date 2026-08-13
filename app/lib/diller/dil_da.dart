@@ -928,4 +928,12 @@ const Map<String, String> cevirilerDa = {
       'Til statistikken, der vises til den, der har lavet opslaget, gemmes som samlede tællere: hvor mange gange og fra hvilken flade (feed, profil, fuldskærmsfeed, serie-/filmside, delt link) opslaget blev set, om den, der så det, fulgte opslagets ejer på det tidspunkt, skiftet fra opslaget til en profil eller til indhold, følgninger opstået via opslaget, delinger og åbning af spoilersløret. Disse tællere indeholder ingen brugeridentitet, IP-adresse eller tidsstempel; det kan ikke slås op, hvem der gjorde hvad.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'For at kunne tælle, hvor mange forskellige personer der har set et opslag, gemmes der pr. seer et uigenkaldeligt nøglebaseret sammendrag (en kryptografisk forkortelse afledt af brugeridentiteten eller IP-adressen) i 90 dage. Opslagets ejer får kun vist tallet; seernes identitet deles under ingen omstændigheder.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Flyt til „Vil se“?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'En titel er enten på vej til at blive set eller allerede set. Hvis du fortsætter, bliver dine {} sete-markeringer i denne serie slettet.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'En titel er enten på vej til at blive set eller allerede set. Hvis du fortsætter, bliver din markering „Set“ på denne film fjernet.',
+  'Sil ve taşı': 'Slet og flyt',
 };

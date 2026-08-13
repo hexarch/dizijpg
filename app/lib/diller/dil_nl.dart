@@ -934,4 +934,12 @@ const Map<String, String> cevirilerNl = {
       'Voor de statistieken die aan de plaatser van een bericht worden getoond, worden als geaggregeerde tellers bewaard: hoe vaak en vanaf welk oppervlak (feed, profiel, schermvullende feed, serie-/filmpagina, gedeelde link) het bericht is bekeken, of de kijker op dat moment de plaatser volgde, de overgang van het bericht naar een profiel of naar inhoud, volgacties die via het bericht ontstonden, delingen en het openen van het spoilergordijn. Deze tellers bevatten geen gebruikersidentiteit, IP-adres of tijdstempel; wie wat deed, is niet op te vragen.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Om te kunnen tellen hoeveel verschillende mensen een bericht hebben gezien, wordt per kijker 90 dagen lang een onomkeerbare samenvatting met sleutel bewaard (een cryptografische verkorting afgeleid van de gebruikersidentiteit of het IP-adres). Aan de plaatser van het bericht wordt alleen het aantal getoond; de identiteit van kijkers wordt onder geen enkele omstandigheid gedeeld.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Verplaatsen naar “Wil ik zien”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Een titel is óf nog te zien óf al gezien. Als je doorgaat, worden je {} kijkmarkeringen bij deze serie verwijderd.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Een titel is óf nog te zien óf al gezien. Als je doorgaat, wordt je markering “Gezien” bij deze film verwijderd.',
+  'Sil ve taşı': 'Verwijderen en verplaatsen',
 };

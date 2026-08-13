@@ -882,4 +882,12 @@ const Map<String, String> cevirilerZh = {
       '为了向帖子作者展示数据，我们以汇总计数器的形式记录：帖子被观看了多少次、来自哪个界面（信息流、个人主页、全屏信息流、剧集/电影页面、分享的链接），观看者当时是否关注了帖子作者，从帖子跳转到主页或内容，通过帖子建立的关注，分享，以及剧透遮罩被揭开的次数。这些计数器不包含用户身份、IP 地址或时间戳；无法查询谁做了什么。',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       '为了统计有多少不同的人看过某条帖子，每位观看者的一个不可逆的带密钥摘要（由用户身份或 IP 地址派生的加密缩略值）会保存 90 天。只向帖子作者展示数字；观看者的身份在任何情况下都不会被分享。',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '移到“想看”吗？',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      '一个作品要么是待看，要么是看过。继续的话，你在这部剧集中的 {} 条观看记录将被删除。',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      '一个作品要么是待看，要么是看过。继续的话，你在这部电影上的“看过”标记将被移除。',
+  'Sil ve taşı': '删除并移动',
 };

@@ -931,4 +931,12 @@ const Map<String, String> cevirilerFi = {
       'Julkaisun tekijälle näytettäviä tilastoja varten säilytetään koostettuina laskureina: kuinka monta kertaa ja miltä pinnalta (syöte, profiili, koko näytön syöte, sarja-/elokuvasivu, jaettu linkki) julkaisua katsottiin, seurasiko katsoja julkaisun tekijää sillä hetkellä, siirtymä julkaisusta profiiliin tai sisältöön, julkaisun kautta syntyneet seuraukset, jaot ja spoilerverhon avaaminen. Näissä laskureissa ei ole käyttäjätunnistetta, IP-osoitetta eikä aikaleimaa; kuka teki mitä, ei ole selvitettävissä.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Jotta voidaan laskea, kuinka moni eri henkilö näki julkaisun, kutakin katsojaa kohden säilytetään 90 päivän ajan peruuttamaton avaimellinen tiiviste (käyttäjätunnisteesta tai IP-osoitteesta johdettu kryptografinen lyhennys). Julkaisun tekijälle näytetään vain lukumäärä; katsojien henkilöllisyyttä ei jaeta missään olosuhteissa.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Siirretäänkö kohtaan ”Aion katsoa”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Nimike on joko katsottavana tai katsottu. Jos jatkat, {} katselumerkintääsi tässä sarjassa poistetaan.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Nimike on joko katsottavana tai katsottu. Jos jatkat, merkintäsi ”Katsottu” tässä elokuvassa poistetaan.',
+  'Sil ve taşı': 'Poista ja siirrä',
 };

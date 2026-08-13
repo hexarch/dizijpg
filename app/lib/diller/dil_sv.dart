@@ -932,4 +932,12 @@ const Map<String, String> cevirilerSv = {
       'För statistiken som visas för den som publicerat sparas som aggregerade räknare: hur många gånger och från vilken yta (flöde, profil, helskärmsflöde, serie-/filmsida, delad länk) inlägget visades, om den som såg det följde publiceraren just då, övergången från inlägget till en profil eller till innehåll, följningar som startade från inlägget, delningar och öppnandet av spoilerridån. Dessa räknare innehåller ingen användaridentitet, IP-adress eller tidsstämpel; det går inte att fråga vem som gjorde vad.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'För att kunna räkna hur många olika personer som såg ett inlägg sparas per person som såg det en oåterkallelig nyckelbaserad sammanfattning (en kryptografisk förkortning härledd ur användaridentiteten eller IP-adressen) i 90 dagar. Den som publicerat ser bara antalet; identiteten hos dem som såg inlägget delas aldrig under några omständigheter.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Flytta till ”Vill se”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'En titel är antingen att se eller redan sedd. Om du fortsätter raderas dina {} sedd-markeringar i den här serien.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'En titel är antingen att se eller redan sedd. Om du fortsätter tas din markering ”Sett” på den här filmen bort.',
+  'Sil ve taşı': 'Ta bort och flytta',
 };

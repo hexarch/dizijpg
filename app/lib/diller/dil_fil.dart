@@ -939,4 +939,12 @@ const Map<String, String> cevirilerFil = {
       'Para sa istatistikang ipinapakita sa may-ari ng post, iniingatan bilang pinagsama-samang counter: ilang beses at mula sa aling surface (feed, profile, full-screen na feed, pahina ng serye/pelikula, na-share na link) tiningnan ang post, kung sinusundan ba ng nanood ang may-ari ng post sa sandaling iyon, ang paglipat mula sa post papunta sa profile o content, ang mga follow na nabuo sa pamamagitan ng post, ang mga share, at ang pagbukas ng takip ng spoiler. Walang taglay na pagkakakilanlan ng user, IP address o timestamp ang mga counter na ito; hindi matutunton kung sino ang gumawa ng ano.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Upang mabilang kung ilang magkakaibang tao ang nakakita ng isang post, isang hindi na maibabalik na keyed digest kada manonood (isang cryptographic na pagpapaikli na hango sa pagkakakilanlan ng user o sa IP address) ang iniingatan nang 90 araw. Ang bilang lamang ang ipinapakita sa may-ari ng post; hindi kailanman ibinabahagi ang pagkakakilanlan ng mga nanood sa anumang pagkakataon.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Ilipat sa “Panonoorin Ko”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Ang isang pamagat ay panonoorin o napanood na. Kung magpapatuloy ka, mabubura ang {} marka ng panonood mo sa seryeng ito.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Ang isang pamagat ay panonoorin o napanood na. Kung magpapatuloy ka, maaalis ang markang “Napanood Ko” mo sa pelikulang ito.',
+  'Sil ve taşı': 'Burahin at ilipat',
 };

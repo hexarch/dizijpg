@@ -928,4 +928,12 @@ const Map<String, String> cevirilerNb = {
       'For statistikken som vises til den som har publisert innlegget, lagres som samlede tellere: hvor mange ganger og fra hvilken flate (strøm, profil, fullskjermstrøm, serie-/filmside, delt lenke) innlegget ble sett, om den som så det fulgte innleggets eier på det tidspunktet, overgangen fra innlegget til en profil eller til innhold, følginger som oppsto via innlegget, delinger og åpning av spoilersløret. Disse tellerne inneholder ingen brukeridentitet, IP-adresse eller tidsstempel; det kan ikke slås opp hvem som gjorde hva.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'For å kunne telle hvor mange forskjellige personer som så et innlegg, lagres det per seer et ugjenkallelig nøkkelbasert sammendrag (en kryptografisk forkortelse utledet av brukeridentiteten eller IP-adressen) i 90 dager. Innleggets eier får bare se tallet; identiteten til dem som så innlegget deles under ingen omstendigheter.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Flytt til «Vil se»?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'En tittel er enten noe som skal ses eller noe som er sett. Hvis du fortsetter, blir de {} sett-markeringene dine i denne serien slettet.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'En tittel er enten noe som skal ses eller noe som er sett. Hvis du fortsetter, blir markeringen «Sett» din på denne filmen fjernet.',
+  'Sil ve taşı': 'Slett og flytt',
 };

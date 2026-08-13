@@ -934,4 +934,12 @@ const Map<String, String> cevirilerMs = {
       'Untuk statistik yang ditunjukkan kepada pemilik siaran, disimpan sebagai pembilang agregat: berapa kali dan dari permukaan mana (suapan, profil, suapan skrin penuh, halaman siri/filem, pautan yang dikongsi) siaran ditonton, sama ada penonton sedang mengikuti pemilik siaran ketika itu, perpindahan daripada siaran ke profil atau kandungan, ikutan yang terbentuk melalui siaran, kongsian, dan pembukaan tabir spoiler. Pembilang ini tidak mengandungi identiti pengguna, alamat IP atau cap masa; siapa melakukan apa tidak boleh disoal.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Untuk dapat mengira berapa ramai orang berbeza melihat sesuatu siaran, satu ringkasan berkunci yang tidak boleh diterbalikkan bagi setiap penonton (pemampatan kriptografi yang diterbitkan daripada identiti pengguna atau alamat IP) disimpan selama 90 hari. Pemilik siaran hanya ditunjukkan jumlahnya; identiti penonton tidak dikongsi dalam apa jua keadaan.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Alihkan ke “Nak Tonton”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Sesuatu judul sama ada akan ditonton atau sudah ditonton. Jika anda teruskan, {} tanda tontonan anda dalam siri ini akan dipadam.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Sesuatu judul sama ada akan ditonton atau sudah ditonton. Jika anda teruskan, tanda “Sudah Tonton” anda pada filem ini akan dibuang.',
+  'Sil ve taşı': 'Padam dan alih',
 };

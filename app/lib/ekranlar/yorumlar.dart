@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gonderi_olcu.dart';
 import '../icerik_deposu.dart';
 import '../medya_yukle.dart';
 import '../tema.dart';
@@ -202,6 +203,8 @@ class _YorumBolumuState extends State<YorumBolumu> {
           icerikler: _icerikler,
           baslangic: i,
           medyaBaslangic: medyaIndeks,
+          // md. 23: dizi/film sayfasından açılan görüntülenme "dizi" kovasına.
+          kaynak: GonderiOlcu.kaynakDizi,
         ),
       ),
     );

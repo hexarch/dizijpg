@@ -935,4 +935,12 @@ const Map<String, String> cevirilerPl = {
       'Na potrzeby statystyk pokazywanych osobie, która opublikowała post, przechowywane są jako zbiorcze liczniki: ile razy i z jakiej powierzchni (kanał, profil, kanał pełnoekranowy, strona serialu/filmu, udostępniony link) post został wyświetlony, czy osoba oglądająca obserwowała w tym momencie autora posta, przejścia z posta do profilu lub treści, obserwacje rozpoczęte przez post, udostępnienia oraz odsłonięcia kurtyny spoilera. Te liczniki nie zawierają identyfikatora użytkownika, adresu IP ani znacznika czasu; nie da się sprawdzić, kto co zrobił.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Aby móc policzyć, ile różnych osób zobaczyło post, dla każdej osoby oglądającej przechowywany jest przez 90 dni nieodwracalny skrót z kluczem (kryptograficzne skrócenie wyprowadzone z identyfikatora użytkownika lub adresu IP). Autorowi posta pokazywana jest wyłącznie liczba; tożsamość osób oglądających nie jest udostępniana w żadnych okolicznościach.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Przenieść do „Obejrzę”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Tytuł jest albo do obejrzenia, albo obejrzany. Jeśli przejdziesz dalej, twoje oznaczenia obejrzenia w tym serialu ({}) zostaną usunięte.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Tytuł jest albo do obejrzenia, albo obejrzany. Jeśli przejdziesz dalej, twoje oznaczenie „Obejrzane” przy tym filmie zostanie usunięte.',
+  'Sil ve taşı': 'Usuń i przenieś',
 };

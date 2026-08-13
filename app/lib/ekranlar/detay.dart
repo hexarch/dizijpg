@@ -22,6 +22,50 @@ const durumSecenekleri = [
   ('biraktim', 'Bıraktım', Icons.cancel_outlined),
 ];
 
+/// TEKİLLİK KURALI — "ya izleyecektir ya izlemiştir" (kullanıcı, 14 Ağu 2026).
+///
+/// İzleme kaydı varken "İzleyeceğim" seçilirse sunucu 409 + `IZLEME_KAYDI_VAR`
+/// döner ve isteği REDDEDER. Kuralı SUNUCU koyar (eski sürümler ve doğrudan
+/// API çağrıları da tutarlı kalsın diye); burada yalnız ONAY toplanır.
+///
+/// VERİ KAYBI SESSİZ OLAMAZ: dizide bu, onlarca bölümlük geçmiş demektir.
+/// Bu yüzden silinecek KAYIT SAYISI metne yazılır ve onay düğmesi kırmızıdır
+/// (`_sifirla`daki "Sil" ile aynı dil).
+///
+/// Dönüş: `true` = onaylandı, aksi hâlde vazgeçildi.
+Future<bool?> izlemeSilmeOnayi(
+  BuildContext context, {
+  required String tur,
+  required int adet,
+}) => showDialog<bool>(
+  context: context,
+  builder: (context) => AlertDialog(
+    backgroundColor: DiziRenkler.koyuGri,
+    title: Text('İzleyeceklerine taşınsın mı?'.c),
+    content: Text(
+      tur == 'tv'
+          ? 'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.'
+                .cf([adet])
+          : 'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.'
+                .c,
+    ),
+    actions: [
+      TextButton(
+        onPressed: () => Navigator.pop(context, false),
+        child: Text('İptal'.c),
+      ),
+      FilledButton(
+        style: FilledButton.styleFrom(
+          backgroundColor: Colors.redAccent,
+          foregroundColor: Colors.white,
+        ),
+        onPressed: () => Navigator.pop(context, true),
+        child: Text('Sil ve taşı'.c),
+      ),
+    ],
+  ),
+);
+
 /// Detay başlığındaki kapak yolları: ANA kapak (backdrop_path) HER ZAMAN ilk
 /// sırada, ardından TMDB'nin arka plan görselleri en çok oy alandan başlayarak.
 /// Aynı yol iki kez girmez; en fazla [kapakTavani] tane.
@@ -180,18 +224,51 @@ class _DetayEkraniState extends State<DetayEkrani> {
     _benimYenile();
   }
 
+  /// Durum çipi. "İzleyeceğim"de sunucu izleme kaydı görürse 409 +
+  /// `IZLEME_KAYDI_VAR` döner; o zaman onay alınıp istek `izlemeleri_sil: true`
+  /// ile BİR KEZ tekrarlanır (bkz. [izlemeSilmeOnayi]).
+  ///
+  /// ELDEKİ `_benim['izlenenler']` ile ÖN KONTROL YAPILMAZ: sayı sunucudan
+  /// gelirse başka cihazda az önce işaretlenen bölümler de doğru sayılır ve
+  /// kural tek yerde (sunucuda) yaşar. İstemci burada yalnızca onay toplar.
   Future<void> _durumSec(String? durum) => _mutasyon(() async {
-    await Api.post('/durum', {
-      'tmdb_id': widget.tmdbId,
-      'tur': widget.tur,
-      'durum': durum ?? '',
-    });
+    var izlemeleriSil = false;
+    while (true) {
+      try {
+        await Api.post('/durum', {
+          'tmdb_id': widget.tmdbId,
+          'tur': widget.tur,
+          'durum': durum ?? '',
+          if (izlemeleriSil) 'izlemeleri_sil': true,
+        });
+        break;
+      } on ApiHata catch (h) {
+        // Onaydan SONRA yine gelirse (olmamalı) SnackBar'a düşsün: sonsuz
+        // döngüde kullanıcıya aynı diyaloğu tekrar tekrar sormayız.
+        if (h.makineKodu != 'IZLEME_KAYDI_VAR' || izlemeleriSil) rethrow;
+        if (!mounted) return;
+        final onay = await izlemeSilmeOnayi(
+          context,
+          tur: widget.tur,
+          adet: (h.govde?['izleme_sayisi'] as num?)?.toInt() ?? 0,
+        );
+        // Vazgeçti: durum DEĞİŞMEZ, izleme kayıtları DURUR, hata da gösterilmez.
+        if (onay != true) return;
+        izlemeleriSil = true;
+      }
+    }
     // Poster kartlarındaki "izledin" rozeti anında doğru olsun.
     KitaplikDurumu.isaretle(
       widget.tur,
       widget.tmdbId,
       durum == 'izliyorum' || durum == 'bitirdim' || durum == 'biraktim',
     );
+    // Sunucu "izleyeceğim"de `tekrar`ı sıfırlar (bkz. POST /durum); rozetin
+    // yanındaki "×2" burada da düşsün, yoksa "izleyeceğim ama 2 kez izledim"
+    // çelişkisi poster kartında yaşamaya devam ederdi.
+    if (durum == 'izleyecegim') {
+      KitaplikDurumu.tekrarAyarla(widget.tur, widget.tmdbId, 0);
+    }
   });
 
   /// Yeniden izleme sayacı (+1 / -1); yalnız "bitirdim" durumunda çalışır.

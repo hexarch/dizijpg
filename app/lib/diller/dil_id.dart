@@ -932,4 +932,12 @@ const Map<String, String> cevirilerId = {
       'Untuk statistik yang ditampilkan kepada pemilik postingan, disimpan sebagai penghitung agregat: berapa kali dan dari permukaan mana (feed, profil, feed layar penuh, halaman serial/film, tautan yang dibagikan) postingan dilihat, apakah penonton saat itu mengikuti pemilik postingan, perpindahan dari postingan ke profil atau konten, pengikut yang terbentuk lewat postingan, pembagian, dan pembukaan tirai spoiler. Penghitung ini tidak memuat identitas pengguna, alamat IP, atau stempel waktu; siapa melakukan apa tidak dapat ditelusuri.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'Agar dapat menghitung berapa banyak orang berbeda yang melihat sebuah postingan, ringkasan berkunci yang tidak dapat dibalik untuk setiap penonton (pemadatan kriptografis yang diturunkan dari identitas pengguna atau alamat IP) disimpan selama 90 hari. Kepada pemilik postingan hanya ditampilkan angkanya; identitas penonton tidak pernah dibagikan dalam keadaan apa pun.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Pindahkan ke “Mau Nonton”?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'Sebuah judul itu akan ditonton atau sudah ditonton. Kalau kamu lanjut, {} tanda tontonanmu di serial ini akan dihapus.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'Sebuah judul itu akan ditonton atau sudah ditonton. Kalau kamu lanjut, tanda “Sudah Nonton” kamu di film ini akan dihapus.',
+  'Sil ve taşı': 'Hapus dan pindahkan',
 };

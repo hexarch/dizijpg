@@ -928,4 +928,12 @@ const Map<String, String> cevirilerEn = {
       'For the statistics shown to a post’s owner, aggregate counters are kept of how many times and from which surface (feed, profile, full-screen feed, show/movie page, shared link) the post was viewed, whether the viewer was following the post’s owner at that moment, moves from the post to a profile or to content, follows started from the post, shares and openings of the spoiler cover. These counters contain no user identity, IP address or timestamp; who did what cannot be queried.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'In order to count how many different people saw a post, an irreversible keyed digest per viewer (a cryptographic condensation derived from the user identity or the IP address) is stored for 90 days. Only the number is shown to the post’s owner; the identity of viewers is never shared under any circumstances.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': 'Move to your Watchlist?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'A title is either to watch or watched. If you continue, your {} watch marks on this show will be deleted.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'A title is either to watch or watched. If you continue, your “Watched” mark on this movie will be removed.',
+  'Sil ve taşı': 'Delete and move',
 };

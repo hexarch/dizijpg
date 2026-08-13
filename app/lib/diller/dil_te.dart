@@ -925,4 +925,12 @@ const Map<String, String> cevirilerTe = {
       'పోస్ట్ యజమానికి చూపే గణాంకాల కోసం సమష్టి కౌంటర్లుగా నిల్వ చేయబడతాయి: పోస్ట్ ఎన్నిసార్లు మరియు ఏ ఉపరితలం నుండి (ఫీడ్, ప్రొఫైల్, పూర్తి స్క్రీన్ ఫీడ్, సిరీస్/సినిమా పేజీ, షేర్ చేసిన లింక్) చూడబడింది, చూసిన వ్యక్తి ఆ సమయంలో పోస్ట్ యజమానిని ఫాలో అవుతున్నారా, పోస్ట్ నుండి ప్రొఫైల్/కంటెంట్‌కు వెళ్లడం, పోస్ట్ ద్వారా ఏర్పడిన ఫాలో, షేర్ మరియు స్పాయిలర్ తెర తెరవడం. ఈ కౌంటర్లలో వినియోగదారు గుర్తింపు, IP చిరునామా లేదా టైమ్‌స్టాంప్ ఉండవు; ఎవరు ఏమి చేశారో ప్రశ్నించలేము.',
   'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, görüntüleyen başına geri çevrilemez bir anahtarlı özet (kullanıcı kimliğinden veya IP adresinden türetilen kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir koşulda paylaşılmaz.':
       'ఒక పోస్ట్‌ను ఎంతమంది వేర్వేరు వ్యక్తులు చూశారో లెక్కించగలిగేందుకు, ప్రతి వీక్షకుడికి ఒక తిరిగి మార్చలేని కీ ఆధారిత సంక్షిప్తం (వినియోగదారు గుర్తింపు లేదా IP చిరునామా నుండి ఉత్పన్నమైన క్రిప్టోగ్రాఫిక్ కుదింపు) 90 రోజులు నిల్వ ఉంచబడుతుంది. పోస్ట్ యజమానికి కేవలం సంఖ్య మాత్రమే చూపబడుతుంది; వీక్షకుల గుర్తింపు ఏ పరిస్థితిలోనూ పంచుకోబడదు.',
+
+  // --- İzleyeceğim tekilliği (izleme silme onayı) ---
+  'İzleyeceklerine taşınsın mı?': '“చూస్తాను”కి తరలించాలా?',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu dizideki {} izleme işaretin silinecek.':
+      'ఒక టైటిల్ చూడాల్సినది అయినా అవుతుంది, చూసినది అయినా అవుతుంది. కొనసాగిస్తే ఈ సిరీస్‌లో నీ {} చూసిన గుర్తులు తొలగించబడతాయి.',
+  'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
+      'ఒక టైటిల్ చూడాల్సినది అయినా అవుతుంది, చూసినది అయినా అవుతుంది. కొనసాగిస్తే ఈ సినిమాపై నీ “చూశాను” గుర్తు తీసివేయబడుతుంది.',
+  'Sil ve taşı': 'తొలగించి తరలించు',
 };
