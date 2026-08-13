@@ -110,7 +110,44 @@ const videoKisaKenar = 720;
 /// `VideoQualityPreset.p720High` ile aynı değer. 720p H.264'te 5 Mbps
 /// gözle fark edilir bir kayıp vermez; 3 Mbps (`p720`) hızlı sahnelerde
 /// blok yapar, 8 Mbps (`p1080`) 720p'de boşa bayt.
+///
+/// DİKKAT — BU BİR **TAVAN**, HEDEF DEĞİL: kodlayıcıya verildiğinde
+/// `MediaCodec` bunu gerçekten üretmeye çalışır (paket CBR kipini tercih
+/// ediyor: `ApplyBitrate.kt:resolveBitrateSettings`). Kaynağın bit hızından
+/// YÜKSEK bir değer vermek dosyayı ŞİŞİRİR. Karar [videoSikistirmaKarari]'nda.
 const videoBitHizi = 5000000;
+
+/// Sıkıştırma ancak dosyayı bu ORANDA küçültecekse yapılır.
+///
+/// 13 Ağu 2026 — ÖLÇÜLMÜŞ HATA (madde 35a, "kendi bozduğumuzu bozmamak").
+/// Eski kural "20 MB'ı aşan her video 720p/5 Mbps'e sıkıştırılır" idi ve
+/// kaynağın bit hızına HİÇ bakmıyordu. Canlıdan alınan gerçek bir dosyayla
+/// ölçüldü (`m85-cea0ca2bba88e369.mp4`, 1080×1920, 70,9 sn, 3,98 Mbps):
+///
+/// | | çözünürlük | boyut | VMAF |
+/// |---|---|---|---|
+/// | kaynak | 1080×1920 (2,07 MP) | **33,6 MB** | 100 |
+/// | eski kural | 720×1280 (0,92 MP) | **40,9 MB** | 93,3 |
+///
+/// Yani dosya **%21,8 BÜYÜDÜ**, piksel sayısı **yarıdan aza düştü** ve üstüne
+/// bir nesil yeniden kodlama kaybı bindi. Sebep: kaynak zaten 3,98 Mbps'ken
+/// kodlayıcıya 5 Mbps'lik bir CBR hedefi verilmesi. Telefon boşuna ısındı,
+/// kullanıcı boşuna bekledi, kalite boşuna düştü.
+///
+/// 1,25 NEDEN: yeniden kodlamanın bedeli (nesil kaybı + 20-60 sn + pil)
+/// ancak %20'lik bir küçülmeyle ödenir. Değer paketin kendi eşiğiyle de
+/// UYUMLU: `BitrateCapPolicy.TOLERANCE = 1.2` — kaynak tavanın 1,2 katının
+/// altındaysa paket zaten kayıpsız transmux'a düşüyor. 1,25 > 1,2 olduğu için
+/// "biz sıkıştır dedik ama paket transmux yaptı" gibi bir boşluk kalmaz.
+const videoKazancEsigi = 1.25;
+
+/// Sunucu sınırına sığdırma payı: hedef [videoAzamiBayt]'ın %92'si.
+///
+/// NEDEN PAY: bit hızı tavanı yalnız GÖRÜNTÜ akışını bağlar; ses akışı, moov
+/// atomu ve konteyner ek yükü üstüne biner. Payı bırakmazsak tam sınırda
+/// üretilen dosya 100 MB'ı birkaç yüz KB aşar ve `videoHazirla` çıktıyı
+/// reddeder — yani dakikalarca süren kodlama çöpe gider.
+const videoSigdirmaPayi = 0.92;
 
 /// Yorum/DM ekinde bir videonun en uzun hâli (trim tutamakları bunu aşamaz).
 const videoAzamiKirpmaSuresi = Duration(seconds: 60);
@@ -132,6 +169,102 @@ double videoOlcek(int genislik, int yukseklik) {
   final kisa = math.min(genislik, yukseklik);
   final o = math.min(videoUzunKenar / uzun, videoKisaKenar / kisa);
   return o >= 1 ? 1 : o;
+}
+
+/// Otomatik sıkıştırma KARARI — saf hesap, birim testiyle kilitli.
+class VideoSikistirmaKarari {
+  /// Yeniden kodlama gerçekten bir işe yarıyor mu? `false` ise video
+  /// **hiç işlenmez** (kırpma istenmediyse dosya olduğu gibi yüklenir).
+  final bool sikistir;
+
+  /// Ölçek çarpanı; `1` = ölçekleme yok.
+  final double olcek;
+
+  /// Kodlayıcıya verilecek bit hızı tavanı; `null` = tavan yok.
+  final int? bitHizi;
+
+  const VideoSikistirmaKarari({
+    required this.sikistir,
+    required this.olcek,
+    required this.bitHizi,
+  });
+
+  static const yok = VideoSikistirmaKarari(
+    sikistir: false,
+    olcek: 1,
+    bitHizi: null,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is VideoSikistirmaKarari &&
+      other.sikistir == sikistir &&
+      other.olcek == olcek &&
+      other.bitHizi == bitHizi;
+
+  @override
+  int get hashCode => Object.hash(sikistir, olcek, bitHizi);
+
+  @override
+  String toString() =>
+      'VideoSikistirmaKarari($sikistir, olcek: $olcek, bitHizi: $bitHizi)';
+}
+
+/// Bu videoyu sıkıştırmak KAZANDIRIYOR mu, kazandırıyorsa hangi ayarla?
+///
+/// TEK KURAL: **sıkıştırmanın tek gerekçesi yükleme boyutudur.** Dosya boyutunu
+/// belirleyen tek şey bit hızıdır (boyut ≈ bit hızı × süre); çözünürlük yalnız
+/// o bit hızının ne kadar iyi göründüğünü belirler. Dolayısıyla kaynak zaten
+/// hedef bit hızının altındaysa sıkıştırma dosyayı KÜÇÜLTEMEZ — yapabileceği
+/// tek şey kaliteyi düşürmektir (bkz. [videoKazancEsigi] ölçüm tablosu).
+///
+/// [genislik]/[yukseklik] rotasyon uygulanmış hâlde beklenir
+/// (`video_islem_io.dart:bilgi` öyle veriyor).
+VideoSikistirmaKarari videoSikistirmaKarari({
+  required int girdiBayt,
+  required Duration sure,
+  required int genislik,
+  required int yukseklik,
+}) {
+  // Sunucu sınırını AŞAN dosyanın başka çaresi yok: sıkıştırılmazsa hiç
+  // yüklenemez. Burada kazanç eşiği aranmaz, sığdırma zorunludur.
+  final zorunlu = girdiBayt > videoAzamiBayt;
+  if (!zorunlu && girdiBayt <= videoSikistirmaEsigiBayt) {
+    return VideoSikistirmaKarari.yok;
+  }
+
+  final us = sure.inMicroseconds;
+  if (us <= 0 || girdiBayt <= 0) {
+    // Süre okunamadı → kaynak bit hızı BİLİNMİYOR. Ölçek vermiyoruz (ölçek
+    // vermek yeniden kodlamayı ZORLAR), yalnız tavanı bildiriyoruz: kaynak
+    // tavanın altındaysa paket kayıpsız transmux'a düşer, üstündeyse indirir.
+    // Bilmediğimiz bir şey yüzünden kaliteyi düşürmüyoruz.
+    return const VideoSikistirmaKarari(
+      sikistir: true,
+      olcek: 1,
+      bitHizi: videoBitHizi,
+    );
+  }
+
+  final kaynakBitHizi = girdiBayt * 8 * 1000000 / us;
+  var hedef = videoBitHizi.toDouble();
+  if (zorunlu) {
+    // 100 MB'a sığması için gereken tavan 5 Mbps'ten düşükse o kazanır.
+    final sigdirma = videoAzamiBayt * videoSigdirmaPayi * 8 * 1000000 / us;
+    if (sigdirma < hedef) hedef = sigdirma;
+  }
+
+  if (!zorunlu && kaynakBitHizi <= hedef * videoKazancEsigi) {
+    return VideoSikistirmaKarari.yok;
+  }
+  return VideoSikistirmaKarari(
+    sikistir: true,
+    // Kaynak GERÇEKTEN bol bit harcıyor; 720p kutusuna indirmek o bitleri
+    // daha az piksele dağıtır. Ölçek yalnız BURADA verilir çünkü ölçek
+    // Media3'te bir efekttir ve yeniden kodlamayı zorunlu kılar.
+    olcek: videoOlcek(genislik, yukseklik),
+    bitHizi: hedef.round(),
+  );
 }
 
 /// Kaynak videonun ölçülen özellikleri.

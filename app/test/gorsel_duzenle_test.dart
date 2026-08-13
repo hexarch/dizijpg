@@ -181,9 +181,18 @@ void main() {
   test('yapılandırma: çıktı JPEG, sınırlar istemci hattıyla uyumlu', () {
     final c = duzenleyiciYapilandirma();
     expect(c.imageGeneration.outputFormat, OutputFormat.jpg);
-    // 2000 px üst sınır → 30 MB istemci sınırının çok altında kalır.
-    expect(c.imageGeneration.maxOutputSize, const Size(2000, 2000));
+    // 4096 px üst sınır (13 Ağu 2026, madde 35a): 2000 px paketin kendi
+    // VARSAYILANIYDI ve düzenlenen her 12 MP fotoğrafın piksellerinin
+    // %75'ini atıyordu (4000×3000 → 2000×1500). Canlıda ölçüldü: en büyük
+    // 300 yüklemenin 263'ü 2000 px'i aşıyor, 262'si ekran görüntüsü —
+    // orada küçültmek doğrudan METNİ bulanıklaştırıyordu. En kötü hâlde
+    // çıktı 2,5 MB, yani 30 MB'lık istemci sınırının 12 katı altında.
+    expect(c.imageGeneration.maxOutputSize, const Size(4096, 4096));
     expect(gorselDuzenleAzamiBayt, 30 * 1024 * 1024);
+    // Kalite 92 + 4:4:4 renk altörnekleme: kırpma/çizim sonrası tek nesil
+    // JPEG kaybı gözle görülmez. Bunlar DÜŞÜRÜLMESİN.
+    expect(c.imageGeneration.jpegQuality, 92);
+    expect(c.imageGeneration.jpegChroma, JpegChroma.yuv444);
     // G1 kapsamı: filtre/ton/sticker SEKMESİ YOK (çeviri borcu §3.4).
     expect(c.mainEditor.tools, [
       SubEditorMode.cropRotate,

@@ -331,6 +331,94 @@ void main() {
     });
   });
 
+  // ---- Sıkıştırma KARARI (madde 35a) ----
+  //
+  // Bu grup tek bir cümleyi kilitliyor: **zaten verimli bir video TEKRAR
+  // sıkıştırılmaz.** 13 Ağu'ya kadar kural yalnız "20 MB'ı aştı mı" idi ve
+  // canlıdan alınan gerçek bir dosyada (1080×1920, 70,9 sn, 3,98 Mbps,
+  // 33,6 MB) çıktı 40,9 MB / 720×1280 oluyordu: dosya %21,8 BÜYÜYOR,
+  // piksel sayısı yarıya iniyordu.
+
+  group('sıkıştırma kararı', () {
+    VideoSikistirmaKarari karar({
+      required int mb,
+      required int saniye,
+      int genislik = 1080,
+      int yukseklik = 1920,
+    }) => videoSikistirmaKarari(
+      girdiBayt: mb * 1024 * 1024,
+      sure: Duration(seconds: saniye),
+      genislik: genislik,
+      yukseklik: yukseklik,
+    );
+
+    test('20 MB altı hiç sorgulanmaz', () {
+      expect(karar(mb: 8, saniye: 5), VideoSikistirmaKarari.yok);
+    });
+
+    test('ÖLÇÜLEN VAKA: 33,6 MB / 70,9 sn / 3,98 Mbps → DOKUNULMAZ', () {
+      // Eski kod burada 720p/5 Mbps'e kodluyordu ve 40,9 MB üretiyordu.
+      final k = videoSikistirmaKarari(
+        girdiBayt: 35228685,
+        sure: const Duration(milliseconds: 70863),
+        genislik: 1080,
+        yukseklik: 1920,
+      );
+      expect(k.sikistir, isFalse);
+      expect(k.olcek, 1);
+      expect(k.bitHizi, isNull);
+    });
+
+    test('bit hızı hedefin altında olan UZUN video da dokunulmaz', () {
+      // 50 MB / 9 dk = 0,78 Mbps. Büyük dosya ≠ şişkin dosya.
+      expect(karar(mb: 50, saniye: 540).sikistir, isFalse);
+    });
+
+    test('bit hızı YÜKSEK olan video sıkıştırılır (720p kutusu + tavan)', () {
+      // 60 MB / 60 sn = 8,4 Mbps → 5 Mbps × 1,25 eşiğinin çok üstünde.
+      final k = karar(mb: 60, saniye: 60);
+      expect(k.sikistir, isTrue);
+      expect(k.bitHizi, videoBitHizi);
+      expect((1080 * k.olcek).round(), 720);
+      expect((1920 * k.olcek).round(), 1280);
+    });
+
+    test('eşiğin HEMEN altı sıkıştırılmaz, hemen üstü sıkıştırılır', () {
+      // Kazanç eşiği 1,25 → 6,25 Mbps sınır. Süre 60 sn seçildi ki
+      // MB ↔ Mbps çevrimi okunur olsun (1 MiB/sn ≈ 8,39 Mbps).
+      int bayt(double mbps) => (mbps * 1000000 * 60 / 8).round();
+      VideoSikistirmaKarari k(double mbps) => videoSikistirmaKarari(
+        girdiBayt: bayt(mbps),
+        sure: const Duration(seconds: 60),
+        genislik: 1080,
+        yukseklik: 1920,
+      );
+      expect(k(6.0).sikistir, isFalse, reason: '6 Mbps < 6,25 → kazanç yok');
+      expect(k(6.5).sikistir, isTrue);
+      // Paketin kendi transmux toleransıyla (BitrateCapPolicy.TOLERANCE =
+      // 1,2) çelişmemeli: sıkıştır dediğimiz her kaynak paket tarafında da
+      // yeniden kodlanmalı, yoksa boşuna beklemiş oluruz.
+      expect(videoKazancEsigi, greaterThan(1.2));
+    });
+
+    test('sunucu sınırını AŞAN dosya kazanç eşiğine bakılmadan sığdırılır', () {
+      // 150 MB / 300 sn = 4,2 Mbps: eşiğin altında ama 100 MB'a sığmıyor.
+      final k = karar(mb: 150, saniye: 300);
+      expect(k.sikistir, isTrue);
+      // Tavan, 100 MB'ın %92'sine sığacak şekilde 5 Mbps'ten AŞAĞI çekilmeli.
+      expect(k.bitHizi, lessThan(videoBitHizi));
+      final tahminiBayt = k.bitHizi! * 300 / 8;
+      expect(tahminiBayt, lessThan(videoAzamiBayt));
+    });
+
+    test('süre okunamadıysa ölçek verilmez (yeniden kodlama ZORLANMAZ)', () {
+      final k = karar(mb: 40, saniye: 0);
+      expect(k.sikistir, isTrue);
+      expect(k.olcek, 1, reason: 'ölçek Media3\'te efekttir, kodlamayı zorlar');
+      expect(k.bitHizi, videoBitHizi);
+    });
+  });
+
   // ---- 1. Trim aralığı ----
 
   group('trim aralığı', () {
@@ -606,12 +694,14 @@ void main() {
     });
 
     testWidgets('uzun sürecek işte "Bu biraz sürebilir" yazar', (tester) async {
-      // 10 dk kaynak → tahmin 5 dk > 30 sn eşiği.
+      // 90 sn kaynak → tahmin 45 sn > 30 sn eşiği. Bit hızı da yüksek
+      // (75 MB / 90 sn ≈ 7 Mbps) ki sıkıştırma kararı GERÇEKTEN çıksın:
+      // 9 dk'lık 50 MB'lık eski kurgu artık (haklı olarak) atlanıyor.
       final motor = _SahteMotor(
         elleBiter: true,
-        girdiBayt: 50 * 1024 * 1024,
+        girdiBayt: 75 * 1024 * 1024,
         bilgiVeri: const VideoBilgi(
-          sure: Duration(minutes: 9),
+          sure: Duration(seconds: 90),
           genislik: 1920,
           yukseklik: 1080,
         ),
@@ -638,10 +728,12 @@ void main() {
       expect(find.byType(AlertDialog), findsNothing);
     });
 
-    testWidgets('20 MB üstü video sessizce 720p/5 Mbps ile sıkıştırılır', (
+    testWidgets('BİT HIZI ŞİŞKİN video sessizce 720p/5 Mbps ile sıkıştırılır', (
       tester,
     ) async {
-      final motor = _SahteMotor(girdiBayt: 45 * 1024 * 1024);
+      // 60 MB / 60 sn ≈ 8,4 Mbps — 5 Mbps'lik hedefin belirgin üstünde,
+      // yani sıkıştırma gerçekten bayt kazandırıyor.
+      final motor = _SahteMotor(girdiBayt: 60 * 1024 * 1024);
       videoIsleyiciSahte = () => motor;
       final kosu = await _hazirlaBaslat(tester, XFile('/kaynak/a.mp4'));
       await _kacKare(tester);
@@ -653,6 +745,28 @@ void main() {
       expect(is0.bas, isNull);
       expect(is0.bit, isNull);
       expect(kosu.sonuc!.path, startsWith('/gecici/'));
+    });
+
+    testWidgets('20 MB ÜSTÜ ama zaten verimli video HİÇ işlenmez (madde 35a)', (
+      tester,
+    ) async {
+      // Canlıdan ölçülen gerçek dosyanın ikizi: 33,6 MB, 70,9 sn, 3,98 Mbps.
+      // Eski kod bunu 40,9 MB'lık bir 720p'ye çeviriyordu.
+      final motor = _SahteMotor(
+        girdiBayt: 35228685,
+        bilgiVeri: const VideoBilgi(
+          sure: Duration(milliseconds: 70863),
+          genislik: 1080,
+          yukseklik: 1920,
+        ),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kaynak = XFile('/kaynak/a.mp4');
+      final kosu = await _hazirlaBaslat(tester, kaynak);
+      await _kacKare(tester);
+      expect(motor.isler, isEmpty, reason: 'kodlayıcı hiç çalışmamalı');
+      expect(kosu.sonuc, same(kaynak), reason: 'özgün dosya yüklenmeli');
+      expect(find.byType(AlertDialog), findsNothing);
     });
 
     testWidgets('kırpma varken küçük dosyada bit hızı ZORLANMAZ', (
@@ -752,14 +866,17 @@ void main() {
     testWidgets(
       'yalnız SIKIŞTIRMA başarısızsa orijinale düşülür (yükleme durmaz)',
       (tester) async {
+        // 60 MB / 60 sn: sıkıştırma kararı GERÇEKTEN çıkar (8,4 Mbps),
+        // böylece test yedeğe düşme yolunu sınar, kararın atlanmasını değil.
         final motor = _SahteMotor(
-          girdiBayt: 40 * 1024 * 1024,
+          girdiBayt: 60 * 1024 * 1024,
           ciktiBas: _m4aBas,
         );
         videoIsleyiciSahte = () => motor;
         final kaynak = XFile('/kaynak/a.mp4');
         final kosu = await _hazirlaBaslat(tester, kaynak);
         await _kacKare(tester);
+        expect(motor.isler, hasLength(1), reason: 'sıkıştırma denenmiş olmalı');
         // Kullanıcı sıkıştırma İSTEMEMİŞTİ; görünmez bir iyileştirmenin
         // başarısızlığı yüklemeyi engellememeli.
         expect(kosu.sonuc, same(kaynak));

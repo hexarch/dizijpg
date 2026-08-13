@@ -30,10 +30,28 @@ import '../tema.dart';
 /// istemci sınırına uyuluyor.
 const gorselDuzenleAzamiBayt = 30 * 1024 * 1024;
 
-/// Editörün üreteceği en büyük kenar. 2000 px, 30 MB sınırının çok altında
-/// (~1-2 MB JPEG) kalmayı garanti eder ve düşük bellekli Android'de
-/// dışa aktarımı saniyenin altında tutar.
-const _azamiCikti = Size(2000, 2000);
+/// Editörün üreteceği en büyük kenar.
+///
+/// 13 Ağu 2026 — **2000 → 4096** (madde 35a, "kendi bozduğumuzu bozmamak").
+/// 2000 px `pro_image_editor`ün PAKET VARSAYILANIYDI; hiç gözden geçirilmemişti
+/// ve yanındaki gerekçe ("30 MB sınırının çok altında kalsın") 12 kat fazla
+/// tedbirliydi. Canlıdaki gerçek dosyalarla ölçüldü:
+///
+/// | kaynak | bugünkü çıktı (2000) | 4096 ile |
+/// |---|---|---|
+/// | 4000×3000 foto, 4078 KB | 2000×1500, **752 KB** | 4000×3000, 2472 KB |
+/// | 1344×2392 ekran görüntüsü, 2537 KB | 1124×2000, **597 KB** | dokunulmaz |
+///
+/// Yani düzenlenen her 12 MP fotoğrafın **piksellerinin %75'i** atılıyordu;
+/// en büyük 300 yüklemenin 263'ü 2000 px'i aşıyor (262'si ekran görüntüsü —
+/// orada 2000'e düşürmek doğrudan METNİ bulanıklaştırır). En kötü hâlde bile
+/// çıktı 2,5 MB: [gorselDuzenleAzamiBayt] sınırının 12 katı altında.
+///
+/// BELLEK İTİRAZINA CEVAP: editör "Tamam"a basılmadan ÖNCE zaten tam
+/// çözünürlüklü görseli çözüp ekranda tutuyor (`decode_image.dart`), yani
+/// tepe bellek çoktan ödenmiş. Çıktıyı kısmak o tepeyi düşürmüyor, yalnız
+/// son adımda detayı çöpe atıyor. 4096, X/Twitter'ın yükleme tavanıyla aynı.
+const _azamiCikti = Size(4096, 4096);
 
 /// Sunucunun kabul ettiği görsel türleri (istemci ikizi).
 enum GorselTur {

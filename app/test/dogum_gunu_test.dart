@@ -209,10 +209,7 @@ void main() {
   testWidgets('ağ hatası damga BIRAKMAZ (sonraki açılışta tekrar denenir)', (
     tester,
   ) async {
-    final kirik = _SahteSorgu(
-      const DogumGunuDurumu(kutlama: true),
-      hata: true,
-    );
+    final kirik = _SahteSorgu(const DogumGunuDurumu(kutlama: true), hata: true);
     await tester.pumpWidget(_uygulama(sorgu: kirik));
     await tester.pumpAndSettle();
     expect(_kutlamaVar(), isFalse);

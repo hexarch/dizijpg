@@ -208,7 +208,13 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     // GIF değilse önce konumlama/kırpma modalı (1:1 daire)
     if (!gifMi(veri)) {
       if (!mounted) return;
-      final kirpik = await gorselKirp(context, veri, oran: 1, daire: true);
+      final kirpik = await gorselKirp(
+        context,
+        veri,
+        oran: 1,
+        daire: true,
+        azamiKenar: gorselKirpAvatarKenar,
+      );
       if (kirpik == null) return;
       veri = kirpik;
     }
@@ -242,7 +248,12 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
     // GIF değilse önce konumlama/kırpma modalı (geniş kapak oranı)
     if (!gifMi(veri)) {
       if (!mounted) return;
-      final kirpik = await gorselKirp(context, veri, oran: 2.4);
+      final kirpik = await gorselKirp(
+        context,
+        veri,
+        oran: 2.4,
+        azamiKenar: gorselKirpKapakKenar,
+      );
       if (kirpik == null) return;
       veri = kirpik;
     }

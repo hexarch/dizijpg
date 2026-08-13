@@ -1,6 +1,104 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — 🚀 MD. 35(a) MEDYA KALİTESİ: KENDİ BOZDUĞUMUZU BOZMAMAK (1.43.0+90)
+Kullanıcının talimatı: "sorun varsa DÜZELTELİM" — inceleme değil, iş maddesi.
+Şüphe DOĞRU ÇIKTI: kalite kaybının kaynağı yapay zekâ eksikliği değil, bizim
+kendi ayarlarımızmış. Üç ayrı yerde, üçü de ÖLÇÜLEREK kanıtlandı.
+
+### 1. Video sıkıştırma dosyayı BÜYÜTÜYORMUŞ
+Canlıdan alınan gerçek dosya (`m85-cea0ca2bba88e369.mp4`, 1080×1920, 70,9 sn,
+3,98 Mbps), yerel ffmpeg ile bugünkü hattın birebir taklidi:
+
+| | çözünürlük | boyut | VMAF |
+|---|---|---|---|
+| kaynak | 1080×1920 (2,07 MP) | 33,6 MB | 100 |
+| **eski kural** | 720×1280 (0,92 MP) | **40,9 MB** | **93,3** |
+| yeni kural | 1080×1920 | 33,6 MB | 100 (bit-birebir) |
+
+Dosya **%21,8 BÜYÜYOR**, piksel sayısı **yarıdan aza** düşüyor, üstüne bir nesil
+kodlama kaybı biniyordu. Kök neden paket kaynağından doğrulandı
+(`pro_video_editor/ApplyBitrate.kt`): bit hızı **`BITRATE_MODE_CBR`** ile
+geçiyor, yani 5 Mbps bir TAVAN değil gerçek bir HEDEF. Kaynak 3,98 Mbps'ken
+kodlayıcıdan 5 Mbps istemek dosyayı şişirmekten başka işe yaramıyor.
+* Eski kapı (`> 20 MB`) YANLIŞ SORUYU soruyordu: boyutu soruyordu, ŞİŞKİNLİĞİ
+  değil. 50 MB'lık 9 dakikalık video (0,78 Mbps) sıkıştırılacak hiçbir şeyi
+  olmamasına rağmen sıkıştırılıyordu.
+* Yeni kural (`videoSikistirmaKarari`): `> 20 MB` **VE** `kaynak bit hızı >
+  hedef × 1,25`. **1,25 seçildi** çünkü paketin kendi transmux toleransı
+  `BitrateCapPolicy.TOLERANCE = 1.2` — 1,25 > 1,2 olduğu için "biz sıkıştır
+  dedik ama paket kayıpsız transmux yaptı" boşluğu kalmıyor (testle kilitli).
+* 100 MB'ı aşan dosyada tavan sığdırmaya göre AŞAĞI çekilir (`payı 0,92` —
+  bit hızı yalnız görüntüyü bağlar, ses + moov + konteyner üstüne biner).
+  Eskiden bu dosyalar dakikalarca kodlanıp "çıktı 100 MB'ı aştı" diye çöpe
+  gidiyordu.
+* **720p kutusu DEĞİŞMEDİ** — ölçüldü, kazanç YOK: 720p→1080p büyütülmüş
+  VMAF 93,27, yerel 1080p@5Mbps 92,84. Ölçüm yanlış bir "düzeltmeden" kurtardı.
+
+### 2. Düzenlenen görsel 2000 px'e kırpılıyormuş
+`_azamiCikti` **paketin ham varsayılanıydı** (2000 px), hiç gözden geçirilmemiş;
+yanındaki gerekçe ("30 MB sınırının altında kalsın") **12 kat** fazla tedbirli —
+en kötü çıktı 2,5 MB. Canlıdaki en büyük 300 yüklemenin **263'ü 2000 px'i
+aşıyor** (262'si `1344×2392` ekran görüntüsü) → kayıp istisna değil, KURAL.
+* 4000×3000 foto → 2000×1500, piksellerin **%75'i** atılıyordu.
+* Ekran görüntüsü 1344×2392 → 1124×2000, metin bulanıklaşıyordu.
+* **2000 → 4096 px.** Bellek itirazının cevabı kodda: editör "Tamam"dan ÖNCE
+  zaten tam çözünürlüklü görseli çözüp ekranda tutuyor, tepe bellek çoktan
+  ödenmiş; çıktıyı kısmak o tepeyi düşürmüyor, son adımda detayı çöpe atıyor.
+* JPEG kalite 92 ve `yuv444` DEĞİŞMEDİ — doğru ayarlar, artık testle kilitli.
+
+### 3. AVATAR YÜKLENEMİYORMUŞ (kalite değil, HARD FAILURE)
+`crop_your_image` çıktıyı **DAİMA PNG** veriyor (`encodePng`; paketin kendi
+yorumu: "TODO: currently always PNG"). PNG kayıpsız → kırpım kaynağın
+çözünürlüğünde çıkıyor → dosya patlıyor.
+
+| | çözünürlük | PNG | sınır | sonuç |
+|---|---|---|---|---|
+| 12 MP fotodan 1:1 avatar | 3000×3000 | **17,7 MB** | 8 MB | ❌ YÜKLENEMİYOR |
+| yeni | 1024×1024 | 2,1 MB | 8 MB | ✅ |
+| canlıdaki en büyük kapak | 5120×2133 | 5,6 MB | 10 MB | her ziyaretçi indiriyordu |
+| yeni | 2048×853 | 1,4 MB | 10 MB | ✅ −74% |
+
+Kullanıcı kadrajı ayarlıyor, "Tamam"a basıyor, "Dosya en fazla 8MB olabilir"
+alıyordu. Yeni `gorseliKucult()`: **yalnız `dart:ui`** (yeni paket YOK — AGP 9 /
+Kotlin 2.3 kuralı), **PNG çıkışta da PNG kalır** (avatar kırpımı DAİRESEL,
+köşeleri saydam; JPEG'e çevirmek beyaz kare yapardı), **tavan altındakine
+dokunulmaz**, **hata yutulur ve özgün baytlar döner** (küçültme bir
+iyileştirmedir, başarısızlığı kırpmayı iptal etmemeli).
+
+### Reddedilen kolay çözüm
+`ImagePicker`'a `maxWidth` vermek avatar şişkinliğini tek satırda çözer gibi
+görünüyordu — YAPILMADI: `image_picker_android/ImageResizer.java` yeniden
+boyutlandırırken `BitmapFactory` ile TEK KARE çözüyor, yani **animasyonlu GIF
+avatarları öldürürdü.** Tam da kaçınılması gereken hasar.
+
+### Sorun sanılıp çıkmayanlar
+* Sunucu tarafı yeniden kodlama YOK — `/medya` ve `/profilim/avatar` ham bayt
+  yazıyor (`sharp`/`jimp` bağımlılığı bile yok). Tek ffmpeg kullanımı AYRI bir
+  kapak karesi üretiyor, videoya dokunmuyor. **Çift işlem yok.**
+* GIF kuralı HER yolda geçerli, yalnız avatarda değil (`gifMi` +
+  `duzenlenebilirMi`).
+
+### Kanıt ve dağıtım
+* `app/test/video_duzenle_test.dart` (+ölçülen gerçek vakanın ikizi: 33,6 MB /
+  70,9 sn / 3,98 Mbps → `sikistir == false`) · `app/test/gorsel_kirp_boyut_test.dart`
+  (yeni) · `flutter test` **1368** (taban 1354) · `npm test` 1012 · analyze 0/0.
+* Mevcut testlerin fixture'ları GERÇEKTEN sıkıştırma gerektiren bit hızlarına
+  taşındı — yoksa yeni kural yüzünden sessizce boşa dönerlerdi.
+* **Backend'e DOKUNULMADI** → yalnız web + APK dağıtıldı.
+  `main.c4ef7026020b.dart.js` (eski hash silindi), SW sökücü yerinde, immutable.
+* APK: `~/Desktop/dizijpg-1.43.0+90.apk`
+* Yeni çeviri anahtarı YOK.
+
+### İLERİYE NOT (ayrı madde, bilerek kapsam dışı)
+1. Editöre giren **saydam PNG** hâlâ JPEG'e çevriliyor, saydam alanlar BEYAZ
+   oluyor (paketin `jpegBackgroundColor` varsayılanı). Düzeltmek çıktı formatını
+   girdiye göre dallandırmayı gerektirir → dosya boyutu riski.
+2. **HEVC (iPhone "Yüksek Verimlilik") videolar** artık sıkıştırılmadan geçince
+   sunucuya HEVC olarak gidiyor ve **tarayıcıda oynatılamıyor** (Chrome/Firefox
+   HEVC desteklemiyor). Sıkıştırmasız yolun eskiden beri var olan boşluğu ama
+   yeni kural onu daha sık tetikleyecek — ele alınmalı.
+
 ## 2026-08-13 — 🚀 DAĞITIM 1.42.0+89 (md. 29 + 36 + 49 canlıda)
 * `server.js` → `/opt/dizijpg/` (YEDEK: `server.js.yedek-md49-20260813`),
   docker-compose rebuild. **Migrasyon gerekmedi** (yeni tablo/kolon yok).

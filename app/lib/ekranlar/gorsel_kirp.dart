@@ -1,4 +1,6 @@
+import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:crop_your_image/crop_your_image.dart';
 import 'package:flutter/material.dart';
@@ -14,13 +16,79 @@ import '../tema.dart';
 bool gifMi(Uint8List veri) =>
     veri.length > 3 && veri[0] == 0x47 && veri[1] == 0x49 && veri[2] == 0x46;
 
+/// Kırpılmış AVATAR'ın en uzun kenarı.
+///
+/// 13 Ağu 2026 — TESPİT VE DÜZELTME (madde 35a). `crop_your_image` çıktısını
+/// **daima PNG** veriyor (`image_image_cropper.dart` → `encodePng`; paketin
+/// kendi yorumu: "TODO: currently always PNG"). PNG kayıpsız olduğu için
+/// kırpım KAYNAĞIN çözünürlüğünde çıkıyor ve dosya patlıyordu. Canlıdaki
+/// gerçek dosyalarla ölçüldü:
+///
+/// | | çözünürlük | PNG |
+/// |---|---|---|
+/// | 12 MP fotodan 1:1 avatar | 3000×3000 | **17,7 MB** → 8 MB sınırına TAKILIR |
+/// | aynısı bu sınırla | 1024×1024 | **2,1 MB** |
+/// | canlıdaki en büyük kapak | 5120×2133 | **5,6 MB** |
+/// | aynısı bu sınırla | 2048×853 | **1,4 MB** |
+///
+/// Yani modern bir telefon fotoğrafıyla avatar YÜKLENEMİYORDU: kullanıcı
+/// kadrajı ayarlıyor, "Tamam"a basıyor ve "Dosya en fazla 8MB olabilir"
+/// hatası alıyordu. Yüklenebilenler de her ziyaretçiye 5,6 MB'lık bir PNG
+/// olarak gidiyordu.
+///
+/// 1024 NEDEN YETER: avatar en büyük yerde ~120 dp çiziliyor, 3× ekranda
+/// 360 px. 1024 px hem bugünün ~3 katı hem de ileride büyütme payı.
+const gorselKirpAvatarKenar = 1024;
+
+/// Kırpılmış KAPAK'ın en uzun kenarı. Kapak masaüstünde içerik genişliği
+/// kadar (`masaustuIcerikGenisligi`) uzayabildiği için avatarın iki katı.
+const gorselKirpKapakKenar = 2048;
+
+/// PNG'yi [azamiKenar]'a sığdırır. Zaten sığıyorsa baytlara DOKUNMAZ
+/// (gereksiz bir kodlama turu = gereksiz kayıp).
+///
+/// PNG ÇIKIŞTA DA PNG: avatar kırpımı DAİREsel, yani köşeleri saydam. JPEG'e
+/// çevirmek o köşeleri beyaz bir kareye döndürürdü. Yalnız `dart:ui`
+/// kullanılıyor — yeni paket yok, web dâhil her yerde aynı kod.
+///
+/// Hata yutulur ve ÖZGÜN baytlar dönülür: küçültme bir iyileştirmedir,
+/// başarısızlığı kırpmayı iptal etmemeli (sınıra takılırsa kullanıcı zaten
+/// anlaşılır bir SnackBar görüyor).
+Future<Uint8List> gorseliKucult(Uint8List veri, int azamiKenar) async {
+  ui.ImageDescriptor? betimleyici;
+  try {
+    betimleyici = await ui.ImageDescriptor.encoded(
+      await ui.ImmutableBuffer.fromUint8List(veri),
+    );
+    final uzun = math.max(betimleyici.width, betimleyici.height);
+    if (uzun <= azamiKenar) return veri;
+    final oran = azamiKenar / uzun;
+    final kodek = await betimleyici.instantiateCodec(
+      targetWidth: math.max(1, (betimleyici.width * oran).round()),
+      targetHeight: math.max(1, (betimleyici.height * oran).round()),
+    );
+    final kare = await kodek.getNextFrame();
+    final bayt = await kare.image.toByteData(format: ui.ImageByteFormat.png);
+    kare.image.dispose();
+    kodek.dispose();
+    return bayt == null ? veri : bayt.buffer.asUint8List();
+  } catch (_) {
+    return veri;
+  } finally {
+    betimleyici?.dispose();
+  }
+}
+
 /// Kırpma/konumlama modalı: kullanıcı kadrajı ayarlar, kırpılmış
 /// baytlar döner (vazgeçerse null). Ayarlar ve profil ortak kullanır.
+/// [azamiKenar] çıktının en uzun kenarını sınırlar (bkz.
+/// [gorselKirpAvatarKenar] / [gorselKirpKapakKenar]).
 Future<Uint8List?> gorselKirp(
   BuildContext context,
   Uint8List veri, {
   required double oran,
   bool daire = false,
+  int azamiKenar = gorselKirpAvatarKenar,
 }) async {
   final kontrol = CropController();
   return showModalBottomSheet<Uint8List?>(
@@ -92,7 +160,13 @@ Future<Uint8List?> gorselKirp(
                     withCircleUi: daire,
                     baseColor: DiziRenkler.siyah,
                     maskColor: Colors.black54,
-                    onCropped: (kirpik) => Navigator.pop(context, kirpik),
+                    // Küçültme BURADA yapılır, sheet kapanmadan: "Tamam"a
+                    // basınca dönen spinner (`kirpiliyor`) zaten görünüyor,
+                    // yani ek bekleme kullanıcıya boş ekran olarak yansımaz.
+                    onCropped: (kirpik) async {
+                      final k = await gorseliKucult(kirpik, azamiKenar);
+                      if (context.mounted) Navigator.pop(context, k);
+                    },
                   ),
                 ),
               ),
@@ -172,6 +246,7 @@ Future<void> profilGorseliDuzenle(
       veri,
       oran: kapak ? 2.4 : 1,
       daire: !kapak,
+      azamiKenar: kapak ? gorselKirpKapakKenar : gorselKirpAvatarKenar,
     );
     if (kirpik == null) return;
     veri = kirpik;

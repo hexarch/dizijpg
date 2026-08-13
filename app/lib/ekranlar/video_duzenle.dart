@@ -113,11 +113,16 @@ Future<VideoKirpma?> videoDuzenle(
 ///   (hata SnackBar ile söylendi). Çağıran bu dosyayı YÜKLEMEMELİ.
 ///
 /// OTOMATİK SIKIŞTIRMA GÖRÜNMEZDİR: kullanıcı hiçbir düğmeye basmaz, yalnız
-/// yüklemesi hızlanır. Tetik tek ve öngörülebilir: **dosya 20 MB'ı aşıyorsa**
-/// (bkz. [videoSikistirmaEsigiBayt]). "Çözünürlük 1080p'den büyükse de
-/// sıkıştır" kuralı BİLEREK eklenmedi: iyi sıkıştırılmış 3 MB'lık bir 1080p
-/// klibi 720p'ye düşürmek kaliteyi düşürür, kazandırdığı bayt sıfıra yakındır.
-/// Sıkıştırmanın tek gerekçesi yükleme boyutudur.
+/// yüklemesi hızlanır. Sıkıştırmanın tek gerekçesi yükleme boyutudur.
+///
+/// TETİK İKİ KAPILIDIR (13 Ağu 2026'da ikincisi eklendi, madde 35a):
+/// 1. Ucuz ön eleme — dosya [videoSikistirmaEsigiBayt]'ı aşmıyorsa üst veri
+///    bile okunmaz.
+/// 2. [videoSikistirmaKarari] — kaynağın BİT HIZI hedefin altındaysa
+///    sıkıştırma dosyayı küçültemez, yalnız kaliteyi düşürür; bu durumda
+///    video hiç işlenmez. Eski kod bu kapıyı taşımıyordu ve 33,6 MB'lık
+///    1080p bir kaynağı 40,9 MB'lık 720p'ye çeviriyordu (ölçüm:
+///    `video_islem_ortak.dart:videoKazancEsigi`).
 Future<XFile?> videoHazirla(
   BuildContext context,
   XFile kaynak, {
@@ -137,11 +142,10 @@ Future<XFile?> videoHazirla(
     return null;
   }
 
-  final sikistir = girdiBayt > videoSikistirmaEsigiBayt;
-  // ATLANABİLİR: küçük ve kırpılmamış video hiçbir işlemden geçmez.
-  if (kirpma == null && !sikistir) return kaynak;
+  // 1. KAPI (ucuz): küçük ve kırpılmamış video için üst veri bile okunmaz.
+  if (kirpma == null && girdiBayt <= videoSikistirmaEsigiBayt) return kaynak;
 
-  var olcek = 1.0;
+  var karar = VideoSikistirmaKarari.yok;
   var tahminSure = Duration.zero;
   final bilgi = await isleyici.bilgi(kaynak.path);
   if (bilgi != null) {
@@ -149,12 +153,30 @@ Future<XFile?> videoHazirla(
       _uyar(mesajci, 'Video çok büyük'.c);
       return null;
     }
-    if (sikistir) olcek = videoOlcek(bilgi.genislik, bilgi.yukseklik);
+    karar = videoSikistirmaKarari(
+      girdiBayt: girdiBayt,
+      sure: bilgi.sure,
+      genislik: bilgi.genislik,
+      yukseklik: bilgi.yukseklik,
+    );
     // Kaba tahmin: yeniden kodlama gerçek zamanın ~0,5 katı (MEDYA-EDITOR-
     // PLANI §6.1). Yalnız "Bu biraz sürebilir" satırını göstermeye yarar.
     final islenen = kirpma?.uzunluk ?? bilgi.sure;
     tahminSure = Duration(milliseconds: islenen.inMilliseconds ~/ 2);
+  } else if (girdiBayt > videoSikistirmaEsigiBayt) {
+    // Üst veri okunamadı ama dosya büyük: kararı süre olmadan da alalım
+    // (fonksiyon bu hâli biliyor ve ölçek vermeden yalnız tavan koyuyor).
+    karar = videoSikistirmaKarari(
+      girdiBayt: girdiBayt,
+      sure: Duration.zero,
+      genislik: 0,
+      yukseklik: 0,
+    );
   }
+
+  // 2. KAPI: sıkıştırma kazanç getirmiyorsa ve kırpma da istenmediyse
+  // kullanıcının dosyasına DOKUNMUYORUZ. Bozmadan bırakmak en iyi sonuçtur.
+  if (kirpma == null && !karar.sikistir) return kaynak;
 
   final hedef = await isleyici.geciciYol('mp4');
   final gorev = 'dizijpg-video-${DateTime.now().microsecondsSinceEpoch}';
@@ -179,8 +201,8 @@ Future<XFile?> videoHazirla(
         bas: kirpma?.bas,
         bit: kirpma?.bit,
         ses: !(kirpma?.sessiz ?? false),
-        olcek: olcek,
-        bitHizi: sikistir ? videoBitHizi : null,
+        olcek: karar.olcek,
+        bitHizi: karar.bitHizi,
       ),
     ),
   );
