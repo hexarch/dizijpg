@@ -1,6 +1,23 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — 🚀 DAĞITIM 1.42.0+89 (md. 29 + 36 + 49 canlıda)
+* `server.js` → `/opt/dizijpg/` (YEDEK: `server.js.yedek-md49-20260813`),
+  docker-compose rebuild. **Migrasyon gerekmedi** (yeni tablo/kolon yok).
+  DİKKAT: dağıtım dizini `/opt/dizijpg` — `/root/dizijpg` BAŞKA bir projedir
+  (Nisan'dan kalma "Dizipal Clone", Django+Next.js). Bu turda yanlışlıkla
+  oraya kopyalanan `server.js` silindi, o projeden hiçbir şey kaybolmadı.
+* Web: `main.f5fdf67747ec.dart.js` (eski hash silindi), SW sökücü yerinde,
+  `cache-control: immutable`, Cloudflare HIT.
+* Uçtan uca curl kanıtı: `/api/tmdb/company/11073` **200** (dağıtımdan önce
+  403'tü) · `/api/tmdb/discover/tv?with_companies=11073` 200 ·
+  `/api/tmdb/company/11073/images` **403** (beyaz liste dar kaldı) ·
+  `/rozetler` → `kademe 8, ultra_mega, puan 17022` ·
+  başkasının profilinde seviye **puan/eşik OLMADAN** dönüyor (sızıntı yok) ·
+  `/dogum-gunu` 200.
+* APK: `~/Desktop/dizijpg-1.42.0+89.apk` (yükleme anahtarıyla imzalı).
+* **AAB Play'e YÜKLENMEDİ** — kullanıcı kendi yükleyecek.
+
 ## 2026-08-13 — 🔎 ANDROID'DE "GOOGLE GİRİŞİ BAŞARISIZ" (kullanıcı bildirimi, DEVAM EDİYOR)
 Bildirim 15:30 TRT. **Yapılandırma tarafı BAŞTAN SONA doğrulandı, hepsi doğru:**
 
