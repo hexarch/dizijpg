@@ -933,4 +933,32 @@ const Map<String, String> cevirilerBn = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'একটি কনটেন্ট হয় দেখা হবে, নয়তো দেখা হয়ে গেছে। চালিয়ে গেলে এই সিনেমায় তোমার “দেখেছি” চিহ্ন উঠে যাবে।',
   'Sil ve taşı': 'মুছে সরাও',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'কলাকুশলী',
+  'Yaratıcı': 'স্রষ্টা',
+  'Yönetmen': 'পরিচালক',
+  'Senaryo': 'চিত্রনাট্য',
+  'Yapımcı': 'প্রযোজক',
+  'Yapım Firmaları': 'প্রযোজনা সংস্থাগুলো',
+  'Yapım Firması': 'প্রযোজনা সংস্থা',
+  'Firma bulunamadı': 'সংস্থা পাওয়া যায়নি',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'এই সংস্থার এই ধরনের কোনো কাজ নেই।',
+  'Seviye {}/{}': 'স্তর {}/{}',
+  'Sonraki: {}': 'পরবর্তী: {}',
+  'En üst unvan': 'সর্বোচ্চ খেতাব',
+  'Meraklı izleyici': 'কৌতূহলী দর্শক',
+  'Hevesli izleyici': 'আগ্রহী দর্শক',
+  'Amatör izleyici': 'শৌখিন দর্শক',
+  'Kıdemli izleyici': 'অভিজ্ঞ দর্শক',
+  'Uzman izleyici': 'বিশেষজ্ঞ দর্শক',
+  'Profesör izleyici': 'অধ্যাপক দর্শক',
+  'Efsane izleyici': 'কিংবদন্তি দর্শক',
+  'Ultra mega izleyici': 'আলট্রা মেগা দর্শক',
+  'Doğum günün kutlu olsun!': 'শুভ জন্মদিন!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'ভালো হয়েছে তুমি জন্মেছ, ভালো হয়েছে তুমি এখানে আছ।',
+  'Bugün {} yaşına girdin': 'আজ তুমি {} বছরে পা দিলে',
+  'Teşekkürler': 'ধন্যবাদ',
 };

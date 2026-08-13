@@ -948,4 +948,32 @@ const Map<String, String> cevirilerEl = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Ένας τίτλος είναι είτε προς παρακολούθηση είτε ήδη ιδωμένος. Αν συνεχίσεις, η σήμανση «Το είδα» σου σε αυτή την ταινία θα αφαιρεθεί.',
   'Sil ve taşı': 'Διαγραφή και μεταφορά',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Συντελεστές',
+  'Yaratıcı': 'Δημιουργία',
+  'Yönetmen': 'Σκηνοθεσία',
+  'Senaryo': 'Σενάριο',
+  'Yapımcı': 'Παραγωγή',
+  'Yapım Firmaları': 'Εταιρείες παραγωγής',
+  'Yapım Firması': 'Εταιρεία παραγωγής',
+  'Firma bulunamadı': 'Η εταιρεία δεν βρέθηκε',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Αυτή η εταιρεία δεν έχει τίτλους αυτού του είδους.',
+  'Seviye {}/{}': 'Επίπεδο {}/{}',
+  'Sonraki: {}': 'Επόμενο: {}',
+  'En üst unvan': 'Ανώτατος τίτλος',
+  'Meraklı izleyici': 'Φιλοπερίεργο κοινό',
+  'Hevesli izleyici': 'Ενθουσιώδες κοινό',
+  'Amatör izleyici': 'Ερασιτεχνικό κοινό',
+  'Kıdemli izleyici': 'Έμπειρο κοινό',
+  'Uzman izleyici': 'Εξειδικευμένο κοινό',
+  'Profesör izleyici': 'Πανεπιστημιακό κοινό',
+  'Efsane izleyici': 'Θρυλικό κοινό',
+  'Ultra mega izleyici': 'Υπερμέγιστο κοινό',
+  'Doğum günün kutlu olsun!': 'Χρόνια πολλά!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Καλά που γεννήθηκες, καλά που είσαι εδώ.',
+  'Bugün {} yaşına girdin': 'Σήμερα έγινες {} ετών',
+  'Teşekkürler': 'Ευχαριστώ',
 };

@@ -933,4 +933,32 @@ const Map<String, String> cevirilerFa = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'هر اثری یا دیده می‌شود یا دیده شده است. اگر ادامه بدهی، نشانهٔ «دیدم» تو در این فیلم برداشته می‌شود.',
   'Sil ve taşı': 'حذف و انتقال',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'عوامل',
+  'Yaratıcı': 'سازنده',
+  'Yönetmen': 'کارگردان',
+  'Senaryo': 'فیلم‌نامه',
+  'Yapımcı': 'تهیه‌کننده',
+  'Yapım Firmaları': 'شرکت‌های سازنده',
+  'Yapım Firması': 'شرکت سازنده',
+  'Firma bulunamadı': 'شرکت پیدا نشد',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'این شرکت اثری از این نوع ندارد.',
+  'Seviye {}/{}': 'سطح {}/{}',
+  'Sonraki: {}': 'بعدی: {}',
+  'En üst unvan': 'بالاترین عنوان',
+  'Meraklı izleyici': 'بینندهٔ کنجکاو',
+  'Hevesli izleyici': 'بینندهٔ مشتاق',
+  'Amatör izleyici': 'بینندهٔ آماتور',
+  'Kıdemli izleyici': 'بینندهٔ پیشکسوت',
+  'Uzman izleyici': 'بینندهٔ متخصص',
+  'Profesör izleyici': 'بینندهٔ پروفسور',
+  'Efsane izleyici': 'بینندهٔ افسانه‌ای',
+  'Ultra mega izleyici': 'بینندهٔ اولترا مگا',
+  'Doğum günün kutlu olsun!': 'تولدت مبارک!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'خوب شد که به دنیا آمدی، خوب شد که اینجایی.',
+  'Bugün {} yaşına girdin': 'امروز {} ساله شدی',
+  'Teşekkürler': 'ممنون',
 };

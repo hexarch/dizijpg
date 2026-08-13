@@ -946,4 +946,34 @@ const Map<String, String> cevirilerPt = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Um título ou está para assistir ou já foi assistido. Se você continuar, a sua marcação “Assisti” neste filme será removida.',
   'Sil ve taşı': 'Excluir e mover',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Equipe',
+  'Yaratıcı': 'Criação',
+  'Yönetmen': 'Direção',
+  'Senaryo': 'Roteiro',
+  'Yapımcı': 'Produção',
+  'Yapım Firmaları': 'Produtoras',
+  'Yapım Firması': 'Produtora',
+  'Firma bulunamadı': 'Produtora não encontrada',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Esta produtora não tem títulos desse tipo.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Nível {}/{}',
+  'Sonraki: {}': 'Próximo: {}',
+  'En üst unvan': 'Título máximo',
+  'Meraklı izleyici': 'Espectador curioso',
+  'Hevesli izleyici': 'Espectador animado',
+  'Amatör izleyici': 'Espectador amador',
+  'Kıdemli izleyici': 'Espectador veterano',
+  'Uzman izleyici': 'Espectador especialista',
+  'Profesör izleyici': 'Espectador professor',
+  'Efsane izleyici': 'Espectador lendário',
+  'Ultra mega izleyici': 'Espectador ultra mega',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'Feliz aniversário!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Que bom que você existe e que está aqui.',
+  'Bugün {} yaşına girdin': 'Hoje você faz {} anos',
+  'Teşekkürler': 'Valeu',
 };

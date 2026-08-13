@@ -932,4 +932,34 @@ const Map<String, String> cevirilerPa = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'ਕੋਈ ਵੀ ਟਾਈਟਲ ਜਾਂ ਤਾਂ ਦੇਖਣਾ ਬਾਕੀ ਹੁੰਦਾ ਹੈ ਜਾਂ ਦੇਖਿਆ ਜਾ ਚੁੱਕਾ ਹੁੰਦਾ ਹੈ। ਅੱਗੇ ਵਧਣ ’ਤੇ ਇਸ ਫ਼ਿਲਮ ਉੱਤੇ ਤੇਰਾ “ਦੇਖ ਲਿਆ” ਨਿਸ਼ਾਨ ਹਟ ਜਾਵੇਗਾ।',
   'Sil ve taşı': 'ਮਿਟਾ ਕੇ ਭੇਜੋ',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'ਨਿਰਮਾਣ ਟੀਮ',
+  'Yaratıcı': 'ਰਚਨਾਕਾਰ',
+  'Yönetmen': 'ਨਿਰਦੇਸ਼ਕ',
+  'Senaryo': 'ਸਕ੍ਰੀਨਪਲੇ',
+  'Yapımcı': 'ਨਿਰਮਾਤਾ',
+  'Yapım Firmaları': 'ਨਿਰਮਾਣ ਕੰਪਨੀਆਂ',
+  'Yapım Firması': 'ਨਿਰਮਾਣ ਕੰਪਨੀ',
+  'Firma bulunamadı': 'ਕੰਪਨੀ ਨਹੀਂ ਮਿਲੀ',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'ਇਸ ਕੰਪਨੀ ਦਾ ਇਸ ਕਿਸਮ ਦਾ ਕੋਈ ਕੰਮ ਸੂਚੀ ਵਿੱਚ ਨਹੀਂ ਹੈ।',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'ਪੱਧਰ {}/{}',
+  'Sonraki: {}': 'ਅਗਲਾ: {}',
+  'En üst unvan': 'ਸਭ ਤੋਂ ਉੱਚਾ ਖ਼ਿਤਾਬ',
+  'Meraklı izleyici': 'ਉਤਸੁਕ ਦਰਸ਼ਕ',
+  'Hevesli izleyici': 'ਉਤਸ਼ਾਹੀ ਦਰਸ਼ਕ',
+  'Amatör izleyici': 'ਸ਼ੌਕੀਆ ਦਰਸ਼ਕ',
+  'Kıdemli izleyici': 'ਸੀਨੀਅਰ ਦਰਸ਼ਕ',
+  'Uzman izleyici': 'ਮਾਹਿਰ ਦਰਸ਼ਕ',
+  'Profesör izleyici': 'ਪ੍ਰੋਫੈਸਰ ਦਰਸ਼ਕ',
+  'Efsane izleyici': 'ਲੈਜੰਡ ਦਰਸ਼ਕ',
+  'Ultra mega izleyici': 'ਅਲਟਰਾ ਮੈਗਾ ਦਰਸ਼ਕ',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'ਜਨਮਦਿਨ ਮੁਬਾਰਕ!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'ਖ਼ੁਸ਼ੀ ਹੈ ਕਿ ਤੁਸੀਂ ਹੋ, ਤੇ ਖ਼ੁਸ਼ੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇੱਥੇ ਹੋ।',
+  'Bugün {} yaşına girdin': 'ਅੱਜ ਤੁਹਾਡੀ ਉਮਰ {} ਸਾਲ ਹੋ ਗਈ',
+  'Teşekkürler': 'ਧੰਨਵਾਦ',
 };

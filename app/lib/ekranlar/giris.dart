@@ -128,12 +128,21 @@ class _GirisEkraniState extends State<GirisEkrani> {
 
   /// Google girişinin HER başarısızlığı kullanıcıya söylenir: sessiz
   /// başarısızlık (hiçbir şey olmaması) bu hatanın ta kendisiydi.
+  ///
+  /// Sunucu hatası kendi metnini gösterir. Google/Play Services hatasında
+  /// çeviri anahtarının SONUNA ham kod eklenir (`… (10)`) — 13 Ağu'da
+  /// "giriş başarısız" bildirimi geldi ve ekranda kod olmadığı için
+  /// yapılandırma hatası (10) ile hesabın yeniden doğrulanması (16)
+  /// birbirinden AYIRT EDİLEMEDİ; sunucuya istek hiç ulaşmadığı için
+  /// kayıtlarda da iz yoktu. Kod YENİ ANAHTAR AÇMADAN eklenir.
   void _googleHatasi(Object? e) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          e is ApiHata ? e.toString() : 'Google girişi başarısız'.c,
+          e is ApiHata
+              ? e.toString()
+              : '${'Google girişi başarısız'.c}${googleHataKodu(e)}',
         ),
       ),
     );

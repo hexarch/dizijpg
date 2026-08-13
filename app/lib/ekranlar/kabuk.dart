@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../ceviri.dart';
 import '../tema.dart';
+import 'dogum_gunu.dart';
 import 'profil.dart' show profilYenileTetik;
 import 'yasakli.dart';
 
@@ -147,7 +148,11 @@ class KabukEkrani extends StatelessWidget {
       // gibi çizilir. Buraya konmasının sebebi: kullanıcı hangi sekmede olursa
       // olsun cezasından haberdar olmalı; tek bir ekrana koysaydık oraya hiç
       // uğramayan kullanıcı sessizce kısıtlanmış olurdu.
-      body: YasakSeridi(child: shell),
+      // DOĞUM GÜNÜ (md. 36): kutlama kabuğun GÖVDESİNİ sarar, tek bir sekmeye
+      // konmaz — kullanıcı hangi sekmede açarsa açsın görsün. Doğum günü
+      // değilse ya da tarih girilmemişse katman hiçbir şey çizmez, ölçüye de
+      // dokunmaz (`build` doğrudan `child`ı döndürür).
+      body: DogumGunuKatmani(child: YasakSeridi(child: shell)),
       bottomNavigationBar: kabukCubugu(
         context,
         secili: shell.currentIndex,

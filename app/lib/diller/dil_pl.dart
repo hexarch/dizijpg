@@ -943,4 +943,34 @@ const Map<String, String> cevirilerPl = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Tytuł jest albo do obejrzenia, albo obejrzany. Jeśli przejdziesz dalej, twoje oznaczenie „Obejrzane” przy tym filmie zostanie usunięte.',
   'Sil ve taşı': 'Usuń i przenieś',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Ekipa',
+  'Yaratıcı': 'Twórca',
+  'Yönetmen': 'Reżyseria',
+  'Senaryo': 'Scenariusz',
+  'Yapımcı': 'Produkcja',
+  'Yapım Firmaları': 'Firmy producenckie',
+  'Yapım Firması': 'Firma producencka',
+  'Firma bulunamadı': 'Nie znaleziono firmy',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Ta firma nie ma tytułów tego rodzaju.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Poziom {}/{}',
+  'Sonraki: {}': 'Następny: {}',
+  'En üst unvan': 'Najwyższy tytuł',
+  'Meraklı izleyici': 'Ciekawski widz',
+  'Hevesli izleyici': 'Zapalony widz',
+  'Amatör izleyici': 'Widz amator',
+  'Kıdemli izleyici': 'Widz weteran',
+  'Uzman izleyici': 'Widz ekspert',
+  'Profesör izleyici': 'Widz profesor',
+  'Efsane izleyici': 'Legendarny widz',
+  'Ultra mega izleyici': 'Ultra mega widz',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'Wszystkiego najlepszego!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Jak dobrze, że jesteś i że jesteś tutaj.',
+  'Bugün {} yaşına girdin': 'Dziś kończysz {} lat',
+  'Teşekkürler': 'Dziękuję',
 };

@@ -940,4 +940,32 @@ const Map<String, String> cevirilerBg = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Едно заглавие или предстои да се гледа, или вече е изгледано. Ако продължиш, отметката ти „Изгледано“ за този филм ще бъде премахната.',
   'Sil ve taşı': 'Изтрий и премести',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Екип',
+  'Yaratıcı': 'Идея',
+  'Yönetmen': 'Режисура',
+  'Senaryo': 'Сценарий',
+  'Yapımcı': 'Продукция',
+  'Yapım Firmaları': 'Продуцентски компании',
+  'Yapım Firması': 'Продуцентска компания',
+  'Firma bulunamadı': 'Компанията не е намерена',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Тази компания няма заглавия от този тип.',
+  'Seviye {}/{}': 'Ниво {}/{}',
+  'Sonraki: {}': 'Следващо: {}',
+  'En üst unvan': 'Най-висока титла',
+  'Meraklı izleyici': 'Любопитна публика',
+  'Hevesli izleyici': 'Запалена публика',
+  'Amatör izleyici': 'Аматьорска публика',
+  'Kıdemli izleyici': 'Опитна публика',
+  'Uzman izleyici': 'Експертна публика',
+  'Profesör izleyici': 'Професорска публика',
+  'Efsane izleyici': 'Легендарна публика',
+  'Ultra mega izleyici': 'Ултра мега публика',
+  'Doğum günün kutlu olsun!': 'Честит рожден ден!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Хубаво, че се роди, и хубаво, че си тук.',
+  'Bugün {} yaşına girdin': 'Днес навършваш {} години',
+  'Teşekkürler': 'Благодаря',
 };

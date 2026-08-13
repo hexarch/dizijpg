@@ -936,4 +936,32 @@ const Map<String, String> cevirilerEn = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'A title is either to watch or watched. If you continue, your “Watched” mark on this movie will be removed.',
   'Sil ve taşı': 'Delete and move',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Crew',
+  'Yaratıcı': 'Creator',
+  'Yönetmen': 'Director',
+  'Senaryo': 'Screenplay',
+  'Yapımcı': 'Producer',
+  'Yapım Firmaları': 'Production Companies',
+  'Yapım Firması': 'Production Company',
+  'Firma bulunamadı': 'Company not found',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'This company has no titles of this type.',
+  'Seviye {}/{}': 'Level {}/{}',
+  'Sonraki: {}': 'Next: {}',
+  'En üst unvan': 'Top rank',
+  'Meraklı izleyici': 'Curious viewer',
+  'Hevesli izleyici': 'Eager viewer',
+  'Amatör izleyici': 'Amateur viewer',
+  'Kıdemli izleyici': 'Senior viewer',
+  'Uzman izleyici': 'Expert viewer',
+  'Profesör izleyici': 'Professor viewer',
+  'Efsane izleyici': 'Legendary viewer',
+  'Ultra mega izleyici': 'Ultra mega viewer',
+  'Doğum günün kutlu olsun!': 'Happy birthday!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'So glad you were born, and glad you’re here.',
+  'Bugün {} yaşına girdin': 'You turned {} today',
+  'Teşekkürler': 'Thanks',
 };

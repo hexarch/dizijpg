@@ -951,4 +951,32 @@ const Map<String, String> cevirilerFr = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Un titre est soit à voir, soit vu. Si tu continues, ta marque « Vu » sur ce film sera retirée.',
   'Sil ve taşı': 'Supprimer et déplacer',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Équipe technique',
+  'Yaratıcı': 'Création',
+  'Yönetmen': 'Réalisation',
+  'Senaryo': 'Scénario',
+  'Yapımcı': 'Production',
+  'Yapım Firmaları': 'Sociétés de production',
+  'Yapım Firması': 'Société de production',
+  'Firma bulunamadı': 'Société introuvable',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Cette société n’a aucun titre de ce type.',
+  'Seviye {}/{}': 'Niveau {}/{}',
+  'Sonraki: {}': 'Suivant : {}',
+  'En üst unvan': 'Rang maximal',
+  'Meraklı izleyici': 'Public curieux',
+  'Hevesli izleyici': 'Public enthousiaste',
+  'Amatör izleyici': 'Public amateur',
+  'Kıdemli izleyici': 'Public chevronné',
+  'Uzman izleyici': 'Public expert',
+  'Profesör izleyici': 'Public émérite',
+  'Efsane izleyici': 'Public légendaire',
+  'Ultra mega izleyici': 'Public ultra méga',
+  'Doğum günün kutlu olsun!': 'Joyeux anniversaire !',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Ta naissance, c’était une bonne idée. Ta présence ici aussi.',
+  'Bugün {} yaşına girdin': 'Aujourd’hui, tu as {} ans',
+  'Teşekkürler': 'Merci',
 };

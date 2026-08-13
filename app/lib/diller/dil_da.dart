@@ -936,4 +936,31 @@ const Map<String, String> cevirilerDa = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'En titel er enten på vej til at blive set eller allerede set. Hvis du fortsætter, bliver din markering „Set“ på denne film fjernet.',
   'Sil ve taşı': 'Slet og flyt',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Crew',
+  'Yaratıcı': 'Skaber',
+  'Yönetmen': 'Instruktør',
+  'Senaryo': 'Manuskript',
+  'Yapımcı': 'Producer',
+  'Yapım Firmaları': 'Produktionsselskaber',
+  'Yapım Firması': 'Produktionsselskab',
+  'Firma bulunamadı': 'Selskabet blev ikke fundet',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Dette selskab har ingen titler af denne type.',
+  'Seviye {}/{}': 'Niveau {}/{}',
+  'Sonraki: {}': 'Næste: {}',
+  'En üst unvan': 'Højeste titel',
+  'Meraklı izleyici': 'Nysgerrig seer',
+  'Hevesli izleyici': 'Ivrig seer',
+  'Amatör izleyici': 'Amatørseer',
+  'Kıdemli izleyici': 'Erfaren seer',
+  'Uzman izleyici': 'Ekspertseer',
+  'Profesör izleyici': 'Professorseer',
+  'Efsane izleyici': 'Legendarisk seer',
+  'Ultra mega izleyici': 'Ultra mega seer',
+  'Doğum günün kutlu olsun!': 'Tillykke med fødselsdagen!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Godt, du blev født, og godt, du er her.',
+  'Bugün {} yaşına girdin': 'I dag fyldte du {}',
+  'Teşekkürler': 'Tak',
 };

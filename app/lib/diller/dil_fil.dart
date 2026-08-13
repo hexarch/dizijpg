@@ -947,4 +947,32 @@ const Map<String, String> cevirilerFil = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Ang isang pamagat ay panonoorin o napanood na. Kung magpapatuloy ka, maaalis ang markang “Napanood Ko” mo sa pelikulang ito.',
   'Sil ve taşı': 'Burahin at ilipat',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Crew',
+  'Yaratıcı': 'Tagalikha',
+  'Yönetmen': 'Direktor',
+  'Senaryo': 'Iskrip',
+  'Yapımcı': 'Prodyuser',
+  'Yapım Firmaları': 'Mga Kompanya ng Produksyon',
+  'Yapım Firması': 'Kompanya ng Produksyon',
+  'Firma bulunamadı': 'Hindi natagpuan ang kompanya',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Walang ganitong uri ng pamagat ang kompanyang ito.',
+  'Seviye {}/{}': 'Antas {}/{}',
+  'Sonraki: {}': 'Susunod: {}',
+  'En üst unvan': 'Pinakamataas na titulo',
+  'Meraklı izleyici': 'Mausisang manonood',
+  'Hevesli izleyici': 'Masugid na manonood',
+  'Amatör izleyici': 'Amatyur na manonood',
+  'Kıdemli izleyici': 'Beteranong manonood',
+  'Uzman izleyici': 'Ekspertong manonood',
+  'Profesör izleyici': 'Propesor na manonood',
+  'Efsane izleyici': 'Maalamat na manonood',
+  'Ultra mega izleyici': 'Ultra mega manonood',
+  'Doğum günün kutlu olsun!': 'Maligayang kaarawan!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Buti na lang isinilang ka, buti na lang nandito ka.',
+  'Bugün {} yaşına girdin': 'Ngayon ay {} taong gulang ka na',
+  'Teşekkürler': 'Salamat',
 };

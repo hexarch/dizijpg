@@ -12,6 +12,7 @@ import 'medya_goster.dart';
 import 'ortak.dart';
 import 'puan_dagilimi.dart';
 import 'puan_sheet.dart';
+import 'sirket.dart';
 import 'tepki.dart';
 import 'yorumlar.dart';
 
@@ -102,6 +103,155 @@ List<String> kapaklariCikar(Map<String, dynamic> icerik) {
     if (y != null && y.isNotEmpty && !yollar.contains(y)) yollar.add(y);
   }
   return yollar;
+}
+
+/// ---------------------------------------------------------------------------
+/// EKİP (madde 49): yönetmen / senarist / yapımcı — TIKLANABİLİR, `/kisi/:id`.
+///
+/// KAYNAK İKİ AYRI ALAN:
+///  * `credits.crew` — `append_to_response=credits` ile ana yanıtla gelir
+///    (ek istek YOK). Her satırda `job` alanı vardır.
+///  * `created_by` — DİZİLERDE gövdenin kendi alanı. ZORUNLU: TMDB'de dizi
+///    kredisi BÖLÜM bazlıdır; dizi düzeyindeki `crew` listesinde çoğu zaman
+///    HİÇ "Director"/"Writer" yoktur (canlı ölçüm 13 Ağu 2026 — Breaking Bad
+///    /tv/1396: 27 kişilik ekipte tek bir Director/Writer satırı yok, ama
+///    `created_by` Vince Gilligan'ı veriyor). `created_by` olmasaydı dizilerde
+///    bölüm ekrandaki en önemli ismi kaçırırdı.
+///
+/// TMDB `job` değerleri İNGİLİZCE ve dile göre değişmez (department/job
+/// sözlüğü çevrilmez) — bu yüzden eşleştirme sabit metinlerle güvenli.
+const ekipRolleri = <(String, List<String>)>[
+  // Sıra = ekrandaki öncelik sırası. Bir kişi birden çok rolde geçerse kartı
+  // İLK (en yüksek öncelikli) rolünün yerinde durur.
+  ('Yaratıcı', <String>[]), // yalnız `created_by`
+  ('Yönetmen', ['Director']),
+  // "Screenplay" ve "Writer" TMDB'de aynı işin iki adı; "Story" konuyu yazan,
+  // "Teleplay" dizi bölümünün senaryosu. Dördü de kullanıcı için "senarist".
+  // "Novel"/"Author" KASITLA DIŞARIDA: uyarlanan kitabın yazarı senarist değil.
+  ('Senaryo', ['Screenplay', 'Writer', 'Story', 'Teleplay']),
+  // TMDB'de bir düzine yapımcı türevi var (Co-Executive, Associate, Line,
+  // Coordinating...). Yalnız iki ANA unvan alınır; gerisi jenerik gürültüsü.
+  ('Yapımcı', ['Producer', 'Executive Producer']),
+];
+
+/// Her rolün şeride koyabileceği EN FAZLA kişi.
+///
+/// NEDEN TAVAN VAR: yapım ekibi listeleri uçsuz. Canlı ölçüm (13 Ağu 2026):
+/// Inception (/movie/27205) 736 kişilik ekip, bunun 4'ü "Producer" + 3'ü
+/// "Executive Producer". Tavansız bırakılsaydı bölüm bir jenerik dökümüne
+/// dönerdi ve asıl bilgi (yönetmen/senarist) yapımcı kalabalığında kaybolurdu.
+///
+/// Sayıların gerekçesi:
+///  * Yaratıcı 4 — `created_by` neredeyse hiç 2-3'ü geçmez (Game of Thrones 2).
+///  * Yönetmen 3 — filmde tipik olarak 1, kardeş/ikili yönetmenlerde 2;
+///    3 kolektifleri de karşılar.
+///  * Senaryo 4 — Screenplay + Writer + Story çoğu zaman AYNI 2-3 kişidir.
+///  * Yapımcı 4 — bu bölümün "şişme" riski buradan gelir, en sıkı tavan burada.
+///
+/// Üst sınır 15 kart; yatay şeritte ~3 ekran genişliği, kaydırılabilir.
+const ekipRolTavani = <String, int>{
+  'Yaratıcı': 4,
+  'Yönetmen': 3,
+  'Senaryo': 4,
+  'Yapımcı': 4,
+};
+
+/// Şeritteki tek ekip üyesi: kişi + o yapımda üstlendiği İŞLER.
+class EkipUyesi {
+  final int id;
+  final String ad;
+  final String? foto;
+
+  /// Türkçe rol anahtarları ("Senaryo", "Yapımcı"). Ekranda `.c` ile çevrilip
+  /// virgülle birleştirilir — aynı kişi iki kez listelenmez.
+  final List<String> isler;
+
+  EkipUyesi({
+    required this.id,
+    required this.ad,
+    required this.foto,
+    required this.isler,
+  });
+}
+
+/// Detay yanıtından ekip şeridini üretir. TEKİLLEŞTİRİR: bir kişi hem
+/// "Writer" hem "Producer" ise TEK kart alır, işleri birleşir ("Senaryo,
+/// Yapımcı").
+///
+/// TAVAN MUHASEBESİ: zaten kartı olan kişi bir sonraki rolün tavanını
+/// HARCAMAZ — yalnız etiketine o rol eklenir. Aksi hâlde senaryoyu da yazan
+/// yapımcılar, kendilerinden başka yapımcı gösterilmesini engellerdi.
+///
+/// Alanlar EKSİK gelirse (TMDB'de `credits` ya da `created_by` olmayabilir,
+/// eski önbellek yanıtında bulunmayabilir) boş liste döner → bölüm HİÇ
+/// çizilmez, hata/boş kutu görünmez.
+List<EkipUyesi> ekibiCikar(Map<String, dynamic> icerik) {
+  final ham = icerik['credits'];
+  final ekipHam = ham is Map ? ham['crew'] : null;
+  final ekip = <Map<String, dynamic>>[
+    for (final e in ekipHam is List ? ekipHam : const [])
+      if (e is Map<String, dynamic>) e,
+  ];
+  final yaratanHam = icerik['created_by'];
+  final yaratanlar = <Map<String, dynamic>>[
+    for (final k in yaratanHam is List ? yaratanHam : const [])
+      if (k is Map<String, dynamic>) k,
+  ];
+
+  // LinkedHashMap: ekleme sırası korunur → ekrandaki sıra rol önceliğidir.
+  final sonuc = <int, EkipUyesi>{};
+  for (final (rol, isler) in ekipRolleri) {
+    final adaylar = isler.isEmpty
+        ? yaratanlar
+        : [
+            for (final e in ekip)
+              if (isler.contains(e['job'])) e,
+          ];
+    var eklenen = 0;
+    for (final k in adaylar) {
+      final id = (k['id'] as num?)?.toInt();
+      final ad = (k['name'] as String?)?.trim();
+      if (id == null || ad == null || ad.isEmpty) continue;
+      final varOlan = sonuc[id];
+      if (varOlan != null) {
+        if (!varOlan.isler.contains(rol)) varOlan.isler.add(rol);
+        continue; // tavanı harcamaz
+      }
+      if (eklenen >= (ekipRolTavani[rol] ?? 0)) continue;
+      sonuc[id] = EkipUyesi(
+        id: id,
+        ad: ad,
+        foto: k['profile_path'] as String?,
+        isler: [rol],
+      );
+      eklenen++;
+    }
+  }
+  return sonuc.values.toList();
+}
+
+/// Yapım firması şeridinde gösterilecek en fazla firma. TMDB'de tek filme
+/// 20'den fazla ortak yapımcı iliştirilmiş örnekler var; şerit bir firma
+/// rehberine dönüşmesin.
+const firmaTavani = 10;
+
+/// `production_companies` → tıklanabilir firma kayıtları.
+///
+/// SÜZGEÇ: `id` ve `name` OLMAYAN kayıt atılır — tıklanınca gidilecek bir
+/// sayfası (ya da yazılacak bir adı) yoksa kartın anlamı yok. Aynı id iki kez
+/// gelirse bir kez gösterilir.
+List<Map<String, dynamic>> yapimFirmalari(Map<String, dynamic> icerik) {
+  final ham = icerik['production_companies'];
+  final sonuc = <int, Map<String, dynamic>>{};
+  for (final f in ham is List ? ham : const []) {
+    if (f is! Map<String, dynamic>) continue;
+    final id = (f['id'] as num?)?.toInt();
+    final ad = (f['name'] as String?)?.trim();
+    if (id == null || ad == null || ad.isEmpty) continue;
+    if (sonuc.length >= firmaTavani) break;
+    sonuc.putIfAbsent(id, () => f);
+  }
+  return sonuc.values.toList();
 }
 
 class DetayEkrani extends StatefulWidget {
@@ -558,6 +708,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
     // "original" birkaç MB olabildiği için tercih edilmedi.
     final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w1280');
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
+    // Md. 49 — ekip ve yapım firmaları. İkisi de EKSİK gelebilir (TMDB'de
+    // olmayan alanlar); boş dönerse aşağıdaki bölümler hiç çizilmez.
+    final ekip = ekibiCikar(c);
+    final firmalar = yapimFirmalari(c);
     final oneriler =
         ((c['recommendations']?['results'] as List<dynamic>?) ?? []);
     final sezonlar = ((c['seasons'] as List<dynamic>?) ?? [])
@@ -1187,6 +1341,136 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                   const SizedBox(height: 6),
                                   Text(
                                     o['name'] as String? ?? '',
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 11),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // Yapım ekibi (md. 49) — yönetmen/senarist/yapımcı, tıklanabilir.
+            // Kadro şeridiyle AYNI kart kalıbı: yeni bir tasarım dili yok,
+            // tek fark adın altındaki iş satırı.
+            if (ekip.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // "Tümünü gör" YOK: liste zaten tavanlı ve kısa
+                    // ([ekipRolTavani]), açılacak ikinci bir ekran olmazdı.
+                    SeritBasligi(baslik: 'Yapım Ekibi'.c),
+                    SizedBox(
+                      // Kadro şeridi 150: 68 (avatar) + 6 + 2 satır ad.
+                      // Burada bir de iş satırı var (2 satıra kadar) → 164.
+                      // Ölçülen içerik ~127 dp; kalan pay yazı ölçeği
+                      // büyütülmüş cihazlar için.
+                      height: 164,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: ekip.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, i) {
+                          final u = ekip[i];
+                          final foto = posterUrl(u.foto, boyut: 'w185');
+                          return InkWell(
+                            // Kart 76x~127 dp — 44 dp dokunma asgarisinin
+                            // çok üstünde.
+                            onTap: () => context.push('/kisi/${u.id}'),
+                            child: SizedBox(
+                              width: 76,
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 34,
+                                    backgroundColor: DiziRenkler.kart,
+                                    backgroundImage: foto == null
+                                        ? null
+                                        : CachedNetworkImageProvider(foto),
+                                    child: foto == null
+                                        ? Icon(
+                                            Icons.person,
+                                            color: DiziRenkler.metin24,
+                                          )
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    u.ad,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 11),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    // Tekilleştirilmiş işler: "Senaryo, Yapımcı"
+                                    u.isler.map((i) => i.c).join(', '),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: DiziRenkler.metin54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            // Yapım firmaları (md. 49) — dokununca firma sayfası açılır.
+            if (firmalar.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SeritBasligi(baslik: 'Yapım Firmaları'.c),
+                    SizedBox(
+                      // 56 (logo) + 6 + 2 satır ad (~26) = 88; pay bırakıldı.
+                      height: 108,
+                      child: ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: firmalar.length,
+                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        itemBuilder: (context, i) {
+                          final f = firmalar[i];
+                          final ad = f['name'] as String;
+                          return InkWell(
+                            // Kart 112x~88 dp — dokunma asgarisinin üstünde.
+                            onTap: () => context.push(
+                              sirketYolu(
+                                (f['id'] as num).toInt(),
+                                ad: ad,
+                                tur: widget.tur,
+                              ),
+                            ),
+                            child: SizedBox(
+                              width: 112,
+                              child: Column(
+                                children: [
+                                  FirmaLogosu(
+                                    logoYolu: f['logo_path'] as String?,
+                                    genislik: 112,
+                                    yukseklik: 56,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    ad,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.center,

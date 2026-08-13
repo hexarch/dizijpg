@@ -942,4 +942,33 @@ const Map<String, String> cevirilerRo = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Un titlu e ori de văzut, ori văzut. Dacă continui, marcajul tău „Am văzut” de la acest film va fi scos.',
   'Sil ve taşı': 'Șterge și mută',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Echipa',
+  'Yaratıcı': 'Creator',
+  'Yönetmen': 'Regie',
+  'Senaryo': 'Scenariu',
+  'Yapımcı': 'Producție',
+  'Yapım Firmaları': 'Companii de producție',
+  'Yapım Firması': 'Companie de producție',
+  'Firma bulunamadı': 'Compania nu a fost găsită',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Această companie nu are titluri de acest tip.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Nivel {}/{}',
+  'Sonraki: {}': 'Următorul: {}',
+  'En üst unvan': 'Titlul suprem',
+  'Meraklı izleyici': 'Spectator curios',
+  'Hevesli izleyici': 'Spectator entuziast',
+  'Amatör izleyici': 'Spectator amator',
+  'Kıdemli izleyici': 'Spectator veteran',
+  'Uzman izleyici': 'Spectator expert',
+  'Profesör izleyici': 'Spectator profesor',
+  'Efsane izleyici': 'Spectator legendar',
+  'Ultra mega izleyici': 'Spectator ultra mega',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'La mulți ani!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Ce bine că exiști și că ești aici.',
+  'Bugün {} yaşına girdin': 'Azi împlinești {} ani',
+  'Teşekkürler': 'Mulțumesc',
 };

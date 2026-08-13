@@ -940,4 +940,33 @@ const Map<String, String> cevirilerSv = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'En titel är antingen att se eller redan sedd. Om du fortsätter tas din markering ”Sett” på den här filmen bort.',
   'Sil ve taşı': 'Ta bort och flytta',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Produktionsteam',
+  'Yaratıcı': 'Skapare',
+  'Yönetmen': 'Regi',
+  'Senaryo': 'Manus',
+  'Yapımcı': 'Producent',
+  'Yapım Firmaları': 'Produktionsbolag',
+  'Yapım Firması': 'Produktionsbolag',
+  'Firma bulunamadı': 'Bolaget hittades inte',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Det här bolaget har inga titlar av den typen.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Nivå {}/{}',
+  'Sonraki: {}': 'Nästa: {}',
+  'En üst unvan': 'Högsta titeln',
+  'Meraklı izleyici': 'Nyfiken tittare',
+  'Hevesli izleyici': 'Ivrig tittare',
+  'Amatör izleyici': 'Amatörtittare',
+  'Kıdemli izleyici': 'Rutinerad tittare',
+  'Uzman izleyici': 'Experttittare',
+  'Profesör izleyici': 'Tittarprofessor',
+  'Efsane izleyici': 'Legendarisk tittare',
+  'Ultra mega izleyici': 'Ultramegatittare',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'Grattis på födelsedagen!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Vad bra att du finns och att du är här.',
+  'Bugün {} yaşına girdin': 'Idag fyller du {} år',
+  'Teşekkürler': 'Tack',
 };

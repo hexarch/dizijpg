@@ -20,6 +20,23 @@ const googleIstemcisi =
 /// yükleme/hata halindeki kilitli eşdeğer düğmede de kullanılır.
 const double googleDugmeYuksekligi = 44;
 
+/// Google/Play Services hatasının TEŞHİS EDİLEBİLİR kuyruğu: `' (10)'` gibi.
+///
+/// Hata mesajının tamamı gösterilmez (kullanıcıya `PlatformException(...)`
+/// yığını okutmanın anlamı yok), ama kod olmadan da teşhis edilemiyor:
+/// **10** = DEVELOPER_ERROR (paket adı/SHA-1 eşleşmiyor), **16** = hesabın
+/// yeniden doğrulanması gerekiyor (cihaz tarafı), **7** = ağ, **12501** =
+/// kullanıcı iptal etti. Kod bulunamazsa BOŞ dönülür — çeviri metni tek
+/// başına kalır, arayüzde parantez artığı görünmez.
+String googleHataKodu(Object? e) {
+  if (e == null) return '';
+  final m = RegExp(
+    r'ApiException:\s*(\d+)|sign_in_failed[^0-9]*(\d+)',
+  ).firstMatch(e.toString());
+  final kod = m?.group(1) ?? m?.group(2);
+  return kod == null ? '' : ' ($kod)';
+}
+
 /// Google'dan dönen kimlik kanıtı.
 ///
 /// Sunucu `POST /auth/google` İKİ yolu da kabul eder: `kimlik` (id_token) ya

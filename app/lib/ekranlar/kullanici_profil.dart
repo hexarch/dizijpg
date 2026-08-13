@@ -7,6 +7,7 @@ import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
+import '../seviye.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'ortak.dart';
@@ -14,6 +15,7 @@ import 'profil.dart'
     show
         sureBicimle,
         RozetCipi,
+        SeviyeSatiri,
         EtkilesimSatiri,
         ProfilSekmeleri,
         ProfilYorumAkisi;
@@ -186,6 +188,25 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                   ),
                               ],
                             ),
+                            // UNVAN (md. 29): kullanıcı adının HEMEN ALTINDA.
+                            //
+                            // İLERLEME BURADA ÇİZİLMEZ (`ilerlemeGoster`
+                            // yalnız `ben_mi` ise true): başkasının profilinde
+                            // ilerleme çubuğu, unvanı bir sıralama tablosuna
+                            // çevirirdi. Zaten sunucu ziyaretçiye puan/eşik
+                            // GÖNDERMİYOR — bu bayrak ikinci kilit.
+                            //
+                            // 1. KADEME VE `izlenenler_gizli` DURUMUNDA
+                            // `seviye` null gelir (sunucu süzüyor), o yüzden
+                            // burada ayrıca koşul yok: satır hiç çizilmez.
+                            if (Seviye.cozumle(p['seviye']) case final sv?)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 3),
+                                child: SeviyeSatiri(
+                                  seviye: sv,
+                                  ilerlemeGoster: p['ben_mi'] == true,
+                                ),
+                              ),
                             // Ülke satırı. Rozet buradan ÇIKTI (artık adın
                             // yanında) — ülke tek başına kaldı.
                             if ((p['ulke'] as String?)?.isNotEmpty == true)

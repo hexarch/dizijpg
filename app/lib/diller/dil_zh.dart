@@ -890,4 +890,32 @@ const Map<String, String> cevirilerZh = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       '一个作品要么是待看，要么是看过。继续的话，你在这部电影上的“看过”标记将被移除。',
   'Sil ve taşı': '删除并移动',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': '制作团队',
+  'Yaratıcı': '主创',
+  'Yönetmen': '导演',
+  'Senaryo': '编剧',
+  'Yapımcı': '制片人',
+  'Yapım Firmaları': '制作公司',
+  'Yapım Firması': '制作公司',
+  'Firma bulunamadı': '未找到该公司',
+  'Bu firmanın bu türde listelenecek yapımı yok.': '该公司没有此类作品。',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': '等级 {}/{}',
+  'Sonraki: {}': '下一级：{}',
+  'En üst unvan': '最高头衔',
+  'Meraklı izleyici': '好奇观众',
+  'Hevesli izleyici': '热情观众',
+  'Amatör izleyici': '业余观众',
+  'Kıdemli izleyici': '资深观众',
+  'Uzman izleyici': '专家观众',
+  'Profesör izleyici': '教授级观众',
+  'Efsane izleyici': '传奇观众',
+  'Ultra mega izleyici': '超究极观众',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': '生日快乐！',
+  'İyi ki doğdun, iyi ki buradasın.': '很高兴世上有你，也很高兴你在这里。',
+  'Bugün {} yaşına girdin': '今天你 {} 岁了',
+  'Teşekkürler': '谢谢',
 };

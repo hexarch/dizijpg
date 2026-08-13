@@ -32,6 +32,7 @@ import 'ekranlar/karsilama.dart';
 import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
 import 'ekranlar/kisi_yapimlar.dart';
+import 'ekranlar/sirket.dart';
 import 'ekranlar/liste.dart';
 import 'ekranlar/kitaplik_liste.dart';
 import 'ekranlar/kullanici_profil.dart';
@@ -96,6 +97,13 @@ const acikYolOnEkleri = <String>[
   '/gonderi/',
   '/dizi/',
   '/listeler/',
+  // Md. 49 — yapım firması sayfası. İçeriğin firma şeridinden açılıyor ve
+  // içerik sayfaları zaten oturumsuz açık; burada giriş duvarı zincirin
+  // ortasında kopukluk yaratırdı. GİZLİLİK: sayfa yalnız TMDB katalog
+  // verisi gösterir, kişiye özel hiçbir alan okumaz. CLOAKING RİSKİ YOK:
+  // `/sirket/` nginx'in bot kuralında (`^/(icerik|gonderi|kisi|dizi|listeler)/`)
+  // yok, yani bot da insan da AYNI uygulamayı görür.
+  '/sirket/',
 ];
 
 /// Oturum gerektirmeyen tam yollar (ön ek DEĞİL: `/gizlilik-tercihleri` gibi
@@ -278,6 +286,23 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
           return id == null
               ? const _GecersizBaglanti()
               : KisiEkrani(kisiId: id);
+        },
+      ),
+      // Yapım firması (md. 49) — detaydaki firma şeridinden açılır. `/kisi/:id`
+      // ile aynı hizada: kabuğun DIŞINDA ve oturumsuz ziyaretçiye AÇIK
+      // (bkz. [acikYolOnEkleri]) — içerik sayfasından buraya tıklayan
+      // ziyaretçinin giriş duvarına çarpması kopukluk olurdu.
+      GoRoute(
+        path: '/sirket/:id',
+        builder: (_, s) {
+          final id = int.tryParse(s.pathParameters['id'] ?? '');
+          return id == null
+              ? const _GecersizBaglanti()
+              : SirketEkrani(
+                  sirketId: id,
+                  sirketAdi: s.uri.queryParameters['ad'],
+                  baslangicTuru: s.uri.queryParameters['tur'],
+                );
         },
       ),
       // Paylaşılan liste — SSR sayfası (`/og/listeler/:id`) bu adrese

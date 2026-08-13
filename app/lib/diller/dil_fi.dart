@@ -939,4 +939,31 @@ const Map<String, String> cevirilerFi = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Nimike on joko katsottavana tai katsottu. Jos jatkat, merkintäsi ”Katsottu” tässä elokuvassa poistetaan.',
   'Sil ve taşı': 'Poista ja siirrä',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Työryhmä',
+  'Yaratıcı': 'Idea',
+  'Yönetmen': 'Ohjaus',
+  'Senaryo': 'Käsikirjoitus',
+  'Yapımcı': 'Tuotanto',
+  'Yapım Firmaları': 'Tuotantoyhtiöt',
+  'Yapım Firması': 'Tuotantoyhtiö',
+  'Firma bulunamadı': 'Yhtiötä ei löytynyt',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Tällä yhtiöllä ei ole tämän tyyppisiä nimikkeitä.',
+  'Seviye {}/{}': 'Taso {}/{}',
+  'Sonraki: {}': 'Seuraava: {}',
+  'En üst unvan': 'Ylin arvonimi',
+  'Meraklı izleyici': 'Utelias katsoja',
+  'Hevesli izleyici': 'Innokas katsoja',
+  'Amatör izleyici': 'Amatöörikatsoja',
+  'Kıdemli izleyici': 'Kokenut katsoja',
+  'Uzman izleyici': 'Asiantuntijakatsoja',
+  'Profesör izleyici': 'Professorikatsoja',
+  'Efsane izleyici': 'Legendakatsoja',
+  'Ultra mega izleyici': 'Ultra mega katsoja',
+  'Doğum günün kutlu olsun!': 'Hyvää syntymäpäivää!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Onneksi synnyit, onneksi olet täällä.',
+  'Bugün {} yaşına girdin': 'Täytit tänään {} vuotta',
+  'Teşekkürler': 'Kiitos',
 };

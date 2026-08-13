@@ -922,4 +922,31 @@ const Map<String, String> cevirilerAr = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'العمل إمّا للمشاهدة وإمّا مُشاهَد. المتابعة ستزيل علامة «شاهدته» في هذا الفيلم.',
   'Sil ve taşı': 'حذف ونقل',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'فريق العمل',
+  'Yaratıcı': 'ابتكار',
+  'Yönetmen': 'إخراج',
+  'Senaryo': 'سيناريو',
+  'Yapımcı': 'إنتاج',
+  'Yapım Firmaları': 'شركات الإنتاج',
+  'Yapım Firması': 'شركة الإنتاج',
+  'Firma bulunamadı': 'لم يُعثر على الشركة',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'لا توجد أعمال من هذا النوع لهذه الشركة.',
+  'Seviye {}/{}': 'المستوى {}/{}',
+  'Sonraki: {}': 'التالي: {}',
+  'En üst unvan': 'أعلى لقب',
+  'Meraklı izleyici': 'مشاهدة بفضول',
+  'Hevesli izleyici': 'مشاهدة بحماس',
+  'Amatör izleyici': 'مشاهدة بهواية',
+  'Kıdemli izleyici': 'مشاهدة بخبرة',
+  'Uzman izleyici': 'مشاهدة باحتراف',
+  'Profesör izleyici': 'مشاهدة بدرجة بروفيسور',
+  'Efsane izleyici': 'مشاهدة بمستوى أسطوري',
+  'Ultra mega izleyici': 'مشاهدة ألترا ميغا',
+  'Doğum günün kutlu olsun!': 'عيد ميلاد سعيد!',
+  'İyi ki doğdun, iyi ki buradasın.': 'سعدنا بمولدك، وسعدنا بوجودك هنا.',
+  'Bugün {} yaşına girdin': 'اليوم عيد ميلادك الـ{}',
+  'Teşekkürler': 'شكرًا',
 };

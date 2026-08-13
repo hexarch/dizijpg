@@ -939,4 +939,33 @@ const Map<String, String> cevirilerUk = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Тайтл або ще не переглянутий, або переглянутий. Якщо продовжиш, твою позначку «Переглянуто» для цього фільму буде знято.',
   'Sil ve taşı': 'Видалити й перенести',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Знімальна група',
+  'Yaratıcı': 'Творець',
+  'Yönetmen': 'Режисер',
+  'Senaryo': 'Сценарій',
+  'Yapımcı': 'Продюсер',
+  'Yapım Firmaları': 'Студії',
+  'Yapım Firması': 'Студія',
+  'Firma bulunamadı': 'Студію не знайдено',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'У цієї студії немає тайтлів такого типу.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Рівень {}/{}',
+  'Sonraki: {}': 'Далі: {}',
+  'En üst unvan': 'Найвищий титул',
+  'Meraklı izleyici': 'Допитливий глядач',
+  'Hevesli izleyici': 'Захоплений глядач',
+  'Amatör izleyici': 'Глядач-аматор',
+  'Kıdemli izleyici': 'Бувалий глядач',
+  'Uzman izleyici': 'Глядач-експерт',
+  'Profesör izleyici': 'Глядач-професор',
+  'Efsane izleyici': 'Легендарний глядач',
+  'Ultra mega izleyici': 'Ультра-мега-глядач',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'З днем народження!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Як добре, що ти є і що ти поруч.',
+  'Bugün {} yaşına girdin': 'Сьогодні тобі виповнилося {}',
+  'Teşekkürler': 'Дякую',
 };

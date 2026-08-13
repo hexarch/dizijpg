@@ -933,4 +933,34 @@ const Map<String, String> cevirilerTe = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'ఒక టైటిల్ చూడాల్సినది అయినా అవుతుంది, చూసినది అయినా అవుతుంది. కొనసాగిస్తే ఈ సినిమాపై నీ “చూశాను” గుర్తు తీసివేయబడుతుంది.',
   'Sil ve taşı': 'తొలగించి తరలించు',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'నిర్మాణ బృందం',
+  'Yaratıcı': 'సృష్టికర్త',
+  'Yönetmen': 'దర్శకత్వం',
+  'Senaryo': 'స్క్రీన్‌ప్లే',
+  'Yapımcı': 'నిర్మాణం',
+  'Yapım Firmaları': 'నిర్మాణ సంస్థలు',
+  'Yapım Firması': 'నిర్మాణ సంస్థ',
+  'Firma bulunamadı': 'సంస్థ కనబడలేదు',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'ఈ సంస్థకు ఈ రకంలో చూపించడానికి ఏమీ లేదు.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'స్థాయి {}/{}',
+  'Sonraki: {}': 'తర్వాత: {}',
+  'En üst unvan': 'అత్యున్నత బిరుదు',
+  'Meraklı izleyici': 'ఆసక్తిగల వీక్షకులు',
+  'Hevesli izleyici': 'ఉత్సాహపు వీక్షకులు',
+  'Amatör izleyici': 'ఔత్సాహిక వీక్షకులు',
+  'Kıdemli izleyici': 'సీనియర్ వీక్షకులు',
+  'Uzman izleyici': 'నిపుణ వీక్షకులు',
+  'Profesör izleyici': 'ప్రొఫెసర్ వీక్షకులు',
+  'Efsane izleyici': 'లెజెండ్ వీక్షకులు',
+  'Ultra mega izleyici': 'అల్ట్రా మెగా వీక్షకులు',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'పుట్టినరోజు శుభాకాంక్షలు!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'మీరు ఉన్నారన్నదే సంతోషం, ఇక్కడ ఉన్నారన్నది మరింత సంతోషం.',
+  'Bugün {} yaşına girdin': 'ఈరోజు మీకు {} ఏళ్లు నిండాయి',
+  'Teşekkürler': 'ధన్యవాదాలు',
 };

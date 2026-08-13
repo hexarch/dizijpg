@@ -1,6 +1,125 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — 🔎 ANDROID'DE "GOOGLE GİRİŞİ BAŞARISIZ" (kullanıcı bildirimi, DEVAM EDİYOR)
+Bildirim 15:30 TRT. **Yapılandırma tarafı BAŞTAN SONA doğrulandı, hepsi doğru:**
+
+* nginx erişim kaydı: son `POST /api/auth/google` **13 Ağu 03:47 EDT (10:47 TRT)
+  ve 200** (Dart/dart:io = Android). O saatten sonra **hiçbir istek yok** →
+  hata bize ULAŞMADAN, cihazdaki Play Services içinde oluyor. Sunucu sağlıklı
+  (`/api/saglik` 200, kayıtlar canlı akıyor).
+* Yükleme anahtarı SHA-1 `2E:38:AB:5C…AB:58` — Firebase'de VE Google Cloud'da
+  Android OAuth istemcisi olarak kayıtlı.
+* **Play App Signing anahtarı SHA-1 `EA:7A:FB:3C…10:E0` — O DA KAYITLI.**
+  (Play Console'da kopyala düğmesinin arkasında; DOM'a basılmıyor.) Yani
+  "Play'den kurulan sürümde SHA-1 eksik" klasik nedeni BU PROJEDE GEÇERSİZ.
+* OAuth izin ekranı: **"In production"**, External, kullanıcı kapağı 0/100 →
+  test kullanıcısı kısıtı yok.
+* Web istemcisi `1026295944597-alc4fpkc…` koddaki `googleIstemcisi` ile birebir
+  aynı; sunucudaki `GOOGLE_ISTEMCI` de aynı.
+* `app/android/app/google-services.json` içindeki `oauth_client: []` boş ama
+  BU BİR NEDEN DEĞİL: dosya Sprint 9'dan kalma, eski; eski Google Sign-In
+  yolu çalışma anında bu dosyadaki listeye bakmıyor (kod `serverClientId`
+  veriyor). Yine de dosya YENİDEN İNDİRİLMELİ (temizlik).
+* Kodda son 3 sürümde Google akışına dokunulmadı (`git log` — son değişiklik
+  1.32.0+77); `pubspec.yaml`ta yalnız sürüm numarası değişti.
+
+**TEŞHİS EDİLEBİLİRLİK EKLENDİ** (`google_kapisi.dart:googleHataKodu`):
+SnackBar artık ham Play Services kodunu metnin sonuna basıyor —
+`Google girişi başarısız (10)`. YENİ ÇEVİRİ ANAHTARI AÇILMADI.
+**10** = DEVELOPER_ERROR (paket/SHA-1) · **16** = hesabın yeniden doğrulanması
+(cihaz tarafı) · **7** = ağ · **12501** = kullanıcı iptal etti.
+Kanıt: `app/test/google_hata_kodu_test.dart` (5 test).
+
+**SIRADAKİ:** kodu görmek için yeni APK. Kod 16 gelirse cihazdaki Google
+hesabı yeniden doğrulanacak (yapılandırma değil); 10 gelirse elde tek bir
+açık kalır — `google_sign_in` 6.x'in eski Android yolu (7.x Credential
+Manager'a geçti).
+
+## 2026-08-14 — ✅ MD. 49 SENARİST / YAPIMCI / YAPIM FİRMASI (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
+İstek: içerik sayfasında yalnız oyuncular vardı; yapım ekibi ve firma yoktu.
+
+* **Ek TMDB isteği GEREKMEDİ** — `detay.dart:_ekVeri` zaten `credits` çekiyordu;
+  `crew` veriyi almasına rağmen HİÇ gösterilmiyordu.
+* **Dizilerde kritik bulgu**: TMDB'de dizi kredisi bölüm bazlı, `/tv/1396`'nın
+  27 kişilik ekibinde tek `Director`/`Writer` YOK. `created_by` kullanılmasa
+  diziler ekipsiz kalırdı → rol sırası **Yaratıcı → Yönetmen → Senaryo → Yapımcı**.
+* `Novel`/`Author` bilerek DIŞARIDA: uyarlanan kitabın yazarı senarist değil.
+* **Tavanlar** (`ekipRolTavani`): Yaratıcı 4 · Yönetmen 3 · Senaryo 4 · Yapımcı 4
+  → en fazla 15 kart. Inception'ın 736 kişilik ekibi tavansız jenerik dökümüne
+  dönerdi. İnce nokta: **kartı olan kişi sonraki rolün tavanını harcamaz**
+  (yoksa senaryoyu da yazan yapımcılar başka yapımcıyı bastırırdı) — testle kilitli.
+* Firma tavanı 10; kişi id'siyle tekilleştirme, işler birleşiyor ("Senaryo, Yapımcı").
+* **TMDB proxy beyaz listesi en dar biçimde genişletildi**: yalnız
+  `/^\/company\/\d+$/`. `/discover/(tv|movie)` zaten izinliydi → firma yapımları
+  için yeni uç açılmadı. `uzunTtl` deseni `company`'yi kapsıyor (7 gün künye);
+  `/discover/*` kasıtla dışarıda (yapım listesi yeni içerikle değişir).
+* Yeni ekran `app/lib/ekranlar/sirket.dart` + `/sirket/:id` rotası; oturumsuz
+  ziyaretçi için açık yol (saf katalog verisi, `/gozat` ile aynı sınıf).
+  `FirmaLogosu` beyaz zeminli — TMDB logoları koyu çizim, koyu temada kaybolurdu.
+* Kanıt: `app/test/ekip_firma_test.dart` (20 test) ·
+  `backend/test/sirket_proxy.test.js` (5 test, beyaz liste kaynaktan okunuyor) ·
+  `flutter test` 1349 · `npm test` 1014 · `flutter analyze` 0 error/0 warning.
+* **ÇEVİRİ TAMAM** (13 Ağu): 9 anahtar 45 dile eklendi; rol etiketleri kişi adı
+  yerine JENERİK (kredi) biçiminde — `Yönetmen` → de `Regie`, fr `Réalisation`,
+  pt `Direção` — böylece kadın bir yönetmenin kartında eril etiket çıkmıyor.
+* **Dağıtım YOK** — `server.js` değişti, canlıya giderken scp + rebuild şart.
+  Migrasyon gerekmiyor (yeni tablo/kolon yok).
+
+## 2026-08-14 — ✅ MD. 29 MİNİ SEVİYE SİSTEMİ (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
+İstek: "Amatör izleyici → profesör izleyici → ultra mega izleyici gibi unvanlar."
+
+* 8 kademe: Meraklı → Hevesli → Amatör → Kıdemli → Uzman → Profesör → Efsane →
+  Ultra mega izleyici. Ton hafif esprili, en alt kademe bile aşağılayıcı değil.
+* Puan formülü: `bölüm×1 + film×2 + bitirilen dizi×5 + yorum×3 + başlık puanı×2`.
+  **Takipçi ve alınan beğeni BİLEREK dışarıda** — onlar popülerliği ölçer, emeği
+  değil; seviye izleme emeğinin karşılığı olmalı.
+* **Yeni kolon açılmadı**: gizlilik için mevcut `izlenenler_gizli` yeniden
+  kullanıldı. Seviye 1 başkasına HİÇ gönderilmiyor (yeni kullanıcı "acemi"
+  etiketiyle teşhir edilmesin).
+* Unvan istemcide çevriliyor; kademe kodu (`merakli`, `ultra_mega`) sunucudan
+  geliyor → başkasının profilinde de İZLEYENİN dilinde okunuyor.
+* Kanıt: `app/test/seviye_test.dart` · `backend/test/seviye.test.js` · tamamı yeşil.
+* **ÇEVİRİ TAMAM** (13 Ağu): 11 anahtar 45 dile. Unvanlarda sıfat KULLANICIYA
+  değil NESNEYE bağlandı: de `Fan`, es/fr `público`/`public`, el nötr `κοινό`,
+  he dişil `צפייה`, it `Occhio …`, ar edat öbeği — eril varsayılan hiçbir dilde yok.
+* **Dağıtım YOK, sürüm artırılmadı, commit YOK.**
+
+## 2026-08-14 — ✅ MD. 36 DOĞUM GÜNÜ KUTLAMASI (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
+İstek: "Doğum günü olan kullanıcıda uygulama ikonu değişsin, kutlayalım" +
+"ikon tasarımları önceden bana sunulacak".
+
+* **İKON DEĞİŞİMİ UYGULANMADI (bilinçli).** Android'de çalışma anında ikon
+  değiştirmenin resmi API'si yok; tek yol `activity-alias` takası ve bazı
+  başlatıcılarda ikon ANA EKRANDAN DÜŞÜYOR, kısayol/widget kırılıyor,
+  uygulama o an kapanabiliyor. Kutlama niyetiyle kullanıcının ikonunu
+  kaybettiremeyiz. **Tasarım önerileri hazır: `ikon-onerileri/`** (4 varyant
+  + mevcut ikon + üreteç betiği + README). Kullanıcı seçerse konuşulur.
+* **Kutlama uygulama İÇİNDE**: kabuk açılışında konfeti + mesaj kartı,
+  **günde bir kez**, kapatılabilir (kapat ikonu / "Teşekkürler" / perde).
+  `MediaQuery.disableAnimations` açıkken **konfeti yok, mesaj var**.
+  Konfeti için YENİ PAKET YOK — `CustomPainter` + tek `AnimationController`,
+  TEK GEÇİŞ (sonsuz tekrar olsaydı `pumpAndSettle` asılırdı).
+* **Sunucu**: yeni `GET /dogum-gunu` (girişZorunlu, 60/saat, `private,
+  no-store`). `/profilim`e ya da `/karsilama`ya alan EKLENMEDİ: karşılama ucu
+  akış bitince istemcide kısa devre oluyor, `/profilim` yanıtı ise prefs'e
+  yazıldığı için güne bağlı bayrak orada bayatlardı. Yanıt yalnız
+  `{kutlama, yas}` — doğum tarihi hiçbir uçtan DIŞARI ÇIKMIYOR.
+* **29 Şubat**: artık olmayan yıllarda kutlama **28 Şubat** (1 Mart değil —
+  doğum ayının içinde kalsın). Artık yılda yalnız 29'unda → yılda tam bir kez.
+* **Saat dilimi**: kutlama KULLANICININ yerel gününe göre; istemci
+  `?bugun=YYYY-MM-DD` yolluyor, sunucu ±1 günle sınırlıyor, yoksa UTC'ye
+  düşüyor. (UTC gününe bakılsaydı UTC+3 kullanıcısı 03:00'a kadar
+  kutlanmazdı — md. 37'deki UTC/yerel hatasının aynı sınıfı.)
+* Kanıt: `backend/test/dogum_gunu.test.js` (18 test) ·
+  `app/test/dogum_gunu_test.dart` (16 test) · `npm test` ve `flutter test`
+  tamamı yeşil · `flutter analyze lib test` yeni bulgu yok.
+* **ÇEVİRİ TAMAM** (13 Ağu): 4 anahtar 45 dile. "İyi ki doğdun" cümlesi cinsiyet
+  çekimi zorlayan dillerde geçmiş zamandan kaçırıldı (pl/sr şimdiki zaman, ru/uk
+  kişisiz kalıp, ur/pa "yaşın {} oldu", fr ad öbeği, pt `Teşekkürler` → `Valeu`
+  çünkü `Obrigado` eril öz-atıf olurdu).
+* **Dağıtım YOK, sürüm artırılmadı, commit YOK.**
+
 ## 2026-08-14 — MD. 20/21/23/24 + İKİ HATA DÜZELTMESİ 🚀 (1.41.0+88)
 Beş ajan paralel; `server.js`te herkese ayrı bölge verildi, çakışma olmadı.
 
@@ -129,7 +248,9 @@ DEĞİŞMEDİ — yeni rota gerekmiyor.
 * Migrasyon: `backend/migrasyon-2026-08-13e.sql` (+ sema.sql).
 * Kanıt: `app/test/karsilama_akisi_test.dart` (11 test) · `flutter test` tamamı
   yeşil · `npm test` 799/799.
-* **BEKLEYEN**: 61 yeni çeviri anahtarı 45 dile eklenmeli (12'si ay adı).
+* ~~**BEKLEYEN**: 61 yeni çeviri anahtarı 45 dile eklenmeli (12'si ay adı).~~
+  **ÇEVİRİ TAMAM** — 13 Ağu'daki kaynak taraması (`.c`/`.cf` çağrıları ↔
+  `dil_en.dart`) bu anahtarların hepsinin eklenmiş olduğunu doğruladı.
   Artık kullanılmayanlar (silinebilir): `Hoş geldin!`,
   `İzlemek istediğin dizi ve filmleri seç`,
   `Seçtiklerin "İzleyeceğim" listene eklenir`, `Şimdilik atla`, `{} ekle`.

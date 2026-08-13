@@ -936,4 +936,32 @@ const Map<String, String> cevirilerCs = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Titul je buď k zhlédnutí, nebo zhlédnutý. Když budeš pokračovat, tvá značka „Zhlédnuto“ u tohoto filmu bude odstraněna.',
   'Sil ve taşı': 'Smazat a přesunout',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Štáb',
+  'Yaratıcı': 'Námět',
+  'Yönetmen': 'Režie',
+  'Senaryo': 'Scénář',
+  'Yapımcı': 'Produkce',
+  'Yapım Firmaları': 'Produkční společnosti',
+  'Yapım Firması': 'Produkční společnost',
+  'Firma bulunamadı': 'Společnost nenalezena',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Tato společnost nemá žádné tituly tohoto typu.',
+  'Seviye {}/{}': 'Úroveň {}/{}',
+  'Sonraki: {}': 'Další: {}',
+  'En üst unvan': 'Nejvyšší titul',
+  'Meraklı izleyici': 'Zvědavé publikum',
+  'Hevesli izleyici': 'Nadšené publikum',
+  'Amatör izleyici': 'Amatérské publikum',
+  'Kıdemli izleyici': 'Zkušené publikum',
+  'Uzman izleyici': 'Expertní publikum',
+  'Profesör izleyici': 'Profesorské publikum',
+  'Efsane izleyici': 'Legendární publikum',
+  'Ultra mega izleyici': 'Ultra mega publikum',
+  'Doğum günün kutlu olsun!': 'Všechno nejlepší k narozeninám!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Je skvělé, že jsi na světě a že jsi tady.',
+  'Bugün {} yaşına girdin': 'Dnes slavíš {}. narozeniny',
+  'Teşekkürler': 'Díky',
 };

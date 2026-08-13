@@ -921,4 +921,34 @@ const Map<String, String> cevirilerTh = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'เรื่องหนึ่งจะอยู่ในสถานะจะดูหรือดูแล้วอย่างใดอย่างหนึ่ง ถ้าไปต่อ เครื่องหมาย “ดูแล้ว” ของคุณในหนังเรื่องนี้จะถูกเอาออก',
   'Sil ve taşı': 'ลบและย้าย',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'ทีมงาน',
+  'Yaratıcı': 'ผู้สร้าง',
+  'Yönetmen': 'ผู้กำกับ',
+  'Senaryo': 'เขียนบท',
+  'Yapımcı': 'โปรดิวเซอร์',
+  'Yapım Firmaları': 'บริษัทผู้สร้าง',
+  'Yapım Firması': 'บริษัทผู้สร้าง',
+  'Firma bulunamadı': 'ไม่พบบริษัท',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'บริษัทนี้ไม่มีผลงานประเภทนี้',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'ระดับ {}/{}',
+  'Sonraki: {}': 'ถัดไป: {}',
+  'En üst unvan': 'ตำแหน่งสูงสุด',
+  'Meraklı izleyici': 'ผู้ชมขี้สงสัย',
+  'Hevesli izleyici': 'ผู้ชมไฟแรง',
+  'Amatör izleyici': 'ผู้ชมสมัครเล่น',
+  'Kıdemli izleyici': 'ผู้ชมรุ่นเก๋า',
+  'Uzman izleyici': 'ผู้ชมผู้เชี่ยวชาญ',
+  'Profesör izleyici': 'ผู้ชมระดับศาสตราจารย์',
+  'Efsane izleyici': 'ผู้ชมระดับตำนาน',
+  'Ultra mega izleyici': 'ผู้ชมอัลตร้าเมกา',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'สุขสันต์วันเกิด!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'ดีใจที่มีคุณอยู่ และดีใจที่คุณอยู่ตรงนี้',
+  'Bugün {} yaşına girdin': 'วันนี้คุณอายุครบ {} ปีแล้ว',
+  'Teşekkürler': 'ขอบคุณ',
 };

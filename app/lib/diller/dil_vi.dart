@@ -934,4 +934,34 @@ const Map<String, String> cevirilerVi = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Một tựa phim hoặc là sẽ xem, hoặc là đã xem. Nếu bạn tiếp tục, dấu “Đã xem” của bạn ở phim này sẽ bị gỡ.',
   'Sil ve taşı': 'Xóa và chuyển',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Đoàn làm phim',
+  'Yaratıcı': 'Người sáng tạo',
+  'Yönetmen': 'Đạo diễn',
+  'Senaryo': 'Kịch bản',
+  'Yapımcı': 'Nhà sản xuất',
+  'Yapım Firmaları': 'Hãng sản xuất',
+  'Yapım Firması': 'Hãng sản xuất',
+  'Firma bulunamadı': 'Không tìm thấy hãng',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Hãng này không có tựa phim nào thuộc loại này.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Cấp {}/{}',
+  'Sonraki: {}': 'Tiếp theo: {}',
+  'En üst unvan': 'Danh hiệu cao nhất',
+  'Meraklı izleyici': 'Người xem tò mò',
+  'Hevesli izleyici': 'Người xem hăng hái',
+  'Amatör izleyici': 'Người xem nghiệp dư',
+  'Kıdemli izleyici': 'Người xem kỳ cựu',
+  'Uzman izleyici': 'Người xem chuyên gia',
+  'Profesör izleyici': 'Người xem giáo sư',
+  'Efsane izleyici': 'Người xem huyền thoại',
+  'Ultra mega izleyici': 'Người xem siêu cấp',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'Chúc mừng sinh nhật!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Thật vui vì có bạn, và vui hơn vì bạn ở đây.',
+  'Bugün {} yaşına girdin': 'Hôm nay bạn tròn {} tuổi',
+  'Teşekkürler': 'Cảm ơn',
 };

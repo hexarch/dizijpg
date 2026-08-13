@@ -10,6 +10,7 @@ import '../bayrak.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
 import '../onbellek.dart';
+import '../seviye.dart';
 import '../tema.dart';
 import 'etiket.dart' show duzMetin;
 import 'favori_oyuncular.dart' show FavoriOyuncuKarti;
@@ -134,6 +135,11 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   /// gösterilir); boş liste = favori yok (yine kompakt satır); dolu = şerit.
   List<dynamic>? _favoriKisiler;
   List<dynamic> _rozetler = [];
+
+  /// Seviye/unvan (md. 29) — `/rozetler` ucundan, rozetlerle AYNI yanıtta
+  /// gelir (ikinci sayaç sistemi yok). Ham hâlde tutulur ki SWR önbelleğine
+  /// JSON olarak yazılabilsin; çözümleme çizim anında yapılır.
+  Map<String, dynamic>? _seviyeHam;
   String? _hata;
   bool _gorselYukleniyor = false;
   // Varsayılan: rozetler en altta
@@ -421,6 +427,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       _profil = d['profil'] as Map<String, dynamic>?;
       _izlenenler = (d['izlenenler'] as List<dynamic>?) ?? _izlenenler;
       _rozetler = (d['rozetler'] as List<dynamic>?) ?? _rozetler;
+      _seviyeHam = (d['seviye'] as Map<String, dynamic>?) ?? _seviyeHam;
       // Favoriler de aynı kayıttan: şerit ikinci açılışta ANINDA çizilir,
       // kompakt satır → şerit zıplaması yalnız ilk ziyarette olur.
       _favoriKisiler =
@@ -448,6 +455,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         'profil': _profil,
         'izlenenler': _izlenenler,
         'rozetler': _rozetler,
+        'seviye': _seviyeHam,
         'favori_kisiler': _favoriKisiler,
       });
     } catch (_) {
@@ -491,6 +499,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         _profil = sonuclar[3] as Map<String, dynamic>;
         _izlenenler = sonuclar[4]['ogeler'] as List<dynamic>;
         _rozetler = sonuclar[5]['rozetler'] as List<dynamic>? ?? [];
+        _seviyeHam = sonuclar[5]['seviye'] as Map<String, dynamic>?;
       });
       // Yorumlar sekmesi: kendi yorumların + içerik adları (açık profil ucu).
       // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
@@ -505,6 +514,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         'profil': _profil,
         'izlenenler': _izlenenler,
         'rozetler': _rozetler,
+        'seviye': _seviyeHam,
         'favori_kisiler': _favoriKisiler,
       });
     } catch (e) {
@@ -794,6 +804,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 AileRozeti(benMi: true, olcu: genis ? 22 : 19),
                             ],
                           ),
+                          // UNVAN (md. 29): kullanıcı adının HEMEN ALTINDA.
+                          // Bu ekran DAİMA kendi profilim — ilerleme çubuğu
+                          // ve "Sonraki: …" satırı BURADA çizilir, açık
+                          // profilde çizilmez (veri de oraya gitmez).
+                          if (Seviye.cozumle(_seviyeHam) case final sv?)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 3),
+                              child: SeviyeSatiri(
+                                seviye: sv,
+                                ilerlemeGoster: true,
+                                yaziBoyu: genis ? 14 : 13,
+                              ),
+                            ),
                           if ((_profil?['bio'] as String?)?.isNotEmpty == true)
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
@@ -1514,6 +1537,111 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// PROFİL UNVANI (istek md. 29) — kullanıcı adının ALTINDAKİ küçük satır.
+///
+/// İki profil ekranı da bunu kullanır (`RozetCipi` ile aynı kalıp: burada
+/// tanımlanır, `kullanici_profil.dart` içe aktarır) — tek kopya, iki ekranda
+/// aynı görünüm.
+///
+/// [ilerlemeGoster] YALNIZ KENDİ PROFİLİNDE true verilir. Ama tek başına da
+/// yeterli değil: ilerleme verisi (puan/eşik) SUNUCUDAN ziyaretçiye hiç
+/// gelmediği için [Seviye.ilerleme] orada zaten null olur. İki kilit
+/// bilerek: istemcideki bir "ben miyim?" hatası veriyi sızdıramaz.
+///
+/// TASARIM KARARLARI (ui-ux-pro-max danışması, 15 Ağu):
+///  · RENK: sarı METİN tonu (`sariMetin`) — koyu temada marka sarısı kart
+///    üstünde 10:1, AÇIK temada hardal (#8A6D00) beyaz üstünde ~4.9:1.
+///    Ham `sari` açık temada beyaz zeminde 1.63:1 ile hem metin hem grafik
+///    eşiğinin altında kalırdı.
+///  · TAŞMA: `FittedBox(scaleDown)` KULLANILMADI — 45 dilde unvanı 12 pt
+///    tabanının altına indirir ve kullanıcının sistem yazı ölçeğini iptal
+///    eder. Yerine "önce sar, sonra üç nokta": iki satıra kadar sarılır.
+///    Tam metin erişilebilirlik ağacına yine tam hâliyle gider.
+///  · İKON YOK: unvan METNİ zaten anlamı taşıyor; rozet şeridinde altı ayrı
+///    ödül ikonu var, yedincisi ayırt edici olmazdı. 320 dp'de ikon, iki
+///    satırlık Almanca unvana yer bırakmıyor. İlerleme satırında küçük bir
+///    `trending_up` var — o satır YALNIZ kendi profilinde çizildiği için
+///    dar ekranda unvanla yarışmıyor.
+///  · TIKLANABİLİR DEĞİL: dokunma hedefi (48 dp) sorunu doğmasın ve
+///    kullanıcı adının hemen altındaki alan kaza dokunuşu yutmasın diye
+///    salt bilgi satırı bırakıldı.
+class SeviyeSatiri extends StatelessWidget {
+  final Seviye seviye;
+
+  /// Kendi profilinde true: ilerleme çubuğu + "Sonraki: … · Seviye 5/8".
+  final bool ilerlemeGoster;
+
+  /// Unvan yazı boyu (masaüstü profilinde biraz büyür).
+  final double yaziBoyu;
+
+  const SeviyeSatiri({
+    super.key,
+    required this.seviye,
+    this.ilerlemeGoster = false,
+    this.yaziBoyu = 13,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final oran = seviye.ilerleme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          seviye.etiket,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: yaziBoyu,
+            fontWeight: FontWeight.w700,
+            color: DiziRenkler.sariMetin,
+          ),
+        ),
+        if (ilerlemeGoster) ...[
+          if (oran != null) ...[
+            const SizedBox(height: 5),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                value: oran,
+                minHeight: 5,
+                backgroundColor: DiziRenkler.metin12,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  DiziRenkler.sariMetin,
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 4),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 1),
+                child: Icon(
+                  Icons.trending_up,
+                  size: 13,
+                  color: DiziRenkler.metin54,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Flexible(
+                child: Text(
+                  seviye.altSatir,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 }

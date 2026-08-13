@@ -936,4 +936,34 @@ const Map<String, String> cevirilerUr = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'کوئی بھی مواد یا تو دیکھنا باقی ہوتا ہے یا دیکھا جا چکا ہوتا ہے۔ آگے بڑھنے پر اس فلم پر تمہارا “دیکھ لیا” نشان ہٹ جائے گا۔',
   'Sil ve taşı': 'حذف کر کے منتقل کریں',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'پروڈکشن ٹیم',
+  'Yaratıcı': 'تخلیق کار',
+  'Yönetmen': 'ہدایت کار',
+  'Senaryo': 'اسکرین پلے',
+  'Yapımcı': 'پروڈیوسر',
+  'Yapım Firmaları': 'پروڈکشن کمپنیاں',
+  'Yapım Firması': 'پروڈکشن کمپنی',
+  'Firma bulunamadı': 'کمپنی نہیں ملی',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'اس کمپنی کا اس قسم کا کوئی کام موجود نہیں۔',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'درجہ {}/{}',
+  'Sonraki: {}': 'اگلا: {}',
+  'En üst unvan': 'سب سے اعلیٰ خطاب',
+  'Meraklı izleyici': 'متجسس ناظر',
+  'Hevesli izleyici': 'پُرجوش ناظر',
+  'Amatör izleyici': 'شوقیہ ناظر',
+  'Kıdemli izleyici': 'سینئر ناظر',
+  'Uzman izleyici': 'ماہر ناظر',
+  'Profesör izleyici': 'پروفیسر ناظر',
+  'Efsane izleyici': 'لیجنڈ ناظر',
+  'Ultra mega izleyici': 'الٹرا میگا ناظر',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'سالگرہ مبارک ہو!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'خوشی ہے کہ آپ ہیں، اور خوشی ہے کہ آپ یہاں ہیں۔',
+  'Bugün {} yaşına girdin': 'آج آپ کی عمر {} سال ہو گئی',
+  'Teşekkürler': 'شکریہ',
 };

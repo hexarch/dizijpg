@@ -930,4 +930,32 @@ const Map<String, String> cevirilerAz = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Bir məzmun ya izləniləcək, ya da izlənilib. Davam etsən bu filmdəki «İzlədim» işarən götürüləcək.',
   'Sil ve taşı': 'Sil və köçür',
+
+  // --- Yapım ekibi / firma + seviye unvanları + doğum günü ---
+  'Yapım Ekibi': 'Yaradıcı heyət',
+  'Yaratıcı': 'Yaradıcı',
+  'Yönetmen': 'Rejissor',
+  'Senaryo': 'Ssenari',
+  'Yapımcı': 'Prodüser',
+  'Yapım Firmaları': 'İstehsalçı şirkətlər',
+  'Yapım Firması': 'İstehsalçı şirkət',
+  'Firma bulunamadı': 'Şirkət tapılmadı',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Bu şirkətin bu növdə əsəri yoxdur.',
+  'Seviye {}/{}': 'Səviyyə {}/{}',
+  'Sonraki: {}': 'Növbəti: {}',
+  'En üst unvan': 'Ən yüksək ad',
+  'Meraklı izleyici': 'Maraqcıl izləyici',
+  'Hevesli izleyici': 'Həvəsli izləyici',
+  'Amatör izleyici': 'Amator izləyici',
+  'Kıdemli izleyici': 'Təcrübəli izləyici',
+  'Uzman izleyici': 'Ekspert izləyici',
+  'Profesör izleyici': 'Professor izləyici',
+  'Efsane izleyici': 'Əfsanəvi izləyici',
+  'Ultra mega izleyici': 'Ultra meqa izləyici',
+  'Doğum günün kutlu olsun!': 'Ad günün mübarək!',
+  'İyi ki doğdun, iyi ki buradasın.':
+      'Yaxşı ki doğulmusan, yaxşı ki buradasan.',
+  'Bugün {} yaşına girdin': 'Bu gün {} yaşın tamam oldu',
+  'Teşekkürler': 'Təşəkkürlər',
 };

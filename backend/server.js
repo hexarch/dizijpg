@@ -3055,6 +3055,10 @@ const TMDB_IZINLI = [
   /^\/(tv|movie)\/\d+\/(credits|videos|recommendations|similar|watch\/providers)$/,
   /^\/person\/\d+$/,
   /^\/person\/\d+\/combined_credits$/,
+  // Yapım firması sayfası (md. 49): ad, logo, ülke, merkez. Firmanın
+  // YAPIMLARI ayrı bir uç istemez — zaten izinli olan
+  // `/discover/(tv|movie)?with_companies=` ile geliyor.
+  /^\/company\/\d+$/,
   /^\/genre\/(tv|movie)\/list$/,
   /^\/find\/\d+$/, // TheTVDB→TMDB eşlemesi (veri içe aktarımı)
 ];
@@ -3127,7 +3131,12 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
     parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids,watch/providers');
   }
   const tam = `${yol}?${parametreler.toString()}`;
-  const uzunTtl = /^\/(tv|movie|person)\//.test(yol);
+  // `company` bu listeye md. 49'da katıldı: bir yapım firmasının adı, logosu,
+  // ülkesi ve merkezi PRATİKTE HİÇ değişmez — arama kademesiyle (onbellek_ttl.js,
+  // 15/30 dk) ilgisi yok, en uzun katalog TTL'i (7 gün) doğru olanı.
+  // `/discover/*` KASITLA dışarıda: firmanın YAPIM LİSTESİ yeni içerik
+  // eklendikçe değişir, o yüzden diğer keşif raflarıyla aynı 6 saatte kalır.
+  const uzunTtl = /^\/(tv|movie|person|company)\//.test(yol);
   // ARAMA/eşleme uçları (`/search/*`, `/find/*`) İÇERİĞE bakan TTL kullanır:
   // TMDB katalogu topluluk doldurduğu için bugün eklenen yapım, sonuçsuz
   // sorgunun önbelleğinde saatlerce "yok" olarak kalmasın.
@@ -7295,9 +7304,113 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
   });
 }));
 
+// ---------- mini seviye / unvan (istek md. 29) ----------
+//
+// "Amatör izleyici → profesör izleyici → ultra mega izleyici gibi unvanlar."
+//
+// KARARLAR VE GEREKÇELERİ:
+//
+//  1) İKİNCİ SAYAÇ SİSTEMİ YOK. Seviye, rozetlerin ZATEN saydığı aynı
+//     `rozetleriHesapla` sorgusundan türer — yeni tablo, yeni sütun, yeni
+//     tetikleyici YOK. İki ayrı sayaç kaynağı kaçınılmaz olarak ayrışır
+//     ("rozette 100 bölüm, seviyede 98") ve hangisinin doğru olduğunu
+//     kimse söyleyemez.
+//  2) SUNUCUDA HESAPLANIR. İstemci yalnız `kod`u etikete çevirir; puanı ve
+//     eşiği kendi uydurmaz. Değiştirilmiş bir istemci kendine "ultra mega"
+//     yazabilirdi ama BAŞKASININ gördüğü unvan bu uçtan gelir.
+//  3) UNVAN DİLDEN BAĞIMSIZ BİR KOD OLARAK GİDER (`profesor`), metin olarak
+//     DEĞİL: 45 dile çeviri istemcide (`app/lib/seviye.dart` + diller).
+//     Sunucu Türkçe metin gönderseydi çeviri imkânsız olurdu.
+//
+// PUAN FORMÜLÜ — YALNIZ KULLANICININ KENDİ YAPTIĞI ŞEYLER:
+//     bölüm ×1 · film ×2 · bitirilen dizi ×5 · yorum ×3 · başlık puanı ×2
+//   · film ×2: bir film ~iki bölüm süresi. Bölüm sayısı tek başına ölçüt
+//     olsaydı yalnız film izleyen biri sonsuza dek en alt kademede kalırdı.
+//   · bitirilen ×5: diziyi BİTİRMEK, aynı sayıda bölümü dağınık izlemekten
+//     daha fazla emek — küçük bir ek, baskın değil.
+//   · TAKİPÇİ VE ALINAN BEĞENİ FORMÜLDE YOK (bilerek): ikisi de kullanıcının
+//     denetiminde değil, POPÜLERLİK ölçer. Unvanı popülerliğe bağlamak,
+//     maddenin "utandırmasın" şartının tam tersini yapardı — sessiz ama çok
+//     izleyen biri kalabalık bir hesabın altında kalırdı.
+//
+// ESPRİLİ AMA AŞAĞILAMAYAN ADLAR: en alt kademe "acemi/çaylak/toy" DEĞİL,
+// nötr-olumlu "meraklı". Bir kademe "beceriksizsin" demez; en alttaki bile
+// sadece yeni başladığını söyler.
+const SEVIYE_KADEMELERI = [
+  { kod: 'merakli', esik: 0 },      // Meraklı izleyici
+  { kod: 'hevesli', esik: 30 },     // Hevesli izleyici
+  { kod: 'amator', esik: 120 },     // Amatör izleyici
+  { kod: 'kidemli', esik: 400 },    // Kıdemli izleyici
+  { kod: 'uzman', esik: 1000 },     // Uzman izleyici
+  { kod: 'profesor', esik: 2500 },  // Profesör izleyici
+  { kod: 'efsane', esik: 6000 },    // Efsane izleyici
+  { kod: 'ultra_mega', esik: 12000 }, // Ultra mega izleyici
+];
+
+/** Sayaçlardan seviye puanı (SAF — testlerde doğrudan çağrılır). */
+function seviyePuani(s) {
+  const n = (x) => (Number.isFinite(Number(x)) ? Math.max(0, Number(x)) : 0);
+  return n(s?.bolum) * 1
+    + n(s?.film) * 2
+    + n(s?.bitirilen) * 5
+    + n(s?.yorum) * 3
+    + n(s?.puan) * 2;
+}
+
+/**
+ * Sayaçlardan tam seviye kaydı (SAF).
+ * `kademe` 1'den başlar; `sonraki_esik`/`sonraki_kod` en üst kademede null.
+ *
+ * `sonraki_kod` DA GÖNDERİLİR: ilerleme satırı "Sonraki: Profesör izleyici"
+ * yazar ve istemcinin kademe SIRASINI bilmesi gerekmez — eşik tablosunun tek
+ * kopyası burada kalır (istemciye kopyalansaydı ilk düzenlemede ayrışırdı).
+ */
+function seviyeHesapla(s) {
+  const puan = seviyePuani(s);
+  let i = 0;
+  while (i + 1 < SEVIYE_KADEMELERI.length && puan >= SEVIYE_KADEMELERI[i + 1].esik) i++;
+  const sonraki = SEVIYE_KADEMELERI[i + 1] || null;
+  return {
+    kademe: i + 1,
+    kod: SEVIYE_KADEMELERI[i].kod,
+    toplam: SEVIYE_KADEMELERI.length,
+    puan,
+    esik: SEVIYE_KADEMELERI[i].esik,
+    sonraki_esik: sonraki ? sonraki.esik : null,
+    sonraki_kod: sonraki ? sonraki.kod : null,
+  };
+}
+
+/**
+ * BAŞKASININ göreceği seviye (SAF). İki şey birden yapar:
+ *
+ *  a) UTANDIRMAMA — 1. KADEME BAŞKASINA HİÇ GÖSTERİLMEZ (null döner).
+ *     Yeni açılmış bir hesabın ziyaretçiye "en alttayım" ilan etmesi, tam da
+ *     maddenin "düşük seviyeyi başkasına göstermek caydırıcı olabilir"
+ *     uyarısıdır. Unvan görünmediğinde ziyaretçi NÖTR bir profil görür —
+ *     "seviyesi düşük" değil, "henüz unvanı yok" bile değil: hiçbir şey.
+ *     Kişi kendi profilinde unvanını ve ilerlemesini GÖRMEYE devam eder.
+ *  b) İLERLEME VERİSİ SIZMAZ: açık görünümde yalnız kademe + kod var.
+ *     `puan`/`esik` gönderilseydi izleme hacminin ALT SINIRI ilan edilirdi
+ *     (izleme rozetlerinin `IZLEME_ROZETLERI` ile düşürülme gerekçesinin
+ *     aynısı) ve ilerleme çubuğu başkasının profilinde de çizilebilirdi.
+ *
+ * `gizli` (= `izlenenler_gizli`) unvanı TAMAMEN kaldırır: seviye puanının
+ * baskın bileşeni izleme sayaçlarıdır, yani "profesör izleyici" yazısı
+ * gizlenen kütüphanenin boyutunu ele verir. AYRI BİR `seviye_gizli` SÜTUNU
+ * AÇILMADI — md. 21'in mevcut anahtarı bu ekseni zaten yönetiyor; ikinci bir
+ * anahtar, aynı veriyi iki yerden yönetmek olurdu.
+ */
+function seviyeAcikGorunum(sv, gizli) {
+  if (gizli || !sv || sv.kademe < 2) return null;
+  return { kademe: sv.kademe, kod: sv.kod, toplam: sv.toplam };
+}
+
 // ---------- rozetler ----------
 // Eşiklerden hesaplanır, tablo yok. kod → (eşik, mevcut değer).
 // Hem /rozetler (kendi, tümü) hem /profil (açık profil, kazanılanlar) kullanır.
+// Seviye de AYNI sayaçlardan, AYNI sorgudan çıkar (bkz. yukarıdaki md. 29
+// kararı: ikinci sayaç sistemi yok) — bu yüzden `{ rozetler, seviye }` döner.
 async function rozetleriHesapla(kullaniciId) {
   const { rows } = await havuz.query(
     `SELECT
@@ -7328,13 +7441,18 @@ async function rozetleriHesapla(kullaniciId) {
     ['bitiren_50', s.bitirilen, 50],
     ['begeni_10', s.begeni_alinan, 10], ['begeni_100', s.begeni_alinan, 100],
   ];
-  return tanimlar.map(([kod, deger, esik]) => ({
-    kod, esik, deger, kazanildi: deger >= esik,
-  }));
+  return {
+    rozetler: tanimlar.map(([kod, deger, esik]) => ({
+      kod, esik, deger, kazanildi: deger >= esik,
+    })),
+    seviye: seviyeHesapla(s),
+  };
 }
 
+// Kendi rozetlerin + kendi seviyen. Kendi verin olduğu için seviye TAM gider
+// (puan + eşik + sonraki eşik): ilerleme çubuğu YALNIZ burada çizilebilsin.
 app.get('/rozetler', girisZorunlu, sarici(async (req, res) => {
-  res.json({ rozetler: await rozetleriHesapla(req.kullanici.id) });
+  res.json(await rozetleriHesapla(req.kullanici.id));
 }));
 
 // Yorum beğen / beğeniyi geri al
@@ -7897,6 +8015,9 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       },
       rozetler: [], listeler: [], incelemeler: [], yorumlar: [],
       icerikler: {}, izlenenler: [],
+      // Engelli profilde unvan da düşer: o da kişinin izleme hacminden türeyen
+      // bir bilgi ve engel "içerik tamamen düşer" diyor.
+      seviye: null,
     });
   }
 
@@ -7922,7 +8043,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   const gizliFiltre = (tablo) => benMi ? '' :
     `AND NOT EXISTS (SELECT 1 FROM gizli_icerikler g
        WHERE g.kullanici_id=$1 AND g.tur=${tablo}.tur AND g.tmdb_id=${tablo}.tmdb_id)`;
-  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetler,
+  const [istatistik, listeler, sonIncelemeler, yorumlar, takip, izlenenler, rozetSeviye,
     dakika] = await Promise.all([
     havuz.query(
       `SELECT
@@ -8054,6 +8175,13 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     // 0 dönünce kart görünmez.
     izlenenlerGizli ? Promise.resolve(0) : tahminiDakika(id),
   ]);
+  const rozetler = rozetSeviye.rozetler;
+  // SEVİYE (md. 29). Sahibi kendi profiline bakıyorsa TAM kayıt (ilerleme
+  // çubuğu için puan/eşik); ziyaretçiye `seviyeAcikGorunum` süzgeci —
+  // 1. kademe hiç gitmez, `izlenenler_gizli` her kademeyi kaldırır.
+  const seviye = benMi
+    ? rozetSeviye.seviye
+    : seviyeAcikGorunum(rozetSeviye.seviye, izlenenlerGizli);
   // Uyum: giriş yapan başka bir kullanıcı bu profile bakıyorsa, ortak izlenen
   // içerik sayısı + puan uyumu (ikisinin de puanladığı içeriklerde puanların
   // yakınlığı; 1 puan farkı ~%11 düşürür). En az 1 ortak puan yoksa uyum=null.
@@ -8137,6 +8265,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     // rozetleri başka eksenlerin verisidir ve bu tercihle ilgisi yoktur.
     rozetler: rozetler.filter((r) => r.kazanildi
       && !(izlenenlerGizli && IZLEME_ROZETLERI.test(r.kod))),
+    seviye,
     listeler: listeler.rows,
     incelemeler: sonIncelemeler.rows,
     // Kart yazarı gösterir: satırlar zaten YALNIZ bu profilin yorumları,
@@ -10373,6 +10502,123 @@ app.post('/karsilama', girisZorunlu, karsilamaLimiti, sarici(async (req, res) =>
   }
   res.set('Cache-Control', 'private, no-store');
   res.json({ durum: 'ok' });
+}));
+
+// ---------- doğum günü kutlaması (md. 36) ----------
+// İstemci: `app/lib/ekranlar/dogum_gunu.dart` (kabuk açılışında bir kez).
+//
+// NEDEN AYRI UÇ (`/profilim`e ya da `/karsilama`ya alan EKLENMEDİ):
+//   * `/karsilama` akış bitince İSTEMCİDE kısa devre oluyor (yerel
+//     `karsilama_bitti` bayrağı okununca sunucuya hiç gidilmiyor) — kutlama
+//     oraya konsaydı akışı bir kez bitiren kullanıcıya BİR DAHA ULAŞMAZDI.
+//   * `/profilim` yanıtı istemcide `SharedPreferences`e YAZILIYOR
+//     (`Oturum.tazele`); "bugün doğum günün" gibi GÜNE BAĞLI bir bayrak orada
+//     donar ve ertesi gün bayat kopyadan okunur. Ayrıca o uç sıcak yolda ve
+//     başka alanlarla paylaşılıyor.
+// Bu uç kişiseldir: doğum tarihi BAŞKASINA hiçbir uçtan sızmaz, "bugün doğum
+// günü" bilgisi yalnız SAHİBİNE gider (herkese açık `/profil/:kullaniciAdi`
+// bu alanlara HİÇ dokunmaz).
+
+/** Gregoryen artık yıl. */
+function artikYilMi(yil) {
+  return (yil % 4 === 0 && yil % 100 !== 0) || yil % 400 === 0;
+}
+
+/**
+ * `YYYY-MM-DD` metnini {yil, ay, gun} yapar; geçersizse null.
+ * Takvimsel olarak var olmayan gün (2025-02-30) da reddedilir.
+ */
+function tarihCoz(ham) {
+  const e = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ham ?? ''));
+  if (!e) return null;
+  const yil = Number(e[1]);
+  const ay = Number(e[2]);
+  const gun = Number(e[3]);
+  if (ay < 1 || ay > 12 || gun < 1) return null;
+  const gunSayisi = [31, artikYilMi(yil) ? 29 : 28, 31, 30, 31, 30,
+    31, 31, 30, 31, 30, 31][ay - 1];
+  if (gun > gunSayisi) return null;
+  return { yil, ay, gun };
+}
+
+/** İki takvim gününün farkı (gün cinsinden, a - b). */
+function gunFarki(a, b) {
+  return Math.round(
+    (Date.UTC(a.yil, a.ay - 1, a.gun) - Date.UTC(b.yil, b.ay - 1, b.gun)) / 86400000,
+  );
+}
+
+/**
+ * İstemcinin bildirdiği YEREL günü döndürür; yoksa/geçersizse sunucunun UTC
+ * gününe düşer.
+ *
+ * SAAT DİLİMİ KARARI (md. 37'deki UTC/yerel karışıklığından ders):
+ * kutlama KULLANICININ takvimine göre yapılır, sunucunun UTC gününe göre
+ * DEĞİL. UTC ile karar verseydik UTC+3'teki bir kullanıcı doğum gününü ancak
+ * saat 03:00'te "kazanır", UTC-5'teki kullanıcı ise doğum gününden 19 saat
+ * ÖNCE kutlanırdı. Sunucunun kullanıcının saat dilimini bilmesinin tek yolu
+ * istemcinin söylemesi; bu yüzden `?bugun=YYYY-MM-DD` alınır.
+ *
+ * GÜVENİLİRLİK: parametre istemci kontrolündedir ama sömürülecek bir şey yok
+ * — kazanç yalnız KENDİ ekranında konfetiyi bir gün erken görmek; hiçbir veri
+ * açılmıyor, hiçbir yetki verilmiyor. Yine de sapma SINIRLANIR: gerçek saat
+ * dilimleri UTC-12…UTC+14 arasında olduğundan yerel gün UTC gününden en çok
+ * BİR GÜN ayrılabilir; daha uzağı sessizce UTC'ye düşer.
+ */
+function kutlamaGunu(ham, simdi = new Date()) {
+  const utc = {
+    yil: simdi.getUTCFullYear(),
+    ay: simdi.getUTCMonth() + 1,
+    gun: simdi.getUTCDate(),
+  };
+  const yerel = tarihCoz(ham);
+  if (!yerel) return utc;
+  return Math.abs(gunFarki(yerel, utc)) <= 1 ? yerel : utc;
+}
+
+/**
+ * [bugun] günü, [gun]/[ay] doğumlu birinin doğum günü mü?
+ *
+ * 29 ŞUBAT KARARI: artık olmayan yıllarda kutlama **28 Şubat**ta yapılır,
+ * 1 Mart'ta değil. Gerekçe: (1) kutlama doğum AYININ içinde kalır — 1 Mart
+ * kutlaması "şubat çocuğu"nu marta taşır; (2) 28 Şubat şubatın SON günüdür,
+ * yani 29'un yerine geçen en yakın gün odur; (3) yıl bilgisi olmayan
+ * kullanıcılarda da aynı kural işler (yıl hiç kullanılmıyor). Artık yıllarda
+ * 29 Şubat GERÇEKTEN vardır, o yıllarda 28'inde kutlama YOKTUR — yani yılda
+ * tam bir kez kutlanır, iki kez değil.
+ */
+function dogumGunuMu(gun, ay, bugun) {
+  if (!Number.isInteger(gun) || !Number.isInteger(ay)) return false;
+  if (gun === bugun.gun && ay === bugun.ay) return true;
+  if (gun === 29 && ay === 2 && !artikYilMi(bugun.yil)) {
+    return bugun.ay === 2 && bugun.gun === 28;
+  }
+  return false;
+}
+
+const dogumGunuLimiti = hizLimiti(60, (req) => `dg:${req.kullanici.id}`);
+
+// Yanıt BİLEREK minimal: `kutlama` bayrağı + (yıl verilmişse) yaş. Doğum
+// gün/ay/yılının kendisi burada DÖNMEZ — istemcinin ihtiyacı yok, dönseydi
+// kişisel veri gereksizce bir uç daha dolaşırdı (onları isteyen tek ekran,
+// karşılama formu, `/karsilama`dan alıyor).
+app.get('/dogum-gunu', girisZorunlu, dogumGunuLimiti, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    'SELECT dogum_gun, dogum_ay, dogum_yil FROM kullanicilar WHERE id=$1',
+    [req.kullanici.id],
+  );
+  const k = rows[0] || {};
+  const bugun = kutlamaGunu(req.query.bugun);
+  const gun = k.dogum_gun ?? null;
+  const ay = k.dogum_ay ?? null;
+  const kutlama = dogumGunuMu(gun, ay, bugun);
+  // Yaş yalnız yıl PAYLAŞILDIYSA. Yıl isteğe bağlıydı (md. 25) — vermeyen
+  // kullanıcıya yaşsız kutlama gider.
+  const yas = kutlama && Number.isInteger(k.dogum_yil)
+    ? bugun.yil - k.dogum_yil
+    : null;
+  res.set('Cache-Control', 'private, no-store');
+  res.json({ kutlama, yas: yas !== null && yas > 0 ? yas : null });
 }));
 
 // 3. adımdaki "SERİ FİLMLER" düğmesinin listesi (Harry Potter, Yüzüklerin

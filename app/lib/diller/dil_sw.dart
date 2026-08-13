@@ -934,4 +934,33 @@ const Map<String, String> cevirilerSw = {
   'Bir içerik ya izlenecektir ya izlenmiştir. Devam edersen bu filmdeki "izledim" işaretin kaldırılacak.':
       'Kichwa ni cha kutazamwa au kimeshatazamwa. Ukiendelea, alama yako ya “Nimetazama” kwenye filamu hii itaondolewa.',
   'Sil ve taşı': 'Futa na uhamishe',
+
+  // --- Yapım ekibi + yapım firmaları ---
+  'Yapım Ekibi': 'Timu ya utayarishaji',
+  'Yaratıcı': 'Muundaji',
+  'Yönetmen': 'Mkurugenzi',
+  'Senaryo': 'Mswada',
+  'Yapımcı': 'Mtayarishaji',
+  'Yapım Firmaları': 'Kampuni za utayarishaji',
+  'Yapım Firması': 'Kampuni ya utayarishaji',
+  'Firma bulunamadı': 'Kampuni haijapatikana',
+  'Bu firmanın bu türde listelenecek yapımı yok.':
+      'Kampuni hii haina kazi za aina hii.',
+  // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
+  'Seviye {}/{}': 'Kiwango {}/{}',
+  'Sonraki: {}': 'Inayofuata: {}',
+  'En üst unvan': 'Cheo cha juu kabisa',
+  'Meraklı izleyici': 'Mtazamaji mdadisi',
+  'Hevesli izleyici': 'Mtazamaji mwenye ari',
+  'Amatör izleyici': 'Mtazamaji chipukizi',
+  'Kıdemli izleyici': 'Mtazamaji mkongwe',
+  'Uzman izleyici': 'Mtazamaji bingwa',
+  'Profesör izleyici': 'Mtazamaji profesa',
+  'Efsane izleyici': 'Mtazamaji gwiji',
+  'Ultra mega izleyici': 'Mtazamaji ultra mega',
+  // --- Doğum günü kutlama kartı ---
+  'Doğum günün kutlu olsun!': 'Heri ya siku yako ya kuzaliwa!',
+  'İyi ki doğdun, iyi ki buradasın.': 'Ni vizuri upo, na ni vizuri uko hapa.',
+  'Bugün {} yaşına girdin': 'Leo umetimiza miaka {}',
+  'Teşekkürler': 'Asante',
 };

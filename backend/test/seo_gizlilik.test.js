@@ -127,6 +127,13 @@ const ACIK_ROTALAR = new Set([
   // artık kişisel değil herkese açık içerik yolu; aşağıdaki "SSR ile
   // indekslenen yollar" testi de /listeler/1'in kapatılmamasını bekliyor.
   '/listeler/x',
+  // 13 Ağu 2026 (md. 49): yapım firması sayfası. `/gozat` ve `/kesfet` ile
+  // AYNI sınıf — yalnız TMDB katalog verisi gösterir (firma adı, logosu,
+  // ülkesi, yapımları), kişiye özel HİÇBİR alan okumaz, oturum istemez.
+  // SSR'si yok ama cloaking de yok: nginx'in bot kuralı
+  // (`^/(icerik|gonderi|kisi|dizi|listeler)/`) bu yolu kapsamıyor, yani bot
+  // da insan da AYNI uygulamayı alıyor.
+  '/sirket/x',
 ]);
 
 // ===========================================================================
