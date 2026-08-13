@@ -81,7 +81,7 @@ const Map<String, String> cevirilerDa = {
   'Tekrar dene': 'Prøv igen',
   'Toplam İzleme Süresi': 'Samlet skærmtid',
   'Tüm Zamanların En İyileri': 'De bedste nogensinde',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Eksportér alle dine data (historik, bedømmelser, kommentarer, lister) som en TV Time-kompatibel ZIP, eller importér en ZIP fra en anden app.',
   'Tümünü Kaldır': 'Fjern alle',
   'Tümünü İzledim': 'Har set alle',
@@ -238,7 +238,7 @@ const Map<String, String> cevirilerDa = {
   'Mesaj silinemedi': 'Beskeden kunne ikke slettes',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linket er ugyldigt eller siden blev ikke fundet',
-  'Keşfet\'e dön': 'Tilbage til Opdag',
+  "Keşfet'e dön": 'Tilbage til Opdag',
   'Düzenle': 'Rediger',
   'Mesajı düzenle': 'Rediger besked',
   'Yanıtlanıyor': 'Svarer',
@@ -266,12 +266,7 @@ const Map<String, String> cevirilerDa = {
   'Abonelik': 'Abonnement',
   'Kirala': 'Lej',
   'Satın al': 'Køb',
-  'Hoş geldin!': 'Velkommen!',
-  'İzlemek istediğin dizi ve filmleri seç': 'Vælg serier og film, du vil se',
-  'Seçtiklerin "İzleyeceğim" listene eklenir': 'Dine valg føjes til din liste',
-  'Şimdilik atla': 'Spring over nu',
   'Devam et': 'Fortsæt',
-  '{} ekle': 'Tilføj {}',
   'Şikayet et': 'Anmeld',
   'Engelle': 'Bloker',
   'Engeli kaldır': 'Fjern blokering',
@@ -314,10 +309,12 @@ const Map<String, String> cevirilerDa = {
   'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
       'Beskeder: dine tekst-, billed- og talebeskeder gemmes på vores servere. Beskeder er ikke end-to-end-krypterede; de gennemses kun ved en anmeldelse, til moderation.',
   'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
-      'Uploadede medier: fotos, GIF\'er, videoer og lydoptagelser, som du tilføjer til din profil, dine kommentarer og beskeder.',
+      "Uploadede medier: fotos, GIF'er, videoer og lydoptagelser, som du tilføjer til din profil, dine kommentarer og beskeder.",
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Teknisk: IP-adresse, omtrentlig placering (land/by), enhedsplatform, appversion og fejllogfiler. Disse gemmes af hensyn til sikkerhed og fejlfinding.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Brugsstatistik: hvilken enhedstype, styresystem og browser der besøges med, lægges til daglige samlede tællere i grove kategorier; selve browserens identifikation gemmes ikke, og tallene kan ikke knyttes til personer.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Notifikationer: til push-notifikationer gemmer vi din enhedstoken og dit sprogvalg. Du kan altid slå notifikationer fra i enhedens indstillinger.',
   'Verileri Nasıl Kullanırız': 'Sådan bruger vi dine data',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -326,12 +323,12 @@ const Map<String, String> cevirilerDa = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Vi bruger kun lokal lagring til at holde dig logget ind og huske valg som sprog og tema. Der er ingen reklame- eller sporingscookies.',
   'Üçüncü Taraf Hizmetler': 'Tredjepartstjenester',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Serie- og filmdata kommer fra TMDB, oplysninger om streamingtjenester fra JustWatch. Push-notifikationer leveres via Google Firebase, og webstedets trafik beskyttes af Cloudflare. For disse tjenester gælder deres egne privatlivspolitikker.',
   'Saklama ve Silme': 'Opbevaring og sletning',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Dine data gemmes, så længe din konto findes. Med "Slet min konto" i indstillingerne kan du slette kontoen permanent; dine data slettes straks, og kopier i sikkerhedskopier senest inden for 14 dage. Fejllogfiler slettes automatisk efter 30 dage.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Du kan eksportere dine data som ZIP fra indstillingerne; arkivet sendes til din e-mailadresse.',
   'Güvenlik': 'Sikkerhed',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -452,12 +449,12 @@ const Map<String, String> cevirilerDa = {
   'Videolarda altyazı göster': 'Vis undertekster på videoer',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Sætningen i videoen er skrevet på skærmen. Teksten er oversættelse: Engelsk på tyrkisk tale, tyrkisk på andre sprog.',
-  "Güncelleme gerekli": "Opdatering påkrævet",
-  "Yeni sürüm var": "Ny version tilgængelig",
+  'Güncelleme gerekli': 'Opdatering påkrævet',
+  'Yeni sürüm var': 'Ny version tilgængelig',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Installer den nye version af dizi.jpg for at fortsætte.",
-  "Güncelle": "Opdater",
-  "Daha sonra": "Senere",
+      'Installer den nye version af dizi.jpg for at fortsætte.',
+  'Güncelle': 'Opdater',
+  'Daha sonra': 'Senere',
   'Takvim güncelleniyor': 'Kalenderen opdateres',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalenderen kunne ikke opdateres, den gamle liste vises',
@@ -712,4 +709,106 @@ const Map<String, String> cevirilerDa = {
   '{} {} yayınlandı': '{} {} er ude',
   'Yeni bölüm yayınlandı': 'Nyt afsnit er ude',
   'Yeni bölümler': 'Nye afsnit',
+  'Geri': 'Tilbage',
+  'Karşılamayı kapat': 'Luk introduktionen',
+  'Adım {} / {}': 'Trin {} / {}',
+  'Hadi başlayalım': 'Lad os komme i gang',
+  'Kaydet ve devam': 'Gem og fortsæt',
+  '{} tanesini ekle': 'Tilføj {}',
+  'Şimdilik geç': 'Spring over nu',
+  'Doğum tarihin ne zaman?': 'Hvornår er du født?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Vi spørger for at kunne vise indhold, der passer til din alder, og for at fejre din fødselsdag.',
+  'Gün': 'Dag',
+  'Ay': 'Måned',
+  'Yıl': 'År',
+  'Doğum yılımı paylaşmak istemiyorum': 'Jeg vil ikke dele mit fødselsår',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Din fødselsdato vises aldrig offentligt på din profil. Den bruges kun til indhold, der passer til din alder, og til fødselsdagshilsner.',
+  'Ocak': 'januar',
+  'Şubat': 'februar',
+  'Mart': 'marts',
+  'Nisan': 'april',
+  'Mayıs': 'maj',
+  'Haziran': 'juni',
+  'Temmuz': 'juli',
+  'Ağustos': 'august',
+  'Eylül': 'september',
+  'Ekim': 'oktober',
+  'Kasım': 'november',
+  'Aralık': 'december',
+  'Verilerini yanında getir': 'Tag dine data med',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Hvis du holder styr på, hvad du ser, i en anden app, kan du flytte det hele hertil. Du behøver ikke starte forfra.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt og Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Vælg den ZIP-fil, du har eksporteret, så følger din visningshistorik, dine bedømmelser og dine lister med.',
+  'Aktarılıyor...': 'Importerer...',
+  'ZIP dosyası seç': 'Vælg ZIP-fil',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Ingen hast: du kan også gøre det senere under Indstillinger > Mine data.',
+  'Hangi filmleri izledin?': 'Hvilke film har du set?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Her er de mest sete titler. Tryk på det, du har set, så føjer vi det til din visningshistorik.',
+  'SERİ FİLMLER': 'FILMSERIER',
+  'Serilerden {} film eklendi': '{} film tilføjet fra filmserier',
+  'Film listesi yüklenemedi': 'Filmlisten kunne ikke indlæses',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Du kan springe dette trin over og tilføje det, du vil, senere.',
+  '{} film izlediklerine eklendi': '{} film føjet til din visningshistorik',
+  'Film serileri': 'Filmserier',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Har du set en hel filmserie fra start til slut? Tilføj den med ét tryk.',
+  'Seri bulunamadı': 'Ingen filmserier fundet',
+  'Daha sonra tekrar deneyebilirsin.': 'Du kan prøve igen senere.',
+  '{} film': '{} film',
+  'Eklendi': 'Tilføjet',
+  'Tümünü izledim': 'Har set alle',
+  'Peki ya diziler?': 'Og hvad med serierne?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Markér det, du har set; jo flere du vælger, jo flere lignende titler viser vi.',
+  'Dizi listesi yüklenemedi': 'Serielisten kunne ikke indlæses',
+  'Seçtiklerine benzeyenler': 'Ligner dine valg',
+  'Her şey hazır': 'Alt er klar',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Tag et hurtigt kig på, hvad du kan i dizi.jpg.',
+  'Profilini tamamla': 'Gør din profil færdig',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Under Indstillinger kan du tilføje en biografi, et profilbillede og et coverbillede.',
+  'Takvimin seni bekliyor': 'Din kalender venter på dig',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Nye afsnit af de serier, du ser, lander i kalenderen, og vi giver besked med en notifikation.',
+  'Puan ver, yorum yaz': 'Bedøm og kommentér',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Bedøm afsnit for afsnit, skriv kommentarer bag et spoilerslør, og opret lister.',
+  'Verilerin sende kalır': 'Dine data bliver hos dig',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Dine data er kun knyttet til din konto og sælges ikke. Under Indstillinger kan du hente det hele eller slette din konto helt.',
+  'Engellenen kullanıcılar': 'Blokerede brugere',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Se hvem du har blokeret, og fjern blokeringen',
+  'Engellediğin kimse yok': 'Du har ikke blokeret nogen',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Du kan blokere nogen via menuen med tre prikker på profilen.',
+  '@{} engellensin mi?': 'Bloker @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'I kan ikke se hinandens opslag, kommentarer eller profiler, og beskeder og opkald går ikke igennem. En eksisterende følgerelation brydes og kommer ikke tilbage, heller ikke hvis du fjerner blokeringen.',
+  'Bu kullanıcıyı engelledin': 'Du har blokeret denne bruger',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Du ser ikke denne persons opslag, kommentarer eller beskeder, og personen ser ikke dine.',
+  '{} yeni bir yapımda: {}': '{} medvirker i en ny titel: {}',
+  'Favori kişinden yeni yapım': 'Ny titel med en yndlingsperson',
+  '{} için bildirimler': 'Notifikationer for {}',
+  'Tüm bildirimler': 'Alle notifikationer',
+  'Uygulamada ve telefonda': 'I appen og på telefonen',
+  'Yalnız uygulama içi': 'Kun i appen',
+  'Telefon bildirimi gönderilmez':
+      'Der sendes ingen notifikation til telefonen',
+  'Kapalı': 'Fra',
+  'Bu kişi için bildirim yok': 'Ingen notifikationer for denne person',
+  'Favori kişilerin yeni yapımları': 'Nye titler med yndlingspersoner',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Når det er slået fra, kan ingen ringe til dig; den, der ringer, ser beskeden "slået fra"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Når det er slået fra, kan ingen videoringe til dig; den, der ringer, ser beskeden "slået fra"',
 };

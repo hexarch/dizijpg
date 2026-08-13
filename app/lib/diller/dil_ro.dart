@@ -82,7 +82,7 @@ const Map<String, String> cevirilerRo = {
   'Tekrar dene': 'Încearcă din nou',
   'Toplam İzleme Süresi': 'Timp total de vizionare',
   'Tüm Zamanların En İyileri': 'Cele mai bune din toate timpurile',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Descarcă-ți toate datele (vizionări, note, comentarii, liste) ca ZIP compatibil cu TV Time sau importă un ZIP din altă aplicație.',
   'Tümünü Kaldır': 'Elimină tot',
   'Tümünü İzledim': 'Le-am văzut pe toate',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerRo = {
   'Mesaj silinemedi': 'Mesajul nu a putut fi șters',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linkul este invalid sau pagina nu a fost găsită',
-  'Keşfet\'e dön': 'Înapoi la Descoperă',
+  "Keşfet'e dön": 'Înapoi la Descoperă',
   'Düzenle': 'Editează',
   'Mesajı düzenle': 'Editează mesajul',
   'Yanıtlanıyor': 'Răspunde',
@@ -268,14 +268,7 @@ const Map<String, String> cevirilerRo = {
   'Abonelik': 'Abonament',
   'Kirala': 'Închiriază',
   'Satın al': 'Cumpără',
-  'Hoş geldin!': 'Bun venit!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Alege serialele și filmele pe care vrei să le vezi',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Alegerile tale se adaugă în lista ta',
-  'Şimdilik atla': 'Omite deocamdată',
   'Devam et': 'Continuă',
-  '{} ekle': 'Adaugă {}',
   'Şikayet et': 'Raportează',
   'Engelle': 'Blochează',
   'Engeli kaldır': 'Deblochează',
@@ -321,7 +314,9 @@ const Map<String, String> cevirilerRo = {
       'Conținut încărcat: fotografii, GIF-uri, videoclipuri și înregistrări vocale pe care le adaugi la profil, comentarii și mesaje.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Tehnice: adresa IP, locația aproximativă (la nivel de țară/oraș), platforma dispozitivului, versiunea aplicației și jurnalele de erori. Sunt păstrate pentru securitate și remedierea problemelor.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Statistici de utilizare: tipul dispozitivului, sistemul de operare și browserul cu care se intră sunt adăugate la contoare zilnice totale, sub formă de categorii generale; identificatorul browserului în sine nu este păstrat, iar aceste cifre nu pot fi legate de persoane.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Notificări: pentru notificările push păstrăm tokenul dispozitivului tău și limba preferată. Poți dezactiva notificările oricând din setările dispozitivului.',
   'Verileri Nasıl Kullanırız': 'Cum îți folosim datele',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -330,12 +325,12 @@ const Map<String, String> cevirilerRo = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Folosim stocarea locală doar pentru a te menține conectat și a reține preferințe precum limba și tema. Nu există cookie-uri de publicitate sau de urmărire.',
   'Üçüncü Taraf Hizmetler': 'Servicii terțe',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Datele despre seriale și filme provin de la TMDB, informațiile despre platformele de streaming de la JustWatch. Notificările push sunt livrate prin Google Firebase, iar traficul site-ului este protejat de Cloudflare. Aceste servicii au propriile politici de confidențialitate.',
   'Saklama ve Silme': 'Păstrare și ștergere',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Datele tale sunt păstrate cât timp există contul tău. Prin „Șterge-mi contul" din setări îți poți șterge contul definitiv; datele sunt șterse imediat, iar copiile din backupuri în cel mult 14 zile. Jurnalele de erori se șterg automat după 30 de zile.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Îți poți exporta datele ca ZIP din setări; arhiva este trimisă la adresa ta de e-mail.',
   'Güvenlik': 'Securitate',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -458,12 +453,12 @@ const Map<String, String> cevirilerRo = {
   'Videolarda altyazı göster': 'Afișați subtitrări la videoclipuri',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Propoziția rostită în videoclip este scrisă pe ecran. Textul este traducere: engleză în limba turcă, turcă în alte limbi.',
-  "Güncelleme gerekli": "Actualizare necesară",
-  "Yeni sürüm var": "Versiune nouă disponibilă",
+  'Güncelleme gerekli': 'Actualizare necesară',
+  'Yeni sürüm var': 'Versiune nouă disponibilă',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Instalează noua versiune dizi.jpg pentru a continua.",
-  "Güncelle": "Actualizează",
-  "Daha sonra": "Mai târziu",
+      'Instalează noua versiune dizi.jpg pentru a continua.',
+  'Güncelle': 'Actualizează',
+  'Daha sonra': 'Mai târziu',
   'Takvim güncelleniyor': 'Calendarul se actualizează',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Calendarul nu a putut fi actualizat, se afișează lista veche',
@@ -720,4 +715,105 @@ const Map<String, String> cevirilerRo = {
   '{} {} yayınlandı': '{} {} a apărut',
   'Yeni bölüm yayınlandı': 'A apărut un episod nou',
   'Yeni bölümler': 'Episoade noi',
+  'Geri': 'Înapoi',
+  'Karşılamayı kapat': 'Închide introducerea',
+  'Adım {} / {}': 'Pasul {} / {}',
+  'Hadi başlayalım': 'Să începem',
+  'Kaydet ve devam': 'Salvează și continuă',
+  '{} tanesini ekle': 'Adaugă {}',
+  'Şimdilik geç': 'Mai târziu',
+  'Doğum tarihin ne zaman?': 'Care este data ta de naștere?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Te întrebăm ca să îți arătăm conținut potrivit vârstei tale și ca să îți urăm la mulți ani de ziua ta.',
+  'Gün': 'Zi',
+  'Ay': 'Lună',
+  'Yıl': 'An',
+  'Doğum yılımı paylaşmak istemiyorum': 'Nu vreau să arăt anul nașterii',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Data nașterii nu apare public pe profilul tău. Se folosește doar pentru conținut potrivit vârstei și pentru urarea de ziua ta.',
+  'Ocak': 'ianuarie',
+  'Şubat': 'februarie',
+  'Mart': 'martie',
+  'Nisan': 'aprilie',
+  'Mayıs': 'mai',
+  'Haziran': 'iunie',
+  'Temmuz': 'iulie',
+  'Ağustos': 'august',
+  'Eylül': 'septembrie',
+  'Ekim': 'octombrie',
+  'Kasım': 'noiembrie',
+  'Aralık': 'decembrie',
+  'Verilerini yanında getir': 'Adu-ți datele cu tine',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Dacă îți ții evidența vizionărilor în altă aplicație, poți muta totul aici. Nu trebuie să iei de la zero.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt și Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Alege fișierul ZIP pe care l-ai exportat, iar vizionările, notele și listele tale vor fi importate.',
+  'Aktarılıyor...': 'Se importă...',
+  'ZIP dosyası seç': 'Alege un fișier ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Nu e nicio grabă: poți face asta și mai târziu din Setări > Datele mele.',
+  'Hangi filmleri izledin?': 'Ce filme ai văzut?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Aici sunt cele mai vizionate. Atinge-le pe cele văzute și le adăugăm la vizionările tale.',
+  'SERİ FİLMLER': 'SERII DE FILME',
+  'Serilerden {} film eklendi': '{} filme adăugate din serii',
+  'Film listesi yüklenemedi': 'Lista de filme nu a putut fi încărcată',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Poți sări peste acest pas și poți adăuga ce vrei mai târziu.',
+  '{} film izlediklerine eklendi': '{} filme adăugate la vizionările tale',
+  'Film serileri': 'Serii de filme',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Dacă ai văzut o serie de la cap la coadă, adaug-o dintr-o singură atingere.',
+  'Seri bulunamadı': 'Nicio serie găsită',
+  'Daha sonra tekrar deneyebilirsin.': 'Poți încerca din nou mai târziu.',
+  '{} film': '{} filme',
+  'Eklendi': 'Adăugat',
+  'Tümünü izledim': 'Le-am văzut pe toate',
+  'Peki ya diziler?': 'Dar serialele?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Bifează ce ai văzut; pe măsură ce alegi, îți aducem seriale asemănătoare.',
+  'Dizi listesi yüklenemedi': 'Lista de seriale nu a putut fi încărcată',
+  'Seçtiklerine benzeyenler': 'Asemănătoare cu ce ai ales',
+  'Her şey hazır': 'Totul e gata',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Aruncă o privire rapidă la ce poți face în dizi.jpg.',
+  'Profilini tamamla': 'Completează-ți profilul',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Din Setări poți adăuga o bio, o poză de profil și o copertă.',
+  'Takvimin seni bekliyor': 'Calendarul tău te așteaptă',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Episoadele noi ale serialelor pe care le vezi ajung în calendar și te anunțăm printr-o notificare.',
+  'Puan ver, yorum yaz': 'Dă notă și comentează',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Notează episod cu episod, comentează sub perdeaua de spoiler și creează liste.',
+  'Verilerin sende kalır': 'Datele tale rămân ale tale',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Datele tale sunt păstrate legate doar de contul tău și nu se vând. Din Setări poți să le descarci pe toate sau să îți ștergi complet contul.',
+  'Engellenen kullanıcılar': 'Persoane blocate',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Vezi pe cine ai blocat și deblochează',
+  'Engellediğin kimse yok': 'Nu ai blocat pe nimeni',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Poți bloca o persoană din meniul cu trei puncte de pe profilul ei.',
+  '@{} engellensin mi?': 'Blochezi @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Niciuna dintre cele două părți nu va vedea postările, comentariile sau profilul celeilalte; nu vor mai fi posibile nici mesajele, nici apelurile. Dacă există o legătură de urmărire, aceasta se rupe și nu revine nici dacă ridici blocarea.',
+  'Bu kullanıcıyı engelledin': 'Ai blocat această persoană',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Nu vezi postările, comentariile și mesajele acestei persoane; nici ea nu le vede pe ale tale.',
+  '{} yeni bir yapımda: {}': '{} apare într-o producție nouă: {}',
+  'Favori kişinden yeni yapım': 'Producție nouă de la o persoană favorită',
+  '{} için bildirimler': 'Notificări pentru {}',
+  'Tüm bildirimler': 'Toate notificările',
+  'Uygulamada ve telefonda': 'În aplicație și pe telefon',
+  'Yalnız uygulama içi': 'Doar în aplicație',
+  'Telefon bildirimi gönderilmez': 'Nu se trimit notificări pe telefon',
+  'Kapalı': 'Dezactivat',
+  'Bu kişi için bildirim yok': 'Nicio notificare pentru această persoană',
+  'Favori kişilerin yeni yapımları': 'Producții noi de la persoanele favorite',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Când e dezactivat, nimeni nu te poate suna vocal; apelantul vede anunțul "dezactivate"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Când e dezactivat, nimeni nu te poate suna video; apelantul vede anunțul "dezactivate"',
 };

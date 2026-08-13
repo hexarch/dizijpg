@@ -344,6 +344,16 @@ String? bildirimHedefi(Map<String, dynamic> veri) {
       return tmdb.isNotEmpty && sezon.isNotEmpty && bolum.isNotEmpty
           ? '/dizi/$tmdb/sezon/$sezon/bolum/$bolum'
           : '/bildirimler';
+    case 'kisi':
+      // Md. 28 — favori kişinin yeni yapımı: doğrudan YAPIMIN sayfasına.
+      // `icerik_tur` OLMADAN adres kurulamaz (TMDB'de dizi 1396 ile film 1396
+      // ayrı yapımlardır); tür beklenmedik bir değerse yanlış sayfa açmaktansa
+      // bildirim listesine düşülür.
+      final icerikTur = _alan(veri, 'icerik_tur');
+      final yapimId = _alan(veri, 'tmdb_id');
+      return (icerikTur == 'tv' || icerikTur == 'movie') && yapimId.isNotEmpty
+          ? '/icerik/$icerikTur/$yapimId'
+          : '/bildirimler';
     case 'begeni' || 'yanit' || 'etiket':
       // yorum_id varsa doğrudan o gönderiye; yoksa bildirim listesine
       final yorumId = _alan(veri, 'yorum_id');

@@ -82,7 +82,7 @@ const Map<String, String> cevirilerRu = {
   'Tekrar dene': 'Попробуй ещё раз',
   'Toplam İzleme Süresi': 'Общее экранное время',
   'Tüm Zamanların En İyileri': 'Лучшие за всё время',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Скачай все свои данные (просмотры, оценки, комментарии, списки) в ZIP, совместимом с TV Time, или импортируй ZIP из другого приложения.',
   'Tümünü Kaldır': 'Убрать все',
   'Tümünü İzledim': 'Всё просмотрено',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerRu = {
   'Mesaj silinemedi': 'Не удалось удалить сообщение',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Ссылка недействительна или страница не найдена',
-  'Keşfet\'e dön': 'Назад к Обзору',
+  "Keşfet'e dön": 'Назад к Обзору',
   'Düzenle': 'Изменить',
   'Mesajı düzenle': 'Изменить сообщение',
   'Yanıtlanıyor': 'Ответ',
@@ -268,14 +268,7 @@ const Map<String, String> cevirilerRu = {
   'Abonelik': 'Подписка',
   'Kirala': 'Аренда',
   'Satın al': 'Купить',
-  'Hoş geldin!': 'Добро пожаловать!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Выбери сериалы и фильмы, которые хочешь посмотреть',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Выбранное добавится в твой список «Буду смотреть»',
-  'Şimdilik atla': 'Пропустить',
   'Devam et': 'Продолжить',
-  '{} ekle': 'Добавить {}',
   'Şikayet et': 'Пожаловаться',
   'Engelle': 'Заблокировать',
   'Engeli kaldır': 'Разблокировать',
@@ -321,7 +314,9 @@ const Map<String, String> cevirilerRu = {
       'Загруженные файлы: фото, GIF, видео и голосовые записи, которые ты добавляешь в профиль, комментарии и сообщения.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Технические данные: IP-адрес, приблизительное местоположение (страна/город), платформа устройства, версия приложения и журналы ошибок. Они хранятся для безопасности и отладки.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Статистика использования: тип устройства, операционная система и браузер, с которых выполнен вход, добавляются в ежедневные суммарные счётчики в виде грубых категорий; сам идентификатор браузера не сохраняется, и эти числа невозможно связать с конкретными людьми.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Уведомления: для push-уведомлений мы храним токен твоего устройства и выбранный язык. Уведомления можно в любой момент отключить в настройках устройства.',
   'Verileri Nasıl Kullanırız': 'Как мы используем твои данные',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -330,12 +325,12 @@ const Map<String, String> cevirilerRu = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Локальное хранилище используется только для того, чтобы не разлогинивать тебя и запоминать настройки вроде языка и темы. Рекламных и отслеживающих cookie нет.',
   'Üçüncü Taraf Hizmetler': 'Сторонние сервисы',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Данные о сериалах и фильмах поступают из TMDB, сведения о стриминговых платформах — из JustWatch. Push-уведомления доставляются через Google Firebase, трафик сайта защищает Cloudflare. На эти сервисы распространяются их собственные политики конфиденциальности.',
   'Saklama ve Silme': 'Хранение и удаление',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Твои данные хранятся, пока существует аккаунт. Через «Удалить аккаунт» в настройках можно удалить аккаунт навсегда; данные стираются сразу, а их копии в резервных копиях — не позднее чем через 14 дней. Журналы ошибок автоматически удаляются через 30 дней.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Ты можешь выгрузить свои данные в виде ZIP из настроек; архив придёт на твою электронную почту.',
   'Güvenlik': 'Безопасность',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -457,12 +452,12 @@ const Map<String, String> cevirilerRu = {
   'Videolarda altyazı göster': 'Показывать субтитры на видео',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Предложение, произнесенное в видео, записано на экране. Текст является переводом: английский на турецкой речи, турецкий на других языках.',
-  "Güncelleme gerekli": "Требуется обновление",
-  "Yeni sürüm var": "Доступна новая версия",
+  'Güncelleme gerekli': 'Требуется обновление',
+  'Yeni sürüm var': 'Доступна новая версия',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Установите новую версию dizi.jpg, чтобы продолжить.",
-  "Güncelle": "Обновить",
-  "Daha sonra": "Позже",
+      'Установите новую версию dizi.jpg, чтобы продолжить.',
+  'Güncelle': 'Обновить',
+  'Daha sonra': 'Позже',
   'Takvim güncelleniyor': 'Календарь обновляется',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Не удалось обновить календарь, показан старый список',
@@ -719,4 +714,105 @@ const Map<String, String> cevirilerRu = {
   '{} {} yayınlandı': '{} {} вышел',
   'Yeni bölüm yayınlandı': 'Вышел новый эпизод',
   'Yeni bölümler': 'Новые эпизоды',
+  'Geri': 'Назад',
+  'Karşılamayı kapat': 'Закрыть приветствие',
+  'Adım {} / {}': 'Шаг {} / {}',
+  'Hadi başlayalım': 'Начнём',
+  'Kaydet ve devam': 'Сохранить и продолжить',
+  '{} tanesini ekle': 'Добавить {}',
+  'Şimdilik geç': 'Пока пропустить',
+  'Doğum tarihin ne zaman?': 'Какая у тебя дата рождения?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Спрашиваем, чтобы показывать подходящее по возрасту и поздравить с днём рождения.',
+  'Gün': 'День',
+  'Ay': 'Месяц',
+  'Yıl': 'Год',
+  'Doğum yılımı paylaşmak istemiyorum': 'Не хочу показывать год рождения',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Дата рождения не показывается в профиле публично. Она нужна только для подходящего по возрасту контента и поздравления с днём рождения.',
+  'Ocak': 'Январь',
+  'Şubat': 'Февраль',
+  'Mart': 'Март',
+  'Nisan': 'Апрель',
+  'Mayıs': 'Май',
+  'Haziran': 'Июнь',
+  'Temmuz': 'Июль',
+  'Ağustos': 'Август',
+  'Eylül': 'Сентябрь',
+  'Ekim': 'Октябрь',
+  'Kasım': 'Ноябрь',
+  'Aralık': 'Декабрь',
+  'Verilerini yanında getir': 'Перенеси свои данные',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Если ведёшь историю просмотров в другом приложении, перенеси её сюда. Начинать с нуля не придётся.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt и Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Выбери ZIP-файл из экспорта — просмотры, оценки и списки перенесутся.',
+  'Aktarılıyor...': 'Перенос...',
+  'ZIP dosyası seç': 'Выбрать ZIP-файл',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Спешить некуда: это можно сделать позже в разделе Настройки > Мои данные.',
+  'Hangi filmleri izledin?': 'Какие фильмы уже просмотрены?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Здесь самое популярное. Отмечай знакомые — добавим их в просмотренное.',
+  'SERİ FİLMLER': 'СЕРИИ ФИЛЬМОВ',
+  'Serilerden {} film eklendi': 'Из серий добавлено фильмов: {}',
+  'Film listesi yüklenemedi': 'Не удалось загрузить список фильмов',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Этот шаг можно пропустить и добавить всё позже.',
+  '{} film izlediklerine eklendi': 'В просмотренное добавлено фильмов: {}',
+  'Film serileri': 'Серии фильмов',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Вся серия просмотрена? Добавь её одним касанием.',
+  'Seri bulunamadı': 'Серии не найдены',
+  'Daha sonra tekrar deneyebilirsin.': 'Можно попробовать позже.',
+  '{} film': 'Фильмов: {}',
+  'Eklendi': 'Добавлено',
+  'Tümünü izledim': 'Всё просмотрено',
+  'Peki ya diziler?': 'А что насчёт сериалов?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Отмечай просмотренное — по твоим отметкам подберём похожее.',
+  'Dizi listesi yüklenemedi': 'Не удалось загрузить список сериалов',
+  'Seçtiklerine benzeyenler': 'Похожее на твой выбор',
+  'Her şey hazır': 'Всё готово',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Быстро посмотри, что можно делать в dizi.jpg.',
+  'Profilini tamamla': 'Заполни профиль',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'В разделе Настройки можно добавить Био, фото профиля и обложку.',
+  'Takvimin seni bekliyor': 'Тебя ждёт Календарь',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Новые эпизоды твоих сериалов попадают в календарь, а мы пришлём уведомление.',
+  'Puan ver, yorum yaz': 'Ставь оценки, пиши комментарии',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Оценивай эпизод за эпизодом, пиши комментарии под завесой спойлера, создавай списки.',
+  'Verilerin sende kalır': 'Твои данные остаются твоими',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Данные хранятся только вместе с твоим аккаунтом и не продаются. В разделе Настройки можно скачать их целиком или полностью удалить аккаунт.',
+  'Engellenen kullanıcılar': 'Заблокированные пользователи',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Посмотреть заблокированных и разблокировать',
+  'Engellediğin kimse yok': 'Заблокированных нет',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Заблокировать пользователя можно через меню с тремя точками на странице профиля.',
+  '@{} engellensin mi?': 'Заблокировать @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Вы не сможете видеть публикации, комментарии и профиль друг друга; сообщения и звонки тоже не пройдут. Подписка между вами, если она есть, разорвётся и не вернётся даже после снятия блокировки.',
+  'Bu kullanıcıyı engelledin': 'Этот пользователь заблокирован',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Ты не видишь публикации, комментарии и сообщения этого человека, а этот человек не видит твои.',
+  '{} yeni bir yapımda: {}': '{} в новом проекте: {}',
+  'Favori kişinden yeni yapım': 'Новый проект любимого человека',
+  '{} için bildirimler': 'Уведомления: {}',
+  'Tüm bildirimler': 'Все уведомления',
+  'Uygulamada ve telefonda': 'В приложении и на телефоне',
+  'Yalnız uygulama içi': 'Только в приложении',
+  'Telefon bildirimi gönderilmez': 'Уведомления на телефон не приходят',
+  'Kapalı': 'Выключено',
+  'Bu kişi için bildirim yok': 'Уведомлений об этом человеке не будет',
+  'Favori kişilerin yeni yapımları': 'Новые проекты любимых людей',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Когда выключено, тебе не смогут позвонить голосом; звонящий увидит уведомление "отключено"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Когда выключено, тебе не смогут позвонить по видео; звонящий увидит уведомление "отключено"',
 };

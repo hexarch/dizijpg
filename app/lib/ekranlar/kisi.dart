@@ -28,6 +28,11 @@ class _KisiEkraniState extends State<KisiEkrani> {
   Map<String, dynamic>? _toplum;
   String? _hata;
 
+  /// Md. 28 — bu KİŞİ için bildirim kipi: 'acik' | 'uygulama' | 'kapali'.
+  /// null = favori değil (ya da oturumsuz) → zil işareti HİÇ çizilmez, çünkü
+  /// bildirim favoriden doğuyor; favorilemeden zil göstermek boş bir söz olurdu.
+  String? _bildirimKipi;
+
   /// İzlenme oranı: null = henüz gelmedi (iskelet), (izlenen, toplam).
   (int, int)? _izlenme;
 
@@ -75,22 +80,153 @@ class _KisiEkraniState extends State<KisiEkrani> {
     }
   }
 
+  /// Md. 28 — (kip, ikon, başlık, açıklama). Kipler sunucudaki
+  /// `favoriler.bildirim` kapalı sözlüğüyle BİREBİR aynı üç değerdir
+  /// (`KISI_BILDIRIM_KIPLERI`, server.js); dördüncü bir değer uydurmak 400 alır.
+  static const _kipler = <(String, IconData, String, String)>[
+    (
+      'acik',
+      Icons.notifications_active,
+      'Tüm bildirimler',
+      'Uygulamada ve telefonda',
+    ),
+    (
+      'uygulama',
+      Icons.notifications_paused,
+      'Yalnız uygulama içi',
+      'Telefon bildirimi gönderilmez',
+    ),
+    ('kapali', Icons.notifications_off, 'Kapalı', 'Bu kişi için bildirim yok'),
+  ];
+
+  /// Md. 28 — bu kişi için bildirim kipi. Oturumsuzda hiç istenmez.
+  /// Kip ikincil bilgidir: gelmezse zil işareti çizilmez, sayfa etkilenmez.
+  Future<void> _bildirimYukle() async {
+    if (!Api.girisli) return;
+    try {
+      final d = await Api.get('/kisi/${widget.kisiId}/bildirim');
+      if (!mounted) return;
+      setState(() => _bildirimKipi = d['bildirim'] as String?);
+    } catch (_) {}
+  }
+
   /// Favori kalbi. İYİMSER: dokunma anında dolar/boşalır, istek düşerse
   /// ESKİ HÂLE GERİ ALINIR + SnackBar (sessiz başarısızlık yasak).
   Future<void> _favoriToggle() async {
     if (!girisGerekli(context)) return;
     final onceki = _favori;
-    setState(() => _favori = !onceki);
+    final onckiKip = _bildirimKipi;
+    setState(() {
+      _favori = !onceki;
+      // Sunucuda `favoriler.bildirim` varsayılanı 'acik'; zil işareti favoriyle
+      // BİRLİKTE belirsin (ayrı bir istek beklenirse bir kare boş kalırdı).
+      // Favoriden çıkınca satır silinir → kip de yok olur.
+      _bildirimKipi = !onceki ? (onckiKip ?? 'acik') : null;
+    });
     try {
       final c = await Api.post('/favori/toggle', {
         'tmdb_id': widget.kisiId,
         'tur': 'person',
       });
       if (!mounted) return;
-      setState(() => _favori = c is Map ? c['favori'] == true : !onceki);
+      final favori = c is Map ? c['favori'] == true : !onceki;
+      setState(() {
+        _favori = favori;
+        _bildirimKipi = favori ? (onckiKip ?? 'acik') : null;
+      });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _favori = onceki);
+      setState(() {
+        _favori = onceki;
+        _bildirimKipi = onckiKip;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  /// Md. 28 — kişi bazlı bildirim kipini seçtiren sayfa altı sayfası.
+  ///
+  /// NEDEN SEÇİM SAYFASI, "DOKUNDUKÇA DÖNEN" TEK İKON DEĞİL: üç durumlu bir
+  /// döngüde kullanıcı bir sonraki dokunuşun ne yapacağını KESTİREMEZ ve
+  /// "yalnız uygulama içi" hâlinin ne demek olduğunu hiç öğrenemezdi. Liste
+  /// üçünü de açıklamasıyla birlikte aynı anda gösterir.
+  ///
+  /// İYİMSER: seçim anında ikon değişir; istek düşerse ESKİ HÂLE GERİ ALINIR
+  /// + SnackBar.
+  Future<void> _bildirimSec() async {
+    final ad = _kisi?['name'] as String? ?? '';
+    final secim = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.notifications_active_outlined,
+                    color: DiziRenkler.sari,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '{} için bildirimler'.cf([ad]),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            for (final (kip, ikon, baslik, aciklama) in _kipler)
+              ListTile(
+                leading: Icon(
+                  ikon,
+                  color: kip == _bildirimKipi
+                      ? DiziRenkler.sari
+                      : DiziRenkler.metin54,
+                ),
+                title: Text(baslik.c),
+                subtitle: Text(
+                  aciklama.c,
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+                ),
+                trailing: kip == _bildirimKipi
+                    ? const Icon(Icons.check, color: DiziRenkler.sari)
+                    : null,
+                onTap: () => Navigator.pop(context, kip),
+              ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+    if (!mounted || secim == null || secim == _bildirimKipi) return;
+    final eski = _bildirimKipi;
+    setState(() => _bildirimKipi = secim);
+    try {
+      final c = await Api.post('/kisi/${widget.kisiId}/bildirim', {
+        'bildirim': secim,
+      });
+      if (!mounted) return;
+      setState(
+        () => _bildirimKipi = c is Map ? c['bildirim'] as String? : secim,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _bildirimKipi = eski);
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -113,6 +249,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
     setState(() => _hata = null);
     _puanYenile();
     _izlenmeYukle();
+    _bildirimYukle();
     try {
       final sonuclar = await Future.wait([
         Api.get('/tmdb/person/${widget.kisiId}'),
@@ -158,6 +295,27 @@ class _KisiEkraniState extends State<KisiEkrani> {
       appBar: AppBar(
         title: Text(k['name'] as String? ?? ''),
         actions: [
+          // Md. 28 — bildirim zili. YALNIZ favorilenmiş kişide çizilir
+          // (bildirim favoriden doğuyor) ve kalbin SOLUNA konur: kalp böylece
+          // sağ üstteki öğrenilmiş yerinde kalır, zil belirince YER DEĞİŞTİRMEZ.
+          if (_bildirimKipi != null)
+            IconButton(
+              onPressed: _bildirimSec,
+              tooltip: 'Bildirimler'.c,
+              icon: Icon(
+                _kipler
+                    .firstWhere(
+                      (k) => k.$1 == _bildirimKipi,
+                      orElse: () => _kipler.first,
+                    )
+                    .$2,
+                // Açıkken sarı (etkin), kısılmış/kapalıyken sönük: durum
+                // İKONDAN DA RENKTEN DE okunabilsin (renk körlüğü).
+                color: _bildirimKipi == 'acik'
+                    ? DiziRenkler.sari
+                    : DiziRenkler.metin54,
+              ),
+            ),
           // Favori oyuncu: dizi/filmdeki kalple AYNI yerde (sağ üst) ve AYNI
           // renkte — kullanıcı öğrendiği jesti burada da uygular.
           IconButton(

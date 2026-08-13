@@ -50,6 +50,9 @@ Disallow: /kitaplik/
 Disallow: /favori-oyuncular
 Disallow: /yapimlar/
 Disallow: /gizlenen-yorumlar
+# 13 Agu 2026 (md. 19): engellenen kullanicilar ekrani. Kisiye ozel olmasinin
+# otesinde HASSAS bir liste — "kim kimi engellemis" hicbir kosulda taranmamali.
+Disallow: /engellenenler
 Disallow: /akis
 Disallow: /takvim
 Disallow: /ozet/

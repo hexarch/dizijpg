@@ -228,15 +228,17 @@ void main() {
       expect(veri.length, 46);
       final uzunluklar = veri.values.map((v) => (v as List).length).toSet();
       expect(uzunluklar.length, 1, reason: 'diller arasında uzunluk farkı var');
-      expect(uzunluklar.first, 34, reason: '29 + 5 yeni dize bekleniyor');
+      // 34 → 35: md.37'nin kullanım istatistikleri maddesi 10. indekse girdi,
+      // arama bölümü bir basamak kaydı (29-33 → 30-34).
+      expect(uzunluklar.first, 35, reason: '29 + 5 + 1 yeni dize bekleniyor');
     });
 
     test('web YAPI dizilimi yeni bölümü ÇİZİYOR', () {
       final m = RegExp(r'var YAPI=(\[.*?\]);', dotAll: true).firstMatch(html);
       final yapi = m!.group(1)!;
-      // Başlık (29) + dört madde (30-33)
-      expect(yapi.contains('["h",29]'), isTrue);
-      for (var i = 30; i <= 33; i++) {
+      // Başlık (30) + dört madde (31-34)
+      expect(yapi.contains('["h",30]'), isTrue);
+      for (var i = 31; i <= 34; i++) {
         expect(yapi.contains('["li",$i]'), isTrue, reason: 'madde $i yok');
       }
     });

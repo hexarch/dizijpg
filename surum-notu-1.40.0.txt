@@ -1,5 +1,5 @@
-Play Console kapalı test (Alpha) sürüm notu — 1.39.0 (85)
-Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 15 derleme birikti.
+Play Console kapalı test (Alpha) sürüm notu — 1.40.0 (86)
+Alpha'daki son yükleme: 70 (1.26.1), 7 Ağustos. Arada 16 derleme birikti.
 ⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI
    (sunucu kill switch). Kapalı özelliği sürüm notunda anmıyoruz.
 --------------------------------------------------------------------
@@ -16,6 +16,12 @@ KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
 • Tekrar izlediklerin artık sayılıyor: göz rozetinde kaçıncı izleyişin
   olduğu yazıyor, toplam izleme süren de ona göre artıyor.
 • Yeni çıkan yapımlar aramada çok daha çabuk görünüyor.
+• İlk açılışta karşılama akışı: doğum tarihi, veri aktarma, izlediğin film
+  ve dizileri tek dokunuşla işaretleme (film serilerinin tamamı dahil).
+• Kullanıcı engelleme: engellediğin kişinin gönderileri, yorumları ve
+  profili artık hiçbir yerde görünmüyor.
+• Favori oyuncu/yönetmenin yeni dizi ya da filmi çıkınca bildirim
+  (kişi başına açıp kapatabilirsin).
 • Webde Google ile giriş.
 • Profil, takvim ve masaüstü görünümünde çok sayıda iyileştirme;
   uygulama belirgin şekilde hızlandı.
@@ -31,6 +37,12 @@ KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
 • Rewatches now count: the watched badge shows how many times you've seen
   it, and your total watch time goes up accordingly.
 • Newly released titles show up in search much sooner.
+• A welcome flow on first launch: birth date, data import, and one-tap
+  marking of the films and shows you've watched (whole franchises too).
+• Block users: a blocked person's posts, comments and profile no longer
+  show up anywhere.
+• Get notified when a favorite actor or director has a new title
+  (togglable per person).
 • Sign in with Google on the web.
 • Many improvements to profile, calendar and desktop layout; the app is
   noticeably faster.

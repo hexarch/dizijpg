@@ -82,7 +82,7 @@ const Map<String, String> cevirilerFi = {
   'Tekrar dene': 'Yritä uudelleen',
   'Toplam İzleme Süresi': 'Ruutuaika yhteensä',
   'Tüm Zamanların En İyileri': 'Kaikkien aikojen parhaat',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Lataa kaikki tietosi (katselut, arvosanat, kommentit, listat) TV Time -yhteensopivana ZIP-tiedostona tai tuo ZIP toisesta sovelluksesta.',
   'Tümünü Kaldır': 'Poista kaikki',
   'Tümünü İzledim': 'Katsoin kaikki',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerFi = {
   'Mesaj silinemedi': 'Viestiä ei voitu poistaa',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Linkki on virheellinen tai sivua ei löytynyt',
-  'Keşfet\'e dön': 'Takaisin Löydä-sivulle',
+  "Keşfet'e dön": 'Takaisin Löydä-sivulle',
   'Düzenle': 'Muokkaa',
   'Mesajı düzenle': 'Muokkaa viestiä',
   'Yanıtlanıyor': 'Vastataan',
@@ -267,14 +267,7 @@ const Map<String, String> cevirilerFi = {
   'Abonelik': 'Tilaus',
   'Kirala': 'Vuokraa',
   'Satın al': 'Osta',
-  'Hoş geldin!': 'Tervetuloa!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Valitse sarjat ja elokuvat, joita haluat katsoa',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Valintasi lisätään katselulistallesi',
-  'Şimdilik atla': 'Ohita nyt',
   'Devam et': 'Jatka',
-  '{} ekle': 'Lisää {}',
   'Şikayet et': 'Ilmoita',
   'Engelle': 'Estä',
   'Engeli kaldır': 'Poista esto',
@@ -320,7 +313,9 @@ const Map<String, String> cevirilerFi = {
       'Ladattu media: valokuvat, GIFit, videot ja ääninauhoitteet, joita lisäät profiiliisi, kommentteihisi ja viesteihisi.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Tekniset: IP-osoite, likimääräinen sijainti (maa-/kaupunkitasolla), laitealusta, sovellusversio ja virhelokit. Näitä säilytetään turvallisuutta ja vianetsintää varten.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Käyttötilastot: laitetyyppi, käyttöjärjestelmä ja selain, joilla palveluun tullaan, lisätään karkeina luokkina päivittäisiin kokonaislaskureihin; itse selaimen tunnistetta ei säilytetä eikä lukuja voi yhdistää henkilöihin.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Ilmoitukset: push-ilmoituksia varten tallennamme laitteesi tokenin ja kielivalintasi. Voit poistaa ilmoitukset käytöstä milloin tahansa laitteen asetuksista.',
   'Verileri Nasıl Kullanırız': 'Miten käytämme tietojasi',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -329,12 +324,12 @@ const Map<String, String> cevirilerFi = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Käytämme paikallista tallennustilaa vain pitääksemme sinut kirjautuneena ja muistaaksemme asetukset, kuten kielen ja teeman. Mainos- tai seurantaevästeitä ei ole.',
   'Üçüncü Taraf Hizmetler': 'Kolmansien osapuolten palvelut',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Sarja- ja elokuvatiedot tulevat TMDB:stä, suoratoistoalustojen tiedot JustWatchista. Push-ilmoitukset toimitetaan Google Firebasen kautta, ja sivuston liikennettä suojaa Cloudflare. Näihin palveluihin sovelletaan niiden omia tietosuojakäytäntöjä.',
   'Saklama ve Silme': 'Säilytys ja poistaminen',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Tietosi säilytetään niin kauan kuin tilisi on olemassa. Asetusten "Poista tilini" -toiminnolla voit poistaa tilisi pysyvästi; tietosi poistetaan heti ja varmuuskopioissa olevat kopiot viimeistään 14 päivässä. Virhelokit poistuvat automaattisesti 30 päivän kuluttua.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Voit viedä tietosi ZIP-muodossa asetuksista; arkisto lähetetään sähköpostiosoitteeseesi.',
   'Güvenlik': 'Turvallisuus',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -456,12 +451,12 @@ const Map<String, String> cevirilerFi = {
   'Videolarda altyazı göster': 'Näytä tekstitykset videoissa',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Videolla puhuttu lause kirjoitetaan näytölle. Teksti on käännetty: Englanti turkin puheessa, turkki muilla kielillä.',
-  "Güncelleme gerekli": "Päivitys vaaditaan",
-  "Yeni sürüm var": "Uusi versio saatavilla",
+  'Güncelleme gerekli': 'Päivitys vaaditaan',
+  'Yeni sürüm var': 'Uusi versio saatavilla',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Asenna dizi.jpg:n uusi versio jatkaaksesi.",
-  "Güncelle": "Päivitä",
-  "Daha sonra": "Myöhemmin",
+      'Asenna dizi.jpg:n uusi versio jatkaaksesi.',
+  'Güncelle': 'Päivitä',
+  'Daha sonra': 'Myöhemmin',
   'Takvim güncelleniyor': 'Kalenteria päivitetään',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalenteria ei voitu päivittää, näytetään vanha lista',
@@ -718,4 +713,105 @@ const Map<String, String> cevirilerFi = {
   '{} {} yayınlandı': '{} {} on julkaistu',
   'Yeni bölüm yayınlandı': 'Uusi jakso on julkaistu',
   'Yeni bölümler': 'Uudet jaksot',
+  'Geri': 'Takaisin',
+  'Karşılamayı kapat': 'Sulje esittely',
+  'Adım {} / {}': 'Vaihe {} / {}',
+  'Hadi başlayalım': 'Aloitetaan',
+  'Kaydet ve devam': 'Tallenna ja jatka',
+  '{} tanesini ekle': 'Lisää {} valittua',
+  'Şimdilik geç': 'Ohita nyt',
+  'Doğum tarihin ne zaman?': 'Milloin olet syntynyt?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Kysymme tätä, jotta voimme näyttää ikääsi sopivaa sisältöä ja juhlia syntymäpäivääsi.',
+  'Gün': 'Päivä',
+  'Ay': 'Kuukausi',
+  'Yıl': 'Vuosi',
+  'Doğum yılımı paylaşmak istemiyorum': 'En halua jakaa syntymävuottani',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Syntymäaikaasi ei näytetä julkisesti profiilissasi. Sitä käytetään vain ikään sopivaan sisältöön ja syntymäpäiväonnitteluun.',
+  'Ocak': 'Tammikuu',
+  'Şubat': 'Helmikuu',
+  'Mart': 'Maaliskuu',
+  'Nisan': 'Huhtikuu',
+  'Mayıs': 'Toukokuu',
+  'Haziran': 'Kesäkuu',
+  'Temmuz': 'Heinäkuu',
+  'Ağustos': 'Elokuu',
+  'Eylül': 'Syyskuu',
+  'Ekim': 'Lokakuu',
+  'Kasım': 'Marraskuu',
+  'Aralık': 'Joulukuu',
+  'Verilerini yanında getir': 'Ota tietosi mukaan',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Jos seuraat katsomiasi toisessa sovelluksessa, voit siirtää ne tänne. Sinun ei tarvitse aloittaa alusta.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ja Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Valitse viemäsi ZIP-tiedosto, niin katseluhistoriasi, arvosanasi ja listasi tuodaan mukana.',
+  'Aktarılıyor...': 'Tuodaan...',
+  'ZIP dosyası seç': 'Valitse ZIP-tiedosto',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Ei kiirettä: voit tehdä tämän myöhemmin kohdassa Asetukset > Omat tiedot.',
+  'Hangi filmleri izledin?': 'Mitä elokuvia olet katsonut?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Tässä ovat katsotuimmat. Lisäämme katseluhistoriaasi ne, joita napautat.',
+  'SERİ FİLMLER': 'ELOKUVASARJAT',
+  'Serilerden {} film eklendi': 'Elokuvasarjoista lisättiin {} elokuvaa',
+  'Film listesi yüklenemedi': 'Elokuvalistaa ei voitu ladata',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Voit ohittaa tämän vaiheen ja lisätä haluamasi myöhemmin.',
+  '{} film izlediklerine eklendi': 'Katseluhistoriaasi lisättiin {} elokuvaa',
+  'Film serileri': 'Elokuvasarjat',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Jos olet katsonut sarjan alusta loppuun, lisää se yhdellä napautuksella.',
+  'Seri bulunamadı': 'Sarjoja ei löytynyt',
+  'Daha sonra tekrar deneyebilirsin.': 'Voit yrittää uudelleen myöhemmin.',
+  '{} film': '{} elokuvaa',
+  'Eklendi': 'Lisätty',
+  'Tümünü izledim': 'Katsoin kaikki',
+  'Peki ya diziler?': 'Entä sarjat?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Merkitse katsomasi – mitä enemmän valitset, sitä osuvampia samankaltaisia tuomme esiin.',
+  'Dizi listesi yüklenemedi': 'Sarjalistaa ei voitu ladata',
+  'Seçtiklerine benzeyenler': 'Valintojesi kaltaisia',
+  'Her şey hazır': 'Kaikki on valmista',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Katso nopeasti, mitä kaikkea voit tehdä dizi.jpg-sovelluksessa.',
+  'Profilini tamamla': 'Viimeistele profiilisi',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Asetuksissa voit lisätä bion, profiilikuvan ja kansikuvan.',
+  'Takvimin seni bekliyor': 'Kalenteri odottaa sinua',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Seuraamiesi sarjojen uudet jaksot päätyvät kalenteriin, ja kerromme niistä ilmoituksella.',
+  'Puan ver, yorum yaz': 'Anna arvosana, kirjoita kommentti',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Arvostele jakso kerrallaan, kirjoita kommentteja spoilerisuojan taakse ja luo listoja.',
+  'Verilerin sende kalır': 'Tietosi pysyvät sinulla',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Tietosi pidetään vain sinun tiliisi sidottuina eikä niitä myydä. Asetuksissa voit ladata ne kaikki tai poistaa tilisi kokonaan.',
+  'Engellenen kullanıcılar': 'Estetyt käyttäjät',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Katso estämäsi henkilöt ja poista esto',
+  'Engellediğin kimse yok': 'Et ole estänyt ketään',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Voit estää käyttäjän kyseisen henkilön profiilin kolmen pisteen valikosta.',
+  '@{} engellensin mi?': 'Estetäänkö @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Ette näe toistenne julkaisuja, kommentteja ettekä profiilia; myöskään viestit tai puhelut eivät kulje. Mahdollinen seurantasuhteenne katkeaa eikä palaa, vaikka poistaisit eston.',
+  'Bu kullanıcıyı engelledin': 'Olet estänyt tämän käyttäjän',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Et näe tämän henkilön julkaisuja, kommentteja etkä viestejä, eikä tämä henkilö näe sinun julkaisujasi.',
+  '{} yeni bir yapımda: {}': '{} on mukana uudessa tuotannossa: {}',
+  'Favori kişinden yeni yapım': 'Uusi tuotanto suosikiltasi',
+  '{} için bildirimler': 'Ilmoitukset: {}',
+  'Tüm bildirimler': 'Kaikki ilmoitukset',
+  'Uygulamada ve telefonda': 'Sovelluksessa ja puhelimessa',
+  'Yalnız uygulama içi': 'Vain sovelluksessa',
+  'Telefon bildirimi gönderilmez': 'Puhelimeen ei lähetetä ilmoituksia',
+  'Kapalı': 'Pois',
+  'Bu kişi için bildirim yok': 'Ei ilmoituksia tästä henkilöstä',
+  'Favori kişilerin yeni yapımları': 'Suosikkihenkilöiden uudet tuotannot',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kun pois päältä, kukaan ei voi soittaa sinulle; soittaja näkee, että äänipuhelut ovat "pois käytöstä"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kun pois päältä, kukaan ei voi soittaa sinulle videolla; soittaja näkee, että videopuhelut ovat "pois käytöstä"',
 };

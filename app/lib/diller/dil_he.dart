@@ -80,7 +80,7 @@ const Map<String, String> cevirilerHe = {
   'Tekrar dene': 'נסה שוב',
   'Toplam İzleme Süresi': 'זמן מסך כולל',
   'Tüm Zamanların En İyileri': 'הטובים בכל הזמנים',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'ייצא את כל הנתונים שלך (צפיות, דירוגים, תגובות, רשימות) כקובץ ZIP תואם TV Time, או ייבא ZIP מאפליקציה אחרת.',
   'Tümünü Kaldır': 'הסר הכל',
   'Tümünü İzledim': 'צפיתי בהכל',
@@ -107,8 +107,8 @@ const Map<String, String> cevirilerHe = {
   '{} ay~tekil': '{} חודש',
   '{} bölüm izlendi': '{} פרקים נצפו',
   '{} dizi.jpg': '{} dizi.jpg',
-  '{} dk': '{} דק\'',
-  '{} dk~tekil': '{} דק\'',
+  '{} dk': "{} דק'",
+  '{} dk~tekil': "{} דק'",
   '{} gün': '{} ימים',
   '{} gün~tekil': '{} יום',
   '{} içerik': '{} פריטים',
@@ -178,7 +178,7 @@ const Map<String, String> cevirilerHe = {
   'Mesaja eklenecek': 'יתווסף להודעה',
   'Mesajını yaz...': 'כתוב הודעה...',
   'Henüz sohbetin yok.\nBir profile girip mesaj gönderebilirsin.':
-      'אין צ\'אטים עדיין.\nפתח פרופיל ושלח הודעה.',
+      "אין צ'אטים עדיין.\nפתח פרופיל ושלח הודעה.",
   'Şifreni mi unuttun?': 'שכחת סיסמה?',
   'Şifreyi Sıfırla': 'איפוס סיסמה',
   'E-postadaki kod': 'הקוד מהמייל',
@@ -236,7 +236,7 @@ const Map<String, String> cevirilerHe = {
   'Mesajı sil': 'מחק הודעה',
   'Mesaj silinemedi': 'לא ניתן היה למחוק את ההודעה',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'הקישור אינו תקין או שהדף לא נמצא',
-  'Keşfet\'e dön': 'חזרה לגילוי',
+  "Keşfet'e dön": 'חזרה לגילוי',
   'Düzenle': 'ערוך',
   'Mesajı düzenle': 'ערוך הודעה',
   'Yanıtlanıyor': 'משיב',
@@ -245,9 +245,9 @@ const Map<String, String> cevirilerHe = {
   'Video': 'וידאו',
   'İçerik': 'תוכן',
   'çevrimiçi': 'מחובר',
-  'son görülme {} dk önce': 'פעילות אחרונה לפני {} דק\'',
-  'son görülme {} saat önce': 'פעילות אחרונה לפני {} ש\'',
-  'son görülme {} gün önce': 'פעילות אחרונה לפני {} י\'',
+  'son görülme {} dk önce': "פעילות אחרונה לפני {} דק'",
+  'son görülme {} saat önce': "פעילות אחרונה לפני {} ש'",
+  'son görülme {} gün önce': "פעילות אחרונה לפני {} י'",
   'Yorumlar yüklenemedi': 'לא ניתן היה לטעון תגובות',
   'Favori': 'מועדף',
   'Listeye ekle': 'הוסף לרשימה',
@@ -263,13 +263,7 @@ const Map<String, String> cevirilerHe = {
   'Abonelik': 'מנוי',
   'Kirala': 'השכרה',
   'Satın al': 'קנייה',
-  'Hoş geldin!': 'ברוכים הבאים!',
-  'İzlemek istediğin dizi ve filmleri seç': 'בחר סדרות וסרטים שאתה רוצה לראות',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'הבחירות שלך יתווספו לרשימת הצפייה',
-  'Şimdilik atla': 'דלג בינתיים',
   'Devam et': 'המשך',
-  '{} ekle': 'הוסף {}',
   'Şikayet et': 'דיווח',
   'Engelle': 'חסימה',
   'Engeli kaldır': 'ביטול חסימה',
@@ -315,7 +309,9 @@ const Map<String, String> cevirilerHe = {
       'מדיה שהועלתה: תמונות, קובצי GIF, סרטונים והקלטות קול שאתה מוסיף לפרופיל, לתגובות ולהודעות.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'נתונים טכניים: כתובת IP, מיקום משוער (מדינה/עיר), פלטפורמת המכשיר, גרסת האפליקציה ויומני שגיאות. אלה נשמרים לצורכי אבטחה ותיקון תקלות.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'סטטיסטיקת שימוש: סוג המכשיר, מערכת ההפעלה והדפדפן שדרכם נכנסים נוספים כקטגוריות גסות למונים יומיים כוללים; מזהה הדפדפן עצמו אינו נשמר והמספרים האלה אינם ניתנים לקישור לאנשים.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'התראות: לצורך התראות פוש אנחנו שומרים את אסימון המכשיר ואת שפת ההעדפה שלך. אפשר לכבות התראות בכל עת בהגדרות המכשיר.',
   'Verileri Nasıl Kullanırız': 'איך אנחנו משתמשים בנתונים שלך',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -324,12 +320,12 @@ const Map<String, String> cevirilerHe = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'אנחנו משתמשים באחסון מקומי רק כדי לשמור אותך מחובר ולזכור העדפות כמו שפה וערכת נושא. אין עוגיות פרסום או מעקב.',
   'Üçüncü Taraf Hizmetler': 'שירותי צד שלישי',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'נתוני הסדרות והסרטים מגיעים מ-TMDB, ומידע על פלטפורמות סטרימינג מ-JustWatch. התראות פוש נשלחות דרך Google Firebase, ותעבורת האתר מוגנת על ידי Cloudflare. שירותים אלה כפופים למדיניות הפרטיות שלהם.',
   'Saklama ve Silme': 'שמירה ומחיקה',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'הנתונים שלך נשמרים כל עוד החשבון קיים. באמצעות "מחק את החשבון שלי" בהגדרות אפשר למחוק את החשבון לצמיתות; הנתונים נמחקים מיד, והעותקים בגיבויים בתוך 14 יום לכל היותר. יומני שגיאות נמחקים אוטומטית אחרי 30 יום.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'אפשר לייצא את הנתונים שלך כקובץ ZIP מההגדרות; הארכיון נשלח לכתובת האימייל שלך.',
   'Güvenlik': 'אבטחה',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -389,7 +385,7 @@ const Map<String, String> cevirilerHe = {
   'Diziler': 'סדרות',
   'Filmler': 'סרטים',
   'Tümü': 'הכול',
-  'Farklı bir tür seç.': 'נסה ז\'אנר אחר.',
+  'Farklı bir tür seç.': "נסה ז'אנר אחר.",
   'Gizlilik': 'פרטיות',
   'İzlediklerimi gizle': 'להסתיר מה שצפיתי',
   'Profilinde izlediğin dizi ve filmler görünmez':
@@ -447,12 +443,12 @@ const Map<String, String> cevirilerHe = {
   'Videolarda altyazı göster': 'הצג כתוביות בסרטונים',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'המשפט הנאמר בסרטון כתוב על המסך. הטקסט הוא תרגום: אנגלית בדיבור טורקי, טורקית בשפות אחרות.',
-  "Güncelleme gerekli": "נדרש עדכון",
-  "Yeni sürüm var": "יש גרסה חדשה",
+  'Güncelleme gerekli': 'נדרש עדכון',
+  'Yeni sürüm var': 'יש גרסה חדשה',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "התקן את הגרסה החדשה של dizi.jpg כדי להמשיך.",
-  "Güncelle": "עדכן",
-  "Daha sonra": "מאוחר יותר",
+      'התקן את הגרסה החדשה של dizi.jpg כדי להמשיך.',
+  'Güncelle': 'עדכן',
+  'Daha sonra': 'מאוחר יותר',
   'Takvim güncelleniyor': 'מעדכן את לוח השידורים',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'לא ניתן היה לעדכן את לוח השידורים, מוצגת הרשימה הישנה',
@@ -703,4 +699,105 @@ const Map<String, String> cevirilerHe = {
   '{} {} yayınlandı': '{} {} שוחרר',
   'Yeni bölüm yayınlandı': 'פרק חדש שוחרר',
   'Yeni bölümler': 'פרקים חדשים',
+  'Geri': 'חזרה',
+  'Karşılamayı kapat': 'סגירת ההיכרות',
+  'Adım {} / {}': 'שלב {} / {}',
+  'Hadi başlayalım': 'מתחילים',
+  'Kaydet ve devam': 'שמירה והמשך',
+  '{} tanesini ekle': 'הוספה של {}',
+  'Şimdilik geç': 'לא עכשיו',
+  'Doğum tarihin ne zaman?': 'מה תאריך הלידה שלך?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'שואלים כדי להציג תוכן שמתאים לגיל שלך וכדי לחגוג את יום ההולדת.',
+  'Gün': 'יום',
+  'Ay': 'חודש',
+  'Yıl': 'שנה',
+  'Doğum yılımı paylaşmak istemiyorum': 'אני לא רוצה לשתף את שנת הלידה שלי',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'תאריך הלידה אינו מוצג לכולם בפרופיל שלך. הוא משמש רק לתוכן שמתאים לגיל ולברכת יום הולדת.',
+  'Ocak': 'ינואר',
+  'Şubat': 'פברואר',
+  'Mart': 'מרץ',
+  'Nisan': 'אפריל',
+  'Mayıs': 'מאי',
+  'Haziran': 'יוני',
+  'Temmuz': 'יולי',
+  'Ağustos': 'אוגוסט',
+  'Eylül': 'ספטמבר',
+  'Ekim': 'אוקטובר',
+  'Kasım': 'נובמבר',
+  'Aralık': 'דצמבר',
+  'Verilerini yanında getir': 'הנתונים שלך באים איתך',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'אם המעקב אחרי הצפיות שלך מתנהל באפליקציה אחרת, אפשר להעביר אותו לכאן. אין צורך להתחיל מאפס.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ו-Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'בחירת קובץ ה-ZIP שיוצא משם; הצפיות, הדירוגים והרשימות שלך יועברו.',
+  'Aktarılıyor...': 'בהעברה...',
+  'ZIP dosyası seç': 'בחירת קובץ ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'אין למה למהר: אפשר לעשות את זה גם אחר כך בהגדרות > הנתונים שלי.',
+  'Hangi filmleri izledin?': 'באילו סרטים כבר יצא לצפות?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'הכי נצפים נמצאים כאן. כל מה שנבחר נוסף לצפיות שלך.',
+  'SERİ FİLMLER': 'סדרות סרטים',
+  'Serilerden {} film eklendi': 'מסדרות הסרטים נוספו {} סרטים',
+  'Film listesi yüklenemedi': 'לא ניתן לטעון את רשימת הסרטים',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'אפשר לדלג על השלב הזה ולהוסיף אחר כך מה שרוצים.',
+  '{} film izlediklerine eklendi': '{} סרטים נוספו לצפיות שלך',
+  'Film serileri': 'סדרות סרטים',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'סדרה שנצפתה מתחילתה ועד סופה נוספת בנגיעה אחת.',
+  'Seri bulunamadı': 'לא נמצאו סדרות',
+  'Daha sonra tekrar deneyebilirsin.': 'אפשר לנסות שוב מאוחר יותר.',
+  '{} film': '{} סרטים',
+  'Eklendi': 'נוסף',
+  'Tümünü izledim': 'צפיתי בכולם',
+  'Peki ya diziler?': 'ומה עם הסדרות?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'סימון מה שנצפה; ככל שנבחר יותר, נביא המלצות דומות.',
+  'Dizi listesi yüklenemedi': 'לא ניתן לטעון את רשימת הסדרות',
+  'Seçtiklerine benzeyenler': 'דומים לבחירות שלך',
+  'Her şey hazır': 'הכול מוכן',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'הצצה מהירה למה שאפשר לעשות ב-dizi.jpg.',
+  'Profilini tamamla': 'השלמת הפרופיל',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'אפשר להוסיף ביו, תמונת פרופיל ותמונת נושא מההגדרות.',
+  'Takvimin seni bekliyor': 'לוח השנה מחכה לך',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'פרקים חדשים של הסדרות שלך נכנסים ללוח השנה, ואנחנו מודיעים בהתראה.',
+  'Puan ver, yorum yaz': 'דירוג וכתיבת תגובות',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'דירוג פרק אחרי פרק, תגובות מאחורי מסך ספוילר, ויצירת רשימות.',
+  'Verilerin sende kalır': 'הנתונים נשארים שלך',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'הנתונים שלך מקושרים לחשבון שלך בלבד ואינם נמכרים. אפשר להוריד את כולם מההגדרות או למחוק את החשבון לגמרי.',
+  'Engellenen kullanıcılar': 'משתמשים חסומים',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'צפייה ברשימת החסומים וביטול חסימה',
+  'Engellediğin kimse yok': 'אין אף אחד חסום',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'אפשר לחסום משתמש מתפריט שלוש הנקודות שבפרופיל.',
+  '@{} engellensin mi?': 'לחסום את @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'הפוסטים, התגובות והפרופילים לא יהיו גלויים אחד לשני; גם הודעות ושיחות לא יעברו. אם קיים ביניכם מעקב, הוא ינותק ולא יחזור גם אחרי ביטול החסימה.',
+  'Bu kullanıcıyı engelledin': 'המשתמש הזה חסום על ידך',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'הפוסטים, התגובות וההודעות של האדם הזה לא מוצגים לך, וגם שלך לא מוצגים לאדם הזה.',
+  '{} yeni bir yapımda: {}': '{} ביצירה חדשה: {}',
+  'Favori kişinden yeni yapım': 'יצירה חדשה של אדם מועדף',
+  '{} için bildirimler': 'התראות עבור {}',
+  'Tüm bildirimler': 'כל ההתראות',
+  'Uygulamada ve telefonda': 'באפליקציה ובטלפון',
+  'Yalnız uygulama içi': 'באפליקציה בלבד',
+  'Telefon bildirimi gönderilmez': 'לא נשלחת התראה לטלפון',
+  'Kapalı': 'כבוי',
+  'Bu kişi için bildirim yok': 'אין התראות לאדם הזה',
+  'Favori kişilerin yeni yapımları': 'יצירות חדשות של אנשים מועדפים',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'כשכבוי, אף אחד לא יכול להתקשר אליך בקול; המתקשר רואה הודעה שהשיחות "מושבתות"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'כשכבוי, אף אחד לא יכול להתקשר אליך בווידאו; המתקשר רואה הודעה שהשיחות "מושבתות"',
 };

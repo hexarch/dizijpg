@@ -82,7 +82,7 @@ const Map<String, String> cevirilerTe = {
   'Tekrar dene': 'మళ్ళీ ప్రయత్నించు',
   'Toplam İzleme Süresi': 'మొత్తం స్క్రీన్ సమయం',
   'Tüm Zamanların En İyileri': 'అన్ని కాలాల్లో అత్యుత్తమమైనవి',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'నీ మొత్తం డేటాను (వీక్షణలు, రేటింగ్‌లు, కామెంట్లు, లిస్టులు) TV Time అనుకూల ZIP గా పొందు లేదా వేరే యాప్ నుండి వచ్చిన ZIP ను దిగుమతి చేయి.',
   'Tümünü Kaldır': 'అన్నీ తొలగించు',
   'Tümünü İzledim': 'అన్నీ చూశాను',
@@ -238,7 +238,7 @@ const Map<String, String> cevirilerTe = {
   'Mesajı sil': 'సందేశాన్ని తొలగించు',
   'Mesaj silinemedi': 'సందేశాన్ని తొలగించలేకపోయాం',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'లింక్ చెల్లదు లేదా పేజీ దొరకలేదు',
-  'Keşfet\'e dön': 'అన్వేషణకు తిరిగి వెళ్లు',
+  "Keşfet'e dön": 'అన్వేషణకు తిరిగి వెళ్లు',
   'Düzenle': 'సవరించు',
   'Mesajı düzenle': 'సందేశం సవరించు',
   'Yanıtlanıyor': 'ప్రత్యుత్తరం ఇస్తోంది',
@@ -265,14 +265,7 @@ const Map<String, String> cevirilerTe = {
   'Abonelik': 'సబ్‌స్క్రిప్షన్',
   'Kirala': 'అద్దెకు తీసుకోండి',
   'Satın al': 'కొనండి',
-  'Hoş geldin!': 'స్వాగతం!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'నువ్వు చూడాలనుకునే సిరీస్‌లు, సినిమాలను ఎంచుకో',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'నీ ఎంపికలు "చూస్తాను" లిస్ట్‌కు జోడించబడతాయి',
-  'Şimdilik atla': 'ప్రస్తుతానికి దాటవేయి',
   'Devam et': 'కొనసాగించు',
-  '{} ekle': '{} జోడించు',
   'Şikayet et': 'ఫిర్యాదు చెయ్యి',
   'Engelle': 'బ్లాక్ చెయ్యి',
   'Engeli kaldır': 'అన్‌బ్లాక్ చెయ్యి',
@@ -318,7 +311,9 @@ const Map<String, String> cevirilerTe = {
       'అప్‌లోడ్ చేసిన మీడియా: ప్రొఫైల్, వ్యాఖ్యలు, సందేశాల్లో నువ్వు జోడించే ఫోటోలు, GIF, వీడియోలు, వాయిస్ రికార్డింగ్‌లు.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'సాంకేతికం: IP చిరునామా, సుమారు ప్రాంతం (దేశం/నగరం స్థాయి), పరికర ప్లాట్‌ఫారమ్, యాప్ వెర్షన్, ఎర్రర్ లాగ్‌లు. ఇవి భద్రత, లోపాల సరిదిద్దటం కోసం ఉంచుతాం.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'వినియోగ గణాంకాలు: ఏ రకమైన పరికరం, ఆపరేటింగ్ సిస్టమ్, బ్రౌజర్‌తో ప్రవేశించారన్నది స్థూల వర్గాలుగా రోజువారీ మొత్తం లెక్కల్లో కలుపుతాం; బ్రౌజర్ గుర్తింపును మాత్రం భద్రపరచం, ఈ సంఖ్యలను వ్యక్తులతో ముడిపెట్టడం సాధ్యం కాదు.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'నోటిఫికేషన్లు: పుష్ నోటిఫికేషన్ల కోసం నీ పరికర టోకెన్, భాషా ఎంపిక నిల్వ అవుతాయి. పరికర సెట్టింగ్స్ నుంచి ఎప్పుడైనా నోటిఫికేషన్లు ఆపేయవచ్చు.',
   'Verileri Nasıl Kullanırız': 'డేటాను ఎలా వాడతాం',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -327,12 +322,12 @@ const Map<String, String> cevirilerTe = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'నిన్ను లాగిన్‌లో ఉంచడానికి, భాష/థీమ్ వంటి ఎంపికలను గుర్తుంచుకోవడానికి మాత్రమే లోకల్ స్టోరేజ్ వాడతాం. ప్రకటన లేదా ట్రాకింగ్ కుకీలు లేవు.',
   'Üçüncü Taraf Hizmetler': 'మూడో పక్ష సేవలు',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'సిరీస్, సినిమాల డేటా TMDB నుంచి, స్ట్రీమింగ్ ప్లాట్‌ఫారమ్ సమాచారం JustWatch నుంచి వస్తాయి. పుష్ నోటిఫికేషన్లు Google Firebase ద్వారా చేరతాయి; సైట్ ట్రాఫిక్‌ను Cloudflare కాపాడుతుంది. ఈ సేవలకు వాటి సొంత గోప్యతా విధానాలు వర్తిస్తాయి.',
   'Saklama ve Silme': 'నిల్వ మరియు తొలగింపు',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'నీ ఖాతా ఉన్నంతవరకు నీ డేటా ఉంటుంది. సెట్టింగ్స్‌లోని "నా ఖాతాను తొలగించు" ద్వారా ఖాతాను శాశ్వతంగా తొలగించవచ్చు; డేటా వెంటనే, బ్యాకప్‌లలోని కాపీలు గరిష్ఠంగా 14 రోజుల్లో తొలగుతాయి. ఎర్రర్ లాగ్‌లు 30 రోజుల తర్వాత ఆటోమేటిక్‌గా తొలగుతాయి.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'సెట్టింగ్స్ నుంచి నీ డేటాను ZIP రూపంలో ఎగుమతి చేసుకోవచ్చు; ఆర్కైవ్ నీ ఇమెయిల్ చిరునామాకు పంపబడుతుంది.',
   'Güvenlik': 'భద్రత',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -453,12 +448,12 @@ const Map<String, String> cevirilerTe = {
   'Videolarda altyazı göster': 'వీడియోలలో ఉపశీర్షికలను చూపండి',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'వీడియోలో మాట్లాడిన వాక్యం స్క్రీన్‌పై వ్రాయబడింది. టెక్స్ట్ అనువాదం: టర్కిష్ ప్రసంగంలో ఇంగ్లీష్, ఇతర భాషలలో టర్కిష్.',
-  "Güncelleme gerekli": "అప్‌డేట్ అవసరం",
-  "Yeni sürüm var": "కొత్త వెర్షన్ అందుబాటులో ఉంది",
+  'Güncelleme gerekli': 'అప్‌డేట్ అవసరం',
+  'Yeni sürüm var': 'కొత్త వెర్షన్ అందుబాటులో ఉంది',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "కొనసాగించడానికి dizi.jpg కొత్త వెర్షన్‌ను ఇన్‌స్టాల్ చేయండి.",
-  "Güncelle": "అప్‌డేట్ చేయండి",
-  "Daha sonra": "తర్వాత",
+      'కొనసాగించడానికి dizi.jpg కొత్త వెర్షన్‌ను ఇన్‌స్టాల్ చేయండి.',
+  'Güncelle': 'అప్‌డేట్ చేయండి',
+  'Daha sonra': 'తర్వాత',
   'Takvim güncelleniyor': 'క్యాలెండర్ నవీకరించబడుతోంది',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'క్యాలెండర్ నవీకరించలేకపోయాము, పాత జాబితా చూపబడుతోంది',
@@ -712,4 +707,106 @@ const Map<String, String> cevirilerTe = {
   '{} {} yayınlandı': '{} {} విడుదలైంది',
   'Yeni bölüm yayınlandı': 'కొత్త ఎపిసోడ్ విడుదలైంది',
   'Yeni bölümler': 'కొత్త ఎపిసోడ్‌లు',
+  'Geri': 'వెనుకకు',
+  'Karşılamayı kapat': 'పరిచయాన్ని మూసివేయి',
+  'Adım {} / {}': 'దశ {} / {}',
+  'Hadi başlayalım': 'మొదలుపెడదాం',
+  'Kaydet ve devam': 'సేవ్ చేసి కొనసాగించు',
+  '{} tanesini ekle': '{} ని జోడించు',
+  'Şimdilik geç': 'ఇప్పటికి దాటవేయి',
+  'Doğum tarihin ne zaman?': 'నీ పుట్టిన తేదీ ఏది?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'వయసుకు తగిన కంటెంట్ చూపడానికి, పుట్టినరోజు శుభాకాంక్షలు చెప్పడానికి అడుగుతున్నాం.',
+  'Gün': 'రోజు',
+  'Ay': 'నెల',
+  'Yıl': 'సంవత్సరం',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'నా పుట్టిన సంవత్సరం పంచుకోవడం ఇష్టం లేదు',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'నీ పుట్టిన తేదీ ప్రొఫైల్‌లో అందరికీ కనిపించదు. వయసుకు తగిన కంటెంట్ కోసం, పుట్టినరోజు శుభాకాంక్షల కోసం మాత్రమే వాడతాం.',
+  'Ocak': 'జనవరి',
+  'Şubat': 'ఫిబ్రవరి',
+  'Mart': 'మార్చి',
+  'Nisan': 'ఏప్రిల్',
+  'Mayıs': 'మే',
+  'Haziran': 'జూన్',
+  'Temmuz': 'జూలై',
+  'Ağustos': 'ఆగస్టు',
+  'Eylül': 'సెప్టెంబర్',
+  'Ekim': 'అక్టోబర్',
+  'Kasım': 'నవంబర్',
+  'Aralık': 'డిసెంబర్',
+  'Verilerini yanında getir': 'నీ డేటాను వెంట తెచ్చుకో',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'వేరే యాప్‌లో చూసినవి ట్రాక్ చేస్తుంటే, వాటిని ఇక్కడికి తెచ్చుకోవచ్చు. మొదటి నుంచి మొదలుపెట్టాల్సిన అవసరం లేదు.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt మరియు Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ఎగుమతి చేసిన ZIP ఫైల్‌ను ఎంచుకో; చూసినవి, రేటింగ్‌లు, లిస్టులు ఇక్కడికి వచ్చేస్తాయి.',
+  'Aktarılıyor...': 'దిగుమతి అవుతోంది...',
+  'ZIP dosyası seç': 'ZIP ఫైల్ ఎంచుకో',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'తొందరేమీ లేదు: దీన్ని తర్వాత సెట్టింగ్స్ > నా డేటా విభాగం నుంచీ చేయవచ్చు.',
+  'Hangi filmleri izledin?': 'ఏ సినిమాలు చూశావు?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'ఎక్కువ మంది చూసినవి ఇక్కడ ఉన్నాయి. నువ్వు తాకినవాటిని చూసినవాటిలో చేరుద్దాం.',
+  'SERİ FİLMLER': 'సినిమా సిరీస్‌లు',
+  'Serilerden {} film eklendi': 'సిరీస్‌ల నుంచి {} సినిమాలు జోడించబడ్డాయి',
+  'Film listesi yüklenemedi': 'సినిమాల జాబితా లోడ్ కాలేదు',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'ఈ దశను దాటవేయవచ్చు, తర్వాత కావాల్సినవి జోడించుకోవచ్చు.',
+  '{} film izlediklerine eklendi': '{} సినిమాలు చూసినవాటిలో చేరాయి',
+  'Film serileri': 'సినిమా సిరీస్‌లు',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'ఒక సిరీస్‌ను మొదటి నుంచి చివరి వరకు చూసి ఉంటే ఒకే తాకుతో జోడించు.',
+  'Seri bulunamadı': 'సిరీస్ ఏదీ దొరకలేదు',
+  'Daha sonra tekrar deneyebilirsin.': 'తర్వాత మళ్ళీ ప్రయత్నించవచ్చు.',
+  '{} film': '{} సినిమాలు',
+  'Eklendi': 'జోడించబడింది',
+  'Tümünü izledim': 'అన్నీ చూశాను',
+  'Peki ya diziler?': 'మరి సిరీస్‌ల సంగతి?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'చూసినవి గుర్తుపెట్టు; ఎంచుకున్న కొద్దీ వాటిని పోలినవి తెచ్చిపెడతాం.',
+  'Dizi listesi yüklenemedi': 'సిరీస్‌ల జాబితా లోడ్ కాలేదు',
+  'Seçtiklerine benzeyenler': 'నువ్వు ఎంచుకున్నవాటిని పోలినవి',
+  'Her şey hazır': 'అంతా సిద్ధం',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg లో ఏమేమి చేయవచ్చో ఒకసారి చూడు.',
+  'Profilini tamamla': 'ప్రొఫైల్‌ను పూర్తి చేయి',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'సెట్టింగ్స్ నుంచి బయో, ప్రొఫైల్ ఫొటో, కవర్ జోడించుకోవచ్చు.',
+  'Takvimin seni bekliyor': 'క్యాలెండర్ నీకోసం ఎదురుచూస్తోంది',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'నువ్వు చూసే సిరీస్‌ల కొత్త ఎపిసోడ్‌లు క్యాలెండర్‌లో చేరతాయి, నోటిఫికేషన్‌తో తెలియజేస్తాం.',
+  'Puan ver, yorum yaz': 'రేటింగ్ ఇవ్వు, కామెంట్ రాయి',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'ఎపిసోడ్ వారీగా రేటింగ్ ఇవ్వు, స్పాయిలర్ తెరతో కామెంట్ రాయి, లిస్టులు సృష్టించు.',
+  'Verilerin sende kalır': 'నీ డేటా నీ దగ్గరే ఉంటుంది',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'నీ డేటా నీ ఖాతాకు మాత్రమే అనుసంధానమై ఉంటుంది, అమ్మబడదు. సెట్టింగ్స్ నుంచి మొత్తం డౌన్‌లోడ్ చేసుకోవచ్చు లేదా ఖాతాను పూర్తిగా తొలగించుకోవచ్చు.',
+  'Engellenen kullanıcılar': 'బ్లాక్ చేసిన వినియోగదారులు',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'బ్లాక్ చేసిన వ్యక్తులను చూడు, అన్‌బ్లాక్ చెయ్యి',
+  'Engellediğin kimse yok': 'నువ్వు ఎవరినీ బ్లాక్ చేయలేదు',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'ఒక వినియోగదారుని వారి ప్రొఫైల్‌లోని మూడు చుక్కల మెనూ నుంచి బ్లాక్ చేయవచ్చు.',
+  '@{} engellensin mi?': '@{} ను బ్లాక్ చేయాలా?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'ఒకరి పోస్టులు, కామెంట్లు, ప్రొఫైల్ మరొకరికి కనిపించవు; సందేశం, కాల్ కూడా వెళ్ళవు. మధ్య ఫాలో ఉంటే అది తెగిపోతుంది, అన్‌బ్లాక్ చేసినా అది తిరిగి రాదు.',
+  'Bu kullanıcıyı engelledin': 'ఈ వినియోగదారుని నువ్వు బ్లాక్ చేశావు',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'ఆ వ్యక్తి పోస్టులు, కామెంట్లు, సందేశాలు నీకు కనిపించవు; నీవి ఆ వ్యక్తికీ కనిపించవు.',
+  '{} yeni bir yapımda: {}': '{} కొత్త ప్రాజెక్ట్‌లో: {}',
+  'Favori kişinden yeni yapım': 'ఇష్టమైన వ్యక్తి నుంచి కొత్త ప్రాజెక్ట్',
+  '{} için bildirimler': '{} కోసం నోటిఫికేషన్లు',
+  'Tüm bildirimler': 'అన్ని నోటిఫికేషన్లు',
+  'Uygulamada ve telefonda': 'యాప్‌లో, ఫోన్‌లో',
+  'Yalnız uygulama içi': 'యాప్‌లో మాత్రమే',
+  'Telefon bildirimi gönderilmez': 'ఫోన్ నోటిఫికేషన్ పంపబడదు',
+  'Kapalı': 'ఆఫ్',
+  'Bu kişi için bildirim yok': 'ఈ వ్యక్తి కోసం నోటిఫికేషన్ లేదు',
+  'Favori kişilerin yeni yapımları': 'ఇష్టమైన వ్యక్తుల కొత్త ప్రాజెక్టులు',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వాయిస్ కాల్ చేయలేరు; కాల్ చేసేవారికి "నిలిపివేయబడింది" అనే సూచన కనిపిస్తుంది',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వీడియో కాల్ చేయలేరు; కాల్ చేసేవారికి "నిలిపివేయబడింది" అనే సూచన కనిపిస్తుంది',
 };

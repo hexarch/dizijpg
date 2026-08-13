@@ -82,7 +82,7 @@ const Map<String, String> cevirilerHu = {
   'Tekrar dene': 'Próbáld újra',
   'Toplam İzleme Süresi': 'Teljes képernyőidő',
   'Tüm Zamanların En İyileri': 'Minden idők legjobbjai',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Töltsd le az összes adatodat (megtekintések, értékelések, hozzászólások, listák) TV Time-kompatibilis ZIP-ként, vagy importálj ZIP-et egy másik alkalmazásból.',
   'Tümünü Kaldır': 'Összes eltávolítása',
   'Tümünü İzledim': 'Mindet láttam',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerHu = {
   'Mesaj silinemedi': 'Az üzenetet nem sikerült törölni',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'A hivatkozás érvénytelen vagy az oldal nem található',
-  'Keşfet\'e dön': 'Vissza a Felfedezéshez',
+  "Keşfet'e dön": 'Vissza a Felfedezéshez',
   'Düzenle': 'Szerkesztés',
   'Mesajı düzenle': 'Üzenet szerkesztése',
   'Yanıtlanıyor': 'Válaszol',
@@ -268,14 +268,7 @@ const Map<String, String> cevirilerHu = {
   'Abonelik': 'Előfizetés',
   'Kirala': 'Kölcsönzés',
   'Satın al': 'Vásárlás',
-  'Hoş geldin!': 'Üdvözlünk!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Válaszd ki a sorozatokat és filmeket, amiket meg akarsz nézni',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Választásaid a listádra kerülnek',
-  'Şimdilik atla': 'Kihagyás most',
   'Devam et': 'Folytatás',
-  '{} ekle': '{} hozzáadása',
   'Şikayet et': 'Jelentés',
   'Engelle': 'Letiltás',
   'Engeli kaldır': 'Letiltás feloldása',
@@ -321,7 +314,9 @@ const Map<String, String> cevirilerHu = {
       'Feltöltött média: a profilodhoz, hozzászólásaidhoz és üzeneteidhez adott fotók, GIF-ek, videók és hangfelvételek.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Technikai: IP-cím, hozzávetőleges hely (ország/város szinten), eszközplatform, alkalmazásverzió és hibanaplók. Ezeket biztonsági és hibajavítási célból őrizzük.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Használati statisztika: az eszköz típusa, az operációs rendszer és a böngésző, amellyel a belépés történik, durva kategóriákként adódik hozzá a napi összesített számlálókhoz; magát a böngészőazonosítót nem tároljuk, és ezek a számok nem köthetők személyekhez.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Értesítések: a push értesítésekhez tároljuk az eszközöd tokenjét és a nyelvi beállításodat. Az értesítéseket bármikor kikapcsolhatod az eszköz beállításaiban.',
   'Verileri Nasıl Kullanırız': 'Hogyan használjuk az adataidat',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -330,12 +325,12 @@ const Map<String, String> cevirilerHu = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'A helyi tárhelyet csak arra használjuk, hogy bejelentkezve maradj, és megjegyezzük a beállításaidat, például a nyelvet és a témát. Nincsenek reklám- vagy nyomkövető sütik.',
   'Üçüncü Taraf Hizmetler': 'Harmadik féltől származó szolgáltatások',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'A sorozat- és filmadatok a TMDB-től, a streamingplatform-információk a JustWatch-tól származnak. A push értesítéseket a Google Firebase kézbesíti, az oldal forgalmát a Cloudflare védi. Ezekre a szolgáltatásokra a saját adatvédelmi szabályzataik vonatkoznak.',
   'Saklama ve Silme': 'Tárolás és törlés',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Az adataidat addig tároljuk, amíg a fiókod létezik. A beállításokban a „Fiókom törlése" gombbal véglegesen törölheted a fiókodat; az adataid azonnal, a biztonsági mentésekben lévő másolataik legkésőbb 14 napon belül törlődnek. A hibanaplók 30 nap után automatikusan törlődnek.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Az adataidat ZIP formátumban exportálhatod a beállításokból; az archívumot az e-mail-címedre küldjük.',
   'Güvenlik': 'Biztonság',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -458,12 +453,12 @@ const Map<String, String> cevirilerHu = {
   'Videolarda altyazı göster': 'Feliratok megjelenítése a videókon',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'A videóban elhangzott mondat fel van írva a képernyőre. A szöveg fordítása: angol a török ​​beszédben, török ​​más nyelveken.',
-  "Güncelleme gerekli": "Frissítés szükséges",
-  "Yeni sürüm var": "Új verzió érhető el",
+  'Güncelleme gerekli': 'Frissítés szükséges',
+  'Yeni sürüm var': 'Új verzió érhető el',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "A folytatáshoz telepítsd a dizi.jpg új verzióját.",
-  "Güncelle": "Frissítés",
-  "Daha sonra": "Később",
+      'A folytatáshoz telepítsd a dizi.jpg új verzióját.',
+  'Güncelle': 'Frissítés',
+  'Daha sonra': 'Később',
   'Takvim güncelleniyor': 'Naptár frissítése folyamatban',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'A naptárt nem sikerült frissíteni, a régi lista látható',
@@ -719,4 +714,107 @@ const Map<String, String> cevirilerHu = {
   '{} {} yayınlandı': '{} {} megjelent',
   'Yeni bölüm yayınlandı': 'Megjelent az új epizód',
   'Yeni bölümler': 'Új epizódok',
+  'Geri': 'Vissza',
+  'Karşılamayı kapat': 'Bevezető bezárása',
+  'Adım {} / {}': '{} / {} lépés',
+  'Hadi başlayalım': 'Vágjunk bele',
+  'Kaydet ve devam': 'Mentés és tovább',
+  '{} tanesini ekle': '{} kiválasztott hozzáadása',
+  'Şimdilik geç': 'Kihagyás most',
+  'Doğum tarihin ne zaman?': 'Mikor születtél?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Azért kérdezzük, hogy a korodnak megfelelő tartalmat mutassunk, és köszönthessünk a születésnapodon.',
+  'Gün': 'Nap',
+  'Ay': 'Hónap',
+  'Yıl': 'Év',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Nem szeretném megosztani a születési évemet',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'A születési dátumod nem jelenik meg nyilvánosan a profilodon. Csak a korodnak megfelelő tartalomhoz és a születésnapi köszöntéshez használjuk.',
+  'Ocak': 'Január',
+  'Şubat': 'Február',
+  'Mart': 'Március',
+  'Nisan': 'Április',
+  'Mayıs': 'Május',
+  'Haziran': 'Június',
+  'Temmuz': 'Július',
+  'Ağustos': 'Augusztus',
+  'Eylül': 'Szeptember',
+  'Ekim': 'Október',
+  'Kasım': 'November',
+  'Aralık': 'December',
+  'Verilerini yanında getir': 'Hozd magaddal az adataidat',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Ha egy másik alkalmazásban tartod számon, mit néztél, ide is áthozhatod. Nem kell nulláról kezdened.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt és Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Válaszd ki az exportált ZIP-fájlt, és átkerülnek a megnézett tartalmaid, az értékeléseid és a listáid.',
+  'Aktarılıyor...': 'Importálás...',
+  'ZIP dosyası seç': 'ZIP-fájl kiválasztása',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Nincs sietség: ezt később a Beállítások > Adataim résznél is megteheted.',
+  'Hangi filmleri izledin?': 'Mely filmeket láttad?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Itt vannak a legnézettebbek. Amire rákoppintasz, felkerül a megnézett tartalmaid közé.',
+  'SERİ FİLMLER': 'FILMSOROZATOK',
+  'Serilerden {} film eklendi': '{} film hozzáadva a filmsorozatokból',
+  'Film listesi yüklenemedi': 'A filmlistát nem sikerült betölteni',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Ezt a lépést kihagyhatod, később bármit hozzáadhatsz.',
+  '{} film izlediklerine eklendi':
+      '{} film hozzáadva a megnézett tartalmaidhoz',
+  'Film serileri': 'Filmsorozatok',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Ha egy sorozatot elejétől a végéig láttál, add hozzá egyetlen koppintással.',
+  'Seri bulunamadı': 'Nem található sorozat',
+  'Daha sonra tekrar deneyebilirsin.': 'Később újra megpróbálhatod.',
+  '{} film': '{} db film',
+  'Eklendi': 'Hozzáadva',
+  'Tümünü izledim': 'Mindet láttam',
+  'Peki ya diziler?': 'És a sorozatok?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Jelöld be, amit láttál – ahogy választasz, hozzuk a hasonlókat.',
+  'Dizi listesi yüklenemedi': 'A sorozatlistát nem sikerült betölteni',
+  'Seçtiklerine benzeyenler': 'A választásaidhoz hasonlók',
+  'Her şey hazır': 'Minden készen áll',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Nézd meg gyorsan, mi mindent tudsz a dizi.jpg-ben.',
+  'Profilini tamamla': 'Egészítsd ki a profilod',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'A Beállításokban bemutatkozást, profilképet és borítóképet adhatsz hozzá.',
+  'Takvimin seni bekliyor': 'Vár rád a naptárad',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'A követett sorozataid új epizódjai felkerülnek a naptárba, és értesítést küldünk róluk.',
+  'Puan ver, yorum yaz': 'Értékelj, szólj hozzá',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Értékelj epizódonként, írj hozzászólást spoilerfüggöny mögé, és készíts listákat.',
+  'Verilerin sende kalır': 'Az adataid nálad maradnak',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Az adataid csak a fiókodhoz kötve maradnak, és nem adjuk el őket. A Beállításokban mindet letöltheted, vagy teljesen törölheted a fiókodat.',
+  'Engellenen kullanıcılar': 'Letiltott felhasználók',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Nézd meg, kiket tiltottál le, és oldd fel a letiltást',
+  'Engellediğin kimse yok': 'Senkit sem tiltottál le',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Egy felhasználót az adott személy profilján lévő három pontos menüből tilthatsz le.',
+  '@{} engellensin mi?': '@{} letiltása?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Nem látjátok egymás bejegyzéseit, hozzászólásait és profilját; üzenet és hívás sem megy át. A köztetek lévő követés megszakad, és akkor sem áll helyre, ha feloldod a letiltást.',
+  'Bu kullanıcıyı engelledin': 'Letiltottad ezt a felhasználót',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Nem látod ennek a személynek a bejegyzéseit, hozzászólásait és üzeneteit; ez a személy sem látja a tieidet.',
+  '{} yeni bir yapımda: {}': '{} új alkotásban szerepel: {}',
+  'Favori kişinden yeni yapım': 'Új alkotás egy kedvencedtől',
+  '{} için bildirimler': 'Értesítések: {}',
+  'Tüm bildirimler': 'Minden értesítés',
+  'Uygulamada ve telefonda': 'Az alkalmazásban és a telefonon',
+  'Yalnız uygulama içi': 'Csak az alkalmazásban',
+  'Telefon bildirimi gönderilmez': 'Nem küldünk telefonos értesítést',
+  'Kapalı': 'Kikapcsolva',
+  'Bu kişi için bildirim yok': 'Nincs értesítés erről a személyről',
+  'Favori kişilerin yeni yapımları': 'Kedvenc személyeid új alkotásai',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kikapcsolva senki sem hívhat fel hanggal; a hívó azt látja, hogy a hanghívás "ki van kapcsolva"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kikapcsolva senki sem hívhat fel videóval; a hívó azt látja, hogy a videohívás "ki van kapcsolva"',
 };

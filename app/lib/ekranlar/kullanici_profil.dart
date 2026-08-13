@@ -104,6 +104,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       final girisli = context.watch<Oturum>().girisli;
       final benMi = p['ben_mi'] == true;
       final takipEdiyorum = p['takip_ediyorum'] == true;
+      // `engel`: BU kullanıcıyı BEN engelledim. Sunucu bayrağı yalnız
+      // ENGELLEYEN tarafa gönderir (karşı taraf beni engellediyse profil yine
+      // boş gelir ama bayrak GELMEZ — "seni engelledi" demek engellemeyi bir
+      // bildirime çevirirdi). Bayrak varken içerik sekmeleri hiç çizilmez:
+      // sunucu zaten boş liste dönüyor, ekranda "Yorum yok" yazmak yerine
+      // sebebini söyleyip geri alma yolunu göstermek gerekir.
+      final engelledim = p['engel'] == true;
       final yorumlar = (p['yorumlar'] as List<dynamic>? ?? []);
       final listeler = (p['listeler'] as List<dynamic>? ?? []);
       final izlenenler = (p['izlenenler'] as List<dynamic>? ?? []);
@@ -275,8 +282,16 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     _UyumKarti(uyum: p['uyum'] as Map<String, dynamic>),
                   ],
                   const SizedBox(height: 16),
+                  // ENGELLİ DURUMU — Takip/Mesaj düğmelerinin YERİNE geçer.
+                  // İkisi birden çizilseydi kullanıcı engellediği kişiye
+                  // "Mesaj" düğmesine basar ve 403 hatası okurdu.
+                  if (engelledim)
+                    _EngelKarti(
+                      isleniyor: _engelIsleniyor,
+                      onKaldir: _engelKaldir,
+                    ),
                   // Takip + Mesaj (kendi profilinde gösterme)
-                  if (!benMi && girisli)
+                  if (!benMi && girisli && !engelledim)
                     Row(
                       children: [
                         Expanded(
@@ -319,10 +334,11 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                   const SizedBox(height: 20),
                   // İki sekme: kendi profilimizle BİREBİR aynı widget
                   // (profil.dart > ProfilSekmeleri).
-                  ProfilSekmeleri(
-                    secili: _sekme,
-                    onSec: (i) => setState(() => _sekme = i),
-                  ),
+                  if (!engelledim)
+                    ProfilSekmeleri(
+                      secili: _sekme,
+                      onSec: (i) => setState(() => _sekme = i),
+                    ),
                   const SizedBox(height: 12),
                 ],
               ),
@@ -330,7 +346,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
             // Sekme içeriği gövdenin 16px yatay dolgusunun DIŞINDA durur:
             // yorum kartı akıştaki gibi ekranı sağdan sola TAM kaplasın,
             // içindeki fotoğraf/video da öyle (kendi profilimizle aynı düzen).
-            if (_sekme == 0)
+            // Engellediğim kişide sekme içeriği HİÇ çizilmez: sunucu boş liste
+            // döndüğü için buraya düşen dal "Bu kullanıcı henüz bir şey
+            // izlememiş" gibi YANLIŞ bir sebep gösterirdi. Doğru sebep
+            // yukarıdaki _EngelKarti'nda yazıyor.
+            if (engelledim)
+              const SizedBox.shrink()
+            else if (_sekme == 0)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: Column(
@@ -528,7 +550,13 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                 if (secim == 'sikayet') {
                   sikayetEtSheet(context, 'kullanici', p['id'] as int);
                 } else if (secim == 'engelle') {
-                  _engelleToggle();
+                  // ENGELLEME onay ister (yıkıcı: takip bağını koparır),
+                  // ENGELİ KALDIRMA istemez (onarıcı, kaybı yok).
+                  if (p['engelledim'] == true) {
+                    _engelleToggle();
+                  } else {
+                    _engelleSor();
+                  }
                 }
               },
               itemBuilder: (context) => [
@@ -582,15 +610,52 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     );
   }
 
+  /// Menüden "Engelle" seçildi: ÖNCE ONAY, sonra istek.
+  ///
+  /// ONAY ŞART çünkü engelleme YIKICI ve YAN ETKİLİ bir eylem: karşılıklı
+  /// takip KOPAR ve engel kaldırılsa bile geri gelmez. Onaysız bir menü
+  /// öğesi, yanlış dokunuşla kullanıcının takip ilişkisini sessizce silerdi.
+  /// "Engeli kaldır" yönü onay İSTEMEZ — yıkıcı değil, onarıcı bir eylemdir.
+  Future<void> _engelleSor() async {
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (dlg) => AlertDialog(
+        backgroundColor: DiziRenkler.koyuGri,
+        title: Text('@{} engellensin mi?'.cf([widget.kullaniciAdi])),
+        content: Text(
+          'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; '
+                  'mesaj ve arama da gidemez. Varsa takip bağınız kopar ve '
+                  'engeli kaldırsan bile geri gelmez.'
+              .c,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dlg, false),
+            child: Text('İptal'.c),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () => Navigator.pop(dlg, true),
+            child: Text('Engelle'.c),
+          ),
+        ],
+      ),
+    );
+    if (onay == true) await _engelleToggle();
+  }
+
+  bool _engelIsleniyor = false;
+
+  Future<void> _engelKaldir() => _engelleToggle();
+
   Future<void> _engelleToggle() async {
+    // Çift dokunuş iki toggle demektir: engel kurulur ve ANINDA geri açılır.
+    if (_engelIsleniyor) return;
+    setState(() => _engelIsleniyor = true);
     final messenger = ScaffoldMessenger.of(context);
     try {
       final engellendi = await Api.engelleToggle(widget.kullaniciAdi);
       if (!mounted) return;
-      setState(() {
-        _profil!['engelledim'] = engellendi;
-        if (engellendi) _profil!['takip_ediyorum'] = false;
-      });
       messenger.showSnackBar(
         SnackBar(
           content: Text(
@@ -598,9 +663,82 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
           ),
         ),
       );
+      // Profili SUNUCUDAN TAZELE: engelleme yalnız bir bayrağı çevirmiyor —
+      // sunucu artık içeriği de süzüyor (engellendiyse boş, engel kalktıysa
+      // geri gelen gönderiler). Yerel setState ile bayrağı çevirmek ekranı
+      // sunucuyla tutarsız bırakırdı (engel kalkınca liste boş kalırdı).
+      await _yukle();
     } catch (e) {
+      if (!mounted) return;
       messenger.showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (mounted) setState(() => _engelIsleniyor = false);
     }
+  }
+}
+
+/// Engellenen kullanıcının profilinde Takip/Mesaj düğmelerinin yerine geçen
+/// kart: durumu söyler ve tek dokunuşla geri almayı sunar.
+class _EngelKarti extends StatelessWidget {
+  final bool isleniyor;
+  final Future<void> Function() onKaldir;
+  const _EngelKarti({required this.isleniyor, required this.onKaldir});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: DiziRenkler.kart,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.block, color: Colors.redAccent, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Bu kullanıcıyı engelledin'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.'
+                .c,
+            style: TextStyle(
+              color: DiziRenkler.metin54,
+              fontSize: 12.5,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton.icon(
+              onPressed: isleniyor ? null : onKaldir,
+              style: FilledButton.styleFrom(
+                backgroundColor: DiziRenkler.koyuGri,
+                foregroundColor: DiziRenkler.metin,
+              ),
+              icon: isleniyor
+                  ? const SizedBox(
+                      width: 14,
+                      height: 14,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.lock_open, size: 18),
+              label: Text('Engeli kaldır'.c),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

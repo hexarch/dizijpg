@@ -8,7 +8,10 @@ import '../tema.dart';
 /// 09.08.2026: sesli/görüntülü arama bölümü eklendi (üstveri 90 gün, içerik
 /// KAYDEDİLMİYOR). `web/gizlilik.html` içindeki `GUNCELLEME` de aynı tarihe
 /// çekildi — `test/gizlilik_arama_test.dart` ikisinin eşitliğini doğruluyor.
-const gizlilikGuncelleme = '09.08.2026';
+/// 13.08.2026 (md. 37): yönetim panelindeki günlük AGREGAT cihaz sayaçları
+/// beyan edildi — ham User-Agent hiçbir yere yazılmıyor, sayılar kişiye
+/// bağlanamıyor.
+const gizlilikGuncelleme = '13.08.2026';
 const gizlilikIletisim = 'iletisim@dizijpg.com';
 
 /// Gizlilik politikası — girişsiz de erişilebilir (yonlendirme beyaz listesi).
@@ -80,6 +83,17 @@ class GizlilikEkrani extends StatelessWidget {
               'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz '
               'platformu, uygulama sürümü ve hata kayıtları. Bunlar '
               'güvenlik ve hata ayıklama için tutulur.',
+            ),
+            // md. 37 — yönetim panelindeki günlük AGREGAT cihaz sayaçları.
+            // İsteğin User-Agent'ından TÜRETİLEN kaba sınıf (tür/OS/tarayıcı)
+            // `cihaz_sayaclari` tablosundaki güne eklenir; ham User-Agent,
+            // kullanıcı kimliği, IP ve saat YAZILMAZ — kişi bazlı sorgu
+            // teknik olarak imkânsız, kayıtlar 400 gün sonra silinir.
+            _Madde(
+              'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve '
+              'tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam '
+              'sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu '
+              'sayılar kişilere bağlanamaz.',
             ),
             _Madde(
               'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '

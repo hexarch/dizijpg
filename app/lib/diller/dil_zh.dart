@@ -78,7 +78,7 @@ const Map<String, String> cevirilerZh = {
   'Tekrar dene': '重试',
   'Toplam İzleme Süresi': '总观看时长',
   'Tüm Zamanların En İyileri': '史上最佳',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       '将你的全部数据（观看、评分、评论、片单）导出为 TV Time 兼容的 ZIP，或导入来自其他应用的 ZIP。',
   'Tümünü Kaldır': '全部移除',
   'Tümünü İzledim': '全部标记已看',
@@ -234,7 +234,7 @@ const Map<String, String> cevirilerZh = {
   'Mesajı sil': '删除消息',
   'Mesaj silinemedi': '无法删除消息',
   'Bağlantı geçersiz veya sayfa bulunamadı': '链接无效或页面未找到',
-  'Keşfet\'e dön': '返回发现',
+  "Keşfet'e dön": '返回发现',
   'Düzenle': '编辑',
   'Mesajı düzenle': '编辑消息',
   'Yanıtlanıyor': '正在回复',
@@ -261,12 +261,7 @@ const Map<String, String> cevirilerZh = {
   'Abonelik': '订阅',
   'Kirala': '租赁',
   'Satın al': '购买',
-  'Hoş geldin!': '欢迎！',
-  'İzlemek istediğin dizi ve filmleri seç': '选择你想看的剧集和电影',
-  'Seçtiklerin "İzleyeceğim" listene eklenir': '你的选择会加入想看列表',
-  'Şimdilik atla': '暂时跳过',
   'Devam et': '继续',
-  '{} ekle': '添加 {}',
   'Şikayet et': '举报',
   'Engelle': '屏蔽',
   'Engeli kaldır': '取消屏蔽',
@@ -312,7 +307,9 @@ const Map<String, String> cevirilerZh = {
       '上传的媒体：你添加到个人资料、评论和消息中的照片、GIF、视频和语音录音。',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       '技术数据：IP 地址、大致位置（国家/城市级别）、设备平台、应用版本和错误日志。这些数据用于安全防护和排查故障。',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      '使用统计：以何种设备类型、操作系统和浏览器访问，会按粗略类别计入每日总计数器；浏览器标识本身不会保存，这些数字也无法关联到具体个人。',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       '通知：为发送推送通知，我们会保存你的设备令牌和语言偏好。你可以随时在设备设置中关闭通知。',
   'Verileri Nasıl Kullanırız': '我们如何使用你的数据',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -321,12 +318,12 @@ const Map<String, String> cevirilerZh = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       '本地存储仅用于保持你的登录状态，以及记住语言、主题等偏好。没有任何广告或跟踪 Cookie。',
   'Üçüncü Taraf Hizmetler': '第三方服务',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       '剧集和电影数据来自 TMDB，流媒体平台信息来自 JustWatch。推送通知通过 Google Firebase 送达，网站流量由 Cloudflare 保护。这些服务适用其各自的隐私政策。',
   'Saklama ve Silme': '保存与删除',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       '你的数据在账号存续期间保留。通过设置中的“删除我的账号”可以永久删除账号；数据会立即删除，备份中的副本最迟在 14 天内清除。错误日志在 30 天后自动删除。',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       '你可以在设置中将数据导出为 ZIP；压缩包会发送到你的邮箱。',
   'Güvenlik': '安全',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -440,11 +437,11 @@ const Map<String, String> cevirilerZh = {
   'Videolarda altyazı göster': '在视频上显示字幕',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       '视频中所说的句子写在屏幕上。文本翻译：土耳其语语音英语，其他语言土耳其语。',
-  "Güncelleme gerekli": "需要更新",
-  "Yeni sürüm var": "有新版本",
-  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.": "请安装 dizi.jpg 新版本以继续。",
-  "Güncelle": "更新",
-  "Daha sonra": "稍后",
+  'Güncelleme gerekli': '需要更新',
+  'Yeni sürüm var': '有新版本',
+  "Devam etmek için dizi.jpg'in yeni sürümünü yükle.": '请安装 dizi.jpg 新版本以继续。',
+  'Güncelle': '更新',
+  'Daha sonra': '稍后',
   'Takvim güncelleniyor': '正在更新日历',
   'Takvim güncellenemedi, eski liste gösteriliyor': '无法更新日历，正在显示旧列表',
   'Bazı diziler yüklenemedi, liste eksik olabilir': '部分剧集加载失败，列表可能不完整',
@@ -679,4 +676,103 @@ const Map<String, String> cevirilerZh = {
   '{} {} yayınlandı': '{} {} 已上线',
   'Yeni bölüm yayınlandı': '新一集已上线',
   'Yeni bölümler': '新剧集',
+  'Geri': '返回',
+  'Karşılamayı kapat': '关闭引导',
+  'Adım {} / {}': '第 {} 步 / 共 {} 步',
+  'Hadi başlayalım': '开始吧',
+  'Kaydet ve devam': '保存并继续',
+  '{} tanesini ekle': '添加选中的 {} 部',
+  'Şimdilik geç': '暂时跳过',
+  'Doğum tarihin ne zaman?': '你的生日是哪天？',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      '我们只是想给你推荐适龄内容，并在生日那天送上祝福。',
+  'Gün': '日',
+  'Ay': '月',
+  'Yıl': '年',
+  'Doğum yılımı paylaşmak istemiyorum': '不想公开我的出生年份',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      '你的生日不会公开显示在个人资料上，只用于适龄内容和生日祝福。',
+  'Ocak': '1月',
+  'Şubat': '2月',
+  'Mart': '3月',
+  'Nisan': '4月',
+  'Mayıs': '5月',
+  'Haziran': '6月',
+  'Temmuz': '7月',
+  'Ağustos': '8月',
+  'Eylül': '9月',
+  'Ekim': '10月',
+  'Kasım': '11月',
+  'Aralık': '12月',
+  'Verilerini yanında getir': '把你的数据一起带过来',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      '如果你在别的应用里记录过观看，可以搬到这里来，不用从零开始。',
+  'TV Time, Trakt ve Letterboxd': 'TV Time、Trakt 和 Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      '选择你导出的 ZIP 文件，把观看记录、评分和片单一起导进来。',
+  'Aktarılıyor...': '导入中...',
+  'ZIP dosyası seç': '选择 ZIP 文件',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      '不用着急：以后也可以在设置 > 我的数据中完成。',
+  'Hangi filmleri izledin?': '你看过哪些电影？',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      '这些是最多人看的。点一下，就加入你的观看记录。',
+  'SERİ FİLMLER': '系列电影',
+  'Serilerden {} film eklendi': '已从系列中添加 {} 部电影',
+  'Film listesi yüklenemedi': '无法加载电影列表',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      '可以先跳过这一步，之后再添加想要的作品。',
+  '{} film izlediklerine eklendi': '已将 {} 部电影加入观看记录',
+  'Film serileri': '电影系列',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      '如果一个系列你从头看到尾，一键就能全部添加。',
+  'Seri bulunamadı': '未找到系列',
+  'Daha sonra tekrar deneyebilirsin.': '你可以稍后再试。',
+  '{} film': '{} 部电影',
+  'Eklendi': '已添加',
+  'Tümünü izledim': '全部看过',
+  'Peki ya diziler?': '那剧集呢？',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      '标记你看过的；选得越多，我们越能带来相似的作品。',
+  'Dizi listesi yüklenemedi': '无法加载剧集列表',
+  'Seçtiklerine benzeyenler': '和你的选择相似的作品',
+  'Her şey hazır': '一切就绪',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.": '快速看看在 dizi.jpg 你能做些什么。',
+  'Profilini tamamla': '完善你的个人资料',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      '你可以在设置里添加简介、头像和封面图。',
+  'Takvimin seni bekliyor': '日历在等你',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      '你追的剧有新剧集时会出现在日历里，我们也会发通知提醒你。',
+  'Puan ver, yorum yaz': '评分、写评论',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      '一集一集打分，用剧透遮罩写评论，还能创建片单。',
+  'Verilerin sende kalır': '数据始终属于你',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      '你的数据只与你的账号绑定，绝不出售。在设置里可以全部下载，也可以彻底删除账号。',
+  'Engellenen kullanıcılar': '已屏蔽的用户',
+  'Engellediğin kişileri gör, engeli kaldır': '查看你屏蔽的人，或取消屏蔽',
+  'Engellediğin kimse yok': '你还没有屏蔽任何人',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      '可以在用户主页的三点菜单中屏蔽对方。',
+  '@{} engellensin mi?': '要屏蔽 @{} 吗？',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      '你们将看不到彼此的帖子、评论和主页，消息和通话也无法送达。若你们之间存在关注关系，该关系将被解除；即使日后取消屏蔽，也不会恢复。',
+  'Bu kullanıcıyı engelledin': '你已屏蔽该用户',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      '你看不到对方的帖子、评论和消息；对方也看不到你的。',
+  '{} yeni bir yapımda: {}': '{} 有新作品：{}',
+  'Favori kişinden yeni yapım': '收藏的人有新作品',
+  '{} için bildirimler': '{} 的通知',
+  'Tüm bildirimler': '全部通知',
+  'Uygulamada ve telefonda': '应用内和手机上',
+  'Yalnız uygulama içi': '仅应用内',
+  'Telefon bildirimi gönderilmez': '不发送手机通知',
+  'Kapalı': '关闭',
+  'Bu kişi için bildirim yok': '不接收这个人的通知',
+  'Favori kişilerin yeni yapımları': '收藏人物的新作品',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      '关闭后没人能给你打语音电话；来电者会看到“已关闭”提示',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      '关闭后没人能给你打视频电话；来电者会看到“已关闭”提示',
 };

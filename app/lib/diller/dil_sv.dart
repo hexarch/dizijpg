@@ -82,7 +82,7 @@ const Map<String, String> cevirilerSv = {
   'Tekrar dene': 'Försök igen',
   'Toplam İzleme Süresi': 'Total skärmtid',
   'Tüm Zamanların En İyileri': 'Bästa genom tiderna',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Exportera alla dina data (historik, betyg, kommentarer, listor) som en TV Time-kompatibel ZIP eller importera en ZIP från en annan app.',
   'Tümünü Kaldır': 'Ta bort alla',
   'Tümünü İzledim': 'Har sett alla',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerSv = {
   'Mesaj silinemedi': 'Meddelandet kunde inte raderas',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Länken är ogiltig eller sidan hittades inte',
-  'Keşfet\'e dön': 'Tillbaka till Utforska',
+  "Keşfet'e dön": 'Tillbaka till Utforska',
   'Düzenle': 'Redigera',
   'Mesajı düzenle': 'Redigera meddelande',
   'Yanıtlanıyor': 'Svarar',
@@ -268,13 +268,7 @@ const Map<String, String> cevirilerSv = {
   'Abonelik': 'Prenumeration',
   'Kirala': 'Hyr',
   'Satın al': 'Köp',
-  'Hoş geldin!': 'Välkommen!',
-  'İzlemek istediğin dizi ve filmleri seç': 'Välj serier och filmer du vill se',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Dina val läggs till i din bevakningslista',
-  'Şimdilik atla': 'Hoppa över nu',
   'Devam et': 'Fortsätt',
-  '{} ekle': 'Lägg till {}',
   'Şikayet et': 'Anmäl',
   'Engelle': 'Blockera',
   'Engeli kaldır': 'Avblockera',
@@ -320,7 +314,9 @@ const Map<String, String> cevirilerSv = {
       'Uppladdade medier: foton, GIF:ar, videor och röstinspelningar som du lägger till i din profil, dina kommentarer och meddelanden.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Tekniskt: IP-adress, ungefärlig plats (land/stad), enhetsplattform, appversion och felloggar. Dessa sparas för säkerhet och felsökning.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Användningsstatistik: vilken enhetstyp, vilket operativsystem och vilken webbläsare besöket sker med läggs till i dagliga totalräknare som grova kategorier; själva webbläsaridentiteten sparas inte och siffrorna går inte att koppla till personer.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Aviseringar: för pushaviseringar sparar vi din enhetstoken och ditt språkval. Du kan när som helst stänga av aviseringar i enhetens inställningar.',
   'Verileri Nasıl Kullanırız': 'Hur vi använder dina uppgifter',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -329,12 +325,12 @@ const Map<String, String> cevirilerSv = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Vi använder lokal lagring endast för att hålla dig inloggad och komma ihåg val som språk och tema. Det finns inga reklam- eller spårningscookies.',
   'Üçüncü Taraf Hizmetler': 'Tredjepartstjänster',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Serie- och filmdata kommer från TMDB, information om streamingtjänster från JustWatch. Pushaviseringar levereras via Google Firebase och webbplatstrafiken skyddas av Cloudflare. För dessa tjänster gäller deras egna integritetspolicyer.',
   'Saklama ve Silme': 'Lagring och radering',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Dina uppgifter sparas så länge ditt konto finns. Med "Radera mitt konto" i inställningarna kan du radera kontot permanent; dina uppgifter raderas direkt och kopior i säkerhetskopior senast inom 14 dagar. Felloggar raderas automatiskt efter 30 dagar.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Du kan exportera dina uppgifter som ZIP från inställningarna; arkivet skickas till din e-postadress.',
   'Güvenlik': 'Säkerhet',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -456,12 +452,12 @@ const Map<String, String> cevirilerSv = {
   'Videolarda altyazı göster': 'Visa undertexter på videor',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Meningen som uttalas i videon skrivs på skärmen. Texten är översättning: engelska på turkiskt tal, turkiska på andra språk.',
-  "Güncelleme gerekli": "Uppdatering krävs",
-  "Yeni sürüm var": "Ny version tillgänglig",
+  'Güncelleme gerekli': 'Uppdatering krävs',
+  'Yeni sürüm var': 'Ny version tillgänglig',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Installera den nya versionen av dizi.jpg för att fortsätta.",
-  "Güncelle": "Uppdatera",
-  "Daha sonra": "Senare",
+      'Installera den nya versionen av dizi.jpg för att fortsätta.',
+  'Güncelle': 'Uppdatera',
+  'Daha sonra': 'Senare',
   'Takvim güncelleniyor': 'Kalendern uppdateras',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalendern kunde inte uppdateras, visar den gamla listan',
@@ -717,4 +713,105 @@ const Map<String, String> cevirilerSv = {
   '{} {} yayınlandı': '{} {} har släppts',
   'Yeni bölüm yayınlandı': 'Nytt avsnitt har släppts',
   'Yeni bölümler': 'Nya avsnitt',
+  'Geri': 'Tillbaka',
+  'Karşılamayı kapat': 'Stäng introduktionen',
+  'Adım {} / {}': 'Steg {} / {}',
+  'Hadi başlayalım': 'Nu kör vi',
+  'Kaydet ve devam': 'Spara och fortsätt',
+  '{} tanesini ekle': 'Lägg till {}',
+  'Şimdilik geç': 'Hoppa över nu',
+  'Doğum tarihin ne zaman?': 'När är du född?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Vi frågar för att kunna visa åldersanpassat innehåll och för att kunna fira din födelsedag.',
+  'Gün': 'Dag',
+  'Ay': 'Månad',
+  'Yıl': 'År',
+  'Doğum yılımı paylaşmak istemiyorum': 'Jag vill inte dela mitt födelseår',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Ditt födelsedatum visas aldrig offentligt på din profil. Det används bara för åldersanpassat innehåll och födelsedagshälsningar.',
+  'Ocak': 'januari',
+  'Şubat': 'februari',
+  'Mart': 'mars',
+  'Nisan': 'april',
+  'Mayıs': 'maj',
+  'Haziran': 'juni',
+  'Temmuz': 'juli',
+  'Ağustos': 'augusti',
+  'Eylül': 'september',
+  'Ekim': 'oktober',
+  'Kasım': 'november',
+  'Aralık': 'december',
+  'Verilerini yanında getir': 'Ta med dig dina data',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Om du håller koll på vad du ser i en annan app kan du flytta hit allt. Du behöver inte börja om från början.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt och Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Välj ZIP-filen du har exporterat, så följer din tittarhistorik, dina betyg och dina listor med.',
+  'Aktarılıyor...': 'Importerar...',
+  'ZIP dosyası seç': 'Välj ZIP-fil',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Ingen brådska: du kan göra det här senare under Inställningar > Mina data.',
+  'Hangi filmleri izledin?': 'Vilka filmer har du sett?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Här är de mest sedda titlarna. Tryck på det du har sett, så lägger vi till det i din tittarhistorik.',
+  'SERİ FİLMLER': 'FILMSERIER',
+  'Serilerden {} film eklendi': '{} filmer tillagda från filmserier',
+  'Film listesi yüklenemedi': 'Filmlistan kunde inte laddas',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Du kan hoppa över det här steget och lägga till det du vill senare.',
+  '{} film izlediklerine eklendi': '{} filmer tillagda i din tittarhistorik',
+  'Film serileri': 'Filmserier',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Har du sett en hel filmserie från början till slut? Lägg till den med ett tryck.',
+  'Seri bulunamadı': 'Inga filmserier hittades',
+  'Daha sonra tekrar deneyebilirsin.': 'Du kan försöka igen senare.',
+  '{} film': '{} filmer',
+  'Eklendi': 'Tillagd',
+  'Tümünü izledim': 'Har sett alla',
+  'Peki ya diziler?': 'Och serierna då?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Markera det du har sett; ju fler du väljer, desto mer liknande titlar visar vi.',
+  'Dizi listesi yüklenemedi': 'Serielistan kunde inte laddas',
+  'Seçtiklerine benzeyenler': 'Liknar dina val',
+  'Her şey hazır': 'Allt är klart',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Ta en snabb titt på vad du kan göra i dizi.jpg.',
+  'Profilini tamamla': 'Gör klart din profil',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'I Inställningar kan du lägga till en biografi, en profilbild och en omslagsbild.',
+  'Takvimin seni bekliyor': 'Din kalender väntar på dig',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Nya avsnitt av serierna du ser hamnar i kalendern, och vi säger till med en avisering.',
+  'Puan ver, yorum yaz': 'Betygsätt och kommentera',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Betygsätt avsnitt för avsnitt, skriv kommentarer bakom ett spoilerskydd och skapa listor.',
+  'Verilerin sende kalır': 'Dina data förblir dina',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Dina data hör bara till ditt konto och säljs aldrig. I Inställningar kan du ladda ner allt eller radera ditt konto helt.',
+  'Engellenen kullanıcılar': 'Blockerade användare',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Se vilka du har blockerat och avblockera dem',
+  'Engellediğin kimse yok': 'Du har inte blockerat någon',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Du kan blockera någon via trepunktsmenyn på profilen.',
+  '@{} engellensin mi?': 'Blockera @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Ni kan inte se varandras inlägg, kommentarer eller profiler, och meddelanden och samtal går inte fram. En befintlig följarrelation bryts och kommer inte tillbaka, även om du tar bort blockeringen.',
+  'Bu kullanıcıyı engelledin': 'Du har blockerat den här användaren',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Du ser inte den här personens inlägg, kommentarer eller meddelanden, och personen ser inte dina.',
+  '{} yeni bir yapımda: {}': '{} medverkar i en ny titel: {}',
+  'Favori kişinden yeni yapım': 'Ny titel med en favoritperson',
+  '{} için bildirimler': 'Aviseringar för {}',
+  'Tüm bildirimler': 'Alla aviseringar',
+  'Uygulamada ve telefonda': 'I appen och på telefonen',
+  'Yalnız uygulama içi': 'Bara i appen',
+  'Telefon bildirimi gönderilmez': 'Ingen avisering skickas till telefonen',
+  'Kapalı': 'Av',
+  'Bu kişi için bildirim yok': 'Inga aviseringar för den här personen',
+  'Favori kişilerin yeni yapımları': 'Nya titlar med favoritpersoner',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'När det är av kan ingen ringa dig med röst; den som ringer ser meddelandet "avstängda"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'När det är av kan ingen videoringa dig; den som ringer ser meddelandet "avstängda"',
 };

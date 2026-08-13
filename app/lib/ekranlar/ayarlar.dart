@@ -1232,6 +1232,9 @@ class _BildirimTercihleriSheetState extends State<_BildirimTercihleriSheet> {
     ('bildir_etiket', 'Etiketlenmeler'),
     // Md. 27: izlediğin dizinin yeni bölümü (yalnız bir öncekini izlediysen).
     ('bildir_bolum', 'Yeni bölümler'),
+    // Md. 28: favori kişinin (oyuncu/yönetmen) yeni dizi/filmi. Kişi BAZINDA
+    // ayar kişinin kendi sayfasında (üç durumlu); bu satır GENEL anahtardır.
+    ('bildir_kisi', 'Favori kişilerin yeni yapımları'),
   ];
 
   @override
@@ -1660,6 +1663,31 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                   final yonlendirici = GoRouter.of(context);
                   Navigator.pop(context);
                   yonlendirici.push('/gizlenen-yorumlar');
+                },
+              ),
+              // Engellenen kullanıcıların TEK toplu yönetim yeri (md. 19).
+              // Buradan girilmezse engel fiilen kalıcı olur: engellenen kişi
+              // aramada/listelerde görünmediği için profiline ulaşılamaz.
+              // Sheet ÖNCE kapanır, sonra gidilir (üstteki satırla aynı kalıp).
+              ListTile(
+                key: const Key('ayar-engellenenler'),
+                leading: Icon(
+                  Icons.block_outlined,
+                  color: DiziRenkler.sariMetin,
+                ),
+                title: Text(
+                  'Engellenen kullanıcılar'.c,
+                  style: TextStyle(color: DiziRenkler.metin, fontSize: 15),
+                ),
+                subtitle: Text(
+                  'Engellediğin kişileri gör, engeli kaldır'.c,
+                  style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+                ),
+                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+                onTap: () {
+                  final yonlendirici = GoRouter.of(context);
+                  Navigator.pop(context);
+                  yonlendirici.push('/engellenenler');
                 },
               ),
               Padding(

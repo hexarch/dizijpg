@@ -1,6 +1,39 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-13 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — ✅ MD. 25 İLK AÇILIŞ KARŞILAMA AKIŞI (yerelde, ÇEVİRİ + dağıtım BEKLİYOR)
+İstek birebir: girişten SONRA ilk açılışta sırayla (1) doğum tarihi, (2) dışarıdan
+veri aktarma, (3) izlenen FİLMLER + görünür "SERİ FİLMLER" düğmesi ("tümünü
+izledim" serinin tamamını ekler), (4) izlenen DİZİLER + ALAKALI (kümelenmiş)
+öneri, (5) uygulama tanıtımı.
+
+Mevcut `karsilama.dart` tek adımlık poster ızgarasıydı; ÜSTÜNE kuruldu, paralel
+sistem yazılmadı. `Oturum.karsilamaGerekli` tetikleyicisi ve `/karsilama` rotası
+DEĞİŞMEDİ — yeni rota gerekmiyor.
+
+* **Atlanabilir**: her adımda "Şimdilik geç" (adımı geçer) + üstte kapatma
+  (akışı bitirir). Yarıda bırakılsa da akış BİR DAHA açılmaz.
+* **Bitti bayrağı SUNUCUDA** (`kullanicilar.karsilama_bitti`) + yerel kopya
+  (`SharedPreferences: karsilama_bitti`). Akış hesaba ait olduğu için cihaz
+  değişince tekrar sorulmaz; yerel kopya yalnız açılışta ağ beklememek için.
+* **Doğum tarihi**: `dogum_gun/dogum_ay/dogum_yil` (yıl İSTEĞE BAĞLI — "doğum
+  yılımı paylaşmak istemiyorum"). Herkese açık profilde GÖSTERİLMEZ; yalnız
+  sahibine `GET /karsilama` döner. Amaç: yaş doğrulama + md. 36 doğum günü.
+* **Veri aktarma yeniden yazılmadı**: 2. adım mevcut `Api.veriIceAktar`
+  (`backend/veri_aktar.js`) ucunu çağırıyor.
+* **Seri filmler**: `GET /karsilama/seriler` — 30 seri İSİMDEN çözülüyor
+  (`/search/collection` + `/collection/{id}`, 7 gün önbellek + Cloudflare).
+  "Tümünü izledim" → `POST /karsilama/toplu-durum` (tek istek, tek toplu INSERT).
+* **Kümelenmiş öneri**: dizi seçildikçe `/tmdb/tv/{id}/recommendations` ile
+  "Seçtiklerine benzeyenler" bölümü doluyor; oturum başına EN ÇOK 6 istek.
+* Migrasyon: `backend/migrasyon-2026-08-13e.sql` (+ sema.sql).
+* Kanıt: `app/test/karsilama_akisi_test.dart` (11 test) · `flutter test` tamamı
+  yeşil · `npm test` 799/799.
+* **BEKLEYEN**: 61 yeni çeviri anahtarı 45 dile eklenmeli (12'si ay adı).
+  Artık kullanılmayanlar (silinebilir): `Hoş geldin!`,
+  `İzlemek istediğin dizi ve filmleri seç`,
+  `Seçtiklerin "İzleyeceğim" listene eklenir`, `Şimdilik atla`, `{} ekle`.
+
 ## 2026-08-13 — ✅ MD. 22 TEKRAR İZLEME (yerelde, dağıtım BEKLİYOR)
 İstek birebir: "Bir dizi/film tekrar izlenebilmeli. Göz işaretinin yanında
 1-2-3...10 gibi sayı olacak, sayı şekillenecek; izlenme saati de ona göre
@@ -65,6 +98,76 @@ uyumu (bunlar kişiye değil ADA göre çekimlenir).
 `app/test/cinsiyetsiz_dil_test.dart` (4 test) — ileride biri eril metin
 eklerse yakalar; nesne kaynaklı çekimin "düzeltilmesini" de engeller.
 
+## 2026-08-13 (c) — MD. 25 KARŞILAMA + MD. 19 ENGELLEME + MD. 28 FAVORİ KİŞİ
+## BİLDİRİMİ + GİZLİLİK MADDESİ 🚀 (1.40.0+86)
+Dört ajan paralel + çeviri turu; `server.js`te herkese ayrı bölge verildi.
+
+### Md. 19 — kullanıcı engelleme (EN ÖNEMLİ BULGU)
+Engelleme şimdiye kadar YALNIZ YAZMADA zorlanıyormuş, OKUMADA değil (kodda
+"bilinçli" diye yazılıydı): engellediğin kişinin yorumları dizi sayfasında,
+adı aramada, sohbeti mesaj listesinde GÖRÜNMEYE DEVAM EDİYORDU.
+11 uç daha süzüldü; üçü kod okurken çıktı ve ilk listede yoktu:
+`/arama/gecmis`, `/listeler/:id` ve en sinsisi **`/ceviri/:yorumId`** —
+gönderi METNİNİ döndürüyor, yani `/yorum/:id` 404 verse bile engellenen
+kişinin yorumu "çeviri" olarak okunabiliyordu.
+`/sohbetler`de okunmamış ROZET SAYACI da süzüldü (yoksa hiç açılamayan mesaj
+rozette sonsuza kilitleniyordu).
+KARARLAR: yazma kapıları 403 değil **404** döner (403 "var ama sana kapalı"
+demek olurdu ve engellenene engellendiğini ele verirdi); profil 404 değil
+**boş profil** (404 olsaydı engeli kaldırma düğmesine ulaşılamazdı); `engel`
+bayrağı YALNIZ engelleyene gider. Engelleme iki yöndeki takibi koparır (arama
+ve DM izinleri karşılıklı takibe bakıyor). Mesaj/gönderi SİLİNMEZ, engel
+kalkınca geri gelir. İndeks `(engellenen_id, engelleyen_id)` yapıldı →
+ters yön dalı indeks-only. 43 backend + 9 app testi.
+
+### Md. 28 — favori kişinin yeni yapımı
+`bildirimler.tur='kisi'` + `kisi_id`/`icerik_tur` sütunları. Tekil anahtarda
+kişi id'si YOK (`kullanici_id, icerik_tur, tmdb_id`): bir filmde üç favori
+oyuncun olabilir, kişi anahtara girseydi aynı film üç kez bildirilirdi.
+Kişi bazlı tercih `favoriler.bildirim` (üç durum: acik/uygulama/kapali) —
+ayrı tablo değil, çünkü tercih ancak favori bağlamında anlamlı ve favori
+silinince kendiliğinden gitmeli. "Yalnız uygulama içi" = satır yazılır, push
+gitmez. Pencere 21 gün + günde bir tur (kişi kredileri TMDB'ye elle giriliyor,
+kadro vizyondan günler sonra tamamlanabiliyor). Kişi başına TEK TMDB çağrısı
+(`/person/{id}?append_to_response=combined_credits`). 63 backend + 34 app testi.
+EK: md.19'un bıraktığı boşluk kapatıldı — engellenen kişi `@etiket` ile
+bildirim gönderemiyor artık (`engelSuzgec` ile tek sorguda, N+1 yok).
+
+### Md. 25 — ilk açılış karşılama akışı (5 adım)
+Doğum tarihi → veri aktarma → filmler (+SERİ FİLMLER) → diziler (kümelenmiş
+öneri) → tanıtım. Mevcut `karsilamaGerekli` mekanizmasının ÜSTÜNE kuruldu.
+Doğum tarihi **üç ayrı sütun** (gün/ay/yıl, yıl NULL olabilir): tek `DATE`'te
+"yıl bilinmiyor" hâli ancak uydurma bir yılla temsil edilirdi ve o sentinel
+er geç gerçek sanılırdı. Herkese açık profil ucuna EKLENMEDİ.
+Bayrak sunucuda (`karsilama_bitti`) — cihaz değiştirene 5 adım baştan
+sorulmasın. Her adımda "Şimdilik geç"; X ile kapatmak da bayrağı yazar.
+Öneri: seçim başına 1 istek, oturum başına en fazla 6.
+İçe aktarma için YENİ KOD YOK, mevcut TV Time akışına bağlandı.
+**ANA OTURUMUN CANLIDA YAKALADIĞI HATA:** `/karsilama/seriler` koleksiyon
+id'lerini isimden çözüyordu ve "ilk posterli sonucu al" diyordu →
+'The Lord of the Rings' için **"The Making of The Lord of the Rings
+Collection"** (yapım belgeselleri) geliyordu; kullanıcı "Tümünü izledim"
+deseydi kitaplığına belgeseller yazılacaktı. `koleksiyonSec()` eklendi
+(belgesel kalıpları elenir, tam ad eşleşmesi önce, eşitlikte posterli) —
+canlıda doğrulandı: artık "Yüzüklerin Efendisi [Seri], 3 film"; seri sayısı
+28 → 30. 8 test + kaynak kilidi.
+
+### Gizlilik + çeviri
+Politikaya "Kullanım istatistikleri" maddesi (md.37'nin agregat sayaçları)
+eklendi — hem uygulama ekranı hem `web/gizlilik.html`in 46 PARALEL DİZİSİ;
+kayma testle kilitlendi (mutasyonla kırmızıya döndürüldü). Tarih 13.08.2026.
+Çeviri: **81 yeni anahtar** (79 beklenen + 2 SÜRÜKLENME: ayarlardaki arama
+izni açıklamaları kodda güncellenmiş ama çevirileri eski metinde kalmış, 45
+dilde Türkçeye düşüyormuş) + 5 ölü anahtar silindi → **45 dil × 705 anahtar**.
+
+### Kanıt ve dağıtım
+`npm test` **813** · `flutter test` **1202** · analyze 0 hata/uyarı (85 info).
+Migrasyonlar: 13c (md.28), 13d (engelleme indeksi), 13e (karşılama) uygulandı.
+Canlı: yeni uçlar 401/200 doğru, `/karsilama/seriler` 30 seri, gizlilik
+sayfası ve 13.08.2026 tarihi yerinde, log temiz, version.json 1.40.0+86,
+bootstrap `main.e46bb4d3070d.dart.js`.
+Paketler: `dizijpg.apk` + `dizijpg-1.40.0+86.aab`; not `surum-notu-1.40.0.txt`.
+
 ## 2026-08-13 (b) — MD. 37 CİHAZ DAĞILIMI + MD. 22 TEKRAR İZLEME + ARAMA
 ## ÖNBELLEĞİ 🚀 (1.39.0+85)
 Üç ajan paralel; her birine `server.js`te AYRI BÖLGE verildi (admin uçları /
@@ -126,13 +229,27 @@ Canlı: log temiz, `cihaz_sayaclari` yazmaya başladı, boş arama başlığı
 doğrulandı, version.json 1.39.0+85, bootstrap `main.132531e4015d.dart.js`.
 Paketler: `dizijpg.apk` + `dizijpg-1.39.0+85.aab`, not: `surum-notu-1.39.0.txt`.
 
-### ⬜ KULLANICI KARARI BEKLİYOR — gizlilik
+### ✅ KULLANICI KARARI VERİLDİ — gizlilik politikasına cümle eklendi
 Cihaz sayaçları YENİ bir toplama. Ham UA saklanmıyor, kişiye bağlanamıyor,
 yalnız günlük agregat sayı tutuluyor; Android uygulaması YENİ bir veri
 GÖNDERMİYOR (UA zaten her HTTP isteğinin standart parçası, biz saklamıyoruz).
 Bu yüzden Play Data Safety beyanının değişmesi GEREKMEYEBİLİR; yine de
 gizlilik politikasına "site kullanım istatistikleri (agregat)" cümlesi
-eklemek dürüst ve ucuz. KARAR KULLANICININ.
+eklemek dürüst ve ucuz. KULLANICI "cümle ekle" dedi → eklendi.
+
+Madde "Topladığımız Veriler" bölümünde, `Teknik: IP adresi...` maddesinin
+HEMEN ALTINDA (mantıksal komşu): *"Kullanım istatistikleri: hangi cihaz türü,
+işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam
+sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar
+kişilere bağlanamaz."* — 45 dile çevrildi (628 → 629 anahtar) ve
+`web/gizlilik.html`de 46 dilin **hepsine 10. indekse** girdi (diziler
+indeksle eşleşiyor; `YAPI` indeksleri +1 kaydırıldı, 29-33 → 30-34).
+Son güncelleme 09.08.2026 → **13.08.2026** (hem `gizlilik.dart` hem
+`GUNCELLEME`). KİLİT: `app/test/gizlilik_cihaz_sayaci_test.dart` (12 test) —
+madde ekranda çiziliyor mu, 45 dilde var ve çevrilmiş mi, 46 dizinin uzunluğu
+eşit mi (tek dile fazladan giriş = tüm sayfa kayar; kasten bozup KIRMIZI
+olduğu görüldü). Sürüm artırılmadı, dağıtım yapılmadı — bir sonraki
+dağıtımda `web/gizlilik.html` de gitmeli.
 
 ## 2026-08-13 — MD. 27 YENİ BÖLÜM BİLDİRİMİ + CİNSİYETSİZ DİL 🚀 (1.38.0+84)
 Dört ajan paralel çalıştı; ana oturum birleştirip dağıttı.

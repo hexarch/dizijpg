@@ -82,7 +82,7 @@ const Map<String, String> cevirilerNl = {
   'Tekrar dene': 'Opnieuw proberen',
   'Toplam İzleme Süresi': 'Totale schermtijd',
   'Tüm Zamanların En İyileri': 'De beste aller tijden',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Exporteer al je gegevens (kijkgeschiedenis, beoordelingen, reacties, lijsten) als TV Time-compatibele ZIP of importeer een ZIP uit een andere app.',
   'Tümünü Kaldır': 'Alles verwijderen',
   'Tümünü İzledim': 'Alles gezien',
@@ -239,7 +239,7 @@ const Map<String, String> cevirilerNl = {
   'Mesaj silinemedi': 'Bericht kon niet worden verwijderd',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link is ongeldig of pagina niet gevonden',
-  'Keşfet\'e dön': 'Terug naar Ontdekken',
+  "Keşfet'e dön": 'Terug naar Ontdekken',
   'Düzenle': 'Bewerken',
   'Mesajı düzenle': 'Bericht bewerken',
   'Yanıtlanıyor': 'Reageren',
@@ -267,14 +267,7 @@ const Map<String, String> cevirilerNl = {
   'Abonelik': 'Abonnement',
   'Kirala': 'Huren',
   'Satın al': 'Kopen',
-  'Hoş geldin!': 'Welkom!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Kies series en films die je wilt kijken',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Je keuzes worden aan je kijklijst toegevoegd',
-  'Şimdilik atla': 'Nu overslaan',
   'Devam et': 'Doorgaan',
-  '{} ekle': '{} toevoegen',
   'Şikayet et': 'Rapporteren',
   'Engelle': 'Blokkeren',
   'Engeli kaldır': 'Deblokkeren',
@@ -313,14 +306,16 @@ const Map<String, String> cevirilerNl = {
   'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
       'Profiel: gegevens die je zelf kiest toe te voegen, zoals avatar, omslagfoto, bio en land.',
   'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
-      'Gebruik: je kijkgeschiedenis, beoordelingen, reacties, lijsten, reacties-emoji\'s en favorieten.',
+      "Gebruik: je kijkgeschiedenis, beoordelingen, reacties, lijsten, reacties-emoji's en favorieten.",
   'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
       'Berichten: je tekst-, beeld- en spraakberichten worden op onze servers opgeslagen. Berichten zijn niet end-to-end versleuteld; ze worden alleen bij een melding voor moderatie bekeken.',
   'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
-      'Geüploade media: foto\'s, GIF\'s, video\'s en spraakopnamen die je toevoegt aan je profiel, reacties en berichten.',
+      "Geüploade media: foto's, GIF's, video's en spraakopnamen die je toevoegt aan je profiel, reacties en berichten.",
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Technisch: IP-adres, geschatte locatie (land/stad), apparaatplatform, app-versie en foutlogboeken. Deze worden bewaard voor beveiliging en probleemoplossing.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Gebruiksstatistieken: het apparaattype, het besturingssysteem en de browser waarmee wordt binnengekomen worden als grove categorieën bij dagelijkse totaaltellers opgeteld; de browseridentificatie zelf wordt niet bewaard en deze aantallen zijn niet aan personen te koppelen.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Meldingen: voor pushmeldingen bewaren we je apparaattoken en taalvoorkeur. Je kunt meldingen altijd uitschakelen in de instellingen van je apparaat.',
   'Verileri Nasıl Kullanırız': 'Hoe we je gegevens gebruiken',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -329,12 +324,12 @@ const Map<String, String> cevirilerNl = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'We gebruiken lokale opslag alleen om je ingelogd te houden en voorkeuren zoals taal en thema te onthouden. Er zijn geen advertentie- of trackingcookies.',
   'Üçüncü Taraf Hizmetler': 'Diensten van derden',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Serie- en filmgegevens komen van TMDB, informatie over streamingdiensten van JustWatch. Pushmeldingen worden bezorgd via Google Firebase en het siteverkeer wordt beschermd door Cloudflare. Voor deze diensten gelden hun eigen privacybeleid.',
   'Saklama ve Silme': 'Bewaren en verwijderen',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Je gegevens worden bewaard zolang je account bestaat. Met "Mijn account verwijderen" in de instellingen kun je je account definitief verwijderen; je gegevens worden direct gewist, kopieën in back-ups uiterlijk binnen 14 dagen. Foutlogboeken worden na 30 dagen automatisch verwijderd.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Je kunt je gegevens via de instellingen als ZIP exporteren; het archief wordt naar je e-mailadres gestuurd.',
   'Güvenlik': 'Beveiliging',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -457,12 +452,12 @@ const Map<String, String> cevirilerNl = {
   'Videolarda altyazı göster': 'Toon ondertitels bij video’s',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'De zin die in de video wordt gesproken, wordt op het scherm geschreven. De tekst is vertaling: Engels in Turkse spraak, Turks in andere talen.',
-  "Güncelleme gerekli": "Update vereist",
-  "Yeni sürüm var": "Nieuwe versie beschikbaar",
+  'Güncelleme gerekli': 'Update vereist',
+  'Yeni sürüm var': 'Nieuwe versie beschikbaar',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Installeer de nieuwe versie van dizi.jpg om door te gaan.",
-  "Güncelle": "Bijwerken",
-  "Daha sonra": "Later",
+      'Installeer de nieuwe versie van dizi.jpg om door te gaan.',
+  'Güncelle': 'Bijwerken',
+  'Daha sonra': 'Later',
   'Takvim güncelleniyor': 'Agenda wordt bijgewerkt',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Agenda kon niet worden bijgewerkt, oude lijst wordt getoond',
@@ -719,4 +714,107 @@ const Map<String, String> cevirilerNl = {
   '{} {} yayınlandı': '{} {} is uit',
   'Yeni bölüm yayınlandı': 'Nieuwe aflevering is uit',
   'Yeni bölümler': 'Nieuwe afleveringen',
+  'Geri': 'Terug',
+  'Karşılamayı kapat': 'Introductie sluiten',
+  'Adım {} / {}': 'Stap {} / {}',
+  'Hadi başlayalım': 'Aan de slag',
+  'Kaydet ve devam': 'Opslaan en doorgaan',
+  '{} tanesini ekle': '{} toevoegen',
+  'Şimdilik geç': 'Nu overslaan',
+  'Doğum tarihin ne zaman?': 'Wanneer ben je geboren?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'We vragen dit om je inhoud te tonen die bij je leeftijd past en om je verjaardag te vieren.',
+  'Gün': 'Dag',
+  'Ay': 'Maand',
+  'Yıl': 'Jaar',
+  'Doğum yılımı paylaşmak istemiyorum': 'Ik wil mijn geboortejaar niet delen',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Je geboortedatum wordt niet openbaar op je profiel getoond. Die gebruiken we alleen voor inhoud die bij je leeftijd past en voor je verjaardag.',
+  'Ocak': 'januari',
+  'Şubat': 'februari',
+  'Mart': 'maart',
+  'Nisan': 'april',
+  'Mayıs': 'mei',
+  'Haziran': 'juni',
+  'Temmuz': 'juli',
+  'Ağustos': 'augustus',
+  'Eylül': 'september',
+  'Ekim': 'oktober',
+  'Kasım': 'november',
+  'Aralık': 'december',
+  'Verilerini yanında getir': 'Neem je gegevens mee',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Houd je in een andere app bij wat je kijkt? Dan kun je alles hierheen halen. Je hoeft niet opnieuw te beginnen.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt en Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Kies het ZIP-bestand dat je hebt geëxporteerd; je kijkgeschiedenis, beoordelingen en lijsten gaan mee.',
+  'Aktarılıyor...': 'Importeren...',
+  'ZIP dosyası seç': 'ZIP-bestand kiezen',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Geen haast: dit kan later ook via Instellingen > Mijn gegevens.',
+  'Hangi filmleri izledin?': 'Welke films heb je gezien?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Dit zijn de meest bekeken titels. Tik aan wat je hebt gezien, dan zetten we het in je kijkgeschiedenis.',
+  'SERİ FİLMLER': 'FILMREEKSEN',
+  'Serilerden {} film eklendi': '{} films toegevoegd uit filmreeksen',
+  'Film listesi yüklenemedi': 'Filmlijst kon niet worden geladen',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Je kunt deze stap overslaan en later toevoegen wat je wilt.',
+  '{} film izlediklerine eklendi':
+      '{} films toegevoegd aan je kijkgeschiedenis',
+  'Film serileri': 'Filmreeksen',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Een hele reeks van begin tot eind gezien? Voeg hem met één tik toe.',
+  'Seri bulunamadı': 'Geen filmreeksen gevonden',
+  'Daha sonra tekrar deneyebilirsin.': 'Je kunt het later opnieuw proberen.',
+  '{} film': '{} films',
+  'Eklendi': 'Toegevoegd',
+  'Tümünü izledim': 'Alles gezien',
+  'Peki ya diziler?': 'En de series dan?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Markeer wat je hebt gezien; hoe meer je kiest, hoe meer vergelijkbare titels we laten zien.',
+  'Dizi listesi yüklenemedi': 'Serielijst kon niet worden geladen',
+  'Seçtiklerine benzeyenler': 'Lijkt op jouw keuzes',
+  'Her şey hazır': 'Alles staat klaar',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Bekijk snel wat je allemaal kunt doen op dizi.jpg.',
+  'Profilini tamamla': 'Maak je profiel af',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Via Instellingen kun je een bio, een profielfoto en een omslagfoto toevoegen.',
+  'Takvimin seni bekliyor': 'Je kalender staat klaar',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Nieuwe afleveringen van de series die je kijkt komen in de kalender, en we laten het je weten met een melding.',
+  'Puan ver, yorum yaz': 'Beoordeel en reageer',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Beoordeel aflevering voor aflevering, schrijf reacties achter een spoilerscherm en maak lijsten.',
+  'Verilerin sende kalır': 'Je gegevens blijven van jou',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Je gegevens zijn alleen aan je account gekoppeld en worden niet verkocht. Via Instellingen kun je alles downloaden of je account volledig verwijderen.',
+  'Engellenen kullanıcılar': 'Geblokkeerde gebruikers',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Bekijk wie je hebt geblokkeerd en hef de blokkering op',
+  'Engellediğin kimse yok': 'Je hebt niemand geblokkeerd',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Je kunt iemand blokkeren via het menu met drie puntjes op het profiel.',
+  '@{} engellensin mi?': '@{} blokkeren?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Jullie kunnen elkaars posts, reacties en profiel niet meer zien; berichten en oproepen komen niet aan. Een bestaande volgrelatie wordt verbroken en komt niet terug, ook niet als je de blokkering opheft.',
+  'Bu kullanıcıyı engelledin': 'Je hebt deze gebruiker geblokkeerd',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Je ziet de posts, reacties en berichten van deze persoon niet, en deze persoon ziet die van jou niet.',
+  '{} yeni bir yapımda: {}': '{} is te zien in een nieuwe titel: {}',
+  'Favori kişinden yeni yapım': 'Nieuwe titel van een favoriete persoon',
+  '{} için bildirimler': 'Meldingen voor {}',
+  'Tüm bildirimler': 'Alle meldingen',
+  'Uygulamada ve telefonda': 'In de app en op je telefoon',
+  'Yalnız uygulama içi': 'Alleen in de app',
+  'Telefon bildirimi gönderilmez':
+      'Er wordt geen melding naar je telefoon gestuurd',
+  'Kapalı': 'Uit',
+  'Bu kişi için bildirim yok': 'Geen meldingen voor deze persoon',
+  'Favori kişilerin yeni yapımları': 'Nieuwe titels van favoriete personen',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Als dit uit staat, kan niemand je bellen; bellers zien de melding "uitgeschakeld"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Als dit uit staat, kan niemand je videobellen; bellers zien de melding "uitgeschakeld"',
 };

@@ -63,11 +63,24 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
   ///    bulmak zordu)
   ///  - yorumsuz (takip) → aktörün profili
   ///  - YANIT bildiriminde adrese `?yanit=1` eklenir; bkz. [gonderiYolu].
-  String _hedef(Map<String, dynamic> b) {
+  /// null = gidilecek geçerli bir yer yok (satır tıklanmaz).
+  String? _hedef(Map<String, dynamic> b) {
     // Md. 27 — yeni bölüm bildiriminin AKTÖRÜ YOK (sistem üretir); hedefi
     // bölümün kendi sayfasıdır.
     if (b['tur'] == 'bolum') {
       return '/dizi/${b['tmdb_id']}/sezon/${b['sezon']}/bolum/${b['bolum']}';
+    }
+    // Md. 28 — favori kişinin yeni yapımı: hedef KİŞİ DEĞİL, YAPIMDIR.
+    // Kullanıcı "yeni filmi çıkmış" diye dokunuyor; onu oyuncunun
+    // filmografisine bırakmak bir adım fazladan iş demekti. (Kişinin id'si
+    // satırda duruyor — ileride "kişiye git" eylemi eklenebilir.)
+    if (b['tur'] == 'kisi') {
+      // `icerik_tur` OLMADAN adres kurulamaz (TMDB'de dizi 1396 ≠ film 1396);
+      // beklenmedik bir değerde yanlış sayfa açmaktansa bu satır tıklanınca
+      // hiçbir yere gitmesin — push tarafındaki [bildirimHedefi] ile aynı kural.
+      final t = b['icerik_tur'];
+      if (t == 'tv' || t == 'movie') return '/icerik/$t/${b['tmdb_id']}';
+      return null;
     }
     if (b['tur'] == 'mesaj') return '/sohbet/${b['aktor']}';
     final yorumId = b['yorum_id'];
@@ -109,6 +122,18 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
               ? '{} {} yayınlandı'.cf([b['dizi_adi'], _sezonBolum(b)])
               : 'Yeni bölüm yayınlandı'.c,
         );
+      case 'kisi':
+        // Md. 28 — aktörsüz ikinci tür. Adlar TMDB'den gelir ve KULLANICI ADI
+        // DEĞİLDİR: "@" kalıbına GİRMEZ. Sunucu TMDB'den ad çekemediyse
+        // (önbellek ıskaladı) yarım cümle basmak yerine yedek metin yazılır.
+        final kisiAdi = b['kisi_adi'] as String?;
+        final yapimAdi = b['yapim_adi'] as String?;
+        return (
+          Icons.theaters_outlined,
+          (kisiAdi?.isNotEmpty == true && yapimAdi?.isNotEmpty == true)
+              ? '{} yeni bir yapımda: {}'.cf([kisiAdi, yapimAdi])
+              : 'Favori kişinden yeni yapım'.c,
+        );
       default:
         return (Icons.notifications, '@${b['aktor']}');
     }
@@ -149,9 +174,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
           itemBuilder: (context, i) {
             final b = _bildirimler![i] as Map<String, dynamic>;
             final (ikon, metin) = _gorunum(b);
-            // Bölüm bildiriminde avatar yerine DİZİNİN POSTERİ durur: aktörü
-            // olmayan tek tür bu, kişi ikonu koymak yanıltıcı olurdu.
-            final avatar = b['tur'] == 'bolum'
+            // AKTÖRSÜZ TÜRLERDE ('bolum' md.27, 'kisi' md.28) avatar yerine
+            // YAPIMIN POSTERİ durur; kişi ikonu koymak "biri bir şey yaptı"
+            // der ve yanıltıcı olurdu.
+            final aktorsuz = b['tur'] == 'bolum' || b['tur'] == 'kisi';
+            final avatar = aktorsuz
                 ? posterUrl(b['poster'] as String?, boyut: 'w185')
                 : dosyaUrl(b['aktor_avatar'] as String?);
             final tarih = (b['tarih'] as String? ?? '').split('T').first;
@@ -165,12 +192,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                           ? CachedNetworkImageProvider(avatar)
                           : null,
                       child: avatar == null
-                          ? Icon(
-                              b['tur'] == 'bolum'
-                                  ? Icons.tv_outlined
-                                  : Icons.person,
-                              color: DiziRenkler.metin38,
-                            )
+                          ? Icon(switch (b['tur']) {
+                              'bolum' => Icons.tv_outlined,
+                              'kisi' => Icons.movie_outlined,
+                              _ => Icons.person,
+                            }, color: DiziRenkler.metin38)
                           : null,
                     ),
                     Positioned(
@@ -198,7 +224,13 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                         backgroundColor: DiziRenkler.sari,
                       )
                     : null,
-                onTap: () => context.push(_hedef(b)),
+                // Hedefi olmayan satır TIKLANMAZ (onTap null → dalga da yok):
+                // "dokundum, hiçbir şey olmadı" hissi vermek yerine satır
+                // baştan etkileşimsiz görünsün.
+                onTap: switch (_hedef(b)) {
+                  final String yol => () => context.push(yol),
+                  _ => null,
+                },
               ),
             );
           },

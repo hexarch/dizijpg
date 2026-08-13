@@ -23,7 +23,7 @@ const Map<String, String> cevirilerFr = {
   'Dosya en fazla 30MB olabilir': 'Le fichier ne peut pas dépasser 30 Mo',
   'Dosya en fazla {}MB olabilir': 'Le fichier ne peut pas dépasser {} Mo',
   'E-posta': 'E-mail',
-  'E-posta veya kullanıcı adı': 'E-mail ou nom d\'utilisateur',
+  'E-posta veya kullanıcı adı': "E-mail ou nom d'utilisateur",
   'En az 2 harf yaz': 'Écris au moins 2 lettres',
   'Film': 'Film',
   'Film yorumu': 'Commentaire de film',
@@ -35,9 +35,9 @@ const Map<String, String> cevirilerFr = {
   'Gönderildi': 'Envoyé',
   'Haftanın Dizileri': 'Séries de la semaine',
   'Haftanın Filmleri': 'Films de la semaine',
-  'Henüz izleme kaydın yok': 'Tu n\'as pas encore d\'historique',
+  'Henüz izleme kaydın yok': "Tu n'as pas encore d'historique",
   'Henüz listen yok — Profil sekmesinden oluştur.':
-      'Tu n\'as pas encore de liste — crée-en une depuis l\'onglet Profil.',
+      "Tu n'as pas encore de liste — crée-en une depuis l'onglet Profil.",
   'Henüz yorum yok.': 'Pas encore de commentaires.',
   'Hesabın bağlandı!': 'Ton compte est associé !',
   'Hesabın yok mu? Kayıt ol': 'Pas de compte ? Inscris-toi',
@@ -51,8 +51,8 @@ const Map<String, String> cevirilerFr = {
   'Kişi ara': 'Rechercher des personnes',
   'Kişi yorumu': 'Commentaire de personne',
   'Konuk Oyuncular': 'Acteurs invités',
-  'Kullanıcı adı (küçük harf)': 'Nom d\'utilisateur (minuscules)',
-  'Kullanıcı adı ara...': 'Rechercher un nom d\'utilisateur...',
+  'Kullanıcı adı (küçük harf)': "Nom d'utilisateur (minuscules)",
+  'Kullanıcı adı ara...': "Rechercher un nom d'utilisateur...",
   'Liste adı': 'Nom de la liste',
   'Listeye Ekle': 'Ajouter à une liste',
   'Misafir hesabındasın — e-postanla bağla, verilerini kaybetme!':
@@ -80,12 +80,12 @@ const Map<String, String> cevirilerFr = {
   'Tamam': 'OK',
   'Tekrar Dene': 'Réessayer',
   'Tekrar dene': 'Réessaie',
-  'Toplam İzleme Süresi': 'Temps d\'écran total',
+  'Toplam İzleme Süresi': "Temps d'écran total",
   'Tüm Zamanların En İyileri': 'Les meilleurs de tous les temps',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
-      'Exporte toutes tes données (visionnages, notes, commentaires, listes) en ZIP compatible TV Time, ou importe un ZIP venant d\'une autre appli.',
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
+      "Exporte toutes tes données (visionnages, notes, commentaires, listes) en ZIP compatible TV Time, ou importe un ZIP venant d'une autre appli.",
   'Tümünü Kaldır': 'Tout retirer',
-  'Tümünü İzledim': 'J\'ai tout vu',
+  'Tümünü İzledim': "J'ai tout vu",
   'Türk Dizileri': 'Séries turques',
   'Veri içe aktar (.zip)': 'Importer des données (.zip)',
   'Verilerim': 'Mes données',
@@ -96,8 +96,7 @@ const Map<String, String> cevirilerFr = {
   'Yapımları': 'Filmographie',
   'Yeni Diziler': 'Nouvelles séries',
   'Yeni Liste': 'Nouvelle liste',
-  'Yeni kullanıcı adı (isteğe bağlı)':
-      'Nouveau nom d\'utilisateur (facultatif)',
+  'Yeni kullanıcı adı (isteğe bağlı)': "Nouveau nom d'utilisateur (facultatif)",
   'Yorum': 'Commentaire',
   'Yorumunu yaz...': 'Écris ton commentaire...',
   'Zaten hesabın var mı? Giriş yap': 'Déjà un compte ? Connecte-toi',
@@ -137,7 +136,7 @@ const Map<String, String> cevirilerFr = {
   'İzledim': 'Vu',
   'İzledin': 'Tu as vu',
   'İzleme geçmişin ve listelerin korunur; artık her cihazdan girebilirsin.':
-      'Ton historique et tes listes sont conservés ; tu peux maintenant te connecter depuis n\'importe quel appareil.',
+      "Ton historique et tes listes sont conservés ; tu peux maintenant te connecter depuis n'importe quel appareil.",
   'İzleme geçmişin, puanların, yorumların ve listelerin ZIP olarak kayıtlı e-posta adresine gönderilecektir.':
       'Ton historique, tes notes, tes commentaires et tes listes seront envoyés en ZIP à ton adresse e-mail enregistrée.',
   'İzleyeceğim': 'À voir',
@@ -155,7 +154,7 @@ const Map<String, String> cevirilerFr = {
   'Yorumlar ({})': 'Commentaires ({})',
   'Yorumları ({})': 'Commentaires ({})',
   'Listelerim': 'Mes listes',
-  'Nereden izledin?': 'Où l\'as-tu regardé ?',
+  'Nereden izledin?': "Où l'as-tu regardé ?",
   'Diziye git': 'Voir la série',
   'TV / Kanal': 'TV / Chaîne',
   'Sinema': 'Cinéma',
@@ -176,7 +175,7 @@ const Map<String, String> cevirilerFr = {
   '@{} yorumuna yanıt verdi': '@{} a répondu à ton commentaire',
   '@{} yorumunu beğendi': '@{} a aimé ton commentaire',
   '@{} seni takip etti': '@{} te suit maintenant',
-  '@{} sana mesaj gönderdi': '@{} t\'a envoyé un message',
+  '@{} sana mesaj gönderdi': "@{} t'a envoyé un message",
   'Mesajlar': 'Messages',
   'Mesaj': 'Message',
   'Mesaja eklenecek': 'Sera ajoute au message',
@@ -204,7 +203,7 @@ const Map<String, String> cevirilerFr = {
   '10 Puan': '10 notes',
   'İlk Takipçi': 'Premier abonné',
   '10 Dizi Bitirdin': '10 séries terminées',
-  'İzlemeyi Bıraktım': 'J\'ai arrêté de regarder',
+  'İzlemeyi Bıraktım': "J'ai arrêté de regarder",
   'İzlediği Diziler ({})': 'Séries vues ({})',
   'İzlediği Filmler ({})': 'Films vus ({})',
   '500 Bölüm': '500 épisodes',
@@ -218,8 +217,8 @@ const Map<String, String> cevirilerFr = {
   '50 Takipçi': '50 abonnés',
   '25 Dizi Bitirdin': '25 séries terminées',
   '50 Dizi Bitirdin': '50 séries terminées',
-  '10 Beğeni': '10 j\'aime',
-  '100 Beğeni': '100 j\'aime',
+  '10 Beğeni': "10 j'aime",
+  '100 Beğeni': "100 j'aime",
   'yazıyor...': 'écrit...',
   'Profil düzeni': 'Disposition du profil',
   'Konumla ve kırp': 'Positionner et rogner',
@@ -228,7 +227,7 @@ const Map<String, String> cevirilerFr = {
   'Sil': 'Supprimer',
   'Bu içerik hiç izlenmemiş olarak işaretlenecek ve listelerinden kaldırılacak.':
       'Ce titre sera marqué comme jamais vu et retiré de tes listes.',
-  'Gelecek bölüm bugün': 'Prochain épisode aujourd\'hui',
+  'Gelecek bölüm bugün': "Prochain épisode aujourd'hui",
   'Gelecek bölüm {} gün sonra': 'Prochain épisode dans {} jours',
   'Tema': 'Thème',
   'Sistem': 'Système',
@@ -242,7 +241,7 @@ const Map<String, String> cevirilerFr = {
   'Mesaj silinemedi': 'Impossible de supprimer le message',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Lien invalide ou page introuvable',
-  'Keşfet\'e dön': 'Retour à Découvrir',
+  "Keşfet'e dön": 'Retour à Découvrir',
   'Düzenle': 'Modifier',
   'Mesajı düzenle': 'Modifier le message',
   'Yanıtlanıyor': 'Réponse',
@@ -261,23 +260,16 @@ const Map<String, String> cevirilerFr = {
   'Kapat': 'Fermer',
   'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.':
       'Tout ce que tu marques comme vu se retrouve ici.',
-  'Henüz sohbetin yok': 'Aucune conversation pour l\'instant',
+  'Henüz sohbetin yok': "Aucune conversation pour l'instant",
   'Bir profile girip mesaj gönderebilirsin.':
       'Ouvre un profil et envoie un message.',
   'Listeyi sil': 'Supprimer la liste',
-  'Puan kaydedilemedi': 'Impossible d\'enregistrer la note',
+  'Puan kaydedilemedi': "Impossible d'enregistrer la note",
   'Nerede İzlenir': 'Où regarder',
   'Abonelik': 'Abonnement',
   'Kirala': 'Louer',
   'Satın al': 'Acheter',
-  'Hoş geldin!': 'Bienvenue !',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Choisis les séries et films que tu veux regarder',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Tes choix sont ajoutés à ta liste',
-  'Şimdilik atla': 'Passer pour l’instant',
   'Devam et': 'Continuer',
-  '{} ekle': 'Ajouter {}',
   'Şikayet et': 'Signaler',
   'Engelle': 'Bloquer',
   'Engeli kaldır': 'Débloquer',
@@ -309,67 +301,68 @@ const Map<String, String> cevirilerFr = {
   'Gizlilik Politikası': 'Politique de Confidentialité',
   'Son güncelleme: {}': 'Dernière mise à jour : {}',
   'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini kullandığında hangi verilerin toplandığını, nasıl kullanıldığını ve haklarının neler olduğunu açıklar.':
-      'Cette politique explique quelles données sont collectées, comment elles sont utilisées et quels sont tes droits lorsque tu utilises l\'application dizi.jpg et le site dizijpg.com.',
+      "Cette politique explique quelles données sont collectées, comment elles sont utilisées et quels sont tes droits lorsque tu utilises l'application dizi.jpg et le site dizijpg.com.",
   'Topladığımız Veriler': 'Données que nous collectons',
   'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri döndürülemez şekilde özetlenerek saklanır; misafir hesaplar e-postasız kullanılabilir.':
-      'Compte : adresse e-mail, nom d\'utilisateur et mot de passe. Les mots de passe sont stockés sous forme de hachage irréversible ; les comptes invités peuvent être utilisés sans e-mail.',
+      "Compte : adresse e-mail, nom d'utilisateur et mot de passe. Les mots de passe sont stockés sous forme de hachage irréversible ; les comptes invités peuvent être utilisés sans e-mail.",
   'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi seçtiğin bilgiler.':
-      'Profil : les informations que tu choisis d\'ajouter, comme l\'avatar, l\'image de couverture, la bio et le pays.',
+      "Profil : les informations que tu choisis d'ajouter, comme l'avatar, l'image de couverture, la bio et le pays.",
   'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
       'Utilisation : ton historique de visionnage, tes notes, commentaires, listes, réactions et favoris.',
   'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
-      'Messages : tes messages texte, image et vocaux sont stockés sur nos serveurs. Les messages ne sont pas chiffrés de bout en bout ; ils ne sont consultés qu\'en cas de signalement, à des fins de modération.',
+      "Messages : tes messages texte, image et vocaux sont stockés sur nos serveurs. Les messages ne sont pas chiffrés de bout en bout ; ils ne sont consultés qu'en cas de signalement, à des fins de modération.",
   'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
       'Médias envoyés : photos, GIF, vidéos et enregistrements vocaux que tu ajoutes à ton profil, tes commentaires et tes messages.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
-      'Données techniques : adresse IP, localisation approximative (pays/ville), plateforme de l\'appareil, version de l\'application et journaux d\'erreurs. Elles sont conservées pour la sécurité et le débogage.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
-      'Notifications : pour les notifications push, nous conservons le jeton de ton appareil et ta langue. Tu peux les désactiver à tout moment dans les réglages de l\'appareil.',
+      "Données techniques : adresse IP, localisation approximative (pays/ville), plateforme de l'appareil, version de l'application et journaux d'erreurs. Elles sont conservées pour la sécurité et le débogage.",
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Statistiques d’usage : le type d’appareil, le système d’exploitation et le navigateur utilisés pour se connecter sont ajoutés à des compteurs quotidiens globaux sous forme de catégories approximatives ; l’identifiant du navigateur lui-même n’est pas conservé et ces chiffres ne peuvent être rattachés à personne.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
+      "Notifications : pour les notifications push, nous conservons le jeton de ton appareil et ta langue. Tu peux les désactiver à tout moment dans les réglages de l'appareil.",
   'Verileri Nasıl Kullanırız': 'Comment nous utilisons tes données',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
       'Nous utilisons tes données uniquement pour fournir le service, protéger ton compte, envoyer des notifications, corriger les erreurs et prévenir les abus. Nous ne vendons pas tes données et ne les partageons avec personne à des fins publicitaires.',
   'Çerezler ve Yerel Depolama': 'Cookies et stockage local',
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
-      'Nous utilisons le stockage local uniquement pour garder ta session ouverte et mémoriser tes préférences comme la langue et le thème. Il n\'y a aucun cookie publicitaire ni de suivi.',
+      "Nous utilisons le stockage local uniquement pour garder ta session ouverte et mémoriser tes préférences comme la langue et le thème. Il n'y a aucun cookie publicitaire ni de suivi.",
   'Üçüncü Taraf Hizmetler': 'Services tiers',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Les données des séries et films proviennent de TMDB, les informations sur les plateformes de streaming de JustWatch. Les notifications push sont acheminées par Google Firebase et le trafic du site est protégé par Cloudflare. Ces services sont soumis à leurs propres politiques de confidentialité.',
   'Saklama ve Silme': 'Conservation et suppression',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
-      'Tes données sont conservées tant que ton compte existe. Avec « Supprimer mon compte » dans les Réglages, tu peux supprimer ton compte définitivement ; tes données sont effacées immédiatement et leurs copies dans les sauvegardes sous 14 jours au plus tard. Les journaux d\'erreurs sont supprimés automatiquement après 30 jours.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
-      'Tu peux exporter tes données au format ZIP depuis les Réglages ; l\'archive est envoyée à ton adresse e-mail.',
+      "Tes données sont conservées tant que ton compte existe. Avec « Supprimer mon compte » dans les Réglages, tu peux supprimer ton compte définitivement ; tes données sont effacées immédiatement et leurs copies dans les sauvegardes sous 14 jours au plus tard. Les journaux d'erreurs sont supprimés automatiquement après 30 jours.",
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
+      "Tu peux exporter tes données au format ZIP depuis les Réglages ; l'archive est envoyée à ton adresse e-mail.",
   'Güvenlik': 'Sécurité',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
       'Les données transitent par des connexions chiffrées (HTTPS) et sont stockées sur des serveurs à accès restreint.',
   'Çocukların Gizliliği': 'Confidentialité des enfants',
   'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
-      'dizi.jpg ne s\'adresse pas aux enfants de moins de 13 ans.',
+      "dizi.jpg ne s'adresse pas aux enfants de moins de 13 ans.",
   'Hakların': 'Tes droits',
   'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}':
-      'En vertu de la KVKK et du GDPR, tu as le droit d\'accéder à tes données, de les corriger, de les supprimer et de les transférer. Pour cela, écris-nous : {}',
+      "En vertu de la KVKK et du GDPR, tu as le droit d'accéder à tes données, de les corriger, de les supprimer et de les transférer. Pour cela, écris-nous : {}",
   'Değişiklikler': 'Modifications',
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
       'Si cette politique change, la nouvelle version sera publiée sur cette page et la date sera mise à jour.',
-  'Kayıt olarak {} kabul etmiş olursun.':
-      'En t\'inscrivant, tu acceptes la {}.',
+  'Kayıt olarak {} kabul etmiş olursun.': "En t'inscrivant, tu acceptes la {}.",
   'Kullanıcılar': 'Utilisateurs',
   'Fotoğrafı değiştir': 'Changer la photo',
   'Yeniden konumlandır': 'Repositionner',
   'Bir şeyler ters gitti': 'Un problème est survenu',
   'Sosyal Bağlantılar': 'Liens sociaux',
   'Profilinde en fazla 3 bağlantı gösterilir.':
-      'Jusqu\'à 3 liens s\'affichent sur ton profil.',
+      "Jusqu'à 3 liens s'affichent sur ton profil.",
   'Platform seç': 'Choisis une plateforme',
-  'Kullanıcı adın': 'Ton nom d\'utilisateur',
+  'Kullanıcı adın': "Ton nom d'utilisateur",
   'Ekle': 'Ajouter',
   'Kaldır': 'Retirer',
   'Kopyalandı: {}': 'Copié : {}',
-  'Geçersiz kullanıcı adı': 'Nom d\'utilisateur invalide',
+  'Geçersiz kullanıcı adı': "Nom d'utilisateur invalide",
   'Bağlantı ekle': 'Ajouter un lien',
   'Spoiler olabilir — dokun ve gör':
       'Peut contenir des spoilers — touche pour voir',
-  'Beğeni': 'J\'aime',
+  'Beğeni': "J'aime",
   'Beğen': 'Jaime',
   'Görüntülenme': 'Vues',
   'Tam ekran': 'Plein écran',
@@ -385,12 +378,12 @@ const Map<String, String> cevirilerFr = {
   'Şunu mu demek istedin': 'Vouliez-vous dire',
   'Spoiler': 'Spoiler',
   'Spoiler — dokun ve gör': 'Spoiler — appuie pour voir',
-  'uyum': 'd\'affinité',
+  'uyum': "d'affinité",
   'Uyum': 'Affinité',
   '{} ortak dizi': '{} séries en commun',
   '{} ortak film': '{} films en commun',
   'Bildirim Tercihleri': 'Préférences de notification',
-  'Beğeniler': 'J\'aime',
+  'Beğeniler': "J'aime",
   'Yeni takipçiler': 'Nouveaux abonnés',
   'Etiketlenmeler': 'Mentions',
   'Yeniden izledim': 'Revu',
@@ -404,15 +397,15 @@ const Map<String, String> cevirilerFr = {
   'Gizlilik': 'Confidentialité',
   'İzlediklerimi gizle': 'Masquer ce que je regarde',
   'Profilinde izlediğin dizi ve filmler görünmez':
-      'Les séries et films que tu as vus n\'apparaîtront pas sur ton profil',
+      "Les séries et films que tu as vus n'apparaîtront pas sur ton profil",
   'Yorumlarımı gizle': 'Masquer mes commentaires',
   'Profilinde yorumların görünmez':
-      'Tes commentaires n\'apparaîtront pas sur ton profil',
+      "Tes commentaires n'apparaîtront pas sur ton profil",
   'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
       'Tu peux masquer une série ou un film précis avec la puce « Masquer sur mon profil » sur sa page.',
   'Geri Bildirim': 'Ton avis',
   'Uygulama hakkında görüş ve önerini yaz...':
-      'Écris ton avis et tes suggestions sur l\'appli...',
+      "Écris ton avis et tes suggestions sur l'appli...",
   'Teşekkürler! Geri bildirimin alındı.': 'Merci ! Ton avis a bien été reçu.',
   'Profilimde gizle': 'Masquer sur mon profil',
   'Yorumları': 'Commentaires',
@@ -429,10 +422,10 @@ const Map<String, String> cevirilerFr = {
   'Çevir': 'Traduire',
   'Çeviri şu an yapılamadı': 'Traduction impossible pour le moment',
   'Bağlantı açılamadı': 'Ouverture du lien impossible',
-  'Orijinali göster': 'Voir l\'original',
+  'Orijinali göster': "Voir l'original",
   'Çeviriyi göster': 'Afficher la traduction',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
-      'Aucun épisode avec une date de diffusion annoncée ce mois-ci. Les dates sont généralement révélées quelques semaines à l\'avance et apparaîtront ici.',
+      "Aucun épisode avec une date de diffusion annoncée ce mois-ci. Les dates sont généralement révélées quelques semaines à l'avance et apparaîtront ici.",
   'devamı': 'plus',
   'Google ile devam et': 'Continuer avec Google',
   'Google girişi başarısız': 'Échec de la connexion Google',
@@ -460,12 +453,12 @@ const Map<String, String> cevirilerFr = {
   'Videolarda altyazı göster': 'Afficher les sous-titres sur les vidéos',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'La phrase prononcée dans la vidéo est écrite à l’écran. Le texte est une traduction : anglais dans la langue turque, turc dans d’autres langues.',
-  "Güncelleme gerekli": "Mise à jour requise",
-  "Yeni sürüm var": "Nouvelle version disponible",
+  'Güncelleme gerekli': 'Mise à jour requise',
+  'Yeni sürüm var': 'Nouvelle version disponible',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Installe la nouvelle version de dizi.jpg pour continuer.",
-  "Güncelle": "Mettre à jour",
-  "Daha sonra": "Plus tard",
+      'Installe la nouvelle version de dizi.jpg pour continuer.',
+  'Güncelle': 'Mettre à jour',
+  'Daha sonra': 'Plus tard',
   'Takvim güncelleniyor': 'Mise à jour du calendrier',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Impossible de mettre à jour le calendrier, ancienne liste affichée',
@@ -698,12 +691,12 @@ const Map<String, String> cevirilerFr = {
       'Si une connexion directe est impossible, l’audio et la vidéo transitent chiffrés par un serveur relais (TURN). Ce relais ne peut pas non plus déchiffrer ni enregistrer le contenu.',
   'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera ise yalnızca görüntülü arama sırasında kullanılır. Arama bitince ikisi de kapatılır.':
       'Le microphone n’est utilisé que pendant un appel audio ou vidéo, et la caméra uniquement pendant un appel vidéo. Les deux sont coupés à la fin de l’appel.',
-  'Takip ettiğin {} kişi izledi': '{} personnes que tu suis l\'ont regardé',
+  'Takip ettiğin {} kişi izledi': "{} personnes que tu suis l'ont regardé",
   'Yorum yaz...': 'Écris un commentaire...',
   'Sıradaki bölüm': 'Épisode suivant',
   'Doğrulanmış testçi': 'Testeur vérifié',
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri':
-      'Notifications de suivis, j\'aime, réponses, messages et mentions',
+      "Notifications de suivis, j'aime, réponses, messages et mentions",
   'Sen': 'Toi',
   'Aradığınız kişide sesli arama devre dışı':
       'Les appels vocaux sont désactivés pour cette personne',
@@ -712,9 +705,9 @@ const Map<String, String> cevirilerFr = {
   'Sesli aramalara izin ver': 'Autoriser les appels vocaux',
   'Görüntülü aramalara izin ver': 'Autoriser les appels vidéo',
   'Kapalıyken kimse seni sesli arayamaz; arayan uyarı görür':
-      'Si désactivé, personne ne peut t\'appeler en vocal ; l\'appelant voit un avis',
+      "Si désactivé, personne ne peut t'appeler en vocal ; l'appelant voit un avis",
   'Kapalıyken kimse seni görüntülü arayamaz; arayan uyarı görür':
-      'Si désactivé, personne ne peut t\'appeler en vidéo ; l\'appelant voit un avis',
+      "Si désactivé, personne ne peut t'appeler en vidéo ; l'appelant voit un avis",
   'Sesli arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
       'Les appels vocaux sont désactivés. Tu peux les activer dans Paramètres > Confidentialité.',
   'Görüntülü arama kapalı. Ayarlar > Gizlilik bölümünden açabilirsin.':
@@ -729,4 +722,108 @@ const Map<String, String> cevirilerFr = {
   '{} {} yayınlandı': '{} {} est disponible',
   'Yeni bölüm yayınlandı': 'Nouvel épisode disponible',
   'Yeni bölümler': 'Nouveaux épisodes',
+  'Geri': 'Retour',
+  'Karşılamayı kapat': "Fermer l'introduction",
+  'Adım {} / {}': 'Étape {} / {}',
+  'Hadi başlayalım': "C'est parti",
+  'Kaydet ve devam': 'Enregistrer et continuer',
+  '{} tanesini ekle': 'Ajouter {}',
+  'Şimdilik geç': 'Plus tard',
+  'Doğum tarihin ne zaman?': 'Quelle est ta date de naissance ?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      "On te le demande pour t'afficher des contenus adaptés à ton âge et pour te souhaiter ton anniversaire.",
+  'Gün': 'Jour',
+  'Ay': 'Mois',
+  'Yıl': 'Année',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Je ne veux pas partager mon année de naissance',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      "Ta date de naissance n'est pas affichée publiquement sur ton profil. Elle sert uniquement aux contenus adaptés à l'âge et aux vœux d'anniversaire.",
+  'Ocak': 'janvier',
+  'Şubat': 'février',
+  'Mart': 'mars',
+  'Nisan': 'avril',
+  'Mayıs': 'mai',
+  'Haziran': 'juin',
+  'Temmuz': 'juillet',
+  'Ağustos': 'août',
+  'Eylül': 'septembre',
+  'Ekim': 'octobre',
+  'Kasım': 'novembre',
+  'Aralık': 'décembre',
+  'Verilerini yanında getir': 'Emporte tes données avec toi',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Si tu suis ce que tu regardes dans une autre appli, tu peux tout transférer ici. Pas besoin de repartir de zéro.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt et Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Choisis le fichier ZIP que tu as exporté : ce que tu as regardé, tes notes et tes listes seront importés.',
+  'Aktarılıyor...': 'Import en cours...',
+  'ZIP dosyası seç': 'Choisir un fichier ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Rien ne presse : tu peux aussi le faire plus tard dans Paramètres > Mes données.',
+  'Hangi filmleri izledin?': 'Quels films as-tu vus ?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Voici les plus regardés. Touche ceux que tu as vus et on les ajoute à ton historique.',
+  'SERİ FİLMLER': 'SAGAS',
+  'Serilerden {} film eklendi': '{} films ajoutés depuis les sagas',
+  'Film listesi yüklenemedi': 'Impossible de charger la liste des films',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Tu peux passer cette étape et ajouter ce que tu veux plus tard.',
+  '{} film izlediklerine eklendi': '{} films ajoutés à ton historique',
+  'Film serileri': 'Sagas de films',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Si tu as vu une saga du début à la fin, ajoute-la en une seule touche.',
+  'Seri bulunamadı': 'Aucune saga trouvée',
+  'Daha sonra tekrar deneyebilirsin.': 'Tu peux réessayer plus tard.',
+  '{} film': '{} films',
+  'Eklendi': 'Ajouté',
+  'Tümünü izledim': 'Je les ai tous vus',
+  'Peki ya diziler?': 'Et les séries ?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Coche ce que tu as vu : au fil de tes choix, on te propose des séries similaires.',
+  'Dizi listesi yüklenemedi': 'Impossible de charger la liste des séries',
+  'Seçtiklerine benzeyenler': 'Similaires à tes choix',
+  'Her şey hazır': 'Tout est prêt',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Jette un œil rapide à ce que tu peux faire sur dizi.jpg.',
+  'Profilini tamamla': 'Complète ton profil',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Depuis Paramètres, tu peux ajouter une bio, une photo de profil et une couverture.',
+  'Takvimin seni bekliyor': "Ton calendrier t'attend",
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      "Les nouveaux épisodes de tes séries s'ajoutent au calendrier et on te prévient par notification.",
+  'Puan ver, yorum yaz': 'Note et commente',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Note épisode par épisode, commente derrière un voile spoiler et crée des listes.',
+  'Verilerin sende kalır': 'Tes données restent les tiennes',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Tes données sont conservées uniquement liées à ton compte et ne sont pas vendues. Depuis Paramètres, tu peux toutes les télécharger ou supprimer complètement ton compte.',
+  'Engellenen kullanıcılar': 'Personnes bloquées',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Vois qui tu as bloqué et retire le blocage',
+  'Engellediğin kimse yok': "Tu n'as bloqué personne",
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Tu peux bloquer une personne depuis le menu à trois points de son profil.',
+  '@{} engellensin mi?': 'Bloquer @{} ?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      "Aucune des deux parties ne verra les publications, les commentaires ni le profil de l'autre ; les messages et les appels seront également impossibles. S'il existe un lien d'abonnement, il est rompu et ne revient pas, même si tu retires le blocage.",
+  'Bu kullanıcıyı engelledin': 'Tu as bloqué cette personne',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Tu ne vois pas les publications, les commentaires ni les messages de cette personne ; elle ne voit pas les tiens non plus.',
+  '{} yeni bir yapımda: {}': '{} est dans une nouvelle production : {}',
+  'Favori kişinden yeni yapım': "Nouvelle production d'une personne favorite",
+  '{} için bildirimler': 'Notifications pour {}',
+  'Tüm bildirimler': 'Toutes les notifications',
+  'Uygulamada ve telefonda': "Dans l'appli et sur le téléphone",
+  'Yalnız uygulama içi': "Dans l'appli uniquement",
+  'Telefon bildirimi gönderilmez':
+      "Aucune notification n'est envoyée sur le téléphone",
+  'Kapalı': 'Désactivé',
+  'Bu kişi için bildirim yok': 'Aucune notification pour cette personne',
+  'Favori kişilerin yeni yapımları':
+      'Nouvelles productions de tes personnes favorites',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Si désactivé, personne ne peut t\'appeler en vocal ; l\'appelant voit l\'avis "désactivés"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Si désactivé, personne ne peut t\'appeler en vidéo ; l\'appelant voit l\'avis "désactivés"',
 };

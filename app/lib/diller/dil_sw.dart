@@ -82,7 +82,7 @@ const Map<String, String> cevirilerSw = {
   'Tekrar dene': 'Jaribu tena',
   'Toplam İzleme Süresi': 'Jumla ya muda wa kutazama',
   'Tüm Zamanların En İyileri': 'Bora Zaidi za Wakati Wote',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Pakua data zako zote (kutazama, alama, maoni, orodha) kama ZIP inayooana na TV Time, au leta ZIP kutoka programu nyingine.',
   'Tümünü Kaldır': 'Ondoa Zote',
   'Tümünü İzledim': 'Nimetazama Zote',
@@ -239,7 +239,7 @@ const Map<String, String> cevirilerSw = {
   'Mesaj silinemedi': 'Ujumbe haukuweza kufutwa',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Kiungo si sahihi au ukurasa haukupatikana',
-  'Keşfet\'e dön': 'Rudi kwenye Gundua',
+  "Keşfet'e dön": 'Rudi kwenye Gundua',
   'Düzenle': 'Hariri',
   'Mesajı düzenle': 'Hariri ujumbe',
   'Yanıtlanıyor': 'Anajibu',
@@ -266,14 +266,7 @@ const Map<String, String> cevirilerSw = {
   'Abonelik': 'Kujiunga',
   'Kirala': 'Kodisha',
   'Satın al': 'Nunua',
-  'Hoş geldin!': 'Karibu!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Chagua vipindi na filamu unazotaka kutazama',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Chaguo lako litaongezwa kwenye orodha yako',
-  'Şimdilik atla': 'Ruka kwa sasa',
   'Devam et': 'Endelea',
-  '{} ekle': 'Ongeza {}',
   'Şikayet et': 'Ripoti',
   'Engelle': 'Zuia',
   'Engeli kaldır': 'Ondoa uzuiaji',
@@ -319,7 +312,9 @@ const Map<String, String> cevirilerSw = {
       'Media zilizopakiwa: picha, GIF, video na rekodi za sauti unazoongeza kwenye wasifu, maoni na ujumbe wako.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Kiufundi: anwani ya IP, mahali pa makadirio (kiwango cha nchi/jiji), jukwaa la kifaa, toleo la programu na kumbukumbu za hitilafu. Hizi huhifadhiwa kwa usalama na kurekebisha matatizo.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Takwimu za matumizi: aina ya kifaa, mfumo wa uendeshaji na kivinjari vinavyotumika kuingia huongezwa kwenye vihesabu vya jumla vya kila siku kama makundi mapana; kitambulisho cha kivinjari chenyewe hakihifadhiwi na idadi hizi haziwezi kuunganishwa na mtu yeyote.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Arifa: kwa arifa za papo hapo tunahifadhi tokeni ya kifaa chako na lugha uliyochagua. Unaweza kuzima arifa wakati wowote kwenye mipangilio ya kifaa.',
   'Verileri Nasıl Kullanırız': 'Jinsi Tunavyotumia Data Yako',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,12 +323,12 @@ const Map<String, String> cevirilerSw = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Tunatumia hifadhi ya ndani tu kukuweka umeingia na kukumbuka mapendeleo kama lugha na mandhari. Hakuna vidakuzi vya matangazo wala vya ufuatiliaji.',
   'Üçüncü Taraf Hizmetler': 'Huduma za Wahusika Wengine',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Data ya vipindi na filamu hutoka TMDB, taarifa za majukwaa ya kutiririsha kutoka JustWatch. Arifa za papo hapo huwasilishwa kupitia Google Firebase, na trafiki ya tovuti hulindwa na Cloudflare. Huduma hizi zinafuata sera zao za faragha.',
   'Saklama ve Silme': 'Uhifadhi na Ufutaji',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Data yako huhifadhiwa muda wote akaunti yako ipo. Kupitia "Futa Akaunti Yangu" kwenye mipangilio unaweza kufuta akaunti kabisa; data yako hufutwa mara moja, na nakala kwenye hifadhi rudufu ndani ya siku 14 zaidi. Kumbukumbu za hitilafu hufutwa kiotomatiki baada ya siku 30.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Unaweza kuhamisha data yako kama ZIP kutoka kwenye mipangilio; jalada hutumwa kwa anwani yako ya barua pepe.',
   'Güvenlik': 'Usalama',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -454,12 +449,12 @@ const Map<String, String> cevirilerSw = {
   'Videolarda altyazı göster': 'Onyesha manukuu kwenye video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Sentensi inayozungumzwa kwenye video imeandikwa kwenye skrini. Nakala ni tafsiri: Kiingereza katika hotuba ya Kituruki, Kituruki kwa lugha zingine.',
-  "Güncelleme gerekli": "Sasisho linahitajika",
-  "Yeni sürüm var": "Toleo jipya linapatikana",
+  'Güncelleme gerekli': 'Sasisho linahitajika',
+  'Yeni sürüm var': 'Toleo jipya linapatikana',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Sakinisha toleo jipya la dizi.jpg ili kuendelea.",
-  "Güncelle": "Sasisha",
-  "Daha sonra": "Baadaye",
+      'Sakinisha toleo jipya la dizi.jpg ili kuendelea.',
+  'Güncelle': 'Sasisha',
+  'Daha sonra': 'Baadaye',
   'Takvim güncelleniyor': 'Inasasisha kalenda',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalenda haikuweza kusasishwa, orodha ya zamani inaonyeshwa',
@@ -713,4 +708,105 @@ const Map<String, String> cevirilerSw = {
   '{} {} yayınlandı': '{} {} kimetoka',
   'Yeni bölüm yayınlandı': 'Kipindi kipya kimetoka',
   'Yeni bölümler': 'Vipindi vipya',
+  'Geri': 'Rudi',
+  'Karşılamayı kapat': 'Funga utangulizi',
+  'Adım {} / {}': 'Hatua {} / {}',
+  'Hadi başlayalım': 'Tuanze',
+  'Kaydet ve devam': 'Hifadhi na uendelee',
+  '{} tanesini ekle': 'Ongeza {}',
+  'Şimdilik geç': 'Ruka kwa sasa',
+  'Doğum tarihin ne zaman?': 'Ulizaliwa lini?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Tunauliza ili kuonyesha maudhui yanayolingana na umri wako na kusherehekea siku yako ya kuzaliwa.',
+  'Gün': 'Siku',
+  'Ay': 'Mwezi',
+  'Yıl': 'Mwaka',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Sitaki kushiriki mwaka wangu wa kuzaliwa',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Tarehe yako ya kuzaliwa haionyeshwi hadharani kwenye wasifu wako. Hutumika tu kwa maudhui yanayolingana na umri na kwa kusherehekea siku ya kuzaliwa.',
+  'Ocak': 'Januari',
+  'Şubat': 'Februari',
+  'Mart': 'Machi',
+  'Nisan': 'Aprili',
+  'Mayıs': 'Mei',
+  'Haziran': 'Juni',
+  'Temmuz': 'Julai',
+  'Ağustos': 'Agosti',
+  'Eylül': 'Septemba',
+  'Ekim': 'Oktoba',
+  'Kasım': 'Novemba',
+  'Aralık': 'Desemba',
+  'Verilerini yanında getir': 'Leta data yako nawe',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Ikiwa unafuatilia ulichotazama kwenye programu nyingine, unaweza kukihamishia hapa. Huhitaji kuanza upya.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt na Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Chagua faili la ZIP ulilohamisha kutoka huko; ulichotazama, alama zako na orodha zako zitahamishwa.',
+  'Aktarılıyor...': 'Inahamisha...',
+  'ZIP dosyası seç': 'Chagua faili la ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Hakuna haraka: unaweza kufanya hivi baadaye pia kupitia Mipangilio > Data Zangu.',
+  'Hangi filmleri izledin?': 'Umetazama filamu zipi?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Zinazotazamwa zaidi zipo hapa. Utakachogusa tutakiongeza kwenye ulichotazama.',
+  'SERİ FİLMLER': 'MIFULULIZO YA FILAMU',
+  'Serilerden {} film eklendi': 'Filamu {} zimeongezwa kutoka mifululizo',
+  'Film listesi yüklenemedi': 'Orodha ya filamu haikupakiwa',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Unaweza kuruka hatua hii, kisha kuongeza unachotaka baadaye.',
+  '{} film izlediklerine eklendi': 'Filamu {} zimeongezwa kwenye ulichotazama',
+  'Film serileri': 'Mifululizo ya filamu',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Kama umetazama mfululizo mzima tangu mwanzo hadi mwisho, uongeze kwa mgusa mmoja.',
+  'Seri bulunamadı': 'Hakuna mfululizo uliopatikana',
+  'Daha sonra tekrar deneyebilirsin.': 'Unaweza kujaribu tena baadaye.',
+  '{} film': 'Filamu {}',
+  'Eklendi': 'Imeongezwa',
+  'Tümünü izledim': 'Nimetazama zote',
+  'Peki ya diziler?': 'Je, vipi kuhusu mifululizo?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Weka alama kwenye ulivyotazama; kadri unavyochagua, tutaleta vinavyofanana.',
+  'Dizi listesi yüklenemedi': 'Orodha ya mifululizo haikupakiwa',
+  'Seçtiklerine benzeyenler': 'Vinavyofanana na ulivyochagua',
+  'Her şey hazır': 'Kila kitu tayari',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Angalia kwa haraka unachoweza kufanya kwenye dizi.jpg.',
+  'Profilini tamamla': 'Kamilisha wasifu wako',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Kutoka Mipangilio unaweza kuongeza Bio, picha ya wasifu na jalada.',
+  'Takvimin seni bekliyor': 'Kalenda inakusubiri',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Vipindi vipya vya mifululizo unayotazama huingia kwenye kalenda, na tunakujulisha kwa arifa.',
+  'Puan ver, yorum yaz': 'Toa alama, andika maoni',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Kadiria kipindi kwa kipindi, andika maoni nyuma ya pazia la spoiler, tengeneza orodha.',
+  'Verilerin sende kalır': 'Data yako inabaki kwako',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Data yako hufungamanishwa na akaunti yako pekee, na haiuzwi. Kutoka Mipangilio unaweza kupakua yote au kufuta akaunti yako kabisa.',
+  'Engellenen kullanıcılar': 'Watumiaji waliozuiwa',
+  'Engellediğin kişileri gör, engeli kaldır': 'Ona uliowazuia, ondoa uzuiaji',
+  'Engellediğin kimse yok': 'Hujamzuia mtu yeyote',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Unaweza kumzuia mtumiaji kupitia menyu ya nukta tatu kwenye wasifu wake.',
+  '@{} engellensin mi?': 'Kumzuia @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Hamtaona machapisho, maoni wala wasifu wa kila mmoja; jumbe na simu pia hazitapita. Kama kuna ufuatiliaji kati yenu, utakatika na hautarudi hata uzuiaji ukiondolewa.',
+  'Bu kullanıcıyı engelledin': 'Umemzuia mtumiaji huyu',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Huoni machapisho, maoni wala jumbe za mtu huyu; na mtu huyu haoni zako.',
+  '{} yeni bir yapımda: {}': '{} kwenye kazi mpya: {}',
+  'Favori kişinden yeni yapım': 'Kazi mpya kutoka kwa mtu unayempenda',
+  '{} için bildirimler': 'Arifa za {}',
+  'Tüm bildirimler': 'Arifa zote',
+  'Uygulamada ve telefonda': 'Kwenye programu na kwenye simu',
+  'Yalnız uygulama içi': 'Ndani ya programu tu',
+  'Telefon bildirimi gönderilmez': 'Arifa ya simu haitumwi',
+  'Kapalı': 'Imezimwa',
+  'Bu kişi için bildirim yok': 'Hakuna arifa kwa mtu huyu',
+  'Favori kişilerin yeni yapımları': 'Kazi mpya za watu unaowapenda',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Ikizimwa, hakuna anayeweza kukupigia simu ya sauti; anayepiga ataona taarifa kwamba simu "zimezimwa"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Ikizimwa, hakuna anayeweza kukupigia simu ya video; anayepiga ataona taarifa kwamba simu "zimezimwa"',
 };

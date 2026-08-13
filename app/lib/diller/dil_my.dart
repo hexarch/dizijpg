@@ -84,7 +84,7 @@ const Map<String, String> cevirilerMy = {
   'Tekrar dene': 'ထပ်စမ်းကြည့်ပါ',
   'Toplam İzleme Süresi': 'စုစုပေါင်း ကြည့်ရှုချိန်',
   'Tüm Zamanların En İyileri': 'အချိန်တိုင်းရဲ့ အကောင်းဆုံးများ',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'မင်းရဲ့ ဒေတာအားလုံး (ကြည့်ရှုမှတ်တမ်း၊ အမှတ်၊ မှတ်ချက်၊ စာရင်း) ကို TV Time နဲ့ ကိုက်ညီတဲ့ ZIP အနေနဲ့ ထုတ်ယူပါ ဒါမှမဟုတ် တခြားအက်ပ်က ZIP ကို ထည့်သွင်းပါ။',
   'Tümünü Kaldır': 'အားလုံး ဖယ်ရှားရန်',
   'Tümünü İzledim': 'အားလုံး ကြည့်ပြီးပြီ',
@@ -242,7 +242,7 @@ const Map<String, String> cevirilerMy = {
   'Mesaj silinemedi': 'မက်ဆေ့ဂျ်ကို ဖျက်၍မရပါ',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'လင့်ခ်မမှန်ကန်ပါ သို့မဟုတ် စာမျက်နှာမတွေ့ပါ',
-  'Keşfet\'e dön': 'ရှာဖွေရန်သို့ ပြန်သွားရန်',
+  "Keşfet'e dön": 'ရှာဖွေရန်သို့ ပြန်သွားရန်',
   'Düzenle': 'တည်းဖြတ်',
   'Mesajı düzenle': 'မက်ဆေ့ဂျ်တည်းဖြတ်',
   'Yanıtlanıyor': 'ပြန်စာပေးနေသည်',
@@ -270,14 +270,7 @@ const Map<String, String> cevirilerMy = {
   'Abonelik': 'အသင်းဝင်ခ',
   'Kirala': 'ငှားရမ်း',
   'Satın al': 'ဝယ်ယူ',
-  'Hoş geldin!': 'ကြိုဆိုပါတယ်!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'သင်ကြည့်လိုသော ဇာတ်လမ်းတွဲများနှင့် ရုပ်ရှင်များကို ရွေးပါ',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'သင့်ရွေးချယ်မှုများကို သင့်စာရင်းသို့ ထည့်ပါမည်',
-  'Şimdilik atla': 'ယခုအတွက် ကျော်ပါ',
   'Devam et': 'ဆက်လုပ်ပါ',
-  '{} ekle': '{} ထည့်ပါ',
   'Şikayet et': 'တိုင်ကြားရန်',
   'Engelle': 'ပိတ်ဆို့ရန်',
   'Engeli kaldır': 'ပိတ်ဆို့မှုဖြုတ်ရန်',
@@ -325,7 +318,9 @@ const Map<String, String> cevirilerMy = {
       'တင်ထားသောမီဒီယာ- ပရိုဖိုင်၊ မှတ်ချက်နှင့် မက်ဆေ့ချ်များတွင် သင်ထည့်သော ဓာတ်ပုံ၊ GIF၊ ဗီဒီယိုနှင့် အသံသွင်းချက်များ။',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'နည်းပညာဆိုင်ရာ- IP လိပ်စာ၊ ခန့်မှန်းတည်နေရာ (နိုင်ငံ/မြို့အဆင့်)၊ စက်ပလက်ဖောင်း၊ အက်ပ်ဗားရှင်းနှင့် အမှားမှတ်တမ်းများ။ ၎င်းတို့ကို လုံခြုံရေးနှင့် ပြဿနာဖြေရှင်းရန်အတွက် သိမ်းထားသည်။',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'အသုံးပြုမှုစာရင်း- မည်သည့်စက်အမျိုးအစား၊ လည်ပတ်စနစ်နှင့် ဘရောက်ဇာဖြင့် ဝင်ရောက်သည်ကို ကြမ်းတမ်းသော အမျိုးအစားများအဖြစ် နေ့စဉ်စုစုပေါင်းရေတွက်မှုများတွင် ထည့်သွင်းသည်။ ဘရောက်ဇာ၏ သတ်မှတ်အမှတ်အသားကိုယ်တိုင်ကို မသိမ်းဆည်းဘဲ ဤကိန်းဂဏန်းများကို မည်သူတစ်ဦးတစ်ယောက်နှင့်မျှ ချိတ်ဆက်၍မရပါ။',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'အသိပေးချက်များ- push အသိပေးချက်များအတွက် သင့်စက်၏ token နှင့် ဘာသာစကားရွေးချယ်မှုကို သိမ်းထားသည်။ စက်၏ဆက်တင်များမှ အသိပေးချက်များကို အချိန်မရွေး ပိတ်နိုင်သည်။',
   'Verileri Nasıl Kullanırız': 'ဒေတာကို မည်သို့အသုံးပြုသနည်း',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -334,12 +329,12 @@ const Map<String, String> cevirilerMy = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'သင့်ကို လော့ဂ်အင်ဝင်ထားစေရန်နှင့် ဘာသာစကား/အပြင်အဆင်ကဲ့သို့ ရွေးချယ်မှုများကို မှတ်ထားရန်အတွက်သာ စက်တွင်းသိုလှောင်မှုကို သုံးသည်။ ကြော်ငြာ သို့မဟုတ် ခြေရာခံ cookie မရှိပါ။',
   'Üçüncü Taraf Hizmetler': 'ပြင်ပဝန်ဆောင်မှုများ',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'ဇာတ်လမ်းတွဲနှင့် ရုပ်ရှင်ဒေတာများသည် TMDB မှ၊ streaming ပလက်ဖောင်းအချက်အလက်များသည် JustWatch မှ လာသည်။ Push အသိပေးချက်များကို Google Firebase မှတစ်ဆင့် ပို့ဆောင်ပြီး ဆိုက်၏အသွားအလာကို Cloudflare က ကာကွယ်သည်။ ဤဝန်ဆောင်မှုများသည် ၎င်းတို့၏ကိုယ်ပိုင် ကိုယ်ရေးအချက်အလက်မူဝါဒများနှင့် လိုက်နာရသည်။',
   'Saklama ve Silme': 'သိမ်းဆည်းမှုနှင့် ဖျက်ခြင်း',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'သင့်အကောင့်ရှိနေသရွေ့ သင့်ဒေတာကို သိမ်းထားသည်။ ဆက်တင်များရှိ "ကျွန်ုပ်၏အကောင့်ကို ဖျက်ရန်" ဖြင့် အကောင့်ကို အပြီးတိုင်ဖျက်နိုင်သည်။ ဒေတာကို ချက်ချင်းဖျက်ပြီး အရန်ကူးယူမှုများရှိ မိတ္တူများကို အများဆုံး ၁၄ ရက်အတွင်း ဖျက်သည်။ အမှားမှတ်တမ်းများကို ရက် ၃၀ ကြာပြီးနောက် အလိုအလျောက် ဖျက်သည်။',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'ဆက်တင်များမှ သင့်ဒေတာကို ZIP အဖြစ် ထုတ်ယူနိုင်သည်။ မှတ်တမ်းဖိုင်ကို သင့်အီးမေးလ်လိပ်စာသို့ ပို့ပေးသည်။',
   'Güvenlik': 'လုံခြုံရေး',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -462,12 +457,12 @@ const Map<String, String> cevirilerMy = {
   'Videolarda altyazı göster': 'ဗီဒီယိုများတွင် စာတန်းထိုးပြပါ။',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'ဗီဒီယိုတွင်ပြောသောစာကြောင်းကို စခရင်ပေါ်တွင်ရေးထားသည်။ စာသားသည် ဘာသာပြန်သည်- တူရကီစကားတွင် အင်္ဂလိပ်၊ အခြားဘာသာစကားဖြင့် တူရကီ။',
-  "Güncelleme gerekli": "အပ်ဒိတ် လိုအပ်သည်",
-  "Yeni sürüm var": "ဗားရှင်းအသစ် ရနိုင်ပါပြီ",
+  'Güncelleme gerekli': 'အပ်ဒိတ် လိုအပ်သည်',
+  'Yeni sürüm var': 'ဗားရှင်းအသစ် ရနိုင်ပါပြီ',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "ဆက်လုပ်ရန် dizi.jpg ၏ ဗားရှင်းအသစ်ကို ထည့်သွင်းပါ။",
-  "Güncelle": "အပ်ဒိတ်လုပ်ရန်",
-  "Daha sonra": "နောက်မှ",
+      'ဆက်လုပ်ရန် dizi.jpg ၏ ဗားရှင်းအသစ်ကို ထည့်သွင်းပါ။',
+  'Güncelle': 'အပ်ဒိတ်လုပ်ရန်',
+  'Daha sonra': 'နောက်မှ',
   'Takvim güncelleniyor': 'ပြက္ခဒိန် အပ်ဒိတ်လုပ်နေသည်',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'ပြက္ခဒိန်ကို အပ်ဒိတ်မလုပ်နိုင်ပါ၊ စာရင်းအဟောင်းကို ပြသနေသည်',
@@ -727,4 +722,106 @@ const Map<String, String> cevirilerMy = {
   '{} {} yayınlandı': '{} {} ထွက်ပြီ',
   'Yeni bölüm yayınlandı': 'အပိုင်းအသစ် ထွက်ပြီ',
   'Yeni bölümler': 'အပိုင်းအသစ်များ',
+  'Geri': 'နောက်သို့',
+  'Karşılamayı kapat': 'ကြိုဆိုမှုကို ပိတ်ရန်',
+  'Adım {} / {}': 'အဆင့် {} / {}',
+  'Hadi başlayalım': 'စတင်ကြရအောင်',
+  'Kaydet ve devam': 'သိမ်းပြီး ဆက်လုပ်ပါ',
+  '{} tanesini ekle': '{} ခု ထည့်ရန်',
+  'Şimdilik geç': 'ယခုအတွက် ကျော်ရန်',
+  'Doğum tarihin ne zaman?': 'သင့်မွေးနေ့ ဘယ်တော့လဲ?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'အသက်အရွယ်နှင့် ကိုက်ညီသော အကြောင်းအရာများ ပြသရန်နှင့် မွေးနေ့ ဆုတောင်းပေးရန် မေးခြင်းဖြစ်သည်။',
+  'Gün': 'ရက်',
+  'Ay': 'လ',
+  'Yıl': 'နှစ်',
+  'Doğum yılımı paylaşmak istemiyorum': 'မွေးသက္ကရာဇ်ကို မပြပါနှင့်',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'သင့်မွေးနေ့ကို ပရိုဖိုင်တွင် အများမြင်အောင် မပြပါ။ အသက်အရွယ်နှင့် ကိုက်ညီသော အကြောင်းအရာနှင့် မွေးနေ့ဆုတောင်းအတွက်သာ အသုံးပြုသည်။',
+  'Ocak': 'ဇန်နဝါရီ',
+  'Şubat': 'ဖေဖော်ဝါရီ',
+  'Mart': 'မတ်',
+  'Nisan': 'ဧပြီ',
+  'Mayıs': 'မေ',
+  'Haziran': 'ဇွန်',
+  'Temmuz': 'ဇူလိုင်',
+  'Ağustos': 'ဩဂုတ်',
+  'Eylül': 'စက်တင်ဘာ',
+  'Ekim': 'အောက်တိုဘာ',
+  'Kasım': 'နိုဝင်ဘာ',
+  'Aralık': 'ဒီဇင်ဘာ',
+  'Verilerini yanında getir': 'သင့်ဒေတာများကို ယူဆောင်လာပါ',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'အခြားအက်ပ်တစ်ခုတွင် ကြည့်ပြီးသားများကို မှတ်သားထားလျှင် ဤနေရာသို့ ရွှေ့ယူနိုင်သည်။ အစကနေ ပြန်စရန် မလိုပါ။',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt နှင့် Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ထုတ်ယူထားသော ZIP ဖိုင်ကို ရွေးပါ။ ကြည့်ပြီးသားများ၊ အဆင့်သတ်မှတ်ချက်များနှင့် စာရင်းများ ရောက်လာပါမည်။',
+  'Aktarılıyor...': 'သွင်းယူနေသည်...',
+  'ZIP dosyası seç': 'ZIP ဖိုင် ရွေးရန်',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'အလျင်စလို မလိုပါ - ဤအရာကို နောက်မှ ဆက်တင်များ > ကိုယ့်ဒေတာများ မှလည်း လုပ်နိုင်သည်။',
+  'Hangi filmleri izledin?': 'ဘယ်ရုပ်ရှင်တွေ ကြည့်ဖူးလဲ?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'အကြည့်အများဆုံးများ ဒီမှာ ရှိသည်။ ထိလိုက်သည်များကို ကြည့်ပြီးသားများထဲ ထည့်လိုက်ပါမည်။',
+  'SERİ FİLMLER': 'ရုပ်ရှင်စီးရီးများ',
+  'Serilerden {} film eklendi': 'စီးရီးများမှ ရုပ်ရှင် {} ကား ထည့်ပြီး',
+  'Film listesi yüklenemedi': 'ရုပ်ရှင်စာရင်း မဖွင့်နိုင်ပါ',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'ဤအဆင့်ကို ကျော်နိုင်သည်၊ နောက်မှ လိုသည်များ ထည့်နိုင်သည်။',
+  '{} film izlediklerine eklendi':
+      'ရုပ်ရှင် {} ကား ကြည့်ပြီးသားများထဲ ထည့်ပြီး',
+  'Film serileri': 'ရုပ်ရှင်စီးရီးများ',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'စီးရီးတစ်ခုကို အစမှအဆုံး ကြည့်ပြီးလျှင် တစ်ချက်ထိရုံဖြင့် ထည့်ပါ။',
+  'Seri bulunamadı': 'စီးရီး မတွေ့ပါ',
+  'Daha sonra tekrar deneyebilirsin.': 'နောက်မှ ထပ်စမ်းကြည့်နိုင်သည်။',
+  '{} film': 'ရုပ်ရှင် {} ကား',
+  'Eklendi': 'ထည့်ပြီး',
+  'Tümünü izledim': 'အားလုံး ကြည့်ပြီး',
+  'Peki ya diziler?': 'ဇာတ်လမ်းတွဲများကော?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'ကြည့်ပြီးသားများကို မှတ်ပါ။ ရွေးလေလေ ဆင်တူသည်များ ယူလာပေးပါမည်။',
+  'Dizi listesi yüklenemedi': 'ဇာတ်လမ်းတွဲစာရင်း မဖွင့်နိုင်ပါ',
+  'Seçtiklerine benzeyenler': 'ရွေးထားသည်များနှင့် ဆင်တူသည်များ',
+  'Her şey hazır': 'အားလုံး အဆင်သင့်',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg တွင် ဘာတွေ လုပ်နိုင်သလဲ အမြန် တစ်ချက် ကြည့်လိုက်ပါ။',
+  'Profilini tamamla': 'ပရိုဖိုင်ကို ပြည့်စုံအောင် လုပ်ပါ',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'ဆက်တင်များမှ ကိုယ်ရေးအကျဉ်း၊ ပရိုဖိုင်ဓာတ်ပုံနှင့် ဖုံးအုပ်ပုံ ထည့်နိုင်သည်။',
+  'Takvimin seni bekliyor': 'ပြက္ခဒိန်က သင့်ကို စောင့်နေသည်',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'ကြည့်နေသော ဇာတ်လမ်းတွဲများ၏ အပိုင်းအသစ်များ ပြက္ခဒိန်ထဲ ရောက်လာမည်၊ အသိပေးချက်ဖြင့် အကြောင်းကြားပါမည်။',
+  'Puan ver, yorum yaz': 'အဆင့်ပေးပါ၊ မှတ်ချက်ရေးပါ',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'အပိုင်းလိုက် အဆင့်ပေးပါ၊ စပွိုင်လာ အကာအကွယ်ဖြင့် မှတ်ချက်ရေးပါ၊ စာရင်းများ ဖန်တီးပါ။',
+  'Verilerin sende kalır': 'ဒေတာများ သင့်လက်ထဲမှာပဲ ရှိသည်',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'သင့်ဒေတာများကို သင့်အကောင့်နှင့်သာ ချိတ်ဆက်ထားသည်၊ ရောင်းချခြင်း မရှိပါ။ ဆက်တင်များမှ အားလုံးကို ဒေါင်းလုဒ်လုပ်နိုင်သည် သို့မဟုတ် အကောင့်ကို လုံးဝ ဖျက်နိုင်သည်။',
+  'Engellenen kullanıcılar': 'ပိတ်ဆို့ထားသော အသုံးပြုသူများ',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'ပိတ်ဆို့ထားသူများကို ကြည့်ပါ၊ ပိတ်ဆို့မှု ဖြုတ်ပါ',
+  'Engellediğin kimse yok': 'မည်သူ့ကိုမျှ ပိတ်ဆို့ထားခြင်း မရှိပါ',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'အသုံးပြုသူတစ်ဦးကို ၎င်း၏ ပရိုဖိုင်ရှိ အစက်သုံးစက် မီနူးမှ ပိတ်ဆို့နိုင်သည်။',
+  '@{} engellensin mi?': '@{} ကို ပိတ်ဆို့မလား?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'တစ်ဦးနှင့်တစ်ဦး၏ ပို့စ်များ၊ မှတ်ချက်များနှင့် ပရိုဖိုင်ကို မမြင်နိုင်တော့ပါ။ စာများနှင့် ခေါ်ဆိုမှုများလည်း မရောက်တော့ပါ။ နောက်လိုက်ဆက်နွယ်မှု ရှိပါက ပြတ်တောက်သွားပြီး ပိတ်ဆို့မှု ဖြုတ်လျှင်လည်း ပြန်မလာတော့ပါ။',
+  'Bu kullanıcıyı engelledin': 'ဤအသုံးပြုသူကို ပိတ်ဆို့ထားသည်',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'ထိုသူ၏ ပို့စ်များ၊ မှတ်ချက်များနှင့် စာများကို သင် မမြင်ပါ။ ထိုသူကလည်း သင့်အရာများကို မမြင်နိုင်ပါ။',
+  '{} yeni bir yapımda: {}': '{} သည် ဇာတ်ကားအသစ်တွင်: {}',
+  'Favori kişinden yeni yapım': 'အနှစ်သက်ဆုံးသူ၏ ဇာတ်ကားအသစ်',
+  '{} için bildirimler': '{} အတွက် အသိပေးချက်များ',
+  'Tüm bildirimler': 'အသိပေးချက် အားလုံး',
+  'Uygulamada ve telefonda': 'အက်ပ်ထဲနှင့် ဖုန်းပေါ်တွင်',
+  'Yalnız uygulama içi': 'အက်ပ်ထဲတွင်သာ',
+  'Telefon bildirimi gönderilmez': 'ဖုန်းအသိပေးချက် မပို့ပါ',
+  'Kapalı': 'ပိတ်',
+  'Bu kişi için bildirim yok': 'ဤသူအတွက် အသိပေးချက် မရှိပါ',
+  'Favori kişilerin yeni yapımları': 'အနှစ်သက်ဆုံးသူများ၏ ဇာတ်ကားအသစ်များ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'ပိတ်ထားပါက မည်သူမျှ သင့်ကို အသံဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် "ပိတ်ထားသည်" အသိပေးချက်ကို မြင်ရမည်',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'ပိတ်ထားပါက မည်သူမျှ သင့်ကို ဗီဒီယိုဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် "ပိတ်ထားသည်" အသိပေးချက်ကို မြင်ရမည်',
 };

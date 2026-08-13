@@ -79,7 +79,7 @@ const Map<String, String> cevirilerKo = {
   'Tekrar dene': '다시 시도',
   'Toplam İzleme Süresi': '총 시청 시간',
   'Tüm Zamanların En İyileri': '역대 최고 작품',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       '모든 데이터(시청, 평점, 댓글, 리스트)를 TV Time 호환 ZIP으로 내보내거나, 다른 앱의 ZIP을 가져올 수 있어요.',
   'Tümünü Kaldır': '전체 해제',
   'Tümünü İzledim': '전체 시청 완료',
@@ -235,7 +235,7 @@ const Map<String, String> cevirilerKo = {
   'Mesajı sil': '메시지 삭제',
   'Mesaj silinemedi': '메시지를 삭제할 수 없어요',
   'Bağlantı geçersiz veya sayfa bulunamadı': '링크가 잘못되었거나 페이지를 찾을 수 없어요',
-  'Keşfet\'e dön': '둘러보기로 돌아가기',
+  "Keşfet'e dön": '둘러보기로 돌아가기',
   'Düzenle': '편집',
   'Mesajı düzenle': '메시지 편집',
   'Yanıtlanıyor': '답장 중',
@@ -262,12 +262,7 @@ const Map<String, String> cevirilerKo = {
   'Abonelik': '구독',
   'Kirala': '대여',
   'Satın al': '구매',
-  'Hoş geldin!': '환영합니다!',
-  'İzlemek istediğin dizi ve filmleri seç': '보고 싶은 시리즈와 영화를 선택하세요',
-  'Seçtiklerin "İzleyeceğim" listene eklenir': '선택한 항목이 볼 예정 목록에 추가됩니다',
-  'Şimdilik atla': '나중에 하기',
   'Devam et': '계속',
-  '{} ekle': '{}개 추가',
   'Şikayet et': '신고',
   'Engelle': '차단',
   'Engeli kaldır': '차단 해제',
@@ -313,7 +308,9 @@ const Map<String, String> cevirilerKo = {
       '업로드한 미디어: 프로필, 댓글, 메시지에 추가한 사진, GIF, 동영상, 음성 녹음.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       '기술 데이터: IP 주소, 대략적인 위치(국가/도시 수준), 기기 플랫폼, 앱 버전, 오류 로그. 보안과 오류 해결을 위해 보관해요.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      '이용 통계: 어떤 기기 종류, 운영체제, 브라우저로 접속했는지를 대략적인 분류로 나눠 하루 단위 합계 카운터에 더해요. 브라우저 식별 정보 자체는 저장하지 않고, 이 수치는 특정 개인과 연결할 수 없어요.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       '알림: 푸시 알림을 위해 기기 토큰과 언어 설정을 저장해요. 알림은 기기 설정에서 언제든 끌 수 있어요.',
   'Verileri Nasıl Kullanırız': '데이터를 사용하는 방법',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -322,12 +319,12 @@ const Map<String, String> cevirilerKo = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       '로컬 저장소는 로그인 상태 유지와 언어·테마 같은 설정 기억에만 사용해요. 광고용이나 추적용 쿠키는 없어요.',
   'Üçüncü Taraf Hizmetler': '제3자 서비스',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       '드라마와 영화 데이터는 TMDB에서, 스트리밍 플랫폼 정보는 JustWatch에서 가져와요. 푸시 알림은 Google Firebase를 통해 전달되고, 사이트 트래픽은 Cloudflare가 보호해요. 이 서비스들에는 각자의 개인정보 처리방침이 적용돼요.',
   'Saklama ve Silme': '보관과 삭제',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       '데이터는 계정이 있는 동안 보관돼요. 설정의 "내 계정 삭제"로 계정을 영구 삭제할 수 있어요. 데이터는 즉시, 백업 속 사본은 늦어도 14일 안에 삭제돼요. 오류 로그는 30일 후 자동으로 삭제돼요.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       '설정에서 데이터를 ZIP으로 내보낼 수 있어요. 아카이브는 이메일 주소로 전송돼요.',
   'Güvenlik': '보안',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -443,12 +440,12 @@ const Map<String, String> cevirilerKo = {
   'Videolarda altyazı göster': '비디오에 자막 표시',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       '영상에서 말하는 문장이 화면에 쓰여집니다. 텍스트는 번역됩니다: 터키어 음성에서는 영어, 다른 언어에서는 터키어입니다.',
-  "Güncelleme gerekli": "업데이트가 필요합니다",
-  "Yeni sürüm var": "새 버전이 있습니다",
+  'Güncelleme gerekli': '업데이트가 필요합니다',
+  'Yeni sürüm var': '새 버전이 있습니다',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "계속하려면 dizi.jpg의 새 버전을 설치하세요.",
-  "Güncelle": "업데이트",
-  "Daha sonra": "나중에",
+      '계속하려면 dizi.jpg의 새 버전을 설치하세요.',
+  'Güncelle': '업데이트',
+  'Daha sonra': '나중에',
   'Takvim güncelleniyor': '캘린더 업데이트 중',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       '캘린더를 업데이트하지 못했습니다. 이전 목록을 표시합니다',
@@ -691,4 +688,104 @@ const Map<String, String> cevirilerKo = {
   '{} {} yayınlandı': '{} {} 공개됐어요',
   'Yeni bölüm yayınlandı': '새 에피소드가 공개됐어요',
   'Yeni bölümler': '새 에피소드',
+  'Geri': '뒤로',
+  'Karşılamayı kapat': '시작 안내 닫기',
+  'Adım {} / {}': '{} / {} 단계',
+  'Hadi başlayalım': '이제 시작해요',
+  'Kaydet ve devam': '저장하고 계속',
+  '{} tanesini ekle': '선택한 {}개 추가',
+  'Şimdilik geç': '일단 건너뛰기',
+  'Doğum tarihin ne zaman?': '생일이 언제예요?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      '나이에 맞는 작품을 보여주고 생일을 축하하려고 물어봐요.',
+  'Gün': '일',
+  'Ay': '월',
+  'Yıl': '년',
+  'Doğum yılımı paylaşmak istemiyorum': '태어난 해는 공개하지 않을래요',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      '생일은 프로필에 공개되지 않아요. 나이에 맞는 작품과 생일 축하에만 사용해요.',
+  'Ocak': '1월',
+  'Şubat': '2월',
+  'Mart': '3월',
+  'Nisan': '4월',
+  'Mayıs': '5월',
+  'Haziran': '6월',
+  'Temmuz': '7월',
+  'Ağustos': '8월',
+  'Eylül': '9월',
+  'Ekim': '10월',
+  'Kasım': '11월',
+  'Aralık': '12월',
+  'Verilerini yanında getir': '쓰던 데이터를 가져오세요',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      '다른 앱에서 시청 기록을 관리했다면 여기로 옮길 수 있어요. 처음부터 다시 시작하지 않아도 돼요.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt와 Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      '내보낸 ZIP 파일을 선택하면 시청 기록, 평점, 리스트를 그대로 가져와요.',
+  'Aktarılıyor...': '가져오는 중...',
+  'ZIP dosyası seç': 'ZIP 파일 선택',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      '서두르지 않아도 돼요. 나중에 설정 > 내 데이터에서도 할 수 있어요.',
+  'Hangi filmleri izledin?': '어떤 영화를 봤어요?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      '가장 많이 본 작품이에요. 누른 작품은 시청 기록에 추가할게요.',
+  'SERİ FİLMLER': '시리즈 영화',
+  'Serilerden {} film eklendi': '시리즈에서 영화 {}편 추가됨',
+  'Film listesi yüklenemedi': '영화 목록을 불러오지 못했어요',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      '이 단계는 건너뛰고 나중에 원하는 작품을 추가해도 돼요.',
+  '{} film izlediklerine eklendi': '영화 {}편을 시청 기록에 추가했어요',
+  'Film serileri': '영화 시리즈',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      '시리즈를 처음부터 끝까지 봤다면 한 번에 추가하세요.',
+  'Seri bulunamadı': '시리즈를 찾지 못했어요',
+  'Daha sonra tekrar deneyebilirsin.': '나중에 다시 시도해 보세요.',
+  '{} film': '영화 {}편',
+  'Eklendi': '추가됨',
+  'Tümünü izledim': '전부 봤어요',
+  'Peki ya diziler?': '드라마는 어때요?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      '본 작품을 표시해 주세요. 고를수록 취향에 맞는 작품을 보여줄게요.',
+  'Dizi listesi yüklenemedi': '드라마 목록을 불러오지 못했어요',
+  'Seçtiklerine benzeyenler': '선택한 작품과 비슷한 작품',
+  'Her şey hazır': '준비 끝',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg에서 무엇을 할 수 있는지 훑어보세요.',
+  'Profilini tamamla': '프로필을 채워보세요',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      '설정에서 소개, 프로필 사진, 커버를 추가할 수 있어요.',
+  'Takvimin seni bekliyor': '캘린더가 기다려요',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      '보는 드라마의 새 에피소드가 캘린더에 올라오고 알림으로도 알려줘요.',
+  'Puan ver, yorum yaz': '평가하고 댓글 쓰기',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      '에피소드마다 평점을 남기고, 스포일러 가림막을 씌워 댓글을 쓰고, 리스트도 만들어요.',
+  'Verilerin sende kalır': '데이터는 네 것이에요',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      '데이터는 네 계정에만 연결되고 절대 판매되지 않아요. 설정에서 전부 내려받거나 계정을 완전히 삭제할 수 있어요.',
+  'Engellenen kullanıcılar': '차단한 사용자',
+  'Engellediğin kişileri gör, engeli kaldır': '차단한 사람을 보고 차단 해제하기',
+  'Engellediğin kimse yok': '차단한 사람이 없어요',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      '사용자 프로필의 점 세 개 메뉴에서 차단할 수 있어요.',
+  '@{} engellensin mi?': '@{} 님을 차단할까요?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      '서로의 게시물, 댓글, 프로필을 볼 수 없고 메시지와 통화도 오갈 수 없습니다. 서로 팔로우 중이었다면 그 연결이 끊기며, 나중에 차단을 해제해도 복구되지 않습니다.',
+  'Bu kullanıcıyı engelledin': '이 사용자를 차단했습니다',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      '이 사람의 게시물, 댓글, 메시지는 보이지 않고, 이 사람도 내 것을 볼 수 없습니다.',
+  '{} yeni bir yapımda: {}': '{} 님의 새 작품: {}',
+  'Favori kişinden yeni yapım': '즐겨찾는 인물의 신작',
+  '{} için bildirimler': '{} 알림',
+  'Tüm bildirimler': '모든 알림',
+  'Uygulamada ve telefonda': '앱과 휴대폰에서',
+  'Yalnız uygulama içi': '앱에서만',
+  'Telefon bildirimi gönderilmez': '휴대폰 알림은 보내지 않아요',
+  'Kapalı': '끔',
+  'Bu kişi için bildirim yok': '이 인물의 알림을 받지 않아요',
+  'Favori kişilerin yeni yapımları': '즐겨찾는 인물의 새 작품',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      '끄면 아무도 음성 통화를 걸 수 없습니다. 거는 사람에게 "사용 중지" 안내가 표시됩니다',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      '끄면 아무도 영상 통화를 걸 수 없습니다. 거는 사람에게 "사용 중지" 안내가 표시됩니다',
 };

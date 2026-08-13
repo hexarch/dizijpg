@@ -18,6 +18,7 @@ import 'ekranlar/bolum.dart';
 import 'ekranlar/detay.dart';
 import 'ekranlar/giris.dart';
 import 'ekranlar/giris_istem.dart';
+import 'ekranlar/engellenen_kullanicilar.dart';
 import 'ekranlar/gizlenen_yorumlar.dart';
 import 'ekranlar/gizlilik.dart';
 import 'ekranlar/gozat.dart';
@@ -342,6 +343,12 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
       GoRoute(
         path: '/gizlenen-yorumlar',
         builder: (_, __) => const GizlenenYorumlarEkrani(),
+      ),
+      // Ayarlar > Gizlilik > Engellenen kullanıcılar. Gizlenen yorumlarla
+      // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
+      GoRoute(
+        path: '/engellenenler',
+        builder: (_, _) => const EngellenenKullanicilarEkrani(),
       ),
       GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
       // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.

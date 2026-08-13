@@ -39,7 +39,7 @@ const Map<String, String> cevirilerEn = {
       'No lists yet — create one from the Profile tab.',
   'Henüz yorum yok.': 'No comments yet.',
   'Hesabın bağlandı!': 'Your account is linked!',
-  'Hesabın yok mu? Kayıt ol': 'Don\'t have an account? Sign up',
+  'Hesabın yok mu? Kayıt ol': "Don't have an account? Sign up",
   'Hesabını Bağla': 'Link Your Account',
   'Hesap Oluştur': 'Create Account',
   'Kapak resmi ekle': 'Add cover image',
@@ -55,7 +55,7 @@ const Map<String, String> cevirilerEn = {
   'Liste adı': 'List name',
   'Listeye Ekle': 'Add to List',
   'Misafir hesabındasın — e-postanla bağla, verilerini kaybetme!':
-      'You\'re on a guest account — link your email so you don\'t lose your data!',
+      "You're on a guest account — link your email so you don't lose your data!",
   'Misafir olarak devam et': 'Continue as guest',
   'Oluştur': 'Create',
   'Oyuncular': 'Cast',
@@ -81,7 +81,7 @@ const Map<String, String> cevirilerEn = {
   'Tekrar dene': 'Try again',
   'Toplam İzleme Süresi': 'Total screen time',
   'Tüm Zamanların En İyileri': 'All-Time Best',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Export all your data (watches, ratings, comments, lists) as a TV Time-compatible ZIP, or import a ZIP from another app.',
   'Tümünü Kaldır': 'Remove All',
   'Tümünü İzledim': 'Watched All',
@@ -235,10 +235,10 @@ const Map<String, String> cevirilerEn = {
   'Yorumunu yaz... (@ ile etiketle)': 'Write your comment... (@ to tag)',
   '@{} bir yorumda seni etiketledi': '@{} tagged you in a comment',
   'Mesajı sil': 'Delete message',
-  'Mesaj silinemedi': 'Message couldn\'t be deleted',
+  'Mesaj silinemedi': "Message couldn't be deleted",
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Link is invalid or page not found',
-  'Keşfet\'e dön': 'Back to Discover',
+  "Keşfet'e dön": 'Back to Discover',
   'Düzenle': 'Edit',
   'Mesajı düzenle': 'Edit message',
   'Yanıtlanıyor': 'Replying',
@@ -250,7 +250,7 @@ const Map<String, String> cevirilerEn = {
   'son görülme {} dk önce': 'last seen {} min ago',
   'son görülme {} saat önce': 'last seen {} h ago',
   'son görülme {} gün önce': 'last seen {} d ago',
-  'Yorumlar yüklenemedi': 'Couldn\'t load comments',
+  'Yorumlar yüklenemedi': "Couldn't load comments",
   'Favori': 'Favorite',
   'Listeye ekle': 'Add to list',
   'İçerik paylaş': 'Share content',
@@ -261,19 +261,12 @@ const Map<String, String> cevirilerEn = {
   'Bir profile girip mesaj gönderebilirsin.':
       'Open a profile and send a message.',
   'Listeyi sil': 'Delete list',
-  'Puan kaydedilemedi': 'Rating couldn\'t be saved',
+  'Puan kaydedilemedi': "Rating couldn't be saved",
   'Nerede İzlenir': 'Where to Watch',
   'Abonelik': 'Subscription',
   'Kirala': 'Rent',
   'Satın al': 'Buy',
-  'Hoş geldin!': 'Welcome!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Pick shows and movies you want to watch',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Your picks are added to your Watchlist',
-  'Şimdilik atla': 'Skip for now',
   'Devam et': 'Continue',
-  '{} ekle': 'Add {}',
   'Şikayet et': 'Report',
   'Engelle': 'Block',
   'Engeli kaldır': 'Unblock',
@@ -319,7 +312,9 @@ const Map<String, String> cevirilerEn = {
       'Uploaded media: photos, GIFs, videos, and audio recordings you add to your profile, comments, and messages.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Technical: IP address, approximate location (country/city level), device platform, app version, and error logs. These are kept for security and debugging.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Usage statistics: which device type, operating system and browser the visit came from is added to daily total counters as coarse categories; the browser identifier itself is not stored and these numbers cannot be linked to individuals.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Notifications: your device token and language preference are stored for push notifications. You can turn off notifications anytime in your device settings.',
   'Verileri Nasıl Kullanırız': 'How We Use Your Data',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,17 +323,17 @@ const Map<String, String> cevirilerEn = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'We only use local storage to keep you signed in and remember preferences like language and theme. There are no advertising or tracking cookies.',
   'Üçüncü Taraf Hizmetler': 'Third-Party Services',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Show and movie information comes from TMDB, and streaming provider information from JustWatch. Push notifications are delivered via Google Firebase, and site traffic is protected by Cloudflare. These services are subject to their own privacy policies.',
   'Saklama ve Silme': 'Retention and Deletion',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Your data is kept for as long as your account is active. You can permanently delete your account with "Delete My Account" in Settings; your data is deleted immediately, and copies in backups within 14 days at the latest. Error logs are automatically deleted after 30 days.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'You can export your data as a ZIP from Settings; the archive is sent to your email address.',
   'Güvenlik': 'Security',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
       'Data is transferred over an encrypted connection (HTTPS) and stored on servers with restricted access.',
-  'Çocukların Gizliliği': 'Children\'s Privacy',
+  'Çocukların Gizliliği': "Children's Privacy",
   'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
       'dizi.jpg is not intended for children under 13.',
   'Hakların': 'Your Rights',
@@ -398,10 +393,10 @@ const Map<String, String> cevirilerEn = {
   'Gizlilik': 'Privacy',
   'İzlediklerimi gizle': 'Hide what I watch',
   'Profilinde izlediğin dizi ve filmler görünmez':
-      'Shows and movies you watched won\'t be shown on your profile',
+      "Shows and movies you watched won't be shown on your profile",
   'Yorumlarımı gizle': 'Hide my comments',
   'Profilinde yorumların görünmez':
-      'Your comments won\'t be shown on your profile',
+      "Your comments won't be shown on your profile",
   'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
       'You can hide a single show or movie with the "Hide on my profile" chip on its page.',
   'Geri Bildirim': 'Feedback',
@@ -420,7 +415,7 @@ const Map<String, String> cevirilerEn = {
   'Web Sitesi': 'Website',
   'Diğer uygulamalar': 'More apps',
   'Bağlantıyı kopyala': 'Copy link',
-  'Henüz kimseyi takip etmiyorsun.': 'You\'re not following anyone yet.',
+  'Henüz kimseyi takip etmiyorsun.': "You're not following anyone yet.",
   'Çevir': 'Translate',
   'Çeviri şu an yapılamadı': 'Translation is not available right now',
   'Bağlantı açılamadı': 'Could not open the link',
@@ -455,12 +450,12 @@ const Map<String, String> cevirilerEn = {
   'Videolarda altyazı göster': 'Show subtitles on videos',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'The sentence spoken in the video is written on the screen. The text is translation: English in Turkish speech, Turkish in other languages.',
-  "Güncelleme gerekli": "Update required",
-  "Yeni sürüm var": "New version available",
+  'Güncelleme gerekli': 'Update required',
+  'Yeni sürüm var': 'New version available',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Install the new version of dizi.jpg to continue.",
-  "Güncelle": "Update",
-  "Daha sonra": "Later",
+      'Install the new version of dizi.jpg to continue.',
+  'Güncelle': 'Update',
+  'Daha sonra': 'Later',
   'Takvim güncelleniyor': 'Updating calendar',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Could not update the calendar, showing the old list',
@@ -717,4 +712,105 @@ const Map<String, String> cevirilerEn = {
   '{} {} yayınlandı': '{} {} is out',
   'Yeni bölüm yayınlandı': 'New episode is out',
   'Yeni bölümler': 'New episodes',
+  'Geri': 'Back',
+  'Karşılamayı kapat': 'Close intro',
+  'Adım {} / {}': 'Step {} / {}',
+  'Hadi başlayalım': "Let's get started",
+  'Kaydet ve devam': 'Save and continue',
+  '{} tanesini ekle': 'Add {}',
+  'Şimdilik geç': 'Skip for now',
+  'Doğum tarihin ne zaman?': 'When were you born?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'We ask so we can show age-appropriate content and celebrate your birthday.',
+  'Gün': 'Day',
+  'Ay': 'Month',
+  'Yıl': 'Year',
+  'Doğum yılımı paylaşmak istemiyorum': "I'd rather not share my birth year",
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Your birth date is never shown publicly on your profile. It is only used for age-appropriate content and birthday wishes.',
+  'Ocak': 'January',
+  'Şubat': 'February',
+  'Mart': 'March',
+  'Nisan': 'April',
+  'Mayıs': 'May',
+  'Haziran': 'June',
+  'Temmuz': 'July',
+  'Ağustos': 'August',
+  'Eylül': 'September',
+  'Ekim': 'October',
+  'Kasım': 'November',
+  'Aralık': 'December',
+  'Verilerini yanında getir': 'Bring your data with you',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'If you track what you watch in another app, you can move it all over here. No need to start from scratch.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt and Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Pick the ZIP file you exported and your watch history, ratings and lists come along.',
+  'Aktarılıyor...': 'Importing...',
+  'ZIP dosyası seç': 'Choose ZIP file',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'No rush: you can also do this later in Settings > My Data.',
+  'Hangi filmleri izledin?': 'Which movies have you watched?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Here are the most watched ones. Tap the ones you have seen and we will add them to your watch history.',
+  'SERİ FİLMLER': 'MOVIE SERIES',
+  'Serilerden {} film eklendi': '{} movies added from movie series',
+  'Film listesi yüklenemedi': "Couldn't load the movie list",
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'You can skip this step and add whatever you like later.',
+  '{} film izlediklerine eklendi': '{} movies added to your watch history',
+  'Film serileri': 'Movie series',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Watched a whole series from start to finish? Add it with one tap.',
+  'Seri bulunamadı': 'No series found',
+  'Daha sonra tekrar deneyebilirsin.': 'You can try again later.',
+  '{} film': '{} movies',
+  'Eklendi': 'Added',
+  'Tümünü izledim': 'Watched all',
+  'Peki ya diziler?': 'And what about shows?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Mark what you have watched; the more you pick, the more similar titles we bring you.',
+  'Dizi listesi yüklenemedi': "Couldn't load the show list",
+  'Seçtiklerine benzeyenler': 'Similar to your picks',
+  'Her şey hazır': "You're all set",
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Take a quick look at what you can do on dizi.jpg.',
+  'Profilini tamamla': 'Complete your profile',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'You can add a bio, a profile photo and a cover image in Settings.',
+  'Takvimin seni bekliyor': 'Your calendar is waiting',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'New episodes of the shows you watch land in your calendar, and we let you know with a notification.',
+  'Puan ver, yorum yaz': 'Rate and comment',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Rate episode by episode, write comments behind a spoiler cover, and build lists.',
+  'Verilerin sende kalır': 'Your data stays yours',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Your data is tied to your account only and is never sold. In Settings you can download all of it or delete your account entirely.',
+  'Engellenen kullanıcılar': 'Blocked users',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'See who you have blocked and unblock them',
+  'Engellediğin kimse yok': "You haven't blocked anyone",
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'You can block someone from the three-dot menu on their profile.',
+  '@{} engellensin mi?': 'Block @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      "Neither of you can see the other's posts, comments or profile, and messages and calls will not go through. Any follow between you is broken, and it does not come back even if you remove the block.",
+  'Bu kullanıcıyı engelledin': 'You have blocked this user',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      "You don't see this person's posts, comments or messages, and this person can't see yours.",
+  '{} yeni bir yapımda: {}': '{} is in a new title: {}',
+  'Favori kişinden yeni yapım': 'New title from a favorite',
+  '{} için bildirimler': 'Notifications for {}',
+  'Tüm bildirimler': 'All notifications',
+  'Uygulamada ve telefonda': 'In the app and on your phone',
+  'Yalnız uygulama içi': 'In the app only',
+  'Telefon bildirimi gönderilmez': 'No phone notification is sent',
+  'Kapalı': 'Off',
+  'Bu kişi için bildirim yok': 'No notifications for this person',
+  'Favori kişilerin yeni yapımları': 'New titles from favorite people',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'When off, nobody can voice call you; callers see a "disabled" notice',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'When off, nobody can video call you; callers see a "disabled" notice',
 };

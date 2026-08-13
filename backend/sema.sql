@@ -19,6 +19,14 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   bildir_takip BOOLEAN NOT NULL DEFAULT true,
   bildir_mesaj BOOLEAN NOT NULL DEFAULT true,
   bildir_etiket BOOLEAN NOT NULL DEFAULT true,
+  -- Doğum tarihi (md. 25 karşılama akışı). Üç ayrı alan: kullanıcı YILINI
+  -- vermeden yalnız gün+ay bırakabilsin (gerekçe migrasyon-2026-08-13e.sql).
+  -- HERKESE AÇIK PROFİLDE GÖSTERİLMEZ; yalnız sahibine `GET /karsilama` döner.
+  dogum_gun SMALLINT,
+  dogum_ay SMALLINT,
+  dogum_yil SMALLINT,
+  -- Karşılama akışı tamamlandı YA DA atlandı → bir daha açılmaz.
+  karsilama_bitti BOOLEAN NOT NULL DEFAULT false,
   olusturma TIMESTAMPTZ DEFAULT now()
 );
 
@@ -270,7 +278,13 @@ CREATE TABLE IF NOT EXISTS engellemeler (
   PRIMARY KEY (engelleyen_id, engellenen_id),
   CHECK (engelleyen_id <> engellenen_id)
 );
-CREATE INDEX IF NOT EXISTS engelleme_engellenen ON engellemeler (engellenen_id);
+-- 13 Ağu 2026 (migrasyon-2026-08-13d): indeks (engellenen_id) idi; engelleme
+-- artık OKUMA uçlarında da süzüyor (`engelSuzgec`, server.js) ve o süzgecin
+-- ters yön dalı `SELECT engelleyen_id ... WHERE engellenen_id=$1` biçiminde.
+-- İkinci kolon anahtara alınınca bu dal İNDEKS-ONLY taranır (heap erişimi
+-- sıfır). Sıra ters çevrilemez: (engelleyen_id, engellenen_id) zaten PK.
+CREATE INDEX IF NOT EXISTS engelleme_engellenen_kapsayan
+  ON engellemeler (engellenen_id, engelleyen_id);
 -- 2026-07-25d: FCM push cihaz token kaydı
 CREATE TABLE IF NOT EXISTS cihaz_tokenlari (
   token TEXT PRIMARY KEY,
@@ -847,3 +861,63 @@ CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_bolum_tekil
 -- harcamasın) ve `bolumBildirimiEkle()` içinde.
 ALTER TABLE kullanicilar
   ADD COLUMN IF NOT EXISTS bildir_bolum BOOLEAN NOT NULL DEFAULT true;
+
+-- ---------------------------------------------------------------------------
+-- 2026-08-13c: FAVORİ KİŞİNİN YENİ YAPIMI BİLDİRİMİ (md. 28)
+-- (migrasyon-2026-08-13c.sql — gerekçelerin tamamı orada)
+--
+-- Favorilenen KİŞİNİN (oyuncu/yönetmen ayrımı ŞEMADA YOKTUR — `favoriler.tur`
+-- yalnız 'person' der) son N günde çıkmış, kullanıcının kitaplığında OLMAYAN
+-- yeni dizi/filmi için bildirim. Kaynağı TMDB `/person/{id}/combined_credits`;
+-- aktörü yoktur, tıpkı 'bolum' gibi.
+--
+-- ***** KİŞİNİN id'si AYRI SÜTUNDA (`kisi_id`), `sezon`DA DEĞİL *****
+-- `tmdb_id` md. 27'den DEVRALINIR ve burada YENİ YAPIMIN id'sidir. Kişinin
+-- id'si `sezon` sütununa sıkıştırılabilirdi; YAPILMADI çünkü o sütunun COMMENT'i
+-- ve `bildirimler_bolum_tekil` indeksi "sezon numarası" anlamı üzerine kurulu.
+-- Ayrıca tv/movie ayrımı için (`/icerik/{tur}/{id}` derin bağlantısı) zaten
+-- YENİ bir sütun gerekiyordu — "sütun eklemeden kurtulma" ihtimali baştan yoktu.
+--
+-- ***** TEKİL ANAHTARDA `kisi_id` YOKTUR *****
+-- Kural: aynı kullanıcıya AYNI YAPIM için ikinci bildirim ASLA. Bir filmde
+-- kullanıcının favorilediği üç oyuncu birden olabilir; anahtara kişi girseydi
+-- aynı film üç kez bildirilirdi. İlk favori kazanır, kalanlar DO NOTHING alır.
+--
+-- ***** KİŞİ BAZLI TERCİH `favoriler`E SÜTUN (ayrı tablo DEĞİL) *****
+-- Tercih ancak "bu kişiyi favoriledim" bağlamında anlamlıdır: favori silinince
+-- tercih de silinmeli — sütun bunu bedava verir, ayrı tablo öksüz satır bırakır.
+-- Üç durum TEK alanda ('acik'|'uygulama'|'kapali'): iki ayrı boolean anlamsız
+-- bileşimlere ("kapalı ama push atılsın") izin verirdi.
+-- ---------------------------------------------------------------------------
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
+  CHECK (tur IN ('yanit','begeni','takip','mesaj','etiket','kacirilan_arama','bolum','kisi'));
+
+-- 'kisi' hedefi: kişinin id'si + YENİ YAPIMIN türü. Yapımın id'si `tmdb_id`.
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS kisi_id INT;
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS icerik_tur TEXT;
+-- KAPALI SÖZLÜK: kodda hata olsa bile bozuk bir tür yazılamaz, dolayısıyla
+-- /icerik/{tur}/{id} adresi bozuk üretilemez.
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_icerik_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_icerik_tur_check
+  CHECK (icerik_tur IS NULL OR icerik_tur IN ('tv','movie'));
+
+-- KISMİ (`WHERE tur='kisi'`) tekil indeks: hem tekrar önleme hem de
+-- server.js'teki ON CONFLICT (kullanici_id, icerik_tur, tmdb_id) ÇIKARIM
+-- HEDEFİ — indeks yoksa görev 42P10 ile patlar.
+CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_kisi_tekil
+  ON bildirimler (kullanici_id, icerik_tur, tmdb_id) WHERE tur = 'kisi';
+
+-- GENEL tercih: diğer bildir_* ile aynı polarite/varsayılan. İKİ YERDE
+-- zorlanır — görevin aday sorgusundaki JOIN'de ve `kisiBildirimiEkle()` içinde.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS bildir_kisi BOOLEAN NOT NULL DEFAULT true;
+
+-- KİŞİ BAZLI üç durumlu tercih (kişinin profilindeki zil işareti):
+--   acik = kutu + push · uygulama = yalnız kutu (push YOK) · kapali = hiçbir şey
+-- Yalnız tur='person' satırlarında anlamlıdır.
+ALTER TABLE favoriler
+  ADD COLUMN IF NOT EXISTS bildirim TEXT NOT NULL DEFAULT 'acik';
+ALTER TABLE favoriler DROP CONSTRAINT IF EXISTS favoriler_bildirim_check;
+ALTER TABLE favoriler ADD CONSTRAINT favoriler_bildirim_check
+  CHECK (bildirim IN ('acik','uygulama','kapali'));

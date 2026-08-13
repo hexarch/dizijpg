@@ -82,7 +82,7 @@ const Map<String, String> cevirilerFil = {
   'Tekrar dene': 'Subukan ulit',
   'Toplam İzleme Süresi': 'Kabuuang screen time',
   'Tüm Zamanların En İyileri': 'Pinakamahusay sa Lahat ng Panahon',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'I-export ang lahat ng data mo (panonood, rating, komento, listahan) bilang TV Time-compatible na ZIP, o mag-import ng ZIP mula sa ibang app.',
   'Tümünü Kaldır': 'Alisin Lahat',
   'Tümünü İzledim': 'Napanood Ko Lahat',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerFil = {
   'Mesaj silinemedi': 'Hindi mabura ang mensahe',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Di-wasto ang link o hindi natagpuan ang pahina',
-  'Keşfet\'e dön': 'Bumalik sa Tuklasin',
+  "Keşfet'e dön": 'Bumalik sa Tuklasin',
   'Düzenle': 'I-edit',
   'Mesajı düzenle': 'I-edit ang mensahe',
   'Yanıtlanıyor': 'Sumasagot',
@@ -268,14 +268,7 @@ const Map<String, String> cevirilerFil = {
   'Abonelik': 'Subscription',
   'Kirala': 'Umupa',
   'Satın al': 'Bumili',
-  'Hoş geldin!': 'Maligayang pagdating!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Pumili ng mga palabas at pelikulang gusto mong panoorin',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Idaragdag ang mga pinili mo sa iyong watchlist',
-  'Şimdilik atla': 'Laktawan muna',
   'Devam et': 'Magpatuloy',
-  '{} ekle': 'Magdagdag ng {}',
   'Şikayet et': 'Iulat',
   'Engelle': 'I-block',
   'Engeli kaldır': 'I-unblock',
@@ -321,7 +314,9 @@ const Map<String, String> cevirilerFil = {
       'Na-upload na media: mga larawan, GIF, video, at voice recording na idinaragdag mo sa profile, komento, at mensahe.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Teknikal: IP address, tinatayang lokasyon (antas ng bansa/lungsod), platform ng device, bersyon ng app, at mga error log. Iniimbak ang mga ito para sa seguridad at pag-aayos ng problema.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Istatistika ng paggamit: ang uri ng device, operating system, at browser na ginamit sa pagpasok ay idinaragdag sa pang-araw-araw na kabuuang counter bilang malalawak na kategorya; hindi iniimbak ang mismong pagkakakilanlan ng browser at hindi maiuugnay ang mga bilang na ito sa sinumang tao.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Mga notification: para sa push notification, iniimbak namin ang token ng device mo at piniling wika. Puwede mong i-off ang mga notification anumang oras sa settings ng device.',
   'Verileri Nasıl Kullanırız': 'Paano Namin Ginagamit ang Data',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -330,12 +325,12 @@ const Map<String, String> cevirilerFil = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Ginagamit lang ang local storage para panatilihin kang naka-login at tandaan ang mga kagustuhan tulad ng wika at tema. Walang advertising o tracking cookies.',
   'Üçüncü Taraf Hizmetler': 'Mga Serbisyo ng Third Party',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Ang data ng mga serye at pelikula ay galing sa TMDB, ang impormasyon ng streaming platform ay galing sa JustWatch. Ang push notification ay ipinapadala sa pamamagitan ng Google Firebase, at ang trapiko ng site ay pinoprotektahan ng Cloudflare. Saklaw ang mga serbisyong ito ng kani-kanilang patakaran sa privacy.',
   'Saklama ve Silme': 'Pag-iimbak at Pagbura',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Nakaimbak ang data mo hangga\'t umiiral ang account mo. Sa "Burahin ang Account Ko" sa settings, permanente mong mabubura ang account; agad na mabubura ang data, at ang mga kopya sa backup ay sa loob ng hindi lalampas sa 14 na araw. Awtomatikong nabubura ang mga error log pagkalipas ng 30 araw.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Puwede mong i-export ang data mo bilang ZIP mula sa settings; ipapadala ang archive sa email address mo.',
   'Güvenlik': 'Seguridad',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -458,12 +453,12 @@ const Map<String, String> cevirilerFil = {
   'Videolarda altyazı göster': 'Ipakita ang mga subtitle sa mga video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Ang pangungusap na binibigkas sa video ay nakasulat sa screen. Ang teksto ay pagsasalin: English sa Turkish speech, Turkish sa ibang mga wika.',
-  "Güncelleme gerekli": "Kailangan ng update",
-  "Yeni sürüm var": "May bagong bersyon",
+  'Güncelleme gerekli': 'Kailangan ng update',
+  'Yeni sürüm var': 'May bagong bersyon',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "I-install ang bagong bersyon ng dizi.jpg para magpatuloy.",
-  "Güncelle": "I-update",
-  "Daha sonra": "Mamaya",
+      'I-install ang bagong bersyon ng dizi.jpg para magpatuloy.',
+  'Güncelle': 'I-update',
+  'Daha sonra': 'Mamaya',
   'Takvim güncelleniyor': 'Ina-update ang kalendaryo',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Hindi na-update ang kalendaryo, ipinapakita ang lumang listahan',
@@ -723,4 +718,108 @@ const Map<String, String> cevirilerFil = {
   '{} {} yayınlandı': 'Lumabas na ang {} {}',
   'Yeni bölüm yayınlandı': 'Lumabas na ang bagong episode',
   'Yeni bölümler': 'Mga bagong episode',
+  'Geri': 'Bumalik',
+  'Karşılamayı kapat': 'Isara ang panimula',
+  'Adım {} / {}': 'Hakbang {} / {}',
+  'Hadi başlayalım': 'Simulan na natin',
+  'Kaydet ve devam': 'I-save at magpatuloy',
+  '{} tanesini ekle': 'Idagdag ang napiling {}',
+  'Şimdilik geç': 'Laktawan muna',
+  'Doğum tarihin ne zaman?': 'Kailan ka ipinanganak?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Itinatanong namin ito para makapagpakita ng nilalamang angkop sa edad mo at para batiin ka sa kaarawan mo.',
+  'Gün': 'Araw',
+  'Ay': 'Buwan',
+  'Yıl': 'Taon',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Ayaw kong ibahagi ang taon ng kapanganakan ko',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Hindi ipinapakita nang publiko ang petsa ng kapanganakan mo sa profile mo. Ginagamit lang ito para sa nilalamang angkop sa edad at para sa pagbati sa kaarawan.',
+  'Ocak': 'Enero',
+  'Şubat': 'Pebrero',
+  'Mart': 'Marso',
+  'Nisan': 'Abril',
+  'Mayıs': 'Mayo',
+  'Haziran': 'Hunyo',
+  'Temmuz': 'Hulyo',
+  'Ağustos': 'Agosto',
+  'Eylül': 'Setyembre',
+  'Ekim': 'Oktubre',
+  'Kasım': 'Nobyembre',
+  'Aralık': 'Disyembre',
+  'Verilerini yanında getir': 'Dalhin mo ang data mo',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Kung sinusubaybayan mo ang mga napapanood mo sa ibang app, puwede mong ilipat ang mga iyon dito. Hindi mo kailangang magsimula sa wala.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt at Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Piliin ang ZIP file na na-export mo para mailipat ang mga napanood, rating at listahan mo.',
+  'Aktarılıyor...': 'Ini-import...',
+  'ZIP dosyası seç': 'Pumili ng ZIP file',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Walang minamadali: puwede mo rin itong gawin mamaya sa Mga Setting > Data Ko.',
+  'Hangi filmleri izledin?': 'Anong mga pelikula ang napanood mo?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Nandito ang pinakamaraming napanood. Idadagdag namin sa mga napanood mo ang mga pinindot mo.',
+  'SERİ FİLMLER': 'MGA SERYE NG PELIKULA',
+  'Serilerden {} film eklendi': '{} pelikula ang naidagdag mula sa mga serye',
+  'Film listesi yüklenemedi': 'Hindi na-load ang listahan ng pelikula',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Puwede mong laktawan ang hakbang na ito at magdagdag ng gusto mo mamaya.',
+  '{} film izlediklerine eklendi':
+      '{} pelikula ang naidagdag sa mga napanood mo',
+  'Film serileri': 'Mga serye ng pelikula',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Kung napanood mo ang isang serye mula simula hanggang dulo, idagdag ito sa isang pindot.',
+  'Seri bulunamadı': 'Walang nakitang serye',
+  'Daha sonra tekrar deneyebilirsin.': 'Puwede mong subukan ulit mamaya.',
+  '{} film': '{} pelikula',
+  'Eklendi': 'Naidagdag',
+  'Tümünü izledim': 'Napanood ko lahat',
+  'Peki ya diziler?': 'Paano naman ang mga serye?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Markahan ang mga napanood mo; habang pumipili ka, magdadala kami ng mga katulad nito.',
+  'Dizi listesi yüklenemedi': 'Hindi na-load ang listahan ng serye',
+  'Seçtiklerine benzeyenler': 'Katulad ng mga pinili mo',
+  'Her şey hazır': 'Handa na ang lahat',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Silipin mo agad kung ano ang puwede mong gawin sa dizi.jpg.',
+  'Profilini tamamla': 'Kumpletuhin ang profile mo',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Puwede kang magdagdag ng Bio, profile photo at cover sa Mga Setting.',
+  'Takvimin seni bekliyor': 'Naghihintay sa iyo ang Kalendaryo',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Lumalabas sa kalendaryo ang mga bagong episode ng mga seryeng pinapanood mo, at ipapaalam namin sa iyo sa pamamagitan ng notipikasyon.',
+  'Puan ver, yorum yaz': 'Mag-rate, magsulat ng komento',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'I-rate ang bawat episode, magsulat ng komento na may kurtinang Spoiler, at gumawa ng mga listahan.',
+  'Verilerin sende kalır': 'Sa iyo nananatili ang data mo',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Nakatali lang sa account mo ang data mo at hindi ito ipinagbibili. Sa Mga Setting, puwede mong i-download ang lahat o burahin nang tuluyan ang account mo.',
+  'Engellenen kullanıcılar': 'Mga na-block na user',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Tingnan ang mga na-block mo, alisin ang block',
+  'Engellediğin kimse yok': 'Wala kang na-block na kahit sino',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Puwede mong i-block ang isang user mula sa tatlong-tuldok na menu sa profile niya.',
+  '@{} engellensin mi?': 'I-block si @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      "Hindi ninyo makikita ang mga post, komento at profile ng isa't isa; hindi rin makakarating ang mensahe at tawag. Mapuputol ang pagsunod ninyo sa isa't isa kung mayroon man, at hindi na ito babalik kahit alisin mo pa ang block.",
+  'Bu kullanıcıyı engelledin': 'Na-block mo ang user na ito',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Hindi mo nakikita ang mga post, komento at mensahe ng taong ito; hindi rin nakikita ng taong ito ang sa iyo.',
+  '{} yeni bir yapımda: {}': '{} ay nasa bagong produksyon: {}',
+  'Favori kişinden yeni yapım': 'Bagong produksyon mula sa paborito mong tao',
+  '{} için bildirimler': 'Mga notipikasyon para kay {}',
+  'Tüm bildirimler': 'Lahat ng notipikasyon',
+  'Uygulamada ve telefonda': 'Sa app at sa telepono',
+  'Yalnız uygulama içi': 'Sa loob lang ng app',
+  'Telefon bildirimi gönderilmez':
+      'Walang ipapadalang notipikasyon sa telepono',
+  'Kapalı': 'Naka-off',
+  'Bu kişi için bildirim yok': 'Walang notipikasyon para sa taong ito',
+  'Favori kişilerin yeni yapımları': 'Mga bagong produksyon ng paboritong tao',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kapag naka-off, walang makakatawag sa iyo gamit ang boses; may makikitang paalalang "naka-off" ang tumatawag',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Kapag naka-off, walang makakatawag sa iyo gamit ang video; may makikitang paalalang "naka-off" ang tumatawag',
 };

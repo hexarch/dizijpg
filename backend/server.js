@@ -1334,9 +1334,11 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 // Bildirim ekler; kendi eylemine bildirim düşmez, hata akışı bozmaz.
 // Push bildirim şablonları (alıcının diline göre; {ad} = @kullanıcı).
 //
-// `bolum` (md. 27, yeni bölüm bildirimi) TEK AKTÖRSÜZ TÜRDÜR: onu bir kullanıcı
-// değil, TMDB takvimi doğurur. Bu yüzden yer tutucusu {ad} değil,
-// {dizi} = dizi adı ve {sb} = "S5B3" biçiminde sezon/bölüm etiketidir.
+// AKTÖRSÜZ TÜRLER — ikisini de bir kullanıcı değil TMDB doğurur, o yüzden
+// {ad} yer tutucusu YOKTUR:
+//  · `bolum` (md. 27, yeni bölüm): {dizi} = dizi adı, {sb} = "S5B3" etiketi.
+//  · `kisi`  (md. 28, favori kişinin yeni yapımı): {kisi} = kişinin adı,
+//    {yapim} = yeni dizi/filmin adı.
 //
 // *** CİNSİYETSİZ DİL (13 Ağu 2026, kullanıcı kararı) *** Uygulama kimsenin
 // cinsiyetini SORMUYOR ve SAKLAMIYOR; o yüzden hiçbir gövde gövdedeki KİŞİYE
@@ -1348,22 +1350,22 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 // (özne "серия", dişil), ar 'صدرت' (özne "حلقة", dişil).
 // Kilit: test/cinsiyetsiz_dil.test.js.
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da' },
-  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile' },
-  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}' },
-  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit' },
-  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}' },
+  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}' },
+  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}' },
+  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}' },
+  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}' },
 };
 
 /**
@@ -1378,11 +1380,12 @@ const sbEtiketi = (dil, sezon, bolum) => `S${sezon}${dil === 'tr' ? 'B' : 'E'}${
 // Alıcının cihazlarına anlık push gönderir (fire-and-forget, hata yutulur).
 // ekstra.metin: mesaj bildiriminde gövdede gösterilecek içerik.
 //
-// AKTÖRSÜZ TÜR ('bolum', md. 27): `aktorId` null gelir. O yüzden (a) kullanıcı
-// sorgusu HİÇ yapılmaz — null id ile boş dönecek bir sorgu her bildirimde
-// boşuna DB'ye vurmaktı; (b) gövde {ad} yerine {dizi}/{sb} ile kurulur;
-// (c) data yükü tmdb_id/sezon/bolum taşır ki istemci dokununca
-// /dizi/:id/sezon/:s/bolum/:b sayfasını açabilsin.
+// AKTÖRSÜZ TÜRLER ('bolum' md. 27, 'kisi' md. 28): `aktorId` null gelir. O
+// yüzden (a) kullanıcı sorgusu HİÇ yapılmaz — null id ile boş dönecek bir sorgu
+// her bildirimde boşuna DB'ye vurmaktı; (b) gövde {ad} yerine türe özgü yer
+// tutucularla kurulur; (c) data yükü derin bağlantıyı kuracak alanları taşır:
+//   bolum → tmdb_id/sezon/bolum  ⇒ /dizi/:id/sezon/:s/bolum/:b
+//   kisi  → icerik_tur/tmdb_id (+ kisi_id) ⇒ /icerik/:tur/:id
 async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
   if (!fcmHazir || !aliciId || aliciId === aktorId) return;
   try {
@@ -1401,7 +1404,17 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       ? (sablon.bolum || '')
         .replace('{dizi}', String(ekstra?.dizi_adi || '').slice(0, 100))
         .replace('{sb}', sbEtiketi(dil, ekstra?.sezon, ekstra?.bolum))
-      : (sablon[tur] || '').replace('{ad}', ad);
+      // md. 28 — favori kişinin yeni yapımı. Adlar TMDB'den gelir ve KULLANICI
+      // ADI DEĞİLDİR: başlarına '@' KONMAZ. İkisinden biri eksikse gövde BOŞ
+      // bırakılır ("yeni bir yapımda: " gibi yarım bir cümle basmaktansa push
+      // hiç gitmesin) — uygulama içi bildirim satırı zaten yazılmış olur.
+      : tur === 'kisi'
+        ? (ekstra?.kisi_adi && ekstra?.yapim_adi
+          ? (sablon.kisi || '')
+            .replace('{kisi}', String(ekstra.kisi_adi).slice(0, 100))
+            .replace('{yapim}', String(ekstra.yapim_adi).slice(0, 100))
+          : '')
+        : (sablon[tur] || '').replace('{ad}', ad);
     if (!govde) return;
     const tokens = tok.rows.map((r) => r.token);
     // Derin bağlantı + görsel için ortak veri (FCM data değerleri string olmalı)
@@ -1417,6 +1430,15 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
       veri.tmdb_id = String(ekstra?.tmdb_id ?? '');
       veri.sezon = String(ekstra?.sezon ?? '');
       veri.bolum = String(ekstra?.bolum ?? '');
+    }
+    // md. 28 — favori kişinin yeni yapımı: dokununca YAPIMIN sayfasına
+    // (/icerik/:tur/:id). `kisi_id` de gider ki istemci ileride kişinin
+    // profiline de gidebilsin; `icerik_tur` OLMADAN adres kurulamaz
+    // (TMDB'de dizi 1396 ile film 1396 ayrı yapımlardır).
+    if (tur === 'kisi') {
+      veri.tmdb_id = String(ekstra?.tmdb_id ?? '');
+      veri.icerik_tur = String(ekstra?.icerik_tur ?? '');
+      veri.kisi_id = String(ekstra?.kisi_id ?? '');
     }
     let paket;
     if (tur === 'arama') {
@@ -1494,6 +1516,10 @@ const BILDIRIM_TERCIH_KOLON = {
   // md. 27 — izlenen dizinin yeni bölümü. Varsayılan açık (bkz.
   // migrasyon-2026-08-13.sql karar 4).
   bolum: 'bildir_bolum',
+  // md. 28 — favori kişinin yeni yapımı. Bu YALNIZ GENEL anahtardır; kişi
+  // bazlı üç durumlu tercih `favoriler.bildirim` sütunundadır ve ayrı bir
+  // kapıdır (bkz. `kisiBildirimiEkle`).
+  kisi: 'bildir_kisi',
 };
 
 async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = null) {
@@ -1560,15 +1586,73 @@ async function bolumBildirimiEkle(aliciId, tmdbId, sezon, bolum, diziAdi) {
 }
 
 /**
+ * FAVORİ KİŞİNİN YENİ YAPIMI bildirimi yazar (md. 28).
+ *
+ * `bolumBildirimiEkle` ile AYNI KALIP (aktörsüz yazıcı, kısmi tekil indeks,
+ * push yalnız satır gerçekten yazıldıysa) — ORTAKLAŞTIRILMADI çünkü ikisinin
+ * INSERT sütunları, ON CONFLICT hedefleri ve tercih kapıları farklı; ortak bir
+ * "aktörsüz yazıcı" soyutlaması üç parametreyi de dışarıdan alan, gövdesi
+ * tamamen dallanmalardan oluşan bir fonksiyon olurdu (md. 27'nin
+ * `bildirimEkle` için verdiği kararın aynısı). ORTAK KALAN: `pushBildirim` ve
+ * `BILDIRIM_TERCIH_KOLON` disiplini.
+ *
+ * *** İKİ KATMANLI TERCİH ***
+ *  1. GENEL  : `kullanicilar.bildir_kisi` — kapalıysa hiçbir favori için
+ *     bildirim yok. (Görevin aday sorgusu bunu JOIN'de de süzer; buradaki
+ *     ikinci kontrol fonksiyonun TEK BAŞINA doğru olmasını sağlar.)
+ *  2. KİŞİ BAZLI: `favoriler.bildirim` üç durumlu —
+ *       'kapali'   → hiçbir şey (görev sorgusu bunu zaten süzer),
+ *       'uygulama' → SATIR YAZILIR, PUSH GİTMEZ ("yalnız uygulama içi"),
+ *       'acik'     → satır + push.
+ *     `kip` görevden gelir; burada yeniden okunmaz çünkü aday sorgusu onu
+ *     kullanıcı başına zaten getirdi (kullanıcı başına ikinci sorgu = N+1).
+ *
+ * @param yapim {{tur:'tv'|'movie', tmdb_id:number, ad:string}} YENİ yapım
+ * @returns {Promise<boolean>} bildirim GERÇEKTEN yazıldı mı (hacim freni sayar)
+ */
+async function kisiBildirimiEkle(aliciId, kisiId, yapim, kip = 'acik', kisiAdi = '') {
+  if (!aliciId || !gecerliTmdb(kisiId) || !gecerliTmdb(yapim?.tmdb_id)) return false;
+  if (yapim.tur !== 'tv' && yapim.tur !== 'movie') return false;
+  if (kip === 'kapali') return false;
+  const t = await havuz
+    .query('SELECT bildir_kisi AS ac FROM kullanicilar WHERE id=$1', [aliciId])
+    .catch(() => ({ rows: [] }));
+  if (t.rows.length && t.rows[0].ac === false) return false;
+  // ON CONFLICT çıkarımı `bildirimler_kisi_tekil` kısmi indeksine dayanır;
+  // WHERE yan tümcesi indeksin yüklemiyle BİREBİR aynı olmak zorunda.
+  // ANAHTARDA `kisi_id` YOK: aynı yapımda kullanıcının birden çok favorisi
+  // olabilir, hepsi için ayrı bildirim gitmemeli (migrasyon karar 3).
+  const y = await havuz.query(
+    `INSERT INTO bildirimler (kullanici_id, tur, kisi_id, icerik_tur, tmdb_id)
+     VALUES ($1,'kisi',$2,$3,$4)
+     ON CONFLICT (kullanici_id, icerik_tur, tmdb_id) WHERE tur='kisi'
+     DO NOTHING`,
+    [aliciId, kisiId, yapim.tur, yapim.tmdb_id],
+  ).catch((e) => { console.error('kisi bildirimi:', e.message); return { rowCount: 0 }; });
+  if (!y.rowCount) return false; // zaten bildirilmiş → push da YOK
+  // "YALNIZ UYGULAMA İÇİ": satır yazıldı, telefon çalmadı.
+  if (kip === 'acik') {
+    pushBildirim(aliciId, 'kisi', null, {
+      kisi_id: kisiId,
+      kisi_adi: kisiAdi,
+      icerik_tur: yapim.tur,
+      tmdb_id: yapim.tmdb_id,
+      yapim_adi: yapim.ad,
+    });
+  }
+  return true;
+}
+
+/**
  * İki kullanıcı arasında ÇİFT YÖNLÜ engelleme var mı?
  *
  * Bu kontrol daha önce `POST /mesajlar` içinde SATIR İÇİ yazılıydı; arama için
- * üçüncü bir kopya yazmak yerine buraya çıkarıldı. (`/paylas-hedefler`teki
- * üçüncü kullanım bir LİSTE sorgusudur — tek çiftlik bu yardımcıya
- * indirgenemez, o yüzden orada SQL alt sorgusu olarak kaldı.)
+ * üçüncü bir kopya yazmak yerine buraya çıkarıldı. LİSTE sorguları tek çiftlik
+ * bu yardımcıya indirgenemez — onların ortak SQL parçası `engelSuzgec()`.
  *
- * Engelleme bugün yalnız GÖNDERMEDE zorlanıyor, OKUMADA değil (bilinçli).
- * ARAMADA bu gevşeklik kabul edilemez — telefon çalıyor.
+ * ENGELLEME ARTIK OKUMADA DA ZORLANIR (13 Ağu 2026, istek md. 19): eskiden
+ * yalnız GÖNDERME kapılarındaydı ve "engellediğim kişinin gönderisi akışımda
+ * görünüyor" şikâyetine yol açıyordu.
  */
 async function engelliMi(aId, bId) {
   const { rows } = await havuz.query(
@@ -1578,6 +1662,33 @@ async function engelliMi(aId, bId) {
     [aId, bId],
   );
   return rows.length > 0;
+}
+
+/**
+ * ÇİFT YÖNLÜ engelleme SQL SÜZGECİ — liste/akış sorgularının ortak parçası.
+ *
+ * `sutun` bir KULLANICI ID ifadesi (ör. 'y.kullanici_id', 'k.id'), `ben` ise
+ * bakan kişinin id'sini taşıyan yer tutucu ('$1', '$3'...). Dönen parça
+ * doğrudan WHERE'e `AND ${engelSuzgec(...)}` diye konur.
+ *
+ * ÇİFT YÖNLÜ: A B'yi engellediyse A da B'yi görmez, B de A'yı. Tek yönlü
+ * olsaydı engellenen kişi engelleyenin gönderilerini okumaya devam ederdi ve
+ * "engelledim" hissi yalan olurdu.
+ *
+ * `${ben}::int = 0 OR` KISA DEVRESİ: oturumsuz okumada (SEO sayfaları,
+ * girisIsteğeBagli uçları) benId 0'dır; kısa devre olmasa her satır için
+ * boşuna iki indeks araması yapılırdı. Sonuç aynı, plan ucuz.
+ *
+ * PERFORMANS: iki dal da indekslidir — `engellemeler` PK'si
+ * (engelleyen_id, engellenen_id) ilk dalı, `engelleme_engellenen`
+ * (engellenen_id, engelleyen_id) ikinci dalı İNDEKS-ONLY karşılar
+ * (migrasyon-2026-08-13d). Alt sorgu satır başına DEĞİL, sorgu başına BİR KEZ
+ * çalışır (hashed subplan) — N+1 yok.
+ */
+function engelSuzgec(sutun, ben) {
+  return `(${ben}::int = 0 OR ${sutun} NOT IN (
+        SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=${ben}
+        UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=${ben}))`;
 }
 
 /** Karşılıklı takip: A→B ve B→A. `takipler` PK'si (eden, edilen), ters yön
@@ -1597,6 +1708,17 @@ async function karsilikliTakipMi(aId, bId) {
 // Kullanıcı adları küçük harf/rakam/nokta/tire/alt çizgi 3-20 karakter (kayıt kuralıyla aynı);
 // başta/sonda nokta-tire olmaz ki cümle sonu noktası ada yapışmasın.
 // haricId: bu id'ye ayrı bildirim gidiyorsa (ör. yanıtlanan) çift bildirim engellenir.
+//
+// *** ENGELLEME (md. 19 boşluğu, 13 Ağu 2026) *** Engellenen bir kullanıcı
+// `@etiket` ile hâlâ bildirim gönderebiliyordu: engel okuma tarafında 11 uçta
+// ve yazma kapılarında zorlanmıştı ama BİLDİRİM yolu açık kalmıştı — engelleyen
+// kişinin telefonu, engellediği kişinin yazdığı yorumla çalıyordu.
+//
+// SÜZGEÇ ADAY SORGUSUNDA: `engelliMi()` ÇİFT BAŞINA bir sorgudur ve burada
+// N kişi etiketlenmiş olabilir (N+1). Onun yerine liste sorgularının ortak
+// parçası `engelSuzgec()` doğrudan WHERE'e konur — etiketlenen kaç kişi olursa
+// olsun TEK sorgu, engellenenler daha veritabanından dönmeden elenir.
+// ÇİFT YÖNLÜ: kim kimi engellemiş olursa olsun bildirim gitmez.
 async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null) {
   const bulunan = new Set();
   const re = /@([a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_])/g;
@@ -1606,8 +1728,9 @@ async function etiketBildirimleriGonder(metin, aktorId, yorumId, haricId = null)
   try {
     const { rows } = await havuz.query(
       `SELECT id FROM kullanicilar
-       WHERE lower(kullanici_adi) = ANY($1) AND misafir = false`,
-      [[...bulunan]],
+       WHERE lower(kullanici_adi) = ANY($1) AND misafir = false
+         AND ${engelSuzgec('id', '$2')}`,
+      [[...bulunan], aktorId],
     );
     for (const r of rows) {
       if (r.id === aktorId || r.id === haricId) continue;
@@ -3327,6 +3450,254 @@ if (ISCI_GOREVLI) {
   setTimeout(yeniBolumleriBildir, 3 * 60 * 1000);
 }
 
+// ===========================================================================
+// md. 28 — FAVORİ KİŞİNİN YENİ YAPIMI BİLDİRİMİ
+// ===========================================================================
+// KULLANICI İSTEĞİ: "Favori oyuncu veya yönetmenin yeni dizi/filmi çıkınca
+// bildirim." ŞEMA UYARISI: `favoriler.tur` yalnız 'person' der — OYUNCU /
+// YÖNETMEN AYRIMI YOKTUR. Bu yüzden özellik "favori KİŞİ" üzerinden çalışır.
+//
+// Karar zinciri md. 27 ile birebir aynı disiplinde ama üç yerde ayrılır:
+// (1) kaynak TMDB takvimi değil kişinin KREDİ LİSTESİ, (2) "bir öncekini
+// izlemiş olma" gibi kendi kendini sınırlayan bir kural YOK — bu yüzden hacim
+// frenleri daha önemli, (3) tercih İKİ KATMANLI (genel + kişi bazlı üç durum).
+//
+// NEDEN 21 GÜN (`YENI_YAPIM_PENCERE_GUN`) — md. 27'nin 14'ünden UZUN:
+//  * KAYNAK DAHA YAVAŞ TAZELENİYOR. md. 27 `/tv/{id}` gövdesindeki
+//    `last_episode_to_air` alanını okuyor; TMDB o alanı takvim için titizlikle
+//    güncelliyor. Kişi KREDİLERİ ise topluluk tarafından elle giriliyor: bir
+//    filmin oyuncu kadrosu vizyondan GÜNLER SONRA tamamlanabiliyor. Kredi geç
+//    girilirse pencere dışında kalıp bildirim hiç gitmezdi.
+//  * TUR SIKLIĞI DÜŞÜK. md. 27 6 saatte bir koşuyor → 14 günde ~56 deneme.
+//    Bu görev GÜNDE BİR koşuyor (aşağıda gerekçesi) → 21 günde 21 deneme.
+//    Yani daha geniş pencere, md. 27'den DAHA AZ yeniden değerlendirme demek.
+//  * NEDEN DAHA UZUN DEĞİL (ör. 60 gün): iki ay önce çıkmış bir filme "yeni
+//    filmi çıktı" demek yalan olur; kullanıcı bildirimi güvenilmez bulur.
+//  * Tekrar zaten kısmi tekil indeksle imkânsız olduğu için geniş pencere
+//    BEDAVA sigortadır (md. 27 ile aynı gerekçe).
+const YENI_YAPIM_PENCERE_GUN = 21;
+//
+// GELECEK TARİHLİ YAPIM BİLDİRİLMEZ (md. 27'deki `tarih > bugun` kuralının
+// aynısı). Üç gerekçe: (a) istek "ÇIKINCA bildirim" diyor — henüz çıkmamış bir
+// şey için yapılacak bir şey yok; (b) TMDB'deki ilan edilmiş tarihler kayar,
+// duyuru tarihinde bildirseydik gerçek çıkışta BİR DAHA bildiremezdik (tekil
+// indeks aynı yapıma ikinci satır yazdırmaz); (c) "yakında çıkacaklar" ayrı bir
+// özelliktir (takvim), bildirim kutusunun işi değil.
+//
+// HACİM FRENİ 1 — kişi başına turda en fazla bu kadar YAPIM değerlendirilir.
+// Çok üretken bir oyuncunun 21 günlük penceresinde 8 kredi birden görünebilir
+// (dizi konuk rolleri, kısa filmler). En yeni 5'i kullanıcıya zaten yeter.
+const YENI_YAPIM_KISI_SINIRI = 5;
+// HACİM FRENİ 2 — tek turda kullanıcı başına en fazla bu kadar bildirim.
+// md. 27 ile AYNI sayı ve aynı gerekçe: erteleme kayıp değildir (satır
+// yazılmayan yapım bir sonraki turda yeniden değerlendirilir ve 21 günlük
+// pencere bitmeden sırası gelir).
+const YENI_YAPIM_TUR_SINIRI = 3;
+// MALİYET FRENİ — kişi ÖBEĞİ. `/person/{id}?append_to_response=combined_credits`
+// gövdeleri BÜYÜKTÜR (yüzlerce kredi, yüzlerce KB). Bütün favori kişileri tek
+// `tmdbTopluGetir` çağrısıyla çekmek onları AYNI ANDA bellekte tutmak demekti;
+// öbek bitince gövdeler serbest kalır. Öbekleme TMDB çağrı SAYISINI
+// DEĞİŞTİRMEZ (kişi başına yine tek istek), yalnız tepe belleği sınırlar.
+const YENI_YAPIM_OBEK = 20;
+// `crew` kredilerinden YALNIZ bunlar sayılır. İstek "oyuncu VEYA YÖNETMEN"
+// diyor; bütün crew'u almak (Writer, Producer, "Thanks", Stunts...) tek bir
+// favoriden düzinelerce bildirim üretirdi. 'Creator' dizinin yönetmen
+// karşılığıdır (TMDB dizilerde 'Director' yerine onu kullanır).
+const YENI_YAPIM_ISLERI = new Set(['Director', 'Creator']);
+
+/**
+ * *** KURALIN KENDİSİ (saf, DB/TMDB'siz test edilebilir) ***
+ * Kişinin kredilerinden "yeni çıkmış yapımlar"ı süzer.
+ *
+ * GÖVDE İKİ BİÇİMİ DE KABUL EDER: `/person/{id}?append_to_response=
+ * combined_credits` (görev bunu kullanır — kişinin ADI da aynı yanıtta gelsin
+ * diye) ve düz `/person/{id}/combined_credits` (`/kisi/:id/izlenme` ucunun
+ * kullandığı biçim). Böylece fonksiyon çağıranından bağımsız kalır.
+ *
+ * SÜZGEÇLER (`kisi_izlenme.js` → `yapimlariCikar` ile aynı çizgi):
+ *  · media_type yalnız 'tv' | 'movie',
+ *  · poster_path ZORUNLU: bildirim kartının solunda poster var; postersiz
+ *    kayıtlar TMDB'de neredeyse hep eksik/çöp girdilerdir,
+ *  · adı olmayan kayıt atılır (push gövdesi "yeni bir yapımda: " olurdu),
+ *  · tarih YYYY-MM-DD ve pencere İÇİNDE, GELECEK DEĞİL,
+ *  · (tur, id) TEKİLLEŞTİRİLİR: aynı yapımda hem oynayıp hem yönetmişse
+ *    (ya da iki rolde oynamışsa) TMDB birden çok kredi döndürür.
+ * SIRA: en yeni önce — kesilecekse (KISI_SINIRI) en eskiler kesilsin.
+ */
+function yeniYapimlar(govde, bugun, pencereGun = YENI_YAPIM_PENCERE_GUN,
+  sinir = YENI_YAPIM_KISI_SINIRI) {
+  const k = govde?.combined_credits || govde;
+  const bas = gunEkle(bugun, -pencereGun);
+  if (!bas || !k) return [];
+  const gorulen = new Set();
+  const cikti = [];
+  const ekle = (c, rol) => {
+    const tur = c?.media_type;
+    if (tur !== 'tv' && tur !== 'movie') return;
+    if (!c.poster_path) return;
+    const id = Number(c.id);
+    if (!Number.isInteger(id) || id <= 0) return;
+    const ad = String(c.name || c.title || '').trim();
+    if (!ad) return;
+    const tarih = String((tur === 'tv' ? c.first_air_date : c.release_date) || '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(tarih)) return;
+    if (tarih > bugun || tarih < bas) return; // gelecek ya da pencere dışı
+    const anahtar = `${tur}:${id}`;
+    if (gorulen.has(anahtar)) return;
+    gorulen.add(anahtar);
+    cikti.push({ tur, tmdb_id: id, ad: ad.slice(0, 200), poster: c.poster_path, tarih, rol });
+  };
+  for (const c of Array.isArray(k.cast) ? k.cast : []) ekle(c, 'oyuncu');
+  for (const c of Array.isArray(k.crew) ? k.crew : []) {
+    if (YENI_YAPIM_ISLERI.has(c?.job)) ekle(c, 'yonetmen');
+  }
+  cikti.sort((a, b) => (a.tarih < b.tarih ? 1 : a.tarih > b.tarih ? -1 : 0));
+  return cikti.slice(0, sinir);
+}
+
+/**
+ * "Kullanıcının kitaplığında olan" (tur:tmdb_id) kümeleri — kullanıcı başına.
+ *
+ * KİTAPLIK burada EN GENİŞ anlamıyla alınır: `durumlar`da HERHANGİ bir durum
+ * ('izleyecegim' DAHİL — kullanıcı zaten haberdar), `izlemeler`de bir kayıt,
+ * ya da `gizli_icerikler`de bir satır (kullanıcı o yapımı GÖRMEK İSTEMEDİĞİNİ
+ * açıkça söylemiş; ona bildirim atmak isteğe doğrudan aykırıdır).
+ * `kisi_izlenme.js`teki DAR "izlendi" tanımı burada KULLANILMAZ: orada soru
+ * "izledi mi", burada "haberi var mı".
+ *
+ * TEK SORGU: (kullanıcı × yapım) çarpımı için kullanıcı başına sorgu YOK;
+ * yapım listesi `unnest` ile geçici bir tabloya çevrilip üç kaynakla
+ * birleştirilir.
+ */
+async function kitaplikKumeleri(kullaniciIdler, yapimlar) {
+  const harita = new Map();
+  if (!kullaniciIdler.length || !yapimlar.length) return harita;
+  const { rows } = await havuz.query(
+    `WITH y(tur, tmdb_id) AS (SELECT * FROM unnest($2::text[], $3::int[]))
+     SELECT d.kullanici_id, d.tur, d.tmdb_id FROM durumlar d
+       JOIN y ON y.tur = d.tur AND y.tmdb_id = d.tmdb_id
+      WHERE d.kullanici_id = ANY($1::int[])
+     UNION
+     SELECT i.kullanici_id, i.tur, i.tmdb_id FROM izlemeler i
+       JOIN y ON y.tur = i.tur AND y.tmdb_id = i.tmdb_id
+      WHERE i.kullanici_id = ANY($1::int[])
+     UNION
+     SELECT g.kullanici_id, g.tur, g.tmdb_id FROM gizli_icerikler g
+       JOIN y ON y.tur = g.tur AND y.tmdb_id = g.tmdb_id
+      WHERE g.kullanici_id = ANY($1::int[])`,
+    [kullaniciIdler, yapimlar.map((y) => y.tur), yapimlar.map((y) => y.tmdb_id)],
+  );
+  for (const r of rows) {
+    let k = harita.get(r.kullanici_id);
+    if (!k) harita.set(r.kullanici_id, k = new Set());
+    k.add(`${r.tur}:${r.tmdb_id}`);
+  }
+  return harita;
+}
+
+/**
+ * Periyodik görev: favori kişilerin yeni yapımlarını bildirir (günde bir).
+ *
+ * NEDEN 24 SAAT (md. 27'nin 6 saati DEĞİL): bölümler gün İÇİNE yayılır (ABD
+ * akşamı = TR sabahı), o yüzden orada saat önemliydi. Bir filmin/dizinin
+ * ÇIKIŞI ise bir TARİHTİR; aynı günün sabahı ile akşamı arasındaki fark
+ * kullanıcı için yoktur. Dört kat daha seyrek koşmak, kişi başına günlük TMDB
+ * isteğini de dörtte bire indirir.
+ *
+ * *** MALİYET FRENİ — KİŞİ BAŞINA TEK TMDB ÇAĞRISI ***
+ *  · Aday sorgusu KİŞİYE göre gruplanır (`GROUP BY f.tmdb_id`): aynı oyuncuyu
+ *    favorileyen 50 kullanıcı için 1 istek yapılır, 50 değil.
+ *  · `append_to_response=combined_credits` sayesinde kişinin ADI ve KREDİLERİ
+ *    AYNI yanıtta gelir — push gövdesi için ikinci bir `/person/{id}` çağrısı
+ *    YOK.
+ *  · Önbellek kullanıcıya değil ANAHTARA bağlıdır (`tmdb_onbellek`), yani
+ *    öbekler arası ve turlar arası paylaşılır.
+ *  · TTL "uzun" (7 gün) DEĞİL "varsayilan" (6 saat): 7 günlük bayat krediyle
+ *    çalışan bir tarama yeni yapımı bir hafta geç fark ederdi. 6 saat, günlük
+ *    turun her seferinde taze veri görmesini garanti eder.
+ *  · Kullanıcı başına sorgu YOK: bir kişinin bütün adayları için kitaplık
+ *    kontrolü TEK sorgudur (`kitaplikKumeleri`).
+ *
+ * TERCİH İKİ KAPIDA: aday sorgusu hem `k.bildir_kisi`i (genel) hem
+ * `f.bildirim <> 'kapali'`yi (kişi bazlı) JOIN/WHERE'de süzer — kapalı
+ * kullanıcı ne sorgulanır ne hacim frenini harcar. İkinci kapı
+ * `kisiBildirimiEkle` içindedir.
+ *
+ * DAYANIKLILIK: tek kişinin hatası o kişide kalır, tur devam eder; tur tamamen
+ * düşse bile 24 saat sonra tekrar denenir ve satır yazılmadığı için hiçbir
+ * bildirim kalıcı olarak kaybolmaz.
+ */
+async function yeniYapimlariBildir() {
+  try {
+    const { rows } = await havuz.query(
+      `SELECT f.tmdb_id AS kisi_id,
+              array_agg(f.kullanici_id ORDER BY f.kullanici_id) AS kullanicilar,
+              array_agg(f.bildirim     ORDER BY f.kullanici_id) AS kipler
+         FROM favoriler f
+         JOIN kullanicilar k ON k.id = f.kullanici_id
+                            AND k.bildir_kisi AND NOT k.yasakli
+        WHERE f.tur='person' AND f.bildirim <> 'kapali'
+        GROUP BY f.tmdb_id`);
+    if (!rows.length) return;
+    const bugun = bugunIso();
+    const yol = (id) => `/person/${id}?append_to_response=combined_credits`;
+    const sayac = new Map(); // kullanici_id -> bu turda atılan bildirim (fren)
+    let toplam = 0;
+    for (let i = 0; i < rows.length; i += YENI_YAPIM_OBEK) {
+      const obek = rows.slice(i, i + YENI_YAPIM_OBEK);
+      // Kişi başına TEK çağrı; toplu getirici benzersizleştirir, önbelleği tek
+      // sorguda okur ve YALNIZ eksikleri 8'li öbeklerle TMDB'den çeker.
+      const harita = await tmdbTopluGetir(
+        obek.map((r) => yol(r.kisi_id)), ONBELLEK_TTL_SN.varsayilan);
+      for (const r of obek) {
+        try {
+          const kisi = harita.get(yol(r.kisi_id));
+          const yapimlar = yeniYapimlar(kisi, bugun);
+          if (!yapimlar.length) continue; // pencere dışı: kullanıcılara HİÇ bakma
+          const adaylar = [];
+          r.kullanicilar.forEach((id, j) => {
+            if ((sayac.get(id) || 0) < YENI_YAPIM_TUR_SINIRI) {
+              adaylar.push({ id, kip: r.kipler[j] });
+            }
+          });
+          if (!adaylar.length) continue;
+          const kitaplik = await kitaplikKumeleri(adaylar.map((a) => a.id), yapimlar);
+          for (const a of adaylar) {
+            const sahip = kitaplik.get(a.id);
+            for (const y of yapimlar) {
+              if ((sayac.get(a.id) || 0) >= YENI_YAPIM_TUR_SINIRI) break;
+              if (sahip?.has(`${y.tur}:${y.tmdb_id}`)) continue; // kitaplığında
+              // Yazıldıysa (tekil indeks çakışmadıysa) sayaç artar; çakıştıysa
+              // kullanıcının kotası boşa gitmez.
+              if (await kisiBildirimiEkle(a.id, r.kisi_id, y, a.kip, kisi?.name)) {
+                sayac.set(a.id, (sayac.get(a.id) || 0) + 1);
+                toplam++;
+              }
+            }
+          }
+        } catch (e) {
+          console.error(`yeni yapim (person/${r.kisi_id}):`, e.message);
+        }
+      }
+    }
+    if (toplam) console.log(`favori kisi bildirimi: ${toplam} adet`);
+  } catch (e) {
+    // Tur düştüyse 24 saat sonra tekrar denenir; satır yazılmadığı için
+    // hiçbir bildirim kalıcı olarak kaybolmaz.
+    console.error('yeni yapim taramasi:', e.message);
+  }
+}
+// KÜME: yalnız görevli işçi (sıra 1) — N işçide N kez koşmak aynı TMDB
+// taramasını N kez yapmaktı. (Bildirimin KENDİSİ zaten kısmi tekil indeksle
+// korunuyor; bu kapı push'u değil, boşuna TMDB/DB yükünü engelliyor.)
+if (ISCI_GOREVLI) {
+  setInterval(yeniYapimlariBildir, 24 * 60 * 60 * 1000);
+  // Açılıştan 9 dk sonra ilk tur: durumlariTara (1 dk), yeniBolumleriBildir
+  // (3 dk) ve tablolariBuda (5 dk) bittikten SONRA — dördü aynı anda TMDB'ye
+  // ve DB'ye yüklenmesin.
+  setTimeout(yeniYapimlariBildir, 9 * 60 * 1000);
+}
+
 // Film izleme kaydı → durum. Filmde ara hâl yoktur: izlendiyse "bitirdim".
 //
 // NEDEN GEREKLİ (4 Ağu 2026 canlı ölçüm): 1265 film izleme kaydının 1229'unun
@@ -3586,6 +3957,9 @@ app.get('/izleyenler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) =
       [tur, tmdbId, benId],
     ),
     // Takip ettiklerin ÖNCE (sosyal kanıt), sonra son izleyen sırasıyla.
+    // ENGELLEME (md. 19): İSİM LİSTESİ süzülür, `sayi` süzülmez — "kaç kişi
+    // izledi" içeriğin kamusal sayacıdır (bkz. /incelemeler'deki aynı karar).
+    // Liste zaten gizlilik tercihi + LIMIT 200 ile sayıdan sapıyor.
     havuz.query(
       `SELECT k.kullanici_adi, k.avatar,
               EXISTS (SELECT 1 FROM takipler t
@@ -3593,7 +3967,7 @@ app.get('/izleyenler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) =
        FROM (SELECT kullanici_id, MAX(tarih) AS son FROM izlemeler
              WHERE tur=$1 AND tmdb_id=$2 GROUP BY kullanici_id) i
        JOIN kullanicilar k ON k.id = i.kullanici_id AND k.misafir = false
-       WHERE true ${gizliYok}
+       WHERE ${engelSuzgec('k.id', '$3')} ${gizliYok}
        ORDER BY (EXISTS (SELECT 1 FROM takipler t
                  WHERE t.takip_eden_id=$3 AND t.takip_edilen_id=k.id)) DESC,
                 i.son DESC NULLS LAST, k.kullanici_adi
@@ -3692,7 +4066,13 @@ app.post('/puan', girisZorunlu, sarici(async (req, res) => {
 // Bir içeriğin herkese açık incelemeleri.
 // `sezon IS NULL`: bu uç dizi/film SAYFASINI besler; bölüm incelemeleri
 // bölümün kendi ucundan (`/bolum-puanlari/...`) gelir.
-app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
+// ENGELLEME (13 Ağu 2026, md. 19) — YALNIZ İNCELEME LİSTESİ SÜZÜLÜR.
+// Ortalama (`ort`) ve puan dağılımı (`dagilim`) SÜZÜLMEZ, bilinçli: onlar
+// içeriğin KAMUSAL istatistiğidir, kişiselleştirilirse aynı dizinin puanı her
+// kullanıcıda başka çıkar ve "8.4" bir daha hiçbir yerde tutmaz (paylaşılan
+// ekran görüntüsü, SEO sayfası, admin paneli). Süzülen şey KİŞİNİN YAZDIĞI
+// METİN ve adıdır — görünürlük kuralı içeriğe değil, kişiye bağlıdır.
+app.get('/incelemeler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => {
   const olcut = [req.params.tur, req.params.tmdbId];
   // Üç sorgu PARALEL (eskiden sıra sıra bekleniyordu): aynı satırları
   // tarıyorlar, tur beklemenin karşılığı yok.
@@ -3702,8 +4082,9 @@ app.get('/incelemeler/:tur/:tmdbId', sarici(async (req, res) => {
        FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
        WHERE p.tur=$1 AND p.tmdb_id=$2 AND p.sezon IS NULL
          AND p.yorum IS NOT NULL AND p.yorum != ''
+         AND ${engelSuzgec('k.id', '$3')}
        ORDER BY p.tarih DESC LIMIT 50`,
-      olcut,
+      [...olcut, req.kullanici?.id || 0],
     ),
     havuz.query(
       `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*) AS adet
@@ -3929,6 +4310,11 @@ app.post('/rewatch', girisZorunlu, sarici(async (req, res) => {
 const BILDIRIM_TERCIH_ALANLARI = [
   'bildir_begeni', 'bildir_yanit', 'bildir_takip', 'bildir_mesaj', 'bildir_etiket',
   'bildir_bolum', // md. 27 — izlenen dizinin yeni bölümü
+  // md. 28 — favori kişinin yeni yapımı. Burada YALNIZ genel anahtar durur:
+  // kişi bazlı üç durumlu ince ayar (`favoriler.bildirim`) kişinin profilinden
+  // yönetilir (`GET|POST /kisi/:id/bildirim`), Ayarlar'dan değil. Sebebi bu
+  // ucun sözleşmesi: yalnız BOOLEAN kabul eder (aşağıdaki POST'a bak).
+  'bildir_kisi',
 ];
 app.get('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
   const { rows } = await havuz.query(
@@ -3955,6 +4341,49 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
     deg,
   );
   res.json(rows[0]);
+}));
+
+// md. 28 — KİŞİ BAZLI bildirim kipi ("kişinin profilinde bildirim işareti").
+//
+// ÜÇ DURUM TEK ALANDA: 'acik' (kutu + push) / 'uygulama' (yalnız uygulama içi
+// bildirim, push YOK) / 'kapali' (hiçbir şey). İki ayrı boolean olsaydı
+// "kapalı ama push atılsın" gibi ANLAMSIZ bir bileşim temsil edilebilirdi.
+//
+// SAKLAMA YERİ `favoriler.bildirim`: tercih ancak "bu kişiyi favoriledim"
+// bağlamında anlamlıdır, favori kalkınca tercih de kalkmalıdır — aynı satırda
+// durunca bu bedavaya olur (ayrı tablo öksüz satır bırakırdı).
+const KISI_BILDIRIM_KIPLERI = ['acik', 'uygulama', 'kapali'];
+
+app.get('/kisi/:id/bildirim', girisZorunlu, kisiLimiti, sarici(async (req, res) => {
+  const kisiId = Number(req.params.id);
+  if (!gecerliTmdb(kisiId)) return res.status(400).json({ hata: 'Geçersiz tmdb_id' });
+  const { rows } = await havuz.query(
+    `SELECT bildirim FROM favoriler
+      WHERE kullanici_id=$1 AND tur='person' AND tmdb_id=$2`,
+    [req.kullanici.id, kisiId],
+  );
+  // favori DEĞİLSE kip null döner: zil işareti yalnız favorilenmiş kişide
+  // anlamlıdır (bildirim zaten favoriden doğuyor).
+  res.json({ favori: rows.length > 0, bildirim: rows[0]?.bildirim || null });
+}));
+
+app.post('/kisi/:id/bildirim', girisZorunlu, kisiLimiti, sarici(async (req, res) => {
+  const kisiId = Number(req.params.id);
+  const { bildirim } = req.body || {};
+  if (!gecerliTmdb(kisiId) || !KISI_BILDIRIM_KIPLERI.includes(bildirim)) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id veya bildirim kipi' });
+  }
+  // Satır YARATILMAZ: kip favoriye bağlı bir niteliktir, favorilemenin kendisi
+  // `POST /favori/toggle`in işidir. Favori yoksa 400 — sessizce hiçbir şey
+  // yapmak, kullanıcının "kapattım" sanmasına yol açardı.
+  const { rows } = await havuz.query(
+    `UPDATE favoriler SET bildirim=$3
+      WHERE kullanici_id=$1 AND tur='person' AND tmdb_id=$2
+      RETURNING bildirim`,
+    [req.kullanici.id, kisiId, bildirim],
+  );
+  if (!rows.length) return res.status(400).json({ hata: 'Önce kişiyi favorile' });
+  res.json({ favori: true, bildirim: rows[0].bildirim });
 }));
 
 // Gizlilik tercihleri: izlenenler/yorumlar/yanıtlar açık profilde gizli mi,
@@ -4260,15 +4689,25 @@ app.post('/listeler/:id/oge', girisZorunlu, sarici(async (req, res) => {
   res.json({ tamam: true });
 }));
 
-app.get('/listeler/:id', sarici(async (req, res) => {
+app.get('/listeler/:id', girisIsteğeBagli, sarici(async (req, res) => {
+  // ENGELLEME (13 Ağu 2026, md. 19): engellenen kişinin listesi 404 döner.
+  // Liste artık profilde görünmüyor (profil boş dönüyor) ama DOĞRUDAN
+  // BAĞLANTIYLA (paylaşılmış URL, eski sohbet) hâlâ açılabiliyordu — liste,
+  // sahibinin küratörlüğüdür ve engellemenin kapsamına girer.
+  // Süzgeç `girisIsteğeBagli` ile gelir; oturumsuz ziyaretçide kısa devre
+  // olur ve uç eskisi gibi (herkese açık liste = 200) davranır.
   const liste = await havuz.query(
     `SELECT l.*, k.kullanici_adi FROM listeler l
-     JOIN kullanicilar k ON k.id = l.kullanici_id WHERE l.id=$1`,
-    [req.params.id],
+     JOIN kullanicilar k ON k.id = l.kullanici_id
+     WHERE l.id=$1 AND ${engelSuzgec('k.id', '$2')}`,
+    [req.params.id, req.kullanici?.id || 0],
   );
   if (!liste.rows.length) return res.status(404).json({ hata: 'Liste bulunamadı' });
   // Gizli listeyi yalnızca sahibi görebilir.
   if (!liste.rows[0].herkese_acik) {
+    // NOT: `girisIsteğeBagli` geçersiz/süresi dolmuş token'da req.kullanici'yi
+    // BOŞ bırakır ama isteği reddetmez; bu blok kendi doğrulamasını yapmaya
+    // devam ediyor ki gizlilik kararı tek bir kapıya bağlı kalsın.
     const baslik = req.headers.authorization || '';
     const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
     let kimlik = null;
@@ -4842,9 +5281,7 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
                    WHERE m LIKE '%.mp4' OR m LIKE '%.webm') AS videolu
      FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
      WHERE y.id=$1 AND NOT k.yasakli
-       AND y.kullanici_id NOT IN (
-         SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$2
-         UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$2)`,
+       AND ${engelSuzgec('y.kullanici_id', '$2')}`,
     [yorumId, benId, istekBaglam.getStore()?.dil || 'tr'],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Gönderi bulunamadı' });
@@ -4926,9 +5363,7 @@ app.get('/yorumlar/:id/begenenler', girisIsteğeBagli, begenenLimiti, sarici(asy
      WHERE b.yorum_id=$1
        AND ($3::timestamptz IS NULL
             OR (b.tarih, b.kullanici_id) < ($3::timestamptz, $4::int))
-       AND ($2::int = 0 OR k.id NOT IN (
-              SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$2
-              UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$2))
+       AND ${engelSuzgec('k.id', '$2')}
      ORDER BY b.tarih DESC, b.kullanici_id DESC
      LIMIT ${BEGENEN_SAYFA + 1}`,
     [yorumId, benId, imlecTarih, imlecId],
@@ -4987,6 +5422,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
        SELECT y.id FROM yorumlar y
        WHERE y.tur=$1 AND y.tmdb_id=$2 AND y.ust_id IS NULL
          AND ($3::int IS NULL OR (y.sezon = $3 AND y.bolum = $4))
+         AND ${engelSuzgec('y.kullanici_id', '$5')}
        ORDER BY y.tarih DESC LIMIT 100),
      izlenen AS (
        SELECT i.sezon, i.bolum FROM izlemeler i
@@ -5006,8 +5442,15 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$5) AS begendim
      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-     WHERE y.id IN (SELECT id FROM ustler)
-        OR y.ust_id IN (SELECT id FROM ustler)
+     WHERE (y.id IN (SELECT id FROM ustler)
+            OR y.ust_id IN (SELECT id FROM ustler))
+       -- ENGELLEME (13 Ağu 2026, md. 19) — İKİ YERDE BİRDEN:
+       --  · ustler CTE'sinde: engellenen kişinin ÜST gönderisi 100'lük
+       --    pencerede yer İŞGAL ETMESİN (yoksa engelleyen kullanıcı, listesi
+       --    engellenenlerle dolduğu için görünür gönderi sayısını kaybederdi).
+       --  · burada: engellenenin YANITLARI da düşsün. Yalnız CTE'de süzmek,
+       --    görünür bir üst gönderinin altındaki engellenen yanıtı bırakırdı.
+       AND ${engelSuzgec('y.kullanici_id', '$5')}
      ORDER BY y.tarih DESC`,
     [req.params.tur, req.params.tmdbId, sezon, bolum, benId,
      istekBaglam.getStore()?.dil || 'tr', AI_KULLANICI],
@@ -5042,9 +5485,7 @@ const AKIS_GOVDE = `
        ) AS guvenli) g
      WHERE y.kullanici_id <> $1
        AND NOT k.yasakli
-       AND y.kullanici_id NOT IN (
-         SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$1
-         UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$1)
+       AND ${engelSuzgec('y.kullanici_id', '$1')}
        AND y.ust_id IS NULL`;
 const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
@@ -5780,8 +6221,13 @@ app.get('/ceviri/:yorumId', girisIsteğeBagli, ceviriLimiti, sarici(async (req, 
     `SELECT btrim(y.metin) AS metin, y.kaynak_dil, md5(btrim(y.metin)) AS ozet,
             (SELECT c.metin FROM metin_cevirileri c
               WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $2) AS ceviri
-     FROM yorumlar y WHERE y.id = $1`,
-    [id, dil],
+     FROM yorumlar y
+     WHERE y.id = $1
+       -- ENGELLEME (md. 19): bu uç gönderi METNİNİ döndürüyor. Süzülmeseydi
+       -- engellenen kişinin yazısı, /yorum/:id 404 verse bile buradan
+       -- (çevirisi olarak) okunabilirdi — süzgecin en kolay atlanan sızıntısı.
+       AND ${engelSuzgec('y.kullanici_id', '$3')}`,
+    [id, dil, req.kullanici?.id || 0],
   );
   if (!rows.length) return res.json({ yok: true });
   const y = rows[0];
@@ -5885,6 +6331,7 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
     havuz.query(
       `SELECT b.id, b.tur, b.yorum_id, b.okundu, b.tarih,
               b.tmdb_id, b.sezon, b.bolum,
+              b.kisi_id, b.icerik_tur,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
               y.tur AS yorum_tur, y.tmdb_id AS yorum_tmdb,
               y.sezon AS yorum_sezon, y.bolum AS yorum_bolum
@@ -5898,17 +6345,41 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
       [req.kullanici.id]),
   ]);
   const bolumler = liste.rows.filter((r) => r.tur === 'bolum' && r.tmdb_id);
-  if (bolumler.length) {
+  // md. 28 — 'kisi': hedefi bir YAPIM (icerik_tur + tmdb_id) ve tetikleyen
+  // KİŞİ (kisi_id). Kartta "‹kişi› yeni bir yapımda: ‹yapım›" yazacağı için üç
+  // şey lazım: yapımın adı, posteri ve kişinin adı.
+  const kisiler = liste.rows.filter((r) => r.tur === 'kisi' && r.tmdb_id && r.icerik_tur);
+  if (bolumler.length || kisiler.length) {
     const yol = (id) => `/tv/${id}?language=tr-TR`; // dil tmdbTopluGetir'de değişir
+    const yapimYolu = (r) => `/${r.icerik_tur}/${r.tmdb_id}?language=tr-TR`;
+    // `/favori-kisiler` ucuyla AYNI önbellek anahtarı (`/person/{id}`): bir
+    // oyuncunun adı orada çekilmişse burada TMDB'ye hiç gidilmez.
+    const kisiYolu = (id) => `/person/${id}`;
     // TMDB tökezlerse bildirim kutusu HİÇ AÇILMAMALI değil: ad/poster null
-    // kalır, satır yine de listelenir (istemci id ile bölüme gidebilir).
+    // kalır, satır yine de listelenir (istemci id ile bölüme/yapıma gidebilir).
+    //
+    // N+1 YOK: SAYFADAKİ HER ŞEY İÇİN TEK toplu çağrı — bölüm dizileri, kişi
+    // bildirimlerinin yapımları ve kişilerin kendileri aynı listede toplanır.
     const harita = await tmdbTopluGetir(
-      bolumler.map((r) => yol(r.tmdb_id)), ONBELLEK_TTL_SN.uzun,
+      [
+        ...bolumler.map((r) => yol(r.tmdb_id)),
+        ...kisiler.map(yapimYolu),
+        ...kisiler.filter((r) => r.kisi_id).map((r) => kisiYolu(r.kisi_id)),
+      ],
+      ONBELLEK_TTL_SN.uzun,
     ).catch(() => new Map());
     for (const r of bolumler) {
       const d = harita.get(yol(r.tmdb_id));
       r.dizi_adi = d?.name || null;
       r.poster = d?.poster_path || null;
+    }
+    for (const r of kisiler) {
+      const y = harita.get(yapimYolu(r));
+      const p = r.kisi_id ? harita.get(kisiYolu(r.kisi_id)) : null;
+      // Dizide `name`, filmde `title` — istemci tek alan okusun.
+      r.yapim_adi = y?.name || y?.title || null;
+      r.poster = y?.poster_path || null;
+      r.kisi_adi = p?.name || null;
     }
   }
   res.json({ bildirimler: liste.rows, okunmamis: okunmamis.rows[0].adet });
@@ -5924,9 +6395,15 @@ app.post('/bildirimler/okundu', girisZorunlu, sarici(async (req, res) => {
 // ---------- özel mesajlar ----------
 // Ana liste / mesaj isteği ayrımı `cevrimici.js` -> sohbetleriAyir.
 //
-// ENGELLEME: bu uç eskiden de engellenenleri ayıklamıyordu (engel yalnız
-// mesaj GÖNDERİMİNDE, POST /mesajlar'da uygulanıyor). Davranış bilerek
-// DEĞİŞTİRİLMEDİ; ayrım kuralı engellemeden bağımsız çalışır.
+// ENGELLEME (13 Ağu 2026, md. 19 — DAVRANIŞ DEĞİŞTİ): engellenen kişinin
+// sohbeti listede (ve mesaj isteklerinde) GÖRÜNMEZ. Eskiden yalnız GÖNDERİM
+// engelleniyordu, sohbet satırı ve son mesaj önizlemesi listede duruyordu —
+// "engelledim ama hâlâ karşımda" şikâyetinin kaynağı buydu.
+//
+// SİLME DEĞİL SAKLAMA: mesajlar `mesajlar` tablosunda DURUYOR. Engel
+// kalkarsa sohbet geçmişiyle birlikte geri gelir. (Engellemenin geri
+// alınabilir olması ürün kararıdır; kalıcı veri kaybı, yanlışlıkla basılan
+// bir menü öğesinin bedeli olamaz.)
 //
 // Sohbet listesi: partner başına son mesaj + okunmamış sayısı + çevrimiçi.
 app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
@@ -5949,7 +6426,8 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
      FROM mesajlar m
      JOIN kullanicilar k
        ON k.id = CASE WHEN m.gonderen_id=$1 THEN m.alici_id ELSE m.gonderen_id END
-     WHERE m.gonderen_id=$1 OR m.alici_id=$1
+     WHERE (m.gonderen_id=$1 OR m.alici_id=$1)
+       AND ${engelSuzgec('k.id', '$1')}
      ORDER BY LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id), m.id DESC`,
     [req.kullanici.id, CEVRIMICI_ESIK_SN],
   );
@@ -5965,8 +6443,13 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
   }
   const { sohbetler, istekler } = sohbetleriAyir(rows);
+  // ROZET SAYACI DA SÜZÜLÜR — yoksa engellenen kişiden gelmiş okunmamış mesaj
+  // rozette sonsuza kadar "1" gösterirdi: sohbet listede olmadığı için
+  // kullanıcı onu AÇIP okuyamaz, rozet asla düşmezdi. (Bu, süzgeci yalnız
+  // listeye koymanın en kolay gözden kaçan yan etkisi.)
   const toplam = await havuz.query(
-    'SELECT count(*)::int AS adet FROM mesajlar WHERE alici_id=$1 AND NOT okundu',
+    `SELECT count(*)::int AS adet FROM mesajlar
+     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}`,
     [req.kullanici.id]);
   res.json({
     sohbetler,
@@ -6004,8 +6487,7 @@ app.get('/paylas-hedefler', girisZorunlu, sarici(async (req, res) => {
      SELECT DISTINCT ON (id) id, kullanici_adi, avatar, oncelik
      FROM hepsi
      WHERE id <> $1
-       AND id NOT IN (SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$1
-                      UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$1)
+       AND ${engelSuzgec('id', '$1')}
      ORDER BY id, oncelik, sira DESC`,
     [benId],
   );
@@ -6216,6 +6698,19 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const partnerId = k.rows[0].id;
+  // ENGELLEME (13 Ağu 2026, md. 19): engelli çiftte sohbet GEÇMİŞİ DE
+  // gösterilmez. 403 DEĞİL, BOŞ LİSTE + `engel: true`:
+  //  · 403, yayındaki istemcide (sohbet.dart) kırmızı hata ekranı çizerdi;
+  //    boş liste ise "henüz mesaj yok" durumuna düşer, ekran sağlam kalır.
+  //  · Yazma zaten `POST /mesajlar` ve `POST /mesaj-tepki` kapılarında 403.
+  //  · Veri SİLİNMEZ: engel kalkınca geçmiş olduğu gibi geri gelir.
+  const engelVar = await engelliMi(req.kullanici.id, partnerId);
+  if (engelVar) {
+    return res.json({
+      mesajlar: [], partner: k.rows[0], icerikler: {}, gonderiler: {},
+      yaziyor: false, engel: true,
+    });
+  }
   const once = parseInt(req.query.once, 10) || null;
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
   const { rows } = await havuz.query(
@@ -6666,13 +7161,25 @@ app.post('/yorumlar/:id/begen', girisZorunlu, sarici(async (req, res) => {
   );
   if (silindi.rowCount === 0) {
     try {
+      // ENGELLEME (md. 19): engellediğin (ya da seni engelleyenin) gönderisini
+      // BEĞENEMEZSİN. Okuma uçları o gönderiyi zaten göstermiyor ama doğrudan
+      // bağlantı/eski önbellek elinde kalmış olabilir; beğeni karşı tarafın
+      // ZİLİNİ ÇALDIRAN bir eylemdir, bu yüzden yazma tarafında da kapalı.
+      // 404: "var ama sana kapalı" demek, engellenen kişiye engellendiğini
+      // ele verirdi (bkz. profil kararı). Beğeni KALDIRMA (yukarıdaki DELETE)
+      // serbest — temizleyici eylem, yeni bildirim üretmez.
+      const sahip = await havuz.query(
+        'SELECT kullanici_id FROM yorumlar WHERE id=$1', [req.params.id]);
+      const sahipId = sahip.rows[0]?.kullanici_id ?? null;
+      if (sahipId && sahipId !== req.kullanici.id
+          && await engelliMi(req.kullanici.id, sahipId)) {
+        return res.status(404).json({ hata: 'Yorum bulunamadı' });
+      }
       await havuz.query(
         'INSERT INTO yorum_begeniler (yorum_id, kullanici_id) VALUES ($1,$2)',
         [req.params.id, req.kullanici.id],
       );
-      const sahip = await havuz.query(
-        'SELECT kullanici_id FROM yorumlar WHERE id=$1', [req.params.id]);
-      bildirimEkle(sahip.rows[0]?.kullanici_id, 'begeni', req.kullanici.id,
+      bildirimEkle(sahipId, 'begeni', req.kullanici.id,
         parseInt(req.params.id, 10));
     } catch (e) {
       if (e.code === '23503') return res.status(404).json({ hata: 'Yorum bulunamadı' });
@@ -6704,6 +7211,14 @@ app.post('/yorumlar', girisZorunlu, yorumLimiti, sarici(async (req, res) => {
       return res.status(404).json({ hata: 'Yanıtlanan yorum bulunamadı' });
     }
     const u = ust.rows[0];
+    // ENGELLEME (md. 19): engelli çifte YANIT YAZILAMAZ. 404 (403 değil):
+    // "gönderi var ama sana kapalı" bilgisi engellenen kişiye engellendiğini
+    // ele verirdi — gönderi zaten hiçbir okuma ucunda görünmüyor, yanıt ucu da
+    // aynı dili konuşur.
+    if (u.kullanici_id !== req.kullanici.id
+        && await engelliMi(req.kullanici.id, u.kullanici_id)) {
+      return res.status(404).json({ hata: 'Yanıtlanan yorum bulunamadı' });
+    }
     gercekUst = u.ust_id || u.id;
     tur = u.tur;
     tmdb_id = u.tmdb_id;
@@ -6827,6 +7342,15 @@ app.post('/takip/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     'DELETE FROM takipler WHERE takip_eden_id=$1 AND takip_edilen_id=$2',
     [req.kullanici.id, hedefId],
   );
+  // ENGELLEME (md. 19): engelli çiftte TAKİP KURULAMAZ. Yalnız KURMA yönü
+  // kapalı — yukarıdaki DELETE (takipten çıkma) bilerek serbesttir; temizleyici
+  // eylemi engellemek kullanıcıyı kendi takip listesinde kilitler.
+  // `POST /engelle` takip satırlarını zaten koparıyor; bu kapı olmasaydı
+  // engellenen kişi bir dokunuşla yeniden takip eder, karşılıklı takibe bağlı
+  // izinler (sesli/görüntülü arama, mesaj isteği atlaması) geri açılırdı.
+  if (silindi.rowCount === 0 && await engelliMi(req.kullanici.id, hedefId)) {
+    return res.status(403).json({ hata: 'Bu kullanıcıyı takip edemezsin' });
+  }
   if (silindi.rowCount === 0) {
     await havuz.query(
       'INSERT INTO takipler (takip_eden_id, takip_edilen_id) VALUES ($1,$2) ON CONFLICT DO NOTHING',
@@ -6840,27 +7364,37 @@ app.post('/takip/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
 }));
 
 // Bir kullanıcının takipçileri / takip ettikleri
-async function takipListesi(kullaniciAdi, sutun, digerSutun) {
+//
+// ENGELLEME (13 Ağu 2026, md. 19): engellenen kişi bu listelerde GÖRÜNMEZ.
+// Engelleme takip satırlarını da koparır (POST /engelle), yani ÇİFTİN KENDİ
+// aralarındaki satır zaten yok; süzgeç ÜÇÜNCÜ KİŞİLERİN listeleri içindir —
+// engellediğin kişi, ortak bir arkadaşının takipçi listesinde karşına
+// çıkmasın. `girisIsteğeBagli` bu yüzden eklendi: uç eskiden oturumu HİÇ
+// okumuyordu, dolayısıyla kimin kimi engellediğini bilemezdi.
+async function takipListesi(kullaniciAdi, sutun, digerSutun, benId = 0) {
   const k = await havuz.query('SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [kullaniciAdi]);
   if (!k.rows.length) return null;
   const { rows } = await havuz.query(
     `SELECT ku.kullanici_adi, ku.avatar, ku.bio
      FROM takipler t JOIN kullanicilar ku ON ku.id = t.${digerSutun}
      WHERE t.${sutun} = $1
+       AND ${engelSuzgec('ku.id', '$2')}
      ORDER BY t.tarih DESC LIMIT 500`,
-    [k.rows[0].id],
+    [k.rows[0].id, benId],
   );
   return rows;
 }
 
-app.get('/takipciler/:kullaniciAdi', sarici(async (req, res) => {
-  const liste = await takipListesi(req.params.kullaniciAdi, 'takip_edilen_id', 'takip_eden_id');
+app.get('/takipciler/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
+  const liste = await takipListesi(req.params.kullaniciAdi, 'takip_edilen_id', 'takip_eden_id',
+    req.kullanici?.id || 0);
   if (liste === null) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   res.json({ kullanicilar: liste });
 }));
 
-app.get('/takipedilenler/:kullaniciAdi', sarici(async (req, res) => {
-  const liste = await takipListesi(req.params.kullaniciAdi, 'takip_eden_id', 'takip_edilen_id');
+app.get('/takipedilenler/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
+  const liste = await takipListesi(req.params.kullaniciAdi, 'takip_eden_id', 'takip_edilen_id',
+    req.kullanici?.id || 0);
   if (liste === null) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   res.json({ kullanicilar: liste });
 }));
@@ -6979,14 +7513,21 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   res.json(duzeltme ? { results, duzeltme } : { results });
 }));
 
-app.get('/kullanici-ara', aramaLimiti, sarici(async (req, res) => {
+// ENGELLEME (13 Ağu 2026, md. 19): engellenen kişi arama sonuçlarında ÇIKMAZ.
+// Bu, `POST /engelle`nin karşılıklı takibi koparmasının doğal devamı: aksi
+// hâlde engellenen kişi adını yazıp profile girer, takip düğmesine basar ve
+// engellemenin ilk sonucunu tek dokunuşta geri alırdı.
+// `girisIsteğeBagli` eklendi (uç oturumsuz da çalışmaya devam eder — o zaman
+// süzgeç kısa devre olur ve eski davranış aynen sürer).
+app.get('/kullanici-ara', girisIsteğeBagli, aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (q.length < 2) return res.json({ kullanicilar: [] });
   const { rows } = await havuz.query(
     `SELECT kullanici_adi, avatar, bio FROM kullanicilar
      WHERE misafir = false AND kullanici_adi LIKE $1
+       AND ${engelSuzgec('id', '$3')}
      ORDER BY (kullanici_adi = $2) DESC, kullanici_adi LIMIT 30`,
-    [`%${q}%`, q],
+    [`%${q}%`, q, req.kullanici?.id || 0],
   );
   res.json({ kullanicilar: rows });
 }));
@@ -7055,6 +7596,51 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const id = k.rows[0].id;
   const benId = req.kullanici?.id || 0;
+
+  // ---------------------------------------------------------------------
+  // ENGELLEME (13 Ağu 2026, md. 19) — PROFİL BOŞ DÖNER, 404 DEĞİL
+  // ---------------------------------------------------------------------
+  // KARAR VE GEREKÇESİ:
+  //  · 404 VERİLMEDİ. Engeli kaldırma düğmesi bu ekranın üç nokta
+  //    menüsünde; 404 dönseydi engelleyen kullanıcı kendi kararını buradan
+  //    GERİ ALAMAZDI (yalnız Ayarlar > Engellenen kullanıcılar kalırdı ve
+  //    profilden engelleyip profilden kaldıramamak tutarsız olurdu).
+  //  · İÇERİK TAMAMEN DÜŞER: yorumlar, incelemeler, listeler, izlenenler,
+  //    rozetler, uyum, istatistik. Kullanıcı adı ve avatar KALIR — "kimi
+  //    engellemiştim?" sorusunun cevabı gizlenirse liste işe yaramaz.
+  //  · bio/kapak/sosyal NULL'lanır: bunlar da kişinin YAZDIĞI içeriktir
+  //    (bağlantı/tanıtım metni), engel onları da kapsamalı.
+  //  · ÇİFT YÖNLÜ: karşı taraf beni engellediyse ben de onun profilini boş
+  //    görürüm. Ama `engel` bayrağı YALNIZ ENGELLEYEN TARAFA gönderilir;
+  //    engellenen taraf sıradan bir "içerik yok" profili görür. Sunucunun
+  //    "seni engelledi" demesi, engellemeyi bir bildirime çevirir ve
+  //    hedefin yeni hesap açmasını tetikler (taciz senaryosunun kendisi).
+  const engel = benId && benId !== id
+    ? (await havuz.query(
+      `SELECT bool_or(engelleyen_id=$1) AS ben_engelledim
+       FROM engellemeler
+       WHERE (engelleyen_id=$1 AND engellenen_id=$2)
+          OR (engelleyen_id=$2 AND engellenen_id=$1)`,
+      [benId, id])).rows[0].ben_engelledim
+    : null;
+  if (engel !== null) {
+    return res.json({
+      ...k.rows[0],
+      bio: null, kapak: null, sosyal: null,
+      ben_mi: false,
+      takip_ediyorum: false,
+      engelledim: engel === true,
+      ...(engel === true ? { engel: true } : {}),
+      uyum: null,
+      istatistik: {
+        bolum: 0, film: 0, dizi: 0, takipci: 0, takip_edilen: 0, yorum: 0,
+        toplam_goruntulenme: 0, toplam_begeni: 0, tahmini_dakika: 0,
+      },
+      rozetler: [], listeler: [], incelemeler: [], yorumlar: [],
+      icerikler: {}, izlenenler: [],
+    });
+  }
+
   // Gizlilik: sahibi kendi profilinde her şeyi görür; başkaları için
   // içerik bazlı gizlenenler düşer, genel anahtarlar bölümü tamamen kapatır.
   const benMi = benId === id;
@@ -7175,9 +7761,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
            -- yanıt için AYRI sorgu atmaz, liste zaten LIMIT 20.
            LEFT JOIN yorumlar u
                   ON u.id = y.ust_id
-                 AND u.kullanici_id NOT IN (
-                       SELECT engellenen_id FROM engellemeler WHERE engelleyen_id=$3
-                       UNION SELECT engelleyen_id FROM engellemeler WHERE engellenen_id=$3)
+                 AND ${engelSuzgec('u.kullanici_id', '$3')}
            LEFT JOIN kullanicilar uk ON uk.id = u.kullanici_id AND NOT uk.yasakli
            WHERE y.kullanici_id=$1 ${yorumSuzgec} ${gizliFiltre('y')}
            ORDER BY y.tarih DESC LIMIT 20`,
@@ -7431,8 +8015,30 @@ app.post('/itiraz', girisZorunlu, itirazLimiti, sarici(async (req, res) => {
   }
 }));
 
-// Kullanıcıyı engelle/engeli kaldır (toggle).
-app.post('/engelle/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
+// ---------------------------------------------------------------------------
+// KULLANICI ENGELLEME (istek md. 19)  ·  toggle: engelle / engeli kaldır
+// ---------------------------------------------------------------------------
+// Yöneticinin verdiği CEZA (md. 6, `yasak.js`) ile karıştırılmamalı: bu araç
+// KULLANICININ KENDİ elindedir, yalnız iki kişi arasındaki ilişkiyi keser ve
+// tek dokunuşla geri alınır.
+//
+// ENGEL KURULUNCA ÜÇ ŞEY OLUR:
+//   1) `engellemeler` satırı yazılır — bütün okuma uçları ÇİFT YÖNLÜ süzer
+//      (`engelSuzgec`), bütün yazma kapıları reddeder (`engelliMi`).
+//   2) İKİ YÖNDEKİ TAKİP SATIRLARI SİLİNİR. Bu şart: sesli/görüntülü arama
+//      izni (`arama.js` md. 10) ve mesaj isteği atlaması KARŞILIKLI TAKİBE
+//      bakıyor. Takip satırı kalsaydı engel, o kapıları açık bırakırdı.
+//      Takip GERİ GELMEZ (engel kalksa bile) — bilinçli: takip bir rıza
+//      beyanıdır, sunucu onu kullanıcı adına yeniden veremez.
+//   3) ÇİFTİN BİRBİRİNE GÖNDERDİĞİ BİLDİRİMLER SİLİNİR. Engelden ÖNCE gelmiş
+//      "X gönderini beğendi / seni takip etti / sana yanıt verdi" satırları
+//      zil kutusunda dururdu; kullanıcının "artık hiçbir şeyini görmeyeyim"
+//      isteğinin en görünür ihlali buydu. Bildirim TÜRETİLMİŞ veridir
+//      (kaynak yorum/beğeni duruyor), silinmesi veri kaybı sayılmaz —
+//      o yüzden mesajların aksine saklanmaz.
+const engelLimiti = hizLimiti(60, (req) => `en:${req.kullanici.id}`);
+
+app.post('/engelle/:kullaniciAdi', girisZorunlu, engelLimiti, sarici(async (req, res) => {
   const hedef = await havuz.query(
     'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [req.params.kullaniciAdi],
   );
@@ -7452,14 +8058,20 @@ app.post('/engelle/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     );
     return res.json({ engellendi: false });
   }
+  // ON CONFLICT: iki hızlı dokunuşun yarışı 23505 ile 500'e düşmesin.
   await havuz.query(
-    'INSERT INTO engellemeler (engelleyen_id, engellenen_id) VALUES ($1,$2)',
+    `INSERT INTO engellemeler (engelleyen_id, engellenen_id) VALUES ($1,$2)
+     ON CONFLICT DO NOTHING`,
     [req.kullanici.id, hedefId],
   );
-  // Engellenince karşılıklı takip de kalksın.
   await havuz.query(
     `DELETE FROM takipler WHERE (takip_eden_id=$1 AND takip_edilen_id=$2)
        OR (takip_eden_id=$2 AND takip_edilen_id=$1)`,
+    [req.kullanici.id, hedefId],
+  );
+  await havuz.query(
+    `DELETE FROM bildirimler
+     WHERE (kullanici_id=$1 AND aktor_id=$2) OR (kullanici_id=$2 AND aktor_id=$1)`,
     [req.kullanici.id, hedefId],
   );
   res.json({ engellendi: true });
@@ -7826,6 +8438,10 @@ app.get('/arama/gecmis', girisZorunlu, gorusmeDurumLimiti, sarici(async (req, re
        ON k.id = CASE WHEN a.arayan_id=$1 THEN a.aranan_id ELSE a.arayan_id END
      WHERE (a.arayan_id=$1 OR a.aranan_id=$1)
        AND ($2::int IS NULL OR a.id < $2)
+       -- ENGELLEME (md. 19): engelli çiftin arama kayıtları listede görünmez.
+       -- Satır SİLİNMEZ (aramalar tablosu süre/istatistik kaydıdır); engel
+       -- kalkarsa geçmiş geri gelir.
+       AND ${engelSuzgec('k.id', '$1')}
      ORDER BY a.id DESC LIMIT $3`,
     [benId, once, adet],
   );
@@ -9391,6 +10007,258 @@ app.post('/admin/kullanici-ban', adminKisit, sarici(async (req, res) => {
     `INSERT INTO yasak_kayitlari (kullanici_id, eylem, sebep, yonetici)
      VALUES ($1,'kaldir',$2,$3)`, [id, sebepTemizle(sebep) || null, yonetici]);
   res.json({ durum: 'ok' });
+}));
+
+// ---------- ilk açılış karşılama akışı (md. 25) ----------
+// Girişten SONRA bir kez çalışan beş adımlı akış (istemci:
+// `app/lib/ekranlar/karsilama.dart`):
+//   1) doğum tarihi  2) dışarıdan veri aktarma (TV Time ZIP → mevcut
+//   `/veri/ice-aktar` akışına kısayol)  3) izlenen filmler + FİLM SERİLERİ
+//   4) izlenen diziler (seçime göre kümelenen öneri)  5) uygulama tanıtımı.
+// Her adım ATLANABİLİR; akış yarıda bırakılsa bile bir daha zorla açılmaz
+// (`kullanicilar.karsilama_bitti`, gerekçe migrasyon-2026-08-13e.sql).
+
+// Doğum tarihi doğrulaması. Gün+ay ZORUNLU ÇİFT, yıl İSTEĞE BAĞLI: kullanıcı
+// yaşını paylaşmak zorunda değil, doğum günü kutlaması (md. 36) gün+ay ile
+// çalışır. Yıl verilmediyse ARTIK YIL varsayılır ki 29 Şubat doğumlular
+// reddedilmesin.
+function gecerliDogum(gun, ay, yil) {
+  if (!Number.isInteger(gun) || !Number.isInteger(ay)) return false;
+  if (ay < 1 || ay > 12 || gun < 1) return false;
+  if (yil !== null) {
+    const buYil = new Date().getUTCFullYear();
+    if (!Number.isInteger(yil) || yil < 1900 || yil > buYil) return false;
+  }
+  const artik = yil === null
+    ? true
+    : ((yil % 4 === 0 && yil % 100 !== 0) || yil % 400 === 0);
+  return gun <= [31, artik ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][ay - 1];
+}
+
+const karsilamaLimiti = hizLimiti(120, (req) => `kr:${req.kullanici.id}`);
+
+// Akışın durumu — YALNIZ SAHİBİNE. Doğum tarihi kişisel veridir: herkese açık
+// profil ucu (`/profil/:kullaniciAdi`) bu alanları HİÇ döndürmez.
+app.get('/karsilama', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    `SELECT karsilama_bitti, dogum_gun, dogum_ay, dogum_yil
+       FROM kullanicilar WHERE id=$1`,
+    [req.kullanici.id],
+  );
+  const k = rows[0] || {};
+  res.set('Cache-Control', 'private, no-store');
+  res.json({
+    bitti: k.karsilama_bitti === true,
+    dogum_gun: k.dogum_gun ?? null,
+    dogum_ay: k.dogum_ay ?? null,
+    dogum_yil: k.dogum_yil ?? null,
+  });
+}));
+
+// Doğum tarihini ve/veya "akış bitti" bayrağını kaydeder. Gövdedeki her alan
+// isteğe bağlıdır; `dogum_gun`/`dogum_ay` null gelirse tarih SİLİNİR.
+app.post('/karsilama', girisZorunlu, karsilamaLimiti, sarici(async (req, res) => {
+  const g = req.body || {};
+  const alanlar = [];
+  const degerler = [req.kullanici.id];
+  const yerTutucu = () => `$${degerler.length + 1}`;
+  if ('dogum_gun' in g || 'dogum_ay' in g || 'dogum_yil' in g) {
+    const sayi = (v) => (v === null || v === undefined || v === '' ? null : Number(v));
+    const gun = sayi(g.dogum_gun);
+    const ay = sayi(g.dogum_ay);
+    const yil = sayi(g.dogum_yil);
+    if (gun === null && ay === null) {
+      alanlar.push('dogum_gun=NULL', 'dogum_ay=NULL', 'dogum_yil=NULL');
+    } else if (!gecerliDogum(gun, ay, yil)) {
+      return res.status(400).json({ hata: 'Geçersiz doğum tarihi' });
+    } else {
+      alanlar.push(`dogum_gun=${yerTutucu()}`); degerler.push(gun);
+      alanlar.push(`dogum_ay=${yerTutucu()}`); degerler.push(ay);
+      alanlar.push(`dogum_yil=${yerTutucu()}`); degerler.push(yil);
+    }
+  }
+  if (g.bitti === true) alanlar.push('karsilama_bitti=true');
+  if (alanlar.length) {
+    await havuz.query(
+      `UPDATE kullanicilar SET ${alanlar.join(', ')} WHERE id=$1`, degerler);
+  }
+  res.set('Cache-Control', 'private, no-store');
+  res.json({ durum: 'ok' });
+}));
+
+// 3. adımdaki "SERİ FİLMLER" düğmesinin listesi (Harry Potter, Yüzüklerin
+// Efendisi...). Koleksiyon kimlikleri KODA GÖMÜLMEZ, İSİMDEN çözülür: yanlış
+// hatırlanan bir id listede sessizce YANLIŞ seriyi gösterirdi. İki TMDB
+// çağrısı (`/search/collection` + `/collection/{id}`) da 7 gün önbellekli,
+// yanıtın tamamı ayrıca Cloudflare kenarında durur → gerçek maliyet dil başına
+// 7 günde bir ~60 çağrıdır.
+const KARSILAMA_SERI_ADLARI = [
+  'Harry Potter', 'The Lord of the Rings', 'The Hobbit', 'Star Wars',
+  'The Avengers', 'The Dark Knight', 'Mission: Impossible', 'James Bond',
+  'The Fast and the Furious', 'The Matrix', 'Jurassic Park',
+  'Pirates of the Caribbean', 'X-Men', 'The Hunger Games', 'John Wick',
+  'Toy Story', 'Shrek', 'Despicable Me', 'The Godfather',
+  'Back to the Future', 'The Terminator', 'Indiana Jones', 'Alien',
+  'The Conjuring', 'Spider-Man', 'Iron Man', 'Kung Fu Panda', 'Ice Age',
+  'The Twilight Saga', 'Rocky',
+];
+
+/// Koleksiyon arama sonuçlarından DOĞRU olanı seçer.
+///
+/// NEDEN GEREKLİ (13 Ağu, canlı doğrulamada yakalandı): "ilk posterli sonucu
+/// al" kuralı 'The Lord of the Rings' için **"The Making of The Lord of the
+/// Rings Collection"** getiriyordu — yani üçleme yerine YAPIM BELGESELLERİ.
+/// Kullanıcı "tümünü izledim" deseydi kitaplığına belgeseller yazılacaktı.
+///
+/// Sıralama: (1) belgesel/derleme kalıpları elenir, (2) adı aranan metinle
+/// TAM eşleşen, (3) aranan metinle BAŞLAYAN, (4) kalanların ilki. Posteri
+/// olan her zaman olmayana yeğlenir (ızgarada boş kutu durmasın).
+const KOLEKSIYON_ELEME = /making of|behind the scenes|documentar|belgesel/i;
+
+function koleksiyonSec(sonuclar, ad) {
+  const sadelestir = (s) => String(s || '')
+    .toLocaleLowerCase('en')
+    .replace(/\b(the|collection|koleksiyonu|serisi|\[seri\]|saga)\b/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+  const hedef = sadelestir(ad);
+  const adaylar = (sonuclar || []).filter((r) => r?.id);
+  if (!adaylar.length) return null;
+  const temiz = adaylar.filter(
+    (r) => !KOLEKSIYON_ELEME.test(`${r.name || ''} ${r.original_name || ''}`),
+  );
+  const havuz = temiz.length ? temiz : adaylar;
+  const puan = (r) => {
+    const a = sadelestir(r.name);
+    const o = sadelestir(r.original_name);
+    if (a === hedef || o === hedef) return 0;
+    if (a.startsWith(hedef) || o.startsWith(hedef)) return 1;
+    return 2;
+  };
+  return [...havuz].sort(
+    (x, y) => puan(x) - puan(y)
+      || (y.poster_path ? 1 : 0) - (x.poster_path ? 1 : 0),
+  )[0];
+}
+
+app.get('/karsilama/seriler', tmdbLimiti, sarici(async (req, res) => {
+  const bugun = bugunIso();
+  const seriler = [];
+  // 8'li paralel öbek (proje kalıbı): 30 seri için en fazla 4 tur.
+  for (let i = 0; i < KARSILAMA_SERI_ADLARI.length; i += 8) {
+    const parca = await Promise.all(
+      KARSILAMA_SERI_ADLARI.slice(i, i + 8).map(async (ad) => {
+        try {
+          // azEsigi=1: koleksiyon aramasında TEK sonuç TAM İSABETTİR
+          // ("Harry Potter" → tek koleksiyon), "neredeyse sonuçsuz" sayılmaz.
+          // Yalnız gerçekten BOŞ yanıt kısa ömürlü önbelleklenir.
+          const arama = await tmdbGetir(
+            `/search/collection?query=${encodeURIComponent(ad)}`,
+            aramaTtl(ONBELLEK_TTL_SN.uzun, 1));
+          const sonuclar = arama?.results || [];
+          const bulunan = koleksiyonSec(sonuclar, ad);
+          if (!bulunan?.id) return null;
+          const k = await tmdbGetir(`/collection/${bulunan.id}`, ONBELLEK_TTL_SN.uzun);
+          const filmler = (k?.parts || [])
+            // Yayınlanmamış filmi "izledim" diye işaretlemek anlamsız.
+            .filter((p) => p?.id && p.poster_path
+              && typeof p.release_date === 'string'
+              && p.release_date && p.release_date <= bugun)
+            .sort((a, b) => a.release_date.localeCompare(b.release_date))
+            .map((p) => ({
+              id: p.id,
+              ad: p.title || p.original_title || '',
+              poster: p.poster_path,
+              yil: Number(p.release_date.slice(0, 4)) || null,
+            }));
+          if (filmler.length < 2) return null; // "seri" en az iki film demek
+          return {
+            id: bulunan.id,
+            ad: k?.name || bulunan.name || ad,
+            poster: k?.poster_path || bulunan.poster_path || null,
+            filmler,
+          };
+        } catch {
+          return null; // tek seri düşerse liste yine dolu gelsin
+        }
+      }),
+    );
+    seriler.push(...parca.filter(Boolean));
+  }
+  // Katalog verisi; kişiye özel alan YOK → kenarda önbelleklenir (dil adreste,
+  // `?dil=xx` — istemcinin `_dilliYol` sarmalayıcısı ekler).
+  res.set('Cache-Control', 'public, max-age=86400, s-maxage=604800');
+  res.json({ seriler });
+}));
+
+// Karşılamada TOPLU işaretleme: "tüm seriyi izledim" 8 film demek, tek tek
+// `POST /durum` atmak 8 gidiş-geliş ederdi. Tek istek, tek toplu INSERT.
+// Mevcut `/durum` ucunun DAVRANIŞINI birebir korur: "bitirdim" filmde tek
+// izleme kaydı, dizide yayınlanmış TÜM bölümleri yazar.
+app.post('/karsilama/toplu-durum', girisZorunlu, karsilamaLimiti, sarici(async (req, res) => {
+  const ogeler = Array.isArray(req.body?.ogeler) ? req.body.ogeler : null;
+  if (!ogeler || ogeler.length === 0 || ogeler.length > 100) {
+    return res.status(400).json({ hata: 'Geçersiz öğe listesi' });
+  }
+  const temiz = [];
+  const gorulen = new Set();
+  for (const o of ogeler) {
+    const tur = o?.tur;
+    const tmdbId = Number(o?.tmdb_id);
+    const durum = o?.durum;
+    if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(tmdbId)
+        || !['izleyecegim', 'izliyorum', 'bitirdim', 'biraktim'].includes(durum)) {
+      return res.status(400).json({ hata: 'Geçersiz tür, tmdb_id ya da durum' });
+    }
+    // Aynı (tur, id) iki kez gelirse `ON CONFLICT DO UPDATE` "satırı ikinci kez
+    // etkileyemez" diye PATLAR — tekilleştirme ŞART.
+    const a = `${tur}:${tmdbId}`;
+    if (gorulen.has(a)) continue;
+    gorulen.add(a);
+    temiz.push({ tur, tmdbId, durum });
+  }
+  const kid = req.kullanici.id;
+  await havuz.query(
+    `INSERT INTO durumlar (kullanici_id, tur, tmdb_id, durum, guncelleme)
+     SELECT $1, t, i, d, now()
+       FROM unnest($2::text[], $3::int[], $4::text[]) AS x(t, i, d)
+     ON CONFLICT (kullanici_id, tur, tmdb_id)
+     DO UPDATE SET durum=EXCLUDED.durum, guncelleme=now()`,
+    [kid, temiz.map((t) => t.tur), temiz.map((t) => t.tmdbId),
+      temiz.map((t) => t.durum)],
+  );
+  const filmler = temiz.filter((t) => t.tur === 'movie' && t.durum === 'bitirdim');
+  if (filmler.length) {
+    await havuz.query(
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+       SELECT $1, 'movie', i, 0, 0 FROM unnest($2::int[]) AS x(i)
+       ON CONFLICT DO NOTHING`,
+      [kid, filmler.map((t) => t.tmdbId)],
+    );
+  }
+  // Diziler: her biri için TMDB detayı gerekiyor → 8'li paralel öbek.
+  const diziler = temiz.filter((t) => t.tur === 'tv' && t.durum === 'bitirdim');
+  let bolumsuz = 0;
+  for (let i = 0; i < diziler.length; i += 8) {
+    await Promise.all(diziler.slice(i, i + 8).map(async (d) => {
+      try {
+        const ciftler = await yayinlanmisBolumler(d.tmdbId);
+        if (!ciftler.length || ciftler.length > 10000) return;
+        await havuz.query(
+          `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+           SELECT $1, 'tv', $2, s, b FROM unnest($3::int[], $4::int[]) AS t(s, b)
+           ON CONFLICT DO NOTHING`,
+          [kid, d.tmdbId, ciftler.map((c) => c[0]), ciftler.map((c) => c[1])],
+        );
+      } catch {
+        // TMDB'ye ulaşılamazsa DURUM yine kaydedilmiş olur; yalnız bölüm
+        // dökümü eksik kalır (sessiz değil: sayaç yanıtta döner).
+        bolumsuz += 1;
+      }
+    }));
+  }
+  res.set('Cache-Control', 'private, no-store');
+  res.json({ durum: 'ok', islenen: temiz.length, bolumsuz });
 }));
 
 // Son durak hata yakalayıcı: varsayılan Express işleyicisi yığın izi

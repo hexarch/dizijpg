@@ -1,0 +1,67 @@
+-- ---------------------------------------------------------------------------
+-- 13 Ağu 2026 — KULLANICI ENGELLEME: OKUMA UÇLARININ İNDEKSİ  ·  istek md. 19
+--
+-- "Engellenen kişinin paylaşımları, yorumları, hiçbir şeyi görünmeyecek ve
+--  iki taraf ASLA birbirine mesaj atamayacak."
+--
+-- ŞEMA DEĞİŞMİYOR: `engellemeler` tablosu 25 Tem 2026'dan beri var (sema.sql),
+-- kolonları yeterli. Bu migrasyon YALNIZ BİR İNDEKSİ genişletir.
+--
+-- ===========================================================================
+-- NEDEN GEREKLİ
+-- ===========================================================================
+-- Engelleme bugüne kadar yalnız GÖNDERME kapılarındaydı (mesaj, mesaj tepkisi,
+-- sesli/görüntülü arama) — hepsi TEK ÇİFT sorgusu, saniyede birkaç kez.
+-- 13 Ağu'dan itibaren engelleme OKUMADA da uygulanıyor ve süzgeç
+-- (`engelSuzgec`, server.js) artık uygulamanın en sıcak sorgularının
+-- İÇİNDE: /akis, /kesfet-akis, /yorumlar/:tur/:tmdbId, /yorum/:id,
+-- /sohbetler, /kullanici-ara, /takipciler, /takipedilenler, /izleyenler,
+-- /incelemeler, /paylas-hedefler, /arama/gecmis...
+--
+-- Süzgecin şekli iki dallı:
+--     SELECT engellenen_id FROM engellemeler WHERE engelleyen_id = <ben>
+--     UNION
+--     SELECT engelleyen_id FROM engellemeler WHERE engellenen_id = <ben>
+--
+--   1. dal → PRIMARY KEY (engelleyen_id, engellenen_id) ile İNDEKS-ONLY
+--      taranır: aranan kolon anahtarın ÖNEKİ, dönen kolon anahtarın içinde.
+--   2. dal → eski `engelleme_engellenen (engellenen_id)` indeksiyle
+--      bulunuyordu ama dönen kolon (engelleyen_id) indekste OLMADIĞI için
+--      her eşleşen satır İÇİN TABLOYA (heap) gidiliyordu.
+--
+-- Bu migrasyon 2. dalı da indeks-only yapar: indekse `engelleyen_id`
+-- ikinci anahtar olarak eklenir. Yani tek satırlık bir kazanç değil —
+-- engellemesi çok olan bir hesapta HER LİSTE SORGUSU başına yapılan heap
+-- erişimleri tamamen kalkar.
+--
+-- Kolon SIRASI önemli: (engellenen_id, engelleyen_id). Ters sırada olsaydı
+-- PK'nin kopyası olurdu ve `WHERE engellenen_id=...` aramasını KARŞILAMAZDI.
+--
+-- ===========================================================================
+-- GÜVENLİK / VERİ
+-- ===========================================================================
+-- Bu dosya HİÇBİR SATIR YAZMAZ, SİLMEZ, DEĞİŞTİRMEZ. Yalnız indeks tanımı.
+-- Yeniden çalıştırılabilir (idempotent): IF NOT EXISTS + IF EXISTS.
+--
+-- CONCURRENTLY KULLANILMADI: `engellemeler` küçük bir tablo (kullanıcı başına
+-- birkaç satır) ve indeks oluşturma milisaniyeler sürer; CONCURRENTLY işlem
+-- bloğunda ÇALIŞMAZ ve diğer migrasyonlarla aynı `psql -f` akışına girmez.
+-- Tablo büyürse (yüz binlerce satır) o gün CONCURRENTLY'ye geçilmeli.
+--
+-- UYGULAMA:
+--   docker compose exec -T db psql -U dizijpg -d dizijpg < migrasyon-2026-08-13d.sql
+--
+-- GERİ ALMA (gerekirse):
+--   DROP INDEX IF EXISTS engelleme_engellenen;
+--   CREATE INDEX engelleme_engellenen ON engellemeler (engellenen_id);
+-- ---------------------------------------------------------------------------
+
+-- Yeni indeksi ÖNCE kur: eski indeks düşerken ters yön sorgusu indekssiz
+-- kalmasın (aradaki mikro pencerede bile seq scan istemiyoruz).
+CREATE INDEX IF NOT EXISTS engelleme_engellenen_kapsayan
+  ON engellemeler (engellenen_id, engelleyen_id);
+
+-- Eski dar indeks artık gereksiz: yeni indeks onun karşıladığı her sorguyu
+-- (engellenen_id öneki) karşılar. Bırakılsaydı her INSERT/DELETE'te boşuna
+-- ikinci bir indeks bakımı yapılırdı.
+DROP INDEX IF EXISTS engelleme_engellenen;

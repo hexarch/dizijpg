@@ -79,7 +79,7 @@ const Map<String, String> cevirilerJa = {
   'Tekrar dene': 'もう一度試す',
   'Toplam İzleme Süresi': '合計視聴時間',
   'Tüm Zamanların En İyileri': '歴代ベスト',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       '全データ（視聴・評価・コメント・リスト）をTV Time互換のZIPでエクスポート、または他のアプリのZIPをインポートできます。',
   'Tümünü Kaldır': 'すべて解除',
   'Tümünü İzledim': 'すべて視聴済みにする',
@@ -235,7 +235,7 @@ const Map<String, String> cevirilerJa = {
   'Mesajı sil': 'メッセージを削除',
   'Mesaj silinemedi': 'メッセージを削除できませんでした',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'リンクが無効か、ページが見つかりません',
-  'Keşfet\'e dön': '見つけるに戻る',
+  "Keşfet'e dön": '見つけるに戻る',
   'Düzenle': '編集',
   'Mesajı düzenle': 'メッセージを編集',
   'Yanıtlanıyor': '返信中',
@@ -262,12 +262,7 @@ const Map<String, String> cevirilerJa = {
   'Abonelik': '定額見放題',
   'Kirala': 'レンタル',
   'Satın al': '購入',
-  'Hoş geldin!': 'ようこそ！',
-  'İzlemek istediğin dizi ve filmleri seç': '見たいドラマや映画を選ぼう',
-  'Seçtiklerin "İzleyeceğim" listene eklenir': '選んだ作品は「見たい」リストに追加されます',
-  'Şimdilik atla': '今はスキップ',
   'Devam et': '続ける',
-  '{} ekle': '{}件追加',
   'Şikayet et': '報告',
   'Engelle': 'ブロック',
   'Engeli kaldır': 'ブロック解除',
@@ -313,7 +308,9 @@ const Map<String, String> cevirilerJa = {
       'アップロードしたメディア：プロフィール、コメント、メッセージに追加した写真、GIF、動画、音声録音。',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       '技術データ：IP アドレス、おおよその位置（国・都市レベル）、端末プラットフォーム、アプリのバージョン、エラーログ。これらはセキュリティと不具合修正のために保持されます。',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      '利用統計：どの端末種別・OS・ブラウザーでアクセスしたかを大まかな区分にまとめ、日ごとの合計カウンターに加算します。ブラウザーの識別情報そのものは保存されず、これらの数値を個人に結び付けることはできません。',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       '通知：プッシュ通知のために端末トークンと言語設定を保存します。通知は端末の設定からいつでもオフにできます。',
   'Verileri Nasıl Kullanırız': 'データの使いみち',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -322,12 +319,12 @@ const Map<String, String> cevirilerJa = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'ローカルストレージは、ログイン状態の維持と、言語やテーマなどの設定を記憶するためだけに使います。広告用・追跡用の Cookie はありません。',
   'Üçüncü Taraf Hizmetler': '第三者サービス',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'ドラマや映画のデータは TMDB から、配信プラットフォーム情報は JustWatch から取得しています。プッシュ通知は Google Firebase 経由で配信され、サイトのトラフィックは Cloudflare が保護しています。これらのサービスには各社のプライバシーポリシーが適用されます。',
   'Saklama ve Silme': '保存と削除',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'あなたのデータはアカウントが存在する間保存されます。設定の「アカウントを削除」でアカウントを完全に削除できます。データは即時に、バックアップ内のコピーも遅くとも 14 日以内に削除されます。エラーログは 30 日後に自動削除されます。',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       '設定からデータを ZIP としてエクスポートできます。アーカイブはあなたのメールアドレスに送信されます。',
   'Güvenlik': 'セキュリティ',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -443,12 +440,12 @@ const Map<String, String> cevirilerJa = {
   'Videolarda altyazı göster': '動画に字幕を表示する',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'ビデオ内で話された文章が画面に書き込まれます。テキストは翻訳です: トルコ語音声で英語、他の言語でトルコ語。',
-  "Güncelleme gerekli": "アップデートが必要です",
-  "Yeni sürüm var": "新しいバージョンがあります",
+  'Güncelleme gerekli': 'アップデートが必要です',
+  'Yeni sürüm var': '新しいバージョンがあります',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "続けるには dizi.jpg の新しいバージョンをインストールしてください。",
-  "Güncelle": "更新",
-  "Daha sonra": "後で",
+      '続けるには dizi.jpg の新しいバージョンをインストールしてください。',
+  'Güncelle': '更新',
+  'Daha sonra': '後で',
   'Takvim güncelleniyor': 'カレンダーを更新しています',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'カレンダーを更新できませんでした。以前のリストを表示しています',
@@ -690,4 +687,104 @@ const Map<String, String> cevirilerJa = {
   '{} {} yayınlandı': '{} {} が公開されました',
   'Yeni bölüm yayınlandı': '新しいエピソードが公開されました',
   'Yeni bölümler': '新しいエピソード',
+  'Geri': '戻る',
+  'Karşılamayı kapat': 'ようこそ画面を閉じる',
+  'Adım {} / {}': 'ステップ {} / {}',
+  'Hadi başlayalım': 'さあ、はじめよう',
+  'Kaydet ve devam': '保存して次へ',
+  '{} tanesini ekle': '選んだ {} 件を追加',
+  'Şimdilik geç': '今はスキップ',
+  'Doğum tarihin ne zaman?': '誕生日はいつ？',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      '年齢に合った作品をおすすめして、誕生日をお祝いするためにうかがっています。',
+  'Gün': '日',
+  'Ay': '月',
+  'Yıl': '年',
+  'Doğum yılımı paylaşmak istemiyorum': '生まれた年は公開したくない',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      '誕生日がプロフィールで公開されることはありません。年齢に合った作品と誕生日のお祝いにだけ使います。',
+  'Ocak': '1月',
+  'Şubat': '2月',
+  'Mart': '3月',
+  'Nisan': '4月',
+  'Mayıs': '5月',
+  'Haziran': '6月',
+  'Temmuz': '7月',
+  'Ağustos': '8月',
+  'Eylül': '9月',
+  'Ekim': '10月',
+  'Kasım': '11月',
+  'Aralık': '12月',
+  'Verilerini yanında getir': 'データを持ってこよう',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      '他のアプリで視聴を記録しているなら、ここに移せます。ゼロから始める必要はありません。',
+  'TV Time, Trakt ve Letterboxd': 'TV Time、Trakt、Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'エクスポートした ZIP ファイルを選ぶと、視聴履歴・評価・リストが取り込まれます。',
+  'Aktarılıyor...': 'インポート中...',
+  'ZIP dosyası seç': 'ZIP ファイルを選択',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      '急がなくて大丈夫。あとから設定 > マイデータでもできます。',
+  'Hangi filmleri izledin?': 'どの映画を観た？',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'よく観られている作品を集めました。タップした作品を視聴済みに追加します。',
+  'SERİ FİLMLER': 'シリーズ映画',
+  'Serilerden {} film eklendi': 'シリーズから映画 {} 本を追加しました',
+  'Film listesi yüklenemedi': '映画リストを読み込めませんでした',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'このステップは飛ばして、あとから好きな作品を追加できます。',
+  '{} film izlediklerine eklendi': '映画 {} 本を視聴済みに追加しました',
+  'Film serileri': '映画シリーズ',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'シリーズを最初から最後まで観たなら、ワンタップで追加できます。',
+  'Seri bulunamadı': 'シリーズが見つかりません',
+  'Daha sonra tekrar deneyebilirsin.': 'あとでもう一度お試しください。',
+  '{} film': '映画 {} 本',
+  'Eklendi': '追加済み',
+  'Tümünü izledim': 'すべて視聴済みにする',
+  'Peki ya diziler?': 'ドラマはどう？',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      '観た作品をチェックしよう。選ぶほど、似ている作品をおすすめします。',
+  'Dizi listesi yüklenemedi': 'ドラマリストを読み込めませんでした',
+  'Seçtiklerine benzeyenler': '選んだ作品に似ている作品',
+  'Her şey hazır': '準備完了',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg でできることをさっと見てみよう。',
+  'Profilini tamamla': 'プロフィールを仕上げよう',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      '設定から自己紹介、プロフィール写真、カバー画像を追加できます。',
+  'Takvimin seni bekliyor': 'カレンダーが待っています',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      '観ているドラマの新しいエピソードはカレンダーに並び、通知でもお知らせします。',
+  'Puan ver, yorum yaz': '評価してコメントしよう',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'エピソードごとに評価して、ネタバレ隠し付きでコメントを書き、リストも作れます。',
+  'Verilerin sende kalır': 'データはあなたのもの',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'データはあなたのアカウントにだけ紐づき、販売されることはありません。設定からすべてダウンロードすることも、アカウントを完全に削除することもできます。',
+  'Engellenen kullanıcılar': 'ブロックしたユーザー',
+  'Engellediğin kişileri gör, engeli kaldır': 'ブロックした相手を確認して、ブロックを解除',
+  'Engellediğin kimse yok': 'ブロックしている人はいません',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'ユーザーのプロフィールにある三点メニューからブロックできます。',
+  '@{} engellensin mi?': '@{} をブロックしますか？',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'お互いの投稿・コメント・プロフィールが見えなくなり、メッセージも通話も届かなくなります。フォロー関係がある場合は解除され、あとでブロックを解除しても元には戻りません。',
+  'Bu kullanıcıyı engelledin': 'このユーザーをブロックしています',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      '相手の投稿・コメント・メッセージは表示されず、相手もあなたのものを見られません。',
+  '{} yeni bir yapımda: {}': '{} が新しい作品に参加：{}',
+  'Favori kişinden yeni yapım': 'お気に入りの人物の新しい作品',
+  '{} için bildirimler': '{} の通知',
+  'Tüm bildirimler': 'すべての通知',
+  'Uygulamada ve telefonda': 'アプリと端末の両方',
+  'Yalnız uygulama içi': 'アプリ内のみ',
+  'Telefon bildirimi gönderilmez': '端末への通知は送りません',
+  'Kapalı': 'オフ',
+  'Bu kişi için bildirim yok': 'この人物の通知は届きません',
+  'Favori kişilerin yeni yapımları': 'お気に入りの人物の新作',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'オフのときは誰もあなたに音声通話できません。発信者には「オフ」の通知が表示されます',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'オフのときは誰もあなたにビデオ通話できません。発信者には「オフ」の通知が表示されます',
 };

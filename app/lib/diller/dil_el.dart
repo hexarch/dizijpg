@@ -82,7 +82,7 @@ const Map<String, String> cevirilerEl = {
   'Tekrar dene': 'Δοκίμασε ξανά',
   'Toplam İzleme Süresi': 'Συνολικός χρόνος οθόνης',
   'Tüm Zamanların En İyileri': 'Τα Καλύτερα Όλων των Εποχών',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Κατέβασε όλα τα δεδομένα σου (προβολές, βαθμολογίες, σχόλια, λίστες) ως ZIP συμβατό με TV Time ή κάνε εισαγωγή ενός ZIP από άλλη εφαρμογή.',
   'Tümünü Kaldır': 'Κατάργηση όλων',
   'Tümünü İzledim': 'Τα είδα όλα',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerEl = {
   'Mesaj silinemedi': 'Δεν ήταν δυνατή η διαγραφή του μηνύματος',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Ο σύνδεσμος δεν είναι έγκυρος ή η σελίδα δεν βρέθηκε',
-  'Keşfet\'e dön': 'Πίσω στην Ανακάλυψη',
+  "Keşfet'e dön": 'Πίσω στην Ανακάλυψη',
   'Düzenle': 'Επεξεργασία',
   'Mesajı düzenle': 'Επεξεργασία μηνύματος',
   'Yanıtlanıyor': 'Απάντηση',
@@ -268,14 +268,7 @@ const Map<String, String> cevirilerEl = {
   'Abonelik': 'Συνδρομή',
   'Kirala': 'Ενοικίαση',
   'Satın al': 'Αγορά',
-  'Hoş geldin!': 'Καλώς ήρθες!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Διάλεξε σειρές και ταινίες που θέλεις να δεις',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Οι επιλογές σου προστίθενται στη λίστα σου',
-  'Şimdilik atla': 'Παράλειψη προς το παρόν',
   'Devam et': 'Συνέχεια',
-  '{} ekle': 'Προσθήκη {}',
   'Şikayet et': 'Αναφορά',
   'Engelle': 'Αποκλεισμός',
   'Engeli kaldır': 'Άρση αποκλεισμού',
@@ -321,7 +314,9 @@ const Map<String, String> cevirilerEl = {
       'Ανεβασμένα πολυμέσα: φωτογραφίες, GIF, βίντεο και ηχογραφήσεις που προσθέτεις στο προφίλ, στα σχόλια και στα μηνύματά σου.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Τεχνικά: διεύθυνση IP, κατά προσέγγιση τοποθεσία (επίπεδο χώρας/πόλης), πλατφόρμα συσκευής, έκδοση εφαρμογής και αρχεία σφαλμάτων. Διατηρούνται για ασφάλεια και διόρθωση προβλημάτων.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Στατιστικά χρήσης: ο τύπος συσκευής, το λειτουργικό σύστημα και το πρόγραμμα περιήγησης με τα οποία γίνεται η είσοδος προστίθενται σε ημερήσιους συνολικούς μετρητές ως χονδρικές κατηγορίες· το ίδιο το αναγνωριστικό του προγράμματος περιήγησης δεν αποθηκεύεται και αυτοί οι αριθμοί δεν μπορούν να συνδεθούν με πρόσωπα.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Ειδοποιήσεις: για τις push ειδοποιήσεις αποθηκεύουμε το token της συσκευής σου και τη γλώσσα που προτιμάς. Μπορείς να απενεργοποιήσεις τις ειδοποιήσεις όποτε θες από τις ρυθμίσεις της συσκευής.',
   'Verileri Nasıl Kullanırız': 'Πώς χρησιμοποιούμε τα δεδομένα σου',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -330,12 +325,12 @@ const Map<String, String> cevirilerEl = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Χρησιμοποιούμε τοπική αποθήκευση μόνο για να παραμένεις συνδεδεμένος και να θυμόμαστε προτιμήσεις όπως γλώσσα και θέμα. Δεν υπάρχουν διαφημιστικά cookies ή cookies παρακολούθησης.',
   'Üçüncü Taraf Hizmetler': 'Υπηρεσίες τρίτων',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Τα δεδομένα σειρών και ταινιών προέρχονται από το TMDB, οι πληροφορίες πλατφορμών streaming από το JustWatch. Οι push ειδοποιήσεις παραδίδονται μέσω Google Firebase και την κίνηση του ιστότοπου προστατεύει το Cloudflare. Οι υπηρεσίες αυτές διέπονται από τις δικές τους πολιτικές απορρήτου.',
   'Saklama ve Silme': 'Διατήρηση και διαγραφή',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Τα δεδομένα σου διατηρούνται όσο υπάρχει ο λογαριασμός σου. Με το «Διαγραφή λογαριασμού» στις ρυθμίσεις μπορείς να διαγράψεις οριστικά τον λογαριασμό· τα δεδομένα διαγράφονται αμέσως και τα αντίγραφά τους στα αντίγραφα ασφαλείας το αργότερο σε 14 ημέρες. Τα αρχεία σφαλμάτων διαγράφονται αυτόματα μετά από 30 ημέρες.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Μπορείς να εξαγάγεις τα δεδομένα σου ως ZIP από τις ρυθμίσεις· το αρχείο αποστέλλεται στη διεύθυνση email σου.',
   'Güvenlik': 'Ασφάλεια',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -458,12 +453,12 @@ const Map<String, String> cevirilerEl = {
   'Videolarda altyazı göster': 'Εμφάνιση υπότιτλων σε βίντεο',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Η πρόταση που λέγεται στο βίντεο είναι γραμμένη στην οθόνη. Το κείμενο είναι μετάφραση: Αγγλικά στην Τουρκική ομιλία, Τουρκικά σε άλλες γλώσσες.',
-  "Güncelleme gerekli": "Απαιτείται ενημέρωση",
-  "Yeni sürüm var": "Νέα έκδοση διαθέσιμη",
+  'Güncelleme gerekli': 'Απαιτείται ενημέρωση',
+  'Yeni sürüm var': 'Νέα έκδοση διαθέσιμη',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Εγκατέστησε τη νέα έκδοση του dizi.jpg για να συνεχίσεις.",
-  "Güncelle": "Ενημέρωση",
-  "Daha sonra": "Αργότερα",
+      'Εγκατέστησε τη νέα έκδοση του dizi.jpg για να συνεχίσεις.',
+  'Güncelle': 'Ενημέρωση',
+  'Daha sonra': 'Αργότερα',
   'Takvim güncelleniyor': 'Το ημερολόγιο ενημερώνεται',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Δεν ήταν δυνατή η ενημέρωση του ημερολογίου, εμφανίζεται η παλιά λίστα',
@@ -724,4 +719,106 @@ const Map<String, String> cevirilerEl = {
   '{} {} yayınlandı': '{} {} κυκλοφόρησε',
   'Yeni bölüm yayınlandı': 'Κυκλοφόρησε νέο επεισόδιο',
   'Yeni bölümler': 'Νέα επεισόδια',
+  'Geri': 'Πίσω',
+  'Karşılamayı kapat': 'Κλείσιμο καλωσορίσματος',
+  'Adım {} / {}': 'Βήμα {} / {}',
+  'Hadi başlayalım': 'Ας ξεκινήσουμε',
+  'Kaydet ve devam': 'Αποθήκευση και συνέχεια',
+  '{} tanesini ekle': 'Προσθήκη {}',
+  'Şimdilik geç': 'Όχι τώρα',
+  'Doğum tarihin ne zaman?': 'Πότε γεννήθηκες;',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Ρωτάμε για να δείχνουμε περιεχόμενο κατάλληλο για την ηλικία σου και να σου ευχηθούμε στα γενέθλιά σου.',
+  'Gün': 'Ημέρα',
+  'Ay': 'Μήνας',
+  'Yıl': 'Έτος',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Δεν θέλω να εμφανίζεται το έτος γέννησής μου',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Η ημερομηνία γέννησης δεν εμφανίζεται δημόσια στο προφίλ σου. Χρησιμοποιείται μόνο για περιεχόμενο κατάλληλο για την ηλικία και για τις ευχές στα γενέθλια.',
+  'Ocak': 'Ιανουάριος',
+  'Şubat': 'Φεβρουάριος',
+  'Mart': 'Μάρτιος',
+  'Nisan': 'Απρίλιος',
+  'Mayıs': 'Μάιος',
+  'Haziran': 'Ιούνιος',
+  'Temmuz': 'Ιούλιος',
+  'Ağustos': 'Αύγουστος',
+  'Eylül': 'Σεπτέμβριος',
+  'Ekim': 'Οκτώβριος',
+  'Kasım': 'Νοέμβριος',
+  'Aralık': 'Δεκέμβριος',
+  'Verilerini yanında getir': 'Φέρε τα δεδομένα σου μαζί σου',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Αν παρακολουθείς όσα βλέπεις σε άλλη εφαρμογή, μπορείς να τα μεταφέρεις εδώ. Δεν χρειάζεται να ξεκινήσεις από την αρχή.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt και Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Διάλεξε το αρχείο ZIP που εξήγαγες, για να μεταφερθούν οι προβολές, οι βαθμολογίες και οι λίστες σου.',
+  'Aktarılıyor...': 'Μεταφορά...',
+  'ZIP dosyası seç': 'Επιλογή αρχείου ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Δεν υπάρχει βιασύνη: μπορείς να το κάνεις και αργότερα από Ρυθμίσεις > Τα δεδομένα μου.',
+  'Hangi filmleri izledin?': 'Ποιες ταινίες έχεις δει;',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Εδώ είναι οι πιο δημοφιλείς. Ό,τι αγγίζεις θα μπει στις προβολές σου.',
+  'SERİ FİLMLER': 'ΣΥΛΛΟΓΕΣ ΤΑΙΝΙΩΝ',
+  'Serilerden {} film eklendi': 'Προστέθηκαν {} ταινίες από συλλογές',
+  'Film listesi yüklenemedi': 'Δεν φορτώθηκε η λίστα ταινιών',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Μπορείς να προσπεράσεις αυτό το βήμα και να προσθέσεις ό,τι θέλεις αργότερα.',
+  '{} film izlediklerine eklendi': 'Προστέθηκαν {} ταινίες στις προβολές σου',
+  'Film serileri': 'Συλλογές ταινιών',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Αν έχεις δει μια συλλογή από την αρχή ως το τέλος, πρόσθεσέ την με ένα άγγιγμα.',
+  'Seri bulunamadı': 'Δεν βρέθηκαν συλλογές',
+  'Daha sonra tekrar deneyebilirsin.': 'Μπορείς να δοκιμάσεις ξανά αργότερα.',
+  '{} film': '{} ταινίες',
+  'Eklendi': 'Προστέθηκε',
+  'Tümünü izledim': 'Τα έχω δει όλα',
+  'Peki ya diziler?': 'Και οι σειρές;',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Σημείωσε όσα έχεις δει· όσο περισσότερα διαλέγεις, τόσο πιο κοντά σου θα είναι οι προτάσεις.',
+  'Dizi listesi yüklenemedi': 'Δεν φορτώθηκε η λίστα σειρών',
+  'Seçtiklerine benzeyenler': 'Παρόμοια με τις επιλογές σου',
+  'Her şey hazır': 'Όλα έτοιμα',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Ρίξε μια γρήγορη ματιά σε όσα μπορείς να κάνεις στο dizi.jpg.',
+  'Profilini tamamla': 'Συμπλήρωσε το προφίλ σου',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Από τις Ρυθμίσεις μπορείς να προσθέσεις Βιογραφικό, φωτογραφία προφίλ και εξώφυλλο.',
+  'Takvimin seni bekliyor': 'Το Ημερολόγιο σε περιμένει',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Τα νέα επεισόδια των σειρών που βλέπεις μπαίνουν στο ημερολόγιο και σου το λέμε με ειδοποίηση.',
+  'Puan ver, yorum yaz': 'Βαθμολόγησε, σχολίασε',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Βαθμολόγησε επεισόδιο προς επεισόδιο, γράψε σχόλια πίσω από κουρτίνα Σπόιλερ, φτιάξε λίστες.',
+  'Verilerin sende kalır': 'Τα δεδομένα σου μένουν δικά σου',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Τα δεδομένα σου κρατούνται μόνο συνδεδεμένα με τον λογαριασμό σου και δεν πωλούνται. Από τις Ρυθμίσεις μπορείς να τα κατεβάσεις όλα ή να διαγράψεις εντελώς τον λογαριασμό σου.',
+  'Engellenen kullanıcılar': 'Αποκλεισμένοι χρήστες',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Δες ποιους έχεις αποκλείσει και κάνε άρση αποκλεισμού',
+  'Engellediğin kimse yok': 'Δεν έχεις αποκλείσει κανέναν',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Μπορείς να αποκλείσεις έναν χρήστη από το μενού με τις τρεις τελείες στη σελίδα του προφίλ.',
+  '@{} engellensin mi?': 'Αποκλεισμός @{};',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Δεν θα μπορείτε να δείτε αναρτήσεις, σχόλια και προφίλ μεταξύ σας· ούτε μηνύματα ούτε κλήσεις θα περνούν. Αν υπάρχει σύνδεση παρακολούθησης μεταξύ σας, κόβεται και δεν επανέρχεται ούτε αν αρθεί ο αποκλεισμός.',
+  'Bu kullanıcıyı engelledin': 'Έχεις αποκλείσει αυτόν τον χρήστη',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Δεν βλέπεις τις αναρτήσεις, τα σχόλια και τα μηνύματα αυτού του ατόμου· ούτε αυτό το άτομο βλέπει τα δικά σου.',
+  '{} yeni bir yapımda: {}': '{} σε νέα παραγωγή: {}',
+  'Favori kişinden yeni yapım': 'Νέα παραγωγή από αγαπημένο πρόσωπο',
+  '{} için bildirimler': 'Ειδοποιήσεις για {}',
+  'Tüm bildirimler': 'Όλες οι ειδοποιήσεις',
+  'Uygulamada ve telefonda': 'Στην εφαρμογή και στο τηλέφωνο',
+  'Yalnız uygulama içi': 'Μόνο μέσα στην εφαρμογή',
+  'Telefon bildirimi gönderilmez': 'Δεν στέλνονται ειδοποιήσεις στο τηλέφωνο',
+  'Kapalı': 'Ανενεργό',
+  'Bu kişi için bildirim yok': 'Καμία ειδοποίηση για αυτό το άτομο',
+  'Favori kişilerin yeni yapımları': 'Νέες παραγωγές αγαπημένων προσώπων',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει φωνητικά· ο καλών βλέπει ειδοποίηση ότι οι κλήσεις είναι "απενεργοποιημένες"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει με βίντεο· ο καλών βλέπει ειδοποίηση ότι οι βιντεοκλήσεις είναι "απενεργοποιημένες"',
 };

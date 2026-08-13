@@ -82,7 +82,7 @@ const Map<String, String> cevirilerVi = {
   'Tekrar dene': 'Thử lại',
   'Toplam İzleme Süresi': 'Tổng thời gian xem',
   'Tüm Zamanların En İyileri': 'Hay nhất mọi thời đại',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Xuất toàn bộ dữ liệu của bạn (lượt xem, điểm, bình luận, danh sách) dưới dạng ZIP tương thích TV Time, hoặc nhập ZIP từ ứng dụng khác.',
   'Tümünü Kaldır': 'Xóa tất cả',
   'Tümünü İzledim': 'Đã xem tất cả',
@@ -240,7 +240,7 @@ const Map<String, String> cevirilerVi = {
   'Mesaj silinemedi': 'Không thể xóa tin nhắn',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Liên kết không hợp lệ hoặc không tìm thấy trang',
-  'Keşfet\'e dön': 'Quay lại Khám phá',
+  "Keşfet'e dön": 'Quay lại Khám phá',
   'Düzenle': 'Sửa',
   'Mesajı düzenle': 'Sửa tin nhắn',
   'Yanıtlanıyor': 'Đang trả lời',
@@ -267,14 +267,7 @@ const Map<String, String> cevirilerVi = {
   'Abonelik': 'Đăng ký',
   'Kirala': 'Thuê',
   'Satın al': 'Mua',
-  'Hoş geldin!': 'Chào mừng!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Chọn phim bộ và phim lẻ bạn muốn xem',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Lựa chọn của bạn sẽ được thêm vào danh sách xem',
-  'Şimdilik atla': 'Bỏ qua bây giờ',
   'Devam et': 'Tiếp tục',
-  '{} ekle': 'Thêm {}',
   'Şikayet et': 'Báo cáo',
   'Engelle': 'Chặn',
   'Engeli kaldır': 'Bỏ chặn',
@@ -320,7 +313,9 @@ const Map<String, String> cevirilerVi = {
       'Nội dung tải lên: ảnh, GIF, video và bản ghi âm bạn thêm vào hồ sơ, bình luận và tin nhắn.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Kỹ thuật: địa chỉ IP, vị trí ước chừng (cấp quốc gia/thành phố), nền tảng thiết bị, phiên bản ứng dụng và nhật ký lỗi. Chúng được lưu để bảo mật và khắc phục sự cố.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Thống kê sử dụng: loại thiết bị, hệ điều hành và trình duyệt dùng để truy cập được cộng vào các bộ đếm tổng theo ngày dưới dạng nhóm khái quát; bản thân định danh trình duyệt không được lưu và những con số này không thể gắn với cá nhân nào.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Thông báo: để gửi thông báo đẩy, chúng tôi lưu token thiết bị và ngôn ngữ bạn chọn. Bạn có thể tắt thông báo bất cứ lúc nào trong cài đặt thiết bị.',
   'Verileri Nasıl Kullanırız': 'Cách chúng tôi dùng dữ liệu',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -329,12 +324,12 @@ const Map<String, String> cevirilerVi = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Bộ nhớ cục bộ chỉ dùng để giữ bạn đăng nhập và ghi nhớ các tùy chọn như ngôn ngữ, giao diện. Không có cookie quảng cáo hay theo dõi.',
   'Üçüncü Taraf Hizmetler': 'Dịch vụ bên thứ ba',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Dữ liệu phim và series lấy từ TMDB, thông tin nền tảng streaming từ JustWatch. Thông báo đẩy được gửi qua Google Firebase, lưu lượng trang được Cloudflare bảo vệ. Các dịch vụ này tuân theo chính sách quyền riêng tư của riêng họ.',
   'Saklama ve Silme': 'Lưu trữ và xóa',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Dữ liệu của bạn được giữ chừng nào tài khoản còn tồn tại. Với "Xóa tài khoản của tôi" trong Cài đặt, bạn có thể xóa tài khoản vĩnh viễn; dữ liệu bị xóa ngay lập tức, các bản sao trong bản sao lưu chậm nhất trong 14 ngày. Nhật ký lỗi tự động xóa sau 30 ngày.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Bạn có thể xuất dữ liệu dưới dạng ZIP từ Cài đặt; tệp lưu trữ sẽ được gửi tới địa chỉ email của bạn.',
   'Güvenlik': 'Bảo mật',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -455,12 +450,12 @@ const Map<String, String> cevirilerVi = {
   'Videolarda altyazı göster': 'Hiển thị phụ đề trên video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Câu nói trong video được viết trên màn hình. Văn bản được dịch: tiếng Anh trong tiếng Thổ Nhĩ Kỳ, tiếng Thổ Nhĩ Kỳ bằng các ngôn ngữ khác.',
-  "Güncelleme gerekli": "Cần cập nhật",
-  "Yeni sürüm var": "Đã có phiên bản mới",
+  'Güncelleme gerekli': 'Cần cập nhật',
+  'Yeni sürüm var': 'Đã có phiên bản mới',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Cài đặt phiên bản mới của dizi.jpg để tiếp tục.",
-  "Güncelle": "Cập nhật",
-  "Daha sonra": "Để sau",
+      'Cài đặt phiên bản mới của dizi.jpg để tiếp tục.',
+  'Güncelle': 'Cập nhật',
+  'Daha sonra': 'Để sau',
   'Takvim güncelleniyor': 'Đang cập nhật lịch',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Không thể cập nhật lịch, đang hiển thị danh sách cũ',
@@ -713,4 +708,105 @@ const Map<String, String> cevirilerVi = {
   '{} {} yayınlandı': '{} {} đã lên sóng',
   'Yeni bölüm yayınlandı': 'Tập mới đã lên sóng',
   'Yeni bölümler': 'Tập mới',
+  'Geri': 'Quay lại',
+  'Karşılamayı kapat': 'Đóng phần giới thiệu',
+  'Adım {} / {}': 'Bước {} / {}',
+  'Hadi başlayalım': 'Bắt đầu thôi',
+  'Kaydet ve devam': 'Lưu và tiếp tục',
+  '{} tanesini ekle': 'Thêm {} mục đã chọn',
+  'Şimdilik geç': 'Bỏ qua bây giờ',
+  'Doğum tarihin ne zaman?': 'Sinh nhật của bạn là ngày nào?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Chúng tôi hỏi để hiển thị nội dung phù hợp với độ tuổi và chúc mừng sinh nhật bạn.',
+  'Gün': 'Ngày',
+  'Ay': 'Tháng',
+  'Yıl': 'Năm',
+  'Doğum yılımı paylaşmak istemiyorum': 'Tôi không muốn chia sẻ năm sinh',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Ngày sinh của bạn không hiển thị công khai trên hồ sơ. Nó chỉ dùng cho nội dung phù hợp độ tuổi và lời chúc sinh nhật.',
+  'Ocak': 'Tháng 1',
+  'Şubat': 'Tháng 2',
+  'Mart': 'Tháng 3',
+  'Nisan': 'Tháng 4',
+  'Mayıs': 'Tháng 5',
+  'Haziran': 'Tháng 6',
+  'Temmuz': 'Tháng 7',
+  'Ağustos': 'Tháng 8',
+  'Eylül': 'Tháng 9',
+  'Ekim': 'Tháng 10',
+  'Kasım': 'Tháng 11',
+  'Aralık': 'Tháng 12',
+  'Verilerini yanında getir': 'Mang dữ liệu của bạn theo',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Nếu bạn đang ghi lại những gì mình xem ở ứng dụng khác, hãy chuyển sang đây. Không cần bắt đầu lại từ đầu.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt và Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Chọn tệp ZIP bạn đã xuất; lịch sử xem, điểm và danh sách của bạn sẽ được nhập vào.',
+  'Aktarılıyor...': 'Đang nhập...',
+  'ZIP dosyası seç': 'Chọn tệp ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Không cần vội: bạn có thể làm việc này sau trong Cài đặt > Dữ liệu của tôi.',
+  'Hangi filmleri izledin?': 'Bạn đã xem những phim nào?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Đây là những phim được xem nhiều nhất. Bạn chạm vào phim nào, chúng tôi thêm phim đó vào lịch sử xem.',
+  'SERİ FİLMLER': 'LOẠT PHIM',
+  'Serilerden {} film eklendi': 'Đã thêm {} phim từ các loạt phim',
+  'Film listesi yüklenemedi': 'Không tải được danh sách phim',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Bạn có thể bỏ qua bước này và thêm những gì bạn muốn sau.',
+  '{} film izlediklerine eklendi': 'Đã thêm {} phim vào lịch sử xem',
+  'Film serileri': 'Loạt phim',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Nếu bạn đã xem trọn một loạt phim, chỉ cần một chạm để thêm.',
+  'Seri bulunamadı': 'Không tìm thấy loạt phim',
+  'Daha sonra tekrar deneyebilirsin.': 'Bạn có thể thử lại sau.',
+  '{} film': '{} phim',
+  'Eklendi': 'Đã thêm',
+  'Tümünü izledim': 'Đã xem hết',
+  'Peki ya diziler?': 'Còn phim bộ thì sao?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Đánh dấu những gì bạn đã xem; càng chọn nhiều, chúng tôi càng mang đến những phim hợp gu bạn.',
+  'Dizi listesi yüklenemedi': 'Không tải được danh sách phim bộ',
+  'Seçtiklerine benzeyenler': 'Tương tự những gì bạn đã chọn',
+  'Her şey hazır': 'Mọi thứ đã sẵn sàng',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Xem nhanh những gì bạn có thể làm trên dizi.jpg.',
+  'Profilini tamamla': 'Hoàn thiện hồ sơ của bạn',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Bạn có thể thêm tiểu sử, ảnh đại diện và ảnh bìa trong Cài đặt.',
+  'Takvimin seni bekliyor': 'Lịch đang chờ bạn',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Tập mới của những phim bộ bạn xem sẽ hiện trên lịch và chúng tôi sẽ báo cho bạn bằng thông báo.',
+  'Puan ver, yorum yaz': 'Chấm điểm, viết bình luận',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Chấm điểm từng tập, viết bình luận có màn che spoiler và tạo danh sách riêng.',
+  'Verilerin sende kalır': 'Dữ liệu vẫn là của bạn',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Dữ liệu của bạn chỉ gắn với tài khoản của bạn và không bị đem bán. Trong Cài đặt, bạn có thể tải về toàn bộ hoặc xóa hẳn tài khoản.',
+  'Engellenen kullanıcılar': 'Người dùng đã chặn',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Xem những người bạn đã chặn, bỏ chặn',
+  'Engellediğin kimse yok': 'Bạn chưa chặn ai',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Bạn có thể chặn một người dùng từ menu ba chấm trên hồ sơ của người đó.',
+  '@{} engellensin mi?': 'Chặn @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Hai bên sẽ không xem được bài đăng, bình luận và hồ sơ của nhau; tin nhắn và cuộc gọi cũng không gửi được. Nếu đang theo dõi nhau, liên kết theo dõi sẽ bị cắt đứt và không quay lại, kể cả khi bạn bỏ chặn.',
+  'Bu kullanıcıyı engelledin': 'Bạn đã chặn người dùng này',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Bạn không thấy bài đăng, bình luận và tin nhắn của người đó; người đó cũng không thấy của bạn.',
+  '{} yeni bir yapımda: {}': '{} có tác phẩm mới: {}',
+  'Favori kişinden yeni yapım': 'Tác phẩm mới từ người bạn yêu thích',
+  '{} için bildirimler': 'Thông báo cho {}',
+  'Tüm bildirimler': 'Tất cả thông báo',
+  'Uygulamada ve telefonda': 'Trong ứng dụng và trên điện thoại',
+  'Yalnız uygulama içi': 'Chỉ trong ứng dụng',
+  'Telefon bildirimi gönderilmez': 'Không gửi thông báo đến điện thoại',
+  'Kapalı': 'Tắt',
+  'Bu kişi için bildirim yok': 'Không có thông báo về người này',
+  'Favori kişilerin yeni yapımları': 'Tác phẩm mới của người yêu thích',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Khi tắt, không ai có thể gọi thoại cho bạn; người gọi sẽ thấy thông báo "đã tắt"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Khi tắt, không ai có thể gọi video cho bạn; người gọi sẽ thấy thông báo "đã tắt"',
 };

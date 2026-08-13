@@ -82,7 +82,7 @@ const Map<String, String> cevirilerPa = {
   'Tekrar dene': 'ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Toplam İzleme Süresi': 'ਕੁੱਲ ਸਕ੍ਰੀਨ ਟਾਈਮ',
   'Tüm Zamanların En İyileri': 'ਆਲ-ਟਾਈਮ ਬੈਸਟ',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'ਆਪਣਾ ਸਾਰਾ ਡੇਟਾ (ਵਾਚ ਹਿਸਟਰੀ, ਰੇਟਿੰਗ, ਕਮੈਂਟ, ਲਿਸਟ) TV Time-ਅਨੁਕੂਲ ZIP ਵਜੋਂ ਲਓ ਜਾਂ ਕਿਸੇ ਹੋਰ ਐਪ ਤੋਂ ਆਈ ZIP ਇੰਪੋਰਟ ਕਰੋ।',
   'Tümünü Kaldır': 'ਸਭ ਹਟਾਓ',
   'Tümünü İzledim': 'ਸਭ ਦੇਖ ਲਏ',
@@ -154,14 +154,14 @@ const Map<String, String> cevirilerPa = {
   'Yorumları ({})': 'ਇਸ ਬਾਰੇ ਕਮੈਂਟ ({})',
   'Listelerim': 'ਮੇਰੀਆਂ ਲਿਸਟਾਂ',
   'Nereden izledin?': 'ਕਿੱਥੇ ਦੇਖਿਆ?',
-  'Diziye git': 'ਸ਼ੋਅ \'ਤੇ ਜਾਓ',
+  'Diziye git': "ਸ਼ੋਅ 'ਤੇ ਜਾਓ",
   'TV / Kanal': 'ਟੀਵੀ / ਚੈਨਲ',
   'Sinema': 'ਸਿਨੇਮਾ',
   'DVD / Blu-ray': 'DVD / Blu-ray',
   'Diğer': 'ਹੋਰ',
   'Akış': 'ਫੀਡ',
   'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.':
-      'ਤੇਰੀ ਫੀਡ ਖਾਲੀ ਹੈ।\nਤੇਰੇ ਦੇਖੇ ਸ਼ੋਅ ਅਤੇ ਫ਼ਿਲਮਾਂ \'ਤੇ ਟਿੱਪਣੀਆਂ ਆਉਣਗੀਆਂ ਤਾਂ ਇੱਥੇ ਦਿਖਣਗੀਆਂ।',
+      "ਤੇਰੀ ਫੀਡ ਖਾਲੀ ਹੈ।\nਤੇਰੇ ਦੇਖੇ ਸ਼ੋਅ ਅਤੇ ਫ਼ਿਲਮਾਂ 'ਤੇ ਟਿੱਪਣੀਆਂ ਆਉਣਗੀਆਂ ਤਾਂ ਇੱਥੇ ਦਿਖਣਗੀਆਂ।",
   'Listeleri ({})': 'ਉਹਨਾਂ ਦੀਆਂ ਸੂਚੀਆਂ ({})',
   'Liste boş.': 'ਇਹ ਸੂਚੀ ਖਾਲੀ ਹੈ।',
   'Yanıtla': 'ਜਵਾਬ ਦਿਓ',
@@ -238,7 +238,7 @@ const Map<String, String> cevirilerPa = {
   'Mesajı sil': 'ਸੁਨੇਹਾ ਮਿਟਾਓ',
   'Mesaj silinemedi': 'ਸੁਨੇਹਾ ਮਿਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
   'Bağlantı geçersiz veya sayfa bulunamadı': 'ਲਿੰਕ ਗਲਤ ਹੈ ਜਾਂ ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ',
-  'Keşfet\'e dön': 'ਡਿਸਕਵਰ \'ਤੇ ਵਾਪਸ ਜਾਓ',
+  "Keşfet'e dön": "ਡਿਸਕਵਰ 'ਤੇ ਵਾਪਸ ਜਾਓ",
   'Düzenle': 'ਸੋਧੋ',
   'Mesajı düzenle': 'ਸੁਨੇਹਾ ਸੋਧੋ',
   'Yanıtlanıyor': 'ਜਵਾਬ ਦੇ ਰਿਹਾ',
@@ -264,16 +264,9 @@ const Map<String, String> cevirilerPa = {
   'Puan kaydedilemedi': 'ਰੇਟਿੰਗ ਸੰਭਾਲੀ ਨਹੀਂ ਜਾ ਸਕੀ',
   'Nerede İzlenir': 'ਕਿੱਥੇ ਵੇਖੋ',
   'Abonelik': 'ਗਾਹਕੀ',
-  'Kirala': 'ਕਿਰਾਏ \'ਤੇ',
+  'Kirala': "ਕਿਰਾਏ 'ਤੇ",
   'Satın al': 'ਖਰੀਦੋ',
-  'Hoş geldin!': 'ਜੀ ਆਇਆਂ ਨੂੰ!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'ਉਹ ਸ਼ੋਅ ਅਤੇ ਫ਼ਿਲਮਾਂ ਚੁਣੋ ਜੋ ਤੁਸੀਂ ਦੇਖਣਾ ਚਾਹੁੰਦੇ ਹੋ',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'ਤੁਹਾਡੀਆਂ ਚੋਣਾਂ ਤੁਹਾਡੀ ਵਾਚਲਿਸਟ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਣਗੀਆਂ',
-  'Şimdilik atla': 'ਹੁਣੇ ਛੱਡੋ',
   'Devam et': 'ਜਾਰੀ ਰੱਖੋ',
-  '{} ekle': '{} ਸ਼ਾਮਲ ਕਰੋ',
   'Şikayet et': 'ਰਿਪੋਰਟ ਕਰੋ',
   'Engelle': 'ਬਲਾਕ ਕਰੋ',
   'Engeli kaldır': 'ਅਨਬਲਾਕ ਕਰੋ',
@@ -314,12 +307,14 @@ const Map<String, String> cevirilerPa = {
   'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, tepkilerin ve favorilerin.':
       'ਵਰਤੋਂ: ਤੇਰਾ ਦੇਖਣ ਦਾ ਇਤਿਹਾਸ, ਰੇਟਿੰਗ, ਟਿੱਪਣੀਆਂ, ਸੂਚੀਆਂ, ਰਿਐਕਸ਼ਨ ਅਤੇ ਮਨਪਸੰਦ।',
   'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca şikayet edilirse moderasyon amacıyla incelenir.':
-      'ਸੁਨੇਹੇ: ਤੇਰੇ ਲਿਖਤੀ, ਤਸਵੀਰੀ ਅਤੇ ਆਵਾਜ਼ੀ ਸੁਨੇਹੇ ਸਾਡੇ ਸਰਵਰਾਂ \'ਤੇ ਰੱਖੇ ਜਾਂਦੇ ਹਨ। ਸੁਨੇਹੇ ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਟਡ ਨਹੀਂ ਹਨ; ਸਿਰਫ਼ ਰਿਪੋਰਟ ਹੋਣ \'ਤੇ ਮੋਡਰੇਸ਼ਨ ਲਈ ਵੇਖੇ ਜਾਂਦੇ ਹਨ।',
+      "ਸੁਨੇਹੇ: ਤੇਰੇ ਲਿਖਤੀ, ਤਸਵੀਰੀ ਅਤੇ ਆਵਾਜ਼ੀ ਸੁਨੇਹੇ ਸਾਡੇ ਸਰਵਰਾਂ 'ਤੇ ਰੱਖੇ ਜਾਂਦੇ ਹਨ। ਸੁਨੇਹੇ ਐਂਡ-ਟੂ-ਐਂਡ ਇਨਕ੍ਰਿਪਟਡ ਨਹੀਂ ਹਨ; ਸਿਰਫ਼ ਰਿਪੋਰਟ ਹੋਣ 'ਤੇ ਮੋਡਰੇਸ਼ਨ ਲਈ ਵੇਖੇ ਜਾਂਦੇ ਹਨ।",
   'Yüklenen medya: profiline, yorumlarına ve mesajlarına eklediğin fotoğraf, GIF, video ve ses kayıtları.':
       'ਅੱਪਲੋਡ ਕੀਤਾ ਮੀਡੀਆ: ਪ੍ਰੋਫਾਈਲ, ਟਿੱਪਣੀਆਂ ਅਤੇ ਸੁਨੇਹਿਆਂ ਵਿੱਚ ਜੋੜੀਆਂ ਫੋਟੋਆਂ, GIF, ਵੀਡੀਓ ਅਤੇ ਆਵਾਜ਼ੀ ਰਿਕਾਰਡਿੰਗਾਂ।',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'ਤਕਨੀਕੀ: IP ਪਤਾ, ਅੰਦਾਜ਼ਨ ਟਿਕਾਣਾ (ਦੇਸ਼/ਸ਼ਹਿਰ ਪੱਧਰ), ਡਿਵਾਈਸ ਪਲੇਟਫਾਰਮ, ਐਪ ਵਰਜ਼ਨ ਅਤੇ ਐਰਰ ਲਾਗ। ਇਹ ਸੁਰੱਖਿਆ ਅਤੇ ਖਾਮੀਆਂ ਠੀਕ ਕਰਨ ਲਈ ਰੱਖੇ ਜਾਂਦੇ ਹਨ।',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'ਵਰਤੋਂ ਦੇ ਅੰਕੜੇ: ਕਿਸ ਕਿਸਮ ਦੇ ਡਿਵਾਈਸ, ਓਪਰੇਟਿੰਗ ਸਿਸਟਮ ਅਤੇ ਬ੍ਰਾਊਜ਼ਰ ਨਾਲ ਦਾਖ਼ਲਾ ਹੋਇਆ, ਇਹ ਮੋਟੀਆਂ ਸ਼੍ਰੇਣੀਆਂ ਵਿੱਚ ਰੋਜ਼ਾਨਾ ਕੁੱਲ ਗਿਣਤੀ ਵਿੱਚ ਜੋੜਿਆ ਜਾਂਦਾ ਹੈ; ਬ੍ਰਾਊਜ਼ਰ ਦੀ ਪਛਾਣ ਆਪ ਨਹੀਂ ਰੱਖੀ ਜਾਂਦੀ ਅਤੇ ਇਹ ਅੰਕੜੇ ਕਿਸੇ ਵਿਅਕਤੀ ਨਾਲ ਨਹੀਂ ਜੋੜੇ ਜਾ ਸਕਦੇ।',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'ਸੂਚਨਾਵਾਂ: ਪੁਸ਼ ਸੂਚਨਾਵਾਂ ਲਈ ਤੇਰੇ ਡਿਵਾਈਸ ਦਾ ਟੋਕਨ ਅਤੇ ਭਾਸ਼ਾ ਦੀ ਪਸੰਦ ਰੱਖੀ ਜਾਂਦੀ ਹੈ। ਡਿਵਾਈਸ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ ਕਦੇ ਵੀ ਸੂਚਨਾਵਾਂ ਬੰਦ ਕਰ ਸਕਦਾ ਹੈਂ।',
   'Verileri Nasıl Kullanırız': 'ਅਸੀਂ ਡਾਟਾ ਕਿਵੇਂ ਵਰਤਦੇ ਹਾਂ',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,16 +323,16 @@ const Map<String, String> cevirilerPa = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'ਲੋਕਲ ਸਟੋਰੇਜ ਸਿਰਫ਼ ਤੈਨੂੰ ਲਾਗਇਨ ਰੱਖਣ ਅਤੇ ਭਾਸ਼ਾ/ਥੀਮ ਵਰਗੀਆਂ ਪਸੰਦਾਂ ਯਾਦ ਰੱਖਣ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ। ਕੋਈ ਇਸ਼ਤਿਹਾਰੀ ਜਾਂ ਟ੍ਰੈਕਿੰਗ ਕੂਕੀ ਨਹੀਂ ਹੈ।',
   'Üçüncü Taraf Hizmetler': 'ਤੀਜੀ-ਧਿਰ ਸੇਵਾਵਾਂ',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
-      'ਸੀਰੀਜ਼ ਅਤੇ ਫਿਲਮਾਂ ਦਾ ਡਾਟਾ TMDB ਤੋਂ ਅਤੇ ਸਟ੍ਰੀਮਿੰਗ ਪਲੇਟਫਾਰਮਾਂ ਦੀ ਜਾਣਕਾਰੀ JustWatch ਤੋਂ ਆਉਂਦੀ ਹੈ। ਪੁਸ਼ ਸੂਚਨਾਵਾਂ Google Firebase ਰਾਹੀਂ ਪਹੁੰਚਦੀਆਂ ਹਨ ਅਤੇ ਸਾਈਟ ਦੇ ਟ੍ਰੈਫਿਕ ਦੀ ਰਾਖੀ Cloudflare ਕਰਦਾ ਹੈ। ਇਨ੍ਹਾਂ ਸੇਵਾਵਾਂ \'ਤੇ ਉਨ੍ਹਾਂ ਦੀਆਂ ਆਪਣੀਆਂ ਪਰਦੇਦਾਰੀ ਨੀਤੀਆਂ ਲਾਗੂ ਹੁੰਦੀਆਂ ਹਨ।',
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
+      "ਸੀਰੀਜ਼ ਅਤੇ ਫਿਲਮਾਂ ਦਾ ਡਾਟਾ TMDB ਤੋਂ ਅਤੇ ਸਟ੍ਰੀਮਿੰਗ ਪਲੇਟਫਾਰਮਾਂ ਦੀ ਜਾਣਕਾਰੀ JustWatch ਤੋਂ ਆਉਂਦੀ ਹੈ। ਪੁਸ਼ ਸੂਚਨਾਵਾਂ Google Firebase ਰਾਹੀਂ ਪਹੁੰਚਦੀਆਂ ਹਨ ਅਤੇ ਸਾਈਟ ਦੇ ਟ੍ਰੈਫਿਕ ਦੀ ਰਾਖੀ Cloudflare ਕਰਦਾ ਹੈ। ਇਨ੍ਹਾਂ ਸੇਵਾਵਾਂ 'ਤੇ ਉਨ੍ਹਾਂ ਦੀਆਂ ਆਪਣੀਆਂ ਪਰਦੇਦਾਰੀ ਨੀਤੀਆਂ ਲਾਗੂ ਹੁੰਦੀਆਂ ਹਨ।",
   'Saklama ve Silme': 'ਸੰਭਾਲ ਅਤੇ ਮਿਟਾਉਣਾ',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'ਤੇਰਾ ਡਾਟਾ ਓਨਾ ਚਿਰ ਰਹਿੰਦਾ ਹੈ ਜਿੰਨਾ ਚਿਰ ਤੇਰਾ ਖਾਤਾ ਹੈ। ਸੈਟਿੰਗਾਂ ਵਿੱਚ "ਮੇਰਾ ਖਾਤਾ ਮਿਟਾਓ" ਨਾਲ ਖਾਤਾ ਹਮੇਸ਼ਾ ਲਈ ਮਿਟਾ ਸਕਦਾ ਹੈਂ; ਡਾਟਾ ਤੁਰੰਤ ਅਤੇ ਬੈਕਅੱਪ ਦੀਆਂ ਕਾਪੀਆਂ ਵੱਧ ਤੋਂ ਵੱਧ 14 ਦਿਨਾਂ ਵਿੱਚ ਮਿਟ ਜਾਂਦੀਆਂ ਹਨ। ਐਰਰ ਲਾਗ 30 ਦਿਨਾਂ ਬਾਅਦ ਆਪੇ ਮਿਟ ਜਾਂਦੇ ਹਨ।',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
-      'ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ ਆਪਣਾ ਡਾਟਾ ZIP ਰੂਪ ਵਿੱਚ ਨਿਰਯਾਤ ਕਰ ਸਕਦਾ ਹੈਂ; ਆਰਕਾਈਵ ਤੇਰੇ ਈਮੇਲ ਪਤੇ \'ਤੇ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ।',
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
+      "ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ ਆਪਣਾ ਡਾਟਾ ZIP ਰੂਪ ਵਿੱਚ ਨਿਰਯਾਤ ਕਰ ਸਕਦਾ ਹੈਂ; ਆਰਕਾਈਵ ਤੇਰੇ ਈਮੇਲ ਪਤੇ 'ਤੇ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ।",
   'Güvenlik': 'ਸੁਰੱਖਿਆ',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
-      'ਡਾਟਾ ਇਨਕ੍ਰਿਪਟਡ ਕਨੈਕਸ਼ਨਾਂ (HTTPS) ਰਾਹੀਂ ਜਾਂਦਾ ਹੈ ਅਤੇ ਸੀਮਤ ਪਹੁੰਚ ਵਾਲੇ ਸਰਵਰਾਂ \'ਤੇ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ।',
+      "ਡਾਟਾ ਇਨਕ੍ਰਿਪਟਡ ਕਨੈਕਸ਼ਨਾਂ (HTTPS) ਰਾਹੀਂ ਜਾਂਦਾ ਹੈ ਅਤੇ ਸੀਮਤ ਪਹੁੰਚ ਵਾਲੇ ਸਰਵਰਾਂ 'ਤੇ ਰੱਖਿਆ ਜਾਂਦਾ ਹੈ।",
   'Çocukların Gizliliği': 'ਬੱਚਿਆਂ ਦੀ ਪਰਦੇਦਾਰੀ',
   'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.':
       'dizi.jpg 13 ਸਾਲ ਤੋਂ ਛੋਟੇ ਬੱਚਿਆਂ ਲਈ ਨਹੀਂ ਹੈ।',
@@ -346,7 +341,7 @@ const Map<String, String> cevirilerPa = {
       'KVKK ਅਤੇ GDPR ਤਹਿਤ ਤੈਨੂੰ ਆਪਣੇ ਡਾਟੇ ਤੱਕ ਪਹੁੰਚ, ਸੁਧਾਰ, ਮਿਟਾਉਣ ਅਤੇ ਤਬਦੀਲ ਕਰਨ ਦਾ ਹੱਕ ਹੈ। ਇਸ ਲਈ ਸਾਨੂੰ ਲਿਖ: {}',
   'Değişiklikler': 'ਤਬਦੀਲੀਆਂ',
   'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve güncelleme tarihi yenilenir.':
-      'ਇਹ ਨੀਤੀ ਬਦਲੇ ਤਾਂ ਨਵਾਂ ਰੂਪ ਇਸੇ ਪੰਨੇ \'ਤੇ ਪ੍ਰਕਾਸ਼ਿਤ ਹੋਵੇਗਾ ਅਤੇ ਤਾਰੀਖ ਅੱਪਡੇਟ ਹੋਵੇਗੀ।',
+      "ਇਹ ਨੀਤੀ ਬਦਲੇ ਤਾਂ ਨਵਾਂ ਰੂਪ ਇਸੇ ਪੰਨੇ 'ਤੇ ਪ੍ਰਕਾਸ਼ਿਤ ਹੋਵੇਗਾ ਅਤੇ ਤਾਰੀਖ ਅੱਪਡੇਟ ਹੋਵੇਗੀ।",
   'Kayıt olarak {} kabul etmiş olursun.': 'ਰਜਿਸਟਰ ਕਰਕੇ ਤੂੰ {} ਸਵੀਕਾਰ ਕਰਦਾ ਹੈਂ।',
   'Kullanıcılar': 'ਵਰਤੋਂਕਾਰ',
   'Fotoğrafı değiştir': 'ਫੋਟੋ ਬਦਲੋ',
@@ -354,7 +349,7 @@ const Map<String, String> cevirilerPa = {
   'Bir şeyler ters gitti': 'ਕੁਝ ਗਲਤ ਹੋ ਗਿਆ',
   'Sosyal Bağlantılar': 'ਸੋਸ਼ਲ ਲਿੰਕ',
   'Profilinde en fazla 3 bağlantı gösterilir.':
-      'ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ \'ਤੇ ਵੱਧ ਤੋਂ ਵੱਧ 3 ਲਿੰਕ ਦਿਖਦੇ ਹਨ।',
+      "ਤੇਰੀ ਪ੍ਰੋਫਾਈਲ 'ਤੇ ਵੱਧ ਤੋਂ ਵੱਧ 3 ਲਿੰਕ ਦਿਖਦੇ ਹਨ।",
   'Platform seç': 'ਪਲੇਟਫਾਰਮ ਚੁਣ',
   'Kullanıcı adın': 'ਤੇਰਾ ਯੂਜ਼ਰਨੇਮ',
   'Ekle': 'ਜੋੜੋ',
@@ -398,10 +393,10 @@ const Map<String, String> cevirilerPa = {
   'Gizlilik': 'ਪਰਦੇਦਾਰੀ',
   'İzlediklerimi gizle': 'ਮੇਰਾ ਦੇਖਿਆ ਲੁਕਾਓ',
   'Profilinde izlediğin dizi ve filmler görünmez':
-      'ਤੇਰੀਆਂ ਦੇਖੀਆਂ ਸੀਰੀਜ਼ ਅਤੇ ਫ਼ਿਲਮਾਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ \'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ',
+      "ਤੇਰੀਆਂ ਦੇਖੀਆਂ ਸੀਰੀਜ਼ ਅਤੇ ਫ਼ਿਲਮਾਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ 'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ",
   'Yorumlarımı gizle': 'ਮੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਲੁਕਾਓ',
   'Profilinde yorumların görünmez':
-      'ਤੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ \'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ',
+      "ਤੇਰੀਆਂ ਟਿੱਪਣੀਆਂ ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ 'ਤੇ ਨਹੀਂ ਦਿਸਣਗੀਆਂ",
   'Tek bir dizi veya filmi, içeriğin sayfasındaki "Profilimde gizle" çipiyle gizleyebilirsin.':
       'ਕਿਸੇ ਇੱਕ ਸੀਰੀਜ਼ ਜਾਂ ਫ਼ਿਲਮ ਨੂੰ ਉਸਦੇ ਪੇਜ \'ਤੇ "ਮੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ ਵਿੱਚ ਲੁਕਾਓ" ਚਿੱਪ ਨਾਲ ਲੁਕਾ ਸਕਦੇ ਹੋ।',
   'Geri Bildirim': 'ਫੀਡਬੈਕ',
@@ -426,7 +421,7 @@ const Map<String, String> cevirilerPa = {
   'Orijinali göster': 'ਅਸਲ ਦਿਖਾਓ',
   'Çeviriyi göster': 'ਅਨੁਵਾਦ ਦਿਖਾਓ',
   'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.':
-      'ਇਸ ਮਹੀਨੇ ਪ੍ਰਸਾਰਣ ਤਾਰੀਖ਼ ਐਲਾਨੀ ਗਈ ਕੋਈ ਕੜੀ ਨਹੀਂ। ਤਾਰੀਖ਼ਾਂ ਆਮ ਤੌਰ \'ਤੇ ਕੁਝ ਹਫ਼ਤੇ ਪਹਿਲਾਂ ਦੱਸੀਆਂ ਜਾਂਦੀਆਂ ਹਨ ਅਤੇ ਫਿਰ ਇੱਥੇ ਦਿਸਣਗੀਆਂ।',
+      "ਇਸ ਮਹੀਨੇ ਪ੍ਰਸਾਰਣ ਤਾਰੀਖ਼ ਐਲਾਨੀ ਗਈ ਕੋਈ ਕੜੀ ਨਹੀਂ। ਤਾਰੀਖ਼ਾਂ ਆਮ ਤੌਰ 'ਤੇ ਕੁਝ ਹਫ਼ਤੇ ਪਹਿਲਾਂ ਦੱਸੀਆਂ ਜਾਂਦੀਆਂ ਹਨ ਅਤੇ ਫਿਰ ਇੱਥੇ ਦਿਸਣਗੀਆਂ।",
   'devamı': 'ਹੋਰ',
   'Google ile devam et': 'Google ਨਾਲ ਜਾਰੀ ਰੱਖੋ',
   'Google girişi başarısız': 'Google ਸਾਈਨ-ਇਨ ਅਸਫਲ ਰਿਹਾ',
@@ -454,12 +449,12 @@ const Map<String, String> cevirilerPa = {
   'Videolarda altyazı göster': 'ਵੀਡੀਓਜ਼ ’ਤੇ ਉਪਸਿਰਲੇਖ ਦਿਖਾਓ',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'ਵੀਡੀਓ ਵਿੱਚ ਬੋਲਿਆ ਵਾਕ ਸਕਰੀਨ ਉੱਤੇ ਲਿਖਿਆ ਹੋਇਆ ਹੈ। ਪਾਠ ਦਾ ਅਨੁਵਾਦ ਹੈ: ਤੁਰਕੀ ਭਾਸ਼ਣ ਵਿੱਚ ਅੰਗਰੇਜ਼ੀ, ਹੋਰ ਭਾਸ਼ਾਵਾਂ ਵਿੱਚ ਤੁਰਕੀ।',
-  "Güncelleme gerekli": "ਅੱਪਡੇਟ ਲੋੜੀਂਦਾ ਹੈ",
-  "Yeni sürüm var": "ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ",
+  'Güncelleme gerekli': 'ਅੱਪਡੇਟ ਲੋੜੀਂਦਾ ਹੈ',
+  'Yeni sürüm var': 'ਨਵਾਂ ਵਰਜਨ ਉਪਲਬਧ ਹੈ',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "ਜਾਰੀ ਰੱਖਣ ਲਈ dizi.jpg ਦਾ ਨਵਾਂ ਵਰਜਨ ਇੰਸਟਾਲ ਕਰੋ।",
-  "Güncelle": "ਅੱਪਡੇਟ ਕਰੋ",
-  "Daha sonra": "ਬਾਅਦ ਵਿੱਚ",
+      'ਜਾਰੀ ਰੱਖਣ ਲਈ dizi.jpg ਦਾ ਨਵਾਂ ਵਰਜਨ ਇੰਸਟਾਲ ਕਰੋ।',
+  'Güncelle': 'ਅੱਪਡੇਟ ਕਰੋ',
+  'Daha sonra': 'ਬਾਅਦ ਵਿੱਚ',
   'Takvim güncelleniyor': 'ਕੈਲੰਡਰ ਅੱਪਡੇਟ ਹੋ ਰਿਹਾ ਹੈ',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'ਕੈਲੰਡਰ ਅੱਪਡੇਟ ਨਹੀਂ ਹੋ ਸਕਿਆ, ਪੁਰਾਣੀ ਸੂਚੀ ਦਿਖਾਈ ਜਾ ਰਹੀ ਹੈ',
@@ -706,7 +701,7 @@ const Map<String, String> cevirilerPa = {
       'ਵੀਡੀਓ ਕਾਲ ਬੰਦ ਹੈ। ਸੈਟਿੰਗਾਂ > ਪਰਦੇਦਾਰੀ ਤੋਂ ਚਾਲੂ ਕਰ ਸਕਦੇ ਹੋ।',
   'Sesli ve görüntülü arama': 'ਵੌਇਸ ਅਤੇ ਵੀਡੀਓ ਕਾਲ',
   'Misafir hesaplar arama yapamaz. Hesap oluşturursan kullanabilirsin.':
-      'ਮਹਿਮਾਨ ਖਾਤੇ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦੇ। ਖਾਤਾ ਬਣਾਉਣ \'ਤੇ ਵਰਤ ਸਕੋਗੇ।',
+      "ਮਹਿਮਾਨ ਖਾਤੇ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦੇ। ਖਾਤਾ ਬਣਾਉਣ 'ਤੇ ਵਰਤ ਸਕੋਗੇ।",
   'Misafir hesaplar aranamaz': 'ਮਹਿਮਾਨ ਖਾਤਿਆਂ ਨੂੰ ਕਾਲ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕਦੀ',
   'Puan dağılımı': 'ਰੇਟਿੰਗ ਵੰਡ',
   '{} yıldız': '{} ਸਟਾਰ',
@@ -714,4 +709,105 @@ const Map<String, String> cevirilerPa = {
   '{} {} yayınlandı': '{} {} ਰਿਲੀਜ਼ ਹੋ ਗਿਆ',
   'Yeni bölüm yayınlandı': 'ਨਵਾਂ ਐਪੀਸੋਡ ਰਿਲੀਜ਼ ਹੋ ਗਿਆ',
   'Yeni bölümler': 'ਨਵੇਂ ਐਪੀਸੋਡ',
+  'Geri': 'ਪਿੱਛੇ',
+  'Karşılamayı kapat': 'ਸੁਆਗਤ ਬੰਦ ਕਰੋ',
+  'Adım {} / {}': 'ਕਦਮ {} / {}',
+  'Hadi başlayalım': 'ਚਲੋ ਸ਼ੁਰੂ ਕਰੀਏ',
+  'Kaydet ve devam': 'ਸੇਵ ਕਰੋ ਤੇ ਅੱਗੇ ਵਧੋ',
+  '{} tanesini ekle': '{} ਸ਼ਾਮਲ ਕਰੋ',
+  'Şimdilik geç': 'ਹੁਣੇ ਲਈ ਛੱਡੋ',
+  'Doğum tarihin ne zaman?': 'ਤੁਹਾਡੀ ਜਨਮ ਤਾਰੀਖ਼ ਕਦੋਂ ਹੈ?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'ਉਮਰ ਮੁਤਾਬਕ ਸਮੱਗਰੀ ਦਿਖਾਉਣ ਅਤੇ ਜਨਮਦਿਨ ਦੀ ਵਧਾਈ ਦੇਣ ਲਈ ਅਸੀਂ ਪੁੱਛਦੇ ਹਾਂ।',
+  'Gün': 'ਦਿਨ',
+  'Ay': 'ਮਹੀਨਾ',
+  'Yıl': 'ਸਾਲ',
+  'Doğum yılımı paylaşmak istemiyorum': 'ਜਨਮ ਸਾਲ ਨਾ ਦਿਖਾਓ',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'ਤੁਹਾਡੀ ਜਨਮ ਤਾਰੀਖ਼ ਪ੍ਰੋਫਾਈਲ ਵਿੱਚ ਜਨਤਕ ਤੌਰ ਤੇ ਨਹੀਂ ਦਿਸਦੀ। ਇਹ ਸਿਰਫ਼ ਉਮਰ ਮੁਤਾਬਕ ਸਮੱਗਰੀ ਅਤੇ ਜਨਮਦਿਨ ਦੀ ਵਧਾਈ ਲਈ ਵਰਤੀ ਜਾਂਦੀ ਹੈ।',
+  'Ocak': 'ਜਨਵਰੀ',
+  'Şubat': 'ਫ਼ਰਵਰੀ',
+  'Mart': 'ਮਾਰਚ',
+  'Nisan': 'ਅਪ੍ਰੈਲ',
+  'Mayıs': 'ਮਈ',
+  'Haziran': 'ਜੂਨ',
+  'Temmuz': 'ਜੁਲਾਈ',
+  'Ağustos': 'ਅਗਸਤ',
+  'Eylül': 'ਸਤੰਬਰ',
+  'Ekim': 'ਅਕਤੂਬਰ',
+  'Kasım': 'ਨਵੰਬਰ',
+  'Aralık': 'ਦਸੰਬਰ',
+  'Verilerini yanında getir': 'ਆਪਣਾ ਡੇਟਾ ਨਾਲ ਲਿਆਓ',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'ਜੇ ਕਿਸੇ ਹੋਰ ਐਪ ਵਿੱਚ ਦੇਖੇ ਹੋਏ ਟ੍ਰੈਕ ਕਰਦੇ ਹੋ, ਤਾਂ ਉਹ ਇੱਥੇ ਲਿਆ ਸਕਦੇ ਹੋ। ਸ਼ੁਰੂ ਤੋਂ ਸ਼ੁਰੂ ਕਰਨ ਦੀ ਲੋੜ ਨਹੀਂ।',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt ਅਤੇ Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'ਐਕਸਪੋਰਟ ਕੀਤੀ ZIP ਫਾਈਲ ਚੁਣੋ; ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ, ਰੇਟਿੰਗਾਂ ਤੇ ਲਿਸਟਾਂ ਆ ਜਾਣਗੀਆਂ।',
+  'Aktarılıyor...': 'ਇੰਪੋਰਟ ਹੋ ਰਿਹਾ ਹੈ...',
+  'ZIP dosyası seç': 'ZIP ਫਾਈਲ ਚੁਣੋ',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'ਕਾਹਲੀ ਨਹੀਂ: ਇਹ ਬਾਅਦ ਵਿੱਚ ਸੈਟਿੰਗਾਂ > ਮੇਰਾ ਡੇਟਾ ਵਿੱਚੋਂ ਵੀ ਕਰ ਸਕਦੇ ਹੋ।',
+  'Hangi filmleri izledin?': 'ਤੁਸੀਂ ਕਿਹੜੀਆਂ ਫ਼ਿਲਮਾਂ ਦੇਖੀਆਂ ਹਨ?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਗਈਆਂ ਇੱਥੇ ਹਨ। ਜਿਨ੍ਹਾਂ ਨੂੰ ਟੈਪ ਕਰੋਗੇ, ਉਹ ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰ ਦੇਵਾਂਗੇ।',
+  'SERİ FİLMLER': 'ਫ਼ਿਲਮ ਸੀਰੀਜ਼',
+  'Serilerden {} film eklendi': 'ਸੀਰੀਜ਼ ਵਿੱਚੋਂ {} ਫ਼ਿਲਮਾਂ ਸ਼ਾਮਲ ਹੋਈਆਂ',
+  'Film listesi yüklenemedi': 'ਫ਼ਿਲਮਾਂ ਦੀ ਸੂਚੀ ਲੋਡ ਨਹੀਂ ਹੋਈ',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'ਇਹ ਕਦਮ ਛੱਡ ਸਕਦੇ ਹੋ, ਬਾਅਦ ਵਿੱਚ ਜੋ ਚਾਹੋ ਸ਼ਾਮਲ ਕਰ ਸਕਦੇ ਹੋ।',
+  '{} film izlediklerine eklendi':
+      '{} ਫ਼ਿਲਮਾਂ ਤੁਹਾਡੇ ਦੇਖੇ ਹੋਏ ਵਿੱਚ ਸ਼ਾਮਲ ਹੋਈਆਂ',
+  'Film serileri': 'ਫ਼ਿਲਮ ਸੀਰੀਜ਼',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'ਕੋਈ ਸੀਰੀਜ਼ ਸ਼ੁਰੂ ਤੋਂ ਅੰਤ ਤੱਕ ਦੇਖੀ ਹੈ ਤਾਂ ਇੱਕੋ ਟੈਪ ਵਿੱਚ ਸ਼ਾਮਲ ਕਰੋ।',
+  'Seri bulunamadı': 'ਕੋਈ ਸੀਰੀਜ਼ ਨਹੀਂ ਮਿਲੀ',
+  'Daha sonra tekrar deneyebilirsin.': 'ਬਾਅਦ ਵਿੱਚ ਦੁਬਾਰਾ ਕੋਸ਼ਿਸ਼ ਕਰ ਸਕਦੇ ਹੋ।',
+  '{} film': '{} ਫ਼ਿਲਮਾਂ',
+  'Eklendi': 'ਸ਼ਾਮਲ ਹੋ ਗਿਆ',
+  'Tümünü izledim': 'ਸਾਰੀਆਂ ਦੇਖ ਲਈਆਂ',
+  'Peki ya diziler?': 'ਅਤੇ ਸੀਰੀਜ਼ ਦਾ ਕੀ?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'ਜੋ ਦੇਖੀਆਂ ਹਨ ਉਹ ਚੁਣੋ; ਜਿਵੇਂ-ਜਿਵੇਂ ਚੁਣੋਗੇ, ਮਿਲਦੀਆਂ-ਜੁਲਦੀਆਂ ਲਿਆਵਾਂਗੇ।',
+  'Dizi listesi yüklenemedi': 'ਸੀਰੀਜ਼ ਦੀ ਸੂਚੀ ਲੋਡ ਨਹੀਂ ਹੋਈ',
+  'Seçtiklerine benzeyenler': 'ਤੁਹਾਡੀ ਚੋਣ ਵਰਗੀਆਂ',
+  'Her şey hazır': 'ਸਭ ਕੁਝ ਤਿਆਰ ਹੈ',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg ਵਿੱਚ ਕੀ-ਕੀ ਕੀਤਾ ਜਾ ਸਕਦਾ ਹੈ, ਇੱਕ ਝਾਤ ਮਾਰੋ।',
+  'Profilini tamamla': 'ਆਪਣੀ ਪ੍ਰੋਫਾਈਲ ਪੂਰੀ ਕਰੋ',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ ਬਾਇਓ, ਪ੍ਰੋਫਾਈਲ ਫੋਟੋ ਤੇ ਕਵਰ ਸ਼ਾਮਲ ਕਰ ਸਕਦੇ ਹੋ।',
+  'Takvimin seni bekliyor': 'ਤੁਹਾਡਾ ਕੈਲੰਡਰ ਉਡੀਕ ਰਿਹਾ ਹੈ',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'ਤੁਸੀਂ ਜੋ ਸੀਰੀਜ਼ ਦੇਖਦੇ ਹੋ ਉਨ੍ਹਾਂ ਦੇ ਨਵੇਂ ਐਪੀਸੋਡ ਕੈਲੰਡਰ ਵਿੱਚ ਆਉਂਦੇ ਹਨ, ਅਸੀਂ ਸੂਚਨਾ ਨਾਲ ਦੱਸਾਂਗੇ।',
+  'Puan ver, yorum yaz': 'ਰੇਟਿੰਗ ਦਿਓ, ਕਮੈਂਟ ਲਿਖੋ',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'ਐਪੀਸੋਡ-ਦਰ-ਐਪੀਸੋਡ ਰੇਟ ਕਰੋ, ਸਪੌਇਲਰ ਪਰਦੇ ਨਾਲ ਕਮੈਂਟ ਲਿਖੋ, ਲਿਸਟਾਂ ਬਣਾਓ।',
+  'Verilerin sende kalır': 'ਤੁਹਾਡਾ ਡੇਟਾ ਤੁਹਾਡੇ ਕੋਲ ਹੀ ਰਹਿੰਦਾ ਹੈ',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'ਤੁਹਾਡਾ ਡੇਟਾ ਸਿਰਫ਼ ਤੁਹਾਡੇ ਖਾਤੇ ਨਾਲ ਜੁੜਿਆ ਰਹਿੰਦਾ ਹੈ, ਵੇਚਿਆ ਨਹੀਂ ਜਾਂਦਾ। ਸੈਟਿੰਗਾਂ ਵਿੱਚੋਂ ਸਭ ਕੁਝ ਡਾਊਨਲੋਡ ਕਰ ਸਕਦੇ ਹੋ ਜਾਂ ਖਾਤਾ ਪੂਰੀ ਤਰ੍ਹਾਂ ਮਿਟਾ ਸਕਦੇ ਹੋ।',
+  'Engellenen kullanıcılar': 'ਬਲਾਕ ਕੀਤੇ ਵਰਤੋਂਕਾਰ',
+  'Engellediğin kişileri gör, engeli kaldır': 'ਬਲਾਕ ਕੀਤੇ ਲੋਕ ਵੇਖੋ, ਬਲਾਕ ਹਟਾਓ',
+  'Engellediğin kimse yok': 'ਤੁਸੀਂ ਕਿਸੇ ਨੂੰ ਬਲਾਕ ਨਹੀਂ ਕੀਤਾ',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'ਕਿਸੇ ਵਰਤੋਂਕਾਰ ਨੂੰ ਉਸ ਦੀ ਪ੍ਰੋਫਾਈਲ ਦੇ ਤਿੰਨ ਬਿੰਦੂਆਂ ਵਾਲੇ ਮੀਨੂ ਤੋਂ ਬਲਾਕ ਕਰ ਸਕਦੇ ਹੋ।',
+  '@{} engellensin mi?': '@{} ਨੂੰ ਬਲਾਕ ਕਰਨਾ ਹੈ?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'ਤੁਸੀਂ ਇੱਕ-ਦੂਜੇ ਦੀਆਂ ਪੋਸਟਾਂ, ਕਮੈਂਟ ਤੇ ਪ੍ਰੋਫਾਈਲ ਨਹੀਂ ਵੇਖ ਸਕੋਗੇ; ਸੁਨੇਹੇ ਤੇ ਕਾਲਾਂ ਵੀ ਨਹੀਂ ਪਹੁੰਚਣਗੀਆਂ। ਜੇ ਤੁਹਾਡੇ ਵਿਚਕਾਰ ਫਾਲੋ ਹੈ ਤਾਂ ਟੁੱਟ ਜਾਵੇਗਾ ਅਤੇ ਬਲਾਕ ਹਟਾਉਣ ਤੋਂ ਬਾਅਦ ਵੀ ਵਾਪਸ ਨਹੀਂ ਆਵੇਗਾ।',
+  'Bu kullanıcıyı engelledin': 'ਤੁਸੀਂ ਇਸ ਵਰਤੋਂਕਾਰ ਨੂੰ ਬਲਾਕ ਕੀਤਾ ਹੈ',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'ਤੁਸੀਂ ਉਸ ਵਿਅਕਤੀ ਦੀਆਂ ਪੋਸਟਾਂ, ਕਮੈਂਟ ਤੇ ਸੁਨੇਹੇ ਨਹੀਂ ਵੇਖਦੇ; ਉਹ ਵਿਅਕਤੀ ਵੀ ਤੁਹਾਡੇ ਨਹੀਂ ਵੇਖ ਸਕਦਾ।',
+  '{} yeni bir yapımda: {}': '{} ਨਵੇਂ ਪ੍ਰੋਜੈਕਟ ਵਿੱਚ: {}',
+  'Favori kişinden yeni yapım': 'ਮਨਪਸੰਦ ਵਿਅਕਤੀ ਦਾ ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ',
+  '{} için bildirimler': '{} ਲਈ ਸੂਚਨਾਵਾਂ',
+  'Tüm bildirimler': 'ਸਾਰੀਆਂ ਸੂਚਨਾਵਾਂ',
+  'Uygulamada ve telefonda': 'ਐਪ ਵਿੱਚ ਤੇ ਫ਼ੋਨ ਉੱਤੇ',
+  'Yalnız uygulama içi': 'ਸਿਰਫ਼ ਐਪ ਵਿੱਚ',
+  'Telefon bildirimi gönderilmez': 'ਫ਼ੋਨ ਸੂਚਨਾ ਨਹੀਂ ਭੇਜੀ ਜਾਂਦੀ',
+  'Kapalı': 'ਬੰਦ',
+  'Bu kişi için bildirim yok': 'ਇਸ ਵਿਅਕਤੀ ਲਈ ਕੋਈ ਸੂਚਨਾ ਨਹੀਂ',
+  'Favori kişilerin yeni yapımları': 'ਮਨਪਸੰਦ ਲੋਕਾਂ ਦੇ ਨਵੇਂ ਪ੍ਰੋਜੈਕਟ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੌਇਸ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ "ਬੰਦ ਹੈ" ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੀਡੀਓ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ "ਬੰਦ ਹੈ" ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
 };

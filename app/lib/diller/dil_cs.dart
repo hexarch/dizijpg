@@ -82,7 +82,7 @@ const Map<String, String> cevirilerCs = {
   'Tekrar dene': 'Zkus to znovu',
   'Toplam İzleme Süresi': 'Celkový čas u obrazovky',
   'Tüm Zamanların En İyileri': 'Nejlepší všech dob',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Stáhni si všechna svá data (sledování, hodnocení, komentáře, seznamy) jako ZIP kompatibilní s TV Time, nebo importuj ZIP z jiné aplikace.',
   'Tümünü Kaldır': 'Odebrat vše',
   'Tümünü İzledim': 'Vše zhlédnuto',
@@ -239,7 +239,7 @@ const Map<String, String> cevirilerCs = {
   'Mesaj silinemedi': 'Zprávu se nepodařilo smazat',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Odkaz je neplatný nebo stránka nenalezena',
-  'Keşfet\'e dön': 'Zpět na Objevovat',
+  "Keşfet'e dön": 'Zpět na Objevovat',
   'Düzenle': 'Upravit',
   'Mesajı düzenle': 'Upravit zprávu',
   'Yanıtlanıyor': 'Odpovídání',
@@ -266,14 +266,7 @@ const Map<String, String> cevirilerCs = {
   'Abonelik': 'Předplatné',
   'Kirala': 'Půjčit',
   'Satın al': 'Koupit',
-  'Hoş geldin!': 'Vítej!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Vyber si seriály a filmy, které chceš sledovat',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Tvé výběry se přidají do tvého seznamu',
-  'Şimdilik atla': 'Zatím přeskočit',
   'Devam et': 'Pokračovat',
-  '{} ekle': 'Přidat {}',
   'Şikayet et': 'Nahlásit',
   'Engelle': 'Zablokovat',
   'Engeli kaldır': 'Odblokovat',
@@ -319,7 +312,9 @@ const Map<String, String> cevirilerCs = {
       'Nahraná média: fotky, GIFy, videa a hlasové nahrávky, které přidáš do profilu, komentářů a zpráv.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Technické údaje: IP adresa, přibližná poloha (země/město), platforma zařízení, verze aplikace a záznamy chyb. Uchovávají se kvůli bezpečnosti a ladění.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Statistika používání: typ zařízení, operační systém a prohlížeč, ze kterého se přistupuje, se v hrubých kategoriích přičítají k denním souhrnným počítadlům; samotný identifikátor prohlížeče se neukládá a tato čísla nelze spojit s konkrétními osobami.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Oznámení: pro push oznámení ukládáme token tvého zařízení a zvolený jazyk. Oznámení můžeš kdykoli vypnout v nastavení zařízení.',
   'Verileri Nasıl Kullanırız': 'Jak tvá data používáme',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,12 +323,12 @@ const Map<String, String> cevirilerCs = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Místní úložiště používáme jen k tomu, abychom tě udrželi přihlášeného a zapamatovali si předvolby jako jazyk a motiv. Žádné reklamní ani sledovací cookies nejsou.',
   'Üçüncü Taraf Hizmetler': 'Služby třetích stran',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Data o seriálech a filmech pocházejí z TMDB, informace o streamovacích platformách z JustWatch. Push oznámení doručuje Google Firebase a provoz webu chrání Cloudflare. Tyto služby se řídí vlastními zásadami ochrany soukromí.',
   'Saklama ve Silme': 'Uchovávání a mazání',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Tvá data se uchovávají, dokud existuje tvůj účet. Přes „Smazat můj účet" v nastavení můžeš účet trvale smazat; data se vymažou okamžitě a jejich kopie v zálohách nejpozději do 14 dnů. Záznamy chyb se automaticky mažou po 30 dnech.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Svá data si můžeš z nastavení exportovat jako ZIP; archiv ti přijde na e-mail.',
   'Güvenlik': 'Zabezpečení',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -456,12 +451,12 @@ const Map<String, String> cevirilerCs = {
   'Videolarda altyazı göster': 'Zobrazovat u videí titulky',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Věta vyslovená ve videu je napsána na obrazovce. Text je překladem: angličtina v turečtině, turečtina v jiných jazycích.',
-  "Güncelleme gerekli": "Je vyžadována aktualizace",
-  "Yeni sürüm var": "Je dostupná nová verze",
+  'Güncelleme gerekli': 'Je vyžadována aktualizace',
+  'Yeni sürüm var': 'Je dostupná nová verze',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Pro pokračování nainstaluj novou verzi dizi.jpg.",
-  "Güncelle": "Aktualizovat",
-  "Daha sonra": "Později",
+      'Pro pokračování nainstaluj novou verzi dizi.jpg.',
+  'Güncelle': 'Aktualizovat',
+  'Daha sonra': 'Později',
   'Takvim güncelleniyor': 'Kalendář se aktualizuje',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalendář se nepodařilo aktualizovat, zobrazuje se starý seznam',
@@ -715,4 +710,105 @@ const Map<String, String> cevirilerCs = {
   '{} {} yayınlandı': '{} {} je venku',
   'Yeni bölüm yayınlandı': 'Nová epizoda je venku',
   'Yeni bölümler': 'Nové epizody',
+  'Geri': 'Zpět',
+  'Karşılamayı kapat': 'Zavřít úvod',
+  'Adım {} / {}': 'Krok {} / {}',
+  'Hadi başlayalım': 'Pojďme na to',
+  'Kaydet ve devam': 'Uložit a pokračovat',
+  '{} tanesini ekle': 'Přidat vybrané ({})',
+  'Şimdilik geç': 'Zatím přeskočit',
+  'Doğum tarihin ne zaman?': 'Jaké je tvoje datum narození?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Ptáme se proto, ať ti můžeme ukazovat obsah odpovídající věku a popřát k narozeninám.',
+  'Gün': 'Den',
+  'Ay': 'Měsíc',
+  'Yıl': 'Rok',
+  'Doğum yılımı paylaşmak istemiyorum': 'Nechci sdílet rok svého narození',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Datum narození se na tvém profilu veřejně nezobrazuje. Slouží jen k obsahu odpovídajícímu věku a k přání k narozeninám.',
+  'Ocak': 'Leden',
+  'Şubat': 'Únor',
+  'Mart': 'Březen',
+  'Nisan': 'Duben',
+  'Mayıs': 'Květen',
+  'Haziran': 'Červen',
+  'Temmuz': 'Červenec',
+  'Ağustos': 'Srpen',
+  'Eylül': 'Září',
+  'Ekim': 'Říjen',
+  'Kasım': 'Listopad',
+  'Aralık': 'Prosinec',
+  'Verilerini yanında getir': 'Vezmi si svá data s sebou',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Pokud si své sledování vedeš v jiné aplikaci, můžeš ho přenést sem. Není potřeba začínat od nuly.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt a Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Vyber ZIP soubor z exportu a přenesou se tvá zhlédnutí, hodnocení i seznamy.',
+  'Aktarılıyor...': 'Importuje se...',
+  'ZIP dosyası seç': 'Vybrat ZIP soubor',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Nespěchej: tohle můžeš udělat i později v Nastavení > Moje data.',
+  'Hangi filmleri izledin?': 'Které filmy už máš zhlédnuté?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Tady jsou ty nejsledovanější. Na co klepneš, to přidáme mezi tvá zhlédnutí.',
+  'SERİ FİLMLER': 'FILMOVÉ SÉRIE',
+  'Serilerden {} film eklendi': 'Přidáno filmů ze sérií: {}',
+  'Film listesi yüklenemedi': 'Seznam filmů se nepodařilo načíst',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Tenhle krok můžeš přeskočit a přidat si cokoli později.',
+  '{} film izlediklerine eklendi': 'Mezi tvá zhlédnutí přidáno filmů: {}',
+  'Film serileri': 'Filmové série',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Pokud máš celou sérii zhlédnutou od začátku do konce, přidej ji jedním klepnutím.',
+  'Seri bulunamadı': 'Žádné série nenalezeny',
+  'Daha sonra tekrar deneyebilirsin.': 'Můžeš to zkusit znovu později.',
+  '{} film': 'Filmů: {}',
+  'Eklendi': 'Přidáno',
+  'Tümünü izledim': 'Vše zhlédnuto',
+  'Peki ya diziler?': 'A co seriály?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Označ, co máš zhlédnuté – podle tvého výběru ti budeme nabízet podobné.',
+  'Dizi listesi yüklenemedi': 'Seznam seriálů se nepodařilo načíst',
+  'Seçtiklerine benzeyenler': 'Podobné tvému výběru',
+  'Her şey hazır': 'Vše je připraveno',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Rychle si projdi, co všechno v dizi.jpg zvládneš.',
+  'Profilini tamamla': 'Doplň si profil',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'V Nastavení můžeš přidat bio, profilovou fotku a obálku.',
+  'Takvimin seni bekliyor': 'Kalendář na tebe čeká',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Nové epizody seriálů, které sleduješ, se objeví v kalendáři a dáme ti vědět oznámením.',
+  'Puan ver, yorum yaz': 'Hodnoť a komentuj',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Hodnoť epizodu po epizodě, piš komentáře pod spoiler clonou a vytvářej seznamy.',
+  'Verilerin sende kalır': 'Tvá data zůstávají tobě',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Tvá data zůstávají svázaná jen s tvým účtem a neprodáváme je. V Nastavení si je můžeš všechna stáhnout nebo účet úplně smazat.',
+  'Engellenen kullanıcılar': 'Zablokovaní uživatelé',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Podívej se na zablokované osoby a zruš blokování',
+  'Engellediğin kimse yok': 'Nemáš žádné zablokované osoby',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Uživatele můžeš zablokovat v nabídce se třemi tečkami na profilu dané osoby.',
+  '@{} engellensin mi?': 'Zablokovat @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Neuvidíte navzájem své příspěvky, komentáře ani profil; neprojdou ani zprávy a hovory. Případné vzájemné sledování se zruší a neobnoví se, ani když blokování zrušíš.',
+  'Bu kullanıcıyı engelledin': 'Tohoto uživatele máš zablokovaného',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Nevidíš příspěvky, komentáře ani zprávy této osoby a tato osoba nevidí tvoje.',
+  '{} yeni bir yapımda: {}': '{} v novém díle: {}',
+  'Favori kişinden yeni yapım': 'Nové dílo od oblíbené osoby',
+  '{} için bildirimler': 'Oznámení pro {}',
+  'Tüm bildirimler': 'Všechna oznámení',
+  'Uygulamada ve telefonda': 'V aplikaci i v telefonu',
+  'Yalnız uygulama içi': 'Jen v aplikaci',
+  'Telefon bildirimi gönderilmez': 'Do telefonu se oznámení neposílají',
+  'Kapalı': 'Vypnuto',
+  'Bu kişi için bildirim yok': 'Žádná oznámení o této osobě',
+  'Favori kişilerin yeni yapımları': 'Nová díla oblíbených osob',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Když je vypnuto, nikdo ti nemůže zavolat; volající uvidí upozornění, že máš hlasové hovory "vypnuté"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Když je vypnuto, nikdo ti nemůže zavolat přes video; volající uvidí upozornění, že máš videohovory "vypnuté"',
 };

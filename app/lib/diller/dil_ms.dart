@@ -82,7 +82,7 @@ const Map<String, String> cevirilerMs = {
   'Tekrar dene': 'Cuba lagi',
   'Toplam İzleme Süresi': 'Jumlah masa tontonan',
   'Tüm Zamanların En İyileri': 'Terbaik Sepanjang Zaman',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'Eksport semua data anda (tontonan, rating, komen, senarai) sebagai ZIP serasi TV Time, atau import ZIP dari aplikasi lain.',
   'Tümünü Kaldır': 'Buang Semua',
   'Tümünü İzledim': 'Dah Tonton Semua',
@@ -239,7 +239,7 @@ const Map<String, String> cevirilerMs = {
   'Mesaj silinemedi': 'Mesej tidak dapat dipadam',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'Pautan tidak sah atau halaman tidak dijumpai',
-  'Keşfet\'e dön': 'Kembali ke Terokai',
+  "Keşfet'e dön": 'Kembali ke Terokai',
   'Düzenle': 'Edit',
   'Mesajı düzenle': 'Edit mesej',
   'Yanıtlanıyor': 'Membalas',
@@ -266,14 +266,7 @@ const Map<String, String> cevirilerMs = {
   'Abonelik': 'Langganan',
   'Kirala': 'Sewa',
   'Satın al': 'Beli',
-  'Hoş geldin!': 'Selamat datang!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'Pilih rancangan dan filem yang anda mahu tonton',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'Pilihan anda ditambah ke senarai tontonan',
-  'Şimdilik atla': 'Langkau buat masa ini',
   'Devam et': 'Teruskan',
-  '{} ekle': 'Tambah {}',
   'Şikayet et': 'Laporkan',
   'Engelle': 'Sekat',
   'Engeli kaldır': 'Nyahsekat',
@@ -319,7 +312,9 @@ const Map<String, String> cevirilerMs = {
       'Media yang dimuat naik: foto, GIF, video dan rakaman suara yang kamu tambah pada profil, komen dan mesej.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'Teknikal: alamat IP, lokasi anggaran (peringkat negara/bandar), platform peranti, versi aplikasi dan log ralat. Ini disimpan untuk keselamatan dan pembaikan masalah.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'Statistik penggunaan: jenis peranti, sistem pengendalian dan pelayar yang digunakan untuk masuk ditambah ke pembilang jumlah harian dalam kategori kasar; pengenalan pelayar itu sendiri tidak disimpan dan angka ini tidak boleh dikaitkan dengan sesiapa.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'Pemberitahuan: untuk pemberitahuan tolak, kami menyimpan token peranti dan pilihan bahasa kamu. Kamu boleh mematikan pemberitahuan pada bila-bila masa dalam tetapan peranti.',
   'Verileri Nasıl Kullanırız': 'Cara Kami Menggunakan Data',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,12 +323,12 @@ const Map<String, String> cevirilerMs = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'Storan setempat hanya digunakan untuk mengekalkan log masuk kamu dan mengingati pilihan seperti bahasa dan tema. Tiada kuki iklan atau penjejakan.',
   'Üçüncü Taraf Hizmetler': 'Perkhidmatan Pihak Ketiga',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'Data siri dan filem datang daripada TMDB, maklumat platform penstriman daripada JustWatch. Pemberitahuan tolak dihantar melalui Google Firebase dan trafik laman dilindungi oleh Cloudflare. Perkhidmatan ini tertakluk pada dasar privasi masing-masing.',
   'Saklama ve Silme': 'Penyimpanan dan Pemadaman',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'Data kamu disimpan selagi akaun kamu wujud. Melalui "Padam Akaun Saya" dalam tetapan, kamu boleh memadam akaun secara kekal; data dipadam serta-merta, salinan dalam sandaran selewat-lewatnya dalam 14 hari. Log ralat dipadam secara automatik selepas 30 hari.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'Kamu boleh mengeksport data sebagai ZIP daripada tetapan; arkib dihantar ke alamat e-mel kamu.',
   'Güvenlik': 'Keselamatan',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -456,12 +451,12 @@ const Map<String, String> cevirilerMs = {
   'Videolarda altyazı göster': 'Tunjukkan sari kata pada video',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'Ayat yang dituturkan dalam video itu ditulis di skrin. Teksnya ialah terjemahan: Bahasa Inggeris dalam ucapan Turki, Turki dalam bahasa lain.',
-  "Güncelleme gerekli": "Kemas kini diperlukan",
-  "Yeni sürüm var": "Versi baharu tersedia",
+  'Güncelleme gerekli': 'Kemas kini diperlukan',
+  'Yeni sürüm var': 'Versi baharu tersedia',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "Pasang versi baharu dizi.jpg untuk meneruskan.",
-  "Güncelle": "Kemas kini",
-  "Daha sonra": "Kemudian",
+      'Pasang versi baharu dizi.jpg untuk meneruskan.',
+  'Güncelle': 'Kemas kini',
+  'Daha sonra': 'Kemudian',
   'Takvim güncelleniyor': 'Mengemas kini kalendar',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'Kalendar tidak dapat dikemas kini, senarai lama dipaparkan',
@@ -721,4 +716,106 @@ const Map<String, String> cevirilerMs = {
   '{} {} yayınlandı': '{} {} sudah keluar',
   'Yeni bölüm yayınlandı': 'Episod baharu sudah keluar',
   'Yeni bölümler': 'Episod baharu',
+  'Geri': 'Kembali',
+  'Karşılamayı kapat': 'Tutup pengenalan',
+  'Adım {} / {}': 'Langkah {} / {}',
+  'Hadi başlayalım': 'Mari mulakan',
+  'Kaydet ve devam': 'Simpan dan teruskan',
+  '{} tanesini ekle': 'Tambah {} pilihan',
+  'Şimdilik geç': 'Langkau dulu',
+  'Doğum tarihin ne zaman?': 'Bilakah tarikh lahir anda?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'Kami bertanya untuk menunjukkan kandungan yang sesuai dengan usia anda dan meraikan hari lahir anda.',
+  'Gün': 'Hari',
+  'Ay': 'Bulan',
+  'Yıl': 'Tahun',
+  'Doğum yılımı paylaşmak istemiyorum':
+      'Saya tidak mahu berkongsi tahun lahir saya',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'Tarikh lahir anda tidak dipaparkan secara umum pada profil anda. Ia hanya digunakan untuk kandungan yang sesuai dengan usia dan ucapan hari lahir.',
+  'Ocak': 'Januari',
+  'Şubat': 'Februari',
+  'Mart': 'Mac',
+  'Nisan': 'April',
+  'Mayıs': 'Mei',
+  'Haziran': 'Jun',
+  'Temmuz': 'Julai',
+  'Ağustos': 'Ogos',
+  'Eylül': 'September',
+  'Ekim': 'Oktober',
+  'Kasım': 'November',
+  'Aralık': 'Disember',
+  'Verilerini yanında getir': 'Bawa data anda bersama',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'Jika anda menjejaki tontonan anda dalam aplikasi lain, anda boleh memindahkannya ke sini. Anda tidak perlu bermula dari kosong.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt dan Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'Pilih fail ZIP yang anda eksport; tontonan, penilaian dan senarai anda akan dipindahkan.',
+  'Aktarılıyor...': 'Mengimport...',
+  'ZIP dosyası seç': 'Pilih fail ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'Tidak perlu tergesa-gesa: anda juga boleh melakukannya kemudian di Tetapan > Data Saya.',
+  'Hangi filmleri izledin?': 'Filem apa yang sudah anda tonton?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'Ini yang paling banyak ditonton. Yang anda ketik akan kami tambah ke tontonan anda.',
+  'SERİ FİLMLER': 'SIRI FILEM',
+  'Serilerden {} film eklendi': '{} filem ditambah daripada siri',
+  'Film listesi yüklenemedi': 'Senarai filem gagal dimuatkan',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'Anda boleh langkau langkah ini dan tambah apa yang anda mahu kemudian.',
+  '{} film izlediklerine eklendi': '{} filem ditambah ke tontonan anda',
+  'Film serileri': 'Siri filem',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'Jika anda sudah menonton satu siri dari awal hingga akhir, tambah dengan satu ketikan.',
+  'Seri bulunamadı': 'Siri tidak dijumpai',
+  'Daha sonra tekrar deneyebilirsin.': 'Anda boleh cuba lagi kemudian.',
+  '{} film': '{} filem',
+  'Eklendi': 'Ditambah',
+  'Tümünü izledim': 'Sudah tonton semua',
+  'Peki ya diziler?': 'Bagaimana pula dengan siri?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'Tandakan yang sudah anda tonton; semakin banyak anda pilih, semakin banyak yang serupa kami bawakan.',
+  'Dizi listesi yüklenemedi': 'Senarai siri gagal dimuatkan',
+  'Seçtiklerine benzeyenler': 'Serupa dengan pilihan anda',
+  'Her şey hazır': 'Semuanya sedia',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'Lihat sekilas apa yang boleh anda lakukan di dizi.jpg.',
+  'Profilini tamamla': 'Lengkapkan profil anda',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'Anda boleh menambah Bio, foto profil dan gambar muka depan di Tetapan.',
+  'Takvimin seni bekliyor': 'Kalendar menanti anda',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'Episod baharu daripada siri yang anda tonton akan masuk ke kalendar, dan kami maklumkan melalui pemberitahuan.',
+  'Puan ver, yorum yaz': 'Beri rating, tulis komen',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'Nilaikan episod demi episod, tulis komen dengan tirai Spoiler, dan cipta senarai.',
+  'Verilerin sende kalır': 'Data anda kekal milik anda',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'Data anda hanya terikat pada akaun anda dan tidak dijual. Di Tetapan anda boleh memuat turun semuanya atau memadam akaun anda sepenuhnya.',
+  'Engellenen kullanıcılar': 'Pengguna yang disekat',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'Lihat orang yang anda sekat, nyahsekat',
+  'Engellediğin kimse yok': 'Anda tidak menyekat sesiapa',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'Anda boleh menyekat pengguna melalui menu tiga titik pada profilnya.',
+  '@{} engellensin mi?': 'Sekat @{}?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'Anda berdua tidak dapat melihat siaran, komen dan profil satu sama lain; mesej dan panggilan juga tidak akan sampai. Ikatan ikutan yang sedia ada akan terputus dan tidak akan kembali walaupun sekatan dibuang.',
+  'Bu kullanıcıyı engelledin': 'Anda telah menyekat pengguna ini',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'Anda tidak melihat siaran, komen dan mesej orang ini; orang itu juga tidak dapat melihat milik anda.',
+  '{} yeni bir yapımda: {}': '{} dalam produksi baharu: {}',
+  'Favori kişinden yeni yapım': 'Produksi baharu daripada orang kegemaran anda',
+  '{} için bildirimler': 'Pemberitahuan untuk {}',
+  'Tüm bildirimler': 'Semua pemberitahuan',
+  'Uygulamada ve telefonda': 'Dalam aplikasi dan pada telefon',
+  'Yalnız uygulama içi': 'Dalam aplikasi sahaja',
+  'Telefon bildirimi gönderilmez': 'Pemberitahuan telefon tidak dihantar',
+  'Kapalı': 'Mati',
+  'Bu kişi için bildirim yok': 'Tiada pemberitahuan untuk orang ini',
+  'Favori kişilerin yeni yapımları': 'Produksi baharu orang kegemaran',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'Apabila dimatikan, tiada sesiapa boleh menelefon suara anda; pemanggil melihat notis "dimatikan"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'Apabila dimatikan, tiada sesiapa boleh membuat panggilan video kepada anda; pemanggil melihat notis "dimatikan"',
 };

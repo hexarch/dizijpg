@@ -82,7 +82,7 @@ const Map<String, String> cevirilerGu = {
   'Tekrar dene': 'ફરી પ્રયત્ન કરો',
   'Toplam İzleme Süresi': 'કુલ સ્ક્રીન ટાઇમ',
   'Tüm Zamanların En İyileri': 'સર્વકાલીન શ્રેષ્ઠ',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'તમારો બધો ડેટા (વૉચ હિસ્ટ્રી, રેટિંગ, કૉમેન્ટ, લિસ્ટ) TV Time-સુસંગત ZIP તરીકે મેળવો અથવા બીજી ઍપમાંથી આવેલી ZIP ઇમ્પોર્ટ કરો.',
   'Tümünü Kaldır': 'બધું કાઢી નાખો',
   'Tümünü İzledim': 'બધું જોઈ લીધું',
@@ -239,7 +239,7 @@ const Map<String, String> cevirilerGu = {
   'Mesaj silinemedi': 'સંદેશ કાઢી શકાયો નહીં',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'લિંક અમાન્ય છે અથવા પૃષ્ઠ મળ્યું નથી',
-  'Keşfet\'e dön': 'ડિસ્કવર પર પાછા જાઓ',
+  "Keşfet'e dön": 'ડિસ્કવર પર પાછા જાઓ',
   'Düzenle': 'સંપાદિત કરો',
   'Mesajı düzenle': 'સંદેશ સંપાદિત કરો',
   'Yanıtlanıyor': 'જવાબ આપી રહ્યાં છે',
@@ -266,14 +266,7 @@ const Map<String, String> cevirilerGu = {
   'Abonelik': 'સબ્સ્ક્રિપ્શન',
   'Kirala': 'ભાડે લો',
   'Satın al': 'ખરીદો',
-  'Hoş geldin!': 'સ્વાગત છે!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'તમે જોવા માંગતા હો તે શો અને ફિલ્મો પસંદ કરો',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'તમારી પસંદ તમારી વૉચલિસ્ટમાં ઉમેરાશે',
-  'Şimdilik atla': 'અત્યારે છોડો',
   'Devam et': 'ચાલુ રાખો',
-  '{} ekle': '{} ઉમેરો',
   'Şikayet et': 'ફરિયાદ કરો',
   'Engelle': 'બ્લોક કરો',
   'Engeli kaldır': 'અનબ્લોક કરો',
@@ -319,7 +312,9 @@ const Map<String, String> cevirilerGu = {
       'અપલોડ કરેલો મીડિયા: પ્રોફાઇલ, ટિપ્પણીઓ અને સંદેશામાં ઉમેરેલા ફોટા, GIF, વીડિયો અને વૉઇસ રેકોર્ડિંગ.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'ટેક્નિકલ: IP સરનામું, અંદાજિત સ્થાન (દેશ/શહેર સ્તરે), ડિવાઇસ પ્લેટફોર્મ, ઍપ વર્ઝન અને એરર લૉગ. આ સુરક્ષા અને ખામી સુધારવા માટે રખાય છે.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'ઉપયોગનાં આંકડા: કયા પ્રકારના ડિવાઇસ, ઑપરેટિંગ સિસ્ટમ અને બ્રાઉઝરથી પ્રવેશ થયો તે સ્થૂળ શ્રેણીઓમાં દૈનિક કુલ ગણતરીમાં ઉમેરાય છે; બ્રાઉઝરની ઓળખ પોતે સાચવવામાં આવતી નથી અને આ આંકડા કોઈ વ્યક્તિ સાથે જોડી શકાતા નથી.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'નોટિફિકેશન: પુશ નોટિફિકેશન માટે તારા ડિવાઇસનો ટોકન અને ભાષાની પસંદગી સચવાય છે. ડિવાઇસનાં સેટિંગ્સમાંથી ગમે ત્યારે નોટિફિકેશન બંધ કરી શકે છે.',
   'Verileri Nasıl Kullanırız': 'અમે ડેટા કેવી રીતે વાપરીએ છીએ',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -328,12 +323,12 @@ const Map<String, String> cevirilerGu = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'લોકલ સ્ટોરેજ ફક્ત તને લૉગ-ઇન રાખવા અને ભાષા/થીમ જેવી પસંદગીઓ યાદ રાખવા વપરાય છે. કોઈ જાહેરાત કે ટ્રેકિંગ કૂકી નથી.',
   'Üçüncü Taraf Hizmetler': 'તૃતીય-પક્ષ સેવાઓ',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'સિરીઝ અને ફિલ્મોનો ડેટા TMDB પરથી અને સ્ટ્રીમિંગ પ્લેટફોર્મની માહિતી JustWatch પરથી આવે છે. પુશ નોટિફિકેશન Google Firebase દ્વારા પહોંચે છે અને સાઇટનો ટ્રાફિક Cloudflare સુરક્ષિત રાખે છે. આ સેવાઓ પર તેમની પોતાની ગોપનીયતા નીતિઓ લાગુ પડે છે.',
   'Saklama ve Silme': 'સંગ્રહ અને કાઢી નાખવું',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'તારું ખાતું હોય ત્યાં સુધી તારો ડેટા રહે છે. સેટિંગ્સમાં "મારું ખાતું કાઢી નાખો" થી ખાતું કાયમ માટે કાઢી શકે છે; ડેટા તરત અને બૅકઅપની નકલો વધુમાં વધુ ૧૪ દિવસમાં ભૂંસાય છે. એરર લૉગ ૩૦ દિવસ પછી આપમેળે ભૂંસાય છે.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'સેટિંગ્સમાંથી તારો ડેટા ZIP રૂપે નિકાસ કરી શકે છે; આર્કાઇવ તારા ઇમેઇલ સરનામે મોકલાય છે.',
   'Güvenlik': 'સુરક્ષા',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -452,12 +447,12 @@ const Map<String, String> cevirilerGu = {
   'Videolarda altyazı göster': 'વિડિઓઝ પર સબટાઈટલ બતાવો',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'વીડિયોમાં બોલાયેલ વાક્ય સ્ક્રીન પર લખાયેલું છે. ટેક્સ્ટનો અનુવાદ છે: ટર્કિશ ભાષણમાં અંગ્રેજી, અન્ય ભાષાઓમાં ટર્કિશ.',
-  "Güncelleme gerekli": "અપડેટ જરૂરી છે",
-  "Yeni sürüm var": "નવું વર્ઝન ઉપલબ્ધ છે",
+  'Güncelleme gerekli': 'અપડેટ જરૂરી છે',
+  'Yeni sürüm var': 'નવું વર્ઝન ઉપલબ્ધ છે',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "ચાલુ રાખવા માટે dizi.jpg નું નવું વર્ઝન ઇન્સ્ટોલ કરો.",
-  "Güncelle": "અપડેટ કરો",
-  "Daha sonra": "પછી",
+      'ચાલુ રાખવા માટે dizi.jpg નું નવું વર્ઝન ઇન્સ્ટોલ કરો.',
+  'Güncelle': 'અપડેટ કરો',
+  'Daha sonra': 'પછી',
   'Takvim güncelleniyor': 'કૅલેન્ડર અપડેટ થઈ રહ્યું છે',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'કૅલેન્ડર અપડેટ થઈ શક્યું નહીં, જૂની યાદી બતાવાય છે',
@@ -711,4 +706,105 @@ const Map<String, String> cevirilerGu = {
   '{} {} yayınlandı': '{} {} રિલીઝ થયો',
   'Yeni bölüm yayınlandı': 'નવો એપિસોડ રિલીઝ થયો',
   'Yeni bölümler': 'નવા એપિસોડ',
+  'Geri': 'પાછળ',
+  'Karşılamayı kapat': 'સ્વાગત બંધ કરો',
+  'Adım {} / {}': 'પગલું {} / {}',
+  'Hadi başlayalım': 'ચાલો શરૂ કરીએ',
+  'Kaydet ve devam': 'સેવ કરો અને આગળ વધો',
+  '{} tanesini ekle': '{} ઉમેરો',
+  'Şimdilik geç': 'હમણાં રહેવા દો',
+  'Doğum tarihin ne zaman?': 'તમારી જન્મતારીખ ક્યારે છે?',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'ઉંમરને અનુરૂપ સામગ્રી બતાવવા અને જન્મદિવસની શુભેચ્છા આપવા માટે અમે પૂછીએ છીએ.',
+  'Gün': 'દિવસ',
+  'Ay': 'મહિનો',
+  'Yıl': 'વર્ષ',
+  'Doğum yılımı paylaşmak istemiyorum': 'જન્મવર્ષ ન બતાવો',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'તમારી જન્મતારીખ પ્રોફાઇલમાં જાહેરમાં દેખાતી નથી. તે ફક્ત ઉંમરને અનુરૂપ સામગ્રી અને જન્મદિવસની શુભેચ્છા માટે વપરાય છે.',
+  'Ocak': 'જાન્યુઆરી',
+  'Şubat': 'ફેબ્રુઆરી',
+  'Mart': 'માર્ચ',
+  'Nisan': 'એપ્રિલ',
+  'Mayıs': 'મે',
+  'Haziran': 'જૂન',
+  'Temmuz': 'જુલાઈ',
+  'Ağustos': 'ઑગસ્ટ',
+  'Eylül': 'સપ્ટેમ્બર',
+  'Ekim': 'ઑક્ટોબર',
+  'Kasım': 'નવેમ્બર',
+  'Aralık': 'ડિસેમ્બર',
+  'Verilerini yanında getir': 'તમારો ડેટા સાથે લાવો',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'જો બીજી કોઈ ઍપમાં જોયેલું ટ્રૅક કરતા હો, તો તે અહીં લાવી શકો છો. શરૂઆતથી શરૂ કરવાની જરૂર નથી.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time, Trakt અને Letterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'એક્સપોર્ટ કરેલી ZIP ફાઇલ પસંદ કરો; તમારાં જોયેલાં, રેટિંગ અને લિસ્ટ આવી જશે.',
+  'Aktarılıyor...': 'ઇમ્પોર્ટ થઈ રહ્યું છે...',
+  'ZIP dosyası seç': 'ZIP ફાઇલ પસંદ કરો',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'ઉતાવળ નથી: આ પછીથી સેટિંગ્સ > મારો ડેટા માંથી પણ કરી શકો છો.',
+  'Hangi filmleri izledin?': 'તમે કઈ ફિલ્મો જોઈ છે?',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'સૌથી વધુ જોવાયેલી અહીં છે. જેને ટૅપ કરો તે તમારાં જોયેલાંમાં ઉમેરી દઈએ.',
+  'SERİ FİLMLER': 'ફિલ્મ સિરીઝ',
+  'Serilerden {} film eklendi': 'સિરીઝમાંથી {} ફિલ્મ ઉમેરાઈ',
+  'Film listesi yüklenemedi': 'ફિલ્મોની યાદી લોડ ન થઈ',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'આ પગલું છોડી શકો છો, પછી જે જોઈએ તે ઉમેરી શકો છો.',
+  '{} film izlediklerine eklendi': '{} ફિલ્મ તમારાં જોયેલાંમાં ઉમેરાઈ',
+  'Film serileri': 'ફિલ્મ સિરીઝ',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'કોઈ સિરીઝ શરૂથી અંત સુધી જોઈ હોય, તો એક જ ટૅપમાં ઉમેરો.',
+  'Seri bulunamadı': 'કોઈ સિરીઝ મળી નહીં',
+  'Daha sonra tekrar deneyebilirsin.': 'પછીથી ફરી પ્રયત્ન કરી શકો છો.',
+  '{} film': '{} ફિલ્મ',
+  'Eklendi': 'ઉમેરાયું',
+  'Tümünü izledim': 'બધી જોઈ લીધી',
+  'Peki ya diziler?': 'અને સિરીઝનું શું?',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'જે જોઈ છે તે પસંદ કરો; જેમ પસંદ કરશો તેમ મળતી આવતી લાવીશું.',
+  'Dizi listesi yüklenemedi': 'સિરીઝની યાદી લોડ ન થઈ',
+  'Seçtiklerine benzeyenler': 'તમારી પસંદ જેવી',
+  'Her şey hazır': 'બધું તૈયાર છે',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'dizi.jpg માં શું શું કરી શકાય તેની ઝડપી ઝલક જુઓ.',
+  'Profilini tamamla': 'તમારી પ્રોફાઇલ પૂરી કરો',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'સેટિંગ્સ માંથી બાયો, પ્રોફાઇલ ફોટો અને કવર ઉમેરી શકો છો.',
+  'Takvimin seni bekliyor': 'તમારું કૅલેન્ડર રાહ જુએ છે',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'તમે જુઓ છો તે સિરીઝના નવા એપિસોડ કૅલેન્ડરમાં આવે છે, અમે સૂચનાથી જણાવીશું.',
+  'Puan ver, yorum yaz': 'રેટિંગ આપો, કૉમેન્ટ લખો',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'એપિસોડ પ્રમાણે રેટ કરો, સ્પોઇલર પડદા સાથે કૉમેન્ટ લખો, લિસ્ટ બનાવો.',
+  'Verilerin sende kalır': 'તમારો ડેટા તમારી પાસે જ રહે છે',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'તમારો ડેટા ફક્ત તમારા ખાતા સાથે જોડાયેલો રહે છે, વેચાતો નથી. સેટિંગ્સ માંથી બધું ડાઉનલોડ કરી શકો છો અથવા ખાતું સંપૂર્ણ કાઢી નાખી શકો છો.',
+  'Engellenen kullanıcılar': 'બ્લોક કરેલા વપરાશકર્તાઓ',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'બ્લોક કરેલા લોકો જુઓ, બ્લોક દૂર કરો',
+  'Engellediğin kimse yok': 'તમે કોઈને બ્લોક કર્યું નથી',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'કોઈ વપરાશકર્તાને તેની પ્રોફાઇલના ત્રણ ટપકાંવાળા મેનૂમાંથી બ્લોક કરી શકો છો.',
+  '@{} engellensin mi?': '@{} ને બ્લોક કરવા છે?',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'તમે એકબીજાની પોસ્ટ, કૉમેન્ટ અને પ્રોફાઇલ જોઈ શકશો નહીં; સંદેશા અને કૉલ પણ પહોંચશે નહીં. તમારી વચ્ચે ફૉલો હશે તો તૂટી જશે અને બ્લોક દૂર કર્યા પછી પણ પાછું નહીં આવે.',
+  'Bu kullanıcıyı engelledin': 'તમે આ વપરાશકર્તાને બ્લોક કર્યું છે',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'તમે એ વ્યક્તિની પોસ્ટ, કૉમેન્ટ અને સંદેશા જોતા નથી; એ વ્યક્તિ પણ તમારાં જોઈ શકતી નથી.',
+  '{} yeni bir yapımda: {}': '{} નવા પ્રોજેક્ટમાં: {}',
+  'Favori kişinden yeni yapım': 'મનપસંદ વ્યક્તિનું નવું પ્રોજેક્ટ',
+  '{} için bildirimler': '{} માટે સૂચનાઓ',
+  'Tüm bildirimler': 'બધી સૂચનાઓ',
+  'Uygulamada ve telefonda': 'ઍપમાં અને ફોનમાં',
+  'Yalnız uygulama içi': 'ફક્ત ઍપમાં',
+  'Telefon bildirimi gönderilmez': 'ફોન સૂચના મોકલાતી નથી',
+  'Kapalı': 'બંધ',
+  'Bu kişi için bildirim yok': 'આ વ્યક્તિ માટે કોઈ સૂચના નહીં',
+  'Favori kişilerin yeni yapımları': 'મનપસંદ લોકોના નવા પ્રોજેક્ટ',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'બંધ હોય ત્યારે કોઈ તમને વોઇસ કૉલ કરી શકતું નથી; કૉલ કરનારને "બંધ છે" સૂચના દેખાય છે',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'બંધ હોય ત્યારે કોઈ તમને વિડિયો કૉલ કરી શકતું નથી; કૉલ કરનારને "બંધ છે" સૂચના દેખાય છે',
 };

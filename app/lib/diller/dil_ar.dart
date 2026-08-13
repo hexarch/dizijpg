@@ -81,7 +81,7 @@ const Map<String, String> cevirilerAr = {
   'Tekrar dene': 'أعد المحاولة',
   'Toplam İzleme Süresi': 'إجمالي وقت المشاهدة',
   'Tüm Zamanların En İyileri': 'الأفضل على الإطلاق',
-  'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP\'i içe aktar.':
+  "Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak al ya da başka uygulamadan gelen ZIP'i içe aktar.":
       'صدّر كل بياناتك (المشاهدات والتقييمات والتعليقات والقوائم) كملف ZIP متوافق مع TV Time، أو استورد ملف ZIP قادمًا من تطبيق آخر.',
   'Tümünü Kaldır': 'إزالة الكل',
   'Tümünü İzledim': 'شاهدت الكل',
@@ -238,7 +238,7 @@ const Map<String, String> cevirilerAr = {
   'Mesaj silinemedi': 'تعذّر حذف الرسالة',
   'Bağlantı geçersiz veya sayfa bulunamadı':
       'الرابط غير صالح أو الصفحة غير موجودة',
-  'Keşfet\'e dön': 'العودة إلى الاستكشاف',
+  "Keşfet'e dön": 'العودة إلى الاستكشاف',
   'Düzenle': 'تعديل',
   'Mesajı düzenle': 'تعديل الرسالة',
   'Yanıtlanıyor': 'يرد',
@@ -265,14 +265,7 @@ const Map<String, String> cevirilerAr = {
   'Abonelik': 'اشتراك',
   'Kirala': 'تأجير',
   'Satın al': 'شراء',
-  'Hoş geldin!': 'مرحبًا!',
-  'İzlemek istediğin dizi ve filmleri seç':
-      'اختر المسلسلات والأفلام التي تريد مشاهدتها',
-  'Seçtiklerin "İzleyeceğim" listene eklenir':
-      'تُضاف اختياراتك إلى قائمة «سأشاهده»',
-  'Şimdilik atla': 'تخطَّ الآن',
   'Devam et': 'متابعة',
-  '{} ekle': 'أضف {}',
   'Şikayet et': 'إبلاغ',
   'Engelle': 'حظر',
   'Engeli kaldır': 'إلغاء الحظر',
@@ -318,7 +311,9 @@ const Map<String, String> cevirilerAr = {
       'الوسائط المرفوعة: الصور وملفات GIF والفيديوهات والتسجيلات الصوتية التي تضيفها إلى ملفك الشخصي وتعليقاتك ورسائلك.',
   'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik ve hata ayıklama için tutulur.':
       'البيانات التقنية: عنوان IP والموقع التقريبي (البلد/المدينة) ومنصة الجهاز وإصدار التطبيق وسجلات الأخطاء. تُحفظ هذه لأغراض الأمان وإصلاح الأعطال.',
-  'Bildirimler: push bildirimleri için cihaz token\'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.':
+  'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu sayılar kişilere bağlanamaz.':
+      'إحصاءات الاستخدام: يُضاف نوع الجهاز ونظام التشغيل والمتصفّح المستخدَم للدخول إلى عدّادات إجمالية يومية ضمن فئات عامة؛ ولا يُحفظ معرّف المتصفّح نفسه ولا يمكن ربط هذه الأرقام بأي شخص.',
+  "Bildirimler: push bildirimleri için cihaz token'ı ve dil tercihin saklanır. Bildirimleri cihazının ayarlarından istediğin zaman kapatabilirsin.":
       'الإشعارات: من أجل الإشعارات الفورية نحفظ رمز جهازك ولغتك المفضّلة. يمكنك إيقاف الإشعارات في أي وقت من إعدادات جهازك.',
   'Verileri Nasıl Kullanırız': 'كيف نستخدم بياناتك',
   'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim göndermek, hataları gidermek ve kötüye kullanımı önlemek için kullanırız. Verilerini satmayız, reklam amacıyla kimseyle paylaşmayız.':
@@ -327,12 +322,12 @@ const Map<String, String> cevirilerAr = {
   'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini hatırlamak için yerel depolama kullanırız. Reklam veya izleme çerezi yoktur.':
       'نستخدم التخزين المحلي فقط لإبقائك مسجّل الدخول وتذكّر تفضيلاتك مثل اللغة والمظهر. لا توجد ملفات تعريف ارتباط إعلانية أو تتبّعية.',
   'Üçüncü Taraf Hizmetler': 'خدمات الجهات الخارجية',
-  'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi JustWatch\'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.':
+  "Dizi ve film bilgileri TMDB'den, izleme sağlayıcı bilgisi JustWatch'tan alınır. Push bildirimleri Google Firebase üzerinden iletilir, site trafiği Cloudflare tarafından korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.":
       'تأتي بيانات المسلسلات والأفلام من TMDB، ومعلومات منصات المشاهدة من JustWatch. تُرسل الإشعارات الفورية عبر Google Firebase، وتحمي Cloudflare حركة الموقع. تخضع هذه الخدمات لسياسات الخصوصية الخاصة بها.',
   'Saklama ve Silme': 'الاحتفاظ والحذف',
   'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki "Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde silinir. Hata kayıtları 30 gün sonra otomatik silinir.':
       'تُحفظ بياناتك ما دام حسابك قائمًا. يمكنك حذف حسابك نهائيًا عبر "حذف حسابي" في الإعدادات؛ تُحذف بياناتك فورًا وتُحذف نسخها في النسخ الاحتياطية خلال 14 يومًا كحد أقصى. وتُحذف سجلات الأخطاء تلقائيًا بعد 30 يومًا.',
-  'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.':
+  "Verilerini Ayarlar'dan ZIP olarak dışa aktarabilirsin; arşiv e-posta adresine gönderilir.":
       'يمكنك تصدير بياناتك بصيغة ZIP من الإعدادات؛ ويُرسل الأرشيف إلى بريدك الإلكتروني.',
   'Güvenlik': 'الأمان',
   'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi sınırlı sunucularda saklanır.':
@@ -450,12 +445,12 @@ const Map<String, String> cevirilerAr = {
   'Videolarda altyazı göster': 'إظهار الترجمة على مقاطع الفيديو',
   'Videoda konuşulan cümle ekranda yazılır. Metin çeviridir: Türkçe konuşmada İngilizce, diğer dillerde Türkçe.':
       'الجملة المنطوقة في الفيديو مكتوبة على الشاشة. النص ترجمة: الإنجليزية في الكلام التركي، التركية في اللغات الأخرى.',
-  "Güncelleme gerekli": "التحديث مطلوب",
-  "Yeni sürüm var": "يتوفر إصدار جديد",
+  'Güncelleme gerekli': 'التحديث مطلوب',
+  'Yeni sürüm var': 'يتوفر إصدار جديد',
   "Devam etmek için dizi.jpg'in yeni sürümünü yükle.":
-      "ثبّت الإصدار الجديد من dizi.jpg للمتابعة.",
-  "Güncelle": "تحديث",
-  "Daha sonra": "لاحقًا",
+      'ثبّت الإصدار الجديد من dizi.jpg للمتابعة.',
+  'Güncelle': 'تحديث',
+  'Daha sonra': 'لاحقًا',
   'Takvim güncelleniyor': 'جارٍ تحديث التقويم',
   'Takvim güncellenemedi, eski liste gösteriliyor':
       'تعذر تحديث التقويم، يتم عرض القائمة القديمة',
@@ -706,4 +701,105 @@ const Map<String, String> cevirilerAr = {
   '{} {} yayınlandı': '{} {} متاحة الآن',
   'Yeni bölüm yayınlandı': 'صدرت حلقة جديدة',
   'Yeni bölümler': 'حلقات جديدة',
+  'Geri': 'رجوع',
+  'Karşılamayı kapat': 'إغلاق الترحيب',
+  'Adım {} / {}': 'الخطوة {} / {}',
+  'Hadi başlayalım': 'هيا نبدأ',
+  'Kaydet ve devam': 'حفظ ومتابعة',
+  '{} tanesini ekle': 'إضافة {} منها',
+  'Şimdilik geç': 'ليس الآن',
+  'Doğum tarihin ne zaman?': 'ما تاريخ ميلادك؟',
+  'Yaşına uygun içerik göstermek ve doğum gününü kutlamak için soruyoruz.':
+      'نسأل لعرض محتوى يناسب عمرك وللاحتفال بعيد ميلادك.',
+  'Gün': 'اليوم',
+  'Ay': 'الشهر',
+  'Yıl': 'السنة',
+  'Doğum yılımı paylaşmak istemiyorum': 'لا أريد مشاركة سنة ميلادي',
+  'Doğum tarihin profilinde herkese açık gösterilmez. Yalnız yaşa uygun içerik ve doğum günü kutlaması için kullanılır.':
+      'لا يظهر تاريخ ميلادك للعامة في ملفك الشخصي. يُستخدم فقط لعرض محتوى مناسب للعمر وللاحتفال بعيد الميلاد.',
+  'Ocak': 'يناير',
+  'Şubat': 'فبراير',
+  'Mart': 'مارس',
+  'Nisan': 'أبريل',
+  'Mayıs': 'مايو',
+  'Haziran': 'يونيو',
+  'Temmuz': 'يوليو',
+  'Ağustos': 'أغسطس',
+  'Eylül': 'سبتمبر',
+  'Ekim': 'أكتوبر',
+  'Kasım': 'نوفمبر',
+  'Aralık': 'ديسمبر',
+  'Verilerini yanında getir': 'بياناتك تأتي معك',
+  'Başka bir uygulamada izlediklerini takip ediyorsan buraya taşıyabilirsin. Sıfırdan başlamana gerek yok.':
+      'إذا كانت مشاهداتك مسجّلة في تطبيق آخر، يمكنك نقلها إلى هنا. لا داعي للبدء من الصفر.',
+  'TV Time, Trakt ve Letterboxd': 'TV Time وTrakt وLetterboxd',
+  'Dışa aktardığın ZIP dosyasını seç; izlediklerin, puanların ve listelerin aktarılsın.':
+      'اختيار ملف ZIP المُصدَّر لنقل مشاهداتك وتقييماتك وقوائمك.',
+  'Aktarılıyor...': 'جارٍ النقل...',
+  'ZIP dosyası seç': 'اختيار ملف ZIP',
+  'Aceleye gerek yok: bunu sonra Ayarlar > Verilerim bölümünden de yapabilirsin.':
+      'لا داعي للعجلة: يمكنك فعل ذلك لاحقًا من الإعدادات > بياناتي.',
+  'Hangi filmleri izledin?': 'ما الأفلام التي سبقت مشاهدتها؟',
+  'En çok izlenenler burada. Dokunduklarını izlediklerine ekleyelim.':
+      'الأعمال الأكثر مشاهدة هنا. كل اختيار يُضاف إلى قائمة مشاهداتك.',
+  'SERİ FİLMLER': 'سلاسل الأفلام',
+  'Serilerden {} film eklendi': 'أُضيف {} فيلمًا من السلاسل',
+  'Film listesi yüklenemedi': 'تعذّر تحميل قائمة الأفلام',
+  'Bu adımı geçebilirsin, sonra istediğini ekleyebilirsin.':
+      'يمكن تخطي هذه الخطوة وإضافة الأعمال لاحقًا.',
+  '{} film izlediklerine eklendi': 'أُضيف {} فيلمًا إلى مشاهداتك',
+  'Film serileri': 'سلاسل الأفلام',
+  'Bir seriyi baştan sona izlediysen tek dokunuşla ekle.':
+      'السلسلة التي سبقت مشاهدتها بالكامل تُضاف بلمسة واحدة.',
+  'Seri bulunamadı': 'لم يتم العثور على سلاسل',
+  'Daha sonra tekrar deneyebilirsin.': 'يمكن المحاولة لاحقًا.',
+  '{} film': '{} فيلم',
+  'Eklendi': 'تمت الإضافة',
+  'Tümünü izledim': 'شاهدتها كلها',
+  'Peki ya diziler?': 'وماذا عن المسلسلات؟',
+  'İzlediklerini işaretle; seçtikçe sana benzeyenleri getireceğiz.':
+      'اختيار ما سبقت مشاهدته؛ ومع كل اختيار نقترح أعمالًا مشابهة.',
+  'Dizi listesi yüklenemedi': 'تعذّر تحميل قائمة المسلسلات',
+  'Seçtiklerine benzeyenler': 'أعمال تشبه اختياراتك',
+  'Her şey hazır': 'كل شيء جاهز',
+  "dizi.jpg'de neler yapabileceğine hızlıca göz at.":
+      'نظرة سريعة على ما يمكنك فعله في dizi.jpg.',
+  'Profilini tamamla': 'إكمال ملفك الشخصي',
+  "Ayarlar'dan bir bio, profil fotoğrafı ve kapak ekleyebilirsin.":
+      'يمكنك إضافة نبذة وصورة شخصية وغلاف من الإعدادات.',
+  'Takvimin seni bekliyor': 'التقويم بانتظارك',
+  'İzlediğin dizilerin yeni bölümleri takvime düşer, bildirimle haber veririz.':
+      'الحلقات الجديدة من مسلسلاتك تظهر في التقويم، ونُرسل إشعارًا بها.',
+  'Puan ver, yorum yaz': 'التقييم والتعليق',
+  'Bölüm bölüm puanla, spoiler perdesiyle yorum yaz, listeler oluştur.':
+      'تقييم حلقة بحلقة، وتعليق خلف ستار الحرق، وإنشاء قوائم.',
+  'Verilerin sende kalır': 'بياناتك تبقى لك',
+  "Verilerin yalnız hesabına bağlı tutulur, satılmaz. Ayarlar'dan hepsini indirebilir ya da hesabını tamamen silebilirsin.":
+      'بياناتك مرتبطة بحسابك وحده ولا تُباع. يمكنك تنزيلها كلها من الإعدادات أو حذف حسابك نهائيًا.',
+  'Engellenen kullanıcılar': 'المستخدمون المحظورون',
+  'Engellediğin kişileri gör, engeli kaldır':
+      'عرض قائمة المحظورين وإلغاء الحظر',
+  'Engellediğin kimse yok': 'لا أحد في قائمة الحظر',
+  'Bir kullanıcıyı profilindeki üç nokta menüsünden engelleyebilirsin.':
+      'يمكن حظر أي مستخدم من قائمة النقاط الثلاث في الملف الشخصي.',
+  '@{} engellensin mi?': 'حظر @{}؟',
+  'Birbirinizin gönderilerini, yorumlarını ve profilini göremezsiniz; mesaj ve arama da gidemez. Varsa takip bağınız kopar ve engeli kaldırsan bile geri gelmez.':
+      'لن يرى أي منكما منشورات الطرف الآخر ولا تعليقاته ولا ملفه الشخصي، ولن تصل الرسائل ولا المكالمات. وإن كانت بينكما متابعة فستنقطع ولن تعود حتى بعد إلغاء الحظر.',
+  'Bu kullanıcıyı engelledin': 'هذا المستخدم محظور لديك',
+  'Gönderilerini, yorumlarını ve mesajlarını görmüyorsun; o da seninkileri göremiyor.':
+      'منشورات هذا الشخص وتعليقاته ورسائله لا تظهر لك، ومنشوراتك لا تظهر له.',
+  '{} yeni bir yapımda: {}': '{} في عمل جديد: {}',
+  'Favori kişinden yeni yapım': 'عمل جديد لشخص مفضّل',
+  '{} için bildirimler': 'إشعارات {}',
+  'Tüm bildirimler': 'كل الإشعارات',
+  'Uygulamada ve telefonda': 'في التطبيق وعلى الهاتف',
+  'Yalnız uygulama içi': 'داخل التطبيق فقط',
+  'Telefon bildirimi gönderilmez': 'لا تُرسل إشعارات إلى الهاتف',
+  'Kapalı': 'إيقاف',
+  'Bu kişi için bildirim yok': 'لا إشعارات لهذا الشخص',
+  'Favori kişilerin yeni yapımları': 'أعمال جديدة للأشخاص المفضّلين',
+  'Kapalıyken kimse seni sesli arayamaz; arayan "devre dışı" uyarısı görür':
+      'عند الإيقاف لا يمكن لأحد الاتصال بك صوتيًا؛ يرى المتصل تنبيهًا بأن المكالمات "معطّلة"',
+  'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
+      'عند الإيقاف لا يمكن لأحد الاتصال بك بالفيديو؛ يرى المتصل تنبيهًا بأن المكالمات "معطّلة"',
 };
