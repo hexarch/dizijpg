@@ -802,4 +802,65 @@ const Map<String, String> cevirilerAr = {
       'عند الإيقاف لا يمكن لأحد الاتصال بك صوتيًا؛ يرى المتصل تنبيهًا بأن المكالمات "معطّلة"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'عند الإيقاف لا يمكن لأحد الاتصال بك بالفيديو؛ يرى المتصل تنبيهًا بأن المكالمات "معطّلة"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'نشاطي',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'إعجاباتك وتعليقاتك ومشاهداتك في مكان واحد',
+  'Henüz hareketin yok': 'لا يوجد نشاط بعد',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'كل ما تعجب به وتعلّق عليه وتشاهده يتجمّع هنا.',
+  'Bu süzgeçte hareket yok': 'لا نشاط ضمن هذا الفلتر',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': 'اختر نوعًا آخر أو عد إلى «الكل».',
+  'Hepsi': 'الكل',
+  'Puan': 'التقييم',
+  'Tepki': 'تفاعل',
+  'İzleme': 'مشاهدة',
+  'Durum': 'الحالة',
+  'Liste': 'قائمة',
+  'Yorum yaptın': 'تم التعليق',
+  'Yorumu beğendin': 'تم الإعجاب بتعليق',
+  '{} puan verdin': 'تقييم {}',
+  'Tepki verdin': 'تم التفاعل',
+  'Listene ekledin': 'تمت الإضافة إلى قائمة',
+  'Takip etmeye başladın': 'متابعة جديدة',
+  '"İzleyeceğim" işaretledin': 'تم وضع علامة «سأشاهده»',
+  '"İzliyorum" işaretledin': 'تم وضع علامة «أشاهده»',
+  '"Bitirdim" işaretledin': 'تم وضع علامة «أنهيته»',
+  '"Bıraktım" işaretledin': 'تم وضع علامة «توقفت عنه»',
+  'Silinmiş içerik': 'محتوى محذوف',
+  'şimdi': 'الآن',
+  '{} g': '{} ي',
+  '{} y': '{} س.',
+  'İstatistiklerim': 'إحصائياتي',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'مشاهدات وإعجابات منشوراتك',
+  'Henüz gönderin yok': 'لا توجد منشورات بعد',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'عندما تكتب تعليقًا على مسلسل أو فيلم، تبدأ أعداد المشاهدات والإعجابات بالتراكم هنا.',
+  'Tüm zamanlar': 'كل الأوقات',
+  'Gönderi': 'المنشورات',
+  'Zaman kırılımı': 'التوزيع الزمني',
+  'Son {} gün': 'آخر {} يوم',
+  'En çok görüntülenen gönderilerin': 'أكثر منشوراتك مشاهدةً',
+  'En çok beğenilen gönderilerin': 'أكثر منشوراتك إعجابًا',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'لم يبدأ سجل المشاهدات بالتراكم بعد؛ بيانات اليوم الأول تظهر غدًا.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'يتراكم سجل المشاهدات منذ {} (تتوفر بيانات {} يوم)، لذلك رقم {} يوم ما زال ناقصًا.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'سجل الإعجابات مُسجَّل منذ {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'لا توجد منشورات لعرضها في هذه الفترة.',
+  'eksik veri': 'بيانات ناقصة',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'لن يرى الآخرون في ملفك الشخصي المسلسلات والأفلام التي شاهدتها ولا عدّادات المشاهدة ولا وقت الشاشة ولا بطاقة التوافق',
+  'Takipçi listemi gizle': 'إخفاء قائمة متابعيّ',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'لا يستطيع الآخرون رؤية من يتابعك؛ ويبقى عدد متابعيك ظاهرًا',
+  'Takip ettiklerimi gizle': 'إخفاء من أتابعهم',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'لا يستطيع الآخرون رؤية من تتابعهم؛ ويبقى عدد المتابَعين ظاهرًا',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'قائمة متابعي هذا المستخدم مخفية.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'قائمة المتابَعين لدى هذا المستخدم مخفية.',
 };

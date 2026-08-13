@@ -824,4 +824,67 @@ const Map<String, String> cevirilerMy = {
       'ပိတ်ထားပါက မည်သူမျှ သင့်ကို အသံဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် "ပိတ်ထားသည်" အသိပေးချက်ကို မြင်ရမည်',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ပိတ်ထားပါက မည်သူမျှ သင့်ကို ဗီဒီယိုဖြင့် မခေါ်နိုင်ပါ။ ခေါ်သူသည် "ပိတ်ထားသည်" အသိပေးချက်ကို မြင်ရမည်',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'ကျွန်ုပ်၏ လှုပ်ရှားမှု',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'သင့် ကြိုက်မှု၊ မှတ်ချက်နှင့် ကြည့်ရှုမှုများ တစ်နေရာတည်းတွင်',
+  'Henüz hareketin yok': 'လှုပ်ရှားမှု မရှိသေးပါ',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'သင် ကြိုက်သမျှ၊ မှတ်ချက်ပေးသမျှ၊ ကြည့်သမျှ ဤနေရာတွင် စုဆောင်းသည်။',
+  'Bu süzgeçte hareket yok': 'ဤစစ်ထုတ်မှုတွင် လှုပ်ရှားမှု မရှိပါ',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'အခြားအမျိုးအစားကို ရွေးပါ သို့မဟုတ် "အားလုံး" သို့ ပြန်သွားပါ။',
+  'Hepsi': 'အားလုံး',
+  'Puan': 'အဆင့်သတ်မှတ်ချက်',
+  'Tepki': 'တုံ့ပြန်မှု',
+  'İzleme': 'ကြည့်ရှုမှု',
+  'Durum': 'အခြေအနေ',
+  'Liste': 'စာရင်း',
+  'Yorum yaptın': 'မှတ်ချက် ပေးခဲ့သည်',
+  'Yorumu beğendin': 'မှတ်ချက်ကို ကြိုက်ခဲ့သည်',
+  '{} puan verdin': '{} အမှတ် ပေးခဲ့သည်',
+  'Tepki verdin': 'တုံ့ပြန်ခဲ့သည်',
+  'Listene ekledin': 'စာရင်းထဲ ထည့်ခဲ့သည်',
+  'Takip etmeye başladın': 'စောင့်ကြည့်ရန် စတင်ခဲ့သည်',
+  '"İzleyeceğim" işaretledin': '"ကြည့်မယ်" ဟု မှတ်သားခဲ့သည်',
+  '"İzliyorum" işaretledin': '"ကြည့်နေတယ်" ဟု မှတ်သားခဲ့သည်',
+  '"Bitirdim" işaretledin': '"ပြီးအောင် ကြည့်ပြီးပြီ" ဟု မှတ်သားခဲ့သည်',
+  '"Bıraktım" işaretledin': '"ရပ်လိုက်ပြီ" ဟု မှတ်သားခဲ့သည်',
+  'Silinmiş içerik': 'ဖျက်ပြီးသော အကြောင်းအရာ',
+  'şimdi': 'ယခု',
+  '{} g': '{} ရက်',
+  '{} y': '{} နှစ်',
+  'İstatistiklerim': 'ကျွန်ုပ်၏ စာရင်းအင်း',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'သင့်ပို့စ်များ၏ ကြည့်ရှုမှုနှင့် ကြိုက်နှစ်သက်မှု',
+  'Henüz gönderin yok': 'သင့်တွင် ပို့စ် မရှိသေးပါ',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'သင် စီးရီး သို့မဟုတ် ရုပ်ရှင်တစ်ခုကို မှတ်ချက်ရေးလိုက်သည်နှင့် ကြည့်ရှုမှုနှင့် ကြိုက်နှစ်သက်မှု အရေအတွက်များ ဤနေရာတွင် စတင်စုဆောင်းပါမည်။',
+  'Tüm zamanlar': 'အချိန်အားလုံး',
+  'Gönderi': 'ပို့စ်များ',
+  'Zaman kırılımı': 'အချိန်အလိုက် ခွဲခြမ်းချက်',
+  'Son {} gün': 'နောက်ဆုံး {} ရက်',
+  'En çok görüntülenen gönderilerin': 'အကြည့်အများဆုံး သင့်ပို့စ်များ',
+  'En çok beğenilen gönderilerin': 'ကြိုက်နှစ်သက်မှု အများဆုံး သင့်ပို့စ်များ',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ကြည့်ရှုမှု မှတ်တမ်း စတင်စုဆောင်းခြင်း မရှိသေးပါ။ ပထမနေ့၏ ဒေတာကို မနက်ဖြန် တွေ့ရပါမည်။',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ကြည့်ရှုမှု မှတ်တမ်းသည် {} မှစ၍ စုဆောင်းနေသည် ({} ရက်စာ ဒေတာရှိသည်)၊ ထို့ကြောင့် {} ရက်စာ ကိန်းဂဏန်းမှာ မပြည့်စုံသေးပါ။',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'ကြိုက်နှစ်သက်မှု မှတ်တမ်းကို {} မှစ၍ မှတ်တမ်းတင်ထားသည်။',
+  'Bu dönemde gösterilecek gönderi yok.': 'ဤကာလအတွက် ပြသရန် ပို့စ် မရှိပါ။',
+  'eksik veri': 'ဒေတာ မပြည့်စုံပါ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'သင့်ပရိုဖိုင်ရှိ ကြည့်ထားသော စီးရီးနှင့် ရုပ်ရှင်များ၊ ကြည့်ရှုမှု ရေတွက်ချက်များ၊ မျက်နှာပြင်အချိန်နှင့် ကိုက်ညီမှုကတ်ကို အခြားသူများ မမြင်ရပါ',
+  'Takipçi listemi gizle': 'ကျွန်ုပ်၏ စောင့်ကြည့်သူစာရင်းကို ဖျောက်ရန်',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'သင့်ကို မည်သူများ စောင့်ကြည့်နေသည်ကို အခြားသူများ မမြင်နိုင်ပါ။ စောင့်ကြည့်သူ အရေအတွက်မူ ဆက်လက်ပေါ်နေပါမည်',
+  'Takip ettiklerimi gizle': 'ကျွန်ုပ် စောင့်ကြည့်သူများကို ဖျောက်ရန်',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'သင် မည်သူများကို စောင့်ကြည့်နေသည်ကို အခြားသူများ မမြင်နိုင်ပါ။ စောင့်ကြည့်နေသည့် အရေအတွက်မူ ဆက်လက်ပေါ်နေပါမည်',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ဤအသုံးပြုသူသည် မိမိ၏ စောင့်ကြည့်သူများကို လျှို့ဝှက်ထားလိုသည်။',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ဤအသုံးပြုသူသည် မိမိ စောင့်ကြည့်နေသူများကို လျှို့ဝှက်ထားလိုသည်။',
 };

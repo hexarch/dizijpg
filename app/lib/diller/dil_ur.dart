@@ -812,4 +812,68 @@ const Map<String, String> cevirilerUr = {
       'بند ہونے پر کوئی آپ کو صوتی کال نہیں کر سکتا؛ کال کرنے والے کو "بند" ہونے کی اطلاع نظر آتی ہے',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'بند ہونے پر کوئی آپ کو ویڈیو کال نہیں کر سکتا؛ کال کرنے والے کو "بند" ہونے کی اطلاع نظر آتی ہے',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'میری سرگرمی',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'تمہاری پسندیدگیاں، تبصرے اور دیکھی گئی چیزیں ایک ہی جگہ',
+  'Henüz hareketin yok': 'ابھی کوئی سرگرمی نہیں',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'جو کچھ تم پسند کرتے، تبصرہ کرتے اور دیکھتے ہو، سب یہاں جمع ہوتا ہے۔',
+  'Bu süzgeçte hareket yok': 'اس فلٹر میں کوئی سرگرمی نہیں',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'کوئی اور قسم منتخب کرو یا «سب» پر واپس جاؤ۔',
+  'Hepsi': 'سب',
+  'Puan': 'ریٹنگ',
+  'Tepki': 'ری ایکشن',
+  'İzleme': 'دیکھنا',
+  'Durum': 'حالت',
+  'Liste': 'فہرست',
+  'Yorum yaptın': 'تبصرہ کیا',
+  'Yorumu beğendin': 'ایک تبصرہ پسند کیا',
+  '{} puan verdin': '{} ریٹنگ دی',
+  'Tepki verdin': 'ری ایکشن دیا',
+  'Listene ekledin': 'فہرست میں شامل کیا',
+  'Takip etmeye başladın': 'فالو کرنا شروع کیا',
+  '"İzleyeceğim" işaretledin': 'واچ لسٹ میں شامل کیا',
+  '"İzliyorum" işaretledin': 'دیکھنا شروع کیا',
+  '"Bitirdim" işaretledin': 'دیکھنا مکمل کیا',
+  '"Bıraktım" işaretledin': 'دیکھنا چھوڑ دیا',
+  'Silinmiş içerik': 'حذف شدہ مواد',
+  'şimdi': 'ابھی',
+  '{} g': '{} دن',
+  '{} y': '{} سال',
+  'İstatistiklerim': 'میرے اعداد و شمار',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'تمہاری پوسٹس کے ملاحظات اور پسندیدگیاں',
+  'Henüz gönderin yok': 'ابھی تمہاری کوئی پوسٹ نہیں',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'جب تم کسی سیریز یا فلم پر تبصرہ لکھو گے، تمہارے ملاحظات اور پسندیدگیاں یہاں جمع ہونے لگیں گی۔',
+  'Tüm zamanlar': 'ہر وقت',
+  'Gönderi': 'پوسٹس',
+  'Zaman kırılımı': 'وقت کے حساب سے تقسیم',
+  'Son {} gün': 'پچھلے {} دن',
+  'En çok görüntülenen gönderilerin': 'تمہاری سب سے زیادہ دیکھی گئی پوسٹس',
+  'En çok beğenilen gönderilerin': 'تمہاری سب سے زیادہ پسند کی گئی پوسٹس',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ملاحظات کی تاریخ ابھی جمع ہونا شروع نہیں ہوئی؛ پہلے دن کا ڈیٹا کل نظر آئے گا۔',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ملاحظات کی تاریخ {} سے جمع ہو رہی ہے ({} دن کا ڈیٹا موجود ہے)، اس لیے {} دن کا عدد ابھی نامکمل ہے۔',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'پسندیدگیوں کی تاریخ {} سے ریکارڈ ہے۔',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'اس مدت میں دکھانے کے لیے کوئی پوسٹ نہیں۔',
+  'eksik veri': 'نامکمل ڈیٹا',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'تمہارے پروفائل پر دیکھی گئی سیریز اور فلمیں، دیکھنے کے کاؤنٹر، اسکرین ٹائم اور میچ کارڈ دوسروں کو نظر نہیں آئیں گے',
+  'Takipçi listemi gizle': 'میری فالوورز کی فہرست چھپائیں',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'دوسرے نہیں دیکھ سکیں گے کہ تمہیں کون فالو کرتا ہے؛ تمہاری فالوورز کی تعداد نظر آتی رہے گی',
+  'Takip ettiklerimi gizle': 'میں کن کو فالو کرتا ہوں یہ چھپائیں',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'تم کن کو فالو کرتے ہو یہ دوسرے نہیں دیکھ سکیں گے؛ تمہاری فالوونگ کی تعداد نظر آتی رہے گی',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'اس صارف کے فالوورز چھپے ہوئے ہیں۔',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'یہ صارف کن کو فالو کرتا ہے، یہ چھپا ہوا ہے۔',
 };

@@ -817,4 +817,68 @@ const Map<String, String> cevirilerTa = {
       'அணைத்திருந்தால் யாரும் உங்களை குரலில் அழைக்க முடியாது; அழைப்பவருக்கு "முடக்கப்பட்டுள்ளது" என்ற அறிவிப்பு தெரியும்',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'அணைத்திருந்தால் யாரும் உங்களை வீடியோவில் அழைக்க முடியாது; அழைப்பவருக்கு "முடக்கப்பட்டுள்ளது" என்ற அறிவிப்பு தெரியும்',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'என் செயல்பாடு',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'உன் லைக்குகள், கருத்துகள், பார்த்தவை ஒரே இடத்தில்',
+  'Henüz hareketin yok': 'இன்னும் செயல்பாடு இல்லை',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'நீ லைக் செய்தவை, கருத்திட்டவை, பார்த்தவை எல்லாம் இங்கே சேரும்.',
+  'Bu süzgeçte hareket yok': 'இந்த வடிகட்டியில் செயல்பாடு இல்லை',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'வேறு வகையைத் தேர்ந்தெடு அல்லது "அனைத்தும்" பக்கம் திரும்பு.',
+  'Hepsi': 'அனைத்தும்',
+  'Puan': 'மதிப்பீடு',
+  'Tepki': 'எதிர்வினை',
+  'İzleme': 'பார்த்தது',
+  'Durum': 'நிலை',
+  'Liste': 'பட்டியல்',
+  'Yorum yaptın': 'கருத்திட்டாய்',
+  'Yorumu beğendin': 'ஒரு கருத்தை லைக் செய்தாய்',
+  '{} puan verdin': '{} மதிப்பெண் அளித்தாய்',
+  'Tepki verdin': 'எதிர்வினை அளித்தாய்',
+  'Listene ekledin': 'பட்டியலில் சேர்த்தாய்',
+  'Takip etmeye başladın': 'பின்தொடரத் தொடங்கினாய்',
+  '"İzleyeceğim" işaretledin': '"பார்க்கப் போகிறேன்" எனக் குறித்தாய்',
+  '"İzliyorum" işaretledin': '"பார்க்கிறேன்" எனக் குறித்தாய்',
+  '"Bitirdim" işaretledin': '"முடித்துவிட்டேன்" எனக் குறித்தாய்',
+  '"Bıraktım" işaretledin': '"விட்டுவிட்டேன்" எனக் குறித்தாய்',
+  'Silinmiş içerik': 'நீக்கப்பட்ட உள்ளடக்கம்',
+  'şimdi': 'இப்போது',
+  '{} g': '{} நா',
+  '{} y': '{} ஆ',
+  'İstatistiklerim': 'என் புள்ளிவிவரங்கள்',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'உன் இடுகைகளின் பார்வைகளும் லைக்குகளும்',
+  'Henüz gönderin yok': 'உனக்கு இன்னும் இடுகைகள் இல்லை',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ஒரு தொடருக்கோ படத்துக்கோ கருத்து எழுதினால், உன் பார்வைகளும் லைக்குகளும் இங்கே சேரத் தொடங்கும்.',
+  'Tüm zamanlar': 'எல்லா காலமும்',
+  'Gönderi': 'இடுகைகள்',
+  'Zaman kırılımı': 'கால வாரியான பகுப்பு',
+  'Son {} gün': 'கடந்த {} நாட்கள்',
+  'En çok görüntülenen gönderilerin': 'அதிகம் பார்க்கப்பட்ட உன் இடுகைகள்',
+  'En çok beğenilen gönderilerin': 'அதிக லைக் பெற்ற உன் இடுகைகள்',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'பார்வை வரலாறு இன்னும் சேரத் தொடங்கவில்லை; முதல் நாள் தரவு நாளை தெரியும்.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'பார்வை வரலாறு {} முதல் சேர்ந்து வருகிறது ({} நாட்கள் தரவு உள்ளது), எனவே {} நாள் எண்ணிக்கை இன்னும் முழுமையடையவில்லை.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'லைக் வரலாறு {} முதல் பதிவு செய்யப்படுகிறது.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'இந்தக் காலகட்டத்தில் காட்ட இடுகைகள் இல்லை.',
+  'eksik veri': 'முழுமையற்ற தரவு',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'உன் சுயவிவரத்தில் நீ பார்த்த தொடர்களும் படங்களும், பார்வை எண்ணிக்கைகள், திரை நேரம், பொருத்த அட்டை ஆகியவை மற்றவர்களுக்குத் தெரியாது',
+  'Takipçi listemi gizle': 'என் பின்தொடர்பவர் பட்டியலை மறை',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'உன்னை யார் பின்தொடர்கிறார்கள் என்பதை மற்றவர்கள் பார்க்க முடியாது; உன் பின்தொடர்பவர் எண்ணிக்கை தெரிந்தபடியே இருக்கும்',
+  'Takip ettiklerimi gizle': 'நான் பின்தொடர்பவர்களை மறை',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'நீ யாரைப் பின்தொடர்கிறாய் என்பதை மற்றவர்கள் பார்க்க முடியாது; உன் பின்தொடர்தல் எண்ணிக்கை தெரிந்தபடியே இருக்கும்',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'இந்தப் பயனர் தன் பின்தொடர்பவர்களை மறைத்து வைக்க விரும்புகிறார்.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'இந்தப் பயனர் தான் பின்தொடர்பவர்களை மறைத்து வைக்க விரும்புகிறார்.',
 };

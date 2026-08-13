@@ -817,4 +817,68 @@ const Map<String, String> cevirilerHu = {
       'Kikapcsolva senki sem hívhat fel hanggal; a hívó azt látja, hogy a hanghívás "ki van kapcsolva"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Kikapcsolva senki sem hívhat fel videóval; a hívó azt látja, hogy a videohívás "ki van kapcsolva"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Tevékenységem',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Kedveléseid, hozzászólásaid és megnézettjeid egy helyen',
+  'Henüz hareketin yok': 'Még nincs tevékenység',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Minden, amit kedvelsz, kommentelsz és megnézel, itt gyűlik össze.',
+  'Bu süzgeçte hareket yok': 'Nincs tevékenység ebben a szűrőben',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Válassz másik típust, vagy térj vissza az „Összes” nézethez.',
+  'Hepsi': 'Összes',
+  'Puan': 'Értékelés',
+  'Tepki': 'Reakció',
+  'İzleme': 'Megnézett',
+  'Durum': 'Állapot',
+  'Liste': 'Lista',
+  'Yorum yaptın': 'Hozzászóltál',
+  'Yorumu beğendin': 'Kedveltél egy hozzászólást',
+  '{} puan verdin': '{} pontot adtál',
+  'Tepki verdin': 'Reagáltál',
+  'Listene ekledin': 'Listához adtad',
+  'Takip etmeye başladın': 'Követni kezdted',
+  '"İzleyeceğim" işaretledin': '„Megnézem majd” jelölés',
+  '"İzliyorum" işaretledin': '„Most nézem” jelölés',
+  '"Bitirdim" işaretledin': '„Befejeztem” jelölés',
+  '"Bıraktım" işaretledin': '„Abbahagytam” jelölés',
+  'Silinmiş içerik': 'Törölt tartalom',
+  'şimdi': 'most',
+  '{} g': '{} n',
+  '{} y': '{} é',
+  'İstatistiklerim': 'Statisztikáim',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Bejegyzéseid megtekintései és kedvelései',
+  'Henüz gönderin yok': 'Még nincs bejegyzésed',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Amint hozzászólsz egy sorozathoz vagy filmhez, itt kezdenek gyűlni a megtekintéseid és kedveléseid.',
+  'Tüm zamanlar': 'Mindenkori',
+  'Gönderi': 'Bejegyzések',
+  'Zaman kırılımı': 'Időbeli bontás',
+  'Son {} gün': 'Utolsó {} nap',
+  'En çok görüntülenen gönderilerin': 'Legtöbbet megtekintett bejegyzéseid',
+  'En çok beğenilen gönderilerin': 'Legtöbbet kedvelt bejegyzéseid',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'A megtekintési előzmények még nem kezdtek gyűlni; az első nap adatai holnap jelennek meg.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'A megtekintési előzmények {} óta gyűlnek ({} napnyi adat van), ezért a {} napos szám még hiányos.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'A kedvelési előzmények {} óta rögzülnek.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Ebben az időszakban nincs megjeleníthető bejegyzés.',
+  'eksik veri': 'hiányos adatok',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'A megnézett sorozatok és filmek, a számlálóid, a képernyőidőd és az egyezéskártyád nem lesznek láthatók mások számára a profilodon',
+  'Takipçi listemi gizle': 'Követőim listájának elrejtése',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Mások nem láthatják, ki követ téged; a követőid száma továbbra is látszik',
+  'Takip ettiklerimi gizle': 'Kiket követek – elrejtés',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Mások nem láthatják, kiket követsz; a követettjeid száma továbbra is látszik',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Ez a felhasználó inkább priváton tartja a követőit.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Ez a felhasználó inkább priváton tartja, kiket követ.',
 };

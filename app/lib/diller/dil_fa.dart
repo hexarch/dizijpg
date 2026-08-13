@@ -810,4 +810,66 @@ const Map<String, String> cevirilerFa = {
       'وقتی خاموش باشد کسی نمی‌تواند با شما تماس صوتی بگیرد؛ تماس‌گیرنده اعلانی می‌بیند که تماس "غیرفعال" است',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'وقتی خاموش باشد کسی نمی‌تواند با شما تماس تصویری بگیرد؛ تماس‌گیرنده اعلانی می‌بیند که تماس "غیرفعال" است',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'فعالیت من',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'پسندها، نظرها و تماشاهایت در یک جریان',
+  'Henüz hareketin yok': 'هنوز فعالیتی نیست',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'هر چه بپسندی، نظر بدهی و تماشا کنی اینجا جمع می‌شود.',
+  'Bu süzgeçte hareket yok': 'در این فیلتر فعالیتی نیست',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'نوع دیگری انتخاب کن یا به «همه» برگرد.',
+  'Hepsi': 'همه',
+  'Puan': 'امتیاز',
+  'Tepki': 'واکنش',
+  'İzleme': 'تماشا',
+  'Durum': 'وضعیت',
+  'Liste': 'فهرست',
+  'Yorum yaptın': 'نظر دادی',
+  'Yorumu beğendin': 'نظری را پسندیدی',
+  '{} puan verdin': 'امتیاز {} دادی',
+  'Tepki verdin': 'واکنش دادی',
+  'Listene ekledin': 'به فهرست افزودی',
+  'Takip etmeye başladın': 'دنبال کردن را آغاز کردی',
+  '"İzleyeceğim" işaretledin': '«خواهم دید» علامت زدی',
+  '"İzliyorum" işaretledin': '«در حال تماشا» علامت زدی',
+  '"Bitirdim" işaretledin': '«تمام کردم» علامت زدی',
+  '"Bıraktım" işaretledin': '«رها کردم» علامت زدی',
+  'Silinmiş içerik': 'محتوای حذف‌شده',
+  'şimdi': 'هم‌اکنون',
+  '{} g': '{} روز',
+  '{} y': '{} سال',
+  'İstatistiklerim': 'آمار من',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'بازدیدها و پسندهای پست‌هایت',
+  'Henüz gönderin yok': 'هنوز پستی نداری',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'وقتی روی سریال یا فیلمی نظر بنویسی، شمار بازدیدها و پسندهایت اینجا جمع می‌شود.',
+  'Tüm zamanlar': 'کل زمان',
+  'Gönderi': 'پست‌ها',
+  'Zaman kırılımı': 'تفکیک زمانی',
+  'Son {} gün': '{} روز اخیر',
+  'En çok görüntülenen gönderilerin': 'پربازدیدترین پست‌هایت',
+  'En çok beğenilen gönderilerin': 'پرپسندترین پست‌هایت',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'تاریخچه بازدیدها هنوز شروع به جمع شدن نکرده است؛ داده روز نخست فردا نمایش داده می‌شود.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'تاریخچه بازدیدها از {} در حال جمع شدن است ({} روز داده موجود است)، بنابراین عدد {} روزه هنوز ناقص است.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'تاریخچه پسندها از {} ثبت شده است.',
+  'Bu dönemde gösterilecek gönderi yok.': 'برای این بازه پستی برای نمایش نیست.',
+  'eksik veri': 'داده ناقص',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'سریال‌ها و فیلم‌هایی که دیده‌ای، شمارنده‌های تماشا، زمان تماشا و کارت تطابق در پروفایلت برای دیگران نمایش داده نمی‌شود',
+  'Takipçi listemi gizle': 'پنهان کردن فهرست دنبال‌کنندگانم',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'دیگران نمی‌توانند ببینند چه کسانی دنبالت می‌کنند؛ شمار دنبال‌کنندگانت همچنان دیده می‌شود',
+  'Takip ettiklerimi gizle': 'پنهان کردن کسانی که دنبال می‌کنم',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'دیگران نمی‌توانند ببینند چه کسانی را دنبال می‌کنی؛ شمار دنبال‌شده‌هایت همچنان دیده می‌شود',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'این کاربر ترجیح می‌دهد دنبال‌کنندگانش پنهان بمانند.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'این کاربر ترجیح می‌دهد کسانی که دنبال می‌کند پنهان بمانند.',
 };

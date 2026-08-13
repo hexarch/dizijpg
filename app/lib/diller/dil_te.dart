@@ -809,4 +809,67 @@ const Map<String, String> cevirilerTe = {
       'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వాయిస్ కాల్ చేయలేరు; కాల్ చేసేవారికి "నిలిపివేయబడింది" అనే సూచన కనిపిస్తుంది',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ఆఫ్‌లో ఉంటే ఎవరూ మీకు వీడియో కాల్ చేయలేరు; కాల్ చేసేవారికి "నిలిపివేయబడింది" అనే సూచన కనిపిస్తుంది',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'నా కార్యకలాపం',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'నీ లైక్‌లు, కామెంట్లు, చూసినవి ఒకే చోట',
+  'Henüz hareketin yok': 'ఇంకా కార్యకలాపం లేదు',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'నువ్వు లైక్ చేసినవి, కామెంట్ చేసినవి, చూసినవి అన్నీ ఇక్కడ చేరతాయి.',
+  'Bu süzgeçte hareket yok': 'ఈ ఫిల్టర్‌లో కార్యకలాపం లేదు',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'మరో రకాన్ని ఎంచుకో లేదా "అన్నీ"కి తిరిగి వెళ్లు.',
+  'Hepsi': 'అన్నీ',
+  'Puan': 'రేటింగ్',
+  'Tepki': 'రియాక్షన్',
+  'İzleme': 'చూసినవి',
+  'Durum': 'స్థితి',
+  'Liste': 'జాబితా',
+  'Yorum yaptın': 'కామెంట్ చేశావు',
+  'Yorumu beğendin': 'కామెంట్‌ను లైక్ చేశావు',
+  '{} puan verdin': '{} రేటింగ్ ఇచ్చావు',
+  'Tepki verdin': 'రియాక్ట్ చేశావు',
+  'Listene ekledin': 'జాబితాకు జోడించావు',
+  'Takip etmeye başladın': 'ఫాలో అవడం మొదలుపెట్టావు',
+  '"İzleyeceğim" işaretledin': '"చూస్తాను" అని గుర్తు పెట్టావు',
+  '"İzliyorum" işaretledin': '"చూస్తున్నాను" అని గుర్తు పెట్టావు',
+  '"Bitirdim" işaretledin': '"పూర్తి చేశాను" అని గుర్తు పెట్టావు',
+  '"Bıraktım" işaretledin': '"వదిలేశాను" అని గుర్తు పెట్టావు',
+  'Silinmiş içerik': 'తొలగించిన కంటెంట్',
+  'şimdi': 'ఇప్పుడు',
+  '{} g': '{} రో',
+  '{} y': '{} సం',
+  'İstatistiklerim': 'నా గణాంకాలు',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'నీ పోస్టుల వీక్షణలు, లైక్‌లు',
+  'Henüz gönderin yok': 'నీకు ఇంకా పోస్టులు లేవు',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'నువ్వు ఏదైనా సిరీస్ లేదా సినిమాకు కామెంట్ రాస్తే, నీ వీక్షణలు, లైక్‌ల సంఖ్య ఇక్కడ పేరుకోవడం మొదలవుతుంది.',
+  'Tüm zamanlar': 'మొత్తం కాలం',
+  'Gönderi': 'పోస్టులు',
+  'Zaman kırılımı': 'కాల విభజన',
+  'Son {} gün': 'గత {} రోజులు',
+  'En çok görüntülenen gönderilerin': 'నీ అత్యధికంగా చూసిన పోస్టులు',
+  'En çok beğenilen gönderilerin': 'నీ అత్యధిక లైక్‌లు వచ్చిన పోస్టులు',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'వీక్షణల చరిత్ర ఇంకా పేరుకోవడం మొదలవలేదు; మొదటి రోజు డేటా రేపు కనిపిస్తుంది.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'వీక్షణల చరిత్ర {} నుంచి పేరుకుంటోంది ({} రోజుల డేటా ఉంది), అందుకే {} రోజుల సంఖ్య ఇంకా అసంపూర్ణం.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'లైక్‌ల చరిత్ర {} నుంచి నమోదవుతోంది.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'ఈ కాలానికి చూపించడానికి పోస్టులు లేవు.',
+  'eksik veri': 'అసంపూర్ణ డేటా',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'నీ ప్రొఫైల్‌లో చూసిన సిరీస్‌లు, సినిమాలు, వీక్షణ కౌంటర్లు, స్క్రీన్ టైమ్, మ్యాచ్ కార్డు ఇతరులకు కనిపించవు',
+  'Takipçi listemi gizle': 'నా ఫాలోవర్ల జాబితాను దాచు',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'నిన్ను ఎవరు ఫాలో అవుతున్నారో ఇతరులు చూడలేరు; నీ ఫాలోవర్ల సంఖ్య కనిపిస్తూనే ఉంటుంది',
+  'Takip ettiklerimi gizle': 'నేను ఎవరిని ఫాలో అవుతున్నానో దాచు',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'నువ్వు ఎవరిని ఫాలో అవుతున్నావో ఇతరులు చూడలేరు; నీ ఫాలోయింగ్ సంఖ్య కనిపిస్తూనే ఉంటుంది',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ఈ వినియోగదారు తన ఫాలోవర్లను గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ఈ వినియోగదారు ఎవరిని ఫాలో అవుతున్నారో గోప్యంగా ఉంచడాన్ని ఇష్టపడతారు.',
 };

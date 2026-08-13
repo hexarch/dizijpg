@@ -815,4 +815,66 @@ const Map<String, String> cevirilerRu = {
       'Когда выключено, тебе не смогут позвонить голосом; звонящий увидит уведомление "отключено"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Когда выключено, тебе не смогут позвонить по видео; звонящий увидит уведомление "отключено"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Моя активность',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Твои лайки, комментарии и просмотры в одной ленте',
+  'Henüz hareketin yok': 'Пока нет активности',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Здесь собирается всё, что ты лайкаешь, комментируешь и смотришь.',
+  'Bu süzgeçte hareket yok': 'В этом фильтре нет активности',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Выбери другой тип или вернись к «Все».',
+  'Hepsi': 'Все',
+  'Puan': 'Оценка',
+  'Tepki': 'Реакция',
+  'İzleme': 'Просмотр',
+  'Durum': 'Статус',
+  'Liste': 'Список',
+  'Yorum yaptın': 'Комментарий добавлен',
+  'Yorumu beğendin': 'Лайк комментарию',
+  '{} puan verdin': 'Оценка {}',
+  'Tepki verdin': 'Реакция',
+  'Listene ekledin': 'Добавлено в список',
+  'Takip etmeye başladın': 'Новая подписка',
+  '"İzleyeceğim" işaretledin': 'Отмечено «Буду смотреть»',
+  '"İzliyorum" işaretledin': 'Отмечено «Смотрю»',
+  '"Bitirdim" işaretledin': 'Отмечено «Досмотрено»',
+  '"Bıraktım" işaretledin': 'Отмечено «Брошено»',
+  'Silinmiş içerik': 'Удалённое содержимое',
+  'şimdi': 'сейчас',
+  '{} g': '{} д',
+  '{} y': '{} г',
+  'İstatistiklerim': 'Моя статистика',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Просмотры и лайки твоих публикаций',
+  'Henüz gönderin yok': 'У тебя пока нет публикаций',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Как только ты прокомментируешь сериал или фильм, здесь начнут накапливаться просмотры и лайки.',
+  'Tüm zamanlar': 'За всё время',
+  'Gönderi': 'Публикации',
+  'Zaman kırılımı': 'Разбивка по времени',
+  'Son {} gün': 'Последние {} дней',
+  'En çok görüntülenen gönderilerin': 'Твои самые просматриваемые публикации',
+  'En çok beğenilen gönderilerin': 'Твои самые залайканные публикации',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'История просмотров ещё не начала накапливаться; данные за первый день появятся завтра.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'История просмотров накапливается с {} (данных за {} дней), поэтому число за {} дней пока неполное.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'История лайков ведётся с {}.',
+  'Bu dönemde gösterilecek gönderi yok.': 'За этот период нет публикаций.',
+  'eksik veri': 'неполные данные',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Просмотренные сериалы и фильмы, счётчики просмотров, экранное время и карточка совпадения не будут видны другим в твоём профиле',
+  'Takipçi listemi gizle': 'Скрыть список моих подписчиков',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Другие не увидят, кто на тебя подписан; число подписчиков остаётся видимым',
+  'Takip ettiklerimi gizle': 'Скрыть мои подписки',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Другие не увидят, на кого ты подписан; число подписок остаётся видимым',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Этот пользователь предпочитает не показывать своих подписчиков.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Этот пользователь предпочитает не показывать свои подписки.',
 };

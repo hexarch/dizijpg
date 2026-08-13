@@ -814,4 +814,68 @@ const Map<String, String> cevirilerSv = {
       'När det är av kan ingen ringa dig med röst; den som ringer ser meddelandet "avstängda"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'När det är av kan ingen videoringa dig; den som ringer ser meddelandet "avstängda"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Min aktivitet',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Dina gillanden, kommentarer och visningar på ett ställe',
+  'Henüz hareketin yok': 'Ingen aktivitet än',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Allt du gillar, kommenterar och ser samlas här.',
+  'Bu süzgeçte hareket yok': 'Ingen aktivitet i det här filtret',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Välj en annan typ eller gå tillbaka till "Alla".',
+  'Hepsi': 'Alla',
+  'Puan': 'Betyg',
+  'Tepki': 'Reaktion',
+  'İzleme': 'Sett',
+  'Durum': 'Status',
+  'Liste': 'Lista',
+  'Yorum yaptın': 'Kommenterat',
+  'Yorumu beğendin': 'Gillat en kommentar',
+  '{} puan verdin': 'Betygsatt med {}',
+  'Tepki verdin': 'Reagerat',
+  'Listene ekledin': 'Lagt till i en lista',
+  'Takip etmeye başladın': 'Började följa',
+  '"İzleyeceğim" işaretledin': 'Markerat som "Vill se"',
+  '"İzliyorum" işaretledin': 'Markerat som "Tittar"',
+  '"Bitirdim" işaretledin': 'Markerat som "Sett klart"',
+  '"Bıraktım" işaretledin': 'Markerat som "Slutat titta"',
+  'Silinmiş içerik': 'Borttaget innehåll',
+  'şimdi': 'nu',
+  '{} g': '{} d',
+  '{} y': '{} år',
+  'İstatistiklerim': 'Min statistik',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Visningar och gillanden på dina inlägg',
+  'Henüz gönderin yok': 'Du har inga inlägg än',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'När du kommenterar en serie eller film börjar dina visningar och gillanden samlas här.',
+  'Tüm zamanlar': 'Alla tider',
+  'Gönderi': 'Inlägg',
+  'Zaman kırılımı': 'Uppdelning över tid',
+  'Son {} gün': 'Senaste {} dagarna',
+  'En çok görüntülenen gönderilerin': 'Dina mest visade inlägg',
+  'En çok beğenilen gönderilerin': 'Dina mest gillade inlägg',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Visningshistoriken har inte börjat byggas upp än; första dagens data visas i morgon.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Visningshistoriken har byggts upp sedan {} ({} dagars data finns), så siffran för {} dagar är fortfarande ofullständig.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Gillandehistoriken har registrerats sedan {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Inga inlägg att visa för den här perioden.',
+  'eksik veri': 'ofullständiga data',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Serier och filmer du har sett, dina räknare, din skärmtid och ditt matchningskort visas inte för andra på din profil',
+  'Takipçi listemi gizle': 'Dölj min följarlista',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Andra kan inte se vilka som följer dig; ditt antal följare förblir synligt',
+  'Takip ettiklerimi gizle': 'Dölj vilka jag följer',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Andra kan inte se vilka du följer; ditt antal följda förblir synligt',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Den här användaren föredrar att hålla sina följare privata.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Den här användaren föredrar att hålla privat vilka hen följer.',
 };

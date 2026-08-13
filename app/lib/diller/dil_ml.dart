@@ -813,4 +813,69 @@ const Map<String, String> cevirilerMl = {
       'ഓഫ് ആയിരിക്കുമ്പോൾ ആർക്കും നിങ്ങളെ വോയ്‌സ് കോൾ ചെയ്യാനാവില്ല; വിളിക്കുന്നയാൾ "പ്രവർത്തനരഹിതം" എന്ന അറിയിപ്പ് കാണും',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ഓഫ് ആയിരിക്കുമ്പോൾ ആർക്കും നിങ്ങളെ വീഡിയോ കോൾ ചെയ്യാനാവില്ല; വിളിക്കുന്നയാൾ "പ്രവർത്തനരഹിതം" എന്ന അറിയിപ്പ് കാണും',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'എന്റെ പ്രവർത്തനം',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'നിന്റെ ലൈക്കുകൾ, കമന്റുകൾ, കണ്ടവ ഒരിടത്ത്',
+  'Henüz hareketin yok': 'ഇതുവരെ പ്രവർത്തനമില്ല',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'നീ ലൈക്ക് ചെയ്യുന്നതും കമന്റ് ചെയ്യുന്നതും കാണുന്നതും ഇവിടെ കൂടും.',
+  'Bu süzgeçte hareket yok': 'ഈ ഫിൽട്ടറിൽ പ്രവർത്തനമില്ല',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'മറ്റൊരു തരം തിരഞ്ഞെടുക്കുക അല്ലെങ്കിൽ "എല്ലാം" എന്നതിലേക്ക് മടങ്ങുക.',
+  'Hepsi': 'എല്ലാം',
+  'Puan': 'റേറ്റിംഗ്',
+  'Tepki': 'പ്രതികരണം',
+  'İzleme': 'കണ്ടത്',
+  'Durum': 'നില',
+  'Liste': 'ലിസ്റ്റ്',
+  'Yorum yaptın': 'കമന്റ് ചെയ്തു',
+  'Yorumu beğendin': 'ഒരു കമന്റ് ലൈക്ക് ചെയ്തു',
+  '{} puan verdin': '{} റേറ്റിംഗ് നൽകി',
+  'Tepki verdin': 'പ്രതികരിച്ചു',
+  'Listene ekledin': 'ലിസ്റ്റിൽ ചേർത്തു',
+  'Takip etmeye başladın': 'ഫോളോ ചെയ്യാൻ തുടങ്ങി',
+  '"İzleyeceğim" işaretledin': '"കാണാൻ പോകുന്നു" എന്ന് അടയാളപ്പെടുത്തി',
+  '"İzliyorum" işaretledin': '"കണ്ടുകൊണ്ടിരിക്കുന്നു" എന്ന് അടയാളപ്പെടുത്തി',
+  '"Bitirdim" işaretledin': '"കണ്ടു തീർത്തു" എന്ന് അടയാളപ്പെടുത്തി',
+  '"Bıraktım" işaretledin': '"നിർത്തി" എന്ന് അടയാളപ്പെടുത്തി',
+  'Silinmiş içerik': 'ഇല്ലാതാക്കിയ ഉള്ളടക്കം',
+  'şimdi': 'ഇപ്പോൾ',
+  '{} g': '{} ദി',
+  '{} y': '{} വ',
+  'İstatistiklerim': 'എന്റെ സ്ഥിതിവിവരം',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'നിന്റെ പോസ്റ്റുകളുടെ കാഴ്ചകളും ലൈക്കുകളും',
+  'Henüz gönderin yok': 'നിനക്ക് ഇതുവരെ പോസ്റ്റുകളില്ല',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ഒരു സീരീസിനോ സിനിമയ്ക്കോ കമന്റ് എഴുതിയാൽ, നിന്റെ കാഴ്ചകളുടെയും ലൈക്കുകളുടെയും എണ്ണം ഇവിടെ കൂടിത്തുടങ്ങും.',
+  'Tüm zamanlar': 'എക്കാലവും',
+  'Gönderi': 'പോസ്റ്റുകൾ',
+  'Zaman kırılımı': 'കാലാടിസ്ഥാനത്തിലുള്ള വിഭജനം',
+  'Son {} gün': 'കഴിഞ്ഞ {} ദിവസം',
+  'En çok görüntülenen gönderilerin': 'ഏറ്റവും കൂടുതൽ കണ്ട നിന്റെ പോസ്റ്റുകൾ',
+  'En çok beğenilen gönderilerin':
+      'ഏറ്റവും കൂടുതൽ ലൈക്ക് കിട്ടിയ നിന്റെ പോസ്റ്റുകൾ',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'കാഴ്ചകളുടെ ചരിത്രം ഇനിയും കൂടിത്തുടങ്ങിയിട്ടില്ല; ആദ്യ ദിവസത്തെ വിവരം നാളെ കാണാം.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'കാഴ്ചകളുടെ ചരിത്രം {} മുതൽ കൂടിവരുന്നു ({} ദിവസത്തെ വിവരമുണ്ട്), അതിനാൽ {} ദിവസത്തെ എണ്ണം ഇനിയും അപൂർണമാണ്.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'ലൈക്കുകളുടെ ചരിത്രം {} മുതൽ രേഖപ്പെടുത്തുന്നു.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'ഈ കാലയളവിൽ കാണിക്കാൻ പോസ്റ്റുകളില്ല.',
+  'eksik veri': 'അപൂർണ വിവരം',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'നിന്റെ പ്രൊഫൈലിലെ കണ്ട സീരീസുകളും സിനിമകളും, കാഴ്ചാ കൗണ്ടറുകൾ, സ്ക്രീൻ സമയം, പൊരുത്ത കാർഡ് എന്നിവ മറ്റുള്ളവർക്ക് കാണില്ല',
+  'Takipçi listemi gizle': 'എന്റെ ഫോളോവർ ലിസ്റ്റ് മറയ്ക്കുക',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'നിന്നെ ആരൊക്കെ ഫോളോ ചെയ്യുന്നു എന്ന് മറ്റുള്ളവർക്ക് കാണാനാകില്ല; നിന്റെ ഫോളോവർ എണ്ണം കാണാം',
+  'Takip ettiklerimi gizle': 'ഞാൻ ഫോളോ ചെയ്യുന്നവരെ മറയ്ക്കുക',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'നീ ആരെയൊക്കെ ഫോളോ ചെയ്യുന്നു എന്ന് മറ്റുള്ളവർക്ക് കാണാനാകില്ല; നിന്റെ ഫോളോയിംഗ് എണ്ണം കാണാം',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ഈ ഉപയോക്താവ് ഫോളോവർമാരെ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ഈ ഉപയോക്താവ് താൻ ഫോളോ ചെയ്യുന്നവരെ സ്വകാര്യമായി സൂക്ഷിക്കാൻ ഇഷ്ടപ്പെടുന്നു.',
 };

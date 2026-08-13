@@ -821,4 +821,70 @@ const Map<String, String> cevirilerEl = {
       'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει φωνητικά· ο καλών βλέπει ειδοποίηση ότι οι κλήσεις είναι "απενεργοποιημένες"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Όταν είναι ανενεργό, κανείς δεν μπορεί να σε καλέσει με βίντεο· ο καλών βλέπει ειδοποίηση ότι οι βιντεοκλήσεις είναι "απενεργοποιημένες"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Η δραστηριότητά μου',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Τα «μου αρέσει», τα σχόλια και οι προβολές σου σε μία ροή',
+  'Henüz hareketin yok': 'Καμία δραστηριότητα ακόμα',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Ό,τι σου αρέσει, σχολιάζεις και βλέπεις συγκεντρώνεται εδώ.',
+  'Bu süzgeçte hareket yok': 'Καμία δραστηριότητα σε αυτό το φίλτρο',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Διάλεξε άλλον τύπο ή γύρνα στο «Όλα».',
+  'Hepsi': 'Όλα',
+  'Puan': 'Βαθμολογία',
+  'Tepki': 'Αντίδραση',
+  'İzleme': 'Προβολή',
+  'Durum': 'Κατάσταση',
+  'Liste': 'Λίστα',
+  'Yorum yaptın': 'Σχολίασες',
+  'Yorumu beğendin': 'Σου άρεσε ένα σχόλιο',
+  '{} puan verdin': 'Βαθμολόγησες με {}',
+  'Tepki verdin': 'Αντέδρασες',
+  'Listene ekledin': 'Πρόσθεσες σε λίστα',
+  'Takip etmeye başladın': 'Ξεκίνησες να ακολουθείς',
+  '"İzleyeceğim" işaretledin': 'Σημειώθηκε «Θα το δω»',
+  '"İzliyorum" işaretledin': 'Σημειώθηκε «Το βλέπω»',
+  '"Bitirdim" işaretledin': 'Σημειώθηκε «Το τελείωσα»',
+  '"Bıraktım" işaretledin': 'Σημειώθηκε «Το παράτησα»',
+  'Silinmiş içerik': 'Διαγραμμένο περιεχόμενο',
+  'şimdi': 'τώρα',
+  '{} g': '{} ημ.',
+  '{} y': '{} έτ.',
+  'İstatistiklerim': 'Τα στατιστικά μου',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Προβολές και «μου αρέσει» στις δημοσιεύσεις σου',
+  'Henüz gönderin yok': 'Δεν έχεις ακόμα δημοσιεύσεις',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Μόλις σχολιάσεις μια σειρά ή μια ταινία, οι προβολές και τα «μου αρέσει» σου αρχίζουν να συγκεντρώνονται εδώ.',
+  'Tüm zamanlar': 'Όλων των εποχών',
+  'Gönderi': 'Δημοσιεύσεις',
+  'Zaman kırılımı': 'Ανάλυση ανά περίοδο',
+  'Son {} gün': 'Τελευταίες {} ημέρες',
+  'En çok görüntülenen gönderilerin':
+      'Οι δημοσιεύσεις σου με τις περισσότερες προβολές',
+  'En çok beğenilen gönderilerin':
+      'Οι δημοσιεύσεις σου με τα περισσότερα «μου αρέσει»',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Το ιστορικό προβολών δεν έχει αρχίσει ακόμα να συγκεντρώνεται· τα δεδομένα της πρώτης ημέρας εμφανίζονται αύριο.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Το ιστορικό προβολών συγκεντρώνεται από τις {} (υπάρχουν δεδομένα {} ημερών), οπότε ο αριθμός των {} ημερών είναι ακόμα ελλιπής.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Το ιστορικό των «μου αρέσει» καταγράφεται από τις {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Δεν υπάρχουν δημοσιεύσεις για αυτήν την περίοδο.',
+  'eksik veri': 'ελλιπή δεδομένα',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Οι σειρές και οι ταινίες που έχεις δει, οι μετρητές προβολών, ο χρόνος οθόνης και η κάρτα συμβατότητας δεν θα είναι ορατά σε άλλους στο προφίλ σου',
+  'Takipçi listemi gizle': 'Απόκρυψη της λίστας ακολούθων μου',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Οι άλλοι δεν μπορούν να δουν ποιοι σε ακολουθούν· το πλήθος των ακολούθων σου παραμένει ορατό',
+  'Takip ettiklerimi gizle': 'Απόκρυψη όσων ακολουθώ',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Οι άλλοι δεν μπορούν να δουν ποιους ακολουθείς· το πλήθος όσων ακολουθείς παραμένει ορατό',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Αυτός ο χρήστης προτιμά να κρατά τους ακολούθους ιδιωτικούς.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Αυτός ο χρήστης προτιμά να κρατά ιδιωτικούς όσους ακολουθεί.',
 };

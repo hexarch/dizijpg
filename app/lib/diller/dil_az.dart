@@ -806,4 +806,68 @@ const Map<String, String> cevirilerAz = {
       'Söndürüldükdə heç kim sənə səsli zəng edə bilməz; zəng edən "deaktiv" bildirişi görür',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Söndürüldükdə heç kim sənə video zəng edə bilməz; zəng edən "deaktiv" bildirişi görür',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Fəaliyyətim',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Bəyənmələrin, şərhlərin və izlədiklərin bir axında',
+  'Henüz hareketin yok': 'Hələ fəaliyyət yoxdur',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Bəyəndiyin, şərh yazdığın və izlədiyin hər şey burada toplanır.',
+  'Bu süzgeçte hareket yok': 'Bu filtrdə fəaliyyət yoxdur',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Başqa növ seç və ya "Hamısı"na qayıt.',
+  'Hepsi': 'Hamısı',
+  'Puan': 'Reytinq',
+  'Tepki': 'Reaksiya',
+  'İzleme': 'İzləmə',
+  'Durum': 'Status',
+  'Liste': 'Siyahı',
+  'Yorum yaptın': 'Şərh yazdın',
+  'Yorumu beğendin': 'Şərhi bəyəndin',
+  '{} puan verdin': '{} bal verdin',
+  'Tepki verdin': 'Reaksiya verdin',
+  'Listene ekledin': 'Siyahıya əlavə etdin',
+  'Takip etmeye başladın': 'İzləməyə başladın',
+  '"İzleyeceğim" işaretledin': '"İzləyəcəyəm" işarələdin',
+  '"İzliyorum" işaretledin': '"İzləyirəm" işarələdin',
+  '"Bitirdim" işaretledin': '"Bitirdim" işarələdin',
+  '"Bıraktım" işaretledin': '"Yarımçıq qoydum" işarələdin',
+  'Silinmiş içerik': 'Silinmiş məzmun',
+  'şimdi': 'indi',
+  '{} g': '{} gün',
+  '{} y': '{} il',
+  'İstatistiklerim': 'Statistikam',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Paylaşımlarının baxış və bəyənmələri',
+  'Henüz gönderin yok': 'Hələ paylaşımın yoxdur',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Hər hansı serial və ya filmə şərh yazdığın anda baxış və bəyənmə sayların burada toplanmağa başlayır.',
+  'Tüm zamanlar': 'Bütün zamanlar',
+  'Gönderi': 'Paylaşımlar',
+  'Zaman kırılımı': 'Zaman bölgüsü',
+  'Son {} gün': 'Son {} gün',
+  'En çok görüntülenen gönderilerin': 'Ən çox baxılan paylaşımların',
+  'En çok beğenilen gönderilerin': 'Ən çox bəyənilən paylaşımların',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Baxış tarixçəsi hələ toplanmağa başlamayıb; ilk günün məlumatı sabah görünür.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Baxış tarixçəsi {} tarixindən toplanır ({} günlük məlumat var), buna görə {} günlük rəqəm hələ natamamdır.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Bəyənmə tarixçəsi {} tarixindən qeydə alınır.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Bu dövr üçün göstəriləcək paylaşım yoxdur.',
+  'eksik veri': 'natamam məlumat',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Profilindəki izlədiyin serial və filmlər, izləmə sayğacların, ekran vaxtın və uyğunluq kartın başqalarına görünməyəcək',
+  'Takipçi listemi gizle': 'İzləyicilər siyahımı gizlət',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Səni kimlərin izlədiyini başqaları görə bilməz; izləyici sayın görünməyə davam edir',
+  'Takip ettiklerimi gizle': 'İzlədiklərimi gizlət',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Kimləri izlədiyini başqaları görə bilməz; izləmə sayın görünməyə davam edir',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Bu istifadəçi izləyicilərini gizli saxlamağa üstünlük verir.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Bu istifadəçi kimləri izlədiyini gizli saxlamağa üstünlük verir.',
 };

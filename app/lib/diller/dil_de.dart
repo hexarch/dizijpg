@@ -828,4 +828,68 @@ const Map<String, String> cevirilerDe = {
       'Wenn aus, kann dich niemand per Sprache anrufen; Anrufer sehen den Hinweis "deaktiviert"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Wenn aus, kann dich niemand per Video anrufen; Anrufer sehen den Hinweis "deaktiviert"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Meine Aktivitäten',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Deine Likes, Kommentare und Ansichten an einem Ort',
+  'Henüz hareketin yok': 'Noch keine Aktivität',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Alles, was du likest, kommentierst und siehst, sammelt sich hier.',
+  'Bu süzgeçte hareket yok': 'Keine Aktivität in diesem Filter',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Wähle einen anderen Typ oder kehre zu „Alle“ zurück.',
+  'Hepsi': 'Alle',
+  'Puan': 'Bewertung',
+  'Tepki': 'Reaktion',
+  'İzleme': 'Gesehen',
+  'Durum': 'Status',
+  'Liste': 'Liste',
+  'Yorum yaptın': 'Kommentiert',
+  'Yorumu beğendin': 'Kommentar geliked',
+  '{} puan verdin': 'Mit {} bewertet',
+  'Tepki verdin': 'Reagiert',
+  'Listene ekledin': 'Zur Liste hinzugefügt',
+  'Takip etmeye başladın': 'Du folgst jetzt',
+  '"İzleyeceğim" işaretledin': 'Als „Will ich sehen“ markiert',
+  '"İzliyorum" işaretledin': 'Als „Schaue ich“ markiert',
+  '"Bitirdim" işaretledin': 'Als „Abgeschlossen“ markiert',
+  '"Bıraktım" işaretledin': 'Als „Abgebrochen“ markiert',
+  'Silinmiş içerik': 'Gelöschter Inhalt',
+  'şimdi': 'jetzt',
+  '{} g': '{} Tg.',
+  '{} y': '{} J.',
+  'İstatistiklerim': 'Meine Statistiken',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Aufrufe und Likes deiner Beiträge',
+  'Henüz gönderin yok': 'Du hast noch keine Beiträge',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Sobald du eine Serie oder einen Film kommentierst, sammeln sich hier deine Aufrufe und Likes.',
+  'Tüm zamanlar': 'Gesamt',
+  'Gönderi': 'Beiträge',
+  'Zaman kırılımı': 'Zeitliche Aufschlüsselung',
+  'Son {} gün': 'Letzte {} Tage',
+  'En çok görüntülenen gönderilerin': 'Deine meistgesehenen Beiträge',
+  'En çok beğenilen gönderilerin': 'Deine meistgelikten Beiträge',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Der Aufrufverlauf hat noch nicht begonnen; die Daten des ersten Tages erscheinen morgen.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Der Aufrufverlauf sammelt sich seit {} ({} Tage an Daten), daher ist die Zahl für {} Tage noch unvollständig.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Der Like-Verlauf wird seit {} aufgezeichnet.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Für diesen Zeitraum gibt es keine Beiträge.',
+  'eksik veri': 'unvollständige Daten',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Serien und Filme, die du gesehen hast, deine Zähler, deine Bildschirmzeit und deine Übereinstimmungskarte sind für andere in deinem Profil nicht sichtbar',
+  'Takipçi listemi gizle': 'Meine Follower-Liste verbergen',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Andere können nicht sehen, wer dir folgt; deine Followerzahl bleibt sichtbar',
+  'Takip ettiklerimi gizle': 'Verbergen, wem ich folge',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Andere können nicht sehen, wem du folgst; deine Anzahl an Abos bleibt sichtbar',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Dieser Nutzer hält die Followerliste lieber privat.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Dieser Nutzer hält lieber privat, wem er folgt.',
 };

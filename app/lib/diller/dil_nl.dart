@@ -817,4 +817,68 @@ const Map<String, String> cevirilerNl = {
       'Als dit uit staat, kan niemand je bellen; bellers zien de melding "uitgeschakeld"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Als dit uit staat, kan niemand je videobellen; bellers zien de melding "uitgeschakeld"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Mijn activiteit',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Je likes, reacties en kijkgeschiedenis op één plek',
+  'Henüz hareketin yok': 'Nog geen activiteit',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Alles wat je liket, becommentarieert en kijkt, verzamelt zich hier.',
+  'Bu süzgeçte hareket yok': 'Geen activiteit in dit filter',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Kies een ander type of ga terug naar "Alles".',
+  'Hepsi': 'Alles',
+  'Puan': 'Beoordeling',
+  'Tepki': 'Reactie-emoji',
+  'İzleme': 'Gekeken',
+  'Durum': 'Status',
+  'Liste': 'Lijst',
+  'Yorum yaptın': 'Gereageerd',
+  'Yorumu beğendin': 'Reactie geliket',
+  '{} puan verdin': 'Beoordeeld met {}',
+  'Tepki verdin': 'Gereageerd met emoji',
+  'Listene ekledin': 'Toegevoegd aan een lijst',
+  'Takip etmeye başladın': 'Je volgt nu',
+  '"İzleyeceğim" işaretledin': 'Gemarkeerd als "Wil ik zien"',
+  '"İzliyorum" işaretledin': 'Gemarkeerd als "Ik kijk"',
+  '"Bitirdim" işaretledin': 'Gemarkeerd als "Afgerond"',
+  '"Bıraktım" işaretledin': 'Gemarkeerd als "Gestopt"',
+  'Silinmiş içerik': 'Verwijderde inhoud',
+  'şimdi': 'nu',
+  '{} g': '{} d',
+  '{} y': '{} j',
+  'İstatistiklerim': 'Mijn statistieken',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Weergaven en likes van je posts',
+  'Henüz gönderin yok': 'Je hebt nog geen posts',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Zodra je een serie of film becommentarieert, beginnen je weergaven en likes zich hier op te bouwen.',
+  'Tüm zamanlar': 'Aller tijden',
+  'Gönderi': 'Posts',
+  'Zaman kırılımı': 'Verdeling per periode',
+  'Son {} gün': 'Laatste {} dagen',
+  'En çok görüntülenen gönderilerin': 'Je meest bekeken posts',
+  'En çok beğenilen gönderilerin': 'Je meest gelikete posts',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'De weergavegeschiedenis is nog niet begonnen; de gegevens van de eerste dag verschijnen morgen.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'De weergavegeschiedenis bouwt zich op sinds {} ({} dagen aan gegevens), dus het aantal over {} dagen is nog onvolledig.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'De likegeschiedenis wordt bijgehouden sinds {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Geen posts om te tonen voor deze periode.',
+  'eksik veri': 'onvolledige gegevens',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Series en films die je hebt gekeken, je kijktellers, je kijktijd en je matchkaart zijn voor anderen niet zichtbaar op je profiel',
+  'Takipçi listemi gizle': 'Mijn volgerslijst verbergen',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Anderen kunnen niet zien wie jou volgt; je aantal volgers blijft zichtbaar',
+  'Takip ettiklerimi gizle': 'Verbergen wie ik volg',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Anderen kunnen niet zien wie jij volgt; je aantal volgend blijft zichtbaar',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Deze gebruiker houdt de volgerslijst liever privé.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Deze gebruiker houdt liever privé wie hij volgt.',
 };

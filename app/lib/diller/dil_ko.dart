@@ -788,4 +788,63 @@ const Map<String, String> cevirilerKo = {
       '끄면 아무도 음성 통화를 걸 수 없습니다. 거는 사람에게 "사용 중지" 안내가 표시됩니다',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       '끄면 아무도 영상 통화를 걸 수 없습니다. 거는 사람에게 "사용 중지" 안내가 표시됩니다',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': '내 활동',
+  'Beğenilerin, yorumların, izlemelerin tek akışta': '좋아요, 댓글, 시청 기록을 한 흐름에서',
+  'Henüz hareketin yok': '아직 활동이 없어요',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      '좋아요를 누르고, 댓글을 달고, 시청한 모든 것이 여기에 쌓여요.',
+  'Bu süzgeçte hareket yok': '이 필터에는 활동이 없어요',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': '다른 종류를 고르거나 "전체"로 돌아가세요.',
+  'Hepsi': '전체',
+  'Puan': '평점',
+  'Tepki': '반응',
+  'İzleme': '시청',
+  'Durum': '상태',
+  'Liste': '목록',
+  'Yorum yaptın': '댓글을 남겼어요',
+  'Yorumu beğendin': '댓글에 좋아요를 눌렀어요',
+  '{} puan verdin': '{}점을 줬어요',
+  'Tepki verdin': '반응을 남겼어요',
+  'Listene ekledin': '목록에 추가했어요',
+  'Takip etmeye başladın': '팔로우를 시작했어요',
+  '"İzleyeceğim" işaretledin': '"볼래요"로 표시했어요',
+  '"İzliyorum" işaretledin': '"보는 중"으로 표시했어요',
+  '"Bitirdim" işaretledin': '"다 봤어요"로 표시했어요',
+  '"Bıraktım" işaretledin': '"하차했어요"로 표시했어요',
+  'Silinmiş içerik': '삭제된 콘텐츠',
+  'şimdi': '방금',
+  '{} g': '{}일',
+  '{} y': '{}년',
+  'İstatistiklerim': '내 통계',
+  'Gönderilerinin görüntülenmesi ve beğenisi': '내 게시물의 조회수와 좋아요',
+  'Henüz gönderin yok': '아직 게시물이 없어요',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      '시리즈나 영화에 댓글을 남기면 조회수와 좋아요 수가 여기에 쌓이기 시작해요.',
+  'Tüm zamanlar': '전체 기간',
+  'Gönderi': '게시물',
+  'Zaman kırılımı': '기간별 분석',
+  'Son {} gün': '최근 {}일',
+  'En çok görüntülenen gönderilerin': '조회수가 가장 높은 게시물',
+  'En çok beğenilen gönderilerin': '좋아요가 가장 많은 게시물',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      '조회수 기록이 아직 쌓이기 시작하지 않았어요. 첫날 데이터는 내일 나타나요.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      '조회수 기록은 {}부터 쌓이고 있어요({}일치 데이터). 그래서 {}일 수치는 아직 불완전해요.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': '좋아요 기록은 {}부터 저장돼요.',
+  'Bu dönemde gösterilecek gönderi yok.': '이 기간에 표시할 게시물이 없어요.',
+  'eksik veri': '불완전한 데이터',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      '프로필의 시청한 시리즈와 영화, 시청 카운터, 시청 시간, 궁합 카드가 다른 사람에게 보이지 않아요',
+  'Takipçi listemi gizle': '팔로워 목록 숨기기',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      '누가 나를 팔로우하는지 다른 사람이 볼 수 없어요. 팔로워 수는 계속 표시돼요',
+  'Takip ettiklerimi gizle': '팔로잉 목록 숨기기',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      '내가 누구를 팔로우하는지 다른 사람이 볼 수 없어요. 팔로잉 수는 계속 표시돼요',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      '이 사용자는 팔로워를 비공개로 유지하고 있어요.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      '이 사용자는 팔로잉 목록을 비공개로 유지하고 있어요.',
 };

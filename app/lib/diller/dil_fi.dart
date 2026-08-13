@@ -814,4 +814,68 @@ const Map<String, String> cevirilerFi = {
       'Kun pois päältä, kukaan ei voi soittaa sinulle; soittaja näkee, että äänipuhelut ovat "pois käytöstä"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Kun pois päältä, kukaan ei voi soittaa sinulle videolla; soittaja näkee, että videopuhelut ovat "pois käytöstä"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Oma toimintani',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Tykkäyksesi, kommenttisi ja katselusi yhdessä paikassa',
+  'Henüz hareketin yok': 'Ei vielä toimintaa',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Kaikki, mistä tykkäät, mitä kommentoit ja katsot, kertyy tänne.',
+  'Bu süzgeçte hareket yok': 'Ei toimintaa tässä suodattimessa',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Valitse toinen tyyppi tai palaa kohtaan "Kaikki".',
+  'Hepsi': 'Kaikki',
+  'Puan': 'Arvosana',
+  'Tepki': 'Reaktio',
+  'İzleme': 'Katselu',
+  'Durum': 'Tila',
+  'Liste': 'Lista',
+  'Yorum yaptın': 'Kommentoit',
+  'Yorumu beğendin': 'Tykkäsit kommentista',
+  '{} puan verdin': 'Annoit arvosanan {}',
+  'Tepki verdin': 'Reagoit',
+  'Listene ekledin': 'Lisäsit listalle',
+  'Takip etmeye başladın': 'Aloit seurata',
+  '"İzleyeceğim" işaretledin': 'Merkitty: "Aion katsoa"',
+  '"İzliyorum" işaretledin': 'Merkitty: "Katson nyt"',
+  '"Bitirdim" işaretledin': 'Merkitty: "Katsoin loppuun"',
+  '"Bıraktım" işaretledin': 'Merkitty: "Jätin kesken"',
+  'Silinmiş içerik': 'Poistettu sisältö',
+  'şimdi': 'nyt',
+  '{} g': '{} pv',
+  '{} y': '{} v',
+  'İstatistiklerim': 'Omat tilastoni',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Julkaisujesi katselukerrat ja tykkäykset',
+  'Henüz gönderin yok': 'Sinulla ei ole vielä julkaisuja',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Kun kommentoit sarjaa tai elokuvaa, katselukertasi ja tykkäyksesi alkavat kertyä tänne.',
+  'Tüm zamanlar': 'Kaikkien aikojen',
+  'Gönderi': 'Julkaisut',
+  'Zaman kırılımı': 'Ajallinen erittely',
+  'Son {} gün': 'Viimeiset {} päivää',
+  'En çok görüntülenen gönderilerin': 'Katsotuimmat julkaisusi',
+  'En çok beğenilen gönderilerin': 'Tykätyimmät julkaisusi',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Katseluhistoria ei ole vielä alkanut kertyä; ensimmäisen päivän tiedot näkyvät huomenna.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Katseluhistoriaa on kertynyt {} alkaen ({} päivän tiedot), joten {} päivän luku on vielä puutteellinen.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Tykkäyshistoriaa on tallennettu {} alkaen.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Ei näytettäviä julkaisuja tälle jaksolle.',
+  'eksik veri': 'puutteelliset tiedot',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Katsomasi sarjat ja elokuvat, katselulaskurisi, ruutuaikasi ja yhteensopivuuskorttisi eivät näy muille profiilissasi',
+  'Takipçi listemi gizle': 'Piilota seuraajalistani',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Muut eivät näe, kuka sinua seuraa; seuraajamääräsi pysyy näkyvissä',
+  'Takip ettiklerimi gizle': 'Piilota keitä seuraan',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Muut eivät näe, keitä seuraat; seurattujen määräsi pysyy näkyvissä',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Tämä käyttäjä haluaa pitää seuraajansa yksityisinä.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Tämä käyttäjä haluaa pitää yksityisenä, keitä hän seuraa.',
 };

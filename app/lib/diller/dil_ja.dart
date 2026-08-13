@@ -787,4 +787,63 @@ const Map<String, String> cevirilerJa = {
       'オフのときは誰もあなたに音声通話できません。発信者には「オフ」の通知が表示されます',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'オフのときは誰もあなたにビデオ通話できません。発信者には「オフ」の通知が表示されます',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'マイアクティビティ',
+  'Beğenilerin, yorumların, izlemelerin tek akışta': 'いいね・コメント・視聴をひとつの流れで',
+  'Henüz hareketin yok': 'まだアクティビティがありません',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'いいねしたもの、コメントしたもの、見たものがここに集まります。',
+  'Bu süzgeçte hareket yok': 'このフィルターに該当なし',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': '別の種類を選ぶか、「すべて」に戻ってください。',
+  'Hepsi': 'すべて',
+  'Puan': '評価',
+  'Tepki': 'リアクション',
+  'İzleme': '視聴',
+  'Durum': 'ステータス',
+  'Liste': 'リスト',
+  'Yorum yaptın': 'コメントしました',
+  'Yorumu beğendin': 'コメントにいいねしました',
+  '{} puan verdin': '{} 点を付けました',
+  'Tepki verdin': 'リアクションしました',
+  'Listene ekledin': 'リストに追加しました',
+  'Takip etmeye başladın': 'フォローを始めました',
+  '"İzleyeceğim" işaretledin': '「見たい」に設定しました',
+  '"İzliyorum" işaretledin': '「視聴中」に設定しました',
+  '"Bitirdim" işaretledin': '「見終わった」に設定しました',
+  '"Bıraktım" işaretledin': '「やめた」に設定しました',
+  'Silinmiş içerik': '削除されたコンテンツ',
+  'şimdi': 'たった今',
+  '{} g': '{}日',
+  '{} y': '{}年',
+  'İstatistiklerim': 'マイ統計',
+  'Gönderilerinin görüntülenmesi ve beğenisi': '自分の投稿の表示回数といいね',
+  'Henüz gönderin yok': 'まだ投稿がありません',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ドラマや映画にコメントすると、表示回数といいねの数がここに貯まり始めます。',
+  'Tüm zamanlar': '全期間',
+  'Gönderi': '投稿',
+  'Zaman kırılımı': '期間別の内訳',
+  'Son {} gün': '直近 {} 日',
+  'En çok görüntülenen gönderilerin': '表示回数が多い投稿',
+  'En çok beğenilen gönderilerin': 'いいねが多い投稿',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      '表示回数の履歴はまだ貯まり始めていません。初日のデータは明日表示されます。',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      '表示回数の履歴は {} から蓄積されています（{} 日分のデータ）。そのため {} 日間の数値はまだ不完全です。',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'いいねの履歴は {} から記録されています。',
+  'Bu dönemde gösterilecek gönderi yok.': 'この期間に表示できる投稿はありません。',
+  'eksik veri': 'データ不完全',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'プロフィール上の視聴した作品、視聴カウンター、視聴時間、相性カードは他の人に表示されなくなります',
+  'Takipçi listemi gizle': 'フォロワー一覧を隠す',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      '誰があなたをフォローしているかは他の人に見えません。フォロワー数は表示されたままです',
+  'Takip ettiklerimi gizle': 'フォロー中の一覧を隠す',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'あなたが誰をフォローしているかは他の人に見えません。フォロー数は表示されたままです',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'このユーザーはフォロワーを非公開にしています。',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'このユーザーはフォロー中の一覧を非公開にしています。',
 };

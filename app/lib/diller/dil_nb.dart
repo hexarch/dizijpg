@@ -811,4 +811,68 @@ const Map<String, String> cevirilerNb = {
       'Når det er av, kan ingen ringe deg; den som ringer ser at anrop er "slått av"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Når det er av, kan ingen videoringe deg; den som ringer ser at videoanrop er "slått av"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Min aktivitet',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Likerklikkene, kommentarene og visningene dine på ett sted',
+  'Henüz hareketin yok': 'Ingen aktivitet ennå',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Alt du liker, kommenterer og ser, samles her.',
+  'Bu süzgeçte hareket yok': 'Ingen aktivitet i dette filteret',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Velg en annen type eller gå tilbake til "Alle".',
+  'Hepsi': 'Alle',
+  'Puan': 'Vurdering',
+  'Tepki': 'Reaksjon',
+  'İzleme': 'Sett',
+  'Durum': 'Status',
+  'Liste': 'Liste',
+  'Yorum yaptın': 'Kommentert',
+  'Yorumu beğendin': 'Likt en kommentar',
+  '{} puan verdin': 'Vurdert med {}',
+  'Tepki verdin': 'Reagert',
+  'Listene ekledin': 'Lagt til i en liste',
+  'Takip etmeye başladın': 'Begynte å følge',
+  '"İzleyeceğim" işaretledin': 'Markert som "Vil se"',
+  '"İzliyorum" işaretledin': 'Markert som "Ser på"',
+  '"Bitirdim" işaretledin': 'Markert som "Fullført"',
+  '"Bıraktım" işaretledin': 'Markert som "Droppet"',
+  'Silinmiş içerik': 'Slettet innhold',
+  'şimdi': 'nå',
+  '{} g': '{} d.',
+  '{} y': '{} år',
+  'İstatistiklerim': 'Statistikken min',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Visninger og likerklikk på innleggene dine',
+  'Henüz gönderin yok': 'Du har ingen innlegg ennå',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Når du kommenterer en serie eller film, begynner visningene og likerklikkene dine å samle seg her.',
+  'Tüm zamanlar': 'Gjennom tidene',
+  'Gönderi': 'Innlegg',
+  'Zaman kırılımı': 'Fordeling over tid',
+  'Son {} gün': 'Siste {} dager',
+  'En çok görüntülenen gönderilerin': 'De mest sette innleggene dine',
+  'En çok beğenilen gönderilerin': 'De mest likte innleggene dine',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Visningshistorikken har ikke begynt å samle seg ennå; dataene for første dag vises i morgen.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Visningshistorikken har samlet seg siden {} (det finnes {} dager med data), så tallet for {} dager er fortsatt ufullstendig.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Likerklikk-historikken er registrert siden {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Ingen innlegg å vise for denne perioden.',
+  'eksik veri': 'ufullstendige data',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Serier og filmer du har sett, tellerne dine, skjermtiden din og samsvarskortet ditt vises ikke for andre på profilen din',
+  'Takipçi listemi gizle': 'Skjul følgerlisten min',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Andre kan ikke se hvem som følger deg; antallet følgere ditt er fortsatt synlig',
+  'Takip ettiklerimi gizle': 'Skjul hvem jeg følger',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Andre kan ikke se hvem du følger; antallet du følger er fortsatt synlig',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Denne brukeren foretrekker å holde følgerne sine private.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Denne brukeren foretrekker å holde privat hvem hen følger.',
 };

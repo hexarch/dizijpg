@@ -812,4 +812,66 @@ const Map<String, String> cevirilerHi = {
       'बंद होने पर कोई तुम्हें वॉइस कॉल नहीं कर सकता; कॉल करने वाले को "बंद है" की सूचना दिखती है',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'बंद होने पर कोई तुम्हें वीडियो कॉल नहीं कर सकता; कॉल करने वाले को "बंद है" की सूचना दिखती है',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'मेरी गतिविधि',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'तुम्हारे लाइक, कमेंट और देखे गए सब एक ही जगह',
+  'Henüz hareketin yok': 'अभी कोई गतिविधि नहीं',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'तुम्हारे लाइक, कमेंट और देखी गई हर चीज़ यहाँ जमा होती है।',
+  'Bu süzgeçte hareket yok': 'इस फ़िल्टर में कोई गतिविधि नहीं',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'कोई दूसरा प्रकार चुनो या "सभी" पर लौटो।',
+  'Hepsi': 'सभी',
+  'Puan': 'रेटिंग',
+  'Tepki': 'रिएक्शन',
+  'İzleme': 'देखा गया',
+  'Durum': 'स्टेटस',
+  'Liste': 'लिस्ट',
+  'Yorum yaptın': 'कमेंट किया',
+  'Yorumu beğendin': 'कमेंट लाइक किया',
+  '{} puan verdin': '{} रेटिंग दी',
+  'Tepki verdin': 'रिएक्शन दिया',
+  'Listene ekledin': 'लिस्ट में जोड़ा',
+  'Takip etmeye başladın': 'फ़ॉलो करना शुरू किया',
+  '"İzleyeceğim" işaretledin': 'वॉचलिस्ट में जोड़ा',
+  '"İzliyorum" işaretledin': 'देखना शुरू किया',
+  '"Bitirdim" işaretledin': 'देखना पूरा किया',
+  '"Bıraktım" işaretledin': 'देखना छोड़ा',
+  'Silinmiş içerik': 'हटाई गई सामग्री',
+  'şimdi': 'अभी',
+  '{} g': '{} दि',
+  '{} y': '{} व',
+  'İstatistiklerim': 'मेरे आँकड़े',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'तुम्हारी पोस्ट के व्यू और लाइक',
+  'Henüz gönderin yok': 'अभी तुम्हारी कोई पोस्ट नहीं',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'जब तुम किसी सीरीज़ या फ़िल्म पर कमेंट लिखोगे, तुम्हारे व्यू और लाइक यहाँ जमा होने लगेंगे।',
+  'Tüm zamanlar': 'सर्वकालिक',
+  'Gönderi': 'पोस्ट',
+  'Zaman kırılımı': 'समय के हिसाब से',
+  'Son {} gün': 'पिछले {} दिन',
+  'En çok görüntülenen gönderilerin': 'तुम्हारी सबसे ज़्यादा देखी गई पोस्ट',
+  'En çok beğenilen gönderilerin': 'तुम्हारी सबसे ज़्यादा लाइक की गई पोस्ट',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'व्यू का इतिहास अभी जमा होना शुरू नहीं हुआ; पहले दिन का डेटा कल दिखेगा।',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'व्यू का इतिहास {} से जमा हो रहा है ({} दिन का डेटा है), इसलिए {} दिन का आँकड़ा अभी अधूरा है।',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'लाइक का इतिहास {} से दर्ज है।',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'इस अवधि में दिखाने के लिए कोई पोस्ट नहीं।',
+  'eksik veri': 'अधूरा डेटा',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'तुम्हारी प्रोफ़ाइल पर देखी गई सीरीज़ और फ़िल्में, तुम्हारे व्यू काउंटर, स्क्रीन टाइम और मैच कार्ड दूसरों को नहीं दिखेंगे',
+  'Takipçi listemi gizle': 'मेरी फ़ॉलोअर सूची छिपाएँ',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'दूसरे नहीं देख पाएँगे कि तुम्हें कौन फ़ॉलो करता है; तुम्हारी फ़ॉलोअर संख्या दिखती रहेगी',
+  'Takip ettiklerimi gizle': 'मैं किसे फ़ॉलो करता हूँ यह छिपाएँ',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'तुम किसे फ़ॉलो करते हो यह दूसरे नहीं देख पाएँगे; तुम्हारी फ़ॉलोइंग संख्या दिखती रहेगी',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'इस यूज़र के फ़ॉलोअर छिपे हुए हैं।',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'यह यूज़र किसे फ़ॉलो करता है यह छिपा हुआ है।',
 };

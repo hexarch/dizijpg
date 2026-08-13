@@ -813,4 +813,66 @@ const Map<String, String> cevirilerEn = {
       'When off, nobody can voice call you; callers see a "disabled" notice',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'When off, nobody can video call you; callers see a "disabled" notice',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'My activity',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Your likes, comments and watches in one feed',
+  'Henüz hareketin yok': 'No activity yet',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Everything you like, comment on and watch collects here.',
+  'Bu süzgeçte hareket yok': 'No activity in this filter',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Pick another type or go back to "All".',
+  'Hepsi': 'All',
+  'Puan': 'Rating',
+  'Tepki': 'Reaction',
+  'İzleme': 'Watched',
+  'Durum': 'Status',
+  'Liste': 'List',
+  'Yorum yaptın': 'You commented',
+  'Yorumu beğendin': 'You liked a comment',
+  '{} puan verdin': 'You rated {}',
+  'Tepki verdin': 'You reacted',
+  'Listene ekledin': 'You added to a list',
+  'Takip etmeye başladın': 'You started following',
+  '"İzleyeceğim" işaretledin': 'Marked as "Watchlist"',
+  '"İzliyorum" işaretledin': 'Marked as "Watching"',
+  '"Bitirdim" işaretledin': 'Marked as "Finished"',
+  '"Bıraktım" işaretledin': 'Marked as "Dropped"',
+  'Silinmiş içerik': 'Deleted content',
+  'şimdi': 'now',
+  '{} g': '{} d',
+  '{} y': '{} y',
+  'İstatistiklerim': 'My stats',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'Views and likes on your posts',
+  'Henüz gönderin yok': 'You have no posts yet',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Once you comment on a show or a movie, your view and like counts start building up here.',
+  'Tüm zamanlar': 'All time',
+  'Gönderi': 'Posts',
+  'Zaman kırılımı': 'Time breakdown',
+  'Son {} gün': 'Last {} days',
+  'En çok görüntülenen gönderilerin': 'Your most viewed posts',
+  'En çok beğenilen gönderilerin': 'Your most liked posts',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'View history hasn’t started building up yet; the first day of data appears tomorrow.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'View history has been building up since {} ({} days of data), so the {}-day count is still incomplete.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Like history has been recorded since {}.',
+  'Bu dönemde gösterilecek gönderi yok.': 'No posts to show for this period.',
+  'eksik veri': 'incomplete data',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'The shows and movies you watched, your watch counters, screen time and match card won’t be visible to others on your profile',
+  'Takipçi listemi gizle': 'Hide my followers list',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Others can’t see who follows you; your follower count stays visible',
+  'Takip ettiklerimi gizle': 'Hide who I follow',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Others can’t see who you follow; your following count stays visible',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'This user prefers to keep their followers private.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'This user prefers to keep who they follow private.',
 };

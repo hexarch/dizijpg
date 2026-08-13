@@ -800,4 +800,66 @@ const Map<String, String> cevirilerTh = {
       'เมื่อปิดอยู่ จะไม่มีใครโทรหาคุณด้วยเสียงได้ ผู้โทรจะเห็นข้อความแจ้งว่า "ปิดอยู่"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'เมื่อปิดอยู่ จะไม่มีใครโทรวิดีโอหาคุณได้ ผู้โทรจะเห็นข้อความแจ้งว่า "ปิดอยู่"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'กิจกรรมของฉัน',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'ถูกใจ คอมเมนต์ และการดูของคุณในที่เดียว',
+  'Henüz hareketin yok': 'ยังไม่มีกิจกรรม',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'ทุกอย่างที่คุณถูกใจ คอมเมนต์ และดู จะถูกรวบรวมไว้ที่นี่',
+  'Bu süzgeçte hareket yok': 'ไม่มีกิจกรรมในตัวกรองนี้',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'เลือกประเภทอื่น หรือกลับไปที่ "ทั้งหมด"',
+  'Hepsi': 'ทั้งหมด',
+  'Puan': 'คะแนน',
+  'Tepki': 'รีแอ็กชัน',
+  'İzleme': 'การดู',
+  'Durum': 'สถานะ',
+  'Liste': 'รายการ',
+  'Yorum yaptın': 'คุณคอมเมนต์',
+  'Yorumu beğendin': 'คุณถูกใจคอมเมนต์',
+  '{} puan verdin': 'คุณให้ {} คะแนน',
+  'Tepki verdin': 'คุณแสดงรีแอ็กชัน',
+  'Listene ekledin': 'คุณเพิ่มลงรายการ',
+  'Takip etmeye başladın': 'คุณเริ่มติดตาม',
+  '"İzleyeceğim" işaretledin': 'ทำเครื่องหมาย "จะดู"',
+  '"İzliyorum" işaretledin': 'ทำเครื่องหมาย "กำลังดู"',
+  '"Bitirdim" işaretledin': 'ทำเครื่องหมาย "ดูจบแล้ว"',
+  '"Bıraktım" işaretledin': 'ทำเครื่องหมาย "เลิกดูแล้ว"',
+  'Silinmiş içerik': 'เนื้อหาที่ถูกลบ',
+  'şimdi': 'เมื่อกี้',
+  '{} g': '{} วัน',
+  '{} y': '{} ปี',
+  'İstatistiklerim': 'สถิติของฉัน',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'ยอดดูและถูกใจของโพสต์คุณ',
+  'Henüz gönderin yok': 'คุณยังไม่มีโพสต์',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'เมื่อคุณคอมเมนต์ซีรีส์หรือหนัง ยอดดูและถูกใจของคุณจะเริ่มสะสมที่นี่',
+  'Tüm zamanlar': 'ตลอดเวลา',
+  'Gönderi': 'โพสต์',
+  'Zaman kırılımı': 'แยกตามช่วงเวลา',
+  'Son {} gün': '{} วันล่าสุด',
+  'En çok görüntülenen gönderilerin': 'โพสต์ที่มียอดดูสูงสุดของคุณ',
+  'En çok beğenilen gönderilerin': 'โพสต์ที่ได้ถูกใจมากที่สุดของคุณ',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ประวัติยอดดูยังไม่เริ่มสะสม ข้อมูลวันแรกจะปรากฏพรุ่งนี้',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ประวัติยอดดูสะสมมาตั้งแต่ {} (มีข้อมูล {} วัน) ตัวเลข {} วันจึงยังไม่ครบ',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'ประวัติถูกใจถูกบันทึกตั้งแต่ {}',
+  'Bu dönemde gösterilecek gönderi yok.': 'ไม่มีโพสต์ให้แสดงในช่วงเวลานี้',
+  'eksik veri': 'ข้อมูลไม่ครบ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'ซีรีส์และหนังที่คุณดู ตัวนับการดู เวลาหน้าจอ และการ์ดความเข้ากันบนโปรไฟล์ของคุณจะไม่แสดงให้คนอื่นเห็น',
+  'Takipçi listemi gizle': 'ซ่อนรายชื่อผู้ติดตามของฉัน',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'คนอื่นจะไม่เห็นว่าใครติดตามคุณ แต่จำนวนผู้ติดตามยังแสดงอยู่',
+  'Takip ettiklerimi gizle': 'ซ่อนคนที่ฉันติดตาม',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'คนอื่นจะไม่เห็นว่าคุณติดตามใคร แต่จำนวนที่คุณติดตามยังแสดงอยู่',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ผู้ใช้รายนี้เลือกที่จะซ่อนผู้ติดตามของตน',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ผู้ใช้รายนี้เลือกที่จะซ่อนคนที่ตนติดตาม',
 };

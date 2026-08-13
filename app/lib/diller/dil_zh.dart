@@ -775,4 +775,62 @@ const Map<String, String> cevirilerZh = {
       '关闭后没人能给你打语音电话；来电者会看到“已关闭”提示',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       '关闭后没人能给你打视频电话；来电者会看到“已关闭”提示',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': '我的动态',
+  'Beğenilerin, yorumların, izlemelerin tek akışta': '你的点赞、评论和观看记录，尽在一处',
+  'Henüz hareketin yok': '还没有动态',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      '你点赞、评论和观看过的一切都会汇集在这里。',
+  'Bu süzgeçte hareket yok': '此筛选下没有动态',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': '选择其他类型，或返回“全部”。',
+  'Hepsi': '全部',
+  'Puan': '评分',
+  'Tepki': '表情回应',
+  'İzleme': '观看',
+  'Durum': '状态',
+  'Liste': '片单',
+  'Yorum yaptın': '你发表了评论',
+  'Yorumu beğendin': '你点赞了一条评论',
+  '{} puan verdin': '你打了 {} 分',
+  'Tepki verdin': '你做了回应',
+  'Listene ekledin': '你加入了片单',
+  'Takip etmeye başladın': '你开始关注',
+  '"İzleyeceğim" işaretledin': '标记为“想看”',
+  '"İzliyorum" işaretledin': '标记为“正在追”',
+  '"Bitirdim" işaretledin': '标记为“看完了”',
+  '"Bıraktım" işaretledin': '标记为“弃剧了”',
+  'Silinmiş içerik': '内容已删除',
+  'şimdi': '刚刚',
+  '{} g': '{} 天',
+  '{} y': '{} 年',
+  'İstatistiklerim': '我的数据',
+  'Gönderilerinin görüntülenmesi ve beğenisi': '你的帖子的浏览量和点赞数',
+  'Henüz gönderin yok': '你还没有帖子',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      '当你为某部剧集或电影写下评论后，你的浏览量和点赞数就会在这里累积。',
+  'Tüm zamanlar': '全部时间',
+  'Gönderi': '帖子',
+  'Zaman kırılımı': '时间细分',
+  'Son {} gün': '最近 {} 天',
+  'En çok görüntülenen gönderilerin': '你浏览量最高的帖子',
+  'En çok beğenilen gönderilerin': '你点赞数最高的帖子',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      '浏览量历史尚未开始累积；第一天的数据将在明天出现。',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      '浏览量历史自 {} 起开始累积（已有 {} 天数据），因此 {} 天的数字仍不完整。',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': '点赞历史自 {} 起有记录。',
+  'Bu dönemde gösterilecek gönderi yok.': '此期间没有可显示的帖子。',
+  'eksik veri': '数据不完整',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      '你在个人主页上看过的剧集和电影、观看计数、观看时长和匹配卡片都不会被他人看到',
+  'Takipçi listemi gizle': '隐藏我的粉丝列表',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      '其他人无法看到谁关注了你；你的粉丝数量仍会显示',
+  'Takip ettiklerimi gizle': '隐藏我关注的人',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      '其他人无法看到你关注了谁；你的关注数量仍会显示',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.': '该用户选择不公开自己的粉丝。',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      '该用户选择不公开自己关注的人。',
 };

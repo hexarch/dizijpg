@@ -809,4 +809,68 @@ const Map<String, String> cevirilerVi = {
       'Khi tắt, không ai có thể gọi thoại cho bạn; người gọi sẽ thấy thông báo "đã tắt"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Khi tắt, không ai có thể gọi video cho bạn; người gọi sẽ thấy thông báo "đã tắt"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Hoạt động của tôi',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Lượt thích, bình luận và lượt xem của bạn trong một dòng',
+  'Henüz hareketin yok': 'Chưa có hoạt động nào',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Mọi thứ bạn thích, bình luận và xem đều được gom về đây.',
+  'Bu süzgeçte hareket yok': 'Không có hoạt động trong bộ lọc này',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Chọn loại khác hoặc quay lại "Tất cả".',
+  'Hepsi': 'Tất cả',
+  'Puan': 'Đánh giá',
+  'Tepki': 'Cảm xúc',
+  'İzleme': 'Đã xem',
+  'Durum': 'Trạng thái',
+  'Liste': 'Danh sách',
+  'Yorum yaptın': 'Bạn đã bình luận',
+  'Yorumu beğendin': 'Bạn đã thích một bình luận',
+  '{} puan verdin': 'Bạn đã chấm {}',
+  'Tepki verdin': 'Bạn đã bày tỏ cảm xúc',
+  'Listene ekledin': 'Bạn đã thêm vào danh sách',
+  'Takip etmeye başladın': 'Bạn đã bắt đầu theo dõi',
+  '"İzleyeceğim" işaretledin': 'Đã đánh dấu "Sẽ xem"',
+  '"İzliyorum" işaretledin': 'Đã đánh dấu "Đang xem"',
+  '"Bitirdim" işaretledin': 'Đã đánh dấu "Đã xem xong"',
+  '"Bıraktım" işaretledin': 'Đã đánh dấu "Đã bỏ dở"',
+  'Silinmiş içerik': 'Nội dung đã xoá',
+  'şimdi': 'vừa xong',
+  '{} g': '{} ngày',
+  '{} y': '{} năm',
+  'İstatistiklerim': 'Thống kê của tôi',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Lượt xem và lượt thích bài đăng của bạn',
+  'Henüz gönderin yok': 'Bạn chưa có bài đăng nào',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Khi bạn bình luận về một series hay bộ phim, số lượt xem và lượt thích sẽ bắt đầu tích luỹ ở đây.',
+  'Tüm zamanlar': 'Toàn thời gian',
+  'Gönderi': 'Bài đăng',
+  'Zaman kırılımı': 'Phân tích theo thời gian',
+  'Son {} gün': '{} ngày qua',
+  'En çok görüntülenen gönderilerin': 'Bài đăng được xem nhiều nhất của bạn',
+  'En çok beğenilen gönderilerin': 'Bài đăng được thích nhiều nhất của bạn',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Lịch sử lượt xem chưa bắt đầu tích luỹ; dữ liệu ngày đầu tiên sẽ xuất hiện vào ngày mai.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Lịch sử lượt xem đã tích luỹ từ {} (có {} ngày dữ liệu), nên con số {} ngày vẫn chưa đầy đủ.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Lịch sử lượt thích được ghi lại từ {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Không có bài đăng nào để hiển thị trong kỳ này.',
+  'eksik veri': 'dữ liệu chưa đầy đủ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Các series và phim bạn đã xem, bộ đếm lượt xem, thời gian xem và thẻ tương hợp sẽ không hiển thị với người khác trên hồ sơ của bạn',
+  'Takipçi listemi gizle': 'Ẩn danh sách người theo dõi tôi',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Người khác không thể xem ai theo dõi bạn; số người theo dõi vẫn hiển thị',
+  'Takip ettiklerimi gizle': 'Ẩn những người tôi theo dõi',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Người khác không thể xem bạn theo dõi ai; số người bạn theo dõi vẫn hiển thị',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Người dùng này muốn giữ kín danh sách người theo dõi.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Người dùng này muốn giữ kín những người mình theo dõi.',
 };

@@ -811,4 +811,67 @@ const Map<String, String> cevirilerBn = {
       'বন্ধ থাকলে কেউ তোমাকে ভয়েস কল করতে পারবে না; কলকারী "বন্ধ আছে" বার্তা দেখবে',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'বন্ধ থাকলে কেউ তোমাকে ভিডিও কল করতে পারবে না; কলকারী "বন্ধ আছে" বার্তা দেখবে',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'আমার কার্যকলাপ',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'তোমার লাইক, কমেন্ট আর দেখা সব এক জায়গায়',
+  'Henüz hareketin yok': 'এখনও কোনো কার্যকলাপ নেই',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'তুমি যা লাইক করো, কমেন্ট করো আর দেখো সব এখানে জমা হয়।',
+  'Bu süzgeçte hareket yok': 'এই ফিল্টারে কোনো কার্যকলাপ নেই',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'অন্য একটি ধরন বেছে নাও বা "সব"-এ ফিরে যাও।',
+  'Hepsi': 'সব',
+  'Puan': 'রেটিং',
+  'Tepki': 'রিঅ্যাকশন',
+  'İzleme': 'দেখা',
+  'Durum': 'স্ট্যাটাস',
+  'Liste': 'লিস্ট',
+  'Yorum yaptın': 'কমেন্ট করেছ',
+  'Yorumu beğendin': 'একটি কমেন্ট লাইক করেছ',
+  '{} puan verdin': '{} রেটিং দিয়েছ',
+  'Tepki verdin': 'রিঅ্যাক্ট করেছ',
+  'Listene ekledin': 'লিস্টে যোগ করেছ',
+  'Takip etmeye başladın': 'ফলো করা শুরু করেছ',
+  '"İzleyeceğim" işaretledin': '"দেখব" চিহ্নিত করেছ',
+  '"İzliyorum" işaretledin': '"দেখছি" চিহ্নিত করেছ',
+  '"Bitirdim" işaretledin': '"শেষ করেছি" চিহ্নিত করেছ',
+  '"Bıraktım" işaretledin': '"ছেড়ে দিয়েছি" চিহ্নিত করেছ',
+  'Silinmiş içerik': 'মুছে ফেলা কনটেন্ট',
+  'şimdi': 'এখন',
+  '{} g': '{} দি',
+  '{} y': '{} ব',
+  'İstatistiklerim': 'আমার পরিসংখ্যান',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'তোমার পোস্টের ভিউ ও লাইক',
+  'Henüz gönderin yok': 'এখনও তোমার কোনো পোস্ট নেই',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'কোনো সিরিজ বা সিনেমায় কমেন্ট লিখলে তোমার ভিউ ও লাইকের সংখ্যা এখানে জমতে শুরু করবে।',
+  'Tüm zamanlar': 'সর্বকালীন',
+  'Gönderi': 'পোস্ট',
+  'Zaman kırılımı': 'সময়ভিত্তিক বিভাজন',
+  'Son {} gün': 'শেষ {} দিন',
+  'En çok görüntülenen gönderilerin': 'তোমার সবচেয়ে বেশি দেখা পোস্ট',
+  'En çok beğenilen gönderilerin': 'তোমার সবচেয়ে বেশি লাইক পাওয়া পোস্ট',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ভিউয়ের ইতিহাস এখনও জমতে শুরু করেনি; প্রথম দিনের ডেটা কাল দেখা যাবে।',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ভিউয়ের ইতিহাস {} থেকে জমছে ({} দিনের ডেটা আছে), তাই {} দিনের সংখ্যা এখনও অসম্পূর্ণ।',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'লাইকের ইতিহাস {} থেকে রেকর্ড করা আছে।',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'এই সময়ে দেখানোর মতো কোনো পোস্ট নেই।',
+  'eksik veri': 'অসম্পূর্ণ ডেটা',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'তোমার প্রোফাইলে দেখা সিরিজ ও সিনেমা, দেখার সংখ্যা, স্ক্রিন টাইম আর মিল কার্ড অন্যরা দেখতে পাবে না',
+  'Takipçi listemi gizle': 'আমার ফলোয়ার তালিকা লুকান',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'কে তোমাকে ফলো করে তা অন্যরা দেখতে পাবে না; তোমার ফলোয়ার সংখ্যা দেখা যেতে থাকবে',
+  'Takip ettiklerimi gizle': 'আমি কাদের ফলো করি তা লুকান',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'তুমি কাদের ফলো করো তা অন্যরা দেখতে পাবে না; তোমার ফলোয়িং সংখ্যা দেখা যেতে থাকবে',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'এই ব্যবহারকারী তার ফলোয়ার গোপন রাখতে পছন্দ করেন।',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'এই ব্যবহারকারী কাদের ফলো করেন তা গোপন রাখতে পছন্দ করেন।',
 };

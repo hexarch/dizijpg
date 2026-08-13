@@ -818,4 +818,68 @@ const Map<String, String> cevirilerMs = {
       'Apabila dimatikan, tiada sesiapa boleh menelefon suara anda; pemanggil melihat notis "dimatikan"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Apabila dimatikan, tiada sesiapa boleh membuat panggilan video kepada anda; pemanggil melihat notis "dimatikan"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Aktiviti saya',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Suka, komen dan tontonan kamu dalam satu aliran',
+  'Henüz hareketin yok': 'Belum ada aktiviti',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Semua yang kamu suka, komen dan tonton terkumpul di sini.',
+  'Bu süzgeçte hareket yok': 'Tiada aktiviti dalam penapis ini',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Pilih jenis lain atau kembali ke "Semua".',
+  'Hepsi': 'Semua',
+  'Puan': 'Penilaian',
+  'Tepki': 'Reaksi',
+  'İzleme': 'Tontonan',
+  'Durum': 'Status',
+  'Liste': 'Senarai',
+  'Yorum yaptın': 'Kamu mengulas',
+  'Yorumu beğendin': 'Kamu menyukai komen',
+  '{} puan verdin': 'Kamu memberi nilai {}',
+  'Tepki verdin': 'Kamu bereaksi',
+  'Listene ekledin': 'Kamu menambah ke senarai',
+  'Takip etmeye başladın': 'Kamu mula mengikuti',
+  '"İzleyeceğim" işaretledin': 'Ditanda "Nak Tonton"',
+  '"İzliyorum" işaretledin': 'Ditanda "Sedang Menonton"',
+  '"Bitirdim" işaretledin': 'Ditanda "Selesai"',
+  '"Bıraktım" işaretledin': 'Ditanda "Berhenti"',
+  'Silinmiş içerik': 'Kandungan dipadam',
+  'şimdi': 'sekarang',
+  '{} g': '{} hr',
+  '{} y': '{} thn',
+  'İstatistiklerim': 'Statistik saya',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Tontonan dan suka pada siaran kamu',
+  'Henüz gönderin yok': 'Kamu belum ada siaran',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Sebaik kamu mengulas siri atau filem, jumlah tontonan dan suka mula terkumpul di sini.',
+  'Tüm zamanlar': 'Sepanjang masa',
+  'Gönderi': 'Siaran',
+  'Zaman kırılımı': 'Pecahan masa',
+  'Son {} gün': '{} hari lepas',
+  'En çok görüntülenen gönderilerin': 'Siaran kamu yang paling banyak ditonton',
+  'En çok beğenilen gönderilerin': 'Siaran kamu yang paling banyak disukai',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Sejarah tontonan belum mula terkumpul; data hari pertama muncul esok.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Sejarah tontonan terkumpul sejak {} (ada data {} hari), jadi angka {} hari masih tidak lengkap.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Sejarah suka direkodkan sejak {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Tiada siaran untuk dipaparkan bagi tempoh ini.',
+  'eksik veri': 'data tidak lengkap',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Siri dan filem yang kamu tonton, pembilang tontonan, masa skrin dan kad padanan tidak akan kelihatan kepada orang lain di profil kamu',
+  'Takipçi listemi gizle': 'Sembunyikan senarai pengikut saya',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Orang lain tidak dapat melihat siapa yang mengikuti kamu; jumlah pengikut kamu kekal kelihatan',
+  'Takip ettiklerimi gizle': 'Sembunyikan siapa yang saya ikuti',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Orang lain tidak dapat melihat siapa yang kamu ikuti; jumlah yang kamu ikuti kekal kelihatan',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Pengguna ini memilih untuk merahsiakan pengikutnya.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Pengguna ini memilih untuk merahsiakan siapa yang diikutinya.',
 };

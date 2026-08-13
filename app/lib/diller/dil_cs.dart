@@ -811,4 +811,68 @@ const Map<String, String> cevirilerCs = {
       'Když je vypnuto, nikdo ti nemůže zavolat; volající uvidí upozornění, že máš hlasové hovory "vypnuté"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Když je vypnuto, nikdo ti nemůže zavolat přes video; volající uvidí upozornění, že máš videohovory "vypnuté"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Moje aktivita',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Tvoje lajky, komentáře a zhlédnutí na jednom místě',
+  'Henüz hareketin yok': 'Zatím žádná aktivita',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Všechno, co lajkuješ, komentuješ a sleduješ, se sbírá tady.',
+  'Bu süzgeçte hareket yok': 'V tomto filtru není žádná aktivita',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Vyber jiný typ nebo se vrať na „Vše“.',
+  'Hepsi': 'Vše',
+  'Puan': 'Hodnocení',
+  'Tepki': 'Reakce',
+  'İzleme': 'Zhlédnutí',
+  'Durum': 'Stav',
+  'Liste': 'Seznam',
+  'Yorum yaptın': 'Komentář přidán',
+  'Yorumu beğendin': 'Lajk komentáře',
+  '{} puan verdin': 'Hodnocení {}',
+  'Tepki verdin': 'Reakce',
+  'Listene ekledin': 'Přidáno do seznamu',
+  'Takip etmeye başladın': 'Nové sledování',
+  '"İzleyeceğim" işaretledin': 'Označeno „Chci vidět“',
+  '"İzliyorum" işaretledin': 'Označeno „Sleduju“',
+  '"Bitirdim" işaretledin': 'Označeno „Dokončeno“',
+  '"Bıraktım" işaretledin': 'Označeno „Opuštěno“',
+  'Silinmiş içerik': 'Smazaný obsah',
+  'şimdi': 'teď',
+  '{} g': '{} d',
+  '{} y': '{} r.',
+  'İstatistiklerim': 'Moje statistiky',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Zobrazení a lajky tvých příspěvků',
+  'Henüz gönderin yok': 'Zatím nemáš žádné příspěvky',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Jakmile okomentuješ seriál nebo film, začnou se tu hromadit tvoje zobrazení a lajky.',
+  'Tüm zamanlar': 'Za celou dobu',
+  'Gönderi': 'Příspěvky',
+  'Zaman kırılımı': 'Rozdělení podle času',
+  'Son {} gün': 'Posledních {} dní',
+  'En çok görüntülenen gönderilerin': 'Tvoje nejzobrazovanější příspěvky',
+  'En çok beğenilen gönderilerin': 'Tvoje nejlajkovanější příspěvky',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Historie zobrazení se zatím nezačala hromadit; data prvního dne se objeví zítra.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Historie zobrazení se hromadí od {} (je k dispozici {} dní dat), takže číslo za {} dní je zatím neúplné.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Historie lajků se zaznamenává od {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Za toto období nejsou žádné příspěvky.',
+  'eksik veri': 'neúplná data',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Zhlédnuté seriály a filmy, tvoje počítadla, čas u obrazovky a karta shody nebudou pro ostatní na tvém profilu viditelné',
+  'Takipçi listemi gizle': 'Skrýt seznam mých sledujících',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Ostatní neuvidí, kdo tě sleduje; počet tvých sledujících zůstává viditelný',
+  'Takip ettiklerimi gizle': 'Skrýt, koho sleduji',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Ostatní neuvidí, koho sleduješ; počet sledovaných zůstává viditelný',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Tento uživatel si přeje nechat své sledující skryté.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Tento uživatel si přeje nechat skryté, koho sleduje.',
 };

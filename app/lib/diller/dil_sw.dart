@@ -809,4 +809,68 @@ const Map<String, String> cevirilerSw = {
       'Ikizimwa, hakuna anayeweza kukupigia simu ya sauti; anayepiga ataona taarifa kwamba simu "zimezimwa"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Ikizimwa, hakuna anayeweza kukupigia simu ya video; anayepiga ataona taarifa kwamba simu "zimezimwa"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Shughuli zangu',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Zilizokupendeza, maoni na ulizotazama mahali pamoja',
+  'Henüz hareketin yok': 'Bado hakuna shughuli',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Kila unachopenda, unachotolea maoni na unachotazama hukusanyika hapa.',
+  'Bu süzgeçte hareket yok': 'Hakuna shughuli katika kichujio hiki',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Chagua aina nyingine au rudi kwenye "Zote".',
+  'Hepsi': 'Zote',
+  'Puan': 'Ukadiriaji',
+  'Tepki': 'Itikio',
+  'İzleme': 'Kutazama',
+  'Durum': 'Hali',
+  'Liste': 'Orodha',
+  'Yorum yaptın': 'Umetoa maoni',
+  'Yorumu beğendin': 'Umependa maoni',
+  '{} puan verdin': 'Umetoa alama {}',
+  'Tepki verdin': 'Umeitikia',
+  'Listene ekledin': 'Umeongeza kwenye orodha',
+  'Takip etmeye başladın': 'Umeanza kufuata',
+  '"İzleyeceğim" işaretledin': 'Umeweka alama "Nitatazama"',
+  '"İzliyorum" işaretledin': 'Umeweka alama "Ninatazama"',
+  '"Bitirdim" işaretledin': 'Umeweka alama "Nimemaliza"',
+  '"Bıraktım" işaretledin': 'Umeweka alama "Nimeacha"',
+  'Silinmiş içerik': 'Maudhui yaliyofutwa',
+  'şimdi': 'sasa',
+  '{} g': 'siku {}',
+  '{} y': 'mwaka {}',
+  'İstatistiklerim': 'Takwimu zangu',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Mionekano na zilizopendwa kwenye machapisho yako',
+  'Henüz gönderin yok': 'Bado huna machapisho',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Ukiandika maoni kwenye mfululizo au filamu, idadi ya mionekano na zilizopendwa huanza kukusanyika hapa.',
+  'Tüm zamanlar': 'Nyakati zote',
+  'Gönderi': 'Machapisho',
+  'Zaman kırılımı': 'Mchanganuo wa muda',
+  'Son {} gün': 'Siku {} zilizopita',
+  'En çok görüntülenen gönderilerin': 'Machapisho yako yaliyoonekana zaidi',
+  'En çok beğenilen gönderilerin': 'Machapisho yako yaliyopendwa zaidi',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Historia ya mionekano bado haijaanza kukusanyika; data ya siku ya kwanza itaonekana kesho.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Historia ya mionekano imekuwa ikikusanyika tangu {} (kuna data ya siku {}), hivyo idadi ya siku {} bado haijakamilika.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Historia ya zilizopendwa imerekodiwa tangu {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Hakuna machapisho ya kuonyesha kwa kipindi hiki.',
+  'eksik veri': 'data pungufu',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Series na filamu ulizotazama, vihesabu vyako vya kutazama, muda wa skrini na kadi ya ulinganifu havitaonekana kwa wengine kwenye wasifu wako',
+  'Takipçi listemi gizle': 'Ficha orodha ya wanaonifuata',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Wengine hawawezi kuona nani anakufuata; idadi ya wanaokufuata inabaki ikionekana',
+  'Takip ettiklerimi gizle': 'Ficha ninaowafuata',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Wengine hawawezi kuona unaowafuata; idadi ya unaowafuata inabaki ikionekana',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Mtumiaji huyu anapendelea kuficha wanaomfuata.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Mtumiaji huyu anapendelea kuficha anaowafuata.',
 };

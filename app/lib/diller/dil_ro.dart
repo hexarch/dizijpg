@@ -816,4 +816,69 @@ const Map<String, String> cevirilerRo = {
       'Când e dezactivat, nimeni nu te poate suna vocal; apelantul vede anunțul "dezactivate"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Când e dezactivat, nimeni nu te poate suna video; apelantul vede anunțul "dezactivate"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Activitatea mea',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Aprecierile, comentariile și vizionările tale într-un singur loc',
+  'Henüz hareketin yok': 'Încă nu există activitate',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Tot ce apreciezi, comentezi și vizionezi se adună aici.',
+  'Bu süzgeçte hareket yok': 'Nicio activitate în acest filtru',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Alege alt tip sau întoarce-te la "Toate".',
+  'Hepsi': 'Toate',
+  'Puan': 'Notă',
+  'Tepki': 'Reacție',
+  'İzleme': 'Vizionare',
+  'Durum': 'Stare',
+  'Liste': 'Listă',
+  'Yorum yaptın': 'Ai comentat',
+  'Yorumu beğendin': 'Ai apreciat un comentariu',
+  '{} puan verdin': 'Ai dat nota {}',
+  'Tepki verdin': 'Ai reacționat',
+  'Listene ekledin': 'Ai adăugat într-o listă',
+  'Takip etmeye başladın': 'Ai început să urmărești',
+  '"İzleyeceğim" işaretledin': 'Marcat ca "O să mă uit"',
+  '"İzliyorum" işaretledin': 'Marcat ca "Mă uit acum"',
+  '"Bitirdim" işaretledin': 'Marcat ca "Am terminat"',
+  '"Bıraktım" işaretledin': 'Marcat ca "Am abandonat"',
+  'Silinmiş içerik': 'Conținut șters',
+  'şimdi': 'acum',
+  '{} g': '{} z',
+  '{} y': '{} a',
+  'İstatistiklerim': 'Statisticile mele',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Vizualizările și aprecierile postărilor tale',
+  'Henüz gönderin yok': 'Încă nu ai postări',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'După ce comentezi un serial sau un film, vizualizările și aprecierile tale încep să se adune aici.',
+  'Tüm zamanlar': 'Din totdeauna',
+  'Gönderi': 'Postări',
+  'Zaman kırılımı': 'Defalcare pe perioade',
+  'Son {} gün': 'Ultimele {} zile',
+  'En çok görüntülenen gönderilerin':
+      'Postările tale cu cele mai multe vizualizări',
+  'En çok beğenilen gönderilerin': 'Postările tale cu cele mai multe aprecieri',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Istoricul vizualizărilor încă nu a început să se adune; datele primei zile apar mâine.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Istoricul vizualizărilor se adună din {} (există {} zile de date), așa că numărul pe {} zile este încă incomplet.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Istoricul aprecierilor este înregistrat din {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Nicio postare de afișat pentru această perioadă.',
+  'eksik veri': 'date incomplete',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Serialele și filmele vizionate, contoarele tale de vizionare, timpul petrecut și cardul de potrivire nu vor fi vizibile altora pe profilul tău',
+  'Takipçi listemi gizle': 'Ascunde lista mea de urmăritori',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Ceilalți nu pot vedea cine te urmărește; numărul tău de urmăritori rămâne vizibil',
+  'Takip ettiklerimi gizle': 'Ascunde pe cine urmăresc',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Ceilalți nu pot vedea pe cine urmărești; numărul tău de urmăriri rămâne vizibil',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Acest utilizator preferă să-și țină urmăritorii privați.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Acest utilizator preferă să țină privat pe cine urmărește.',
 };

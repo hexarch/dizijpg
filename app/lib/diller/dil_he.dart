@@ -800,4 +800,65 @@ const Map<String, String> cevirilerHe = {
       'כשכבוי, אף אחד לא יכול להתקשר אליך בקול; המתקשר רואה הודעה שהשיחות "מושבתות"',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'כשכבוי, אף אחד לא יכול להתקשר אליך בווידאו; המתקשר רואה הודעה שהשיחות "מושבתות"',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'הפעילות שלי',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'הלייקים, התגובות והצפיות שלך במקום אחד',
+  'Henüz hareketin yok': 'אין עדיין פעילות',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'כל מה שאהבת, הגבת עליו וצפית בו נאסף כאן.',
+  'Bu süzgeçte hareket yok': 'אין פעילות בסינון הזה',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': 'בחר סוג אחר או חזור אל «הכול».',
+  'Hepsi': 'הכול',
+  'Puan': 'דירוג',
+  'Tepki': 'ריאקציה',
+  'İzleme': 'צפייה',
+  'Durum': 'סטטוס',
+  'Liste': 'רשימה',
+  'Yorum yaptın': 'נוספה תגובה',
+  'Yorumu beğendin': 'לייק לתגובה',
+  '{} puan verdin': 'דירוג {}',
+  'Tepki verdin': 'ריאקציה',
+  'Listene ekledin': 'נוסף לרשימה',
+  'Takip etmeye başladın': 'התחלת מעקב',
+  '"İzleyeceğim" işaretledin': 'סומן כ«אצפה»',
+  '"İzliyorum" işaretledin': 'סומן כ«צופה»',
+  '"Bitirdim" işaretledin': 'סומן כ«סיימתי»',
+  '"Bıraktım" işaretledin': 'סומן כ«נטשתי»',
+  'Silinmiş içerik': 'תוכן שנמחק',
+  'şimdi': 'עכשיו',
+  '{} g': "{} ימ'",
+  '{} y': "{} שנ'",
+  'İstatistiklerim': 'הסטטיסטיקה שלי',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'צפיות ולייקים בפוסטים שלך',
+  'Henüz gönderin yok': 'אין לך עדיין פוסטים',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ברגע שתכתוב תגובה על סדרה או סרט, מספרי הצפיות והלייקים שלך יתחילו להצטבר כאן.',
+  'Tüm zamanlar': 'מכל הזמנים',
+  'Gönderi': 'פוסטים',
+  'Zaman kırılımı': 'פילוח לפי זמן',
+  'Son {} gün': '{} הימים האחרונים',
+  'En çok görüntülenen gönderilerin': 'הפוסטים הנצפים ביותר שלך',
+  'En çok beğenilen gönderilerin': 'הפוסטים עם הכי הרבה לייקים שלך',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'היסטוריית הצפיות עדיין לא התחילה להצטבר; נתוני היום הראשון יופיעו מחר.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'היסטוריית הצפיות מצטברת מאז {} (יש נתונים של {} ימים), ולכן המספר ל-{} ימים עדיין חלקי.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'היסטוריית הלייקים נרשמת מאז {}.',
+  'Bu dönemde gösterilecek gönderi yok.': 'אין פוסטים להצגה בתקופה הזו.',
+  'eksik veri': 'נתונים חלקיים',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'הסדרות והסרטים שצפית בהם, מוני הצפייה, זמן המסך וכרטיס ההתאמה לא יוצגו לאחרים בפרופיל שלך',
+  'Takipçi listemi gizle': 'הסתר את רשימת העוקבים שלי',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'אחרים לא יכולים לראות מי עוקב אחריך; מספר העוקבים שלך נשאר גלוי',
+  'Takip ettiklerimi gizle': 'להסתיר את מי שאני עוקב אחריו',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'אחרים לא יכולים לראות אחרי מי אתם עוקבים; מספר הנעקבים שלך נשאר גלוי',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'רשימת העוקבים של המשתמש הזה מוסתרת.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'רשימת הנעקבים של המשתמש הזה מוסתרת.',
 };

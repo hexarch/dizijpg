@@ -810,4 +810,66 @@ const Map<String, String> cevirilerPa = {
       'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੌਇਸ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ "ਬੰਦ ਹੈ" ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ਬੰਦ ਹੋਣ ਤੇ ਕੋਈ ਤੁਹਾਨੂੰ ਵੀਡੀਓ ਕਾਲ ਨਹੀਂ ਕਰ ਸਕਦਾ; ਕਾਲ ਕਰਨ ਵਾਲੇ ਨੂੰ "ਬੰਦ ਹੈ" ਸੂਚਨਾ ਦਿਸਦੀ ਹੈ',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'ਮੇਰੀ ਸਰਗਰਮੀ',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'ਤੇਰੇ ਲਾਈਕ, ਕਮੈਂਟ ਅਤੇ ਦੇਖਿਆ ਸਭ ਇੱਕੋ ਥਾਂ',
+  'Henüz hareketin yok': 'ਹਾਲੇ ਕੋਈ ਸਰਗਰਮੀ ਨਹੀਂ',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'ਜੋ ਤੂੰ ਲਾਈਕ ਕਰਦਾ, ਕਮੈਂਟ ਕਰਦਾ ਤੇ ਦੇਖਦਾ ਹੈਂ, ਸਭ ਇੱਥੇ ਇਕੱਠਾ ਹੁੰਦਾ ਹੈ।',
+  'Bu süzgeçte hareket yok': 'ਇਸ ਫਿਲਟਰ ਵਿੱਚ ਕੋਈ ਸਰਗਰਮੀ ਨਹੀਂ',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'ਹੋਰ ਕਿਸਮ ਚੁਣ ਜਾਂ "ਸਭ" ’ਤੇ ਵਾਪਸ ਜਾ।',
+  'Hepsi': 'ਸਭ',
+  'Puan': 'ਰੇਟਿੰਗ',
+  'Tepki': 'ਰਿਐਕਸ਼ਨ',
+  'İzleme': 'ਦੇਖਿਆ',
+  'Durum': 'ਸਥਿਤੀ',
+  'Liste': 'ਸੂਚੀ',
+  'Yorum yaptın': 'ਕਮੈਂਟ ਕੀਤਾ',
+  'Yorumu beğendin': 'ਕਮੈਂਟ ਲਾਈਕ ਕੀਤਾ',
+  '{} puan verdin': '{} ਰੇਟਿੰਗ ਦਿੱਤੀ',
+  'Tepki verdin': 'ਰਿਐਕਸ਼ਨ ਦਿੱਤਾ',
+  'Listene ekledin': 'ਸੂਚੀ ਵਿੱਚ ਜੋੜਿਆ',
+  'Takip etmeye başladın': 'ਫਾਲੋ ਕਰਨਾ ਸ਼ੁਰੂ ਕੀਤਾ',
+  '"İzleyeceğim" işaretledin': 'ਵਾਚਲਿਸਟ ਵਿੱਚ ਜੋੜਿਆ',
+  '"İzliyorum" işaretledin': 'ਦੇਖਣਾ ਸ਼ੁਰੂ ਕੀਤਾ',
+  '"Bitirdim" işaretledin': 'ਦੇਖਣਾ ਪੂਰਾ ਕੀਤਾ',
+  '"Bıraktım" işaretledin': 'ਦੇਖਣਾ ਛੱਡਿਆ',
+  'Silinmiş içerik': 'ਮਿਟਾਈ ਗਈ ਸਮੱਗਰੀ',
+  'şimdi': 'ਹੁਣੇ',
+  '{} g': '{} ਦਿ',
+  '{} y': '{} ਸਾ',
+  'İstatistiklerim': 'ਮੇਰੇ ਅੰਕੜੇ',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'ਤੇਰੀਆਂ ਪੋਸਟਾਂ ਦੇ ਵਿਊ ਅਤੇ ਲਾਈਕ',
+  'Henüz gönderin yok': 'ਹਾਲੇ ਤੇਰੀ ਕੋਈ ਪੋਸਟ ਨਹੀਂ',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ਜਦੋਂ ਤੂੰ ਕਿਸੇ ਸੀਰੀਜ਼ ਜਾਂ ਫ਼ਿਲਮ ’ਤੇ ਕਮੈਂਟ ਲਿਖੇਂਗਾ, ਤੇਰੇ ਵਿਊ ਅਤੇ ਲਾਈਕ ਇੱਥੇ ਇਕੱਠੇ ਹੋਣ ਲੱਗਣਗੇ।',
+  'Tüm zamanlar': 'ਹਰ ਸਮੇਂ ਦਾ',
+  'Gönderi': 'ਪੋਸਟਾਂ',
+  'Zaman kırılımı': 'ਸਮੇਂ ਮੁਤਾਬਕ ਵੰਡ',
+  'Son {} gün': 'ਪਿਛਲੇ {} ਦਿਨ',
+  'En çok görüntülenen gönderilerin': 'ਤੇਰੀਆਂ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਪੋਸਟਾਂ',
+  'En çok beğenilen gönderilerin': 'ਤੇਰੀਆਂ ਸਭ ਤੋਂ ਵੱਧ ਲਾਈਕ ਹੋਈਆਂ ਪੋਸਟਾਂ',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ਵਿਊ ਦਾ ਇਤਿਹਾਸ ਹਾਲੇ ਇਕੱਠਾ ਹੋਣਾ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਇਆ; ਪਹਿਲੇ ਦਿਨ ਦਾ ਡੇਟਾ ਕੱਲ੍ਹ ਦਿਸੇਗਾ।',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ਵਿਊ ਦਾ ਇਤਿਹਾਸ {} ਤੋਂ ਇਕੱਠਾ ਹੋ ਰਿਹਾ ਹੈ ({} ਦਿਨ ਦਾ ਡੇਟਾ ਹੈ), ਇਸ ਲਈ {} ਦਿਨ ਦਾ ਅੰਕੜਾ ਹਾਲੇ ਅਧੂਰਾ ਹੈ।',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'ਲਾਈਕ ਦਾ ਇਤਿਹਾਸ {} ਤੋਂ ਦਰਜ ਹੈ।',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'ਇਸ ਸਮੇਂ ਵਿੱਚ ਦਿਖਾਉਣ ਲਈ ਕੋਈ ਪੋਸਟ ਨਹੀਂ।',
+  'eksik veri': 'ਅਧੂਰਾ ਡੇਟਾ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'ਤੇਰੀ ਪ੍ਰੋਫ਼ਾਈਲ ’ਤੇ ਦੇਖੀਆਂ ਸੀਰੀਜ਼ ਤੇ ਫ਼ਿਲਮਾਂ, ਦੇਖਣ ਦੇ ਕਾਊਂਟਰ, ਸਕ੍ਰੀਨ ਟਾਈਮ ਅਤੇ ਮੇਲ ਕਾਰਡ ਹੋਰਾਂ ਨੂੰ ਨਹੀਂ ਦਿਸਣਗੇ',
+  'Takipçi listemi gizle': 'ਮੇਰੀ ਫਾਲੋਅਰ ਸੂਚੀ ਲੁਕਾਓ',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'ਤੈਨੂੰ ਕੌਣ ਫਾਲੋ ਕਰਦਾ ਹੈ, ਇਹ ਹੋਰ ਨਹੀਂ ਦੇਖ ਸਕਣਗੇ; ਤੇਰੀ ਫਾਲੋਅਰ ਗਿਣਤੀ ਦਿਸਦੀ ਰਹੇਗੀ',
+  'Takip ettiklerimi gizle': 'ਮੈਂ ਕਿਸ ਨੂੰ ਫਾਲੋ ਕਰਦਾ ਹਾਂ, ਲੁਕਾਓ',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'ਤੂੰ ਕਿਸ ਨੂੰ ਫਾਲੋ ਕਰਦਾ ਹੈਂ, ਇਹ ਹੋਰ ਨਹੀਂ ਦੇਖ ਸਕਣਗੇ; ਤੇਰੀ ਫਾਲੋਇੰਗ ਗਿਣਤੀ ਦਿਸਦੀ ਰਹੇਗੀ',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ਇਸ ਵਰਤੋਂਕਾਰ ਦੇ ਫਾਲੋਅਰ ਲੁਕਾਏ ਹੋਏ ਹਨ।',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ਇਹ ਵਰਤੋਂਕਾਰ ਕਿਸ ਨੂੰ ਫਾਲੋ ਕਰਦਾ ਹੈ, ਇਹ ਲੁਕਾਇਆ ਹੋਇਆ ਹੈ।',
 };

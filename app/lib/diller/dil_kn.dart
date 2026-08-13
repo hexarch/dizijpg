@@ -812,4 +812,67 @@ const Map<String, String> cevirilerKn = {
       'ಆಫ್ ಆಗಿದ್ದರೆ ಯಾರೂ ನಿಮಗೆ ಧ್ವನಿ ಕರೆ ಮಾಡಲಾಗದು; ಕರೆ ಮಾಡುವವರಿಗೆ "ನಿಷ್ಕ್ರಿಯ" ಎಂಬ ಸೂಚನೆ ಕಾಣುತ್ತದೆ',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ಆಫ್ ಆಗಿದ್ದರೆ ಯಾರೂ ನಿಮಗೆ ವೀಡಿಯೊ ಕರೆ ಮಾಡಲಾಗದು; ಕರೆ ಮಾಡುವವರಿಗೆ "ನಿಷ್ಕ್ರಿಯ" ಎಂಬ ಸೂಚನೆ ಕಾಣುತ್ತದೆ',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'ನನ್ನ ಚಟುವಟಿಕೆ',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'ನಿನ್ನ ಲೈಕ್, ಕಾಮೆಂಟ್ ಮತ್ತು ನೋಡಿದ್ದೆಲ್ಲ ಒಂದೇ ಕಡೆ',
+  'Henüz hareketin yok': 'ಇನ್ನೂ ಚಟುವಟಿಕೆ ಇಲ್ಲ',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'ನೀನು ಲೈಕ್ ಮಾಡಿದ್ದು, ಕಾಮೆಂಟ್ ಮಾಡಿದ್ದು, ನೋಡಿದ್ದೆಲ್ಲ ಇಲ್ಲಿ ಸೇರುತ್ತದೆ.',
+  'Bu süzgeçte hareket yok': 'ಈ ಫಿಲ್ಟರ್‌ನಲ್ಲಿ ಚಟುವಟಿಕೆ ಇಲ್ಲ',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'ಬೇರೆ ಬಗೆಯನ್ನು ಆರಿಸು ಅಥವಾ "ಎಲ್ಲಾ" ಗೆ ಹಿಂತಿರುಗು.',
+  'Hepsi': 'ಎಲ್ಲಾ',
+  'Puan': 'ರೇಟಿಂಗ್',
+  'Tepki': 'ಪ್ರತಿಕ್ರಿಯೆ',
+  'İzleme': 'ನೋಡಿದ್ದು',
+  'Durum': 'ಸ್ಥಿತಿ',
+  'Liste': 'ಪಟ್ಟಿ',
+  'Yorum yaptın': 'ಕಾಮೆಂಟ್ ಮಾಡಿದೆ',
+  'Yorumu beğendin': 'ಕಾಮೆಂಟ್ ಲೈಕ್ ಮಾಡಿದೆ',
+  '{} puan verdin': '{} ರೇಟಿಂಗ್ ನೀಡಿದೆ',
+  'Tepki verdin': 'ಪ್ರತಿಕ್ರಿಯಿಸಿದೆ',
+  'Listene ekledin': 'ಪಟ್ಟಿಗೆ ಸೇರಿಸಿದೆ',
+  'Takip etmeye başladın': 'ಫಾಲೋ ಮಾಡಲು ಶುರು ಮಾಡಿದೆ',
+  '"İzleyeceğim" işaretledin': '"ನೋಡುತ್ತೇನೆ" ಎಂದು ಗುರುತಿಸಿದೆ',
+  '"İzliyorum" işaretledin': '"ನೋಡುತ್ತಿದ್ದೇನೆ" ಎಂದು ಗುರುತಿಸಿದೆ',
+  '"Bitirdim" işaretledin': '"ಮುಗಿಸಿದೆ" ಎಂದು ಗುರುತಿಸಿದೆ',
+  '"Bıraktım" işaretledin': '"ಬಿಟ್ಟುಬಿಟ್ಟೆ" ಎಂದು ಗುರುತಿಸಿದೆ',
+  'Silinmiş içerik': 'ಅಳಿಸಿದ ವಿಷಯ',
+  'şimdi': 'ಈಗ',
+  '{} g': '{} ದಿ',
+  '{} y': '{} ವ',
+  'İstatistiklerim': 'ನನ್ನ ಅಂಕಿಅಂಶಗಳು',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'ನಿನ್ನ ಪೋಸ್ಟ್‌ಗಳ ವೀಕ್ಷಣೆ ಮತ್ತು ಲೈಕ್',
+  'Henüz gönderin yok': 'ನಿನಗೆ ಇನ್ನೂ ಪೋಸ್ಟ್‌ಗಳಿಲ್ಲ',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'ನೀನು ಯಾವುದೇ ಸರಣಿ ಅಥವಾ ಚಿತ್ರಕ್ಕೆ ಕಾಮೆಂಟ್ ಬರೆದರೆ, ನಿನ್ನ ವೀಕ್ಷಣೆ ಮತ್ತು ಲೈಕ್ ಸಂಖ್ಯೆ ಇಲ್ಲಿ ಸೇರಲು ಶುರುವಾಗುತ್ತದೆ.',
+  'Tüm zamanlar': 'ಎಲ್ಲಾ ಕಾಲ',
+  'Gönderi': 'ಪೋಸ್ಟ್‌ಗಳು',
+  'Zaman kırılımı': 'ಕಾಲಾವಧಿ ವಿಂಗಡಣೆ',
+  'Son {} gün': 'ಕಳೆದ {} ದಿನ',
+  'En çok görüntülenen gönderilerin': 'ನಿನ್ನ ಅತಿ ಹೆಚ್ಚು ವೀಕ್ಷಿಸಲಾದ ಪೋಸ್ಟ್‌ಗಳು',
+  'En çok beğenilen gönderilerin': 'ನಿನ್ನ ಅತಿ ಹೆಚ್ಚು ಲೈಕ್ ಪಡೆದ ಪೋಸ್ಟ್‌ಗಳು',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'ವೀಕ್ಷಣಾ ಇತಿಹಾಸ ಇನ್ನೂ ಸೇರಲು ಶುರುವಾಗಿಲ್ಲ; ಮೊದಲ ದಿನದ ದತ್ತಾಂಶ ನಾಳೆ ಕಾಣಿಸುತ್ತದೆ.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'ವೀಕ್ಷಣಾ ಇತಿಹಾಸ {} ಇಂದ ಸೇರುತ್ತಿದೆ ({} ದಿನಗಳ ದತ್ತಾಂಶವಿದೆ), ಹಾಗಾಗಿ {} ದಿನಗಳ ಸಂಖ್ಯೆ ಇನ್ನೂ ಅಪೂರ್ಣ.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'ಲೈಕ್ ಇತಿಹಾಸ {} ಇಂದ ದಾಖಲಾಗುತ್ತಿದೆ.',
+  'Bu dönemde gösterilecek gönderi yok.': 'ಈ ಅವಧಿಗೆ ತೋರಿಸಲು ಪೋಸ್ಟ್‌ಗಳಿಲ್ಲ.',
+  'eksik veri': 'ಅಪೂರ್ಣ ದತ್ತಾಂಶ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'ನಿನ್ನ ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ನೋಡಿದ ಸರಣಿ ಮತ್ತು ಚಿತ್ರಗಳು, ವೀಕ್ಷಣಾ ಎಣಿಕೆಗಳು, ಪರದೆ ಸಮಯ ಮತ್ತು ಹೊಂದಾಣಿಕೆ ಕಾರ್ಡ್ ಇತರರಿಗೆ ಕಾಣಿಸುವುದಿಲ್ಲ',
+  'Takipçi listemi gizle': 'ನನ್ನ ಫಾಲೋವರ್ ಪಟ್ಟಿಯನ್ನು ಮರೆಮಾಡಿ',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'ನಿನ್ನನ್ನು ಯಾರು ಫಾಲೋ ಮಾಡುತ್ತಾರೆಂದು ಇತರರು ನೋಡಲಾಗದು; ನಿನ್ನ ಫಾಲೋವರ್ ಸಂಖ್ಯೆ ಕಾಣಿಸುತ್ತಲೇ ಇರುತ್ತದೆ',
+  'Takip ettiklerimi gizle': 'ನಾನು ಯಾರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತೇನೆ ಎಂಬುದನ್ನು ಮರೆಮಾಡಿ',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'ನೀನು ಯಾರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತೀಯ ಎಂದು ಇತರರು ನೋಡಲಾಗದು; ನಿನ್ನ ಫಾಲೋಯಿಂಗ್ ಸಂಖ್ಯೆ ಕಾಣಿಸುತ್ತಲೇ ಇರುತ್ತದೆ',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ಈ ಬಳಕೆದಾರ ತನ್ನ ಫಾಲೋವರ್‌ಗಳನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ಈ ಬಳಕೆದಾರ ಯಾರನ್ನು ಫಾಲೋ ಮಾಡುತ್ತಾರೆಂಬುದನ್ನು ಗೌಪ್ಯವಾಗಿ ಇಡಲು ಬಯಸುತ್ತಾರೆ.',
 };

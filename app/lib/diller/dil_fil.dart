@@ -822,4 +822,68 @@ const Map<String, String> cevirilerFil = {
       'Kapag naka-off, walang makakatawag sa iyo gamit ang boses; may makikitang paalalang "naka-off" ang tumatawag',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'Kapag naka-off, walang makakatawag sa iyo gamit ang video; may makikitang paalalang "naka-off" ang tumatawag',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'Aktibidad ko',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'Ang mga like, komento at napanood mo sa isang lugar',
+  'Henüz hareketin yok': 'Wala pang aktibidad',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'Nagtitipon dito ang lahat ng nili-like, kinokomentuhan at pinapanood mo.',
+  'Bu süzgeçte hareket yok': 'Walang aktibidad sa filter na ito',
+  'Başka bir tür seç ya da "Hepsi"ne dön.':
+      'Pumili ng ibang uri o bumalik sa "Lahat".',
+  'Hepsi': 'Lahat',
+  'Puan': 'Rating',
+  'Tepki': 'Reaksyon',
+  'İzleme': 'Napanood',
+  'Durum': 'Status',
+  'Liste': 'Listahan',
+  'Yorum yaptın': 'Nagkomento ka',
+  'Yorumu beğendin': 'Nag-like ka ng komento',
+  '{} puan verdin': 'Binigyan mo ng {}',
+  'Tepki verdin': 'Nag-react ka',
+  'Listene ekledin': 'Idinagdag mo sa listahan',
+  'Takip etmeye başladın': 'Nagsimula kang sumunod',
+  '"İzleyeceğim" işaretledin': 'Minarkahan bilang "Panonoorin Ko"',
+  '"İzliyorum" işaretledin': 'Minarkahan bilang "Pinapanood Ko"',
+  '"Bitirdim" işaretledin': 'Minarkahan bilang "Tapos Na"',
+  '"Bıraktım" işaretledin': 'Minarkahan bilang "Hininto Ko"',
+  'Silinmiş içerik': 'Tinanggal na content',
+  'şimdi': 'ngayon',
+  '{} g': '{} araw',
+  '{} y': '{} taon',
+  'İstatistiklerim': 'Stats ko',
+  'Gönderilerinin görüntülenmesi ve beğenisi':
+      'Mga view at like sa mga post mo',
+  'Henüz gönderin yok': 'Wala ka pang post',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'Kapag nagkomento ka sa isang series o pelikula, magsisimulang mag-ipon dito ang bilang ng views at likes mo.',
+  'Tüm zamanlar': 'Sa lahat ng panahon',
+  'Gönderi': 'Mga post',
+  'Zaman kırılımı': 'Hati-hati ayon sa panahon',
+  'Son {} gün': 'Huling {} araw',
+  'En çok görüntülenen gönderilerin': 'Mga post mong pinakamaraming view',
+  'En çok beğenilen gönderilerin': 'Mga post mong pinakamaraming like',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'Hindi pa nagsisimulang mag-ipon ang history ng views; lalabas bukas ang data ng unang araw.',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'Nag-iipon ang history ng views mula {} (may {} araw na data), kaya hindi pa kumpleto ang bilang para sa {} araw.',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.':
+      'Naitatala ang history ng likes mula {}.',
+  'Bu dönemde gösterilecek gönderi yok.':
+      'Walang post na maipapakita para sa panahong ito.',
+  'eksik veri': 'hindi kumpletong data',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'Hindi makikita ng iba sa profile mo ang mga series at pelikulang napanood mo, ang mga counter ng panonood, screen time at match card',
+  'Takipçi listemi gizle': 'Itago ang listahan ng mga follower ko',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'Hindi makikita ng iba kung sino ang sumusunod sa iyo; nananatiling nakikita ang bilang ng follower mo',
+  'Takip ettiklerimi gizle': 'Itago kung sino ang sinusundan ko',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'Hindi makikita ng iba kung sino ang sinusundan mo; nananatiling nakikita ang bilang ng sinusundan mo',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'Mas gusto ng user na ito na itago ang mga follower niya.',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'Mas gusto ng user na ito na itago kung sino ang sinusundan niya.',
 };

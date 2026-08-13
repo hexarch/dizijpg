@@ -794,4 +794,64 @@ const Map<String, String> cevirilerAm = {
       'ሲጠፋ ማንም በድምፅ ሊደውልልዎ አይችልም፤ ደዋዩ "ተሰናክሏል" የሚል ማሳወቂያ ያያል',
   'Kapalıyken kimse seni görüntülü arayamaz; arayan "devre dışı" uyarısı görür':
       'ሲጠፋ ማንም በቪዲዮ ሊደውልልዎ አይችልም፤ ደዋዩ "ተሰናክሏል" የሚል ማሳወቂያ ያያል',
+
+  // --- Hareketlerim / İstatistiklerim / gizlilik ---
+  'Hareketlerim': 'የእኔ እንቅስቃሴ',
+  'Beğenilerin, yorumların, izlemelerin tek akışta':
+      'ውዴታዎች፣ አስተያየቶችና እይታዎች በአንድ ቦታ',
+  'Henüz hareketin yok': 'እስካሁን እንቅስቃሴ የለም',
+  'Beğendiğin, yorumladığın, izlediğin her şey burada birikir.':
+      'የተወደዱ፣ አስተያየት የተሰጠባቸውና የታዩ ሁሉ እዚህ ይሰበሰባሉ።',
+  'Bu süzgeçte hareket yok': 'በዚህ ማጣሪያ ውስጥ እንቅስቃሴ የለም',
+  'Başka bir tür seç ya da "Hepsi"ne dön.': 'ሌላ ዓይነት ይምረጡ ወይም ወደ «ሁሉም» ይመለሱ።',
+  'Hepsi': 'ሁሉም',
+  'Puan': 'ደረጃ',
+  'Tepki': 'ምላሽ',
+  'İzleme': 'እይታ',
+  'Durum': 'ሁኔታ',
+  'Liste': 'ዝርዝር',
+  'Yorum yaptın': 'አስተያየት ተሰጥቷል',
+  'Yorumu beğendin': 'አስተያየት ተወዷል',
+  '{} puan verdin': '{} ነጥብ ተሰጥቷል',
+  'Tepki verdin': 'ምላሽ ተሰጥቷል',
+  'Listene ekledin': 'ወደ ዝርዝር ተጨምሯል',
+  'Takip etmeye başladın': 'መከታተል ተጀምሯል',
+  '"İzleyeceğim" işaretledin': '«አያለሁ» ተብሎ ተመልክቷል',
+  '"İzliyorum" işaretledin': '«እያየሁ ነው» ተብሎ ተመልክቷል',
+  '"Bitirdim" işaretledin': '«ጨርሻለሁ» ተብሎ ተመልክቷል',
+  '"Bıraktım" işaretledin': '«አቁሜዋለሁ» ተብሎ ተመልክቷል',
+  'Silinmiş içerik': 'የተሰረዘ ይዘት',
+  'şimdi': 'አሁን',
+  '{} g': '{} ቀን',
+  '{} y': '{} ዓመ',
+  'İstatistiklerim': 'የእኔ ስታቲስቲክስ',
+  'Gönderilerinin görüntülenmesi ve beğenisi': 'የልጥፎች እይታዎችና ውዴታዎች',
+  'Henüz gönderin yok': 'እስካሁን ልጥፍ የለም',
+  'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
+      'በተከታታይ ድራማ ወይም ፊልም ላይ አስተያየት ሲጻፍ የእይታና የውዴታ ቁጥሮች እዚህ መከማቸት ይጀምራሉ።',
+  'Tüm zamanlar': 'ሁሉም ጊዜ',
+  'Gönderi': 'ልጥፎች',
+  'Zaman kırılımı': 'የጊዜ ክፍፍል',
+  'Son {} gün': 'ያለፉት {} ቀናት',
+  'En çok görüntülenen gönderilerin': 'በብዛት የታዩ ልጥፎች',
+  'En çok beğenilen gönderilerin': 'በብዛት የተወደዱ ልጥፎች',
+  'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
+      'የእይታ ታሪክ ገና መከማቸት አልጀመረም፤ የመጀመሪያው ቀን መረጃ ነገ ይታያል።',
+  'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
+      'የእይታ ታሪክ ከ{} ጀምሮ እየተከማቸ ነው ({} ቀን መረጃ አለ)፤ ስለዚህ የ{} ቀን ቁጥር ገና ያልተሟላ ነው።',
+  'Beğeni geçmişi {} tarihinden beri kayıtlı.': 'የውዴታ ታሪክ ከ{} ጀምሮ ተመዝግቧል።',
+  'Bu dönemde gösterilecek gönderi yok.': 'በዚህ ወቅት የሚታይ ልጥፍ የለም።',
+  'eksik veri': 'ያልተሟላ መረጃ',
+  'Profilinde izlediğin dizi ve filmler, izleme sayaçların, ekran süren ve uyum kartın başkalarına görünmez':
+      'በመገለጫው ላይ የታዩ ተከታታዮችና ፊልሞች፣ የእይታ ቆጣሪዎች፣ የስክሪን ጊዜና የተዛማጅነት ካርድ ለሌሎች አይታዩም',
+  'Takipçi listemi gizle': 'የተከታዮቼን ዝርዝር ደብቅ',
+  'Seni kimlerin takip ettiğini başkaları göremez; takipçi sayın görünmeye devam eder':
+      'ማን እንደሚከታተል ሌሎች ማየት አይችሉም፤ የተከታዮች ቁጥር ግን መታየቱን ይቀጥላል',
+  'Takip ettiklerimi gizle': 'የምከታተላቸውን ደብቅ',
+  'Kimleri takip ettiğini başkaları göremez; takip sayın görünmeye devam eder':
+      'ማንን እንደሚከታተል ሌሎች ማየት አይችሉም፤ የክትትል ቁጥር ግን መታየቱን ይቀጥላል',
+  'Bu kullanıcı takipçilerini gizli tutmayı tercih ediyor.':
+      'ይህ ተጠቃሚ ተከታዮቻቸውን በሚስጥር መያዝ ይመርጣሉ።',
+  'Bu kullanıcı takip ettiklerini gizli tutmayı tercih ediyor.':
+      'ይህ ተጠቃሚ የሚከታተሏቸውን በሚስጥር መያዝ ይመርጣሉ።',
 };
