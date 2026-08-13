@@ -16,6 +16,7 @@ import '../gorusme/arama_servisi.dart';
 import '../gorusme/gorusme_api.dart' show misafirAramaSebebi;
 import '../push.dart';
 import 'gorsel_kirp.dart';
+import 'iki_adim_sheet.dart' show IkiAdimAyariSheet;
 import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
 import '../tema.dart';
@@ -1150,6 +1151,37 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       backgroundColor: DiziRenkler.koyuGri,
                       isScrollControlled: true,
                       builder: (_) => const _GizlilikSheet(),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // md. 52 — İki adımlı doğrulama (YALNIZ e-posta).
+                Card(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.lock_outline,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'İki Adımlı Doğrulama'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Girişte e-postana kod gönderilir'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin38,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => showModalBottomSheet(
+                      context: context,
+                      backgroundColor: DiziRenkler.koyuGri,
+                      isScrollControlled: true,
+                      builder: (_) => const IkiAdimAyariSheet(),
                     ),
                   ),
                 ),

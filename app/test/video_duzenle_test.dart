@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:dizijpg/ekranlar/medya_inceleme.dart';
@@ -8,6 +9,8 @@ import 'package:dizijpg/video_islem.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'gercek_video_baslik.dart';
 
 /// Video kırpma (trim) + otomatik sıkıştırma (MEDYA-EDITOR-PLANI §V1).
 ///
@@ -78,6 +81,7 @@ class _SahteMotor implements VideoIsleyici {
     this.girdiBayt = 4 * 1024 * 1024,
     this.ciktiBayt = 2 * 1024 * 1024,
     Uint8List? ciktiBas,
+    Uint8List? kaynakVeri,
     this.bilgiVeri = const VideoBilgi(
       sure: Duration(seconds: 60),
       genislik: 1080,
@@ -86,11 +90,17 @@ class _SahteMotor implements VideoIsleyici {
     this.elleBiter = false,
     this.patlar = false,
     this.iptalTamamlar = true,
-  }) : ciktiBas = ciktiBas ?? _mp4Bas;
+  }) : ciktiBas = ciktiBas ?? _mp4Bas,
+       // Varsayılan kaynak GERÇEK bir H.264 MP4: kodek kapısı eklendikten
+       // sonra da eski testlerin anlamı değişmesin (H.264 = dokunulmaz).
+       kaynakVeri = kaynakVeri ?? gercekH264;
 
   final int girdiBayt;
   final int ciktiBayt;
   final Uint8List ciktiBas;
+
+  /// KAYNAK dosyanın baytları — `videoKodegi` bunu okur.
+  final Uint8List kaynakVeri;
   final VideoBilgi? bilgiVeri;
 
   /// true → [isle] bir Completer bekler; ancak [iptal] ya da [bitir] onu
@@ -169,7 +179,14 @@ class _SahteMotor implements VideoIsleyici {
       '/gecici/v${_sayac++}.$uzanti';
 
   @override
-  Future<Uint8List> basBaytlar(String yol, {int adet = 16}) async => ciktiBas;
+  Future<Uint8List> parca(String yol, {int bas = 0, int adet = 16}) async {
+    // Kaynak yolu için GERÇEK bir MP4 kutu ağacı sunulur ki `videoKodegi`
+    // sahte motorla da ölçülebilsin; çıktı yolu için sihirli baytlar.
+    final tam = yol.startsWith('/gecici/') ? ciktiBas : kaynakVeri;
+    if (bas >= tam.length) return Uint8List(0);
+    final son = math.min(tam.length, bas + adet);
+    return Uint8List.sublistView(tam, bas, son);
+  }
 
   @override
   Future<int> boyut(String yol) async =>
@@ -416,6 +433,252 @@ void main() {
       expect(k.sikistir, isTrue);
       expect(k.olcek, 1, reason: 'ölçek Media3\'te efekttir, kodlamayı zorlar');
       expect(k.bitHizi, videoBitHizi);
+    });
+  });
+
+  // ---- Kodek algılama (madde 53) ----
+  //
+  // ÖLÇÜM (13 Ağu 2026, canlı): 25.851 medya dosyasının video olan 481'i
+  // ffprobe'dan geçirildi → 448 H.264, **33 VP9**, 0 HEVC. Yani "tarayıcıda
+  // oynamayan video" ÖNGÖRÜ değil, canlıda duran bir olgu; üstelik VP9
+  // dosyalardan biri (`m85-cea0ca2bba88e369.mp4`) madde 35(a)'nın ölçüm
+  // dosyasının ta kendisi. Kural bu yüzden HEVC'ye özel değil: H.264
+  // olmayan her görüntü kodeki yeniden kodlanır.
+  //
+  // Baytlar GERÇEK ffmpeg çıktısıdır (`gercek_video_baslik.dart`).
+
+  group('kodek algılama', () {
+    Future<VideoKodek> kodek(Uint8List v) =>
+        videoKodegi(bellektenOku(v), v.length);
+
+    test('gerçek H.264 dosyası avc1 olarak tanınır', () async {
+      expect(await kodek(gercekH264), VideoKodek.h264);
+    });
+
+    test('gerçek HEVC dosyası hvc1 olarak tanınır', () async {
+      expect(await kodek(gercekHevc), VideoKodek.hevc);
+    });
+
+    test('gerçek VP9 dosyası vp09 olarak tanınır', () async {
+      // Canlıdaki 33 dosyanın kodeki. `moov` bu dosyada mdat'tan SONRA:
+      // ayrıştırıcı mdat gövdesini okumadan üzerinden atlayabilmeli.
+      expect(await kodek(gercekVp9), VideoKodek.vp9);
+    });
+
+    test('`moov` DOSYANIN SONUNDA olsa da bulunur', () async {
+      // Telefon kamerası faststart yazmaz; moov sondadır. Bu vaka kaçarsa
+      // gerçek cihaz videolarının HİÇBİRİ tanınmaz.
+      expect(await kodek(gercekH264MoovSonda), VideoKodek.h264);
+    });
+
+    test('`mdat` GÖVDESİ okunmaz — yalnız 16 baytlık başlığı', () async {
+      // BU TESTİN ASIL DERDİ 813 baytlık oyuncak dosya değil, 100 MB'lık
+      // gerçek video: kodek öğrenmek için `mdat` gövdesini okumak, kullanıcıyı
+      // her yüklemede yüz megabaytlık bir disk okumasına mahkûm etmek demek.
+      // `moov` gövdesi okunur (kutu ağacı orada), `mdat` gövdesi ASLA.
+      //
+      // `gercekH264MoovSonda` kutuları: ftyp(0,32) free(32,8) mdat(40,722)
+      // moov(762,752). mdat'tan okunmasına izin verilen tek şey 16 baytlık
+      // başlık penceresidir (64 bitlik boy alanı da oraya sığsın diye 16);
+      // yani 56. bayttan `moov`a kadar olan aralığa HİÇ dokunulmamalı.
+      const mdatGovdeBas = 40 + 16;
+      const mdatGovdeSon = 762;
+      final okunan = <List<int>>[];
+      final ham = bellektenOku(gercekH264MoovSonda);
+      final k = await videoKodegi((bas, adet) async {
+        final v = await ham(bas, adet);
+        okunan.add([bas, bas + v.length]);
+        return v;
+      }, gercekH264MoovSonda.length);
+      expect(k, VideoKodek.h264);
+      for (final aralik in okunan) {
+        expect(
+          aralik[0] < mdatGovdeSon && aralik[1] > mdatGovdeBas,
+          isFalse,
+          reason: 'mdat gövdesine dokunuldu: $aralik',
+        );
+      }
+      // mdat'ın üzerinden 16 baytlık tek bir başlık okumasıyla atlanmalı.
+      expect(okunan.where((a) => a[0] == 40), hasLength(1));
+    });
+
+    test('BOZUK/KISA dosyalarda ÇÖKMEZ, "bilinmiyor" döner', () async {
+      expect(await kodek(Uint8List(0)), VideoKodek.bilinmiyor);
+      expect(await kodek(Uint8List(4)), VideoKodek.bilinmiyor);
+      // ftyp diyor ama gerisi yok.
+      expect(await kodek(_mp4Bas), VideoKodek.bilinmiyor);
+      // WebM (EBML) — MP4 kutu ağacı değil; rastgele baytlar kutu boyu
+      // sanılıp gezilmemeli.
+      expect(await kodek(_webmBas), VideoKodek.bilinmiyor);
+      // Gerçek dosyanın ortasından kesilmiş hâli: `moov` yarım.
+      expect(
+        await kodek(Uint8List.sublistView(gercekH264, 0, 200)),
+        VideoKodek.bilinmiyor,
+      );
+      // Boy alanı 0 olan kutu (dosya sonuna kadar) sonsuz döngü yapmamalı.
+      expect(
+        await kodek(_bas([0, 0, 0, 0, 0x66, 0x74, 0x79, 0x70])),
+        VideoKodek.bilinmiyor,
+      );
+    });
+
+    test('dosya boyutu bilinmiyorsa okumaya hiç girişilmez', () async {
+      var okumaOldu = false;
+      final k = await videoKodegi((bas, adet) async {
+        okumaOldu = true;
+        return Uint8List(0);
+      }, 0);
+      expect(k, VideoKodek.bilinmiyor);
+      expect(okumaOldu, isFalse);
+    });
+
+    test('okuma İSTİSNA fırlatırsa yutulur', () async {
+      final k = await videoKodegi(
+        (bas, adet) async => throw Exception('disk gitti'),
+        1000,
+      );
+      expect(k, VideoKodek.bilinmiyor);
+    });
+
+    test('yalnız H.264 ve bilinmiyor "dokunma" der', () {
+      expect(VideoKodek.h264.yenidenKodlaGerek, isFalse);
+      // Emin değilsek dokunmuyoruz: bugünkü davranış korunur.
+      expect(VideoKodek.bilinmiyor.yenidenKodlaGerek, isFalse);
+      expect(VideoKodek.hevc.yenidenKodlaGerek, isTrue);
+      expect(VideoKodek.vp9.yenidenKodlaGerek, isTrue);
+      expect(VideoKodek.av1.yenidenKodlaGerek, isTrue);
+      expect(VideoKodek.digerVideo.yenidenKodlaGerek, isTrue);
+    });
+  });
+
+  // ---- Oynatılabilirlik KARARI (madde 53) ----
+
+  group('oynatılabilirlik kararı', () {
+    VideoSikistirmaKarari karar({
+      required int mb,
+      required int saniye,
+      VideoKodek kodek = VideoKodek.hevc,
+      int genislik = 1080,
+      int yukseklik = 1920,
+    }) => videoSikistirmaKarari(
+      girdiBayt: mb * 1024 * 1024,
+      sure: Duration(seconds: saniye),
+      genislik: genislik,
+      yukseklik: yukseklik,
+      kodek: kodek,
+    );
+
+    test('H.264 kaynak madde 35(a) kuralına DOKUNMAZ', () {
+      // Bu satır 35(a)'yı koruyor: kodek parametresi eklendi diye "zaten
+      // verimli" bir H.264 video yeniden kodlanmaya başlamamalı.
+      expect(karar(mb: 8, saniye: 5, kodek: VideoKodek.h264).sikistir, isFalse);
+      expect(
+        karar(mb: 50, saniye: 540, kodek: VideoKodek.h264).sikistir,
+        isFalse,
+      );
+    });
+
+    test('20 MB ALTINDAKİ HEVC bile yeniden kodlanır', () {
+      // Boyut kapısı bunu hiç sorgulamazdı; oynamayan video küçük de olabilir.
+      final k = karar(mb: 8, saniye: 20);
+      expect(k.sikistir, isTrue);
+    });
+
+    test('ÖLÇÜLEN VAKA: 33,6 MB VP9 dosya artık H.264\'e çevrilir', () {
+      // `m85-cea0ca2bba88e369.mp4` — 35(a) bunu "dokunma" diye bırakıyordu
+      // (boyut açısından DOĞRU), ama dosya VP9 ve Safari'de oynamıyor.
+      final k = videoSikistirmaKarari(
+        girdiBayt: 35228685,
+        sure: const Duration(milliseconds: 70863),
+        genislik: 1080,
+        yukseklik: 1920,
+        kodek: VideoKodek.vp9,
+      );
+      expect(k.sikistir, isTrue);
+      // ÇÖZÜNÜRLÜK KORUNUR: yeniden kodlamanın gerekçesi kodek, piksel değil.
+      expect(
+        k.olcek,
+        1,
+        reason: '35(a) piksel yarıya indirmenin bedelini ölçtü',
+      );
+      // Kaynak 3,98 Mbps → tavan %80'i.
+      expect(k.bitHizi, closeTo(3977103 * videoOynatilabilirlikPayi, 20000));
+    });
+
+    test('tavan kaynağın ALTINDA kalır — yoksa iOS kayıpsız KOPYALAR', () {
+      // `RenderVideo.swift:61` → kaynak ≤ tavan × 1,2 ise
+      // AVAssetExportPresetPassthrough; kodek DEĞİŞMEZ, düzeltme boşa gider.
+      // Paketin toleransı 1,2; bizim payımız 1/0,8 = 1,25 > 1,2.
+      for (final mbps in [0.5, 1.0, 2.0, 4.0, 6.0]) {
+        final bayt = (mbps * 1000000 * 30 / 8).round();
+        final k = videoSikistirmaKarari(
+          girdiBayt: bayt,
+          sure: const Duration(seconds: 30),
+          genislik: 1080,
+          yukseklik: 1920,
+          kodek: VideoKodek.hevc,
+        );
+        expect(k.sikistir, isTrue, reason: '$mbps Mbps');
+        final kaynakBitHizi = bayt * 8 / 30;
+        expect(
+          kaynakBitHizi,
+          greaterThan(k.bitHizi! * 1.2),
+          reason: '$mbps Mbps — paket kayıpsız kopyalama yoluna düşmemeli',
+        );
+      }
+      expect(1 / videoOynatilabilirlikPayi, greaterThan(1.2));
+    });
+
+    test(
+      'çıktı kaynaktan BÜYÜK olamaz (35a\'nın şişme hatası tekrarlanmaz)',
+      () {
+        for (final mbps in [0.3, 1.0, 3.98, 6.0]) {
+          final bayt = (mbps * 1000000 * 40 / 8).round();
+          final k = videoSikistirmaKarari(
+            girdiBayt: bayt,
+            sure: const Duration(seconds: 40),
+            genislik: 1080,
+            yukseklik: 1920,
+            kodek: VideoKodek.vp9,
+          );
+          final tahminiBayt = k.bitHizi! * 40 / 8;
+          expect(
+            tahminiBayt,
+            lessThanOrEqualTo(bayt.toDouble()),
+            reason: '$mbps',
+          );
+        }
+      },
+    );
+
+    test('tavan 5 Mbps\'i ve 100 MB sığdırmasını aşmaz', () {
+      // Yüksek bit hızlı kaynakta zaten BOYUT kararı devreye girer ve o da
+      // H.264 üretir; oynatılabilirlik dalı ikinci kez bit harcamaz.
+      final k = karar(mb: 60, saniye: 60);
+      expect(k.bitHizi, lessThanOrEqualTo(videoBitHizi));
+      // 100 MB'ı aşan kaynakta sığdırma tavanı kazanır.
+      final b = karar(mb: 150, saniye: 300);
+      expect(b.bitHizi! * 300 / 8, lessThan(videoAzamiBayt));
+    });
+
+    test('süre okunamadıysa ölçek verilmez, yalnız tavan konur', () {
+      final k = karar(mb: 8, saniye: 0);
+      expect(k.sikistir, isTrue);
+      expect(k.olcek, 1);
+      expect(k.bitHizi, videoBitHizi);
+    });
+
+    test('BOYUT kararı zaten sıkıştırıyorsa o kazanır', () {
+      // Çıktı ne olursa olsun H.264; ikinci bir kural gereksiz. Kodekli ve
+      // kodeksiz çağrı AYNI kararı vermeli.
+      final kodekli = karar(mb: 60, saniye: 60, kodek: VideoKodek.hevc);
+      final kodeksiz = karar(mb: 60, saniye: 60, kodek: VideoKodek.bilinmiyor);
+      expect(kodekli, kodeksiz);
+      expect(
+        kodekli.olcek,
+        lessThan(1),
+        reason: 'boyut dalı 720p kutusu ister',
+      );
     });
   });
 
@@ -785,6 +1048,120 @@ void main() {
       await _kacKare(tester);
       expect(motor.isler.single.bitHizi, isNull);
       expect(motor.isler.single.olcek, 1);
+    });
+  });
+
+  // ---- KODEK KAPISI, uçtan uca (madde 53) ----
+  //
+  // Yukarıdaki karar testleri saf hesabı kilitliyor; bunlar hesabın GERÇEKTEN
+  // hatta bağlı olduğunu kilitliyor. Motorun `parca` çağrısı kaynağın gerçek
+  // baytlarını veriyor, `videoHazirla` kodeki oradan okuyor.
+
+  group('kodek kapısı', () {
+    testWidgets('KÜÇÜK bir HEVC video artık işlenir (1. kapıyı geçer)', (
+      tester,
+    ) async {
+      // 8 MB: 20 MB eşiğinin ALTINDA, yani madde 35a'dan sonra bu dosya
+      // sorgusuz sunucuya gidiyordu — ve Chrome'da oynamıyordu.
+      final motor = _SahteMotor(
+        girdiBayt: 8 * 1024 * 1024,
+        kaynakVeri: gercekHevc,
+        bilgiVeri: const VideoBilgi(
+          sure: Duration(seconds: 20),
+          genislik: 1080,
+          yukseklik: 1920,
+        ),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kosu = await _hazirlaBaslat(tester, XFile('/kaynak/a.mp4'));
+      await _kacKare(tester);
+      expect(motor.isler, hasLength(1), reason: 'HEVC H.264\'e çevrilmeli');
+      expect(motor.isler.single.olcek, 1, reason: 'çözünürlük korunur');
+      expect(motor.isler.single.bitHizi, isNotNull);
+      expect(kosu.sonuc!.path, startsWith('/gecici/'));
+    });
+
+    testWidgets('35(a)\'nın ÖLÇÜM DOSYASI (VP9) artık dönüştürülür', (
+      tester,
+    ) async {
+      // Aynı boyut/süre/çözünürlük — tek fark kaynağın GERÇEKTEN VP9 olması.
+      // Bir üstteki "zaten verimli video HİÇ işlenmez" testiyle bilinçli
+      // olarak zıt: 35(a) boyut için haklı, madde 53 kodek için haklı.
+      final motor = _SahteMotor(
+        girdiBayt: 35228685,
+        kaynakVeri: gercekVp9,
+        bilgiVeri: const VideoBilgi(
+          sure: Duration(milliseconds: 70863),
+          genislik: 1080,
+          yukseklik: 1920,
+        ),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kosu = await _hazirlaBaslat(tester, XFile('/kaynak/a.mp4'));
+      await _kacKare(tester);
+      expect(motor.isler, hasLength(1));
+      final is0 = motor.isler.single;
+      expect(is0.olcek, 1);
+      // Tavan kaynağın (3,98 Mbps) altında: iOS kayıpsız kopyalamaya düşmesin.
+      expect(is0.bitHizi, lessThan((3977103 / 1.2).round()));
+      expect(kosu.sonuc!.path, startsWith('/gecici/'));
+    });
+
+    testWidgets('H.264 kaynak DOKUNULMADAN geçer (35a korunuyor)', (
+      tester,
+    ) async {
+      // Aynı dosya H.264 olsaydı: kodlayıcı hiç çalışmamalı.
+      final motor = _SahteMotor(
+        girdiBayt: 35228685,
+        kaynakVeri: gercekH264MoovSonda,
+        bilgiVeri: const VideoBilgi(
+          sure: Duration(milliseconds: 70863),
+          genislik: 1080,
+          yukseklik: 1920,
+        ),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kaynak = XFile('/kaynak/a.mp4');
+      final kosu = await _hazirlaBaslat(tester, kaynak);
+      await _kacKare(tester);
+      expect(motor.isler, isEmpty);
+      expect(kosu.sonuc, same(kaynak));
+    });
+
+    testWidgets('kodek OKUNAMAZSA dosyaya dokunulmaz', (tester) async {
+      // Bozuk/bilinmeyen kap: emin olmadığımız için bugünkü davranış.
+      final motor = _SahteMotor(
+        girdiBayt: 8 * 1024 * 1024,
+        kaynakVeri: Uint8List.fromList(const [1, 2, 3, 4, 5, 6, 7, 8]),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kaynak = XFile('/kaynak/a.mp4');
+      final kosu = await _hazirlaBaslat(tester, kaynak);
+      await _kacKare(tester);
+      expect(motor.isler, isEmpty);
+      expect(kosu.sonuc, same(kaynak));
+    });
+
+    testWidgets('kodlayıcı patlarsa HEVC orijinali yine de yüklenir', (
+      tester,
+    ) async {
+      // Oynamayan bir dosya yüklemek, kullanıcıyı hiçbir çare bırakmadan
+      // reddetmekten iyidir (`_yedegeDus` sözleşmesi).
+      final motor = _SahteMotor(
+        girdiBayt: 8 * 1024 * 1024,
+        kaynakVeri: gercekHevc,
+        patlar: true,
+        bilgiVeri: const VideoBilgi(
+          sure: Duration(seconds: 20),
+          genislik: 1080,
+          yukseklik: 1920,
+        ),
+      );
+      videoIsleyiciSahte = () => motor;
+      final kaynak = XFile('/kaynak/a.mp4');
+      final kosu = await _hazirlaBaslat(tester, kaynak);
+      await _kacKare(tester);
+      expect(kosu.sonuc, same(kaynak));
     });
   });
 

@@ -963,4 +963,21 @@ const Map<String, String> cevirilerTe = {
       'మీరు ఉన్నారన్నదే సంతోషం, ఇక్కడ ఉన్నారన్నది మరింత సంతోషం.',
   'Bugün {} yaşına girdin': 'ఈరోజు మీకు {} ఏళ్లు నిండాయి',
   'Teşekkürler': 'ధన్యవాదాలు',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'రెండు దశల ధృవీకరణ',
+  'Girişte e-postana kod gönderilir':
+      'సైన్ ఇన్ చేసినప్పుడు ఇమెయిల్‌కు కోడ్ వస్తుంది',
+  'Kod {} adresine gönderildi': '{}కు కోడ్ పంపబడింది',
+  '6 haneli kod': '6 అంకెల కోడ్',
+  'Doğrula': 'ధృవీకరించు',
+  'Yeniden gönder': 'మళ్ళీ పంపు',
+  'Vazgeç': 'రద్దు',
+  'Yeni kod gönderildi': 'కొత్త కోడ్ పంపబడింది',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Googleతో సైన్ ఇన్ చేసినప్పుడు కోడ్ అడగరు; Google దాని స్వంత ధృవీకరణ చేస్తుంది.',
+  'Kapatmak için de kod gerekir.': 'ఆఫ్ చేయడానికి కూడా కోడ్ కావాలి.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ఇమెయిల్ అందుబాటులో లేకపోతే ఖాతాలోకి ప్రవేశించడం సాధ్యం కాదు.',
+  'İki adımlı doğrulama açıldı': 'రెండు దశల ధృవీకరణ ఆన్ చేయబడింది',
+  'İki adımlı doğrulama kapatıldı': 'రెండు దశల ధృవీకరణ ఆఫ్ చేయబడింది',
 };

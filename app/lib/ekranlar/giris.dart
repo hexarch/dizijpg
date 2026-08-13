@@ -11,6 +11,7 @@ import '../ceviri.dart';
 import '../google_kapisi.dart';
 import '../push.dart';
 import '../tema.dart';
+import 'iki_adim_sheet.dart';
 import 'ortak.dart' show altGuvenli;
 
 /// Formun azami genişliği. Google'ın kendi düğmesi 400 px'ten geniş
@@ -276,17 +277,35 @@ class _GirisEkraniState extends State<GirisEkrani> {
   Future<void> _gonder() async {
     setState(() => _yukleniyor = true);
     try {
-      final kullanici = _kayitModu
-          ? await Api.kayit(
-              _email.text.trim(),
-              _kullaniciAdi.text.trim(),
-              _sifre.text,
-            )
-          : await Api.giris(_email.text.trim(), _sifre.text);
+      if (_kayitModu) {
+        final kullanici = await Api.kayit(
+          _email.text.trim(),
+          _kullaniciAdi.text.trim(),
+          _sifre.text,
+        );
+        if (!mounted) return;
+        // Yeni kayıt → karşılama akışı (router yönlendirir).
+        Oturum.karsilamaGerekli = true;
+        await context.read<Oturum>().girisYapildi(kullanici);
+        pushBaslat(); // push izni + token kaydı
+        return;
+      }
+      final d = await Api.giris(_email.text.trim(), _sifre.text);
       if (!mounted) return;
-      // Yeni kayıt → karşılama akışı (router yönlendirir).
-      if (_kayitModu) Oturum.karsilamaGerekli = true;
-      await context.read<Oturum>().girisYapildi(kullanici);
+      // md. 52 — İKİ ADIMLI DOĞRULAMA: şifre doğru ama OTURUM AÇILMADI.
+      // Yanıtta token yok; elimizde yalnız kısa ömürlü bir bilet var. Şifreyi
+      // ikinci adım için saklamıyoruz (yasak) — bilet onun yerine geçiyor.
+      if (d['iki_adim'] == true) {
+        // Giriş düğmesinin spinner'ı BURADA kapanır. Kapatmasaydık kod
+        // sayfası açıkken alttaki düğme sonsuza kadar dönerdi (istek bitti,
+        // sıra kullanıcıda) — `finally` ancak sayfa kapanınca çalışıyor.
+        setState(() => _yukleniyor = false);
+        await _ikiAdim(d['bilet'] as String, d['eposta_ipucu'] as String?);
+        return;
+      }
+      await context.read<Oturum>().girisYapildi(
+        d['kullanici'] as Map<String, dynamic>,
+      );
       pushBaslat(); // push izni + token kaydı
     } catch (e) {
       if (!mounted) return;
@@ -297,6 +316,21 @@ class _GirisEkraniState extends State<GirisEkrani> {
       if (mounted) setState(() => _yukleniyor = false);
     }
   }
+
+  /// Girişin ikinci adımı: e-postadaki kod. Vazgeçilirse hiçbir şey olmaz —
+  /// kullanıcı giriş formunda kalır (şifre alanı doludur, yeniden dener).
+  Future<void> _ikiAdim(String bilet, String? epostaIpucu) => ikiAdimSheetAc(
+    context,
+    baslik: 'İki Adımlı Doğrulama'.c,
+    aciklama: 'Kod {} adresine gönderildi'.cf([epostaIpucu ?? '•••']),
+    dogrula: (kod) async {
+      final kullanici = await Api.girisKodu(bilet, kod);
+      if (!mounted) return;
+      await context.read<Oturum>().girisYapildi(kullanici);
+      pushBaslat(); // push izni + token kaydı
+    },
+    yenidenGonder: () => Api.girisKoduYenile(bilet),
+  );
 
   @override
   Widget build(BuildContext context) {

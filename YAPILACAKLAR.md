@@ -1,6 +1,177 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-13 — 🚀 MD. 52 İKİ ADIMLI DOĞRULAMA (2FA) + DAĞITIM 1.44.0+91
+İstek: "Çift doğrulama yöntemi açılabilsin (sadece mail ile)." TOTP/SMS YOK.
+
+### NE İŞE YARADIĞI KONUSUNDA DÜRÜST OLUNDU
+Hesaba giden ÜÇ yol var: şifre · e-posta kutusu (`sifre-sifirla` TEK BAŞINA
+token veriyor) · Google. 2FA yalnız BİRİNCİSİNİ "şifre + kutu"ya çeviriyor.
+* KAZANÇ: sızmış/tekrar kullanılmış ŞİFRE artık tek başına yetmiyor.
+* KAZANÇ DEĞİL: kutu ele geçirilmişse hesap zaten gidiyordu.
+* Bu yüzden `/auth/sifre-sifirla`ya 2FA EKLENMEDİ — aynı kutuya İKİNCİ bir kod
+  hiçbir şey kanıtlamaz, yalnız adım sayısını artırırdı.
+
+### KURTARMA KODU: HAYIR (ölçüme dayalı karar)
+Kutu ZATEN tek kritik nokta. Kurtarma kodu hiçbir kapıyı kapatmıyor; aynı
+hesaba giden İKİNCİ ve SÜRESİZ bir parola olurdu (kullanıcıların çoğu ya
+kaybeder ya aynı kutuya kaydeder). Geriye kalan dar hâl ("kutusunu kaybetti
+ama şifresini hatırlıyor") üç ucuz önlemle karşılandı:
+ (a) **2FA'yı AÇMAK da e-posta kodu ister** (`amac='ac'`) → kilit takılmadan
+     ÖNCE kutunun ÇALIŞTIĞI kanıtlanır; ölü/yanlış adrese kilit takılamaz.
+ (b) Açmak `sifre_surumu`'nu artırmaz → kullanıcı kendi telefonundan atılmaz.
+ (c) Ayarlar'da risk AÇIKÇA yazıyor.
+
+### GOOGLE'DA SEÇENEK GİZLENMEDİ, AÇIKLANDI
+"Yalnız Google ile giren" kullanıcı GÜVENİLİR BİÇİMDE AYIRT EDİLEMİYOR:
+`/auth/google` yeni hesaba da rastgele bir bcrypt hash'i yazıyor, yani
+"şifresi yok" işareti yok. Yanlış tahminle gizleseydik, şifresini sonradan
+belirlemiş kullanıcıdan GERÇEK bir güvenlik ayarını saklardık. Ayarlarda
+yazıyor: "Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar."
+`/auth/google` `iki_adim`'a HİÇ bakmıyor (test kilitli).
+
+### YOL ÜSTÜNDE KAPATILAN ZAMANLAMA SIZINTISI
+`/auth/giris` hesap YOKSA `bcrypt.compare`'i hiç çalıştırmıyordu (~0 ms vs
+~80 ms) → saldırgan "bu e-posta kayıtlı mı" sorusunu ÖLÇEREK cevaplayabiliyordu.
+Artık sabit bir `ZAMAN_ESITLEYICI_HASH`'e karşı karşılaştırma yapılıyor.
+Posta ateşle-unut, yani yanıt süresi SMTP'ye bağlanmıyor.
+Ayrıca 2FA kodları mail günlüğünde de maskelendi (`KOD_MAILLERI`) — yoksa
+admin panelinde okunabilir dururdu.
+
+### Teknik
+* Ara adım = **kısa ömürlü bilet** (`<id>.<32 bayt rastgele>`); sunucuda yalnız
+  sha256'sı durur, `timingSafeEqual` ile karşılaştırılır. **Şifre istemcide
+  BEKLETİLMİYOR** (test `containsKey('sifre') == false` ile kilitliyor).
+* Kod: 6 hane (`crypto.randomInt`), **10 dk** (sıfırlamanın 15'inden kısa —
+  giriş kodu anında girilir), 5 denemede satır SİLİNİR, bcrypt ile hash'li.
+  Biçimsiz girdi (6 hane değil) DB'ye dokunmaz ve **deneme hakkı yakmaz**.
+  `amac` da karşılaştırılır: kapatma kodu girişte kabul edilmez.
+* Migrasyon `backend/migrasyon-2026-08-14f.sql` — **CANLIYA UYGULANDI**,
+  kendi doğrulama bloğunu geçti (142 kullanıcının 0'ında açık).
+  `sifirlama_kodlari`ya kolon EKLENMEDİ: aynı satır paylaşılsaydı "giriş
+  kodunu 5 kez yanlış girmek şifre sıfırlama kodunu da öldürür" gibi görünmez
+  bir bağ doğardı.
+* `Dockerfile` COPY listesine `iki_adim.js` eklendi (mevcut denetim testi
+  eksikliği YAKALADI).
+
+### Kanıt ve dağıtım
+* `backend/test/iki_adim.test.js` (42 test) · `app/test/iki_adim_test.dart`
+  (15 test) · `flutter test` **1420** · `npm test` **1054** · analyze 0/0.
+* Çeviri: 13 anahtar × 45 dil, **818 → 831**. Terimler uydurma değil, o dilde
+  Google/banka yerleşiği (de `Bestätigung in zwei Schritten`, ru
+  `Двухэтапная аутентификация`, ja `2段階認証`, nl `Tweestapsverificatie`).
+  Cinsiyet: "erişemezsen giremezsin" hiçbir dilde kişiye çekimli fiil
+  kullanmıyor — he adlaştırma (`אובדן הגישה…`), cs öntakılı isim öbeği,
+  ar kişisiz mastar, am nazik çoğul çekim, hi/mr/gu kişisiz edilgen.
+* **CANLI UÇTAN UCA CURL KANITI** (yalnız "koştu" demedik):
+  `/auth/iki-adim` → `{acik:false, kullanilabilir:true, eposta_ipucu:"c•••@gmail.com"}` ·
+  kod isteme → `{gonderildi:true}` · **DB satırı**: `kod_hash` bcrypt
+  (`$2a$10$`, 60 karakter — düz metin DEĞİL), `amac='ac'`, `bilet_hash` NULL
+  (yalnız `giris`te dolu), `bitis` 10 dk · **yanlış kod `deneme`yi 1 yaptı,
+  BİÇİMSİZ kod yakmadı** · test satırı sonra silindi.
+* Web `main.99abddb5c7d3.dart.js` (eski hash silindi), SW sökücü yerinde,
+  immutable + Cloudflare. `server.js` yedeği: `server.js.yedek-2fa-20260813`.
+* APK + AAB: `~/Desktop/dizijpg-1.44.0+91.apk` / `.aab` (yükleme anahtarı
+  `2e38ab5c…` ile imzalı — Firebase ve Cloud'da kayıtlı).
+* Sürüm notu `surum-notu-1.44.0.txt`: tr-TR **491**, en-US **496** karakter
+  (Play sınırı 500). 53 ve 52 satırları eklenirken "Doğum gününde kutlama"
+  düşürüldü ve uzun satırlar kısaltıldı.
+
+## 2026-08-13 — 🚀 GOOGLE HESAP SEÇİCİ + MD. 53 KODEK + MD. 54 SAYDAM PNG
+## (1.44.0+91 ile CANLIDA)
+
+### Google hesap seçici açılmıyordu (kullanıcı bildirimi)
+"1 kere hesap seçtim mi daha seçemiyorum, çıkış yapsam da eski hesabı seçiyor."
+* KÖK NEDEN: `Oturum.cikis()` (**api.dart** içinde, oturum.dart YOK) yalnız kendi
+  JWT'mizi + önbelleği siliyordu; **Google tarafındaki oturuma HİÇ dokunmuyordu**.
+  `signIn()` de önbellekteki hesabı sessizce geri veriyor → seçici hiç açılmıyor.
+* İKİ YERDE birden kapatıldı: çıkışta `googleOturumunuKapat()`, ayrıca `dokun()`
+  içinde `signIn()` ÖNCESİ `signOut()`. İkincisi ilkinden BAĞIMSIZ olarak gerekli
+  — kullanıcı zaten girişteyken hesap değiştirmek isteyebilir ya da token'ı çıkış
+  akışından geçmeden düşmüş olabilir.
+* **`signOut()` seçildi, `disconnect()` DEĞİL**: ikisi de seçiciyi geri getirir,
+  ama `disconnect()` OAuth iznini de iptal eder → kullanıcı her girişte onay
+  ekranını yeniden görürdü. İstenen hesap DEĞİŞTİRMEK, izni iptal etmek değil.
+* Webde de aynı boşluk vardı: GIS'in `disableAutoSelect()` kancası (Google'ın
+  kendi şartı) hiç çağrılmıyordu → `googleWebCikis()`.
+* KULLANICI DOĞRULADI (13 Ağu 16:41): yeni sürümde giriş hata VERMİYOR; nginx
+  kaydında iki başarılı 200 var. **Ancak o derlemede seçici düzeltmesi YOKTU** —
+  seçici davranışı bir sonraki APK'da doğrulanacak.
+* 15:30'daki `(16)` hatası için ZAFER İLAN EDİLMEDİ: bayat önbellek hipotezi
+  makul ama kanıtlanmadı (cihaz logcat'i yok, sunucuda iz yok). Kod yorumunda
+  "AYRICA ŞÜPHELİ" olarak duruyor.
+* Kanıt: `app/test/google_hesap_secici_test.dart` (9 test). Düzeltme geri
+  alınınca **5 test kırmızı** — testler hatayı gerçekten yakalıyor.
+
+### Md. 53 — H.264 OLMAYAN VİDEO (ölçüm beklentiyi BOZDU)
+Canlıda 25.851 dosyanın sihirli baytı okundu, video olan 481'i `ffprobe` ile
+tarandı (ffprobe + ffmpeg sunucuda VAR):
+
+| kodek | adet | oran |
+|---|---|---|
+| H.264 | 448 | %93,1 |
+| **VP9** | **33** | **%6,9** |
+| **HEVC** | **0** | **%0** |
+
+* **HEVC canlıda YOK** — iPhone senaryosu öngörülmüş bir riskmiş, gerçekleşmiş
+  değil. **Ama aynı şekilli sorun ZATEN canlıda**: 33 VP9-in-MP4 dosya Chrome'da
+  oynuyor, **Safari ve iOS AVPlayer'da oynamıyor** (AVFoundation'da VP9 çözücü yok).
+* O 33 dosyadan biri **`m85-cea0ca2bba88e369.mp4`** — yani md. 35(a)'nın "zaten
+  verimli, dokunma" kararının üstüne kurulduğu ÖLÇÜM DOSYASININ TA KENDİSİ.
+  O ölçüm doğruydu ama dosyanın KODEĞİNE bakılmamıştı.
+* Bu yüzden kural **kodekten bağımsız**: H.264 olmayan HER görüntü kodeki
+  H.264'e çevrilir. HEVC'ye özel kural, ölçülen 33 dosyayı ıskalayıp öngörülen
+  SIFIR dosyayı düzeltirdi.
+* 35(a) ile ÇELİŞMEZ: buradaki yeniden kodlamanın gerekçesi boyut değil,
+  OYNATILABİLİRLİK. Bu yüzden **ölçek 1 kalıyor** (720p kutusuna inilmiyor) —
+  piksel yarıya indirmenin bedeli 35(a)'da zaten ölçülmüştü.
+* **Bit hızı tavanı kaynağın %80'i** — kalite tercihi değil ZORUNLULUK:
+  `RenderVideo.swift:61`'de kaynak tavan × 1,2'nin altındaysa iOS
+  `AVAssetExportPresetPassthrough` ile KAYIPSIZ kopyalıyor ve kodek
+  DEĞİŞMİYORDU. 1/0,8 = 1,25 → `videoKazancEsigi` ile aynı sayı, aynı sebep.
+* Kodek hiçbir yerde okunmuyormuş: `server.js`'teki `VIDEO_TURLERI` yalnız
+  `ftyp` baytına bakıyor, `pro_video_editor`'ün `VideoMetadata`'sında kodek
+  alanı YOK. Saf MP4 kutu ayrıştırıcısı yazıldı (`videoKodegi`).
+* BİLİNEN SINIR (koda yazıldı): **web'den** yüklenen VP9/HEVC bu kapıdan geçmez
+  — tarayıcıda kodlayıcı yok. Çaresi sunucuda ikinci kopya, AYRI İŞ.
+* Kanıt: `app/test/gercek_video_baslik.dart` — sunucudaki ffmpeg ile üretilmiş
+  GERÇEK H.264/HEVC/VP9 başlıkları (biri `moov` sonda, telefon kamerası düzeni).
+  20 test; `mdat` gövdesinin okunmadığı da ÖLÇÜLEREK kilitlendi.
+
+### Md. 54 — SAYDAM PNG EDİTÖRDEN BEYAZ ÇIKIYORDU
+* "Başlığa bakmak yeter mi?" sorusu ÖLÇÜLDÜ, cevap **HAYIR**: 2934 gerçek PNG
+  tarandı, RGBA olanların **%23,5'i tamamen opak**. macOS ekran görüntüleri RGBA
+  çıkıyor ama tek saydam pikseli yok — ve en büyük 300 yüklemenin 262'si ekran
+  görüntüsü. Sadece başlığa bakılsaydı en kalabalık sınıf gereksiz PNG'ye
+  düşerdi: ölçülen örnekte 249 KB → 1419 KB (**5,7 kat**).
+  Bu yüzden başlık "olabilir" derse GERÇEK PİKSEL TARAMASI yapılıyor
+  (`dart:ui`, 512 px'e küçültülmüş çözme, <5 ms). Yeni eklenti YOK.
+* Başlık ön elemesi PNG'de IHDR renk tipi **artı `tRNS` yığını** (palet/gri
+  PNG'lerde saydamlık oradan gelir); WebP'de `VP8X` ALPHA biti / `VP8L` / kayıplı
+  `VP8 ` ayrımı.
+* **KODDAKİ BİR GEREKÇE YANLIŞMIŞ**: "30 MB sınırının altında kalsın" diyordu ama
+  atıf verdiği `yorumlar.dart:_ekAzamiBayt` 7 Ağu'da kaldırılmış. Gerçek tavan
+  `medyaAzamiBayt` = 100 MB. Yorum düzeltildi, sınır dürüst gerekçeyle bırakıldı.
+* Saydamda **JPEG'e DÜŞÜLMÜYOR** (o, düzeltilen hatayı geri getirmek olurdu);
+  gerekirse saydamlığı koruyarak ÇÖZÜNÜRLÜK düşürülüyor — kullanıcının feda
+  edebileceği şey çözünürlük, alfa kanalı içeriğin kendisi. PNG tavanı 2048 px
+  (2048² ham RGBA = 16,8 MB; 4096² = 67 MB, sınırın iki katı üstü).
+* YAN BULGU: paketin `captureImageByteFormat` varsayılanı `rawRgba` (ön çarpımlı
+  alfa) ve paketin KENDİ belgesi bunun yarı saydam kenarlarda koyu hale
+  bıraktığını söylüyor → PNG hattında `rawStraightRgba`.
+* Kanıt: 6 test, örnekler Pillow ile bağımsız doğrulanmış GERÇEK baytlar.
+  En değerlisi **hata kilidi**: aynı görsel iki yapılandırmadan geçiyor, PNG
+  yolunda delik saydam (`alfa=0`), JPEG yolunda `[255,255,255,255]`.
+  Mutasyon testiyle kırmızıya döndüğü doğrulandı.
+
+### Durum
+* `flutter test` 1420 · `npm test` 1054 · analyze 0 error / 0 warning.
+* **YENİ ÇEVİRİ ANAHTARI YOK** (üç iş de mevcut anahtarları kullandı).
+* Play sürüm notu hazır: `surum-notu-1.44.0.txt` (tr-TR 495 / en-US 456 karakter,
+  500 sınırının altında). 53 ve 52 satırları "EKLENECEK" başlığında bekliyor.
+* **DAĞITIM BEKLİYOR** — md. 52 (2FA) hâlâ yazılıyor, migrasyonu var; hepsi
+  birlikte 1.44.0+91 olarak çıkacak.
+
 ## 2026-08-13 — 🚀 MD. 35(a) MEDYA KALİTESİ: KENDİ BOZDUĞUMUZU BOZMAMAK (1.43.0+90)
 Kullanıcının talimatı: "sorun varsa DÜZELTELİM" — inceleme değil, iş maddesi.
 Şüphe DOĞRU ÇIKTI: kalite kaybının kaynağı yapay zekâ eksikliği değil, bizim
@@ -208,8 +379,10 @@ Manager'a geçti).
   değiştirmenin resmi API'si yok; tek yol `activity-alias` takası ve bazı
   başlatıcılarda ikon ANA EKRANDAN DÜŞÜYOR, kısayol/widget kırılıyor,
   uygulama o an kapanabiliyor. Kutlama niyetiyle kullanıcının ikonunu
-  kaybettiremeyiz. **Tasarım önerileri hazır: `ikon-onerileri/`** (4 varyant
-  + mevcut ikon + üreteç betiği + README). Kullanıcı seçerse konuşulur.
+  kaybettiremeyiz. Tasarım önerileri sunuldu (`ikon-onerileri/`, 4 varyant).
+  **✅ KULLANICI KARARI (13 Ağu): "hiçbirini beğenmedim, şu an ikon
+  kullanmayalım." → İKON İŞİ KAPANDI.** Dosyalar duruyor; ileride istenirse
+  oradan devam edilir.
 * **Kutlama uygulama İÇİNDE**: kabuk açılışında konfeti + mesaj kartı,
   **günde bir kez**, kapatılabilir (kapat ikonu / "Teşekkürler" / perde).
   `MediaQuery.disableAnimations` açıkken **konfeti yok, mesaj var**.

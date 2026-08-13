@@ -154,14 +154,25 @@ class _ProVideoIsleyici implements VideoIsleyici {
   }
 
   @override
-  Future<Uint8List> basBaytlar(String yol, {int adet = 16}) async {
-    final akis = File(yol).openRead(0, adet);
-    final tampon = <int>[];
-    await for (final parca in akis) {
-      tampon.addAll(parca);
-      if (tampon.length >= adet) break;
+  Future<Uint8List> parca(String yol, {int bas = 0, int adet = 16}) async {
+    if (bas < 0 || adet <= 0) return Uint8List(0);
+    try {
+      // `openRead` ARALIK okur: 100 MB'lık bir dosyanın sonundaki `moov`a
+      // ulaşmak için dosyanın tamamı belleğe alınmaz.
+      final akis = File(yol).openRead(bas, bas + adet);
+      final tampon = <int>[];
+      await for (final dilim in akis) {
+        tampon.addAll(dilim);
+        if (tampon.length >= adet) break;
+      }
+      return Uint8List.fromList(
+        tampon.length > adet ? tampon.sublist(0, adet) : tampon,
+      );
+    } catch (_) {
+      // Dosya kısaldı/silindi/izin gitti: boş dönmek çağıranda
+      // "bilinmiyor"a düşer, yani dosyaya dokunulmaz.
+      return Uint8List(0);
     }
-    return Uint8List.fromList(tampon.take(adet).toList());
   }
 
   @override

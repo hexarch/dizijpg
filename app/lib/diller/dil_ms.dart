@@ -968,4 +968,20 @@ const Map<String, String> cevirilerMs = {
       'Syukurlah anda dilahirkan, syukurlah anda di sini.',
   'Bugün {} yaşına girdin': 'Hari ini anda berusia {} tahun',
   'Teşekkürler': 'Terima kasih',
+  'İki Adımlı Doğrulama': 'Pengesahan Dua Langkah',
+  'Girişte e-postana kod gönderilir':
+      'Kod dihantar ke e-mel anda semasa log masuk',
+  'Kod {} adresine gönderildi': 'Kod dihantar ke {}',
+  '6 haneli kod': 'Kod 6 digit',
+  'Doğrula': 'Sahkan',
+  'Yeniden gönder': 'Hantar semula',
+  'Vazgeç': 'Batal',
+  'Yeni kod gönderildi': 'Kod baharu dihantar',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Kod tidak diminta semasa log masuk dengan Google; Google membuat pengesahannya sendiri.',
+  'Kapatmak için de kod gerekir.': 'Mematikannya juga memerlukan kod.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Tanpa akses ke e-mel, anda tidak dapat log masuk ke akaun.',
+  'İki adımlı doğrulama açıldı': 'Pengesahan dua langkah dihidupkan',
+  'İki adımlı doğrulama kapatıldı': 'Pengesahan dua langkah dimatikan',
 };

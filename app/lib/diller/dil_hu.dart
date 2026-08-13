@@ -969,4 +969,20 @@ const Map<String, String> cevirilerHu = {
       'Jó, hogy megszülettél, és jó, hogy itt vagy.',
   'Bugün {} yaşına girdin': 'Ma lettél {} éves',
   'Teşekkürler': 'Köszönöm',
+  'İki Adımlı Doğrulama': 'Kétlépcsős azonosítás',
+  'Girişte e-postana kod gönderilir':
+      'Bejelentkezéskor kódot küldünk az e-mail-címedre',
+  'Kod {} adresine gönderildi': 'Kód elküldve ide: {}',
+  '6 haneli kod': '6 jegyű kód',
+  'Doğrula': 'Ellenőrzés',
+  'Yeniden gönder': 'Újraküldés',
+  'Vazgeç': 'Mégse',
+  'Yeni kod gönderildi': 'Új kód elküldve',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google-fiókkal belépve nem kérünk kódot; a Google saját azonosítást végez.',
+  'Kapatmak için de kod gerekir.': 'A kikapcsoláshoz is kód kell.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Ha elveszíted a hozzáférést az e-mail-címedhez, nem tudsz belépni.',
+  'İki adımlı doğrulama açıldı': 'A kétlépcsős azonosítás bekapcsolva',
+  'İki adımlı doğrulama kapatıldı': 'A kétlépcsős azonosítás kikapcsolva',
 };

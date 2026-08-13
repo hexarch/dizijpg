@@ -969,4 +969,21 @@ const Map<String, String> cevirilerSv = {
   'İyi ki doğdun, iyi ki buradasın.': 'Vad bra att du finns och att du är här.',
   'Bugün {} yaşına girdin': 'Idag fyller du {} år',
   'Teşekkürler': 'Tack',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Tvåstegsverifiering',
+  'Girişte e-postana kod gönderilir':
+      'En kod skickas till din e-post vid inloggning',
+  'Kod {} adresine gönderildi': 'Kod skickad till {}',
+  '6 haneli kod': '6-siffrig kod',
+  'Doğrula': 'Verifiera',
+  'Yeniden gönder': 'Skicka igen',
+  'Vazgeç': 'Avbryt',
+  'Yeni kod gönderildi': 'Ny kod skickad',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Ingen kod krävs vid inloggning med Google; Google gör sin egen verifiering.',
+  'Kapatmak için de kod gerekir.': 'Det krävs en kod även för att stänga av.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Utan tillgång till din e-post går det inte att logga in.',
+  'İki adımlı doğrulama açıldı': 'Tvåstegsverifiering är på',
+  'İki adımlı doğrulama kapatıldı': 'Tvåstegsverifiering är av',
 };

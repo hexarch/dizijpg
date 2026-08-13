@@ -966,4 +966,21 @@ const Map<String, String> cevirilerUr = {
       'خوشی ہے کہ آپ ہیں، اور خوشی ہے کہ آپ یہاں ہیں۔',
   'Bugün {} yaşına girdin': 'آج آپ کی عمر {} سال ہو گئی',
   'Teşekkürler': 'شکریہ',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'دو مرحلوں کی توثیق',
+  'Girişte e-postana kod gönderilir':
+      'سائن اِن پر آپ کی ای میل پر کوڈ بھیجا جاتا ہے',
+  'Kod {} adresine gönderildi': '{} پر کوڈ بھیج دیا گیا',
+  '6 haneli kod': '6 ہندسوں کا کوڈ',
+  'Doğrula': 'توثیق کریں',
+  'Yeniden gönder': 'دوبارہ بھیجیں',
+  'Vazgeç': 'منسوخ',
+  'Yeni kod gönderildi': 'نیا کوڈ بھیج دیا گیا',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google سے سائن اِن پر کوڈ نہیں مانگا جاتا؛ توثیق Google خود کر لیتا ہے۔',
+  'Kapatmak için de kod gerekir.': 'اسے بند کرنے کے لیے بھی کوڈ درکار ہے۔',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ای میل تک رسائی نہ ہو تو اکاؤنٹ میں داخل ہونا ممکن نہیں۔',
+  'İki adımlı doğrulama açıldı': 'دو مرحلوں کی توثیق آن ہو گئی',
+  'İki adımlı doğrulama kapatıldı': 'دو مرحلوں کی توثیق بند ہو گئی',
 };

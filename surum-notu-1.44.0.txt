@@ -1,0 +1,114 @@
+Play Console kapalı test (Alpha) sürüm notu — 1.44.0 (91)
+Alpha'daki son yükleme: 86 (1.40.0), 13 Ağustos. Arada 4 derleme birikti
+(86 → 88 → 89 → 90 → 91); hepsi tek AAB olarak gidiyor.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI
+   (sunucu kill switch). Kapalı özelliği sürüm notunda anmıyoruz.
+⚠ KARAKTER SINIRI: Play "Yenilikler" alanı dil başına 500 karakter.
+   Aşağıdaki bloklar SAYILDI; satırlar SARILMADAN, olduğu gibi yapıştırılmalı
+   (satır kaydırırsan sayı değişmez ama madde tek satır kalsın diye böyle).
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır (tr-TR + en-US):
+
+<tr-TR>  (491 karakter)
+• Yapım ekibi: yönetmen, senarist, yapımcı ve firma — dokununca sayfaları açılıyor.
+• İzleyici seviyesi: izledikçe unvanın yükseliyor.
+• İstatistikler: gönderilerinin görüntülenme, beğeni ve etkileşimi.
+• İki adımlı doğrulama: girişte e-postana kod.
+• Videolar artık her tarayıcıda oynuyor.
+• Fotoğraf ve videolar küçültülmeden yükleniyor; avatar hatası giderildi.
+• Çıkışta Google hesabını değiştirebiliyorsun.
+• "İzlediklerimi gizle" istatistikleri de gizliyor; çeşitli hatalar düzeltildi.
+</tr-TR>
+
+<en-US>  (496 karakter)
+• Cast and crew: director, writer, producer and studio — tap to open.
+• Viewer level: your title rises as you watch.
+• Stats: views, likes and engagement for your profile and your posts.
+• Two-step verification: a code to your email at sign-in.
+• Videos now play in every browser.
+• Photos and videos upload without being shrunk; avatar upload error fixed.
+• You can switch Google accounts after signing out.
+• "Hide what I watch" now hides stats too; emoji animation and watch-status bugs fixed.
+</en-US>
+
+--------------------------------------------------------------------
+UZUN — kendi kaydımız, Play'e GİRMEYECEK. 86 → 91 arasındaki tam liste.
+
+### 1.41.0+88 (14 Ağu)
+* Md. 20 Hareketlerim — kendi hareket geçmişin tek akışta (sekiz tablo
+  birleştirildi, imleçli sayfalama; 120 bin satırlı hesapta 10 sayfa 51 ms).
+* Md. 21 Gizlilik — "izlediklerimi gizle" YARIM zorlanıyormuş: şerit
+  gizleniyor ama istatistik sayaçları, ekran süresi, uyum kartı ve rozetler
+  açık kalıyordu. KISA listede var (kullanıcı gizlediğini sanıyordu).
+* Md. 23 Gönderi istatistikleri — gönderi başına görüntülenme, etkileşim
+  oranı + kendi ortalamanla kıyas, spoiler perdesi açılma oranı, içeriğe
+  tıklama, takipçi/keşif kırılımı, 7/30/90/tümü seçici, zirve zamanı.
+  "Görüntüleyenler" YALNIZ SAYI (md.21'deki gizlilik sözüyle çelişmesin).
+* Md. 24 İstatistiklerim — ayarlarda toplu görüntülenme/beğeni kırılımı
+  (30/60/90/120 gün). Ekran, verinin 14 Ağu'dan beri biriktiğini AÇIKÇA
+  yazıyor; eksik kapsam tahminle doldurulmuyor.
+* Hata: emoji animasyonu — mesaj rozetleri ve içerik satırındaki emojiler
+  durağandı, artık belirdiğinde bir kez oynuyor.
+* Hata: "izledim" ve "izleyeceğim" aynı anda görünüyordu. Kök neden
+  `izlemeler` ⨯ `durumlar` çelişkisi; canlıda 7 satır / 6 kullanıcı
+  düzeltildi, tek izleme kaydı kaybedilmedi.
+
+### 1.42.0+89 (13 Ağu)
+* Md. 29 Mini seviye sistemi — 8 kademe (Meraklı → Ultra mega izleyici),
+  puan izleme emeğinden geliyor (takipçi ve beğeni bilerek dışarıda).
+* Md. 36 Doğum günü — kabuk açılışında konfeti + kutlama kartı, günde bir
+  kez, kapatılabilir. Uygulama ikonu DEĞİŞMİYOR (Android'de güvenli yolu yok;
+  tasarım önerileri `ikon-onerileri/` altında bekliyor).
+* Md. 49 Yapım ekibi ve firma — yaratıcı/yönetmen/senaryo/yapımcı kartları +
+  yeni firma sayfası (`/sirket/:id`).
+
+### 1.43.0+90 (13 Ağu)
+* Md. 35(a) Medya kalitesi — üç ölçülmüş kayıp giderildi: video sıkıştırma
+  dosyayı %21,8 BÜYÜTÜP çözünürlüğü yarıya indiriyordu; düzenlenen görsel
+  2000 px'e kırpılıyordu (canlıdaki en büyük 300 yüklemenin 263'ü bunu
+  aşıyor); avatar kırpımı PNG olarak 17,7 MB çıkıp "Dosya en fazla 8MB
+  olabilir" hatası veriyordu — yani YÜKLENEMİYORDU.
+
+### 1.44.0+91 (yerelde, bu turda)
+* Google hesap seçici — "bir kere hesap seçtim mi bir daha seçemiyorum,
+  çıkış yapsam da eski hesabı otomatik seçiyor". Çıkışta Google tarafındaki
+  oturum da kapatılıyor; `disconnect()` KULLANILMADI (OAuth iznini geri
+  alır, her girişte onay ekranı çıkardı).
+* Md. 54 Saydam PNG — saydam görsel editörden JPEG çıkıp saydam alanlar
+  BEYAZ oluyordu; artık PNG kalıyor (saydam hatta tavan 2048 px).
+
+### KISA listeye ALINMAYANLAR ve nedeni
+* Md. 20 Hareketlerim / Md. 24 İstatistiklerim ayrı ayrı yazılamadı —
+  ikisi de "İstatistikler" satırında toplandı, 500 karakter üç ayrı satır
+  kaldırmıyor. Kullanıcı ekranı açınca zaten görecek.
+* Md. 29'un kademe adları, md. 36'nın 29 Şubat / saat dilimi inceliği,
+  md. 49'un rol tavanları: ayrıntı, sürüm notunun işi değil.
+* Md. 21'in "hangi uçların süzüldüğü", md. 23'ün kırılımları, md. 35(a)'nın
+  ölçüm tabloları: teknik gerekçe, kullanıcıya bir şey söylemiyor.
+* Md. 25 karşılama akışı, md. 19 engelleme, md. 28 favori kişi bildirimi:
+  1.40.0+86 ile ZATEN Alpha'da, bu turun konusu değil.
+* Cinsiyetsiz dil turu, çeviri anahtarları (45 dil), migrasyonlar, test
+  sayıları, sunucu dayanıklılığı: sessiz altyapı.
+* Google giriş hata kodunun SnackBar'a basılması (teşhis amaçlı) — geçici
+  bir tanı aracı, özellik değil.
+* Md. 37 cihaz dağılımı (admin paneli): kullanıcıya görünmüyor.
+
+--------------------------------------------------------------------
+EKLENECEK — 1.44.0+91 DERLENMEDEN ÖNCE bu iki madde bitiyor, notun KISA
+bölümüne girmeleri gerekiyor (o an karakter sayısı YENİDEN hesaplanmalı;
+şu an tr-TR'de 5, en-US'te 44 karakter boşluk var — yani bir madde ancak
+kısaltma yapılarak sığar).
+
+1. Md. 53 — HEVC / VP9 videolar. Kazanç: "yüklediğin videolar artık her
+   cihazda ve tarayıcıda oynuyor" (iPhone'un "Yüksek Verimlilik" çıktısı
+   Chrome/Firefox'ta, VP9 ise Safari ve iOS'ta oynamıyordu; canlıdaki 481
+   videonun 33'ü bu durumda). Önerilen satır:
+   tr: "• Yüklediğin videolar artık her tarayıcıda ve her cihazda oynuyor."
+   en: "• Videos you upload now play in every browser and on every device."
+2. Md. 52 — İki adımlı doğrulama. Kazanç: "girişte e-postana 6 haneli kod;
+   ayarlardan açıp kapatabiliyorsun". Önerilen satır:
+   tr: "• İki adımlı doğrulama: girişte e-postana kod gelsin (ayarlardan)."
+   en: "• Two-step verification: get a code by email at sign-in (settings)."
+
+Sığdırmak için önerilen kısaltma: "Doğum gününde kutlama." satırı düşürülür
+(23 + 25 karakter kazandırır, kullanıcı zaten kendi doğum gününde görecek).

@@ -928,4 +928,18 @@ const Map<String, String> cevirilerJa = {
   'İyi ki doğdun, iyi ki buradasın.': '生まれてきてくれてありがとう、ここにいてくれてありがとう。',
   'Bugün {} yaşına girdin': '今日で{}歳になったね',
   'Teşekkürler': 'ありがとう',
+  'İki Adımlı Doğrulama': '2段階認証',
+  'Girişte e-postana kod gönderilir': 'ログイン時にメールアドレスへコードが届きます',
+  'Kod {} adresine gönderildi': '{} にコードを送信しました',
+  '6 haneli kod': '6桁のコード',
+  'Doğrula': '確認',
+  'Yeniden gönder': '再送信',
+  'Vazgeç': 'キャンセル',
+  'Yeni kod gönderildi': '新しいコードを送信しました',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Googleでログインする場合はコードを求められません。Googleが独自に認証します。',
+  'Kapatmak için de kod gerekir.': 'オフにするときもコードが必要です。',
+  'E-postana erişemezsen hesabına giremezsin.': 'メールを利用できなくなると、ログインできなくなります。',
+  'İki adımlı doğrulama açıldı': '2段階認証をオンにしました',
+  'İki adımlı doğrulama kapatıldı': '2段階認証をオフにしました',
 };

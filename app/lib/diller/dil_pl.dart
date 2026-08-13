@@ -973,4 +973,21 @@ const Map<String, String> cevirilerPl = {
       'Jak dobrze, że jesteś i że jesteś tutaj.',
   'Bugün {} yaşına girdin': 'Dziś kończysz {} lat',
   'Teşekkürler': 'Dziękuję',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Weryfikacja dwuetapowa',
+  'Girişte e-postana kod gönderilir':
+      'Kod jest wysyłany na e-mail przy logowaniu',
+  'Kod {} adresine gönderildi': 'Kod wysłany na {}',
+  '6 haneli kod': '6-cyfrowy kod',
+  'Doğrula': 'Zweryfikuj',
+  'Yeniden gönder': 'Wyślij ponownie',
+  'Vazgeç': 'Anuluj',
+  'Yeni kod gönderildi': 'Wysłano nowy kod',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Przy logowaniu przez Google kod nie jest wymagany; Google prowadzi własną weryfikację.',
+  'Kapatmak için de kod gerekir.': 'Wyłączenie też wymaga kodu.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Bez dostępu do e-maila logowanie nie będzie możliwe.',
+  'İki adımlı doğrulama açıldı': 'Weryfikacja dwuetapowa włączona',
+  'İki adımlı doğrulama kapatıldı': 'Weryfikacja dwuetapowa wyłączona',
 };

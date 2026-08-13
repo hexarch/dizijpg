@@ -966,4 +966,20 @@ const Map<String, String> cevirilerSr = {
   'İyi ki doğdun, iyi ki buradasın.': 'Како је лепо што постојиш и што си ту.',
   'Bugün {} yaşına girdin': 'Данас пуниш {} година',
   'Teşekkürler': 'Хвала',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Потврда у два корака',
+  'Girişte e-postana kod gönderilir': 'При пријави се шаље код на имејл',
+  'Kod {} adresine gönderildi': 'Код је послат на {}',
+  '6 haneli kod': 'Код од 6 цифара',
+  'Doğrula': 'Потврди',
+  'Yeniden gönder': 'Пошаљи поново',
+  'Vazgeç': 'Одустани',
+  'Yeni kod gönderildi': 'Нови код је послат',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'При пријави преко Google-а код се не тражи; Google обавља сопствену проверу.',
+  'Kapatmak için de kod gerekir.': 'И за искључивање је потребан код.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Без приступа имејлу пријава на налог није могућа.',
+  'İki adımlı doğrulama açıldı': 'Потврда у два корака је укључена',
+  'İki adımlı doğrulama kapatıldı': 'Потврда у два корака је искључена',
 };

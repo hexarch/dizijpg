@@ -966,4 +966,19 @@ const Map<String, String> cevirilerId = {
       'Syukurlah kamu lahir, syukurlah kamu di sini.',
   'Bugün {} yaşına girdin': 'Hari ini kamu berusia {} tahun',
   'Teşekkürler': 'Terima kasih',
+  'İki Adımlı Doğrulama': 'Verifikasi Dua Langkah',
+  'Girişte e-postana kod gönderilir': 'Kode dikirim ke emailmu saat masuk',
+  'Kod {} adresine gönderildi': 'Kode dikirim ke {}',
+  '6 haneli kod': 'Kode 6 digit',
+  'Doğrula': 'Verifikasi',
+  'Yeniden gönder': 'Kirim ulang',
+  'Vazgeç': 'Batal',
+  'Yeni kod gönderildi': 'Kode baru dikirim',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Saat masuk dengan Google, kode tidak diminta; Google melakukan verifikasinya sendiri.',
+  'Kapatmak için de kod gerekir.': 'Menonaktifkannya juga butuh kode.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Tanpa akses ke email, kamu tidak bisa masuk ke akunmu.',
+  'İki adımlı doğrulama açıldı': 'Verifikasi dua langkah aktif',
+  'İki adımlı doğrulama kapatıldı': 'Verifikasi dua langkah nonaktif',
 };

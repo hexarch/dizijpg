@@ -59,6 +59,267 @@ VideoTur videoTuru(Uint8List v) {
   return VideoTur.bilinmeyen;
 }
 
+/// Kaynak videonun GÖRÜNTÜ kodeki (madde 53).
+///
+/// NEDEN GEREKLİ: konteyner (`mp4`) ile kodek AYRI şeylerdir ve tarayıcılar
+/// konteyneri değil KODEKİ desteklemez. `.mp4` uzantılı bir dosya H.264 de
+/// olabilir, HEVC/VP9/AV1 de — ve hiçbir tarayıcı bunların hepsini oynatmaz:
+///
+/// | kodek | Chrome/Firefox (masaüstü) | Safari / iOS `AVPlayer` |
+/// |---|---|---|
+/// | H.264 (`avc1`/`avc3`) | oynar | oynar |
+/// | HEVC (`hvc1`/`hev1`) | **oynamaz** | oynar |
+/// | VP9 (`vp09`) | oynar | **oynamaz** |
+/// | AV1 (`av01`) | oynar (yeni sürüm) | **oynamaz** |
+///
+/// Yani HER YERDE oynayan TEK görüntü kodeki **H.264**'tür. Sunucunun
+/// `VIDEO_TURLERI` kapısı (`server.js:5303`) yalnız `ftyp` sihirli baytına
+/// bakıyor; kodeke HİÇ bakmıyor. Bu yüzden kapı istemcide, yükleme hattında.
+enum VideoKodek {
+  /// `avc1` / `avc3` — her yerde oynar, dokunulmaz.
+  h264,
+
+  /// `hvc1` / `hev1` / `dvh1` / `dvhe` — iPhone "Yüksek Verimlilik" çıktısı.
+  hevc,
+
+  /// `vp09`. 13 Ağu ölçümü: canlıdaki 481 videonun **33'ü** bu (bkz.
+  /// [videoKodekOlcumu]).
+  vp9,
+
+  /// `av01`.
+  av1,
+
+  /// Tanınan ama H.264 olmayan başka bir görüntü kodeki (`mp4v`, `s263`…).
+  digerVideo,
+
+  /// Okunamadı: bozuk kutu ağacı, `moov` bulunamadı ya da kap MP4 değil
+  /// (WebM'in EBML ağacı BURADA AYRIŞTIRILMAZ — bkz. [videoKodegi]).
+  ///
+  /// **Bilmemek "sorun var" demek DEĞİLDİR:** bu değerde dosyaya dokunulmaz,
+  /// yani bugünkü davranış birebir korunur. Emin olmadığımız bir şey için
+  /// kullanıcının videosunu yeniden kodlamayız.
+  bilinmiyor;
+
+  /// Bu kodek YÜZÜNDEN yeniden kodlama gerekiyor mu?
+  ///
+  /// [h264] gerekmez (zaten hedef), [bilinmiyor] da gerekmez (yukarıdaki
+  /// "emin değilsek dokunma" kuralı). Kalan her şey gerektirir.
+  bool get yenidenKodlaGerek =>
+      this != VideoKodek.h264 && this != VideoKodek.bilinmiyor;
+}
+
+/// 13 Ağu 2026 — CANLI ÖLÇÜM (madde 53, tasarım bu sayıların üstüne kuruldu).
+///
+/// `/var/lib/docker/volumes/dizijpg_dizijpg_dosyalar/_data/medya` altındaki
+/// 25.851 dosyanın sihirli baytı okundu, video olan 481'i `ffprobe`'dan
+/// geçirildi:
+///
+/// | kodek | adet | oran |
+/// |---|---|---|
+/// | H.264 (`avc1`) | 448 | %93,1 |
+/// | **VP9 (`vp09`)** | **33** | **%6,9** |
+/// | HEVC | **0** | %0 |
+///
+/// İKİ SONUÇ, ikisi de tasarımı değiştirdi:
+///
+/// 1. **HEVC canlıda HENÜZ YOK.** Madde 53'ün çıkış noktası (iPhone "Yüksek
+///    Verimlilik") bugün gerçekleşmiş bir sorun değil, ÖNGÖRÜLEN bir sorun.
+/// 2. **Ama aynı şekilli sorun ZATEN CANLIDA:** 33 VP9/MP4 dosya Chrome'da
+///    oynuyor, Safari'de ve iOS `AVPlayer`'da OYNAMIYOR. Dahası bu 33
+///    dosyadan biri `m85-cea0ca2bba88e369.mp4` — yani madde 35(a)'nın
+///    "zaten verimli, dokunma" kararının üstüne kurulduğu ÖLÇÜM DOSYASININ
+///    TA KENDİSİ (bkz. [videoKazancEsigi] tablosu: 1080×1920, 70,9 sn,
+///    3,98 Mbps, 33,6 MB). O ölçüm doğruydu — ama dosyanın kodekine kimse
+///    bakmamıştı, çünkü hat kodeki HİÇBİR YERDE okumuyordu.
+///
+/// Bu yüzden kural HEVC'ye özel DEĞİL, kodekten bağımsız yazıldı:
+/// **H.264 olmayan her görüntü kodeki H.264'e çevrilir.** HEVC'ye özel bir
+/// kural bugün ölçülen 33 dosyayı ıskalar, öngörülen sıfır dosyayı düzeltirdi.
+const videoKodekOlcumu = '13 Ağu 2026: 481 video — 448 H.264, 33 VP9, 0 HEVC';
+
+/// Oynatılabilirlik için yeniden kodlarken kaynağın bit hızının EN ÇOK bu
+/// oranı istenir: **%80** (= kaynak ÷ 1,25).
+///
+/// BU BİR KALİTE TERCİHİ DEĞİL, ZORUNLULUK. Paket, istenen bit hızını kaynak
+/// zaten sağlıyorsa yeniden kodlamayı ATLAYIP dosyayı KAYIPSIZ KOPYALIYOR —
+/// ve kayıpsız kopya kodeki DEĞİŞTİRMEZ:
+/// * iOS: `RenderVideo.swift:61` → `BitrateCapPolicy.isPassthroughEligible`
+///   + `shouldForceEncode`; kaynak ≤ tavan × 1,2 ise
+///   `AVAssetExportPresetPassthrough` (salt remux). HEVC dosya HEVC kalır.
+/// * Android'de bu delik YOK: paket `setVideoMimeType(VIDEO_H264)`'ü koşulsuz
+///   veriyor (`VideoMimeUtils.kt:27`, `RenderVideo.kt:758`) ve Media3'ün
+///   `TransformerUtil.shouldTranscodeVideo` bayt kodunda istenen MIME kaynağın
+///   `sampleMimeType`'ından farklıysa transmux yolu KAPANIYOR (1.10.1
+///   bayt kodu, offset 66-114). Yani Android H.264'e zaten mecbur kalıyor.
+///
+/// Tavanı kaynağın ALTINA çekmek iOS'taki kopyalama yolunu kapatan tek
+/// koldur. 0,8 seçildi çünkü 1/0,8 = 1,25 = [videoKazancEsigi]: iki yolun da
+/// eşiği aynı sayı, aynı sebep (paketin 1,2 toleransının üstünde kalmak).
+///
+/// BEDELİ AÇIKÇA: H.264 aynı görüntüyü HEVC/VP9'dan daha çok bitle anlatır;
+/// üstüne bir de %20 daha az bit veriyoruz. Yani çıktı kaynaktan bir tık
+/// yumuşak olacak. Bu BİLİNÇLİ: oynamayan kusursuz bir video, biraz yumuşak
+/// ama oynayan bir videodan kötüdür. Kalite ayarı 35b/35c'nin konusu.
+const videoOynatilabilirlikPayi = 0.8;
+
+/// `stsd` ararken inilecek MP4 kap kutuları. Listenin DIŞINDAKİ kutulara
+/// girilmez: `stsd`i dosyada ham metin gibi aramak (`udta`, `free`, gömülü
+/// küçük resim…) yanlış eşleşme üretebilirdi.
+const _kapKutulari = {'moov', 'trak', 'mdia', 'minf', 'stbl'};
+
+/// Üst düzeyde en çok bu kadar kutu atlanır. `moov` sağlıklı bir MP4'te ilk
+/// birkaç kutudan biridir (`shouldOptimizeForNetworkUse` onu başa alır);
+/// yüzlerce kutu atlıyorsak dosya bozuktur, okumayı sürdürmenin anlamı yok.
+const _azamiKutuAdimi = 64;
+
+/// `moov`dan okunacak azami bayt. 8 MB, saatlerce süren bir videonun kutu
+/// ağacına bile fazlasıyla yeter; üstü bellek kazası demektir.
+const _azamiMoovBayt = 8 * 1024 * 1024;
+
+/// `stsd` ağacında en fazla bu derinliğe inilir. Bozuk/kötü niyetli bir dosya
+/// `trak` içinde `trak` sarmalayıp sonsuz özyineleme yaptırmasın.
+const _azamiKutuDerinligi = 8;
+
+/// Dosyanın [bas] baytından başlayan [adet] baytı. Kısa dönebilir (dosya sonu).
+typedef VideoBaytOkuyucu = Future<Uint8List> Function(int bas, int adet);
+
+/// Kaynak videonun görüntü kodeki. **SAF** (dart:io YOK): baytları [oku]
+/// veriyor, testler onu bellekten besliyor.
+///
+/// NASIL: MP4 bir kutu (box) ağacıdır. Üst düzey kutular sırayla atlanarak
+/// `moov` bulunur, sonra `moov → trak → mdia → minf → stbl → stsd` yolu
+/// izlenir; `stsd`nin ilk örnek girdisinin 4 harfli biçim etiketi kodektir
+/// (`avc1`, `hvc1`, `vp09`…). Ses parçalarının `stsd`si de aynı ağaçtadır
+/// (`mp4a`) — tanınmayan etiket atlanır, ilk GÖRÜNTÜ etiketi kazanır.
+///
+/// `moov` DOSYANIN SONUNDA OLABİLİR (telefon kamerası öyle yazar): üst düzey
+/// kutuları atlarken `mdat` gövdesi OKUNMAZ, yalnız 16 baytlık başlığı okunup
+/// üzerinden atlanır. Yani 100 MB'lık bir dosyada bile okunan bayt birkaç yüz
+/// KB'ı geçmez.
+///
+/// SAĞLAMLIK SÖZLEŞMESİ: bozuk boy, kısa dosya, `moov`suz dosya, MP4 olmayan
+/// kap (WebM) — hepsinde [VideoKodek.bilinmiyor] döner, İSTİSNA FIRLATMAZ.
+/// Çağıran bu değerde dosyaya dokunmaz.
+Future<VideoKodek> videoKodegi(VideoBaytOkuyucu oku, int dosyaBoyut) async {
+  if (dosyaBoyut <= 0) return VideoKodek.bilinmiyor;
+  var konum = 0;
+  for (var adim = 0; adim < _azamiKutuAdimi; adim++) {
+    if (konum < 0 || konum + 8 > dosyaBoyut) return VideoKodek.bilinmiyor;
+    final Uint8List basl;
+    try {
+      basl = await oku(konum, 16);
+    } catch (_) {
+      // Okuma hatası sessizce yutulur: kodek bilinmiyorsa dosyaya dokunmayız,
+      // yani en kötü ihtimalle bugünkü davranışa düşeriz.
+      return VideoKodek.bilinmiyor;
+    }
+    if (basl.length < 8) return VideoKodek.bilinmiyor;
+    final tip = _kutuTipi(basl, 4);
+    // İLK kutu `ftyp` DEĞİLSE bu bir MP4 değildir (WebM buraya düşer) —
+    // rastgele baytları kutu boyu sanıp gezinmeyelim.
+    if (adim == 0 && tip != 'ftyp') return VideoKodek.bilinmiyor;
+
+    var boy = _u32(basl, 0);
+    var govdeBas = konum + 8;
+    if (boy == 1) {
+      // 64 bitlik boy. Üst 32 bit doluysa kutu 4 GB'ı aşıyor demektir; ne
+      // `moov` o kadar büyür ne de bizim ilgi alanımıza girer.
+      if (basl.length < 16 || _u32(basl, 8) != 0) return VideoKodek.bilinmiyor;
+      boy = _u32(basl, 12);
+      govdeBas = konum + 16;
+    } else if (boy == 0) {
+      // "Dosyanın sonuna kadar" — yalnız son kutuda geçerlidir.
+      boy = dosyaBoyut - konum;
+    }
+    if (boy < govdeBas - konum || konum + boy > dosyaBoyut) {
+      return VideoKodek.bilinmiyor;
+    }
+
+    if (tip == 'moov') {
+      final uzunluk = math.min(konum + boy - govdeBas, _azamiMoovBayt);
+      if (uzunluk <= 0) return VideoKodek.bilinmiyor;
+      final Uint8List moov;
+      try {
+        moov = await oku(govdeBas, uzunluk);
+      } catch (_) {
+        return VideoKodek.bilinmiyor;
+      }
+      return _kodekAra(moov, 0, moov.length, 0) ?? VideoKodek.bilinmiyor;
+    }
+    konum += boy;
+  }
+  return VideoKodek.bilinmiyor;
+}
+
+/// [bas]-[son] aralığındaki kutuları gezer; kap kutularına iner, `stsd`
+/// bulunca kodeki döner. Bulamazsa `null`.
+VideoKodek? _kodekAra(Uint8List v, int bas, int son, int derinlik) {
+  if (derinlik > _azamiKutuDerinligi) return null;
+  var i = bas;
+  while (i + 8 <= son) {
+    var boy = _u32(v, i);
+    final tip = _kutuTipi(v, i + 4);
+    var govdeBas = i + 8;
+    if (boy == 1) {
+      if (i + 16 > son || _u32(v, i + 8) != 0) return null;
+      boy = _u32(v, i + 12);
+      govdeBas = i + 16;
+    } else if (boy == 0) {
+      boy = son - i;
+    }
+    // Bozuk boy: ilerleyemezsek sonsuz döngüye girmemek için bırakırız.
+    if (boy < govdeBas - i || i + boy > son) return null;
+
+    if (tip == 'stsd') {
+      // `stsd` gövdesi: 1 bayt sürüm + 3 bayt bayrak + 4 bayt girdi sayısı,
+      // sonra girdiler. Sayıya GÜVENMEYİP sınıra kadar gezeriz.
+      final k = _stsdKodegi(v, govdeBas + 8, i + boy);
+      if (k != null) return k;
+    } else if (_kapKutulari.contains(tip)) {
+      final k = _kodekAra(v, govdeBas, i + boy, derinlik + 1);
+      if (k != null) return k;
+    }
+    i += boy;
+  }
+  return null;
+}
+
+/// `stsd` girdilerinin ilk GÖRÜNTÜ biçimi. Ses girdileri (`mp4a`…) atlanır.
+VideoKodek? _stsdKodegi(Uint8List v, int bas, int son) {
+  var i = bas;
+  while (i + 8 <= son) {
+    final boy = _u32(v, i);
+    final kodek = _bicimKodegi(_kutuTipi(v, i + 4));
+    if (kodek != null) return kodek;
+    if (boy < 8 || i + boy > son) return null;
+    i += boy;
+  }
+  return null;
+}
+
+/// 4 harfli örnek girdi biçimi → kodek. Görüntü olmayan biçimde `null`.
+VideoKodek? _bicimKodegi(String bicim) => switch (bicim) {
+  'avc1' || 'avc3' || 'avc2' || 'avc4' => VideoKodek.h264,
+  // `dvh1`/`dvhe` Dolby Vision'dır ama taşıyıcısı HEVC'dir; Chrome onu da
+  // oynatmaz, aynı kefeye girer.
+  'hvc1' || 'hev1' || 'hvt1' || 'dvh1' || 'dvhe' => VideoKodek.hevc,
+  'vp09' || 'vp08' => VideoKodek.vp9,
+  'av01' => VideoKodek.av1,
+  'mp4v' || 's263' || 'h263' || 'jpeg' || 'mjpa' => VideoKodek.digerVideo,
+  _ => null,
+};
+
+/// 4 harfli kutu tipi. `String.fromCharCodes` ASCII dışı baytı da alır;
+/// tip zaten yalnız bilinen sabitlerle karşılaştırılıyor.
+String _kutuTipi(Uint8List v, int i) =>
+    i + 4 <= v.length ? String.fromCharCodes(v, i, i + 4) : '';
+
+/// Big-endian 32 bit. Kaydırma DEĞİL çarpma kullanılıyor: bu dosya web'e de
+/// derleniyor ve dart2js'te `<<` 32 bit taşmasında sürprizlidir.
+int _u32(Uint8List v, int i) => i + 4 <= v.length
+    ? v[i] * 16777216 + v[i + 1] * 65536 + v[i + 2] * 256 + v[i + 3]
+    : 0;
+
 /// Sunucunun `/medya` gövde sınırı: **100 MB** (`server.js:3174`,
 /// `express.raw({limit: '100mb'})`; nginx `client_max_body_size 105m`).
 ///
@@ -220,7 +481,39 @@ class VideoSikistirmaKarari {
 ///
 /// [genislik]/[yukseklik] rotasyon uygulanmış hâlde beklenir
 /// (`video_islem_io.dart:bilgi` öyle veriyor).
+///
+/// [kodek] 13 Ağu 2026'da eklendi (madde 53). BOYUT kararı ile
+/// OYNATILABİLİRLİK kararı BİRBİRİNDEN BAĞIMSIZ iki gerekçedir ve bu sırayla
+/// sorulur:
+///
+/// 1. Boyut kazandırıyor mu? Kazandırıyorsa iş biter — çıktı zaten H.264
+///    olacağı için kodek sorunu da yoluna gelir, ikinci bir kural gerekmez.
+/// 2. Kazandırmıyorsa: kodek her yerde oynuyor mu? Oynamıyorsa yeniden
+///    kodlanır, ama BAMBAŞKA bir ayarla ([videoOynatilabilirlikPayi]).
+///
+/// Bu sıralama madde 35(a) ile ÇELİŞMEZ, onu TAMAMLAR. 35(a) "boyut
+/// gerekçesiyle gereksiz yeniden kodlama yapma" der ve o kural aynen duruyor:
+/// H.264 bir video hâlâ boyut için sorgulanır, oynatılabilirlik için ASLA
+/// yeniden kodlanmaz. Değişen tek şey, boyutun TEK gerekçe olmaktan çıkması.
 VideoSikistirmaKarari videoSikistirmaKarari({
+  required int girdiBayt,
+  required Duration sure,
+  required int genislik,
+  required int yukseklik,
+  VideoKodek kodek = VideoKodek.bilinmiyor,
+}) {
+  final boyut = _boyutKarari(
+    girdiBayt: girdiBayt,
+    sure: sure,
+    genislik: genislik,
+    yukseklik: yukseklik,
+  );
+  if (boyut.sikistir || !kodek.yenidenKodlaGerek) return boyut;
+  return _oynatilabilirlikKarari(girdiBayt: girdiBayt, sure: sure);
+}
+
+/// Yalnız BOYUT gerekçeli karar — madde 35(a)'nın kuralı, olduğu gibi.
+VideoSikistirmaKarari _boyutKarari({
   required int girdiBayt,
   required Duration sure,
   required int genislik,
@@ -264,6 +557,52 @@ VideoSikistirmaKarari videoSikistirmaKarari({
     // Media3'te bir efekttir ve yeniden kodlamayı zorunlu kılar.
     olcek: videoOlcek(genislik, yukseklik),
     bitHizi: hedef.round(),
+  );
+}
+
+/// Yalnız OYNATILABİLİRLİK gerekçeli karar (madde 53). Buraya gelindiyse
+/// boyut kararı "dokunma" demiştir; tek sebep kodektir.
+///
+/// ÖLÇEK NEDEN 1: yeniden kodlamanın gerekçesi kodek, çözünürlük DEĞİL.
+/// 720p kutusuna indirmek piksel sayısını yarıya düşürür ve bunun
+/// oynatılabilirliğe hiçbir katkısı yoktur — madde 35(a) tam da bu bedeli
+/// ölçüp "boşuna" demişti ([videoKazancEsigi] tablosu). Aynı hatayı yeni bir
+/// bahaneyle tekrarlamıyoruz.
+///
+/// BİT HIZI TAVANI ÜÇ SINIRIN EN KÜÇÜĞÜ:
+/// * kaynak × [videoOynatilabilirlikPayi] — paketin kayıpsız kopyalama
+///   yolunu KAPATMAK için zorunlu (gerekçe orada yazılı);
+/// * [videoBitHizi] — 5 Mbps'in üstüne çıkmanın anlamı yok;
+/// * 100 MB sığdırma tavanı — çıktı sunucu kapısından geçmezse tüm iş çöpe.
+///
+/// Birinci sınır tek başına çıktının kaynaktan BÜYÜK olmasını da imkânsız
+/// kılıyor: çıktı ≈ kaynak × 0,8. Yani bu dal dosyayı asla şişirmez.
+VideoSikistirmaKarari _oynatilabilirlikKarari({
+  required int girdiBayt,
+  required Duration sure,
+}) {
+  final us = sure.inMicroseconds;
+  if (us <= 0 || girdiBayt <= 0) {
+    // Süre okunamadı → kaynak bit hızı bilinmiyor, payı hesaplayamayız.
+    // Tavan olarak [videoBitHizi] veriyoruz: Android'de MIME uyuşmazlığı
+    // yeniden kodlamayı zaten zorluyor, iOS'ta ise bit hızı okunamayan kaynak
+    // `shouldForceEncode`'da "kanıtlanamadı" sayılıp yine kodlanıyor
+    // (`BitrateCapPolicy.swift`: `guard let rate else { return true }`).
+    return const VideoSikistirmaKarari(
+      sikistir: true,
+      olcek: 1,
+      bitHizi: videoBitHizi,
+    );
+  }
+  final kaynakBitHizi = girdiBayt * 8 * 1000000 / us;
+  var hedef = kaynakBitHizi * videoOynatilabilirlikPayi;
+  if (hedef > videoBitHizi) hedef = videoBitHizi.toDouble();
+  final sigdirma = videoAzamiBayt * videoSigdirmaPayi * 8 * 1000000 / us;
+  if (sigdirma < hedef) hedef = sigdirma;
+  return VideoSikistirmaKarari(
+    sikistir: true,
+    olcek: 1,
+    bitHizi: math.max(1, hedef.round()),
   );
 }
 
@@ -358,8 +697,14 @@ abstract class VideoIsleyici {
   /// Geçici dizinde benzersiz bir çıktı yolu üretir.
   Future<String> geciciYol(String uzanti);
 
-  /// Sihirli bayt doğrulaması için dosyanın ilk [adet] baytı.
-  Future<Uint8List> basBaytlar(String yol, {int adet = 16});
+  /// Dosyanın [bas] baytından başlayan [adet] baytı. Dosya sonuna denk
+  /// gelirse KISA döner; hata olursa boş liste (asla fırlatmaz).
+  ///
+  /// İKİ İŞİ VAR: sihirli bayt doğrulaması (`bas: 0`) ve [videoKodegi]'nin
+  /// MP4 kutu ağacında gezinmesi. İkincisi dosyanın ortasından/sonundan da
+  /// okur — `moov` telefon kamerası çıktısında SONDADIR ve tüm dosyayı
+  /// belleğe almadan oraya ulaşmanın tek yolu budur.
+  Future<Uint8List> parca(String yol, {int bas = 0, int adet = 16});
 
   /// Dosya boyutu (bayt). Okunamazsa -1.
   Future<int> boyut(String yol);

@@ -964,4 +964,20 @@ const Map<String, String> cevirilerMl = {
       'നിങ്ങൾ ജനിച്ചത് നന്നായി, ഇവിടെ ഉള്ളതും നന്നായി.',
   'Bugün {} yaşına girdin': 'ഇന്ന് നിങ്ങൾക്ക് {} വയസ്സ് തികഞ്ഞു',
   'Teşekkürler': 'നന്ദി',
+  'İki Adımlı Doğrulama': 'രണ്ട് ഘട്ട പരിശോധന',
+  'Girişte e-postana kod gönderilir':
+      'ലോഗിൻ ചെയ്യുമ്പോൾ ഇമെയിലിലേക്ക് കോഡ് അയയ്ക്കും',
+  'Kod {} adresine gönderildi': 'കോഡ് {} എന്ന വിലാസത്തിലേക്ക് അയച്ചു',
+  '6 haneli kod': '6 അക്ക കോഡ്',
+  'Doğrula': 'പരിശോധിക്കൂ',
+  'Yeniden gönder': 'വീണ്ടും അയയ്ക്കൂ',
+  'Vazgeç': 'റദ്ദാക്കൂ',
+  'Yeni kod gönderildi': 'പുതിയ കോഡ് അയച്ചു',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google ഉപയോഗിച്ച് ലോഗിൻ ചെയ്യുമ്പോൾ കോഡ് ചോദിക്കില്ല; പരിശോധന Google സ്വയം നടത്തും.',
+  'Kapatmak için de kod gerekir.': 'ഓഫ് ചെയ്യാനും കോഡ് വേണം.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ഇമെയിൽ ലഭ്യമല്ലെങ്കിൽ അക്കൗണ്ടിൽ ലോഗിൻ ചെയ്യാൻ കഴിയില്ല.',
+  'İki adımlı doğrulama açıldı': 'രണ്ട് ഘട്ട പരിശോധന ഓണാക്കി',
+  'İki adımlı doğrulama kapatıldı': 'രണ്ട് ഘട്ട പരിശോധന ഓഫാക്കി',
 };

@@ -968,4 +968,20 @@ const Map<String, String> cevirilerNl = {
       'Fijn dat je geboren bent, en fijn dat je er bent.',
   'Bugün {} yaşına girdin': 'Vandaag ben je {} geworden',
   'Teşekkürler': 'Bedankt',
+  'İki Adımlı Doğrulama': 'Tweestapsverificatie',
+  'Girişte e-postana kod gönderilir':
+      'Bij het inloggen ontvang je een code per e-mail',
+  'Kod {} adresine gönderildi': 'Code verstuurd naar {}',
+  '6 haneli kod': '6-cijferige code',
+  'Doğrula': 'Verifiëren',
+  'Yeniden gönder': 'Opnieuw sturen',
+  'Vazgeç': 'Annuleren',
+  'Yeni kod gönderildi': 'Nieuwe code verstuurd',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Bij inloggen met Google wordt geen code gevraagd; Google verifieert zelf.',
+  'Kapatmak için de kod gerekir.': 'Uitschakelen vraagt ook om een code.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Zonder toegang tot je e-mail kun je niet meer inloggen.',
+  'İki adımlı doğrulama açıldı': 'Tweestapsverificatie staat aan',
+  'İki adımlı doğrulama kapatıldı': 'Tweestapsverificatie staat uit',
 };

@@ -968,4 +968,19 @@ const Map<String, String> cevirilerBg = {
       'Хубаво, че се роди, и хубаво, че си тук.',
   'Bugün {} yaşına girdin': 'Днес навършваш {} години',
   'Teşekkürler': 'Благодаря',
+  'İki Adımlı Doğrulama': 'Потвърждаване в две стъпки',
+  'Girişte e-postana kod gönderilir': 'При влизане на имейла ти се изпраща код',
+  'Kod {} adresine gönderildi': 'Кодът е изпратен до {}',
+  '6 haneli kod': '6-цифрен код',
+  'Doğrula': 'Потвърди',
+  'Yeniden gönder': 'Изпрати отново',
+  'Vazgeç': 'Отказ',
+  'Yeni kod gönderildi': 'Изпратен е нов код',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'При влизане с Google не се иска код; Google прави собствена проверка.',
+  'Kapatmak için de kod gerekir.': 'За изключване също се изисква код.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Ако изгубиш достъп до имейла си, няма да можеш да влезеш в акаунта си.',
+  'İki adımlı doğrulama açıldı': 'Потвърждаването в две стъпки е включено',
+  'İki adımlı doğrulama kapatıldı': 'Потвърждаването в две стъпки е изключено',
 };

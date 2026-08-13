@@ -968,4 +968,20 @@ const Map<String, String> cevirilerRu = {
       'Как хорошо, что ты есть и что ты с нами.',
   'Bugün {} yaşına girdin': 'Сегодня тебе исполнилось {}',
   'Teşekkürler': 'Спасибо',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Двухэтапная аутентификация',
+  'Girişte e-postana kod gönderilir': 'При входе на почту приходит код',
+  'Kod {} adresine gönderildi': 'Код отправлен на {}',
+  '6 haneli kod': 'Код из 6 цифр',
+  'Doğrula': 'Подтвердить',
+  'Yeniden gönder': 'Отправить снова',
+  'Vazgeç': 'Отмена',
+  'Yeni kod gönderildi': 'Новый код отправлен',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'При входе через Google код не запрашивается; Google выполняет собственную проверку.',
+  'Kapatmak için de kod gerekir.': 'Для отключения тоже нужен код.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Без доступа к почте вход в аккаунт будет невозможен.',
+  'İki adımlı doğrulama açıldı': 'Двухэтапная аутентификация включена',
+  'İki adımlı doğrulama kapatıldı': 'Двухэтапная аутентификация отключена',
 };

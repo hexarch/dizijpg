@@ -963,4 +963,20 @@ const Map<String, String> cevirilerDa = {
   'İyi ki doğdun, iyi ki buradasın.': 'Godt, du blev født, og godt, du er her.',
   'Bugün {} yaşına girdin': 'I dag fyldte du {}',
   'Teşekkürler': 'Tak',
+  'İki Adımlı Doğrulama': 'Bekræftelse i to trin',
+  'Girişte e-postana kod gönderilir': 'Ved login sendes en kode til din mail',
+  'Kod {} adresine gönderildi': 'Koden er sendt til {}',
+  '6 haneli kod': '6-cifret kode',
+  'Doğrula': 'Bekræft',
+  'Yeniden gönder': 'Send igen',
+  'Vazgeç': 'Annuller',
+  'Yeni kod gönderildi': 'Ny kode sendt',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Der bliver ikke bedt om en kode ved login med Google; Google står selv for verificeringen.',
+  'Kapatmak için de kod gerekir.':
+      'Der kræves også en kode for at slå det fra.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Uden adgang til din mail kan du ikke logge ind.',
+  'İki adımlı doğrulama açıldı': 'Bekræftelse i to trin er slået til',
+  'İki adımlı doğrulama kapatıldı': 'Bekræftelse i to trin er slået fra',
 };

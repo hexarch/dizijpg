@@ -971,4 +971,19 @@ const Map<String, String> cevirilerIt = {
       'Che bello che tu esista, che bello averti qui.',
   'Bugün {} yaşına girdin': 'Oggi compi {} anni',
   'Teşekkürler': 'Grazie',
+  'İki Adımlı Doğrulama': 'Verifica in due passaggi',
+  'Girişte e-postana kod gönderilir': "All'accesso ricevi un codice via e-mail",
+  'Kod {} adresine gönderildi': 'Codice inviato a {}',
+  '6 haneli kod': 'Codice a 6 cifre',
+  'Doğrula': 'Verifica',
+  'Yeniden gönder': 'Invia di nuovo',
+  'Vazgeç': 'Annulla',
+  'Yeni kod gönderildi': 'Nuovo codice inviato',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      "Con l'accesso tramite Google il codice non viene richiesto; Google esegue la propria verifica.",
+  'Kapatmak için de kod gerekir.': 'Anche per disattivarla serve un codice.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      "Se perdi l'accesso alla tua e-mail, non potrai più accedere all'account.",
+  'İki adımlı doğrulama açıldı': 'Verifica in due passaggi attiva',
+  'İki adımlı doğrulama kapatıldı': 'Verifica in due passaggi disattivata',
 };

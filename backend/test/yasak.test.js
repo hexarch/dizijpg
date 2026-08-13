@@ -228,8 +228,17 @@ test('BAĞLANTI: yasak yükü kullanıcıya GÖSTERİLİYOR (sebep + kalan süre
   assert.match(SERVER, /yasak: req\.yasak/);
   assert.match(SERVER, /\.\.\.\(req\.yasak \? \{ yasak: req\.yasak \} : \{\}\)/,
     '/profilim yasak bilgisini taşımıyor — hiç yazmayan yasaklı cezasını göremez');
-  assert.match(SERVER, /const yasak = yasakYuku\(rows\[0\]\);/,
-    '/auth/giris yasak yükünü döndürmüyor');
+  // 14 Ağu (md. 52 — iki adımlı doğrulama): giriş yanıtı ARTIK TEK YERDE
+  // kuruluyor (`girisYuku`), çünkü 2FA'lı hesapta oturum ikinci adımda
+  // (`/auth/giris-kod`) açılıyor. İDDİA AYNI, üstelik güçlendi: yükü üreten
+  // TEK fonksiyon yasak bilgisini taşıyor ve iki giriş yolu da onu kullanıyor,
+  // yani "ikinci adımda ceza uyarısı düştü" hatası imkânsız.
+  assert.match(SERVER, /function girisYuku\(k\) \{\n\s*const yasak = yasakYuku\(k\);/,
+    'giriş yükü üreticisi yasak bilgisini taşımıyor');
+  assert.match(SERVER, /res\.json\(girisYuku\(rows\[0\]\)\);/,
+    '/auth/giris ortak giriş yükünü döndürmüyor');
+  assert.match(SERVER, /res\.json\(girisYuku\(k\)\);/,
+    '/auth/giris-kod (2FA ikinci adımı) ortak giriş yükünü döndürmüyor');
 });
 
 test('yasakYuku: kalan süre saniye olarak ve sebep ile birlikte gelir', () => {

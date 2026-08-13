@@ -1031,3 +1031,29 @@ CREATE INDEX IF NOT EXISTS listeler_kullanici
   ON listeler (kullanici_id);
 CREATE INDEX IF NOT EXISTS liste_ogeleri_eklenme
   ON liste_ogeleri (liste_id, eklenme DESC);
+
+-- 2026-08-14 (f): İKİ ADIMLI DOĞRULAMA (md. 52) — YALNIZ E-POSTA.
+-- Tam gerekçe migrasyon-2026-08-14f.sql'de. Özet:
+--  * `iki_adim` isteğe bağlı, VARSAYILAN KAPALI.
+--  * Yalnız /auth/giris yolunda okunur. /auth/google BİLEREK bakmaz (Google
+--    kendi iki adımlı doğrulamasını uyguluyor, çift kilit olurdu).
+--  * /auth/sifre-sifirla da bakmaz: o akış zaten AYNI e-posta kutusuna kod
+--    gönderiyor, ikinci kod hiçbir şey kanıtlamaz.
+ALTER TABLE kullanicilar
+  ADD COLUMN IF NOT EXISTS iki_adim BOOLEAN NOT NULL DEFAULT false;
+
+-- Tek kullanımlık 6 haneli kodlar (`sifirlama_kodlari` ile aynı örüntü):
+-- kullanıcı başına EN FAZLA BİR açık kod, kod HASH'lenir, 10 dk yaşar,
+-- 5 yanlış denemede satır SİLİNİR (yalnız "bekle" denmez).
+--   amac       — 'giris' | 'ac' | 'kapat'. Doğrulama amacı da karşılaştırır:
+--                kapatma için istenen kod giriş adımında kabul edilmez.
+--   bilet_hash — yalnız amac='giris'. Ara adımı taşıyan kısa ömürlü biletin
+--                sha256'sı; bilet doğrulanana kadar OTURUM TOKEN'I VERİLMEZ.
+CREATE TABLE IF NOT EXISTS iki_adim_kodlari (
+  kullanici_id INT PRIMARY KEY REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  kod_hash TEXT NOT NULL,
+  amac TEXT NOT NULL CHECK (amac IN ('giris','ac','kapat')),
+  bilet_hash TEXT,
+  bitis TIMESTAMPTZ NOT NULL,
+  deneme INT NOT NULL DEFAULT 0
+);

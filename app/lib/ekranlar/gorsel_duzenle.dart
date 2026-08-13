@@ -1,3 +1,6 @@
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
@@ -21,13 +24,22 @@ import '../tema.dart';
 /// tanınmayan bir bayt dizisi sunucuya hiç gönderilmez, kullanıcıya hata
 /// gösterilir. "JPEG üretir herhâlde" varsayımı yasak — kontrol kodda.
 
-/// Düzenlenmiş çıktının üst sınırı. İstemcinin yorum eki sınırıyla (30 MB,
-/// `yorumlar.dart:_ekAzamiBayt`) AYNI: editörden çıkan dosya da o kapıdan
-/// geçecek, sınırı burada erken yakalayıp anlaşılır hata veriyoruz.
+/// Düzenlenmiş çıktının üst sınırı.
 ///
-/// TESPİT (MEDYA-EDITOR-PLANI §3.5): sunucu 100 MB kabul ediyor, istemci
-/// 30 MB'da kesiyor — bu uyumsuzluk G1 kapsamı DIŞINDA, burada yalnızca
-/// istemci sınırına uyuluyor.
+/// 13 Ağu 2026 — GEREKÇESİ DÜZELTİLDİ (madde 54). Eskiden burada "istemcinin
+/// yorum eki sınırıyla (30 MB, `yorumlar.dart:_ekAzamiBayt`) AYNI" yazıyordu;
+/// o sabit ARTIK YOK. 7 Ağu 2026'da yükleme hattı `medya_yukle.dart`'ta
+/// birleştirildi ve sınırlar KODDAN doğrulandı:
+/// * `medya_yukle.dart:medyaAzamiBayt` = `videoAzamiBayt` = **100 MB / dosya**
+/// * `medya_yukle.dart:medyaToplamAzamiBayt` = **100 MB / gönderi**
+/// * `server.js:5289` `express.raw({limit:'100mb'})`, nginx 105m
+///
+/// Yani gerçek tavan 30 değil 100 MB. Bu sabit yine de 30 MB'da duruyor ve
+/// artık DÜRÜST bir gerekçesi var: burası tek bir DÜZENLENMİŞ görselin
+/// tavanı. 30 MB'lık tek bir görsel gönderi başına 100 MB'lık toplam
+/// bütçenin üçte birini yer ve mobil veriyle yüklenmesi dakikalar sürer;
+/// editörden böyle bir dosya çıkıyorsa (yalnız saydam=PNG hattında mümkün)
+/// doğru cevap onu göndermek değil, [pngSigdir] ile küçültmektir.
 const gorselDuzenleAzamiBayt = 30 * 1024 * 1024;
 
 /// Editörün üreteceği en büyük kenar.
@@ -52,6 +64,59 @@ const gorselDuzenleAzamiBayt = 30 * 1024 * 1024;
 /// tepe bellek çoktan ödenmiş. Çıktıyı kısmak o tepeyi düşürmüyor, yalnız
 /// son adımda detayı çöpe atıyor. 4096, X/Twitter'ın yükleme tavanıyla aynı.
 const _azamiCikti = Size(4096, 4096);
+
+/// SAYDAM (PNG) hattının en büyük kenarı — JPEG hattından bilinçli olarak
+/// daha küçük.
+///
+/// NEDEN 4096 DEĞİL (madde 54): [_azamiCikti]'nın 4096 olabilmesinin tek
+/// sebebi JPEG'in KAYIPLI olması — 12 MP bir fotoğraf kalite 92'de 2,5 MB'a
+/// iniyor. PNG KAYIPSIZ; dosya boyutunun üst sınırını sıkıştırma değil
+/// PİKSEL SAYISI belirliyor. Ham RGBA hesabı (PNG bundan büyük olamaz,
+/// deflate en kötü hâlde "stored" bloğa düşer):
+///
+/// | kenar | piksel | ham RGBA = PNG tavanı |
+/// |---|---|---|
+/// | 4096 | 16,8 MP | **67 MB** — 30 MB sınırının 2 katı üstü |
+/// | 2896 | 8,4 MP | 33,5 MB — hâlâ üstünde |
+/// | 2048 | 4,2 MP | **16,8 MB** — 1,8 kat pay |
+///
+/// 2048 kalite kaybı DEĞİL, saydam içeriğin doğasına uygun bir tavan:
+/// saydamlık taşıyan görsel = çıkartma/logo/grafik (ölçüldü, aşağıya bak),
+/// fotoğraf değil. Telefon ekranı 1080 px geniş; 2048 zaten iki katı.
+/// Ayrıca dünkü (12 Ağu) sürüme kadar HER çıktı 2000 px'e iniyordu.
+///
+/// Bu bir GARANTİ değil, ucuz bir sigorta: paketin ölçek kısıtı ekran
+/// kutusu üzerinden çalıştığı için (`image_render_service.dart:85`, `max`
+/// ile) uç en-boy oranlarında tavanı aşabiliyor. Kesin güvence
+/// [pngSigdir]'de.
+const _azamiSaydamCikti = Size(2048, 2048);
+
+/// Saydamlık taramasında kullanılan örnek kenarı (px).
+///
+/// Tam çözünürlükte çözmek gerekmiyor: 4096² bir görselin RGBA'sı 67 MB;
+/// 512² yalnız 1 MB ve tarama <5 ms. Küçültme ORTALAMA aldığı için tek bir
+/// saydam piksel bile kaybolmuyor — 4096'lık bir görselde 8×8'lik bir
+/// bloğun tek pikseli saydamsa örnekteki alfa 255 değil 251 çıkar.
+const _saydamlikOrnekBoyu = 512;
+
+/// PNG üretim ayarları — hem editör hattı hem [pngSigdir] BURADAN okur ki
+/// küçültme sonrası kodlama editörünkiyle birebir aynı olsun.
+///
+/// `rawStraightRgba` ŞART: paketin varsayılanı `rawRgba` (ÖN ÇARPIMLI alfa)
+/// ve paketin kendi belgesi diyor ki ön çarpımlı alfa yarı saydam kenarlarda
+/// KOYU HALE (dark fringing) bırakır. Saydamlığı koruyup kenarını
+/// karartmak, düzeltmeye çalıştığımız hatanın daha sinsi bir sürümü olurdu.
+///
+/// `paeth` süzgeci: paketin varsayılanı `PngFilter.none`, yani satır süzgeci
+/// hiç uygulanmıyor ve deflate'in işi zorlaşıyor. Paeth PNG'nin standart
+/// süzgeci; dosya boyutunu düşürmek bu maddede birinci derece risk olduğu
+/// için CPU'yu değil boyutu optimize ediyoruz.
+const _saydamUretim = ImageGenerationConfigs(
+  outputFormat: OutputFormat.png,
+  captureImageByteFormat: ui.ImageByteFormat.rawStraightRgba,
+  pngFilter: PngFilter.paeth,
+  maxOutputSize: _azamiSaydamCikti,
+);
 
 /// Sunucunun kabul ettiği görsel türleri (istemci ikizi).
 enum GorselTur {
@@ -102,6 +167,230 @@ bool duzenlenebilirMi(Uint8List v) {
   return t == GorselTur.jpeg || t == GorselTur.png || t == GorselTur.webp;
 }
 
+// --- SAYDAMLIK (madde 54) ------------------------------------------------
+//
+// SORUN: saydam PNG editöre girip JPEG çıkıyordu ve saydam alanlar BEYAZ
+// oluyordu (`pro_image_editor`ün `jpegBackgroundColor` varsayılanı beyaz).
+// Kullanıcı bunu ancak yükledikten sonra görüyordu — sessiz bozulma.
+//
+// ÇÖZÜM: çıktı formatı GİRDİYE göre dallanıyor. Saydamlık VARSA çıktı PNG,
+// yoksa (bugünkü gibi) JPEG kalite 92 / yuv444.
+
+/// Bu baytlar saydamlık TAŞIYABİLİR mi? Ucuz, senkron, hiçbir şey çözmez —
+/// yalnız başlık/yığın okur.
+///
+/// Bu bir ÖN ELEME: `false` dönerse görselde kesinlikle saydam piksel YOKTUR
+/// (JPEG'de alfa kanalı diye bir şey yok, alfasız PNG'de de). `true` dönmesi
+/// "olabilir" demektir; kesin cevabı [saydamlikVar] verir.
+@visibleForTesting
+bool saydamlikTasiyabilir(Uint8List v) {
+  switch (gorselTuru(v)) {
+    case GorselTur.png:
+      return _pngSaydamlikTasiyabilir(v);
+    case GorselTur.webp:
+      return _webpSaydamlikTasiyabilir(v);
+    case GorselTur.jpeg:
+    case GorselTur.gif:
+    case GorselTur.bilinmeyen:
+      return false;
+  }
+}
+
+/// PNG: IHDR renk tipi + `tRNS` yığını.
+///
+/// Renk tipi (IHDR gövdesinin 10. baytı = dosyanın 25. baytı):
+/// 0 gri · 2 RGB · 3 palet · 4 gri+alfa · 6 RGBA.
+///
+/// 4 ve 6'nın alfa KANALI var. 0, 2 ve 3'ün yok ama `tRNS` yığını yine de
+/// saydamlık taşır: palet PNG'de palet başına alfa, gri/RGB'de "şu renk
+/// tamamen saydam" anahtarı. Ölçümde bu hiç de nadir değildi — taranan
+/// 2934 PNG'nin 148'i palet+tRNS, 31'i RGB+tRNS, 4'ü gri+tRNS.
+bool _pngSaydamlikTasiyabilir(Uint8List v) {
+  if (v.length < 26) return false;
+  // İlk yığın IHDR olmak ZORUNDA (PNG spec). Değilse dosya bozuk.
+  if (v[12] != 0x49 || v[13] != 0x48 || v[14] != 0x44 || v[15] != 0x52) {
+    return false;
+  }
+  final renkTipi = v[25];
+  if (renkTipi == 4 || renkTipi == 6) return true; // gri+alfa / RGBA
+  return _pngTrnsVar(v);
+}
+
+/// `tRNS` yığınını arar. IDAT'a ya da IEND'e gelince durur: spec `tRNS`in
+/// IDAT'tan ÖNCE gelmesini şart koşuyor, sonrasını taramak boşuna.
+bool _pngTrnsVar(Uint8List v) {
+  var i = 8; // 8 baytlık imzadan sonra ilk yığın
+  while (i + 8 <= v.length) {
+    // 4 baytlık uzunluk BÜYÜK UÇLU. Kaydırma yerine çarpma: dart2js'te
+    // `<<` 32 bit ve 0x80000000 sınırında işaret değiştirir.
+    final uzunluk =
+        v[i] * 16777216 + v[i + 1] * 65536 + v[i + 2] * 256 + v[i + 3];
+    if (uzunluk < 0 || uzunluk > v.length) return false; // bozuk/kısa dosya
+    final t0 = v[i + 4], t1 = v[i + 5], t2 = v[i + 6], t3 = v[i + 7];
+    // 'tRNS'
+    if (t0 == 0x74 && t1 == 0x52 && t2 == 0x4E && t3 == 0x53) return true;
+    // 'IDAT' ya da 'IEND' → daha ileride tRNS olamaz.
+    if (t0 == 0x49 && t1 == 0x44 && t2 == 0x41 && t3 == 0x54) return false;
+    if (t0 == 0x49 && t1 == 0x45 && t2 == 0x4E && t3 == 0x44) return false;
+    i += 12 + uzunluk; // uzunluk + tür + gövde + CRC
+  }
+  return false;
+}
+
+/// WebP: kapsayıcının ilk yığını belirler.
+///
+/// * `VP8X` (genişletilmiş) → 20. bayttaki bayrakların ALPHA biti (0x10).
+/// * `VP8L` (kayıpsız) → alfa taşıyabilir, piksel taramasına bırak.
+/// * `VP8 ` (kayıplı, tek başına) → alfa kanalı YOKTUR.
+bool _webpSaydamlikTasiyabilir(Uint8List v) {
+  if (v.length < 16) return false;
+  final c0 = v[12], c1 = v[13], c2 = v[14], c3 = v[15];
+  if (c0 == 0x56 && c1 == 0x50 && c2 == 0x38) {
+    if (c3 == 0x58) return v.length > 20 && (v[20] & 0x10) != 0; // VP8X
+    if (c3 == 0x4C) return true; // VP8L
+  }
+  return false;
+}
+
+/// Görselde GERÇEKTEN saydam piksel var mı? Çıktı formatı kararı BUNA bakar.
+///
+/// NEDEN BAŞLIK YETMİYOR — ÖLÇÜLDÜ (13 Ağu 2026, madde 54): kullanıcı
+/// içeriğine benzeyen 793 PNG'lik örnekte RGBA (renk tipi 6) olan 603
+/// dosyanın **142'si (%23,5) tamamen OPAK**. Bunlar tam da PNG'de tutmanın
+/// en pahalı olduğu dosyalar:
+///
+/// | dosya | PNG | JPEG k92 |
+/// |---|---|---|
+/// | 1529×881 arka plan (RGBA, opak) | **1419 KB** | 249 KB (**5,7 kat**) |
+/// | macOS ekran görüntüsü (RGBA, opak) | 23 KB | 13 KB |
+///
+/// macOS ekran görüntüsü RGBA çıkıyor ve HİÇ saydam pikseli yok. Bu dosyanın
+/// [_azamiCikti] gerekçesinde ölçülmüştü: en büyük 300 yüklemenin 262'si
+/// ekran görüntüsü. Yani "başlıkta alfa var → PNG" kuralı, yüklemelerin en
+/// kalabalık sınıfını kat kat şişirirdi. Gerçek piksel taraması ŞART.
+///
+/// TERS YÖNDE HATA YAPMAZ: çözülemeyen bayt dizisinde `true` döner —
+/// saydamlığı korumak (büyük dosya) beyaza boyamaktan (bozuk görsel) iyidir.
+Future<bool> saydamlikVar(Uint8List veri) async {
+  if (!saydamlikTasiyabilir(veri)) return false;
+  ui.Codec? kodek;
+  ui.Image? gorsel;
+  try {
+    kodek = await ui.instantiateImageCodec(
+      veri,
+      targetWidth: _saydamlikOrnekBoyu,
+      targetHeight: _saydamlikOrnekBoyu,
+      // Küçük görseli BÜYÜTME (varsayılan `true`): 32×32 bir çıkartmayı
+      // 512×512'ye çıkarmak 256 kat gereksiz iş demek.
+      allowUpscaling: false,
+    );
+    gorsel = (await kodek.getNextFrame()).image;
+    final bayt = await gorsel.toByteData(
+      format: ui.ImageByteFormat.rawStraightRgba,
+    );
+    if (bayt == null) return true;
+    final p = bayt.buffer.asUint8List(bayt.offsetInBytes, bayt.lengthInBytes);
+    for (var i = 3; i < p.length; i += 4) {
+      if (p[i] != 255) return true;
+    }
+    return false;
+  } catch (_) {
+    return true; // çözemedik → saydamlığı VARSAY (güvenli taraf)
+  } finally {
+    gorsel?.dispose();
+    kodek?.dispose();
+  }
+}
+
+/// PNG'nin IHDR genişliği; PNG değilse/bozuksa `null`.
+int? _pngGenislik(Uint8List v) {
+  if (v.length < 24 || gorselTuru(v) != GorselTur.png) return null;
+  if (v[12] != 0x49 || v[13] != 0x48 || v[14] != 0x44 || v[15] != 0x52) {
+    return null;
+  }
+  return v[16] * 16777216 + v[17] * 65536 + v[18] * 256 + v[19];
+}
+
+/// PNG çıktısını [gorselDuzenleAzamiBayt]'a SIĞDIRIR — saydamlığı KORUYARAK.
+///
+/// NEDEN JPEG'E DÜŞMÜYORUZ: JPEG'e düşmek saydam alanları beyaza boyamak,
+/// yani maddenin tarif ettiği hatayı geri getirmek demek. Kullanıcının
+/// kaybetmeyi göze alabileceği şey ÇÖZÜNÜRLÜK; alfa kanalı içeriğin
+/// kendisi (çevresinde beyaz kutu olan bir çıkartma bozuk bir çıkartmadır).
+/// Bu yüzden sıkışınca piksel atıyoruz, saydamlığı değil.
+///
+/// PNG boyutu piksel sayısıyla kabaca doğru orantılı; hedef kenarı
+/// `sqrt(bütçe/boyut)` ile bir hamlede hesaplıyoruz (körlemesine yarıya
+/// bölmek yerine), %15 emniyet payıyla. Tek küçültme yetmezse bir kez daha
+/// denenir — her deneme yeniden kodlama demek ve saniyeler sürebilir.
+///
+/// HER KÜÇÜLTME ORİJİNALDEN yapılır (`png`, `sonuc` değil): arka arkaya
+/// küçültmek yeniden örneklemeyi üst üste bindirip görüntüyü yumuşatırdı.
+///
+/// [butce] yalnız TEST için ayrı: üretimde 30 MB'lık bir PNG üretmek
+/// gerekmesin diye. Testte küçük bir bütçeyle aynı kod yolu koşuluyor.
+@visibleForTesting
+Future<Uint8List> pngSigdir(
+  Uint8List png, {
+  int butce = gorselDuzenleAzamiBayt,
+  int enKucukKenar = 256,
+}) async {
+  final asilGenislik = _pngGenislik(png);
+  if (asilGenislik == null) return png;
+  var sonuc = png;
+  var genislik = asilGenislik;
+  for (var deneme = 0; deneme < 2; deneme++) {
+    if (sonuc.length <= butce || genislik <= enKucukKenar) break;
+    final oran = math.sqrt(butce * 0.85 / sonuc.length);
+    final hedef = (genislik * oran)
+        .floor()
+        .clamp(enKucukKenar, genislik - 1)
+        .toInt();
+    final kucuk = await _pngKucult(png, hedef);
+    // Küçültme başarısız ya da işe yaramadıysa DÖNGÜYÜ BIRAK: elimizdeki
+    // en iyi sonucu koru, sonsuza kadar yeniden kodlama.
+    if (kucuk == null ||
+        gorselTuru(kucuk) != GorselTur.png ||
+        kucuk.length >= sonuc.length) {
+      break;
+    }
+    sonuc = kucuk;
+    genislik = hedef;
+  }
+  return sonuc;
+}
+
+/// [png]'yi [hedefGenislik] pikselde yeniden kodlar; alfa kanalı korunur.
+///
+/// Yeni eklenti YOK: çözme `dart:ui`, kodlama editörün zaten kullandığı
+/// `ImageConverter`. `cropToDrawingBounds: false` ŞART — açıkken paket
+/// saydam kenarları KIRPIYOR (`dart_ui_remove_transparent_image_areas.dart`)
+/// ve çıkartmanın çerçevesi kayardı.
+Future<Uint8List?> _pngKucult(Uint8List png, int hedefGenislik) async {
+  ui.Codec? kodek;
+  ui.Image? gorsel;
+  try {
+    kodek = await ui.instantiateImageCodec(
+      png,
+      targetWidth: hedefGenislik,
+      allowUpscaling: false,
+    );
+    gorsel = (await kodek.getNextFrame()).image;
+    return await ImageConverter.instance.uiImageToImageBytes(
+      gorsel,
+      configs: _saydamUretim.copyWith(
+        maxOutputSize: Size.infinite, // ölçeği zaten çözerken verdik
+        cropToDrawingBounds: false,
+      ),
+    );
+  } catch (_) {
+    return null;
+  } finally {
+    gorsel?.dispose();
+    kodek?.dispose();
+  }
+}
+
 /// İki bayt dizisi birebir aynı mı (kullanıcı gerçekten bir şey değiştirdi mi).
 ///
 /// Editör `enableUseOriginalBytes` ile hiç değişiklik yapılmadıysa ORİJİNAL
@@ -129,20 +418,27 @@ Future<Uint8List?> Function(BuildContext, Uint8List)? gorselDuzenleSahte;
 ///    zaten [duzenlenebilirMi] ile önceden eleyip kullanıcıyı bilgilendirmeli;
 ///    burada ikinci emniyet kemeri olarak sessizce `null` dönülür.
 ///
-/// HATA: çıktı tanınmayan bir tür ya da 30 MB'ı aşıyorsa SnackBar ile
-/// söylenir ve `null` dönülür — sessiz başarısızlık YOK.
+/// HATA: çıktı tanınmayan bir tür ya da [gorselDuzenleAzamiBayt]'ı aşıyorsa
+/// SnackBar ile söylenir ve `null` dönülür — sessiz başarısızlık YOK.
+///
+/// ÇIKTI FORMATI GİRDİYE GÖRE (madde 54): girdide gerçekten saydam piksel
+/// varsa çıktı PNG (saydamlık korunur), yoksa JPEG.
 Future<Uint8List?> gorselDuzenle(BuildContext context, Uint8List veri) async {
   if (gorselDuzenleSahte != null) return gorselDuzenleSahte!(context, veri);
   if (!duzenlenebilirMi(veri)) return null;
 
+  // Gezinme kancaları await'TEN ÖNCE alınır: `saydamlikVar` asenkron ve
+  // arada widget sökülmüş olabilir (use_build_context_synchronously).
   final mesajci = ScaffoldMessenger.of(context);
-  final sonuc = await Navigator.of(context, rootNavigator: true)
-      .push<Uint8List?>(
-        MaterialPageRoute(
-          fullscreenDialog: true,
-          builder: (_) => _GorselDuzenleEkrani(veri: veri),
-        ),
-      );
+  final gezgin = Navigator.of(context, rootNavigator: true);
+  final saydam = await saydamlikVar(veri);
+
+  final sonuc = await gezgin.push<Uint8List?>(
+    MaterialPageRoute(
+      fullscreenDialog: true,
+      builder: (_) => _GorselDuzenleEkrani(veri: veri, saydam: saydam),
+    ),
+  );
 
   if (sonuc == null) return null;
   if (ayniBaytlar(sonuc, veri)) return null; // "bitti" dedi ama değiştirmedi
@@ -153,11 +449,18 @@ Future<Uint8List?> gorselDuzenle(BuildContext context, Uint8List veri) async {
     _uyar(mesajci, 'Düzenlenemedi'.c);
     return null;
   }
-  if (sonuc.length > gorselDuzenleAzamiBayt) {
+  // PNG kayıpsız: sınırı yalnız bu hat zorlayabilir. Zorladıysa saydamlığı
+  // koruyarak küçült — beyaza boyayıp göndermek YASAK (madde 54).
+  var cikti = sonuc;
+  if (cikti.length > gorselDuzenleAzamiBayt &&
+      gorselTuru(cikti) == GorselTur.png) {
+    cikti = await pngSigdir(cikti);
+  }
+  if (cikti.length > gorselDuzenleAzamiBayt) {
     _uyar(mesajci, 'Düzenlenen görsel çok büyük'.c);
     return null;
   }
-  return sonuc;
+  return cikti;
 }
 
 void _uyar(ScaffoldMessengerState mesajci, String metin) => mesajci
@@ -168,14 +471,18 @@ void _uyar(ScaffoldMessengerState mesajci, String metin) => mesajci
 /// tema/dil/araç yapılandırmamızla sarar.
 class _GorselDuzenleEkrani extends StatelessWidget {
   final Uint8List veri;
-  const _GorselDuzenleEkrani({required this.veri});
+
+  /// Girdide gerçekten saydam piksel var mı ([saydamlikVar]).
+  final bool saydam;
+
+  const _GorselDuzenleEkrani({required this.veri, required this.saydam});
 
   @override
   Widget build(BuildContext context) {
     Uint8List? cikti;
     return ProImageEditor.memory(
       veri,
-      configs: duzenleyiciYapilandirma(),
+      configs: duzenleyiciYapilandirma(saydam: saydam),
       callbacks: ProImageEditorCallbacks(
         onImageEditingComplete: (bytes) async => cikti = bytes,
         // Tek çıkış kapısı: "bitti" de, "vazgeç" de buradan geçer. `cikti`
@@ -202,7 +509,10 @@ class _GorselDuzenleEkrani extends StatelessWidget {
 ///   büyüterek yapılıyor → 1 dize.
 /// Kalan dizelerin bir kısmı da uygulamada ZATEN VAR olan anahtarlara
 /// bağlandı (İptal, Tamam, Geri al, Kaldır, Düzenle, Devam et).
-ProImageEditorConfigs duzenleyiciYapilandirma() {
+///
+/// [saydam] — girdide gerçekten saydam piksel var mı ([saydamlikVar])?
+/// Yalnız çıktı formatını etkiler; araçlar/çeviri/tema aynıdır.
+ProImageEditorConfigs duzenleyiciYapilandirma({bool saydam = false}) {
   const sari = DiziRenkler.sari;
   return ProImageEditorConfigs(
     // Editör tuvali DAİMA KOYU — açık temada da. Fotoğrafın algılanan
@@ -270,14 +580,24 @@ ProImageEditorConfigs duzenleyiciYapilandirma() {
       ],
       style: const CropRotateEditorStyle(cropCornerColor: sari),
     ),
-    imageGeneration: const ImageGenerationConfigs(
-      // JPEG: sunucunun `RESIM_TURLERI` listesinde FFD8FF ile karşılığı var,
-      // her cihazda aynı, PNG'den kat kat küçük. Kalite 92 → görsel farkı
-      // yok, dosya ~%60 küçük.
-      outputFormat: OutputFormat.jpg,
-      jpegQuality: 92,
-      maxOutputSize: _azamiCikti,
-    ),
+    // ÇIKTI FORMATI GİRDİYE GÖRE DALLANIR (madde 54, 13 Ağu 2026).
+    //
+    // Eskiden koşulsuz JPEG'di. JPEG'de alfa kanalı YOK; paket saydam
+    // alanları `jpegBackgroundColor` ile dolduruyor ve varsayılanı BEYAZ.
+    // Sonuç: editöre giren her çıkartma/logo beyaz kutuyla çıkıyordu ve
+    // kullanıcı bunu ancak yükledikten sonra fark ediyordu.
+    imageGeneration: saydam
+        ? _saydamUretim
+        // JPEG: sunucunun `RESIM_TURLERI` listesinde FFD8FF ile karşılığı
+        // var, her cihazda aynı, PNG'den kat kat küçük. Kalite 92 → görsel
+        // farkı yok, dosya ~%60 küçük. SAYDAMLIK YOKSA hâlâ doğru seçim:
+        // ölçüldü, RGBA ama opak bir 1529×881 arka plan PNG'de 1419 KB,
+        // JPEG k92'de 249 KB.
+        : const ImageGenerationConfigs(
+            outputFormat: OutputFormat.jpg,
+            jpegQuality: 92,
+            maxOutputSize: _azamiCikti,
+          ),
   );
 }
 

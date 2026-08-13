@@ -971,4 +971,21 @@ const Map<String, String> cevirilerRo = {
   'İyi ki doğdun, iyi ki buradasın.': 'Ce bine că exiști și că ești aici.',
   'Bugün {} yaşına girdin': 'Azi împlinești {} ani',
   'Teşekkürler': 'Mulțumesc',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Verificare în doi pași',
+  'Girişte e-postana kod gönderilir':
+      'La conectare se trimite un cod pe e-mail',
+  'Kod {} adresine gönderildi': 'Cod trimis la {}',
+  '6 haneli kod': 'Cod din 6 cifre',
+  'Doğrula': 'Verifică',
+  'Yeniden gönder': 'Retrimite',
+  'Vazgeç': 'Renunță',
+  'Yeni kod gönderildi': 'Cod nou trimis',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'La conectarea cu Google nu se cere cod; Google face propria verificare.',
+  'Kapatmak için de kod gerekir.': 'Dezactivarea cere și ea un cod.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Fără acces la e-mail, conectarea la cont nu mai este posibilă.',
+  'İki adımlı doğrulama açıldı': 'Verificarea în doi pași este activată',
+  'İki adımlı doğrulama kapatıldı': 'Verificarea în doi pași este dezactivată',
 };

@@ -11,6 +11,25 @@ import 'tema.dart';
 
 GoogleKapisi googleWebKapisi() => GoogleKapisiWeb();
 
+/// Web dalının çıkışı: `google_sign_in_web` bunu GIS'in
+/// `id.disableAutoSelect()` çağrısına indirir.
+///
+/// NEDEN GEREKLİ: Google'ın kendi şartı — "kullanıcı sitenden çıktığında
+/// `disableAutoSelect` çağırmalısın". Çağrılmazsa GIS bir sonraki ziyarette
+/// SON KULLANILAN hesabı otomatik seçip kimliği geri verir; kullanıcı hesap
+/// değiştiremez. Mobildeki `signIn()` önbelleği ile aynı hatanın web yüzü.
+///
+/// Giriş ekranındaki [GoogleKapisiWeb] örneği çıkış anında yaşamıyor (kullanıcı
+/// Ayarlar'dan çıkıyor), bu yüzden istemci burada yeniden kurulur — web
+/// eklentisi `GoogleSignInPlatform.instance` üzerinden tek kopyadır, ikinci
+/// nesne aynı GIS oturumuna bağlanır.
+Future<void> googleWebCikis() async {
+  await GoogleSignIn(
+    clientId: googleIstemcisi,
+    scopes: const ['email'],
+  ).signOut();
+}
+
 /// Web dalı: Google'ın KENDİ düğmesi (`renderButton`) + kimlik akışı.
 ///
 /// ESKİ YOL NEDEN ÇALIŞMIYORDU (10 Ağu 2026, tarayıcıda üretildi):

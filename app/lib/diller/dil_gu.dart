@@ -956,4 +956,20 @@ const Map<String, String> cevirilerGu = {
       'તમારો જન્મ થયો એ સારું, તમે અહીં છો એ પણ સારું.',
   'Bugün {} yaşına girdin': 'આજે તમારાં {} વર્ષ પૂરાં થયાં',
   'Teşekkürler': 'આભાર',
+  'İki Adımlı Doğrulama': 'બે-પગલાંની ચકાસણી',
+  'Girişte e-postana kod gönderilir':
+      'લૉગ ઇન વખતે ઈમેલ પર કોડ મોકલવામાં આવે છે',
+  'Kod {} adresine gönderildi': 'કોડ {} પર મોકલ્યો',
+  '6 haneli kod': '6 અંકનો કોડ',
+  'Doğrula': 'ચકાસો',
+  'Yeniden gönder': 'ફરી મોકલો',
+  'Vazgeç': 'રદ કરો',
+  'Yeni kod gönderildi': 'નવો કોડ મોકલ્યો',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google થી લૉગ ઇન કરતી વખતે કોડ પુછાતો નથી; ચકાસણી Google તરફથી થાય છે.',
+  'Kapatmak için de kod gerekir.': 'બંધ કરવા માટે પણ કોડ જરૂરી છે.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ઈમેલ સુધી પહોંચ ન રહે તો ખાતામાં લૉગ ઇન થઈ શકશે નહીં.',
+  'İki adımlı doğrulama açıldı': 'બે-પગલાંની ચકાસણી ચાલુ થઈ',
+  'İki adımlı doğrulama kapatıldı': 'બે-પગલાંની ચકાસણી બંધ થઈ',
 };

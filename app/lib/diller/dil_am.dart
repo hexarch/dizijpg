@@ -938,4 +938,19 @@ const Map<String, String> cevirilerAm = {
   'İyi ki doğdun, iyi ki buradasın.': 'መወለድዎ ደስታ ነው፣ ከእኛ ጋር መሆንዎም እንዲሁ።',
   'Bugün {} yaşına girdin': 'ዛሬ {} ዓመት ሞላዎት',
   'Teşekkürler': 'አመሰግናለሁ',
+  'İki Adımlı Doğrulama': 'የሁለት ደረጃ ማረጋገጫ',
+  'Girişte e-postana kod gönderilir': 'ሲገቡ ወደ ኢሜይልዎ ኮድ ይላካል',
+  'Kod {} adresine gönderildi': 'ኮድ ወደ {} ተልኳል',
+  '6 haneli kod': 'የ6 አኃዝ ኮድ',
+  'Doğrula': 'አረጋግጡ',
+  'Yeniden gönder': 'እንደገና ላኩ',
+  'Vazgeç': 'ይቅር',
+  'Yeni kod gönderildi': 'አዲስ ኮድ ተልኳል',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'በGoogle ሲገቡ ኮድ አይጠየቅም፤ Google የራሱን ማረጋገጫ ያከናውናል።',
+  'Kapatmak için de kod gerekir.': 'ማጥፋትም ኮድ ይጠይቃል።',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ኢሜይልዎን ማግኘት ካልቻሉ ወደ መለያዎ መግባት አይችሉም።',
+  'İki adımlı doğrulama açıldı': 'የሁለት ደረጃ ማረጋገጫ ነቅቷል',
+  'İki adımlı doğrulama kapatıldı': 'የሁለት ደረጃ ማረጋገጫ ጠፍቷል',
 };

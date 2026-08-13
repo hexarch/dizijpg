@@ -964,4 +964,20 @@ const Map<String, String> cevirilerCs = {
       'Je skvělé, že jsi na světě a že jsi tady.',
   'Bugün {} yaşına girdin': 'Dnes slavíš {}. narozeniny',
   'Teşekkürler': 'Díky',
+  'İki Adımlı Doğrulama': 'Dvoufázové ověření',
+  'Girişte e-postana kod gönderilir':
+      'Při přihlášení se na tvůj e-mail pošle kód',
+  'Kod {} adresine gönderildi': 'Kód byl odeslán na {}',
+  '6 haneli kod': '6místný kód',
+  'Doğrula': 'Ověřit',
+  'Yeniden gönder': 'Poslat znovu',
+  'Vazgeç': 'Zrušit',
+  'Yeni kod gönderildi': 'Nový kód byl odeslán',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Při přihlášení přes Google se kód nevyžaduje; Google provádí vlastní ověření.',
+  'Kapatmak için de kod gerekir.': 'K vypnutí je také potřeba kód.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Bez přístupu k e-mailu se do účtu nedostaneš.',
+  'İki adımlı doğrulama açıldı': 'Dvoufázové ověření je zapnuté',
+  'İki adımlı doğrulama kapatıldı': 'Dvoufázové ověření je vypnuté',
 };

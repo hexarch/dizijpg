@@ -35,6 +35,13 @@ import {
 import {
   yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
 } from './kisi_izlenme.js';
+// md. 52 — iki adımlı doğrulama (YALNIZ e-posta). Saf modül: sabitler, bilet
+// üretimi/çözümü, e-posta maskesi ve doğrulama KARAR AĞACI orada; burada
+// yalnız DB/bcrypt/posta işi kalır.
+import {
+  IKI_ADIM_MAX_DENEME, IKI_ADIM_DK, IKI_ADIM_KOD_DESENI, IKI_ADIM_AMAC,
+  esitSabit, ikiAdimBiletUret, ikiAdimBiletCoz, epostaMaskele, ikiAdimKarar,
+} from './iki_adim.js';
 // Özel mesajların durağan şifrelemesi (AES-256-GCM). `cozGoster` ASLA
 // fırlatmaz: tek bozuk satır yüzünden sohbetin tamamı 500 dönmesin.
 // DİKKAT: `anahtarlar` İÇE AKTARILMAZ — GET /mesajlar/:ad içinde aynı adda
@@ -653,10 +660,14 @@ const mailUlastirici = nodemailer.createTransport({
   tls: { rejectUnauthorized: false },
 });
 
-// Sıfırlama kodu tek kullanımlık bir kimlik bilgisidir: günlüğe düz yazılırsa
-// panele erişen biri istediği hesabın şifresini sıfırlayabilir. Maskele.
+// Kod mailleri: gövdesinde TEK KULLANIMLIK bir kimlik bilgisi taşıyan türler.
+// Günlüğe düz yazılırsa admin paneline erişen biri o hesabın şifresini
+// sıfırlayabilir ya da iki adımlı doğrulamasını geçebilir. Maskele.
+// (md. 52: 'iki_adim' de buraya EKLENDİ — giriş kodu da sıfırlama kodu kadar
+// hassas; unutulsaydı 2FA kodları panelde okunabilir dururdu.)
+const KOD_MAILLERI = new Set(['sifirlama', 'iki_adim']);
 function mailGovdeTemizle(metin, tur) {
-  const t = tur === 'sifirlama'
+  const t = KOD_MAILLERI.has(tur)
     ? String(metin).replace(/\b\d{6}\b/g, '••••••') : String(metin);
   return t.length > 20000 ? `${t.slice(0, 20000)}\n…(kırpıldı)` : t;
 }
@@ -2944,9 +2955,40 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
     'SELECT * FROM kullanicilar WHERE email = lower($1) OR kullanici_adi = $1',
     [email || ''],
   );
-  if (!rows.length || !rows[0].sifre_hash ||
-      !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
+  // KULLANICI SAYIMI (enumeration) — ZAMANLAMA EŞİTLENDİ:
+  // Eski hâlde hesap YOKSA `bcrypt.compare` HİÇ çalışmıyordu; var olan hesapta
+  // ~60-100 ms, olmayanda ~0 ms dönüyordu. Yani yanıt SÜRESİ "bu e-posta
+  // kayıtlı mı" sorusunu cevaplıyordu. Artık her iki dalda da bir bcrypt
+  // maliyeti ödenir (sahte hash gerçek bir bcrypt hash'idir, aynı maliyet
+  // sınıfında). Mesaj ve durum kodu zaten tekti.
+  const kayitli = rows.length > 0 && !!rows[0].sifre_hash;
+  const sifreDogru = await bcrypt.compare(
+    sifre || '', kayitli ? rows[0].sifre_hash : ZAMAN_ESITLEYICI_HASH);
+  if (!kayitli || !sifreDogru) {
     return res.status(401).json({ hata: 'E-posta/kullanıcı adı veya şifre hatalı' });
+  }
+  // ---- İKİ ADIMLI DOĞRULAMA (md. 52) ----
+  // ŞİFRE DOĞRU AMA HENÜZ TOKEN YOK. Kod doğrulanana kadar oturum açılmaz;
+  // ara adımı taşıyan şey kısa ömürlü, tek kullanımlık BİLETTİR. Şifrenin
+  // istemcide bekletilmesi YASAK olduğu için "ikinci adımda şifreyi tekrar
+  // gönder" yolu seçilmedi.
+  //
+  // BU DALIN SAYIM (enumeration) DEĞERİ YOK: buraya YALNIZ doğru şifreyle
+  // gelinir. Şifreyi bilen saldırgan hesabın var olduğunu zaten biliyor;
+  // 2FA'nın açık olduğunu görmesi ona yeni bir bilgi vermez. Şifreyi
+  // BİLMEYEN için yanıt (401, tek mesaj, eşit süre) hiç değişmedi.
+  if (rows[0].iki_adim && rows[0].email) {
+    const { bilet, hash } = ikiAdimBiletUret(rows[0].id);
+    const kod = await ikiAdimKodYaz(rows[0].id, 'giris', hash);
+    // ATEŞLE-UNUT: SMTP'yi beklersek yanıt süresi posta sunucusuna bağlanır.
+    ikiAdimMailGonder(rows[0].id, rows[0].email, kod, 'giris');
+    return res.json({
+      iki_adim: true,
+      bilet,
+      // Kullanıcı adıyla giren kişi hangi kutuya bakacağını bilmiyor olabilir;
+      // TAM adres yazmıyoruz, maskeli ipucu yetiyor.
+      eposta_ipucu: epostaMaskele(rows[0].email),
+    });
   }
   // YASAKLI KULLANICI GİREBİLİR — bilerek. Sebebi ve kalan süreyi UYGULAMA
   // İÇİNDE görmesi gerekiyor; giriş kapısında "askıya alındı" deyip kesmek
@@ -2955,19 +2997,38 @@ app.post('/auth/giris', authLimiti, sarici(async (req, res) => {
   // Yanıta `yasak` yükü eklenir: istemci giriş biter bitmez uyarıyı gösterir.
   // (Süreli banı süresi dolmuşsa `yasakAktif` false döner ve yük hiç konmaz —
   // kullanıcı kendiliğinden serbest kalmıştır.)
-  const yasak = yasakYuku(rows[0]);
-  const { id, kullanici_adi, email: eposta, misafir } = rows[0];
-  res.json({
-    token: jwtUret(rows[0]),
-    kullanici: { id, kullanici_adi, email: eposta, misafir },
-    ...(yasak ? { yasak } : {}),
-  });
+  res.json(girisYuku(rows[0]));
 }));
+
+/// Giriş yanıtının TEK üreticisi: `/auth/giris` (2FA kapalıyken) ve
+/// `/auth/giris-kod` (2FA doğrulandıktan sonra) BİREBİR aynı gövdeyi döndürür.
+/// İki yerde ayrı ayrı kurulsaydı istemci ikinci adımda eksik alan görürdü
+/// (ör. `yasak` yükü unutulur, cezalı kullanıcı uyarısını hiç görmezdi).
+function girisYuku(k) {
+  const yasak = yasakYuku(k);
+  const { id, kullanici_adi, email, misafir } = k;
+  return {
+    token: jwtUret(k),
+    kullanici: { id, kullanici_adi, email, misafir },
+    ...(yasak ? { yasak } : {}),
+  };
+}
 
 // Google ile giriş/kayıt: istemci Google'dan aldığı kimliği yollar, sunucu
 // Google'a doğrulatır. Android id_token, web ise erişim token'ı gönderir
 // (GIS web akışı id_token vermiyor). E-posta doğrulanmış Google hesabı =
 // e-posta sahipliği kanıtı: hesap varsa girilir, yoksa oluşturulur.
+//
+// İKİ ADIMLI DOĞRULAMA BU YOLDA SORULMAZ (md. 52, kullanıcı kararı).
+// `kullanicilar.iki_adim` burada BİLEREK OKUNMUYOR:
+//   · Google hesabı kendi iki adımlı doğrulamasını uyguluyor; üstüne bir
+//     katman daha koymak çift kilit olurdu.
+//   · Kullanıcıyı e-posta kutusuna bağımlı kılardı — oysa Google ile giren
+//     kişi tam da kutuya/şifreye uğramadan girmeyi seçmiş oluyor.
+//   · Bu yolun kanıtı ZATEN e-posta sahipliğidir (email_verified): 2FA'nın
+//     kanıtlamak istediği şeyin aynısı, Google tarafından kanıtlanmış hâli.
+// Bu satırlar test/iki_adim.test.js tarafından KİLİTLİ: bu uca 2FA eklenirse
+// test kırmızıya döner.
 const GOOGLE_ISTEMCI = '1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com';
 
 app.post('/auth/google', authLimiti, sarici(async (req, res) => {
@@ -3042,6 +3103,269 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
   }
   res.status(500).json({ hata: 'Hesap oluşturulamadı' });
 }));
+
+// ===========================================================================
+// İKİ ADIMLI DOĞRULAMA (md. 52) — YALNIZ E-POSTA
+// ===========================================================================
+// Kullanıcı isteği: "Çift doğrulama yöntemi açılabilsin (sadece mail ile)."
+// TOTP/authenticator YOK, SMS YOK.
+//
+// ---------------------------------------------------------------------------
+// NE KORUR, NE KORUMAZ (abartma yok)
+// ---------------------------------------------------------------------------
+// Hesaba giden yollar: (1) şifre, (2) e-posta kutusu → /auth/sifre-sifirla,
+// (3) Google. 2FA yalnız (1)'i "şifre + kutu" yapar.
+//   * KAZANÇ: sızmış/tekrar kullanılmış ŞİFRE tek başına yetmez.
+//   * KAZANÇ DEĞİL: kutu ele geçmişse hesap 2FA'sız da gidiyordu.
+// Bu yüzden `/auth/sifre-sifirla`ya 2FA EKLENMEDİ: aynı kutuya ikinci bir kod
+// göndermek hiçbir şey kanıtlamaz, yalnız adım sayısını artırırdı.
+//
+// ---------------------------------------------------------------------------
+// KURTARMA KODLARI: HAYIR — ölçüp karar verdik
+// ---------------------------------------------------------------------------
+// ÖLÇÜM: bu projede e-posta kutusu ZATEN tek kritik noktadır; kutuyu tutan
+// kişi `/auth/sifre-sifirla` ile şifreyi değiştirip TOKEN alabiliyor. Yani
+// kurtarma kodu, GÜVENLİK açısından hiçbir kapı kapatmaz.
+// GERİYE TEK BİR HÂL KALIYOR: "kutusunu kaybetti AMA şifresini hatırlıyor".
+// 2FA'sız bu kişi girebiliyordu, 2FA'lı giremez. Bunu üç ucuz önlemle
+// karşılıyoruz, kurtarma kodu üretmeden:
+//   a) 2FA'yı AÇMAK da e-posta kodu ister (amac='ac') → kilit takılmadan önce
+//      kutunun ÇALIŞTIĞI kanıtlanır; ölü/yanlış adrese kilit takılamaz.
+//   b) Açmak mevcut oturumları DÜŞÜRMEZ (`sifre_surumu` artmaz) → kullanıcı
+//      açtığı anda kendi cihazlarından atılmaz, token 90 gün yaşar.
+//   c) Ayarlar ekranı riski AÇIKÇA yazar ("E-postana erişemezsen hesabına
+//      giremezsin").
+// KURTARMA KODU NEDEN DAHA KÖTÜ OLURDU: aynı hesaba giden İKİNCİ ve SÜRESİZ
+// bir parola olurdu. Kullanıcıların çoğu onu ya kaybeder ya da AYNI e-posta
+// kutusuna kaydeder — ikinci durumda korumayı hiç artırmaz, yalnız saldırı
+// yüzeyini büyütür. Ayrıca "8 kodu güvenle sakla" akışı 45 dile çevrilecek
+// yeni bir ekran demekti; kazandırdığı tek şey yukarıdaki dar hâldi.
+// KARAR DEĞİŞİRSE: tek yapılacak `iki_adim_kodlari` yanına hash'lenmiş,
+// tek kullanımlık kod tablosu eklemek ve `ikiAdimKodDogrula`ya ikinci bir
+// dal koymaktır — bu tasarım o kapıyı kapatmıyor.
+// ---------------------------------------------------------------------------
+
+// Sabitler ve KARAR AĞACI saf `iki_adim.js` modülünde (yukarıdaki import
+// bloğunda). Burada yalnız I/O kalır: DB, bcrypt, posta.
+
+/**
+ * Var olmayan hesap dalında da bcrypt maliyetini ödemek için sabit hash.
+ * Değeri önemsiz — yalnız `bcrypt.compare`in aynı işi yapması gerekiyor.
+ * Açılışta bir kez üretilir (~60 ms).
+ */
+const ZAMAN_ESITLEYICI_HASH = bcrypt.hashSync('dizijpg-zaman-esitleyici', 10);
+
+/**
+ * Yeni kod üretir, HASH'leyip yazar ve KODU döndürür (çağıran postalar).
+ * Kullanıcı başına tek satır: yeni kod eskisini ezer ve `deneme`yi sıfırlar —
+ * meşru kullanıcı "yeni kod iste" deyip yine kilitli kalmasın.
+ * NOT: 'giris' ve 'kapat' kodları aynı satırı paylaşır; ikisini aynı anda
+ * yürüten kullanıcıda SONUNCUSU geçerlidir (ötekinde "kod geçersiz" görür ve
+ * yeniden ister). Bu, iki ayrı satır tutmanın karmaşıklığına değmeyen,
+ * pratikte görülmeyen bir kenar durumdur.
+ */
+async function ikiAdimKodYaz(kullaniciId, amac, biletHash = null) {
+  const kod = String(crypto.randomInt(100000, 1000000));
+  const hash = await bcrypt.hash(kod, 10);
+  await havuz.query(
+    `INSERT INTO iki_adim_kodlari
+       (kullanici_id, kod_hash, amac, bilet_hash, bitis, deneme)
+     VALUES ($1,$2,$3,$4, now() + ($5 * interval '1 minute'), 0)
+     ON CONFLICT (kullanici_id) DO UPDATE
+       SET kod_hash=$2, amac=$3, bilet_hash=$4,
+           bitis=now() + ($5 * interval '1 minute'), deneme=0`,
+    [kullaniciId, hash, amac, biletHash, IKI_ADIM_DK],
+  );
+  return kod;
+}
+
+const ikiAdimKodSil = (kullaniciId) =>
+  havuz.query('DELETE FROM iki_adim_kodlari WHERE kullanici_id=$1', [kullaniciId]);
+
+/**
+ * Kodu doğrular. Doğruysa satırı SİLER (tek kullanımlık) ve true döner.
+ * `sifre-sifirla` ile aynı karar ağacı: süre → kilit → karşılaştırma.
+ */
+async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
+  // Biçimsiz girdi DB'ye HİÇ dokunmaz ve deneme hakkı yakmaz (bkz. karar
+  // ağacındaki 'bicimsiz' dalı).
+  if (!IKI_ADIM_KOD_DESENI.test(String(kod || ''))) return false;
+  const { rows } = await havuz.query(
+    'SELECT kod_hash, amac, bitis, deneme FROM iki_adim_kodlari WHERE kullanici_id=$1',
+    [kullaniciId],
+  );
+  const kayit = rows[0];
+  // ÖN KARAR: pahalı bcrypt karşılaştırmasına GİRMEDEN önce süre/amaç/kilit.
+  // `kodDogru: false` verilmesinin sebebi bu — henüz karşılaştırmadık; bu
+  // aşamada 'kabul' zaten dönemez.
+  const onKarar = ikiAdimKarar({
+    bicimGecerli: true,
+    kayitVar: !!kayit,
+    amacUyuyor: kayit?.amac === amac,
+    suresiDoldu: kayit ? new Date(kayit.bitis) < new Date() : true,
+    deneme: kayit?.deneme ?? 0,
+    kodDogru: false,
+  });
+  if (onKarar === 'gecersiz') return false;
+  // Kilit kodu BİLMEKTEN ÖNCE gelir: sınır aşılmışsa doğru kod bile kabul
+  // edilmez ve satır düşer (yeniden gönderim şart, "biraz bekle" demiyoruz).
+  if (onKarar === 'kilit') {
+    await ikiAdimKodSil(kullaniciId);
+    return false;
+  }
+  // bcrypt.compare SABİT ZAMANLIDIR (erken çıkışlı bayt karşılaştırması yapmaz).
+  if (!(await bcrypt.compare(String(kod), kayit.kod_hash))) {
+    const { rows: d } = await havuz.query(
+      `UPDATE iki_adim_kodlari SET deneme = deneme + 1
+       WHERE kullanici_id=$1 RETURNING deneme`,
+      [kullaniciId],
+    );
+    if ((d[0]?.deneme ?? 0) >= IKI_ADIM_MAX_DENEME) await ikiAdimKodSil(kullaniciId);
+    return false;
+  }
+  // TEK KULLANIMLIK: doğrulanan kod HEMEN silinir.
+  await ikiAdimKodSil(kullaniciId);
+  return true;
+}
+
+/** Kod postası (ateşle-unut). Gövde `mailGovdeTemizle` ile günlükte maskelenir. */
+function ikiAdimMailGonder(kullaniciId, email, kod, amac) {
+  const konu = amac === 'giris'
+    ? 'dizi.jpg giriş kodun' : 'dizi.jpg doğrulama kodun';
+  const acikla = amac === 'giris'
+    ? 'Giriş kodun'
+    : (amac === 'ac' ? 'İki adımlı doğrulamayı açma kodun'
+      : 'İki adımlı doğrulamayı kapatma kodun');
+  mailGonder({
+    to: email,
+    subject: konu,
+    text: `${acikla}: ${kod}\n\n${IKI_ADIM_DK} dakika geçerlidir. `
+      + 'Sen istemediysen bu e-postayı yok say ve şifreni değiştir.',
+  }, { tur: 'iki_adim', kullanici_id: kullaniciId })
+    .catch((e) => console.error('iki adim maili:', e.message));
+}
+
+// Kod İSTEME limitleri — e-posta bombardımanına ve "yeni kod isteyip sayacı
+// sıfırla" kaçamağına karşı (şifre sıfırlamadaki `sifirlamaIstekLimiti` ile
+// aynı gerekçe). Saatte 5 kod x 5 deneme = en fazla 25 tahmin.
+// Giriş kodunun YENİDEN gönderimi BİLETE göre sayılır: yeni bilet almak doğru
+// şifre gerektirir, yani sayacı sıfırlamanın bedeli var.
+const ikiAdimYenileLimiti = hizLimitiMerkezi(5,
+  (req) => `2fy:${String(req.body?.bilet || '').slice(0, 64)}`);
+// Ayarlardaki aç/kapat kodları HESAP başına.
+const ikiAdimKodLimiti = hizLimitiMerkezi(5, (req) => `2fk:${req.kullanici.id}`);
+// Durum okuması ucuz ama sonsuz değil; authLimiti'ye (IP başına 30) BİLEREK
+// bağlanmadı: ayarlar ekranını açmak giriş bütçesini yiyemez.
+const ikiAdimOkuLimiti = hizLimiti(120, (req) => `2fo:${req.kullanici.id}`);
+
+// ---------------------------------------------------------------------------
+// GİRİŞİN İKİNCİ ADIMI
+// ---------------------------------------------------------------------------
+// TEK MESAJ, TEK DURUM KODU (şifre sıfırlamayla aynı disiplin): "bilet yok" /
+// "kod yanlış" / "süre doldu" / "çok denedin" ayrımı YAPILMAZ.
+const ikiAdimGecersiz = (res) =>
+  res.status(400).json({ hata: 'Kod geçersiz veya süresi dolmuş' });
+
+/** Bileti çözer ve `{kullanici, biletHash}` döndürür; geçersizse null. */
+async function ikiAdimBiletSahibi(bilet) {
+  const c = ikiAdimBiletCoz(bilet);
+  if (!c) return null;
+  const { rows } = await havuz.query(
+    `SELECT k.*, s.bilet_hash
+       FROM kullanicilar k JOIN iki_adim_kodlari s ON s.kullanici_id=k.id
+      WHERE k.id=$1 AND s.amac='giris' AND s.bitis > now()`,
+    [c.id],
+  );
+  if (!rows.length || !rows[0].bilet_hash) return null;
+  // SABİT ZAMANLI karşılaştırma: satır id ile bulundu, gizli kısım burada
+  // doğrulanıyor. (İkisi de hex, aynı uzunlukta.)
+  if (!esitSabit(Buffer.from(rows[0].bilet_hash, 'hex'), Buffer.from(c.hash, 'hex'))) {
+    return null;
+  }
+  return { kullanici: rows[0], biletHash: c.hash };
+}
+
+app.post('/auth/giris-kod', authLimiti, sarici(async (req, res) => {
+  const { bilet, kod } = req.body || {};
+  const sahip = await ikiAdimBiletSahibi(bilet);
+  if (!sahip) return ikiAdimGecersiz(res);
+  const k = sahip.kullanici;
+  if (!(await ikiAdimKodDogrula(k.id, 'giris', kod))) return ikiAdimGecersiz(res);
+  // Kod tüketildi (satır silindi) → bilet de ölü. Oturum ANCAK ŞİMDİ açılır.
+  cihazKaydet(req, k.id);
+  res.json(girisYuku(k));
+}));
+
+// Kodu yeniden gönder: BİLET aynı kalır (istemci şifreyi tekrar sormak zorunda
+// kalmasın — şifreyi istemcide bekletmek YASAK). Yeni kod eski denemeleri
+// sıfırlar, süreyi tazeler.
+app.post('/auth/giris-kod-yenile', authLimiti, ikiAdimYenileLimiti,
+  sarici(async (req, res) => {
+    const sahip = await ikiAdimBiletSahibi(req.body?.bilet);
+    if (!sahip) return ikiAdimGecersiz(res);
+    const kod = await ikiAdimKodYaz(
+      sahip.kullanici.id, 'giris', sahip.biletHash);
+    ikiAdimMailGonder(sahip.kullanici.id, sahip.kullanici.email, kod, 'giris');
+    res.json({ gonderildi: true });
+  }));
+
+// ---------------------------------------------------------------------------
+// AYARLAR: AÇ / KAPAT
+// ---------------------------------------------------------------------------
+app.get('/auth/iki-adim', girisZorunlu, ikiAdimOkuLimiti, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    'SELECT iki_adim, email, misafir FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+  if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
+  res.json({
+    acik: rows[0].iki_adim === true,
+    // E-postası olmayan (misafir) hesapta kod gönderilecek yer yok.
+    kullanilabilir: !!rows[0].email && !rows[0].misafir,
+    eposta_ipucu: epostaMaskele(rows[0].email),
+  });
+}));
+
+// Aç/kapat kodunu iste. KAPATMA DA KOD İSTER (kullanıcı kararı): açabilen ama
+// kapatamayan bir kilit işe yaramaz, ama ÇALINMIŞ OTURUMLA sessizce
+// kapatılabilen bir kilit de işe yaramaz — token tek başına yetmesin.
+app.post('/auth/iki-adim/kod', authLimiti, girisZorunlu, ikiAdimKodLimiti,
+  sarici(async (req, res) => {
+    const { amac } = req.body || {};
+    if (!IKI_ADIM_AMAC.includes(amac)) {
+      return res.status(400).json({ hata: 'Geçersiz istek' });
+    }
+    const { rows } = await havuz.query(
+      'SELECT iki_adim, email, misafir FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+    if (!rows.length) return res.status(404).json({ hata: 'Hesap bulunamadı' });
+    if (!rows[0].email || rows[0].misafir) {
+      return res.status(400).json({ hata: 'Bu hesapta e-posta yok' });
+    }
+    // Zaten istenen hâldeyse boşuna posta atma.
+    if ((amac === 'ac') === (rows[0].iki_adim === true)) {
+      return res.status(409).json({ hata: 'İki adımlı doğrulama zaten bu durumda' });
+    }
+    const kod = await ikiAdimKodYaz(req.kullanici.id, amac);
+    ikiAdimMailGonder(req.kullanici.id, rows[0].email, kod, amac);
+    res.json({ gonderildi: true, eposta_ipucu: epostaMaskele(rows[0].email) });
+  }));
+
+app.post('/auth/iki-adim/dogrula', authLimiti, girisZorunlu,
+  sarici(async (req, res) => {
+    const { amac, kod } = req.body || {};
+    if (!IKI_ADIM_AMAC.includes(amac)) {
+      return res.status(400).json({ hata: 'Geçersiz istek' });
+    }
+    if (!(await ikiAdimKodDogrula(req.kullanici.id, amac, kod))) {
+      return ikiAdimGecersiz(res);
+    }
+    const acik = amac === 'ac';
+    await havuz.query('UPDATE kullanicilar SET iki_adim=$1 WHERE id=$2',
+      [acik, req.kullanici.id]);
+    // `sifre_surumu` BİLEREK ARTIRILMIYOR: 2FA açmak diğer cihazlardaki
+    // oturumları düşürseydi kullanıcı kilidi taktığı anda kendi telefonundan
+    // atılırdı (ve kutusu ölüyse geri giremezdi). Bkz. yukarıdaki "KURTARMA
+    // KODLARI" gerekçesi, madde (b).
+    res.json({ acik });
+  }));
 
 // ---------- TMDB proxy (beyaz listeli) ----------
 const TMDB_IZINLI = [

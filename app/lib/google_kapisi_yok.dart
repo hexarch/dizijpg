@@ -8,3 +8,9 @@ import 'google_kapisi.dart';
 GoogleKapisi googleWebKapisi() => throw UnsupportedError(
   'Google web kapısı yalnız web derlemesinde vardır (renderButton).',
 );
+
+/// Web'e özel çıkış (GIS `disableAutoSelect`). Mobilde `googleOturumunuKapat`
+/// bu dala GİRMEZ — istemcinin kendi `signOut()`u çağrılır.
+Future<void> googleWebCikis() => throw UnsupportedError(
+  'Google web çıkışı yalnız web derlemesinde vardır (disableAutoSelect).',
+);

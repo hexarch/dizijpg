@@ -949,4 +949,20 @@ const Map<String, String> cevirilerAr = {
   'İyi ki doğdun, iyi ki buradasın.': 'سعدنا بمولدك، وسعدنا بوجودك هنا.',
   'Bugün {} yaşına girdin': 'اليوم عيد ميلادك الـ{}',
   'Teşekkürler': 'شكرًا',
+  'İki Adımlı Doğrulama': 'التحقق بخطوتين',
+  'Girişte e-postana kod gönderilir':
+      'عند تسجيل الدخول يُرسَل رمز إلى بريدك الإلكتروني',
+  'Kod {} adresine gönderildi': 'أُرسل الرمز إلى {}',
+  '6 haneli kod': 'رمز من 6 أرقام',
+  'Doğrula': 'تحقق',
+  'Yeniden gönder': 'إعادة إرسال',
+  'Vazgeç': 'إلغاء',
+  'Yeni kod gönderildi': 'تم إرسال رمز جديد',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'لا يُطلب رمز عند تسجيل الدخول عبر Google؛ إذ تتولّى Google التحقق بنفسها.',
+  'Kapatmak için de kod gerekir.': 'الإيقاف يتطلّب رمزًا أيضًا.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'في حال فقدان الوصول إلى البريد الإلكتروني، يتعذّر تسجيل الدخول إلى الحساب.',
+  'İki adımlı doğrulama açıldı': 'تم تفعيل التحقق بخطوتين',
+  'İki adımlı doğrulama kapatıldı': 'تم إيقاف التحقق بخطوتين',
 };

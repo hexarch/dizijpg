@@ -946,4 +946,19 @@ const Map<String, String> cevirilerHe = {
   'İyi ki doğdun, iyi ki buradasın.': 'טוב שנולדת, טוב שהגעת אלינו.',
   'Bugün {} yaşına girdin': 'היום מלאו לך {} שנים',
   'Teşekkürler': 'תודה',
+  'İki Adımlı Doğrulama': 'אימות דו-שלבי',
+  'Girişte e-postana kod gönderilir': 'בהתחברות נשלח קוד לאימייל שלך',
+  'Kod {} adresine gönderildi': 'הקוד נשלח אל {}',
+  '6 haneli kod': 'קוד בן 6 ספרות',
+  'Doğrula': 'אימות',
+  'Yeniden gönder': 'שליחה מחדש',
+  'Vazgeç': 'ביטול',
+  'Yeni kod gönderildi': 'קוד חדש נשלח',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'בהתחברות עם Google לא מתבקש קוד; Google מבצעת אימות משלה.',
+  'Kapatmak için de kod gerekir.': 'גם הכיבוי דורש קוד.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'אובדן הגישה לאימייל פירושו אובדן הגישה לחשבון.',
+  'İki adımlı doğrulama açıldı': 'האימות הדו-שלבי הופעל',
+  'İki adımlı doğrulama kapatıldı': 'האימות הדו-שלבי כובה',
 };

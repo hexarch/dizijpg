@@ -963,4 +963,21 @@ const Map<String, String> cevirilerSw = {
   'İyi ki doğdun, iyi ki buradasın.': 'Ni vizuri upo, na ni vizuri uko hapa.',
   'Bugün {} yaşına girdin': 'Leo umetimiza miaka {}',
   'Teşekkürler': 'Asante',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Uthibitishaji wa Hatua Mbili',
+  'Girişte e-postana kod gönderilir':
+      'Msimbo hutumwa kwa barua pepe yako unapoingia',
+  'Kod {} adresine gönderildi': 'Msimbo umetumwa kwa {}',
+  '6 haneli kod': 'Msimbo wa tarakimu 6',
+  'Doğrula': 'Thibitisha',
+  'Yeniden gönder': 'Tuma tena',
+  'Vazgeç': 'Ghairi',
+  'Yeni kod gönderildi': 'Msimbo mpya umetumwa',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Unapoingia kwa Google huulizwi msimbo; Google hufanya uthibitishaji wake.',
+  'Kapatmak için de kod gerekir.': 'Kuizima pia kunahitaji msimbo.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Bila ufikiaji wa barua pepe yako, huwezi kuingia kwenye akaunti.',
+  'İki adımlı doğrulama açıldı': 'Uthibitishaji wa hatua mbili umewashwa',
+  'İki adımlı doğrulama kapatıldı': 'Uthibitishaji wa hatua mbili umezimwa',
 };

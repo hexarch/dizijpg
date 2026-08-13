@@ -966,4 +966,21 @@ const Map<String, String> cevirilerFi = {
   'İyi ki doğdun, iyi ki buradasın.': 'Onneksi synnyit, onneksi olet täällä.',
   'Bugün {} yaşına girdin': 'Täytit tänään {} vuotta',
   'Teşekkürler': 'Kiitos',
+  'İki Adımlı Doğrulama': 'Kaksivaiheinen vahvistus',
+  'Girişte e-postana kod gönderilir':
+      'Kirjautuessa sähköpostiisi lähetetään koodi',
+  'Kod {} adresine gönderildi': 'Koodi lähetettiin osoitteeseen {}',
+  '6 haneli kod': '6-numeroinen koodi',
+  'Doğrula': 'Vahvista',
+  'Yeniden gönder': 'Lähetä uudelleen',
+  'Vazgeç': 'Peruuta',
+  'Yeni kod gönderildi': 'Uusi koodi lähetetty',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google-kirjautumisessa koodia ei kysytä; Google tekee oman vahvistuksensa.',
+  'Kapatmak için de kod gerekir.': 'Myös käytöstä poistaminen vaatii koodin.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Jos menetät pääsyn sähköpostiisi, et pääse enää tilillesi.',
+  'İki adımlı doğrulama açıldı': 'Kaksivaiheinen vahvistus otettiin käyttöön',
+  'İki adımlı doğrulama kapatıldı':
+      'Kaksivaiheinen vahvistus poistettiin käytöstä',
 };

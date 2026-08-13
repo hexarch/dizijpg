@@ -74,18 +74,58 @@ abstract class GoogleKapisi {
   void birak();
 }
 
+/// Mobil Google istemcisini üreten TEK NOKTA.
+///
+/// Hem giriş ([GoogleKapisiMobil]) hem çıkış ([googleOturumunuKapat]) buradan
+/// geçer — giriş ekranı yokken de (Ayarlar'dan çıkış) aynı yapılandırmayla bir
+/// istemci gerekiyor. `var`: test sahte `GoogleSignIn` koyabilsin diye — alan
+/// GLOBAL, test sonunda [googleIstemcisiVarsayilan] ile geri alınmalı.
+GoogleSignIn Function() googleIstemcisiUret = googleIstemcisiVarsayilan;
+
+/// Üretimdeki istemci. Test kancayı buna geri koyabilsin diye açık.
+GoogleSignIn googleIstemcisiVarsayilan() => GoogleSignIn(
+  // Web'de `clientId`, mobilde `serverClientId` verilir. Mobilde
+  // clientId VERİLMEZ: Android istemci kimliği ayrıdır ve id_token'ın
+  // `aud` alanı serverClientId'den gelir — sunucu bunu doğruluyor.
+  serverClientId: googleIstemcisi,
+  scopes: const ['email'],
+);
+
+/// Google TARAFINDAKİ oturumu kapatır. Uygulamadan çıkışta çağrılır
+/// (`Oturum.cikis()`, api.dart).
+///
+/// --- HANGİ HATAYI ÇÖZÜYOR (13 Ağu 2026) ---
+/// Kullanıcı bildirdi: "google ile girişte 1 kere hesap seçtim mi daha
+/// seçemiyorum, çıkış yapsam da eski hesabı seçiyor otomatik olarak".
+/// Kök neden: bizim çıkışımız YALNIZ kendi token'ımızı siliyordu; Google
+/// tarafındaki oturum açık kalıyor, `signIn()` de önbellekteki hesabı sessizce
+/// geri veriyordu — hesap seçici hiç açılmıyordu.
+///
+/// NEDEN `signOut()`, `disconnect()` DEĞİL: ikisi de yerel önbelleği temizler
+/// ve seçiciyi geri getirir, ama `disconnect()` OAuth İZNİNİ de geri alır —
+/// kullanıcı her girişte "dizi.jpg e-posta adresine erişmek istiyor" ONAY
+/// EKRANINI yeniden görürdü. İstenen şey hesap DEĞİŞTİREBİLMEK, izni iptal
+/// etmek değil; onay ekranı burada gereksiz sürtünme olurdu. (İzin iptali
+/// kullanıcının kendi Google hesap ayarlarında zaten var.)
+///
+/// Hata YUTULUR: Google girişi hiç kullanılmadıysa ya da Play Services
+/// erişilemiyorsa uygulamadan çıkış YİNE DE tamamlanmalı — kullanıcıyı
+/// hesabında kilitli bırakmak bu hatadan beterdir.
+Future<void> googleOturumunuKapat({required bool web}) async {
+  try {
+    // Webde GIS'in kendi kancası: `signOut()` orada `disableAutoSelect()`e
+    // iner (Google'ın şartı: "kullanıcı sitenden çıkınca bunu çağırmalısın").
+    // Mobil istemci webde kurulamaz (serverClientId desteklenmez), o yüzden dal.
+    await (web ? googleWebCikis() : googleIstemcisiUret().signOut());
+  } catch (_) {
+    // bkz. yukarıdaki not
+  }
+}
+
 /// Android/iOS dalı — 6 Ağu 2026 öncesindeki davranışın BİREBİR aynısı.
 class GoogleKapisiMobil implements GoogleKapisi {
   GoogleKapisiMobil({GoogleSignIn? google})
-    : google =
-          google ??
-          GoogleSignIn(
-            // Web'de `clientId`, mobilde `serverClientId` verilir. Mobilde
-            // clientId VERİLMEZ: Android istemci kimliği ayrıdır ve id_token'ın
-            // `aud` alanı serverClientId'den gelir — sunucu bunu doğruluyor.
-            serverClientId: googleIstemcisi,
-            scopes: const ['email'],
-          );
+    : google = google ?? googleIstemcisiUret();
 
   /// Testin yapılandırmayı doğrulayabilmesi için açık bırakıldı.
   final GoogleSignIn google;
@@ -98,6 +138,23 @@ class GoogleKapisiMobil implements GoogleKapisi {
 
   @override
   Future<GoogleKimligi?> dokun() async {
+    // ÖNCE ÖNBELLEĞİ TEMİZLE, sonra seçiciyi aç.
+    //
+    // `signIn()` tek başına önbellekteki hesabı SESSİZCE geri verir: seçici
+    // açılmaz, kullanıcı başka hesaba geçemez (13 Ağu 2026 bildirimi). Çıkışta
+    // da temizliyoruz ([googleOturumunuKapat]) ama buradaki temizlik ondan
+    // BAĞIMSIZ olarak gerekli — kullanıcı zaten girişteyken "Google ile devam
+    // et"e basabilir, ya da token'ı çıkış akışından geçmeden düşmüş olabilir.
+    //
+    // AYRICA ŞÜPHELİ: bayat önbellek hesabı Play Services'te
+    // `ApiException 16 — Account reauth failed` üretiyor olabilir; seçiciyi
+    // zorlamak o yolu da kapatır (aynı gün gelen "Android'de Google girişi
+    // başarısız (16)" bildirimi).
+    //
+    // Hata yutulur: temizlik başarısız olsa bile GİRİŞİ DENEMEK gerekir.
+    try {
+      await google.signOut();
+    } catch (_) {}
     final hesap = await google.signIn();
     if (hesap == null) return null; // kullanıcı seçiciyi kapattı
     final yetki = await hesap.authentication;

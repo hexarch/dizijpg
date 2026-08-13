@@ -115,14 +115,18 @@ Future<VideoKirpma?> videoDuzenle(
 /// OTOMATİK SIKIŞTIRMA GÖRÜNMEZDİR: kullanıcı hiçbir düğmeye basmaz, yalnız
 /// yüklemesi hızlanır. Sıkıştırmanın tek gerekçesi yükleme boyutudur.
 ///
-/// TETİK İKİ KAPILIDIR (13 Ağu 2026'da ikincisi eklendi, madde 35a):
-/// 1. Ucuz ön eleme — dosya [videoSikistirmaEsigiBayt]'ı aşmıyorsa üst veri
-///    bile okunmaz.
+/// TETİK ÜÇ KAPILIDIR (2. kapı 13 Ağu sabahı madde 35a ile, 3. kapı aynı gün
+/// madde 53 ile eklendi):
+/// 1. Ucuz ön eleme — dosya [videoSikistirmaEsigiBayt]'ı aşmıyorsa VE kodeki
+///    sorunsuzsa üst veri bile okunmaz.
 /// 2. [videoSikistirmaKarari] — kaynağın BİT HIZI hedefin altındaysa
 ///    sıkıştırma dosyayı küçültemez, yalnız kaliteyi düşürür; bu durumda
 ///    video hiç işlenmez. Eski kod bu kapıyı taşımıyordu ve 33,6 MB'lık
 ///    1080p bir kaynağı 40,9 MB'lık 720p'ye çeviriyordu (ölçüm:
 ///    `video_islem_ortak.dart:videoKazancEsigi`).
+/// 3. KODEK — H.264 olmayan görüntü kodeki her yerde oynamaz; boyut kararı ne
+///    olursa olsun H.264'e çevrilir (gerekçe ve canlı ölçüm:
+///    `video_islem_ortak.dart:videoKodekOlcumu`).
 Future<XFile?> videoHazirla(
   BuildContext context,
   XFile kaynak, {
@@ -130,6 +134,10 @@ Future<XFile?> videoHazirla(
 }) async {
   final isleyici = videoMotoru();
   // Web: cihazda kodlayıcı yok → bugünkü davranış birebir korunur.
+  // MADDE 53 SINIRI, AÇIKÇA: web'den yüklenen bir HEVC/VP9 dosya BURADAN
+  // GEÇMEZ, çünkü tarayıcıda kodlayıcı yok. Bu kapı yalnız Android/iOS
+  // uygulamasını kapatır; web tarafı için çare sunucuda ikinci bir kopya
+  // üretmektir (ffmpeg konteynerde VAR — `kare_imza.js:25`) ve o AYRI bir iş.
   if (isleyici == null) return kaynak;
 
   final mesajci = ScaffoldMessenger.of(context);
@@ -142,8 +150,24 @@ Future<XFile?> videoHazirla(
     return null;
   }
 
-  // 1. KAPI (ucuz): küçük ve kırpılmamış video için üst veri bile okunmaz.
-  if (kirpma == null && girdiBayt <= videoSikistirmaEsigiBayt) return kaynak;
+  // KODEK OKUMASI 1. KAPIDAN ÖNCE: oynamayan video KÜÇÜK de olabilir. 20 MB
+  // eşiğinin altında kalan bir HEVC klip eski sırayla hiç sorgulanmadan
+  // sunucuya giderdi — madde 53'ün tam olarak şikâyet ettiği hâl.
+  // BEDELİ ÖNEMSİZ: yalnız kutu BAŞLIKLARI ve `moov` okunur (birkaç yüz KB),
+  // görüntü verisi (`mdat`) okunmaz; çözücü/kodlayıcı hiç ayağa kalkmaz.
+  final kodek = await videoKodegi(
+    (bas, adet) => isleyici.parca(kaynak.path, bas: bas, adet: adet),
+    girdiBayt,
+  );
+
+  // 1. KAPI (ucuz): küçük, kırpılmamış VE her yerde oynayan video için
+  // paketin üst veri okuması (`bilgi`) hiç çağrılmaz — pahalı olan odur,
+  // yukarıdaki kutu okuması değil.
+  if (kirpma == null &&
+      !kodek.yenidenKodlaGerek &&
+      girdiBayt <= videoSikistirmaEsigiBayt) {
+    return kaynak;
+  }
 
   var karar = VideoSikistirmaKarari.yok;
   var tahminSure = Duration.zero;
@@ -158,19 +182,22 @@ Future<XFile?> videoHazirla(
       sure: bilgi.sure,
       genislik: bilgi.genislik,
       yukseklik: bilgi.yukseklik,
+      kodek: kodek,
     );
     // Kaba tahmin: yeniden kodlama gerçek zamanın ~0,5 katı (MEDYA-EDITOR-
     // PLANI §6.1). Yalnız "Bu biraz sürebilir" satırını göstermeye yarar.
     final islenen = kirpma?.uzunluk ?? bilgi.sure;
     tahminSure = Duration(milliseconds: islenen.inMilliseconds ~/ 2);
-  } else if (girdiBayt > videoSikistirmaEsigiBayt) {
-    // Üst veri okunamadı ama dosya büyük: kararı süre olmadan da alalım
-    // (fonksiyon bu hâli biliyor ve ölçek vermeden yalnız tavan koyuyor).
+  } else if (girdiBayt > videoSikistirmaEsigiBayt || kodek.yenidenKodlaGerek) {
+    // Üst veri okunamadı ama dosya büyük ya da kodek oynamıyor: kararı süre
+    // olmadan da alalım (fonksiyon bu hâli biliyor ve ölçek vermeden yalnız
+    // tavan koyuyor).
     karar = videoSikistirmaKarari(
       girdiBayt: girdiBayt,
       sure: Duration.zero,
       genislik: 0,
       yukseklik: 0,
+      kodek: kodek,
     );
   }
 
@@ -224,7 +251,7 @@ Future<XFile?> videoHazirla(
   // (`server.js:3179`): `ftyp` + `M4A` markalı bir çıktı orada `.m4a` olur ve
   // uygulama onu ses sanır. Bu yüzden çıktının ilk baytları burada
   // `videoTuru` ile doğrulanır.
-  final bas = await isleyici.basBaytlar(yol);
+  final bas = await isleyici.parca(yol);
   final ciktiBayt = await isleyici.boyut(yol);
   if (videoTuru(bas) != VideoTur.mp4 ||
       ciktiBayt <= 0 ||
@@ -248,6 +275,11 @@ Future<XFile?> videoHazirla(
 /// * Yalnız GÖRÜNMEZ sıkıştırma denendiyse → kullanıcının böyle bir isteği
 ///   yoktu; orijinal sunucu sınırına sığıyorsa sessizce onunla devam edilir.
 ///   Görünmez bir iyileştirmenin başarısızlığı yüklemeyi engellememeli.
+///
+/// KODEK DÖNÜŞÜMÜ (madde 53) DE BU İKİNCİ SINIFTADIR: kodlayıcı patlarsa
+/// orijinal yüklenir. Evet, o dosya bazı tarayıcılarda oynamayacak — ama
+/// yüklemeyi tümden reddetmek kullanıcıyı elinde hiçbir çare olmadan
+/// bırakırdı. Bugünkü davranışa düşmek, hiçbir şey yapmamaktan kötü değil.
 XFile? _yedegeDus(
   ScaffoldMessengerState mesajci,
   XFile kaynak,

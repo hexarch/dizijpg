@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ceviri.dart';
 import 'cihaz_kimlik.dart';
+import 'google_kapisi.dart';
 import 'icerik_deposu.dart';
 import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
@@ -251,14 +252,59 @@ class Api {
     return d['kullanici'] as Map<String, dynamic>;
   }
 
+  /// Şifreyle giriş. İKİ SONUÇ döner:
+  ///  * 2FA KAPALI → `{kullanici: {...}}`; oturum token'ı kaydedilmiştir.
+  ///  * 2FA AÇIK   → `{iki_adim: true, bilet, eposta_ipucu}`; TOKEN YOKTUR.
+  ///
+  /// Çağıran `iki_adim`a bakmak ZORUNDA: `d['kullanici']`ye körlemesine
+  /// uzanan kod 2FA'lı hesapta null patlar (md. 52).
   static Future<Map<String, dynamic>> giris(String email, String sifre) async {
     final d = await post('/auth/giris', {'email': email, 'sifre': sifre});
+    if (d['iki_adim'] == true) return Map<String, dynamic>.from(d as Map);
     await _tokenKaydet(d['token'] as String);
     // Yasaklı kullanıcı GİREBİLİR (cezasını uygulama içinde görsün diye);
     // yanıtta ceza varsa hemen yakalanır. `temizle: true`: ceza kalkmışsa
     // önceki oturumdan kalan uyarı da düşer.
     _yasakOku(d, temizle: true);
+    return Map<String, dynamic>.from(d as Map);
+  }
+
+  /// Girişin İKİNCİ ADIMI: e-postaya gelen kodu doğrular, oturumu açar.
+  ///
+  /// [bilet] ilk adımdan gelen kısa ömürlü belirteçtir. ŞİFRE BURADA YOK —
+  /// şifreyi ikinci adım için istemcide bekletmek yasak; sunucu kimliği
+  /// bilete bağlıyor (backend `iki_adim.js`).
+  static Future<Map<String, dynamic>> girisKodu(
+    String bilet,
+    String kod,
+  ) async {
+    final d = await post('/auth/giris-kod', {'bilet': bilet, 'kod': kod});
+    await _tokenKaydet(d['token'] as String);
+    _yasakOku(d, temizle: true);
     return d['kullanici'] as Map<String, dynamic>;
+  }
+
+  /// Giriş kodunu yeniden gönderir; BİLET aynı kalır (şifre tekrar sorulmaz).
+  static Future<void> girisKoduYenile(String bilet) =>
+      post('/auth/giris-kod-yenile', {'bilet': bilet});
+
+  // ---- iki adımlı doğrulama ayarları (md. 52) ----
+
+  /// `{acik, kullanilabilir, eposta_ipucu}`.
+  /// `kullanilabilir` false ise hesabın e-postası yok (misafir) — kod
+  /// gönderilecek bir yer olmadığı için anahtar kapalı çizilir.
+  static Future<Map<String, dynamic>> ikiAdimDurumu() async =>
+      await get('/auth/iki-adim') as Map<String, dynamic>;
+
+  /// Aç/kapat kodunu e-postaya gönderir. [amac]: 'ac' | 'kapat'.
+  static Future<Map<String, dynamic>> ikiAdimKodIste(String amac) async =>
+      await post('/auth/iki-adim/kod', {'amac': amac}) as Map<String, dynamic>;
+
+  /// Kodu doğrular ve ayarı uygular; dönen `acik` yeni durumdur.
+  /// KAPATMA DA KOD İSTER: çalınmış bir oturum kilidi sessizce açamasın.
+  static Future<bool> ikiAdimDogrula(String amac, String kod) async {
+    final d = await post('/auth/iki-adim/dogrula', {'amac': amac, 'kod': kod});
+    return d['acik'] == true;
   }
 
   static Future<Map<String, dynamic>> misafirGiris() async {
@@ -377,7 +423,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.43.0+90';
+  static const surum = '1.44.0+91';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -616,6 +662,12 @@ class Oturum extends ChangeNotifier {
 
   Future<void> cikis() async {
     await Api.cikis();
+    // GOOGLE OTURUMU DA KAPANIR (13 Ağu 2026). Yalnız kendi token'ımızı
+    // silmek yetmiyordu: Google tarafındaki oturum açık kalınca `signIn()`
+    // önbellekteki hesabı sessizce geri veriyor, hesap seçici HİÇ açılmıyordu
+    // ("çıkış yapsam da eski hesabı seçiyor otomatik olarak"). Gerekçe ve
+    // `signOut()`/`disconnect()` kararı: google_kapisi.dart.
+    await googleOturumunuKapat(web: kIsWeb);
     KitaplikDurumu.temizle(); // başka hesap önceki kitaplığı görmesin
     IcerikDeposu.temizle();
     kullanici = null;

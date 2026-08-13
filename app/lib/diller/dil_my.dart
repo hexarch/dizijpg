@@ -974,4 +974,20 @@ const Map<String, String> cevirilerMy = {
       'မွေးဖွားလာတာ ကောင်းလိုက်တာ၊ ဒီမှာ ရှိနေတာလည်း ကောင်းလိုက်တာ။',
   'Bugün {} yaşına girdin': 'ဒီနေ့ သင့်အသက် {} နှစ် ပြည့်ပြီ',
   'Teşekkürler': 'ကျေးဇူးတင်ပါတယ်',
+  'İki Adımlı Doğrulama': 'နှစ်ဆင့် အတည်ပြုခြင်း',
+  'Girişte e-postana kod gönderilir':
+      'ဝင်ရောက်ချိန်တွင် အီးမေးလ်သို့ ကုဒ် ပို့ပေးပါမည်',
+  'Kod {} adresine gönderildi': 'ကုဒ်ကို {} သို့ ပို့ပြီးပါပြီ',
+  '6 haneli kod': '6 လုံးပါ ကုဒ်',
+  'Doğrula': 'အတည်ပြုရန်',
+  'Yeniden gönder': 'ပြန်ပို့ရန်',
+  'Vazgeç': 'မလုပ်တော့ပါ',
+  'Yeni kod gönderildi': 'ကုဒ်အသစ် ပို့ပြီးပါပြီ',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google ဖြင့် ဝင်ရောက်ပါက ကုဒ် မတောင်းပါ; Google က ကိုယ်တိုင် အတည်ပြုပါသည်။',
+  'Kapatmak için de kod gerekir.': 'ပိတ်ရန်အတွက်လည်း ကုဒ် လိုအပ်ပါသည်။',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'အီးမေးလ်ကို မသုံးနိုင်တော့ပါက အကောင့်သို့ ဝင်၍ မရတော့ပါ။',
+  'İki adımlı doğrulama açıldı': 'နှစ်ဆင့် အတည်ပြုခြင်း ဖွင့်ပြီးပါပြီ',
+  'İki adımlı doğrulama kapatıldı': 'နှစ်ဆင့် အတည်ပြုခြင်း ပိတ်ပြီးပါပြီ',
 };

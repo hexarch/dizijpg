@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:dizijpg/ekranlar/gorsel_duzenle.dart';
 import 'package:dizijpg/ekranlar/medya_inceleme.dart';
@@ -52,6 +54,82 @@ final _jpeg = base64Decode(
   'Dw8PD//bAEMBAgICBAQEBwQEBxALCQsQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQ'
   'EBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEP/dAAQAAf/aAAwDAQACEQMRAD8A/Syi'
   'iiv5XP4rP//Z',
+);
+
+// --- SAYDAMLIK ÖRNEKLERİ (madde 54) --------------------------------------
+//
+// Hepsi GERÇEK, çözülebilir PNG/WebP baytları (elle üretildi, alfa değerleri
+// bağımsız bir çözücüyle — Pillow — doğrulandı). Uydurma bayt dizisi YETMEZ:
+// `saydamlikVar` görseli gerçekten çözüp piksel tarıyor.
+
+/// 2×2 RGBA, GERÇEKTEN saydam: bir piksel alfa=0, biri alfa=128.
+final _saydamPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFUlEQVR42mP4z8'
+  'DwHwhB4D8QMDQAAD1VB3rvzIegAAAAAElFTkSuQmCC',
+);
+
+/// 2×2 RGBA ama TAMAMEN OPAK — alfa kanalı var, saydam piksel yok.
+/// Başlığa bakan bir tespit bunu yanlışlıkla PNG'de tutardı (bkz. ölçüm).
+final _rgbaOpakPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAFElEQVR42mP4z8'
+  'DwHwyBNBAw/AcAR8oI+FuapL4AAAAASUVORK5CYII=',
+);
+
+/// 2×2 RGB (renk tipi 2) — alfa kanalı diye bir şey YOK.
+final _rgbPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAAFElEQVR42mP4z8'
+  'DAAMIM////ZwAAHu8E/HMcU8wAAAAASUVORK5CYII=',
+);
+
+/// 2×2 GRİ+ALFA (renk tipi 4), saydam piksel var.
+final _griAlfaPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAQAAADYv8WvAAAAEklEQVR42mOoYD'
+  'jxn4Hrf9R/ABSMBKKGyWSPAAAAAElFTkSuQmCC',
+);
+
+/// 2×2 PALET + `tRNS`, saydam palet girdisi KULLANILIYOR.
+/// Renk tipi 3'te alfa kanalı yoktur; saydamlık `tRNS` yığınından gelir.
+final _paletTrnsPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAADFBMVEX/AAAA/w'
+  'AAAP///wDWAo97AAAABHRSTlMA////sy1AiAAAAA5JREFUeNpjYGBkYGIGAAAR'
+  'AAeDymRkAAAAAElFTkSuQmCC',
+);
+
+/// 2×2 PALET + `tRNS` AMA saydam girdi hiç kullanılmıyor → aslında opak.
+final _paletTrnsOpakPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAADFBMVEX/AAAA/w'
+  'AAAP///wDWAo97AAAABHRSTlMA////sy1AiAAAAA5JREFUeNpjYGRiYGYEAAAa'
+  'AAjcVsr8AAAAAElFTkSuQmCC',
+);
+
+/// 2×2 PALET, `tRNS` YOK → saydamlık imkânsız.
+final _paletOpakPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAMAAABFaP0WAAAADFBMVEX/AAAA/w'
+  'AAAP///wDWAo97AAAADklEQVR42mNgYGRgYgYAABEAB4PKZGQAAAAASUVORK5C'
+  'YII=',
+);
+
+/// 2×2 RGB + `tRNS` renk anahtarı ("şu renk saydam") — alfa kanalsız saydam.
+final _rgbTrnsPng = base64Decode(
+  'iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAIAAAD91JpzAAAABnRSTlMA/wAAAA'
+  'CkwsAdAAAAFElEQVR42mP4z8DAAMIM////ZwAAHu8E/HMcU8wAAAAASUVORK5C'
+  'YII=',
+);
+
+/// 4×4 kayıpsız WebP (VP8L), saydam piksel var.
+final _saydamWebp = base64Decode(
+  'UklGRh4AAABXRUJQVlA4TBIAAAAvA8AAEA8Q8x/zH4w7PET0Pxw=',
+);
+
+/// 4×4 kayıpsız WebP (VP8L) ama tamamen opak.
+final _rgbaOpakWebp = base64Decode(
+  'UklGRhwAAABXRUJQVlA4TA8AAAAvA8AAAAcQ0f/+ByKi/wEA',
+);
+
+/// 4×4 KAYIPLI WebP (`VP8 `) — kayıplı WebP'de alfa kanalı YOKTUR.
+final _opakWebp = base64Decode(
+  'UklGRjoAAABXRUJQVlA4IC4AAACQAQCdASoEAAQAAUAmJaACdLoAA5gA/vtV4/'
+  '+lwf/S4P/pcH/pcH8bss4bpAAA',
 );
 
 /// `ftyp` markalı MP4 başlığı — sihirli bayttan VİDEO sayılır (makas çıkar).
@@ -116,6 +194,56 @@ Finder _kalemDuzenli() => find.byTooltip('Düzenlendi');
 
 /// Şeritteki i. FOTOĞRAF karesi (odağı oraya taşımak için).
 Finder _kare(int i) => find.bySemanticsLabel('Fotoğraf').at(i);
+
+// --- Saydamlık testleri için gerçek görsel üretimi -----------------------
+
+/// [kenar]×[kenar] PNG üretir: dışı GÜRÜLTÜLÜ opak, ORTASI DELİK (saydam).
+///
+/// Neden gürültü: düz renk PNG'de neredeyse sıfıra sıkışır, o zaman
+/// "küçültünce dosya küçülüyor mu" ölçülemez. Neden delik ORTADA: paket
+/// saydam KENARLARI kırpabiliyor (`cropToDrawingBounds`); delik içeride
+/// olunca test o davranıştan bağımsız kalır.
+Future<Uint8List> _delikliPng(int kenar) async {
+  final rastgele = math.Random(42);
+  final kaydedici = ui.PictureRecorder();
+  final tuval = Canvas(kaydedici);
+  final delik = Rect.fromLTWH(kenar / 4, kenar / 4, kenar / 2, kenar / 2);
+  for (var y = 0; y < kenar; y += 2) {
+    for (var x = 0; x < kenar; x += 2) {
+      final kare = Rect.fromLTWH(x.toDouble(), y.toDouble(), 2, 2);
+      if (delik.contains(kare.center)) continue; // çizilmeyen yer SAYDAM kalır
+      tuval.drawRect(
+        kare,
+        Paint()
+          ..color = Color.fromARGB(
+            255,
+            rastgele.nextInt(256),
+            rastgele.nextInt(256),
+            rastgele.nextInt(256),
+          ),
+      );
+    }
+  }
+  final resim = await kaydedici.endRecording().toImage(kenar, kenar);
+  final bayt = await resim.toByteData(format: ui.ImageByteFormat.png);
+  resim.dispose();
+  return bayt!.buffer.asUint8List();
+}
+
+/// [veri]nin ORTA pikselinin RGBA'sı — "delik gerçekten saydam mı, yoksa
+/// beyaza mı boyandı" sorusunu doğrudan cevaplar.
+Future<List<int>> _ortaPiksel(Uint8List veri) async {
+  final kodek = await ui.instantiateImageCodec(veri);
+  final resim = (await kodek.getNextFrame()).image;
+  final bayt = await resim.toByteData(
+    format: ui.ImageByteFormat.rawStraightRgba,
+  );
+  final p = bayt!.buffer.asUint8List();
+  final i = ((resim.height ~/ 2) * resim.width + resim.width ~/ 2) * 4;
+  resim.dispose();
+  kodek.dispose();
+  return [p[i], p[i + 1], p[i + 2], p[i + 3]];
+}
 
 void main() {
   setUp(() {
@@ -227,6 +355,209 @@ void main() {
     expect(gorselTuru(cikti!), GorselTur.jpeg);
     expect(duzenlenebilirMi(cikti!), isTrue); // sunucu kapısından geçer
     expect(cikti!.length, lessThan(gorselDuzenleAzamiBayt));
+  });
+
+  // --- SAYDAMLIK (madde 54) ---------------------------------------------
+  //
+  // Saydam PNG editörden BEYAZ çıkıyordu: JPEG'de alfa yok, paket saydam
+  // alanı `jpegBackgroundColor` (varsayılan BEYAZ) ile dolduruyordu.
+  // Kullanıcı bozulmayı ancak yükledikten sonra görüyordu — sessiz bozulma.
+
+  test('saydamlıkTaşıyabilir: başlık ön elemesi, hiçbir şey çözmeden', () {
+    // Alfa KANALI olanlar (renk tipi 4/6) → taşıyabilir.
+    expect(saydamlikTasiyabilir(_saydamPng), isTrue);
+    expect(saydamlikTasiyabilir(_griAlfaPng), isTrue);
+    // RGBA ama opak: başlık AYIRT EDEMEZ, "taşıyabilir" der. Kesin cevabı
+    // `saydamlikVar` verir — bu ayrımın maliyeti aşağıdaki testte ölçülü.
+    expect(saydamlikTasiyabilir(_rgbaOpakPng), isTrue);
+    // Alfa kanalı YOK ama tRNS yığını saydamlık taşır (palet/RGB/gri).
+    expect(saydamlikTasiyabilir(_paletTrnsPng), isTrue);
+    expect(saydamlikTasiyabilir(_paletTrnsOpakPng), isTrue);
+    expect(saydamlikTasiyabilir(_rgbTrnsPng), isTrue);
+    // Ne alfa kanalı ne tRNS → kesinlikle opak.
+    expect(saydamlikTasiyabilir(_rgbPng), isFalse);
+    expect(saydamlikTasiyabilir(_paletOpakPng), isFalse);
+    // JPEG'de ve GIF'te bu hattın işi yok.
+    expect(saydamlikTasiyabilir(_jpeg), isFalse);
+    expect(saydamlikTasiyabilir(_gif), isFalse);
+    // WebP: VP8L alfa taşıyabilir, KAYIPLI `VP8 ` taşıyamaz.
+    expect(saydamlikTasiyabilir(_saydamWebp), isTrue);
+    expect(saydamlikTasiyabilir(_rgbaOpakWebp), isTrue);
+    expect(saydamlikTasiyabilir(_opakWebp), isFalse);
+  });
+
+  test('saydamlıkTaşıyabilir: bozuk/kısa baytta ÇÖKMEZ', () {
+    expect(saydamlikTasiyabilir(Uint8List(0)), isFalse);
+    expect(saydamlikTasiyabilir(Uint8List(4)), isFalse);
+    expect(saydamlikTasiyabilir(Uint8List(30)), isFalse);
+    // Doğru PNG imzası + çöp: IHDR yok → bozuk, false.
+    final sahtePng = Uint8List.fromList([
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, //
+      ...List.filled(40, 0x55),
+    ]);
+    expect(saydamlikTasiyabilir(sahtePng), isFalse);
+    // Yarıda kesilmiş gerçek PNG (yığın uzunluğu dosyayı aşar) → sonsuz
+    // döngü ya da RangeError YOK.
+    for (var n = 12; n < _paletTrnsPng.length; n += 3) {
+      expect(
+        () => saydamlikTasiyabilir(Uint8List.sublistView(_paletTrnsPng, 0, n)),
+        returnsNormally,
+      );
+    }
+    // Uzunluk alanı 0xFFFFFFFF olan bozuk yığın (dart2js'te işaret tuzağı).
+    final devYigin = Uint8List.fromList([
+      ..._rgbPng.sublist(0, 33), // imza + IHDR
+      0xFF, 0xFF, 0xFF, 0xFF, // uzunluk = 4294967295
+      0x74, 0x52, 0x4E, 0x53, // 'tRNS'
+    ]);
+    expect(saydamlikTasiyabilir(devYigin), isFalse);
+  });
+
+  testWidgets(
+    'saydamlıkVar: GERÇEK piksel taraması — başlık yalan söyleyebilir',
+    (tester) async {
+      // ÖLÇÜM (13 Ağu 2026): kullanıcı içeriğine benzeyen 793 PNG'lik örnekte
+      // RGBA olan 603 dosyanın 142'si (%23,5) TAMAMEN OPAK'tı; macOS ekran
+      // görüntüsü de RGBA ama opak çıkıyor. Bu dosyanın kendi ölçümüne göre
+      // en büyük 300 yüklemenin 262'si ekran görüntüsü. Yani "başlıkta alfa
+      // var → PNG" kuralı yüklemelerin en kalabalık sınıfını şişirirdi:
+      // ölçülen 1529×881 bir arka planda PNG 1419 KB, JPEG k92 249 KB (5,7 kat).
+      await tester.runAsync(() async {
+        // Gerçekten saydam olanlar.
+        expect(await saydamlikVar(_saydamPng), isTrue);
+        expect(await saydamlikVar(_griAlfaPng), isTrue);
+        expect(await saydamlikVar(_paletTrnsPng), isTrue);
+        expect(await saydamlikVar(_rgbTrnsPng), isTrue);
+        expect(await saydamlikVar(_saydamWebp), isTrue);
+        // Başlık "olabilir" diyor ama TEK BİR saydam piksel yok → JPEG hattı.
+        expect(await saydamlikVar(_rgbaOpakPng), isFalse);
+        expect(await saydamlikVar(_paletTrnsOpakPng), isFalse);
+        expect(await saydamlikVar(_rgbaOpakWebp), isFalse);
+        // Başlık zaten eliyor; çözme hiç yapılmıyor.
+        expect(await saydamlikVar(_rgbPng), isFalse);
+        expect(await saydamlikVar(_paletOpakPng), isFalse);
+        expect(await saydamlikVar(_jpeg), isFalse);
+        expect(await saydamlikVar(_gif), isFalse);
+        expect(await saydamlikVar(_opakWebp), isFalse);
+        // Bozuk bayt: çökme YOK. Çözülemeyende saydamlık VARSAYILIR —
+        // saydamlığı boşuna korumak, sessizce beyaza boyamaktan iyidir.
+        expect(await saydamlikVar(Uint8List(20)), isFalse); // tür tanınmıyor
+        final bozukPng = Uint8List.fromList([
+          ..._saydamPng.sublist(0, 34),
+          ...List.filled(20, 0x00),
+        ]);
+        expect(await saydamlikVar(bozukPng), isTrue);
+      });
+    },
+  );
+
+  test('yapılandırma: saydam girdide çıktı PNG, opakta JPEG', () {
+    final opak = duzenleyiciYapilandirma().imageGeneration;
+    expect(opak.outputFormat, OutputFormat.jpg);
+    expect(opak.maxOutputSize, const Size(4096, 4096));
+
+    final saydam = duzenleyiciYapilandirma(saydam: true).imageGeneration;
+    expect(saydam.outputFormat, OutputFormat.png);
+    // Ön çarpımlı alfa (paketin varsayılanı `rawRgba`) yarı saydam
+    // kenarlarda KOYU HALE bırakıyor — saydamlığı koruyup kenarı karartmak
+    // düzelttiğimiz hatanın sinsi sürümü olurdu.
+    expect(saydam.captureImageByteFormat, ui.ImageByteFormat.rawStraightRgba);
+    // Paketin varsayılanı `PngFilter.none`; boyut bu maddede birinci risk.
+    expect(saydam.pngFilter, PngFilter.paeth);
+    // PNG KAYIPSIZ: tavanı sıkıştırma değil piksel sayısı belirler.
+    // 2048² ham RGBA = 16,8 MB → 30 MB sınırının altında kalır; 4096²
+    // 67 MB eder, yani sınırın iki katı üstü.
+    expect(saydam.maxOutputSize, const Size(2048, 2048));
+    expect(2048 * 2048 * 4, lessThan(gorselDuzenleAzamiBayt));
+    expect(4096 * 4096 * 4, greaterThan(gorselDuzenleAzamiBayt));
+    // Araçlar/çeviri iki hatta da AYNI; yalnız çıktı formatı dallanır.
+    expect(
+      duzenleyiciYapilandirma(saydam: true).mainEditor.tools,
+      duzenleyiciYapilandirma().mainEditor.tools,
+    );
+  });
+
+  testWidgets('paketin GERÇEK kodlayıcısı saydamlığı KORUR (bug kilidi)', (
+    tester,
+  ) async {
+    // Maddenin ta kendisi: aynı saydam girdi iki yapılandırmadan geçiriliyor.
+    // Eski (JPEG) yolda delik BEYAZ oluyor; yeni (PNG) yolda saydam kalıyor.
+    // Bu test `saydam: true` dalını silen her değişikliği kırmızıya çevirir.
+    late Uint8List girdi;
+    late Uint8List? pngCikti;
+    late Uint8List? jpegCikti;
+    await tester.runAsync(() async {
+      girdi = await _delikliPng(64);
+      expect(
+        await saydamlikVar(girdi),
+        isTrue,
+        reason: 'örnek gerçekten saydam',
+      );
+
+      pngCikti = await ImageConverter.instance.convertFormat(
+        image: EditorImage(byteArray: girdi),
+        format: duzenleyiciYapilandirma(
+          saydam: true,
+        ).imageGeneration.outputFormat,
+        generationConfigs: duzenleyiciYapilandirma(
+          saydam: true,
+        ).imageGeneration.copyWith(cropToDrawingBounds: false),
+      );
+      jpegCikti = await ImageConverter.instance.convertFormat(
+        image: EditorImage(byteArray: girdi),
+        format: duzenleyiciYapilandirma().imageGeneration.outputFormat,
+        generationConfigs: duzenleyiciYapilandirma().imageGeneration,
+      );
+
+      // YENİ DAVRANIŞ: PNG ve delik hâlâ saydam.
+      expect(gorselTuru(pngCikti!), GorselTur.png);
+      expect(duzenlenebilirMi(pngCikti!), isTrue); // sunucu kapısından geçer
+      expect(await saydamlikVar(pngCikti!), isTrue);
+      expect(
+        (await _ortaPiksel(pngCikti!))[3],
+        0,
+        reason: 'delik saydam kaldı',
+      );
+
+      // ESKİ DAVRANIŞ (hatanın kanıtı): JPEG'de delik BEYAZ.
+      expect(gorselTuru(jpegCikti!), GorselTur.jpeg);
+      expect(await _ortaPiksel(jpegCikti!), [255, 255, 255, 255]);
+    });
+  });
+
+  testWidgets('pngSığdır: sınırı aşan PNG SAYDAMLIĞI KORUYARAK küçülür', (
+    tester,
+  ) async {
+    // DOSYA BOYUTU RİSKİ: PNG kayıpsız, 30 MB'ı yalnız bu hat zorlayabilir.
+    // Cevabımız JPEG'e düşmek DEĞİL — o, saydam alanı beyaza boyamak yani
+    // düzelttiğimiz hatayı geri getirmek olurdu. Kullanıcının feda
+    // edebileceği şey ÇÖZÜNÜRLÜK; alfa kanalı içeriğin kendisidir.
+    //
+    // Testte 30 MB'lık görsel üretmemek için `pngSigdir` bütçesi enjekte
+    // ediliyor; koşan kod yolu üretimdekiyle AYNI.
+    await tester.runAsync(() async {
+      final buyuk = await _delikliPng(512);
+      final butce = buyuk.length ~/ 6;
+
+      final kucuk = await pngSigdir(buyuk, butce: butce, enKucukKenar: 32);
+
+      expect(gorselTuru(kucuk), GorselTur.png, reason: 'PNG kaldı');
+      expect(kucuk.length, lessThan(buyuk.length));
+      expect(kucuk.length, lessThanOrEqualTo(butce));
+      // ASIL MESELE: küçülürken saydamlık KAYBOLMADI.
+      expect(await saydamlikVar(kucuk), isTrue);
+      expect((await _ortaPiksel(kucuk))[3], 0);
+      expect(duzenlenebilirMi(kucuk), isTrue);
+
+      // Sınırın altındaki PNG'ye DOKUNULMAZ (gereksiz yeniden kodlama yok).
+      final ayni = await pngSigdir(buyuk, butce: buyuk.length);
+      expect(identical(ayni, buyuk), isTrue);
+
+      // PNG olmayan/bozuk girdi: çökme yok, girdi aynen döner.
+      expect(identical(await pngSigdir(_jpeg, butce: 1), _jpeg), isTrue);
+      final bozuk = Uint8List(4);
+      expect(identical(await pngSigdir(bozuk, butce: 1), bozuk), isTrue);
+    });
   });
 
   // --- Kalem düğmesi: ne zaman var, ne zaman yok -------------------------

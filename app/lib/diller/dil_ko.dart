@@ -929,4 +929,19 @@ const Map<String, String> cevirilerKo = {
   'İyi ki doğdun, iyi ki buradasın.': '태어나 줘서 고마워요, 함께해 줘서 고마워요.',
   'Bugün {} yaşına girdin': '오늘 {}살이 되었어요',
   'Teşekkürler': '고마워요',
+  'İki Adımlı Doğrulama': '2단계 인증',
+  'Girişte e-postana kod gönderilir': '로그인할 때 이메일로 코드가 전송됩니다',
+  'Kod {} adresine gönderildi': '{}(으)로 코드를 보냈습니다',
+  '6 haneli kod': '6자리 코드',
+  'Doğrula': '확인',
+  'Yeniden gönder': '다시 보내기',
+  'Vazgeç': '취소',
+  'Yeni kod gönderildi': '새 코드를 보냈습니다',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google로 로그인하면 코드를 묻지 않습니다. Google이 자체 인증을 진행합니다.',
+  'Kapatmak için de kod gerekir.': '끌 때도 코드가 필요합니다.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      '이메일을 이용할 수 없으면 계정에 로그인할 수 없습니다.',
+  'İki adımlı doğrulama açıldı': '2단계 인증을 켰습니다',
+  'İki adımlı doğrulama kapatıldı': '2단계 인증을 껐습니다',
 };

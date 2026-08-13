@@ -714,7 +714,14 @@ class _SahteMotor implements VideoIsleyici {
   Future<String> geciciYol(String uzanti) async => '/gecici/v.$uzanti';
 
   @override
-  Future<Uint8List> basBaytlar(String yol, {int adet = 16}) async => _mp4;
+  Future<Uint8List> parca(String yol, {int bas = 0, int adet = 16}) async =>
+      bas >= _mp4.length
+      ? Uint8List(0)
+      : Uint8List.sublistView(
+          _mp4,
+          bas,
+          bas + adet > _mp4.length ? _mp4.length : bas + adet,
+        );
 
   @override
   Future<int> boyut(String yol) async => 1024;

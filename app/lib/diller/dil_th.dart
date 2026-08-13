@@ -951,4 +951,21 @@ const Map<String, String> cevirilerTh = {
       'ดีใจที่มีคุณอยู่ และดีใจที่คุณอยู่ตรงนี้',
   'Bugün {} yaşına girdin': 'วันนี้คุณอายุครบ {} ปีแล้ว',
   'Teşekkürler': 'ขอบคุณ',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'การยืนยันแบบ 2 ขั้นตอน',
+  'Girişte e-postana kod gönderilir':
+      'ระบบจะส่งรหัสไปยังอีเมลของคุณเมื่อลงชื่อเข้าใช้',
+  'Kod {} adresine gönderildi': 'ส่งรหัสไปที่ {} แล้ว',
+  '6 haneli kod': 'รหัส 6 หลัก',
+  'Doğrula': 'ยืนยัน',
+  'Yeniden gönder': 'ส่งอีกครั้ง',
+  'Vazgeç': 'ยกเลิก',
+  'Yeni kod gönderildi': 'ส่งรหัสใหม่แล้ว',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'เมื่อลงชื่อเข้าใช้ด้วย Google จะไม่มีการขอรหัส เพราะ Google ยืนยันตัวตนด้วยตัวเอง',
+  'Kapatmak için de kod gerekir.': 'การปิดใช้งานก็ต้องใช้รหัสเช่นกัน',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'หากเข้าถึงอีเมลไม่ได้ จะลงชื่อเข้าใช้บัญชีไม่ได้',
+  'İki adımlı doğrulama açıldı': 'เปิดการยืนยันแบบ 2 ขั้นตอนแล้ว',
+  'İki adımlı doğrulama kapatıldı': 'ปิดการยืนยันแบบ 2 ขั้นตอนแล้ว',
 };

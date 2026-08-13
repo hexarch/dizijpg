@@ -964,4 +964,21 @@ const Map<String, String> cevirilerVi = {
       'Thật vui vì có bạn, và vui hơn vì bạn ở đây.',
   'Bugün {} yaşına girdin': 'Hôm nay bạn tròn {} tuổi',
   'Teşekkürler': 'Cảm ơn',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'Xác minh 2 bước',
+  'Girişte e-postana kod gönderilir':
+      'Mã sẽ được gửi đến email của bạn khi đăng nhập',
+  'Kod {} adresine gönderildi': 'Đã gửi mã đến {}',
+  '6 haneli kod': 'Mã 6 chữ số',
+  'Doğrula': 'Xác minh',
+  'Yeniden gönder': 'Gửi lại',
+  'Vazgeç': 'Hủy',
+  'Yeni kod gönderildi': 'Đã gửi mã mới',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Khi đăng nhập bằng Google sẽ không cần nhập mã; Google tự xác minh.',
+  'Kapatmak için de kod gerekir.': 'Việc tắt cũng cần mã.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Nếu mất quyền truy cập email thì không thể đăng nhập vào tài khoản.',
+  'İki adımlı doğrulama açıldı': 'Đã bật xác minh 2 bước',
+  'İki adımlı doğrulama kapatıldı': 'Đã tắt xác minh 2 bước',
 };

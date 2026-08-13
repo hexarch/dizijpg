@@ -961,4 +961,20 @@ const Map<String, String> cevirilerBn = {
       'ভালো হয়েছে তুমি জন্মেছ, ভালো হয়েছে তুমি এখানে আছ।',
   'Bugün {} yaşına girdin': 'আজ তুমি {} বছরে পা দিলে',
   'Teşekkürler': 'ধন্যবাদ',
+  'İki Adımlı Doğrulama': 'দুই ধাপে যাচাইকরণ',
+  'Girişte e-postana kod gönderilir':
+      'সাইন ইন করলে তোমার ইমেইলে কোড পাঠানো হয়',
+  'Kod {} adresine gönderildi': '{} ঠিকানায় কোড পাঠানো হয়েছে',
+  '6 haneli kod': '6 সংখ্যার কোড',
+  'Doğrula': 'যাচাই করো',
+  'Yeniden gönder': 'আবার পাঠাও',
+  'Vazgeç': 'বাতিল',
+  'Yeni kod gönderildi': 'নতুন কোড পাঠানো হয়েছে',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google দিয়ে সাইন ইন করলে কোড চাওয়া হয় না; Google নিজেই যাচাই করে।',
+  'Kapatmak için de kod gerekir.': 'বন্ধ করতেও কোড লাগবে।',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ইমেইলে ঢুকতে না পারলে অ্যাকাউন্টেও ঢোকা যাবে না।',
+  'İki adımlı doğrulama açıldı': 'দুই ধাপে যাচাইকরণ চালু হয়েছে',
+  'İki adımlı doğrulama kapatıldı': 'দুই ধাপে যাচাইকরণ বন্ধ হয়েছে',
 };

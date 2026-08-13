@@ -962,4 +962,21 @@ const Map<String, String> cevirilerPa = {
       'ਖ਼ੁਸ਼ੀ ਹੈ ਕਿ ਤੁਸੀਂ ਹੋ, ਤੇ ਖ਼ੁਸ਼ੀ ਹੈ ਕਿ ਤੁਸੀਂ ਇੱਥੇ ਹੋ।',
   'Bugün {} yaşına girdin': 'ਅੱਜ ਤੁਹਾਡੀ ਉਮਰ {} ਸਾਲ ਹੋ ਗਈ',
   'Teşekkürler': 'ਧੰਨਵਾਦ',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': 'ਦੋ-ਪੜਾਵੀ ਤਸਦੀਕ',
+  'Girişte e-postana kod gönderilir':
+      'ਸਾਈਨ-ਇਨ ਵੇਲੇ ਤੁਹਾਡੀ ਈਮੇਲ ਉੱਤੇ ਕੋਡ ਭੇਜਿਆ ਜਾਂਦਾ ਹੈ',
+  'Kod {} adresine gönderildi': '{} ਉੱਤੇ ਕੋਡ ਭੇਜ ਦਿੱਤਾ ਗਿਆ',
+  '6 haneli kod': '6 ਅੰਕਾਂ ਵਾਲਾ ਕੋਡ',
+  'Doğrula': 'ਤਸਦੀਕ ਕਰੋ',
+  'Yeniden gönder': 'ਦੁਬਾਰਾ ਭੇਜੋ',
+  'Vazgeç': 'ਰੱਦ ਕਰੋ',
+  'Yeni kod gönderildi': 'ਨਵਾਂ ਕੋਡ ਭੇਜ ਦਿੱਤਾ ਗਿਆ',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google ਨਾਲ ਸਾਈਨ-ਇਨ ਵੇਲੇ ਕੋਡ ਨਹੀਂ ਪੁੱਛਿਆ ਜਾਂਦਾ; ਤਸਦੀਕ Google ਆਪ ਕਰ ਲੈਂਦਾ ਹੈ।',
+  'Kapatmak için de kod gerekir.': 'ਇਸਨੂੰ ਬੰਦ ਕਰਨ ਲਈ ਵੀ ਕੋਡ ਚਾਹੀਦਾ ਹੈ।',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ਈਮੇਲ ਤੱਕ ਪਹੁੰਚ ਨਾ ਹੋਵੇ ਤਾਂ ਖਾਤੇ ਵਿੱਚ ਦਾਖ਼ਲ ਨਹੀਂ ਹੋਇਆ ਜਾ ਸਕਦਾ।',
+  'İki adımlı doğrulama açıldı': 'ਦੋ-ਪੜਾਵੀ ਤਸਦੀਕ ਚਾਲੂ ਹੋ ਗਈ',
+  'İki adımlı doğrulama kapatıldı': 'ਦੋ-ਪੜਾਵੀ ਤਸਦੀਕ ਬੰਦ ਹੋ ਗਈ',
 };

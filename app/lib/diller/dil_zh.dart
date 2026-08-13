@@ -918,4 +918,19 @@ const Map<String, String> cevirilerZh = {
   'İyi ki doğdun, iyi ki buradasın.': '很高兴世上有你，也很高兴你在这里。',
   'Bugün {} yaşına girdin': '今天你 {} 岁了',
   'Teşekkürler': '谢谢',
+  // --- İki adımlı doğrulama (2FA) ---
+  'İki Adımlı Doğrulama': '两步验证',
+  'Girişte e-postana kod gönderilir': '登录时会向你的邮箱发送验证码',
+  'Kod {} adresine gönderildi': '验证码已发送至 {}',
+  '6 haneli kod': '6 位验证码',
+  'Doğrula': '验证',
+  'Yeniden gönder': '重新发送',
+  'Vazgeç': '取消',
+  'Yeni kod gönderildi': '新验证码已发送',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      '使用 Google 登录时不会要求输入验证码；Google 会进行自己的验证。',
+  'Kapatmak için de kod gerekir.': '关闭时同样需要验证码。',
+  'E-postana erişemezsen hesabına giremezsin.': '若无法访问邮箱，将无法登录账号。',
+  'İki adımlı doğrulama açıldı': '两步验证已开启',
+  'İki adımlı doğrulama kapatıldı': '两步验证已关闭',
 };

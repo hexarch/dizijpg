@@ -354,11 +354,16 @@ class _MedyaIncelemeEkraniState extends State<MedyaIncelemeEkrani> {
         // bunu web'de de karşılar (MEDYA-EDITOR-PLANI G1-not).
         final duzenli = _duzenlenen[o.kimlik];
         if (duzenli != null) {
+          // TÜR SABİT DEĞİL (madde 54): editör saydam girdide PNG üretiyor.
+          // Adı/MIME'ı "jpg" diye yazmak dosyayı bozmaz (sunucu sihirli
+          // bayta bakıyor, `Api.medyaYukle` da octet-stream gönderiyor) ama
+          // yalan olur; tür baytlardan okunuyor.
+          final png = gorselTuru(duzenli) == GorselTur.png;
           dosyalar.add(
             XFile.fromData(
               duzenli,
-              mimeType: 'image/jpeg',
-              name: 'duzenlendi-${o.kimlik}.jpg',
+              mimeType: png ? 'image/png' : 'image/jpeg',
+              name: 'duzenlendi-${o.kimlik}.${png ? 'png' : 'jpg'}',
               length: duzenli.length,
             ),
           );

@@ -962,4 +962,20 @@ const Map<String, String> cevirilerNb = {
       'Så fint at du ble født, og så fint at du er her.',
   'Bugün {} yaşına girdin': 'I dag ble du {} år',
   'Teşekkürler': 'Takk',
+  'İki Adımlı Doğrulama': 'Totrinnsbekreftelse',
+  'Girişte e-postana kod gönderilir':
+      'Ved innlogging sendes en kode til e-posten din',
+  'Kod {} adresine gönderildi': 'Kode sendt til {}',
+  '6 haneli kod': '6-sifret kode',
+  'Doğrula': 'Bekreft',
+  'Yeniden gönder': 'Send på nytt',
+  'Vazgeç': 'Avbryt',
+  'Yeni kod gönderildi': 'Ny kode sendt',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Du blir ikke bedt om kode når du logger inn med Google; Google gjør sin egen verifisering.',
+  'Kapatmak için de kod gerekir.': 'Du trenger kode også for å slå det av.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Mister du tilgangen til e-posten din, kommer du ikke inn på kontoen.',
+  'İki adımlı doğrulama açıldı': 'Totrinnsbekreftelse er på',
+  'İki adımlı doğrulama kapatıldı': 'Totrinnsbekreftelse er av',
 };

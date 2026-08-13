@@ -961,4 +961,19 @@ const Map<String, String> cevirilerFa = {
       'خوب شد که به دنیا آمدی، خوب شد که اینجایی.',
   'Bugün {} yaşına girdin': 'امروز {} ساله شدی',
   'Teşekkürler': 'ممنون',
+  'İki Adımlı Doğrulama': 'تأیید دو مرحله‌ای',
+  'Girişte e-postana kod gönderilir': 'هنگام ورود، کد به ایمیلت فرستاده می‌شود',
+  'Kod {} adresine gönderildi': 'کد به {} ارسال شد',
+  '6 haneli kod': 'کد 6 رقمی',
+  'Doğrula': 'تأیید',
+  'Yeniden gönder': 'ارسال دوباره',
+  'Vazgeç': 'انصراف',
+  'Yeni kod gönderildi': 'کد جدید ارسال شد',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'هنگام ورود با Google کدی خواسته نمی‌شود؛ Google تأیید خودش را انجام می‌دهد.',
+  'Kapatmak için de kod gerekir.': 'برای خاموش کردن هم کد لازم است.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'اگر به ایمیلت دسترسی نداشته باشی، نمی‌توانی وارد حسابت شوی.',
+  'İki adımlı doğrulama açıldı': 'تأیید دو مرحله‌ای روشن شد',
+  'İki adımlı doğrulama kapatıldı': 'تأیید دو مرحله‌ای خاموش شد',
 };

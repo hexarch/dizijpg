@@ -960,4 +960,20 @@ const Map<String, String> cevirilerHi = {
       'अच्छा हुआ कि तुम्हारा जन्म हुआ, अच्छा है कि तुम यहाँ हो.',
   'Bugün {} yaşına girdin': 'आज तुम्हारे {} साल पूरे हुए',
   'Teşekkürler': 'धन्यवाद',
+  'İki Adımlı Doğrulama': '2-स्टेप वेरिफ़िकेशन',
+  'Girişte e-postana kod gönderilir':
+      'लॉग इन करते समय ईमेल पर कोड भेजा जाता है',
+  'Kod {} adresine gönderildi': 'कोड {} पर भेजा गया',
+  '6 haneli kod': '6 अंकों का कोड',
+  'Doğrula': 'वेरिफ़ाई करो',
+  'Yeniden gönder': 'फिर से भेजो',
+  'Vazgeç': 'रद्द करो',
+  'Yeni kod gönderildi': 'नया कोड भेजा गया',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google से लॉग इन करने पर कोड नहीं पूछा जाता; वेरिफ़िकेशन Google की तरफ़ से होता है।',
+  'Kapatmak için de kod gerekir.': 'इसे बंद करने के लिए भी कोड लगेगा।',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ईमेल तक पहुँच न रहने पर अकाउंट में लॉग इन नहीं हो पाएगा।',
+  'İki adımlı doğrulama açıldı': '2-स्टेप वेरिफ़िकेशन चालू हुआ',
+  'İki adımlı doğrulama kapatıldı': '2-स्टेप वेरिफ़िकेशन बंद हुआ',
 };

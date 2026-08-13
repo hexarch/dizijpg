@@ -976,4 +976,22 @@ const Map<String, String> cevirilerEl = {
       'Καλά που γεννήθηκες, καλά που είσαι εδώ.',
   'Bugün {} yaşına girdin': 'Σήμερα έγινες {} ετών',
   'Teşekkürler': 'Ευχαριστώ',
+  'İki Adımlı Doğrulama': 'Επαλήθευση σε δύο βήματα',
+  'Girişte e-postana kod gönderilir':
+      'Κατά τη σύνδεση στέλνεται κωδικός στο email σου',
+  'Kod {} adresine gönderildi': 'Ο κωδικός στάλθηκε στο {}',
+  '6 haneli kod': 'Κωδικός 6 ψηφίων',
+  'Doğrula': 'Επαλήθευση',
+  'Yeniden gönder': 'Επαναποστολή',
+  'Vazgeç': 'Άκυρο',
+  'Yeni kod gönderildi': 'Στάλθηκε νέος κωδικός',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Κατά τη σύνδεση με Google δεν ζητείται κωδικός· η Google κάνει τη δική της επαλήθευση.',
+  'Kapatmak için de kod gerekir.':
+      'Απαιτείται κωδικός και για την απενεργοποίηση.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Αν χάσεις την πρόσβαση στο email σου, δεν θα μπορείς να συνδεθείς στον λογαριασμό σου.',
+  'İki adımlı doğrulama açıldı': 'Η επαλήθευση σε δύο βήματα ενεργοποιήθηκε',
+  'İki adımlı doğrulama kapatıldı':
+      'Η επαλήθευση σε δύο βήματα απενεργοποιήθηκε',
 };

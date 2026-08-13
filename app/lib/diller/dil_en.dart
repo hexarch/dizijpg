@@ -964,4 +964,20 @@ const Map<String, String> cevirilerEn = {
       'So glad you were born, and glad you’re here.',
   'Bugün {} yaşına girdin': 'You turned {} today',
   'Teşekkürler': 'Thanks',
+  'İki Adımlı Doğrulama': 'Two-Step Verification',
+  'Girişte e-postana kod gönderilir':
+      'A code is sent to your email when you sign in',
+  'Kod {} adresine gönderildi': 'Code sent to {}',
+  '6 haneli kod': '6-digit code',
+  'Doğrula': 'Verify',
+  'Yeniden gönder': 'Resend',
+  'Vazgeç': 'Cancel',
+  'Yeni kod gönderildi': 'New code sent',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      "You won't be asked for a code when signing in with Google; Google handles its own verification.",
+  'Kapatmak için de kod gerekir.': 'Turning it off also requires a code.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      "If you lose access to your email, you won't be able to sign in.",
+  'İki adımlı doğrulama açıldı': 'Two-step verification is on',
+  'İki adımlı doğrulama kapatıldı': 'Two-step verification is off',
 };

@@ -975,4 +975,20 @@ const Map<String, String> cevirilerFil = {
       'Buti na lang isinilang ka, buti na lang nandito ka.',
   'Bugün {} yaşına girdin': 'Ngayon ay {} taong gulang ka na',
   'Teşekkürler': 'Salamat',
+  'İki Adımlı Doğrulama': 'Two-Step Verification',
+  'Girişte e-postana kod gönderilir':
+      'Ipapadala ang code sa email mo kapag nag-sign in',
+  'Kod {} adresine gönderildi': 'Ipinadala ang code sa {}',
+  '6 haneli kod': '6-digit na code',
+  'Doğrula': 'I-verify',
+  'Yeniden gönder': 'Ipadala ulit',
+  'Vazgeç': 'Kanselahin',
+  'Yeni kod gönderildi': 'Naipadala ang bagong code',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Walang hihinging code kapag nag-sign in gamit ang Google; ang Google mismo ang nagve-verify.',
+  'Kapatmak için de kod gerekir.': 'Kailangan din ng code para i-off ito.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'Kung mawalan ka ng access sa email mo, hindi ka makakapasok sa account mo.',
+  'İki adımlı doğrulama açıldı': 'Naka-on na ang two-step verification',
+  'İki adımlı doğrulama kapatıldı': 'Naka-off na ang two-step verification',
 };

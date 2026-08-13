@@ -962,4 +962,20 @@ const Map<String, String> cevirilerKn = {
       'ನೀನು ಹುಟ್ಟಿದ್ದು ಒಳ್ಳೆಯದಾಯಿತು, ಇಲ್ಲಿ ಇರುವುದೂ ಸಂತೋಷ.',
   'Bugün {} yaşına girdin': 'ಇಂದು ನಿನಗೆ {} ವರ್ಷ ತುಂಬಿತು',
   'Teşekkürler': 'ಧನ್ಯವಾದ',
+  'İki Adımlı Doğrulama': 'ಎರಡು ಹಂತದ ಪರಿಶೀಲನೆ',
+  'Girişte e-postana kod gönderilir':
+      'ಲಾಗಿನ್ ಮಾಡುವಾಗ ಇಮೇಲ್‌ಗೆ ಕೋಡ್ ಕಳುಹಿಸಲಾಗುತ್ತದೆ',
+  'Kod {} adresine gönderildi': 'ಕೋಡ್ {} ಗೆ ಕಳುಹಿಸಲಾಗಿದೆ',
+  '6 haneli kod': '6 ಅಂಕಿಯ ಕೋಡ್',
+  'Doğrula': 'ಪರಿಶೀಲಿಸು',
+  'Yeniden gönder': 'ಮತ್ತೆ ಕಳುಹಿಸು',
+  'Vazgeç': 'ರದ್ದು',
+  'Yeni kod gönderildi': 'ಹೊಸ ಕೋಡ್ ಕಳುಹಿಸಲಾಗಿದೆ',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google ಮೂಲಕ ಲಾಗಿನ್ ಮಾಡುವಾಗ ಕೋಡ್ ಕೇಳುವುದಿಲ್ಲ; ಪರಿಶೀಲನೆಯನ್ನು Google ತಾನೇ ಮಾಡುತ್ತದೆ.',
+  'Kapatmak için de kod gerekir.': 'ಆಫ್ ಮಾಡಲೂ ಕೋಡ್ ಬೇಕು.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'ಇಮೇಲ್ ಬಳಸಲು ಆಗದಿದ್ದರೆ ಖಾತೆಗೆ ಲಾಗಿನ್ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.',
+  'İki adımlı doğrulama açıldı': 'ಎರಡು ಹಂತದ ಪರಿಶೀಲನೆ ಆನ್ ಆಗಿದೆ',
+  'İki adımlı doğrulama kapatıldı': 'ಎರಡು ಹಂತದ ಪರಿಶೀಲನೆ ಆಫ್ ಆಗಿದೆ',
 };

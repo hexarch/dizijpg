@@ -958,4 +958,19 @@ const Map<String, String> cevirilerAz = {
       'Yaxşı ki doğulmusan, yaxşı ki buradasan.',
   'Bugün {} yaşına girdin': 'Bu gün {} yaşın tamam oldu',
   'Teşekkürler': 'Təşəkkürlər',
+  'İki Adımlı Doğrulama': 'İki mərhələli doğrulama',
+  'Girişte e-postana kod gönderilir': 'Girişdə e-poçtuna kod göndərilir',
+  'Kod {} adresine gönderildi': 'Kod {} ünvanına göndərildi',
+  '6 haneli kod': '6 rəqəmli kod',
+  'Doğrula': 'Doğrula',
+  'Yeniden gönder': 'Yenidən göndər',
+  'Vazgeç': 'İmtina',
+  'Yeni kod gönderildi': 'Yeni kod göndərildi',
+  'Google ile girişte kod sorulmaz; Google kendi doğrulamasını yapar.':
+      'Google ilə girişdə kod soruşulmur; Google öz doğrulamasını aparır.',
+  'Kapatmak için de kod gerekir.': 'Söndürmək üçün də kod tələb olunur.',
+  'E-postana erişemezsen hesabına giremezsin.':
+      'E-poçtuna girişi itirsən, hesabına daxil ola bilməzsən.',
+  'İki adımlı doğrulama açıldı': 'İki mərhələli doğrulama aktivləşdirildi',
+  'İki adımlı doğrulama kapatıldı': 'İki mərhələli doğrulama söndürüldü',
 };
