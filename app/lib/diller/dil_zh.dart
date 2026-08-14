@@ -1009,9 +1009,11 @@ const Map<String, String> cevirilerZh = {
   'Puan 1-10 arası olmalı': '评分须为 1 到 10',
   'En fazla 10 medya eklenebilir': '最多可添加 10 个媒体文件',
   'Bu cihazdan yeni hesap açılamıyor': '此设备无法创建新账号',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': '需要有效邮箱、用户名和至少 6 位密码',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      '需要有效邮箱、用户名和至少 6 位密码',
   'Geçerli e-posta ve en az 6 karakter şifre gerekli': '需要有效邮箱和至少 6 位密码',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': '用户名须为 3–20 个字符；可用小写字母、数字、点、连字符和下划线（首尾不能是点或连字符）',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      '用户名须为 3–20 个字符；可用小写字母、数字、点、连字符和下划线（首尾不能是点或连字符）',
   'Bu hesap zaten bağlı': '该账号已绑定',
   'Hesap oluşturulamadı': '无法创建账号',
   'Misafir hesabı oluşturulamadı': '无法创建访客账号',
@@ -1049,4 +1051,5 @@ const Map<String, String> cevirilerZh = {
   'Medya bağlantısının süresi dolmuş': '媒体链接已过期',
   'Bu medya için imzalı bağlantı gerekli': '此媒体需要带签名的链接',
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': '通话服务正在重启，稍后再试',
+  'Puan göstergesi': '评分图例',
 };

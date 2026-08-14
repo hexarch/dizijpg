@@ -1072,45 +1072,65 @@ const Map<String, String> cevirilerSv = {
       'Servern startar om, försök om en stund',
   'Puan 1-10 arası olmalı': 'Betyget måste vara mellan 1 och 10',
   'En fazla 10 medya eklenebilir': 'Högst 10 mediefiler kan läggas till',
-  'Bu cihazdan yeni hesap açılamıyor': 'Det går inte att skapa konto från den här enheten',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Giltig e-post, användarnamn och lösenord på minst 6 tecken krävs',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Giltig e-post och lösenord på minst 6 tecken krävs',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Användarnamn 3–20 tecken; gemener, siffror, punkter, bindestreck, understreck (inte i kanterna)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Det går inte att skapa konto från den här enheten',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Giltig e-post, användarnamn och lösenord på minst 6 tecken krävs',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Giltig e-post och lösenord på minst 6 tecken krävs',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Användarnamn 3–20 tecken; gemener, siffror, punkter, bindestreck, understreck (inte i kanterna)',
   'Bu hesap zaten bağlı': 'Kontot är redan kopplat',
   'Hesap oluşturulamadı': 'Kontot kunde inte skapas',
   'Misafir hesabı oluşturulamadı': 'Gästkontot kunde inte skapas',
   'Hesap bulunamadı': 'Kontot hittades inte',
   'Bu hesapta e-posta yok': 'Kontot har ingen e-post',
-  'İki adımlı doğrulama zaten bu durumda': 'Tvåstegsverifieringen är redan i det här läget',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Tvåstegsverifieringen är redan i det här läget',
   'Kod yanlış': 'Fel kod',
   'Kodun süresi doldu': 'Koden har gått ut',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Användaren har ingen e-post (gästkonto)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Användaren har ingen e-post (gästkonto)',
   'Bio en fazla 300 karakter olabilir': 'Bio får vara högst 300 tecken',
   'Geçersiz ülke': 'Ogiltigt land',
   'Geçersiz sosyal bağlantı': 'Ogiltig social länk',
   'Geçersiz doğum tarihi': 'Ogiltigt födelsedatum',
   'Liste adı gerekli': 'Listnamn krävs',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Namnet får vara 60 tecken, beskrivningen 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Namnet får vara 60 tecken, beskrivningen 300',
   'Liste bulunamadı': 'Listan hittades inte',
   'Değiştirilecek tercih yok': 'Inget att uppdatera',
-  'İnceleme en fazla 2000 karakter olabilir': 'Recensionen får vara högst 2000 tecken',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Markera titeln som avslutad först',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Recensionen får vara högst 2000 tecken',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Markera titeln som avslutad först',
   'Önce kişiyi favorile': 'Lägg personen som favorit först',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Avsnittskommentar kräver både säsong och avsnitt',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Avsnittskommentar kräver både säsong och avsnitt',
   'Yanıtlanan yorum bulunamadı': 'Kommentaren du svarar på hittades inte',
   'Geri bildirim 3-2000 karakter olmalı': 'Feedback måste vara 3–2000 tecken',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Titel och text krävs (minst 2 tecken)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Titel och text krävs (minst 2 tecken)',
   'Kendine mesaj gönderemezsin': 'Du kan inte skicka meddelande till dig själv',
-  'Mesaj en fazla 2000 karakter olabilir': 'Meddelandet får vara högst 2000 tecken',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Meddelandet får vara högst 2000 tecken',
   'Mesaj 1-2000 karakter olmalı': 'Meddelandet måste vara 1–2000 tecken',
   'Mesaj bulunamadı': 'Meddelandet hittades inte',
-  'Mesaj bulunamadı veya düzenlenemez': 'Meddelandet hittades inte eller kan inte redigeras',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Du kan bara anmäla ett meddelande som skickats till dig',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Meddelandet hittades inte eller kan inte redigeras',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Du kan bara anmäla ett meddelande som skickats till dig',
   'Sebep gerekli': 'Orsak krävs',
-  'İtiraz edilecek aktif bir ceza yok': 'Det finns inget aktivt straff att överklaga',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Du har redan ett överklagande som väntar på granskning',
-  'Bu ceza için itirazın zaten incelendi': 'Ditt överklagande av det här straffet har redan granskats',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Det finns inget aktivt straff att överklaga',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Du har redan ett överklagande som väntar på granskning',
+  'Bu ceza için itirazın zaten incelendi':
+      'Ditt överklagande av det här straffet har redan granskats',
   'Medya bağlantısının süresi dolmuş': 'Medielänken har gått ut',
-  'Bu medya için imzalı bağlantı gerekli': 'En signerad länk krävs för den här median',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Samtalstjänsten startar om; försök om en stund',
+  'Bu medya için imzalı bağlantı gerekli':
+      'En signerad länk krävs för den här median',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Samtalstjänsten startar om; försök om en stund',
+  'Puan göstergesi': 'Betygsförklaring',
 };

@@ -1033,9 +1033,12 @@ const Map<String, String> cevirilerAm = {
   'Puan 1-10 arası olmalı': 'ውጤቱ ከ 1 እስከ 10 መሆን አለበት',
   'En fazla 10 medya eklenebilir': 'ቢበዛ 10 ሚዲያ መጨመር ይቻላል',
   'Bu cihazdan yeni hesap açılamıyor': 'ከዚህ መሣሪያ አዲስ መለያ መክፈት አይቻልም',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'ትክክለኛ ኢሜይል፣ የተጠቃሚ ስም እና ቢያንስ 6 ፊደል የይለፍ ቃል ያስፈልጋል',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'ትክክለኛ ኢሜይል እና ቢያንስ 6 ፊደል የይለፍ ቃል ያስፈልጋል',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'የተጠቃሚ ስም 3–20፤ ትንሽ ፊደል፣ ቁጥር፣ ነጥብ፣ ጭረት፣ የታች መስመር (ጫፍ ላይ አይሁን)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'ትክክለኛ ኢሜይል፣ የተጠቃሚ ስም እና ቢያንስ 6 ፊደል የይለፍ ቃል ያስፈልጋል',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'ትክክለኛ ኢሜይል እና ቢያንስ 6 ፊደል የይለፍ ቃል ያስፈልጋል',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'የተጠቃሚ ስም 3–20፤ ትንሽ ፊደል፣ ቁጥር፣ ነጥብ፣ ጭረት፣ የታች መስመር (ጫፍ ላይ አይሁን)',
   'Bu hesap zaten bağlı': 'ይህ መለያ አስቀድሞ ተገናኝቷል',
   'Hesap oluşturulamadı': 'መለያ መፍጠር አልተቻለም',
   'Misafir hesabı oluşturulamadı': 'የእንግዳ መለያ መፍጠር አልተቻለም',
@@ -1056,21 +1059,26 @@ const Map<String, String> cevirilerAm = {
   'İnceleme en fazla 2000 karakter olabilir': 'ግምገማ ቢበዛ 2000 ፊደል',
   'Önce içeriği "bitirdim" olarak işaretle': 'መጀመሪያ እንደ ተጠናቀቀ ምልክት አድርግ',
   'Önce kişiyi favorile': 'መጀመሪያ ሰውዬውን ተወዳጅ አድርግ',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'የክፍል አስተያየት ሁለቱም ወቅት እና ክፍል ያስፈልጋሉ',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'የክፍል አስተያየት ሁለቱም ወቅት እና ክፍል ያስፈልጋሉ',
   'Yanıtlanan yorum bulunamadı': 'የተመለሰው አስተያየት አልተገኘም',
   'Geri bildirim 3-2000 karakter olmalı': 'ግብረመልስ 3–2000 ፊደል መሆን አለበት',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'ርዕስ እና ጽሑፍ ያስፈልጋሉ (ቢያንስ 2 ፊደል)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'ርዕስ እና ጽሑፍ ያስፈልጋሉ (ቢያንስ 2 ፊደል)',
   'Kendine mesaj gönderemezsin': 'ራስህን መልእክት መላክ አትችልም',
   'Mesaj en fazla 2000 karakter olabilir': 'መልእክት ቢበዛ 2000 ፊደል',
   'Mesaj 1-2000 karakter olmalı': 'መልእክት 1–2000 ፊደል መሆን አለበት',
   'Mesaj bulunamadı': 'መልእክት አልተገኘም',
   'Mesaj bulunamadı veya düzenlenemez': 'መልእክት አልተገኘም ወይም ሊስተካከል አይችልም',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'ወደ አንተ የተላከ መልእክት ብቻ ማመልከት ትችላለህ',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'ወደ አንተ የተላከ መልእክት ብቻ ማመልከት ትችላለህ',
   'Sebep gerekli': 'ምክንያት ያስፈልጋል',
   'İtiraz edilecek aktif bir ceza yok': 'ይግባኝ የሚቀርብበት ንቁ ቅጣት የለም',
   'Zaten incelenmeyi bekleyen bir itirazın var': 'አስቀድሞ ግምገማ የሚጠባበቅ ይግባኝ አለህ',
   'Bu ceza için itirazın zaten incelendi': 'የዚህ ቅጣት ይግባኝ አስቀድሞ ተገምግሟል',
   'Medya bağlantısının süresi dolmuş': 'የሚዲያ አገናኝ ጊዜ አልቋል',
   'Bu medya için imzalı bağlantı gerekli': 'ለዚህ ሚዲያ የተፈረመ አገናኝ ያስፈልጋል',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'የጥሪ አገልግሎት እንደገና እየተጀመረ ነው፤ ትንሽ ቆይተህ ሞክር',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'የጥሪ አገልግሎት እንደገና እየተጀመረ ነው፤ ትንሽ ቆይተህ ሞክር',
+  'Puan göstergesi': 'የደረጃ መግለጫ',
 };

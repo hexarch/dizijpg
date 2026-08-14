@@ -1067,45 +1067,64 @@ const Map<String, String> cevirilerUk = {
       'Сервер перезапускається, спробуй за мить',
   'Puan 1-10 arası olmalı': 'Оцінка має бути від 1 до 10',
   'En fazla 10 medya eklenebilir': 'Можна додати щонайбільше 10 файлів',
-  'Bu cihazdan yeni hesap açılamıyor': 'З цього пристрою не можна створити обліковий запис',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Потрібна чинна пошта, ім\'я користувача і пароль щонайменше з 6 символів',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Потрібна чинна пошта і пароль щонайменше з 6 символів',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Ім\'я 3–20 символів; малі літери, цифри, крапки, дефіси й підкреслення (не з країв)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'З цього пристрою не можна створити обліковий запис',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Потрібна чинна пошта, ім\'я користувача і пароль щонайменше з 6 символів',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Потрібна чинна пошта і пароль щонайменше з 6 символів',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Ім\'я 3–20 символів; малі літери, цифри, крапки, дефіси й підкреслення (не з країв)',
   'Bu hesap zaten bağlı': 'Цей обліковий запис уже прив\'язано',
   'Hesap oluşturulamadı': 'Не вдалося створити обліковий запис',
-  'Misafir hesabı oluşturulamadı': 'Не вдалося створити гостьовий обліковий запис',
+  'Misafir hesabı oluşturulamadı':
+      'Не вдалося створити гостьовий обліковий запис',
   'Hesap bulunamadı': 'Обліковий запис не знайдено',
   'Bu hesapta e-posta yok': 'У цього облікового запису немає пошти',
-  'İki adımlı doğrulama zaten bu durumda': 'Двокрокова перевірка вже в цьому стані',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Двокрокова перевірка вже в цьому стані',
   'Kod yanlış': 'Невірний код',
   'Kodun süresi doldu': 'Термін коду минув',
-  'Kullanıcının e-postası yok (misafir hesap)': 'У користувача немає пошти (гостьовий обліковий запис)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'У користувача немає пошти (гостьовий обліковий запис)',
   'Bio en fazla 300 karakter olabilir': 'Біо щонайбільше 300 символів',
   'Geçersiz ülke': 'Недійсна країна',
   'Geçersiz sosyal bağlantı': 'Недійсне соціальне посилання',
   'Geçersiz doğum tarihi': 'Недійсна дата народження',
   'Liste adı gerekli': 'Потрібна назва списку',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Назва щонайбільше 60, опис 300 символів',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Назва щонайбільше 60, опис 300 символів',
   'Liste bulunamadı': 'Список не знайдено',
   'Değiştirilecek tercih yok': 'Немає що оновлювати',
   'İnceleme en fazla 2000 karakter olabilir': 'Огляд щонайбільше 2000 символів',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Спочатку познач тайтл як переглянутий',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Спочатку познач тайтл як переглянутий',
   'Önce kişiyi favorile': 'Спочатку додай особу в обране',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Для коментаря до серії потрібні і сезон, і серія',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Для коментаря до серії потрібні і сезон, і серія',
   'Yanıtlanan yorum bulunamadı': 'Коментар, на який відповідаєш, не знайдено',
   'Geri bildirim 3-2000 karakter olmalı': 'Відгук має бути 3–2000 символів',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Потрібні заголовок і текст (щонайменше 2 символи)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Потрібні заголовок і текст (щонайменше 2 символи)',
   'Kendine mesaj gönderemezsin': 'Не можна написати самому собі',
-  'Mesaj en fazla 2000 karakter olabilir': 'Повідомлення щонайбільше 2000 символів',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Повідомлення щонайбільше 2000 символів',
   'Mesaj 1-2000 karakter olmalı': 'Повідомлення має бути 1–2000 символів',
   'Mesaj bulunamadı': 'Повідомлення не знайдено',
-  'Mesaj bulunamadı veya düzenlenemez': 'Повідомлення не знайдено або його не можна змінити',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Можна поскаржитися лише на повідомлення, надіслане тобі',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Повідомлення не знайдено або його не можна змінити',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Можна поскаржитися лише на повідомлення, надіслане тобі',
   'Sebep gerekli': 'Потрібна причина',
   'İtiraz edilecek aktif bir ceza yok': 'Немає чинної кари для оскарження',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'У тебе вже є скарга на розгляді',
-  'Bu ceza için itirazın zaten incelendi': 'Скаргу щодо цієї кари вже розглянуто',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'У тебе вже є скарга на розгляді',
+  'Bu ceza için itirazın zaten incelendi':
+      'Скаргу щодо цієї кари вже розглянуто',
   'Medya bağlantısının süresi dolmuş': 'Термін медіапосилання минув',
-  'Bu medya için imzalı bağlantı gerekli': 'Для цього медіа потрібне підписане посилання',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Служба дзвінків перезапускається, спробуй трохи згодом',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Для цього медіа потрібне підписане посилання',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Служба дзвінків перезапускається, спробуй трохи згодом',
+  'Puan göstergesi': 'Позначення оцінок',
 };

@@ -1056,44 +1056,58 @@ const Map<String, String> cevirilerFa = {
   'Puan 1-10 arası olmalı': 'امتیاز باید بین ۱ و ۱۰ باشد',
   'En fazla 10 medya eklenebilir': 'حداکثر ۱۰ رسانه می‌توان افزود',
   'Bu cihazdan yeni hesap açılamıyor': 'از این دستگاه نمی‌توان حساب ساخت',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'ایمیل معتبر، نام کاربری و رمز حداقل ۶ نویسه لازم است',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'ایمیل معتبر و رمز حداقل ۶ نویسه لازم است',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'نام کاربری ۳–۲۰ نویسه؛ حروف کوچک، رقم، نقطه، خط تیره و زیرخط (نه در دو سر)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'ایمیل معتبر، نام کاربری و رمز حداقل ۶ نویسه لازم است',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'ایمیل معتبر و رمز حداقل ۶ نویسه لازم است',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'نام کاربری ۳–۲۰ نویسه؛ حروف کوچک، رقم، نقطه، خط تیره و زیرخط (نه در دو سر)',
   'Bu hesap zaten bağlı': 'این حساب از قبل متصل است',
   'Hesap oluşturulamadı': 'حساب ساخته نشد',
   'Misafir hesabı oluşturulamadı': 'حساب مهمان ساخته نشد',
   'Hesap bulunamadı': 'حساب پیدا نشد',
   'Bu hesapta e-posta yok': 'این حساب ایمیل ندارد',
-  'İki adımlı doğrulama zaten bu durumda': 'تأیید دو مرحله‌ای از قبل در همین وضعیت است',
+  'İki adımlı doğrulama zaten bu durumda':
+      'تأیید دو مرحله‌ای از قبل در همین وضعیت است',
   'Kod yanlış': 'کد نادرست است',
   'Kodun süresi doldu': 'اعتبار کد تمام شد',
-  'Kullanıcının e-postası yok (misafir hesap)': 'این کاربر ایمیل ندارد (حساب مهمان)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'این کاربر ایمیل ندارد (حساب مهمان)',
   'Bio en fazla 300 karakter olabilir': 'بیو حداکثر ۳۰۰ نویسه',
   'Geçersiz ülke': 'کشور نامعتبر',
   'Geçersiz sosyal bağlantı': 'پیوند اجتماعی نامعتبر',
   'Geçersiz doğum tarihi': 'تاریخ تولد نامعتبر',
   'Liste adı gerekli': 'نام فهرست لازم است',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'نام حداکثر ۶۰، توضیح ۳۰۰ نویسه',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'نام حداکثر ۶۰، توضیح ۳۰۰ نویسه',
   'Liste bulunamadı': 'فهرست پیدا نشد',
   'Değiştirilecek tercih yok': 'چیزی برای به‌روزرسانی نیست',
   'İnceleme en fazla 2000 karakter olabilir': 'نقد حداکثر ۲۰۰۰ نویسه',
-  'Önce içeriği "bitirdim" olarak işaretle': 'اول آن را به‌عنوان تمام‌شده علامت بزن',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'اول آن را به‌عنوان تمام‌شده علامت بزن',
   'Önce kişiyi favorile': 'اول این فرد را به علاقه‌مندی‌ها اضافه کن',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'برای نظر قسمت هم فصل و هم قسمت لازم است',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'برای نظر قسمت هم فصل و هم قسمت لازم است',
   'Yanıtlanan yorum bulunamadı': 'نظر پاسخ‌داده‌شده پیدا نشد',
   'Geri bildirim 3-2000 karakter olmalı': 'بازخورد باید ۳–۲۰۰۰ نویسه باشد',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'عنوان و متن لازم است (حداقل ۲ نویسه)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'عنوان و متن لازم است (حداقل ۲ نویسه)',
   'Kendine mesaj gönderemezsin': 'نمی‌توانی به خودت پیام بدهی',
   'Mesaj en fazla 2000 karakter olabilir': 'پیام حداکثر ۲۰۰۰ نویسه',
   'Mesaj 1-2000 karakter olmalı': 'پیام باید ۱–۲۰۰۰ نویسه باشد',
   'Mesaj bulunamadı': 'پیام پیدا نشد',
   'Mesaj bulunamadı veya düzenlenemez': 'پیام پیدا نشد یا ویرایش نمی‌شود',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'فقط پیام‌های ارسال‌شده به تو را می‌توان گزارش کرد',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'فقط پیام‌های ارسال‌شده به تو را می‌توان گزارش کرد',
   'Sebep gerekli': 'دلیل لازم است',
   'İtiraz edilecek aktif bir ceza yok': 'مجازات فعالی برای اعتراض نیست',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'از قبل یک اعتراض در انتظار بررسی داری',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'از قبل یک اعتراض در انتظار بررسی داری',
   'Bu ceza için itirazın zaten incelendi': 'اعتراض این مجازات قبلاً بررسی شده',
   'Medya bağlantısının süresi dolmuş': 'لینک رسانه منقضی شد',
-  'Bu medya için imzalı bağlantı gerekli': 'برای این رسانه پیوند امضاشده لازم است',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'سرویس تماس در حال راه‌اندازی دوباره است؛ کمی بعد دوباره امتحان کن',
+  'Bu medya için imzalı bağlantı gerekli':
+      'برای این رسانه پیوند امضاشده لازم است',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'سرویس تماس در حال راه‌اندازی دوباره است؛ کمی بعد دوباره امتحان کن',
+  'Puan göstergesi': 'راهنمای امتیازها',
 };

@@ -56,6 +56,80 @@ Güvenlik `[!]`: DB rolü, CSP, medya imzası (AAB yüklenene kadar açılmaz).
 Kullanıcıda: AAB 1.46 Play'e yükle, Veri Güvenliği beyanı, testçi listesine
 dokunma.
 
+## 2026-08-14 — 🚀 PUAN IZGARASI %50 KÜÇÜLDÜ + CANLI PALET (1.50.0+98)
+Kullanıcı: "kutular hâlâ çok büyük, o ekranı %50 daha küçük yapabilirsin ·
+daha canlı renkler kullan."
+
+### ÇELİŞKİ VE ÇÖZÜMÜ — "hücre gezinmez, SEÇER"
+%50 küçültme ile "dokunma hedefi ≥44 dp" kuralı çakışıyordu: hücre tıklanabilir
+olduğu için adım 44'te kalmak zorundaydı, yani ızgara gerçekte küçülmüyordu.
+**Kural ÇİĞNENMEDİ, KAPSAMI DARALTILDI.** Gerekçe: 44 dp kuralı GEZİNME
+denetimleri içindir — orada ıskalamanın bedeli yanlış sayfa + geri tuşu +
+kaybolan kaydırma. 22 dp hücreye ıskalamanın bedeli ise KOMŞU HÜCRENİN
+SEÇİLMESİ; ekran değişmez, düzeltme tek dokunuş.
+* Hücre artık yalnız **SEÇİYOR**; gerçek gezinme hedefi **190 × 44 dp okuma
+  balonu**. Testin adı bunu söylüyor.
+* Elenen seçenekler gerekçeli: kutu 24/adım 28 hem daha az küçültür (%36) hem
+  puanı 8.4→8 yaparak bilgi kaybettirir hem AYNI kuralı zaten deler.
+  Yazıyı kutudan çıkarmak zaten balonu ZORUNLU kılıyordu (18 dp'ye "10.0"
+  sığmaz; sığmayınca renk tek başına anlam taşır, o da yasak) — balon zaten
+  gerekliyse gezinmeyi ona bindirmek bedava.
+
+| 10 sezon × 20 bölüm | adım | kutu | en | boy |
+|---|---|---|---|---|
+| önce | 44 | 32 | 484 dp | 924 dp |
+| **sonra** | **22** | **18** | **242 dp** | **462 dp** |
+
+Her iki kenarda TAM %50, alanda %75. 360 dp'de sığan sezon sütunu 7 → **14**.
+
+### CANLI PALET (4 kova → 6 + gri)
+**Eski palet donuktu ÇÜNKÜ kutuda yazı vardı** — her kova 4,5:1 taşımak
+zorundaydı. Yazı çıkınca rampa serbest kaldı. Ayrıca ≥7 TEK kovaydı; dizi
+puanları 7-9'da kümelendiği için tipik ızgara baştan aşağı tek renkti.
+
+| kova | renk | parlaklık | çip yazısı |
+|---|---|---|---|
+| ≥9 | `#D4F53B` | 0,796 | 14,42:1 |
+| 8-9 | `#F5C518` (marka sarısı) | 0,594 | 10,97:1 |
+| 7-8 | `#F59E0B` | 0,439 | 8,33:1 |
+| 6-7 | `#F97316` | 0,325 | 6,38:1 |
+| 5-6 | `#DC2626` | 0,167 | 4,83:1 |
+| <5 | `#BE123C` | 0,117 | 6,29:1 |
+
+Parlaklık MONOTON artıyor, uçtan uca 6,8 kat → kırmızı-yeşil ekseninden
+bağımsız, gri tonlamada da sıralanıyor.
+* **Kontur kararı**: dolgu tek başına iki temada birden 3:1 veremez
+  (0,11-0,28 bandına sıkışır). WCAG 1.4.11'in kendi yolu kullanıldı: dolgunun
+  %45'i tema metin rengine karışmış 1 dp kontur.
+* **YAN BULGU**: eski "oy yok" kutusu koyu temada zeminle **1,4:1**'di — yani
+  "bölüm YOK" boşluğundan AYIRT EDİLEMİYORDU. Artık ≥3:1.
+
+### Erişilebilirlik — üç kanal
+Okuma balonu (sayı) + `Semantics` ("S1 · 3. Bölüm, 9.2 TMDB") + altta 7 pullu
+gösterge. Gösterge etiketleri bilerek sayı/simge (`9+ 8 7 6 5 <5 —`) — 45 dilde
+aynı okunur, çeviri istemez.
+
+### Çeviri
+Tek yeni anahtar: `'Puan göstergesi'` (göstergenin ekran okuyucu etiketi),
+45 dil → **922 anahtar**. **"Efsane" tuzağı**: bazı dillerde "legend"in
+karşılığı mit anlamına da geliyor. Grafik göstergesi terimi seçildi —
+el `Υπόμνημα`, he `מקרא`, hu `jelmagyarázat`, fi `selite`, ru `Обозначения`,
+fa `راهنما`, ar `مفتاح`, ja `凡例`, zh `图例`, ko `범례`, fil `Gabay`
+(*alamat* DEĞİL), id `Keterangan` (*legenda* DEĞİL), az `göstərici`
+(*əfsanə* DEĞİL), it `Legenda` (tek g — *leggenda* mit demek).
+
+### Ayrıca
+`kesfet.dart`taki kullanılmayan `katalog_liste.dart` import'u kaldırıldı
+(analyze'daki tek warning'di).
+
+### Kanıt ve dağıtım
+* `flutter test` **1634** · `npm test` **1137** · analyze **0 error / 0 warning**
+  (84 info; warning sayısı 1 → 0).
+* Web `main.6cb6318ecb82.dart.js`, brotli üretildi, `content-encoding: br`
+  doğrulandı. **Backend değişmedi** → yalnız web dağıtıldı.
+* CANLI: `/icerik/tv/94997`, `/raf/haftanin-dizileri`, `/akis` → 200.
+* APK: `~/Desktop/dizijpg-1.50.0+98.apk` (88 MB).
+
 ## 2026-08-14 — 🚀 WEB YENİLEME + PUAN IZGARASI (1.49.0+97)
 
 ### KULLANICI HATASI: "yenileyince beni hep farklı sayfalara atıyor"

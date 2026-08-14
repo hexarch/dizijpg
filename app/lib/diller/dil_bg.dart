@@ -1065,45 +1065,65 @@ const Map<String, String> cevirilerBg = {
       'Сървърът се рестартира, опитай пак след малко',
   'Puan 1-10 arası olmalı': 'Оценката трябва да е между 1 и 10',
   'En fazla 10 medya eklenebilir': 'Може да се добавят най-много 10 файла',
-  'Bu cihazdan yeni hesap açılamıyor': 'От това устройство не може да се създаде акаунт',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Нужен е валиден имейл, потребителско име и парола от поне 6 знака',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Нужен е валиден имейл и парола от поне 6 знака',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Потребителското име е 3–20 знака; малки букви, цифри, точки, тирета и долни черти (не в краищата)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'От това устройство не може да се създаде акаунт',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Нужен е валиден имейл, потребителско име и парола от поне 6 знака',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Нужен е валиден имейл и парола от поне 6 знака',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Потребителското име е 3–20 знака; малки букви, цифри, точки, тирета и долни черти (не в краищата)',
   'Bu hesap zaten bağlı': 'Този акаунт вече е свързан',
   'Hesap oluşturulamadı': 'Акаунтът не можа да бъде създаден',
   'Misafir hesabı oluşturulamadı': 'Гост акаунтът не можа да бъде създаден',
   'Hesap bulunamadı': 'Акаунтът не е намерен',
   'Bu hesapta e-posta yok': 'Този акаунт няма имейл',
-  'İki adımlı doğrulama zaten bu durumda': 'Двустъпковата проверка вече е в това състояние',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Двустъпковата проверка вече е в това състояние',
   'Kod yanlış': 'Грешен код',
   'Kodun süresi doldu': 'Кодът е изтекъл',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Този потребител няма имейл (гост акаунт)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Този потребител няма имейл (гост акаунт)',
   'Bio en fazla 300 karakter olabilir': 'Биото може да е най-много 300 знака',
   'Geçersiz ülke': 'Невалидна държава',
   'Geçersiz sosyal bağlantı': 'Невалидна социална връзка',
   'Geçersiz doğum tarihi': 'Невалидна рождена дата',
   'Liste adı gerekli': 'Името на списъка е задължително',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Името може да е най-много 60, описанието 300 знака',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Името може да е най-много 60, описанието 300 знака',
   'Liste bulunamadı': 'Списъкът не е намерен',
   'Değiştirilecek tercih yok': 'Няма какво да се обнови',
-  'İnceleme en fazla 2000 karakter olabilir': 'Рецензията може да е най-много 2000 знака',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Първо маркирай заглавието като гледано',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Рецензията може да е най-много 2000 знака',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Първо маркирай заглавието като гледано',
   'Önce kişiyi favorile': 'Първо добави човека в любими',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'За коментар към епизод са нужни и сезон, и епизод',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'За коментар към епизод са нужни и сезон, и епизод',
   'Yanıtlanan yorum bulunamadı': 'Коментарът, на който отговаряш, не е намерен',
-  'Geri bildirim 3-2000 karakter olmalı': 'Обратната връзка трябва да е 3–2000 знака',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Заглавие и текст са задължителни (поне 2 знака)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Обратната връзка трябва да е 3–2000 знака',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Заглавие и текст са задължителни (поне 2 знака)',
   'Kendine mesaj gönderemezsin': 'Не можеш да пишеш на себе си',
-  'Mesaj en fazla 2000 karakter olabilir': 'Съобщението може да е най-много 2000 знака',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Съобщението може да е най-много 2000 знака',
   'Mesaj 1-2000 karakter olmalı': 'Съобщението трябва да е 1–2000 знака',
   'Mesaj bulunamadı': 'Съобщението не е намерено',
-  'Mesaj bulunamadı veya düzenlenemez': 'Съобщението не е намерено или не може да се редактира',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Можеш да докладваш само съобщение, изпратено до теб',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Съобщението не е намерено или не може да се редактира',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Можеш да докладваш само съобщение, изпратено до теб',
   'Sebep gerekli': 'Причината е задължителна',
   'İtiraz edilecek aktif bir ceza yok': 'Няма активно наказание за обжалване',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Вече имаш жалба, чакаща преглед',
-  'Bu ceza için itirazın zaten incelendi': 'Жалбата за това наказание вече е прегледана',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Вече имаш жалба, чакаща преглед',
+  'Bu ceza için itirazın zaten incelendi':
+      'Жалбата за това наказание вече е прегледана',
   'Medya bağlantısının süresi dolmuş': 'Медийният линк е изтекъл',
-  'Bu medya için imzalı bağlantı gerekli': 'За тази медия е нужен подписан линк',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Услугата за обаждания се рестартира; опитай след малко',
+  'Bu medya için imzalı bağlantı gerekli':
+      'За тази медия е нужен подписан линк',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Услугата за обаждания се рестартира; опитай след малко',
+  'Puan göstergesi': 'Легенда на оценките',
 };

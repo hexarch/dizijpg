@@ -1066,45 +1066,64 @@ const Map<String, String> cevirilerSr = {
       'Сервер се поново покреће, покушај за који тренутак',
   'Puan 1-10 arası olmalı': 'Оцена мора бити између 1 и 10',
   'En fazla 10 medya eklenebilir': 'Може се додати највише 10 датотека',
-  'Bu cihazdan yeni hesap açılamıyor': 'Са овог уређаја се не може направити налог',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Потребна је исправна е-пошта, корисничко име и лозинка од најмање 6 знакова',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Потребна је исправна е-пошта и лозинка од најмање 6 знакова',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Корисничко име 3–20 знакова; мала слова, цифре, тачке, цртице и доње црте (не на ивицама)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Са овог уређаја се не може направити налог',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Потребна је исправна е-пошта, корисничко име и лозинка од најмање 6 знакова',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Потребна је исправна е-пошта и лозинка од најмање 6 знакова',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Корисничко име 3–20 знакова; мала слова, цифре, тачке, цртице и доње црте (не на ивицама)',
   'Bu hesap zaten bağlı': 'Овај налог је већ повезан',
   'Hesap oluşturulamadı': 'Налог није направљен',
   'Misafir hesabı oluşturulamadı': 'Гостујући налог није направљен',
   'Hesap bulunamadı': 'Налог није пронађен',
   'Bu hesapta e-posta yok': 'Овај налог нема е-пошту',
-  'İki adımlı doğrulama zaten bu durumda': 'Двостепена потврда је већ у овом стању',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Двостепена потврда је већ у овом стању',
   'Kod yanlış': 'Погрешан код',
   'Kodun süresi doldu': 'Код је истекао',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Овај корисник нема е-пошту (гостујући налог)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Овај корисник нема е-пошту (гостујући налог)',
   'Bio en fazla 300 karakter olabilir': 'Био може имати највише 300 знакова',
   'Geçersiz ülke': 'Неважећа земља',
   'Geçersiz sosyal bağlantı': 'Неважећи друштвени линк',
   'Geçersiz doğum tarihi': 'Неважећи датум рођења',
   'Liste adı gerekli': 'Име листе је обавезно',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Име може имати највише 60, опис 300 знакова',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Име може имати највише 60, опис 300 знакова',
   'Liste bulunamadı': 'Листа није пронађена',
   'Değiştirilecek tercih yok': 'Нема шта ажурирати',
-  'İnceleme en fazla 2000 karakter olabilir': 'Рецензија може имати највише 2000 знакова',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Рецензија може имати највише 2000 знакова',
   'Önce içeriği "bitirdim" olarak işaretle': 'Прво означи наслов као завршен',
   'Önce kişiyi favorile': 'Прво додај особу у омиљене',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'За коментар епизоде потребни су и сезона и епизода',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'За коментар епизоде потребни су и сезона и епизода',
   'Yanıtlanan yorum bulunamadı': 'Коментар на који одговараш није пронађен',
-  'Geri bildirim 3-2000 karakter olmalı': 'Повратна информација мора имати 3–2000 знакова',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Наслов и текст су обавезни (најмање 2 знака)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Повратна информација мора имати 3–2000 знакова',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Наслов и текст су обавезни (најмање 2 знака)',
   'Kendine mesaj gönderemezsin': 'Не можеш себи послати поруку',
-  'Mesaj en fazla 2000 karakter olabilir': 'Порука може имати највише 2000 знакова',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Порука може имати највише 2000 знакова',
   'Mesaj 1-2000 karakter olmalı': 'Порука мора имати 1–2000 знакова',
   'Mesaj bulunamadı': 'Порука није пронађена',
-  'Mesaj bulunamadı veya düzenlenemez': 'Порука није пронађена или се не може уредити',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Можеш пријавити само поруку која ти је послата',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Порука није пронађена или се не може уредити',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Можеш пријавити само поруку која ти је послата',
   'Sebep gerekli': 'Разлог је обавезан',
   'İtiraz edilecek aktif bir ceza yok': 'Нема активне казне за жалбу',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Већ имаш жалбу која чека преглед',
-  'Bu ceza için itirazın zaten incelendi': 'Жалба за ову казну је већ прегледана',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Већ имаш жалбу која чека преглед',
+  'Bu ceza için itirazın zaten incelendi':
+      'Жалба за ову казну је већ прегледана',
   'Medya bağlantısının süresi dolmuş': 'Медијски линк је истекао',
-  'Bu medya için imzalı bağlantı gerekli': 'За овај медиј је потребан потписани линк',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Услуга позива се поново покреће; покушај ускоро',
+  'Bu medya için imzalı bağlantı gerekli':
+      'За овај медиј је потребан потписани линк',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Услуга позива се поново покреће; покушај ускоро',
+  'Puan göstergesi': 'Легенда оцена',
 };

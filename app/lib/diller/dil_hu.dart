@@ -1070,45 +1070,66 @@ const Map<String, String> cevirilerHu = {
       'A szerver újraindul, próbáld meg mindjárt',
   'Puan 1-10 arası olmalı': 'A pont 1 és 10 között legyen',
   'En fazla 10 medya eklenebilir': 'Legfeljebb 10 média adható hozzá',
-  'Bu cihazdan yeni hesap açılamıyor': 'Erről az eszközről nem hozható létre fiók',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Érvényes e-mail, felhasználónév és legalább 6 karakteres jelszó kell',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Érvényes e-mail és legalább 6 karakteres jelszó kell',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'A név 3–20 karakter; kisbetű, szám, pont, kötőjel, aláhúzás (szélen nem)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Erről az eszközről nem hozható létre fiók',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Érvényes e-mail, felhasználónév és legalább 6 karakteres jelszó kell',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Érvényes e-mail és legalább 6 karakteres jelszó kell',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'A név 3–20 karakter; kisbetű, szám, pont, kötőjel, aláhúzás (szélen nem)',
   'Bu hesap zaten bağlı': 'Ez a fiók már össze van kötve',
   'Hesap oluşturulamadı': 'A fiók létrehozása nem sikerült',
   'Misafir hesabı oluşturulamadı': 'A vendégfiók létrehozása nem sikerült',
   'Hesap bulunamadı': 'A fiók nem található',
   'Bu hesapta e-posta yok': 'Ehhez a fiókhoz nincs e-mail',
-  'İki adımlı doğrulama zaten bu durumda': 'A kétlépcsős hitelesítés már ebben az állapotban van',
+  'İki adımlı doğrulama zaten bu durumda':
+      'A kétlépcsős hitelesítés már ebben az állapotban van',
   'Kod yanlış': 'Hibás kód',
   'Kodun süresi doldu': 'A kód lejárt',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Ennek a felhasználónak nincs e-mailje (vendégfiók)',
-  'Bio en fazla 300 karakter olabilir': 'A bemutatkozás legfeljebb 300 karakter lehet',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Ennek a felhasználónak nincs e-mailje (vendégfiók)',
+  'Bio en fazla 300 karakter olabilir':
+      'A bemutatkozás legfeljebb 300 karakter lehet',
   'Geçersiz ülke': 'Érvénytelen ország',
   'Geçersiz sosyal bağlantı': 'Érvénytelen közösségi hivatkozás',
   'Geçersiz doğum tarihi': 'Érvénytelen születési dátum',
   'Liste adı gerekli': 'A lista neve kötelező',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'A név legfeljebb 60, a leírás 300 karakter lehet',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'A név legfeljebb 60, a leírás 300 karakter lehet',
   'Liste bulunamadı': 'A lista nem található',
   'Değiştirilecek tercih yok': 'Nincs mit frissíteni',
-  'İnceleme en fazla 2000 karakter olabilir': 'Az értékelés legfeljebb 2000 karakter lehet',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Az értékelés legfeljebb 2000 karakter lehet',
   'Önce içeriği "bitirdim" olarak işaretle': 'Először jelöld befejezettnek',
   'Önce kişiyi favorile': 'Először tedd a személyt a kedvencekhez',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Epizódhozzászóláshoz évad és epizód is kell',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Epizódhozzászóláshoz évad és epizód is kell',
   'Yanıtlanan yorum bulunamadı': 'A megválaszolt hozzászólás nem található',
-  'Geri bildirim 3-2000 karakter olmalı': 'A visszajelzés 3–2000 karakter legyen',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Cím és szöveg kötelező (legalább 2 karakter)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'A visszajelzés 3–2000 karakter legyen',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Cím és szöveg kötelező (legalább 2 karakter)',
   'Kendine mesaj gönderemezsin': 'Nem üzenhetsz magadnak',
-  'Mesaj en fazla 2000 karakter olabilir': 'Az üzenet legfeljebb 2000 karakter lehet',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Az üzenet legfeljebb 2000 karakter lehet',
   'Mesaj 1-2000 karakter olmalı': 'Az üzenet 1–2000 karakter legyen',
   'Mesaj bulunamadı': 'Az üzenet nem található',
-  'Mesaj bulunamadı veya düzenlenemez': 'Az üzenet nem található vagy nem szerkeszthető',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Csak a neked küldött üzenetet jelentheted',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Az üzenet nem található vagy nem szerkeszthető',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Csak a neked küldött üzenetet jelentheted',
   'Sebep gerekli': 'Az indok kötelező',
-  'İtiraz edilecek aktif bir ceza yok': 'Nincs aktív büntetés, amit meg lehetne fellebbezni',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Már van egy felülvizsgálatra váró fellebbezésed',
-  'Bu ceza için itirazın zaten incelendi': 'A büntetés fellebbezését már megvizsgálták',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Nincs aktív büntetés, amit meg lehetne fellebbezni',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Már van egy felülvizsgálatra váró fellebbezésed',
+  'Bu ceza için itirazın zaten incelendi':
+      'A büntetés fellebbezését már megvizsgálták',
   'Medya bağlantısının süresi dolmuş': 'A médiahivatkozás lejárt',
-  'Bu medya için imzalı bağlantı gerekli': 'Ehhez a médiához aláírt hivatkozás kell',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'A hívásszolgáltatás újraindul; próbáld kicsit később',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Ehhez a médiához aláírt hivatkozás kell',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'A hívásszolgáltatás újraindul; próbáld kicsit később',
+  'Puan göstergesi': 'Értékelés jelmagyarázata',
 };

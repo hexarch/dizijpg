@@ -1043,9 +1043,12 @@ const Map<String, String> cevirilerHe = {
   'Puan 1-10 arası olmalı': 'הציון חייב להיות בין 1 ל-10',
   'En fazla 10 medya eklenebilir': 'אפשר להוסיף לכל היותר 10 קבצים',
   'Bu cihazdan yeni hesap açılamıyor': 'אי אפשר ליצור חשבון מהמכשיר הזה',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'נדרשים אימייל תקין, שם משתמש וסיסמה של לפחות 6 תווים',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'נדרשים אימייל תקין וסיסמה של לפחות 6 תווים',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'שם משתמש 3–20 תווים; אותיות קטנות, ספרות, נקודות, מקפים וקווים תחתונים (לא בקצוות)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'נדרשים אימייל תקין, שם משתמש וסיסמה של לפחות 6 תווים',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'נדרשים אימייל תקין וסיסמה של לפחות 6 תווים',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'שם משתמש 3–20 תווים; אותיות קטנות, ספרות, נקודות, מקפים וקווים תחתונים (לא בקצוות)',
   'Bu hesap zaten bağlı': 'החשבון הזה כבר מקושר',
   'Hesap oluşturulamadı': 'לא ניתן ליצור את החשבון',
   'Misafir hesabı oluşturulamadı': 'לא ניתן ליצור חשבון אורח',
@@ -1054,33 +1057,44 @@ const Map<String, String> cevirilerHe = {
   'İki adımlı doğrulama zaten bu durumda': 'האימות הדו-שלבי כבר במצב הזה',
   'Kod yanlış': 'קוד שגוי',
   'Kodun süresi doldu': 'הקוד פג',
-  'Kullanıcının e-postası yok (misafir hesap)': 'למשתמש הזה אין אימייל (חשבון אורח)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'למשתמש הזה אין אימייל (חשבון אורח)',
   'Bio en fazla 300 karakter olabilir': 'הביו יכול להיות לכל היותר 300 תווים',
   'Geçersiz ülke': 'מדינה לא תקפה',
   'Geçersiz sosyal bağlantı': 'קישור חברתי לא תקף',
   'Geçersiz doğum tarihi': 'תאריך לידה לא תקף',
   'Liste adı gerekli': 'נדרש שם לרשימה',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'השם יכול להיות 60 תווים, התיאור 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'השם יכול להיות 60 תווים, התיאור 300',
   'Liste bulunamadı': 'הרשימה לא נמצאה',
   'Değiştirilecek tercih yok': 'אין מה לעדכן',
-  'İnceleme en fazla 2000 karakter olabilir': 'הביקורת יכולה להיות לכל היותר 2000 תווים',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'הביקורת יכולה להיות לכל היותר 2000 תווים',
   'Önce içeriği "bitirdim" olarak işaretle': 'סמן קודם שהשלמת',
   'Önce kişiyi favorile': 'הוסף קודם את האדם למועדפים',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'לתגובה על פרק נדרשים גם עונה וגם פרק',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'לתגובה על פרק נדרשים גם עונה וגם פרק',
   'Yanıtlanan yorum bulunamadı': 'התגובה שעליה אתה מגיב לא נמצאה',
   'Geri bildirim 3-2000 karakter olmalı': 'המשוב חייב להיות 3–2000 תווים',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'נדרשים כותרת וטקסט (לפחות 2 תווים)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'נדרשים כותרת וטקסט (לפחות 2 תווים)',
   'Kendine mesaj gönderemezsin': 'אי אפשר לשלוח הודעה לעצמך',
-  'Mesaj en fazla 2000 karakter olabilir': 'ההודעה יכולה להיות לכל היותר 2000 תווים',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'ההודעה יכולה להיות לכל היותר 2000 תווים',
   'Mesaj 1-2000 karakter olmalı': 'ההודעה חייבת להיות 1–2000 תווים',
   'Mesaj bulunamadı': 'ההודעה לא נמצאה',
-  'Mesaj bulunamadı veya düzenlenemez': 'ההודעה לא נמצאה או שאי אפשר לערוך אותה',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'אפשר לדווח רק על הודעה שנשלחה אליך',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'ההודעה לא נמצאה או שאי אפשר לערוך אותה',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'אפשר לדווח רק על הודעה שנשלחה אליך',
   'Sebep gerekli': 'נדרשת סיבה',
   'İtiraz edilecek aktif bir ceza yok': 'אין עונש פעיל לערער עליו',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'כבר יש לך ערעור שממתין לבדיקה',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'כבר יש לך ערעור שממתין לבדיקה',
   'Bu ceza için itirazın zaten incelendi': 'הערעור על העונש הזה כבר נבדק',
   'Medya bağlantısının süresi dolmuş': 'קישור המדיה פג',
   'Bu medya için imzalı bağlantı gerekli': 'נדרש קישור חתום למדיה הזאת',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'שירות השיחות מופעל מחדש; נסה שוב עוד מעט',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'שירות השיחות מופעל מחדש; נסה שוב עוד מעט',
+  'Puan göstergesi': 'מקרא דירוגים',
 };

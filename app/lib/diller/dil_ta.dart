@@ -1078,45 +1078,64 @@ const Map<String, String> cevirilerTa = {
       'சேவையகம் மீள்துவங்குகிறது, சற்று கழித்து முயல்க',
   'Puan 1-10 arası olmalı': 'மதிப்பீடு 1 முதல் 10 வரை இருக்க வேண்டும்',
   'En fazla 10 medya eklenebilir': 'அதிகபட்சம் 10 ஊடகங்கள் சேர்க்கலாம்',
-  'Bu cihazdan yeni hesap açılamıyor': 'இந்த சாதனத்தில் புதிய கணக்கு திறக்க முடியாது',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'செல்லுபடியாகும் மின்னஞ்சல், பயனர் பெயர், குறைந்தது 6 எழுத்து கடவுச்சொல் வேண்டும்',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'செல்லுபடியாகும் மின்னஞ்சல் மற்றும் குறைந்தது 6 எழுத்து கடவுச்சொல் வேண்டும்',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'பயனர் பெயர் 3–20; சிற்றெழுத்து, எண்கள், புள்ளி, ஹைபன், அடிக்கோடு (முன்/பின் இல்லை)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'இந்த சாதனத்தில் புதிய கணக்கு திறக்க முடியாது',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'செல்லுபடியாகும் மின்னஞ்சல், பயனர் பெயர், குறைந்தது 6 எழுத்து கடவுச்சொல் வேண்டும்',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'செல்லுபடியாகும் மின்னஞ்சல் மற்றும் குறைந்தது 6 எழுத்து கடவுச்சொல் வேண்டும்',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'பயனர் பெயர் 3–20; சிற்றெழுத்து, எண்கள், புள்ளி, ஹைபன், அடிக்கோடு (முன்/பின் இல்லை)',
   'Bu hesap zaten bağlı': 'இந்தக் கணக்கு ஏற்கனவே இணைக்கப்பட்டுள்ளது',
   'Hesap oluşturulamadı': 'கணக்கை உருவாக்க முடியவில்லை',
   'Misafir hesabı oluşturulamadı': 'விருந்தினர் கணக்கை உருவாக்க முடியவில்லை',
   'Hesap bulunamadı': 'கணக்கு கிடைக்கவில்லை',
   'Bu hesapta e-posta yok': 'இந்தக் கணக்கில் மின்னஞ்சல் இல்லை',
-  'İki adımlı doğrulama zaten bu durumda': 'இரு-படி சரிபார்ப்பு ஏற்கனவே இந்த நிலையில் உள்ளது',
+  'İki adımlı doğrulama zaten bu durumda':
+      'இரு-படி சரிபார்ப்பு ஏற்கனவே இந்த நிலையில் உள்ளது',
   'Kod yanlış': 'குறியீடு தவறு',
   'Kodun süresi doldu': 'குறியீட்டின் காலம் முடிந்தது',
-  'Kullanıcının e-postası yok (misafir hesap)': 'இந்தப் பயனருக்கு மின்னஞ்சல் இல்லை (விருந்தினர் கணக்கு)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'இந்தப் பயனருக்கு மின்னஞ்சல் இல்லை (விருந்தினர் கணக்கு)',
   'Bio en fazla 300 karakter olabilir': 'சுயவிவரம் அதிகபட்சம் 300 எழுத்துகள்',
   'Geçersiz ülke': 'செல்லாத நாடு',
   'Geçersiz sosyal bağlantı': 'செல்லாத சமூக இணைப்பு',
   'Geçersiz doğum tarihi': 'செல்லாத பிறந்த தேதி',
   'Liste adı gerekli': 'பட்டியல் பெயர் தேவை',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'பெயர் அதிகபட்சம் 60, விவரம் 300 எழுத்துகள்',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'பெயர் அதிகபட்சம் 60, விவரம் 300 எழுத்துகள்',
   'Liste bulunamadı': 'பட்டியல் கிடைக்கவில்லை',
   'Değiştirilecek tercih yok': 'புதுப்பிக்க எதுவும் இல்லை',
-  'İnceleme en fazla 2000 karakter olabilir': 'விமர்சனம் அதிகபட்சம் 2000 எழுத்துகள்',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'விமர்சனம் அதிகபட்சம் 2000 எழுத்துகள்',
   'Önce içeriği "bitirdim" olarak işaretle': 'முதலில் இதை முடித்ததாக குறி',
   'Önce kişiyi favorile': 'முதலில் இந்த நபரை பிடித்தவராக்கு',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'அத்தியாயக் கருத்துக்கு பருவம் மற்றும் அத்தியாயம் இரண்டும் வேண்டும்',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'அத்தியாயக் கருத்துக்கு பருவம் மற்றும் அத்தியாயம் இரண்டும் வேண்டும்',
   'Yanıtlanan yorum bulunamadı': 'பதிலளிக்கப்பட்ட கருத்து கிடைக்கவில்லை',
-  'Geri bildirim 3-2000 karakter olmalı': 'கருத்து 3–2000 எழுத்துகளாக இருக்க வேண்டும்',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'தலைப்பு மற்றும் உரை தேவை (குறைந்தது 2 எழுத்துகள்)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'கருத்து 3–2000 எழுத்துகளாக இருக்க வேண்டும்',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'தலைப்பு மற்றும் உரை தேவை (குறைந்தது 2 எழுத்துகள்)',
   'Kendine mesaj gönderemezsin': 'உனக்கு நீயே செய்தி அனுப்ப முடியாது',
   'Mesaj en fazla 2000 karakter olabilir': 'செய்தி அதிகபட்சம் 2000 எழுத்துகள்',
   'Mesaj 1-2000 karakter olmalı': 'செய்தி 1–2000 எழுத்துகளாக இருக்க வேண்டும்',
   'Mesaj bulunamadı': 'செய்தி கிடைக்கவில்லை',
-  'Mesaj bulunamadı veya düzenlenemez': 'செய்தி கிடைக்கவில்லை அல்லது திருத்த முடியாது',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'உனக்கு வந்த செய்தியை மட்டுமே புகாரளிக்கலாம்',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'செய்தி கிடைக்கவில்லை அல்லது திருத்த முடியாது',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'உனக்கு வந்த செய்தியை மட்டுமே புகாரளிக்கலாம்',
   'Sebep gerekli': 'காரணம் தேவை',
-  'İtiraz edilecek aktif bir ceza yok': 'மேல்முறையீடு செய்ய செயலில் தண்டனை இல்லை',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'ஏற்கனவே மதிப்பாய்வு காத்திருக்கும் மேல்முறையீடு உள்ளது',
-  'Bu ceza için itirazın zaten incelendi': 'இந்த தண்டனை மேல்முறையீடு ஏற்கனவே மதிப்பாய்வு செய்யப்பட்டது',
+  'İtiraz edilecek aktif bir ceza yok':
+      'மேல்முறையீடு செய்ய செயலில் தண்டனை இல்லை',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'ஏற்கனவே மதிப்பாய்வு காத்திருக்கும் மேல்முறையீடு உள்ளது',
+  'Bu ceza için itirazın zaten incelendi':
+      'இந்த தண்டனை மேல்முறையீடு ஏற்கனவே மதிப்பாய்வு செய்யப்பட்டது',
   'Medya bağlantısının süresi dolmuş': 'ஊடக இணைப்பின் காலம் முடிந்தது',
-  'Bu medya için imzalı bağlantı gerekli': 'இந்த ஊடகத்துக்கு கையொப்ப இணைப்பு தேவை',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'அழைப்பு சேவை மறுதொடக்கம் ஆகிறது; சிறிது நேரம் கழித்து முயலவும்',
+  'Bu medya için imzalı bağlantı gerekli':
+      'இந்த ஊடகத்துக்கு கையொப்ப இணைப்பு தேவை',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'அழைப்பு சேவை மறுதொடக்கம் ஆகிறது; சிறிது நேரம் கழித்து முயலவும்',
+  'Puan göstergesi': 'மதிப்பீட்டு லெஜண்ட்',
 };

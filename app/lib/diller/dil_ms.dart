@@ -1069,45 +1069,62 @@ const Map<String, String> cevirilerMs = {
       'Pelayan sedang mula semula, cuba lagi sebentar',
   'Puan 1-10 arası olmalı': 'Penilaian mesti antara 1 dan 10',
   'En fazla 10 medya eklenebilir': 'Paling banyak 10 media',
-  'Bu cihazdan yeni hesap açılamıyor': 'Peranti ini tidak boleh buka akaun baharu',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Perlu e-mel sah, nama pengguna dan kata laluan sekurang-kurangnya 6 aksara',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Perlu e-mel sah dan kata laluan sekurang-kurangnya 6 aksara',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Nama pengguna 3–20 aksara; huruf kecil, digit, titik, sengkang, garis bawah (bukan di hujung)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Peranti ini tidak boleh buka akaun baharu',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Perlu e-mel sah, nama pengguna dan kata laluan sekurang-kurangnya 6 aksara',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Perlu e-mel sah dan kata laluan sekurang-kurangnya 6 aksara',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Nama pengguna 3–20 aksara; huruf kecil, digit, titik, sengkang, garis bawah (bukan di hujung)',
   'Bu hesap zaten bağlı': 'Akaun ini sudah dipautkan',
   'Hesap oluşturulamadı': 'Akaun tidak dapat dicipta',
   'Misafir hesabı oluşturulamadı': 'Akaun tetamu tidak dapat dicipta',
   'Hesap bulunamadı': 'Akaun tidak dijumpai',
   'Bu hesapta e-posta yok': 'Akaun ini tiada e-mel',
-  'İki adımlı doğrulama zaten bu durumda': 'Pengesahan dua langkah sudah dalam keadaan ini',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Pengesahan dua langkah sudah dalam keadaan ini',
   'Kod yanlış': 'Kod salah',
   'Kodun süresi doldu': 'Kod tamat tempoh',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Pengguna ini tiada e-mel (akaun tetamu)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Pengguna ini tiada e-mel (akaun tetamu)',
   'Bio en fazla 300 karakter olabilir': 'Bio paling banyak 300 aksara',
   'Geçersiz ülke': 'Negara tidak sah',
   'Geçersiz sosyal bağlantı': 'Pautan sosial tidak sah',
   'Geçersiz doğum tarihi': 'Tarikh lahir tidak sah',
   'Liste adı gerekli': 'Nama senarai diperlukan',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Nama paling banyak 60, perihalan 300 aksara',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Nama paling banyak 60, perihalan 300 aksara',
   'Liste bulunamadı': 'Senarai tidak dijumpai',
   'Değiştirilecek tercih yok': 'Tiada apa untuk dikemas kini',
-  'İnceleme en fazla 2000 karakter olabilir': 'Ulasan paling banyak 2000 aksara',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Tandai tajuk sebagai selesai dahulu',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Ulasan paling banyak 2000 aksara',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Tandai tajuk sebagai selesai dahulu',
   'Önce kişiyi favorile': 'Kegemaran orang itu dahulu',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Komen episod perlukan musim dan episod bersama',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Komen episod perlukan musim dan episod bersama',
   'Yanıtlanan yorum bulunamadı': 'Komen yang dibalas tidak dijumpai',
   'Geri bildirim 3-2000 karakter olmalı': 'Maklum balas mestilah 3–2000 aksara',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Tajuk dan teks diperlukan (sekurang-kurangnya 2 aksara)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Tajuk dan teks diperlukan (sekurang-kurangnya 2 aksara)',
   'Kendine mesaj gönderemezsin': 'Tidak boleh hantar mesej kepada diri sendiri',
   'Mesaj en fazla 2000 karakter olabilir': 'Mesej paling banyak 2000 aksara',
   'Mesaj 1-2000 karakter olmalı': 'Mesej mestilah 1–2000 aksara',
   'Mesaj bulunamadı': 'Mesej tidak dijumpai',
-  'Mesaj bulunamadı veya düzenlenemez': 'Mesej tidak dijumpai atau tidak boleh disunting',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Hanya mesej dihantar kepada anda boleh dilaporkan',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Mesej tidak dijumpai atau tidak boleh disunting',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Hanya mesej dihantar kepada anda boleh dilaporkan',
   'Sebep gerekli': 'Sebab diperlukan',
   'İtiraz edilecek aktif bir ceza yok': 'Tiada hukuman aktif untuk rayuan',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Anda sudah ada rayuan menunggu semakan',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Anda sudah ada rayuan menunggu semakan',
   'Bu ceza için itirazın zaten incelendi': 'Rayuan hukuman ini sudah disemak',
   'Medya bağlantısının süresi dolmuş': 'Pautan media tamat tempoh',
-  'Bu medya için imzalı bağlantı gerekli': 'Media ini perlukan pautan ditandatangani',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Perkhidmatan panggilan sedang dimulakan semula; cuba sebentar lagi',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Media ini perlukan pautan ditandatangani',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Perkhidmatan panggilan sedang dimulakan semula; cuba sebentar lagi',
+  'Puan göstergesi': 'Petunjuk penilaian',
 };

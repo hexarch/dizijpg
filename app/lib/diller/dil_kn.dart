@@ -1063,44 +1063,58 @@ const Map<String, String> cevirilerKn = {
   'Puan 1-10 arası olmalı': 'ರೇಟಿಂಗ್ 1 ರಿಂದ 10 ರ ನಡುವೆ ಇರಬೇಕು',
   'En fazla 10 medya eklenebilir': 'ಗರಿಷ್ಠ 10 ಮಾಧ್ಯಮ ಸೇರಿಸಬಹುದು',
   'Bu cihazdan yeni hesap açılamıyor': 'ಈ ಸಾಧನದಿಂದ ಹೊಸ ಖಾತೆ ತೆರೆಯಲಾಗದು',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'ಮಾನ್ಯ ಇಮೇಲ್, ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಕನಿಷ್ಠ 6 ಅಕ್ಷರದ ಪಾಸ್‌ವರ್ಡ್ ಬೇಕು',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'ಮಾನ್ಯ ಇಮೇಲ್ ಮತ್ತು ಕನಿಷ್ಠ 6 ಅಕ್ಷರದ ಪಾಸ್‌ವರ್ಡ್ ಬೇಕು',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ಬಳಕೆದಾರಹೆಸರು 3–20; ಸಣ್ಣ ಅಕ್ಷರ, ಅಂಕೆ, ಚುಕ್ಕೆ, ಹೈಫನ್, ಅಂಡರ್‌ಸ್ಕೋರ್ (ತುದಿಯಲ್ಲಿ ಬೇಡ)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'ಮಾನ್ಯ ಇಮೇಲ್, ಬಳಕೆದಾರಹೆಸರು ಮತ್ತು ಕನಿಷ್ಠ 6 ಅಕ್ಷರದ ಪಾಸ್‌ವರ್ಡ್ ಬೇಕು',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'ಮಾನ್ಯ ಇಮೇಲ್ ಮತ್ತು ಕನಿಷ್ಠ 6 ಅಕ್ಷರದ ಪಾಸ್‌ವರ್ಡ್ ಬೇಕು',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ಬಳಕೆದಾರಹೆಸರು 3–20; ಸಣ್ಣ ಅಕ್ಷರ, ಅಂಕೆ, ಚುಕ್ಕೆ, ಹೈಫನ್, ಅಂಡರ್‌ಸ್ಕೋರ್ (ತುದಿಯಲ್ಲಿ ಬೇಡ)',
   'Bu hesap zaten bağlı': 'ಈ ಖಾತೆ ಈಗಾಗಲೇ ಲಿಂಕ್ ಆಗಿದೆ',
   'Hesap oluşturulamadı': 'ಖಾತೆ ರಚಿಸಲಾಗಲಿಲ್ಲ',
   'Misafir hesabı oluşturulamadı': 'ಅತಿಥಿ ಖಾತೆ ರಚಿಸಲಾಗಲಿಲ್ಲ',
   'Hesap bulunamadı': 'ಖಾತೆ ಸಿಗಲಿಲ್ಲ',
   'Bu hesapta e-posta yok': 'ಈ ಖಾತೆಯಲ್ಲಿ ಇಮೇಲ್ ಇಲ್ಲ',
-  'İki adımlı doğrulama zaten bu durumda': 'ಎರಡು-ಹಂತದ ಪರಿಶೀಲನೆ ಈಗಾಗಲೇ ಈ ಸ್ಥಿತಿಯಲ್ಲಿದೆ',
+  'İki adımlı doğrulama zaten bu durumda':
+      'ಎರಡು-ಹಂತದ ಪರಿಶೀಲನೆ ಈಗಾಗಲೇ ಈ ಸ್ಥಿತಿಯಲ್ಲಿದೆ',
   'Kod yanlış': 'ಕೋಡ್ ತಪ್ಪು',
   'Kodun süresi doldu': 'ಕೋಡ್ ಅವಧಿ ಮುಗಿಯಿತು',
-  'Kullanıcının e-postası yok (misafir hesap)': 'ಈ ಬಳಕೆದಾರರಿಗೆ ಇಮೇಲ್ ಇಲ್ಲ (ಅತಿಥಿ ಖಾತೆ)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'ಈ ಬಳಕೆದಾರರಿಗೆ ಇಮೇಲ್ ಇಲ್ಲ (ಅತಿಥಿ ಖಾತೆ)',
   'Bio en fazla 300 karakter olabilir': 'ಬಯೋ ಗರಿಷ್ಠ 300 ಅಕ್ಷರ',
   'Geçersiz ülke': 'ಅಮಾನ್ಯ ದೇಶ',
   'Geçersiz sosyal bağlantı': 'ಅಮಾನ್ಯ ಸಾಮಾಜಿಕ ಲಿಂಕ್',
   'Geçersiz doğum tarihi': 'ಅಮಾನ್ಯ ಜನ್ಮ ದಿನಾಂಕ',
   'Liste adı gerekli': 'ಪಟ್ಟಿ ಹೆಸರು ಅಗತ್ಯ',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'ಹೆಸರು ಗರಿಷ್ಠ 60, ವಿವರ 300 ಅಕ್ಷರ',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'ಹೆಸರು ಗರಿಷ್ಠ 60, ವಿವರ 300 ಅಕ್ಷರ',
   'Liste bulunamadı': 'ಪಟ್ಟಿ ಸಿಗಲಿಲ್ಲ',
   'Değiştirilecek tercih yok': 'ನವೀಕರಿಸಲು ಏನೂ ಇಲ್ಲ',
   'İnceleme en fazla 2000 karakter olabilir': 'ವಿಮರ್ಶೆ ಗರಿಷ್ಠ 2000 ಅಕ್ಷರ',
-  'Önce içeriği "bitirdim" olarak işaretle': 'ಮೊದಲು ಇದನ್ನು ಮುಗಿಸಿದೆ ಎಂದು ಗುರುತಿಸಿ',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'ಮೊದಲು ಇದನ್ನು ಮುಗಿಸಿದೆ ಎಂದು ಗುರುತಿಸಿ',
   'Önce kişiyi favorile': 'ಮೊದಲು ವ್ಯಕ್ತಿಯನ್ನು ಮೆಚ್ಚಿನವರನ್ನಾಗಿ ಮಾಡಿ',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'ಎಪಿಸೋಡ್ ಟಿಪ್ಪಣಿಗೆ ಸೀಸನ್ ಮತ್ತು ಎಪಿಸೋಡ್ ಎರಡೂ ಬೇಕು',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'ಎಪಿಸೋಡ್ ಟಿಪ್ಪಣಿಗೆ ಸೀಸನ್ ಮತ್ತು ಎಪಿಸೋಡ್ ಎರಡೂ ಬೇಕು',
   'Yanıtlanan yorum bulunamadı': 'ಪ್ರತ್ಯುತ್ತರಿಸಿದ ಟಿಪ್ಪಣಿ ಸಿಗಲಿಲ್ಲ',
   'Geri bildirim 3-2000 karakter olmalı': 'ಪ್ರತಿಕ್ರಿಯೆ 3–2000 ಅಕ್ಷರ ಇರಬೇಕು',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಪಠ್ಯ ಅಗತ್ಯ (ಕನಿಷ್ಠ 2 ಅಕ್ಷರ)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'ಶೀರ್ಷಿಕೆ ಮತ್ತು ಪಠ್ಯ ಅಗತ್ಯ (ಕನಿಷ್ಠ 2 ಅಕ್ಷರ)',
   'Kendine mesaj gönderemezsin': 'ನಿಮಗೆ ನೀವೇ ಸಂದೇಶ ಕಳುಹಿಸಲಾಗದು',
   'Mesaj en fazla 2000 karakter olabilir': 'ಸಂದೇಶ ಗರಿಷ್ಠ 2000 ಅಕ್ಷರ',
   'Mesaj 1-2000 karakter olmalı': 'ಸಂದೇಶ 1–2000 ಅಕ್ಷರ ಇರಬೇಕು',
   'Mesaj bulunamadı': 'ಸಂದೇಶ ಸಿಗಲಿಲ್ಲ',
   'Mesaj bulunamadı veya düzenlenemez': 'ಸಂದೇಶ ಸಿಗಲಿಲ್ಲ ಅಥವಾ ಸಂಪಾದಿಸಲಾಗದು',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'ನಿನಗೆ ಬಂದ ಸಂದೇಶವನ್ನು ಮಾತ್ರ ವರದಿ ಮಾಡಬಹುದು',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'ನಿನಗೆ ಬಂದ ಸಂದೇಶವನ್ನು ಮಾತ್ರ ವರದಿ ಮಾಡಬಹುದು',
   'Sebep gerekli': 'ಕಾರಣ ಅಗತ್ಯ',
   'İtiraz edilecek aktif bir ceza yok': 'ಅಪೀಲ್ ಮಾಡಲು ಸಕ್ರಿಯ ಶಿಕ್ಷೆ ಇಲ್ಲ',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'ಈಗಾಗಲೇ ಪರಿಶೀಲನೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಅಪೀಲ್ ಇದೆ',
-  'Bu ceza için itirazın zaten incelendi': 'ಈ ಶಿಕ್ಷೆಯ ಅಪೀಲ್ ಈಗಾಗಲೇ ಪರಿಶೀಲಿಸಲಾಗಿದೆ',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'ಈಗಾಗಲೇ ಪರಿಶೀಲನೆಗಾಗಿ ಕಾಯುತ್ತಿರುವ ಅಪೀಲ್ ಇದೆ',
+  'Bu ceza için itirazın zaten incelendi':
+      'ಈ ಶಿಕ್ಷೆಯ ಅಪೀಲ್ ಈಗಾಗಲೇ ಪರಿಶೀಲಿಸಲಾಗಿದೆ',
   'Medya bağlantısının süresi dolmuş': 'ಮಾಧ್ಯಮ ಲಿಂಕ್ ಅವಧಿ ಮುಗಿಯಿತು',
   'Bu medya için imzalı bağlantı gerekli': 'ಈ ಮಾಧ್ಯಮಕ್ಕೆ ಸಹಿ ಮಾಡಿದ ಲಿಂಕ್ ಅಗತ್ಯ',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'ಕಾಲಿಂಗ್ ಸೇವೆ ಮರುಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ; ಸ್ವಲ್ಪ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'ಕಾಲಿಂಗ್ ಸೇವೆ ಮರುಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ; ಸ್ವಲ್ಪ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
+  'Puan göstergesi': 'ರೇಟಿಂಗ್ ಲೆಜೆಂಡ್',
 };

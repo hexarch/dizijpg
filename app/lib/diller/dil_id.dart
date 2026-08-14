@@ -1065,45 +1065,62 @@ const Map<String, String> cevirilerId = {
       'Server sedang restart, coba lagi sebentar',
   'Puan 1-10 arası olmalı': 'Nilai harus antara 1 dan 10',
   'En fazla 10 medya eklenebilir': 'Paling banyak 10 media',
-  'Bu cihazdan yeni hesap açılamıyor': 'Perangkat ini tidak bisa buat akun baru',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Perlu email valid, nama pengguna, dan kata sandi minimal 6 karakter',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Perlu email valid dan kata sandi minimal 6 karakter',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Nama pengguna 3–20 karakter; huruf kecil, angka, titik, strip, garis bawah (bukan di ujung)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Perangkat ini tidak bisa buat akun baru',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Perlu email valid, nama pengguna, dan kata sandi minimal 6 karakter',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Perlu email valid dan kata sandi minimal 6 karakter',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Nama pengguna 3–20 karakter; huruf kecil, angka, titik, strip, garis bawah (bukan di ujung)',
   'Bu hesap zaten bağlı': 'Akun ini sudah terhubung',
   'Hesap oluşturulamadı': 'Akun tidak bisa dibuat',
   'Misafir hesabı oluşturulamadı': 'Akun tamu tidak bisa dibuat',
   'Hesap bulunamadı': 'Akun tidak ditemukan',
   'Bu hesapta e-posta yok': 'Akun ini tidak punya email',
-  'İki adımlı doğrulama zaten bu durumda': 'Verifikasi dua langkah sudah dalam keadaan ini',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Verifikasi dua langkah sudah dalam keadaan ini',
   'Kod yanlış': 'Kode salah',
   'Kodun süresi doldu': 'Kode kedaluwarsa',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Pengguna ini tidak punya email (akun tamu)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Pengguna ini tidak punya email (akun tamu)',
   'Bio en fazla 300 karakter olabilir': 'Bio paling banyak 300 karakter',
   'Geçersiz ülke': 'Negara tidak valid',
   'Geçersiz sosyal bağlantı': 'Tautan sosial tidak valid',
   'Geçersiz doğum tarihi': 'Tanggal lahir tidak valid',
   'Liste adı gerekli': 'Nama daftar wajib',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Nama paling banyak 60, deskripsi 300 karakter',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Nama paling banyak 60, deskripsi 300 karakter',
   'Liste bulunamadı': 'Daftar tidak ditemukan',
   'Değiştirilecek tercih yok': 'Tidak ada yang diubah',
-  'İnceleme en fazla 2000 karakter olabilir': 'Ulasan paling banyak 2000 karakter',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Ulasan paling banyak 2000 karakter',
   'Önce içeriği "bitirdim" olarak işaretle': 'Tandai judulnya selesai dulu',
   'Önce kişiyi favorile': 'Favoritkan orangnya dulu',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Komentar episode butuh musim dan episode sekaligus',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Komentar episode butuh musim dan episode sekaligus',
   'Yanıtlanan yorum bulunamadı': 'Komentar yang dibalas tidak ditemukan',
   'Geri bildirim 3-2000 karakter olmalı': 'Masukan harus 3–2000 karakter',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Judul dan teks wajib (minimal 2 karakter)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Judul dan teks wajib (minimal 2 karakter)',
   'Kendine mesaj gönderemezsin': 'Tidak bisa kirim pesan ke diri sendiri',
   'Mesaj en fazla 2000 karakter olabilir': 'Pesan paling banyak 2000 karakter',
   'Mesaj 1-2000 karakter olmalı': 'Pesan harus 1–2000 karakter',
   'Mesaj bulunamadı': 'Pesan tidak ditemukan',
-  'Mesaj bulunamadı veya düzenlenemez': 'Pesan tidak ditemukan atau tidak bisa diedit',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Hanya pesan yang dikirim ke kamu yang bisa dilaporkan',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Pesan tidak ditemukan atau tidak bisa diedit',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Hanya pesan yang dikirim ke kamu yang bisa dilaporkan',
   'Sebep gerekli': 'Alasan wajib',
-  'İtiraz edilecek aktif bir ceza yok': 'Tidak ada hukuman aktif untuk diajukan banding',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Kamu sudah punya banding yang menunggu tinjauan',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Tidak ada hukuman aktif untuk diajukan banding',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Kamu sudah punya banding yang menunggu tinjauan',
   'Bu ceza için itirazın zaten incelendi': 'Banding hukuman ini sudah ditinjau',
   'Medya bağlantısının süresi dolmuş': 'Tautan media kedaluwarsa',
-  'Bu medya için imzalı bağlantı gerekli': 'Media ini butuh tautan bertanda tangan',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Layanan panggilan sedang dimulai ulang; coba sebentar lagi',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Media ini butuh tautan bertanda tangan',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Layanan panggilan sedang dimulai ulang; coba sebentar lagi',
+  'Puan göstergesi': 'Keterangan rating',
 };

@@ -1081,45 +1081,66 @@ const Map<String, String> cevirilerFr = {
       'Le serveur redémarre, réessaie dans un instant',
   'Puan 1-10 arası olmalı': 'La note doit être entre 1 et 10',
   'En fazla 10 medya eklenebilir': 'Tu peux ajouter 10 médias au plus',
-  'Bu cihazdan yeni hesap açılamıyor': 'Impossible de créer un compte depuis cet appareil',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Il faut un e-mail valide, un identifiant et un mot de passe d\'au moins 6 caractères',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Il faut un e-mail valide et un mot de passe d\'au moins 6 caractères',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'L\'identifiant doit faire 3–20 caractères ; minuscules, chiffres, points, tirets et underscores (pas au début ni à la fin)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Impossible de créer un compte depuis cet appareil',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Il faut un e-mail valide, un identifiant et un mot de passe d\'au moins 6 caractères',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Il faut un e-mail valide et un mot de passe d\'au moins 6 caractères',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'L\'identifiant doit faire 3–20 caractères ; minuscules, chiffres, points, tirets et underscores (pas au début ni à la fin)',
   'Bu hesap zaten bağlı': 'Ce compte est déjà lié',
   'Hesap oluşturulamadı': 'Impossible de créer le compte',
   'Misafir hesabı oluşturulamadı': 'Impossible de créer un compte invité',
   'Hesap bulunamadı': 'Compte introuvable',
   'Bu hesapta e-posta yok': 'Ce compte n\'a pas d\'e-mail',
-  'İki adımlı doğrulama zaten bu durumda': 'La validation en deux étapes est déjà dans cet état',
+  'İki adımlı doğrulama zaten bu durumda':
+      'La validation en deux étapes est déjà dans cet état',
   'Kod yanlış': 'Code incorrect',
   'Kodun süresi doldu': 'Le code a expiré',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Cet utilisateur n\'a pas d\'e-mail (compte invité)',
-  'Bio en fazla 300 karakter olabilir': 'La bio peut faire 300 caractères au plus',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Cet utilisateur n\'a pas d\'e-mail (compte invité)',
+  'Bio en fazla 300 karakter olabilir':
+      'La bio peut faire 300 caractères au plus',
   'Geçersiz ülke': 'Pays invalide',
   'Geçersiz sosyal bağlantı': 'Lien social invalide',
   'Geçersiz doğum tarihi': 'Date de naissance invalide',
   'Liste adı gerekli': 'Le nom de la liste est requis',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Le nom peut faire 60 caractères, la description 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Le nom peut faire 60 caractères, la description 300',
   'Liste bulunamadı': 'Liste introuvable',
   'Değiştirilecek tercih yok': 'Rien à mettre à jour',
-  'İnceleme en fazla 2000 karakter olabilir': 'L\'avis peut faire 2000 caractères au plus',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Marque d\'abord le titre comme terminé',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'L\'avis peut faire 2000 caractères au plus',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Marque d\'abord le titre comme terminé',
   'Önce kişiyi favorile': 'Ajoute d\'abord la personne en favori',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Pour un commentaire d\'épisode, saison et épisode sont tous deux requis',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Pour un commentaire d\'épisode, saison et épisode sont tous deux requis',
   'Yanıtlanan yorum bulunamadı': 'Commentaire auquel tu réponds introuvable',
-  'Geri bildirim 3-2000 karakter olmalı': 'Le retour doit faire 3–2000 caractères',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Le titre et le texte sont requis (au moins 2 caractères)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Le retour doit faire 3–2000 caractères',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Le titre et le texte sont requis (au moins 2 caractères)',
   'Kendine mesaj gönderemezsin': 'Tu ne peux pas t\'envoyer un message',
-  'Mesaj en fazla 2000 karakter olabilir': 'Le message peut faire 2000 caractères au plus',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Le message peut faire 2000 caractères au plus',
   'Mesaj 1-2000 karakter olmalı': 'Le message doit faire 1–2000 caractères',
   'Mesaj bulunamadı': 'Message introuvable',
   'Mesaj bulunamadı veya düzenlenemez': 'Message introuvable ou non modifiable',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Tu ne peux signaler qu\'un message qui t\'a été envoyé',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Tu ne peux signaler qu\'un message qui t\'a été envoyé',
   'Sebep gerekli': 'Le motif est requis',
-  'İtiraz edilecek aktif bir ceza yok': 'Il n\'y a pas de sanction active à contester',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Tu as déjà un recours en attente d\'examen',
-  'Bu ceza için itirazın zaten incelendi': 'Ton recours pour cette sanction a déjà été examiné',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Il n\'y a pas de sanction active à contester',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Tu as déjà un recours en attente d\'examen',
+  'Bu ceza için itirazın zaten incelendi':
+      'Ton recours pour cette sanction a déjà été examiné',
   'Medya bağlantısının süresi dolmuş': 'Le lien média a expiré',
-  'Bu medya için imzalı bağlantı gerekli': 'Un lien signé est requis pour ce média',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Le service d\'appels redémarre ; réessaie un peu plus tard',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Un lien signé est requis pour ce média',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Le service d\'appels redémarre ; réessaie un peu plus tard',
+  'Puan göstergesi': 'Légende des notes',
 };

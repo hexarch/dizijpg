@@ -1056,45 +1056,62 @@ const Map<String, String> cevirilerBn = {
       'সার্ভার রিস্টার্ট হচ্ছে, একটু পরে চেষ্টা করো',
   'Puan 1-10 arası olmalı': 'স্কোর 1 থেকে 10 এর মধ্যে হতে হবে',
   'En fazla 10 medya eklenebilir': 'সর্বোচ্চ 10টি মিডিয়া যোগ করা যায়',
-  'Bu cihazdan yeni hesap açılamıyor': 'এই ডিভাইস থেকে নতুন অ্যাকাউন্ট খোলা যায় না',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'সঠিক ইমেইল, ব্যবহারকারীর নাম ও অন্তত ৬ অক্ষরের পাসওয়ার্ড লাগে',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'সঠিক ইমেইল ও অন্তত ৬ অক্ষরের পাসওয়ার্ড লাগে',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ব্যবহারকারীর নাম ৩–২০ অক্ষর; ছোট হাতের অক্ষর, সংখ্যা, বিন্দু, হাইফেন, আন্ডারস্কোর (শুরু/শেষে নয়)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'এই ডিভাইস থেকে নতুন অ্যাকাউন্ট খোলা যায় না',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'সঠিক ইমেইল, ব্যবহারকারীর নাম ও অন্তত ৬ অক্ষরের পাসওয়ার্ড লাগে',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'সঠিক ইমেইল ও অন্তত ৬ অক্ষরের পাসওয়ার্ড লাগে',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ব্যবহারকারীর নাম ৩–২০ অক্ষর; ছোট হাতের অক্ষর, সংখ্যা, বিন্দু, হাইফেন, আন্ডারস্কোর (শুরু/শেষে নয়)',
   'Bu hesap zaten bağlı': 'এই অ্যাকাউন্ট ইতিমধ্যেই সংযুক্ত',
   'Hesap oluşturulamadı': 'অ্যাকাউন্ট তৈরি করা যায়নি',
   'Misafir hesabı oluşturulamadı': 'গেস্ট অ্যাকাউন্ট তৈরি করা যায়নি',
   'Hesap bulunamadı': 'অ্যাকাউন্ট পাওয়া যায়নি',
   'Bu hesapta e-posta yok': 'এই অ্যাকাউন্টে ইমেইল নেই',
-  'İki adımlı doğrulama zaten bu durumda': 'দুই ধাপের যাচাই ইতিমধ্যেই এই অবস্থায়',
+  'İki adımlı doğrulama zaten bu durumda':
+      'দুই ধাপের যাচাই ইতিমধ্যেই এই অবস্থায়',
   'Kod yanlış': 'কোড ভুল',
   'Kodun süresi doldu': 'কোডের মেয়াদ শেষ',
-  'Kullanıcının e-postası yok (misafir hesap)': 'এই ব্যবহারকারীর ইমেইল নেই (গেস্ট অ্যাকাউন্ট)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'এই ব্যবহারকারীর ইমেইল নেই (গেস্ট অ্যাকাউন্ট)',
   'Bio en fazla 300 karakter olabilir': 'বায়ো সর্বোচ্চ ৩০০ অক্ষর',
   'Geçersiz ülke': 'অবৈধ দেশ',
   'Geçersiz sosyal bağlantı': 'অবৈধ সামাজিক লিঙ্ক',
   'Geçersiz doğum tarihi': 'অবৈধ জন্ম তারিখ',
   'Liste adı gerekli': 'তালিকার নাম লাগে',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'নাম সর্বোচ্চ ৬০, বিবরণ ৩০০ অক্ষর',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'নাম সর্বোচ্চ ৬০, বিবরণ ৩০০ অক্ষর',
   'Liste bulunamadı': 'তালিকা পাওয়া যায়নি',
   'Değiştirilecek tercih yok': 'আপডেট করার কিছু নেই',
   'İnceleme en fazla 2000 karakter olabilir': 'রিভিউ সর্বোচ্চ ২০০০ অক্ষর',
-  'Önce içeriği "bitirdim" olarak işaretle': 'আগে এটিকে শেষ দেখা হিসেবে চিহ্নিত করো',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'আগে এটিকে শেষ দেখা হিসেবে চিহ্নিত করো',
   'Önce kişiyi favorile': 'আগে এই ব্যক্তিকে ফেভারিট করো',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'পর্বের মন্তব্যে সিজন ও পর্ব দুটোই লাগে',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'পর্বের মন্তব্যে সিজন ও পর্ব দুটোই লাগে',
   'Yanıtlanan yorum bulunamadı': 'যে মন্তব্যে উত্তর দিচ্ছ তা পাওয়া যায়নি',
   'Geri bildirim 3-2000 karakter olmalı': 'ফিডব্যাক ৩–২০০০ অক্ষর হতে হবে',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'শিরোনাম ও লেখা লাগে (কমপক্ষে ২ অক্ষর)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'শিরোনাম ও লেখা লাগে (কমপক্ষে ২ অক্ষর)',
   'Kendine mesaj gönderemezsin': 'নিজেকে বার্তা পাঠানো যায় না',
   'Mesaj en fazla 2000 karakter olabilir': 'বার্তা সর্বোচ্চ ২০০০ অক্ষর',
   'Mesaj 1-2000 karakter olmalı': 'বার্তা ১–২০০০ অক্ষর হতে হবে',
   'Mesaj bulunamadı': 'বার্তা পাওয়া যায়নি',
-  'Mesaj bulunamadı veya düzenlenemez': 'বার্তা পাওয়া যায়নি বা সম্পাদন করা যায় না',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'শুধু তোমার কাছে আসা বার্তার অভিযোগ করা যায়',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'বার্তা পাওয়া যায়নি বা সম্পাদন করা যায় না',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'শুধু তোমার কাছে আসা বার্তার অভিযোগ করা যায়',
   'Sebep gerekli': 'কারণ লাগে',
   'İtiraz edilecek aktif bir ceza yok': 'আপিল করার মতো কোনো সক্রিয় শাস্তি নেই',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'তোমার ইতিমধ্যেই পর্যালোচনার অপেক্ষায় একটি আপিল আছে',
-  'Bu ceza için itirazın zaten incelendi': 'এই শাস্তির আপিল ইতিমধ্যেই পর্যালোচিত',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'তোমার ইতিমধ্যেই পর্যালোচনার অপেক্ষায় একটি আপিল আছে',
+  'Bu ceza için itirazın zaten incelendi':
+      'এই শাস্তির আপিল ইতিমধ্যেই পর্যালোচিত',
   'Medya bağlantısının süresi dolmuş': 'মিডিয়া লিঙ্কের মেয়াদ শেষ',
-  'Bu medya için imzalı bağlantı gerekli': 'এই মিডিয়ার জন্য স্বাক্ষরিত লিঙ্ক লাগে',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'কল সেবা রিস্টার্ট হচ্ছে; কিছুক্ষণ পর চেষ্টা করো',
+  'Bu medya için imzalı bağlantı gerekli':
+      'এই মিডিয়ার জন্য স্বাক্ষরিত লিঙ্ক লাগে',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'কল সেবা রিস্টার্ট হচ্ছে; কিছুক্ষণ পর চেষ্টা করো',
+  'Puan göstergesi': 'রেটিং লেজেন্ড',
 };

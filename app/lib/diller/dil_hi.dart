@@ -1059,44 +1059,62 @@ const Map<String, String> cevirilerHi = {
   'Puan 1-10 arası olmalı': 'स्कोर 1 से 10 के बीच हो',
   'En fazla 10 medya eklenebilir': 'ज़्यादा से ज़्यादा 10 मीडिया जोड़ सकते हो',
   'Bu cihazdan yeni hesap açılamıyor': 'इस डिवाइस से नया खाता नहीं खोल सकते',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'मान्य ईमेल, उपयोगकर्ता नाम और कम से कम 6 अक्षर का पासवर्ड चाहिए',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'मान्य ईमेल और कम से कम 6 अक्षर का पासवर्ड चाहिए',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'उपयोगकर्ता नाम 3–20 अक्षर; छोटे अक्षर, अंक, बिंदु, हाइफ़न, अंडरस्कोर (आगे/पीछे बिंदु-हाइफ़न नहीं)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'मान्य ईमेल, उपयोगकर्ता नाम और कम से कम 6 अक्षर का पासवर्ड चाहिए',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'मान्य ईमेल और कम से कम 6 अक्षर का पासवर्ड चाहिए',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'उपयोगकर्ता नाम 3–20 अक्षर; छोटे अक्षर, अंक, बिंदु, हाइफ़न, अंडरस्कोर (आगे/पीछे बिंदु-हाइफ़न नहीं)',
   'Bu hesap zaten bağlı': 'यह खाता पहले से जुड़ा है',
   'Hesap oluşturulamadı': 'खाता नहीं बन सका',
   'Misafir hesabı oluşturulamadı': 'अतिथि खाता नहीं बन सका',
   'Hesap bulunamadı': 'खाता नहीं मिला',
   'Bu hesapta e-posta yok': 'इस खाते में ईमेल नहीं है',
-  'İki adımlı doğrulama zaten bu durumda': 'दो-चरण सत्यापन पहले से इसी स्थिति में है',
+  'İki adımlı doğrulama zaten bu durumda':
+      'दो-चरण सत्यापन पहले से इसी स्थिति में है',
   'Kod yanlış': 'कोड गलत है',
   'Kodun süresi doldu': 'कोड की समय सीमा खत्म',
-  'Kullanıcının e-postası yok (misafir hesap)': 'इस उपयोगकर्ता के पास ईमेल नहीं (अतिथि खाता)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'इस उपयोगकर्ता के पास ईमेल नहीं (अतिथि खाता)',
   'Bio en fazla 300 karakter olabilir': 'बायो ज़्यादा से ज़्यादा 300 अक्षर',
   'Geçersiz ülke': 'अमान्य देश',
   'Geçersiz sosyal bağlantı': 'अमान्य सोशल लिंक',
   'Geçersiz doğum tarihi': 'अमान्य जन्म तिथि',
   'Liste adı gerekli': 'सूची का नाम ज़रूरी है',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'नाम ज़्यादा से ज़्यादा 60, विवरण 300 अक्षर',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'नाम ज़्यादा से ज़्यादा 60, विवरण 300 अक्षर',
   'Liste bulunamadı': 'सूची नहीं मिली',
   'Değiştirilecek tercih yok': 'अपडेट करने को कुछ नहीं',
-  'İnceleme en fazla 2000 karakter olabilir': 'समीक्षा ज़्यादा से ज़्यादा 2000 अक्षर',
-  'Önce içeriği "bitirdim" olarak işaretle': 'पहले इसे पूरा देखा हुआ चिह्नित करो',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'समीक्षा ज़्यादा से ज़्यादा 2000 अक्षर',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'पहले इसे पूरा देखा हुआ चिह्नित करो',
   'Önce kişiyi favorile': 'पहले इस व्यक्ति को पसंदीदा करो',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'एपिसोड टिप्पणी के लिए सीज़न और एपिसोड दोनों चाहिए',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'एपिसोड टिप्पणी के लिए सीज़न और एपिसोड दोनों चाहिए',
   'Yanıtlanan yorum bulunamadı': 'जिस टिप्पणी का जवाब है वह नहीं मिली',
   'Geri bildirim 3-2000 karakter olmalı': 'फ़ीडबैक 3–2000 अक्षर होना चाहिए',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'शीर्षक और पाठ ज़रूरी हैं (कम से कम 2 अक्षर)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'शीर्षक और पाठ ज़रूरी हैं (कम से कम 2 अक्षर)',
   'Kendine mesaj gönderemezsin': 'खुद को संदेश नहीं भेज सकते',
-  'Mesaj en fazla 2000 karakter olabilir': 'संदेश ज़्यादा से ज़्यादा 2000 अक्षर',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'संदेश ज़्यादा से ज़्यादा 2000 अक्षर',
   'Mesaj 1-2000 karakter olmalı': 'संदेश 1–2000 अक्षर होना चाहिए',
   'Mesaj bulunamadı': 'संदेश नहीं मिला',
-  'Mesaj bulunamadı veya düzenlenemez': 'संदेश नहीं मिला या संपादित नहीं हो सकता',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'केवल तुम्हें आए संदेश की शिकायत कर सकते हो',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'संदेश नहीं मिला या संपादित नहीं हो सकता',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'केवल तुम्हें आए संदेश की शिकायत कर सकते हो',
   'Sebep gerekli': 'कारण ज़रूरी है',
   'İtiraz edilecek aktif bir ceza yok': 'अपील करने लायक कोई सक्रिय सज़ा नहीं',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'तुम्हारी एक अपील पहले से समीक्षा की प्रतीक्षा में है',
-  'Bu ceza için itirazın zaten incelendi': 'इस सज़ा की अपील पहले ही देखी जा चुकी है',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'तुम्हारी एक अपील पहले से समीक्षा की प्रतीक्षा में है',
+  'Bu ceza için itirazın zaten incelendi':
+      'इस सज़ा की अपील पहले ही देखी जा चुकी है',
   'Medya bağlantısının süresi dolmuş': 'मीडिया लिंक की समय सीमा खत्म',
-  'Bu medya için imzalı bağlantı gerekli': 'इस मीडिया के लिए हस्ताक्षरित लिंक ज़रूरी है',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'कॉलिंग सेवा रीस्टार्ट हो रही है; थोड़ी देर बाद कोशिश करो',
+  'Bu medya için imzalı bağlantı gerekli':
+      'इस मीडिया के लिए हस्ताक्षरित लिंक ज़रूरी है',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'कॉलिंग सेवा रीस्टार्ट हो रही है; थोड़ी देर बाद कोशिश करो',
+  'Puan göstergesi': 'रेटिंग लेजेंड',
 };

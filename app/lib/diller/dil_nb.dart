@@ -1063,45 +1063,62 @@ const Map<String, String> cevirilerNb = {
       'Serveren starter på nytt, prøv igjen om et øyeblikk',
   'Puan 1-10 arası olmalı': 'Karakteren må være mellom 1 og 10',
   'En fazla 10 medya eklenebilir': 'Du kan legge til høyst 10 medier',
-  'Bu cihazdan yeni hesap açılamıyor': 'Kan ikke opprette konto fra denne enheten',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Gyldig e-post, brukernavn og passord på minst 6 tegn kreves',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Gyldig e-post og passord på minst 6 tegn kreves',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Brukernavn 3–20 tegn; små bokstaver, siffer, punktum, bindestreker og understreker (ikke i endene)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Kan ikke opprette konto fra denne enheten',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Gyldig e-post, brukernavn og passord på minst 6 tegn kreves',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Gyldig e-post og passord på minst 6 tegn kreves',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Brukernavn 3–20 tegn; små bokstaver, siffer, punktum, bindestreker og understreker (ikke i endene)',
   'Bu hesap zaten bağlı': 'Denne kontoen er allerede koblet',
   'Hesap oluşturulamadı': 'Kontoen kunne ikke opprettes',
   'Misafir hesabı oluşturulamadı': 'Gjestekontoen kunne ikke opprettes',
   'Hesap bulunamadı': 'Kontoen ble ikke funnet',
   'Bu hesapta e-posta yok': 'Denne kontoen har ingen e-post',
-  'İki adımlı doğrulama zaten bu durumda': 'Tofaktorbekreftelse er allerede i denne tilstanden',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Tofaktorbekreftelse er allerede i denne tilstanden',
   'Kod yanlış': 'Feil kode',
   'Kodun süresi doldu': 'Koden er utløpt',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Denne brukeren har ingen e-post (gjestekonto)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Denne brukeren har ingen e-post (gjestekonto)',
   'Bio en fazla 300 karakter olabilir': 'Bio kan være høyst 300 tegn',
   'Geçersiz ülke': 'Ugyldig land',
   'Geçersiz sosyal bağlantı': 'Ugyldig sosial lenke',
   'Geçersiz doğum tarihi': 'Ugyldig fødselsdato',
   'Liste adı gerekli': 'Listenavn kreves',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Navn kan være høyst 60 tegn, beskrivelse 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Navn kan være høyst 60 tegn, beskrivelse 300',
   'Liste bulunamadı': 'Listen ble ikke funnet',
   'Değiştirilecek tercih yok': 'Ingenting å oppdatere',
-  'İnceleme en fazla 2000 karakter olabilir': 'Anmeldelse kan være høyst 2000 tegn',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Anmeldelse kan være høyst 2000 tegn',
   'Önce içeriği "bitirdim" olarak işaretle': 'Merk tittelen som ferdig først',
   'Önce kişiyi favorile': 'Merk personen som favoritt først',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Både sesong og episode kreves for en episodekommentar',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Både sesong og episode kreves for en episodekommentar',
   'Yanıtlanan yorum bulunamadı': 'Kommentaren du svarer på ble ikke funnet',
   'Geri bildirim 3-2000 karakter olmalı': 'Tilbakemelding må være 3–2000 tegn',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Tittel og tekst kreves (minst 2 tegn)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Tittel og tekst kreves (minst 2 tegn)',
   'Kendine mesaj gönderemezsin': 'Du kan ikke sende melding til deg selv',
   'Mesaj en fazla 2000 karakter olabilir': 'Melding kan være høyst 2000 tegn',
   'Mesaj 1-2000 karakter olmalı': 'Melding må være 1–2000 tegn',
   'Mesaj bulunamadı': 'Meldingen ble ikke funnet',
-  'Mesaj bulunamadı veya düzenlenemez': 'Meldingen ble ikke funnet eller kan ikke redigeres',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Du kan bare rapportere en melding sendt til deg',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Meldingen ble ikke funnet eller kan ikke redigeres',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Du kan bare rapportere en melding sendt til deg',
   'Sebep gerekli': 'Årsak kreves',
   'İtiraz edilecek aktif bir ceza yok': 'Det er ingen aktiv straff å klage på',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Du har allerede en klage som venter på gjennomgang',
-  'Bu ceza için itirazın zaten incelendi': 'Klagen din for denne straffen er allerede gjennomgått',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Du har allerede en klage som venter på gjennomgang',
+  'Bu ceza için itirazın zaten incelendi':
+      'Klagen din for denne straffen er allerede gjennomgått',
   'Medya bağlantısının süresi dolmuş': 'Medialenken er utløpt',
-  'Bu medya için imzalı bağlantı gerekli': 'En signert lenke kreves for denne mediaen',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Anropstjenesten starter på nytt; prøv igjen om litt',
+  'Bu medya için imzalı bağlantı gerekli':
+      'En signert lenke kreves for denne mediaen',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Anropstjenesten starter på nytt; prøv igjen om litt',
+  'Puan göstergesi': 'Vurderingsforklaring',
 };

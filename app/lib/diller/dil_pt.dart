@@ -1082,45 +1082,66 @@ const Map<String, String> cevirilerPt = {
       'O servidor está reiniciando; tente em instantes',
   'Puan 1-10 arası olmalı': 'A nota deve estar entre 1 e 10',
   'En fazla 10 medya eklenebilir': 'Você pode adicionar no máximo 10 mídias',
-  'Bu cihazdan yeni hesap açılamıyor': 'Não é possível criar conta neste dispositivo',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'É preciso e-mail válido, nome de usuário e senha com pelo menos 6 caracteres',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'É preciso e-mail válido e senha com pelo menos 6 caracteres',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'O nome deve ter 3–20 caracteres; minúsculas, dígitos, pontos, hífens e sublinhados (não no início/fim)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Não é possível criar conta neste dispositivo',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'É preciso e-mail válido, nome de usuário e senha com pelo menos 6 caracteres',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'É preciso e-mail válido e senha com pelo menos 6 caracteres',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'O nome deve ter 3–20 caracteres; minúsculas, dígitos, pontos, hífens e sublinhados (não no início/fim)',
   'Bu hesap zaten bağlı': 'Esta conta já está vinculada',
   'Hesap oluşturulamadı': 'Não foi possível criar a conta',
   'Misafir hesabı oluşturulamadı': 'Não foi possível criar conta de convidado',
   'Hesap bulunamadı': 'Conta não encontrada',
   'Bu hesapta e-posta yok': 'Esta conta não tem e-mail',
-  'İki adımlı doğrulama zaten bu durumda': 'A verificação em duas etapas já está assim',
+  'İki adımlı doğrulama zaten bu durumda':
+      'A verificação em duas etapas já está assim',
   'Kod yanlış': 'Código errado',
   'Kodun süresi doldu': 'O código expirou',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Este usuário não tem e-mail (conta convidada)',
-  'Bio en fazla 300 karakter olabilir': 'A bio pode ter no máximo 300 caracteres',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Este usuário não tem e-mail (conta convidada)',
+  'Bio en fazla 300 karakter olabilir':
+      'A bio pode ter no máximo 300 caracteres',
   'Geçersiz ülke': 'País inválido',
   'Geçersiz sosyal bağlantı': 'Link social inválido',
   'Geçersiz doğum tarihi': 'Data de nascimento inválida',
   'Liste adı gerekli': 'O nome da lista é obrigatório',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'O nome pode ter 60 caracteres, a descrição 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'O nome pode ter 60 caracteres, a descrição 300',
   'Liste bulunamadı': 'Lista não encontrada',
   'Değiştirilecek tercih yok': 'Nada para atualizar',
-  'İnceleme en fazla 2000 karakter olabilir': 'A resenha pode ter no máximo 2000 caracteres',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Marque o título como concluído primeiro',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'A resenha pode ter no máximo 2000 caracteres',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Marque o título como concluído primeiro',
   'Önce kişiyi favorile': 'Favorite a pessoa primeiro',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Comentário de episódio exige temporada e episódio juntos',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Comentário de episódio exige temporada e episódio juntos',
   'Yanıtlanan yorum bulunamadı': 'Comentário respondido não encontrado',
-  'Geri bildirim 3-2000 karakter olmalı': 'O feedback deve ter 3–2000 caracteres',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Título e texto são obrigatórios (pelo menos 2 caracteres)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'O feedback deve ter 3–2000 caracteres',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Título e texto são obrigatórios (pelo menos 2 caracteres)',
   'Kendine mesaj gönderemezsin': 'Você não pode enviar mensagem para si',
-  'Mesaj en fazla 2000 karakter olabilir': 'A mensagem pode ter no máximo 2000 caracteres',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'A mensagem pode ter no máximo 2000 caracteres',
   'Mesaj 1-2000 karakter olmalı': 'A mensagem deve ter 1–2000 caracteres',
   'Mesaj bulunamadı': 'Mensagem não encontrada',
-  'Mesaj bulunamadı veya düzenlenemez': 'Mensagem não encontrada ou não pode ser editada',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Você só pode denunciar uma mensagem enviada a você',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Mensagem não encontrada ou não pode ser editada',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Você só pode denunciar uma mensagem enviada a você',
   'Sebep gerekli': 'O motivo é obrigatório',
   'İtiraz edilecek aktif bir ceza yok': 'Não há penalidade ativa para recorrer',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Você já tem um recurso aguardando análise',
-  'Bu ceza için itirazın zaten incelendi': 'Seu recurso desta penalidade já foi analisado',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Você já tem um recurso aguardando análise',
+  'Bu ceza için itirazın zaten incelendi':
+      'Seu recurso desta penalidade já foi analisado',
   'Medya bağlantısının süresi dolmuş': 'O link de mídia expirou',
-  'Bu medya için imzalı bağlantı gerekli': 'É preciso um link assinado para esta mídia',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'O serviço de chamadas está reiniciando; tente daqui a pouco',
+  'Bu medya için imzalı bağlantı gerekli':
+      'É preciso um link assinado para esta mídia',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'O serviço de chamadas está reiniciando; tente daqui a pouco',
+  'Puan göstergesi': 'Legenda das notas',
 };

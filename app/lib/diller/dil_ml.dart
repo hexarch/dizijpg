@@ -1063,45 +1063,62 @@ const Map<String, String> cevirilerMl = {
       'സെർവർ റീസ്റ്റാർട്ട് ചെയ്യുന്നു, അല്പസമയം കഴിഞ്ഞ് ശ്രമിക്കൂ',
   'Puan 1-10 arası olmalı': 'റേറ്റിംഗ് 1 മുതൽ 10 വരെ ആയിരിക്കണം',
   'En fazla 10 medya eklenebilir': 'പരമാവധി 10 മീഡിയ ചേർക്കാം',
-  'Bu cihazdan yeni hesap açılamıyor': 'ഈ ഉപകരണത്തിൽ നിന്ന് പുതിയ അക്കൗണ്ട് തുറക്കാനാവില്ല',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'സാധുവായ ഇമെയിൽ, ഉപയോക്തൃനാമം, കുറഞ്ഞത് 6 അക്ഷരമുള്ള പാസ്‌വേഡ് വേണം',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'സാധുവായ ഇമെയിലും കുറഞ്ഞത് 6 അക്ഷരമുള്ള പാസ്‌വേഡും വേണം',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ഉപയോക്തൃനാമം 3–20; ചെറിയക്ഷരം, അക്കം, ഡോട്ട്, ഹൈഫൻ, അണ്ടർസ്കോർ (അറ്റത്ത് വേണ്ട)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'ഈ ഉപകരണത്തിൽ നിന്ന് പുതിയ അക്കൗണ്ട് തുറക്കാനാവില്ല',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'സാധുവായ ഇമെയിൽ, ഉപയോക്തൃനാമം, കുറഞ്ഞത് 6 അക്ഷരമുള്ള പാസ്‌വേഡ് വേണം',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'സാധുവായ ഇമെയിലും കുറഞ്ഞത് 6 അക്ഷരമുള്ള പാസ്‌വേഡും വേണം',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ഉപയോക്തൃനാമം 3–20; ചെറിയക്ഷരം, അക്കം, ഡോട്ട്, ഹൈഫൻ, അണ്ടർസ്കോർ (അറ്റത്ത് വേണ്ട)',
   'Bu hesap zaten bağlı': 'ഈ അക്കൗണ്ട് ഇതിനകം ബന്ധിപ്പിച്ചിരിക്കുന്നു',
   'Hesap oluşturulamadı': 'അക്കൗണ്ട് ഉണ്ടാക്കാനായില്ല',
   'Misafir hesabı oluşturulamadı': 'അതിഥി അക്കൗണ്ട് ഉണ്ടാക്കാനായില്ല',
   'Hesap bulunamadı': 'അക്കൗണ്ട് കണ്ടെത്തിയില്ല',
   'Bu hesapta e-posta yok': 'ഈ അക്കൗണ്ടിന് ഇമെയിൽ ഇല്ല',
-  'İki adımlı doğrulama zaten bu durumda': 'രണ്ട്-ഘട്ട പരിശോധന ഇതിനകം ഈ അവസ്ഥയിലാണ്',
+  'İki adımlı doğrulama zaten bu durumda':
+      'രണ്ട്-ഘട്ട പരിശോധന ഇതിനകം ഈ അവസ്ഥയിലാണ്',
   'Kod yanlış': 'കോഡ് തെറ്റാണ്',
   'Kodun süresi doldu': 'കോഡ് കാലഹരണപ്പെട്ടു',
-  'Kullanıcının e-postası yok (misafir hesap)': 'ഈ ഉപയോക്താവിന് ഇമെയിൽ ഇല്ല (അതിഥി അക്കൗണ്ട്)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'ഈ ഉപയോക്താവിന് ഇമെയിൽ ഇല്ല (അതിഥി അക്കൗണ്ട്)',
   'Bio en fazla 300 karakter olabilir': 'ബയോ പരമാവധി 300 അക്ഷരം',
   'Geçersiz ülke': 'അസാധുവായ രാജ്യം',
   'Geçersiz sosyal bağlantı': 'അസാധുവായ സോഷ്യൽ ലിങ്ക്',
   'Geçersiz doğum tarihi': 'അസാധുവായ ജനനത്തീയതി',
   'Liste adı gerekli': 'ലിസ്റ്റ് പേര് ആവശ്യമാണ്',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'പേര് പരമാവധി 60, വിവരണം 300 അക്ഷരം',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'പേര് പരമാവധി 60, വിവരണം 300 അക്ഷരം',
   'Liste bulunamadı': 'ലിസ്റ്റ് കണ്ടെത്തിയില്ല',
   'Değiştirilecek tercih yok': 'അപ്‌ഡേറ്റ് ചെയ്യാൻ ഒന്നുമില്ല',
   'İnceleme en fazla 2000 karakter olabilir': 'അവലോകനം പരമാവധി 2000 അക്ഷരം',
-  'Önce içeriği "bitirdim" olarak işaretle': 'ആദ്യം ഇത് കണ്ടുതീർത്തതായി അടയാളപ്പെടുത്തൂ',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'ആദ്യം ഇത് കണ്ടുതീർത്തതായി അടയാളപ്പെടുത്തൂ',
   'Önce kişiyi favorile': 'ആദ്യം ഈ വ്യക്തിയെ പ്രിയപ്പെട്ടതാക്കൂ',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'എപ്പിസോഡ് അഭിപ്രായത്തിന് സീസണും എപ്പിസോഡും വേണം',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'എപ്പിസോഡ് അഭിപ്രായത്തിന് സീസണും എപ്പിസോഡും വേണം',
   'Yanıtlanan yorum bulunamadı': 'മറുപടി നൽകിയ അഭിപ്രായം കണ്ടെത്തിയില്ല',
   'Geri bildirim 3-2000 karakter olmalı': 'ഫീഡ്ബാക്ക് 3–2000 അക്ഷരമായിരിക്കണം',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'തലക്കെട്ടും വാചകവും ആവശ്യം (കുറഞ്ഞത് 2 അക്ഷരം)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'തലക്കെട്ടും വാചകവും ആവശ്യം (കുറഞ്ഞത് 2 അക്ഷരം)',
   'Kendine mesaj gönderemezsin': 'നിനക്ക് നീ തന്നെ സന്ദേശം അയയ്ക്കാനാവില്ല',
   'Mesaj en fazla 2000 karakter olabilir': 'സന്ദേശം പരമാവധി 2000 അക്ഷരം',
   'Mesaj 1-2000 karakter olmalı': 'സന്ദേശം 1–2000 അക്ഷരമായിരിക്കണം',
   'Mesaj bulunamadı': 'സന്ദേശം കണ്ടെത്തിയില്ല',
-  'Mesaj bulunamadı veya düzenlenemez': 'സന്ദേശം കണ്ടെത്തിയില്ല അല്ലെങ്കിൽ തിരുത്താനാവില്ല',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'നിനക്ക് വന്ന സന്ദേശം മാത്രമേ റിപ്പോർട്ട് ചെയ്യാവൂ',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'സന്ദേശം കണ്ടെത്തിയില്ല അല്ലെങ്കിൽ തിരുത്താനാവില്ല',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'നിനക്ക് വന്ന സന്ദേശം മാത്രമേ റിപ്പോർട്ട് ചെയ്യാവൂ',
   'Sebep gerekli': 'കാരണം ആവശ്യമാണ്',
   'İtiraz edilecek aktif bir ceza yok': 'അപ്പീൽ ചെയ്യാൻ സജീവ ശിക്ഷയില്ല',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'ഇതിനകം അവലോകനത്തിനായി കാത്തിരിക്കുന്ന അപ്പീൽ ഉണ്ട്',
-  'Bu ceza için itirazın zaten incelendi': 'ഈ ശിക്ഷയുടെ അപ്പീൽ ഇതിനകം അവലോകനം ചെയ്തു',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'ഇതിനകം അവലോകനത്തിനായി കാത്തിരിക്കുന്ന അപ്പീൽ ഉണ്ട്',
+  'Bu ceza için itirazın zaten incelendi':
+      'ഈ ശിക്ഷയുടെ അപ്പീൽ ഇതിനകം അവലോകനം ചെയ്തു',
   'Medya bağlantısının süresi dolmuş': 'മീഡിയ ലിങ്ക് കാലഹരണപ്പെട്ടു',
-  'Bu medya için imzalı bağlantı gerekli': 'ഈ മീഡിയയ്ക്ക് ഒപ്പിട്ട ലിങ്ക് ആവശ്യമാണ്',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'കോളിംഗ് സേവനം വീണ്ടും ആരംഭിക്കുന്നു; അൽപ്പം കഴിഞ്ഞ് ശ്രമിക്കൂ',
+  'Bu medya için imzalı bağlantı gerekli':
+      'ഈ മീഡിയയ്ക്ക് ഒപ്പിട്ട ലിങ്ക് ആവശ്യമാണ്',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'കോളിംഗ് സേവനം വീണ്ടും ആരംഭിക്കുന്നു; അൽപ്പം കഴിഞ്ഞ് ശ്രമിക്കൂ',
+  'Puan göstergesi': 'റേറ്റിംഗ് ലെജൻഡ്',
 };

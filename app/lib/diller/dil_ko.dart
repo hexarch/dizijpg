@@ -1022,9 +1022,12 @@ const Map<String, String> cevirilerKo = {
   'Puan 1-10 arası olmalı': '평점은 1에서 10 사이여야 합니다',
   'En fazla 10 medya eklenebilir': '미디어는 최대 10개까지입니다',
   'Bu cihazdan yeni hesap açılamıyor': '이 기기에서는 새 계정을 만들 수 없습니다',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': '유효한 이메일, 사용자 이름, 6자 이상 비밀번호가 필요합니다',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': '유효한 이메일과 6자 이상 비밀번호가 필요합니다',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': '사용자 이름은 3–20자; 소문자, 숫자, 점, 하이픈, 밑줄 (앞뒤 점/하이픈 불가)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      '유효한 이메일, 사용자 이름, 6자 이상 비밀번호가 필요합니다',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      '유효한 이메일과 6자 이상 비밀번호가 필요합니다',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      '사용자 이름은 3–20자; 소문자, 숫자, 점, 하이픈, 밑줄 (앞뒤 점/하이픈 불가)',
   'Bu hesap zaten bağlı': '이 계정은 이미 연결되어 있습니다',
   'Hesap oluşturulamadı': '계정을 만들 수 없습니다',
   'Misafir hesabı oluşturulamadı': '게스트 계정을 만들 수 없습니다',
@@ -1045,7 +1048,8 @@ const Map<String, String> cevirilerKo = {
   'İnceleme en fazla 2000 karakter olabilir': '리뷰는 최대 2000자입니다',
   'Önce içeriği "bitirdim" olarak işaretle': '먼저 이 작품을 시청 완료로 표시하세요',
   'Önce kişiyi favorile': '먼저 이 인물을 즐겨찾기에 추가하세요',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': '에피소드 댓글에는 시즌과 회차가 모두 필요합니다',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      '에피소드 댓글에는 시즌과 회차가 모두 필요합니다',
   'Yanıtlanan yorum bulunamadı': '답글 대상 댓글을 찾을 수 없습니다',
   'Geri bildirim 3-2000 karakter olmalı': '피드백은 3–2000자여야 합니다',
   'Başlık ve metin gerekli (en az 2 karakter)': '제목과 본문이 필요합니다(2자 이상)',
@@ -1061,5 +1065,7 @@ const Map<String, String> cevirilerKo = {
   'Bu ceza için itirazın zaten incelendi': '이 제재에 대한 이의는 이미 검토되었습니다',
   'Medya bağlantısının süresi dolmuş': '미디어 링크가 만료되었습니다',
   'Bu medya için imzalı bağlantı gerekli': '이 미디어에는 서명된 링크가 필요합니다',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': '통화 서비스를 다시 시작하는 중입니다. 잠시 후 다시 시도하세요',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      '통화 서비스를 다시 시작하는 중입니다. 잠시 후 다시 시도하세요',
+  'Puan göstergesi': '평점 범례',
 };

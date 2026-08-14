@@ -1047,9 +1047,12 @@ const Map<String, String> cevirilerAr = {
   'Puan 1-10 arası olmalı': 'يجب أن يكون التقييم بين 1 و10',
   'En fazla 10 medya eklenebilir': 'يمكن إضافة 10 ملفات كحد أقصى',
   'Bu cihazdan yeni hesap açılamıyor': 'لا يمكن إنشاء حساب من هذا الجهاز',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'يلزم بريد صالح واسم مستخدم وكلمة مرور من 6 أحرف على الأقل',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'يلزم بريد صالح وكلمة مرور من 6 أحرف على الأقل',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'اسم المستخدم 3–20 حرفًا؛ أحرف صغيرة وأرقام ونقاط وشرطات وشرطات سفلية (بدون نقطة/شرطة في الطرفين)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'يلزم بريد صالح واسم مستخدم وكلمة مرور من 6 أحرف على الأقل',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'يلزم بريد صالح وكلمة مرور من 6 أحرف على الأقل',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'اسم المستخدم 3–20 حرفًا؛ أحرف صغيرة وأرقام ونقاط وشرطات وشرطات سفلية (بدون نقطة/شرطة في الطرفين)',
   'Bu hesap zaten bağlı': 'هذا الحساب مرتبط بالفعل',
   'Hesap oluşturulamadı': 'تعذر إنشاء الحساب',
   'Misafir hesabı oluşturulamadı': 'تعذر إنشاء حساب زائر',
@@ -1058,33 +1061,40 @@ const Map<String, String> cevirilerAr = {
   'İki adımlı doğrulama zaten bu durumda': 'التحقق بخطوتين في هذه الحالة أصلًا',
   'Kod yanlış': 'الرمز خاطئ',
   'Kodun süresi doldu': 'انتهت صلاحية الرمز',
-  'Kullanıcının e-postası yok (misafir hesap)': 'لا بريد لهذا المستخدم (حساب زائر)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'لا بريد لهذا المستخدم (حساب زائر)',
   'Bio en fazla 300 karakter olabilir': 'السيرة 300 حرف كحد أقصى',
   'Geçersiz ülke': 'بلد غير صالح',
   'Geçersiz sosyal bağlantı': 'رابط اجتماعي غير صالح',
   'Geçersiz doğum tarihi': 'تاريخ ميلاد غير صالح',
   'Liste adı gerekli': 'اسم القائمة مطلوب',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'الاسم 60 حرفًا والوصف 300 كحد أقصى',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'الاسم 60 حرفًا والوصف 300 كحد أقصى',
   'Liste bulunamadı': 'القائمة غير موجودة',
   'Değiştirilecek tercih yok': 'لا يوجد شيء لتحديثه',
   'İnceleme en fazla 2000 karakter olabilir': 'المراجعة 2000 حرف كحد أقصى',
   'Önce içeriği "bitirdim" olarak işaretle': 'علّم العمل بأنه مكتمل أولًا',
   'Önce kişiyi favorile': 'أضف الشخص إلى المفضلة أولًا',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'لتعليق حلقة يلزم الموسم والحلقة معًا',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'لتعليق حلقة يلزم الموسم والحلقة معًا',
   'Yanıtlanan yorum bulunamadı': 'التعليق المُجاب عليه غير موجود',
   'Geri bildirim 3-2000 karakter olmalı': 'الملاحظة يجب أن تكون 3–2000 حرف',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'العنوان والنص مطلوبان (حرفان على الأقل)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'العنوان والنص مطلوبان (حرفان على الأقل)',
   'Kendine mesaj gönderemezsin': 'لا يمكنك مراسلة نفسك',
   'Mesaj en fazla 2000 karakter olabilir': 'الرسالة 2000 حرف كحد أقصى',
   'Mesaj 1-2000 karakter olmalı': 'الرسالة يجب أن تكون 1–2000 حرف',
   'Mesaj bulunamadı': 'الرسالة غير موجودة',
   'Mesaj bulunamadı veya düzenlenemez': 'الرسالة غير موجودة أو لا يمكن تعديلها',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'يمكنك الإبلاغ فقط عن رسالة وصلت إليك',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'يمكنك الإبلاغ فقط عن رسالة وصلت إليك',
   'Sebep gerekli': 'السبب مطلوب',
   'İtiraz edilecek aktif bir ceza yok': 'لا توجد عقوبة سارية للطعن',
   'Zaten incelenmeyi bekleyen bir itirazın var': 'لديك بالفعل طعن قيد المراجعة',
   'Bu ceza için itirazın zaten incelendi': 'طعنك على هذه العقوبة رُوجع بالفعل',
   'Medya bağlantısının süresi dolmuş': 'انتهت صلاحية رابط الوسائط',
   'Bu medya için imzalı bağlantı gerekli': 'يلزم رابط موقّع لهذه الوسائط',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'خدمة المكالمات قيد إعادة التشغيل؛ أعد المحاولة بعد قليل',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'خدمة المكالمات قيد إعادة التشغيل؛ أعد المحاولة بعد قليل',
+  'Puan göstergesi': 'مفتاح التقييمات',
 };

@@ -1078,45 +1078,67 @@ const Map<String, String> cevirilerRo = {
       'Serverul se repornește, încearcă imediat',
   'Puan 1-10 arası olmalı': 'Nota trebuie să fie între 1 și 10',
   'En fazla 10 medya eklenebilir': 'Poți adăuga cel mult 10 fișiere',
-  'Bu cihazdan yeni hesap açılamıyor': 'Nu poți crea un cont de pe acest dispozitiv',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Trebuie e-mail valid, nume de utilizator și parolă de cel puțin 6 caractere',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Trebuie e-mail valid și parolă de cel puțin 6 caractere',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Numele: 3–20 caractere; minuscule, cifre, puncte, cratime și underscore (nu la capete)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Nu poți crea un cont de pe acest dispozitiv',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Trebuie e-mail valid, nume de utilizator și parolă de cel puțin 6 caractere',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Trebuie e-mail valid și parolă de cel puțin 6 caractere',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Numele: 3–20 caractere; minuscule, cifre, puncte, cratime și underscore (nu la capete)',
   'Bu hesap zaten bağlı': 'Acest cont este deja conectat',
   'Hesap oluşturulamadı': 'Nu s-a putut crea contul',
   'Misafir hesabı oluşturulamadı': 'Nu s-a putut crea un cont oaspete',
   'Hesap bulunamadı': 'Contul nu a fost găsit',
   'Bu hesapta e-posta yok': 'Acest cont nu are e-mail',
-  'İki adımlı doğrulama zaten bu durumda': 'Verificarea în doi pași e deja în această stare',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Verificarea în doi pași e deja în această stare',
   'Kod yanlış': 'Cod greșit',
   'Kodun süresi doldu': 'Codul a expirat',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Acest utilizator nu are e-mail (cont oaspete)',
-  'Bio en fazla 300 karakter olabilir': 'Bio-ul poate avea cel mult 300 de caractere',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Acest utilizator nu are e-mail (cont oaspete)',
+  'Bio en fazla 300 karakter olabilir':
+      'Bio-ul poate avea cel mult 300 de caractere',
   'Geçersiz ülke': 'Țară nevalidă',
   'Geçersiz sosyal bağlantı': 'Link social nevalid',
   'Geçersiz doğum tarihi': 'Dată de naștere nevalidă',
   'Liste adı gerekli': 'Numele listei este obligatoriu',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Numele poate avea 60 de caractere, descrierea 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Numele poate avea 60 de caractere, descrierea 300',
   'Liste bulunamadı': 'Lista nu a fost găsită',
   'Değiştirilecek tercih yok': 'Nu e nimic de actualizat',
-  'İnceleme en fazla 2000 karakter olabilir': 'Recenzia poate avea cel mult 2000 de caractere',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Marchează mai întâi titlul ca terminat',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Recenzia poate avea cel mult 2000 de caractere',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Marchează mai întâi titlul ca terminat',
   'Önce kişiyi favorile': 'Adaugă mai întâi persoana la favorite',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Pentru un comentariu de episod sunt necesare sezonul și episodul',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Pentru un comentariu de episod sunt necesare sezonul și episodul',
   'Yanıtlanan yorum bulunamadı': 'Comentariul la care răspunzi nu a fost găsit',
-  'Geri bildirim 3-2000 karakter olmalı': 'Feedbackul trebuie să aibă 3–2000 de caractere',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Titlul și textul sunt obligatorii (cel puțin 2 caractere)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Feedbackul trebuie să aibă 3–2000 de caractere',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Titlul și textul sunt obligatorii (cel puțin 2 caractere)',
   'Kendine mesaj gönderemezsin': 'Nu poți să-ți trimiți mesaje ție',
-  'Mesaj en fazla 2000 karakter olabilir': 'Mesajul poate avea cel mult 2000 de caractere',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Mesajul poate avea cel mult 2000 de caractere',
   'Mesaj 1-2000 karakter olmalı': 'Mesajul trebuie să aibă 1–2000 de caractere',
   'Mesaj bulunamadı': 'Mesajul nu a fost găsit',
-  'Mesaj bulunamadı veya düzenlenemez': 'Mesajul nu a fost găsit sau nu poate fi editat',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Poți raporta doar un mesaj trimis ție',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Mesajul nu a fost găsit sau nu poate fi editat',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Poți raporta doar un mesaj trimis ție',
   'Sebep gerekli': 'Motivul este obligatoriu',
-  'İtiraz edilecek aktif bir ceza yok': 'Nu există o pedeapsă activă de contestat',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Ai deja o contestație în așteptarea examinării',
-  'Bu ceza için itirazın zaten incelendi': 'Contestația pentru această pedeapsă a fost deja examinată',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Nu există o pedeapsă activă de contestat',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Ai deja o contestație în așteptarea examinării',
+  'Bu ceza için itirazın zaten incelendi':
+      'Contestația pentru această pedeapsă a fost deja examinată',
   'Medya bağlantısının süresi dolmuş': 'Linkul media a expirat',
-  'Bu medya için imzalı bağlantı gerekli': 'Pentru acest media este necesar un link semnat',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Serviciul de apeluri se repornește; încearcă puțin mai târziu',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Pentru acest media este necesar un link semnat',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Serviciul de apeluri se repornește; încearcă puțin mai târziu',
+  'Puan göstergesi': 'Legenda notelor',
 };

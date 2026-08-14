@@ -1056,44 +1056,59 @@ const Map<String, String> cevirilerGu = {
   'Puan 1-10 arası olmalı': 'સ્કોર 1 થી 10 વચ્ચે હોવો જોઈએ',
   'En fazla 10 medya eklenebilir': 'વધુમાં વધુ 10 મીડિયા ઉમેરી શકાય',
   'Bu cihazdan yeni hesap açılamıyor': 'આ ઉપકરણથી નવું ખાતું ખોલી શકાતું નથી',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'માન્ય ઈમેલ, વપરાશકર્તા નામ અને ઓછામાં ઓછા 6 અક્ષરનો પાસવર્ડ જોઈએ',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'માન્ય ઈમેલ અને ઓછામાં ઓછા 6 અક્ષરનો પાસવર્ડ જોઈએ',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'વપરાશકર્તા નામ 3–20; નાના અક્ષર, અંક, બિંદુ, હાઇફન, અન્ડરસ્કોર (ટોચે નહીં)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'માન્ય ઈમેલ, વપરાશકર્તા નામ અને ઓછામાં ઓછા 6 અક્ષરનો પાસવર્ડ જોઈએ',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'માન્ય ઈમેલ અને ઓછામાં ઓછા 6 અક્ષરનો પાસવર્ડ જોઈએ',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'વપરાશકર્તા નામ 3–20; નાના અક્ષર, અંક, બિંદુ, હાઇફન, અન્ડરસ્કોર (ટોચે નહીં)',
   'Bu hesap zaten bağlı': 'આ ખાતું પહેલેથી જોડાયેલું છે',
   'Hesap oluşturulamadı': 'ખાતું બનાવી શકાયું નહીં',
   'Misafir hesabı oluşturulamadı': 'મહેમાન ખાતું બનાવી શકાયું નહીં',
   'Hesap bulunamadı': 'ખાતું મળ્યું નહીં',
   'Bu hesapta e-posta yok': 'આ ખાતામાં ઈમેલ નથી',
-  'İki adımlı doğrulama zaten bu durumda': 'બે-પગલાં ચકાસણી પહેલેથી આ સ્થિતિમાં છે',
+  'İki adımlı doğrulama zaten bu durumda':
+      'બે-પગલાં ચકાસણી પહેલેથી આ સ્થિતિમાં છે',
   'Kod yanlış': 'કોડ ખોટો છે',
   'Kodun süresi doldu': 'કોડની મુદત પૂરી',
-  'Kullanıcının e-postası yok (misafir hesap)': 'આ વપરાશકર્તા પાસે ઈમેલ નથી (મહેમાન ખાતું)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'આ વપરાશકર્તા પાસે ઈમેલ નથી (મહેમાન ખાતું)',
   'Bio en fazla 300 karakter olabilir': 'બાયો વધુમાં વધુ 300 અક્ષર',
   'Geçersiz ülke': 'અમાન્ય દેશ',
   'Geçersiz sosyal bağlantı': 'અમાન્ય સોશિયલ લિંક',
   'Geçersiz doğum tarihi': 'અમાન્ય જન્મ તારીખ',
   'Liste adı gerekli': 'યાદીનું નામ જરૂરી છે',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'નામ વધુમાં વધુ 60, વર્ણન 300 અક્ષર',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'નામ વધુમાં વધુ 60, વર્ણન 300 અક્ષર',
   'Liste bulunamadı': 'યાદી મળી નહીં',
   'Değiştirilecek tercih yok': 'અપડેટ કરવાનું કંઈ નથી',
   'İnceleme en fazla 2000 karakter olabilir': 'સમીક્ષા વધુમાં વધુ 2000 અક્ષર',
-  'Önce içeriği "bitirdim" olarak işaretle': 'પહેલા આને પૂર્ણ જોયેલ તરીકે ચિહ્નિત કરો',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'પહેલા આને પૂર્ણ જોયેલ તરીકે ચિહ્નિત કરો',
   'Önce kişiyi favorile': 'પહેલા વ્યક્તિને મનપસંદ કરો',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'એપિસોડ ટિપ્પણી માટે સીઝન અને એપિસોડ બંને જોઈએ',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'એપિસોડ ટિપ્પણી માટે સીઝન અને એપિસોડ બંને જોઈએ',
   'Yanıtlanan yorum bulunamadı': 'જવાબ આપેલી ટિપ્પણી મળી નહીં',
   'Geri bildirim 3-2000 karakter olmalı': 'પ્રતિસાદ 3–2000 અક્ષર હોવો જોઈએ',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'શીર્ષક અને લખાણ જરૂરી (ઓછામાં ઓછા 2 અક્ષર)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'શીર્ષક અને લખાણ જરૂરી (ઓછામાં ઓછા 2 અક્ષર)',
   'Kendine mesaj gönderemezsin': 'તમે તમારી જાતને સંદેશ મોકલી શકતા નથી',
   'Mesaj en fazla 2000 karakter olabilir': 'સંદેશ વધુમાં વધુ 2000 અક્ષર',
   'Mesaj 1-2000 karakter olmalı': 'સંદેશ 1–2000 અક્ષર હોવો જોઈએ',
   'Mesaj bulunamadı': 'સંદેશ મળ્યો નહીં',
   'Mesaj bulunamadı veya düzenlenemez': 'સંદેશ મળ્યો નહીં અથવા સંપાદિત થતો નથી',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'ફક્ત તમને આવેલા સંદેશની ફરિયાદ કરી શકાય',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'ફક્ત તમને આવેલા સંદેશની ફરિયાદ કરી શકાય',
   'Sebep gerekli': 'કારણ જરૂરી છે',
   'İtiraz edilecek aktif bir ceza yok': 'અપીલ કરવા કોઈ સક્રિય સજા નથી',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'પહેલેથી સમીક્ષાની રાહ જોતી અપીલ છે',
-  'Bu ceza için itirazın zaten incelendi': 'આ સજાની અપીલ પહેલેથી સમીક્ષા થઈ ગઈ છે',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'પહેલેથી સમીક્ષાની રાહ જોતી અપીલ છે',
+  'Bu ceza için itirazın zaten incelendi':
+      'આ સજાની અપીલ પહેલેથી સમીક્ષા થઈ ગઈ છે',
   'Medya bağlantısının süresi dolmuş': 'મીડિયા લિંકની મુદત પૂરી',
-  'Bu medya için imzalı bağlantı gerekli': 'આ મીડિયા માટે સહી કરેલી લિંક જરૂરી છે',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'કોલિંગ સેવા ફરી શરૂ થઈ રહી છે; થોડી વાર પછી પ્રયાસ કરો',
+  'Bu medya için imzalı bağlantı gerekli':
+      'આ મીડિયા માટે સહી કરેલી લિંક જરૂરી છે',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'કોલિંગ સેવા ફરી શરૂ થઈ રહી છે; થોડી વાર પછી પ્રયાસ કરો',
+  'Puan göstergesi': 'રેટિંગ લેજેન્ડ',
 };

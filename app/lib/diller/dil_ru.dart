@@ -1067,45 +1067,63 @@ const Map<String, String> cevirilerRu = {
       'Сервер перезапускается, попробуй через минуту',
   'Puan 1-10 arası olmalı': 'Оценка должна быть от 1 до 10',
   'En fazla 10 medya eklenebilir': 'Можно добавить не больше 10 файлов',
-  'Bu cihazdan yeni hesap açılamıyor': 'С этого устройства нельзя создать аккаунт',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Нужны действующая почта, имя пользователя и пароль не короче 6 символов',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Нужны действующая почта и пароль не короче 6 символов',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Имя: 3–20 символов; строчные буквы, цифры, точки, дефисы и подчёркивания (не с краёв)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'С этого устройства нельзя создать аккаунт',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Нужны действующая почта, имя пользователя и пароль не короче 6 символов',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Нужны действующая почта и пароль не короче 6 символов',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Имя: 3–20 символов; строчные буквы, цифры, точки, дефисы и подчёркивания (не с краёв)',
   'Bu hesap zaten bağlı': 'Этот аккаунт уже привязан',
   'Hesap oluşturulamadı': 'Не удалось создать аккаунт',
   'Misafir hesabı oluşturulamadı': 'Не удалось создать гостевой аккаунт',
   'Hesap bulunamadı': 'Аккаунт не найден',
   'Bu hesapta e-posta yok': 'У этого аккаунта нет почты',
-  'İki adımlı doğrulama zaten bu durumda': 'Двухшаговая проверка уже в этом состоянии',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Двухшаговая проверка уже в этом состоянии',
   'Kod yanlış': 'Неверный код',
   'Kodun süresi doldu': 'Срок кода истёк',
-  'Kullanıcının e-postası yok (misafir hesap)': 'У пользователя нет почты (гостевой аккаунт)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'У пользователя нет почты (гостевой аккаунт)',
   'Bio en fazla 300 karakter olabilir': 'Био не длиннее 300 символов',
   'Geçersiz ülke': 'Неверная страна',
   'Geçersiz sosyal bağlantı': 'Неверная соцссылка',
   'Geçersiz doğum tarihi': 'Неверная дата рождения',
   'Liste adı gerekli': 'Нужно имя списка',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Имя не длиннее 60, описание — 300 символов',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Имя не длиннее 60, описание — 300 символов',
   'Liste bulunamadı': 'Список не найден',
   'Değiştirilecek tercih yok': 'Нечего обновлять',
   'İnceleme en fazla 2000 karakter olabilir': 'Отзыв не длиннее 2000 символов',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Сначала отметь тайтл как просмотренный',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Сначала отметь тайтл как просмотренный',
   'Önce kişiyi favorile': 'Сначала добавь человека в избранное',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Для комментария к серии нужны и сезон, и серия',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Для комментария к серии нужны и сезон, и серия',
   'Yanıtlanan yorum bulunamadı': 'Комментарий, на который отвечаешь, не найден',
   'Geri bildirim 3-2000 karakter olmalı': 'Отзыв должен быть 3–2000 символов',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Нужны заголовок и текст (не меньше 2 символов)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Нужны заголовок и текст (не меньше 2 символов)',
   'Kendine mesaj gönderemezsin': 'Нельзя написать самому себе',
   'Mesaj en fazla 2000 karakter olabilir': 'Сообщение не длиннее 2000 символов',
   'Mesaj 1-2000 karakter olmalı': 'Сообщение должно быть 1–2000 символов',
   'Mesaj bulunamadı': 'Сообщение не найдено',
-  'Mesaj bulunamadı veya düzenlenemez': 'Сообщение не найдено или его нельзя изменить',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Можно пожаловаться только на сообщение, пришедшее тебе',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Сообщение не найдено или его нельзя изменить',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Можно пожаловаться только на сообщение, пришедшее тебе',
   'Sebep gerekli': 'Нужна причина',
-  'İtiraz edilecek aktif bir ceza yok': 'Нет действующего наказания для обжалования',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'У тебя уже есть жалоба на рассмотрении',
-  'Bu ceza için itirazın zaten incelendi': 'Жалоба по этому наказанию уже рассмотрена',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Нет действующего наказания для обжалования',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'У тебя уже есть жалоба на рассмотрении',
+  'Bu ceza için itirazın zaten incelendi':
+      'Жалоба по этому наказанию уже рассмотрена',
   'Medya bağlantısının süresi dolmuş': 'Срок медиассылки истёк',
-  'Bu medya için imzalı bağlantı gerekli': 'Для этого файла нужна подписанная ссылка',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Служба звонков перезапускается, попробуй чуть позже',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Для этого файла нужна подписанная ссылка',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Служба звонков перезапускается, попробуй чуть позже',
+  'Puan göstergesi': 'Обозначения оценок',
 };

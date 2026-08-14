@@ -1050,44 +1050,57 @@ const Map<String, String> cevirilerTh = {
   'Puan 1-10 arası olmalı': 'คะแนนต้องอยู่ระหว่าง 1 ถึง 10',
   'En fazla 10 medya eklenebilir': 'เพิ่มสื่อได้ไม่เกิน 10 ไฟล์',
   'Bu cihazdan yeni hesap açılamıyor': 'สร้างบัญชีใหม่จากอุปกรณ์นี้ไม่ได้',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'ต้องมีอีเมลที่ใช้ได้ ชื่อผู้ใช้ และรหัสผ่านอย่างน้อย 6 ตัว',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'ต้องมีอีเมลที่ใช้ได้และรหัสผ่านอย่างน้อย 6 ตัว',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ชื่อผู้ใช้ 3–20 ตัว; ตัวพิมพ์เล็ก ตัวเลข จุด ยัติภังค์ ขีดล่าง (ห้ามหัวท้าย)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'ต้องมีอีเมลที่ใช้ได้ ชื่อผู้ใช้ และรหัสผ่านอย่างน้อย 6 ตัว',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'ต้องมีอีเมลที่ใช้ได้และรหัสผ่านอย่างน้อย 6 ตัว',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ชื่อผู้ใช้ 3–20 ตัว; ตัวพิมพ์เล็ก ตัวเลข จุด ยัติภังค์ ขีดล่าง (ห้ามหัวท้าย)',
   'Bu hesap zaten bağlı': 'บัญชีนี้เชื่อมแล้ว',
   'Hesap oluşturulamadı': 'สร้างบัญชีไม่ได้',
   'Misafir hesabı oluşturulamadı': 'สร้างบัญชีผู้เยี่ยมชมไม่ได้',
   'Hesap bulunamadı': 'ไม่พบบัญชี',
   'Bu hesapta e-posta yok': 'บัญชีนี้ไม่มีอีเมล',
-  'İki adımlı doğrulama zaten bu durumda': 'การยืนยันสองขั้นเป็นสถานะนี้อยู่แล้ว',
+  'İki adımlı doğrulama zaten bu durumda':
+      'การยืนยันสองขั้นเป็นสถานะนี้อยู่แล้ว',
   'Kod yanlış': 'รหัสผิด',
   'Kodun süresi doldu': 'รหัสหมดอายุ',
-  'Kullanıcının e-postası yok (misafir hesap)': 'ผู้ใช้นี้ไม่มีอีเมล (บัญชีผู้เยี่ยมชม)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'ผู้ใช้นี้ไม่มีอีเมล (บัญชีผู้เยี่ยมชม)',
   'Bio en fazla 300 karakter olabilir': 'ประวัติได้ไม่เกิน 300 ตัวอักษร',
   'Geçersiz ülke': 'ประเทศไม่ถูกต้อง',
   'Geçersiz sosyal bağlantı': 'ลิงก์โซเชียลไม่ถูกต้อง',
   'Geçersiz doğum tarihi': 'วันเกิดไม่ถูกต้อง',
   'Liste adı gerekli': 'ต้องมีชื่อรายการ',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'ชื่อได้ไม่เกิน 60 คำอธิบาย 300 ตัวอักษร',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'ชื่อได้ไม่เกิน 60 คำอธิบาย 300 ตัวอักษร',
   'Liste bulunamadı': 'ไม่พบรายการ',
   'Değiştirilecek tercih yok': 'ไม่มีอะไรให้อัปเดต',
   'İnceleme en fazla 2000 karakter olabilir': 'รีวิวได้ไม่เกิน 2000 ตัวอักษร',
   'Önce içeriği "bitirdim" olarak işaretle': 'ทำเครื่องหมายว่าดูจบก่อน',
   'Önce kişiyi favorile': 'เพิ่มบุคคลนี้ในรายการโปรดก่อน',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'คอมเมนต์ตอนต้องมีทั้งซีซันและตอน',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'คอมเมนต์ตอนต้องมีทั้งซีซันและตอน',
   'Yanıtlanan yorum bulunamadı': 'ไม่พบคอมเมนต์ที่ตอบกลับ',
   'Geri bildirim 3-2000 karakter olmalı': 'ความคิดเห็นต้องมี 3–2000 ตัวอักษร',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'ต้องมีหัวข้อและข้อความ (อย่างน้อย 2 ตัวอักษร)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'ต้องมีหัวข้อและข้อความ (อย่างน้อย 2 ตัวอักษร)',
   'Kendine mesaj gönderemezsin': 'ส่งข้อความถึงตัวเองไม่ได้',
   'Mesaj en fazla 2000 karakter olabilir': 'ข้อความได้ไม่เกิน 2000 ตัวอักษร',
   'Mesaj 1-2000 karakter olmalı': 'ข้อความต้องมี 1–2000 ตัวอักษร',
   'Mesaj bulunamadı': 'ไม่พบข้อความ',
   'Mesaj bulunamadı veya düzenlenemez': 'ไม่พบข้อความหรือแก้ไขไม่ได้',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'รายงานได้เฉพาะข้อความที่ส่งมาหาคุณ',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'รายงานได้เฉพาะข้อความที่ส่งมาหาคุณ',
   'Sebep gerekli': 'ต้องมีเหตุผล',
   'İtiraz edilecek aktif bir ceza yok': 'ไม่มีโทษที่ใช้อยู่ให้ยื่นอุทธรณ์',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'คุณมีคำอุทธรณ์รอตรวจสอบอยู่แล้ว',
-  'Bu ceza için itirazın zaten incelendi': 'คำอุทธรณ์โทษนี้ได้รับการตรวจสอบแล้ว',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'คุณมีคำอุทธรณ์รอตรวจสอบอยู่แล้ว',
+  'Bu ceza için itirazın zaten incelendi':
+      'คำอุทธรณ์โทษนี้ได้รับการตรวจสอบแล้ว',
   'Medya bağlantısının süresi dolmuş': 'ลิงก์สื่อหมดอายุ',
   'Bu medya için imzalı bağlantı gerekli': 'สื่อนี้ต้องใช้ลิงก์ที่มีลายเซ็น',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'บริการโทรกำลังรีสตาร์ต ลองใหม่สักครู่',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'บริการโทรกำลังรีสตาร์ต ลองใหม่สักครู่',
+  'Puan göstergesi': 'คำอธิบายสัญลักษณ์คะแนน',
 };

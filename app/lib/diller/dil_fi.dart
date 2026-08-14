@@ -1069,44 +1069,64 @@ const Map<String, String> cevirilerFi = {
   'Puan 1-10 arası olmalı': 'Arvosanan on oltava 1–10',
   'En fazla 10 medya eklenebilir': 'Enintään 10 mediaa',
   'Bu cihazdan yeni hesap açılamıyor': 'Tältä laitteelta ei voi luoda tiliä',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Tarvitaan kelvollinen sähköposti, käyttäjätunnus ja vähintään 6 merkin salasana',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Tarvitaan kelvollinen sähköposti ja vähintään 6 merkin salasana',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Käyttäjätunnus 3–20 merkkiä; pienaakkoset, numerot, pisteet, yhdysmerkit ja alaviivat (ei reunoilla)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Tarvitaan kelvollinen sähköposti, käyttäjätunnus ja vähintään 6 merkin salasana',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Tarvitaan kelvollinen sähköposti ja vähintään 6 merkin salasana',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Käyttäjätunnus 3–20 merkkiä; pienaakkoset, numerot, pisteet, yhdysmerkit ja alaviivat (ei reunoilla)',
   'Bu hesap zaten bağlı': 'Tämä tili on jo yhdistetty',
   'Hesap oluşturulamadı': 'Tiliä ei voitu luoda',
   'Misafir hesabı oluşturulamadı': 'Vierastiliä ei voitu luoda',
   'Hesap bulunamadı': 'Tiliä ei löytynyt',
   'Bu hesapta e-posta yok': 'Tällä tilillä ei ole sähköpostia',
-  'İki adımlı doğrulama zaten bu durumda': 'Kaksivaiheinen vahvistus on jo tässä tilassa',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Kaksivaiheinen vahvistus on jo tässä tilassa',
   'Kod yanlış': 'Väärä koodi',
   'Kodun süresi doldu': 'Koodi on vanhentunut',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Käyttäjällä ei ole sähköpostia (vierastili)',
-  'Bio en fazla 300 karakter olabilir': 'Esittely saa olla enintään 300 merkkiä',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Käyttäjällä ei ole sähköpostia (vierastili)',
+  'Bio en fazla 300 karakter olabilir':
+      'Esittely saa olla enintään 300 merkkiä',
   'Geçersiz ülke': 'Virheellinen maa',
   'Geçersiz sosyal bağlantı': 'Virheellinen some-linkki',
   'Geçersiz doğum tarihi': 'Virheellinen syntymäaika',
   'Liste adı gerekli': 'Luettelon nimi on pakollinen',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Nimi saa olla enintään 60, kuvaus 300 merkkiä',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Nimi saa olla enintään 60, kuvaus 300 merkkiä',
   'Liste bulunamadı': 'Luetteloa ei löytynyt',
   'Değiştirilecek tercih yok': 'Ei päivitettävää',
-  'İnceleme en fazla 2000 karakter olabilir': 'Arvostelu saa olla enintään 2000 merkkiä',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Merkitse otsikko ensin katsotuksi',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Arvostelu saa olla enintään 2000 merkkiä',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Merkitse otsikko ensin katsotuksi',
   'Önce kişiyi favorile': 'Lisää henkilö suosikkeihin ensin',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Jakson kommentti vaatii sekä kauden että jakson',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Jakson kommentti vaatii sekä kauden että jakson',
   'Yanıtlanan yorum bulunamadı': 'Vastattavaa kommenttia ei löytynyt',
   'Geri bildirim 3-2000 karakter olmalı': 'Palautteen on oltava 3–2000 merkkiä',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Otsikko ja teksti ovat pakollisia (vähintään 2 merkkiä)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Otsikko ja teksti ovat pakollisia (vähintään 2 merkkiä)',
   'Kendine mesaj gönderemezsin': 'Et voi viestittää itsellesi',
-  'Mesaj en fazla 2000 karakter olabilir': 'Viesti saa olla enintään 2000 merkkiä',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Viesti saa olla enintään 2000 merkkiä',
   'Mesaj 1-2000 karakter olmalı': 'Viestin on oltava 1–2000 merkkiä',
   'Mesaj bulunamadı': 'Viestiä ei löytynyt',
-  'Mesaj bulunamadı veya düzenlenemez': 'Viestiä ei löytynyt tai sitä ei voi muokata',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Voit ilmiantaa vain sinulle lähetetyn viestin',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Viestiä ei löytynyt tai sitä ei voi muokata',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Voit ilmiantaa vain sinulle lähetetyn viestin',
   'Sebep gerekli': 'Syy on pakollinen',
-  'İtiraz edilecek aktif bir ceza yok': 'Ei ole voimassa olevaa rangaistusta valitettavaksi',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Sinulla on jo valitus odottamassa käsittelyä',
-  'Bu ceza için itirazın zaten incelendi': 'Valituksesi tästä rangaistuksesta on jo käsitelty',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Ei ole voimassa olevaa rangaistusta valitettavaksi',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Sinulla on jo valitus odottamassa käsittelyä',
+  'Bu ceza için itirazın zaten incelendi':
+      'Valituksesi tästä rangaistuksesta on jo käsitelty',
   'Medya bağlantısının süresi dolmuş': 'Medialinkki on vanhentunut',
-  'Bu medya için imzalı bağlantı gerekli': 'Tälle medialle tarvitaan allekirjoitettu linkki',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Soittopalvelu käynnistyy uudelleen; yritä hetken kuluttua',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Tälle medialle tarvitaan allekirjoitettu linkki',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Soittopalvelu käynnistyy uudelleen; yritä hetken kuluttua',
+  'Puan göstergesi': 'Arvosanojen selite',
 };

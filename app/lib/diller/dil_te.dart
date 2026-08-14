@@ -1065,44 +1065,58 @@ const Map<String, String> cevirilerTe = {
   'Puan 1-10 arası olmalı': 'రేటింగ్ 1 నుంచి 10 మధ్య ఉండాలి',
   'En fazla 10 medya eklenebilir': 'గరిష్టంగా 10 మీడియా జోడించవచ్చు',
   'Bu cihazdan yeni hesap açılamıyor': 'ఈ పరికరం నుంచి కొత్త ఖాతా తెరవలేరు',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'చెల్లుబాటు అయ్యే ఈమెయిల్, వినియోగదారు పేరు, కనీసం 6 అక్షరాల సంకేతపదం కావాలి',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'చెల్లుబాటు అయ్యే ఈమెయిల్ మరియు కనీసం 6 అక్షరాల సంకేతపదం కావాలి',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'వినియోగదారు పేరు 3–20; చిన్న అక్షరాలు, అంకెలు, చుక్క, హైఫన్, అండర్‌స్కోర్ (చివర్లలో కాదు)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'చెల్లుబాటు అయ్యే ఈమెయిల్, వినియోగదారు పేరు, కనీసం 6 అక్షరాల సంకేతపదం కావాలి',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'చెల్లుబాటు అయ్యే ఈమెయిల్ మరియు కనీసం 6 అక్షరాల సంకేతపదం కావాలి',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'వినియోగదారు పేరు 3–20; చిన్న అక్షరాలు, అంకెలు, చుక్క, హైఫన్, అండర్‌స్కోర్ (చివర్లలో కాదు)',
   'Bu hesap zaten bağlı': 'ఈ ఖాతా ఇప్పటికే లింక్ అయింది',
   'Hesap oluşturulamadı': 'ఖాతా సృష్టించలేకపోయాం',
   'Misafir hesabı oluşturulamadı': 'గెస్ట్ ఖాతా సృష్టించలేకపోయాం',
   'Hesap bulunamadı': 'ఖాతా కనబడలేదు',
   'Bu hesapta e-posta yok': 'ఈ ఖాతాలో ఈమెయిల్ లేదు',
-  'İki adımlı doğrulama zaten bu durumda': 'రెండు-దశల ధృవీకరణ ఇప్పటికే ఈ స్థితిలో ఉంది',
+  'İki adımlı doğrulama zaten bu durumda':
+      'రెండు-దశల ధృవీకరణ ఇప్పటికే ఈ స్థితిలో ఉంది',
   'Kod yanlış': 'కోడ్ తప్పు',
   'Kodun süresi doldu': 'కోడ్ గడువు ముగిసింది',
-  'Kullanıcının e-postası yok (misafir hesap)': 'ఈ వినియోగదారుకు ఈమెయిల్ లేదు (గెస్ట్ ఖాతా)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'ఈ వినియోగదారుకు ఈమెయిల్ లేదు (గెస్ట్ ఖాతా)',
   'Bio en fazla 300 karakter olabilir': 'బయో గరిష్టంగా 300 అక్షరాలు',
   'Geçersiz ülke': 'చెల్లని దేశం',
   'Geçersiz sosyal bağlantı': 'చెల్లని సోషల్ లింక్',
   'Geçersiz doğum tarihi': 'చెల్లని పుట్టిన తేదీ',
   'Liste adı gerekli': 'జాబితా పేరు అవసరం',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'పేరు గరిష్టంగా 60, వివరణ 300 అక్షరాలు',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'పేరు గరిష్టంగా 60, వివరణ 300 అక్షరాలు',
   'Liste bulunamadı': 'జాబితా కనబడలేదు',
   'Değiştirilecek tercih yok': 'మార్చడానికి ఏమీ లేదు',
   'İnceleme en fazla 2000 karakter olabilir': 'సమీక్ష గరిష్టంగా 2000 అక్షరాలు',
-  'Önce içeriği "bitirdim" olarak işaretle': 'ముందుగా దీన్ని పూర్తయిందిగా గుర్తు పెట్టు',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'ముందుగా దీన్ని పూర్తయిందిగా గుర్తు పెట్టు',
   'Önce kişiyi favorile': 'ముందుగా వ్యక్తిని ఇష్టాంశంగా చేయి',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'ఎపిసోడ్ వ్యాఖ్యకు సీజన్ మరియు ఎపిసోడ్ రెండూ కావాలి',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'ఎపిసోడ్ వ్యాఖ్యకు సీజన్ మరియు ఎపిసోడ్ రెండూ కావాలి',
   'Yanıtlanan yorum bulunamadı': 'ప్రత్యుత్తరం ఇచ్చిన వ్యాఖ్య కనబడలేదు',
   'Geri bildirim 3-2000 karakter olmalı': 'అభిప్రాయం 3–2000 అక్షరాలు ఉండాలి',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'శీర్షిక మరియు పాఠ్యం అవసరం (కనీసం 2 అక్షరాలు)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'శీర్షిక మరియు పాఠ్యం అవసరం (కనీసం 2 అక్షరాలు)',
   'Kendine mesaj gönderemezsin': 'మీకు మీరే సందేశం పంపలేరు',
   'Mesaj en fazla 2000 karakter olabilir': 'సందేశం గరిష్టంగా 2000 అక్షరాలు',
   'Mesaj 1-2000 karakter olmalı': 'సందేశం 1–2000 అక్షరాలు ఉండాలి',
   'Mesaj bulunamadı': 'సందేశం కనబడలేదు',
   'Mesaj bulunamadı veya düzenlenemez': 'సందేశం కనబడలేదు లేదా సవరించలేం',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'నీకు వచ్చిన సందేశాన్ని మాత్రమే నివేదించవచ్చు',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'నీకు వచ్చిన సందేశాన్ని మాత్రమే నివేదించవచ్చు',
   'Sebep gerekli': 'కారణం అవసరం',
   'İtiraz edilecek aktif bir ceza yok': 'అప్పీల్ చేయడానికి చురుకైన శిక్ష లేదు',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'ఇప్పటికే సమీక్ష కోసం వేచి ఉన్న అప్పీల్ ఉంది',
-  'Bu ceza için itirazın zaten incelendi': 'ఈ శిక్ష అప్పీల్ ఇప్పటికే సమీక్షించబడింది',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'ఇప్పటికే సమీక్ష కోసం వేచి ఉన్న అప్పీల్ ఉంది',
+  'Bu ceza için itirazın zaten incelendi':
+      'ఈ శిక్ష అప్పీల్ ఇప్పటికే సమీక్షించబడింది',
   'Medya bağlantısının süresi dolmuş': 'మీడియా లింక్ గడువు ముగిసింది',
   'Bu medya için imzalı bağlantı gerekli': 'ఈ మీడియాకు సంతకం చేసిన లింక్ అవసరం',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'కాలింగ్ సేవ మళ్లీ ప్రారంభమవుతోంది; కాసేపు తర్వాత ప్రయత్నించు',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'కాలింగ్ సేవ మళ్లీ ప్రారంభమవుతోంది; కాసేపు తర్వాత ప్రయత్నించు',
+  'Puan göstergesi': 'రేటింగ్ లెజెండ్',
 };

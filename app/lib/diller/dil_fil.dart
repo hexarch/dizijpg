@@ -1082,45 +1082,65 @@ const Map<String, String> cevirilerFil = {
   'Puan 1-10 arası olmalı': 'Ang marka ay dapat 1 hanggang 10',
   'En fazla 10 medya eklenebilir':
       'Hanggang 10 media lang ang puwedeng idagdag',
-  'Bu cihazdan yeni hesap açılamıyor': 'Hindi makagawa ng account mula sa device na ito',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Kailangan ng wastong email, username, at password na hindi bababa sa 6 na karakter',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Kailangan ng wastong email at password na hindi bababa sa 6 na karakter',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Username 3–20 karakter; maliliit na letra, numero, tuldok, gitling, underscore (hindi sa dulo)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Hindi makagawa ng account mula sa device na ito',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Kailangan ng wastong email, username, at password na hindi bababa sa 6 na karakter',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Kailangan ng wastong email at password na hindi bababa sa 6 na karakter',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Username 3–20 karakter; maliliit na letra, numero, tuldok, gitling, underscore (hindi sa dulo)',
   'Bu hesap zaten bağlı': 'Naka-link na ang account na ito',
   'Hesap oluşturulamadı': 'Hindi nagawa ang account',
   'Misafir hesabı oluşturulamadı': 'Hindi nagawa ang guest account',
   'Hesap bulunamadı': 'Hindi nahanap ang account',
   'Bu hesapta e-posta yok': 'Walang email ang account na ito',
-  'İki adımlı doğrulama zaten bu durumda': 'Naka-ganito na ang two-step verification',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Naka-ganito na ang two-step verification',
   'Kod yanlış': 'Maling code',
   'Kodun süresi doldu': 'Nag-expire na ang code',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Walang email ang user na ito (guest account)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Walang email ang user na ito (guest account)',
   'Bio en fazla 300 karakter olabilir': 'Ang bio ay hanggang 300 karakter lang',
   'Geçersiz ülke': 'Hindi wastong bansa',
   'Geçersiz sosyal bağlantı': 'Hindi wastong social link',
   'Geçersiz doğum tarihi': 'Hindi wastong petsa ng kapanganakan',
   'Liste adı gerekli': 'Kailangan ang pangalan ng listahan',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Ang pangalan ay hanggang 60, ang paglalarawan 300 karakter',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Ang pangalan ay hanggang 60, ang paglalarawan 300 karakter',
   'Liste bulunamadı': 'Hindi nahanap ang listahan',
   'Değiştirilecek tercih yok': 'Walang ia-update',
-  'İnceleme en fazla 2000 karakter olabilir': 'Ang review ay hanggang 2000 karakter lang',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Ang review ay hanggang 2000 karakter lang',
   'Önce içeriği "bitirdim" olarak işaretle': 'Markahan muna bilang tapos na',
   'Önce kişiyi favorile': 'I-favorite muna ang tao',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Kailangan ang season at episode para sa komento ng episode',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Kailangan ang season at episode para sa komento ng episode',
   'Yanıtlanan yorum bulunamadı': 'Hindi nahanap ang komentong sinasagot',
-  'Geri bildirim 3-2000 karakter olmalı': 'Ang feedback ay dapat 3–2000 karakter',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Kailangan ang pamagat at teksto (hindi bababa sa 2 karakter)',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Ang feedback ay dapat 3–2000 karakter',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Kailangan ang pamagat at teksto (hindi bababa sa 2 karakter)',
   'Kendine mesaj gönderemezsin': 'Hindi ka puwedeng magmensahe sa sarili',
-  'Mesaj en fazla 2000 karakter olabilir': 'Ang mensahe ay hanggang 2000 karakter lang',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Ang mensahe ay hanggang 2000 karakter lang',
   'Mesaj 1-2000 karakter olmalı': 'Ang mensahe ay dapat 1–2000 karakter',
   'Mesaj bulunamadı': 'Hindi nahanap ang mensahe',
-  'Mesaj bulunamadı veya düzenlenemez': 'Hindi nahanap ang mensahe o hindi ma-edit',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Maaari mo lang i-report ang mensaheng ipinadala sa iyo',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Hindi nahanap ang mensahe o hindi ma-edit',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Maaari mo lang i-report ang mensaheng ipinadala sa iyo',
   'Sebep gerekli': 'Kailangan ang dahilan',
-  'İtiraz edilecek aktif bir ceza yok': 'Walang aktibong parusa na maaaring iapela',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'May appeal ka nang naghihintay ng review',
-  'Bu ceza için itirazın zaten incelendi': 'Na-review na ang appeal mo para sa parusang ito',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Walang aktibong parusa na maaaring iapela',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'May appeal ka nang naghihintay ng review',
+  'Bu ceza için itirazın zaten incelendi':
+      'Na-review na ang appeal mo para sa parusang ito',
   'Medya bağlantısının süresi dolmuş': 'Nag-expire na ang media link',
-  'Bu medya için imzalı bağlantı gerekli': 'Kailangan ng signed link para sa media na ito',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Nagre-restart ang calling service; subukan ulit sa ilang sandali',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Kailangan ng signed link para sa media na ito',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Nagre-restart ang calling service; subukan ulit sa ilang sandali',
+  'Puan göstergesi': 'Gabay sa rating',
 };

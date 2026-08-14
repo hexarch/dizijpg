@@ -1080,45 +1080,66 @@ const Map<String, String> cevirilerEl = {
       'Ο διακομιστής επανεκκινείται· δοκίμασε σε λίγο',
   'Puan 1-10 arası olmalı': 'Η βαθμολογία πρέπει να είναι από 1 έως 10',
   'En fazla 10 medya eklenebilir': 'Μπορείς να προσθέσεις το πολύ 10 αρχεία',
-  'Bu cihazdan yeni hesap açılamıyor': 'Δεν μπορείς να φτιάξεις λογαριασμό από αυτή τη συσκευή',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Χρειάζεσαι έγκυρο email, όνομα χρήστη και κωδικό τουλάχιστον 6 χαρακτήρων',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Χρειάζεσαι έγκυρο email και κωδικό τουλάχιστον 6 χαρακτήρων',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Το όνομα 3–20 χαρακτήρες· πεζά, ψηφία, τελείες, παύλες και κάτω παύλες (όχι στα άκρα)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Δεν μπορείς να φτιάξεις λογαριασμό από αυτή τη συσκευή',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Χρειάζεσαι έγκυρο email, όνομα χρήστη και κωδικό τουλάχιστον 6 χαρακτήρων',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Χρειάζεσαι έγκυρο email και κωδικό τουλάχιστον 6 χαρακτήρων',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Το όνομα 3–20 χαρακτήρες· πεζά, ψηφία, τελείες, παύλες και κάτω παύλες (όχι στα άκρα)',
   'Bu hesap zaten bağlı': 'Αυτός ο λογαριασμός είναι ήδη συνδεδεμένος',
   'Hesap oluşturulamadı': 'Δεν έγινε ο λογαριασμός',
   'Misafir hesabı oluşturulamadı': 'Δεν έγινε λογαριασμός επισκέπτη',
   'Hesap bulunamadı': 'Ο λογαριασμός δεν βρέθηκε',
   'Bu hesapta e-posta yok': 'Αυτός ο λογαριασμός δεν έχει email',
-  'İki adımlı doğrulama zaten bu durumda': 'Η επαλήθευση δύο βημάτων είναι ήδη σε αυτή την κατάσταση',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Η επαλήθευση δύο βημάτων είναι ήδη σε αυτή την κατάσταση',
   'Kod yanlış': 'Λάθος κωδικός',
   'Kodun süresi doldu': 'Ο κωδικός έληξε',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Αυτός ο χρήστης δεν έχει email (λογαριασμός επισκέπτη)',
-  'Bio en fazla 300 karakter olabilir': 'Το βιο μπορεί να έχει το πολύ 300 χαρακτήρες',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Αυτός ο χρήστης δεν έχει email (λογαριασμός επισκέπτη)',
+  'Bio en fazla 300 karakter olabilir':
+      'Το βιο μπορεί να έχει το πολύ 300 χαρακτήρες',
   'Geçersiz ülke': 'Μη έγκυρη χώρα',
   'Geçersiz sosyal bağlantı': 'Μη έγκυρος κοινωνικός σύνδεσμος',
   'Geçersiz doğum tarihi': 'Μη έγκυρη ημερομηνία γέννησης',
   'Liste adı gerekli': 'Απαιτείται όνομα λίστας',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Το όνομα μπορεί να έχει 60 χαρακτήρες, η περιγραφή 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Το όνομα μπορεί να έχει 60 χαρακτήρες, η περιγραφή 300',
   'Liste bulunamadı': 'Η λίστα δεν βρέθηκε',
   'Değiştirilecek tercih yok': 'Δεν υπάρχει τίποτα για ενημέρωση',
-  'İnceleme en fazla 2000 karakter olabilir': 'Η κριτική μπορεί να έχει το πολύ 2000 χαρακτήρες',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Η κριτική μπορεί να έχει το πολύ 2000 χαρακτήρες',
   'Önce içeriği "bitirdim" olarak işaretle': 'Σήμανέ το πρώτα ως ολοκληρωμένο',
   'Önce kişiyi favorile': 'Βάλε πρώτα το άτομο στα αγαπημένα',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Για σχόλιο επεισοδίου χρειάζονται και σεζόν και επεισόδιο',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Για σχόλιο επεισοδίου χρειάζονται και σεζόν και επεισόδιο',
   'Yanıtlanan yorum bulunamadı': 'Το σχόλιο στο οποίο απαντάς δεν βρέθηκε',
-  'Geri bildirim 3-2000 karakter olmalı': 'Η ανατροφοδότηση πρέπει να είναι 3–2000 χαρακτήρες',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Τίτλος και κείμενο απαιτούνται (τουλάχιστον 2 χαρακτήρες)',
-  'Kendine mesaj gönderemezsin': 'Δεν μπορείς να στείλεις μήνυμα στον εαυτό σου',
-  'Mesaj en fazla 2000 karakter olabilir': 'Το μήνυμα μπορεί να έχει το πολύ 2000 χαρακτήρες',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Η ανατροφοδότηση πρέπει να είναι 3–2000 χαρακτήρες',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Τίτλος και κείμενο απαιτούνται (τουλάχιστον 2 χαρακτήρες)',
+  'Kendine mesaj gönderemezsin':
+      'Δεν μπορείς να στείλεις μήνυμα στον εαυτό σου',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Το μήνυμα μπορεί να έχει το πολύ 2000 χαρακτήρες',
   'Mesaj 1-2000 karakter olmalı': 'Το μήνυμα πρέπει να είναι 1–2000 χαρακτήρες',
   'Mesaj bulunamadı': 'Το μήνυμα δεν βρέθηκε',
-  'Mesaj bulunamadı veya düzenlenemez': 'Το μήνυμα δεν βρέθηκε ή δεν επεξεργάζεται',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Μπορείς να αναφέρεις μόνο μήνυμα που σου στάλθηκε',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Το μήνυμα δεν βρέθηκε ή δεν επεξεργάζεται',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Μπορείς να αναφέρεις μόνο μήνυμα που σου στάλθηκε',
   'Sebep gerekli': 'Απαιτείται αιτία',
   'İtiraz edilecek aktif bir ceza yok': 'Δεν υπάρχει ενεργή ποινή για ένσταση',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Έχεις ήδη ένσταση σε αναμονή εξέτασης',
-  'Bu ceza için itirazın zaten incelendi': 'Η ένστασή σου για αυτή την ποινή εξετάστηκε ήδη',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Έχεις ήδη ένσταση σε αναμονή εξέτασης',
+  'Bu ceza için itirazın zaten incelendi':
+      'Η ένστασή σου για αυτή την ποινή εξετάστηκε ήδη',
   'Medya bağlantısının süresi dolmuş': 'Ο σύνδεσμος πολυμέσων έληξε',
-  'Bu medya için imzalı bağlantı gerekli': 'Για αυτό το αρχείο απαιτείται υπογεγραμμένος σύνδεσμος',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Η υπηρεσία κλήσεων επανεκκινείται· δοκίμασε σε λίγο',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Για αυτό το αρχείο απαιτείται υπογεγραμμένος σύνδεσμος',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Η υπηρεσία κλήσεων επανεκκινείται· δοκίμασε σε λίγο',
+  'Puan göstergesi': 'Υπόμνημα βαθμολογίας',
 };

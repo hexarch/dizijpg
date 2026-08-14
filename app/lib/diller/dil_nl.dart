@@ -1068,10 +1068,14 @@ const Map<String, String> cevirilerNl = {
       'Server herstart, probeer zo weer',
   'Puan 1-10 arası olmalı': 'Cijfer moet tussen 1 en 10',
   'En fazla 10 medya eklenebilir': 'Maximaal 10 media',
-  'Bu cihazdan yeni hesap açılamıyor': 'Vanaf dit apparaat kun je geen account aanmaken',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Geldig e-mailadres, gebruikersnaam en wachtwoord van minstens 6 tekens nodig',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Geldig e-mailadres en wachtwoord van minstens 6 tekens nodig',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Gebruikersnaam 3–20 tekens; kleine letters, cijfers, punten, streepjes, underscores (niet aan de randen)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Vanaf dit apparaat kun je geen account aanmaken',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Geldig e-mailadres, gebruikersnaam en wachtwoord van minstens 6 tekens nodig',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Geldig e-mailadres en wachtwoord van minstens 6 tekens nodig',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Gebruikersnaam 3–20 tekens; kleine letters, cijfers, punten, streepjes, underscores (niet aan de randen)',
   'Bu hesap zaten bağlı': 'Dit account is al gekoppeld',
   'Hesap oluşturulamadı': 'Account aanmaken mislukt',
   'Misafir hesabı oluşturulamadı': 'Gastaccount aanmaken mislukt',
@@ -1080,33 +1084,48 @@ const Map<String, String> cevirilerNl = {
   'İki adımlı doğrulama zaten bu durumda': 'Tweestapsverificatie staat al zo',
   'Kod yanlış': 'Onjuiste code',
   'Kodun süresi doldu': 'Code verlopen',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Deze gebruiker heeft geen e-mail (gastaccount)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Deze gebruiker heeft geen e-mail (gastaccount)',
   'Bio en fazla 300 karakter olabilir': 'Bio mag maximaal 300 tekens zijn',
   'Geçersiz ülke': 'Ongeldig land',
   'Geçersiz sosyal bağlantı': 'Ongeldige socialelink',
   'Geçersiz doğum tarihi': 'Ongeldige geboortedatum',
   'Liste adı gerekli': 'Lijstnaam is verplicht',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Naam maximaal 60, beschrijving 300 tekens',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Naam maximaal 60, beschrijving 300 tekens',
   'Liste bulunamadı': 'Lijst niet gevonden',
   'Değiştirilecek tercih yok': 'Niets om bij te werken',
-  'İnceleme en fazla 2000 karakter olabilir': 'Recensie mag maximaal 2000 tekens zijn',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Markeer de titel eerst als afgerond',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Recensie mag maximaal 2000 tekens zijn',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Markeer de titel eerst als afgerond',
   'Önce kişiyi favorile': 'Zet de persoon eerst bij favorieten',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Voor een afleveringcommentaar zijn seizoen én aflevering nodig',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Voor een afleveringcommentaar zijn seizoen én aflevering nodig',
   'Yanıtlanan yorum bulunamadı': 'Beantwoorde reactie niet gevonden',
   'Geri bildirim 3-2000 karakter olmalı': 'Feedback moet 3–2000 tekens zijn',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Titel en tekst zijn verplicht (minstens 2 tekens)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Titel en tekst zijn verplicht (minstens 2 tekens)',
   'Kendine mesaj gönderemezsin': 'Je kunt jezelf geen bericht sturen',
-  'Mesaj en fazla 2000 karakter olabilir': 'Bericht mag maximaal 2000 tekens zijn',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'Bericht mag maximaal 2000 tekens zijn',
   'Mesaj 1-2000 karakter olmalı': 'Bericht moet 1–2000 tekens zijn',
   'Mesaj bulunamadı': 'Bericht niet gevonden',
-  'Mesaj bulunamadı veya düzenlenemez': 'Bericht niet gevonden of niet bewerkbaar',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Je kunt alleen een bericht melden dat naar jou is gestuurd',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Bericht niet gevonden of niet bewerkbaar',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Je kunt alleen een bericht melden dat naar jou is gestuurd',
   'Sebep gerekli': 'Reden is verplicht',
-  'İtiraz edilecek aktif bir ceza yok': 'Er is geen actieve straf om bezwaar tegen te maken',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Je hebt al een bezwaar dat wacht op beoordeling',
-  'Bu ceza için itirazın zaten incelendi': 'Je bezwaar tegen deze straf is al beoordeeld',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Er is geen actieve straf om bezwaar tegen te maken',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Je hebt al een bezwaar dat wacht op beoordeling',
+  'Bu ceza için itirazın zaten incelendi':
+      'Je bezwaar tegen deze straf is al beoordeeld',
   'Medya bağlantısının süresi dolmuş': 'Medialink verlopen',
-  'Bu medya için imzalı bağlantı gerekli': 'Voor dit medium is een ondertekende link nodig',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'De beldienst start opnieuw; probeer het zo weer',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Voor dit medium is een ondertekende link nodig',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'De beldienst start opnieuw; probeer het zo weer',
+  'Puan göstergesi': 'Scorelegenda',
 };

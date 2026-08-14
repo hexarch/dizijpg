@@ -8,7 +8,6 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'arama_cubugu.dart';
-import 'katalog_liste.dart';
 import 'ortak.dart';
 
 /// Ana Sayfa rafları: (başlık, TMDB yolu, tür).

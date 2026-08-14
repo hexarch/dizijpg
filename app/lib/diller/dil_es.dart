@@ -1074,45 +1074,67 @@ const Map<String, String> cevirilerEs = {
       'El servidor se está reiniciando; prueba en un momento',
   'Puan 1-10 arası olmalı': 'La nota debe estar entre 1 y 10',
   'En fazla 10 medya eklenebilir': 'Puedes añadir 10 archivos como máximo',
-  'Bu cihazdan yeni hesap açılamıyor': 'No se puede crear una cuenta desde este dispositivo',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Hace falta un correo válido, un nombre de usuario y una contraseña de al menos 6 caracteres',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Hace falta un correo válido y una contraseña de al menos 6 caracteres',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'El nombre debe tener 3–20 caracteres; minúsculas, dígitos, puntos, guiones y guiones bajos (no al inicio ni al final)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'No se puede crear una cuenta desde este dispositivo',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Hace falta un correo válido, un nombre de usuario y una contraseña de al menos 6 caracteres',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Hace falta un correo válido y una contraseña de al menos 6 caracteres',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'El nombre debe tener 3–20 caracteres; minúsculas, dígitos, puntos, guiones y guiones bajos (no al inicio ni al final)',
   'Bu hesap zaten bağlı': 'Esta cuenta ya está vinculada',
   'Hesap oluşturulamadı': 'No se pudo crear la cuenta',
   'Misafir hesabı oluşturulamadı': 'No se pudo crear una cuenta de invitado',
   'Hesap bulunamadı': 'Cuenta no encontrada',
   'Bu hesapta e-posta yok': 'Esta cuenta no tiene correo',
-  'İki adımlı doğrulama zaten bu durumda': 'La verificación en dos pasos ya está así',
+  'İki adımlı doğrulama zaten bu durumda':
+      'La verificación en dos pasos ya está así',
   'Kod yanlış': 'Código incorrecto',
   'Kodun süresi doldu': 'El código caducó',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Este usuario no tiene correo (cuenta invitado)',
-  'Bio en fazla 300 karakter olabilir': 'La bio puede tener 300 caracteres como máximo',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Este usuario no tiene correo (cuenta invitado)',
+  'Bio en fazla 300 karakter olabilir':
+      'La bio puede tener 300 caracteres como máximo',
   'Geçersiz ülke': 'País no válido',
   'Geçersiz sosyal bağlantı': 'Enlace social no válido',
   'Geçersiz doğum tarihi': 'Fecha de nacimiento no válida',
   'Liste adı gerekli': 'El nombre de la lista es obligatorio',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'El nombre puede tener 60 caracteres, la descripción 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'El nombre puede tener 60 caracteres, la descripción 300',
   'Liste bulunamadı': 'Lista no encontrada',
   'Değiştirilecek tercih yok': 'No hay nada que actualizar',
-  'İnceleme en fazla 2000 karakter olabilir': 'La reseña puede tener 2000 caracteres como máximo',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Marca el título como terminado primero',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'La reseña puede tener 2000 caracteres como máximo',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Marca el título como terminado primero',
   'Önce kişiyi favorile': 'Marca a la persona como favorita primero',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Para un comentario de episodio hacen falta temporada y episodio',
-  'Yanıtlanan yorum bulunamadı': 'No se encontró el comentario al que respondes',
-  'Geri bildirim 3-2000 karakter olmalı': 'Los comentarios deben tener 3–2000 caracteres',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Hacen falta título y texto (al menos 2 caracteres)',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Para un comentario de episodio hacen falta temporada y episodio',
+  'Yanıtlanan yorum bulunamadı':
+      'No se encontró el comentario al que respondes',
+  'Geri bildirim 3-2000 karakter olmalı':
+      'Los comentarios deben tener 3–2000 caracteres',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Hacen falta título y texto (al menos 2 caracteres)',
   'Kendine mesaj gönderemezsin': 'No puedes enviarte un mensaje a ti',
-  'Mesaj en fazla 2000 karakter olabilir': 'El mensaje puede tener 2000 caracteres como máximo',
+  'Mesaj en fazla 2000 karakter olabilir':
+      'El mensaje puede tener 2000 caracteres como máximo',
   'Mesaj 1-2000 karakter olmalı': 'El mensaje debe tener 1–2000 caracteres',
   'Mesaj bulunamadı': 'Mensaje no encontrado',
-  'Mesaj bulunamadı veya düzenlenemez': 'Mensaje no encontrado o no se puede editar',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Solo puedes denunciar un mensaje que te hayan enviado',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Mensaje no encontrado o no se puede editar',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Solo puedes denunciar un mensaje que te hayan enviado',
   'Sebep gerekli': 'El motivo es obligatorio',
   'İtiraz edilecek aktif bir ceza yok': 'No hay una sanción activa que apelar',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Ya tienes una apelación pendiente de revisión',
-  'Bu ceza için itirazın zaten incelendi': 'Tu apelación por esta sanción ya fue revisada',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Ya tienes una apelación pendiente de revisión',
+  'Bu ceza için itirazın zaten incelendi':
+      'Tu apelación por esta sanción ya fue revisada',
   'Medya bağlantısının süresi dolmuş': 'El enlace de media caducó',
-  'Bu medya için imzalı bağlantı gerekli': 'Hace falta un enlace firmado para este archivo',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'El servicio de llamadas se está reiniciando; prueba en un rato',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Hace falta un enlace firmado para este archivo',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'El servicio de llamadas se está reiniciando; prueba en un rato',
+  'Puan göstergesi': 'Leyenda de puntuación',
 };

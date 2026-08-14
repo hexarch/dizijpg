@@ -1065,45 +1065,61 @@ const Map<String, String> cevirilerVi = {
       'Máy chủ đang khởi động lại, thử lại sau giây lát',
   'Puan 1-10 arası olmalı': 'Điểm phải từ 1 đến 10',
   'En fazla 10 medya eklenebilir': 'Thêm tối đa 10 tệp phương tiện',
-  'Bu cihazdan yeni hesap açılamıyor': 'Không tạo được tài khoản từ thiết bị này',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Cần email hợp lệ, tên người dùng và mật khẩu ít nhất 6 ký tự',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Cần email hợp lệ và mật khẩu ít nhất 6 ký tự',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Tên 3–20 ký tự; chữ thường, số, chấm, gạch ngang, gạch dưới (không ở hai đầu)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'Không tạo được tài khoản từ thiết bị này',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Cần email hợp lệ, tên người dùng và mật khẩu ít nhất 6 ký tự',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Cần email hợp lệ và mật khẩu ít nhất 6 ký tự',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Tên 3–20 ký tự; chữ thường, số, chấm, gạch ngang, gạch dưới (không ở hai đầu)',
   'Bu hesap zaten bağlı': 'Tài khoản này đã được liên kết',
   'Hesap oluşturulamadı': 'Không tạo được tài khoản',
   'Misafir hesabı oluşturulamadı': 'Không tạo được tài khoản khách',
   'Hesap bulunamadı': 'Không tìm thấy tài khoản',
   'Bu hesapta e-posta yok': 'Tài khoản này không có email',
-  'İki adımlı doğrulama zaten bu durumda': 'Xác minh hai bước đã ở trạng thái này',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Xác minh hai bước đã ở trạng thái này',
   'Kod yanlış': 'Mã sai',
   'Kodun süresi doldu': 'Mã đã hết hạn',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Người dùng này không có email (tài khoản khách)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Người dùng này không có email (tài khoản khách)',
   'Bio en fazla 300 karakter olabilir': 'Tiểu sử tối đa 300 ký tự',
   'Geçersiz ülke': 'Quốc gia không hợp lệ',
   'Geçersiz sosyal bağlantı': 'Liên kết mạng xã hội không hợp lệ',
   'Geçersiz doğum tarihi': 'Ngày sinh không hợp lệ',
   'Liste adı gerekli': 'Cần tên danh sách',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Tên tối đa 60, mô tả 300 ký tự',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Tên tối đa 60, mô tả 300 ký tự',
   'Liste bulunamadı': 'Không tìm thấy danh sách',
   'Değiştirilecek tercih yok': 'Không có gì để cập nhật',
   'İnceleme en fazla 2000 karakter olabilir': 'Bài viết tối đa 2000 ký tự',
   'Önce içeriği "bitirdim" olarak işaretle': 'Hãy đánh dấu đã xem xong trước',
   'Önce kişiyi favorile': 'Hãy yêu thích người đó trước',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Bình luận tập cần cả mùa và tập',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Bình luận tập cần cả mùa và tập',
   'Yanıtlanan yorum bulunamadı': 'Không tìm thấy bình luận được trả lời',
   'Geri bildirim 3-2000 karakter olmalı': 'Phản hồi phải từ 3–2000 ký tự',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Cần tiêu đề và nội dung (ít nhất 2 ký tự)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Cần tiêu đề và nội dung (ít nhất 2 ký tự)',
   'Kendine mesaj gönderemezsin': 'Không gửi tin cho chính mình được',
   'Mesaj en fazla 2000 karakter olabilir': 'Tin nhắn tối đa 2000 ký tự',
   'Mesaj 1-2000 karakter olmalı': 'Tin nhắn phải từ 1–2000 ký tự',
   'Mesaj bulunamadı': 'Không tìm thấy tin nhắn',
-  'Mesaj bulunamadı veya düzenlenemez': 'Không tìm thấy tin hoặc không sửa được',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Chỉ báo cáo được tin nhắn gửi tới bạn',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Không tìm thấy tin hoặc không sửa được',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Chỉ báo cáo được tin nhắn gửi tới bạn',
   'Sebep gerekli': 'Cần lý do',
-  'İtiraz edilecek aktif bir ceza yok': 'Không có hình phạt đang hiệu lực để kháng cáo',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Bạn đã có kháng cáo đang chờ xét',
-  'Bu ceza için itirazın zaten incelendi': 'Kháng cáo hình phạt này đã được xét',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Không có hình phạt đang hiệu lực để kháng cáo',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Bạn đã có kháng cáo đang chờ xét',
+  'Bu ceza için itirazın zaten incelendi':
+      'Kháng cáo hình phạt này đã được xét',
   'Medya bağlantısının süresi dolmuş': 'Liên kết media đã hết hạn',
   'Bu medya için imzalı bağlantı gerekli': 'Cần liên kết đã ký cho tệp này',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Dịch vụ gọi đang khởi động lại; thử lại sau một lát',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Dịch vụ gọi đang khởi động lại; thử lại sau một lát',
+  'Puan göstergesi': 'Chú giải điểm',
 };

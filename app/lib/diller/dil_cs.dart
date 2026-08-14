@@ -1061,44 +1061,60 @@ const Map<String, String> cevirilerCs = {
   'Puan 1-10 arası olmalı': 'Hodnocení musí být mezi 1 a 10',
   'En fazla 10 medya eklenebilir': 'Lze přidat nejvýš 10 souborů',
   'Bu cihazdan yeni hesap açılamıyor': 'Z tohoto zařízení nelze založit účet',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Je potřeba platný e-mail, uživatelské jméno a heslo alespoň 6 znaků',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Je potřeba platný e-mail a heslo alespoň 6 znaků',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'Jméno 3–20 znaků; malá písmena, číslice, tečky, pomlčky a podtržítka (ne na okrajích)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Je potřeba platný e-mail, uživatelské jméno a heslo alespoň 6 znaků',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Je potřeba platný e-mail a heslo alespoň 6 znaků',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'Jméno 3–20 znaků; malá písmena, číslice, tečky, pomlčky a podtržítka (ne na okrajích)',
   'Bu hesap zaten bağlı': 'Tento účet je už propojený',
   'Hesap oluşturulamadı': 'Účet se nepodařilo vytvořit',
   'Misafir hesabı oluşturulamadı': 'Hostující účet se nepodařilo vytvořit',
   'Hesap bulunamadı': 'Účet nenalezen',
   'Bu hesapta e-posta yok': 'Tento účet nemá e-mail',
-  'İki adımlı doğrulama zaten bu durumda': 'Dvoufázové ověření už je v tomto stavu',
+  'İki adımlı doğrulama zaten bu durumda':
+      'Dvoufázové ověření už je v tomto stavu',
   'Kod yanlış': 'Špatný kód',
   'Kodun süresi doldu': 'Kód vypršel',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Tento uživatel nemá e-mail (hostující účet)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Tento uživatel nemá e-mail (hostující účet)',
   'Bio en fazla 300 karakter olabilir': 'Bio smí mít nejvýš 300 znaků',
   'Geçersiz ülke': 'Neplatná země',
   'Geçersiz sosyal bağlantı': 'Neplatný sociální odkaz',
   'Geçersiz doğum tarihi': 'Neplatné datum narození',
   'Liste adı gerekli': 'Název seznamu je povinný',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Název smí mít 60 znaků, popis 300',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Název smí mít 60 znaků, popis 300',
   'Liste bulunamadı': 'Seznam nenalezen',
   'Değiştirilecek tercih yok': 'Není co aktualizovat',
-  'İnceleme en fazla 2000 karakter olabilir': 'Recenze smí mít nejvýš 2000 znaků',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Nejdřív označ titul jako dokončený',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Recenze smí mít nejvýš 2000 znaků',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Nejdřív označ titul jako dokončený',
   'Önce kişiyi favorile': 'Nejdřív si osobu přidej do oblíbených',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Komentář k dílu vyžaduje sezonu i díl',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Komentář k dílu vyžaduje sezonu i díl',
   'Yanıtlanan yorum bulunamadı': 'Odpovídaný komentář nenalezen',
   'Geri bildirim 3-2000 karakter olmalı': 'Zpětná vazba musí mít 3–2000 znaků',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Nadpis a text jsou povinné (alespoň 2 znaky)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Nadpis a text jsou povinné (alespoň 2 znaky)',
   'Kendine mesaj gönderemezsin': 'Nemůžeš poslat zprávu sám sobě',
   'Mesaj en fazla 2000 karakter olabilir': 'Zpráva smí mít nejvýš 2000 znaků',
   'Mesaj 1-2000 karakter olmalı': 'Zpráva musí mít 1–2000 znaků',
   'Mesaj bulunamadı': 'Zpráva nenalezena',
   'Mesaj bulunamadı veya düzenlenemez': 'Zpráva nenalezena nebo nejde upravit',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Můžeš nahlásit jen zprávu odeslanou tobě',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Můžeš nahlásit jen zprávu odeslanou tobě',
   'Sebep gerekli': 'Důvod je povinný',
   'İtiraz edilecek aktif bir ceza yok': 'Není aktivní trest k odvolání',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Už máš odvolání čekající na posouzení',
-  'Bu ceza için itirazın zaten incelendi': 'Odvolání k tomuto trestu už bylo posouzeno',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Už máš odvolání čekající na posouzení',
+  'Bu ceza için itirazın zaten incelendi':
+      'Odvolání k tomuto trestu už bylo posouzeno',
   'Medya bağlantısının süresi dolmuş': 'Odkaz na média vypršel',
-  'Bu medya için imzalı bağlantı gerekli': 'Pro toto médium je potřeba podepsaný odkaz',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Služba volání se restartuje; zkus to za chvíli',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Pro toto médium je potřeba podepsaný odkaz',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Služba volání se restartuje; zkus to za chvíli',
+  'Puan göstergesi': 'Legenda hodnocení',
 };

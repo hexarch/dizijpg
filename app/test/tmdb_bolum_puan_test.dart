@@ -1,6 +1,37 @@
+import 'dart:math' as math;
+
+import 'package:dizijpg/tema.dart';
 import 'package:dizijpg/tmdb_bolum_puan.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+/// WCAG 2.1 bağıl parlaklık (relative luminance).
+double _parlaklik(Color c) {
+  double kanal(double v) =>
+      v <= 0.04045 ? v / 12.92 : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return 0.2126 * kanal(c.r) + 0.7152 * kanal(c.g) + 0.0722 * kanal(c.b);
+}
+
+/// WCAG kontrast oranı (1:1 … 21:1).
+double _kontrast(Color a, Color b) {
+  final la = _parlaklik(a);
+  final lb = _parlaklik(b);
+  return (math.max(la, lb) + 0.05) / (math.min(la, lb) + 0.05);
+}
+
+/// Rampa kovalarının temsilci puanları — düşükten yükseğe.
+const _rampa = [3.0, 5.5, 6.5, 7.5, 8.5, 9.5];
+
+/// Temayı geçici olarak değiştirip geri alır (renkler tema-duyarlı).
+R _temada<R>(bool acik, R Function() f) {
+  final onceki = DiziRenkler.acik;
+  DiziRenkler.acik = acik;
+  try {
+    return f();
+  } finally {
+    DiziRenkler.acik = onceki;
+  }
+}
 
 void main() {
   test('özel sezon (0) atılır, 1…N kalır', () {
@@ -42,17 +73,6 @@ void main() {
     expect(tmdbPuanMetni(m[4]!.puan), '1.0');
   });
 
-  test('renk kovaları: 7 sarı-yeşil, 6 turuncu, 5 kırmızı, altı koyu', () {
-    expect(tmdbPuanKutuRengi(7.6), const Color(0xFFC9A227));
-    expect(tmdbPuanKutuRengi(6.3), const Color(0xFFD97706));
-    expect(tmdbPuanKutuRengi(5.5), const Color(0xFFC2410C));
-    expect(tmdbPuanKutuRengi(1.0), const Color(0xFF9B1C1C));
-    expect(tmdbPuanYaziRengi(7.6), const Color(0xFF17171A));
-    expect(tmdbPuanYaziRengi(6.3), const Color(0xFF17171A));
-    expect(tmdbPuanYaziRengi(5.5), Colors.white);
-    expect(tmdbPuanYaziRengi(1.0), Colors.white);
-  });
-
   test('max bölüm numarası eksik sezonları da hesaba katar', () {
     expect(
       tmdbMaxBolum([
@@ -67,5 +87,143 @@ void main() {
       ]),
       8,
     );
+  });
+
+  // ---------------------------------------------------------------------
+  // CANLI PALET (kullanıcı 14 Ağu: "daha CANLI renkler kullan").
+  // Kova sayısı 4 → 6; eski donuk hardal/kiremit gitti.
+  // ---------------------------------------------------------------------
+
+  test('6 kova + oy yok: eşikler ve renk kodları kilitli', () {
+    expect(tmdbPuanKutuRengi(9.6), const Color(0xFFD4F53B));
+    expect(tmdbPuanKutuRengi(9.0), const Color(0xFFD4F53B));
+    expect(tmdbPuanKutuRengi(8.9), const Color(0xFFF5C518));
+    expect(tmdbPuanKutuRengi(8.0), const Color(0xFFF5C518));
+    expect(tmdbPuanKutuRengi(7.6), const Color(0xFFF59E0B));
+    expect(tmdbPuanKutuRengi(6.3), const Color(0xFFF97316));
+    expect(tmdbPuanKutuRengi(5.5), const Color(0xFFDC2626));
+    expect(tmdbPuanKutuRengi(1.0), const Color(0xFFBE123C));
+
+    // 8–9 kovası MARKA sarısıdır: rampa kimlikle kavga etmiyor, onu içeriyor.
+    expect(tmdbPuanKutuRengi(8.4), DiziRenkler.sari);
+
+    // Eski donuk tonların HİÇBİRİ kalmadı.
+    for (final p in _rampa) {
+      expect(
+        tmdbPuanKutuRengi(p),
+        isNot(
+          anyOf(
+            const Color(0xFFC9A227),
+            const Color(0xFFD97706),
+            const Color(0xFFC2410C),
+            const Color(0xFF9B1C1C),
+          ),
+        ),
+      );
+    }
+  });
+
+  test(
+    'PARLAKLIK MONOTON artar (gri tonlamada ve renk körlüğünde sıralanır)',
+    () {
+      // Kırmızı-yeşil ekseni tek başına ayırt edici olmasın diye açıklık da
+      // kova boyunca artmalı. Ölçülen dizi:
+      // <5 0,117 → 5 0,167 → 6 0,325 → 7 0,439 → 8 0,594 → 9+ 0,796
+      final dizi = [for (final p in _rampa) _parlaklik(tmdbPuanKutuRengi(p))];
+      for (var i = 1; i < dizi.length; i++) {
+        expect(
+          dizi[i],
+          greaterThan(dizi[i - 1]),
+          reason: 'kova $i parlaklığı düşüyor: $dizi',
+        );
+        // Komşu kovalar arası ADIM anlamlı olsun (ölçülen: 1,30–1,72).
+        final oran = (dizi[i] + 0.05) / (dizi[i - 1] + 0.05);
+        expect(oran, greaterThan(1.25), reason: 'kova $i adımı zayıf: $oran');
+      }
+      expect(dizi.first, closeTo(0.117, 0.005));
+      expect(dizi.last, closeTo(0.796, 0.005));
+      // Uçtan uca 6,8 kat parlaklık farkı — rampa gri tonlamada da okunur.
+      expect(dizi.last / dizi.first, greaterThan(5));
+    },
+  );
+
+  test('KUTU KONTURU her iki temada zemine karşı ≥3:1 (WCAG 1.4.11)', () {
+    // Dolgu TEK BAŞINA iki temada birden 3:1 veremez (matematiksel olarak
+    // 0,11–0,28 parlaklık bandına sıkışırdı, 6 kovalık rampa oraya sığmaz).
+    // Bu yüzden nesnenin SINIRI kontrast taşır.
+    for (final acik in [false, true]) {
+      _temada(acik, () {
+        final zemin = DiziRenkler.siyah;
+        for (final p in [..._rampa, null]) {
+          final k = _kontrast(tmdbPuanKenarRengi(p), zemin);
+          expect(
+            k,
+            greaterThanOrEqualTo(3.0),
+            reason: 'kontur/zemin kontrastı düşük (acik=$acik, puan=$p): $k',
+          );
+        }
+      });
+    }
+  });
+
+  test('OY YOK grisi zeminden ayrışır (≥3:1) — "bölüm yok" ile karışmaz', () {
+    // Eski `koyuGri` (#17171A) koyu temada zeminle 1,4:1'di; ızgarada artık
+    // "—" yazısı olmadığı için gri kutunun kendisi görünmek ZORUNDA.
+    _temada(false, () {
+      expect(tmdbPuanKutuRengi(null), const Color(0xFF5F5F69));
+      expect(
+        _kontrast(tmdbPuanKutuRengi(null), DiziRenkler.siyah),
+        greaterThanOrEqualTo(3.0),
+      );
+    });
+    _temada(true, () {
+      expect(tmdbPuanKutuRengi(null), const Color(0xFF8C8C96));
+      expect(
+        _kontrast(tmdbPuanKutuRengi(null), DiziRenkler.siyah),
+        greaterThanOrEqualTo(3.0),
+      );
+    });
+  });
+
+  test('BALON puan çipi: her kovada yazı/zemin kontrastı ≥4,5:1', () {
+    // Izgara kutularında yazı YOK; puan, seçilen hücrenin balonundaki çipte
+    // yazılı. Çip zemini kova rengi olduğu için kontrast kova kova ölçülür.
+    for (final acik in [false, true]) {
+      _temada(acik, () {
+        for (final p in [..._rampa, null]) {
+          final k = _kontrast(tmdbPuanYaziRengi(p), tmdbPuanKutuRengi(p));
+          expect(
+            k,
+            greaterThanOrEqualTo(4.5),
+            reason: 'çip yazı kontrastı düşük (acik=$acik, puan=$p): $k',
+          );
+        }
+      });
+    }
+    // Kural: 6 ve üstü açık kutudur → koyu yazı; altı koyu kutudur → beyaz.
+    expect(tmdbPuanYaziRengi(9.5), const Color(0xFF17171A));
+    expect(tmdbPuanYaziRengi(6.3), const Color(0xFF17171A));
+    expect(tmdbPuanYaziRengi(5.5), Colors.white);
+    expect(tmdbPuanYaziRengi(1.0), Colors.white);
+  });
+
+  test('gösterge kovaları: 7 pul, etiketleri çeviri gerektirmez', () {
+    expect(tmdbPuanKovalari.map((k) => k.etiket).toList(), [
+      '9+',
+      '8',
+      '7',
+      '6',
+      '5',
+      '<5',
+      '—',
+    ]);
+    // Her pul GERÇEKTEN farklı bir kovayı temsil eder (renkler benzersiz).
+    final renkler = _temada(
+      false,
+      () => tmdbPuanKovalari.map((k) => tmdbPuanKutuRengi(k.ornek)).toSet(),
+    );
+    expect(renkler.length, 7);
+    // Son pul "oy yok" — rampanın dışında, nötr gri.
+    expect(tmdbPuanKovalari.last.ornek, isNull);
   });
 }

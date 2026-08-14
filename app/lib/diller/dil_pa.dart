@@ -1062,45 +1062,61 @@ const Map<String, String> cevirilerPa = {
       'ਸਰਵਰ ਮੁੜ ਚਾਲੂ ਹੋ ਰਿਹਾ ਹੈ, ਥੋੜ੍ਹੀ ਚਿਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Puan 1-10 arası olmalı': 'ਸਕੋਰ 1 ਤੋਂ 10 ਵਿਚਕਾਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
   'En fazla 10 medya eklenebilir': 'ਵੱਧ ਤੋਂ ਵੱਧ 10 ਮੀਡੀਆ ਜੋੜੇ ਜਾ ਸਕਦੇ ਹਨ',
-  'Bu cihazdan yeni hesap açılamıyor': 'ਇਸ ਡਿਵਾਈਸ ਤੋਂ ਨਵਾਂ ਖਾਤਾ ਨਹੀਂ ਖੋਲ੍ਹ ਸਕਦੇ',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'ਠੀਕ ਈਮੇਲ, ਵਰਤੋਂਕਾਰ ਨਾਂ ਅਤੇ ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰਾਂ ਦਾ ਪਾਸਵਰਡ ਚਾਹੀਦਾ ਹੈ',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'ਠੀਕ ਈਮੇਲ ਅਤੇ ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰਾਂ ਦਾ ਪਾਸਵਰਡ ਚਾਹੀਦਾ ਹੈ',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ਵਰਤੋਂਕਾਰ ਨਾਂ 3–20; ਛੋਟੇ ਅੱਖਰ, ਅੰਕ, ਬਿੰਦੀ, ਹਾਈਫਨ, ਅੰਡਰਸਕੋਰ (ਸਿਰਿਆਂ ਤੇ ਨਹੀਂ)',
+  'Bu cihazdan yeni hesap açılamıyor':
+      'ਇਸ ਡਿਵਾਈਸ ਤੋਂ ਨਵਾਂ ਖਾਤਾ ਨਹੀਂ ਖੋਲ੍ਹ ਸਕਦੇ',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'ਠੀਕ ਈਮੇਲ, ਵਰਤੋਂਕਾਰ ਨਾਂ ਅਤੇ ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰਾਂ ਦਾ ਪਾਸਵਰਡ ਚਾਹੀਦਾ ਹੈ',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'ਠੀਕ ਈਮੇਲ ਅਤੇ ਘੱਟੋ-ਘੱਟ 6 ਅੱਖਰਾਂ ਦਾ ਪਾਸਵਰਡ ਚਾਹੀਦਾ ਹੈ',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ਵਰਤੋਂਕਾਰ ਨਾਂ 3–20; ਛੋਟੇ ਅੱਖਰ, ਅੰਕ, ਬਿੰਦੀ, ਹਾਈਫਨ, ਅੰਡਰਸਕੋਰ (ਸਿਰਿਆਂ ਤੇ ਨਹੀਂ)',
   'Bu hesap zaten bağlı': 'ਇਹ ਖਾਤਾ ਪਹਿਲਾਂ ਹੀ ਜੁੜਿਆ ਹੈ',
   'Hesap oluşturulamadı': 'ਖਾਤਾ ਨਹੀਂ ਬਣ ਸਕਿਆ',
   'Misafir hesabı oluşturulamadı': 'ਮਹਿਮਾਨ ਖਾਤਾ ਨਹੀਂ ਬਣ ਸਕਿਆ',
   'Hesap bulunamadı': 'ਖਾਤਾ ਨਹੀਂ ਮਿਲਿਆ',
   'Bu hesapta e-posta yok': 'ਇਸ ਖਾਤੇ ਵਿੱਚ ਈਮੇਲ ਨਹੀਂ',
-  'İki adımlı doğrulama zaten bu durumda': 'ਦੋ-ਪੜਾਅ ਤਸਦੀਕ ਪਹਿਲਾਂ ਹੀ ਇਸ ਹਾਲਤ ਵਿੱਚ ਹੈ',
+  'İki adımlı doğrulama zaten bu durumda':
+      'ਦੋ-ਪੜਾਅ ਤਸਦੀਕ ਪਹਿਲਾਂ ਹੀ ਇਸ ਹਾਲਤ ਵਿੱਚ ਹੈ',
   'Kod yanlış': 'ਕੋਡ ਗਲਤ ਹੈ',
   'Kodun süresi doldu': 'ਕੋਡ ਦੀ ਮਿਆਦ ਖਤਮ',
-  'Kullanıcının e-postası yok (misafir hesap)': 'ਇਸ ਵਰਤੋਂਕਾਰ ਕੋਲ ਈਮੇਲ ਨਹੀਂ (ਮਹਿਮਾਨ ਖਾਤਾ)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'ਇਸ ਵਰਤੋਂਕਾਰ ਕੋਲ ਈਮੇਲ ਨਹੀਂ (ਮਹਿਮਾਨ ਖਾਤਾ)',
   'Bio en fazla 300 karakter olabilir': 'ਬਾਇਓ ਵੱਧ ਤੋਂ ਵੱਧ 300 ਅੱਖਰ',
   'Geçersiz ülke': 'ਗਲਤ ਦੇਸ਼',
   'Geçersiz sosyal bağlantı': 'ਗਲਤ ਸੋਸ਼ਲ ਲਿੰਕ',
   'Geçersiz doğum tarihi': 'ਗਲਤ ਜਨਮ ਤਾਰੀਖ',
   'Liste adı gerekli': 'ਸੂਚੀ ਦਾ ਨਾਂ ਲੋੜੀਂਦਾ ਹੈ',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'ਨਾਂ ਵੱਧ ਤੋਂ ਵੱਧ 60, ਵੇਰਵਾ 300 ਅੱਖਰ',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'ਨਾਂ ਵੱਧ ਤੋਂ ਵੱਧ 60, ਵੇਰਵਾ 300 ਅੱਖਰ',
   'Liste bulunamadı': 'ਸੂਚੀ ਨਹੀਂ ਮਿਲੀ',
   'Değiştirilecek tercih yok': 'ਅੱਪਡੇਟ ਕਰਨ ਲਈ ਕੁਝ ਨਹੀਂ',
   'İnceleme en fazla 2000 karakter olabilir': 'ਸਮੀਖਿਆ ਵੱਧ ਤੋਂ ਵੱਧ 2000 ਅੱਖਰ',
-  'Önce içeriği "bitirdim" olarak işaretle': 'ਪਹਿਲਾਂ ਇਸਨੂੰ ਮੁਕੰਮਲ ਵੇਖਿਆ ਨਿਸ਼ਾਨ ਲਾਓ',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'ਪਹਿਲਾਂ ਇਸਨੂੰ ਮੁਕੰਮਲ ਵੇਖਿਆ ਨਿਸ਼ਾਨ ਲਾਓ',
   'Önce kişiyi favorile': 'ਪਹਿਲਾਂ ਇਸ ਵਿਅਕਤੀ ਨੂੰ ਪਸੰਦੀਦਾ ਬਣਾਓ',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'ਐਪੀਸੋਡ ਟਿੱਪਣੀ ਲਈ ਸੀਜ਼ਨ ਅਤੇ ਐਪੀਸੋਡ ਦੋਵੇਂ ਚਾਹੀਦੇ ਹਨ',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'ਐਪੀਸੋਡ ਟਿੱਪਣੀ ਲਈ ਸੀਜ਼ਨ ਅਤੇ ਐਪੀਸੋਡ ਦੋਵੇਂ ਚਾਹੀਦੇ ਹਨ',
   'Yanıtlanan yorum bulunamadı': 'ਜਿਸ ਟਿੱਪਣੀ ਦਾ ਜਵਾਬ ਹੈ ਉਹ ਨਹੀਂ ਮਿਲੀ',
   'Geri bildirim 3-2000 karakter olmalı': 'ਫੀਡਬੈਕ 3–2000 ਅੱਖਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'ਸਿਰਲੇਖ ਅਤੇ ਲਿਖਤ ਲੋੜੀਂਦੇ (ਘੱਟੋ-ਘੱਟ 2 ਅੱਖਰ)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'ਸਿਰਲੇਖ ਅਤੇ ਲਿਖਤ ਲੋੜੀਂਦੇ (ਘੱਟੋ-ਘੱਟ 2 ਅੱਖਰ)',
   'Kendine mesaj gönderemezsin': 'ਤੁਸੀਂ ਆਪਣੇ ਆਪ ਨੂੰ ਸੁਨੇਹਾ ਨਹੀਂ ਭੇਜ ਸਕਦੇ',
   'Mesaj en fazla 2000 karakter olabilir': 'ਸੁਨੇਹਾ ਵੱਧ ਤੋਂ ਵੱਧ 2000 ਅੱਖਰ',
   'Mesaj 1-2000 karakter olmalı': 'ਸੁਨੇਹਾ 1–2000 ਅੱਖਰ ਹੋਣਾ ਚਾਹੀਦਾ ਹੈ',
   'Mesaj bulunamadı': 'ਸੁਨੇਹਾ ਨਹੀਂ ਮਿਲਿਆ',
-  'Mesaj bulunamadı veya düzenlenemez': 'ਸੁਨੇਹਾ ਨਹੀਂ ਮਿਲਿਆ ਜਾਂ ਸੋਧਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'ਸਿਰਫ਼ ਤੁਹਾਨੂੰ ਆਏ ਸੁਨੇਹੇ ਦੀ ਸ਼ਿਕਾਇਤ ਹੋ ਸਕਦੀ ਹੈ',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'ਸੁਨੇਹਾ ਨਹੀਂ ਮਿਲਿਆ ਜਾਂ ਸੋਧਿਆ ਨਹੀਂ ਜਾ ਸਕਦਾ',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'ਸਿਰਫ਼ ਤੁਹਾਨੂੰ ਆਏ ਸੁਨੇਹੇ ਦੀ ਸ਼ਿਕਾਇਤ ਹੋ ਸਕਦੀ ਹੈ',
   'Sebep gerekli': 'ਕਾਰਨ ਲੋੜੀਂਦਾ ਹੈ',
   'İtiraz edilecek aktif bir ceza yok': 'ਅਪੀਲ ਲਈ ਕੋਈ ਸਰਗਰਮ ਸਜ਼ਾ ਨਹੀਂ',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'ਪਹਿਲਾਂ ਹੀ ਸਮੀਖਿਆ ਦੀ ਉਡੀਕ ਵਾਲੀ ਅਪੀਲ ਹੈ',
-  'Bu ceza için itirazın zaten incelendi': 'ਇਸ ਸਜ਼ਾ ਦੀ ਅਪੀਲ ਪਹਿਲਾਂ ਹੀ ਸਮੀਖਿਆ ਹੋ ਚੁੱਕੀ ਹੈ',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'ਪਹਿਲਾਂ ਹੀ ਸਮੀਖਿਆ ਦੀ ਉਡੀਕ ਵਾਲੀ ਅਪੀਲ ਹੈ',
+  'Bu ceza için itirazın zaten incelendi':
+      'ਇਸ ਸਜ਼ਾ ਦੀ ਅਪੀਲ ਪਹਿਲਾਂ ਹੀ ਸਮੀਖਿਆ ਹੋ ਚੁੱਕੀ ਹੈ',
   'Medya bağlantısının süresi dolmuş': 'ਮੀਡੀਆ ਲਿੰਕ ਦੀ ਮਿਆਦ ਖਤਮ',
   'Bu medya için imzalı bağlantı gerekli': 'ਇਸ ਮੀਡੀਆ ਲਈ ਦਸਤਖਤੀ ਲਿੰਕ ਲੋੜੀਂਦਾ ਹੈ',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'ਕਾਲਿੰਗ ਸੇਵਾ ਮੁੜ ਚਾਲੂ ਹੋ ਰਹੀ ਹੈ; ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'ਕਾਲਿੰਗ ਸੇਵਾ ਮੁੜ ਚਾਲੂ ਹੋ ਰਹੀ ਹੈ; ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Puan göstergesi': 'ਰੇਟਿੰਗ ਲੈਜੰਡ',
 };

@@ -1056,44 +1056,62 @@ const Map<String, String> cevirilerAz = {
   'Puan 1-10 arası olmalı': 'Qiymət 1–10 arasında olmalıdır',
   'En fazla 10 medya eklenebilir': 'Ən çox 10 media əlavə edilə bilər',
   'Bu cihazdan yeni hesap açılamıyor': 'Bu cihazdan yeni hesab açıla bilməz',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': 'Düzgün e-poçt, istifadəçi adı və ən azı 6 simvollu şifrə lazımdır',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': 'Düzgün e-poçt və ən azı 6 simvollu şifrə lazımdır',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'İstifadəçi adı 3–20 simvol; kiçik hərf, rəqəm, nöqtə, defis, alt xətt (kənarda olmaz)',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      'Düzgün e-poçt, istifadəçi adı və ən azı 6 simvollu şifrə lazımdır',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      'Düzgün e-poçt və ən azı 6 simvollu şifrə lazımdır',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'İstifadəçi adı 3–20 simvol; kiçik hərf, rəqəm, nöqtə, defis, alt xətt (kənarda olmaz)',
   'Bu hesap zaten bağlı': 'Bu hesab artıq bağlıdır',
   'Hesap oluşturulamadı': 'Hesab yaradıla bilmədi',
   'Misafir hesabı oluşturulamadı': 'Qonaq hesabı yaradıla bilmədi',
   'Hesap bulunamadı': 'Hesab tapılmadı',
   'Bu hesapta e-posta yok': 'Bu hesabda e-poçt yoxdur',
-  'İki adımlı doğrulama zaten bu durumda': 'İkiaddımlı doğrulama artıq bu haldadır',
+  'İki adımlı doğrulama zaten bu durumda':
+      'İkiaddımlı doğrulama artıq bu haldadır',
   'Kod yanlış': 'Kod səhvdir',
   'Kodun süresi doldu': 'Kodun müddəti bitib',
-  'Kullanıcının e-postası yok (misafir hesap)': 'Bu istifadəçinin e-poçtu yoxdur (qonaq hesabı)',
+  'Kullanıcının e-postası yok (misafir hesap)':
+      'Bu istifadəçinin e-poçtu yoxdur (qonaq hesabı)',
   'Bio en fazla 300 karakter olabilir': 'Bio ən çox 300 simvol ola bilər',
   'Geçersiz ülke': 'Etibarsız ölkə',
   'Geçersiz sosyal bağlantı': 'Etibarsız sosial keçid',
   'Geçersiz doğum tarihi': 'Etibarsız doğum tarixi',
   'Liste adı gerekli': 'Siyahı adı tələb olunur',
-  'Ad en fazla 60, açıklama 300 karakter olabilir': 'Ad ən çox 60, təsvir 300 simvol ola bilər',
+  'Ad en fazla 60, açıklama 300 karakter olabilir':
+      'Ad ən çox 60, təsvir 300 simvol ola bilər',
   'Liste bulunamadı': 'Siyahı tapılmadı',
   'Değiştirilecek tercih yok': 'Yenilənəcək heç nə yoxdur',
-  'İnceleme en fazla 2000 karakter olabilir': 'Rəy ən çox 2000 simvol ola bilər',
-  'Önce içeriği "bitirdim" olarak işaretle': 'Əvvəlcə başlığı bitmiş kimi işarələ',
+  'İnceleme en fazla 2000 karakter olabilir':
+      'Rəy ən çox 2000 simvol ola bilər',
+  'Önce içeriği "bitirdim" olarak işaretle':
+      'Əvvəlcə başlığı bitmiş kimi işarələ',
   'Önce kişiyi favorile': 'Əvvəlcə şəxsi favoritə əlavə et',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'Bölüm şərhi üçün mövsüm və bölüm birlikdə lazımdır',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'Bölüm şərhi üçün mövsüm və bölüm birlikdə lazımdır',
   'Yanıtlanan yorum bulunamadı': 'Cavab verilən şərh tapılmadı',
   'Geri bildirim 3-2000 karakter olmalı': 'Rəy 3–2000 simvol olmalıdır',
-  'Başlık ve metin gerekli (en az 2 karakter)': 'Başlıq və mətn tələb olunur (ən azı 2 simvol)',
+  'Başlık ve metin gerekli (en az 2 karakter)':
+      'Başlıq və mətn tələb olunur (ən azı 2 simvol)',
   'Kendine mesaj gönderemezsin': 'Özünə mesaj göndərə bilməzsən',
   'Mesaj en fazla 2000 karakter olabilir': 'Mesaj ən çox 2000 simvol ola bilər',
   'Mesaj 1-2000 karakter olmalı': 'Mesaj 1–2000 simvol olmalıdır',
   'Mesaj bulunamadı': 'Mesaj tapılmadı',
-  'Mesaj bulunamadı veya düzenlenemez': 'Mesaj tapılmadı və ya redaktə edilə bilməz',
-  'Yalnız sana gelen mesajı şikayet edebilirsin': 'Yalnız sənə gələn mesajı şikayət edə bilərsən',
+  'Mesaj bulunamadı veya düzenlenemez':
+      'Mesaj tapılmadı və ya redaktə edilə bilməz',
+  'Yalnız sana gelen mesajı şikayet edebilirsin':
+      'Yalnız sənə gələn mesajı şikayət edə bilərsən',
   'Sebep gerekli': 'Səbəb tələb olunur',
-  'İtiraz edilecek aktif bir ceza yok': 'Apellyasiya ediləcək aktiv cəza yoxdur',
-  'Zaten incelenmeyi bekleyen bir itirazın var': 'Artıq baxılmanı gözləyən bir apellyasiyan var',
-  'Bu ceza için itirazın zaten incelendi': 'Bu cəza üçün apellyasiyan artıq baxılıb',
+  'İtiraz edilecek aktif bir ceza yok':
+      'Apellyasiya ediləcək aktiv cəza yoxdur',
+  'Zaten incelenmeyi bekleyen bir itirazın var':
+      'Artıq baxılmanı gözləyən bir apellyasiyan var',
+  'Bu ceza için itirazın zaten incelendi':
+      'Bu cəza üçün apellyasiyan artıq baxılıb',
   'Medya bağlantısının süresi dolmuş': 'Media keçidinin müddəti bitib',
-  'Bu medya için imzalı bağlantı gerekli': 'Bu media üçün imzalı keçid lazımdır',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': 'Zəng xidməti yenidən başlayır, bir az sonra yenə cəhd et',
+  'Bu medya için imzalı bağlantı gerekli':
+      'Bu media üçün imzalı keçid lazımdır',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      'Zəng xidməti yenidən başlayır, bir az sonra yenə cəhd et',
+  'Puan göstergesi': 'Reytinq göstəricisi',
 };

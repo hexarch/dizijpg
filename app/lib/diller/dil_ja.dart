@@ -1020,9 +1020,12 @@ const Map<String, String> cevirilerJa = {
   'Puan 1-10 arası olmalı': '評価は1〜10にしてください',
   'En fazla 10 medya eklenebilir': 'メディアは最大10件までです',
   'Bu cihazdan yeni hesap açılamıyor': 'この端末では新規アカウントを作れません',
-  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli': '有効なメール、ユーザー名、6文字以上のパスワードが必要です',
-  'Geçerli e-posta ve en az 6 karakter şifre gerekli': '有効なメールと6文字以上のパスワードが必要です',
-  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)': 'ユーザー名は3–20文字。小文字・数字・ピリオド・ハイフン・下線（先頭末尾は不可）',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli':
+      '有効なメール、ユーザー名、6文字以上のパスワードが必要です',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli':
+      '有効なメールと6文字以上のパスワードが必要です',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
+      'ユーザー名は3–20文字。小文字・数字・ピリオド・ハイフン・下線（先頭末尾は不可）',
   'Bu hesap zaten bağlı': 'このアカウントは既に連携済みです',
   'Hesap oluşturulamadı': 'アカウントを作成できませんでした',
   'Misafir hesabı oluşturulamadı': 'ゲストアカウントを作成できませんでした',
@@ -1043,7 +1046,8 @@ const Map<String, String> cevirilerJa = {
   'İnceleme en fazla 2000 karakter olabilir': 'レビューは最大2000文字です',
   'Önce içeriği "bitirdim" olarak işaretle': '先に視聴済みにしてください',
   'Önce kişiyi favorile': '先にその人物をお気に入りにしてください',
-  'Bölüm yorumu için sezon ve bolum birlikte gerekli': 'エピソードコメントにはシーズンと話数の両方が必要です',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli':
+      'エピソードコメントにはシーズンと話数の両方が必要です',
   'Yanıtlanan yorum bulunamadı': '返信先のコメントが見つかりません',
   'Geri bildirim 3-2000 karakter olmalı': 'フィードバックは3–2000文字である必要があります',
   'Başlık ve metin gerekli (en az 2 karakter)': 'タイトルと本文が必要です（2文字以上）',
@@ -1059,5 +1063,7 @@ const Map<String, String> cevirilerJa = {
   'Bu ceza için itirazın zaten incelendi': 'この処分への異議は既に審査済みです',
   'Medya bağlantısının süresi dolmuş': 'メディアリンクの期限が切れました',
   'Bu medya için imzalı bağlantı gerekli': 'このメディアには署名付きリンクが必要です',
-  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene': '通話サービスを再起動中です。少ししてから再試行してください',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
+      '通話サービスを再起動中です。少ししてから再試行してください',
+  'Puan göstergesi': '評価の凡例',
 };
