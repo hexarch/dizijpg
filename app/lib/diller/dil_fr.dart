@@ -1036,4 +1036,8 @@ const Map<String, String> cevirilerFr = {
       'Visionnage moyen : {} % de la vidéo',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'La moyenne des 20 segments de la courbe.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Cherche une série, un film, une personne ou une société...',
+  'Şirketler': 'Sociétés',
+  'Senarist': 'Scénariste',
 };

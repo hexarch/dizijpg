@@ -1020,4 +1020,8 @@ const Map<String, String> cevirilerId = {
   'Ortalama izlenme: videonun %{} kadarı': 'Rata-rata ditonton: {}% dari video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Rata-rata dari 20 bagian kurva retensi.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Cari serial, film, orang, atau perusahaan...',
+  'Şirketler': 'Perusahaan',
+  'Senarist': 'Penulis naskah',
 };

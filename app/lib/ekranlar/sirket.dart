@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ayarlar.dart' show ulkeler;
 import 'ortak.dart';
@@ -99,6 +100,7 @@ class FirmaLogosu extends StatelessWidget {
             ? yedek
             : CachedNetworkImage(
                 imageUrl: url,
+                httpHeaders: gorselBasliklari(url),
                 fit: BoxFit.contain,
                 // Firma adı logonun hemen altında/yanında yazıyor; ekran
                 // okuyucu aynı şeyi iki kez okumasın.

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
@@ -167,7 +168,11 @@ class _BolumEkraniState extends State<BolumEkrani> {
           else if (gorsel != null)
             AspectRatio(
               aspectRatio: 16 / 9,
-              child: CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover),
+              child: CachedNetworkImage(
+                imageUrl: gorsel,
+                httpHeaders: gorselBasliklari(gorsel),
+                fit: BoxFit.cover,
+              ),
             ),
           Padding(
             padding: const EdgeInsets.all(16),
@@ -265,7 +270,10 @@ class _BolumEkraniState extends State<BolumEkrani> {
                             backgroundColor: DiziRenkler.kart,
                             backgroundImage: foto == null
                                 ? null
-                                : CachedNetworkImageProvider(foto),
+                                : CachedNetworkImageProvider(
+                                    foto,
+                                    headers: gorselBasliklari(foto),
+                                  ),
                             child: foto == null
                                 ? Icon(Icons.person, color: DiziRenkler.metin24)
                                 : null,

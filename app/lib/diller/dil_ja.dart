@@ -979,4 +979,7 @@ const Map<String, String> cevirilerJa = {
       'これらは投稿の全期間の合計です (独自の注記がある枠を除く)。下の日数選択はグラフだけを変えます。',
   'Ortalama izlenme: videonun %{} kadarı': '平均視聴: 動画の {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': '維持率カーブの 20 区間の平均です。',
+  'Dizi, film, kişi veya şirket ara...': 'ドラマ・映画・人物・会社を検索...',
+  'Şirketler': '会社',
+  'Senarist': '脚本家',
 };

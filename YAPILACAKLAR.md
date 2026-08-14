@@ -1,6 +1,25 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-14 — 🚀 ARAMA: KİŞİ + ŞİRKET + PAGESPEED (1.47.0+94)
+Web `main.f2cddbaecade.dart.js` · SW sökücü · brotli q11 · API yeniden derlendi.
+
+### Arama — oyuncu / yönetmen / senarist / şirket
+Kullanıcı `cartoon` yazınca Cartoon Network çıkmıyordu: `/ara` yalnız TMDB
+`/search/multi` çağırıyordu (şirket DÖNMEZ). Şimdi `/search/company` +
+`/search/person` takviyesi var; `media_type: company` basılır, dokununca
+`/sirket/:id`. Kişi satırında meslek alt yazısı (Yönetmen · Breaking Bad).
+TMDB `cartoon` 1. sayfada kısa adı ("Cartoon") öne aldığı için 2. sayfa +
+`cartoon network` takviyesi ve uzun-hedef sıralaması eklendi. Canlı curl:
+`q=cartoon` ilk 8 sonuç Cartoon Network India/Movies/Turkey/Studios/…
+Eski istemci (Play 1.40) `poster_path` yok diye şirketi yok sayar — zararsız.
+
+### Aynı derlemede (ölçülmüş, bekleyen işler)
+Statik açılış ekranı · SimpleIcons budama (font 1,36 MB→6 KB) · WebP Accept ·
+APK `abiFilters` yalnız APK · Fince `Uudet seuraajat` · SEO sitemap/soft 404
+kodu (nginx `@spa` parçası henüz uygulanmadı) · takip listesi LIMIT 500'de
+`takip_ediyorum`.
+
 ## 2026-08-14 — 🚀 İSTATİSTİK EKRANLARI + SEVİYE SADELEŞTİRME (1.46.0+93)
 Beş ajan paralel; dosya sahipliği bölündü, çakışma olmadı.
 

@@ -662,7 +662,7 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
 - **(c) Risk:** Düşük.
 - **(d) Adım:** nginx'e `location = / { if ($og_bot) { ... } }` ekle; `/og/` ucu markayı anlatan bir sayfa + popüler/yeni yorumlanan 50–100 içeriğe bağlantı listesi dönsün. `/gozat`, `/kesfet` için de benzer liste sayfaları.
 
-#### 1.5. Performans: Cloudflare önbelleğini devreye al 🟡 (yama hazır, uygulanmadı → `backend/nginx-seo-20260806.parca.conf`)
+#### 1.5. Performans: Cloudflare önbelleğini devreye al ✅ TAMAM (önbellek 6 Ağu; sıkıştırma 14 Ağu 2026)
 
 - **(a) Etki:** Orta–yüksek (kullanıcı deneyimi ve CWV). Origin yükünde de belirgin düşüş.
 - **(b) İş yükü:** 0,5–1 gün.
@@ -682,6 +682,51 @@ Her madde: **(a) beklenen etki · (b) iş yükü · (c) risk · (d) uygulama ad�
   3. `main.dart.js` için `no-store`'u kaldırmak istiyorsanız önce dosya adına build hash'i ekleyin (`flutter build web` çıktısını post-process eden bir adım) ve `index.html`'i `no-store` bırakın. Hash'siz haliyle `no-store` **doğru** karardır — dokunmayın.
   4. Brotli: Cloudflare panelinde Brotli'yi aç. `main.dart.js` için ~250–300 KB beklenen tasarruf. **[DOĞRULANMALI: CF Brotli ayarının durumu; ölçümde `content-encoding: gzip` döndü.]**
   5. `flutter build web --wasm` ile skwasm derlemesini değerlendir — CanvasKit'ten daha küçük ilk yük verebilir, ancak tarayıcı desteği ve görsel regresyon testi gerekir. **[DOĞRULANMALI: projede denenip denenmediği.]**
+
+**Uygulama notu (14 Ağu 2026, canlı) — 1.5 önbellek DOĞRULANDI, sıkıştırma EKLENDİ:**
+
+Bu madde 6 Ağustos'ta "yama hazır, uygulanmadı" diye bırakılmıştı; 14 Ağustos'ta
+ölçünce **önbellek tarafının fiilen çalıştığı** görüldü, sıkıştırma tarafında ise
+planın 4. adımının (CF panelinden Brotli) tek başına YETMEDİĞİ ortaya çıktı.
+
+- **Önbellek (adım 1–3) çalışıyor.** İkinci istekte `cf-cache-status: HIT`:
+  `main.f68cb0813ef6.dart.js` (`immutable`), `canvaskit/canvaskit.wasm`, `flutter.js`.
+  İçerik hash'li ad `araclar/web_hashla.js` ile üretiliyor, `index.html` `no-store`
+  kalıyor — yani 3. adımın koşulu sağlanmış durumda.
+- **Adım 4 ölçümle YANLIŞLANDI.** "Cloudflare panelinden Brotli'yi aç, ~250–300 KB
+  kazanç" beklentisi tutmadı: CF **origin'den gelen gövdeyi yeniden sıkıştırmıyor.**
+  Origin nginx'in VARSAYILAN `gzip_comp_level 1`i ile sıkıştırıyordu ve br isteyen
+  istemciye gzip'ten DAHA BÜYÜK yanıt gidiyordu:
+
+  | Dosya | Ham | CF br (önce) | Origin gzip q1 | **Statik br q11** |
+  |---|---|---|---|---|
+  | `main.<hash>.dart.js` | 11.842.763 | 2.941.559 | 3.523.884 | **2.097.008** |
+  | `canvaskit/canvaskit.wasm` | 7.229.467 | 2.851.336 | — | **2.248.161** |
+
+  İlk yüklemenin kritik yolu **~1,45 MB** kısaldı (−845 KB + −603 KB).
+- **Yapılan iş:** `apt-get install brotli libnginx-mod-http-brotli-{filter,static}`
+  (Debian 12'de paket olarak var, kaynaktan derleme gerekmedi) +
+  `backend/nginx-sikistirma-20260814.parca.conf` → sunucuda
+  `/etc/nginx/dizijpg/sikistirma.conf`, ana bloğun `root` satırından hemen sonra
+  `include` ile bağlandı. `brotli_static on` + anlık `brotli` (seviye 5, SSR/JSON
+  için) + gzip yedeği seviye 6.
+- **`gzip_types`'a `application/wasm` ŞART:** ilk denemede yalnız `brotli_types`'a
+  konmuştu, br desteklemeyen istemci `canvaskit.wasm`'ı **7.229.467 B HAM**
+  indiriyordu. Şimdi gzip ile 2.903.572 B.
+- **`.br` üretimi dağıtım adımı:** `araclar/web_brotli.sh` (sunucuda çalışır,
+  `dizijpg-ux-kontrol` skill'inin dağıtım ritüelinde **5b** olarak eklendi).
+  49 dosya, 45,9 MB → 13,0 MB (%71). Betik `._*` macOS artıklarını da siliyor
+  (canlıda 8 tane birikmişti).
+- **ÖĞRENİLMİŞ DERS — atomik yazma:** betiğin ilk sürümü `.br`'yi YERİNDE yazıyordu.
+  11,8 MB'lık JS'in q11 sıkıştırması ~2 dakika sürüyor ve o süre boyunca
+  `brotli_static` YARIM gövdeyi 200 ile servis etti (`content-length: 0` ölçüldü).
+  Dağıtım anında sitedeki JS bozuk gidiyordu. Çözüm: `.br.gecici` → `mv` (atomik).
+- **[KULLANICIDA] Cloudflare önbelleği boşaltılmalı.** Origin artık doğru gövdeyi
+  veriyor ama CF sabit adresleri (`/canvaskit/*`, `/assets/*`) `immutable`
+  1 yıl TTL ile önbellekte tutuyor; `HIT` dönen eski kopya kendiliğinden düşmez.
+  Panelden "Purge Everything" (içerik hash'li ve `no-store` dosyalar yüzünden
+  risksiz) veya `/canvaskit/` ön eki için önbellek boşaltma gerekiyor.
+  API ile yapılamadı: depoda/sunucuda CF API anahtarı YOK.
 
 **Uygulama notu (6 Ağu 2026, canlı) — 1.3 + 1.4 + IndexNow:**
 

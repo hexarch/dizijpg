@@ -1034,4 +1034,8 @@ const Map<String, String> cevirilerFil = {
   'Ortalama izlenme: videonun %{} kadarı': 'Average na napanood: {}% ng video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Ang average ng 20 bahagi ng kurba.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Maghanap ng serye, pelikula, tao, o kumpanya...',
+  'Şirketler': 'Mga kumpanya',
+  'Senarist': 'Manunulat ng iskrip',
 };

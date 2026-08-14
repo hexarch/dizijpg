@@ -1025,4 +1025,8 @@ const Map<String, String> cevirilerHu = {
   'Ortalama izlenme: videonun %{} kadarı': 'Átlagos megtekintés: a videó {}%-a',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'A megtartási görbe 20 szakaszának átlaga.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Sorozat, film, személy vagy cég keresése...',
+  'Şirketler': 'Cégek',
+  'Senarist': 'Forgatókönyvíró',
 };

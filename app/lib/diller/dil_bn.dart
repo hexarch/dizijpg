@@ -1013,4 +1013,8 @@ const Map<String, String> cevirilerBn = {
       'এই সংখ্যাগুলো পোস্টের সর্বকালীন মোট (যেসব বাক্সের নিজস্ব নোট আছে সেগুলো ছাড়া); নিচের দিন নির্বাচন কেবল গ্রাফ বদলায়।',
   'Ortalama izlenme: videonun %{} kadarı': 'গড় দেখা: ভিডিওর {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': 'কার্ভের 20টি ভাগের গড়।',
+  'Dizi, film, kişi veya şirket ara...':
+      'সিরিজ, সিনেমা, ব্যক্তি বা কোম্পানি খোঁজো...',
+  'Şirketler': 'কোম্পানি',
+  'Senarist': 'চিত্রনাট্যকার',
 };

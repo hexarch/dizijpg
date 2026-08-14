@@ -15,6 +15,7 @@ import '../altyazi.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
+import '../gorsel_basliklari.dart';
 import '../medya_yukle.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
@@ -569,10 +570,15 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
             else if (arka != null)
               CachedNetworkImage(
                 imageUrl: arka,
+                httpHeaders: gorselBasliklari(arka),
                 fit: BoxFit.cover,
                 // Video karesi henüz üretilmemişse içerik posterine düş
                 errorWidget: (context, url, hata) => poster != null
-                    ? CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover)
+                    ? CachedNetworkImage(
+                        imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
+                        fit: BoxFit.cover,
+                      )
                     : Container(color: DiziRenkler.kart),
               )
             else
@@ -915,6 +921,7 @@ Future<double?> _fotoOraniniOlc(String url) {
   final tamam = Completer<double?>();
   final akis = CachedNetworkImageProvider(
     url,
+    headers: gorselBasliklari(url),
   ).resolve(ImageConfiguration.empty);
   late final ImageStreamListener dinleyici;
   void bitir(double? o) {
@@ -1275,7 +1282,10 @@ class _ReelSayfaState extends State<_ReelSayfa>
       for (final u in _medya) {
         if (_videoMu(u)) continue; // videolar akışla gelir, önbelleğe alınmaz
         precacheImage(
-          CachedNetworkImageProvider(u),
+          // Ön yükleme ile GÖSTERİM aynı başlıkları kullanmalı: aksi hâlde
+          // (kuramsal olarak) iki farklı biçim inebilirdi. Önbellek anahtarı
+          // yalnız URL'dir, başlık anahtarı etkilemez.
+          CachedNetworkImageProvider(u, headers: gorselBasliklari(u)),
           context,
           onError: (_, _) {}, // ağ hatası sessiz geçilir, gösterim etkilenmez
         );
@@ -1483,7 +1493,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
       );
     } else if (foto != null) {
       zemin = Center(
-        child: CachedNetworkImage(imageUrl: foto, fit: BoxFit.contain),
+        child: CachedNetworkImage(
+          imageUrl: foto,
+          httpHeaders: gorselBasliklari(foto),
+          fit: BoxFit.contain,
+        ),
       );
     } else {
       // Yazılı yorum: yalnız poster arka planı. ALINTI METNİ dokunuş
@@ -1492,7 +1506,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
       zemin = poster != null
           ? Opacity(
               opacity: 0.25,
-              child: CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+              child: CachedNetworkImage(
+                imageUrl: poster,
+                httpHeaders: gorselBasliklari(poster),
+                fit: BoxFit.cover,
+              ),
             )
           : const SizedBox.expand();
     }

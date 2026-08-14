@@ -194,6 +194,9 @@ void main() {
     // aynı kapsamı görmeli; ayrışırlarsa cloaking geri gelir.
     expect(herkeseAcikMi('/listeler/1'), isTrue);
     expect(herkeseAcikMi('/listeler/1234'), isTrue);
+    // SEO 1.4 (14 Ağu): keşif sayfaları oturumsuz açık — SSR ile aynı içerik.
+    expect(herkeseAcikMi('/gozat'), isTrue);
+    expect(herkeseAcikMi('/kesfet'), isTrue);
     // Korumalı alan korumalı kalmalı.
     expect(herkeseAcikMi('/listelerim'), isFalse);
     expect(herkeseAcikMi('/takvim'), isFalse);

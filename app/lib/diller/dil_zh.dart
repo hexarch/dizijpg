@@ -970,4 +970,7 @@ const Map<String, String> cevirilerZh = {
       '这些数字是帖子的全期总数（带有单独说明的方框除外），下方的天数选择只会改变图表。',
   'Ortalama izlenme: videonun %{} kadarı': '平均观看：视频的 {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': '留存曲线 20 个区间的平均值。',
+  'Dizi, film, kişi veya şirket ara...': '搜索剧集、电影、人物或公司...',
+  'Şirketler': '公司',
+  'Senarist': '编剧',
 };

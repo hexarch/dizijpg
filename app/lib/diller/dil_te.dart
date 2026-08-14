@@ -1020,4 +1020,8 @@ const Map<String, String> cevirilerTe = {
   'Ortalama izlenme: videonun %{} kadarı': 'సగటు వీక్షణ: వీడియోలో {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'రిటెన్షన్ కర్వ్‌లోని 20 విభాగాల సగటు.',
+  'Dizi, film, kişi veya şirket ara...':
+      'సిరీస్, సినిమా, వ్యక్తి లేదా కంపెనీని వెతుకు...',
+  'Şirketler': 'కంపెనీలు',
+  'Senarist': 'స్క్రీన్ రైటర్',
 };

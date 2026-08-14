@@ -1030,4 +1030,8 @@ const Map<String, String> cevirilerMy = {
   'Ortalama izlenme: videonun %{} kadarı': 'ပျမ်းမျှ ကြည့်ရှုမှု: ဗီဒီယို၏ {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'ဆက်လက်ကြည့်ရှုမှု မျဉ်းကွေး၏ အပိုင်း 20 ခု၏ ပျမ်းမျှ။',
+  'Dizi, film, kişi veya şirket ara...':
+      'ဇာတ်လမ်းတွဲ၊ ရုပ်ရှင်၊ လူ သို့မဟုတ် ကုမ္ပဏီ ရှာရန်...',
+  'Şirketler': 'ကုမ္ပဏီများ',
+  'Senarist': 'ဇာတ်ညွှန်းရေးသူ',
 };

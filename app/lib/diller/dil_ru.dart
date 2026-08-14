@@ -1024,4 +1024,8 @@ const Map<String, String> cevirilerRu = {
   'Ortalama izlenme: videonun %{} kadarı': 'Средний просмотр: {}% видео',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Среднее по 20 интервалам кривой удержания.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Поиск сериалов, фильмов, людей и компаний...',
+  'Şirketler': 'Компании',
+  'Senarist': 'Сценарист',
 };

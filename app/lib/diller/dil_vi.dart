@@ -1021,4 +1021,8 @@ const Map<String, String> cevirilerVi = {
   'Ortalama izlenme: videonun %{} kadarı': 'Xem trung bình: {}% video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Trung bình của 20 khoảng trên đường cong giữ chân.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Tìm phim bộ, phim lẻ, người hoặc công ty...',
+  'Şirketler': 'Công ty',
+  'Senarist': 'Biên kịch',
 };

@@ -1012,4 +1012,7 @@ const Map<String, String> cevirilerFa = {
       'این عددها مجموع کل عمر پست هستند (به‌جز کادرهایی که یادداشت خودشان را دارند)؛ انتخاب روز در پایین فقط نمودار را تغییر می‌دهد.',
   'Ortalama izlenme: videonun %{} kadarı': 'میانگین تماشا: {}٪ از ویدیو',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': 'میانگین 20 بخش منحنی.',
+  'Dizi, film, kişi veya şirket ara...': 'سریال، فیلم، شخص یا شرکت جستجو کن...',
+  'Şirketler': 'شرکت‌ها',
+  'Senarist': 'فیلم‌نامه‌نویس',
 };

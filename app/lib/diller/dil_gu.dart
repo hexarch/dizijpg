@@ -1011,4 +1011,8 @@ const Map<String, String> cevirilerGu = {
   'Ortalama izlenme: videonun %{} kadarı': 'સરેરાશ જોવાયું: વીડિયોનો {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'રિટેન્શન કર્વનાં 20 ખાનાંની સરેરાશ.',
+  'Dizi, film, kişi veya şirket ara...':
+      'સિરીઝ, ફિલ્મ, વ્યક્તિ કે કંપની શોધો...',
+  'Şirketler': 'કંપનીઓ',
+  'Senarist': 'પટકથા લેખક',
 };

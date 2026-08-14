@@ -13,6 +13,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../altyazi.dart';
 import '../api.dart';
+import '../gorsel_basliklari.dart';
 import '../icerik_deposu.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
@@ -91,6 +92,7 @@ class MedyaGaleri extends StatelessWidget {
                     ))
             : CachedNetworkImage(
                 imageUrl: urller[i],
+                httpHeaders: gorselBasliklari(urller[i]),
                 fit: BoxFit.cover,
                 placeholder: (_, _) => Container(color: DiziRenkler.kart),
                 errorWidget: (_, _, _) => Container(
@@ -135,6 +137,7 @@ class MedyaGaleri extends StatelessWidget {
             constraints: BoxConstraints(maxHeight: kisit.maxWidth * 1.5),
             child: CachedNetworkImage(
               imageUrl: urller[0],
+              httpHeaders: gorselBasliklari(urller[0]),
               width: double.infinity,
               fit: BoxFit.fitWidth,
               placeholder: (_, _) =>
@@ -252,7 +255,10 @@ class _AkisMedyaState extends State<AkisMedya> {
     _oran = widget.oran;
     // İlk medya görselse doğal oranını ölç (video kendi oranını bildirir)
     if (_oran == null && !_video(widget.urller.first)) {
-      final saglayici = CachedNetworkImageProvider(widget.urller.first);
+      final saglayici = CachedNetworkImageProvider(
+        widget.urller.first,
+        headers: gorselBasliklari(widget.urller.first),
+      );
       _akis = saglayici.resolve(const ImageConfiguration());
       _dinleyici = ImageStreamListener((bilgi, _) {
         if (!mounted || _oran != null) return;
@@ -371,6 +377,7 @@ class _AkisMedyaState extends State<AkisMedya> {
                           color: Colors.black,
                           child: CachedNetworkImage(
                             imageUrl: url,
+                            httpHeaders: gorselBasliklari(url),
                             // İlk medya oranı kutuyu belirlediği için o tam
                             // oturur; diğerleri kırpılmadan sığdırılır.
                             fit: widget.tumunuKapla || i == 0
@@ -1103,6 +1110,7 @@ class PosterKarti extends StatelessWidget {
                         )
                       : CachedNetworkImage(
                           imageUrl: posterYolu,
+                          httpHeaders: gorselBasliklari(posterYolu),
                           fit: BoxFit.cover,
                           placeholder: (_, __) =>
                               Container(color: DiziRenkler.kart),
@@ -1836,6 +1844,12 @@ Widget agGorselKur({
   }
   return CachedNetworkImage(
     imageUrl: url,
+    // Bu sarmalayıcı KULLANICININ YÜKLEDİĞİ avatar/kapak için kullanılıyor;
+    // o adresler kendi sunucumuzda ve orada içerik pazarlığı yok, dolayısıyla
+    // başlık `null` çıkar (davranış birebir eskisi). Kural yine de tek elden
+    // uygulanıyor: yarın buraya bir TMDB adresi verilirse kazanç kendiliğinden
+    // gelsin, çağıran ayrıca bir şey hatırlamak zorunda kalmasın.
+    httpHeaders: gorselBasliklari(url),
     fit: fit,
     placeholder: yerTutucu == null ? null : (_, _) => yerTutucu,
     errorWidget: hata == null ? null : (_, _, _) => hata,
@@ -1932,7 +1946,10 @@ class KullaniciAvatari extends StatelessWidget {
             radius: yaricap,
             backgroundColor: arkaplan ?? DiziRenkler.koyuGri,
             backgroundImage: url != null
-                ? CachedNetworkImageProvider(url!)
+                ? CachedNetworkImageProvider(
+                    url!,
+                    headers: gorselBasliklari(url),
+                  )
                 : null,
             child: url == null
                 ? Icon(
@@ -2276,6 +2293,7 @@ class _ListeOgeKartState extends State<_ListeOgeKart> {
           child: poster != null
               ? CachedNetworkImage(
                   imageUrl: poster,
+                  httpHeaders: gorselBasliklari(poster),
                   fit: BoxFit.cover,
                   errorWidget: (_, _, _) => Icon(
                     Icons.broken_image_outlined,

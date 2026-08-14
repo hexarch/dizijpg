@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../api.dart';
+import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../puan.dart';
@@ -786,6 +787,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                               onTap: () => medyaGoster(context, [arka]),
                               child: CachedNetworkImage(
                                 imageUrl: arka,
+                                httpHeaders: gorselBasliklari(arka),
                                 fit: BoxFit.cover,
                               ),
                             )
@@ -1330,7 +1332,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                     backgroundColor: DiziRenkler.kart,
                                     backgroundImage: foto == null
                                         ? null
-                                        : CachedNetworkImageProvider(foto),
+                                        : CachedNetworkImageProvider(
+                                            foto,
+                                            headers: gorselBasliklari(foto),
+                                          ),
                                     child: foto == null
                                         ? Icon(
                                             Icons.person,
@@ -1394,7 +1399,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                     backgroundColor: DiziRenkler.kart,
                                     backgroundImage: foto == null
                                         ? null
-                                        : CachedNetworkImageProvider(foto),
+                                        : CachedNetworkImageProvider(
+                                            foto,
+                                            headers: gorselBasliklari(foto),
+                                          ),
                                     child: foto == null
                                         ? Icon(
                                             Icons.person,
@@ -1821,7 +1829,11 @@ class _BolumSatiri extends StatelessWidget {
                         color: DiziRenkler.koyuGri,
                         child: Icon(Icons.tv, color: DiziRenkler.metin24),
                       )
-                    : CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover),
+                    : CachedNetworkImage(
+                        imageUrl: gorsel,
+                        httpHeaders: gorselBasliklari(gorsel),
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             const SizedBox(width: 10),
@@ -2013,6 +2025,7 @@ class _NeredeIzlenir extends StatelessWidget {
               )
             : CachedNetworkImage(
                 imageUrl: logo,
+                httpHeaders: gorselBasliklari(logo),
                 width: 48,
                 height: 48,
                 fit: BoxFit.cover,
@@ -2083,7 +2096,10 @@ Future<void> tumOyuncularAc(
                   radius: 24,
                   backgroundColor: DiziRenkler.kart,
                   backgroundImage: foto != null
-                      ? CachedNetworkImageProvider(foto)
+                      ? CachedNetworkImageProvider(
+                          foto,
+                          headers: gorselBasliklari(foto),
+                        )
                       : null,
                   child: foto == null
                       ? Icon(Icons.person, color: DiziRenkler.metin38)

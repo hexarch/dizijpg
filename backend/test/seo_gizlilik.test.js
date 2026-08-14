@@ -168,18 +168,29 @@ test('hiçbir SSR sayfası kullanıcı profiline BAĞLANTI vermiyor', () => {
   assert.ok(!h.includes('<a '), 'yorum bloğu bağlantı üretiyor');
 });
 
-test('sitemap YALNIZ /icerik/:tur/:id üretir — profil/kişisel URL yok', () => {
+test('sitemap YALNIZ içerik/bölüm URL\'i üretir — profil/kişisel URL yok', () => {
+  // 14 Ağu 2026: artık İKİ üreteç var (içerik ve bölüm haritası). İkisi de
+  // yalnız TMDB kimliğinden URL kurmalı; kullanıcıya ait hiçbir yol üretmemeli.
   const uret = bolum('async function sitemapUret()', 'async function sitemapVerisi');
-  assert.match(uret, /loc: `\$\{SITE_KOK\}\/icerik\/\$\{r\.tur\}\/\$\{r\.tmdb_id\}`/);
+  assert.match(uret, /`\$\{SITE_KOK\}\/icerik\/\$\{r\.tur\}\/\$\{r\.tmdb_id\}`/);
+  const bolumUret = bolum(
+    'async function sitemapBolumUret()', 'async function sitemapBolumVerisi');
+  assert.match(bolumUret,
+    /`\$\{SITE_KOK\}\/dizi\/\$\{r\.tmdb_id\}\/sezon\/\$\{r\.sezon\}\/bolum\/\$\{r\.bolum\}`/);
   for (const y of ['kullanici', 'profil', 'sohbet', 'bildirim', 'kitaplik']) {
     assert.ok(!uret.includes(y), `sitemap şablonuna ${y} sızmış`);
+    assert.ok(!bolumUret.includes(y), `bölüm sitemap şablonuna ${y} sızmış`);
   }
-  // Sorgu yalnız içerik tablolarından tur+tmdb_id seçiyor; kullanıcı kimliği
-  // ya da adı çıktıya HİÇ girmiyor.
+  // Sorgular yalnız içerik tablolarından tur/tmdb_id/sezon/bolum seçiyor;
+  // kullanıcı kimliği ya da adı çıktıya HİÇ girmiyor.
   const sorgu = bildirimCek('SITEMAP_SORGU');
   assert.match(sorgu, /SELECT tur, tmdb_id, max\(tarih\) AS son/);
-  assert.ok(!/kullanici_adi/.test(sorgu), 'sitemap sorgusu kullanıcı adı seçiyor');
-  assert.ok(!/\bemail\b/.test(sorgu), 'sitemap sorgusu e-posta seçiyor');
+  const bolumSorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
+  assert.match(bolumSorgu, /SELECT tmdb_id, sezon, bolum, max\(tarih\) AS son/);
+  for (const [ad, s] of [['içerik', sorgu], ['bölüm', bolumSorgu]]) {
+    assert.ok(!/kullanici_adi/.test(s), `${ad} sitemap sorgusu kullanıcı adı seçiyor`);
+    assert.ok(!/\bemail\b/.test(s), `${ad} sitemap sorgusu e-posta seçiyor`);
+  }
 });
 
 // ===========================================================================
@@ -385,13 +396,15 @@ test('/og/gozat ve /og/kesfet uçları tanımlı', () => {
 });
 
 test('CLOAKING KİLİDİ: Flutter rotaları oturumsuz açılmadıkça noindex', () => {
-  // yonlendirme.dart'taki acikYolOnEkleri'nde '/gozat' ve '/kesfet' YOK:
-  // oturumsuz ziyaretçi /giris'e atılıyor. O halde bu sayfalar indekse
-  // GİRMEMELİ (SEO-PLANI 3.1). Kilidin iki ucu da burada denetleniyor.
-  const acikListe = /const acikYolOnEkleri = <String>\[([^\]]*)\]/
-    .exec(YONLENDIRME);
-  assert.ok(acikListe, 'acikYolOnEkleri listesi bulunamadı');
-  const flutterAcik = (yol) => acikListe[1].includes(`'${yol}'`);
+  // İndeksleme kararı Flutter'ın oturumsuz açmasıyla KİLİTLİ (SEO-PLANI 3.1).
+  // 14 Ağu: iki rota `acikTamYollar`'a alındı ve SEO_KESIF_INDEKS=true.
+  // Geri almak için İKİSİNİ birden kapat; aksi halde bu test kırmızıya döner.
+  const onEk = /const acikYolOnEkleri = <String>\[([^\]]*)\]/.exec(YONLENDIRME);
+  const tam = /const acikTamYollar = <String>\[([^\]]*)\]/.exec(YONLENDIRME);
+  assert.ok(onEk, 'acikYolOnEkleri listesi bulunamadı');
+  assert.ok(tam, 'acikTamYollar listesi bulunamadı');
+  const flutterAcik = (yol) =>
+    tam[1].includes(`'${yol}'`) || onEk[1].includes(`'${yol}'`);
   const sabit = /const SEO_KESIF_INDEKS = (true|false);/.exec(KAYNAK);
   assert.ok(sabit, 'SEO_KESIF_INDEKS sabiti yok');
   if (sabit[1] === 'true') {
@@ -505,4 +518,26 @@ test('keşif tanımları gozat.dart/kesfet.dart ile aynı TMDB sorgularını kul
     assert.ok(kesfet.includes(`'${ad}'`), `kesfet.dart'ta raf yok: ${ad}`);
     assert.ok(raflar.includes(`'${ad}'`), `SEO rafları eksik: ${ad}`);
   }
+});
+
+// ===========================================================================
+// 7) /kisi indeks eşiği + sitemap-genel (14 Ağu 2026)
+// ===========================================================================
+test('kisiIndekslenir: özgün içerik VEYA biyografi+yapım eşiği', () => {
+  const fn = alan(
+    ['SEO_KISI_BIYO_MIN', 'SEO_KISI_YAPIM_MIN', 'kisiIndekslenir'],
+    'kisiIndekslenir',
+  );
+  assert.equal(fn({ ozgunVar: true, biyografi: '', yapimSayisi: 0 }), true);
+  assert.equal(fn({ ozgunVar: false, biyografi: 'x'.repeat(200), yapimSayisi: 6 }), true);
+  assert.equal(fn({ ozgunVar: false, biyografi: 'x'.repeat(199), yapimSayisi: 6 }), false);
+  assert.equal(fn({ ozgunVar: false, biyografi: 'x'.repeat(200), yapimSayisi: 5 }), false);
+  assert.equal(fn({ ozgunVar: false, biyografi: '', yapimSayisi: 12 }), false);
+});
+
+test('sitemap-genel /gozat ve /kesfet\'i SEO_KESIF_INDEKS ile bağlar', () => {
+  const kaynak = bildirimCek('SITEMAP_GENEL_YOLLAR');
+  assert.match(kaynak, /yol: '\/gozat'[\s\S]*indekslenir: \(\) => SEO_KESIF_INDEKS/);
+  assert.match(kaynak, /yol: '\/kesfet'[\s\S]*indekslenir: \(\) => SEO_KESIF_INDEKS/);
+  assert.match(kaynak, /yol: '\/'[\s\S]*indekslenir: \(\) => true/);
 });

@@ -108,7 +108,17 @@ const acikYolOnEkleri = <String>[
 
 /// Oturum gerektirmeyen tam yollar (ön ek DEĞİL: `/gizlilik-tercihleri` gibi
 /// ileride eklenebilecek kişisel bir ekran yanlışlıkla açılmasın).
-const acikTamYollar = <String>['/gizlilik'];
+const acikTamYollar = <String>[
+  '/gizlilik',
+  // SEO 1.4 — keşif sayfalarının SSR'ı 6 Ağu'dan beri vardı ama Flutter
+  // giriş duvarının arkasındaydı; bot içerik, insan /giris görüyordu
+  // (cloaking). 14 Ağu'da ikisi de oturumsuz açıldı, `SEO_KESIF_INDEKS`
+  // aynı turda `true` yapıldı. Tam yol (ön ek değil): `/kesfet-akis` bir
+  // API ucu, Flutter rotası değil; yine de `/kesfet/` diye bir alt yol
+  // ileride eklenirse yanlışlıkla açılmasın.
+  '/gozat',
+  '/kesfet',
+];
 
 /// Tek gönderi adresi. [yanit] TRUE ise `?yanit=1` eklenir.
 ///

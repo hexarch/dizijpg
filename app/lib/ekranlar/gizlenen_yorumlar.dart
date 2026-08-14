@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -168,6 +169,7 @@ class _GizliYorumSatiri extends StatelessWidget {
                       height: 50,
                       child: CachedNetworkImage(
                         imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
                         fit: BoxFit.cover,
                         placeholder: (_, _) =>
                             Container(color: DiziRenkler.kart),

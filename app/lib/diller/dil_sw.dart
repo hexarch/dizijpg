@@ -1024,4 +1024,8 @@ const Map<String, String> cevirilerSw = {
   'Ortalama izlenme: videonun %{} kadarı': 'Wastani wa kutazamwa: {}% ya video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Wastani wa vipimo 20 vya grafu ya kubaki.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Tafuta mfululizo, filamu, mtu au kampuni...',
+  'Şirketler': 'Kampuni',
+  'Senarist': 'Mwandishi wa filamu',
 };

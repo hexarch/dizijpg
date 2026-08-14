@@ -4,6 +4,7 @@ import 'package:video_player/video_player.dart';
 
 import '../altyazi.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 
 /// Tam ekran medya görüntüleyici: fotoğrafta çimdik/sürükle yakınlaştırma,
@@ -70,6 +71,11 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                   child: Center(
                     child: CachedNetworkImage(
                       imageUrl: url,
+                      // Bu görüntüleyici İKİ KAYNAĞI da açıyor: TMDB arka
+                      // planı/bölüm karesi (detay.dart, bolum.dart) ve kendi
+                      // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu
+                      // ancak ÇALIŞMA ANINDA bilinir; kararı adres veriyor.
+                      httpHeaders: gorselBasliklari(url),
                       fit: BoxFit.contain,
                       progressIndicatorBuilder: (_, __, ___) =>
                           const CircularProgressIndicator(

@@ -7,6 +7,7 @@ import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../seviye.dart';
 import '../tema.dart';
 import 'begenenler.dart';
@@ -941,6 +942,7 @@ class ProfilYorumKarti extends StatelessWidget {
                           height: 34,
                           child: CachedNetworkImage(
                             imageUrl: poster,
+                            httpHeaders: gorselBasliklari(poster),
                             fit: BoxFit.cover,
                             errorWidget: (_, __, ___) =>
                                 Container(color: DiziRenkler.koyuGri),
@@ -1193,7 +1195,7 @@ class _KullaniciListesiEkraniState extends State<KullaniciListesiEkrani> {
                 return KullaniciSatiri(
                   key: ValueKey(ad),
                   kullanici: u,
-                  takipEdiyorum: kume == null ? null : kume.contains(ad),
+                  takipEdiyorum: satirTakipDurumu(u, kume),
                   onTakipDegisti: (v) => _kumeyeYaz(ad, v),
                 );
               },
@@ -1245,7 +1247,8 @@ class KullaniciSatiri extends StatelessWidget {
     // kullanıcı adıyla karşılaştırılır (kendini takip edemezsin).
     final benimAdim =
         context.watch<Oturum>().kullanici?['kullanici_adi'] as String?;
-    final benMi = benimAdim != null && benimAdim == ad;
+    final benMi =
+        kullanici['ben_mi'] == true || (benimAdim != null && benimAdim == ad);
     return ListTile(
       leading: KullaniciAvatari(
         url: avatar,
@@ -1374,9 +1377,7 @@ class _KullaniciAramaEkraniState extends State<KullaniciAramaEkrani> {
                         return KullaniciSatiri(
                           key: ValueKey(ad),
                           kullanici: u,
-                          takipEdiyorum: kume == null
-                              ? null
-                              : kume.contains(ad),
+                          takipEdiyorum: satirTakipDurumu(u, kume),
                           onTakipDegisti: (v) =>
                               v ? kume?.add(ad) : kume?.remove(ad),
                         );
@@ -1460,6 +1461,7 @@ class _YorumDetayModal extends StatelessWidget {
                     child: poster != null
                         ? CachedNetworkImage(
                             imageUrl: poster!,
+                            httpHeaders: gorselBasliklari(poster),
                             fit: BoxFit.cover,
                             errorWidget: (_, __, ___) => Container(
                               color: DiziRenkler.kart,

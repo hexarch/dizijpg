@@ -9,6 +9,7 @@ import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
+import '../gorsel_basliklari.dart';
 import '../onbellek.dart';
 import '../seviye.dart';
 import '../tema.dart';
@@ -1472,6 +1473,7 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
                       Expanded(
                         child: CachedNetworkImage(
                           imageUrl: k,
+                          httpHeaders: gorselBasliklari(k),
                           fit: BoxFit.cover,
                         ),
                       ),

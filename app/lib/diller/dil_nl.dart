@@ -1024,4 +1024,8 @@ const Map<String, String> cevirilerNl = {
       'Gemiddeld bekeken: {}% van de video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Het gemiddelde van de 20 delen van de retentiecurve.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Zoek een serie, film, persoon of bedrijf...',
+  'Şirketler': 'Bedrijven',
+  'Senarist': 'Scenarist',
 };

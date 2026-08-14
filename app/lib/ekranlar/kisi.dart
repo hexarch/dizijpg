@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../puan.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
@@ -359,6 +360,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                 )
                               : CachedNetworkImage(
                                   imageUrl: foto,
+                                  httpHeaders: gorselBasliklari(foto),
                                   fit: BoxFit.cover,
                                 ),
                         ),

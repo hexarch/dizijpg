@@ -1018,4 +1018,8 @@ const Map<String, String> cevirilerNb = {
       'Gjennomsnittlig sett: {} % av videoen',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Gjennomsnittet av de 20 delene i seerkurven.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Søk etter serie, film, person eller selskap...',
+  'Şirketler': 'Selskaper',
+  'Senarist': 'Manusforfatter',
 };

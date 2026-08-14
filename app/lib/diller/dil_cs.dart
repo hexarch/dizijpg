@@ -1016,4 +1016,8 @@ const Map<String, String> cevirilerCs = {
       'Tato čísla jsou celkové součty příspěvku za celou dobu (kromě polí s vlastní poznámkou); volba dnů níže mění jen graf.',
   'Ortalama izlenme: videonun %{} kadarı': 'Průměrně zhlédnuto: {} % videa',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': 'Průměr 20 úseků křivky.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Hledat seriál, film, osobu nebo společnost...',
+  'Şirketler': 'Společnosti',
+  'Senarist': 'Scénárista',
 };

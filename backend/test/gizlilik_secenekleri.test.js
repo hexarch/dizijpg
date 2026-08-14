@@ -246,8 +246,11 @@ function sahteHavuz(kayit = {}) {
           (a === benId ? [b] : b === benId ? [a] : [])));
         satirlar = satirlar.filter((id) => !engelli.has(id));
       }
-      // 2) GİZLİLİK — herkese karşı; SQL'de varsa yalnız isteyenin satırı kalır.
-      if (sql.includes(kendiSatirSuzgec('ku.id', '$2'))) {
+      // 2) GİZLİLİK — herkese karşı; SQL'de AND ile varsa yalnız isteyenin
+      // satırı kalır. `includes('ku.id = $2::int')` YETERSİZ: 14 Ağu'dan beri
+      // `ben_mi` sütunu aynı ifadeyi SELECT'te kullanıyor, gizlilik süzgeci
+      // değil. Asıl süzgeç `AND ku.id = $2::int`.
+      if (sql.includes(`AND ${kendiSatirSuzgec('ku.id', '$2')}`)) {
         satirlar = satirlar.filter((id) => id === benId);
       }
       return { rows: satirlar.map((id) => ({ kullanici_adi: ADLAR[id], avatar: null, bio: null })) };
@@ -303,7 +306,7 @@ test('KENDİ VERİMİ BEN GÖRÜYORUM: sahibi gizli listesini TAM görür', asyn
   const s = await takipcilerinden('ayse', 10);
   assert.equal(s.gizli, false, 'sahibine `gizli` bayrağı gönderilmemeli');
   assert.deepEqual(adlari(s), ['can', 'deniz', 'engelli']);
-  assert.ok(!KAYIT.sql.includes('ku.id = $2::int'),
+  assert.ok(!KAYIT.sql.includes(`AND ${kendiSatirSuzgec('ku.id', '$2')}`),
     'sahibinin sorgusuna gizlilik süzgeci girmiş');
 });
 

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -153,7 +154,10 @@ class FavoriOyuncuKarti extends StatelessWidget {
             backgroundColor: DiziRenkler.kart,
             backgroundImage: foto == null
                 ? null
-                : CachedNetworkImageProvider(foto),
+                : CachedNetworkImageProvider(
+                    foto,
+                    headers: gorselBasliklari(foto),
+                  ),
             child: foto == null
                 ? Icon(Icons.person, color: DiziRenkler.metin24, size: 30)
                 : null,

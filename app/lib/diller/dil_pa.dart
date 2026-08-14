@@ -1019,4 +1019,8 @@ const Map<String, String> cevirilerPa = {
   'Ortalama izlenme: videonun %{} kadarı': 'ਔਸਤ ਦੇਖਿਆ: ਵੀਡੀਓ ਦਾ {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'ਰਿਟੈਨਸ਼ਨ ਕਰਵ ਦੇ 20 ਖਾਨਿਆਂ ਦੀ ਔਸਤ।',
+  'Dizi, film, kişi veya şirket ara...':
+      'ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਵਿਅਕਤੀ ਜਾਂ ਕੰਪਨੀ ਖੋਜੋ...',
+  'Şirketler': 'ਕੰਪਨੀਆਂ',
+  'Senarist': 'ਸਕ੍ਰੀਨਰਾਈਟਰ',
 };

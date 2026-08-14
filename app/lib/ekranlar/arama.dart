@@ -1,13 +1,17 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
+import 'arama_cubugu.dart';
 import 'ortak.dart';
+import 'sirket.dart';
 
 class AramaEkrani extends StatefulWidget {
   const AramaEkrani({super.key});
@@ -21,6 +25,8 @@ class _AramaEkraniState extends State<AramaEkrani>
   final _kutu = TextEditingController();
   Timer? _geciktirici;
   List<dynamic> _sonuclar = [];
+  List<dynamic> _kisiler = [];
+  List<dynamic> _sirketler = [];
   List<dynamic> _kullanicilar = [];
   bool _yukleniyor = false;
   List<String> _gecmis = [];
@@ -70,6 +76,8 @@ class _AramaEkraniState extends State<AramaEkrani>
     if (sorgu.trim().length < 2) {
       setState(() {
         _sonuclar = [];
+        _kisiler = [];
+        _sirketler = [];
         _kullanicilar = [];
       });
       return;
@@ -84,16 +92,17 @@ class _AramaEkraniState extends State<AramaEkrani>
       ]);
       if (!mounted) return;
       setState(() {
-        _sonuclar = (yanitlar[0]['results'] as List<dynamic>)
-            .where(
-              (r) => r['media_type'] != 'person'
-                  ? r['poster_path'] != null
-                  : r['profile_path'] != null,
-            )
-            .toList();
+        final ham = yanitlar[0]['results'] as List<dynamic>? ?? [];
+        _sonuclar = aramaIcerikListesi(ham);
+        _kisiler = aramaKisiListesi(ham);
+        _sirketler = aramaSirketListesi(ham);
         _kullanicilar = yanitlar[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
-      if (_sonuclar.isNotEmpty) _gecmiseEkle(sorgu);
+      if (_sonuclar.isNotEmpty ||
+          _kisiler.isNotEmpty ||
+          _sirketler.isNotEmpty) {
+        _gecmiseEkle(sorgu);
+      }
     } catch (e) {
       // Sessiz yutma yok: arama başarısızsa kullanıcıya bildir.
       if (mounted) {
@@ -119,7 +128,7 @@ class _AramaEkraniState extends State<AramaEkrani>
               controller: _kutu,
               onChanged: _degisti,
               decoration: InputDecoration(
-                hintText: 'Dizi, film veya kişi ara...'.c,
+                hintText: 'Dizi, film, kişi veya şirket ara...'.c,
                 prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
                 suffixIcon: _yukleniyor
                     ? const Padding(
@@ -138,7 +147,11 @@ class _AramaEkraniState extends State<AramaEkrani>
             ),
           ),
           Expanded(
-            child: _sonuclar.isEmpty && _kullanicilar.isEmpty
+            child:
+                _sonuclar.isEmpty &&
+                    _kisiler.isEmpty &&
+                    _sirketler.isEmpty &&
+                    _kullanicilar.isEmpty
                 ? (_gecmis.isEmpty
                       ? BosDurum(
                           ikon: Icons.local_movies_outlined,
@@ -240,6 +253,39 @@ class _AramaEkraniState extends State<AramaEkrani>
                           ),
                         ),
                       ],
+                      if (_sirketler.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.apartment_outlined,
+                                size: 18,
+                                color: DiziRenkler.sariMetin,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                'Şirketler'.c,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 92,
+                          child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            itemCount: _sirketler.take(8).length,
+                            itemBuilder: (context, i) {
+                              final s = _sirketler[i] as Map<String, dynamic>;
+                              return _SirketKutusu(sirket: s);
+                            },
+                          ),
+                        ),
+                      ],
                       Expanded(
                         child: GridView.builder(
                           padding: const EdgeInsets.all(16),
@@ -247,13 +293,18 @@ class _AramaEkraniState extends State<AramaEkrani>
                             satirBoslugu: 14,
                             bosluk: 10,
                           ),
-                          itemCount: _sonuclar.length,
+                          itemCount: _sonuclar.length + _kisiler.length,
                           itemBuilder: (context, i) {
-                            final r = _sonuclar[i] as Map<String, dynamic>;
-                            if (r['media_type'] == 'person') {
-                              return _KisiKarti(kisi: r);
+                            if (i < _kisiler.length) {
+                              return _KisiKarti(
+                                kisi: _kisiler[i] as Map<String, dynamic>,
+                              );
                             }
-                            return PosterKarti(icerik: r);
+                            return PosterKarti(
+                              icerik:
+                                  _sonuclar[i - _kisiler.length]
+                                      as Map<String, dynamic>,
+                            );
                           },
                         ),
                       ),
@@ -314,7 +365,9 @@ class _KisiKarti extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final foto = posterUrl(kisi['profile_path'] as String?, boyut: 'w185');
+    final alt = kisiAramaAltYazi(kisi);
     return InkWell(
+      key: Key('arama-kisi-${aramaTmdbId(kisi)}'),
       onTap: () => context.push('/kisi/${kisi['id']}'),
       child: Column(
         children: [
@@ -326,10 +379,15 @@ class _KisiKarti extends StatelessWidget {
                       color: DiziRenkler.kart,
                       child: Icon(Icons.person, color: DiziRenkler.metin24),
                     )
-                  : Image.network(
-                      foto,
+                  : CachedNetworkImage(
+                      imageUrl: foto,
+                      httpHeaders: gorselBasliklari(foto),
                       fit: BoxFit.cover,
                       width: double.infinity,
+                      errorWidget: (_, _, _) => Container(
+                        color: DiziRenkler.kart,
+                        child: Icon(Icons.person, color: DiziRenkler.metin24),
+                      ),
                     ),
             ),
           ),
@@ -357,7 +415,62 @@ class _KisiKarti extends StatelessWidget {
               ),
             ],
           ),
+          if (alt.isNotEmpty)
+            Text(
+              alt,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+/// Yatay şeritteki şirket: logo + ad, dokununca `/sirket/:id`.
+class _SirketKutusu extends StatelessWidget {
+  final Map<String, dynamic> sirket;
+  const _SirketKutusu({required this.sirket});
+
+  @override
+  Widget build(BuildContext context) {
+    final ad = (sirket['name'] as String?) ?? '';
+    final id = aramaTmdbId(sirket);
+    return SizedBox(
+      width: 88,
+      child: InkWell(
+        key: Key('arama-sirket-$id'),
+        borderRadius: BorderRadius.circular(10),
+        onTap: () {
+          if (id == null) return;
+          context.push(sirketYolu(id, ad: ad));
+        },
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 44),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FirmaLogosu(
+                  logoYolu: sirket['logo_path'] as String?,
+                  genislik: 56,
+                  yukseklik: 40,
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  ad,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

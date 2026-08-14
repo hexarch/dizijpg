@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -449,7 +450,10 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
               radius: 16,
               backgroundColor: DiziRenkler.koyuGri,
               backgroundImage: gorsel != null
-                  ? CachedNetworkImageProvider(gorsel)
+                  ? CachedNetworkImageProvider(
+                      gorsel,
+                      headers: gorselBasliklari(gorsel),
+                    )
                   : null,
               child: gorsel == null
                   ? Icon(Icons.person, size: 16, color: DiziRenkler.metin38)
@@ -461,7 +465,11 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
                 width: 27,
                 height: 40,
                 child: gorsel != null
-                    ? CachedNetworkImage(imageUrl: gorsel, fit: BoxFit.cover)
+                    ? CachedNetworkImage(
+                        imageUrl: gorsel,
+                        httpHeaders: gorselBasliklari(gorsel),
+                        fit: BoxFit.cover,
+                      )
                     : Container(
                         color: DiziRenkler.koyuGri,
                         child: Icon(

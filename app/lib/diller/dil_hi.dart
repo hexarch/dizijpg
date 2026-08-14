@@ -1015,4 +1015,8 @@ const Map<String, String> cevirilerHi = {
   'Ortalama izlenme: videonun %{} kadarı': 'औसत देखा गया: वीडियो का {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'रिटेंशन कर्व के 20 खंडों का औसत।',
+  'Dizi, film, kişi veya şirket ara...':
+      'सीरीज़, फ़िल्म, व्यक्ति या कंपनी खोजो...',
+  'Şirketler': 'कंपनियाँ',
+  'Senarist': 'पटकथा लेखक',
 };

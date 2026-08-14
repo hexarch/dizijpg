@@ -989,4 +989,7 @@ const Map<String, String> cevirilerAm = {
       'እነዚህ ቁጥሮች የልጥፉ የዕድሜ ልክ ድምር ናቸው (የራሳቸው ማስታወሻ ያላቸው ሳጥኖች ሳይጨመሩ)፤ ከታች ያለው የቀን ምርጫ ግራፉን ብቻ ይለውጣል።',
   'Ortalama izlenme: videonun %{} kadarı': 'አማካይ እይታ፦ የቪዲዮው {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': 'የመስመሩ 20 ክፍሎች አማካይ።',
+  'Dizi, film, kişi veya şirket ara...': 'ድራማ፣ ፊልም፣ ሰው ወይም ኩባንያ ፈልግ...',
+  'Şirketler': 'ኩባንያዎች',
+  'Senarist': 'ስክሪፕት ጸሃፊ',
 };

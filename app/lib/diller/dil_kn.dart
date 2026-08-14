@@ -1018,4 +1018,8 @@ const Map<String, String> cevirilerKn = {
   'Ortalama izlenme: videonun %{} kadarı': 'ಸರಾಸರಿ ವೀಕ್ಷಣೆ: ವೀಡಿಯೊದ {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'ಉಳಿಸಿಕೊಳ್ಳುವಿಕೆ ಕರ್ವ್‌ನ 20 ಭಾಗಗಳ ಸರಾಸರಿ.',
+  'Dizi, film, kişi veya şirket ara...':
+      'ಸೀರೀಸ್, ಸಿನಿಮಾ, ವ್ಯಕ್ತಿ ಅಥವಾ ಕಂಪನಿ ಹುಡುಕು...',
+  'Şirketler': 'ಕಂಪನಿಗಳು',
+  'Senarist': 'ಚಿತ್ರಕಥೆಗಾರ',
 };

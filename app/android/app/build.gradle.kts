@@ -13,6 +13,16 @@ val keystoreProperties = Properties().apply {
     if (f.exists()) load(FileInputStream(f))
 }
 
+// Bu derleme Play'e gidecek bir AAB mı, elle kurulacak bir APK mı?
+// `flutter build appbundle` → `:app:bundleRelease`, `flutter build apk` →
+// `:app:assembleRelease` görevini çalıştırır; ayrım görev adından yapılıyor.
+// Neden gerekli: ABI kısıtı yalnız APK'da kazanç veriyor (aşağıdaki
+// `buildTypes.release` yorumu), AAB'de ise ChromeOS/emülatör desteğini
+// gereksizce kaybettiriyor.
+val aabDerlemesiMi: Boolean = gradle.startParameter.taskNames.any {
+    it.contains("bundle", ignoreCase = true)
+}
+
 android {
     namespace = "com.dizijpg.dizijpg"
     compileSdk = flutter.compileSdkVersion
@@ -52,6 +62,28 @@ android {
             signingConfig = if (keystoreProperties.isNotEmpty())
                 signingConfigs.getByName("release")
             else signingConfigs.getByName("debug")
+
+            // md.51 — APK boyutu. Tek parça (universal) APK içine üç ABI'nin
+            // yerel kütüphaneleri birlikte giriyordu; x86_64 çıkarıldığında
+            // ölçülen boyut 119,6 MB → 77,3 MB oldu.
+            //
+            // KISIT YALNIZ APK'YA UYGULANIR, AAB'YE UYGULANMAZ:
+            // Play, bundle'ı zaten cihazın ABI'sine göre böldüğü için kullanıcı
+            // hiçbir zaman üç ABI'yi birden indirmiyor — yani AAB'den x86_64'ü
+            // atmanın indirme boyutuna FAYDASI YOK, buna karşılık x86_64
+            // ChromeOS cihazlar ve emülatörler Play sürümünü kuramaz hale gelir.
+            // Kazanç sadece elle dağıtılan tek parça APK'da gerçek.
+            //
+            // `debug` de etkilenmez (blok `release` içinde): x86_64 emülatörde
+            // geliştirme/hata ayıklama bozulmaz.
+            //
+            // `armeabi-v7a` LİSTEDEN ÇIKARILMAZ: çıkarılırsa 32 bit ARM
+            // cihazlar uygulamayı kuramaz olur (devir notundaki yasak).
+            if (!aabDerlemesiMi) {
+                ndk {
+                    abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+                }
+            }
         }
     }
 }

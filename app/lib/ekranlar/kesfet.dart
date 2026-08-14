@@ -89,6 +89,9 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
   int _mesajSayi = 0;
 
   Future<void> _mesajSayisiYukle() async {
+    // Oturumsuz ziyaretçi (SEO 1.4, 14 Ağu): /sohbetler girisZorunlu, 401
+    // yememek için hiç isteme. Rozet zaten 0 kalır.
+    if (!Api.girisli) return;
     try {
       final d = await Api.get('/sohbetler');
       if (mounted) {
@@ -129,9 +132,13 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       // Tüm raflar + öneriler paralel çekilir (öneri hatası rafları düşürmez).
       final istekler = <Future<dynamic>>[
         for (final r in anaSayfaRaflari) Api.get(r.$2),
-        Api.get(
-          '/onerilen',
-        ).catchError((_) => <String, dynamic>{'oneriler': <dynamic>[]}),
+        // /onerilen girisZorunlu — oturumsuz ziyaretçiye "Sana Özel" rafı yok.
+        if (Api.girisli)
+          Api.get(
+            '/onerilen',
+          ).catchError((_) => <String, dynamic>{'oneriler': <dynamic>[]})
+        else
+          Future<Map<String, dynamic>>.value({'oneriler': <dynamic>[]}),
       ];
       final sonuclar = await Future.wait(istekler);
       if (!mounted) return;

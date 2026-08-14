@@ -1025,4 +1025,8 @@ const Map<String, String> cevirilerMs = {
       'Purata tontonan: {}% daripada video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Purata 20 bahagian lengkung pengekalan.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Cari siri, filem, orang atau syarikat...',
+  'Şirketler': 'Syarikat',
+  'Senarist': 'Penulis skrip',
 };

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ortak.dart';
 
@@ -813,7 +814,11 @@ class _SecimKarosu extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: poster == null
                   ? Container(color: DiziRenkler.kart)
-                  : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+                  : CachedNetworkImage(
+                      imageUrl: poster,
+                      httpHeaders: gorselBasliklari(poster),
+                      fit: BoxFit.cover,
+                    ),
             ),
             // Ad şeridi: siyah degrade üstüne BEYAZ yazı — poster ne olursa
             // olsun kontrast korunur (metin rengi temadan gelmez).
@@ -1319,6 +1324,7 @@ class _SeriKartiState extends State<_SeriKarti> {
                           ? Container(color: DiziRenkler.koyuGri)
                           : CachedNetworkImage(
                               imageUrl: poster,
+                              httpHeaders: gorselBasliklari(poster),
                               fit: BoxFit.cover,
                             ),
                     ),

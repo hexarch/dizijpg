@@ -601,4 +601,26 @@ void main() {
     expect(find.text('Entfolgen'), findsOneWidget);
     expect(find.text('Folgen'), findsOneWidget);
   });
+
+  test('satirTakipDurumu sunucu alanını kümeye tercih eder', () {
+    // LIMIT 500 kümesinde olmayan ama sunucunun "takip ediyorum" dediği kişi.
+    expect(
+      satirTakipDurumu(
+        {'kullanici_adi': 'eski', 'takip_ediyorum': true},
+        {'baska'},
+      ),
+      isTrue,
+    );
+    expect(
+      satirTakipDurumu(
+        {'kullanici_adi': 'yabanci', 'takip_ediyorum': false},
+        {'yabanci'},
+      ),
+      isFalse,
+    );
+    // Eski sunucu (alan yok): kümeye düş.
+    expect(satirTakipDurumu({'kullanici_adi': 'a'}, {'a'}), isTrue);
+    expect(satirTakipDurumu({'kullanici_adi': 'a'}, {'b'}), isFalse);
+    expect(satirTakipDurumu({'kullanici_adi': 'a'}, null), isNull);
+  });
 }

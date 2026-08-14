@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 
 /// Masaüstünde aynı anda gösterilen ay sayısı. Dar ekranda DAİMA 1 ay.
@@ -573,7 +574,11 @@ class _AyTakvimiState extends State<AyTakvimi> {
             height: 62,
             child: poster == null
                 ? Container(color: DiziRenkler.koyuGri)
-                : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+                : CachedNetworkImage(
+                    imageUrl: poster,
+                    httpHeaders: gorselBasliklari(poster),
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
         title: Text(

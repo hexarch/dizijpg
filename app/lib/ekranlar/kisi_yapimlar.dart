@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 import 'ortak.dart';
@@ -235,7 +236,11 @@ class YapimSatiri extends StatelessWidget {
                           color: DiziRenkler.metin24,
                         ),
                       )
-                    : CachedNetworkImage(imageUrl: kapak, fit: BoxFit.cover),
+                    : CachedNetworkImage(
+                        imageUrl: kapak,
+                        httpHeaders: gorselBasliklari(kapak),
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             const SizedBox(width: 12),

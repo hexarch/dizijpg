@@ -981,4 +981,7 @@ const Map<String, String> cevirilerKo = {
       '이 수치는 게시물의 전체 기간 합계예요 (자체 설명이 있는 항목 제외). 아래 기간 선택은 그래프만 바꿔요.',
   'Ortalama izlenme: videonun %{} kadarı': '평균 시청: 동영상의 {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.': '유지율 곡선 20개 구간의 평균이에요.',
+  'Dizi, film, kişi veya şirket ara...': '드라마, 영화, 인물, 회사 검색...',
+  'Şirketler': '회사',
+  'Senarist': '각본가',
 };

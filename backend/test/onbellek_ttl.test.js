@@ -199,7 +199,10 @@ test('tmdbTopluGetir: seçici TTL SQL aralığını BOZMAZ (JS tarafında süzü
 test('KATALOG TTL\'İ KORUNDU: detay uçları hâlâ uzun önbellekli', () => {
   // Kapsam ARAMA uçlarıyla sınırlıydı; /tv/:id, /person/:id vb. dokunulmadı.
   assert.ok(SERVER.includes('`/tv/${tmdbId}?language=tr-TR`, ONBELLEK_TTL_SN.uzun'));
-  assert.ok(SERVER.includes('`/person/${req.params.id}`, ONBELLEK_TTL_SN.uzun'));
+  // /tmdb/* vekili kişi/dizi/film/firma detayını regex ile uzun TTL'e alır.
+  // Eski test `` `/person/${req.params.id}` `` diye ayrı bir ucu arıyordu;
+  // vekil hepsini tek yerde topladığı için o dize yok, regex asıl kilit.
+  assert.match(SERVER, /uzunTtl = \/\^\\\/\(tv\|movie\|person\|company\)\\\//);
 });
 
 // ===========================================================================

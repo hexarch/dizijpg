@@ -1028,4 +1028,8 @@ const Map<String, String> cevirilerIt = {
   'Ortalama izlenme: videonun %{} kadarı': 'Visione media: il {}% del video',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'La media dei 20 segmenti della curva di visione.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Cerca serie, film, persone o società...',
+  'Şirketler': 'Società',
+  'Senarist': 'Sceneggiatore',
 };

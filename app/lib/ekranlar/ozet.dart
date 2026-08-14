@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../puan.dart';
 import '../tema.dart';
 import 'ortak.dart';
@@ -51,6 +52,13 @@ class _OzetEkraniState extends State<OzetEkrani> {
     } else {
       final o = _ozet!;
       final enCok = (o['en_cok'] as List<dynamic>? ?? []);
+      // Poster adresi satır başına BİR KEZ kurulur: aynı adres hem görsele hem
+      // WebP başlığı kararına gidiyor (bkz. `gorsel_basliklari.dart`), iki ayrı
+      // `posterUrl()` çağrısı tutmak gerekmesin.
+      final enCokSatirlari = [
+        for (final d in enCok)
+          (veri: d, poster: posterUrl(d['poster'] as String?)),
+      ];
       final kartlar = [
         (Icons.tv_outlined, '${o['bolum']}', 'Bölüm'.c),
         (Icons.movie_outlined, '${o['film']}', 'Film'.c),
@@ -119,7 +127,7 @@ class _OzetEkraniState extends State<OzetEkrani> {
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 10),
-            for (final d in enCok)
+            for (final s in enCokSatirlari)
               Card(
                 child: ListTile(
                   leading: ClipRRect(
@@ -127,20 +135,21 @@ class _OzetEkraniState extends State<OzetEkrani> {
                     child: SizedBox(
                       width: 40,
                       height: 58,
-                      child: d['poster'] != null
+                      child: s.poster != null
                           ? CachedNetworkImage(
-                              imageUrl: posterUrl(d['poster'] as String?)!,
+                              imageUrl: s.poster!,
+                              httpHeaders: gorselBasliklari(s.poster),
                               fit: BoxFit.cover,
                             )
                           : Container(color: DiziRenkler.koyuGri),
                     ),
                   ),
-                  title: Text(d['ad'] as String? ?? ''),
+                  title: Text(s.veri['ad'] as String? ?? ''),
                   subtitle: Text(
-                    '{} bölüm izlendi'.cf([d['bolum']]),
+                    '{} bölüm izlendi'.cf([s.veri['bolum']]),
                     style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
                   ),
-                  onTap: () => context.push('/icerik/tv/${d['tmdb_id']}'),
+                  onTap: () => context.push('/icerik/tv/${s.veri['tmdb_id']}'),
                 ),
               ),
           ],

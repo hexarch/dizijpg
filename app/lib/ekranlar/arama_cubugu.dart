@@ -6,8 +6,79 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'sirket.dart';
+
+/// TMDB `known_for_department` → mevcut çeviri anahtarı.
+/// Acting bölüm başlığı "Oyuncular"; Directing "Yönetmen"; Writing "Senarist".
+String kisiAramaMeslegi(String? bolum) {
+  switch (bolum) {
+    case 'Acting':
+      return 'Oyuncular'.c;
+    case 'Directing':
+      return 'Yönetmen'.c;
+    case 'Writing':
+      return 'Senarist'.c;
+    default:
+      return '';
+  }
+}
+
+/// Kişi satırının alt yazısı: `Yönetmen · Breaking Bad`.
+String kisiAramaAltYazi(Map<String, dynamic> r) {
+  final meslek = kisiAramaMeslegi(r['known_for_department'] as String?);
+  String yapim = '';
+  for (final y in (r['known_for'] as List<dynamic>? ?? [])) {
+    if (y is! Map) continue;
+    final ad = ((y['name'] ?? y['title']) as String? ?? '').trim();
+    if (ad.isEmpty) continue;
+    yapim = ad;
+    break;
+  }
+  return [
+    if (meslek.isNotEmpty) meslek,
+    if (yapim.isNotEmpty) yapim,
+  ].join(' · ');
+}
+
+/// Şirket satırının alt yazısı: köken ülke (ISO kodu yerelleştirilir).
+String sirketAramaAltYazi(Map<String, dynamic> r) {
+  final kod = (r['origin_country'] as String? ?? '').trim();
+  if (kod.isEmpty) return '';
+  return ulkeAdiKoddan(kod);
+}
+
+/// Poster'lı dizi/film. Eski istemci sözleşmesi: kişi ve şirket burada YOK.
+List<dynamic> aramaIcerikListesi(List<dynamic> sonuclar) => sonuclar
+    .where(
+      (r) =>
+          r is Map &&
+          r['media_type'] != 'person' &&
+          r['media_type'] != 'company' &&
+          r['poster_path'] != null,
+    )
+    .toList();
+
+List<dynamic> aramaKisiListesi(List<dynamic> sonuclar) => sonuclar
+    .where(
+      (r) =>
+          r is Map && r['media_type'] == 'person' && r['profile_path'] != null,
+    )
+    .toList();
+
+/// Logosu olmayan şirket de listelenir (ikon yedek).
+List<dynamic> aramaSirketListesi(List<dynamic> sonuclar) =>
+    sonuclar.where((r) => r is Map && r['media_type'] == 'company').toList();
+
+int? aramaTmdbId(dynamic r) {
+  if (r is! Map) return null;
+  final id = r['id'];
+  if (id is int) return id;
+  if (id is num) return id.toInt();
+  return int.tryParse('$id');
+}
 
 /// Masaüstü üst barının yüksekliği.
 const double masaustuUstBarYuksekligi = 64;
@@ -40,7 +111,8 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
   bool araniyor = false;
   String? aramaHatasi; // sessiz başarısızlık yok: hata hâli gösterilir
   List<dynamic> _aramaIcerik = []; // dizi + film
-  List<dynamic> _aramaKisiler = []; // oyuncu/yönetmen (TMDB)
+  List<dynamic> _aramaKisiler = []; // oyuncu/yönetmen/senarist (TMDB)
+  List<dynamic> _aramaSirketler = []; // yapım firması (TMDB company)
   List<dynamic> _aramaKullanicilar = []; // uygulama kullanıcıları
   String? _duzeltme; // "şunu mu demek istedin" — sunucu yazım düzeltmesi
 
@@ -50,7 +122,8 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
   bool get _sonucBos =>
       _aramaKullanicilar.isEmpty &&
       _aramaIcerik.isEmpty &&
-      _aramaKisiler.isEmpty;
+      _aramaKisiler.isEmpty &&
+      _aramaSirketler.isEmpty;
 
   @override
   void dispose() {
@@ -88,16 +161,9 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
         _duzeltme = (d != null && d.toLowerCase() != sorgu.trim().toLowerCase())
             ? d
             : null;
-        _aramaIcerik = sonuclar
-            .where(
-              (r) => r['media_type'] != 'person' && r['poster_path'] != null,
-            )
-            .toList();
-        _aramaKisiler = sonuclar
-            .where(
-              (r) => r['media_type'] == 'person' && r['profile_path'] != null,
-            )
-            .toList();
+        _aramaIcerik = aramaIcerikListesi(sonuclar);
+        _aramaKisiler = aramaKisiListesi(sonuclar);
+        _aramaSirketler = aramaSirketListesi(sonuclar);
         _aramaKullanicilar = y[1]['kullanicilar'] as List<dynamic>? ?? [];
       });
     } catch (_) {
@@ -114,7 +180,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
     autofocus: otomatikOdak,
     textInputAction: TextInputAction.search,
     decoration: InputDecoration(
-      hintText: 'Dizi, film veya kişi ara...'.c,
+      hintText: 'Dizi, film, kişi veya şirket ara...'.c,
       prefixIcon: Icon(Icons.search, color: DiziRenkler.metin54),
       suffixIcon: araniyor
           ? const Padding(
@@ -253,6 +319,24 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                     kullaniciyaGit(context, k['kullanici_adi'] as String),
               ),
           ],
+          if (_aramaSirketler.isNotEmpty) ...[
+            baslik(Icons.apartment_outlined, 'Şirketler'.c),
+            for (final r in _aramaSirketler.take(8))
+              _AramaSatiri(
+                key: Key('arama-sirket-${aramaTmdbId(r)}'),
+                gorselUrl: null,
+                sirketMi: true,
+                sirketLogoYolu:
+                    (r as Map<String, dynamic>)['logo_path'] as String?,
+                ad: (r['name'] ?? '?') as String,
+                altYazi: sirketAramaAltYazi(r),
+                onTap: () {
+                  final id = aramaTmdbId(r);
+                  if (id == null) return;
+                  context.push(sirketYolu(id, ad: r['name'] as String?));
+                },
+              ),
+          ],
           if (_aramaIcerik.isNotEmpty) ...[
             baslik(Icons.local_movies_outlined, 'Dizi ve Filmler'.c),
             for (final r in _aramaIcerik.take(12))
@@ -276,13 +360,14 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
             baslik(Icons.person_outline, 'Kişiler'.c),
             for (final r in _aramaKisiler.take(8))
               _AramaSatiri(
+                key: Key('arama-kisi-${aramaTmdbId(r)}'),
                 gorselUrl: posterUrl(
                   (r as Map<String, dynamic>)['profile_path'] as String?,
                   boyut: 'w185',
                 ),
                 yuvarlak: true,
                 ad: (r['name'] ?? '?') as String,
-                altYazi: '',
+                altYazi: kisiAramaAltYazi(r),
                 onTap: () => context.push('/kisi/${r['id']}'),
               ),
           ],
@@ -487,23 +572,28 @@ class _TamEkranAramaSayfasiState extends State<TamEkranAramaSayfasi>
           ? aramaSonuclari()
           : BosDurum(
               ikon: Icons.search,
-              baslik: 'Dizi, film veya kişi ara...'.c,
+              baslik: 'Dizi, film, kişi veya şirket ara...'.c,
             ),
     );
   }
 }
 
-/// Arama sonucu satırı: küçük görsel (poster ya da yuvarlak avatar) +
-/// ad + alt bilgi. Tüm ekran boylarında aynı düzen.
+/// Arama sonucu satırı: küçük görsel (poster, yuvarlak avatar veya firma
+/// logosu) + ad + alt bilgi. Dokunma yüksekliği en az 44 dp.
 class _AramaSatiri extends StatelessWidget {
   final String? gorselUrl;
+  final String? sirketLogoYolu;
+  final bool sirketMi;
   final bool yuvarlak;
   final String ad;
   final String altYazi;
   final VoidCallback onTap;
-  final String? kullaniciAdi; // kullanıcı satırlarında AI rozeti için
+  final String? kullaniciAdi;
   const _AramaSatiri({
+    super.key,
     required this.gorselUrl,
+    this.sirketLogoYolu,
+    this.sirketMi = false,
     this.yuvarlak = false,
     required this.ad,
     required this.altYazi,
@@ -513,59 +603,76 @@ class _AramaSatiri extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gorsel = gorselUrl == null
-        ? Container(
-            color: DiziRenkler.kart,
-            child: Icon(
-              yuvarlak ? Icons.person : Icons.movie_outlined,
-              color: DiziRenkler.metin38,
-              size: 20,
-            ),
-          )
-        : CachedNetworkImage(imageUrl: gorselUrl!, fit: BoxFit.cover);
+    final Widget onizleme;
+    if (sirketMi) {
+      onizleme = FirmaLogosu(
+        logoYolu: sirketLogoYolu,
+        genislik: 44,
+        yukseklik: 44,
+      );
+    } else if (yuvarlak) {
+      onizleme = KullaniciAvatari(
+        url: gorselUrl,
+        kullaniciAdi: kullaniciAdi,
+        yaricap: 22,
+        arkaplan: DiziRenkler.kart,
+      );
+    } else {
+      final gorsel = gorselUrl == null
+          ? Container(
+              color: DiziRenkler.kart,
+              child: Icon(
+                Icons.movie_outlined,
+                color: DiziRenkler.metin38,
+                size: 20,
+              ),
+            )
+          : CachedNetworkImage(
+              imageUrl: gorselUrl!,
+              httpHeaders: gorselBasliklari(gorselUrl),
+              fit: BoxFit.cover,
+            );
+      onizleme = ClipRRect(
+        borderRadius: BorderRadius.circular(6),
+        child: SizedBox(width: 40, height: 56, child: gorsel),
+      );
+    }
     return InkWell(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-        child: Row(
-          children: [
-            yuvarlak
-                ? KullaniciAvatari(
-                    url: gorselUrl,
-                    kullaniciAdi: kullaniciAdi,
-                    yaricap: 22,
-                    arkaplan: DiziRenkler.kart,
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(6),
-                    child: SizedBox(width: 40, height: 56, child: gorsel),
-                  ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    ad,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  if (altYazi.isNotEmpty)
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
+          child: Row(
+            children: [
+              onizleme,
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                     Text(
-                      altYazi,
+                      ad,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: DiziRenkler.metin54,
-                      ),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
-                ],
+                    if (altYazi.isNotEmpty)
+                      Text(
+                        altYazi,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: DiziRenkler.metin54,
+                        ),
+                      ),
+                  ],
+                ),
               ),
-            ),
-            Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin38),
-          ],
+              Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin38),
+            ],
+          ),
         ),
       ),
     );

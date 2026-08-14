@@ -1034,4 +1034,8 @@ const Map<String, String> cevirilerTa = {
   'Ortalama izlenme: videonun %{} kadarı': 'சராசரி பார்வை: வீடியோவின் {}%',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'தக்கவைப்பு வளைவின் 20 பிரிவுகளின் சராசரி.',
+  'Dizi, film, kişi veya şirket ara...':
+      'தொடர், படம், நபர் அல்லது நிறுவனத்தைத் தேடு...',
+  'Şirketler': 'நிறுவனங்கள்',
+  'Senarist': 'திரைக்கதையாளர்',
 };

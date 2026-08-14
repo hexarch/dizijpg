@@ -14,6 +14,7 @@ import 'package:record/record.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../dosya_oku.dart';
+import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
 import '../push.dart';
@@ -1802,6 +1803,10 @@ class _MesajBaloncugu extends StatelessWidget {
     final icerik = icerikTur != null
         ? icerikler['$icerikTur:$icerikId'] as Map<String, dynamic>?
         : null;
+    // Paylaşılan dizi/film kartının posteri. Adres burada BİR KEZ kuruluyor:
+    // WebP başlığı da aynı adrese göre seçildiği için (bkz.
+    // `gorsel_basliklari.dart`) iki ayrı `posterUrl()` çağrısı tutmak gerekmez.
+    final icerikPosteri = posterUrl(icerik?['poster'] as String?, boyut: 'w92');
     // Paylaşılan gönderi (link değil postun kendisi)
     final gonderiId = (m['yorum_id'] as num?)?.toInt();
     final gonderi = gonderiId != null
@@ -2053,12 +2058,12 @@ class _MesajBaloncugu extends StatelessWidget {
                               child: SizedBox(
                                 width: 38,
                                 height: 56,
-                                child: icerik?['poster'] != null
+                                child: icerikPosteri != null
                                     ? CachedNetworkImage(
-                                        imageUrl: posterUrl(
-                                          icerik!['poster'] as String?,
-                                          boyut: 'w92',
-                                        )!,
+                                        imageUrl: icerikPosteri,
+                                        httpHeaders: gorselBasliklari(
+                                          icerikPosteri,
+                                        ),
                                         fit: BoxFit.cover,
                                       )
                                     : Container(
@@ -2321,6 +2326,7 @@ class _IcerikSecSheetState extends State<_IcerikSecSheet> {
                       child: poster != null
                           ? CachedNetworkImage(
                               imageUrl: poster,
+                              httpHeaders: gorselBasliklari(poster),
                               fit: BoxFit.cover,
                             )
                           : Container(color: DiziRenkler.kart),

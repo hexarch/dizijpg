@@ -1008,4 +1008,7 @@ const Map<String, String> cevirilerTh = {
   'Ortalama izlenme: videonun %{} kadarı': 'ดูเฉลี่ย: {}% ของวิดีโอ',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'ค่าเฉลี่ยของ 20 ช่วงในกราฟการคงอยู่',
+  'Dizi, film, kişi veya şirket ara...': 'ค้นหาซีรีส์ หนัง บุคคล หรือบริษัท...',
+  'Şirketler': 'บริษัท',
+  'Senarist': 'นักเขียนบท',
 };

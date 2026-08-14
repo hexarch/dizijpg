@@ -209,17 +209,14 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
 
 /// GİRİŞ YAPANIN TAKİP ETTİKLERİ — tek istekte, satır başına sorgu YOK.
 ///
-/// `/takipciler/:ad`, `/takipedilenler/:ad` ve `/kullanici-ara` uçları satır
-/// başına `takip_ediyorum` DÖNDÜRMÜYOR (yalnız `kullanici_adi`, `avatar`,
-/// `bio`). Düğmenin başlangıç durumu bilinmeden çizilemez: uç bir TOGGLE
-/// olduğu için yanlış başlangıç "takip et" sanılan dokunuşu TAKİBİ BIRAK'a
-/// çevirirdi. Çözüm, listeyle PARALEL tek bir ek istek: kendi takip
-/// ettiklerimin kullanıcı adı kümesi. 500 satırlık bir liste 500 istek değil
-/// 1 istek eder.
+/// `/takipciler/:ad`, `/takipedilenler/:ad` ve `/kullanici-ara` uçları 14 Ağu
+/// 2026'dan itibaren satır başına `takip_ediyorum` (+ `ben_mi`) döndürüyor.
+/// Eski istemci (Play 1.40) bu alanı yok sayıp aşağıdaki kümeyi kullanmaya
+/// devam eder — geriye dönük uyum.
 ///
-/// SINIR: uç `LIMIT 500` uyguluyor. 500'den fazla kişi takip eden bir hesapta
-/// kümenin dışında kalan satırlar "Takip Et" görünür. Kalıcı çözüm sunucunun
-/// bu üç uca `takip_ediyorum` (+ `ben_mi`) eklemesidir; o gün burası silinir.
+/// SINIR (eski yol): uç `LIMIT 500` uyguluyor. 500'den fazla kişi takip eden
+/// bir hesapta kümenin dışında kalan satırlar "Takip Et" görünürdü. Kalıcı
+/// çözüm satır alanı; [satirTakipDurumu] onu tercih eder.
 ///
 /// `null` döner = durum BİLİNMİYOR (ağ hatası). Çağıran taraf o hâlde düğmeyi
 /// HİÇ çizmemeli — yanlış yönde toggle atmaktansa düğmesiz liste yeğdir.
@@ -244,4 +241,14 @@ Future<Set<String>?> takipKumesiGetir(String? benimKullaniciAdim) async {
   } catch (_) {
     return null;
   }
+}
+
+/// Satırın takip durumu. Sunucu `takip_ediyorum` verdiyse onu kullan
+/// (LIMIT 500 küme hatasını kapatır). Alan yoksa (eski sunucu / Play 1.40
+/// yanıtı) [kume] yedeğine düşer.
+bool? satirTakipDurumu(Map<String, dynamic> k, Set<String>? kume) {
+  if (k.containsKey('takip_ediyorum')) return k['takip_ediyorum'] == true;
+  if (kume == null) return null;
+  final ad = k['kullanici_adi'];
+  return ad is String && kume.contains(ad);
 }

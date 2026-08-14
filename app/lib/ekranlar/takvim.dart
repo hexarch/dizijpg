@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../onbellek.dart';
 import '../tema.dart';
@@ -366,7 +367,11 @@ class _TakvimEkraniState extends State<TakvimEkrani>
             height: 62,
             child: poster == null
                 ? Container(color: DiziRenkler.koyuGri)
-                : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+                : CachedNetworkImage(
+                    imageUrl: poster,
+                    httpHeaders: gorselBasliklari(poster),
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
         title: Text(
@@ -416,7 +421,11 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                 height: 62,
                 child: poster == null
                     ? Container(color: DiziRenkler.koyuGri)
-                    : CachedNetworkImage(imageUrl: poster, fit: BoxFit.cover),
+                    : CachedNetworkImage(
+                        imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
+                        fit: BoxFit.cover,
+                      ),
               ),
             ),
             title: Text(
@@ -670,6 +679,7 @@ class _BolumModaliState extends State<BolumModali> {
                         ? Container(color: DiziRenkler.kart)
                         : CachedNetworkImage(
                             imageUrl: poster,
+                            httpHeaders: gorselBasliklari(poster),
                             fit: BoxFit.cover,
                           ),
                   ),

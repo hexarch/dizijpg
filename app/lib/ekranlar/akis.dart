@@ -9,6 +9,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
+import '../gorsel_basliklari.dart';
 import '../onbellek.dart';
 import '../sira_tercihi.dart';
 import '../tema.dart';
@@ -800,6 +801,7 @@ class _AkisKartiState extends State<AkisKarti> {
                           height: _kapakYuksekligi,
                           child: CachedNetworkImage(
                             imageUrl: poster,
+                            httpHeaders: gorselBasliklari(poster),
                             fit: BoxFit.cover,
                             placeholder: (_, _) =>
                                 Container(color: DiziRenkler.kart),

@@ -2073,6 +2073,37 @@ const seoMetin = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 const seoYildiz = (p) => Math.min(5, Math.max(0, Math.round(Number(p) / 2)));
 const seoYildizOrt = (p) => Math.min(5, Number(p) / 2).toFixed(1);
 
+// `seoOzUzunluk` SQL ifadesinin JS karşılığı: etiket (#tag), bahsetme (@ad) ve
+// bağlantılar ATILDIKTAN SONRA kalan metnin uzunluğu.
+//
+// NEDEN İKİ TARAF: uzunluk eşiği bir yerde SQL'de (sitemap kapsamı), bir yerde
+// JS'te (elde hazır satırın indekslenip indekslenmeyeceği) gerekiyor. İkisi
+// ayrışırsa sitemap'te olup noindex yiyen sayfa doğar.
+// SQL'deki `[[:alnum:]_]` UTF-8 yerelinde Türkçe harfleri de kapsar; JS'te aynı
+// davranış için `\p{L}\p{N}` (Unicode harf/rakam) kullanılır — `\w` yalnız
+// ASCII eşleştirip "#şaka" gibi etiketleri metin sayardı.
+const seoOzMetinUzunlugu = (s) => String(s ?? '')
+  .replace(/(#|@)[\p{L}\p{N}_]+|https?:\/\/\S+/gu, '')
+  .trim().length;
+
+// TMDB'nin TÜRKÇE alanı sık sık boş döner: 14 Ağu 2026'da /kisi/17419
+// (Bryan Cranston) sayfası bu yüzden "dizi.jpg üzerinde keşfet." jenerik
+// cümlesine düşüyordu. `append_to_response=translations` alanı AYNI istekte
+// getirdiği için İngilizceye düşmek EK TMDB ÇAĞRISI GEREKTİRMEZ.
+//
+// `translations`: TMDB'nin `{ translations: [{ iso_639_1, data: {...} }] }` yükü.
+// `alan`: okunacak alan adı ('biography' | 'overview' | 'name').
+function seoCeviriAlani(translations, alan, diller = ['en']) {
+  const liste = translations?.translations;
+  if (!Array.isArray(liste)) return '';
+  for (const dil of diller) {
+    const t = liste.find((x) => x?.iso_639_1 === dil);
+    const v = seoMetin(t?.data?.[alan]);
+    if (v) return v;
+  }
+  return '';
+}
+
 // Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
 // reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
 function seoYorumHtml({ kullanici_adi, metin, tarih, puan }) {
@@ -2094,13 +2125,21 @@ function seoBaglantiListesi(baslik, ogeler) {
 // SEO 1.2 — yapısal veri. AggregateRating YALNIZCA gerçekten puan varsa basılır
 // (ratingCount: 0 ile basmak politika ihlali) ve değeri sayfadaki metinle birebir
 // aynıdır. Spoiler/yasaklı metinler seoIcerikVerisi'nde zaten elenmiş durumda.
-function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
-  const dizi = tur === 'tv';
-  const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
-  const oyuncular = (v.credits?.cast || []).slice(0, 10).map((o) => ({
-    '@type': 'Person', name: o.name, url: `${SITE_KOK}/kisi/${o.id}`,
-  }));
-  const degerlendirmeler = [
+//
+// Aşağıdaki DÖRT yardımcı 14 Ağu 2026'da `icerikJsonLd`den ve /og/icerik uç
+// gövdesinden ÇIKARILDI: bölüm (`/og/dizi/.../bolum/...`) ve kişi (`/og/kisi`)
+// sayfaları da AYNI puan/inceleme/yorum gövdesini basıyor. Kopyalanırsa
+// sayfalar zamanla ayrışır ve "sayfada GÖRÜNEN değer = yapısal veri" kuralı
+// sessizce bozulur (yapısal veri politikası ihlali).
+
+/** TMDB kişi kaydını schema.org Person'a çevirir (iç bağlantılı). */
+const seoKisiNesnesi = (o) => ({
+  '@type': 'Person', name: o.name, url: `${SITE_KOK}/kisi/${o.id}`,
+});
+
+/** `seoIcerikVerisi`/`seoBolumVerisi` çıktısını schema.org `Review` dizisine çevirir. */
+function seoDegerlendirmeler(seo, limit = 10) {
+  return [
     ...seo.incelemeler.map((r) => ({
       '@type': 'Review',
       author: { '@type': 'Person', name: r.kullanici_adi },
@@ -2119,7 +2158,49 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
       datePublished: seoGun(r.tarih),
       reviewBody: seoMetin(r.metin),
     })),
-  ].slice(0, 10);
+  ].slice(0, limit);
+}
+
+/**
+ * AggregateRating — YALNIZCA gerçekten puan varsa üretilir (`ratingCount: 0`
+ * basmak politika ihlali). Değer sayfaya basılan metinle AYNI fonksiyondan
+ * (`seoYildizOrt`) geçer.
+ */
+function seoOrtalamaPuan(seo) {
+  if (!(seo.adet > 0) || !seo.ortalama) return null;
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: seoYildizOrt(seo.ortalama),
+    ratingCount: seo.adet,
+    bestRating: '5', worstRating: '1',
+  };
+}
+
+/**
+ * Puan ortalaması + incelemeler + yorumlar bloğunun GÖRÜNEN karşılığı.
+ * `seoDegerlendirmeler`/`seoOrtalamaPuan` ile aynı veriden beslenir; başlıklar
+ * sayfaya göre değişir (dizi sayfası "X incelemeleri", bölüm sayfası "bu bölüm
+ * hakkında ..." der).
+ */
+function seoDegerlendirmeGovdesi(seo, { incelemeBasligi, yorumBasligi }) {
+  const puanBlok = seo.adet > 0 && seo.ortalama
+    ? `\n<p>dizi.jpg puanı: ${htmlKacir(seoYildizOrt(seo.ortalama))} / 5`
+      + ` (${htmlKacir(seo.adet)} puan)</p>` : '';
+  const incelemeBlok = seo.incelemeler.length
+    ? `\n<h2>${htmlKacir(incelemeBasligi)}</h2>\n`
+      + seo.incelemeler.map(seoYorumHtml).join('\n') : '';
+  const yorumBlok = seo.yorumlar.length
+    ? `\n<h2>${htmlKacir(yorumBasligi)}</h2>\n`
+      + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
+  return puanBlok + incelemeBlok + yorumBlok;
+}
+
+function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
+  const dizi = tur === 'tv';
+  const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
+  const oyuncular = (v.credits?.cast || []).slice(0, 10).map(seoKisiNesnesi);
+  const degerlendirmeler = seoDegerlendirmeler(seo);
+  const ortalama = seoOrtalamaPuan(seo);
 
   const ana = {
     '@type': dizi ? 'TVSeries' : 'Movie',
@@ -2134,16 +2215,7 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
     ...(dizi && v.number_of_episodes ? { numberOfEpisodes: v.number_of_episodes } : {}),
     ...(!dizi && v.runtime ? { duration: `PT${v.runtime}M` } : {}),
     ...(oyuncular.length ? { actor: oyuncular } : {}),
-    ...(seo.adet > 0 && seo.ortalama ? {
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        // 1138'deki sayfa metniyle AYNI fonksiyondan geçmeli: JSON-LD ile
-        // görünen değer birebir aynı olmak zorunda (yapısal veri politikası).
-        ratingValue: seoYildizOrt(seo.ortalama),
-        ratingCount: seo.adet,
-        bestRating: '5', worstRating: '1',
-      },
-    } : {}),
+    ...(ortalama ? { aggregateRating: ortalama } : {}),
     ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
   };
 
@@ -2181,15 +2253,10 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     const gorsel = tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280');
     const seo = await seoIcerikVerisi(tur, id);
 
-    const puanBlok = seo.adet > 0 && seo.ortalama
-      ? `\n<p>dizi.jpg puanı: ${htmlKacir(seoYildizOrt(seo.ortalama))} / 5`
-        + ` (${htmlKacir(seo.adet)} puan)</p>` : '';
-    const incelemeBlok = seo.incelemeler.length
-      ? `\n<h2>${htmlKacir(adYil)} incelemeleri</h2>\n`
-        + seo.incelemeler.map(seoYorumHtml).join('\n') : '';
-    const yorumBlok = seo.yorumlar.length
-      ? `\n<h2>dizi.jpg kullanıcılarının yorumları</h2>\n`
-        + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
+    const degerlendirmeBlok = seoDegerlendirmeGovdesi(seo, {
+      incelemeBasligi: `${adYil} incelemeleri`,
+      yorumBasligi: 'dizi.jpg kullanıcılarının yorumları',
+    });
     const oyuncuBlok = seoBaglantiListesi('Oyuncular',
       (v.credits?.cast || []).slice(0, 10)
         .map((o) => ({ ad: o.name, yol: `/kisi/${o.id}` })));
@@ -2207,7 +2274,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
       indexle: await ozgunIcerikVar(tur, id),
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
-      govde: puanBlok + incelemeBlok + yorumBlok + oyuncuBlok + benzerBlok,
+      govde: degerlendirmeBlok + oyuncuBlok + benzerBlok,
       jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
   } catch {
@@ -2216,6 +2283,140 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   }
 }));
 
+// ---------- SEO: /kisi/:id sayfası (14 Ağu 2026'da boşta duruyordu) ----------
+// ÖLÇÜM (14 Ağu, canlı): /kisi/17419 (Bryan Cranston) yalnız 1.194 bayt,
+// `robots: noindex,follow` ve açıklama JENERİK: "dizi.jpg üzerinde keşfet."
+// İKİ ayrı kusur vardı:
+//   1. TMDB'nin TÜRKÇE biyografisi boştu ve İngilizceye DÜŞÜLMÜYORDU,
+//   2. sayfanın GÖVDESİ HİÇ YOKTU — ne yapım bağlantısı ne de dizi.jpg'deki
+//      kişi yorumları/puanları basılıyordu (ikisi de zaten veritabanında:
+//      `yorumlar`/`puanlar` tabloları `tur='person'` kabul ediyor).
+//
+// İNDEKSLEME EŞİĞİ — TEK TANIM NOKTASI. `noindex,follow` kuralı KORUNUYOR ama
+// artık "sayfa gerçekten içerik kazandı mı" sorusuna cevap veriyor. İki yoldan
+// BİRİ yeterli:
+//   a) kişi hakkında dizi.jpg'de özgün yorum/inceleme var (ESKİ kural, aynen),
+//   b) en az SEO_KISI_BIYO_MIN karakter biyografi VE en az SEO_KISI_YAPIM_MIN
+//      iç bağlantılı yapım.
+// (b) yolunun gerekçesi: biyografi + 6 yapım bağlantısı olan sayfa artık bir
+// tarama çıkmazı değil, dizinin/filmin sayfalarına köprü kuran gerçek bir
+// düğüm. Eşiğin ALTINDA kalan sayfa `noindex,follow` kalır — taranır,
+// bağlantıları takip edilir, indekse girmez.
+//
+// EŞİK NEDEN 200 KARAKTER: TMDB'de birçok kişinin biyografisi "X is an actor."
+// gibi tek cümledir; onu indekslemek ince içerik olur. 200 karakter, gerçek bir
+// paragrafın alt sınırıdır (ölçüm: Cranston'ın İngilizce biyografisi ~1.900).
+const SEO_KISI_BIYO_MIN = 200;
+const SEO_KISI_YAPIM_MIN = 6;
+const SEO_KISI_YAPIM_LIMIT = 12;  // sayfaya basılan yapım bağlantısı sayısı
+
+/**
+ * `/kisi/:id` sayfası indekse girsin mi? Karar TEK BİR FONKSİYONDA: uç bunu
+ * çağırır, `backend/test/seo_ssr_zenginlik.test.js` bunu ÇALIŞTIRARAK kilitler.
+ * Uç gövdesine gömülü bir ifade olsaydı test ancak kaynak metnine bakabilirdi.
+ */
+const kisiIndekslenir = ({ ozgunVar, biyografi, yapimSayisi }) =>
+  Boolean(ozgunVar)
+  || (String(biyografi || '').length >= SEO_KISI_BIYO_MIN
+    && yapimSayisi >= SEO_KISI_YAPIM_MIN);
+
+// TMDB `known_for_department` -> Türkçe meslek. Sayfa dili tr; İngilizce
+// departman adını basmak hem okunmaz hem de meta açıklamayı bozardı.
+const SEO_KISI_MESLEK = {
+  Acting: 'oyuncu',
+  Directing: 'yönetmen',
+  Writing: 'senarist',
+  Production: 'yapımcı',
+  Editing: 'kurgu ekibi üyesi',
+  Camera: 'görüntü yönetmeni',
+  Sound: 'müzik ve ses ekibi üyesi',
+  Art: 'sanat ekibi üyesi',
+  'Costume & Make-Up': 'kostüm ve makyaj ekibi üyesi',
+  'Visual Effects': 'görsel efekt ekibi üyesi',
+  Lighting: 'ışık ekibi üyesi',
+  Crew: 'ekip üyesi',
+};
+
+/**
+ * Biyografisi HİÇ olmayan kişi için VERİDEN anlamlı bir açıklama kurar.
+ * Jenerik "dizi.jpg üzerinde keşfet." cümlesinden farkı: her kişi için
+ * FARKLIDIR (meslek + doğum + öne çıkan yapımlar), yani bir arama sorgusuna
+ * gerçekten cevap verir ve yinelenen meta açıklama üretmez.
+ */
+function seoKisiAciklamasi(ad, v, yapimlar) {
+  const meslek = SEO_KISI_MESLEK[v.known_for_department] || '';
+  const yil = String(v.birthday || '').slice(0, 4);
+  const yer = seoMetin(v.place_of_birth);
+  const dogum = yil ? ` (d. ${yil}${yer ? `, ${yer}` : ''})` : '';
+  const parcalar = [`${ad}${meslek ? `, ${meslek}` : ''}${dogum}.`];
+  if (yapimlar.length) {
+    parcalar.push(
+      `Öne çıkan yapımları: ${yapimlar.slice(0, 5).map((y) => y.ad).join(', ')}.`);
+  }
+  parcalar.push('dizi.jpg\'de puanlarını ve kullanıcı yorumlarını görebilirsin.');
+  return parcalar.join(' ');
+}
+
+/**
+ * Kişi sayfasının yapısal verisi.
+ *
+ * AGGREGATE RATING / REVIEW BİLEREK BASILMIYOR: schema.org'da `aggregateRating`
+ * ve `review` alanlarının etki alanı (domain) `Person`ı İÇERMEZ (CreativeWork,
+ * Product, Organization, ... içerir). Sayfada kişi puanları GÖRÜNÜR ama geçersiz
+ * alan basmak yapısal veri hatasıdır — /og/ana'da `SearchAction`ın basılmama
+ * gerekçesiyle aynı disiplin.
+ *
+ * `knowsAbout`: kişinin yer aldığı yapımlar. `performerIn` diye bir schema.org
+ * alanı YOKTUR; uydurulan alan doğrulayıcıda hata verir.
+ */
+function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar }) {
+  const meslek = SEO_KISI_MESLEK[v.known_for_department];
+  const yapimNesneleri = yapimlar.map((y) => ({
+    '@type': y.tur === 'tv' ? 'TVSeries' : 'Movie',
+    name: y.ad,
+    url: SITE_KOK + y.yol,
+  }));
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Person',
+        '@id': `${url}#kisi`,
+        name: ad,
+        url,
+        ...(gorsel ? { image: gorsel } : {}),
+        ...(biyografi ? { description: biyografi } : {}),
+        ...(meslek ? { jobTitle: meslek } : {}),
+        ...(v.birthday ? { birthDate: String(v.birthday).slice(0, 10) } : {}),
+        ...(v.deathday ? { deathDate: String(v.deathday).slice(0, 10) } : {}),
+        ...(v.place_of_birth
+          ? { birthPlace: { '@type': 'Place', name: seoMetin(v.place_of_birth) } }
+          : {}),
+        ...(v.imdb_id ? { sameAs: `https://www.imdb.com/name/${v.imdb_id}/` } : {}),
+        ...(yapimNesneleri.length ? { knowsAbout: yapimNesneleri } : {}),
+      },
+      // Sayfada GÖRÜNEN yapım listesinin birebir karşılığı (keşif sayfalarındaki
+      // ItemList disiplini): görünmeyen öğe yapısal veriye girmez.
+      ...(yapimNesneleri.length ? [{
+        '@type': 'ItemList',
+        name: `${ad} — dizi.jpg'deki yapımları`,
+        numberOfItems: yapimNesneleri.length,
+        itemListElement: yapimNesneleri.map((y, i) => ({
+          '@type': 'ListItem', position: i + 1, name: y.name, url: y.url,
+        })),
+      }] : []),
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { '@type': 'ListItem', position: 2, name: 'Kişiler' },
+          { '@type': 'ListItem', position: 3, name: ad },
+        ],
+      },
+    ],
+  };
+}
+
 app.get('/og/kisi/:id', sarici(async (req, res) => {
   const kid = parseInt(req.params.id, 10);
   const url = `https://dizijpg.com/kisi/${req.params.id}`;
@@ -2223,22 +2424,102 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
     return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
-    const v = await tmdbGetir(`/person/${req.params.id}`, ONBELLEK_TTL_SN.uzun);
+    // TEK TMDB isteği: `combined_credits` iç bağlantıları, `translations`
+    // İngilizce biyografi yedeğini getirir (7 gün önbellekli).
+    const v = await tmdbGetir(
+      `/person/${kid}?append_to_response=combined_credits,translations`,
+      ONBELLEK_TTL_SN.uzun);
+    const ad = v.name || 'dizi.jpg';
+    // Türkçe boşsa İngilizce çeviriye düş (bu maddenin asıl kusuru buydu).
+    const biyografi = seoMetin(v.biography)
+      || seoCeviriAlani(v.translations, 'biography');
+
+    // İÇ BAĞLANTILAR: yalnız BİZDE SAYFASI OLAN yapımlar, yani /icerik/:tur/:id
+    // (tv|movie). TMDB'nin başka media_type'ları atlanır — olmayan URL bota
+    // bildirilmez. Afişsiz kayıt uygulamada da listelenmiyor.
+    const hamYapimlar = [
+      ...(v.combined_credits?.cast || []),
+      ...(v.combined_credits?.crew || []),
+    ].filter((y) => y && (y.media_type === 'tv' || y.media_type === 'movie')
+      && (y.name || y.title) && y.poster_path && gecerliTmdb(y.id));
+    // Aynı yapımda hem oyuncu hem ekip olabilir (ör. yönetmen-oyuncu):
+    // tür+kimliğe göre tekilleştir, sonra popülerliğe göre sırala.
+    const yapimlar = [...new Map(
+      hamYapimlar.map((y) => [`${y.media_type}:${y.id}`, y]),
+    ).values()]
+      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+      .slice(0, SEO_KISI_YAPIM_LIMIT)
+      .map((y) => ({
+        ad: y.name || y.title,
+        tur: y.media_type,
+        yol: `/icerik/${y.media_type}/${y.id}`,
+      }));
+
+    // dizi.jpg'nin KİŞİ hakkındaki özgün içeriği (yorum + inceleme + puan).
+    // İçerik sayfasıyla AYNI yardımcı: süzgeçler (spoiler/yasaklı/gizlenmiş)
+    // ve sıralama (uzunluğa göre) tek yerden gelir.
+    const seo = await seoIcerikVerisi('person', kid);
+
+    const kimlikSatirlari = [
+      SEO_KISI_MESLEK[v.known_for_department] && `Meslek: ${SEO_KISI_MESLEK[v.known_for_department]}`,
+      v.birthday && `Doğum: ${String(v.birthday).slice(0, 10)}`
+        + (v.place_of_birth ? `, ${seoMetin(v.place_of_birth)}` : ''),
+      v.deathday && `Ölüm: ${String(v.deathday).slice(0, 10)}`,
+    ].filter(Boolean);
+
+    const govde = (kimlikSatirlari.length
+      ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
+      + (biyografi
+        ? `\n<h2>${htmlKacir(ad)} kimdir?</h2>\n<p>${htmlKacir(biyografi)}</p>` : '')
+      + seoBaglantiListesi(`${ad} — dizi.jpg'deki yapımları`, yapimlar)
+      + seoDegerlendirmeGovdesi(seo, {
+        incelemeBasligi: `${ad} hakkında dizi.jpg incelemeleri`,
+        yorumBasligi: `${ad} hakkında kullanıcı yorumları`,
+      });
+
+    // Eşik: özgün kullanıcı içeriği VAR MI, yoksa biyografi + yapım sayısı
+    // yeterli mi. `ozgunIcerikVar` yerine ELDEKİ veri kullanılıyor: fazladan
+    // sorgu atmaz ve sayfada BASILAN içerikle birebir aynı ölçüyü kullanır.
+    const indexle = kisiIndekslenir({
+      ozgunVar: seo.yorumlar.length > 0 || seo.incelemeler.length > 0,
+      biyografi,
+      yapimSayisi: yapimlar.length,
+    });
+
     res.type('html').send(ogSayfa({
-      baslik: `${v.name || 'dizi.jpg'} — dizi.jpg`,
-      aciklama: v.biography || 'dizi.jpg üzerinde keşfet.',
+      baslik: `${ad} — dizi.jpg`,
+      h1: ad,
+      // Biyografi varsa meta açıklama ondan (ogSayfa 200 karaktere kırpar);
+      // yoksa veriden kurulmuş kişiye ÖZGÜ cümle.
+      aciklama: biyografi || seoKisiAciklamasi(ad, v, yapimlar),
       gorsel: tmdbGorsel(v.profile_path, 'w500'),
       url,
       canonical: `${SITE_KOK}/kisi/${kid}`,
-      // Kişi sayfaları da aynı kurala tabi: özgün yorum yoksa TMDB kopyasıdır,
-      // indekse girmesin ama bağlantıları takip edilsin (sınırsız tarama alanı).
-      indexle: await ozgunIcerikVar('person', kid),
+      indexle,
       tur: 'profile',
+      govde,
+      jsonLd: kisiJsonLd({
+        url: `${SITE_KOK}/kisi/${kid}`, ad, biyografi,
+        gorsel: tmdbGorsel(v.profile_path, 'w500'), v, yapimlar,
+      }),
     }));
   } catch {
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
+
+/**
+ * Gönderi sayfası indekse girsin mi?
+ *
+ * ESKİ HÂL: uç HER gönderiyi indekslenebilir basıyordu — "test", tek emoji ya da
+ * yalnız "#breakingbad" yazan gönderiler dahil. Bu, sitenin kendi ince içerik
+ * kuralıyla çelişiyordu.
+ * Ölçü sitemap kapsamıyla AYNI sabittir (`SEO_YORUM_MIN`) ve etiket/bahsetme/
+ * bağlantı ATILDIKTAN sonra yapılır; yoksa hashtag yığını eşiği geçer.
+ * Eşiğin altındaki gönderi `noindex,follow` alır: paylaşım önizlemesi
+ * (WhatsApp/Twitter kartı) etkilenmez, yalnız indekse girmez.
+ */
+const gonderiIndekslenir = (metin) => seoOzMetinUzunlugu(metin) >= SEO_YORUM_MIN;
 
 app.get('/og/gonderi/:id', sarici(async (req, res) => {
   const id = parseInt(req.params.id, 10);
@@ -2255,8 +2536,12 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
     //  2) `gizli_icerikler`: yazarın "bu dizi/film bende görünmesin" dediği
     //     içerikteki gönderi paylaşım/arama yüzeyine çıkmaz (SEO_GIZLI_ICERIK_YOK
     //     ile aynı gerekçe).
+    // `y.sezon`/`y.bolum` 14 Ağu 2026'da eklendi: bölüm gönderisi artık BÖLÜM
+    // sayfasına bağlanıyor (o sayfa artık zengin ve indekslenebilir).
+    // `y.tarih` yalnız GÜN olarak basılır (seoYorumHtml/seoGun).
     const { rows } = await havuz.query(
-      `SELECT y.metin, y.medya, y.tur, y.tmdb_id, k.kullanici_adi
+      `SELECT y.metin, y.medya, y.tur, y.tmdb_id, y.sezon, y.bolum, y.tarih,
+              k.kullanici_adi
        FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
        WHERE y.id=$1 AND NOT k.yasakli AND NOT y.spoiler
          AND ${SEO_GIZLI_ICERIK_YOK('y')}`, [id]);
@@ -2275,14 +2560,77 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
       icerikAd = v.name || v.title || '';
       if (!gorsel) gorsel = tmdbGorsel(v.poster_path);
     } catch { /* içerik alınamazsa pos+ad boş */ }
+
+    // İÇ BAĞLANTILAR (14 Ağu 2026): sayfa 1,1 KB'lık bir çıkmazdı — gönderinin
+    // HAKKINDA olduğu içeriğe bile bağlantı vermiyordu.
+    const baglantilar = [];
+    const icerikYolu = ['tv', 'movie'].includes(y.tur) && gecerliTmdb(y.tmdb_id)
+      ? `/icerik/${y.tur}/${y.tmdb_id}` : null;
+    if (icerikYolu) {
+      baglantilar.push({ ad: icerikAd || 'Gönderinin içeriği', yol: icerikYolu });
+    }
+    if (y.tur === 'tv' && y.sezon !== null && y.bolum !== null) {
+      baglantilar.push({
+        ad: `${icerikAd ? `${icerikAd} ` : ''}${y.sezon}. Sezon ${y.bolum}. Bölüm`,
+        yol: `/dizi/${y.tmdb_id}/sezon/${y.sezon}/bolum/${y.bolum}`,
+      });
+    }
+
+    // GÖVDE: gönderi metninin TAMAMI (og:description 200 karaktere kırpılıyor,
+    // yani sayfanın kendisinde metin hiç yoktu). Yorum bloğu yardımcısı yeniden
+    // kullanılıyor — kullanıcı adı DÜZ METİN kalır, bağlantıya çevrilmez.
+    const govde = (seoMetin(y.metin)
+      ? `\n<h2>Gönderi</h2>\n${seoYorumHtml({
+        kullanici_adi: y.kullanici_adi, metin: y.metin, tarih: y.tarih,
+      })}` : '')
+      + seoBaglantiListesi('Bağlantılar', baglantilar);
+
     res.type('html').send(ogSayfa({
       baslik: `@${y.kullanici_adi}${icerikAd ? ` · ${icerikAd}` : ''} — dizi.jpg`,
       aciklama: y.metin || 'dizi.jpg üzerinde bir gönderi.',
       gorsel,
       url,
       canonical: `${SITE_KOK}/gonderi/${id}`,
-      // Gönderinin kendisi özgün içeriktir -> indekslenebilir.
+      indexle: gonderiIndekslenir(y.metin),
       tur: 'article',
+      govde,
+      // GİZLİLİK: `author` YALNIZ ad taşır, profile `url` VERİLMEZ —
+      // /kullanici/ hiçbir koşulda arama motoruna bildirilmez.
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'SocialMediaPosting',
+            '@id': `${SITE_KOK}/gonderi/${id}#gonderi`,
+            url: `${SITE_KOK}/gonderi/${id}`,
+            author: { '@type': 'Person', name: y.kullanici_adi },
+            datePublished: seoGun(y.tarih),
+            ...(seoMetin(y.metin) ? { articleBody: seoMetin(y.metin) } : {}),
+            ...(gorsel ? { image: gorsel } : {}),
+            ...(icerikYolu && icerikAd ? {
+              about: {
+                '@type': y.tur === 'tv' ? 'TVSeries' : 'Movie',
+                name: icerikAd,
+                url: SITE_KOK + icerikYolu,
+              },
+            } : {}),
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+              ...(icerikYolu && icerikAd ? [{
+                '@type': 'ListItem', position: 2, name: icerikAd,
+                item: SITE_KOK + icerikYolu,
+              }] : []),
+              {
+                '@type': 'ListItem', position: icerikYolu && icerikAd ? 3 : 2,
+                name: `@${y.kullanici_adi} gönderisi`,
+              },
+            ],
+          },
+        ],
+      },
     }));
   } catch {
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
@@ -2307,6 +2655,120 @@ async function seoBolumYorumlari(tmdbId, sezon, bolum) {
   return rows;
 }
 
+/**
+ * Bölümün dizi.jpg'deki TÜM özgün içeriği: yorumlar + puanla yazılmış
+ * incelemeler + puan ortalaması. `seoIcerikVerisi`nin bölüm karşılığı ve AYNI
+ * ortak süzgeçleri kullanır (SEO_YORUM_KOSUL / SEO_INCELEME_KOSUL).
+ *
+ * NEDEN İNCELEMELER DE GEREKTİ (14 Ağu 2026): sayfa yalnız yorumlara bakıyordu,
+ * dolayısıyla "bölüme puan + inceleme yazılmış ama yorum yazılmamış" durumda
+ * sayfa `noindex` alıyordu. Bölüm sitemap'i bu satırları KAPSAMAK zorunda
+ * (`bolum_puani` uçları o veriyi yıllardır topluyor), yoksa sitemap'te olup
+ * noindex yiyen sayfa doğardı.
+ */
+async function seoBolumVerisi(tmdbId, sezon, bolum) {
+  const [yorumlar, inceleme, puan] = await Promise.all([
+    seoBolumYorumlari(tmdbId, sezon, bolum),
+    havuz.query(
+      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
+         FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+        WHERE p.tur = 'tv' AND p.tmdb_id = $1 AND p.sezon = $2 AND p.bolum = $3
+          AND ${SEO_INCELEME_KOSUL}
+        ORDER BY length(p.yorum) DESC LIMIT $4`,
+      [tmdbId, sezon, bolum, SEO_YORUM_LIMIT]),
+    // Ortalama YALNIZ o bölümün puanlarından: sayfada GÖRÜNEN değerle JSON-LD
+    // birebir aynı olmak zorunda (dizinin geneli bu sayfada hiç gösterilmiyor).
+    havuz.query(
+      `SELECT round(avg(puan)::numeric, 1)::float AS ortalama, count(puan)::int AS adet
+         FROM puanlar
+        WHERE tur = 'tv' AND tmdb_id = $1 AND sezon = $2 AND bolum = $3`,
+      [tmdbId, sezon, bolum]),
+  ]);
+  return {
+    yorumlar,
+    incelemeler: inceleme.rows,
+    ortalama: puan.rows[0]?.ortalama ?? null,
+    adet: puan.rows[0]?.adet ?? 0,
+  };
+}
+
+/**
+ * Bölüm sayfasının KAPSAM KURALI — tek tanım noktası.
+ * `ozgunIcerikVar`ın bölüm karşılığıdır ve ÜÇ yer bunu paylaşır: sayfanın
+ * `indexle`si, `SITEMAP_BOLUM_SORGU` ve sayfaya basılan metin.
+ * Ölçü elde hazır veridir: fazladan sorgu atılmaz.
+ */
+const bolumOzgunIcerikVar = (seo) =>
+  seo.yorumlar.length > 0 || seo.incelemeler.length > 0;
+
+// Bölüm sayfasının iç bağlantı bütçesi. AYNI SEZONUN diğer bölümleri tarama
+// derinliğinin asıl kaynağı: tek bölüm sayfası sezonun tamamına köprü olur.
+// 12'de kesiliyor çünkü 40 bölümlük bir sezonun tamamını her bölüm sayfasına
+// basmak, içeriği olmayan onlarca bölüme tarama daveti çıkarır.
+const SEO_BOLUM_KOMSU = 12;
+const SEO_BOLUM_KONUK = 8;   // konuk oyuncu bağlantısı (/kisi/:id)
+
+/**
+ * Bölüm sayfasının yapısal verisi: TVEpisode (+ uygunsa AggregateRating ve
+ * Review) ve BreadcrumbList. Değerlendirme/puan gövdesi içerik sayfasıyla ORTAK
+ * yardımcılardan gelir; kopya yok.
+ *
+ * `partOfSeason`a URL VERİLMEZ: `/dizi/:id/sezon/:s` diye bir rota YOK
+ * (app/lib/yonlendirme.dart'ta yalnız bölüm rotası var) ve olmayan URL'i bota
+ * bildirmek soft 404 üretir.
+ */
+function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel, bol, seo }) {
+  const ekip = Array.isArray(bol.crew) ? bol.crew : [];
+  const yonetmenler = ekip.filter((c) => c?.job === 'Director' && c.name && gecerliTmdb(c.id));
+  const yazarlar = ekip.filter((c) => c?.department === 'Writing' && c.name && gecerliTmdb(c.id));
+  const konuklar = (Array.isArray(bol.guest_stars) ? bol.guest_stars : [])
+    .filter((o) => o?.name && gecerliTmdb(o.id));
+  const degerlendirmeler = seoDegerlendirmeler(seo);
+  const ortalama = seoOrtalamaPuan(seo);
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'TVEpisode',
+        '@id': `${url}#bolum`,
+        name: bolumAd,
+        url,
+        episodeNumber: bolum,
+        ...(gorsel ? { image: gorsel } : {}),
+        ...(bol.air_date ? { datePublished: String(bol.air_date).slice(0, 10) } : {}),
+        ...(ozet ? { description: seoMetin(ozet) } : {}),
+        partOfSeason: { '@type': 'TVSeason', seasonNumber: sezon },
+        partOfSeries: {
+          '@type': 'TVSeries', name: diziAd, url: `${SITE_KOK}/icerik/tv/${diziId}`,
+        },
+        ...(yonetmenler.length
+          ? { director: yonetmenler.slice(0, 3).map(seoKisiNesnesi) } : {}),
+        ...(yazarlar.length
+          ? { author: yazarlar.slice(0, 3).map(seoKisiNesnesi) } : {}),
+        ...(konuklar.length
+          ? { actor: konuklar.slice(0, SEO_BOLUM_KONUK).map(seoKisiNesnesi) } : {}),
+        ...(ortalama ? { aggregateRating: ortalama } : {}),
+        ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { '@type': 'ListItem', position: 2, name: 'Diziler', item: `${SITE_KOK}/gozat` },
+          {
+            '@type': 'ListItem', position: 3, name: diziAd,
+            item: `${SITE_KOK}/icerik/tv/${diziId}`,
+          },
+          {
+            '@type': 'ListItem', position: 4,
+            name: `${sezon}. Sezon ${bolum}. Bölüm`,
+          },
+        ],
+      },
+    ],
+  };
+}
+
 app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const s = parseInt(req.params.sezon, 10);
@@ -2320,46 +2782,95 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
   try {
-    const [dizi, bol] = await Promise.all([
+    // ÜÇ TMDB çağrısı paralel, hepsi 7 gün önbellekli:
+    //  · dizi     — ad ve poster,
+    //  · sezon    — bölüm LİSTESİ. Bu olmadan "sonraki bölüm" bağlantısı sezon
+    //               sonunda OLMAYAN bir URL'e gidiyordu (kendi ürettiğimiz
+    //               soft 404). Sezon alınamazsa sayfa yine döner: `.catch(null)`.
+    //  · bölüm    — özet + konuk oyuncu + ekip + İngilizce çeviri yedeği.
+    const [dizi, sezonV, bol] = await Promise.all([
       tmdbGetir(`/tv/${id}`, ONBELLEK_TTL_SN.uzun),
-      tmdbGetir(`/tv/${id}/season/${s}/episode/${b}`, ONBELLEK_TTL_SN.uzun),
+      tmdbGetir(`/tv/${id}/season/${s}`, ONBELLEK_TTL_SN.uzun).catch(() => null),
+      tmdbGetir(`/tv/${id}/season/${s}/episode/${b}?append_to_response=translations`,
+        ONBELLEK_TTL_SN.uzun),
     ]);
     const diziAd = dizi.name || 'dizi.jpg';
-    const bolumAd = bol.name || `${b}. Bölüm`;
+    const bolumAd = bol.name
+      || seoCeviriAlani(bol.translations, 'name')
+      || `${b}. Bölüm`;
     const h1 = `${diziAd} ${s}. Sezon ${b}. Bölüm — ${bolumAd}`;
-    const yorumlar = await seoBolumYorumlari(id, s, b);
+    // Bölüm özeti Türkçe boşsa İngilizceye düş (TMDB'de sık görülür).
+    const ozet = seoMetin(bol.overview)
+      || seoCeviriAlani(bol.translations, 'overview');
+    const seo = await seoBolumVerisi(id, s, b);
 
-    const yorumBlok = yorumlar.length
-      ? `\n<h2>Bu bölüm hakkında yorumlar</h2>\n`
-        + yorumlar.map(seoYorumHtml).join('\n') : '';
+    const sezonBolumleri = (sezonV?.episodes || [])
+      .filter((e) => Number.isInteger(e?.episode_number));
+    const bolumNolari = new Set(sezonBolumleri.map((e) => e.episode_number));
+    // Sezon verisi yoksa yalnız ÖNCEKİ bölüme bağlanılır: varlığı matematikten
+    // bellidir (b > 1), sonrakinin varlığı ise BİLİNMEZ.
+    const bolumVar = (n) => (bolumNolari.size ? bolumNolari.has(n) : n < b);
+
     const komsu = [{ ad: `${diziAd} — tüm bölümler`, yol: `/icerik/tv/${id}` }];
-    if (b > 1) {
-      komsu.push({ ad: `${s}. Sezon ${b - 1}. Bölüm`, yol: `/dizi/${id}/sezon/${s}/bolum/${b - 1}` });
+    if (b > 1 && bolumVar(b - 1)) {
+      komsu.push({
+        ad: `${s}. Sezon ${b - 1}. Bölüm`,
+        yol: `/dizi/${id}/sezon/${s}/bolum/${b - 1}`,
+      });
     }
-    komsu.push({ ad: `${s}. Sezon ${b + 1}. Bölüm`, yol: `/dizi/${id}/sezon/${s}/bolum/${b + 1}` });
+    if (bolumVar(b + 1)) {
+      komsu.push({
+        ad: `${s}. Sezon ${b + 1}. Bölüm`,
+        yol: `/dizi/${id}/sezon/${s}/bolum/${b + 1}`,
+      });
+    }
+
+    const sezonBlok = seoBaglantiListesi(`${diziAd} ${s}. sezon bölümleri`,
+      sezonBolumleri
+        .filter((e) => e.episode_number !== b && e.episode_number !== b - 1
+          && e.episode_number !== b + 1)
+        .slice(0, SEO_BOLUM_KOMSU)
+        .map((e) => ({
+          ad: `${s}. Sezon ${e.episode_number}. Bölüm`
+            + (seoMetin(e.name) ? ` — ${seoMetin(e.name)}` : ''),
+          yol: `/dizi/${id}/sezon/${s}/bolum/${e.episode_number}`,
+        })));
+
+    const konukBlok = seoBaglantiListesi('Bu bölümdeki konuk oyuncular',
+      (Array.isArray(bol.guest_stars) ? bol.guest_stars : [])
+        .filter((o) => o?.name && gecerliTmdb(o.id))
+        .slice(0, SEO_BOLUM_KONUK)
+        .map((o) => ({ ad: o.name, yol: `/kisi/${o.id}` })));
+
+    // Yayın tarihi görünür bilgi: JSON-LD'deki datePublished ile aynı gün.
+    const yayinBlok = bol.air_date
+      ? `\n<p>Yayın tarihi: ${htmlKacir(String(bol.air_date).slice(0, 10))}</p>` : '';
+    const ozetBlok = ozet
+      ? `\n<h2>${htmlKacir(bolumAd)} özeti</h2>\n<p>${htmlKacir(ozet)}</p>` : '';
 
     res.type('html').send(ogSayfa({
       baslik: `${diziAd} ${s}. sezon ${b}. bölüm: ${bolumAd} — dizi.jpg`,
       h1,
-      aciklama: bol.overview || `${diziAd} ${s}. sezon ${b}. bölüm — dizi.jpg`,
+      aciklama: ozet || `${diziAd} ${s}. sezon ${b}. bölüm "${bolumAd}" —`
+        + ' dizi.jpg puanı, incelemeleri ve kullanıcı yorumları.',
       gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
       url,
       canonical: `${SITE_KOK}/dizi/${id}/sezon/${s}/bolum/${b}`,
-      indexle: yorumlar.length > 0,
+      indexle: bolumOzgunIcerikVar(seo),
       tur: 'video.episode',
-      govde: yorumBlok + seoBaglantiListesi('Bağlantılar', komsu),
-      jsonLd: {
-        '@context': 'https://schema.org',
-        '@type': 'TVEpisode',
-        name: bolumAd,
-        episodeNumber: b,
-        ...(bol.air_date ? { datePublished: String(bol.air_date).slice(0, 10) } : {}),
-        ...(bol.overview ? { description: seoMetin(bol.overview) } : {}),
-        partOfSeason: { '@type': 'TVSeason', seasonNumber: s },
-        partOfSeries: {
-          '@type': 'TVSeries', name: diziAd, url: `${SITE_KOK}/icerik/tv/${id}`,
-        },
-      },
+      govde: yayinBlok + ozetBlok
+        + seoDegerlendirmeGovdesi(seo, {
+          incelemeBasligi: 'Bu bölüm hakkında incelemeler',
+          yorumBasligi: 'Bu bölüm hakkında yorumlar',
+        })
+        + seoBaglantiListesi('Bağlantılar', komsu) + sezonBlok + konukBlok,
+      jsonLd: bolumJsonLd({
+        url: `${SITE_KOK}/dizi/${id}/sezon/${s}/bolum/${b}`,
+        diziId: id, diziAd, bolumAd, sezon: s, bolum: b,
+        ozet,
+        gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
+        bol, seo,
+      }),
     }));
   } catch {
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
@@ -2377,7 +2888,7 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
   }
   try {
     const { rows } = await havuz.query(
-      `SELECT l.ad, l.aciklama, l.herkese_acik, k.kullanici_adi
+      `SELECT l.ad, l.aciklama, l.herkese_acik, l.olusturma, k.kullanici_adi
          FROM listeler l JOIN kullanicilar k ON k.id = l.kullanici_id
         WHERE l.id = $1 AND NOT k.yasakli`, [id]);
     if (!rows.length || !rows[0].herkese_acik) {
@@ -2406,15 +2917,34 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
       indexle: baglantilar.length >= SEO_LISTE_MIN,
       tur: 'article',
       govde: seoBaglantiListesi(`Listedeki ${baglantilar.length} içerik`, baglantilar),
+      // GİZLİLİK: `author` YALNIZ ad taşır, profile `url` VERİLMEZ (aynı kural
+      // /og/gonderi'de de geçerli). BreadcrumbList 14 Ağu 2026'da eklendi:
+      // sayfa 1,5 KB'lık bir çıkmazdı ve hiyerarşide nereye oturduğu belirsizdi.
       jsonLd: baglantilar.length ? {
         '@context': 'https://schema.org',
-        '@type': 'ItemList',
-        name: l.ad,
-        ...(l.aciklama ? { description: seoMetin(l.aciklama) } : {}),
-        numberOfItems: baglantilar.length,
-        itemListElement: baglantilar.slice(0, 30).map((x, i) => ({
-          '@type': 'ListItem', position: i + 1, name: x.ad, url: SITE_KOK + x.yol,
-        })),
+        '@graph': [
+          {
+            '@type': 'ItemList',
+            '@id': `${SITE_KOK}/listeler/${id}#liste`,
+            name: l.ad,
+            url: `${SITE_KOK}/listeler/${id}`,
+            ...(l.aciklama ? { description: seoMetin(l.aciklama) } : {}),
+            author: { '@type': 'Person', name: l.kullanici_adi },
+            ...(l.olusturma ? { dateCreated: seoGun(l.olusturma) } : {}),
+            numberOfItems: baglantilar.length,
+            itemListElement: baglantilar.slice(0, 30).map((x, i) => ({
+              '@type': 'ListItem', position: i + 1, name: x.ad, url: SITE_KOK + x.yol,
+            })),
+          },
+          {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+              { '@type': 'ListItem', position: 2, name: 'Listeler' },
+              { '@type': 'ListItem', position: 3, name: l.ad },
+            ],
+          },
+        ],
       } : null,
     }));
   } catch {
@@ -2455,7 +2985,10 @@ app.get('/og/ana', sarici(async (_req, res) => {
     url,
     canonical: `${SITE_KOK}/`,
     tur: 'website',
-    govde: seoBaglantiListesi('Son yorumlanan diziler ve filmler', baglantilar),
+    // Keşif sayfaları ana sayfadan bağlanır (SEO_KESIF_HUB gerekçesi orada):
+    // sitemap'e girmedikleri için Google'ın onları bulacağı TEK yol bu.
+    govde: seoBaglantiListesi('Keşfe başla', SEO_KESIF_HUB)
+      + seoBaglantiListesi('Son yorumlanan diziler ve filmler', baglantilar),
     jsonLd: {
       '@context': 'https://schema.org',
       '@graph': [
@@ -2480,18 +3013,25 @@ app.get('/og/ana', sarici(async (_req, res) => {
 
 // ---------- SEO 1.4 (kalan): /gozat ve /kesfet liste sayfaları ----------
 //
-// CLOAKING KİLİDİ — bu sabit `false` doğdu ve bilerek öyle:
-// `app/lib/yonlendirme.dart` içindeki `acikYolOnEkleri` listesinde '/gozat' ve
-// '/kesfet' YOK; oturumsuz ziyaretçi bu adreslerde /giris'e atılıyor. Sayfaları
-// bugün indekslersek bot içerik, kullanıcı giriş formu görür — SEO-PLANI 3.1'de
-// "diğer tüm SEO yatırımlarını riske atar" denen cloaking'in ta kendisi.
-// Bu yüzden sayfalar `noindex,follow` doğar: Google gövdeyi tarar, iç
-// bağlantıları takip eder (asıl değer bu — 200 içerik sayfasına köprü), ama
-// indekse girmez. Flutter tarafı iki rotayı oturumsuz açtığı gün bu sabit
-// `true` yapılır; TEK satırlık değişiklik, başka hiçbir yere dokunulmaz.
-const SEO_KESIF_INDEKS = false;
+// CLOAKING KİLİDİ — 14 Ağu 2026'ya kadar `false` idi: Flutter
+// `acikTamYollar`'da '/gozat' ve '/kesfet' YOKTU, oturumsuz ziyaretçi /giris'e
+// atılıyordu. Sayfalar indekslenseydi bot içerik, insan giriş formu görürdü
+// (SEO-PLANI 3.1). Aynı turda iki rota `acikTamYollar`'a alındı ve bu sabit
+// `true` yapıldı. Test (`seo_gizlilik.test.js`) ikisini kilitler: sabit `true`
+// iken Flutter'ın da açık olması ZORUNLU. Geri almak için İKİSİNİ birden
+// kapat.
+const SEO_KESIF_INDEKS = true;
 const SEO_KESIF_OGE = 8;    // blok başına bağlantı
 const SEO_KESIF_MIN = 24;   // bu sayının altında sayfa "ince" sayılır -> noindex
+
+// Ana sayfanın (`/og/ana`) keşif sayfalarına verdiği HUB bağlantıları.
+//
+// Ana sayfa bu iki keşif yoluna <a> ile bağlanır (iç bağlantı merkezi).
+// 14 Ağu'dan itibaren ikisi de sitemap-genel.xml'e de girer (`SEO_KESIF_INDEKS`).
+const SEO_KESIF_HUB = [
+  { ad: 'Türlerine göre diziler ve filmler', yol: '/gozat' },
+  { ad: 'Haftanın dizileri, filmleri ve öne çıkan raflar', yol: '/kesfet' },
+];
 
 // /kesfet = uygulamanın Ana Sayfası. `app/lib/ekranlar/kesfet.dart` içindeki
 // `anaSayfaRaflari` ile AYNI raflar ve AYNI TMDB yolları — bot ile kullanıcının
@@ -2657,6 +3197,139 @@ app.get('/og/gozat', ogKesifUcu({
     + 'görürsünüz.',
 }));
 
+// ---------- SEO 3.4: SOFT 404'Ü KAPAT ----------
+// ÖLÇÜM (14 Ağu 2026, canlı): `/boyle-bir-sayfa-yok` -> HTTP 200 + boş Flutter
+// kabuğu, `noindex` bile yok. Google bunu "Soft 404" olarak raporlar: hem
+// tarama bütçesi bu yollarda yanar hem site geneli kalite algısı düşer.
+//
+// ÇÖZÜM İKİ PARÇALI VE İNSAN TRAFİĞİNE HİÇ DOKUNMAZ:
+//   1. nginx (backend/nginx-seo-20260814.parca.conf): SPA geri dönüşüne düşen
+//      BOT istekleri Node'a taşınır. Gerçek kullanıcı `try_files` ile Flutter
+//      kabuğunu almaya devam eder — derin bağlantı, F5 ve geri tuşu değişmez.
+//   2. Burası: BİLİNEN ROTA TABLOSU.
+//        · tabloda VAR ama SSR'ı yok -> 200 + `noindex,follow` minimal sayfa.
+//          Sayfa gerçekten 200'dür (kullanıcı orada bir ekran görüyor); 404
+//          vermek yalan olur ve insan trafiğiyle çelişirdi.
+//        · tabloda YOK               -> GERÇEK 404 + `noindex`.
+//
+// TABLO NEDEN ELLE YAZILI: gerçek kaynak `app/lib/yonlendirme.dart` ama backend
+// imajında `app/` klasörü YOK (Dockerfile yalnız backend dosyalarını kopyalar),
+// yani çalışma zamanında okunamaz. GERÇEKLE AYRIŞMAYI TEST ENGELLİYOR:
+// `backend/test/seo_soft404.test.js` yonlendirme.dart'ı ayrıştırır, buradaki
+// `yol` listesiyle BİREBİR eşleşmesini şart koşar ve her desenin kendi
+// `yol`undan üretilen örnek adresi eşlediğini doğrular. Yeni bir ekran eklenip
+// bu tablo güncellenmezse test kırmızıya döner.
+//
+// `yol` alanı yonlendirme.dart'taki yazımın AYNISI olmak zorundadır (testin
+// karşılaştırma anahtarı budur); `desen` çalışma zamanı eşleştiricisidir.
+const BOT_ROTALARI = [
+  // Kök: Flutter rotası değil ama SSR'ı VAR (`/og/ana`, nginx `location = /`).
+  { yol: '/', desen: /^\/$/ },
+
+  // Oturum/karşılama ekranları
+  { yol: '/giris', desen: /^\/giris$/ },
+  { yol: '/karsilama', desen: /^\/karsilama$/ },
+  { yol: '/gizlilik', desen: /^\/gizlilik$/ },
+
+  // Alt sekmeler
+  { yol: '/kesfet', desen: /^\/kesfet$/ },
+  { yol: '/takvim', desen: /^\/takvim$/ },
+  { yol: '/akis', desen: /^\/akis$/ },
+  { yol: '/arama', desen: /^\/arama$/ },
+  { yol: '/profil', desen: /^\/profil$/ },
+  { yol: '/gozat', desen: /^\/gozat$/ },
+
+  // Profil ve sosyal ekranlar (hepsi robots.txt ile KAPALI; tabloda olmaları
+  // yalnız "bu yol vardır, 404 değildir" demek içindir).
+  { yol: '/kullanici/:ad', desen: /^\/kullanici\/[^/]+$/ },
+  { yol: '/kullanici/:ad/takipciler', desen: /^\/kullanici\/[^/]+\/takipciler$/ },
+  { yol: '/kullanici/:ad/takip', desen: /^\/kullanici\/[^/]+\/takip$/ },
+  { yol: '/kisi-ara', desen: /^\/kisi-ara$/ },
+  { yol: '/bildirimler', desen: /^\/bildirimler$/ },
+  { yol: '/sohbetler', desen: /^\/sohbetler$/ },
+  { yol: '/mesaj-istekleri', desen: /^\/mesaj-istekleri$/ },
+  { yol: '/sohbet/:ad', desen: /^\/sohbet\/[^/]+$/ },
+  { yol: '/gorusme/:ad', desen: /^\/gorusme\/[^/]+$/ },
+  { yol: '/arama-gelen', desen: /^\/arama-gelen$/ },
+
+  // İçerik yolları — hepsinin SSR'ı var, yani buraya normalde hiç düşmezler.
+  { yol: '/icerik/:tur/:id', desen: /^\/icerik\/[a-z]+\/\d+$/ },
+  { yol: '/kisi/:id', desen: /^\/kisi\/\d+$/ },
+  { yol: '/sirket/:id', desen: /^\/sirket\/\d+$/ },
+  { yol: '/listeler/:id', desen: /^\/listeler\/\d+$/ },
+  { yol: '/gonderi/:id', desen: /^\/gonderi\/\d+$/ },
+  {
+    yol: '/dizi/:id/sezon/:sezon/bolum/:bolum',
+    desen: /^\/dizi\/\d+\/sezon\/\d+\/bolum\/\d+$/,
+  },
+
+  // Kişisel ekranlar
+  { yol: '/ayarlar', desen: /^\/ayarlar$/ },
+  { yol: '/kitaplik/:durum', desen: /^\/kitaplik\/[a-z]+$/ },
+  { yol: '/favori-oyuncular', desen: /^\/favori-oyuncular$/ },
+  { yol: '/yapimlar/:id', desen: /^\/yapimlar\/\d+$/ },
+  { yol: '/izlediklerim', desen: /^\/izlediklerim$/ },
+  { yol: '/gizlenen-yorumlar', desen: /^\/gizlenen-yorumlar$/ },
+  { yol: '/engellenenler', desen: /^\/engellenenler$/ },
+  { yol: '/hareketlerim', desen: /^\/hareketlerim$/ },
+  { yol: '/istatistiklerim', desen: /^\/istatistiklerim$/ },
+  { yol: '/gonderi-istatistik/:id', desen: /^\/gonderi-istatistik\/\d+$/ },
+  { yol: '/ozet/:yil', desen: /^\/ozet\/\d+$/ },
+  { yol: '/tam-arama', desen: /^\/tam-arama$/ },
+];
+
+/** Yol bilinen bir Flutter/SSR rotası mı? */
+const botRotasiVar = (yol) => BOT_ROTALARI.some((r) => r.desen.test(yol));
+
+// Bot yüzeyi hız limiti. nginx artık SPA'ya düşen TÜM bot isteklerini buraya
+// taşıdığı için Googlebot kılığına giren biri Node'u uydurma yollarla dövebilir.
+// Uç DB'ye ve TMDB'ye HİÇ dokunmaz (yalnız regex eşleşmesi), yani maliyet
+// düşüktür; limit gene de konuluyor.
+//
+// YALNIZ BU UCA: mevcut `/og/...` uçlarına limit eklemek gerçek Googlebot
+// taramasını 429'a düşürme riski taşırdı ve o sayfalar sitenin en değerli
+// yüzeyi. Anahtar IP: bu uca oturum hiç gelmiyor.
+const botYolLimiti = hizLimiti(1200, (req) => `b4:${req.ip}`);
+
+// Yakalayıcı uç — TÜM özel `/og/...` uçlarından SONRA tanımlanmak ZORUNDA
+// (Express ilk eşleşen rotayı çalıştırır).
+app.get(/^\/og(?:\/(.*))?$/, botYolLimiti, (req, res) => {
+  // Sondaki eğik çizgi atılır: kanonik biçim `/x`, `/x/` değil (kanonikUrl ile
+  // aynı kural). Uzunluk kırpması, uydurma dev yolların sayfaya basılmasını
+  // engeller (kaçış zaten ogSayfa'da yapılıyor).
+  const yol = `/${String(req.params[0] || '').replace(/\/+$/, '').slice(0, 200)}`;
+  const url = kanonikUrl(yol);
+  const cikislar = [{ ad: 'dizi.jpg ana sayfa', yol: '/' }, ...SEO_KESIF_HUB];
+
+  if (!botRotasiVar(yol)) {
+    // GERÇEK 404: Google "Bulunamadı" olarak raporlar, varsa indeksten düşürür
+    // ve tarama bütçesini bu yola bir daha harcamaz.
+    return res.status(404).type('html').send(ogSayfa({
+      baslik: 'Sayfa bulunamadı — dizi.jpg',
+      h1: 'Sayfa bulunamadı',
+      aciklama: 'Aradığın adres dizi.jpg üzerinde yok. '
+        + 'Ana sayfadan dizileri ve filmleri keşfedebilirsin.',
+      url,
+      canonical: url,
+      indexle: false,
+      govde: seoBaglantiListesi('Buradan devam edebilirsin', cikislar),
+    }));
+  }
+
+  // Rota VAR ama SSR'ı yok: oturum gerektiren ya da kişisel bir ekran.
+  // Durum kodu 200 (sayfa gerçekten var), indeks kapalı, bağlantılar açık.
+  res.type('html').send(ogSayfa({
+    baslik: 'dizi.jpg — Dizi ve Film Takip Uygulaması',
+    h1: 'dizi.jpg',
+    aciklama: 'Bu ekran dizi.jpg uygulamasının içinde açılır. '
+      + 'Dizileri ve filmleri ana sayfadan keşfedebilirsin.',
+    url,
+    canonical: url,
+    indexle: false,
+    govde: seoBaglantiListesi('Buradan devam edebilirsin', cikislar),
+  }));
+});
+
 // robots.txt Node'dan servis edilir (IndexNow anahtarıyla aynı gerekçe):
 // Flutter web dağıtımı `scp build/web/*` ile /var/www/dizijpg'yi ezdiği için
 // oraya konan dosya her dağıtımda kaybolma riski taşıyordu ve depoda kopyası
@@ -2731,19 +3404,75 @@ const SITEMAP_SORGU = `
      WHERE p.tur IN ('tv','movie') AND p.sezon IS NULL AND ${SEO_INCELEME_KOSUL}
   ) t GROUP BY tur, tmdb_id ORDER BY son DESC`;
 
+// ---------- Sitemap: BÖLÜM sayfaları (14 Ağu 2026) ----------
+// "[dizi adı] N. sezon M. bölüm" Türkiye'nin en yüksek hacimli dizi araması
+// (SEO-PLANI 3.7) ve SSR sayfası 6 Ağu'dan beri VAR — ama sitemap'te HİÇ YOKTU,
+// yani Google bölüm sayfalarını keşfetmiyordu.
+//
+// KAPSAM, içerik haritasıyla AYNI disiplindedir ve `bolumOzgunIcerikVar()` ile
+// BİREBİR örtüşür: yalnız o bölüme yayına değer yorum ya da inceleme yazılmış
+// bölümler. Aksi halde 2.400 dizi × ~50 bölüm = on binlerce boş sayfa taramaya
+// davet edilirdi (tarama bütçesi israfı, bu maddenin tek gerçek riski).
+//
+// SÜZGEÇLER ORTAK SABİTLERDEN gelir (SEO_YORUM_KOSUL / SEO_INCELEME_KOSUL):
+// spoiler, yasaklı yazar, "bu içeriği gizle" tercihi ve uzunluk eşiği burada da
+// aynen geçerli — sitemap ile sayfanın `indexle`si ayrışamaz.
+const SITEMAP_BOLUM_SORGU = `
+  SELECT tmdb_id, sezon, bolum, max(tarih) AS son FROM (
+    SELECT y.tmdb_id, y.sezon, y.bolum, y.tarih
+      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+     WHERE y.tur = 'tv' AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
+       AND ${SEO_YORUM_KOSUL}
+    UNION ALL
+    SELECT p.tmdb_id, p.sezon, p.bolum, p.tarih
+      FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+     WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
+       AND ${SEO_INCELEME_KOSUL}
+  ) t GROUP BY tmdb_id, sezon, bolum ORDER BY son DESC`;
+
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
 const SITEMAP_TTL_MS = 6 * 3600 * 1000; // sorgu tüm yorum tablosunu tarar; her istekte çalışmasın
-let sitemapOnbellek = { ts: 0, sayfalar: [], adet: 0 };
-let sitemapUretimi = null;              // eşzamanlı istekler tek sorguyu paylaşsın
 
 const gunTarihi = (d) => new Date(d).toISOString().slice(0, 10); // W3C: YYYY-MM-DD
 
-async function sitemapUret() {
-  const { rows } = await havuz.query(SITEMAP_SORGU);
+// Önbellek kapları. İçerik ve bölüm haritaları AYRI kaplarda tutulur: biri
+// üretilemezse diğeri servis edilmeye devam eder.
+const sitemapKovasi = () => ({
+  onbellek: { ts: 0, sayfalar: [], adet: 0 },
+  uretim: null,   // eşzamanlı istekler tek sorguyu paylaşsın
+});
+const sitemapIcerikKovasi = sitemapKovasi();
+const sitemapBolumKovasi = sitemapKovasi();
+
+/**
+ * "Tek uçuş" (single-flight) önbellek okuma. İki harita da bu kalıbı paylaşır:
+ *  · TTL içinde ikinci sorgu atılmaz,
+ *  · eşzamanlı istekler TEK sorguyu paylaşır,
+ *  · üretim başarısızsa BAYAT önbellek servis edilir — boş bir sitemap
+ *    yayınlamak Google'a "bu URL'ler artık yok" demektir, bayat liste kat kat
+ *    iyidir.
+ */
+async function sitemapKovaOku(kova, uretici) {
+  const taze = Date.now() - kova.onbellek.ts < SITEMAP_TTL_MS;
+  if (taze && kova.onbellek.sayfalar.length) return kova.onbellek;
+  if (!kova.uretim) {
+    kova.uretim = uretici().then(
+      (v) => { kova.onbellek = v; kova.uretim = null; return v; },
+      (e) => {
+        kova.uretim = null;
+        if (kova.onbellek.sayfalar.length) return kova.onbellek;
+        throw e;
+      });
+  }
+  return kova.uretim;
+}
+
+/** Satırları `SITEMAP_SAYFA_BOYU`luk sayfalara böler (boşsa tek boş sayfa). */
+function sitemapSayfala(rows, locUret) {
   const sayfalar = [];
   for (let i = 0; i < rows.length; i += SITEMAP_SAYFA_BOYU) {
     sayfalar.push(rows.slice(i, i + SITEMAP_SAYFA_BOYU).map((r) => ({
-      loc: `${SITE_KOK}/icerik/${r.tur}/${r.tmdb_id}`,
+      loc: locUret(r),
       lastmod: gunTarihi(r.son),
     })));
   }
@@ -2751,20 +3480,23 @@ async function sitemapUret() {
   return { ts: Date.now(), sayfalar, adet: rows.length };
 }
 
+async function sitemapUret() {
+  const { rows } = await havuz.query(SITEMAP_SORGU);
+  return sitemapSayfala(rows, (r) => `${SITE_KOK}/icerik/${r.tur}/${r.tmdb_id}`);
+}
+
 async function sitemapVerisi() {
-  const taze = Date.now() - sitemapOnbellek.ts < SITEMAP_TTL_MS;
-  if (taze && sitemapOnbellek.sayfalar.length) return sitemapOnbellek;
-  if (!sitemapUretimi) {
-    sitemapUretimi = sitemapUret().then(
-      (v) => { sitemapOnbellek = v; sitemapUretimi = null; return v; },
-      (e) => {
-        sitemapUretimi = null;
-        // Üretim başarısızsa bayat önbellek, boş sitemap'ten iyidir.
-        if (sitemapOnbellek.sayfalar.length) return sitemapOnbellek;
-        throw e;
-      });
-  }
-  return sitemapUretimi;
+  return sitemapKovaOku(sitemapIcerikKovasi, sitemapUret);
+}
+
+async function sitemapBolumUret() {
+  const { rows } = await havuz.query(SITEMAP_BOLUM_SORGU);
+  return sitemapSayfala(rows,
+    (r) => `${SITE_KOK}/dizi/${r.tmdb_id}/sezon/${r.sezon}/bolum/${r.bolum}`);
+}
+
+async function sitemapBolumVerisi() {
+  return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret);
 }
 
 function sitemapGonder(res, xml) {
@@ -2772,10 +3504,35 @@ function sitemapGonder(res, xml) {
   res.type('application/xml').send(xml);
 }
 
+/** `<url>` satırı — XML kaçışı ATLANMAZ (loc kullanıcı verisinden türese bile). */
+const sitemapSatiri = (u, changefreq, priority) =>
+  `  <url><loc>${htmlKacir(u.loc)}</loc><lastmod>${u.lastmod}</lastmod>`
+  + `<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
+
+const sitemapUrlseti = (satirlar) => `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${satirlar.join('\n')}
+</urlset>
+`;
+
 app.get('/sitemap.xml', sarici(async (_req, res) => {
-  const d = await sitemapVerisi();
-  const tarih = gunTarihi(d.ts || Date.now());
-  const parcalar = ['genel', ...d.sayfalar.map((_, i) => `icerik-${i + 1}`)];
+  // İki harita PARALEL ve BAĞIMSIZ okunur: bölüm sorgusu düşse bile içerik
+  // haritası dizinden kaybolmasın (`allSettled`).
+  const [icerik, bolum] = await Promise.allSettled([
+    sitemapVerisi(), sitemapBolumVerisi(),
+  ]);
+  const icerikD = icerik.status === 'fulfilled' ? icerik.value : { ts: 0, sayfalar: [] };
+  const bolumD = bolum.status === 'fulfilled' ? bolum.value : { ts: 0, sayfalar: [] };
+  if (bolum.status === 'rejected') console.error('sitemap-bolum', bolum.reason?.message);
+  if (icerik.status === 'rejected') throw icerik.reason;   // içerik haritası zorunlu
+  const tarih = gunTarihi(Math.max(icerikD.ts, bolumD.ts) || Date.now());
+  const parcalar = [
+    'genel',
+    ...icerikD.sayfalar.map((_, i) => `icerik-${i + 1}`),
+    // Boş bölüm haritası dizine YAZILMAZ: içi olmayan bir alt harita bildirmek
+    // GSC'de "0 URL" uyarısı üretir.
+    ...bolumD.sayfalar.filter((s) => s.length).map((_, i) => `bolum-${i + 1}`),
+  ];
   sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${parcalar.map((p) =>
@@ -2785,12 +3542,45 @@ ${parcalar.map((p) =>
 `);
 }));
 
+// ---------- sitemap-genel.xml: SSR'ı olan SABİT sayfalar ----------
+// 14 Ağu 2026 ölçümü: bu harita TEK URL içeriyordu (yalnız `/`).
+//
+// BİR YOL BURAYA ÜÇ KOŞULUN HEPSİ SAĞLANIRSA GİRER:
+//   1. SSR'ı VAR (bot gerçek içerik alır, boş Flutter kabuğu değil),
+//   2. robots.txt `Disallow` listesinde DEĞİL — çelişen girdi GSC'de
+//      "Robots.txt tarafından engellendi" hatası üretir,
+//   3. sayfa `noindex` DÖNMÜYOR — noindex bir URL'i sitemap'e koymak
+//      "Gönderilen URL 'noindex' ile işaretlenmiş" hatası üretir.
+// Üç koşul da `backend/test/seo_sitemap.test.js` ile kilitlidir.
+//
+// `/gozat` ve `/kesfet` `SEO_KESIF_INDEKS` true olduğu sürece bu haritaya
+// girer (14 Ağu: Flutter oturumsuz açtı, kilit çözüldü). false yapılırsa
+// noindex bir URL sitemap'e KONMAZ — GSC "noindex ile işaretlenmiş" hatası.
+//
+// `/gizlilik` BİLEREK YOK: robots.txt'te açık ve gerçek bir rota ama SSR'ı
+// olmadığı için bot Flutter kabuğunu alıyor, yani (1) sağlanmıyor.
+const SITEMAP_GENEL_YOLLAR = [
+  { yol: '/', changefreq: 'daily', priority: '1.0', indekslenir: () => true },
+  {
+    yol: '/gozat', changefreq: 'daily', priority: '0.7',
+    indekslenir: () => SEO_KESIF_INDEKS,
+  },
+  {
+    yol: '/kesfet', changefreq: 'daily', priority: '0.7',
+    indekslenir: () => SEO_KESIF_INDEKS,
+  },
+];
+
 app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
-  sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>${SITE_KOK}/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
-</urlset>
-`);
+  // `lastmod` YOK: bu sayfaların içeriği TMDB'den geliyor, bizde "son
+  // değişiklik" damgası yok. Uydurma tarih bildirmek sitemap'in güvenilirliğini
+  // düşürür (Google lastmod'u tutarsız bulursa tamamen yok sayar).
+  const satirlar = SITEMAP_GENEL_YOLLAR
+    .filter((s) => s.indekslenir())
+    .map((s) => `  <url><loc>${htmlKacir(kanonikUrl(s.yol))}</loc>`
+      + `<changefreq>${s.changefreq}</changefreq>`
+      + `<priority>${s.priority}</priority></url>`);
+  sitemapGonder(res, sitemapUrlseti(satirlar));
 }));
 
 // Yol ".xml" ile bittiği için düz string rota yerine regex (path-to-regexp
@@ -2800,14 +3590,20 @@ app.get(/^\/sitemap-icerik-(\d+)\.xml$/, sarici(async (req, res) => {
   const n = parseInt(req.params[0], 10);
   const sayfa = d.sayfalar[n - 1];
   if (!sayfa) return res.status(404).type('text/plain').send('yok');
-  sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sayfa.map((u) =>
-    `  <url><loc>${htmlKacir(u.loc)}</loc><lastmod>${u.lastmod}</lastmod>`
-    + `<changefreq>weekly</changefreq><priority>0.8</priority></url>`
-  ).join('\n')}
-</urlset>
-`);
+  sitemapGonder(res, sitemapUrlseti(sayfa.map((u) => sitemapSatiri(u, 'weekly', '0.8'))));
+}));
+
+// Bölüm haritası. `priority` 0.6 (içerik sayfalarının 0.8'inin ALTINDA):
+// bölüm sayfası dizinin kendi sayfasından daha dar bir sorguya cevap verir ve
+// tarama sırasında dizi sayfası önce gelmelidir. `changefreq` monthly:
+// yayınlanmış bir bölümün metadatası nadiren değişir, yeni yorum geldiğinde
+// IndexNow zaten anında haber veriyor.
+app.get(/^\/sitemap-bolum-(\d+)\.xml$/, sarici(async (req, res) => {
+  const d = await sitemapBolumVerisi();
+  const n = parseInt(req.params[0], 10);
+  const sayfa = d.sayfalar[n - 1];
+  if (!sayfa || !sayfa.length) return res.status(404).type('text/plain').send('yok');
+  sitemapGonder(res, sitemapUrlseti(sayfa.map((u) => sitemapSatiri(u, 'monthly', '0.6'))));
 }));
 
 // İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).
@@ -8093,8 +8889,19 @@ async function takipListesi(kullaniciAdi, sutun, digerSutun, benId = 0, hangi = 
   // (yanındaki dört `_gizli` alanıyla aynı kapsam). Sahibi kendi listesini
   // göremeseydi tercihini geri almadan kimin takip ettiğini bilemezdi.
   const gizli = k.rows[0].gizli === true && benId !== sahipId;
+  // `takip_ediyorum` + `ben_mi`: 14 Ağu 2026. Eski istemci kendi takip
+  // listesini ayrıca çekip satırları o 500'lük kümeyle karşılaştırıyordu;
+  // 501. kişiden sonrası yanlışlıkla "Takip Et" görünüyordu. Satır alanı
+  // küme boyutundan BAĞIMSIZ doğru. Eski istemci (Play 1.40) yeni alanı
+  // yok sayar, eski davranış aynen sürer.
   const { rows } = await havuz.query(
-    `SELECT ku.kullanici_adi, ku.avatar, ku.bio
+    `SELECT ku.kullanici_adi, ku.avatar, ku.bio,
+            EXISTS (
+              SELECT 1 FROM takipler t2
+               WHERE t2.takip_eden_id = $2::int
+                 AND t2.takip_edilen_id = ku.id
+            ) AS takip_ediyorum,
+            (ku.id = $2::int) AS ben_mi
      FROM takipler t JOIN kullanicilar ku ON ku.id = t.${digerSutun}
      WHERE t.${sutun} = $1
        AND ${engelSuzgec('ku.id', '$2')}
@@ -8122,10 +8929,15 @@ app.get('/takipedilenler/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, r
 
 // Kullanıcı arama (keşfet / takip için)
 // Arama sonuçlarını yerel başlık dizinine işler (yazım toleransının besini).
-function icerikDizineEkle(liste) {
-  const satirlar = (liste || []).filter((r) =>
+// Yalnız dizi/film: kişi ve şirket dizin tablosuna GİRMEZ (yazım düzeltmesi
+// başlık içindir; firma adı "Breaking Bad" gibi bir yapım değildir).
+function icerikDizinSatirlari(liste) {
+  return (liste || []).filter((r) =>
     (r.media_type === 'tv' || r.media_type === 'movie') &&
     r.id && (r.name || r.title));
+}
+function icerikDizineEkle(liste) {
+  const satirlar = icerikDizinSatirlari(liste);
   if (!satirlar.length) return;
   havuz.query(
     `INSERT INTO icerik_dizini (tur, tmdb_id, ad, orijinal_ad, populerlik)
@@ -8141,22 +8953,152 @@ function icerikDizineEkle(liste) {
   ).catch(() => {});
 }
 
+/** Arama yazım varyantları: aynen + "the"siz; her taban için boşluksuz hali. */
+function aramaVaryantlari(q) {
+  const varyantlar = new Set();
+  for (const taban of [q, q.replace(/^the\s+/i, '')]) {
+    varyantlar.add(taban);
+    varyantlar.add(taban.replace(/\s+/g, ''));
+  }
+  return varyantlar;
+}
+
+/** Ad karşılaştırması: küçük harf, boşluksuz, baştaki "the" yok. */
+function aramaAdDuz(s) {
+  return String(s || '').toLowerCase().replace(/\s+/g, '').replace(/^the/, '');
+}
+
+/**
+ * Şirket araması TMDB'de media_type taşımaz; eski istemci (Play 1.40)
+ * `media_type != person && poster_path` süzgecine takılır ve satırı yok sayar.
+ * Yeni alan EKLENİR, eski alan KALDIRILMAZ.
+ */
+function sirketAramaSatiri(r) {
+  if (!r || r.id == null) return null;
+  return { ...r, media_type: 'company' };
+}
+
+function kisiAramaSatiri(r) {
+  if (!r || r.id == null) return null;
+  return { ...r, media_type: 'person' };
+}
+
+/** Aynı person:id / company:id için daha zengin satırı koru. */
+function aramaSatirBirlestir(eski, yeni) {
+  if (!eski) return yeni;
+  if (!yeni || eski.media_type !== yeni.media_type) return eski;
+  if (eski.media_type === 'person') {
+    const eskiKf = Array.isArray(eski.known_for) ? eski.known_for.length : 0;
+    const yeniKf = Array.isArray(yeni.known_for) ? yeni.known_for.length : 0;
+    return {
+      ...eski,
+      profile_path: eski.profile_path || yeni.profile_path,
+      known_for_department: eski.known_for_department || yeni.known_for_department,
+      known_for: yeniKf > eskiKf ? yeni.known_for : (eski.known_for || yeni.known_for),
+      popularity: Math.max(eski.popularity || 0, yeni.popularity || 0),
+    };
+  }
+  if (eski.media_type === 'company') {
+    return {
+      ...eski,
+      name: eski.name || yeni.name,
+      logo_path: eski.logo_path || yeni.logo_path,
+      origin_country: eski.origin_country || yeni.origin_country,
+    };
+  }
+  return (eski.popularity || 0) >= (yeni.popularity || 0) ? eski : yeni;
+}
+
+/**
+ * Sıralama hedefleri: yazım varyantları + tek kelimede `q network`.
+ * TMDB "cartoon" deyince Cartoon Network'ü 1. sayfaya koymaz; hedef listesine
+ * "cartoonnetwork" eklenince o ad önek isabeti kısa "Cartoon" birebirini ezer.
+ */
+function aramaHedefleri(q, varyantlar) {
+  const hedefler = [...varyantlar].map(aramaAdDuz);
+  const t = String(q || '').trim();
+  if (t.length >= 2 && !/\s/.test(t)) hedefler.push(aramaAdDuz(`${t} network`));
+  return hedefler;
+}
+
+/** En uzun hedef kazanır: birebir ve önek ayrı tutulur. */
+function aramaEnIyiIsabet(adlar, hedefler) {
+  let birebir = 0;
+  let onek = 0;
+  for (const h of hedefler) {
+    if (!h) continue;
+    if (adlar.some((a) => a === h)) birebir = Math.max(birebir, h.length);
+    else if (adlar.some((a) => a.startsWith(h))) onek = Math.max(onek, h.length);
+  }
+  return { birebir, onek };
+}
+
+/**
+ * Birebir ad eşleşmesi popülerlikten önce. Şirket, aynı isabet düzeyinde
+ * dizi/filmden üstte durur — "Cartoon Network" aramasında rastgele bir
+ * dizi (Cartoon Network Checker) üste çıkmasın diye.
+ * Uzun hedef kısa hedeften üstündür: "cartoon" → Cartoon Network Studios,
+ * adı tam "Cartoon" olan küçük firmayı ezer.
+ */
+function aramaPuanla(r, hedefler) {
+  const pop = Number(r.popularity) || 0;
+  const adlar = [r.name, r.title, r.original_name, r.original_title]
+    .filter(Boolean)
+    .map(aramaAdDuz);
+  const sirket = r.media_type === 'company';
+  const enKisa = adlar.length ? Math.min(...adlar.map((a) => a.length)) : 99;
+  const kisaBonus = 1000 / (enKisa + 1);
+  const { birebir, onek } = aramaEnIyiIsabet(adlar, hedefler);
+  const logoBonus = sirket && r.logo_path ? 80 : 0;
+  const sirketKat = sirket ? 1e5 : 0;
+  let isabet = 0;
+  if (birebir > 0) isabet = birebir * 2e6 + 1e6;
+  else if (onek > 0) isabet = onek * 2e6;
+  return isabet + sirketKat + pop + kisaBonus + logoBonus;
+}
+
+/** Kişi + şirket TMDB yolları (varyant başına); multi ayrı çağrılır. */
+function aramaKisiSirketYollari(varyantlar, q = '') {
+  const yollar = [];
+  const gorulen = new Set();
+  const ekle = (yol) => {
+    if (gorulen.has(yol)) return;
+    gorulen.add(yol);
+    yollar.push(yol);
+  };
+  for (const v of varyantlar) {
+    const qEnc = encodeURIComponent(v);
+    ekle(`/search/person?query=${qEnc}`);
+    ekle(`/search/company?query=${qEnc}`);
+  }
+  // TMDB şirket 1. sayfada kısa adı öne alır ("cartoon" → "Cartoon");
+  // Cartoon Network 2. sayfadadır. Tek kelimede `q network` ayrıca çağrılır.
+  const orijinal = String(q || '').trim();
+  if (orijinal.length >= 2) {
+    ekle(`/search/company?query=${encodeURIComponent(orijinal)}&page=2`);
+    if (!/\s/.test(orijinal)) {
+      ekle(`/search/company?query=${encodeURIComponent(`${orijinal} network`)}`);
+    }
+  }
+  return yollar;
+}
+
 // Akıllı içerik araması: sorgu VARYANTLARI ("Black List" → "BlackList",
 // "the"siz hali) TMDB'de paralel aranır, tekilleştirilip popülerliğe göre
 // sıralanır. Düz /tmdb/search/multi tek yazımı bulamıyordu.
 // Sonuç çıkmazsa YAZIM TOLERANSI: yerel başlık dizininde pg_trgm benzerliğiyle
 // en yakın başlıklar bulunur ("brekaing bad" → Breaking Bad).
+//
+// Kişi (oyuncu/yönetmen/senarist) /search/person ile, şirket (Cartoon Network)
+// /search/company ile takviye edilir. Multi şirket DÖNMEZ; kişi sıralaması
+// zayıf kalabilir. Toplu çağrı tmdbTopluGetir ile 8'li öbek (proje kuralı).
 app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim();
   if (q.length < 2) return res.json({ results: [] });
   // Tabanlar: aynen + "the"siz; her taban için bir de boşluksuz hali
   // ("the black list" → "the black list", "theblacklist", "black list",
   // "blacklist"). Bitişik → boşluklu yönü belirsiz olduğundan denenmez.
-  const varyantlar = new Set();
-  for (const taban of [q, q.replace(/^the\s+/i, '')]) {
-    varyantlar.add(taban);
-    varyantlar.add(taban.replace(/\s+/g, ''));
-  }
+  const varyantlar = aramaVaryantlari(q);
   const sonuclar = new Map();
   await Promise.all([...varyantlar].map(async (v) => {
     try {
@@ -8169,28 +9111,33 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
       );
       for (const r of (d.results || [])) {
         const k = `${r.media_type}:${r.id}`;
-        if (!sonuclar.has(k)) sonuclar.set(k, r);
+        sonuclar.set(k, aramaSatirBirlestir(sonuclar.get(k), r));
       }
     } catch { /* tek varyant hatası aramayı bozmasın */ }
   }));
+  // Kişi + şirket: multi'nin kaçırdığı (şirket hiç gelmez) ve zayıf sıraladığı
+  // kişileri tamamla. Varyant × 2 + şirket 2. sayfa (+ tek kelimede
+  // `q network`) — tmdbTopluGetir 8'li öbekler.
+  try {
+    const ek = await tmdbTopluGetir(
+      aramaKisiSirketYollari(varyantlar, q),
+      aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+    );
+    for (const [yol, d] of ek) {
+      const sirketMi = yol.startsWith('/search/company');
+      for (const r of (d && d.results) || []) {
+        const satir = sirketMi ? sirketAramaSatiri(r) : kisiAramaSatiri(r);
+        if (!satir) continue;
+        const k = `${satir.media_type}:${satir.id}`;
+        sonuclar.set(k, aramaSatirBirlestir(sonuclar.get(k), satir));
+      }
+    }
+  } catch { /* kişi/şirket takviyesi aramayı bozmasın */ }
   // Sıralama: başlık eşleşmesi popülerlikten önce gelir — yoksa "game of
   // thrones" aramasında House of the Dragon (daha popüler) üste çıkıyordu.
-  const duz = (s) =>
-    String(s || '').toLowerCase().replace(/\s+/g, '').replace(/^the/, '');
-  const hedefler = [...varyantlar].map(duz);
-  const puanla = (r) => {
-    const pop = r.popularity || 0;
-    const adlar = [r.name, r.title, r.original_name, r.original_title]
-      .filter(Boolean)
-      .map(duz);
-    if (adlar.some((a) => hedefler.includes(a))) return 1e9 + pop; // birebir
-    if (adlar.some((a) => hedefler.some((h) => a.startsWith(h)))) {
-      return 1e6 + pop; // başlangıç eşleşmesi
-    }
-    return pop;
-  };
+  const hedefler = aramaHedefleri(q, varyantlar);
   let results = [...sonuclar.values()]
-    .sort((a, b) => puanla(b) - puanla(a))
+    .sort((a, b) => aramaPuanla(b, hedefler) - aramaPuanla(a, hedefler))
     .slice(0, 30);
   icerikDizineEkle(results); // dizin her başarılı aramayla zenginleşir
   let duzeltme = null;
@@ -8244,7 +9191,14 @@ app.get('/kullanici-ara', girisIsteğeBagli, aramaLimiti, sarici(async (req, res
   const q = String(req.query.q || '').trim().toLowerCase();
   if (q.length < 2) return res.json({ kullanicilar: [] });
   const { rows } = await havuz.query(
-    `SELECT kullanici_adi, avatar, bio FROM kullanicilar
+    `SELECT kullanici_adi, avatar, bio,
+            EXISTS (
+              SELECT 1 FROM takipler t
+               WHERE t.takip_eden_id = $3::int
+                 AND t.takip_edilen_id = kullanicilar.id
+            ) AS takip_ediyorum,
+            (id = $3::int) AS ben_mi
+     FROM kullanicilar
      WHERE misafir = false AND kullanici_adi LIKE $1
        AND ${engelSuzgec('id', '$3')}
      ORDER BY (kullanici_adi = $2) DESC, kullanici_adi LIMIT 30`,

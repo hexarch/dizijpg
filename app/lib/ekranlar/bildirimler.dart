@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../gorsel_basliklari.dart';
 import '../tema.dart';
 import '../yonlendirme.dart';
 import 'ortak.dart';
@@ -188,8 +189,14 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                   children: [
                     CircleAvatar(
                       backgroundColor: DiziRenkler.koyuGri,
+                      // Aynı yuvarlak ya TMDB posteri ya kendi sunucumuzdaki
+                      // avatarı gösteriyor; WebP başlığının gerekip
+                      // gerekmediğine ADRESE bakarak tek yerde karar veriliyor.
                       backgroundImage: avatar != null
-                          ? CachedNetworkImageProvider(avatar)
+                          ? CachedNetworkImageProvider(
+                              avatar,
+                              headers: gorselBasliklari(avatar),
+                            )
                           : null,
                       child: avatar == null
                           ? Icon(switch (b['tur']) {

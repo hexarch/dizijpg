@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,6 +18,15 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+
+  <!-- Viewport: STATİK olarak burada duruyor çünkü açılış ekranı Flutter
+       yüklenmeden ÖNCE boyanıyor; meta olmadan mobil tarayıcı sayfayı 980 px
+       genişlik varsayıp küçültür ve marka minicik görünür. Flutter motoru
+       (FullPageEmbeddingStrategy._applyViewportMeta) açılışta bu etiketi silip
+       kendi `user-scalable=no` sürümünü koyuyor; ilk kareden sonra aşağıdaki
+       betik yakınlaştırmaya izin veren değeri geri yazıyor. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <meta name="description" content="dizi.jpg — Dizi ve filmlerini takip et">
   <meta name="theme-color" content="#F5C518">
 
@@ -57,8 +66,231 @@
        kopya doğru olanı. -->
   <meta name="google-signin-client_id"
         content="1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com">
+
+  <!--
+    AÇILIŞ EKRANI STİLİ — SATIR İÇİ OLMAK ZORUNDA.
+
+    Amaç: İlk İçerikli Boyama (FCP). Flutter web'in ilk karesi CanvasKit WASM +
+    ~1,5 MB main.dart.js indirilip derlenene kadar gelmiyor; o ana kadar sayfa
+    bembeyaz duruyordu (PageSpeed: mobil 34 / masaüstü 59).
+
+    Ayrı bir .css dosyası = fazladan bir ağ isteği = kazancın büyük kısmı gider.
+    Aynı sebeple burada HİÇBİR görsel/font indirilmiyor: marka işareti salt
+    CSS + metin, yazı tipi sistem yığını (Poppins'i beklemez).
+
+    RENKLER UYDURMA DEĞİL, uygulamanın temasından alındı — `app/lib/tema.dart`
+    içindeki `diziTema()` (300. satır): `zemin = acik ? Color(0xFFF6F6F8)
+    : Color(0xFF0B0B0D)`, metin (303. satır) `acik ? Color(0xFF17171A)
+    : Colors.white`. Tema varsayılanı "sistem" (tema.dart:7) olduğu için burada
+    da `prefers-color-scheme` ile aynı karar veriliyor; aksi hâlde açık temalı
+    cihazda koyu açılıştan beyaz uygulamaya sıçrama olurdu.
+
+    Marka kırmızısı `assets/logo.png` üzerinden örneklendi (medyan #A41125);
+    vurgu sarısı temanın `DiziRenkler.sari` değeri (#F5C518, `theme-color`).
+  -->
+  <style>
+    :root {
+      color-scheme: light dark;
+      --acilis-zemin: #0B0B0D;
+      --acilis-metin: #EDEBE8;
+      --acilis-iz: rgba(255, 255, 255, 0.14);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --acilis-zemin: #F6F6F8;
+        --acilis-metin: #17171A;
+        --acilis-iz: rgba(0, 0, 0, 0.12);
+      }
+    }
+
+    /* Zemin `html` üzerinde de tanımlı: tarayıcı sayfa tuvalini bu renkle
+       boyar, böylece gövde henüz ayrıştırılmadan bile beyaz parlama olmaz. */
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--acilis-zemin);
+    }
+
+    #acilis {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--acilis-zemin);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      opacity: 1;
+      transition: opacity 200ms ease-out;
+    }
+
+    /* Flutter devraldıktan sonra: solar ve tıklamaları uygulamaya bırakır. */
+    #acilis[data-gizle] {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .acilis-govde {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      padding: 0 24px;
+    }
+
+    /* Marka işareti: logo.png'nin (DİZİ + kırmızı JPG bloğu) ağ isteği
+       gerektirmeyen sade karşılığı. */
+    .acilis-marka {
+      display: flex;
+      align-items: stretch;
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      line-height: 1;
+    }
+
+    .acilis-marka-dizi {
+      padding: 6px 7px 6px 0;
+      color: var(--acilis-metin);
+    }
+
+    .acilis-marka-jpg {
+      padding: 6px 9px;
+      border-radius: 3px;
+      background-color: #A41125;
+      color: #FFFFFF;
+    }
+
+    /* Belirsiz ilerleme çubuğu: tek elemana `::after` ile çizildi. */
+    .acilis-ilerleme {
+      position: relative;
+      overflow: hidden;
+      width: 148px;
+      height: 3px;
+      border-radius: 3px;
+      background-color: var(--acilis-iz);
+    }
+
+    .acilis-ilerleme::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 40%;
+      border-radius: 3px;
+      background-color: #F5C518;
+      animation: acilis-kaydir 1200ms ease-in-out infinite;
+    }
+
+    @keyframes acilis-kaydir {
+      from { transform: translateX(-100%); }
+      to   { transform: translateX(250%); }
+    }
+
+    /* Hareket azaltma tercihi: kayan animasyon ve solma geçişi kapanır,
+       yerine duran (sabit) bir çubuk kalır. */
+    @media (prefers-reduced-motion: reduce) {
+      #acilis {
+        transition: none;
+      }
+
+      .acilis-ilerleme::after {
+        width: 100%;
+        opacity: 0.55;
+        animation: none;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- Açılış katmanı: `flutter_bootstrap.js`ten ÖNCE geliyor ki ayrıştırıcı
+       ona ulaştığı anda boyanabilsin. Tamamı dekoratiftir; ekran okuyucular
+       uygulamanın gerçek içeriğini beklesin diye erişilebilirlik ağacından
+       `aria-hidden` ile çıkarıldı. -->
+  <div id="acilis" aria-hidden="true">
+    <div class="acilis-govde">
+      <div class="acilis-marka">
+        <span class="acilis-marka-dizi">DİZİ</span><span class="acilis-marka-jpg">JPG</span>
+      </div>
+      <div class="acilis-ilerleme"></div>
+    </div>
+  </div>
+
+  <script>
+    // Açılış katmanının kaldırılması + Flutter'ın viewport meta'sının onarımı.
+    // Satır içi tutuluyor: ayrı dosya = fazladan istek, ki bu betiğin varlık
+    // sebebi (FCP kazancı) tam da onu önlemek. `eval` ve satır içi olay
+    // özniteliği yok; ileride CSP açılırsa yalnız hash/nonce eklemek yeter.
+    (function () {
+      'use strict';
+
+      var SOLMA_MS = 200;
+      // Emniyet süresi: `flutter-first-frame` hiç gelmezse (JS hatası, çok
+      // yavaş ağ) katman sonsuza kadar kalmasın.
+      var EMNIYET_MS = 20000;
+
+      var tamamlandi = false;
+      var emniyetSayaci = 0;
+
+      // Flutter motoru açılışta sayfadaki viewport meta'sını silip yerine
+      // `flt-viewport` işaretli, `maximum-scale=1.0, user-scalable=no` içeren
+      // kendi etiketini koyuyor (kaynak: flutter_web_sdk .../view_embedder/
+      // embedding_strategy/full_page_embedding_strategy.dart, _applyViewportMeta).
+      // Lighthouse erişilebilirliği bu yüzden 100'ün altında kalıyor; ilk
+      // kareden sonra yakınlaştırmaya izin veren değeri geri yazıyoruz.
+      function viewportuOnar() {
+        var meta = document.querySelector('meta[name="viewport"]');
+        if (!meta) {
+          meta = document.createElement('meta');
+          meta.setAttribute('name', 'viewport');
+          document.head.appendChild(meta);
+        }
+        meta.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+
+      // Önce opaklık geçişiyle sil, sonra DOM'dan tamamen kaldır.
+      function katmaniKaldir() {
+        var katman = document.getElementById('acilis');
+        if (!katman) {
+          return;
+        }
+        katman.setAttribute('data-gizle', '');
+        window.setTimeout(function () {
+          if (katman.parentNode) {
+            katman.remove();
+          }
+        }, SOLMA_MS + 50);
+      }
+
+      function devral() {
+        if (tamamlandi) {
+          return;
+        }
+        tamamlandi = true;
+        window.clearTimeout(emniyetSayaci);
+        katmaniKaldir();
+      }
+
+      // Olay `window` üzerinde tetikleniyor: çerçeve ilk kareden sonra
+      // `flutter/service_worker` kanalına 'first-frame' yolluyor
+      // (rendering/binding.dart, _handleWebFirstFrame), motor da bunu
+      // `domWindow.dispatchEvent(... 'flutter-first-frame')`e çeviriyor
+      // (engine/platform_dispatcher.dart).
+      // Viewport onarımı emniyet zaman aşımından SONRA gelse bile çalışsın
+      // diye `devral`dan ayrı çağrılıyor: Flutter geç açılırsa meta'yı o anda
+      // yeniden yazacaktır.
+      window.addEventListener('flutter-first-frame', function () {
+        viewportuOnar();
+        devral();
+      });
+
+      emniyetSayaci = window.setTimeout(devral, EMNIYET_MS);
+    })();
+  </script>
+
   <!--
     You can customize the "flutter_bootstrap.js" script.
     This is useful to provide a custom configuration to the Flutter loader

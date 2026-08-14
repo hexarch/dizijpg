@@ -1027,4 +1027,8 @@ const Map<String, String> cevirilerSv = {
       'Genomsnittligt tittande: {} % av videon',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Snittet av retentionskurvans 20 intervall.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Sök serie, film, person eller bolag...',
+  'Şirketler': 'Bolag',
+  'Senarist': 'Manusförfattare',
 };

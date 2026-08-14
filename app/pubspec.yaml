@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.46.0+93
+version: 1.47.0+94
 
 environment:
   sdk: ^3.12.2
@@ -89,6 +89,14 @@ dependencies:
   # (builtInKotlin=false, newDsl=false). Web'de trim desteklenmiyor →
   # lib/video_islem_stub.dart bu paketi HİÇ import etmez.
   pro_video_editor: ^2.11.1
+  # Marka ikonu FONTU (SimpleIcons.ttf) için gerekli — bağımlılık KALMALI.
+  # Ama Dart tarafında `SimpleIcons` sınıfı KULLANILMAZ: paket 3.442 ikonu
+  # `static const Map<String, IconData> values` haritasında topladığı için
+  # sınıfı bir kez import etmek ikon budayıcının 3.442 glifin TAMAMINI
+  # "kullanılıyor" saymasına yol açıyordu (1,46 MB fontun yalnız %6,8'i
+  # kırpılıyordu). Kullandığımız 18 ikon lib/ikonlar/sosyal_ikonlar.dart
+  # içinde yerel `const IconData` olarak tanımlı; font 6.044 bayta iniyor.
+  # Ayrıntı ve regresyon kilidi: test/sosyal_ikonlar_test.dart
   simple_icons: ^16.23.0
   url_launcher: ^6.3.2
   # Telefonun kendi paylaşım sayfası (WhatsApp, e-posta, Instagram...)

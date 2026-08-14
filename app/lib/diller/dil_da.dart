@@ -1019,4 +1019,8 @@ const Map<String, String> cevirilerDa = {
       'Gennemsnitligt set: {} % af videoen',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Gennemsnittet af kurvens 20 intervaller.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Søg efter serie, film, person eller selskab...',
+  'Şirketler': 'Selskaber',
+  'Senarist': 'Manuskriptforfatter',
 };

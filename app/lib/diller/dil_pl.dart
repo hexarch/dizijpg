@@ -1031,4 +1031,8 @@ const Map<String, String> cevirilerPl = {
   'Ortalama izlenme: videonun %{} kadarı': 'Średnio obejrzano: {}% wideo',
   'Elde tutma eğrisinin 20 kovasının ortalaması.':
       'Średnia z 20 przedziałów krzywej utrzymania.',
+  'Dizi, film, kişi veya şirket ara...':
+      'Szukaj serialu, filmu, osoby lub firmy...',
+  'Şirketler': 'Firmy',
+  'Senarist': 'Scenarzysta',
 };

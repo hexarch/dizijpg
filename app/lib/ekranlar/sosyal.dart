@@ -1,10 +1,13 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:simple_icons/simple_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../ceviri.dart';
+// Marka ikonları: `SimpleIcons` sınıfı YERİNE yerel const tanımlar kullanılır —
+// paketin 3.442 ikonluk sabit haritası derlemeye girmesin ki ikon budayıcı
+// fontun yalnız kullandığımız 18 glifini bıraksın.
+import '../ikonlar/sosyal_ikonlar.dart';
 import '../tema.dart';
 
 /// Desteklenen sosyal platformlar (backend SOSYAL_PLATFORMLAR ile aynı).
@@ -31,99 +34,99 @@ const sosyalPlatformlar = [
   SosyalPlatform(
     'instagram',
     'Instagram',
-    SimpleIcons.instagram,
+    SosyalIkonlar.instagram,
     'https://instagram.com/{}',
     uygulamaUrl: 'instagram://user?username={}',
   ),
   SosyalPlatform(
     'facebook',
     'Facebook',
-    SimpleIcons.facebook,
+    SosyalIkonlar.facebook,
     'https://facebook.com/{}',
   ),
   SosyalPlatform(
     'x',
     'X',
-    SimpleIcons.x,
+    SosyalIkonlar.x,
     'https://x.com/{}',
     uygulamaUrl: 'twitter://user?screen_name={}',
   ),
   SosyalPlatform(
     'tiktok',
     'TikTok',
-    SimpleIcons.tiktok,
+    SosyalIkonlar.tiktok,
     'https://tiktok.com/@{}',
   ),
-  SosyalPlatform('discord', 'Discord', SimpleIcons.discord, null),
+  SosyalPlatform('discord', 'Discord', SosyalIkonlar.discord, null),
   SosyalPlatform(
     'steam',
     'Steam',
-    SimpleIcons.steam,
+    SosyalIkonlar.steam,
     'https://steamcommunity.com/id/{}',
   ),
   // Simple Icons'ta xbox/epic yok (marka politikası) — yakın ikonlarla.
   SosyalPlatform('xbox', 'Xbox', Icons.sports_esports, null),
-  SosyalPlatform('epicgames', 'Epic Games', SimpleIcons.epicgames, null),
+  SosyalPlatform('epicgames', 'Epic Games', SosyalIkonlar.epicgames, null),
   SosyalPlatform(
     'imdb',
     'IMDb',
-    SimpleIcons.imdb,
+    SosyalIkonlar.imdb,
     'https://www.imdb.com/user/{}',
   ),
-  SosyalPlatform('vk', 'VK', SimpleIcons.vk, 'https://vk.com/{}'),
+  SosyalPlatform('vk', 'VK', SosyalIkonlar.vk, 'https://vk.com/{}'),
   SosyalPlatform(
     'youtube',
     'YouTube',
-    SimpleIcons.youtube,
+    SosyalIkonlar.youtube,
     'https://youtube.com/@{}',
   ),
   SosyalPlatform(
     'twitch',
     'Twitch',
-    SimpleIcons.twitch,
+    SosyalIkonlar.twitch,
     'https://twitch.tv/{}',
   ),
   SosyalPlatform(
     'spotify',
     'Spotify',
-    SimpleIcons.spotify,
+    SosyalIkonlar.spotify,
     'https://open.spotify.com/user/{}',
   ),
   SosyalPlatform(
     'github',
     'GitHub',
-    SimpleIcons.github,
+    SosyalIkonlar.github,
     'https://github.com/{}',
   ),
   SosyalPlatform(
     'reddit',
     'Reddit',
-    SimpleIcons.reddit,
+    SosyalIkonlar.reddit,
     'https://reddit.com/u/{}',
   ),
   SosyalPlatform(
     'telegram',
     'Telegram',
-    SimpleIcons.telegram,
+    SosyalIkonlar.telegram,
     'https://t.me/{}',
     uygulamaUrl: 'tg://resolve?domain={}',
   ),
   SosyalPlatform(
     'snapchat',
     'Snapchat',
-    SimpleIcons.snapchat,
+    SosyalIkonlar.snapchat,
     'https://snapchat.com/add/{}',
   ),
   SosyalPlatform(
     'pinterest',
     'Pinterest',
-    SimpleIcons.pinterest,
+    SosyalIkonlar.pinterest,
     'https://pinterest.com/{}',
   ),
   SosyalPlatform(
     'letterboxd',
     'Letterboxd',
-    SimpleIcons.letterboxd,
+    SosyalIkonlar.letterboxd,
     'https://letterboxd.com/{}',
   ),
   // Genel web sitesi: değer alan adıdır (ör. ornek.com/sayfa)
