@@ -849,11 +849,7 @@ const Map<String, String> cevirilerHi = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'जब तुम किसी सीरीज़ या फ़िल्म पर कमेंट लिखोगे, तुम्हारे व्यू और लाइक यहाँ जमा होने लगेंगे।',
   'Tüm zamanlar': 'सर्वकालिक',
-  'Gönderi': 'पोस्ट',
-  'Zaman kırılımı': 'समय के हिसाब से',
   'Son {} gün': 'पिछले {} दिन',
-  'En çok görüntülenen gönderilerin': 'तुम्हारी सबसे ज़्यादा देखी गई पोस्ट',
-  'En çok beğenilen gönderilerin': 'तुम्हारी सबसे ज़्यादा लाइक की गई पोस्ट',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'व्यू का इतिहास अभी जमा होना शुरू नहीं हुआ; पहले दिन का डेटा कल दिखेगा।',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -944,17 +940,6 @@ const Map<String, String> cevirilerHi = {
   'Firma bulunamadı': 'कंपनी नहीं मिली',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'इस कंपनी का इस तरह का कोई शीर्षक नहीं है.',
-  'Seviye {}/{}': 'स्तर {}/{}',
-  'Sonraki: {}': 'अगला: {}',
-  'En üst unvan': 'सर्वोच्च स्तर',
-  'Meraklı izleyici': 'जिज्ञासु दर्शक',
-  'Hevesli izleyici': 'उत्साही दर्शक',
-  'Amatör izleyici': 'शौकिया दर्शक',
-  'Kıdemli izleyici': 'अनुभवी दर्शक',
-  'Uzman izleyici': 'विशेषज्ञ दर्शक',
-  'Profesör izleyici': 'प्रोफेसर दर्शक',
-  'Efsane izleyici': 'दिग्गज दर्शक',
-  'Ultra mega izleyici': 'अल्ट्रा मेगा दर्शक',
   'Doğum günün kutlu olsun!': 'जन्मदिन मुबारक हो!',
   'İyi ki doğdun, iyi ki buradasın.':
       'अच्छा हुआ कि तुम्हारा जन्म हुआ, अच्छा है कि तुम यहाँ हो.',
@@ -996,4 +981,38 @@ const Map<String, String> cevirilerHi = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'लेवल {}',
+  'Sonraki seviyeye {} puan kaldı': 'अगले लेवल के लिए {} पॉइंट बाकी',
+  'Gönderilerin': 'तुम्हारी पोस्ट',
+  '{} gönderi': '{} पोस्ट',
+  '{} gönderi · {} görüntülenme': '{} पोस्ट · {} व्यू',
+  'önceki {} güne göre': 'पिछले {} दिन की तुलना में',
+  'önceki {} güne göre %{} arttı': 'पिछले {} दिन की तुलना में {}% बढ़ा',
+  'önceki {} güne göre %{} azaldı': 'पिछले {} दिन की तुलना में {}% घटा',
+  'önceki {} güne göre değişmedi': 'पिछले {} दिन की तुलना में कोई बदलाव नहीं',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'रोज़ाना व्यू: सबसे कम {}, सबसे ज़्यादा {}',
+  'Etkileşim oranı henüz ölçülemedi': 'एंगेजमेंट दर अभी नहीं मापी जा सकी',
+  'Oranlar': 'दरें',
+  'Beğenme oranı': 'लाइक दर',
+  'Yorum oranı': 'कमेंट दर',
+  'Paylaşma oranı': 'शेयर दर',
+  'İçeriğe gitme oranı': 'कंटेंट टैप दर',
+  'Profile gitme oranı': 'प्रोफ़ाइल विज़िट दर',
+  'Ziyaretten takibe dönüşüm': 'विज़िट से फ़ॉलो दर',
+  'beğeni ÷ görüntülenme': 'लाइक ÷ व्यू',
+  'yorum ÷ görüntülenme': 'कमेंट ÷ व्यू',
+  'paylaşım ÷ görüntülenme': 'शेयर ÷ व्यू',
+  'içeriğe tıklama ÷ görüntülenme': 'कंटेंट पर टैप ÷ व्यू',
+  'profil ziyareti ÷ görüntülenme': 'प्रोफ़ाइल विज़िट ÷ व्यू',
+  'yeni takip ÷ profil ziyareti': 'नए फ़ॉलो ÷ प्रोफ़ाइल विज़िट',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'दर के लिए कम से कम {} व्यू चाहिए; अभी {} हैं।',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'दरें पोस्ट के आजीवन आँकड़ों से बनती हैं; नीचे दिया गया दिन चुनाव इन्हें नहीं बदलता।',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ये आँकड़े पोस्ट के आजीवन कुल हैं (अपनी अलग टिप्पणी वाले बॉक्स छोड़कर); नीचे दिया गया दिन चुनाव सिर्फ़ ग्राफ़ बदलता है।',
+  'Ortalama izlenme: videonun %{} kadarı': 'औसत देखा गया: वीडियो का {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'रिटेंशन कर्व के 20 खंडों का औसत।',
 };

@@ -1,28 +1,38 @@
 // MİNİ SEVİYE SİSTEMİ (istek md. 29) — `node --test test/*.test.js`
 //
-// "Amatör izleyici → profesör izleyici → ultra mega izleyici gibi unvanlar.
-//  Unvanları BİZ koyacağız (kullanıcı seçmeyecek)."
-// Maddenin notu: "Eşikler kullanıcıyı UTANDIRMAMALI — düşük seviyeyi
-// başkasına göstermek caydırıcı olabilir; md. 21'deki gizleme tercihleriyle
-// uyumlu düşünülmeli."
+// 14 AĞU REVİZYONU: "seviye sistemi kalsın ama 7/8 gibi yazma; bir seviye
+// sistemimiz olsun, ona göre artsın seviyesi."
+//  · UNVANLAR KALKTI (meraklı/hevesli/…/ultra mega) — bu dosyadaki unvan
+//    testleri (ad tekilliği, aşağılayıcı sözcük taraması, "üç örnek unvan
+//    tabloda var", "en üst kademe ultra_mega") KALDIRILDI: ortada ad yok.
+//    Aşağılamama şartı artık yapısal olarak sağlanıyor — sunucu yalnız bir
+//    SAYI gönderiyor.
+//  · TAVAN KALKTI — "kademe sayısı 6-10" ve "en üst kademede sonraki_esik
+//    null" testleri, yerlerini TAVANSIZLIK ve GERİLEME YOK testlerine
+//    bıraktı.
+//  · `kod`/`toplam`/`sonraki_kod` alanları kalktı; sözleşme testleri buna
+//    göre daraltıldı (açık görünümde artık YALNIZ `kademe` var).
 //
-// BU DOSYANIN KİLİTLEDİĞİ BEŞ KARAR:
+// BU DOSYANIN KİLİTLEDİĞİ KARARLAR:
 //
 //  1) İKİNCİ SAYAÇ SİSTEMİ YOK. Seviye `rozetleriHesapla`nın ZATEN attığı
 //     sorgunun sayaçlarından türer; yeni tablo/sütun açılmadı. Uç
 //     `{ rozetler, seviye }` döndürür — iki kaynak ayrışamaz.
-//  2) HESAP SUNUCUDA VE SAF. `seviyeHesapla` yalnız sayaç nesnesi alır;
-//     ağ, saat, rastgelelik yok. Aşağıdaki sınır testleri her kademenin
-//     alt sınırını ve bir eksiğini tek tek dener.
-//  3) UTANDIRMAMA — 1. KADEME BAŞKASINA GİTMEZ. `seviyeAcikGorunum` null
+//  2) HESAP SUNUCUDA VE SAF. `seviyePuani`/`seviyeEsigi`/`seviyeKademesi`
+//     yalnız sayı alır; ağ, saat, rastgelelik yok.
+//  3) EĞRİ TAVANSIZ AMA TAŞMAZ: `esik(n) = 14·(n−1)³`. Kademe sonsuza dek
+//     artar, çok yüksek puanda bile sonlu ve makul bir sayı üretir, hesap
+//     sınırlı adımda biter (sonsuz döngü yok).
+//  4) KİMSE SEVİYE KAYBETMEZ. Eski 8 kademenin HER eşiğinde yeni kademe
+//     eski kademeden küçük DEĞİL. Eski eğri de yeni eğri de puana göre
+//     azalmayan basamak fonksiyonu olduğundan bu, aradaki TÜM puanlar için
+//     gerilemenin imkânsız olduğunu kanıtlar.
+//  5) UTANDIRMAMA — 1. KADEME BAŞKASINA GİTMEZ. `seviyeAcikGorunum` null
 //     döndürür; ziyaretçi "en alt seviye" yazısı değil HİÇBİR ŞEY görür.
-//     Kişi kendi profilinde unvanını görmeye devam eder.
-//  4) MD. 21 UYUMU. `izlenenler_gizli` açıkken unvan açık profilde HİÇ
-//     görünmez: puanın baskın bileşeni izleme sayaçları, yani unvan
-//     gizlenen kütüphanenin boyutunu ele verir (`IZLEME_ROZETLERI`
-//     gerekçesinin aynısı). AYRI `seviye_gizli` sütunu AÇILMADI.
-//  5) İLERLEME VERİSİ SIZMAZ. Açık görünümde `puan`/`esik`/`sonraki_esik`
-//     alanları YOKTUR — ilerleme çubuğu başkasının profilinde çizilemez.
+//  6) MD. 21 UYUMU. `izlenenler_gizli` açıkken seviye açık profilde HİÇ
+//     görünmez (puanın baskın bileşeni izleme sayaçları).
+//  7) İLERLEME VERİSİ SIZMAZ. Açık görünümde `puan`/`esik`/`sonraki_esik`
+//     YOKTUR — ilerleme çubuğu başkasının profilinde çizilemez.
 //
 // YÖNTEM: `server.js` içe aktarılamıyor (modül yüklenir yüklenmez
 // `app.listen` çağırıyor). Bildirimler KAYNAKTAN ÇEKİLİP GERÇEKTEN
@@ -76,10 +86,13 @@ function alan(adlar, ifade) {
   return new Function(`${adlar.map(bildirimCek).join('\n')}\nreturn (${ifade});`)();
 }
 
-const SEVIYE_KADEMELERI = alan(['SEVIYE_KADEMELERI'], 'SEVIYE_KADEMELERI');
 const seviyePuani = alan(['seviyePuani'], 'seviyePuani');
+const seviyeEsigi = alan(['SEVIYE_KATSAYISI', 'seviyeEsigi'], 'seviyeEsigi');
+const seviyeKademesi = alan(
+  ['SEVIYE_KATSAYISI', 'seviyeEsigi', 'seviyeKademesi'], 'seviyeKademesi');
 const seviyeHesapla = alan(
-  ['SEVIYE_KADEMELERI', 'seviyePuani', 'seviyeHesapla'], 'seviyeHesapla');
+  ['SEVIYE_KATSAYISI', 'seviyeEsigi', 'seviyeKademesi', 'seviyePuani', 'seviyeHesapla'],
+  'seviyeHesapla');
 const seviyeAcikGorunum = alan(['seviyeAcikGorunum'], 'seviyeAcikGorunum');
 
 /** `rozetleriHesapla`nın sorgusunun döndürdüğü satırın tam şekli. */
@@ -88,55 +101,166 @@ const sayac = (o = {}) => ({
   takipci: 0, bitirilen: 0, begeni_alinan: 0, ...o,
 });
 
+/** 14 Ağu'dan ÖNCEKİ 8 kademenin eşikleri — gerileme kilidi bunlara bakar. */
+const ESKI_ESIKLER = [0, 30, 120, 400, 1000, 2500, 6000, 12000];
+
 // ===========================================================================
-// 1. KADEME TABLOSU — 6-10 kademe, eşikler kesin artan, ilki 0
+// 1. EŞİK EĞRİSİ — saf, kesin artan, TAVANSIZ
 // ===========================================================================
 
-test('kademe sayısı 6-10 aralığında', () => {
-  assert.ok(SEVIYE_KADEMELERI.length >= 6 && SEVIYE_KADEMELERI.length <= 10,
-    `beklenen 6-10, bulunan ${SEVIYE_KADEMELERI.length}`);
+test('1. kademenin eşiği 0 — sıfır veriyle de bir seviyen olur', () => {
+  assert.equal(seviyeEsigi(1), 0);
 });
 
-test('ilk kademenin eşiği 0 — sıfır veriyle de bir unvanın olur', () => {
-  assert.equal(SEVIYE_KADEMELERI[0].esik, 0);
-});
-
-test('eşikler KESİN ARTAN — eşitlik bile olsa bir kademe erişilemez olurdu', () => {
-  for (let i = 1; i < SEVIYE_KADEMELERI.length; i++) {
-    assert.ok(SEVIYE_KADEMELERI[i].esik > SEVIYE_KADEMELERI[i - 1].esik,
-      `${SEVIYE_KADEMELERI[i].kod} eşiği bir öncekinden büyük değil`);
+test('eşikler KESİN ARTAN (eşitlik olsa bir kademe erişilemez olurdu)', () => {
+  for (let n = 1; n < 500; n++) {
+    assert.ok(seviyeEsigi(n + 1) > seviyeEsigi(n),
+      `esik(${n + 1}) > esik(${n}) değil`);
   }
 });
 
-test('kodlar tekil ve dilden bağımsız (küçük harf + alt çizgi)', () => {
-  const kodlar = SEVIYE_KADEMELERI.map((k) => k.kod);
-  assert.equal(new Set(kodlar).size, kodlar.length, 'yinelenen kod var');
-  for (const k of kodlar) assert.match(k, /^[a-z][a-z0-9_]*$/, `kod dile sızmış: ${k}`);
+test('eşikler TAM SAYI — "1249,5 puan" diye bir hedef gösterilemez', () => {
+  for (let n = 1; n <= 200; n++) {
+    assert.ok(Number.isSafeInteger(seviyeEsigi(n)), `esik(${n}) tam sayı değil`);
+  }
 });
 
-test('UTANDIRMAMA: hiçbir kademe kodu aşağılayıcı bir sözcük taşımaz', () => {
-  // Maddenin şartı. Kod listesi Türkçe etiketin kaynağıdır
-  // (app/lib/seviye.dart), o yüzden yasak sözcük burada da tutulur.
-  const YASAK = ['acemi', 'caylak', 'toy', 'ezik', 'zayif', 'kotu', 'aptal',
-    'cahil', 'beceriksiz', 'tembel', 'sifir', 'hicbir', 'bos'];
-  for (const { kod } of SEVIYE_KADEMELERI) {
-    for (const y of YASAK) {
-      assert.ok(!kod.includes(y), `aşağılayıcı kademe kodu: ${kod} (${y})`);
+test('İLK KADEMELER ÇABUK: 2. seviye 14 puan (14 bölüm / 7 film)', () => {
+  assert.equal(seviyeEsigi(2), 14);
+  assert.equal(seviyeKademesi(14), 2);
+  assert.equal(seviyeHesapla(sayac({ bolum: 14 })).kademe, 2);
+  assert.equal(seviyeHesapla(sayac({ film: 7 })).kademe, 2);
+  // İlk üç kademe, ilk gerçek kullanım oturumunun menzilinde.
+  assert.ok(seviyeEsigi(3) <= 150, `3. kademe çok uzak: ${seviyeEsigi(3)}`);
+});
+
+test('SONRA YAVAŞLAR: kademeler arası fark her adımda BÜYÜR', () => {
+  for (let n = 2; n < 300; n++) {
+    const oncekiFark = seviyeEsigi(n) - seviyeEsigi(n - 1);
+    const fark = seviyeEsigi(n + 1) - seviyeEsigi(n);
+    assert.ok(fark > oncekiFark, `${n}. kademede eğri dikleşmiyor`);
+  }
+});
+
+test('AMA DURMAZ: her puanın üstünde ulaşılabilir bir kademe var', () => {
+  // Tavansızlığın işlemsel tanımı: puan büyüdükçe kademe de büyümeye devam
+  // eder — eski tablodaki gibi 8'de takılıp kalmaz.
+  for (const p of [12_000, 50_000, 250_000, 1_000_000, 50_000_000]) {
+    assert.ok(seviyeKademesi(p * 10) > seviyeKademesi(p),
+      `${p} puandan sonra seviye artmıyor — tavan var`);
+  }
+});
+
+// ===========================================================================
+// 2. KADEME HESABI — eşiğin tersi, sınırda kesin
+// ===========================================================================
+
+test('MONOTON: puan arttıkça kademe asla düşmez (0..200.000 taranır)', () => {
+  let onceki = 1;
+  for (let p = 0; p <= 200_000; p++) {
+    const n = seviyeKademesi(p);
+    assert.ok(n >= onceki, `puan ${p}: kademe ${onceki} → ${n} düştü`);
+    onceki = n;
+  }
+});
+
+test('TANIM: esik(n) ≤ puan < esik(n+1) — her eşikte ve bir eksiğinde', () => {
+  for (let n = 1; n <= 300; n++) {
+    const esik = seviyeEsigi(n);
+    assert.equal(seviyeKademesi(esik), n, `eşikte (${esik}) kademe yanlış`);
+    if (n > 1) {
+      assert.equal(seviyeKademesi(esik - 1), n - 1,
+        `eşiğin 1 altında (${esik - 1}) yükselmiş`);
     }
+    assert.equal(seviyeKademesi(esik + 1), n);
   }
 });
 
-test('kullanıcının verdiği üç örnek unvan tabloda karşılık buluyor', () => {
-  const kodlar = SEVIYE_KADEMELERI.map((k) => k.kod);
-  for (const k of ['amator', 'profesor', 'ultra_mega']) {
-    assert.ok(kodlar.includes(k), `istekteki örnek unvan yok: ${k}`);
+test('0 puan geçerli: 1. kademe (çökme yok, negatif kademe yok)', () => {
+  assert.equal(seviyeKademesi(0), 1);
+  assert.equal(seviyeHesapla(sayac()).kademe, 1);
+});
+
+test('ÇOK YÜKSEK PUAN: sonlu, makul, taşmayan bir sayı', () => {
+  // Gerçekçi tavan: 14.814 bölüm izleyen kullanıcımız ~18.400 puanda.
+  // Buradaki değerler onun 500 katına kadar çıkıyor.
+  for (const p of [1e6, 1e9, 1e12, Number.MAX_SAFE_INTEGER]) {
+    const n = seviyeKademesi(p);
+    assert.ok(Number.isSafeInteger(n), `${p} puanda kademe tam sayı değil: ${n}`);
+    assert.ok(n > 1 && n < 1e6, `${p} puanda saçma kademe: ${n}`);
+    assert.ok(seviyeEsigi(n) <= p, `${p} puanda kademe fazla yüksek`);
   }
-  // "ultra mega" EN ÜST kademe olmalı — istekteki sıralamanın sonu.
-  assert.equal(SEVIYE_KADEMELERI[SEVIYE_KADEMELERI.length - 1].kod, 'ultra_mega');
+  // Sonsuz/çöp girdi çökertmez, döngüye sokmaz.
+  assert.equal(seviyeKademesi(Infinity), 1);
+  assert.equal(seviyeKademesi(NaN), 1);
+  assert.equal(seviyeKademesi(-5), 1);
+  assert.equal(seviyeKademesi('abc'), 1);
+});
+
+test('SAF: aynı girdi aynı sonucu verir, girdiyi DEĞİŞTİRMEZ', () => {
+  const s = sayac({ bolum: 137, yorum: 4 });
+  const kopya = { ...s };
+  assert.deepEqual(seviyeHesapla(s), seviyeHesapla(s));
+  assert.deepEqual(s, kopya, 'seviyeHesapla girdiyi kirletti');
 });
 
 // ===========================================================================
-// 2. PUAN FORMÜLÜ — mevcut sayaçlardan türer, popülerliği SAYMAZ
+// 3. GERİLEME YOK — kimse seviye kaybetmeyecek
+// ===========================================================================
+
+test('GERİLEME YOK: eski 8 kademenin HER eşiğinde yeni kademe ≥ eski', () => {
+  // Kullanıcının en sert kısıtı. Eski tablo: 0/30/120/400/1000/2500/6000/12000.
+  ESKI_ESIKLER.forEach((esik, i) => {
+    const eskiKademe = i + 1;
+    const yeni = seviyeKademesi(esik);
+    assert.ok(yeni >= eskiKademe,
+      `${esik} puan: eski ${eskiKademe} → yeni ${yeni} (DÜŞÜŞ)`);
+  });
+});
+
+test('GERİLEME YOK: eşikler arasındaki HER puan için de geçerli', () => {
+  // Yukarıdaki eşik testi matematiksel olarak yeterli (iki fonksiyon da
+  // azalmayan), ama kanıtı elle de yürütüyoruz: eski tablonun kapsadığı
+  // aralıkta tek tek karşılaştırma.
+  const eskiKademe = (p) => {
+    let i = 0;
+    while (i + 1 < ESKI_ESIKLER.length && p >= ESKI_ESIKLER[i + 1]) i++;
+    return i + 1;
+  };
+  for (let p = 0; p <= 60_000; p++) {
+    assert.ok(seviyeKademesi(p) >= eskiKademe(p),
+      `${p} puan: eski ${eskiKademe(p)} → yeni ${seviyeKademesi(p)}`);
+  }
+});
+
+test('CANLI DAĞILIM (14 Ağu, 142 kullanıcı): tek bir hesap bile düşmüyor', () => {
+  // Canlı veritabanından YALNIZ OKUMA ile çıkarılan GERÇEK puanlar
+  // (rozetleriHesapla sorgusunun tüm kullanıcılar için hâli; sorgu
+  //  scratchpad'de, veriye dokunulmadı). Puanı 0 olan 94 hesap listede yok:
+  //  hepsi eskiden de yeniden de 1. kademe. [puan, eski kademe]:
+  const CANLI = [
+    [18429, 8], [17022, 8], [8866, 7], [8486, 7], [7233, 7], [6843, 7],
+    [1496, 5], [1107, 5], [934, 4], [871, 4], [309, 3], [292, 3], [249, 3],
+    [149, 3], [112, 2], [104, 2], [94, 2], [94, 2], [84, 2], [76, 2],
+    [72, 2], [69, 2], [64, 2], [44, 2], [43, 2], [33, 2], [31, 2], [27, 1],
+    [25, 1], [25, 1], [23, 1], [18, 1], [16, 1], [13, 1], [10, 1], [10, 1],
+    [7, 1], [7, 1], [7, 1], [6, 1], [3, 1], [3, 1], [2, 1], [2, 1], [2, 1],
+    [2, 1], [2, 1], [1, 1],
+  ];
+  assert.equal(CANLI.length, 48, 'canlı örneklem eksik');
+  let dusen = 0;
+  for (const [puan, eski] of CANLI) {
+    if (seviyeKademesi(puan) < eski) dusen++;
+  }
+  assert.equal(dusen, 0, 'canlı veride seviye kaybeden kullanıcı var');
+  // En çok izleyen iki hesap 8 → 11; kimse aynı kalmaktan kötüsünü görmüyor.
+  assert.equal(seviyeKademesi(18429), 11);
+  assert.equal(seviyeKademesi(17022), 11);
+  assert.equal(seviyeKademesi(0), 1);
+});
+
+// ===========================================================================
+// 4. PUAN FORMÜLÜ — mevcut sayaçlardan türer, popülerliği SAYMAZ (DEĞİŞMEDİ)
 // ===========================================================================
 
 test('yeni kullanıcı: tüm sayaçlar 0 → puan 0', () => {
@@ -156,7 +280,7 @@ test('formül ağırlıkları: bölüm ×1, film ×2, bitirilen ×5, yorum ×3, 
 });
 
 test('TAKİPÇİ VE ALINAN BEĞENİ SEVİYEYİ DEĞİŞTİRMEZ (popülerlik ölçmüyoruz)', () => {
-  // İkisi de kullanıcının denetiminde değil. Unvanı bunlara bağlamak,
+  // İkisi de kullanıcının denetiminde değil. Seviyeyi bunlara bağlamak,
   // "utandırmasın" şartının tam tersi olurdu.
   const sade = seviyePuani(sayac({ bolum: 50 }));
   const unlu = seviyePuani(sayac({ bolum: 50, takipci: 10_000, begeni_alinan: 9_999 }));
@@ -177,89 +301,71 @@ test('bozuk/eksik sayaç puanı çökertmez, negatife düşürmez', () => {
 });
 
 // ===========================================================================
-// 3. SINIRLAR — her kademenin ALT SINIRI ve BİR EKSİĞİ
+// 5. KAYDIN ŞEKLİ — salt sayı; unvan/kesir alanı YOK
 // ===========================================================================
 
-test('her kademenin ALT SINIRINDA o kademe, BİR EKSİĞİNDE bir önceki', () => {
-  for (let i = 0; i < SEVIYE_KADEMELERI.length; i++) {
-    const { kod, esik } = SEVIYE_KADEMELERI[i];
-    // Puan bire bir bölüm sayısıyla üretilir (bölüm ×1) — sınır tam denenir.
-    const tam = seviyeHesapla(sayac({ bolum: esik }));
-    assert.equal(tam.kademe, i + 1, `${kod}: eşikte (${esik}) kademe yanlış`);
-    assert.equal(tam.kod, kod, `${kod}: eşikte kod yanlış`);
-    if (i > 0) {
-      const eksik = seviyeHesapla(sayac({ bolum: esik - 1 }));
-      assert.equal(eksik.kademe, i, `${kod}: eşiğin 1 altında (${esik - 1}) yükselmiş`);
-      assert.equal(eksik.kod, SEVIYE_KADEMELERI[i - 1].kod);
-    }
+test('kayıt YALNIZ kademe/puan/esik/sonraki_esik taşır (kod, toplam GİTTİ)', () => {
+  const sv = seviyeHesapla(sayac({ bolum: 500 }));
+  assert.deepEqual(Object.keys(sv).sort(),
+    ['esik', 'kademe', 'puan', 'sonraki_esik']);
+  for (const eskiAlan of ['kod', 'toplam', 'sonraki_kod']) {
+    assert.ok(!(eskiAlan in sv), `kaldırılan alan hâlâ gönderiliyor: ${eskiAlan}`);
   }
 });
 
-test('yeni kullanıcı EN ALT kademede ve unvanı vardır (boş değil)', () => {
+test('TAVAN YOK: sonraki_esik HER kademede dolu (ilerleme çubuğu hep çizilir)', () => {
+  for (const p of [0, 13, 14, 12_000, 1_000_000]) {
+    const sv = seviyeHesapla(sayac({ bolum: p }));
+    assert.ok(Number.isSafeInteger(sv.sonraki_esik) && sv.sonraki_esik > sv.esik,
+      `${p} puanda sonraki_esik yok — "en üst seviye" durumu geri gelmiş`);
+  }
+});
+
+test('esik ≤ puan < sonraki_esik (ilerleme oranı 0..1 arasında kalır)', () => {
+  for (const p of [0, 1, 13, 14, 111, 112, 5000, 18_429]) {
+    const sv = seviyeHesapla(sayac({ bolum: p }));
+    assert.ok(sv.esik <= sv.puan, `${p}: esik > puan`);
+    assert.ok(sv.puan < sv.sonraki_esik, `${p}: puan >= sonraki_esik`);
+  }
+});
+
+test('yeni kullanıcı 1. kademede ve ilerleme çubuğu ÇİZİLEBİLİR', () => {
   const sv = seviyeHesapla(sayac());
   assert.equal(sv.kademe, 1);
-  assert.equal(sv.kod, SEVIYE_KADEMELERI[0].kod);
   assert.equal(sv.puan, 0);
   assert.equal(sv.esik, 0);
   assert.ok(sv.sonraki_esik > 0, 'ilk kademede sonraki eşik yok — ilerleme çizilemez');
 });
 
-test('en üst kademede sonraki_esik/sonraki_kod null (ilerleme çubuğu gizlensin)', () => {
-  const son = SEVIYE_KADEMELERI[SEVIYE_KADEMELERI.length - 1];
-  const sv = seviyeHesapla(sayac({ bolum: son.esik * 10 }));
-  assert.equal(sv.kademe, SEVIYE_KADEMELERI.length);
-  assert.equal(sv.kod, son.kod);
-  assert.equal(sv.sonraki_esik, null);
-  assert.equal(sv.sonraki_kod, null);
-});
-
-test('sonraki_kod BİR SONRAKİ kademenin kodudur (istemci sırayı bilmez)', () => {
-  for (let i = 0; i + 1 < SEVIYE_KADEMELERI.length; i++) {
-    const sv = seviyeHesapla(sayac({ bolum: SEVIYE_KADEMELERI[i].esik }));
-    assert.equal(sv.sonraki_kod, SEVIYE_KADEMELERI[i + 1].kod);
-    assert.equal(sv.sonraki_esik, SEVIYE_KADEMELERI[i + 1].esik);
-  }
-});
-
-test('kayıt her zaman toplam kademe sayısını taşır (istemci "5/8" yazabilsin)', () => {
-  assert.equal(seviyeHesapla(sayac()).toplam, SEVIYE_KADEMELERI.length);
-});
-
-test('SAF: aynı sayaç iki çağrıda aynı sonucu verir, girdiyi DEĞİŞTİRMEZ', () => {
-  const s = sayac({ bolum: 137, yorum: 4 });
-  const kopya = { ...s };
-  assert.deepEqual(seviyeHesapla(s), seviyeHesapla(s));
-  assert.deepEqual(s, kopya, 'seviyeHesapla girdiyi kirletti');
-});
-
 // ===========================================================================
-// 4. AÇIK GÖRÜNÜM — utandırmama + md. 21 gizliliği
+// 6. AÇIK GÖRÜNÜM — utandırmama + md. 21 gizliliği
 // ===========================================================================
 
 test('UTANDIRMAMA: 1. kademe BAŞKASINA gösterilmez (null)', () => {
   assert.equal(seviyeAcikGorunum(seviyeHesapla(sayac()), false), null);
   assert.equal(seviyeAcikGorunum(seviyeHesapla(sayac({ bolum: 1 })), false), null);
+  // Eşiğin bir altı hâlâ 1. kademe → hâlâ gizli.
+  assert.equal(seviyeAcikGorunum(seviyeHesapla(sayac({ bolum: 13 })), false), null);
 });
 
-test('2. kademeden itibaren unvan açık profilde görünür', () => {
-  const sv = seviyeHesapla(sayac({ bolum: SEVIYE_KADEMELERI[1].esik }));
+test('2. kademeden itibaren seviye açık profilde görünür', () => {
+  const sv = seviyeHesapla(sayac({ bolum: seviyeEsigi(2) }));
   const acik = seviyeAcikGorunum(sv, false);
-  assert.ok(acik, '2. kademede unvan gizlenmiş');
-  assert.equal(acik.kod, SEVIYE_KADEMELERI[1].kod);
+  assert.ok(acik, '2. kademede seviye gizlenmiş');
   assert.equal(acik.kademe, 2);
 });
 
-test('MD. 21: izlenenler_gizli açıkken unvan HİÇ gitmez (en üst kademede bile)', () => {
-  const son = SEVIYE_KADEMELERI[SEVIYE_KADEMELERI.length - 1];
-  const sv = seviyeHesapla(sayac({ bolum: son.esik }));
+test('MD. 21: izlenenler_gizli açıkken seviye HİÇ gitmez (yüksek kademede bile)', () => {
+  const sv = seviyeHesapla(sayac({ bolum: 50_000 }));
+  assert.ok(sv.kademe > 10);
   assert.equal(seviyeAcikGorunum(sv, true), null);
 });
 
 test('AÇIK GÖRÜNÜMDE İLERLEME VERİSİ YOK — puan/eşik sızmaz', () => {
   const sv = seviyeHesapla(sayac({ bolum: 3_333, yorum: 12 }));
   const acik = seviyeAcikGorunum(sv, false);
-  assert.deepEqual(Object.keys(acik).sort(), ['kademe', 'kod', 'toplam']);
-  for (const alan_ of ['puan', 'esik', 'sonraki_esik', 'sonraki_kod']) {
+  assert.deepEqual(Object.keys(acik), ['kademe']);
+  for (const alan_ of ['puan', 'esik', 'sonraki_esik', 'kod', 'toplam']) {
     assert.ok(!(alan_ in acik), `açık profile ${alan_} sızıyor`);
   }
 });
@@ -270,7 +376,7 @@ test('seviyeAcikGorunum null/eksik kayda dayanır', () => {
 });
 
 // ===========================================================================
-// 5. UÇLAR — kaynak sözleşmesi
+// 7. UÇLAR — kaynak sözleşmesi
 // ===========================================================================
 
 const ROZETLERI_HESAPLA = bildirimCek('rozetleriHesapla');
@@ -312,8 +418,15 @@ test('/profil: sahibine TAM kayıt, ziyaretçiye SÜZGEÇTEN geçmiş kayıt', (
 });
 
 test('/profil: ENGELLİ profilde seviye null döner', () => {
-  // Engel dalı "içerik tamamen düşer" diyor; unvan da izleme hacminden türer.
+  // Engel dalı "içerik tamamen düşer" diyor; seviye de izleme hacminden türer.
   const engelDali = /return res\.json\(\{[\s\S]*?\}\);/.exec(PROFIL);
   assert.ok(engelDali, 'engel dalı bulunamadı');
   assert.match(engelDali[0], /seviye: null/);
+});
+
+test('UNVAN TABLOSU KAYNAKTAN SİLİNDİ (ekranda hiçbir yerde görünmesin)', () => {
+  assert.ok(!/SEVIYE_KADEMELERI/.test(KAYNAK), 'eski kademe tablosu duruyor');
+  for (const kod of ['merakli', 'hevesli', 'kidemli', 'profesor', 'ultra_mega']) {
+    assert.ok(!new RegExp(`'${kod}'`).test(KAYNAK), `unvan kodu kalmış: ${kod}`);
+  }
 });

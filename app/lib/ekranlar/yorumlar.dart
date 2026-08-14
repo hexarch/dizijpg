@@ -12,6 +12,7 @@ import '../medya_yukle.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
+import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'medya_inceleme.dart';
 import 'giris_istem.dart';
 import 'kesfet_akis.dart' show ReelsGorunumu;
@@ -860,7 +861,16 @@ class _YorumKartiState extends State<YorumKarti> {
               ),
             ],
             const SizedBox(height: 8),
-            // Görüntülenme + beğeni
+            // ETKİLEŞİM SATIRI — MEDYANIN ALTINDA, ayrı satırda.
+            //
+            // *** MEDYANIN ÜSTÜNE BİNMEZ ***: kullanıcının özellikle istediği
+            // budur. Göz ikonu ve "İstatistikleri gör" bir Stack'e alınıp
+            // fotoğrafın/videonun köşesine oturtulsaydı kareyi kapatır, üstelik
+            // videoda oynatma denetimleriyle çakışırdı.
+            //
+            // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" → beğeni
+            // → yorum. Satır SOLA DAYALI (Row'un varsayılanı `start`);
+            // istatistik girişi sağa itilmez, sayının hemen yanında durur.
             Row(
               children: [
                 Icon(
@@ -873,6 +883,16 @@ class _YorumKartiState extends State<YorumKarti> {
                   '$goruntulenme',
                   style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                 ),
+                // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
+                // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
+                // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
+                // bir girişten daha kötüdür.
+                if (benim) ...[
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: IstatistikGirisi(gonderiId: yorum['id'] as int),
+                  ),
+                ],
                 const SizedBox(width: 16),
                 InkWell(
                   onTap: _begen,
@@ -912,32 +932,45 @@ class _YorumKartiState extends State<YorumKarti> {
                 // Gönderiye yorum: ok değil KONUŞMA BALONU + yorum sayısı.
                 // Ok ikonu "paylaş/ilet" gibi okunuyordu, kullanıcı gönderiye
                 // yorum yazılabildiğini fark etmiyordu.
-                InkWell(
-                  onTap: () => widget.yanitla(widget.yorum),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.mode_comment_outlined,
-                          size: 16,
-                          color: DiziRenkler.metin38,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          widget.yanitlar.isEmpty
-                              ? 'Yorum yap'.c
-                              : '${widget.yanitlar.length}',
-                          style: TextStyle(
-                            fontSize: 12,
+                //
+                // FLEXIBLE: satır artık dört öğe taşıyor (göz+sayı, istatistik
+                // girişi, beğeni, yorum) ve 360 dp'de "Yorum yap" + uzun
+                // çevirileri sabit genişlikte kalırsa satır 1-2 px taşıyor
+                // (widget testi yakaladı). Yazı kısalır, İKON KALIR.
+                Flexible(
+                  child: InkWell(
+                    onTap: () => widget.yanitla(widget.yorum),
+                    borderRadius: BorderRadius.circular(20),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.mode_comment_outlined,
+                            size: 16,
                             color: DiziRenkler.metin38,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 4),
+                          Flexible(
+                            child: Text(
+                              widget.yanitlar.isEmpty
+                                  ? 'Yorum yap'.c
+                                  : '${widget.yanitlar.length}',
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

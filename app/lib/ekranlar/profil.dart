@@ -804,10 +804,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                 AileRozeti(benMi: true, olcu: genis ? 22 : 19),
                             ],
                           ),
-                          // UNVAN (md. 29): kullanıcı adının HEMEN ALTINDA.
+                          // SEVİYE (md. 29): kullanıcı adının HEMEN ALTINDA.
                           // Bu ekran DAİMA kendi profilim — ilerleme çubuğu
-                          // ve "Sonraki: …" satırı BURADA çizilir, açık
-                          // profilde çizilmez (veri de oraya gitmez).
+                          // ve "Sonraki seviyeye …" satırı BURADA çizilir,
+                          // açık profilde çizilmez (veri de oraya gitmez).
                           if (Seviye.cozumle(_seviyeHam) case final sv?)
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
@@ -1552,30 +1552,35 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
 /// gelmediği için [Seviye.ilerleme] orada zaten null olur. İki kilit
 /// bilerek: istemcideki bir "ben miyim?" hatası veriyi sızdıramaz.
 ///
-/// TASARIM KARARLARI (ui-ux-pro-max danışması, 15 Ağu):
+/// TASARIM KARARLARI (ui-ux-pro-max danışması, 15 Ağu — 14 Ağu'da güncellendi):
 ///  · RENK: sarı METİN tonu (`sariMetin`) — koyu temada marka sarısı kart
 ///    üstünde 10:1, AÇIK temada hardal (#8A6D00) beyaz üstünde ~4.9:1.
 ///    Ham `sari` açık temada beyaz zeminde 1.63:1 ile hem metin hem grafik
-///    eşiğinin altında kalırdı.
-///  · TAŞMA: `FittedBox(scaleDown)` KULLANILMADI — 45 dilde unvanı 12 pt
+///    eşiğinin altında kalırdı. RENK TEK BAŞINA ANLAM TAŞIMIYOR: sayı da
+///    çubuğun altındaki cümle de metin.
+///  · TAŞMA: `FittedBox(scaleDown)` KULLANILMADI — 45 dilde metni 12 pt
 ///    tabanının altına indirir ve kullanıcının sistem yazı ölçeğini iptal
 ///    eder. Yerine "önce sar, sonra üç nokta": iki satıra kadar sarılır.
 ///    Tam metin erişilebilirlik ağacına yine tam hâliyle gider.
-///  · İKON YOK: unvan METNİ zaten anlamı taşıyor; rozet şeridinde altı ayrı
-///    ödül ikonu var, yedincisi ayırt edici olmazdı. 320 dp'de ikon, iki
-///    satırlık Almanca unvana yer bırakmıyor. İlerleme satırında küçük bir
-///    `trending_up` var — o satır YALNIZ kendi profilinde çizildiği için
-///    dar ekranda unvanla yarışmıyor.
-///  · TIKLANABİLİR DEĞİL: dokunma hedefi (48 dp) sorunu doğmasın ve
+///  · İKON YOK (üst satırda): "Seviye 7" metni zaten anlamı taşıyor; rozet
+///    şeridinde altı ayrı ödül ikonu var, yedincisi ayırt edici olmazdı.
+///    İlerleme satırında küçük bir `trending_up` var — o satır YALNIZ kendi
+///    profilinde çizildiği için dar ekranda yarışmıyor.
+///  · EKRAN OKUYUCU: etiketsiz `LinearProgressIndicator` erişilebilirlik
+///    ağacında HİÇ görünmez (dolgu yalnız görene bilgi olurdu). Çubuğa
+///    `semanticsLabel` ("Seviye 7") + `semanticsValue` (SALT SAYI: "40")
+///    verildi; alttaki iki metin zaten okunduğu için sarmalayıcı bir
+///    `Semantics` düğümü EKLENMEDİ (aynı cümleyi üçüncü kez söylerdi).
+///  · TIKLANABİLİR DEĞİL: dokunma hedefi (44 dp) sorunu doğmasın ve
 ///    kullanıcı adının hemen altındaki alan kaza dokunuşu yutmasın diye
 ///    salt bilgi satırı bırakıldı.
 class SeviyeSatiri extends StatelessWidget {
   final Seviye seviye;
 
-  /// Kendi profilinde true: ilerleme çubuğu + "Sonraki: … · Seviye 5/8".
+  /// Kendi profilinde true: ilerleme çubuğu + "Sonraki seviyeye … kaldı".
   final bool ilerlemeGoster;
 
-  /// Unvan yazı boyu (masaüstü profilinde biraz büyür).
+  /// "Seviye 7" yazı boyu (masaüstü profilinde biraz büyür).
   final double yaziBoyu;
 
   const SeviyeSatiri({
@@ -1588,6 +1593,7 @@ class SeviyeSatiri extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final oran = seviye.ilerleme;
+    final alt = seviye.altSatir;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -1614,32 +1620,48 @@ class SeviyeSatiri extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(
                   DiziRenkler.sariMetin,
                 ),
+                // Etiketsiz bir çubuk ekran okuyucuda HİÇ düğüm üretmez:
+                // dolgunun ne kadar dolu olduğu yalnız GÖRENE bilgi olurdu.
+                // Sarmalayıcı `Semantics` KULLANILMADI — alttaki iki metin
+                // zaten okunuyor, üçüncü bir düğüm hepsini tekrarlardı.
+                //
+                // DEĞER SALT SAYI: bu widget erişilebilirlik ağacında bir
+                // "progress bar" düğümü (min 0, max 100) kurar ve Flutter
+                // `value`nun SAYIYA ÇEVRİLEBİLMESİNİ doğruluyor —
+                // yüzde işareti konursa ("%40") çerçeve assert'e düşüyor
+                // (denendi: "Progress bar value … must be valid numbers").
+                // Yüzde işaretini ekran okuyucunun kendisi ekler; bu yüzden
+                // burada `'%{}'` anahtarı KULLANILAMAZ, kullanılmadı.
+                semanticsLabel: seviye.etiket,
+                semanticsValue: '${(oran * 100).round()}',
               ),
             ),
           ],
-          const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 1),
-                child: Icon(
-                  Icons.trending_up,
-                  size: 13,
-                  color: DiziRenkler.metin54,
+          if (alt != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 1),
+                  child: Icon(
+                    Icons.trending_up,
+                    size: 13,
+                    color: DiziRenkler.metin54,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 4),
-              Flexible(
-                child: Text(
-                  seviye.altSatir,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                const SizedBox(width: 4),
+                Flexible(
+                  child: Text(
+                    alt,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ],
     );

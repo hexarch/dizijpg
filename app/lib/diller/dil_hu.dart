@@ -855,11 +855,7 @@ const Map<String, String> cevirilerHu = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Amint hozzászólsz egy sorozathoz vagy filmhez, itt kezdenek gyűlni a megtekintéseid és kedveléseid.',
   'Tüm zamanlar': 'Mindenkori',
-  'Gönderi': 'Bejegyzések',
-  'Zaman kırılımı': 'Időbeli bontás',
   'Son {} gün': 'Utolsó {} nap',
-  'En çok görüntülenen gönderilerin': 'Legtöbbet megtekintett bejegyzéseid',
-  'En çok beğenilen gönderilerin': 'Legtöbbet kedvelt bejegyzéseid',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'A megtekintési előzmények még nem kezdtek gyűlni; az első nap adatai holnap jelennek meg.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -953,17 +949,6 @@ const Map<String, String> cevirilerHu = {
   'Firma bulunamadı': 'A cég nem található',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Ennek a cégnek nincs ilyen típusú alkotása.',
-  'Seviye {}/{}': 'Szint {}/{}',
-  'Sonraki: {}': 'Következő: {}',
-  'En üst unvan': 'Legmagasabb rang',
-  'Meraklı izleyici': 'Kíváncsi néző',
-  'Hevesli izleyici': 'Lelkes néző',
-  'Amatör izleyici': 'Amatőr néző',
-  'Kıdemli izleyici': 'Tapasztalt néző',
-  'Uzman izleyici': 'Szakértő néző',
-  'Profesör izleyici': 'Professzor néző',
-  'Efsane izleyici': 'Legendás néző',
-  'Ultra mega izleyici': 'Ultra mega néző',
   'Doğum günün kutlu olsun!': 'Boldog születésnapot!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Jó, hogy megszülettél, és jó, hogy itt vagy.',
@@ -1005,4 +990,39 @@ const Map<String, String> cevirilerHu = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': '{}. szint',
+  'Sonraki seviyeye {} puan kaldı': '{} pont a következő szintig',
+  'Gönderilerin': 'Bejegyzéseid',
+  '{} gönderi': '{} bejegyzés',
+  '{} gönderi · {} görüntülenme': '{} bejegyzés · {} megtekintés',
+  'önceki {} güne göre': 'az előző {} naphoz képest',
+  'önceki {} güne göre %{} arttı': 'az előző {} naphoz képest {}%-kal nőtt',
+  'önceki {} güne göre %{} azaldı':
+      'az előző {} naphoz képest {}%-kal csökkent',
+  'önceki {} güne göre değişmedi': 'az előző {} naphoz képest nem változott',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Napi megtekintések: legkevesebb {}, legtöbb {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Az interakciós arány még nem mérhető',
+  'Oranlar': 'Arányok',
+  'Beğenme oranı': 'Kedvelési arány',
+  'Yorum oranı': 'Hozzászólási arány',
+  'Paylaşma oranı': 'Megosztási arány',
+  'İçeriğe gitme oranı': 'Tartalomkoppintási arány',
+  'Profile gitme oranı': 'Profilmegtekintési arány',
+  'Ziyaretten takibe dönüşüm': 'Látogatásból követés',
+  'beğeni ÷ görüntülenme': 'kedvelések ÷ megtekintések',
+  'yorum ÷ görüntülenme': 'hozzászólások ÷ megtekintések',
+  'paylaşım ÷ görüntülenme': 'megosztások ÷ megtekintések',
+  'içeriğe tıklama ÷ görüntülenme': 'tartalomkoppintások ÷ megtekintések',
+  'profil ziyareti ÷ görüntülenme': 'profilmegtekintések ÷ megtekintések',
+  'yeni takip ÷ profil ziyareti': 'új követések ÷ profilmegtekintések',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Az arányokhoz legalább {} megtekintés kell; jelenleg {} van.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Az arányok a bejegyzés mindenkori számaiból származnak; az alábbi napválasztás nem változtat rajtuk.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Ezek a számok a bejegyzés mindenkori összesítései (a saját megjegyzéssel ellátott dobozok kivételével); az alábbi napválasztás csak a diagramot változtatja meg.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Átlagos megtekintés: a videó {}%-a',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'A megtartási görbe 20 szakaszának átlaga.',
 };

@@ -14,6 +14,7 @@ import '../sira_tercihi.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
+import 'gonderi_istatistik.dart' show gonderiIstatistikAc;
 import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'ortak.dart';
 import 'paylas.dart' show gonderiPaylas;
@@ -918,15 +919,22 @@ class _AkisKartiState extends State<AkisKarti> {
                 // (md. 23). Başkasının gönderisinde salt bilgi olarak kalır:
                 // uç zaten yalnız sahibine cevap veriyor, dokunulabilir
                 // görünüp 404 almak kullanıcıyı yanıltırdı.
+                //
+                // *** MODAL AÇAR, SAYFAYA GİTMEZ *** (13 Ağu değişikliği):
+                // eskiden `/gonderi-istatistik/:id` rotasına push ediyordu,
+                // yani aynı giriş yorum kartında modal, akış kartında tam
+                // ekran açılıyordu. Akış kartı profilde de kullanılıyor
+                // (`ProfilYorumAkisi`) ve sayfaya gidip geri gelmek listeyi
+                // baştan kurup kaydırma konumunu kaybettiriyordu. Rota
+                // SİLİNMEDİ — paylaşılan bağlantı ve tarayıcı geçmişi hâlâ
+                // oradan geliyor (`backend/test/seo_gizlilik.test.js`).
                 _EylemDugmesi(
                   ikon: Icons.visibility_outlined,
                   etiket: '${y['goruntulenme'] ?? 0}',
                   renk: benim ? DiziRenkler.sariMetin : DiziRenkler.metin38,
                   ipucu: benim ? 'İstatistikleri gör'.c : 'Görüntülenme'.c,
                   onTap: benim
-                      ? () => GoRouter.of(
-                          context,
-                        ).push('/gonderi-istatistik/${y['id']}')
+                      ? () => gonderiIstatistikAc(context, y['id'] as int)
                       : null,
                 ),
                 const Spacer(),

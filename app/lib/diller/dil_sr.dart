@@ -850,11 +850,7 @@ const Map<String, String> cevirilerSr = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Чим коментаришеш серију или филм, овде почињу да се сакупљају твоји прегледи и свиђања.',
   'Tüm zamanlar': 'Свих времена',
-  'Gönderi': 'Објаве',
-  'Zaman kırılımı': 'Расподела по времену',
   'Son {} gün': 'Последњих {} дана',
-  'En çok görüntülenen gönderilerin': 'Твоје најгледаније објаве',
-  'En çok beğenilen gönderilerin': 'Твоје најсвиђаније објаве',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Историја прегледа још није почела да се сакупља; подаци првог дана појавиће се сутра.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -950,17 +946,6 @@ const Map<String, String> cevirilerSr = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Ова кућа нема наслове ове врсте.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Ниво {}/{}',
-  'Sonraki: {}': 'Следеће: {}',
-  'En üst unvan': 'Највиша титула',
-  'Meraklı izleyici': 'Радознали гледалац',
-  'Hevesli izleyici': 'Ватрени гледалац',
-  'Amatör izleyici': 'Гледалац аматер',
-  'Kıdemli izleyici': 'Искусни гледалац',
-  'Uzman izleyici': 'Гледалац стручњак',
-  'Profesör izleyici': 'Гледалац професор',
-  'Efsane izleyici': 'Легендарни гледалац',
-  'Ultra mega izleyici': 'Ултра мега гледалац',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'Срећан рођендан!',
   'İyi ki doğdun, iyi ki buradasın.': 'Како је лепо што постојиш и што си ту.',
@@ -1001,4 +986,40 @@ const Map<String, String> cevirilerSr = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Ниво {}',
+  'Sonraki seviyeye {} puan kaldı': 'Поени до следећег нивоа: {}',
+  'Gönderilerin': 'Твоје објаве',
+  '{} gönderi': 'Објаве: {}',
+  '{} gönderi · {} görüntülenme': 'Објаве: {} · Прегледи: {}',
+  'önceki {} güne göre': 'у односу на претходних {} дана',
+  'önceki {} güne göre %{} arttı': 'у односу на претходних {} дана: раст {}%',
+  'önceki {} güne göre %{} azaldı': 'у односу на претходних {} дана: пад {}%',
+  'önceki {} güne göre değişmedi': 'без промене у односу на претходних {} дана',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Дневни прегледи: најмање {}, највише {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Стопа интеракције још није измерена',
+  'Oranlar': 'Стопе',
+  'Beğenme oranı': 'Стопа свиђања',
+  'Yorum oranı': 'Стопа коментара',
+  'Paylaşma oranı': 'Стопа дељења',
+  'İçeriğe gitme oranı': 'Стопа додира на садржај',
+  'Profile gitme oranı': 'Стопа посета профилу',
+  'Ziyaretten takibe dönüşüm': 'Из посете у праћење',
+  'beğeni ÷ görüntülenme': 'свиђања ÷ прегледи',
+  'yorum ÷ görüntülenme': 'коментари ÷ прегледи',
+  'paylaşım ÷ görüntülenme': 'дељења ÷ прегледи',
+  'içeriğe tıklama ÷ görüntülenme': 'додири на садржај ÷ прегледи',
+  'profil ziyareti ÷ görüntülenme': 'посете профилу ÷ прегледи',
+  'yeni takip ÷ profil ziyareti': 'нова праћења ÷ посете профилу',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'За стопе је потребно најмање {} прегледа; тренутно их има {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Стопе се рачунају из укупних бројева објаве за све време; избор дана испод их не мења.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Ови бројеви су укупни бројеви објаве за све време (осим поља са сопственом напоменом); избор дана испод мења само графикон.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Просечно одгледано: {}% видеа',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Просек 20 интервала криве задржавања.',
 };

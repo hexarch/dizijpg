@@ -855,11 +855,7 @@ const Map<String, String> cevirilerTa = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'ஒரு தொடருக்கோ படத்துக்கோ கருத்து எழுதினால், உன் பார்வைகளும் லைக்குகளும் இங்கே சேரத் தொடங்கும்.',
   'Tüm zamanlar': 'எல்லா காலமும்',
-  'Gönderi': 'இடுகைகள்',
-  'Zaman kırılımı': 'கால வாரியான பகுப்பு',
   'Son {} gün': 'கடந்த {} நாட்கள்',
-  'En çok görüntülenen gönderilerin': 'அதிகம் பார்க்கப்பட்ட உன் இடுகைகள்',
-  'En çok beğenilen gönderilerin': 'அதிக லைக் பெற்ற உன் இடுகைகள்',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'பார்வை வரலாறு இன்னும் சேரத் தொடங்கவில்லை; முதல் நாள் தரவு நாளை தெரியும்.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -956,17 +952,6 @@ const Map<String, String> cevirilerTa = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'இந்த நிறுவனத்தில் இந்த வகையில் பட்டியலிட எதுவும் இல்லை.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'நிலை {}/{}',
-  'Sonraki: {}': 'அடுத்தது: {}',
-  'En üst unvan': 'உச்சப் பட்டம்',
-  'Meraklı izleyici': 'ஆர்வமுள்ள பார்வையாளர்',
-  'Hevesli izleyici': 'உற்சாகப் பார்வையாளர்',
-  'Amatör izleyici': 'அமெச்சூர் பார்வையாளர்',
-  'Kıdemli izleyici': 'மூத்த பார்வையாளர்',
-  'Uzman izleyici': 'நிபுணப் பார்வையாளர்',
-  'Profesör izleyici': 'பேராசிரியர் பார்வையாளர்',
-  'Efsane izleyici': 'இதிகாசப் பார்வையாளர்',
-  'Ultra mega izleyici': 'அல்ட்ரா மெகா பார்வையாளர்',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'பிறந்தநாள் வாழ்த்துகள்!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1009,4 +994,44 @@ const Map<String, String> cevirilerTa = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'நிலை {}',
+  'Sonraki seviyeye {} puan kaldı': 'அடுத்த நிலைக்கு {} புள்ளிகள் மீதம்',
+  'Gönderilerin': 'உன் இடுகைகள்',
+  '{} gönderi': 'இடுகைகள்: {}',
+  '{} gönderi · {} görüntülenme': 'இடுகைகள்: {} · பார்வைகள்: {}',
+  'önceki {} güne göre': 'முந்தைய {} நாட்களுடன் ஒப்பிடும்போது',
+  'önceki {} güne göre %{} arttı':
+      'முந்தைய {} நாட்களுடன் ஒப்பிடும்போது {}% அதிகரிப்பு',
+  'önceki {} güne göre %{} azaldı':
+      'முந்தைய {} நாட்களுடன் ஒப்பிடும்போது {}% குறைவு',
+  'önceki {} güne göre değişmedi':
+      'முந்தைய {} நாட்களுடன் ஒப்பிடும்போது மாற்றமில்லை',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'தினசரி பார்வைகள்: குறைந்தது {}, அதிகபட்சம் {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'ஈடுபாட்டு விகிதம் இன்னும் அளக்கப்படவில்லை',
+  'Oranlar': 'விகிதங்கள்',
+  'Beğenme oranı': 'லைக் விகிதம்',
+  'Yorum oranı': 'கருத்து விகிதம்',
+  'Paylaşma oranı': 'பகிர்வு விகிதம்',
+  'İçeriğe gitme oranı': 'உள்ளடக்கத் தட்டல் விகிதம்',
+  'Profile gitme oranı': 'சுயவிவரப் பார்வை விகிதம்',
+  'Ziyaretten takibe dönüşüm': 'பார்வையிலிருந்து பின்தொடர்வு',
+  'beğeni ÷ görüntülenme': 'லைக்குகள் ÷ பார்வைகள்',
+  'yorum ÷ görüntülenme': 'கருத்துகள் ÷ பார்வைகள்',
+  'paylaşım ÷ görüntülenme': 'பகிர்வுகள் ÷ பார்வைகள்',
+  'içeriğe tıklama ÷ görüntülenme': 'உள்ளடக்கத் தட்டல்கள் ÷ பார்வைகள்',
+  'profil ziyareti ÷ görüntülenme': 'சுயவிவரப் பார்வைகள் ÷ பார்வைகள்',
+  'yeni takip ÷ profil ziyareti': 'புதிய பின்தொடர்வுகள் ÷ சுயவிவரப் பார்வைகள்',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'விகிதத்திற்கு குறைந்தது {} பார்வைகள் தேவை; இப்போது {} உள்ளன.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'விகிதங்கள் இடுகையின் மொத்த கால எண்களிலிருந்து வருகின்றன; கீழே உள்ள நாள் தேர்வு அவற்றை மாற்றாது.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'இந்த எண்கள் இடுகையின் மொத்த கால கூட்டுத்தொகை (தனி குறிப்பு உள்ள பெட்டிகள் தவிர); கீழே உள்ள நாள் தேர்வு வரைபடத்தை மட்டுமே மாற்றும்.',
+  'Ortalama izlenme: videonun %{} kadarı': 'சராசரி பார்வை: வீடியோவின் {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'தக்கவைப்பு வளைவின் 20 பிரிவுகளின் சராசரி.',
 };

@@ -851,12 +851,7 @@ const Map<String, String> cevirilerMl = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'ഒരു സീരീസിനോ സിനിമയ്ക്കോ കമന്റ് എഴുതിയാൽ, നിന്റെ കാഴ്ചകളുടെയും ലൈക്കുകളുടെയും എണ്ണം ഇവിടെ കൂടിത്തുടങ്ങും.',
   'Tüm zamanlar': 'എക്കാലവും',
-  'Gönderi': 'പോസ്റ്റുകൾ',
-  'Zaman kırılımı': 'കാലാടിസ്ഥാനത്തിലുള്ള വിഭജനം',
   'Son {} gün': 'കഴിഞ്ഞ {} ദിവസം',
-  'En çok görüntülenen gönderilerin': 'ഏറ്റവും കൂടുതൽ കണ്ട നിന്റെ പോസ്റ്റുകൾ',
-  'En çok beğenilen gönderilerin':
-      'ഏറ്റവും കൂടുതൽ ലൈക്ക് കിട്ടിയ നിന്റെ പോസ്റ്റുകൾ',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'കാഴ്ചകളുടെ ചരിത്രം ഇനിയും കൂടിത്തുടങ്ങിയിട്ടില്ല; ആദ്യ ദിവസത്തെ വിവരം നാളെ കാണാം.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -948,17 +943,6 @@ const Map<String, String> cevirilerMl = {
   'Firma bulunamadı': 'കമ്പനി കണ്ടെത്തിയില്ല',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'ഈ കമ്പനിക്ക് ഈ തരത്തിലുള്ള സൃഷ്ടികളൊന്നുമില്ല.',
-  'Seviye {}/{}': 'ലെവൽ {}/{}',
-  'Sonraki: {}': 'അടുത്തത്: {}',
-  'En üst unvan': 'ഏറ്റവും ഉയർന്ന പദവി',
-  'Meraklı izleyici': 'കൗതുക പ്രേക്ഷകർ',
-  'Hevesli izleyici': 'ഉത്സാഹ പ്രേക്ഷകർ',
-  'Amatör izleyici': 'അമേച്വർ പ്രേക്ഷകർ',
-  'Kıdemli izleyici': 'മുതിർന്ന പ്രേക്ഷകർ',
-  'Uzman izleyici': 'വിദഗ്ധ പ്രേക്ഷകർ',
-  'Profesör izleyici': 'പ്രൊഫസർ പ്രേക്ഷകർ',
-  'Efsane izleyici': 'ഇതിഹാസ പ്രേക്ഷകർ',
-  'Ultra mega izleyici': 'അൾട്രാ മെഗാ പ്രേക്ഷകർ',
   'Doğum günün kutlu olsun!': 'ജന്മദിനാശംസകൾ!',
   'İyi ki doğdun, iyi ki buradasın.':
       'നിങ്ങൾ ജനിച്ചത് നന്നായി, ഇവിടെ ഉള്ളതും നന്നായി.',
@@ -1000,4 +984,38 @@ const Map<String, String> cevirilerMl = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'ലെവൽ {}',
+  'Sonraki seviyeye {} puan kaldı': 'അടുത്ത ലെവലിലേക്ക് {} പോയിന്റ് ബാക്കി',
+  'Gönderilerin': 'നിന്റെ പോസ്റ്റുകൾ',
+  '{} gönderi': '{} പോസ്റ്റ്',
+  '{} gönderi · {} görüntülenme': '{} പോസ്റ്റ് · {} കാഴ്ച',
+  'önceki {} güne göre': 'മുൻ {} ദിവസവുമായി താരതമ്യം',
+  'önceki {} güne göre %{} arttı': 'മുൻ {} ദിവസത്തെക്കാൾ {}% കൂടി',
+  'önceki {} güne göre %{} azaldı': 'മുൻ {} ദിവസത്തെക്കാൾ {}% കുറഞ്ഞു',
+  'önceki {} güne göre değişmedi': 'മുൻ {} ദിവസത്തിൽ നിന്ന് മാറ്റമില്ല',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'ദിവസേനയുള്ള കാഴ്ചകൾ: കുറഞ്ഞത് {}, കൂടിയത് {}',
+  'Etkileşim oranı henüz ölçülemedi': 'ഇടപഴകൽ നിരക്ക് ഇതുവരെ അളക്കാനായില്ല',
+  'Oranlar': 'നിരക്കുകൾ',
+  'Beğenme oranı': 'ലൈക്ക് നിരക്ക്',
+  'Yorum oranı': 'കമന്റ് നിരക്ക്',
+  'Paylaşma oranı': 'പങ്കിടൽ നിരക്ക്',
+  'İçeriğe gitme oranı': 'ഉള്ളടക്ക ടാപ്പ് നിരക്ക്',
+  'Profile gitme oranı': 'പ്രൊഫൈൽ സന്ദർശന നിരക്ക്',
+  'Ziyaretten takibe dönüşüm': 'സന്ദർശനത്തിൽ നിന്ന് ഫോളോ',
+  'beğeni ÷ görüntülenme': 'ലൈക്കുകൾ ÷ കാഴ്ചകൾ',
+  'yorum ÷ görüntülenme': 'കമന്റുകൾ ÷ കാഴ്ചകൾ',
+  'paylaşım ÷ görüntülenme': 'പങ്കിടലുകൾ ÷ കാഴ്ചകൾ',
+  'içeriğe tıklama ÷ görüntülenme': 'ഉള്ളടക്ക ടാപ്പുകൾ ÷ കാഴ്ചകൾ',
+  'profil ziyareti ÷ görüntülenme': 'പ്രൊഫൈൽ സന്ദർശനങ്ങൾ ÷ കാഴ്ചകൾ',
+  'yeni takip ÷ profil ziyareti': 'പുതിയ ഫോളോകൾ ÷ പ്രൊഫൈൽ സന്ദർശനങ്ങൾ',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'നിരക്കിന് കുറഞ്ഞത് {} കാഴ്ച വേണം; ഇപ്പോൾ {} ഉണ്ട്.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'നിരക്കുകൾ പോസ്റ്റിന്റെ എക്കാലത്തെയും കണക്കുകളിൽ നിന്നാണ്; താഴെയുള്ള ദിവസ തിരഞ്ഞെടുപ്പ് അവയെ മാറ്റില്ല.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ഈ സംഖ്യകൾ പോസ്റ്റിന്റെ എക്കാലത്തെയും ആകെത്തുകയാണ് (സ്വന്തം കുറിപ്പുള്ള ബോക്സുകൾ ഒഴികെ); താഴെയുള്ള ദിവസ തിരഞ്ഞെടുപ്പ് ഗ്രാഫ് മാത്രം മാറ്റുന്നു.',
+  'Ortalama izlenme: videonun %{} kadarı': 'ശരാശരി കാഴ്ച: വീഡിയോയുടെ {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'നിലനിർത്തൽ വക്രത്തിലെ 20 ഭാഗങ്ങളുടെ ശരാശരി.',
 };

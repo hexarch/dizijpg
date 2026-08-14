@@ -850,11 +850,7 @@ const Map<String, String> cevirilerUr = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'جب تم کسی سیریز یا فلم پر تبصرہ لکھو گے، تمہارے ملاحظات اور پسندیدگیاں یہاں جمع ہونے لگیں گی۔',
   'Tüm zamanlar': 'ہر وقت',
-  'Gönderi': 'پوسٹس',
-  'Zaman kırılımı': 'وقت کے حساب سے تقسیم',
   'Son {} gün': 'پچھلے {} دن',
-  'En çok görüntülenen gönderilerin': 'تمہاری سب سے زیادہ دیکھی گئی پوسٹس',
-  'En çok beğenilen gönderilerin': 'تمہاری سب سے زیادہ پسند کی گئی پوسٹس',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'ملاحظات کی تاریخ ابھی جمع ہونا شروع نہیں ہوئی؛ پہلے دن کا ڈیٹا کل نظر آئے گا۔',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -949,17 +945,6 @@ const Map<String, String> cevirilerUr = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'اس کمپنی کا اس قسم کا کوئی کام موجود نہیں۔',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'درجہ {}/{}',
-  'Sonraki: {}': 'اگلا: {}',
-  'En üst unvan': 'سب سے اعلیٰ خطاب',
-  'Meraklı izleyici': 'متجسس ناظر',
-  'Hevesli izleyici': 'پُرجوش ناظر',
-  'Amatör izleyici': 'شوقیہ ناظر',
-  'Kıdemli izleyici': 'سینئر ناظر',
-  'Uzman izleyici': 'ماہر ناظر',
-  'Profesör izleyici': 'پروفیسر ناظر',
-  'Efsane izleyici': 'لیجنڈ ناظر',
-  'Ultra mega izleyici': 'الٹرا میگا ناظر',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'سالگرہ مبارک ہو!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1002,4 +987,40 @@ const Map<String, String> cevirilerUr = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'لیول {}',
+  'Sonraki seviyeye {} puan kaldı': 'اگلے لیول تک {} پوائنٹس باقی',
+  'Gönderilerin': 'تمہاری پوسٹس',
+  '{} gönderi': 'پوسٹس: {}',
+  '{} gönderi · {} görüntülenme': 'پوسٹس: {} · ویوز: {}',
+  'önceki {} güne göre': 'پچھلے {} دن کے مقابلے میں',
+  'önceki {} güne göre %{} arttı': 'پچھلے {} دن کے مقابلے میں {}% اضافہ',
+  'önceki {} güne göre %{} azaldı': 'پچھلے {} دن کے مقابلے میں {}% کمی',
+  'önceki {} güne göre değişmedi': 'پچھلے {} دن کے مقابلے میں کوئی تبدیلی نہیں',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'روزانہ ویوز: کم سے کم {}، زیادہ سے زیادہ {}',
+  'Etkileşim oranı henüz ölçülemedi': 'مشغولیت کی شرح ابھی ناپی نہیں جا سکی',
+  'Oranlar': 'شرحیں',
+  'Beğenme oranı': 'پسندیدگی کی شرح',
+  'Yorum oranı': 'تبصرے کی شرح',
+  'Paylaşma oranı': 'شیئر کی شرح',
+  'İçeriğe gitme oranı': 'مواد پر ٹیپ کی شرح',
+  'Profile gitme oranı': 'پروفائل وزٹ کی شرح',
+  'Ziyaretten takibe dönüşüm': 'وزٹ سے فالو تک',
+  'beğeni ÷ görüntülenme': 'لائکس ÷ ویوز',
+  'yorum ÷ görüntülenme': 'تبصرے ÷ ویوز',
+  'paylaşım ÷ görüntülenme': 'شیئرز ÷ ویوز',
+  'içeriğe tıklama ÷ görüntülenme': 'مواد پر ٹیپ ÷ ویوز',
+  'profil ziyareti ÷ görüntülenme': 'پروفائل وزٹ ÷ ویوز',
+  'yeni takip ÷ profil ziyareti': 'نئے فالو ÷ پروفائل وزٹ',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'شرح کے لیے کم از کم {} ویوز درکار ہیں؛ ابھی {} ہیں۔',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'شرحیں پوسٹ کے پورے عرصے کے اعداد سے نکلتی ہیں؛ نیچے دن کا انتخاب انہیں نہیں بدلتا۔',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'یہ اعداد پوسٹ کے پورے عرصے کے کل ہیں (اپنے الگ نوٹ والے خانوں کے سوا)؛ نیچے دن کا انتخاب صرف گراف بدلتا ہے۔',
+  'Ortalama izlenme: videonun %{} kadarı': 'اوسط دیکھا گیا: ویڈیو کا {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'ریٹینشن کرو کے 20 حصوں کا اوسط۔',
 };

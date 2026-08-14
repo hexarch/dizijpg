@@ -8,7 +8,61 @@ import '../tema.dart';
 import 'istatistiklerim.dart' show sayiBicimle;
 import 'ortak.dart';
 
-/// GÖNDERİ İSTATİSTİKLERİ — kendi gönderinin göz ikonundan açılır (md. 23).
+/// ORAN İÇİN EN AZ GÖRÜNTÜLENME — "az veride oran yanıltır" kuralının sayısı.
+///
+/// NEDEN 50: yüzde ekranda TAM SAYIYA yuvarlanıyor, yani n görüntülenmede TEK
+/// bir beğeni oranı 100/n puan oynatır. n=10'da bu 10 puandır: bir tek dokunuş
+/// "%10 beğenme oranı" üretir ve kullanıcı bunu bir ölçü sanır. n=50'de aynı
+/// dokunuş 2 puan oynatır — gürültü, gösterilen sayının yuvarlama hatası
+/// mertebesine iner. Aynı mantığın video kovasındaki hâli sunucudaki
+/// `VIDEO_KOVA_EN_AZ = 20`'dir (tek izleyici eğriyi bir kovadan fazla
+/// oynatamasın); `ETKILESIM_EN_AZ_GONDERI = 3` ise kıyas TABANININ eşiğidir.
+///
+/// EŞİĞİN ALTINDA ORAN ÇİZİLMEZ — yerine kaç görüntülenme gerektiği YAZILIR
+/// (md. 24'ün dürüstlük kalıbı: ölçülmeyen gösterilmez).
+const int oranEnAzGoruntulenme = 50;
+
+/// "BU SAYILAR PENCERELİ DEĞİL" NOTU — üç yerde birden kullanılır (Erişim,
+/// Bu gönderiden sonra; Oranların kendi cümlesi var).
+///
+/// NEDEN VAR: sunucu `?gun=` parametresini YALNIZ grafiğin `seri`sine
+/// uyguluyor; `olcu` altındaki ham sayılar gönderinin ömür boyu toplamı olarak
+/// dönüyor. Ekranın altında bir gün seçicisi durduğu için kullanıcı üstteki
+/// kutuları da o pencereye ait sanıyordu. Uçları pencerelemek AYRI bir iş;
+/// o gelene kadar ölçünün gerçek kapsamı YAZIYLA söylenir (md. 24 kalıbı:
+/// ölçülmeyen gösterilmez, ölçülenin kapsamı gizlenmez).
+///
+/// GETTER, SABİT DEĞİL: `.c` seçili dile bakar, dil çalışma anında değişir.
+String get _omurBoyuNotu =>
+    'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.'
+        .c;
+
+/// Oranı yazıya çevirir: `%3,4` / `%50`.
+///
+/// * YÜZDE İŞARETİ SABİT YAZILMAZ. Yeri dile göre değişir (tr "%45", en "45%",
+///   de/fr/ru "45 %", fa "45٪") — `'%{}'` anahtarı CLDR'den çıkarıldı
+///   (`tool/yuzde_kalibi.dart`, 13 Ağu).
+/// * KÜÇÜK ORANDA TEK ONDALIK: "%0" demek "hiç" demektir, oysa %0,4 vardır.
+String yuzdeYaz(double oran) {
+  final y = oran * 100;
+  return '%{}'.cf([y < 10 ? y.toStringAsFixed(1) : y.round()]);
+}
+
+/// GÖNDERİ İSTATİSTİKLERİ — kendi gönderinin göz ikonunun yanındaki
+/// "İstatistikleri gör" girişinden açılır (md. 23).
+///
+/// ===========================================================================
+/// İKİ KABUK, TEK GÖVDE
+/// ===========================================================================
+/// Aynı içerik iki yerde çiziliyor ve gövde [GonderiIstatistikGovdesi]'nde
+/// TEK KEZ yazılı:
+///  1. [gonderiIstatistikAc] → modal alt sayfa. Kullanıcının istediği giriş
+///     budur: gönderi listesi arkada KALIR, kapanınca kaydırma konumu ve
+///     beğeni durumu bozulmaz (bir sayfaya gidip geri gelmek listeyi baştan
+///     kurardı).
+///  2. [GonderiIstatistikEkrani] → `/gonderi-istatistik/:id` tam ekran rotası.
+///     SİLİNMEDİ: paylaşılmış bağlantı, tarayıcı geçmişi ve oturumsuz erişim
+///     testi bu adresi kullanıyor (`backend/test/seo_gizlilik.test.js`).
 ///
 /// ===========================================================================
 /// EKRANIN ÜÇ KURALI
@@ -44,17 +98,190 @@ import 'ortak.dart';
 /// RENK: tek seri olduğu için efsane (legend) YOK — başlık serinin adıdır.
 /// Marka sarısı `sariMetin` ile alınır (açık temada koyulaştırılmış hardal,
 /// koyuda parlak sarı); ızgara `metin12` ile geri planda kalır.
-class GonderiIstatistikEkrani extends StatefulWidget {
+/// MODAL GİRİŞ — gönderi kartındaki "İstatistikleri gör" buraya gelir.
+///
+/// * `DraggableScrollableSheet`: içerik uzun (dört bölüm + iki grafik), tek
+///   ekrana sığmaz; kullanıcı sayfaya GİTMEDEN yukarı çekip okur.
+/// * Sheet kendi rotasıdır: altındaki liste ÇİZİLİ KALIR ve kapanınca
+///   `setState` bile gerekmez — bağlam korunur.
+/// * `SafeArea` + gövdenin `altGuvenli` dolgusu: sheet'in son satırı sistem
+///   gezinme çubuğunun ALTINDA kalmaz (bu proje bunu bir kez yaşadı).
+Future<void> gonderiIstatistikAc(BuildContext context, int gonderiId) =>
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+      ),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.85,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, kaydirma) => SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
+              // Sürükleme tutamağı (beğenenler/paylaş sheet'iyle aynı dil)
+              Container(
+                width: 38,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: DiziRenkler.metin24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.insights_outlined,
+                      size: 20,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    const SizedBox(width: 8),
+                    // Flexible + ellipsis: uzun çeviriler (my/ta/el) 320 dp
+                    // telefonda başlığı taşırıyordu.
+                    Flexible(
+                      child: Text(
+                        'Gönderi istatistikleri'.c,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(color: DiziRenkler.metin12, height: 12),
+              // OrtaKolon masaüstünde de: sheet tüm pencere genişliğini
+              // kaplar, 1400 px'e yayılmış sayı kutuları okunmaz olurdu
+              // (tam ekran kabukla aynı sınır).
+              Expanded(
+                child: OrtaKolon(
+                  azami: masaustuKolonGenisligi,
+                  cocuk: GonderiIstatistikGovdesi(
+                    gonderiId: gonderiId,
+                    kaydirma: kaydirma,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+/// "İstatistikleri gör" GİRİŞİ — YALNIZ KENDİ gönderinde, görüntülenme
+/// sayısının hemen sağında (md. 23).
+///
+/// *** TEK KOPYA ***: aynı giriş üç yerde çiziliyor (dizi/film/kişi
+/// sayfasındaki `YorumKarti`, profildeki `ProfilYorumKarti` ve akış kartı) ve
+/// widget BURADA, açtığı modalın (`gonderiIstatistikAc`) yanında TEK KEZ
+/// yazılı. Her ekrana bir kopya konsaydı ikon/renk/dokunma hedefi zamanla
+/// birbirinden ayrılırdı — nitekim akış kartı 13 Ağu'ya kadar aynı işi TAM
+/// EKRAN rotaya giderek yapıyordu, yani üç girişten biri farklı davranıyordu.
+///
+/// TASARIM KARARLARI
+/// * MODAL AÇAR, sayfaya GİTMEZ ([gonderiIstatistikAc]): arkadaki liste çizili
+///   kalır, kapanınca kaydırma konumu ve beğeni durumu bozulmaz. Aynı içeriğin
+///   tam ekran hâli `/gonderi-istatistik/:id` rotasında DURUYOR — paylaşılan
+///   bağlantı ve tarayıcı geçmişi oradan gelir.
+/// * MEDYANIN ÜSTÜNE BİNMEZ: çağıran kartlar bunu galerinin ALTINDAKİ normal
+///   satıra koyar, Stack'e almaz (kullanıcının açık isteği).
+/// * DOKUNMA HEDEFİ 44 dp: ikon 16 px, kutu `minHeight: dokunmaHedefi` ile
+///   büyütülür (ikonu büyütmek satırın görsel dengesini bozardı).
+/// * DAR EKRANDA (360 dp) TAŞMAZ: çağıran satırda dış `Flexible`, burada iç
+///   `Flexible` + `ellipsis` yazıyı kısaltır — ikon her hâlükârda kalır, yani
+///   giriş tanınabilir olmaya devam eder.
+class IstatistikGirisi extends StatelessWidget {
+  final int gonderiId;
+
+  const IstatistikGirisi({super.key, required this.gonderiId});
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    child: InkWell(
+      key: Key('istatistik-giris-$gonderiId'),
+      onTap: () => gonderiIstatistikAc(context, gonderiId),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: dokunmaHedefi),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.centerLeft,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.insights_outlined,
+              size: 16,
+              color: DiziRenkler.sariMetin,
+            ),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text(
+                'İstatistikleri gör'.c,
+                maxLines: 1,
+                softWrap: false,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: DiziRenkler.sariMetin,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+/// TAM EKRAN KABUK — `/gonderi-istatistik/:id`. Gövde modaldekiyle AYNI.
+class GonderiIstatistikEkrani extends StatelessWidget {
   final int gonderiId;
 
   const GonderiIstatistikEkrani({super.key, required this.gonderiId});
 
   @override
-  State<GonderiIstatistikEkrani> createState() =>
-      _GonderiIstatistikEkraniState();
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(title: Text('Gönderi istatistikleri'.c)),
+    body: OrtaKolon(
+      azami: masaustuKolonGenisligi,
+      cocuk: GonderiIstatistikGovdesi(gonderiId: gonderiId),
+    ),
+  );
 }
 
-class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
+/// ORTAK GÖVDE — veriyi çeker ve bölümleri çizer. Kabuk (sheet mi sayfa mı)
+/// bunu bilmez; tek fark [kaydirma] denetleyicisidir.
+class GonderiIstatistikGovdesi extends StatefulWidget {
+  final int gonderiId;
+
+  /// Modal kabukta `DraggableScrollableSheet`in denetleyicisi (sheet'i
+  /// kaydırmayla büyütüp küçültmek için ŞART). Tam ekran kabukta null.
+  final ScrollController? kaydirma;
+
+  const GonderiIstatistikGovdesi({
+    super.key,
+    required this.gonderiId,
+    this.kaydirma,
+  });
+
+  @override
+  State<GonderiIstatistikGovdesi> createState() =>
+      _GonderiIstatistikGovdesiState();
+}
+
+class _GonderiIstatistikGovdesiState extends State<GonderiIstatistikGovdesi> {
   /// Seçili aralık (gün). 0 = tümü. Sunucudaki beyaz listeyle aynı.
   int _gun = 30;
   Map<String, dynamic>? _veri;
@@ -121,36 +348,45 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
     } else if (_veri == null) {
       govde = const _Iskelet();
     } else {
-      govde = RefreshIndicator(
-        color: DiziRenkler.sari,
-        onRefresh: _yukle,
-        child: ListView(
-          padding: EdgeInsets.fromLTRB(
-            12,
-            12,
-            12,
-            altGuvenli(context, ekstra: 24),
-          ),
-          children: _icerik(),
+      final liste = ListView(
+        controller: widget.kaydirma,
+        // altGuvenli: sheet'te de sayfada da son satır sistem gezinme
+        // çubuğunun altında kalmaz.
+        padding: EdgeInsets.fromLTRB(
+          12,
+          12,
+          12,
+          altGuvenli(context, ekstra: 24),
         ),
+        children: _icerik(),
       );
+      // AŞAĞI ÇEKİP TAZELEME YALNIZ TAM EKRANDA. Modalde en üstteki aşağı
+      // çekme hareketi sheet'i KÜÇÜLTMEK/KAPATMAK içindir; RefreshIndicator
+      // o hareketi yutsaydı kullanıcı sheet'i sürükleyerek kapatamazdı.
+      govde = widget.kaydirma == null
+          ? RefreshIndicator(
+              color: DiziRenkler.sari,
+              onRefresh: _yukle,
+              child: liste,
+            )
+          : liste;
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Gönderi istatistikleri'.c),
-        // Yükleme başlıkta: aralık değişirken sayılar yerinde kalsın,
-        // kullanıcı iki aralığı karşılaştırabilsin.
-        bottom: _yukleniyor
-            ? const PreferredSize(
-                preferredSize: Size.fromHeight(2),
-                child: LinearProgressIndicator(
+    return Column(
+      children: [
+        // Yükleme çizgisi içeriğin ÜSTÜNDE ve HER ZAMAN 2 px yer kaplar:
+        // aralık değişirken sayılar yerinde kalsın (kullanıcı iki aralığı
+        // karşılaştırabilsin) ve çizgi gelip gidince içerik ZIPLAMASIN.
+        SizedBox(
+          height: 2,
+          child: _yukleniyor
+              ? const LinearProgressIndicator(
                   minHeight: 2,
                   color: DiziRenkler.sari,
-                ),
-              )
-            : null,
-      ),
-      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
+                )
+              : null,
+        ),
+        Expanded(child: govde),
+      ],
     );
   }
 
@@ -210,6 +446,15 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
           ),
         ],
       ),
+      const SizedBox(height: 8),
+      // *** DÜRÜSTLÜK NOTU *** — sunucu `olcu` alanlarını `?gun=` ile
+      // DARALTMIYOR: ham sayılar gönderinin ömür boyu toplamıdır, yalnız
+      // grafiğin `seri`si pencereli. Not olmadan kullanıcı aşağıda "Son 7 gün"
+      // seçiliyken buradaki kutuları da 7 günlük sanıyordu — ekrandaki en
+      // büyük sayıyı yanlış okumak, sayıyı hiç göstermemekten kötüdür.
+      // Kendi kapsam notu olan kutu (Görüntüleyen: son 90 gün) bunun dışında;
+      // parantez o yüzden var.
+      _KapsamNotu(_omurBoyuNotu),
       ..._etkilesim(),
 
       // --- BU GÖNDERİDEN SONRA --------------------------------------------
@@ -248,6 +493,10 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
           payda: gor,
         ),
       ],
+      const SizedBox(height: 8),
+      // Erişim kutularıyla AYNI dürüstlük notu: bu üç sayı da ömür boyudur,
+      // gün seçicisi onlara dokunmaz.
+      _KapsamNotu(_omurBoyuNotu),
       if (olcuBas != null) ...[
         const SizedBox(height: 8),
         _KapsamNotu(
@@ -256,6 +505,11 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
               .cf([tarihBicimle(olcuBas)]),
         ),
       ],
+
+      // --- ORANLAR ---------------------------------------------------------
+      // HAM SAYILARDAN SONRA: oran türetilmiş bir ölçüdür, kullanıcı önce
+      // payı ve paydayı yukarıdaki kutularda görür, sonra oranı okur.
+      ..._oranlar(o, gor),
 
       // --- GRAFİK ----------------------------------------------------------
       const SizedBox(height: 20),
@@ -295,6 +549,100 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
     return [
       const SizedBox(height: 8),
       _EtkilesimKarti(oran: oran, farkYuzde: fark),
+    ];
+  }
+
+  /// ORANLAR — kullanıcının istediği "beğenme / paylaşma oranı" ve akrabaları.
+  ///
+  /// HEPSİ TÜRETME: sunucu ayrı bir oran alanı döndürmüyor, paylar ve payda
+  /// zaten `olcu`nun içinde. Formül her satırın altında YAZILI (kullanıcı
+  /// neyi neye böldüğümüzü görmeden sayıya güvenemez).
+  ///
+  /// *** ALT EŞİK ***: [oranEnAzGoruntulenme] görüntülenmenin altında HİÇBİR
+  /// oran çizilmez — kaç görüntülenme gerektiği yazılır. Az veride oran
+  /// yanıltır; gerekçenin tamamı sabitin başında.
+  ///
+  /// KAYDETME ORANI YOK: bu projede gönderi kaydetme (bookmark) diye bir
+  /// özellik yok, dolayısıyla ölçülecek bir olay da yok. Uydurma bir sayı
+  /// basmaktansa satırı hiç koymuyoruz (md. 24 kalıbı).
+  List<Widget> _oranlar(Map<String, dynamic> o, int gor) {
+    final ziyaret = o['profil_ziyaret'] as int? ?? 0;
+    return [
+      const SizedBox(height: 20),
+      _Baslik('Oranlar'.c),
+      if (gor < oranEnAzGoruntulenme)
+        _BosGrafik(
+          mesaj: 'Oran için en az {} görüntülenme gerekiyor; şu an {} var.'.cf([
+            oranEnAzGoruntulenme,
+            gor,
+          ]),
+        )
+      else ...[
+        _OranSatiri(
+          ikon: Icons.favorite_border,
+          etiket: 'Beğenme oranı'.c,
+          not: 'beğeni ÷ görüntülenme'.c,
+          pay: o['begeni'] as int? ?? 0,
+          payda: gor,
+        ),
+        const SizedBox(height: 8),
+        _OranSatiri(
+          ikon: Icons.mode_comment_outlined,
+          etiket: 'Yorum oranı'.c,
+          not: 'yorum ÷ görüntülenme'.c,
+          pay: o['yanit'] as int? ?? 0,
+          payda: gor,
+        ),
+        const SizedBox(height: 8),
+        _OranSatiri(
+          ikon: Icons.share_outlined,
+          etiket: 'Paylaşma oranı'.c,
+          not: 'paylaşım ÷ görüntülenme'.c,
+          pay: o['paylasim'] as int? ?? 0,
+          payda: gor,
+        ),
+        const SizedBox(height: 8),
+        _OranSatiri(
+          ikon: Icons.movie_outlined,
+          etiket: 'İçeriğe gitme oranı'.c,
+          not: 'içeriğe tıklama ÷ görüntülenme'.c,
+          pay: o['icerik_tikla'] as int? ?? 0,
+          payda: gor,
+        ),
+        const SizedBox(height: 8),
+        _OranSatiri(
+          ikon: Icons.person_outline,
+          etiket: 'Profile gitme oranı'.c,
+          not: 'profil ziyareti ÷ görüntülenme'.c,
+          pay: ziyaret,
+          payda: gor,
+        ),
+        // DÖNÜŞÜM ORANININ PAYDASI GÖRÜNTÜLENME DEĞİL ZİYARETTİR: "gördü →
+        // profile gitti → takip etti" hunisinin SON adımı. Kendi eşiği var,
+        // çünkü ziyaret sayısı görüntülenmeden çok daha küçüktür.
+        if (ziyaret >= oranEnAzGoruntulenme) ...[
+          const SizedBox(height: 8),
+          _OranSatiri(
+            ikon: Icons.person_add_alt,
+            etiket: 'Ziyaretten takibe dönüşüm'.c,
+            not: 'yeni takip ÷ profil ziyareti'.c,
+            pay: o['takip'] as int? ?? 0,
+            payda: ziyaret,
+          ),
+        ],
+      ],
+      const SizedBox(height: 8),
+      // Oranların payı da paydası da ÖMÜR BOYU sayılardır (sunucu `olcu`yu
+      // pencerelemez; yalnız grafik serisi `?gun=` ile daralır). Kullanıcı
+      // "Son 7 gün" seçiliyken bu oranların da 7 günlük olduğunu sanmasın.
+      _KapsamNotu(
+        // "aşağıdaki" — gün seçici bu bölümün ALTINDA duruyor. İlk yazımda
+        // "yukarıdaki" deniyordu ve kullanıcıyı yanlış yöne gönderiyordu;
+        // aynı turda ikinci bir ajan fark etti. Testi seçicinin gerçekten
+        // altta olduğunu ölçüyor.
+        'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.'
+            .c,
+      ),
     ];
   }
 
@@ -389,10 +737,31 @@ class _GonderiIstatistikEkraniState extends State<GonderiIstatistikEkrani> {
 
     final ortanca = v['ortanca'] as int? ?? 0;
     final tamamlama = (v['tamamlama'] as num?)?.toDouble() ?? 0;
+    // ORTALAMA İZLENME — kullanıcının istediği ölçü. Sunucu bunu AYRI bir alan
+    // olarak döndürmüyor; EĞRİDEN TÜRETİLİYOR:
+    //
+    //   egri[k] = videonun k. yirmide birine ULAŞANLARIN oranı (sonek toplamı).
+    //   Bir izleyicinin gördüğü kesir = (ulaştığı kova sayısı) ÷ n.
+    //   Tüm izleyiciler üzerinden ortalaması, kovaların "hâlâ izleniyor"
+    //   oranlarının toplamının n'e bölümüne EŞİTTİR (toplama sırası değişti,
+    //   sayı değişmedi):  ortalama izlenme = (Σ egri[k]) ÷ n.
+    //
+    // Yani ORTALAMA İZLENME = EĞRİNİN ORTALAMASI. Ölçünün çözünürlüğü kova
+    // genişliği kadardır (%5); ondalık YAZILMAZ, yuvarlanır.
+    final ortalamaIzlenme = egri.reduce((a, b) => a + b) / egri.length;
     return [
       ...basliklar,
       _EldeTutmaGrafigi(egri: egri, gorunum: gorunum),
       const SizedBox(height: 8),
+      _Ipucu(
+        ikon: Icons.play_circle_outline,
+        metin: 'Ortalama izlenme: videonun %{} kadarı'.cf([
+          (ortalamaIzlenme * 100).round(),
+        ]),
+      ),
+      const SizedBox(height: 4),
+      _KapsamNotu('Elde tutma eğrisinin 20 kovasının ortalaması.'.c),
+      const SizedBox(height: 6),
       _Ipucu(
         ikon: Icons.timelapse,
         metin: 'İzleyenlerin yarısı videonun en az %{} kadarını gördü.'.cf([
@@ -652,9 +1021,8 @@ class _EtkilesimKarti extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final yuzde = (oran * 100);
-    // Küçük oranlarda tek ondalık: "%0" demek "hiç" demektir, oysa %0,4 var.
-    final metin = '%${yuzde < 10 ? yuzde.toStringAsFixed(1) : yuzde.round()}';
+    // Küçük oranlarda tek ondalık + yüzde işaretinin yeri dile göre: [yuzdeYaz]
+    final metin = yuzdeYaz(oran);
     final f = farkYuzde;
     // ±%5'lik bant "aynı düzeyde" sayılır: 1-2 puanlık gürültüyü haber diye
     // sunmak kullanıcıyı yanıltır.
@@ -741,10 +1109,15 @@ class _EtkilesimKarti extends StatelessWidget {
   }
 }
 
-/// Pay/payda oranı (spoiler perdesi gibi). Payda 0 ise oran YAZILMAZ.
+/// Pay/payda oranı (spoiler perdesi, beğenme/paylaşma oranları).
+/// Payda 0 ise oran YAZILMAZ — 0/0 tanımsızdır, "%0" ise "kimse yapmadı" der.
 class _OranSatiri extends StatelessWidget {
   final IconData ikon;
   final String etiket;
+
+  /// Formülün kendisi ("beğeni ÷ görüntülenme"). Kullanıcı neyi neye
+  /// böldüğümüzü görmeden orana güvenemez.
+  final String? not;
   final int pay;
   final int payda;
 
@@ -753,6 +1126,7 @@ class _OranSatiri extends StatelessWidget {
     required this.etiket,
     required this.pay,
     required this.payda,
+    this.not,
   });
 
   @override
@@ -760,7 +1134,7 @@ class _OranSatiri extends StatelessWidget {
     final oran = payda > 0 ? pay / payda : null;
     final sag = oran == null
         ? sayiBicimle(pay)
-        : '${sayiBicimle(pay)}  ·  %${(oran * 100).round()}';
+        : '${sayiBicimle(pay)}  ·  ${yuzdeYaz(oran)}';
     return Semantics(
       label: '$etiket: $sag',
       excludeSemantics: true,
@@ -773,11 +1147,30 @@ class _OranSatiri extends StatelessWidget {
               Icon(ikon, size: 16, color: DiziRenkler.sariMetin),
               const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  etiket,
-                  style: TextStyle(color: DiziRenkler.metin70, fontSize: 13),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      etiket,
+                      style: TextStyle(
+                        color: DiziRenkler.metin70,
+                        fontSize: 13,
+                      ),
+                    ),
+                    if (not != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        not!,
+                        style: TextStyle(
+                          color: DiziRenkler.metin38,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 sag,
                 style: TextStyle(
@@ -814,9 +1207,9 @@ class _CubukSatiri extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pay = enBuyuk > 0 ? deger / enBuyuk : 0.0;
-    final yuzde = toplam > 0 ? (deger / toplam * 100).round() : 0;
+    final yuzde = yuzdeYaz(toplam > 0 ? deger / toplam : 0);
     return Semantics(
-      label: '$etiket: ${sayiBicimle(deger)}, %$yuzde',
+      label: '$etiket: ${sayiBicimle(deger)}, $yuzde',
       excludeSemantics: true,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 10),
@@ -837,7 +1230,7 @@ class _CubukSatiri extends StatelessWidget {
                 // Sayı ve yüzde METİN RENGİNDE — seri rengi kimliği çubuk
                 // taşır, yazı okunurluk tonunda kalır (dataviz kuralı).
                 Text(
-                  '${sayiBicimle(deger)}  ·  %$yuzde',
+                  '${sayiBicimle(deger)}  ·  $yuzde',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -1383,9 +1776,11 @@ class _EldeTutmaCizer extends CustomPainter {
     for (final oran in const [0.0, 0.5, 1.0]) {
       final y = yKonum(oran);
       tuval.drawLine(Offset(sol, y), Offset(sag, y), izgaraKalem);
+      // Tuvale yazarken de '%{}' anahtarı: yüzde işaretinin yeri dile göre
+      // değişir (bkz. [yuzdeYaz]).
       _yaz(
         tuval,
-        '%${(oran * 100).round()}',
+        '%{}'.cf([(oran * 100).round()]),
         Offset(0, y - 6),
         10,
         yazi,
@@ -1445,11 +1840,11 @@ class _EldeTutmaCizer extends CustomPainter {
     // --- X ETİKETLERİ: yalnız iki uç (ara etiketler üst üste binerdi) -----
     // Sağ uç "%95": son kova videonun %95'ini GEÇENLERİ sayar, bitirenleri
     // değil — "%100" yazmak eğrinin son noktasını yanlış okuturdu.
-    _yaz(tuval, '%0', Offset(sol, alt + 4), 10, yazi, 40);
+    _yaz(tuval, '%{}'.cf([0]), Offset(sol, alt + 4), 10, yazi, 40);
     final sonYuzde = ((n - 1) * 100 / n).round();
     _yaz(
       tuval,
-      '%$sonYuzde',
+      '%{}'.cf([sonYuzde]),
       Offset(sag - 40, alt + 4),
       10,
       yazi,

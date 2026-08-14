@@ -837,11 +837,7 @@ const Map<String, String> cevirilerTh = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'เมื่อคุณคอมเมนต์ซีรีส์หรือหนัง ยอดดูและถูกใจของคุณจะเริ่มสะสมที่นี่',
   'Tüm zamanlar': 'ตลอดเวลา',
-  'Gönderi': 'โพสต์',
-  'Zaman kırılımı': 'แยกตามช่วงเวลา',
   'Son {} gün': '{} วันล่าสุด',
-  'En çok görüntülenen gönderilerin': 'โพสต์ที่มียอดดูสูงสุดของคุณ',
-  'En çok beğenilen gönderilerin': 'โพสต์ที่ได้ถูกใจมากที่สุดของคุณ',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'ประวัติยอดดูยังไม่เริ่มสะสม ข้อมูลวันแรกจะปรากฏพรุ่งนี้',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -934,17 +930,6 @@ const Map<String, String> cevirilerTh = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'บริษัทนี้ไม่มีผลงานประเภทนี้',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'ระดับ {}/{}',
-  'Sonraki: {}': 'ถัดไป: {}',
-  'En üst unvan': 'ตำแหน่งสูงสุด',
-  'Meraklı izleyici': 'ผู้ชมขี้สงสัย',
-  'Hevesli izleyici': 'ผู้ชมไฟแรง',
-  'Amatör izleyici': 'ผู้ชมสมัครเล่น',
-  'Kıdemli izleyici': 'ผู้ชมรุ่นเก๋า',
-  'Uzman izleyici': 'ผู้ชมผู้เชี่ยวชาญ',
-  'Profesör izleyici': 'ผู้ชมระดับศาสตราจารย์',
-  'Efsane izleyici': 'ผู้ชมระดับตำนาน',
-  'Ultra mega izleyici': 'ผู้ชมอัลตร้าเมกา',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'สุขสันต์วันเกิด!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -987,4 +972,40 @@ const Map<String, String> cevirilerTh = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'ระดับ {}',
+  'Sonraki seviyeye {} puan kaldı': 'อีก {} คะแนนถึงระดับถัดไป',
+  'Gönderilerin': 'โพสต์ของคุณ',
+  '{} gönderi': 'โพสต์ {}',
+  '{} gönderi · {} görüntülenme': 'โพสต์ {} · ยอดดู {}',
+  'önceki {} güne göre': 'เทียบกับ {} วันก่อนหน้า',
+  'önceki {} güne göre %{} arttı': 'เทียบกับ {} วันก่อนหน้า เพิ่มขึ้น {}%',
+  'önceki {} güne göre %{} azaldı': 'เทียบกับ {} วันก่อนหน้า ลดลง {}%',
+  'önceki {} güne göre değişmedi': 'ไม่เปลี่ยนแปลงเทียบกับ {} วันก่อนหน้า',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'ยอดดูรายวัน: ต่ำสุด {} สูงสุด {}',
+  'Etkileşim oranı henüz ölçülemedi': 'ยังวัดอัตราการมีส่วนร่วมไม่ได้',
+  'Oranlar': 'อัตราส่วน',
+  'Beğenme oranı': 'อัตราการถูกใจ',
+  'Yorum oranı': 'อัตราความคิดเห็น',
+  'Paylaşma oranı': 'อัตราการแชร์',
+  'İçeriğe gitme oranı': 'อัตราการแตะเนื้อหา',
+  'Profile gitme oranı': 'อัตราการเข้าชมโปรไฟล์',
+  'Ziyaretten takibe dönüşüm': 'จากเข้าชมเป็นผู้ติดตาม',
+  'beğeni ÷ görüntülenme': 'ถูกใจ ÷ ยอดดู',
+  'yorum ÷ görüntülenme': 'ความคิดเห็น ÷ ยอดดู',
+  'paylaşım ÷ görüntülenme': 'การแชร์ ÷ ยอดดู',
+  'içeriğe tıklama ÷ görüntülenme': 'การแตะเนื้อหา ÷ ยอดดู',
+  'profil ziyareti ÷ görüntülenme': 'การเข้าชมโปรไฟล์ ÷ ยอดดู',
+  'yeni takip ÷ profil ziyareti': 'การติดตามใหม่ ÷ การเข้าชมโปรไฟล์',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'อัตราส่วนต้องมียอดดูอย่างน้อย {} ครั้ง ตอนนี้มี {} ครั้ง',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'อัตราส่วนคำนวณจากยอดรวมตลอดอายุโพสต์ การเลือกวันด้านล่างไม่เปลี่ยนค่าเหล่านี้',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ตัวเลขเหล่านี้คือยอดรวมตลอดอายุโพสต์ (ยกเว้นกล่องที่มีหมายเหตุของตัวเอง) การเลือกวันด้านล่างเปลี่ยนเฉพาะกราฟ',
+  'Ortalama izlenme: videonun %{} kadarı': 'ดูเฉลี่ย: {}% ของวิดีโอ',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'ค่าเฉลี่ยของ 20 ช่วงในกราฟการคงอยู่',
 };

@@ -856,11 +856,7 @@ const Map<String, String> cevirilerPl = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Gdy skomentujesz serial lub film, twoje wyświetlenia i polubienia zaczną się tu gromadzić.',
   'Tüm zamanlar': 'Od początku',
-  'Gönderi': 'Posty',
-  'Zaman kırılımı': 'Podział czasowy',
   'Son {} gün': 'Ostatnie {} dni',
-  'En çok görüntülenen gönderilerin': 'Twoje najczęściej wyświetlane posty',
-  'En çok beğenilen gönderilerin': 'Twoje najczęściej lubiane posty',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Historia wyświetleń jeszcze się nie zaczęła gromadzić; dane z pierwszego dnia pojawią się jutro.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -956,17 +952,6 @@ const Map<String, String> cevirilerPl = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Ta firma nie ma tytułów tego rodzaju.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Poziom {}/{}',
-  'Sonraki: {}': 'Następny: {}',
-  'En üst unvan': 'Najwyższy tytuł',
-  'Meraklı izleyici': 'Ciekawski widz',
-  'Hevesli izleyici': 'Zapalony widz',
-  'Amatör izleyici': 'Widz amator',
-  'Kıdemli izleyici': 'Widz weteran',
-  'Uzman izleyici': 'Widz ekspert',
-  'Profesör izleyici': 'Widz profesor',
-  'Efsane izleyici': 'Legendarny widz',
-  'Ultra mega izleyici': 'Ultra mega widz',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'Wszystkiego najlepszego!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1009,4 +994,41 @@ const Map<String, String> cevirilerPl = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Poziom {}',
+  'Sonraki seviyeye {} puan kaldı': 'Punkty do następnego poziomu: {}',
+  'Gönderilerin': 'Twoje posty',
+  '{} gönderi': 'Posty: {}',
+  '{} gönderi · {} görüntülenme': 'Posty: {} · Wyświetlenia: {}',
+  'önceki {} güne göre': 'wobec poprzednich {} dni',
+  'önceki {} güne göre %{} arttı': 'wobec poprzednich {} dni wzrost o {}%',
+  'önceki {} güne göre %{} azaldı': 'wobec poprzednich {} dni spadek o {}%',
+  'önceki {} güne göre değişmedi': 'bez zmian wobec poprzednich {} dni',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Dzienne wyświetlenia: najmniej {}, najwięcej {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Wskaźnika zaangażowania nie da się jeszcze zmierzyć',
+  'Oranlar': 'Wskaźniki',
+  'Beğenme oranı': 'Wskaźnik polubień',
+  'Yorum oranı': 'Wskaźnik komentarzy',
+  'Paylaşma oranı': 'Wskaźnik udostępnień',
+  'İçeriğe gitme oranı': 'Wskaźnik kliknięć treści',
+  'Profile gitme oranı': 'Wskaźnik wizyt w profilu',
+  'Ziyaretten takibe dönüşüm': 'Z wizyty w obserwację',
+  'beğeni ÷ görüntülenme': 'polubienia ÷ wyświetlenia',
+  'yorum ÷ görüntülenme': 'komentarze ÷ wyświetlenia',
+  'paylaşım ÷ görüntülenme': 'udostępnienia ÷ wyświetlenia',
+  'içeriğe tıklama ÷ görüntülenme': 'kliknięcia treści ÷ wyświetlenia',
+  'profil ziyareti ÷ görüntülenme': 'wizyty w profilu ÷ wyświetlenia',
+  'yeni takip ÷ profil ziyareti': 'nowe obserwacje ÷ wizyty w profilu',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Wskaźniki wymagają co najmniej {} wyświetleń; teraz jest ich {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Wskaźniki wynikają z sum posta z całego okresu; wybór dni poniżej ich nie zmienia.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'To są sumy posta z całego okresu (poza polami z własną notką); wybór dni poniżej zmienia tylko wykres.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Średnio obejrzano: {}% wideo',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Średnia z 20 przedziałów krzywej utrzymania.',
 };

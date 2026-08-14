@@ -167,6 +167,31 @@ Future<List<Uri>> _kur(
   return kayit;
 }
 
+/// Aynı gövdeyi MODAL kabukta kurar (gönderi kartındaki girişin yaptığı gibi).
+Future<void> _kurModal(
+  WidgetTester tester, {
+  Map<String, dynamic>? sabit,
+}) async {
+  SharedPreferences.setMockInitialValues({'token': 'sahte'});
+  await Api.tokenYukle();
+  Api.istemci = _istemci(<Uri>[], sabit: sabit);
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: diziTema(acik: false),
+      home: Scaffold(
+        body: Builder(
+          builder: (context) => TextButton(
+            onPressed: () => gonderiIstatistikAc(context, 42),
+            child: const Text('aç'),
+          ),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text('aç'));
+  await tester.pumpAndSettle();
+}
+
 void main() {
   // Uzun ekran: liste tamamen ağaca girsin, kaydırma gerekmesin.
   void ekran(WidgetTester tester) {
@@ -533,6 +558,133 @@ void main() {
     await _kur(tester, durum: 500);
     expect(find.textContaining('Yalnız kendi gönderilerinin'), findsNothing);
     expect(tester.takeException(), isNull);
+  });
+
+  // -------------------------------------------------------------------------
+  // ORANLAR — "az veride oran YANILTIR" eşiği
+  // -------------------------------------------------------------------------
+  testWidgets('eşik ÜSTÜNDE beğenme/paylaşma oranları çizilir', (tester) async {
+    ekran(tester);
+    await _kur(tester);
+    expect(find.text('Beğenme oranı'), findsOneWidget);
+    expect(find.text('Paylaşma oranı'), findsOneWidget);
+    expect(find.text('Yorum oranı'), findsOneWidget);
+    // Formül YAZILI: kullanıcı neyin neye bölündüğünü görmeden güvenemez.
+    expect(find.text('beğeni ÷ görüntülenme'), findsOneWidget);
+    // 40/1234 = %3,24 → tek ondalık (küçük oranda "%3" bilgi kaybıdır)
+    expect(find.textContaining('%3.2'), findsWidgets);
+  });
+
+  testWidgets('*** EŞİK ALTINDA ORAN GÖSTERİLMEZ *** (yeterli veri yok)', (
+    tester,
+  ) async {
+    ekran(tester);
+    // 30 görüntülenme: tek bir beğeni oranı 3,3 puan oynatır — ölçü değil,
+    // tesadüf. Sabitin gerekçesi: gonderi_istatistik.dart.
+    await _kur(tester, sabit: _yanit(goruntulenme: 30));
+    expect(find.text('Oranlar'), findsOneWidget);
+    expect(find.text('Beğenme oranı'), findsNothing);
+    expect(find.text('Paylaşma oranı'), findsNothing);
+    // NEDEN olmadığı ve kaçının gerektiği YAZIYOR.
+    expect(
+      find.textContaining('en az $oranEnAzGoruntulenme görüntülenme gerekiyor'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('şu an 30 var'), findsOneWidget);
+  });
+
+  testWidgets('dönüşüm oranının PAYDASI ziyaret; ziyaret azsa çizilmez', (
+    tester,
+  ) async {
+    ekran(tester);
+    // Varsayılan yanıtta profil_ziyaret = 19 → eşiğin (50) altında.
+    await _kur(tester);
+    expect(find.text('Ziyaretten takibe dönüşüm'), findsNothing);
+  });
+
+  testWidgets('oranlar ZAMAN ARALIĞINDAN etkilenmez ve bunu YAZAR', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(tester);
+    expect(
+      find.textContaining('ömür boyu sayılarından'),
+      findsOneWidget,
+      reason: '"Son 7 gün" seçiliyken oranlar 7 günlük sanılmasın',
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // ORTALAMA İZLENME — eğriden TÜRETİLİYOR
+  // -------------------------------------------------------------------------
+  testWidgets('ortalama izlenme eğrinin ORTALAMASIDIR', (tester) async {
+    ekran(tester);
+    await _kur(tester, sabit: _yanit(videolu: true, video: _video()));
+    // egri = 1×1,0 + 10×0,75 + 9×0,25 = 10,75 ; 10,75 / 20 = %53,75 → %54
+    expect(find.text('Ortalama izlenme: videonun %54 kadarı'), findsOneWidget);
+    expect(find.textContaining('kovasının ortalaması'), findsOneWidget);
+  });
+
+  testWidgets('VİDEOSUZ gönderide ortalama izlenme de YOK', (tester) async {
+    ekran(tester);
+    await _kur(tester);
+    expect(find.textContaining('Ortalama izlenme'), findsNothing);
+  });
+
+  testWidgets('eşik altındaki videoda ortalama izlenme HESAPLANMAZ', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(
+      tester,
+      sabit: _yanit(videolu: true, video: _video(gorunum: 3, egriVar: false)),
+    );
+    expect(find.textContaining('Ortalama izlenme'), findsNothing);
+  });
+
+  // -------------------------------------------------------------------------
+  // İKİ KABUK, TEK GÖVDE (modal + tam ekran rota)
+  // -------------------------------------------------------------------------
+  testWidgets('TAM EKRAN kabuk ortak gövdeyi çizer (derin bağlantı yaşıyor)', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kur(tester);
+    expect(find.byType(GonderiIstatistikGovdesi), findsOneWidget);
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.text('Görüntülenme'), findsOneWidget);
+  });
+
+  testWidgets('MODAL kabuk AYNI gövdeyi çizer (içerik ayrışamaz)', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kurModal(tester);
+    expect(find.byType(GonderiIstatistikGovdesi), findsOneWidget);
+    // Sayfaya GİDİLMEDİ: açan düğme arkada duruyor.
+    expect(find.text('aç'), findsOneWidget);
+    // Tam ekrandaki bölümlerin hepsi burada da var.
+    for (final b in const [
+      'Erişim',
+      'Oranlar',
+      'Bu gönderiden sonra',
+      'Zamana yayılmış görüntülenme',
+      'Görüntülenme nereden geldi',
+      'Kimler gördü',
+    ]) {
+      expect(find.text(b), findsOneWidget, reason: b);
+    }
+  });
+
+  testWidgets('modalde aralık çipleri de çalışır (gövde tam işlevli)', (
+    tester,
+  ) async {
+    ekran(tester);
+    await _kurModal(tester);
+    await tester.tap(find.byKey(const Key('aralik-7')));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.byType(GonderiIstatistikGovdesi), findsOneWidget);
   });
 
   testWidgets('sıfır veriyle ekran çökmez', (tester) async {

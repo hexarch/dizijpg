@@ -852,11 +852,7 @@ const Map<String, String> cevirilerFi = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Kun kommentoit sarjaa tai elokuvaa, katselukertasi ja tykkäyksesi alkavat kertyä tänne.',
   'Tüm zamanlar': 'Kaikkien aikojen',
-  'Gönderi': 'Julkaisut',
-  'Zaman kırılımı': 'Ajallinen erittely',
   'Son {} gün': 'Viimeiset {} päivää',
-  'En çok görüntülenen gönderilerin': 'Katsotuimmat julkaisusi',
-  'En çok beğenilen gönderilerin': 'Tykätyimmät julkaisusi',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Katseluhistoria ei ole vielä alkanut kertyä; ensimmäisen päivän tiedot näkyvät huomenna.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -951,17 +947,6 @@ const Map<String, String> cevirilerFi = {
   'Firma bulunamadı': 'Yhtiötä ei löytynyt',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Tällä yhtiöllä ei ole tämän tyyppisiä nimikkeitä.',
-  'Seviye {}/{}': 'Taso {}/{}',
-  'Sonraki: {}': 'Seuraava: {}',
-  'En üst unvan': 'Ylin arvonimi',
-  'Meraklı izleyici': 'Utelias katsoja',
-  'Hevesli izleyici': 'Innokas katsoja',
-  'Amatör izleyici': 'Amatöörikatsoja',
-  'Kıdemli izleyici': 'Kokenut katsoja',
-  'Uzman izleyici': 'Asiantuntijakatsoja',
-  'Profesör izleyici': 'Professorikatsoja',
-  'Efsane izleyici': 'Legendakatsoja',
-  'Ultra mega izleyici': 'Ultra mega katsoja',
   'Doğum günün kutlu olsun!': 'Hyvää syntymäpäivää!',
   'İyi ki doğdun, iyi ki buradasın.': 'Onneksi synnyit, onneksi olet täällä.',
   'Bugün {} yaşına girdin': 'Täytit tänään {} vuotta',
@@ -1001,4 +986,42 @@ const Map<String, String> cevirilerFi = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{} %',
+  'Seviye {}': 'Taso {}',
+  'Sonraki seviyeye {} puan kaldı': '{} pistettä seuraavaan tasoon',
+  'Gönderilerin': 'Julkaisusi',
+  '{} gönderi': '{} julkaisua',
+  '{} gönderi · {} görüntülenme': '{} julkaisua · {} katselukertaa',
+  'önceki {} güne göre': 'edellisiin {} päivään verrattuna',
+  'önceki {} güne göre %{} arttı':
+      'edellisiin {} päivään verrattuna noussut {} %',
+  'önceki {} güne göre %{} azaldı':
+      'edellisiin {} päivään verrattuna laskenut {} %',
+  'önceki {} güne göre değişmedi': 'ennallaan edellisiin {} päivään verrattuna',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Päivittäiset katselut: alin {}, ylin {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Vuorovaikutusastetta ei voi vielä mitata',
+  'Oranlar': 'Prosentit',
+  'Beğenme oranı': 'Tykkäysprosentti',
+  'Yorum oranı': 'Kommenttiprosentti',
+  'Paylaşma oranı': 'Jakoprosentti',
+  'İçeriğe gitme oranı': 'Sisältönapautusprosentti',
+  'Profile gitme oranı': 'Profiilikäyntiprosentti',
+  'Ziyaretten takibe dönüşüm': 'Käynnistä seuraajaksi',
+  'beğeni ÷ görüntülenme': 'tykkäykset ÷ katselukerrat',
+  'yorum ÷ görüntülenme': 'kommentit ÷ katselukerrat',
+  'paylaşım ÷ görüntülenme': 'jaot ÷ katselukerrat',
+  'içeriğe tıklama ÷ görüntülenme': 'sisällön napautukset ÷ katselukerrat',
+  'profil ziyareti ÷ görüntülenme': 'profiilikäynnit ÷ katselukerrat',
+  'yeni takip ÷ profil ziyareti': 'uudet seuraajat ÷ profiilikäynnit',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Prosentit vaativat vähintään {} katselukertaa; nyt niitä on {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Prosentit lasketaan julkaisun kaikkien aikojen luvuista; alla oleva päivävalinta ei muuta niitä.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Nämä luvut ovat julkaisun kaikkien aikojen summia (paitsi ruudut, joilla on oma huomautus); alla oleva päivävalinta muuttaa vain kaaviota.',
+  'Ortalama izlenme: videonun %{} kadarı':
+      'Keskimäärin katsottu: {} % videosta',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Käyrän 20 jakson keskiarvo.',
 };

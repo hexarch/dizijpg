@@ -838,11 +838,7 @@ const Map<String, String> cevirilerAr = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'عندما تكتب تعليقًا على مسلسل أو فيلم، تبدأ أعداد المشاهدات والإعجابات بالتراكم هنا.',
   'Tüm zamanlar': 'كل الأوقات',
-  'Gönderi': 'المنشورات',
-  'Zaman kırılımı': 'التوزيع الزمني',
   'Son {} gün': 'آخر {} يوم',
-  'En çok görüntülenen gönderilerin': 'أكثر منشوراتك مشاهدةً',
-  'En çok beğenilen gönderilerin': 'أكثر منشوراتك إعجابًا',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'لم يبدأ سجل المشاهدات بالتراكم بعد؛ بيانات اليوم الأول تظهر غدًا.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -934,17 +930,6 @@ const Map<String, String> cevirilerAr = {
   'Firma bulunamadı': 'لم يُعثر على الشركة',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'لا توجد أعمال من هذا النوع لهذه الشركة.',
-  'Seviye {}/{}': 'المستوى {}/{}',
-  'Sonraki: {}': 'التالي: {}',
-  'En üst unvan': 'أعلى لقب',
-  'Meraklı izleyici': 'مشاهدة بفضول',
-  'Hevesli izleyici': 'مشاهدة بحماس',
-  'Amatör izleyici': 'مشاهدة بهواية',
-  'Kıdemli izleyici': 'مشاهدة بخبرة',
-  'Uzman izleyici': 'مشاهدة باحتراف',
-  'Profesör izleyici': 'مشاهدة بدرجة بروفيسور',
-  'Efsane izleyici': 'مشاهدة بمستوى أسطوري',
-  'Ultra mega izleyici': 'مشاهدة ألترا ميغا',
   'Doğum günün kutlu olsun!': 'عيد ميلاد سعيد!',
   'İyi ki doğdun, iyi ki buradasın.': 'سعدنا بمولدك، وسعدنا بوجودك هنا.',
   'Bugün {} yaşına girdin': 'اليوم عيد ميلادك الـ{}',
@@ -983,4 +968,38 @@ const Map<String, String> cevirilerAr = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'المستوى {}',
+  'Sonraki seviyeye {} puan kaldı': '{} نقطة حتى المستوى التالي',
+  'Gönderilerin': 'منشوراتك',
+  '{} gönderi': '{} منشور',
+  '{} gönderi · {} görüntülenme': '{} منشور · {} مشاهدة',
+  'önceki {} güne göre': 'مقارنة بـ {} يوم سابق',
+  'önceki {} güne göre %{} arttı': 'مقارنة بـ {} يوم سابق، ارتفاع بنسبة {}%',
+  'önceki {} güne göre %{} azaldı': 'مقارنة بـ {} يوم سابق، انخفاض بنسبة {}%',
+  'önceki {} güne göre değişmedi': 'لا تغيير مقارنة بـ {} يوم سابق',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'المشاهدات اليومية: الأدنى {}، الأعلى {}',
+  'Etkileşim oranı henüz ölçülemedi': 'لا يمكن قياس معدل التفاعل بعد',
+  'Oranlar': 'المعدلات',
+  'Beğenme oranı': 'معدل الإعجاب',
+  'Yorum oranı': 'معدل التعليق',
+  'Paylaşma oranı': 'معدل المشاركة',
+  'İçeriğe gitme oranı': 'معدل النقر على المحتوى',
+  'Profile gitme oranı': 'معدل زيارة الملف',
+  'Ziyaretten takibe dönüşüm': 'من الزيارة إلى المتابعة',
+  'beğeni ÷ görüntülenme': 'الإعجابات ÷ المشاهدات',
+  'yorum ÷ görüntülenme': 'التعليقات ÷ المشاهدات',
+  'paylaşım ÷ görüntülenme': 'المشاركات ÷ المشاهدات',
+  'içeriğe tıklama ÷ görüntülenme': 'النقرات على المحتوى ÷ المشاهدات',
+  'profil ziyareti ÷ görüntülenme': 'زيارات الملف الشخصي ÷ المشاهدات',
+  'yeni takip ÷ profil ziyareti': 'متابعات جديدة ÷ زيارات الملف الشخصي',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'تحتاج المعدلات إلى {} مشاهدة على الأقل، وهناك {} حاليا.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'تُحسب المعدلات من أرقام المنشور منذ نشره، ولا يغيّرها اختيار الأيام أدناه.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'هذه الأرقام هي إجمالي المنشور منذ نشره (باستثناء المربعات التي لها ملاحظة خاصة)، واختيار الأيام أدناه يغيّر الرسم البياني فقط.',
+  'Ortalama izlenme: videonun %{} kadarı': 'متوسط المشاهدة: {}% من الفيديو',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'متوسط شرائح المنحنى الـ 20.',
 };

@@ -51,23 +51,38 @@ const _pencereler = [30, 60, 90, 120, 0];
 Map<String, dynamic> _yanit(int gun) => {
   'bugun': '2026-09-01',
   'secili_gun': gun,
+  'secili_sirala': 'goruntulenme',
   'gonderi_sayisi': 4,
-  'toplam': {'goruntulenme': 1234567, 'begeni': 890},
+  'toplam': {'goruntulenme': 1234567, 'begeni': 890, 'yanit': 133},
   'pencereler': [
     for (final n in [30, 60, 90, 120])
       {
         'gun': n,
         'goruntulenme': n * 10,
         'begeni': n,
+        'yanit': n ~/ 3,
         'goruntulenme_tam': true,
         'begeni_tam': true,
+        // Yön oku AÇIK: 45 dilin hiçbirinde kahraman satırını taşırmamalı.
+        'onceki_goruntulenme': n * 8,
+        'onceki_tam': true,
+        'degisim': 25,
       },
   ],
+  // Eğri de AÇIK — 45 dil turunda tuval de ağaçta olsun.
+  'seri': [
+    for (var i = 0; i < 30; i++)
+      {
+        'gun': '2026-08-${(i + 1).toString().padLeft(2, '0')}',
+        'goruntulenme': i,
+      },
+  ],
+  'etkilesim': {'n': 9, 'en_az': 3, 'oran': 0.078},
+  'yon_en_az': 30,
   'goruntulenme_baslangic': '2026-08-14',
   'goruntulenme_gun': 200,
   'begeni_baslangic': '2026-07-16',
-  'en_cok_goruntulenen': const [_gonderi],
-  'en_cok_begenilen': const [_gonderi],
+  'gonderiler': const [_gonderi],
   'icerikler': {
     'tv:1396': {'ad': 'Breaking Bad', 'poster': null},
   },
@@ -86,6 +101,7 @@ const _gonderi = {
   'toplam_begeni': 40,
   'pencere_goruntulenme': 320,
   'pencere_begeni': 12,
+  'pencere_yanit': 7,
 };
 
 /// Uygulamanın gerçek fontunu teste yükler (bkz. dosya başındaki NOT).
@@ -178,10 +194,14 @@ void main() {
       reason: 'segmentler farklı satırlara düşmüş: $ustler',
     );
 
-    // Başlığın tepesinden seçicinin altına kadar tüm blok.
+    // Seçicinin kapladığı tüm blok. 14 Ağu 2026'da "Zaman kırılımı" BAŞLIĞI
+    // KALKTI (seçici ekranın en üstüne taşındı; ilk şey olduğu için neyi
+    // yönettiği yerinden belli), bu yüzden blok artık başlıktan değil
+    // segmentin kendisinden ölçülüyor — sınır AYNI kaldı, hatta 23 dp'lik
+    // başlık vergisi de düştü.
     final blok =
         tester.getRect(find.byKey(const Key('pencere-0'))).bottom -
-        tester.getRect(find.text('Zaman kırılımı')).top;
+        tester.getRect(find.byKey(const Key('pencere-30'))).top;
     expect(
       blok,
       lessThanOrEqualTo(80.0),
@@ -302,7 +322,9 @@ void main() {
         reason: '$g günlük segment yanlış pencere istedi',
       );
       // Başkasının verisini isteyebilecek parametre eklenmemiş olmalı.
-      expect(kayit.last.queryParameters.keys.toSet(), {'gun'});
+      // (14 Ağu 2026: tek listenin sıralaması eklendi — `sirala` da KAPALI
+      // SÖZLÜK, sunucuda beyaz listeden geçiyor. Liste yine kapalı bir küme.)
+      expect(kayit.last.queryParameters.keys.toSet(), {'gun', 'sirala'});
     }
   });
 

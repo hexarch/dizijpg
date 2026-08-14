@@ -849,11 +849,7 @@ const Map<String, String> cevirilerCs = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Jakmile okomentuješ seriál nebo film, začnou se tu hromadit tvoje zobrazení a lajky.',
   'Tüm zamanlar': 'Za celou dobu',
-  'Gönderi': 'Příspěvky',
-  'Zaman kırılımı': 'Rozdělení podle času',
   'Son {} gün': 'Posledních {} dní',
-  'En çok görüntülenen gönderilerin': 'Tvoje nejzobrazovanější příspěvky',
-  'En çok beğenilen gönderilerin': 'Tvoje nejlajkovanější příspěvky',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Historie zobrazení se zatím nezačala hromadit; data prvního dne se objeví zítra.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -948,17 +944,6 @@ const Map<String, String> cevirilerCs = {
   'Firma bulunamadı': 'Společnost nenalezena',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Tato společnost nemá žádné tituly tohoto typu.',
-  'Seviye {}/{}': 'Úroveň {}/{}',
-  'Sonraki: {}': 'Další: {}',
-  'En üst unvan': 'Nejvyšší titul',
-  'Meraklı izleyici': 'Zvědavé publikum',
-  'Hevesli izleyici': 'Nadšené publikum',
-  'Amatör izleyici': 'Amatérské publikum',
-  'Kıdemli izleyici': 'Zkušené publikum',
-  'Uzman izleyici': 'Expertní publikum',
-  'Profesör izleyici': 'Profesorské publikum',
-  'Efsane izleyici': 'Legendární publikum',
-  'Ultra mega izleyici': 'Ultra mega publikum',
   'Doğum günün kutlu olsun!': 'Všechno nejlepší k narozeninám!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Je skvělé, že jsi na světě a že jsi tady.',
@@ -998,4 +983,37 @@ const Map<String, String> cevirilerCs = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{} %',
+  'Seviye {}': 'Úroveň {}',
+  'Sonraki seviyeye {} puan kaldı': 'Do další úrovně zbývá {} bodů',
+  'Gönderilerin': 'Tvé příspěvky',
+  '{} gönderi': '{} příspěvků',
+  '{} gönderi · {} görüntülenme': '{} příspěvků · {} zobrazení',
+  'önceki {} güne göre': 'oproti předchozím {} dnům',
+  'önceki {} güne göre %{} arttı': 'oproti předchozím {} dnům nárůst o {} %',
+  'önceki {} güne göre %{} azaldı': 'oproti předchozím {} dnům pokles o {} %',
+  'önceki {} güne göre değişmedi': 'oproti předchozím {} dnům beze změny',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Denní zobrazení: nejméně {}, nejvíce {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Míru zapojení zatím nelze změřit',
+  'Oranlar': 'Míry',
+  'Beğenme oranı': 'Míra lajků',
+  'Yorum oranı': 'Míra komentářů',
+  'Paylaşma oranı': 'Míra sdílení',
+  'İçeriğe gitme oranı': 'Míra prokliků na obsah',
+  'Profile gitme oranı': 'Míra návštěv profilu',
+  'Ziyaretten takibe dönüşüm': 'Z návštěvy na sledování',
+  'beğeni ÷ görüntülenme': 'lajky ÷ zobrazení',
+  'yorum ÷ görüntülenme': 'komentáře ÷ zobrazení',
+  'paylaşım ÷ görüntülenme': 'sdílení ÷ zobrazení',
+  'içeriğe tıklama ÷ görüntülenme': 'prokliky na obsah ÷ zobrazení',
+  'profil ziyareti ÷ görüntülenme': 'návštěvy profilu ÷ zobrazení',
+  'yeni takip ÷ profil ziyareti': 'nová sledování ÷ návštěvy profilu',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Míry potřebují aspoň {} zobrazení; teď jich je {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Míry vycházejí z celkových čísel příspěvku za celou dobu; volba dnů níže je nemění.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Tato čísla jsou celkové součty příspěvku za celou dobu (kromě polí s vlastní poznámkou); volba dnů níže mění jen graf.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Průměrně zhlédnuto: {} % videa',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.': 'Průměr 20 úseků křivky.',
 };

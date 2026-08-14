@@ -847,11 +847,7 @@ const Map<String, String> cevirilerSw = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Ukiandika maoni kwenye mfululizo au filamu, idadi ya mionekano na zilizopendwa huanza kukusanyika hapa.',
   'Tüm zamanlar': 'Nyakati zote',
-  'Gönderi': 'Machapisho',
-  'Zaman kırılımı': 'Mchanganuo wa muda',
   'Son {} gün': 'Siku {} zilizopita',
-  'En çok görüntülenen gönderilerin': 'Machapisho yako yaliyoonekana zaidi',
-  'En çok beğenilen gönderilerin': 'Machapisho yako yaliyopendwa zaidi',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Historia ya mionekano bado haijaanza kukusanyika; data ya siku ya kwanza itaonekana kesho.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -947,17 +943,6 @@ const Map<String, String> cevirilerSw = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Kampuni hii haina kazi za aina hii.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Kiwango {}/{}',
-  'Sonraki: {}': 'Inayofuata: {}',
-  'En üst unvan': 'Cheo cha juu kabisa',
-  'Meraklı izleyici': 'Mtazamaji mdadisi',
-  'Hevesli izleyici': 'Mtazamaji mwenye ari',
-  'Amatör izleyici': 'Mtazamaji chipukizi',
-  'Kıdemli izleyici': 'Mtazamaji mkongwe',
-  'Uzman izleyici': 'Mtazamaji bingwa',
-  'Profesör izleyici': 'Mtazamaji profesa',
-  'Efsane izleyici': 'Mtazamaji gwiji',
-  'Ultra mega izleyici': 'Mtazamaji ultra mega',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'Heri ya siku yako ya kuzaliwa!',
   'İyi ki doğdun, iyi ki buradasın.': 'Ni vizuri upo, na ni vizuri uko hapa.',
@@ -999,4 +984,44 @@ const Map<String, String> cevirilerSw = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Ngazi {}',
+  'Sonraki seviyeye {} puan kaldı': 'Pointi {} zimebaki hadi ngazi ijayo',
+  'Gönderilerin': 'Machapisho yako',
+  '{} gönderi': 'Machapisho: {}',
+  '{} gönderi · {} görüntülenme': 'Machapisho: {} · Mionekano: {}',
+  'önceki {} güne göre': 'ikilinganishwa na siku {} zilizopita',
+  'önceki {} güne göre %{} arttı':
+      'ikilinganishwa na siku {} zilizopita: ongezeko la {}%',
+  'önceki {} güne göre %{} azaldı':
+      'ikilinganishwa na siku {} zilizopita: punguzo la {}%',
+  'önceki {} güne göre değişmedi':
+      'hakuna mabadiliko ikilinganishwa na siku {} zilizopita',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Mionekano ya kila siku: chini kabisa {}, juu kabisa {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Kiwango cha mwingiliano bado hakijapimika',
+  'Oranlar': 'Viwango',
+  'Beğenme oranı': 'Kiwango cha kupendwa',
+  'Yorum oranı': 'Kiwango cha maoni',
+  'Paylaşma oranı': 'Kiwango cha kushirikiwa',
+  'İçeriğe gitme oranı': 'Kiwango cha mibofyo ya maudhui',
+  'Profile gitme oranı': 'Kiwango cha ziara za wasifu',
+  'Ziyaretten takibe dönüşüm': 'Kutoka ziara hadi kufuatwa',
+  'beğeni ÷ görüntülenme': 'zilizopendwa ÷ mionekano',
+  'yorum ÷ görüntülenme': 'maoni ÷ mionekano',
+  'paylaşım ÷ görüntülenme': 'kushirikiwa ÷ mionekano',
+  'içeriğe tıklama ÷ görüntülenme': 'mibofyo ya maudhui ÷ mionekano',
+  'profil ziyareti ÷ görüntülenme': 'ziara za wasifu ÷ mionekano',
+  'yeni takip ÷ profil ziyareti': 'wafuasi wapya ÷ ziara za wasifu',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Viwango vinahitaji angalau mionekano {}; sasa kuna {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Viwango hutokana na jumla ya chapisho ya muda wote; uteuzi wa siku hapa chini hauvibadilishi.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Namba hizi ni jumla ya chapisho ya muda wote (isipokuwa visanduku vyenye dokezo lake); uteuzi wa siku hapa chini hubadilisha grafu pekee.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Wastani wa kutazamwa: {}% ya video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Wastani wa vipimo 20 vya grafu ya kubaki.',
 };

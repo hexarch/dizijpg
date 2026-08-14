@@ -1,6 +1,108 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-14 — 🚀 İSTATİSTİK EKRANLARI + SEVİYE SADELEŞTİRME (1.46.0+93)
+Beş ajan paralel; dosya sahipliği bölündü, çakışma olmadı.
+
+### İstatistiklerim — yeniden düzen (kullanıcı: "saçma yer kaplıyor")
+| | 360 dp | veri dolunca |
+|---|---|---|
+| Sayı bölümü ESKİ | 541 dp | — |
+| Sayı bölümü YENİ | **432 dp** | **375 dp** |
+| Toplam içerik ESKİ → YENİ | 775 → **508 dp** | — |
+* Seçici EN ÜSTE (altındaki her şeyi o yönetiyor, ortada duruyordu).
+* Tek KAHRAMAN sayı + yön rozeti + sparkline; altında beğeni/yanıt/etkileşim.
+* İki liste TEK listeye + sıralama (görüntülenme / beğeni / **yanıt** — yanıt
+  YENİ, "en çok konuşulan gönderin" demek).
+* "Tüm zamanlar" tek satır olarak EN ALTA → **"Tümü"deki sayı tekrarı bitti**.
+* **KULLANICI KARARI: "veri dolunca kendiliğinden görünsün".** Yön oku ve eğri
+  kodda VAR ama kapsam tamamlanmadan ÇİZİLMİYOR; etkileşim oranı için sorgu
+  bile koşmuyor ("—"). Uydurma/oranlanmış sayı YOK.
+* **`GONDERI_GUNLUK_SAKLAMA` 130 → 250 (kritik bulgu)**: 120 günlük pencerenin
+  önceki dönemi 240 gün geriye uzanıyor; 130'da kalsaydı 90 ve 120 günlük
+  pencerelerin oku **ASLA** görünemezdi. Çalışma zamanı sabiti, migrasyon yok.
+* **Eski istemci korumalı**: `?sirala=` yoksa eski alanlar da dönüyor
+  (Play'de hâlâ 1.40.0+86 var).
+* Erişilebilirlik: yön ÜÇ kanaldan (işaret + ikon + renk). **Açık temada
+  yeşil kontrast hatası düzeltildi**: #1B9E4B beyaz üstünde 3,48:1 — o renk
+  bir NOKTA için seçilmişti (3:1), burada 14 px kalın YAZI taşıyor (4,5:1
+  gerekir) → #157A38 (5,4:1).
+
+### Gönderi istatistikleri — modal + oranlar
+* Giriş satırı: medyanın ALTINDA (üstüne binmiyor), sola dayalı, göz →
+  görüntülenme → "İstatistikleri gör". **Yalnız sahibine.**
+* Tam ekran → **modal**. Rota `/gonderi-istatistik/:id` DURUYOR (derin bağlantı
+  + `seo_gizlilik.test.js`); gövde ortak widget, iki kabuk çiziyor.
+* Üç giriş de (dizi/film sayfası, profil kartı, akış kartı) artık modal açıyor.
+* **Oranlar** bölümü: beğenme/yorum/paylaşma/içeriğe gitme/profile gitme +
+  ziyaretten takibe dönüşüm. Her satırın altında **FORMÜLÜ** yazılı.
+* Video: **ortalama izlenme** elde tutma eğrisinden türetildi, hesabı ekranda.
+* Alt eşik **50 görüntülenme**: yüzde tam sayıya yuvarlanıyor, n=10'da tek
+  beğeni oranı 10 puan oynatır, n=50'de 2 puan (yuvarlama mertebesi).
+* **KAYDETME ORANI EKLENMEDİ** — uygulamada gönderi kaydetme (bookmark) diye
+  bir özellik YOK. Uydurulmadı; ayrı bir ürün işi.
+* Dürüstlük notu: ham sayılar ÖMÜR BOYU, yalnız grafik pencereli. Not hem
+  Oranlar hem Erişim hem "Bu gönderiden sonra" kutularında. İlk yazımda
+  "yukarıdaki gün seçimi" diyordu ama seçici ALTTA — ikinci ajan yakaladı,
+  "aşağıdaki" yapıldı, testi seçicinin gerçekten altta olduğunu ölçüyor.
+* Sahiplik tuzağı: oturumsuz ziyaretçide `null == null` "bu benim gönderim"
+  sonucu verebilirdi → açık koruma + test.
+* Yan bulgu: 360 dp'de satır **1,5 px taşıyordu** ("Yorum yap" sabit
+  genişlikteydi) — düzeltildi.
+
+### Md. 29 seviye — unvanlar ve tavan KALKTI (kullanıcı isteği)
+* "Meraklı izleyici … Ultra mega izleyici" 8 unvan ve "Seviye 7/8" paydası
+  gitti. Artık yalnız **"Seviye 7"** + "Sonraki seviyeye {} puan kaldı".
+* **Tavan yok**: `esik(n) = 14·(n−1)³`, seviye ~puan^(1/3) hızıyla sonsuza
+  dek artar. İlk kademeler çabuk (2. seviye 14 puan), aralar (n−1)² ile açılır.
+* **Katsayı 14 NEDEN**: "kimse düşmesin" kısıtı katsayıyı ≤14,8'e sıkıştırıyor;
+  14 bunu sağlayan EN BÜYÜK tam sayı → eski eğriye en yakın, şişme en az.
+* **KİMSE SEVİYE KAYBETMİYOR — ölçüldü**: canlıdan 142 kullanıcının sayaçları
+  okundu (yalnız SELECT), 128 aynı kaldı, 14 yükseldi, **düşen 0**.
+  Ayrıca eski 8 eşiğin her birinde yeni kademe ≥ eski; iki fonksiyon da
+  azalmayan olduğu için bu TÜM puanlar için gerilemenin imkânsızlığını kanıtlar.
+* Gizlilik kararları KORUNDU: 1. kademe başkasına hiç gitmiyor,
+  `izlenenler_gizli` her kademeyi kaldırıyor, ziyaretçiye puan/eşik yok.
+* **Eski APK'lar seviye satırını HİÇ ÇİZMİYOR** (kaldırılan `kod` alanını
+  arıyorlar) — çökme yok, yanlış unvan yok. Play'deki 1.40.0+86 için geçerli.
+
+### Çeviri turu
+* **15 kullanılmayan anahtar SİLİNDİ** (8 unvan + 7 eski istatistik metni),
+  **29 yeni anahtar eklendi** → 45 dil × **855** anahtar.
+* **BRIEF'İMDE HATA VARDI, ajanlar yakaladı**: iki yer tutuculu cümlelerde
+  (`önceki {} güne göre %{} arttı`) İngilizce karşılığı sırayı TERS yazmıştım.
+  `.cf()` konumsal doldurur; uygulansaydı gün ve yüzde takas olurdu.
+  Üç ajan da kaynağa bakıp doğru sırayı kurdu. **45 dosya × 2 anahtar makineyle
+  denetlendi (yüzde işaretine bitişik `{}` ikinci mi): 0 şüpheli.**
+* Çoğul tuzağı: ru/uk/pl/sr'de sayıya bağlı çekimden kaçmak için iki nokta
+  kalıbı (`Публикации: {}`), ro'da "20 de postări" tuzağı.
+* Fincede mevcut bir çeviri hatalı bulundu (`Uudet seuraukset` = "yeni
+  sonuçlar", olması gereken "yeni takipçiler") — yeni formülde doğrusu
+  kullanıldı, ESKİ SATIR HÂLÂ HATALI, ayrı düzeltme gerekiyor.
+
+### Kanıt ve dağıtım
+* `flutter test` **1561** · `npm test` **1104** · analyze 0 error / 0 warning.
+* **CANLI UÇTAN UCA**: `?sirala=yanit` → görüntülenme 90/76/75, beğeni 5/4/3,
+  yanıt 1/1/0 (üç sıralama da doğru) · `?sirala` YOKSA eski alanlar dönüyor ·
+  `degisim: null`, `seri: []`, `etkilesim.oran: null` (kapsam eksik → gizli,
+  tam da istenen davranış) · `/rozetler` → `{kademe: 11, puan: 18477}`,
+  **kod/toplam/unvan YOK**.
+* Web `main.f68cb0813ef6.dart.js` (eski hash silindi), SW sökücü yerinde.
+  `server.js` yedeği: `server.js.yedek-ist-20260814`. Migrasyon gerekmedi.
+* APK: `~/Desktop/dizijpg-1.46.0+93.apk`. **AAB kullanıcı kararıyla beklemede.**
+
+### 🚀 dizi.jpg RESMİ HESABI — 168 YAPIM İZLENDİ İŞARETLENDİ
+Kullanıcı isteği: "paylaştığı tüm dizi ve filmleri izlemiş olsun, izliyoruma
+da geçsin devam edenler."
+* `POST /durum` + `bitirdim` ile (ham SQL DEĞİL): filmde tek kayıt, dizide
+  O GÜNE KADAR YAYINLANMIŞ tüm bölümler. 168/168 başarılı, 0 hata.
+* Sonuç: **48 film + 10.708 bölüm** kaydı; 166 bitirdim, **2 izliyorum**
+  (South Park, Reacher — yeni sezon tarihi AÇIKLANMIŞ olanlar).
+* "Devam edenler izliyoruma" işini projenin KENDİ otomatiği yaptı
+  (`dizi_durum.js` + `araclar/durum_duzelt.js`, kullanıcının 4 Ağu kuralı).
+  Paralel mantık yazılmadı. Araç yazmadan önce `durumlar` tablosunun tarihli
+  yedeğini aldı; önce kuru koşu yapıldı (2 dizi değişecek denildi, öyle oldu).
+
 ## 2026-08-13 — 🚀 VİDEO ELDE TUTMA EĞRİSİ + İSTATİSTİK SEÇİCİ (1.45.0+92)
 
 ### Md. 23'ün ertelenen parçası: VİDEO ELDE TUTMA EĞRİSİ

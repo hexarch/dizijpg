@@ -853,11 +853,7 @@ const Map<String, String> cevirilerBg = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Щом коментираш сериал или филм, показванията и харесванията ти започват да се събират тук.',
   'Tüm zamanlar': 'За всички времена',
-  'Gönderi': 'Публикации',
-  'Zaman kırılımı': 'Разбивка по време',
   'Son {} gün': 'Последните {} дни',
-  'En çok görüntülenen gönderilerin': 'Най-гледаните ти публикации',
-  'En çok beğenilen gönderilerin': 'Най-харесваните ти публикации',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Историята на показванията още не е започнала да се събира; данните за първия ден се появяват утре.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -952,17 +948,6 @@ const Map<String, String> cevirilerBg = {
   'Firma bulunamadı': 'Компанията не е намерена',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Тази компания няма заглавия от този тип.',
-  'Seviye {}/{}': 'Ниво {}/{}',
-  'Sonraki: {}': 'Следващо: {}',
-  'En üst unvan': 'Най-висока титла',
-  'Meraklı izleyici': 'Любопитна публика',
-  'Hevesli izleyici': 'Запалена публика',
-  'Amatör izleyici': 'Аматьорска публика',
-  'Kıdemli izleyici': 'Опитна публика',
-  'Uzman izleyici': 'Експертна публика',
-  'Profesör izleyici': 'Професорска публика',
-  'Efsane izleyici': 'Легендарна публика',
-  'Ultra mega izleyici': 'Ултра мега публика',
   'Doğum günün kutlu olsun!': 'Честит рожден ден!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Хубаво, че се роди, и хубаво, че си тук.',
@@ -1001,4 +986,39 @@ const Map<String, String> cevirilerBg = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Ниво {}',
+  'Sonraki seviyeye {} puan kaldı': 'Още {} точки до следващото ниво',
+  'Gönderilerin': 'Твоите публикации',
+  '{} gönderi': '{} публикации',
+  '{} gönderi · {} görüntülenme': '{} публикации · {} показвания',
+  'önceki {} güne göre': 'спрямо предходните {} дни',
+  'önceki {} güne göre %{} arttı': 'спрямо предходните {} дни, ръст с {}%',
+  'önceki {} güne göre %{} azaldı': 'спрямо предходните {} дни, спад с {}%',
+  'önceki {} güne göre değişmedi': 'без промяна спрямо предходните {} дни',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Дневни показвания: най-малко {}, най-много {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Нивото на взаимодействие още не може да се измери',
+  'Oranlar': 'Проценти',
+  'Beğenme oranı': 'Процент харесвания',
+  'Yorum oranı': 'Процент коментари',
+  'Paylaşma oranı': 'Процент споделяния',
+  'İçeriğe gitme oranı': 'Процент към съдържанието',
+  'Profile gitme oranı': 'Процент посещения',
+  'Ziyaretten takibe dönüşüm': 'Посещение към последване',
+  'beğeni ÷ görüntülenme': 'харесвания ÷ показвания',
+  'yorum ÷ görüntülenme': 'коментари ÷ показвания',
+  'paylaşım ÷ görüntülenme': 'споделяния ÷ показвания',
+  'içeriğe tıklama ÷ görüntülenme': 'докосвания на съдържанието ÷ показвания',
+  'profil ziyareti ÷ görüntülenme': 'посещения на профила ÷ показвания',
+  'yeni takip ÷ profil ziyareti': 'нови последвания ÷ посещения на профила',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Процентите изискват поне {} показвания; сега има {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Процентите се изчисляват от общите числа на публикацията за целия ѝ период; изборът на дни по-долу не ги променя.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Тези числа са общо за целия период на публикацията (без кутиите със собствена бележка); изборът на дни по-долу променя само графиката.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Средно изгледано: {}% от видеото',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Средното от 20-те части на кривата.',
 };

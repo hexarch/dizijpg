@@ -810,11 +810,7 @@ const Map<String, String> cevirilerZh = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       '当你为某部剧集或电影写下评论后，你的浏览量和点赞数就会在这里累积。',
   'Tüm zamanlar': '全部时间',
-  'Gönderi': '帖子',
-  'Zaman kırılımı': '时间细分',
   'Son {} gün': '最近 {} 天',
-  'En çok görüntülenen gönderilerin': '你浏览量最高的帖子',
-  'En çok beğenilen gönderilerin': '你点赞数最高的帖子',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       '浏览量历史尚未开始累积；第一天的数据将在明天出现。',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -902,17 +898,6 @@ const Map<String, String> cevirilerZh = {
   'Firma bulunamadı': '未找到该公司',
   'Bu firmanın bu türde listelenecek yapımı yok.': '该公司没有此类作品。',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': '等级 {}/{}',
-  'Sonraki: {}': '下一级：{}',
-  'En üst unvan': '最高头衔',
-  'Meraklı izleyici': '好奇观众',
-  'Hevesli izleyici': '热情观众',
-  'Amatör izleyici': '业余观众',
-  'Kıdemli izleyici': '资深观众',
-  'Uzman izleyici': '专家观众',
-  'Profesör izleyici': '教授级观众',
-  'Efsane izleyici': '传奇观众',
-  'Ultra mega izleyici': '超究极观众',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': '生日快乐！',
   'İyi ki doğdun, iyi ki buradasın.': '很高兴世上有你，也很高兴你在这里。',
@@ -951,4 +936,38 @@ const Map<String, String> cevirilerZh = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': '等级 {}',
+  'Sonraki seviyeye {} puan kaldı': '距离下一等级还差 {} 积分',
+  'Gönderilerin': '你的帖子',
+  '{} gönderi': '{} 条帖子',
+  '{} gönderi · {} görüntülenme': '{} 条帖子 · {} 次浏览',
+  'önceki {} güne göre': '与前 {} 天相比',
+  'önceki {} güne göre %{} arttı': '与前 {} 天相比增长 {}%',
+  'önceki {} güne göre %{} azaldı': '与前 {} 天相比下降 {}%',
+  'önceki {} güne göre değişmedi': '与前 {} 天相比没有变化',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}': '每日浏览量：最低 {}，最高 {}',
+  'Etkileşim oranı henüz ölçülemedi': '暂时无法计算互动率',
+  'Oranlar': '各项比率',
+  'Beğenme oranı': '点赞率',
+  'Yorum oranı': '评论率',
+  'Paylaşma oranı': '分享率',
+  'İçeriğe gitme oranı': '内容点击率',
+  'Profile gitme oranı': '主页访问率',
+  'Ziyaretten takibe dönüşüm': '访问转关注率',
+  'beğeni ÷ görüntülenme': '点赞 ÷ 浏览量',
+  'yorum ÷ görüntülenme': '评论 ÷ 浏览量',
+  'paylaşım ÷ görüntülenme': '分享 ÷ 浏览量',
+  'içeriğe tıklama ÷ görüntülenme': '内容点击 ÷ 浏览量',
+  'profil ziyareti ÷ görüntülenme': '主页访问 ÷ 浏览量',
+  'yeni takip ÷ profil ziyareti': '新增关注 ÷ 主页访问',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      '比率至少需要 {} 次浏览，目前有 {} 次。',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      '比率来自帖子的全期总数，下方的天数选择不会改变它们。',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      '这些数字是帖子的全期总数（带有单独说明的方框除外），下方的天数选择只会改变图表。',
+  'Ortalama izlenme: videonun %{} kadarı': '平均观看：视频的 {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.': '留存曲线 20 个区间的平均值。',
 };

@@ -860,11 +860,7 @@ const Map<String, String> cevirilerFil = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Kapag nagkomento ka sa isang series o pelikula, magsisimulang mag-ipon dito ang bilang ng views at likes mo.',
   'Tüm zamanlar': 'Sa lahat ng panahon',
-  'Gönderi': 'Mga post',
-  'Zaman kırılımı': 'Hati-hati ayon sa panahon',
   'Son {} gün': 'Huling {} araw',
-  'En çok görüntülenen gönderilerin': 'Mga post mong pinakamaraming view',
-  'En çok beğenilen gönderilerin': 'Mga post mong pinakamaraming like',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Hindi pa nagsisimulang mag-ipon ang history ng views; lalabas bukas ang data ng unang araw.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -959,17 +955,6 @@ const Map<String, String> cevirilerFil = {
   'Firma bulunamadı': 'Hindi natagpuan ang kompanya',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Walang ganitong uri ng pamagat ang kompanyang ito.',
-  'Seviye {}/{}': 'Antas {}/{}',
-  'Sonraki: {}': 'Susunod: {}',
-  'En üst unvan': 'Pinakamataas na titulo',
-  'Meraklı izleyici': 'Mausisang manonood',
-  'Hevesli izleyici': 'Masugid na manonood',
-  'Amatör izleyici': 'Amatyur na manonood',
-  'Kıdemli izleyici': 'Beteranong manonood',
-  'Uzman izleyici': 'Ekspertong manonood',
-  'Profesör izleyici': 'Propesor na manonood',
-  'Efsane izleyici': 'Maalamat na manonood',
-  'Ultra mega izleyici': 'Ultra mega manonood',
   'Doğum günün kutlu olsun!': 'Maligayang kaarawan!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Buti na lang isinilang ka, buti na lang nandito ka.',
@@ -1009,4 +994,44 @@ const Map<String, String> cevirilerFil = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Level {}',
+  'Sonraki seviyeye {} puan kaldı':
+      '{} puntos na lang para sa susunod na level',
+  'Gönderilerin': 'Mga post mo',
+  '{} gönderi': '{} post',
+  '{} gönderi · {} görüntülenme': '{} post · {} view',
+  'önceki {} güne göre': 'kumpara sa nakaraang {} araw',
+  'önceki {} güne göre %{} arttı':
+      'kumpara sa nakaraang {} araw, tumaas nang {}%',
+  'önceki {} güne göre %{} azaldı':
+      'kumpara sa nakaraang {} araw, bumaba nang {}%',
+  'önceki {} güne göre değişmedi':
+      'walang pagbabago kumpara sa nakaraang {} araw',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Mga view kada araw: pinakamababa {}, pinakamataas {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Hindi pa masusukat ang rate ng engagement',
+  'Oranlar': 'Mga rate',
+  'Beğenme oranı': 'Rate ng like',
+  'Yorum oranı': 'Rate ng komento',
+  'Paylaşma oranı': 'Rate ng share',
+  'İçeriğe gitme oranı': 'Rate ng content tap',
+  'Profile gitme oranı': 'Rate ng profile visit',
+  'Ziyaretten takibe dönüşüm': 'Bisita patungong follow',
+  'beğeni ÷ görüntülenme': 'mga like ÷ mga view',
+  'yorum ÷ görüntülenme': 'mga komento ÷ mga view',
+  'paylaşım ÷ görüntülenme': 'mga share ÷ mga view',
+  'içeriğe tıklama ÷ görüntülenme': 'mga tap sa content ÷ mga view',
+  'profil ziyareti ÷ görüntülenme': 'mga pagbisita sa profile ÷ mga view',
+  'yeni takip ÷ profil ziyareti':
+      'mga bagong follow ÷ mga pagbisita sa profile',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Kailangan ng mga rate ng hindi bababa sa {} view; {} pa lang ngayon.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Galing ang mga rate sa kabuuang bilang ng post mula simula; hindi ito binabago ng pagpili ng araw sa ibaba.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Kabuuang bilang ng post mula simula ang mga numerong ito (maliban sa mga kahon na may sariling paalala); ang pagpili ng araw sa ibaba ay nagbabago lang sa chart.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Average na napanood: {}% ng video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Ang average ng 20 bahagi ng kurba.',
 };

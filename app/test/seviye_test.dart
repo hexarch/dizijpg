@@ -12,52 +12,65 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// MİNİ SEVİYE SİSTEMİ (istek md. 29) — profil alt unvanı.
+/// MİNİ SEVİYE SİSTEMİ (istek md. 29) — profil satırı.
 ///
-/// "Amatör izleyici → profesör izleyici → ultra mega izleyici gibi unvanlar.
-///  Unvanları BİZ koyacağız (kullanıcı seçmeyecek)."
-/// Maddenin notu: "Eşikler kullanıcıyı UTANDIRMAMALI — düşük seviyeyi
-/// başkasına göstermek caydırıcı olabilir; md. 21'deki gizleme tercihleriyle
-/// uyumlu düşünülmeli."
+/// 14 AĞU REVİZYONU: "seviye sistemi kalsın ama 7/8 gibi yazma; bir seviye
+/// sistemimiz olsun, ona göre artsın seviyesi."
+///
+/// BU TURDA DEĞİŞEN İDDİALAR:
+///  · UNVAN TESTLERİ KALKTI (8 adın tekilliği, aşağılayıcı sözcük taraması,
+///    "en alt kademenin adı Meraklı izleyici", üç örnek unvan). Ortada ad
+///    yok; yerlerine "EKRANDA HİÇBİR UNVAN YOK" gerileme kilidi geldi
+///    ([_eskiUnvanlar] listesi bu dosyada, `Seviye.tumAdlar` SİLİNDİ).
+///  · "Seviye 5/8" ve "Sonraki: {unvan}" iddiaları yerini "Seviye 5" ile
+///    "Sonraki seviyeye {} puan kaldı" satırına bıraktı.
+///  · "EN ÜST kademe" testleri kalktı: TAVAN YOK, sunucu `sonraki_esik`i
+///    her zaman gönderiyor.
+///  · `cozumle` artık `kod`/`toplam` istemiyor (sunucu göndermiyor), o
+///    yüzden "tanınmayan kod → null" testleri de kalktı.
 ///
 /// BU DOSYANIN KİLİTLEDİĞİ DAVRANIŞ:
-///  1) Unvan metinleri AŞAĞILAYICI DEĞİL — en alt kademe dahil.
-///  2) Eşik/ilerleme matematiği sınırlarda doğru (0, tam eşik, taşma).
-///  3) İLERLEME YALNIZ KENDİ PROFİLİNDE: çubuk ve "Sonraki: … · Seviye 5/8"
+///  1) EKRANDA UNVAN YOK — kendi profilinde de başkasınınkinde de.
+///  2) PAYDA YOK — "Seviye 5" var, "Seviye 5/8" yok.
+///  3) Eşik/ilerleme matematiği sınırlarda doğru (0, tam eşik, taşma).
+///  4) İLERLEME YALNIZ KENDİ PROFİLİNDE: çubuk ve "Sonraki seviyeye …"
 ///     satırı başkasının profilinde ÇİZİLMEZ.
-///  4) Sunucu unvanı süzdüyse (1. kademe ya da `izlenenler_gizli`) açık
+///  5) Sunucu seviyeyi süzdüyse (1. kademe ya da `izlenenler_gizli`) açık
 ///     profilde satır HİÇ ÇİZİLMEZ — "seviye gizli" yazısı bile yok.
-///  5) 320 dp'de en uzun unvan taşmıyor (45 dil için tampon).
+///  6) 320 dp'de üç haneli seviye + uzun ilerleme satırı taşmıyor.
 ///
-/// Eşik TABLOSU burada sınanmaz: tablo yalnız sunucuda (tek kopya).
-/// Sınır testleri `backend/test/seviye.test.js` içinde.
+/// Eşik EĞRİSİ burada sınanmaz: eğrinin tek kopyası sunucuda.
+/// Sınır/gerileme testleri `backend/test/seviye.test.js` içinde.
 const double _darEkran = 320;
 const Size _ekran = Size(600, 900);
+
+/// 14 Ağu'da kaldırılan unvanlar — ekranda ASLA görünmemeli.
+const _eskiUnvanlar = [
+  'Meraklı izleyici',
+  'Hevesli izleyici',
+  'Amatör izleyici',
+  'Kıdemli izleyici',
+  'Uzman izleyici',
+  'Profesör izleyici',
+  'Efsane izleyici',
+  'Ultra mega izleyici',
+];
 
 /// Sunucunun KENDİ profilinde döndürdüğü tam seviye kaydı.
 Map<String, dynamic> _tamSeviye({
   int kademe = 5,
-  String kod = 'uzman',
   int puan = 1240,
-  int esik = 1000,
-  int? sonrakiEsik = 2500,
-  String? sonrakiKod = 'profesor',
+  int esik = 896,
+  int? sonrakiEsik = 1750,
 }) => {
   'kademe': kademe,
-  'kod': kod,
-  'toplam': 8,
   'puan': puan,
   'esik': esik,
   'sonraki_esik': sonrakiEsik,
-  'sonraki_kod': sonrakiKod,
 };
 
 /// Sunucunun ZİYARETÇİYE döndürdüğü süzülmüş kayıt: puan/eşik YOK.
-Map<String, dynamic> _acikSeviye({int kademe = 5, String kod = 'uzman'}) => {
-  'kademe': kademe,
-  'kod': kod,
-  'toplam': 8,
-};
+Map<String, dynamic> _acikSeviye({int kademe = 5}) => {'kademe': kademe};
 
 Map<String, dynamic> _acikProfil({Object? seviye, bool benMi = false}) => {
   'id': 7,
@@ -166,6 +179,16 @@ Finder get _cubuk => find.descendant(
   matching: find.byType(LinearProgressIndicator),
 );
 
+/// Ekranda unvan/payda kalıntısı var mı? (Gerileme kilidi.)
+void _unvanYok(WidgetTester tester) {
+  for (final ad in _eskiUnvanlar) {
+    expect(find.textContaining(ad), findsNothing, reason: 'unvan sızdı: $ad');
+  }
+  expect(find.textContaining('Sonraki:'), findsNothing);
+  expect(find.textContaining('En üst'), findsNothing);
+  expect(find.textContaining('/8'), findsNothing);
+}
+
 void main() {
   setUp(() async {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
@@ -177,75 +200,27 @@ void main() {
   });
 
   // =========================================================================
-  // 1. UNVAN METİNLERİ — utandırmama şartı
+  // 1. ETİKET — salt sayı, payda YOK, unvan YOK
   // =========================================================================
 
-  group('unvanlar', () {
-    test('8 unvan var, hepsi tekil ve boş değil', () {
-      expect(Seviye.tumAdlar, hasLength(8));
-      expect(Seviye.tumAdlar.toSet(), hasLength(8));
-      for (final ad in Seviye.tumAdlar) {
-        expect(ad.trim(), isNotEmpty);
-      }
+  group('etiket', () {
+    test('"Seviye 5" — payda ("/8") YOK', () {
+      final sv = Seviye.cozumle(_tamSeviye())!;
+      expect(sv.etiket, 'Seviye 5');
+      expect(sv.etiket.contains('/'), isFalse);
     });
 
-    test('UTANDIRMAMA: hiçbir unvan aşağılayıcı bir sözcük taşımıyor', () {
-      // Maddenin şartı. "acemi/çaylak/toy" gibi adlar EN ALT kademede
-      // kullanıcının profilinde kalıcı bir küçümseme yazısı olurdu.
-      const yasak = [
-        'acemi',
-        'çaylak',
-        'caylak',
-        'toy',
-        'ezik',
-        'zayıf',
-        'zayif',
-        'kötü',
-        'kotu',
-        'aptal',
-        'cahil',
-        'beceriksiz',
-        'tembel',
-        'başlangıç',
-        'baslangic',
-        'sıfır',
-        'sifir',
-        'hiç',
-        'yok',
-      ];
-      for (final ad in Seviye.tumAdlar) {
-        final kucuk = ad.toLowerCase();
-        for (final y in yasak) {
-          expect(
-            kucuk.contains(y),
-            isFalse,
-            reason: 'aşağılayıcı unvan: "$ad" ($y)',
-          );
-        }
-      }
+    test('TAVANSIZ: üç haneli kademe de aynı biçimde yazılır', () {
+      expect(Seviye.cozumle(_acikSeviye(kademe: 41))!.etiket, 'Seviye 41');
+      expect(Seviye.cozumle(_acikSeviye(kademe: 137))!.etiket, 'Seviye 137');
     });
 
-    test('EN ALT kademenin adı nötr-olumlu: "Meraklı izleyici"', () {
-      const sv = Seviye(kademe: 1, kod: 'merakli', toplam: 8);
-      expect(sv.etiket, 'Meraklı izleyici');
-    });
-
-    test('kullanıcının verdiği üç örnek unvan sözlükte var', () {
-      for (final kod in ['amator', 'profesor', 'ultra_mega']) {
-        expect(Seviye.tumKodlar, contains(kod));
+    test('etiket ve alt satır hiçbir ESKİ UNVANI içermiyor', () {
+      final sv = Seviye.cozumle(_tamSeviye())!;
+      for (final ad in _eskiUnvanlar) {
+        expect(sv.etiket.contains(ad), isFalse);
+        expect(sv.altSatir!.contains(ad), isFalse);
       }
-      expect(
-        const Seviye(kademe: 3, kod: 'amator', toplam: 8).etiket,
-        'Amatör izleyici',
-      );
-      expect(
-        const Seviye(kademe: 6, kod: 'profesor', toplam: 8).etiket,
-        'Profesör izleyici',
-      );
-      expect(
-        const Seviye(kademe: 8, kod: 'ultra_mega', toplam: 8).etiket,
-        'Ultra mega izleyici',
-      );
     });
   });
 
@@ -256,45 +231,36 @@ void main() {
   group('Seviye.cozumle', () {
     test('null / yanlış tür / eksik alan → null', () {
       expect(Seviye.cozumle(null), isNull);
-      expect(Seviye.cozumle('uzman'), isNull);
+      expect(Seviye.cozumle('5'), isNull);
       expect(Seviye.cozumle(<String, dynamic>{}), isNull);
-      expect(Seviye.cozumle({'kademe': 2, 'toplam': 8}), isNull);
-      expect(
-        Seviye.cozumle({'kademe': 0, 'kod': 'uzman', 'toplam': 8}),
-        isNull,
-      );
-    });
-
-    test('TANINMAYAN KOD → null (ekranda ham anahtar BASILMAZ)', () {
-      // Eski istemci + yeni sunucu: yeni bir kademe kodu eklenirse eski
-      // uygulama "ultra_ultra_mega" diye bir anahtar göstermez, satırı atlar.
-      expect(
-        Seviye.cozumle({'kademe': 9, 'kod': 'gizemli_kod', 'toplam': 9}),
-        isNull,
-      );
-    });
-
-    test('toplam < kademe olan tutarsız kayıt → null', () {
-      expect(
-        Seviye.cozumle({'kademe': 9, 'kod': 'uzman', 'toplam': 8}),
-        isNull,
-      );
+      expect(Seviye.cozumle({'puan': 120}), isNull);
+      expect(Seviye.cozumle({'kademe': 0}), isNull);
+      expect(Seviye.cozumle({'kademe': -3}), isNull);
     });
 
     test('ziyaretçi kaydında puan/eşik yok → ilerleme yok', () {
       final sv = Seviye.cozumle(_acikSeviye())!;
       expect(sv.kademe, 5);
-      expect(sv.kod, 'uzman');
       expect(sv.puan, isNull);
       expect(sv.ilerlemeVar, isFalse);
       expect(sv.ilerleme, isNull);
+      expect(sv.kalanPuan, isNull);
+      expect(sv.altSatir, isNull);
     });
 
-    test('tanınmayan sonraki_kod yok sayılır, kayıt yine çözülür', () {
-      final sv = Seviye.cozumle(_tamSeviye(sonrakiKod: 'bilinmeyen'))!;
-      expect(sv.kod, 'uzman');
-      expect(sv.sonrakiKod, isNull);
-      expect(sv.sonrakiEtiket, isNull);
+    test('ESKİ SUNUCUNUN kod/toplam alanları yok sayılır, kayıt çözülür', () {
+      // Dağıtım sırasında eski bir yanıt önbellekten gelebilir.
+      final sv = Seviye.cozumle({
+        'kademe': 5,
+        'kod': 'uzman',
+        'toplam': 8,
+        'puan': 1240,
+        'esik': 896,
+        'sonraki_esik': 1750,
+      })!;
+      expect(sv.etiket, 'Seviye 5');
+      expect(sv.altSatir, isNotNull);
+      expect(sv.altSatir!.contains('Uzman'), isFalse);
     });
   });
 
@@ -304,94 +270,103 @@ void main() {
 
   group('ilerleme (saf)', () {
     test('kademenin TAM ALT SINIRINDA çubuk boş (0.0)', () {
-      final sv = Seviye.cozumle(_tamSeviye(puan: 1000, esik: 1000))!;
+      final sv = Seviye.cozumle(_tamSeviye(puan: 896))!;
       expect(sv.ilerleme, 0.0);
     });
 
     test('sonraki eşiğin BİR ALTINDA çubuk dolmaya çok yakın ama 1 değil', () {
-      final sv = Seviye.cozumle(_tamSeviye(puan: 2499, esik: 1000))!;
+      final sv = Seviye.cozumle(_tamSeviye(puan: 1749))!;
       expect(sv.ilerleme, greaterThan(0.99));
       expect(sv.ilerleme, lessThan(1.0));
+      expect(sv.kalanPuan, 1);
     });
 
     test('tam ortada 0.5', () {
-      final sv = Seviye.cozumle(_tamSeviye(puan: 1750, esik: 1000))!;
+      final sv = Seviye.cozumle(_tamSeviye(puan: 1323))!;
       expect(sv.ilerleme, closeTo(0.5, 0.0001));
     });
 
     test('EŞİK AŞILMIŞ gecikmiş veride 1.0 ile kırpılır (çubuk taşmaz)', () {
-      final sv = Seviye.cozumle(_tamSeviye(puan: 9999, esik: 1000))!;
+      final sv = Seviye.cozumle(_tamSeviye(puan: 9999))!;
       expect(sv.ilerleme, 1.0);
+      // "Sonraki seviyeye -8249 puan kaldı" saçmalığı yok.
+      expect(sv.kalanPuan, 0);
     });
 
     test('EŞİĞİN ALTINDA tutarsız veride 0.0 ile kırpılır', () {
-      final sv = Seviye.cozumle(_tamSeviye(puan: 10, esik: 1000))!;
+      final sv = Seviye.cozumle(_tamSeviye(puan: 10))!;
       expect(sv.ilerleme, 0.0);
     });
 
-    test('EN ÜST kademede ilerleme yok, alt satır "En üst unvan" der', () {
-      final sv = Seviye.cozumle(
-        _tamSeviye(
-          kademe: 8,
-          kod: 'ultra_mega',
-          puan: 20000,
-          esik: 12000,
-          sonrakiEsik: null,
-          sonrakiKod: null,
-        ),
-      )!;
-      expect(sv.enUst, isTrue);
+    test('sonraki_esik gelmezse (eski/bozuk yanıt) ilerleme çizilmez', () {
+      final sv = Seviye.cozumle(_tamSeviye(sonrakiEsik: null))!;
       expect(sv.ilerlemeVar, isFalse);
       expect(sv.ilerleme, isNull);
-      expect(sv.altSatir, 'En üst unvan · Seviye 8/8');
+      expect(sv.altSatir, isNull);
     });
 
-    test('alt satır İLERİ BAKAR: hedef unvanı + konum', () {
+    test('alt satır İLERİ BAKAR: kalan puan, YÜZDE DEĞİL', () {
       final sv = Seviye.cozumle(_tamSeviye())!;
-      expect(sv.altSatir, 'Sonraki: Profesör izleyici · Seviye 5/8');
+      expect(sv.kalanPuan, 510);
+      expect(sv.altSatir, 'Sonraki seviyeye 510 puan kaldı');
       // Yüzde YOK — "%18 tamamlandı" az izleyene ne kadar AZ yaptığını söyler.
-      expect(sv.altSatir.contains('%'), isFalse);
+      expect(sv.altSatir!.contains('%'), isFalse);
     });
 
-    test('YENİ KULLANICI: en alt kademe, unvanı var, ilerleme çizilebilir', () {
+    test('YENİ KULLANICI: 1. kademe, ilerleme çizilebilir, unvan yok', () {
       final sv = Seviye.cozumle(
-        _tamSeviye(
-          kademe: 1,
-          kod: 'merakli',
-          puan: 0,
-          esik: 0,
-          sonrakiEsik: 30,
-          sonrakiKod: 'hevesli',
-        ),
+        _tamSeviye(kademe: 1, puan: 0, esik: 0, sonrakiEsik: 14),
       )!;
-      expect(sv.etiket, 'Meraklı izleyici');
+      expect(sv.etiket, 'Seviye 1');
       expect(sv.ilerleme, 0.0);
-      expect(sv.altSatir, 'Sonraki: Hevesli izleyici · Seviye 1/8');
+      expect(sv.altSatir, 'Sonraki seviyeye 14 puan kaldı');
     });
   });
 
   // =========================================================================
-  // 4. KENDİ PROFİLİM — unvan + İLERLEME görünür
+  // 4. KENDİ PROFİLİM — seviye + İLERLEME görünür, UNVAN YOK
   // =========================================================================
 
-  testWidgets('KENDİ PROFİLİM: unvan, ilerleme çubuğu ve hedef satırı VAR', (
+  testWidgets('KENDİ PROFİLİM: "Seviye 5", çubuk ve kalan puan satırı VAR', (
     tester,
   ) async {
     await _kendim(tester, _tamSeviye());
     expect(find.byType(SeviyeSatiri), findsOneWidget);
-    expect(find.text('Uzman izleyici'), findsOneWidget);
+    expect(find.text('Seviye 5'), findsOneWidget);
     expect(_cubuk, findsOneWidget);
-    expect(
-      find.text('Sonraki: Profesör izleyici · Seviye 5/8'),
-      findsOneWidget,
-    );
+    expect(find.text('Sonraki seviyeye 510 puan kaldı'), findsOneWidget);
     expect(find.byIcon(Icons.trending_up), findsOneWidget);
     // Çubuk gerçekten kısmen dolu (0 ya da 1'e sıkışmış değil).
     final gosterge = tester.widget<LinearProgressIndicator>(_cubuk);
-    expect(gosterge.value, closeTo(0.16, 0.01));
+    expect(gosterge.value, closeTo(0.403, 0.01));
   });
 
-  testWidgets('KENDİ PROFİLİM: unvan kullanıcı adının ALTINDA duruyor', (
+  testWidgets('KENDİ PROFİLİM: EKRANDA HİÇBİR UNVAN/PAYDA YOK', (tester) async {
+    await _kendim(tester, _tamSeviye());
+    _unvanYok(tester);
+  });
+
+  testWidgets('KENDİ PROFİLİM: çubuk ekran okuyucuda ADLI ve DEĞERLİ', (
+    tester,
+  ) async {
+    // Etiketsiz bir `LinearProgressIndicator` erişilebilirlik ağacına HİÇ
+    // girmez; dolgu yalnız görene bilgi olurdu.
+    final tut = tester.ensureSemantics();
+    await _kendim(tester, _tamSeviye());
+    // Ağaç gerçekten kuruldu: değer sayıya çevrilemezse çerçeve burada
+    // assert'e düşer (bu tuzağa bir kez düşüldü, bu satır kapıyı tutuyor).
+    expect(tester.takeException(), isNull);
+    final gosterge = tester.widget<LinearProgressIndicator>(_cubuk);
+    expect(gosterge.semanticsLabel, 'Seviye 5');
+    // SALT SAYI: çerçeve bu düğümü "progress bar" (0..100) olarak kuruyor ve
+    // değerin sayıya çevrilebilmesini assert ediyor — "%40" yazılırsa uygulama
+    // her karede assert'e düşer (yüzde işaretini ekran okuyucu ekler).
+    expect(gosterge.semanticsValue, '40');
+    expect(double.tryParse(gosterge.semanticsValue!), isNotNull);
+    tut.dispose();
+  });
+
+  testWidgets('KENDİ PROFİLİM: seviye kullanıcı adının ALTINDA duruyor', (
     tester,
   ) async {
     await _kendim(tester, _tamSeviye());
@@ -407,10 +382,10 @@ void main() {
     );
     expect(adFinder, findsOneWidget);
     final ad = tester.getRect(adFinder);
-    final unvan = tester.getRect(find.text('Uzman izleyici'));
-    expect(unvan.top, greaterThanOrEqualTo(ad.bottom - 1));
+    final seviye = tester.getRect(find.text('Seviye 5'));
+    expect(seviye.top, greaterThanOrEqualTo(ad.bottom - 1));
     // Aynı sütunda: sol kenarları hizalı.
-    expect(unvan.left, closeTo(ad.left, 1));
+    expect(seviye.left, closeTo(ad.left, 1));
   });
 
   testWidgets('KENDİ PROFİLİM: seviye gelmezse satır hiç çizilmez', (
@@ -421,39 +396,37 @@ void main() {
     expect(_cubuk, findsNothing);
   });
 
-  testWidgets('EN ÜST kademede çubuk yok, "En üst unvan" satırı var', (
+  testWidgets('TAVAN YOK: yüksek kademede de çubuk ve hedef satırı sürüyor', (
     tester,
   ) async {
+    // Eskiden 8. kademede çubuk kaybolur, "En üst unvan" yazardı.
     await _kendim(
       tester,
-      _tamSeviye(
-        kademe: 8,
-        kod: 'ultra_mega',
-        puan: 20000,
-        esik: 12000,
-        sonrakiEsik: null,
-        sonrakiKod: null,
-      ),
+      _tamSeviye(kademe: 12, puan: 20000, esik: 18634, sonrakiEsik: 24192),
     );
-    expect(find.text('Ultra mega izleyici'), findsOneWidget);
-    expect(_cubuk, findsNothing);
-    expect(find.text('En üst unvan · Seviye 8/8'), findsOneWidget);
+    expect(find.text('Seviye 12'), findsOneWidget);
+    expect(_cubuk, findsOneWidget);
+    expect(find.text('Sonraki seviyeye 4192 puan kaldı'), findsOneWidget);
+    _unvanYok(tester);
   });
 
   // =========================================================================
-  // 5. BAŞKASININ PROFİLİ — yalnız unvan; ilerleme YOK
+  // 5. BAŞKASININ PROFİLİ — yalnız sayı; ilerleme YOK
   // =========================================================================
 
-  testWidgets('BAŞKASININ PROFİLİ: unvan VAR ama İLERLEME YOK', (tester) async {
+  testWidgets('BAŞKASININ PROFİLİ: "Seviye 5" VAR ama İLERLEME YOK', (
+    tester,
+  ) async {
     await _baskasi(tester, _acikSeviye());
     expect(find.byType(SeviyeSatiri), findsOneWidget);
-    expect(find.text('Uzman izleyici'), findsOneWidget);
-    // Çubuk, hedef satırı ve konum ("Seviye 5/8") ÇİZİLMEZ: başkasının
-    // profilindeki ilerleme, unvanı bir sıralama tablosuna çevirirdi.
+    expect(find.text('Seviye 5'), findsOneWidget);
+    // Çubuk ve hedef satırı ÇİZİLMEZ: başkasının profilindeki ilerleme,
+    // seviyeyi bir sıralama tablosuna çevirirdi.
     expect(_cubuk, findsNothing);
     expect(find.byIcon(Icons.trending_up), findsNothing);
-    expect(find.textContaining('Seviye 5/8'), findsNothing);
-    expect(find.textContaining('Sonraki:'), findsNothing);
+    expect(find.textContaining('Sonraki seviyeye'), findsNothing);
+    expect(find.textContaining('puan kaldı'), findsNothing);
+    _unvanYok(tester);
   });
 
   testWidgets(
@@ -462,9 +435,9 @@ void main() {
       // İkinci kilit: `ilerlemeGoster` bayrağı `ben_mi`ye bağlı. Sunucu bir
       // gün süzgeci gevşetse bile ziyaretçi çubuğu görmez.
       await _baskasi(tester, _tamSeviye());
-      expect(find.text('Uzman izleyici'), findsOneWidget);
+      expect(find.text('Seviye 5'), findsOneWidget);
       expect(_cubuk, findsNothing);
-      expect(find.textContaining('Sonraki:'), findsNothing);
+      expect(find.textContaining('puan kaldı'), findsNothing);
     },
   );
 
@@ -479,9 +452,8 @@ void main() {
       await _baskasi(tester, null);
       expect(find.byType(SeviyeSatiri), findsNothing);
       expect(_cubuk, findsNothing);
-      for (final ad in Seviye.tumAdlar) {
-        expect(find.text(ad), findsNothing, reason: 'unvan sızdı: $ad');
-      }
+      expect(find.textContaining('Seviye'), findsNothing);
+      _unvanYok(tester);
     },
   );
 
@@ -491,32 +463,27 @@ void main() {
     // Bu ekran kendi kullanıcı adınla da açılabiliyor; "kendi profilim mi"
     // kararı sunucunun `ben_mi` yargısından gelir.
     await _baskasi(tester, _tamSeviye(), benMi: true);
-    expect(find.text('Uzman izleyici'), findsOneWidget);
+    expect(find.text('Seviye 5'), findsOneWidget);
     expect(_cubuk, findsOneWidget);
-    expect(
-      find.text('Sonraki: Profesör izleyici · Seviye 5/8'),
-      findsOneWidget,
-    );
+    expect(find.text('Sonraki seviyeye 510 puan kaldı'), findsOneWidget);
   });
 
   // =========================================================================
-  // 6. DAR EKRAN — 45 dilde uzun unvan
+  // 6. DAR EKRAN — 45 dilde uzun ilerleme satırı
   // =========================================================================
 
-  testWidgets('320 dp: en uzun unvan + ilerleme satırı taşmıyor', (
+  testWidgets('320 dp: üç haneli seviye + ilerleme satırı taşmıyor', (
     tester,
   ) async {
-    // Deneme yazı tipinde her harf 1em kare: "Ultra mega izleyici" gerçek
-    // yazı tipinden çok daha geniş çizilir, yani bu 45 dil için tampon.
+    // Deneme yazı tipinde her harf 1em kare: satır gerçek yazı tipinden çok
+    // daha geniş çizilir, yani bu 45 dil için tampon.
     await _kendim(
       tester,
       _tamSeviye(
-        kademe: 8,
-        kod: 'ultra_mega',
-        puan: 13000,
-        esik: 12000,
-        sonrakiEsik: null,
-        sonrakiKod: null,
+        kademe: 137,
+        puan: 34_000_000,
+        esik: 33_918_368,
+        sonrakiEsik: 35_998_942,
       ),
       boyut: const Size(_darEkran, 900),
     );
@@ -525,13 +492,13 @@ void main() {
     final kutu = tester.getRect(satir);
     expect(kutu.left, greaterThanOrEqualTo(0));
     expect(kutu.right, lessThanOrEqualTo(_darEkran + 0.01));
-    // Unvan iki satıra SARILIR (üç noktaya düşse bile) ama kaybolmaz.
-    final metin = tester.getRect(find.text('Ultra mega izleyici'));
+    // Seviye metni sarılır/üç noktaya düşer ama kaybolmaz.
+    final metin = tester.getRect(find.text('Seviye 137'));
     expect(metin.width, greaterThan(0));
     expect(metin.right, lessThanOrEqualTo(kutu.right + 0.01));
 
     // Bu ekranda 320 dp'de KALAN taşmalar sekme etiketlerinden gelir (ülke
-    // satırı testindeki bilinen gürültü, gerçek yazı tipinde yok). Unvan
+    // satırı testindeki bilinen gürültü, gerçek yazı tipinde yok). Seviye
     // kaynaklı taşma olmadığını yukarıdaki ölçümler kanıtlıyor.
     final istisna = tester.takeException();
     if (istisna != null) {

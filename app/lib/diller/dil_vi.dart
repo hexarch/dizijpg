@@ -847,11 +847,7 @@ const Map<String, String> cevirilerVi = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Khi bạn bình luận về một series hay bộ phim, số lượt xem và lượt thích sẽ bắt đầu tích luỹ ở đây.',
   'Tüm zamanlar': 'Toàn thời gian',
-  'Gönderi': 'Bài đăng',
-  'Zaman kırılımı': 'Phân tích theo thời gian',
   'Son {} gün': '{} ngày qua',
-  'En çok görüntülenen gönderilerin': 'Bài đăng được xem nhiều nhất của bạn',
-  'En çok beğenilen gönderilerin': 'Bài đăng được thích nhiều nhất của bạn',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Lịch sử lượt xem chưa bắt đầu tích luỹ; dữ liệu ngày đầu tiên sẽ xuất hiện vào ngày mai.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -947,17 +943,6 @@ const Map<String, String> cevirilerVi = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Hãng này không có tựa phim nào thuộc loại này.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Cấp {}/{}',
-  'Sonraki: {}': 'Tiếp theo: {}',
-  'En üst unvan': 'Danh hiệu cao nhất',
-  'Meraklı izleyici': 'Người xem tò mò',
-  'Hevesli izleyici': 'Người xem hăng hái',
-  'Amatör izleyici': 'Người xem nghiệp dư',
-  'Kıdemli izleyici': 'Người xem kỳ cựu',
-  'Uzman izleyici': 'Người xem chuyên gia',
-  'Profesör izleyici': 'Người xem giáo sư',
-  'Efsane izleyici': 'Người xem huyền thoại',
-  'Ultra mega izleyici': 'Người xem siêu cấp',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'Chúc mừng sinh nhật!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1000,4 +985,40 @@ const Map<String, String> cevirilerVi = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Cấp {}',
+  'Sonraki seviyeye {} puan kaldı': 'Còn {} điểm để lên cấp tiếp theo',
+  'Gönderilerin': 'Bài đăng của bạn',
+  '{} gönderi': '{} bài đăng',
+  '{} gönderi · {} görüntülenme': '{} bài đăng · {} lượt xem',
+  'önceki {} güne göre': 'so với {} ngày trước đó',
+  'önceki {} güne göre %{} arttı': 'so với {} ngày trước đó, tăng {}%',
+  'önceki {} güne göre %{} azaldı': 'so với {} ngày trước đó, giảm {}%',
+  'önceki {} güne göre değişmedi': 'không đổi so với {} ngày trước đó',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Lượt xem hằng ngày: thấp nhất {}, cao nhất {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Chưa đo được tỷ lệ tương tác',
+  'Oranlar': 'Tỷ lệ',
+  'Beğenme oranı': 'Tỷ lệ thích',
+  'Yorum oranı': 'Tỷ lệ bình luận',
+  'Paylaşma oranı': 'Tỷ lệ chia sẻ',
+  'İçeriğe gitme oranı': 'Tỷ lệ nhấn vào nội dung',
+  'Profile gitme oranı': 'Tỷ lệ xem trang cá nhân',
+  'Ziyaretten takibe dönüşüm': 'Từ ghé thăm đến theo dõi',
+  'beğeni ÷ görüntülenme': 'lượt thích ÷ lượt xem',
+  'yorum ÷ görüntülenme': 'bình luận ÷ lượt xem',
+  'paylaşım ÷ görüntülenme': 'lượt chia sẻ ÷ lượt xem',
+  'içeriğe tıklama ÷ görüntülenme': 'lượt nhấn vào nội dung ÷ lượt xem',
+  'profil ziyareti ÷ görüntülenme': 'lượt xem trang cá nhân ÷ lượt xem',
+  'yeni takip ÷ profil ziyareti': 'lượt theo dõi mới ÷ lượt xem trang cá nhân',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Tỷ lệ cần ít nhất {} lượt xem; hiện có {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Tỷ lệ được tính từ tổng số trọn đời của bài đăng; lựa chọn ngày bên dưới không thay đổi chúng.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Đây là tổng số trọn đời của bài đăng (trừ các ô có ghi chú riêng); lựa chọn ngày bên dưới chỉ thay đổi biểu đồ.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Xem trung bình: {}% video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Trung bình của 20 khoảng trên đường cong giữ chân.',
 };

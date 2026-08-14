@@ -853,11 +853,7 @@ const Map<String, String> cevirilerRu = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Как только ты прокомментируешь сериал или фильм, здесь начнут накапливаться просмотры и лайки.',
   'Tüm zamanlar': 'За всё время',
-  'Gönderi': 'Публикации',
-  'Zaman kırılımı': 'Разбивка по времени',
   'Son {} gün': 'Последние {} дней',
-  'En çok görüntülenen gönderilerin': 'Твои самые просматриваемые публикации',
-  'En çok beğenilen gönderilerin': 'Твои самые залайканные публикации',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'История просмотров ещё не начала накапливаться; данные за первый день появятся завтра.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -951,17 +947,6 @@ const Map<String, String> cevirilerRu = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'У этой студии нет тайтлов такого типа.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Уровень {}/{}',
-  'Sonraki: {}': 'Дальше: {}',
-  'En üst unvan': 'Высший титул',
-  'Meraklı izleyici': 'Любопытный зритель',
-  'Hevesli izleyici': 'Увлечённый зритель',
-  'Amatör izleyici': 'Зритель-любитель',
-  'Kıdemli izleyici': 'Бывалый зритель',
-  'Uzman izleyici': 'Зритель-эксперт',
-  'Profesör izleyici': 'Зритель-профессор',
-  'Efsane izleyici': 'Легендарный зритель',
-  'Ultra mega izleyici': 'Ультра-мега-зритель',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'С днём рождения!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1003,4 +988,40 @@ const Map<String, String> cevirilerRu = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Уровень {}',
+  'Sonraki seviyeye {} puan kaldı': 'Очки до следующего уровня: {}',
+  'Gönderilerin': 'Твои публикации',
+  '{} gönderi': 'Публикации: {}',
+  '{} gönderi · {} görüntülenme': 'Публикации: {} · Просмотры: {}',
+  'önceki {} güne göre': 'к предыдущим {} дням',
+  'önceki {} güne göre %{} arttı': 'к предыдущим {} дням: рост на {}%',
+  'önceki {} güne göre %{} azaldı': 'к предыдущим {} дням: снижение на {}%',
+  'önceki {} güne göre değişmedi': 'к предыдущим {} дням: без изменений',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Просмотры по дням: минимум {}, максимум {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Уровень вовлечённости пока не измерен',
+  'Oranlar': 'Показатели',
+  'Beğenme oranı': 'Доля лайков',
+  'Yorum oranı': 'Доля комментариев',
+  'Paylaşma oranı': 'Доля репостов',
+  'İçeriğe gitme oranı': 'Доля переходов к контенту',
+  'Profile gitme oranı': 'Доля переходов в профиль',
+  'Ziyaretten takibe dönüşüm': 'Из визита в подписку',
+  'beğeni ÷ görüntülenme': 'лайки ÷ просмотры',
+  'yorum ÷ görüntülenme': 'комментарии ÷ просмотры',
+  'paylaşım ÷ görüntülenme': 'репосты ÷ просмотры',
+  'içeriğe tıklama ÷ görüntülenme': 'переходы к контенту ÷ просмотры',
+  'profil ziyareti ÷ görüntülenme': 'переходы в профиль ÷ просмотры',
+  'yeni takip ÷ profil ziyareti': 'новые подписки ÷ переходы в профиль',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Для показателей нужно минимум {} просмотров; сейчас их {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Показатели считаются по числам публикации за всё время; выбор дней ниже их не меняет.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Это числа публикации за всё время (кроме блоков со своей пометкой); выбор дней ниже меняет только график.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Средний просмотр: {}% видео',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Среднее по 20 интервалам кривой удержания.',
 };

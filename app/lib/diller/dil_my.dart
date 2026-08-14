@@ -862,11 +862,7 @@ const Map<String, String> cevirilerMy = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'သင် စီးရီး သို့မဟုတ် ရုပ်ရှင်တစ်ခုကို မှတ်ချက်ရေးလိုက်သည်နှင့် ကြည့်ရှုမှုနှင့် ကြိုက်နှစ်သက်မှု အရေအတွက်များ ဤနေရာတွင် စတင်စုဆောင်းပါမည်။',
   'Tüm zamanlar': 'အချိန်အားလုံး',
-  'Gönderi': 'ပို့စ်များ',
-  'Zaman kırılımı': 'အချိန်အလိုက် ခွဲခြမ်းချက်',
   'Son {} gün': 'နောက်ဆုံး {} ရက်',
-  'En çok görüntülenen gönderilerin': 'အကြည့်အများဆုံး သင့်ပို့စ်များ',
-  'En çok beğenilen gönderilerin': 'ကြိုက်နှစ်သက်မှု အများဆုံး သင့်ပို့စ်များ',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'ကြည့်ရှုမှု မှတ်တမ်း စတင်စုဆောင်းခြင်း မရှိသေးပါ။ ပထမနေ့၏ ဒေတာကို မနက်ဖြန် တွေ့ရပါမည်။',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -958,17 +954,6 @@ const Map<String, String> cevirilerMy = {
   'Firma bulunamadı': 'ကုမ္ပဏီ မတွေ့ပါ',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'ဤကုမ္ပဏီတွင် ဤအမျိုးအစား ဇာတ်လမ်း မရှိပါ။',
-  'Seviye {}/{}': 'အဆင့် {}/{}',
-  'Sonraki: {}': 'နောက်တစ်ဆင့်: {}',
-  'En üst unvan': 'အမြင့်ဆုံးအဆင့်',
-  'Meraklı izleyici': 'စိတ်ဝင်စား ပရိသတ်',
-  'Hevesli izleyici': 'စိတ်အားထက်သန် ပရိသတ်',
-  'Amatör izleyici': 'အပျော်တမ်း ပရိသတ်',
-  'Kıdemli izleyici': 'အတွေ့အကြုံရှိ ပရိသတ်',
-  'Uzman izleyici': 'ကျွမ်းကျင် ပရိသတ်',
-  'Profesör izleyici': 'ပါမောက္ခ ပရိသတ်',
-  'Efsane izleyici': 'ဒဏ္ဍာရီ ပရိသတ်',
-  'Ultra mega izleyici': 'အယ်လ်ထရာ မီဂါ ပရိသတ်',
   'Doğum günün kutlu olsun!': 'မွေးနေ့မင်္ဂလာပါ!',
   'İyi ki doğdun, iyi ki buradasın.':
       'မွေးဖွားလာတာ ကောင်းလိုက်တာ၊ ဒီမှာ ရှိနေတာလည်း ကောင်းလိုက်တာ။',
@@ -1010,4 +995,39 @@ const Map<String, String> cevirilerMy = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'အဆင့် {}',
+  'Sonraki seviyeye {} puan kaldı': 'နောက်အဆင့်အထိ အမှတ် {} လိုသေးသည်',
+  'Gönderilerin': 'သင့်ပို့စ်များ',
+  '{} gönderi': 'ပို့စ် {} ခု',
+  '{} gönderi · {} görüntülenme': 'ပို့စ် {} ခု · ကြည့်ရှုမှု {} ကြိမ်',
+  'önceki {} güne göre': 'ယခင် {} ရက်နှင့် နှိုင်းယှဉ်ပါက',
+  'önceki {} güne göre %{} arttı': 'ယခင် {} ရက်ထက် {}% တိုးလာသည်',
+  'önceki {} güne göre %{} azaldı': 'ယခင် {} ရက်ထက် {}% ကျဆင်းသည်',
+  'önceki {} güne göre değişmedi': 'ယခင် {} ရက်နှင့် မပြောင်းလဲပါ',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'နေ့စဉ် ကြည့်ရှုမှု: အနည်းဆုံး {}၊ အများဆုံး {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'ပါဝင်ဆက်နွှယ်မှုနှုန်းကို မတိုင်းတာနိုင်သေးပါ',
+  'Oranlar': 'နှုန်းများ',
+  'Beğenme oranı': 'နှစ်သက်မှုနှုန်း',
+  'Yorum oranı': 'မှတ်ချက်နှုန်း',
+  'Paylaşma oranı': 'မျှဝေမှုနှုန်း',
+  'İçeriğe gitme oranı': 'အကြောင်းအရာ နှိပ်နှုန်း',
+  'Profile gitme oranı': 'ပရိုဖိုင် ဝင်ကြည့်နှုန်း',
+  'Ziyaretten takibe dönüşüm': 'ဝင်ကြည့်မှ စောင့်ကြည့်',
+  'beğeni ÷ görüntülenme': 'နှစ်သက်မှု ÷ ကြည့်ရှုမှု',
+  'yorum ÷ görüntülenme': 'မှတ်ချက် ÷ ကြည့်ရှုမှု',
+  'paylaşım ÷ görüntülenme': 'မျှဝေမှု ÷ ကြည့်ရှုမှု',
+  'içeriğe tıklama ÷ görüntülenme': 'အကြောင်းအရာ နှိပ်မှု ÷ ကြည့်ရှုမှု',
+  'profil ziyareti ÷ görüntülenme': 'ပရိုဖိုင် ဝင်ကြည့်မှု ÷ ကြည့်ရှုမှု',
+  'yeni takip ÷ profil ziyareti': 'စောင့်ကြည့်မှုအသစ် ÷ ပရိုဖိုင် ဝင်ကြည့်မှု',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'နှုန်းအတွက် ကြည့်ရှုမှု အနည်းဆုံး {} လိုသည်; ယခု {} ရှိသည်။',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'နှုန်းများသည် ပို့စ်၏ အချိန်အားလုံး ကိန်းဂဏန်းများမှ ထွက်သည်; အောက်ပါ ရက်ရွေးချယ်မှုက ၎င်းတို့ကို မပြောင်းလဲပါ။',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ဤကိန်းဂဏန်းများသည် ပို့စ်၏ အချိန်အားလုံး စုစုပေါင်းဖြစ်သည် (ကိုယ်ပိုင်မှတ်စုပါသော အကွက်များမှလွဲ၍); အောက်ပါ ရက်ရွေးချယ်မှုက ဂရပ်ကိုသာ ပြောင်းသည်။',
+  'Ortalama izlenme: videonun %{} kadarı': 'ပျမ်းမျှ ကြည့်ရှုမှု: ဗီဒီယို၏ {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'ဆက်လက်ကြည့်ရှုမှု မျဉ်းကွေး၏ အပိုင်း 20 ခု၏ ပျမ်းမျှ။',
 };

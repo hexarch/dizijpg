@@ -864,11 +864,7 @@ const Map<String, String> cevirilerFr = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Dès que tu commentes une série ou un film, tes vues et j’aime commencent à s’accumuler ici.',
   'Tüm zamanlar': 'Depuis toujours',
-  'Gönderi': 'Publications',
-  'Zaman kırılımı': 'Répartition dans le temps',
   'Son {} gün': '{} derniers jours',
-  'En çok görüntülenen gönderilerin': 'Tes publications les plus vues',
-  'En çok beğenilen gönderilerin': 'Tes publications les plus aimées',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'L’historique des vues n’a pas encore commencé à s’accumuler ; les données du premier jour apparaîtront demain.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -963,17 +959,6 @@ const Map<String, String> cevirilerFr = {
   'Firma bulunamadı': 'Société introuvable',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Cette société n’a aucun titre de ce type.',
-  'Seviye {}/{}': 'Niveau {}/{}',
-  'Sonraki: {}': 'Suivant : {}',
-  'En üst unvan': 'Rang maximal',
-  'Meraklı izleyici': 'Public curieux',
-  'Hevesli izleyici': 'Public enthousiaste',
-  'Amatör izleyici': 'Public amateur',
-  'Kıdemli izleyici': 'Public chevronné',
-  'Uzman izleyici': 'Public expert',
-  'Profesör izleyici': 'Public émérite',
-  'Efsane izleyici': 'Public légendaire',
-  'Ultra mega izleyici': 'Public ultra méga',
   'Doğum günün kutlu olsun!': 'Joyeux anniversaire !',
   'İyi ki doğdun, iyi ki buradasın.':
       'Ta naissance, c’était une bonne idée. Ta présence ici aussi.',
@@ -1013,4 +998,42 @@ const Map<String, String> cevirilerFr = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{} %',
+  'Seviye {}': 'Niveau {}',
+  'Sonraki seviyeye {} puan kaldı': '{} points avant le niveau suivant',
+  'Gönderilerin': 'Tes publications',
+  '{} gönderi': '{} publications',
+  '{} gönderi · {} görüntülenme': '{} publications · {} vues',
+  'önceki {} güne göre': 'vs {} jours précédents',
+  'önceki {} güne göre %{} arttı':
+      'par rapport aux {} jours précédents, hausse de {} %',
+  'önceki {} güne göre %{} azaldı':
+      'par rapport aux {} jours précédents, baisse de {} %',
+  'önceki {} güne göre değişmedi':
+      'sans changement par rapport aux {} jours précédents',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Vues quotidiennes : minimum {}, maximum {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Taux d’engagement pas encore mesurable',
+  'Oranlar': 'Taux',
+  'Beğenme oranı': 'Taux de j’aime',
+  'Yorum oranı': 'Taux de commentaires',
+  'Paylaşma oranı': 'Taux de partages',
+  'İçeriğe gitme oranı': 'Taux de clics contenu',
+  'Profile gitme oranı': 'Taux de visites profil',
+  'Ziyaretten takibe dönüşüm': 'Visite vers abonnement',
+  'beğeni ÷ görüntülenme': 'j’aime ÷ vues',
+  'yorum ÷ görüntülenme': 'commentaires ÷ vues',
+  'paylaşım ÷ görüntülenme': 'partages ÷ vues',
+  'içeriğe tıklama ÷ görüntülenme': 'clics sur le contenu ÷ vues',
+  'profil ziyareti ÷ görüntülenme': 'visites du profil ÷ vues',
+  'yeni takip ÷ profil ziyareti': 'nouveaux abonnements ÷ visites du profil',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Les taux nécessitent au moins {} vues ; il y en a {} pour le moment.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Les taux proviennent des totaux depuis la publication ; le choix des jours ci-dessous ne les modifie pas.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Ces chiffres sont les totaux depuis la publication (sauf les blocs qui ont leur propre note) ; le choix des jours ci-dessous ne modifie que le graphique.',
+  'Ortalama izlenme: videonun %{} kadarı':
+      'Visionnage moyen : {} % de la vidéo',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'La moyenne des 20 segments de la courbe.',
 };

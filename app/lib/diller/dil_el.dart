@@ -859,13 +859,7 @@ const Map<String, String> cevirilerEl = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Μόλις σχολιάσεις μια σειρά ή μια ταινία, οι προβολές και τα «μου αρέσει» σου αρχίζουν να συγκεντρώνονται εδώ.',
   'Tüm zamanlar': 'Όλων των εποχών',
-  'Gönderi': 'Δημοσιεύσεις',
-  'Zaman kırılımı': 'Ανάλυση ανά περίοδο',
   'Son {} gün': 'Τελευταίες {} ημέρες',
-  'En çok görüntülenen gönderilerin':
-      'Οι δημοσιεύσεις σου με τις περισσότερες προβολές',
-  'En çok beğenilen gönderilerin':
-      'Οι δημοσιεύσεις σου με τα περισσότερα «μου αρέσει»',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Το ιστορικό προβολών δεν έχει αρχίσει ακόμα να συγκεντρώνεται· τα δεδομένα της πρώτης ημέρας εμφανίζονται αύριο.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -960,17 +954,6 @@ const Map<String, String> cevirilerEl = {
   'Firma bulunamadı': 'Η εταιρεία δεν βρέθηκε',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Αυτή η εταιρεία δεν έχει τίτλους αυτού του είδους.',
-  'Seviye {}/{}': 'Επίπεδο {}/{}',
-  'Sonraki: {}': 'Επόμενο: {}',
-  'En üst unvan': 'Ανώτατος τίτλος',
-  'Meraklı izleyici': 'Φιλοπερίεργο κοινό',
-  'Hevesli izleyici': 'Ενθουσιώδες κοινό',
-  'Amatör izleyici': 'Ερασιτεχνικό κοινό',
-  'Kıdemli izleyici': 'Έμπειρο κοινό',
-  'Uzman izleyici': 'Εξειδικευμένο κοινό',
-  'Profesör izleyici': 'Πανεπιστημιακό κοινό',
-  'Efsane izleyici': 'Θρυλικό κοινό',
-  'Ultra mega izleyici': 'Υπερμέγιστο κοινό',
   'Doğum günün kutlu olsun!': 'Χρόνια πολλά!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Καλά που γεννήθηκες, καλά που είσαι εδώ.',
@@ -1012,4 +995,42 @@ const Map<String, String> cevirilerEl = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Επίπεδο {}',
+  'Sonraki seviyeye {} puan kaldı': '{} πόντοι για το επόμενο επίπεδο',
+  'Gönderilerin': 'Οι δημοσιεύσεις σου',
+  '{} gönderi': '{} δημοσιεύσεις',
+  '{} gönderi · {} görüntülenme': '{} δημοσιεύσεις · {} προβολές',
+  'önceki {} güne göre': 'σε σχέση με τις προηγούμενες {} ημέρες',
+  'önceki {} güne göre %{} arttı':
+      'σε σχέση με τις προηγούμενες {} ημέρες, αύξηση {}%',
+  'önceki {} güne göre %{} azaldı':
+      'σε σχέση με τις προηγούμενες {} ημέρες, μείωση {}%',
+  'önceki {} güne göre değişmedi':
+      'χωρίς μεταβολή σε σχέση με τις προηγούμενες {} ημέρες',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Ημερήσιες προβολές: ελάχιστο {}, μέγιστο {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Το ποσοστό αλληλεπίδρασης δεν μετριέται ακόμα',
+  'Oranlar': 'Ποσοστά',
+  'Beğenme oranı': 'Ποσοστό «Μου αρέσει»',
+  'Yorum oranı': 'Ποσοστό σχολίων',
+  'Paylaşma oranı': 'Ποσοστό κοινοποιήσεων',
+  'İçeriğe gitme oranı': 'Ποσοστό πατημάτων',
+  'Profile gitme oranı': 'Ποσοστό επισκέψεων',
+  'Ziyaretten takibe dönüşüm': 'Επίσκεψη σε ακολούθηση',
+  'beğeni ÷ görüntülenme': 'μου αρέσει ÷ προβολές',
+  'yorum ÷ görüntülenme': 'σχόλια ÷ προβολές',
+  'paylaşım ÷ görüntülenme': 'κοινοποιήσεις ÷ προβολές',
+  'içeriğe tıklama ÷ görüntülenme': 'πατήματα στο περιεχόμενο ÷ προβολές',
+  'profil ziyareti ÷ görüntülenme': 'επισκέψεις προφίλ ÷ προβολές',
+  'yeni takip ÷ profil ziyareti': 'νέες ακολουθήσεις ÷ επισκέψεις προφίλ',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Τα ποσοστά χρειάζονται τουλάχιστον {} προβολές· τώρα υπάρχουν {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Τα ποσοστά προκύπτουν από τα συνολικά νούμερα της δημοσίευσης· η επιλογή ημερών παρακάτω δεν τα αλλάζει.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Αυτά τα νούμερα είναι τα συνολικά της δημοσίευσης (εκτός από τα πλαίσια με δική τους σημείωση)· η επιλογή ημερών παρακάτω αλλάζει μόνο το γράφημα.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Μέση παρακολούθηση: {}% του βίντεο',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Ο μέσος όρος των 20 τμημάτων της καμπύλης.',
 };

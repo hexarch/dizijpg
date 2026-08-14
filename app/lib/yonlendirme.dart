@@ -330,11 +330,18 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
                 );
         },
       ),
-      // Kendi gönderinin istatistikleri (md. 23) — göz ikonunun yanındaki
-      // "istatistikleri gör" girişi buraya gelir. Kabuğun DIŞINDA tam ekran,
-      // geri tuşu gönderiye döner. Uç yalnız SAHİBİNE cevap verir; başkası
-      // derin bağlantıyla girerse ekran "gönderi bulunamadı" der (404 —
-      // 403 varlığı ele verirdi).
+      // Kendi gönderinin istatistikleri (md. 23) — TAM EKRAN hâli.
+      //
+      // GÖNDERİ KARTINDAKİ "İstatistikleri gör" ARTIK BURAYA GELMİYOR: o giriş
+      // `gonderiIstatistikAc` ile MODAL açıyor (liste arkada kalsın, bağlam
+      // korunsun). Bu rota YİNE DE DURUYOR ve durmalı — paylaşılmış bağlantı,
+      // tarayıcı geçmişi ve oturumsuz erişim testi (`seo_gizlilik.test.js`)
+      // bu adresi kullanıyor. İki kabuk da AYNI gövdeyi
+      // (`GonderiIstatistikGovdesi`) çiziyor, yani içerik ayrışamaz.
+      //
+      // Kabuğun DIŞINDA tam ekran, geri tuşu gönderiye döner. Uç yalnız
+      // SAHİBİNE cevap verir; başkası derin bağlantıyla girerse ekran
+      // "gönderi bulunamadı" der (404 — 403 varlığı ele verirdi).
       //
       // NEDEN `/gonderi/:id/istatistik` DEĞİL: robots.txt ön ek kuralları
       // JOKER İÇERMİYOR (seo_gizlilik.test.js bunu kilitliyor) ve id ORTADA

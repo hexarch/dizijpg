@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:crop_your_image/crop_your_image.dart';
+import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/gorsel_kirp.dart';
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// MODAL TARAMASINDA BULUNAN DİĞER ALT-GÜVENLİ-ALAN HATALARI.
@@ -57,9 +59,16 @@ Map<String, dynamic> _yorum() => {
   'begeni': 2,
 };
 
-Widget _agac(Widget cocuk) => MaterialApp(
-  theme: diziTema(acik: false),
-  home: Scaffold(body: cocuk),
+/// [Oturum] sağlayıcısı ŞART: [ProfilYorumKarti] artık "bu gönderi benim mi"
+/// sorusunu oturumdan soruyor (kendi gönderinde "İstatistikleri gör" girişi
+/// çıkar — `profil_istatistik_girisi_test.dart`). Burada oturum BOŞ bırakıldı:
+/// giriş çizilmez, ölçülen alt-güvenli-alan düzeni birebir aynı kalır.
+Widget _agac(Widget cocuk) => ChangeNotifierProvider<Oturum>.value(
+  value: Oturum(),
+  child: MaterialApp(
+    theme: diziTema(acik: false),
+    home: Scaffold(body: cocuk),
+  ),
 );
 
 Future<void> _kur(WidgetTester tester, Widget agac) async {

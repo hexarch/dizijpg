@@ -859,11 +859,7 @@ const Map<String, String> cevirilerPt = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Quando você comentar em uma série ou filme, suas visualizações e curtidas começam a se acumular aqui.',
   'Tüm zamanlar': 'Desde sempre',
-  'Gönderi': 'Publicações',
-  'Zaman kırılımı': 'Divisão por período',
   'Son {} gün': 'Últimos {} dias',
-  'En çok görüntülenen gönderilerin': 'Suas publicações mais vistas',
-  'En çok beğenilen gönderilerin': 'Suas publicações mais curtidas',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'O histórico de visualizações ainda não começou a se acumular; os dados do primeiro dia aparecem amanhã.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -959,17 +955,6 @@ const Map<String, String> cevirilerPt = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Esta produtora não tem títulos desse tipo.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Nível {}/{}',
-  'Sonraki: {}': 'Próximo: {}',
-  'En üst unvan': 'Título máximo',
-  'Meraklı izleyici': 'Espectador curioso',
-  'Hevesli izleyici': 'Espectador animado',
-  'Amatör izleyici': 'Espectador amador',
-  'Kıdemli izleyici': 'Espectador veterano',
-  'Uzman izleyici': 'Espectador especialista',
-  'Profesör izleyici': 'Espectador professor',
-  'Efsane izleyici': 'Espectador lendário',
-  'Ultra mega izleyici': 'Espectador ultra mega',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'Feliz aniversário!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -1012,4 +997,44 @@ const Map<String, String> cevirilerPt = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Nível {}',
+  'Sonraki seviyeye {} puan kaldı': 'Pontos para o próximo nível: {}',
+  'Gönderilerin': 'Suas publicações',
+  '{} gönderi': 'Publicações: {}',
+  '{} gönderi · {} görüntülenme': 'Publicações: {} · Visualizações: {}',
+  'önceki {} güne göre': 'em relação aos {} dias anteriores',
+  'önceki {} güne göre %{} arttı':
+      'em relação aos {} dias anteriores, subiu {}%',
+  'önceki {} güne göre %{} azaldı':
+      'em relação aos {} dias anteriores, desceu {}%',
+  'önceki {} güne göre değişmedi':
+      'sem alteração em relação aos {} dias anteriores',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Visualizações diárias: mínimo {}, máximo {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'A taxa de interação ainda não pôde ser medida',
+  'Oranlar': 'Taxas',
+  'Beğenme oranı': 'Taxa de curtidas',
+  'Yorum oranı': 'Taxa de comentários',
+  'Paylaşma oranı': 'Taxa de partilhas',
+  'İçeriğe gitme oranı': 'Taxa de toques no conteúdo',
+  'Profile gitme oranı': 'Taxa de visitas ao perfil',
+  'Ziyaretten takibe dönüşüm': 'De visita a seguidor',
+  'beğeni ÷ görüntülenme': 'curtidas ÷ visualizações',
+  'yorum ÷ görüntülenme': 'comentários ÷ visualizações',
+  'paylaşım ÷ görüntülenme': 'partilhas ÷ visualizações',
+  'içeriğe tıklama ÷ görüntülenme': 'toques no conteúdo ÷ visualizações',
+  'profil ziyareti ÷ görüntülenme': 'visitas ao perfil ÷ visualizações',
+  'yeni takip ÷ profil ziyareti': 'novos seguidores ÷ visitas ao perfil',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'As taxas precisam de pelo menos {} visualizações; de momento há {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'As taxas vêm dos totais de sempre da publicação; a seleção de dias abaixo não as altera.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Estes números são os totais de sempre da publicação (exceto as caixas com nota própria); a seleção de dias abaixo altera apenas o gráfico.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Visualização média: {}% do vídeo',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Média dos 20 intervalos da curva de retenção.',
 };

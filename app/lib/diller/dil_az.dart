@@ -844,11 +844,7 @@ const Map<String, String> cevirilerAz = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Hər hansı serial və ya filmə şərh yazdığın anda baxış və bəyənmə sayların burada toplanmağa başlayır.',
   'Tüm zamanlar': 'Bütün zamanlar',
-  'Gönderi': 'Paylaşımlar',
-  'Zaman kırılımı': 'Zaman bölgüsü',
   'Son {} gün': 'Son {} gün',
-  'En çok görüntülenen gönderilerin': 'Ən çox baxılan paylaşımların',
-  'En çok beğenilen gönderilerin': 'Ən çox bəyənilən paylaşımların',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Baxış tarixçəsi hələ toplanmağa başlamayıb; ilk günün məlumatı sabah görünür.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -942,17 +938,6 @@ const Map<String, String> cevirilerAz = {
   'Firma bulunamadı': 'Şirkət tapılmadı',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Bu şirkətin bu növdə əsəri yoxdur.',
-  'Seviye {}/{}': 'Səviyyə {}/{}',
-  'Sonraki: {}': 'Növbəti: {}',
-  'En üst unvan': 'Ən yüksək ad',
-  'Meraklı izleyici': 'Maraqcıl izləyici',
-  'Hevesli izleyici': 'Həvəsli izləyici',
-  'Amatör izleyici': 'Amator izləyici',
-  'Kıdemli izleyici': 'Təcrübəli izləyici',
-  'Uzman izleyici': 'Ekspert izləyici',
-  'Profesör izleyici': 'Professor izləyici',
-  'Efsane izleyici': 'Əfsanəvi izləyici',
-  'Ultra mega izleyici': 'Ultra meqa izləyici',
   'Doğum günün kutlu olsun!': 'Ad günün mübarək!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Yaxşı ki doğulmusan, yaxşı ki buradasan.',
@@ -991,4 +976,39 @@ const Map<String, String> cevirilerAz = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Səviyyə {}',
+  'Sonraki seviyeye {} puan kaldı': 'Növbəti səviyyəyə {} xal qaldı',
+  'Gönderilerin': 'Paylaşımların',
+  '{} gönderi': '{} paylaşım',
+  '{} gönderi · {} görüntülenme': '{} paylaşım · {} baxış',
+  'önceki {} güne göre': 'əvvəlki {} günə görə',
+  'önceki {} güne göre %{} arttı': 'əvvəlki {} günə görə {}% artıb',
+  'önceki {} güne göre %{} azaldı': 'əvvəlki {} günə görə {}% azalıb',
+  'önceki {} güne göre değişmedi': 'əvvəlki {} günə görə dəyişməyib',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Gündəlik baxış: ən az {}, ən çox {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Qarşılıqlı əlaqə nisbəti hələ ölçülə bilmir',
+  'Oranlar': 'Nisbətlər',
+  'Beğenme oranı': 'Bəyənmə nisbəti',
+  'Yorum oranı': 'Şərh nisbəti',
+  'Paylaşma oranı': 'Paylaşma nisbəti',
+  'İçeriğe gitme oranı': 'Məzmuna keçid nisbəti',
+  'Profile gitme oranı': 'Profil ziyarəti nisbəti',
+  'Ziyaretten takibe dönüşüm': 'Ziyarətdən izləyiciyə',
+  'beğeni ÷ görüntülenme': 'bəyənmə ÷ baxış',
+  'yorum ÷ görüntülenme': 'şərh ÷ baxış',
+  'paylaşım ÷ görüntülenme': 'paylaşma ÷ baxış',
+  'içeriğe tıklama ÷ görüntülenme': 'məzmuna toxunuşlar ÷ baxış',
+  'profil ziyareti ÷ görüntülenme': 'profil ziyarətləri ÷ baxış',
+  'yeni takip ÷ profil ziyareti': 'yeni izləmələr ÷ profil ziyarətləri',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Nisbətlər üçün ən azı {} baxış lazımdır; hazırda {} var.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Nisbətlər paylaşımın bütün dövr üzrə saylarından çıxır; aşağıdakı gün seçimi onları dəyişmir.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Bu saylar paylaşımın bütün dövr üzrə cəmidir (öz qeydi olan qutular istisna); aşağıdakı gün seçimi yalnız qrafiki dəyişir.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Orta izlənmə: videonun {}%-i',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Əyrinin 20 hissəsinin ortalaması.',
 };

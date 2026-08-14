@@ -858,11 +858,7 @@ const Map<String, String> cevirilerIt = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Quando commenti una serie o un film, le tue visualizzazioni e i mi piace iniziano ad accumularsi qui.',
   'Tüm zamanlar': 'Da sempre',
-  'Gönderi': 'Post',
-  'Zaman kırılımı': 'Ripartizione temporale',
   'Son {} gün': 'Ultimi {} giorni',
-  'En çok görüntülenen gönderilerin': 'I tuoi post più visti',
-  'En çok beğenilen gönderilerin': 'I tuoi post più apprezzati',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'La cronologia delle visualizzazioni non ha ancora iniziato ad accumularsi; i dati del primo giorno appaiono domani.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -955,17 +951,6 @@ const Map<String, String> cevirilerIt = {
   'Firma bulunamadı': 'Casa di produzione non trovata',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Questa casa di produzione non ha titoli di questo tipo.',
-  'Seviye {}/{}': 'Livello {}/{}',
-  'Sonraki: {}': 'Prossimo: {}',
-  'En üst unvan': 'Grado massimo',
-  'Meraklı izleyici': 'Occhio curioso',
-  'Hevesli izleyici': 'Occhio entusiasta',
-  'Amatör izleyici': 'Occhio amatoriale',
-  'Kıdemli izleyici': 'Occhio veterano',
-  'Uzman izleyici': 'Occhio esperto',
-  'Profesör izleyici': 'Occhio da professore',
-  'Efsane izleyici': 'Occhio leggendario',
-  'Ultra mega izleyici': 'Occhio ultra mega',
   'Doğum günün kutlu olsun!': 'Buon compleanno!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Che bello che tu esista, che bello averti qui.',
@@ -1006,4 +991,41 @@ const Map<String, String> cevirilerIt = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Livello {}',
+  'Sonraki seviyeye {} puan kaldı': '{} punti al livello successivo',
+  'Gönderilerin': 'I tuoi post',
+  '{} gönderi': '{} post',
+  '{} gönderi · {} görüntülenme': '{} post · {} visualizzazioni',
+  'önceki {} güne göre': 'rispetto ai {} giorni precedenti',
+  'önceki {} güne göre %{} arttı':
+      'rispetto ai {} giorni precedenti: aumento del {}%',
+  'önceki {} güne göre %{} azaldı':
+      'rispetto ai {} giorni precedenti: calo del {}%',
+  'önceki {} güne göre değişmedi': 'invariato rispetto ai {} giorni precedenti',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Visualizzazioni giornaliere: minimo {}, massimo {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Tasso di interazione non ancora misurabile',
+  'Oranlar': 'Tassi',
+  'Beğenme oranı': 'Tasso di mi piace',
+  'Yorum oranı': 'Tasso di commenti',
+  'Paylaşma oranı': 'Tasso di condivisioni',
+  'İçeriğe gitme oranı': 'Tasso tocchi contenuto',
+  'Profile gitme oranı': 'Tasso visite al profilo',
+  'Ziyaretten takibe dönüşüm': 'Da visita a follower',
+  'beğeni ÷ görüntülenme': 'mi piace ÷ visualizzazioni',
+  'yorum ÷ görüntülenme': 'commenti ÷ visualizzazioni',
+  'paylaşım ÷ görüntülenme': 'condivisioni ÷ visualizzazioni',
+  'içeriğe tıklama ÷ görüntülenme': 'tocchi sul contenuto ÷ visualizzazioni',
+  'profil ziyareti ÷ görüntülenme': 'visite al profilo ÷ visualizzazioni',
+  'yeni takip ÷ profil ziyareti': 'nuovi follower ÷ visite al profilo',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Per i tassi servono almeno {} visualizzazioni; al momento ce ne sono {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'I tassi derivano dai totali di sempre del post; la selezione dei giorni qui sotto non li cambia.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Questi numeri sono i totali di sempre del post (tranne i riquadri con una nota propria); la selezione dei giorni qui sotto cambia solo il grafico.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Visione media: il {}% del video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'La media dei 20 segmenti della curva di visione.',
 };

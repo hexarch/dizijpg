@@ -849,11 +849,7 @@ const Map<String, String> cevirilerNb = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Når du kommenterer en serie eller film, begynner visningene og likerklikkene dine å samle seg her.',
   'Tüm zamanlar': 'Gjennom tidene',
-  'Gönderi': 'Innlegg',
-  'Zaman kırılımı': 'Fordeling over tid',
   'Son {} gün': 'Siste {} dager',
-  'En çok görüntülenen gönderilerin': 'De mest sette innleggene dine',
-  'En çok beğenilen gönderilerin': 'De mest likte innleggene dine',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Visningshistorikken har ikke begynt å samle seg ennå; dataene for første dag vises i morgen.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -946,17 +942,6 @@ const Map<String, String> cevirilerNb = {
   'Firma bulunamadı': 'Fant ikke selskapet',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Dette selskapet har ingen titler av denne typen.',
-  'Seviye {}/{}': 'Nivå {}/{}',
-  'Sonraki: {}': 'Neste: {}',
-  'En üst unvan': 'Høyeste rang',
-  'Meraklı izleyici': 'Nysgjerrig seer',
-  'Hevesli izleyici': 'Ivrig seer',
-  'Amatör izleyici': 'Amatørseer',
-  'Kıdemli izleyici': 'Erfaren seer',
-  'Uzman izleyici': 'Ekspertseer',
-  'Profesör izleyici': 'Professorseer',
-  'Efsane izleyici': 'Legendarisk seer',
-  'Ultra mega izleyici': 'Ultra mega seer',
   'Doğum günün kutlu olsun!': 'Gratulerer med dagen!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Så fint at du ble født, og så fint at du er her.',
@@ -998,4 +983,39 @@ const Map<String, String> cevirilerNb = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{} %',
+  'Seviye {}': 'Nivå {}',
+  'Sonraki seviyeye {} puan kaldı': '{} poeng til neste nivå',
+  'Gönderilerin': 'Innleggene dine',
+  '{} gönderi': '{} innlegg',
+  '{} gönderi · {} görüntülenme': '{} innlegg · {} visninger',
+  'önceki {} güne göre': 'mot forrige {} dager',
+  'önceki {} güne göre %{} arttı': 'mot forrige {} dager: opp {} %',
+  'önceki {} güne göre %{} azaldı': 'mot forrige {} dager: ned {} %',
+  'önceki {} güne göre değişmedi': 'uendret mot forrige {} dager',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Daglige visninger: lavest {}, høyest {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Interaksjonsraten kan ikke måles ennå',
+  'Oranlar': 'Rater',
+  'Beğenme oranı': 'Likerklikkrate',
+  'Yorum oranı': 'Kommentarrate',
+  'Paylaşma oranı': 'Delingsrate',
+  'İçeriğe gitme oranı': 'Trykkrate for innhold',
+  'Profile gitme oranı': 'Profilbesøksrate',
+  'Ziyaretten takibe dönüşüm': 'Fra besøk til følge',
+  'beğeni ÷ görüntülenme': 'likerklikk ÷ visninger',
+  'yorum ÷ görüntülenme': 'kommentarer ÷ visninger',
+  'paylaşım ÷ görüntülenme': 'delinger ÷ visninger',
+  'içeriğe tıklama ÷ görüntülenme': 'trykk på innhold ÷ visninger',
+  'profil ziyareti ÷ görüntülenme': 'profilbesøk ÷ visninger',
+  'yeni takip ÷ profil ziyareti': 'nye følgere ÷ profilbesøk',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Ratene trenger minst {} visninger; nå er det {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Ratene kommer fra innleggets tall gjennom tidene; dagvalget nedenfor endrer dem ikke.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Disse tallene er innleggets totaler gjennom tidene (unntatt boksene med egen merknad); dagvalget nedenfor endrer bare grafen.',
+  'Ortalama izlenme: videonun %{} kadarı':
+      'Gjennomsnittlig sett: {} % av videoen',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Gjennomsnittet av de 20 delene i seerkurven.',
 };

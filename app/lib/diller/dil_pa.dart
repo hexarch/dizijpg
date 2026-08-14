@@ -847,11 +847,7 @@ const Map<String, String> cevirilerPa = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'ਜਦੋਂ ਤੂੰ ਕਿਸੇ ਸੀਰੀਜ਼ ਜਾਂ ਫ਼ਿਲਮ ’ਤੇ ਕਮੈਂਟ ਲਿਖੇਂਗਾ, ਤੇਰੇ ਵਿਊ ਅਤੇ ਲਾਈਕ ਇੱਥੇ ਇਕੱਠੇ ਹੋਣ ਲੱਗਣਗੇ।',
   'Tüm zamanlar': 'ਹਰ ਸਮੇਂ ਦਾ',
-  'Gönderi': 'ਪੋਸਟਾਂ',
-  'Zaman kırılımı': 'ਸਮੇਂ ਮੁਤਾਬਕ ਵੰਡ',
   'Son {} gün': 'ਪਿਛਲੇ {} ਦਿਨ',
-  'En çok görüntülenen gönderilerin': 'ਤੇਰੀਆਂ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਪੋਸਟਾਂ',
-  'En çok beğenilen gönderilerin': 'ਤੇਰੀਆਂ ਸਭ ਤੋਂ ਵੱਧ ਲਾਈਕ ਹੋਈਆਂ ਪੋਸਟਾਂ',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'ਵਿਊ ਦਾ ਇਤਿਹਾਸ ਹਾਲੇ ਇਕੱਠਾ ਹੋਣਾ ਸ਼ੁਰੂ ਨਹੀਂ ਹੋਇਆ; ਪਹਿਲੇ ਦਿਨ ਦਾ ਡੇਟਾ ਕੱਲ੍ਹ ਦਿਸੇਗਾ।',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -945,17 +941,6 @@ const Map<String, String> cevirilerPa = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'ਇਸ ਕੰਪਨੀ ਦਾ ਇਸ ਕਿਸਮ ਦਾ ਕੋਈ ਕੰਮ ਸੂਚੀ ਵਿੱਚ ਨਹੀਂ ਹੈ।',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'ਪੱਧਰ {}/{}',
-  'Sonraki: {}': 'ਅਗਲਾ: {}',
-  'En üst unvan': 'ਸਭ ਤੋਂ ਉੱਚਾ ਖ਼ਿਤਾਬ',
-  'Meraklı izleyici': 'ਉਤਸੁਕ ਦਰਸ਼ਕ',
-  'Hevesli izleyici': 'ਉਤਸ਼ਾਹੀ ਦਰਸ਼ਕ',
-  'Amatör izleyici': 'ਸ਼ੌਕੀਆ ਦਰਸ਼ਕ',
-  'Kıdemli izleyici': 'ਸੀਨੀਅਰ ਦਰਸ਼ਕ',
-  'Uzman izleyici': 'ਮਾਹਿਰ ਦਰਸ਼ਕ',
-  'Profesör izleyici': 'ਪ੍ਰੋਫੈਸਰ ਦਰਸ਼ਕ',
-  'Efsane izleyici': 'ਲੈਜੰਡ ਦਰਸ਼ਕ',
-  'Ultra mega izleyici': 'ਅਲਟਰਾ ਮੈਗਾ ਦਰਸ਼ਕ',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'ਜਨਮਦਿਨ ਮੁਬਾਰਕ!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -998,4 +983,40 @@ const Map<String, String> cevirilerPa = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'ਪੱਧਰ {}',
+  'Sonraki seviyeye {} puan kaldı': 'ਅਗਲੇ ਪੱਧਰ ਤੱਕ {} ਅੰਕ ਬਾਕੀ',
+  'Gönderilerin': 'ਤੇਰੀਆਂ ਪੋਸਟਾਂ',
+  '{} gönderi': 'ਪੋਸਟਾਂ: {}',
+  '{} gönderi · {} görüntülenme': 'ਪੋਸਟਾਂ: {} · ਵਿਊ: {}',
+  'önceki {} güne göre': 'ਪਿਛਲੇ {} ਦਿਨਾਂ ਦੇ ਮੁਕਾਬਲੇ',
+  'önceki {} güne göre %{} arttı': 'ਪਿਛਲੇ {} ਦਿਨਾਂ ਦੇ ਮੁਕਾਬਲੇ {}% ਵਾਧਾ',
+  'önceki {} güne göre %{} azaldı': 'ਪਿਛਲੇ {} ਦਿਨਾਂ ਦੇ ਮੁਕਾਬਲੇ {}% ਕਮੀ',
+  'önceki {} güne göre değişmedi': 'ਪਿਛਲੇ {} ਦਿਨਾਂ ਦੇ ਮੁਕਾਬਲੇ ਕੋਈ ਬਦਲਾਅ ਨਹੀਂ',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'ਰੋਜ਼ਾਨਾ ਵਿਊ: ਸਭ ਤੋਂ ਘੱਟ {}, ਸਭ ਤੋਂ ਵੱਧ {}',
+  'Etkileşim oranı henüz ölçülemedi': 'ਸ਼ਮੂਲੀਅਤ ਦਰ ਹਾਲੇ ਮਾਪੀ ਨਹੀਂ ਜਾ ਸਕੀ',
+  'Oranlar': 'ਦਰਾਂ',
+  'Beğenme oranı': 'ਲਾਈਕ ਦਰ',
+  'Yorum oranı': 'ਟਿੱਪਣੀ ਦਰ',
+  'Paylaşma oranı': 'ਸਾਂਝਾ ਕਰਨ ਦੀ ਦਰ',
+  'İçeriğe gitme oranı': 'ਸਮੱਗਰੀ ਟੈਪ ਦਰ',
+  'Profile gitme oranı': 'ਪ੍ਰੋਫਾਈਲ ਫੇਰੀ ਦਰ',
+  'Ziyaretten takibe dönüşüm': 'ਫੇਰੀ ਤੋਂ ਫਾਲੋ ਦਰ',
+  'beğeni ÷ görüntülenme': 'ਲਾਈਕ ÷ ਵਿਊਜ਼',
+  'yorum ÷ görüntülenme': 'ਟਿੱਪਣੀਆਂ ÷ ਵਿਊਜ਼',
+  'paylaşım ÷ görüntülenme': 'ਸਾਂਝੇ ÷ ਵਿਊਜ਼',
+  'içeriğe tıklama ÷ görüntülenme': 'ਸਮੱਗਰੀ ਉੱਤੇ ਟੈਪ ÷ ਵਿਊਜ਼',
+  'profil ziyareti ÷ görüntülenme': 'ਪ੍ਰੋਫਾਈਲ ਫੇਰੀਆਂ ÷ ਵਿਊਜ਼',
+  'yeni takip ÷ profil ziyareti': 'ਨਵੇਂ ਫਾਲੋ ÷ ਪ੍ਰੋਫਾਈਲ ਫੇਰੀਆਂ',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'ਦਰ ਲਈ ਘੱਟੋ-ਘੱਟ {} ਵਿਊਜ਼ ਚਾਹੀਦੇ ਹਨ; ਹੁਣ {} ਹਨ।',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'ਦਰਾਂ ਪੋਸਟ ਦੇ ਪੂਰੇ ਸਮੇਂ ਦੇ ਕੁੱਲ ਅੰਕੜਿਆਂ ਤੋਂ ਬਣਦੀਆਂ ਹਨ; ਹੇਠਾਂ ਦਿੱਤੀ ਦਿਨ ਚੋਣ ਇਨ੍ਹਾਂ ਨੂੰ ਨਹੀਂ ਬਦਲਦੀ।',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ਇਹ ਅੰਕੜੇ ਪੋਸਟ ਦੇ ਪੂਰੇ ਸਮੇਂ ਦੇ ਕੁੱਲ ਹਨ (ਆਪਣੀ ਵੱਖਰੀ ਟਿੱਪਣੀ ਵਾਲੇ ਖਾਨੇ ਛੱਡ ਕੇ); ਹੇਠਾਂ ਦਿੱਤੀ ਦਿਨ ਚੋਣ ਸਿਰਫ਼ ਗ੍ਰਾਫ਼ ਬਦਲਦੀ ਹੈ।',
+  'Ortalama izlenme: videonun %{} kadarı': 'ਔਸਤ ਦੇਖਿਆ: ਵੀਡੀਓ ਦਾ {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'ਰਿਟੈਨਸ਼ਨ ਕਰਵ ਦੇ 20 ਖਾਨਿਆਂ ਦੀ ਔਸਤ।',
 };

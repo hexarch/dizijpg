@@ -830,11 +830,7 @@ const Map<String, String> cevirilerAm = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'በተከታታይ ድራማ ወይም ፊልም ላይ አስተያየት ሲጻፍ የእይታና የውዴታ ቁጥሮች እዚህ መከማቸት ይጀምራሉ።',
   'Tüm zamanlar': 'ሁሉም ጊዜ',
-  'Gönderi': 'ልጥፎች',
-  'Zaman kırılımı': 'የጊዜ ክፍፍል',
   'Son {} gün': 'ያለፉት {} ቀናት',
-  'En çok görüntülenen gönderilerin': 'በብዛት የታዩ ልጥፎች',
-  'En çok beğenilen gönderilerin': 'በብዛት የተወደዱ ልጥፎች',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'የእይታ ታሪክ ገና መከማቸት አልጀመረም፤ የመጀመሪያው ቀን መረጃ ነገ ይታያል።',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -923,17 +919,6 @@ const Map<String, String> cevirilerAm = {
   'Yapım Firması': 'የፕሮዳክሽን ኩባንያ',
   'Firma bulunamadı': 'ኩባንያው አልተገኘም',
   'Bu firmanın bu türde listelenecek yapımı yok.': 'ይህ ኩባንያ በዚህ ዓይነት ሥራ የለውም።',
-  'Seviye {}/{}': 'ደረጃ {}/{}',
-  'Sonraki: {}': 'ቀጣይ፦ {}',
-  'En üst unvan': 'ከፍተኛው ማዕረግ',
-  'Meraklı izleyici': 'ጉጉ ተመልካች',
-  'Hevesli izleyici': 'ወዳድ ተመልካች',
-  'Amatör izleyici': 'አማተር ተመልካች',
-  'Kıdemli izleyici': 'አንጋፋ ተመልካች',
-  'Uzman izleyici': 'ባለሙያ ተመልካች',
-  'Profesör izleyici': 'ፕሮፌሰር ተመልካች',
-  'Efsane izleyici': 'አፈታሪካዊ ተመልካች',
-  'Ultra mega izleyici': 'ኡልትራ ሜጋ ተመልካች',
   'Doğum günün kutlu olsun!': 'መልካም ልደት!',
   'İyi ki doğdun, iyi ki buradasın.': 'መወለድዎ ደስታ ነው፣ ከእኛ ጋር መሆንዎም እንዲሁ።',
   'Bugün {} yaşına girdin': 'ዛሬ {} ዓመት ሞላዎት',
@@ -971,4 +956,37 @@ const Map<String, String> cevirilerAm = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'ደረጃ {}',
+  'Sonraki seviyeye {} puan kaldı': 'ወደ ቀጣዩ ደረጃ {} ነጥብ ቀርቷል',
+  'Gönderilerin': 'ልጥፎችዎ',
+  '{} gönderi': '{} ልጥፍ',
+  '{} gönderi · {} görüntülenme': '{} ልጥፍ · {} እይታ',
+  'önceki {} güne göre': 'ካለፉት {} ቀናት አንጻር',
+  'önceki {} güne göre %{} arttı': 'ካለፉት {} ቀናት አንጻር በ{}% ጨምሯል',
+  'önceki {} güne göre %{} azaldı': 'ካለፉት {} ቀናት አንጻር በ{}% ቀንሷል',
+  'önceki {} güne göre değişmedi': 'ካለፉት {} ቀናት አንጻር አልተለወጠም',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'ዕለታዊ እይታ፦ ዝቅተኛ {}፣ ከፍተኛ {}',
+  'Etkileşim oranı henüz ölçülemedi': 'የተሳትፎ መጠን ገና አልተለካም',
+  'Oranlar': 'መጠኖች',
+  'Beğenme oranı': 'የመውደድ መጠን',
+  'Yorum oranı': 'የአስተያየት መጠን',
+  'Paylaşma oranı': 'የማጋራት መጠን',
+  'İçeriğe gitme oranı': 'የይዘት ንክኪ መጠን',
+  'Profile gitme oranı': 'የመገለጫ ጉብኝት መጠን',
+  'Ziyaretten takibe dönüşüm': 'ከጉብኝት ወደ ክትትል',
+  'beğeni ÷ görüntülenme': 'መውደዶች ÷ እይታዎች',
+  'yorum ÷ görüntülenme': 'አስተያየቶች ÷ እይታዎች',
+  'paylaşım ÷ görüntülenme': 'ማጋራቶች ÷ እይታዎች',
+  'içeriğe tıklama ÷ görüntülenme': 'የይዘት ንክኪዎች ÷ እይታዎች',
+  'profil ziyareti ÷ görüntülenme': 'የመገለጫ ጉብኝቶች ÷ እይታዎች',
+  'yeni takip ÷ profil ziyareti': 'አዲስ ክትትሎች ÷ የመገለጫ ጉብኝቶች',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'ለመጠኖቹ ቢያንስ {} እይታ ያስፈልጋል፤ አሁን {} አለ።',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'መጠኖቹ የልጥፉ የዕድሜ ልክ ቁጥሮች ላይ ተመሥርተዋል፤ ከታች ያለው የቀን ምርጫ አይለውጣቸውም።',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'እነዚህ ቁጥሮች የልጥፉ የዕድሜ ልክ ድምር ናቸው (የራሳቸው ማስታወሻ ያላቸው ሳጥኖች ሳይጨመሩ)፤ ከታች ያለው የቀን ምርጫ ግራፉን ብቻ ይለውጣል።',
+  'Ortalama izlenme: videonun %{} kadarı': 'አማካይ እይታ፦ የቪዲዮው {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.': 'የመስመሩ 20 ክፍሎች አማካይ።',
 };

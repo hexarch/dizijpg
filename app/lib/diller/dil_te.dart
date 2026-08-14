@@ -846,11 +846,7 @@ const Map<String, String> cevirilerTe = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'నువ్వు ఏదైనా సిరీస్ లేదా సినిమాకు కామెంట్ రాస్తే, నీ వీక్షణలు, లైక్‌ల సంఖ్య ఇక్కడ పేరుకోవడం మొదలవుతుంది.',
   'Tüm zamanlar': 'మొత్తం కాలం',
-  'Gönderi': 'పోస్టులు',
-  'Zaman kırılımı': 'కాల విభజన',
   'Son {} gün': 'గత {} రోజులు',
-  'En çok görüntülenen gönderilerin': 'నీ అత్యధికంగా చూసిన పోస్టులు',
-  'En çok beğenilen gönderilerin': 'నీ అత్యధిక లైక్‌లు వచ్చిన పోస్టులు',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'వీక్షణల చరిత్ర ఇంకా పేరుకోవడం మొదలవలేదు; మొదటి రోజు డేటా రేపు కనిపిస్తుంది.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -946,17 +942,6 @@ const Map<String, String> cevirilerTe = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'ఈ సంస్థకు ఈ రకంలో చూపించడానికి ఏమీ లేదు.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'స్థాయి {}/{}',
-  'Sonraki: {}': 'తర్వాత: {}',
-  'En üst unvan': 'అత్యున్నత బిరుదు',
-  'Meraklı izleyici': 'ఆసక్తిగల వీక్షకులు',
-  'Hevesli izleyici': 'ఉత్సాహపు వీక్షకులు',
-  'Amatör izleyici': 'ఔత్సాహిక వీక్షకులు',
-  'Kıdemli izleyici': 'సీనియర్ వీక్షకులు',
-  'Uzman izleyici': 'నిపుణ వీక్షకులు',
-  'Profesör izleyici': 'ప్రొఫెసర్ వీక్షకులు',
-  'Efsane izleyici': 'లెజెండ్ వీక్షకులు',
-  'Ultra mega izleyici': 'అల్ట్రా మెగా వీక్షకులు',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'పుట్టినరోజు శుభాకాంక్షలు!',
   'İyi ki doğdun, iyi ki buradasın.':
@@ -999,4 +984,40 @@ const Map<String, String> cevirilerTe = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'స్థాయి {}',
+  'Sonraki seviyeye {} puan kaldı': 'తదుపరి స్థాయికి {} పాయింట్లు మిగిలాయి',
+  'Gönderilerin': 'నీ పోస్టులు',
+  '{} gönderi': 'పోస్టులు: {}',
+  '{} gönderi · {} görüntülenme': 'పోస్టులు: {} · వీక్షణలు: {}',
+  'önceki {} güne göre': 'మునుపటి {} రోజులతో పోలిస్తే',
+  'önceki {} güne göre %{} arttı': 'మునుపటి {} రోజులతో పోలిస్తే {}% పెరిగింది',
+  'önceki {} güne göre %{} azaldı': 'మునుపటి {} రోజులతో పోలిస్తే {}% తగ్గింది',
+  'önceki {} güne göre değişmedi': 'మునుపటి {} రోజులతో పోలిస్తే మార్పు లేదు',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'రోజువారీ వీక్షణలు: కనిష్ఠం {}, గరిష్ఠం {}',
+  'Etkileşim oranı henüz ölçülemedi': 'ఎంగేజ్‌మెంట్ రేటు ఇంకా కొలవడం కుదరలేదు',
+  'Oranlar': 'రేట్లు',
+  'Beğenme oranı': 'లైక్ రేటు',
+  'Yorum oranı': 'వ్యాఖ్య రేటు',
+  'Paylaşma oranı': 'షేర్ రేటు',
+  'İçeriğe gitme oranı': 'కంటెంట్ ట్యాప్ రేటు',
+  'Profile gitme oranı': 'ప్రొఫైల్ సందర్శన రేటు',
+  'Ziyaretten takibe dönüşüm': 'సందర్శన నుంచి ఫాలో',
+  'beğeni ÷ görüntülenme': 'లైక్‌లు ÷ వీక్షణలు',
+  'yorum ÷ görüntülenme': 'వ్యాఖ్యలు ÷ వీక్షణలు',
+  'paylaşım ÷ görüntülenme': 'షేర్‌లు ÷ వీక్షణలు',
+  'içeriğe tıklama ÷ görüntülenme': 'కంటెంట్ ట్యాప్‌లు ÷ వీక్షణలు',
+  'profil ziyareti ÷ görüntülenme': 'ప్రొఫైల్ సందర్శనలు ÷ వీక్షణలు',
+  'yeni takip ÷ profil ziyareti': 'కొత్త ఫాలోలు ÷ ప్రొఫైల్ సందర్శనలు',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'రేటుకు కనీసం {} వీక్షణలు కావాలి; ఇప్పుడు {} ఉన్నాయి.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'రేట్లు పోస్టు మొత్తం కాలపు సంఖ్యల నుంచి వస్తాయి; కింది రోజుల ఎంపిక వాటిని మార్చదు.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'ఈ సంఖ్యలు పోస్టు మొత్తం కాలపు మొత్తాలు (సొంత గమనిక ఉన్న పెట్టెలు మినహా); కింది రోజుల ఎంపిక గ్రాఫ్‌ను మాత్రమే మారుస్తుంది.',
+  'Ortalama izlenme: videonun %{} kadarı': 'సగటు వీక్షణ: వీడియోలో {}%',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'రిటెన్షన్ కర్వ్‌లోని 20 విభాగాల సగటు.',
 };

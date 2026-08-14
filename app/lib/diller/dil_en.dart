@@ -850,11 +850,7 @@ const Map<String, String> cevirilerEn = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Once you comment on a show or a movie, your view and like counts start building up here.',
   'Tüm zamanlar': 'All time',
-  'Gönderi': 'Posts',
-  'Zaman kırılımı': 'Time breakdown',
   'Son {} gün': 'Last {} days',
-  'En çok görüntülenen gönderilerin': 'Your most viewed posts',
-  'En çok beğenilen gönderilerin': 'Your most liked posts',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'View history hasn’t started building up yet; the first day of data appears tomorrow.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -948,17 +944,6 @@ const Map<String, String> cevirilerEn = {
   'Firma bulunamadı': 'Company not found',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'This company has no titles of this type.',
-  'Seviye {}/{}': 'Level {}/{}',
-  'Sonraki: {}': 'Next: {}',
-  'En üst unvan': 'Top rank',
-  'Meraklı izleyici': 'Curious viewer',
-  'Hevesli izleyici': 'Eager viewer',
-  'Amatör izleyici': 'Amateur viewer',
-  'Kıdemli izleyici': 'Senior viewer',
-  'Uzman izleyici': 'Expert viewer',
-  'Profesör izleyici': 'Professor viewer',
-  'Efsane izleyici': 'Legendary viewer',
-  'Ultra mega izleyici': 'Ultra mega viewer',
   'Doğum günün kutlu olsun!': 'Happy birthday!',
   'İyi ki doğdun, iyi ki buradasın.':
       'So glad you were born, and glad you’re here.',
@@ -998,4 +983,40 @@ const Map<String, String> cevirilerEn = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Level {}',
+  'Sonraki seviyeye {} puan kaldı': '{} points to the next level',
+  'Gönderilerin': 'Your posts',
+  '{} gönderi': '{} posts',
+  '{} gönderi · {} görüntülenme': '{} posts · {} views',
+  'önceki {} güne göre': 'vs. previous {} days',
+  'önceki {} güne göre %{} arttı': 'compared with the previous {} days, up {}%',
+  'önceki {} güne göre %{} azaldı':
+      'compared with the previous {} days, down {}%',
+  'önceki {} güne göre değişmedi':
+      'unchanged compared with the previous {} days',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Daily views: lowest {}, highest {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Engagement rate not measurable yet',
+  'Oranlar': 'Rates',
+  'Beğenme oranı': 'Like rate',
+  'Yorum oranı': 'Comment rate',
+  'Paylaşma oranı': 'Share rate',
+  'İçeriğe gitme oranı': 'Content tap rate',
+  'Profile gitme oranı': 'Profile visit rate',
+  'Ziyaretten takibe dönüşüm': 'Visit-to-follow rate',
+  'beğeni ÷ görüntülenme': 'likes ÷ views',
+  'yorum ÷ görüntülenme': 'comments ÷ views',
+  'paylaşım ÷ görüntülenme': 'shares ÷ views',
+  'içeriğe tıklama ÷ görüntülenme': 'content taps ÷ views',
+  'profil ziyareti ÷ görüntülenme': 'profile visits ÷ views',
+  'yeni takip ÷ profil ziyareti': 'new follows ÷ profile visits',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Rates need at least {} views; there are {} right now.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Rates come from the post’s lifetime totals; the day selector below does not change them.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'These numbers are the post’s lifetime totals (except boxes with their own note); the day selector below only changes the chart.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Average watched: {}% of the video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'The average of the retention curve’s 20 buckets.',
 };

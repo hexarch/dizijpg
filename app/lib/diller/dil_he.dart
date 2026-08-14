@@ -836,11 +836,7 @@ const Map<String, String> cevirilerHe = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'ברגע שתכתוב תגובה על סדרה או סרט, מספרי הצפיות והלייקים שלך יתחילו להצטבר כאן.',
   'Tüm zamanlar': 'מכל הזמנים',
-  'Gönderi': 'פוסטים',
-  'Zaman kırılımı': 'פילוח לפי זמן',
   'Son {} gün': '{} הימים האחרונים',
-  'En çok görüntülenen gönderilerin': 'הפוסטים הנצפים ביותר שלך',
-  'En çok beğenilen gönderilerin': 'הפוסטים עם הכי הרבה לייקים שלך',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'היסטוריית הצפיות עדיין לא התחילה להצטבר; נתוני היום הראשון יופיעו מחר.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -931,17 +927,6 @@ const Map<String, String> cevirilerHe = {
   'Firma bulunamadı': 'החברה לא נמצאה',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'לחברה הזו אין כותרים מסוג זה.',
-  'Seviye {}/{}': 'רמה {}/{}',
-  'Sonraki: {}': 'הבא: {}',
-  'En üst unvan': 'הדרגה העליונה',
-  'Meraklı izleyici': 'צפייה סקרנית',
-  'Hevesli izleyici': 'צפייה נלהבת',
-  'Amatör izleyici': 'צפייה חובבנית',
-  'Kıdemli izleyici': 'צפייה ותיקה',
-  'Uzman izleyici': 'צפייה מקצועית',
-  'Profesör izleyici': 'צפייה ברמת פרופסור',
-  'Efsane izleyici': 'צפייה אגדית',
-  'Ultra mega izleyici': 'צפייה אולטרה מגה',
   'Doğum günün kutlu olsun!': 'יום הולדת שמח!',
   'İyi ki doğdun, iyi ki buradasın.': 'טוב שנולדת, טוב שהגעת אלינו.',
   'Bugün {} yaşına girdin': 'היום מלאו לך {} שנים',
@@ -981,4 +966,38 @@ const Map<String, String> cevirilerHe = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'רמה {}',
+  'Sonraki seviyeye {} puan kaldı': 'נותרו {} נקודות לרמה הבאה',
+  'Gönderilerin': 'הפוסטים שלך',
+  '{} gönderi': '{} פוסטים',
+  '{} gönderi · {} görüntülenme': '{} פוסטים · {} צפיות',
+  'önceki {} güne göre': 'לעומת {} הימים הקודמים',
+  'önceki {} güne göre %{} arttı': 'לעומת {} הימים הקודמים: עלייה של {}%',
+  'önceki {} güne göre %{} azaldı': 'לעומת {} הימים הקודמים: ירידה של {}%',
+  'önceki {} güne göre değişmedi': 'ללא שינוי לעומת {} הימים הקודמים',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'צפיות יומיות: הנמוך ביותר {}, הגבוה ביותר {}',
+  'Etkileşim oranı henüz ölçülemedi': 'שיעור המעורבות עדיין לא ניתן למדידה',
+  'Oranlar': 'שיעורים',
+  'Beğenme oranı': 'שיעור לייקים',
+  'Yorum oranı': 'שיעור תגובות',
+  'Paylaşma oranı': 'שיעור שיתופים',
+  'İçeriğe gitme oranı': 'שיעור הקשות על התוכן',
+  'Profile gitme oranı': 'שיעור ביקורים בפרופיל',
+  'Ziyaretten takibe dönüşüm': 'מביקור למעקב',
+  'beğeni ÷ görüntülenme': 'לייקים ÷ צפיות',
+  'yorum ÷ görüntülenme': 'תגובות ÷ צפיות',
+  'paylaşım ÷ görüntülenme': 'שיתופים ÷ צפיות',
+  'içeriğe tıklama ÷ görüntülenme': 'הקשות על התוכן ÷ צפיות',
+  'profil ziyareti ÷ görüntülenme': 'ביקורים בפרופיל ÷ צפיות',
+  'yeni takip ÷ profil ziyareti': 'עוקבים חדשים ÷ ביקורים בפרופיל',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'לשיעורים דרושות לפחות {} צפיות; כרגע יש {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'השיעורים מבוססים על נתוני הפוסט מכל הזמנים; בחירת הימים שלמטה לא משנה אותם.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'המספרים האלה הם הסך הכול של הפוסט מכל הזמנים (חוץ מתיבות עם הערה משלהן); בחירת הימים שלמטה משנה רק את הגרף.',
+  'Ortalama izlenme: videonun %{} kadarı': 'צפייה ממוצעת: {}% מהסרטון',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'הממוצע של 20 המקטעים בעקומת ההחזקה.',
 };

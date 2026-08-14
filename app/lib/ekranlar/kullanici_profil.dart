@@ -10,6 +10,7 @@ import '../ceviri.dart';
 import '../seviye.dart';
 import '../tema.dart';
 import 'begenenler.dart';
+import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'ortak.dart';
 import 'profil.dart'
     show
@@ -188,11 +189,12 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                   ),
                               ],
                             ),
-                            // UNVAN (md. 29): kullanıcı adının HEMEN ALTINDA.
+                            // SEVİYE (md. 29): kullanıcı adının HEMEN ALTINDA,
+                            // yalnız sayı ("Seviye 7").
                             //
                             // İLERLEME BURADA ÇİZİLMEZ (`ilerlemeGoster`
                             // yalnız `ben_mi` ise true): başkasının profilinde
-                            // ilerleme çubuğu, unvanı bir sıralama tablosuna
+                            // ilerleme çubuğu, seviyeyi bir sıralama tablosuna
                             // çevirirdi. Zaten sunucu ziyaretçiye puan/eşik
                             // GÖNDERMİYOR — bu bayrak ikinci kilit.
                             //
@@ -867,10 +869,18 @@ class _Sayac extends StatelessWidget {
 }
 
 /// Profildeki yorum: metin + görüntülenme/beğeni sayıları, içeriğe götürür.
+///
+/// KENDİ GÖNDERİNDE göz ikonunun sağında "İstatistikleri gör" girişi çıkar
+/// (md. 23) — kullanıcının birebir isteği "kendi profiline bakınca kendi
+/// yorumunda" idi. Ayrıntılar [IstatistikGirisi] başlığında.
 class ProfilYorumKarti extends StatelessWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
-  const ProfilYorumKarti({required this.yorum, this.icerikler = const {}});
+  const ProfilYorumKarti({
+    super.key,
+    required this.yorum,
+    this.icerikler = const {},
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -887,6 +897,16 @@ class ProfilYorumKarti extends StatelessWidget {
         : bolumMu
         ? '/dizi/${yorum['tmdb_id']}/sezon/${yorum['sezon']}/bolum/${yorum['bolum']}'
         : '/icerik/$tur/${yorum['tmdb_id']}';
+    // GÖNDERİ BENİM Mİ? — istatistik girişinin TEK koşulu (md. 23).
+    //
+    // Kart hem KENDİ profilimin yorumlar sheet'inde hem başkasının profilinde
+    // kullanılıyor; ayrım kartın çizildiği YERDEN değil VERİDEN çıkar
+    // (`AkisKarti` ile aynı ölçüt). Çıkışsız kullanıcıda `benimId` null olur —
+    // `null == null` TUZAĞINA düşmemek için ikisi de dolu olmalı, yoksa
+    // `kullanici_id`si olmayan bir satır oturumsuz ziyaretçiye "senin" görünür
+    // ve giriş açılıp uçtan 404 alırdı.
+    final benimId = context.watch<Oturum>().kullanici?['id'];
+    final benim = benimId != null && yorum['kullanici_id'] == benimId;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -975,6 +995,14 @@ class ProfilYorumKarti extends StatelessWidget {
                 style: const TextStyle(height: 1.4),
               ),
               const SizedBox(height: 8),
+              // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin)
+              // ALTINDA, AYRI satırda. Medyalı gönderide medya bu kartta değil
+              // detay modalinde çizilir; satır hiçbir hâlde bir Stack'e alınıp
+              // görselin üstüne bindirilmez (kullanıcının açık isteği).
+              //
+              // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" →
+              // beğeni. Satır SOLA DAYALI (Row varsayılanı `start`); giriş
+              // sağa itilmez, sayının hemen yanında durur.
               Row(
                 children: [
                   Icon(
@@ -987,6 +1015,19 @@ class ProfilYorumKarti extends StatelessWidget {
                     '${yorum['goruntulenme'] ?? 0}',
                     style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
                   ),
+                  // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
+                  // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
+                  // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
+                  // bir girişten daha kötüdür.
+                  //
+                  // FLEXIBLE: 360 dp'de uzun çevirili dillerde yazı kısalsın,
+                  // satır taşmasın (İKON kalır, giriş tanınabilir olur).
+                  if (benim) ...[
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: IstatistikGirisi(gonderiId: yorum['id'] as int),
+                    ),
+                  ],
                   const SizedBox(width: 14),
                   // Beğeni sayısına BASILI TUTMAK beğenenleri açar (beğeninin
                   // göründüğü her yerde aynı sheet). onTap YOK: kısa dokunuş

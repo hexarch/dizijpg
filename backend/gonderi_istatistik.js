@@ -20,11 +20,58 @@
 /** Ekranda sunulan zaman pencereleri (gün). "Tümü" = 0 ile temsil edilir. */
 export const GONDERI_PENCERELER = [30, 60, 90, 120];
 
-/** Günlük satırların saklama süresi: en uzun pencere (120) + 10 gün pay. */
-export const GONDERI_GUNLUK_SAKLAMA = 130;
+/**
+ * Günlük satırların saklama süresi.
+ *
+ * 130 İDİ (en uzun pencere + 10 gün pay), 14 Ağu 2026'da 250 OLDU. Sebep:
+ * ekran artık "önceki eşit uzunluktaki döneme göre" yön oku çiziyor, yani
+ * 120 günlük pencere için 240 GÜNLÜK geçmiş gerekiyor. 130'da kalsaydı 90 ve
+ * 120 günlük pencerelerin oku ASLA görünemezdi — kullanıcının kararı ise
+ * "kodu şimdi yaz, veri dolunca kendiliğinden görünsün"; veriyi budayıp
+ * "dolmasını bekle" demek o sözü tutmamak olurdu.
+ *
+ * 2×120 + 10 gün pay = 250. Hacim: satır YALNIZ görüntülenmesi ARTAN
+ * gönderi-gün çiftlerine yazılıyor (bkz. TOPLA_SQL `WHERE`), yani tablo aktif
+ * gönderi sayısıyla büyür, toplam gönderi sayısıyla değil.
+ */
+export const GONDERI_GUNLUK_SAKLAMA = 250;
 
 /** Üst listelerde gösterilen gönderi sayısı. */
 export const GONDERI_LISTE_SINIR = 10;
+
+/**
+ * TEK LİSTENİN SIRALAMA SEÇENEKLERİ — istemci etiketi → SQL ölçüsü.
+ *
+ * KAPALI SÖZLÜK: ölçü adı doğrudan `ORDER BY`a giriyor, serbest metin alınmaz.
+ *
+ * `yanit` NEDEN VAR (14 Ağu 2026): ekran iki listeyi (en çok görüntülenen /
+ * en çok beğenilen) TEK listeye indirdi ve sıralamayı kullanıcıya bıraktı.
+ * Üçüncü ölçü "en çok konuşulan" demek — TARTIŞMA BAŞLATAN gönderi popüler
+ * gönderiden farklıdır ve bu ekranın amacı ("kendi paylaşımlarının kalitesini
+ * artırsın") tam olarak o farkı görmekten geçiyor.
+ */
+export const GONDERI_SIRALAMALARI = {
+  goruntulenme: 'pencere_goruntulenme',
+  begeni: 'pencere_begeni',
+  yanit: 'pencere_yanit',
+};
+
+/**
+ * YÖN OKUNUN görünmesi için ÖNCEKİ dönemde gereken EN AZ görüntülenme.
+ *
+ * NEDEN BİR EŞİK ŞART: yüzde değişim `(şimdi - önceki) / önceki`; payda
+ * küçüldükçe tek bir görüntülenme oku savurur. Önceki dönemde n görüntülenme
+ * varken TEK görüntülenmenin oynattığı yüzde 100/n'dir.
+ *
+ * NEDEN 30: ekranda yüzde TAM SAYI olarak yazılıyor, yani ölçünün
+ * çözünürlüğü 1 puandır. Tek bir görüntülenmenin oku 3 puandan fazla
+ * oynatmaması için n ≥ 33 (100/3) gerekir; 30'da bir görüntülenme ~3,3 puan
+ * eder — "%18 arttı" cümlesinin gürültüden ayrıldığı en alt sınır burasıdır.
+ * n = 5 olsaydı tek görüntülenme %20'lik bir "artış" uydururdu.
+ *
+ * ALTINDA OK HİÇ ÇİZİLMEZ (yaklaşık değer/tahmin YASAK — md. 24 kalıbı).
+ */
+export const YON_EN_AZ_GORUNTULENME = 30;
 
 /**
  * Günlük anlık görüntü upsert'i. $1 = gün (YYYY-MM-DD), $2 = taban turu mu.
@@ -82,7 +129,14 @@ SELECT
     WHERE kullanici_id=$1) AS goruntulenme,
   (SELECT count(*)::int FROM yorum_begeniler b
      JOIN yorumlar y ON y.id=b.yorum_id
-    WHERE y.kullanici_id=$1) AS begeni`;
+    WHERE y.kullanici_id=$1) AS begeni,
+  -- ÖMÜR BOYU YANIT: "Tümü" seçiliyken ikincil üçlünün ikinci hücresi. Pencere
+  -- sorgusu (YANIT_PENCERE_SQL) en fazla 120 gün geriye bakar; "tümü" için
+  -- oradan bir sayı türetmek sessizce 120 günle sınırlı bir "tüm zamanlar"
+  -- gösterirdi.
+  (SELECT count(*)::int FROM yorumlar c
+     JOIN yorumlar y ON y.id=c.ust_id
+    WHERE y.kullanici_id=$1) AS yanit`;
 
 /** Pencere sınırı — TEK KAYNAK. `gun > BUGÜN - N` = bugün dahil N takvim günü. */
 const sinir = (sutun, n) => `${sutun} > $2::date - ${n}`;
@@ -90,17 +144,77 @@ const sinir = (sutun, n) => `${sutun} > $2::date - ${n}`;
 /** Beğeni tarihinin gün karşılığı (UTC — `gonderi_gunluk.gun` ile aynı takvim). */
 const BEGENI_GUN = `(b.tarih AT TIME ZONE 'utc')::date`;
 
+/** Yanıt tarihinin gün karşılığı (UTC — `gonderi_gunluk.gun` ile aynı takvim). */
+const YANIT_GUN = `(c.tarih AT TIME ZONE 'utc')::date`;
+
+/**
+ * ÖNCEKİ EŞİT UZUNLUKTAKİ DÖNEM — `(BUGÜN-2N … BUGÜN-N]`.
+ *
+ * `sinir(2n)` "son 2N gün", `NOT sinir(n)` ise "son N günü ÇIKAR" demek;
+ * kesişimleri tam N takvim günü eder ve seçili pencereyle HİÇ ÖRTÜŞMEZ.
+ * Örtüşseydi "önceki döneme göre %18 arttı" cümlesi kendi kendini sayardı.
+ */
+const oncekiSinir = (sutun, n) =>
+  `${sinir(sutun, 2 * n)} AND NOT (${sinir(sutun, n)})`;
+
 /**
  * Kullanıcının KENDİ gönderilerinin pencere pencere görüntülenmesi.
- * $1 = kullanıcı, $2 = bugün. Dönen sütunlar: g30, g60, g90, g120.
+ * $1 = kullanıcı, $2 = bugün.
+ *
+ * Dönen sütunlar: g30…g120 (SEÇİLİ dönem) ve o30…o120 (ÖNCEKİ eşit
+ * uzunluktaki dönem — yön okunun kıyas tabanı).
+ *
+ * Dış sınır 120 DEĞİL 240: en uzun pencerenin (120) önceki dönemi 240 gün
+ * geriye uzanıyor. `GONDERI_GUNLUK_SAKLAMA` bu yüzden 250'ye çıkarıldı.
  */
 export const GORUNTULENME_PENCERE_SQL = `
 SELECT ${GONDERI_PENCERELER.map((n) =>
-  `COALESCE(sum(g.goruntulenme) FILTER (WHERE ${sinir('g.gun', n)}),0)::int AS g${n}`,
+  `COALESCE(sum(g.goruntulenme) FILTER (WHERE ${sinir('g.gun', n)}),0)::int AS g${n},
+       COALESCE(sum(g.goruntulenme) FILTER (WHERE ${oncekiSinir('g.gun', n)}),0)::int AS o${n}`,
 ).join(',\n       ')}
   FROM gonderi_gunluk g
   JOIN yorumlar y ON y.id = g.gonderi_id
- WHERE y.kullanici_id=$1 AND ${sinir('g.gun', 120)}`;
+ WHERE y.kullanici_id=$1 AND ${sinir('g.gun', 2 * Math.max(...GONDERI_PENCERELER))}`;
+
+/**
+ * Aynı pencerelerde ALINAN YANIT. $1 = kullanıcı, $2 = bugün.
+ * Dönen sütunlar: y30, y60, y90, y120.
+ *
+ * `c` = yanıt satırı, `y` = yanıtlanan gönderi. Sınır YANITIN tarihine
+ * uygulanır: "son 30 günde 126 yanıt aldım" cümlesi yanıtların ne zaman
+ * geldiğini ölçer, gönderinin ne zaman yazıldığını değil.
+ *
+ * KENDİ YANITI DIŞLANMADI — bilerek: md. 23'ün `TEKIL_TEMEL_SQL`i ve
+ * `ETKILESIM_ORTALAMA_SQL` de tüm yanıtları sayıyor. İki ekran aynı gönderi
+ * için farklı yanıt sayısı gösterirse kullanıcı hangisine güveneceğini bilemez;
+ * tanımı burada tek başına değiştirmek o tutarlılığı bozardı.
+ */
+export const YANIT_PENCERE_SQL = `
+SELECT ${GONDERI_PENCERELER.map((n) =>
+  `(count(*) FILTER (WHERE ${sinir(YANIT_GUN, n)}))::int AS y${n}`,
+).join(',\n       ')}
+  FROM yorumlar c
+  JOIN yorumlar y ON y.id = c.ust_id
+ WHERE y.kullanici_id=$1 AND ${sinir(YANIT_GUN, 120)}`;
+
+/**
+ * SPARKLINE'IN VERİSİ — gün gün, kullanıcının TÜM gönderilerinin toplamı.
+ * $1 = kullanıcı, $2 = bugün, $3 = kaç gün geriye.
+ *
+ * GÜNLÜK DELTA (kümülatif DEĞİL): md. 23'te tek gönderinin eğrisi kümülatif
+ * çizilir çünkü tek gönderinin günlük deltası 0,0,3,0 diye zikzak yapar. Burada
+ * seri kullanıcının TÜM gönderilerinin toplamı — hem daha düzgün, hem sorulan
+ * soru farklı: "son 30 günüm yükseliyor mu?" Kümülatif eğri matematiksel
+ * olarak hep artar, yani o soruya ASLA "hayır" diyemez.
+ */
+export const GUNLUK_SERI_SQL = `
+SELECT to_char(g.gun, 'YYYY-MM-DD') AS gun,
+       sum(g.goruntulenme)::int AS goruntulenme
+  FROM gonderi_gunluk g
+  JOIN yorumlar y ON y.id = g.gonderi_id
+ WHERE y.kullanici_id=$1 AND g.gun > $2::date - $3::int
+ GROUP BY g.gun
+ ORDER BY g.gun`;
 
 /**
  * Aynı pencerelerde ALINAN BEĞENİ. $1 = kullanıcı, $2 = bugün.
@@ -131,7 +245,7 @@ SELECT ${GONDERI_PENCERELER.map((n) =>
  * ad hem çıktı sütununa hem `yorumlar.goruntulenme` girdi sütununa uyardı.
  */
 export function listeSql(gun, sirala) {
-  if (!['pencere_goruntulenme', 'pencere_begeni'].includes(sirala)) {
+  if (!Object.values(GONDERI_SIRALAMALARI).includes(sirala)) {
     throw new Error(`gecersiz siralama: ${sirala}`);
   }
   if (gun !== 0 && !GONDERI_PENCERELER.includes(gun)) {
@@ -149,6 +263,14 @@ export function listeSql(gun, sirala) {
     : `(SELECT count(*)::int FROM yorum_begeniler bb
           WHERE bb.yorum_id=y.id
             AND ${sinir("(bb.tarih AT TIME ZONE 'utc')::date", gun)})`;
+  // ÜÇÜNCÜ ÖLÇÜ (14 Ağu 2026): "en çok konuşulan". Diğer ad `cc` — `c` md. 23
+  // sorgularında kullanılıyor, aynı harfi iç içe geçen bir sorguda yeniden
+  // kullanmak sessiz bir dış-referans hatasına açık kapı bırakır.
+  const olcuY = tumZaman
+    ? '(SELECT count(*)::int FROM yorumlar cc WHERE cc.ust_id=y.id)'
+    : `(SELECT count(*)::int FROM yorumlar cc
+          WHERE cc.ust_id=y.id
+            AND ${sinir("(cc.tarih AT TIME ZONE 'utc')::date", gun)})`;
   return {
     parametreliMi: !tumZaman,
     sql: `
@@ -163,12 +285,116 @@ SELECT y.id, y.tur, y.tmdb_id, y.sezon, y.bolum, y.spoiler, y.tarih,
        (SELECT count(*)::int FROM yorum_begeniler bb
          WHERE bb.yorum_id=y.id) AS toplam_begeni,
        ${olcuG} AS pencere_goruntulenme,
-       ${olcuB} AS pencere_begeni
+       ${olcuB} AS pencere_begeni,
+       ${olcuY} AS pencere_yanit
   FROM yorumlar y
  WHERE y.kullanici_id=$1
  ORDER BY ${sirala} DESC, y.id DESC
  LIMIT ${GONDERI_LISTE_SINIR}`,
   };
+}
+
+/**
+ * SEÇİLİ PENCERENİN ETKİLEŞİM ORANI — `ETKILESIM_ORTALAMA_SQL`in genel hâli.
+ *
+ * *** TEK TANIM, İKİ EKRAN ***: md. 23 (tek gönderi) kıyas tabanını
+ * `ETKILESIM_ORTALAMA_SQL` ile alıyor; o sabit ARTIK BU FONKSİYONDAN türüyor
+ * (`etkilesimSql(0).sql`). İkinci bir "etkileşim oranı" SQL'i yazılsaydı iki
+ * ekran aynı kullanıcı için farklı yüzde gösterebilirdi.
+ *
+ * TANIM (değişmedi): gönderi başına (beğeni + yanıt) / görüntülenme
+ * ORANLARININ ORTALAMASI — toplamların oranı DEĞİL. `goruntulenme > 0` şart
+ * (0/0 tanımsız), `ust_id IS NULL` şart (yanıt gönderi değildir).
+ *
+ * PENCEREDE: üç ölçünün ÜÇÜ de aynı pencereye kısılır. Yalnız beğeni/yanıt
+ * kısılıp görüntülenme ömür boyu kalsaydı oran sistematik olarak KÜÇÜK çıkardı.
+ *
+ * @param {number} gun 0 = tüm zamanlar.
+ * @returns {{sql:string, parametreliMi:boolean}} `parametreliMi` false ise
+ *   sorgu $2 kullanmaz; fazla parametre Postgres'te bind hatasıdır.
+ */
+export function etkilesimSql(gun) {
+  if (gun !== 0 && !GONDERI_PENCERELER.includes(gun)) {
+    throw new Error(`gecersiz pencere: ${gun}`);
+  }
+  const tumZaman = gun === 0;
+  const beg = tumZaman
+    ? '(SELECT count(*) FROM yorum_begeniler b WHERE b.yorum_id=y.id)'
+    : `(SELECT count(*) FROM yorum_begeniler b WHERE b.yorum_id=y.id
+            AND ${sinir("(b.tarih AT TIME ZONE 'utc')::date", gun)})`;
+  const yan = tumZaman
+    ? '(SELECT count(*) FROM yorumlar c WHERE c.ust_id=y.id)'
+    : `(SELECT count(*) FROM yorumlar c WHERE c.ust_id=y.id
+            AND ${sinir(YANIT_GUN, gun)})`;
+  // Ömür boyu görüntülenme TEK SÜTUN (`y.goruntulenme`); pencerede günlük
+  // anlık görüntülerin toplamı.
+  const gor = tumZaman
+    ? 'y.goruntulenme'
+    : `COALESCE((SELECT sum(d.goruntulenme)::int FROM gonderi_gunluk d
+                   WHERE d.gonderi_id=y.id AND ${sinir('d.gun', gun)}),0)`;
+  return {
+    parametreliMi: !tumZaman,
+    sql: `
+SELECT count(*)::int AS n,
+       avg((${beg}
+          + ${yan})::numeric
+           / ${gor}) AS ort
+  FROM yorumlar y
+ WHERE y.kullanici_id=$1 AND y.ust_id IS NULL AND ${gor} > 0`,
+  };
+}
+
+/**
+ * YÖN OKU — önceki eşit uzunluktaki döneme göre yüzde değişim.
+ *
+ * *** TAHMİN ÜRETMEZ ***: üç durumda null döner ve ekran oku HİÇ ÇİZMEZ.
+ *   1. `tam` false — önceki dönem ölçülmemiş (veri o kadar geriye gitmiyor).
+ *      Kısmi ölçümü "önceki dönem" saymak DÜŞÜŞ uydururdu.
+ *   2. `onceki < YON_EN_AZ_GORUNTULENME` — payda küçük, yüzde gürültü.
+ *   3. `onceki === 0` — 0'dan artışın yüzdesi tanımsızdır (2. şart bunu da
+ *      kapsıyor, ama sıfır bölme niyeti açıkça yazılı kalsın).
+ *
+ * @returns {number|null} Tam sayı yüzde (+ artış, − düşüş).
+ */
+export function degisimYuzde({ simdi, onceki, tam }) {
+  if (!tam) return null;
+  const o = Number(onceki);
+  if (!Number.isFinite(o) || o <= 0 || o < YON_EN_AZ_GORUNTULENME) return null;
+  const s = Number(simdi);
+  if (!Number.isFinite(s)) return null;
+  return Math.round(((s - o) / o) * 100);
+}
+
+/**
+ * SPARKLINE DİZİSİ — pencerenin HER GÜNÜ için tam bir dizi.
+ *
+ * `gonderi_gunluk` yalnız görüntülenmesi ARTAN gönderi-gün çiftlerine satır
+ * yazar; burada eksik gün "veri yok" DEĞİL, "o gün hiç görüntülenme gelmedi"
+ * demektir ⇒ 0 yazılır. (md. 23'ün `seriDoldur`u KÜMÜLATİF toplamı taşır
+ * çünkü orada eksik gün "toplam aynı kaldı" demek; iki doldurma kuralı
+ * bilerek farklı ve her biri kendi ölçüsüne doğru.)
+ *
+ * Dizinin uzunluğu TAM `gun`dür: eğri ancak pencere tam ölçüldüğünde
+ * çizileceği için (bkz. `goruntulenme_tam`) kısa dizi zaten çizilmez, ama
+ * uzunluğun sabit olması istemcinin "kaç günlük eğri bu?" diye tahmin
+ * yürütmesini engeller.
+ *
+ * @param {Array<{gun:string,goruntulenme:number}>} satirlar GUNLUK_SERI_SQL çıktısı
+ * @param {string} bugun YYYY-MM-DD
+ * @param {number} gun Pencere uzunluğu (0 → boş dizi: "tümü"nün eğrisi yoktur)
+ */
+export function pencereSerisi(satirlar, bugun, gun) {
+  if (!Number.isInteger(gun) || gun <= 0) return [];
+  const harita = new Map(
+    (satirlar || []).map((s) => [s.gun, Number(s.goruntulenme) || 0]),
+  );
+  const cikti = [];
+  let g = gunEkle(bugun, -(gun - 1));
+  for (let i = 0; i < gun; i += 1) {
+    cikti.push({ gun: g, goruntulenme: harita.get(g) ?? 0 });
+    g = gunEkle(g, 1);
+  }
+  return cikti;
 }
 
 /**
@@ -322,7 +548,7 @@ export const TEKIL_SAYAC_SQL = `
 SELECT olcu, adet::int FROM gonderi_sayac WHERE gonderi_id=$1`;
 
 /**
- * KULLANICININ KENDİ ORTALAMA ETKİLEŞİM ORANI — kıyas tabanı.
+ * KULLANICININ KENDİ ORTALAMA ETKİLEŞİM ORANI — kıyas tabanı (ÖMÜR BOYU).
  * $1 = kullanıcı. Dönen: n (kıyasa giren gönderi sayısı), ort (0..1 oran).
  *
  * `goruntulenme > 0` ŞART: görüntülenmemiş gönderinin oranı tanımsızdır
@@ -331,14 +557,12 @@ SELECT olcu, adet::int FROM gonderi_sayac WHERE gonderi_id=$1`;
  *
  * `ust_id IS NULL`: yanıtlar gönderi değildir; ortalamaya katılsalardı taban
  * bambaşka bir dağılımdan gelirdi.
+ *
+ * METİN ARTIK `etkilesimSql(0)`DAN ÜRETİLİYOR (14 Ağu 2026): md. 24 ekranı da
+ * etkileşim oranı gösteriyor, ama PENCERELİ. İki ayrı SQL yazılsaydı aynı
+ * kullanıcı iki ekranda farklı yüzde görebilirdi; tanım tek yerde durur.
  */
-export const ETKILESIM_ORTALAMA_SQL = `
-SELECT count(*)::int AS n,
-       avg(((SELECT count(*) FROM yorum_begeniler b WHERE b.yorum_id=y.id)
-          + (SELECT count(*) FROM yorumlar c WHERE c.ust_id=y.id))::numeric
-           / y.goruntulenme) AS ort
-  FROM yorumlar y
- WHERE y.kullanici_id=$1 AND y.ust_id IS NULL AND y.goruntulenme > 0`;
+export const ETKILESIM_ORTALAMA_SQL = etkilesimSql(0).sql;
 
 /**
  * Kıyasın gösterilmesi için gereken EN AZ gönderi sayısı.

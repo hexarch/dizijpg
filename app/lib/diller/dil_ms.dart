@@ -856,11 +856,7 @@ const Map<String, String> cevirilerMs = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'Sebaik kamu mengulas siri atau filem, jumlah tontonan dan suka mula terkumpul di sini.',
   'Tüm zamanlar': 'Sepanjang masa',
-  'Gönderi': 'Siaran',
-  'Zaman kırılımı': 'Pecahan masa',
   'Son {} gün': '{} hari lepas',
-  'En çok görüntülenen gönderilerin': 'Siaran kamu yang paling banyak ditonton',
-  'En çok beğenilen gönderilerin': 'Siaran kamu yang paling banyak disukai',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Sejarah tontonan belum mula terkumpul; data hari pertama muncul esok.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -952,17 +948,6 @@ const Map<String, String> cevirilerMs = {
   'Firma bulunamadı': 'Syarikat tidak dijumpai',
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Syarikat ini tiada judul jenis ini.',
-  'Seviye {}/{}': 'Tahap {}/{}',
-  'Sonraki: {}': 'Seterusnya: {}',
-  'En üst unvan': 'Gelaran tertinggi',
-  'Meraklı izleyici': 'Penonton ingin tahu',
-  'Hevesli izleyici': 'Penonton bersemangat',
-  'Amatör izleyici': 'Penonton amatur',
-  'Kıdemli izleyici': 'Penonton veteran',
-  'Uzman izleyici': 'Penonton pakar',
-  'Profesör izleyici': 'Penonton profesor',
-  'Efsane izleyici': 'Penonton legenda',
-  'Ultra mega izleyici': 'Penonton ultra mega',
   'Doğum günün kutlu olsun!': 'Selamat hari jadi!',
   'İyi ki doğdun, iyi ki buradasın.':
       'Syukurlah anda dilahirkan, syukurlah anda di sini.',
@@ -1004,4 +989,40 @@ const Map<String, String> cevirilerMs = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+  'Seviye {}': 'Tahap {}',
+  'Sonraki seviyeye {} puan kaldı': '{} mata lagi ke tahap seterusnya',
+  'Gönderilerin': 'Siaran kamu',
+  '{} gönderi': '{} siaran',
+  '{} gönderi · {} görüntülenme': '{} siaran · {} tontonan',
+  'önceki {} güne göre': 'berbanding {} hari sebelumnya',
+  'önceki {} güne göre %{} arttı': 'berbanding {} hari sebelumnya naik {}%',
+  'önceki {} güne göre %{} azaldı': 'berbanding {} hari sebelumnya turun {}%',
+  'önceki {} güne göre değişmedi':
+      'tiada perubahan berbanding {} hari sebelumnya',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Tontonan harian: terendah {}, tertinggi {}',
+  'Etkileşim oranı henüz ölçülemedi': 'Kadar interaksi belum dapat diukur',
+  'Oranlar': 'Kadar',
+  'Beğenme oranı': 'Kadar suka',
+  'Yorum oranı': 'Kadar komen',
+  'Paylaşma oranı': 'Kadar kongsian',
+  'İçeriğe gitme oranı': 'Kadar ketikan kandungan',
+  'Profile gitme oranı': 'Kadar lawatan profil',
+  'Ziyaretten takibe dönüşüm': 'Lawatan jadi pengikut',
+  'beğeni ÷ görüntülenme': 'suka ÷ tontonan',
+  'yorum ÷ görüntülenme': 'komen ÷ tontonan',
+  'paylaşım ÷ görüntülenme': 'kongsian ÷ tontonan',
+  'içeriğe tıklama ÷ görüntülenme': 'ketikan kandungan ÷ tontonan',
+  'profil ziyareti ÷ görüntülenme': 'lawatan profil ÷ tontonan',
+  'yeni takip ÷ profil ziyareti': 'ikutan baharu ÷ lawatan profil',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Kadar memerlukan sekurang-kurangnya {} tontonan; kini ada {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Kadar datang daripada jumlah sepanjang masa siaran; pilihan hari di bawah tidak mengubahnya.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Angka ini ialah jumlah sepanjang masa siaran (kecuali kotak yang ada nota sendiri); pilihan hari di bawah hanya mengubah graf.',
+  'Ortalama izlenme: videonun %{} kadarı':
+      'Purata tontonan: {}% daripada video',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Purata 20 bahagian lengkung pengekalan.',
 };

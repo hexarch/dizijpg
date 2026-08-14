@@ -104,6 +104,8 @@ import { CihazSayaci, bugunUtc } from './cihaz_sinif.js';
 import {
   GONDERI_PENCERELER, GONDERI_GUNLUK_SAKLAMA, TOPLA_SQL, BUDA_SQL, TOPLAM_SQL,
   GORUNTULENME_PENCERE_SQL, BEGENI_PENCERE_SQL, listeSql, gunFark,
+  YANIT_PENCERE_SQL, GUNLUK_SERI_SQL, GONDERI_SIRALAMALARI,
+  YON_EN_AZ_GORUNTULENME, degisimYuzde, pencereSerisi, etkilesimSql,
   GONDERI_TEKIL_PENCERELER, GONDERI_KAYNAKLARI, GONDERI_ISTEMCI_OLCULERI,
   kaynakOlcu, GORUNUM_SAYAC_SQL, GORUNTULEYEN_SQL, SAYAC_ARTIR_SQL,
   TEKIL_TEMEL_SQL, TEKIL_SAYAC_SQL, ETKILESIM_ORTALAMA_SQL,
@@ -7629,9 +7631,14 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
   });
 }));
 
-// ---------- mini seviye / unvan (istek md. 29) ----------
+// ---------- mini seviye (istek md. 29, 14 Ağu revizyonu) ----------
 //
-// "Amatör izleyici → profesör izleyici → ultra mega izleyici gibi unvanlar."
+// "Seviye sistemi kalsın ama 7/8 gibi yazma; bir seviye sistemimiz olsun,
+//  ona göre artsın seviyesi."
+//
+// 14 AĞU'DA KALKANLAR: UNVANLAR (meraklı/hevesli/… /ultra mega) ve TAVAN.
+// Unvan tablosu ekranda hiçbir yerde görünmüyor, sunucu artık `kod`/`toplam`
+// göndermiyor; seviye salt bir SAYI ve ÜST SINIRI YOK.
 //
 // KARARLAR VE GEREKÇELERİ:
 //
@@ -7640,37 +7647,70 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
 //     tetikleyici YOK. İki ayrı sayaç kaynağı kaçınılmaz olarak ayrışır
 //     ("rozette 100 bölüm, seviyede 98") ve hangisinin doğru olduğunu
 //     kimse söyleyemez.
-//  2) SUNUCUDA HESAPLANIR. İstemci yalnız `kod`u etikete çevirir; puanı ve
-//     eşiği kendi uydurmaz. Değiştirilmiş bir istemci kendine "ultra mega"
-//     yazabilirdi ama BAŞKASININ gördüğü unvan bu uçtan gelir.
-//  3) UNVAN DİLDEN BAĞIMSIZ BİR KOD OLARAK GİDER (`profesor`), metin olarak
-//     DEĞİL: 45 dile çeviri istemcide (`app/lib/seviye.dart` + diller).
-//     Sunucu Türkçe metin gönderseydi çeviri imkânsız olurdu.
+//  2) SUNUCUDA HESAPLANIR. İstemci eşik EĞRİSİNİ hiç bilmez; puanı ve eşiği
+//     kendi uydurmaz. Değiştirilmiş bir istemci kendine "Seviye 99"
+//     yazabilirdi ama BAŞKASININ gördüğü kademe bu uçtan gelir.
+//  3) YANIT SALT SAYIDIR: `kademe` (+ kendi profilinde `puan`/`esik`/
+//     `sonraki_esik`). Çevrilecek bir metin göndermiyoruz; "Seviye 7"
+//     cümlesini 45 dile istemci kuruyor (`app/lib/seviye.dart`).
+//     ESKİ İSTEMCİ UYUMU: 1.x APK'lar `kod` alanını arıyor, bulamayınca
+//     seviye satırını HİÇ ÇİZMİYOR (çökmüyor, yanlış unvan da basmıyor).
 //
-// PUAN FORMÜLÜ — YALNIZ KULLANICININ KENDİ YAPTIĞI ŞEYLER:
+// PUAN FORMÜLÜ — YALNIZ KULLANICININ KENDİ YAPTIĞI ŞEYLER (DEĞİŞMEDİ):
 //     bölüm ×1 · film ×2 · bitirilen dizi ×5 · yorum ×3 · başlık puanı ×2
 //   · film ×2: bir film ~iki bölüm süresi. Bölüm sayısı tek başına ölçüt
 //     olsaydı yalnız film izleyen biri sonsuza dek en alt kademede kalırdı.
 //   · bitirilen ×5: diziyi BİTİRMEK, aynı sayıda bölümü dağınık izlemekten
 //     daha fazla emek — küçük bir ek, baskın değil.
 //   · TAKİPÇİ VE ALINAN BEĞENİ FORMÜLDE YOK (bilerek): ikisi de kullanıcının
-//     denetiminde değil, POPÜLERLİK ölçer. Unvanı popülerliğe bağlamak,
+//     denetiminde değil, POPÜLERLİK ölçer. Seviyeyi popülerliğe bağlamak,
 //     maddenin "utandırmasın" şartının tam tersini yapardı — sessiz ama çok
 //     izleyen biri kalabalık bir hesabın altında kalırdı.
 //
-// ESPRİLİ AMA AŞAĞILAMAYAN ADLAR: en alt kademe "acemi/çaylak/toy" DEĞİL,
-// nötr-olumlu "meraklı". Bir kademe "beceriksizsin" demez; en alttaki bile
-// sadece yeni başladığını söyler.
-const SEVIYE_KADEMELERI = [
-  { kod: 'merakli', esik: 0 },      // Meraklı izleyici
-  { kod: 'hevesli', esik: 30 },     // Hevesli izleyici
-  { kod: 'amator', esik: 120 },     // Amatör izleyici
-  { kod: 'kidemli', esik: 400 },    // Kıdemli izleyici
-  { kod: 'uzman', esik: 1000 },     // Uzman izleyici
-  { kod: 'profesor', esik: 2500 },  // Profesör izleyici
-  { kod: 'efsane', esik: 6000 },    // Efsane izleyici
-  { kod: 'ultra_mega', esik: 12000 }, // Ultra mega izleyici
-];
+// EŞİK EĞRİSİ — KÜBİK, TAVANSIZ:   esik(n) = 14 × (n−1)³
+//   0, 14, 112, 378, 896, 1750, 3024, 4802, 7168, 10206, 14000, 18634, …
+//
+//   · TAVAN YOK: `n` bir tablonun son satırı değil, formülün tersi. 8.
+//     kademede duran eski tablonun aksine izledikçe artmaya DEVAM eder.
+//   · İLK KADEMELER ÇABUK: 2. seviye 14 puan = 14 bölüm ya da 7 film ya da
+//     3 bitirilmiş dizi. Yeni hesap ilk oturumunda ilerleme hisseder.
+//   · SONRA YAVAŞLAR AMA DURMAZ: kademeler arası fark (n−1)² ile büyür
+//     (14 → 98 → 266 → 518 …), yani eğri sürekli dikleşir; buna karşın
+//     seviye ~puan^(1/3) hızıyla SONSUZA KADAR artar. Üstel bir tablo
+//     (her kademe iki katı) bir noktadan sonra pratikte durur, kübik durmaz.
+//   · KATSAYI 14 NEREDEN: **kimse seviye kaybetmesin** kısıtından. Eski
+//     tablonun 8 eşiği (0/30/120/400/1000/2500/6000/12000) için yeni
+//     kademe ≥ eski kademe olmalı; bu, katsayıyı ≤ 14,8'e (400 ÷ 3³)
+//     sıkıştırıyor. 14, kısıtı sağlayan EN BÜYÜK tam sayı, yani eski eğriye
+//     EN YAKIN olanı: seviye şişmesi en az. Eski eşiklerde yeni kademeler
+//     1,2,3,4,5,6,8,10 — hiçbiri gerilemiyor (kanıt: test/seviye.test.js
+//     "GERİLEME YOK" + canlı dağılım taraması, 142 kullanıcı, düşen 0).
+const SEVIYE_KATSAYISI = 14;
+
+/** `kademe` (≥1) için puan eşiği (SAF, tam sayı). 1. kademe daima 0. */
+function seviyeEsigi(kademe) {
+  const n = Math.max(1, Math.floor(Number(kademe) || 1));
+  return SEVIYE_KATSAYISI * (n - 1) ** 3;
+}
+
+/**
+ * Puandan kademe (SAF) — `seviyeEsigi`nin tersi: en büyük n öyle ki
+ * esik(n) ≤ puan.
+ *
+ * `Math.cbrt` KAYAN NOKTADIR: tam eşikte 2,9999999999999996 dönebilir ve
+ * kullanıcı hak ettiği kademeyi görmeyebilirdi. Bu yüzden sonuç, tam sayı
+ * eşiklerle SINIRLI SAYIDA adımda düzeltilir — `while` yerine sayaçlı `for`:
+ * bozuk bir girdi bile döngüyü sonsuza çeviremez.
+ */
+function seviyeKademesi(puan) {
+  const p = Number(puan);
+  if (!Number.isFinite(p) || p < SEVIYE_KATSAYISI) return 1;
+  let n = Math.floor(Math.cbrt(p / SEVIYE_KATSAYISI)) + 1;
+  if (!Number.isFinite(n) || n < 1) return 1;
+  for (let d = 0; d < 3 && n > 1 && p < seviyeEsigi(n); d++) n--;
+  for (let d = 0; d < 3 && p >= seviyeEsigi(n + 1); d++) n++;
+  return n;
+}
 
 /** Sayaçlardan seviye puanı (SAF — testlerde doğrudan çağrılır). */
 function seviyePuani(s) {
@@ -7684,25 +7724,18 @@ function seviyePuani(s) {
 
 /**
  * Sayaçlardan tam seviye kaydı (SAF).
- * `kademe` 1'den başlar; `sonraki_esik`/`sonraki_kod` en üst kademede null.
- *
- * `sonraki_kod` DA GÖNDERİLİR: ilerleme satırı "Sonraki: Profesör izleyici"
- * yazar ve istemcinin kademe SIRASINI bilmesi gerekmez — eşik tablosunun tek
- * kopyası burada kalır (istemciye kopyalansaydı ilk düzenlemede ayrışırdı).
+ * `kademe` 1'den başlar; TAVAN OLMADIĞI İÇİN `sonraki_esik` DAİMA DOLUDUR —
+ * ilerleme çubuğu hiçbir zaman "bitti" durumuna düşmez, hep bir sonraki
+ * hedefi gösterir.
  */
 function seviyeHesapla(s) {
   const puan = seviyePuani(s);
-  let i = 0;
-  while (i + 1 < SEVIYE_KADEMELERI.length && puan >= SEVIYE_KADEMELERI[i + 1].esik) i++;
-  const sonraki = SEVIYE_KADEMELERI[i + 1] || null;
+  const kademe = seviyeKademesi(puan);
   return {
-    kademe: i + 1,
-    kod: SEVIYE_KADEMELERI[i].kod,
-    toplam: SEVIYE_KADEMELERI.length,
+    kademe,
     puan,
-    esik: SEVIYE_KADEMELERI[i].esik,
-    sonraki_esik: sonraki ? sonraki.esik : null,
-    sonraki_kod: sonraki ? sonraki.kod : null,
+    esik: seviyeEsigi(kademe),
+    sonraki_esik: seviyeEsigi(kademe + 1),
   };
 }
 
@@ -7712,23 +7745,23 @@ function seviyeHesapla(s) {
  *  a) UTANDIRMAMA — 1. KADEME BAŞKASINA HİÇ GÖSTERİLMEZ (null döner).
  *     Yeni açılmış bir hesabın ziyaretçiye "en alttayım" ilan etmesi, tam da
  *     maddenin "düşük seviyeyi başkasına göstermek caydırıcı olabilir"
- *     uyarısıdır. Unvan görünmediğinde ziyaretçi NÖTR bir profil görür —
- *     "seviyesi düşük" değil, "henüz unvanı yok" bile değil: hiçbir şey.
- *     Kişi kendi profilinde unvanını ve ilerlemesini GÖRMEYE devam eder.
- *  b) İLERLEME VERİSİ SIZMAZ: açık görünümde yalnız kademe + kod var.
+ *     uyarısıdır. Seviye görünmediğinde ziyaretçi NÖTR bir profil görür —
+ *     "seviyesi düşük" değil, "henüz seviyesi yok" bile değil: hiçbir şey.
+ *     Kişi kendi profilinde seviyesini ve ilerlemesini GÖRMEYE devam eder.
+ *  b) İLERLEME VERİSİ SIZMAZ: açık görünümde YALNIZ `kademe` var.
  *     `puan`/`esik` gönderilseydi izleme hacminin ALT SINIRI ilan edilirdi
  *     (izleme rozetlerinin `IZLEME_ROZETLERI` ile düşürülme gerekçesinin
  *     aynısı) ve ilerleme çubuğu başkasının profilinde de çizilebilirdi.
  *
- * `gizli` (= `izlenenler_gizli`) unvanı TAMAMEN kaldırır: seviye puanının
- * baskın bileşeni izleme sayaçlarıdır, yani "profesör izleyici" yazısı
- * gizlenen kütüphanenin boyutunu ele verir. AYRI BİR `seviye_gizli` SÜTUNU
+ * `gizli` (= `izlenenler_gizli`) seviyeyi TAMAMEN kaldırır: seviye puanının
+ * baskın bileşeni izleme sayaçlarıdır, yani "Seviye 9" yazısı gizlenen
+ * kütüphanenin boyutunu ele verir. AYRI BİR `seviye_gizli` SÜTUNU
  * AÇILMADI — md. 21'in mevcut anahtarı bu ekseni zaten yönetiyor; ikinci bir
  * anahtar, aynı veriyi iki yerden yönetmek olurdu.
  */
 function seviyeAcikGorunum(sv, gizli) {
   if (gizli || !sv || sv.kademe < 2) return null;
-  return { kademe: sv.kademe, kod: sv.kod, toplam: sv.toplam };
+  return { kademe: sv.kademe };
 }
 
 // ---------- rozetler ----------
@@ -8340,7 +8373,7 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
       },
       rozetler: [], listeler: [], incelemeler: [], yorumlar: [],
       icerikler: {}, izlenenler: [],
-      // Engelli profilde unvan da düşer: o da kişinin izleme hacminden türeyen
+      // Engelli profilde seviye de düşer: o da kişinin izleme hacminden türeyen
       // bir bilgi ve engel "içerik tamamen düşer" diyor.
       seviye: null,
     });
@@ -11239,11 +11272,34 @@ if (ISCI_GOREVLI) {
 }
 
 /**
- * GET /istatistiklerim/gonderiler?gun=30|60|90|120|0
+ * GET /istatistiklerim/gonderiler?gun=30|60|90|120|0&sirala=goruntulenme|begeni|yanit
  *
  * YALNIZ KENDİ VERİSİ: her sorgu `yorumlar.kullanici_id = req.kullanici.id`
  * ile bağlanır ve uçta kullanıcı seçme parametresi YOKTUR (bir başkasının
  * gönderi performansı, yazarın kendi kürasyon kararlarını ele verir).
+ *
+ * ---------------------------------------------------------------------------
+ * 14 AĞU 2026 — EKRAN YENİDEN DÜZENLENDİ, UÇ GENİŞLEDİ
+ * ---------------------------------------------------------------------------
+ * Ekran artık TEK kahraman sayı (seçili pencerenin görüntülenmesi) + yön oku +
+ * eğri, altında ikincil üçlü (beğeni · yanıt · etkileşim oranı) ve TEK gönderi
+ * listesi gösteriyor. Uç buna karşılık dört şey ekledi:
+ *   1. `pencereler[].yanit`      — üçlünün ikinci hücresi ve yeni sıralama.
+ *   2. `pencereler[].degisim`    — önceki EŞİT UZUNLUKTAKİ döneme göre yüzde.
+ *   3. `seri`                    — sparkline'ın gün gün verisi.
+ *   4. `etkilesim`               — seçili pencerenin ortalama etkileşim oranı.
+ *
+ * *** VERİ YOKKEN HİÇBİRİ UYDURULMAZ ***  Yön oku ancak hem seçili hem ÖNCEKİ
+ * dönem TAM ölçülmüşse (`gorKapsam >= 2n`) ve önceki dönem
+ * `YON_EN_AZ_GORUNTULENME` eşiğini aşıyorsa döner; eğri ancak seçili dönem tam
+ * ölçülmüşse döner; etkileşim oranı penceredeki görüntülenme eksik ölçülmüşse
+ * HİÇ HESAPLANMAZ (eksik payda oranı yukarı şişirirdi). Hepsi null/boş döner ve
+ * ekran o parçayı ÇİZMEZ. Veri dolunca kod değişmeden kendiliğinden görünürler.
+ *
+ * ESKİ İSTEMCİ UYUMU: `sirala` parametresi YOKSA istek eski uygulamadan
+ * geliyordur (telefonlardaki APK sunucuyla birlikte güncellenmez) — yanıta
+ * `en_cok_goruntulenen` / `en_cok_begenilen` listeleri de konur. Yeni istemci
+ * `sirala` gönderir ve TEK liste (`gonderiler`) alır.
  */
 app.get('/istatistiklerim/gonderiler', girisZorunlu, sarici(async (req, res) => {
   const kid = req.kullanici.id;
@@ -11252,17 +11308,24 @@ app.get('/istatistiklerim/gonderiler', girisZorunlu, sarici(async (req, res) => 
   // Tanınmayan/eksik değer "tümü"ne (0) düşer — 400 dönüp ekranı boş
   // bırakmaktansa en genel görünümü vermek daha iyi.
   const gun = GONDERI_PENCERELER.includes(istenen) ? istenen : 0;
+  // Sıralama da KAPALI SÖZLÜK: etiket `ORDER BY`a giriyor (bkz. listeSql).
+  const siralaHam = String(req.query.sirala ?? '');
+  const eskiIstemci = siralaHam === '';
+  const sirala = Object.hasOwn(GONDERI_SIRALAMALARI, siralaHam)
+    ? siralaHam : 'goruntulenme';
   // Gün sınırı UTC: `gonderi_gunluk.gun` de UTC'ye göre yazılıyor (bugunUtc).
   const bugun = bugunUtc();
 
-  const [toplamlar, gorPencere, begPencere, kapsam] = await Promise.all([
-    havuz.query(TOPLAM_SQL, [kid]),
-    havuz.query(GORUNTULENME_PENCERE_SQL, [kid, bugun]),
-    havuz.query(BEGENI_PENCERE_SQL, [kid, bugun]),
-    havuz.query(
-      `SELECT anahtar, deger FROM ayarlar
-        WHERE anahtar IN ('gonderi_gunluk_baslangic','begeni_gecmis_baslangic')`),
-  ]);
+  const [toplamlar, gorPencere, begPencere, yanPencere, kapsam] =
+    await Promise.all([
+      havuz.query(TOPLAM_SQL, [kid]),
+      havuz.query(GORUNTULENME_PENCERE_SQL, [kid, bugun]),
+      havuz.query(BEGENI_PENCERE_SQL, [kid, bugun]),
+      havuz.query(YANIT_PENCERE_SQL, [kid, bugun]),
+      havuz.query(
+        `SELECT anahtar, deger FROM ayarlar
+          WHERE anahtar IN ('gonderi_gunluk_baslangic','begeni_gecmis_baslangic')`),
+    ]);
 
   const ayar = Object.fromEntries(kapsam.rows.map((r) => [r.anahtar, r.deger]));
   const gorKapsam = gunFark(bugun, ayar.gonderi_gunluk_baslangic);
@@ -11274,50 +11337,101 @@ app.get('/istatistiklerim/gonderiler', girisZorunlu, sarici(async (req, res) => 
 
   const g = gorPencere.rows[0] || {};
   const b = begPencere.rows[0] || {};
-  const pencereler = GONDERI_PENCERELER.map((n) => ({
-    gun: n,
-    goruntulenme: g[`g${n}`] ?? 0,
-    begeni: b[`b${n}`] ?? 0,
-    // "tam": pencerenin TAMAMI ölçülmüş mü? Değilse ekran sayının yanına
-    // "veri {tarih}'ten beri birikiyor" notunu basar. SAYI ŞİŞİRİLMEZ.
-    goruntulenme_tam: gorKapsam >= n,
-    begeni_tam: begKapsam >= n,
-  }));
+  const y = yanPencere.rows[0] || {};
+  const pencereler = GONDERI_PENCERELER.map((n) => {
+    // ÖNCEKİ dönem 2n gün geriye uzanır; kapsam onu da örtmüyorsa yön yok.
+    const oncekiTam = gorKapsam >= 2 * n;
+    const onceki = g[`o${n}`] ?? 0;
+    return {
+      gun: n,
+      goruntulenme: g[`g${n}`] ?? 0,
+      begeni: b[`b${n}`] ?? 0,
+      yanit: y[`y${n}`] ?? 0,
+      // "tam": pencerenin TAMAMI ölçülmüş mü? Değilse ekran sayının yanına
+      // "veri {tarih}'ten beri birikiyor" notunu basar. SAYI ŞİŞİRİLMEZ.
+      goruntulenme_tam: gorKapsam >= n,
+      begeni_tam: begKapsam >= n,
+      // Kısmen ölçülmüş bir "önceki dönem" sayısı ekrana SIZMAMALI: ölçülmemiş
+      // günler eksik sayılır, kullanıcı olmayan bir artış görürdü.
+      onceki_goruntulenme: oncekiTam ? onceki : null,
+      onceki_tam: oncekiTam,
+      degisim: degisimYuzde({
+        simdi: g[`g${n}`] ?? 0, onceki, tam: oncekiTam,
+      }),
+    };
+  });
 
-  // Üst listeler seçili pencerenin ölçüsüyle sıralanır (SQL: listeSql).
-  const gorSorgu = listeSql(gun, 'pencere_goruntulenme');
-  const begSorgu = listeSql(gun, 'pencere_begeni');
+  // Seçili pencerenin görüntülenmesi TAM ölçüldü mü? ("Tümü" ömür boyu sayaçtır
+  // ve eksiksizdir.) Hem eğrinin hem etkileşim oranının şartı bu.
+  const seciliTam = gun === 0
+    || (pencereler.find((p) => p.gun === gun)?.goruntulenme_tam ?? false);
+
+  // Liste(ler): eski istemci iki ayrı sıralama bekler, yenisi tek liste.
+  const olculer = eskiIstemci
+    ? ['pencere_goruntulenme', 'pencere_begeni']
+    : [GONDERI_SIRALAMALARI[sirala]];
+  const sorgular = olculer.map((o) => listeSql(gun, o));
   // "Tümü" seçiliyken sorgu $2 KULLANMAZ; parametreyi yine de göndersek
   // Postgres "bind message supplies 2 parameters" diye reddederdi.
-  const listeArg = gorSorgu.parametreliMi ? [kid, bugun] : [kid];
-  const [enGor, enBeg] = await Promise.all([
-    havuz.query(gorSorgu.sql, listeArg),
-    havuz.query(begSorgu.sql, listeArg),
+  const listeArg = sorgular[0].parametreliMi ? [kid, bugun] : [kid];
+  const etkSorgu = etkilesimSql(gun);
+  const [listeler, seriSatir, etkSatir] = await Promise.all([
+    Promise.all(sorgular.map((s) => havuz.query(s.sql, listeArg))),
+    // Eğri YALNIZ tam ölçülmüş bir pencerede çizilir; "tümü"nün eğrisi yok
+    // (bir başlangıcı olmayan pencerenin günlük serisi de olmaz).
+    gun !== 0 && seciliTam
+      ? havuz.query(GUNLUK_SERI_SQL, [kid, bugun, gun])
+      : Promise.resolve({ rows: [] }),
+    // Etkileşim oranının paydası penceredeki görüntülenmedir; eksik ölçülmüş
+    // bir payda oranı YUKARI şişirir, o yüzden hiç hesaplanmaz.
+    seciliTam
+      ? havuz.query(etkSorgu.sql, etkSorgu.parametreliMi ? [kid, bugun] : [kid])
+      : Promise.resolve({ rows: [] }),
   ]);
 
   // İçerik adı/posteri: satırda "hangi diziye yazdım" görünsün diye tek toplu
   // TMDB okuması (gizlenen-yorumlar ekranıyla aynı kalıp) — satır başına ek
   // istek YOK.
-  const anahtarlar = [...new Set([...enGor.rows, ...enBeg.rows]
-    .map((y) => `${y.tur}:${y.tmdb_id}`))];
+  const satirlar = listeler.flatMap((l) => l.rows);
+  const anahtarlar = [...new Set(satirlar.map((s) => `${s.tur}:${s.tmdb_id}`))];
   const icerikler = anahtarlar.length ? await icerikBilgileri(anahtarlar) : {};
 
+  const etk = etkSatir.rows[0];
+  const etkN = Number(etk?.n ?? 0);
   res.set('Cache-Control', 'private, no-store');
   res.json({
     bugun,
     secili_gun: gun,
+    secili_sirala: sirala,
     gonderi_sayisi: toplamlar.rows[0].gonderi,
     toplam: {
       goruntulenme: toplamlar.rows[0].goruntulenme,
       begeni: toplamlar.rows[0].begeni,
+      yanit: toplamlar.rows[0].yanit,
     },
     pencereler,
     // Biriktirmenin başladığı gün (null = ilk tur henüz koşmadı).
     goruntulenme_baslangic: ayar.gonderi_gunluk_baslangic || null,
     goruntulenme_gun: gorKapsam,
     begeni_baslangic: ayar.begeni_gecmis_baslangic || null,
-    en_cok_goruntulenen: enGor.rows,
-    en_cok_begenilen: enBeg.rows,
+    // Eğri: pencerenin HER günü için bir nokta (eksik gün = 0 görüntülenme).
+    // Çizilemiyorsa BOŞ dizi — yarım eğri çizmektense hiç çizmemek.
+    seri: gun !== 0 && seciliTam
+      ? pencereSerisi(seriSatir.rows, bugun, gun) : [],
+    // ALT EŞİK: 1-2 gönderide "etkileşim oranın %12" cümlesi kendi kendini
+    // ölçmektir (md. 23 ile aynı eşik, aynı gerekçe).
+    etkilesim: {
+      n: etkN,
+      en_az: ETKILESIM_EN_AZ_GONDERI,
+      oran: etkN >= ETKILESIM_EN_AZ_GONDERI && etk?.ort != null
+        ? Number(etk.ort) : null,
+    },
+    yon_en_az: YON_EN_AZ_GORUNTULENME,
+    gonderiler: listeler[0].rows,
+    ...(eskiIstemci ? {
+      en_cok_goruntulenen: listeler[0].rows,
+      en_cok_begenilen: listeler[1].rows,
+    } : {}),
     icerikler,
   });
 }));

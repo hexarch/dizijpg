@@ -854,12 +854,7 @@ const Map<String, String> cevirilerRo = {
   'Bir dizi ya da filme yorum yazdığında görüntülenme ve beğeni sayıların burada birikmeye başlar.':
       'După ce comentezi un serial sau un film, vizualizările și aprecierile tale încep să se adune aici.',
   'Tüm zamanlar': 'Din totdeauna',
-  'Gönderi': 'Postări',
-  'Zaman kırılımı': 'Defalcare pe perioade',
   'Son {} gün': 'Ultimele {} zile',
-  'En çok görüntülenen gönderilerin':
-      'Postările tale cu cele mai multe vizualizări',
-  'En çok beğenilen gönderilerin': 'Postările tale cu cele mai multe aprecieri',
   'Görüntülenme geçmişi henüz birikmeye başlamadı; ilk gün verisi yarın görünür.':
       'Istoricul vizualizărilor încă nu a început să se adune; datele primei zile apar mâine.',
   'Görüntülenme geçmişi {} tarihinden beri birikiyor ({} günlük veri var), bu yüzden {} günlük sayı henüz eksik.':
@@ -955,17 +950,6 @@ const Map<String, String> cevirilerRo = {
   'Bu firmanın bu türde listelenecek yapımı yok.':
       'Această companie nu are titluri de acest tip.',
   // --- İzleyici seviyesi ve unvanları (cinsiyetsiz) ---
-  'Seviye {}/{}': 'Nivel {}/{}',
-  'Sonraki: {}': 'Următorul: {}',
-  'En üst unvan': 'Titlul suprem',
-  'Meraklı izleyici': 'Spectator curios',
-  'Hevesli izleyici': 'Spectator entuziast',
-  'Amatör izleyici': 'Spectator amator',
-  'Kıdemli izleyici': 'Spectator veteran',
-  'Uzman izleyici': 'Spectator expert',
-  'Profesör izleyici': 'Spectator profesor',
-  'Efsane izleyici': 'Spectator legendar',
-  'Ultra mega izleyici': 'Spectator ultra mega',
   // --- Doğum günü kutlama kartı ---
   'Doğum günün kutlu olsun!': 'La mulți ani!',
   'İyi ki doğdun, iyi ki buradasın.': 'Ce bine că exiști și că ești aici.',
@@ -1007,4 +991,44 @@ const Map<String, String> cevirilerRo = {
   // basılamaz (bkz. gonderi_istatistik.dart). Kalıp bu dosyanın
   // kendi mevcut yüzde çevirilerinden çıkarıldı.
   '%{}': '{}%',
+
+  // --- md.42/26 istatistikler + seviye ---
+  'Seviye {}': 'Nivelul {}',
+  'Sonraki seviyeye {} puan kaldı': 'Puncte până la nivelul următor: {}',
+  'Gönderilerin': 'Postările tale',
+  '{} gönderi': 'Postări: {}',
+  '{} gönderi · {} görüntülenme': 'Postări: {} · Vizualizări: {}',
+  'önceki {} güne göre': 'față de {} de zile anterioare',
+  'önceki {} güne göre %{} arttı':
+      'față de {} de zile anterioare, creștere de {}%',
+  'önceki {} güne göre %{} azaldı':
+      'față de {} de zile anterioare, scădere de {}%',
+  'önceki {} güne göre değişmedi':
+      'fără schimbare față de {} de zile anterioare',
+  'Günlük görüntülenme: en düşük {}, en yüksek {}':
+      'Vizualizări zilnice: minim {}, maxim {}',
+  'Etkileşim oranı henüz ölçülemedi':
+      'Rata de interacțiune nu poate fi măsurată încă',
+  'Oranlar': 'Rate',
+  'Beğenme oranı': 'Rata de aprecieri',
+  'Yorum oranı': 'Rata de comentarii',
+  'Paylaşma oranı': 'Rata de distribuiri',
+  'İçeriğe gitme oranı': 'Rata de atingeri pe conținut',
+  'Profile gitme oranı': 'Rata de vizite pe profil',
+  'Ziyaretten takibe dönüşüm': 'Din vizită în urmărire',
+  'beğeni ÷ görüntülenme': 'aprecieri ÷ vizualizări',
+  'yorum ÷ görüntülenme': 'comentarii ÷ vizualizări',
+  'paylaşım ÷ görüntülenme': 'distribuiri ÷ vizualizări',
+  'içeriğe tıklama ÷ görüntülenme': 'atingeri pe conținut ÷ vizualizări',
+  'profil ziyareti ÷ görüntülenme': 'vizite pe profil ÷ vizualizări',
+  'yeni takip ÷ profil ziyareti': 'urmăriri noi ÷ vizite pe profil',
+  'Oran için en az {} görüntülenme gerekiyor; şu an {} var.':
+      'Ratele au nevoie de cel puțin {} vizualizări; acum sunt {}.',
+  'Oranlar gönderinin ömür boyu sayılarından çıkar; aşağıdaki gün seçimi bunları değiştirmez.':
+      'Ratele rezultă din totalurile postării pe toată durata; selecția de zile de mai jos nu le schimbă.',
+  'Bu sayılar gönderinin ömür boyu toplamıdır (kendi notu olan kutular hariç); aşağıdaki gün seçimi yalnız grafiği değiştirir.':
+      'Aceste cifre sunt totalurile postării pe toată durata (cu excepția casetelor cu notă proprie); selecția de zile de mai jos schimbă doar graficul.',
+  'Ortalama izlenme: videonun %{} kadarı': 'Vizionare medie: {}% din videoclip',
+  'Elde tutma eğrisinin 20 kovasının ortalaması.':
+      'Media celor 20 de intervale ale curbei de retenție.',
 };
