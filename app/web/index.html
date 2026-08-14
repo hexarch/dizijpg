@@ -52,6 +52,8 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- Açılış logosu: FCP için erken keşif. Asıl dosya assets/logo.png ile aynı. -->
+  <link rel="preload" as="image" href="logo.png">
 
   <title>dizi.jpg</title>
   <link rel="manifest" href="manifest.json">
@@ -75,18 +77,18 @@
     bembeyaz duruyordu (PageSpeed: mobil 34 / masaüstü 59).
 
     Ayrı bir .css dosyası = fazladan bir ağ isteği = kazancın büyük kısmı gider.
-    Aynı sebeple burada HİÇBİR görsel/font indirilmiyor: marka işareti salt
-    CSS + metin, yazı tipi sistem yığını (Poppins'i beklemez).
+    Yazı tipi sistem yığını (Poppins'i beklemez). Marka, uygulamanın kendi
+    `assets/logo.png` dosyasının web kopyasıdır (`/logo.png`). CSS metin
+    taklidi kullanılmaz — gerçek dosyanın dokusu ve kırmızı kutu harfleri
+    birebir aynı kalır.
 
     RENKLER UYDURMA DEĞİL, uygulamanın temasından alındı — `app/lib/tema.dart`
-    içindeki `diziTema()` (300. satır): `zemin = acik ? Color(0xFFF6F6F8)
-    : Color(0xFF0B0B0D)`, metin (303. satır) `acik ? Color(0xFF17171A)
-    : Colors.white`. Tema varsayılanı "sistem" (tema.dart:7) olduğu için burada
-    da `prefers-color-scheme` ile aynı karar veriliyor; aksi hâlde açık temalı
-    cihazda koyu açılıştan beyaz uygulamaya sıçrama olurdu.
+    içindeki `diziTema()`: zemin açık `#F6F6F8` / koyu `#0B0B0D`. Tema
+    varsayılanı "sistem" olduğu için burada da `prefers-color-scheme` ile
+    aynı karar veriliyor. Logo koyu zemin için çizilmiştir (`DiziRenkler.markaKoyu`);
+    açık temada siyah karesi marka pulu olarak durur.
 
-    Marka kırmızısı `assets/logo.png` üzerinden örneklendi (medyan #A41125);
-    vurgu sarısı temanın `DiziRenkler.sari` değeri (#F5C518, `theme-color`).
+    Vurgu sarısı temanın `DiziRenkler.sari` değeri (#F5C518, `theme-color`).
   -->
   <style>
     :root {
@@ -140,27 +142,13 @@
       padding: 0 24px;
     }
 
-    /* Marka işareti: logo.png'nin (DİZİ + kırmızı JPG bloğu) ağ isteği
-       gerektirmeyen sade karşılığı. */
-    .acilis-marka {
-      display: flex;
-      align-items: stretch;
-      font-size: 38px;
-      font-weight: 800;
-      letter-spacing: 0.01em;
-      line-height: 1;
-    }
-
-    .acilis-marka-dizi {
-      padding: 6px 7px 6px 0;
-      color: var(--acilis-metin);
-    }
-
-    .acilis-marka-jpg {
-      padding: 6px 9px;
-      border-radius: 3px;
-      background-color: #A41125;
-      color: #FFFFFF;
+    /* Gerçek logo: 640² PNG, ekranda 160² (giriş ekranı 130 dp ile aynı mertebe).
+       width/height ayrıldı ki görsel gelene kadar düzen zıplamasın (CLS). */
+    .acilis-logo {
+      display: block;
+      width: 160px;
+      height: 160px;
+      border-radius: 16px;
     }
 
     /* Belirsiz ilerleme çubuğu: tek elemana `::after` ile çizildi. */
@@ -212,9 +200,15 @@
        `aria-hidden` ile çıkarıldı. -->
   <div id="acilis" aria-hidden="true">
     <div class="acilis-govde">
-      <div class="acilis-marka">
-        <span class="acilis-marka-dizi">DİZİ</span><span class="acilis-marka-jpg">JPG</span>
-      </div>
+      <img
+        class="acilis-logo"
+        src="logo.png"
+        width="160"
+        height="160"
+        alt=""
+        fetchpriority="high"
+        decoding="async"
+      >
       <div class="acilis-ilerleme"></div>
     </div>
   </div>
