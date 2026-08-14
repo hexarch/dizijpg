@@ -1,0 +1,40 @@
+Play Console kapalı test (Alpha) sürüm notu — 1.46.0 (93)
+Alpha'daki son yükleme: 86 (1.40.0), 7 Ağustos. Arada 6 derleme birikti
+(86 → 88 → 89 → 90 → 91 → 92 → 93); hepsi tek AAB olarak gidiyor.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI.
+⚠ KARAKTER SINIRI: Play "Yenilikler" alanı dil başına 500 karakter.
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır:
+
+<tr-TR>  (470 karakter)
+• Yapım ekibi: yönetmen, senarist, yapımcı ve firma — dokununca sayfaları açılıyor.
+• Gönderi istatistikleri: erişim, oranlar ve videonun ne kadarının izlendiği.
+• İzleyici seviyesi: izledikçe yükseliyor.
+• İki adımlı doğrulama: girişte e-postana kod.
+• Videolar artık her tarayıcıda oynuyor.
+• Fotoğraf ve videolar küçültülmeden yükleniyor; avatar yükleme hatası giderildi.
+• Çıkışta Google hesabını değiştirebiliyorsun.
+• Doğum gününde kutlama; birçok hata düzeltmesi.
+</tr-TR>
+
+<en-US>  (445 karakter)
+• Cast and crew: director, writer, producer and studio — tap to open.
+• Post stats: reach, rates, and how much of your video was watched.
+• Viewer level: it rises as you watch.
+• Two-step verification: a code to your email at sign-in.
+• Videos now play in every browser.
+• Photos and videos upload without being shrunk; avatar upload error fixed.
+• You can switch Google accounts after signing out.
+• A birthday celebration, plus many bug fixes.
+</en-US>
+
+--------------------------------------------------------------------
+KISA LİSTEYE ALINMAYANLAR (yer yok, kullanıcı gözle fark etmez)
+* Md. 20 Hareketlerim, Md. 21 gizlilik anahtarları, Md. 24 toplu istatistikler
+  — 1.41.0+88'de çıkmıştı, hâlâ Alpha'ya inmedi ama "istatistikler" satırı
+  bunları da kapsıyor.
+* Md. 36 doğum günü ikonu: kullanıcı kararıyla İPTAL, yalnız uygulama içi kutlama.
+* Seviye sisteminden unvanların kaldırılması (md. 29 revizyonu) — "seviye
+  yükseliyor" satırı yeterli.
+* Çeviri (855 anahtar × 45 dil), migrasyonlar, test artışı, altyapı: sessiz iş.
+* Md. 37 admin cihaz dağılımı: yalnız yöneticiyi ilgilendiriyor.
