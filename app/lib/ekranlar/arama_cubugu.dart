@@ -319,24 +319,6 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                     kullaniciyaGit(context, k['kullanici_adi'] as String),
               ),
           ],
-          if (_aramaSirketler.isNotEmpty) ...[
-            baslik(Icons.apartment_outlined, 'Şirketler'.c),
-            for (final r in _aramaSirketler.take(8))
-              _AramaSatiri(
-                key: Key('arama-sirket-${aramaTmdbId(r)}'),
-                gorselUrl: null,
-                sirketMi: true,
-                sirketLogoYolu:
-                    (r as Map<String, dynamic>)['logo_path'] as String?,
-                ad: (r['name'] ?? '?') as String,
-                altYazi: sirketAramaAltYazi(r),
-                onTap: () {
-                  final id = aramaTmdbId(r);
-                  if (id == null) return;
-                  context.push(sirketYolu(id, ad: r['name'] as String?));
-                },
-              ),
-          ],
           if (_aramaIcerik.isNotEmpty) ...[
             baslik(Icons.local_movies_outlined, 'Dizi ve Filmler'.c),
             for (final r in _aramaIcerik.take(12))
@@ -354,6 +336,24 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                 ].where((p) => p.isNotEmpty).join(' · '),
                 onTap: () =>
                     context.push('/icerik/${r['media_type']}/${r['id']}'),
+              ),
+          ],
+          if (_aramaSirketler.isNotEmpty) ...[
+            baslik(Icons.apartment_outlined, 'Şirketler'.c),
+            for (final r in _aramaSirketler.take(8))
+              _AramaSatiri(
+                key: Key('arama-sirket-${aramaTmdbId(r)}'),
+                gorselUrl: null,
+                sirketMi: true,
+                sirketLogoYolu:
+                    (r as Map<String, dynamic>)['logo_path'] as String?,
+                ad: (r['name'] ?? '?') as String,
+                altYazi: sirketAramaAltYazi(r),
+                onTap: () {
+                  final id = aramaTmdbId(r);
+                  if (id == null) return;
+                  context.push(sirketYolu(id, ad: r['name'] as String?));
+                },
               ),
           ],
           if (_aramaKisiler.isNotEmpty) ...[

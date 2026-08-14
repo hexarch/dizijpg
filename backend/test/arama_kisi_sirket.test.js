@@ -57,6 +57,11 @@ const kisiAramaSatiri = alan(['kisiAramaSatiri'], 'kisiAramaSatiri');
 const aramaSatirBirlestir = alan(['aramaSatirBirlestir'], 'aramaSatirBirlestir');
 const aramaHedefleri = alan(['aramaAdDuz', 'aramaHedefleri'], 'aramaHedefleri');
 const aramaPuanla = alan(['aramaAdDuz', 'aramaEnIyiIsabet', 'aramaPuanla'], 'aramaPuanla');
+const aramaTurSirasi = alan(['aramaTurSirasi'], 'aramaTurSirasi');
+const aramaSonuclariDiz = alan(
+  ['aramaAdDuz', 'aramaEnIyiIsabet', 'aramaPuanla', 'aramaSonuclariDiz'],
+  'aramaSonuclariDiz',
+);
 const aramaKisiSirketYollari = alan(['aramaKisiSirketYollari'], 'aramaKisiSirketYollari');
 const icerikDizinSatirlari = alan(['icerikDizinSatirlari'], 'icerikDizinSatirlari');
 
@@ -71,6 +76,7 @@ test('/ara kaynağında /search/company ve /search/person kilitli', () => {
   assert.match(KAYNAK, /\/search\/person\?query=/);
   assert.match(KAYNAK, /\/search\/company\?query=/);
   assert.match(ara, /tmdbTopluGetir\(/);
+  assert.match(ara, /aramaSonuclariDiz\(/);
   assert.match(KAYNAK, /media_type: 'company'/);
 });
 
@@ -148,7 +154,7 @@ test('kişi/şirket tekilleştirme: aynı id birleşir, zengin alan korunur', ()
   assert.equal(aramaSatirBirlestir(a, b).logo_path, '/logo.png');
 });
 
-test('Cartoon Network: şirket dizi/filmden üste çıkar (birebir/önek)', () => {
+test('Cartoon Network: şirket, dizi/filmden SONRA sıralanır', () => {
   const hedefler = aramaHedefleri('cartoon network', aramaVaryantlari('cartoon network'));
   const sirket = sirketAramaSatiri({ id: 7899, name: 'Cartoon Network Studios' });
   const dizi = {
@@ -158,11 +164,35 @@ test('Cartoon Network: şirket dizi/filmden üste çıkar (birebir/önek)', () =
     popularity: 50,
     poster_path: '/p.jpg',
   };
-  assert.ok(aramaPuanla(sirket, hedefler) > aramaPuanla(dizi, hedefler),
-    'şirket önek eşleşmesi, popüler dizinin üstünde olmalı');
+  const kisi = { media_type: 'person', id: 1, name: 'Cartoon Network' };
+  assert.ok(aramaTurSirasi(dizi) < aramaTurSirasi(kisi));
+  assert.ok(aramaTurSirasi(kisi) < aramaTurSirasi(sirket));
+  const sirali = aramaSonuclariDiz([sirket, dizi, kisi], hedefler);
+  assert.equal(sirali[0].media_type, 'tv');
+  assert.equal(sirali[1].media_type, 'person');
+  assert.equal(sirali[2].media_type, 'company');
 
   const birebir = sirketAramaSatiri({ id: 1, name: 'Cartoon Network' });
   assert.ok(aramaPuanla(birebir, hedefler) > aramaPuanla(sirket, hedefler));
+});
+
+test('çok dizi varken şirket kota ile listede kalır ve sonda durur', () => {
+  const hedefler = aramaHedefleri('cartoon', aramaVaryantlari('cartoon'));
+  const diziler = Array.from({ length: 40 }, (_, i) => ({
+    media_type: 'tv',
+    id: i + 1,
+    name: `Cartoon Show ${i}`,
+    popularity: 80,
+    poster_path: '/p.jpg',
+  }));
+  const sirket = sirketAramaSatiri({ id: 7899, name: 'Cartoon Network Studios' });
+  const out = aramaSonuclariDiz([...diziler, sirket], hedefler);
+  const sirketler = out.filter((r) => r.media_type === 'company');
+  const dizilerOut = out.filter((r) => r.media_type === 'tv');
+  assert.equal(dizilerOut.length, 16);
+  assert.equal(sirketler.length, 1);
+  assert.equal(sirketler[0].id, 7899);
+  assert.ok(out.findIndex((r) => r.media_type === 'company') > dizilerOut.length - 1);
 });
 
 test('cartoon: Cartoon Network Studios, kısa ada "Cartoon"dan üste çıkar', () => {

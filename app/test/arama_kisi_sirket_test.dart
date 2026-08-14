@@ -211,6 +211,11 @@ void main() {
     expect(find.text('Dizi ve Filmler'), findsOneWidget);
     expect(find.text('Breaking Bad'), findsOneWidget);
     expect(find.text('@alcelik'), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text('Şirketler')).dy,
+      greaterThan(tester.getTopLeft(find.text('Dizi ve Filmler')).dy),
+      reason: 'Şirketler, dizi ve filmden sonra gelmeli',
+    );
 
     final sirketSatiri = tester.getRect(
       find.byKey(const Key('arama-sirket-7899')),

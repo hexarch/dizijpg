@@ -9034,11 +9034,9 @@ function aramaEnIyiIsabet(adlar, hedefler) {
 }
 
 /**
- * Birebir ad eşleşmesi popülerlikten önce. Şirket, aynı isabet düzeyinde
- * dizi/filmden üstte durur — "Cartoon Network" aramasında rastgele bir
- * dizi (Cartoon Network Checker) üste çıkmasın diye.
- * Uzun hedef kısa hedeften üstündür: "cartoon" → Cartoon Network Studios,
- * adı tam "Cartoon" olan küçük firmayı ezer.
+ * Birebir ad eşleşmesi popülerlikten önce. Tür sırası (dizi/film, kişi,
+ * şirket) `aramaTurSirasi` ile ayrıca uygulanır — şirket dizi/filmin
+ * üstüne çıkmaz.
  */
 function aramaPuanla(r, hedefler) {
   const pop = Number(r.popularity) || 0;
@@ -9055,6 +9053,32 @@ function aramaPuanla(r, hedefler) {
   if (birebir > 0) isabet = birebir * 2e6 + 1e6;
   else if (onek > 0) isabet = onek * 2e6;
   return isabet + sirketKat + pop + kisaBonus + logoBonus;
+}
+
+/** Liste sırası: dizi/film, sonra kişi, en sonda şirket. */
+function aramaTurSirasi(r) {
+  const t = r && r.media_type;
+  if (t === 'tv' || t === 'movie') return 0;
+  if (t === 'person') return 1;
+  if (t === 'company') return 2;
+  return 3;
+}
+
+/**
+ * Tür başına kota: 200 cartoon dizisi şirketleri 30'luk dilimden ezmesin.
+ * Sıra kullanıcı isteği: dizi/film → kişi → şirket.
+ */
+function aramaSonuclariDiz(liste, hedefler) {
+  const puanli = [...liste].sort(
+    (a, b) => aramaPuanla(b, hedefler) - aramaPuanla(a, hedefler),
+  );
+  const al = (turler, n) =>
+    puanli.filter((r) => turler.includes(r.media_type)).slice(0, n);
+  return [
+    ...al(['tv', 'movie'], 16),
+    ...al(['person'], 6),
+    ...al(['company'], 8),
+  ];
 }
 
 /** Kişi + şirket TMDB yolları (varyant başına); multi ayrı çağrılır. */
@@ -9136,9 +9160,7 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   // Sıralama: başlık eşleşmesi popülerlikten önce gelir — yoksa "game of
   // thrones" aramasında House of the Dragon (daha popüler) üste çıkıyordu.
   const hedefler = aramaHedefleri(q, varyantlar);
-  let results = [...sonuclar.values()]
-    .sort((a, b) => aramaPuanla(b, hedefler) - aramaPuanla(a, hedefler))
-    .slice(0, 30);
+  let results = aramaSonuclariDiz(sonuclar.values(), hedefler);
   icerikDizineEkle(results); // dizin her başarılı aramayla zenginleşir
   let duzeltme = null;
   if (!results.length) {

@@ -253,6 +253,29 @@ class _AramaEkraniState extends State<AramaEkrani>
                           ),
                         ),
                       ],
+                      Expanded(
+                        child: GridView.builder(
+                          padding: const EdgeInsets.all(16),
+                          gridDelegate: const PosterIzgarasi(
+                            satirBoslugu: 14,
+                            bosluk: 10,
+                          ),
+                          itemCount: _sonuclar.length + _kisiler.length,
+                          itemBuilder: (context, i) {
+                            if (i < _kisiler.length) {
+                              return _KisiKarti(
+                                kisi: _kisiler[i] as Map<String, dynamic>,
+                              );
+                            }
+                            return PosterKarti(
+                              icerik:
+                                  _sonuclar[i - _kisiler.length]
+                                      as Map<String, dynamic>,
+                            );
+                          },
+                        ),
+                      ),
+                      // Şirketler dizi/film ızgarasından SONRA (kullanıcı isteği).
                       if (_sirketler.isNotEmpty) ...[
                         Padding(
                           padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
@@ -286,28 +309,6 @@ class _AramaEkraniState extends State<AramaEkrani>
                           ),
                         ),
                       ],
-                      Expanded(
-                        child: GridView.builder(
-                          padding: const EdgeInsets.all(16),
-                          gridDelegate: const PosterIzgarasi(
-                            satirBoslugu: 14,
-                            bosluk: 10,
-                          ),
-                          itemCount: _sonuclar.length + _kisiler.length,
-                          itemBuilder: (context, i) {
-                            if (i < _kisiler.length) {
-                              return _KisiKarti(
-                                kisi: _kisiler[i] as Map<String, dynamic>,
-                              );
-                            }
-                            return PosterKarti(
-                              icerik:
-                                  _sonuclar[i - _kisiler.length]
-                                      as Map<String, dynamic>,
-                            );
-                          },
-                        ),
-                      ),
                     ],
                   ),
           ),
