@@ -1,0 +1,1188 @@
+# dizi.jpg — İSTEK LİSTESİ
+# Son düzenleme: 14 Ağustos 2026 (akşam — arama + PageSpeed turu kapandı)
+#
+# Durum işaretleri:  [ ] bekliyor   [~] yapılıyor   [x] bitti   [!] karar gerekiyor
+#
+# NOT: Bu dosya projeler/ kökünde durur, dizijpg/ içinde DEĞİL.
+# Teknik yol haritası ayrı: dizijpg/YAPILACAKLAR.md
+# Yeni istek geldiğinde en alta ham hâlde yazılabilir; buraya taşınır.
+#
+# NUMARALAR KİMLİKTİR, SIRA DEĞİL. Bir madde bölüm değiştirse de numarası
+# sabit kalır — notlar ve commit mesajları birbirine numarayla atıf yapıyor.
+# Öncelik, maddenin bulunduğu BÖLÜM ve bölüm içindeki YERİDİR.
+# Bu dosya git'e KATILMAZ (yapilacaklar / yapilacaklar2).
+
+
+# =========================================================================
+# DURUM (14 Ağustos 2026)
+# =========================================================================
+# CANLIDA: dizijpg.com — sürüm 1.48.0+96 (web). Backend 1.47.0+95 (değişmedi).
+#   JS: main.5639d9ac25b3.dart.js · SW sökücü · brotli q11.
+# PLAY: 1.40.0+86 Alpha'da. 14 gün sayacı kesintisiz ilerliyor (~13. gün).
+#   TESTÇİ LİSTESİNE DOKUNMA — biri düşerse sayaç sıfırlanabilir.
+#   AAB 1.46.0+93 hazır, Play'e YÜKLENMEDİ: ~/Desktop/dizijpg-1.46.0+93.aab
+#   Sürüm notu: dizijpg/surum-notu-1.46.0.txt (tr 470 / en 445, Play sınırı 500).
+# APK: ~/Desktop/dizijpg-1.46.0+93.apk
+#
+# ⚠ SESLİ/GÖRÜNTÜLÜ ARAMA HERKESTE KAPALI (13 Ağu kullanıcı kararı).
+#   Sunucu kill switch (.env: ARAMA_KAPALI + ARAMA_GORUNTULU).
+#   Geri açmak: .env'deki iki satırı sil + docker-compose up -d api.
+#
+# 14 AĞU TURUNDA BİTEN (hepsi canlıda):
+#   57 arama kişi+şirket · 50 katalog WebP · 51 splash/brotli/ikon ·
+#   56 Fince · SEO sitemap/soft 404 KODU · LIMIT 500 takip_ediyorum
+# =========================================================================
+
+## SIRADA — ÖZET (14 Ağu; öncelik buradaki sıradır)
+
+ŞU AN ÇALIŞILAN İŞ YOK.
+
+YAPILACAK
+  58  nginx @spa — SEO soft 404; kod + parça conf hazır, canlıya İŞLENMEDİ
+  55  Gönderi kaydetme (bookmark) — küçük, net
+  59  Profil listelerini sürükleyerek sıralama (favori / izledim / izliyorum)
+  60  Profil sayfası görüntülenme sayısı (gönderi ziyareti değil)
+  30  Moderatör sistemi — SENİN TARİFİN ŞART (silme / gizleme / işaret?)
+  18 + 48  Wiki + ödüller — aynı kaynak araştırması (TMDB ödül TUTMUYOR)
+
+BUGÜN BİTTİ (1.48.0+96 canlıda)
+  61  TMDB bölüm puanı ısı haritası — /icerik/tv/108978 → 8.1 TMDB + sarı ok.
+
+BEKLETİLEN (gerekçeleri maddede)
+  31 + 35b/c  medya editörü / AI kalite (native eklenti bu projede kırıldı)
+  32 soundtrack (veri kaynağı yok) · 33 arama efektleri (arama KAPALI)
+  8 yarışma (tarif tek cümle) · 5 rehber + 44 balon (en sona, senin kararın)
+  34 kahve ısmarla (rafta, ödeme/hukuk)
+
+GÜVENLİK — hazır ama UYGULANMADI [!]
+  DB rolü (dizijpg TEK süper kullanıcı — yanlış sırada erişim kaybı)
+  CSP report-only (nginx'te 7 yere)
+  Medya imzası ZORUNLU — AAB yüklenip eski istemci düşünceye kadar AÇILMAZ
+
+SENDEN
+  AAB'yi Play'e yükle · Veri Güvenliği beyanını güncelle
+  Testçi listesine dokunma · arama testi ASKIDA (arama kapalı)
+
+## ŞU AN ÇALIŞILIYOR
+
+Boş.
+
+## SON TURLAR (hepsi canlıda, referans için)
+[x] 14 Ağu 1.47.0+95 — arama kişi+şirket (cartoon → Cartoon Network),
+    şirketler dizi/filmden SONRA, splash gerçek logo.png, brotli_static,
+    SimpleIcons 1,36 MB→6 KB, WebP Accept, Fince Uudet seuraajat.
+    SEO nginx @spa henüz canlı conf'ta yok → md. 58.
+[x] 14 Ağu 1.46.0+93 — istatistik ekranları yeniden düzen, gönderi istatistik
+    modalı, seviye sadeleştirme (unvan+tavan kalktı), dizi.jpg hesabına 168
+    yapım işaretlendi. Ayrıntı dizijpg/YAPILACAKLAR.md.
+[x] 13 Ağu 1.45.0+92 — video elde tutma eğrisi, istatistik zaman seçicisi
+    (281→73 dp), yüzde kalıbı (`%{}` anahtarı).
+
+[x] HATA — GOOGLE HESAP SEÇİCİ AÇILMIYOR — ÇÖZÜLDÜ
+    "1 kere hesap seçtim mi daha seçemiyorum, çıkış yapsam da eski hesabı
+    seçiyor otomatik olarak." Şüphe: bizim çıkışımız yalnız kendi token'ımızı
+    siliyor, Google tarafındaki oturumu (`signOut`/`disconnect`) kapatmıyor;
+    `signIn()` de önbellekteki hesabı sessizce geri veriyor.
+    HİPOTEZ: aynı kök neden 15:30'daki "Google girişi başarısız"ı da açıklar —
+    bayat önbellek `ApiException 16 (Account reauth failed)` üretiyor olabilir.
+    Doğruysa tek düzeltme iki hatayı birden kapatır.
+
+[x] 53. → ÖLÇÜM BEKLENTİYİ BOZDU: canlıda HEVC SIFIR, ama %6,9 VP9 var ve
+    onlar Safari/iPhone'da oynamıyor. Kural kodekten bağımsız yazıldı.
+[x] 54. Saydam PNG editörden beyaz çıkıyor — BİTTİ
+[x] 52. İki adımlı doğrulama (2FA) — BİTTİ
+
+Son tur (13 Ağu): md. 29 + 36 + 49 CANLIDA (1.42.0+89), 24 yeni anahtar
+45 dile çevrildi (818 anahtar).
+
+⚠ AÇIK HATA — ANDROID'DE GOOGLE GİRİŞİ: kullanıcı 13 Ağu 15:30'da bildirdi.
+  Yapılandırma baştan sona doğrulandı, HATA BİZDE DEĞİL: her iki SHA-1 de
+  (yükleme 2E:38:AB… + Play App Signing EA:7A:FB…) Firebase'de ve Google
+  Cloud'da kayıtlı, OAuth ekranı "In production", istemci kimlikleri aynı.
+  Sunucu kaydı: son başarılı giriş 13 Ağu 10:47 (200); ondan sonra HİÇ istek
+  gelmemiş → hata cihazdaki Play Services içinde.
+  YAPILDI: SnackBar artık ham kodu gösteriyor — `Google girişi başarısız (16)`.
+  BEKLENEN: kullanıcı 1.42.0+89 APK'sıyla deneyip kodu söyleyecek.
+    16 → cihazdaki Google hesabı yeniden doğrulanacak (yapılandırma değil)
+    10 → `google_sign_in` 6.x eski Android yolu; 7.x Credential Manager'a geçiş
+
+
+## SIRADA — KÜÇÜK
+
+[ ] 18. OYUNCU/DİZİ/FİLM WIKI BÖLÜMÜ
+    Oyuncular hakkında wiki bölümü ve ilginç detaylar; aynısı dizi ve
+    filmler için de.
+
+## SIRADA — ORTA
+
+[x] 20. HAREKETLERİM  (14 Ağu — backend CANLIDA, web çeviriyi bekliyor)
+    Beğeniler, yorumlar, izlemeler, puanlar, tepkiler, durumlar, listeler,
+    takipler TEK zaman akışında + tür süzgeçleri + sonsuz kaydırma.
+    Yeni tablo AÇILMADI; sekiz mevcut tablo UNION ALL ile birleşiyor, imleç
+    (tarih, anahtar) çiftiyle sayfalanıyor — eş tarihli satırlar (toplu içe
+    aktarım tek `now()` yazıyor) tekrar/atlama yapmasın diye. 9 indeks
+    eklendi; 120 bin satırlı kullanıcıda 10 sayfa 51 ms ölçüldü.
+    ENGELLEME KARARI: beğeni satırı BAŞKASININ yorumunu taşıdığı için
+    süzülüyor (yoksa kendi ayarlar ekranım engellemenin arka kapısı olurdu);
+    takip satırı süzülmüyor çünkü engelleme takibi zaten siliyor.
+    34 backend + 23 app testi.
+    Kullanıcı kendi hareketlerini görsün: beğenileri, yorumları, izlemeleri,
+    takipleri, izledikleri, gördükleri vb.
+
+[x] 21. ANONİMLİK / GİZLİLİK SEÇENEKLERİ  (14 Ağu — backend CANLIDA)
+    İki yeni anahtar: takipçi listemi gizle, takip ettiklerimi gizle (ayrı
+    ayrı — "kimi takip ediyorum" zevk beyanı, "kim beni takip ediyor"
+    başkalarının kararı).
+    ASIL BULGU: `izlenenler_gizli` YARIM zorlanıyormuş — şerit gizleniyordu
+    ama istatistik sayaçları, ekran süresi, uyum kartı ve izleme rozetleri
+    AÇIK kalıyordu. Gizlediğini sanan kullanıcının verisi başka yerden
+    görünüyordu; kapatıldı.
+    Gizli listede İSTEYENİN KENDİ satırı kalır (bilinçli): yoksa listesini
+    gizleyen kullanıcı kendi arama düğmesini kaybederdi. Sayaçlar
+    süzülmüyor — gizlenen KİMLİK listesi.
+    35 backend + 9 app testi. Ekrandaki "Takipçi yok" yalanı da düzeltildi
+    (kilit ikonu + "gizli tutmayı tercih ediyor").
+    Kullanıcıya daha fazla saklanma alanı: "yorumlarımı profilimde gizle",
+    takipçilerimi gizle, takip ettiklerimi gizle, izlediklerimi gizle vb.
+    NOT: profiller zaten aramaya kapatıldı (8 Ağu kullanıcı kararı); bu onun
+    kullanıcı tarafındaki karşılığı.
+
+[x] 36. DOĞUM GÜNÜ KUTLAMASI  (13 Ağu CANLIDA — ikon DEĞİŞMİYOR)
+    ✅ KULLANICI KARARI (13 Ağu): "doğum günü ikonlarının hiçbirini beğenmedim,
+       o yüzden şu an ikon kullanmayalım." → İKON İŞİ KAPANDI. Kutlama uygulama
+       İÇİNDE kalıyor (konfeti + kart), ki teknik gerekçe de zaten bunu
+       söylüyordu. Dört tasarım `dizijpg/ikon-onerileri/` altında duruyor;
+       ileride istenirse oradan devam edilir, yeniden üretmeye gerek yok.
+    Doğum günü olan kullanıcıda uygulama ikonu değişsin, kutlayalım.
+    KULLANICI İSTEĞİ: ikon tasarımları ÖNCEDEN kendisine sunulacak.
+
+    ✓ ENGEL KALKTI (13 Ağu): madde 25 bitti, doğum tarihi artık TOPLANIYOR
+      (`kullanicilar.dogum_gun/ay/yil`, yıl isteğe bağlı, herkese açık
+      profilde GÖSTERİLMİYOR). Kutlama gün+ay ile çalışır.
+
+    ⚠ ANDROID'DE İKON DEĞİŞTİRME SANILDIĞI KADAR TEMİZ DEĞİL:
+      Çalışma anında ikon değiştiren resmi bir API YOK. Tek yol manifeste
+      önceden yazılmış `activity-alias`ları açıp kapatmak. Yan etkileri
+      gerçek: bazı başlatıcılarda ikon ana ekrandan DÜŞER, kısayollar ve
+      widget'lar kırılabilir, uygulama o anda kapanabilir. Yani "kutlama"
+      niyetiyle kullanıcının ana ekranındaki ikonu kaybettirebiliriz.
+      Ayrıca her ikon önceden pakete gömülür (APK büyür), sonradan
+      eklenemez.
+      iOS'ta `setAlternateIconName` var ama sistem uyarı penceresi
+      gösteriyor. Webde (PWA) favicon serbestçe değişir, sorun yok.
+
+    ÖNERİM: ikon değiştirmeyi ayrı ve İSTEĞE BAĞLI tut; asıl kutlamayı
+    uygulama İÇİNDE yap (açılışta konfeti, profilde rozet, doğum günü
+    mesajı). Bu her platformda sorunsuz çalışır ve kimsenin ana ekranını
+    bozmaz. İkon değişimi istenirse yalnız kullanıcı açıkça izin verirse.
+
+    BENİM YAPACAĞIM: ikon tasarımlarını önce sunacağım (kullanıcı isteği).
+
+[x] 29. MİNİ SEVİYE SİSTEMİ  (13 Ağu CANLIDA)
+    8 kademe: Meraklı → Hevesli → Amatör → Kıdemli → Uzman → Profesör →
+    Efsane → Ultra mega izleyici. Puan YALNIZ izleme emeğinden: bölüm×1 +
+    film×2 + bitirilen dizi×5 + yorum×3 + puan×2. Takipçi ve alınan beğeni
+    BİLEREK dışarıda (popülerlik ölçer, emek değil). Yeni kolon açılmadı,
+    md. 21'deki `izlenenler_gizli` yeniden kullanıldı; 1. kademe başkasına
+    HİÇ gönderilmiyor, ziyaretçiye puan/eşik gitmiyor (curl ile doğrulandı).
+    Amatör izleyici → profesör izleyici → ultra mega izleyici gibi
+    unvanlar. Unvanları BİZ koyacağız (kullanıcı seçmeyecek).
+    NOT: unvanlar 45 dile çevrilecek. Ayrıca eşikler kullanıcıyı
+    utandırmamalı — düşük seviyeyi başkasına göstermek caydırıcı olabilir;
+    madde 21'deki gizleme tercihleriyle uyumlu düşünülmeli.
+
+[ ] 30. MODERATÖR SİSTEMİ
+    Başvuru ile moderatör alınacak. Moderatörler dizi/filmlere özel yorum
+    yazacak veya video editleyecek; belirli yetkileri olacak.
+    NOT: madde 6'da yönetici tarafı (ban, güven skoru, şikayet kuyruğu)
+    zaten var — moderatör ONUN ALT YETKİ SEVİYESİ olarak tasarlanmalı,
+    ayrı bir yetki sistemi kurulmamalı. Hangi yetkiler verilecek net
+    yazılmalı: silme mi, gizleme mi, yalnız işaretleme mi? Moderatörün
+    kendi şikayetini kendi onaylayamaması gibi kısıtlar gerekir.
+
+## SIRADA — BÜYÜK (her biri ayrı proje)
+
+[x] 23. GÖNDERİ İSTATİSTİKLERİ  (14 Ağu CANLIDA, 1.41.0+88)
+    Kendi gönderinde "istatistikleri gör": erişim, tekil görüntüleyen,
+    beğeni, yorum, paylaşım, profil ziyareti, içeriğe tıklama, gönderiden
+    gelen takip, spoiler perdesi açılması + zamana yayılmış grafik +
+    görüntülenme kaynakları (akış/profil/reels/dizi/paylaşım) +
+    takipçi/keşif kırılımı + 7/30/90/tümü seçici + zirve zamanı.
+    KULLANICI EKLEMELERİ (14 Ağu, benim önerimle): etkileşim oranı ve
+    "kendi ortalamanın %X üstünde" kıyası — çıplak sayı bağlamsızdı.
+    KİMLİK GÖSTERİLMİYOR: "görüntüleyenler" tekil SAYI (kullanıcı kararı);
+    md. 21'de verilen gizlilik sözüyle çelişmesin diye. Tekil sayım için
+    kaçınılmaz kişi-bazlı satır ANAHTARLI ÖZET olarak tutuluyor (ham
+    kimlik/IP değil), 90 gün sonra siliniyor, uç yalnız sayı döndürüyor.
+    BULGU: paylaşım hiçbir yerde SAYILMIYORMUŞ — sayaç eklendi.
+    GRAFİK KÜMÜLATİF: günlük artış düşük trafikte zikzak yapardı ve tek
+    çare yumuşatmak, yani sayıyı bozmaktı; kümülatif eğri azalamaz.
+    Ekran yolu `/gonderi-istatistik/:id` — robots.txt ön ek kuralları
+    `/gonderi/` altını kapatamıyordu (SSR sayfaları da kapanırdı).
+    Video izlenme süresi eğrisi SONRAKİ TURA (planı kodda yazılı).
+    42 backend + 28 app testi. Gizlilik politikasına iki madde eklendi.
+    Kendi profilinden kendi yorumuna bakınca, göz ikonunun yanında
+    "istatistikleri gör" → tıklayınca:
+      beğeni sayısı · yorum sayısı · paylaşım sayısı · görüntülenme ·
+      görüntüleyenler (görüntülenme ile farkı korunacak) · profil ziyareti
+      (gönderiden profiline gelen kişi) · takipler (o gönderiden kaç kişi
+      takip etti)
+    Aşağı kaydırınca: zamana yayılmış GRAFİK — tek çizgi, zikzak olmayacak.
+    Altında görüntülenme KAYNAKLARI: akış · profil · reels · dizi profili ·
+    paylaşımdan gelenler.
+    Videolarda EKSTRA: izlenme süresi grafiği — %100'den başlayıp saniye
+    ilerledikçe azalan eğri.
+    ⚠ Bu özellik yeni veri toplamayı gerektiriyor (görüntülenme kaynağı,
+      görüntüleyen kimlik, izlenme süresi). Gizlilik politikası ve Play
+      Data Safety GÜNCELLENMELİ; "görüntüleyenler" başkasının kim olduğunu
+      gösteriyorsa madde 21'deki gizlilik tercihleriyle çakışmamalı.
+
+[x] 24. AYARLARDA TOPLU İSTATİSTİKLER  (14 Ağu — backend CANLIDA)
+    Gönderi görüntülenmesi ve beğenisi; 30/60/90/120 gün + tüm zamanlar;
+    en çok görüntülenen ve beğenilen kendi gönderilerin.
+    DÜRÜSTLÜK KARARI: görüntülenme kırılımı GERİYE DÖNÜK ÜRETİLEMEZ —
+    `yorumlar.goruntulenme` yalnız bir sayaç, artışın ne zaman olduğu
+    hiçbir yerde yazılı değil. Günlük anlık görüntü tablosu kuruldu (14
+    Ağu'dan itibaren birikiyor) ve ekran bunu AÇIKÇA söylüyor; sayı
+    oranlanıp şişirilmiyor. Beğeni kırılımı `yorum_begeniler.tarih`
+    sayesinde geriye dönük TAM doğru.
+    İlk tur yalnız "çıpa" kuruyor — ömür boyu sayacı "bugünün artışı"
+    saymak açılış gününde sahte zirve üretirdi. Grafik BİLEREK çizilmedi.
+    Md. 23 aynı altyapıyı kullanacak. 25 backend + 13 app testi.
+    YAN BULGU: `yorum_goruntuleyen` tablosu şemada var ama sunucu ona hiç
+    yazmıyor — ölü tablo, temizlenebilir.
+    Kullanıcının kendi genel istatistikleri: tüm zamanların görüntülenmesi,
+    30 / 60 / 90 / 120 günlük görüntülenme; beğenilerde aynı kırılım.
+    Amaç (kullanıcı): "neyini tutuyorsak en net şekilde verelim ki kendi
+    paylaşımlarının kalitesini artırsın."
+    Madde 23 ile aynı veri altyapısını paylaşıyor — birlikte tasarlanmalı.
+
+[ ] 31. MEDYA EDİTÖRÜNÜ GELİŞTİR
+    Video ve fotoğraf yüklerken çıkan editörün özellikleri artırılacak,
+    "elinden gelenin en iyisini yap" (kullanıcı).
+    MEVCUT: kırpma, döndürme, çizim, metin, emoji, bulanıklaştırma-
+    pikselleştirme (görsel); trim, sıkıştırma, ses kapatma (video).
+    ⚠ ffmpeg_kit EMEKLİYE AYRILDI ve GPL'di — video tarafında ne
+      eklenebileceği paket kısıtlarına bağlı, önce sondaj yapılmalı.
+
+[~] 35. EDİTÖRDE KALİTE ARTIRMA  — (a) BİTTİ 13 Ağu CANLIDA (1.43.0+90),
+    (b) ve (c) duruyor.  (10 Ağu, kullanıcı: "biraz yoğunlaş,
+    GERÇEK ANLAMDA kalite artırılabilsin")
+    Video ve fotoğraf editleme kısmına kalite artırma özelliği.
+    Madde 31'in parçası ama kullanıcı ayrıca vurguladı — ayrı tutuldu.
+
+    ÜÇ AYRI İŞ, ZORLUKLARI ÇOK FARKLI — karıştırılmamalı:
+    (a) [x] KENDİ BOZDUĞUMUZU BOZMAMAK — 13 Ağu BİTTİ, CANLIDA (1.43.0+90).
+        ÖLÇÜLDÜ, ÜÇ GERÇEK SORUN ÇIKTI, ÜÇÜ DE DÜZELTİLDİ:
+        1. Video sıkıştırma dosyayı BÜYÜTÜYORDU (33,6→40,9 MB), çözünürlüğü
+           yarıdan aza düşürüyordu (VMAF 100→93,3). Sebep: bit hızı CBR ile
+           HEDEF olarak geçiyor, kaynak 3,98 Mbps'ken 5 Mbps istemek şişiriyor.
+           Artık kaynak bit hızına bakılıyor (kazanç eşiği 1,25).
+        2. Düzenlenen görsel 2000 px'e kırpılıyordu — paketin ham varsayılanı,
+           hiç gözden geçirilmemiş. Canlıdaki 300 yüklemenin 263'ü bu sınırı
+           aşıyor. 4096 px yapıldı.
+        3. AVATAR YÜKLENEMİYORDU (kalite değil, hata): kırpma paketi daima PNG
+           veriyor, 12 MP fotodan 17,7 MB çıkıp 8 MB sınırına takılıyordu.
+        720p kutusu ÖLÇÜLDÜ, kazanç yok, bilerek DEĞİŞTİRİLMEDİ.
+        Ayrıntı: dizijpg/YAPILACAKLAR.md, 13 Ağu maddesi.
+        ---- özgün plan ----
+        >>> KULLANICI TALİMATI (10 Ağu): "bunu yaparken böyle sorun varsa
+        >>> DÜZELTELİM." Yani bu bir inceleme maddesi değil, İŞ maddesi:
+        >>> ölç, sorun varsa AYNI TURDA düzelt, bulguyu raporla.
+        Şu an videoyu OTOMATİK SIKIŞTIRIYORUZ (video editör, 7-8 Ağu).
+        Kullanıcının "kalite düşük" algısının kaynağı bizim sıkıştırma
+        ayarımız olabilir. Yapılacaklar:
+          · Mevcut bit hızı / çözünürlük / kalite değerlerini ÖLÇ
+          · Aynı kaynak videoyu ham hâliyle ve bizim çıktımızla yan yana koy
+          · Görsel tarafta da bak: yükleme sırasında yeniden boyutlandırma
+            veya JPEG kalite düşürme var mı
+          · Sorun varsa AYARLARI DÜZELT (dosya boyutu sınırıyla dengeleyerek)
+        Yapay zekâ eklemeden önce buna bakılmazsa, kaliteyi önce kendimiz
+        düşürüp sonra pahalı yöntemlerle geri kazanmaya çalışmış oluruz.
+    (b) FOTOĞRAF için gerçek süper çözünürlük — YAPILABİLİR.
+        Real-ESRGAN / ESRGAN'ın TFLite sürümleri var, lisansları uygun
+        (BSD/MIT — kullanıcının "açık kaynak ve ücretsiz" şartına uyar).
+        Cihazda çalışır, sunucu maliyeti yok.
+        ⚠ RİSK: `tflite_flutter` native eklenti. Bu projede AGP 9 /
+          Kotlin 2.3 yüzünden native eklentiler DEFALARCA kırıldı
+          (file_picker, record, cryptography_flutter). ÖNCE SONDAJ:
+          boş bir dalda derleme geçiyor mu, APK ne kadar büyüyor.
+    (c) VİDEO için gerçek süper çözünürlük — CİHAZDA PRATİK DEĞİL.
+        Kare kare model çalıştırmak gerekir; 30 saniyelik videoda telefonu
+        dakikalarca meşgul eder ve ısıtır. Sunucuda yapmak GPU demek,
+        yani ücretli altyapı — kullanıcının koyduğu "ücretsiz" şartına
+        aykırı. Videoda gerçekçi kazanç: gürültü azaltma, kararlılık
+        (stabilizasyon) ve daha iyi kodlama ayarları.
+
+    KULLANICIYA DÜRÜST OLMAK: "kaliteyi artır" düğmesi fotoğrafta gerçek
+    iş yapar, videoda beklentiyi karşılamayabilir. Videoda ne yaptığımız
+    açıkça yazılmalı, sihir vadedilmemeli.
+
+[ ] 32. MÜZİK / SOUNDTRACK LİSTESİ
+    Dizi ve film profillerinde "nereden izlenir"in ÜSTÜNDE müzik listesi
+    bölümü. Tıklayınca çalan müzikler listelensin, "1. sezon 4. bölümde
+    çalanlar" ayrımıyla. Platform bağlantıları da eklenecek.
+    ⚠ VERİ KAYNAĞI SORUN — kullanıcı da "ulaşabiliyorsak" demiş:
+      TMDB soundtrack verisi VERMİYOR. Bölüm bazlı şarkı listesi ücretsiz
+      ve açık kaynaklarda büyük ölçüde YOK (Tunefind'ın açık API'si yok ve
+      kazımayı şartları yasaklıyor). MusicBrainz ücretsiz ama film/dizi
+      sahne müziği kapsaması çok seyrek.
+      ÖNCE FİZİBİLİTE: birkaç popüler dizi için gerçekten veri var mı
+      ölçülmeli. Yoksa kapsam küçültülür (ör. yalnız film müziği albümü,
+      bölüm ayrımı olmadan) ya da iş iptal edilir. Yarım veriyle
+      yayınlamak "çoğu dizide boş bölüm" demek.
+
+[ ] 33. GÖRÜNTÜLÜ ARAMADA EFEKTLER / SES DEĞİŞTİRİCİ
+    Komiklik için görüntü efektleri veya ses değiştirici.
+    ⚠ Madde 7 (arama) CANLIDA STABİL ÇALIŞTIKTAN SONRA. Gerçek zamanlı
+      video işleme işlemciyi ve pili ciddi yer; arama daha kendini
+      kanıtlamadan üstüne yük bindirmek temel özelliği riske atar.
+
+[ ] 8. SOHBETTE MİNİ YARIŞMALAR
+    Dizi/film soruları sorma oyunu.
+
+## YENİ İSTEKLER (13 Ağu — dosyanın altındaki ham notlardan çıkarıldı)
+
+[ ] 48. YAPIM BİLGİSİNİ ZENGİNLEŞTİR: ÖDÜLLER
+    "Oynayan ödüllü oyuncu varsa onun bilgisini ve aldığı ödülü de vermeliyiz.
+    Dizinin/filmin kazandığı ödüller de olmalı — Transfermarkt'ta futbol
+    takımının altında kupalar nasıl duruyorsa öyle." (kullanıcının sözü)
+    NOT: TMDB ödül verisi TUTMUYOR. Kaynak araştırması ŞART (IMDb lisanslı,
+    Wikidata/Wikipedia açık). Önce kaynak + lisans netleşmeli, sonra tasarım.
+    Md. 18 (wiki bölümü) ile aynı araştırmaya bağlı — birlikte ele alınmalı.
+
+[x] 49. SENARİST / YAPIMCI / YAPIM FİRMASI BİLGİSİ  (13 Ağu CANLIDA)
+    `credits.crew` zaten geliyormuş, hiç gösterilmiyormuş. Dizilerde kredi
+    bölüm bazlı olduğu için `created_by` şart (Breaking Bad'in 27 kişilik
+    ekibinde tek yönetmen/senarist yok). Rol başına tavan: 4/3/4/4.
+    Yeni `/sirket/:id` ekranı; TMDB proxy beyaz listesine yalnız
+    `/company/{id}` eklendi (`/company/{id}/images` hâlâ 403).
+    Bu kişiler ve firmalar gösterilsin, TIKLANABİLİR olsun, profillerine
+    gidilebilsin. NOT: TMDB `credits.crew` (job: Writer/Producer) ve
+    `production_companies` alanları elimizde ZATEN var — kişi sayfası da var.
+    Firma sayfası YOK; TMDB `/company/{id}` ile yeni ekran gerekir.
+
+[x] 50. GÖRSEL PERFORMANSI: AVIF + WEBP + SRCSET  (14 Ağu — katalog CANLIDA)
+    Katalog (TMDB): `Accept: image/webp` 46 çağrı noktasında; TMDB WebP
+    veriyor (~%28). AVIF TMDB'de YOK. srcset zaten vardı (`api.dart`).
+    ÖLÇÜLDÜ, YAPILMAYACAK: TMDB AVIF, ekstra srcset, CF Polish (ücretsiz
+    planda yok). Kendi yüklediğimiz medya için 12 varyasyon AÇILMADI —
+    yeniden istersen ayrı iş.
+
+[x] 51. PAGESPEED + MOBİL/WEB OPTİMİZASYON  (14 Ağu CANLIDA, dürüst tavan)
+    Splash (gerçek `logo.png`, uydurma "DİZİ JPG" metni DEĞİL) · nginx
+    `brotli_static` · SimpleIcons 1,36 MB→6 KB · APK `abiFilters` (AAB'de
+    x86_64 KALDI) · viewport. DÜRÜST HEDEF: mobil ~70 / masaüstü ~91.
+    100 imkânsız: Flutter CanvasKit + `Intl.v8BreakIterator` (SDK).
+    Örnek site `sinamalar.com` yok; `sinemalar.com` üç kategoride bizden kötü.
+    KALAN: nginx `@spa` (md. 58) — bu PageSpeed değil, SEO soft 404.
+
+[x] 52. İKİ ADIMLI DOĞRULAMA (2FA) — BİTTİ 13 Ağu, CANLIDA (1.44.0+91)
+    Yalnız e-posta. Kurtarma kodu YOK (gerekçe: kutu zaten tek kritik nokta).
+    Google ile girenlerde sorulmaz. Yol üstünde bir zamanlama sızıntısı da
+    kapatıldı: /auth/giris hesap yoksa bcrypt'i hiç çalıştırmıyordu.
+    "Çift doğrulama yöntemi açılabilsin (sadece mail ile)."
+    AÇIK SORU (kullanıcının kendi sorusu): Google ile girenlerde ne olacak?
+    Google hesabı zaten kendi 2FA'sını uyguluyor — o kullanıcılarda ikinci
+    bir katman ya gereksiz ya da çift kilit olur. Karar gerekiyor.
+
+
+[x] 53. H.264 OLMAYAN VİDEO TARAYICIDA OYNAMIYOR — BİTTİ 13 Ağu (dağıtım bekliyor)
+    ÖLÇÜM: canlıda HEVC SIFIR. Ama %6,9 VP9 var ve onlar Safari/iPhone'da
+    oynamıyor — sorun vardı, tahmin ettiğimiz yönün tersineymiş. HEVC'ye özel
+    kural yazılsaydı ölçülen 33 dosyayı ıskalayıp sıfır dosyayı düzeltirdik.
+    iPhone'un "Yüksek Verimlilik" ayarıyla çekilen videolar HEVC/H.265.
+    Sıkıştırılmadan geçtiklerinde sunucuya HEVC olarak gidiyor ve
+    Chrome/Firefox bunu OYNATMIYOR (Safari oynatıyor).
+    Eskiden beri var olan boşluk ama md. 35a'nın yeni kuralı (zaten verimli
+    videoyu sıkıştırma) bunu DAHA SIK tetikleyecek — artık öncelikli.
+    ÇÖZÜM SEÇENEKLERİ: (a) yalnız kodek yüzünden H.264'e transcode et
+    (kalite kaybı ama her yerde oynar), (b) yükleme anında kodek algılayıp
+    kullanıcıyı uyar, (c) sunucuda ikinci bir H.264 kopyası üret (disk+CPU).
+    ÖNCE ÖLÇ: canlıdaki videoların kaçı HEVC?
+
+[x] 54. SAYDAM PNG EDİTÖRDEN BEYAZ ÇIKIYOR — BİTTİ 13 Ağu (dağıtım bekliyor)
+    Başlık yeterli DEĞİLMİŞ: 2934 PNG tarandı, RGBA olanların %23,5'i opak.
+    Medya editörüne giren saydam PNG (çıkartma tarzı görseller) JPEG'e
+    çevriliyor ve saydam alanlar BEYAZ oluyor (paketin `jpegBackgroundColor`
+    varsayılanı). Nadir ama sessiz bir bozulma.
+    Düzeltmek çıktı formatını GİRDİYE GÖRE dallandırmayı gerektiriyor
+    (saydamlık varsa PNG kal) — dosya boyutu riski taşıyor, ölçülmeli.
+
+
+[ ] 55. GÖNDERİ KAYDETME (bookmark)  (14 Ağu, istatistik turundan çıktı)
+    Kullanıcı gönderi istatistiklerinde "kaydetme oranı" istedi ama böyle bir
+    ÖZELLİK YOK: düğme, tablo, uç, ölçü hiçbiri. Ajan uydurmadı, bildirdi.
+    X'te `bookmark_count`, Instagram'da `saved` karşılığı. Beğeniden FARKLI ve
+    daha güçlü bir sinyal ("beğenmedim ama sakladım").
+    İŞ: kaydet düğmesi + `yorum_kaydedenler` tablosu + `gonderi_sayac`'a
+    `kaydetme` ölçüsü + istatistik satırı. Sahibine yalnız SAYI gösterilir.
+
+[x] 56. FİNCE ÇEVİRİ HATASI  (14 Ağu CANLIDA, 1.47.0+95)
+    `Yeni takip` → `Uudet seuraukset` YANLIŞTI ("yeni sonuçlar").
+    Doğrusu `Uudet seuraajat` — dosyadaki iki biçim tek doğruya çekildi.
+
+[x] 57. ARAMADA OYUNCU / YÖNETMEN / SENARİST / ŞİRKET  (14 Ağu CANLIDA, 1.47.0+95)
+    `/ara` artık `/search/multi` + `/search/company` + `/search/person`.
+    `cartoon` kısa sorgu TMDB 1. sayfada Cartoon Network getirmiyordu →
+    2. sayfa + `q network` takviyesi + uzun-hedef puanı.
+    Sıra: Kullanıcılar → Dizi/Film → Şirketler → Kişiler. Kota: 16 tv/movie
+    + 8 şirket + 6 kişi (yoksa 200 cartoon dizisi şirketleri düşürüyordu).
+    Dokununca `/sirket/:id` / `/kisi/:id`. Play 1.40 `poster_path` yok diye
+    şirketi yok sayar — zararsız.
+
+[ ] 58. NGINX @spa — SEO SOFT 404  (14 Ağu, kod hazır, conf uygulanmadı)
+    Sitemap `/kesfet`+`/gozat`, bölüm haritası, `/kisi` EN biyografi, soft
+    404 kodu CANLIDA. Parça: `backend/nginx-seo-20260814.parca.conf`.
+    Canlıda hâlâ `location / { try_files $uri /index.html; }` — botlar
+    olmayan sayfada 200 + SPA alıyor. `try_files $uri @spa;` ayrı dikkatli
+    tur (yanlış conf tüm siteyi kırar).
+
+[ ] 59. PROFİL LİSTELERİNİ SÜRÜKLEYEREK SIRALAMA  (ham nottan, 14 Ağu numaralandı)
+    Favori diziler, izlediklerim, izliyorum, filmler — kaydırma/sürükleme
+    ile düzenlenebilsin. Ayarlardaki profil düzeni zaten Reorderable;
+    bu İÇERİK listelerinin kendi sırası.
+
+[ ] 60. PROFİL SAYFASI GÖRÜNTÜLENME SAYISI  (ham nottan, 14 Ağu numaralandı)
+    İstatistiklerde "profilim kaç kez açıldı". Md. 23'teki "profil ziyareti"
+    gönderiden profile GEÇİŞ; bu madde sayfanın kendisinin görüntülenmesi.
+    Kimlik gösterilmez, yalnız sayı (md. 21/23 gizlilik sözü).
+
+[x] 61. TMDB BÖLÜM PUANI ISI HARİTASI  (14 Ağu, 1.48.0+96 CANLIDA)
+    Dizi detayında sarı `dizi.jpg` rozeti DEĞİL, TMDB puanına dokununca
+    altında sezon×bölüm ızgara. Üstte S1…, solda E1…, kesişimde puan +
+    renk (Reacher kovaları: ≥7 altın, ≥6 turuncu, ≥5 kırmızı, <5 koyu
+    kırmızı). Oy yoksa `—` (0.0 yazılmaz). S0 atılır. Filmde açılmaz.
+    Puanlı hücre ≥44 dp, dokununca bölüm sayfası. Lazy
+    `GET /tmdb/tv/:id/season/:n`. 45 dil. Test 10/10 yeşil.
+
+
+## AÇIK TEKNİK BORÇ (küçük ama unutulmasın)
+
+[x] `/takipciler`, `/takipedilenler`, `/kullanici-ara` — 14 Ağu CANLIDA
+    Satırda `takip_ediyorum` + `ben_mi`. LIMIT 500 duruyor ama sınır
+    dışındakiler artık yanlış "Takip Et" göstermiyor (durum satırda geliyor).
+
+
+## KARAR BEKLEYEN — GÜVENLİK (hazır ama uygulanmadı)
+
+[!] DB rolünü kısıtlama — DİKKAT: `dizijpg` giriş yapabilen TEK süper
+    kullanıcı, `postgres` rolü YOK. Yanlış sırayla yapılırsa veritabanına
+    erişim kaybedilir ve SQL ile geri alınamaz. Ayrı bir turda, yedek elde
+    hazırken yapılmalı.
+[!] CSP report-only — nginx'te 7 ayrı yere girmeli (add_header miras
+    alınmıyor), yoksa bazı yollar sessizce CSP'siz kalır.
+[!] Medya imzası ZORUNLU modu — kullanıcılar yeni sürüme geçtikten sonra
+    açılacak. Şimdi açılırsa eski sürümdekilerin DM medyası görünmez.
+
+
+## SENDEN BEKLENEN
+
+[ ] Play Console'a 1.46.0+93 AAB yükle
+    Dosya: ~/Desktop/dizijpg-1.46.0+93.aab (~96 MB).
+    Sürüm notu HAZIR: dizijpg/surum-notu-1.46.0.txt (tr-TR 470 / en-US 445).
+    Ajan yükleyemez (tarayıcı 10 MB sınırı, Play API yok).
+[ ] Play Veri Güvenliği beyanı — md. 23 yeni veri topluyor (görüntülenme
+    kaynağı, video izlenme kovası). Politika metni 46 dilde canlı; Play
+    panelindeki beyan güncellenmedi.
+[x] Play Console'a 1.40.0+86 AAB yükle  (13 Ağu GÖNDERİLDİ)
+    PLAY'İN İKİ UYARISI (engelleyici değil): 13 cihaz desteği düştü (~%0);
+    paket boyutu ~118 MB — abiFilters sonrası APK 77 MB, AAB ayrı.
+[ ] Arama testi için iki telefonu hazırla (madde 7, adım 5) — ASKIDA,
+    arama sunucuda KAPALI.
+[!] Testçi listesine DOKUNMA — 14 gün sayacı kesintisiz ~13. gün.
+
+
+# =========================================================================
+# EN SON YAPILACAK — diğer her şey bittikten sonra
+# =========================================================================
+# KULLANICI KARARI (10 Ağu): "rehberi en sona al, onu her şeyi yaptıktan
+# sonra yapalım". Yarım kalmış hâliyle duruyor, kaybolan bir şey yok.
+
+[ ] 5. AYARLARA REHBER  — EN SONA BIRAKILDI (10 Ağu, kullanıcı)
+    >>> DURAKLATILDIĞI AN (buradan devam edilecek) <<<
+    · Diskte 67/276 webp var. Ağaçta 132 dosya değişmiş (çoğu SİLME).
+    · KAYIP YOK: 186 görselin tamamı git'te HEAD'de (commit e466004).
+      Geri almak için: git checkout -- araclar/rehber-gorsel/
+    · Emülatör açık kalmış olabilir (emulator-5554) — gerekmiyorsa kapat.
+    · İki ajan da bu işte takıldı. Sebep: 200+ karelik TEK uzun komut.
+      Devam edilirse 5-8 dillik öbekler hâlinde çalışılmalı.
+
+    NEDEN 123 GÖRSEL SİLİNDİ (karar DOĞRUYDU, ben doğruladım):
+      Silinen Almanca ayarlar karesini git'ten çıkarıp gözle inceledim.
+      Arayüz Almanca ama BİO TÜRKÇE ve ülke "Türkiye" (Almancası "Türkei").
+      Yani içerik dili arayüz diliyle uyuşmuyordu — kullanıcının şikayet
+      ettiği tam sorun. Sıkı doğrulama korunmalı, gevşetilmemeli.
+
+    AÇIK SORU: ülke adları 10 Ağu'da 45 dile çevrildi ama emülatördeki
+    APK eski olabilir. Devam edilince ülkenin doğru dilde çıktığı
+    doğrulanmalı; çıkmıyorsa emülatördeki uygulama yeniden kurulmalı.
+
+    BULUNAN ARAYÜZ HATASI (düzeltilmedi, madde olarak ayrıca ele alınmalı):
+      Almanca ayarlarda tema seçicide "System" kelimesi "Syste / m" diye
+      ortadan bölünüyor — dar düğmede uzun çeviri taşıyor. Fince, Macarca,
+      Lehçe, Felemenkçe gibi uzun sözcüklü dillerde de olması muhtemel.
+
+    ---- ÖZGÜN PLAN ----
+    KARAR (kullanıcı): ekran görüntüleri 45 dilde OTOMATİK üretilecek,
+    sunucudan servis edilecek (APK büyümesin), rehber HEM uygulamada HEM webde.
+    Durum: emülatör boru hattı kuruldu, Türkçe 6 ekran çekildi, demo hesap
+    (GIF avatar + GIF kapak + bio + sosyal) donatıldı.
+    Kalan: Türkçe turu TEKRAR çekilecek (hesap zenginleşti), 46 dile
+    ölçeklenecek, rehber içeriği yazılacak, uygulama ekranı + web sayfası.
+    KARAR (kullanıcı): yorumlar da çevrilecek — ekran görüntüsündeki dil ile
+    içerik dili tutarlı olacak (İspanyolca çekimde Türkçe yorum kalmayacak).
+    ⚠ Madde 25 (ilk açılış akışı) ile ÇAKIŞIYOR — birlikte tasarlanmalı.
+
+    NEDEN EN SONA UYGUN: rehber, uygulamanın SON hâlini anlatan ekran
+    görüntülerinden oluşuyor. Bugün bile arayüz üç yerde değişti (GIF
+    avatarları, "devamı" yazısı, arama düğmeleri). Önce çekilseydi, her
+    değişiklikte 276 karenin tamamı yeniden çekilecekti. En sona bırakmak
+    tekrar çekim maliyetini sıfırlıyor.
+    ⚠ Madde 25 (ilk açılış akışı) ile ÇAKIŞIYOR — ikisi de "uygulamayı
+      tanıt" işi. 25 önce yapılırsa rehberin kapsamı küçülebilir.
+
+
+# =========================================================================
+# RAFTA — şimdilik yapılmayacak
+# =========================================================================
+# Buradakiler iptal DEĞİL, ertelendi. Karar verilince yukarı taşınır.
+
+[!] 34. KAHVE ISMARLA (bağış)  — 10 Ağu: KULLANICI RAFA KALDIRDI
+    İstek: aylık maliyetimiz $ olarak gösterilecek; gelen bağışlar vergiler
+    düşüldükten sonra $ olarak gösterilecek; kâr/zarara göre altında bar
+    şekillenecek.
+
+    NEDEN RAFTA: bu bir ödeme işi — teknik değil, hukuki/politika işi.
+      · Google Play, uygulama içinden alınan ödemelerde kendi faturalama
+        sistemini şart koşuyor (komisyon alır). Bağış istisnası yalnız
+        kayıtlı yardım kuruluşlarına ve bazı ülkelerde geçerli. Bağış
+        karşılığında rozet/ayrıcalık verilirse KESİN Play faturalaması.
+      · Gelir elde etmek vergi ve muhasebe yükümlülüğü doğurur.
+      · "Maliyetimiz şu kadar" diye rakam yayımlamak geri alınamaz bir
+        şeffaflık taahhüdü; sonradan gizlemek güven kaybettirir.
+
+    RAFTAN İNMESİ İÇİN VERİLECEK KARARLAR:
+      1. Bağış web üzerinden mi (Play kuralı dışında kalır, komisyon yok)
+         yoksa uygulama içinden mi?
+      2. Bağışa karşılık bir şey verilecek mi? (Verilirse Play faturalaması
+         zorunlu hâle gelir — "teşekkür" bile sayılabilir, dikkat.)
+      3. Rakamlar gerçek mi, yuvarlanmış mı? Kim muhasebeleştirecek?
+
+
+# =========================================================================
+# BİTENLER — ARŞİV
+# =========================================================================
+
+## SIRADAN ÇIKANLAR (küçük/orta/büyük bölümlerinde tamamlananlar)
+
+[x] 46. UZUN ÇEVİRİLERDE TAŞMA AİLESİ  (12 Ağu CANLIDA, 1.34.1+80)
+    a) Tema seçici (de "System" bölünmesi): üç segment etiketi
+       FittedBox(scaleDown) + tek satır — ellipsis yerine scaleDown seçildi,
+       "Järjestelm…" gibi anlam kaybı olmaz, metin tam kalıp bir tık küçülür.
+    b) Profil sekmeleri: etiket Flexible > FittedBox(scaleDown); fi/hu
+       gerçek RenderFlex taşması testte doğrulanıp kilitlendi (açık profil
+       da aynı widget'ı kullandığı için o da düzeldi).
+    Toplu taramada 3 ek yer düzeltildi: gözat Diziler/Filmler segmentleri,
+    kişi-yapımlar '{} yapımdan {} tanesini izledin' satırı (de + çok haneli
+    sayı taşıyordu), gelen arama ekranı "Görüntülü/Sesli arama" satırı.
+    Ayarlar'daki üç sheet başlığı da Expanded'a alındı.
+    KANIT: test/uzun_ceviri_tasma_test.dart (6 test, 320 dp dar ekran,
+    fi/hu/pl gerçek çevirilerle) — düzeltmesiz 6/6 kırmızı doğrulandı.
+    Toplam 1024 test yeşil. Yeni çeviri anahtarı yok.
+
+[x] 17. PUAN DAĞILIMI (IMDb tarzı)  (12 Ağu CANLIDA, 1.35.0+81)
+    Detaydaki sarı "4.2 dizi.jpg" rozetine dokununca alt sayfada dağılım
+    grafiği açılıyor (IMDb'de de puan grafiğe kapıdır): 5→1 yatay çubuklar,
+    her çubukta kişi sayısı YAZILI, üstte ortalama + "N kişi puanladı".
+    Kendi puanın ayrıca işaretli (parlak çubuk + kişi ikonu — renk körlüğünde
+    de ayırt edilsin diye yalnız renkle ayrılmıyor).
+    Sunucu: /incelemeler ucuna `dagilim` eklendi (yeni istek YOK, aynı
+    yanıtla geliyor; üç sorgu artık paralel). Dağılım HAM ölçekte (1-10)
+    gelir, 5 yıldıza kovalamayı istemci `puan.dart` ile yapar — ölçek
+    çevirisi tek yerde kalsın diye (o dosyanın başlığındaki eski hata).
+    Rozetin dokunma hedefi 21→44 dp yapıldı; yanındaki izleyen sayacı da
+    (o zaten 22 dp'ydi, 44 asgarisinin yarısı — eski eksik kapandı).
+    KANIT: test/puan_dagilimi_test.dart (13 test: kova sınırları 1-10→1-5,
+    5→1 sıra, sayıların yazılı olduğu, orantı, kendi puanın işareti,
+    hareket-azaltma, boş veride açılmama, 44 dp + dokununca açılma).
+    Toplam 1037 test yeşil. Çeviri: 2 yeni anahtar × 45 dil (624).
+
+[x] 19. KULLANICI ENGELLEME  (13 Ağu CANLIDA, 1.40.0+86)
+    Engellenen kişinin gönderileri, yorumları, profili hiçbir yerde
+    görünmüyor; iki taraf birbirine mesaj/arama gönderemiyor.
+    BULGU: engelleme şimdiye dek YALNIZ YAZMADA zorlanıyormuş, OKUMADA
+    değil — engellediğin kişinin yorumları dizi sayfasında, adı aramada,
+    sohbeti mesaj listesinde görünmeye devam ediyordu. 11 uç daha süzüldü
+    (üçü kod okurken çıktı; en sinsisi /ceviri ucu: gönderi metnini
+    döndürüyordu, yani yorum "çeviri" olarak okunabiliyordu).
+    Yazma kapıları 403 değil 404 döner (403 engellenene engellendiğini ele
+    verirdi); profil 404 değil BOŞ profil (yoksa engeli kaldırma düğmesine
+    ulaşılamazdı). Engelleme iki yöndeki takibi koparır. Mesaj/gönderi
+    SİLİNMEZ, engel kalkınca geri gelir. 43 backend + 9 app testi.
+    Engellenen kişinin paylaşımları, yorumları, hiçbir şeyi görünmeyecek ve
+    iki taraf ASLA birbirine mesaj atamayacak.
+    NOT: ban/ceza sistemi (madde 6) yönetici tarafıydı; bu KULLANICININ
+    kendi eline verilen araç. Karşılıklı kesme olduğu için arama
+    düğmelerinin görünürlüğünü de etkiler (madde 7 ile bağlantılı).
+
+[x] 37. ADMİN PANELİNDE CİHAZ DAĞILIMI  (13 Ağu CANLIDA, 1.39.0+85)
+    Panelde yeni "Cihazlar" sekmesi: cihaz türü / işletim sistemi / tarayıcı
+    dağılımı + push platformu + uygulama sürümü + dil + günlük eğilim.
+    ENVANTER SONUCU: tarayıcı/OS/tür verisi elimizde HİÇ YOKTU; push tablosu
+    yalnız android/ios ve yalnız bildirime izin verenleri görüyordu (web
+    kullanıcısı orada hiç yok). Bu yüzden User-Agent'tan TÜRETİLMİŞ sayaç
+    eklendi: ham UA HİÇBİR YERE yazılmıyor, üç kapalı sözlükten birer değere
+    indirgenip günlük agregat sayaca ekleniyor (kullanici_id/IP/saat YOK,
+    kişi bazlı sorgu imkânsız, CHECK'ler DB düzeyinde zorluyor, 400 gün sonra
+    silinir). Sayaç İSTEK sayar kişi değil — panel bunu ve örneklem
+    eksikliğini sarı kutuda yazıyor. 32 test.
+    ⬜ SENİN KARARIN: gizlilik politikasına "agregat kullanım istatistiği"
+    cümlesi eklensin mi (Play Data Safety değişikliği muhtemelen gerekmiyor,
+    gerekçe YAPILACAKLAR.md 13 Ağu-b'de).
+    Kullanıcıların cihaz dağılımı panelde görünsün: masaüstü / mobil /
+    tablet, Android / iOS / Windows / Linux / macOS, tarayıcı, uygulama
+    sürümü. "Alabildiğimiz tüm datayı güzelce göster" (kullanıcı).
+    NE VAR ELİMİZDE (önce bu doğrulanmalı):
+      · `cihaz_tokenlari` tablosu — push için platform bilgisi tutuyor
+        olabilir, ama YALNIZ bildirime izin verenleri kapsar (eksik örneklem)
+      · İstek başlıklarındaki `User-Agent` — herkesi kapsar ama şu an
+        kaydedilmiyor olabilir
+      · `Api.surum` — istemci sürümü zaten gönderiliyor
+    ⚠ GİZLİLİK SINIRI: bu bir TOPLAM istatistik olacak, kullanıcı bazında
+      "kim hangi cihazı kullanıyor" listesi DEĞİL. Cihaz parmak izi
+      çıkarmıyoruz (ban sisteminde de bilinçli olarak kimlik donanımdan
+      okunmuyordu — aynı çizgi korunmalı). Toplanan yeni veri olursa
+      gizlilik politikası + Play Data Safety güncellenir.
+
+[x] 27. YENİ BÖLÜM BİLDİRİMİ (sıra farkındalıklı)  (13 Ağu — sunucu CANLIDA,
+    istemci sonraki sürümle)
+    Senin kuralın birebir uygulandı: yeni bölüm çıkınca bildirim, AMA ancak
+    BİR ÖNCEKİ bölümü izlemişsen. 1. sezondaki kullanıcıya 10. sezon bildirimi
+    GİTMEZ (gerçek DB'de 10 kullanıcılık senaryoyla kanıtlandı). Zaten izlenen
+    bölüme bildirim yok; dizinin İLK bölümüne (S1B1) bildirim yok.
+    Sezon geçişi: B1 için ÖNCEKİ SEZONUN SON bölümü aranıyor; sezon numarası
+    "sezon-1" varsayılmıyor (TMDB'de numara atlayabiliyor), bölüm sayısı
+    /tv/{id} gövdesinden — EK TMDB ÇAĞRISI YOK.
+    AYNI BÖLÜM İÇİN İKİNCİ BİLDİRİM İMKÂNSIZ: kısmi tekil indeks
+    (kullanici_id, tmdb_id, sezon, bolum) WHERE tur='bolum'; push yalnız
+    satır GERÇEKTEN yazıldıysa gidiyor.
+    6 saatte bir, yalnız görevli işçide. Pencere 14 gün; tur başına kullanıcı
+    başına en fazla 3 bildirim (30 dizi izleyenin telefonu patlamasın —
+    frene takılan bölüm kaybolmaz, sonraki turda sırası gelir).
+    Ayarlar > Bildirim Tercihleri > "Yeni bölümler" ile kapatılabilir.
+    KANIT: backend 55 test (624 yeşil), app 44 test (1115 yeşil), migrasyon
+    gerçek PostgreSQL'de 3 kez + geri alma denendi.
+    İSTEMCİ TESTLERİ İKİ GERÇEK HATA BULDU (ikisi de push.dart, mevcut
+    bildirimleri de etkiliyordu): (1) uygulama AÇIKKEN gelen bildirime
+    dokununca hedef kayboluyordu — beğeni/yanıt/etiket dahil, doğru gönderi
+    yerine bildirim listesine düşüyordu; (2) sunucu sezon/bölümü SAYI, push
+    METİN gönderdiği için sert tip dönüşümü çöküyor ve dokunuş hiçbir şey
+    yapmıyordu.
+    İzlediği dizinin yeni bölümü gelince bildirim at — AMA ancak bir
+    öncekini izlemişse. 1. sezonda olan kullanıcıya 10. sezonun bölümü
+    için bildirim GİTMEYECEK (kullanıcı kuralı).
+    NOT: izleme ilerlemesi bölüm bazında biliniyor mu, önce doğrulanmalı.
+    Madde 22 (tekrar izleme) şemayı değiştirecekse ondan SONRA yapılmalı,
+    yoksa iki kez yazılır.
+
+[x] 28. FAVORİ OYUNCU/YÖNETMEN YENİ İŞ BİLDİRİMİ  (13 Ağu CANLIDA, 1.40.0+86)
+    Favori kişinin yeni dizi/filmi çıkınca bildirim; kişinin sayfasında zil
+    işaretiyle üç durumlu ayar (tüm bildirimler / yalnız uygulama içi /
+    kapalı) + Ayarlar'da genel anahtar.
+    NOT DOĞRULANDI: `favoriler` tablosunda oyuncu/yönetmen ayrımı YOK, o
+    yüzden "favori kişi" olarak yapıldı; rol ayrımı ayrı iş.
+    Aynı yapım iki kez bildirilmez; bir filmde üç favori oyuncun olsa da
+    tek bildirim gider. Pencere 21 gün, günde bir tur, kişi başına TEK TMDB
+    çağrısı. 63 backend + 34 app testi.
+    Favori oyuncu veya yönetmenin yeni dizi/filmi çıkınca bildirim.
+    Kişinin profilinde bildirim işareti olacak — oradan açıp kapatabilsin.
+    Daha hassas ayar: "yalnız uygulama içi bildirim" gibi seçenekler.
+    NOT: yönetmen favorileme var mı, kontrol edilmeli — madde 4'te
+    `favoriler` tablosuna person eklenmişti ama rol ayrımı olmayabilir.
+
+[x] 43. MESAJLARA EMOJİ TEPKİSİ  (12 Ağu CANLIDA, 1.37.0+83)
+    Çift tık → ❤️ (ikinci çift tık kaldırır). Basılı tutunca 9 emojilik
+    hareketli şerit AÇILIR — ama menü EZİLMEDİ: senin notundaki uyarı haklı
+    çıktı, basılı tutma zaten Yanıtla/Düzenle/Sil/Şikayet menüsüne bağlıydı.
+    Şerit menünün BAŞINA eklendi (WhatsApp/Telegram kalıbı); bir gerileme
+    testi menünün yerinde durduğunu kilitliyor.
+    Rozetler baloncuğun altında: hareketli emoji + sayı (2+ ise yazılır);
+    kendi tepkin çerçeveli, dokununca kalkar, başkasınınkine dokununca sana
+    da eklenir. İyimser güncelleme + hatada geri alma.
+    ŞİFRELEME KARARI: tepki AÇIK üstveri. Mesaj METNİ şifreli kalır; tepki
+    9 elemanlı SABİT ve herkese açık bir kümeden tek değer — şifrelemek DB
+    dökümü senaryosunda frekans analizine karşı gerçek koruma vermez ama
+    sayaçları saymayı imkânsız kılardı. DB zaten kim-kiminle-ne-zaman
+    üstverisini açık tutuyor.
+    Sunucu (ajan): `mesaj_tepkileri` tablosu + `POST /mesaj-tepki`; tepkiler
+    AYRI UÇ DEĞİL `GET /mesajlar` yanıtıyla geliyor (5 sn'lik yoklama iki
+    katına çıkmasın), tek sorguda toplanıyor (N+1 yok, sorgu günlüğüyle
+    kanıtlandı). YETKİ: başkasının sohbetindeki mesaja tepki 404 (403 değil —
+    403 "bu id var ama senin değil" derdi, id tarayan biri mesaj varlığını
+    ölçerdi). VS16'sız kalp de kabul edilip kanonikleştiriliyor.
+    Hız limiti 600/sa (kullanıcı bazlı). Bildirim EKLENMEDİ (bilinçli).
+    KANIT: app 7 test + backend 29 test. Testler ÜÇ gerçek hata yakaladı:
+    şerit 390 dp'de 27 px taşıyordu (yatay kaydırma + 44 dp hedef), 9 sonsuz
+    animasyon ekranı hiç durulmuyordu (açılışta bir kez oynar oldu — pil),
+    ve iyimser kare ölçülemiyordu. Toplam: app 1051, backend 569 yeşil.
+    Sohbet mesajlarına emoji bırakılabilmeli: ÇİFT TIKLAYINCA otomatik kalp,
+    BASILI TUTUNCA emoji seçici açılacak.
+    NOT: gönderilerdeki tepki bileşeni (tepki.dart) zaten var — aynı seçici
+    kullanılmalı, ikinci bir emoji seçici yazılmamalı. DM'ler ŞİFRELİ:
+    tepkinin de şifreli mesaj yapısına nasıl ekleneceği tasarlanmalı
+    (sunucu mesaj içeriğini göremiyor; tepki açık üstveri mi olacak, karar).
+    Basılı tutma sohbette başka bir işe atanmışsa (kopyala menüsü?) çakışma
+    önce kontrol edilmeli.
+
+[x] 22. TEKRAR İZLEME  (13 Ağu CANLIDA, 1.39.0+85)
+    Göz rozetinde kaçıncı izleyişin olduğu yazıyor (10+ için "×10+"), toplam
+    izlenme süresi tekrarlara göre artıyor.
+    ŞEMA DEĞİŞMEDİ: `durumlar.tekrar` ve /rewatch zaten vardı; `izlemeler`e
+    tekrar satırı ATILMADI — o tablo bölüm sayaçlarının (rozet, kitaplık,
+    uyum, yeni bölüm bildirimi) kaynağı, çoğaltmak hepsini bozardı.
+    Süre formülü ÜÇ yerde kopyaymış (yıl özeti dahil), tek yardımcıya indi.
+    Yıl özeti tekrarı saymıyor: tekrarın hangi yıl yapıldığı kayıtlı değil,
+    yoksa bugünkü tekrar 2019 özetini şişirirdi. 37 test.
+
+[x] 25. İLK AÇILIŞ KARŞILAMA AKIŞI  (13 Ağu CANLIDA, 1.40.0+86)
+    Beş adım: doğum tarihi → veri aktarma (mevcut TV Time akışına bağlandı,
+    yeni kod yok) → filmler + SERİ FİLMLER ("tümünü izledim" seriyi komple
+    ekler) → diziler (seçtikçe benzerleri gelir, düz popülerlik değil) →
+    tanıtım. Her adımda "Şimdilik geç"; tamamlandı bayrağı SUNUCUDA, cihaz
+    değiştirene baştan sorulmaz.
+    Doğum tarihi gün/ay/yıl AYRI sütunlarda (yıl isteğe bağlı), herkese açık
+    profilde GÖSTERİLMEZ.
+    CANLIDA YAKALANAN HATA: film serileri isimden çözülüyordu ve
+    "Yüzüklerin Efendisi" için YAPIM BELGESELLERİ koleksiyonu geliyordu —
+    "tümünü izledim" deseydin kitaplığına belgeseller yazılacaktı. Seçim
+    kurala bağlandı, canlıda doğrulandı (28 → 30 seri).
+    Girişten SONRA, uygulama ilk kez açıldığında sırayla:
+      1. Doğum tarihi sor
+      2. Dışarıdan veri aktarmayı desteklediğimizi söyle (TV Time ZIP içe
+         aktarma ZATEN var — oraya bağlan, yeni akış yazma)
+      3. İZLEDİĞİ FİLMLERİ sor: ekranda en çok izlenenler listelensin.
+         Görünür bir yerde "SERİ FİLMLER" düğmesi olsun → film serilerini
+         göster (Harry Potter gibi) → "tümünü izledim" seçeneği, tıklayınca
+         serinin TAMAMI izlediklerine eklensin.
+      4. DİZİLERİ sor: Better Call Saul, Breaking Bad, Pluribus, GoT,
+         House of the Dragon gibi bilinenler + ALAKALI dizileri de göster
+         (kümelenmiş öneri, düz popülerlik listesi değil)
+      5. Uygulamayı tanıt: bio ekleyebilirsin, verilerin şöyle tutuluyor,
+         istersen anonimleşebilirsin vb.
+    ⚠ KULLANICI KURALI: "buradan sonra çıkabilsin, ZORLAMA kullanıcıyı" —
+      5. adımdan itibaren atlanabilir olacak.
+      ÖNERİM: 1-4 de atlanabilir olsun. Doğum tarihini zorunlu tutmak
+      kaydolan kullanıcıyı ilk ekranda kaybettirir; ayrıca misafir hesap
+      (e-postasız) özelliğimizle çelişir.
+
+    ⚠ DOĞUM TARİHİ HUKUKİ İŞ ÇIKARIR — tasarımdan önce karar gerek:
+      Yaş verisi topladığımız an KVKK/GDPR'da çocuk rızası kuralları devreye
+      girer (13/16 yaş altı için veli onayı) ve Play Data Safety + yaş
+      derecelendirme formu güncellenmek zorunda. "Sadece soralım, bir şey
+      yapmayalım" seçeneği YOK: yaşı biliyorsak ona göre davranmamız beklenir.
+      Karar verilecek: yaş ne işe yarayacak (içerik filtresi? yaş
+      doğrulaması?) ve altında kalanlara ne olacak.
+
+    TEKNİK NOTLAR:
+      · Film serileri TMDB `collection` ucuyla geliyor, kalıp mevcut.
+      · "Tümünü izledim" TEK toplu uca yazmalı; N ayrı istek atılırsa 20
+        filmlik seri 20 istek eder ve hız limitine takılır.
+      · Madde 5 (REHBER) ile ÇAKIŞIYOR: ikisi de "uygulamayı tanıt" işi.
+        Birlikte tasarlanmalı, iki ayrı tanıtım akışı yazılmamalı.
+      · Madde 22 (tekrar izleme) ile bağlantılı: toplu "izledim" yazarken
+        izleme sayacı şeması nasıl olacaksa ona uymalı.
+
+
+## ÇÖZÜLEN HATALAR (kullanıcının bildirdikleri)
+
+[x] 47. PROFİLDE "İZLİYORUM"DAN YANLIŞ DİZİ DÜŞÜYOR  (12 Ağu CANLIDA, 1.34.0+79)
+    KÖK NEDEN (senin "aç-kapa düzeltiyor" ipucun doğruydu — gösterim hatası):
+    poster karosu (MiniIcerik) veriyi yalnız İLK kuruluşta çekiyordu ve
+    şeritler anahtarsızdı. Liste 2'den 1'e düşünce Flutter 0. karoyu geri
+    dönüştürüyor, karo ESKİ dizinin verisini göstermeye devam ediyordu:
+    silinen (BB) ekranda kalıyor, kalan (Dexter) "silinmiş" görünüyordu.
+    DÜZELTME (iki katman): karo kimliği değişince veriyi yeniden çeker
+    (didUpdateWidget + bayat yanıt koruması) + 5 şeridin hepsine
+    ValueKey('tur-tmdb_id') (profil x2, izlediklerim, kitaplık, açık profil).
+    KANIT: test/izliyorum_dusme_test.dart — "iki dizili İzliyorum, 2.'yi
+    kaldır, 1. duruyor" senaryosu; düzeltmesiz İKİSİ DE KIRMIZI doğrulandı.
+    TEKRARLAMA ADIMLARI: İzliyorum'da 2 dizi var (Dexter + Breaking Bad).
+    Breaking Bad'e gir, dizinin profilinden "izliyorum"u kaldır, profiline
+    dön → DEXTER kalkmış görünüyor (yanlış olan). Uygulamayı kapat-aç →
+    doğru hâl: Dexter duruyor, Breaking Bad silinmiş.
+    ÖNEMLİ İPUCU (kullanıcının gözlemi): aç-kapa DÜZELTİYOR → sunucu doğru
+    kaydediyor, hata İSTEMCİNİN profil listesini yerel güncelleme/önbellekten
+    çizme tarafında. Yani veri kaybı yok, gösterim hatası var.
+    ŞÜPHELİLER (doğrulanmadı, bakınca ilk buralara):
+      · İyimser yerel kaldırma id yerine SIRA/indeks ile siliyor olabilir
+        (takvimdeki removeWhere kalıbı tmdb_id ile; profil şeridi farklı mı?)
+      · Şerit kartlarında ValueKey eksikse widget geri dönüşümü yanlış
+        elemanı düşürebilir (madde 2'deki bayat-state ailesi)
+      · SWR önbelleği: dönüşte bayat liste + yerel silme üst üste binince
+        yanlış eleman düşüyor olabilir; tur/tmdb_id karışması da mümkün
+        (dizi vs film aynı tmdb_id taşıyabilir!)
+    Doğru düzeltme ölçütü: silme TÜR+TMDB_ID ile hedeflenmeli, dönüşte
+    arka plan tazelemesi gerçek listeyi getirmeli; teste "iki dizili liste,
+    2.'yi kaldır, 1. duruyor" senaryosu yazılmalı.
+
+[x] 13. GIF PROFİL RESİMLERİ  (10 Ağu CANLIDA)
+    KÖK NEDEN: iki kusur üst üste binmiş. Ekranlar avatarı HAREKETSİZ kipte
+    çağırıyordu ve o kip ilk kareyi çizen bir yol kullanıyordu — yani sorun
+    webe özel DEĞİLDİ, her platformda donuktu. Üç yüzeyde düzeltildi.
+    ESKİ BAŞLIK: GIF profil resimleri akışta/yorumlarda/reels'te oynamıyor
+    9 Ağu'da profil ekranındaki avatar+kapak düzeltildi ama YALNIZ ORASI.
+    Kök neden biliniyor: `cached_network_image` webde HtmlImage kipi
+    kullanıyor, kare sayısını 1 sanıyor. Çözüm de biliniyor (web/mobil dalı,
+    `agGorselKur`). Aynı düzeltme akış, dizi/film yorumları ve reels'teki
+    avatarlara UYGULANMADI.
+    ⚠ TEST TUZAĞI: `flutter test` DAİMA kIsWeb==false ile koşar. Web dalı
+      testte görünmez — bu hata tam bu yüzden canlıya çıktı. Web bayrağı
+      parametre olarak alınmalı.
+
+[x] 14. "DEVAMI" YAZISI  (10 Ağu CANLIDA)
+    KÖK NEDEN: hiçbir şeye BAKMADAN her zaman ekleniyordu. Sonuç tam tersti:
+    kısa metinde görünüyor, uzun metinde eleniyordu. Artık ölçülerek karar
+    veriliyor, etiket kendi satırında (üç nokta onu yiyemesin diye).
+    Gönderilerde içerik "." bile olsa "devamı" bağlantısı görünüyor.
+    Reels kısmı da aynı sorun için kontrol edilecek.
+
+[x] 15. BİLDİRİMDEN YANITA GİDİNCE KOCA EKRAN  (10 Ağu CANLIDA)
+    KÖK NEDEN: bildirim, YANITIN kendi numarasını taşıyor (üst yorumunkini
+    değil); yanıtın medyası olmadığı için reels sanılıp tam ekran açılıyordu.
+    Bildirim yolları artık üst yorumu çözüyor, ek istek maliyeti YOK.
+    Gönderiye gelen yanıt bildirimine tıklayınca yorum yazma alanı tüm
+    ekranı kaplıyor.
+
+
+[x] 39. MİSAFİR HESAP ARAMA KISITI  (10 Ağu CANLIDA)
+    Kullanıcı kararı: misafirler aranamasın, bu ayarları açamasın, sebebi
+    kendilerine söylensin. Üçü de yapıldı, ayarlarda kilitli anahtar + açıklama.
+    YOL BOYUNCA BULUNAN AÇIK: misafir hesaplar GERÇEK KULLANICILARI
+    ARAYABİLİYORMUŞ — sunucuda arayanın hesap türüne dair hiçbir kontrol
+    yokmuş. Kullanıcının kararı bu açığı da kapattı.
+    Eskiden misafire arama 404 dönüyordu ("kullanıcı yok"), yani var olan
+    kullanıcı için yalan söyleniyordu; artık ALICI_MISAFIR (403).
+
+[x] 40. WEBDE GOOGLE İLE GİRİŞ  (10 Ağu CANLIDA)
+    KÖK NEDEN: `signIn()` webde çıkmaz sokak — açılır pencere akışı sonsuza
+    kadar bekliyor, hata ATMIYOR, sunucuya istek gitmiyor. Konsolda hata
+    olmamasının sebebi buydu. Google'ın kendi düğmesi çizdiriliyor.
+    Konsol yapılandırması ELENDİ: Authorized JavaScript origins doğruymuş.
+    "Last used: 31 Tem" → webde Google girişi HİÇ çalışmamış, gerileme değil.
+    SDK yüklenemezse (reklam engelleyici) sebebi yazan kilitli düğme çıkıyor.
+    Android yolu DEĞİŞMEDİ, testle kilitlendi.
+    ✓ 11 Ağu: kullanıcı gerçek hesapla DENEDİ — web de telefon da ÇALIŞIYOR.
+
+[x] 41. ARAMA HATA MESAJLARI KULLANICIYA ULAŞMIYORDU  (10 Ağu CANLIDA)
+    Senin testinde gördüğün "bağlantı hatası" bundandı. Kurulum sırasında
+    medya katmanı koparsa mesaj GENEL metne SABİTLENİYORDU; saniyeler sonra
+    gelen gerçek sebep doğru metne çevriliyor ama ekrana ulaşamıyordu.
+    Yani sunucu doğru şeyi söylüyor, uygulama göstermiyordu.
+
+
+## 11 AĞUSTOS — CANLIYA ÇIKANLAR (1.33.0+78)
+
+[x] 42. ARAMA KALİTE TURU  (11 Ağu WEBDE CANLIDA — telefon testi bekliyor)
+    Senin iki telefonlu testindeki 4 şikâyet: arama hissi yok · ses kalitesi ·
+    bağlantı yavaş · ekran tasarımı zayıf. Tamamı İSTEMCİ-YALNIZ çözüldü,
+    backend DEĞİŞMEDİ. Ayrıntı: backend/ARAMA-API-SOZLESMESI.md §14.7.
+      ① Zil + haptik (`arama_efekti.dart` + assets/sesler/zil.wav): giden
+        aramada ringback, gelen aramada ön plan zili; durum geçişlerinde
+        titreşim. Yeni paket YOK (audioplayers zaten vardı).
+      ② Ses: echoCancellation/noiseSuppression/autoGainControl AÇIKÇA verildi;
+        opus'a FEC + 32 kbps tavan; sesli arama AHİZE, görüntülü HOPARLÖR.
+      ③ Bağlanma hızı: ICE toplama beklemesi 6 sn → 2 sn üst süre (erken
+        biterse anında). SÖZLEŞME SAPMASI olarak §14.7'de gerekçeli yazıldı.
+      ④ Çalarken avatarda nabız halkaları (hareket-azalt açıksa hiç dönmez).
+    +20 test (zil, ses kısıtları, ICE iki yön, nabız). Toplam 1010 yeşil.
+    11 Ağu: sürüm 1.33.0+78, web dağıtıldı, APK/AAB derlendi.
+    KALAN: iki telefonda gerçek test (madde 7'nin 11 maddelik turu hâlâ
+    geçerli, en kritiği FARKLI AĞ) — zil yalnız uygulamada duyulur, webde
+    arama zaten kapalı.
+
+[x] 26. MASAÜSTÜNDE EKRANLAR KENARA DAYALI  (11 Ağu CANLIDA)
+    "Aslında TÜM ekranlarımız böyle olmalı" gereği TOPLU geçiş yapıldı:
+    15 ekran `OrtaKolon`a alındı — detay, bölüm, kişi, kişi yapımları,
+    ayarlar, bildirimler, özet, izlediklerim, listeler (3 çeşit), gözat
+    (1080 geniş ızgara), favori oyuncular, gizlenen yorumlar, kullanıcı
+    profil + takipçi listeleri + kullanıcı arama.
+    DIŞARIDA BIRAKILANLAR (bilerek): sheet/gömülü widget'lar, tam ekran
+    medya editörleri (medya_inceleme, gorsel/video_duzenle), giriş/karşılama,
+    sohbet (kendi 800'lük kısıtı var), akış/reels/takvim/keşfet (madde 9'da
+    zaten yapılmıştı). `arama.dart` hiçbir yerden çağrılmıyor — ölü kod.
+
+## 10 AĞUSTOS — CANLIYA ÇIKANLAR (1.32.0+77)
+
+[x] 12. EKSİK ÇEVİRİLER  (10 Ağu CANLIDA)
+    605 → 611 anahtar, 45 dosya tam eşit. Çevirisi olmayan `.c` çağrısı: 0.
+    Eklenenler: "Takip ettiğin {} kişi izledi" · "Yorum yaz..." ·
+    "Sıradaki bölüm" · "Doğrulanmış testçi" · bildirim kanalı açıklaması ·
+    "Sen" (bildirimdeki kendi mesaj etiketin, hiç anahtar değilmiş).
+
+    ⚠ BENİM İLK ÖLÇÜMÜM YANLIŞTI: tarayıcı yalnız tek tırnaklı anahtarları
+      sayıyordu, dosyalar iki tırnak biçimini karışık kullanıyor. Zorunlu
+      güncelleme ekranı ZATEN ÇEVRİLİYDİ (`(zorunlu ? 'a' : 'b').c` kalıbı).
+      Ders: çeviri taraması yaparken HER İKİ tırnak biçimi ve parantezli
+      ifadeler hesaba katılmalı.
+
+    AJANIN BULDUĞU GERÇEK HATA (benim taramamın göremediği):
+      `pushArkaplan` çeviriyi yalnız 'arama' dalında yüklüyordu — uygulama
+      KAPALIYKEN gelen MESAJ bildiriminde "Yanıtla" ve "Mesajını yaz..."
+      45 dilde Türkçe basıyordu. Yükleme dalların üstüne alındı.
+
+    ÜLKE ÇÖZÜMÜ: ISO kodu üzerinden ayrı harita (`lib/diller/ulkeler.dart`),
+    Unicode CLDR'den `araclar/ulke_adlari_uret.js` ile ÜRETİLİYOR (5220 ad
+    elle yazılmadı, üretici bit bit tekrarlanabilir). SAKLANAN DEĞER TÜRKÇE
+    KALIYOR — test bunu sunucuya giden gövdeyi yakalayarak kilitliyor
+    (İspanyolca arayüzde "España" seçilince gövdede 'İspanya' gidiyor).
+    Boyut: APK +416 KB (%0,37), web main.dart.js +182 KB (%1,83).
+
+    YAN FAYDA — gerçek çökme düzeldi: ülke VE dil seçicisinde denetleyici,
+    kapanma animasyonu sürerken atılıyordu ("TextEditingController was used
+    after being disposed"). Mevcut koddaki hataymış.
+
+    Testler 892 → 908, analyze 0 hata/uyarı, web+APK derlemesi geçti.
+
+[x] 7. SOHBETTE SESLİ VE GÖRÜNTÜLÜ ARAMA  (10 Ağu CANLIDA, 1.32.0+77)
+    ⚠ 10 Ağu: MADDE 38 EKLENDİ — kullanıcı başına açma/kapama, varsayılan
+      KAPALI. Dağıtımdan ÖNCE yapılmalı; yoksa kullanıcılar kapatma imkânı
+      olmadan aranabilir hâle gelir. Aşağıdaki 5 adım ondan sonra.
+
+    Kalan 5 adım:
+      1. Sürüm artır: pubspec.yaml + Api.surum BİRLİKTE (1.30.1+75 -> 1.31.0+76)
+      2. Web dağıtımı (SW sökücü + web_hashla.js atlanmayacak, rsync --delete YOK)
+      3. APK + AAB derle, İKİ TELEFONA kur (kullanıcının iki cihazı var)
+      4. Bayrakları AÇ: arama_acik=1 VE arama_goruntulu_acik=1
+         (kullanıcı kararı 9 Ağu: ikisini birden açalım)
+      5. 11 maddelik elle test turu — EN KRİTİĞİ 8. madde: iki cihazı FARKLI
+         ağa koyup bağlanamamasını sağla, sonra `aramalar` tablosunda satır
+         `basarisiz` görünmeli (`cevaplandi` DEĞİL). Yanlışsa röle ölçümü
+         bozuktur ve görüntülü aramanın maliyet kararı yanlış veriye dayanır.
+      Play Console: Data Safety -> "Audio/Video: collected = NO, shared = NO";
+      toplanan tek şey App activity/other = arama üstverisi, 90 gün.
+
+    NE YAPILDI: sunucuda 8 uç + `aramalar` tablosu + coturn 4.6.1 (BSD,
+    ücretsiz — senin şartın), TURN kimlikleri kısa ömürlü HMAC ile üretiliyor.
+    İstemcide 8 dosyalık modül, 113 test. Toplam 892 test yeşil.
+    MEDYA UÇTAN UCA ŞİFRELİ (DTLS-SRTP) — sunucu konuşmayı ÇÖZEMEZ. Yalnız
+    üstveri: kim/kime/ne zaman/kaç dk, 90 gün (7 Ağu kullanıcı kararı;
+    ses kaydı KVKK'da özel nitelikli veri, ayrıca mesajları şifrelediğimiz
+    bir üründe aramaları kaydetmek çelişki olurdu).
+
+    WEB'DE ARAMA KAPALI (bilinçli): tarayıcıda arka plan bildirimi yok, sekme
+    arkadayken telefon HİÇ çalmaz; arayan bunu bilemez, boşuna arar ve
+    cevapsız kalınca sessizleştirme cezasını ARAYAN yer. Web kullanıcısı
+    ulaşılmaz değil — bildirim telefonuna gidiyor.
+
+    BİLİNEN EKSİKLER (bilerek; sessiz arıza değil, kullanıcı ne olduğunu görüyor):
+      Wi-Fi<->hücresel geçişinde arama "Bağlantı koptu" ile temiz kapanıyor
+      (ICE yeniden başlatma yok) · arka plana alınca ses düşebilir (ön plan
+      servisi Play'de gösterim videosu istiyor) · arama geçmişi ekranı yok
+      (uç ve çeviriler hazır) · iOS CallKit yok.
+
+
+## ALTYAPI / GÜVENLİK → AYRI DOSYADA
+    Kapasite, çökme, loglama, yedek ve saldırı önlemleri artık
+    `projeler/yapilacaklar2` dosyasında. Bu dosya ÜRÜN istekleri içindir.
+    En kritik üçü orada: medyanın yedeği YOK · yedekler koruduğu veriyle
+    aynı diskte · geri yükleme hiç denenmedi.
+
+
+## ARAMA İLE BİRLİKTE ÇIKTI
+
+[x] 38. AYARLARDAN SESLİ/GÖRÜNTÜLÜ ARAMAYI KAPATABİLME  (10 Ağu CANLIDA)
+    Ayarlarda iki ayrı anahtar: sesli arama, görüntülü arama.
+    >>> İKİSİ DE VARSAYILAN OLARAK KAPALI <<<  (kullanıcı kararı)
+
+    DAVRANIŞ:
+    · Sohbet ekranında arama düğmeleri PASİF görünecek (gizlenmeyecek).
+      Tıklayınca "nereden açacağını" söyleyen bir açıklama çıkacak.
+    · Arayanda izin açık, ARANANDA kapalıysa: arama OTOMATİK REDDEDİLECEK
+      ve arayanın ekranında tür bazında mesaj görünecek —
+      sesli aradıysa "aradığınız kişide sesli arama devre dışı",
+      görüntülü aradıysa "...görüntülü arama devre dışı".
+
+    ⚠ SUNUCU ZORLAYACAK, İSTEMCİ DEĞİL. Düğmeyi istemcide pasif yapmak
+      yeterli DEĞİL — değiştirilmiş bir istemci yine arama başlatabilir.
+      Kontrol `/arama/baslat` içinde olacak (karşılıklı takip kapısının
+      yanında). İstemci tarafı yalnız görsel kolaylık.
+
+    ⚠ OTOMATİK RED, ARAYANI CEZALANDIRMAMALI. Sözleşmede "15 dakikada 3
+      cevapsız → 1 saat arama yasağı" kuralı var. Kapalı olduğu için
+      reddedilen arama bu sayaca GİRMEYECEK; yoksa özelliği kapatan kişi,
+      kendisini arayan masum kullanıcıyı sessizleştirmiş olur.
+      (Aynı tuzağa web kararında da düşülmüştü, oradan biliyoruz.)
+
+    ⚠ ÜÇ KATMAN OLUYOR, ÖNCELİK NET YAZILMALI:
+      1) Sunucu geneli bayrak (`arama_acik`, `arama_goruntulu_acik`)
+      2) Kullanıcının kendi tercihi (bu madde)
+      3) Karşılıklı takip şartı
+      Herhangi biri kapalıysa arama olmaz; kullanıcıya gösterilen mesaj
+      HANGİ sebeple engellendiğini doğru söylemeli.
+
+    NOT — küçük gizlilik bedeli, bilinçli: "bu kişide arama kapalı" demek,
+    başka bir kullanıcının ayarını ifşa etmek demektir. Alternatifi
+    "bağlanılamadı" demek olurdu; o da kullanıcıya uygulamayı bozuk
+    gösterirdi. Bilgilendirmek daha doğru, ama bilerek seçildiği yazılsın.
+
+    YAN FAYDA: varsayılan KAPALI olması, arama bayraklarını canlıda açmayı
+    RİSKSİZ hâle getiriyor — kimse istemeden aranabilir duruma gelmiyor.
+    Bedeli: özelliği kimse bilmezse kimse açmaz. Rehberde (madde 5) ve ilk
+    açılış akışında (madde 25) tanıtılmalı.
+
+    İŞ KALEMLERİ: `ayarlar` tablosuna/kullanıcı tercihine 2 alan + migrasyon ·
+    `/arama/baslat` kontrolü + 2 yeni hata kodu · ayarlar ekranı 2 anahtar ·
+    sohbette pasif düğme + açıklama · arayan tarafında tür bazlı mesaj ·
+    yeni metinler 45 dile çevrilecek.
+
+    ⚠ MADDE 7 İLE BİRLİKTE ÇIKMALI. Arama canlıya bu özellik olmadan
+      çıkarsa, kullanıcıların aranmayı kapatma imkânı olmadan aranabilir
+      hâle gelirler — sonradan eklemek "önce açtık sonra kapattık" olur.
+
+
+[x] 16. FAVORİ OYUNCULAR IZGARA GÖRÜNÜMÜ  (12 Ağu CANLIDA, 1.34.0+79)
+    Profilde favori oyuncular artık "İzlediğim Diziler/Filmler" ile aynı
+    dilde yatay şerit: yuvarlak fotoğraf + altında ad (2 satır, üç nokta),
+    "Tümünü gör" → mevcut /favori-oyuncular ızgarası. Kart, ızgaradaki
+    `FavoriOyuncuKarti`nin KENDİSİ (yeni kalıp yok); 30 kart önizleme
+    (İzlediğim şeritleriyle aynı tavan), başlık gerçek toplamı yazar.
+    Boş/hata durumunda eski kompakt satır korunuyor. Veri profili
+    BEKLETMEDEN ayrı çekiliyor, SWR önbelleğiyle ikinci açılış anında.
+    Yeni çeviri anahtarı AÇILMADI. +6 test → toplam 1016 yeşil.
+
+[x] 45. AUTH HIZ LİMİTİ HERKESİ KİLİTLİYORDU  (11 Ağu BULUNDU + ÇÖZÜLDÜ)
+    Senin bildirimin: Android'de Google girişi "çok fazla istek" diyordu.
+    KÖK NEDEN: Mac'te 2 Ağu'dan beri çalışan insta_kopru --izle HER TURDA
+    (60 sn'de bir) /auth/giris ile SIFIRDAN giriş yapıyordu → saatte 60
+    giriş, authLimiti IP başına 30/sa → ev IP'sinin kovası her saatin ilk
+    yarısında doluyor, AYNI AĞDAKİ HERKESİN girişi (senin Google girişin
+    dahil) 429 yiyordu. Köprünün kendisi de her saatin yarısında kilitli
+    kalıyormuş — yani Instagram köprüsü günlerdir yarım kapasite çalışıyordu.
+    ÇÖZÜM: köprü artık token'ı turlar arası ÖNBELLEKLİYOR (giriş ~tek sefer;
+    401 gelirse düşürüp sonraki turda yeniden girer). API yeniden başlatılıp
+    sayaç anında temizlendi; senin girişin 04:03'te 200 döndü (loglarda).
+    NOT: köprüyü launchd yönetiyor (com.dizijpg.instakopru, KeepAlive) —
+    süreç öldürülünce kendiliğinden yeniden doğar; elle ikinci kopya
+    BAŞLATMA (çift işleme olur).
+    AÇIK SORU (küçük, karar senin): authLimiti BAŞARILI girişleri de
+    sayıyor. Kaba kuvvet koruması için asıl sayılması gereken BAŞARISIZ
+    denemeler; başarılılar sayılmasa bu olay hiç yaşanmazdı. İstersen
+    ayrı maddeye çevirelim.
+
+
+[x] 11. BÖLÜMLERE PUAN VERME  (9 Ağu CANLIDA)
+    `puanlar`a sezon/bölüm eklendi; bölüm puanları dizi genel puanından AYRI
+    (ortalamayı kirletmiyor). Bölüm sayfası + takvim modalına yıldız.
+    YAKALANAN HATA: takvim modalındaki yıldızlar sezon/bölüm göndermiyordu —
+    bir bölüme puan verince TÜM DİZİYİ puanlıyordu. Düzeltildi; veritabanında
+    bu hatadan kalma bozuk kayıt olmadığı da doğrulandı.
+
+[x] 10. LİSTELERDE TAKİP ET / TAKİBİ BIRAK  (8 Ağu CANLIDA)
+    Beğenenler, takipçiler, takip edilenler ve kullanıcı aramasına eklendi.
+    Kendi satırında çıkmıyor. (Açık işi yukarıda "teknik borç" altında.)
+
+[x] 9. MASAÜSTÜ GENİŞLİĞİ  (8 Ağu CANLIDA)
+    Ortak `OrtaKolon` widget'ı + dört dosyadaki elle yazılmış 720 sabitleri
+    kaldırıldı. Takvim 1920 → 720 dp ortalandı; Reels 9:16 tuvale alındı
+    (720 verilseydi eylem sütunu videonun kenarına taşardı). Takvimde 1080'e
+    sıkıştırma DENENDİ, vazgeçildi: "altı ay birden ekranda" garantisi kırılıyordu.
+
+[x] 6. BAN VE CEZA SİSTEMİ  (8 Ağu CANLIDA)
+    Süreli + kalıcı + cihaz banı, güven skoru (0-100, 30 günde +1, aktif banda
+    donuk), denetim izi. Banlı kullanıcı GİRER ve OKUR, yazamaz — cezasını
+    görebilsin diye. Cihaz banı YALNIZ hesap açmayı keser (kullanıcı kararı:
+    paylaşılan cihazda masum kişi kilitlenmesin); kimlik donanımdan OKUNMUYOR.
+    Güven skoru OTOMATİK ban VERMEZ; ham şikayet sayısı skoru düşürmez, yalnız
+    yönetici doğrulaması düşürür. İtiraz uygulamadan gidip panelde kuyruğa
+    düşüyor (e-posta kutusuna bağımlılık yok).
+    YOL BOYUNCA KAPATILAN AÇIK: mesaj şikayetinde sahiplik kontrolü yokmuş —
+    rastgele mesaj numaralarıyla YABANCILARIN DM'leri moderasyon kuyruğuna
+    düşürülebiliyordu.
+
+[x] 4. FAVORİ OYUNCU LİSTESİ + İZLENME ORANI  (8 Ağu CANLIDA)
+    BULGU: `favoriler` tablosu person'ı DESTEKLEMİYORDU — oyuncu puanlanıyor
+    ama favorilenemiyordu. Kişi ekranına favori kalbi eklendi (favorileme yolu
+    hiç yokmuş). İzlenme oranı TEK TMDB isteğiyle hesaplanıyor.
+
+[x] 3. SOHBETTE İÇERİK KARTI ANINDA GİTMESİN  (7 Ağu)
+    Seçilen dizi/film giriş kutusunun üstünde bekliyor, Gönder'e basınca
+    metinle TEK mesaj olarak gidiyor.
+
+[x] 2. YORUM GİRİŞİ: İPUCU + AVATAR HATASI  (7 Ağu)
+    KÖK NEDEN: `POST /auth/giris` yanıtında `avatar` alanı YOKMUŞ; girişten
+    sonra oturumda avatar boş kalıyordu. Düzeltme ağaçta vardı ama TEST YOKTU;
+    9 testle kilitlendi.
+    NOT: ipucu metni "Yorum yaz..." oldu ama ÇEVİRİSİ EKLENMEMİŞ — madde 12'de.
+
+[x] 1. TESTÇİ ROZETİ → ALTIN ONAY TİKİ  (7 Ağu)
+    Marka sarısı KULLANILMADI — açık temada 1,51:1 veriyor, grafik nesne eşiği
+    3:1; tik kaybolurdu. Tema-duyarlı `sariMetin` ikisinde de geçiyor.
+
+[x] 7-8 AĞUSTOS TOPLU İŞLER
+    Uygulama içi medya seçici + ÇOKLU SEÇİM · görsel editör (kırpma, döndürme,
+    çizim, metin, emoji, spoiler/yüz için bulanıklaştırma-pikselleştirme) ·
+    video editör (trim, sıkıştırma, ses kapatma) · aynı seçici DM ve Reels
+    yanıtlarına da bağlandı · özel mesajlar AES-256-GCM ile ŞİFRELENİYOR
+    (70 mesaj dönüştürüldü) · masaüstünde kapaklar netleşti · paylaşılan liste
+    bağlantıları açılıyor (/listeler/:id rotası hiç yokmuş) · puan ölçeği
+    tutarlandı · SEO: /gozat + /kesfet bot sayfaları, robots.txt depoya alındı,
+    profiller aramaya KAPATILDI (kullanıcı kararı) · sohbette çökme düzeldi.
+    İKİ GİZLİLİK SIZINTISI KAPATILDI: spoiler yorumu link önizlemesinde
+    tıklamadan görünüyordu; "bu içeriği gizle" tercihi SEO'da yok sayılıyordu.
+
+[x] GÜVENLİK — 8 AĞU CANLIDA
+    DM medyası Cloudflare'ın public önbelleğinden temizlendi (51 saattir orada,
+    1 yıllık immutable etiketiyle) · yedek dizini 700 (kara hesabı tüm DB
+    dökümünü okuyabiliyordu) · şifre sıfırlamada hesap başına 5 deneme kilidi ·
+    yedekler şifrelendi (29 yedek .gpg, anahtar parola yöneticisinde).
+
+
+## EN SONA BIRAKILANLAR (kullanıcı kararı)
+
+[ ] 44. İZLENME SÜRESİ BALON GRAFİĞİ  (10 Ağu istendi; 12 Ağu EN SONA atıldı)
+    Toplam izlenme süresine tıklayınca (kendi profilinde de başkasınınkinde
+    de) yeni görünüm: dizi/film kapağı arka planlı YUVARLAK balonlar,
+    izlenme süresine göre boyutu büyüyen şekilde. Dizi + film + yönetmen +
+    oyuncu dağılımları olacak.
+    NOT: veri zaten var (izleme kayıtları + bölüm süreleri). Yönetmen/oyuncu
+    kırılımı için kişi-başına süre TMDB cast/crew üzerinden toplanır — maliyeti
+    ölçülmeli. Madde 21 (gizlilik) ile bağ: izlediklerini gizleyen kullanıcının
+    balonları başkasına görünmemeli.
+
+# =========================================================================
+# HAM NOTLAR (yukarıda numaralandı — kaynak olarak duruyor)
+# =========================================================================
+# ödüller → 48  |  senarist/firma → 49 [x]  |  pagespeed/srcset/avif → 50 [x] 51 [x]
+# engellenenler → 19 [x]  |  2FA → 52 [x]  |  profil görüntülenme → 60
+# profil listeleri sürükle → 59  |  arama kişi/şirket → 57 [x]
+
+filmler ve dizilerde bilgi içeriklerini arttırmalıyız mesela oynayan ödüllü oyuncu varsa onun bilgisini ve aldığı ödülü de vermeliyiz 
+dizinin filmin kazandığı ödüllerde olmalı transfermark futboltakımının altında diziler kupalar gibi
+→ 48 (açık, araştırma)
+
+senarist ve yapımcı yapımcı firma bilgileri falanda olmalı ve tıklanılabilip onların profiline gidebilmeliyiz
+→ 49 [x] 13 Ağu CANLIDA
+
+Bu sinamalar.com sitesi çok çok iyi bir örnek bu arada. Sitende birde https://pagespeed.web.dev/ üzerinden baktığında tüm puanları 100 yapmaya çalış. Sen şuanlık performansta sorun yaşayabilirsin bir galeri gibi görüneceği için onunla ilgili srcsetler ayarlaman ve 1 görsel için 12 ye yakın boyut varyasyonu uygulaman vs gerekiyor
+ seo ve performans açısından resimleri ona seo göre yükle
+ mobil ve web optimizasyon testleri yapılmalı
+ Buradaki yaklaşımı da özellikle araştırdım. Avif en performanslı resim sıkıştırma formatı ama bazı tarayıcılar desteklemiyor o yüzden aynı boyutta webp lerede ihtiyaç oluyor. Ek olarak hiç bir boyuta uymayan bir resim olursa diye en altta img tagı üzerinde defaultta kullanılacak resmide belirtmek gerekiyor ( alinin önerisi)
+→ 50 [x] katalog WebP · 51 [x] dürüst tavan 70/91, 100 imkânsız · 58 nginx @spa kalan
+
+ Ayarlarda engellenen kullanıcılar gözükebilsin ve engeli kaldırılabilsin
+→ 19 [x] 13 Ağu CANLIDA
+
+ Çift doğrulama yöntemi açılabilsin (sadece mail ile) gmail ile girenlerde ne yapacağız bilmiyorum
+→ 52 [x] 13 Ağu CANLIDA (Google ile girenlerde sorulmaz)
+
+ Profil görüntülenme sayısını da istatisliklerde ver
+→ 60 (açık)
+
+Profildeki listeler kaydırma sürükleme ile düzenlenebilir olmalı(favori diziler izlediklerim izliyorum filmler)
+→ 59 (açık)
+
+arama kısmında oyuncu yönetmen senarist şirketler (cartoon network) gibi aramalar yapılabilsin
+→ 57 [x] 14 Ağu CANLIDA 1.47.0+95
+
+

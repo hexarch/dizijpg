@@ -1,0 +1,309 @@
+# dizi.jpg — ALTYAPI, GÜVENLİK VE DAYANIKLILIK LİSTESİ
+# Oluşturuldu: 10 Ağustos 2026
+#
+# Bu dosya ÜRÜN İSTEKLERİNİ içermez — onlar `yapilacaklar` dosyasında.
+# Burada: veri kaybı riski, çökme, loglama, kapasite, saldırı önlemleri.
+#
+# Durum işaretleri:  [ ] bekliyor   [~] yapılıyor   [x] bitti   [!] karar gerekiyor
+# Numaralar KİMLİKTİR, sıra değil. Öncelik bölüm sırasındadır.
+#
+# BURADAKİ HER RAKAM 9-10 AĞUSTOS 2026'DA SUNUCUDAN ÖLÇÜLDÜ, tahmin değil.
+
+
+# =========================================================================
+# A. VERİ KAYBI RİSKİ — en kritik, diğer her şeyden önce
+# =========================================================================
+# Üçü birleştiğinde proje biter. Tek tek bakınca küçük görünüyorlar.
+
+[x] A1. MEDYA YEDEĞİ  (10 Ağu ÇÖZÜLDÜ)
+    Artımlı yedek kuruldu ve kanıtlandı: ilk kopya 6 GB/55 sn, ikinci çalıştırma
+    0 bayt/1 sn. 30.997 dosya Mac'te. ESKİ DURUM:
+    Yedek betiği YALNIZCA veritabanını alıyor (`.sql.gz.gpg`). Kullanıcıların
+    bütün fotoğrafları, videoları, avatarları — 6,5 GB — TEK KOPYA.
+    Silinirse, bozulursa, disk giderse geri gelmez.
+    Günlük tam kopya ANLAMSIZ (her gün 6,5 GB). Artımlı olmalı: bir kerelik
+    ilk kopya, sonra yalnız yeni dosyalar.
+
+[x] A2. DIŞARI KOPYALAMA  (10 Ağu TAMAM — otomatik)
+    Mac'e ÇEKME (pull) kuruldu — sunucu Mac'e erişemiyor, yani sunucu ele
+    geçse bile buradaki yedekler silinemez. İlk çekme BAŞARILI: 31 şifreli
+    yedek + 30.997 medya dosyası, 6,6 GB, ~/dizijpg-yedekler.
+    OTOMATİK: launchd görevi her gün 05:30'da çekiyor
+    (`~/Library/LaunchAgents/com.dizijpg.yedekcek.plist`). Elle tetikleyip
+    doğrulandı: çıkış kodu 0, ikinci çalıştırma 0 bayt (artımlı çalışıyor).
+    Günlük: `~/dizijpg-yedekler/cekme.log`
+    ⚠ TUZAK (yaşandı): macOS koruması arka plan görevlerinin ~/Desktop
+      altındaki betiği çalıştırmasına İZİN VERMİYOR ("Operation not
+      permitted", çıkış 126). Bu yüzden çalışan kopya `~/.dizijpg/` altında.
+      DEPODAKİ KANONİK — değiştirince çalışan kopyayı tazelemek gerekiyor:
+      `cp araclar/mac-yedek-cek.sh ~/.dizijpg/mac-yedek-cek.sh`
+    ⚠ SINIR: Mac kapalıysa çekme olmaz. Bunun karşılığı, sunucu ele geçse
+      bile buradaki yedeklere ulaşamaması (çekme modeli).
+    ESKİ DURUM:
+    30 yedeğin tamamı `/opt/dizijpg/yedekler` altında, yani veritabanının
+    yanı başında. Dışarıya kopyalama YOK (`yedek.sh` içinde scp/rsync/s3 yok).
+    Yedekler ZATEN ŞİFRELİ (GPG) — tam da bu yüzden şifrelemiştik, artık
+    her yere konabilirler. Toplam 681 MB, herhangi bir yere sığar.
+    ⚠ Anahtar da aynı makinede (`/opt/dizijpg/yedek-anahtar.key`). Dışarı
+      kopyalarken anahtarın PAROLA YÖNETİCİSİNDE olduğu doğrulanmalı —
+      anahtarsız yedek işe yaramaz.
+
+[x] A3. GERİ YÜKLEME PROVASI  (10 Ağu YAPILDI)
+    Ayrı ve AĞI KAPALI konteynerde geri yüklendi. 37/37 tablo eksiksiz,
+    kullanıcı sayısı canlıyla tuttu. VERİTABANI RTO: 75 saniye.
+    YAN BULGU: yedeği açacak araç (yedek-ac.sh) SUNUCUDA YOKTU — felaket
+    günü elde açma aracı olmayacaktı. Kuruldu ve test edildi.
+    ESKİ DURUM:
+    Denenmemiş yedek, yedek değildir. Çalışıp çalışmadığını en kötü günde
+    öğrenmek istemeyiz. Prova: yedeği BOŞ bir veritabanına aç, kullanıcı
+    sayısını ve birkaç tabloyu doğrula. Bir kere yapılır, ömür boyu yeter.
+    ⚠ CANLI VERİTABANINA DOKUNULMADAN yapılacak (ayrı isim / ayrı konteyner).
+
+    >>> A1+A2+A3 NEDEN BİRLİKTE ÖLÜMCÜL:
+    >>> LVM iki fiziksel diski (sda5 + sdb) TEK mantıksal birime bağlamış,
+    >>> yedeklilik (RAID) YOK. Root'ta ne var? İşletim sistemi + veritabanı
+    >>> + medya + 30 yedeğin hepsi. BİR disk arızalanırsa hepsi birden gider.
+    >>> İki diske yayılmış olmak arıza ihtimalini AZALTMIYOR, ARTIRIYOR.
+
+
+# =========================================================================
+# B. ÇÖKME VE DAYANIKLILIK
+# =========================================================================
+# Kullanıcı talimatı (10 Ağu): "api uçlarımız çökmesin"
+
+[x] B1. YAKALANMAMIŞ HATA YAKALAYICILARI  (12 Ağu CANLIDA)
+    unhandledRejection + uncaughtException yakalayıcıları gunluk.js üzerinden
+    bağlamlı JSON loglayıp düzgün kapanıyor (Docker geri başlatır). İskelet
+    önceki oturumda kurulmuş; bu turda provayla doğrulandı ve testle kilitlendi
+    (uncaughtException zarif kapanmaya GİRMEZ — bozuk durumda bekleme yok).
+
+[x] B2. SIGTERM'DE ZARİF KAPANMA  (12 Ağu CANLIDA — 2 gerçek hata bulundu)
+    Prova İKİ tuzak yakaladı: (1) tek seferlik closeIdleConnections süpürmesi
+    nginx keep-alive bağlantılarını kaçırıyordu → server.close geri çağrısı
+    hiç gelmiyor, havuz.end HİÇ çalışmıyordu (her dağıtımda zaman aşımına
+    sarkardı). Düzeltme: kapanana dek 500 ms'de bir periyodik süpürme.
+    (2) compose'ta stop_grace_period YOKTU (varsayılan 10 sn) ama kapanma
+    payı 15 sn — Docker ortada SIGKILL basardı. → api'ye stop_grace_period:
+    30s; test iki değeri birbirine kilitler (kapanma.test.js).
+    CANLI KANIT (12 Ağu restart): kapanma_basladi → kapanma_bitti 10 ms,
+    çıkış temiz, API geri geldi. StopTimeout=30 docker inspect ile doğrulandı.
+
+[ ] B3. TEK NOKTA ARIZASI — replika yok
+    Veritabanı, API, TURN, medya hepsi aynı kutuda. Büyüme ciddileşirse
+    önce bu düşünülmeli. (A2 ile birlikte okunmalı.)
+
+
+# =========================================================================
+# C. LOGLAMA
+# =========================================================================
+# Kullanıcı talimatı (10 Ağu): "hata durumlarını iyi loglayalım"
+
+[x] C1. BAĞLAMLI HATA LOGLARI  (12 Ağu CANLIDA — 1 gerçek hata bulundu)
+    gunluk.js: tek satır JSON — ts/seviye/istek kimliği (X-Istek-Kimlik
+    başlığıyla eşleşir)/metot/yol (query'siz)/durum/kullanıcı id/hata+yığın.
+    BULUNAN HATA: durum kodu `kod` adıyla loglanıyordu ve gizli-alan süzgeci
+    onu "[gizli]" yapıyordu — loga hiç düşmüyordu; `durum` adına çevrildi,
+    ad tuzağı testle kilitlendi. SIZDIRMA YASAĞI iki katman testli: gövde/
+    başlık/query değerleri hiç alınmaz + mesaj/yığındaki JWT, e-posta,
+    bcrypt, SDP maskelenir. npm test: 489/489 (478 + 11 yeni).
+
+[x] C2. DOCKER LOGLARINA BOYUT SINIRI  (12 Ağu DOĞRULANDI — zaten uygulanmıştı)
+    Bakıldığında compose'da (depo + sunucu birebir aynı) logging blokları
+    ZATEN vardı ve `docker inspect` iki konteynerde de json-file 50m×5
+    gösterdi — yani sınır ÇALIŞAN konteynerlerde aktif, bu madde bayatmış.
+    Servis başına tavan 250 MB, eskisi otomatik döner.
+
+[x] C3. SYSTEMD JOURNAL  (12 Ağu TAMAM: 2,1 GB → 460 MB)
+    `/etc/systemd/journald.conf` → `SystemMaxUse=500M` (yedek:
+    journald.conf.yedek-20260812), journald yeniden başlatıldı, vacuum
+    otomatik çalıştı: `journalctl --disk-usage` 460,3 MB. API etkilenmedi
+    (saglik 200). Artık kendi kendini 500M altında tutar.
+
+[ ] C4. İZLEME — ZATEN VAR VE İYİ, dokunma
+    `/usr/local/bin/dizijpg-saglik.sh`, dakikada bir, sunucunun DIŞINDAN
+    Cloudflare üzerinden gerçek kullanıcı yolunu ölçüyor. Üst üste 3 hatada
+    tek mail, düzelince "toparlandı" maili (spam yağmuru yok).
+    31 Tem'deki 20 dakikalık kesintiden sonra yazılmış. Sağlam.
+
+
+# =========================================================================
+# D. CPU VE KAPASİTE
+# =========================================================================
+# Kullanıcı talimatı (10 Ağu): "cpu iyi kullanalım"
+# ÖLÇÜM: 16 çekirdek · 131 GB RAM · yük 0.10 (boşta) · 124 kullanıcı ·
+#        359 MB veritabanı · 6,5 GB medya · 286 Mbps yükleme ölçüldü
+#        (şu anki kullanım 11 kbps). DONANIM PATATES DEĞİL.
+
+[x] D1. NODE KÜMELEME  (12 Ağu CANLIDA — 4 işçi)
+    kume.js birincil (fork+gözetim+IPC santrali, HTTP dinlemez), 4 işçi
+    (NODE_ISCI env; 0=eski tek süreç, geri dönüş anahtarı). Havuz işçi
+    başına floor(80/N)=20, testle kilitli (4×20=80≤100'ün emniyet payı).
+    BELLEK-İÇİ DURUM tek tek çözüldü: arama sinyali "sahip işçi + iç
+    vekil" (SDP/ICE diske yazılmaz kuralı bozulmadan — PG'ye taşıma
+    bilinçli reddedildi), yaziyor/özel-medya/şifre-sürümü/akış-tohumu
+    IPC yayını, authLimiti+şifre sıfırlama merkezi sayaç (fail-open),
+    periyodik işler tek görevli işçide. Ölen işçi aynı sırayla yeniden
+    doğar (hızlı-ölüm freni). SIGTERM: birincil iletir, 4× kapanma_bitti
+    → kume_kapandi CANLIDA kanıtlandı (200 ms). 511/511 test (22 yeni,
+    gerçek fork'lu entegrasyon dahil). X-Isci başlığıyla dağılım canlıda
+    doğrulandı (4 işçiye de düşüyor). Bilinen gevşeme: ~20 DoS-yumuşatıcı
+    limit işçi-başına (fiilen ×4) — bilinçli, istenirse sonra sıkılır.
+
+[x] D2. MEDYA GÖNDERİMİ NGINX'E  (12 Ağu CANLIDA — X-Accel-Redirect)
+    Güvenlik mantığı (imza kapısı, OZEL_MEDYA, yalnizGet) NODE'DA KALDI;
+    kapıdan geçen istekte Node dosya okumaz, X-Accel-Redirect + doğru
+    Content-Type/Cache-Control basar, nginx internal bloktan sendfile'la
+    yollar (medya_xaccel.js + nginx-medya.conf.ornek). MEDYA_XACCEL=0
+    geri dönüş anahtarı. nginx www-data /var/lib/docker'ı okuyamadığı
+    için volume /srv/dizijpg-veri'ye bind mount edildi (fstab'da,
+    fstab.yedek-20260812 alındı; docker izinleri GEVŞETİLMEDİ).
+    CANLI DOĞRULAMA: genel gönderi medyası public+immutable+CF HIT,
+    avatar public, DM medyası private/no-store+BYPASS+noindex (m10 vb.
+    gerçekten DM çıktı), video Range 206, POST /medya 401 (405 tuzağı
+    yok), /ic-dosya dışarıdan 404. 525/525 test (14 yeni).
+
+[x] D3. POSTGRES AYARLARI  (12 Ağu CANLIDA)
+    dizijpg-db compose command ile: shared_buffers 160MB→1GB (359MB veri
+    tamamen tampona sığar), work_mem 4→16MB, maintenance 64→256MB,
+    random_page_cost 4→1.1 (SSD), effective_cache_size 6GB. Makine
+    paylaşımlı olduğu için kasıtlı ölçülü. SHOW ile doğrulandı; API +
+    DB'li uç 200. Host PG'ye (başka projenin) DOKUNULMADI.
+
+[ ] D4. GÖRÜNTÜLÜ ARAMA BANT GENİŞLİĞİ — artık FATURA değil, KAPASİTE sorunu
+    KULLANICI BİLGİSİ (10 Ağu): trafik SINIRSIZ, veri merkezi ücret kesmiyor.
+    Yani bu bir maliyet freni değil. AMA pipe paylaşımlı: röleye düşen
+    görüntülü aramalar sitenin kullandığı hattı yer. Doyarsa fatura gelmez,
+    SİTE HERKESE YAVAŞLAR — arama yapmayanlara bile.
+    Röleli görüntülü arama ≈ 3 Mbps (TURN hem alır hem iletir); sesli ~1/30'u.
+    286 Mbps ölçülen kapasitede ~95 eşzamanlı röleli görüntülü arama hattı
+    doyurur. Röle oranı tipik olarak ~%20 → ~475 eşzamanlı görüntülü arama.
+    ⚠ Madde 7'deki `role_dustu` ÖLÇÜMÜ TAM DA BUNUN İÇİN. Arama açılınca
+      izlenecek İLK sayı bu. Kullanıcı "sesli+görüntülü ikisini birden aç"
+      dedi, o yüzden röle oranını baştan doğru ölçmek şart.
+    `ARAMA_TRAFIK_ESIK_GB` şu an .env'de TANIMSIZ.
+
+[x] D5. DİSK — ÇÖZÜLDÜ (10 Ağu)
+    Docker temizliğiyle 29 GB → 37 GB boş (ölü tron işçileri 4,8 GB +
+    etiketsiz imajlar 2,2 GB + kullanılmayan imaj ~1 GB). Servisler sağlam
+    kaldı, medya birimine dokunulmadı. İmaj sayısı 138 → 5.
+    KULLANICI BİLGİSİ: disk MAKİNE KAPATILMADAN eklenebiliyor → disk artık
+    kritik yolda değil.
+    NOT: 138 imaj birikmişti, her dağıtım eskisini bırakıyor. Dağıtım
+    ritüeline aylık temizlik adımı eklenebilir.
+    ÖNERİ (yeni disk eklenirse): root'a EKLEME, medya dizinine AYRI bağla.
+    Medya sınırsız büyüyen tek şey; ayrı dursun ki dolduğunda sistemi değil
+    yalnız kendini etkilesin, ileride taşıması da kolay olsun.
+
+    GENEL: bugünkü hâliyle birkaç bin eşzamanlı kullanıcı sorunsuz, on
+    binlerde zorlanır. D1+D2+D3 bedava ve şimdi yapılabilir.
+
+
+# =========================================================================
+# E. SALDIRI ÖNLEMLERİ
+# =========================================================================
+# Kullanıcı talimatı (10 Ağu): "saldırı önlemleri de alalım"
+
+[x] E1. GÜVENLİK DUVARI  (12 Ağu AKTİF)
+    ufw etkin: varsayılan deny incoming / allow outgoing. Açık: 22, 80, 443,
+    posta (25/587/110/143/993/995), TURN (3478 tcp+udp, 5349 TLS, 24000-24499
+    udp röle — coturn conf'tan doğrulandı), docker ağından host Postfix'e 25
+    (dizijpg mail hattı — kapansa şifre sıfırlama SESSİZCE kırılırdı, duvar
+    sonrası konteynerden test edildi: OK). Güvenli sırayla: kurallar inaktifken
+    yazıldı + 5 dk'lık ölü-adam sigortası (systemd-run ufw disable) kurulup
+    doğrulama sonrası iptal edildi. SSH yeni bağlantı/site/API/TURN dıştan
+    test edildi. fail2ban etkilenmedi. Betik: dizijpg/araclar/
+    e1-guvenlik-duvari.sh (+ sunucuda /root/e1-kur.sh).
+    ⚠ DERS: ufw config'e TÜRKÇE KARAKTER YAZILMAZ — kuralları ASCII'yle
+    dosyaya yazar, ğ UnicodeEncodeError verdi (ilk deneme yarıda kaldı,
+    after.rules yedeğinden dönüldü).
+    İLERİDE: 110/143 (düz metin POP3/IMAP) kapatılabilir; 80/443 Cloudflare
+    IP aralıklarına daraltılabilir.
+
+[x] E2. POSTGRES 5432  (12 Ağu KAPANDI)
+    ufw ile yalnız pg_hba'daki iki istemci IP'ye açık (188.119.45.48,
+    154.53.163.5); dışarıdan bağlantı denemesi artık düşüyor (nc ile
+    doğrulandı, önce bağlanılabiliyordu).
+
+[x] E3. REDIS 6379  (12 Ağu DIŞARIYA KAPANDI — kalıcı adım sahibinde)
+    Tespit: dopamall-redis (/root/dopamall) parolasız, 4 anahtar, dış
+    istemcisi YOK — neredeyse kullanılmıyor. Docker yayını (0.0.0.0:6379)
+    ufw'yi BAYPAS eder (DNAT, PREROUTING) → çözüm DOCKER-USER zinciri:
+    dış arayüzden (ens18) 6379'a DROP, after.rules'ta kalıcı. Localhost ve
+    konteyner-içi erişim bozulmadı; dışarıdan nc artık düşüyor.
+    ⬜ KALICI ÇÖZÜM (dopamall sahibiyle): compose'da 127.0.0.1:6379 bağla +
+    requirepass koy. Şu an duvar koruyor ama config düzeyinde de kapanmalı.
+
+[ ] E4. SSH — İYİ DURUMDA, dokunma
+    Parola ile giriş KAPALI, yalnız anahtar. Root yalnız anahtarla.
+    fail2ban AKTİF: 9902 başarısız deneme, 520 yasaklama, şu an 10 yasaklı.
+    Yani kaba kuvvet saldırısı SÜREKLİ oluyor ve savunma çalışıyor.
+    (Başarısız giriş kaydı `btmp` 84 MB'a ulaşmış — saldırının boyutu bu.)
+    İyileştirme (isteğe bağlı): SSH'ı 22 dışında bir porta almak gürültüyü
+    keser. Güvenliği artırmaz ama log gürültüsünü ciddi azaltır.
+
+[ ] E5. UYGULAMA KATMANI — mevcut durum iyi, tamamlanmalı
+    VAR: hız limitleri (24 yerde), ban/ceza sistemi, güven skoru, cihaz banı,
+    admin paneli IP kısıtı + token, imzalı medya URL'leri, şifre sıfırlamada
+    5 deneme kilidi, mesajlar AES-256-GCM ile şifreli, SSRF engellemesi
+    (coturn'da kanıtlandı).
+    EKSİK: aşağıdaki F bölümündeki üç karar.
+
+[ ] E7. ROOT'A BEŞ SSH ANAHTARI TANIMLI — gözden geçirilmeli
+    `/root/.ssh/authorized_keys` içinde 5 anahtar var, HER BİRİ SINIRSIZ ROOT:
+      · alicihanceliktht@gmail.com   (İKİ KEZ — biri gereksiz)
+      · alicihancelik@magnumoto.com
+      · bilalcayir@magnumoto.com     (başka kişi)
+      · k1m03s02@cursor              (yapay zekâ kodlama aracı)
+    Hepsi meşru olabilir — ama her biri sunucunun TAMAMINA, yani
+    veritabanına, medyaya ve yedeklere erişiyor. Sorulacak: bu anahtarların
+    hepsi hâlâ gerekli mi, sahipleri hâlâ erişmeli mi, `cursor` anahtarı
+    hangi makinede duruyor?
+    Kullanılmayan anahtarı silmek en ucuz güvenlik iyileştirmesidir.
+    ⚠ Silmeden önce kendi erişimini KAYBETMEDİĞİNİ doğrula (açık bir SSH
+      oturumu elde tutarak).
+
+[ ] E8. AYNI MAKİNEDE BAŞKA PROJELER ROOT OLARAK ÇALIŞIYOR
+    `/root/restaurant` ve `/root/brnmedia` Python uygulamaları root
+    yetkisiyle koşuyor; ayrıca host Postgres, host Redis ve posta sunucusu
+    aynı kutuda. Bunlardan HERHANGİ BİRİNDEKİ açık, dizi.jpg'nin
+    veritabanına ve medyasına erişim demek.
+    Yapılabilecek en pratik şey (izolasyon zor): bu servisleri güncel
+    tutmak ve E1'deki güvenlik duvarıyla dışarı açılan yüzeyi daraltmak.
+
+[ ] E6. CLOUDFLARE KALKANI TAM KULLANILMIYOR
+    Önümüzde Cloudflare var (önbellek, sıkıştırma, bot kuralları kullanılıyor).
+    Kullanılabilecek ama bakılmamış: WAF kuralları, hız sınırlama, bot
+    savaşı kipi, giriş uçlarına özel koruma. Ücretsiz katmanda da epey şey var.
+
+
+# =========================================================================
+# F. BEKLEYEN GÜVENLİK KARARLARI (hazır ama uygulanmadı — senin onayın)
+# =========================================================================
+
+[!] F1. DB ROLÜNÜ KISITLAMA
+    DİKKAT: `dizijpg` giriş yapabilen TEK süper kullanıcı, `postgres` rolü YOK.
+    Yanlış sırayla yapılırsa veritabanına erişim KAYBEDİLİR ve SQL ile geri
+    alınamaz. Ayrı bir turda, yedek elde hazırken yapılmalı.
+    → A3 (geri yükleme provası) BUNDAN ÖNCE yapılmalı.
+
+[!] F2. CSP (report-only)
+    nginx'te 7 AYRI YERE girmeli — `add_header` miras ALINMIYOR, bir yeri
+    atlarsak o yol sessizce korumasız kalır.
+
+[!] F3. MEDYA İMZASI ZORUNLU MODU
+    Kullanıcılar yeni sürüme geçtikten SONRA açılacak. Şimdi açılırsa eski
+    sürümdekilerin DM medyası görünmez olur.
+
+
+# =========================================================================
+# ÖNERİLEN SIRA
+# =========================================================================
+# 1. A2 + A3  — yedekleri dışarı çıkar, geri yükleme provası yap (yarım gün)
+#               Bunlar olmadan yaptığımız her şey tek diskin ömrüne bağlı.
+# 2. A1       — medya yedeği (artımlı)
+# 3. C2 + C3  — log boyut sınırları (tek satırlık config, disk dolmasını önler)
+# 4. B1 + B2 + C1 — çökme kalkanları, zarif kapanma, bağlamlı hata logları
+# 5. E1 + E2 + E3 — güvenlik duvarı ve açık portlar (SSH kesme riski: dikkat)
+# 6. D1 + D3  — Node kümeleme (havuz hesabıyla) + Postgres ayarları
+# 7. D2       — medyayı nginx'e devret
+# 8. F1/F2/F3 — bekleyen güvenlik kararları

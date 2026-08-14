@@ -185,56 +185,69 @@ class _TmdbPuanHaritasiState extends State<TmdbPuanHaritasi> {
 }
 
 /// Üstte sezonlar, solda bölümler; kesişimde puan kutusu.
+///
+/// ÖLÇÜ KARARI (kullanıcı: "renkli kutucuklar çok büyük, %33 daha küçük").
+/// Hücrenin İKİ ölçüsü var ve bilerek AYRILDI:
+///  * [_hucre] = ızgara adımı ve DOKUNMA HEDEFİ. Puanlı hücre TIKLANABİLİR
+///    (bölüm sayfasına gider), bu yüzden 44 dp'nin altına inemez — kural
+///    CLAUDE.md/skill'de. Eskiden 48 + 2×2 dolgu = 52 dp adımdı, 44'e indi.
+///  * [_kutu] = GÖRÜNEN renkli kare: 48 → 32 (%33 küçük). Kısaltma dolguyla
+///    yapılır: 44 dp'lik saydam kabuğun ortasında 32 dp'lik kutu durur
+///    (`istatistiklerim.dart`taki `_PencereSegmenti` ile aynı yöntem).
+///
+/// DİKEY TAVAN KALDIRILDI (kullanıcı: "belirli oranda açılıyor ama komple
+/// açılması gerekiyor"). Eskiden ızgara `maxHeight: 48*9` ile kırpılıp KENDİ
+/// dikey kaydırmasına giriyordu; detay sayfası zaten kayan bir
+/// `CustomScrollView` olduğu için bu, sayfa içinde ikinci bir kaydırma
+/// kutusuydu ve ızgara hep yarım görünüyordu. Artık tüm sezon×bölüm ızgarası
+/// açılır, sayfayla birlikte kayar. Yatay kaydırma KALIR: sezon sayısı
+/// ekranı aşabilir ve orada sayfanın kaydırması işe yaramaz.
 class _Izgara extends StatelessWidget {
   final List<TmdbSezonPuani> sezonlar;
   final void Function(int sezon, int bolum) onBolumSec;
 
   const _Izgara({required this.sezonlar, required this.onBolumSec});
 
-  static const _kenar = 48.0;
+  /// Dokunma hücresi = ızgara adımı (≥44 dp zorunlu, hücre tıklanabilir).
+  static const _hucre = dokunmaHedefi;
+
+  /// Görünen renkli kutu (48 → 32: %33 küçük).
+  static const _kutu = 32.0;
 
   @override
   Widget build(BuildContext context) {
     final maxB = tmdbMaxBolum(sezonlar);
     if (maxB == 0) return const SizedBox.shrink();
-    // En fazla 8 bölüm satırı + başlık görünsün; fazlası dikey kayar.
-    const maxYukseklik = _kenar * 9;
     return Semantics(
       label: 'Bölüm puanları'.c,
       child: Scrollbar(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: maxYukseklik),
-          child: SingleChildScrollView(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Column(
                 children: [
-                  Column(
-                    children: [
-                      const SizedBox(width: _kenar, height: _kenar),
-                      for (var b = 1; b <= maxB; b++)
-                        _BaslikKutusu('E{}'.cf([b])),
-                    ],
-                  ),
-                  for (final s in sezonlar)
-                    Column(
-                      children: [
-                        _BaslikKutusu('S{}'.cf([s.sezonNo])),
-                        for (var b = 1; b <= maxB; b++)
-                          _PuanHucresi(
-                            kayit: s.bolumler[b],
-                            sezon: s.sezonNo,
-                            bolum: b,
-                            onTap: s.bolumler[b]?.puan == null
-                                ? null
-                                : () => onBolumSec(s.sezonNo, b),
-                          ),
-                      ],
-                    ),
+                  const SizedBox(width: _hucre, height: _hucre),
+                  for (var b = 1; b <= maxB; b++) _BaslikKutusu('E{}'.cf([b])),
                 ],
               ),
-            ),
+              for (final s in sezonlar)
+                Column(
+                  children: [
+                    _BaslikKutusu('S{}'.cf([s.sezonNo])),
+                    for (var b = 1; b <= maxB; b++)
+                      _PuanHucresi(
+                        kayit: s.bolumler[b],
+                        sezon: s.sezonNo,
+                        bolum: b,
+                        onTap: s.bolumler[b]?.puan == null
+                            ? null
+                            : () => onBolumSec(s.sezonNo, b),
+                      ),
+                  ],
+                ),
+            ],
           ),
         ),
       ),
@@ -249,8 +262,8 @@ class _BaslikKutusu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: _Izgara._kenar,
-      height: _Izgara._kenar,
+      width: _Izgara._hucre,
+      height: _Izgara._hucre,
       child: Center(
         child: FittedBox(
           fit: BoxFit.scaleDown,
@@ -283,21 +296,44 @@ class _PuanHucresi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final puan = kayit?.puan;
+    // OLMAYAN BÖLÜM (kullanıcı: "olmayan bölümlerde — kullanmak yerine boş
+    // bırak"). Izgara dikdörtgen olduğu için 8 bölümlük sezonun 22. satırında
+    // da bir hücre çizilir; orada gösterilecek HİÇBİR ŞEY yoktur. Eskiden bu
+    // hücre de gri kutu + "—" basıyordu, yani "bölüm yok" ile "bölüm var, oyu
+    // yok" ayırt EDİLEMİYORDU. Artık: kutu yok, yazı yok, `Semantics` yok —
+    // ekran okuyucu da olmayan bölümü okumasın.
+    if (kayit == null) {
+      return const SizedBox(width: _Izgara._hucre, height: _Izgara._hucre);
+    }
+    // VAR OLAN AMA OYU OLMAYAN BÖLÜM: gri kutu + "—" KORUNDU. Boş bırakmak
+    // ikisini yeniden ayırt edilemez yapardı; ayrım anlamlı, çünkü yayında
+    // olan dizide "yayınlandı ama henüz puanlanmadı" bilgisi gerçek bir
+    // durumdur (yeni bölüm, az izlenen bölüm). Kutunun VARLIĞI "bölüm var"
+    // der, "—" ise "puan yok" der.
+    final puan = kayit!.puan;
     final govde = Container(
-      width: _Izgara._kenar - 4,
-      height: _Izgara._kenar - 4,
+      width: _Izgara._kutu,
+      height: _Izgara._kutu,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: tmdbPuanKutuRengi(puan),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Text(
-        tmdbPuanMetni(puan),
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          color: tmdbPuanYaziRengi(puan),
+      // Kutu 44 → 32 küçüldü; 12 dp yazı "10.0"a (en geniş değer) sığıyor,
+      // ama büyük yazı ölçeğinde taşardı. FittedBox taşma yerine bir tık
+      // küçültür (başlık kutularıyla aynı kalıp).
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            tmdbPuanMetni(puan),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: tmdbPuanYaziRengi(puan),
+            ),
+          ),
         ),
       ),
     );
@@ -306,22 +342,22 @@ class _PuanHucresi extends StatelessWidget {
       label:
           'S{} · {}. Bölüm'.cf([sezon, bolum]) +
           (puan == null ? '' : ', ${tmdbPuanMetni(puan)} TMDB'),
-      child: Padding(
-        padding: const EdgeInsets.all(2),
-        child: SizedBox(
-          width: _Izgara._kenar,
-          height: _Izgara._kenar,
-          child: onTap == null
-              ? Center(child: govde)
-              : Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: onTap,
-                    borderRadius: BorderRadius.circular(8),
-                    child: Center(child: govde),
-                  ),
+      // DOKUNMA HEDEFİ: kabuk 44 dp (InkWell tüm kabuğu kaplar), görünen kutu
+      // 32 dp — aradaki 6 dp saydam dolgudur. Kutuyu küçültmek parmağı
+      // küçültmez.
+      child: SizedBox(
+        width: _Izgara._hucre,
+        height: _Izgara._hucre,
+        child: onTap == null
+            ? Center(child: govde)
+            : Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(10),
+                  child: Center(child: govde),
                 ),
-        ),
+              ),
       ),
     );
   }

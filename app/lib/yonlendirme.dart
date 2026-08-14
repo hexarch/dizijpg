@@ -29,6 +29,7 @@ import 'ekranlar/istatistiklerim.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/karsilama.dart';
+import 'ekranlar/katalog_liste.dart';
 import 'ekranlar/kesfet.dart';
 import 'ekranlar/kisi.dart';
 import 'ekranlar/kisi_yapimlar.dart';
@@ -97,6 +98,17 @@ const acikYolOnEkleri = <String>[
   '/gonderi/',
   '/dizi/',
   '/listeler/',
+  // Keşfet raflarının "Tümünü gör" sayfası (`/raf/:slug`).
+  //
+  // NEDEN AÇIK: raflar `/kesfet`te oturumsuz ziyaretçiye de çiziliyor
+  // (yalnız "Sana Özel" giriş ister), yani "Tümünü gör" bağlantısı oturumsuz
+  // ziyaretçinin GÖRDÜĞÜ bir bağlantı. Kapalı olsaydı zincir tam ortasından
+  // kopardı — `/sirket/` ile birebir aynı gerekçe.
+  // GİZLİLİK: sayfa yalnız TMDB katalog verisi gösterir, kişiye özel hiçbir
+  // alan okumaz. CLOAKING RİSKİ YOK: `/raf/` nginx'in bot kuralında
+  // (`^/(icerik|gonderi|kisi|dizi|listeler)/`) yok — bot da insan da AYNI
+  // uygulamayı görür.
+  '/raf/',
   // Md. 49 — yapım firması sayfası. İçeriğin firma şeridinden açılıyor ve
   // içerik sayfaları zaten oturumsuz açık; burada giriş duvarı zincirin
   // ortasında kopukluk yaratırdı. GİZLİLİK: sayfa yalnız TMDB katalog
@@ -136,15 +148,87 @@ String gonderiYolu(String yorumId, {bool yanit = false}) =>
 bool herkeseAcikMi(String yol) =>
     acikTamYollar.contains(yol) || acikYolOnEkleri.any(yol.startsWith);
 
+/// Tarayıcı adresinden uygulama içi başlangıç rotasını çıkarır.
+///
+/// F5'in tek kaynağı burasıdır: kullanıcı hangi adresteyse uygulama ORADA
+/// açılmalı. [adres] null ise (mobil) `/kesfet`.
+///
+/// Üç ayrı tuzağı birlikte kapatır:
+///  1. **Yolu yeniden KODLA.** `Uri.path` yüzde-çözülmüş yol verir; bunu
+///     doğrudan konum dizesi olarak vermek `/kullanici/a%20b` gibi adreslerde
+///     ayrıştırılamayan bir dize üretir. Segmentler tek tek yeniden kodlanır.
+///  2. **Sondaki eğik çizgiyi kırp.** `/akis/` hiçbir rotayla EŞLEŞMEZ ve
+///     `errorBuilder`a, yani "Bağlantı geçersiz" ekranına düşerdi — kullanıcı
+///     için "beni başka sayfaya attı" demek. Adresi elle yazarken, kopyala
+///     yapıştırırken ve eski bağlantılarda sık görülür.
+///  3. **Sorgu dizesini KORU.** `?tur=`, `?gun=`, `?yanit=1` gibi süzgeçler
+///     sayfanın parçasıdır; kaybolurlarsa kullanıcı aynı yolda ama başka
+///     içerikle karşılaşır. Ham (kodlanmış) hâliyle taşınır.
+String baslangicRotasi(Uri? adres) {
+  if (adres == null) return '/kesfet';
+  var yol = adres.pathSegments
+      // Sondaki eğik çizgi boş bir son segment üretir; onu at.
+      .where((s) => s.isNotEmpty)
+      .map(Uri.encodeComponent)
+      .join('/');
+  yol = yol.isEmpty ? '' : '/$yol';
+  // Kök adres (`/`, `` ya da yalnız sorgu): uygulamanın ana sayfası.
+  if (yol.isEmpty) return '/kesfet';
+  if (yenilemeyleAcilmaz(yol)) return '/sohbetler';
+  return yol + (adres.hasQuery ? '?${adres.query}' : '');
+}
+
+/// Yenilemeyle YENİDEN AÇILMAMASI gereken yollar (sesli/görüntülü arama).
+///
+/// Kural "kullanıcı neredeyse orada aç" ise de bu iki adres bir SAYFA değil,
+/// canlı bir OTURUM: `/gorusme/:ad` açılınca karşı tarafa arama BAŞLATIR,
+/// `/arama-gelen` ise sunucudaki teklifi bekler. Sayfayı yenilemek WebRTC
+/// bağlantısını zaten koparır; adresi olduğu gibi geri yüklemek "F5'e bastım,
+/// telefon yeniden çaldı" demek olurdu. Mesajlara düşülür — aramanın geldiği
+/// yer orası.
+bool yenilemeyleAcilmaz(String yol) =>
+    yol == gelenAramaYolu || yol.startsWith('/gorusme/');
+
 /// URL tabanlı yönlendirme: web'de reload bulunulan sayfada kalır.
-GoRouter yonlendiriciOlustur(Oturum oturum) {
+///
+/// [tarayiciAdresi] YALNIZ TEST İÇİNDİR: `flutter test` daima
+/// `kIsWeb == false` koşar, yani gömülü bayrakla yazılan web dalı testten
+/// GİZLENİR (aynı tuzak `GirisEkrani(web: ...)`de de enjeksiyonla çözülmüştü).
+/// Verilirse "tarayıcı şu adreste yenilendi" demektir; verilmezse web'de
+/// `Uri.base`, mobilde null.
+GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
+  // ===========================================================================
+  // ADRES ÇUBUĞU `push` EDİLEN SAYFAYI DA GÖSTERSİN  (14 Ağu 2026)
+  // ===========================================================================
+  // Kullanıcı bildirimi: "webde gezerken sayfayı yenilediğimde beni hep farklı
+  // sayfalara atıyor."
+  //
+  // KÖK NEDEN: go_router'ın bu bayrağı VARSAYILAN OLARAK FALSE. Kapalıyken
+  // `push` ile açılan sayfalar adres çubuğuna hiç yazılmaz; adres en son `go`
+  // edilen konumda (yani kabuk sekmesinde) donar. Bu uygulamada derin
+  // gezinmenin TAMAMI `push` ile yapılıyor — içerik, kişi, bölüm, kullanıcı
+  // profili, sohbet, kitaplık, özet, liste, gönderi, tam ekran arama... Yani
+  // hata tek bir sayfada değil, gezilen HER derin sayfadaydı.
+  //
+  // CANLIDA ÖLÇÜLDÜ (Chrome, oturumlu): Keşfet'ten "House of the Dragon"
+  // posterine dokunduktan sonra dizi sayfası tam ekran açıkken
+  // `location.pathname` hâlâ `/kesfet` idi. F5 → Keşfet.
+  //
+  // go_router bu bayrağa "önerilmez" diyor, GEREKÇESİ ŞU: en üstteki rotanın
+  // adresi her uygulamada derin bağlantılanabilir olmayabilir. Bu projede
+  // olabiliyor ve bu artık TESTLE KİLİTLİ — `yenileme_ayni_sayfa_test.dart`
+  // rota tablosundaki HER yolu soğuk açılışla deneyip aynı sayfada açıldığını
+  // doğruluyor; yeni bir rota deep-link'lenemez hâlde eklenirse test kırılır.
+  //
+  // YAN FAYDA: kullanıcı artık adres çubuğundaki bağlantıyı kopyalayıp
+  // paylaşabiliyor (eskiden hep ana sayfa adresi kopyalanıyordu).
+  GoRouter.optionURLReflectsImperativeAPIs = true;
+
+  final adres = tarayiciAdresi ?? (kIsWeb ? Uri.base : null);
   // F5 güvencesi: motor başlangıç rotasını URL stratejisi kurulmadan '/'
   // olarak yakalayabiliyor; o durumda derin bağlantı kaybolup keşfete
   // düşülüyordu. Başlangıcı doğrudan tarayıcı adresinden alıyoruz.
-  var baslangic = '/kesfet';
-  if (kIsWeb && Uri.base.path.length > 1) {
-    baslangic = Uri.base.path + (Uri.base.hasQuery ? '?${Uri.base.query}' : '');
-  }
+  final baslangic = baslangicRotasi(adres);
   return sonYonlendirici = GoRouter(
     initialLocation: baslangic,
     refreshListenable: oturum,
@@ -184,6 +268,32 @@ GoRouter yonlendiriciOlustur(Oturum oturum) {
               GoRoute(
                 path: '/kesfet',
                 builder: (_, __) => const KesfetEkrani(),
+              ),
+              // Raf başlığındaki "Tümünü gör".
+              //
+              // 14 Ağu 2026 — kullanıcının bildirdiği hata: bu ekran
+              // `Navigator.push(MaterialPageRoute(...))` ile, yani
+              // yönlendiricinin DIŞINDAN açılıyordu. Canlıda ölçüldü: sayfa
+              // tam ekran açılırken `location.pathname` `/kesfet`te kalıyor,
+              // F5 kullanıcıyı Keşfet'e geri atıyordu.
+              //
+              // KEŞFET ŞUBESİNİN İÇİNDE (kabuk dışı kök rota DEĞİL): sayfa
+              // bugün de alt gezinme çubuğuyla birlikte açılıyor; kök rotaya
+              // taşımak çubuğu kaldırır ve görünümü değiştirirdi. Şube içinde
+              // durunca yenilemede Keşfet sekmesi de doğru seçilir —
+              // `/kitaplik/:durum` ile aynı kalıp.
+              GoRoute(
+                path: '/raf/:slug',
+                builder: (_, s) {
+                  final raf = rafBul(s.pathParameters['slug']);
+                  return raf == null
+                      ? const _GecersizBaglanti()
+                      : KatalogListeEkrani(
+                          baslik: raf.$1,
+                          yol: raf.$2,
+                          tur: raf.$3,
+                        );
+                },
               ),
             ],
           ),

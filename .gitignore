@@ -7,3 +7,6 @@ app/.flutter-plugins*
 app/android/build/
 firebase-gizli/
 .DS_Store
+
+# Ajanların geçici betikleri (çeviri/ölçüm) — depoya girmez.
+app/scratchpad/

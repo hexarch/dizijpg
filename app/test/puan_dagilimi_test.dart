@@ -248,6 +248,138 @@ void main() {
     });
   });
 
+  // -----------------------------------------------------------------------
+  // Kullanıcı isteği 2026-08-14: "açılan div belirli oranda açılıyor ama
+  // komple açılması gerekiyor."
+  //
+  // ESKİ HÂL: `showModalBottomSheet` varsayılanı sheet'i ekranın 9/16'sı
+  // (~%56) ile SINIRLAR — içerik uzayınca alttan keser. Aşağıdaki testler
+  // tam o tavanı ölçüp aştığımızı gösteriyor.
+  // -----------------------------------------------------------------------
+  group('alt sayfa yüksekliği', () {
+    const ekran = Size(360, 480);
+
+    /// Eski davranışın tavanı: `showModalBottomSheet` varsayılan kısıtı.
+    const eskiTavan = 480 * 9 / 16; // 270 dp
+
+    Future<double> ac(
+      WidgetTester tester, {
+      double yaziOlcegi = 1,
+      double altPay = 0,
+    }) async {
+      tester.view.devicePixelRatio = 1;
+      tester.view.physicalSize = ekran;
+      tester.view.padding = FakeViewPadding(bottom: altPay);
+      addTearDown(tester.view.reset);
+
+      late BuildContext ctx;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: diziTema(acik: false),
+          // `builder` Navigator'ın ÜSTÜNDE sarar → modal rota da bu
+          // MediaQuery'i devralır (home'u sarmak yetmezdi).
+          builder: (c, child) => MediaQuery(
+            data: MediaQuery.of(
+              c,
+            ).copyWith(textScaler: TextScaler.linear(yaziOlcegi)),
+            child: child!,
+          ),
+          home: Builder(
+            builder: (c) {
+              ctx = c;
+              return const Scaffold(body: SizedBox());
+            },
+          ),
+        ),
+      );
+      puanDagilimiAc(
+        ctx,
+        dagilim: _ham({10: 64, 8: 32, 6: 16, 4: 9, 2: 7}),
+        ortalama: 8.1,
+      );
+      await tester.pumpAndSettle();
+      return tester.getSize(find.byType(PuanDagilimiSheet)).height;
+    }
+
+    testWidgets('içerik eski 9/16 tavanını aşınca sayfa KESİLMEZ', (
+      tester,
+    ) async {
+      final yukseklik = await ac(tester, yaziOlcegi: 2);
+
+      expect(
+        yukseklik,
+        greaterThan(eskiTavan),
+        reason: 'sheet hâlâ eski tavanda takılı',
+      );
+      // Beş çubuğun HEPSİ çizili ve sonuncusu sheet'in İÇİNDE (kırpılmamış).
+      final cubuklar = find.byType(FractionallySizedBox);
+      expect(cubuklar, findsNWidgets(5));
+      final sheet = tester.getRect(find.byType(PuanDagilimiSheet));
+      expect(
+        tester.getRect(cubuklar.last).bottom,
+        lessThanOrEqualTo(sheet.bottom),
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('kısa içerikte ekranı gereksiz kaplamaz (içeriğe göre boy)', (
+      tester,
+    ) async {
+      final yukseklik = await ac(tester);
+      // Sabit oranlı (0.85 gibi) bir sheet burada 408 dp açardı; içerik kadar
+      // açılıyoruz. Yine de tüm çubuklar görünür.
+      expect(yukseklik, lessThan(ekran.height * 0.9));
+      expect(find.byType(FractionallySizedBox), findsNWidgets(5));
+    });
+
+    testWidgets('alt güvenli alan korunuyor (sistem çubuğu altında kalmaz)', (
+      tester,
+    ) async {
+      await ac(tester, altPay: 34);
+
+      final govde = tester.widget<Padding>(
+        find.byKey(const Key('puan-dagilimi-govde')),
+      );
+      expect((govde.padding as EdgeInsets).bottom, 34 + 16);
+
+      final sheet = tester.getRect(find.byType(PuanDagilimiSheet));
+      final sonCubuk = tester.getRect(find.byType(FractionallySizedBox).last);
+      expect(
+        sheet.bottom - sonCubuk.bottom,
+        greaterThanOrEqualTo(34),
+        reason: 'son çubuk gezinme çubuğunun altında kalıyor',
+      );
+    });
+
+    testWidgets('devasa yazı ölçeğinde tavana oturur ve KAYDIRILIR', (
+      tester,
+    ) async {
+      final yukseklik = await ac(tester, yaziOlcegi: 4);
+      expect(yukseklik, closeTo(ekran.height * 0.9, 0.5));
+      expect(tester.takeException(), isNull, reason: 'taşma olmamalı');
+
+      // Son çubuk (1 yıldız → 7 kişi) başlangıçta görüş alanının ALTINDA.
+      // `findsOneWidget` yeterli KANIT DEĞİL: kaydırma kutusu görünmeyen
+      // çocukları da kurar. Konumla ölçüyoruz.
+      final sheet = tester.getRect(find.byType(PuanDagilimiSheet));
+      final oncesi = tester.getRect(find.text('7')).top;
+      expect(
+        oncesi,
+        greaterThan(sheet.bottom),
+        reason: 'içerik zaten sığıyorsa bu test bir şey kanıtlamaz',
+      );
+
+      await tester.drag(find.byType(PuanDagilimiSheet), const Offset(0, -2000));
+      await tester.pumpAndSettle();
+
+      // Kaydırınca gerçekten yukarı geldi ve sheet'in İÇİNDE okunuyor.
+      final sonrasi = tester.getRect(find.text('7'));
+      expect(sonrasi.top, lessThan(oncesi));
+      expect(sonrasi.bottom, lessThanOrEqualTo(sheet.bottom));
+      expect(sonrasi.top, greaterThanOrEqualTo(sheet.top));
+    });
+  });
+
   group('detay sayfası rozeti', () {
     setUp(
       () =>

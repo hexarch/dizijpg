@@ -134,6 +134,13 @@ const ACIK_ROTALAR = new Set([
   // (`^/(icerik|gonderi|kisi|dizi|listeler)/`) bu yolu kapsamıyor, yani bot
   // da insan da AYNI uygulamayı alıyor.
   '/sirket/x',
+  // 14 Ağu 2026: Keşfet rafının "Tümünü gör" sayfası (`/raf/:slug`). `/sirket/x`
+  // ile AYNI sınıf: yalnız TMDB katalog verisi (rafın sayfalanmış hâli),
+  // kişiye özel HİÇBİR alan yok, oturum istemez. Zaten HERKESE AÇIK olan
+  // `/kesfet`te çizilen bir bağlantı — kapatmak zincirin ortasını koparırdı.
+  // Cloaking riski yok: nginx'in bot kuralı (`^/(icerik|gonderi|kisi|dizi|
+  // listeler)/`) `/raf/`i kapsamıyor, bot da insan da AYNI uygulamayı alıyor.
+  '/raf/x',
 ]);
 
 // ===========================================================================

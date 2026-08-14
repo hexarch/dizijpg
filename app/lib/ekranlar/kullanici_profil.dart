@@ -917,6 +917,15 @@ class ProfilYorumKarti extends StatelessWidget {
       surfaceTintColor: Colors.transparent,
       shape: const RoundedRectangleBorder(),
       child: Column(
+        // KART İÇERİĞİ KADAR YÜKSEK OLMALI. `Column` varsayılanı
+        // `MainAxisSize.max`; istatistik girişi (md. 23) için bu Column
+        // eklendiğinde kart, sınırsız yükseklikli bir ebeveynde TÜM alanı
+        // kaplar hale geldi. Listede fark edilmiyordu ama tıklanabilir
+        // InkWell yalnız içerik kadar yüksek kaldığı için kartın alt
+        // yarısına yapılan dokunuş HİÇBİR ŞEY YAPMIYORDU.
+        // (14 Ağu 2026 — `modal_alt_guvenli_ek_test.dart` iki testi bu
+        // yüzden kırıldı: dokunuş boşluğa düşüyor, modal hiç açılmıyordu.)
+        mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
             borderRadius: BorderRadius.circular(14),

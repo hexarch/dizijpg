@@ -3238,6 +3238,11 @@ const BOT_ROTALARI = [
   { yol: '/arama', desen: /^\/arama$/ },
   { yol: '/profil', desen: /^\/profil$/ },
   { yol: '/gozat', desen: /^\/gozat$/ },
+  // Keşfet rafının "Tümünü gör" sayfası (14 Ağu 2026). Slug Türkçe başlıktan
+  // üretiliyor (`kesfet.dart` → `rafSlug`), yani yalnız küçük harf, rakam ve
+  // tire içerir. SSR'ı YOK: bot buradan noindex,follow minimal sayfa alır —
+  // 404 DEĞİL, çünkü sayfa gerçekten var.
+  { yol: '/raf/:slug', desen: /^\/raf\/[a-z0-9-]+$/ },
 
   // Profil ve sosyal ekranlar (hepsi robots.txt ile KAPALI; tabloda olmaları
   // yalnız "bu yol vardır, 404 değildir" demek içindir).

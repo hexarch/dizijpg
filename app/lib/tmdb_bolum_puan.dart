@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'tema.dart';
 
-/// Bir bölümün TMDB puanı. [puan] null ise oy yok — kutuda "—" durur,
-/// 0.0 uydurulmaz.
+/// Bir bölümün TMDB puanı. [puan] null ise BÖLÜM VAR ama oyu yok — kutuda
+/// "—" durur, 0.0 uydurulmaz. (Bölümün hiç olmaması ayrı durumdur: sezon
+/// haritasında o numarada KAYIT bulunmaz ve hücre bomboş çizilir.)
 class TmdbBolumPuani {
   final int bolumNo;
   final double? puan;
@@ -85,12 +86,23 @@ Color tmdbPuanKutuRengi(double? puan) {
 }
 
 /// Kutu üstündeki yazı: açık kutuda koyu, koyu kutuda beyaz (4.5:1).
+///
+/// OY YOK durumundaki "—" eskiden `metin38`di: gri kutu zemininde (koyu
+/// `#17171A`) kontrast 3,6:1, yani WCAG AA'nın (4,5:1) ALTINDA — kutu %33
+/// küçülünce büsbütün seçilemez olurdu. Ölçülen yeni değerler: koyu temada
+/// beyaz %54 → 5,9:1, açık temada `#52525B` → 6,6:1.
 Color tmdbPuanYaziRengi(double? puan) {
-  if (puan == null) return DiziRenkler.metin38;
+  if (puan == null) {
+    return DiziRenkler.acik ? const Color(0xFF52525B) : Colors.white54;
+  }
   if (puan >= 6) return const Color(0xFF17171A);
   return Colors.white;
 }
 
-/// Hücrede gösterilecek metin: `7.6` ya da `—`.
+/// Hücrede gösterilecek metin: `7.6` ya da (bölüm VAR, oyu yok) `—`.
+///
+/// HİÇ OLMAYAN bölüm buraya gelmez: ızgara o hücreyi tamamen boş çizer
+/// (`tmdb_puan_izgara.dart`, `kayit == null` dalı). Ayrım bilinçli — "bölüm
+/// yok" hiçbir şey, "puan yok" ise gri kutu içinde tire.
 String tmdbPuanMetni(double? puan) =>
     puan == null ? '—' : puan.toStringAsFixed(1);

@@ -92,8 +92,11 @@ class ApiHata implements Exception {
   final Map<String, dynamic>? govde;
 
   ApiHata(this.mesaj, {this.kod, this.yasak, this.makineKodu, this.govde});
+
+  /// Sunucu Türkçe anahtar basar; ekranda seçili dilin karşılığı durur.
+  /// Haritada yoksa Türkçe kalır (yeni uç, henüz çevrilmemiş metin).
   @override
-  String toString() => mesaj;
+  String toString() => mesaj.c;
 }
 
 class Api {
@@ -423,7 +426,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.48.0+96';
+  static const surum = '1.49.0+97';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

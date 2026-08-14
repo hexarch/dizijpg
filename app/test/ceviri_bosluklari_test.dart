@@ -48,6 +48,78 @@ const _yeniAnahtarlar = [
   // tmdb_puan_izgara.dart — TMDB ısı haritası
   'Bölüm puanları',
   'Bölüm puanları yüklenemedi',
+  // api.dart — sunucu hata metinleri (SnackBar'da Türkçe kalıyordu)
+  'Giriş gerekli',
+  'Geçersiz oturum',
+  'Oturum sonlandı, tekrar giriş yap',
+  'Çok fazla istek; biraz sonra tekrar dene',
+  'E-posta/kullanıcı adı veya şifre hatalı',
+  'Bu e-posta veya kullanıcı adı zaten kayıtlı',
+  'Google doğrulaması başarısız',
+  'Kod geçersiz veya süresi dolmuş',
+  'Bu kullanıcıyla mesajlaşamazsın',
+  'Kendini takip edemezsin',
+  'Bu kullanıcıyı takip edemezsin',
+  'Kendini engelleyemezsin',
+  'Yorum 1-1000 karakter olmalı',
+  'Boş mesaj gönderilemez',
+  'Kullanıcı bulunamadı',
+  'Yorum bulunamadı',
+  'Gönderi bulunamadı',
+  'Şifre hatalı',
+  'Şifre en az 6 karakter olmalı',
+  'Yalnızca GIF, PNG, JPEG veya WebP yüklenebilir',
+  'Desteklenen türler: GIF, PNG, JPEG, WebP, MP4, WebM, ses',
+  'Geçerli bir ZIP dosyası değil',
+  'Verilerini e-postayla almak için önce hesabına e-posta bağlamalısın',
+  'Bu içerikte izleme kaydın var. "İzleyeceğim" demek için önce izleme işaretlerin silinmeli.',
+  'Arama şu anda kapalı',
+  'Misafir hesaplar arama ayarlarını açamaz; hesap oluşturunca kullanabilirsin',
+  'Sunucu yeniden başlatılıyor, birazdan tekrar dene',
+  'Puan 1-10 arası olmalı',
+  'En fazla 10 medya eklenebilir',
+  // api.dart — 2. tur (kayıt, liste, mesaj, itiraz, 2FA)
+  'Bu cihazdan yeni hesap açılamıyor',
+  'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli',
+  'Geçerli e-posta ve en az 6 karakter şifre gerekli',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)',
+  'Bu hesap zaten bağlı',
+  'Hesap oluşturulamadı',
+  'Misafir hesabı oluşturulamadı',
+  'Hesap bulunamadı',
+  'Bu hesapta e-posta yok',
+  'İki adımlı doğrulama zaten bu durumda',
+  'Kod yanlış',
+  'Kodun süresi doldu',
+  'Kullanıcının e-postası yok (misafir hesap)',
+  'Bio en fazla 300 karakter olabilir',
+  'Geçersiz ülke',
+  'Geçersiz sosyal bağlantı',
+  'Geçersiz doğum tarihi',
+  'Liste adı gerekli',
+  'Ad en fazla 60, açıklama 300 karakter olabilir',
+  'Liste bulunamadı',
+  'Değiştirilecek tercih yok',
+  'İnceleme en fazla 2000 karakter olabilir',
+  'Önce içeriği "bitirdim" olarak işaretle',
+  'Önce kişiyi favorile',
+  'Bölüm yorumu için sezon ve bolum birlikte gerekli',
+  'Yanıtlanan yorum bulunamadı',
+  'Geri bildirim 3-2000 karakter olmalı',
+  'Başlık ve metin gerekli (en az 2 karakter)',
+  'Kendine mesaj gönderemezsin',
+  'Mesaj en fazla 2000 karakter olabilir',
+  'Mesaj 1-2000 karakter olmalı',
+  'Mesaj bulunamadı',
+  'Mesaj bulunamadı veya düzenlenemez',
+  'Yalnız sana gelen mesajı şikayet edebilirsin',
+  'Sebep gerekli',
+  'İtiraz edilecek aktif bir ceza yok',
+  'Zaten incelenmeyi bekleyen bir itirazın var',
+  'Bu ceza için itirazın zaten incelendi',
+  'Medya bağlantısının süresi dolmuş',
+  'Bu medya için imzalı bağlantı gerekli',
+  'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).
@@ -201,6 +273,29 @@ void main() {
         expect(cikti, contains('7'), reason: '$kod → sayı yerleşmedi');
         expect(cikti, isNot(contains('{}')), reason: '$kod → {} sızdı');
       }
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  group('ApiHata — sunucu Türkçesi ekranda çevrilir', () {
+    test('İngilizce arayüzde SnackBar metni Türkçe kalmaz', () async {
+      await Ceviri.sec('en');
+      expect(ApiHata('Giriş gerekli').toString(), 'Sign in required');
+      expect(ApiHata('Hesap bulunamadı').toString(), 'Account not found');
+      expect(
+        ApiHata(
+          'Bu içerikte izleme kaydın var. "İzleyeceğim" demek için önce izleme işaretlerin silinmeli.',
+        ).toString(),
+        startsWith('You have watch history'),
+      );
+    });
+
+    test('haritada olmayan metin olduğu gibi kalır', () async {
+      await Ceviri.sec('en');
+      expect(
+        ApiHata('Henüz çevrilmemiş uç metni').toString(),
+        'Henüz çevrilmemiş uç metni',
+      );
     });
   });
 

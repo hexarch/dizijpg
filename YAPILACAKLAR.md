@@ -1,6 +1,13 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-14 — ✅ API HATA METİNLERİ 45 DİL (dağıtım BEKLİYOR)
+Sunucu Türkçe `hata:` basıyordu; İngilizce arayüzde SnackBar Türkçe kalıyordu.
+`ApiHata.toString()` artık `.c`. Kullanıcıya düşen ~70 metin 45 dile eklendi
+(giriş, kayıt, izleme çakışması, mesaj, liste, 2FA, itiraz). Yönetici /
+WebRTC / `Geçersiz tmdb_id` gibi iç uçlar Türkçe kaldı (ekrana düşmez).
+`ceviri_bosluklari_test` kilidi var. Canlıya henüz gitmedi.
+
 ## 2026-08-14 — 🚀 ARAMA: KİŞİ + ŞİRKET + PAGESPEED (1.47.0+95)
 Web `main.4dd54b3e4942.dart.js` · SW sökücü · brotli q11 · API yeniden derlendi.
 
@@ -48,6 +55,80 @@ Bekletilen: 31/35b-c, 32, 33 (arama KAPALI), 8, 5, 44, 34.
 Güvenlik `[!]`: DB rolü, CSP, medya imzası (AAB yüklenene kadar açılmaz).
 Kullanıcıda: AAB 1.46 Play'e yükle, Veri Güvenliği beyanı, testçi listesine
 dokunma.
+
+## 2026-08-14 — 🚀 WEB YENİLEME + PUAN IZGARASI (1.49.0+97)
+
+### KULLANICI HATASI: "yenileyince beni hep farklı sayfalara atıyor"
+**KÖK NEDEN (kanıtlandı):** `GoRouter.optionURLReflectsImperativeAPIs`
+varsayılan `false`. Bu bayrak kapalıyken go_router **`push` ile açılan
+sayfaları adres çubuğuna HİÇ YAZMIYOR**; adres en son `go` edilen konumda
+(kabuk sekmesinde) donuyor. Bu uygulamada derin gezinmenin TAMAMI `push` —
+içerik, kişi, bölüm, profil, sohbet, kitaplık, özet, liste, gönderi, arama.
+Yani hata tek sayfada değil, **gezilen HER derin sayfadaydı**.
+* Canlıda ölçüldü: Keşfet'ten posterе dokun → dizi sayfası açık ama
+  `location.pathname` hâlâ `/kesfet`. F5 → Keşfet.
+* **Sunucu SUÇSUZ**: `/akis`, `/profil`, `/ayarlar`, `/istatistiklerim`,
+  `/icerik/tv/1396`, `/akis/` — hepsi normal ve Googlebot UA ile 200.
+  nginx'e DOKUNULMADI (md. 58 hâlâ ayrı iş).
+* İkinci bağımsız hata: Keşfet rafındaki **"Tümünü gör"**
+  `Navigator.push(MaterialPageRoute)` ile açılıyordu — yönlendiricinin
+  dışında, hiç URL'si yoktu. `/raf/:slug` rotası eklendi (Keşfet şubesine,
+  kabuk dışına değil — alt menü yerinde kalsın) + `BOT_ROTALARI` + robots.
+* `baslangicRotasi(Uri?)` sertleştirildi: yol segmentleri yeniden kodlanıyor,
+  **sondaki eğik çizgi kırpılıyor** (`/akis/` "Bağlantı geçersiz" ekranına
+  düşüyordu), sorgu dizesi korunuyor.
+* `yenilemeyleAcilmaz`: `/gorusme/:ad` ve `/arama-gelen` yenilemede
+  `/sohbetler`e düşer — yoksa F5 yeniden arama başlatırdı.
+* **TESTİN DOĞRU ALANI ÖLÇMESİ KRİTİKTİ**: `currentConfiguration.uri` bakan
+  test bu hatayı GÖREMİYOR (push'ta doğru görünüyor); tarayıcıya giden adres
+  `restoreRouteInformation`. İlk turda 6 test yeşilken hata canlıda duruyordu.
+* `app/test/yenileme_ayni_sayfa_test.dart` (12 test): rota listesi
+  `GoRouter.configuration.routes`tan çıkarılıyor → yeni rota eklendiğinde test
+  onu elle güncelleme gerekmeden kapsıyor.
+* Mutasyon kontrolü: dört düzeltme tek tek geri alındı, ilgili test kırıldı.
+* YAN FAYDA: kullanıcı artık adres çubuğundaki bağlantıyı paylaşabiliyor;
+  eskiden hangi sayfada olursa olsun ana sayfa adresi kopyalanıyordu.
+* KAPSAM DIŞI (bilinçli): Reels, medya büyütme ve yükleme editörleri hâlâ
+  URL'siz — geçici katmanlar (bellekteki listeye / seçilen dosyaya bağlı).
+
+### KULLANICI İSTEĞİ: puan dağılımı + bölüm ızgarası
+* **"Komple açılmıyor"** — İKİ aday da düzeltildi. Asıl şikâyet TMDB puanına
+  dokununca açılan **ızgara**: `ConstrainedBox(maxHeight: 48*9)` + iç dikey
+  `SingleChildScrollView` vardı, yani kayan sayfa içinde İKİNCİ bir kaydırma
+  kutusu — ızgara hep yarım duruyordu. Kaldırıldı, yatay kaydırma korundu.
+  Ayrıca `puan_dagilimi` sheet'ine `isScrollControlled: true`.
+  Sheet **içeriğe göre** boyutlanıyor (tavan %90) — sabit oran kısa ekranda
+  keser, uzun ekranda yarısı boş panel açardı.
+  Ölçüm (360×480): 1.0× 270→236 · 1.3× 270 (32 dp kesik)→302 ·
+  2.0× 270 (162 dp kesik)→432.
+* **Kutucuklar %33 küçük**: hücre TIKLANABİLİR olduğu için iki ölçü ayrıldı —
+  `_hucre = 44` (dokunma hedefi) ve `_kutu = 32` (görünen kare, 48→32).
+  Kısaltma dolguyla. 360 dp'de sığan sezon sütunu 6 → 7.
+  YAN HATA: eski `Padding(all: 2)` veri sütunlarının adımını 52'ye çıkarırken
+  sol `E1/E2…` sütunu 48'de kalıyordu — satır etiketleri **veriden kayıyordu**.
+* **Olmayan bölümde boşluk**: `kayit == null` (bölüm HİÇ YOK) → kutu yok,
+  yazı yok, `Semantics` yok. `puan == null` (bölüm VAR, oyu yok) → gri kutu +
+  `—` KORUNDU; boş bırakmak ikisini ayırt edilemez yapardı.
+  `—` rengi kontrast için `metin38` → 3,6:1'den 5,9:1'e çıkarıldı.
+* Sheet tam açılınca `_Satir`daki sabit 34 dp sütunlar 2× yazı ölçeğinde
+  YATAYDA TAŞIYORDU — genişlik artık `textScaler` ile büyüyor.
+
+### YOL ÜSTÜNDE YAKALANAN GERİLEME
+`modal_alt_guvenli_ek_test.dart` iki testi HEAD'de kırıktı. Sebep: md. 23
+istatistik girişi için eklenen `Column` **`MainAxisSize.max`** varsayılanıyla
+kartı sınırsız yükseklikli ebeveynde TÜM alana yayıyordu; tıklanabilir
+`InkWell` yalnız içerik kadar (118 dp) yüksek kaldığı için **kartın alt
+yarısına yapılan dokunuş hiçbir şey yapmıyordu**. `mainAxisSize: min` eklendi.
+
+### Kanıt ve dağıtım
+* `flutter test` **1625** · `npm test` **1137** · analyze 0 error / 0 warning.
+* Web `main.db71bf84cf69.dart.js`, brotli üretildi (49 dosya, %72 kazanç),
+  `content-encoding: br` doğrulandı. `server.js` yedeği:
+  `server.js.yedek-raf-20260814`.
+* **CANLI CURL**: `/raf/haftanin-dizileri` 200 (yeni), `/akis` `/profil`
+  `/icerik/tv/1396` `/ayarlar` 200, Googlebot ile `/raf/...` 200.
+* APK: `~/Desktop/dizijpg-1.49.0+97.apk` (88 MB — x86_64 dışarıda).
+* `app/scratchpad/` `.gitignore`a eklendi (ajan betikleri depoya girmesin).
 
 ## 2026-08-14 — 🚀 İSTATİSTİK EKRANLARI + SEVİYE SADELEŞTİRME (1.46.0+93)
 Beş ajan paralel; dosya sahipliği bölündü, çakışma olmadı.

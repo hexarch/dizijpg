@@ -77,6 +77,51 @@ const anaSayfaRaflari = <(String, String, String)>[
   ),
 ];
 
+/// Türkçe raf başlığından üretilen KALICI adres parçası (`/raf/:slug`).
+///
+/// NEDEN BAŞLIKTAN, NEDEN İNDEKSTEN DEĞİL: indeks kullansaydık
+/// [anaSayfaRaflari]'na araya bir raf eklemek paylaşılmış/yer imlenmiş tüm
+/// adresleri BAŞKA bir rafa çevirirdi. Slug listedeki sırayla değil, rafın
+/// kendi kimliğiyle bağlı.
+///
+/// ÇEVİRİDEN DEĞİL, TÜRKÇE ANAHTARDAN: başlık 45 dile çevriliyor; çeviriden
+/// üretilen adres kullanıcının diline göre değişir ve İngilizce açılan bir
+/// bağlantı Türkçe oturumda kırılırdı.
+///
+/// Türkçe harfler ÖNCE katlanır, SONRA küçük harfe inilir: Dart'ın
+/// `toLowerCase()`i 'İ'yi iki kod birimine ('i' + birleşen nokta) çevirir ve
+/// adreste görünmez bir karakter bırakırdı.
+String rafSlug(String baslik) {
+  const katla = {
+    'Ç': 'C',
+    'Ğ': 'G',
+    'İ': 'I',
+    'Ö': 'O',
+    'Ş': 'S',
+    'Ü': 'U',
+    'ç': 'c',
+    'ğ': 'g',
+    'ı': 'i',
+    'ö': 'o',
+    'ş': 's',
+    'ü': 'u',
+  };
+  final duz = baslik.split('').map((h) => katla[h] ?? h).join();
+  return duz
+      .toLowerCase()
+      .replaceAll(RegExp('[^a-z0-9]+'), '-')
+      .replaceAll(RegExp('^-+|-+\$'), '');
+}
+
+/// [rafSlug] ile eşleşen rafı bulur; yoksa null (bozuk/eski bağlantı).
+(String, String, String)? rafBul(String? slug) {
+  if (slug == null || slug.isEmpty) return null;
+  for (final raf in anaSayfaRaflari) {
+    if (rafSlug(raf.$1) == slug) return raf;
+  }
+  return null;
+}
+
 class KesfetEkrani extends StatefulWidget {
   const KesfetEkrani({super.key});
 
@@ -210,17 +255,15 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
                 icerikler: e.value,
                 turZorla: rafMap[e.key]?.$3,
                 // "Sana Özel" kişiye özel üretiliyor, sayfalanamaz.
+                // ADRESE YAZILAN gezinme (14 Ağu 2026). Eskiden burada
+                // `Navigator.push(MaterialPageRoute(...))` vardı: sayfa
+                // açılıyor ama URL `/kesfet`te kalıyordu, yani F5 kullanıcıyı
+                // Keşfet'e geri atıyordu (canlıda ölçüldü). `context.push`
+                // aynı görünümü verir — rota Keşfet şubesinin içinde, alt
+                // gezinme çubuğu yerinde kalır — ama adres sayfayı yansıtır.
                 onBaslikTap: rafMap[e.key] == null
                     ? null
-                    : () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => KatalogListeEkrani(
-                            baslik: rafMap[e.key]!.$1,
-                            yol: rafMap[e.key]!.$2,
-                            tur: rafMap[e.key]!.$3,
-                          ),
-                        ),
-                      ),
+                    : () => context.push('/raf/${rafSlug(rafMap[e.key]!.$1)}'),
               ),
             const SizedBox(height: 24),
           ],
