@@ -1,5 +1,24 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-15 — 🚀 BAŞKA ÜLKELERDEN TOHUM HESAPLAR (id 163–177)
+Canlıda ülke alanı 29 Türkiye + 113 boştu. Çevirisi dolu 15 dile uygun
+**15 hesap** yazıldı (ünlü adı / çalıntı foto yok; düz renk avatar).
+ABD, Çin, Hindistan, İspanya, Fransa, Mısır, Bangladeş, Brezilya, Rusya,
+Pakistan, Endonezya, Almanya, Japonya, Vietnam, Güney Kore.
+Her birinde ülke + bio (o dilde) + 1 kısa gönderi; `dizi.jpg` takip ediliyor.
+Gönderi çevirileri TR/EN elde, diğer 13 dil Argos. API yeniden başlatılmadı.
+Şifreler depoda yok: sunucu `yedekler/intl-kullanicilar.txt` (600).
+Betik: `backend/araclar/ulke_kullanici_tohum.js` (tekrar çalışınca atlar).
+Kanıt: `GET /api/profil/lucia.series` → ulke İspanya;
+`GET /api/avatarlar/avatar166-intl.png` → image/png.
+
+## 2026-08-14 — 🚀 GÖNDERİ ÇEVİRİSİ 15 DİL (Argos, Google yok)
+Benzersiz gönderi metinleri (~4069) `metin_cevirileri`ne yazıldı:
+en/zh/hi/es/fr/ar/bn/pt/ru/ur/id/de/ja/vi/ko. Mevcut EN ezilmedi.
+Motor: sunucuda Argos Translate (CTranslate2), `argos_doldur.py`.
+Çevir düğmesi bu dillerde önbellekten gelir; diğer arayüz dilleri hâlâ
+istek anında üretilir.
 
 ## 2026-08-14 — ✅ dizi.jpg.ai KARE TEKRARI + BİYO (canlı DB)
 `@dizi.jpg.ai` (id=51) 2411 yorum / 21.531 kare tarandı.
