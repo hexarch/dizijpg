@@ -1,6 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-14 — ✅ dizi.jpg.ai KARE TEKRARI + BİYO (canlı DB)
+`@dizi.jpg.ai` (id=51) 2411 yorum / 21.531 kare tarandı.
+* Yorum içi yol tekrarı 0. Yorumlar arası birebir aynı dosya: **6 grup**.
+* 3 yorumda 5,6 KB bozuk JPEG (aynı md5, üç alakasız yapım) — çıkarıldı.
+* 5 tam boy kare iki yapımda paylaşılıyordu — erken yorumda durdu, sonrakinden düştü.
+* 8 kare DB'den çıktı (21.531→**21.523**). 28 dosya
+  `karantina-2026-08-14`'e taşındı (silinmedi).
+* Bio ASCII yazım: `zekasi/anlatirim` → `zekâsı/anlatırım`.
+* 11 Instagram köprüsü (başka hesapların postu, EN/hashtag) duruyor — ürün kararı.
+Algısal süzgeç (6 Ağu) TMDB karelerinde 0 tekrar bırakmıştı; bu tur yalnız
+birebir md5 + bozuk minik dosya.
+
 ## 2026-08-14 — ✅ API HATA METİNLERİ 45 DİL (dağıtım BEKLİYOR)
 Sunucu Türkçe `hata:` basıyordu; İngilizce arayüzde SnackBar Türkçe kalıyordu.
 `ApiHata.toString()` artık `.c`. Kullanıcıya düşen ~70 metin 45 dile eklendi
@@ -55,6 +67,69 @@ Bekletilen: 31/35b-c, 32, 33 (arama KAPALI), 8, 5, 44, 34.
 Güvenlik `[!]`: DB rolü, CSP, medya imzası (AAB yüklenene kadar açılmaz).
 Kullanıcıda: AAB 1.46 Play'e yükle, Veri Güvenliği beyanı, testçi listesine
 dokunma.
+
+## 2026-08-14 — 🚀 PUAN IZGARASI %25'E ÇEKİLDİ, SAYILAR GERİ (1.51.0+99)
+Kullanıcı: "şu an çok küçük oldular ve sayılar gözükmüyor, %50 fazla oldu,
+%25 yapalım." → bir önceki turun %50'si geri alındı.
+
+| | adım | kutu | 10 sezon × 20 bölüm |
+|---|---|---|---|
+| Referans (sayılı) | 44 | 32 | 484 × 924 dp |
+| Ara tur (%50, sayısız) | 22 | 18 | 242 × 462 dp |
+| **Şimdi (%25)** | **33** | **24** | **363 × 693 dp** |
+
+Her kenarda tam 0,75 katı; alanda %43,75 kazanç.
+
+### SAYI GERİ GELDİ ama YAZI BOYU DÜŞMEDİ (12 dp korundu)
+Bunu mümkün kılan tek şey **`10.0` → `10` kısaltması**. Poppins ExtraBold ile
+ÖLÇÜLDÜ (kutu içi kullanılabilir alan 22 dp):
+`9.2` 17,7 · **`10.0` 24,0 → TAŞAR** · `10` 12,5 · `—` 11,2
+Kısaltmasaydık yazıyı 10 dp'ye indirmek gerekirdi. Ondalık burada BİLGİ
+TAŞIMIYOR: 10.0 TMDB'nin tavanı, `.0` hep sıfır. **Ekran okuyucu ve balon tam
+ondalığı kullanmaya devam ediyor** ("S1 · 3. Bölüm, 10.0 TMDB"); kısaltma
+yalnız görsel hücrede.
+* `letterSpacing: 0` — M3'ün 0,25 dp'si 22 dp'lik yerde bedava genişlik
+  (`9.2` 19,5 → 17,7).
+* `Semantics(excludeSemantics: true)` — yoksa hücre "S1 · 1. Bölüm, 7.6 TMDB"
+  + "7.6" diye İKİ KEZ okunuyordu.
+
+### PALET HİÇ DEĞİŞMEDİ — yük yazı rengine bindirildi
+Yazı geri gelince kontrast şartı da geri geldi, ama kullanıcı canlılığı
+beğendiği için **tek bir ton bile donuklaştırılmadı**. Kova başına koyu/beyaz
+yazı seçimi (`tmdbPuanYaziRengi`) altı kovada da eşiği geçiyor:
+
+| Kova | Dolgu | Yazı | Kontrast |
+|---|---|---|---|
+| 9+ | `#D4F53B` | `#17171A` | 14,42:1 |
+| 8 | `#F5C518` | `#17171A` | 10,97:1 |
+| 7 | `#F59E0B` | `#17171A` | 8,33:1 |
+| 6 | `#F97316` | `#17171A` | 6,38:1 |
+| 5 | `#DC2626` | beyaz | 4,83:1 |
+| <5 | `#BE123C` | beyaz | 6,29:1 |
+
+**TERS yazı rengi her kovada çöküyor** (en iyisi 3,70:1) — yani kova başına
+seçim "süs" değil ZORUNLULUK; bu da testle belgelendi.
+
+### TESTLERDE KRİTİK DÜZELTME — gerçek font yüklendi
+`flutter_test`in varsayılan deneme fontu her glifi `fontSize` kadar geniş
+çiziyor (`9.2` orada 33 dp). O metriklerle "sığıyor mu" ölçümü ANLAMSIZDI.
+Testlere `FontLoader` ile **Poppins yüklendi**; ölçümler artık gerçek.
+* "SAYI GÖRÜNÜYOR ve TAŞMIYOR": çizilen genişlik doğal genişliğe EŞİT — yani
+  `FittedBox` devreye girmedi, sayı tam boyunda (`findsOneWidget` DEĞİL, ölçüm).
+* Kontrast testi renkleri varsaymıyor: çizilen `Container` dolgusu ile
+  içindeki `Text` rengi widget ağacından OKUNUP hesaplanıyor.
+* `10.0` 22 dp'ye sığmıyor / `10` sığıyor — kısaltmanın gerekçesi kilitli.
+* Ara tura dönülmediği (`_adim != 22`) ayrıca kilitli.
+
+Korunanlar: "hücre gezinmez SEÇER" (33 < 44 olduğu için balon hâlâ gerekli),
+balon 190×44 ve gezinmeyi o yapıyor, olmayan bölüm tamamen boş, oysuz bölüm
+gri + `—`, 7 pullu gösterge, dikey tavan yok.
+
+### Kanıt ve dağıtım
+* `flutter test` **1639** · analyze 0 error / 0 warning.
+* Web `main.1638ed1f9f59.dart.js`, brotli üretildi. **Backend değişmedi.**
+* APK: `~/Desktop/dizijpg-1.51.0+99.apk` (88 MB).
+* Yeni çeviri anahtarı YOK.
 
 ## 2026-08-14 — 🚀 PUAN IZGARASI %50 KÜÇÜLDÜ + CANLI PALET (1.50.0+98)
 Kullanıcı: "kutular hâlâ çok büyük, o ekranı %50 daha küçük yapabilirsin ·

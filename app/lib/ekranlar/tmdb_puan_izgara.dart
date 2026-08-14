@@ -189,27 +189,41 @@ class _TmdbPuanHaritasiState extends State<TmdbPuanHaritasi> {
 /// Üstte sezonlar, solda bölümler; kesişimde puan kutusu.
 ///
 /// ─────────────────────────────────────────────────────────────────────────
-/// ÖLÇÜ KARARI — kullanıcı (14 Ağu): *"kutular hâlâ çok büyük, o ekranı %50
-/// daha küçük yapabilirsin"*. Sabahki tur adımı 52 → 44, kutuyu 48 → 32
-/// yapmıştı; yetmedi ÇÜNKÜ ızgaranın kapladığı yeri belirleyen kutu değil
-/// ADIM'dır ve adım, hücre TIKLANABİLİR olduğu için 44 dp'ye (dokunma hedefi
-/// kuralı) çakılıydı. 10 sezon × 20 bölümde ızgara 484 × 924 dp ediyordu —
-/// telefonda bir ekrandan uzun.
+/// ÖLÇÜ KARARI — İKİ AŞAMALI, ikincisi bir GERİ ALMA.
 ///
-/// ÇELİŞKİ ŞÖYLE ÇÖZÜLDÜ: hücre artık GEZİNMEZ, SEÇER.
-///  * Adım 44 → 22 dp (tam yarısı), görünen kutu 32 → 18 dp. 10×20 ızgara
-///    242 × 462 dp: her iki kenarda tam %50, alanda %75 kazanç.
-///  * Kutudan puan YAZISI çıktı (18 dp'ye "10.0" sığmaz) — ızgara gerçek bir
-///    ısı haritası oldu. Renk TEK BAŞINA anlam taşımasın diye puan üç ayrı
-///    kanaldan veriliyor: (1) hücreye dokununca açılan [_Balon] puanı SAYIYLA
-///    yazar, (2) her hücrenin `Semantics` etiketi puanı söyler, (3) altta
-///    [_Gosterge] renk–puan karşılığını gösterir.
-///  * 44 dp KURALI ÇİĞNENMEDİ, kapsamı değişti: kural GEZİNME denetimleri
+/// 1) Kullanıcı (14 Ağu): *"kutular hâlâ çok büyük, o ekranı %50 daha küçük
+///    yapabilirsin"*. Adım 44 → 22, kutu 32 → 18 yapıldı. Kutudan puan YAZISI
+///    da çıktı, çünkü 18 dp'ye sayı sığmıyordu.
+/// 2) Aynı gün, kullanıcı sonucu görünce: *"şu an çok küçük oldular ve
+///    sayılar gözükmüyor. %50 fazla oldu, %25 yapalım."* — yani küçültmenin
+///    kendisi değil, MİKTARI ve yazının kaybı yanlıştı.
+///
+/// BUGÜNKÜ HÂL: referans, sayının GÖRÜNDÜĞÜ eski hâldir (adım 44 / kutu 32) ve
+/// ondan %25 küçültülür.
+///  * Adım 44 → 33 dp (`dokunmaHedefi * 0.75`), görünen kutu 32 → 24 dp,
+///    hücreler arası boşluk 12 → 9 dp. Üç ölçü de tam 0,75 katı, yani ızgara
+///    ORANTILI küçüldü; 22 dp'lik ara tur (0,50) terk edildi.
+///  * 10 sezon × 20 bölüm: 484 × 924 → 363 × 693 dp. Her kenarda %25, alanda
+///    %43,75 kazanç. (Ara turdaki 242 × 462'ye göre büyüme kasıtlı.)
+///  * SAYI KUTUYA GERİ DÖNDÜ, üstelik eski fontSize 12 ile — 24 dp'lik kutuda
+///    okunabilirlik düşmedi. Bunu mümkün kılan tek numara `10.0` yerine `10`
+///    yazmak; gerekçesi [tmdbPuanKisaMetni] içinde ölçülerle duruyor.
+///    `FittedBox(scaleDown)` güvence katmanı: kullanıcı yazı ölçeğini
+///    büyütürse sayı taşmaz, küçülür.
+///  * Sayı geri gelince 4,5:1 KONTRAST ŞARTI da geri geldi. Canlı palet YİNE
+///    DE korundu: yük dolguya değil [tmdbPuanYaziRengi]'ne bindirildi (açık
+///    kovada koyu yazı, koyu kovada beyaz) — ölçümler o fonksiyonun başında.
+///
+/// "HÜCRE GEZİNMEZ, SEÇER" KARARI DURUYOR ve hâlâ zorunlu: 33 dp < 44 dp.
+///  * 44 dp KURALI ÇİĞNENMEDİ, kapsamı daraldı: kural GEZİNME denetimleri
 ///    içindir, çünkü orada ıskalamanın bedeli yanlış sayfa + geri tuşu +
-///    kaybolan kaydırma konumudur. 22 dp'lik hücreye ıskalayarak dokunmanın
+///    kaybolan kaydırma konumudur. 33 dp'lik hücreye ıskalayarak dokunmanın
 ///    bedeli ise komşu hücrenin seçilmesi — ekran değişmez, düzeltme tek
 ///    dokunuş. GERÇEK gezinme hedefi [_Balon]'dur ve o 190 × 44 dp'dir.
-///    Yani sayfaya gitmek hâlâ tam boy bir hedefe dokunmakla olur.
+///  * Sayı kutuda görünse de balon gereksiz olmadı: sezon/bölüm numarasını
+///    ("S1 · 3. Bölüm") ve tam ondalığı yazar, bölüme götürür.
+///  * Renk tek başına anlam taşımıyor — puan artık DÖRT kanaldan veriliyor:
+///    kutudaki sayı, [_Balon], her hücrenin `Semantics` etiketi, [_Gosterge].
 ///
 /// DİKEY TAVAN YOK (sabahki karar korunuyor): ızgara komple açılır, detay
 /// sayfasının kendi `CustomScrollView`'ıyla kayar. Yatay kaydırma kalır —
@@ -220,11 +234,20 @@ class _Izgara extends StatefulWidget {
 
   const _Izgara({required this.sezonlar, required this.onBolumSec});
 
-  /// Izgara adımı: dokunma hedefinin TAM YARISI (44 → 22 dp).
-  static const hucre = dokunmaHedefi / 2;
+  /// Izgara adımı: dokunma hedefinin %75'i (44 → 33 dp).
+  static const hucre = dokunmaHedefi * 0.75;
 
-  /// Görünen renkli kutu (32 → 18; aradaki 4 dp hücreler arası boşluk).
-  static const kutu = 18.0;
+  /// Görünen renkli kutu (32 → 24; aradaki 9 dp hücreler arası boşluk).
+  static const kutu = 32.0 * 0.75;
+
+  /// Kutudaki puanın yazı boyu. Küçültmeden ÖNCEKİ değerle aynı (12 dp):
+  /// kutu %25 küçüldü ama okunabilirlik küçülmedi. Poppins ExtraBold ile en
+  /// geniş hücre metni `9.2` = 17,7 dp ve kontur içi 22 dp'ye rahat sığıyor
+  /// (bkz. [tmdbPuanKisaMetni]).
+  static const yazi = 12.0;
+
+  /// Satır/sütun başlıkları (`S1`, `E20`) — veriden bir kademe geride.
+  static const baslikYazi = 11.0;
 
   /// Okuma balonu: seçilen hücrenin puanını YAZIYLA veren ve bölüm sayfasına
   /// götüren gerçek gezinme hedefi. Yükseklik dokunma hedefine eşit.
@@ -313,7 +336,7 @@ class _IzgaraState extends State<_Izgara> {
   /// Seçili hücrenin ÜSTÜNE (yer yoksa altına) tutturulan okuma balonu.
   ///
   /// Konum aritmetikle bulunur — ızgara birörnek olduğu için `GlobalKey`
-  /// gerekmez: sütun i, x = (1+i)·22; bölüm b, y = b·22.
+  /// gerekmez: sütun i, x = (1+i)·adım; bölüm b, y = b·adım.
   List<Widget> _balon(double en, double boy) {
     final sec = _secili;
     if (sec == null) return const [];
@@ -365,15 +388,15 @@ class _BaslikKutusu extends StatelessWidget {
       width: _Izgara.hucre,
       height: _Izgara.hucre,
       child: Center(
-        // 22 dp hücrede "E20"/"S10" ancak eksen etiketi boyunda okunur:
-        // 10 dp. FittedBox daha uzun numaralarda (E100) taşırmak yerine
-        // bir tık küçültür.
+        // 33 dp hücrede "E20"/"S10" 11 dp'de rahat durur (Poppins ExtraBold
+        // "E20" = 19,5 dp). FittedBox daha uzun numaralarda (E100) taşırmak
+        // yerine bir tık küçültür.
         child: FittedBox(
           fit: BoxFit.scaleDown,
           child: Text(
             yazi,
             style: TextStyle(
-              fontSize: 10,
+              fontSize: _Izgara.baslikYazi,
               fontWeight: FontWeight.w800,
               color: DiziRenkler.metin70,
             ),
@@ -408,10 +431,10 @@ class _PuanHucresi extends StatelessWidget {
     if (kayit == null) {
       return const SizedBox(width: _Izgara.hucre, height: _Izgara.hucre);
     }
-    // VAR OLAN AMA OYU OLMAYAN BÖLÜM: nötr GRİ kutu. Ayrım korunuyor —
-    // kutunun VARLIĞI "bölüm var" der, GRİ olması "puan yok" der. (Eskiden
-    // bunu kutudaki "—" söylüyordu; artık ızgarada yazı olmadığı için grinin
-    // zeminden 3:1 ayrışması ZORUNLU oldu, bkz. `tmdbPuanKutuRengi`.)
+    // VAR OLAN AMA OYU OLMAYAN BÖLÜM: nötr GRİ kutu + "—". Ayrım iki kanallı:
+    // kutunun VARLIĞI "bölüm var" der, GRİ + tire "puan yok" der. Grinin
+    // zeminden 3:1 ayrışması yine ZORUNLU (bkz. `tmdbPuanKutuRengi`) — renk
+    // körü ya da yazıyı okuyamayan kullanıcı için kutunun kendisi sınırdır.
     final puan = kayit!.puan;
     return Semantics(
       button: true,
@@ -419,6 +442,10 @@ class _PuanHucresi extends StatelessWidget {
       label:
           'S{} · {}. Bölüm'.cf([sezon, bolum]) +
           (puan == null ? '' : ', ${tmdbPuanMetni(puan)} TMDB'),
+      // Kutudaki sayı ayrıca SESLENDİRİLMEZ: etiket zaten sezonu, bölümü ve
+      // puanı söylüyor. Dışlanmazsa hücre "S1 · 1. Bölüm, 7.6 TMDB" + "7.6"
+      // diye iki kez okunur ve etiket kirlenir.
+      excludeSemantics: true,
       child: SizedBox(
         width: _Izgara.hucre,
         height: _Izgara.hucre,
@@ -429,15 +456,38 @@ class _PuanHucresi extends StatelessWidget {
             child: Container(
               width: _Izgara.kutu,
               height: _Izgara.kutu,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: tmdbPuanKutuRengi(puan),
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(6),
                 // Seçim GERİ BİLDİRİMİ: kutu büyümez (ızgara zıplamasın),
                 // konturu kalınlaşır ve tema metin rengine döner. Parmağın
                 // altında kalan bir splash'tan daha görünür.
                 border: Border.all(
                   color: secili ? DiziRenkler.metin : tmdbPuanKenarRengi(puan),
                   width: secili ? 2 : 1,
+                ),
+              ),
+              // PUAN KUTUNUN İÇİNDE (kullanıcı: "sayılar gözükmüyor").
+              // FittedBox yalnız GÜVENCE: 12 dp'de en geniş metin (`9.2`
+              // 17,7 dp) kontur içi 22 dp'ye zaten sığıyor, ama kullanıcının
+              // yazı ölçeği büyükse taşmak yerine küçülsün.
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  tmdbPuanKisaMetni(puan),
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: _Izgara.yazi,
+                    fontWeight: FontWeight.w800,
+                    // M3 gövde metni 0,25 dp harf aralığı taşır; 22 dp'lik
+                    // yerde bu bedava genişlik demek. Sıfırlanınca `9.2`
+                    // 19,5 → 17,7 dp'ye iner ve ölçü temadan bağımsızlaşır.
+                    letterSpacing: 0,
+                    // Kova başına seçilir: açık dolguda koyu, koyu dolguda
+                    // beyaz. Canlı rampanın 4,5:1 taşımasının tek yolu.
+                    color: tmdbPuanYaziRengi(puan),
+                  ),
                 ),
               ),
             ),
@@ -448,11 +498,12 @@ class _PuanHucresi extends StatelessWidget {
   }
 }
 
-/// Seçili hücrenin okuma balonu: puanı SAYIYLA verir ve bölüme götürür.
+/// Seçili hücrenin okuma balonu: hangi bölüm olduğunu söyler ve oraya götürür.
 ///
-/// Bu widget iki işi birden yapıyor ve ikisi de zorunlu:
-///  * Isı haritasında renk tek başına anlam taşımasın diye puanı yazar.
-///  * 44 dp'lik GERÇEK gezinme hedefi olur (hücre yalnız seçer).
+/// Sayı hücreye geri geldikten sonra da zorunlu, çünkü iki iş yapıyor:
+///  * 44 dp'lik GERÇEK gezinme hedefidir (33 dp'lik hücre yalnız seçer).
+///  * Hücrenin söyleyemediğini söyler: sezon/bölüm numarası ("S1 · 3. Bölüm")
+///    ve tam ondalık (`10.0`, hücrede yer darlığından `10` yazıyor).
 class _Balon extends StatelessWidget {
   final int sezon;
   final int bolum;
@@ -527,8 +578,9 @@ class _Balon extends StatelessWidget {
   }
 }
 
-/// Renk → puan göstergesi. Isı haritasında sayı yazmadığı için ZORUNLU:
-/// "renk tek başına anlam taşımasın" kuralının görsel ayağı budur.
+/// Renk → puan göstergesi. Hücrede sayı olsa da KALIYOR: ızgaraya bakan göz
+/// önce ÖRÜNTÜYÜ görür, örüntü ise renkten okunur — hangi rengin hangi aralık
+/// olduğunu söyleyen tek yer burasıdır.
 ///
 /// Etiketler sayı/simge olduğu için çeviri anahtarı gerektirmez.
 class _Gosterge extends StatelessWidget {

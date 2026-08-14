@@ -73,6 +73,24 @@ void main() {
     expect(tmdbPuanMetni(m[4]!.puan), '1.0');
   });
 
+  test('HÜCRE metni: yalnız 10.0 kısalır, geri kalan aynen kalır', () {
+    // 24 dp'lik kutuya sığan tek uzun-değer çözümü (ölçüler
+    // `tmdb_puan_izgara_test.dart` içindeki ÖLÇÜM testinde). Ondalık burada
+    // bilgi taşımıyor: 10.0 TMDB'nin tavanı, ".0" hep sıfır.
+    expect(tmdbPuanKisaMetni(10.0), '10');
+    expect(tmdbPuanKisaMetni(9.99), '10', reason: 'yuvarlanınca da kısalmalı');
+
+    // Kısaltma BURADA BİTER — başka hiçbir değer bozulmuyor.
+    for (final p in [1.0, 3.4, 5.5, 7.6, 8.0, 9.2, 9.9]) {
+      expect(tmdbPuanKisaMetni(p), tmdbPuanMetni(p), reason: 'puan $p');
+      expect(tmdbPuanKisaMetni(p).length, 3);
+    }
+    expect(tmdbPuanKisaMetni(null), '—');
+
+    // Ekran okuyucu ve balon TAM ondalığı kullanmaya devam eder.
+    expect(tmdbPuanMetni(10.0), '10.0');
+  });
+
   test('max bölüm numarası eksik sezonları da hesaba katar', () {
     expect(
       tmdbMaxBolum([
@@ -185,9 +203,10 @@ void main() {
     });
   });
 
-  test('BALON puan çipi: her kovada yazı/zemin kontrastı ≥4,5:1', () {
-    // Izgara kutularında yazı YOK; puan, seçilen hücrenin balonundaki çipte
-    // yazılı. Çip zemini kova rengi olduğu için kontrast kova kova ölçülür.
+  test('KUTU + BALON puan yazısı: 6 kovanın HEPSİNDE ≥4,5:1', () {
+    // Sayı ızgara hücresine GERİ DÖNDÜ (kullanıcı: "sayılar gözükmüyor"),
+    // yani kontrast şartı artık yalnız balonu değil ASIL ızgarayı bağlıyor.
+    // Yazı 12 dp — "büyük metin" istisnası yok, eşik 4,5:1.
     for (final acik in [false, true]) {
       _temada(acik, () {
         for (final p in [..._rampa, null]) {
@@ -195,7 +214,7 @@ void main() {
           expect(
             k,
             greaterThanOrEqualTo(4.5),
-            reason: 'çip yazı kontrastı düşük (acik=$acik, puan=$p): $k',
+            reason: 'kutu yazı kontrastı düşük (acik=$acik, puan=$p): $k',
           );
         }
       });
@@ -205,6 +224,35 @@ void main() {
     expect(tmdbPuanYaziRengi(6.3), const Color(0xFF17171A));
     expect(tmdbPuanYaziRengi(5.5), Colors.white);
     expect(tmdbPuanYaziRengi(1.0), Colors.white);
+  });
+
+  test('KOVA BAŞINA yazı rengi ZORUNLU: tek renk seçilse rampa çökerdi', () {
+    // Bu test, canlı paletin neden korunabildiğini kilitler. Kontrast yükü
+    // dolguya bindirilseydi (tek yazı rengi) tonların doygunluğunu kırpmak
+    // gerekirdi — eski donuk paletin sebebi buydu. Ölçüm: HER İKİ tek-renk
+    // seçeneği de en az bir kovada 4,5:1'in altına düşüyor.
+    for (final tekRenk in [const Color(0xFF17171A), Colors.white]) {
+      final dusenler = [
+        for (final p in _rampa)
+          if (_kontrast(tekRenk, tmdbPuanKutuRengi(p)) < 4.5) p,
+      ];
+      expect(
+        dusenler,
+        isNotEmpty,
+        reason: 'tek renk $tekRenk tüm kovaları taşıyor olamaz',
+      );
+    }
+    // Ters seçim her kovada çöker (ölçülen en iyisi 3,70:1 < 4,5).
+    for (final p in _rampa) {
+      final ters = tmdbPuanYaziRengi(p) == Colors.white
+          ? const Color(0xFF17171A)
+          : Colors.white;
+      expect(
+        _kontrast(ters, tmdbPuanKutuRengi(p)),
+        lessThan(4.5),
+        reason: 'kova $p için ters yazı rengi de yeterli çıkıyor',
+      );
+    }
   });
 
   test('gösterge kovaları: 7 pul, etiketleri çeviri gerektirmez', () {

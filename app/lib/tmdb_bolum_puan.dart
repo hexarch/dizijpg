@@ -78,8 +78,18 @@ int tmdbMaxBolum(Iterable<TmdbSezonPuani> sezonlar) {
 /// KULLANICI (14 Ağu): *"daha CANLI renkler kullan"*. Eski palet (hardal
 /// `#C9A227`, kiremit `#C2410C`) donuktu ÇÜNKÜ kutunun üstüne puan yazılıyordu
 /// ve her kova 4,5:1 yazı kontrastı taşımak zorundaydı — bu, doygunluğu
-/// kırpıyordu. Yazı kutudan çıkınca (bkz. `tmdb_puan_izgara.dart`, okuma
-/// balonu) rampa serbest kaldı ve tam doygun tonlara geçildi.
+/// kırpıyordu.
+///
+/// YAZI GERİ GELDİ (aynı gün, ikinci düzeltme: *"sayılar gözükmüyor"*), yani
+/// 4,5:1 şartı da geri geldi. RAMPA YİNE DE DEĞİŞMEDİ ve tek bir ton bile
+/// donuklaştırılmadı — çünkü kontrast yükü DOLGUYA değil YAZI RENGİNE
+/// bindirildi: [tmdbPuanYaziRengi] kova başına koyu/beyaz seçiyor. Ölçülen
+/// yazı kontrastları (koyu `#17171A` ya da beyaz, kovaya göre):
+///   9+ 14,42:1 · 8 10,97:1 · 7 8,33:1 · 6 6,38:1 · 5 4,83:1 · &lt;5 6,29:1
+///   · oy yok 6,31:1 (koyu tema) / 5,37:1 (açık tema)
+/// Hepsi 4,5:1 üstünde. Eski paletin donukluğu, kontrastı TEK bir yazı
+/// rengiyle (hep koyu) taşımaya çalışmaktan geliyordu; kova başına seçim
+/// yapılınca doygunluk kırpılmadan kurtuldu.
 ///
 /// KOVA SAYISI 4 → 6. Eski ≥7 TEK kovaydı; oysa dizilerin bölüm puanları
 /// 7–9 arasında kümelenir, yani tipik bir dizinin ızgarası baştan aşağı TEK
@@ -113,6 +123,10 @@ Color tmdbPuanKutuRengi(double? puan) {
 
 /// Kutunun 1 dp konturu: dolgunun %45'i tema metin rengine karıştırılır.
 ///
+/// Kutuda artık sayı da var; kontur yine de ZORUNLU, çünkü 4,5:1'lik YAZI
+/// kontrastı kutunun kendisini zeminden ayırmaz (WCAG 1.4.11 nesne sınırı
+/// kuralı ayrı bir şart) — "oy yok" hücresinde ayrım tamamen buna dayanıyor.
+///
 /// NEDEN GEREKLİ: dolgu tek başına İKİ temada birden 3:1 veremez. Parlak
 /// tonlar (9+ `#D4F53B`) açık temada zeminle 1,15:1, koyu tonlar koyu temada
 /// zayıf kalır — matematiksel olarak imkânsız: hem `#0B0B0D` hem `#F6F6F8`
@@ -126,12 +140,17 @@ Color tmdbPuanKenarRengi(double? puan) => Color.lerp(
   0.45,
 )!;
 
-/// Okuma balonundaki puan çipinin yazı rengi (çip zemini kova rengidir).
+/// Kova dolgusunun ÜSTÜNE yazılan puanın rengi — hem ızgara hücresinde hem
+/// okuma balonundaki puan çipinde. Zemin daima kova rengidir.
 ///
-/// Izgara kutularında ARTIK YAZI YOK; bu renk yalnız bir hücre seçilince
-/// açılan balonun içindeki puan çipinde kullanılır. Ölçülen kontrastlar:
-/// 9+ 14,42:1 · 8 10,97:1 · 7 8,33:1 · 6 6,38:1 · 5 4,83:1 · &lt;5 6,29:1 ·
-/// oy yok 6,31:1 (koyu) / 5,37:1 (açık) — hepsi 4,5:1 üstü.
+/// KURAL: 6 ve üstü kovalar AÇIK dolgudur (parlaklık 0,325–0,796) → koyu yazı;
+/// 5 ve altı KOYU dolgudur (0,117–0,167) → beyaz yazı. Ters seçim her kovada
+/// çöker (ölçüldü: 9+ üstüne beyaz 1,24:1, &lt;5 üstüne koyu 2,85:1), yani bu
+/// dallanma süs değil, canlı rampanın okunabilir kalmasının TEK yolu.
+///
+/// Ölçülen kontrastlar: 9+ 14,42:1 · 8 10,97:1 · 7 8,33:1 · 6 6,38:1 ·
+/// 5 4,83:1 · &lt;5 6,29:1 · oy yok 6,31:1 (koyu) / 5,37:1 (açık) — hepsi
+/// 4,5:1 üstü, yani 12 dp'lik "normal metin" eşiğini karşılıyor.
 Color tmdbPuanYaziRengi(double? puan) {
   if (puan == null) {
     return DiziRenkler.acik ? const Color(0xFF17171A) : Colors.white;
@@ -142,9 +161,10 @@ Color tmdbPuanYaziRengi(double? puan) {
 
 /// Gösterge (legend) satırının kovaları — yüksekten alçağa, sonda "oy yok".
 ///
-/// ZORUNLU: ızgarada artık sayı yazmıyor, yani renk TEK BAŞINA anlam taşıyor
-/// gibi görünür. Gösterge + hücreye dokununca açılan puan balonu + `Semantics`
-/// etiketi, o anlamı renkten bağımsız üç ayrı kanaldan verir.
+/// Sayı hücreye geri geldi ama gösterge KALIYOR: ızgaranın asıl işi tek
+/// bakışta örüntü göstermek ve o örüntü RENKTEN okunuyor. Gösterge, rengin
+/// hangi puan aralığı demek olduğunu söyleyen tek yerdir; ayrıca 12 dp'lik
+/// sayıyı okuyamayan kullanıcı için renk→puan köprüsüdür.
 ///
 /// Etiketler sayı ya da simgedir (`9+`, `8`, `<5`, `—`) — çeviri anahtarı yok,
 /// 45 dilde aynı okunur.
@@ -174,3 +194,22 @@ const tmdbPuanKovalari = <TmdbPuanKovasi>[
 /// yok" hiçbir şey, "puan yok" ise gri kutu içinde tire.
 String tmdbPuanMetni(double? puan) =>
     puan == null ? '—' : puan.toStringAsFixed(1);
+
+/// Izgara HÜCRESİNDEKİ metin: [tmdbPuanMetni] ile aynı, tek farkı `10.0`
+/// yerine `10` demesi.
+///
+/// NEDEN KISALTMA: hücre kutusu 24 dp, konturlar düşünce içeride 22 dp yer
+/// kalıyor. Poppins ExtraBold ile ölçülen genişlikler (fontSize 12):
+/// `9.2` → 17,7 dp, `10.0` → 24,0 dp, `10` → 12,5 dp. Yani TEK bir değer,
+/// `10.0`, tüm ızgaranın yazı boyunu 10 dp'ye çekiyordu (`10.0` 11 dp'de bile
+/// 22,0 dp ile sınırı zorluyor). Ondalık burada bilgi de taşımıyor: 10.0
+/// TMDB'nin tavanıdır, ".0" hep sıfırdır. Kısaltınca en geniş değer `9.2`
+/// gibi 3 karakterliler oluyor ve yazı 12 dp'de — yani sayının GÖRÜNDÜĞÜ eski
+/// hâlle (kutu 32 dp, fontSize 12) AYNI boyda — kalabiliyor.
+///
+/// Ekran okuyucu ve balon [tmdbPuanMetni]'ni kullanmaya devam eder: orada yer
+/// dar değil, "10.0 TMDB" sesli okunuşta daha net.
+String tmdbPuanKisaMetni(double? puan) {
+  final s = tmdbPuanMetni(puan);
+  return s == '10.0' ? '10' : s;
+}
