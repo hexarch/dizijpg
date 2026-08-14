@@ -1029,4 +1029,8 @@ const Map<String, String> cevirilerHu = {
       'Sorozat, film, személy vagy cég keresése...',
   'Şirketler': 'Cégek',
   'Senarist': 'Forgatókönyvíró',
+  'Bölüm puanları': 'Epizódértékelések',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Az epizódértékelések nem tölthetők be',
 };

@@ -1023,4 +1023,8 @@ const Map<String, String> cevirilerDa = {
       'Søg efter serie, film, person eller selskab...',
   'Şirketler': 'Selskaber',
   'Senarist': 'Manuskriptforfatter',
+  'Bölüm puanları': 'Afsnitsbedømmelser',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Afsnitsbedømmelserne kunne ikke indlæses',
 };

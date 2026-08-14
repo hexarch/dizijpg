@@ -1022,4 +1022,8 @@ const Map<String, String> cevirilerKn = {
       'ಸೀರೀಸ್, ಸಿನಿಮಾ, ವ್ಯಕ್ತಿ ಅಥವಾ ಕಂಪನಿ ಹುಡುಕು...',
   'Şirketler': 'ಕಂಪನಿಗಳು',
   'Senarist': 'ಚಿತ್ರಕಥೆಗಾರ',
+  'Bölüm puanları': 'ಎಪಿಸೋಡ್ ರೇಟಿಂಗ್',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'ಎಪಿಸೋಡ್ ರೇಟಿಂಗ್ ಲೋಡ್ ಆಗಲಿಲ್ಲ',
 };

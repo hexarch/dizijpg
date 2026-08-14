@@ -1017,4 +1017,8 @@ const Map<String, String> cevirilerBn = {
       'সিরিজ, সিনেমা, ব্যক্তি বা কোম্পানি খোঁজো...',
   'Şirketler': 'কোম্পানি',
   'Senarist': 'চিত্রনাট্যকার',
+  'Bölüm puanları': 'এপিসোড রেটিং',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'এপিসোড রেটিং লোড করা যায়নি',
 };

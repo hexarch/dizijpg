@@ -45,6 +45,9 @@ const _yeniAnahtarlar = [
   'Takip, beğeni, yanıt, mesaj ve etiket bildirimleri',
   // push.dart — MessagingStyle'da kendi mesaj satırlarının etiketi
   'Sen',
+  // tmdb_puan_izgara.dart — TMDB ısı haritası
+  'Bölüm puanları',
+  'Bölüm puanları yüklenemedi',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).

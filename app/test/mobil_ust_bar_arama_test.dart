@@ -229,7 +229,9 @@ void main() {
       expect(alan.autofocus, isTrue);
       expect(find.byIcon(Icons.grid_view_outlined), findsNothing);
       // Boş sorgu hâli: ne sonuç ne hata, yönlendirici ipucu var.
-      expect(find.text('Dizi, film veya kişi ara...'), findsWidgets);
+      // 14 Ağu: arama kişi+şirket turunda ipucu metni değişti (md. 57)
+      // — "veya şirket" eklendi. Test eski metni arıyordu.
+      expect(find.text('Dizi, film, kişi veya şirket ara...'), findsWidgets);
     });
 
     testWidgets('geri oku ile ESKİ HÂLE dönüyor', (tester) async {

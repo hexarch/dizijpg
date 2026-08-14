@@ -1035,4 +1035,8 @@ const Map<String, String> cevirilerRo = {
       'Caută seriale, filme, persoane sau companii...',
   'Şirketler': 'Companii',
   'Senarist': 'Scenarist',
+  'Bölüm puanları': 'Notele episoadelor',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Notele episoadelor nu au putut fi încărcate',
 };

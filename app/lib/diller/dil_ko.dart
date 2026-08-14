@@ -984,4 +984,8 @@ const Map<String, String> cevirilerKo = {
   'Dizi, film, kişi veya şirket ara...': '드라마, 영화, 인물, 회사 검색...',
   'Şirketler': '회사',
   'Senarist': '각본가',
+  'Bölüm puanları': '에피소드 평점',
+  'S{}': 'S{}',
+  'E{}': '{}화',
+  'Bölüm puanları yüklenemedi': '에피소드 평점을 불러오지 못했습니다',
 };

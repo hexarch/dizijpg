@@ -1006,4 +1006,8 @@ const Map<String, String> cevirilerAr = {
       'ابحث عن مسلسل أو فيلم أو شخص أو شركة...',
   'Şirketler': 'شركات',
   'Senarist': 'كاتب سيناريو',
+  'Bölüm puanları': 'تقييمات الحلقات',
+  'S{}': 'م{}',
+  'E{}': 'ح{}',
+  'Bölüm puanları yüklenemedi': 'تعذر تحميل تقييمات الحلقات',
 };

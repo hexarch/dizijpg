@@ -982,4 +982,8 @@ const Map<String, String> cevirilerJa = {
   'Dizi, film, kişi veya şirket ara...': 'ドラマ・映画・人物・会社を検索...',
   'Şirketler': '会社',
   'Senarist': '脚本家',
+  'Bölüm puanları': 'エピソード評価',
+  'S{}': 'S{}',
+  'E{}': '第{}話',
+  'Bölüm puanları yüklenemedi': 'エピソード評価を読み込めませんでした',
 };

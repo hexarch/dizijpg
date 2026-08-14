@@ -1045,4 +1045,9 @@ const Map<String, String> cevirilerDe = {
       'Serie, Film, Person oder Unternehmen suchen...',
   'Şirketler': 'Unternehmen',
   'Senarist': 'Drehbuchautor',
+  'Bölüm puanları': 'Folgenbewertungen',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi':
+      'Folgenbewertungen konnten nicht geladen werden',
 };

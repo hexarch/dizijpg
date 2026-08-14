@@ -1028,4 +1028,8 @@ const Map<String, String> cevirilerRu = {
       'Поиск сериалов, фильмов, людей и компаний...',
   'Şirketler': 'Компании',
   'Senarist': 'Сценарист',
+  'Bölüm puanları': 'Оценки серий',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Не удалось загрузить оценки серий',
 };

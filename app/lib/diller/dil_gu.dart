@@ -1015,4 +1015,8 @@ const Map<String, String> cevirilerGu = {
       'સિરીઝ, ફિલ્મ, વ્યક્તિ કે કંપની શોધો...',
   'Şirketler': 'કંપનીઓ',
   'Senarist': 'પટકથા લેખક',
+  'Bölüm puanları': 'એપિસોડ રેટિંગ',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'એપિસોડ રેટિંગ લોડ થઈ શક્યું નહીં',
 };

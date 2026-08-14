@@ -1031,4 +1031,8 @@ const Map<String, String> cevirilerSv = {
       'Sök serie, film, person eller bolag...',
   'Şirketler': 'Bolag',
   'Senarist': 'Manusförfattare',
+  'Bölüm puanları': 'Avsnittsbetyg',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Avsnittsbetygen kunde inte läsas in',
 };

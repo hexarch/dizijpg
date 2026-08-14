@@ -992,4 +992,8 @@ const Map<String, String> cevirilerAm = {
   'Dizi, film, kişi veya şirket ara...': 'ድራማ፣ ፊልም፣ ሰው ወይም ኩባንያ ፈልግ...',
   'Şirketler': 'ኩባንያዎች',
   'Senarist': 'ስክሪፕት ጸሃፊ',
+  'Bölüm puanları': 'የክፍል ነጥቦች',
+  'S{}': 'ም{}',
+  'E{}': 'ክ{}',
+  'Bölüm puanları yüklenemedi': 'የክፍል ነጥቦችን መጫን አልተቻለም',
 };

@@ -1035,4 +1035,8 @@ const Map<String, String> cevirilerPl = {
       'Szukaj serialu, filmu, osoby lub firmy...',
   'Şirketler': 'Firmy',
   'Senarist': 'Scenarzysta',
+  'Bölüm puanları': 'Oceny odcinków',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Nie udało się wczytać ocen odcinków',
 };

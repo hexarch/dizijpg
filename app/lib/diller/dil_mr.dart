@@ -1018,4 +1018,8 @@ const Map<String, String> cevirilerMr = {
       'सीरीज, सिनेमा, व्यक्ती किंवा कंपनी शोधा...',
   'Şirketler': 'कंपन्या',
   'Senarist': 'पटकथा लेखक',
+  'Bölüm puanları': 'एपिसोड रेटिंग',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'एपिसोड रेटिंग लोड झाली नाही',
 };

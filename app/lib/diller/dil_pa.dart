@@ -1023,4 +1023,8 @@ const Map<String, String> cevirilerPa = {
       'ਸੀਰੀਜ਼, ਫ਼ਿਲਮ, ਵਿਅਕਤੀ ਜਾਂ ਕੰਪਨੀ ਖੋਜੋ...',
   'Şirketler': 'ਕੰਪਨੀਆਂ',
   'Senarist': 'ਸਕ੍ਰੀਨਰਾਈਟਰ',
+  'Bölüm puanları': 'ਐਪੀਸੋਡ ਰੇਟਿੰਗ',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'ਐਪੀਸੋਡ ਰੇਟਿੰਗ ਲੋਡ ਨਹੀਂ ਹੋ ਸਕੀ',
 };

@@ -1028,4 +1028,8 @@ const Map<String, String> cevirilerFi = {
       'Hae sarjaa, elokuvaa, henkilöä tai yhtiötä...',
   'Şirketler': 'Yhtiöt',
   'Senarist': 'Käsikirjoittaja',
+  'Bölüm puanları': 'Jaksoarviot',
+  'S{}': 'K{}',
+  'E{}': 'J{}',
+  'Bölüm puanları yüklenemedi': 'Jaksoarvioita ei voitu ladata',
 };

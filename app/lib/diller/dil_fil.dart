@@ -1038,4 +1038,8 @@ const Map<String, String> cevirilerFil = {
       'Maghanap ng serye, pelikula, tao, o kumpanya...',
   'Şirketler': 'Mga kumpanya',
   'Senarist': 'Manunulat ng iskrip',
+  'Bölüm puanları': 'Mga rating ng episode',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Hindi ma-load ang mga rating ng episode',
 };

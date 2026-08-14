@@ -1015,4 +1015,8 @@ const Map<String, String> cevirilerFa = {
   'Dizi, film, kişi veya şirket ara...': 'سریال، فیلم، شخص یا شرکت جستجو کن...',
   'Şirketler': 'شرکت‌ها',
   'Senarist': 'فیلم‌نامه‌نویس',
+  'Bölüm puanları': 'امتیاز قسمت‌ها',
+  'S{}': 'ف{}',
+  'E{}': 'ق{}',
+  'Bölüm puanları yüklenemedi': 'امتیاز قسمت‌ها بارگذاری نشد',
 };

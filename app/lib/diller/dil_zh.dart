@@ -973,4 +973,8 @@ const Map<String, String> cevirilerZh = {
   'Dizi, film, kişi veya şirket ara...': '搜索剧集、电影、人物或公司...',
   'Şirketler': '公司',
   'Senarist': '编剧',
+  'Bölüm puanları': '分集评分',
+  'S{}': '第{}季',
+  'E{}': '第{}集',
+  'Bölüm puanları yüklenemedi': '无法加载分集评分',
 };

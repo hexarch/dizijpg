@@ -1024,4 +1024,8 @@ const Map<String, String> cevirilerId = {
       'Cari serial, film, orang, atau perusahaan...',
   'Şirketler': 'Perusahaan',
   'Senarist': 'Penulis naskah',
+  'Bölüm puanları': 'Peringkat episode',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Peringkat episode tidak dapat dimuat',
 };

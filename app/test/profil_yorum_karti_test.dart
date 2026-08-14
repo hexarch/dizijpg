@@ -1,6 +1,8 @@
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/akis.dart';
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
+import 'package:dizijpg/ekranlar/kullanici_profil.dart';
+import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -115,5 +117,46 @@ void main() {
     y['takip_ediyorum'] = false;
     await _reelsKur(tester, y);
     expect(find.text('Takip Et'), findsOneWidget);
+  });
+
+  testWidgets('profil yorum kartı da ana zeminle birleşir, eylemler beyazdır', (
+    tester,
+  ) async {
+    DiziRenkler.acik = false;
+    SharedPreferences.setMockInitialValues({});
+    await Api.tokenYukle();
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: Oturum(),
+        child: MaterialApp(
+          home: Scaffold(
+            body: ProfilYorumKarti(
+              yorum: _profilYorumu(),
+              icerikler: _icerikler,
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final kart = tester.widget<Card>(find.byType(Card));
+    expect(kart.color, DiziRenkler.siyah);
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.remove_red_eye)).color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('13')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('2')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('2026-08-02')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
   });
 }

@@ -56,10 +56,18 @@ class DiziRenkler {
   static Color get koyuGri =>
       acik ? const Color(0xFFECECEF) : const Color(0xFF17171A);
 
-  /// Kart zemini
+  /// Kart zemini (ayarlar, istatistik kutuları — gönderi kartı DEĞİL)
   static Color get kart => acik ? Colors.white : const Color(0xFF1F1F23);
   static Color get acikGri =>
       acik ? const Color(0xFF6E6E76) : const Color(0xFF9E9EA3);
+
+  /// Gönderi kartı zemini: ana zeminle AYNI. Akıştaki gri kutu dikişi
+  /// kalksın diye (kullanıcı: "siyah yapıp tema rengi ile birleştirelim").
+  static Color get gonderiZemin => siyah;
+
+  /// Gönderi eylem satırı (beğeni, yorum, görüntülenme, tarih, paylaş).
+  /// Koyu temada beyaz; açık temada koyu — `Colors.white` açık zeminde erirdi.
+  static Color get gonderiEylem => metin;
 
   // --- Metin/ikon tonları (Colors.whiteXX yerine BUNLAR kullanılır) ---
   static Color get metin => acik ? const Color(0xFF17171A) : Colors.white;

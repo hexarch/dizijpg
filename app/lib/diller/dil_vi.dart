@@ -1025,4 +1025,8 @@ const Map<String, String> cevirilerVi = {
       'Tìm phim bộ, phim lẻ, người hoặc công ty...',
   'Şirketler': 'Công ty',
   'Senarist': 'Biên kịch',
+  'Bölüm puanları': 'Điểm từng tập',
+  'S{}': 'S{}',
+  'E{}': 'Tập {}',
+  'Bölüm puanları yüklenemedi': 'Không tải được điểm từng tập',
 };

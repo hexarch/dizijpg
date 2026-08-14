@@ -1040,4 +1040,8 @@ const Map<String, String> cevirilerFr = {
       'Cherche une série, un film, une personne ou une société...',
   'Şirketler': 'Sociétés',
   'Senarist': 'Scénariste',
+  'Bölüm puanları': 'Notes des épisodes',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Impossible de charger les notes',
 };

@@ -1015,4 +1015,8 @@ const Map<String, String> cevirilerAz = {
       'Serial, film, şəxs və ya şirkət axtar...',
   'Şirketler': 'Şirkətlər',
   'Senarist': 'Ssenarist',
+  'Bölüm puanları': 'Seriya balları',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Seriya balları yüklənmədi',
 };

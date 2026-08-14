@@ -638,8 +638,13 @@ class _AkisKartiState extends State<AkisKarti> {
 
     // Kart ekran kenarlarına dayanır (yatay kenar boşluğu yok) ki medya
     // sağa-sola TAM otursun; köşe yuvarlaması da bu yüzden kapalı.
+    // Zemin ana renkle birleşir (gri kutu yok); ayırıcı ince çizgi.
     final kart = Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: DiziRenkler.gonderiZemin,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
       shape: const RoundedRectangleBorder(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -903,7 +908,9 @@ class _AkisKartiState extends State<AkisKarti> {
                 _EylemDugmesi(
                   ikon: _begendim ? Icons.favorite : Icons.favorite_border,
                   etiket: _begeni > 0 ? '$_begeni' : null,
-                  renk: _begendim ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+                  renk: _begendim
+                      ? DiziRenkler.sariMetin
+                      : DiziRenkler.gonderiEylem,
                   ipucu: 'Beğen'.c,
                   onTap: _begen,
                   // Basılı tut → beğenenler listesi (her yerde aynı sheet)
@@ -913,7 +920,7 @@ class _AkisKartiState extends State<AkisKarti> {
                 _EylemDugmesi(
                   ikon: Icons.mode_comment_outlined,
                   etiket: _yanit > 0 ? '$_yanit' : 'Yorum yap'.c,
-                  renk: DiziRenkler.metin54,
+                  renk: DiziRenkler.gonderiEylem,
                   ipucu: 'Yorum yap'.c,
                   onTap: _yanitlariAc,
                 ),
@@ -933,7 +940,7 @@ class _AkisKartiState extends State<AkisKarti> {
                 _EylemDugmesi(
                   ikon: Icons.visibility_outlined,
                   etiket: '${y['goruntulenme'] ?? 0}',
-                  renk: benim ? DiziRenkler.sariMetin : DiziRenkler.metin38,
+                  renk: DiziRenkler.gonderiEylem,
                   ipucu: benim ? 'İstatistikleri gör'.c : 'Görüntülenme'.c,
                   onTap: benim
                       ? () => gonderiIstatistikAc(context, y['id'] as int)
@@ -942,17 +949,21 @@ class _AkisKartiState extends State<AkisKarti> {
                 const Spacer(),
                 Text(
                   tarih,
-                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: DiziRenkler.gonderiEylem,
+                  ),
                 ),
                 _EylemDugmesi(
                   ikon: Icons.send_outlined,
-                  renk: DiziRenkler.metin54,
+                  renk: DiziRenkler.gonderiEylem,
                   ipucu: 'Paylaş'.c,
                   onTap: _paylas,
                 ),
               ],
             ),
           ),
+          Divider(height: 1, thickness: 1, color: DiziRenkler.metin12),
         ],
       ),
     );
@@ -1028,10 +1039,7 @@ class _EylemDugmesi extends StatelessWidget {
           Icon(ikon, size: 19, color: renk),
           if (etiket != null) ...[
             const SizedBox(width: 5),
-            Text(
-              etiket!,
-              style: TextStyle(fontSize: 12.5, color: DiziRenkler.metin70),
-            ),
+            Text(etiket!, style: TextStyle(fontSize: 12.5, color: renk)),
           ],
         ],
       ),

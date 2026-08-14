@@ -1020,4 +1020,8 @@ const Map<String, String> cevirilerCs = {
       'Hledat seriál, film, osobu nebo společnost...',
   'Şirketler': 'Společnosti',
   'Senarist': 'Scénárista',
+  'Bölüm puanları': 'Hodnocení dílů',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Hodnocení dílů se nepodařilo načíst',
 };

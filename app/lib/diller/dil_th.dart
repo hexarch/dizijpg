@@ -1011,4 +1011,8 @@ const Map<String, String> cevirilerTh = {
   'Dizi, film, kişi veya şirket ara...': 'ค้นหาซีรีส์ หนัง บุคคล หรือบริษัท...',
   'Şirketler': 'บริษัท',
   'Senarist': 'นักเขียนบท',
+  'Bölüm puanları': 'คะแนนตอน',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'โหลดคะแนนตอนไม่ได้',
 };

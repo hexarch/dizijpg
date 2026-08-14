@@ -1028,4 +1028,8 @@ const Map<String, String> cevirilerNl = {
       'Zoek een serie, film, persoon of bedrijf...',
   'Şirketler': 'Bedrijven',
   'Senarist': 'Scenarist',
+  'Bölüm puanları': 'Afleveringsscores',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Afleveringsscores konden niet worden geladen',
 };

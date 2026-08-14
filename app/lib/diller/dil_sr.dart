@@ -1026,4 +1026,8 @@ const Map<String, String> cevirilerSr = {
       'Претражи серије, филмове, особе или компаније...',
   'Şirketler': 'Компаније',
   'Senarist': 'Сценариста',
+  'Bölüm puanları': 'Оцене епизода',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Оцене епизода нису учитане',
 };

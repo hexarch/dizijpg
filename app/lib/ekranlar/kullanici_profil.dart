@@ -910,163 +910,181 @@ class ProfilYorumKarti extends StatelessWidget {
     final benim = benimId != null && yorum['kullanici_id'] == benimId;
 
     return Card(
-      margin: const EdgeInsets.symmetric(vertical: 4),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14),
-        onTap: () => showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: DiziRenkler.koyuGri,
-          builder: (_) => _YorumDetayModal(
-            yorum: yorum,
-            ad: ad,
-            poster: poster,
-            bolumMu: bolumMu,
-            hedef: hedef,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+      margin: EdgeInsets.zero,
+      elevation: 0,
+      color: DiziRenkler.gonderiZemin,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(),
+      child: Column(
+        children: [
+          InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: DiziRenkler.koyuGri,
+              builder: (_) => _YorumDetayModal(
+                yorum: yorum,
+                ad: ad,
+                poster: poster,
+                bolumMu: bolumMu,
+                hedef: hedef,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (poster != null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(5),
-                        child: SizedBox(
-                          width: 24,
-                          height: 34,
-                          child: CachedNetworkImage(
-                            imageUrl: poster,
-                            httpHeaders: gorselBasliklari(poster),
-                            fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) =>
-                                Container(color: DiziRenkler.koyuGri),
+                  Row(
+                    children: [
+                      if (poster != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(5),
+                            child: SizedBox(
+                              width: 24,
+                              height: 34,
+                              child: CachedNetworkImage(
+                                imageUrl: poster,
+                                httpHeaders: gorselBasliklari(poster),
+                                fit: BoxFit.cover,
+                                errorWidget: (_, __, ___) =>
+                                    Container(color: DiziRenkler.koyuGri),
+                              ),
+                            ),
+                          ),
+                        )
+                      else ...[
+                        Icon(
+                          tur == 'person'
+                              ? Icons.person
+                              : tur == 'movie'
+                              ? Icons.movie
+                              : Icons.tv,
+                          size: 15,
+                          color: DiziRenkler.sariMetin,
+                        ),
+                        const SizedBox(width: 6),
+                      ],
+                      Expanded(
+                        child: Text(
+                          (ad ??
+                                  (tur == 'person'
+                                      ? 'Kişi yorumu'.c
+                                      : tur == 'movie'
+                                      ? 'Film yorumu'.c
+                                      : 'Dizi yorumu'.c)) +
+                              (bolumMu
+                                  ? ' · ${'S{}B{}'.cf([yorum['sezon'], yorum['bolum']])}'
+                                  : ''),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: DiziRenkler.sariMetin,
                           ),
                         ),
                       ),
-                    )
-                  else ...[
-                    Icon(
-                      tur == 'person'
-                          ? Icons.person
-                          : tur == 'movie'
-                          ? Icons.movie
-                          : Icons.tv,
-                      size: 15,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                    const SizedBox(width: 6),
-                  ],
-                  Expanded(
-                    child: Text(
-                      (ad ??
-                              (tur == 'person'
-                                  ? 'Kişi yorumu'.c
-                                  : tur == 'movie'
-                                  ? 'Film yorumu'.c
-                                  : 'Dizi yorumu'.c)) +
-                          (bolumMu
-                              ? ' · ${'S{}B{}'.cf([yorum['sezon'], yorum['bolum']])}'
-                              : ''),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: DiziRenkler.sariMetin,
+                      const SizedBox(width: 8),
+                      Text(
+                        tarih,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: DiziRenkler.gonderiEylem,
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(height: 6),
                   Text(
-                    tarih,
-                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                    yorum['metin'] as String? ?? '',
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(height: 1.4),
                   ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                yorum['metin'] as String? ?? '',
-                maxLines: 4,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(height: 1.4),
-              ),
-              const SizedBox(height: 8),
-              // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin)
-              // ALTINDA, AYRI satırda. Medyalı gönderide medya bu kartta değil
-              // detay modalinde çizilir; satır hiçbir hâlde bir Stack'e alınıp
-              // görselin üstüne bindirilmez (kullanıcının açık isteği).
-              //
-              // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" →
-              // beğeni. Satır SOLA DAYALI (Row varsayılanı `start`); giriş
-              // sağa itilmez, sayının hemen yanında durur.
-              Row(
-                children: [
-                  Icon(
-                    Icons.remove_red_eye,
-                    size: 15,
-                    color: DiziRenkler.metin38,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${yorum['goruntulenme'] ?? 0}',
-                    style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
-                  ),
-                  // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
-                  // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
-                  // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
-                  // bir girişten daha kötüdür.
+                  const SizedBox(height: 8),
+                  // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin)
+                  // ALTINDA, AYRI satırda. Medyalı gönderide medya bu kartta değil
+                  // detay modalinde çizilir; satır hiçbir hâlde bir Stack'e alınıp
+                  // görselin üstüne bindirilmez (kullanıcının açık isteği).
                   //
-                  // FLEXIBLE: 360 dp'de uzun çevirili dillerde yazı kısalsın,
-                  // satır taşmasın (İKON kalır, giriş tanınabilir olur).
-                  if (benim) ...[
-                    const SizedBox(width: 6),
-                    Flexible(
-                      child: IstatistikGirisi(gonderiId: yorum['id'] as int),
-                    ),
-                  ],
-                  const SizedBox(width: 14),
-                  // Beğeni sayısına BASILI TUTMAK beğenenleri açar (beğeninin
-                  // göründüğü her yerde aynı sheet). onTap YOK: kısa dokunuş
-                  // karta ait — gönderi ayrıntısı açılmaya devam eder.
-                  InkWell(
-                    onLongPress: () =>
-                        begenenleriAc(context, yorum['id'] as int),
-                    borderRadius: BorderRadius.circular(16),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 12,
+                  // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" →
+                  // beğeni. Satır SOLA DAYALI (Row varsayılanı `start`); giriş
+                  // sağa itilmez, sayının hemen yanında durur.
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.remove_red_eye,
+                        size: 15,
+                        color: DiziRenkler.gonderiEylem,
                       ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.favorite,
-                            size: 15,
-                            color: DiziRenkler.sariMetin,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${yorum['begeni'] ?? 0}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: DiziRenkler.metin38,
-                            ),
-                          ),
-                        ],
+                      const SizedBox(width: 4),
+                      Text(
+                        '${yorum['goruntulenme'] ?? 0}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: DiziRenkler.gonderiEylem,
+                        ),
                       ),
-                    ),
+                      // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
+                      // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
+                      // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
+                      // bir girişten daha kötüdür.
+                      //
+                      // FLEXIBLE: 360 dp'de uzun çevirili dillerde yazı kısalsın,
+                      // satır taşmasın (İKON kalır, giriş tanınabilir olur).
+                      if (benim) ...[
+                        const SizedBox(width: 6),
+                        Flexible(
+                          child: IstatistikGirisi(
+                            gonderiId: yorum['id'] as int,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(width: 14),
+                      // Beğeni sayısına BASILI TUTMAK beğenenleri açar (beğeninin
+                      // göründüğü her yerde aynı sheet). onTap YOK: kısa dokunuş
+                      // karta ait — gönderi ayrıntısı açılmaya devam eder.
+                      InkWell(
+                        onLongPress: () =>
+                            begenenleriAc(context, yorum['id'] as int),
+                        borderRadius: BorderRadius.circular(16),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 12,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.favorite,
+                                size: 15,
+                                color: DiziRenkler.sariMetin,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${yorum['begeni'] ?? 0}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: DiziRenkler.gonderiEylem,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+          Divider(height: 1, thickness: 1, color: DiziRenkler.metin12),
+        ],
       ),
     );
   }
@@ -1540,11 +1558,15 @@ class _YorumDetayModal extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.remove_red_eye, size: 15, color: DiziRenkler.metin38),
+              Icon(
+                Icons.remove_red_eye,
+                size: 15,
+                color: DiziRenkler.gonderiEylem,
+              ),
               const SizedBox(width: 4),
               Text(
                 '${yorum['goruntulenme'] ?? 0}',
-                style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
+                style: TextStyle(fontSize: 12, color: DiziRenkler.gonderiEylem),
               ),
               const SizedBox(width: 14),
               InkWell(
@@ -1567,7 +1589,7 @@ class _YorumDetayModal extends StatelessWidget {
                         '${yorum['begeni'] ?? 0}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: DiziRenkler.metin38,
+                          color: DiziRenkler.gonderiEylem,
                         ),
                       ),
                     ],
@@ -1577,7 +1599,7 @@ class _YorumDetayModal extends StatelessWidget {
               const Spacer(),
               Text(
                 tarih,
-                style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
+                style: TextStyle(fontSize: 11, color: DiziRenkler.gonderiEylem),
               ),
             ],
           ),

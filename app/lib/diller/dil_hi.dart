@@ -1019,4 +1019,8 @@ const Map<String, String> cevirilerHi = {
       'सीरीज़, फ़िल्म, व्यक्ति या कंपनी खोजो...',
   'Şirketler': 'कंपनियाँ',
   'Senarist': 'पटकथा लेखक',
+  'Bölüm puanları': 'एपिसोड रेटिंग',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'एपिसोड रेटिंग लोड नहीं हो सकी',
 };

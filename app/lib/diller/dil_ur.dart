@@ -1027,4 +1027,8 @@ const Map<String, String> cevirilerUr = {
       'سیریز، فلم، شخصیت یا کمپنی تلاش کریں...',
   'Şirketler': 'کمپنیاں',
   'Senarist': 'اسکرین رائٹر',
+  'Bölüm puanları': 'قسط ریٹنگ',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'قسط ریٹنگ لوڈ نہیں ہو سکی',
 };

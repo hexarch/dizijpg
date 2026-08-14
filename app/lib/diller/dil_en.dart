@@ -1023,4 +1023,8 @@ const Map<String, String> cevirilerEn = {
       'Search shows, movies, people or companies...',
   'Şirketler': 'Companies',
   'Senarist': 'Screenwriter',
+  'Bölüm puanları': 'Episode ratings',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Couldn\'t load episode ratings',
 };

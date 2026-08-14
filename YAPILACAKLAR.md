@@ -1,24 +1,53 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-14 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-14 — 🚀 ARAMA: KİŞİ + ŞİRKET + PAGESPEED (1.47.0+94)
-Web `main.f2cddbaecade.dart.js` · SW sökücü · brotli q11 · API yeniden derlendi.
+## 2026-08-14 — 🚀 ARAMA: KİŞİ + ŞİRKET + PAGESPEED (1.47.0+95)
+Web `main.4dd54b3e4942.dart.js` · SW sökücü · brotli q11 · API yeniden derlendi.
 
-### Arama — oyuncu / yönetmen / senarist / şirket
+### Arama — oyuncu / yönetmen / senarist / şirket (`yapilacaklar` md. 57)
 Kullanıcı `cartoon` yazınca Cartoon Network çıkmıyordu: `/ara` yalnız TMDB
 `/search/multi` çağırıyordu (şirket DÖNMEZ). Şimdi `/search/company` +
 `/search/person` takviyesi var; `media_type: company` basılır, dokununca
 `/sirket/:id`. Kişi satırında meslek alt yazısı (Yönetmen · Breaking Bad).
 TMDB `cartoon` 1. sayfada kısa adı ("Cartoon") öne aldığı için 2. sayfa +
-`cartoon network` takviyesi ve uzun-hedef sıralaması eklendi. Canlı curl:
-`q=cartoon` ilk 8 sonuç Cartoon Network India/Movies/Turkey/Studios/…
-Eski istemci (Play 1.40) `poster_path` yok diye şirketi yok sayar — zararsız.
+`cartoon network` takviyesi ve uzun-hedef sıralaması eklendi.
+**Sıra (kullanıcı isteği):** Kullanıcılar → Dizi/Film → Şirketler → Kişiler.
+Kota 16 tv/movie + 8 şirket + 6 kişi — yoksa 200 cartoon dizisi şirketleri
+`slice(0,30)`'dan düşürüyordu. Canlı curl `q=cartoon`: önce diziler, indeks
+22'den CN India/Movies/Turkey/Studios. Play 1.40 `poster_path` yok diye
+şirketi yok sayar — zararsız.
 
-### Aynı derlemede (ölçülmüş, bekleyen işler)
-Statik açılış ekranı · SimpleIcons budama (font 1,36 MB→6 KB) · WebP Accept ·
-APK `abiFilters` yalnız APK · Fince `Uudet seuraajat` · SEO sitemap/soft 404
-kodu (nginx `@spa` parçası henüz uygulanmadı) · takip listesi LIMIT 500'de
-`takip_ediyorum`.
+### PageSpeed / görsel (`yapilacaklar` md. 50–51, dürüst tavan)
+Statik açılış: gerçek `app/web/logo.png` (ilk sürüm CSS "DİZİ JPG" uydurması
+kullanıcı reddetti; eski `index.html.br` CF'de kalınca eski splash servis
+edildi — her `index.html` değişiminde `.br` yeniden üretilmeli).
+SimpleIcons 1,36 MB→6 KB · WebP Accept · APK `abiFilters` yalnız APK ·
+Fince `Uudet seuraajat`. Dürüst hedef mobil ~70 / masaüstü ~91, 100 değil
+(`Intl.v8BreakIterator` Flutter SDK).
+
+### Aynı derlemede
+SEO sitemap `/kesfet`+`/gozat`, bölüm haritası, `/kisi` EN biyografi, soft
+404 **kodu** (nginx `@spa` parçası henüz canlı conf'ta yok → md. 58) ·
+takip listesi LIMIT 500'de `takip_ediyorum`.
+
+## 2026-08-14 — 🚀 TMDB BÖLÜM PUANI ISI HARİTASI (1.48.0+96)
+Web `main.5639d9ac25b3.dart.js` · SW sökücü · brotli q11. Backend değişmedi
+(`/tmdb/tv/:id/season/:n` zaten beyaz listede). Origin eski hash 404.
+
+Dizi detayında TMDB puanına (sarı `dizi.jpg` rozeti DEĞİL) dokununca
+altında sezon×bölüm ızgara (`TmdbPuanHaritasi`). Filmde yok. S0 atılır,
+oysuz hücre `—`. Puanlı hücre bölüm sayfasına gider. Lazy sezon çekimi.
+Yıldız+yazı+sarı chevron aynı 44 dp hedef. Widget test 10/10.
+Aynı derlemede: akış/profil yorum kartı zemini tema ile birleşti.
+
+## SIRADA (ürün — tam metin `yapilacaklar`)
+Kod hazır, ayrı dikkatli tur: **58 nginx `@spa`**. Küçük/net: **55 bookmark**.
+Ham nottan yeni: **59** profil listesi sürükle, **60** profil sayfası
+görüntülenme. Tarif şart: **30 moderatör**. Araştırma: **18 wiki + 48 ödül**.
+Bekletilen: 31/35b-c, 32, 33 (arama KAPALI), 8, 5, 44, 34.
+Güvenlik `[!]`: DB rolü, CSP, medya imzası (AAB yüklenene kadar açılmaz).
+Kullanıcıda: AAB 1.46 Play'e yükle, Veri Güvenliği beyanı, testçi listesine
+dokunma.
 
 ## 2026-08-14 — 🚀 İSTATİSTİK EKRANLARI + SEVİYE SADELEŞTİRME (1.46.0+93)
 Beş ajan paralel; dosya sahipliği bölündü, çakışma olmadı.

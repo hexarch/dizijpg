@@ -1,6 +1,7 @@
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/akis.dart';
 import 'package:dizijpg/ekranlar/etiket.dart';
+import 'package:dizijpg/tema.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -152,5 +153,56 @@ void main() {
         .map((e) => e[0])
         .toList();
     expect(m, ['http://a.co', 'https://b.co/x', 'www.c.co']);
+  });
+
+  testWidgets('gönderi kartı ana zeminle birleşir, eylem satırı beyazdır', (
+    tester,
+  ) async {
+    DiziRenkler.acik = false;
+    await _kur(tester, _gonderi());
+
+    final kart = tester.widget<Card>(find.byType(Card));
+    expect(kart.color, DiziRenkler.siyah);
+    expect(kart.elevation, 0);
+
+    Color ikonRengi(IconData i) =>
+        tester.widget<Icon>(find.byIcon(i)).color ?? const Color(0x00000000);
+
+    expect(ikonRengi(Icons.favorite_border), DiziRenkler.gonderiEylem);
+    expect(ikonRengi(Icons.mode_comment_outlined), DiziRenkler.gonderiEylem);
+    expect(ikonRengi(Icons.visibility_outlined), DiziRenkler.gonderiEylem);
+    expect(ikonRengi(Icons.send_outlined), DiziRenkler.gonderiEylem);
+
+    expect(
+      tester.widget<Text>(find.text('Yorum yap')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('3')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('9')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+    expect(
+      tester.widget<Text>(find.text('2026-08-02')).style?.color,
+      DiziRenkler.gonderiEylem,
+    );
+  });
+
+  testWidgets('beğenilmiş gönderide kalp sarı kalır, sayı da sarıdır', (
+    tester,
+  ) async {
+    DiziRenkler.acik = false;
+    await _kur(tester, {..._gonderi(), 'begendim': true});
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.favorite)).color,
+      DiziRenkler.sariMetin,
+    );
+    expect(
+      tester.widget<Text>(find.text('3')).style?.color,
+      DiziRenkler.sariMetin,
+    );
   });
 }

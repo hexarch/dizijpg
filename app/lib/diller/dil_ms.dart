@@ -1029,4 +1029,8 @@ const Map<String, String> cevirilerMs = {
       'Cari siri, filem, orang atau syarikat...',
   'Şirketler': 'Syarikat',
   'Senarist': 'Penulis skrip',
+  'Bölüm puanları': 'Penilaian episod',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Penilaian episod tidak dapat dimuatkan',
 };

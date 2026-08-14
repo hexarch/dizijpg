@@ -760,245 +760,264 @@ class _YorumKartiState extends State<YorumKarti> {
     final goruntulenme = (yorum['goruntulenme'] as int?) ?? 0;
 
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      elevation: 0,
+      color: DiziRenkler.gonderiZemin,
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      shape: const RoundedRectangleBorder(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                KullaniciAvatari(
-                  url: avatar,
-                  kullaniciAdi: yorum['kullanici_adi'] as String?,
-                  yaricap: 14,
-                  // GIF avatar dizi/film yorumlarında da OYNAR (md.13).
-                  hareketli: true,
-                ),
-                const SizedBox(width: 8),
-                // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
-                Flexible(
-                  child: InkWell(
-                    onTap: () => kullaniciyaGit(
-                      context,
-                      yorum['kullanici_adi'] as String,
+                Row(
+                  children: [
+                    KullaniciAvatari(
+                      url: avatar,
+                      kullaniciAdi: yorum['kullanici_adi'] as String?,
+                      yaricap: 14,
+                      // GIF avatar dizi/film yorumlarında da OYNAR (md.13).
+                      hareketli: true,
                     ),
-                    child: Text(
-                      '@${yorum['kullanici_adi']}',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        color: DiziRenkler.sariMetin,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  tarih,
-                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin38),
-                ),
-                // Bölüm yorumu dizi sayfasında da listelenir; hangi bölüme ait
-                // olduğu tarihin yanındaki rozetten anlaşılır ve oraya götürür.
-                if (widget.diziId != null && yorum['sezon'] != null)
-                  BolumRozeti(
-                    diziId: widget.diziId!,
-                    sezon: yorum['sezon'] as int,
-                    bolum: yorum['bolum'] as int,
-                  ),
-                const Spacer(),
-                if (benim)
-                  InkWell(
-                    borderRadius: BorderRadius.circular(16),
-                    onTap: widget.sil,
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(
-                        Icons.delete_outline,
-                        size: 18,
-                        color: DiziRenkler.metin38,
-                      ),
-                    ),
-                  )
-                else if (widget.benimId != null)
-                  // Tek bayrak ikonu yerine standart dikey üç nokta menüsü
-                  UcNoktaMenu(
-                    tur: 'yorum',
-                    hedefId: yorum['id'] as int,
-                    renk: DiziRenkler.metin38,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            CeviriliMetin(
-              yorumId: yorum['id'] as int,
-              metin: yorum['metin'] as String? ?? '',
-              kaynakDil: yorum['kaynak_dil'] as String?,
-              ceviriVar: yorum['ceviri_var'] == true,
-              cevrildi: yorum['cevrildi'] == true,
-              orijinalMetin: yorum['orijinal_metin'] as String?,
-              yapici: (m) => SpoilerMetin(
-                m,
-                spoiler: !_spoilerAcik,
-                onAc: () => setState(() => _spoilerAcik = true),
-                stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
-              ),
-            ),
-            if (medya.isNotEmpty && _spoilerAcik) ...[
-              const SizedBox(height: 10),
-              // AKIŞTAKİ galeri: medya kaç tane olursa olsun (10 dahil) sırayla
-              // yana kaydırılır, altta nokta + sağ üstte "5/10" sayacı olur.
-              // Eskiden 2 sütun ızgaraydı: kareye kırpılıyor, sıra kayboluyordu.
-              // Tek dokunuş Reels (dokunulan medyadan), çift dokunuş beğeni.
-              MedyaGaleri(
-                yollar: medya,
-                otomatikOynat: true,
-                onAc: _medyaAc,
-                onCiftDokunus: _begen,
-                // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
-                gonderiId: yorum['id'],
-              ),
-            ],
-            const SizedBox(height: 8),
-            // ETKİLEŞİM SATIRI — MEDYANIN ALTINDA, ayrı satırda.
-            //
-            // *** MEDYANIN ÜSTÜNE BİNMEZ ***: kullanıcının özellikle istediği
-            // budur. Göz ikonu ve "İstatistikleri gör" bir Stack'e alınıp
-            // fotoğrafın/videonun köşesine oturtulsaydı kareyi kapatır, üstelik
-            // videoda oynatma denetimleriyle çakışırdı.
-            //
-            // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" → beğeni
-            // → yorum. Satır SOLA DAYALI (Row'un varsayılanı `start`);
-            // istatistik girişi sağa itilmez, sayının hemen yanında durur.
-            Row(
-              children: [
-                Icon(
-                  Icons.remove_red_eye,
-                  size: 16,
-                  color: DiziRenkler.metin38,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '$goruntulenme',
-                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin38),
-                ),
-                // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
-                // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
-                // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
-                // bir girişten daha kötüdür.
-                if (benim) ...[
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: IstatistikGirisi(gonderiId: yorum['id'] as int),
-                  ),
-                ],
-                const SizedBox(width: 16),
-                InkWell(
-                  onTap: _begen,
-                  // Basılı tut → beğenenler listesi (akış/Reels ile aynı sheet)
-                  onLongPress: () =>
-                      begenenleriAc(context, widget.yorum['id'] as int),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          _begendim ? Icons.favorite : Icons.favorite_border,
-                          size: 16,
-                          color: _begendim
-                              ? DiziRenkler.sariMetin
-                              : DiziRenkler.metin38,
+                    const SizedBox(width: 8),
+                    // Uzun kullanıcı adı rozeti/tarihi taşırmasın: kısalt
+                    Flexible(
+                      child: InkWell(
+                        onTap: () => kullaniciyaGit(
+                          context,
+                          yorum['kullanici_adi'] as String,
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '$_begeni',
+                        child: Text(
+                          '@${yorum['kullanici_adi']}',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
-                            fontSize: 12,
-                            color: _begendim
-                                ? DiziRenkler.sariMetin
-                                : DiziRenkler.metin38,
+                            fontWeight: FontWeight.w700,
+                            color: DiziRenkler.sariMetin,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                // Gönderiye yorum: ok değil KONUŞMA BALONU + yorum sayısı.
-                // Ok ikonu "paylaş/ilet" gibi okunuyordu, kullanıcı gönderiye
-                // yorum yazılabildiğini fark etmiyordu.
-                //
-                // FLEXIBLE: satır artık dört öğe taşıyor (göz+sayı, istatistik
-                // girişi, beğeni, yorum) ve 360 dp'de "Yorum yap" + uzun
-                // çevirileri sabit genişlikte kalırsa satır 1-2 px taşıyor
-                // (widget testi yakaladı). Yazı kısalır, İKON KALIR.
-                Flexible(
-                  child: InkWell(
-                    onTap: () => widget.yanitla(widget.yorum),
-                    borderRadius: BorderRadius.circular(20),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 10,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.mode_comment_outlined,
-                            size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      tarih,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: DiziRenkler.gonderiEylem,
+                      ),
+                    ),
+                    // Bölüm yorumu dizi sayfasında da listelenir; hangi bölüme ait
+                    // olduğu tarihin yanındaki rozetten anlaşılır ve oraya götürür.
+                    if (widget.diziId != null && yorum['sezon'] != null)
+                      BolumRozeti(
+                        diziId: widget.diziId!,
+                        sezon: yorum['sezon'] as int,
+                        bolum: yorum['bolum'] as int,
+                      ),
+                    const Spacer(),
+                    if (benim)
+                      InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: widget.sil,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Icon(
+                            Icons.delete_outline,
+                            size: 18,
                             color: DiziRenkler.metin38,
                           ),
-                          const SizedBox(width: 4),
-                          Flexible(
-                            child: Text(
-                              widget.yanitlar.isEmpty
-                                  ? 'Yorum yap'.c
-                                  : '${widget.yanitlar.length}',
-                              maxLines: 1,
-                              softWrap: false,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DiziRenkler.metin38,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            // Yanıtlar (tek seviye)
-            if (widget.yanitlar.isNotEmpty) ...[
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (final c in widget.yanitlar)
-                      _YanitSatiri(
-                        key: ValueKey(c['id']),
-                        yanit: c as Map<String, dynamic>,
-                        benim: c['kullanici_id'] == widget.benimId,
-                        sil: () => widget.yanitSil(c['id'] as int),
-                        yanitla: () => widget.yanitla(c),
-                        medyaAc: widget.medyaAc,
+                        ),
+                      )
+                    else if (widget.benimId != null)
+                      // Tek bayrak ikonu yerine standart dikey üç nokta menüsü
+                      UcNoktaMenu(
+                        tur: 'yorum',
+                        hedefId: yorum['id'] as int,
+                        renk: DiziRenkler.metin38,
                       ),
                   ],
                 ),
-              ),
-            ],
-          ],
-        ),
+                const SizedBox(height: 8),
+                CeviriliMetin(
+                  yorumId: yorum['id'] as int,
+                  metin: yorum['metin'] as String? ?? '',
+                  kaynakDil: yorum['kaynak_dil'] as String?,
+                  ceviriVar: yorum['ceviri_var'] == true,
+                  cevrildi: yorum['cevrildi'] == true,
+                  orijinalMetin: yorum['orijinal_metin'] as String?,
+                  yapici: (m) => SpoilerMetin(
+                    m,
+                    spoiler: !_spoilerAcik,
+                    onAc: () => setState(() => _spoilerAcik = true),
+                    stil: TextStyle(height: 1.4, color: DiziRenkler.metin),
+                  ),
+                ),
+                if (medya.isNotEmpty && _spoilerAcik) ...[
+                  const SizedBox(height: 10),
+                  // AKIŞTAKİ galeri: medya kaç tane olursa olsun (10 dahil) sırayla
+                  // yana kaydırılır, altta nokta + sağ üstte "5/10" sayacı olur.
+                  // Eskiden 2 sütun ızgaraydı: kareye kırpılıyor, sıra kayboluyordu.
+                  // Tek dokunuş Reels (dokunulan medyadan), çift dokunuş beğeni.
+                  MedyaGaleri(
+                    yollar: medya,
+                    otomatikOynat: true,
+                    onAc: _medyaAc,
+                    onCiftDokunus: _begen,
+                    // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
+                    gonderiId: yorum['id'],
+                  ),
+                ],
+                const SizedBox(height: 8),
+                // ETKİLEŞİM SATIRI — MEDYANIN ALTINDA, ayrı satırda.
+                //
+                // *** MEDYANIN ÜSTÜNE BİNMEZ ***: kullanıcının özellikle istediği
+                // budur. Göz ikonu ve "İstatistikleri gör" bir Stack'e alınıp
+                // fotoğrafın/videonun köşesine oturtulsaydı kareyi kapatır, üstelik
+                // videoda oynatma denetimleriyle çakışırdı.
+                //
+                // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" → beğeni
+                // → yorum. Satır SOLA DAYALI (Row'un varsayılanı `start`);
+                // istatistik girişi sağa itilmez, sayının hemen yanında durur.
+                Row(
+                  children: [
+                    Icon(
+                      Icons.remove_red_eye,
+                      size: 16,
+                      color: DiziRenkler.gonderiEylem,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$goruntulenme',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: DiziRenkler.gonderiEylem,
+                      ),
+                    ),
+                    // *** YALNIZ GÖNDERİ SAHİBİNE ***: uç başkasının gönderisine
+                    // 404 veriyor (sahiplik SQL'in WHERE'inde), ama arayüzde de
+                    // görünmemeli — açılıp "bulunamadı" diyen bir giriş, olmayan
+                    // bir girişten daha kötüdür.
+                    if (benim) ...[
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: IstatistikGirisi(gonderiId: yorum['id'] as int),
+                      ),
+                    ],
+                    const SizedBox(width: 16),
+                    InkWell(
+                      onTap: _begen,
+                      // Basılı tut → beğenenler listesi (akış/Reels ile aynı sheet)
+                      onLongPress: () =>
+                          begenenleriAc(context, widget.yorum['id'] as int),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              _begendim
+                                  ? Icons.favorite
+                                  : Icons.favorite_border,
+                              size: 16,
+                              color: _begendim
+                                  ? DiziRenkler.sariMetin
+                                  : DiziRenkler.gonderiEylem,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '$_begeni',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _begendim
+                                    ? DiziRenkler.sariMetin
+                                    : DiziRenkler.gonderiEylem,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    // Gönderiye yorum: ok değil KONUŞMA BALONU + yorum sayısı.
+                    // Ok ikonu "paylaş/ilet" gibi okunuyordu, kullanıcı gönderiye
+                    // yorum yazılabildiğini fark etmiyordu.
+                    //
+                    // FLEXIBLE: satır artık dört öğe taşıyor (göz+sayı, istatistik
+                    // girişi, beğeni, yorum) ve 360 dp'de "Yorum yap" + uzun
+                    // çevirileri sabit genişlikte kalırsa satır 1-2 px taşıyor
+                    // (widget testi yakaladı). Yazı kısalır, İKON KALIR.
+                    Flexible(
+                      child: InkWell(
+                        onTap: () => widget.yanitla(widget.yorum),
+                        borderRadius: BorderRadius.circular(20),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 10,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.mode_comment_outlined,
+                                size: 16,
+                                color: DiziRenkler.gonderiEylem,
+                              ),
+                              const SizedBox(width: 4),
+                              Flexible(
+                                child: Text(
+                                  widget.yanitlar.isEmpty
+                                      ? 'Yorum yap'.c
+                                      : '${widget.yanitlar.length}',
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: DiziRenkler.gonderiEylem,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // Yanıtlar (tek seviye)
+                if (widget.yanitlar.isNotEmpty) ...[
+                  const SizedBox(height: 6),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        for (final c in widget.yanitlar)
+                          _YanitSatiri(
+                            key: ValueKey(c['id']),
+                            yanit: c as Map<String, dynamic>,
+                            benim: c['kullanici_id'] == widget.benimId,
+                            sil: () => widget.yanitSil(c['id'] as int),
+                            yanitla: () => widget.yanitla(c),
+                            medyaAc: widget.medyaAc,
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Divider(height: 1, thickness: 1, color: DiziRenkler.metin12),
+        ],
       ),
     );
   }
@@ -1367,7 +1386,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
               const SizedBox(width: 8),
               Text(
                 tarih,
-                style: TextStyle(fontSize: 10, color: DiziRenkler.metin38),
+                style: TextStyle(fontSize: 10, color: DiziRenkler.gonderiEylem),
               ),
               const Spacer(),
               // Dokunma hedefleri 44px'e yakın olsun diye geniş padding
@@ -1388,7 +1407,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                         size: 15,
                         color: _begendim
                             ? DiziRenkler.sariMetin
-                            : DiziRenkler.metin38,
+                            : DiziRenkler.gonderiEylem,
                       ),
                       if (_begeni > 0) ...[
                         const SizedBox(width: 3),
@@ -1396,7 +1415,9 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                           '$_begeni',
                           style: TextStyle(
                             fontSize: 11,
-                            color: DiziRenkler.metin38,
+                            color: _begendim
+                                ? DiziRenkler.sariMetin
+                                : DiziRenkler.gonderiEylem,
                           ),
                         ),
                       ],
@@ -1415,7 +1436,7 @@ class _YanitSatiriState extends State<_YanitSatiri> {
                   child: Icon(
                     Icons.reply,
                     size: 15,
-                    color: DiziRenkler.metin38,
+                    color: DiziRenkler.gonderiEylem,
                   ),
                 ),
               ),

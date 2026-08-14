@@ -1032,4 +1032,8 @@ const Map<String, String> cevirilerIt = {
       'Cerca serie, film, persone o società...',
   'Şirketler': 'Società',
   'Senarist': 'Sceneggiatore',
+  'Bölüm puanları': 'Voti degli episodi',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Impossibile caricare i voti',
 };

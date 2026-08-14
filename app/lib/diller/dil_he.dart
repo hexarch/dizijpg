@@ -1003,4 +1003,8 @@ const Map<String, String> cevirilerHe = {
   'Dizi, film, kişi veya şirket ara...': 'חפש סדרה, סרט, אדם או חברה...',
   'Şirketler': 'חברות',
   'Senarist': 'תסריטאי',
+  'Bölüm puanları': 'דירוגי פרקים',
+  'S{}': 'ע{}',
+  'E{}': 'פ{}',
+  'Bölüm puanları yüklenemedi': 'לא ניתן לטעון את דירוגי הפרקים',
 };

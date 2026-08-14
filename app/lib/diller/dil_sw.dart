@@ -1028,4 +1028,8 @@ const Map<String, String> cevirilerSw = {
       'Tafuta mfululizo, filamu, mtu au kampuni...',
   'Şirketler': 'Kampuni',
   'Senarist': 'Mwandishi wa filamu',
+  'Bölüm puanları': 'Alama za vipindi',
+  'S{}': 'S{}',
+  'E{}': 'E{}',
+  'Bölüm puanları yüklenemedi': 'Alama za vipindi hazikuweza kupakiwa',
 };
