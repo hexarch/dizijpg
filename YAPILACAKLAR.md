@@ -1,17 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-15 — 🔨 SEO: BÖLÜM ARAMASI (45 dil değil, TR önce)
-İstek: "Silo 5. sezon 4. bölüm" aramasında üst sıra. 45 dil × bölüm URL'i
-YOK (thin content / doorway; SEO-PLANI 2.6).
-**Canlı (API restart gerekmez):** `dizi.jpg.ai` 36 spoiler’sız bölüm yorumu
-(Silo S1–S3E7, BB dönüm noktaları, Squid Game/Dark S1E1). Sitemap-bölüm
-**2 → 37 URL**. Googlebot: Silo S2E4 **index** + yorum gövdesi; Silo S5E4
-**404** + “Sayfa bulunamadı”; S5E4 sitemap’te yok. alcelik kapak/avatar aynı.
-**Bekleniyor — API’yi sen yeniden başlat:** dizi SSR’ı yalnız özgün içerikli
-bölüme link basar (Silo `/icerik/tv/125988` → S2E4 var, S3E8/S5E4 yok).
-`server.js` konteynerde güncel, bellek eski.
-Betik: `seo_bolum_tohum.js`. Test: `seo_bolum_kesif.test.js`.
+## 2026-08-15 — 🚀 SEO: BÖLÜM ARAMASI (TR önce, kalite turu)
+İstek: "Silo 5. sezon 4. bölüm" araması. 45 dil × bölüm URL'i YOK (SEO-PLANI 2.6).
+Silo S5 TMDB'de yok → gerçek **404**. İlk tohum kısa/kalıptı; ikinci tur
+eleştirmen üslubu (oyuncu, sahne, yargı, ≥280 karakter, tekil açılış).
+`dizi.jpg.ai` **61** spoiler’sız bölüm: Silo S1–S3E7, BB dönüm, BCS/TLOU/
+Chernobyl/Severance/The Bear/Succession + Şahsiyet/Bir Başkadır/Kulüp.
+Googlebot: Silo S2E4 **index** + Rebecca Ferguson; BCS S3E5 Dalavere;
+Şahsiyet S1E1 Haluk Bilginer. Sitemap işçi önbelleği 6 saate kadar 37
+kalabilir (küme ayrı bellek); origin’de bir işçi **61**. alcelik kapak/avatar
+aynı; son alcelik yorumları bizim değil.
+Betik: `seo_bolum_tohum_uret.py` → json → `seo_bolum_tohum.js` (güncelleme yazar).
 
 
 ## 2026-08-15 — 🚀 TOHUM PROFİL GÖRÜNÜMÜ (kapak + şerit + liste)

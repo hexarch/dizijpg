@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Popüler dizilerin bölümlerine dizi.jpg.ai yorumu yazar (sitemap + indexle).
- * Spoiler yok. Aynı (ai, tv, tmdb, sezon, bölüm) varsa atlar. alcelik yok.
+ * Spoiler yok. Aynı kayıt varsa METNİ GÜNCELLER (kalite turu). alcelik yok.
  *
  *   docker cp araclar/seo_bolum_tohum.js dizijpg-api:/app/
  *   docker cp araclar/seo_bolum_tohum.json dizijpg-api:/app/
@@ -26,6 +26,16 @@ const ozUzunluk = (s) => String(s ?? '')
   .replace(/(#|@)[\p{L}\p{N}_]+|https?:\/\/\S+/gu, '')
   .trim().length;
 
+async function ceviriYaz(kaynak, dil, metin) {
+  if (!metin || !String(metin).trim()) return;
+  await havuz.query(
+    `INSERT INTO metin_cevirileri (ozet, dil, metin)
+     VALUES (md5(btrim($1)), $2, $3)
+     ON CONFLICT (ozet, dil) DO UPDATE SET metin = EXCLUDED.metin`,
+    [kaynak, dil, metin],
+  );
+}
+
 async function ana() {
   const ham = JSON.parse(fs.readFileSync(new URL('./seo_bolum_tohum.json', import.meta.url), 'utf8'));
   const { rows: ai } = await havuz.query(
@@ -34,38 +44,40 @@ async function ana() {
   const aiId = ai[0].id;
 
   let ek = 0;
-  let atla = 0;
+  let guncel = 0;
   const simdi = Date.now();
   const liste = ham.ogeler || [];
   for (let i = 0; i < liste.length; i++) {
     const o = liste[i];
     if (ozUzunluk(o.tr) < MIN) throw new Error(`kısa metin ${o.tmdb_id} S${o.sezon}E${o.bolum}`);
     const varMi = await havuz.query(
-      `SELECT 1 FROM yorumlar
+      `SELECT id, metin FROM yorumlar
         WHERE kullanici_id=$1 AND tur='tv' AND tmdb_id=$2
           AND sezon=$3 AND bolum=$4 LIMIT 1`,
       [aiId, o.tmdb_id, o.sezon, o.bolum],
     );
     if (varMi.rows.length) {
-      atla++;
-      continue;
-    }
-    const tarih = new Date(simdi - (liste.length - i) * 36 * 3600 * 1000);
-    await havuz.query(
-      `INSERT INTO yorumlar
-         (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, spoiler, kaynak_dil, tarih)
-       VALUES ($1,'tv',$2,$3,$4,$5,'{}',false,'tr',$6)`,
-      [aiId, o.tmdb_id, o.sezon, o.bolum, o.tr, tarih],
-    );
-    if (o.en) {
+      if (varMi.rows[0].metin !== o.tr) {
+        await havuz.query(
+          `UPDATE yorumlar SET metin=$1, spoiler=false, kaynak_dil='tr'
+            WHERE id=$2 AND kullanici_id=$3`,
+          [o.tr, varMi.rows[0].id, aiId],
+        );
+        guncel++;
+        console.log(`~ tv:${o.tmdb_id} S${o.sezon}E${o.bolum}`);
+      }
+    } else {
+      const tarih = new Date(simdi - (liste.length - i) * 36 * 3600 * 1000);
       await havuz.query(
-        `INSERT INTO metin_cevirileri (ozet, dil, metin)
-         VALUES (md5(btrim($1)), 'en', $2) ON CONFLICT (ozet, dil) DO NOTHING`,
-        [o.tr, o.en],
+        `INSERT INTO yorumlar
+           (kullanici_id, tur, tmdb_id, sezon, bolum, metin, medya, spoiler, kaynak_dil, tarih)
+         VALUES ($1,'tv',$2,$3,$4,$5,'{}',false,'tr',$6)`,
+        [aiId, o.tmdb_id, o.sezon, o.bolum, o.tr, tarih],
       );
+      ek++;
+      console.log(`+ tv:${o.tmdb_id} S${o.sezon}E${o.bolum}`);
     }
-    ek++;
-    console.log(`+ tv:${o.tmdb_id} S${o.sezon}E${o.bolum}`);
+    if (o.en) await ceviriYaz(o.tr, 'en', o.en);
   }
   const { rows: n } = await havuz.query(
     `SELECT count(*)::int AS n FROM (
@@ -78,7 +90,7 @@ async function ana() {
   );
   const al = await havuz.query(
     'SELECT count(*)::int AS n FROM yorumlar WHERE kullanici_id=$1', [ALCELIK]);
-  console.log(`eklenen ${ek} atlanan ${atla} bolum_sayfa~${n[0].n} alcelik_yorum ${al.rows[0].n}`);
+  console.log(`eklenen ${ek} guncellenen ${guncel} bolum_sayfa~${n[0].n} alcelik_yorum ${al.rows[0].n}`);
   await havuz.end();
 }
 

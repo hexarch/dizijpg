@@ -102,3 +102,27 @@ test('dizi sayfası bölüm linki sitemap süzgeciyle aynı (boş bölüme davet
   assert.match(b, /SEO_INCELEME_KOSUL/);
   assert.match(b, /y\.tur = 'tv'/);
 });
+
+test('bölüm tohumu eleştirmen uzunluğunda, tekil açılış, spoiler kalıbı yok', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const { fileURLToPath } = await import('node:url');
+  const kok = path.dirname(fileURLToPath(import.meta.url));
+  const j = JSON.parse(fs.readFileSync(
+    path.join(kok, '..', 'araclar', 'seo_bolum_tohum.json'), 'utf8'));
+  const acilis = new Set();
+  assert.ok(j.ogeler.length >= 60, `adet ${j.ogeler.length}`);
+  for (const o of j.ogeler) {
+    assert.ok(o.tr.length >= 280, `kısa TR ${o.tmdb_id} S${o.sezon}E${o.bolum}`);
+    assert.ok(o.en.length >= 280, `kısa EN ${o.tmdb_id} S${o.sezon}E${o.bolum}`);
+    const bas = o.tr.slice(0, 48);
+    assert.equal(acilis.has(bas), false, `aynı açılış ${bas}`);
+    acilis.add(bas);
+    assert.doesNotMatch(o.tr, /açıklama yağmuru/);
+    assert.equal(o.tr.includes('spoiler'), false);
+  }
+  const s2e4 = j.ogeler.find((o) => o.tmdb_id === 125988 && o.sezon === 2 && o.bolum === 4);
+  assert.ok(s2e4.tr.includes('Rebecca Ferguson'));
+  assert.ok(s2e4.tr.includes('Harmonyum'));
+});
+
