@@ -414,4 +414,43 @@ void main() {
     final yazi = tester.widget<Text>(find.text('Gelen mesaj istekleri'));
     expect(yazi.maxLines, 2);
   });
+
+  testWidgets('masaüstü: sohbet satırları 720 kolonunda ortalanır', (
+    tester,
+  ) async {
+    _sunucu(sohbetler: [_sohbet('ayse')]);
+    await _kur(tester, ekran: const Size(1440, 900));
+
+    final r = tester.getRect(_satir('ayse'));
+    expect(r.width, lessThanOrEqualTo(masaustuKolonGenisligi));
+    expect(r.left, closeTo((1440 - r.width) / 2, 1));
+    expect(r.left, greaterThan(200), reason: 'kullanıcılar sola yapışmamalı');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('mobil: sohbet satırı tam genişlikte kalır (kısıt bağlamaz)', (
+    tester,
+  ) async {
+    _sunucu(sohbetler: [_sohbet('ayse')]);
+    await _kur(tester, ekran: const Size(360, 800));
+
+    final r = tester.getRect(_satir('ayse'));
+    expect(r.left, 0);
+    expect(r.width, 360);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('masaüstü: mesaj istekleri listesi de ortalanır', (tester) async {
+    _sunucu(istekler: [_sohbet('yabanci')]);
+    await _kur(
+      tester,
+      ekran: const Size(1440, 900),
+      baslangic: '/mesaj-istekleri',
+    );
+
+    final r = tester.getRect(_satir('yabanci'));
+    expect(r.width, lessThanOrEqualTo(masaustuKolonGenisligi));
+    expect(r.left, closeTo((1440 - r.width) / 2, 1));
+    expect(tester.takeException(), isNull);
+  });
 }

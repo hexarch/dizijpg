@@ -241,7 +241,9 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
           ),
         ],
       ),
-      body: govde,
+      // PC'de akış/bildirimler ile AYNI ortalanmış okuma kolonu (720);
+      // mobilde kısıt bağlamaz, kullanıcı satırları tam genişlikte kalır.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }
@@ -374,7 +376,8 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani> {
 
     return Scaffold(
       appBar: AppBar(title: Text('Gelen mesaj istekleri'.c)),
-      body: govde,
+      // Sohbet listesiyle aynı kolon: masaüstünde kullanıcılar sola yapışmasın.
+      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
     );
   }
 }

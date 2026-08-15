@@ -1,6 +1,10 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ MESAJLAR: kullanıcı listesi ortalandı
+Masaüstünde sohbet/istek satırları 720 kolonunda (bildirimler gibi).
+Mobil tam genişlik. Dağıtılmadı.
+
 ## 2026-08-16 — ✅ PROFİL: Yorumlar sekmesi gri değil
 Seçili olmayan sekme yazı+ikon `metin` (koyu temada beyaz). Dağıtılmadı.
 
