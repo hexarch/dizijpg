@@ -279,7 +279,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             child: Text(
                               'Toplam İzleme Süresi'.c,
                               style: TextStyle(
-                                color: DiziRenkler.metin54,
+                                color: DiziRenkler.metin,
                                 fontSize: 13,
                               ),
                             ),

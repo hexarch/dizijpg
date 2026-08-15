@@ -966,7 +966,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                         child: Text(
                           'Toplam İzleme Süresi'.c,
                           style: TextStyle(
-                            color: DiziRenkler.metin54,
+                            color: DiziRenkler.metin,
                             fontSize: 13,
                           ),
                         ),

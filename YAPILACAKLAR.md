@@ -1,6 +1,9 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ PROFİL: toplam izleme süresi yazısı beyaz
+Etiket `metin` (koyu temada beyaz). Süre sayısı sarı kaldı. Dağıtılmadı.
+
 ## 2026-08-16 — 🚀 WEB 1.55.0+103 (takvim 1 / yorumlar rengi / mesajlar orta)
 Tek bölümde altta "1" yok (sarı daire durur). Profilde seçili olmayan
 Yorumlar yazı+ikon beyaz. Mesajlar listesi masaüstünde 720 kolonunda.
