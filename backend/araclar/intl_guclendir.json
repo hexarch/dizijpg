@@ -1,0 +1,307 @@
+{
+  "bio": {
+    "lin.binge": "上海。下班先看一集再吃饭。武侠老片和古装剧来回倒，周末才敢把长的那几部打开。韩国的也在补，可还是更想把《霸王别姬》再看一遍——不是为了怀旧，是为了听那口戏。走廊里的《花样年华》我也不敢快进。",
+    "yuki.dorama": "東京で本の編集をしています。新作より、何度も観た劇場版に戻る週末の方が多い。ジブリと90年代のテレビアニメが家の空気みたいなもの。実写の時代劇も少しずつ。字幕なしで戻れる作品が増えると、その週は仕事が少し楽に見えます。",
+    "jiwon.drama": "서울에서 일하고 주말엔 드라마를 정주행합니다. 로맨스만 보는 줄 알았는데 스릴러랑 오래된 한국영화도 같이 쌓였어요. 자막 없이 다시 보는 작품이 생기면 그때가 제일 좋아요. 비 오는 날엔 일부러 무거운 걸 꺼냅니다.",
+    "rafi.screen": "ঢাকায় থাকি। সত্যজিৎ আগে, তারপর যা হোক। বাংলা সিনেমা কম বেরোয়, তাই দিল্লি ক্রাইম আর পথের পাঁচালী দুটোই তাকে। সপ্তাহে একবার পুরনো ছবি না দেখলে মন খালি লাগে। নতুন ওয়েব সিরিজ আসি, কিন্তু ফিরে যাই কালো-সাদার দিকে।",
+    "nour.yushahid": "القاهرة. أتابع ما يُصنع هنا وما يصل مدبلجاً، لكنني أرجع دائماً إلى الأفلام التي لا تصرخ. البيت، الشارع، الصمت بين جملتين. المترجم يصل أحياناً قبل النسخة الأصلية، فأجلس بينهما."
+  },
+  "yanitlar": [
+    {
+      "kim": "jiwon.drama",
+      "hedef": "yuki.dorama",
+      "tur": "movie",
+      "tmdb_id": 129,
+      "metin": "치히로가 이름을 빼앗기는 장면은 볼 때마다 숨이 짧아져요. 마법은 화려한 게 아니라 일상을 한 칸 밀어내는 쪽에 가깝죠. 자막 없이 다시 보니 물소리만으로도 충분했습니다.",
+      "en": "The scene where Chihiro loses her name still shortens my breath. The magic is not spectacle; it just nudges ordinary life one step aside. Watching without subtitles, the water was enough.",
+      "tr": "Chihiro'nun adını kaybettiği sahnede hâlâ nefesim kısalıyor. Büyü gösteri değil; gündelik hayatı bir adım kaydırıyor. Altyazısız izleyince su sesi yetti."
+    },
+    {
+      "kim": "lin.binge",
+      "hedef": "yuki.dorama",
+      "tur": "movie",
+      "tmdb_id": 128,
+      "metin": "San的怒气我一直记得。不是女主角光环，是她真的站在两种活法中间。重看时我更注意森林的风声，对话反而少听了一些。",
+      "en": "I still remember San's anger. Not a heroine glow — she is standing between two ways of living. On rewatch I listen more to the forest wind and less to the talk.",
+      "tr": "San'ın öfkesini hâlâ hatırlıyorum. Kahraman ışıltısı değil; iki yaşam biçiminin arasında duruyor. Yeniden bakınca orman rüzgârını daha çok, konuşmayı daha az dinledim."
+    },
+    {
+      "kim": "yuki.dorama",
+      "hedef": "jiwon.drama",
+      "tur": "movie",
+      "tmdb_id": 496243,
+      "metin": "階段の途中で止めたくなる映画です。笑わせておいて、あとから笑った自分が残る。韓国語のリズムが字幕より先に来る夜がありました。",
+      "en": "A film that makes you want to pause on the stairs. It gets a laugh, then leaves you with the person who laughed. One night the Korean rhythm arrived before the subtitles.",
+      "tr": "Merdivende duraklatmak istediğin film. Güldürüp sonra gülen kişiyi sende bırakıyor. Bir gece Korece ritim altyazıdan önce geldi."
+    },
+    {
+      "kim": "minh.phim",
+      "hedef": "jiwon.drama",
+      "tur": "tv",
+      "tmdb_id": 94796,
+      "metin": "Hồng Hạnh của tôi cũng cần một thị trấn nhỏ để thở. Không phải vì chuyện tình, vì nhịp sống chậm đến mức nghe được gió. Tôi xem xong rồi mở cửa sổ thật.",
+      "en": "My Hae-jin also needed a small town to breathe. Not for the romance — for a pace slow enough to hear the wind. After it I actually opened a window.",
+      "tr": "Benim Hae-jin'imin de nefes almak için küçük bir kente ihtiyacı vardı. Aşk için değil; rüzgârı duyacak kadar yavaş bir tempo için. Bitince gerçekten pencere açtım."
+    },
+    {
+      "kim": "lena.serie",
+      "hedef": "miles.watches",
+      "tur": "tv",
+      "tmdb_id": 1396,
+      "metin": "Walter bleibt bei mir als jemand, der zu lange erklärt, warum er muss. Die Wüste ist ehrlich. Ich mag, dass die Serie den Mann nicht retten will.",
+      "en": "Walter stays with me as someone who explains too long why he has to. The desert is honest. I like that the show does not try to save the man.",
+      "tr": "Walter bende, neden zorunda olduğunu fazla uzun anlatan biri olarak kalıyor. Çöl dürüst. Dizinin adamı kurtarmaya çalışmamasını seviyorum."
+    },
+    {
+      "kim": "daria.serial",
+      "hedef": "miles.watches",
+      "tur": "tv",
+      "tmdb_id": 1396,
+      "metin": "Смотрела как чужое семейное падение, очень американское. Лаборатория в подвале у нас выглядела бы иначе, стыд тот же. Сериал не про химию. Про то, как человек уговаривает себя.",
+      "en": "I watched it as someone else's family fall, very American. A lab in the basement would look different here; the shame is the same. The show is not about chemistry. It is about how a person talks himself into it.",
+      "tr": "Başkasının aile düşüşü gibi izledim, çok Amerikan. Bodrumdaki laboratuvar bizde başka görünürdü; utanç aynı. Dizi kimya değil. İnsanın kendini nasıl ikna ettiği."
+    },
+    {
+      "kim": "miles.watches",
+      "hedef": "lena.serie",
+      "tur": "tv",
+      "tmdb_id": 70523,
+      "metin": "Dark is the only show where I accepted being lost as the point. The cave is not a puzzle room. It is a family that will not stop repeating itself. I watched with a notebook and still missed a door.",
+      "en": "Dark is the only show where I accepted being lost as the point. The cave is not a puzzle room. It is a family that will not stop repeating itself. I watched with a notebook and still missed a door.",
+      "tr": "Dark, kaybolmayı meselenin kendisi olarak kabul ettiğim tek dizi. Mağara bulmaca odası değil. Kendini tekrar etmeyi bırakmayan bir aile. Defterle izledim, yine bir kapıyı kaçırdım."
+    },
+    {
+      "kim": "daria.serial",
+      "hedef": "lena.serie",
+      "tur": "tv",
+      "tmdb_id": 70523,
+      "metin": "Холоднее наших молчаливых фильмов, но схема честная. Дети платят дольше, чем хочется признать. Я тоже останавливалась на середине сезона — не от скуки, от плотности.",
+      "en": "Colder than our silent films, but the scheme is honest. Children pay longer than anyone wants to admit. I also paused mid-season — not from boredom, from density.",
+      "tr": "Bizim sessiz filmlerden daha soğuk, şema dürüst. Çocuklar itiraf edilmek istenenden uzun ödüyor. Ben de sezon ortasında durdum — sıkıntıdan değil, yoğunluktan."
+    },
+    {
+      "kim": "lena.serie",
+      "hedef": "daria.serial",
+      "tur": "tv",
+      "tmdb_id": 70523,
+      "metin": "Schön, dass du den Kälte nicht als Fehler liest. Winden ist klein genug, dass jede Lüge Nachbarn hat. Genau das wollte ich von der Serie.",
+      "en": "Glad you do not read the cold as a flaw. Winden is small enough that every lie has neighbors. That is what I wanted from the show.",
+      "tr": "Soğuğu kusur saymaman iyi. Winden her yalanın komşusu olacak kadar küçük. Diziden istediğim buydu."
+    },
+    {
+      "kim": "yuki.dorama",
+      "hedef": "lin.binge",
+      "tur": "movie",
+      "tmdb_id": 843,
+      "metin": "廊下の赤が残ります。言葉を減らすほど近づく、という作り方は日本の恋愛映画ではあまり見ない。あの歌を止めたくない。",
+      "en": "The red of the hallway stays. Cutting the words to get closer is not how Japanese romances usually work. I do not want to stop that song.",
+      "tr": "Koridorun kırmızısı kalıyor. Sözü keserek yaklaşmak, Japon aşk filmlerinde pek yok. O şarkıyı durdurmak istemiyorum."
+    },
+    {
+      "kim": "lin.binge",
+      "hedef": "jiwon.drama",
+      "tur": "tv",
+      "tmdb_id": 93405,
+      "metin": "第一季的灯就够了。规则一简单，人就原形毕露。我这边也刷过，不太想看它后来把房间做大。",
+      "en": "Season one's lights were enough. Once the rules are simple, people show their shape. I watched it here too. I do not want the later seasons making the room bigger.",
+      "tr": "Birinci sezonun ışığı yetti. Kurallar basitleşince insan şekil veriyor. Burada da izledim. Sonraki sezonların odayı büyütmesini istemiyorum."
+    },
+    {
+      "kim": "nour.yushahid",
+      "hedef": "dimas.nonton",
+      "tur": "tv",
+      "tmdb_id": 93405,
+      "metin": "اللعبة واضحة، لذلك أقسى. لم أحتج موسيقى عالية. ضوء المهجع يكفي. أشاهد وأفكر في من يضع القواعد لا في من يركض.",
+      "en": "The game is clear, so it is harsher. I did not need loud music. The dorm light is enough. I watch and think about who writes the rules, not who runs.",
+      "tr": "Oyun açık, o yüzden daha sert. Yüksek müziğe ihtiyacım yoktu. Yurt ışığı yeter. Koşanı değil kuralı yazanı düşünerek izliyorum."
+    },
+    {
+      "kim": "dimas.nonton",
+      "hedef": "minh.phim",
+      "tur": "tv",
+      "tmdb_id": 93405,
+      "metin": "Di warung orang bahas permainan ini kayak bahas bola. Aturannya gampang, makanya kejam. Aku berhenti di musim pertama. Cukup.",
+      "en": "At the stall people talk about this game the way they talk about football. The rules are easy, so it is cruel. I stopped after season one. Enough.",
+      "tr": "Büfede bunu futbol gibi konuşuyorlar. Kurallar kolay, o yüzden zalim. Birinci sezonda durdum. Yeter."
+    },
+    {
+      "kim": "sofia.seriesbr",
+      "hedef": "lucia.series",
+      "tur": "tv",
+      "tmdb_id": 71446,
+      "metin": "Aqui também parou de ser só o plano. O uniforme vermelho cansa. Eu fiquei pelas primeiras temporadas, quando o prédio ainda era um problema, não um espetáculo.",
+      "en": "Here it also stopped being just the plan. The red uniform wears you out. I stayed with the early seasons, when the building was still a problem, not a show.",
+      "tr": "Burada da plan olmaktan çıktı. Kırmızı üniforma yoruyor. Ben erken sezonlarda kaldım: bina hâlâ bir sorundu, gösteri değil."
+    },
+    {
+      "kim": "dimas.nonton",
+      "hedef": "lucia.series",
+      "tur": "tv",
+      "tmdb_id": 71446,
+      "metin": "Aku nonton karena semua orang nonton, terus capek sendiri. Topengnya lebih kuat dari ceritanya. Musim awal masih rapat.",
+      "en": "I watched because everyone watched, then got tired myself. The mask is stronger than the story. The early seasons are still tight.",
+      "tr": "Herkes izlediği için izledim, sonra kendim yoruldum. Maske hikâyeden güçlü. Erken sezonlar hâlâ sıkı."
+    },
+    {
+      "kim": "lucia.series",
+      "hedef": "sofia.seriesbr",
+      "tur": "tv",
+      "tmdb_id": 71446,
+      "metin": "Exacto: el edificio primero. Cuando la serie se enamora de su propio disfraz, yo también me fui. Las primeras temporadas todavía tienen polvo.",
+      "en": "Exactly: the building first. When the show falls in love with its own costume, I left too. The early seasons still have dust.",
+      "tr": "Aynen: önce bina. Dizi kendi kostümüne âşık olunca ben de çıktım. Erken sezonlarda hâlâ toz var."
+    },
+    {
+      "kim": "camille.ecran",
+      "hedef": "lucia.series",
+      "tur": "movie",
+      "tmdb_id": 219,
+      "metin": "Volver sent le vent et la cuisine. Almodóvar ne cache pas les morts, il les fait rentrer par la porte. J'ai revu la scène du restaurant trop de fois.",
+      "en": "Volver smells of wind and kitchen. Almodóvar does not hide the dead; he lets them in through the door. I have rewatched the restaurant scene too many times.",
+      "tr": "Volver rüzgâr ve mutfak kokuyor. Almodóvar ölüleri gizlemiyor, kapıdan içeri alıyor. Restoran sahnesini fazla kez açtım."
+    },
+    {
+      "kim": "lucia.series",
+      "hedef": "camille.ecran",
+      "tur": "movie",
+      "tmdb_id": 194,
+      "metin": "Amélie me da envidia buena. París aquí no es postal, es una forma de mirar a la gente sin pedir permiso. La relojería del montaje es lo que más me queda.",
+      "en": "Amélie gives me the good kind of envy. Paris here is not a postcard; it is a way of looking at people without asking. The clockwork of the editing is what stays.",
+      "tr": "Amélie iyi cins imrenmedir. Paris burada kartpostal değil; izinsiz insan bakma biçimi. Kurgu saat işi — bende o kalıyor."
+    },
+    {
+      "kim": "miles.watches",
+      "hedef": "dimas.nonton",
+      "tur": "movie",
+      "tmdb_id": 94329,
+      "metin": "The hallway fights are the thesis. Nobody explains the building; you learn it with your shoulders. I put it on when American action starts talking too much.",
+      "en": "The hallway fights are the thesis. Nobody explains the building; you learn it with your shoulders. I put it on when American action starts talking too much.",
+      "tr": "Koridor dövüşleri tezin kendisi. Bina anlatılmıyor; omuzlarınla öğreniyorsun. Amerikan aksiyonu fazla konuşunca bunu açıyorum."
+    },
+    {
+      "kim": "minh.phim",
+      "hedef": "jiwon.drama",
+      "tur": "movie",
+      "tmdb_id": 496243,
+      "metin": "Cầu thang ấy tôi cũng muốn dừng. Cười xong rồi ngồi im. Không cần bài học lớn. Chỉ cần cái nhà, cái bàn, cái nhìn.",
+      "en": "I also wanted to stop on those stairs. Laugh, then sit still. No big lesson. Just the house, the table, the look.",
+      "tr": "O merdivende ben de durmak istedim. Gül, sonra otur. Büyük ders yok. Ev, masa, bakış."
+    },
+    {
+      "kim": "aanya.screens",
+      "hedef": "rafi.screen",
+      "tur": "movie",
+      "tmdb_id": 20453,
+      "metin": "तीन इडियट्स को मैं मज़ाक की फ़िल्म मान के बैठी थी, फिर वो हॉस्टल वाला सन्नाटा रह गया। हँसी के नीचे परीक्षा का डर है, और वो डर घर जैसा लगता है।",
+      "en": "I sat down treating 3 Idiots as a joke film, then the hostel quiet stayed. Under the laughs is exam fear, and that fear feels like home.",
+      "tr": "3 Idiots'u şaka filmi sanıp oturdum, yurt sessizliği kaldı. Gülüşün altında sınav korkusu var; o korku ev gibi."
+    },
+    {
+      "kim": "rafi.screen",
+      "hedef": "aanya.screens",
+      "tur": "movie",
+      "tmdb_id": 19404,
+      "metin": "ডিডিএলজে আমি ট্রেনের জন্য রাখি। গানগুলো পরে আসে। শাহরুখ যখন পেছন ফিরে দাঁড়ায়, তখন মনে হয় সময়টা ইচ্ছে করে ধীর করে দেওয়া। পুরনো, তবু কাজ করে।",
+      "en": "I keep DDLJ for the train. The songs come after. When Shah Rukh turns around, time feels deliberately slow. Old, and it still works.",
+      "tr": "DDLJ'yi tren için tutuyorum. Şarkılar sonra gelir. Shah Rukh arkasını dönünce zaman kasten yavaşlıyor. Eski, hâlâ işe yarıyor."
+    },
+    {
+      "kim": "zara.dramay",
+      "hedef": "aanya.screens",
+      "tur": "movie",
+      "tmdb_id": 20453,
+      "metin": "یہ فلم ہنساتی ہے اور پھر ہوسٹل کا خوف چھوڑ جاتی ہے۔ میں نے بھی اسے ہلکا سمجھ کر چلایا تھا۔ ہلکا نہیں تھا۔",
+      "en": "This film makes you laugh and then leaves the hostel fear. I also started it thinking it was light. It was not light.",
+      "tr": "Bu film güldürüp yurt korkusunu bırakıyor. Ben de hafif sanıp açmıştım. Hafif değildi."
+    },
+    {
+      "kim": "aanya.screens",
+      "hedef": "zara.dramay",
+      "tur": "movie",
+      "tmdb_id": 20453,
+      "metin": "हाँ — हल्की लगती है, फिर रैगिंग वाली चुप्पी याद रह जाती है। हम दोनों एक ही दरवाज़े से घुसे।",
+      "en": "Yes — it looks light, then the ragging quiet stays. We both came in through the same door.",
+      "tr": "Evet — hafif görünüyor, sonra ragging sessizliği kalıyor. İkimiz de aynı kapıdan girdik."
+    },
+    {
+      "kim": "zara.dramay",
+      "hedef": "jiwon.drama",
+      "tur": "tv",
+      "tmdb_id": 94796,
+      "metin": "چھوٹے شہر کی ہوا یہاں بھی چاہیے ہوتی ہے۔ محبت سے زیادہ، سست رفتار۔ بارش والے دن یہ ڈراما میرے کام آتا ہے۔",
+      "en": "I need that small-town air here too. More than the romance, the slow pace. On rain days this drama does the work.",
+      "tr": "O küçük kent havası bana da lazım. Aşktan çok yavaş tempo. Yağmurlu günde bu dizi işimi görüyor."
+    },
+    {
+      "kim": "nour.yushahid",
+      "hedef": "zara.dramay",
+      "tur": "movie",
+      "tmdb_id": 962571,
+      "metin": "جودلاند يبقى في الجسم بعد العناوين. الرقص هنا ليس زينة. هو طريقة للبقاء. شاهدت وأنا أفكر في من يُسمح له أن يُرى.",
+      "en": "Joyland stays in the body after the credits. The dance is not decoration. It is a way to remain. I watched thinking about who is allowed to be seen.",
+      "tr": "Joyland jenerikten sonra bedende kalıyor. Dans süs değil. Kalma biçimi. Kimin görünmesine izin var diye bakarak izledim."
+    },
+    {
+      "kim": "jiwon.drama",
+      "hedef": "minh.phim",
+      "tur": "tv",
+      "tmdb_id": 94796,
+      "metin": "창문을 연 거 이해해요. 이 드라마는 사건을 쌓지 않고 하루를 쌓아요. 그게 로맨스보다 오래 남더라고요.",
+      "en": "I get why you opened the window. This show stacks days, not incidents. That lasts longer than the romance.",
+      "tr": "Pencereyi açmanı anlıyorum. Bu dizi olay değil gün yığıyor. Aşktan uzun kalıyor."
+    },
+    {
+      "kim": "sofia.seriesbr",
+      "hedef": "dimas.nonton",
+      "tur": "movie",
+      "tmdb_id": 94329,
+      "metin": "Corredor sem discurso. Aqui a gente também cansa de ação que explica o prédio. Ombro, parede, respiração. Chega.",
+      "en": "A hallway with no speech. We also get tired of action that explains the building. Shoulder, wall, breath. Enough.",
+      "tr": "Nutuksuz koridor. Bina anlatan aksiyondan biz de yoruluyoruz. Omuz, duvar, nefes. Yeter."
+    },
+    {
+      "kim": "camille.ecran",
+      "hedef": "lena.serie",
+      "tur": "movie",
+      "tmdb_id": 582,
+      "metin": "Das Leben der Anderen me laisse une pièce trop propre. Le rideau, le micro, la pièce d'à côté. Je revois ça quand je n'ai plus envie de dialogues malins.",
+      "en": "The Lives of Others leaves me a room that is too clean. The curtain, the mic, the room next door. I put it on when I no longer want clever dialogue.",
+      "tr": "Başkalarının Hayatı bende fazla temiz bir oda bırakıyor. Perde, mikrofon, yandaki oda. Zekice diyalog istemeyince bunu açıyorum."
+    },
+    {
+      "kim": "rafi.screen",
+      "hedef": "aanya.screens",
+      "tur": "tv",
+      "tmdb_id": 79352,
+      "metin": "সেক্রেড গেমস আমিও রাতে দেখি, দিনে না। শহরটা পর্যটকের নয়। গান কম, সিঁড়ি বেশি। শেষ পর্যন্ত কে যেন সব সময় এক ধাপ উপরে।",
+      "en": "I also watch Sacred Games at night, not in the day. The city is not for tourists. Fewer songs, more stairs. By the end someone is always one step above.",
+      "tr": "Sacred Games'i ben de gece izlerim, gündüz değil. Kent turistlik değil. Şarkı az, merdiven çok. Sona doğru biri hep bir basamak yukarıda."
+    }
+  ],
+  "ek": [
+    {"ad": "daria.serial", "tur": "movie", "tmdb_id": 1398, "durum": "bitirdim", "oran": 1, "puan": 10, "platform": "MUBI"},
+    {"ad": "daria.serial", "tur": "movie", "tmdb_id": 429174, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "daria.serial", "tur": "movie", "tmdb_id": 78182, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "MUBI"},
+    {"ad": "daria.serial", "tur": "movie", "tmdb_id": 38360, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "zara.dramay", "tur": "movie", "tmdb_id": 70067, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "YouTube"},
+    {"ad": "zara.dramay", "tur": "movie", "tmdb_id": 512096, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "Netflix"},
+    {"ad": "zara.dramay", "tur": "movie", "tmdb_id": 23717, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "YouTube"},
+    {"ad": "minh.phim", "tur": "movie", "tmdb_id": 36266, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "minh.phim", "tur": "movie", "tmdb_id": 544812, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "MUBI"},
+    {"ad": "minh.phim", "tur": "movie", "tmdb_id": 543294, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "Netflix"},
+    {"ad": "minh.phim", "tur": "movie", "tmdb_id": 505192, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "rafi.screen", "tur": "movie", "tmdb_id": 72958, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "rafi.screen", "tur": "movie", "tmdb_id": 133479, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "MUBI"},
+    {"ad": "rafi.screen", "tur": "movie", "tmdb_id": 592814, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "MUBI"},
+    {"ad": "rafi.screen", "tur": "movie", "tmdb_id": 41053, "durum": "bitirdim", "oran": 1, "puan": 10, "platform": "YouTube"},
+    {"ad": "aanya.screens", "tur": "movie", "tmdb_id": 41053, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "Prime Video"},
+    {"ad": "aanya.screens", "tur": "movie", "tmdb_id": 80484, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "Prime Video"},
+    {"ad": "aanya.screens", "tur": "movie", "tmdb_id": 19666, "durum": "bitirdim", "oran": 1, "puan": 8, "platform": "Prime Video"},
+    {"ad": "aanya.screens", "tur": "movie", "tmdb_id": 534780, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "Netflix"},
+    {"ad": "jiwon.drama", "tur": "movie", "tmdb_id": 491584, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "jiwon.drama", "tur": "movie", "tmdb_id": 290098, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "Netflix"},
+    {"ad": "yuki.dorama", "tur": "movie", "tmdb_id": 505192, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "MUBI"},
+    {"ad": "miles.watches", "tur": "tv", "tmdb_id": 60059, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "Netflix"},
+    {"ad": "jiwon.drama", "tur": "tv", "tmdb_id": 76662, "durum": "bitirdim", "oran": 1, "puan": 9, "platform": "Netflix"}
+  ]
+}

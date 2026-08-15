@@ -1,6 +1,41 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-15 — 🚀 TOHUM HESAPLAR GÜÇLENDİ (takip + yanıt + beğeni)
+15 intl hesap birbirini takip ediyor (daria 0→14 takipçi). Her kök gönderiye
+6 tohum beğenisi; 30 spoiler’sız yanıt (ana dil + EN/TR, diğer 13 Argos).
+İnce kütüphanelere doğrulanmış TMDB id ile ek film (Stalker, Bol, Cyclo…).
+Bildirim yok (ham SQL). alcelik takip/yanıt/beğeni 0. API yeniden başlatılmadı.
+Betik: `intl_guclendir.js`.
+Kanıt: `GET /api/profil/daria.serial` istatistik takipci=14, toplam_begeni=30;
+lena Dark gönderisine miles+daria yanıtı; çeviri 16 dil.
+
+## 2026-08-15 — 🚀 MD.58 NGINX @spa: SOFT 404 KAPANDI (yalnız nginx, kod zaten canlıydı)
+Uygulanan: `location / { try_files $uri $uri/ @spa; }` + yeni `location @spa`
+(`error_page 418 = @og` · `if ($og_bot) { return 418; }` · `try_files
+/index.html =404`). **Canlı conf'taki blok parçadaki gibi `try_files $uri
+/index.html` değil, `try_files $uri $uri/ /index.html` idi — `$uri/` korundu.**
+
+ÖN KOŞULLAR UYGULAMADAN ÖNCE KANITLANDI (varsayılmadı): `@og` bloğunda
+`proxy_intercept_errors` YOK · `server.js`te `BOT_ROTALARI` var · sunucunun
+içinden `curl 127.0.0.1:8500/og/boyle-bir-sayfa-yok` → **404**,
+`/og/ayarlar` → **200**. Yedek `/etc/nginx/sites-available/dizijpg.com.yedek-20260815`;
+geri alma tek satır (`if ($og_bot)` sil + reload).
+
+DOĞRULAMA (hepsi canlı curl): bot+olmayan yol **404** + `noindex,follow` ·
+bot+`/ayarlar` 200 · **insan+olmayan yol 200 kabuk (davranış değişmedi)** ·
+`/kullanici/alcelik` kabuk · **bot+`flutter_bootstrap.js` 200** (bu kırılsaydı
+Googlebot sayfayı hiç render edemezdi) · SSR `<article>` 7 · ana sayfa 60 ve
+`/gozat` 96 iç bağlantı · api saglik + robots + sitemap + sitemap-bolum-1 +
+IndexNow anahtarı 200.
+
+### ⬜ AÇIK KALAN: 58b — soft 404'ün ikinci vakası
+`/icerik/tv/99999999` (bot) **hâlâ 200**. Yol bilinen rota desenine uyduğu için
+nginx regex bloğuyla doğrudan `@og`'a gidiyor; Node TMDB'de bulamayınca boş
+başlıklı sayfa üretiyor. `noindex,follow` var → İNDEKSLENMİYOR, ama Google
+"Soft 404" raporlar ve tarama bütçesi yanar. Çözüm Node tarafında: `ogSayfa()`
+kayıt yoksa 404 dönmeli. md.58 bunu KAPSAMIYORDU.
+
 ## 2026-08-15 — 🚀 TOHUM AVATAR: KARAKTER KARESİ
 15 intl hesabın düz renk PNG’si TMDB karakter/oyuncu karesiyle değişti
 (1:1 800px JPEG, yeni dosya adı — CDN immutable eski rengi tutmasın).
