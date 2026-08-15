@@ -216,8 +216,8 @@ void main() {
       await t.pumpWidget(_sar(const AramaDugmeleri(kullaniciAdi: 'alcelik')));
       await t.pumpAndSettle();
       final pasif = _ikonRengi(t, 'sohbet-sesli-ara');
-      expect(pasif, DiziRenkler.metin38);
-      expect(pasif, isNot(DiziRenkler.metin));
+      expect(pasif, DiziRenkler.metin);
+      expect(pasif, isNot(DiziRenkler.sariMetin));
     });
 
     testWidgets('pasif düğme DOKUNUŞU ALIR ve hedefi >= 44 dp', (t) async {
@@ -331,7 +331,7 @@ void main() {
       await t.pumpAndSettle();
 
       expect(find.byKey(const Key('sohbet-sesli-ara')), findsOneWidget);
-      expect(_ikonRengi(t, 'sohbet-sesli-ara'), DiziRenkler.metin);
+      expect(_ikonRengi(t, 'sohbet-sesli-ara'), DiziRenkler.sariMetin);
       // Karşılıklı takip sorgusu eskisi gibi ATILIYOR.
       expect(_istekSayisi, greaterThanOrEqualTo(1));
 

@@ -687,10 +687,7 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
             Container(
               color: Colors.black45,
               child: const Center(
-                child: Icon(
-                  Icons.visibility_off_outlined,
-                  color: Colors.white70,
-                ),
+                child: Icon(Icons.visibility_off_outlined, color: Colors.white),
               ),
             ),
           // Dokunuş katmanı EN ÜSTTE. Web'de VideoPlayer HtmlElementView
@@ -1702,7 +1699,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
               child: Icon(
                 Icons.play_arrow_rounded,
                 size: 88,
-                color: Colors.white70,
+                color: Colors.white,
               ),
             ),
           ),
@@ -1724,12 +1721,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     const Icon(
                       Icons.visibility_off_outlined,
                       size: 44,
-                      color: Colors.white70,
+                      color: Colors.white,
                     ),
                     const SizedBox(height: 10),
                     Text(
                       'Spoiler olabilir — dokun ve gör'.c,
-                      style: const TextStyle(color: Colors.white70),
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ],
                 ),
@@ -1866,7 +1863,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                 ),
-                                side: const BorderSide(color: Colors.white70),
+                                side: const BorderSide(color: Colors.white),
                               ),
                               child: Text(
                                 'Takip Et'.c,
@@ -1920,7 +1917,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
                       Text(
                         '${_sure(d.value.position)} / ${_sure(d.value.duration)}',
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: Colors.white,
                           fontSize: 12,
                         ),
                       ),
@@ -1937,15 +1934,13 @@ class _ReelSayfaState extends State<_ReelSayfa>
                     children: [
                       for (var i = 0; i < _medya.length; i++)
                         Container(
-                          width: 7,
-                          height: 7,
+                          width: i == _medyaSayfa ? 8 : 5,
+                          height: i == _medyaSayfa ? 8 : 5,
                           margin: const EdgeInsets.symmetric(horizontal: 3),
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: i == _medyaSayfa
-                                ? Colors.white
-                                : Colors.white38,
-                            boxShadow: const [
+                            color: Colors.white,
+                            boxShadow: [
                               BoxShadow(color: Colors.black45, blurRadius: 3),
                             ],
                           ),
@@ -1971,8 +1966,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
               // kullanıcıyı yanıltırdı.
               _ReelsDugme(
                 ikon: Icons.remove_red_eye_outlined,
-                renk: benimGonderi ? DiziRenkler.sari : Colors.white70,
-                etiketRenk: Colors.white70,
+                renk: benimGonderi ? DiziRenkler.sari : Colors.white,
+                etiketRenk: Colors.white,
                 etiket: '${(y['goruntulenme'] as num?)?.toInt() ?? 0}',
                 onTap: benimGonderi
                     ? () => GoRouter.of(
@@ -2145,7 +2140,7 @@ class _ReelsMetniState extends State<ReelsMetni> {
                 Text(
                   'devamı'.c,
                   style: stil.copyWith(
-                    color: Colors.white.withValues(alpha: 0.75),
+                    color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -2571,7 +2566,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
               : Icon(
                   ikon,
                   size: 22,
-                  color: kapali ? DiziRenkler.metin24 : DiziRenkler.sari,
+                  color: kapali ? DiziRenkler.metin : DiziRenkler.sari,
                 ),
         ),
       ),
@@ -2768,7 +2763,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                                     Icon(
                                       Icons.forum_outlined,
                                       size: 34,
-                                      color: DiziRenkler.metin24,
+                                      color: DiziRenkler.metin,
                                     ),
                                     const SizedBox(height: 8),
                                     Text(

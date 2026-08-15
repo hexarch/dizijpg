@@ -195,7 +195,7 @@ void main() {
     expect(find.byKey(const Key('sohbet-sesli-ara')), findsOneWidget);
     expect(AramaServisi.kullanilabilir, isFalse);
     expect(AramaServisi.yakindaModu, isTrue);
-    expect(_ikonRengi(t, 'sohbet-sesli-ara'), DiziRenkler.metin38);
+    expect(_ikonRengi(t, 'sohbet-sesli-ara'), DiziRenkler.metin);
   });
 
   testWidgets('WEB: arama düğmeleri hiç çizilmez', (t) async {
@@ -283,7 +283,7 @@ void main() {
       findsOneWidget,
       reason: 'kendi tercihi kapalıyken düğme GİZLENMEMELİ',
     );
-    // Pasiflik görsel: soluk renk (metin38), aktif hâl metin rengini kullanır.
+    // Pasiflik görsel: kapalı = tema metni, açık = marka sarısı (gri yok).
     final kapali = _ikonRengi(t, 'sohbet-sesli-ara');
 
     AramaServisi.ayariKur(_buz());

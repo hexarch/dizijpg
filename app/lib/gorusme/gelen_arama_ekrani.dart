@@ -206,7 +206,7 @@ class _GelenAramaSayfasiState extends State<GelenAramaSayfasi> {
                       Icon(
                         goruntulu ? Icons.videocam : Icons.call,
                         size: 18,
-                        color: Colors.white70,
+                        color: Colors.white,
                       ),
                       const SizedBox(width: 6),
                       // Flexible: uzun çeviri dar ekranda taşmak yerine sarar
@@ -215,7 +215,7 @@ class _GelenAramaSayfasiState extends State<GelenAramaSayfasi> {
                         child: Text(
                           goruntulu ? 'Görüntülü arama'.c : 'Sesli arama'.c,
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white,
                             fontSize: 15,
                           ),
                         ),

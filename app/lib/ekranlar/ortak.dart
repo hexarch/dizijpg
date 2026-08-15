@@ -418,12 +418,12 @@ class _AkisMedyaState extends State<AkisMedya> {
                   children: [
                     for (var i = 0; i < widget.urller.length; i++)
                       Container(
-                        width: 6,
-                        height: 6,
+                        width: i == _sayfa ? 8 : 5,
+                        height: i == _sayfa ? 8 : 5,
                         margin: const EdgeInsets.symmetric(horizontal: 3),
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: i == _sayfa ? Colors.white : Colors.white38,
+                          color: Colors.white,
                         ),
                       ),
                   ],
@@ -599,11 +599,7 @@ class _AkisVideoState extends State<AkisVideo> {
     Widget govde;
     if (_hata) {
       govde = const Center(
-        child: Icon(
-          Icons.videocam_off_outlined,
-          size: 44,
-          color: Colors.white38,
-        ),
+        child: Icon(Icons.videocam_off_outlined, size: 44, color: Colors.white),
       );
     } else if (d == null) {
       // Henüz kurulmadı: siyah duraklatılmış kapak
@@ -627,7 +623,7 @@ class _AkisVideoState extends State<AkisVideo> {
                 child: Icon(
                   Icons.play_circle_outline,
                   size: 52,
-                  color: Colors.white70,
+                  color: Colors.white,
                 ),
               ),
             if (v.isPlaying)
@@ -1104,7 +1100,7 @@ class PosterKarti extends StatelessWidget {
                           color: DiziRenkler.kart,
                           child: Icon(
                             Icons.movie,
-                            color: DiziRenkler.metin24,
+                            color: DiziRenkler.metin,
                             size: 40,
                           ),
                         )
@@ -1118,7 +1114,7 @@ class PosterKarti extends StatelessWidget {
                             color: DiziRenkler.kart,
                             child: Icon(
                               Icons.broken_image,
-                              color: DiziRenkler.metin24,
+                              color: DiziRenkler.metin,
                             ),
                           ),
                         ),
@@ -2401,7 +2397,7 @@ class UcNoktaMenu extends StatelessWidget {
     required this.tur,
     required this.hedefId,
     this.benimMi = false,
-    this.renk = Colors.white70,
+    this.renk = Colors.white,
     this.onEngelle,
   });
 

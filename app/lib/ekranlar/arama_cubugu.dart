@@ -229,7 +229,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.search_off, size: 44, color: DiziRenkler.metin24),
+            Icon(Icons.search_off, size: 44, color: DiziRenkler.metin),
             const SizedBox(height: 10),
             Text(
               'Sonuç bulunamadı'.c,

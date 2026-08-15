@@ -355,7 +355,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                   color: DiziRenkler.kart,
                                   child: Icon(
                                     Icons.person,
-                                    color: DiziRenkler.metin24,
+                                    color: DiziRenkler.metin,
                                   ),
                                 )
                               : CachedNetworkImage(

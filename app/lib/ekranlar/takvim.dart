@@ -253,7 +253,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
               Icon(
                 Icons.calendar_month_outlined,
                 size: 44,
-                color: DiziRenkler.metin24,
+                color: DiziRenkler.metin,
               ),
               const SizedBox(height: 10),
               Text(

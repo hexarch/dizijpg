@@ -1,6 +1,15 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.58.0+106 (gri yazı/ikon yok)
+İkincil tonlar (`metin70/54/38`) tam `metin` (koyu = beyaz). Tema ikon,
+ipucu, ListTile, TabBar ve seçili olmayan alt çubuk ikonu da metin.
+Sarı vurgu ve sarı-üstü-siyah aynı. Ayırıcılar `metin24` kaldı. Backend yok.
+`main.4dc03c679338.dart.js` (eski `eaaf14be161f` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.58.0+106 · giriş+profilim
+testkullanici · hashed JS `immutable` + `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB 1.57.0+105 (keşfet oynatma + takvim yazı rengi)
 Keşfet ızgarası görünür videolardan izlenmesi en yüksek olanı oynatır;
 oynayan karo PointerInterceptor ile tıklanır. Takvim gri yazıları `metin`

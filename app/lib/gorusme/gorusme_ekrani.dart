@@ -398,7 +398,7 @@ class _GorusmeEkraniState extends State<GorusmeEkrani> {
                       Text(
                         _durumMetni,
                         style: const TextStyle(
-                          color: Colors.white70,
+                          color: Colors.white,
                           fontSize: 15,
                         ),
                       ),
@@ -441,7 +441,7 @@ class _GorusmeEkraniState extends State<GorusmeEkrani> {
                                     color: Colors.black45,
                                     child: Icon(
                                       Icons.videocam_off,
-                                      color: Colors.white54,
+                                      color: Colors.white,
                                     ),
                                   ),
                           ),

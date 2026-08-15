@@ -1255,7 +1255,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                     child: foto == null
                                         ? Icon(
                                             Icons.person,
-                                            color: DiziRenkler.metin24,
+                                            color: DiziRenkler.metin,
                                           )
                                         : null,
                                   ),
@@ -1322,7 +1322,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                     child: foto == null
                                         ? Icon(
                                             Icons.person,
-                                            color: DiziRenkler.metin24,
+                                            color: DiziRenkler.metin,
                                           )
                                         : null,
                                   ),
@@ -1820,7 +1820,7 @@ class _BolumSatiri extends StatelessWidget {
                 child: gorsel == null
                     ? Container(
                         color: DiziRenkler.koyuGri,
-                        child: Icon(Icons.tv, color: DiziRenkler.metin24),
+                        child: Icon(Icons.tv, color: DiziRenkler.metin),
                       )
                     : CachedNetworkImage(
                         imageUrl: gorsel,
@@ -1858,7 +1858,7 @@ class _BolumSatiri extends StatelessWidget {
               onPressed: izlendiToggle,
               icon: Icon(
                 izlendi ? Icons.check_circle : Icons.radio_button_unchecked,
-                color: izlendi ? DiziRenkler.sariMetin : DiziRenkler.metin24,
+                color: izlendi ? DiziRenkler.sariMetin : DiziRenkler.metin,
                 size: 26,
               ),
             ),

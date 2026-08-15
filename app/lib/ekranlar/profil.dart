@@ -1603,16 +1603,13 @@ class _IzlenenlerKartiState extends State<_IzlenenlerKarti> {
                           ),
                         ),
                         const Spacer(),
-                        const Icon(Icons.chevron_right, color: Colors.white70),
+                        const Icon(Icons.chevron_right, color: Colors.white),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Text(
                       '{} içerik · otomatik'.cf([widget.ogeler.length]),
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
                     ),
                   ],
                 ),

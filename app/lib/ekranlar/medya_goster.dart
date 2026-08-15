@@ -84,7 +84,7 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                       errorWidget: (_, __, ___) => const Icon(
                         Icons.broken_image_outlined,
                         size: 48,
-                        color: Colors.white38,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -195,11 +195,7 @@ class _TamVideoState extends State<_TamVideo> {
     final d = _d;
     if (_hata != null) {
       return const Center(
-        child: Icon(
-          Icons.videocam_off_outlined,
-          size: 48,
-          color: Colors.white38,
-        ),
+        child: Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
       );
     }
     if (d == null) {
@@ -224,7 +220,7 @@ class _TamVideoState extends State<_TamVideo> {
             const Icon(
               Icons.play_circle_outline,
               size: 72,
-              color: Colors.white70,
+              color: Colors.white,
             ),
           // Altyazı: alt kontrol çubuğunun ÜSTÜNDE, sol altta. Çubukla
           // çakışmasın diye bottom=86 (çubuk ~70px + boşluk).
@@ -285,7 +281,7 @@ class _TamVideoState extends State<_TamVideo> {
                         Text(
                           '${_sure(d.value.position)} / ${_sure(d.value.duration)}',
                           style: const TextStyle(
-                            color: Colors.white70,
+                            color: Colors.white,
                             fontSize: 12,
                           ),
                         ),

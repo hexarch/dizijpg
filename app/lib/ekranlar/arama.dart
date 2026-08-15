@@ -378,7 +378,7 @@ class _KisiKarti extends StatelessWidget {
               child: foto == null
                   ? Container(
                       color: DiziRenkler.kart,
-                      child: Icon(Icons.person, color: DiziRenkler.metin24),
+                      child: Icon(Icons.person, color: DiziRenkler.metin),
                     )
                   : CachedNetworkImage(
                       imageUrl: foto,
@@ -387,7 +387,7 @@ class _KisiKarti extends StatelessWidget {
                       width: double.infinity,
                       errorWidget: (_, _, _) => Container(
                         color: DiziRenkler.kart,
-                        child: Icon(Icons.person, color: DiziRenkler.metin24),
+                        child: Icon(Icons.person, color: DiziRenkler.metin),
                       ),
                     ),
             ),

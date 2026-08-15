@@ -923,7 +923,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                   ikon,
                   size: 22,
                   color: kapali
-                      ? DiziRenkler.metin24
+                      ? DiziRenkler.metin
                       : (vurgulu ? DiziRenkler.sari : DiziRenkler.sariMetin),
                 ),
         ),
@@ -1895,10 +1895,7 @@ class _MesajBaloncugu extends StatelessWidget {
                       }),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: yaziRengi.withValues(alpha: 0.75),
-                      ),
+                      style: TextStyle(fontSize: 12, color: yaziRengi),
                     ),
                   ),
                 // Sesli mesaj
@@ -2029,7 +2026,7 @@ class _MesajBaloncugu extends StatelessWidget {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 11,
-                                        color: yaziRengi.withValues(alpha: 0.8),
+                                        color: yaziRengi,
                                       ),
                                     ),
                                   ],
@@ -2096,7 +2093,7 @@ class _MesajBaloncugu extends StatelessWidget {
                             Icon(
                               Icons.chevron_right,
                               size: 16,
-                              color: yaziRengi.withValues(alpha: 0.6),
+                              color: yaziRengi,
                             ),
                           ],
                         ),
@@ -2122,7 +2119,7 @@ class _MesajBaloncugu extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontStyle: FontStyle.italic,
-                              color: yaziRengi.withValues(alpha: 0.5),
+                              color: yaziRengi,
                             ),
                           ),
                           if (benim) const SizedBox(width: 5),
@@ -2137,7 +2134,7 @@ class _MesajBaloncugu extends StatelessWidget {
                             size: 13,
                             color: m['okundu'] == true
                                 ? const Color(0xFF1976D2)
-                                : yaziRengi.withValues(alpha: 0.55),
+                                : yaziRengi,
                           ),
                       ],
                     ),
@@ -2238,7 +2235,7 @@ class _TepkiRozeti extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
-                  color: metinRengi.withValues(alpha: 0.75),
+                  color: metinRengi,
                 ),
               ),
             ],

@@ -133,7 +133,7 @@ class SurumKapisiKatmani extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     'Devam etmek için dizi.jpg\'in yeni sürümünü yükle.'.c,
-                    style: metin.bodyMedium?.copyWith(color: Colors.white70),
+                    style: metin.bodyMedium?.copyWith(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                   // Yöneticinin panelden yazdığı not — çeviriden geçmez,
@@ -148,7 +148,7 @@ class SurumKapisiKatmani extends StatelessWidget {
                       ),
                       child: Text(
                         not!,
-                        style: metin.bodySmall?.copyWith(color: Colors.white70),
+                        style: metin.bodySmall?.copyWith(color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -173,7 +173,7 @@ class SurumKapisiKatmani extends StatelessWidget {
                       onPressed: onErtele,
                       child: Text(
                         'Daha sonra'.c,
-                        style: const TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: Colors.white),
                       ),
                     ),
                   ],

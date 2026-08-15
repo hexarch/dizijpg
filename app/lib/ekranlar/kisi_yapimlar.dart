@@ -233,7 +233,7 @@ class YapimSatiri extends StatelessWidget {
                         child: Icon(
                           Icons.image_not_supported_outlined,
                           size: 18,
-                          color: DiziRenkler.metin24,
+                          color: DiziRenkler.metin,
                         ),
                       )
                     : CachedNetworkImage(

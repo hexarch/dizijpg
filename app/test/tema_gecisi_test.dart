@@ -147,7 +147,7 @@ void main() {
     );
     expect(
       _zenginRengi(t),
-      Colors.black54,
+      const Color(0xFF17171A),
       reason: 'RichText eski temada kaldı',
     );
 
@@ -177,7 +177,7 @@ void main() {
     );
     expect(_metinRengi(t, 'Başlık'), Colors.white);
     expect(_metinRengi(t, 'rozet'), DiziRenkler.sari);
-    expect(_zenginRengi(t), Colors.white70);
+    expect(_zenginRengi(t), Colors.white);
   });
 
   testWidgets('açık temada metin zemine karışmıyor (kontrast kontrolü)', (

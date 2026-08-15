@@ -71,9 +71,13 @@ class DiziRenkler {
 
   // --- Metin/ikon tonları (Colors.whiteXX yerine BUNLAR kullanılır) ---
   static Color get metin => acik ? const Color(0xFF17171A) : Colors.white;
-  static Color get metin70 => acik ? Colors.black54 : Colors.white70;
-  static Color get metin54 => acik ? Colors.black45 : Colors.white54;
-  static Color get metin38 => acik ? Colors.black38 : Colors.white38;
+
+  /// Kullanıcı (16 Ağu 2026): gri yazı/ikon yok. İkincil tonlar da tam [metin]
+  /// (koyu temada beyaz, açıkta koyu). `metin24`/`metin12` yalnız ayırıcı,
+  /// çerçeve ve bindirme için kalır.
+  static Color get metin70 => metin;
+  static Color get metin54 => metin;
+  static Color get metin38 => metin;
   static Color get metin24 => acik ? Colors.black26 : Colors.white24;
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
 
@@ -293,9 +297,8 @@ ThemeData diziTema({required bool acik}) {
             ? const Color(0xFFE2E2E6)
             : const Color(0xFF2A2A2F),
         onSurface: acik ? const Color(0xFF17171A) : Colors.white,
-        onSurfaceVariant: acik
-            ? const Color(0xFF54545C)
-            : const Color(0xFFB9B9BF),
+        // İkincil yazı/ikon da tam metin — gri etiket/ikon kalmasın.
+        onSurfaceVariant: acik ? const Color(0xFF17171A) : Colors.white,
         outline: acik ? const Color(0xFFC9C9CF) : const Color(0xFF3A3A40),
       );
 
@@ -309,10 +312,22 @@ ThemeData diziTema({required bool acik}) {
   final kart = acik ? Colors.white : const Color(0xFF1F1F23);
   final ikincil = acik ? const Color(0xFFECECEF) : const Color(0xFF17171A);
   final metin = acik ? const Color(0xFF17171A) : Colors.white;
-  final metin70 = acik ? Colors.black54 : Colors.white70;
 
   return taban.copyWith(
     scaffoldBackgroundColor: zemin,
+    iconTheme: IconThemeData(color: metin),
+    primaryIconTheme: IconThemeData(color: metin),
+    hintColor: metin,
+    listTileTheme: ListTileThemeData(
+      iconColor: metin,
+      textColor: metin,
+      subtitleTextStyle: TextStyle(fontFamily: 'Poppins', color: metin),
+    ),
+    tabBarTheme: TabBarThemeData(
+      labelColor: metin,
+      unselectedLabelColor: metin,
+      indicatorColor: sari,
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: zemin,
       foregroundColor: metin,
@@ -338,7 +353,7 @@ ThemeData diziTema({required bool acik}) {
       indicatorColor: sari,
       iconTheme: WidgetStateProperty.resolveWith(
         (s) => IconThemeData(
-          color: s.contains(WidgetState.selected) ? Colors.black : metin70,
+          color: s.contains(WidgetState.selected) ? Colors.black : metin,
         ),
       ),
       labelTextStyle: WidgetStateProperty.all(
@@ -346,7 +361,7 @@ ThemeData diziTema({required bool acik}) {
           fontFamily: 'Poppins',
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: metin70,
+          color: metin,
         ),
       ),
     ),
@@ -404,7 +419,7 @@ ThemeData diziTema({required bool acik}) {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: sari, width: 2),
       ),
-      hintStyle: TextStyle(color: acik ? Colors.black38 : Colors.white38),
+      hintStyle: TextStyle(color: metin),
     ),
     dividerTheme: DividerThemeData(
       color: acik ? const Color(0xFFE2E2E6) : const Color(0xFF2A2A2F),

@@ -1247,7 +1247,7 @@ class _VideoOynaticiState extends State<VideoOynatici> {
                       const Icon(
                         Icons.play_circle_outline,
                         size: 44,
-                        color: Colors.white70,
+                        color: Colors.white,
                       ),
                     if (widget.tamEkran != null)
                       Positioned(
