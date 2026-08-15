@@ -367,11 +367,21 @@ ThemeData diziTema({required bool acik}) {
       side: BorderSide.none,
       backgroundColor: kart,
       selectedColor: sari,
-      // Seçili çip sarı zeminli: yazı siyah; değilse tema metni
-      labelStyle: WidgetStateTextStyle.resolveWith(
-        (s) => TextStyle(
-          fontFamily: 'Poppins',
-          color: s.contains(WidgetState.selected) ? Colors.black : metin,
+      // Seçili çip sarı zeminli: yazı siyah; değilse tema metni.
+      //
+      // DİKKAT — durum-duyarlılık STİLDE DEĞİL RENKTE olmalı (15 Ağu 2026):
+      // Burada eskiden `WidgetStateTextStyle.resolveWith(...)` vardı ve çip
+      // yazıları KOYU TEMADA SİYAH çıkıyordu (kullanıcı bildirdi: Gözat'taki
+      // tür çipleri). Sebep, Flutter'ın `RawChip` kodunun stilin tamamını
+      // değil YALNIZCA rengini durum-duyarlı çözmesi:
+      //     resolveAs<Color?>(effectiveLabelStyle.color, states)
+      // `WidgetStateTextStyle`ın taban `color` alanı null olduğu için sonuç
+      // null kalıyor, metin de varsayılan SİYAHA düşüyordu.
+      // Regresyon testi: test/gozat_tur_cipi_renk_test.dart
+      labelStyle: TextStyle(
+        fontFamily: 'Poppins',
+        color: WidgetStateColor.resolveWith(
+          (s) => s.contains(WidgetState.selected) ? Colors.black : metin,
         ),
       ),
     ),

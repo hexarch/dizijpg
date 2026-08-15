@@ -2235,12 +2235,42 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
   };
 }
 
+// md.58b (15 Agu 2026) — SOFT 404'UN IKINCI VAKASI.
+// md.58 (nginx @spa) yalniz BILINMEYEN YOLLARI 404 yapti. Bilinen rota
+// desenine uyan ama KAYDI OLMAYAN adresler (/icerik/tv/99999999) hala 200
+// donuyordu: bos baslikli sayfa + noindex. Indekse girmiyordu ama Google
+// bunu "Soft 404" olarak raporluyor ve tarama butcesi yakiyor.
+//
+// AYRIM KRITIK: "kayit yok" ile "TMDB'ye ulasilamadi" ayni sey DEGIL.
+// Gecici bir TMDB arizasinda 404 donersek Google var olan sayfalari
+// indeksten dusurur. tmdbGetir hatayi zaten ayiriyor: TMDB 404 -> status 404,
+// ag/5xx/zaman asimi -> status 502. Yalniz 404 burada 404'e cevrilir.
+//
+// Sayfanin kendisi yakala-tumu 404'uyle AYNI kalitede: baslik + aciklama +
+// cikis baglantilari. Bos bir "dizi.jpg" sayfasi hem kullaniciya hem bota
+// olu son demektir.
+function ogYok(res, url, aciklama) {
+  return res.status(404).type('html').send(ogSayfa({
+    baslik: 'Sayfa bulunamadı — dizi.jpg',
+    h1: 'Sayfa bulunamadı',
+    aciklama: aciklama
+      || 'Aradığın sayfa dizi.jpg üzerinde yok ya da kaldırılmış. '
+      + 'Ana sayfadan dizileri ve filmleri keşfedebilirsin.',
+    url,
+    canonical: url,
+    indexle: false,
+    govde: seoBaglantiListesi('Buradan devam edebilirsin', [
+      { ad: 'dizi.jpg ana sayfa', yol: '/' }, ...SEO_KESIF_HUB,
+    ]),
+  }));
+}
+
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
   const id = parseInt(tmdbId, 10);
   const url = `https://dizijpg.com/icerik/${tur}/${tmdbId}`;
   if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(id)) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    return ogYok(res, url);
   }
   try {
     // credits/similar tek istekte gelir: iç bağlantılar bu maddenin gizli değeri,
@@ -2277,8 +2307,11 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       govde: degerlendirmeBlok + oyuncuBlok + benzerBlok,
       jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
-  } catch {
+  } catch (e) {
     // TMDB'de bulunamadı/erişilemedi -> indekse girmesin (soft 404).
+    if (e && e.status === 404) return ogYok(res, url);
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
@@ -2421,7 +2454,7 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
   const kid = parseInt(req.params.id, 10);
   const url = `https://dizijpg.com/kisi/${req.params.id}`;
   if (!gecerliTmdb(kid)) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    return ogYok(res, url);
   }
   try {
     // TEK TMDB isteği: `combined_credits` iç bağlantıları, `translations`
@@ -2503,7 +2536,10 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
         gorsel: tmdbGorsel(v.profile_path, 'w500'), v, yapimlar,
       }),
     }));
-  } catch {
+  } catch (e) {
+    if (e && e.status === 404) return ogYok(res, url);
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
@@ -2525,7 +2561,7 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const url = `https://dizijpg.com/gonderi/${req.params.id}`;
   if (!gecerliTmdb(id)) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    return ogYok(res, url);
   }
   try {
     // GİZLİLİK (6 Ağu 2026 denetimi) — iki sızıntı burada kapatıldı:
@@ -2547,6 +2583,14 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
          AND ${SEO_GIZLI_ICERIK_YOK('y')}`, [id]);
     if (!rows.length) {
       // Gönderi yok / yazarı yasaklı / spoiler / gizlenmiş -> içerik basılmaz.
+      //
+      // md.58b: 404 YALNIZ gerçekten yoksa. Spoiler işaretli ya da gizlenmiş
+      // gönderi KULLANICI için vardır (uygulamada perde arkasında duruyor);
+      // bota "yok" demek yanlış olur. Ayrım için tek satırlık varlık sorgusu —
+      // yalnız bu nadir ıskalama yolunda çalışır.
+      const { rows: mevcut } = await havuz.query(
+        'SELECT 1 FROM yorumlar WHERE id=$1', [id]);
+      if (!mevcut.length) return ogYok(res, url, 'Bu gönderi kaldırılmış.');
       return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
     }
     const y = rows[0];
@@ -2632,7 +2676,10 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
         ],
       },
     }));
-  } catch {
+  } catch (e) {
+    if (e && e.status === 404) return ogYok(res, url);
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
@@ -2779,7 +2826,7 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     || !Number.isInteger(s) || s < 0 || s > 100
     || !Number.isInteger(b) || b < 1 || b > 2000;
   if (gecersiz) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    return ogYok(res, url);
   }
   try {
     // ÜÇ TMDB çağrısı paralel, hepsi 7 gün önbellekli:
@@ -2872,7 +2919,10 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
         bol, seo,
       }),
     }));
-  } catch {
+  } catch (e) {
+    if (e && e.status === 404) return ogYok(res, url);
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));
@@ -2884,7 +2934,7 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const url = `${SITE_KOK}/listeler/${req.params.id}`;
   if (!gecerliTmdb(id)) {
-    return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+    return ogYok(res, url);
   }
   try {
     const { rows } = await havuz.query(
@@ -2892,7 +2942,7 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
          FROM listeler l JOIN kullanicilar k ON k.id = l.kullanici_id
         WHERE l.id = $1 AND NOT k.yasakli`, [id]);
     if (!rows.length || !rows[0].herkese_acik) {
-      return res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+      return ogYok(res, url, 'Bu liste yok ya da sahibi herkese açık yapmamış.');
     }
     const l = rows[0];
     const { rows: ogeler } = await havuz.query(
@@ -2947,7 +2997,10 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
         ],
       } : null,
     }));
-  } catch {
+  } catch (e) {
+    if (e && e.status === 404) return ogYok(res, url);
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
     res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
   }
 }));

@@ -1,0 +1,47 @@
+Play Console sürüm notu — 1.51.0 (99)
+Alpha'daki son yükleme: 86 (1.40.0), 7 Ağustos. Arada 12 derleme birikti
+(86 → 88 → 89 → 90 → 91 → 92 → 93 → 94 → 95 → 96 → 97 → 98 → 99);
+hepsi tek AAB olarak gidiyor. 1.46 notu Play'e hiç yüklenmedi, bu not onu KAPSAR.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama 13 Ağu'da herkeste KAPATILDI.
+⚠ KARAKTER SINIRI: Play "Yenilikler" alanı dil başına 500 karakter.
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır:
+
+<tr-TR>  (470 karakter)
+• Dizi sayfasında TMDB puanına dokun: sezon × bölüm puan ızgarası açılıyor.
+• Aramada artık oyuncu, yönetmen ve yapım şirketi de çıkıyor.
+• Yapım ekibi: yönetmen, senarist, yapımcı ve firma — dokununca açılıyor.
+• Gönderi istatistikleri: erişim, oranlar ve videonun izlenme oranı.
+• İzleyici seviyesi: izledikçe yükseliyor.
+• İki adımlı doğrulama: girişte e-postana kod.
+• Fotoğraf ve videolar küçültülmeden yükleniyor.
+• Daha hızlı açılış ve çok sayıda hata düzeltmesi.
+</tr-TR>
+
+<en-US>  (455 karakter)
+• Tap the TMDB rating on a show to open a season × episode rating grid.
+• Search now finds actors, directors and production companies.
+• Cast and crew: director, writer, producer and studio — tap to open.
+• Post stats: reach, rates, and how much of your video was watched.
+• Viewer level: it rises as you watch.
+• Two-step verification: a code to your email at sign-in.
+• Photos and videos upload without being shrunk.
+• Faster startup and many bug fixes.
+</en-US>
+
+--------------------------------------------------------------------
+KISA LİSTEYE ALINMAYANLAR (yer yok ya da kullanıcı gözle fark etmez)
+* Web yenilemede aynı sayfada kalma (1.49.0+97) — go_router
+  `optionURLReflectsImperativeAPIs` hatası. YALNIZ WEB'i ilgilendiriyor,
+  Play notunda yeri yok.
+* Puan ızgarasının üç turluk boyut ayarı (97 → 98 → 99): kullanıcı için tek
+  özellik, "puan ızgarası" satırı yeterli.
+* PageSpeed işleri (brotli, WebP Accept, SimpleIcons budama, statik açılış
+  ekranı) → "daha hızlı açılış" satırında toplandı.
+* Md. 36 doğum günü ikonu iptal edildi; yalnız uygulama içi kutlama var —
+  1.46 notundaki "doğum gününde kutlama" satırı yer açmak için düşürüldü.
+* Md. 20 Hareketlerim, md. 21 gizlilik anahtarları, md. 24 toplu
+  istatistikler: "gönderi istatistikleri" satırı bunları da kapsıyor.
+* Çeviri (45 dil), migrasyonlar, SEO/sitemap, test artışı, altyapı ve
+  güvenlik işleri: sessiz iş.
+* Md. 37 admin cihaz dağılımı: yalnız yöneticiyi ilgilendiriyor.

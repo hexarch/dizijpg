@@ -431,12 +431,29 @@ Son tur (13 Ağu): md. 29 + 36 + 49 CANLIDA (1.42.0+89), 24 yeni anahtar
     Dokununca `/sirket/:id` / `/kisi/:id`. Play 1.40 `poster_path` yok diye
     şirketi yok sayar — zararsız.
 
-[ ] 58. NGINX @spa — SEO SOFT 404  (14 Ağu, kod hazır, conf uygulanmadı)
+[x] 58. NGINX @spa — SEO SOFT 404  (15 Ağu 2026 CANLIDA)
     Sitemap `/kesfet`+`/gozat`, bölüm haritası, `/kisi` EN biyografi, soft
     404 kodu CANLIDA. Parça: `backend/nginx-seo-20260814.parca.conf`.
-    Canlıda hâlâ `location / { try_files $uri /index.html; }` — botlar
-    olmayan sayfada 200 + SPA alıyor. `try_files $uri @spa;` ayrı dikkatli
-    tur (yanlış conf tüm siteyi kırar).
+    UYGULANDI: `location / { try_files $uri $uri/ @spa; }` + `location @spa`
+    (`error_page 418 = @og; if ($og_bot) { return 418; } try_files
+    /index.html =404;`). Canlı conf'ta blok `try_files $uri $uri/ /index.html`
+    şeklindeydi — parçadaki `$uri/`siz hali DEĞİL; `$uri/` korundu.
+    Ön koşullar uygulamadan ÖNCE kanıtlandı: `@og`'da
+    `proxy_intercept_errors` yok, `server.js`te `BOT_ROTALARI` var,
+    sunucu içinden `127.0.0.1:8500/og/olmayan` → 404, `/og/ayarlar` → 200.
+    Yedek: `/etc/nginx/sites-available/dizijpg.com.yedek-20260815`.
+    DOĞRULANDI (curl): bot+olmayan yol 404 & `noindex,follow` · bot+/ayarlar
+    200 · insan+olmayan yol 200 kabuk · bot+flutter_bootstrap.js 200 ·
+    SSR article 7 / ana sayfa 60 / gozat 96 iç bağlantı · api saglik,
+    robots, sitemap, sitemap-bolum-1, IndexNow hepsi 200.
+
+[ ] 58b. SOFT 404'ÜN İKİNCİ VAKASI — BİLİNEN ROTA + OLMAYAN KAYIT (15 Ağu)
+    `/icerik/tv/99999999` (bot) hâlâ **200** dönüyor: yol bilinen rota
+    desenine uyduğu için nginx regex bloğuyla doğrudan `@og`'a gidiyor,
+    Node TMDB'de bulamayınca BOŞ başlıklı sayfa üretiyor.
+    `noindex,follow` VAR → indekslenmiyor, ama Google yine "Soft 404"
+    raporlar, tarama bütçesi yanar. ÇÖZÜM NGINX DEĞİL NODE: `ogSayfa()`
+    TMDB kaydını bulamazsa 404 döndürmeli. Küçük iş, ayrı tur.
 
 [ ] 59. PROFİL LİSTELERİNİ SÜRÜKLEYEREK SIRALAMA  (ham nottan, 14 Ağu numaralandı)
     Favori diziler, izlediklerim, izliyorum, filmler — kaydırma/sürükleme
@@ -1184,5 +1201,9 @@ Profildeki listeler kaydırma sürükleme ile düzenlenebilir olmalı(favori diz
 
 arama kısmında oyuncu yönetmen senarist şirketler (cartoon network) gibi aramalar yapılabilsin
 → 57 [x] 14 Ağu CANLIDA 1.47.0+95
+
+başka ülkelerden kullanıcı ekle (çeviri 15 dil ile)
+→ [x] 15 Ağu CANLIDA — 15 tohum hesap (id 163–177). Kapak 2.4:1 sinema karesi,
+   film şeridi ~10, listeler 8 öğe, karakter avatar. Şifre yalnız sunucuda.
 
 
