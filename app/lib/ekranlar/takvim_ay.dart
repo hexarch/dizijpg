@@ -76,12 +76,49 @@ const double takvimGezinmeYuksekligiDar = 44;
 /// Dar ekranda ızgara ile alttaki bölüm listesi arasındaki ayırıcı (eski 20).
 const double takvimAyiriciYuksekligiDar = 10;
 
+/// Masaüstü sağ sütunda bir günün başlığı + o günün bölümleri.
+/// [tarih] `YYYY-MM-DD`. Seçili günün kendisi de (boş olsa bile) ilk sıradadır.
+@immutable
+class TakvimGunGrubu {
+  final String tarih;
+  final List<Map<String, dynamic>> bolumler;
+  const TakvimGunGrubu(this.tarih, this.bolumler);
+}
+
+/// Seçili günden ileri: önce seçili gün (bölüm olmasa da), sonra yalnızca
+/// DOLU günler. Boş günler atlanır — 16 Ağustos'un altında 18 Ağustos gelir.
+@visibleForTesting
+List<TakvimGunGrubu> takvimGunDevami(
+  Map<String, List<Map<String, dynamic>>> gunler,
+  String seciliKey,
+) {
+  final sonuc = <TakvimGunGrubu>[
+    TakvimGunGrubu(seciliKey, gunler[seciliKey] ?? const []),
+  ];
+  final sonrakiler =
+      gunler.keys.where((t) => t.compareTo(seciliKey) > 0).toList()..sort();
+  for (final t in sonrakiler) {
+    final liste = gunler[t];
+    if (liste == null || liste.isEmpty) continue;
+    sonuc.add(TakvimGunGrubu(t, liste));
+  }
+  return sonuc;
+}
+
+/// `YYYY-MM-DD` → yerel DateTime (saat yok; parse UTC kayması yapmasın).
+@visibleForTesting
+DateTime takvimTarihCoz(String anahtar) {
+  final p = anahtar.split('-');
+  return DateTime(int.parse(p[0]), int.parse(p[1]), int.parse(p[2]));
+}
+
 /// Ay-takvimi görünümü: bölümler yayın tarihlerine göre ay ızgarasında;
 /// bir güne dokununca o günün bölümleri altta listelenir.
 ///
 /// MASAÜSTÜNDE (genişlik >= [masaustuEsigi]) tek dev ay yerine [masaustuAySayisi]
-/// ay yan yana/alt alta küçük paneller hâlinde, bölüm listesi de sağda ayrı
-/// sütunda gösterilir. Dar ekranda düzen birebir eskisi gibidir.
+/// ay yan yana/alt alta küçük paneller hâlinde, bölüm listesi sağda ayrı
+/// sütunda gösterilir ve seçili günden SONRAKİ dolu günlerle devam eder
+/// (sütun boş kalmasın). Dar ekranda düzen birebir eskisi gibidir.
 class AyTakvimi extends StatefulWidget {
   final List<dynamic> olaylar;
   final Future<void> Function(Map<String, dynamic>) onAc;
@@ -397,42 +434,16 @@ class _AyTakvimiState extends State<AyTakvimi> {
       ),
     );
 
-    // Seçili günün bölümleri (boşsa "sıradaki bölüm" gösterilir)
-    final gunListesi = seciliBolumler.isEmpty
+    // Seçili günün bölümleri.
+    // Masaüstü: sütun boş kalmasın diye sonraki DOLU günler de eklenir.
+    // Mobil: boş günde tek "sıradaki bölüm" kartı (eski davranış).
+    final gunListesi = genis
+        ? _masaustuGunListesi(gunler, yerel)
+        : seciliBolumler.isEmpty
         ? ListView(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
             children: [
-              Text(
-                'Bu gün bölüm yok'.c,
-                style: TextStyle(color: DiziRenkler.metin54),
-              ),
-              // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
-              // yüklemedi" diye tereddüt etmesin.
-              if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      size: 15,
-                      color: DiziRenkler.metin38,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
-                            .c,
-                        style: TextStyle(
-                          color: DiziRenkler.metin38,
-                          fontSize: 12,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+              ..._gunBosUyarisi(gunler, ayKey),
               if (sonrakiOlay != null) ...[
                 const SizedBox(height: 18),
                 Text(
@@ -538,6 +549,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
               children: [
                 // Hangi günün listesi olduğu masaüstünde şart: seçili hücre altı
                 // ayın içinde kaybolabiliyor. Yerelleştirilmiş tam tarih.
+                // Altındaki liste seçili günden SONRAKİ dolu günlerle devam eder.
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
                   child: Text(
@@ -555,6 +567,88 @@ class _AyTakvimiState extends State<AyTakvimi> {
           ),
         ],
       ),
+    );
+  }
+
+  /// Seçili gün boşken gösterilen metin (ayın tamamı boşsa sebebini de söyler).
+  List<Widget> _gunBosUyarisi(
+    Map<String, List<Map<String, dynamic>>> gunler,
+    String ayKey,
+  ) => [
+    Text('Bu gün bölüm yok'.c, style: TextStyle(color: DiziRenkler.metin54)),
+    // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
+    // yüklemedi" diye tereddüt etmesin.
+    if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
+      const SizedBox(height: 8),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.info_outline, size: 15, color: DiziRenkler.metin38),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
+                  .c,
+              style: TextStyle(
+                color: DiziRenkler.metin38,
+                fontSize: 12,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  ];
+
+  /// Masaüstü sağ sütun: seçili gün + sonraki dolu günler (boş gün atlanır).
+  Widget _masaustuGunListesi(
+    Map<String, List<Map<String, dynamic>>> gunler,
+    MaterialLocalizations yerel,
+  ) {
+    final gruplar = takvimGunDevami(gunler, _anahtar(_secili));
+    final cocuklar = <Widget>[];
+    final ilk = gruplar.first;
+    if (ilk.bolumler.isEmpty) {
+      cocuklar.addAll(_gunBosUyarisi(gunler, ilk.tarih.substring(0, 7)));
+    } else {
+      for (final b in ilk.bolumler) {
+        cocuklar.add(_bolumKarti(b));
+      }
+    }
+    for (final g in gruplar.skip(1)) {
+      final tarih = takvimTarihCoz(g.tarih);
+      cocuklar.add(
+        Padding(
+          key: ValueKey('takvim-devam-${g.tarih}'),
+          padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
+          child: InkWell(
+            onTap: () => setState(() => _secili = tarih),
+            borderRadius: BorderRadius.circular(8),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 44),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  yerel.formatFullDate(tarih),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w800,
+                    color: DiziRenkler.metin,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      for (final b in g.bolumler) {
+        cocuklar.add(_bolumKarti(b));
+      }
+    }
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 16),
+      children: cocuklar,
     );
   }
 
