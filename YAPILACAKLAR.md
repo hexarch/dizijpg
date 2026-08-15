@@ -1,17 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-15 — ⬜ SEO: BÖLÜM ARAMASI (45 dil değil, TR önce)
-İstek: "Silo 5. sezon 4. bölüm" (ve 45 dildeki karşılığı) aramasında üst sıra.
-Kanıt (15 Ağu, Googlebot curl): başlık kalıbı TR'de hazır
-(`Silo 2. sezon 4. bölüm: Harmonyum — dizi.jpg`) ama sayfa **noindex**
-(özgün yorum yok). Tüm sitede sitemap-bölüm **2 URL**. Dizi SSR'ında
-**0 bölüm linki**. `?dil=en` başlığı/özeti değiştirmiyor; `lang` hep `tr`;
-hreflang yok. Silo S5E4 TMDB'de yok → boş `noindex` iskelet.
-**Yapılmayacak:** 45 dil × her bölüm için makine çevirisi URL'i (thin content /
-doorway; SEO-PLANI 2.6). Sıra: (1) dizi sayfasına sezon/bölüm linki
-(2) bölüm sayfalarına özgün metin ki indexlensin (3) sonra yalnız dolu
-dillerde `/en/` + hreflang.
+## 2026-08-15 — 🔨 SEO: BÖLÜM ARAMASI (45 dil değil, TR önce)
+İstek: "Silo 5. sezon 4. bölüm" aramasında üst sıra. 45 dil × bölüm URL'i
+YOK (thin content / doorway; SEO-PLANI 2.6).
+**Canlı (API restart gerekmez):** `dizi.jpg.ai` 36 spoiler’sız bölüm yorumu
+(Silo S1–S3E7, BB dönüm noktaları, Squid Game/Dark S1E1). Sitemap-bölüm
+**2 → 37 URL**. Googlebot: Silo S2E4 **index** + yorum gövdesi; Silo S5E4
+**404** + “Sayfa bulunamadı”; S5E4 sitemap’te yok. alcelik kapak/avatar aynı.
+**Bekleniyor — API’yi sen yeniden başlat:** dizi SSR’ı yalnız özgün içerikli
+bölüme link basar (Silo `/icerik/tv/125988` → S2E4 var, S3E8/S5E4 yok).
+`server.js` konteynerde güncel, bellek eski.
+Betik: `seo_bolum_tohum.js`. Test: `seo_bolum_kesif.test.js`.
+
 
 ## 2026-08-15 — 🚀 TOHUM PROFİL GÖRÜNÜMÜ (kapak + şerit + liste)
 15 intl hesabın kapakları yazısız 2.4:1 sinema karesi (yeni dosya adı, CDN

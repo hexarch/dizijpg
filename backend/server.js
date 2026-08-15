@@ -2122,6 +2122,107 @@ function seoBaglantiListesi(baslik, ogeler) {
   return `\n<h2>${htmlKacir(baslik)}</h2>\n<ul>${li}</ul>`;
 }
 
+// Dizi SSR'ına bölüm linki. "[dizi] n. sezon m. bölüm" kuyruğunun keşfi
+// dizi sayfasından başlar; 15 Ağu ölçümünde Silo sayfasında 0 bölüm linki
+// vardı, sitemap-bölüm'de ise tüm sitede 2 URL. Tarama bütçesi için tavan:
+// son N sezonun bölümleri tek tek, daha eski sezonlar yalnız 1. bölüme.
+const SEO_DIZI_SEZON_TAM = 4;
+const SEO_DIZI_BOLUM_TAVAN = 80;
+
+/**
+ * Sezon TMDB yükünden bölüm listesi HTML'i. Saf: TMDB çağırmaz, test edilir.
+ * `sezonlar`: `{ season_number, episodes: [{ episode_number, name }] }[]`
+ * `eskiBaglantilar`: sezon numarası (→ 1. bölüm) veya `{ season_number, episode_number }`.
+ */
+function seoDiziBolumHtml(id, diziAd, sezonlar, eskiBaglantilar = []) {
+  let html = '';
+  let toplam = 0;
+  for (const sz of sezonlar || []) {
+    const sn = sz?.season_number;
+    if (!Number.isInteger(sn) || sn < 1) continue;
+    const ogeler = [];
+    for (const e of sz.episodes || []) {
+      if (!Number.isInteger(e?.episode_number) || e.episode_number < 1) continue;
+      if (toplam >= SEO_DIZI_BOLUM_TAVAN) break;
+      const ad = seoMetin(e.name);
+      ogeler.push({
+        ad: `${sn}. Sezon ${e.episode_number}. Bölüm` + (ad ? ` — ${ad}` : ''),
+        yol: `/dizi/${id}/sezon/${sn}/bolum/${e.episode_number}`,
+      });
+      toplam++;
+    }
+    html += seoBaglantiListesi(`${diziAd} ${sn}. sezon bölümleri`, ogeler);
+    if (toplam >= SEO_DIZI_BOLUM_TAVAN) break;
+  }
+  const eski = (eskiBaglantilar || []).map((x) => {
+    if (Number.isInteger(x) && x > 0) {
+      return { ad: `${x}. Sezon`, yol: `/dizi/${id}/sezon/${x}/bolum/1` };
+    }
+    const sn = x?.season_number;
+    const bn = x?.episode_number;
+    if (!Number.isInteger(sn) || sn < 1 || !Number.isInteger(bn) || bn < 1) return null;
+    return { ad: `${sn}. Sezon`, yol: `/dizi/${id}/sezon/${sn}/bolum/${bn}` };
+  }).filter(Boolean);
+  return html + seoBaglantiListesi(`${diziAd} diğer sezonlar`, eski);
+}
+
+/**
+ * Bu dizide sitemap ile AYNI kuralda indekslenen bölümler.
+ * Dizi sayfasından boş/noindex bölüme link yok (Silo S3E8 tarama tuzağı).
+ */
+async function seoDiziIcerikBolumleri(tmdbId) {
+  const { rows } = await havuz.query(
+    `SELECT sezon, bolum FROM (
+       SELECT y.sezon, y.bolum
+         FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+        WHERE y.tur = 'tv' AND y.tmdb_id = $1
+          AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
+          AND ${SEO_YORUM_KOSUL}
+       UNION
+       SELECT p.sezon, p.bolum
+         FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+        WHERE p.tur = 'tv' AND p.tmdb_id = $1
+          AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
+          AND ${SEO_INCELEME_KOSUL}
+     ) t ORDER BY sezon, bolum`,
+    [tmdbId]);
+  return rows;
+}
+
+/** Dizi OG gövdesi: yalnız özgün içerikli bölümler + TMDB adı (8'li öbek). */
+async function seoDiziBolumGovdesi(id, v) {
+  const icerik = await seoDiziIcerikBolumleri(id);
+  if (!icerik.length) return '';
+  const sezonNolar = [...new Set(icerik.map((r) => r.sezon))]
+    .filter((n) => Number.isInteger(n) && n > 0)
+    .sort((a, b) => a - b);
+  const tamNolar = sezonNolar.slice(-SEO_DIZI_SEZON_TAM);
+  const eskiNolar = sezonNolar.filter((n) => !tamNolar.includes(n));
+  const yollar = tamNolar.map((n) => `/tv/${id}/season/${n}`);
+  const harita = yollar.length
+    ? await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun)
+    : new Map();
+  const sezonVerileri = tamNolar.map((n) => {
+    const s = harita.get(`/tv/${id}/season/${n}`);
+    const adByNo = new Map(
+      (Array.isArray(s?.episodes) ? s.episodes : [])
+        .filter((e) => Number.isInteger(e?.episode_number))
+        .map((e) => [e.episode_number, e.name]));
+    return {
+      season_number: n,
+      episodes: icerik
+        .filter((r) => r.sezon === n)
+        .map((r) => ({ episode_number: r.bolum, name: adByNo.get(r.bolum) })),
+    };
+  });
+  const eskiBag = eskiNolar.map((n) => {
+    const ilk = icerik.find((r) => r.sezon === n);
+    return { season_number: n, episode_number: ilk.bolum };
+  });
+  const diziAd = seoMetin(v?.name) || 'Dizi';
+  return seoDiziBolumHtml(id, diziAd, sezonVerileri, eskiBag);
+}
+
 // SEO 1.2 — yapısal veri. AggregateRating YALNIZCA gerçekten puan varsa basılır
 // (ratingCount: 0 ile basmak politika ihlali) ve değeri sayfadaki metinle birebir
 // aynıdır. Spoiler/yasaklı metinler seoIcerikVerisi'nde zaten elenmiş durumda.
@@ -2294,6 +2395,8 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       (v.similar?.results || []).slice(0, 8)
         .filter((b) => b.name || b.title)
         .map((b) => ({ ad: b.name || b.title, yol: `/icerik/${tur}/${b.id}` })));
+    // Bölüm kuyruğu dizi sayfasından keşfedilir (filmde sezon yok).
+    const bolumBlok = tur === 'tv' ? await seoDiziBolumGovdesi(id, v) : '';
 
     res.type('html').send(ogSayfa({
       baslik: `${adYil} — dizi.jpg`,
@@ -2304,7 +2407,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
       indexle: await ozgunIcerikVar(tur, id),
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
-      govde: degerlendirmeBlok + oyuncuBlok + benzerBlok,
+      govde: degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok,
       jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
   } catch (e) {
@@ -2837,10 +2940,20 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     //  · bölüm    — özet + konuk oyuncu + ekip + İngilizce çeviri yedeği.
     const [dizi, sezonV, bol] = await Promise.all([
       tmdbGetir(`/tv/${id}`, ONBELLEK_TTL_SN.uzun),
-      tmdbGetir(`/tv/${id}/season/${s}`, ONBELLEK_TTL_SN.uzun).catch(() => null),
+      tmdbGetir(`/tv/${id}/season/${s}`, ONBELLEK_TTL_SN.uzun).catch((e) => {
+        if (e && e.status === 404) return null;
+        throw e;
+      }),
       tmdbGetir(`/tv/${id}/season/${s}/episode/${b}?append_to_response=translations`,
-        ONBELLEK_TTL_SN.uzun),
+        ONBELLEK_TTL_SN.uzun).catch((e) => {
+        if (e && e.status === 404) return null;
+        throw e;
+      }),
     ]);
+    // TMDB 404'ü Promise.all içinde yutulunca boş "dizi.jpg" 200'si basılmasın.
+    if (!dizi?.name || !bol || !Number.isInteger(bol.episode_number)) {
+      return ogYok(res, url);
+    }
     const diziAd = dizi.name || 'dizi.jpg';
     const bolumAd = bol.name
       || seoCeviriAlani(bol.translations, 'name')
