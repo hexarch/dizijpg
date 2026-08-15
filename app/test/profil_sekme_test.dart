@@ -44,12 +44,24 @@ void main() {
     expect(secilen, 0);
   });
 
-  testWidgets('seçili sekmenin metni sarı, diğeri soluk', (tester) async {
-    await tester.pumpWidget(_sar(1, (_) {}));
+  testWidgets('seçili sekme sarı, seçili olmayan yazı+ikon tema metni', (
+    tester,
+  ) async {
+    DiziRenkler.acik = false;
+    addTearDown(() => DiziRenkler.acik = false);
+    await tester.pumpWidget(_sar(0, (_) {}));
     final yorumlar = tester.widget<Text>(find.text('Yorumlar'));
     final diziler = tester.widget<Text>(find.text('Dizi ve Filmler'));
-    expect(yorumlar.style?.color, DiziRenkler.sariMetin);
-    expect(diziler.style?.color, DiziRenkler.metin54);
+    expect(diziler.style?.color, DiziRenkler.sariMetin);
+    expect(yorumlar.style?.color, Colors.white);
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.mode_comment_outlined)).color,
+      Colors.white,
+    );
+    expect(
+      tester.widget<Icon>(find.byIcon(Icons.movie_outlined)).color,
+      DiziRenkler.sariMetin,
+    );
   });
 
   testWidgets('dokunma hedefi en az 44px yüksekliğinde', (tester) async {

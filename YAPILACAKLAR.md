@@ -1,6 +1,9 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ PROFİL: Yorumlar sekmesi gri değil
+Seçili olmayan sekme yazı+ikon `metin` (koyu temada beyaz). Dağıtılmadı.
+
 ## 2026-08-16 — ✅ TAKVİM: tek bölümde "1" yazılmaz
 Sarı daire durur; alt sayı yalnız 2+ bölümde. Dağıtılmadı.
 

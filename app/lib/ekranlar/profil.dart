@@ -1892,7 +1892,8 @@ class ProfilSekmeleri extends StatelessWidget {
                         size: 18,
                         color: secili == i
                             ? DiziRenkler.sariMetin
-                            : DiziRenkler.metin54,
+                            // Seçili değil: gri değil, tema metni (koyu=beyaz).
+                            : DiziRenkler.metin,
                       ),
                       const SizedBox(width: 6),
                       // Flexible + FittedBox: uzun çeviri (hu "Sorozatok és
@@ -1910,7 +1911,7 @@ class ProfilSekmeleri extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               color: secili == i
                                   ? DiziRenkler.sariMetin
-                                  : DiziRenkler.metin54,
+                                  : DiziRenkler.metin,
                             ),
                           ),
                         ),
