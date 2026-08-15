@@ -1,6 +1,11 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ TAKVİM: gri yazılar beyaz
+Hafta günleri, boş gün rakamı, ay başlığı, boş uyarı ve bölüm alt yazısı
+`metin` (koyu temada beyaz). Dolu günün sarı dairedeki rakamı siyah kaldı.
+Dağıtılmadı.
+
 ## 2026-08-16 — ✅ KEŞFET: en çok izlenen oynasın + tıklansın
 Izgara artık görünür videolardan izlenmesi en yüksek olanı oynatır
 (eski kural sol üsttekiydi). Oynayan karo PointerInterceptor ile

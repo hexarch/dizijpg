@@ -188,7 +188,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
   }
 
   /// Gün rakamı: o gün dizi gelecekse sarı daire + siyah yazı (sarı üstü
-  /// daima koyu). Boş günde daire yok, soluk tema rengi.
+  /// daima koyu). Boş günde daire yok, tema metni (koyu temada beyaz).
   Widget _gunRakami({
     required int gun,
     required String anahtar,
@@ -202,7 +202,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
         fontSize: kompakt ? (sayi > 0 ? 11.0 : 12.5) : (sayi > 0 ? 12.0 : null),
         fontWeight: secili || sayi > 0 ? FontWeight.w800 : FontWeight.w500,
         height: 1,
-        color: sayi > 0 ? Colors.black : DiziRenkler.metin54,
+        color: sayi > 0 ? Colors.black : DiziRenkler.metin,
       ),
     );
     if (sayi <= 0) return yazi;
@@ -258,7 +258,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                       b,
                       style: TextStyle(
                         fontSize: kompakt ? 10 : 11,
-                        color: DiziRenkler.metin70,
+                        color: DiziRenkler.metin,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -484,7 +484,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
-                    color: DiziRenkler.metin54,
+                    color: DiziRenkler.metin,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -559,7 +559,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                                       style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w800,
-                                        color: DiziRenkler.metin70,
+                                        color: DiziRenkler.metin,
                                       ),
                                     ),
                                   ),
@@ -608,7 +608,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
     Map<String, List<Map<String, dynamic>>> gunler,
     String ayKey,
   ) => [
-    Text('Bu gün bölüm yok'.c, style: TextStyle(color: DiziRenkler.metin54)),
+    Text('Bu gün bölüm yok'.c, style: TextStyle(color: DiziRenkler.metin)),
     // Ayın TAMAMI boşsa sebebini söyle: kullanıcı "uygulama mı
     // yüklemedi" diye tereddüt etmesin.
     if (!gunler.keys.any((t) => t.startsWith(ayKey))) ...[
@@ -616,14 +616,14 @@ class _AyTakvimiState extends State<AyTakvimi> {
       Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.info_outline, size: 15, color: DiziRenkler.metin38),
+          Icon(Icons.info_outline, size: 15, color: DiziRenkler.metin),
           const SizedBox(width: 6),
           Expanded(
             child: Text(
               'Bu ay için yayın tarihi açıklanmış bölüm yok. Tarihler genelde birkaç hafta önceden duyurulur; açıklandıkça burada görünür.'
                   .c,
               style: TextStyle(
-                color: DiziRenkler.metin38,
+                color: DiziRenkler.metin,
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -797,7 +797,7 @@ class _AyOku extends StatelessWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 )
               : null,
-          icon: Icon(ikon, color: DiziRenkler.metin70),
+          icon: Icon(ikon, color: DiziRenkler.metin),
         ),
         if (sayi > 0)
           Positioned(

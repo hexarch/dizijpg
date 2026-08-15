@@ -181,7 +181,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
             Expanded(
               child: Text(
                 metin,
-                style: TextStyle(fontSize: 12.5, color: DiziRenkler.metin70),
+                style: TextStyle(fontSize: 12.5, color: DiziRenkler.metin),
               ),
             ),
             if (!_yukleniyor)
@@ -261,7 +261,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                         'yeni bölümleri burada takip et.'
                     .c,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: DiziRenkler.metin54, height: 1.6),
+                style: TextStyle(color: DiziRenkler.metin, height: 1.6),
               ),
             ],
           ),
@@ -475,13 +475,13 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                       style: TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: DiziRenkler.metin70,
+                        color: DiziRenkler.metin,
                       ),
                     ),
                   ),
                   Icon(
                     acik ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-                    color: DiziRenkler.metin54,
+                    color: DiziRenkler.metin,
                   ),
                 ],
               ],
@@ -506,7 +506,7 @@ class _TakvimEkraniState extends State<TakvimEkrani>
                 ),
                 trailing: Text(
                   tarihKisa(b['tarih'] as String?),
-                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin54),
+                  style: TextStyle(fontSize: 12, color: DiziRenkler.metin),
                 ),
                 onTap: () => _modalAc(b),
               ),
@@ -704,7 +704,7 @@ class _BolumModaliState extends State<BolumModali> {
                           Icon(
                             Icons.chevron_right,
                             size: 18,
-                            color: DiziRenkler.metin38,
+                            color: DiziRenkler.metin,
                           ),
                         ],
                       ),
@@ -714,7 +714,7 @@ class _BolumModaliState extends State<BolumModali> {
                             (b['bolum_adi'] != null
                                 ? ' · ${b['bolum_adi']}'
                                 : ''),
-                        style: TextStyle(color: DiziRenkler.metin70),
+                        style: TextStyle(color: DiziRenkler.metin),
                       ),
                       if (b['tarih'] != null) ...[
                         const SizedBox(height: 6),
