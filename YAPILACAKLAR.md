@@ -1,5 +1,10 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-16 — 🚀 WEB 1.53.0+101 (bildirim kartı + takvim devam)
+Medyasız beğeni bildirimi Reels koca yazı yerine akış kartı. Masaüstü
+takvim sağ sütunu seçili günden sonraki dolu günlerle doluyor. Backend yok.
+`main.1a209e70667c.dart.js` · SW sökücü · brotli q11.
 
 ## 2026-08-15 — 🚀 SEO: BÖLÜM ARAMASI (TR önce, kalite turu)
 İstek: "Silo 5. sezon 4. bölüm" araması. 45 dil × bölüm URL'i YOK (SEO-PLANI 2.6).
