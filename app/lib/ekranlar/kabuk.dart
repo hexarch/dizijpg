@@ -134,6 +134,82 @@ Widget kabukCubugu(
   );
 }
 
+/// Beş sekmenin kök yolları (soldan sağa). Kabuk-dışı sayfadan sekmeye
+/// basınca [context.go] buraya gider.
+const List<String> kabukSekmeKokleri = [
+  '/kesfet',
+  '/takvim',
+  '/akis',
+  '/arama',
+  '/profil',
+];
+
+/// Yola göre hangi sekme seçili görünür.
+///
+/// Kabuk-dışı tarama sayfaları (/icerik, /gonderi, /kisi…) Ana Sayfa (0)
+/// sayılır. Profil ailesi (ayarlar, istatistik, kitaplık) 4. sekmedir.
+@visibleForTesting
+int kabukSekmeIndeksi(String yol) {
+  if (yol.startsWith('/takvim')) return 1;
+  if (yol.startsWith('/akis') ||
+      yol.startsWith('/kullanici') ||
+      yol.startsWith('/bildirim') ||
+      yol.startsWith('/sohbet') ||
+      yol.startsWith('/kisi-ara') ||
+      yol.startsWith('/mesaj-istekleri')) {
+    return 2;
+  }
+  if (yol == '/arama') return 3;
+  if (yol.startsWith('/profil') ||
+      yol.startsWith('/kitaplik') ||
+      yol.startsWith('/favori-oyuncular') ||
+      yol.startsWith('/ayarlar') ||
+      yol.startsWith('/gizlenen-yorumlar') ||
+      yol.startsWith('/engellenenler') ||
+      yol.startsWith('/istatistiklerim') ||
+      yol.startsWith('/hareketlerim') ||
+      yol.startsWith('/izlediklerim') ||
+      yol.startsWith('/ozet')) {
+    return 4;
+  }
+  return 0;
+}
+
+/// Masaüstünde kabuk-dışı sayfadan beşli çubuğa basınca ilgili sekmeye git.
+void kabukSekmeyeGit(BuildContext context, int i) {
+  if (i < 0 || i >= kabukSekmeKokleri.length) return;
+  if (i == 4) profilYenileTetik.value++;
+  context.go(kabukSekmeKokleri[i]);
+}
+
+/// Masaüstünde alt gezinme adasını sayfaya bağlar; mobilde çocuğu olduğu
+/// gibi bırakır (detay tam ekran kalır).
+///
+/// Kabuğun (StatefulShellRoute) İÇİNDE kullanılmaz — orada [KabukEkrani]
+/// zaten çubuğu taşır; iki kez bağlamak çift ada üretir.
+class MasaustuKaliciCubuk extends StatelessWidget {
+  final Widget cocuk;
+  const MasaustuKaliciCubuk({super.key, required this.cocuk});
+
+  @override
+  Widget build(BuildContext context) {
+    if (!masaustuMu(context)) return cocuk;
+    final yol =
+        GoRouter.maybeOf(
+          context,
+        )?.routerDelegate.currentConfiguration.uri.path ??
+        '/';
+    return Scaffold(
+      body: cocuk,
+      bottomNavigationBar: kabukCubugu(
+        context,
+        secili: kabukSekmeIndeksi(yol),
+        onSec: (i) => kabukSekmeyeGit(context, i),
+      ),
+    );
+  }
+}
+
 /// Ana kabuk: Keşfet · Takvim · Arama · Profil.
 /// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
 class KabukEkrani extends StatelessWidget {

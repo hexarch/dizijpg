@@ -144,6 +144,9 @@ const acikTamYollar = <String>[
 String gonderiYolu(String yorumId, {bool yanit = false}) =>
     yanit ? '/gonderi/$yorumId?yanit=1' : '/gonderi/$yorumId';
 
+/// Kabuk-dışı sayfayı masaüstünde beşli çubukla sarar; mobilde dokunmaz.
+Widget _masa(Widget sayfa) => MasaustuKaliciCubuk(cocuk: sayfa);
+
 /// [yol] oturumsuz ziyaretçiye açık mı?
 bool herkeseAcikMi(String yol) =>
     acikTamYollar.contains(yol) || acikYolOnEkleri.any(yol.startsWith);
@@ -394,9 +397,9 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           final tur = s.pathParameters['tur'];
           if (id == null || (tur != 'tv' && tur != 'movie')) {
-            return const _GecersizBaglanti();
+            return _masa(const _GecersizBaglanti());
           }
-          return DetayEkrani(tmdbId: id, tur: tur!);
+          return _masa(DetayEkrani(tmdbId: id, tur: tur!));
         },
       ),
       GoRoute(
@@ -404,8 +407,8 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : KisiEkrani(kisiId: id);
+              ? _masa(const _GecersizBaglanti())
+              : _masa(KisiEkrani(kisiId: id));
         },
       ),
       // Yapım firması (md. 49) — detaydaki firma şeridinden açılır. `/kisi/:id`
@@ -417,11 +420,13 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : SirketEkrani(
-                  sirketId: id,
-                  sirketAdi: s.uri.queryParameters['ad'],
-                  baslangicTuru: s.uri.queryParameters['tur'],
+              ? _masa(const _GecersizBaglanti())
+              : _masa(
+                  SirketEkrani(
+                    sirketId: id,
+                    sirketAdi: s.uri.queryParameters['ad'],
+                    baslangicTuru: s.uri.queryParameters['tur'],
+                  ),
                 );
         },
       ),
@@ -432,8 +437,8 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : ListeEkrani(listeId: id);
+              ? _masa(const _GecersizBaglanti())
+              : _masa(ListeEkrani(listeId: id));
         },
       ),
       // Paylaşılan gönderi (reel/yorum) — tam ekran tek gönderi
@@ -442,11 +447,13 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : GonderiEkrani(
-                  yorumId: id,
-                  // Bildirimden gelen yanıt yolu — bkz. [gonderiYolu].
-                  yanitBildirimi: s.uri.queryParameters['yanit'] == '1',
+              ? _masa(const _GecersizBaglanti())
+              : _masa(
+                  GonderiEkrani(
+                    yorumId: id,
+                    // Bildirimden gelen yanıt yolu — bkz. [gonderiYolu].
+                    yanitBildirimi: s.uri.queryParameters['yanit'] == '1',
+                  ),
                 );
         },
       ),
@@ -473,8 +480,8 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : GonderiIstatistikEkrani(gonderiId: id);
+              ? _masa(const _GecersizBaglanti())
+              : _masa(GonderiIstatistikEkrani(gonderiId: id));
         },
       ),
       GoRoute(
@@ -484,13 +491,15 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
           final sezon = int.tryParse(s.pathParameters['sezon'] ?? '');
           final bolum = int.tryParse(s.pathParameters['bolum'] ?? '');
           if (id == null || sezon == null || bolum == null) {
-            return const _GecersizBaglanti();
+            return _masa(const _GecersizBaglanti());
           }
-          return BolumEkrani(
-            tmdbId: id,
-            sezonNo: sezon,
-            bolumNo: bolum,
-            izlendi: (s.extra as bool?) ?? false,
+          return _masa(
+            BolumEkrani(
+              tmdbId: id,
+              sezonNo: sezon,
+              bolumNo: bolum,
+              izlendi: (s.extra as bool?) ?? false,
+            ),
           );
         },
       ),
@@ -512,24 +521,27 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         path: gelenAramaYolu,
         builder: (_, _) => const GelenAramaSayfasi(),
       ),
-      GoRoute(path: '/ayarlar', builder: (_, __) => const AyarlarEkrani()),
+      GoRoute(
+        path: '/ayarlar',
+        builder: (_, __) => _masa(const AyarlarEkrani()),
+      ),
       // Ayarlar > Gizlilik > Gizlenen yorumlar. Kabuğun DIŞINDA: ayarların
       // kendisi gibi tam ekran açılır, geri tuşu ayarlara döner.
       GoRoute(
         path: '/gizlenen-yorumlar',
-        builder: (_, __) => const GizlenenYorumlarEkrani(),
+        builder: (_, __) => _masa(const GizlenenYorumlarEkrani()),
       ),
       // Ayarlar > Gizlilik > Engellenen kullanıcılar. Gizlenen yorumlarla
       // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
       GoRoute(
         path: '/engellenenler',
-        builder: (_, _) => const EngellenenKullanicilarEkrani(),
+        builder: (_, _) => _masa(const EngellenenKullanicilarEkrani()),
       ),
       // Ayarlar > İstatistiklerim (md. 24). Gizlenen yorumlar/engellenenler ile
       // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
       GoRoute(
         path: '/istatistiklerim',
-        builder: (_, _) => const IstatistiklerimEkrani(),
+        builder: (_, _) => _masa(const IstatistiklerimEkrani()),
       ),
       // Ayarlar > Hareketlerim (md. 20). Gizlenen yorumlar/engellenenler ile
       // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
@@ -537,9 +549,9 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
       GoRoute(
         path: '/hareketlerim',
         builder: (_, s) =>
-            HareketlerimEkrani(tur: s.uri.queryParameters['tur']),
+            _masa(HareketlerimEkrani(tur: s.uri.queryParameters['tur'])),
       ),
-      GoRoute(path: '/gozat', builder: (_, __) => const GozatEkrani()),
+      GoRoute(path: '/gozat', builder: (_, __) => _masa(const GozatEkrani())),
       // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.
       // KABUĞUN DIŞINDA: alt gezinme çubuğu görünmez, geri tuşu (Android ve
       // tarayıcı) aramayı kapatıp geldiği sekmeye döner.
@@ -560,19 +572,22 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
               child: cocuk,
             ),
           ),
-          child: const TamEkranAramaSayfasi(),
+          child: const MasaustuKaliciCubuk(cocuk: TamEkranAramaSayfasi()),
         ),
       ),
       GoRoute(
         path: '/ozet/:yil',
         builder: (_, s) {
           final yil = int.tryParse(s.pathParameters['yil'] ?? '');
-          return yil == null ? const _GecersizBaglanti() : OzetEkrani(yil: yil);
+          return yil == null
+              ? _masa(const _GecersizBaglanti())
+              : _masa(OzetEkrani(yil: yil));
         },
       ),
       GoRoute(
         path: '/izlediklerim',
-        builder: (_, s) => IzlenenlerEkrani(tur: s.uri.queryParameters['tur']),
+        builder: (_, s) =>
+            _masa(IzlenenlerEkrani(tur: s.uri.queryParameters['tur'])),
       ),
       // Oyuncunun yapımları + izlendi/izlenmedi listesi.
       //
@@ -591,13 +606,15 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) {
           final id = int.tryParse(s.pathParameters['id'] ?? '');
           return id == null
-              ? const _GecersizBaglanti()
-              : KisiYapimlariEkrani(kisiId: id, kisiAdi: s.extra as String?);
+              ? _masa(const _GecersizBaglanti())
+              : _masa(
+                  KisiYapimlariEkrani(kisiId: id, kisiAdi: s.extra as String?),
+                );
         },
       ),
     ],
     // Eşleşmeyen rota (bozuk/eski bağlantı): hata ekranı yerine nazik sayfa
-    errorBuilder: (_, __) => const _GecersizBaglanti(),
+    errorBuilder: (_, __) => _masa(const _GecersizBaglanti()),
   );
 }
 
