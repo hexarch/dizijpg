@@ -21,6 +21,7 @@ import '../sira_tercihi.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_kova.dart';
+import 'akis.dart' show AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
@@ -660,13 +661,26 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
   }
 }
 
-/// Tek gönderi ekranı (paylaşılan link → /gonderi/:id): yorumu çekip
-/// Reels görünümünde tek sayfa olarak tam ekran açar.
+/// Medyası olmayan (yalnız yazı) gönderi. Reels bu durumda dizi posterini
+/// tam ekran zemin yapıp metni dev punto basar; akış kartı doğru yüzeydir.
+@visibleForTesting
+bool gonderiYaziliMi(Map<String, dynamic>? y) {
+  if (y == null) return false;
+  final m = y['medya'];
+  return m is! List || m.isEmpty;
+}
+
+/// Tek gönderi ekranı (paylaşılan link / bildirim → /gonderi/:id).
+///
+/// Medyalı gönderi Reels'te tam ekran açılır. Yalnız-yazı gönderi ise
+/// [AkisKarti] ile çizilir — Reels yazılı yorumu dizi posteri üstüne dev
+/// punto bastığı için beğeni bildiriminden gelince "yorum yazma" ekranı
+/// gibi duruyordu; akıştaki kart doğru yüzeydir.
 ///
 /// [yanitBildirimi] TRUE ise ([gonderiYolu] `?yanit=1`) gelen id bir YANITTIR:
-/// ekran üst gönderiyi çözer, TAM EKRAN onu gösterir ve üstüne normal yorum
-/// ekranını ([yanitlariAc]) açar — akış kartındaki konuşma balonuna basmakla
-/// AYNI yüzey. Bkz. [_ustuCoz].
+/// ekran üst gönderiyi çözer, onu (medyasına göre Reels veya kart) gösterir
+/// ve üstüne normal yorum ekranını ([yanitlariAc]) açar — akış kartındaki
+/// konuşma balonuna basmakla AYNI yüzey. Bkz. [_ustuCoz].
 class GonderiEkrani extends StatefulWidget {
   final int yorumId;
   final bool yanitBildirimi;
@@ -729,7 +743,9 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
         _icerikler = icerikler;
         _yorumlarAcilacak = yorumlarAc;
       });
-      _devamYukle();
+      // Yazılı gönderi akış kartı olarak kalır; keşfet devam listesi
+      // Reels kaydırması içindir, kartın altına medyalı Reels karışmasın.
+      if (!gonderiYaziliMi(yorum)) _devamYukle();
     } catch (e) {
       if (!mounted) return;
       setState(() => _hata = e.toString());
@@ -844,6 +860,28 @@ class _GonderiEkraniState extends State<GonderiEkrani> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) yanitlariAc(context, yorum);
       });
+    }
+    if (gonderiYaziliMi(_yorum)) {
+      return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: 'Kapat'.c,
+            // Doğrudan URL ile açıldıysa geri gidilecek yer yoktur →
+            // Reels'tekiyle aynı yedek (Keşfet akışı).
+            onPressed: () => Navigator.of(context).canPop()
+                ? Navigator.pop(context)
+                : GoRouter.of(context).go('/arama'),
+            icon: const Icon(Icons.arrow_back),
+          ),
+        ),
+        body: OrtaKolon(
+          azami: masaustuKolonGenisligi,
+          cocuk: ListView(
+            padding: EdgeInsets.only(top: 8, bottom: altGuvenli(context)),
+            children: [AkisKarti(yorum: _yorum!, icerikler: _icerikler)],
+          ),
+        ),
+      );
     }
     return ReelsGorunumu(
       liste: [_yorum!, ..._devam],

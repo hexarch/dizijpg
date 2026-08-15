@@ -35,6 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// Canlıdaki gerçek satırların (bkz. başlıktaki kanıt) sadeleştirilmişi.
 const _ustId = 80;
 const _yanitId = 82;
+const _yaziliId = 91;
 
 Map<String, dynamic> _ust() => {
   'id': _ustId,
@@ -70,6 +71,25 @@ Map<String, dynamic> _yanitGonderi() => {
   'ust_id': _ustId,
 };
 
+/// Beğenilen yalnız-yazı yorum (medya yok). Reels bunu dizi posteri üstüne
+/// koca yazı basardı; akış kartı doğru yüzeydir.
+Map<String, dynamic> _yazili() => {
+  'id': _yaziliId,
+  'kullanici_id': 3,
+  'kullanici_adi': 'alcelik',
+  'avatar': null,
+  'tur': 'tv',
+  'tmdb_id': 1396,
+  'sezon': null,
+  'bolum': null,
+  'metin': 'Misafirin begendigi yorum',
+  'medya': <String>[],
+  'begeni': 1,
+  'goruntulenme': 12,
+  'spoiler': false,
+  'ust_id': null,
+};
+
 const _icerikler = {
   'tv:1396': {'ad': 'Breaking Bad', 'poster': null},
 };
@@ -96,6 +116,9 @@ List<String> _sunucu() {
     if (yol.endsWith('/yorum/$_ustId')) {
       final y = _ust()..remove('ust_id');
       return _json({'yorum': y, 'icerikler': _icerikler});
+    }
+    if (yol.endsWith('/yorum/$_yaziliId')) {
+      return _json({'yorum': _yazili(), 'icerikler': _icerikler});
     }
     if (yol.contains('/yorumlar/tv/1396')) {
       return _json({
@@ -275,6 +298,43 @@ void main() {
             'Karşılaştırmanın diğer ucu: bildirim yolunun VARDIĞI ekran ile '
             'normal yolun açtığı ekran AYNI widget olmalı.',
       );
+    });
+  });
+
+  group('YAZILI GÖNDERİ: Reels değil akış kartı', () {
+    test('medyasız yorum yazılı sayılır', () {
+      expect(gonderiYaziliMi(_yazili()), isTrue);
+      expect(gonderiYaziliMi(_ust()), isFalse);
+      expect(gonderiYaziliMi(null), isFalse);
+      expect(gonderiYaziliMi({'medya': null}), isTrue);
+    });
+
+    testWidgets('beğeni bildirimi yazılı yorumu AkisKarti olarak açar', (
+      tester,
+    ) async {
+      final cagrilar = _sunucu();
+      await _kur(tester, const GonderiEkrani(yorumId: _yaziliId));
+      expect(
+        find.byType(ReelsGorunumu),
+        findsNothing,
+        reason:
+            'HATA BUYDU: medyasız yorum Reels\'te dizi posteri üstüne '
+            'dev puntolu yazı oluyordu ("yorum yazma ekranı").',
+      );
+      expect(find.byType(AkisKarti), findsOneWidget);
+      expect(find.textContaining('Misafirin begendigi yorum'), findsWidgets);
+      expect(
+        cagrilar.any((y) => y.contains('/kesfet-akis')),
+        isFalse,
+        reason: 'Yazılı kartın altına keşfet Reels listesi eklenmemeli.',
+      );
+    });
+
+    testWidgets('medyalı paylaşım yolu hâlâ Reels', (tester) async {
+      _sunucu();
+      await _kur(tester, const GonderiEkrani(yorumId: _ustId));
+      expect(find.byType(ReelsGorunumu), findsOneWidget);
+      expect(find.byType(AkisKarti), findsNothing);
     });
   });
 }
