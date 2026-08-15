@@ -1,15 +1,14 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-16 — ✅ TAKVİM: gri yazılar beyaz
-Hafta günleri, boş gün rakamı, ay başlığı, boş uyarı ve bölüm alt yazısı
-`metin` (koyu temada beyaz). Dolu günün sarı dairedeki rakamı siyah kaldı.
-Dağıtılmadı.
-
-## 2026-08-16 — ✅ KEŞFET: en çok izlenen oynasın + tıklansın
-Izgara artık görünür videolardan izlenmesi en yüksek olanı oynatır
-(eski kural sol üsttekiydi). Oynayan karo PointerInterceptor ile
-tıklanır, Reels açılır. Dağıtılmadı.
+## 2026-08-16 — 🚀 WEB 1.57.0+105 (keşfet oynatma + takvim yazı rengi)
+Keşfet ızgarası görünür videolardan izlenmesi en yüksek olanı oynatır;
+oynayan karo PointerInterceptor ile tıklanır. Takvim gri yazıları `metin`
+(koyu temada beyaz); sarı dairedeki gün rakamı siyah. Backend yok.
+`main.eaaf14be161f.dart.js` (eski `ccb3041e40c5` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.57.0+105 · giriş+profilim
+testkullanici · hashed JS `immutable` + `br` MISS.
 
 ## 2026-08-16 — 🚀 WEB 1.56.0+104 (profil kimlik yazıları beyaz)
 Kullanıcı adı, bio, ülke, takipçi/beğeni etiketleri, madalyon altı ve

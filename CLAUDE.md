@@ -17,8 +17,10 @@
    `flutter test` saniyeler sürer, tarayıcı otomasyonundan çok daha güvenilir:
    Flutter web tuvali erişilebilirlik ağacı vermez (`find` çalışmaz) ve sürükleme
    fling sayılıp sayfayı sona atar.
-8. **İş bitince commit + `git push origin main`.** 16 Tem–31 Tem arasında 53
-   commit push edilmeden bekledi; kullanıcı fark edip sordu.
+8. **İş bitince commit + `git push origin main` + canlı web dağıtımı.**
+   Dağıtımı kullanıcıya sorma. 16 Tem–31 Tem arasında 53 commit push
+   edilmeden bekledi; kullanıcı fark edip sordu. 16 Ağu: iş bitince
+   “canlıya alayım mı” diye sorma — ritüeli uygula.
 9. Gizli dosyalar depoda DEĞİL ve öyle kalmalı: `backend/.env`, `firebase-gizli/`
    (kök .gitignore), keystore + `key.properties` (`app/android/.gitignore`).
    Push öncesi doğrula:
