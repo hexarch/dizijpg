@@ -3,9 +3,9 @@
  * Başka ülkelerden tohum hesaplar — profilde ülke bayrağı görünsün diye.
  * Gönderi YAZMAZ (kısa otomatik metinler canlıdan silindi).
  *
- * Gerçek kişi taklidi YOK (ünlü adı, çalıntı fotoğraf yok). Kullanıcı adı
- * uydurma; avatar düz renk kare; e-posta @intl.dizijpg.invalid (asla mail
- * gitmez). Şifre rastgele, dosyaya yazılır, depoYA GİRMEZ.
+ * Gerçek kişi taklidi YOK (ünlü adı yok). Avatar: film/dizi karakter karesi
+ * (`intl_avatar_karakter.js`); bu betik yalnız avatarı boş olan yeni hesaba
+ * düz renk yazar. E-posta @intl.dizijpg.invalid. Şifre depoda yok.
  *
  * Tekrar çalıştırmak güvenli: aynı kullanıcı adı varsa atlar.
  *
@@ -145,12 +145,16 @@ async function ana() {
       console.log(`+ ${t.ad} (id=${id}) ${t.ulke}`);
     }
 
-    const dosya = `avatar${id}-intl.png`;
-    fs.writeFileSync(path.join(avatarDizin, dosya), karePng(...t.renk));
-    await havuz.query(
-      'UPDATE kullanicilar SET avatar=$1 WHERE id=$2',
-      [`/avatarlar/${dosya}`, id],
-    );
+    // Var olan avatarı ezme (karakter karesi intl_avatar_karakter.js ile gelir).
+    const eskiAvatar = varOlan.rows[0]?.avatar;
+    if (!eskiAvatar) {
+      const dosya = `avatar${id}-intl.png`;
+      fs.writeFileSync(path.join(avatarDizin, dosya), karePng(...t.renk));
+      await havuz.query(
+        'UPDATE kullanicilar SET avatar=$1 WHERE id=$2',
+        [`/avatarlar/${dosya}`, id],
+      );
+    }
 
     await havuz.query(
       `INSERT INTO takipler (takip_eden_id, takip_edilen_id)

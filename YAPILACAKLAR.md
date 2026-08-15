@@ -1,6 +1,16 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-15 — 🚀 TOHUM AVATAR: KARAKTER KARESİ
+15 intl hesabın düz renk PNG’si TMDB karakter/oyuncu karesiyle değişti
+(1:1 800px JPEG, yeni dosya adı — CDN immutable eski rengi tutmasın).
+Çocuk karakter yok. alcelik dokunulmadı. API yeniden başlatılmadı.
+Yuki: Spike Spiegel tek-karakter afişi (grup kolajı değil). Miles: Heisenberg
+yüz kırpımı (depo sahnesi değil). Tohum betiği var olan avatarı ezmez.
+Betik: `intl_avatar_karakter.js`.
+Kanıt: `GET /api/avatarlar/avatar175-1786789410349.jpg` → image/jpeg 800×800;
+`GET /api/profil/yuki.dorama` avatar aynı yol; alcelik gif aynı.
+
 ## 2026-08-15 — 🚀 TOHUM PROFİLLER A–Z (kare + uzun yazı + kütüphane)
 15 ülke hesabı (id 163–177) artık boş iskelet değil. Her birinde:
 uzun ana-dil gönderi (spoiler yok) + TMDB sahne karesi (8, algısal süzgeç),
