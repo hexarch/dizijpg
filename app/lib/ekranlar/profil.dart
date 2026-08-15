@@ -92,7 +92,7 @@ class EtkilesimSatiri extends StatelessWidget {
                     etiket,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
                   ),
                 ],
               ),
@@ -798,6 +798,10 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                   style: TextStyle(
                                     fontSize: genis ? 21 : 17,
                                     fontWeight: FontWeight.w900,
+                                    // Tema metni: koyu temada beyaz. Rengi
+                                    // vermezsek gövde stili web'de soluk
+                                    // görünebiliyor (kullanıcı: gri yazma).
+                                    color: DiziRenkler.metin,
                                   ),
                                 ),
                               ),
@@ -824,7 +828,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                               child: Text(
                                 _profil!['bio'] as String,
                                 style: TextStyle(
-                                  color: DiziRenkler.metin70,
+                                  color: DiziRenkler.metin,
                                   fontSize: 13,
                                 ),
                               ),
@@ -839,19 +843,41 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                               ),
                             ),
                           const SizedBox(height: 6),
-                          // Takipçi / takip (kendi listelerine gider)
-                          Row(
+                          // Takipçi / takip / beğeni / görüntülenme.
+                          //
+                          // Beğeni ve görüntülenme 15 Ağu 2026'da buraya
+                          // TAŞINDI (kullanıcı isteği): önceden aşağıda ayrı
+                          // kutulu `EtkilesimSatiri` şeridiydi, şimdi takipçi
+                          // ve takiple AYNI satır içi biçimde duruyor.
+                          //
+                          // Row DEĞİL Wrap: dört sayaç, uzun çevirilerle
+                          // (pl "obserwujących", de "Aufrufe") 360 dp'de tek
+                          // satıra sığmaz — Row taşma çizgisi verirdi.
+                          Wrap(
+                            spacing: 16,
+                            runSpacing: 2,
                             children: [
-                              _TakipSayac(
+                              TakipSayac(
                                 deger: '${st['takipci_sayisi'] ?? 0}',
                                 etiket: 'takipçi'.c,
                                 onTap: () => _takipListe(kullaniciAdi, true),
                               ),
-                              const SizedBox(width: 16),
-                              _TakipSayac(
+                              TakipSayac(
                                 deger: '${st['takip_sayisi'] ?? 0}',
                                 etiket: 'takip'.c,
                                 onTap: () => _takipListe(kullaniciAdi, false),
+                              ),
+                              TakipSayac(
+                                deger:
+                                    '${(st['toplam_begeni'] as num?)?.toInt() ?? 0}',
+                                etiket: 'beğeni'.c,
+                                onTap: () => _yorumlarAc(kullaniciAdi),
+                              ),
+                              TakipSayac(
+                                deger:
+                                    '${(st['toplam_goruntulenme'] as num?)?.toInt() ?? 0}',
+                                etiket: 'görüntülenme'.c,
+                                onTap: () => _yorumlarAc(kullaniciAdi),
                               ),
                             ],
                           ),
@@ -911,25 +937,25 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       runSpacing: bosluk,
                       children: [
                         // Sayaçlar tıklanır: ilgili liste/modal açılır
-                        _StatKarti(
+                        StatMadalyon(
                           genislik: genislik,
                           deger: '${st['izlenen_bolum']}',
                           etiket: 'Bölüm'.c,
                           onTap: () => context.push('/izlediklerim?tur=tv'),
                         ),
-                        _StatKarti(
+                        StatMadalyon(
                           genislik: genislik,
                           deger: '${st['izlenen_film']}',
                           etiket: 'Film'.c,
                           onTap: () => context.push('/izlediklerim?tur=movie'),
                         ),
-                        _StatKarti(
+                        StatMadalyon(
                           genislik: genislik,
                           deger: '${st['takip_edilen_dizi']}',
                           etiket: 'Dizi'.c,
                           onTap: () => context.push('/izlediklerim?tur=tv'),
                         ),
-                        _StatKarti(
+                        StatMadalyon(
                           genislik: genislik,
                           deger: '${st['yorum_sayisi'] ?? 0}',
                           etiket: 'Yorum'.c,
@@ -983,14 +1009,11 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                // Yorumlarının toplam etkileşimi (görüntülenme: foto/video
-                // ekli yorumlar dahil — aynı sayaç)
-                EtkilesimSatiri(
-                  begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
-                  goruntulenme:
-                      (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
-                ),
+                // NOT: yorumların toplam beğeni/görüntülenmesi buradaki kutulu
+                // `EtkilesimSatiri` şeridinden ÇIKARILDI (15 Ağu 2026); artık
+                // yukarıda takipçi/takip ile aynı satır içi biçimde duruyor.
+                // Sınıfın kendisi DURUYOR: açık profil (kullanici_profil.dart)
+                // hâlâ o düzeni kullanıyor.
               ],
               altBolum: [
                 const SizedBox(height: 20),
@@ -1324,11 +1347,12 @@ class ProfilUstBolum extends StatelessWidget {
   }
 }
 
-class _TakipSayac extends StatelessWidget {
+class TakipSayac extends StatelessWidget {
   final String deger;
   final String etiket;
   final VoidCallback onTap;
-  const _TakipSayac({
+  const TakipSayac({
+    super.key,
     required this.deger,
     required this.etiket,
     required this.onTap,
@@ -1355,7 +1379,7 @@ class _TakipSayac extends StatelessWidget {
               ),
               TextSpan(
                 text: ' $etiket',
-                style: TextStyle(color: DiziRenkler.metin54),
+                style: TextStyle(color: DiziRenkler.metin),
               ),
             ],
           ),
@@ -1365,12 +1389,52 @@ class _TakipSayac extends StatelessWidget {
   }
 }
 
-class _StatKarti extends StatelessWidget {
+/// Profil sayacı: YUVARLAK madalyon + ALTINDA etiket (kullanıcı isteği,
+/// 15 Ağu 2026). Öncesi: köşeleri yuvarlatılmış dikdörtgen kutu, İÇİNDE sarı
+/// sayı ve etiket.
+///
+/// RENK KARARLARI:
+/// * Madalyon zemini `koyuGri` — `kart`tan BİR TIK daha koyu (koyu temada
+///   #17171A vs #1F1F23; açık temada #ECECEF vs beyaz). İki temada da "bir tık
+///   daha koyu" anlamını korur.
+/// * Sayı MARKA SARISI. Kısa bir beyaz denemesinden sonra kullanıcı sarıya
+///   dönülmesini istedi (16 Ağu 2026): "beyazı beğenmedim, aynı stil kalsın,
+///   bizim sarımıza dön". Yani rahatsız eden şey sarının kendisi değil, ESKİ
+///   DÜZENDİ (dikdörtgen kutu + içeride etiket).
+///
+///   KOYU temada `sariMetin` (#F5C518) doğrudan kullanılır.
+///   AÇIK temada KULLANILAMAZ: `sariMetin`in açık karşılığı #8A6D00 ve bu,
+///   bir tık koyulaştırılmış madalyon zemininde (#ECECEF) yalnız **4,17:1**
+///   veriyor — eşiğin altında (ölçüldü, test yakaladı). Eskiden zemin BEYAZDI,
+///   o yüzden sorun görünmüyordu; "bir tık daha koyu" isteği sınırı deldi.
+///   Bu yüzden açık temada bir tık koyu altın (#7A6000, 5,09:1) kullanılır.
+///   Not: FittedBox beş haneli sayıyı küçültebildiği için "büyük yazı"
+///   istisnasına (3:1) GÜVENİLMEDİ — küçülünce o istisna düşerdi.
+/// * Etiket (dairenin ALTI) `DiziRenkler.metin`. 16 Ağu 2026: kullanıcı
+///   madalyon altındaki gri yazıları da beyaz istedi.
+///
+/// ÖLÇÜ: madalyon çapı hücre genişliğinden türetilir, [_enAzCap] altına
+/// düşmez (44 dp dokunma hedefi + görsel denge) ve [_enCokCap] üstüne çıkmaz
+/// (masaüstünde dev daireler oluşurdu). Dokunma hedefi madalyon DEĞİL, tüm
+/// sütun (madalyon + etiket) — yani her zaman 44 dp'nin üstünde.
+class StatMadalyon extends StatelessWidget {
   final String deger;
   final String etiket;
   final double genislik;
   final VoidCallback? onTap;
-  const _StatKarti({
+
+  static const double _enAzCap = 56;
+  static const double _enCokCap = 88;
+
+  /// Açık temada madalyon zemininde okunan altın (bkz. sınıf yorumu).
+  static const _acikTemaAltin = Color(0xFF7A6000);
+
+  /// Madalyon içindeki sayının rengi.
+  static Color get sayiRengi =>
+      DiziRenkler.acik ? _acikTemaAltin : DiziRenkler.sariMetin;
+
+  const StatMadalyon({
+    super.key,
     required this.deger,
     required this.etiket,
     required this.genislik,
@@ -1379,37 +1443,55 @@ class _StatKarti extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cap = genislik.clamp(_enAzCap, _enCokCap).toDouble();
     return SizedBox(
-      width: genislik,
+      // Hücre, daireden DAR olamaz: olsaydı dış SizedBox daireyi ezer ve
+      // `_enAzCap` garantisi kâğıt üstünde kalırdı (test bunu yakaladı).
+      // Çok dar ekranda Wrap satır başına daha az madalyon alır — doğru
+      // duyarlı davranış budur.
+      width: cap > genislik ? cap : genislik,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 2),
-          decoration: BoxDecoration(
-            color: DiziRenkler.kart,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: DiziRenkler.metin12),
-          ),
-          child: Column(
-            children: [
-              Text(
-                deger,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                  color: DiziRenkler.sariMetin,
+        borderRadius: BorderRadius.circular(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: cap,
+              height: cap,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: DiziRenkler.koyuGri,
+                shape: BoxShape.circle,
+                border: Border.all(color: DiziRenkler.metin12),
+              ),
+              // FittedBox: 14.478 gibi beş haneli sayı dairede taşmasın —
+              // kırpmak yerine küçülür (ellipsis sayıyı YANLIŞ gösterirdi).
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  deger,
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: sayiRengi,
+                  ),
                 ),
               ),
-              const SizedBox(height: 2),
-              Text(
-                etiket,
-                style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 6),
+            // Etiket madalyonun ALTINDA. 45 dilde uzunluk değişiyor
+            // (tr "Bölüm", pl "Odcinki", de "Folgen") → iki satıra izin var.
+            Text(
+              etiket,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
+            ),
+          ],
         ),
       ),
     );
@@ -1649,7 +1731,7 @@ class SeviyeSatiri extends StatelessWidget {
                   child: Icon(
                     Icons.trending_up,
                     size: 13,
-                    color: DiziRenkler.metin54,
+                    color: DiziRenkler.metin,
                   ),
                 ),
                 const SizedBox(width: 4),
@@ -1658,7 +1740,7 @@ class SeviyeSatiri extends StatelessWidget {
                     alt,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
                   ),
                 ),
               ],

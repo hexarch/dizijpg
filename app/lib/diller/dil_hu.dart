@@ -362,8 +362,10 @@ const Map<String, String> cevirilerHu = {
   'Spoiler olabilir — dokun ve gör':
       'Spoilert tartalmazhat — koppints a megtekintéshez',
   'Beğeni': 'Kedvelések',
+  'beğeni': 'kedvelések',
   'Beğen': 'Tetszik',
   'Görüntülenme': 'Megtekintések',
+  'görüntülenme': 'megtekintések',
   'Tam ekran': 'Teljes képernyő',
   'Arama başarısız': 'A keresés sikertelen',
   'Sonuç bulunamadı': 'Nincs találat',

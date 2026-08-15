@@ -172,9 +172,10 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                     '@${p['kullanici_adi']}',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w900,
+                                      color: DiziRenkler.metin,
                                     ),
                                   ),
                                 ),
@@ -226,7 +227,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                     const SizedBox(height: 12),
                     Text(
                       p['bio'] as String,
-                      style: TextStyle(color: DiziRenkler.metin70, height: 1.4),
+                      style: TextStyle(color: DiziRenkler.metin, height: 1.4),
                     ),
                   ],
                   // Sosyal bağlantılar (varsa)
@@ -859,7 +860,7 @@ class _Sayac extends StatelessWidget {
               const SizedBox(height: 2),
               Text(
                 etiket,
-                style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
               ),
             ],
           ),

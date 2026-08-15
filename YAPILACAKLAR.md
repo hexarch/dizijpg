@@ -1,6 +1,11 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ PROFİL: kimlik yazıları beyaz
+Kullanıcı adı, bio, ülke, takipçi/beğeni etiketleri ve madalyon altı
+yazılar `metin` (koyu temada beyaz). Boş durum / hata / Bıraktım soluk
+kaldı. Dağıtılmadı.
+
 ## 2026-08-16 — ✅ PROFİL: toplam izleme süresi yazısı beyaz
 Etiket `metin` (koyu temada beyaz). Süre sayısı sarı kaldı. Dağıtılmadı.
 

@@ -362,8 +362,10 @@ const Map<String, String> cevirilerRu = {
   'Spoiler olabilir — dokun ve gör':
       'Возможны спойлеры — нажми, чтобы посмотреть',
   'Beğeni': 'Лайки',
+  'beğeni': 'лайки',
   'Beğen': 'Нравится',
   'Görüntülenme': 'Просмотры',
+  'görüntülenme': 'просмотры',
   'Tam ekran': 'Во весь экран',
   'Arama başarısız': 'Поиск не удался',
   'Sonuç bulunamadı': 'Ничего не найдено',

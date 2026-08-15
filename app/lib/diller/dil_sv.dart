@@ -363,8 +363,10 @@ const Map<String, String> cevirilerSv = {
   'Spoiler olabilir — dokun ve gör':
       'Kan innehålla spoilrar — tryck för att visa',
   'Beğeni': 'Gillanden',
+  'beğeni': 'gillanden',
   'Beğen': 'Gilla',
   'Görüntülenme': 'Visningar',
+  'görüntülenme': 'visningar',
   'Tam ekran': 'Helskärm',
   'Arama başarısız': 'Sökningen misslyckades',
   'Sonuç bulunamadı': 'Inga resultat',

@@ -360,8 +360,10 @@ const Map<String, String> cevirilerCs = {
   'Spoiler olabilir — dokun ve gör':
       'Může obsahovat spoilery — klepni pro zobrazení',
   'Beğeni': 'Lajky',
+  'beğeni': 'lajky',
   'Beğen': 'To se mi líbí',
   'Görüntülenme': 'Zobrazení',
+  'görüntülenme': 'zobrazení',
   'Tam ekran': 'Celá obrazovka',
   'Arama başarısız': 'Vyhledávání se nezdařilo',
   'Sonuç bulunamadı': 'Žádné výsledky',

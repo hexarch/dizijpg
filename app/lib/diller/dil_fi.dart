@@ -361,8 +361,10 @@ const Map<String, String> cevirilerFi = {
   'Spoiler olabilir — dokun ve gör':
       'Voi sisältää juonipaljastuksia — napauta nähdäksesi',
   'Beğeni': 'Tykkäykset',
+  'beğeni': 'tykkäykset',
   'Beğen': 'Tykkää',
   'Görüntülenme': 'Katselukerrat',
+  'görüntülenme': 'katselukerrat',
   'Tam ekran': 'Koko näyttö',
   'Arama başarısız': 'Haku epäonnistui',
   'Sonuç bulunamadı': 'Ei tuloksia',

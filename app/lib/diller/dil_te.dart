@@ -360,8 +360,10 @@ const Map<String, String> cevirilerTe = {
   'Spoiler olabilir — dokun ve gör':
       'స్పాయిలర్ ఉండవచ్చు — చూడటానికి ట్యాప్ చేయి',
   'Beğeni': 'లైక్‌లు',
+  'beğeni': 'లైక్‌లు',
   'Beğen': 'ఇష్టం',
   'Görüntülenme': 'వీక్షణలు',
+  'görüntülenme': 'వీక్షణలు',
   'Tam ekran': 'పూర్తి స్క్రీన్',
   'Arama başarısız': 'శోధన విఫలమైంది',
   'Sonuç bulunamadı': 'ఫలితాలు లేవు',

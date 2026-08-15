@@ -360,8 +360,10 @@ const Map<String, String> cevirilerMs = {
   'Spoiler olabilir — dokun ve gör':
       'Mungkin mengandungi spoiler — ketik untuk melihat',
   'Beğeni': 'Suka',
+  'beğeni': 'suka',
   'Beğen': 'Suka',
   'Görüntülenme': 'Tontonan',
+  'görüntülenme': 'tontonan',
   'Tam ekran': 'Skrin penuh',
   'Arama başarısız': 'Carian gagal',
   'Sonuç bulunamadı': 'Tiada hasil',

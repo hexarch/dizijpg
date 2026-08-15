@@ -363,8 +363,10 @@ const Map<String, String> cevirilerEl = {
   'Spoiler olabilir — dokun ve gör':
       'Ίσως περιέχει spoiler — πάτησε για προβολή',
   'Beğeni': 'Μου αρέσει',
+  'beğeni': 'μου αρέσει',
   'Beğen': 'Μου αρέσει',
   'Görüntülenme': 'Προβολές',
+  'görüntülenme': 'προβολές',
   'Tam ekran': 'Πλήρης οθόνη',
   'Arama başarısız': 'Η αναζήτηση απέτυχε',
   'Sonuç bulunamadı': 'Κανένα αποτέλεσμα',

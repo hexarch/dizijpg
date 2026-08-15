@@ -361,8 +361,10 @@ const Map<String, String> cevirilerHi = {
   'Spoiler olabilir — dokun ve gör':
       'स्पॉइलर हो सकता है — देखने के लिए टैप करो',
   'Beğeni': 'लाइक',
+  'beğeni': 'लाइक',
   'Beğen': 'लाइक',
   'Görüntülenme': 'व्यू',
+  'görüntülenme': 'व्यू',
   'Tam ekran': 'फ़ुल स्क्रीन',
   'Arama başarısız': 'खोज विफल रही',
   'Sonuç bulunamadı': 'कोई नतीजा नहीं मिला',

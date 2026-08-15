@@ -398,7 +398,7 @@ class UlkeSatiri extends StatelessWidget {
             ulkeAdi(ulke),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+            style: TextStyle(color: DiziRenkler.metin, fontSize: 12),
           ),
         ),
       ],
