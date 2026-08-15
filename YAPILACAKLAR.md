@@ -1,6 +1,11 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ TAKVİM: dolu gün sarı daire + dilim boşluğu
+İleri tarih dilimleri arası boşluk %50 (16→8 / 8→4). Gün altındaki bölüm
+sayısının sarı zemini kalktı (koyu=beyaz, açık=siyah, 8/7 pt). Dolu günde
+üstteki rakam sarı daire + siyah yazı. Dağıtılmadı.
+
 ## 2026-08-16 — 🚀 WEB 1.53.0+101 (bildirim kartı + takvim devam)
 Medyasız beğeni bildirimi Reels koca yazı yerine akış kartı. Masaüstü
 takvim sağ sütunu seçili günden sonraki dolu günlerle doluyor. Backend yok.

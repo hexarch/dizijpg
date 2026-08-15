@@ -4,14 +4,16 @@ import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// 3 Ağu isteği (iki madde):
+/// 3 Ağu isteği (iki madde) + 16 Ağu takvim gün hücresi:
 ///   1) "aşağıdaki 5 iconun bulunduğu divin yüksekliğini %35 küçült"
 ///   2) "takvimdeki günlerin altında çıkan sayı dizi sayısını daha küçük yaz"
+///   3) alt sayı sarı zeminli değil; koyu temada beyaz / açıkta siyah.
+///      Dolu günde ÜSTTEKİ gün rakamı sarı dairede.
 ///
 /// ÖLÇÜLEN DEĞERLER (bu testler kilitler):
 ///   alt çubuk mobil   80 → 52 dp  (tam %35; dokunma asgarisi 44'ün üstünde)
 ///   alt çubuk masaüstü 56 → 44 dp (%35 kuralı 36.4 verirdi, 44'te DURDURULDU)
-///   takvim sayı rozeti dar ekran 10 → 9 pt, masaüstü kompakt 9 → 8 pt
+///   takvim alt sayı dar ekran 10 → 9 → 8 pt, masaüstü kompakt 9 → 8 → 7 pt
 ///
 /// Kısaltma erişilebilirliği bozmamalı: her sekmenin dokunma yüksekliği
 /// [dokunmaAsgari] (44 dp) altına İNMEZ ve beş sekme de dokunulabilir kalır.
@@ -58,12 +60,15 @@ List<Map<String, dynamic>> _olaylar() => [
   {'tarih': _bugunAnahtar(9), 'dizi_adi': 'C Dizisi', 'sezon': 1, 'bolum': 7},
 ];
 
-Widget _takvim({required bool acikTema}) => MaterialApp(
-  theme: diziTema(acik: acikTema),
-  home: Scaffold(
-    body: AyTakvimi(olaylar: _olaylar(), onAc: (_) async {}),
-  ),
-);
+Widget _takvim({required bool acikTema}) {
+  DiziRenkler.acik = acikTema;
+  return MaterialApp(
+    theme: diziTema(acik: acikTema),
+    home: Scaffold(
+      body: AyTakvimi(olaylar: _olaylar(), onAc: (_) async {}),
+    ),
+  );
+}
 
 /// Rozetin içindeki yazının punto'su.
 double _rozetPunto(WidgetTester tester, String anahtar) {
@@ -166,20 +171,22 @@ void main() {
   });
 
   group('2) takvim gün sayısı rozeti küçüldü', () {
+    tearDown(() => DiziRenkler.acik = false);
+
     test('punto sabitleri eski değerlerin altında', () {
-      expect(takvimSayiPunto, 9); // eski 10
-      expect(takvimSayiPuntoKompakt, 8); // eski 9
-      expect(takvimSayiPunto, lessThan(10));
+      expect(takvimSayiPunto, 8); // eski 10 → 9 → 8
+      expect(takvimSayiPuntoKompakt, 7); // eski 9 → 8 → 7
+      expect(takvimSayiPunto, lessThan(9));
       expect(takvimSayiPuntoKompakt, lessThan(takvimSayiPunto));
     });
 
-    testWidgets('DAR EKRAN (360 dp): rozet 9 pt ve TAŞMA YOK', (tester) async {
+    testWidgets('DAR EKRAN (360 dp): rozet 8 pt ve TAŞMA YOK', (tester) async {
       _ekran(tester, _darG, _darY);
       await tester.pumpWidget(_takvim(acikTema: false));
       await tester.pump();
 
       expect(_rozetPunto(tester, _bugunAnahtar(2)), takvimSayiPunto);
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), 9);
+      expect(_rozetPunto(tester, _bugunAnahtar(2)), 8);
       // İki bölümlü gün "2" yazar (rozet içeriği bozulmadı).
       expect(
         find.descendant(
@@ -205,7 +212,7 @@ void main() {
       expect(hucre.height, greaterThanOrEqualTo(dokunmaAsgari));
     });
 
-    testWidgets('MASAÜSTÜ 6 aylık ızgara: rozet 8 pt ve TAŞMA YOK', (
+    testWidgets('MASAÜSTÜ 6 aylık ızgara: rozet 7 pt ve TAŞMA YOK', (
       tester,
     ) async {
       _ekran(tester, _genisG, _genisY);
@@ -214,7 +221,7 @@ void main() {
 
       // Kompakt ızgarada aynı gün birden fazla panelde DEĞİL; tek rozet.
       expect(_rozetPunto(tester, _bugunAnahtar(2)), takvimSayiPuntoKompakt);
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), 8);
+      expect(_rozetPunto(tester, _bugunAnahtar(2)), 7);
       expect(
         tester.takeException(),
         isNull,
@@ -222,7 +229,7 @@ void main() {
       );
     });
 
-    testWidgets('AÇIK TEMA: rozet hâlâ sarı zemin + koyu yazı (kontrast)', (
+    testWidgets('AÇIK TEMA: alt sayı sarı zemin YOK, yazı siyah', (
       tester,
     ) async {
       _ekran(tester, _darG, _darY);
@@ -233,9 +240,9 @@ void main() {
         find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(2)}')),
       );
       expect(
-        (kutu.decoration! as BoxDecoration).color,
-        DiziRenkler.sari,
-        reason: 'rozet zemini her iki temada sabit sarı',
+        kutu.decoration,
+        isNull,
+        reason: 'bölüm sayısı artık sarı rozet değil',
       );
       final metin = tester.widget<Text>(
         find.descendant(
@@ -243,9 +250,49 @@ void main() {
           matching: find.byType(Text),
         ),
       );
-      // Sarı üstü koyu yazı: açık temada beyaza dönüp kaybolmamalı.
-      expect(metin.style!.color, Colors.black);
-      expect(metin.style!.fontWeight, FontWeight.w800);
+      expect(metin.style!.color, DiziRenkler.metin);
+      expect(DiziRenkler.acik, isTrue);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('KOYU TEMA: alt sayı beyaz, dolu günün rakamı sarı dairede', (
+      tester,
+    ) async {
+      _ekran(tester, _darG, _darY);
+      await tester.pumpWidget(_takvim(acikTema: false));
+      await tester.pump();
+
+      final anahtar = _bugunAnahtar(2);
+      final sayiMetin = tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(ValueKey('takvim-sayi-$anahtar')),
+          matching: find.byType(Text),
+        ),
+      );
+      expect(sayiMetin.style!.color, Colors.white);
+
+      final daire = tester.widget<Container>(
+        find.byKey(ValueKey('takvim-gun-$anahtar')),
+      );
+      final dek = daire.decoration! as BoxDecoration;
+      expect(dek.color, DiziRenkler.sari);
+      expect(dek.shape, BoxShape.circle);
+      expect(daire.constraints!.maxWidth, takvimGunDaire);
+      expect(daire.constraints!.maxHeight, takvimGunDaire);
+
+      final rakam = tester.widget<Text>(
+        find.descendant(
+          of: find.byKey(ValueKey('takvim-gun-$anahtar')),
+          matching: find.byType(Text),
+        ),
+      );
+      expect(rakam.style!.color, Colors.black);
+
+      // Ayın 1'i olay yok (olaylar +2 ve +9) — sarı daire yok.
+      expect(
+        find.byKey(ValueKey('takvim-gun-${_bugunAnahtar(0)}')),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
   });

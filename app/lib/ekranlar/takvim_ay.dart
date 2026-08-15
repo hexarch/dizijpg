@@ -39,14 +39,25 @@ const double masaustuTakvimGenisligi =
     1 + // dikey ayırıcı
     masaustuGunSutunu;
 
-/// Gün hücresinin altındaki "o gün kaç bölüm var" rozetinin punto'su.
-/// 3 Ağu isteğiyle küçültüldü: dar ekran 10 → [takvimSayiPunto] (9),
-/// masaüstü kompakt ızgara 9 → [takvimSayiPuntoKompakt] (8).
-/// Gövde metni DEĞİL tek/çift haneli bir yoğunluk rozeti: w800 kalınlık +
-/// sarı üstü siyah (~12.6:1) okunurluğu taşıyor, gün hücresinin dokunma
-/// alanı bundan etkilenmiyor.
-const double takvimSayiPunto = 9;
-const double takvimSayiPuntoKompakt = 8;
+/// Gün hücresinin altındaki "o gün kaç bölüm var" sayısının punto'su.
+/// 16 Ağu: sarı rozet kalktı; sayı tema renginde (koyu=beyaz, açık=siyah)
+/// ve bir tık daha küçük. Dolu günün VURGUSU artık üstteki gün rakamının
+/// sarı dairesi. Dokunma alanı (hücre ≥44 dp) bundan etkilenmiyor.
+const double takvimSayiPunto = 8;
+const double takvimSayiPuntoKompakt = 7;
+
+/// Boş günün yer tutucusu — sayı satırıyla aynı hizada kalsın.
+const double takvimSayiYerTutucu = 10;
+const double takvimSayiYerTutucuKompakt = 8;
+
+/// Dolu günde gün rakamının sarı daire çapı (44 dp hücreye sığar).
+const double takvimGunDaire = 20;
+const double takvimGunDaireKompakt = 20;
+
+/// Masaüstü sağ sütunda sonraki gün başlığının dikey dolgusu.
+/// Eski 16/8; dilimler arası boşluk %50 kısaldı.
+const double takvimDevamBaslikUst = 8;
+const double takvimDevamBaslikAlt = 4;
 
 /// DAR EKRAN (mobil) tek-ay ızgarasında gün hücresinin SABİT yüksekliği.
 ///
@@ -175,6 +186,40 @@ class _AyTakvimiState extends State<AyTakvimi> {
     return m;
   }
 
+  /// Gün rakamı: o gün dizi gelecekse sarı daire + siyah yazı (sarı üstü
+  /// daima koyu). Boş günde daire yok, soluk tema rengi.
+  Widget _gunRakami({
+    required int gun,
+    required String anahtar,
+    required int sayi,
+    required bool secili,
+    required bool kompakt,
+  }) {
+    final yazi = Text(
+      '$gun',
+      style: TextStyle(
+        fontSize: kompakt ? (sayi > 0 ? 11.0 : 12.5) : (sayi > 0 ? 12.0 : null),
+        fontWeight: secili || sayi > 0 ? FontWeight.w800 : FontWeight.w500,
+        height: 1,
+        color: sayi > 0 ? Colors.black : DiziRenkler.metin54,
+      ),
+    );
+    if (sayi <= 0) return yazi;
+    final cap = kompakt ? takvimGunDaireKompakt : takvimGunDaire;
+    return Container(
+      key: ValueKey('takvim-gun-$anahtar'),
+      width: cap,
+      height: cap,
+      alignment: Alignment.center,
+      decoration: const BoxDecoration(
+        color: DiziRenkler.sari,
+        shape: BoxShape.circle,
+      ),
+      // Çift haneli gün (31) 20 dp daireye sığsın.
+      child: FittedBox(fit: BoxFit.scaleDown, child: yazi),
+    );
+  }
+
   /// Bir ay paneli: [baslik] + hafta başlıkları + gün ızgarası.
   /// [kompakt] masaüstünde birden çok ay sığsın diye ölçüleri küçültür.
   Widget _ayPaneli(
@@ -265,51 +310,38 @@ class _AyTakvimiState extends State<AyTakvimi> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        '$gun',
-                        style: TextStyle(
-                          fontSize: kompakt ? 12.5 : null,
-                          fontWeight: secili
-                              ? FontWeight.w800
-                              : FontWeight.w500,
-                          color: sayi > 0
-                              ? DiziRenkler.metin
-                              : DiziRenkler.metin54,
-                        ),
+                      _gunRakami(
+                        gun: gun,
+                        anahtar: anahtar,
+                        sayi: sayi,
+                        secili: secili,
+                        kompakt: kompakt,
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 1),
                       if (sayi > 0)
                         Container(
                           key: ValueKey('takvim-sayi-$anahtar'),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: kompakt ? 3.5 : 4,
-                            vertical: 1,
-                          ),
-                          decoration: BoxDecoration(
-                            color: DiziRenkler.sari,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
                           child: Text(
                             '$sayi',
                             style: TextStyle(
                               fontSize: kompakt
                                   ? takvimSayiPuntoKompakt
                                   : takvimSayiPunto,
-                              fontWeight: FontWeight.w800,
-                              // Rozet zemini HER İKİ TEMADA da sabit sarı
-                              // (DiziRenkler.sari) — üstündeki yazı da sabit
-                              // koyu kalmalı, yoksa açık temada sarı üstü
-                              // beyaz olup okunmaz. Kontrast ~12.6:1.
-                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              height: 1,
+                              // Sarı zemin yok: koyu temada beyaz, açıkta siyah.
+                              color: DiziRenkler.metin,
                             ),
                           ),
                         )
                       else
-                        // Rozetsiz günün yer tutucusu: rozetle AYNI yükseklik
-                        // olmalı, yoksa dolu/boş günlerin sayıları farklı
-                        // hizada durur. 44 dp'lik dar hücrede bu kayma göze
-                        // batıyor (ölçülen rozet kutusu 15 dp).
-                        SizedBox(height: kompakt ? 9 : 15),
+                        // Sayı satırıyla AYNI yükseklik: dolu/boş gün rakamları
+                        // hizada kalsın (44 dp dar hücrede kayma göze batar).
+                        SizedBox(
+                          height: kompakt
+                              ? takvimSayiYerTutucuKompakt
+                              : takvimSayiYerTutucu,
+                        ),
                     ],
                   ),
                 ),
@@ -621,7 +653,12 @@ class _AyTakvimiState extends State<AyTakvimi> {
       cocuklar.add(
         Padding(
           key: ValueKey('takvim-devam-${g.tarih}'),
-          padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
+          padding: const EdgeInsets.fromLTRB(
+            4,
+            takvimDevamBaslikUst,
+            4,
+            takvimDevamBaslikAlt,
+          ),
           child: InkWell(
             onTap: () => setState(() => _secili = tarih),
             borderRadius: BorderRadius.circular(8),

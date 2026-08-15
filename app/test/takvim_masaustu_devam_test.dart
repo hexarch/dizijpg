@@ -105,6 +105,21 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Sıradaki bölüm'), findsNothing);
+
+      final baslik = tester.widget<Padding>(
+        find.byKey(ValueKey('takvim-devam-${_k(ikiSonra)}')),
+      );
+      expect(
+        baslik.padding,
+        const EdgeInsets.fromLTRB(
+          4,
+          takvimDevamBaslikUst,
+          4,
+          takvimDevamBaslikAlt,
+        ),
+      );
+      expect(takvimDevamBaslikUst, 8); // eski 16, %50
+      expect(takvimDevamBaslikAlt, 4); // eski 8, %50
     });
 
     testWidgets('seçili gün boşsa uyarı + sonraki günler (teaser değil)', (

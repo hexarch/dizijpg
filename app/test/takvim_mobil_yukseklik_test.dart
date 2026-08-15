@@ -371,8 +371,8 @@ void main() {
       );
       final dek = bugunKutu.decoration! as BoxDecoration;
       expect((dek.border! as Border).top.color, DiziRenkler.sari);
-      // Rozet hâlâ 9 pt ve sarı zeminli (kontrast korundu).
-      expect(takvimSayiPunto, 9);
+      // Alt sayı 8 pt; dolu günün vurgusu sarı dairede (taşma yok).
+      expect(takvimSayiPunto, 8);
       expect(tester.takeException(), isNull);
     });
 
