@@ -185,8 +185,8 @@ void main() {
       await tester.pumpWidget(_takvim(acikTema: false));
       await tester.pump();
 
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), takvimSayiPunto);
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), 8);
+      expect(_rozetPunto(tester, _bugunAnahtar(9)), takvimSayiPunto);
+      expect(_rozetPunto(tester, _bugunAnahtar(9)), 8);
       // İki bölümlü gün "2" yazar (rozet içeriği bozulmadı).
       expect(
         find.descendant(
@@ -194,6 +194,11 @@ void main() {
           matching: find.text('2'),
         ),
         findsOneWidget,
+      );
+      // Tek bölümde "1" yazılmaz — sarı daire yeter.
+      expect(
+        find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(2)}')),
+        findsNothing,
       );
       // RenderFlex overflow olsaydı burada yakalanırdı.
       expect(
@@ -204,7 +209,7 @@ void main() {
       // Gün hücresinin dokunma alanı küçülmedi (rozet punto'su etkilemedi).
       final hucre = tester.getSize(
         find.ancestor(
-          of: find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(2)}')),
+          of: find.byKey(ValueKey('takvim-gun-${_bugunAnahtar(2)}')),
           matching: find.byType(GestureDetector),
         ),
       );
@@ -220,8 +225,9 @@ void main() {
       await tester.pump();
 
       // Kompakt ızgarada aynı gün birden fazla panelde DEĞİL; tek rozet.
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), takvimSayiPuntoKompakt);
-      expect(_rozetPunto(tester, _bugunAnahtar(2)), 7);
+      // Tek bölümde sayı yok; punto 2 bölümlü günden okunur.
+      expect(_rozetPunto(tester, _bugunAnahtar(9)), takvimSayiPuntoKompakt);
+      expect(_rozetPunto(tester, _bugunAnahtar(9)), 7);
       expect(
         tester.takeException(),
         isNull,
@@ -237,7 +243,7 @@ void main() {
       await tester.pump();
 
       final kutu = tester.widget<Container>(
-        find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(2)}')),
+        find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(9)}')),
       );
       expect(
         kutu.decoration,
@@ -246,7 +252,7 @@ void main() {
       );
       final metin = tester.widget<Text>(
         find.descendant(
-          of: find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(2)}')),
+          of: find.byKey(ValueKey('takvim-sayi-${_bugunAnahtar(9)}')),
           matching: find.byType(Text),
         ),
       );
@@ -263,13 +269,19 @@ void main() {
       await tester.pump();
 
       final anahtar = _bugunAnahtar(2);
+      final cift = _bugunAnahtar(9);
       final sayiMetin = tester.widget<Text>(
         find.descendant(
-          of: find.byKey(ValueKey('takvim-sayi-$anahtar')),
+          of: find.byKey(ValueKey('takvim-sayi-$cift')),
           matching: find.byType(Text),
         ),
       );
       expect(sayiMetin.style!.color, Colors.white);
+      expect(sayiMetin.data, '2');
+
+      // Tek bölüm: sarı daire var, altta "1" yok.
+      expect(find.byKey(ValueKey('takvim-sayi-$anahtar')), findsNothing);
+      expect(find.byKey(ValueKey('takvim-gun-$anahtar')), findsOneWidget);
 
       final daire = tester.widget<Container>(
         find.byKey(ValueKey('takvim-gun-$anahtar')),

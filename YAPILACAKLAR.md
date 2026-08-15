@@ -1,6 +1,9 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ TAKVİM: tek bölümde "1" yazılmaz
+Sarı daire durur; alt sayı yalnız 2+ bölümde. Dağıtılmadı.
+
 ## 2026-08-16 — 🚀 WEB 1.54.0+102 (takvim hücresi + masaüstü çubuk)
 Takvim: dolu günde gün rakamı sarı daire + siyah yazı; altındaki bölüm
 sayısı sarı rozet değil (koyu=beyaz, açık=siyah, 8/7 pt); ileri tarih

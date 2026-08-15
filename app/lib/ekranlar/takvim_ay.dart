@@ -41,8 +41,9 @@ const double masaustuTakvimGenisligi =
 
 /// Gün hücresinin altındaki "o gün kaç bölüm var" sayısının punto'su.
 /// 16 Ağu: sarı rozet kalktı; sayı tema renginde (koyu=beyaz, açık=siyah)
-/// ve bir tık daha küçük. Dolu günün VURGUSU artık üstteki gün rakamının
-/// sarı dairesi. Dokunma alanı (hücre ≥44 dp) bundan etkilenmiyor.
+/// ve bir tık daha küçük. Dolu günün VURGUSU üstteki gün rakamının sarı
+/// dairesi. Tek bölümde alt sayı YAZILMAZ (sarı daire yeter); 2+ yazılır.
+/// Dokunma alanı (hücre ≥44 dp) bundan etkilenmiyor.
 const double takvimSayiPunto = 8;
 const double takvimSayiPuntoKompakt = 7;
 
@@ -318,7 +319,7 @@ class _AyTakvimiState extends State<AyTakvimi> {
                         kompakt: kompakt,
                       ),
                       const SizedBox(height: 1),
-                      if (sayi > 0)
+                      if (sayi > 1)
                         Container(
                           key: ValueKey('takvim-sayi-$anahtar'),
                           child: Text(
@@ -335,8 +336,8 @@ class _AyTakvimiState extends State<AyTakvimi> {
                           ),
                         )
                       else
-                        // Sayı satırıyla AYNI yükseklik: dolu/boş gün rakamları
-                        // hizada kalsın (44 dp dar hücrede kayma göze batar).
+                        // Tek bölümde "1" yazılmaz (sarı daire yeter).
+                        // Yer tutucu: dolu/boş gün rakamları hizada kalsın.
                         SizedBox(
                           height: kompakt
                               ? takvimSayiYerTutucuKompakt
