@@ -1,0 +1,3115 @@
+[
+  {
+    "ad": "yuki.dorama",
+    "dil": "ja",
+    "bio": "東京で本の編集をしています。新作より、何度も観た劇場版に戻る週末の方が多い。ジブリと90年代のテレビアニメが家の空気みたいなもの。最近は実写の時代劇にも手を出しています。",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "jiwon.drama",
+      "lin.binge",
+      "dimas.nonton",
+      "minh.phim",
+      "miles.watches"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 608
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 1067
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 30991
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 129
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 16767
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "何度でも観る劇場版",
+        "aciklama": "気分が沈んだ夜に、最初から最後まで通す映画。",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 129
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 128
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 372058
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 149
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 10494
+          }
+        ]
+      },
+      {
+        "ad": "深夜に進めたアニメ",
+        "aciklama": "一度始めたら寝る時間を忘れるやつ。",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 1429
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 31911
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 42509
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 30991
+          }
+        ]
+      },
+      {
+        "ad": "ジブリ以外の宿題",
+        "aciklama": "実写と、まだ途中のアニメ。週末のリスト。",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 126308
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 30981
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 890
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 10494
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 129,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Netflix",
+        "tepki": "😍",
+        "gonderi": true,
+        "metin": "千と千尋をまた最初から観た。子どもの頃は湯屋の忙しさだけが面白かったのに、今は千尋が自分の名前を取り戻していくところが一番胸に残る。油屋の湯気、電車の海、カオナシが静かになる瞬間。宮崎駿は説明しない。置いておくだけ。だから何度観ても、そのたびに少し大人側の自分が別の場面で泣いている。",
+        "en": "I watched Spirited Away from the start again. As a child I only loved how busy the bathhouse was; now what stays with me is Chihiro taking her name back. The steam, the sea train, the moment No-Face goes quiet. Miyazaki does not explain. He just leaves things there. So every rewatch, a slightly older version of me cries at a different scene.",
+        "tr": "Ruhların Kaçışı'nı yine baştan izledim. Çocukken yalnız hamamın telaşı eğlenceliydi; şimdi içimde kalan, Chihiro'nun adını geri alması. Buhar, deniz treni, Kaonashi'nin sessizleştiği an. Miyazaki açıklamaz. Bırakır. O yüzden her izleyişte biraz daha yetişkin olan ben başka bir sahnede ağlıyor.",
+        "inceleme": "湯屋の忙しさより、名前を取り戻す場面が残る。何度観ても説明されない余白が、今の自分に別の傷を開ける。",
+        "inceleme_en": "More than the busy bathhouse, taking the name back is what stays. The unexplained space opens a different bruise each time.",
+        "inceleme_tr": "Hamamın telaşından çok adı geri almak kalıyor. Açıklanmayan boşluk her izleyişte başka bir yeri açıyor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 128,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "もののけ姫は、誰が正しいかを教えてくれない。サンもアシタカも、森も製鉄の里も、それぞれ生きる理由がある。あの最後の「生きろ」は慰めというより宿題で、観終わるたびに自分の日常の小さな欲まで少し疑わしくなる。作画の密度ではなく、あの空気の重さで好きな作品。",
+        "en": "Princess Mononoke never tells you who is right. San, Ashitaka, the forest, the ironworks — each has a reason to live. That final 'live' is less comfort than homework; after every watch I distrust even the small hungers of my own day. I love it for the weight of the air, not for how dense the animation is.",
+        "tr": "Prenses Mononoke kimin haklı olduğunu söylemez. San, Ashitaka, orman, demir köyü — her birinin yaşama gerekçesi var. Sondaki 'yaşa' teselliden çok ödev; her bitirişte gündelik küçük açlıklarımı bile biraz kuşkulanıyorum. Çizimin sıklığından değil, havanın ağırlığından seviyorum.",
+        "inceleme": "誰が正しいかを拒否する映画。最後の「生きろ」は慰めではなく、観終わったあとの宿題。",
+        "inceleme_en": "A film that refuses to tell you who is right. The final live is homework, not comfort.",
+        "inceleme_tr": "Kimin haklı olduğunu reddeden film. Sondaki yaşa teselli değil, bittikten sonraki ödev."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1429,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Crunchyroll",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "進撃の巨人は、最初の巨人のシーンで引っ張られて、途中から歴史とプロパガンダの話になっている。そこが好きだった。誰が壁の外にいるのかより、誰が物語を書いているのかの方が怖い。最終盤は好みが分かれると思う。それでも序盤から中盤までの情報の出し方は、今見ても丁寧すぎるくらい計算されている。",
+        "en": "Attack on Titan grabs you with the first titan scene, then turns into a story about history and propaganda. That is the part I loved. Who is writing the story is scarier than who is outside the walls. The ending splits people. Even so, the way information is paid out from the early to middle run still feels almost too carefully planned.",
+        "tr": "Attack on Titan ilk dev sahnesiyle çekiyor, sonra tarih ve propaganda hikâyesine dönüşüyor. Sevdiğim yer orası. Duvarın dışında kim var sorusundan çok, hikâyeyi kim yazıyor sorusu korkutucu. Final herkese yaramaz. Yine de baştan ortaya bilgiyi dağıtışı hâlâ fazla hesaplı gelecek kadar özenli.",
+        "inceleme": "巨人より、物語を書く側が怖い。終盤は分かれる。中盤までの出し方は今見ても計算されている。",
+        "inceleme_en": "Who writes the story is scarier than the titans. The ending splits people. The middle still feels calculated.",
+        "inceleme_tr": "Devlerden çok hikâyeyi yazan taraf korkutucu. Final ayrıştırır. Ortaya kadar dağıtış hâlâ hesaplı."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 31911,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Crunchyroll",
+        "gonderi": true,
+        "metin": "鋼の錬金術師 FULLMETAL ALCHEMIST は、約束を守る物語だと思う。等価交換を掲げておきながら、最後に残るのは計算できないもの。弟を背負うエドワードの怒り方が、年を取るほどに兄の話に聞こえる。穴のない構成で、64話で全部回収する潔さが今の連載ものにはあまりない。",
+        "en": "Fullmetal Alchemist: Brotherhood is a story about keeping a promise. It hangs equivalent exchange on the wall, then what remains is the thing you cannot calculate. The way Edward carries his anger — and his brother — sounds more like an older brother's story the older I get. A construction with no holes, and the nerve to close every thread in 64 episodes, is rare in long-running shows now.",
+        "tr": "Fullmetal Alchemist: Brotherhood bana bir sözü tutma hikâyesi gibi geliyor. Eşdeğer takası duvara asıyor, sonda kalan ise hesaplanamayan şey. Edward'ın öfkesini ve kardeşini taşıyışı, yaş aldıkça ağabey hikâyesine dönüyor. Deliği olmayan kurgu; 64 bölümde her parantezi kapatan cesaret bugünün uzun işlerinde az.",
+        "inceleme": "等価交換を掲げて、最後に計算できないものが残る。64話で回収する潔さが今は珍しい。",
+        "inceleme_en": "It hangs equivalent exchange on the wall, then leaves what you cannot calculate. Closing every thread in 64 episodes is rare now.",
+        "inceleme_tr": "Eşdeğer takası asıyor, sonda hesaplanamayan kalıyor. 64 bölümde her şeyi kapatmak şimdi az."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 30991,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "カウボーイビバップは、話がつながっていないようで、全部「帰れない人たち」の話になっている。スパイクの戦いより、ジェットがコーヒーを淹れる時間の方が印象に残ったりする。BGMを上げて夜に一話だけ、が一番正しい観方だと思っている。終わったあとに何も説明されないのが、逆に親切。",
+        "en": "Cowboy Bebop looks disconnected episode to episode, and then you notice every one is about people who cannot go home. More than Spike's fights, the time Jet spends making coffee is what stays. One episode at night with the soundtrack up is the right way to watch it. It explains nothing when it ends, which is, oddly, the kind part.",
+        "tr": "Cowboy Bebop bölüm bölüm kopuk durur; sonra hepsinin 'eve dönemeyenler' hikâyesi olduğunu görürsün. Spike'ın dövüşünden çok Jet'in kahve koyduğu an kalıyor. Gece soundtrack açık tek bölüm, bence doğru izleme. Bitince hiçbir şey açıklamaması tersinden nezaket.",
+        "inceleme": "繋がっていない話が、全部帰れない人の話になっている。夜に一話、音を上げて観るのが正しい。",
+        "inceleme_en": "Disconnected episodes that are all about people who cannot go home. One episode at night, music up, is the right way.",
+        "inceleme_tr": "Kopuk duran bölümlerin hepsi eve dönemeyenler. Gece tek bölüm, müzik açık, doğru izleme."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 372058,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "tepki": "😢",
+        "gonderi": true,
+        "metin": "君の名は。を劇場で二回観た。入れ替わりは仕掛けで、残るのは黄昏の光と、名前を呼び合う声。新海誠の空は綺麗すぎると言われる。綺麗すぎても、あの列車のシーンは今でも胸がざわつく。続編を待たなくていい。あれで完結している。",
+        "en": "I saw Your Name twice in a theater. The body-swap is the device; what stays is the dusk light and the voices calling a name. People say Shinkai's skies are too pretty. Even so, that train scene still moves in my chest. It does not need a sequel. It ends.",
+        "tr": "Adını Sen Koy'u salonda iki kez izledim. Bedene girmek düzenek; kalan alacakaranlık ve adı çağıran sesler. Shinkai'nin göğü fazla güzel denir. Yine de o tren sahnesi göğsümde duruyor. Devam gerekmez. Bitmiş.",
+        "inceleme": "仕掛けより黄昏。綺麗すぎると言われても、呼び合う声は残る。続編は要らない。",
+        "inceleme_en": "Dusk more than the device. Even if the skies are too pretty, the calling stays. No sequel needed.",
+        "inceleme_tr": "Düzeneğinden çok alacakaranlık. Gök fazla güzel denese de çağrı kalıyor. Devam gerekmez."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 42509,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Crunchyroll",
+        "inceleme": "中二に見えて、時間の残酷さの話になる。助けることを諦めない友情の方が主題。",
+        "inceleme_en": "It looks like teen posturing, then becomes about the cruelty of time. The subject is friendship that will not stop helping.",
+        "inceleme_tr": "Ergen poz gibi durur, zamanın zalimliğine döner. Konu yardım etmeyi bırakmayan dostluk."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 37854,
+        "durum": "izliyorum",
+        "oran": 0.12,
+        "puan": 8,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 126308,
+        "durum": "izliyorum",
+        "oran": 0.55,
+        "puan": 8,
+        "platform": "Disney+"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 13916,
+        "durum": "biraktim",
+        "oran": 0.35,
+        "puan": 6,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 30981,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 8392,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Netflix",
+        "tepki": "😍",
+        "gonderi": true,
+        "metin": "となりのトトロは、子ども向けに見えるけれど、大人になってから観ると「隣にいるのに見えないもの」の話になる。サツキが走っている場面より、雨のバス停の方が残る。宮崎駿は説明しない。置いておくだけ。あのネコバスの音ではなく、土の匂いと、まだ間に合うという感じが、今の東京の週末にも効いている。",
+        "en": "My Neighbor Totoro looks like a children's film, and then as an adult it becomes a story about things that are next to you and still unseen. The rain at the bus stop stays longer than Satsuki running. Miyazaki does not explain. He leaves it. The smell of dirt, and the feeling that you are still on time, still works on a Tokyo weekend.",
+        "tr": "Komşum Totoro çocuk filmi gibi durur; yetişkinin gözünde yanında olup görünmeyenlerin hikâyesi olur. Satsuki'nin koşmasından çok yağmurlu durak kalır. Miyazaki açıklamaz. Bırakır. Toprak kokusu ve hâlâ yetişiyor olma hissi, Tokyo hafta sonunda hâlâ işe yarıyor.",
+        "inceleme": "子ども向けの顔をして、見えない隣を撮っている。雨のバス停だけで足りる映画。",
+        "inceleme_en": "A children's face, filming the unseen next door. The rainy bus stop is enough of a film.",
+        "inceleme_tr": "Çocuk yüzüyle görünmeyen komşuyu çekiyor. Yağmurlu durak tek başına film."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 4935,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "inceleme": "ハウルの動く城は戦争の話を魔法の話の顔でする。ソフィーが年を取るほど、声がはっきりする。",
+        "inceleme_en": "Howl's Moving Castle talks about war with a magic face. The older Sophie gets, the clearer her voice.",
+        "inceleme_tr": "Yürüyen Şato savaşı sihir yüzüyle anlatır. Sophie yaşlandıkça sesi netleşir."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 16859,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 890,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "inceleme": "エヴァンゲリオンは傷の設計図。使徒より、乗り込む前の沈黙の方が残る。",
+        "inceleme_en": "Evangelion is a blueprint of a wound. The silence before climbing in stays longer than the angels.",
+        "inceleme_tr": "Evangelion bir yaranın planı. Meleklerden çok binmeden önceki sessizlik kalır."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 10494,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "MUBI"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1063,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 46298,
+        "durum": "izliyorum",
+        "oran": 0.25,
+        "puan": 8,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 85937,
+        "durum": "izliyorum",
+        "oran": 0.2,
+        "puan": 7,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 95479,
+        "durum": "izliyorum",
+        "oran": 0.15,
+        "puan": 7,
+        "platform": "Crunchyroll"
+      }
+    ]
+  },
+  {
+    "ad": "jiwon.drama",
+    "dil": "ko",
+    "bio": "서울에서 일하고 주말엔 드라마를 정주행합니다. 로맨스만 보는 줄 알았는데 어느새 스릴러랑 오래된 한국영화도 같이 쌓였어요. 자막 없이 다시 보는 작품이 생기면 그때가 제일 좋아요.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "yuki.dorama",
+      "lin.binge"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 20738
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 21684
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "비 오는 날 한국영화",
+        "aciklama": "창밖이 흐릴 때 일부러 꺼내 보는 것들.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 496243
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 670
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 11423
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 705996
+          }
+        ]
+      },
+      {
+        "ad": "마음 놓고 우는 드라마",
+        "aciklama": "반전보다 사람이 남는 쪽.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 94796
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 197067
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 128883
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Netflix",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "기생충은 웃기다가 갑자기 집이 무거워지는 영화다. 계단을 오르내리는 그 동선만으로도 계급이 보이고, 비가 오는 밤부터는 장르가 바뀐다. 봉준호는 설명을 많이 하지 않는다. 냄새 이야기, 정원 잔치, 지하. 다 보고 나면 우리 아파트 복도 소리가 조금 달라 들린다. 한국영화가 세계를 설득한 방식이 바로 이런 구체성이라고 생각한다.",
+        "en": "Parasite is funny until the house suddenly gets heavy. Just the way people go up and down the stairs shows class, and from the rainy night the genre changes. Bong Joon-ho does not explain much. The smell, the garden party, the basement. After it ends the hallway in my building sounds slightly different. I think that concreteness is how Korean film convinced the world.",
+        "tr": "Parazit, ev birden ağırlaşana kadar komik. Merdiven inip çıkış bile sınıfı gösteriyor; yağmurlu geceden sonra tür değişiyor. Bong Joon-ho az açıklar. Koku, bahçe partisi, bodrum. Bitince binamızın koridor sesi biraz başka geliyor. Kore sinemasının dünyayı ikna etme biçimi bence tam bu somutluk.",
+        "inceleme": "웃기다가 집이 무거워진다. 계단만으로 계급이 보인다. 구체성이 세계를 설득했다.",
+        "inceleme_en": "Funny until the house gets heavy. Stairs alone show class. That concreteness convinced the world.",
+        "inceleme_tr": "Ev ağırlaşana kadar komik. Merdiven sınıfı gösteriyor. O somutluk dünyayı ikna etti."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "사랑의 불시착은 달달하다고만 말하기엔 분단이 너무 구체적으로 그려진다. 리정혁의 집이 예쁜 게 아니라, 세리씨가 거기서 생활해야 하는 규칙들이 세밀해서 오래 남았다. 손예진과 현빈의 호흡도 좋지만, 나는 북한 마을 사람들이 서로를 돌보는 장면들을 더 자주 떠올린다. 로맨스 포장 안에 현실의 선을 숨기지 않은 작품.",
+        "en": "Crash Landing on You is too specifically about the border to call it only sweet. It is not that Ri Jeong-hyeok's house is pretty; it is the rules Se-ri has to live under that stayed with me. The chemistry is good, but I more often remember the villagers looking after each other. A romance that does not hide the real line inside the wrapping.",
+        "tr": "Crash Landing on You'yu yalnız tatlı demek yetmez; sınır çok somut. Ri Jeong-hyeok'un evi güzel olduğu için değil, Se-ri'nin uymak zorunda olduğu kurallar kaldı bende. Kimya güzel ama aklıma daha çok köylülerin birbirine bakışı geliyor. Ambalajın içinde gerçek çizgiyi gizlemeyen bir romans.",
+        "inceleme": "달달함 안에 분단의 규칙이 세밀하다. 마을 사람들이 서로를 돌보는 장면이 더 남는다.",
+        "inceleme_en": "Sweet, with the rules of a divided country drawn fine. The villagers looking after each other stay longer.",
+        "inceleme_tr": "Tatlı; bölünmüş ülkenin kuralları ince. Köylülerin birbirine bakışı daha kalıcı."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "오징어 게임은 게임 규칙보다 대기실이 더 잔인하다. 456명이 한 공간에 있을 때 생기는 작은 거래들, 그 실내의 형광등. 이정재가 말이 없는 시간이 많아서 오히려 설득력 있었다. 시즌이 늘어나면 상징이 흔들릴 수 있다고 생각하지만, 1시즌의 그 단순함이 전 세계를 움직인 이유는 아직도 분명하다.",
+        "en": "In Squid Game the waiting room is crueler than the rules. The small trades when 456 people share one space, those indoor lights. Lee Jung-jae spends so much time not talking that it becomes convincing. More seasons might shake the symbol, but the reason season one moved the world is still obvious: that simplicity.",
+        "tr": "Squid Game'de bekleyiş odası kurallardan daha zalim. 456 kişi aynı yerdeyken çıkan küçük alışverişler, o floresanlar. Lee Jung-jae'nin uzun sessizliği inandırıcı. Sezon çoğalırsa sembol sarsılabilir ama birinci sezonun dünyayı oynatmasının sebebi hâlâ net: o sadelik.",
+        "inceleme": "게임보다 대기실이 잔인하다. 1시즌의 단순함이 아직 분명하다.",
+        "inceleme_en": "The waiting room is crueler than the games. Season one's simplicity is still obvious.",
+        "inceleme_tr": "Oyunlardan çok bekleyiş odası zalim. Birinci sezonun sadeliği hâlâ net."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 670,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "올드보이는 복수 이야기처럼 시작해서 가족 이야기로 남는다. 복도를 달리는 그 한 테이크는 아직도 폭력의 문법 수업 같고, 끝난 뒤의 침묵이 더 길다. 박찬욱은 스타일이 먼저 보인다고들 하는데, 나는 최민식의 얼굴이 무너지는 쪽이 먼저다. 그래서 더 가끔 꺼내는 영화.",
+        "en": "Oldboy starts like revenge and stays as a family story. That corridor take is still a lesson in the grammar of violence, and the silence after it ends is longer. People say Park Chan-wook's style arrives first; for me Choi Min-sik's face collapsing arrives first. Hard to rewatch without flinching, which is why I take it out rarely.",
+        "tr": "Oldboy intikam gibi başlayıp aile hikâyesi olarak kalıyor. Koridor planı hâlâ şiddetin dilbilgisi dersi; bittikten sonraki sessizlik daha uzun. Park Chan-wook'ta önce üslup görünürmüş; bende önce Choi Min-sik'in yüzünün çöküşü var. Tiksinecek kadar zor, o yüzden seyrek açıyorum.",
+        "inceleme": "복수처럼 시작해서 가족으로 남는다. 최민식의 얼굴이 스타일보다 먼저 온다.",
+        "inceleme_en": "Starts as revenge, stays as family. Choi Min-sik's face arrives before the style.",
+        "inceleme_tr": "İntikam gibi başlar, aile olarak kalır. Choi Min-sik'in yüzü üsluptan önce gelir."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "이상한 변호사 우영우는 재능을 전시하지 않는다. 우영우가 말을 고르는 속도, 김밥을 좋아하는 이유, 법정에서 상대가 당황하는 타이밍. 로펌 권력 이야기도 빠지지 않아서 힐링만으로 끝나지 않는다. 박은빈의 연기가 캐릭터를 귀엽게만 만들지 않은 게 이 드라마의 수명이라고 본다.",
+        "en": "Extraordinary Attorney Woo does not exhibit talent for show. The speed Woo Young-woo picks words, why she likes kimbap, the moment the other side panics in court. The law-firm power story never drops, so it does not end as mere healing. Park Eun-bin not making the character only cute is, I think, why the show lasts.",
+        "tr": "Olağanüstü Avukat Woo yeteneği vitrine koymaz. Woo Young-woo'nun söz seçme hızı, kimbap sevmesi, karşı tarafın mahkemede şaştığı an. Hukuk bürosu iktidarı da düşmüyor; iş sırf iyileşme diye bitmiyor. Park Eun-bin karakteri yalnız sevimli bırakmadığı için dizinin ömrü var bence.",
+        "inceleme": "재능을 전시하지 않는다. 힐링만으로 끝나지 않는 로펌 이야기도 같이 간다.",
+        "inceleme_en": "It does not exhibit talent. The law-firm power story keeps it from ending as mere healing.",
+        "inceleme_tr": "Yetenek sergilemez. Hukuk bürosu iktidarı işi sırf iyileşme diye bitirmiyor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 11423,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 705996,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "inceleme": "헤어질 결심은 안개가 대사다. 박찬욱이 이번에는 칼을 숨기고 시선을 남긴다.",
+        "inceleme_en": "Decision to Leave uses fog as dialogue. Park Chan-wook hides the knife this time and leaves the gaze.",
+        "inceleme_tr": "Ayrılığa Karar vermede sis replik. Park Chan-wook bu kez bıçağı saklayıp bakışı bırakıyor."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 128883,
+        "durum": "izliyorum",
+        "oran": 0.4,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 136283,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 76669,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 64010,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "inceleme": "응답하라 1988은 반전 없이 시간이 가는 드라마. 골목과 식탁이 플롯보다 정확하다.",
+        "inceleme_en": "Reply 1988 is a drama where time passes without twists. Alleys and tables are more precise than plot.",
+        "inceleme_tr": "Reply 1988 dönüşsüz geçen zaman. Sokak ve sofra olay örgüsünden net."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 96102,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.2,
+        "puan": 8,
+        "platform": "Netflix"
+      }
+    ]
+  },
+  {
+    "ad": "miles.watches",
+    "dil": "en",
+    "bio": "I live in Brooklyn and watch slower than the internet wants me to. Crime desks, kitchen shows, one Western a year. If a series still works with the sound off, I stay.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "lena.serie",
+      "camille.ecran"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 1158
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 380
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1438
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 7345
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Sunday crime",
+        "aciklama": "Shows that treat institutions as characters.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 1438
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 1398
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 1396
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 76331
+          }
+        ]
+      },
+      {
+        "ad": "Quiet American movies",
+        "aciklama": "Not much talking. A lot of weather.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 7345
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 6977
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 3082
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "tv",
+        "tmdb_id": 1438,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Max",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "The Wire is still the only show I recommend with a warning: it will not chase you. The first hours feel like being dropped into a job you have not trained for. Then the corners, the docks, the schools, the paper all start rhyming. I care less about who gets shot than about how a city talks to itself when nobody is winning. Season four wrecked me more than the gang plot ever did.",
+        "en": "The Wire is still the only show I recommend with a warning: it will not chase you. The first hours feel like being dropped into a job you have not trained for. Then the corners, the docks, the schools, the paper all start rhyming. I care less about who gets shot than about how a city talks to itself when nobody is winning. Season four wrecked me more than the gang plot ever did.",
+        "tr": "The Wire'ı hâlâ bir uyarıyla öneriyorum: peşinden koşmaz. İlk saatler, eğitilmediğin bir işe atılmış gibi. Sonra köşeler, liman, okullar, gazete birbirine uyak tutuyor. Kimin vurulduğundan çok, kimse kazanmazken bir kentin kendi kendine nasıl konuştuğu. Dördüncü sezon, çete hikâyesinden daha çok dağıttı beni.",
+        "inceleme": "It will not chase you. Season four wrecked me more than any gang plot. A city talking to itself.",
+        "inceleme_en": "It will not chase you. Season four wrecked me more than any gang plot. A city talking to itself.",
+        "inceleme_tr": "Peşinden koşmaz. Dördüncü sezon çete hikâyesinden çok dağıttı. Kendine konuşan bir kent."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Max",
+        "gonderi": true,
+        "metin": "I waited too long on The Sopranos because everyone had already decided it was the well. Watching it now, the therapy scenes are the action. Tony in the kitchen at night, the ducks, Carmela counting money in her head. It is not nostalgia for mob movies. It is a man who cannot tell the difference between appetite and love, and a family that has to live inside that weather for years.",
+        "en": "I waited too long on The Sopranos because everyone had already decided it was the well. Watching it now, the therapy scenes are the action. Tony in the kitchen at night, the ducks, Carmela counting money in her head. It is not nostalgia for mob movies. It is a man who cannot tell the difference between appetite and love, and a family that has to live inside that weather for years.",
+        "tr": "The Sopranos'u geç bıraktım; herkes kuyu diye karar vermişti. Şimdi izleyince terapi sahneleri aksiyon. Gece mutfakta Tony, ördekler, Carmela'nın kafasında para sayması. Mafya filmine özlem değil. İştahla sevgiyi ayıramayan bir adam ve yıllarca o havanın içinde yaşamak zorunda olan bir aile.",
+        "inceleme": "The therapy is the action. Appetite mistaken for love, for years, in one kitchen.",
+        "inceleme_en": "The therapy is the action. Appetite mistaken for love, for years, in one kitchen.",
+        "inceleme_tr": "Aksiyon terapi. Yıllarca bir mutfakta iştahı sevgi sanmak."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Breaking Bad is tighter than people remember. The first season still looks small on purpose. What I notice on rewatch is how often Walt is already performing, even in the classroom. Cranston makes pride look like a chemical. I do not need the memes. I need the quiet in the crawl space, and the way Skyler becomes the only adult in the room without a speech about it.",
+        "en": "Breaking Bad is tighter than people remember. The first season still looks small on purpose. What I notice on rewatch is how often Walt is already performing, even in the classroom. Cranston makes pride look like a chemical. I do not need the memes. I need the quiet in the crawl space, and the way Skyler becomes the only adult in the room without a speech about it.",
+        "tr": "Breaking Bad insanların hatırladığından daha sıkı. İlk sezon kasten küçük duruyor. Yeniden izleyince Walt'un sınıfta bile rol yaptığını görüyorum. Cranston gururu kimyasal gibi oynuyor. Memelere ihtiyacım yok. Bodrum boşluğundaki sessizliğe ve Skyler'ın nutuk atmadan odadaki tek yetişkin oluşuna ihtiyacım var.",
+        "inceleme": "Tighter than the memes. Pride as a chemical. Skyler becomes the adult without a speech.",
+        "inceleme_en": "Tighter than the memes. Pride as a chemical. Skyler becomes the adult without a speech.",
+        "inceleme_tr": "Memelerden sıkı. Gurur kimyasal. Skyler nutuksuz yetişkin oluyor."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 76331,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Max",
+        "gonderi": true,
+        "metin": "Succession is about people who were never taught how to be bored without hurting someone. The boardrooms are funny until you notice nobody has anywhere else to go. Kendall's speeches, Shiv's timing, Roman making a joke instead of a feeling. I finished it angry, which I think is the honest ending. Wealth here is not glamorous. It is a room with no windows and very good tailoring.",
+        "en": "Succession is about people who were never taught how to be bored without hurting someone. The boardrooms are funny until you notice nobody has anywhere else to go. Kendall's speeches, Shiv's timing, Roman making a joke instead of a feeling. I finished it angry, which I think is the honest ending. Wealth here is not glamorous. It is a room with no windows and very good tailoring.",
+        "tr": "Succession, sıkılmayı birine zarar vermeden beceremeyen insanlar hakkında. Yönetim kurulları komik; ta ki kimsenin gidecek başka yeri olmadığını görünceye kadar. Kendall'ın konuşmaları, Shiv'in zamanlaması, Roman'ın duygu yerine şaka yapması. Öfkeli bitirdim; dürüst son bu bence. Zenginlik burada ışıltı değil. Penceresiz, terziliği çok iyi bir oda.",
+        "inceleme": "Nobody was taught how to be bored without hurting someone. I finished angry. Honest.",
+        "inceleme_en": "Nobody was taught how to be bored without hurting someone. I finished angry. Honest.",
+        "inceleme_tr": "Sıkılmayı zarar vermeden kimse öğretmemiş. Öfkeli bitirdim. Dürüst."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 7345,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "There Will Be Blood is mostly a face and a landscape arguing. Day-Lewis does not wink. The milkshake line is the meme; the church scene is the movie. I watch it when I need to remember that American ambition can look like a man standing too close to a hole in the ground. The score does half the violence. I do not play it in the background. That would be rude.",
+        "en": "There Will Be Blood is mostly a face and a landscape arguing. Day-Lewis does not wink. The milkshake line is the meme; the church scene is the movie. I watch it when I need to remember that American ambition can look like a man standing too close to a hole in the ground. The score does half the violence. I do not play it in the background. That would be rude.",
+        "tr": "There Will Be Blood çoğunlukla bir yüzle bir peyzajın tartışması. Day-Lewis göz kırpmaz. Milkshake repliği meme; kilise sahnesi filmin kendisi. Amerikan hırsının yerdeki bir çukurun fazla yakınına duran adama benzediğini hatırlamam gerekince açıyorum. Müziğin şiddetin yarısını yaptığını düşünüyorum. Arka planda açmam. Ayıp olur.",
+        "inceleme": "A face arguing with a landscape. The church scene is the movie; the milkshake is the meme.",
+        "inceleme_en": "A face arguing with a landscape. The church scene is the movie; the milkshake is the meme.",
+        "inceleme_tr": "Peyzajla tartışan bir yüz. Film kilise sahnesi; meme milkshake."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 6977,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 136315,
+        "durum": "izliyorum",
+        "oran": 0.6,
+        "puan": 9,
+        "platform": "Disney+"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 60059,
+        "durum": "izliyorum",
+        "oran": 0.45,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.5,
+        "puan": 6,
+        "platform": "Max"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 95480,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 238,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "inceleme": "The wedding is the thesis. Everything after is a man discovering the cost of saying yes in a dark room.",
+        "inceleme_en": "The wedding is the thesis. Everything after is a man discovering the cost of saying yes in a dark room.",
+        "inceleme_tr": "Düğün tez. Sonrası karanlık odada evet demenin bedelini öğrenen adam."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 769,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1104,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 46648,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Max"
+      }
+    ]
+  },
+  {
+    "ad": "lin.binge",
+    "dil": "zh",
+    "bio": "在上海，下班先看一集再吃饭。武侠老片和古装剧来回倒。最近也在补一些韩国的东西，但还是更想把《霸王别姬》再看一遍。",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "yuki.dorama",
+      "jiwon.drama"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 12453
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 1336
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 843
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 90761
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "反复看的华语片",
+        "aciklama": "不用想剧情、只想待在里面的电影。",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 843
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 146
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 79
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 10997
+          }
+        ]
+      },
+      {
+        "ad": "古装慢慢看",
+        "aciklama": "一口气补不完、只好周末两集的那种。",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 64197
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 90761
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 81133
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 843,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "tepki": "😍",
+        "gonderi": true,
+        "metin": "花样年华我几乎不敢快进。走廊、旗袍、那首歌，王家卫让时间变稠。梁朝伟和张曼玉靠得那么近，却始终隔着一句没说完的话。每次重看都觉得自己更懂那种说不出口的距离。它不是怀旧，是把一种城市里的克制拍到骨头里。",
+        "en": "I almost never skip in In the Mood for Love. Hallway, cheongsam, that song — Wong Kar-wai makes time thick. Tony Leung and Maggie Cheung stand so close and still leave a sentence unfinished. Each rewatch I think I understand that unspoken distance a little more. It is not nostalgia. It is restraint filmed down to the bone.",
+        "tr": "Aşk Rüzgarı'nda neredeyse hiç atlamam. Koridor, çipao, o şarkı — Wong Kar-wai zamanı koyulaştırıyor. Tony Leung ile Maggie Cheung o kadar yakın ki cümle yine bitmiyor. Her izleyişte o söylenmeyen mesafeyi biraz daha anladığımı sanıyorum. Nostalji değil. Kentin kendini tutuşunu kemiğe kadar çekmek.",
+        "inceleme": "不敢快进。时间变稠。靠得那么近，却留着一句没说完的话。",
+        "inceleme_en": "I do not skip. Time thickens. They stand that close and still leave a sentence unfinished.",
+        "inceleme_tr": "Atlamam. Zaman koyulaşır. O kadar yakın, cümle yine bitmez."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 146,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "卧虎藏龙是我把外国人拉来看华语片时的第一部。竹林、屋顶、那一声剑。李安把武打拍成思念。章子怡跑在树上的时候，我还是会屏住呼吸。它漂亮，但不空。最后的悬崖不是特效，是一个选择。",
+        "en": "Crouching Tiger, Hidden Dragon is the first Chinese-language film I pull foreigners toward. Bamboo, rooftops, that one sword sound. Ang Lee shoots fighting as longing. When Zhang Ziyi runs through the trees I still hold my breath. It is beautiful without being empty. The cliff at the end is not an effect. It is a choice.",
+        "tr": "Kaplan ve Ejderha, yabancılara ilk gösterdiğim Çince film. Bambu, çatılar, o kılıç sesi. Ang Lee dövüşü özlem gibi çekiyor. Zhang Ziyi ağaçların içinde koşunca hâlâ nefesim kesiliyor. Güzel ama boş değil. Sondaki uçurum efekt değil. Bir tercih.",
+        "inceleme": "武打拍成思念。竹林里那一跑，我还是会屏住呼吸。",
+        "inceleme_en": "Fighting shot as longing. That run through the bamboo still takes my breath.",
+        "inceleme_tr": "Dövüş özlem gibi. Bambudaki koşu hâlâ nefesi keser."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 90761,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "陈情令我是被配乐拖进去的。仙侠外壳下面是一门很老的课：谁被写下历史，谁只能活在传闻里。蓝忘机不说话的时候比说话更清楚。它有偶像剧的光，也有一股子不肯轻易和解的别扭。我喜欢这种别扭。",
+        "en": "The Untamed pulled me in with the score. Under the xianxia skin is an old lesson: who gets written into history, who only lives in rumor. Lan Wangji is clearer when he does not speak. It has idol-drama light and a stubbornness that will not make peace easily. I like that stubbornness.",
+        "tr": "The Untamed'e müzik çekti. Peri-kahraman kabuğunun altında eski bir ders var: tarihi kim yazıyor, kim yalnız söylentide yaşıyor. Lan Wangji konuşmayınca daha net. Idol dizi ışığı da var, kolay barışmayan bir inat da. O inadı seviyorum.",
+        "inceleme": "仙侠外壳下面是谁被写下历史。蓝忘机不说话更清楚。我喜欢这种别扭。",
+        "inceleme_en": "Under the xianxia skin: who gets written into history. Lan Wangji is clearer silent. I like the stubbornness.",
+        "inceleme_tr": "Kabuğun altında tarihi kimin yazdığı. Lan Wangji sessizken net. O inadı seviyorum."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 79,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "英雄的色彩先把人打倒。张艺谋用红、用棋、用无名的故事把统一写成一种代价。有人嫌它空。我觉得空是故意的，像一幅要你退远点看的画。李连杰很少这样安静。安静反而更锋利。",
+        "en": "Hero knocks you down with colour first. Zhang Yimou uses red, chess, Nameless's story to write unification as a cost. Some call it empty. I think the emptiness is on purpose, like a painting you have to step back from. Jet Li is rarely this quiet. Quiet is sharper.",
+        "tr": "Kahraman önce renkle yere seriyor. Zhang Yimou kırmızı, satranç ve İsimsiz'in hikâyesiyle birleşmeyi bir bedel olarak yazıyor. Boş diyen var. Bence boşluk kasten, geriden bakman gereken bir resim gibi. Jet Li nadiren bu kadar sessiz. Sessizlik daha keskin.",
+        "inceleme": "色彩先把人打倒。空是故意的，像要退远点看的画。",
+        "inceleme_en": "Colour knocks you down first. The emptiness is on purpose, like a painting you step back from.",
+        "inceleme_tr": "Önce renk yere serer. Boşluk kasten, geriden bakılan resim gibi."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "鱿鱼游戏在这边也刷过一遍。规则简单，所以更狠。我不太吃第二季的膨胀，第一季那间宿舍的日光灯就够了。它让我想起很多国产里不敢拍得这么直白的东西：人在游戏里比在生活里更容易露出形状。",
+        "en": "I went through Squid Game here too. The rules are simple, so it hits harder. I do not love how later seasons swell; season one's dorm fluorescent is enough. It reminds me of things mainland shows still rarely say that straight: people show their shape faster in a game than in a life.",
+        "tr": "Squid Game'i burada da bitirdim. Kurallar basit, o yüzden daha sert. Sonraki şişmeyi pek sevmiyorum; birinci sezonun yurt floresanı yeter. Buradaki işlerin hâlâ bu kadar düz söylemediği şeyi hatırlatıyor: insan oyunda hayattakinden çabuk şekil veriyor.",
+        "inceleme": "规则简单所以更狠。第一季宿舍的灯就够了。",
+        "inceleme_en": "Simple rules, so it hits harder. Season one's dorm lights are enough.",
+        "inceleme_tr": "Kurallar basit, daha sert. Birinci sezonun yurt ışığı yeter."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 10997,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "tepki": "😢",
+        "inceleme": "霸王别姬不是怀旧。是一个人把戏和生活叠在同一张脸上，叠到裂开。",
+        "inceleme_en": "Farewell My Concubine is not nostalgia. A person stacking opera and life on one face until it splits.",
+        "inceleme_tr": "Vedanın Konkubini nostalji değil. Opera ile hayatı aynı yüzde çatlayana kadar istiflemek."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 64197,
+        "durum": "izliyorum",
+        "oran": 0.45,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1429,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "biraktim",
+        "oran": 0.25,
+        "puan": 5,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 11104,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 81133,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix"
+      }
+    ]
+  },
+  {
+    "ad": "aanya.screens",
+    "dil": "hi",
+    "bio": "मुंबई में हूँ। हफ़्ते में एक पुरानी हिंदी फ़िल्म ज़रूर देखती हूँ, बाकी समय वेब सीरीज़। शाहरुख़ से शुरू हुआ था, इरफ़ान पर आकर रुक गया मन।",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "rafi.screen",
+      "zara.dramay"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 35742
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 76793
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 20453
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 79352
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "बार-बार वाली फ़िल्में",
+        "aciklama": "बीमार दिन या बहुत अच्छे दिन, दोनों में चलती हैं।",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 20453
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 19404
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 360814
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 579974
+          }
+        ]
+      },
+      {
+        "ad": "वेब पर हिम्मत",
+        "aciklama": "हँसी के बाद शहर की सच्चाई।",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 79352
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 87508
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 496243
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 20453,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "tepki": "😂",
+        "gonderi": true,
+        "metin": "थ्री इडियट्स को लोग मीम समझते हैं, मैं उसे क्लासरूम की फ़िल्म मानती हूँ। फ़ारहान की आवाज़, रैंचो का गायब होना, परीक्षा का वह दबाव जो हँसाने के बहाने बैठता है। आमिर ख़ान यहाँ स्टार कम, शिक्षक ज़्यादा हैं। हर बार जब कोई पूछता है सफलता क्या है, यही फ़िल्म याद आती है — जवाब सरल है, जीना कठिन।",
+        "en": "People treat 3 Idiots as memes. I treat it as a classroom film. Farhan's voice, Rancho vanishing, exam pressure sitting down disguised as jokes. Aamir Khan is less star here than teacher. Whenever someone asks what success is, this is the film I remember — the answer is simple, living it is not.",
+        "tr": "3 Aptal'ı herkes meme sanıyor, ben sınıf filmi sayıyorum. Farhan'ın sesi, Rancho'nun kaybolması, şaka kılığında oturan sınav baskısı. Aamir Khan burada yıldızdan çok öğretmen. Başarı nedir diye sorulunca bu film geliyor — cevap basit, yaşamak değil.",
+        "inceleme": "मीम नहीं, क्लासरूम की फ़िल्म। जवाब सरल है, जीना कठिन।",
+        "inceleme_en": "Not a meme film. A classroom film. The answer is simple; living it is not.",
+        "inceleme_tr": "Meme değil, sınıf filmi. Cevap basit, yaşamak değil."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 79352,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "सेक्रेड गेम्स मुंबई को पर्यटन नहीं, बीमारी की तरह दिखाती है। नवाज़ुद्दीन की साँस, सई की थकान, गणेश गैटोन्डे का इंतज़ार। यह क्राइम शो कम, शहर के पाप का लेखा है। सेकंड सीज़न बिखरा, पहला सीज़न अब भी बैठता है। हिंदी वेब सीरीज़ को साहस इसी ने सिखाया, चाहे लोग अब और चिकना सामान देखें।",
+        "en": "Sacred Games does not show Mumbai as tourism. It shows it as an illness. Nawazuddin's breath, Saif looking tired, Ganesh Gaitonde waiting. Less a crime show than an account of a city's sin. Season two frays; season one still sits. This is what taught Hindi web series to be brave, even if people now watch smoother things.",
+        "tr": "Sacred Games Mumbai'yi turizm değil hastalık gibi gösteriyor. Nawazuddin'in nefesi, Saif'in yorgunluğu, Gaitonde'nin bekleyişi. Polisiyeden çok bir kentin günah defteri. İkinci sezon dağılır; birinci hâlâ oturur. Hintçe diziye cesareti bu öğretti, insanlar şimdi daha pürüzsüz şeyler izlese de.",
+        "inceleme": "मुंबई बीमारी की तरह। हिंदी वेब को साहस इसी ने सिखाया।",
+        "inceleme_en": "Mumbai as an illness. This is what taught Hindi web series to be brave.",
+        "inceleme_tr": "Mumbai hastalık gibi. Hintçe diziye cesareti bu öğretti."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 360814,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "दंगल को मैं खेल फ़िल्म से ज़्यादा पिता-बेटी की फ़िल्म मानती हूँ। पहलवानों की मिट्टी, चोटी, वह आख़िरी कुश्ती। आमिर का शरीर बदलना चर्चा बना, मुझे गीत और चुप्पी ज़्यादा याद हैं। राष्ट्र और परिवार यहाँ एक ही अखाड़े में हैं। थोड़ा नारा है, थोड़ा सच है। दोनों साथ चलते हैं।",
+        "en": "I treat Dangal less as a sports film than a father-daughter film. Wrestlers' dirt, the braid, that last bout. Aamir changing his body was the talk; I remember the songs and the silences more. Nation and family share one pit here. A little slogan, a little truth. They walk together.",
+        "tr": "Dangal'ı spor filminden çok baba-kız filmi sayıyorum. Güreşçi toprağı, örgü, son maç. Aamir'in bedeni konuşuldu; bende şarkılar ve suskunluklar kaldı. Millet ve aile burada aynı minderde. Biraz slogan, biraz gerçek. İkisi beraber yürüyor.",
+        "inceleme": "खेल से ज़्यादा पिता-बेटी। राष्ट्र और परिवार एक अखाड़े में।",
+        "inceleme_en": "Less sports than father-daughter. Nation and family in one pit.",
+        "inceleme_tr": "Spor değil baba-kız. Millet ve aile aynı minderde."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 579974,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "RRR शोर है, और शोर जानबूझकर है। राजामौली भीड़ को सम्मान देते हैं। वह पुल वाला दृश्य मैंने बिना मुस्कुराए नहीं देखा। यह इतिहास की किताब नहीं, मेले की किताब है। कभी-कभी सिनेमा को इतना बड़ा होना चाहिए कि हॉल में साँस रुक जाए। यही वह फ़िल्म है।",
+        "en": "RRR is noise, and the noise is on purpose. Rajamouli respects a crowd. I have not watched the bridge sequence without smiling. This is not a history book. It is a fairground book. Sometimes cinema should be large enough that a hall holds its breath. That is this film.",
+        "tr": "RRR gürültü, ve gürültü kasten. Rajamouli kalabalığa saygı duyuyor. Köprü sahnesini gülmeden izleyemedim. Tarih kitabı değil, panayır kitabı. Bazen sinema salonun nefesini kesecek kadar büyük olmalı. İşte bu film.",
+        "inceleme": "जानबूझकर शोर। मेले की किताब, इतिहास की नहीं। हॉल में साँस रुकनी चाहिए।",
+        "inceleme_en": "Noise on purpose. A fairground book, not a history book. A hall should hold its breath.",
+        "inceleme_tr": "Kasten gürültü. Panayır kitabı, tarih değil. Salon nefessiz kalmalı."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 19404,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "डीडीएलजे को कितनी बार देखा है, गिनती नहीं। स्विट्ज़रलैंड से कम, घर लौटने के इंतज़ार से ज़्यादा याद है। शाहरुख़ का हाथ पीले सरसों में, काजोल का गुस्सा। यह प्रेम कहानी है, लेकिन असली विषय इजाज़त है। हर शादी के मौसम में यही फ़िल्म कहीं न कहीं चल रही होती है, और मुझे अब भी बुरा नहीं लगता।",
+        "en": "I have lost count of Dilwale Dulhania Le Jayenge. I remember the wait to come home more than Switzerland. Shah Rukh's hand in the mustard, Kajol's temper. It is a love story, but the real subject is permission. Every wedding season this film is playing somewhere, and I still do not mind.",
+        "tr": "DDLJ'yi kaç kez izlediğimi unuttum. İsviçre'den çok eve dönüş beklentisi kaldı. Shah Rukh'un hardal tarlasındaki eli, Kajol'un öfkesi. Aşk hikâyesi ama asıl konu izin. Her düğün mevsimi bir yerde bu film açık ve hâlâ bozulmuyorum.",
+        "inceleme": "स्विट्ज़रलैंड से कम, इजाज़त का इंतज़ार ज़्यादा। अब भी बुरा नहीं लगता।",
+        "inceleme_en": "Less Switzerland than the wait for permission. I still do not mind.",
+        "inceleme_tr": "İsviçre'den çok izin bekleyişi. Hâlâ bozulmuyorum."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 87508,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.3,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "lucia.series",
+    "dil": "es",
+    "bio": "Vivo en Madrid y llego tarde a casi todo, menos a las series. Me quedo con el cine español raro y con los thrillers que no gritan. Si una historia cabe en una cocina, mejor.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "camille.ecran",
+      "sofia.seriesbr"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 3131
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 3096
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 1417
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Cine español que no perdona",
+        "aciklama": "Películas que se quedan en la casa después de apagar.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 1417
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 219
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 411088
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 619264
+          }
+        ]
+      },
+      {
+        "ad": "Series para no mirar el móvil",
+        "aciklama": "Si miro el teléfono, pierdo el hilo de verdad.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 71446
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 76669
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "La casa de papel funciona mientras el plan es más inteligente que el espectáculo. Las primeras partes tienen esa electricidad de atraco clásico: el plano, el tiempo, la radio. Luego el mito se come a los personajes y a mí se me enfría. Aun así, Nairobi y el Profesor me importaron de verdad. No es la mejor serie española que he visto. Es la que mejor explica cómo un país se enamoró de un salto de cama rojo.",
+        "en": "Money Heist works while the plan is smarter than the spectacle. The early parts have that classic-heist electricity: the map, the clock, the radio. Then the myth eats the characters and I cool off. Still, Nairobi and the Professor mattered to me. It is not the best Spanish series I have seen. It is the one that best explains how a country fell in love with a red jumpsuit.",
+        "tr": "La casa de papel, plan gösteriden akıllıyken işliyor. İlk kısımlarda klasik soygun elektriği var: plan, süre, telsiz. Sonra mit karakterleri yiyor, bende soğuyor. Yine de Nairobi ile Profesör gerçekten önemliydi. Gördüğüm en iyi İspanyol dizi değil. Bir ülkenin kırmızı tuluma nasıl âşık olduğunu en iyi anlatan dizi.",
+        "inceleme": "Funciona mientras el plan es más listo que el espectáculo. Luego el mito se come a la gente.",
+        "inceleme_en": "It works while the plan is smarter than the spectacle. Then the myth eats the people.",
+        "inceleme_tr": "Plan gösteriden akıllıyken işler. Sonra mit insanları yer."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 1417,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "El laberinto del fauno la vi tarde, con la casa en silencio. Del Toro no esconde la guerra detrás de la fantasía: las dos se miran. Ofelia no es una niña tonta. Es alguien que elige un mundo porque el otro ya está podrido. El fauno me da miedo y ternura a la vez, que es exactamente el punto. Cada vez que la rewatch, el final me parece menos cuento y más veredicto.",
+        "en": "I came late to Pan's Labyrinth, house quiet. Del Toro does not hide the war behind the fantasy: they look at each other. Ofelia is not a silly child. She picks a world because the other one is already rotten. The faun scares me and moves me at once, which is exactly the point. Each rewatch the ending feels less like a tale and more like a verdict.",
+        "tr": "Pan'ın Labirenti'ni geç, ev sessizken izledim. Del Toro savaşı fantezinin arkasına saklamaz: ikisi birbirine bakar. Ofelia aptal bir çocuk değil. Öteki dünya çoktan çürüdüğü için bir dünya seçiyor. Faun hem korkutuyor hem yumuşatıyor; mesele tam o. Her yeniden izleyişte son masaldan çok hüküm gibi.",
+        "inceleme": "La guerra y el cuento se miran. Ofelia elige un mundo porque el otro ya está podrido.",
+        "inceleme_en": "War and the tale look at each other. Ofelia picks a world because the other is already rotten.",
+        "inceleme_tr": "Savaş ile masal birbirine bakar. Ofelia öteki çürüdüğü için bir dünya seçer."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 219,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Volver es Almodóvar en casa, con el viento de La Mancha y las mujeres hablando de verdad. Penélope no hace de estrella; hace de hija que no puede dejar de cuidar. El secreto familiar está, pero lo que me queda es la risa en el patio y el pelo al viento en el coche. Hay cine español que grita. Este, cuando grita, es porque alguien ha vuelto.",
+        "en": "Volver is Almodóvar at home, with La Mancha wind and women actually talking. Penélope is not doing star; she is doing a daughter who cannot stop taking care. The family secret is there, but what I keep is the laugh in the yard and the hair in the car wind. Some Spanish cinema shouts. This one, when it shouts, is because someone has come back.",
+        "tr": "Volver, Almodóvar'ın evinde: La Mancha rüzgârı ve gerçekten konuşan kadınlar. Penélope yıldızlık yapmıyor; bakmayı bırakamayan bir kız evlat. Aile sırrı var ama bende kalan avludaki gülüş ve arabadaki saç. Bazı İspanyol sineması bağırır. Bu, bağırınca birisi geri geldiği içindir.",
+        "inceleme": "Almodóvar en casa. El secreto está; lo que queda es la risa en el patio.",
+        "inceleme_en": "Almodóvar at home. The secret is there; what remains is the laugh in the yard.",
+        "inceleme_tr": "Almodóvar evde. Sır var; kalan avludaki gülüş."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 619264,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "El hoyo es una metáfora que no se esconde, y aun así funciona el rato que estás dentro del pozo. La comida bajando, las reglas absurdas, la gente que se vuelve verticalmente cruel. No es sutil. No hace falta. Me dejó más tiempo pensando en quién decide el menú que en la sangre. A veces el cine español de género va directo a la yugular y acierta.",
+        "en": "The Platform is a metaphor that does not hide, and it still works for as long as you are in the shaft. Food coming down, stupid rules, people turning cruel along the vertical. It is not subtle. It does not need to be. I spent more time thinking about who decides the menu than about the blood. Sometimes Spanish genre cinema goes straight for the throat and lands.",
+        "tr": "The Platform saklanmayan bir metafor; yine de kuyudayken işliyor. Aşağı inen yemek, saçma kurallar, düşeyde zalimleşen insanlar. İnce değil. Gerek de yok. Kandan çok menüyü kimin seçtiğini düşündüm. İspanyol tür sineması bazen gırtlağa gider ve tutturur.",
+        "inceleme": "Metáfora sin esconderse. Pensé más en quién decide el menú que en la sangre.",
+        "inceleme_en": "A metaphor that does not hide. I thought more about who decides the menu than about the blood.",
+        "inceleme_tr": "Saklanmayan metafor. Kandan çok menüyü kimin seçtiğini düşündüm."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 411088,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Contratiempo es un thriller de reloj y de clase. El coche, el bosque, el abogado que habla demasiado bien. Oriol Paulo dirige como si el espectador fuera otro sospechoso. Me gusta cuando el cine español de misterio no copia a Hollywood, copia a las conversaciones largas en despachos feos. El giro está. La resaca, también.",
+        "en": "The Invisible Guest is a thriller of clocks and class. The car, the woods, the lawyer who talks too well. Oriol Paulo directs as if the viewer were another suspect. I like Spanish mystery when it does not copy Hollywood and copies long talks in ugly offices instead. The twist is there. The hangover too.",
+        "tr": "Görünmez Misafir, saat ve sınıf gerilimi. Araba, orman, fazla iyi konuşan avukat. Oriol Paulo seyirciyi başka bir şüpheli gibi yönetiyor. İspanyol gizem Hollywood kopyalamayıp çirkin ofislerdeki uzun konuşmaları kopyalayınca seviyorum. Dönüş var. Akşamdan kalma da.",
+        "inceleme": "Reloj y clase. El giro está; la resaca, también.",
+        "inceleme_en": "Clock and class. The twist is there; the hangover too.",
+        "inceleme_tr": "Saat ve sınıf. Dönüş var; akşamdan kalma da."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 76669,
+        "durum": "izliyorum",
+        "oran": 0.35,
+        "puan": 6,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 194,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 96677,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.3,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1438,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      }
+    ]
+  },
+  {
+    "ad": "camille.ecran",
+    "dil": "fr",
+    "bio": "Paris, le métro, un écouteur. Je recommence Amélie trop souvent et je fais semblant de ne plus aimer Lupin. J'aime les films où les gens se parlent trop, et les séries où personne n'avoue rien.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "lucia.series",
+      "lena.serie"
+    ],
+    "favoriler": [
+      {
+        "tur": "person",
+        "tmdb_id": 2405
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 194
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 96677
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 531428
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "France qui reste",
+        "aciklama": "Des films que je prête sans angoisse.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 194
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 77338
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 531428
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 915935
+          }
+        ]
+      },
+      {
+        "ad": "Dimanche soir",
+        "aciklama": "Quand je ne veux pas réfléchir trop, mais pas non plus une série vide.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 96677
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 71446
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 62476
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 194,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "tepki": "😍",
+        "gonderi": true,
+        "metin": "Le Fabuleux Destin d'Amélie Poulain, je le connais par cœur et je le revois quand Paris est trop bruyant. Jeunnet n'est pas naïf: il cadre la solitude comme une farce. Les petits gestes, les photoautomates, le nain de jardin. On peut le trouver sucré. Moi j'y entends quelqu'un qui a peur d'être vu et qui apprend à l'être quand même. C'est pour ça que ça tient.",
+        "en": "I know Amélie by heart and I put it on when Paris is too loud. Jeunet is not naive: he frames loneliness as a gag. The little gestures, the photo booths, the garden gnome. You can call it sweet. I hear someone afraid of being seen who learns to be seen anyway. That is why it lasts.",
+        "tr": "Amelie'yi ezbere biliyorum; Paris fazla gürültülüyken açıyorum. Jeunet naif değil: yalnızlığı şaka gibi kadrajlıyor. Küçük jestler, foto kabinleri, bahçe cücesi. Şekerli diyen olur. Ben görülmekten korkup yine de görünmeyi öğrenen birini duyuyorum. O yüzden duruyor.",
+        "inceleme": "Paris trop bruyant, je remets Amélie. La solitude cadrée comme une farce, et ça tient.",
+        "inceleme_en": "When Paris is too loud I put Amélie on. Loneliness framed as a gag, and it holds.",
+        "inceleme_tr": "Paris gürültülüyken Amelie. Yalnızlık şaka kadrajı, duruyor."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 96677,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Lupin est un plaisir coupable assumé. Omar Sy porte le charme, mais c'est la France des petits arrangements qui m'intéresse: les musées, les familles bien nées, le vol comme réplique. Ce n'est pas Le Bureau. Ça n'essaie pas. Une série qui s'amuse à être populaire sans s'excuser, ça me va, surtout le dimanche soir.",
+        "en": "Lupin is a guilty pleasure I do not hide. Omar Sy carries the charm, but what I care about is France of small arrangements: museums, well-born families, theft as a reply. It is not The Bureau. It does not try to be. A show that enjoys being popular without apologizing works for me, especially on Sunday night.",
+        "tr": "Lupin, saklamadığım suçlu bir zevk. Omar Sy cazibeyi taşıyor ama beni ilgilendiren küçük ayarların Fransa'sı: müzeler, iyi aileler, cevap olarak hırsızlık. The Bureau değil. Olmaya da çalışmıyor. Özür dilemeden popüler olmaktan hoşlanan bir dizi, hele pazar gecesi, bana yeter.",
+        "inceleme": "Plaisir coupable. La France des petits arrangements, le vol comme réplique. Dimanche soir.",
+        "inceleme_en": "Guilty pleasure. France of small arrangements, theft as a reply. Sunday night.",
+        "inceleme_tr": "Suçlu zevk. Küçük ayarların Fransa'sı, cevap olarak hırsızlık. Pazar gecesi."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 531428,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Portrait de la jeune fille en feu se tient presque sans musique, et c'est déjà une thèse. Sciamma filme le regard comme un travail. Le feu, la robe verte, la page qu'on ne montre pas tout de suite. J'en sors plus attentive aux silences des autres. Rare, un film d'amour qui refuse le spectacle de la souffrance et garde la dignité jusqu'au dernier plan.",
+        "en": "Portrait of a Lady on Fire holds almost without music, and that is already an argument. Sciamma films looking as work. The fire, the green dress, the page they do not show at once. I leave more careful with other people's silences. Rare, a love film that refuses the spectacle of pain and keeps dignity through the last shot.",
+        "tr": "Portrait of a Lady on Fire neredeyse müziksiz duruyor; bu bile bir tez. Sciamma bakmayı iş gibi çekiyor. Ateş, yeşil elbise, hemen gösterilmeyen sayfa. Çıkınca başkalarının sessizliğine daha dikkat ediyorum. Acıyı gösteriye çevirmeyen, son plana kadar onuru tutan aşk filmi az.",
+        "inceleme": "Presque sans musique. Le regard comme un travail. La dignité jusqu'au dernier plan.",
+        "inceleme_en": "Almost without music. Looking as work. Dignity through the last shot.",
+        "inceleme_tr": "Neredeyse müziksiz. Bakmak bir iş. Son plana kadar onur."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 77338,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Intouchables, je l'ai vu trop de fois en avion, et pourtant ça tient. L'amitié est écrite large, d'accord. Ce qui reste, c'est la façon dont le film refuse de transformer le handicap en leçon. Omar Sy encore, mais plus terre à terre. Paris y est moins carte postale qu'appartement trop grand. Je le mets quand quelqu'un a besoin d'un film qui ne punit pas le rire.",
+        "en": "I have seen The Intouchables too many times on planes, and it still holds. The friendship is written large, fine. What remains is how the film refuses to turn disability into a lesson. Omar Sy again, more grounded. Paris is less postcard than an apartment that is too big. I put it on when someone needs a film that does not punish laughter.",
+        "tr": "Dokunulmazlar'ı uçakta fazla izledim, hâlâ duruyor. Dostluk kalın yazılmış, tamam. Kalan, filmin engeli derse çevirmeyi reddetmesi. Yine Omar Sy, daha yere basarak. Paris kartpostal değil, fazla büyük daire. Birinin gülmeyi cezalandırmayan filme ihtiyacı olunca açıyorum.",
+        "inceleme": "Vu trop souvent en avion. Il refuse de transformer le handicap en leçon.",
+        "inceleme_en": "Seen too often on planes. It refuses to turn disability into a lesson.",
+        "inceleme_tr": "Uçakta fazla izlendi. Engeli derse çevirmeyi reddediyor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 915935,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "Anatomie d'une chute est un huis clos qui n'a pas besoin de sang. La neige, le chalet, la visio, l'enfant qui traduit. Triet filme le couple comme une enquête impossible. Sandra Hüller ne plaide pas; elle existe, et ça dérange la salle. J'ai adoré qu'on ne me donne pas la vérité toute faite. Le doute, ici, est plus honnête que le verdict.",
+        "en": "Anatomy of a Fall is a closed room that does not need blood. Snow, the chalet, the video call, the child who translates. Triet films a couple as an impossible investigation. Sandra Hüller does not plead; she exists, and that bothers the room. I loved not being handed a ready-made truth. Doubt here is more honest than the verdict.",
+        "tr": "Bir Düşüşün Anatomisi kana ihtiyaç duymayan kapalı oda. Kar, dağ evi, görüntülü arama, çeviri yapan çocuk. Triet çifti imkânsız bir soruşturma gibi çekiyor. Sandra Hüller savunma yapmıyor; var oluyor ve salon rahatsız. Hazır gerçek verilmemesini sevdim. Burada kuşku hükümden daha dürüst.",
+        "inceleme": "Huis clos sans sang. Le doute est plus honnête que le verdict.",
+        "inceleme_en": "A closed room without blood. Doubt is more honest than the verdict.",
+        "inceleme_tr": "Kansız kapalı oda. Kuşku hükümden dürüst."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 62476,
+        "durum": "izliyorum",
+        "oran": 0.4,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 70523,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 76669,
+        "durum": "biraktim",
+        "oran": 0.15,
+        "puan": 4,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "lena.serie",
+    "dil": "de",
+    "bio": "Berlin, Wedding. Ich gucke lieber etwas Zweimal als alles Neue. Dark habe ich zu oft erklärt und trotzdem fange ich wieder bei Folge eins an. Familiengeheimnisse, Beton, Regen.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "miles.watches",
+      "camille.ecran"
+    ],
+    "favoriler": [
+      {
+        "tur": "tv",
+        "tmdb_id": 70523
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 582
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 104
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 66980
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Deutschland, langsam",
+        "aciklama": "Filme, die nicht um Aufmerksamkeit betteln.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 582
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 104
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 70523
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 66980
+          }
+        ]
+      },
+      {
+        "ad": "Noch auf der Liste",
+        "aciklama": "Wenn Dark zu oft erklärt wurde.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 1438
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 1398
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 387
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "tv",
+        "tmdb_id": 70523,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "Dark ist anstrengend auf die richtige Art. Winden ist klein, das Höhlensystem nicht, und trotzdem geht es am Ende um Eltern, die ihre Kinder nicht rechtzeitig anrufen. Die Zeitreise ist Handwerk. Was bleibt, ist der Satz, dass alles miteinander zusammenhängt, und wie kalt die Serie das ausspricht. Beim dritten Mal habe ich aufgehört, die Zettel zu malen, und angefangen, den Figuren zuzuhören.",
+        "en": "Dark is tiring in the right way. Winden is small, the cave system is not, and still it ends up being about parents who do not call their children in time. The time travel is craft. What remains is the line that everything is connected, and how coldly the show says it. On the third pass I stopped drawing charts and started listening to the people.",
+        "tr": "Dark doğru türden yorucu. Winden küçük, mağara sistemi değil; yine de iş, çocuklarını vaktinde aramayan ebeveynlere varıyor. Zaman yolculuğu zanaat. Kalan, her şeyin bağlı olduğu cümlesi ve dizinin bunu ne kadar soğuk söylemesi. Üçüncü turda şema çizmeyi bırakıp karakterleri dinlemeye başladım.",
+        "inceleme": "Anstrengend auf die richtige Art. Am Ende Eltern, die nicht anrufen. Kalt, und das ist kein Fehler.",
+        "inceleme_en": "Tiring in the right way. It ends on parents who do not call. Cold, and that is not a flaw.",
+        "inceleme_tr": "Doğru türden yorucu. Aramayan ebeveynlerde biter. Soğuk, kusur değil."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 582,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "Das Leben der Anderen habe ich in der Schule gesehen und später allein noch einmal. Der Wiesler, der zuhört, bis er ein Mensch wird, ohne dass der Film ihn heilig spricht. Die Schreibmaschine, der Dachboden, der Vorhang. Es ist ein Film über Würde in einem System, das Würde als Risiko behandelt. Ulrich Mühe spielt das fast ohne Gesicht, und genau deshalb glaubt man ihm jede Sekunde.",
+        "en": "I saw The Lives of Others at school and later again alone. Wiesler listens until he becomes a person, without the film making him a saint. The typewriter, the attic, the curtain. It is a film about dignity in a system that treats dignity as a risk. Ulrich Mühe plays it almost without a face, which is why you believe every second.",
+        "tr": "Başkalarının Hayatı'nı okulda izledim, sonra yalnız başıma bir daha. Wiesler, film onu aziz ilan etmeden, dinleye dinleye insan oluyor. Daktilo, tavan arası, perde. Haysiyeti risk sayan bir sistemde haysiyet filmi. Ulrich Mühe neredeyse yüzsüz oynuyor; her saniyesine o yüzden inanıyorsun.",
+        "inceleme": "Würde als Risiko. Ulrich Mühe fast ohne Gesicht, deshalb glaubt man jede Sekunde.",
+        "inceleme_en": "Dignity as a risk. Mühe almost without a face, so you believe every second.",
+        "inceleme_tr": "Haysiyet risk. Mühe neredeyse yüzsüz; her saniyeye inanıyorsun."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 104,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "Lola rennt ist Berlin, bevor Berlin so stolz auf sich war. Drei Läufe, dieselbe Liebe, anderes Pech. Tykwer macht aus Zeit ein Schlagzeug. Ich mag, dass der Film nicht weise wird. Er bleibt laut, rot, kurzatmig. Manchmal braucht man kein Motiv, man braucht Tempo und eine Tasche voll Geld. Dann ist das hier genau richtig.",
+        "en": "Run Lola Run is Berlin before Berlin was so proud of itself. Three runs, the same love, different bad luck. Tykwer turns time into a drum kit. I like that the film never gets wise. It stays loud, red, short of breath. Sometimes you do not need a motif. You need speed and a bag of money. Then this is exactly right.",
+        "tr": "Koş Lola Koş, Berlin kendinden bu kadar gurur duymadan önceki Berlin. Üç koşu, aynı aşk, başka şanssızlık. Tykwer zamanı davul setine çeviriyor. Filmin akıllanmaması hoşuma gidiyor. Gürültülü, kırmızı, nefessiz kalıyor. Bazen motif değil tempo ve bir çanta para gerekir. O zaman tam bu.",
+        "inceleme": "Berlin vor dem Stolz. Zeit als Schlagzeug. Laut, rot, kurzatmig. Genau richtig.",
+        "inceleme_en": "Berlin before the pride. Time as a drum kit. Loud, red, short of breath. Exactly right.",
+        "inceleme_tr": "Gururdan önceki Berlin. Zaman davul. Gürültülü, kırmızı, nefessiz. Tam."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 66980,
+        "durum": "izliyorum",
+        "oran": 0.35,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Babylon Berlin ist Kostüm und Kokain, ja. Darunter liegt eine Stadt, die noch nicht weiß, dass sie gleich kippt. Gereon und Charlotte ziehen mich mehr durch die Straßen als durch die Morde. Die Tanzflächen sind schön, die Akten schöner. Ich gucke langsam, absichtlich. Wer das als nur als Krimi nimmt, verpasst das Zittern.",
+        "en": "Babylon Berlin is costume and cocaine, yes. Under that is a city that does not yet know it is about to tip. Gereon and Charlotte pull me through the streets more than through the murders. The dance floors are beautiful; the files more so. I watch slowly on purpose. Take it as only a crime show and you miss the tremor.",
+        "tr": "Babylon Berlin kostüm ve kokain, evet. Altında henüz devrileceğini bilmeyen bir kent var. Gereon ile Charlotte beni cinayetlerden çok sokaklardan çekiyor. Dans tabanları güzel; dosyalar daha güzel. Kasten yavaş izliyorum. Bunu yalnız polisiye sanırsan titremeyi kaçırırsın.",
+        "inceleme": "Kostüm und Kokain, darunter eine Stadt die noch nicht weiß dass sie kippt.",
+        "inceleme_en": "Costume and cocaine, under that a city that does not know it is about to tip.",
+        "inceleme_tr": "Kostüm ve kokain; altında henüz devrileceğini bilmeyen kent."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 88236,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "How to Sell Drugs Online (Fast) ist albern und dann plötzlich gemein zu seinen Figuren, was ich an deutscher Comedy selten sehe. Moritz ist kein Genie, er ist peinlich, und genau deshalb glaubwürdig. Die 2000er-Optik nervt manchmal. Die Scham nicht. Eine Serie über das Internet, die das Internet nicht feiert, sondern als schlechte Idee behandelt.",
+        "en": "How to Sell Drugs Online (Fast) is silly and then suddenly mean to its characters, which I rarely see in German comedy. Moritz is not a genius, he is embarrassing, which is why he is believable. The 2000s look sometimes grates. The shame does not. A show about the internet that does not celebrate the internet, and treats it as a bad idea.",
+        "tr": "How to Sell Drugs Online (Fast) aptal, sonra birden karakterlerine kötü — Alman komedide az gördüğüm şey. Moritz dâhi değil, utanç verici; inandırıcı olduğu yer orası. 2000'ler görüntüsü bazen batıyor. Utanç batmıyor. İnterneti kutlamayan, onu kötü fikir gibi ele alan bir internet dizisi.",
+        "inceleme": "Albern, dann gemein zu seinen Figuren. Das Internet als schlechte Idee.",
+        "inceleme_en": "Silly, then mean to its characters. The internet treated as a bad idea.",
+        "inceleme_tr": "Aptal, sonra karakterlerine kötü. İnternet kötü fikir gibi."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 206010,
+        "durum": "izliyorum",
+        "oran": 0.5,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1438,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.4,
+        "puan": 6,
+        "platform": "Max"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 387,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "sofia.seriesbr",
+    "dil": "pt",
+    "bio": "São Paulo, trânsito, fone. Gosto de filme brasileiro que não pede desculpa, e de série que parece rua de verdade. Se tiver baile e polícia no mesmo quadro, eu fico.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "lucia.series",
+      "miles.watches"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 598
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 7347
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 68467
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Brasil sem filtro",
+        "aciklama": "O que eu indico quando pedem 'um filme nosso'.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 598
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 7347
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 666
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 68467
+          }
+        ]
+      },
+      {
+        "ad": "Fora e junto",
+        "aciklama": "O que a casa assistiu quando o algoritmo empurrou.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 93405
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 71446
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 496243
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 598,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "Cidade de Deus eu já vi tantas vezes que sei quando o flash vai estourar. Mesmo assim o ritmo não envelheceu. Meirelles e Lund filmam a favela sem folclore barato e sem discurso de palanque. Buscapé olhando, o menino no gatilho, o sol estourado. É violento. Também é preciso. Cada vez que alguém chama de 'filme de tiro' eu peço para prestar atenção em quem está narrando.",
+        "en": "I have seen City of God so many times I know when the flash will pop. The rhythm still has not aged. Meirelles and Lund film the favela without cheap folklore and without a podium speech. Buscapé looking, the kid on the trigger, the blown-out sun. It is violent. It is also precise. Every time someone calls it a shoot-em-up I ask them to watch who is narrating.",
+        "tr": "Tanrı Kent'i flaşın ne zaman patlayacağını bilecek kadar izledim. Ritim yine de yaşlanmamış. Meirelles ve Lund gecekonduyu ucuz folklor ve kürsü nutku olmadan çekiyor. Bakan Buscapé, tetikteki çocuk, patlamış güneş. Şiddetli. Aynı zamanda net. Birisi 'silah filmi' deyince anlatanın kim olduğuna bakmasını istiyorum.",
+        "inceleme": "O ritmo não envelheceu. Não é filme de tiro. Presta atenção em quem narra.",
+        "inceleme_en": "The rhythm has not aged. Not a shoot-em-up. Watch who is narrating.",
+        "inceleme_tr": "Ritim yaşlanmadı. Silah filmi değil. Anlatana bak."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 7347,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "Tropa de Elite é um filme irritado, e tem razão de estar. O capitão Nascimento não é herói para pôr na parede. Padilha filma o BOPE como máquina e como vício. O funk, o campus, o morro, tudo no mesmo nervo. Gosto dele porque não me pede para escolher um lado limpo. No Brasil isso ainda é raro no cinema que estoura nas salas.",
+        "en": "Elite Squad is an angry film, and it has reasons. Captain Nascimento is not a hero for the wall. Padilha films BOPE as a machine and as an addiction. Funk, campus, the hill, all on the same nerve. I like it because it does not ask me to pick a clean side. In Brazil that is still rare in cinema that actually fills theaters.",
+        "tr": "Seçkin Birlik kızgın bir film ve haklı sebepleri var. Yüzbaşı Nascimento duvara asılacak kahraman değil. Padilha BOPE'yi makine ve bağımlılık gibi çekiyor. Funk, kampüs, tepe, aynı sinir. Temiz taraf seçmemi istemediği için seviyorum. Brezilya'da salon dolduran sinemada bu hâlâ az.",
+        "inceleme": "Filme irritado com razão. Não pede lado limpo. Isso ainda é raro nas salas.",
+        "inceleme_en": "An angry film with reasons. It does not ask for a clean side. Still rare in theaters.",
+        "inceleme_tr": "Hakli kızgın film. Temiz taraf istemez. Salonlarda hâlâ az."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 68467,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "3% é desigualdade em forma de jogo, às vezes óbvia demais, às vezes certeira. O Processo é cruel de um jeito burocrático que eu reconheço. Não é Cidade de Deus. Não precisa ser. Como série brasileira que chegou longe, ela mostrou que a gente também sabe fazer distopia sem copiar o sotaque dos outros. Eu fiquei até o fim por causa das alianças, não dos tiros.",
+        "en": "3% is inequality as a game, sometimes too obvious, sometimes exact. The Process is cruel in a bureaucratic way I recognize. It is not City of God. It does not have to be. As a Brazilian series that traveled, it showed we can do dystopia without copying someone else's accent. I stayed to the end for the alliances, not the guns.",
+        "tr": "3%, oyun kılığına girmiş eşitsizlik; bazen fazla açık, bazen isabetli. Süreç, tanıdığım bürokratik bir zalimlik. Tanrı Kent değil. Olmak zorunda da değil. Uzağa giden bir Brezilya dizisi olarak distopiyi başkasının aksanını kopyalamadan yapabildiğimizi gösterdi. Sonda silah için değil ittifaklar için kaldım.",
+        "inceleme": "Desigualdade em forma de jogo. Fiquei pelas alianças, não pelos tiros.",
+        "inceleme_en": "Inequality as a game. I stayed for the alliances, not the guns.",
+        "inceleme_tr": "Oyun kılığında eşitsizlik. Silah için değil ittifak için kaldım."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 666,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Central do Brasil é o contrário do espetáculo: um banco de estação, cartas, um menino, uma mulher cansada. Fernanda Montenegro segura o filme só com o olhar. Salles filma o sertão sem cartão-postal. Toda vez que eu acho que cinema brasileiro precisa gritar para ser visto, eu volto aqui e me calo.",
+        "en": "Central Station is the opposite of spectacle: a station booth, letters, a boy, a tired woman. Fernanda Montenegro holds the film with a look. Salles films the hinterland without a postcard. Whenever I think Brazilian cinema has to shout to be seen, I come back here and shut up.",
+        "tr": "Merkez Terminali gösterinin tersi: gişe, mektuplar, bir çocuk, yorgun bir kadın. Fernanda Montenegro filmi bakışıyla tutuyor. Salles iç kesimi kartpostalsız çekiyor. Brezilya sinemasının görünmek için bağırması gerektiğini sandığımda buraya dönüp susuyorum.",
+        "inceleme": "O contrário do espetáculo. Fernanda Montenegro segura só com o olhar.",
+        "inceleme_en": "The opposite of spectacle. Fernanda Montenegro holds it with a look.",
+        "inceleme_tr": "Gösterinin tersi. Fernanda Montenegro bakışla tutuyor."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "La casa de papel estourou aqui como se fosse nossa. Eu vi no sofá, gritando com o Professor. Não é o melhor que tem. É o que a gente assistiu junto. Gosto quando uma série estrangeira vira assunto de padaria. Isso também é cultura pop, mesmo que os críticos façam cara.",
+        "en": "Money Heist blew up here as if it were ours. I watched on the sofa, yelling at the Professor. It is not the best thing on offer. It is what we watched together. I like when a foreign series becomes bakery talk. That is pop culture too, even if critics make a face.",
+        "tr": "La casa de papel burada bizimmiş gibi patladı. Koltukta Profesör'e bağırarak izledim. En iyisi değil. Beraber izlediğimiz şey. Yabancı bir dizinin fırın sohbeti olması hoşuma gidiyor. Eleştirmen surat assa da bu da popüler kültür.",
+        "inceleme": "Estourou como se fosse nossa. Não é o melhor. É o que a gente viu junto.",
+        "inceleme_en": "Blew up as if it were ours. Not the best. What we watched together.",
+        "inceleme_tr": "Bizimmiş gibi patladı. En iyisi değil. Beraber izlediğimiz."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.4,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1438,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 76669,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 670,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video"
+      }
+    ]
+  },
+  {
+    "ad": "nour.yushahid",
+    "dil": "ar",
+    "bio": "من القاهرة. أتابع ما يُصنع هنا وما يصل مدبلجاً، لكنني أرجع دائماً إلى الأفلام التي لا تصرخ. البيت، الشارع، الصمت بين جملتين.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "zara.dramay",
+      "camille.ecran"
+    ],
+    "favoriler": [
+      {
+        "tur": "tv",
+        "tmdb_id": 106590
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 517814
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "ما يبقى بعد العناوين",
+        "aciklama": "أعمال أعود إليها حين أملّ من الضجيج.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 517814
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 106590
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 428495
+          }
+        ]
+      },
+      {
+        "ad": "ما يصل مدبلجاً",
+        "aciklama": "أعمال وصلت إلى القاهرة وصارت حديث البيت.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 93405
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 71446
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 496243
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "tv",
+        "tmdb_id": 106590,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "بارانورمال ليست قصة رعب رخيصة. القاهرة فيها بطلة، والشقة أضيق من الخوف. أحمد أمين يلعب الرجل الذي لا يريد أن يصدق، وهذا أقرب إلى حياتنا من أي قفزات. أحببت أن المسلسل يترك تفسيراً معلقاً. الرعب الذي يبقى بعد إغلاق الحلقة أصدق من الدم.",
+        "en": "Paranormal is not cheap horror. Cairo is a character, and the apartment is narrower than the fear. Ahmed Amin plays a man who does not want to believe, which is closer to our lives than any jump scare. I liked that the series leaves an explanation hanging. The fear that stays after you close the episode is more honest than blood.",
+        "tr": "Paranormal ucuz korku değil. Kahire karakter, daire korkudan daha dar. Ahmed Amin inanmak istemeyen adamı oynuyor; bu, sıçratmalardan hayatımıza daha yakın. Dizinin açıklamayı asılı bırakması hoşuma gitti. Bölümü kapattıktan sonra kalan korku kandan daha dürüst.",
+        "inceleme": "القاهرة بطلة. الرعب الذي يبقى بعد إغلاق الحلقة أصدق من الدم.",
+        "inceleme_en": "Cairo is a character. The fear that stays after the episode is more honest than blood.",
+        "inceleme_tr": "Kahire karakter. Bölümden sonra kalan korku kandan dürüst."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 517814,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "كفرناحوم فيلمي الذي أتجنبه ثم أعود إليه. زين ليس استعارة، هو طفل يتكلم بسرعة الغضب. لاباكي لا تزيّن الفقر. الكاميرا قريبة أكثر مما يُحتمل أحياناً، وهذا هو القصد. كل مرة أنتهي منه أحتاج صمتاً في المطبخ. السينما العربية حين تكون بهذه القسوة تكون أيضاً رحيمة، بشكل غريب.",
+        "en": "Capernaum is the film I avoid and then return to. Zain is not a metaphor; he is a child who talks at the speed of anger. Labaki does not decorate poverty. The camera is closer than is comfortable, which is the point. Every time I finish it I need silence in the kitchen. When Arab cinema is this harsh it is also, strangely, merciful.",
+        "tr": "Capharnaüm kaçınıp geri döndüğüm film. Zain metafor değil; öfke hızında konuşan bir çocuk. Labaki yoksulluğu süslemiyor. Kamera bazen dayanılmaz yakın; mesele o. Her bitirişimde mutfakta sessizlik istiyorum. Arap sineması bu kadar sert olunca tuhaf biçimde merhametli de oluyor.",
+        "inceleme": "أتجنبها ثم أعود. زين ليس استعارة. بعد النهاية أحتاج صمت المطبخ.",
+        "inceleme_en": "I avoid it and return. Zain is not a metaphor. After it I need kitchen silence.",
+        "inceleme_tr": "Kaçınıp dönüyorum. Zain metafor değil. Bitince mutfak sessizliği."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 428495,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "حادثة النيل هيلتون فيلم نوار مصري بروح الستينيات وفساد لا يحتاج مبالغة. الفندق، البوليس، الجثة التي لا يريدها أحد. أحببت الإيقاع البارد. ليس فيلماً صاخباً عن الجريمة، بل عن من يُسمح له أن ينظر إلى الجانب الآخر من الردهة.",
+        "en": "The Nile Hilton Incident is Egyptian noir with a sixties hangover and corruption that needs no exaggeration. The hotel, the police, the body nobody wants. I liked the cold tempo. Not a loud crime film. A film about who is allowed to look to the other side of the lobby.",
+        "tr": "Nil Hilton Olayı, abartıya ihtiyaç duymayan yolsuzluk ve altmışlar mahmurluğuyla Mısır kara filmi. Otel, polis, kimsenin istemediği ceset. Soğuk temposunu sevdim. Gürültülü suç filmi değil. Lobinin öteki tarafına bakmasına izin verilenler hakkında.",
+        "inceleme": "نوار بلا مبالغة. عمن يُسمح له أن ينظر إلى الجانب الآخر من الردهة.",
+        "inceleme_en": "Noir without exaggeration. About who is allowed to look across the lobby.",
+        "inceleme_tr": "Abartısız kara film. Lobinin öteki tarafına bakmasına izin verilenler."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 87382,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Hulu",
+        "gonderi": true,
+        "metin": "رامي يكتب المهاجر كأنه نكتة طويلة ثم يبكي في المطبخ. الحلقة الواحدة قد تنقلب من حفلة إلى جنازة. ليس مسلسلاً عن الإسلام بقدر ما هو عن ابن يترجم بيت أهله للعالم. أضحك، ثم أشعر أن الضحك فيه خيانة صغيرة، وهذا ذكاء الكتابة.",
+        "en": "Ramy writes the immigrant as a long joke and then cries in the kitchen. One episode can flip from a party to a funeral. It is less a show about Islam than about a son translating his parents' house to the world. I laugh, then feel the laugh is a small betrayal, which is the writing being smart.",
+        "tr": "Ramy göçmeni uzun bir şaka gibi yazıp mutfakta ağlıyor. Bir bölüm partiden cenazeye dönebiliyor. İslam dizisinden çok, ailesinin evini dünyaya çeviren oğul. Gülüyorum, sonra gülüşün küçük bir ihanet olduğunu hissediyorum; yazının zekâsı bu.",
+        "inceleme": "نكتة طويلة ثم بكاء في المطبخ. الضحك فيه خيانة صغيرة، وهذا ذكاء.",
+        "inceleme_en": "A long joke, then crying in the kitchen. The laugh is a small betrayal, which is smart.",
+        "inceleme_tr": "Uzun şaka, sonra mutfakta ağlamak. Gülüş küçük ihanet; zekâ bu."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "لعبة الحبار وصلت إلى هنا كما وصلت إلى كل مكان. القواعد بسيطة والقسوة أوضح من كثير مما يُكتب عندنا عن الفقر. لا أراها تحفة. أراها مرآة متأخرة. الموسم الأول يكفي. الباقي توسّع يخاف أن يسكت.",
+        "en": "Squid Game arrived here the way it arrived everywhere. The rules are simple and the cruelty is clearer than a lot of what is written about poverty at home. I do not call it a masterpiece. I call it a late mirror. Season one is enough. The rest is expansion afraid of going quiet.",
+        "tr": "Squid Game buraya her yere vardığı gibi vardı. Kurallar basit, zalimlik bizde yoksulluk üzerine yazılanların çoğundan açık. Başyapıt demem. Geç kalmış ayna derim. Birinci sezon yeter. Kalan, susmaktan korkan şişme.",
+        "inceleme": "مرآة متأخرة. الموسم الأول يكفي. الباقي يخاف أن يسكت.",
+        "inceleme_en": "A late mirror. Season one is enough. The rest is afraid of going quiet.",
+        "inceleme_tr": "Geç ayna. Birinci sezon yeter. Kalan susmaktan korkuyor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "izliyorum",
+        "oran": 0.4,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.25,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 70523,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 843,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "rafi.screen",
+    "dil": "bn",
+    "bio": "ঢাকায় থাকি। সত্যজিৎ আগে, তারপর যা হোক। বাংলা সিনেমা কম বেরোয়, তাই দিল্লি ক্রাইম আর পথের পাঁচালী দুটোই আমার তাকের ওপর।",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "aanya.screens",
+      "zara.dramay"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 5801
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 87508
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 79352
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "বারবার বাংলা",
+        "aciklama": "যেগুলো ছাড়লে মনে হয় নিজের ভাষাই হারিয়েছি।",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 5801
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 20453
+          }
+        ]
+      },
+      {
+        "ad": "ঘরের স্ক্রিন",
+        "aciklama": "ঢাকায় সবাই দেখেছে, তাই আমিও।",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 93405
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 20453
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 1396
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 5801,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 10,
+        "platform": "Prime Video",
+        "tepki": "😢",
+        "gonderi": true,
+        "metin": "পথের পাঁচালীকে আমি ক্লাসিক বলে সরিয়ে রাখি না। গ্রামের ধুলো, দুর্গা, অপু, ট্রেনের শব্দ। সত্যজিৎ রেয় কোনো বক্তৃতা দেন না, শুধু দেখতে দেন। প্রতিবার দেখলে মনে হয় দারিদ্র্যকে তিনি কখনো রোমান্টিক করেননি, শুধু তার পাশে বসেছেন। বাংলা সিনেমার মূল যেখানে, আমি সেখানেই ফিরি।",
+        "en": "I do not put Pather Panchali away as a classic and forget it. Village dust, Durga, Apu, the train. Satyajit Ray does not lecture. He lets you look. Every time I watch I think he never romanticized poverty; he just sat beside it. That is the root of Bengali cinema, and I go back there.",
+        "tr": "Pather Panchali'yi klasik deyip rafa kaldırmıyorum. Köy tozu, Durga, Apu, tren. Satyajit Ray nutuk atmaz. Bakmanı sağlar. Her izleyişte yoksulluğu romantize etmediğini, yanına oturduğunu düşünüyorum. Bengal sinemasının kökü orası, oraya dönüyorum.",
+        "inceleme": "ক্লাসিক বলে সরিয়ে রাখি না। দারিদ্র্যকে রোমান্টিক করেননি, পাশে বসেছেন।",
+        "inceleme_en": "I do not shelf it as a classic. He did not romanticize poverty; he sat beside it.",
+        "inceleme_tr": "Klasik deyip kaldırmıyorum. Yoksulluğu romantize etmedi; yanına oturdu."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 87508,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "দিল্লি ক্রাইম হলো ধৈর্যের পুলিশি কাজ। শীলা ভট্টের মুখ, ফাইল, রাতের দিল্লি। কোনো নায়ক নেই, শুধু কাজ আছে। বাংলাদেশ থেকে দেখলেও প্রতিষ্ঠানের ক্লান্তি চেনা লাগে। সিজন ওয়ান এখনও সবচেয়ে শক্ত। চিৎকার কম, নোটবুক বেশি।",
+        "en": "Delhi Crime is police work as patience. Shefali Shah's face, files, Delhi at night. No hero, only the job. Watching from Bangladesh I still recognize the tiredness of institutions. Season one is still the strongest. Less shouting, more notebooks.",
+        "tr": "Delhi Crime sabır olarak polis işi. Shefali Shah'ın yüzü, dosyalar, gece Delhi. Kahraman yok, iş var. Bangladeş'ten izleyince de kurumların yorgunluğu tanıdık. Birinci sezon hâlâ en sıkı. Bağırış az, defter çok.",
+        "inceleme": "ধৈর্যের পুলিশি কাজ। চিৎকার কম, নোটবুক বেশি।",
+        "inceleme_en": "Police work as patience. Less shouting, more notebooks.",
+        "inceleme_tr": "Sabır olarak polis. Bağırış az, defter çok."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 20453,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "থ্রি ইডিয়টস ঢাকার হলেও হাসতে হাসতে দেখা যায়। শিক্ষা ব্যবস্থার চাপ এখানেও এক। র্যাঞ্চো একটু বেশি পরিষ্কার নায়ক, তবু ক্লাসরুমের ভয়টা সত্য। বন্ধুদের নিয়ে দেখা মুভি, পরে একা দেখলে অন্য কথা শোনা যায়।",
+        "en": "3 Idiots still plays in Dhaka halls with people laughing. The pressure of school is the same here. Rancho is a little too clean a hero, but the fear in the classroom is true. A friends movie; watched alone it says something else.",
+        "tr": "3 Aptal Dakka salonunda hâlâ güldürerek oynar. Okul baskısı burada da aynı. Rancho biraz fazla temiz kahraman ama sınıftaki korku doğru. Arkadaş filmi; yalnız izleyince başka söz çıkıyor.",
+        "inceleme": "ঢাকার হলেও হাসতে হাসতে চলে। র্যাঞ্চো পরিষ্কার, ক্লাসরুম সত্য।",
+        "inceleme_en": "It still plays in Dhaka with laughter. Rancho is clean; the classroom is true.",
+        "inceleme_tr": "Dakka salonunda hâlâ güldürür. Rancho temiz; sınıf doğru."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 79352,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "সেক্রেড গেমস মুম্বাইকে সুন্দর করে না। নওয়াজের গলা, শহরের রাত। অপরাধ নয়, ক্ষমতার হিসাব। বাংলায় এমন সাহসী ওয়েব এখনও কম। তাই আমি এটাকে প্রতিবেশীর কাজ হিসেবে নয়, প্রয়োজন হিসেবে দেখি।",
+        "en": "Sacred Games does not pretty Mumbai. Nawaz's voice, the city's night. Not crime so much as an account of power. Bengali web still rarely goes that far. So I watch it not as a neighbour's work but as a need.",
+        "tr": "Sacred Games Mumbai'yi güzelleştirmez. Nawaz'ın sesi, kent gecesi. Suçtan çok iktidar hesabı. Bengalce web hâlâ o kadar uzağa az gider. Onu komşu işi değil ihtiyaç diye izliyorum.",
+        "inceleme": "অপরাধ নয়, ক্ষমতার হিসাব। বাংলা ওয়েবে এমন সাহস এখনও কম।",
+        "inceleme_en": "Not crime so much as an account of power. Bengali web still rarely goes that far.",
+        "inceleme_tr": "Suç değil iktidar hesabı. Bengalce web hâlâ o kadar uzağa az gider."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "স্কুইড গেম সারা ঘর দেখেছে। নিয়ম সরল, তাই নিষ্ঠুরতা স্পষ্ট। আমি একে মহাখেল না বলে একটা সতর্কতা বলি। গরিব মানুষকে খেলা বানিয়ে দেখানো সহজ, সহজ বলেই ধরে রাখা দায়।",
+        "en": "The whole house watched Squid Game. The rules are simple, so the cruelty is clear. I do not call it a masterpiece. I call it a warning. Turning poor people into a game is easy, and because it is easy it is hard to hold.",
+        "tr": "Evin hepsi Squid Game izledi. Kurallar basit, zalimlik açık. Başyapıt demem. Uyarı derim. Yoksulu oyuna çevirmek kolay; kolay olduğu için tutması zor.",
+        "inceleme": "সতর্কতা। গরিবকে খেলা বানানো সহজ, সহজ বলেই ধরে রাখা দায়।",
+        "inceleme_en": "A warning. Turning the poor into a game is easy, and therefore hard to hold.",
+        "inceleme_tr": "Uyarı. Yoksulu oyuna çevirmek kolay; tutması zor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.2,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 360814,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.15,
+        "puan": 4,
+        "platform": "Max"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 10997,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "izliyorum",
+        "oran": 0.2,
+        "puan": 8,
+        "platform": "Netflix"
+      }
+    ]
+  },
+  {
+    "ad": "daria.serial",
+    "dil": "ru",
+    "bio": "Москва, двор, наушники. Люблю наше кино, где мало говорят и много стоят. Голливуд смотрю, но возвращаюсь к Балабанову и Звягинцеву.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "lena.serie",
+      "miles.watches"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 20992
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 265180
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 70523
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Тихое русское",
+        "aciklama": "Когда не хочется, чтобы фильм объяснял меня мне.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 20992
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 265180
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 11190
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 95202
+          }
+        ]
+      },
+      {
+        "ad": "Не наше, но честно",
+        "aciklama": "Импорт, который не кажется туристическим.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 70523
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 496243
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 1396
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 20992,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "Брат я пересматриваю не из ностальгии по девяностым, а потому что Данила всё ещё ходит по городу, которого уже нет. Балабанов не романтизирует винтовку. Он показывает, как человек ищет правила в каше. Музыка Селина Дион рядом с этим — почти издёвка, и это точно. Фильм жёсткий. Он честный в своей жёсткости.",
+        "en": "I rewatch Brother not out of nineties nostalgia but because Danila still walks a city that is gone. Balabanov does not romanticize the rifle. He shows a man looking for rules in mash. Celine Dion next to that is almost a mockery, and that is exact. The film is hard. It is honest in its hardness.",
+        "tr": "Birader'i doksan nostaljisi için değil, Danila artık olmayan kentte hâlâ yürüdüğü için açıyorum. Balabanov tüfeği romantize etmez. Çorbanın içinde kural arayan adamı gösterir. Yanındaki Celine Dion neredeyse alay; isabetli. Film sert. Sertliğinde dürüst.",
+        "inceleme": "Не ностальгия. Человек ищет правила в каше. Жёсткий и честный в этой жёсткости.",
+        "inceleme_en": "Not nostalgia. A man looking for rules in mash. Hard, and honest in that hardness.",
+        "inceleme_tr": "Nostalji değil. Çorbada kural arayan adam. Sert, sertliğinde dürüst."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 265180,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Левиафан — это не фильм про рыбу. Это про дом, который можно отнять на бумаге. Звягинцев снимает север так, будто Бог оттуда уже ушёл, а чиновники остались. Финал не утешает. Правильно, что не утешает. После него долго не хочется ничего остроумного.",
+        "en": "Leviathan is not a film about a fish. It is about a house you can take with paper. Zvyagintsev shoots the north as if God already left and the clerks stayed. The ending does not comfort. It is right that it does not. After it I do not want anything clever for a long time.",
+        "tr": "Leviathan balık filmi değil. Kâğıtla alınabilen ev filmi. Zvyagintsev kuzeyi, Tanrı gitmiş memurlar kalmış gibi çekiyor. Son teselli etmiyor. Etmemesi doğru. Sonrasında uzun süre zekice bir şey istemiyorum.",
+        "inceleme": "Не про рыбу. Про дом на бумаге. Финал не утешает — правильно.",
+        "inceleme_en": "Not about a fish. A house taken with paper. The ending does not comfort, correctly.",
+        "inceleme_tr": "Balık değil. Kâğıtla alınan ev. Son teselli etmiyor — doğru."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 95202,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Эпидемия / To the Lake смотрится как наш ответ большим американским заражениям, только дачи и семьи важнее спецназа. Люди противные и родные одновременно. Сериал не про вирус, про то, с кем ты сядешь в машину. Мне этого хватило, чтобы досмотреть.",
+        "en": "To the Lake plays like our answer to the big American outbreaks, except dachas and families matter more than special forces. People are awful and family at once. The show is not about a virus. It is about who you get in the car with. That was enough for me to finish.",
+        "tr": "To the Lake büyük Amerikan salgınlarına bizim cevap gibi; özel timden çok yazlık ve aile. İnsanlar hem berbat hem aile. Dizi virüs değil, arabaya kiminle bineceğin. Bitirmeme yetti.",
+        "inceleme": "Дачи важнее спецназа. Не про вирус, про то с кем сядешь в машину.",
+        "inceleme_en": "Dachas matter more than special forces. Not the virus: who you get in the car with.",
+        "inceleme_tr": "Yazlık özel timden önemli. Virüs değil: arabaya kiminle bineceğin."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 11190,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Возвращение Звягинцева — молчаливый и мокрый. Отец, двое сыновей, вышка, озеро. Никто не произносит нужных речей, поэтому всё слышно. Это коротко и тяжело, как удар, который не показывают, а оставляют в теле после титров.",
+        "en": "Zvyagintsev's The Return is quiet and wet. A father, two sons, a tower, a lake. Nobody makes the needed speeches, so you hear everything. It is short and heavy, like a blow they do not show and leave in the body after the credits.",
+        "tr": "Zvyagintsev'in Dönüş'ü sessiz ve ıslak. Baba, iki oğul, kule, göl. Kimse gereken nutku atmadığı için her şey duyuluyor. Kısa ve ağır; göstermedikleri, jenerikten sonra bedende bıraktıkları bir darbe gibi.",
+        "inceleme": "Молчаливый и мокрый. Нужных речей нет, поэтому всё слышно.",
+        "inceleme_en": "Quiet and wet. No needed speeches, so you hear everything.",
+        "inceleme_tr": "Sessiz ve ıslak. Nutuk yok, her şey duyuluyor."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 70523,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Dark я смотрела как чужую семейную сагу, которая вдруг стала про время. Немцы умеют делать тесно. Мне ближе наши молчаливые фильмы, но здесь схема честная: дети платят за родителей дольше, чем хочется признать. Сериал холодный. Холод — не недостаток.",
+        "en": "I watched Dark as someone else's family saga that suddenly became about time. Germans know how to make it cramped. I am closer to our silent films, but the scheme here is honest: children pay for parents longer than anyone wants to admit. The show is cold. Cold is not a flaw.",
+        "tr": "Dark'ı birden zaman hakkında olan başkasının aile destanı gibi izledim. Almanlar daraltmayı biliyor. Ben bizim sessiz filmlere daha yakınım ama şema dürüst: çocuklar ebeveynlerin bedelini kimsenin itiraf etmek istediğinden uzun ödüyor. Dizi soğuk. Soğuk kusur değil.",
+        "inceleme": "Чужая сага про время. Холод — не недостаток. Дети платят дольше, чем хочется признать.",
+        "inceleme_en": "Someone else's saga about time. Cold is not a flaw. Children pay longer than anyone admits.",
+        "inceleme_tr": "Başkasının zaman destanı. Soğuk kusur değil. Çocuklar itiraf edilenden uzun ödüyor."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 3040,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 6,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.35,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1438,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 28,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "zara.dramay",
+    "dil": "ur",
+    "bio": "لاہور۔ ڈرامے دیکھتی ہوں مگر فلم کا مزہ الگ ہے۔ جوائے لینڈ نے ہمت دی۔ باقی وقت ترکی اور ہندی کے درمیان پھنسی رہتی ہوں، پھر واپس اپنے گھر کی کہانیوں پہ آ جاتی ہوں۔",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "aanya.screens",
+      "nour.yushahid"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 962571
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 416477
+      },
+      {
+        "tur": "person",
+        "tmdb_id": 35742
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "گھر کے قریب",
+        "aciklama": "وہ کام جن میں لاہور یا کراچی کی ہوا لگتی ہے۔",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 962571
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 416477
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 464293
+          }
+        ]
+      },
+      {
+        "ad": "باہر کی چیزیں",
+        "aciklama": "گھر کے علاوہ جو چل نکلا۔",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 94796
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 93405
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 20453
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 962571,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "tepki": "😢",
+        "gonderi": true,
+        "metin": "جوائے لینڈ دیکھ کے میں نے لمبا سکوت کیا۔ یہ فلم نعرہ نہیں لگاتی، گھر کے اندر کی ہوا دکھاتی ہے۔ عائلہ کی نظر، سٹیج کی روشنی، وہ خوف جو زبان پر نہیں آتا۔ پاکستانی سینما جب اتنا بےخوف ہوتا ہے تو لگتا ہے ہم ابھی زندہ ہیں۔ میں اسے بار بار نہیں چلا سکتی، اور یہی اس کی عزت ہے۔",
+        "en": "After Joyland I sat quiet a long time. The film does not chant. It shows the air inside a house. Aila's look, the stage light, the fear that will not come to the tongue. When Pakistani cinema is this unafraid it feels like we are still alive. I cannot put it on again and again, and that is the respect it is owed.",
+        "tr": "Joyland'den sonra uzun sessiz oturdum. Film slogan atmaz. Evin içindeki havayı gösterir. Aila'nın bakışı, sahne ışığı, dile gelmeyen korku. Pakistan sineması bu kadar korkusuz olunca hâlâ canlıyız gibi. Tekrar tekrar açamıyorum; saygı da bu.",
+        "inceleme": "نعرہ نہیں، گھر کی ہوا۔ بار بار نہیں چلا سکتی، یہی عزت ہے۔",
+        "inceleme_en": "Not a chant. The air inside a house. I cannot put it on again and again; that is the respect.",
+        "inceleme_tr": "Slogan değil, evin havası. Tekrar tekrar açamam; saygı bu."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 416477,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "دی بگ سک ایک مہاجر لطیفہ ہے جو آخر میں گھر بن جاتا ہے۔ کمڈجی اور زو جی کی سگی، بیماری، ویزا، وہ مہمان جو نہیں جاتے۔ ہنسی اس لیے چلتی ہے کہ پہچان ہے، نہ کہ منظرنامہ اجنبی ہے۔ میں اسے رشتہ داروں کے سامنے چلا چکی ہوں۔ کام کر گیا۔",
+        "en": "The Big Sick is an immigrant joke that becomes a house by the end. Kumail and Zoe, the illness, the visa, the guests who will not leave. The laugh works because it is recognition, not because the scenery is foreign. I have played it in front of relatives. It did the job.",
+        "tr": "The Big Sick, sonda eve dönüşen bir göçmen şakası. Kumail ve Zoe, hastalık, vize, gitmeyen misafirler. Gülme yabancılıktan değil tanımaktan çalışıyor. Akrabaların önünde açtım. İşini yaptı.",
+        "inceleme": "مہاجر لطیفہ جو گھر بن جاتا ہے۔ پہچان کی ہنسی، اجنبی منظرنامے کی نہیں۔",
+        "inceleme_en": "An immigrant joke that becomes a house. A laugh of recognition, not foreign scenery.",
+        "inceleme_tr": "Eve dönüşen göçmen şakası. Tanıma gülüşü, yabancı manzara değil."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 464293,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "مولا جٹ لیجنڈ شور ہے۔ جان بوجھ کر۔ پنجابی فخر، گرد، خون، گیت۔ میں اسے تاریخ نہیں مانتی، میلے کی کتاب مانتی ہوں۔ کبھی کبھی ہال میں بیٹھ کے شور بھی ثقافت ہے۔ یہ وہ فلم ہے۔",
+        "en": "The Legend of Maula Jatt is noise. On purpose. Punjabi pride, dust, blood, songs. I do not take it as history. I take it as a fairground book. Sometimes sitting in a hall and being loud is also culture. That is this film.",
+        "tr": "The Legend of Maula Jatt gürültü. Kasten. Pencap gururu, toz, kan, şarkı. Tarih saymam. Panayır kitabı sayarım. Bazen salonda oturup gürültü de kültür. İşte bu film.",
+        "inceleme": "جان بوجھ کر شور۔ تاریخ نہیں، میلے کی کتاب۔",
+        "inceleme_en": "Noise on purpose. Not history. A fairground book.",
+        "inceleme_tr": "Kasten gürültü. Tarih değil, panayır kitabı."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "کریش لینڈنگ آن یو یہاں سب نے دیکھی۔ میٹھا ہے، مگر سرحد کو چھپاتی نہیں۔ میں نے اس میں وہ بات دیکھی جو ہمارے ڈراموں میں کبھی کبھار آتی ہے: محبت کے نیچے ریاست۔ ہان سوک ہیو کی اداکاری یاد رہتی ہے، پلاٹ سے زیادہ۔",
+        "en": "Everyone here watched Crash Landing on You. It is sweet, but it does not hide the border. I saw in it what our dramas sometimes reach: the state under the love. Hyun Bin stays with me more than the plot.",
+        "tr": "Crash Landing on You'yu burada herkes izledi. Tatlı, sınırı saklamıyor. Dizilerimizin ara sıra değdiği şeyi gördüm: aşkın altında devlet. Hyun Bin olay örgüsünden çok aklımda.",
+        "inceleme": "میٹھا ہے، سرحد چھپتی نہیں۔ محبت کے نیچے ریاست۔",
+        "inceleme_en": "Sweet, and the border is not hidden. The state under the love.",
+        "inceleme_tr": "Tatlı, sınır gizli değil. Aşkın altında devlet."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 20453,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "تھری ایڈیٹس امتحان کے موسم میں چلتی ہے۔ ہنسی کے نیچے وہی دباؤ ہے جو لاہور کے کالجز میں بھی ہے۔ رانچو صاف ہے، کلاس روم سچا ہے۔ گھر والوں کے ساتھ دیکھنا آسان، بعد میں اکیلے دیکھنا الگ بات نکالتا ہے۔",
+        "en": "3 Idiots runs in exam season. Under the laughs is the same pressure you find in Lahore colleges. Rancho is clean; the classroom is true. Easy with family; alone it says something else.",
+        "tr": "3 Aptal sınav mevsiminde açılır. Gülmenin altında Lahor kolejlerindeki aynı baskı var. Rancho temiz; sınıf doğru. Aileyle kolay; yalnız başka söz çıkıyor.",
+        "inceleme": "امتحان کے موسم کی فلم۔ ہنسی کے نیچے لاہور کا دباؤ بھی ہے۔",
+        "inceleme_en": "An exam-season film. Under the laughs, Lahore pressure too.",
+        "inceleme_tr": "Sınav mevsimi filmi. Gülmenin altında Lahor baskısı da var."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "izliyorum",
+        "oran": 0.3,
+        "puan": 7,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "izliyorum",
+        "oran": 0.3,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 5801,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "dimas.nonton",
+    "dil": "id",
+    "bio": "Jakarta, macet, earphone. Horor lokal dulu, baru yang luar. The Raid saya putar kalau ada yang bilang film Indonesia cuma sinetron. Tidak.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "minh.phim",
+      "sofia.seriesbr"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 94329
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 467012
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Indonesia yang berani",
+        "aciklama": "Yang saya tunjuk waktu orang meremehkan film kita.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 94329
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 180299
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 467012
+          }
+        ]
+      },
+      {
+        "ad": "Yang rame di warung",
+        "aciklama": "Bukan kanon. Tapi ditonton bareng.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 93405
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 71446
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 37854
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 94329,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Prime Video",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "The Raid itu gedung sebagai neraka yang masuk akal. Evans tidak banyak bicara. Iko Uwais bergerak sampai kamera kelihatan capek. Saya suka karena film ini tidak minta maaf soal tempo. Lorong, pisau, napas. Setiap kali ada yang bilang aksi Asia hanya Hong Kong, saya putar yang ini. Jakarta juga bisa keras tanpa terjemahan.",
+        "en": "The Raid is a building as a hell that makes sense. Evans does not talk much. Iko Uwais moves until the camera looks tired. I like that the film does not apologize for tempo. Corridor, knife, breath. Whenever someone says Asian action is only Hong Kong, I put this on. Jakarta can be hard without subtitles in the soul.",
+        "tr": "The Raid, mantıklı bir cehennem olarak bina. Evans az konuşur. Iko Uwais kamera yorulana kadar hareket eder. Tempo için özür dilememesi hoşuma gider. Koridor, bıçak, nefes. Asya aksiyonu yalnız Hong Kong diyen olunca bunu açarım. Jakarta da ruhunda altyazısız sert olabiliyor.",
+        "inceleme": "Gedung sebagai neraka yang masuk akal. Tempo tidak minta maaf. Jakarta bisa keras.",
+        "inceleme_en": "A building as a hell that makes sense. Tempo does not apologize. Jakarta can be hard.",
+        "inceleme_tr": "Mantıklı cehennem olarak bina. Tempo özür dilemez. Jakarta sert olabilir."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 180299,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video",
+        "gonderi": true,
+        "metin": "The Raid 2 lebih ramai, lebih geng, lebih basah. Ada yang bilang kelebihan. Saya bilang itu nafsu. Mobil, dapur, lumpur. Evans tetap pusat yang hampir tidak berubah wajah. Sekuel yang tidak mengecil, malah melebar ke kota. Berani, meski napasnya agak panjang.",
+        "en": "The Raid 2 is busier, more gang, wetter. Some say too much. I say appetite. Cars, kitchen, mud. Evans stays a center whose face barely changes. A sequel that does not shrink; it widens into the city. Brave, even if the breath runs a little long.",
+        "tr": "The Raid 2 daha kalabalık, daha çete, daha ıslak. Fazla diyen var. Ben iştah derim. Araba, mutfak, çamur. Evans yüzü neredeyse değişmeyen merkez. Küçülmeyen, kente yayılan devam. Cesur, nefesi biraz uzun olsa da.",
+        "inceleme": "Lebih ramai, lebih basah. Nafsu, bukan kelebihan. Evans hampir tidak berubah wajah.",
+        "inceleme_en": "Busier, wetter. Appetite, not excess. Evans's face barely changes.",
+        "inceleme_tr": "Daha kalabalık, daha ıslak. İştah, fazlalık değil. Evans'ın yüzü değişmez."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 467012,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Pengabdi Setan horor rumah yang tahu cara pakai sepi. Joko Anwar tidak kejar jump scare murah terus. Ibu, piano, foto. Saya lebih takut sama yang tidak muncul daripada yang muncul. Horor Indonesia kalau sabar, bisa lebih dalam dari yang orang kira. Ini buktinya.",
+        "en": "Satan's Slaves is house horror that knows how to use quiet. Joko Anwar does not chase cheap jump scares the whole time. Mother, piano, photograph. I am more afraid of what does not appear than of what does. When Indonesian horror is patient it goes deeper than people think. This is the proof.",
+        "tr": "Şeytanın Köleleri sessizliği kullanmayı bilen ev korkusu. Joko Anwar ucuz sıçratmanın peşinde koşmuyor sürekli. Anne, piyano, fotoğraf. Görünmeyenden, görünenden daha korkuyorum. Endonezya korkusu sabırlı olunca sanıldığından derin. Kanıt bu.",
+        "inceleme": "Horor rumah yang pakai sepi. Lebih takut yang tidak muncul.",
+        "inceleme_en": "House horror that uses quiet. More afraid of what does not appear.",
+        "inceleme_tr": "Sessizliği kullanan ev korkusu. Görünmeyenden daha korkuyorum."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Squid Game di sini ditonton bareng keluarga, yang aneh dan lucu. Aturannya gampang, kejamnya jelas. Saya tidak anggap mahakarya. Saya anggap cermin yang telat. Musim satu cukup. Yang nanti hanya takut sunyi.",
+        "en": "Squid Game got watched here with family, which is strange and funny. Rules easy, cruelty clear. I do not call it a masterpiece. I call it a late mirror. Season one is enough. What comes after is mostly afraid of silence.",
+        "tr": "Squid Game burada aileyle izlendi; tuhaf ve komik. Kurallar kolay, zalimlik açık. Başyapıt demem. Geç ayna derim. Birinci sezon yeter. Sonrası çoğunlukla sessizlikten korkuyor.",
+        "inceleme": "Ditonton bareng keluarga. Cermin yang telat. Musim satu cukup.",
+        "inceleme_en": "Watched with family. A late mirror. Season one is enough.",
+        "inceleme_tr": "Aileyle izlendi. Geç ayna. Birinci sezon yeter."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 71446,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 7,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Money Heist meledak di warung kopi. Saya ikut berteriak ke Profesor. Bukan yang terbaik. Tapi yang ditonton bareng. Kadang serial asing jadi milik kampung dulu, baru milik kritikus. Itu sah.",
+        "en": "Money Heist exploded in coffee stalls. I yelled at the Professor too. Not the best thing. The thing watched together. Sometimes a foreign series belongs to the neighborhood before it belongs to critics. That is allowed.",
+        "tr": "La casa de papel kahve tezgâhında patladı. Ben de Profesör'e bağırdım. En iyisi değil. Beraber izlenen. Bazen yabancı dizi eleştirmenden önce mahallenin olur. Bu caiz.",
+        "inceleme": "Meledak di warung. Bukan yang terbaik. Yang ditonton bareng. Itu sah.",
+        "inceleme_en": "Exploded in stalls. Not the best. The thing watched together. Allowed.",
+        "inceleme_tr": "Tezgâhta patladı. En iyisi değil. Beraber izlenen. Caiz."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.25,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 37854,
+        "durum": "izliyorum",
+        "oran": 0.08,
+        "puan": 7,
+        "platform": "Crunchyroll"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1429,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 670,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1398,
+        "durum": "izleyecegim"
+      }
+    ]
+  },
+  {
+    "ad": "minh.phim",
+    "dil": "vi",
+    "bio": "Sài Gòn, xe máy, tai nghe. Hay xem phim Việt ít thôi vì ít phim, nên bù bằng Hàn và Thái. Furie là cái tôi khoe khi ai đó bảo điện ảnh mình chỉ có tình cảm.",
+    "takip": [
+      "dizi.jpg",
+      "dizi.jpg.ai",
+      "dimas.nonton",
+      "jiwon.drama"
+    ],
+    "favoriler": [
+      {
+        "tur": "movie",
+        "tmdb_id": 567973
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 19552
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796
+      }
+    ],
+    "listeler": [
+      {
+        "ad": "Việt Nam không ngọt",
+        "aciklama": "Những phim tôi đưa khi muốn người ta im.",
+        "ogeler": [
+          {
+            "tur": "movie",
+            "tmdb_id": 567973
+          },
+          {
+            "tur": "movie",
+            "tmdb_id": 19552
+          }
+        ]
+      },
+      {
+        "ad": "Hàn để nghỉ",
+        "aciklama": "Khi không muốn thi, chỉ muốn ngồi.",
+        "ogeler": [
+          {
+            "tur": "tv",
+            "tmdb_id": 94796
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 197067
+          },
+          {
+            "tur": "tv",
+            "tmdb_id": 128883
+          }
+        ]
+      }
+    ],
+    "yapimlar": [
+      {
+        "tur": "movie",
+        "tmdb_id": 567973,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "tepki": "😮",
+        "gonderi": true,
+        "metin": "Hai Phượng / Furie là phim hành động Việt không xin lỗi. Ngô Thanh Vân đánh đến mức camera phải lùi. Cốt mẹ tìm con không mới, nhưng nhịp thì mới với mình. Tôi chiếu phim này khi có người bảo điện ảnh Việt chỉ biết khóc. Không. Cũng biết chạy và biết đau.",
+        "en": "Furie is Vietnamese action that does not apologize. Ngo Thanh Van hits until the camera has to back up. A mother looking for a child is not new; the rhythm was new to me. I put this on when someone says Vietnamese cinema only knows how to cry. No. It also knows how to run and how to hurt.",
+        "tr": "Furie özür dilemeyen Vietnam aksiyonu. Ngo Thanh Van kamera geri çekilene kadar vuruyor. Çocuğunu arayan anne yeni değil; ritim bana yeniydi. Vietnam sineması yalnız ağlamayı bilir diyen olunca bunu açıyorum. Hayır. Koşmayı ve acımayı da bilir.",
+        "inceleme": "Hành động Việt không xin lỗi. Biết chạy và biết đau, không chỉ biết khóc.",
+        "inceleme_en": "Vietnamese action that does not apologize. It knows how to run and hurt, not only cry.",
+        "inceleme_tr": "Özür dilemeyen Vietnam aksiyonu. Yalnız ağlamaz; koşmayı ve acımayı bilir."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 19552,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "MUBI",
+        "gonderi": true,
+        "metin": "Mùi đu đủ xanh gần như không có thoại mà vẫn đầy. Trần Anh Hùng quay Sài Gòn như nhớ, không như quảng cáo. Tôi xem chậm. Cảnh nấu ăn, cảnh mưa, cảnh người đứng. Phim Việt hiếm khi được yên như vậy. Vì thế tôi giữ nó kỹ.",
+        "en": "The Scent of Green Papaya has almost no talk and is still full. Tran Anh Hung shoots Saigon as memory, not as an ad. I watch it slowly. Cooking, rain, someone standing. Vietnamese films are rarely allowed to be this quiet. That is why I keep it carefully.",
+        "tr": "Yeşil Papayanın Kokusu neredeyse konuşmasız ve yine de dolu. Tran Anh Hung Saygon'u reklam değil hatıra gibi çekiyor. Yavaş izliyorum. Yemek, yağmur, duran insan. Vietnam filmlerine bu kadar sessizlik az tanınır. Onu özenle tutuyorum.",
+        "inceleme": "Gần như không thoại mà vẫn đầy. Sài Gòn như nhớ, không như quảng cáo.",
+        "inceleme_en": "Almost no talk and still full. Saigon as memory, not as an ad.",
+        "inceleme_tr": "Konuşmasız ve dolu. Saygon reklam değil hatıra."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 94796,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Hạ cánh nơi anh xem với bạn, khóc hơi nhiều. Ngọt, nhưng biên giới không bị giấu. Ở Việt Nam chuyện đó quen. Hyun Bin thì nhớ, twist thì quên. Đôi khi K-drama là chỗ resting, không phải chỗ thi. Tôi chấp nhận.",
+        "en": "I watched Crash Landing on You with friends and cried a bit much. Sweet, but the border is not hidden. In Vietnam that feeling is familiar. I remember Hyun Bin and forget the twists. Sometimes K-drama is a place to rest, not a place to sit an exam. I accept that.",
+        "tr": "Crash Landing on You'yu arkadaşlarla izledim, biraz fazla ağladım. Tatlı, sınır gizli değil. Vietnam'da o his tanıdık. Hyun Bin kalıyor, dönüşler unutuluyor. K-drama bazen sınav değil dinlenme yeri. Kabul.",
+        "inceleme": "Khóc hơi nhiều. K-drama đôi khi là chỗ resting, không phải chỗ thi.",
+        "inceleme_en": "Cried a bit much. Sometimes K-drama is rest, not an exam.",
+        "inceleme_tr": "Biraz fazla ağladım. K-drama bazen sınav değil dinlenme."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 93405,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Trò chơi con mực coi chung nhà. Luật dễ nên độc rõ. Không phải kiệt tác với tôi. Là gương tới trễ. Mùa một đủ. Phần sau chủ yếu sợ im.",
+        "en": "The house watched Squid Game together. Easy rules, clear cruelty. Not a masterpiece to me. A late mirror. Season one is enough. Later seasons are mostly afraid of going quiet.",
+        "tr": "Ev Squid Game'i beraber izledi. Kolay kural, açık zalimlik. Bence başyapıt değil. Geç ayna. Birinci sezon yeter. Sonraları çoğunlukla susmaktan korkuyor.",
+        "inceleme": "Coi chung nhà. Không phải kiệt tác. Gương tới trễ. Mùa một đủ.",
+        "inceleme_en": "The house watched together. Not a masterpiece. A late mirror. Season one is enough.",
+        "inceleme_tr": "Ev beraber izledi. Başyapıt değil. Geç ayna. Birinci sezon yeter."
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 496243,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix",
+        "gonderi": true,
+        "metin": "Ký sinh trùng xem xong, cầu thang nhà mình nghe khác. Bong Joon-ho không giảng. Mùi, tiệc vườn, tầng hầm. Hài rồi nặng. Tôi nghĩ điện ảnh châu Á thuyết phục thế giới bằng đúng thứ cụ thể này, không bằng khẩu hiệu.",
+        "en": "After Parasite the stairs in my building sounded different. Bong Joon-ho does not lecture. Smell, garden party, basement. Funny, then heavy. I think Asian cinema convinced the world with exactly this kind of concrete, not with slogans.",
+        "tr": "Parazit'ten sonra binanın merdiveni başka duyuldu. Bong Joon-ho ders vermiyor. Koku, bahçe partisi, bodrum. Komik, sonra ağır. Asya sineması dünyayı sloganla değil tam bu somutlukla ikna etti bence.",
+        "inceleme": "Cầu thang nhà mình nghe khác. Châu Á thuyết phục bằng cái cụ thể, không khẩu hiệu.",
+        "inceleme_en": "The stairs in my building sounded different. Asia convinced with the concrete, not slogans.",
+        "inceleme_tr": "Binanın merdiveni başka duyuldu. Asya sloganla değil somutlukla ikna etti."
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 197067,
+        "durum": "izliyorum",
+        "oran": 0.45,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1396,
+        "durum": "izliyorum",
+        "oran": 0.2,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 670,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 8,
+        "platform": "Prime Video"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1429,
+        "durum": "izleyecegim"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 1399,
+        "durum": "biraktim",
+        "oran": 0.2,
+        "puan": 5,
+        "platform": "Max"
+      },
+      {
+        "tur": "tv",
+        "tmdb_id": 128883,
+        "durum": "izliyorum",
+        "oran": 0.3,
+        "puan": 8,
+        "platform": "Netflix"
+      },
+      {
+        "tur": "movie",
+        "tmdb_id": 129,
+        "durum": "bitirdim",
+        "oran": 1,
+        "puan": 9,
+        "platform": "Netflix"
+      }
+    ]
+  }
+]

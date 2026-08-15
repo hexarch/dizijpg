@@ -1,13 +1,28 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-15 — 🚀 TOHUM PROFİLLER A–Z (kare + uzun yazı + kütüphane)
+15 ülke hesabı (id 163–177) artık boş iskelet değil. Her birinde:
+uzun ana-dil gönderi (spoiler yok) + TMDB sahne karesi (8, algısal süzgeç),
+bitirdim/izliyorum/izleyeceğim/bıraktım, bölüm izleme, puan + ayrı inceleme,
+açık liste, favori, tepki, platform, kapak, birbirini takip.
+Japon `yuki.dorama`: Ghibli + FMA + AoT + Bebop + Totoro + Your Name + Eva +
+Monster/HxH/Champloo kütüphanesi (7 gönderi). Metinler Google’suz; TR/EN JSON,
+kalan 13 dil Argos. TMDB id’leri aramayla doğrulandı (ilk turda Bebop≠Bleach
+gibi sapmalar düzeltildi). `izleyecegim` ile izleme satırı çakışması 0.
+API yeniden başlatılmadı. Betik: `intl_profil_doldur.js` + `intl_id_duzelt.js`.
+Kanıt: `GET /api/profil/yuki.dorama` → 7 yorum / 8 kare, 3 liste, 9 inceleme,
+istatistik 312 bölüm; `GET /api/medya/m175-….jpg` → image/jpeg;
+`GET /api/avatarlar/kapak175-intl.jpg` → image/jpeg.
+
 ## 2026-08-15 — 🚀 BAŞKA ÜLKELERDEN TOHUM HESAPLAR (id 163–177)
 Canlıda ülke alanı 29 Türkiye + 113 boştu. Çevirisi dolu 15 dile uygun
 **15 hesap** yazıldı (ünlü adı / çalıntı foto yok; düz renk avatar).
 ABD, Çin, Hindistan, İspanya, Fransa, Mısır, Bangladeş, Brezilya, Rusya,
 Pakistan, Endonezya, Almanya, Japonya, Vietnam, Güney Kore.
-Her birinde ülke + bio (o dilde) + 1 kısa gönderi; `dizi.jpg` takip ediliyor.
-Gönderi çevirileri TR/EN elde, diğer 13 dil Argos. API yeniden başlatılmadı.
+Her birinde ülke + bio (o dilde); `dizi.jpg` takip ediliyor.
+Kısa otomatik gönderiler (15 satır) kalitesiz bulundu, **silindi** (yorum 5079–5093 + 240 çeviri).
+API yeniden başlatılmadı.
 Şifreler depoda yok: sunucu `yedekler/intl-kullanicilar.txt` (600).
 Betik: `backend/araclar/ulke_kullanici_tohum.js` (tekrar çalışınca atlar).
 Kanıt: `GET /api/profil/lucia.series` → ulke İspanya;
