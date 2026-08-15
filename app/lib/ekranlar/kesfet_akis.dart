@@ -132,6 +132,29 @@ int kesfetSutunlari(double kolonGenisligi) => posterSutunlari(
   bosluk: kesfetKaroBoslugu,
 );
 
+/// Ekranda görünen video karolarından hangilerinin oynayacağı.
+///
+/// KULLANICI İSTEĞİ (16 Ağu 2026): "her zaman ilk video oynuyor, ekrandaki
+/// en çok izlenen video oynamalı". Eski kural görünürlük sırasının ilk
+/// [esZamanli] elemanıydı — ızgara soldan sağa kurulduğu için bu daima
+/// sol üstteki videoydu. Yeni kural: görünenler arasında izlenme sayısı
+/// en yüksek olanlar. Eşitlikte küçük indeks (daha yukarıdaki) kazanır.
+@visibleForTesting
+List<int> kesfetOynayanlar({
+  required Iterable<int> gorunur,
+  required int Function(int i) izlenme,
+  int esZamanli = 2,
+}) {
+  final adaylar = gorunur.toList();
+  adaylar.sort((a, b) {
+    final fark = izlenme(b).compareTo(izlenme(a));
+    if (fark != 0) return fark;
+    return a.compareTo(b);
+  });
+  if (adaylar.length <= esZamanli) return adaylar;
+  return adaylar.sublist(0, esZamanli);
+}
+
 class KesfetAkisEkrani extends StatefulWidget {
   const KesfetAkisEkrani({super.key});
 
@@ -151,7 +174,7 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   final _sayfalama = KesfetSayfalama();
   bool _yukluyor = false;
 
-  /// Ekranda görünen VİDEOLU karoların sırası (görünme anına göre).
+  /// Ekranda görünen VİDEOLU karolar (küme; sıra oynatmayı belirlemez).
   final List<int> _gorunurVideolar = [];
 
   /// Aynı anda oynayan karo sayısı. İkiden fazlası hem veri hem pil yakar.
@@ -163,12 +186,21 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
   bool _videoluMu(int i) =>
       (_liste?[i] as Map<String, dynamic>?)?['videolu'] == true;
 
+  int _izlenme(int i) =>
+      ((_liste?[i] as Map<String, dynamic>?)?['goruntulenme'] as num?)
+          ?.toInt() ??
+      0;
+
   /// Karo görünürlüğü değişince oynayacak ikiliyi yeniden belirler.
   void _gorunurlukDegisti(int i, bool gorunur) {
     if (!_videoluMu(i)) return;
     final vardi = _gorunurVideolar.contains(i);
     if (gorunur == vardi) return;
-    final oncekiIkili = _gorunurVideolar.take(_esZamanliOynatma).toList();
+    final oncekiIkili = kesfetOynayanlar(
+      gorunur: _gorunurVideolar,
+      izlenme: _izlenme,
+      esZamanli: _esZamanliOynatma,
+    );
     if (gorunur) {
       _gorunurVideolar.add(i);
     } else {
@@ -177,13 +209,20 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     // Kaydırırken görünürlük sürekli değişir; YALNIZ oynayan ikili
     // değiştiyse yeniden çiz. Aksi halde her olayda tüm ızgara yeniden
     // kurulur ve kaydırma takılır.
-    final yeniIkili = _gorunurVideolar.take(_esZamanliOynatma).toList();
+    final yeniIkili = kesfetOynayanlar(
+      gorunur: _gorunurVideolar,
+      izlenme: _izlenme,
+      esZamanli: _esZamanliOynatma,
+    );
     if (!listEquals(oncekiIkili, yeniIkili)) setState(() {});
   }
 
-  /// İlk gören ilk oynar: listedeki ilk iki görünür video.
-  bool _oynasinMi(int i) =>
-      _gorunurVideolar.take(_esZamanliOynatma).contains(i);
+  /// Ekranda görünenler içinde izlenmesi en yüksek videolar oynar.
+  bool _oynasinMi(int i) => kesfetOynayanlar(
+    gorunur: _gorunurVideolar,
+    izlenme: _izlenme,
+    esZamanli: _esZamanliOynatma,
+  ).contains(i);
 
   @override
   void initState() {
@@ -448,7 +487,8 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
 /// Video gönderilerinde İÇERİK POSTERİ değil, videonun kendi karesi gösterilir
 /// (sunucu yüklemede `<yol>.jpg` üretir). Böylece ızgara resim gösterir;
 /// onlarca video çözücü açılmaz. [oynat] verilen karo — ekranda aynı anda en
-/// fazla iki tanesi — sessiz ve döngüsel olarak gerçekten oynar.
+/// fazla iki tanesi, izlenme sayısı en yüksek olanlar — sessiz ve döngüsel
+/// olarak gerçekten oynar.
 class _KesfetKutusu extends StatefulWidget {
   final Map<String, dynamic> yorum;
   final Map<String, dynamic> icerikler;
@@ -549,113 +589,124 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
         : (video != null ? dosyaUrl('$video.jpg') : poster);
 
     final d = _d;
+    final videoOynuyor = d != null && d.value.isInitialized;
     return VisibilityDetector(
       key: Key('kesfet-${widget.sira}-${widget.yorum['id']}'),
       onVisibilityChanged: (bilgi) =>
           widget.onGorunurluk(bilgi.visibleFraction > 0.6),
-      child: InkWell(
-        onTap: widget.onTap,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (d != null && d.value.isInitialized)
-              FittedBox(
-                fit: BoxFit.cover,
-                clipBehavior: Clip.hardEdge,
-                child: SizedBox(
-                  width: d.value.size.width,
-                  height: d.value.size.height,
-                  child: VideoPlayer(d),
-                ),
-              )
-            else if (arka != null)
-              CachedNetworkImage(
-                imageUrl: arka,
-                httpHeaders: gorselBasliklari(arka),
-                fit: BoxFit.cover,
-                // Video karesi henüz üretilmemişse içerik posterine düş
-                errorWidget: (context, url, hata) => poster != null
-                    ? CachedNetworkImage(
-                        imageUrl: poster,
-                        httpHeaders: gorselBasliklari(poster),
-                        fit: BoxFit.cover,
-                      )
-                    : Container(color: DiziRenkler.kart),
-              )
-            else
-              Container(color: DiziRenkler.kart),
-            // Yazılı yorum: alt yarıda metin bandı. Sunucu artık Keşfet'e
-            // medyasız gönderi DÜŞÜRMÜYOR (KESFET_MEDYALI); bu dal yalnız
-            // yedek: eski sunucu/önbellekten gelen sayfa boş karo göstermesin.
-            if (medya.isEmpty)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(6, 6, 6, 22),
-                  color: Colors.black54,
-                  child: Text(
-                    spoiler ? '•••' : (widget.yorum['metin'] as String? ?? ''),
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white, fontSize: 11),
-                  ),
-                ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          if (d != null && d.value.isInitialized)
+            FittedBox(
+              fit: BoxFit.cover,
+              clipBehavior: Clip.hardEdge,
+              child: SizedBox(
+                width: d.value.size.width,
+                height: d.value.size.height,
+                child: VideoPlayer(d),
               ),
-            if (videolu)
-              const Positioned(
-                top: 6,
-                right: 6,
-                // Gölge şart: video karesi de poster de yüklenemezse karo
-                // DiziRenkler.kart'a düşer (açık temada BEYAZ) ve gölgesiz
-                // beyaz ok kaybolurdu. Göz ikonu da aynı kalıbı kullanıyor.
-                child: Icon(
-                  Icons.play_arrow,
-                  size: 20,
-                  color: Colors.white,
-                  shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
-                ),
-              ),
-            // Sol alt: göz + izlenme sayısı (okunurluk için gölgeli)
-            Positioned(
-              left: 6,
-              bottom: 5,
-              child: IgnorePointer(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.remove_red_eye_outlined,
-                      size: 13,
-                      color: Colors.white,
-                      shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      '$goruntulenme',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w700,
-                        shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
-                      ),
-                    ),
-                  ],
+            )
+          else if (arka != null)
+            CachedNetworkImage(
+              imageUrl: arka,
+              httpHeaders: gorselBasliklari(arka),
+              fit: BoxFit.cover,
+              // Video karesi henüz üretilmemişse içerik posterine düş
+              errorWidget: (context, url, hata) => poster != null
+                  ? CachedNetworkImage(
+                      imageUrl: poster,
+                      httpHeaders: gorselBasliklari(poster),
+                      fit: BoxFit.cover,
+                    )
+                  : Container(color: DiziRenkler.kart),
+            )
+          else
+            Container(color: DiziRenkler.kart),
+          // Yazılı yorum: alt yarıda metin bandı. Sunucu artık Keşfet'e
+          // medyasız gönderi DÜŞÜRMÜYOR (KESFET_MEDYALI); bu dal yalnız
+          // yedek: eski sunucu/önbellekten gelen sayfa boş karo göstermesin.
+          if (medya.isEmpty)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.fromLTRB(6, 6, 6, 22),
+                color: Colors.black54,
+                child: Text(
+                  spoiler ? '•••' : (widget.yorum['metin'] as String? ?? ''),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 11),
                 ),
               ),
             ),
-            if (spoiler)
-              Container(
-                color: Colors.black45,
-                child: const Center(
-                  child: Icon(
-                    Icons.visibility_off_outlined,
-                    color: Colors.white70,
+          if (videolu)
+            const Positioned(
+              top: 6,
+              right: 6,
+              // Gölge şart: video karesi de poster de yüklenemezse karo
+              // DiziRenkler.kart'a düşer (açık temada BEYAZ) ve gölgesiz
+              // beyaz ok kaybolurdu. Göz ikonu da aynı kalıbı kullanıyor.
+              child: Icon(
+                Icons.play_arrow,
+                size: 20,
+                color: Colors.white,
+                shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+              ),
+            ),
+          // Sol alt: göz + izlenme sayısı (okunurluk için gölgeli)
+          Positioned(
+            left: 6,
+            bottom: 5,
+            child: IgnorePointer(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.remove_red_eye_outlined,
+                    size: 13,
+                    color: Colors.white,
+                    shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
                   ),
+                  const SizedBox(width: 3),
+                  Text(
+                    '$goruntulenme',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      shadows: [Shadow(color: Colors.black87, blurRadius: 3)],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          if (spoiler)
+            Container(
+              color: Colors.black45,
+              child: const Center(
+                child: Icon(
+                  Icons.visibility_off_outlined,
+                  color: Colors.white70,
                 ),
               ),
-          ],
-        ),
+            ),
+          // Dokunuş katmanı EN ÜSTTE. Web'de VideoPlayer HtmlElementView
+          // tıklamayı DOM'da yutar; InkWell videonun ALTINDAYSA hiç
+          // ateşlenmez (kullanıcı: "oynayan videoya tıklanmıyor"). Reels
+          // sayfası aynı tuzağı PointerInterceptor ile aşıyor.
+          Positioned.fill(
+            child: PointerInterceptor(
+              intercepting: videoOynuyor,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(onTap: widget.onTap),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

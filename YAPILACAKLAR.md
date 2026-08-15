@@ -1,6 +1,11 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — ✅ KEŞFET: en çok izlenen oynasın + tıklansın
+Izgara artık görünür videolardan izlenmesi en yüksek olanı oynatır
+(eski kural sol üsttekiydi). Oynayan karo PointerInterceptor ile
+tıklanır, Reels açılır. Dağıtılmadı.
+
 ## 2026-08-16 — 🚀 WEB 1.56.0+104 (profil kimlik yazıları beyaz)
 Kullanıcı adı, bio, ülke, takipçi/beğeni etiketleri, madalyon altı ve
 toplam izleme süresi yazısı `metin` (koyu temada beyaz). Sayaçlar yuvarlak
