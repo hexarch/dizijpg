@@ -1,10 +1,14 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-16 — ✅ TAKVİM: dolu gün sarı daire + dilim boşluğu
-İleri tarih dilimleri arası boşluk %50 (16→8 / 8→4). Gün altındaki bölüm
-sayısının sarı zemini kalktı (koyu=beyaz, açık=siyah, 8/7 pt). Dolu günde
-üstteki rakam sarı daire + siyah yazı. Dağıtılmadı.
+## 2026-08-16 — 🚀 WEB 1.54.0+102 (takvim hücresi + masaüstü çubuk)
+Takvim: dolu günde gün rakamı sarı daire + siyah yazı; altındaki bölüm
+sayısı sarı rozet değil (koyu=beyaz, açık=siyah, 8/7 pt); ileri tarih
+dilimleri arası boşluk %50. Masaüstü 5’li bar dizi/gönderi/ayarlar
+sayfalarında kaybolmaz. Backend yok.
+`main.ced44d674e24.dart.js` (eski `1a209e70667c` origin’den silindi) ·
+SW sökücü · brotli q11. Kanıt: `/api/saglik` ok · version.json 1.54.0+102 ·
+giriş+`/api/takvim` 120 olay · hashed JS `immutable` + `br` HIT.
 
 ## 2026-08-16 — 🚀 WEB 1.53.0+101 (bildirim kartı + takvim devam)
 Medyasız beğeni bildirimi Reels koca yazı yerine akış kartı. Masaüstü
