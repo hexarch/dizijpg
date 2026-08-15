@@ -1,15 +1,12 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-16 — ✅ MESAJLAR: kullanıcı listesi ortalandı
-Masaüstünde sohbet/istek satırları 720 kolonunda (bildirimler gibi).
-Mobil tam genişlik. Dağıtılmadı.
-
-## 2026-08-16 — ✅ PROFİL: Yorumlar sekmesi gri değil
-Seçili olmayan sekme yazı+ikon `metin` (koyu temada beyaz). Dağıtılmadı.
-
-## 2026-08-16 — ✅ TAKVİM: tek bölümde "1" yazılmaz
-Sarı daire durur; alt sayı yalnız 2+ bölümde. Dağıtılmadı.
+## 2026-08-16 — 🚀 WEB 1.55.0+103 (takvim 1 / yorumlar rengi / mesajlar orta)
+Tek bölümde altta "1" yok (sarı daire durur). Profilde seçili olmayan
+Yorumlar yazı+ikon beyaz. Mesajlar listesi masaüstünde 720 kolonunda.
+Backend yok. `main.d33b6d60a274.dart.js` (eski `ced44d674e24` origin’den
+silindi) · SW sökücü · brotli q11. Kanıt: `/api/saglik` ok · version.json
+1.55.0+103 · giriş+takvim 120 · sohbetler 23 · hashed JS `immutable` + `br`.
 
 ## 2026-08-16 — 🚀 WEB 1.54.0+102 (takvim hücresi + masaüstü çubuk)
 Takvim: dolu günde gün rakamı sarı daire + siyah yazı; altındaki bölüm

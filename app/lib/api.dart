@@ -426,7 +426,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.54.0+102';
+  static const surum = '1.55.0+103';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
