@@ -1,6 +1,15 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-15 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-15 — 🚀 TOHUM PROFİL GÖRÜNÜMÜ (kapak + şerit + liste)
+15 intl hesabın kapakları yazısız 2.4:1 sinema karesi (yeni dosya adı, CDN
+immutable). Film şeridi ~8–14; listeler 8 öğe; favori kişi TMDB aramasıyla.
+Yanlış eşleşme silindi (Front of the Class, Broken Mirror, Patti Cake$).
+alcelik kapak/avatar aynı. API yeniden başlatılmadı.
+Betik: `intl_profil_guzelles.js`.
+Kanıt: `GET /api/profil/lucia.series` film 6→11, listeler 8+8, kapak
+`kapak166-1786793651024.jpg` image/jpeg; alcelik `kapak3-….gif` aynı.
+
 ## 2026-08-15 — 🚀 TOHUM HESAPLAR GÜÇLENDİ (takip + yanıt + beğeni)
 15 intl hesap birbirini takip ediyor (daria 0→14 takipçi). Her kök gönderiye
 6 tohum beğenisi; 30 spoiler’sız yanıt (ana dil + EN/TR, diğer 13 Argos).
