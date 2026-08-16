@@ -99,7 +99,7 @@ void main() {
     await tester.pump();
     expect(find.text('eski'), findsOneWidget);
 
-    await tester.pump(sohbetYoklamaAraligi);
+    await tester.pump(sohbetListeYoklamaAraligi);
     await tester.pump();
     expect(find.text('yeni geldi'), findsOneWidget);
     expect(find.text('eski'), findsNothing);
@@ -287,6 +287,15 @@ void main() {
     );
   });
 
+  test('klavye/gölge inactive iken sohbet ön planda sayılır', () {
+    expect(sohbetOnPlanda(null), isTrue);
+    expect(sohbetOnPlanda(AppLifecycleState.resumed), isTrue);
+    expect(sohbetOnPlanda(AppLifecycleState.inactive), isTrue);
+    expect(sohbetOnPlanda(AppLifecycleState.hidden), isFalse);
+    expect(sohbetOnPlanda(AppLifecycleState.paused), isFalse);
+    expect(sohbetOnPlanda(AppLifecycleState.detached), isFalse);
+  });
+
   testWidgets('açık sohbet yoklaması bakiyor=1 taşır', (tester) async {
     final yollar = <String>[];
     Api.istemci = MockClient((istek) async {
@@ -333,6 +342,83 @@ void main() {
     expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
     expect(yollar, isNotEmpty);
     expect(yollar.first, contains('bakiyor=1'));
+    await _kapat(tester);
+  });
+
+  testWidgets('klavye inactive iken bakıyor kapanmaz ve yoklama sürer', (
+    tester,
+  ) async {
+    var mesajIstek = 0;
+    final bakiyor = <bool>[];
+    final yaziyor = <bool>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        mesajIstek++;
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      if (istek.url.path.endsWith('/sohbet/bakiyor')) {
+        final govde = jsonDecode(istek.body) as Map<String, dynamic>;
+        bakiyor.add(govde['acik'] == true);
+        return _json(const {'tamam': true});
+      }
+      if (istek.url.path.endsWith('/yaziyor')) {
+        final govde = jsonDecode(istek.body) as Map<String, dynamic>;
+        yaziyor.add(govde['acik'] == true);
+        return _json(const {'tamam': true});
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+    addTearDown(() {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    });
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'},
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
+    expect(bakiyor, contains(true));
+    expect(bakiyor, isNot(contains(false)));
+    final once = mesajIstek;
+
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    await tester.pump();
+    expect(bakiyor, isNot(contains(false)));
+    expect(yaziyor, isEmpty);
+
+    await tester.pump(sohbetYoklamaAraligi);
+    await tester.pump();
+    expect(mesajIstek, greaterThan(once));
+    expect(bakiyor.where((v) => v).length, greaterThanOrEqualTo(1));
+    expect(bakiyor, isNot(contains(false)));
     await _kapat(tester);
   });
 

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 
 /// Ön planda yeni DM gelince sohbet listesi ve açık konuşma hemen tazelensin.
 ///
@@ -37,4 +38,16 @@ class SohbetOlaylari {
 bool sohbetYoluBu(String? yol, String ad) {
   if (yol == null || ad.isEmpty) return false;
   return yol == '/sohbet/$ad' || yol == '/sohbet/${Uri.encodeComponent(ad)}';
+}
+
+/// Sohbet hâlâ ön planda sayılır mı?
+///
+/// `inactive` klavye, bildirim gölgesi ve kısa geçişlerde gelir; ekran
+/// görünür kalır. Bunu "arka plan" sayınca yoklama durur, bakıyor damgası
+/// düşer, yazıyor sinyali `acik:false` ile silinir — mesaj geç gelir,
+/// sohbetteyken zil çalar, yazıyor hiç görünmez.
+bool sohbetOnPlanda(AppLifecycleState? yasam) {
+  if (yasam == null) return true;
+  return yasam == AppLifecycleState.resumed ||
+      yasam == AppLifecycleState.inactive;
 }

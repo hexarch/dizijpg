@@ -1,6 +1,20 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.72.0+120 (sohbet: klavyede yoklama/yazıyor/bakıyor)
+Android klavye ve bildirim gölgesi `inactive` basınca sohbet "arka plan"
+sanılıyordu: yoklama duruyor, bakıyor damgası düşüyor, yazıyor `acik:false`
+gidiyordu. Mesaj 3 sn yerine çok geç iniyor, sohbetteyken zil çalıyor,
+yazıyor/ses kaydediyor görünmüyordu. `inactive` artık ön plan; yoklama
+1 sn; FCM partner eşleşirse görünürlük bayrağına bakmadan çeker.
+APK `~/Desktop/dizijpg-1.72.0+120.apk` (89 MB, imzalı).
+`main.5a6ce7a5ef07.dart.js` (eski `cd53e4f9462a` origin’den silindi) ·
+SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.72.0+120 · giriş testkullanici ·
+`POST /yaziyor tur=kayit` → emma `GET /mesajlar` `durum=kayit` · widget:
+inactive iken bakıyor kapanmaz, yoklama sürer, yazıyor acik:false gitmez ·
+hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.71.0+119 (fragman oynatıcı: altyazı, 2×, ±10)
 Kendi krom: altyazı aç/kapa, kalıcı 1×/2×, sağa çift dokunuş +10 sn,
 sola çift dokunuş −10 sn, sağa veya sola basılı tutunca geçici 2×.

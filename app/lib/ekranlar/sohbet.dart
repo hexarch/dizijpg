@@ -33,8 +33,12 @@ import 'ses.dart';
 /// "son görülme 2 dk önce" görünebilirdi.
 const cevrimiciEsikSn = 180;
 
-/// Liste ve açık sohbet yoklama aralığı. Tam geçmiş değil, ucuz tur.
-const Duration sohbetYoklamaAraligi = Duration(seconds: 3);
+/// Açık konuşma yoklaması. 3 sn WhatsApp hissini bozuyordu; 1 sn ucuz
+/// `?sonra=` turu (yeni satır yoksa küçük JSON).
+const Duration sohbetYoklamaAraligi = Duration(seconds: 1);
+
+/// Sohbet listesi: yazıyor önizlemesi için yeter, konuşma kadar sık değil.
+const Duration sohbetListeYoklamaAraligi = Duration(seconds: 3);
 
 /// GET /mesajlar yanıtından karşı tarafın canlı durumunu okur.
 ///
@@ -222,7 +226,10 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani>
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_olay);
     _yukle();
-    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle(sessiz: true));
+    _sayac = Timer.periodic(
+      sohbetListeYoklamaAraligi,
+      (_) => _yukle(sessiz: true),
+    );
   }
 
   @override
@@ -423,7 +430,10 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_olay);
     _yukle();
-    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle(sessiz: true));
+    _sayac = Timer.periodic(
+      sohbetListeYoklamaAraligi,
+      (_) => _yukle(sessiz: true),
+    );
   }
 
   @override
@@ -852,13 +862,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   void _gorunurluk() {
     if (!mounted) return;
     final yol = _yonlendirici?.routerDelegate.currentConfiguration.uri.path;
-    if (yol == null || yol.isEmpty) {
-      _sayac ??= Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle());
-      return;
-    }
+    // İlk karede yol boş gelebilir; yoklamayı/bakıyor damgasını kesme.
+    if (yol == null || yol.isEmpty) return;
     final yasam = WidgetsBinding.instance.lifecycleState;
-    final onPlanda = yasam == null || yasam == AppLifecycleState.resumed;
-    final acik = onPlanda && sohbetYoluBu(yol, widget.kullaniciAdi);
+    final acik =
+        sohbetOnPlanda(yasam) && sohbetYoluBu(yol, widget.kullaniciAdi);
     final onceki = _sohbetGorunur;
     _sohbetGorunur = acik;
     if (acik) {
@@ -920,8 +928,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   }
 
   /// FCM veya başka ekran yeni mesaj bildirdi: bu konuşmaysa hemen çek.
+  /// Görünürlük bayrağı yanlış olsa bile (klavye/inactive) mesaj insin.
   void _sohbetOlayi() {
-    if (!_sohbetGorunur) return;
     final ad = SohbetOlaylari.partner;
     if (ad != null && ad != widget.kullaniciAdi) return;
     _yukle();
