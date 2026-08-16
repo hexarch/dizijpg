@@ -618,6 +618,54 @@ void main() {
     expect(sohbetDurumYazi(null), isNull);
   });
 
+  test('kayıt sürerken paused damgayı silmez; sohbetten çıkınca siler', () {
+    expect(
+      sohbetDurumKapatilmali(rotaBu: true, kaydediyor: true),
+      isFalse,
+      reason: 'mikrofon izni paused: ses kaydediyor kalsın',
+    );
+    expect(
+      sohbetDurumKapatilmali(rotaBu: true, kaydediyor: false),
+      isTrue,
+      reason: 'yazıyor, arka plan: damga kapansın',
+    );
+    expect(
+      sohbetDurumKapatilmali(rotaBu: false, kaydediyor: true),
+      isTrue,
+      reason: 'sohbetten çıkınca kayıt damgası da kapansın',
+    );
+  });
+
+  test('kayıt heartbeat paused iken de POST atar', () {
+    expect(
+      sohbetDurumHeartbeatGonder(
+        gorunur: false,
+        tur: 'kayit',
+        kaydediyor: true,
+        metinVar: false,
+      ),
+      isTrue,
+    );
+    expect(
+      sohbetDurumHeartbeatGonder(
+        gorunur: false,
+        tur: 'yaziyor',
+        kaydediyor: false,
+        metinVar: true,
+      ),
+      isFalse,
+    );
+    expect(
+      sohbetDurumHeartbeatGonder(
+        gorunur: true,
+        tur: 'yaziyor',
+        kaydediyor: false,
+        metinVar: true,
+      ),
+      isTrue,
+    );
+  });
+
   testWidgets('karşı taraf yazıyorsa başlıkta yazıyor görünür', (tester) async {
     Api.istemci = MockClient((istek) async {
       if (istek.url.path.contains('/mesajlar/')) {
@@ -934,6 +982,69 @@ void main() {
     expect(
       yaziyorGovdeler.where((g) => g['acik'] == true).length,
       greaterThanOrEqualTo(2),
+    );
+    await _kapat(tester);
+  });
+
+  testWidgets('yazarken paused olunca yazıyor kapanır; kayıt kuralı ayrı', (
+    tester,
+  ) async {
+    final yaziyorGovdeler = <Map<String, dynamic>>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/yaziyor')) {
+        yaziyorGovdeler.add(jsonDecode(istek.body) as Map<String, dynamic>);
+        return _json({'tamam': true});
+      }
+      if (istek.url.path.contains('/mesajlar/')) {
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+    addTearDown(() {
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    });
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.enterText(find.byType(TextField), 'merhaba');
+    await tester.pump();
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+    await tester.pump();
+    expect(
+      yaziyorGovdeler.where((g) => g['acik'] == false),
+      isNotEmpty,
+      reason: 'yazıyor arka planda kapansın; yalnız kayıt paused\'da kalır',
     );
     await _kapat(tester);
   });

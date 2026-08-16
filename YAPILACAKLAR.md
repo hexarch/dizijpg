@@ -1,6 +1,16 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-17 — 🚀 WEB+APK 1.75.0+123 (ses kaydediyor: mikrofonda paused silmesin)
+Yazıyor düzelince kayıt hâlâ görünmüyordu: Android mikrofon izni `paused`
+basıyor, istemci damgayı `acik:false` ile siliyordu. Kayıt sürerken paused
+silmez; heartbeat `paused` iken de `tur=kayit` yollar. Yazıyor arka planda
+hâlâ kapanır. APK `~/Desktop/dizijpg-1.75.0+123.apk` (116 MB).
+`main.043802e8e5f4.dart.js` (eski `44b55a8e0ed5` silindi) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.75.0+123 · emma POST `tur=kayit` →
+testkullanici 8/8 GET `durum=kayit` · `acik:false` sonrası null · widget: kayıt
+paused silmez, yazıyor paused kapanır, heartbeat kayit paused’ta POST · hashed JS `br` HIT.
+
 ## 2026-08-17 — 🚀 WEB+APK 1.74.0+122 (yazıyor: küme + görünür gösterge)
 Karşı taraf çevrimiçi görünüyordu, yazıyor hiç yanmıyordu. `son_gorulme` PG'de,
 `yaziyorlar` işçi belleğinde: POST A işçisine, yoklama B'ye düşünce damga boş.

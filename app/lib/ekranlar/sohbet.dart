@@ -58,6 +58,30 @@ String? sohbetDurumYazi(String? durum) {
   return null;
 }
 
+/// Yazıyor/kayıt damgası kapatılsın mı?
+///
+/// Rota bu sohbet değilse evet. Kayıt sürerken Android mikrofon izni
+/// `paused` basar; onu "sohbet kapandı" sayınca `acik:false` gider ve
+/// karşı taraf "ses kaydediyor" hiç görmez.
+bool sohbetDurumKapatilmali({required bool rotaBu, required bool kaydediyor}) {
+  if (!rotaBu) return true;
+  if (kaydediyor) return false;
+  return true;
+}
+
+/// Heartbeat bu turda POST atmalı mı? Kayıt `paused` iken de taze tutulur
+/// (TTL 10 sn; atlanırsa gösterge söner).
+bool sohbetDurumHeartbeatGonder({
+  required bool gorunur,
+  required String tur,
+  required bool kaydediyor,
+  required bool metinVar,
+}) {
+  if (tur == 'kayit') return kaydediyor;
+  if (tur == 'yaziyor') return metinVar && gorunur;
+  return gorunur;
+}
+
 /// Yoklamada setState'i boş yere tetiklememek için satır parmak izi.
 bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
   if (a == null || a.length != b.length) return false;
@@ -808,9 +832,14 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           _durumDurdur();
           return;
         }
-        // Görünürlük bayrağı yanlış olsa bile damgayı silme — klavye
-        // inactive / push yığını 2 sn sonra acik:false atıyordu.
-        if (!_sohbetGorunur) return;
+        if (!sohbetDurumHeartbeatGonder(
+          gorunur: _sohbetGorunur,
+          tur: tur,
+          kaydediyor: _kaydediyor,
+          metinVar: _metin.text.trim().isNotEmpty,
+        )) {
+          return;
+        }
         _durumGonder(tur);
       });
     }
@@ -898,6 +927,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (onceki && _bakisGonderildi) {
         _sohbetBakisiniAyarla(false);
         _bakisGonderildi = false;
+      }
+      if (sohbetDurumKapatilmali(
+        rotaBu: sohbetYoluBu(yol, widget.kullaniciAdi),
+        kaydediyor: _kaydediyor,
+      )) {
         _durumDurdur();
       }
     }
@@ -979,7 +1013,21 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Future<void> _kayitBasla() async {
     try {
       if (_kaydedici == null) return;
-      if (!await _kaydedici.hasPermission()) return;
+      // İzin diyaloğu `paused` basar. Damgayı ve `_kaydediyor`'u ÖNCE yak;
+      // yoksa _gorunurluk acik:false atar, karşı taraf kaydı hiç görmez.
+      if (mounted) {
+        setState(() {
+          _kaydediyor = true;
+          _kayitSn = 0;
+          _seviyeler.clear();
+        });
+      }
+      _durumHeartbeat('kayit');
+      if (!await _kaydedici.hasPermission()) {
+        _durumDurdur();
+        if (mounted) setState(() => _kaydediyor = false);
+        return;
+      }
       final dizin = await getTemporaryDirectory();
       final yol =
           '${dizin.path}/ses_${DateTime.now().millisecondsSinceEpoch}.ogg';
@@ -989,12 +1037,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       );
       _kayitYolu = yol;
       if (!mounted) return;
-      setState(() {
-        _kaydediyor = true;
-        _kayitSn = 0;
-        _seviyeler.clear();
-      });
-      _durumHeartbeat('kayit');
       // Canlı ses şiddeti: 100 ms'de bir örnek (2 dk × 10 = en çok 1200 örnek)
       _seviyeAbonelik?.cancel();
       _seviyeAbonelik = _kaydedici
