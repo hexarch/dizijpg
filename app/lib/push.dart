@@ -454,11 +454,11 @@ Future<void> pushBaslat() async {
           // Liste ve açık sohbet FCM ile hemen tazelensin (gir-çık yok).
           final ad = m.data['ad'] as String? ?? '';
           SohbetOlaylari.mesajGeldi(ad.isEmpty ? null : ad);
-          final yol =
-              sonYonlendirici?.routerDelegate.currentConfiguration.uri.path;
+          final yol = sohbetUstKonum(sonYonlendirici);
           // Konuşma ekranı açıkken yerel bildirim ÇİZİLMEZ — mesaj zaten
           // balon olarak iner. Sunucu da bakıyor damgasıyla FCM atmaz;
-          // bu yedek, uçuştaki push için.
+          // bu yedek, uçuştaki push için. `uri.path` değil: sohbet `push`
+          // ile açılır, uri `/sohbetler`de kalır.
           if (SohbetOlaylari.buSohbetAcik(ad) || sohbetYoluBu(yol, ad)) {
             return;
           }

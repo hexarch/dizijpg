@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.73.0+121 (sohbet push yığını: yazıyor + zil)
+Sohbet listeden `push` ile açılıyor; `uri.path` `/sohbetler`de kalıyordu.
+İstemci ekranı kapalı sanıp bakıyor damgasını kesiyor, yoklama duruyor,
+yazıyor görünmüyor, sohbetteyken FCM zili çalıyordu. Yığın üstü
+`matchedLocation` okunuyor. Emülatör kanıt: başlıkta typing... /
+recording audio..., mesaj indi, dizijpg bildirimi 0. APK
+`~/Desktop/dizijpg-1.73.0+121.apk` (89 MB). `main.e946a819021a.dart.js`
+(eski `5a6ce7a5ef07` silindi) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.73.0+121 · widget: push
+uri.path≠üst konum, listeden açınca bakıyor kapanmaz · hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.72.0+120 (sohbet: klavyede yoklama/yazıyor/bakıyor)
 Android klavye ve bildirim gölgesi `inactive` basınca sohbet "arka plan"
 sanılıyordu: yoklama duruyor, bakıyor damgası düşüyor, yazıyor `acik:false`

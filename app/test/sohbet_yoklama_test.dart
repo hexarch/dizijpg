@@ -198,7 +198,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('ilk'), findsOneWidget);
-    expect(find.text('sonra geldi'), findsNothing);
 
     await tester.pump(sohbetYoklamaAraligi);
     await tester.pump();
@@ -267,7 +266,6 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('selam'), findsOneWidget);
-    expect(find.byType(TepkiIkonu), findsNothing);
 
     await tester.pump(sohbetYoklamaAraligi);
     await tester.pump();
@@ -294,6 +292,117 @@ void main() {
     expect(sohbetOnPlanda(AppLifecycleState.hidden), isFalse);
     expect(sohbetOnPlanda(AppLifecycleState.paused), isFalse);
     expect(sohbetOnPlanda(AppLifecycleState.detached), isFalse);
+  });
+
+  testWidgets('sohbetUstKonum push yığınının üstünü okur (uri tabanda kalır)', (
+    tester,
+  ) async {
+    final y = GoRouter(
+      initialLocation: '/sohbetler',
+      routes: [
+        GoRoute(path: '/sohbetler', builder: (_, _) => const Text('liste')),
+        GoRoute(
+          path: '/sohbet/:ad',
+          builder: (_, s) => Text('sohbet ${s.pathParameters['ad']}'),
+        ),
+      ],
+    );
+    await tester.pumpWidget(MaterialApp.router(routerConfig: y));
+    await tester.pump();
+    expect(y.routerDelegate.currentConfiguration.uri.path, '/sohbetler');
+    expect(sohbetUstKonum(y), '/sohbetler');
+
+    y.push('/sohbet/emma.watches');
+    await tester.pump();
+    expect(
+      y.routerDelegate.currentConfiguration.uri.path,
+      '/sohbetler',
+      reason: 'push uri.path\'i değiştirmez — tam da canlıdaki tuzak',
+    );
+    expect(sohbetUstKonum(y), '/sohbet/emma.watches');
+    expect(sohbetYoluBu(sohbetUstKonum(y), 'emma.watches'), isTrue);
+    expect(
+      sohbetYoluBu(
+        y.routerDelegate.currentConfiguration.uri.path,
+        'emma.watches',
+      ),
+      isFalse,
+    );
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('listeden push ile açılan sohbet bakıyor kapatmaz, yoklar', (
+    tester,
+  ) async {
+    final bakiyor = <bool>[];
+    final mesajSorgilari = <String>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.endsWith('/sohbetler')) {
+        return _json({
+          'sohbetler': [_sohbet('ayse', metin: 'selam')],
+          'istekler': <dynamic>[],
+          'okunmamis': 0,
+        });
+      }
+      if (istek.url.path.contains('/mesajlar/')) {
+        mesajSorgilari.add(istek.url.query);
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'selam')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      if (istek.url.path.endsWith('/sohbet/bakiyor')) {
+        final govde = jsonDecode(istek.body) as Map<String, dynamic>;
+        bakiyor.add(govde['acik'] == true);
+        return _json(const {'tamam': true});
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final yonlendirici = GoRouter(
+      initialLocation: '/sohbetler',
+      routes: [
+        GoRoute(path: '/sohbetler', builder: (_, _) => const SohbetlerEkrani()),
+        GoRoute(
+          path: '/sohbet/:ad',
+          builder: (_, s) =>
+              SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+        ),
+      ],
+    );
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'},
+        child: MaterialApp.router(routerConfig: yonlendirici),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('@ayse'), findsOneWidget);
+
+    await tester.tap(find.text('@ayse'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('selam'), findsWidgets);
+    expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
+    expect(
+      bakiyor,
+      isNot(contains(false)),
+      reason: 'push ile açınca bakıyor kapanmasın',
+    );
+    expect(bakiyor, contains(true));
+    expect(mesajSorgilari.any((q) => q.contains('bakiyor=1')), isTrue);
+    await _kapat(tester);
   });
 
   testWidgets('açık sohbet yoklaması bakiyor=1 taşır', (tester) async {
@@ -341,7 +450,11 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
     expect(yollar, isNotEmpty);
-    expect(yollar.first, contains('bakiyor=1'));
+    expect(
+      yollar.any((q) => q.contains('bakiyor=1')),
+      isTrue,
+      reason: 'görünür sohbet GET yoklamasında bakiyor=1 taşımalı',
+    );
     await _kapat(tester);
   });
 

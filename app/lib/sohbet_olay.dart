@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:go_router/go_router.dart';
 
 /// Ön planda yeni DM gelince sohbet listesi ve açık konuşma hemen tazelensin.
 ///
@@ -38,6 +39,21 @@ class SohbetOlaylari {
 bool sohbetYoluBu(String? yol, String ad) {
   if (yol == null || ad.isEmpty) return false;
   return yol == '/sohbet/$ad' || yol == '/sohbet/${Uri.encodeComponent(ad)}';
+}
+
+/// Yığının en üstündeki konum.
+///
+/// `GoRouter.push` `currentConfiguration.uri`'yi DEĞİŞTİRMEZ (taban
+/// `/sohbetler` kalır; `uri` yalnız `go` eşleşmelerini yansıtır). Sohbet
+/// listeden `push` ile açıldığı için `uri.path`'e bakınca ekran açıkken
+/// bile "görünmüyor" sanılır: bakıyor damgası kapanır, yoklama durur,
+/// yazıyor görünmez, sohbetteyken zil çalar.
+String? sohbetUstKonum(GoRouter? yonlendirici) {
+  return yonlendirici
+      ?.routerDelegate
+      .currentConfiguration
+      .lastOrNull
+      ?.matchedLocation;
 }
 
 /// Sohbet hâlâ ön planda sayılır mı?

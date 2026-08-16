@@ -744,7 +744,10 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Bu konuşma ekranı görünür mü? Kabuk sekmesi değişince StatefulShell
   /// State'i canlı tutar; yoklama durmazsa sunucu "bakıyor" sanır ve push
   /// kesilir. Yalnız rota + ön plan açıkken yokla.
-  bool _sohbetGorunur = true;
+  ///
+  /// `false` ile başlar: ilk karede yığın henüz `/sohbetler` iken `true`
+  /// varsaymak `POST bakiyor acik:false` yollardı (açılmadan kapanır).
+  bool _sohbetGorunur = false;
   bool _bakisGonderildi = false;
 
   /// Saat sütununun açılma miktarı (0 = kapalı, tavan = tam görünür).
@@ -861,8 +864,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Rota veya yaşam döngüsü değişince yoklamayı aç/kapa.
   void _gorunurluk() {
     if (!mounted) return;
-    final yol = _yonlendirici?.routerDelegate.currentConfiguration.uri.path;
-    // İlk karede yol boş gelebilir; yoklamayı/bakıyor damgasını kesme.
+    // `uri.path` değil: sohbet `push` ile açılır, uri tabanda kalır.
+    final yol = sohbetUstKonum(_yonlendirici);
+    // İlk karede yığın boş gelebilir; yoklamayı/bakıyor damgasını kesme.
     if (yol == null || yol.isEmpty) return;
     final yasam = WidgetsBinding.instance.lifecycleState;
     final acik =
@@ -875,6 +879,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (!onceki || !_bakisGonderildi) {
         _sohbetBakisiniAyarla(true);
         _bakisGonderildi = true;
+        // Damgayı GET ?bakiyor=1 ile de taze tut (POST zorla açar;
+        // yoklama 1 sn sonra gelir, o ana kadar FCM kaçmasın).
+        _yukle();
       }
     } else {
       _sayac?.cancel();
@@ -882,7 +889,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (SohbetOlaylari.acikPartner == widget.kullaniciAdi) {
         SohbetOlaylari.acikPartner = null;
       }
-      if (onceki) {
+      // Hiç `acik:true` gitmediyse kapatma da gitmesin (lütuf damgayı
+      // 1,5 sn kilitler, uçuştaki GET bakıyor'u geri açamaz).
+      if (onceki && _bakisGonderildi) {
         _sohbetBakisiniAyarla(false);
         _bakisGonderildi = false;
         _durumDurdur();
@@ -908,7 +917,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     if (SohbetOlaylari.acikPartner == widget.kullaniciAdi) {
       SohbetOlaylari.acikPartner = null;
     }
-    if (_sohbetGorunur) _sohbetBakisiniAyarla(false);
+    if (_bakisGonderildi) _sohbetBakisiniAyarla(false);
     _durumDurdur();
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
