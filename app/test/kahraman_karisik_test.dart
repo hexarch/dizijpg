@@ -92,10 +92,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('2/2'), findsOneWidget);
     // Keep-alive offstage tutulur; yoksa geri gelince kapak + t=0.
-    expect(
-      find.byType(FragmanGomucu, skipOffstage: false),
-      findsOneWidget,
-    );
+    expect(find.byType(FragmanGomucu, skipOffstage: false), findsOneWidget);
 
     await tester.drag(find.byType(PageView), const Offset(300, 0));
     await tester.pumpAndSettle();

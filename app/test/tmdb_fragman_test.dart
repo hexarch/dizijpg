@@ -168,6 +168,13 @@ void main() {
     );
     expect(youtubeGommeUrl('abcDEF12345'), contains('controls=0'));
     expect(youtubeGommeUrl('abcDEF12345'), contains('enablejsapi=1'));
+    expect(youtubeGommeUrl('abcDEF12345'), contains('cc_load_policy=0'));
+    expect(youtubeGommeUrl('abcDEF12345', dil: 'tr'), contains('hl=tr'));
+    expect(
+      youtubeGommeUrl('abcDEF12345', dil: 'tr'),
+      contains('cc_lang_pref=tr'),
+    );
+    expect(youtubeGommeUrl('abcDEF12345', dil: '../x'), isNot(contains('hl=')));
     expect(
       youtubeGommeUrl('abcDEF12345', gizlilikDostu: false),
       contains('www.youtube.com/embed/'),

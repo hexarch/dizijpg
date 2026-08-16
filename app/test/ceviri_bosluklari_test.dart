@@ -36,6 +36,10 @@ const _yeniAnahtarlar = [
   'Önceki',
   'Sonraki',
   'Fragmanı oynat',
+  'Altyazıyı aç',
+  'Altyazıyı kapat',
+  '10 saniye ileri',
+  '10 saniye geri',
   'ses kaydediyor...',
   // detay.dart — "Takip ettiğin 3 kişi izledi"
   'Takip ettiğin {} kişi izledi',

@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.71.0+119 (fragman oynatıcı: altyazı, 2×, ±10)
+Kendi krom: altyazı aç/kapa, kalıcı 1×/2×, sağa çift dokunuş +10 sn,
+sola çift dokunuş −10 sn, sağa veya sola basılı tutunca geçici 2×.
+Alt çubukta üç katman: koyu kalan, açık gri tampon, sarı oynanan.
+Yatay kaydırma hâlâ PageView'de (video alanında pan yok). YouTube
+yüzeyi gömme; ham MP4 yok. APK `~/Desktop/dizijpg-1.71.0+119.apk`
+(89 MB, imzalı). `main.cd53e4f9462a.dart.js` (eski `a6777c0648ae`
+origin’den silindi; CF immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.71.0+119 · widget: çift dokunuş
+±10, basılı tut 2×, CC/1×, tampon≠oynanan · hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.70.0+118 (fragman kaydırınca başa sarmasın)
 Kahraman kaydırıcısında oynayan fragman ScrollStart'ta sökülüyordu;
 WebView de yatay sürüklemeyi yutuyordu. Şimdi duraklar, keep-alive ile

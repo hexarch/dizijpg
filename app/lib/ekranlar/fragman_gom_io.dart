@@ -40,8 +40,12 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   bool _oynuyor = true;
   bool _sessiz = false;
   bool _oynatmakIstiyor = true;
+  bool _altyazi = false;
+  bool _basili2x = false;
+  double _kaliciHiz = 1;
   Duration _konum = Duration.zero;
   Duration _sure = Duration.zero;
+  Duration _tampon = Duration.zero;
   Timer? _boya;
 
   /// `flutter test` VM'de platform WebView yok; kapağı söktükten sonra
@@ -49,6 +53,8 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   bool get _otomatikTest =>
       WidgetsBinding.instance.runtimeType.toString() ==
       'AutomatedTestWidgetsFlutterBinding';
+
+  double get _hiz => _basili2x ? 2 : _kaliciHiz;
 
   @override
   void initState() {
@@ -157,11 +163,20 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
       _hata = false;
       _konum = Duration.zero;
       _sure = Duration.zero;
+      _tampon = Duration.zero;
       _oynuyor = true;
+      _altyazi = false;
+      _basili2x = false;
+      _kaliciHiz = 1;
     });
     denetci.loadRequest(
       Uri.parse(
-        youtubeGommeUrl(widget.youtubeId, otomatik: true, gizlilikDostu: false),
+        youtubeGommeUrl(
+          widget.youtubeId,
+          otomatik: true,
+          gizlilikDostu: false,
+          dil: Ceviri.dil.value,
+        ),
       ),
       headers: const {'Referer': 'https://dizijpg.com/'},
     );
@@ -184,12 +199,15 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     if (m == null || !mounted) return;
     final t = ((m['t'] as num?)?.toDouble() ?? 0) * 1000;
     final d = ((m['d'] as num?)?.toDouble() ?? 0) * 1000;
+    final b = ((m['b'] as num?)?.toDouble() ?? 0) * 1000;
     final p = m['p'] == true;
     final sessiz = m['m'] == true;
     final konum = Duration(milliseconds: t.round());
     final sure = Duration(milliseconds: d.round());
+    final tampon = Duration(milliseconds: b.round());
     if (konum == _konum &&
         sure == _sure &&
+        tampon == _tampon &&
         p == _oynuyor &&
         sessiz == _sessiz) {
       return;
@@ -197,6 +215,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
     setState(() {
       _konum = konum;
       if (sure > Duration.zero) _sure = sure;
+      _tampon = tampon;
       _oynuyor = p;
       _sessiz = sessiz;
     });
@@ -239,9 +258,32 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
   }
 
   void _sar(Duration s) {
-    final sn = s.inMilliseconds / 1000;
-    _js('fragmanSar($sn)');
-    setState(() => _konum = s);
+    var hedef = s;
+    if (hedef < Duration.zero) hedef = Duration.zero;
+    if (_sure > Duration.zero && hedef > _sure) hedef = _sure;
+    _js('fragmanSar(${hedef.inMilliseconds / 1000})');
+    setState(() => _konum = hedef);
+  }
+
+  void _ileri10() => _sar(_konum + const Duration(seconds: 10));
+
+  void _geri10() => _sar(_konum - const Duration(seconds: 10));
+
+  void _hizDegistir() {
+    setState(() => _kaliciHiz = _kaliciHiz >= 1.5 ? 1 : 2);
+    if (!_basili2x) _js('fragmanHiz($_kaliciHiz)');
+  }
+
+  void _basiliTut(bool acik) {
+    setState(() => _basili2x = acik);
+    _js('fragmanHiz(${acik ? 2 : _kaliciHiz})');
+  }
+
+  void _altyaziDegistir() {
+    final hedef = !_altyazi;
+    final dil = Ceviri.dil.value.replaceAll(RegExp(r'[^a-z]'), '');
+    _js("fragmanAltyazi(${hedef ? 'true' : 'false'}, '$dil')");
+    setState(() => _altyazi = hedef);
   }
 
   @override
@@ -278,11 +320,19 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
             yukleniyor: _yukleniyor,
             oynuyor: _oynuyor,
             sessiz: _sessiz,
+            altyazi: _altyazi,
+            hiz: _hiz,
             konum: _konum,
             sure: _sure,
+            tampon: _tampon,
             altBosluk: widget.altBosluk,
             onOynatDuraklat: _oynatDuraklat,
             onSessiz: _sessizDegistir,
+            onAltyazi: _altyaziDegistir,
+            onHiz: _hizDegistir,
+            onGeri10: _geri10,
+            onIleri10: _ileri10,
+            onBasili2x: _basiliTut,
             onSarma: _sar,
           ),
       ],
@@ -291,6 +341,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
 }
 
 /// YouTube kromunu siler, `<video>`yu doldurur, zamanı kanala basar.
+/// Altyazı penceresi gizlenmez; çubuğun üstüne kaydırılır.
 const _gizleJs = r'''
 (function(){
   var st = document.getElementById('fragman-css');
@@ -311,21 +362,68 @@ const _gizleJs = r'''
       'html,body,#player,#player-api,.html5-video-player,.html5-video-container',
       '{width:100%!important;height:100%!important;margin:0!important;',
       'padding:0!important;overflow:hidden!important;background:#000!important;}',
-      'video{width:100%!important;height:100%!important;object-fit:contain!important;}'
+      'video{width:100%!important;height:100%!important;object-fit:contain!important;}',
+      '.ytp-caption-window-container,.caption-window{bottom:72px!important;}',
+      '.ytp-caption-window-bottom{margin-bottom:56px!important;}'
     ].join('');
     (document.head || document.documentElement).appendChild(st);
   }
   function video(){ return document.querySelector('video'); }
+  function player(){
+    return document.getElementById('movie_player') ||
+      document.querySelector('.html5-video-player');
+  }
+  if (typeof window.__fragmanHiz !== 'number') window.__fragmanHiz = 1;
   window.fragmanOynat = function(){ var v=video(); if(v){ v.play(); } };
   window.fragmanDuraklat = function(){ var v=video(); if(v){ v.pause(); } };
   window.fragmanSar = function(s){ var v=video(); if(v){ v.currentTime=s; } };
   window.fragmanSessiz = function(m){ var v=video(); if(v){ v.muted=!!m; } };
+  window.fragmanHiz = function(r){
+    window.__fragmanHiz = r;
+    var v=video();
+    if(v){ v.playbackRate = r; }
+  };
+  window.fragmanAltyazi = function(acik, dil){
+    var p = player();
+    if (p) {
+      try {
+        if (acik) {
+          if (typeof p.loadModule === 'function') p.loadModule('captions');
+          if (typeof p.setOption === 'function') {
+            p.setOption('captions', 'track', {languageCode: dil || 'tr'});
+          }
+        } else if (typeof p.unloadModule === 'function') {
+          p.unloadModule('captions');
+        }
+      } catch (e) {}
+    }
+    var v = video();
+    if (!v || !v.textTracks) return;
+    var dilK = (dil || '').toLowerCase();
+    var aday = -1;
+    for (var i = 0; i < v.textTracks.length; i++) {
+      var lang = (v.textTracks[i].language || '').toLowerCase();
+      if (dilK && lang.indexOf(dilK) === 0) { aday = i; break; }
+    }
+    if (aday < 0 && v.textTracks.length) aday = 0;
+    for (var j = 0; j < v.textTracks.length; j++) {
+      v.textTracks[j].mode = acik ? (j === aday ? 'showing' : 'hidden') : 'disabled';
+    }
+  };
   function nabiz(){
     var v = video();
+    if (v && v.playbackRate !== window.__fragmanHiz) {
+      v.playbackRate = window.__fragmanHiz;
+    }
     if (v && window.Fragman) {
+      var b = 0;
+      if (v.buffered && v.buffered.length) {
+        b = v.buffered.end(v.buffered.length - 1);
+      }
       window.Fragman.postMessage(JSON.stringify({
         t: v.currentTime || 0,
         d: isFinite(v.duration) ? v.duration : 0,
+        b: b,
         p: !v.paused && !v.ended,
         m: !!v.muted
       }));

@@ -110,6 +110,7 @@ String youtubeGommeUrl(
   String youtubeId, {
   bool otomatik = false,
   bool gizlilikDostu = true,
+  String? dil,
 }) {
   final host = gizlilikDostu ? 'www.youtube-nocookie.com' : 'www.youtube.com';
   final q = StringBuffer(
@@ -121,6 +122,10 @@ String youtubeGommeUrl(
     '&widget_referrer=https://dizijpg.com',
   );
   if (otomatik) q.write('&autoplay=1');
+  final hl = dil?.trim().toLowerCase() ?? '';
+  if (RegExp(r'^[a-z]{2,3}$').hasMatch(hl)) {
+    q.write('&hl=$hl&cc_lang_pref=$hl');
+  }
   return q.toString();
 }
 
