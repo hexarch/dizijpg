@@ -202,7 +202,7 @@ void main() {
 
     await tester.pump(sohbetYoklamaAraligi);
     await tester.pump();
-    expect(yollar, contains('sonra=10'));
+    expect(yollar.any((q) => q.contains('sonra=10')), isTrue);
     expect(find.text('sonra geldi'), findsOneWidget);
     expect(find.text('ilk'), findsOneWidget);
     await _kapat(tester);
@@ -273,6 +273,138 @@ void main() {
     await tester.pump();
     expect(find.byType(TepkiIkonu), findsOneWidget);
     expect(find.text('selam'), findsOneWidget);
+    await _kapat(tester);
+  });
+
+  test('sohbetYoluBu kodlanmış adı da kabul eder', () {
+    expect(sohbetYoluBu('/sohbet/ayse', 'ayse'), isTrue);
+    expect(sohbetYoluBu('/sohbet/ayse', 'ali'), isFalse);
+    expect(sohbetYoluBu('/sohbetler', 'ayse'), isFalse);
+    expect(sohbetYoluBu(null, 'ayse'), isFalse);
+    expect(
+      sohbetYoluBu('/sohbet/${Uri.encodeComponent('a.b')}', 'a.b'),
+      isTrue,
+    );
+  });
+
+  testWidgets('açık sohbet yoklaması bakiyor=1 taşır', (tester) async {
+    final yollar = <String>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        yollar.add(istek.url.query);
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
+    expect(yollar, isNotEmpty);
+    expect(yollar.first, contains('bakiyor=1'));
+    await _kapat(tester);
+  });
+
+  testWidgets('sohbetten çıkınca yoklama durur ve bakıyor kapanır', (
+    tester,
+  ) async {
+    var mesajIstek = 0;
+    final bakiyor = <bool>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        mesajIstek++;
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      if (istek.url.path.endsWith('/sohbet/bakiyor')) {
+        final govde = jsonDecode(istek.body) as Map<String, dynamic>;
+        bakiyor.add(govde['acik'] == true);
+        return _json(const {'tamam': true});
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    final yonlendirici = GoRouter(
+      initialLocation: '/sohbet/ayse',
+      routes: [
+        GoRoute(
+          path: '/sohbet/:ad',
+          builder: (_, s) =>
+              SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+        ),
+        GoRoute(path: '/diger', builder: (_, _) => const Text('diger sayfa')),
+      ],
+    );
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(routerConfig: yonlendirici),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('ilk'), findsOneWidget);
+    expect(SohbetOlaylari.buSohbetAcik('ayse'), isTrue);
+    expect(bakiyor, contains(true));
+    final once = mesajIstek;
+
+    yonlendirici.go('/diger');
+    await tester.pumpAndSettle();
+    expect(find.text('diger sayfa'), findsOneWidget);
+    expect(SohbetOlaylari.buSohbetAcik('ayse'), isFalse);
+    expect(bakiyor, contains(false));
+
+    await tester.pump(sohbetYoklamaAraligi);
+    await tester.pump();
+    expect(
+      mesajIstek,
+      once,
+      reason: 'görünmeyen sohbet yoklamaya devam etmesin',
+    );
     await _kapat(tester);
   });
 }

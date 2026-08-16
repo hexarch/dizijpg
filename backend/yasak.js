@@ -154,6 +154,9 @@ export const YASAK_MUAF = Object.freeze([
   '/bildirim-tercihleri', '/gizlilik-tercihleri', '/gizle',
   // Bildirim okundu işareti + mesaj "iletildi" tiki: yeni içerik ÜRETMEZ
   '/bildirimler/okundu', '/mesajlar/iletildi',
+  // Açık sohbet damgasını kapatmak da içerik ÜRETMEZ; yasaklı sohbeti
+  // okuyup çıkınca push'un yeniden açılabilmesi için muaf.
+  '/sohbet/bakiyor',
   // ***** ARAMAYI KAPATMA — BU SATIRI ASLA SİLME *****
   // Aramanın ORTASINDA ban yiyen kullanıcı `/arama/bitir`den 403 alırsa
   // aramayı TEMİZ KAPATAMAZ: karşı taraf hayalet bir aramada kalır, süre

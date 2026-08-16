@@ -184,6 +184,7 @@ test('YAZMA KAPISI: giriş, kişisel takip verisi, şikayet ve hesap silme AÇIK
     ['POST', '/puan'], ['POST', '/favori/toggle'], ['POST', '/rewatch'],
     ['POST', '/bildirim-tercihleri'], ['POST', '/gizlilik-tercihleri'],
     ['POST', '/bildirimler/okundu'], ['POST', '/mesajlar/iletildi'],
+    ['POST', '/sohbet/bakiyor'],
     ['POST', '/engelle/ali'], ['POST', '/sikayet'],
     ['POST', '/veri/disa-aktar'], ['DELETE', '/hesabim'],
   ];

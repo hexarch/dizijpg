@@ -697,6 +697,13 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
   Timer? _sayac;
+  GoRouter? _yonlendirici;
+
+  /// Bu konuşma ekranı görünür mü? Kabuk sekmesi değişince StatefulShell
+  /// State'i canlı tutar; yoklama durmazsa sunucu "bakıyor" sanır ve push
+  /// kesilir. Yalnız rota + ön plan açıkken yokla.
+  bool _sohbetGorunur = true;
+  bool _bakisGonderildi = false;
 
   /// Saat sütununun açılma miktarı (0 = kapalı, tavan = tam görünür).
   /// Kalıcı bir mod DEĞİL: parmak kalkınca 0'a geri yaylanır.
@@ -745,18 +752,77 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       upperBound: saatSutunuGenisligi,
     );
     _yukle(ilk: true);
-    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle());
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_sohbetOlayi);
+    SohbetOlaylari.acikPartner = widget.kullaniciAdi;
     // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
     mesajBildirimleriniTemizle(widget.kullaniciAdi);
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final y = GoRouter.of(context);
+    if (!identical(_yonlendirici, y)) {
+      _yonlendirici?.routerDelegate.removeListener(_gorunurluk);
+      _yonlendirici = y;
+      _yonlendirici!.routerDelegate.addListener(_gorunurluk);
+    }
+    _gorunurluk();
+  }
+
+  /// Rota veya yaşam döngüsü değişince yoklamayı aç/kapa.
+  void _gorunurluk() {
+    if (!mounted) return;
+    final yol = _yonlendirici?.routerDelegate.currentConfiguration.uri.path;
+    if (yol == null || yol.isEmpty) {
+      _sayac ??= Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle());
+      return;
+    }
+    final yasam = WidgetsBinding.instance.lifecycleState;
+    final onPlanda = yasam == null || yasam == AppLifecycleState.resumed;
+    final acik = onPlanda && sohbetYoluBu(yol, widget.kullaniciAdi);
+    final onceki = _sohbetGorunur;
+    _sohbetGorunur = acik;
+    if (acik) {
+      SohbetOlaylari.acikPartner = widget.kullaniciAdi;
+      _sayac ??= Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle());
+      if (!onceki || !_bakisGonderildi) {
+        _sohbetBakisiniAyarla(true);
+        _bakisGonderildi = true;
+      }
+    } else {
+      _sayac?.cancel();
+      _sayac = null;
+      if (SohbetOlaylari.acikPartner == widget.kullaniciAdi) {
+        SohbetOlaylari.acikPartner = null;
+      }
+      if (onceki) {
+        _sohbetBakisiniAyarla(false);
+        _bakisGonderildi = false;
+      }
+    }
+  }
+
+  /// Sunucuya "bu konuşmaya bakıyorum / baktım" damgası.
+  void _sohbetBakisiniAyarla(bool acik) {
+    Api.post('/sohbet/bakiyor', {
+      'kullanici_adi': widget.kullaniciAdi,
+      'acik': acik,
+    }).catchError((_) => null);
+  }
+
+  @override
   void dispose() {
+    _yonlendirici?.routerDelegate.removeListener(_gorunurluk);
+    _yonlendirici = null;
     _sayac?.cancel();
     SohbetOlaylari.nesil.removeListener(_sohbetOlayi);
     WidgetsBinding.instance.removeObserver(this);
+    if (SohbetOlaylari.acikPartner == widget.kullaniciAdi) {
+      SohbetOlaylari.acikPartner = null;
+    }
+    if (_sohbetGorunur) _sohbetBakisiniAyarla(false);
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
@@ -768,11 +834,15 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState durum) {
-    if (durum == AppLifecycleState.resumed) _yukle(tam: true);
+    _gorunurluk();
+    if (durum == AppLifecycleState.resumed && _sohbetGorunur) {
+      _yukle(tam: true);
+    }
   }
 
   /// FCM veya başka ekran yeni mesaj bildirdi: bu konuşmaysa hemen çek.
   void _sohbetOlayi() {
+    if (!_sohbetGorunur) return;
     final ad = SohbetOlaylari.partner;
     if (ad != null && ad != widget.kullaniciAdi) return;
     _yukle();
@@ -950,9 +1020,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     try {
       final sonId = _sonMesajId();
       final artimli = !ilk && !tam && sonId != null;
-      final yol = artimli
-          ? '/mesajlar/${widget.kullaniciAdi}?sonra=$sonId'
-          : '/mesajlar/${widget.kullaniciAdi}';
+      final parcalar = <String>[
+        if (_sohbetGorunur) 'bakiyor=1',
+        if (artimli) 'sonra=$sonId',
+      ];
+      final taban = '/mesajlar/${widget.kullaniciAdi}';
+      final yol = parcalar.isEmpty ? taban : '$taban?${parcalar.join('&')}';
       final d = await Api.get(yol);
       if (!mounted) return;
       final gelen = d['mesajlar'] as List<dynamic>? ?? const [];
@@ -1012,7 +1085,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       }
     } finally {
       _cekiliyor = false;
-      if (_bekleyenYukle && mounted) {
+      if (_bekleyenYukle && mounted && _sohbetGorunur) {
         _bekleyenYukle = false;
         final tekrarTam = _bekleyenTam;
         _bekleyenTam = false;

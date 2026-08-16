@@ -33,6 +33,9 @@ import {
   CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, sohbetleriAyir, istekRozeti,
 } from './cevrimici.js';
 import {
+  sohbetAcikAnahtar, sohbetAcikIsaretle, sohbetAcikKapat, sohbetAcikMi,
+} from './sohbet_bakiyor.js';
+import {
   yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
 } from './kisi_izlenme.js';
 // md. 52 — iki adımlı doğrulama (YALNIZ e-posta). Saf modül: sabitler, bilet
@@ -8034,6 +8037,32 @@ function yaziyorIsaretle(anahtar, zaman = Date.now()) {
 abone('yaziyor', (v) => {
   if (v && typeof v.a === 'string' && Number.isFinite(v.z)) yaziyorIsaretle(v.a, v.z);
 });
+
+// Açık sohbet damgası: alıcı BU konuşmanın ekranındayken mesaj push'u
+// (ve zil satırı) üretilmez. Eski istemci `bakiyor=1` göndermez → damga
+// yazılmaz → davranış eskisi gibi. KÜME: yoklama işçi A'ya, gönderim
+// işçi B'ye düşerse yayınlanmayan damga push'u kesmez.
+const sohbetBakanlar = new Map();
+abone('sohbet_bakiyor', (v) => {
+  if (!v || typeof v.a !== 'string' || !Number.isFinite(v.z)) return;
+  const parca = v.a.split(':');
+  const bakan = Number(parca[0]);
+  const partner = Number(parca[1]);
+  if (!bakan || !partner) return;
+  if (v.k) sohbetAcikKapat(sohbetBakanlar, bakan, partner, v.z);
+  else sohbetAcikIsaretle(sohbetBakanlar, bakan, partner, v.z, !!v.zorla);
+});
+function sohbetBakisiniDuyur(bakanId, partnerId, acik) {
+  const zaman = Date.now();
+  if (acik) sohbetAcikIsaretle(sohbetBakanlar, bakanId, partnerId, zaman, true);
+  else sohbetAcikKapat(sohbetBakanlar, bakanId, partnerId, zaman);
+  yayinla('sohbet_bakiyor', {
+    a: sohbetAcikAnahtar(bakanId, partnerId),
+    z: zaman,
+    k: acik ? 0 : 1,
+    zorla: acik ? 1 : 0,
+  });
+}
 app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
   const k = await havuz.query(
     'SELECT id FROM kullanicilar WHERE kullanici_adi=$1',
@@ -8220,6 +8249,17 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     [req.params.kullaniciAdi]);
   if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
   const partnerId = k.rows[0].id;
+  // Yeni istemci sohbet görünürken `bakiyor=1` gönderir; eski sürüm bu
+  // sorguyu taşımaz → damga yazılmaz, push eskisi gibi gider.
+  if (String(req.query.bakiyor || '') === '1') {
+    const zaman = Date.now();
+    sohbetAcikIsaretle(sohbetBakanlar, req.kullanici.id, partnerId, zaman);
+    yayinla('sohbet_bakiyor', {
+      a: sohbetAcikAnahtar(req.kullanici.id, partnerId),
+      z: zaman,
+      k: 0,
+    });
+  }
   // ENGELLEME (13 Ağu 2026, md. 19): engelli çiftte sohbet GEÇMİŞİ DE
   // gösterilmez. 403 DEĞİL, BOŞ LİSTE + `engel: true`:
   //  · 403, yayındaki istemcide (sohbet.dart) kırmızı hata ekranı çizerdi;
@@ -8457,10 +8497,26 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   // Kardeş işçilere de duyurulur (gizlilik gerekçesi abone bloğunda).
   ozelMedyaEkle(medya);
   yayinla('ozel_medya_ekle', medya);
-  // Push gövdesinde mesajın kendisi görünsün (boşsa şablona düşer)
-  bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
-    temiz ? { metin: temiz } : null);
+  // Alıcı bu konuşmanın ekranındaysa zil + FCM gereksiz: mesaj 3 sn
+  // yoklamayla zaten iner. Başka sohbet / arka plan → bildirim gider.
+  if (!sohbetAcikMi(sohbetBakanlar, aliciId, req.kullanici.id)) {
+    bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
+      temiz ? { metin: temiz } : null);
+  }
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
+}));
+
+// Sohbet ekranı açıldı/kapandı. GET ?bakiyor=1 yoklamada damgayı taze tutar;
+// bu uç ekran kapanınca (ve ilk açılışta zorla) anında keser/açar.
+app.post('/sohbet/bakiyor', girisZorunlu, sarici(async (req, res) => {
+  const ad = String(req.body?.kullanici_adi || '');
+  if (!ad) return res.status(400).json({ hata: 'kullanici_adi gerekli' });
+  const k = await havuz.query(
+    'SELECT id FROM kullanicilar WHERE kullanici_adi=$1', [ad]);
+  if (!k.rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  const acik = req.body?.acik !== false && req.body?.acik !== 'false';
+  sohbetBakisiniDuyur(req.kullanici.id, k.rows[0].id, acik);
+  res.json({ tamam: true });
 }));
 
 // Kendi mesajını düzenle (yalnız metin; medya/içerik kartı düzenlenmez)

@@ -456,7 +456,12 @@ Future<void> pushBaslat() async {
           SohbetOlaylari.mesajGeldi(ad.isEmpty ? null : ad);
           final yol =
               sonYonlendirici?.routerDelegate.currentConfiguration.uri.path;
-          if (yol == '/sohbet/$ad') return;
+          // Konuşma ekranı açıkken yerel bildirim ÇİZİLMEZ — mesaj zaten
+          // balon olarak iner. Sunucu da bakıyor damgasıyla FCM atmaz;
+          // bu yedek, uçuştaki push için.
+          if (SohbetOlaylari.buSohbetAcik(ad) || sohbetYoluBu(yol, ad)) {
+            return;
+          }
           mesajBildirimiGoster(m.data);
           return;
         }

@@ -6,7 +6,8 @@
 //   1. YAYIN (broadcast): bellek-içi durumun işçiler arasında tutarlı kalması
 //      gereken küçük olayları birincil süreç ÜZERİNDEN tüm kardeş işçilere
 //      iletir. Kullanım yerleri ve gerekçeleri server.js'te, çağrı başında:
-//      `yaziyor` (yazıyor... göstergesi), `ozel_medya_*` (DM medya gizliliği),
+//      `yaziyor` (yazıyor... göstergesi), `sohbet_bakiyor` (açık sohbet
+//      damgası — bakıyorken mesaj push'u kesilir), `ozel_medya_*` (DM medya gizliliği),
 //      `sv_sil` (şifre/ban önbelleği düşürme), `tohum` (akış sayfalama listesi).
 //   2. SAYAÇ RPC: kaba kuvvete bakan hız limitleri (auth, şifre sıfırlama)
 //      işçi başına değil KÜME GENELİNDE sayılmalı — yoksa N işçide limit

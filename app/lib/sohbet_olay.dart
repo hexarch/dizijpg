@@ -13,8 +13,28 @@ class SohbetOlaylari {
   /// kendi partneriyse.
   static String? partner;
 
+  /// Kullanıcının şu an baktığı konuşmanın karşı tarafı (yoksa null).
+  /// FCM ön plan bildirimi ve sunucu damgası bununla hizalanır.
+  static String? acikPartner;
+
   static void mesajGeldi([String? ad]) {
     partner = ad;
     nesil.value++;
   }
+
+  /// Bu konuşmanın ekranı görünür mü? Büyük/küçük harf yok: kullanıcı adı
+  /// rotaya olduğu gibi yazılır.
+  static bool buSohbetAcik(String? ad) {
+    if (ad == null || ad.isEmpty || acikPartner == null) return false;
+    return acikPartner == ad;
+  }
+}
+
+/// GoRouter yolunun bu kişiyle sohbet olup olmadığı.
+///
+/// Kodlanmış (`%20`) ve ham adın ikisi de kabul: kullanıcı adında nokta
+/// vs. olunca `uri.path` kodlanmış gelebilir.
+bool sohbetYoluBu(String? yol, String ad) {
+  if (yol == null || ad.isEmpty) return false;
+  return yol == '/sohbet/$ad' || yol == '/sohbet/${Uri.encodeComponent(ad)}';
 }

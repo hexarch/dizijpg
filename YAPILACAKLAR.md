@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.67.0+115 (sohbetteyken mesaj push'u yok)
+Karşı taraf o konuşmanın ekranındayken mesaj FCM + zil satırı üretilmez
+(mesaj zaten 3 sn yoklamayla iner). Eski istemci `bakiyor=1` göndermez →
+davranış eskisi gibi. Ekran kapanınca / uygulama arka plana düşünce push
+hemen açılır. APK `~/Desktop/dizijpg-1.67.0+115.apk` (89 MB, imzalı).
+`main.6137ee0b65a6.dart.js` (eski `ed8a38965adb` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.67.0+115 · giriş testkullanici ·
+`POST /sohbet/bakiyor` tamam · `GET ?bakiyor=1` 200 · widget: bakıyor
+kapanınca yoklama durur · hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.66.0+114 (fragman+kapak tek kaydırıcı)
 Dizi/film/bölüm kahramanı tek 16:9 kare: video, foto, video… (en fazla
 5 Trailer/Teaser, Clip yok). Kaydırınca çalan gömme sökülür. Noktalar
