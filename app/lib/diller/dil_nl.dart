@@ -290,6 +290,7 @@ const Map<String, String> cevirilerNl = {
   'Kaydediliyor…': 'Opnemen…',
   'Ses oynatılamadı': 'Spraakbericht kon niet worden afgespeeld',
   'Oynat': 'Afspelen',
+  'Fragmanı oynat': 'Trailer afspelen',
   'Duraklat': 'Pauzeren',
   'Liste görünümü': 'Lijstweergave',
   'Takvim görünümü': 'Kalenderweergave',

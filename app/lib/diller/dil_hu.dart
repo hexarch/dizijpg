@@ -291,6 +291,7 @@ const Map<String, String> cevirilerHu = {
   'Kaydediliyor…': 'Felvétel…',
   'Ses oynatılamadı': 'A hangüzenetet nem sikerült lejátszani',
   'Oynat': 'Lejátszás',
+  'Fragmanı oynat': 'Előzetes lejátszása',
   'Duraklat': 'Szünet',
   'Liste görünümü': 'Listanézet',
   'Takvim görünümü': 'Naptárnézet',

@@ -284,6 +284,7 @@ const Map<String, String> cevirilerZh = {
   'Kaydediliyor…': '录音中…',
   'Ses oynatılamadı': '无法播放语音',
   'Oynat': '播放',
+  'Fragmanı oynat': '播放预告片',
   'Duraklat': '暂停',
   'Liste görünümü': '列表视图',
   'Takvim görünümü': '日历视图',

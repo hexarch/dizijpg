@@ -289,6 +289,7 @@ const Map<String, String> cevirilerCs = {
   'Kaydediliyor…': 'Nahrávání…',
   'Ses oynatılamadı': 'Zvuk se nepodařilo přehrát',
   'Oynat': 'Přehrát',
+  'Fragmanı oynat': 'Přehrát trailer',
   'Duraklat': 'Pozastavit',
   'Liste görünümü': 'Zobrazení seznamu',
   'Takvim görünümü': 'Zobrazení kalendáře',

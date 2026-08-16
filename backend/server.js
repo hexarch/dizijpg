@@ -4346,6 +4346,8 @@ const TMDB_IZINLI = [
   /^\/tv\/\d+\/season\/\d+$/,
   /^\/tv\/\d+\/season\/\d+\/episode\/\d+$/,
   /^\/tv\/\d+\/season\/\d+\/episode\/\d+\/images$/, // bölüm kareleri (stills)
+  /^\/tv\/\d+\/season\/\d+\/videos$/, // sezon fragmanı (bölümde Trailer yoksa)
+  /^\/tv\/\d+\/season\/\d+\/episode\/\d+\/videos$/, // bölüm fragmanı (append yedeği)
   /^\/(tv|movie)\/\d+\/(credits|videos|recommendations|similar|watch\/providers)$/,
   /^\/person\/\d+$/,
   /^\/person\/\d+\/combined_credits$/,
@@ -4423,6 +4425,19 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   // Detay sayfalarına ek verileri tek istekte iliştir.
   if (/^\/(tv|movie)\/\d+$/.test(yol) && !parametreler.has('append_to_response')) {
     parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids,watch/providers');
+  }
+  // Bölüm detayı: fragman tek istekte gelsin (ayrı /videos 403 olmasın).
+  if (/^\/tv\/\d+\/season\/\d+\/episode\/\d+$/.test(yol) &&
+      !parametreler.has('append_to_response')) {
+    parametreler.set('append_to_response', 'videos');
+  }
+  // TMDB `language=tr-TR` yalnız TR videoyu verir; Inception gibi yapımlarda
+  // resmi fragman EN. Kullanıcı dili + EN + dilsiz. İstemci göndermişse dokunma.
+  const ek = parametreler.get('append_to_response') || '';
+  const videoIste = /\/videos$/.test(yol) || ek.split(',').includes('videos');
+  if (videoIste && !parametreler.has('include_video_language')) {
+    const kod = String(istekBaglam.getStore()?.dil || 'tr');
+    parametreler.set('include_video_language', `${kod},en,null`);
   }
   const tam = `${yol}?${parametreler.toString()}`;
   // `company` bu listeye md. 49'da katıldı: bir yapım firmasının adı, logosu,

@@ -289,6 +289,7 @@ const Map<String, String> cevirilerId = {
   'Kaydediliyor…': 'Merekam…',
   'Ses oynatılamadı': 'Audio tidak bisa diputar',
   'Oynat': 'Putar',
+  'Fragmanı oynat': 'Putar trailer',
   'Duraklat': 'Jeda',
   'Liste görünümü': 'Tampilan daftar',
   'Takvim görünümü': 'Tampilan kalender',

@@ -277,6 +277,8 @@ void main() {
     }
     // Yazısız kapak: üstüne dizi adı basılmış afişler gelmesin
     expect(tmdb.single.contains('include_image_language=null'), isTrue);
+    // TR dilinde resmi fragman çoğu zaman EN — İngilizce videolar da gelsin
+    expect(tmdb.single.contains('include_video_language='), isTrue);
     // Kapaklar ilk çizimde hazır → kaydırıcı sonradan belirmiyor
     expect(find.byType(AkisMedya), findsOneWidget);
     expect(find.text('1/2'), findsOneWidget);

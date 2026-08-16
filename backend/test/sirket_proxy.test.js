@@ -59,6 +59,13 @@ test('beyaz liste EN DAR: alt yollar ve sayı olmayan id yasak', () => {
   }
 });
 
+test('sezon ve bölüm videoları izinli (fragman)', () => {
+  assert.ok(izinli('/tv/1396/season/1/videos'));
+  assert.ok(izinli('/tv/1396/season/1/episode/1/videos'));
+  assert.equal(izinli('/tv/1396/season/1/episode/1/videos/x'), false);
+  assert.equal(izinli('/tv/1396/season/videos'), false);
+});
+
 test('firma yapımları için discover zaten izinli (yeni uç gerekmedi)', () => {
   assert.ok(izinli('/discover/movie'));
   assert.ok(izinli('/discover/tv'));

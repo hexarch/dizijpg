@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.62.0+110
+version: 1.63.0+111
 
 environment:
   sdk: ^3.12.2
@@ -103,6 +103,9 @@ dependencies:
   share_plus: ^10.1.4
   pointer_interceptor: ^0.10.1+2
   visibility_detector: ^0.4.0+2
+  # YouTube iframe (fragman_gom_web.dart). Transitive duruyordu; doğrudan
+  # import edildiği için bağımlılık listesinde de dursun.
+  web: ^1.1.1
   # Sesli/görüntülü arama (WebRTC). SÜRÜM KİLİTLİ (^ YOK): 1.6.0 sondajı
   # geçti — AGP 9 ile derleniyor, MIT lisanslı, arm64 APK'ya +11,5 MiB
   # ekliyor. Bir üst yama sürümü native Android/iOS kodu taşıdığı için

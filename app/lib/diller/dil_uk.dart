@@ -290,6 +290,7 @@ const Map<String, String> cevirilerUk = {
   'Kaydediliyor…': 'Запис…',
   'Ses oynatılamadı': 'Не вдалося відтворити аудіо',
   'Oynat': 'Відтворити',
+  'Fragmanı oynat': 'Відтворити трейлер',
   'Duraklat': 'Пауза',
   'Liste görünümü': 'Список',
   'Takvim görünümü': 'Календар',

@@ -287,6 +287,7 @@ const Map<String, String> cevirilerTh = {
   'Kaydediliyor…': 'กำลังบันทึก…',
   'Ses oynatılamadı': 'เล่นเสียงไม่ได้',
   'Oynat': 'เล่น',
+  'Fragmanı oynat': 'เล่นตัวอย่าง',
   'Duraklat': 'หยุดชั่วคราว',
   'Liste görünümü': 'มุมมองรายการ',
   'Takvim görünümü': 'มุมมองปฏิทิน',

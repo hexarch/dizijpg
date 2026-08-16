@@ -288,6 +288,7 @@ const Map<String, String> cevirilerAr = {
   'Kaydediliyor…': 'جارٍ التسجيل…',
   'Ses oynatılamadı': 'تعذّر تشغيل الصوت',
   'Oynat': 'تشغيل',
+  'Fragmanı oynat': 'تشغيل الإعلان',
   'Duraklat': 'إيقاف مؤقت',
   'Liste görünümü': 'عرض القائمة',
   'Takvim görünümü': 'عرض التقويم',

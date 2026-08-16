@@ -291,6 +291,7 @@ const Map<String, String> cevirilerSv = {
   'Kaydediliyor…': 'Spelar in…',
   'Ses oynatılamadı': 'Röstmeddelandet kunde inte spelas upp',
   'Oynat': 'Spela upp',
+  'Fragmanı oynat': 'Spela trailern',
   'Duraklat': 'Pausa',
   'Liste görünümü': 'Listvy',
   'Takvim görünümü': 'Kalendervy',

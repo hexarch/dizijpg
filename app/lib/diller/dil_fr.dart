@@ -292,6 +292,7 @@ const Map<String, String> cevirilerFr = {
   'Kaydediliyor…': 'Enregistrement…',
   'Ses oynatılamadı': 'Impossible de lire l’audio',
   'Oynat': 'Lire',
+  'Fragmanı oynat': 'Lire la bande-annonce',
   'Duraklat': 'Pause',
   'Liste görünümü': 'Vue liste',
   'Takvim görünümü': 'Vue calendrier',

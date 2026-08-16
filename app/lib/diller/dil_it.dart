@@ -293,6 +293,7 @@ const Map<String, String> cevirilerIt = {
   'Kaydediliyor…': 'Registrazione…',
   'Ses oynatılamadı': 'Impossibile riprodurre l’audio',
   'Oynat': 'Riproduci',
+  'Fragmanı oynat': 'Riproduci trailer',
   'Duraklat': 'Metti in pausa',
   'Liste görünümü': 'Vista elenco',
   'Takvim görünümü': 'Vista calendario',

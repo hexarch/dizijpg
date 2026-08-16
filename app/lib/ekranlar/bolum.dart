@@ -7,6 +7,8 @@ import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../tema.dart';
+import '../tmdb_fragman.dart';
+import 'fragman.dart';
 import 'giris_istem.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
@@ -38,6 +40,9 @@ class _BolumEkraniState extends State<BolumEkrani> {
 
   /// Bölüme ait kare (still) yolları; ilki bölümün kapak karesidir.
   List<String> _kareler = const [];
+
+  /// Bölüm veya sezon Trailer/Teaser'ı (Clip spoiler, kahramana konmaz).
+  TmdbFragman? _fragman;
   String? _hata;
   late bool _izlendi = widget.izlendi;
 
@@ -51,19 +56,28 @@ class _BolumEkraniState extends State<BolumEkrani> {
     setState(() => _hata = null);
     final taban =
         '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/episode/${widget.bolumNo}';
+    final videoDil = tmdbVideoDilParametre();
     try {
       // Kareler bölümle BİRLİKTE istenir: sonradan gelseydi kutu boyu/nokta
       // göstergesi yüklendikten sonra belirir, içerik zıplardı.
+      // Sezon videosu paralel: bölümde Trailer yoksa sezon fragmanı kahraman
+      // olur (BB S1E1'de yalnız Clip var, S1 Trailer var).
       final sonuc = await Future.wait([
-        Api.get(taban),
+        Api.get('$taban?append_to_response=videos&$videoDil'),
         // Kareler süs veridir; gelmezse sayfa eskisi gibi tek kapakla çalışır.
         Api.get('$taban/images').catchError((_) => null),
+        Api.get(
+          '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/videos?$videoDil',
+        ).catchError((_) => null),
       ]);
       if (!mounted) return;
       final b = sonuc[0] as Map<String, dynamic>;
       setState(() {
         _bolum = b;
         _kareler = _kareleriCikar(b, sonuc[1]);
+        _fragman =
+            fragmanSec(b['videos'], dil: Ceviri.dil.value) ??
+            fragmanSec(sonuc[2], dil: Ceviri.dil.value);
       });
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
@@ -152,9 +166,10 @@ class _BolumEkraniState extends State<BolumEkrani> {
       govde = ListView(
         padding: EdgeInsets.only(bottom: altGuvenli(context)),
         children: [
-          // Birden çok kare varsa yana kaydırmalı (nokta göstergeli) görünüm;
-          // tek kare varsa eski sabit kapak. Kare yoksa hiçbir şey çizilmez.
-          if (_kareler.length > 1)
+          // Resmi fragman varsa en başta video; yoksa kare kaydırıcısı.
+          if (_fragman != null)
+            FragmanOynatici(youtubeId: _fragman!.youtubeId)
+          else if (_kareler.length > 1)
             AkisMedya(
               urller: [for (final y in _kareler) posterUrl(y, boyut: 'w780')!],
               oran: 16 / 9,

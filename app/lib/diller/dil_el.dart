@@ -291,6 +291,7 @@ const Map<String, String> cevirilerEl = {
   'Kaydediliyor…': 'Εγγραφή…',
   'Ses oynatılamadı': 'Δεν ήταν δυνατή η αναπαραγωγή του ήχου',
   'Oynat': 'Αναπαραγωγή',
+  'Fragmanı oynat': 'Αναπαραγωγή τρέιλερ',
   'Duraklat': 'Παύση',
   'Liste görünümü': 'Προβολή λίστας',
   'Takvim görünümü': 'Προβολή ημερολογίου',

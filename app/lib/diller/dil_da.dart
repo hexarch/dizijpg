@@ -289,6 +289,7 @@ const Map<String, String> cevirilerDa = {
   'Kaydediliyor…': 'Optager…',
   'Ses oynatılamadı': 'Talebeskeden kunne ikke afspilles',
   'Oynat': 'Afspil',
+  'Fragmanı oynat': 'Afspil trailer',
   'Duraklat': 'Pause',
   'Liste görünümü': 'Listevisning',
   'Takvim görünümü': 'Kalendervisning',

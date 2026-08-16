@@ -289,6 +289,7 @@ const Map<String, String> cevirilerHi = {
   'Kaydediliyor…': 'रिकॉर्ड हो रहा है…',
   'Ses oynatılamadı': 'ऑडियो नहीं चल सका',
   'Oynat': 'चलाओ',
+  'Fragmanı oynat': 'ट्रेलर चलाएँ',
   'Duraklat': 'रोको',
   'Liste görünümü': 'सूची दृश्य',
   'Takvim görünümü': 'कैलेंडर दृश्य',

@@ -291,6 +291,7 @@ const Map<String, String> cevirilerMl = {
   'Kaydediliyor…': 'റെക്കോർഡ് ചെയ്യുന്നു…',
   'Ses oynatılamadı': 'ഓഡിയോ പ്ലേ ചെയ്യാനായില്ല',
   'Oynat': 'പ്ലേ ചെയ്യൂ',
+  'Fragmanı oynat': 'ട്രെയ്‌ലർ പ്ലേ ചെയ്യുക',
   'Duraklat': 'താൽക്കാലികമായി നിർത്തൂ',
   'Liste görünümü': 'ലിസ്റ്റ് കാഴ്ച',
   'Takvim görünümü': 'കലണ്ടർ കാഴ്ച',

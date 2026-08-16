@@ -290,6 +290,7 @@ const Map<String, String> cevirilerVi = {
   'Kaydediliyor…': 'Đang ghi…',
   'Ses oynatılamadı': 'Không phát được âm thanh',
   'Oynat': 'Phát',
+  'Fragmanı oynat': 'Phát trailer',
   'Duraklat': 'Tạm dừng',
   'Liste görünümü': 'Xem danh sách',
   'Takvim görünümü': 'Xem lịch',

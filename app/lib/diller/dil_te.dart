@@ -288,6 +288,7 @@ const Map<String, String> cevirilerTe = {
   'Kaydediliyor…': 'రికార్డ్ అవుతోంది…',
   'Ses oynatılamadı': 'ఆడియో ప్లే చేయలేకపోయాం',
   'Oynat': 'ప్లే చేయి',
+  'Fragmanı oynat': 'ట్రైలర్ ప్లే చేయి',
   'Duraklat': 'పాజ్ చేయి',
   'Liste görünümü': 'జాబితా వీక్షణ',
   'Takvim görünümü': 'క్యాలెండర్ వీక్షణ',

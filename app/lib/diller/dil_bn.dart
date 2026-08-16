@@ -291,6 +291,7 @@ const Map<String, String> cevirilerBn = {
   'Kaydediliyor…': 'রেকর্ড হচ্ছে…',
   'Ses oynatılamadı': 'অডিও চালানো যায়নি',
   'Oynat': 'চালাও',
+  'Fragmanı oynat': 'ট্রেলার চালান',
   'Duraklat': 'থামাও',
   'Liste görünümü': 'তালিকা ভিউ',
   'Takvim görünümü': 'ক্যালেন্ডার ভিউ',

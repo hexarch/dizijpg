@@ -291,6 +291,7 @@ const Map<String, String> cevirilerPl = {
   'Kaydediliyor…': 'Nagrywanie…',
   'Ses oynatılamadı': 'Nie udało się odtworzyć dźwięku',
   'Oynat': 'Odtwórz',
+  'Fragmanı oynat': 'Odtwórz zwiastun',
   'Duraklat': 'Wstrzymaj',
   'Liste görünümü': 'Widok listy',
   'Takvim görünümü': 'Widok kalendarza',

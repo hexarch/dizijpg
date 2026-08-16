@@ -291,6 +291,7 @@ const Map<String, String> cevirilerBg = {
   'Kaydediliyor…': 'Записване…',
   'Ses oynatılamadı': 'Аудиото не можа да се възпроизведе',
   'Oynat': 'Възпроизвеждане',
+  'Fragmanı oynat': 'Пусни трейлъра',
   'Duraklat': 'Пауза',
   'Liste görünümü': 'Изглед списък',
   'Takvim görünümü': 'Изглед календар',

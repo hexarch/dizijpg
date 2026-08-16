@@ -289,6 +289,7 @@ const Map<String, String> cevirilerUr = {
   'Kaydediliyor…': 'ریکارڈنگ…',
   'Ses oynatılamadı': 'آواز نہیں چلائی جا سکی',
   'Oynat': 'چلائیں',
+  'Fragmanı oynat': 'ٹریلر چلائیں',
   'Duraklat': 'وقفہ',
   'Liste görünümü': 'فہرست منظر',
   'Takvim görünümü': 'کیلنڈر منظر',

@@ -295,6 +295,7 @@ const Map<String, String> cevirilerMy = {
   'Kaydediliyor…': 'အသံဖမ်းနေသည်…',
   'Ses oynatılamadı': 'အသံဖွင့်၍ မရပါ',
   'Oynat': 'ဖွင့်ရန်',
+  'Fragmanı oynat': 'ကြိုကြည့်ဗီဒီယို ဖွင့်ရန်',
   'Duraklat': 'ခေတ္တရပ်ရန်',
   'Liste görünümü': 'စာရင်းမြင်ကွင်း',
   'Takvim görünümü': 'ပြက္ခဒိန်မြင်ကွင်း',

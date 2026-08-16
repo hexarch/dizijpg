@@ -290,6 +290,7 @@ const Map<String, String> cevirilerFi = {
   'Kaydediliyor…': 'Tallennetaan…',
   'Ses oynatılamadı': 'Ääniviestiä ei voitu toistaa',
   'Oynat': 'Toista',
+  'Fragmanı oynat': 'Toista traileri',
   'Duraklat': 'Keskeytä',
   'Liste görünümü': 'Luettelonäkymä',
   'Takvim görünümü': 'Kalenterinäkymä',

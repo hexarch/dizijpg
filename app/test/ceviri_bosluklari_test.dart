@@ -35,6 +35,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _yeniAnahtarlar = [
   'Önceki',
   'Sonraki',
+  'Fragmanı oynat',
   // detay.dart — "Takip ettiğin 3 kişi izledi"
   'Takip ettiğin {} kişi izledi',
   // kesfet_akis.dart + yorumlar.dart — yorum kutusu ipucu

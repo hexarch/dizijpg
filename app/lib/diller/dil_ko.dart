@@ -285,6 +285,7 @@ const Map<String, String> cevirilerKo = {
   'Kaydediliyor…': '녹음 중…',
   'Ses oynatılamadı': '음성을 재생할 수 없어요',
   'Oynat': '재생',
+  'Fragmanı oynat': '예고편 재생',
   'Duraklat': '일시정지',
   'Liste görünümü': '목록 보기',
   'Takvim görünümü': '캘린더 보기',

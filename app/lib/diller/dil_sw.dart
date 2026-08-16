@@ -289,6 +289,7 @@ const Map<String, String> cevirilerSw = {
   'Kaydediliyor…': 'Inarekodi…',
   'Ses oynatılamadı': 'Sauti haikuweza kuchezwa',
   'Oynat': 'Cheza',
+  'Fragmanı oynat': 'Cheza trela',
   'Duraklat': 'Sitisha',
   'Liste görünümü': 'Mwonekano wa orodha',
   'Takvim görünümü': 'Mwonekano wa kalenda',

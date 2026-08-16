@@ -289,6 +289,7 @@ const Map<String, String> cevirilerGu = {
   'Kaydediliyor…': 'રેકોર્ડ થઈ રહ્યું છે…',
   'Ses oynatılamadı': 'ઑડિયો ચલાવી શકાયો નહીં',
   'Oynat': 'ચલાવ',
+  'Fragmanı oynat': 'ટ્રેલર ચલાવો',
   'Duraklat': 'થોભાવ',
   'Liste görünümü': 'સૂચિ દૃશ્ય',
   'Takvim görünümü': 'કૅલેન્ડર દૃશ્ય',

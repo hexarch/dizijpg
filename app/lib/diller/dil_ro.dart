@@ -291,6 +291,7 @@ const Map<String, String> cevirilerRo = {
   'Kaydediliyor…': 'Se înregistrează…',
   'Ses oynatılamadı': 'Audio nu a putut fi redat',
   'Oynat': 'Redă',
+  'Fragmanı oynat': 'Redă trailerul',
   'Duraklat': 'Pauză',
   'Liste görünümü': 'Vizualizare listă',
   'Takvim görünümü': 'Vizualizare calendar',

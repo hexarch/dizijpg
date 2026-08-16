@@ -290,6 +290,7 @@ const Map<String, String> cevirilerMr = {
   'Kaydediliyor…': 'रेकॉर्ड होत आहे…',
   'Ses oynatılamadı': 'ऑडिओ प्ले होऊ शकला नाही',
   'Oynat': 'प्ले कर',
+  'Fragmanı oynat': 'ट्रेलर प्ले करा',
   'Duraklat': 'थांबव',
   'Liste görünümü': 'सूची दृश्य',
   'Takvim görünümü': 'कॅलेंडर दृश्य',

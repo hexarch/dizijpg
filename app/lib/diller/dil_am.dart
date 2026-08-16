@@ -285,6 +285,7 @@ const Map<String, String> cevirilerAm = {
   'Kaydediliyor…': 'በመቅዳት ላይ…',
   'Ses oynatılamadı': 'ድምፁን ማጫወት አልተቻለም',
   'Oynat': 'አጫውት',
+  'Fragmanı oynat': 'ትሬለር አጫውት',
   'Duraklat': 'ለአፍታ አቁም',
   'Liste görünümü': 'የዝርዝር እይታ',
   'Takvim görünümü': 'የቀን መቁጠሪያ እይታ',

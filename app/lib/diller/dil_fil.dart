@@ -291,6 +291,7 @@ const Map<String, String> cevirilerFil = {
   'Kaydediliyor…': 'Nagre-record…',
   'Ses oynatılamadı': 'Hindi ma-play ang audio',
   'Oynat': 'I-play',
+  'Fragmanı oynat': 'I-play ang trailer',
   'Duraklat': 'I-pause',
   'Liste görünümü': 'List view',
   'Takvim görünümü': 'Calendar view',

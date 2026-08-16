@@ -291,6 +291,7 @@ const Map<String, String> cevirilerNb = {
   'Kaydediliyor…': 'Tar opp…',
   'Ses oynatılamadı': 'Talemeldingen kunne ikke spilles av',
   'Oynat': 'Spill av',
+  'Fragmanı oynat': 'Spill av trailer',
   'Duraklat': 'Pause',
   'Liste görünümü': 'Listevisning',
   'Takvim görünümü': 'Kalendervisning',

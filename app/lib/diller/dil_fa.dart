@@ -289,6 +289,7 @@ const Map<String, String> cevirilerFa = {
   'Kaydediliyor…': 'در حال ضبط…',
   'Ses oynatılamadı': 'پخش صدا ممکن نشد',
   'Oynat': 'پخش',
+  'Fragmanı oynat': 'پخش تریلر',
   'Duraklat': 'مکث',
   'Liste görünümü': 'نمای فهرست',
   'Takvim görünümü': 'نمای تقویم',

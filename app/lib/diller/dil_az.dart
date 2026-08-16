@@ -289,6 +289,7 @@ const Map<String, String> cevirilerAz = {
   'Kaydediliyor…': 'Yazılır…',
   'Ses oynatılamadı': 'Səs oxudula bilmədi',
   'Oynat': 'Oynat',
+  'Fragmanı oynat': 'Treyleri oynat',
   'Duraklat': 'Fasilə',
   'Liste görünümü': 'Siyahı görünüşü',
   'Takvim görünümü': 'Təqvim görünüşü',

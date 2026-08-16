@@ -286,6 +286,7 @@ const Map<String, String> cevirilerHe = {
   'Kaydediliyor…': 'מקליט…',
   'Ses oynatılamadı': 'לא ניתן להפעיל את ההודעה הקולית',
   'Oynat': 'הפעל',
+  'Fragmanı oynat': 'הפעל טריילר',
   'Duraklat': 'השהה',
   'Liste görünümü': 'תצוגת רשימה',
   'Takvim görünümü': 'תצוגת לוח שנה',

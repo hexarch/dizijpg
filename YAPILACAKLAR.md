@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.63.0+111 (dizi/film/bölüm fragmanı kahramanda)
+Dizi ve film sayfasının en başında TMDB YouTube Trailer/Teaser; bölümde
+kendi fragmanı yoksa sezon fragmanı. Clip/BTS spoiler olduğu için
+kahramana konmaz. `include_video_language=tr,en,null` — TR dilinde EN
+resmi fragman düşmesin. Webde dokununca youtube-nocookie iframe; ses
+kaydırınca kesilir. Backend: sezon `/videos` beyaz liste.
+`main.897a620b8be9.dart.js` (eski `58473b80e6ee` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.63.0+111 · giriş testkullanici ·
+Inception 27 video / 3 trailer · Silo Official Trailer ·
+`/tv/1396/season/1/videos` 200 Season 1 Trailer ·
+S1E1 `append videos` 14 (Teaser var) · hashed JS `immutable` + `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB 1.62.0+110 (sohbet emoji tepkisi yoklamada)
 Karşı tarafın (veya senin) mevcut balona bıraktığı emoji, gir-çık
 olmadan 3 sn yoklamada görünür. `GET /mesajlar/:ad?sonra=` yeni id’lere

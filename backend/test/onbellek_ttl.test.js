@@ -146,7 +146,7 @@ test('KAYNAK KİLİDİ: hiçbir arama çağrısı KOŞULSUZ sabit TTL kullanmıy
 test('/tmdb/* proxy: search/find yolları içeriğe bakan TTL alır', () => {
   const i = SERVER.indexOf("app.get('/tmdb/*'");
   assert.ok(i > 0, '/tmdb/* ucu yok');
-  const uc = SERVER.slice(i, i + 3000);
+  const uc = SERVER.slice(i, i + 4500);
   assert.match(uc, /const aramaMi = \/\^\\\/\(search\|find\)\\\/\/\.test\(yol\)/,
     'proxy arama yollarını ayırt etmiyor');
   assert.match(uc, /aramaMi\s*\n?\s*\?\s*aramaTtl\(/,
@@ -156,6 +156,14 @@ test('/tmdb/* proxy: search/find yolları içeriğe bakan TTL alır', () => {
   assert.match(uc, /bosArama[\s\S]{0,200}s-maxage=900/,
     'sonuçsuz arama kenarda (CDN) hâlâ uzun yaşıyor');
   assert.match(uc, /tmdbSonucSayisi\(veri\) < azEsigi/);
+});
+
+test('/tmdb/* proxy: fragman isteklerine include_video_language eklenir', () => {
+  const i = SERVER.indexOf("app.get('/tmdb/*'");
+  const uc = SERVER.slice(i, i + 4500);
+  assert.match(uc, /include_video_language/,
+    'TR dilinde İngilizce resmi fragman düşmesin');
+  assert.match(uc, /ek\.split\(','\)\.includes\('videos'\)/);
 });
 
 test('/ara ucu: her sorgu VARYANTI kendi doluluğuna göre yaşar', () => {

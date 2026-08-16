@@ -289,6 +289,7 @@ const Map<String, String> cevirilerPa = {
   'Kaydediliyor…': 'ਰਿਕਾਰਡ ਹੋ ਰਿਹਾ ਹੈ…',
   'Ses oynatılamadı': 'ਆਡੀਓ ਚਲਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
   'Oynat': 'ਚਲਾਓ',
+  'Fragmanı oynat': 'ਟ੍ਰੇਲਰ ਚਲਾਓ',
   'Duraklat': 'ਰੋਕੋ',
   'Liste görünümü': 'ਸੂਚੀ ਦ੍ਰਿਸ਼',
   'Takvim görünümü': 'ਕੈਲੰਡਰ ਦ੍ਰਿਸ਼',

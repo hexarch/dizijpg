@@ -291,6 +291,7 @@ const Map<String, String> cevirilerEs = {
   'Kaydediliyor…': 'Grabando…',
   'Ses oynatılamadı': 'No se pudo reproducir el audio',
   'Oynat': 'Reproducir',
+  'Fragmanı oynat': 'Reproducir tráiler',
   'Duraklat': 'Pausar',
   'Liste görünümü': 'Vista de lista',
   'Takvim görünümü': 'Vista de calendario',
