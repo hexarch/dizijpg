@@ -166,6 +166,8 @@ void main() {
       youtubeGommeUrl('abcDEF12345'),
       contains('origin=https://dizijpg.com'),
     );
+    expect(youtubeGommeUrl('abcDEF12345'), contains('controls=0'));
+    expect(youtubeGommeUrl('abcDEF12345'), contains('enablejsapi=1'));
     expect(
       youtubeGommeUrl('abcDEF12345', gizlilikDostu: false),
       contains('www.youtube.com/embed/'),

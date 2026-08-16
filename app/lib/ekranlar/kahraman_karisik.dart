@@ -9,7 +9,8 @@ import '../veri_tasarrufu.dart';
 import 'fragman.dart';
 
 /// Dizi/film/bölüm kahramanı: tek 16:9 karede video ve fotoğraf karışık
-/// kaydırılır (video, foto, video…). Çalan fragman kaydırınca söner.
+/// kaydırılır (video, foto, video…). Çalan fragman kaydırınca duraklar;
+/// geri gelince kaldığı yerden devam eder.
 class KahramanKarisik extends StatefulWidget {
   final List<KahramanOge> ogeler;
   final void Function(String url)? onFotoAc;
@@ -29,7 +30,6 @@ class KahramanKarisik extends StatefulWidget {
 class _KahramanKarisikState extends State<KahramanKarisik> {
   late final PageController _sayfaKontrol;
   int _sayfa = 0;
-  bool _kaydiriyor = false;
   int _sayacTetik = 0;
   bool _hicGoruldu = false;
 
@@ -143,81 +143,71 @@ class _KahramanKarisikState extends State<KahramanKarisik> {
       onVisibilityChanged: _gorunurluk,
       child: AspectRatio(
         aspectRatio: 16 / 9,
-        child: NotificationListener<ScrollNotification>(
-          onNotification: (n) {
-            if (n.metrics.axis != Axis.horizontal) return false;
-            if (n is ScrollStartNotification && !_kaydiriyor) {
-              setState(() => _kaydiriyor = true);
-            } else if (n is ScrollEndNotification && _kaydiriyor) {
-              setState(() => _kaydiriyor = false);
-            }
-            return false;
-          },
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              PageView.builder(
-                controller: _sayfaKontrol,
-                itemCount: ogeler.length,
-                allowImplicitScrolling: VeriTasarrufu.onYuklemeSerbest,
-                onPageChanged: (i) {
-                  setState(() => _sayfa = i);
-                  _sayaciGoster();
-                },
-                itemBuilder: (context, i) {
-                  final oge = ogeler[i];
-                  if (oge.videoMi) {
-                    return FragmanOynatici(
-                      youtubeId: oge.youtubeId!,
-                      aktif: !_kaydiriyor && i == _sayfa,
-                    );
-                  }
-                  return _foto(oge);
-                },
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            PageView.builder(
+              controller: _sayfaKontrol,
+              itemCount: ogeler.length,
+              allowImplicitScrolling: VeriTasarrufu.onYuklemeSerbest,
+              onPageChanged: (i) {
+                setState(() => _sayfa = i);
+                _sayaciGoster();
+              },
+              itemBuilder: (context, i) {
+                final oge = ogeler[i];
+                if (oge.videoMi) {
+                  return FragmanOynatici(
+                    youtubeId: oge.youtubeId!,
+                    aktif: i == _sayfa,
+                    altBosluk: coklu ? 44 : 8,
+                  );
+                }
+                return _foto(oge);
+              },
+            ),
+            if (coklu) ...[
+              Positioned(
+                top: 10 + widget.sayacUstBosluk,
+                right: 10,
+                child: IgnorePointer(child: _sayacRozeti()),
               ),
-              if (coklu) ...[
-                Positioned(
-                  top: 10 + widget.sayacUstBosluk,
-                  right: 10,
-                  child: IgnorePointer(child: _sayacRozeti()),
-                ),
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: SizedBox(
-                    height: 44,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        for (var i = 0; i < ogeler.length; i++)
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => _kareyeGit(i),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                vertical: 16,
-                              ),
-                              child: Container(
-                                width: i == _sayfa ? 8 : 5,
-                                height: i == _sayfa ? 8 : 5,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: i == _sayfa
-                                      ? Colors.white
-                                      : Colors.white38,
-                                ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: SizedBox(
+                  height: 44,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (var i = 0; i < ogeler.length; i++)
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => _kareyeGit(i),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4,
+                              vertical: 16,
+                            ),
+                            child: Container(
+                              width: i == _sayfa ? 8 : 5,
+                              height: i == _sayfa ? 8 : 5,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: i == _sayfa
+                                    ? Colors.white
+                                    : Colors.white38,
                               ),
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );

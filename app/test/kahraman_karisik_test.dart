@@ -55,7 +55,9 @@ void main() {
     );
   });
 
-  testWidgets('oynarken kaydırınca gömme sökülür', (tester) async {
+  testWidgets('oynarken kaydırınca gömme kalır, geri gelince kapak yok', (
+    tester,
+  ) async {
     await tester.binding.setSurfaceSize(_ekran);
     addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -77,8 +79,28 @@ void main() {
     await tester.pump();
     expect(find.byType(FragmanGomucu), findsOneWidget);
 
-    await tester.drag(find.byType(PageView), const Offset(-300, 0));
+    // Kaydırmanın ORTASI: parmak hâlâ basılı, sayfa değişmedi. Eski kod
+    // ScrollStart'ta gömmeyi söküyordu; video başa sarıyordu.
+    final merkez = tester.getCenter(find.byType(PageView));
+    final parmak = await tester.startGesture(merkez);
+    await parmak.moveBy(const Offset(-80, 0));
     await tester.pump();
-    expect(find.byType(FragmanGomucu), findsNothing);
+    expect(find.byType(FragmanGomucu), findsOneWidget);
+
+    await parmak.moveBy(const Offset(-220, 0));
+    await parmak.up();
+    await tester.pumpAndSettle();
+    expect(find.text('2/2'), findsOneWidget);
+    // Keep-alive offstage tutulur; yoksa geri gelince kapak + t=0.
+    expect(
+      find.byType(FragmanGomucu, skipOffstage: false),
+      findsOneWidget,
+    );
+
+    await tester.drag(find.byType(PageView), const Offset(300, 0));
+    await tester.pumpAndSettle();
+    expect(find.text('1/2'), findsOneWidget);
+    expect(find.byType(FragmanGomucu), findsOneWidget);
+    expect(find.byIcon(Icons.play_arrow), findsNothing);
   });
 }

@@ -104,6 +104,8 @@ bool fragmanGommeIstek(String url) {
 /// Gömme adresi. [gizlilikDostu] web iframe için nocookie; Android WebView
 /// Error 153 verdiği için orada `youtube.com/embed` kullanılır.
 /// [otomatik] yalnız kullanıcı dokunduktan sonra — sessiz autoplay yok.
+/// `controls=0` + `enablejsapi=1`: YouTube kromu gizlenir, bizim çubuk
+/// duraklatır/sarar; kaydırınca sökülmeden duraklar.
 String youtubeGommeUrl(
   String youtubeId, {
   bool otomatik = false,
@@ -113,6 +115,8 @@ String youtubeGommeUrl(
   final q = StringBuffer(
     'https://$host/embed/$youtubeId'
     '?rel=0&modestbranding=1&playsinline=1'
+    '&controls=0&fs=0&iv_load_policy=3&disablekb=1'
+    '&cc_load_policy=0&enablejsapi=1'
     '&origin=https://dizijpg.com'
     '&widget_referrer=https://dizijpg.com',
   );

@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.70.0+118 (fragman kaydırınca başa sarmasın)
+Kahraman kaydırıcısında oynayan fragman ScrollStart'ta sökülüyordu;
+WebView de yatay sürüklemeyi yutuyordu. Şimdi duraklar, keep-alive ile
+konum kalır, geri gelince kapak+t=0 yok. YouTube kromu (başlık, ilgili,
+logo) gizlenir; sarı çubuk + oynat/duraklat/sessiz bizim. WebView
+IgnorePointer — kaydırma Flutter'da. Ham MP4 yok (googlevideo 403);
+yüzey gömme `<video>`, krom bizim. APK `~/Desktop/dizijpg-1.70.0+118.apk`
+(89 MB, imzalı). `main.a6777c0648ae.dart.js` (eski `44524c0a0dc2`
+origin’den silindi) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.70.0+118 · widget: kaydırma
+ortasında gömme durur, foto sayfasında keep-alive, geri gelince kapak
+yok · hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.69.0+117 (seviye şimdilik kapalı)
 Profildeki seviye satırı (kendi ve başkasının) görünmez. API
 `/rozetler` ve `/profil` `seviye: null` döner — eski APK da satırı

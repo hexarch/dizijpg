@@ -11,18 +11,21 @@ import 'fragman_gom.dart';
 /// Dizi/film/bölüm kahramanındaki resmi fragman.
 ///
 /// Başta yalnız YouTube kapağı + oynat düğmesi vardır (yer ayrılır, CLS yok,
-/// sessiz autoplay yok). Dokununca webde iframe, Android/iOS'ta WebView
-/// gömülür — YouTube uygulamasına gidilmez. Kaydırılıp ekrandan düşünce
-/// gömme sökülür; ses arkada kalmaz.
+/// sessiz autoplay yok). Dokununca uygulama içi oynatıcı açılır — YouTube
+/// uygulamasına gidilmez. Kaydırılıp görünmez olunca DURAKLAR; sökülmez ki
+/// geri gelince başa sarılmasın.
 class FragmanOynatici extends StatefulWidget {
   final String youtubeId;
 
-  /// Null = gömme (web iframe / native WebView). Testte `false` verilirse
+  /// Null = gömme (web iframe / native yüzey). Testte `false` verilirse
   /// [disariAc] çağrılır; üretimde varsayılan gömmedir.
   final bool? gomulu;
 
-  /// Kaydırıcıda görünür kare değilse gömme sökülür (ses arkada kalmaz).
+  /// Kaydırıcıda görünür kare değilse oynatma duraklar (ses arkada kalmaz).
   final bool aktif;
+
+  /// Alt kontrol çubuğunun noktaların üstünde kalması için (karışık kahraman).
+  final double altBosluk;
 
   /// Yalnız [gomulu] açıkça false iken. Testler boş fonksiyon verir ki
   /// `url_launcher` bağlama istemesin.
@@ -33,6 +36,7 @@ class FragmanOynatici extends StatefulWidget {
     required this.youtubeId,
     this.gomulu,
     this.aktif = true,
+    this.altBosluk = 8,
     this.disariAc,
   });
 
@@ -40,16 +44,23 @@ class FragmanOynatici extends StatefulWidget {
   State<FragmanOynatici> createState() => _FragmanOynaticiState();
 }
 
-class _FragmanOynaticiState extends State<FragmanOynatici> {
+class _FragmanOynaticiState extends State<FragmanOynatici>
+    with AutomaticKeepAliveClientMixin {
   bool _oynuyor = false;
+  bool _gorunur = true;
 
   bool get _gomulu => widget.gomulu ?? true;
+
+  /// Oynatma başlamışsa kaydırıcı kardeşi yok etmesin — konum kalsın.
+  @override
+  bool get wantKeepAlive => _oynuyor;
 
   @override
   void didUpdateWidget(FragmanOynatici eski) {
     super.didUpdateWidget(eski);
-    if (!widget.aktif && _oynuyor) {
+    if (eski.youtubeId != widget.youtubeId) {
       _oynuyor = false;
+      updateKeepAlive();
     }
   }
 
@@ -59,6 +70,7 @@ class _FragmanOynaticiState extends State<FragmanOynatici> {
     if (!widget.aktif) return;
     if (_gomulu) {
       setState(() => _oynuyor = true);
+      updateKeepAlive();
       return;
     }
     final ac = widget.disariAc ?? _youtubeAc;
@@ -70,14 +82,17 @@ class _FragmanOynaticiState extends State<FragmanOynatici> {
     await launchUrl(uri, mode: LaunchMode.externalApplication);
   }
 
-  /// Ekrandan kayınca iframe'i söker; aksi hâlde yorumlarda ses çalardı.
+  /// Dikey kaydırınca (yorumlar) duraklatır; oynatıcıyı SÖKMEZ.
   void _gorunurluk(VisibilityInfo bilgi) {
-    if (!mounted || !_oynuyor || bilgi.visibleFraction >= 0.35) return;
-    setState(() => _oynuyor = false);
+    if (!mounted || !_oynuyor) return;
+    final g = bilgi.visibleFraction >= 0.35;
+    if (g == _gorunur) return;
+    setState(() => _gorunur = g);
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return VisibilityDetector(
       key: Key('fragman-${widget.youtubeId}'),
       onVisibilityChanged: _gorunurluk,
@@ -85,8 +100,12 @@ class _FragmanOynaticiState extends State<FragmanOynatici> {
         aspectRatio: 16 / 9,
         child: ColoredBox(
           color: DiziRenkler.kart,
-          child: _oynuyor && _gomulu && widget.aktif
-              ? FragmanGomucu(youtubeId: widget.youtubeId)
+          child: _oynuyor && _gomulu
+              ? FragmanGomucu(
+                  youtubeId: widget.youtubeId,
+                  aktif: widget.aktif && _gorunur,
+                  altBosluk: widget.altBosluk,
+                )
               : _kapak(),
         ),
       ),
