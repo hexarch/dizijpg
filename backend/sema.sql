@@ -307,6 +307,18 @@ CREATE INDEX IF NOT EXISTS mesajlar_cift
   ON mesajlar (LEAST(gonderen_id, alici_id), GREATEST(gonderen_id, alici_id), id DESC);
 CREATE INDEX IF NOT EXISTS mesajlar_okunmamis ON mesajlar (alici_id) WHERE NOT okundu;
 
+-- Yazıyor / ses kaydediyor damgası. Bellek+IPC yetmez: kümede POST işçi A'ya,
+-- yoklama işçi B'ye düşünce gösterge hiç yanmaz (çevrimiçi PG'de olduğu için
+-- görünür kalır). TTL uygulama katmanında (sohbet_durum.js SOHBET_DURUM_MS).
+CREATE TABLE IF NOT EXISTS sohbet_canli (
+  gonderen_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  alici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  tur TEXT NOT NULL CHECK (tur IN ('yaziyor', 'kayit')),
+  z BIGINT NOT NULL,
+  PRIMARY KEY (gonderen_id, alici_id)
+);
+CREATE INDEX IF NOT EXISTS sohbet_canli_alici_z ON sohbet_canli (alici_id, z);
+
 CREATE TABLE IF NOT EXISTS sifirlama_kodlari (
   kullanici_id INT PRIMARY KEY REFERENCES kullanicilar(id) ON DELETE CASCADE,
   kod_hash TEXT NOT NULL,

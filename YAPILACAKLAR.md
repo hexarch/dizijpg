@@ -1,5 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-17 — 🚀 WEB+APK 1.74.0+122 (yazıyor: küme + görünür gösterge)
+Karşı taraf çevrimiçi görünüyordu, yazıyor hiç yanmıyordu. `son_gorulme` PG'de,
+`yaziyorlar` işçi belleğinde: POST A işçisine, yoklama B'ye düşünce damga boş.
+nginx keep-alive aynı curl'ü tek işçiye yapıştırdığı için 12/12 kanıtı yanıltıcıydı.
+Damga `sohbet_canli` tablosuna da yazılıyor. İstemci: AppBar 64 px (22 px başlık
+alt satırı kırpmasın), yazıyor giriş kutusunun üstünde, heartbeat görünürlük
+yanlış olsa bile `acik:false` atmaz, metin dinleyicisi IME kaçışını kapatır.
+Migrasyon `migrasyon-2026-08-17.sql`. APK `~/Desktop/dizijpg-1.74.0+122.apk`
+(116 MB). `main.44b55a8e0ed5.dart.js` (eski `e946a819021a` silindi) · SW sökücü ·
+brotli q11. Kanıt: `/api/saglik` ok · version.json 1.74.0+122 · emma POST
+`/yaziyor` → testkullanici 8/8 GET `durum=yaziyor` + `sohbet_canli` 15→1 ·
+`acik:false` sonrası null · widget: yoklama geçişi, heartbeat acik:false yok,
+başlık+kutu üstü 2 yazıyor · hashed JS `br` HIT.
 
 ## 2026-08-16 — 🚀 WEB+APK 1.73.0+121 (sohbet push yığını: yazıyor + zil)
 Sohbet listeden `push` ile açılıyor; `uri.path` `/sohbetler`de kalıyordu.

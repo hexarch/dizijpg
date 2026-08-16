@@ -796,7 +796,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       _gonderilenDurum = tur;
       _durumSayaci?.cancel();
       _durumSayaci = Timer.periodic(const Duration(seconds: 2), (_) {
-        if (!mounted || !_sohbetGorunur) {
+        if (!mounted) {
           _durumDurdur();
           return;
         }
@@ -808,6 +808,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           _durumDurdur();
           return;
         }
+        // Görünürlük bayrağı yanlış olsa bile damgayı silme — klavye
+        // inactive / push yığını 2 sn sonra acik:false atıyordu.
+        if (!_sohbetGorunur) return;
         _durumGonder(tur);
       });
     }
@@ -842,6 +845,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       upperBound: saatSutunuGenisligi,
     );
     _yukle(ilk: true);
+    _metin.addListener(_yaziyorBildir);
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_sohbetOlayi);
     SohbetOlaylari.acikPartner = widget.kullaniciAdi;
@@ -922,6 +926,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
+    _metin.removeListener(_yaziyorBildir);
     _metin.dispose();
     _kaydirma.dispose();
     _saatKaydirici.dispose();
@@ -1608,6 +1613,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
     return Scaffold(
       appBar: AppBar(
+        // Tema title 22 px; alt satır (yazıyor) 56 px araç çubuğunda
+        // kırpılıyordu. 17+12 bu yükseklikte sığar, büyük yazı ölçeğinde de.
+        toolbarHeight: 64,
         title: InkWell(
           onTap: () => context.push('/kullanici/${widget.kullaniciAdi}'),
           child: Column(
@@ -1618,10 +1626,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                 '@${widget.kullaniciAdi}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: DiziRenkler.metin,
+                ),
               ),
               if (karsiYazi != null)
                 Text(
                   karsiYazi,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -1791,6 +1807,24 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                         ),
                       ),
               ),
+              // Başlıkta kaçarsa (kırpma / bakış) kutunun üstünde de dursun.
+              if (karsiYazi != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      karsiYazi,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    ),
+                  ),
+                ),
               // Bekleyen dizi/film kartı: seçildi ama HENÜZ gönderilmedi.
               // Yanıt kutusuyla aynı kalıp (aynı yer, aynı zemin, aynı çarpı).
               if (_bekleyenIcerik != null) _bekleyenIcerikSeridi(),

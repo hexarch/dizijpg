@@ -1,7 +1,9 @@
 // Sohbet canlı durumu — SAF mantık (Express/pg yok).
 //
 // Karşı tarafa "yazıyor / ses kaydediyor" göstermek için bellek damgası.
-// Kalıcılık YOK ve İSTENMİYOR: süreç düşünce herkes durmuş sayılır.
+// Kalıcılık İSTENMİYOR: süreç düşünce herkes durmuş sayılır.
+// Kümede aynı damga `sohbet_canli` tablosuna da yazılır (server.js) — yoksa
+// POST işçi A, GET işçi B boş harita okur; çevrimiçi (PG) görünür, yazıyor yok.
 //
 // Eski kayıt biçimi yalnız epoch sayısıydı; okuma onu hâlâ "yaziyor" sayar
 // ki küme işçilerinden biri eski paket gönderirse gösterge kaybolmasın.

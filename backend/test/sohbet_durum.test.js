@@ -60,7 +60,7 @@ test('GET /mesajlar durum alanını döner; yaziyor eski istemci için kalır', 
   const govde = SERVER.slice(bas, sonraki === -1 ? undefined : sonraki);
   assert.match(govde, /durum: durum/);
   assert.match(govde, /yaziyor: durum != null/);
-  assert.match(govde, /sohbetDurumOku\(yaziyorlar/);
+  assert.match(govde, /sohbetDurumGetir\(partnerId/);
 });
 
 test('POST /yaziyor tur ve acik=false kabul eder', () => {
@@ -70,14 +70,28 @@ test('POST /yaziyor tur ve acik=false kabul eder', () => {
   assert.match(govde, /sohbetDurumTur\(req\.body\?\.tur\)/);
   assert.match(govde, /sohbetDurumSil\(yaziyorlar/);
   assert.match(govde, /t: tur/);
+  assert.match(govde, /sohbetCanliYaz/);
+  assert.match(govde, /sohbetCanliSil/);
 });
 
 test('GET /sohbetler satıra durum basar', () => {
   const bas = SERVER.indexOf("app.get('/sohbetler'");
   const sonraki = SERVER.indexOf('\napp.', bas + 10);
   const govde = SERVER.slice(bas, sonraki === -1 ? undefined : sonraki);
-  assert.match(govde, /sohbetDurumOku\(yaziyorlar/);
+  assert.match(govde, /sohbetDurumToplu/);
   assert.match(govde, /r\.yaziyor = r\.durum != null/);
+});
+
+test('sohbet_canli PG yedek yolu: sema, migrasyon ve server aynı tablo', () => {
+  const sema = fs.readFileSync(path.join(KOK, 'sema.sql'), 'utf8');
+  const mig = fs.readFileSync(path.join(KOK, 'migrasyon-2026-08-17.sql'), 'utf8');
+  assert.match(sema, /CREATE TABLE IF NOT EXISTS sohbet_canli/);
+  assert.match(mig, /CREATE TABLE IF NOT EXISTS sohbet_canli/);
+  assert.match(sema, /tur TEXT NOT NULL CHECK \(tur IN \('yaziyor', 'kayit'\)\)/);
+  assert.match(mig, /tur TEXT NOT NULL CHECK \(tur IN \('yaziyor', 'kayit'\)\)/);
+  assert.match(SERVER, /INSERT INTO sohbet_canli/);
+  assert.match(SERVER, /FROM sohbet_canli/);
+  assert.match(SERVER, /SOHBET_DURUM_MS/);
 });
 
 test('sohbet_durum.js Dockerfile COPY listesinde', () => {

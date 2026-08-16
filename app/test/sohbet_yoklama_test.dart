@@ -660,7 +660,7 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('yazıyor...'), findsOneWidget);
+    expect(find.text('yazıyor...'), findsNWidgets(2));
     await _kapat(tester);
   });
 
@@ -708,7 +708,7 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('ses kaydediyor...'), findsOneWidget);
+    expect(find.text('ses kaydediyor...'), findsNWidgets(2));
     expect(find.text('yazıyor...'), findsNothing);
     await _kapat(tester);
   });
@@ -811,6 +811,130 @@ void main() {
     expect(yaziyorGovdeler.first['tur'], 'yaziyor');
     expect(yaziyorGovdeler.first['kullanici_adi'], 'ayse');
     expect(yaziyorGovdeler.first['acik'], true);
+    await _kapat(tester);
+  });
+
+  testWidgets('yoklama durum=yaziyor gelince başlık ve kutu üstü güncellenir', (
+    tester,
+  ) async {
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        final artimli = istek.url.queryParameters.containsKey('sonra');
+        if (artimli) {
+          await Future<void>.delayed(const Duration(milliseconds: 800));
+        }
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'guncellemeler': artimli
+              ? [
+                  {
+                    'id': 10,
+                    'okundu': false,
+                    'iletildi': false,
+                    'duzenlendi': false,
+                    'tepkiler': const <Map<String, dynamic>>[],
+                  },
+                ]
+              : const <dynamic>[],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': artimli,
+          if (artimli) 'durum': 'yaziyor',
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('yazıyor...'), findsNothing);
+    await tester.pump(sohbetYoklamaAraligi);
+    await tester.pump();
+    expect(find.text('yazıyor...'), findsNWidgets(2));
+    await _kapat(tester);
+  });
+
+  testWidgets('yazarken heartbeat acik:false atmaz', (tester) async {
+    final yaziyorGovdeler = <Map<String, dynamic>>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/yaziyor')) {
+        yaziyorGovdeler.add(jsonDecode(istek.body) as Map<String, dynamic>);
+        return _json({'tamam': true});
+      }
+      if (istek.url.path.contains('/mesajlar/')) {
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.enterText(find.byType(TextField), 'merhaba');
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 2));
+    await tester.pump();
+    expect(yaziyorGovdeler.where((g) => g['acik'] == false), isEmpty);
+    expect(
+      yaziyorGovdeler.where((g) => g['acik'] == true).length,
+      greaterThanOrEqualTo(2),
+    );
     await _kapat(tester);
   });
 }

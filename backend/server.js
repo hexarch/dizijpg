@@ -36,6 +36,7 @@ import {
   sohbetAcikAnahtar, sohbetAcikIsaretle, sohbetAcikKapat, sohbetAcikMi,
 } from './sohbet_bakiyor.js';
 import {
+  SOHBET_DURUM_MS,
   sohbetDurumTur, sohbetDurumYaz, sohbetDurumSil, sohbetDurumOku,
 } from './sohbet_durum.js';
 import {
@@ -7960,14 +7961,20 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
   }
   const { sohbetler, istekler } = sohbetleriAyir(rows);
-  // Liste yoklaması da yazıyor/kayıt göstersin; damga bellekte, SQL yok.
+  // Liste yoklaması da yazıyor/kayıt göstersin. Bellek yetmez: damga
+  // sohbet_canli'de (küme işçileri). Tek sorgu, N+1 yok.
   const benId = req.kullanici.id;
+  const partnerIdler = [...new Set([
+    ...sohbetler.map((r) => r.partner_id),
+    ...istekler.map((r) => r.partner_id),
+  ])].filter((id) => Number.isInteger(id));
+  const damgalar = await sohbetDurumToplu(benId, partnerIdler);
   for (const r of sohbetler) {
-    r.durum = sohbetDurumOku(yaziyorlar, `${r.partner_id}:${benId}`);
+    r.durum = damgalar.get(r.partner_id) || null;
     r.yaziyor = r.durum != null;
   }
   for (const r of istekler) {
-    r.durum = sohbetDurumOku(yaziyorlar, `${r.partner_id}:${benId}`);
+    r.durum = damgalar.get(r.partner_id) || null;
     r.yaziyor = r.durum != null;
   }
   // ROZET SAYACI DA SÜZÜLÜR — yoksa engellenen kişiden gelmiş okunmamış mesaj
@@ -8052,6 +8059,69 @@ abone('yaziyor', (v) => {
   yaziyorIsaretle(v.a, v.z, v.t);
 });
 
+// PG yedek yol: küme işçileri arası. Tablo yoksa (migrasyon kaçtı) bellek
+// yeter; sohbet 500 yemez.
+async function sohbetCanliYaz(gonderenId, aliciId, tur, zaman) {
+  try {
+    await havuz.query(
+      `INSERT INTO sohbet_canli (gonderen_id, alici_id, tur, z)
+       VALUES ($1,$2,$3,$4)
+       ON CONFLICT (gonderen_id, alici_id) DO UPDATE SET tur=$3, z=$4`,
+      [gonderenId, aliciId, tur, zaman],
+    );
+  } catch { /* tablo yok / geçici hata */ }
+}
+async function sohbetCanliSil(gonderenId, aliciId) {
+  try {
+    await havuz.query(
+      'DELETE FROM sohbet_canli WHERE gonderen_id=$1 AND alici_id=$2',
+      [gonderenId, aliciId],
+    );
+  } catch { /* tablo yok / geçici hata */ }
+}
+async function sohbetDurumGetir(gonderenId, aliciId) {
+  const anahtar = `${gonderenId}:${aliciId}`;
+  const yerel = sohbetDurumOku(yaziyorlar, anahtar);
+  if (yerel) return yerel;
+  try {
+    const { rows } = await havuz.query(
+      `SELECT tur FROM sohbet_canli
+        WHERE gonderen_id=$1 AND alici_id=$2 AND z > $3 LIMIT 1`,
+      [gonderenId, aliciId, Date.now() - SOHBET_DURUM_MS],
+    );
+    const tur = rows[0]?.tur;
+    if (tur === 'kayit' || tur === 'yaziyor') {
+      yaziyorIsaretle(anahtar, Date.now(), tur);
+      return tur;
+    }
+  } catch { /* tablo yok / geçici hata */ }
+  return null;
+}
+async function sohbetDurumToplu(aliciId, partnerIdler) {
+  const sonuc = new Map();
+  const eksik = [];
+  for (const id of partnerIdler) {
+    const t = sohbetDurumOku(yaziyorlar, `${id}:${aliciId}`);
+    if (t) sonuc.set(id, t);
+    else eksik.push(id);
+  }
+  if (!eksik.length) return sonuc;
+  try {
+    const { rows } = await havuz.query(
+      `SELECT gonderen_id, tur FROM sohbet_canli
+        WHERE alici_id=$1 AND gonderen_id = ANY($2::int[]) AND z > $3`,
+      [aliciId, eksik, Date.now() - SOHBET_DURUM_MS],
+    );
+    for (const r of rows) {
+      if (r.tur === 'kayit' || r.tur === 'yaziyor') {
+        sonuc.set(r.gonderen_id, r.tur);
+        yaziyorIsaretle(`${r.gonderen_id}:${aliciId}`, Date.now(), r.tur);
+      }
+    }
+  } catch { /* tablo yok / geçici hata */ }
+  return sonuc;
+}
+
 // Açık sohbet damgası: alıcı BU konuşmanın ekranındayken mesaj push'u
 // (ve zil satırı) üretilmez. Eski istemci `bakiyor=1` göndermez → damga
 // yazılmaz → davranış eskisi gibi. KÜME: yoklama işçi A'ya, gönderim
@@ -8088,10 +8158,12 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
     if (!acik) {
       sohbetDurumSil(yaziyorlar, anahtar);
       yayinla('yaziyor', { a: anahtar, z: 0, t: '' });
+      await sohbetCanliSil(req.kullanici.id, k.rows[0].id);
     } else {
       const tur = sohbetDurumTur(req.body?.tur);
       yaziyorIsaretle(anahtar, zaman, tur);
       yayinla('yaziyor', { a: anahtar, z: zaman, t: tur });
+      await sohbetCanliYaz(req.kullanici.id, k.rows[0].id, tur, zaman);
     }
   }
   res.json({ tamam: true });
@@ -8403,7 +8475,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // `rows` bu noktada eskiden yeniye (ASC). `sonra` zaten ASC çeker;
   // ilk yükleme DESC+reverse ile aynı sıraya gelir. Bir kez daha
   // reverse yeni mesajları listenin başına atardı.
-  const durum = sohbetDurumOku(yaziyorlar, `${partnerId}:${req.kullanici.id}`);
+  const durum = await sohbetDurumGetir(partnerId, req.kullanici.id);
   res.json({
     mesajlar: rows,
     guncellemeler,
