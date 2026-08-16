@@ -513,6 +513,8 @@ const Map<String, String> cevirilerPa = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'ਤੂੰ ਸਾਡੇ ਪਹਿਲੇ ਵਰਤੋਂਕਾਰਾਂ ਵਿੱਚੋਂ ਇੱਕ ਹੈਂ। ਤੇਰੇ ਸੁਝਾਵਾਂ ਨੇ ਐਪ ਨੂੰ ਅੱਜ ਵਾਲਾ ਰੂਪ ਦਿੱਤਾ।',
   'İleri': 'ਅੱਗੇ',
+  'Önceki': 'ਪਿਛਲਾ',
+  'Sonraki': 'ਅਗਲਾ',
   'Seçilen dosya okunamadı': 'ਚੁਣੀ ਫਾਈਲ ਪੜ੍ਹੀ ਨਹੀਂ ਜਾ ਸਕੀ',
   'Video açılamadı': 'ਵੀਡੀਓ ਨਹੀਂ ਖੁੱਲ੍ਹ ਸਕੀ',
   'En fazla {} medya seçebilirsin': 'ਤੁਸੀਂ ਵੱਧ ਤੋਂ ਵੱਧ {} ਮੀਡੀਆ ਚੁਣ ਸਕਦੇ ਹੋ',

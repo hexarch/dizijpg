@@ -501,6 +501,8 @@ const Map<String, String> cevirilerJa = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'あなたは最初のユーザーのひとりです。あなたのフィードバックのおかげで、アプリは今の形になりました。',
   'İleri': '次へ',
+  'Önceki': '前へ',
+  'Sonraki': '次へ',
   'Seçilen dosya okunamadı': '選択したファイルを読み込めませんでした',
   'Video açılamadı': '動画を開けませんでした',
   'En fazla {} medya seçebilirsin': 'メディアは最大 {} 件まで選べます',

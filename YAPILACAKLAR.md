@@ -1,6 +1,14 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.60.0+108 (tam ekran yan oklar + yön tuşları)
+Fotoğraf lightbox ve Reels'te 2+ kare/gönderi varken sağ/sol oklar;
+klavye yön tuşları da geçirir (Reels'te sol/sağ önce fotoğraf, yoksa
+gönderi; yukarı/aşağı gönderi). 2 anahtar 45 dile. Backend yok.
+`main.ad8be90ceba7.dart.js` (eski `18ed0ac74abb` origin’den silindi) ·
+SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.60.0+108 · giriş testkullanici.
+
 ## 2026-08-16 — 🚀 WEB 1.59.0+107 (pasif gri, kullanılan beyaz)
 Kullanılan yazı/ikon `metin`; kapalı düğme, ipucu, boş yer tutucu `metin38`.
 Backend yok. `main.18ed0ac74abb.dart.js` (eski `4dc03c679338` origin’den

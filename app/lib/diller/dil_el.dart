@@ -517,6 +517,8 @@ const Map<String, String> cevirilerEl = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Είσαι από τους πρώτους χρήστες μας. Τα σχόλιά σου βοήθησαν την εφαρμογή να γίνει αυτό που είναι σήμερα.',
   'İleri': 'Επόμενο',
+  'Önceki': 'Προηγούμενο',
+  'Sonraki': 'Επόμενο',
   'Seçilen dosya okunamadı':
       'Δεν ήταν δυνατή η ανάγνωση του επιλεγμένου αρχείου',
   'Video açılamadı': 'Δεν ήταν δυνατό το άνοιγμα του βίντεο',

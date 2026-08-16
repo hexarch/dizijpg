@@ -514,6 +514,8 @@ const Map<String, String> cevirilerVi = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Bạn là một trong những người dùng đầu tiên của chúng tôi. Phản hồi của bạn đã giúp ứng dụng trở thành như hôm nay.',
   'İleri': 'Tiếp',
+  'Önceki': 'Trước',
+  'Sonraki': 'Sau',
   'Seçilen dosya okunamadı': 'Không thể đọc tệp đã chọn',
   'Video açılamadı': 'Không thể mở video',
   'En fazla {} medya seçebilirsin': 'Bạn có thể chọn tối đa {} mục',

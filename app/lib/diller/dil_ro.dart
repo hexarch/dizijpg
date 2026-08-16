@@ -518,6 +518,8 @@ const Map<String, String> cevirilerRo = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Ești printre primii noștri utilizatori. Feedbackul tău a ajutat aplicația să devină ceea ce este astăzi.',
   'İleri': 'Înainte',
+  'Önceki': 'Anterior',
+  'Sonraki': 'Următor',
   'Seçilen dosya okunamadı': 'Fișierul selectat nu a putut fi citit',
   'Video açılamadı': 'Clipul nu a putut fi deschis',
   'En fazla {} medya seçebilirsin': 'Poți selecta cel mult {} elemente',

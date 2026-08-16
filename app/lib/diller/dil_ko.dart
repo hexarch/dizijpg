@@ -502,6 +502,8 @@ const Map<String, String> cevirilerKo = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       '너는 우리의 첫 사용자 중 한 명이야. 네 피드백 덕분에 앱이 지금의 모습이 되었어.',
   'İleri': '다음',
+  'Önceki': '이전',
+  'Sonraki': '다음',
   'Seçilen dosya okunamadı': '선택한 파일을 읽지 못했습니다',
   'Video açılamadı': '동영상을 열지 못했습니다',
   'En fazla {} medya seçebilirsin': '최대 {}개까지 선택할 수 있습니다',

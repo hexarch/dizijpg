@@ -513,6 +513,8 @@ const Map<String, String> cevirilerDa = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Du er en af vores første brugere. Din feedback var med til at gøre appen til det, den er i dag.',
   'İleri': 'Næste',
+  'Önceki': 'Forrige',
+  'Sonraki': 'Næste',
   'Seçilen dosya okunamadı': 'Den valgte fil kunne ikke læses',
   'Video açılamadı': 'Videoen kunne ikke åbnes',
   'En fazla {} medya seçebilirsin': 'Du kan højst vælge {} medier',

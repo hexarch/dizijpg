@@ -505,6 +505,8 @@ const Map<String, String> cevirilerAm = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'ከመጀመሪያዎቹ ተጠቃሚዎቻችን አንዱ ነዎት። አስተያየቶችዎ መተግበሪያው ዛሬ ያለበት ደረጃ እንዲደርስ ረድተዋል።',
   'İleri': 'ቀጣይ',
+  'Önceki': 'ቀዳሚ',
+  'Sonraki': 'ቀጣይ',
   'Seçilen dosya okunamadı': 'የተመረጠው ፋይል ማንበብ አልተቻለም',
   'Video açılamadı': 'ቪዲዮውን መክፈት አልተቻለም',
   'En fazla {} medya seçebilirsin': 'ቢበዛ {} ሚዲያ መምረጥ ይችላሉ',

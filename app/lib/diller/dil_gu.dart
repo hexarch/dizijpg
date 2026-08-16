@@ -511,6 +511,8 @@ const Map<String, String> cevirilerGu = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'તું અમારા પ્રથમ વપરાશકર્તાઓમાં છે. તારા પ્રતિસાદથી એપ આજે છે તેવી બની.',
   'İleri': 'આગળ',
+  'Önceki': 'પહેલાનું',
+  'Sonraki': 'આગલું',
   'Seçilen dosya okunamadı': 'પસંદ કરેલી ફાઇલ વાંચી શકાઈ નથી',
   'Video açılamadı': 'વીડિયો ખૂલી શક્યો નથી',
   'En fazla {} medya seçebilirsin': 'તમે વધુમાં વધુ {} મીડિયા પસંદ કરી શકો છો',

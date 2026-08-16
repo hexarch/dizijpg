@@ -495,6 +495,8 @@ const Map<String, String> cevirilerZh = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       '你是我们最早的用户之一。你的反馈帮助这款应用成为今天的样子。',
   'İleri': '下一步',
+  'Önceki': '上一个',
+  'Sonraki': '下一个',
   'Seçilen dosya okunamadı': '无法读取所选文件',
   'Video açılamadı': '无法打开视频',
   'En fazla {} medya seçebilirsin': '最多可以选择 {} 个媒体',

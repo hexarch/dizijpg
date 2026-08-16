@@ -515,6 +515,8 @@ const Map<String, String> cevirilerCs = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Patříš mezi naše první uživatele. Tvoje zpětná vazba pomohla aplikaci stát se tím, čím je dnes.',
   'İleri': 'Další',
+  'Önceki': 'Předchozí',
+  'Sonraki': 'Další',
   'Seçilen dosya okunamadı': 'Vybraný soubor se nepodařilo přečíst',
   'Video açılamadı': 'Video se nepodařilo otevřít',
   'En fazla {} medya seçebilirsin': 'Vybrat můžete nejvýše {} položek',

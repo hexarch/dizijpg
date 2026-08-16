@@ -514,6 +514,8 @@ const Map<String, String> cevirilerId = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Kamu salah satu pengguna pertama kami. Masukanmu membantu aplikasi ini menjadi seperti sekarang.',
   'İleri': 'Berikutnya',
+  'Önceki': 'Sebelumnya',
+  'Sonraki': 'Berikutnya',
   'Seçilen dosya okunamadı': 'File yang dipilih tidak dapat dibaca',
   'Video açılamadı': 'Video tidak dapat dibuka',
   'En fazla {} medya seçebilirsin': 'Kamu bisa memilih maksimal {} media',

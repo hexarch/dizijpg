@@ -25,6 +25,7 @@ import 'akis.dart' show AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
+import 'medya_goster.dart';
 import 'medya_inceleme.dart';
 import 'ortak.dart';
 import 'paylas.dart';
@@ -1071,6 +1072,9 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
   late int _aktif = widget.baslangic; // yalnız aktif sayfa oynar/işaretlenir
   bool _getiriyor = false;
 
+  /// Ekrandaki Reels sayfası — ok/tuş önce onun medyasına, sonra gönderiye.
+  _ReelSayfaState? _aktifSayfa;
+
   /// Masaüstü tuvalinin oranı: EKRANDAKİ medyanın ölçülen oranı (bilinmiyorsa
   /// 9:16). Yalnız aktif sayfa bildirir.
   double _oran = reelsTuvalOrani;
@@ -1092,6 +1096,82 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
   void dispose() {
     _sayfa.dispose();
     super.dispose();
+  }
+
+  /// Gönderideki medya adedi (okların ilk karede de doğru çizilmesi için).
+  int _medyaAdedi(int i) {
+    if (i < 0 || i >= widget.liste.length) return 0;
+    final m = (widget.liste[i] as Map)['medya'];
+    return m is List ? m.length : 0;
+  }
+
+  int get _sayfaNo =>
+      _sayfa.hasClients ? (_sayfa.page?.round() ?? _aktif) : _aktif;
+
+  int get _medyaSayfa =>
+      _aktifSayfa?.medyaSayfa ??
+      (_aktif == widget.baslangic ? widget.medyaBaslangic : 0);
+
+  int get _medyaToplam => _aktifSayfa?.medyaToplam ?? _medyaAdedi(_aktif);
+
+  bool get _solVar => _aktif > 0 || _medyaSayfa > 0;
+
+  bool get _sagVar =>
+      _aktif < widget.liste.length - 1 || _medyaSayfa < _medyaToplam - 1;
+
+  /// Aktif sayfa kendisini kaydeder (initState'te setState yok).
+  void _sayfaKaydet(_ReelSayfaState s) {
+    if (_aktifSayfa == s) return;
+    _aktifSayfa = s;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  void _sayfaBirak(_ReelSayfaState s) {
+    if (_aktifSayfa == s) _aktifSayfa = null;
+  }
+
+  /// Ok/tuş sonrası ok görünürlüğü güncellenir.
+  void _medyaDegisti() {
+    if (mounted) setState(() {});
+  }
+
+  /// Sol: önceki fotoğraf, yoksa önceki gönderi.
+  void _sol() {
+    if (_aktifSayfa != null) {
+      if (_aktifSayfa!.geriMedya()) {
+        setState(() {});
+        return;
+      }
+    } else if (_medyaAdedi(_aktif) > 1) {
+      return; // çocuk henüz bağlanmadı, gönderi atlanmasın
+    }
+    _postGit(_sayfaNo - 1);
+  }
+
+  /// Sağ: sonraki fotoğraf, yoksa sonraki gönderi.
+  void _sag() {
+    if (_aktifSayfa != null) {
+      if (_aktifSayfa!.ileriMedya()) {
+        setState(() {});
+        return;
+      }
+    } else if (_medyaAdedi(_aktif) > 1) {
+      return;
+    }
+    _postGit(_sayfaNo + 1);
+  }
+
+  void _postGit(int i) {
+    if (!_sayfa.hasClients) return;
+    if (i < 0 || i >= widget.liste.length) return;
+    if (i == _sayfaNo) return;
+    _sayfa.animateToPage(
+      i,
+      duration: tamEkranGecisSuresi,
+      curve: Curves.easeOut,
+    );
   }
 
   /// Son 3 sayfaya girince sıradaki sayfayı ızgaraya çektir; gelen gönderiler
@@ -1134,58 +1214,89 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
         // her zaman baştan.
         medyaBaslangic: i == widget.baslangic ? widget.medyaBaslangic : 0,
         kaynak: widget.kaynak,
+        onKayit: i == _aktif ? _sayfaKaydet : null,
+        onBirak: _sayfaBirak,
+        onMedyaDegisti: i == _aktif ? _medyaDegisti : null,
       ),
     );
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        children: [
-          // MASAÜSTÜ: sahne dikey tuvale sığdırılıp ORTALANIR — 1920 dp'lik
-          // ekranda kullanıcı adı solda, eylem sütunu 1900 dp ötede sağdaydı.
-          // Tuvalin İÇİ değişmez: video oranı, `PointerInterceptor`lu dokunuş
-          // katmanı ve sağdaki eylem sütunu sayfanın kendi Stack'inde kalır,
-          // yalnız sayfanın genişliği değişir.
-          //
-          // Tuvalin ORANI ekrandaki medyayı izler ([reelsAzamiTuvalOrani]):
-          // dikey videoda 9:16 (değişiklik yok), YATAY medyada çerçeve genişler
-          // ve siyah boşluk kapanır. Geçiş 200 ms yumuşatılır — anlık zıplama
-          // `ui-ux-pro-max` → Animation/"Instant state changes (0ms)" karşıtı.
-          // MOBİL: [masaustuMu] false → sayfa doğrudan çizilir, hiçbir
-          // sarmalayıcı eklenmez (bugünkü ağaç birebir aynı).
-          if (masaustuMu(context))
-            Center(
-              child: LayoutBuilder(
-                builder: (context, kisit) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  width: reelsTuvalGenisligi(
-                    kisit.maxWidth,
-                    kisit.maxHeight,
-                    oran: _oran,
+    final dolgu = MediaQuery.paddingOf(context);
+    final coklu = widget.liste.length > 1 || _medyaToplam > 1;
+
+    return TamEkranKlavye(
+      sola: coklu ? _sol : null,
+      saga: coklu ? _sag : null,
+      yukari: widget.liste.length > 1 ? () => _postGit(_sayfaNo - 1) : null,
+      asagi: widget.liste.length > 1 ? () => _postGit(_sayfaNo + 1) : null,
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            // MASAÜSTÜ: sahne dikey tuvale sığdırılıp ORTALANIR — 1920 dp'lik
+            // ekranda kullanıcı adı solda, eylem sütunu 1900 dp ötede sağdaydı.
+            // Tuvalin İÇİ değişmez: video oranı, `PointerInterceptor`lu dokunuş
+            // katmanı ve sağdaki eylem sütunu sayfanın kendi Stack'inde kalır,
+            // yalnız sayfanın genişliği değişir.
+            //
+            // Tuvalin ORANI ekrandaki medyayı izler ([reelsAzamiTuvalOrani]):
+            // dikey videoda 9:16 (değişiklik yok), YATAY medyada çerçeve genişler
+            // ve siyah boşluk kapanır. Geçiş 200 ms yumuşatılır — anlık zıplama
+            // `ui-ux-pro-max` → Animation/"Instant state changes (0ms)" karşıtı.
+            // MOBİL: [masaustuMu] false → sayfa doğrudan çizilir, hiçbir
+            // sarmalayıcı eklenmez (bugünkü ağaç birebir aynı).
+            if (masaustuMu(context))
+              Center(
+                child: LayoutBuilder(
+                  builder: (context, kisit) => AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeOut,
+                    width: reelsTuvalGenisligi(
+                      kisit.maxWidth,
+                      kisit.maxHeight,
+                      oran: _oran,
+                    ),
+                    child: sayfalar,
                   ),
-                  child: sayfalar,
+                ),
+              )
+            else
+              sayfalar,
+            // Yan oklar tuvalin ÜSTÜNDE (masaüstünde siyah kenarlıkta durur).
+            if (_solVar)
+              Positioned(
+                left: 8 + dolgu.left,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: TamEkranYonOku(sola: true, onPressed: _sol),
                 ),
               ),
-            )
-          else
-            sayfalar,
-          SafeArea(
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                tooltip: 'Kapat'.c,
-                // Doğrudan URL ile açıldıysa (paylaşılan gönderi linki) geri
-                // gidilecek yer yoktur → Keşfet'e dön.
-                onPressed: () => Navigator.of(context).canPop()
-                    ? Navigator.pop(context)
-                    : GoRouter.of(context).go('/arama'),
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                style: IconButton.styleFrom(backgroundColor: Colors.black38),
+            if (_sagVar)
+              Positioned(
+                right: 8 + dolgu.right,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: TamEkranYonOku(sola: false, onPressed: _sag),
+                ),
+              ),
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  tooltip: 'Kapat'.c,
+                  // Doğrudan URL ile açıldıysa (paylaşılan gönderi linki) geri
+                  // gidilecek yer yoktur → Keşfet'e dön.
+                  onPressed: () => Navigator.of(context).canPop()
+                      ? Navigator.pop(context)
+                      : GoRouter.of(context).go('/arama'),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  style: IconButton.styleFrom(backgroundColor: Colors.black38),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -1204,6 +1315,12 @@ class _ReelSayfa extends StatefulWidget {
   /// Görüntülenme kaynak etiketi — `ReelsGorunumu.kaynak`tan gelir.
   final String kaynak;
 
+  /// Aktif olunca üst görünüme kaydolur (ok/tuş bu state üzerinden medya
+  /// değiştirir). `onKayit` yalnız aktif sayfaya verilir.
+  final ValueChanged<_ReelSayfaState>? onKayit;
+  final ValueChanged<_ReelSayfaState>? onBirak;
+  final VoidCallback? onMedyaDegisti;
+
   const _ReelSayfa({
     super.key,
     required this.yorum,
@@ -1212,6 +1329,9 @@ class _ReelSayfa extends StatefulWidget {
     this.medyaBaslangic = 0,
     this.onOran,
     this.kaynak = GonderiOlcu.kaynakReels,
+    this.onKayit,
+    this.onBirak,
+    this.onMedyaDegisti,
   });
 
   @override
@@ -1257,6 +1377,25 @@ class _ReelSayfaState extends State<_ReelSayfa>
   /// Ekranda duran medya (çoklu gönderide kaydırmayla değişir)
   String? get _aktifMedya =>
       _medya.isEmpty ? null : _medya[_medyaSayfa.clamp(0, _medya.length - 1)];
+
+  int get medyaSayfa => _medyaSayfa;
+  int get medyaToplam => _medya.length;
+
+  /// Üst ok/tuş: önceki kare. İlk karede false → gönderi geri gider.
+  bool geriMedya() {
+    if (_medyaSayfa <= 0) return false;
+    setState(() => _medyaSayfa--);
+    _medyaDegisti();
+    return true;
+  }
+
+  /// Üst ok/tuş: sonraki kare. Son karede false → sonraki gönderi.
+  bool ileriMedya() {
+    if (_medyaSayfa >= _medya.length - 1) return false;
+    setState(() => _medyaSayfa++);
+    _medyaDegisti();
+    return true;
+  }
 
   String? get _videoUrl {
     final m = _aktifMedya;
@@ -1333,6 +1472,11 @@ class _ReelSayfaState extends State<_ReelSayfa>
       // Bu sayfa aktif oldu: tuval oranını (biliniyorsa) hemen bildir.
       _oranBildir();
     }
+    if (widget.aktif) {
+      widget.onKayit?.call(this);
+    } else if (eski.aktif) {
+      widget.onBirak?.call(this);
+    }
   }
 
   @override
@@ -1347,6 +1491,8 @@ class _ReelSayfaState extends State<_ReelSayfa>
     _oraniOlc();
     _oranBildir();
     if (widget.aktif) _medyaOnbellekle();
+    // Referans; üst setState yok (initState sırasında yasak).
+    if (widget.aktif) widget.onKayit?.call(this);
   }
 
   bool _onbellekBasladi = false;
@@ -1441,10 +1587,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
     _videoKur();
     _medyaOrani = null;
     _oraniOlc();
+    widget.onMedyaDegisti?.call();
   }
 
   @override
   void dispose() {
+    widget.onBirak?.call(this);
     _kalpAnim.dispose();
     // ÖLÇÜ ÖNCE GİDER: `dispose()` sonrası denetleyici okunamaz. Tek gönderim
     // güvencesi izleyicinin kendisinde (ikinci çağrı istek çıkarmaz).

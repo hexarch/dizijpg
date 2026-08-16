@@ -513,6 +513,8 @@ const Map<String, String> cevirilerUr = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'تم ہمارے پہلے صارفین میں سے ایک ہو۔ تمہاری رائے نے ایپ کو آج کی شکل دی۔',
   'İleri': 'آگے',
+  'Önceki': 'پچھلا',
+  'Sonraki': 'اگلا',
   'Seçilen dosya okunamadı': 'منتخب فائل نہیں پڑھی جا سکی',
   'Video açılamadı': 'ویڈیو نہیں کھل سکی',
   'En fazla {} medya seçebilirsin':

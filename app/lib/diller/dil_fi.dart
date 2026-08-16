@@ -515,6 +515,8 @@ const Map<String, String> cevirilerFi = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Olet yksi ensimmäisistä käyttäjistämme. Palautteesi auttoi tekemään sovelluksesta sen, mikä se on tänään.',
   'İleri': 'Seuraava',
+  'Önceki': 'Edellinen',
+  'Sonraki': 'Seuraava',
   'Seçilen dosya okunamadı': 'Valittua tiedostoa ei voitu lukea',
   'Video açılamadı': 'Videota ei voitu avata',
   'En fazla {} medya seçebilirsin': 'Voit valita enintään {} mediaa',

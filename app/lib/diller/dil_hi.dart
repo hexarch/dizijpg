@@ -515,6 +515,8 @@ const Map<String, String> cevirilerHi = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'तुम हमारे पहले उपयोगकर्ताओं में से एक हो। तुम्हारी प्रतिक्रिया से ऐप आज जैसा है वैसा बना।',
   'İleri': 'आगे',
+  'Önceki': 'पिछला',
+  'Sonraki': 'अगला',
   'Seçilen dosya okunamadı': 'चुनी गई फ़ाइल पढ़ी नहीं जा सकी',
   'Video açılamadı': 'वीडियो नहीं खुल सका',
   'En fazla {} medya seçebilirsin': 'आप अधिकतम {} मीडिया चुन सकते हैं',

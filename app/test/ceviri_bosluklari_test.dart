@@ -33,6 +33,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  'Önceki',
+  'Sonraki',
   // detay.dart — "Takip ettiğin 3 kişi izledi"
   'Takip ettiğin {} kişi izledi',
   // kesfet_akis.dart + yorumlar.dart — yorum kutusu ipucu

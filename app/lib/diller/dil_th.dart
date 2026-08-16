@@ -508,6 +508,8 @@ const Map<String, String> cevirilerTh = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'คุณคือหนึ่งในผู้ใช้กลุ่มแรกของเรา ความคิดเห็นของคุณช่วยให้แอปเป็นอย่างที่เป็นอยู่ทุกวันนี้',
   'İleri': 'ถัดไป',
+  'Önceki': 'ก่อนหน้า',
+  'Sonraki': 'ถัดไป',
   'Seçilen dosya okunamadı': 'อ่านไฟล์ที่เลือกไม่สำเร็จ',
   'Video açılamadı': 'เปิดวิดีโอไม่สำเร็จ',
   'En fazla {} medya seçebilirsin': 'เลือกได้สูงสุด {} รายการ',

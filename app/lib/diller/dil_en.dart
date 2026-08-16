@@ -514,6 +514,8 @@ const Map<String, String> cevirilerEn = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'You are one of our first users. Your feedback helped shape the app into what it is today.',
   'İleri': 'Next',
+  'Önceki': 'Previous',
+  'Sonraki': 'Next',
   'Seçilen dosya okunamadı': 'The selected file could not be read',
   'Video açılamadı': 'The video could not be opened',
   'En fazla {} medya seçebilirsin': 'You can select up to {} media',

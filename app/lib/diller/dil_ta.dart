@@ -515,6 +515,8 @@ const Map<String, String> cevirilerTa = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'நீ எங்கள் முதல் பயனர்களில் ஒருவர். உன் கருத்துகள் செயலி இன்று இருப்பது போல் மாற உதவின.',
   'İleri': 'அடுத்து',
+  'Önceki': 'முந்தைய',
+  'Sonraki': 'அடுத்த',
   'Seçilen dosya okunamadı': 'தேர்ந்தெடுத்த கோப்பைப் படிக்க முடியவில்லை',
   'Video açılamadı': 'வீடியோவைத் திறக்க முடியவில்லை',
   'En fazla {} medya seçebilirsin': 'அதிகபட்சம் {} மீடியா தேர்வு செய்யலாம்',

@@ -513,6 +513,8 @@ const Map<String, String> cevirilerSw = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Wewe ni mmoja wa watumiaji wetu wa kwanza. Maoni yako yalisaidia programu kuwa ilivyo leo.',
   'İleri': 'Endelea',
+  'Önceki': 'Iliyotangulia',
+  'Sonraki': 'Ifuatayo',
   'Seçilen dosya okunamadı': 'Faili uliyochagua haikuweza kusomwa',
   'Video açılamadı': 'Video haikuweza kufunguliwa',
   'En fazla {} medya seçebilirsin': 'Unaweza kuchagua midia {} kwa juu zaidi',

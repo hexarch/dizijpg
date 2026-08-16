@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:video_player/video_player.dart';
 
 import '../altyazi.dart';
@@ -29,6 +31,86 @@ Future<void> medyaGoster(
 
 bool _videoMu(String url) => url.endsWith('.mp4') || url.endsWith('.webm');
 
+/// Tam ekran geçiş süresi: anlık zıplama yok (150–300 ms aralığı).
+const Duration tamEkranGecisSuresi = Duration(milliseconds: 250);
+
+/// Tam ekran fotoğraf/gönderi geçiş oku.
+///
+/// Siyah overlay üzerinde beyaz chevron; dokunma hedefi ≥44 dp. Web'de HTML
+/// video katmanı tıklamayı yutmasın diye [PointerInterceptor] ile sarılır.
+class TamEkranYonOku extends StatelessWidget {
+  static const solAnahtar = ValueKey<String>('tam-ekran-sol-ok');
+  static const sagAnahtar = ValueKey<String>('tam-ekran-sag-ok');
+
+  final bool sola;
+  final VoidCallback onPressed;
+
+  const TamEkranYonOku({
+    super.key,
+    required this.sola,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PointerInterceptor(
+      child: IconButton(
+        key: sola ? solAnahtar : sagAnahtar,
+        tooltip: sola ? 'Önceki'.c : 'Sonraki'.c,
+        onPressed: onPressed,
+        icon: Icon(
+          sola ? Icons.chevron_left : Icons.chevron_right,
+          color: Colors.white,
+          size: 28,
+        ),
+        style: IconButton.styleFrom(
+          backgroundColor: Colors.black.withValues(alpha: 0.45),
+          minimumSize: const Size(44, 44),
+          tapTargetSize: MaterialTapTargetSize.padded,
+        ),
+      ),
+    );
+  }
+}
+
+/// Tam ekran görünümde yön tuşlarını önceki/sonraki eyleme bağlar.
+///
+/// Odak metin kutusundaysa yutulmaz: [CallbackShortcuts] o zaman yazma
+/// alanının atası olmadığı için (yorum sheet'i ayrı rota) tuşlar kutuya gider.
+class TamEkranKlavye extends StatelessWidget {
+  final VoidCallback? sola;
+  final VoidCallback? saga;
+  final VoidCallback? yukari;
+  final VoidCallback? asagi;
+  final Widget child;
+
+  const TamEkranKlavye({
+    super.key,
+    this.sola,
+    this.saga,
+    this.yukari,
+    this.asagi,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return CallbackShortcuts(
+      bindings: {
+        if (sola != null)
+          const SingleActivator(LogicalKeyboardKey.arrowLeft): sola!,
+        if (saga != null)
+          const SingleActivator(LogicalKeyboardKey.arrowRight): saga!,
+        if (yukari != null)
+          const SingleActivator(LogicalKeyboardKey.arrowUp): yukari!,
+        if (asagi != null)
+          const SingleActivator(LogicalKeyboardKey.arrowDown): asagi!,
+      },
+      child: Focus(autofocus: true, child: child),
+    );
+  }
+}
+
 class _MedyaGorunumu extends StatefulWidget {
   final List<String> urller;
   final int baslangic;
@@ -50,86 +132,133 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
     super.dispose();
   }
 
+  int get _sayfaNo =>
+      _sayfa.hasClients ? (_sayfa.page?.round() ?? _aktif) : _aktif;
+
+  /// Önceki medya; ilk karede no-op.
+  void _geri() => _git(_sayfaNo - 1);
+
+  /// Sonraki medya; son karede no-op.
+  void _ileri() => _git(_sayfaNo + 1);
+
+  void _git(int i) {
+    if (!_sayfa.hasClients) return;
+    if (i < 0 || i >= widget.urller.length) return;
+    if (i == _sayfaNo) return;
+    _sayfa.animateToPage(
+      i,
+      duration: tamEkranGecisSuresi,
+      curve: Curves.easeOut,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black.withValues(alpha: 0.93),
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _sayfa,
-            itemCount: widget.urller.length,
-            onPageChanged: (i) => setState(() => _aktif = i),
-            itemBuilder: (context, i) {
-              final url = widget.urller[i];
-              if (_videoMu(url)) return _TamVideo(url: url);
-              // Fotoğraf/GIF: çimdikle 5x'e kadar yakınlaştır
-              return GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: InteractiveViewer(
-                  maxScale: 5,
-                  child: Center(
-                    child: CachedNetworkImage(
-                      imageUrl: url,
-                      // Bu görüntüleyici İKİ KAYNAĞI da açıyor: TMDB arka
-                      // planı/bölüm karesi (detay.dart, bolum.dart) ve kendi
-                      // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu
-                      // ancak ÇALIŞMA ANINDA bilinir; kararı adres veriyor.
-                      httpHeaders: gorselBasliklari(url),
-                      fit: BoxFit.contain,
-                      progressIndicatorBuilder: (_, __, ___) =>
-                          const CircularProgressIndicator(
-                            color: DiziRenkler.sari,
-                          ),
-                      errorWidget: (_, __, ___) => const Icon(
-                        Icons.broken_image_outlined,
-                        size: 48,
-                        color: Colors.white38,
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-          // Üst şerit: sayaç + kapat
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
-                children: [
-                  if (widget.urller.length > 1)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black45,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Text(
-                        '${_aktif + 1}/${widget.urller.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
+    final coklu = widget.urller.length > 1;
+    final dolgu = MediaQuery.paddingOf(context);
+    return TamEkranKlavye(
+      sola: coklu ? _geri : null,
+      saga: coklu ? _ileri : null,
+      yukari: coklu ? _geri : null,
+      asagi: coklu ? _ileri : null,
+      child: Scaffold(
+        backgroundColor: Colors.black.withValues(alpha: 0.93),
+        body: Stack(
+          children: [
+            PageView.builder(
+              controller: _sayfa,
+              itemCount: widget.urller.length,
+              onPageChanged: (i) => setState(() => _aktif = i),
+              itemBuilder: (context, i) {
+                final url = widget.urller[i];
+                if (_videoMu(url)) return _TamVideo(url: url);
+                // Fotoğraf/GIF: çimdikle 5x'e kadar yakınlaştır
+                return GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: InteractiveViewer(
+                    maxScale: 5,
+                    child: Center(
+                      child: CachedNetworkImage(
+                        imageUrl: url,
+                        // Bu görüntüleyici İKİ KAYNAĞI da açıyor: TMDB arka
+                        // planı/bölüm karesi (detay.dart, bolum.dart) ve kendi
+                        // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu
+                        // ancak ÇALIŞMA ANINDA bilinir; kararı adres veriyor.
+                        httpHeaders: gorselBasliklari(url),
+                        fit: BoxFit.contain,
+                        progressIndicatorBuilder: (_, __, ___) =>
+                            const CircularProgressIndicator(
+                              color: DiziRenkler.sari,
+                            ),
+                        errorWidget: (_, __, ___) => const Icon(
+                          Icons.broken_image_outlined,
+                          size: 48,
+                          color: Colors.white38,
                         ),
                       ),
                     ),
-                  const Spacer(),
-                  IconButton(
-                    tooltip: 'Kapat'.c,
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close, color: Colors.white),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.black45,
-                    ),
                   ),
-                ],
+                );
+              },
+            ),
+            // Yan oklar Stack İÇİNDE (sınır dışı Positioned tıklanamaz).
+            if (coklu && _aktif > 0)
+              Positioned(
+                left: 8 + dolgu.left,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: TamEkranYonOku(sola: true, onPressed: _geri),
+                ),
+              ),
+            if (coklu && _aktif < widget.urller.length - 1)
+              Positioned(
+                right: 8 + dolgu.right,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: TamEkranYonOku(sola: false, onPressed: _ileri),
+                ),
+              ),
+            // Üst şerit: sayaç + kapat
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: Row(
+                  children: [
+                    if (coklu)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black45,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          '${_aktif + 1}/${widget.urller.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    const Spacer(),
+                    IconButton(
+                      tooltip: 'Kapat'.c,
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Colors.black45,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

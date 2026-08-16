@@ -523,6 +523,8 @@ const Map<String, String> cevirilerMy = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'သင်သည် ကျွန်ုပ်တို့၏ ပထမဆုံး အသုံးပြုသူများထဲမှ တစ်ဦးဖြစ်သည်။ သင်၏ တုံ့ပြန်ချက်များက အက်ပ်ကို ယနေ့ပုံစံဖြစ်လာစေခဲ့သည်။',
   'İleri': 'ရှေ့သို့',
+  'Önceki': 'ယခင်',
+  'Sonraki': 'နောက်',
   'Seçilen dosya okunamadı': 'ရွေးထားသောဖိုင်ကို ဖတ်၍မရပါ',
   'Video açılamadı': 'ဗီဒီယိုကို ဖွင့်၍မရပါ',
   'En fazla {} medya seçebilirsin': 'အများဆုံး {} ခု ရွေးနိုင်သည်',

@@ -517,6 +517,8 @@ const Map<String, String> cevirilerFil = {
   'İlk kullanıcılarımızdan birisin. Geri bildirimlerinle uygulamanın bugün olduğu hale gelmesine katkı sağladın.':
       'Isa ka sa aming mga unang user. Nakatulong ang feedback mo para maging ganito ang app ngayon.',
   'İleri': 'Susunod',
+  'Önceki': 'Nakaraan',
+  'Sonraki': 'Susunod',
   'Seçilen dosya okunamadı': 'Hindi mabasa ang napiling file',
   'Video açılamadı': 'Hindi mabuksan ang video',
   'En fazla {} medya seçebilirsin':
