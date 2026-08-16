@@ -220,6 +220,7 @@ const Map<String, String> cevirilerKn = {
   '10 Beğeni': '10 ಲೈಕ್‌ಗಳು',
   '100 Beğeni': '100 ಲೈಕ್‌ಗಳು',
   'yazıyor...': 'ಟೈಪ್ ಮಾಡುತ್ತಿದ್ದಾರೆ...',
+  'ses kaydediyor...': 'ಆಡಿಯೋ ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ...',
   'Profil düzeni': 'ಪ್ರೊಫೈಲ್ ವಿನ್ಯಾಸ',
   'Konumla ve kırp': 'ಸ್ಥಾನ ಹೊಂದಿಸಿ ಕತ್ತರಿಸಿ',
   'Listeye eklendi': 'ಪಟ್ಟಿಗೆ ಸೇರಿಸಲಾಗಿದೆ',

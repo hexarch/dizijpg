@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.68.0+116 (yazıyor + ses kaydediyor)
+Yazıyor göstergesi tuşa basınca bir kez gidip 6 sn'de düşmüyordu; şimdi
+2 sn heartbeat + kapanınca `acik:false`. Ses kaydı ayrı `kayit` türü.
+Karşı taraf sohbet başlığında ve mesaj listesinde "yazıyor..." /
+"ses kaydediyor..." görür. Eski istemci yalnız `yaziyor: true` okur.
+APK `~/Desktop/dizijpg-1.68.0+116.apk` (89 MB, imzalı).
+`main.e5488b05376c.dart.js` (eski `6137ee0b65a6` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.68.0+116 · giriş testkullanici ·
+`POST /yaziyor tur=kayit` → GET durum=`kayit` · `tur=yaziyor` · `acik:false`
+durum=null · `/sohbetler` `durum` alanı · widget: başlık+liste+ilk tuş POST ·
+hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.67.0+115 (sohbetteyken mesaj push'u yok)
 Karşı taraf o konuşmanın ekranındayken mesaj FCM + zil satırı üretilmez
 (mesaj zaten 3 sn yoklamayla iner). Eski istemci `bakiyor=1` göndermez →

@@ -216,6 +216,7 @@ const Map<String, String> cevirilerJa = {
   '10 Beğeni': 'いいね10',
   '100 Beğeni': 'いいね100',
   'yazıyor...': '入力中…',
+  'ses kaydediyor...': '音声を録音中…',
   'Profil düzeni': 'プロフィールの並び順',
   'Konumla ve kırp': '位置を調整して切り抜く',
   'Listeye eklendi': 'リストに追加しました',

@@ -219,6 +219,7 @@ const Map<String, String> cevirilerMr = {
   '10 Beğeni': '10 लाइक',
   '100 Beğeni': '100 लाइक',
   'yazıyor...': 'टाइप करत आहे...',
+  'ses kaydediyor...': 'ऑडिओ रेकॉर्ड होत आहे...',
   'Profil düzeni': 'प्रोफाइल मांडणी',
   'Konumla ve kırp': 'स्थिती ठरवा आणि क्रॉप करा',
   'Listeye eklendi': 'यादीत जोडले',

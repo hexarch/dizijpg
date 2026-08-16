@@ -25,6 +25,7 @@ const _kisiAnahtarlari = [
   '@{} kullanıcısına yanıt veriyorsun',
   'Kimseyi takip etmiyor',
   'yazıyor...',
+  'ses kaydediyor...',
   'son görülme {} dk önce',
   'son görülme {} saat önce',
   'son görülme {} gün önce',

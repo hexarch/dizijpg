@@ -36,6 +36,9 @@ import {
   sohbetAcikAnahtar, sohbetAcikIsaretle, sohbetAcikKapat, sohbetAcikMi,
 } from './sohbet_bakiyor.js';
 import {
+  sohbetDurumTur, sohbetDurumYaz, sohbetDurumSil, sohbetDurumOku,
+} from './sohbet_durum.js';
+import {
   yapimlariCikar, izlenenAnahtarlar, izlenmeOzeti,
 } from './kisi_izlenme.js';
 // md. 52 — iki adımlı doğrulama (YALNIZ e-posta). Saf modül: sabitler, bilet
@@ -7957,6 +7960,16 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
   }
   const { sohbetler, istekler } = sohbetleriAyir(rows);
+  // Liste yoklaması da yazıyor/kayıt göstersin; damga bellekte, SQL yok.
+  const benId = req.kullanici.id;
+  for (const r of sohbetler) {
+    r.durum = sohbetDurumOku(yaziyorlar, `${r.partner_id}:${benId}`);
+    r.yaziyor = r.durum != null;
+  }
+  for (const r of istekler) {
+    r.durum = sohbetDurumOku(yaziyorlar, `${r.partner_id}:${benId}`);
+    r.yaziyor = r.durum != null;
+  }
   // ROZET SAYACI DA SÜZÜLÜR — yoksa engellenen kişiden gelmiş okunmamış mesaj
   // rozette sonsuza kadar "1" gösterirdi: sohbet listede olmadığı için
   // kullanıcı onu AÇIP okuyamaz, rozet asla düşmezdi. (Bu, süzgeci yalnız
@@ -8025,17 +8038,18 @@ app.get('/paylas-hedefler', girisZorunlu, sarici(async (req, res) => {
 // yayınlanmazsa gösterge işçi sayısı kadar seyrek yanar (fiilen bozulur).
 // Damga kardeş işçilere yayınlanır; kalıcılık yine YOK ve İSTENMİYOR.
 const yaziyorlar = new Map();
-function yaziyorIsaretle(anahtar, zaman = Date.now()) {
-  yaziyorlar.set(anahtar, zaman);
-  if (yaziyorlar.size > 5000) {
-    const esik = Date.now() - 60_000;
-    for (const [k, z] of yaziyorlar) {
-      if (z < esik) yaziyorlar.delete(k);
-    }
-  }
+function yaziyorIsaretle(anahtar, zaman = Date.now(), tur = 'yaziyor') {
+  sohbetDurumYaz(yaziyorlar, anahtar, tur, zaman);
 }
 abone('yaziyor', (v) => {
-  if (v && typeof v.a === 'string' && Number.isFinite(v.z)) yaziyorIsaretle(v.a, v.z);
+  if (!v || typeof v.a !== 'string') return;
+  // z=0: ekran kapandı / metin silindi / kayıt bitti — damgayı hemen düşür.
+  if (!v.z) {
+    sohbetDurumSil(yaziyorlar, v.a);
+    return;
+  }
+  if (!Number.isFinite(v.z)) return;
+  yaziyorIsaretle(v.a, v.z, v.t);
 });
 
 // Açık sohbet damgası: alıcı BU konuşmanın ekranındayken mesaj push'u
@@ -8069,9 +8083,16 @@ app.post('/yaziyor', girisZorunlu, sarici(async (req, res) => {
     [req.body?.kullanici_adi]);
   if (k.rows.length) {
     const anahtar = `${req.kullanici.id}:${k.rows[0].id}`;
+    const acik = req.body?.acik !== false && req.body?.acik !== 'false';
     const zaman = Date.now();
-    yaziyorIsaretle(anahtar, zaman);
-    yayinla('yaziyor', { a: anahtar, z: zaman });
+    if (!acik) {
+      sohbetDurumSil(yaziyorlar, anahtar);
+      yayinla('yaziyor', { a: anahtar, z: 0, t: '' });
+    } else {
+      const tur = sohbetDurumTur(req.body?.tur);
+      yaziyorIsaretle(anahtar, zaman, tur);
+      yayinla('yaziyor', { a: anahtar, z: zaman, t: tur });
+    }
   }
   res.json({ tamam: true });
 }));
@@ -8382,15 +8403,15 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // `rows` bu noktada eskiden yeniye (ASC). `sonra` zaten ASC çeker;
   // ilk yükleme DESC+reverse ile aynı sıraya gelir. Bir kez daha
   // reverse yeni mesajları listenin başına atardı.
+  const durum = sohbetDurumOku(yaziyorlar, `${partnerId}:${req.kullanici.id}`);
   res.json({
     mesajlar: rows,
     guncellemeler,
     partner: k.rows[0],
     icerikler,
     gonderiler,
-    yaziyor:
-      Date.now() - (yaziyorlar.get(`${partnerId}:${req.kullanici.id}`) || 0) <
-      6000,
+    yaziyor: durum != null,
+    durum: durum,
   });
 }));
 

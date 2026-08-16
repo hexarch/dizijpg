@@ -219,6 +219,7 @@ const Map<String, String> cevirilerUr = {
   '10 Beğeni': '10 لائیکس',
   '100 Beğeni': '100 لائیکس',
   'yazıyor...': 'لکھا جا رہا ہے...',
+  'ses kaydediyor...': 'آڈیو ریکارڈ ہو رہا ہے...',
   'Profil düzeni': 'پروفائل ترتیب',
   'Konumla ve kırp': 'پوزیشن سیٹ کریں اور کراپ کریں',
   'Listeye eklendi': 'فہرست میں شامل ہو گیا',

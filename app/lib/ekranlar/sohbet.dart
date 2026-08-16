@@ -36,6 +36,24 @@ const cevrimiciEsikSn = 180;
 /// Liste ve açık sohbet yoklama aralığı. Tam geçmiş değil, ucuz tur.
 const Duration sohbetYoklamaAraligi = Duration(seconds: 3);
 
+/// GET /mesajlar yanıtından karşı tarafın canlı durumunu okur.
+///
+/// Yeni sunucu `durum` gönderir (`yaziyor` / `kayit`). Eski sürüm yalnız
+/// `yaziyor: true` basar — onu yazıyor say.
+String? sohbetDurumCoz(Map<String, dynamic> d) {
+  final durum = d['durum'];
+  if (durum == 'kayit' || durum == 'yaziyor') return durum as String;
+  if (d['yaziyor'] == true) return 'yaziyor';
+  return null;
+}
+
+/// Karşı tarafın canlı durumunun kullanıcıya gösterilecek metni.
+String? sohbetDurumYazi(String? durum) {
+  if (durum == 'kayit') return 'ses kaydediyor...'.c;
+  if (durum == 'yaziyor') return 'yazıyor...'.c;
+  return null;
+}
+
 /// Yoklamada setState'i boş yere tetiklememek için satır parmak izi.
 bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
   if (a == null || a.length != b.length) return false;
@@ -46,7 +64,9 @@ bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
         x['metin'] != y['metin'] ||
         x['okunmamis'] != y['okunmamis'] ||
         x['cevrimici'] != y['cevrimici'] ||
-        x['medya'] != y['medya']) {
+        x['medya'] != y['medya'] ||
+        x['durum'] != y['durum'] ||
+        x['yaziyor'] != y['yaziyor']) {
       return false;
     }
   }
@@ -512,6 +532,7 @@ class SohbetSatiri extends StatelessWidget {
   Widget build(BuildContext context) {
     final okunmamis = (sohbet['okunmamis'] as int?) ?? 0;
     final ozet = mesajOzeti(sohbet);
+    final canli = sohbetDurumYazi(sohbetDurumCoz(sohbet));
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -544,26 +565,38 @@ class SohbetSatiri extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 2),
-                  Row(
-                    children: [
-                      // Metinsiz son mesaj: türünü söyle (ses/foto/video/içerik)
-                      if (ozet.ikon != null) ...[
-                        Icon(ozet.ikon, size: 14, color: DiziRenkler.metin54),
-                        const SizedBox(width: 4),
-                      ],
-                      Expanded(
-                        child: Text(
-                          ozet.metin,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: DiziRenkler.metin54,
+                  if (canli != null)
+                    Text(
+                      canli,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                    )
+                  else
+                    Row(
+                      children: [
+                        // Metinsiz son mesaj: türünü söyle (ses/foto/video/içerik)
+                        if (ozet.ikon != null) ...[
+                          Icon(ozet.ikon, size: 14, color: DiziRenkler.metin54),
+                          const SizedBox(width: 4),
+                        ],
+                        Expanded(
+                          child: Text(
+                            ozet.metin,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: DiziRenkler.metin54,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
                 ],
               ),
             ),
@@ -668,7 +701,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   bool _yuklendi = false;
   bool _gonderiliyor = false;
   bool _ekYukleniyor = false;
-  bool _yaziyor = false; // karşı taraf yazıyor mu
+  String? _karsiDurum; // karşı taraf: yaziyor | kayit
   String? _hata; // ilk yükleme hatası
   Map<String, dynamic>? _partner; // avatar + son_gorulme
   Map<String, dynamic>? _yanitlanan; // alıntılanan mesaj (yanıt modu)
@@ -693,7 +726,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// (backend/server.js:4526-4607) — `if (!temiz && !medya && !icerikVar ...)`
   /// koşulu da yalnız üçü de boşsa 400 veriyor.
   Map<String, dynamic>? _bekleyenIcerik;
-  DateTime _sonYaziyorBildirimi = DateTime.fromMillisecondsSinceEpoch(0);
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
   Timer? _sayac;
@@ -731,15 +763,60 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   // mesajla gönderilen dalga formu bundan üretilir.
   final List<double> _seviyeler = [];
   StreamSubscription<Amplitude>? _seviyeAbonelik;
+  Timer? _durumSayaci;
+  String? _gonderilenDurum;
 
-  /// Yazarken karşı tarafa "yazıyor" sinyali (3 sn'de bir en fazla).
-  void _yaziyorBildir() {
-    final simdi = DateTime.now();
-    if (simdi.difference(_sonYaziyorBildirimi).inSeconds < 3) return;
-    _sonYaziyorBildirimi = simdi;
+  /// Karşı tarafa canlı durum. Eskiden yalnız tuşa basılınca ve 3 sn
+  /// kısırlığıyla gidiyordu: kısa yazışmada ping bir kez atılıp süre dolunca
+  /// düşüyordu; yoklama kaçınca gösterge hiç yanmıyordu.
+  void _durumGonder(String? tur) {
     Api.post('/yaziyor', {
       'kullanici_adi': widget.kullaniciAdi,
+      'acik': tur != null,
+      if (tur != null) 'tur': tur,
     }).catchError((_) => null);
+  }
+
+  void _durumHeartbeat(String tur) {
+    if (_gonderilenDurum != tur || _durumSayaci == null) {
+      _durumGonder(tur);
+      _gonderilenDurum = tur;
+      _durumSayaci?.cancel();
+      _durumSayaci = Timer.periodic(const Duration(seconds: 2), (_) {
+        if (!mounted || !_sohbetGorunur) {
+          _durumDurdur();
+          return;
+        }
+        if (tur == 'yaziyor' && _metin.text.trim().isEmpty) {
+          _durumDurdur();
+          return;
+        }
+        if (tur == 'kayit' && !_kaydediyor) {
+          _durumDurdur();
+          return;
+        }
+        _durumGonder(tur);
+      });
+    }
+  }
+
+  void _durumDurdur() {
+    _durumSayaci?.cancel();
+    _durumSayaci = null;
+    if (_gonderilenDurum != null) {
+      _durumGonder(null);
+      _gonderilenDurum = null;
+    }
+  }
+
+  /// Yazarken karşı tarafa "yazıyor" sinyali.
+  void _yaziyorBildir() {
+    if (_kaydediyor) return;
+    if (_metin.text.trim().isEmpty) {
+      if (_gonderilenDurum == 'yaziyor') _durumDurdur();
+      return;
+    }
+    _durumHeartbeat('yaziyor');
   }
 
   @override
@@ -800,6 +877,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (onceki) {
         _sohbetBakisiniAyarla(false);
         _bakisGonderildi = false;
+        _durumDurdur();
       }
     }
   }
@@ -823,6 +901,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       SohbetOlaylari.acikPartner = null;
     }
     if (_sohbetGorunur) _sohbetBakisiniAyarla(false);
+    _durumDurdur();
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
@@ -893,6 +972,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         _kayitSn = 0;
         _seviyeler.clear();
       });
+      _durumHeartbeat('kayit');
       // Canlı ses şiddeti: 100 ms'de bir örnek (2 dk × 10 = en çok 1200 örnek)
       _seviyeAbonelik?.cancel();
       _seviyeAbonelik = _kaydedici
@@ -907,6 +987,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         if (_kayitSn >= 120) _kayitGonder(); // 2 dk üst sınır
       });
     } catch (_) {
+      _durumDurdur();
       if (mounted) setState(() => _kaydediyor = false);
     }
   }
@@ -918,17 +999,20 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       await _kaydedici?.stop();
     } catch (_) {}
     _kayitYolu = null;
+    _durumDurdur();
     if (mounted) {
       setState(() {
         _kaydediyor = false;
         _kayitSn = 0;
       });
+      if (_metin.text.trim().isNotEmpty) _yaziyorBildir();
     }
   }
 
   Future<void> _kayitGonder() async {
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
+    _durumDurdur();
     final saniye = _kayitSn;
     final dalga = dalgaKodla(_seviyeler, saniye);
     String? yol;
@@ -982,11 +1066,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
   String _mesajParmakIzi(
     List<dynamic> mesajlar,
-    bool yaziyor,
+    String? durum,
     Map<String, dynamic>? partner,
   ) {
     final b = StringBuffer()
-      ..write(yaziyor ? '1' : '0')
+      ..write(durum ?? '0')
       ..write('|')
       ..write(partner?['son_gorulme'] ?? '');
     for (final ham in mesajlar) {
@@ -1029,7 +1113,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       final d = await Api.get(yol);
       if (!mounted) return;
       final gelen = d['mesajlar'] as List<dynamic>? ?? const [];
-      final yaziyor = d['yaziyor'] == true;
+      final durum = sohbetDurumCoz(d);
       final partner = d['partner'] as Map<String, dynamic>?;
       final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
@@ -1058,8 +1142,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         yeniGeldi = gelen.length != _mesajlar.length;
       }
 
-      final parmak = _mesajParmakIzi(birlesik, yaziyor, partner);
-      final eski = _mesajParmakIzi(_mesajlar, _yaziyor, _partner);
+      final parmak = _mesajParmakIzi(birlesik, durum, partner);
+      final eski = _mesajParmakIzi(_mesajlar, _karsiDurum, _partner);
       if (!ilk && parmak == eski && _hata == null) return;
 
       final altaYakinDi =
@@ -1069,7 +1153,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         _mesajlar = birlesik;
         _icerikler.addAll(icerikler);
         _gonderiler.addAll(gonderiler);
-        _yaziyor = yaziyor;
+        _karsiDurum = durum;
         if (partner != null) _partner = partner;
         _yuklendi = true;
         _hata = null;
@@ -1309,6 +1393,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           'yanit_id': (_yanitlanan!['id'] as num).toInt(),
       });
       _metin.clear();
+      _durumDurdur();
       setState(() {
         _yanitlanan = null;
         _bekleyenIcerik = null;
@@ -1502,6 +1587,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   @override
   Widget build(BuildContext context) {
     final benimId = context.watch<Oturum>().kullanici?['id'];
+    final karsiYazi = sohbetDurumYazi(_karsiDurum);
 
     return Scaffold(
       appBar: AppBar(
@@ -1516,9 +1602,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              if (_yaziyor)
+              if (karsiYazi != null)
                 Text(
-                  'yazıyor...'.c,
+                  karsiYazi,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,

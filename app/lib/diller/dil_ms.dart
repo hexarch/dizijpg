@@ -219,6 +219,7 @@ const Map<String, String> cevirilerMs = {
   '10 Beğeni': '10 Suka',
   '100 Beğeni': '100 Suka',
   'yazıyor...': 'sedang menaip...',
+  'ses kaydediyor...': 'sedang merakam audio...',
   'Profil düzeni': 'Susun atur profil',
   'Konumla ve kırp': 'Laraskan dan pangkas',
   'Listeye eklendi': 'Ditambah ke senarai',

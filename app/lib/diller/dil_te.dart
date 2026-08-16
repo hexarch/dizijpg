@@ -219,6 +219,7 @@ const Map<String, String> cevirilerTe = {
   '10 Beğeni': '10 లైక్‌లు',
   '100 Beğeni': '100 లైక్‌లు',
   'yazıyor...': 'టైప్ చేస్తున్నారు...',
+  'ses kaydediyor...': 'ఆడియో రికార్డ్ అవుతోంది...',
   'Profil düzeni': 'ప్రొఫైల్ లేఅవుట్',
   'Konumla ve kırp': 'స్థానం సర్దుబాటు చేసి కత్తిరించు',
   'Listeye eklendi': 'జాబితాకు జోడించబడింది',

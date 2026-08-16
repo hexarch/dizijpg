@@ -219,6 +219,7 @@ const Map<String, String> cevirilerUk = {
   '10 Beğeni': '10 вподобань',
   '100 Beğeni': '100 вподобань',
   'yazıyor...': 'друкує...',
+  'ses kaydediyor...': 'записує аудіо...',
   'Profil düzeni': 'Порядок розділів профілю',
   'Konumla ve kırp': 'Розташуй та обріж',
   'Listeye eklendi': 'Додано до списку',

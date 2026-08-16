@@ -219,6 +219,7 @@ const Map<String, String> cevirilerFil = {
   '10 Beğeni': '10 Likes',
   '100 Beğeni': '100 Likes',
   'yazıyor...': 'nagta-type...',
+  'ses kaydediyor...': 'nagre-record ng audio...',
   'Profil düzeni': 'Layout ng profile',
   'Konumla ve kırp': 'Iposisyon at i-crop',
   'Listeye eklendi': 'Naidagdag sa listahan',

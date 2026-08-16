@@ -219,6 +219,7 @@ const Map<String, String> cevirilerGu = {
   '10 Beğeni': '10 લાઇક',
   '100 Beğeni': '100 લાઇક',
   'yazıyor...': 'લખાઈ રહ્યું છે...',
+  'ses kaydediyor...': 'ઑડિયો રેકોર્ડ થઈ રહ્યું છે...',
   'Profil düzeni': 'પ્રોફાઇલ લેઆઉટ',
   'Konumla ve kırp': 'સ્થિતિ ગોઠવો અને કાપો',
   'Listeye eklendi': 'યાદીમાં ઉમેરાયું',

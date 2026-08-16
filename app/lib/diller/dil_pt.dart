@@ -220,6 +220,7 @@ const Map<String, String> cevirilerPt = {
   '10 Beğeni': '10 curtidas',
   '100 Beğeni': '100 curtidas',
   'yazıyor...': 'digitando...',
+  'ses kaydediyor...': 'gravando áudio...',
   'Profil düzeni': 'Layout do perfil',
   'Konumla ve kırp': 'Posicione e recorte',
   'Listeye eklendi': 'Adicionado à lista',

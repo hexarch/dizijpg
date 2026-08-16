@@ -219,6 +219,7 @@ const Map<String, String> cevirilerHi = {
   '10 Beğeni': '10 लाइक',
   '100 Beğeni': '100 लाइक',
   'yazıyor...': 'लिखा जा रहा है...',
+  'ses kaydediyor...': 'ऑडियो रिकॉर्ड हो रहा है...',
   'Profil düzeni': 'प्रोफ़ाइल लेआउट',
   'Konumla ve kırp': 'जगह चुनो और क्रॉप करो',
   'Listeye eklendi': 'लिस्ट में जोड़ा गया',

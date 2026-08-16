@@ -407,4 +407,211 @@ void main() {
     );
     await _kapat(tester);
   });
+
+  test('sohbetDurumCoz durum ve eski yaziyor alanını okur', () {
+    expect(sohbetDurumCoz({'yaziyor': true}), 'yaziyor');
+    expect(sohbetDurumCoz({'yaziyor': false}), isNull);
+    expect(sohbetDurumCoz({'durum': 'kayit', 'yaziyor': true}), 'kayit');
+    expect(sohbetDurumCoz({'durum': 'yaziyor'}), 'yaziyor');
+    expect(sohbetDurumCoz(<String, dynamic>{}), isNull);
+    expect(sohbetDurumYazi('kayit'), 'ses kaydediyor...');
+    expect(sohbetDurumYazi('yaziyor'), 'yazıyor...');
+    expect(sohbetDurumYazi(null), isNull);
+  });
+
+  testWidgets('karşı taraf yazıyorsa başlıkta yazıyor görünür', (tester) async {
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': true,
+          'durum': 'yaziyor',
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('yazıyor...'), findsOneWidget);
+    await _kapat(tester);
+  });
+
+  testWidgets('karşı taraf kaydediyorsa başlıkta ses kaydediyor görünür', (
+    tester,
+  ) async {
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': true,
+          'durum': 'kayit',
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('ses kaydediyor...'), findsOneWidget);
+    expect(find.text('yazıyor...'), findsNothing);
+    await _kapat(tester);
+  });
+
+  testWidgets('listede karşı taraf kaydediyorsa ses kaydediyor görünür', (
+    tester,
+  ) async {
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.endsWith('/sohbetler')) {
+        return _json({
+          'sohbetler': [
+            {
+              ..._sohbet('ayse', metin: 'son mesaj'),
+              'yaziyor': true,
+              'durum': 'kayit',
+            },
+          ],
+          'istekler': <dynamic>[],
+          'okunmamis': 0,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: GoRouter(
+          initialLocation: '/sohbetler',
+          routes: [
+            GoRoute(
+              path: '/sohbetler',
+              builder: (_, _) => const SohbetlerEkrani(),
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.text('ses kaydediyor...'), findsOneWidget);
+    expect(find.text('son mesaj'), findsNothing);
+    await _kapat(tester);
+  });
+
+  testWidgets('ilk tuşta POST /yaziyor tur=yaziyor gider', (tester) async {
+    final yaziyorGovdeler = <Map<String, dynamic>>[];
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/yaziyor')) {
+        yaziyorGovdeler.add(jsonDecode(istek.body) as Map<String, dynamic>);
+        return _json({'tamam': true});
+      }
+      if (istek.url.path.contains('/mesajlar/')) {
+        return _json({
+          'mesajlar': [_mesaj(10, metin: 'ilk')],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+    addTearDown(() => SohbetOlaylari.acikPartner = null);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.enterText(find.byType(TextField), 'm');
+    await tester.pump();
+    expect(yaziyorGovdeler, isNotEmpty);
+    expect(yaziyorGovdeler.first['tur'], 'yaziyor');
+    expect(yaziyorGovdeler.first['kullanici_adi'], 'ayse');
+    expect(yaziyorGovdeler.first['acik'], true);
+    await _kapat(tester);
+  });
 }

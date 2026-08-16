@@ -220,6 +220,7 @@ const Map<String, String> cevirilerFr = {
   '10 Beğeni': "10 j'aime",
   '100 Beğeni': "100 j'aime",
   'yazıyor...': 'écrit...',
+  'ses kaydediyor...': 'enregistre un vocal...',
   'Profil düzeni': 'Disposition du profil',
   'Konumla ve kırp': 'Positionner et rogner',
   'Listeye eklendi': 'Ajouté à la liste',

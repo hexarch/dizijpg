@@ -219,6 +219,7 @@ const Map<String, String> cevirilerRo = {
   '10 Beğeni': '10 aprecieri',
   '100 Beğeni': '100 de aprecieri',
   'yazıyor...': 'scrie...',
+  'ses kaydediyor...': 'înregistrează audio...',
   'Profil düzeni': 'Aspectul profilului',
   'Konumla ve kırp': 'Poziționează și decupează',
   'Listeye eklendi': 'Adăugat în listă',

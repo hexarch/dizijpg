@@ -215,6 +215,7 @@ const Map<String, String> cevirilerZh = {
   '10 Beğeni': '10 个赞',
   '100 Beğeni': '100 个赞',
   'yazıyor...': '正在输入…',
+  'ses kaydediyor...': '正在录音…',
   'Profil düzeni': '主页布局',
   'Konumla ve kırp': '调整位置并裁剪',
   'Listeye eklendi': '已加入片单',

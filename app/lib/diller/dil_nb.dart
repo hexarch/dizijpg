@@ -219,6 +219,7 @@ const Map<String, String> cevirilerNb = {
   '10 Beğeni': '10 likerklikk',
   '100 Beğeni': '100 likerklikk',
   'yazıyor...': 'skriver...',
+  'ses kaydediyor...': 'tar opp lyd...',
   'Profil düzeni': 'Profiloppsett',
   'Konumla ve kırp': 'Plasser og beskjær',
   'Listeye eklendi': 'Lagt til i listen',

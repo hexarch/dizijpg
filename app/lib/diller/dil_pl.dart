@@ -219,6 +219,7 @@ const Map<String, String> cevirilerPl = {
   '10 Beğeni': '10 polubień',
   '100 Beğeni': '100 polubień',
   'yazıyor...': 'pisze...',
+  'ses kaydediyor...': 'nagrywa audio...',
   'Profil düzeni': 'Układ profilu',
   'Konumla ve kırp': 'Ustaw i przytnij',
   'Listeye eklendi': 'Dodano do listy',
