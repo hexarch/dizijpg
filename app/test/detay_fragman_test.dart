@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/detay.dart';
 import 'package:dizijpg/ekranlar/fragman.dart';
+import 'package:dizijpg/ekranlar/fragman_gom.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -114,16 +115,16 @@ void main() {
     expect(find.byType(AkisMedya), findsOneWidget);
   });
 
-  testWidgets('oynata basınca gömme açılır (iframe yok, test VM)', (
+  testWidgets('oynata basınca gömme açılır, YouTube uygulaması açılmaz', (
     tester,
   ) async {
+    var disari = 0;
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: FragmanOynatici(
             youtubeId: 'officialTr1',
-            gomulu: true,
-            disariAc: _bosAc,
+            disariAc: (_) async => disari++,
           ),
         ),
       ),
@@ -134,7 +135,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.play_arrow));
     await tester.pump();
     expect(find.byIcon(Icons.play_arrow), findsNothing);
+    expect(find.byType(FragmanGomucu), findsOneWidget);
+    expect(disari, 0);
   });
 }
-
-Future<void> _bosAc(Uri uri) async {}

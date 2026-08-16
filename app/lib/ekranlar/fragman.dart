@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -12,16 +11,17 @@ import 'fragman_gom.dart';
 /// Dizi/film/bölüm kahramanındaki resmi fragman.
 ///
 /// Başta yalnız YouTube kapağı + oynat düğmesi vardır (yer ayrılır, CLS yok,
-/// sessiz autoplay yok). Dokununca webde iframe gömülür; mobilde YouTube
-/// açılır. Kaydırılıp ekrandan düşünce gömme sökülür — ses arkada kalmaz.
+/// sessiz autoplay yok). Dokununca webde iframe, Android/iOS'ta WebView
+/// gömülür — YouTube uygulamasına gidilmez. Kaydırılıp ekrandan düşünce
+/// gömme sökülür; ses arkada kalmaz.
 class FragmanOynatici extends StatefulWidget {
   final String youtubeId;
 
-  /// Testte `kIsWeb` hep false'tur; üretimde webde gömme açılsın diye
-  /// parametre. Null = `kIsWeb`.
+  /// Null = gömme (web iframe / native WebView). Testte `false` verilirse
+  /// [disariAc] çağrılır; üretimde varsayılan gömmedir.
   final bool? gomulu;
 
-  /// Mobilde YouTube'u dışarı aç. Testler boş fonksiyon verir ki
+  /// Yalnız [gomulu] açıkça false iken. Testler boş fonksiyon verir ki
   /// `url_launcher` bağlama istemesin.
   final Future<void> Function(Uri uri)? disariAc;
 
@@ -39,9 +39,10 @@ class FragmanOynatici extends StatefulWidget {
 class _FragmanOynaticiState extends State<FragmanOynatici> {
   bool _oynuyor = false;
 
-  bool get _gomulu => widget.gomulu ?? kIsWeb;
+  bool get _gomulu => widget.gomulu ?? true;
 
-  /// Fragmanı başlatır: webde gömme, değilse YouTube uygulaması/tarayıcı.
+  /// Fragmanı başlatır: gömme (uygulama içi). [gomulu] false ise yedek
+  /// dışarı açma — üretim bunu kullanmaz.
   Future<void> _oynat() async {
     if (_gomulu) {
       setState(() => _oynuyor = true);

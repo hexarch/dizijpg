@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.65.0+113 (Android fragman uygulama içinde)
+Android/iOS fragmanı YouTube uygulamasına atmadan WebView gömer
+(`intent://` ve `/watch` kesilir). Web iframe aynı. Kapak + oynat durur;
+kaydırınca ses kesilir. APK `~/Desktop/dizijpg-1.65.0+113.apk` (89 MB,
+arm+arm64, imzalı). Play AAB yok.
+`main.35cb6f57f963.dart.js` (eski `429d476aa0a5` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.65.0+113 · giriş testkullanici ·
+widget: oynatınca `FragmanGomucu`, `disariAc` 0 · `intent://` false ·
+hashed JS `immutable` + `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB 1.64.0+112 (fragman fotoğrafları silmesin)
 Fragman kahramanın **yerine** geçmişti (Silo masaüstü: yalnız video).
 Video en üstte durur; kapak kaydırıcısı / bölüm kareleri **altında** eskisi

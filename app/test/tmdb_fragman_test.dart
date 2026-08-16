@@ -129,7 +129,41 @@ void main() {
       contains('autoplay=1'),
     );
     expect(youtubeGommeUrl('abcDEF12345'), isNot(contains('autoplay=1')));
+    expect(
+      youtubeGommeUrl('abcDEF12345'),
+      contains('origin=https://dizijpg.com'),
+    );
+    expect(
+      youtubeGommeUrl('abcDEF12345', gizlilikDostu: false),
+      contains('www.youtube.com/embed/'),
+    );
     expect(youtubeIzleUri('abcDEF12345').host, 'www.youtube.com');
+  });
+
+  test('gömme WebView YouTube uygulamasına kaçmaz', () {
+    expect(
+      fragmanGommeIstek('https://www.youtube.com/embed/abcDEF12345?autoplay=1'),
+      isTrue,
+    );
+    expect(
+      fragmanGommeIstek('https://www.youtube-nocookie.com/embed/abcDEF12345'),
+      isTrue,
+    );
+    expect(
+      fragmanGommeIstek('https://i.ytimg.com/vi/abc/hqdefault.jpg'),
+      isTrue,
+    );
+    expect(
+      fragmanGommeIstek('intent://www.youtube.com/watch?v=abc#Intent;end'),
+      isFalse,
+    );
+    expect(fragmanGommeIstek('vnd.youtube:abcDEF12345'), isFalse);
+    expect(
+      fragmanGommeIstek('https://www.youtube.com/watch?v=abcDEF12345'),
+      isFalse,
+    );
+    expect(fragmanGommeIstek('https://youtu.be/abcDEF12345'), isFalse);
+    expect(fragmanGommeIstek('https://evil.example/embed/x'), isFalse);
   });
 
   test('tmdbVideoDilParametre kullanıcı dili + en + null', () {

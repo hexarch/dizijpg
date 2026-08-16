@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-/// Web OLMAYAN derleme (Android/iOS ve `flutter test` VM): platform görünümü
-/// yok. Oynatma [FragmanOynatici] içinde YouTube'a yönlendirilir; burası
-/// yalnız içe aktarma simetrisi için duran bir yer tutucu.
+/// Ne web ne de dart:io (ör. bazı test/wasm hedefleri): platform görünümü
+/// yok. Android/iOS `fragman_gom_io.dart` ile WebView gömer.
 class FragmanGomucu extends StatelessWidget {
   final String youtubeId;
 

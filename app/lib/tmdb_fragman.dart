@@ -29,16 +29,78 @@ String tmdbVideoDilParametre([String? dil]) =>
 String youtubeKapakUrl(String youtubeId) =>
     'https://i.ytimg.com/vi/$youtubeId/hqdefault.jpg';
 
-/// YouTube izleme adresi (mobilde uygulama/tarayıcıya açılır).
+/// YouTube izleme adresi (yedek; gömme başarısız olursa dışarı açılmaz —
+/// kullanıcı Android'de uygulamada kalsın diye).
 Uri youtubeIzleUri(String youtubeId) =>
     Uri.parse('https://www.youtube.com/watch?v=$youtubeId');
 
-/// Gizlilik dostu gömme adresi. [otomatik] yalnız kullanıcı dokunduktan
-/// sonra açılır — tarayıcı sessiz autoplay'i bile veri yer.
-String youtubeGommeUrl(String youtubeId, {bool otomatik = false}) {
+/// Gömme WebView'in YouTube uygulamasına kaçmasını engellemek için
+/// izin verilen istekler. `intent://` ve `/watch` dışarı atar.
+bool fragmanGommeIstek(String url) {
+  final kucuk = url.trim().toLowerCase();
+  if (kucuk.isEmpty) return false;
+  if (kucuk.startsWith('intent:') ||
+      kucuk.startsWith('market:') ||
+      kucuk.startsWith('youtube:') ||
+      kucuk.startsWith('vnd.youtube') ||
+      kucuk.startsWith('vnd.android')) {
+    return false;
+  }
+  final u = Uri.tryParse(url);
+  if (u == null) return false;
+  final sema = u.scheme.toLowerCase();
+  if (sema == 'about' || sema == 'data' || sema == 'blob') return true;
+  if (sema != 'http' && sema != 'https') return false;
+  final host = u.host.toLowerCase();
+  if (host.isEmpty) return false;
+  const kokler = <String>[
+    'youtube.com',
+    'youtube-nocookie.com',
+    'youtu.be',
+    'ytimg.com',
+    'ggpht.com',
+    'googlevideo.com',
+    'google.com',
+    'googleapis.com',
+    'gstatic.com',
+    'googleusercontent.com',
+    'doubleclick.net',
+  ];
+  var hostIzinli = false;
+  for (final k in kokler) {
+    if (host == k || host.endsWith('.$k')) {
+      hostIzinli = true;
+      break;
+    }
+  }
+  if (!hostIzinli) return false;
+  if (host == 'youtu.be' || host.endsWith('.youtu.be')) return false;
+  if (host == 'youtube.com' || host.endsWith('.youtube.com')) {
+    final yol = u.path.toLowerCase();
+    if (yol.contains('/watch') ||
+        yol.contains('/shorts') ||
+        yol.contains('/live/') ||
+        yol.contains('/redirect')) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/// Gömme adresi. [gizlilikDostu] web iframe için nocookie; Android WebView
+/// Error 153 verdiği için orada `youtube.com/embed` kullanılır.
+/// [otomatik] yalnız kullanıcı dokunduktan sonra — sessiz autoplay yok.
+String youtubeGommeUrl(
+  String youtubeId, {
+  bool otomatik = false,
+  bool gizlilikDostu = true,
+}) {
+  final host = gizlilikDostu ? 'www.youtube-nocookie.com' : 'www.youtube.com';
   final q = StringBuffer(
-    'https://www.youtube-nocookie.com/embed/$youtubeId'
-    '?rel=0&modestbranding=1&playsinline=1',
+    'https://$host/embed/$youtubeId'
+    '?rel=0&modestbranding=1&playsinline=1'
+    '&origin=https://dizijpg.com'
+    '&widget_referrer=https://dizijpg.com',
   );
   if (otomatik) q.write('&autoplay=1');
   return q.toString();
