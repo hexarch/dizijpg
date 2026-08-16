@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/bolum.dart';
 import 'package:dizijpg/ekranlar/fragman.dart';
+import 'package:dizijpg/ekranlar/kahraman_karisik.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -99,7 +100,8 @@ void main() {
     await _kur(tester);
 
     expect(find.byType(FragmanOynatici), findsOneWidget);
-    expect(find.byType(AkisMedya), findsOneWidget);
+    expect(find.byType(KahramanKarisik), findsOneWidget);
+    expect(find.byType(AkisMedya), findsNothing);
     expect(find.text('Pilot'), findsOneWidget);
   });
 
@@ -135,7 +137,8 @@ void main() {
     expect(find.byType(FragmanOynatici), findsOneWidget);
     final f = tester.widget<FragmanOynatici>(find.byType(FragmanOynatici));
     expect(f.youtubeId, 'seasonTrlr1');
-    expect(find.byType(AkisMedya), findsOneWidget);
+    expect(find.byType(KahramanKarisik), findsOneWidget);
+    expect(find.byType(AkisMedya), findsNothing);
   });
 
   testWidgets('hiç Trailer yoksa kareler eskisi gibi durur', (tester) async {

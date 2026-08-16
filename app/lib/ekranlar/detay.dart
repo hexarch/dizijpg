@@ -10,8 +10,8 @@ import '../puan.dart';
 import '../tema.dart';
 import '../tmdb_bolum_puan.dart';
 import '../tmdb_fragman.dart';
-import 'fragman.dart';
 import 'giris_istem.dart';
+import 'kahraman_karisik.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
 import 'puan_dagilimi.dart';
@@ -356,8 +356,7 @@ class _DetayEkraniState extends State<DetayEkrani> {
     ),
   );
 
-  /// Kapak kaydırıcısı / tek görsel. Fragman varken de AYNI galeri durur —
-  /// video fotoğrafların yerine geçmez.
+  /// Kapak kaydırıcısı / tek görsel (fragman yokken kahraman bu).
   Widget _kapakZemini({required String? arka, required double sayacUstBosluk}) {
     if (_kapaklar.length > 1) {
       return AkisMedya(
@@ -744,9 +743,10 @@ class _DetayEkraniState extends State<DetayEkrani> {
     // görsel büyütülüp gözle görülür bulanıklaşıyordu. w1280 tam oturuyor;
     // "original" birkaç MB olabildiği için tercih edilmedi.
     final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w1280');
-    // Resmi fragman (Trailer/Teaser) varsa EN ÜSTE video; kapak galerisi
-    // durur (video fotoğrafların yerine geçmez). Clip spoiler, seçilmez.
-    final fragman = fragmanSec(c['videos'], dil: Ceviri.dil.value);
+    // Resmi fragmanlar (Trailer/Teaser) kapaklarla TEK kaydırıcıda karışır:
+    // video, foto, video… Clip spoiler, seçilmez.
+    final videolar = fragmanlariSec(c['videos'], dil: Ceviri.dil.value);
+    final karisik = karisikKahramanDiz(videolar, kapakUrlleri);
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
     // Md. 49 — ekip ve yapım firmaları. İkisi de EKSİK gelebilir (TMDB'de
     // olmayan alanlar); boş dönerse aşağıdaki bölümler hiç çizilmez.
@@ -790,20 +790,23 @@ class _DetayEkraniState extends State<DetayEkrani> {
         cocuk: CustomScrollView(
           slivers: [
             // Fragman iframe webde platform görünümüdür: SliverAppBar'ın üstüne
-            // binerse geri tuşu tıklanamaz. Fragman varsa çubuk örtmez; kapak
-            // galerisi VİDEONUN ALTINDA eskisi gibi durur (fotoğraflar silinmez).
-            if (fragman != null) ...[
+            // binerse geri tuşu tıklanamaz. Video varsa çubuk örtmez; fragman
+            // ve kapaklar AYNI 16:9 kaydırıcıda (video, foto, video…).
+            if (videolar.isNotEmpty) ...[
               const SliverAppBar(pinned: true, actions: [GirisEylemi()]),
               SliverToBoxAdapter(
-                child: FragmanOynatici(youtubeId: fragman.youtubeId),
-              ),
-              if (_kapaklar.isNotEmpty || arka != null)
-                SliverToBoxAdapter(
-                  child: SizedBox(
-                    height: 220,
-                    child: _kapakZemini(arka: arka, sayacUstBosluk: 8),
-                  ),
+                child: KahramanKarisik(
+                  ogeler: karisik,
+                  onFotoAc: (url) {
+                    final i = kapakUrlleri.indexOf(url);
+                    medyaGoster(
+                      context,
+                      kapakUrlleri,
+                      baslangic: i < 0 ? 0 : i,
+                    );
+                  },
                 ),
+              ),
             ] else
               SliverAppBar(
                 expandedHeight: 220,

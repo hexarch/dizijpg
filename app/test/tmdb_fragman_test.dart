@@ -34,6 +34,39 @@ void main() {
     expect(f, isNotNull);
     expect(f!.youtubeId, 'trailerKey1');
     expect(f.tur, 'Trailer');
+    final hepsi = fragmanlariSec({
+      'results': [
+        {
+          'site': 'YouTube',
+          'type': 'Teaser',
+          'key': 'teaserKey12',
+          'official': true,
+          'iso_639_1': 'tr',
+          'name': 'Teaser',
+        },
+        {
+          'site': 'YouTube',
+          'type': 'Trailer',
+          'key': 'trailerKey1',
+          'official': true,
+          'iso_639_1': 'tr',
+          'name': 'Resmi fragman',
+        },
+        {
+          'site': 'YouTube',
+          'type': 'Trailer',
+          'key': 'enTrailer12',
+          'official': true,
+          'iso_639_1': 'en',
+          'name': 'Official Trailer',
+        },
+      ],
+    }, dil: 'tr');
+    expect(hepsi.map((x) => x.youtubeId).toList(), [
+      'trailerKey1',
+      'enTrailer12',
+      'teaserKey12',
+    ]);
   });
 
   test('TR yoksa resmi İngilizce Trailer seçilir', () {
@@ -169,5 +202,54 @@ void main() {
   test('tmdbVideoDilParametre kullanıcı dili + en + null', () {
     expect(tmdbVideoDilParametre('tr'), 'include_video_language=tr,en,null');
     expect(tmdbVideoDilParametre('ja'), 'include_video_language=ja,en,null');
+  });
+
+  test('fragman tavanı 5, Clip sayılmaz', () {
+    final hepsi = fragmanlariSec({
+      'results': [
+        for (var i = 0; i < 8; i++)
+          {
+            'site': 'YouTube',
+            'type': 'Trailer',
+            'key': 'trailKey$i$i$i$i',
+            'official': true,
+            'iso_639_1': 'en',
+          },
+        {
+          'site': 'YouTube',
+          'type': 'Clip',
+          'key': 'clipKey9999',
+          'official': true,
+          'iso_639_1': 'en',
+        },
+      ],
+    });
+    expect(hepsi, hasLength(5));
+    expect(hepsi.any((f) => f.youtubeId.startsWith('clip')), isFalse);
+  });
+
+  test('karışık dizi: video, foto, video, foto', () {
+    final v = [
+      const TmdbFragman(youtubeId: 'vidAAAAA1'),
+      const TmdbFragman(youtubeId: 'vidBBBBB2'),
+    ];
+    final karisik = karisikKahramanDiz(v, ['/a.jpg', '/b.jpg', '/c.jpg']);
+    expect(karisik.map((o) => o.youtubeId ?? o.url).toList(), [
+      'vidAAAAA1',
+      '/a.jpg',
+      'vidBBBBB2',
+      '/b.jpg',
+      '/c.jpg',
+    ]);
+  });
+
+  test('fragmanlariBirlestir tekrarı atlar, tavanı keser', () {
+    final a = [const TmdbFragman(youtubeId: 'aaaaaa1')];
+    final b = [
+      const TmdbFragman(youtubeId: 'aaaaaa1'),
+      const TmdbFragman(youtubeId: 'bbbbbb2'),
+    ];
+    final birlesik = fragmanlariBirlestir(a, b);
+    expect(birlesik.map((f) => f.youtubeId).toList(), ['aaaaaa1', 'bbbbbb2']);
   });
 }

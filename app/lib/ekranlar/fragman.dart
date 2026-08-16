@@ -21,6 +21,9 @@ class FragmanOynatici extends StatefulWidget {
   /// [disariAc] çağrılır; üretimde varsayılan gömmedir.
   final bool? gomulu;
 
+  /// Kaydırıcıda görünür kare değilse gömme sökülür (ses arkada kalmaz).
+  final bool aktif;
+
   /// Yalnız [gomulu] açıkça false iken. Testler boş fonksiyon verir ki
   /// `url_launcher` bağlama istemesin.
   final Future<void> Function(Uri uri)? disariAc;
@@ -29,6 +32,7 @@ class FragmanOynatici extends StatefulWidget {
     super.key,
     required this.youtubeId,
     this.gomulu,
+    this.aktif = true,
     this.disariAc,
   });
 
@@ -41,9 +45,18 @@ class _FragmanOynaticiState extends State<FragmanOynatici> {
 
   bool get _gomulu => widget.gomulu ?? true;
 
+  @override
+  void didUpdateWidget(FragmanOynatici eski) {
+    super.didUpdateWidget(eski);
+    if (!widget.aktif && _oynuyor) {
+      _oynuyor = false;
+    }
+  }
+
   /// Fragmanı başlatır: gömme (uygulama içi). [gomulu] false ise yedek
   /// dışarı açma — üretim bunu kullanmaz.
   Future<void> _oynat() async {
+    if (!widget.aktif) return;
     if (_gomulu) {
       setState(() => _oynuyor = true);
       return;
@@ -72,7 +85,7 @@ class _FragmanOynaticiState extends State<FragmanOynatici> {
         aspectRatio: 16 / 9,
         child: ColoredBox(
           color: DiziRenkler.kart,
-          child: _oynuyor && _gomulu
+          child: _oynuyor && _gomulu && widget.aktif
               ? FragmanGomucu(youtubeId: widget.youtubeId)
               : _kapak(),
         ),

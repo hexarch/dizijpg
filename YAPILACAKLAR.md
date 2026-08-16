@@ -1,6 +1,15 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.66.0+114 (fragman+kapak tek kaydırıcı)
+Dizi/film/bölüm kahramanı tek 16:9 kare: video, foto, video… (en fazla
+5 Trailer/Teaser, Clip yok). Kaydırınca çalan gömme sökülür. Noktalar
+tıklanır. APK `~/Desktop/dizijpg-1.66.0+114.apk` (89 MB, imzalı).
+`main.ed8a38965adb.dart.js` (eski `35cb6f57f963` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.66.0+114 · giriş testkullanici ·
+widget: 1/3→2/3→3/3 · oynat+kaydır gömme yok · hashed JS `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.65.0+113 (Android fragman uygulama içinde)
 Android/iOS fragmanı YouTube uygulamasına atmadan WebView gömer
 (`intent://` ve `/watch` kesilir). Web iframe aynı. Kapak + oynat durur;

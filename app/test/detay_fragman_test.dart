@@ -4,6 +4,7 @@ import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/detay.dart';
 import 'package:dizijpg/ekranlar/fragman.dart';
 import 'package:dizijpg/ekranlar/fragman_gom.dart';
+import 'package:dizijpg/ekranlar/kahraman_karisik.dart';
 import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -90,8 +91,10 @@ void main() {
 
     expect(find.byType(FragmanOynatici), findsOneWidget);
     expect(find.byIcon(Icons.play_arrow), findsOneWidget);
-    expect(find.byType(AkisMedya), findsOneWidget);
+    expect(find.byType(KahramanKarisik), findsOneWidget);
+    expect(find.byType(AkisMedya), findsNothing);
     expect(find.text('Breaking Bad'), findsOneWidget);
+    expect(find.text('1/3'), findsOneWidget);
   });
 
   testWidgets('yalnız Clip kahraman olmaz, kapaklar durur', (tester) async {

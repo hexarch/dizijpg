@@ -12,6 +12,20 @@ class TmdbFragman {
   final String? tur;
 }
 
+/// Kahraman kaydırıcısındaki bir kare: YouTube fragmanı veya kapak fotoğrafı.
+class KahramanOge {
+  const KahramanOge.foto(this.url) : youtubeId = null;
+  const KahramanOge.video(this.youtubeId) : url = null;
+
+  final String? url;
+  final String? youtubeId;
+
+  bool get videoMi => youtubeId != null;
+}
+
+/// Kahramanda en fazla bu kadar Trailer/Teaser. Clip spoiler, alınmaz.
+const fragmanTavani = 5;
+
 /// YouTube video kimliği: TMDB `key` alanı. XSS'e iframe `src` kaçmasın
 /// diye harf/rakam/tire/altçizgi dışında bir şey kabul edilmez.
 final _youtubeId = RegExp(r'^[A-Za-z0-9_-]{6,20}$');
@@ -106,27 +120,77 @@ String youtubeGommeUrl(
   return q.toString();
 }
 
-/// TMDB `videos` gövdesinden (map.results veya düz liste) en uygun fragmanı
-/// seçer. Yoksa null — çağıran kapak galerisine düşer, boş kutu çizilmez.
-TmdbFragman? fragmanSec(dynamic videos, {String dil = 'tr'}) {
+/// TMDB `videos` gövdesinden Trailer/Teaser listesi (puana göre, tekrarsız).
+List<TmdbFragman> fragmanlariSec(dynamic videos, {String dil = 'tr'}) {
   final ham = videos is Map ? videos['results'] : videos;
-  if (ham is! List) return null;
-  TmdbFragman? enIyi;
-  var enPuan = -1;
+  if (ham is! List) return const [];
+  final adaylar = <TmdbFragman>[];
+  final puanlar = <int>[];
+  final gorulen = <String>{};
   for (final satir in ham) {
     if (satir is! Map) continue;
     final puan = _fragmanPuani(satir, dil);
-    if (puan <= enPuan) continue;
+    if (puan < 0) continue;
     final id = satir['key'] as String?;
-    if (id == null || !youtubeIdGecerli(id)) continue;
-    enPuan = puan;
-    enIyi = TmdbFragman(
-      youtubeId: id,
-      ad: satir['name'] as String?,
-      tur: satir['type'] as String?,
+    if (id == null || !youtubeIdGecerli(id) || !gorulen.add(id)) continue;
+    adaylar.add(
+      TmdbFragman(
+        youtubeId: id,
+        ad: satir['name'] as String?,
+        tur: satir['type'] as String?,
+      ),
     );
+    puanlar.add(puan);
   }
-  return enIyi;
+  final sira = [for (var i = 0; i < adaylar.length; i++) i]
+    ..sort((a, b) => puanlar[b].compareTo(puanlar[a]));
+  return [for (final i in sira.take(fragmanTavani)) adaylar[i]];
+}
+
+/// En uygun tek fragman; yoksa null.
+TmdbFragman? fragmanSec(dynamic videos, {String dil = 'tr'}) {
+  final hepsi = fragmanlariSec(videos, dil: dil);
+  return hepsi.isEmpty ? null : hepsi.first;
+}
+
+/// Bölüm listesi önde, sezondakiler tekrarsız eklenir.
+List<TmdbFragman> fragmanlariBirlestir(
+  List<TmdbFragman> once,
+  List<TmdbFragman> sonra,
+) {
+  final ids = {for (final f in once) f.youtubeId};
+  final sonuc = [...once];
+  for (final f in sonra) {
+    if (ids.add(f.youtubeId)) sonuc.add(f);
+    if (sonuc.length >= fragmanTavani) break;
+  }
+  return sonuc;
+}
+
+/// Video, foto, video, foto… Fazla olan tür sonda devam eder.
+List<KahramanOge> karisikKahramanDiz(
+  List<TmdbFragman> videolar,
+  List<String> fotoUrlleri,
+) {
+  if (videolar.isEmpty) {
+    return [for (final u in fotoUrlleri) KahramanOge.foto(u)];
+  }
+  if (fotoUrlleri.isEmpty) {
+    return [for (final v in videolar) KahramanOge.video(v.youtubeId)];
+  }
+  final n = videolar.length > fotoUrlleri.length
+      ? videolar.length
+      : fotoUrlleri.length;
+  final sonuc = <KahramanOge>[];
+  for (var i = 0; i < n; i++) {
+    if (i < videolar.length) {
+      sonuc.add(KahramanOge.video(videolar[i].youtubeId));
+    }
+    if (i < fotoUrlleri.length) {
+      sonuc.add(KahramanOge.foto(fotoUrlleri[i]));
+    }
+  }
+  return sonuc;
 }
 
 /// Trailer > Teaser; resmi; kullanıcı dili > İngilizce. Diğer türler -1.

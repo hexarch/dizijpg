@@ -8,8 +8,8 @@ import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../tema.dart';
 import '../tmdb_fragman.dart';
-import 'fragman.dart';
 import 'giris_istem.dart';
+import 'kahraman_karisik.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
 import 'tepki.dart';
@@ -41,8 +41,8 @@ class _BolumEkraniState extends State<BolumEkrani> {
   /// Bölüme ait kare (still) yolları; ilki bölümün kapak karesidir.
   List<String> _kareler = const [];
 
-  /// Bölüm veya sezon Trailer/Teaser'ı (Clip spoiler, kahramana konmaz).
-  TmdbFragman? _fragman;
+  /// Bölüm + sezon Trailer/Teaser'ları (Clip spoiler, kahramana konmaz).
+  List<TmdbFragman> _fragmanlar = const [];
   String? _hata;
   late bool _izlendi = widget.izlendi;
 
@@ -75,9 +75,10 @@ class _BolumEkraniState extends State<BolumEkrani> {
       setState(() {
         _bolum = b;
         _kareler = _kareleriCikar(b, sonuc[1]);
-        _fragman =
-            fragmanSec(b['videos'], dil: Ceviri.dil.value) ??
-            fragmanSec(sonuc[2], dil: Ceviri.dil.value);
+        _fragmanlar = fragmanlariBirlestir(
+          fragmanlariSec(b['videos'], dil: Ceviri.dil.value),
+          fragmanlariSec(sonuc[2], dil: Ceviri.dil.value),
+        );
       });
     } catch (e) {
       if (mounted) setState(() => _hata = e.toString());
@@ -166,10 +167,24 @@ class _BolumEkraniState extends State<BolumEkrani> {
       govde = ListView(
         padding: EdgeInsets.only(bottom: altGuvenli(context)),
         children: [
-          // Resmi fragman en başta; kareler (fotoğraflar) durur, video
-          // onların yerine geçmez.
-          if (_fragman != null) FragmanOynatici(youtubeId: _fragman!.youtubeId),
-          if (_kareler.length > 1)
+          // Fragman ve kareler tek kaydırıcıda: video, foto, video…
+          if (_fragmanlar.isNotEmpty)
+            KahramanKarisik(
+              ogeler: karisikKahramanDiz(_fragmanlar, [
+                for (final y in _kareler) posterUrl(y, boyut: 'w780')!,
+              ]),
+              onFotoAc: (url) {
+                final fotolar = [
+                  for (final y in _kareler) posterUrl(y, boyut: 'w1280')!,
+                ];
+                final kucuk = [
+                  for (final y in _kareler) posterUrl(y, boyut: 'w780')!,
+                ];
+                final i = kucuk.indexOf(url);
+                medyaGoster(context, fotolar, baslangic: i < 0 ? 0 : i);
+              },
+            )
+          else if (_kareler.length > 1)
             AkisMedya(
               urller: [for (final y in _kareler) posterUrl(y, boyut: 'w780')!],
               oran: 16 / 9,
