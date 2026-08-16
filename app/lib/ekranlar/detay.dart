@@ -356,6 +356,37 @@ class _DetayEkraniState extends State<DetayEkrani> {
     ),
   );
 
+  /// Kapak kaydırıcısı / tek görsel. Fragman varken de AYNI galeri durur —
+  /// video fotoğrafların yerine geçmez.
+  Widget _kapakZemini({required String? arka, required double sayacUstBosluk}) {
+    if (_kapaklar.length > 1) {
+      return AkisMedya(
+        urller: kapakUrlleri,
+        tumunuKapla: true,
+        sayacUstBosluk: sayacUstBosluk,
+        gorselUstu: _karartma,
+        onAc: (i) => medyaGoster(context, kapakUrlleri, baslangic: i),
+      );
+    }
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        if (arka != null)
+          GestureDetector(
+            onTap: () => medyaGoster(context, [arka]),
+            child: CachedNetworkImage(
+              imageUrl: arka,
+              httpHeaders: gorselBasliklari(arka),
+              fit: BoxFit.cover,
+            ),
+          )
+        else
+          Container(color: DiziRenkler.kart),
+        IgnorePointer(child: _karartma),
+      ],
+    );
+  }
+
   Future<void> _benimYenile() async {
     if (!Api.girisli) return; // uç 401 döner; oturumsuzda kişisel veri yok
     try {
@@ -713,8 +744,8 @@ class _DetayEkraniState extends State<DetayEkrani> {
     // görsel büyütülüp gözle görülür bulanıklaşıyordu. w1280 tam oturuyor;
     // "original" birkaç MB olabildiği için tercih edilmedi.
     final arka = posterUrl(c['backdrop_path'] as String?, boyut: 'w1280');
-    // Resmi fragman (Trailer/Teaser) varsa kahraman videodur; yoksa kapak
-    // galerisi eskisi gibi durur. Clip'ler spoiler olduğu için seçilmez.
+    // Resmi fragman (Trailer/Teaser) varsa EN ÜSTE video; kapak galerisi
+    // durur (video fotoğrafların yerine geçmez). Clip spoiler, seçilmez.
     final fragman = fragmanSec(c['videos'], dil: Ceviri.dil.value);
     final kadro = ((c['credits']?['cast'] as List<dynamic>?) ?? []);
     // Md. 49 — ekip ve yapım firmaları. İkisi de EKSİK gelebilir (TMDB'de
@@ -759,13 +790,20 @@ class _DetayEkraniState extends State<DetayEkrani> {
         cocuk: CustomScrollView(
           slivers: [
             // Fragman iframe webde platform görünümüdür: SliverAppBar'ın üstüne
-            // binerse geri tuşu tıklanamaz. Bu yüzden fragman AYRI sliver,
-            // çubuk örtmez. Fragman yoksa eski örtülü kapak galerisi durur.
+            // binerse geri tuşu tıklanamaz. Fragman varsa çubuk örtmez; kapak
+            // galerisi VİDEONUN ALTINDA eskisi gibi durur (fotoğraflar silinmez).
             if (fragman != null) ...[
               const SliverAppBar(pinned: true, actions: [GirisEylemi()]),
               SliverToBoxAdapter(
                 child: FragmanOynatici(youtubeId: fragman.youtubeId),
               ),
+              if (_kapaklar.isNotEmpty || arka != null)
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 220,
+                    child: _kapakZemini(arka: arka, sayacUstBosluk: 8),
+                  ),
+                ),
             ] else
               SliverAppBar(
                 expandedHeight: 220,
@@ -774,48 +812,12 @@ class _DetayEkraniState extends State<DetayEkrani> {
                 // ister); bu buton olmasa sayfada çıkışsız kalırdı.
                 actions: const [GirisEylemi()],
                 flexibleSpace: FlexibleSpaceBar(
-                  // Kaydırma yana; şerit yukarı kayarken ölçeklenseydi kaydırıcının
-                  // noktaları da kayar, parmağın altındaki kare oynardı.
                   collapseMode: CollapseMode.none,
-                  // Birden çok kapak varsa yana kaydırmalı görünüm (nokta + sayaç);
-                  // tek kapakta ESKİ sabit görsel, hiç kapak yoksa boş zemin —
-                  // hiçbirinde boş kutu ya da hata metni çıkmaz.
-                  background: _kapaklar.length > 1
-                      ? AkisMedya(
-                          urller: kapakUrlleri,
-                          tumunuKapla: true,
-                          // Rozet üst çubuğun altına insin (üstteki düğmelerle
-                          // çakışmasın); çentik/durum çubuğu da hesaba katılır.
-                          sayacUstBosluk:
-                              MediaQuery.paddingOf(context).top +
-                              kToolbarHeight,
-                          // Karartma göstergelerin ALTINA çizilir; en üste konsaydı
-                          // opak alt ucu noktaları yutardı.
-                          gorselUstu: _karartma,
-                          // DOKUNULAN kapak açılır: sabit 0 verilseydi kaydırıp
-                          // üçüncü kapağa dokunan kullanıcı birinciyi görürdü.
-                          onAc: (i) =>
-                              medyaGoster(context, kapakUrlleri, baslangic: i),
-                        )
-                      : Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            if (arka != null)
-                              GestureDetector(
-                                onTap: () => medyaGoster(context, [arka]),
-                                child: CachedNetworkImage(
-                                  imageUrl: arka,
-                                  httpHeaders: gorselBasliklari(arka),
-                                  fit: BoxFit.cover,
-                                ),
-                              )
-                            else
-                              Container(color: DiziRenkler.kart),
-                            // Karartma yalnız SÜStür; dokunuşu yutup görseli
-                            // açılmaz yapmasın diye tıklamaya kapalı.
-                            IgnorePointer(child: _karartma),
-                          ],
-                        ),
+                  background: _kapakZemini(
+                    arka: arka,
+                    sayacUstBosluk:
+                        MediaQuery.paddingOf(context).top + kToolbarHeight,
+                  ),
                 ),
               ),
             SliverToBoxAdapter(

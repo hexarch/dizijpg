@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.64.0+112 (fragman fotoğrafları silmesin)
+Fragman kahramanın **yerine** geçmişti (Silo masaüstü: yalnız video).
+Video en üstte durur; kapak kaydırıcısı / bölüm kareleri **altında** eskisi
+gibi. Boş kapak kutusu yok. `web_brotli.sh`: 1 KB altı kaynakta eski `.br`
+silinir (SW sökücü 615 B + bayat `.br` = CF eski gövde).
+`main.429d476aa0a5.dart.js` (eski `897a620b8be9` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.64.0+112 · giriş testkullanici ·
+Silo 125988 Official Trailer + 44 backdrop · widget: fragman+AkisMedya
+birlikte · hashed JS `immutable` + `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB 1.63.0+111 (dizi/film/bölüm fragmanı kahramanda)
 Dizi ve film sayfasının en başında TMDB YouTube Trailer/Teaser; bölümde
 kendi fragmanı yoksa sezon fragmanı. Clip/BTS spoiler olduğu için

@@ -166,10 +166,10 @@ class _BolumEkraniState extends State<BolumEkrani> {
       govde = ListView(
         padding: EdgeInsets.only(bottom: altGuvenli(context)),
         children: [
-          // Resmi fragman varsa en başta video; yoksa kare kaydırıcısı.
-          if (_fragman != null)
-            FragmanOynatici(youtubeId: _fragman!.youtubeId)
-          else if (_kareler.length > 1)
+          // Resmi fragman en başta; kareler (fotoğraflar) durur, video
+          // onların yerine geçmez.
+          if (_fragman != null) FragmanOynatici(youtubeId: _fragman!.youtubeId),
+          if (_kareler.length > 1)
             AkisMedya(
               urller: [for (final y in _kareler) posterUrl(y, boyut: 'w780')!],
               oran: 16 / 9,

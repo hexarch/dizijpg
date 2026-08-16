@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// Bölüm kahramanı: Trailer/Teaser varsa video, yalnız Clip varsa kareler.
+/// Bölüm kahramanı: Trailer/Teaser EN ÜSTE; kareler (fotoğraflar) durur.
 const Size _ekran = Size(600, 900);
 
 Map<String, dynamic> _bolum({List<Map<String, Object>>? videolar}) => {
@@ -81,7 +81,7 @@ void main() {
     await Api.tokenYukle();
   });
 
-  testWidgets('bölüm Trailer kahramanda, kare kaydırıcısı yok', (tester) async {
+  testWidgets('bölüm Trailer üstte, kare kaydırıcısı da durur', (tester) async {
     _sunucu(
       bolum: _bolum(
         videolar: [
@@ -99,7 +99,7 @@ void main() {
     await _kur(tester);
 
     expect(find.byType(FragmanOynatici), findsOneWidget);
-    expect(find.byType(AkisMedya), findsNothing);
+    expect(find.byType(AkisMedya), findsOneWidget);
     expect(find.text('Pilot'), findsOneWidget);
   });
 
@@ -135,7 +135,7 @@ void main() {
     expect(find.byType(FragmanOynatici), findsOneWidget);
     final f = tester.widget<FragmanOynatici>(find.byType(FragmanOynatici));
     expect(f.youtubeId, 'seasonTrlr1');
-    expect(find.byType(AkisMedya), findsNothing);
+    expect(find.byType(AkisMedya), findsOneWidget);
   });
 
   testWidgets('hiç Trailer yoksa kareler eskisi gibi durur', (tester) async {

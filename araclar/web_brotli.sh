@@ -85,13 +85,19 @@ sayi=0
 for uzanti in "${UZANTILAR[@]}"; do
   while IFS= read -r dosya; do
     ham=$(stat -c%s "$dosya")
-    [ "$ham" -lt "$ASGARI_BAYT" ] && continue
+    # Eşik altındaki kaynakta ESKİ .br kalırsa nginx `brotli_static` onu
+    # yollar — 16 Ağu: SW sökücü 615 B, eşik 1024, eski .br CF'ye eski
+    # gövde servis etti (no-store BYPASS bile br'yi origin'den çekti).
+    if [ "$ham" -lt "$ASGARI_BAYT" ]; then
+      rm -f "${dosya}.br"
+      continue
+    fi
     gecici="${dosya}.br.gecici"
     brotli -f -q 11 -o "$gecici" "$dosya"
     br=$(stat -c%s "$gecici")
     # Sıkışmayan dosya için .br tutmak anlamsız (nginx büyük olanı yollar).
     if [ "$br" -ge "$ham" ]; then
-      rm -f "$gecici"
+      rm -f "$gecici" "${dosya}.br"
       continue
     fi
     # Atomik geçiş: nginx ya tam eski ya tam yeni gövdeyi görür.

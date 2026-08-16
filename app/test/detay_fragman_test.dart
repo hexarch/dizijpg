@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// Dizi/film detay kahramanı: resmi fragman varsa video, yoksa kapak galerisi.
+/// Dizi/film detay kahramanı: resmi fragman EN ÜSTE; kapak galerisi durur.
 const Size _ekran = Size(600, 900);
 
 Map<String, dynamic> _icerik({List<Map<String, Object>>? videolar}) => {
@@ -68,7 +68,7 @@ void main() {
     await Api.tokenYukle();
   });
 
-  testWidgets('resmi fragman kahramanda, kapak kaydırıcısı yok', (
+  testWidgets('resmi fragman üstte, kapak kaydırıcısı da durur', (
     tester,
   ) async {
     _sunucu(
@@ -89,7 +89,7 @@ void main() {
 
     expect(find.byType(FragmanOynatici), findsOneWidget);
     expect(find.byIcon(Icons.play_arrow), findsOneWidget);
-    expect(find.byType(AkisMedya), findsNothing);
+    expect(find.byType(AkisMedya), findsOneWidget);
     expect(find.text('Breaking Bad'), findsOneWidget);
   });
 
