@@ -650,7 +650,7 @@ class CevrimiciAvatar extends StatelessWidget {
   }
 }
 
-/// İkili sohbet: metin + fotoğraf/GIF + dizi/film kartı. 5 sn'de bir yenilenir.
+/// İkili sohbet: metin + fotoğraf/GIF + dizi/film kartı. 3 sn'de yoklanır.
 class SohbetEkrani extends StatefulWidget {
   final String kullaniciAdi;
 
@@ -675,7 +675,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   int? _duzenlenenId; // düzenlenen mesajın id'si (düzenleme modu)
   bool _cekiliyor = false;
   bool _bekleyenYukle = false;
-  int _yoklamaTur = 0;
+  bool _bekleyenTam = false;
+  int? _tepkiUcusId;
 
   /// Seçilmiş ama HENÜZ GÖNDERİLMEMİŞ dizi/film kartı (TMDB arama sonucu).
   ///
@@ -744,10 +745,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       upperBound: saatSutunuGenisligi,
     );
     _yukle(ilk: true);
-    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) {
-      _yoklamaTur++;
-      _yukle(tam: _yoklamaTur % 2 == 0);
-    });
+    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle());
     WidgetsBinding.instance.addObserver(this);
     SohbetOlaylari.nesil.addListener(_sohbetOlayi);
     // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
@@ -770,7 +768,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState durum) {
-    if (durum == AppLifecycleState.resumed) _yukle();
+    if (durum == AppLifecycleState.resumed) _yukle(tam: true);
   }
 
   /// FCM veya başka ekran yeni mesaj bildirdi: bu konuşmaysa hemen çek.
@@ -945,6 +943,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Future<void> _yukle({bool ilk = false, bool tam = false}) async {
     if (_cekiliyor) {
       _bekleyenYukle = true;
+      if (tam) _bekleyenTam = true;
       return;
     }
     _cekiliyor = true;
@@ -961,6 +960,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       final partner = d['partner'] as Map<String, dynamic>?;
       final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
+      final guncellemeler = d['guncellemeler'] as List<dynamic>? ?? const [];
 
       List<dynamic> birlesik;
       var yeniGeldi = false;
@@ -977,6 +977,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         ];
         yeniGeldi = ekler.isNotEmpty;
         birlesik = yeniGeldi ? [..._mesajlar, ...ekler] : _mesajlar;
+        if (guncellemeler.isNotEmpty) {
+          birlesik = _pencereyiUygula(birlesik, guncellemeler);
+        }
       } else {
         birlesik = gelen;
         yeniGeldi = gelen.length != _mesajlar.length;
@@ -1011,9 +1014,57 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       _cekiliyor = false;
       if (_bekleyenYukle && mounted) {
         _bekleyenYukle = false;
-        _yukle();
+        final tekrarTam = _bekleyenTam;
+        _bekleyenTam = false;
+        _yukle(tam: tekrarTam);
       }
     }
+  }
+
+  /// Yoklama penceresindeki tepki/okundu damgalarını mevcut balonlara yazar.
+  List<dynamic> _pencereyiUygula(
+    List<dynamic> mevcut,
+    List<dynamic> guncellemeler,
+  ) {
+    final harita = <int, Map<String, dynamic>>{};
+    for (final ham in guncellemeler) {
+      if (ham is! Map) continue;
+      final id = (ham['id'] as num?)?.toInt();
+      if (id == null) continue;
+      harita[id] = Map<String, dynamic>.from(ham);
+    }
+    if (harita.isEmpty) return mevcut;
+    return [
+      for (final ham in mevcut)
+        if (ham is Map<String, dynamic>)
+          _mesajiPenceredenYaz(ham, harita[(ham['id'] as num?)?.toInt()])
+        else
+          ham,
+    ];
+  }
+
+  Map<String, dynamic> _mesajiPenceredenYaz(
+    Map<String, dynamic> ham,
+    Map<String, dynamic>? g,
+  ) {
+    if (g == null) return ham;
+    final id = (ham['id'] as num?)?.toInt();
+    // Uçuştaki kendi tepkimiz bayat boş listeyle ezilmesin.
+    if (id != null && id == _tepkiUcusId) {
+      return {
+        ...ham,
+        'okundu': g['okundu'] ?? ham['okundu'],
+        'iletildi': g['iletildi'] ?? ham['iletildi'],
+        'duzenlendi': g['duzenlendi'] ?? ham['duzenlendi'],
+      };
+    }
+    return {
+      ...ham,
+      'okundu': g['okundu'] ?? ham['okundu'],
+      'iletildi': g['iletildi'] ?? ham['iletildi'],
+      'duzenlendi': g['duzenlendi'] ?? ham['duzenlendi'],
+      if (g['tepkiler'] is List) 'tepkiler': g['tepkiler'],
+    };
   }
 
   /// Kendi mesajını sil: önce yerelde kaldır (iyimser), hata olursa geri getir.
@@ -1038,10 +1089,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// Md. 43 — mesaja tepki ver / kaldır (`emoji: null` = kaldır).
   ///
   /// İYİMSER: rozet dokunur dokunmaz güncellenir, sunucu hata verirse liste
-  /// eski hâline döner + SnackBar. Beş saniyelik yoklama zaten sonra gerçek
-  /// hâli getiriyor; kullanıcı o kadar beklemesin.
+  /// eski hâline döner + SnackBar. Karşı tarafın tepkisi 3 sn'lik yoklama
+  /// `guncellemeler` ile gelir; kendi tepkimiz uçuşta ezilmesin.
   Future<void> _tepkiVer(int mesajId, String? emoji) async {
     final yedek = List<dynamic>.from(_mesajlar);
+    _tepkiUcusId = mesajId;
     setState(() {
       _mesajlar = [
         for (final ham in _mesajlar)
@@ -1058,7 +1110,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         'emoji': emoji,
       });
       // Sunucu KESİN listeyi döner (aynı biçim): karşı taraf aynı anda tepki
-      // vermişse sayaç 5 sn'lik yoklamayı beklemeden düzelir. Alan yoksa
+      // vermişse sayaç yoklamayı beklemeden düzelir. Alan yoksa
       // (eski sunucu) iyimser hâl korunur.
       final kesin = (d as Map<String, dynamic>?)?['tepkiler'];
       if (kesin is List && mounted) {
@@ -1079,6 +1131,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(e.toString())));
+    } finally {
+      if (_tepkiUcusId == mesajId) _tepkiUcusId = null;
     }
   }
 
@@ -1479,7 +1533,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                                 m['medya'] == null &&
                                 m['icerik_tur'] == null;
                             final baloncuk = _MesajBaloncugu(
-                              // Poll (5sn) listeyi yenilerken baloncuk id ile
+                              // Yoklama listeyi yenilerken baloncuk id ile
                               // eşleşsin: medya yeniden yüklenip kaymasın.
                               key: ValueKey(m['id'] ?? 'm$i'),
                               mesaj: m,

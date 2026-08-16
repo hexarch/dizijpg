@@ -1,6 +1,19 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.62.0+110 (sohbet emoji tepkisi yoklamada)
+Karşı tarafın (veya senin) mevcut balona bıraktığı emoji, gir-çık
+olmadan 3 sn yoklamada görünür. `GET /mesajlar/:ad?sonra=` yeni id’lere
+ek olarak son 50’nin `guncellemeler` penceresini (okundu/iletildi/
+duzenlendi + tepkiler) döner. Ayrı `GET /mesaj-tepki` yok. FCM yok
+(bilinçli). Backend var.
+`main.58473b80e6ee.dart.js` (eski `608eeb266977` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.62.0+110 · giriş testkullanici ·
+`/sohbetler` 23 · `/sohbetler/okunmamis` 20 ·
+`/mesajlar/demo.yusuf?sonra=126` mesajlar `[]` + `guncellemeler` 1 ·
+`GET /mesaj-tepki` 404 · hashed JS `immutable` + `br` MISS.
+
 ## 2026-08-16 — 🚀 WEB 1.61.0+109 (sohbet yoklama + ucuz mesaj imleci)
 Mesajlar listesi ve açık sohbet 3 sn'de sessiz yoklar; FCM gelince hemen
 tazelenir — gir-çık gerekmez. `GET /mesajlar/:ad?sonra=` yalnız yeni id;

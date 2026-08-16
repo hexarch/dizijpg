@@ -394,11 +394,13 @@ test('HIZ LİMİTİ: uca bağlı ve mesaj limitinden gevşek', () => {
 // ---------------------------------------------------------------------------
 test('OKUMA: tepkiler GET /mesajlar/:ad yanıtına ekleniyor (ayrı uç YOK)', () => {
   const govde = ucGovdesi('/mesajlar/:kullaniciAdi', 'get');
-  assert.match(govde, /await mesajTepkileri\(rows\.map\(\(r\) => r\.id\), req\.kullanici\.id\)/,
+  assert.match(govde, /await mesajTepkileri\(/,
     'sayfa tepkileri toplanmıyor');
   assert.match(govde, /for \(const r of rows\) r\.tepkiler = tepkiHaritasi\[r\.id\] \|\| \[\];/,
     'tepkisi olmayan mesaj `tepkiler: []` almıyor — istemcide null denetimi gerekir');
-  // Sohbet 5 sn'de bir yokluyor: AYRI bir tepki okuma ucu yük ikiye katlardı.
+  // Yoklama `sonra` ile yalnız yeni id verir: mevcut balonun tepkisi
+  // `guncellemeler` penceresinden birleşir. Ayrı GET /mesaj-tepki YOK.
+  assert.match(govde, /guncellemeler/, 'yoklama tepki penceresi yok');
   assert.doesNotMatch(KAYNAK, /app\.get\('\/mesaj-tepki/,
     'ayrı tepki okuma ucu eklenmiş — yoklama yükü iki katına çıkar');
 });

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/sohbet.dart';
+import 'package:dizijpg/ekranlar/tepki.dart';
 import 'package:dizijpg/sohbet_olay.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -204,6 +205,74 @@ void main() {
     expect(yollar, contains('sonra=10'));
     expect(find.text('sonra geldi'), findsOneWidget);
     expect(find.text('ilk'), findsOneWidget);
+    await _kapat(tester);
+  });
+
+  testWidgets('yoklama karşı tepki rozetini gir-çık olmadan gösterir', (
+    tester,
+  ) async {
+    Api.istemci = MockClient((istek) async {
+      if (istek.url.path.contains('/mesajlar/')) {
+        final sonra = istek.url.queryParameters['sonra'];
+        return _json({
+          'mesajlar': sonra == null
+              ? [_mesaj(10, metin: 'selam')]
+              : <dynamic>[],
+          'guncellemeler': sonra == null
+              ? <dynamic>[]
+              : [
+                  {
+                    'id': 10,
+                    'okundu': false,
+                    'iletildi': false,
+                    'duzenlendi': false,
+                    'tepkiler': [
+                      {'emoji': '❤️', 'adet': 1, 'benim': false},
+                    ],
+                  },
+                ],
+          'icerikler': const <String, dynamic>{},
+          'gonderiler': const <String, dynamic>{},
+          'partner': const {'son_gorulme': null, 'avatar': null},
+          'yaziyor': false,
+        });
+      }
+      return _json(const {});
+    });
+    SharedPreferences.setMockInitialValues({'token': 'sahte'});
+    await Api.tokenYukle();
+    tester.view
+      ..devicePixelRatio = 1.0
+      ..physicalSize = const Size(390, 844);
+    addTearDown(tester.view.reset);
+
+    final oturum = Oturum()..kullanici = {'id': 1, 'kullanici_adi': 'ben'};
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: GoRouter(
+            initialLocation: '/sohbet/ayse',
+            routes: [
+              GoRoute(
+                path: '/sohbet/:ad',
+                builder: (_, s) =>
+                    SohbetEkrani(kullaniciAdi: s.pathParameters['ad']!),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('selam'), findsOneWidget);
+    expect(find.byType(TepkiIkonu), findsNothing);
+
+    await tester.pump(sohbetYoklamaAraligi);
+    await tester.pump();
+    expect(find.byType(TepkiIkonu), findsOneWidget);
+    expect(find.text('selam'), findsOneWidget);
     await _kapat(tester);
   });
 }

@@ -191,7 +191,8 @@ void main() {
     expect(find.text('Mesajı sil'), findsOneWidget);
 
     await tester.tap(find.byType(TepkiIkonu).at(2)); // 😂 (kalp, 😍, 😂)
-    await tester.pumpAndSettle();
+    // Rozet `oynat:true` sonsuz Lottie ticker'ı kurar; pumpAndSettle bitmez.
+    await tester.pump(const Duration(milliseconds: 400));
     expect(_gonderilen.single['emoji'], mesajTepkiEmojileri[2]);
     await _kapat(tester);
   });

@@ -159,6 +159,7 @@ test('GET /mesajlar/:ad yoklama yalnız yeni id\'leri ister (sonra=)', () => {
   // ASC satırlar bir kez daha reverse edilirse istemci yeni mesajı başa ekler.
   assert.match(govde, /mesajlar: rows,/);
   assert.doesNotMatch(govde, /mesajlar: rows\.reverse\(/);
+  assert.match(govde, /guncellemeler/, 'mevcut balonun tepkisi yoklamada yok');
 });
 
 test('GET /sohbetler/okunmamis yalnız rozeti döner (listeyi çekmez)', () => {

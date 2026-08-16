@@ -8122,7 +8122,7 @@ async function mesajTepkileri(mesajIdler, benId) {
 // yani mesaj göndermekten çok daha sık tetiklenir; `mesajLimiti`nin 300'ü
 // hareketli bir sohbette gün ortasında biterdi. Öte yandan tepki tek satırlık
 // bir UPSERT'tir, BİLDİRİM ÜRETMEZ (aşağıya bak) ve karşı tarafa ancak 5
-// sn'lik yoklamayla ulaşır — yani taciz değil, yalnız DoS boyutu var.
+// sn'lik yoklamayla (+ pencere `guncellemeler`) ulaşır — taciz değil, DoS.
 // Saatte 600 = dakikada 10 sürekli dokunuş: insan davranışının çok üstünde,
 // betiğin çok altında.
 const mesajTepkiLimiti = hizLimiti(600, (req) => `mt:${req.kullanici.id}`);
@@ -8130,8 +8130,8 @@ const mesajTepkiLimiti = hizLimiti(600, (req) => `mt:${req.kullanici.id}`);
 // Tepki bırak / değiştir / kaldır. `emoji: null` = KALDIR (POST /tepki ile
 // aynı sözleşme). Aynı kullanıcının ikinci emojisi mevcut satırı DEĞİŞTİRİR.
 //
-// BİLDİRİM YOK (bilinçli): sohbet ekranı zaten 5 sn'de bir tazeleniyor, yani
-// tepki karşı tarafa kendiliğinden ulaşır. `bildirimler.tur` CHECK'ini
+// BİLDİRİM YOK (bilinçli): sohbet 3 sn'de yoklar ve `guncellemeler` ile
+// tepkiyi mevcut balona yazar. `bildirimler.tur` CHECK'ini
 // genişletmek + 45 dilde push şablonu yazmak ayrı bir iştir.
 app.post('/mesaj-tepki', girisZorunlu, mesajTepkiLimiti, sarici(async (req, res) => {
   const { mesaj_id: mesajId, emoji: emojiHam = null } = req.body || {};
@@ -8258,13 +8258,35 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
     r.yanit_medya = medyaImzali(r.yanit_medya, MEDYA_IMZA_ANAHTARI);
   }
-  // Emoji tepkileri (md. 43) AYRI BİR UÇTAN DEĞİL, mesajlarla BİRLİKTE gelir:
-  // sohbet ekranı zaten 5 sn'de bir yokluyor, ikinci bir uç yoklama yükünü
-  // ikiye katlardı. Sayfadaki 50 mesajın hepsi TEK sorguda toplanır.
-  const tepkiHaritasi = await mesajTepkileri(rows.map((r) => r.id), req.kullanici.id);
+  // Emoji tepkileri AYRI UÇTAN DEĞİL, mesajlarla birlikte gelir. `sonra`
+  // yalnız YENİ id verdiği için karşı tarafın mevcut balona bıraktığı emoji
+  // bu pencere sorgusu olmadan görünmezdi (gir-çık gerekirdi).
+  let guncellemeler = [];
+  let tepkiIdler = rows.map((r) => r.id);
+  if (sonra) {
+    const pencere = await havuz.query(
+      `SELECT m.id, m.okundu, m.iletildi, m.duzenlendi
+       FROM mesajlar m
+       WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))
+       ORDER BY m.id DESC LIMIT 50`,
+      [req.kullanici.id, partnerId],
+    );
+    tepkiIdler = [...new Set([...tepkiIdler, ...pencere.rows.map((r) => r.id)])];
+    guncellemeler = pencere.rows;
+  }
+  const tepkiHaritasi = await mesajTepkileri(tepkiIdler, req.kullanici.id);
   // Tepkisi olmayan mesaj da `tepkiler: []` alır: istemci alanın VAR olduğuna
   // güvenebilsin (null denetimi unutulan bir yerde çökme olmasın).
   for (const r of rows) r.tepkiler = tepkiHaritasi[r.id] || [];
+  if (sonra) {
+    guncellemeler = guncellemeler.map((r) => ({
+      id: r.id,
+      okundu: r.okundu,
+      iletildi: r.iletildi,
+      duzenlendi: r.duzenlendi,
+      tepkiler: tepkiHaritasi[r.id] || [],
+    }));
+  }
   // Paylaşılan içerik kartları için ad + poster (önbellekli TMDB)
   const anahtarlar = [...new Set(rows
     .filter((r) => r.icerik_tur && r.icerik_id)
@@ -8307,6 +8329,7 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // reverse yeni mesajları listenin başına atardı.
   res.json({
     mesajlar: rows,
+    guncellemeler,
     partner: k.rows[0],
     icerikler,
     gonderiler,
