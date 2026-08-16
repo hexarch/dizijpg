@@ -149,6 +149,28 @@ test('GET /mesajlar/:ad gizleyenin son_gorulme damgasını NULL yapar', () => {
   );
 });
 
+test('GET /mesajlar/:ad yoklama yalnız yeni id\'leri ister (sonra=)', () => {
+  const bas = SERVER.indexOf("app.get('/mesajlar/:kullaniciAdi'");
+  const sonraki = SERVER.indexOf('\napp.', bas + 10);
+  const govde = SERVER.slice(bas, sonraki === -1 ? undefined : sonraki);
+  assert.match(govde, /req\.query\.sonra/, 'sonra imleci yok');
+  assert.match(govde, /m\.id > \$3/, 'yeni mesajlar id > sonra değil');
+  assert.match(govde, /ORDER BY m\.id ASC LIMIT 50/, 'yeniler eskiden yeniye gelmeli');
+  // ASC satırlar bir kez daha reverse edilirse istemci yeni mesajı başa ekler.
+  assert.match(govde, /mesajlar: rows,/);
+  assert.doesNotMatch(govde, /mesajlar: rows\.reverse\(/);
+});
+
+test('GET /sohbetler/okunmamis yalnız rozeti döner (listeyi çekmez)', () => {
+  const bas = SERVER.indexOf("app.get('/sohbetler/okunmamis'");
+  assert.notEqual(bas, -1);
+  const sonraki = SERVER.indexOf('\napp.', bas + 10);
+  const govde = SERVER.slice(bas, sonraki === -1 ? undefined : sonraki);
+  assert.match(govde, /engelSuzgec\('gonderen_id'/);
+  assert.match(govde, /okunmamis: toplam\.rows\[0\]\.adet/);
+  assert.doesNotMatch(govde, /sohbetleriAyir/);
+});
+
 // --------------------------------------------------- istek / ana liste
 
 const s = (o) => ({ okunmamis: 0, ...o });

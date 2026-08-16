@@ -13,6 +13,7 @@ import 'api.dart';
 import 'ceviri.dart';
 import 'gorusme/arama_bildirim.dart';
 import 'yonlendirme.dart';
+import 'sohbet_olay.dart';
 
 final FlutterLocalNotificationsPlugin _yerel =
     FlutterLocalNotificationsPlugin();
@@ -450,8 +451,9 @@ Future<void> pushBaslat() async {
           return;
         }
         if (m.data['tur'] == 'mesaj') {
-          // Zaten o sohbetteyse bildirim basma (5 sn'lik poll gösterir)
+          // Liste ve açık sohbet FCM ile hemen tazelensin (gir-çık yok).
           final ad = m.data['ad'] as String? ?? '';
+          SohbetOlaylari.mesajGeldi(ad.isEmpty ? null : ad);
           final yol =
               sonYonlendirici?.routerDelegate.currentConfiguration.uri.path;
           if (yol == '/sohbet/$ad') return;

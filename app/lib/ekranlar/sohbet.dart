@@ -18,6 +18,7 @@ import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
 import '../push.dart';
+import '../sohbet_olay.dart';
 import '../tema.dart';
 import 'tepki.dart';
 import 'medya_goster.dart';
@@ -31,6 +32,26 @@ import 'ses.dart';
 /// İkisi ayrı eşik kullansaydı aynı kişi listede çevrimiçi, sohbeti açınca
 /// "son görülme 2 dk önce" görünebilirdi.
 const cevrimiciEsikSn = 180;
+
+/// Liste ve açık sohbet yoklama aralığı. Tam geçmiş değil, ucuz tur.
+const Duration sohbetYoklamaAraligi = Duration(seconds: 3);
+
+/// Yoklamada setState'i boş yere tetiklememek için satır parmak izi.
+bool _sohbetSatirlariAyni(List<dynamic>? a, List<dynamic> b) {
+  if (a == null || a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    final x = a[i] as Map;
+    final y = b[i] as Map;
+    if (x['id'] != y['id'] ||
+        x['metin'] != y['metin'] ||
+        x['okunmamis'] != y['okunmamis'] ||
+        x['cevrimici'] != y['cevrimici'] ||
+        x['medya'] != y['medya']) {
+      return false;
+    }
+  }
+  return true;
+}
 
 /// Avatar boyu ve satır dolgusu — testler bu sabitleri ölçer.
 /// Satır yüksekliği = 44 (avatar) + 2*8 (dikey dolgu) = 60 dp (>= 44 dp).
@@ -166,30 +187,74 @@ class SohbetlerEkrani extends StatefulWidget {
   State<SohbetlerEkrani> createState() => _SohbetlerEkraniState();
 }
 
-class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
+class _SohbetlerEkraniState extends State<SohbetlerEkrani>
+    with WidgetsBindingObserver {
   List<dynamic>? _sohbetler;
   List<dynamic> _istekler = const [];
   String? _hata;
+  Timer? _sayac;
+  bool _cekiliyor = false;
+  bool _bekleyenYukle = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    SohbetOlaylari.nesil.addListener(_olay);
     _yukle();
+    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle(sessiz: true));
   }
 
-  Future<void> _yukle() async {
-    setState(() => _hata = null);
+  @override
+  void dispose() {
+    _sayac?.cancel();
+    SohbetOlaylari.nesil.removeListener(_olay);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState durum) {
+    if (durum == AppLifecycleState.resumed) _yukle(sessiz: true);
+  }
+
+  void _olay() => _yukle(sessiz: true);
+
+  Future<void> _yukle({bool sessiz = false}) async {
+    if (_cekiliyor) {
+      _bekleyenYukle = true;
+      return;
+    }
+    _cekiliyor = true;
+    if (!sessiz) setState(() => _hata = null);
     try {
       final d = await Api.get('/sohbetler');
       if (!mounted) return;
+      final sohbetler = d['sohbetler'] as List<dynamic>;
+      // Eski sunucu `istekler` göndermez -> bölüm boş kalır, çökme olmaz.
+      final istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+      if (sessiz &&
+          _hata == null &&
+          _sohbetSatirlariAyni(_sohbetler, sohbetler) &&
+          _sohbetSatirlariAyni(_istekler, istekler)) {
+        return;
+      }
       setState(() {
-        _sohbetler = d['sohbetler'] as List<dynamic>;
-        // Eski sunucu `istekler` göndermez -> bölüm boş kalır, çökme olmaz.
-        _istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+        _sohbetler = sohbetler;
+        _istekler = istekler;
+        _hata = null;
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      if (!sessiz || _sohbetler == null) {
+        setState(() => _hata = e.toString());
+      }
+    } finally {
+      _cekiliyor = false;
+      if (_bekleyenYukle && mounted) {
+        _bekleyenYukle = false;
+        _yukle(sessiz: true);
+      }
     }
   }
 
@@ -197,7 +262,12 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
   Widget build(BuildContext context) {
     Widget govde;
     if (_hata != null) {
-      govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
+      govde = HataGorunumu(
+        mesaj: _hata!,
+        tekrar: () {
+          _yukle();
+        },
+      );
     } else if (_sohbetler == null) {
       govde = const IskeletListe();
     } else if (_sohbetler!.isEmpty) {
@@ -209,7 +279,7 @@ class _SohbetlerEkraniState extends State<SohbetlerEkrani> {
     } else {
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
-        onRefresh: _yukle,
+        onRefresh: () => _yukle(),
         child: ListView.builder(
           // Yatay dolgu SATIRIN İÇİNDE (dokunma alanı kenara kadar sürsün),
           // listede yalnız uçlarda küçük bir nefes payı kalır.
@@ -319,25 +389,69 @@ class MesajIstekleriEkrani extends StatefulWidget {
   State<MesajIstekleriEkrani> createState() => _MesajIstekleriEkraniState();
 }
 
-class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani> {
+class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
+    with WidgetsBindingObserver {
   List<dynamic>? _istekler;
   String? _hata;
+  Timer? _sayac;
+  bool _cekiliyor = false;
+  bool _bekleyenYukle = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    SohbetOlaylari.nesil.addListener(_olay);
     _yukle();
+    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) => _yukle(sessiz: true));
   }
 
-  Future<void> _yukle() async {
-    setState(() => _hata = null);
+  @override
+  void dispose() {
+    _sayac?.cancel();
+    SohbetOlaylari.nesil.removeListener(_olay);
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState durum) {
+    if (durum == AppLifecycleState.resumed) _yukle(sessiz: true);
+  }
+
+  void _olay() => _yukle(sessiz: true);
+
+  Future<void> _yukle({bool sessiz = false}) async {
+    if (_cekiliyor) {
+      _bekleyenYukle = true;
+      return;
+    }
+    _cekiliyor = true;
+    if (!sessiz) setState(() => _hata = null);
     try {
       final d = await Api.get('/sohbetler');
       if (!mounted) return;
-      setState(() => _istekler = (d['istekler'] as List<dynamic>?) ?? const []);
+      final istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+      if (sessiz &&
+          _hata == null &&
+          _sohbetSatirlariAyni(_istekler, istekler)) {
+        return;
+      }
+      setState(() {
+        _istekler = istekler;
+        _hata = null;
+      });
     } catch (e) {
       if (!mounted) return;
-      setState(() => _hata = e.toString());
+      if (!sessiz || _istekler == null) {
+        setState(() => _hata = e.toString());
+      }
+    } finally {
+      _cekiliyor = false;
+      if (_bekleyenYukle && mounted) {
+        _bekleyenYukle = false;
+        _yukle(sessiz: true);
+      }
     }
   }
 
@@ -345,7 +459,12 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani> {
   Widget build(BuildContext context) {
     Widget govde;
     if (_hata != null) {
-      govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
+      govde = HataGorunumu(
+        mesaj: _hata!,
+        tekrar: () {
+          _yukle();
+        },
+      );
     } else if (_istekler == null) {
       govde = const IskeletListe();
     } else if (_istekler!.isEmpty) {
@@ -357,7 +476,7 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani> {
     } else {
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
-        onRefresh: _yukle,
+        onRefresh: () => _yukle(),
         child: ListView.builder(
           padding: const EdgeInsets.symmetric(vertical: 4),
           itemCount: _istekler!.length,
@@ -542,7 +661,7 @@ class SohbetEkrani extends StatefulWidget {
 }
 
 class _SohbetEkraniState extends State<SohbetEkrani>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   List<dynamic> _mesajlar = [];
   final Map<String, dynamic> _icerikler = {};
   final Map<String, dynamic> _gonderiler = {};
@@ -554,6 +673,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   Map<String, dynamic>? _partner; // avatar + son_gorulme
   Map<String, dynamic>? _yanitlanan; // alıntılanan mesaj (yanıt modu)
   int? _duzenlenenId; // düzenlenen mesajın id'si (düzenleme modu)
+  bool _cekiliyor = false;
+  bool _bekleyenYukle = false;
+  int _yoklamaTur = 0;
 
   /// Seçilmiş ama HENÜZ GÖNDERİLMEMİŞ dizi/film kartı (TMDB arama sonucu).
   ///
@@ -622,7 +744,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       upperBound: saatSutunuGenisligi,
     );
     _yukle(ilk: true);
-    _sayac = Timer.periodic(const Duration(seconds: 5), (_) => _yukle());
+    _sayac = Timer.periodic(sohbetYoklamaAraligi, (_) {
+      _yoklamaTur++;
+      _yukle(tam: _yoklamaTur % 2 == 0);
+    });
+    WidgetsBinding.instance.addObserver(this);
+    SohbetOlaylari.nesil.addListener(_sohbetOlayi);
     // Bu sohbetin biriken mesaj bildirimini kapat, geçmişini sıfırla
     mesajBildirimleriniTemizle(widget.kullaniciAdi);
   }
@@ -630,6 +757,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   @override
   void dispose() {
     _sayac?.cancel();
+    SohbetOlaylari.nesil.removeListener(_sohbetOlayi);
+    WidgetsBinding.instance.removeObserver(this);
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
@@ -637,6 +766,18 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kaydirma.dispose();
     _saatKaydirici.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState durum) {
+    if (durum == AppLifecycleState.resumed) _yukle();
+  }
+
+  /// FCM veya başka ekran yeni mesaj bildirdi: bu konuşmaysa hemen çek.
+  void _sohbetOlayi() {
+    final ad = SohbetOlaylari.partner;
+    if (ad != null && ad != widget.kullaniciAdi) return;
+    _yukle();
   }
 
   // ---- Saat sütunu jesti ----
@@ -765,27 +906,99 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
-  Future<void> _yukle({bool ilk = false}) async {
+  int? _sonMesajId() {
+    if (_mesajlar.isEmpty) return null;
+    final id = (_mesajlar.last as Map)['id'];
+    return id is num ? id.toInt() : null;
+  }
+
+  String _mesajParmakIzi(
+    List<dynamic> mesajlar,
+    bool yaziyor,
+    Map<String, dynamic>? partner,
+  ) {
+    final b = StringBuffer()
+      ..write(yaziyor ? '1' : '0')
+      ..write('|')
+      ..write(partner?['son_gorulme'] ?? '');
+    for (final ham in mesajlar) {
+      final m = ham as Map;
+      b
+        ..write('|')
+        ..write(m['id'])
+        ..write(':')
+        ..write(m['okundu'])
+        ..write(':')
+        ..write(m['iletildi'])
+        ..write(':')
+        ..write(m['duzenlendi'])
+        ..write(':')
+        ..write(m['metin'])
+        ..write(':')
+        ..write(m['tepkiler']);
+    }
+    return b.toString();
+  }
+
+  /// İlk yüklemede tam geçmiş; yoklamada `?sonra=` ile yalnız yeniler.
+  /// Aynı anda tek istek; çakışan çağrılar bitince bir kez daha çekilir.
+  Future<void> _yukle({bool ilk = false, bool tam = false}) async {
+    if (_cekiliyor) {
+      _bekleyenYukle = true;
+      return;
+    }
+    _cekiliyor = true;
     try {
-      final d = await Api.get('/mesajlar/${widget.kullaniciAdi}');
+      final sonId = _sonMesajId();
+      final artimli = !ilk && !tam && sonId != null;
+      final yol = artimli
+          ? '/mesajlar/${widget.kullaniciAdi}?sonra=$sonId'
+          : '/mesajlar/${widget.kullaniciAdi}';
+      final d = await Api.get(yol);
       if (!mounted) return;
-      final yeni = d['mesajlar'] as List<dynamic>;
-      final degisti = yeni.length != _mesajlar.length;
-      // setState'ten ÖNCE ölç: kullanıcı en altta mıydı? (yukarıda eski mesaj
-      // okuyorsa yeni mesaj gelince zorla aşağı atmayalım — WhatsApp davranışı)
+      final gelen = d['mesajlar'] as List<dynamic>? ?? const [];
+      final yaziyor = d['yaziyor'] == true;
+      final partner = d['partner'] as Map<String, dynamic>?;
+      final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
+      final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
+
+      List<dynamic> birlesik;
+      var yeniGeldi = false;
+      if (artimli) {
+        final mevcut = <int>{
+          for (final m in _mesajlar)
+            if ((m as Map)['id'] is num) (m['id'] as num).toInt(),
+        };
+        final ekler = [
+          for (final m in gelen)
+            if ((m as Map)['id'] is num &&
+                !mevcut.contains((m['id'] as num).toInt()))
+              m,
+        ];
+        yeniGeldi = ekler.isNotEmpty;
+        birlesik = yeniGeldi ? [..._mesajlar, ...ekler] : _mesajlar;
+      } else {
+        birlesik = gelen;
+        yeniGeldi = gelen.length != _mesajlar.length;
+      }
+
+      final parmak = _mesajParmakIzi(birlesik, yaziyor, partner);
+      final eski = _mesajParmakIzi(_mesajlar, _yaziyor, _partner);
+      if (!ilk && parmak == eski && _hata == null) return;
+
       final altaYakinDi =
           !_kaydirma.hasClients ||
           _kaydirma.position.pixels >= _kaydirma.position.maxScrollExtent - 250;
       setState(() {
-        _mesajlar = yeni;
-        _icerikler.addAll(d['icerikler'] as Map<String, dynamic>? ?? {});
-        _gonderiler.addAll(d['gonderiler'] as Map<String, dynamic>? ?? {});
-        _yaziyor = d['yaziyor'] == true;
-        _partner = d['partner'] as Map<String, dynamic>?;
+        _mesajlar = birlesik;
+        _icerikler.addAll(icerikler);
+        _gonderiler.addAll(gonderiler);
+        _yaziyor = yaziyor;
+        if (partner != null) _partner = partner;
         _yuklendi = true;
         _hata = null;
       });
-      if (ilk || (degisti && altaYakinDi)) _sonaKaydir();
+      if (ilk || (yeniGeldi && altaYakinDi)) _sonaKaydir();
     } catch (e) {
       // İlk yüklemede hata → boş sohbet yerine hata + tekrar dene göster
       if (mounted && ilk) {
@@ -793,6 +1006,12 @@ class _SohbetEkraniState extends State<SohbetEkrani>
           _yuklendi = true;
           _hata = e.toString();
         });
+      }
+    } finally {
+      _cekiliyor = false;
+      if (_bekleyenYukle && mounted) {
+        _bekleyenYukle = false;
+        _yukle();
       }
     }
   }
@@ -967,6 +1186,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         _yanitlanan = null;
         _bekleyenIcerik = null;
       });
+      SohbetOlaylari.mesajGeldi(widget.kullaniciAdi);
       await _yukle();
       _sonaKaydir();
     } catch (e) {
@@ -1016,7 +1236,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       await Api.patch('/mesajlar/$id', {'metin': metin.trim()});
       _metin.clear();
       setState(() => _duzenlenenId = null);
-      await _yukle();
+      await _yukle(tam: true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(

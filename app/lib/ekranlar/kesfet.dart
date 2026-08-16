@@ -133,11 +133,11 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
   int _mesajSayi = 0;
 
   Future<void> _mesajSayisiYukle() async {
-    // Oturumsuz ziyaretçi (SEO 1.4, 14 Ağu): /sohbetler girisZorunlu, 401
+    // Oturumsuz ziyaretçi (SEO 1.4, 14 Ağu): rozet ucu girisZorunlu, 401
     // yememek için hiç isteme. Rozet zaten 0 kalır.
     if (!Api.girisli) return;
     try {
-      final d = await Api.get('/sohbetler');
+      final d = await Api.get('/sohbetler/okunmamis');
       if (mounted) {
         setState(() => _mesajSayi = (d['okunmamis'] as int?) ?? 0);
       }

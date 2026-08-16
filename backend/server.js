@@ -7894,6 +7894,8 @@ app.post('/bildirimler/okundu', girisZorunlu, sarici(async (req, res) => {
 //
 // Sohbet listesi: partner başına son mesaj + okunmamış sayısı + çevrimiçi.
 app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
+  // Satır başına EXISTS/count yok: okunmamış ve "ben yazdım" TEK geçişte
+  // toplanır (yoksa 20 sohbet = 40 ek sorgu, liste 400ms+ sürerdi).
   const { rows } = await havuz.query(
     `SELECT DISTINCT ON (LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id))
             m.id, m.metin, m.medya, m.icerik_tur, m.tarih, m.gonderen_id,
@@ -7904,15 +7906,22 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
             COALESCE(NOT k.cevrimici_gizli
                      AND k.son_gorulme > now() - ($2 * interval '1 second'),
                      false) AS cevrimici,
-            EXISTS (SELECT 1 FROM takipler t
-                    WHERE t.takip_eden_id=$1 AND t.takip_edilen_id=k.id) AS takip_ediyorum,
-            EXISTS (SELECT 1 FROM mesajlar b
-                    WHERE b.gonderen_id=$1 AND b.alici_id=k.id) AS ben_yazdim,
-            (SELECT count(*)::int FROM mesajlar o
-             WHERE o.alici_id=$1 AND o.gonderen_id=k.id AND NOT o.okundu) AS okunmamis
+            (t.takip_eden_id IS NOT NULL) AS takip_ediyorum,
+            (by.alici_id IS NOT NULL) AS ben_yazdim,
+            COALESCE(o.adet, 0) AS okunmamis
      FROM mesajlar m
      JOIN kullanicilar k
        ON k.id = CASE WHEN m.gonderen_id=$1 THEN m.alici_id ELSE m.gonderen_id END
+     LEFT JOIN takipler t
+       ON t.takip_eden_id=$1 AND t.takip_edilen_id=k.id
+     LEFT JOIN (
+       SELECT DISTINCT alici_id FROM mesajlar WHERE gonderen_id=$1
+     ) by ON by.alici_id = k.id
+     LEFT JOIN (
+       SELECT gonderen_id, count(*)::int AS adet FROM mesajlar
+       WHERE alici_id=$1 AND NOT okundu
+       GROUP BY gonderen_id
+     ) o ON o.gonderen_id = k.id
      WHERE (m.gonderen_id=$1 OR m.alici_id=$1)
        AND ${engelSuzgec('k.id', '$1')}
      ORDER BY LEAST(m.gonderen_id,m.alici_id), GREATEST(m.gonderen_id,m.alici_id), m.id DESC`,
@@ -7947,6 +7956,17 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     istek_okunmamis: istekRozeti(istekler),
     okunmamis: toplam.rows[0].adet,
   });
+}));
+
+// Yalnız rozet: akış/keşfet tam sohbet listesini çekmesin. Engel süzgeci
+// GET /sohbetler ile AYNI — aksi halde listede görünmeyen okunmamış, rozette
+// sonsuza kadar "1" kalırdı.
+app.get('/sohbetler/okunmamis', girisZorunlu, sarici(async (req, res) => {
+  const toplam = await havuz.query(
+    `SELECT count(*)::int AS adet FROM mesajlar
+     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}`,
+    [req.kullanici.id]);
+  res.json({ okunmamis: toplam.rows[0].adet });
 }));
 
 // Paylaşım hedefleri: mesajlaştıkların ÖNCE, sonra takip ettiklerin, sonra
@@ -8199,19 +8219,33 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     });
   }
   const once = parseInt(req.query.once, 10) || null;
+  const sonraHam = parseInt(req.query.sonra, 10);
+  const sonra = Number.isInteger(sonraHam) && sonraHam > 0 ? sonraHam : null;
   // Alıntılanan mesajın kısa önizlemesi de gelir (LEFT JOIN yanit).
-  const { rows } = await havuz.query(
-    `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
+  const secim = `SELECT m.id, m.gonderen_id, m.metin, m.medya, m.ses_dalga, m.icerik_tur, m.icerik_id,
             m.yorum_id, m.okundu, m.iletildi, m.duzenlendi, m.yanit_id, m.tarih,
             y.metin AS yanit_metin, y.gonderen_id AS yanit_gonderen,
             y.medya AS yanit_medya, y.icerik_tur AS yanit_icerik_tur
      FROM mesajlar m
      LEFT JOIN mesajlar y ON y.id = m.yanit_id
-     WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))
-       AND ($3::int IS NULL OR m.id < $3)
+     WHERE ((m.gonderen_id=$1 AND m.alici_id=$2) OR (m.gonderen_id=$2 AND m.alici_id=$1))`;
+  let rows;
+  if (sonra) {
+    // Yoklama: yalnız son görülen id'den YENİLER. ASC = istemci sona ekler,
+    // 50 eski satırı çözüp imzalamak zorunda kalmaz.
+    const q = await havuz.query(
+      `${secim} AND m.id > $3 ORDER BY m.id ASC LIMIT 50`,
+      [req.kullanici.id, partnerId, sonra],
+    );
+    rows = q.rows;
+  } else {
+    const q = await havuz.query(
+      `${secim} AND ($3::int IS NULL OR m.id < $3)
      ORDER BY m.id DESC LIMIT 50`,
-    [req.kullanici.id, partnerId, once],
-  );
+      [req.kullanici.id, partnerId, once],
+    );
+    rows = q.rows.reverse();
+  }
   // Mesaj metni VE alıntılanan mesajın metni şifreli gelir; İKİSİ de çözülür.
   // yanit_metin atlanırsa alıntı baloncuğunda ham zarf görünür (kolayca
   // gözden kaçar, çünkü asıl baloncuklar düzgün görünmeye devam eder).
@@ -8268,8 +8302,11 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     `UPDATE bildirimler SET okundu=true
      WHERE kullanici_id=$1 AND aktor_id=$2 AND tur='mesaj' AND NOT okundu`,
     [req.kullanici.id, partnerId]).catch(() => {});
+  // `rows` bu noktada eskiden yeniye (ASC). `sonra` zaten ASC çeker;
+  // ilk yükleme DESC+reverse ile aynı sıraya gelir. Bir kez daha
+  // reverse yeni mesajları listenin başına atardı.
   res.json({
-    mesajlar: rows.reverse(),
+    mesajlar: rows,
     partner: k.rows[0],
     icerikler,
     gonderiler,

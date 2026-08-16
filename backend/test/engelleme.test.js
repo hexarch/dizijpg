@@ -125,6 +125,8 @@ const SUZULEN_UCLAR = [
     () => ucGovdesi('get', '/incelemeler/:tur/:tmdbId')],
   ['GET /sohbetler — mesaj listesi + istekler',
     () => ucGovdesi('get', '/sohbetler')],
+  ['GET /sohbetler/okunmamis — rozet sayacı',
+    () => ucGovdesi('get', '/sohbetler/okunmamis')],
   ['GET /paylas-hedefler — gönderi paylaşma hedefleri',
     () => ucGovdesi('get', '/paylas-hedefler')],
   ['GET /kullanici-ara — kullanıcı arama',

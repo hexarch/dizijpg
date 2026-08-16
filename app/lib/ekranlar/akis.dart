@@ -91,10 +91,11 @@ class _AkisEkraniState extends State<AkisEkrani>
   }
 
   Future<void> _rozetleriYukle() async {
+    if (!Api.girisli) return;
     try {
       final sonuclar = await Future.wait([
         Api.get('/bildirimler'),
-        Api.get('/sohbetler'),
+        Api.get('/sohbetler/okunmamis'),
       ]);
       if (!mounted) return;
       setState(() {

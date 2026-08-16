@@ -114,6 +114,10 @@ Future<void> _kur(
   );
   await tester.pumpWidget(MaterialApp.router(routerConfig: yonlendirici));
   await tester.pump(); // ilk /sohbetler cevabı
+  addTearDown(() async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 1));
+  });
 }
 
 Finder _satir(String ad) =>

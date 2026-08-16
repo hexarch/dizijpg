@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.61.0+109 (sohbet yoklama + ucuz mesaj imleci)
+Mesajlar listesi ve açık sohbet 3 sn'de sessiz yoklar; FCM gelince hemen
+tazelenir — gir-çık gerekmez. `GET /mesajlar/:ad?sonra=` yalnız yeni id;
+akış/keşfet rozeti `GET /sohbetler/okunmamis`. Liste SQL'i satır başına
+EXISTS yerine JOIN. Backend var.
+`main.608eeb266977.dart.js` (eski `ad8be90ceba7` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.61.0+109 · giriş testkullanici ·
+`/sohbetler` 23 sohbet · `/sohbetler/okunmamis` 20 ·
+`/mesajlar/demo.yusuf?sonra=126` boş dizi · hashed JS `immutable` + `br`.
+
 ## 2026-08-16 — 🚀 WEB 1.60.0+108 (tam ekran yan oklar + yön tuşları)
 Fotoğraf lightbox ve Reels'te 2+ kare/gönderi varken sağ/sol oklar;
 klavye yön tuşları da geçirir (Reels'te sol/sağ önce fotoğraf, yoksa
