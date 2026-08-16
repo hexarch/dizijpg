@@ -31,17 +31,13 @@ import 'package:visibility_detector/visibility_detector.dart';
 ///
 /// BU DOSYANIN KİLİTLEDİĞİ DAVRANIŞ:
 ///  1) EKRANDA UNVAN YOK — kendi profilinde de başkasınınkinde de.
-///  2) PAYDA YOK — "Seviye 5" var, "Seviye 5/8" yok.
+///  2) PAYDA YOK — "Seviye 5" var, "Seviye 5/8" yok (hesap tarafı).
 ///  3) Eşik/ilerleme matematiği sınırlarda doğru (0, tam eşik, taşma).
-///  4) İLERLEME YALNIZ KENDİ PROFİLİNDE: çubuk ve "Sonraki seviyeye …"
-///     satırı başkasının profilinde ÇİZİLMEZ.
-///  5) Sunucu seviyeyi süzdüyse (1. kademe ya da `izlenenler_gizli`) açık
-///     profilde satır HİÇ ÇİZİLMEZ — "seviye gizli" yazısı bile yok.
-///  6) 320 dp'de üç haneli seviye + uzun ilerleme satırı taşmıyor.
+///  4) 16 Ağu 2026: sistem KAPALI — sunucu kayıt gönderse bile satır çizilmez.
+///  5) Sunucu seviyeyi süzdüyse (null) açık profilde satır HİÇ ÇİZİLMEZ.
 ///
 /// Eşik EĞRİSİ burada sınanmaz: eğrinin tek kopyası sunucuda.
 /// Sınır/gerileme testleri `backend/test/seviye.test.js` içinde.
-const double _darEkran = 320;
 const Size _ekran = Size(600, 900);
 
 /// 14 Ağu'da kaldırılan unvanlar — ekranda ASLA görünmemeli.
@@ -262,6 +258,14 @@ void main() {
       expect(sv.altSatir, isNotNull);
       expect(sv.altSatir!.contains('Uzman'), isFalse);
     });
+
+    test('ekranda: sistem kapalıysa sunucu kayıt gönderse bile null', () {
+      expect(seviyeSistemiAcik, isFalse);
+      expect(Seviye.ekranda(_tamSeviye()), isNull);
+      expect(Seviye.ekranda(_acikSeviye()), isNull);
+      // cozumle hesap için açık kalır — bayrak yalnız çizimi keser.
+      expect(Seviye.cozumle(_tamSeviye()), isNotNull);
+    });
   });
 
   // =========================================================================
@@ -325,67 +329,26 @@ void main() {
 
   // =========================================================================
   // 4. KENDİ PROFİLİM — seviye + İLERLEME görünür, UNVAN YOK
+  //    16 Ağu 2026: sistem KAPALI. Çizim iddiaları bayrak açılınca geri gelir;
+  //    kapalıyken satırın HİÇ çizilmediği kilitlenir.
   // =========================================================================
 
-  testWidgets('KENDİ PROFİLİM: "Seviye 5", çubuk ve kalan puan satırı VAR', (
-    tester,
-  ) async {
-    await _kendim(tester, _tamSeviye());
-    expect(find.byType(SeviyeSatiri), findsOneWidget);
-    expect(find.text('Seviye 5'), findsOneWidget);
-    expect(_cubuk, findsOneWidget);
-    expect(find.text('Sonraki seviyeye 510 puan kaldı'), findsOneWidget);
-    expect(find.byIcon(Icons.trending_up), findsOneWidget);
-    // Çubuk gerçekten kısmen dolu (0 ya da 1'e sıkışmış değil).
-    final gosterge = tester.widget<LinearProgressIndicator>(_cubuk);
-    expect(gosterge.value, closeTo(0.403, 0.01));
-  });
+  testWidgets(
+    'KAPALI: kendi profilinde sunucu tam kayıt gönderse bile satır yok',
+    (tester) async {
+      expect(seviyeSistemiAcik, isFalse);
+      await _kendim(tester, _tamSeviye());
+      expect(find.byType(SeviyeSatiri), findsNothing);
+      expect(_cubuk, findsNothing);
+      expect(find.textContaining('Seviye'), findsNothing);
+      expect(find.textContaining('puan kaldı'), findsNothing);
+      _unvanYok(tester);
+    },
+  );
 
   testWidgets('KENDİ PROFİLİM: EKRANDA HİÇBİR UNVAN/PAYDA YOK', (tester) async {
     await _kendim(tester, _tamSeviye());
     _unvanYok(tester);
-  });
-
-  testWidgets('KENDİ PROFİLİM: çubuk ekran okuyucuda ADLI ve DEĞERLİ', (
-    tester,
-  ) async {
-    // Etiketsiz bir `LinearProgressIndicator` erişilebilirlik ağacına HİÇ
-    // girmez; dolgu yalnız görene bilgi olurdu.
-    final tut = tester.ensureSemantics();
-    await _kendim(tester, _tamSeviye());
-    // Ağaç gerçekten kuruldu: değer sayıya çevrilemezse çerçeve burada
-    // assert'e düşer (bu tuzağa bir kez düşüldü, bu satır kapıyı tutuyor).
-    expect(tester.takeException(), isNull);
-    final gosterge = tester.widget<LinearProgressIndicator>(_cubuk);
-    expect(gosterge.semanticsLabel, 'Seviye 5');
-    // SALT SAYI: çerçeve bu düğümü "progress bar" (0..100) olarak kuruyor ve
-    // değerin sayıya çevrilebilmesini assert ediyor — "%40" yazılırsa uygulama
-    // her karede assert'e düşer (yüzde işaretini ekran okuyucu ekler).
-    expect(gosterge.semanticsValue, '40');
-    expect(double.tryParse(gosterge.semanticsValue!), isNotNull);
-    tut.dispose();
-  });
-
-  testWidgets('KENDİ PROFİLİM: seviye kullanıcı adının ALTINDA duruyor', (
-    tester,
-  ) async {
-    await _kendim(tester, _tamSeviye());
-    // Kullanıcı adı `@…` ile başlayan tek metin (oturum sahte olduğu için
-    // adın kendisi değil, biçimi aranır).
-    // (AppBar başlığı da aynı metni taşıyor; kalın başlık olanı aranır.)
-    final adFinder = find.byWidgetPredicate(
-      (w) =>
-          w is Text &&
-          (w.data ?? '').startsWith('@') &&
-          w.style?.fontWeight == FontWeight.w900,
-      description: 'profil başlığındaki kullanıcı adı',
-    );
-    expect(adFinder, findsOneWidget);
-    final ad = tester.getRect(adFinder);
-    final seviye = tester.getRect(find.text('Seviye 5'));
-    expect(seviye.top, greaterThanOrEqualTo(ad.bottom - 1));
-    // Aynı sütunda: sol kenarları hizalı.
-    expect(seviye.left, closeTo(ad.left, 1));
   });
 
   testWidgets('KENDİ PROFİLİM: seviye gelmezse satır hiç çizilmez', (
@@ -396,59 +359,23 @@ void main() {
     expect(_cubuk, findsNothing);
   });
 
-  testWidgets('TAVAN YOK: yüksek kademede de çubuk ve hedef satırı sürüyor', (
-    tester,
-  ) async {
-    // Eskiden 8. kademede çubuk kaybolur, "En üst unvan" yazardı.
-    await _kendim(
-      tester,
-      _tamSeviye(kademe: 12, puan: 20000, esik: 18634, sonrakiEsik: 24192),
-    );
-    expect(find.text('Seviye 12'), findsOneWidget);
-    expect(_cubuk, findsOneWidget);
-    expect(find.text('Sonraki seviyeye 4192 puan kaldı'), findsOneWidget);
-    _unvanYok(tester);
-  });
-
   // =========================================================================
-  // 5. BAŞKASININ PROFİLİ — yalnız sayı; ilerleme YOK
+  // 5. BAŞKASININ PROFİLİ — kapalıyken sayı da yok
   // =========================================================================
 
-  testWidgets('BAŞKASININ PROFİLİ: "Seviye 5" VAR ama İLERLEME YOK', (
+  testWidgets('KAPALI: başkasının profilinde de satır HİÇ çizilmez', (
     tester,
   ) async {
     await _baskasi(tester, _acikSeviye());
-    expect(find.byType(SeviyeSatiri), findsOneWidget);
-    expect(find.text('Seviye 5'), findsOneWidget);
-    // Çubuk ve hedef satırı ÇİZİLMEZ: başkasının profilindeki ilerleme,
-    // seviyeyi bir sıralama tablosuna çevirirdi.
+    expect(find.byType(SeviyeSatiri), findsNothing);
+    expect(find.textContaining('Seviye'), findsNothing);
     expect(_cubuk, findsNothing);
-    expect(find.byIcon(Icons.trending_up), findsNothing);
-    expect(find.textContaining('Sonraki seviyeye'), findsNothing);
-    expect(find.textContaining('puan kaldı'), findsNothing);
     _unvanYok(tester);
   });
-
-  testWidgets(
-    'BAŞKASININ PROFİLİ: sunucu puan/eşik SIZDIRSA BİLE ilerleme çizilmez',
-    (tester) async {
-      // İkinci kilit: `ilerlemeGoster` bayrağı `ben_mi`ye bağlı. Sunucu bir
-      // gün süzgeci gevşetse bile ziyaretçi çubuğu görmez.
-      await _baskasi(tester, _tamSeviye());
-      expect(find.text('Seviye 5'), findsOneWidget);
-      expect(_cubuk, findsNothing);
-      expect(find.textContaining('puan kaldı'), findsNothing);
-    },
-  );
 
   testWidgets(
     'GİZLİ / 1. KADEME: sunucu seviye=null yolladıysa satır HİÇ çizilmez',
     (tester) async {
-      // İki durum aynı yanıtı üretir (`seviyeAcikGorunum` → null):
-      //  · md. 21 "izlediklerimi gizle" açık,
-      //  · kullanıcı henüz 1. kademede (utandırmama kuralı).
-      // Ekranda "seviye gizli" gibi bir yer tutucu da YOK — bu, gizlenmiş
-      // bir şey olduğunu ele verirdi.
       await _baskasi(tester, null);
       expect(find.byType(SeviyeSatiri), findsNothing);
       expect(_cubuk, findsNothing);
@@ -457,56 +384,12 @@ void main() {
     },
   );
 
-  testWidgets('AÇIK PROFİL KENDİ ADIMLA açıldıysa (ben_mi) ilerleme GÖRÜNÜR', (
+  testWidgets('AÇIK PROFİL KENDİ ADIMLA açıldıysa da kapalıyken satır yok', (
     tester,
   ) async {
-    // Bu ekran kendi kullanıcı adınla da açılabiliyor; "kendi profilim mi"
-    // kararı sunucunun `ben_mi` yargısından gelir.
     await _baskasi(tester, _tamSeviye(), benMi: true);
-    expect(find.text('Seviye 5'), findsOneWidget);
-    expect(_cubuk, findsOneWidget);
-    expect(find.text('Sonraki seviyeye 510 puan kaldı'), findsOneWidget);
-  });
-
-  // =========================================================================
-  // 6. DAR EKRAN — 45 dilde uzun ilerleme satırı
-  // =========================================================================
-
-  testWidgets('320 dp: üç haneli seviye + ilerleme satırı taşmıyor', (
-    tester,
-  ) async {
-    // Deneme yazı tipinde her harf 1em kare: satır gerçek yazı tipinden çok
-    // daha geniş çizilir, yani bu 45 dil için tampon.
-    await _kendim(
-      tester,
-      _tamSeviye(
-        kademe: 137,
-        puan: 34_000_000,
-        esik: 33_918_368,
-        sonrakiEsik: 35_998_942,
-      ),
-      boyut: const Size(_darEkran, 900),
-    );
-    final satir = find.byType(SeviyeSatiri);
-    expect(satir, findsOneWidget);
-    final kutu = tester.getRect(satir);
-    expect(kutu.left, greaterThanOrEqualTo(0));
-    expect(kutu.right, lessThanOrEqualTo(_darEkran + 0.01));
-    // Seviye metni sarılır/üç noktaya düşer ama kaybolmaz.
-    final metin = tester.getRect(find.text('Seviye 137'));
-    expect(metin.width, greaterThan(0));
-    expect(metin.right, lessThanOrEqualTo(kutu.right + 0.01));
-
-    // Bu ekranda 320 dp'de KALAN taşmalar sekme etiketlerinden gelir (ülke
-    // satırı testindeki bilinen gürültü, gerçek yazı tipinde yok). Seviye
-    // kaynaklı taşma olmadığını yukarıdaki ölçümler kanıtlıyor.
-    final istisna = tester.takeException();
-    if (istisna != null) {
-      expect(
-        istisna.toString(),
-        contains('overflowed'),
-        reason: 'beklenmeyen istisna: $istisna',
-      );
-    }
+    expect(find.byType(SeviyeSatiri), findsNothing);
+    expect(find.textContaining('Seviye'), findsNothing);
+    expect(_cubuk, findsNothing);
   });
 }

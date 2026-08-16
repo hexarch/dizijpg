@@ -1,5 +1,9 @@
 import 'ceviri.dart';
 
+/// Kullanıcı kararı (16 Ağu 2026): seviye şimdilik KAPALI.
+/// Profilde satır çizilmez. Hesap ve çeviriler duruyor; `true` yapmak yeter.
+const bool seviyeSistemiAcik = false;
+
 /// MİNİ SEVİYE (istek md. 29, 14 Ağu revizyonu) — SAF hesap + etiket.
 /// Widget YOK.
 ///
@@ -45,6 +49,11 @@ class Seviye {
   final int? sonrakiEsik;
 
   const Seviye({required this.kademe, this.puan, this.esik, this.sonrakiEsik});
+
+  /// Ekrana basılacak kayıt. Sistem kapalıysa daima null — sunucu hâlâ
+  /// tam kayıt gönderse bile satır çizilmez.
+  static Seviye? ekranda(Object? ham) =>
+      seviyeSistemiAcik ? cozumle(ham) : null;
 
   /// Sunucu yanıtındaki `seviye` alanını çözer. Alan yoksa, null'sa ya da
   /// biçimi bozuksa **null** döner — ekranda satır hiç çizilmez.

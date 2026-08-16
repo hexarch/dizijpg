@@ -1,6 +1,17 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB+APK 1.69.0+117 (seviye şimdilik kapalı)
+Profildeki seviye satırı (kendi ve başkasının) görünmez. API
+`/rozetler` ve `/profil` `seviye: null` döner — eski APK da satırı
+çizmez. Hesap kodu duruyor (`SEVIYE_ACIK` / `seviyeSistemiAcik`).
+APK `~/Desktop/dizijpg-1.69.0+117.apk` (89 MB, imzalı).
+`main.44524c0a0dc2.dart.js` (eski `e5488b05376c` origin’den silindi; CF
+immutable HIT beklenen) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.69.0+117 · `/rozetler` seviye
+null · `/profil/testkullanici` seviye null · widget: tam kayıt gelse bile
+satır yok · hashed JS `br` HIT.
+
 ## 2026-08-16 — 🚀 WEB+APK 1.68.0+116 (yazıyor + ses kaydediyor)
 Yazıyor göstergesi tuşa basınca bir kez gidip 6 sn'de düşmüyordu; şimdi
 2 sn heartbeat + kapanınca `acik:false`. Ses kaydı ayrı `kayit` türü.

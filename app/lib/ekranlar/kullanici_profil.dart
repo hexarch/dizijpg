@@ -203,7 +203,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                             // 1. KADEME VE `izlenenler_gizli` DURUMUNDA
                             // `seviye` null gelir (sunucu süzüyor), o yüzden
                             // burada ayrıca koşul yok: satır hiç çizilmez.
-                            if (Seviye.cozumle(p['seviye']) case final sv?)
+                            if (Seviye.ekranda(p['seviye']) case final sv?)
                               Padding(
                                 padding: const EdgeInsets.only(top: 3),
                                 child: SeviyeSatiri(

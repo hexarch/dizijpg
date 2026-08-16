@@ -382,7 +382,7 @@ test('seviyeAcikGorunum null/eksik kayda dayanır', () => {
 const ROZETLERI_HESAPLA = bildirimCek('rozetleriHesapla');
 
 test('rozetleriHesapla { rozetler, seviye } döner — TEK sorgu, TEK kaynak', () => {
-  assert.match(ROZETLERI_HESAPLA, /seviye:\s*seviyeHesapla\(s\)/);
+  assert.match(ROZETLERI_HESAPLA, /seviye:\s*SEVIYE_ACIK \? seviyeHesapla\(s\) : null/);
   assert.match(ROZETLERI_HESAPLA, /rozetler:\s*tanimlar\.map/);
 });
 
@@ -412,9 +412,17 @@ const PROFIL = (() => {
 })();
 
 test('/profil: sahibine TAM kayıt, ziyaretçiye SÜZGEÇTEN geçmiş kayıt', () => {
+  assert.match(PROFIL, /SEVIYE_ACIK/);
+  assert.match(PROFIL, /rozetSeviye\.seviye/);
   assert.match(PROFIL,
-    /const seviye = benMi\s*\n?\s*\? rozetSeviye\.seviye\s*\n?\s*: seviyeAcikGorunum\(rozetSeviye\.seviye, izlenenlerGizli\)/);
+    /seviyeAcikGorunum\(rozetSeviye\.seviye, izlenenlerGizli\)/);
   assert.match(PROFIL, /\n\s*seviye,\n/);
+});
+
+test('SEVIYE_ACIK false: uçlar seviye göndermez (şimdilik kapalı)', () => {
+  assert.match(KAYNAK, /const SEVIYE_ACIK = false/);
+  assert.match(ROZETLERI_HESAPLA, /SEVIYE_ACIK \? seviyeHesapla\(s\) : null/);
+  assert.match(PROFIL, /!SEVIYE_ACIK/);
 });
 
 test('/profil: ENGELLİ profilde seviye null döner', () => {

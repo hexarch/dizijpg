@@ -8804,6 +8804,11 @@ app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
 //     EN YAKIN olanı: seviye şişmesi en az. Eski eşiklerde yeni kademeler
 //     1,2,3,4,5,6,8,10 — hiçbiri gerilemiyor (kanıt: test/seviye.test.js
 //     "GERİLEME YOK" + canlı dağılım taraması, 142 kullanıcı, düşen 0).
+// 16 AĞU 2026 — ŞİMDİLİK KAPALI. Kullanıcı: "Profildeki seviye sistemini
+// şuan devredışı bırakalım görünüştende kaldır." Uçlar `seviye: null`
+// döner; 1.46+ istemciler null'da satırı zaten çizmiyor. Hesap kodu
+// DURUYOR — bayrağı true yapmak yeter.
+const SEVIYE_ACIK = false;
 const SEVIYE_KATSAYISI = 14;
 
 /** `kademe` (≥1) için puan eşiği (SAF, tam sayı). 1. kademe daima 0. */
@@ -8922,7 +8927,7 @@ async function rozetleriHesapla(kullaniciId) {
     rozetler: tanimlar.map(([kod, deger, esik]) => ({
       kod, esik, deger, kazanildi: deger >= esik,
     })),
-    seviye: seviyeHesapla(s),
+    seviye: SEVIYE_ACIK ? seviyeHesapla(s) : null,
   };
 }
 
@@ -9836,9 +9841,11 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
   // SEVİYE (md. 29). Sahibi kendi profiline bakıyorsa TAM kayıt (ilerleme
   // çubuğu için puan/eşik); ziyaretçiye `seviyeAcikGorunum` süzgeci —
   // 1. kademe hiç gitmez, `izlenenler_gizli` her kademeyi kaldırır.
-  const seviye = benMi
-    ? rozetSeviye.seviye
-    : seviyeAcikGorunum(rozetSeviye.seviye, izlenenlerGizli);
+  const seviye = !SEVIYE_ACIK
+    ? null
+    : (benMi
+      ? rozetSeviye.seviye
+      : seviyeAcikGorunum(rozetSeviye.seviye, izlenenlerGizli));
   // Uyum: giriş yapan başka bir kullanıcı bu profile bakıyorsa, ortak izlenen
   // içerik sayısı + puan uyumu (ikisinin de puanladığı içeriklerde puanların
   // yakınlığı; 1 puan farkı ~%11 düşürür). En az 1 ortak puan yoksa uyum=null.

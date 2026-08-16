@@ -813,7 +813,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           // Bu ekran DAİMA kendi profilim — ilerleme çubuğu
                           // ve "Sonraki seviyeye …" satırı BURADA çizilir,
                           // açık profilde çizilmez (veri de oraya gitmez).
-                          if (Seviye.cozumle(_seviyeHam) case final sv?)
+                          if (Seviye.ekranda(_seviyeHam) case final sv?)
                             Padding(
                               padding: const EdgeInsets.only(top: 3),
                               child: SeviyeSatiri(
