@@ -421,9 +421,9 @@ class _AkisMedyaState extends State<AkisMedya> {
                         width: i == _sayfa ? 8 : 5,
                         height: i == _sayfa ? 8 : 5,
                         margin: const EdgeInsets.symmetric(horizontal: 3),
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white,
+                          color: i == _sayfa ? Colors.white : Colors.white38,
                         ),
                       ),
                   ],
@@ -599,7 +599,11 @@ class _AkisVideoState extends State<AkisVideo> {
     Widget govde;
     if (_hata) {
       govde = const Center(
-        child: Icon(Icons.videocam_off_outlined, size: 44, color: Colors.white),
+        child: Icon(
+          Icons.videocam_off_outlined,
+          size: 44,
+          color: Colors.white38,
+        ),
       );
     } else if (d == null) {
       // Henüz kurulmadı: siyah duraklatılmış kapak
@@ -1100,7 +1104,7 @@ class PosterKarti extends StatelessWidget {
                           color: DiziRenkler.kart,
                           child: Icon(
                             Icons.movie,
-                            color: DiziRenkler.metin,
+                            color: DiziRenkler.metin24,
                             size: 40,
                           ),
                         )
@@ -1114,7 +1118,7 @@ class PosterKarti extends StatelessWidget {
                             color: DiziRenkler.kart,
                             child: Icon(
                               Icons.broken_image,
-                              color: DiziRenkler.metin,
+                              color: DiziRenkler.metin24,
                             ),
                           ),
                         ),

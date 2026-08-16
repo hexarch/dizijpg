@@ -134,8 +134,7 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
   /// [acik] false iken düğme **GİZLENMEZ, PASİF görünür** (md. 38) ve
   /// `onPressed` **null bırakılmaz**: `IconButton(onPressed: null)` dokunuşu
   /// hiç almaz, dolayısıyla "nereden açacağını söyle" isteği yerine getirilemez.
-  /// Pasiflik yalnız GÖRSELDİR — açıkken marka sarısı, kapalıyken tema metni
-  /// (gri ikon yok; 16 Ağu).
+  /// Pasiflik yalnız GÖRSELDİR — renk `metin38`e düşer.
   Widget _dugme({
     required Key anahtar,
     required IconData ikon,
@@ -150,10 +149,10 @@ class _AramaDugmeleriState extends State<AramaDugmeleri> {
       // açıklamayı okumak isteyen kullanıcı düğmeyi ıskalar.
       //
       // Pasif hâlde tooltip = açıklamanın kendisi. Ekran okuyucu için tek
-      // erişilebilir ipucu budur: renk farkı sesli okunmaz, "Sesli
+      // erişilebilir ipucu budur: renk farkı (metin38) sesli okunmaz, "Sesli
       // ara" desek kullanıcı basar ve neden çalışmadığını anlamaz.
       tooltip: acik ? etiket : _pasifMetin(tur),
-      icon: Icon(ikon, color: acik ? DiziRenkler.sariMetin : DiziRenkler.metin),
+      icon: Icon(ikon, color: acik ? DiziRenkler.metin : DiziRenkler.metin38),
       onPressed: acik ? () => _ara(tur) : () => _pasifAciklama(tur),
     );
   }

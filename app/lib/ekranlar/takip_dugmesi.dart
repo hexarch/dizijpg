@@ -166,7 +166,7 @@ class _TakipDugmesiState extends State<TakipDugmesi> {
                     minimumSize: const Size(0, 36),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     foregroundColor: DiziRenkler.metin,
-                    disabledForegroundColor: DiziRenkler.metin54,
+                    disabledForegroundColor: DiziRenkler.metin38,
                     side: BorderSide(color: DiziRenkler.metin24),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),

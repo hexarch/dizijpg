@@ -131,7 +131,7 @@ class GirisIstemiKarti extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.chevron_right, size: 20, color: DiziRenkler.metin38),
+              Icon(Icons.chevron_right, size: 20, color: DiziRenkler.metin),
             ],
           ),
         ),

@@ -355,7 +355,7 @@ class _KisiEkraniState extends State<KisiEkrani> {
                                   color: DiziRenkler.kart,
                                   child: Icon(
                                     Icons.person,
-                                    color: DiziRenkler.metin,
+                                    color: DiziRenkler.metin24,
                                   ),
                                 )
                               : CachedNetworkImage(
@@ -566,7 +566,7 @@ class IzlenmeOraniSatiri extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin38),
+              Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin),
             ],
           ),
         ),

@@ -152,7 +152,11 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.notifications_none, size: 44, color: DiziRenkler.metin),
+            Icon(
+              Icons.notifications_none,
+              size: 44,
+              color: DiziRenkler.metin24,
+            ),
             const SizedBox(height: 10),
             Text(
               'Henüz bildirim yok'.c,

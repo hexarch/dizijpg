@@ -923,7 +923,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                   ikon,
                   size: 22,
                   color: kapali
-                      ? DiziRenkler.metin
+                      ? DiziRenkler.metin38
                       : (vurgulu ? DiziRenkler.sari : DiziRenkler.sariMetin),
                 ),
         ),
@@ -2119,7 +2119,7 @@ class _MesajBaloncugu extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 10,
                               fontStyle: FontStyle.italic,
-                              color: yaziRengi,
+                              color: yaziRengi.withValues(alpha: 0.5),
                             ),
                           ),
                           if (benim) const SizedBox(width: 5),
@@ -2134,7 +2134,7 @@ class _MesajBaloncugu extends StatelessWidget {
                             size: 13,
                             color: m['okundu'] == true
                                 ? const Color(0xFF1976D2)
-                                : yaziRengi,
+                                : yaziRengi.withValues(alpha: 0.55),
                           ),
                       ],
                     ),
@@ -2304,7 +2304,7 @@ class _IcerikSecSheetState extends State<_IcerikSecSheet> {
               onChanged: _degisti,
               decoration: InputDecoration(
                 hintText: 'Dizi, film veya kişi ara...'.c,
-                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin38),
+                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin),
               ),
             ),
           ),

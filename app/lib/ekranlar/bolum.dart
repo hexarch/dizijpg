@@ -275,7 +275,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                                     headers: gorselBasliklari(foto),
                                   ),
                             child: foto == null
-                                ? Icon(Icons.person, color: DiziRenkler.metin)
+                                ? Icon(Icons.person, color: DiziRenkler.metin24)
                                 : null,
                           ),
                           const SizedBox(height: 6),

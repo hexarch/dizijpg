@@ -441,7 +441,7 @@ class _GorusmeEkraniState extends State<GorusmeEkrani> {
                                     color: Colors.black45,
                                     child: Icon(
                                       Icons.videocam_off,
-                                      color: Colors.white,
+                                      color: Colors.white38,
                                     ),
                                   ),
                           ),

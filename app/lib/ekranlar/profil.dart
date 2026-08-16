@@ -306,7 +306,7 @@ class _ProfilEkraniState extends State<ProfilEkrani>
           'Yıllık izleme istatistiklerin'.c,
           style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
         ),
-        trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+        trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin),
         onTap: () => context.push('/ozet/${DateTime.now().year}'),
       ),
     ),

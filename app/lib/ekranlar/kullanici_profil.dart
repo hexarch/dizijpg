@@ -1519,7 +1519,7 @@ class _YorumDetayModal extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+                Icon(Icons.chevron_right, color: DiziRenkler.metin),
               ],
             ),
           ),

@@ -1044,7 +1044,7 @@ class _OnizlemeState extends State<_Onizleme> {
               child: Icon(
                 Icons.movie_outlined,
                 size: 64,
-                color: DiziRenkler.metin,
+                color: DiziRenkler.metin24,
               ),
             )
           else if (widget.duzenli != null)

@@ -84,7 +84,7 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                       errorWidget: (_, __, ___) => const Icon(
                         Icons.broken_image_outlined,
                         size: 48,
-                        color: Colors.white,
+                        color: Colors.white38,
                       ),
                     ),
                   ),
@@ -195,7 +195,11 @@ class _TamVideoState extends State<_TamVideo> {
     final d = _d;
     if (_hata != null) {
       return const Center(
-        child: Icon(Icons.videocam_off_outlined, size: 48, color: Colors.white),
+        child: Icon(
+          Icons.videocam_off_outlined,
+          size: 48,
+          color: Colors.white38,
+        ),
       );
     }
     if (d == null) {

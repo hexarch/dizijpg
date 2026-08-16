@@ -820,10 +820,10 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                       ),
                     ),
                     trailing: _ulke == null
-                        ? Icon(Icons.chevron_right, color: DiziRenkler.metin38)
+                        ? Icon(Icons.chevron_right, color: DiziRenkler.metin)
                         : IconButton(
                             tooltip: 'Kapat'.c,
-                            icon: Icon(Icons.close, color: DiziRenkler.metin38),
+                            icon: Icon(Icons.close, color: DiziRenkler.metin),
                             onPressed: () => setState(() => _ulke = null),
                           ),
                     onTap: _ulkeSec,
@@ -1785,7 +1785,7 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                   'Profilinde gizlediğin yorumları tekrar göster'.c,
                   style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
                 ),
-                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin),
                 onTap: () {
                   final yonlendirici = GoRouter.of(context);
                   Navigator.pop(context);
@@ -1810,7 +1810,7 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
                   'Engellediğin kişileri gör, engeli kaldır'.c,
                   style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
                 ),
-                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin38),
+                trailing: Icon(Icons.chevron_right, color: DiziRenkler.metin),
                 onTap: () {
                   final yonlendirici = GoRouter.of(context);
                   Navigator.pop(context);
@@ -2026,7 +2026,7 @@ class _AramaliSecimSayfasiState extends State<_AramaliSecimSayfasi> {
               onChanged: (_) => setState(() {}),
               decoration: InputDecoration(
                 hintText: widget.ipucu,
-                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin38),
+                prefixIcon: Icon(Icons.search, color: DiziRenkler.metin),
               ),
             ),
           ),

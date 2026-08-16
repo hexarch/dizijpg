@@ -159,7 +159,7 @@ class FavoriOyuncuKarti extends StatelessWidget {
                     headers: gorselBasliklari(foto),
                   ),
             child: foto == null
-                ? Icon(Icons.person, color: DiziRenkler.metin, size: 30)
+                ? Icon(Icons.person, color: DiziRenkler.metin24, size: 30)
                 : null,
           ),
           const SizedBox(height: 8),

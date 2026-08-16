@@ -1,6 +1,12 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-16 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-16 — 🚀 WEB 1.59.0+107 (pasif gri, kullanılan beyaz)
+Kullanılan yazı/ikon `metin`; kapalı düğme, ipucu, boş yer tutucu `metin38`.
+Backend yok. `main.18ed0ac74abb.dart.js` (eski `4dc03c679338` origin’den
+silindi) · SW sökücü · brotli q11.
+Kanıt: `/api/saglik` ok · version.json 1.59.0+107 · giriş testkullanici.
+
 ## 2026-08-16 — 🚀 WEB 1.58.0+106 (gri yazı/ikon yok)
 İkincil tonlar (`metin70/54/38`) tam `metin` (koyu = beyaz). Tema ikon,
 ipucu, ListTile, TabBar ve seçili olmayan alt çubuk ikonu da metin.

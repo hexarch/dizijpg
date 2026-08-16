@@ -72,12 +72,12 @@ class DiziRenkler {
   // --- Metin/ikon tonları (Colors.whiteXX yerine BUNLAR kullanılır) ---
   static Color get metin => acik ? const Color(0xFF17171A) : Colors.white;
 
-  /// Kullanıcı (16 Ağu 2026): gri yazı/ikon yok. İkincil tonlar da tam [metin]
-  /// (koyu temada beyaz, açıkta koyu). `metin24`/`metin12` yalnız ayırıcı,
-  /// çerçeve ve bindirme için kalır.
+  /// Kullanılan içerik (etiket, ok, arama ikonu) tam [metin].
+  /// `metin70`/`metin54` bu yüzden [metin] ile aynı.
+  /// `metin38` PASİF: kapalı düğme, ipucu, boş yer tutucu, kazanılmamış.
   static Color get metin70 => metin;
   static Color get metin54 => metin;
-  static Color get metin38 => metin;
+  static Color get metin38 => acik ? Colors.black38 : Colors.white38;
   static Color get metin24 => acik ? Colors.black26 : Colors.white24;
   static Color get metin12 => acik ? Colors.black12 : Colors.white12;
 
@@ -317,7 +317,7 @@ ThemeData diziTema({required bool acik}) {
     scaffoldBackgroundColor: zemin,
     iconTheme: IconThemeData(color: metin),
     primaryIconTheme: IconThemeData(color: metin),
-    hintColor: metin,
+    hintColor: acik ? Colors.black38 : Colors.white38,
     listTileTheme: ListTileThemeData(
       iconColor: metin,
       textColor: metin,
@@ -419,7 +419,7 @@ ThemeData diziTema({required bool acik}) {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: sari, width: 2),
       ),
-      hintStyle: TextStyle(color: metin),
+      hintStyle: TextStyle(color: acik ? Colors.black38 : Colors.white38),
     ),
     dividerTheme: DividerThemeData(
       color: acik ? const Color(0xFFE2E2E6) : const Color(0xFF2A2A2F),

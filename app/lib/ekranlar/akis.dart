@@ -248,7 +248,7 @@ class _AkisEkraniState extends State<AkisEkrani>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.dynamic_feed, size: 44, color: DiziRenkler.metin),
+              Icon(Icons.dynamic_feed, size: 44, color: DiziRenkler.metin24),
               const SizedBox(height: 10),
               Text(
                 'Akışın boş.\nİzlediğin dizi ve filmlere yorum yapılınca burada görünecek.'

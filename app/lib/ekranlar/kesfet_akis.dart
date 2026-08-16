@@ -1937,10 +1937,12 @@ class _ReelSayfaState extends State<_ReelSayfa>
                           width: i == _medyaSayfa ? 8 : 5,
                           height: i == _medyaSayfa ? 8 : 5,
                           margin: const EdgeInsets.symmetric(horizontal: 3),
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
+                            color: i == _medyaSayfa
+                                ? Colors.white
+                                : Colors.white38,
+                            boxShadow: const [
                               BoxShadow(color: Colors.black45, blurRadius: 3),
                             ],
                           ),
@@ -2566,7 +2568,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
               : Icon(
                   ikon,
                   size: 22,
-                  color: kapali ? DiziRenkler.metin : DiziRenkler.sari,
+                  color: kapali ? DiziRenkler.metin38 : DiziRenkler.sari,
                 ),
         ),
       ),
@@ -2763,7 +2765,7 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                                     Icon(
                                       Icons.forum_outlined,
                                       size: 34,
-                                      color: DiziRenkler.metin,
+                                      color: DiziRenkler.metin24,
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
