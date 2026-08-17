@@ -37,7 +37,19 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://dizijpg:${DB_SIFRE}@db:5432/dizijpg
+      # UYGULAMA ROLU — SÜPER KULLANICI DEĞİL (güvenlik denetimi §4.3).
+      # Eskiden burada `dizijpg` yazıyordu: uygulama DB'ye rolsuper=t,
+      # rolbypassrls=t ile bağlanıyordu. Bugün SQLi yok ama çıksaydı etki
+      # "veri okuma"dan `COPY ... TO PROGRAM` ile DB konteynerinde KOMUT
+      # ÇALIŞTIRMAYA sıçrardı. `dizijpg_app` yalnız CONNECT + DML taşır;
+      # süper kullanıcı artık YALNIZ migrasyon içindir.
+      #
+      # `:?` BİLİNÇLİ (varsayılan YOK): değişken eksikse compose HATA verir.
+      # Varsayılan olarak `dizijpg` yazsaydık, .env'den bir satır silindiği
+      # gün uygulama SESSİZCE süper kullanıcıya geri döner ve bu düzeltme
+      # kimse fark etmeden geri alınmış olurdu.
+      # GERİ ALMA: .env'de DB_APP_KULLANICI=dizijpg + DB_APP_SIFRE=<DB_SIFRE>.
+      DATABASE_URL: postgres://${DB_APP_KULLANICI:?.env icinde DB_APP_KULLANICI tanimli olmali}:${DB_APP_SIFRE:?.env icinde DB_APP_SIFRE tanimli olmali}@db:5432/dizijpg
       JWT_SECRET: ${JWT_SECRET}
       TMDB_TOKEN: ${TMDB_TOKEN}
       # Özel mesajların DURAĞAN şifrelemesi (AES-256-GCM, backend/kripto.js).

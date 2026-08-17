@@ -65,7 +65,12 @@
 \if :{?app_sifre}
 \else
   \echo '!! app_sifre verilmedi. Şöyle çalıştır:'
-  \echo '!!   psql -v app_sifre="'"'"'<parola>'"'"'" -f db-rol-en-az-yetki-20260808.sql'
+  \echo '!!   psql -v app_sifre=<parola> -f db-rol-en-az-yetki-20260808.sql'
+  \echo '!! PAROLAYI TIRNAKLAMA. Asagida :''app_sifre'' bicimi kullaniliyor ve'
+  \echo '!! psql tirnaklamayi KENDISI yapar. Elle tirnak eklenirse parola'
+  \echo '!! TIRNAKLARLA BIRLIKTE kaydedilir; .env''deki cikplak degerle'
+  \echo '!! uyusmaz ve uygulama "password authentication failed" ile acilmaz.'
+  \echo '!! (17 Agu 2026 gecisinde tam bunu yasadik: uc dakika 500 dondu.)'
   \quit
 \endif
 
