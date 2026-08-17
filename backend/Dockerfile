@@ -4,8 +4,18 @@ WORKDIR /app
 # ızgarası video yerine bu resmi gösterir; onlarca çözücü açılmaz).
 # ffmpeg (üstte) + postgresql-client: panelden elle yedek (pg_dump) alınabilsin.
 RUN apk add --no-cache ffmpeg postgresql16-client
-COPY package.json ./
-RUN npm install --omit=dev
+# package-lock.json ZORUNLU (guvenlik denetimi 2026-08-17 §4.8).
+# ONCEKI HAL `npm install` idi ve lock dosyasi YOKTU: her derleme bagimliliklari
+# semver araligindan YENIDEN cozuyordu. Yani (a) dun calisan imaj bugun farkli
+# paketlerle dogabilir, (b) bir bagimliligin ele gecirilmis yama surumu
+# yayinlanirsa bir sonraki derlemede SESSIZCE imaja girerdi. `npm audit` bile
+# lock olmadan calismiyordu (ENOLOCK).
+#
+# `npm ci` lock'a BIREBIR uyar ve package.json ile lock uyusmazsa HATA verir —
+# yani "package.json'i degistirdim ama lock'u guncellemedim" durumu derlemeyi
+# kirar, sessizce farkli bir agac kurmaz.
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 # kripto.js: özel mesajların durağan şifrelemesi. server.js onu import ediyor;
 # imaja GIRMEZSE konteyner "Cannot find module './kripto.js'" ile acilista olur
 # ve restart dongusune girer. Geri doldurma betigi de imaja giriyor ki

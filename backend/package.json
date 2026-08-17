@@ -12,11 +12,11 @@
     "csv-parse": "^5.5.6",
     "express": "^4.21.0",
     "firebase-admin": "^12.7.0",
-    "geoip-lite": "^1.4.10",
+    "geoip-lite": "^2.0.3",
     "jsonwebtoken": "^9.0.2",
     "jszip": "^3.10.1",
     "mailparser": "^3.9.14",
-    "nodemailer": "^6.9.14",
+    "nodemailer": "^9.0.5",
     "pg": "^8.13.0"
   }
 }
