@@ -4070,7 +4070,51 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
   const mevcut = await havuz.query(
     'SELECT * FROM kullanicilar WHERE email = lower($1)', [email]);
   if (mevcut.rows.length) {
-    const k = mevcut.rows[0];
+    let k = mevcut.rows[0];
+    // ---- HESAP ÖN-KAÇIRMA KAPISI (denetim 2026-08-17 §4.2) ----
+    // Kayıt ucu e-posta sahipliğini doğrulamıyor. Saldırgan kurbanın
+    // adresiyle önceden hesap açtıysa, kurban Google'la girdiğinde
+    // SALDIRGANIN hesabına düşer ve saldırgan kendi şifresiyle o hesabı
+    // (DM'ler dahil) okumaya devam eder.
+    //
+    // Buraya YALNIZ posta kutusunun gerçek sahibi gelebilir — Google
+    // `email_verified` bunu kanıtladı. Yani hesapta duran şifre ve token
+    // BAŞKASINA ait olabilir ve artık geçerli olmamalı.
+    //
+    // Sıra ÖNEMLİ: token `jwtUret(k)` ile üretilmeden ÖNCE sürüm artırılmalı,
+    // yoksa kullanıcının elinde ESKİ sürümlü (ilk `girisZorunlu`da 401 yiyen)
+    // bir token kalırdı — yani kendi girişimizi kendimiz iptal ederdik.
+    if (k.eposta_dogrulandi !== true) {
+      const { rows: y } = await havuz.query(
+        `UPDATE kullanicilar
+            SET sifre_hash = $2,
+                sifre_surumu = sifre_surumu + 1,
+                eposta_dogrulandi = true
+          WHERE id = $1
+        RETURNING *`,
+        [k.id, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10)],
+      );
+      k = y[0];
+      // Önbellek 30 sn TTL'li: düşürmezsek yeni token yarım dakika boyunca
+      // ESKİ sürümle karşılaştırılır ve kullanıcı kendi girişinde 401 alır.
+      sifreSurumOnbellekSil(k.id);
+      // Sessiz yapmıyoruz: sahibi "şifremle giremiyorum" diye şaşırmasın,
+      // saldırgan varsa kurban durumu öğrensin. Ateşle-unut — SMTP yanıtı
+      // giriş süresini uzatmasın.
+      mailGonder({
+        to: email,
+        subject: 'dizi.jpg hesabına Google ile giriş yapıldı',
+        text: 'Hesabına Google ile giriş yapıldı.\n\n'
+          + 'Güvenlik için bu hesabın ESKİ şifresi ve açık oturumları '
+          + 'geçersiz kılındı: e-posta adresinin sahipliği ilk kez şimdi '
+          + 'doğrulandı, öncesinde hesapta senin belirlemediğin bir şifre '
+          + 'bulunuyor olabilirdi.\n\n'
+          + 'Bundan sonra Google ile girmeye devam edebilirsin. Şifreyle de '
+          + 'girmek istersen "Şifremi unuttum" ile yeni bir şifre belirle.\n\n'
+          + 'dizi.jpg',
+      }, { tur: 'google_dogrulama', kullanici_id: k.id })
+        .catch((e) => console.error('google dogrulama maili:', e.message));
+    }
     // /auth/giris ile aynı karar: yasaklı kullanıcı girer, cezasını görür,
     // yazamaz (bkz. girisZorunlu içindeki tek kapı).
     const yasak = yasakYuku(k);
@@ -4091,8 +4135,12 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
     const ad = deneme === 0 ? kok : kok.slice(0, 12) + '_' + crypto.randomBytes(2).toString('hex');
     try {
       const { rows } = await havuz.query(
-        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash)
-         VALUES (lower($1), $2, $3)
+        // eposta_dogrulandi=true: hesabı açan şey Google'ın `email_verified`
+        // yanıtıdır, yani posta kutusunun sahipliği ZATEN kanıtlanmıştır.
+        // İşaretlemezsek kullanıcı ikinci kez Google'la girdiğinde §4.2 kapısı
+        // boş yere tetiklenir ve kendi belirlediği şifreyi silerdi.
+        `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash, eposta_dogrulandi)
+         VALUES (lower($1), $2, $3, true)
          RETURNING id, kullanici_adi, email, misafir`,
         [email, ad, await bcrypt.hash(crypto.randomBytes(16).toString('hex'), 10)],
       );
@@ -4225,6 +4273,14 @@ async function ikiAdimKodDogrula(kullaniciId, amac, kod) {
   }
   // TEK KULLANIMLIK: doğrulanan kod HEMEN silinir.
   await ikiAdimKodSil(kullaniciId);
+  // Kod POSTA KUTUSUNDAN okundu -> e-posta sahipliği kanıtlandı (denetim
+  // §4.2). Bu işaret olmadan, 2FA'sı açık bir kullanıcı sonradan Google'la
+  // girdiğinde ön-kaçırma kapısı boş yere tetiklenir ve şifresini silerdi.
+  // Ateşle-unut: doğrulamanın kendisi bu yazmaya BAĞLI DEĞİL.
+  havuz.query(
+    'UPDATE kullanicilar SET eposta_dogrulandi=true WHERE id=$1 AND NOT eposta_dogrulandi',
+    [kullaniciId],
+  ).catch((e) => console.error('eposta_dogrulandi:', e.message));
   return true;
 }
 
@@ -8748,8 +8804,14 @@ app.post('/auth/sifre-sifirla', authLimiti, sarici(async (req, res) => {
   }
   const hash = await bcrypt.hash(sifre, 10);
   // Şifre sürümünü artır: eski JWT'ler (çalınmış olabilir) geçersiz olsun.
+  // `eposta_dogrulandi`: buraya gelmek için 6 haneli kodun POSTA KUTUSUNDAN
+  // okunması gerekti — sahiplik kanıtlandı (denetim §4.2). İşaretlenmezse
+  // kullanıcı sonradan Google'la girdiğinde az önce belirlediği şifre
+  // gereksiz yere silinirdi.
   await havuz.query(
-    'UPDATE kullanicilar SET sifre_hash=$1, sifre_surumu=sifre_surumu+1 WHERE id=$2',
+    `UPDATE kullanicilar
+        SET sifre_hash=$1, sifre_surumu=sifre_surumu+1, eposta_dogrulandi=true
+      WHERE id=$2`,
     [hash, kayit.id]);
   await havuz.query('DELETE FROM sifirlama_kodlari WHERE kullanici_id=$1', [kayit.id]);
   sifreSurumOnbellekSil(kayit.id);

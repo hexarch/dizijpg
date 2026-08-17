@@ -13,6 +13,11 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   sosyal JSONB NOT NULL DEFAULT '[]',
   son_gorulme TIMESTAMPTZ,
   sifre_surumu INT NOT NULL DEFAULT 0,
+  -- Posta kutusuna erişimi KANITLAYAN bir akış tamamlandı mı? (Google ile
+  -- açılış / şifre sıfırlama / iki adımlı doğrulama). Google girişi VAR OLAN
+  -- bir hesaba düştüğünde bu false ise hesap ön-kaçırılmış olabilir: şifre ve
+  -- oturumlar geçersizleştirilir. Gerekçesi migrasyon-2026-08-17b.sql'de.
+  eposta_dogrulandi BOOLEAN NOT NULL DEFAULT false,
   yasakli BOOLEAN NOT NULL DEFAULT false,
   bildir_begeni BOOLEAN NOT NULL DEFAULT true,
   bildir_yanit BOOLEAN NOT NULL DEFAULT true,

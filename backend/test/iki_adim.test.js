@@ -249,8 +249,22 @@ test('kod SABİT ZAMANLI karşılaştırılıyor (bcrypt.compare)', () => {
 test('kod TEK KULLANIMLIK: doğrulanınca satır SİLİNİR', () => {
   const d = uc('async function ikiAdimKodDogrula', 1800);
   const son = d.slice(d.lastIndexOf('bcrypt.compare'));
-  assert.match(son, /await ikiAdimKodSil\(kullaniciId\);\s*\n\s*return true/,
-    'doğru kod tüketilmiyor — aynı kod ikinci kez kullanılabilirdi');
+  // ÖLÇÜLEN ŞEY: `return true`e ulaşmadan ÖNCE silme AWAIT ile bitmiş olmalı.
+  // Eskiden bu, "silme satırının hemen ardından return" diye yazılıydı; 17 Ağu
+  // 2026'da aralarına `eposta_dogrulandi` yazması eklenince test KODU DOĞRUYKEN
+  // kırmızıya döndü. Bitişiklik hiçbir zaman gereklilik değildi — gereklilik
+  // SIRA (silme önce) ve arada erken çıkış olmaması.
+  // lastIndexOf ŞART: `ikiAdimKodSil` bu kuyrukta İKİ KEZ geçer — biri yanlış
+  // kod sınıra dayanınca kodu iptal eden dalda, ki onu `return false` izler.
+  // indexOf o dalı bulur ve aşağıdaki "arada erken çıkış yok" kontrolü o
+  // `return false`a takılıp testi KODU DOĞRUYKEN kırar.
+  const silIdx = son.lastIndexOf('await ikiAdimKodSil(kullaniciId);');
+  const dogruIdx = son.indexOf('return true');
+  assert.ok(silIdx !== -1, 'doğru kod tüketilmiyor — silme çağrısı yok');
+  assert.ok(dogruIdx !== -1 && silIdx < dogruIdx,
+    'doğru kod tüketilmeden true dönülüyor — aynı kod ikinci kez kullanılabilirdi');
+  assert.ok(!/return/.test(son.slice(silIdx, dogruIdx)),
+    'silme ile true arasında erken çıkış var — kod tüketilmeden dönülebilir');
   assert.match(SERVER_KOD, /DELETE FROM iki_adim_kodlari WHERE kullanici_id=\$1/);
 });
 
