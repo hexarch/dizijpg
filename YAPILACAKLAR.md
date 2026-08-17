@@ -5,13 +5,34 @@
 Rapor: `GUVENLIK-DENETIMI-2026-08-17.md` (salt okuma; kod + sunucu).
 Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
 Öncelik sırası:
-- ⬜ **KIRMIZI** Kotasız yükleme → disk doldurma DoS. Misafir hesap bedava
-  (30/sa/IP) × 40 yükleme × 100 MB = ~120 GB/sa; diskte 21 GB boş, alarm yok.
-  Önce disk eşiği kapısı (`/medya` + `/veri/ice-aktar` başında boş alan < 10 GB
-  → 507) ve misafire ayrı sıkı limit; sonra kullanıcı başına toplam kota.
-- ⬜ **KIRMIZI** 146 bekleyen paket (56 güvenlik): openssl, gnutls, krb5, nss,
-  bind9, **internete açık dovecot**; çekirdek 6.1.170→6.1.180.
-  `unattended-upgrades` kurulu değil. Bakım penceresi + otomatik güvenlik yaması.
+- 🚀 **KIRMIZI — KAPANDI (17 Ağu)** Kotasız yükleme → disk doldurma DoS.
+  `backend/disk.js` (saf modül, 23 test): boş alan < 10 GB ise `/medya`,
+  `/veri/ice-aktar` ve avatar/kapak uçları 507 + `DEPO_DOLU`. Kapı
+  `express.raw`'dan ÖNCE (reddedilecek 100 MB gövde belleğe alınmıyor).
+  Ölçüm hata verirse FAIL-OPEN. `DISK_ESIK_GB` ile ayarlanır, 0 devre dışı.
+  Canlı kanıt: eşik geçici 999 GB → iki uç da 507, `GET /medya` + `/saglik`
+  200; geri alınca yükleme yeniden 200. Sürüm 1.76.0+124, 45 dil çevrildi.
+  ⬜ KALAN: kullanıcı başına toplam kota (`kullanicilar.medya_bayt`),
+  misafire ayrı sıkı yükleme limiti, `saglik_izle.sh`e %85 disk alarmı.
+- 🚀 **KIRMIZI — KAPANDI (17 Ağu)** Paket yamaları. `unattended-upgrade`
+  koşturuldu: bekleyen güvenlik yaması **56 → 0** (openssl, gnutls, krb5,
+  nss, bind9, dovecot dahil). `unattended-upgrades` kuruldu ve **yalnız
+  `-security`** deposuna daraltıldı — paylaşımlı makinede başka projelerin
+  bağımlılıkları kendiliğinden değişmesin (`52unattended-upgrades-dizijpg`,
+  `#clear` ŞART: APT'de ikinci atama listeye EKLER, ezmez). Zamanlayıcı
+  `20auto-upgrades` ile açıldı (yoktu — yani kurulsa bile hiç koşmayacaktı).
+  Otomatik reboot KAPALI: reboot tüm makineyi keser, karar insanın.
+  Çekirdek 6.1.0-45 → 6.1.0-52, yeniden başlatıldı; makine 20 sn'de döndü.
+  Reboot ÖNCESİ tüm çalışan servislerin `enabled` olduğu tarandı; sonrasında
+  10 servis + 3 konteyner + iptables kuralları doğrulandı.
+  Not: `brnmedia.service` "activating" görünüyor ama 8001'de yanıt veriyor
+  (`Type=forking` birim hatası) — reboot öncesinde de öyleydi, başka proje.
+  ⬜ KALAN: 86 güvenlik-dışı paket bilerek uygulanmadı; Debian 12 oldstable,
+  2026 içinde 13'e geçiş planı.
+- 🚀 **YENİ BULGU — KAPANDI (17 Ağu)** `DISK_ESIK_GB` compose'da yoktu:
+  kod okuyor ama konteyner görmüyordu, `.env`e yazmak HİÇBİR ŞEY yapmıyordu.
+  TURN_SIR'ın 9 Ağu'da düştüğü sessiz-ölü-ayar tuzağı. `docker-compose.yml`e
+  eklendi + test kilitledi.
 - ⬜ `/api/Admin/ozet` nginx IP kapısını BÜYÜK HARFLE atlıyor (403 = Express'e
   ulaştı; `/api/admin` → 404). `location ~* ^/api/admin` + `case sensitive routing`.
 - ⬜ Hesap ön-kaçırma: kayıtta e-posta doğrulaması yok + `/auth/google` var olan

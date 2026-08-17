@@ -1,0 +1,8 @@
+// dizi.jpg guvenlik denetimi 2026-08-17 §3.2 — otomatik GUVENLIK yamalari.
+// Onceki durum: 146 bekleyen paket, 56'si guvenlik; unattended-upgrades
+// kurulu bile degildi. Internete DOGRUDAN acik dovecot/postfix yamasiz
+// calisiyordu (Cloudflare bu servisleri korumuyor).
+APT::Periodic::Update-Package-Lists "1";
+APT::Periodic::Unattended-Upgrade "1";
+APT::Periodic::Download-Upgradeable-Packages "1";
+APT::Periodic::AutocleanInterval "7";

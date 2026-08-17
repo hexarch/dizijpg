@@ -1,0 +1,35 @@
+// dizi.jpg guvenlik denetimi 2026-08-17 §3.2 — YALNIZ guvenlik deposu.
+//
+// NEDEN AYRI DOSYA: /etc/apt/apt.conf.d/50unattended-upgrades paketin
+// dagittigi dosyadir; duzenlenirse her `apt upgrade`te "yapilandirma dosyasi
+// degismis, ne yapayim?" sorusu cikar ve otomatik guncelleme takilir.
+// Ayri drop-in daha yuksek numarayla SONRA okunur ve ezer.
+//
+// NEDEN YALNIZ -security: bu makine PAYLASIMLI (CRM, dopamall, dizipal,
+// posta sunucusu ayni kutuda). Debian'in varsayilan kalibi nokta-surum
+// guncellemelerini de (label=Debian) kapsiyor; bu genelde iyidir ama baska
+// projelerin bagimliliklarini bizim bilmedigimiz bir anda degistirir.
+// Guvenlik yamasi dar, ongorulebilir ve ertelenemez olandir.
+//
+// `#clear` SART: APT'de ayni listeye ikinci kez atama YAPMAK EKLER, ezmez.
+// Temizlemeseydik varsayilan uc kalip da listede kalir ve bu dosya hicbir
+// sey daraltmamis olurdu (sessiz etkisizlik).
+#clear Unattended-Upgrade::Origins-Pattern;
+Unattended-Upgrade::Origins-Pattern {
+        "origin=Debian,codename=${distro_codename},label=Debian-Security";
+        "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
+};
+
+// Yeniden baslatma OTOMATIK DEGIL: reboot bu makinedeki TUM projeleri ve
+// posta sunucusunu keser. Cekirdek yamasi indikten sonra yeniden baslatma
+// karari insana aittir; /var/run/reboot-required dosyasi isareti verir.
+Unattended-Upgrade::Automatic-Reboot "false";
+
+// Yamalanan servisleri yeniden baslat (dovecot/postfix/nginx). Bunsuz paket
+// diske iner ama SURECTE eski kod calismaya devam eder ve yama fiilen
+// uygulanmamis olur — en sinsi yanlis guvenlik hissi.
+Unattended-Upgrade::Automatic-Reboot-WithUsers "false";
+
+// Basarisiz/askida kalan yamalar sessizce birikmesin: root'a rapor.
+Unattended-Upgrade::Mail "root";
+Unattended-Upgrade::MailReport "on-change";

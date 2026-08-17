@@ -1,5 +1,34 @@
 # dizi.jpg — Güvenlik Denetimi (3. tur)
 
+> ## ⟶ DURUM GÜNCELLEMESİ — 17 Ağustos 2026, aynı gün
+>
+> **İki KIRMIZI bulgunun ikisi de KAPATILDI ve canlıda doğrulandı.**
+> Bu rapordaki geri kalan bulgular hâlâ açıktır.
+>
+> | # | Bulgu | Durum | Kanıt |
+> |---|---|---|---|
+> | 3.1 | Kotasız yükleme → disk doldurma DoS | **KAPANDI** | `backend/disk.js` + 23 test; canlı: eşik geçici 999 GB → `POST /medya` ve `/profilim/avatar` **507 `DEPO_DOLU`**, `GET /medya` + `/saglik` **200** (okuma etkilenmiyor); eşik geri alınınca yükleme yeniden **200**. Sürüm 1.76.0+124 |
+> | 3.2 | 56 güvenlik yaması bekliyor, otomatik güncelleme yok | **KAPANDI** | `unattended-upgrade` çalıştırıldı → bekleyen güvenlik yaması **56 → 0**; `unattended-upgrades` kuruldu, **yalnız `-security`** deposuna daraltıldı (`52unattended-upgrades-dizijpg`, `#clear` ile), zamanlayıcı `20auto-upgrades` ile açıldı; çekirdek **6.1.0-45 → 6.1.0-52**, yeniden başlatıldı |
+>
+> **Yeniden başlatma:** makine 20 saniyede döndü. Reboot ÖNCESİ tüm çalışan
+> servislerin `enabled` olduğu tek tek tarandı (paylaşımlı makine — başka
+> projeler var). Sonrasında doğrulandı: nginx, postfix, dovecot, docker,
+> fail2ban, coturn, postgresql, restaurant, dizijpg-frontend, brnmedia
+> hepsi ayakta; üç konteyner ayakta; iptables kuralları (5432/6379 DROP +
+> DOCKER-USER) korunmuş; https://dizijpg.com **200**.
+>
+> **Not:** `brnmedia.service` systemd'de "activating" görünüyor ama 8001'de
+> yanıt veriyor (301). Sebep birimin `Type=forking` olması — gunicorn beklenen
+> pidfile'ı yazmıyor. Bu durum reboot ÖNCESİNDE de aynıydı, başka bir projeye
+> ait ve bu denetimde DEĞİŞTİRİLMEDİ.
+>
+> **Yan etki:** yalnız iki geçici test dosyası yüklendi ve silindi; `.env`e
+> eklenen geçici `DISK_ESIK_GB=999` satırı kaldırıldı ve dosyanın yedekle
+> **birebir aynı** olduğu `diff` ile doğrulandı.
+>
+> Ayrıntı ve yeni bulgu (compose'un `DISK_ESIK_GB`'yi aktarmaması):
+> `YAPILACAKLAR.md` → 17 Ağustos maddeleri.
+
 **Tarih:** 2026-08-17 · **Kapsam:** tüm uygulama + sunucu (`154.53.163.3` / karanew,
 `/opt/dizijpg`, https://dizijpg.com) · **Yöntem:** SALT OKUMA.
 Kod okuması (`backend/**`, `admin.html`, nginx/compose/Dockerfile) + sunucuda
