@@ -407,12 +407,15 @@ test('KAÇIŞ YOLLARI compose ile konteynere AKTARILIYOR', () => {
   // okunuyor, `DISK_ESIK_GB` ise disk.js'in `esikBayt(env)` fonksiyonunda
   // (saf modül ortamı doğrudan okumaz, adı yine orada geçer). Yalnız server.js
   // taransaydı ikincisi gözden kaçardı.
+  // MEDYA_IMZA_ZORUNLU da bu listede: 17 Ağu'da göç bayrağını açarken onun da
+  // compose'da OLMADIĞI görüldü — yani `.env`e yazmak etkisiz kalacaktı, tıpkı
+  // DISK_ESIK_GB'de olduğu gibi. Üçüncü kez aynı tuzak.
   const kaynak = SERVER + DISK_SRC;
-  const okunanlar = [...kaynak.matchAll(/\b(DISK_ESIK_GB|IP_BAYT_SAAT_GB)\b/g)]
-    .map((m) => m[1]);
-  assert.ok(new Set(okunanlar).size === 2,
-    `beklenen iki ayar kaynakta bulunamadı: ${[...new Set(okunanlar)]}`);
-  for (const ad of new Set(okunanlar)) {
+  const beklenen = ['DISK_ESIK_GB', 'IP_BAYT_SAAT_GB', 'MEDYA_IMZA_ZORUNLU'];
+  const okunanlar = beklenen.filter((ad) => new RegExp(`\\b${ad}\\b`).test(kaynak));
+  assert.deepEqual(okunanlar, beklenen,
+    `beklenen ayarlar kaynakta bulunamadı: ${okunanlar}`);
+  for (const ad of okunanlar) {
     assert.match(compose, new RegExp(`^\\s*${ad}:\\s*\\$\\{${ad}`, 'm'),
       `${ad} compose api.environment içinde yok — .env'e yazmak etkisiz kalır`);
   }

@@ -113,6 +113,14 @@ services:
       # 0/boş = eski yol (Node okur). nginx'te /ic-dosya + /ic-ozel internal
       # blokları ve /srv/dizijpg-veri bind mount'u gerektirir (fstab'da).
       MEDYA_XACCEL: ${MEDYA_XACCEL:-1}
+      # DM medyası için imzalı-süreli URL ZORUNLU mu (denetim 2026-08-07 §2.1).
+      # `1` = imzasız özel medya isteği 403. Göç dönemi 17 Ağu 2026'da kapandı:
+      # nginx access loglarında gerçek istemcilerin imzasız özel-medya istekleri
+      # yalnız 4-7 Ağustos tarihliydi (imzalama canlıya çıkmadan ÖNCE); 8 Ağu'dan
+      # beri gelen tek imzasız istek denetimin kendi curl testleriydi.
+      # Halka açık yorum/akış medyası ETKİLENMEZ — kapı yalnız OZEL_MEDYA
+      # kümesindeki dosyalara bakar.
+      MEDYA_IMZA_ZORUNLU: ${MEDYA_IMZA_ZORUNLU:-}
       # Disk eşiği kapısı (güvenlik denetimi 2026-08-17 §3.1). Boş alan bu
       # değerin altına inince yükleme uçları 507 döner. Varsayılan 10 GB;
       # `0` kapıyı tamamen açar (kırılacak cam).
