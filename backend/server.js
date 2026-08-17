@@ -6803,6 +6803,18 @@ app.get('/altyazi/:dosya', girisIsteğeBagli, altyaziLimiti, sarici(async (req, 
   if (!ALTYAZI_DOSYA.test(dosya)) {
     return res.status(400).json({ hata: 'Geçersiz medya adı' });
   }
+  // ÖZEL (DM) MEDYA KAPISI — denetim 2026-08-17 §5.3.
+  // BUGÜN SIZINTI YOK: altyazı kuyruğu YALNIZ `yorumlar` tablosundan besleniyor
+  // (araclar/altyazi_uret.js `kuyrugaDoldur`), yani DM videoları hiç deşifre
+  // edilmiyor. Ama bu uç oturum bile İSTEMİYOR (`girisIsteğeBagli`) ve dosya
+  // adını bilen herkese metni verir. Kuyruğa bir gün `mesajlar` eklenirse — ki
+  // "DM videolarına da altyazı" makul bir istek — DM'in KONUŞMA METNİ imzasız
+  // ve oturumsuz okunur hâle gelirdi. İmzalı-süreli URL koruması videonun
+  // BAYTLARINI koruyor, metnini değil.
+  // Kümeyi zaten bellekte tutuyoruz (OZEL_MEDYA); kontrol bedava.
+  if (OZEL_MEDYA.has(dosya)) {
+    return res.status(403).json({ hata: 'Bu medyanın altyazısı özeldir' });
+  }
   const medya = `/medya/${dosya}`;
   const { rows } = await havuz.query(
     `SELECT baslangic_ms, bitis_ms, metin, kaynak_dil, hedef_dil

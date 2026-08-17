@@ -224,7 +224,30 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     // TV Time'ın yeni tek dosyalı dışa aktarımı: "tv-time-export (1).csv" gibi
     if (/^tv-time-export.*\.csv$/i.test(ad)) ad = 'tv-time-export.csv';
     else if (!IZIN_LI_DOSYALAR.has(ad)) continue; // token/şifre/ip dosyaları okunmaz
+    // ---- ZIP BOMBASI: ÖNCE BEYANA BAK (denetim 2026-08-17 §5.1) ----
+    // Eski hâlde boyut kontrolü `async('nodebuffer')`DAN SONRA yapılıyordu:
+    // 60 MB sınırının çok üstünde bir giriş, sınıra takılmadan ÖNCE belleğe
+    // TAMAMEN açılıyordu. 50 MB'lık bir ZIP gigabaytlara şişip işçiyi OOM ile
+    // öldürebilirdi (4 işçi, sırayla hepsi).
+    //
+    // ZIP merkezi dizini her giriş için açılmış boyutu BEYAN eder ve JSZip
+    // bunu `_data.uncompressedSize`te açmadan önce verir. Beyan YALAN
+    // OLABİLİR (saldırgan küçük yazıp büyük akış gönderebilir) — bu yüzden
+    // açıldıktan SONRAKİ kontroller SİLİNMEDİ, üstüne kondu. Beyan dürüst
+    // bombayı bedavaya eler; yalancıyı ikinci katman yakalar ve o durumda
+    // bellek sıçraması `/api/veri/ice-aktar`ın 50 MB gövde sınırı + IP bayt
+    // bütçesiyle zaten sınırlıdır.
+    const beyan = Number(giris._data?.uncompressedSize);
+    if (Number.isFinite(beyan)) {
+      if (beyan > MAX_DOSYA_ACIK) {
+        throw Object.assign(new Error(`${ad} çok büyük`), { status: 400 });
+      }
+      if (toplam + beyan > MAX_TOPLAM_ACIK) {
+        throw Object.assign(new Error('ZIP içeriği çok büyük'), { status: 400 });
+      }
+    }
     const veri = await giris.async('nodebuffer');
+    // İKİNCİ KATMAN: beyan yalan söylediyse burada yakalanır.
     if (veri.length > MAX_DOSYA_ACIK) {
       throw Object.assign(new Error(`${ad} çok büyük`), { status: 400 });
     }

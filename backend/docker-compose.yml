@@ -34,6 +34,31 @@ services:
     # tam kapanma ortasında SIGKILL basar ve istekler yine yarıda kesilir —
     # bu satır o tuzağı kapatır (test/kapanma.test.js iki değeri kilitler).
     stop_grace_period: 30s
+    # KONTEYNER SERTLEŞTİRME (güvenlik denetimi 2026-08-17 §4.4).
+    #
+    # Konteyner root olarak çalışıyor ve yüklenen HER videoyu ffmpeg'e veriyor
+    # (`videoKaresiCikar`). ffmpeg, kötü niyetli çerçeve verisine karşı en çok
+    # CVE alan bileşenlerden biridir; bir açık tetiklenirse elde edilen kod
+    # çalıştırma konteynerde ROOT olur — ve orada .env (JWT sırrı, mesaj
+    # şifreleme anahtarı, DB parolası), firebase-admin.json, medya volume'ü ve
+    # /yedekler bağlı.
+    #
+    # `USER node` TAM çözümdür ama bu turda YAPILMADI, sebebi somut: /yedekler
+    # host'ta 700 root:root (denetim §3.2 düzeltmesi) ve gece cron'u oraya root
+    # olarak yazıyor. Konteyneri uid 1000'e almak ya dizini gevşetmeyi ya da
+    # yedek sahipliğini yeniden tasarlamayı gerektirir — yani §3.2'yi bozma
+    # riski taşır. Ayrı ve dikkatli bir tur işi.
+    #
+    # Bu iki satır o turu BEKLEMEDEN elde edilebilecek kısmı alıyor:
+    #   no-new-privileges: setuid ikililerle yetki YÜKSELTME yolunu kapatır
+    #     (konteyner içinde root olsan bile daha fazlasını kazanamazsın).
+    #   cap_drop ALL: root'un taşıdığı tüm Linux yeteneklerini alır. Node 8500
+    #     dinliyor (1024 üstü), ffmpeg ve pg_dump yetenek istemiyor — yani
+    #     bugünkü işlevin hiçbiri bunlara dayanmıyor (dağıtımda doğrulandı).
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     depends_on:
       - db
     environment:
