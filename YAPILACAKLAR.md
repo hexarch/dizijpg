@@ -1,6 +1,38 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-17 — ⬜ Güvenlik denetimi (3. tur) bulguları
+Rapor: `GUVENLIK-DENETIMI-2026-08-17.md` (salt okuma; kod + sunucu).
+Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
+Öncelik sırası:
+- ⬜ **KIRMIZI** Kotasız yükleme → disk doldurma DoS. Misafir hesap bedava
+  (30/sa/IP) × 40 yükleme × 100 MB = ~120 GB/sa; diskte 21 GB boş, alarm yok.
+  Önce disk eşiği kapısı (`/medya` + `/veri/ice-aktar` başında boş alan < 10 GB
+  → 507) ve misafire ayrı sıkı limit; sonra kullanıcı başına toplam kota.
+- ⬜ **KIRMIZI** 146 bekleyen paket (56 güvenlik): openssl, gnutls, krb5, nss,
+  bind9, **internete açık dovecot**; çekirdek 6.1.170→6.1.180.
+  `unattended-upgrades` kurulu değil. Bakım penceresi + otomatik güvenlik yaması.
+- ⬜ `/api/Admin/ozet` nginx IP kapısını BÜYÜK HARFLE atlıyor (403 = Express'e
+  ulaştı; `/api/admin` → 404). `location ~* ^/api/admin` + `case sensitive routing`.
+- ⬜ Hesap ön-kaçırma: kayıtta e-posta doğrulaması yok + `/auth/google` var olan
+  hesaba şifresiz giriyor. Google eşleşmesinde `sifre_surumu++` ve şifreyi iptal et.
+- ⬜ DB rolü hâlâ süper kullanıcı — `db-rol-en-az-yetki-20260808.sql` 9 gündür
+  uygulanmadı (7 Ağu §3.1).
+- ⬜ `package-lock.json` yok → `npm install` her derlemede yeniden çözüyor.
+  `npm ci` + lock; nodemailer 2 YÜKSEK açık (bugün tetiklenemiyor).
+- ⬜ CSP hâlâ yok (3. denetim). Report-Only → `/api/csp-rapor` toplayıcısı
+  canlıda hazır ama başlık olmadığı için hiç veri almıyor.
+  Ek: `Permissions-Policy` `location = /` bloğunda düşüyor.
+- ⬜ Cloudflare Origin Cert + **Full (strict)** — origin sertifikası kendinden imzalı.
+- ⬜ Sunucu dışı yedek yok (gizlilik yarısı düzeldi: 700 + gpg, gece cron çalışıyor).
+- ⬜ `MEDYA_IMZA_ZORUNLU` 9 gündür kapalı — `MEDYA_SAYAC.imzasiz_ozel`'e bakıp
+  bilinçli karar ver, unutulmuş bayrak olarak kalmasın.
+- ⬜ API konteyneri root; yüklenen videoyu ffmpeg'e veriyor. `USER node` +
+  `no-new-privileges` + `cap_drop: ALL`.
+- ⬜ Düşük: zip bombası (boyut açtıktan SONRA kontrol ediliyor), `/altyazi`
+  ucunda özel-medya kapısı yok (bugün DM videosu kuyruğa girmiyor),
+  posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
+
 ## 2026-08-17 — 🚀 WEB+APK 1.75.0+123 (ses kaydediyor: mikrofonda paused silmesin)
 Yazıyor düzelince kayıt hâlâ görünmüyordu: Android mikrofon izni `paused`
 basıyor, istemci damgayı `acik:false` ile siliyordu. Kayıt sürerken paused
