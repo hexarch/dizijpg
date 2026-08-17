@@ -1027,6 +1027,8 @@ const Map<String, String> cevirilerAr = {
       'طلبات كثيرة جدًا؛ أعد المحاولة بعد قليل',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'لا توجد مساحة على الخادم حالياً، حاول بعد قليل',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'مساحة الوسائط لديك ممتلئة؛ احذف الملفات القديمة لتوفير مساحة',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'البريد/اسم المستخدم أو كلمة المرور خاطئة',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

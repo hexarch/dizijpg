@@ -1046,6 +1046,8 @@ const Map<String, String> cevirilerBg = {
       'Твърде много заявки; опитай пак след малко',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'В момента няма място на сървъра, опитай отново след малко',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Мястото ти за медия е пълно; изтрий стари качвания, за да освободиш място',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Грешен имейл/потребител или парола',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

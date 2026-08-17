@@ -1051,6 +1051,8 @@ const Map<String, String> cevirilerHu = {
       'Túl sok kérés; próbáld meg kicsit később',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Jelenleg nincs hely a szerveren, próbáld újra kicsit később',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'A médiatárhelyed megtelt; törölj régi feltöltéseket a helyfelszabadításhoz',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Hibás e-mail/felhasználónév vagy jelszó',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

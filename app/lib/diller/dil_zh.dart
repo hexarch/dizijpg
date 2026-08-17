@@ -992,6 +992,8 @@ const Map<String, String> cevirilerZh = {
   'Oturum sonlandı, tekrar giriş yap': '会话已结束，请重新登录',
   'Çok fazla istek; biraz sonra tekrar dene': '请求过多，稍后再试',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene': '服务器暂时没有空间，请稍后再试',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      '你的媒体空间已满，请删除旧上传内容以释放空间',
   'E-posta/kullanıcı adı veya şifre hatalı': '邮箱/用户名或密码不正确',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı': '该邮箱或用户名已被注册',
   'Google doğrulaması başarısız': 'Google 验证失败',

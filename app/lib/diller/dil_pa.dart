@@ -1044,6 +1044,8 @@ const Map<String, String> cevirilerPa = {
       'ਬਹੁਤ ਜ਼ਿਆਦਾ ਬੇਨਤੀਆਂ; ਥੋੜ੍ਹੀ ਚਿਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'ਸਰਵਰ ਉੱਤੇ ਹੁਣ ਥਾਂ ਨਹੀਂ ਹੈ, ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'ਤੁਹਾਡੀ ਮੀਡੀਆ ਸਟੋਰੇਜ ਭਰ ਗਈ ਹੈ; ਥਾਂ ਬਣਾਉਣ ਲਈ ਪੁਰਾਣੇ ਅੱਪਲੋਡ ਮਿਟਾਓ',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ਈਮੇਲ/ਯੂਜ਼ਰਨੇਮ ਜਾਂ ਪਾਸਵਰਡ ਗਲਤ ਹੈ',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'ਇਹ ਈਮੇਲ ਜਾਂ ਯੂਜ਼ਰਨੇਮ ਪਹਿਲਾਂ ਹੀ ਲਿਆ ਹੋਇਆ ਹੈ',

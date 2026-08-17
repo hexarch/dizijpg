@@ -18,6 +18,8 @@ import {
   VARSAYILAN_ESIK_GB, VARSAYILAN_TTL_MS, DEPO_DOLU_KODU, DEPO_DOLU_MESAJ,
   VARSAYILAN_IP_BAYT_SAAT, BUTCE_PENCERE_MS,
   esikBayt, bosBayt, diskKapisi, govdeUzunlugu, baytButcesi,
+  VARSAYILAN_KOTA_BAYT, MISAFIR_KOTA_BAYT,
+  medyaSahibi, kullanimTopla, kotaBayt,
 } from '../disk.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -426,4 +428,117 @@ test('disk.js imaja giriyor (Cannot find module ile restart döngüsü tuzağı)
   assert.ok(copy, 'COPY server.js satırı bulunamadı');
   assert.ok(/(^|\s)disk\.js(\s|$)/.test(copy),
     'disk.js imaja girmiyor: "Cannot find module ./disk.js" ile restart döngüsü');
+});
+
+// ===========================================================================
+// 9. Kullanıcı başına toplam medya kotası (§3.1 üçüncü katman)
+// ===========================================================================
+
+test('medyaSahibi: medya, avatar ve kapak adlarından sahip çıkar', () => {
+  assert.equal(medyaSahibi('m42-dc71d42e04a88a65.jpg'), 42);
+  assert.equal(medyaSahibi('m1-2f2dfa78379e570c.png'), 1);
+  assert.equal(medyaSahibi('avatar3-1786094173967.gif'), 3);
+  assert.equal(medyaSahibi('kapak3-1786186463341.gif'), 3);
+  // Video kapağı `<dosya>.jpg` — sahibi yine ön ekten okunur, yoksa DM
+  // videolarının kapakları hiç kimseye faturalanmazdı.
+  assert.equal(medyaSahibi('m7-aabbccddeeff0011.mp4.jpg'), 7);
+});
+
+test('medyaSahibi: tanınmayan ad -> null (yanlış kişiye fatura kesme)', () => {
+  for (const ad of ['', 'rastgele.jpg', 'm0-abc.jpg', 'mabc-1.jpg', null, 42]) {
+    assert.equal(medyaSahibi(ad), null, String(ad));
+  }
+});
+
+test('kullanimTopla: sahibe göre toplar, tanınmayanı ve çöp boyutu atar', () => {
+  const t = kullanimTopla([
+    { ad: 'm1-aaaaaaaaaaaaaaaa.png', bayt: 100 },
+    { ad: 'm1-bbbbbbbbbbbbbbbb.png', bayt: 50 },
+    { ad: 'avatar1-123.png', bayt: 25 },
+    { ad: 'm2-cccccccccccccccc.png', bayt: 7 },
+    { ad: 'taninmaz.png', bayt: 999 },
+    { ad: 'm3-dddddddddddddddd.png', bayt: -5 },
+  ]);
+  assert.equal(t.get(1), 175, 'medya + avatar aynı hesaba yazılmalı');
+  assert.equal(t.get(2), 7);
+  assert.equal(t.has(3), false, 'negatif boyut sayılmamalı');
+  assert.equal(t.size, 2);
+});
+
+test('kotaBayt: misafir üyeden DÜŞÜK, hesaba özel değer ikisini de EZER', () => {
+  assert.equal(kotaBayt({ medya_kota_bayt: null }, false), VARSAYILAN_KOTA_BAYT);
+  assert.equal(kotaBayt({ medya_kota_bayt: null }, true), MISAFIR_KOTA_BAYT);
+  assert.ok(MISAFIR_KOTA_BAYT < VARSAYILAN_KOTA_BAYT,
+    'misafir kotası üyeden düşük olmalı — hesap bedava ve saniyede açılıyor');
+  assert.equal(kotaBayt({ medya_kota_bayt: 12345 }, false), 12345);
+  assert.equal(kotaBayt({ medya_kota_bayt: 12345 }, true), 12345);
+});
+
+test('kotaBayt: 0 SINIRSIZ demek (tohum/içerik hesapları kaçış yolu)', () => {
+  assert.equal(kotaBayt({ medya_kota_bayt: 0 }, false), 0);
+  assert.equal(kotaBayt({ medya_kota_bayt: 0 }, true), 0);
+});
+
+test('kota ATOMİK ayrılıyor: kontrol UPDATE\'in İÇİNDE', () => {
+  // Ayrı SELECT + UPDATE yazılsaydı aynı anda gelen iki yükleme ikisi de
+  // "yer var" görüp kotayı birlikte aşardı (okuma-değiştirme-yazma yarışı).
+  const g = SERVER.slice(SERVER.indexOf('async function kotaAyir('),
+    SERVER.indexOf('function kotaIade('));
+  assert.match(g, /UPDATE kullanicilar SET medya_bayt = medya_bayt \+ \$2[\s\S]*?WHERE id=\$1 AND medya_bayt \+ \$2 <= \$3/,
+    'kota kontrolü UPDATE koşulunda değil — eşzamanlı yüklemeler kotayı aşar');
+  assert.match(g, /if \(!kota\) return \{ tamam: true \}/,
+    '0 (sınırsız) kısa devresi yok');
+});
+
+test('kota YAZMA HATASINDA iade ediliyor (hayalet kullanım kalmasın)', () => {
+  assert.match(SERVER, /catch \(e\) \{\s*\n\s*kotaIade\(req\.kullanici\.id, veri\.length\);\s*\n\s*throw e;/,
+    'disk yazma başarısızsa ayrılan kota geri verilmiyor');
+});
+
+test('avatar DEĞİŞİMİNDE eski dosyanın kotası iade ediliyor', () => {
+  // Avatar her değiştiğinde eskisi siliniyor. İade edilmezse kullanıcı yalnız
+  // fotoğrafını değiştirerek kotasını tüketirdi.
+  const g = SERVER.slice(SERVER.indexOf('function profilResmiUcu(sutun)'),
+    SERVER.indexOf('function profilResmiUcu(sutun)') + 3000);
+  assert.match(g, /eskiBoyut/, 'silinen avatarın boyutu ölçülmüyor');
+  assert.match(g, /kotaIade\(req\.kullanici\.id, eskiBoyut\)/,
+    'silinen avatarın kotası iade edilmiyor');
+});
+
+test('gece YENİDEN HESAPLAMA günlük bakıma bağlı (muhasebe kayması düzelsin)', () => {
+  const budaGovde = SERVER.slice(
+    SERVER.indexOf('async function tablolariBuda()'),
+    SERVER.indexOf('async function aramaTrafigiKontrol()'));
+  assert.ok(budaGovde.includes('medyaKullanimiYenidenHesapla()'),
+    'yeniden hesaplama bağlanmamış — muhasebe kayması kalıcı olur '
+    + '(tohum araçları diske DOĞRUDAN yazıyor, silme yolları unutulabilir)');
+  const g = SERVER.slice(SERVER.indexOf('async function medyaKullanimiYenidenHesapla('),
+    SERVER.indexOf('async function medyaKullanimiYenidenHesapla(') + 2200);
+  assert.match(g, /BEGIN/, 'tek işlemde olmalı: panel "herkes sıfır" anını görmesin');
+  assert.match(g, /UPDATE kullanicilar SET medya_bayt = 0/,
+    'kullanımı biten hesaplar sıfırlanmıyor — hepsini silen kullanıcının borcu kalır');
+});
+
+test('hatalar tablosunda SATIR TAVANI da var (yalnız süre yetmiyor)', () => {
+  // `/hata-bildir` oturum istemiyor; 30 günlük saklama tek başına pencere
+  // İÇİNDE şişmeyi engellemiyor.
+  assert.match(SERVER, /const HATA_TAVAN = \d+/);
+  assert.match(SERVER, /DELETE FROM hatalar WHERE id NOT IN \(\s*\n\s*SELECT id FROM hatalar ORDER BY id DESC LIMIT \$\{HATA_TAVAN\}\)/,
+    'satır tavanı budaması yok');
+});
+
+test('AÇILIŞTA yazılabilirlik kontrolü var (sessiz EACCES tuzağı)', () => {
+  // 17 Ağu 2026: `cap_drop: ALL` root'tan CAP_DAC_OVERRIDE'ı aldı ve uid 501'e
+  // ait `/veri/medya` yazılamaz oldu. Süreç açıldı, /saglik 200 döndü, ffmpeg
+  // çalıştı — kırıklık YALNIZCA ilk gerçek yüklemede EACCES ile çıktı.
+  // Kontrol açılışa çekilmezse aynı tuzak her mount/izin değişiminde tekrarlar.
+  assert.match(SERVER, /for \(const dizin of \[MEDYA_DIZIN, AVATAR_DIZIN\]\)[\s\S]{0,400}yazma-testi/,
+    'açılışta yazma denemesi yok — izin hatası ilk yüklemeye kadar gizli kalır');
+  assert.match(SERVER, /YAZILAMIYOR/, 'uyarı metni yok');
+  // Süreç ÖLDÜRÜLMEMELİ: okuma yazma olmadan da çalışır, tüm siteyi kapatmak
+  // orantısız olurdu.
+  const blok = SERVER.slice(SERVER.indexOf('for (const dizin of [MEDYA_DIZIN, AVATAR_DIZIN])'),
+    SERVER.indexOf('const statikSecenek'));
+  assert.ok(!/process\.exit/.test(blok),
+    'yazılamayan dizin tüm süreci öldürüyor — okuma yolu da kapanır');
 });

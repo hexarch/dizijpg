@@ -18,6 +18,12 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   -- bir hesaba düştüğünde bu false ise hesap ön-kaçırılmış olabilir: şifre ve
   -- oturumlar geçersizleştirilir. Gerekçesi migrasyon-2026-08-17b.sql'de.
   eposta_dogrulandi BOOLEAN NOT NULL DEFAULT false,
+  -- Toplam medya kullanımı ve hesaba özel kota (denetim §3.1). Yüklemede
+  -- artar, silmede azalır, HER GECE diskten yeniden hesaplanır — muhasebe
+  -- kayması kendiliğinden düzelir. `medya_kota_bayt`: NULL = tür varsayılanı,
+  -- 0 = sınırsız. Gerekçe migrasyon-2026-08-17c.sql'de.
+  medya_bayt BIGINT NOT NULL DEFAULT 0,
+  medya_kota_bayt BIGINT,
   yasakli BOOLEAN NOT NULL DEFAULT false,
   bildir_begeni BOOLEAN NOT NULL DEFAULT true,
   bildir_yanit BOOLEAN NOT NULL DEFAULT true,

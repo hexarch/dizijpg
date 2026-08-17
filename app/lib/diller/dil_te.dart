@@ -1045,6 +1045,8 @@ const Map<String, String> cevirilerTe = {
       'చాలా ఎక్కువ అభ్యర్థనలు; కాస్త తర్వాత ప్రయత్నించు',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'సర్వర్‌లో ప్రస్తుతం స్థలం లేదు, కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'మీ మీడియా నిల్వ నిండిపోయింది; స్థలం కోసం పాత అప్‌లోడ్‌లను తొలగించండి',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ఇమెయిల్/యూజర్ పేరు లేదా పాస్‌వర్డ్ తప్పు',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

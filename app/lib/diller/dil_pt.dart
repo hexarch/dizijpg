@@ -1062,6 +1062,8 @@ const Map<String, String> cevirilerPt = {
       'Muitas solicitações; tente daqui a pouco',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Sem espaço no servidor agora, tente novamente em instantes',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Seu espaço de mídia está cheio; apague envios antigos para liberar espaço',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/usuário ou senha incorretos',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

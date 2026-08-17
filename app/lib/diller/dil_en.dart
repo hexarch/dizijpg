@@ -1044,6 +1044,8 @@ const Map<String, String> cevirilerEn = {
       'Too many requests; try again in a bit',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'No space on the server right now, try again shortly',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Your media storage is full; delete old uploads to free up space',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Email/username or password is wrong',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

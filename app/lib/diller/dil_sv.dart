@@ -1052,6 +1052,8 @@ const Map<String, String> cevirilerSv = {
       'För många förfrågningar; försök om en stund',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Ingen plats på servern just nu, försök igen om en stund',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Ditt medielagringsutrymme är fullt; radera gamla uppladdningar för att frigöra plats',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-post/användarnamn eller lösenord är fel',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

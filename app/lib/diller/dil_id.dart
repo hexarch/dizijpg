@@ -1045,6 +1045,8 @@ const Map<String, String> cevirilerId = {
       'Terlalu banyak permintaan; coba lagi sebentar',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Server sedang penuh, coba lagi sebentar lagi',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Penyimpanan media kamu penuh; hapus unggahan lama untuk mengosongkan ruang',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Email/nama pengguna atau kata sandi salah',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

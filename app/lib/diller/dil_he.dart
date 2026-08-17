@@ -1024,6 +1024,8 @@ const Map<String, String> cevirilerHe = {
       'יותר מדי בקשות; נסה שוב בעוד מעט',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'אין כרגע מקום בשרת, נסה שוב בעוד רגע',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'אחסון המדיה שלך מלא; מחק העלאות ישנות כדי לפנות מקום',
   'E-posta/kullanıcı adı veya şifre hatalı': 'אימייל/שם משתמש או סיסמה שגויים',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'האימייל או שם המשתמש הזה כבר תפוס',

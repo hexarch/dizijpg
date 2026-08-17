@@ -1061,6 +1061,8 @@ const Map<String, String> cevirilerFr = {
       'Trop de requêtes ; réessaie un peu plus tard',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Plus d’espace sur le serveur pour l’instant, réessaie dans un moment',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Ton espace média est plein ; supprime d’anciens envois pour libérer de la place',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/identifiant ou mot de passe incorrect',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

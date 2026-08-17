@@ -1049,6 +1049,8 @@ const Map<String, String> cevirilerNl = {
       'Te veel verzoeken; probeer zo weer',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Even geen ruimte op de server, probeer het zo opnieuw',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Je mediaopslag is vol; verwijder oude uploads om ruimte te maken',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/gebruikersnaam of wachtwoord onjuist',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

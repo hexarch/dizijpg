@@ -1049,6 +1049,8 @@ const Map<String, String> cevirilerSw = {
       'Maombi mengi mno; jaribu tena baada ya muda',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Hakuna nafasi kwenye seva kwa sasa, jaribu tena baadaye kidogo',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Hifadhi yako ya midia imejaa; futa vipakiwa vya zamani ili kupata nafasi',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Barua pepe/jina la mtumiaji au nenosiri si sahihi',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

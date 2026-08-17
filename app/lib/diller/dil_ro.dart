@@ -1057,6 +1057,8 @@ const Map<String, String> cevirilerRo = {
       'Prea multe cereri; încearcă puțin mai târziu',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Momentan nu e spațiu pe server, încearcă din nou în scurt timp',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Spațiul tău media este plin; șterge încărcările vechi pentru a elibera spațiu',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/utilizator sau parolă greșită',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

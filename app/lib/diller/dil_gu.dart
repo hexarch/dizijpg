@@ -1036,6 +1036,8 @@ const Map<String, String> cevirilerGu = {
       'ઘણી બધી વિનંતીઓ; થોડી વાર પછી પ્રયાસ કરો',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'સર્વર પર અત્યારે જગ્યા નથી, થોડી વારે ફરી પ્રયાસ કરો',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'તમારો મીડિયા સ્ટોરેજ ભરાઈ ગયો છે; જગ્યા માટે જૂના અપલોડ કાઢી નાખો',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ઇમેઇલ/વપરાશકર્તાનામ અથવા પાસવર્ડ ખોટો',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

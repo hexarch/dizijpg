@@ -133,6 +133,83 @@ export function baytButcesi({
   return katman;
 }
 
+// ---------------------------------------------------------------------------
+// ÜÇÜNCÜ KATMAN: KULLANICI BAŞINA TOPLAM KOTA (denetim §3.1)
+// ---------------------------------------------------------------------------
+// Eşik kapısı "makine ölmesin", bayt bütçesi "saatlik hız" derdinde. İkisi de
+// ZAMANA bağlı; hiçbiri "tek hesap günler boyunca birikerek diski yer"
+// durumunu kapatmıyor. Kota onu kapatır.
+//
+// ÖLÇÜLDÜ (17 Ağu, diskteki gerçek dağılım): gerçek bir insanın bir aylık
+// kullanımı ~40 MB. Varsayılan 2 GB bunun ~50 katı.
+
+/** Bağlı (e-postalı) hesap için varsayılan kota. */
+export const VARSAYILAN_KOTA_BAYT = 2 * 1024 ** 3;
+/** Misafir hesap için kota. Hesap bedava olduğu için bilerek düşük. */
+export const MISAFIR_KOTA_BAYT = 200 * 1024 * 1024;
+
+/** Kota aşımının makine kodu. */
+export const KOTA_DOLU_KODU = 'KOTA_DOLU';
+/**
+ * Kullanıcıya dönen metin — AYNI ZAMANDA ÇEVİRİ ANAHTARIDIR (app/lib/api.dart
+ * `mesaj.c`). Değişirse `lib/diller/dil_*.dart` içindeki 45 karşılık da AYNI
+ * turda değişmeli.
+ */
+export const KOTA_DOLU_MESAJ = 'Medya alanın doldu; yer açmak için eski yüklemelerini sil';
+
+/**
+ * Dosya adından SAHİBİNİ çıkarır. Adlar sahibin id'sini taşır:
+ *   medya  : `m<id>-<16hex>.<uzanti>` (+ video kapağı `.jpg`)
+ *   avatar : `avatar<id>-<zaman>.<uzanti>`
+ *   kapak  : `kapak<id>-<zaman>.<uzanti>`
+ * Tanınmayan ad -> null (sayıma girmez; yanlış kullanıcıya fatura kesmeyiz).
+ * @returns {number|null}
+ */
+export function medyaSahibi(ad) {
+  if (typeof ad !== 'string') return null;
+  const m = /^(?:m|avatar|kapak)([1-9][0-9]{0,9})-/.exec(ad);
+  if (!m) return null;
+  const id = Number(m[1]);
+  return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+/**
+ * Hesabın kotası (bayt). Öncelik: hesaba özel değer > tür varsayılanı.
+ * `0` SINIRSIZ demektir (içerik/tohum hesapları için kaçış yolu) ve bu yüzden
+ * `?? ` DEĞİL açık `null` kontrolü kullanılıyor — `0 ?? x` 0 döndürür ama
+ * niyeti okuyanın kafasında `0 = kapalı` ile `0 = tanımsız` karışmasın.
+ * @param {{medya_kota_bayt?: number|null}} kullanici
+ * @param {boolean} misafirMi
+ * @returns {number} 0 = sınırsız
+ */
+export function kotaBayt(kullanici, misafirMi) {
+  const ozel = kullanici?.medya_kota_bayt;
+  if (ozel !== null && ozel !== undefined) return Number(ozel);
+  return misafirMi ? MISAFIR_KOTA_BAYT : VARSAYILAN_KOTA_BAYT;
+}
+
+/**
+ * Dizindeki dosyaları sahibine göre toplar. GECE YENİDEN HESAPLAMA için:
+ * muhasebe (yüklemede artır / silmede azalt) kaçınılmaz olarak kayar —
+ * silme yollarından biri unutulur, tohum araçları diske doğrudan yazar,
+ * elle dosya silinir. Diskten yeniden hesaplamak bu kaymayı KENDİLİĞİNDEN
+ * düzeltir, yani muhasebenin kusursuz olması gerekmez.
+ *
+ * @param {Array<{ad:string, bayt:number}>} girdiler
+ * @returns {Map<number, number>} sahip id -> toplam bayt
+ */
+export function kullanimTopla(girdiler) {
+  const toplam = new Map();
+  for (const g of girdiler || []) {
+    const sahip = medyaSahibi(g?.ad);
+    if (sahip == null) continue;
+    const bayt = Number(g?.bayt);
+    if (!Number.isFinite(bayt) || bayt < 0) continue;
+    toplam.set(sahip, (toplam.get(sahip) || 0) + bayt);
+  }
+  return toplam;
+}
+
 /** Varsayılan eşik: bu kadar boş alan KALMADIYSA yükleme reddedilir. */
 export const VARSAYILAN_ESIK_GB = 10;
 

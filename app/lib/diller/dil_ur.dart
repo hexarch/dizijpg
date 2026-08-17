@@ -1048,6 +1048,8 @@ const Map<String, String> cevirilerUr = {
       'بہت زیادہ درخواستیں؛ تھوڑی دیر بعد کوشش کریں',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'سرور پر ابھی جگہ نہیں ہے، تھوڑی دیر بعد کوشش کریں',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'آپ کی میڈیا اسٹوریج بھر گئی ہے؛ جگہ بنانے کے لیے پرانی اپ لوڈز حذف کریں',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ای میل/یوزرنیم یا پاس ورڈ غلط ہے',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'یہ ای میل یا یوزرنیم پہلے سے موجود ہے',

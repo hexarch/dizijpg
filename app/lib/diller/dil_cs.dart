@@ -1041,6 +1041,8 @@ const Map<String, String> cevirilerCs = {
       'Příliš mnoho požadavků; zkus to za chvíli',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Na serveru teď není místo, zkus to za chvíli znovu',
+  'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
+      'Tvé úložiště médií je plné; uvolni místo smazáním starých nahrávek',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/uživatelské jméno nebo heslo je špatně',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

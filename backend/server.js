@@ -69,6 +69,7 @@ import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
 import {
   diskKapisi, esikBayt as diskEsikBayt,
   baytButcesi, VARSAYILAN_IP_BAYT_SAAT,
+  kotaBayt, kullanimTopla, KOTA_DOLU_KODU, KOTA_DOLU_MESAJ,
 } from './disk.js';
 // TMDB arama önbelleğinin İÇERİĞE bakan ömrü: sonuçsuz sorgu dakikalar,
 // dolu sonuç saatler/günler yaşar. Gerekçe onbellek_ttl.js başında.
@@ -340,6 +341,32 @@ function videoKaresiCikar(dosyaYolu) {
 
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
+
+// ---------- AÇILIŞTA YAZILABİLİRLİK KONTROLÜ ----------
+// 17 Ağu 2026'da yaşandı: `cap_drop: ALL` (denetim §4.4 sertleştirmesi)
+// konteynerdeki root'tan CAP_DAC_OVERRIDE'ı da aldı. `/veri/medya` dizini
+// eski bir Mac aktarımından kalma uid 501'e aitti ve 755'ti; root artık ona
+// YAZAMIYORDU. Süreç sorunsuz açıldı, sağlık yoklaması 200 döndü, ffmpeg ve
+// pg_dump çalıştı — kırıklık YALNIZCA ilk gerçek yüklemede, EACCES ile
+// ortaya çıktı. Yani sessiz ve gecikmeli bir arızaydı.
+//
+// Bu döngü onu AÇILIŞA çeker: dizin yazılamıyorsa log gürültülü bağırır.
+// SÜREÇ ÖLDÜRÜLMEZ — okuma (medya servisi, tüm API) yazma olmadan da
+// çalışır; yazamadığı için tüm siteyi kapatmak orantısız olurdu.
+for (const dizin of [MEDYA_DIZIN, AVATAR_DIZIN]) {
+  const deneme = path.join(dizin, `.yazma-testi-${process.pid}`);
+  try {
+    fs.writeFileSync(deneme, '');
+    fs.unlinkSync(deneme);
+  } catch (e) {
+    console.error(
+      `UYARI: ${dizin} YAZILAMIYOR (${e.code}) — yüklemeler 500 dönecek. `
+      + 'Muhtemel sebep: dizin sahibi konteyner kullanıcısı değil ve '
+      + 'cap_drop ALL yüzünden CAP_DAC_OVERRIDE yok. Çözüm: '
+      + `chown root:root <host'taki ${dizin} karşılığı>`);
+  }
+}
+
 const statikSecenek = { maxAge: '365d', immutable: true, fallthrough: false };
 
 // ---------- DİSK EŞİĞİ KAPISI (denetim 2026-08-17 §3.1) ----------
@@ -1402,6 +1429,101 @@ console.log(IP_BAYT_BUTCE
   ? `Yükleme bütçesi: IP başına ${(IP_BAYT_BUTCE / 1024 ** 3).toFixed(2)} GB/saat `
     + `(${ISCI_SAYISI} işçi × ${(ISCI_BUTCE / 1024 ** 3).toFixed(3)} GB)`
   : 'Yükleme bütçesi KAPALI (IP_BAYT_SAAT_GB=0)');
+
+// ---------- KULLANICI BAŞINA TOPLAM MEDYA KOTASI (denetim §3.1) ----------
+/**
+ * Kotayı ATOMİK olarak ayırır: kontrol ve artırma TEK ifadede olur.
+ * Ayrı `SELECT` + `UPDATE` yazsaydık, aynı anda gelen iki yükleme ikisi de
+ * "yer var" görüp kotayı birlikte aşardı (klasik okuma-değiştirme-yazma
+ * yarışı). `WHERE ... + $2 <= kota` koşulu bu yüzden UPDATE'in İÇİNDE.
+ *
+ * @returns {Promise<{tamam:boolean, kullanilan?:number, kota?:number}>}
+ */
+async function kotaAyir(kullaniciId, bayt, misafirMi) {
+  const { rows } = await havuz.query(
+    'SELECT medya_bayt, medya_kota_bayt FROM kullanicilar WHERE id=$1', [kullaniciId]);
+  if (!rows.length) return { tamam: true };            // hesap yok: kapıyı bekletme
+  const kota = kotaBayt(rows[0], misafirMi);
+  if (!kota) return { tamam: true };                   // 0 = sınırsız
+  const { rows: y } = await havuz.query(
+    `UPDATE kullanicilar SET medya_bayt = medya_bayt + $2
+      WHERE id=$1 AND medya_bayt + $2 <= $3
+      RETURNING medya_bayt`,
+    [kullaniciId, bayt, kota],
+  );
+  if (!y.length) {
+    return { tamam: false, kullanilan: Number(rows[0].medya_bayt), kota };
+  }
+  return { tamam: true, kullanilan: Number(y[0].medya_bayt), kota };
+}
+
+/**
+ * Ayrılan kotayı geri verir. Yükleme kotayı ayırdıktan SONRA başarısız olursa
+ * (disk yazma hatası, geçersiz tür) çağrılır; yoksa kullanıcı hiç yüklenmemiş
+ * bir dosya için ömür boyu yer ödemiş olurdu. Ateşle-unut: geri verme hatası
+ * isteğin sonucunu değiştirmemeli.
+ */
+function kotaIade(kullaniciId, bayt) {
+  if (!bayt) return;
+  havuz.query(
+    'UPDATE kullanicilar SET medya_bayt = GREATEST(0, medya_bayt - $2) WHERE id=$1',
+    [kullaniciId, bayt],
+  ).catch((e) => console.error('kotaIade:', e.message));
+}
+
+/** Kota reddi yanıtı — tek yerden, iki uçta da aynı gövde. */
+const kotaReddi = (res, d) => res.status(413).json({
+  hata: KOTA_DOLU_MESAJ,
+  kod: KOTA_DOLU_KODU,
+  kullanilan: d.kullanilan,
+  kota: d.kota,
+});
+
+/**
+ * GECE YENİDEN HESAPLAMA — muhasebe kaymasını kendiliğinden düzeltir.
+ * Muhasebe (yüklemede artır / silmede azalt) kaçınılmaz olarak kayar: bir
+ * silme yolu unutulur, tohum araçları diske DOĞRUDAN yazar (ai_tohum.js,
+ * araclar/intl_*), dosya elle silinir. Diskten yeniden hesaplamak bu kaymayı
+ * kökten çözer — yani muhasebenin kusursuz olması GEREKMEZ.
+ */
+async function medyaKullanimiYenidenHesapla() {
+  const girdiler = [];
+  for (const dizin of [MEDYA_DIZIN, AVATAR_DIZIN]) {
+    let adlar;
+    try { adlar = fs.readdirSync(dizin); } catch { continue; }
+    for (const ad of adlar) {
+      try {
+        const st = fs.statSync(path.join(dizin, ad));
+        if (st.isFile()) girdiler.push({ ad, bayt: st.size });
+      } catch { /* yarışta silinmiş olabilir */ }
+    }
+  }
+  const toplam = kullanimTopla(girdiler);
+  // Tek sorguda yaz: satır satır UPDATE 160+ tur atardı. Kullanımı OLMAYAN
+  // hesaplar da sıfırlanmalı (hepsini sildiyse borcu kalmasın) — bu yüzden
+  // önce hepsi 0'lanır, sonra bulunanlar yazılır. Tek işlemde, yani panel
+  // aradaki "herkes sıfır" anını hiç görmez.
+  const istemci = await havuz.connect();
+  try {
+    await istemci.query('BEGIN');
+    await istemci.query('UPDATE kullanicilar SET medya_bayt = 0 WHERE medya_bayt <> 0');
+    if (toplam.size) {
+      await istemci.query(
+        `UPDATE kullanicilar k SET medya_bayt = v.bayt
+           FROM (SELECT unnest($1::int[]) AS id, unnest($2::bigint[]) AS bayt) v
+          WHERE k.id = v.id`,
+        [[...toplam.keys()], [...toplam.values()]],
+      );
+    }
+    await istemci.query('COMMIT');
+    console.log(`medya kullanımı yeniden hesaplandı: ${toplam.size} hesap`);
+  } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
+    console.error('medya kullanımı hesaplanamadı:', e.message);
+  } finally {
+    istemci.release();
+  }
+}
 const authLimiti = hizLimitiMerkezi(30, (req) => `a:${req.ip}`);
 // Şifre sıfırlama KODU İSTEME: hesap başına saatte 5. İki işi birden yapar:
 //  1) e-posta bombardımanını engeller (her istek kurbanın kutusuna posta atar),
@@ -5210,12 +5332,30 @@ async function filmDurumunuGuncelle(kullaniciId, tmdbId, izlendi) {
 // Büyüyen tabloların günlük budaması (sınırsız şişmeyi önler). Süresi geçen
 // akış-görüldü kayıtları, eski TMDB önbelleği, görüntülenme izleri ve hata
 // günlükleri silinir. Popüler fallback zaten 30 günden eskiyi önemsemez.
+// `hatalar` tablosunda tutulacak en fazla satır. 20.000 x ~1.5 KB ≈ 30 MB:
+// bugünkü gerçek hacmin (bir ayda 657 satır) 30 katı, yani meşru kullanımı
+// ASLA kesmez; ama dağıtık bir sel geldiğinde üst sınır bellidir.
+const HATA_TAVAN = 20000;
+
 async function tablolariBuda() {
   const isler = [
     `DELETE FROM akis_goruldu WHERE tarih < now() - interval '30 days'`,
     `DELETE FROM tmdb_onbellek WHERE guncelleme < now() - interval '30 days'`,
     `DELETE FROM yorum_goruntuleyen WHERE tarih < now() - interval '90 days'`,
     `DELETE FROM hatalar WHERE tarih < now() - interval '30 days'`,
+    // SATIR TAVANI — süreye EK olarak (denetim 2026-08-17 §5.4).
+    // `/hata-bildir` OTURUM İSTEMİYOR (girisIsteğeBagli) ve kayıt başına
+    // 2 KB mesaj + 8 KB yığın kabul ediyor; IP başına 60/saat. Tek başına
+    // 30 günlük saklama, pencere İÇİNDE şişmeyi engellemiyor: dağıtık bir
+    // istekle tablo bir ay boyunca büyüyüp diski yiyebilir ve tam da §3.1'in
+    // korumaya çalıştığı boş alanı tüketir.
+    //
+    // NEDEN "en yeni N" (en eski N değil): hata kutusunun işe yaradığı an,
+    // kullanıcı "şu hatayı aldım" dediğinde SON kayıtlara bakmaktır. Sel
+    // gelirse eski gerçek hatalar zaten 30 günde düşecekti; yeni gerçek
+    // hataları korumak daha değerli.
+    `DELETE FROM hatalar WHERE id NOT IN (
+       SELECT id FROM hatalar ORDER BY id DESC LIMIT ${HATA_TAVAN})`,
     // Arama ÜSTVERİSİ 90 gün (KVKK ölçülülük + `yorum_goruntuleyen` emsali +
     // röle oranı ölçümünün istediği "3 ay veri" ile birebir). İçerik zaten
     // hiç yazılmıyor; burada silinen yalnız "kim, kimi, ne zaman, ne kadar".
@@ -5224,6 +5364,10 @@ async function tablolariBuda() {
   for (const sql of isler) {
     try { await havuz.query(sql); } catch (e) { console.error('buda:', e.message); }
   }
+  // Medya kotası muhasebesini diskten yeniden kur. Budamayla aynı görevde
+  // çünkü ikisi de "gecelik bakım" ve ikisi de YALNIZ sıra-1 işçisinde koşar
+  // (kümede N kez koşsalardı N kez aynı işi yaparlardı).
+  await medyaKullanimiYenidenHesapla();
   await aramaTrafigiKontrol();
 }
 
@@ -6694,17 +6838,30 @@ function profilResmiUcu(sutun) {
       if (!tur) {
         return res.status(400).json({ hata: 'Yalnızca GIF, PNG, JPEG veya WebP yüklenebilir' });
       }
+      const kota = await kotaAyir(req.kullanici.id, veri.length, req.misafir === true);
+      if (!kota.tamam) return kotaReddi(res, kota);
       const dosya = `${sutun}${req.kullanici.id}-${Date.now()}.${tur.uzanti}`;
-      fs.writeFileSync(path.join(AVATAR_DIZIN, dosya), veri);
+      try {
+        fs.writeFileSync(path.join(AVATAR_DIZIN, dosya), veri);
+      } catch (e) {
+        kotaIade(req.kullanici.id, veri.length);
+        throw e;
+      }
       const yeniYol = `/avatarlar/${dosya}`;
       const eski = await havuz.query(
         `SELECT ${sutun} FROM kullanicilar WHERE id=$1`, [req.kullanici.id]);
       await havuz.query(
         `UPDATE kullanicilar SET ${sutun}=$1 WHERE id=$2`, [yeniYol, req.kullanici.id]);
-      // Eski dosyayı temizle (varsa ve bizim dizindeyse)
+      // Eski dosyayı temizle (varsa ve bizim dizindeyse). Kotasını da GERİ VER:
+      // avatar her değiştiğinde eskisi siliniyor, iade edilmezse kullanıcı
+      // yalnız fotoğrafını değiştirerek kotasını tüketirdi.
       const eskiYol = eski.rows[0]?.[sutun];
       if (eskiYol?.startsWith('/avatarlar/')) {
-        fs.unlink(path.join(AVATAR_DIZIN, path.basename(eskiYol)), () => {});
+        const eskiTam = path.join(AVATAR_DIZIN, path.basename(eskiYol));
+        let eskiBoyut = 0;
+        try { eskiBoyut = fs.statSync(eskiTam).size; } catch { /* zaten yok */ }
+        fs.unlink(eskiTam, () => {});
+        kotaIade(req.kullanici.id, eskiBoyut);
       }
       res.json({ [sutun]: yeniYol });
     }),
@@ -6759,10 +6916,22 @@ app.post('/medya',
     if (!tur) {
       return res.status(400).json({ hata: 'Desteklenen türler: GIF, PNG, JPEG, WebP, MP4, WebM, ses' });
     }
+    // KOTA — tür doğrulandıktan SONRA, diske yazmadan ÖNCE. Sıra bilinçli:
+    // geçersiz bir gövde için kota ayırmak, kullanıcıya hiç var olmayan bir
+    // dosyanın yerini fatura etmek olurdu.
+    const kota = await kotaAyir(req.kullanici.id, veri.length, req.misafir === true);
+    if (!kota.tamam) return kotaReddi(res, kota);
     // Dosya adı yükleyenin kimliğini taşır; yorum eklerken sahiplik bununla doğrulanır.
     const dosya = `m${req.kullanici.id}-${crypto.randomBytes(8).toString('hex')}.${tur.uzanti}`;
     const tamYol = path.join(MEDYA_DIZIN, dosya);
-    fs.writeFileSync(tamYol, veri);
+    try {
+      fs.writeFileSync(tamYol, veri);
+    } catch (e) {
+      // Yazma başarısızsa ayrılan kotayı GERİ VER: yoksa kullanıcı diskte
+      // olmayan bir dosya için ömür boyu yer ödemeye devam ederdi.
+      kotaIade(req.kullanici.id, veri.length);
+      throw e;
+    }
     const videoMu = VIDEO_TURLERI.includes(tur);
     // Kare çıkarma yüklemeyi ~1 sn uzatır ama ızgarayı çok hafifletir.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;

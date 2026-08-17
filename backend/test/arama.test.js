@@ -776,7 +776,14 @@ test('TRAFİK EŞİK UYARISI: eşik varsayılan 200 GB, OTOMATİK KAPATMA YOK', 
   // kullanıcılara kesinti yaşatması demektir. Karar insana ait.
   assert.ok(!/arama_acik.*'0'|UPDATE ayarlar SET deger='0'/.test(govde),
     'eşik uyarısı özelliği otomatik kapatıyor — bilinçli karara aykırı');
-  assert.ok(/tablolariBuda[\s\S]{0,900}aramaTrafigiKontrol\(\)/.test(SERVER),
+  // ÖLÇÜLEN ŞEY: çağrı `tablolariBuda`nın GÖVDESİNDE mi? Eskiden bu, "iki ad
+  // 900 karakter içinde geçiyor mu" diye yazılıydı; 17 Ağu 2026'da gövdeye
+  // `medyaKullanimiYenidenHesapla()` eklenince mesafe aşıldı ve test KOD
+  // DOĞRUYKEN kırmızıya döndü. Yakınlık hiçbir zaman gereklilik değildi.
+  const budaGovde = SERVER.slice(
+    SERVER.indexOf('async function tablolariBuda()'),
+    SERVER.indexOf('async function aramaTrafigiKontrol()'));
+  assert.ok(budaGovde.includes('aramaTrafigiKontrol()'),
     'eşik kontrolü günlük budama işine bağlanmamış (ek zamanlayıcı istemiyoruz)');
 });
 
