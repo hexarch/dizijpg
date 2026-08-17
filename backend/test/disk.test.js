@@ -258,6 +258,16 @@ test('kapı fs.statfsSync ile GERÇEK dizini ölçüyor', () => {
     'kapı yanlış dizini ölçüyor ya da ölçüm bağlanmamış');
 });
 
+test('DISK_ESIK_GB compose ile konteynere AKTARILIYOR', () => {
+  // TURN_SIR tuzağı (docker-compose.yml, 9 Ağu 2026): `.env`de değişken VARDI
+  // ama compose onu konteynere aktarmıyordu, kod varsayılana düşüyordu ve ayar
+  // SESSİZCE etkisizdi. Bu kapının kaçış yolu (`DISK_ESIK_GB=0`) aynı sessiz
+  // ölümle kaybolursa, disk dolduğunda kapıyı açmanın yolu kalmaz.
+  const compose = fs.readFileSync(path.join(KOK, 'docker-compose.yml'), 'utf8');
+  assert.match(compose, /^\s*DISK_ESIK_GB:\s*\$\{DISK_ESIK_GB/m,
+    'DISK_ESIK_GB compose api.environment içinde yok — .env\'e yazmak etkisiz kalır');
+});
+
 test('disk.js imaja giriyor (Cannot find module ile restart döngüsü tuzağı)', () => {
   const copy = DOCKERFILE.split('\n').find((s) => s.startsWith('COPY server.js'));
   assert.ok(copy, 'COPY server.js satırı bulunamadı');

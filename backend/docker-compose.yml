@@ -76,6 +76,13 @@ services:
       # 0/boş = eski yol (Node okur). nginx'te /ic-dosya + /ic-ozel internal
       # blokları ve /srv/dizijpg-veri bind mount'u gerektirir (fstab'da).
       MEDYA_XACCEL: ${MEDYA_XACCEL:-1}
+      # Disk eşiği kapısı (güvenlik denetimi 2026-08-17 §3.1). Boş alan bu
+      # değerin altına inince yükleme uçları 507 döner. Varsayılan 10 GB;
+      # `0` kapıyı tamamen açar (kırılacak cam).
+      # BU SATIR ŞART: .env'de değişken olsa bile compose onu konteynere
+      # AKTARMAZSA kod varsayılana düşer ve ayar SESSİZCE etkisiz kalır —
+      # TURN_SIR'ın 9 Ağu'da düştüğü tuzağın aynısı (yukarıdaki nota bak).
+      DISK_ESIK_GB: ${DISK_ESIK_GB:-}
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya
       MAIL_HOST: host.docker.internal
