@@ -1057,6 +1057,8 @@ const Map<String, String> cevirilerTa = {
   'Oturum sonlandı, tekrar giriş yap': 'அமர்வு முடிந்தது, மீண்டும் உள்நுழை',
   'Çok fazla istek; biraz sonra tekrar dene':
       'அதிக கோரிக்கைகள்; சற்று கழித்து மீண்டும் முயல்க',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'சர்வரில் தற்போது இடம் இல்லை, சிறிது நேரம் கழித்து முயற்சிக்கவும்',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'மின்னஞ்சல்/பயனர் பெயர் அல்லது கடவுச்சொல் தவறு',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

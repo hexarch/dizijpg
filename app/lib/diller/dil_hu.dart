@@ -1049,6 +1049,8 @@ const Map<String, String> cevirilerHu = {
       'A munkamenet véget ért, jelentkezz be újra',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Túl sok kérés; próbáld meg kicsit később',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Jelenleg nincs hely a szerveren, próbáld újra kicsit később',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Hibás e-mail/felhasználónév vagy jelszó',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

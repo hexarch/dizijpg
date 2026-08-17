@@ -63,6 +63,10 @@ import {
 // İmza/özel-medya kapısına DOKUNMAZ; kapıdan geçen isteğin yalnız dosya
 // gönderimini devralır. MEDYA_XACCEL=1 değilse tamamen saydamdır.
 import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
+// Disk eşiği kapısı (güvenlik denetimi 2026-08-17 §3.1). Kotasız yükleme +
+// bedava misafir hesap = ~10 dakikada diski doldurup MAKİNENİN TAMAMINI
+// (host PG, Postfix, gece yedeği dahil) durdurmak. Gerekçe disk.js başında.
+import { diskKapisi, esikBayt as diskEsikBayt } from './disk.js';
 // TMDB arama önbelleğinin İÇERİĞE bakan ömrü: sonuçsuz sorgu dakikalar,
 // dolu sonuç saatler/günler yaşar. Gerekçe onbellek_ttl.js başında.
 import { tmdbSonucSayisi, aramaTtlSecici, ttlCoz } from './onbellek_ttl.js';
@@ -334,6 +338,25 @@ function videoKaresiCikar(dosyaYolu) {
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });
 fs.mkdirSync(MEDYA_DIZIN, { recursive: true });
 const statikSecenek = { maxAge: '365d', immutable: true, fallthrough: false };
+
+// ---------- DİSK EŞİĞİ KAPISI (denetim 2026-08-17 §3.1) ----------
+// Boş alan eşiğin altına inince YAZAN uçlar 507 döner; OKUMA hiç etkilenmez
+// (kullanıcı yüklediklerini görmeye devam eder, uygulama çalışmayı sürdürür).
+// TEK ölçüm noktası MEDYA_DIZIN: avatar, medya ve yedekler aynı dosya
+// sisteminde (/srv/dizijpg-veri ve /opt/dizijpg ikisi de `/` üzerinde).
+// `.env`'e `DISK_ESIK_GB=0` yazmak kapıyı tamamen açar (kırılacak cam).
+const DISK_ESIK = diskEsikBayt(process.env);
+const diskKapi = diskKapisi({
+  dizin: MEDYA_DIZIN,
+  esik: DISK_ESIK,
+  olc: fs.statfsSync,
+  uyar: ({ bos, esik }) => console.error(
+    `DİSK EŞİĞİ AŞILDI: boş ${(bos / 1024 ** 3).toFixed(2)} GB < eşik `
+    + `${(esik / 1024 ** 3).toFixed(2)} GB — yükleme uçları 507 dönüyor`),
+});
+console.log(DISK_ESIK
+  ? `Disk eşiği: ${(DISK_ESIK / 1024 ** 3).toFixed(1)} GB (altına inince yükleme 507)`
+  : 'Disk eşiği KAPALI (DISK_ESIK_GB=0)');
 
 // ---------- ÖZEL (DM) MEDYA KORUMASI ----------
 // Denetim §2.1: `/medya` kimlik doğrulamasız; DM fotoğrafı/sesi de dahil her
@@ -6541,6 +6564,7 @@ function profilResmiUcu(sutun) {
   return [
     girisZorunlu,
     yuklemeLimiti,
+    diskKapi,
     express.raw({ type: ['image/*', 'application/octet-stream'], limit: '10mb' }),
     sarici(async (req, res) => {
       const veri = req.body;
@@ -6600,6 +6624,9 @@ const SES_TURLERI = [
 app.post('/medya',
   girisZorunlu,
   yuklemeLimiti,
+  // Disk eşiği express.raw'dan ÖNCE: reddedilecek isteğin 100 MB'lık gövdesini
+  // belleğe almanın anlamı yok (disk.js "KONUM" notu).
+  diskKapi,
   // 100mb: Instagram'dan aktarılan videolar özgün kalitesinde yüklensin
   // (40-70MB olabiliyor). nginx tarafında client_max_body_size 105m.
   express.raw({ type: ['image/*', 'video/*', 'audio/*', 'application/octet-stream'], limit: '100mb' }),
@@ -9657,6 +9684,7 @@ app.post('/veri/disa-aktar', girisZorunlu, veriLimiti, sarici(async (req, res) =
 app.post('/veri/ice-aktar',
   girisZorunlu,
   veriLimiti,
+  diskKapi,
   express.raw({ type: ['application/zip', 'application/octet-stream'], limit: '50mb' }),
   sarici(async (req, res) => {
     if (!Buffer.isBuffer(req.body) || req.body.length < 4) {
@@ -11407,7 +11435,18 @@ app.get('/admin/depolama', adminKisit, sarici(async (req, res) => {
   let disk = null;
   try {
     const s = fs.statfsSync('/');
-    disk = { toplam: s.blocks * s.bsize, bos: s.bfree * s.bsize };
+    disk = {
+      toplam: s.blocks * s.bsize,
+      bos: s.bfree * s.bsize,
+      // Denetim §3.1 kapısının GERÇEKTEN baktığı sayılar. `bos` root'a ayrılmış
+      // %5'i de sayar (bfree); kapı `bavail`e bakar — ikisini yan yana
+      // göstermezsek panel "12 GB var" derken uçlar 507 döndürür ve sebep
+      // görünmez. `kapi_acik` = şu an yükleme reddediliyor mu.
+      bos_kullanilabilir: diskKapi.bos(),
+      esik: DISK_ESIK,
+      kapi_acik: DISK_ESIK > 0 && diskKapi.bos() !== null
+        && diskKapi.bos() < DISK_ESIK,
+    };
   } catch { /* statfs yoksa atla */ }
   const [medya, avatarlar, dbBoyut, tablolar] = await Promise.all([
     Promise.resolve(dizinOzet(MEDYA_DIZIN)),

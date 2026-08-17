@@ -1022,6 +1022,8 @@ const Map<String, String> cevirilerHe = {
   'Oturum sonlandı, tekrar giriş yap': 'ההפעלה הסתיימה, התחבר שוב',
   'Çok fazla istek; biraz sonra tekrar dene':
       'יותר מדי בקשות; נסה שוב בעוד מעט',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'אין כרגע מקום בשרת, נסה שוב בעוד רגע',
   'E-posta/kullanıcı adı veya şifre hatalı': 'אימייל/שם משתמש או סיסמה שגויים',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'האימייל או שם המשתמש הזה כבר תפוס',

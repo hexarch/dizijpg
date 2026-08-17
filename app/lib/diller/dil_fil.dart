@@ -1057,6 +1057,8 @@ const Map<String, String> cevirilerFil = {
   'Oturum sonlandı, tekrar giriş yap': 'Tapos na ang session, mag-sign in ulit',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Masyadong maraming request; subukan ulit sa ilang sandali',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Wala munang espasyo sa server, subukan ulit mamaya',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Mali ang email/username o password',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

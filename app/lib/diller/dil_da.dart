@@ -1042,6 +1042,8 @@ const Map<String, String> cevirilerDa = {
   'Oturum sonlandı, tekrar giriş yap': 'Sessionen er slut, log ind igen',
   'Çok fazla istek; biraz sonra tekrar dene':
       'For mange anmodninger; prøv igen om lidt',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Der er ikke plads på serveren lige nu, prøv igen om lidt',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/brugernavn eller adgangskode er forkert',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

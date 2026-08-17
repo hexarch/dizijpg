@@ -1025,6 +1025,8 @@ const Map<String, String> cevirilerAr = {
   'Oturum sonlandı, tekrar giriş yap': 'انتهت الجلسة، سجّل الدخول مجددًا',
   'Çok fazla istek; biraz sonra tekrar dene':
       'طلبات كثيرة جدًا؛ أعد المحاولة بعد قليل',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'لا توجد مساحة على الخادم حالياً، حاول بعد قليل',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'البريد/اسم المستخدم أو كلمة المرور خاطئة',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

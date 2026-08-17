@@ -1039,6 +1039,8 @@ const Map<String, String> cevirilerCs = {
   'Oturum sonlandı, tekrar giriş yap': 'Relace skončila, přihlas se znovu',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Příliš mnoho požadavků; zkus to za chvíli',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Na serveru teď není místo, zkus to za chvíli znovu',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/uživatelské jméno nebo heslo je špatně',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

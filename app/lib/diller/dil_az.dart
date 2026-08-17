@@ -1034,6 +1034,8 @@ const Map<String, String> cevirilerAz = {
   'Oturum sonlandı, tekrar giriş yap': 'Sessiya bitdi, yenidən giriş et',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Həddindən çox sorğu; bir az sonra yenidən yoxla',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Hazırda serverdə yer yoxdur, bir azdan yenidən cəhd edin',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-poçt/istifadəçi adı və ya şifrə səhvdir',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

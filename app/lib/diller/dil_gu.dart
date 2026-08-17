@@ -1034,6 +1034,8 @@ const Map<String, String> cevirilerGu = {
   'Oturum sonlandı, tekrar giriş yap': 'સત્ર પૂરું, ફરી સાઇન ઇન કરો',
   'Çok fazla istek; biraz sonra tekrar dene':
       'ઘણી બધી વિનંતીઓ; થોડી વાર પછી પ્રયાસ કરો',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'સર્વર પર અત્યારે જગ્યા નથી, થોડી વારે ફરી પ્રયાસ કરો',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ઇમેઇલ/વપરાશકર્તાનામ અથવા પાસવર્ડ ખોટો',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

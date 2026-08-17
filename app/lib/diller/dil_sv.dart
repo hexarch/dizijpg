@@ -1050,6 +1050,8 @@ const Map<String, String> cevirilerSv = {
   'Oturum sonlandı, tekrar giriş yap': 'Sessionen är slut, logga in igen',
   'Çok fazla istek; biraz sonra tekrar dene':
       'För många förfrågningar; försök om en stund',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Ingen plats på servern just nu, försök igen om en stund',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-post/användarnamn eller lösenord är fel',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

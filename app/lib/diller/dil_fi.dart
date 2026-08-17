@@ -1047,6 +1047,8 @@ const Map<String, String> cevirilerFi = {
   'Oturum sonlandı, tekrar giriş yap': 'Istunto päättyi, kirjaudu uudelleen',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Liikaa pyyntöjä; yritä hetken päästä uudelleen',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Palvelimella ei ole nyt tilaa, yritä hetken kuluttua uudelleen',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Sähköposti/käyttäjätunnus tai salasana on väärin',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

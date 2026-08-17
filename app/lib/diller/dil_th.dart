@@ -1029,6 +1029,8 @@ const Map<String, String> cevirilerTh = {
   'Geçersiz oturum': 'เซสชันไม่ถูกต้อง',
   'Oturum sonlandı, tekrar giriş yap': 'เซสชันสิ้นสุด เข้าสู่ระบบอีกครั้ง',
   'Çok fazla istek; biraz sonra tekrar dene': 'คำขอมากเกินไป ลองใหม่สักครู่',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'ตอนนี้เซิร์ฟเวอร์ไม่มีพื้นที่ว่าง ลองใหม่อีกสักครู่',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'อีเมล/ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı': 'อีเมลหรือชื่อนี้ถูกใช้แล้ว',

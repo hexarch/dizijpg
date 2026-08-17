@@ -1011,6 +1011,8 @@ const Map<String, String> cevirilerAm = {
   'Oturum sonlandı, tekrar giriş yap': 'ክፍለ ጊዜው አለቀ፣ እንደገና ግባ',
   'Çok fazla istek; biraz sonra tekrar dene':
       'በጣም ብዙ ጥያቄዎች፤ ትንሽ ቆይተህ እንደገና ሞክር',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'አሁን በአገልጋዩ ላይ ቦታ የለም፣ ከጥቂት ጊዜ በኋላ እንደገና ይሞክሩ',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ኢሜይል/የተጠቃሚ ስም ወይም የይለፍ ቃል ስህተት ነው',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

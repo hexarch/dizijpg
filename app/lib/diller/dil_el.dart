@@ -1056,6 +1056,8 @@ const Map<String, String> cevirilerEl = {
   'Oturum sonlandı, tekrar giriş yap': 'Η συνεδρία έληξε, συνδέσου ξανά',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Πάρα πολλά αιτήματα· δοκίμασε σε λίγο',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Δεν υπάρχει χώρος στον διακομιστή αυτή τη στιγμή, δοκίμασε ξανά σε λίγο',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Λάθος email/όνομα χρήστη ή κωδικός',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

@@ -1043,6 +1043,8 @@ const Map<String, String> cevirilerTe = {
   'Oturum sonlandı, tekrar giriş yap': 'సెషన్ ముగిసింది, మళ్లీ సైన్ ఇన్ చేయి',
   'Çok fazla istek; biraz sonra tekrar dene':
       'చాలా ఎక్కువ అభ్యర్థనలు; కాస్త తర్వాత ప్రయత్నించు',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'సర్వర్‌లో ప్రస్తుతం స్థలం లేదు, కాసేపటి తర్వాత మళ్లీ ప్రయత్నించండి',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ఇమెయిల్/యూజర్ పేరు లేదా పాస్‌వర్డ్ తప్పు',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

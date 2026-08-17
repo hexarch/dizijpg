@@ -1041,6 +1041,8 @@ const Map<String, String> cevirilerKn = {
   'Oturum sonlandı, tekrar giriş yap': 'ಸೆಷನ್ ಮುಗಿಯಿತು, ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ',
   'Çok fazla istek; biraz sonra tekrar dene':
       'ತುಂಬಾ ವಿನಂತಿಗಳು; ಸ್ವಲ್ಪ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'ಸರ್ವರ್‌ನಲ್ಲಿ ಸದ್ಯಕ್ಕೆ ಸ್ಥಳವಿಲ್ಲ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ಇಮೇಲ್/ಬಳಕೆದಾರರ ಹೆಸರು ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪು',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

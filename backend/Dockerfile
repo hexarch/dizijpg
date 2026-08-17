@@ -35,7 +35,11 @@ RUN npm install --omit=dev
 # konteyner "Cannot find module './iki_adim.js'" ile acilista olur —
 # kripto.js / arama.js ile AYNI tuzak. test/arama.test.js bu listeyi otomatik
 # denetliyor (bu satir eklenmeden once testi KIRMIZIYA dondurdu).
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js arama.js gunluk.js onbellek_ttl.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js admin.html ./
+# disk.js: disk esigi kapisi (guvenlik denetimi 2026-08-17 §3.1). server.js onu
+# import ediyor; imaja GIRMEZSE konteyner "Cannot find module './disk.js'" ile
+# acilista olur ve restart dongusune girer — kripto.js / medya_imza.js /
+# arama.js ile AYNI tuzak. test/arama.test.js bu listeyi otomatik denetliyor.
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js disk.js arama.js gunluk.js onbellek_ttl.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./

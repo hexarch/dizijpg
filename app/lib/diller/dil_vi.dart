@@ -1044,6 +1044,8 @@ const Map<String, String> cevirilerVi = {
   'Oturum sonlandı, tekrar giriş yap': 'Phiên đã hết, đăng nhập lại',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Quá nhiều yêu cầu; thử lại sau một lát',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Máy chủ tạm thời hết dung lượng, hãy thử lại sau ít phút',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'Email/tên người dùng hoặc mật khẩu sai',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

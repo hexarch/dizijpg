@@ -1000,6 +1000,8 @@ const Map<String, String> cevirilerJa = {
   'Geçersiz oturum': 'セッションが無効です',
   'Oturum sonlandı, tekrar giriş yap': 'セッションが終了しました。再ログインしてください',
   'Çok fazla istek; biraz sonra tekrar dene': 'リクエストが多すぎます。少ししてから再試行してください',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'サーバーの空き容量が一時的にありません。しばらくしてからお試しください',
   'E-posta/kullanıcı adı veya şifre hatalı': 'メール/ユーザー名またはパスワードが違います',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı': 'このメールまたはユーザー名は既に使われています',
   'Google doğrulaması başarısız': 'Google認証に失敗しました',

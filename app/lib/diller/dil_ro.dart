@@ -1055,6 +1055,8 @@ const Map<String, String> cevirilerRo = {
       'Sesiunea s-a încheiat, autentifică-te din nou',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Prea multe cereri; încearcă puțin mai târziu',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Momentan nu e spațiu pe server, încearcă din nou în scurt timp',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mail/utilizator sau parolă greșită',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

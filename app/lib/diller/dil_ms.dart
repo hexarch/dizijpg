@@ -1048,6 +1048,8 @@ const Map<String, String> cevirilerMs = {
   'Oturum sonlandı, tekrar giriş yap': 'Sesi tamat, log masuk semula',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Terlalu banyak permintaan; cuba lagi sebentar',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Tiada ruang pada pelayan buat masa ini, cuba lagi sebentar lagi',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'E-mel/nama pengguna atau kata laluan salah',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

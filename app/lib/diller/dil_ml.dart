@@ -1041,6 +1041,8 @@ const Map<String, String> cevirilerMl = {
   'Oturum sonlandı, tekrar giriş yap': 'സെഷൻ അവസാനിച്ചു, വീണ്ടും സൈൻ ഇൻ ചെയ്യൂ',
   'Çok fazla istek; biraz sonra tekrar dene':
       'അമിതമായ അഭ്യർത്ഥനകൾ; അല്പസമയം കഴിഞ്ഞ് വീണ്ടും ശ്രമിക്കൂ',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'സെർവറിൽ ഇപ്പോൾ സ്ഥലമില്ല, അൽപ്പം കഴിഞ്ഞ് വീണ്ടും ശ്രമിക്കുക',
   'E-posta/kullanıcı adı veya şifre hatalı':
       'ഇമെയിൽ/ഉപയോക്തൃനാമം അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റാണ്',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':

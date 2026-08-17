@@ -1051,6 +1051,8 @@ const Map<String, String> cevirilerIt = {
   'Oturum sonlandı, tekrar giriş yap': 'Sessione terminata, accedi di nuovo',
   'Çok fazla istek; biraz sonra tekrar dene':
       'Troppe richieste; riprova tra poco',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'Al momento non c’è spazio sul server, riprova tra poco',
   'E-posta/kullanıcı adı veya şifre hatalı': 'Email/utente o password errati',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'Questa email o questo nome è già registrato',

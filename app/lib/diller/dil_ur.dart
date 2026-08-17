@@ -1046,6 +1046,8 @@ const Map<String, String> cevirilerUr = {
   'Oturum sonlandı, tekrar giriş yap': 'سیشن ختم، دوبارہ سائن ان کریں',
   'Çok fazla istek; biraz sonra tekrar dene':
       'بہت زیادہ درخواستیں؛ تھوڑی دیر بعد کوشش کریں',
+  'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
+      'سرور پر ابھی جگہ نہیں ہے، تھوڑی دیر بعد کوشش کریں',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ای میل/یوزرنیم یا پاس ورڈ غلط ہے',
   'Bu e-posta veya kullanıcı adı zaten kayıtlı':
       'یہ ای میل یا یوزرنیم پہلے سے موجود ہے',
