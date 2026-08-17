@@ -83,6 +83,10 @@ services:
       # AKTARMAZSA kod varsayılana düşer ve ayar SESSİZCE etkisiz kalır —
       # TURN_SIR'ın 9 Ağu'da düştüğü tuzağın aynısı (yukarıdaki nota bak).
       DISK_ESIK_GB: ${DISK_ESIK_GB:-}
+      # IP başına saatlik yükleme baytı bütçesi (§3.1'in ikinci katmanı).
+      # Varsayılan 1 GB/saat; `0` bütçeyi tamamen açar. DISK_ESIK_GB ile AYNI
+      # aktarım tuzağına tabidir — bu satır olmadan .env'e yazmak etkisizdir.
+      IP_BAYT_SAAT_GB: ${IP_BAYT_SAAT_GB:-}
       AVATAR_DIZIN: /veri/avatarlar
       MEDYA_DIZIN: /veri/medya
       MAIL_HOST: host.docker.internal

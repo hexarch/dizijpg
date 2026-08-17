@@ -45,6 +45,94 @@
 // (bu uçlarda ~birkaç yüz MB) bir kaçak bırakır — eşik zaten 10 GB'lık bir
 // pay ayırdığı için bu kaçak eşiğin İÇİNDE kalır.
 
+// ---------------------------------------------------------------------------
+// İKİNCİ KATMAN: IP BAŞINA SAATLİK YÜKLEME BAYTI (denetim §3.1'in kalanı)
+// ---------------------------------------------------------------------------
+// Eşik kapısı makinenin ölmesini engelliyor ama saldırgan eşiğe KADAR
+// doldurup kapıyı kapatabilir; o andan sonra gerçek kullanıcılar da
+// yükleyemez. Yani eşik "makine ayakta"yı, bu bütçe "hizmet kullanılabilir"i
+// korur.
+//
+// NEDEN IP BAŞINA, HESAP BAŞINA DEĞİL: hesap BEDAVA ve saniyede açılıyor
+// (misafir girişi, e-posta doğrulaması yok). Hesap başına konan her sınır,
+// hesap sayısıyla çarpılarak aşılır. IP bedava değildir.
+//
+// NEDEN Content-Length (gövdeyi OKUMADAN): 100 MB'lık bir gövdeyi belleğe
+// alıp sonra "bütçen bitti" demek, saldırganın istediği şeyi (bellek + CPU
+// harcaması) zaten yapmak olurdu. nginx `proxy_request_buffering on` ile
+// isteği tamponlayıp Node'a HER ZAMAN Content-Length ile verir, yani başlık
+// pratikte hep vardır ve gövdeyle uyuşmak ZORUNDADIR (uyuşmazsa Node isteği
+// zaten reddeder). Başlık yine de yoksa `bilinmeyen` kadar ücret keseriz —
+// belirsizliği saldırganın değil bütçenin lehine yorumluyoruz.
+
+/** IP başına saatlik yükleme bütçesi. 1 GB gerçek kullanımın çok üstünde. */
+export const VARSAYILAN_IP_BAYT_SAAT = 1024 ** 3;
+
+/** Bütçe penceresi (ms). `hizLimiti` ile aynı: sabit 1 saatlik kova. */
+export const BUTCE_PENCERE_MS = 3600_000;
+
+/**
+ * Content-Length'i güvenli okur.
+ * @returns {number|null} bayt; başlık yok/bozuk/negatifse null
+ */
+export function govdeUzunlugu(req) {
+  const ham = req?.headers?.['content-length'];
+  if (ham == null) return null;
+  // BOŞ DİZE KONTROLÜ ŞART: `Number('')` 0'dır, yani `Content-Length:` (değeri
+  // boş) gönderen istek "0 bayt" sayılıp bütçeden HİÇ ücret kesilmeden
+  // geçerdi. Testi yazarken yakalandı; sessiz bir bütçe deliğiydi.
+  const metin = String(ham).trim();
+  if (metin === '') return null;
+  const n = Number(metin);
+  if (!Number.isFinite(n) || n < 0 || !Number.isInteger(n)) return null;
+  return n;
+}
+
+/**
+ * IP başına saatlik yükleme baytı bütçesi. `express.raw`tan ÖNCE bağlanır.
+ *
+ * @param {object} sec
+ * @param {number} sec.butce        Pencere başına bayt tavanı. 0 -> devre dışı.
+ * @param {(req)=>string} sec.anahtar  Bütçe anahtarı (IP).
+ * @param {number} [sec.bilinmeyen] Content-Length yoksa kesilecek ücret.
+ * @param {number} [sec.pencereMs]
+ * @param {()=>number} [sec.simdi]
+ * @param {string} [sec.mesaj]      Kullanıcıya dönen metin (çeviri anahtarı).
+ */
+export function baytButcesi({
+  butce, anahtar, bilinmeyen = 100 * 1024 * 1024,
+  pencereMs = BUTCE_PENCERE_MS, simdi = Date.now,
+  mesaj = 'Çok fazla istek; biraz sonra tekrar dene',
+}) {
+  const sayaclar = new Map();
+  const katman = (req, res, next) => {
+    if (!butce) return next();
+    const simdiMs = simdi();
+    const k = anahtar(req);
+    let kayit = sayaclar.get(k);
+    if (!kayit || simdiMs > kayit.sifirlama) {
+      kayit = { bayt: 0, sifirlama: simdiMs + pencereMs };
+      sayaclar.set(k, kayit);
+    }
+    const uzunluk = govdeUzunlugu(req) ?? bilinmeyen;
+    if (kayit.bayt + uzunluk > butce) {
+      // 429: bu bir HIZ limitidir, depo tükenmesi (507) DEĞİL. İkisini tek
+      // koda indirmek "diskim mi doldu, çok mu hızlıyım" ayrımını silerdi.
+      // Metin BİLEREK mevcut hız limiti cümlesi: 45 dilde zaten çevrili.
+      return res.status(429).json({ hata: mesaj, kod: 'YUKLEME_BUTCESI' });
+    }
+    kayit.bayt += uzunluk;
+    // Bellek emniyeti: yalnız süresi DOLMUŞ kayıtları at. `clear()` herkesin
+    // bütçesini sıfırlardı — hizLimiti'nde düzeltilen aynı hata.
+    if (sayaclar.size > 10000) {
+      for (const [ka, v] of sayaclar) if (simdiMs > v.sifirlama) sayaclar.delete(ka);
+    }
+    return next();
+  };
+  katman.durum = (k) => sayaclar.get(k) || null;
+  return katman;
+}
+
 /** Varsayılan eşik: bu kadar boş alan KALMADIYSA yükleme reddedilir. */
 export const VARSAYILAN_ESIK_GB = 10;
 

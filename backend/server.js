@@ -66,7 +66,10 @@ import { xaccelKatman as medyaXaccelKatman } from './medya_xaccel.js';
 // Disk eşiği kapısı (güvenlik denetimi 2026-08-17 §3.1). Kotasız yükleme +
 // bedava misafir hesap = ~10 dakikada diski doldurup MAKİNENİN TAMAMINI
 // (host PG, Postfix, gece yedeği dahil) durdurmak. Gerekçe disk.js başında.
-import { diskKapisi, esikBayt as diskEsikBayt } from './disk.js';
+import {
+  diskKapisi, esikBayt as diskEsikBayt,
+  baytButcesi, VARSAYILAN_IP_BAYT_SAAT,
+} from './disk.js';
 // TMDB arama önbelleğinin İÇERİĞE bakan ömrü: sonuçsuz sorgu dakikalar,
 // dolu sonuç saatler/günler yaşar. Gerekçe onbellek_ttl.js başında.
 import { tmdbSonucSayisi, aramaTtlSecici, ttlCoz } from './onbellek_ttl.js';
@@ -1339,7 +1342,66 @@ function hizLimitiMerkezi(limit, anahtarUret) {
     });
   });
 }
-const yuklemeLimiti = hizLimiti(40, (req) => `y:${req.kullanici.id}`);
+// ---------- YÜKLEME LİMİTLERİ (denetim 2026-08-17 §3.1'in kalanı) ----------
+// Disk eşiği kapısı (disk.js) makinenin ÖLMESİNİ engelliyor ama tek başına
+// yetmiyor: saldırgan eşiğe kadar (bugün ~11 GB) doldurup kapıyı kapatabilir
+// ve o andan sonra GERÇEK kullanıcılar da yükleyemez. Yani "makine ayakta"
+// ile "hizmet kullanılabilir" arasındaki farkı bu iki limit kapatıyor.
+//
+// SAYI limiti hesap başına, BAYT limiti IP başına. Bilerek farklı anahtarlar:
+// hesap BEDAVA ve saniyede açılıyor (misafir girişi), yani hesap başına her
+// sınır çarpılarak aşılır. IP bedava değildir. İkisi birlikte "sınırsız hesap
+// aç, her biriyle 100 MB yükle" kaçamağını kapatır.
+const MISAFIR_YUKLEME_SAAT = 5;   // misafir: 5 x 100 MB = 500 MB/saat
+const UYE_YUKLEME_SAAT = 40;      // bağlı hesap: bugünkü değer, DEĞİŞMEDİ
+const yuklemeLimitiUye = hizLimiti(UYE_YUKLEME_SAAT, (req) => `y:${req.kullanici.id}`);
+const yuklemeLimitiMisafir = hizLimiti(
+  MISAFIR_YUKLEME_SAAT, (req) => `ym:${req.kullanici.id}`);
+// `req.misafir` girisZorunlu'da `kullaniciDurumu` önbelleğinden gelir (JWT'den
+// DEĞİL: token 90 gün yaşıyor, hesap bağlanınca misafirlik bayatlardı).
+// Anahtar önekleri AYRI: misafirken 5 hakkını yakıp hesabını bağlayan kişi
+// üyelik sayacına sıfırdan başlar — yön kullanıcı lehine.
+const yuklemeLimiti = (req, res, next) =>
+  (req.misafir === true ? yuklemeLimitiMisafir : yuklemeLimitiUye)(req, res, next);
+
+// IP başına saatlik yükleme BAYTI. `req.ip` kullanılıyor (gercekIp değil):
+// nginx `/api/` bloğunda istemcinin gönderdiği XFF/X-Real-IP'yi $remote_addr
+// ile EZİYOR ve `trust proxy: 1` ile Express bunu tek girdi olarak okuyor —
+// yani istemci bütçesini sahte IP ile tazeleyemez (bkz. gercekIp notu).
+// `IP_BAYT_SAAT_GB=0` bütçeyi tamamen kapatır (kırılacak cam).
+const IP_BAYT_BUTCE = (() => {
+  const ham = String(process.env.IP_BAYT_SAAT_GB ?? '').trim();
+  if (ham === '') return VARSAYILAN_IP_BAYT_SAAT;
+  const gb = Number(ham);
+  if (!Number.isFinite(gb) || gb < 0) return VARSAYILAN_IP_BAYT_SAAT;
+  return Math.round(gb * 1024 ** 3);
+})();
+// KÜME PAYLAŞTIRMASI — ÖLÇÜLEREK bulundu, tahminle değil.
+// İlk sürüm bütçeyi işçi başına tam değerle kurdu. Canlı kanıt denemesinde
+// bütçe 107 bayta indirildi ve 6 ardışık 33 baytlık yükleme (198 bayt) HEPSİ
+// 200 döndü: nginx her yeni bağlantıyı başka bir işçiye veriyor, her işçi
+// kendi belleğinde ayrı sayaç tutuyor ve hiçbiri sınıra ulaşmıyordu. Yani
+// gerçek tavan N katıydı (4 işçide 1 GB değil 4 GB/saat).
+//
+// Çözüm bütçeyi işçi sayısına BÖLMEK. Bedeli açıkça şudur: tüm istekleri tek
+// işçiye düşen bir istemci bütçenin yalnız 1/N'ini görür (4 işçide 256 MB/saat).
+// Gerçek kullanım bunun çok altında (bir kullanıcının bir saatte 256 MB
+// yüklemesi olağan değil), ve yön BİLİNÇLİ olarak sıkı taraf: yanlış "geçir"
+// kararı diski yakar, yanlış "reddet" kararı 429 ile geri döner.
+//
+// ALTERNATİF NEDEN SEÇİLMEDİ: `hizLimitiMerkezi` gibi birincilde tek sayaç
+// tutmak tam doğru olurdu ama `sayacArtir` BİRER BİRER artırıyor, bayt
+// taşımıyor. Bayt taşıyan bir IPC eklemek her yüklemeye bir tur bindirirdi;
+// bölme, aynı güvenliği sıfır IPC ile veriyor.
+const ISCI_BUTCE = Math.floor(IP_BAYT_BUTCE / ISCI_SAYISI);
+const yuklemeBaytButcesi = baytButcesi({
+  butce: ISCI_BUTCE,
+  anahtar: (req) => `yb:${req.ip}`,
+});
+console.log(IP_BAYT_BUTCE
+  ? `Yükleme bütçesi: IP başına ${(IP_BAYT_BUTCE / 1024 ** 3).toFixed(2)} GB/saat `
+    + `(${ISCI_SAYISI} işçi × ${(ISCI_BUTCE / 1024 ** 3).toFixed(3)} GB)`
+  : 'Yükleme bütçesi KAPALI (IP_BAYT_SAAT_GB=0)');
 const authLimiti = hizLimitiMerkezi(30, (req) => `a:${req.ip}`);
 // Şifre sıfırlama KODU İSTEME: hesap başına saatte 5. İki işi birden yapar:
 //  1) e-posta bombardımanını engeller (her istek kurbanın kutusuna posta atar),
@@ -6621,6 +6683,7 @@ function profilResmiUcu(sutun) {
     girisZorunlu,
     yuklemeLimiti,
     diskKapi,
+    yuklemeBaytButcesi,
     express.raw({ type: ['image/*', 'application/octet-stream'], limit: '10mb' }),
     sarici(async (req, res) => {
       const veri = req.body;
@@ -6683,6 +6746,7 @@ app.post('/medya',
   // Disk eşiği express.raw'dan ÖNCE: reddedilecek isteğin 100 MB'lık gövdesini
   // belleğe almanın anlamı yok (disk.js "KONUM" notu).
   diskKapi,
+  yuklemeBaytButcesi,
   // 100mb: Instagram'dan aktarılan videolar özgün kalitesinde yüklensin
   // (40-70MB olabiliyor). nginx tarafında client_max_body_size 105m.
   express.raw({ type: ['image/*', 'video/*', 'audio/*', 'application/octet-stream'], limit: '100mb' }),
@@ -9747,6 +9811,7 @@ app.post('/veri/ice-aktar',
   girisZorunlu,
   veriLimiti,
   diskKapi,
+  yuklemeBaytButcesi,
   express.raw({ type: ['application/zip', 'application/octet-stream'], limit: '50mb' }),
   sarici(async (req, res) => {
     if (!Buffer.isBuffer(req.body) || req.body.length < 4) {

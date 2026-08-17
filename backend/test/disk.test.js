@@ -16,7 +16,8 @@ import { fileURLToPath } from 'node:url';
 
 import {
   VARSAYILAN_ESIK_GB, VARSAYILAN_TTL_MS, DEPO_DOLU_KODU, DEPO_DOLU_MESAJ,
-  esikBayt, bosBayt, diskKapisi,
+  VARSAYILAN_IP_BAYT_SAAT, BUTCE_PENCERE_MS,
+  esikBayt, bosBayt, diskKapisi, govdeUzunlugu, baytButcesi,
 } from '../disk.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -258,14 +259,163 @@ test('kapı fs.statfsSync ile GERÇEK dizini ölçüyor', () => {
     'kapı yanlış dizini ölçüyor ya da ölçüm bağlanmamış');
 });
 
-test('DISK_ESIK_GB compose ile konteynere AKTARILIYOR', () => {
+// ===========================================================================
+// 7. IP başına saatlik yükleme baytı bütçesi (§3.1'in kalanı)
+// ===========================================================================
+
+/** Content-Length taşıyan sahte istek. */
+const istekYap = (uzunluk) => ({
+  headers: uzunluk == null ? {} : { 'content-length': String(uzunluk) },
+});
+
+function calistirIstek(katman, req) {
+  const sonuc = { gecti: false, durum: null, govde: null };
+  const res = {
+    status(k) { sonuc.durum = k; return this; },
+    json(g) { sonuc.govde = g; return this; },
+  };
+  katman(req, res, () => { sonuc.gecti = true; });
+  return sonuc;
+}
+
+test('govdeUzunlugu: geçerli Content-Length okunur', () => {
+  assert.equal(govdeUzunlugu(istekYap(1234)), 1234);
+  assert.equal(govdeUzunlugu(istekYap(0)), 0);
+});
+
+test('govdeUzunlugu: yok/bozuk/negatif/ondalık -> null', () => {
+  for (const v of [null, 'abc', '-5', '1.5', 'Infinity', '']) {
+    assert.equal(govdeUzunlugu(istekYap(v)), null, String(v));
+  }
+});
+
+test('bütçe içindeki yüklemeler GEÇER, aşınca 429 + makine kodu', () => {
+  const k = baytButcesi({ butce: 100, anahtar: () => 'ip' });
+  assert.equal(calistirIstek(k, istekYap(60)).gecti, true);
+  assert.equal(calistirIstek(k, istekYap(40)).gecti, true, 'tam bütçe geçmeli');
+  const s = calistirIstek(k, istekYap(1));
+  assert.equal(s.gecti, false);
+  assert.equal(s.durum, 429, '507 DEĞİL: bu hız limiti, depo tükenmesi değil');
+  assert.equal(s.govde.kod, 'YUKLEME_BUTCESI');
+});
+
+test('reddedilen istek bütçeyi TÜKETMEZ (küçük yükleme sonra geçebilir)', () => {
+  const k = baytButcesi({ butce: 100, anahtar: () => 'ip' });
+  calistirIstek(k, istekYap(90));
+  assert.equal(calistirIstek(k, istekYap(50)).gecti, false, 'aşan istek reddedilir');
+  // Ret sayacı artırmadıysa 10 baytlık istek hâlâ sığmalı. Artırsaydı
+  // saldırgan tek büyük istekle herkesin bütçesini yakabilirdi.
+  assert.equal(calistirIstek(k, istekYap(10)).gecti, true);
+});
+
+test('Content-Length YOKSA en yüksek ücret kesilir (belirsizlik bütçe lehine)', () => {
+  const k = baytButcesi({ butce: 100, anahtar: () => 'ip', bilinmeyen: 100 });
+  assert.equal(calistirIstek(k, istekYap(null)).gecti, true);
+  assert.equal(calistirIstek(k, istekYap(1)).gecti, false,
+    'başlıksız istek bedava geçseydi bütçe chunked ile atlanırdı');
+});
+
+test('bütçe IP BAŞINA ayrı tutulur', () => {
+  let ip = 'a';
+  const k = baytButcesi({ butce: 100, anahtar: () => ip });
+  assert.equal(calistirIstek(k, istekYap(100)).gecti, true);
+  assert.equal(calistirIstek(k, istekYap(1)).gecti, false);
+  ip = 'b';
+  assert.equal(calistirIstek(k, istekYap(100)).gecti, true, 'başka IP etkilenmemeli');
+});
+
+test('pencere dolunca bütçe tazelenir', () => {
+  let t = 1_000_000;
+  const k = baytButcesi({
+    butce: 100, anahtar: () => 'ip', pencereMs: 1000, simdi: () => t,
+  });
+  assert.equal(calistirIstek(k, istekYap(100)).gecti, true);
+  assert.equal(calistirIstek(k, istekYap(1)).gecti, false);
+  t += 1001;
+  assert.equal(calistirIstek(k, istekYap(100)).gecti, true);
+});
+
+test('butce=0 bütçeyi tamamen kapatır (kırılacak cam)', () => {
+  const k = baytButcesi({ butce: 0, anahtar: () => 'ip' });
+  assert.equal(calistirIstek(k, istekYap(10 ** 12)).gecti, true);
+});
+
+test('varsayılanlar makul: 1 GB/saat, 1 saatlik pencere', () => {
+  assert.equal(VARSAYILAN_IP_BAYT_SAAT, 1024 ** 3);
+  assert.equal(BUTCE_PENCERE_MS, 3600_000);
+});
+
+// ===========================================================================
+// 8. Yükleme limitleri BAĞLANTI denetimi
+// ===========================================================================
+
+test('bayt bütçesi ÜÇ yükleme ucunda da ve express.raw ÖNCESİNDE', () => {
+  for (const imza of [
+    "app.post('/medya',",
+    "app.post('/veri/ice-aktar',",
+    'function profilResmiUcu(sutun)',
+  ]) {
+    const z = zincir(imza);
+    const butce = z.indexOf('yuklemeBaytButcesi');
+    const ham = z.indexOf('express.raw');
+    assert.notEqual(butce, -1, `${imza} bayt bütçesine bağlanmamış`);
+    assert.ok(butce < ham, `${imza}: bütçe express.raw sonrasında`);
+  }
+});
+
+test('bayt bütçesi İŞÇİ SAYISINA bölünüyor (küme gevşekliği)', () => {
+  // CANLI ÖLÇÜM (17 Ağu): bütçe 107 bayta indirilip 6 x 33 bayt yüklendi;
+  // 198 > 107 olmasına rağmen ALTISI DA 200 döndü. Sebep: nginx her yeni
+  // bağlantıyı başka işçiye veriyor ve her işçinin sayacı ayrı. Bölme
+  // olmadan gerçek tavan N katıdır — yani ayarın söylediği sayı YALAN olur.
+  assert.match(SERVER, /const ISCI_BUTCE = Math\.floor\(IP_BAYT_BUTCE \/ ISCI_SAYISI\)/,
+    'bütçe işçi sayısına bölünmüyor — gerçek tavan N katı olur');
+  assert.match(SERVER, /baytButcesi\(\{\s*\n\s*butce: ISCI_BUTCE/,
+    'bölünmüş değer kullanılmıyor');
+});
+
+test('bayt bütçesi req.ip ile anahtarlanıyor (spoof edilemez)', () => {
+  // `gercekIp` ham CF-Connecting-IP/X-Real-IP okur; nginx bunları eziyor ama
+  // `req.ip` (trust proxy: 1) tek doğru kaynaktır — hız limitlerinin tamamı
+  // bu yüzden req.ip kullanıyor (denetim 2026-08-07 §4.2).
+  assert.match(SERVER, /anahtar:\s*\(req\)\s*=>\s*`yb:\$\{req\.ip\}`/,
+    'bütçe gercekIp ile anahtarlanmış olabilir — sahte başlıkla tazelenirdi');
+});
+
+test('MİSAFİR yükleme sayısı üyeden DÜŞÜK ve ayrı anahtarda', () => {
+  // Hesap bedava ve saniyede açılıyor; misafire üyeyle aynı hakkı vermek
+  // "sınırsız hesap aç, her biriyle 40 dosya yükle" demekti.
+  assert.match(SERVER, /const MISAFIR_YUKLEME_SAAT = (\d+)/);
+  const misafir = Number(/const MISAFIR_YUKLEME_SAAT = (\d+)/.exec(SERVER)[1]);
+  const uye = Number(/const UYE_YUKLEME_SAAT = (\d+)/.exec(SERVER)[1]);
+  assert.ok(misafir < uye, `misafir (${misafir}) üyeden (${uye}) düşük olmalı`);
+  assert.match(SERVER, /`ym:\$\{req\.kullanici\.id\}`/,
+    'misafir sayacı ayrı önek taşımıyor — bağlanınca sayaç taşınır');
+  assert.match(SERVER, /req\.misafir === true \? yuklemeLimitiMisafir : yuklemeLimitiUye/,
+    'seçim `req.misafir` üzerinden yapılmıyor');
+});
+
+test('KAÇIŞ YOLLARI compose ile konteynere AKTARILIYOR', () => {
   // TURN_SIR tuzağı (docker-compose.yml, 9 Ağu 2026): `.env`de değişken VARDI
   // ama compose onu konteynere aktarmıyordu, kod varsayılana düşüyordu ve ayar
-  // SESSİZCE etkisizdi. Bu kapının kaçış yolu (`DISK_ESIK_GB=0`) aynı sessiz
-  // ölümle kaybolursa, disk dolduğunda kapıyı açmanın yolu kalmaz.
+  // SESSİZCE etkisizdi. Bu kapıların kaçış yolları aynı sessiz ölümle
+  // kaybolursa, disk dolduğunda ya da bütçe yanlış ayarlandığında müdahale
+  // etmenin yolu kalmaz. Test bu yüzden `process.env`den OKUNAN her ayarı
+  // compose'da arar — yeni bir ayar eklenip aktarımı unutulursa kırmızıya döner.
   const compose = fs.readFileSync(path.join(KOK, 'docker-compose.yml'), 'utf8');
-  assert.match(compose, /^\s*DISK_ESIK_GB:\s*\$\{DISK_ESIK_GB/m,
-    'DISK_ESIK_GB compose api.environment içinde yok — .env\'e yazmak etkisiz kalır');
+  // İKİ KAYNAK birden taranır: `IP_BAYT_SAAT_GB` server.js'te `process.env`den
+  // okunuyor, `DISK_ESIK_GB` ise disk.js'in `esikBayt(env)` fonksiyonunda
+  // (saf modül ortamı doğrudan okumaz, adı yine orada geçer). Yalnız server.js
+  // taransaydı ikincisi gözden kaçardı.
+  const kaynak = SERVER + DISK_SRC;
+  const okunanlar = [...kaynak.matchAll(/\b(DISK_ESIK_GB|IP_BAYT_SAAT_GB)\b/g)]
+    .map((m) => m[1]);
+  assert.ok(new Set(okunanlar).size === 2,
+    `beklenen iki ayar kaynakta bulunamadı: ${[...new Set(okunanlar)]}`);
+  for (const ad of new Set(okunanlar)) {
+    assert.match(compose, new RegExp(`^\\s*${ad}:\\s*\\$\\{${ad}`, 'm'),
+      `${ad} compose api.environment içinde yok — .env'e yazmak etkisiz kalır`);
+  }
 });
 
 test('disk.js imaja giriyor (Cannot find module ile restart döngüsü tuzağı)', () => {
