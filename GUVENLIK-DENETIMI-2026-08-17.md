@@ -26,8 +26,48 @@
 > eklenen geçici `DISK_ESIK_GB=999` satırı kaldırıldı ve dosyanın yedekle
 > **birebir aynı** olduğu `diff` ile doğrulandı.
 >
-> Ayrıntı ve yeni bulgu (compose'un `DISK_ESIK_GB`'yi aktarmaması):
-> `YAPILACAKLAR.md` → 17 Ağustos maddeleri.
+> ### İkinci tur — aynı gün, kalan maddeler
+>
+> | # | Bulgu | Durum |
+> |---|---|---|
+> | 3.1 kalan | Kota/limit yok | **KAPANDI** — misafir yükleme 40→5/saat; IP başına 1 GB/saat bayt bütçesi; %82'de disk alarmı (10 dk cron) |
+> | 4.1 | `/api/Admin` harf bypass'ı | **KAPANDI** — `location ~* ^/api/admin { return 404; }`; dört yazım da 404 |
+> | 4.2 | Hesap ön-kaçırma | **KAPANDI** — `eposta_dogrulandi` kolonu; Google girişi doğrulanmamış hesaba düşerse şifre+oturum iptal + bilgilendirme postası |
+> | 4.3 | DB süper kullanıcı | **KAPANDI** — `dizijpg_app` (yalnız CONNECT+DML); süper kullanıcı yalnız migrasyon |
+> | 4.4 | Konteyner root | **KISMEN** — `no-new-privileges` + `cap_drop: ALL` uygulandı; `USER node` ertelendi (aşağıda) |
+> | 4.5 | CSP yok | **KAPANDI (Report-Only)** — 8/8 blokta; `Permissions-Policy` deliği de kapatıldı (2/8 → 8/8) |
+> | 4.8 | Lock yok, 2 yüksek npm açığı | **KAPANDI** — `npm ci` + lock; nodemailer 9, geoip-lite 2; **0 yüksek** (8 orta kaldı) |
+> | 5.1 | Zip bombası | **KAPANDI** — beyan edilen boyut açmadan önce kontrol ediliyor |
+> | 5.3 | `/altyazi` özel medya kapısı | **KAPANDI** — `OZEL_MEDYA` kontrolü eklendi |
+>
+> **İki hata yaşandı, ikisi de yakalandı ve belgelendi:** (1) rol geçişinde
+> parola çift tırnaklandı, uygulama ~3 dakika 28P01 ile 500 döndü — SQL'in
+> kendi kullanım notu tuzağı kuruyordu, düzeltildi; (2) `CONNECTION LIMIT 50`
+> havuz tavanıyla (80) çelişiyordu, 90'a çıkarıldı. Ayrıca ilk bayt bütçesi
+> işçi başına kurulmuştu ve canlı ölçümde tutmadı (4 kat gevşek); işçi
+> sayısına bölündü ve yeniden ölçüldü.
+>
+> **firebase-admin 14.2.0 denendi ve GERİ ALINDI:** varsayılan dışa aktarımda
+> `credential` ve `messaging` yok; server.js `initializeApp`i try/catch içinde
+> çağırdığı için hata yutulur ve **push sessizce ölürdü**. Kalan 8 orta açık
+> (uuid zinciri) bu yüzden bilerek duruyor — npm'in "düzeltmesi" zaten
+> firebase-admin'i 10.3.0'a **düşürmek**.
+>
+> ### Hâlâ açık (ve neden)
+>
+> | # | Bulgu | Neden hâlâ açık |
+> |---|---|---|
+> | 4.4 | `USER node` | `/yedekler` 700 root:root ve gece cron'u root yazıyor. uid 1000'e almak §3.2'yi bozma riski taşır — ayrı, dikkatli bir tur işi |
+> | 4.6 | Sunucu dışı yedek | **Hedef ve kimlik bilgisi kullanıcıdan gerekiyor** (B2 / S3 / 154.53.163.5) |
+> | 4.7 | `MEDYA_IMZA_ZORUNLU` | `MEDYA_SAYAC.imzasiz_ozel` okunmalı; admin paneli IP kısıtlı, denetim makinesi listede değil |
+> | 4.9 | Origin sertifikası | **Cloudflare paneli gerekiyor** — Origin Certificate üret + SSL modu Full (strict) |
+> | 4.5 | CSP zorunlu kılma | Report-Only ölçümü birkaç gün beklemeli; `GET /api/admin/csp` `toplam: 0` ise zorunlu yapılır |
+> | 5.4 | Anonim `/hata-bildir` şişmesi | Etki düşük (metin); saklama süresi/budama eklenebilir |
+> | 5.5 | nginx.conf'ta TLS 1.0/1.1 | dizi.jpg vhost'u zaten 1.2/1.3 ile eziyor; genel satır **başka projelerin** vhost'larını da etkilediği için dokunulmadı |
+> | 3.1 | Kullanıcı başına toplam kota | Bayt bütçesi + eşik kapısı riski pratikte kapattı; kalıcı kota muhasebesi (silmede azaltma) ayrı iş |
+>
+> Ayrıntı ve yeni bulgular (compose'un `DISK_ESIK_GB`/`IP_BAYT_SAAT_GB`'yi
+> aktarmaması): `YAPILACAKLAR.md` → 17 Ağustos maddeleri.
 
 **Tarih:** 2026-08-17 · **Kapsam:** tüm uygulama + sunucu (`154.53.163.3` / karanew,
 `/opt/dizijpg`, https://dizijpg.com) · **Yöntem:** SALT OKUMA.

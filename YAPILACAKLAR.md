@@ -33,25 +33,51 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   kod okuyor ama konteyner görmüyordu, `.env`e yazmak HİÇBİR ŞEY yapmıyordu.
   TURN_SIR'ın 9 Ağu'da düştüğü sessiz-ölü-ayar tuzağı. `docker-compose.yml`e
   eklendi + test kilitledi.
-- ⬜ `/api/Admin/ozet` nginx IP kapısını BÜYÜK HARFLE atlıyor (403 = Express'e
-  ulaştı; `/api/admin` → 404). `location ~* ^/api/admin` + `case sensitive routing`.
-- ⬜ Hesap ön-kaçırma: kayıtta e-posta doğrulaması yok + `/auth/google` var olan
-  hesaba şifresiz giriyor. Google eşleşmesinde `sifre_surumu++` ve şifreyi iptal et.
-- ⬜ DB rolü hâlâ süper kullanıcı — `db-rol-en-az-yetki-20260808.sql` 9 gündür
-  uygulanmadı (7 Ağu §3.1).
-- ⬜ `package-lock.json` yok → `npm install` her derlemede yeniden çözüyor.
-  `npm ci` + lock; nodemailer 2 YÜKSEK açık (bugün tetiklenemiyor).
-- ⬜ CSP hâlâ yok (3. denetim). Report-Only → `/api/csp-rapor` toplayıcısı
-  canlıda hazır ama başlık olmadığı için hiç veri almıyor.
-  Ek: `Permissions-Policy` `location = /` bloğunda düşüyor.
-- ⬜ Cloudflare Origin Cert + **Full (strict)** — origin sertifikası kendinden imzalı.
-- ⬜ Sunucu dışı yedek yok (gizlilik yarısı düzeldi: 700 + gpg, gece cron çalışıyor).
-- ⬜ `MEDYA_IMZA_ZORUNLU` 9 gündür kapalı — `MEDYA_SAYAC.imzasiz_ozel`'e bakıp
-  bilinçli karar ver, unutulmuş bayrak olarak kalmasın.
-- ⬜ API konteyneri root; yüklenen videoyu ffmpeg'e veriyor. `USER node` +
-  `no-new-privileges` + `cap_drop: ALL`.
-- ⬜ Düşük: zip bombası (boyut açtıktan SONRA kontrol ediliyor), `/altyazi`
-  ucunda özel-medya kapısı yok (bugün DM videosu kuyruğa girmiyor),
+- 🚀 **KAPANDI (17 Ağu)** `/api/Admin` harf bypass'ı. nginx önek eşlemesi harf
+  duyarlı, Express yönlendirmesi değil. `location ~* ^/api/admin { return 404; }`
+  eklendi (bloğu regex'e çevirmek mümkün değil: regex location'da proxy_pass URI
+  taşıyamaz). Dört yazım da 404, normal API 200.
+- 🚀 **KAPANDI (17 Ağu)** Hesap ön-kaçırma. `eposta_dogrulandi` kolonu +
+  migrasyon-2026-08-17b.sql. Google girişi doğrulanmamış hesaba düşerse şifre
+  rastgeleye çevrilir, `sifre_surumu` artar, önbellek düşer, kullanıcıya
+  açıklayıcı posta gider. Bayrağı yalnız kutu erişimi kanıtlayan yollar açar.
+  SIRA testle kilitli: sürüm artışı jwtUret'ten ÖNCE. 12 bağlantı testi.
+- 🚀 **KAPANDI (17 Ağu)** DB rolü. `dizijpg_app` — yalnız CONNECT+DML,
+  rolsuper/rolbypassrls/rolcreatedb/rolcreaterole hepsi f. Süper kullanıcı
+  yalnız migrasyon. compose'da `:?` ile ZORUNLU (varsayılan yok: .env'den satır
+  silinince sessizce süper kullanıcıya dönmesin).
+  İKİ TUZAK: (a) SQL `PASSWORD :'app_sifre'` ile zaten tırnaklıyor, betik
+  ayrıca tırnaklayınca parola tırnaklarla kaydedildi ve ~3 dk 500 döndü —
+  SQL'in KENDİ kullanım notu tuzağı kuruyordu, düzeltildi; (b) CONNECTION
+  LIMIT 50 vs havuz 4×20=80 çelişiyordu, 90 yapıldı.
+- 🚀 **KAPANDI (17 Ağu)** `package-lock.json` + `npm ci`. nodemailer 6→9,
+  geoip-lite 1→2 (ip-address 10.5.0). 2 yüksek + 9 orta → **0 yüksek** + 8 orta.
+  firebase-admin 14 DENENDİ, GERİ ALINDI: varsayılan dışa aktarımda
+  `credential`/`messaging` yok, push sessizce ölürdü. test/bagimlilik.test.js
+  üç sessiz gerilemeyi kilitliyor.
+- 🚀 **KAPANDI (17 Ağu, Report-Only)** CSP. add_header MİRAS ALINMADIĞI için
+  8 bloğun HEPSİNE eklendi. Aynı tarama ikinci deliği buldu: `Permissions-Policy`
+  8 bloktan yalnız 2'sindeydi → 8/8. `POST /api/csp-rapor` 204.
+  ⬜ SIRADAKİ ADIM İNSANA AİT: birkaç gün sonra `GET /api/admin/csp`'ye bak;
+  `toplam: 0` ise aynı değeri `Content-Security-Policy` adıyla zorunlu yap.
+- 🚀 **KAPANDI (17 Ağu)** Düşük maddeler: zip bombası (beyan edilen boyut
+  açmadan önce kontrol ediliyor, sonraki kontroller de duruyor), `/altyazi`
+  özel-medya kapısı (bugün sızıntı yoktu ama kuyruğa `mesajlar` eklenirse
+  DM'in konuşma METNİ imzasız okunurdu).
+- 🚀 **KISMEN (17 Ağu)** Konteyner sertleştirme: `no-new-privileges` +
+  `cap_drop: ALL` uygulandı; ffmpeg ve pg_dump'ın hâlâ çalıştığı ÖLÇÜLDÜ.
+  ⬜ `USER node` ERTELENDİ, sebebi somut: `/yedekler` 700 root:root ve gece
+  cron'u root yazıyor; uid 1000'e almak §3.2'yi bozma riski taşır.
+- ⬜ Cloudflare Origin Cert + **Full (strict)** — origin sertifikası kendinden
+  imzalı. **CF paneli gerekiyor, kullanıcı işi.**
+- ⬜ Sunucu dışı yedek yok. **Hedef + kimlik bilgisi kullanıcıdan gerekiyor**
+  (B2 / S3 / 154.53.163.5).
+- ⬜ `MEDYA_IMZA_ZORUNLU` hâlâ kapalı — `MEDYA_SAYAC.imzasiz_ozel` okunmalı ama
+  admin paneli IP kısıtlı ve denetim makinesi listede değil.
+- ⬜ Düşük kalanlar: anonim `/hata-bildir` tablo şişmesi (saklama/budama);
+  nginx.conf'ta genel TLS 1.0/1.1 (dizi.jpg vhost'u zaten eziyor, satır BAŞKA
+  projelerin vhost'larını etkilediği için dokunulmadı); kullanıcı başına
+  toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
 
 ## 2026-08-17 — 🚀 WEB+APK 1.75.0+123 (ses kaydediyor: mikrofonda paused silmesin)
