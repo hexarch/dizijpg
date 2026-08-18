@@ -7365,8 +7365,14 @@ const AKIS_GOVDE = `
               AND d.tur='tv' AND d.tmdb_id=y.tmdb_id
               AND d.durum IN ('izliyorum','bitirdim')))
        ) AS guvenli) g
-     WHERE y.kullanici_id <> $1
-       AND NOT k.yasakli
+     -- KENDI GONDERILERIMIZ DE AKISTA (19 Agu 2026 istegi: "akista ve
+     -- reels'te kendi paylastiklarimizi da gorelim"). Eskiden burada
+     -- y.kullanici_id <> $1 vardi ve kullanici kendi gonderisini akista
+     -- HIC goremiyordu -- paylastiktan sonra "gitti mi?" hissi veriyordu.
+     -- Siralamada ayricalik YOK: takip_ettigim sinyali kendi gonderinde 0
+     -- (kendini takip etmiyorsun), yani skoru digerleriyle ayni yarisir.
+     -- NOT: bu blok bir SABLON DIZESI icinde; buraya BACKTICK YAZMA.
+     WHERE NOT k.yasakli
        AND ${engelSuzgec('y.kullanici_id', '$1')}
        AND y.ust_id IS NULL`;
 const AKIS_ALANLAR = `
@@ -7379,6 +7385,11 @@ const AKIS_ALANLAR = `
             (SELECT count(*)::int FROM yorumlar c WHERE c.ust_id=y.id) AS yanit,
             EXISTS(SELECT 1 FROM yorum_begeniler b
                    WHERE b.yorum_id=y.id AND b.kullanici_id=$1) AS begendim,
+            -- Gonderi BENIM mi? Istemci buna bakip kendi gonderisinde
+            -- "Takip Et" dugmesini cizmez. takip_ediyorum'u true'ya zorlamak
+            -- daha kisa olurdu ama YALAN olurdu: takip etmiyorum, sadece
+            -- takip edilecek bir sey yok. (Sablon dizesi: BACKTICK YOK.)
+            (y.kullanici_id = $1) AS benim,
             -- Akış kartındaki "Takip Et" düğmesi: takip ediyorsan düğme HİÇ
             -- çizilmez. Alan burada (ortak SELECT) üretilir ki /akis ve
             -- /kesfet-akis aynı sözleşmeyi döndürsün.

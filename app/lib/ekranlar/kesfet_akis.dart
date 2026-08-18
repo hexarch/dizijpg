@@ -1331,7 +1331,13 @@ class _ReelSayfaState extends State<_ReelSayfa>
   // Takip durumu HER kaynakta gelmez (profilden açılan Reels'te yok). Bilinmiyorsa
   // düğme hiç çizilmez: kendi gönderinde "Takip Et" göstermek ya da zaten takip
   // ettiğin kişiye yeniden sormak yanlış olur; profil sayfasının kendi düğmesi var.
-  late final bool _takipBilinir = widget.yorum.containsKey('takip_ediyorum');
+  //
+  // 19 Ağu 2026: akış artık KENDİ gönderilerimizi de getiriyor. Sunucu bu
+  // satırlarda `benim: true` gönderir; olmasaydı kendi gönderimizin üstünde
+  // kendimizi takip etmeye çağıran bir düğme çıkardı.
+  late final bool _takipBilinir =
+      widget.yorum.containsKey('takip_ediyorum') &&
+      widget.yorum['benim'] != true;
   late bool _spoilerAcik = widget.yorum['spoiler'] != true;
   // Çift dokunuş kalbi: dokunulan KONUMDA belirir, yükselip solar.
   // DİKKAT: `late final` ile TEMBEL kurulmamalı — kullanıcı hiç çift
