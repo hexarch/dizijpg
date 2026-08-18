@@ -209,8 +209,13 @@ test('YAZMA KAPISI: ön ek muafiyeti yalnız "/" ile biten girdilerde geçerli',
 });
 
 test('BAĞLANTI: yasak kapısı girisZorunlu İÇİNDE — her uca kopyalanmamış', () => {
-  const bas = SERVER.indexOf('async function girisZorunlu(');
-  assert.notEqual(bas, -1, 'girisZorunlu bulunamadı');
+  // AD NOTU: 18 Ağu 2026'da fonksiyon `girisZorunluHam` oldu ve rotalara
+  // `araSarici(girisZorunluHam)` bağlanıyor (async ara katmanın reddetmesi
+  // işçiyi öldürüyordu — bkz. test/ara_sarici.test.js). Kapının YERİ
+  // değişmedi; çapa hem eski hem yeni adı kabul eder.
+  const m = /async function girisZorunlu(?:Ham)?\(/.exec(SERVER);
+  assert.ok(m, 'girisZorunlu bulunamadı');
+  const bas = m.index;
   const govde = SERVER.slice(bas, bas + 3000);
   assert.match(govde, /req\.yasak\s*=\s*yasakAktif\(durum\)\s*\?\s*yasakYuku\(durum\)/,
     'girisZorunlu yasak durumunu hesaplamıyor');

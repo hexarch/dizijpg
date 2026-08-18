@@ -1108,16 +1108,7 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
   int get _sayfaNo =>
       _sayfa.hasClients ? (_sayfa.page?.round() ?? _aktif) : _aktif;
 
-  int get _medyaSayfa =>
-      _aktifSayfa?.medyaSayfa ??
-      (_aktif == widget.baslangic ? widget.medyaBaslangic : 0);
-
   int get _medyaToplam => _aktifSayfa?.medyaToplam ?? _medyaAdedi(_aktif);
-
-  bool get _solVar => _aktif > 0 || _medyaSayfa > 0;
-
-  bool get _sagVar =>
-      _aktif < widget.liste.length - 1 || _medyaSayfa < _medyaToplam - 1;
 
   /// Aktif sayfa kendisini kaydeder (initState'te setState yok).
   void _sayfaKaydet(_ReelSayfaState s) {
@@ -1220,7 +1211,9 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
       ),
     );
 
-    final dolgu = MediaQuery.paddingOf(context);
+    // NOT: `MediaQuery.paddingOf` YALNIZ yan okların kenar boşluğu içindi;
+    // oklar kaldırılınca (19 Ağu) gerek kalmadı. Kapatma düğmesi kendi
+    // `SafeArea`sını kullanıyor.
     final coklu = widget.liste.length > 1 || _medyaToplam > 1;
 
     return TamEkranKlavye(
@@ -1261,25 +1254,16 @@ class _ReelsGorunumuState extends State<ReelsGorunumu> {
               )
             else
               sayfalar,
-            // Yan oklar tuvalin ÜSTÜNDE (masaüstünde siyah kenarlıkta durur).
-            if (_solVar)
-              Positioned(
-                left: 8 + dolgu.left,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: TamEkranYonOku(sola: true, onPressed: _sol),
-                ),
-              ),
-            if (_sagVar)
-              Positioned(
-                right: 8 + dolgu.right,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: TamEkranYonOku(sola: false, onPressed: _sag),
-                ),
-              ),
+            // YAN OK YOK — bilinçli (19 Ağu 2026, kullanıcı isteği).
+            // Reels dikey kaydırma/dokunma ile gezilir; ekranın iki yanında
+            // duran chevron'lar hem videonun üstünü kapatıyordu hem de
+            // Instagram/TikTok'ta olmayan bir öğe olarak yabancı duruyordu.
+            // MASAÜSTÜNDE DE KALDIRILDI: yön TUŞLARI (TamEkranKlavye, yukarıda
+            // `sola:`/`saga:`) çalışmaya devam ediyor, yani klavyeyle gezinme
+            // kaybolmadı — yalnız görsel buton gitti.
+            // Tam ekran FOTOĞRAF görüntüleyicideki oklar (medya_goster.dart)
+            // AYRI ve DURUYOR: orası kaydırmayla değil, tek tek karelerle gezilen
+            // bir galeri.
             SafeArea(
               child: Align(
                 alignment: Alignment.topLeft,

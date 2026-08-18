@@ -1230,7 +1230,38 @@ async function cihazYasakliMi(kimlik) {
   return yasakAktif(rows[0]) ? yasakYuku(rows[0]) : null;
 }
 
-async function girisZorunlu(req, res, next) {
+/**
+ * ARA KATMAN SARMALAYICI — async ara katmanların reddetmesini Express'in
+ * hata zincirine verir.
+ *
+ * NEDEN VAR (18 Ağu 2026 kod taraması): Express 4, ara katman bir Promise
+ * döndürdüğünde onu İZLEMEZ. `girisZorunlu` async'ti ve içindeki
+ * `await kullaniciDurumu(...)` try/catch'siz duruyordu; DB bir an cevap
+ * vermeyince reddetme hiçbir yerde yakalanmıyor, `process.on
+ * ('unhandledRejection')` kancasına düşüyor ve o da `kapan(...)` ile TÜM
+ * İŞÇİYİ kapatıyordu. Yani beklenen "tek isteğe 500" yerine sonuç
+ * "işçi ölür, uçuştaki bütün istekler düşer" oluyordu.
+ *
+ * CANLI KANIT (17 Ağu, DB rol parolası uyuşmazlığı): log
+ * `olay:"yakalanmamis_reddetme" … at async kullaniciDurumu … at async
+ * girisZorunlu` ve aynı dakikalarda nginx'te `502 GET /api/sohbetler`
+ * (500 değil — 502, yani upstream ölmüştü).
+ *
+ * `sarici` ROTA GÖVDELERİ içindir ve (req,res) alır; bu ise ARA KATMAN
+ * içindir, `next`i de taşır ve hatayı `next(err)` ile son durak
+ * işleyicisine (dosya sonundaki `app.use((err,...))`) devreder — istemci
+ * yığın izi görmez, 5xx bağlamıyla loglanır.
+ *
+ * DEĞİŞMEZ (test/ara_sarici.test.js kilitliyor): sarılan ara katman
+ * `next()`i EN SON çağırmalı. `next()`ten SONRA bir şey fırlatırsa
+ * `next(err)` ikinci kez çağrılır ve Express zinciri iki kez ilerletir.
+ * Bugün sarılan ikisinde de `next()` son ifadedir.
+ */
+const araSarici = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+async function girisZorunluHam(req, res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
   if (!token) return res.status(401).json({ hata: 'Giriş gerekli' });
@@ -1284,7 +1315,7 @@ async function girisZorunlu(req, res, next) {
 // geçersizdir (girisZorunlu ile aynı sürüm kontrolü); aksi halde banlı
 // kullanıcı okuma uçlarında hâlâ kimlik olarak sayılırdı. Doğrulama
 // başarısızsa istek anonim devam eder (uç yine de çalışır).
-async function girisIsteğeBagli(req, _res, next) {
+async function girisIsteğeBagliHam(req, _res, next) {
   const baslik = req.headers.authorization || '';
   const token = baslik.startsWith('Bearer ') ? baslik.slice(7) : null;
   if (token) {
@@ -1295,6 +1326,11 @@ async function girisIsteğeBagli(req, _res, next) {
   }
   next();
 }
+
+// Rotalara BAĞLANAN sürümler. Bare `async function` olarak bağlanırlarsa
+// reddetmeleri işçiyi öldürür (yukarıdaki araSarici gerekçesi).
+const girisZorunlu = araSarici(girisZorunluHam);
+const girisIsteğeBagli = araSarici(girisIsteğeBagliHam);
 
 // Uç sarmalayıcı: async bir uçtaki her reddetme BURADA yakalanır — yani
 // unutulmuş bir `await` süreci öldürmez, tek istek 500 alır.

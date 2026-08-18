@@ -80,18 +80,26 @@ void main() {
     expect(find.textContaining('/1'), findsNothing);
   });
 
-  testWidgets('çoklu fotoğrafta sağ ok sonraki kareye gider', (tester) async {
+  // 19 Ağu 2026 (kullanıcı isteği): Reels'te ekranın iki yanındaki chevron
+  // butonları KALDIRILDI — telefonda da masaüstünde de. Video kaydırma ve
+  // dokunmayla gezilir; oklar videonun üstünü kapatıyordu.
+  // Klavye gezinmesi KAYBOLMADI, aşağıdaki yön tuşu testi onu koruyor.
+  testWidgets('Reels\'te yan ok BUTONU YOK (ne ilk karede ne ortada)', (
+    tester,
+  ) async {
     await _reelsKur(tester, medyaSayisi: 3);
     expect(find.text('1/3'), findsOneWidget);
     expect(find.byKey(TamEkranYonOku.solAnahtar), findsNothing);
-    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsOneWidget);
+    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsNothing);
 
-    await tester.tap(find.byKey(TamEkranYonOku.sagAnahtar));
+    // Ortadaki kareye geç: iki yönde de gidilebilir olduğu hâlde ok çıkmamalı
+    // (eski davranışta burada İKİ ok birden görünüyordu).
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await tester.pump();
 
     expect(find.text('2/3'), findsOneWidget);
-    expect(find.byKey(TamEkranYonOku.solAnahtar), findsOneWidget);
-    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsOneWidget);
+    expect(find.byKey(TamEkranYonOku.solAnahtar), findsNothing);
+    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsNothing);
   });
 
   testWidgets('yön tuşu çoklu fotoğrafta kare değiştirir', (tester) async {
@@ -101,7 +109,7 @@ void main() {
     expect(find.text('2/3'), findsOneWidget);
   });
 
-  testWidgets('iki gönderide sağ ok sonraki gönderiye gider', (tester) async {
+  testWidgets('iki gönderide yön tuşu sonraki gönderiye gider', (tester) async {
     await _reelsKur(
       tester,
       liste: [
@@ -110,17 +118,18 @@ void main() {
       ],
     );
     expect(find.byKey(TamEkranYonOku.solAnahtar), findsNothing);
-    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsOneWidget);
+    expect(find.byKey(TamEkranYonOku.sagAnahtar), findsNothing);
 
     final pv = tester.widget<PageView>(find.byType(PageView));
     expect(pv.controller!.page, closeTo(0, 0.01));
 
-    await tester.tap(find.byKey(TamEkranYonOku.sagAnahtar));
+    // Buton gitti; gönderiler arası geçiş yön TUŞUYLA hâlâ çalışmalı.
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
     await tester.pump();
     await tester.pump(tamEkranGecisSuresi);
 
     expect(pv.controller!.page, closeTo(1, 0.01));
-    expect(find.byKey(TamEkranYonOku.solAnahtar), findsOneWidget);
+    expect(find.byKey(TamEkranYonOku.solAnahtar), findsNothing);
     expect(find.byKey(TamEkranYonOku.sagAnahtar), findsNothing);
   });
 }
