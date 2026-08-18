@@ -121,7 +121,15 @@ export function yedekDurumu(dizin, gunlukDosya = null) {
   cikti.var_mi = true;
   const dosyalar = [];
   for (const ad of adlar) {
-    if (!/\.(sql|dump)\.gz$/.test(ad)) continue;
+    // ŞİFRELİ YEDEKLER DE SAYILIR (.gpg).
+    // 8 Ağu 2026'da yedekler gpg ile şifrelenmeye başladı ve adlar
+    // `dizijpg-20260817-0400.sql.gz.gpg` oldu; bu süzgeç ise yalnız
+    // `.sql.gz`/`.dump.gz` ile BİTEN adı kabul ediyordu. Sonuç: panel
+    // 25 günlük yedek diskte dururken "Yedek bulunamadı" + "Son yedek: YOK"
+    // gösterdi ve `yedekBayat` sürekli kırmızı yandı.
+    // En kötüsü ŞU: gerçek bir yedek arızasında panel BUGÜNKÜYLE AYNI
+    // görüneceği için fark edilmezdi — yedeğin tek gözlem yüzeyi kördü.
+    if (!/\.(sql|dump)\.gz(\.gpg)?$|\.(sql|dump)\.gpg$/.test(ad)) continue;
     try {
       const st = fs.statSync(path.join(dizin, ad));
       if (!st.isFile()) continue;

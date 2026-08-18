@@ -11852,22 +11852,59 @@ app.post('/admin/oksuz-sil', adminKisit, sarici(async (req, res) => {
 
 // Elle yedek: gecelik cron'un aynısını çalıştırır (aynı dizin, aynı ad kalıbı).
 // SİLME YOK — bu uç yalnızca dosya EKLER.
+// Yedek anahtarı: gece betiğinin (`/opt/dizijpg/yedek.sh`) kullandığı GPG
+// parola dosyasının konteyner içindeki yolu. Salt-okunur bağlanır.
+const YEDEK_ANAHTAR = process.env.YEDEK_ANAHTAR || '/yedek-anahtar.key';
+
+/** Yedek dizinindeki EN YENİ yedek dosyası (yoksa null). */
+function sonYedek() {
+  let adlar;
+  try { adlar = fs.readdirSync(YEDEK_DIZIN); } catch { return null; }
+  const uygun = [];
+  for (const ad of adlar) {
+    // `depolama.yedekDurumu` ile AYNI kalıp: şifreli (.gpg) adlar da sayılır.
+    if (!/\.(sql|dump)\.gz(\.gpg)?$|\.(sql|dump)\.gpg$/.test(ad)) continue;
+    try {
+      const st = fs.statSync(path.join(YEDEK_DIZIN, ad));
+      if (st.isFile()) uygun.push({ ad, boyut: st.size, mtime: st.mtimeMs });
+    } catch { /* okunamayanı atla */ }
+  }
+  uygun.sort((a, b) => b.mtime - a.mtime);
+  return uygun[0] || null;
+}
+
 app.post('/admin/yedek-al', adminKisit, sarici(async (_req, res) => {
   let u;
   try { u = new URL(DATABASE_URL); } catch { return res.status(500).json({ hata: 'DATABASE_URL okunamadı' }); }
   const ts = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/(\d{8})(\d{4})/, '$1-$2');
-  const dosya = path.join(YEDEK_DIZIN, `dizijpg-${ts}-elle.sql.gz`);
+  // ŞİFRELİ (19 Ağu 2026 isteği: "bu yedekler şifreli olacak, indiren
+  // açamayacak, sızma durumuna karşı"). Anahtar yoksa AÇIKÇA HATA VERİLİR —
+  // sessizce şifresiz yedek üretmek, tam da istenmeyen şeyi yapıp "tamam"
+  // demek olurdu.
+  if (!fs.existsSync(YEDEK_ANAHTAR)) {
+    throw Object.assign(
+      new Error('Yedek anahtarı bulunamadı; şifreli yedek alınamıyor'),
+      { status: 500 });
+  }
+  const dosya = path.join(YEDEK_DIZIN, `dizijpg-${ts}-elle.sql.gz.gpg`);
   await new Promise((coz, red) => {
     execFile('/bin/sh', ['-c',
       // umask 077: dosya DOĞRUDAN 600 doğsun. Sonradan chmod yarış koşulu
       // bırakır — dosya bir an 644 olarak var olur ve o an okunabilir.
-      // (Denetim §3.2: yedekler dünyaya-okunurdu.)
-      // pipefail: pg_dump çökerse gzip yine 0 döndürür ve BOŞ bir "yedek"
-      // başarı sanılırdı.
-      `set -o pipefail 2>/dev/null || true; umask 077; `
+      // pipefail: pg_dump ya da gpg çökerse boru yine 0 döndürür ve BOŞ bir
+      // "yedek" başarı sanılırdı.
+      // GPG parametreleri gece betiğiyle BİREBİR aynı: aynı anahtarla
+      // açılabilsinler, "hangi yedek hangi komutla açılıyor" ikiliği olmasın.
+      // GNUPGHOME yazılabilir olmalı ve ÖNCE var olmalı: gpg dizini kendisi
+      // açsa da `cap_drop: ALL` altında izin uyarısı verip boş çıktı bırakabilir.
+      `set -o pipefail 2>/dev/null || true; umask 077; mkdir -p /tmp/gnupg; chmod 700 /tmp/gnupg; `
       + `pg_dump -h ${u.hostname} -p ${u.port || 5432} -U ${u.username} `
-      + `${u.pathname.slice(1)} | gzip > '${dosya}'`],
-    { env: { ...process.env, PGPASSWORD: decodeURIComponent(u.password) }, timeout: 240000 },
+      + `${u.pathname.slice(1)} | gzip | `
+      + `gpg --batch --yes --quiet --pinentry-mode loopback `
+      + `--passphrase-file '${YEDEK_ANAHTAR}' `
+      + `--symmetric --cipher-algo AES256 --s2k-mode 3 `
+      + `--s2k-digest-algo SHA512 --s2k-count 65011712 -o '${dosya}'`],
+    { env: { ...process.env, PGPASSWORD: decodeURIComponent(u.password), GNUPGHOME: '/tmp/gnupg' }, timeout: 240000 },
     (e, _so, se) => (e ? red(new Error(se || e.message)) : coz()));
   }).catch((e) => { throw Object.assign(new Error(e.message.slice(0, 300)), { status: 500 }); });
   let boyut = null;
@@ -11875,10 +11912,28 @@ app.post('/admin/yedek-al', adminKisit, sarici(async (_req, res) => {
   // Kemer + askı: umask zaten 600 doğurur, ama volume seçenekleri ya da farklı
   // bir kabuk umask'ı yok sayarsa dosya yine dünyaya-okunur kalmasın.
   try { fs.chmodSync(dosya, 0o600); } catch { /* dosya yoksa zaten hata döndü */ }
-  // NOT: panelden alınan bu yedek ŞİFRESİZDİR — konteynerde gpg yok. Gece
-  // çalışan /opt/dizijpg/yedek.sh dizindeki şifresiz dökümleri en geç 24 saat
-  // içinde şifreler. Bu aradaki pencerede koruma yalnız 600 iznidir.
-  res.json({ durum: 'ok', dosya: path.basename(dosya), boyut });
+  res.json({ durum: 'ok', dosya: path.basename(dosya), boyut, sifreli: true });
+}));
+
+// EN YENİ yedeği indir. Panelde "hazırla" düğmesinin SOLUNDAKİ indirme oku.
+//
+// GÜVENLİK: dosya adı İSTEMCİDEN ALINMAZ — sunucu dizini kendi tarar ve en
+// yenisini verir. Ad parametresi kabul etseydik `../../etc/passwd` savunması
+// yazmak zorunda kalırdık; kabul etmeyerek o sınıfı tamamen siliyoruz.
+// İçerik zaten GPG ile şifrelidir: bağlantı sızsa bile dosya anahtarsız
+// açılamaz (isteğin gerekçesi buydu).
+app.get('/admin/yedek-indir', adminKisit, sarici(async (_req, res) => {
+  const y = sonYedek();
+  if (!y) return res.status(404).json({ hata: 'İndirilecek yedek yok' });
+  const tam = path.join(YEDEK_DIZIN, y.ad);
+  res.setHeader('Content-Type', 'application/octet-stream');
+  res.setHeader('Content-Length', String(y.boyut));
+  res.setHeader('Content-Disposition', `attachment; filename="${y.ad}"`);
+  // Yedek ASLA önbelleğe girmesin (CF, tarayıcı, ara vekil).
+  res.setHeader('Cache-Control', 'private, no-store, max-age=0');
+  fs.createReadStream(tam)
+    .on('error', () => { if (!res.headersSent) res.status(500).end(); else res.destroy(); })
+    .pipe(res);
 }));
 
 // ---------- TMDB önbelleği ----------

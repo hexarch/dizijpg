@@ -3,7 +3,10 @@ WORKDIR /app
 # ffmpeg: video yüklenince ilk kareden küçük resim üretilir (Keşfet
 # ızgarası video yerine bu resmi gösterir; onlarca çözücü açılmaz).
 # ffmpeg (üstte) + postgresql-client: panelden elle yedek (pg_dump) alınabilsin.
-RUN apk add --no-cache ffmpeg postgresql16-client
+# gnupg: panelden alinan ELLE yedek de sifreli olsun (19 Agu 2026 istegi).
+# Gece betigi host'ta gpg kullaniyor; konteynerde YOKTU ve o yuzden elle
+# yedek sifresiz uretiliyordu. Ayni anahtarla ayni parametreler kullanilir.
+RUN apk add --no-cache ffmpeg postgresql16-client gnupg
 # package-lock.json ZORUNLU (guvenlik denetimi 2026-08-17 §4.8).
 # ONCEKI HAL `npm install` idi ve lock dosyasi YOKTU: her derleme bagimliliklari
 # semver araligindan YENIDEN cozuyordu. Yani (a) dun calisan imaj bugun farkli

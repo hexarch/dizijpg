@@ -393,8 +393,15 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     <div class="panel">
       <h3>💾 Yedekler <span class="sag" id="dep-yedek-ozet">—</span></h3>
       <div class="arac">
-        <button class="btn" id="dep-yedek-al" onclick="yedekAl()">Şimdi yedek al</button>
-        <span class="kck">Gecelik yedek cron ile 04:00'te alınır</span>
+        <!-- İNDİRME SOLDA, HAZIRLAMA SAĞDA (19 Ağu 2026 isteği).
+             Tooltip inecek yedeğin TARİHİNİ söyler: iki düğme yan yanayken
+             "hangisini indiriyorum" sorusu yoksa kullanıcı yeni yedek
+             hazırladığını sanıp eskisini indirebilir. -->
+        <button class="btn" id="dep-yedek-indir" onclick="yedekIndir()"
+                title="Yedek yok">⬇ Son yedeği indir</button>
+        <button class="btn" id="dep-yedek-al" onclick="yedekAl()">Yedek hazırla</button>
+        <span class="kck">Gecelik yedek cron ile 04:00'te alınır ·
+          yedekler <b>şifreli</b> (GPG AES-256), anahtarsız açılamaz</span>
       </div>
       <div style="overflow:auto;max-height:300px"><table id="dep-yedek-tablo"></table></div>
       <div id="dep-yedek-gunluk" class="mono kck" style="padding:10px 16px;white-space:pre-wrap;border-top:1px solid var(--line)"></div>
@@ -1321,6 +1328,17 @@ async function depolamaYukle(){
         <td class="kck mono">${new Date(f.mtime).toLocaleDateString('tr')}</td></tr>`).join('')}</tbody>`
       : '<tbody><tr><td class="bos">Dosya yok</td></tr></tbody>';
     $('#dep-yedek-ozet').textContent=y.var_mi?(y.adet+' yedek · '+bytFmt(y.boyut)):'dizin bağlı değil';
+    // İndirme düğmesi: yedek yoksa KAPALI (tıklayınca 404 almak yerine
+    // baştan belli olsun), varsa tooltip'te İNECEK dosyanın tarihi + adı.
+    const indirBtn=$('#dep-yedek-indir');
+    if(y.son){
+      indirBtn.disabled=false;
+      const t=new Date(y.son.mtime);
+      indirBtn.title=`${t.toLocaleString('tr')} · ${y.son.ad} · ${bytFmt(y.son.boyut)}`;
+    } else {
+      indirBtn.disabled=true;
+      indirBtn.title='İndirilecek yedek yok';
+    }
     $('#dep-yedek-tablo').innerHTML = y.dosyalar.length? `
       <thead><tr><th>Yedek</th><th>Boyut</th><th>Zaman</th></tr></thead>
       <tbody>${y.dosyalar.map(f=>`<tr>
@@ -1389,11 +1407,35 @@ async function oksuzSil(){
   }catch(e){ alert('Silinemedi: '+e.message); }
   b.disabled=false; b.textContent='Öksüzleri sil';
 }
+/* Son yedeği indir.
+   `api()` kullanılmıyor: yanıt JSON değil, ~165 MB'lık İKİLİ dosya.
+   Token varsa başlık şart (adminKisit) → fetch + blob; token yoksa erişim
+   zaten IP ile veriliyor, o zaman DOĞRUDAN bağlantı kullanılır ve dosya
+   belleğe alınmadan diske akar (165 MB'ı blob'a almak sekmeyi zorlar). */
+async function yedekIndir(){
+  const b=$('#dep-yedek-indir'); if(b.disabled) return;
+  const yol=TABAN+'/yedek-indir';
+  if(!TOKEN){ location.href=yol; return; }
+  b.disabled=true; const eski=b.textContent; b.textContent='İndiriliyor…';
+  try{
+    const r=await fetch(yol,{headers:{'x-admin-token':TOKEN}});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const ad=(r.headers.get('content-disposition')||'').match(/filename="([^"]+)"/);
+    const blob=await r.blob();
+    const u=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=u; a.download=ad?ad[1]:'yedek.sql.gz.gpg';
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(u);
+  }catch(e){ alert('Yedek indirilemedi: '+e.message); }
+  finally{ b.disabled=false; b.textContent=eski; }
+}
+
 async function yedekAl(){
   if(!confirm('Şimdi tam veritabanı yedeği alınsın mı? (birkaç dakika sürebilir)')) return;
-  const b=$('#dep-yedek-al'); b.disabled=true; b.textContent='Yedekleniyor…';
+  const b=$('#dep-yedek-al'); b.disabled=true; b.textContent='Hazırlanıyor…';
   try{ const r=await api('/yedek-al',{method:'POST',body:'{}'});
-    alert('Yedek alındı: '+r.dosya+' ('+bytFmt(r.boyut)+')'); depolamaYukle();
+    alert('Yedek alındı: '+r.dosya+' ('+bytFmt(r.boyut)+')'+(r.sifreli?'\n\nŞifreli (GPG AES-256) — açmak için yedek anahtarı gerekir.':'')); depolamaYukle();
   }catch(e){ alert('Yedek alınamadı: '+e.message); }
   b.disabled=false; b.textContent='Şimdi yedek al';
 }

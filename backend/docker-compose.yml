@@ -158,6 +158,11 @@ services:
       # Yazılabilir olmalı (pg_dump çıktısı buraya düşer); kod bu dizinden
       # dosya SİLMEZ, yalnızca ekler.
       - ./yedekler:/yedekler
+      # Yedek sifreleme anahtari SALT-OKUNUR. Panelden alinan elle yedek de
+      # gece betigiyle AYNI anahtarla sifrelenir; boylece tek bir parola
+      # butun yedekleri acar ("hangi yedek hangi anahtarla" ikiligi olmaz).
+      # Dosya yoksa uc 500 verir ve SIFRESIZ yedek URETMEZ.
+      - ./yedek-anahtar.key:/yedek-anahtar.key:ro
       - ./yedek.log:/yedek.log:ro
     extra_hosts:
       # Konteynerden host'taki Postfix'e erişim (mail gönderimi)
