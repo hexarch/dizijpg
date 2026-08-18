@@ -5746,7 +5746,10 @@ app.get('/izleyenler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) =
 function puanHedef(govde) {
   const { tmdb_id, tur } = govde || {};
   let { sezon = null, bolum = null } = govde || {};
-  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
+  // 'company' 19 Ağu 2026 (istek): yapım firması profilleri de puanlanıp
+  // tepki alabiliyor. Kişi gibi: izlenmez, bölümü olmaz — aşağıdaki
+  // "sezon yalnız tv'de" kuralı onu zaten kapsıyor.
+  if (!['tv', 'movie', 'person', 'company'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
   if ((sezon == null) !== (bolum == null)) return null;
   if (sezon != null) {
     if (tur !== 'tv') return null;
@@ -6296,7 +6299,10 @@ const TEPKI_EMOJILERI = ['😄', '😢', '😮', '🥱', '😭', '😂', '😱',
 function tepkiHedef(govde) {
   const { tmdb_id, tur } = govde || {};
   let { sezon = null, bolum = null } = govde || {};
-  if (!['tv', 'movie', 'person'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
+  // 'company' 19 Ağu 2026 (istek): yapım firması profilleri de puanlanıp
+  // tepki alabiliyor. Kişi gibi: izlenmez, bölümü olmaz — aşağıdaki
+  // "sezon yalnız tv'de" kuralı onu zaten kapsıyor.
+  if (!['tv', 'movie', 'person', 'company'].includes(tur) || !gecerliTmdb(tmdb_id)) return null;
   if ((sezon == null) !== (bolum == null)) return null;
   if (sezon != null) {
     if (tur !== 'tv') return null;
@@ -7053,7 +7059,8 @@ app.post('/icerikler', girisIsteğeBagli, tmdbLimiti, sarici(async (req, res) =>
 }));
 
 // ---------- yorumlar ----------
-const YORUM_TURLERI = ['tv', 'movie', 'person'];
+// 'company' 19 Ağu 2026 (istek): yapım firması profillerine de yorum.
+const YORUM_TURLERI = ['tv', 'movie', 'person', 'company'];
 
 // ===========================================================================
 // md. 23 — GÖRÜNTÜLENME KAYDI (sayaç + kaynak + tekil izleyici)
@@ -7170,7 +7177,10 @@ app.get('/yorum/:id', girisIsteğeBagli, sarici(async (req, res) => {
     const v = await tmdbGetir(`/${y.tur === 'person' ? 'person' : y.tur}/${y.tmdb_id}`, ONBELLEK_TTL_SN.uzun);
     icerikler[anahtar] = {
       ad: v.name || v.title || '?',
-      poster: v.poster_path || v.profile_path || null,
+      // ŞİRKETTE görsel `logo_path`tir: poster_path/profile_path GELMEZ.
+      // Eklenmezse firma kartları adı olan ama görseli olmayan boş kutuya
+      // düşerdi (19 Ağu, /sirket yorum+puan işi).
+      poster: v.poster_path || v.profile_path || v.logo_path || null,
     };
   } catch {
     icerikler[anahtar] = { ad: '?', poster: null };
@@ -7727,7 +7737,10 @@ async function icerikBilgileri(anahtarlar) {
     }
     icerikler[a] = {
       ad: v.name || v.title || '?',
-      poster: v.poster_path || v.profile_path || null,
+      // ŞİRKETTE görsel `logo_path`tir: poster_path/profile_path GELMEZ.
+      // Eklenmezse firma kartları adı olan ama görseli olmayan boş kutuya
+      // düşerdi (19 Ağu, /sirket yorum+puan işi).
+      poster: v.poster_path || v.profile_path || v.logo_path || null,
     };
   });
   return icerikler;

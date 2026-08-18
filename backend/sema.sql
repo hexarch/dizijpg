@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS durumlar (
 CREATE TABLE IF NOT EXISTS puanlar (
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
   tmdb_id INT NOT NULL,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
   sezon INT,
   bolum INT,
   puan INT CHECK (puan BETWEEN 1 AND 10),
@@ -102,7 +102,7 @@ CREATE INDEX IF NOT EXISTS puanlar_bolum_hedef
 CREATE TABLE IF NOT EXISTS yorumlar (
   id SERIAL PRIMARY KEY,
   kullanici_id INT REFERENCES kullanicilar(id) ON DELETE CASCADE,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
   tmdb_id INT NOT NULL,
   sezon INT,
   bolum INT,
@@ -262,7 +262,7 @@ CREATE INDEX IF NOT EXISTS idx_onbellek_zaman ON tmdb_onbellek(guncelleme);
 CREATE TABLE IF NOT EXISTS tepkiler (
   id SERIAL PRIMARY KEY,
   kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
-  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
   tmdb_id INT NOT NULL,
   sezon INT,
   bolum INT,

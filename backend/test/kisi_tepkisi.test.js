@@ -81,8 +81,20 @@ function ucGovdesi(yol, yontem = 'post') {
 test('ŞEMA: tepkiler.tur person kabul ediyor (puanlar ile aynı küme)', () => {
   const govde = /CREATE TABLE IF NOT EXISTS tepkiler \(([\s\S]*?)\n\);/.exec(SEMA);
   assert.ok(govde, 'sema.sql içinde tepkiler tablosu bulunamadı');
-  assert.match(govde[1], /tur TEXT NOT NULL CHECK \(tur IN \('tv','movie','person'\)\)/,
-    "tepkiler.tur 'person' kabul etmiyor");
+  // 19 Ağu 2026: 'company' eklendi (yapım firması profillerine de puan/tepki).
+  // Ölçülen şey DEĞİŞMEDİ: tepkiler ve puanlar AYNI tür kümesini taşımalı —
+  // iki tabloda ayrışan küme, birinde kabul edilip diğerinde 23514 patlayan
+  // bir tür demektir. O yüzden küme sabit yazılmak yerine puanlar'dan okunup
+  // KARŞILAŞTIRILIYOR.
+  const tepkiKume = /tur TEXT NOT NULL CHECK \(tur IN \(([^)]*)\)\)/.exec(govde[1]);
+  assert.ok(tepkiKume, 'tepkiler.tur CHECK kümesi okunamadı');
+  const puanGovde = /CREATE TABLE IF NOT EXISTS puanlar \(([\s\S]*?)\n\);/.exec(SEMA);
+  const puanKume = /tur TEXT NOT NULL CHECK \(tur IN \(([^)]*)\)\)/.exec(puanGovde[1]);
+  assert.equal(tepkiKume[1], puanKume[1],
+    'tepkiler ve puanlar tür kümeleri ayrışmış');
+  for (const t of ["'person'", "'company'"]) {
+    assert.ok(tepkiKume[1].includes(t), `tepkiler.tur ${t} kabul etmiyor`);
+  }
   // Emoji listesi ve tekil indeks bozulmamalı (kişi başına da tek tepki).
   assert.match(govde[1], /emoji TEXT NOT NULL CHECK \(emoji IN \(/);
   assert.match(SEMA, /CREATE UNIQUE INDEX IF NOT EXISTS tepkiler_tekil\s*\n?\s*ON tepkiler \(kullanici_id, tur, tmdb_id, COALESCE\(sezon,-1\), COALESCE\(bolum,-1\)\)/);
@@ -253,6 +265,8 @@ test('TÜR LİSTESİ PAYLAŞILAN SABİT DEĞİL (sızma imkânsız)', () => {
   assert.ok(satirIci >= 10,
     `satır içi ['tv', 'movie'] listeleri kaybolmuş (${satirIci}) — paylaşılan sabite mi dönüştü?`);
   const tepki = bildirimCek(KAYNAK, 'tepkiHedef');
-  assert.match(tepki, /\['tv', 'movie', 'person'\]\.includes\(tur\)/,
+  // Liste 19 Ağu'da 'company' ile büyüdü; ÖLÇÜLEN ŞEY listenin İÇERİĞİ değil,
+  // uç başına SATIR İÇİ yazılmış olması (paylaşılan sabite dönmemesi).
+  assert.match(tepki, /\['tv', 'movie', 'person', 'company'\]\.includes\(tur\)/,
     'tepkiHedef tür listesi kendi içinde olmalı');
 });
