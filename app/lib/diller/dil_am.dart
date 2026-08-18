@@ -1013,6 +1013,10 @@ const Map<String, String> cevirilerAm = {
       'በጣም ብዙ ጥያቄዎች፤ ትንሽ ቆይተህ እንደገና ሞክር',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'አሁን በአገልጋዩ ላይ ቦታ የለም፣ ከጥቂት ጊዜ በኋላ እንደገና ይሞክሩ',
+  'Devam eden yapımlar ({})': 'በመካሄድ ላይ ያሉ ስራዎች ({})',
+  'Diziler ({})': 'ተከታታዮች ({})',
+  'Filmler ({})': 'ፊልሞች ({})',
+  'Tüm yapımlar': 'ሁሉም ስራዎች',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'የሚዲያ ማከማቻዎ ሞልቷል፤ ቦታ ለማግኘት አሮጌ ስቀላዎችን ይሰርዙ',
   'E-posta/kullanıcı adı veya şifre hatalı':

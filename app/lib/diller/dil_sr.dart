@@ -1047,6 +1047,10 @@ const Map<String, String> cevirilerSr = {
       'Превише захтева; покушај мало касније',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Тренутно нема места на серверу, покушај поново за који тренутак',
+  'Devam eden yapımlar ({})': 'Актуелне продукције ({})',
+  'Diziler ({})': 'Серије ({})',
+  'Filmler ({})': 'Филмови ({})',
+  'Tüm yapımlar': 'Све продукције',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Простор за медије је попуњен; обриши старе отпремљене датотеке',
   'E-posta/kullanıcı adı veya şifre hatalı':

@@ -1050,6 +1050,10 @@ const Map<String, String> cevirilerMs = {
       'Terlalu banyak permintaan; cuba lagi sebentar',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Tiada ruang pada pelayan buat masa ini, cuba lagi sebentar lagi',
+  'Devam eden yapımlar ({})': 'Produksi berterusan ({})',
+  'Diziler ({})': 'Siri ({})',
+  'Filmler ({})': 'Filem ({})',
+  'Tüm yapımlar': 'Semua produksi',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Storan media anda penuh; padam muat naik lama untuk membebaskan ruang',
   'E-posta/kullanıcı adı veya şifre hatalı':

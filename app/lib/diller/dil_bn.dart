@@ -1038,6 +1038,10 @@ const Map<String, String> cevirilerBn = {
       'অনেক বেশি অনুরোধ; একটু পরে চেষ্টা করো',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'সার্ভারে এখন জায়গা নেই, একটু পরে আবার চেষ্টা করুন',
+  'Devam eden yapımlar ({})': 'চলমান প্রোডাকশন ({})',
+  'Diziler ({})': 'সিরিজ ({})',
+  'Filmler ({})': 'সিনেমা ({})',
+  'Tüm yapımlar': 'সব প্রোডাকশন',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'আপনার মিডিয়া স্টোরেজ পূর্ণ; জায়গা খালি করতে পুরোনো আপলোড মুছুন',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ইমেল/ইউজারনেম বা পাসওয়ার্ড ভুল',

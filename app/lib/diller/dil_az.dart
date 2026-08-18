@@ -1036,6 +1036,10 @@ const Map<String, String> cevirilerAz = {
       'Həddindən çox sorğu; bir az sonra yenidən yoxla',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Hazırda serverdə yer yoxdur, bir azdan yenidən cəhd edin',
+  'Devam eden yapımlar ({})': 'Davam edən layihələr ({})',
+  'Diziler ({})': 'Seriallar ({})',
+  'Filmler ({})': 'Filmlər ({})',
+  'Tüm yapımlar': 'Bütün layihələr',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Media yaddaşın doludur; yer açmaq üçün köhnə yükləmələri sil',
   'E-posta/kullanıcı adı veya şifre hatalı':

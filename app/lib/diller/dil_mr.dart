@@ -1039,6 +1039,10 @@ const Map<String, String> cevirilerMr = {
       'खूप जास्त विनंत्या; थोड्या वेळाने पुन्हा प्रयत्न करा',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'सर्व्हरवर सध्या जागा नाही, थोड्या वेळाने पुन्हा प्रयत्न करा',
+  'Devam eden yapımlar ({})': 'सुरू असलेली निर्मिती ({})',
+  'Diziler ({})': 'मालिका ({})',
+  'Filmler ({})': 'चित्रपट ({})',
+  'Tüm yapımlar': 'सर्व निर्मिती',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'तुमचा मीडिया स्टोरेज भरला आहे; जागा करण्यासाठी जुने अपलोड हटवा',
   'E-posta/kullanıcı adı veya şifre hatalı':

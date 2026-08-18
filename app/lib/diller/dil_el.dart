@@ -1058,6 +1058,10 @@ const Map<String, String> cevirilerEl = {
       'Πάρα πολλά αιτήματα· δοκίμασε σε λίγο',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Δεν υπάρχει χώρος στον διακομιστή αυτή τη στιγμή, δοκίμασε ξανά σε λίγο',
+  'Devam eden yapımlar ({})': 'Τρέχουσες παραγωγές ({})',
+  'Diziler ({})': 'Σειρές ({})',
+  'Filmler ({})': 'Ταινίες ({})',
+  'Tüm yapımlar': 'Όλες οι παραγωγές',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Ο αποθηκευτικός χώρος πολυμέσων γέμισε· διάγραψε παλιά αρχεία για χώρο',
   'E-posta/kullanıcı adı veya şifre hatalı':

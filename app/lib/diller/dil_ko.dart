@@ -1004,6 +1004,10 @@ const Map<String, String> cevirilerKo = {
   'Çok fazla istek; biraz sonra tekrar dene': '요청이 너무 많습니다. 잠시 후 다시 시도하세요',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       '서버에 공간이 일시적으로 없습니다. 잠시 후 다시 시도해 주세요',
+  'Devam eden yapımlar ({})': '방영 중인 작품 ({})',
+  'Diziler ({})': '시리즈 ({})',
+  'Filmler ({})': '영화 ({})',
+  'Tüm yapımlar': '전체 작품',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       '미디어 저장 공간이 가득 찼습니다. 오래된 업로드를 삭제해 주세요',
   'E-posta/kullanıcı adı veya şifre hatalı': '이메일/사용자 이름 또는 비밀번호가 틀립니다',

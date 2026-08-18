@@ -1036,6 +1036,10 @@ const Map<String, String> cevirilerFa = {
       'درخواست‌ها زیاد است؛ کمی بعد دوباره امتحان کن',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'در حال حاضر فضایی روی سرور نیست، کمی بعد دوباره تلاش کن',
+  'Devam eden yapımlar ({})': 'آثار در حال پخش ({})',
+  'Diziler ({})': 'سریال‌ها ({})',
+  'Filmler ({})': 'فیلم‌ها ({})',
+  'Tüm yapımlar': 'همه آثار',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'فضای رسانه‌ات پر شده؛ برای باز کردن جا، بارگذاری‌های قدیمی را حذف کن',
   'E-posta/kullanıcı adı veya şifre hatalı':

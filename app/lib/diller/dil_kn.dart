@@ -1043,6 +1043,10 @@ const Map<String, String> cevirilerKn = {
       'ತುಂಬಾ ವಿನಂತಿಗಳು; ಸ್ವಲ್ಪ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'ಸರ್ವರ್‌ನಲ್ಲಿ ಸದ್ಯಕ್ಕೆ ಸ್ಥಳವಿಲ್ಲ, ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
+  'Devam eden yapımlar ({})': 'ನಡೆಯುತ್ತಿರುವ ನಿರ್ಮಾಣಗಳು ({})',
+  'Diziler ({})': 'ಸರಣಿಗಳು ({})',
+  'Filmler ({})': 'ಚಲನಚಿತ್ರಗಳು ({})',
+  'Tüm yapımlar': 'ಎಲ್ಲಾ ನಿರ್ಮಾಣಗಳು',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'ನಿಮ್ಮ ಮಾಧ್ಯಮ ಸಂಗ್ರಹ ತುಂಬಿದೆ; ಜಾಗಕ್ಕಾಗಿ ಹಳೆಯ ಅಪ್‌ಲೋಡ್‌ಗಳನ್ನು ಅಳಿಸಿ',
   'E-posta/kullanıcı adı veya şifre hatalı':

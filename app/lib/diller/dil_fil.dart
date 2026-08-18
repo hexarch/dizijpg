@@ -1059,6 +1059,10 @@ const Map<String, String> cevirilerFil = {
       'Masyadong maraming request; subukan ulit sa ilang sandali',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Wala munang espasyo sa server, subukan ulit mamaya',
+  'Devam eden yapımlar ({})': 'Kasalukuyang produksyon ({})',
+  'Diziler ({})': 'Serye ({})',
+  'Filmler ({})': 'Pelikula ({})',
+  'Tüm yapımlar': 'Lahat ng produksyon',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Puno na ang media storage mo; burahin ang lumang mga upload para makabawas',
   'E-posta/kullanıcı adı veya şifre hatalı':

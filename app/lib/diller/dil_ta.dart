@@ -1059,6 +1059,10 @@ const Map<String, String> cevirilerTa = {
       'அதிக கோரிக்கைகள்; சற்று கழித்து மீண்டும் முயல்க',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'சர்வரில் தற்போது இடம் இல்லை, சிறிது நேரம் கழித்து முயற்சிக்கவும்',
+  'Devam eden yapımlar ({})': 'தொடரும் தயாரிப்புகள் ({})',
+  'Diziler ({})': 'தொடர்கள் ({})',
+  'Filmler ({})': 'திரைப்படங்கள் ({})',
+  'Tüm yapımlar': 'அனைத்து தயாரிப்புகள்',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'உங்கள் ஊடக சேமிப்பு நிரம்பியது; இடம் பெற பழைய பதிவேற்றங்களை நீக்கவும்',
   'E-posta/kullanıcı adı veya şifre hatalı':

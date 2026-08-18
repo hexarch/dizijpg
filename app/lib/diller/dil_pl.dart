@@ -1056,6 +1056,10 @@ const Map<String, String> cevirilerPl = {
       'Za dużo żądań; spróbuj za chwilę',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Na serwerze chwilowo brak miejsca, spróbuj za chwilę',
+  'Devam eden yapımlar ({})': 'Trwające produkcje ({})',
+  'Diziler ({})': 'Seriale ({})',
+  'Filmler ({})': 'Filmy ({})',
+  'Tüm yapımlar': 'Wszystkie produkcje',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Twoja przestrzeń na media jest pełna; usuń stare pliki, aby zwolnić miejsce',
   'E-posta/kullanıcı adı veya şifre hatalı':

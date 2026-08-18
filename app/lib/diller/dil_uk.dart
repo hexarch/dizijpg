@@ -1048,6 +1048,10 @@ const Map<String, String> cevirilerUk = {
       'Забагато запитів; спробуй трохи пізніше',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Зараз на сервері немає місця, спробуйте трохи згодом',
+  'Devam eden yapımlar ({})': 'Поточні проєкти ({})',
+  'Diziler ({})': 'Серіали ({})',
+  'Filmler ({})': 'Фільми ({})',
+  'Tüm yapımlar': 'Усі проєкти',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Місце для медіа закінчилося; видаліть старі завантаження',
   'E-posta/kullanıcı adı veya şifre hatalı':

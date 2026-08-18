@@ -1067,6 +1067,10 @@ const Map<String, String> cevirilerDe = {
       'Zu viele Anfragen; versuch es gleich nochmal',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Momentan kein Speicherplatz auf dem Server, versuch es gleich nochmal',
+  'Devam eden yapımlar ({})': 'Laufende Produktionen ({})',
+  'Diziler ({})': 'Serien ({})',
+  'Filmler ({})': 'Filme ({})',
+  'Tüm yapımlar': 'Alle Produktionen',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Dein Medienspeicher ist voll; lösche alte Uploads, um Platz zu schaffen',
   'E-posta/kullanıcı adı veya şifre hatalı':

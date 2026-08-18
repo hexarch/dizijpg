@@ -1049,6 +1049,10 @@ const Map<String, String> cevirilerFi = {
       'Liikaa pyyntöjä; yritä hetken päästä uudelleen',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Palvelimella ei ole nyt tilaa, yritä hetken kuluttua uudelleen',
+  'Devam eden yapımlar ({})': 'Käynnissä olevat tuotannot ({})',
+  'Diziler ({})': 'Sarjat ({})',
+  'Filmler ({})': 'Elokuvat ({})',
+  'Tüm yapımlar': 'Kaikki tuotannot',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Medialtatilasi on täynnä; vapauta tilaa poistamalla vanhoja latauksia',
   'E-posta/kullanıcı adı veya şifre hatalı':

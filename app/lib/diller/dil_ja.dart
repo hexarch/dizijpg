@@ -1002,6 +1002,10 @@ const Map<String, String> cevirilerJa = {
   'Çok fazla istek; biraz sonra tekrar dene': 'リクエストが多すぎます。少ししてから再試行してください',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'サーバーの空き容量が一時的にありません。しばらくしてからお試しください',
+  'Devam eden yapımlar ({})': '放送中の作品（{}）',
+  'Diziler ({})': 'シリーズ（{}）',
+  'Filmler ({})': '映画（{}）',
+  'Tüm yapımlar': 'すべての作品',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'メディアの保存容量がいっぱいです。古いアップロードを削除してください',
   'E-posta/kullanıcı adı veya şifre hatalı': 'メール/ユーザー名またはパスワードが違います',

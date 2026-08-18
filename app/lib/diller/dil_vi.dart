@@ -1046,6 +1046,10 @@ const Map<String, String> cevirilerVi = {
       'Quá nhiều yêu cầu; thử lại sau một lát',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'Máy chủ tạm thời hết dung lượng, hãy thử lại sau ít phút',
+  'Devam eden yapımlar ({})': 'Tác phẩm đang chiếu ({})',
+  'Diziler ({})': 'Phim bộ ({})',
+  'Filmler ({})': 'Phim lẻ ({})',
+  'Tüm yapımlar': 'Tất cả tác phẩm',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'Bộ nhớ media của bạn đã đầy; hãy xoá các tệp cũ để giải phóng dung lượng',
   'E-posta/kullanıcı adı veya şifre hatalı':

@@ -481,7 +481,14 @@ void main() {
     expect(find.text('Sony Pictures Television'), findsWidgets);
     // Ülke: TMDB iki harfli kod verir, ekranda SEÇİLİ DİLDEKİ ad görünür
     expect(find.text('Amerika Birleşik Devletleri'), findsOneWidget);
-    expect(find.byType(PosterKarti), findsOneWidget);
+    // 19 Ağu 2026: sayfaya RAFLAR eklendi (devam edenler/diziler/filmler).
+    // İki sonuç: (a) `PosterKarti` artık birden çok yerde çizilir, (b) ızgara
+    // rafların ALTINA indiği için görüş alanına girmez ve tembel sliver onu
+    // hiç kurmaz. Bu yüzden "tam bir kart" ölçüsü artık anlamsız.
+    // ÖLÇÜLEN ŞEY AYNI KALDI: içerik çizildi mi, boş durum çıktı mı.
+    // Izgaranın kendi davranışı (tür değişince yeniden istek) aşağıdaki
+    // `kayit` beklentileriyle zaten kilitli.
+    expect(find.byType(PosterKarti), findsWidgets);
     expect(find.byType(BosDurum), findsNothing);
     // Detaydan gelen tür sekmeyi belirledi → dizi keşfi istendi
     expect(
@@ -521,7 +528,14 @@ void main() {
       },
     );
     expect(find.text('Taşınan Ad'), findsWidgets);
-    expect(find.byType(PosterKarti), findsOneWidget);
+    // 19 Ağu 2026: sayfaya RAFLAR eklendi (devam edenler/diziler/filmler).
+    // İki sonuç: (a) `PosterKarti` artık birden çok yerde çizilir, (b) ızgara
+    // rafların ALTINA indiği için görüş alanına girmez ve tembel sliver onu
+    // hiç kurmaz. Bu yüzden "tam bir kart" ölçüsü artık anlamsız.
+    // ÖLÇÜLEN ŞEY AYNI KALDI: içerik çizildi mi, boş durum çıktı mı.
+    // Izgaranın kendi davranışı (tür değişince yeniden istek) aşağıdaki
+    // `kayit` beklentileriyle zaten kilitli.
+    expect(find.byType(PosterKarti), findsWidgets);
     expect(find.byType(HataGorunumu), findsNothing);
     expect(tester.takeException(), isNull);
   });
@@ -556,6 +570,15 @@ void main() {
       reason: kayit.toString(),
     );
 
+    // 19 Ağu 2026: raflar eklenince tür sekmesi katlamanın ALTINA indi ve
+    // tembel sliver onu kurmuyor. Önce görünür hale getir; `find.text` tam
+    // eşleşme olduğu için raf başlığıyla ("Diziler (1)") karışmaz.
+    await tester.scrollUntilVisible(
+      find.text('Diziler'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pump();
     await tester.tap(find.text('Diziler'));
     for (var i = 0; i < 8; i++) {
       await tester.pump(const Duration(milliseconds: 60));

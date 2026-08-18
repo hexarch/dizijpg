@@ -1044,6 +1044,10 @@ const Map<String, String> cevirilerPa = {
       'ਬਹੁਤ ਜ਼ਿਆਦਾ ਬੇਨਤੀਆਂ; ਥੋੜ੍ਹੀ ਚਿਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'ਸਰਵਰ ਉੱਤੇ ਹੁਣ ਥਾਂ ਨਹੀਂ ਹੈ, ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
+  'Devam eden yapımlar ({})': 'ਜਾਰੀ ਨਿਰਮਾਣ ({})',
+  'Diziler ({})': 'ਸੀਰੀਜ਼ ({})',
+  'Filmler ({})': 'ਫ਼ਿਲਮਾਂ ({})',
+  'Tüm yapımlar': 'ਸਾਰੇ ਨਿਰਮਾਣ',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'ਤੁਹਾਡੀ ਮੀਡੀਆ ਸਟੋਰੇਜ ਭਰ ਗਈ ਹੈ; ਥਾਂ ਬਣਾਉਣ ਲਈ ਪੁਰਾਣੇ ਅੱਪਲੋਡ ਮਿਟਾਓ',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ਈਮੇਲ/ਯੂਜ਼ਰਨੇਮ ਜਾਂ ਪਾਸਵਰਡ ਗਲਤ ਹੈ',

@@ -1031,6 +1031,10 @@ const Map<String, String> cevirilerTh = {
   'Çok fazla istek; biraz sonra tekrar dene': 'คำขอมากเกินไป ลองใหม่สักครู่',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'ตอนนี้เซิร์ฟเวอร์ไม่มีพื้นที่ว่าง ลองใหม่อีกสักครู่',
+  'Devam eden yapımlar ({})': 'ผลงานที่กำลังฉาย ({})',
+  'Diziler ({})': 'ซีรีส์ ({})',
+  'Filmler ({})': 'ภาพยนตร์ ({})',
+  'Tüm yapımlar': 'ผลงานทั้งหมด',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'พื้นที่สื่อของคุณเต็มแล้ว ลบไฟล์เก่าเพื่อเพิ่มพื้นที่',
   'E-posta/kullanıcı adı veya şifre hatalı':

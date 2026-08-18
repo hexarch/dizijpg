@@ -1055,6 +1055,10 @@ const Map<String, String> cevirilerMy = {
       'တောင်းဆိုမှု များလွန်းသည်၊ ခဏကြာမှ ပြန်ကြိုးစားပါ',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'ဆာဗာတွင် ယာယီနေရာမရှိပါ၊ ခဏအကြာတွင် ပြန်ကြိုးစားပါ',
+  'Devam eden yapımlar ({})': 'ဆက်လက်ထုတ်လုပ်နေသော ({})',
+  'Diziler ({})': 'စီးရီးများ ({})',
+  'Filmler ({})': 'ရုပ်ရှင်များ ({})',
+  'Tüm yapımlar': 'ထုတ်လုပ်မှုအားလုံး',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'သင့်မီဒီယာသိုလှောင်မှု ပြည့်နေပါပြီ၊ နေရာလွတ်ရန် ဟောင်းသောဖိုင်များကို ဖျက်ပါ',
   'E-posta/kullanıcı adı veya şifre hatalı':

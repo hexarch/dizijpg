@@ -1048,6 +1048,10 @@ const Map<String, String> cevirilerUr = {
       'بہت زیادہ درخواستیں؛ تھوڑی دیر بعد کوشش کریں',
   'Sunucuda geçici olarak yer yok, birazdan tekrar dene':
       'سرور پر ابھی جگہ نہیں ہے، تھوڑی دیر بعد کوشش کریں',
+  'Devam eden yapımlar ({})': 'جاری پروڈکشنز ({})',
+  'Diziler ({})': 'سیریز ({})',
+  'Filmler ({})': 'فلمیں ({})',
+  'Tüm yapımlar': 'تمام پروڈکشنز',
   'Medya alanın doldu; yer açmak için eski yüklemelerini sil':
       'آپ کی میڈیا اسٹوریج بھر گئی ہے؛ جگہ بنانے کے لیے پرانی اپ لوڈز حذف کریں',
   'E-posta/kullanıcı adı veya şifre hatalı': 'ای میل/یوزرنیم یا پاس ورڈ غلط ہے',
