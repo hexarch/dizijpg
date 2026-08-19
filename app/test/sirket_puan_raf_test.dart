@@ -23,12 +23,10 @@
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
-import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:dizijpg/yonlendirme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:provider/provider.dart';
@@ -62,11 +60,14 @@ http.Client _sahteIstemci(List<String> kayit) => MockClient((istek) async {
   if (yol == '/api/tmdb/company/3268') return cevap(_firma);
   if (yol == '/api/tmdb/discover/tv') {
     final sureli = istek.url.queryParameters['with_status'] == '0';
-    // `results` 1 öğe ama `total_results` 26/166: başlık HANGİSİNİ okuyor?
+    // DEVAM EDEN rafı 1 öğe (başlık sayısı testi için yeter).
+    // DİZİ rafı 20 öğe: kaydırdıkça yükleme eşiği `>= 12` öğe ister — kısa
+    // listede BİLEREK tetiklenmiyor (yoksa şerit/ızgara kullanıcı hiç
+    // dokunmadan kendini sonuna kadar yüklerdi; bu tuzağa bir kez düşüldü).
     return cevap({
-      'results': [
-        if (sureli) _yapim(1, 'Devam Eden Dizi') else _yapim(2, 'Bitmiş Dizi'),
-      ],
+      'results': sureli
+          ? [_yapim(1, 'Devam Eden Dizi')]
+          : [for (var i = 0; i < 20; i++) _yapim(100 + i, 'Dizi $i')],
       'total_results': sureli ? 26 : 166,
       'total_pages': sureli ? 2 : 9,
     });
@@ -251,37 +252,58 @@ void main() {
     expect(find.byType(SegmentedButton<String>), findsNothing);
   });
 
-  testWidgets('başlığa dokununca raf AÇILIR ve "Daha fazla" belirir', (
+  testWidgets('başlığa dokununca raf AÇILIR ve KENDİLİĞİNDEN sayfalanır', (
     tester,
   ) async {
     uzunEkran(tester);
     await _kur(tester);
 
-    // Kapalı: yatay şerit var, "daha fazla" yok.
-    expect(find.byKey(const Key('raf-daha-dizi')), findsNothing);
-
     await tester.tap(find.byKey(const Key('raf-baslik-dizi')));
     await tester.pumpAndSettle();
 
-    // Açık: sayfa daha var (1/9) olduğu için düğme çıkar.
+    expect(find.text('Daralt'), findsWidgets);
+    // 19 AĞU 2026 — "Daha fazla" DÜĞMESİ KALDIRILDI. Başlıktaki "Tümünü gör"
+    // zaten "hepsini göreyim" demek; her sayfa için ikinci bir düğmeye
+    // bastırmak kullanıcıyı iki kez niyet beyanına zorlardı. Sayfalama artık
+    // ızgaranın sonu görününce kendiliğinden ilerliyor.
     expect(
       find.byKey(const Key('raf-daha-dizi')),
-      findsOneWidget,
-      reason: 'açık rafta "daha fazla" düğmesi yok',
+      findsNothing,
+      reason: '"daha fazla" düğmesi hâlâ çiziliyor',
     );
-    expect(find.text('Daralt'), findsWidgets);
   });
 
-  testWidgets('"Daha fazla" SIRADAKİ SAYFAYI ister (page=2)', (tester) async {
+  testWidgets('KISA listede kendiliğinden sayfalanmaz (kaçak yükleme yok)', (
+    tester,
+  ) async {
+    uzunEkran(tester);
+    final kayit = await _kur(tester);
+    kayit.clear();
+    // "Devam eden" rafı tek öğeli; açılınca sayfa istememeli. İlk denemede
+    // tetikleyici indekse bakıyordu ve `i >= uzunluk - 6` tek öğede daha ilk
+    // karede doğru oluyordu — raf kullanıcı hiç dokunmadan 2. sayfayı,
+    // sonra 3'ü, 4'ü... çekiyordu.
+    await tester.tap(find.byKey(const Key('raf-baslik-devam')));
+    await tester.pumpAndSettle();
+    expect(
+      kayit.any((y) => y.contains('page=2')),
+      isFalse,
+      reason: 'kısa liste kendiliğinden sayfalandı: $kayit',
+    );
+  });
+
+  testWidgets('KAYDIRDIKÇA YÜKLE: sıradaki sayfa DÜĞMESİZ istenir', (
+    tester,
+  ) async {
     uzunEkran(tester);
     final kayit = await _kur(tester);
 
+    kayit.clear();
     await tester.tap(find.byKey(const Key('raf-baslik-dizi')));
     await tester.pumpAndSettle();
-    kayit.clear();
-    await tester.tap(find.byKey(const Key('raf-daha-dizi')));
-    await tester.pumpAndSettle();
 
+    // Izgara açılır açılmaz son kartlar zaten görünür (sahte yanıtta tek öğe
+    // var), yani sayfalama DÜĞMESİZ tetiklenmeli.
     expect(
       kayit.any(
         (y) =>
@@ -290,7 +312,7 @@ void main() {
             !y.contains('with_status=0'),
       ),
       isTrue,
-      reason: 'daha fazla, dizi rafının 2. sayfasını istemiyor: $kayit',
+      reason: 'kaydırdıkça yükleme 2. sayfayı istemiyor: $kayit',
     );
   });
 }

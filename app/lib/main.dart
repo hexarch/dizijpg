@@ -13,6 +13,7 @@ import 'altyazi.dart';
 import 'api.dart';
 import 'ceviri.dart';
 import 'cihaz_kimlik.dart';
+import 'ekranlar/kabuk.dart' show KabukKatlama;
 import 'gorusme/arama_servisi.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
@@ -98,6 +99,9 @@ Future<void> main() async {
     await acilisAdimi('altyazi', AltyaziAyar.yukle);
     // Akış/Keşfet: Kronolojik mi Önerilen mi
     await acilisAdimi('sira', SiraTercihi.yukle);
+    // Masaüstü gezinme adası katlı mı? İlk kareden ÖNCE okunmalı, yoksa
+    // çubuk bir açılıp hemen kapanır (göze çarpan bir zıplama).
+    await acilisAdimi('cubuk-katlama', KabukKatlama.yukle);
     final oturum = Oturum();
     await acilisAdimi('oturum', oturum.yukle);
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)

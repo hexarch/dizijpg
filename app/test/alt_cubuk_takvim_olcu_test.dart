@@ -147,8 +147,11 @@ void main() {
       final cubuk = tester.getSize(find.byType(NavigationBar));
       expect(cubuk.height, 44, reason: 'eski 56 dp → 44 dp (asgaride durdu)');
 
-      expect(_hedefler(), findsNWidgets(5));
-      for (var i = 0; i < 5; i++) {
+      // 17 Ağu: masaüstünde 6. hedef (Mesajlar) eklendi. Ada genişlemedi, o
+      // yüzden asıl risk burada: 278/6 ≈ 46.3 dp, 44 sınırına yakın. Test
+      // altı hedefi de ölçer — sınıra dayanan bir düzenlemede ilk bu patlar.
+      expect(_hedefler(), findsNWidgets(6));
+      for (var i = 0; i < 6; i++) {
         final h = tester.getSize(_hedefler().at(i));
         expect(
           h.height,
@@ -161,6 +164,9 @@ void main() {
           reason: '$i. sekme genişliği ${h.width} < 44',
         );
       }
+      // Yalnız ilk beşi basılır: 6. hedef kabuk dalı değil, GoRouter'a
+      // `push` eden bir kısayol — burada yönlendirici yok, davranışı
+      // masaustu_mesaj_gezinme_test.dart kilitliyor.
       for (var i = 0; i < 5; i++) {
         await tester.tap(_hedefler().at(i));
         await tester.pump();

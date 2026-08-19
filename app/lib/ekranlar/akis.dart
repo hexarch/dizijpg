@@ -12,6 +12,7 @@ import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
 import '../onbellek.dart';
 import '../sira_tercihi.dart';
+import '../sohbet_olay.dart';
 import '../tema.dart';
 import 'begenenler.dart';
 import 'etiket.dart';
@@ -102,6 +103,9 @@ class _AkisEkraniState extends State<AkisEkrani>
         _bildirimSayi = (sonuclar[0]['okunmamis'] as int?) ?? 0;
         _mesajSayi = (sonuclar[1]['okunmamis'] as int?) ?? 0;
       });
+      // Masaüstü gezinme adası kendi isteğini atmaz; taze sayıyı ortak
+      // kaynağa yazınca ada da aynı anda güncellenir.
+      SohbetOlaylari.okunmamis.value = _mesajSayi;
     } catch (_) {}
   }
 
@@ -324,7 +328,10 @@ class _AkisEkraniState extends State<AkisEkrani>
             },
           ),
           RozetliIkon(
-            ikon: Icons.mail_outline,
+            // Ana Sayfa ile AYNI ikon olmak zorunda: iki üst barda aynı yere
+            // giden düğme farklı çizilirse (zarf vs kâğıt uçak) kullanıcı
+            // ikisini ayrı özellik sanıyor. Referans Ana Sayfa'daki.
+            ikon: Icons.near_me_outlined,
             sayi: _mesajSayi,
             etiket: 'Mesajlar'.c,
             onTap: () async {

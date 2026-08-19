@@ -1,6 +1,23 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-19 — ✅ Mesajlaşma gezinmesi (3 kullanıcı isteği, dağıtım BEKLİYOR)
+- ✅ **Mesaj ikonu tutarsızlığı.** Akış üst barı zarf (`Icons.mail_outline`),
+  Ana Sayfa kâğıt uçak (`Icons.near_me_outlined`) çiziyordu; aynı yere giden
+  iki düğme ayrı özellik gibi görünüyordu. Akış Ana Sayfa'ya hizalandı.
+- ✅ **Masaüstü gezinme adasına Mesajlar** (6. hedef, `/sohbetler`e `push`).
+  Ada 280 dp'de kaldı → hedef başına 46.3 dp (44 sınırının üstünde).
+  MOBİL BEŞ ÖĞEDE KALDI. Okunmamış rozeti `SohbetOlaylari.okunmamis`
+  ortak kaynağından beslenir (üst bar rozetiyle aynı anda değişir).
+- ✅ **Adanın sağında katla/aç düğmesi.** Tek ok, duruma göre yön değiştirir
+  (RTL'de ters); `Tooltip` + `Semantics.expanded` ile üç kanaldan bildirilir.
+  Tercih `SharedPreferences`ta (`masaustu_cubuk_katli`), açılışta okunur.
+  Katlıyken ada gizlenir ama düğme kalır — geri açmanın yolu görünür.
+- ⬜ **Çeviri borcu:** aç tarafının ipucu için 45 dilde "Genişlet" anahtarı
+  yok; şimdilik mevcut `'Tekrar göster'` ödünç alındı. Uygun anahtar 45 dile
+  eklenince `lib/ekranlar/kabuk.dart`taki `_katlaDugmesi` güncellenmeli.
+- Kanıt: `test/masaustu_mesaj_gezinme_test.dart` (9 test).
+
 ## 2026-08-17 — ⬜ Güvenlik denetimi (3. tur) bulguları
 Rapor: `GUVENLIK-DENETIMI-2026-08-17.md` (salt okuma; kod + sunucu).
 Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.

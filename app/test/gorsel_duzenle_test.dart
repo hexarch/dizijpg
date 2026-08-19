@@ -1,9 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:dizijpg/ekranlar/gorsel_duzenle.dart';
+// ERTELENEN PARÇA, TESTTE DÜZ IMPORT. Üretimde bu kütüphaneye yalnız
+// `gorsel_duzenle.dart` içindeki `deferred as editor` üzerinden ulaşılıyor;
+// burada düz import etmek `.part.js` ayrımını BOZMAZ, çünkü ayrımı
+// belirleyen şey web giriş noktasından (`lib/main.dart`) çıkan yollar —
+// `test/` o grafiğin içinde değil. Testin `pro_image_editor` tiplerine
+// ihtiyacı var (`duzenleyiciYapilandirma`, `pngSigdir`); onları ertelenmeyen
+// tarafta tutmak paketi ana pakete geri çekerdi.
+import 'package:dizijpg/ekranlar/gorsel_duzenle_editor.dart';
 import 'package:dizijpg/ekranlar/medya_inceleme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -249,10 +258,12 @@ void main() {
   setUp(() {
     sistemSeciciSahte = null;
     gorselDuzenleSahte = null;
+    editorYukleSahte = null;
   });
   tearDown(() {
     sistemSeciciSahte = null;
     gorselDuzenleSahte = null;
+    editorYukleSahte = null;
   });
 
   // --- Sihirli bayt: sunucudaki `RESIM_TURLERI` kapısının istemci ikizi ----
@@ -785,6 +796,84 @@ void main() {
 
     expect(find.text('Düzenlenemedi'), findsOneWidget);
     expect(_kalem(), findsOneWidget); // düğme kilitli kalmadı
+  });
+
+  // --- ERTELENMİŞ YÜKLEME: yükleniyor → başarı → hata --------------------
+
+  testWidgets('editör parçası inerken kalem SPINNER gösterir, hata SÖYLENİR', (
+    tester,
+  ) async {
+    // 19 Ağu 2026, "deferred imports" 1. tur. Editör artık ayrı bir
+    // `.part.js`; `loadLibrary()` AĞDAN dosya çekiyor ve yavaş bağlantıda
+    // saniyeler sürebiliyor. İki risk doğdu, ikisi de burada kilitleniyor:
+    //
+    // 1. SESSİZ BEKLEME: kullanıcı kaleme basar, hiçbir şey olmaz, DONDU
+    //    sanar. Kanıt: parça inerken kalem yerinde spinner var ve düğme
+    //    kilitli (`_DuzenleDugmesi.mesgul`).
+    // 2. SESSİZ HATA: parça inemezse (bağlantı koptu, eski servis çalışanı
+    //    404 döndü) eskiden `null` dönüp susmak düğmeyi "bozuk" gösterirdi.
+    //    Kanıt: SnackBar çıkıyor ve düğme boşta hâline dönüyor.
+    //
+    // `gorselDuzenleSahte` BİLEREK null: bu testin konusu tam da sahtenin
+    // atladığı yol, yani gerçek yükleme kapısı.
+    final kapi = Completer<void>();
+    var cagrildi = 0;
+    editorYukleSahte = () {
+      cagrildi++;
+      return kapi.future;
+    };
+
+    await _ac(tester, [_d(_png, 'a.png')]);
+    await tester.tap(_kalem());
+    // `pumpAndSettle` YOK: parça hâlâ iniyor, o ara hâli görmek istiyoruz.
+    await tester.pump();
+
+    expect(cagrildi, 1);
+    // Kalem GLİFİ spinner'a döndü → "meşgul" hâli GÖRÜNÜR. (Tooltip/etiket
+    // bilerek değişmiyor: ekran okuyucu düğmenin ADINI kaybetmesin diye
+    // `_DuzenleDugmesi` yalnız glifi değiştirip düğmeyi kilitliyor.)
+    expect(find.byIcon(Icons.edit_outlined), findsNothing);
+    expect(
+      find.descendant(
+        of: _kalem(),
+        matching: find.byType(CircularProgressIndicator),
+      ),
+      findsOneWidget,
+    );
+
+    // Parça inemedi.
+    kapi.completeError(Exception('ağ koptu'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Düzenlenemedi'), findsOneWidget);
+    // Düğme kilitli kalmadı: glif kaleme döndü, spinner gitti.
+    expect(find.byIcon(Icons.edit_outlined), findsOneWidget);
+    expect(
+      find.descendant(
+        of: _kalem(),
+        matching: find.byType(CircularProgressIndicator),
+      ),
+      findsNothing,
+    );
+    expect(_kalemDuzenli(), findsNothing); // yalancı "düzenlendi" rozeti yok
+  });
+
+  testWidgets('GIF/video baytında editör parçası HİÇ İNMEZ', (tester) async {
+    // Ertelemenin ilk kazancı: düzenlenemeyen girdide 686 KB'lık parça hiç
+    // istenmiyor. `gorselDuzenle` sırası bozulursa (önce `loadLibrary`,
+    // sonra `duzenlenebilirMi`) bu test kırmızıya döner.
+    var cagrildi = 0;
+    editorYukleSahte = () async => cagrildi++;
+    await _ac(tester, [_d(_gif, 'a.gif')]);
+    expect(_kalem(), findsNothing); // GIF'te kalem zaten çizilmiyor
+    expect(
+      await gorselDuzenle(
+        tester.element(find.byType(MedyaIncelemeEkrani)),
+        _gif,
+      ),
+      isNull,
+    );
+    expect(cagrildi, 0);
   });
 
   // --- Çeviri disiplini --------------------------------------------------

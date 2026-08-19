@@ -11,6 +11,15 @@
 // sürüm servis edilme riski YOK; buna karşılık dosya sonsuza kadar önbelleklenebilir.
 // Bu, `no-store`u kaldırmanın TEK güvenli yolu — süreyi uzatmak değil.
 //
+// 19 Ağu 2026 — ERTELENMİŞ PARÇALAR (`main.dart.js_<n>.part.js`):
+// `pro_image_editor` deferred import'a alınınca dart2js ana paketten ayrı bir
+// parça dosyası üretmeye başladı (bugün 1 tane, 2,8 MB). Bu dosya hash'lenmezse
+// adı sabit kalır; nginx'te hiçbir kurala düşmediği için Cloudflare onu
+// varsayılan `.js` davranışıyla önbelleğe alır ve YENİ derlemeden sonra ESKİ
+// parçayı servis edebilir. dart2js parçanın içine gömülü kimliği
+// (`deferredPartHashes`) ana pakette tuttuğu için uyumsuz parça sessizce
+// yüklenmez: görsel düzenleyici canlıda ölür. Bu yüzden parçalar da hash'lenir.
+//
 // Kullanım:  node araclar/web_hashla.js [build/web dizini]
 // Varsayılan dizin: app/build/web
 
@@ -24,45 +33,184 @@ const kok = process.argv[2]
 const ANA = 'main.dart.js';
 const ONYUKLEYICI = 'flutter_bootstrap.js';
 
+// Ana paket: hash'siz (taze derleme) ve hash'li (bu betik bir kez koşmuş) hâli.
+const ANA_HASHLI = /^main\.[0-9a-f]{12}\.dart\.js$/;
+// Parçalar: `main.dart.js_1.part.js` (taze) ve `main.dart.js_1.<hash>.part.js`.
+// SAYIYA GÖMÜLME: bugün 1 parça var, yarın 5 olabilir — indeks desenle okunur.
+const PARCA_HAM = /^main\.dart\.js_(\d+)\.part\.js$/;
+const PARCA_HASHLI = /^main\.dart\.js_(\d+)\.([0-9a-f]{12})\.part\.js$/;
+
 function cik(mesaj) {
   console.error(`web_hashla: ${mesaj}`);
   process.exit(1);
 }
 
-const anaYol = path.join(kok, ANA);
+function hashla(tampon) {
+  return crypto.createHash('sha256').update(tampon).digest('hex').slice(0, 12);
+}
+
+if (!fs.existsSync(kok)) cik(`dizin yok: ${kok}`);
+const dosyalar = fs.readdirSync(kok).sort();
+
+// --- 1) Ana paketin KAYNAĞINI bul ------------------------------------------
+//
+// İDEMPOTENT: betik ikinci kez koşarsa `main.dart.js` artık yoktur (birincide
+// hash'li ada dönüştü). Eskiden bu durum "önce flutter build web çalıştırın"
+// diye hataya düşüyordu; dağıtım ritüelinde betiği iki kez koşmak sık olduğu
+// için bu YANLIŞ ALARM'dı. Tek bir hash'li ana paket varsa onu kaynak say.
+let anaAd = null;
+if (dosyalar.includes(ANA)) {
+  anaAd = ANA;
+} else {
+  const hashliAnalar = dosyalar.filter((a) => ANA_HASHLI.test(a));
+  if (hashliAnalar.length === 1) {
+    anaAd = hashliAnalar[0];
+  } else if (hashliAnalar.length === 0) {
+    cik(`${path.join(kok, ANA)} yok — önce flutter build web çalıştırın`);
+  } else {
+    // Hangisinin güncel olduğu belirsiz; tahmin etmek eski paketi canlıya
+    // sokabilir. SESSİZ GEÇME.
+    cik(`birden fazla hash'li ana paket var (${hashliAnalar.join(', ')}) — `
+      + `hangisinin güncel olduğu belirsiz, build dizinini temizleyip yeniden derleyin`);
+  }
+}
+
 const onyukleyiciYol = path.join(kok, ONYUKLEYICI);
-if (!fs.existsSync(anaYol)) cik(`${anaYol} yok — önce flutter build web çalıştırın`);
 if (!fs.existsSync(onyukleyiciYol)) cik(`${onyukleyiciYol} yok`);
 
-const icerik = fs.readFileSync(anaYol);
-const hash = crypto.createHash('sha256').update(icerik).digest('hex').slice(0, 12);
+const anaYol = path.join(kok, anaAd);
+// Parça adları ana paketin İÇİNDE düz metin olarak geçtiği için ana paketi
+// metin olarak okuyup üzerinde çalışıyoruz (dart2js çıktısı UTF-8).
+let anaIcerik = fs.readFileSync(anaYol, 'utf8');
+
+// --- 2) Parçaları indeks indeks topla ---------------------------------------
+const parcalar = new Map(); // indeks -> { ham, hashliler: [] }
+for (const ad of dosyalar) {
+  let e = ad.match(PARCA_HAM);
+  if (e) {
+    const kayit = parcalar.get(e[1]) || { ham: null, hashliler: [] };
+    kayit.ham = ad;
+    parcalar.set(e[1], kayit);
+    continue;
+  }
+  e = ad.match(PARCA_HASHLI);
+  if (e) {
+    const kayit = parcalar.get(e[1]) || { ham: null, hashliler: [] };
+    kayit.hashliler.push(ad);
+    parcalar.set(e[1], kayit);
+  }
+}
+
+// --- 3) Parçaları hash'le ve ana paketteki referansları yeniden yaz ----------
+//
+// SIRALAMA — KRİTİK: referans ana paketin İÇİNDE (`deferredPartUris:[...]`)
+// duruyor. Ana paketi önce hash'leyip sonra içine dokunursak, dosyanın adındaki
+// hash artık İÇERİĞİYLE UYUŞMAZ; "aynı ad ⇒ aynı içerik" garantisi çöker ve
+// `immutable` verdiğimiz Cloudflare bir sonraki derlemede aynı adla ESKİ gövdeyi
+// sonsuza kadar tutabilir. Bu yüzden sıra ZORUNLU olarak:
+//   (a) parçaları hash'le → (b) ana paket metnindeki parça adlarını güncelle →
+//   (c) ana paketin hash'ini ARTIK KESİNLEŞMİŞ içerikten al → (d) yaz.
+// Not: `deferredPartHashes` içindeki değer parçanın İÇİNE gömülü kimliktir
+// (parça dosyasının sonundaki `$__dart_deferred_initializers__["..."]` anahtarı),
+// dosya adından bağımsızdır — yeniden adlandırma onu bozmaz.
+const parcaOzet = [];
+for (const indeks of [...parcalar.keys()].sort((a, b) => Number(a) - Number(b))) {
+  const kayit = parcalar.get(indeks);
+
+  // Bu indekse yapılan HER referans (hash'siz ya da eski hash'li).
+  const refDeseni = new RegExp(
+    `main\\.dart\\.js_${indeks}\\.(?:[0-9a-f]{12}\\.)?part\\.js`, 'g');
+  const refAdet = (anaIcerik.match(refDeseni) || []).length;
+
+  if (refAdet === 0) {
+    if (kayit.ham) {
+      // Taze derleme parça üretmiş ama ana pakette adı geçmiyor: dart2js çıktı
+      // biçimi değişmiş olabilir. SESSİZ GEÇME — parça hash'lenmeden dağıtılırsa
+      // Cloudflare bayat gövde servis eder ve düzenleyici canlıda ölür.
+      cik(`${kayit.ham} üretilmiş ama ${anaAd} içinde referansı YOK — `
+        + `dart2js çıktı biçimi değişmiş olabilir, elle bakın`);
+    }
+    // Ham kaynağı olmayan + ana pakette hiç anılmayan hash'li parça: önceki
+    // derlemeden artakalan. Temizle (birikirse dağıtım her seferinde şişer).
+    for (const eski of kayit.hashliler) {
+      fs.unlinkSync(path.join(kok, eski));
+      console.log(`  eski hash'li parça silindi (referansı kalmamış): ${eski}`);
+    }
+    continue;
+  }
+
+  // Kaynak seçimi: taze `ham` varsa o, yoksa (ikinci çalıştırma) tek hash'li.
+  let kaynak = kayit.ham;
+  if (!kaynak) {
+    if (kayit.hashliler.length !== 1) {
+      cik(`main.dart.js_${indeks}.part.js yok ve hash'li karşılığı belirsiz `
+        + `(${kayit.hashliler.length} aday: ${kayit.hashliler.join(', ') || 'yok'})`);
+    }
+    kaynak = kayit.hashliler[0];
+  }
+
+  const parcaHash = hashla(fs.readFileSync(path.join(kok, kaynak)));
+  const yeniParcaAd = `main.dart.js_${indeks}.${parcaHash}.part.js`;
+
+  anaIcerik = anaIcerik.replace(refDeseni, yeniParcaAd);
+
+  // Aynı indeksin eski hash'li kopyaları birikmesin (ana paketle aynı desen).
+  for (const eski of kayit.hashliler) {
+    if (eski !== yeniParcaAd && eski !== kaynak) {
+      fs.unlinkSync(path.join(kok, eski));
+      console.log(`  eski hash'li parça silindi: ${eski}`);
+    }
+  }
+  if (kaynak !== yeniParcaAd) {
+    fs.renameSync(path.join(kok, kaynak), path.join(kok, yeniParcaAd));
+  }
+
+  parcaOzet.push(`${yeniParcaAd} (${refAdet} referans)`);
+}
+
+// Doğrula: ana pakette hash'SİZ parça adı KALMAMALI. Kalırsa nginx'te sabit
+// adlı bir `.js` servis edilir ve bayat parça riski geri gelir.
+if (/main\.dart\.js_\d+\.part\.js/.test(anaIcerik)) {
+  cik(`${anaAd} içinde hâlâ hash'siz parça referansı var`);
+}
+
+// --- 4) Ana paketi ARTIK kesinleşmiş içerikten hash'le ----------------------
+const hash = hashla(Buffer.from(anaIcerik, 'utf8'));
 const yeniAd = `main.${hash}.dart.js`;
+
+// Önce YAZ, sonra eskisini sil: ters sırada betik yarıda kesilirse ana paket
+// tamamen kaybolur ve build dizini kurtarılamaz.
+fs.writeFileSync(path.join(kok, yeniAd), anaIcerik);
+if (anaAd !== yeniAd) fs.unlinkSync(anaYol);
 
 // Önceki çalıştırmalardan kalan hash'li dosyalar birikmesin: build dizini her
 // derlemede yeniden üretilmiyor olabilir.
 for (const ad of fs.readdirSync(kok)) {
-  if (/^main\.[0-9a-f]{12}\.dart\.js$/.test(ad) && ad !== yeniAd) {
+  if (ANA_HASHLI.test(ad) && ad !== yeniAd) {
     fs.unlinkSync(path.join(kok, ad));
     console.log(`  eski hash'li dosya silindi: ${ad}`);
   }
 }
 
-fs.renameSync(anaYol, path.join(kok, yeniAd));
-
-// flutter_bootstrap.js içinde ad ÜÇ yerde geçiyor (mainJsPath varsayılanı,
-// derleme yapılandırması, yükleyici). Hepsi değişmeli — biri kalırsa 404.
+// --- 5) flutter_bootstrap.js -----------------------------------------------
+// Ad ÜÇ yerde geçiyor (mainJsPath varsayılanı, derleme yapılandırması,
+// yükleyici). Hepsi değişmeli — biri kalırsa 404.
+// Desendeki `(?!_)`: `main.dart.js_1.part.js` de `main.dart.js` ile başlıyor;
+// düz metin değiştirme onu `main.<hash>.dart.js_1.part.js`e çevirip bozardı.
+// İDEMPOTENT: ikinci çalıştırmada dosyada zaten hash'li ad vardır, o da eşleşir.
+const ONY_DESEN = /main\.(?:[0-9a-f]{12}\.)?dart\.js(?!_)/g;
 const onceki = fs.readFileSync(onyukleyiciYol, 'utf8');
-const adet = (onceki.match(/main\.dart\.js/g) || []).length;
+const adet = (onceki.match(ONY_DESEN) || []).length;
 if (!adet) cik(`${ONYUKLEYICI} içinde "main.dart.js" geçmiyor — Flutter çıktısı değişmiş olabilir`);
-fs.writeFileSync(onyukleyiciYol, onceki.split(ANA).join(yeniAd));
+fs.writeFileSync(onyukleyiciYol, onceki.replace(ONY_DESEN, yeniAd));
 
 // Doğrula: artık hiçbir yerde hash'siz ad kalmamalı.
 const sonra = fs.readFileSync(onyukleyiciYol, 'utf8');
-if (/(^|[^.0-9a-f])main\.dart\.js/.test(sonra)) {
+if (/(^|[^.0-9a-f])main\.dart\.js(?!_)/.test(sonra)) {
   cik(`${ONYUKLEYICI} içinde hâlâ hash'siz "main.dart.js" var`);
 }
 
-// --- index.html'e ana paket ÖN YÜKLEMESİ -----------------------------------
+// --- 6) index.html'e ana paket ÖN YÜKLEMESİ ---------------------------------
 //
 // NEDEN: `main.<hash>.dart.js` yalnız `flutter_bootstrap.js` ÇALIŞTIKTAN sonra
 // keşfediliyor. Lighthouse ölçümü (mobil): istek `Low` öncelikle ve ancak
@@ -73,6 +221,9 @@ if (/(^|[^.0-9a-f])main\.dart\.js/.test(sonra)) {
 //
 // Ad hash'li olduğu için bu satır her derlemede DEĞİŞMEK zorunda: elle
 // yazılamaz, hash'i üreten yer olan bu betik yazmalı.
+//
+// Parçalar BİLEREK preload EDİLMEZ: ertelenmiş import'un bütün amacı 2,8 MB'ı
+// ilk açılıştan çıkarmak; preload onu geri getirir.
 const INDEKS = 'index.html';
 const indeksYol = path.join(kok, INDEKS);
 if (!fs.existsSync(indeksYol)) cik(`${indeksYol} yok`);
@@ -117,5 +268,10 @@ if (sonAdet !== 1 || !indeksSon.includes(onyukSatiri.trim())) {
   cik(`${INDEKS} preload doğrulaması başarısız (${sonAdet} satır bulundu, beklenen 1: ${yeniAd})`);
 }
 
-console.log(`web_hashla: ${ANA} -> ${yeniAd} (${adet} referans güncellendi)`);
+console.log(`web_hashla: ${anaAd} -> ${yeniAd} (${adet} referans güncellendi)`);
+if (parcaOzet.length) {
+  console.log(`web_hashla: ertelenmiş parça: ${parcaOzet.join(', ')}`);
+} else {
+  console.log('web_hashla: ertelenmiş parça yok');
+}
 console.log(`web_hashla: ${INDEKS} preload satırı ${onyukDurum}: ${yeniAd}`);

@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../api.dart';
 import '../ceviri.dart';
+import '../sohbet_olay.dart';
 import '../tema.dart';
 import 'arama_cubugu.dart';
 import 'ortak.dart';
@@ -138,8 +139,11 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
     if (!Api.girisli) return;
     try {
       final d = await Api.get('/sohbetler/okunmamis');
+      // Masaüstü gezinme adasının rozeti de bu sayıdan besleniyor: ortak
+      // kaynağa yazmazsak ada bayat kalır (kendi isteğini atmıyor).
+      SohbetOlaylari.okunmamis.value = (d['okunmamis'] as int?) ?? 0;
       if (mounted) {
-        setState(() => _mesajSayi = (d['okunmamis'] as int?) ?? 0);
+        setState(() => _mesajSayi = SohbetOlaylari.okunmamis.value);
       }
     } catch (_) {}
   }

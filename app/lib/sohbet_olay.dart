@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 
+import 'api.dart';
+
 /// Ön planda yeni DM gelince sohbet listesi ve açık konuşma hemen tazelensin.
 ///
 /// Push (FCM) ve yoklama aynı kapıdan geçer: ekranlar [nesil] dinler, partner
@@ -10,6 +12,32 @@ class SohbetOlaylari {
   SohbetOlaylari._();
 
   static final ValueNotifier<int> nesil = ValueNotifier(0);
+
+  /// Okunmamış DM sayısı — TEK KAYNAK.
+  ///
+  /// Rozet artık iki yerde değil ÜÇ yerde çiziliyor (Ana Sayfa üst barı, Akış
+  /// üst barı, masaüstü gezinme adası). Her yüzey kendi sayısını tutsaydı,
+  /// yalnız ekranı açılan yüzey tazelenir; masaüstünde ada hep ekranda
+  /// durduğu için bayat sayıyla kalırdı. Sayıyı fetch eden ekranlar buraya
+  /// yazar, çizen herkes buradan okur.
+  static final ValueNotifier<int> okunmamis = ValueNotifier(0);
+
+  /// Okunmamış sayısını sunucudan tazeler.
+  ///
+  /// Kendi ekranı olmayan yüzeyler (gezinme adası) için: sohbetlerden geri
+  /// dönüldüğünde rozetin düşmesi gerekir, ama adanın arkasındaki sayfa
+  /// yeniden yüklenmez. Oturumsuz ziyaretçide uç `girisZorunlu` olduğu için
+  /// hiç istenmez — boş yere 401 toplanmaz.
+  static Future<void> okunmamisYenile() async {
+    if (!Api.girisli) return;
+    try {
+      final d = await Api.get('/sohbetler/okunmamis');
+      okunmamis.value = (d['okunmamis'] as int?) ?? 0;
+    } catch (_) {
+      // Ağ yoksa eldeki sayı kalsın; rozeti sıfırlamak "hepsini okudun"
+      // yalanı olurdu.
+    }
+  }
 
   /// Son olayın göndereni; liste her olayda tazelenir, açık sohbet yalnız
   /// kendi partneriyse.

@@ -606,15 +606,9 @@ void main() {
     await tester.pumpAndSettle();
     // Başlık AÇIK duruma geçti (yazı + ok yönü birlikte değişir).
     expect(find.text('Daralt'), findsOneWidget);
-    // "Daha fazla" ızgaranın ALTINDA; 900 px'lik test ekranında tembel
-    // sliver onu kurmuyor, önce görünür kılınır.
-    await tester.scrollUntilVisible(
-      find.byKey(const Key('raf-daha-dizi')),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.pumpAndSettle();
-    expect(find.byKey(const Key('raf-daha-dizi')), findsOneWidget);
+    // "Daha fazla" DÜĞMESİ ARTIK YOK (19 Ağu 2026): başlıktaki "Tümünü gör"
+    // zaten "hepsini göreyim" demek. Sayfalama kaydırdıkça ilerliyor.
+    expect(find.byKey(const Key('raf-daha-dizi')), findsNothing);
     expect(tester.takeException(), isNull);
   });
 

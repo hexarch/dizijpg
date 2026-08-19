@@ -167,6 +167,15 @@ class _Raf {
   bool yukluyor = false;
   bool ilkGeldi = false;
 
+  /// Yatay şeridin kaydırma denetleyicisi.
+  ///
+  /// NEDEN İNDEKS DEĞİL KONUM: ilk denemede "son 5 karta gelince yükle" diye
+  /// indekse bakılıyordu. Kısa listede (ör. 1 öğe) `i >= uzunluk - 5` daha ilk
+  /// karede DOĞRU oluyor ve şerit, kullanıcı hiç dokunmadan sayfa sayfa sonuna
+  /// kadar kendini yüklüyordu — testte yakalandı. Kaydırma konumu böyle bir
+  /// yalan söylemez: kullanıcı gerçekten yana kaydırmadıysa tetiklenmez.
+  final ScrollController kaydirma = ScrollController();
+
   _Raf({
     required this.anahtar,
     required this.ikon,
@@ -268,11 +277,29 @@ class _SirketEkraniState extends State<SirketEkrani> {
         ],
       ),
     ];
+    for (final r in _raflar) {
+      r.kaydirma.addListener(() {
+        if (!r.kaydirma.hasClients || r.acik) return;
+        // Sağ kenara 400 px kala sıradaki sayfa: parmak dibe varmadan gelsin.
+        if (r.kaydirma.position.pixels >=
+            r.kaydirma.position.maxScrollExtent - 400) {
+          _dahaFazla(r);
+        }
+      });
+    }
     if (_gecerli) {
       _firmaYukle();
       _puanYenile();
       _raflariYukle();
     }
+  }
+
+  @override
+  void dispose() {
+    for (final r in _raflar) {
+      r.kaydirma.dispose();
+    }
+    super.dispose();
   }
 
   Future<void> _firmaYukle() async {
@@ -542,7 +569,7 @@ class _SirketEkraniState extends State<SirketEkrani> {
     return [
       SliverToBoxAdapter(child: _rafBasligi(raf)),
       if (!raf.acik)
-        SliverToBoxAdapter(child: _rafSeridi(ogeler))
+        SliverToBoxAdapter(child: _rafSeridi(raf, ogeler))
       else ...[
         SliverPadding(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
@@ -550,6 +577,28 @@ class _SirketEkraniState extends State<SirketEkrani> {
             gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
             itemCount: ogeler.length,
             itemBuilder: (context, i) {
+              // KAYDIRDIKÇA YÜKLE (19 Ağu 2026 isteği): "daha fazla yazısını
+              // çıkarma, kaydırdıkça yükle; kullanıcı zaten hepsini görmek
+              // istediği için tıklıyor." Doğru: "Tümünü gör" ZATEN açık bir
+              // niyet beyanı, ikinci bir düğme gereksiz sürtünme.
+              //
+              // TETİKLEYİCİ SAYFANIN DİBİ DEĞİL, IZGARANIN SONU. Genişletilmiş
+              // raf sayfanın ORTASINDA olabilir (altında öbür raflar ve yorum
+              // bölümü var); `maxScrollExtent`e bakan bir dinleyici o durumda
+              // ya hiç ateşlenmez ya da yanlış rafı besler. Son kartlar ekrana
+              // girdiğinde tetiklemek, rafın nerede olduğundan BAĞIMSIZ çalışır.
+              //
+              // 6 KART ÖNCE: bir satır 3-6 kart; kullanıcı dibe varmadan
+              // sayfa yolda olsun ki bekleme görünmesin.
+              // `ogeler.length >= 12` ŞART: kısa listede `i >= uzunluk - 6`
+              // ilk karede doğru olur ve ızgara kullanıcı kaydırmadan kendini
+              // sonuna kadar yükler (şeritte tam bu tuzağa düşüldü).
+              if (ogeler.length >= 12 && i >= ogeler.length - 6) {
+                // Çizim sırasında setState YASAK — kare sonuna ertele.
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && raf.acik) _dahaFazla(raf);
+                });
+              }
               final o = ogeler[i] as Map<String, dynamic>;
               return PosterKarti(
                 icerik: o,
@@ -623,8 +672,15 @@ class _SirketEkraniState extends State<SirketEkrani> {
     ),
   );
 
-  /// Kapalı hâl: yatay poster şeridi (en çok 20 kart).
-  Widget _rafSeridi(List<dynamic> ogeler) => Padding(
+  /// Kapalı hâl: yatay poster şeridi — O DA KAYDIRDIKÇA YÜKLENİR.
+  ///
+  /// 19 AĞU 2026: eskiden şerit 20 kartta KESİLİYORDU, açık ızgara ise
+  /// sonsuza gidiyordu. Kullanıcı tutarsızlığı yakaladı: "tümünü gör diyince
+  /// neden sonsuza kadar gidiyor da... kaydırınca gitmiyor". Haklı — 20
+  /// sayısının kullanıcı açısından hiçbir anlamı yok, yalnızca TMDB'nin sayfa
+  /// boyutuydu. Yana kaydırmak da en az aşağı kaydırmak kadar açık bir "devamını
+  /// göster" isteğidir.
+  Widget _rafSeridi(_Raf raf, List<dynamic> ogeler) => Padding(
     padding: const EdgeInsets.only(left: 12, top: 8),
     child: SizedBox(
       // YÜKSEKLİK TÜRETİLİR, SABİT DEĞİL: `PosterKarti` posterin 2:3 oranına
@@ -633,11 +689,29 @@ class _SirketEkraniState extends State<SirketEkrani> {
       // tipi ölçeği büyüyen kullanıcıda aynı taşmayı sessizce geri getirirdi.
       height: _rafKartGenisligi * 3 / 2 + posterBaslikYuksekligi,
       child: ListView.separated(
+        controller: raf.kaydirma,
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(right: 12),
-        itemCount: ogeler.length > 20 ? 20 : ogeler.length,
+        // Yükleniyorken SONA bir hücre daha: dönen gösterge oraya çizilir,
+        // yoksa kullanıcı şeridin bittiğini sanır.
+        itemCount: ogeler.length + (raf.yukluyor ? 1 : 0),
         separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (context, i) {
+          if (i >= ogeler.length) {
+            return const SizedBox(
+              width: _rafKartGenisligi,
+              child: Center(
+                child: SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: DiziRenkler.sari,
+                  ),
+                ),
+              ),
+            );
+          }
           final o = ogeler[i] as Map<String, dynamic>;
           return SizedBox(
             width: _rafKartGenisligi,
@@ -652,46 +726,37 @@ class _SirketEkraniState extends State<SirketEkrani> {
     ),
   );
 
-  /// Açık rafın altı: "daha fazla" düğmesi ya da dönen gösterge.
+  /// Alt gezinme çubuğu/jest çizgisi payı.
+  Widget get _altBosluk => SliverToBoxAdapter(
+    child: SizedBox(height: altGuvenli(context, ekstra: 24)),
+  );
+
+  /// Açık rafın altı: yalnızca YÜKLENİYOR göstergesi.
   ///
-  /// KENDİLİĞİNDEN SAYFALAMA YOK — bilerek. Sonsuz kaydırma, kaldırdığımız
-  /// ızgaranın yorumları gömme sorununu geri getirirdi.
+  /// "Daha fazla" DÜĞMESİ KALDIRILDI (19 Ağu 2026): raf başlığındaki
+  /// "Tümünü gör" zaten "hepsini göreyim" demek; ondan sonra her sayfa için
+  /// bir düğmeye daha bastırmak kullanıcıyı iki kez niyet beyanına zorlardı.
+  /// Sayfalama artık ızgaranın sonu görününce kendiliğinden ilerliyor.
+  ///
+  /// LİSTE BİTTİĞİNDE HİÇBİR ŞEY ÇİZİLMEZ — "hepsi bu kadar" yazısı da yok:
+  /// başlıktaki sayı (`Diziler (166)`) zaten kaç tane olduğunu söylüyor,
+  /// ikinci bir bitiş işareti gürültü olurdu.
   Widget _dahaFazlaSatiri(_Raf raf) {
-    if (raf.yukluyor) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(
-          child: SizedBox(
-            width: 22,
-            height: 22,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: DiziRenkler.sari,
-            ),
-          ),
-        ),
-      );
-    }
-    if (raf.bitti) return const SizedBox(height: 12);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+    if (!raf.yukluyor) return const SizedBox(height: 12);
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 16),
       child: Center(
-        child: OutlinedButton.icon(
-          key: Key('raf-daha-${raf.anahtar}'),
-          onPressed: () => _dahaFazla(raf),
-          icon: const Icon(Icons.expand_more, size: 18),
-          label: Text('Daha fazla'.c),
+        child: SizedBox(
+          width: 22,
+          height: 22,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: DiziRenkler.sari,
+          ),
         ),
       ),
     );
   }
-
-  /// Alt gezinme çubuğu/jest çizgisi payı. Yalnız KAYAN hâllerde eklenir:
-  /// `SliverFillRemaining` zaten kalan yüksekliği doldurduğu için hata/boş
-  /// hâlinde bunu da koymak sayfaya sebepsiz kaydırma açardı.
-  Widget get _altBosluk => SliverToBoxAdapter(
-    child: SizedBox(height: altGuvenli(context, ekstra: 24)),
-  );
 
   @override
   Widget build(BuildContext context) {
