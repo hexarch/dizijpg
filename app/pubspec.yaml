@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.83.1+133
+version: 1.84.0+134
 
 environment:
   sdk: ^3.12.2
@@ -126,6 +126,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # CSP satır içi betik hash bekçisi (test/csp_satir_ici_hash_test.dart).
+  # Geçişli bağımlılık olarak zaten geliyordu ama TEST doğrudan import ediyor;
+  # bildirilmemiş import bir gün üst paket onu bırakınca sessizce kırılırdı.
+  crypto: ^3.0.0
   flutter_launcher_icons: ^0.14.1
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices.
