@@ -1184,4 +1184,5 @@ const Map<String, String> cevirilerTa = {
   'Son {} gün · haftalık': 'கடைசி {} நாட்கள் · வாராந்திர',
   'Ekran süren, serin ve en çok izlediklerin':
       'உங்கள் திரை நேரம், தொடர் மற்றும் அதிகம் பார்த்தவை',
+  'Daralt': 'சுருக்கு',
 };

@@ -11,6 +11,15 @@
 //     gelecek tarihli film sorgusundan mı besleniyor? Yanlış sorgu, sayfa
 //     dolu göründüğü için gözle FARK EDİLMEZ.
 //  2) Raf SIRASI: devam edenler → diziler → filmler.
+//
+// 19 AĞU 2026 — KULLANICI İKİ HATA BULDU, İKİSİ DE BURADA KİLİTLENDİ
+//  3) BAŞLIKTAKİ SAYI `total_results`TAN gelir. Eskiden `liste.length`
+//     yazıyordu; o liste TMDB'nin TEK SAYFASI (en çok 20). Amazon Studios'ta
+//     üç raf da "(20)" diyordu, gerçekte 26/166/125'ti. Sahte yanıtlar bu
+//     yüzden `results` ile `total_results`ı BİLEREK FARKLI tutuyor — testin
+//     hangisini okuduğu ancak böyle görünür.
+//  4) ALTTA "Tüm yapımlar" IZGARASI YOK. Sonsuz sayfalanıp yorumları
+//     gömüyordu. Raf başlığına dokununca liste AŞAĞI DOĞRU açılır.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
@@ -53,10 +62,13 @@ http.Client _sahteIstemci(List<String> kayit) => MockClient((istek) async {
   if (yol == '/api/tmdb/company/3268') return cevap(_firma);
   if (yol == '/api/tmdb/discover/tv') {
     final sureli = istek.url.queryParameters['with_status'] == '0';
+    // `results` 1 öğe ama `total_results` 26/166: başlık HANGİSİNİ okuyor?
     return cevap({
       'results': [
         if (sureli) _yapim(1, 'Devam Eden Dizi') else _yapim(2, 'Bitmiş Dizi'),
       ],
+      'total_results': sureli ? 26 : 166,
+      'total_pages': sureli ? 2 : 9,
     });
   }
   if (yol == '/api/tmdb/discover/movie') {
@@ -70,6 +82,8 @@ http.Client _sahteIstemci(List<String> kayit) => MockClient((istek) async {
         else
           _yapim(4, 'Eski Film', dizi: false),
       ],
+      'total_results': gelecek ? 0 : 125,
+      'total_pages': gelecek ? 1 : 7,
     });
   }
   if (yol.startsWith('/api/incelemeler/')) {
@@ -128,6 +142,16 @@ Future<List<String>> _kur(WidgetTester tester, {bool girisli = true}) async {
 }
 
 void main() {
+  /// UZUN EKRAN. Raflar artık SLIVER: `SliverGrid`/`SliverToBoxAdapter` yalnız
+  /// GÖRÜNENİ kurar, yani 600 px'lik varsayılan testte film rafı ağaca hiç
+  /// girmez ve `findsNothing` döner. Bu bir hata değil, tembel çizimin doğal
+  /// sonucu — ekranı uzatmak, kaydırmadan daha okunur bir kurulum.
+  void uzunEkran(WidgetTester tester) {
+    tester.view.physicalSize = const Size(500, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+  }
+
   testWidgets('puan/tepki/yorum UÇLARI company türüyle soruluyor', (
     tester,
   ) async {
@@ -176,6 +200,7 @@ void main() {
   });
 
   testWidgets('RAF SIRASI: devam edenler → diziler → filmler', (tester) async {
+    uzunEkran(tester);
     await _kur(tester);
     final devam = tester.getTopLeft(find.textContaining('Devam eden')).dy;
     final dizi = tester.getTopLeft(find.textContaining('Diziler')).dy;
@@ -189,5 +214,83 @@ void main() {
   ) async {
     await _kur(tester, girisli: false);
     expect(find.text('Puanla'), findsOneWidget);
+  });
+
+  testWidgets('BAŞLIKTAKİ SAYI total_results (sayfa uzunluğu DEĞİL)', (
+    tester,
+  ) async {
+    uzunEkran(tester);
+    await _kur(tester);
+    // Sahte yanıt her rafa 1-2 öğe veriyor ama total_results 26/166/125.
+    // Eski kod `liste.length` yazıyordu — o hâlde bu üç iddia da düşer.
+    expect(
+      find.text('Devam eden yapımlar (26)'),
+      findsOneWidget,
+      reason: 'devam eden rafı sayfa uzunluğunu yazıyor',
+    );
+    expect(
+      find.text('Diziler (166)'),
+      findsOneWidget,
+      reason: 'dizi rafı sayfa uzunluğunu yazıyor',
+    );
+    expect(
+      find.text('Filmler (125)'),
+      findsOneWidget,
+      reason: 'film rafı sayfa uzunluğunu yazıyor',
+    );
+  });
+
+  testWidgets('ALTTA "Tüm yapımlar" ızgarası YOK, yorumlar erişilebilir', (
+    tester,
+  ) async {
+    uzunEkran(tester);
+    await _kur(tester);
+    // Izgara sonsuz sayfalanıp yorumları gömüyordu; kaldırıldı.
+    expect(find.text('Tüm yapımlar'), findsNothing);
+    // Sekmeler de gitti (ızgaranın başlığıydı).
+    expect(find.byType(SegmentedButton<String>), findsNothing);
+  });
+
+  testWidgets('başlığa dokununca raf AÇILIR ve "Daha fazla" belirir', (
+    tester,
+  ) async {
+    uzunEkran(tester);
+    await _kur(tester);
+
+    // Kapalı: yatay şerit var, "daha fazla" yok.
+    expect(find.byKey(const Key('raf-daha-dizi')), findsNothing);
+
+    await tester.tap(find.byKey(const Key('raf-baslik-dizi')));
+    await tester.pumpAndSettle();
+
+    // Açık: sayfa daha var (1/9) olduğu için düğme çıkar.
+    expect(
+      find.byKey(const Key('raf-daha-dizi')),
+      findsOneWidget,
+      reason: 'açık rafta "daha fazla" düğmesi yok',
+    );
+    expect(find.text('Daralt'), findsWidgets);
+  });
+
+  testWidgets('"Daha fazla" SIRADAKİ SAYFAYI ister (page=2)', (tester) async {
+    uzunEkran(tester);
+    final kayit = await _kur(tester);
+
+    await tester.tap(find.byKey(const Key('raf-baslik-dizi')));
+    await tester.pumpAndSettle();
+    kayit.clear();
+    await tester.tap(find.byKey(const Key('raf-daha-dizi')));
+    await tester.pumpAndSettle();
+
+    expect(
+      kayit.any(
+        (y) =>
+            y.startsWith('/api/tmdb/discover/tv') &&
+            y.contains('page=2') &&
+            !y.contains('with_status=0'),
+      ),
+      isTrue,
+      reason: 'daha fazla, dizi rafının 2. sayfasını istemiyor: $kayit',
+    );
   });
 }

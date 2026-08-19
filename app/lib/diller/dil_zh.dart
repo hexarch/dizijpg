@@ -1095,4 +1095,5 @@ const Map<String, String> cevirilerZh = {
   'Son {} gün · günlük': '最近 {} 天 · 按天',
   'Son {} gün · haftalık': '最近 {} 天 · 按周',
   'Ekran süren, serin ve en çok izlediklerin': '你的观看时长、连续记录和最常看的作品',
+  'Daralt': '收起',
 };

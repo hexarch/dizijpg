@@ -1110,4 +1110,5 @@ const Map<String, String> cevirilerJa = {
   'Son {} gün · günlük': '直近{}日 · 日別',
   'Son {} gün · haftalık': '直近{}日 · 週別',
   'Ekran süren, serin ve en çok izlediklerin': '視聴時間、連続記録、よく見た作品',
+  'Daralt': '折りたたむ',
 };

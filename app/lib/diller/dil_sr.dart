@@ -1172,4 +1172,5 @@ const Map<String, String> cevirilerSr = {
   'Son {} gün · haftalık': 'Poslednjih {} dana · nedeljno',
   'Ekran süren, serin ve en çok izlediklerin':
       'Tvoje vreme pred ekranom, niz i najgledanije',
+  'Daralt': 'Skupi',
 };

@@ -1175,4 +1175,5 @@ const Map<String, String> cevirilerMy = {
   'Son {} gün · haftalık': 'နောက်ဆုံး {} ရက် · အပတ်စဉ်',
   'Ekran süren, serin ve en çok izlediklerin':
       'သင့်ဖန်သားပြင်အချိန်၊ စဉ်ဆက်နှင့် အများဆုံးကြည့်ထားသည်များ',
+  'Daralt': 'ခေါက်သိမ်းရန်',
 };

@@ -1188,4 +1188,5 @@ const Map<String, String> cevirilerEl = {
   'Son {} gün · haftalık': 'Τελευταίες {} ημέρες · εβδομαδιαία',
   'Ekran süren, serin ve en çok izlediklerin':
       'Ο χρόνος οθόνης, το σερί και τα πιο παρακολουθημένα σου',
+  'Daralt': 'Σύμπτυξη',
 };

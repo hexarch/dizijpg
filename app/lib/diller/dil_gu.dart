@@ -1156,4 +1156,5 @@ const Map<String, String> cevirilerGu = {
   'Son {} gün · haftalık': 'છેલ્લા {} દિવસ · સાપ્તાહિક',
   'Ekran süren, serin ve en çok izlediklerin':
       'તમારો સ્ક્રીન સમય, શ્રેણી અને સૌથી વધુ જોયેલા',
+  'Daralt': 'સંકોચો',
 };

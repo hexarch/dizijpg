@@ -1160,4 +1160,5 @@ const Map<String, String> cevirilerAz = {
   'Son {} gün · haftalık': 'Son {} gün · həftəlik',
   'Ekran süren, serin ve en çok izlediklerin':
       'Ekran vaxtın, seriyan və ən çox izlədiklərin',
+  'Daralt': 'Yığcamlaşdır',
 };

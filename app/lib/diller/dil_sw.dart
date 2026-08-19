@@ -1171,4 +1171,5 @@ const Map<String, String> cevirilerSw = {
   'Son {} gün · haftalık': 'Siku {} zilizopita · kila wiki',
   'Ekran süren, serin ve en çok izlediklerin':
       'Muda wako wa skrini, mfululizo na ulizotazama zaidi',
+  'Daralt': 'Kunja',
 };

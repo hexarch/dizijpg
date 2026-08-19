@@ -1187,4 +1187,5 @@ const Map<String, String> cevirilerRo = {
   'Son {} gün · haftalık': 'Ultimele {} zile · săptămânal',
   'Ekran süren, serin ve en çok izlediklerin':
       'Timpul tău pe ecran, seria și cele mai vizionate',
+  'Daralt': 'Restrânge',
 };

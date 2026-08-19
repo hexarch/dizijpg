@@ -1169,4 +1169,5 @@ const Map<String, String> cevirilerId = {
   'Son {} gün · haftalık': '{} hari terakhir · mingguan',
   'Ekran süren, serin ve en çok izlediklerin':
       'Waktu layar, rentetan, dan tontonan teratasmu',
+  'Daralt': 'Ciutkan',
 };

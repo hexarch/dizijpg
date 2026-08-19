@@ -1165,4 +1165,5 @@ const Map<String, String> cevirilerTe = {
   'Son {} gün · haftalık': 'చివరి {} రోజులు · వారానికి',
   'Ekran süren, serin ve en çok izlediklerin':
       'మీ స్క్రీన్ సమయం, పరంపర మరియు ఎక్కువగా చూసినవి',
+  'Daralt': 'కుదించు',
 };

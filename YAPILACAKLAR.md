@@ -80,6 +80,35 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
 
+## 2026-08-19 — 🚀 WEB 1.82.0+131 (şirket rafları + içerik sayfası afiş/tür)
+Kullanıcı iki ayrı geri bildirim verdi, üçü de düzeltildi.
+
+**1) "gerçekten 20 tane mi var?"** — HAYIR. Raf başlıkları `liste.length`
+yazıyordu, o da TMDB'nin sayfa boyutu (20). Amazon Studios'ta gerçek sayılar
+26 / 166 / 125. Başlık artık `total_results`tan geliyor. (Sayı ile çizilen
+liste bire bir tutmayabilir: afişsiz kayıtlar ızgarada gri delik bıraktığı
+için gösterilmiyor ama TMDB onları da sayıyor.)
+
+**2) "aşağıda yorumlar var, belki insanlar yorumlar için ziyaret edecek"** —
+alttaki "Tüm yapımlar" ızgarası + dizi/film sekmesi KALDIRILDI. Sonsuz
+sayfalanıp yorumları gömüyordu ve raflar zaten aynı içeriği gösteriyordu.
+Yerine raf başlığı açma/kapama düğmesi oldu: dokununca liste aşağı doğru
+ızgaraya açılıyor, altında "Daha fazla" ile sayfalanıyor. KENDİLİĞİNDEN
+sayfalama YOK — o, kaldırdığımız sorunu geri getirirdi.
+
+**3) İçerik sayfasında afiş + tıklanabilir türler** ("isminin soluna
+posterini koy, türlere tıklanabilsin"). Üstteki kapak 16:9 bir SAHNE
+görselidir ve çoğu yapımda afişle benzeşmez; kullanıcı yapımı afişinden
+tanıyor. Afiş başlığın solunda, dokununca büyüyor. Türler `ActionChip` oldu →
+`/gozat?tur=..&genre=..`. Tür kimliği TMDB'de dizi/film kataloglarında AYRI
+olduğu için `tur` de taşınıyor; Gözat o çipi ön seçili açıyor ve adres
+paylaşılabilir kalıyor.
+
+Kanıt: 1764 Flutter testi yeşil (9 yeni: raf sayısı/açılma/sayfalama, afiş
+konumu, tür çipi adresi). Canlı tarayıcıda doğrulandı — Amazon Studios
+"(26)/(166)", "Tümünü gör" açıyor; The Odyssey afişi başlığın solunda,
+"Macera" çipi `/gozat?tur=movie&genre=12` açıyor ve ızgara doluyor.
+
 ## 2026-08-19 — 🚀 WEB 1.81.1+130 (şirket sayfası GRİ EKRAN düzeltmesi)
 Kullanıcı bildirdi: "Dizi profilinden yapım firmalarını açınca gri bir ekran
 çıkıyor, Android cihazımda da webde de aynı."

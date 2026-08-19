@@ -1175,4 +1175,5 @@ const Map<String, String> cevirilerFi = {
   'Son {} gün · haftalık': 'Viimeiset {} päivää · viikoittain',
   'Ekran süren, serin ve en çok izlediklerin':
       'Ruutuaikasi, putkesi ja katsotuimmat',
+  'Daralt': 'Tiivistä',
 };

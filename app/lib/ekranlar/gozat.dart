@@ -8,15 +8,34 @@ import 'ortak.dart';
 /// Katalog "Gözat": dizi/film seç, türe göre süz, popülerlik sırasına göre
 /// poster ızgarası (sonsuz kaydırma). İçerik EKLEMENİN keşif yolu — kullanıcı
 /// ne aradığını bilmese de gezip bulabilir.
+/// Gözat adresi. Tür çipini ÖN SEÇİLİ açar.
+///
+/// NEDEN ADRESE YAZILIYOR (19 Ağu 2026): içerik sayfasındaki tür etiketlerine
+/// dokununca burası açılıyor. Seçimi yalnız yapıcıya verseydik F5 kullanıcıyı
+/// "Tümü"ne düşürürdü ve bağlantı paylaşılamazdı.
+String gozatYolu({String? tur, int? genre}) {
+  final q = <String>[
+    if (tur == 'tv' || tur == 'movie') 'tur=$tur',
+    if (genre != null) 'genre=$genre',
+  ];
+  return q.isEmpty ? '/gozat' : '/gozat?${q.join('&')}';
+}
+
 class GozatEkrani extends StatefulWidget {
-  const GozatEkrani({super.key});
+  /// Açılışta seçili dizi/film ('tv' | 'movie'); null → 'tv'.
+  final String? baslangicTuru;
+
+  /// Açılışta seçili TMDB tür kimliği; null → "Tümü".
+  final int? baslangicGenre;
+
+  const GozatEkrani({super.key, this.baslangicTuru, this.baslangicGenre});
 
   @override
   State<GozatEkrani> createState() => _GozatEkraniState();
 }
 
 class _GozatEkraniState extends State<GozatEkrani> {
-  String _tur = 'tv'; // 'tv' | 'movie'
+  late String _tur; // 'tv' | 'movie'
   List<dynamic> _turler = []; // TMDB genre listesi
   int? _seciliGenre; // null = tümü (popüler)
   final List<dynamic> _sonuc = [];
@@ -25,10 +44,13 @@ class _GozatEkraniState extends State<GozatEkrani> {
   bool _dahaVar = true;
   String? _hata;
   final _kaydirma = ScrollController();
+  final _cipKaydirma = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _tur = widget.baslangicTuru == 'movie' ? 'movie' : 'tv';
+    _seciliGenre = widget.baslangicGenre;
     _turleriYukle();
     _yukle(ilk: true);
     _kaydirma.addListener(() {
@@ -42,6 +64,7 @@ class _GozatEkraniState extends State<GozatEkrani> {
   @override
   void dispose() {
     _kaydirma.dispose();
+    _cipKaydirma.dispose();
     super.dispose();
   }
 
@@ -50,10 +73,28 @@ class _GozatEkraniState extends State<GozatEkrani> {
       final d = await Api.get('/tmdb/genre/$_tur/list');
       if (mounted) {
         setState(() => _turler = d['genres'] as List<dynamic>? ?? []);
+        _seciliCipeKaydir();
       }
     } catch (_) {
       /* tür çipleri gelmezse ızgara yine çalışır */
     }
+  }
+
+  /// Seçili çipi görünür yap. Çip genişlikleri değişken olduğu için ölçmek
+  /// yerine YAKLAŞIK bir konum kullanılıyor (ortalama çip ~96 px): amaç
+  /// piksel hassasiyeti değil, "seçili çip ekranda olsun".
+  void _seciliCipeKaydir() {
+    if (_seciliGenre == null || _turler.isEmpty) return;
+    final i = _turler.indexWhere((t) => t['id'] == _seciliGenre);
+    if (i < 0) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_cipKaydirma.hasClients) return;
+      final hedef = (i * 96.0).clamp(
+        0.0,
+        _cipKaydirma.position.maxScrollExtent,
+      );
+      _cipKaydirma.jumpTo(hedef);
+    });
   }
 
   Future<void> _yukle({bool ilk = false}) async {
@@ -151,6 +192,11 @@ class _GozatEkraniState extends State<GozatEkrani> {
               SizedBox(
                 height: 40,
                 child: ListView(
+                  // Dışarıdan seçili gelen çip listenin ORTALARINDA olabilir
+                  // (Dram 18, Bilim Kurgu 878...). Denetleyici, çip listesi
+                  // dolduğunda o çipi görünür kılmak için kullanılır — yoksa
+                  // kullanıcı "Gözat" açılınca hangi türde olduğunu göremezdi.
+                  controller: _cipKaydirma,
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   children: [

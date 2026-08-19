@@ -1172,4 +1172,5 @@ const Map<String, String> cevirilerBg = {
   'Son {} gün · haftalık': 'Последните {} дни · седмично',
   'Ekran süren, serin ve en çok izlediklerin':
       'Твоето екранно време, серия и най-гледани',
+  'Daralt': 'Свиване',
 };

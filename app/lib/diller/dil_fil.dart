@@ -1189,4 +1189,5 @@ const Map<String, String> cevirilerFil = {
   'Son {} gün · haftalık': 'Huling {} araw · lingguhan',
   'Ekran süren, serin ve en çok izlediklerin':
       'Ang oras mo sa screen, sunod-sunod at pinakamadalas panoorin',
+  'Daralt': 'I-collapse',
 };

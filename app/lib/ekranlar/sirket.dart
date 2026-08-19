@@ -117,6 +117,68 @@ class FirmaLogosu extends StatelessWidget {
   }
 }
 
+/// ---------------------------------------------------------------------------
+/// RAF MODELİ — 19 Ağu 2026, kullanıcı İKİ hata birden buldu
+/// ---------------------------------------------------------------------------
+/// 1) BAŞLIKTAKİ SAYI YALANDI. Başlık `liste.length` yazıyordu; o liste
+///    TMDB'nin TEK SAYFASI, yani en çok 20. Amazon Studios'ta üç rafın üçü de
+///    "(20)" diyordu — gerçekte 26 / 166 / 125. Sayı artık `total_results`tan
+///    geliyor. ("gerçekten 20 tane mi var?" — hayır, değildi.)
+/// 2) ALTTAKİ IZGARA GEREKSİZDİ ve ZARARLIYDI. Raflar zaten dizileri ve
+///    filmleri gösteriyordu; ızgara sonsuz sayfalanıp ALTTAKİ YORUMLARI
+///    gömüyordu. Kullanıcı: "aşağıda yorumlar var, belki insanlar yorumlar
+///    için ziyaret edecek." Izgara kaldırıldı; başlığa dokununca raf AŞAĞI
+///    DOĞRU açılıyor.
+///
+/// AÇILAN RAF NEDEN KENDİLİĞİNDEN SAYFALAMIYOR: sonsuz kaydırma tam da
+/// kaldırdığımız sorunu geri getirirdi. "Daha fazla" düğmesi listeyi SINIRLI
+/// tutar, yorumlar birkaç ekran ötede kalır.
+///
+/// SAYI İLE LİSTE UZUNLUĞU BİRE BİR TUTMAYABİLİR: afişsiz kayıtlar ızgarada
+/// gri delik bıraktığı için çizilmez, ama `total_results` onları da sayar.
+/// Başlıktaki sayının cevapladığı soru "bu firmanın kaç yapımı var" —
+/// "kaç tanesini çizebiliyoruz" değil.
+
+/// Rafı besleyen TEK bir TMDB sorgusu ve KENDİ sayfa imleci.
+class _RafKaynak {
+  /// `page` parametresi HARİÇ tam yol.
+  final String yol;
+  final String tur;
+  final List<dynamic> ogeler = [];
+  int sayfa = 0;
+  int toplam = 0;
+  bool bitti = false;
+
+  _RafKaynak(this.yol, this.tur);
+}
+
+/// Bir raf: başlık + bir ya da BİRDEN ÇOK kaynak.
+///
+/// "Devam eden yapımlar" iki kaynaktan beslenir (süren diziler + gelecek
+/// filmler). Kaynaklar AYRI liste tutar ve ekrana sırayla dizilir; tek listeye
+/// karıştırılsalardı ikinci dizi sayfası filmlerin ARKASINA eklenir ve sıra
+/// bozulurdu.
+class _Raf {
+  final String anahtar;
+  final IconData ikon;
+  final String baslikKalibi;
+  final List<_RafKaynak> kaynaklar;
+  bool acik = false;
+  bool yukluyor = false;
+  bool ilkGeldi = false;
+
+  _Raf({
+    required this.anahtar,
+    required this.ikon,
+    required this.baslikKalibi,
+    required this.kaynaklar,
+  });
+
+  List<dynamic> get ogeler => [for (final k in kaynaklar) ...k.ogeler];
+  int get toplam => kaynaklar.fold(0, (t, k) => t + k.toplam);
+  bool get bitti => kaynaklar.every((k) => k.bitti);
+}
+
 class SirketEkrani extends StatefulWidget {
   final int sirketId;
 
@@ -149,53 +211,68 @@ class _SirketEkraniState extends State<SirketEkrani> {
   /// gelmiş olabilir ve yapım ızgarası bu uçtan bağımsız çalışır.
   bool _firmaDustu = false;
 
-  late String _tur;
+  /// Raflar. `baslangicTuru` ARTIK SEKME SEÇMİYOR (sekmeler kaldırıldı) ama
+  /// bağlantı biçimi (`?tur=tv`) korunuyor: paylaşılmış eski adresler kırılmasın.
+  late final List<_Raf> _raflar;
 
   /// Puan/tepki/yorum (19 Ağu 2026 isteği). Kişi sayfasıyla BİREBİR aynı
   /// desen: `/incelemeler/company/:id` toplum puanını, `/benim/company/:id`
-  /// kendi puanımı verir. İkisi de `tur`u SQL parametresi olarak aldığı için
-  /// backend'de ek tür listesi gerekmedi.
+  /// kendi puanımı verir.
   Map<String, dynamic>? _benimPuan;
   Map<String, dynamic>? _toplum;
-
-  /// Raflar (kullanıcı profili düzeni): devam edenler / diziler / filmler.
-  /// Boş liste = "yüklendi ama yok"; null = henüz gelmedi (iskelet çizilir).
-  List<dynamic>? _devamEden;
-  List<dynamic>? _diziRaf;
-  List<dynamic>? _filmRaf;
-
-  final List<dynamic> _icerikler = [];
-  final _kaydirma = ScrollController();
-  int _sayfa = 0;
-  bool _yukluyor = false;
-  bool _bitti = false;
-  String? _hata;
 
   bool get _gecerli => widget.sirketId > 0;
 
   @override
   void initState() {
     super.initState();
-    _tur = widget.baslangicTuru == 'tv' ? 'tv' : 'movie';
+    final bugun = DateTime.now().toUtc().toIso8601String().substring(0, 10);
+    final firma = 'with_companies=${widget.sirketId}';
+    const onek = '/tmdb/discover';
+    _raflar = [
+      // DEVAM EDEN = yayını süren dizi (`with_status=0` Returning Series)
+      //            + HENÜZ ÇIKMAMIŞ film (`primary_release_date.gte=bugün`).
+      // İkisi tek rafta birleşir çünkü sorulan şey "bu firmadan şu an ne
+      // geliyor" — türü değil. Dizi önce: "devam eden" sezgisi önce yayında
+      // olanı çağrıştırıyor.
+      _Raf(
+        anahtar: 'devam',
+        ikon: Icons.play_circle_outline,
+        baslikKalibi: 'Devam eden yapımlar ({})',
+        kaynaklar: [
+          _RafKaynak(
+            '$onek/tv?$firma&with_status=0&sort_by=popularity.desc',
+            'tv',
+          ),
+          _RafKaynak(
+            '$onek/movie?$firma&primary_release_date.gte=$bugun'
+                '&sort_by=primary_release_date.asc',
+            'movie',
+          ),
+        ],
+      ),
+      _Raf(
+        anahtar: 'dizi',
+        ikon: Icons.tv_outlined,
+        baslikKalibi: 'Diziler ({})',
+        kaynaklar: [
+          _RafKaynak('$onek/tv?$firma&sort_by=popularity.desc', 'tv'),
+        ],
+      ),
+      _Raf(
+        anahtar: 'film',
+        ikon: Icons.movie_outlined,
+        baslikKalibi: 'Filmler ({})',
+        kaynaklar: [
+          _RafKaynak('$onek/movie?$firma&sort_by=popularity.desc', 'movie'),
+        ],
+      ),
+    ];
     if (_gecerli) {
       _firmaYukle();
       _puanYenile();
       _raflariYukle();
-      _sonrakiSayfa();
     }
-    _kaydirma.addListener(() {
-      // Dibe 600 px kala sıradaki sayfa: kullanıcı beklemesin.
-      if (_kaydirma.position.pixels >=
-          _kaydirma.position.maxScrollExtent - 600) {
-        _sonrakiSayfa();
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _kaydirma.dispose();
-    super.dispose();
   }
 
   Future<void> _firmaYukle() async {
@@ -244,106 +321,63 @@ class _SirketEkraniState extends State<SirketEkrani> {
     if (kaydedildi) _puanYenile();
   }
 
-  /// RAFLAR — kullanıcı profili düzeni (19 Ağu 2026 isteği):
-  /// "diziler filmler sırasıyla, varsa en üstte devam eden yapımlar
-  ///  (dizi ve gelecek filmler olacak)".
-  ///
-  /// Üç ayrı `discover` çağrısı; hepsi `/tmdb/*` beyaz listesinde ve
-  /// önbellekli, yani firma sayfası TMDB'ye üç kez vurmuş olsa da yanıtlar
-  /// `tmdb_onbellek`ten gelir.
-  ///
-  /// DEVAM EDEN = yayını süren dizi (`with_status=0` Returning Series)
-  ///            + HENÜZ ÇIKMAMIŞ film (`primary_release_date.gte=bugün`).
-  /// İkisi tek rafta birleşir çünkü kullanıcının sorduğu şey "bu firmadan
-  /// şu an ne geliyor" — türü değil.
+  /// Her rafın HER kaynağından İLK sayfa; hepsi paralel. Dört küçük istek,
+  /// hepsi `/tmdb/*` beyaz listesinde ve sunucuda önbellekli.
   Future<void> _raflariYukle() async {
-    final bugun = DateTime.now().toUtc().toIso8601String().substring(0, 10);
-    Future<List<dynamic>> cek(String yol) async {
-      try {
-        final d = await Api.get(yol);
-        // Afişsizler ayıklanır: rafta gri delik bırakıyorlar (ızgarayla aynı
-        // süzgeç).
-        return (d['results'] as List<dynamic>? ?? [])
-            .where((r) => r['poster_path'] != null)
-            .toList();
-      } catch (_) {
-        return const [];
-      }
-    }
-
-    final onek = '/tmdb/discover';
-    final firma = 'with_companies=${widget.sirketId}';
-    final sonuc = await Future.wait([
-      cek('$onek/tv?$firma&with_status=0&sort_by=popularity.desc'),
-      cek(
-        '$onek/movie?$firma&primary_release_date.gte=$bugun'
-        '&sort_by=primary_release_date.asc',
-      ),
-      cek('$onek/tv?$firma&sort_by=popularity.desc'),
-      cek('$onek/movie?$firma&sort_by=popularity.desc'),
+    await Future.wait([
+      for (final r in _raflar)
+        for (final k in r.kaynaklar) _kaynakSayfa(k),
     ]);
     if (!mounted) return;
     setState(() {
-      // Devam eden dizi + gelecek film TEK rafta; dizi önce, çünkü "devam
-      // eden" sezgisi önce yayındakini çağrıştırıyor.
-      _devamEden = [
-        ...sonuc[0].map((r) => {...r as Map<String, dynamic>, '_tur': 'tv'}),
-        ...sonuc[1].map((r) => {...r as Map<String, dynamic>, '_tur': 'movie'}),
-      ];
-      _diziRaf = sonuc[2];
-      _filmRaf = sonuc[3];
+      for (final r in _raflar) {
+        r.ilkGeldi = true;
+      }
     });
   }
 
-  Future<void> _sonrakiSayfa() async {
-    if (_yukluyor || _bitti || !_gecerli) return;
-    setState(() {
-      _yukluyor = true;
-      _hata = null;
-    });
+  /// Tek kaynaktan SIRADAKİ sayfa.
+  ///
+  /// `total_results` HER sayfada okunur ki başlıktaki sayı ilk yanıtla
+  /// birlikte doğru olsun — kullanıcının "daha fazla"ya basmasını beklemesin.
+  Future<void> _kaynakSayfa(_RafKaynak kaynak) async {
+    if (kaynak.bitti) return;
     try {
-      final d = await Api.get(
-        '/tmdb/discover/$_tur'
-        '?with_companies=${widget.sirketId}'
-        '&sort_by=popularity.desc&page=${_sayfa + 1}',
-      );
+      final d = await Api.get('${kaynak.yol}&page=${kaynak.sayfa + 1}');
       if (!mounted) return;
-      // Afişsiz kayıtlar ızgarada gri delik bırakıyor — gözat ekranıyla aynı
-      // süzgeç. Sayfanın DOLU olup olmadığına ham sonuçla karar verilir,
-      // yoksa afişsiz bir sayfa listeyi erkenden bitirirdi.
       final ham = (d['results'] as List<dynamic>? ?? []);
-      setState(() {
-        _sayfa++;
-        _icerikler.addAll(ham.where((r) => r['poster_path'] != null));
-        // TMDB sayfa tavanı 500; boş sayfa da sonu gösterir.
-        if (ham.isEmpty || _sayfa >= 500) _bitti = true;
-        _yukluyor = false;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _yukluyor = false;
-        // İlk sayfa patladıysa hata görünümü; sonraki sayfalarda sessizce dur
-        // (ekranda zaten dolu bir ızgara var, onu hata ekranıyla silmek yanlış).
-        if (_icerikler.isEmpty) {
-          _hata = e.toString();
-        } else {
-          _bitti = true;
-        }
-      });
+      kaynak.sayfa++;
+      kaynak.toplam = (d['total_results'] as num?)?.toInt() ?? kaynak.toplam;
+      final sayfaSayisi = (d['total_pages'] as num?)?.toInt() ?? 0;
+      // Afişsizler ayıklanır: ızgarada gri delik bırakıyorlar. Sayfanın DOLU
+      // olup olmadığına HAM sonuçla karar verilir — yoksa tamamı afişsiz bir
+      // sayfa listeyi erkenden bitirirdi.
+      kaynak.ogeler.addAll(
+        ham
+            .where((r) => r['poster_path'] != null)
+            .map((r) => {...r as Map<String, dynamic>, '_tur': kaynak.tur}),
+      );
+      // TMDB sayfa tavanı 500.
+      if (ham.isEmpty || kaynak.sayfa >= sayfaSayisi || kaynak.sayfa >= 500) {
+        kaynak.bitti = true;
+      }
+    } catch (_) {
+      // SESSİZ: bir raf düşerse sayfanın geri kalanı (puan, yorumlar) ayakta
+      // kalmalı. Bitmiş sayılır ki "daha fazla" sonsuza kadar denemesin.
+      kaynak.bitti = true;
     }
   }
 
-  void _turDegis(String tur) {
-    if (tur == _tur) return;
-    setState(() {
-      _tur = tur;
-      _icerikler.clear();
-      _sayfa = 0;
-      _bitti = false;
-      _hata = null;
-    });
-    _sonrakiSayfa();
+  /// "Daha fazla": BİTMEMİŞ İLK kaynaktan bir sayfa daha.
+  ///
+  /// Kaynak sırası korunur (önce diziler biter, sonra filmler) — böylece
+  /// karışık rafta yeni gelenler listenin ortasına düşmez.
+  Future<void> _dahaFazla(_Raf raf) async {
+    if (raf.yukluyor || raf.bitti) return;
+    setState(() => raf.yukluyor = true);
+    await _kaynakSayfa(raf.kaynaklar.firstWhere((k) => !k.bitti));
+    if (!mounted) return;
+    setState(() => raf.yukluyor = false);
   }
 
   String get _ad {
@@ -483,107 +517,174 @@ class _SirketEkraniState extends State<SirketEkrani> {
   /// Raftaki tek kartın genişliği. Yükseklik bundan TÜRETİLİR.
   static const double _rafKartGenisligi = 124;
 
-  /// Tek raf: başlık (ikon + ad + adet) ve yatay poster şeridi.
-  /// null liste = iskelet; boş liste = raf HİÇ çizilmez (boş başlık gürültü).
-  Widget _raf(
-    IconData ikon,
-    String baslikKalibi,
-    List<dynamic>? liste, {
-    String? turZorla,
-  }) {
-    if (liste == null) {
-      return const Padding(
-        padding: EdgeInsets.fromLTRB(12, 16, 12, 0),
-        child: IskeletKutu(genislik: double.infinity, yukseklik: 208),
-      );
+  /// Rafta ŞU AN yüklü öğe sayısı (başlıkta `total_results` yokken kullanılır).
+  int ogeSayisi(_Raf raf) => raf.ogeler.length;
+
+  /// Tek rafın SLIVER'ları: başlık + (kapalıysa yatay şerit / açıksa ızgara).
+  ///
+  /// Widget değil SLIVER döndürür: açık raf yüzlerce kart taşıyabilir ve
+  /// `SliverGrid` yalnız görünenleri kurar. Hepsini bir `Column`a koymak
+  /// 166 kartı birden çizmek olurdu.
+  List<Widget> _rafSliverlari(_Raf raf) {
+    if (!raf.ilkGeldi) {
+      return [
+        const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(12, 16, 12, 0),
+            child: IskeletKutu(genislik: double.infinity, yukseklik: 208),
+          ),
+        ),
+      ];
     }
-    if (liste.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(12, 20, 0, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(ikon, size: 19, color: DiziRenkler.sariMetin),
-              const SizedBox(width: 6),
-              Text(
-                baslikKalibi.cf([liste.length]),
+    final ogeler = raf.ogeler;
+    // Boş raf HİÇ çizilmez: "(0)" yazan bir başlık gürültüden ibaret.
+    if (ogeler.isEmpty) return const [];
+    return [
+      SliverToBoxAdapter(child: _rafBasligi(raf)),
+      if (!raf.acik)
+        SliverToBoxAdapter(child: _rafSeridi(ogeler))
+      else ...[
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+          sliver: SliverGrid.builder(
+            gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
+            itemCount: ogeler.length,
+            itemBuilder: (context, i) {
+              final o = ogeler[i] as Map<String, dynamic>;
+              return PosterKarti(
+                icerik: o,
+                turZorla: o['_tur'] as String?,
+                genislik: double.infinity,
+              );
+            },
+          ),
+        ),
+        SliverToBoxAdapter(child: _dahaFazlaSatiri(raf)),
+      ],
+    ];
+  }
+
+  /// Raf başlığı = AÇMA/KAPAMA DÜĞMESİ.
+  ///
+  /// Sayı `total_results`tan gelir (bkz. [_Raf] üstündeki not). Dokunma
+  /// hedefi 44 px: ikon değil SATIRIN KENDİSİ büyütüldü.
+  Widget _rafBasligi(_Raf raf) => InkWell(
+    key: Key('raf-baslik-${raf.anahtar}'),
+    onTap: () => setState(() => raf.acik = !raf.acik),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 0),
+      child: SizedBox(
+        height: 44,
+        child: Row(
+          children: [
+            Icon(raf.ikon, size: 19, color: DiziRenkler.sariMetin),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                // Toplam 0 ise (uç düştü) yüklenen öğe sayısına düşülür:
+                // "Diziler (0)" yazıp altında 20 kart çizmek yeni bir yalan
+                // olurdu.
+                raf.baslikKalibi.cf([
+                  raf.toplam > 0 ? raf.toplam : ogeSayisi(raf),
+                ]),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          SizedBox(
-            // YÜKSEKLİK TÜRETİLİR, SABİT DEĞİL: `PosterKarti` posterin 2:3
-            // oranına BİR DE başlık+puan satırı ekliyor. 208 px sabiti
-            // yazınca test "RenderFlex overflowed by 18 pixels" ile patladı;
-            // sabit bir sayı yazmak, yazı tipi ölçeği büyüyen kullanıcıda
-            // aynı taşmayı sessizce geri getirirdi.
-            height: _rafKartGenisligi * 3 / 2 + posterBaslikYuksekligi,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 12),
-              itemCount: liste.length > 20 ? 20 : liste.length,
-              separatorBuilder: (_, _) => const SizedBox(width: 10),
-              itemBuilder: (context, i) {
-                final o = liste[i] as Map<String, dynamic>;
-                return SizedBox(
-                  width: _rafKartGenisligi,
-                  child: PosterKarti(
-                    icerik: o,
-                    // Karışık rafta tür SATIR BAŞINA taşınır (`_tur` alanı);
-                    // tek türlü raflarda dışarıdan verilir.
-                    turZorla: turZorla ?? o['_tur'] as String?,
-                    genislik: double.infinity,
+            ),
+            // Durum ÜÇ KANALDAN: yazı + ok yönü + `Semantics.expanded`.
+            // Yalnız ok olsaydı ekran okuyucu hiçbir şey duymazdı.
+            Semantics(
+              expanded: raf.acik,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    raf.acik ? 'Daralt'.c : 'Tümünü gör'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.sariMetin,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
-                );
-              },
+                  Icon(
+                    raf.acik ? Icons.expand_less : Icons.expand_more,
+                    color: DiziRenkler.sariMetin,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  /// Kapalı hâl: yatay poster şeridi (en çok 20 kart).
+  Widget _rafSeridi(List<dynamic> ogeler) => Padding(
+    padding: const EdgeInsets.only(left: 12, top: 8),
+    child: SizedBox(
+      // YÜKSEKLİK TÜRETİLİR, SABİT DEĞİL: `PosterKarti` posterin 2:3 oranına
+      // BİR DE başlık+puan satırı ekliyor. 208 px sabiti yazınca test
+      // "RenderFlex overflowed by 18 pixels" ile patlamıştı; sabit sayı, yazı
+      // tipi ölçeği büyüyen kullanıcıda aynı taşmayı sessizce geri getirirdi.
+      height: _rafKartGenisligi * 3 / 2 + posterBaslikYuksekligi,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.only(right: 12),
+        itemCount: ogeler.length > 20 ? 20 : ogeler.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
+        itemBuilder: (context, i) {
+          final o = ogeler[i] as Map<String, dynamic>;
+          return SizedBox(
+            width: _rafKartGenisligi,
+            child: PosterKarti(
+              icerik: o,
+              turZorla: o['_tur'] as String?,
+              genislik: double.infinity,
+            ),
+          );
+        },
+      ),
+    ),
+  );
+
+  /// Açık rafın altı: "daha fazla" düğmesi ya da dönen gösterge.
+  ///
+  /// KENDİLİĞİNDEN SAYFALAMA YOK — bilerek. Sonsuz kaydırma, kaldırdığımız
+  /// ızgaranın yorumları gömme sorununu geri getirirdi.
+  Widget _dahaFazlaSatiri(_Raf raf) {
+    if (raf.yukluyor) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Center(
+          child: SizedBox(
+            width: 22,
+            height: 22,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: DiziRenkler.sari,
             ),
           ),
-        ],
+        ),
+      );
+    }
+    if (raf.bitti) return const SizedBox(height: 12);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      child: Center(
+        child: OutlinedButton.icon(
+          key: Key('raf-daha-${raf.anahtar}'),
+          onPressed: () => _dahaFazla(raf),
+          icon: const Icon(Icons.expand_more, size: 18),
+          label: Text('Daha fazla'.c),
+        ),
       ),
     );
   }
-
-  /// Raf yığını: devam edenler → diziler → filmler (istenen sıra).
-  Widget get _raflar => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _raf(Icons.play_circle_outline, 'Devam eden yapımlar ({})', _devamEden),
-      _raf(Icons.tv_outlined, 'Diziler ({})', _diziRaf, turZorla: 'tv'),
-      _raf(Icons.movie_outlined, 'Filmler ({})', _filmRaf, turZorla: 'movie'),
-    ],
-  );
-
-  Widget get _sekmeler => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
-    child: SegmentedButton<String>(
-      // FittedBox: uzun çeviri dar hücrede satır kırmaz, sığmazsa yazı küçülür
-      // (gözat ekranıyla aynı kalıp).
-      segments: [
-        ButtonSegment(
-          value: 'movie',
-          label: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text('Filmler'.c, maxLines: 1, softWrap: false),
-          ),
-        ),
-        ButtonSegment(
-          value: 'tv',
-          label: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text('Diziler'.c, maxLines: 1, softWrap: false),
-          ),
-        ),
-      ],
-      selected: {_tur},
-      onSelectionChanged: (s) => _turDegis(s.first),
-    ),
-  );
 
   /// Alt gezinme çubuğu/jest çizgisi payı. Yalnız KAYAN hâllerde eklenir:
   /// `SliverFillRemaining` zaten kalan yüksekliği doldurduğu için hata/boş
@@ -591,84 +692,6 @@ class _SirketEkraniState extends State<SirketEkrani> {
   Widget get _altBosluk => SliverToBoxAdapter(
     child: SizedBox(height: altGuvenli(context, ekstra: 24)),
   );
-
-  /// Izgaranın ÜÇ HÂLİ (yükleniyor / boş / hata) + dolu hâl.
-  List<Widget> get _govde {
-    if (_hata != null) {
-      return [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: HataGorunumu(
-            mesaj: _hata!,
-            tekrar: () {
-              setState(() => _bitti = false);
-              _sonrakiSayfa();
-            },
-          ),
-        ),
-      ];
-    }
-    if (_icerikler.isEmpty && _yukluyor) {
-      return [
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          sliver: SliverGrid.builder(
-            gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
-            itemCount: 9,
-            itemBuilder: (_, _) => const IskeletKutu(
-              genislik: double.infinity,
-              yukseklik: double.infinity,
-            ),
-          ),
-        ),
-        _altBosluk,
-      ];
-    }
-    if (_icerikler.isEmpty) {
-      return [
-        SliverFillRemaining(
-          hasScrollBody: false,
-          child: BosDurum(
-            ikon: Icons.movie_outlined,
-            baslik: 'Yapım bulunamadı'.c,
-            ipucu: 'Bu firmanın bu türde listelenecek yapımı yok.'.c,
-          ),
-        ),
-      ];
-    }
-    return [
-      SliverPadding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        sliver: SliverGrid.builder(
-          gridDelegate: const PosterIzgarasi(satirBoslugu: 12, bosluk: 10),
-          itemCount: _icerikler.length,
-          itemBuilder: (context, i) => PosterKarti(
-            icerik: _icerikler[i] as Map<String, dynamic>,
-            turZorla: _tur,
-            genislik: double.infinity,
-          ),
-        ),
-      ),
-      // Sonraki sayfa gelirken listenin ALTINDA dönen gösterge.
-      if (_yukluyor)
-        const SliverToBoxAdapter(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(
-              child: SizedBox(
-                width: 22,
-                height: 22,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: DiziRenkler.sari,
-                ),
-              ),
-            ),
-          ),
-        ),
-      _altBosluk,
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -705,40 +728,15 @@ class _SirketEkraniState extends State<SirketEkrani> {
       body: OrtaKolon(
         azami: masaustuIcerikGenisligi,
         cocuk: CustomScrollView(
-          controller: _kaydirma,
           slivers: [
             SliverToBoxAdapter(child: _baslik),
             // Puan + tepki: başlığın hemen altında (kişi sayfasıyla aynı yer).
             SliverToBoxAdapter(child: _puanSatiri),
-            // Raflar: devam edenler → diziler → filmler.
-            SliverToBoxAdapter(child: _raflar),
-            // TÜM YAPIMLAR: raflar en çok 20 kart gösterir, firmanın 239
-            // dizisi olabiliyor. Sayfalanan ızgara KORUNDU ki "hepsini gör"
-            // yolu kapanmasın; sekme artık bu bölümün başlığı.
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 24, 12, 0),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.grid_view_outlined,
-                      size: 19,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Tüm yapımlar'.c,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(child: _sekmeler),
-            ..._govde,
+            // Raflar: devam edenler → diziler → filmler. Başlığa dokununca
+            // raf AŞAĞI DOĞRU açılır. Altta ayrı bir "Tüm yapımlar" ızgarası
+            // ARTIK YOK: sonsuz sayfalanıp yorumları gömüyordu (19 Ağu 2026).
+            for (final r in _raflar) ..._rafSliverlari(r),
+            _altBosluk,
             // Yorumlar en altta: firma kartı Reels'e buradan verilir
             // (`/icerikler` ucu yalnız dizi/film bilir, firma adı olmadan
             // Reels üstünde "?" görünürdü — kişi sayfasındaki aynı tuzak).

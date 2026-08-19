@@ -1167,4 +1167,5 @@ const Map<String, String> cevirilerMl = {
   'Son {} gün · haftalık': 'അവസാന {} ദിവസം · പ്രതിവാരം',
   'Ekran süren, serin ve en çok izlediklerin':
       'നിങ്ങളുടെ സ്ക്രീൻ സമയം, പരമ്പര, ഏറ്റവും കൂടുതൽ കണ്ടവ',
+  'Daralt': 'ചുരുക്കുക',
 };

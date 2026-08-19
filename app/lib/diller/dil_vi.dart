@@ -1168,4 +1168,5 @@ const Map<String, String> cevirilerVi = {
   'Son {} gün · haftalık': '{} ngày qua · theo tuần',
   'Ekran süren, serin ve en çok izlediklerin':
       'Thời gian xem, chuỗi ngày và mục xem nhiều nhất của bạn',
+  'Daralt': 'Thu gọn',
 };

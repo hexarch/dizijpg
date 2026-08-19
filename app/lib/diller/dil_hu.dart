@@ -1178,4 +1178,5 @@ const Map<String, String> cevirilerHu = {
   'Son {} gün · haftalık': 'Utolsó {} nap · hetente',
   'Ekran süren, serin ve en çok izlediklerin':
       'Képernyőidőd, sorozatod és a legtöbbet nézettek',
+  'Daralt': 'Összecsukás',
 };

@@ -1168,4 +1168,5 @@ const Map<String, String> cevirilerDa = {
   'Son {} gün · haftalık': 'Sidste {} dage · ugentligt',
   'Ekran süren, serin ve en çok izlediklerin':
       'Din skærmtid, stime og mest sete',
+  'Daralt': 'Skjul',
 };

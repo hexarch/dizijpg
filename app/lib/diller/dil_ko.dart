@@ -1112,4 +1112,5 @@ const Map<String, String> cevirilerKo = {
   'Son {} gün · günlük': '최근 {}일 · 일별',
   'Son {} gün · haftalık': '최근 {}일 · 주별',
   'Ekran süren, serin ve en çok izlediklerin': '시청 시간, 연속 기록, 가장 많이 본 작품',
+  'Daralt': '접기',
 };

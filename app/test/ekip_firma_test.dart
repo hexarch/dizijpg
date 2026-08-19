@@ -498,19 +498,35 @@ void main() {
     );
   });
 
-  testWidgets('firma ekranı: sonuç yoksa boş durum, çökme yok', (tester) async {
+  testWidgets('firma ekranı: sonuç yoksa raf ÇİZİLMEZ, çökme yok', (
+    tester,
+  ) async {
+    // 19 AĞU 2026 — "Tüm yapımlar" ızgarası KALDIRILDI (sonsuz sayfalanıp
+    // alttaki yorumları gömüyordu). Onunla birlikte ızgaranın "Yapım
+    // bulunamadı" boş durumu da gitti. Yeni davranış: yapımı olmayan firmada
+    // raf başlığı HİÇ çizilmez — "Diziler (0)" yazan boş bir başlık
+    // gürültüden ibaret olurdu. Sayfa yine ayakta: künye, puan ve yorumlar
+    // yerinde.
     await firmaAc(tester, kesif: {'results': <dynamic>[]});
-    expect(find.byType(BosDurum), findsOneWidget);
-    expect(find.text('Yapım bulunamadı'), findsOneWidget);
+    expect(find.textContaining('Diziler ('), findsNothing);
+    expect(find.textContaining('Filmler ('), findsNothing);
+    expect(find.byType(PosterKarti), findsNothing);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('firma ekranı: keşif ucu patlarsa hata + Tekrar Dene', (
+  testWidgets('firma ekranı: keşif ucu patlarsa SAYFA AYAKTA kalır', (
     tester,
   ) async {
+    // 19 AĞU 2026 — davranış BİLEREK değişti. Eskiden keşif ucu 500 dönünce
+    // TÜM gövde bir hata görünümüne dönüyordu; artık sayfanın asıl işi tek
+    // bir ızgara değil (künye + puan + tepki + YORUMLAR da var) ve hepsini
+    // bir rafın hatası yüzünden silmek yanlış olurdu. Raf sessizce
+    // çizilmiyor, sayfa duruyor.
     await firmaAc(tester, kesif: 500);
-    expect(find.byType(HataGorunumu), findsOneWidget);
-    expect(find.text('Tekrar Dene'), findsOneWidget);
+    expect(find.textContaining('Diziler ('), findsNothing);
+    expect(find.text('Taşınan Ad'), findsNothing);
+    // Künye geldiği için firma adı yerinde:
+    expect(find.textContaining('Sony Pictures Television'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 
@@ -550,9 +566,12 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('sekme değişince liste sıfırlanır ve diğer tür istenir', (
+  testWidgets('RAF BAŞLIĞINA dokununca açılır (sekme YOK artık)', (
     tester,
   ) async {
+    // 19 AĞU 2026 — dizi/film SEKMESİ kaldırıldı: sekme, kaldırdığımız
+    // "Tüm yapımlar" ızgarasının başlığıydı. Yerine raf başlığının kendisi
+    // açma/kapama düğmesi oldu ("tıklayınca aşağıya doğru uzat listeyi").
     final kayit = <String>[];
     await firmaAc(
       tester,
@@ -562,28 +581,40 @@ void main() {
         'results': [
           {'id': 1, 'name': 'Bir Film', 'poster_path': '/p.jpg'},
         ],
+        'total_results': 40,
+        'total_pages': 2,
       },
     );
+    // Sekmeler gitti.
+    expect(find.byType(SegmentedButton<String>), findsNothing);
+    expect(find.text('Tüm yapımlar'), findsNothing);
+
+    // İKİ katalog da AÇILIŞTA istenir (raflar bağımsız): sekme beklemeye
+    // gerek yok.
     expect(
       kayit.any((u) => u.contains('/tmdb/discover/movie?')),
       isTrue,
       reason: kayit.toString(),
     );
+    expect(
+      kayit.any((u) => u.contains('/tmdb/discover/tv?')),
+      isTrue,
+      reason: kayit.toString(),
+    );
 
-    // 19 Ağu 2026: raflar eklenince tür sekmesi katlamanın ALTINA indi ve
-    // tembel sliver onu kurmuyor. Önce görünür hale getir; `find.text` tam
-    // eşleşme olduğu için raf başlığıyla ("Diziler (1)") karışmaz.
+    await tester.tap(find.byKey(const Key('raf-baslik-dizi')));
+    await tester.pumpAndSettle();
+    // Başlık AÇIK duruma geçti (yazı + ok yönü birlikte değişir).
+    expect(find.text('Daralt'), findsOneWidget);
+    // "Daha fazla" ızgaranın ALTINDA; 900 px'lik test ekranında tembel
+    // sliver onu kurmuyor, önce görünür kılınır.
     await tester.scrollUntilVisible(
-      find.text('Diziler'),
+      find.byKey(const Key('raf-daha-dizi')),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.pump();
-    await tester.tap(find.text('Diziler'));
-    for (var i = 0; i < 8; i++) {
-      await tester.pump(const Duration(milliseconds: 60));
-    }
-    expect(kayit.any((u) => u.contains('/tmdb/discover/tv?')), isTrue);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('raf-daha-dizi')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

@@ -11,6 +11,7 @@ import '../tema.dart';
 import '../tmdb_bolum_puan.dart';
 import '../tmdb_fragman.dart';
 import 'giris_istem.dart';
+import 'gozat.dart' show gozatYolu;
 import 'kahraman_karisik.dart';
 import 'medya_goster.dart';
 import 'ortak.dart';
@@ -735,10 +736,16 @@ class _DetayEkraniState extends State<DetayEkrani> {
     final yil = ((c['first_air_date'] ?? c['release_date'] ?? '') as String)
         .split('-')
         .first;
+    // TÜRLER ARTIK METİN DEĞİL, TIKLANABİLİR (19 Ağu 2026 isteği: "türlere
+    // tıklanabilsin, tıklayınca o türdeki dizileri listele"). `id`si olmayan
+    // kayıt atılır: dokunulacak bir hedefi yok, çip çizmek yalan olurdu.
     final turler = ((c['genres'] as List<dynamic>?) ?? [])
-        .map((g) => g['name'])
+        .whereType<Map<String, dynamic>>()
+        .where(
+          (g) => g['id'] is num && (g['name'] as String?)?.isNotEmpty == true,
+        )
         .take(3)
-        .join(' · ');
+        .toList();
     // w780 idi: 3x yoğunluklu telefonda bu alan ~1290 fiziksel piksel,
     // görsel büyütülüp gözle görülür bulanıklaşıyordu. w1280 tam oturuyor;
     // "original" birkaç MB olabildiği için tercih edilmedi.
@@ -829,21 +836,50 @@ class _DetayEkraniState extends State<DetayEkrani> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      ad,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      [
-                        if (yil.isNotEmpty) yil,
-                        if (tv) '{} sezon'.cf([c['number_of_seasons']]),
-                        if (turler.isNotEmpty) turler,
-                      ].join(' · '),
-                      style: TextStyle(color: DiziRenkler.metin54),
+                    // POSTER BAŞLIĞIN SOLUNDA (19 Ağu 2026 isteği).
+                    //
+                    // NEDEN KAPAĞA EK OLARAK: yukarıdaki kapak 16:9 bir
+                    // SAHNE görselidir (backdrop) ve çoğu yapımda afişle
+                    // hiç benzeşmez. Kullanıcı bir yapımı AFİŞİNDEN tanır;
+                    // arama sonucunda, kitaplıkta, Keşfet'te hep o afişi
+                    // görüyor. Başlığın yanında olmayınca sayfa "doğru
+                    // yapıma mı geldim" sorusunu cevapsız bırakıyordu.
+                    //
+                    // Yükseklik posterin 2:3 oranından TÜRETİLİR; sabit
+                    // sayı yazı tipi ölçeği büyüyen kullanıcıda taşardı.
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _AfisKucuk(yol: c['poster_path'] as String?, ad: ad),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                ad,
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                [
+                                  if (yil.isNotEmpty) yil,
+                                  if (tv)
+                                    '{} sezon'.cf([c['number_of_seasons']]),
+                                ].join(' · '),
+                                style: TextStyle(color: DiziRenkler.metin54),
+                              ),
+                              if (turler.isNotEmpty) ...[
+                                const SizedBox(height: 8),
+                                _TurCipleri(turler: turler, tur: widget.tur),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 8),
                     if (tv && tmdbSezonNolari(c).isNotEmpty)
@@ -2143,3 +2179,106 @@ Future<void> tumOyuncularAc(
     ),
   ),
 );
+
+/// Başlığın SOLUNDAKİ küçük afiş (19 Ağu 2026 isteği).
+///
+/// Afişi olmayan yapımda beyaz/boş dikdörtgen yerine kart zemini + ikon
+/// çizilir: boş kutu "görsel yüklenemedi" gibi durur, oysa TMDB'de o afiş
+/// gerçekten yok. Görsele dokunulunca BÜYÜTÜLÜR — üstteki kapak şeridiyle
+/// aynı jest, ayrı bir öğrenme yükü yok.
+class _AfisKucuk extends StatelessWidget {
+  final String? yol;
+  final String ad;
+
+  /// Genişlik; yükseklik posterin 2:3 oranından TÜRETİLİR.
+  static const double genislik = 92;
+
+  const _AfisKucuk({required this.yol, required this.ad});
+
+  @override
+  Widget build(BuildContext context) {
+    final url = posterUrl(yol, boyut: 'w342');
+    final kutu = ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: SizedBox(
+        width: genislik,
+        height: genislik * 3 / 2,
+        child: url == null
+            ? ColoredBox(
+                color: DiziRenkler.kart,
+                child: Icon(
+                  Icons.movie_outlined,
+                  color: DiziRenkler.metin38,
+                  size: 28,
+                ),
+              )
+            : CachedNetworkImage(
+                imageUrl: url,
+                httpHeaders: gorselBasliklari(url),
+                fit: BoxFit.cover,
+                placeholder: (_, _) => ColoredBox(color: DiziRenkler.kart),
+                errorWidget: (_, _, _) => ColoredBox(
+                  color: DiziRenkler.kart,
+                  child: Icon(
+                    Icons.movie_outlined,
+                    color: DiziRenkler.metin38,
+                    size: 28,
+                  ),
+                ),
+              ),
+      ),
+    );
+    if (url == null) return Semantics(label: ad, child: kutu);
+    return Semantics(
+      button: true,
+      label: ad,
+      child: InkWell(
+        key: const Key('detay-afis'),
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => medyaGoster(context, [url]),
+        child: kutu,
+      ),
+    );
+  }
+}
+
+/// Tür etiketleri — TIKLANABİLİR.
+///
+/// İSTEK: "türlere tıklanabilsin, tıklayınca o türdeki dizileri listele."
+/// Hedef Gözat ekranı: türe göre süzülmüş, sonsuz kaydırmalı poster ızgarası
+/// ZATEN orada. İkinci bir liste ekranı yazmak aynı ızgaranın kopyası olurdu.
+///
+/// Dizinin türüne dokununca DİZİ listesi, filmin türüne dokununca FİLM listesi
+/// açılır (`tur` taşınır): TMDB'nin tür kimlikleri iki katalogda AYRIDIR ve
+/// yanlış katalogda süzmek sessizce boş/alakasız sonuç verirdi.
+class _TurCipleri extends StatelessWidget {
+  final List<Map<String, dynamic>> turler;
+  final String tur;
+
+  const _TurCipleri({required this.turler, required this.tur});
+
+  @override
+  Widget build(BuildContext context) => Wrap(
+    spacing: 6,
+    runSpacing: 6,
+    children: [
+      for (final g in turler)
+        ActionChip(
+          key: Key('tur-cip-${g['id']}'),
+          label: Text('${g['name']}'),
+          labelStyle: TextStyle(
+            color: DiziRenkler.sariMetin,
+            fontSize: 12.5,
+            fontWeight: FontWeight.w700,
+          ),
+          side: BorderSide(color: DiziRenkler.sari.withValues(alpha: 0.35)),
+          backgroundColor: DiziRenkler.sari.withValues(alpha: 0.10),
+          visualDensity: VisualDensity.compact,
+          materialTapTargetSize: MaterialTapTargetSize.padded,
+          onPressed: () => GoRouter.of(
+            context,
+          ).push(gozatYolu(tur: tur, genre: (g['id'] as num).toInt())),
+        ),
+    ],
+  );
+}

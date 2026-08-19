@@ -560,7 +560,18 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
         builder: (_, s) =>
             _masa(HareketlerimEkrani(tur: s.uri.queryParameters['tur'])),
       ),
-      GoRoute(path: '/gozat', builder: (_, __) => _masa(const GozatEkrani())),
+      // `?tur=` ve `?genre=`: içerik sayfasındaki tür etiketinden gelinir
+      // (19 Ağu 2026). Adreste durduğu için F5'te seçim korunur ve bağlantı
+      // paylaşılabilir.
+      GoRoute(
+        path: '/gozat',
+        builder: (_, s) => _masa(
+          GozatEkrani(
+            baslangicTuru: s.uri.queryParameters['tur'],
+            baslangicGenre: int.tryParse(s.uri.queryParameters['genre'] ?? ''),
+          ),
+        ),
+      ),
       // Mobilde üst bardaki kapalı kutunun açtığı TAM EKRAN arama.
       // KABUĞUN DIŞINDA: alt gezinme çubuğu görünmez, geri tuşu (Android ve
       // tarayıcı) aramayı kapatıp geldiği sekmeye döner.

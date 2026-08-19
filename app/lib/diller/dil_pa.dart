@@ -1165,4 +1165,5 @@ const Map<String, String> cevirilerPa = {
   'Son {} gün · haftalık': 'ਪਿਛਲੇ {} ਦਿਨ · ਹਫ਼ਤਾਵਾਰੀ',
   'Ekran süren, serin ve en çok izlediklerin':
       'ਤੁਹਾਡਾ ਸਕ੍ਰੀਨ ਸਮਾਂ, ਲੜੀ ਅਤੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੇ ਗਏ',
+  'Daralt': 'ਸੰਖੇਪ ਕਰੋ',
 };
