@@ -38,14 +38,19 @@ export const SURE_BIRIMLERI = Object.freeze({
   yil: 365 * 86_400_000,
 });
 
-/** Tek seferde verilebilecek en uzun süreli ban: 10 yıl (üstü = kalıcı). */
+/**
+ * Tek seferde verilebilecek en uzun süreli ban: 10 YIL (üstü = kalıcı sayılır).
+ * Yıl cinsinden yazılıdır; `bitisHesapla` bunu `SURE_BIRIMLERI.yil` ile çarpar.
+ */
 export const AZAMI_MIKTAR = 10;
 
 /**
  * Süreli banın bitiş anını hesaplar.
  *
  * @param {string} birim 'dakika' | 'saat' | 'gun' | 'yil'
- * @param {number} miktar 1..AZAMI_MIKTAR*… (tam sayı, 1'den küçük olamaz)
+ * @param {number} miktar 1 ve üzeri tam sayı. Üst sınır YOK — hesap sonucu
+ *        AZAMI_MIKTAR yıla kırpılır (aşağıdaki `enFazla`), yani 'yil' 999 da
+ *        geçerli bir giriştir ve 10 yıl döner.
  * @param {number} simdi epoch ms
  * @returns {number} bitiş epoch ms
  * @throws geçersiz birim/miktarda — sessizce "kalıcı"ya düşmek TEHLİKELİ
@@ -60,9 +65,11 @@ export function bitisHesapla(birim, miktar, simdi = Date.now()) {
   if (!Number.isInteger(n) || n < 1) {
     throw new Error(`Geçersiz süre miktarı: ${miktar} (1 ve üzeri tam sayı)`);
   }
-  // Üst sınır: 10 yıl. Daha uzunu isteniyorsa "kalıcı" seçilmelidir; 500 yıllık
-  // ban veri tabanında timestamp taşmasına ve saçma arayüz metnine yol açar.
-  const enFazla = 10 * SURE_BIRIMLERI.yil;
+  // Üst sınır. Daha uzunu isteniyorsa "kalıcı" seçilmelidir; 500 yıllık ban
+  // veri tabanında timestamp taşmasına ve saçma arayüz metnine yol açar.
+  // Sayı burada ELLE YAZILMAZ: AZAMI_MIKTAR dışarıya bu sınırın adı olarak
+  // veriliyor, ikinci bir "10" bırakmak ikisinin ayrışmasına davetiyedir.
+  const enFazla = AZAMI_MIKTAR * SURE_BIRIMLERI.yil;
   const sure = Math.min(n * carpan, enFazla);
   return simdi + sure;
 }

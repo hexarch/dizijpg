@@ -58,6 +58,22 @@
 /// Otomatiğin ASLA değiştirmeyeceği durumlar (karar 3).
 export const DOKUNULMAZ_DURUMLAR = ['biraktim'];
 
+/// Tek sezonda dikkate alınacak azami bölüm sayısı.
+///
+/// TAVAN NEDEN VAR: `episode_count` TMDB'de topluluk düzenlemesine açık bir
+/// alandır; bozuk tek bir kayıt (ör. 99999) buradan yüz binlerce elemanlı bir
+/// diziye, oradan da tek seferde o kadar satırlık bir INSERT'e dönüşür.
+/// Tavan, veri hatasının maliyetini sabitler.
+///
+/// NEDEN ARTIK 500 DEĞİL: 500 gerçek dizileri kesiyordu. TMDB tek sezona
+/// yığılmış uzun soluklu yapımlar barındırır (Doraemon 1979 ve benzeri günlük
+/// animeler tek sezonda 1700+ bölüm). Böyle bir dizide "bitirdim" işaretlemesi
+/// 500. bölümde susuyordu: kullanıcı 501+ bölümleri izlenmemiş görüyor ama
+/// nedenini gösteren hiçbir iz yoktu — arayüz de günlük de sessizdi.
+/// 3000, bilinen en uzun TMDB sezonunun belirgin üstünde; hâlâ tek sorguya
+/// sığan bir büyüklük.
+export const SEZON_BOLUM_TAVANI = 3000;
+
 /// Bir kaydın anahtarı: "sezon:bolum".
 const anahtar = (s, b) => `${s}:${b}`;
 
@@ -90,7 +106,20 @@ export function yayinlanmisBolumler(dizi, bugunIso) {
         adet = Math.min(adet, son.episode_number || adet);
       }
     }
-    for (let b = 1; b <= Math.min(adet, 500); b++) ciftler.push([no, b]);
+    // Tavan aşılırsa KESİLİR AMA SESSİZ KALINMAZ: kesilen bölümler
+    // "bitirdim"de eksik kalıyor ve kullanıcı bunu ancak listeyi tek tek
+    // sayarak fark edebilir. Günlüğe düşen satır, şikâyet geldiğinde aranacak
+    // ilk yer olsun diye var.
+    const sinirli = Math.min(adet, SEZON_BOLUM_TAVANI);
+    if (adet > SEZON_BOLUM_TAVANI) {
+      console.warn(
+        `[dizi_durum] SEZON BÖLÜM TAVANI AŞILDI: tmdb=${dizi?.id ?? '?'} `
+        + `"${dizi?.name ?? '?'}" sezon ${no} → ${adet} bölüm, `
+        + `${SEZON_BOLUM_TAVANI} tanesi işlendi. Kalan ${adet - SEZON_BOLUM_TAVANI} `
+        + 'bölüm "bitirdim" işaretlemesinde EKSİK kalır.',
+      );
+    }
+    for (let b = 1; b <= sinirli; b++) ciftler.push([no, b]);
   }
   return ciftler;
 }

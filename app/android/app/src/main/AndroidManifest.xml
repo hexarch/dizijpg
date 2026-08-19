@@ -53,9 +53,22 @@
          HİÇBİR MEDYA/DEPOLAMA İZNİ GERİ EKLENMEYECEK — sürüm yine reddedilir.
          (İzin adları burada bilerek YAZILMADI: birleştirilmiş manifest'te
          "izin var mı" grep'i yanlış pozitif vermesin.) -->
+    <!-- YEDEKLEME KAPALI (19 Ağu 2026) — GÜVENLİK.
+         Android'in varsayılanı allowBackup=true'dur ve öznitelik yazılmadığı
+         sürece bu varsayılan geçerlidir. Oturum jetonu (JWT) düz metin olarak
+         SharedPreferences'ta duruyor (lib/api.dart, 'token' anahtarı); yedek
+         açıkken bu dosya Google bulut yedeğine gidiyor ve BAŞKA bir cihaza geri
+         yüklenerek oturum ele geçirilebiliyordu. Jetonun taşınabilir olmaması
+         gerekir: kullanıcı yeni cihazda yeniden giriş yapar, bedeli bir kez
+         parola girmektir.
+         API 31+ta allowBackup YALNIZ bulut yedeğini kapatır; cihazdan cihaza
+         aktarım (D2D) varsayılan olarak sürer. Onu da dar kesmek için
+         dataExtractionRules eklendi: res/xml/veri_cikarma_kurallari.xml. -->
     <application
         android:label="dizi.jpg"
         android:name="${applicationName}"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/veri_cikarma_kurallari"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

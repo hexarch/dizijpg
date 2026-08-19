@@ -11,6 +11,7 @@ import assert from 'node:assert/strict';
 
 import {
   hedefDurum, yayinlanmisBolumler, yeniSezonBekleniyorMu, DOKUNULMAZ_DURUMLAR,
+  SEZON_BOLUM_TAVANI,
 } from '../dizi_durum.js';
 
 const BUGUN = '2026-08-04';
@@ -78,6 +79,53 @@ test('yayınlanmış bölümler: GELECEK tarihli sezon hiç sayılmaz', () => {
     son: [2, 8],
   });
   assert.equal(yayinlanmisBolumler(d, BUGUN).length, 16);
+});
+
+// ---------------------------------------------------------------------------
+// SEZON BÖLÜM TAVANI (19 Ağu 2026)
+// Eski kod tek sezonu 500 bölümde kesiyordu ve bunu HİÇBİR YERDE söylemiyordu:
+// TMDB'de tek sezona yığılmış günlük animelerde (Doraemon 1979 → 1700+ bölüm)
+// "bitirdim" işareti 501. bölümden itibaren eksik kalıyordu.
+// ---------------------------------------------------------------------------
+test("tavan: 500'ün üstündeki gerçek sezonlar ARTIK kesilmiyor", () => {
+  const d = dizi({
+    sezonlar: [{ no: 1, adet: 1700, tarih: '2000-01-01' }],
+    son: [1, 1700],
+  });
+  const c = yayinlanmisBolumler(d, BUGUN);
+  assert.equal(c.length, 1700, 'eski 500 tavanı geri gelmiş');
+  assert.deepEqual(c[1699], [1, 1700]);
+});
+
+test('tavan: aşılırsa kesilir AMA sessiz kalmaz (console.warn)', () => {
+  const d = dizi({
+    sezonlar: [{ no: 1, adet: SEZON_BOLUM_TAVANI + 42, tarih: '2000-01-01' }],
+    son: [1, SEZON_BOLUM_TAVANI + 42],
+  });
+  const eski = console.warn;
+  const satirlar = [];
+  console.warn = (...a) => satirlar.push(a.join(' '));
+  try {
+    const c = yayinlanmisBolumler(d, BUGUN);
+    assert.equal(c.length, SEZON_BOLUM_TAVANI, 'tavan uygulanmadı');
+  } finally {
+    console.warn = eski;
+  }
+  assert.equal(satirlar.length, 1, 'kesme SESSİZ yapıldı — uyarı yok');
+  assert.match(satirlar[0], /TAVANI AŞILDI/);
+  assert.match(satirlar[0], /42/, 'kaç bölümün düştüğü yazılmamış');
+});
+
+test('tavan: aşılmayan sezonda uyarı BASILMAZ (günlük kirlenmesin)', () => {
+  const eski = console.warn;
+  let sayi = 0;
+  console.warn = () => { sayi += 1; };
+  try {
+    yayinlanmisBolumler(IKI_SEZON, BUGUN);
+  } finally {
+    console.warn = eski;
+  }
+  assert.equal(sayi, 0);
 });
 
 // ---------------------------------------------------------------------------

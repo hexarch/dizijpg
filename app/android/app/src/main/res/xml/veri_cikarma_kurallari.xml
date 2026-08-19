@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ (API 31+) veri çıkarma kuralları.
+     NEDEN VAR: manifestteki android:allowBackup="false" bu sürümlerde yalnız
+     BULUT yedeğini kapatıyor; cihazdan cihaza aktarım (yeni telefona geçiş)
+     varsayılan olarak açık kalıyor ve oturum jetonunu taşıyordu.
+     NEDEN "her şeyi hariç tut" DEĞİL: aktarımın tamamını kapatmak, kullanıcının
+     kendi yeni cihazına geçerken önbellek/tercih gibi zararsız verilerini de
+     attırır. Kesilen tek yüzey, jetonun durduğu tercih dosyasıdır — sır
+     taşınmaz, kullanıcı yeni cihazda bir kez giriş yapar.
+     shared_preferences eklentisi Android'de tüm anahtarları TEK dosyaya yazar:
+     shared_prefs/FlutterSharedPreferences.xml (jeton anahtarı: 'token'). -->
+<data-extraction-rules>
+    <!-- allowBackup="false" ile bu bölüm zaten devre dışı; birisi ileride o
+         özniteliği kaldırırsa jeton yine de yedeğe girmesin diye duruyor. -->
+    <cloud-backup>
+        <exclude domain="sharedpref" path="FlutterSharedPreferences.xml" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="sharedpref" path="FlutterSharedPreferences.xml" />
+    </device-transfer>
+</data-extraction-rules>

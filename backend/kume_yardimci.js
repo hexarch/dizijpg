@@ -78,8 +78,14 @@ export function havuzMax(env = {}, isci = 1) {
 /**
  * Hızlı-ölüm freni: art arda hızlı ölümlerde yeniden fork'tan önce beklenecek
  * süre. İlk ölüm bedava (tekil çökme normaldir, B1 bunu zaten öngörüyor),
- * sonrası üstel: 1s, 2s, 4s ... 30s tavan. Sayaç, HIZLI_OLUM_MS'ten uzun
- * yaşayan bir işçiyle sıfırlanır.
+ * sonrası üstel: 2s, 4s, 8s, 16s → 30s tavan (FREN_TAVAN_MS). Sayaç,
+ * HIZLI_OLUM_MS'ten uzun yaşayan bir işçiyle sıfırlanır.
+ *
+ * (Yorum 19 Ağu 2026'da düzeltildi: "1s, 2s, 4s" yazıyordu, gerçek ilk bekleme
+ * 2s. Değişen YORUM; davranış test/kume.test.js ile kilitli.)
+ *
+ * `Math.min(n, 10)` üssü kilitler: sayaç büyüdükçe 2**n'in anlamsız
+ * büyüklüklere çıkmasını engeller, sonucu zaten tavan belirliyor.
  */
 export function frenMs(ardArdaHizliOlum) {
   const n = Math.max(0, Math.floor(ardArdaHizliOlum) || 0);

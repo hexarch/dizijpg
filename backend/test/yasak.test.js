@@ -63,6 +63,22 @@ test('bitisHesapla: 10 yıl tavanı aşılmaz (timestamp taşması / saçma aray
   assert.equal(AZAMI_MIKTAR, 10);
 });
 
+test('AZAMI_MIKTAR ölü sabit DEĞİL: tavanın kendisi odur', () => {
+  // Sabit bir zamanlar yalnız dışa aktarılıyordu, tavan ise `bitisHesapla`
+  // içinde elle "10" yazılıydı. Biri değişip diğeri kalırsa dışarıya söylenen
+  // sınır ile uygulanan sınır ayrışır. Bu test ikisini birbirine bağlar.
+  const t0 = 0;
+  assert.equal(
+    bitisHesapla('yil', AZAMI_MIKTAR + 5, t0),
+    AZAMI_MIKTAR * SURE_BIRIMLERI.yil,
+  );
+  // Tavanın ALTI kırpılmaz.
+  assert.equal(
+    bitisHesapla('yil', AZAMI_MIKTAR - 1, t0),
+    (AZAMI_MIKTAR - 1) * SURE_BIRIMLERI.yil,
+  );
+});
+
 // ---------------------------------------------------------------------------
 // 2. SÜRELİ BAN SÜRESİ DOLUNCA SERBEST KALIR (cron YOK)
 // ---------------------------------------------------------------------------

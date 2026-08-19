@@ -13,6 +13,29 @@ val keystoreProperties = Properties().apply {
     if (f.exists()) load(FileInputStream(f))
 }
 
+// Gerçek yayın anahtarı elimizde mi? `key.properties` ve `.jks` GİZLİ, depoda
+// yok (app/android/.gitignore) — yani taze bir kopyada bu bayrak false olur.
+val imzaAnahtariVar: Boolean = keystoreProperties.isNotEmpty()
+
+// Bu çağrı DAĞITILACAK imzalı bir paket mi üretiyor?
+// `flutter build apk --release` → `:app:assembleRelease`,
+// `flutter build appbundle --release` → `:app:bundleRelease`.
+// `surumApkMi` bunun yerine geçmez: o yalnız APK'yı tanır, AAB'yi kaçırır ve
+// Play'e giden asıl paket AAB'dir.
+val surumPaketiMi: Boolean = gradle.startParameter.taskNames.any {
+    it.contains("release", ignoreCase = true) &&
+        (it.contains("assemble", ignoreCase = true) ||
+            it.contains("bundle", ignoreCase = true))
+}
+
+// Bilerek imzasız sürüm derlemesi için açık onay: `-PimzaYok=true`.
+// Neden bir kaçış kapısı var: anahtarı olmayan biri (CI, yeni geliştirici)
+// boyut/derleme ölçmek için sürüm paketi üretmek isteyebilir. Kapı AÇIK DEĞİL,
+// elle açılıyor — yanlışlıkla debug anahtarına düşmek ile bilerek düşmek
+// arasındaki fark budur.
+val imzaYokOnayi: Boolean =
+    (project.findProperty("imzaYok") as String?)?.toBoolean() == true
+
 // Bu derleme Play'e gidecek bir AAB mı, elle kurulacak bir APK mı?
 // `flutter build appbundle` → `:app:bundleRelease`, `flutter build apk` →
 // `:app:assembleRelease` görevini çalıştırır; ayrım görev adından yapılıyor.
@@ -70,7 +93,36 @@ android {
 
     buildTypes {
         release {
-            signingConfig = if (keystoreProperties.isNotEmpty())
+            // İMZA: SESSİZ DÜŞÜŞ YASAK (19 Ağu 2026).
+            //
+            // Eskiden `key.properties` yoksa burada HİÇBİR ŞEY SÖYLENMEDEN
+            // hata ayıklama anahtarına düşülüyordu. Debug anahtarıyla imzalı
+            // bir paket derleme çıktısında sürüm paketinden ayırt edilemez;
+            // Play'e yüklenirse yükleme anahtarı uyuşmazlığıyla reddedilir,
+            // elden dağıtılırsa gerçek anahtarla imzalı sürümün ÜZERİNE
+            // kurulamaz (kullanıcı uygulamayı silmek zorunda kalır, verisi
+            // gider). Bu yüzden UYARI DEĞİL, DURDURMA seçildi: uyarı Gradle
+            // çıktısında kaybolur, hata kaybolmaz.
+            //
+            // HATA AYIKLAMA DERLEMESİ KIRILMAZ: kapı yalnız `assembleRelease`
+            // / `bundleRelease` çağrılarında kapanıyor. `assembleDebug`,
+            // `flutter run` ve Android Studio eşitlemesi anahtarsız çalışır.
+            if (!imzaAnahtariVar && surumPaketiMi && !imzaYokOnayi) {
+                error(
+                    "İMZA ANAHTARI YOK: app/android/key.properties bulunamadı. " +
+                        "Bu paket hata ayıklama anahtarıyla imzalanırdı — Play " +
+                        "reddeder, elden kurulumda da sürümün üzerine gelmez. " +
+                        "Anahtarı yerine koyun ya da bilerek imzasız derliyorsanız " +
+                        "-PimzaYok=true verin.",
+                )
+            }
+            if (!imzaAnahtariVar && surumPaketiMi) {
+                logger.warn(
+                    "UYARI: sürüm paketi HATA AYIKLAMA anahtarıyla imzalanıyor " +
+                        "(-PimzaYok=true). Bu paket dağıtılamaz.",
+                )
+            }
+            signingConfig = if (imzaAnahtariVar)
                 signingConfigs.getByName("release")
             else signingConfigs.getByName("debug")
 

@@ -5662,6 +5662,15 @@ app.post('/durum', girisZorunlu, sarici(async (req, res) => {
     } else {
       try {
         const ciftler = await yayinlanmisBolumler(tmdb_id);
+        // 10000'lik üst kapı bir güvenlik supabıdır (bozuk TMDB verisi tek
+        // sorguyu şişirmesin). Aşıldığında HİÇBİR bölüm işaretlenmiyor —
+        // kullanıcı "bitirdim" dedi ama listesi bomboş kalıyor. Bunu sessiz
+        // bırakmak, sebebi bulunamayan bir şikâyet üretir.
+        if (ciftler.length > 10000) {
+          console.warn(`UYARI: tmdb=${tmdb_id} için ${ciftler.length} bölüm `
+            + 'çıktı (kapı 10000) — "bitirdim" işaretlendi ama HİÇBİR bölüm '
+            + 'izlendi olarak yazılmadı.');
+        }
         if (ciftler.length > 0 && ciftler.length <= 10000) {
           await havuz.query(
             `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
@@ -13253,6 +13262,14 @@ app.post('/karsilama/toplu-durum', girisZorunlu, karsilamaLimiti, sarici(async (
     await Promise.all(diziler.slice(i, i + 8).map(async (d) => {
       try {
         const ciftler = await yayinlanmisBolumler(d.tmdbId);
+        // Üst kapı aşıldığında bölüm dökümü hiç yazılmıyor; aktarımı yapan
+        // kullanıcı bunu ancak diziyi açıp fark eder. `bolumsuz` sayacına
+        // dahil edilmiyor çünkü o sayaç "TMDB'ye ulaşılamadı" demek — ayrı bir
+        // sebebi aynı kutuya koymak, günlüğe bakan kişiyi yanlış yere götürür.
+        if (ciftler.length > 10000) {
+          console.warn(`UYARI: tmdb=${d.tmdbId} için ${ciftler.length} bölüm `
+            + 'çıktı (kapı 10000) — aktarımda durum yazıldı, bölümler YAZILMADI.');
+        }
         if (!ciftler.length || ciftler.length > 10000) return;
         await havuz.query(
           `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)

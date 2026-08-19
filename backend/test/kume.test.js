@@ -94,6 +94,17 @@ test('frenMs: ilk ölüm bedava, sonrası üstel, 30 sn tavan', () => {
   assert.equal(frenMs(50), FREN_TAVAN_MS); // tavan
 });
 
+test('frenMs: bekleme dizisi TAM olarak 2s, 4s, 8s, 16s, 30s', () => {
+  // Fonksiyonun üstündeki yorum "1s, 2s, 4s" diyordu; gerçek ilk bekleme 2s.
+  // Yorum düzeltildi (19 Ağu 2026), sayılar bir daha ayrışmasın diye buraya
+  // tek tek yazıldı — yorumu okuyan kişi burayı da okuyabilir.
+  assert.equal(frenMs(2), 2_000);
+  assert.equal(frenMs(3), 4_000);
+  assert.equal(frenMs(4), 8_000);
+  assert.equal(frenMs(5), 16_000);
+  assert.equal(frenMs(6), FREN_TAVAN_MS); // 32s isterdi, tavan 30s
+});
+
 // ===========================================================================
 // 3. KAYNAK KİLİDİ — server.js küme bağlantıları
 // ===========================================================================
