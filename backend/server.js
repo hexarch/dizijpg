@@ -821,6 +821,9 @@ const ICERIK_APPEND = 'credits,videos,recommendations,external_ids,watch/provide
  * @param {string} dilKodu kısa dil kodu ('tr', 'en' ...) — fragman dili için
  */
 function icerikTmdbYolu(tur, tmdbId, dilKodu = 'tr') {
+  // Kimlik SAYIYA çevriliyor: `/tv/01396` ile `/tv/1396` AYNI yapımdır ama
+  // dize olarak iki AYRI anahtar olurdu — tam da kaçındığımız bölünme.
+  const kimlik = Number(tmdbId);
   const p = new URLSearchParams();
   p.set('append_to_response', ICERIK_APPEND);
   // `include_image_language=null` = YAZISIZ kapaklar (üstüne dizi adı basılmış
@@ -829,7 +832,7 @@ function icerikTmdbYolu(tur, tmdbId, dilKodu = 'tr') {
   // TMDB `language=tr-TR` yalnız TR videoyu verir; Inception gibi yapımlarda
   // resmi fragman EN. Kullanıcı dili + EN + dilsiz.
   p.set('include_video_language', `${dilKodu},en,null`);
-  return `/${tur}/${tmdbId}?${p.toString()}`;
+  return `/${tur}/${kimlik}?${p.toString()}`;
 }
 
 // ---------- SSR SÜRE BÜTÇESİ (19 Ağu 2026) ----------
