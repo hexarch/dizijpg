@@ -437,12 +437,30 @@ Okunuşu: **trafik değdiği yeri zaten ısıtıyor.** Değer, botun hiç girmed
    her şey aynı anda tazelenip aynı anda bayatlar ve kaçan tek koşu tüm
    katalogu yaşlandırır.
 2. **SSR/uygulama anahtar birleştirme** — SSR
-   `?append_to_response=credits,similar` kullanıyor, uygulama farklı bir
-   append kümesi. Aynı yapım iki ayrı satırda. Sitemap'teki 2.453 içerik
-   sayfasının **1.153'ünün** tr-TR verisi uygulama anahtarı altında ZATEN VAR;
-   SSR göremediği için canlı TMDB çağrısı yapılıyor. Birleştirme bu 1.153
-   sayfayı **sıfır TMDB isteğiyle** ısıtır ve sonrasında bot ile uygulama aynı
-   satırı paylaşır.
+   `?append_to_response=credits,similar` kullanıyordu, uygulama farklı bir
+   append kümesi. Aynı yapım iki ayrı satırda, ikisi de diğerinin
+   önbelleğinden yararlanamıyordu.
+
+   **Kararsızlığın sebebi bulundu:** `/tmdb/*` ucu `new URLSearchParams(req.query)`
+   ile İSTEMCİNİN parametre sırasını anahtara sızdırıyordu. Eski web derlemesi
+   `include_video_language` göndermiyor, yenisi gönderiyor → tek yapım için
+   5 ayrı satır. Anahtar sunucuya alındı: istemcinin gönderdiği parametreler
+   atılıyor, anahtar tek sabitten (`ICERIK_APPEND` + `icerikTmdbYolu`,
+   server.js:778-828) sabit sırayla kuruluyor. Böylece **eski APK ve web
+   derlemeleri de otomatik aynı satıra düşüyor** — istemci dağıtımı beklemeye
+   gerek yok.
+
+   `similar` → `recommendations` geçişi ölçüldü, GERİLEME DEĞİL İYİLEŞME:
+   boş dönen oran `similar` %1,08 (554 satırda 6), `recommendations` %0,16
+   (1.933 satırda 3). Ortak 60 yapımda ikisi de 20 sonuç döndü. Somut kazanç:
+   Arka Sokaklar (tv/32836) `similar`=0 iken `recommendations`=20.
+
+   > **DÜZELTME — ilk verilen "1.153 sayfa" rakamı yanıltıcıydı.**
+   > Uygulama anahtarı altında 1.261 farklı yapım var, ama TTL 7 gün olduğu
+   > için ANINDA sıcak sayılacak olan **258** (tek kanonik anahtar altında
+   > **39**). Yani birleştirmenin anlık ısıtma kazancı küçük. **Asıl kazanç
+   > kalıcı olan:** bundan sonra uygulama ve bot aynı satırı yazıp okuyor,
+   > yani her kullanıcı ziyareti botun sayfasını da ısıtıyor.
 
 ### Yol üstünde bulunan kusur
 
@@ -452,6 +470,13 @@ anahtarların hepsi `yaş = Infinity` ile berabere kalıyor, eşitlik bozucu
 istek gidiyordu. Sıralama üç anahtarlı yapıldı: öncelik → aşım bandı
 (`yaş/ttl`, ham yaş DEĞİL) → sınıflar arası sırayla dağıtım. Doldurma süresi
 değişmedi (70 koşu ≈ 11,7 saat), yalnız dağılım düzeldi.
+
+### ⚠️ Dağıtım sırası — ikisi AYNI dağıtımda gitmeli
+
+Ölçüm: eski SSR anahtarında **375 taze yapım**, yeni paylaşılan anahtarda
+yalnız **39**. Isıtıcı hizalanmadan anahtar değişikliği dağıtılırsa ısıtıcı
+ölü bir anahtarı tazelemeye devam eder ve SSR SOĞUR — kısa vadeli gerileme.
+Geçişten sonraki ilk günlerde kuyruk derinliğinin sıçraması beklenen davranış.
 
 ### Kabul ölçütü
 
