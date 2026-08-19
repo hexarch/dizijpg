@@ -2739,16 +2739,28 @@ function seoDegerlendirmeler(seo, limit = 10) {
  * kolay istismar edilen bir sinyal olarak görür; ayrıca tek puan değişince
  * arama sonucundaki yıldız zıplar.
  *
- * 3 seçildi: iki farklı görüş bir ortalamayı hâlâ uçlara savurur, üçüncü puan
- * en azından bir eğilim gösterir. Sayı keyfî olduğu için TEK YERDE tanımlı —
- * yükseltmek/indirmek isteyen burayı değiştirir.
+ * 1 SEÇİLDİ — ÖNCE 3 YAZILMIŞTI, CANLI ÖLÇÜMLE GERİ ALINDI (19 Ağu 2026).
+ *
+ * Gerekçe ölçüm: eşik 3 iken yıldız kalan sayfa sayısı 321 → 16'ya düşüyordu.
+ * Yani tohum temizliği 423 → 321 (102 sayfa) maliyet çıkarırken, EŞİK tek
+ * başına 305 sayfayı götürüyordu. Oysa politikanın istediği şey puanın
+ * GERÇEK olması; Google bir ALT SAYI şartı koymuyor. Tek gerçek kullanıcının
+ * puanı da gerçektir ve onu gizlemek, olmayan bir kuralı kendimize uygulamak
+ * olurdu — üstelik 305 sayfalık zengin sonucu bedavaya vererek.
+ *
+ * "Tek puan ortalamayı uçlara savurur" itirazı doğru ama bu bir DOĞRULUK
+ * sorunu değil, temsil sorunudur; `ratingCount` zaten yanında basılıyor ve
+ * okuyucu 1 kişilik ortalamayı öyle görüyor.
+ *
+ * Sayı keyfî olduğu için TEK YERDE tanımlı — değiştirmek isteyen burayı
+ * değiştirir ve yukarıdaki ölçümü tekrarlar.
  *
  * NOT: eşik altında kalınca sayfadaki "dizi.jpg puanı: X / 5" metni SİLİNMEZ.
  * Kural tek yönlüdür: yapılandırılmış veride BEYAN EDİLEN her şey sayfada
  * görünmelidir; sayfada görünen her şeyi beyan etmek zorunlu değildir.
  * Beyan etmemek her zaman güvenli taraftır.
  */
-const SEO_PUAN_MIN = 3;
+const SEO_PUAN_MIN = 1;
 
 /**
  * AggregateRating — YALNIZCA yeterli sayıda GERÇEK puan varsa üretilir

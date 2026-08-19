@@ -245,18 +245,26 @@ test('sayfadaki metin ile aggregateRating AYNI değeri üretir', () => {
     `sayfadaki puan SAYISI şemayla ayrıştı: ${govde}`);
 });
 
-test('aggregateRating ALT SINIRI: 1-2 gerçek puan zayıf sinyaldir, basılmaz', () => {
-  assert.equal(SEO_PUAN_MIN, 3);
+test('aggregateRating ALT SINIRI: puan YOKSA basılmaz, VARSA basılır', () => {
+  // 19 AĞU 2026 — eşik 3 iken CANLIDA ÖLÇÜLDÜ: yıldız kalan sayfa 321 → 16.
+  // Tohum temizliğinin maliyeti 102 sayfaydı, kalan 305'i EŞİK götürüyordu.
+  // Google bir alt sayı şartı KOYMUYOR; tek gerçek kullanıcının puanı da
+  // gerçektir. Olmayan bir kuralı kendimize uygulayıp 305 sayfalık zengin
+  // sonucu bedavaya vermek yanlıştı — eşik 1'e çekildi.
+  assert.equal(SEO_PUAN_MIN, 1);
   const kur = (adet) => ({ ortalama: '8.0', adet, incelemeler: [], yorumlar: [] });
-  assert.equal(seoOrtalamaPuan(kur(0)), null);
-  assert.equal(seoOrtalamaPuan(kur(1)), null, 'tek puan TOPLAM değildir');
-  assert.equal(seoOrtalamaPuan(kur(2)), null);
-  assert.ok(seoOrtalamaPuan(kur(3)), 'eşiği geçen gerçek puan basılmalı');
-  // Eşik altında SAYFA METNİ SİLİNMEZ: kural tek yönlüdür — şemada beyan
-  // edilen sayfada görünmeli, tersi zorunlu değil.
-  const govde = seoDegerlendirmeGovdesi(kur(1),
+  assert.equal(seoOrtalamaPuan(kur(0)), null, 'ratingCount 0 basmak ihlaldir');
+  assert.ok(seoOrtalamaPuan(kur(1)), 'tek GERÇEK puan da gerçektir');
+  assert.ok(seoOrtalamaPuan(kur(3)));
+  // "EŞİK ALTINDA SAYFA METNİ SİLİNMEZ" alt iddiası KALDIRILDI: eşik 1 olunca
+  // "puanı var ama eşiği geçmiyor" diye bir durum kalmadı. adet=0 ise zaten
+  // ne şemada ne sayfada puan var — sınanacak bir ayrışma yok.
+  // Şema ⊆ sayfa kuralı, aşağıdaki "sayfa metni şemayla ayrıştı" iddialarıyla
+  // ve TOPLUM_PUAN_SQL'in tek kaynak olmasıyla zaten kilitli.
+  const bosGovde = seoDegerlendirmeGovdesi(kur(0),
     { incelemeBasligi: 'x', yorumBasligi: 'y' });
-  assert.match(govde, /dizi\.jpg puanı: 4\.0 \/ 5/);
+  assert.doesNotMatch(bosGovde, /dizi\.jpg puanı/,
+    'puan yokken sayfada puan metni basılmamalı');
 });
 
 // ===========================================================================
