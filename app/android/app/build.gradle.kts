@@ -23,6 +23,17 @@ val aabDerlemesiMi: Boolean = gradle.startParameter.taskNames.any {
     it.contains("bundle", ignoreCase = true)
 }
 
+// SÜRÜM APK'sı mı derleniyor? (`flutter build apk --release`)
+//
+// `aabDerlemesiMi`nin DEĞİLİ YETMEZ: o bayrak `assembleDebug` için de false
+// döner, yani onu kullanan bir kısıt HATA AYIKLAMA derlemesini de vururdu —
+// x86_64 emülatörde geliştirme bozulurdu. Bu bayrak "assemble" VE "release"
+// ister; ikisi birden yalnız elle dağıtılan sürüm APK'sında doğrudur.
+val surumApkMi: Boolean = gradle.startParameter.taskNames.any {
+    it.contains("assemble", ignoreCase = true) &&
+        it.contains("release", ignoreCase = true)
+}
+
 android {
     namespace = "com.dizijpg.dizijpg"
     compileSdk = flutter.compileSdkVersion
@@ -79,10 +90,42 @@ android {
             //
             // `armeabi-v7a` LİSTEDEN ÇIKARILMAZ: çıkarılırsa 32 bit ARM
             // cihazlar uygulamayı kuramaz olur (devir notundaki yasak).
+            //
+            // 19 AĞU 2026 — BU BLOK ARTIK TEK BAŞINA YETMİYOR (ölçüldü).
+            // `flutter build apk --release` ile derlenen APK 122,1 MB çıktı ve
+            // İÇİNDE ÜÇ ABI DE VARDI: `lib/x86_64/libapp.so`,
+            // `libflutter.so`, `libjingle_peerconnection_so.so`. Yani yukarıdaki
+            // `abiFilters` çağrısının GÖZLENEBİLİR HİÇBİR ETKİSİ KALMAMIŞ —
+            // Flutter Gradle eklentisi `-Ptarget-platform`dan türettiği ABI
+            // kümesini bizim bloğumuzdan SONRA yazıyor ve üzerine biniyor.
+            // Blok yine de duruyor: eklenti davranışı değişirse tekrar tutar,
+            // dururken de zarar vermiyor. Gerçek kısıt aşağıdaki `packaging`.
             if (!aabDerlemesiMi) {
                 ndk {
                     abiFilters += listOf("armeabi-v7a", "arm64-v8a")
                 }
+            }
+        }
+    }
+
+    // ABI KISITININ GERÇEKTEN UYGULANDIĞI YER (19 Ağu 2026).
+    //
+    // `buildTypes.release.ndk.abiFilters` etkisiz kaldığı için (yukarıdaki
+    // not) x86_64 kütüphaneleri APK'ya giriyordu. `--target-platform
+    // android-arm,android-arm64` bayrağı Flutter'ın KENDİ kütüphanelerini
+    // (`libapp.so`, `libflutter.so`) dışarıda bırakıyor ama EKLENTİLERİN
+    // getirdiklerini bırakmıyor: flutter_webrtc'nin hazır derlenmiş
+    // `libjingle_peerconnection_so.so`su tek başına 15,3 MB. Paketleme
+    // süzgeci ikisini de kesiyor, üstelik bayrağa bağlı kalmadan.
+    //
+    // YALNIZ SÜRÜM APK'sında: AAB'de x86_64 KALMALI (Play zaten cihaza göre
+    // bölüyor; atmanın indirme boyutuna faydası yok, buna karşılık ChromeOS
+    // ve emülatör kullanıcıları uygulamayı kuramaz olur). Hata ayıklama
+    // derlemesi de etkilenmez — x86_64 emülatörde geliştirme sürüyor.
+    if (surumApkMi) {
+        packaging {
+            jniLibs {
+                excludes += "lib/x86_64/**"
             }
         }
     }
