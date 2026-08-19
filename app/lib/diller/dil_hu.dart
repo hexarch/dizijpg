@@ -1200,4 +1200,47 @@ const Map<String, String> cevirilerHu = {
   'Tüm raflara uygulanır': 'Minden polcra érvényes',
   'En popüler {} yapım arasında sıralandı':
       'A(z) {} legnépszerűbb cím között rendezve',
+  'Altyazı görünümü': 'Feliratok megjelenése',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Szín, betűtípus, méret, él és átlátszatlanság',
+  'Bu bir örnek altyazıdır.': 'Ez egy mintafelirat.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Az előnézet a beállítás módosításakor azonnal frissül.',
+  'Yazı biçimi': 'Szövegstílus',
+  'Yazı rengi': 'Szövegszín',
+  'Yazı opaklığı': 'Szöveg átlátszatlansága',
+  'Yazı tipi': 'Betűtípus',
+  'Yazı boyutu': 'Szövegméret',
+  'Karakter ayrıtı': 'Karakterél',
+  'Ayrıt türü': 'Él típusa',
+  'Ayrıt rengi': 'Él színe',
+  'Yok': 'Nincs',
+  'Dış çizgi': 'Körvonal',
+  'Gölge': 'Vetett árnyék',
+  'Kabartma': 'Kiemelkedő',
+  'Oyma': 'Süllyesztett',
+  'Arka plan rengi': 'Háttérszín',
+  'Arka plan opaklığı': 'Háttér átlátszatlansága',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'A háttér a szöveg mögötti kitöltés, az ablak pedig a teljes feliratblokk mögötti szélesebb felület.',
+  'Pencere': 'Ablak',
+  'Pencere rengi': 'Ablak színe',
+  'Pencere opaklığı': 'Ablak átlátszatlansága',
+  'Altyazı görünümü sıfırlansın mı?': 'Visszaállítod a feliratok megjelenését?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'A szín, betűtípus, méret, él és átlátszatlanság beállításai visszaállnak az alapértelmezettre.',
+  'Altyazı görünümü varsayılana döndü':
+      'A feliratok megjelenése visszaállt az alapértelmezettre',
+  '{} indiriliyor…': '{} letöltése…',
+  'Seçince indirilir': 'Kiválasztáskor letöltődik',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'A betűtípust nem sikerült letölteni. Az alapértelmezett betűtípussal jelenik meg.',
+  'Beyaz': 'Fehér',
+  'Siyah': 'Fekete',
+  'Kırmızı': 'Piros',
+  'Yeşil': 'Zöld',
+  'Mavi': 'Kék',
+  'Sarı': 'Sárga',
+  'Camgöbeği': 'Ciánkék',
+  'Macenta': 'Bíbor',
 };

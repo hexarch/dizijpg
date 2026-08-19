@@ -1211,4 +1211,48 @@ const Map<String, String> cevirilerFr = {
   'Tüm raflara uygulanır': 'S\'applique à toutes les étagères',
   'En popüler {} yapım arasında sıralandı':
       'Trié parmi les {} titres les plus populaires',
+  'Altyazı görünümü': 'Apparence des sous-titres',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Couleur, police, taille, bord et opacité',
+  'Bu bir örnek altyazıdır.': 'Ceci est un exemple de sous-titre.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'L\'aperçu se met à jour instantanément à chaque changement.',
+  'Yazı biçimi': 'Style du texte',
+  'Yazı rengi': 'Couleur du texte',
+  'Yazı opaklığı': 'Opacité du texte',
+  'Yazı tipi': 'Police',
+  'Yazı boyutu': 'Taille du texte',
+  'Karakter ayrıtı': 'Bord des caractères',
+  'Ayrıt türü': 'Type de bord',
+  'Ayrıt rengi': 'Couleur du bord',
+  'Yok': 'Aucun',
+  'Dış çizgi': 'Contour',
+  'Gölge': 'Ombre portée',
+  'Kabartma': 'En relief',
+  'Oyma': 'En creux',
+  'Arka plan rengi': 'Couleur d\'arrière-plan',
+  'Arka plan opaklığı': 'Opacité de l\'arrière-plan',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'L\'arrière-plan est le fond juste derrière le texte ; la fenêtre est la surface plus large derrière tout le bloc de sous-titres.',
+  'Pencere': 'Fenêtre',
+  'Pencere rengi': 'Couleur de la fenêtre',
+  'Pencere opaklığı': 'Opacité de la fenêtre',
+  'Altyazı görünümü sıfırlansın mı?':
+      'Réinitialiser l\'apparence des sous-titres ?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Les réglages de couleur, police, taille, bord et opacité reviendront aux valeurs par défaut.',
+  'Altyazı görünümü varsayılana döndü':
+      'Apparence des sous-titres réinitialisée',
+  '{} indiriliyor…': 'Téléchargement de {}…',
+  'Seçince indirilir': 'Téléchargée à la sélection',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Impossible de télécharger la police. Affichage avec la police par défaut.',
+  'Beyaz': 'Blanc',
+  'Siyah': 'Noir',
+  'Kırmızı': 'Rouge',
+  'Yeşil': 'Vert',
+  'Mavi': 'Bleu',
+  'Sarı': 'Jaune',
+  'Camgöbeği': 'Cyan',
+  'Macenta': 'Magenta',
 };

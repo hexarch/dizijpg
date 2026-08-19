@@ -1209,4 +1209,47 @@ const Map<String, String> cevirilerRo = {
   'Tüm raflara uygulanır': 'Se aplică tuturor rafturilor',
   'En popüler {} yapım arasında sıralandı':
       'Sortat între cele mai populare {} titluri',
+  'Altyazı görünümü': 'Aspectul subtitrărilor',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Culoare, font, dimensiune, margine și opacitate',
+  'Bu bir örnek altyazıdır.': 'Aceasta este o subtitrare de exemplu.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Previzualizarea se actualizează instantaneu la fiecare modificare.',
+  'Yazı biçimi': 'Stilul textului',
+  'Yazı rengi': 'Culoarea textului',
+  'Yazı opaklığı': 'Opacitatea textului',
+  'Yazı tipi': 'Font',
+  'Yazı boyutu': 'Dimensiunea textului',
+  'Karakter ayrıtı': 'Marginea caracterelor',
+  'Ayrıt türü': 'Tipul marginii',
+  'Ayrıt rengi': 'Culoarea marginii',
+  'Yok': 'Fără',
+  'Dış çizgi': 'Contur',
+  'Gölge': 'Umbră',
+  'Kabartma': 'În relief',
+  'Oyma': 'Adâncit',
+  'Arka plan rengi': 'Culoarea fundalului',
+  'Arka plan opaklığı': 'Opacitatea fundalului',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Fundalul este umplutura chiar din spatele textului; fereastra este suprafața mai largă din spatele întregului bloc de subtitrare.',
+  'Pencere': 'Fereastră',
+  'Pencere rengi': 'Culoarea ferestrei',
+  'Pencere opaklığı': 'Opacitatea ferestrei',
+  'Altyazı görünümü sıfırlansın mı?': 'Resetezi aspectul subtitrărilor?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Setările de culoare, font, dimensiune, margine și opacitate vor reveni la valorile implicite.',
+  'Altyazı görünümü varsayılana döndü':
+      'Aspectul subtitrărilor a revenit la valorile implicite',
+  '{} indiriliyor…': 'Se descarcă {}…',
+  'Seçince indirilir': 'Se descarcă la selectare',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Fontul nu a putut fi descărcat. Se afișează cu fontul implicit.',
+  'Beyaz': 'Alb',
+  'Siyah': 'Negru',
+  'Kırmızı': 'Roșu',
+  'Yeşil': 'Verde',
+  'Mavi': 'Albastru',
+  'Sarı': 'Galben',
+  'Camgöbeği': 'Cyan',
+  'Macenta': 'Magenta',
 };

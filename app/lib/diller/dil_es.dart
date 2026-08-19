@@ -1205,4 +1205,48 @@ const Map<String, String> cevirilerEs = {
   'Tüm raflara uygulanır': 'Se aplica a todos los estantes',
   'En popüler {} yapım arasında sıralandı':
       'Ordenado entre los {} títulos más populares',
+  'Altyazı görünümü': 'Apariencia de los subtítulos',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Color, fuente, tamaño, borde y opacidad',
+  'Bu bir örnek altyazıdır.': 'Este es un subtítulo de ejemplo.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'La vista previa se actualiza al instante al cambiar los ajustes.',
+  'Yazı biçimi': 'Estilo del texto',
+  'Yazı rengi': 'Color del texto',
+  'Yazı opaklığı': 'Opacidad del texto',
+  'Yazı tipi': 'Fuente',
+  'Yazı boyutu': 'Tamaño del texto',
+  'Karakter ayrıtı': 'Borde de los caracteres',
+  'Ayrıt türü': 'Tipo de borde',
+  'Ayrıt rengi': 'Color del borde',
+  'Yok': 'Ninguno',
+  'Dış çizgi': 'Contorno',
+  'Gölge': 'Sombra',
+  'Kabartma': 'Relieve',
+  'Oyma': 'Hundido',
+  'Arka plan rengi': 'Color de fondo',
+  'Arka plan opaklığı': 'Opacidad del fondo',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'El fondo es el relleno justo detrás del texto; la ventana es la superficie más amplia detrás de todo el bloque de subtítulos.',
+  'Pencere': 'Ventana',
+  'Pencere rengi': 'Color de la ventana',
+  'Pencere opaklığı': 'Opacidad de la ventana',
+  'Altyazı görünümü sıfırlansın mı?':
+      '¿Restablecer la apariencia de los subtítulos?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Los ajustes de color, fuente, tamaño, borde y opacidad volverán a sus valores predeterminados.',
+  'Altyazı görünümü varsayılana döndü':
+      'Apariencia de los subtítulos restablecida',
+  '{} indiriliyor…': 'Descargando {}…',
+  'Seçince indirilir': 'Se descarga al seleccionarla',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'No se pudo descargar la fuente. Se muestra con la fuente predeterminada.',
+  'Beyaz': 'Blanco',
+  'Siyah': 'Negro',
+  'Kırmızı': 'Rojo',
+  'Yeşil': 'Verde',
+  'Mavi': 'Azul',
+  'Sarı': 'Amarillo',
+  'Camgöbeği': 'Cian',
+  'Macenta': 'Magenta',
 };

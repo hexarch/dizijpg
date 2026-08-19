@@ -1190,4 +1190,47 @@ const Map<String, String> cevirilerVi = {
   'Tüm raflara uygulanır': 'Áp dụng cho mọi kệ',
   'En popüler {} yapım arasında sıralandı':
       'Đã sắp xếp trong {} tựa phổ biến nhất',
+  'Altyazı görünümü': 'Giao diện phụ đề',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Màu, phông chữ, cỡ chữ, cạnh và độ mờ',
+  'Bu bir örnek altyazıdır.': 'Đây là một phụ đề mẫu.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Bản xem trước cập nhật ngay khi bạn đổi cài đặt.',
+  'Yazı biçimi': 'Kiểu chữ',
+  'Yazı rengi': 'Màu chữ',
+  'Yazı opaklığı': 'Độ mờ của chữ',
+  'Yazı tipi': 'Phông chữ',
+  'Yazı boyutu': 'Cỡ chữ',
+  'Karakter ayrıtı': 'Cạnh ký tự',
+  'Ayrıt türü': 'Loại cạnh',
+  'Ayrıt rengi': 'Màu cạnh',
+  'Yok': 'Không có',
+  'Dış çizgi': 'Viền',
+  'Gölge': 'Đổ bóng',
+  'Kabartma': 'Nổi',
+  'Oyma': 'Chìm',
+  'Arka plan rengi': 'Màu nền',
+  'Arka plan opaklığı': 'Độ mờ của nền',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Nền là phần tô ngay sau chữ; cửa sổ là bề mặt rộng hơn phía sau toàn bộ khối phụ đề.',
+  'Pencere': 'Cửa sổ',
+  'Pencere rengi': 'Màu cửa sổ',
+  'Pencere opaklığı': 'Độ mờ của cửa sổ',
+  'Altyazı görünümü sıfırlansın mı?': 'Đặt lại giao diện phụ đề?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Cài đặt màu, phông chữ, cỡ chữ, cạnh và độ mờ sẽ trở về mặc định.',
+  'Altyazı görünümü varsayılana döndü':
+      'Đã đặt lại giao diện phụ đề về mặc định',
+  '{} indiriliyor…': 'Đang tải {}…',
+  'Seçince indirilir': 'Tải xuống khi được chọn',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Không tải được phông chữ. Đang hiển thị bằng phông chữ mặc định.',
+  'Beyaz': 'Trắng',
+  'Siyah': 'Đen',
+  'Kırmızı': 'Đỏ',
+  'Yeşil': 'Xanh lá',
+  'Mavi': 'Xanh dương',
+  'Sarı': 'Vàng',
+  'Camgöbeği': 'Lục lam',
+  'Macenta': 'Đỏ tươi',
 };

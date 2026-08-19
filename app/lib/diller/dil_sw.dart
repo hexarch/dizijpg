@@ -1193,4 +1193,47 @@ const Map<String, String> cevirilerSw = {
   'Tüm raflara uygulanır': 'Inatumika kwa rafu zote',
   'En popüler {} yapım arasında sıralandı':
       'Imepangwa miongoni mwa vipindi {} maarufu zaidi',
+  'Altyazı görünümü': 'Muonekano wa manukuu',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Rangi, fonti, ukubwa, ukingo na kiwango cha uwazi',
+  'Bu bir örnek altyazıdır.': 'Haya ni manukuu ya mfano.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Onyesho la kukagua husasishwa papo hapo mipangilio inapobadilika.',
+  'Yazı biçimi': 'Mtindo wa maandishi',
+  'Yazı rengi': 'Rangi ya maandishi',
+  'Yazı opaklığı': 'Kiwango cha uwazi cha maandishi',
+  'Yazı tipi': 'Fonti',
+  'Yazı boyutu': 'Ukubwa wa maandishi',
+  'Karakter ayrıtı': 'Ukingo wa herufi',
+  'Ayrıt türü': 'Aina ya ukingo',
+  'Ayrıt rengi': 'Rangi ya ukingo',
+  'Yok': 'Hakuna',
+  'Dış çizgi': 'Mstari wa nje',
+  'Gölge': 'Kivuli',
+  'Kabartma': 'Iliyoinuka',
+  'Oyma': 'Iliyobonyea',
+  'Arka plan rengi': 'Rangi ya mandharinyuma',
+  'Arka plan opaklığı': 'Kiwango cha uwazi cha mandharinyuma',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Mandharinyuma ni sehemu iliyojazwa nyuma ya maandishi; dirisha ni uso mpana zaidi nyuma ya eneo lote la manukuu.',
+  'Pencere': 'Dirisha',
+  'Pencere rengi': 'Rangi ya dirisha',
+  'Pencere opaklığı': 'Kiwango cha uwazi cha dirisha',
+  'Altyazı görünümü sıfırlansın mı?': 'Uweke upya muonekano wa manukuu?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Mipangilio ya rangi, fonti, ukubwa, ukingo na uwazi itarudi kwenye chaguomsingi.',
+  'Altyazı görünümü varsayılana döndü':
+      'Muonekano wa manukuu umerudi kwenye chaguomsingi',
+  '{} indiriliyor…': 'Inapakua {}…',
+  'Seçince indirilir': 'Hupakuliwa ikichaguliwa',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Fonti haikuweza kupakuliwa. Inaonyeshwa kwa fonti chaguomsingi.',
+  'Beyaz': 'Nyeupe',
+  'Siyah': 'Nyeusi',
+  'Kırmızı': 'Nyekundu',
+  'Yeşil': 'Kijani',
+  'Mavi': 'Bluu',
+  'Sarı': 'Njano',
+  'Camgöbeği': 'Samawati',
+  'Macenta': 'Magenta',
 };

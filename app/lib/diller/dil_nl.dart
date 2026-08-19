@@ -1196,4 +1196,47 @@ const Map<String, String> cevirilerNl = {
   'Tüm raflara uygulanır': 'Geldt voor alle planken',
   'En popüler {} yapım arasında sıralandı':
       'Gesorteerd onder de {} populairste titels',
+  'Altyazı görünümü': 'Weergave van ondertiteling',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Kleur, lettertype, grootte, rand en ondoorzichtigheid',
+  'Bu bir örnek altyazıdır.': 'Dit is een voorbeeldondertitel.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Het voorbeeld wordt direct bijgewerkt als je iets wijzigt.',
+  'Yazı biçimi': 'Tekststijl',
+  'Yazı rengi': 'Tekstkleur',
+  'Yazı opaklığı': 'Ondoorzichtigheid van tekst',
+  'Yazı tipi': 'Lettertype',
+  'Yazı boyutu': 'Tekstgrootte',
+  'Karakter ayrıtı': 'Tekenrand',
+  'Ayrıt türü': 'Randtype',
+  'Ayrıt rengi': 'Randkleur',
+  'Yok': 'Geen',
+  'Dış çizgi': 'Contour',
+  'Gölge': 'Slagschaduw',
+  'Kabartma': 'Verhoogd',
+  'Oyma': 'Verlaagd',
+  'Arka plan rengi': 'Achtergrondkleur',
+  'Arka plan opaklığı': 'Ondoorzichtigheid van achtergrond',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'De achtergrond is de vulling direct achter de tekst; het venster is het bredere vlak achter het hele ondertitelblok.',
+  'Pencere': 'Venster',
+  'Pencere rengi': 'Vensterkleur',
+  'Pencere opaklığı': 'Ondoorzichtigheid van venster',
+  'Altyazı görünümü sıfırlansın mı?': 'Weergave van ondertiteling resetten?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'De instellingen voor kleur, lettertype, grootte, rand en ondoorzichtigheid gaan terug naar de standaardwaarden.',
+  'Altyazı görünümü varsayılana döndü':
+      'Weergave van ondertiteling teruggezet naar standaard',
+  '{} indiriliyor…': '{} wordt gedownload…',
+  'Seçince indirilir': 'Wordt gedownload bij selectie',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Lettertype kon niet worden gedownload. Wordt weergegeven met het standaardlettertype.',
+  'Beyaz': 'Wit',
+  'Siyah': 'Zwart',
+  'Kırmızı': 'Rood',
+  'Yeşil': 'Groen',
+  'Mavi': 'Blauw',
+  'Sarı': 'Geel',
+  'Camgöbeği': 'Cyaan',
+  'Macenta': 'Magenta',
 };

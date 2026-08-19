@@ -1194,4 +1194,47 @@ const Map<String, String> cevirilerSr = {
   'Tüm raflara uygulanır': 'Примењује се на све полице',
   'En popüler {} yapım arasında sıralandı':
       'Сортирано међу {} најпопуларнијих наслова',
+  'Altyazı görünümü': 'Изглед титлова',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Боја, фонт, величина, ивица и непрозирност',
+  'Bu bir örnek altyazıdır.': 'Ово је пример титла.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Преглед се ажурира одмах при свакој промени.',
+  'Yazı biçimi': 'Стил текста',
+  'Yazı rengi': 'Боја текста',
+  'Yazı opaklığı': 'Непрозирност текста',
+  'Yazı tipi': 'Фонт',
+  'Yazı boyutu': 'Величина текста',
+  'Karakter ayrıtı': 'Ивица знакова',
+  'Ayrıt türü': 'Тип ивице',
+  'Ayrıt rengi': 'Боја ивице',
+  'Yok': 'Нема',
+  'Dış çizgi': 'Контура',
+  'Gölge': 'Сенка',
+  'Kabartma': 'Издигнуто',
+  'Oyma': 'Удубљено',
+  'Arka plan rengi': 'Боја позадине',
+  'Arka plan opaklığı': 'Непрозирност позадине',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Позадина је испуна одмах иза текста, а прозор је шира површина иза целог блока титлова.',
+  'Pencere': 'Прозор',
+  'Pencere rengi': 'Боја прозора',
+  'Pencere opaklığı': 'Непрозирност прозора',
+  'Altyazı görünümü sıfırlansın mı?': 'Ресетовати изглед титлова?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Подешавања боје, фонта, величине, ивице и непрозирности вратиће се на подразумевана.',
+  'Altyazı görünümü varsayılana döndü':
+      'Изглед титлова враћен на подразумевани',
+  '{} indiriliyor…': 'Преузимање {}…',
+  'Seçince indirilir': 'Преузима се при избору',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Није могуће преузети фонт. Приказује се подразумеваним фонтом.',
+  'Beyaz': 'Бела',
+  'Siyah': 'Црна',
+  'Kırmızı': 'Црвена',
+  'Yeşil': 'Зелена',
+  'Mavi': 'Плава',
+  'Sarı': 'Жута',
+  'Camgöbeği': 'Цијан',
+  'Macenta': 'Магента',
 };

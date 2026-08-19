@@ -1197,4 +1197,48 @@ const Map<String, String> cevirilerMy = {
   'Tüm raflara uygulanır': 'စင်အားလုံးတွင် သက်ရောက်သည်',
   'En popüler {} yapım arasında sıralandı':
       'ရေပန်းအစားဆုံး ခေါင်းစဉ် {} ခုအတွင်း စီစဉ်ထားသည်',
+  'Altyazı görünümü': 'စာတန်းထိုး အသွင်အပြင်',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'အရောင်၊ ဖောင့်၊ အရွယ်အစား၊ အနားသတ်နှင့် အလင်းပိတ်မှု',
+  'Bu bir örnek altyazıdır.': 'ဤသည်မှာ နမူနာ စာတန်းထိုးဖြစ်သည်။',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'ဆက်တင် ပြောင်းလိုက်သည်နှင့် အစမ်းကြည့်ရှုမှု ချက်ချင်း အသစ်ဖြစ်သည်။',
+  'Yazı biçimi': 'စာသား ပုံစံ',
+  'Yazı rengi': 'စာသား အရောင်',
+  'Yazı opaklığı': 'စာသား အလင်းပိတ်မှု',
+  'Yazı tipi': 'ဖောင့်',
+  'Yazı boyutu': 'စာသား အရွယ်အစား',
+  'Karakter ayrıtı': 'စာလုံး အနားသတ်',
+  'Ayrıt türü': 'အနားသတ် အမျိုးအစား',
+  'Ayrıt rengi': 'အနားသတ် အရောင်',
+  'Yok': 'မရှိ',
+  'Dış çizgi': 'အနားမျဉ်း',
+  'Gölge': 'အရိပ်',
+  'Kabartma': 'ဖောင်းကြွ',
+  'Oyma': 'ချိုင့်',
+  'Arka plan rengi': 'နောက်ခံ အရောင်',
+  'Arka plan opaklığı': 'နောက်ခံ အလင်းပိတ်မှု',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'နောက်ခံသည် စာသား၏ နောက်ကပ်လျက် ဖြည့်ထားသည့် အပိုင်းဖြစ်ပြီး၊ ဝင်းဒိုးမှာ စာတန်းထိုးတစ်ခုလုံး၏ နောက်ရှိ ပိုကျယ်သော မျက်နှာပြင်ဖြစ်သည်။',
+  'Pencere': 'ဝင်းဒိုး',
+  'Pencere rengi': 'ဝင်းဒိုး အရောင်',
+  'Pencere opaklığı': 'ဝင်းဒိုး အလင်းပိတ်မှု',
+  'Altyazı görünümü sıfırlansın mı?':
+      'စာတန်းထိုး အသွင်အပြင်ကို ပြန်လည်သတ်မှတ်မလား။',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'အရောင်၊ ဖောင့်၊ အရွယ်အစား၊ အနားသတ်နှင့် အလင်းပိတ်မှု ဆက်တင်များ မူလအတိုင်း ပြန်ဖြစ်သွားပါမည်။',
+  'Altyazı görünümü varsayılana döndü':
+      'စာတန်းထိုး အသွင်အပြင် မူလအတိုင်း ပြန်ဖြစ်သွားပြီ',
+  '{} indiriliyor…': '{} ကို ဒေါင်းလုဒ်လုပ်နေသည်…',
+  'Seçince indirilir': 'ရွေးလျှင် ဒေါင်းလုဒ်လုပ်ပါမည်',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'ဖောင့် ဒေါင်းလုဒ်မလုပ်နိုင်ပါ။ မူလဖောင့်ဖြင့် ပြသနေသည်။',
+  'Beyaz': 'အဖြူ',
+  'Siyah': 'အမည်း',
+  'Kırmızı': 'အနီ',
+  'Yeşil': 'အစိမ်း',
+  'Mavi': 'အပြာ',
+  'Sarı': 'အဝါ',
+  'Camgöbeği': 'စိမ်းပြာ',
+  'Macenta': 'မဂျင်တာ',
 };

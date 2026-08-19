@@ -1210,4 +1210,47 @@ const Map<String, String> cevirilerEl = {
   'Tüm raflara uygulanır': 'Ισχύει για όλα τα ράφια',
   'En popüler {} yapım arasında sıralandı':
       'Ταξινομήθηκε ανάμεσα στους {} πιο δημοφιλείς τίτλους',
+  'Altyazı görünümü': 'Εμφάνιση υποτίτλων',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Χρώμα, γραμματοσειρά, μέγεθος, περίγραμμα και αδιαφάνεια',
+  'Bu bir örnek altyazıdır.': 'Αυτό είναι ένα δείγμα υπότιτλου.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Η προεπισκόπηση ενημερώνεται αμέσως με κάθε αλλαγή.',
+  'Yazı biçimi': 'Στυλ κειμένου',
+  'Yazı rengi': 'Χρώμα κειμένου',
+  'Yazı opaklığı': 'Αδιαφάνεια κειμένου',
+  'Yazı tipi': 'Γραμματοσειρά',
+  'Yazı boyutu': 'Μέγεθος κειμένου',
+  'Karakter ayrıtı': 'Περίγραμμα χαρακτήρων',
+  'Ayrıt türü': 'Τύπος περιγράμματος',
+  'Ayrıt rengi': 'Χρώμα περιγράμματος',
+  'Yok': 'Κανένα',
+  'Dış çizgi': 'Περίγραμμα',
+  'Gölge': 'Σκιά',
+  'Kabartma': 'Ανάγλυφο',
+  'Oyma': 'Βυθισμένο',
+  'Arka plan rengi': 'Χρώμα φόντου',
+  'Arka plan opaklığı': 'Αδιαφάνεια φόντου',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Το φόντο είναι το γέμισμα ακριβώς πίσω από το κείμενο· το παράθυρο είναι η πιο πλατιά επιφάνεια πίσω από ολόκληρο το μπλοκ των υποτίτλων.',
+  'Pencere': 'Παράθυρο',
+  'Pencere rengi': 'Χρώμα παραθύρου',
+  'Pencere opaklığı': 'Αδιαφάνεια παραθύρου',
+  'Altyazı görünümü sıfırlansın mı?': 'Επαναφορά εμφάνισης υποτίτλων;',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Οι ρυθμίσεις χρώματος, γραμματοσειράς, μεγέθους, περιγράμματος και αδιαφάνειας θα επανέλθουν στις προεπιλογές.',
+  'Altyazı görünümü varsayılana döndü':
+      'Η εμφάνιση υποτίτλων επανήλθε στις προεπιλογές',
+  '{} indiriliyor…': 'Γίνεται λήψη του {}…',
+  'Seçince indirilir': 'Γίνεται λήψη κατά την επιλογή',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Δεν ήταν δυνατή η λήψη της γραμματοσειράς. Εμφανίζεται με την προεπιλεγμένη γραμματοσειρά.',
+  'Beyaz': 'Λευκό',
+  'Siyah': 'Μαύρο',
+  'Kırmızı': 'Κόκκινο',
+  'Yeşil': 'Πράσινο',
+  'Mavi': 'Μπλε',
+  'Sarı': 'Κίτρινο',
+  'Camgöbeği': 'Κυανό',
+  'Macenta': 'Ματζέντα',
 };

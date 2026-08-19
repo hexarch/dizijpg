@@ -1195,4 +1195,47 @@ const Map<String, String> cevirilerMs = {
   'Tüm raflara uygulanır': 'Digunakan pada semua rak',
   'En popüler {} yapım arasında sıralandı':
       'Diisih dalam kalangan {} judul paling popular',
+  'Altyazı görünümü': 'Rupa sari kata',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Warna, fon, saiz, tepi dan kelegapan',
+  'Bu bir örnek altyazıdır.': 'Ini ialah sari kata contoh.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Pratonton dikemas kini serta-merta apabila tetapan berubah.',
+  'Yazı biçimi': 'Gaya teks',
+  'Yazı rengi': 'Warna teks',
+  'Yazı opaklığı': 'Kelegapan teks',
+  'Yazı tipi': 'Fon',
+  'Yazı boyutu': 'Saiz teks',
+  'Karakter ayrıtı': 'Tepi aksara',
+  'Ayrıt türü': 'Jenis tepi',
+  'Ayrıt rengi': 'Warna tepi',
+  'Yok': 'Tiada',
+  'Dış çizgi': 'Garis luar',
+  'Gölge': 'Bayang',
+  'Kabartma': 'Timbul',
+  'Oyma': 'Cekung',
+  'Arka plan rengi': 'Warna latar belakang',
+  'Arka plan opaklığı': 'Kelegapan latar belakang',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Latar belakang ialah isian tepat di belakang teks; tetingkap pula ialah permukaan lebih luas di belakang seluruh blok sari kata.',
+  'Pencere': 'Tetingkap',
+  'Pencere rengi': 'Warna tetingkap',
+  'Pencere opaklığı': 'Kelegapan tetingkap',
+  'Altyazı görünümü sıfırlansın mı?': 'Tetapkan semula rupa sari kata?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Tetapan warna, fon, saiz, tepi dan kelegapan akan kembali kepada lalai.',
+  'Altyazı görünümü varsayılana döndü':
+      'Rupa sari kata dikembalikan kepada lalai',
+  '{} indiriliyor…': 'Memuat turun {}…',
+  'Seçince indirilir': 'Dimuat turun apabila dipilih',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Fon tidak dapat dimuat turun. Dipaparkan dengan fon lalai.',
+  'Beyaz': 'Putih',
+  'Siyah': 'Hitam',
+  'Kırmızı': 'Merah',
+  'Yeşil': 'Hijau',
+  'Mavi': 'Biru',
+  'Sarı': 'Kuning',
+  'Camgöbeği': 'Sian',
+  'Macenta': 'Magenta',
 };

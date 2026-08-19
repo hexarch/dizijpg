@@ -1012,6 +1012,29 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                           ),
                         ),
                       ),
+                      // Görünüm ayarları AYRI ekranda: on denetim burada
+                      // olsaydı ayarlar sayfası boğulurdu.
+                      Divider(color: DiziRenkler.metin12, height: 1),
+                      ListTile(
+                        key: const ValueKey('altyazi-bicem-girisi'),
+                        leading: Icon(
+                          Icons.format_color_text,
+                          color: DiziRenkler.sariMetin,
+                        ),
+                        title: Text('Altyazı görünümü'.c),
+                        subtitle: Text(
+                          'Renk, yazı tipi, boyut, ayrıt ve opaklık'.c,
+                          style: TextStyle(
+                            color: DiziRenkler.metin54,
+                            fontSize: 12,
+                          ),
+                        ),
+                        trailing: Icon(
+                          Icons.chevron_right,
+                          color: DiziRenkler.metin38,
+                        ),
+                        onTap: () => context.push('/altyazi-bicem'),
+                      ),
                     ],
                   ),
                 ),

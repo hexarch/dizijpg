@@ -1182,4 +1182,47 @@ const Map<String, String> cevirilerAz = {
   'Tüm raflara uygulanır': 'Bütün rəflərə tətbiq olunur',
   'En popüler {} yapım arasında sıralandı':
       'Ən populyar {} əsər arasında sıralandı',
+  'Altyazı görünümü': 'Altyazı görünüşü',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Rəng, şrift, ölçü, kənar və qeyri-şəffaflıq',
+  'Bu bir örnek altyazıdır.': 'Bu, nümunə altyazıdır.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Ayar dəyişdikcə önizləmə dərhal yenilənir.',
+  'Yazı biçimi': 'Mətn üslubu',
+  'Yazı rengi': 'Mətn rəngi',
+  'Yazı opaklığı': 'Mətnin qeyri-şəffaflığı',
+  'Yazı tipi': 'Şrift',
+  'Yazı boyutu': 'Mətn ölçüsü',
+  'Karakter ayrıtı': 'Simvol kənarı',
+  'Ayrıt türü': 'Kənar növü',
+  'Ayrıt rengi': 'Kənar rəngi',
+  'Yok': 'Yoxdur',
+  'Dış çizgi': 'Kontur',
+  'Gölge': 'Kölgə',
+  'Kabartma': 'Qabarıq',
+  'Oyma': 'Batıq',
+  'Arka plan rengi': 'Arxa fon rəngi',
+  'Arka plan opaklığı': 'Arxa fonun qeyri-şəffaflığı',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Arxa fon mətnin dərhal arxasındakı doldurmadır; pəncərə isə bütün altyazı blokunun arxasındakı daha geniş səthdir.',
+  'Pencere': 'Pəncərə',
+  'Pencere rengi': 'Pəncərə rəngi',
+  'Pencere opaklığı': 'Pəncərənin qeyri-şəffaflığı',
+  'Altyazı görünümü sıfırlansın mı?': 'Altyazı görünüşü sıfırlansın?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Rəng, şrift, ölçü, kənar və qeyri-şəffaflıq ayarları ilkin dəyərlərə qayıdacaq.',
+  'Altyazı görünümü varsayılana döndü':
+      'Altyazı görünüşü ilkin vəziyyətə qaytarıldı',
+  '{} indiriliyor…': '{} endirilir…',
+  'Seçince indirilir': 'Seçildikdə endirilir',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Şrifti endirmək mümkün olmadı. İlkin şriftlə göstərilir.',
+  'Beyaz': 'Ağ',
+  'Siyah': 'Qara',
+  'Kırmızı': 'Qırmızı',
+  'Yeşil': 'Yaşıl',
+  'Mavi': 'Mavi',
+  'Sarı': 'Sarı',
+  'Camgöbeği': 'Sian',
+  'Macenta': 'Magenta',
 };

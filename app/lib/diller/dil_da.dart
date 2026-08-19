@@ -1190,4 +1190,48 @@ const Map<String, String> cevirilerDa = {
   'Tüm raflara uygulanır': 'Gælder for alle hylder',
   'En popüler {} yapım arasında sıralandı':
       'Sorteret blandt de {} mest populære titler',
+  'Altyazı görünümü': 'Underteksternes udseende',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Farve, skrifttype, størrelse, kant og opacitet',
+  'Bu bir örnek altyazıdır.': 'Dette er en eksempelundertekst.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Forhåndsvisningen opdateres med det samme, når du ændrer en indstilling.',
+  'Yazı biçimi': 'Tekststil',
+  'Yazı rengi': 'Tekstfarve',
+  'Yazı opaklığı': 'Tekstens opacitet',
+  'Yazı tipi': 'Skrifttype',
+  'Yazı boyutu': 'Tekststørrelse',
+  'Karakter ayrıtı': 'Tegnkant',
+  'Ayrıt türü': 'Kanttype',
+  'Ayrıt rengi': 'Kantfarve',
+  'Yok': 'Ingen',
+  'Dış çizgi': 'Kontur',
+  'Gölge': 'Skygge',
+  'Kabartma': 'Hævet',
+  'Oyma': 'Sænket',
+  'Arka plan rengi': 'Baggrundsfarve',
+  'Arka plan opaklığı': 'Baggrundens opacitet',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Baggrunden er fyldet lige bag teksten; vinduet er den bredere flade bag hele undertekstblokken.',
+  'Pencere': 'Vindue',
+  'Pencere rengi': 'Vinduesfarve',
+  'Pencere opaklığı': 'Vinduets opacitet',
+  'Altyazı görünümü sıfırlansın mı?':
+      'Vil du nulstille underteksternes udseende?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Indstillingerne for farve, skrifttype, størrelse, kant og opacitet vender tilbage til standard.',
+  'Altyazı görünümü varsayılana döndü':
+      'Underteksternes udseende er nulstillet',
+  '{} indiriliyor…': 'Downloader {}…',
+  'Seçince indirilir': 'Downloades, når du vælger den',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Skrifttypen kunne ikke downloades. Vises med standardskrifttypen.',
+  'Beyaz': 'Hvid',
+  'Siyah': 'Sort',
+  'Kırmızı': 'Rød',
+  'Yeşil': 'Grøn',
+  'Mavi': 'Blå',
+  'Sarı': 'Gul',
+  'Camgöbeği': 'Cyan',
+  'Macenta': 'Magenta',
 };

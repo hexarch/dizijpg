@@ -1189,4 +1189,47 @@ const Map<String, String> cevirilerMl = {
   'Tüm raflara uygulanır': 'എല്ലാ ഷെൽഫുകൾക്കും ബാധകം',
   'En popüler {} yapım arasında sıralandı':
       'ഏറ്റവും ജനപ്രിയമായ {} ശീർഷകങ്ങൾക്കിടയിൽ അടുക്കി',
+  'Altyazı görünümü': 'സബ്ടൈറ്റിലിന്റെ രൂപം',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'നിറം, ഫോണ്ട്, വലുപ്പം, അരിക്, അതാര്യത',
+  'Bu bir örnek altyazıdır.': 'ഇത് ഒരു സാമ്പിൾ സബ്ടൈറ്റിൽ ആണ്.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'ക്രമീകരണം മാറുമ്പോൾ പ്രിവ്യൂ ഉടനെ പുതുക്കും.',
+  'Yazı biçimi': 'ടെക്സ്റ്റ് ശൈലി',
+  'Yazı rengi': 'ടെക്സ്റ്റിന്റെ നിറം',
+  'Yazı opaklığı': 'ടെക്സ്റ്റിന്റെ അതാര്യത',
+  'Yazı tipi': 'ഫോണ്ട്',
+  'Yazı boyutu': 'ടെക്സ്റ്റിന്റെ വലുപ്പം',
+  'Karakter ayrıtı': 'അക്ഷരത്തിന്റെ അരിക്',
+  'Ayrıt türü': 'അരികിന്റെ തരം',
+  'Ayrıt rengi': 'അരികിന്റെ നിറം',
+  'Yok': 'ഒന്നുമില്ല',
+  'Dış çizgi': 'ഔട്ട്‌ലൈൻ',
+  'Gölge': 'നിഴൽ',
+  'Kabartma': 'ഉയർന്നത്',
+  'Oyma': 'താഴ്ന്നത്',
+  'Arka plan rengi': 'പശ്ചാത്തല നിറം',
+  'Arka plan opaklığı': 'പശ്ചാത്തലത്തിന്റെ അതാര്യത',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'പശ്ചാത്തലം എന്നത് ടെക്സ്റ്റിന് തൊട്ടുപിന്നിലെ നിറമുള്ള ഭാഗമാണ്; വിൻഡോ എന്നത് സബ്ടൈറ്റിൽ ബ്ലോക്കിന് മുഴുവനായി പിന്നിലുള്ള വിശാലമായ പ്രതലമാണ്.',
+  'Pencere': 'വിൻഡോ',
+  'Pencere rengi': 'വിൻഡോയുടെ നിറം',
+  'Pencere opaklığı': 'വിൻഡോയുടെ അതാര്യത',
+  'Altyazı görünümü sıfırlansın mı?': 'സബ്ടൈറ്റിലിന്റെ രൂപം പുനഃസജ്ജമാക്കണോ?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'നിറം, ഫോണ്ട്, വലുപ്പം, അരിക്, അതാര്യത എന്നിവയുടെ ക്രമീകരണങ്ങൾ ഡിഫോൾട്ടിലേക്ക് മടങ്ങും.',
+  'Altyazı görünümü varsayılana döndü':
+      'സബ്ടൈറ്റിലിന്റെ രൂപം ഡിഫോൾട്ടിലേക്ക് മടങ്ങി',
+  '{} indiriliyor…': '{} ഡൗൺലോഡ് ചെയ്യുന്നു…',
+  'Seçince indirilir': 'തിരഞ്ഞെടുക്കുമ്പോൾ ഡൗൺലോഡ് ചെയ്യും',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'ഫോണ്ട് ഡൗൺലോഡ് ചെയ്യാനായില്ല. ഡിഫോൾട്ട് ഫോണ്ടിൽ കാണിക്കുന്നു.',
+  'Beyaz': 'വെള്ള',
+  'Siyah': 'കറുപ്പ്',
+  'Kırmızı': 'ചുവപ്പ്',
+  'Yeşil': 'പച്ച',
+  'Mavi': 'നീല',
+  'Sarı': 'മഞ്ഞ',
+  'Camgöbeği': 'സയാൻ',
+  'Macenta': 'മജന്ത',
 };

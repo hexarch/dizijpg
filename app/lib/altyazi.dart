@@ -1,8 +1,12 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import 'altyazi_font.dart';
 import 'api.dart';
 import 'ceviri.dart';
 
@@ -173,22 +177,471 @@ class AltyaziDeposu {
   }
 }
 
-/// Altyazı gösterilsin mi (Ayarlar > Video altyazıları).
+// ===========================================================================
+// ALTYAZI BİÇEMİ — kullanıcının seçtiği görünüm
+// ===========================================================================
+
+/// Harfin kenarına uygulanan işlem (Android altyazı ayarındaki `edgeType`).
+///
+/// Neden ayrı bir kavram: zemin şeffaf yapıldığında metnin videodan
+/// ayrılmasını sağlayan TEK şey budur. Beşi de GÖRSEL OLARAK farklı çizim
+/// üretir (`AltyaziBicem.golgeler` + dış çizgi için ikinci metin katmanı).
+enum AltyaziAyrit {
+  /// Hiçbir kenar işlemi yok — düz metin.
+  yok,
+
+  /// Harfin çevresine kontur. Flutter'da tek [TextStyle] hem dolgu hem kontur
+  /// veremediği için ALTA ikinci bir [Text] çizilir (bkz. [AltyaziGovde]).
+  disCizgi,
+
+  /// Yumuşak gölge (bugünkü varsayılan görünüm).
+  golge,
+
+  /// Kabartma: koyu gölge sağ-altta, soluk ışık sol-üstte.
+  kabartma,
+
+  /// Oyma: yönler kabartmanın TERSİ — harf yüzeye gömülmüş görünür.
+  oyma,
+}
+
+// YAZI TİPİ LİSTESİ BURADA DEĞİL: `AltyaziFont.aileler` (altyazi_font.dart).
+// Fontlar `pubspec.yaml`da `fonts:` altında DEĞİL `assets:` altında duruyor —
+// ölçüldü: `fonts:` altındaki her aile, hiçbir kod kullanmasa bile açılışta
+// topluca iniyordu (30 aile = her ziyarete +1,51 MB brotli, ilk kareyi bloke
+// eden yolda). Yani bir aile, kullanıcı SEÇENE KADAR bellekte YOKTUR;
+// `TextStyle(fontFamily: ...)` tek başına yetmez, `AltyaziFont.yukle` şarttır.
+
+/// Renk seçicilerde sunulan hazır renkler (Android'in altyazı paletiyle aynı
+/// sekiz renk). Serbest renk çarkı YOK: sekiz renk hem yeterli hem de her biri
+/// ≥44 px dokunma hedefiyle tek ekrana sığıyor.
+const List<Color> altyaziRenkleri = [
+  Colors.white,
+  Colors.black,
+  Color(0xFFE53935), // kırmızı
+  Color(0xFF43A047), // yeşil
+  Color(0xFF1E88E5), // mavi
+  Color(0xFFFDD835), // sarı
+  Color(0xFF00ACC1), // camgöbeği
+  Color(0xFFD81B60), // macenta
+];
+
+/// Kullanıcının seçtiği altyazı görünümü.
+///
+/// VARSAYILANLAR BUGÜNKÜ GÖRÜNÜMÜ BİREBİR KORUR: beyaz metin, %62 siyah zemin,
+/// gölge. Sebebi kodda zaten yazıyordu — yalnız gölge yetmiyordu, açık sahnede
+/// beyaz metin kayboluyordu. Kullanıcı zemini şeffaf yapabilir (onun kararı),
+/// ama hiçbir ayara dokunmayan hiç kimse okunurluk kaybetmez.
+@immutable
+class AltyaziBicem {
+  /// Yazının rengi.
+  final Color yaziRengi;
+
+  /// Yazının opaklığı (0 = görünmez, 1 = tam opak). Kenar/gölge de bu değere
+  /// bağlıdır; yoksa opaklık 0'da harfin gölgesi ekranda kalırdı.
+  final double yaziOpaklik;
+
+  /// [AltyaziFont.aileler] içinden bir aile adı. Aile TEMBEL yüklenir —
+  /// yalnız bu alanı ayarlamak yetmez, `AltyaziAyar.fontHazirla` da çağrılmalı.
+  final String font;
+
+  /// Yazı boyutu ÇARPANI. Mutlak boyut değil: akışta kart içinde küçük,
+  /// Reels'te büyük olan `AltyaziKatmani.yaziBoyutu` ile ÇARPILIR, böylece
+  /// iki bağlamdaki oran korunur.
+  final double boyutOlcek;
+
+  final AltyaziAyrit ayrit;
+
+  /// Kenar/gölge rengi.
+  final Color ayritRengi;
+
+  /// Metin satırının hemen ARKASINDAKİ dolgu.
+  final Color zeminRengi;
+  final double zeminOpaklik;
+
+  /// Tüm altyazı bloğunun arkasındaki DAHA GENİŞ yüzey — zeminden AYRI bir
+  /// katman (Android'de de ayrıdır). Varsayılanı görünmez.
+  final Color pencereRengi;
+  final double pencereOpaklik;
+
+  const AltyaziBicem({
+    this.yaziRengi = Colors.white,
+    this.yaziOpaklik = 1,
+    this.font = 'Poppins',
+    this.boyutOlcek = 1,
+    this.ayrit = AltyaziAyrit.golge,
+    this.ayritRengi = Colors.black,
+    this.zeminRengi = Colors.black,
+    this.zeminOpaklik = 0.62,
+    this.pencereRengi = Colors.black,
+    this.pencereOpaklik = 0,
+  });
+
+  /// Sıfırla'nın döndüğü değer ve hiç ayar yapmamış kullanıcının gördüğü.
+  static const varsayilan = AltyaziBicem();
+
+  /// Yazı boyutu çarpanının sınırları (kaydırıcı ve doğrulama aynı sayıyı
+  /// kullansın diye burada).
+  static const enKucukOlcek = 0.8;
+  static const enBuyukOlcek = 2.0;
+
+  AltyaziBicem kopya({
+    Color? yaziRengi,
+    double? yaziOpaklik,
+    String? font,
+    double? boyutOlcek,
+    AltyaziAyrit? ayrit,
+    Color? ayritRengi,
+    Color? zeminRengi,
+    double? zeminOpaklik,
+    Color? pencereRengi,
+    double? pencereOpaklik,
+  }) => AltyaziBicem(
+    yaziRengi: yaziRengi ?? this.yaziRengi,
+    yaziOpaklik: yaziOpaklik ?? this.yaziOpaklik,
+    font: font ?? this.font,
+    boyutOlcek: boyutOlcek ?? this.boyutOlcek,
+    ayrit: ayrit ?? this.ayrit,
+    ayritRengi: ayritRengi ?? this.ayritRengi,
+    zeminRengi: zeminRengi ?? this.zeminRengi,
+    zeminOpaklik: zeminOpaklik ?? this.zeminOpaklik,
+    pencereRengi: pencereRengi ?? this.pencereRengi,
+    pencereOpaklik: pencereOpaklik ?? this.pencereOpaklik,
+  );
+
+  /// Metnin gölge listesi. [boyut] ÇİZİLEN punto: kaydırma mesafesi punto ile
+  /// büyüsün ki 13 px'te doğru duran kabartma 26 px'te silik kalmasın.
+  ///
+  /// `yok` ve `disCizgi` gölgesizdir — dış çizgi işini ikinci metin katmanı
+  /// yapar, üstüne gölge de eklenirse iki etki üst üste binerdi.
+  List<Shadow> golgeler(double boyut) {
+    final c = ayritRengi.withValues(alpha: yaziOpaklik);
+    final d = (boyut / 9).clamp(1.0, 3.0);
+    switch (ayrit) {
+      case AltyaziAyrit.yok:
+      case AltyaziAyrit.disCizgi:
+        return const [];
+      case AltyaziAyrit.golge:
+        // blur 3 / kaydırmasız: bugünkü `Shadow(blurRadius: 3, ...)` ile AYNI.
+        return [Shadow(blurRadius: 3, color: c)];
+      case AltyaziAyrit.kabartma:
+        return [
+          Shadow(offset: Offset(d, d), color: c),
+          Shadow(
+            offset: Offset(-d, -d),
+            color: c.withValues(alpha: c.a * .35),
+          ),
+        ];
+      case AltyaziAyrit.oyma:
+        return [
+          Shadow(offset: Offset(-d, -d), color: c),
+          Shadow(
+            offset: Offset(d, d),
+            color: c.withValues(alpha: c.a * .35),
+          ),
+        ];
+    }
+  }
+
+  /// Dış çizgi katmanının kontur kalınlığı (punto ile orantılı).
+  double konturKalinligi(double boyut) => (boyut / 9).clamp(1.0, 3.5);
+
+  Map<String, dynamic> _harita() => {
+    'yr': yaziRengi.toARGB32(),
+    'yo': yaziOpaklik,
+    'f': font,
+    'bo': boyutOlcek,
+    'a': ayrit.name,
+    'ar': ayritRengi.toARGB32(),
+    'zr': zeminRengi.toARGB32(),
+    'zo': zeminOpaklik,
+    'pr': pencereRengi.toARGB32(),
+    'po': pencereOpaklik,
+  };
+
+  String kodla() => jsonEncode(_harita());
+
+  static double _oran(Object? d, double varsayilanDeger) {
+    final s = (d as num?)?.toDouble();
+    if (s == null || s.isNaN) return varsayilanDeger;
+    return s.clamp(0.0, 1.0);
+  }
+
+  static Color _renk(Object? d, Color varsayilanDeger) {
+    final i = (d as num?)?.toInt();
+    return i == null ? varsayilanDeger : Color(i);
+  }
+
+  /// Kayıtlı biçemi çözer. Bozuk/eksik her alan VARSAYILANA düşer: kullanıcı
+  /// eski bir sürümden geliyorsa ya da tercih dosyası bozulduysa altyazı
+  /// okunmaz hale gelmesin.
+  static AltyaziBicem cozumle(String? ham) {
+    if (ham == null || ham.isEmpty) return varsayilan;
+    try {
+      final j = jsonDecode(ham);
+      if (j is! Map) return varsayilan;
+      final font = j['f'];
+      final olcek = (j['bo'] as num?)?.toDouble() ?? 1;
+      return AltyaziBicem(
+        yaziRengi: _renk(j['yr'], varsayilan.yaziRengi),
+        yaziOpaklik: _oran(j['yo'], varsayilan.yaziOpaklik),
+        font: font is String && AltyaziFont.aileler.contains(font)
+            ? font
+            : varsayilan.font,
+        boyutOlcek: olcek.isNaN
+            ? 1
+            : olcek.clamp(enKucukOlcek, enBuyukOlcek).toDouble(),
+        ayrit: AltyaziAyrit.values.firstWhere(
+          (e) => e.name == j['a'],
+          orElse: () => varsayilan.ayrit,
+        ),
+        ayritRengi: _renk(j['ar'], varsayilan.ayritRengi),
+        zeminRengi: _renk(j['zr'], varsayilan.zeminRengi),
+        zeminOpaklik: _oran(j['zo'], varsayilan.zeminOpaklik),
+        pencereRengi: _renk(j['pr'], varsayilan.pencereRengi),
+        pencereOpaklik: _oran(j['po'], varsayilan.pencereOpaklik),
+      );
+    } catch (_) {
+      return varsayilan;
+    }
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is AltyaziBicem &&
+      other.yaziRengi == yaziRengi &&
+      other.yaziOpaklik == yaziOpaklik &&
+      other.font == font &&
+      other.boyutOlcek == boyutOlcek &&
+      other.ayrit == ayrit &&
+      other.ayritRengi == ayritRengi &&
+      other.zeminRengi == zeminRengi &&
+      other.zeminOpaklik == zeminOpaklik &&
+      other.pencereRengi == pencereRengi &&
+      other.pencereOpaklik == pencereOpaklik;
+
+  @override
+  int get hashCode => Object.hash(
+    yaziRengi,
+    yaziOpaklik,
+    font,
+    boyutOlcek,
+    ayrit,
+    ayritRengi,
+    zeminRengi,
+    zeminOpaklik,
+    pencereRengi,
+    pencereOpaklik,
+  );
+}
+
+/// Altyazı gösterilsin mi (Ayarlar > Video altyazıları) ve nasıl görünsün.
 class AltyaziAyar {
   static const _anahtar = 'altyazi_acik';
+  static const _bicemAnahtar = 'altyazi_bicem';
 
   /// Varsayılan AÇIK: özellik ancak görülürse fark edilir.
   static final ValueNotifier<bool> acik = ValueNotifier(true);
 
+  /// Görünüm. [ValueNotifier] olması şart: ayarlar ekranındaki kaydırıcı
+  /// oynatılmakta olan videonun altyazısını ANINDA günceller.
+  static final ValueNotifier<AltyaziBicem> bicem = ValueNotifier(
+    AltyaziBicem.varsayilan,
+  );
+
+  /// Font yükleme kancası. Üretimde [AltyaziFont.yukle]; testte hata/askıda
+  /// kalma senaryoları buradan sürülür (font ajanının dosyasına dokunmadan).
+  @visibleForTesting
+  static Future<void> Function(String aile) fontYukleyici = AltyaziFont.yukle;
+
+  /// "Bu aile bellekte mi?" kancası — [AltyaziFont.hazir]'ın önüne geçer.
+  ///
+  /// Kanca olmasının sebebi: gerçek yükleyicinin belleği SÜREÇ GENELİNDE
+  /// birikir, yani bir test başka bir testin ön koşulunu bozar (ölçüldü:
+  /// Sıfırla testi 'Anton'ı yükleyince indirme testi hiç indirme görmüyordu).
+  @visibleForTesting
+  static bool Function(String aile) fontHazirKancasi = AltyaziFont.hazir;
+
+  /// [aile] şu an bellekte mi? Tembel yükleme yüzünden seçilmemiş bir aile
+  /// YÜKLÜ DEĞİLDİR; arayüz "indiriliyor" hâlini buna bakarak gösterir.
+  static bool fontHazirMi(String aile) => fontHazirKancasi(aile);
+
+  /// Yalnız test: kancaları gerçek uygulamalarına geri alır.
+  @visibleForTesting
+  static void fontKancasiniSifirla() {
+    fontYukleyici = AltyaziFont.yukle;
+    fontHazirKancasi = AltyaziFont.hazir;
+  }
+
+  /// Seçili aileyi belleğe getirir. HATAYA DAYANIKLI: ağ yoksa ya da dosya
+  /// bozuksa istisna SIZMAZ, yalnız `false` döner ve altyazı varsayılan
+  /// fontla çizilmeye devam eder. Altyazı ikincil bir katman — yazı tipi
+  /// inmedi diye uygulamanın çökmesi kabul edilemez.
+  static Future<bool> fontHazirla(String aile) async {
+    try {
+      await fontYukleyici(aile);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   static Future<void> yukle() async {
     final p = await SharedPreferences.getInstance();
     acik.value = p.getBool(_anahtar) ?? true;
+    bicem.value = AltyaziBicem.cozumle(p.getString(_bicemAnahtar));
+    // ATEŞLE-UNUT: açılış BEKLETİLMEZ. Kayıtlı font bellekte değildir (tembel
+    // yükleme); beklersek `main.dart`taki açılış adımı ağ hızına bağlanır.
+    // Font inince `AltyaziFont.surum` artar ve [AltyaziGovde] kendiliğinden
+    // yeniden çizilir — beklemenin bir faydası da yok.
+    unawaited(fontHazirla(bicem.value.font));
   }
 
   static Future<void> sec(bool a) async {
     acik.value = a;
     final p = await SharedPreferences.getInstance();
     await p.setBool(_anahtar, a);
+  }
+
+  /// Önce bildiriciyi (anında çizim), sonra diski günceller.
+  ///
+  /// Fontu da ateşle-unut olarak getirir: biçemi hangi yoldan ayarlarsan
+  /// ayarla aile er geç yüklenir. Ayarlar ekranı ayrıca [fontHazirla]yı
+  /// BEKLEYEREK yükleniyor göstergesini sürer.
+  static Future<void> bicemSec(AltyaziBicem b) async {
+    final fontDegisti = b.font != bicem.value.font;
+    bicem.value = b;
+    if (fontDegisti) unawaited(fontHazirla(b.font));
+    final p = await SharedPreferences.getInstance();
+    await p.setString(_bicemAnahtar, b.kodla());
+  }
+
+  /// Sıfırla: kayıt SİLİNİR, böylece ileride varsayılan değişirse kullanıcı
+  /// yeni varsayılanı görür (donmuş bir kopya değil).
+  static Future<void> bicemSifirla() async {
+    bicem.value = AltyaziBicem.varsayilan;
+    final p = await SharedPreferences.getInstance();
+    await p.remove(_bicemAnahtar);
+  }
+}
+
+/// Altyazının GÖRÜNEN gövdesi: pencere → zemin → (kontur) → metin.
+///
+/// Hem video üstündeki [AltyaziKatmani] hem de Ayarlar'daki canlı önizleme
+/// BUNU kullanır. Önizlemeye ayrı bir çizim kopyası yazılsaydı ayarlar
+/// "çalışıyor gibi" görünüp videoda başka davranırdı.
+class AltyaziGovde extends StatelessWidget {
+  /// Testlerin/önizlemenin katmanları karıştırmadan bulabilmesi için.
+  static const pencereAnahtari = ValueKey('altyazi-pencere');
+  static const zeminAnahtari = ValueKey('altyazi-zemin');
+  static const metinAnahtari = ValueKey('altyazi-metin');
+  static const konturAnahtari = ValueKey('altyazi-kontur');
+
+  final String metin;
+  final AltyaziBicem bicem;
+
+  /// Bağlamın temel puntosu; [AltyaziBicem.boyutOlcek] ile çarpılır.
+  final double yaziBoyutu;
+
+  final EdgeInsets kenarBosluk;
+  final int azamiSatir;
+
+  const AltyaziGovde({
+    super.key,
+    required this.metin,
+    required this.bicem,
+    this.yaziBoyutu = 13,
+    this.kenarBosluk = EdgeInsets.zero,
+    this.azamiSatir = 3,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // FONT TEMBEL YÜKLENİYOR: aile indiğinde `TextStyle` DEĞİŞMEZ, dolayısıyla
+    // hiçbir şey kendiliğinden yeniden çizilmez. `surum`u dinleyip alt ağacı
+    // yeni bir anahtarla kurmak, `RenderParagraph`ı tazeleyip yazıyı ARTIK
+    // MEVCUT aileyle yeniden dizdirir. Dinlemezsek font iner ve ekranda
+    // hiçbir şey olmaz — ayar "çalışmıyor" görünürdü.
+    return ValueListenableBuilder<int>(
+      valueListenable: AltyaziFont.surum,
+      builder: (context, surum, _) =>
+          KeyedSubtree(key: ValueKey('altyazi-font-$surum'), child: _ciz()),
+    );
+  }
+
+  Widget _ciz() {
+    final boyut = yaziBoyutu * bicem.boyutOlcek;
+    final yazi = TextStyle(
+      color: bicem.yaziRengi.withValues(alpha: bicem.yaziOpaklik),
+      fontSize: boyut,
+      fontFamily: bicem.font,
+      height: 1.3,
+      fontWeight: FontWeight.w600,
+      shadows: bicem.golgeler(boyut),
+    );
+
+    Widget govde = Text(
+      metin,
+      key: metinAnahtari,
+      // Uzun cümle SARSIN, kesilmesin; 3 satırdan sonrası elenir
+      // (nadiren olur, whisper segmentleri cümle uzunluğunda).
+      maxLines: azamiSatir,
+      overflow: TextOverflow.ellipsis,
+      style: yazi,
+    );
+
+    if (bicem.ayrit == AltyaziAyrit.disCizgi) {
+      // TextStyle aynı anda `color` ve `foreground` alamaz (assertion) — bu
+      // yüzden kontur katmanı sıfırdan kurulur, copyWith ile DEĞİL.
+      final kontur = TextStyle(
+        fontSize: boyut,
+        fontFamily: bicem.font,
+        height: 1.3,
+        fontWeight: FontWeight.w600,
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = bicem.konturKalinligi(boyut)
+          ..strokeJoin = StrokeJoin.round
+          ..color = bicem.ayritRengi.withValues(alpha: bicem.yaziOpaklik),
+      );
+      govde = Stack(
+        children: [
+          Text(
+            metin,
+            key: konturAnahtari,
+            maxLines: azamiSatir,
+            overflow: TextOverflow.ellipsis,
+            style: kontur,
+          ),
+          govde,
+        ],
+      );
+    }
+
+    return Container(
+      key: pencereAnahtari,
+      margin: kenarBosluk,
+      // Pencere görünmezken dolgu da yok: hiçbir ayara dokunmayan kullanıcıda
+      // altyazının konumu bugünkünden 1 piksel bile kaymasın.
+      padding: bicem.pencereOpaklik > 0
+          ? const EdgeInsets.all(6)
+          : EdgeInsets.zero,
+      decoration: BoxDecoration(
+        color: bicem.pencereRengi.withValues(alpha: bicem.pencereOpaklik),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Container(
+        key: zeminAnahtari,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+        decoration: BoxDecoration(
+          // Yarı saydam KOYU zemin (varsayılan): video sahnesi bembeyaz olsa
+          // bile beyaz metin okunur kalır (kontrast > 7:1). Yalnız gölge
+          // yetmiyordu — açık sahnede metin kayboluyordu.
+          color: bicem.zeminRengi.withValues(alpha: bicem.zeminOpaklik),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: govde,
+      ),
+    );
   }
 }
 
@@ -335,34 +788,15 @@ class _AltyaziKatmaniState extends State<AltyaziKatmani> {
                       ? kisit.maxWidth * widget.genislikOrani
                       : double.infinity,
                 ),
-                child: Container(
-                  margin: widget.kenarBosluk,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    // Yarı saydam KOYU zemin: video sahnesi bembeyaz olsa bile
-                    // beyaz metin okunur kalır (kontrast > 7:1). Yalnız gölge
-                    // yetmiyordu — açık sahnede metin kayboluyordu.
-                    color: Colors.black.withValues(alpha: 0.62),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Text(
-                    metin,
-                    // Uzun cümle SARSIN, kesilmesin; 3 satırdan sonrası elenir
-                    // (nadiren olur, whisper segmentleri cümle uzunluğunda).
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: widget.yaziBoyutu,
-                      height: 1.3,
-                      fontWeight: FontWeight.w600,
-                      shadows: const [
-                        Shadow(blurRadius: 3, color: Colors.black87),
-                      ],
-                    ),
+                // Biçem değişince (Ayarlar'daki kaydırıcı) açık video ANINDA
+                // yeni görünüme geçsin diye burada dinlenir.
+                child: ValueListenableBuilder<AltyaziBicem>(
+                  valueListenable: AltyaziAyar.bicem,
+                  builder: (context, bicem, _) => AltyaziGovde(
+                    metin: metin,
+                    bicem: bicem,
+                    yaziBoyutu: widget.yaziBoyutu,
+                    kenarBosluk: widget.kenarBosluk,
                   ),
                 ),
               ),

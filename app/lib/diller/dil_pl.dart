@@ -1204,4 +1204,47 @@ const Map<String, String> cevirilerPl = {
   'Tüm raflara uygulanır': 'Dotyczy wszystkich półek',
   'En popüler {} yapım arasında sıralandı':
       'Posortowano wśród {} najpopularniejszych tytułów',
+  'Altyazı görünümü': 'Wygląd napisów',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Kolor, czcionka, rozmiar, krawędź i nieprzezroczystość',
+  'Bu bir örnek altyazıdır.': 'To jest przykładowy napis.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Podgląd aktualizuje się natychmiast po zmianie ustawień.',
+  'Yazı biçimi': 'Styl tekstu',
+  'Yazı rengi': 'Kolor tekstu',
+  'Yazı opaklığı': 'Nieprzezroczystość tekstu',
+  'Yazı tipi': 'Czcionka',
+  'Yazı boyutu': 'Rozmiar tekstu',
+  'Karakter ayrıtı': 'Krawędź znaków',
+  'Ayrıt türü': 'Typ krawędzi',
+  'Ayrıt rengi': 'Kolor krawędzi',
+  'Yok': 'Brak',
+  'Dış çizgi': 'Kontur',
+  'Gölge': 'Cień',
+  'Kabartma': 'Wypukła',
+  'Oyma': 'Wklęsła',
+  'Arka plan rengi': 'Kolor tła',
+  'Arka plan opaklığı': 'Nieprzezroczystość tła',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Tło to wypełnienie tuż za tekstem, a okno to szersza powierzchnia za całym blokiem napisów.',
+  'Pencere': 'Okno',
+  'Pencere rengi': 'Kolor okna',
+  'Pencere opaklığı': 'Nieprzezroczystość okna',
+  'Altyazı görünümü sıfırlansın mı?': 'Zresetować wygląd napisów?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Ustawienia koloru, czcionki, rozmiaru, krawędzi i nieprzezroczystości wrócą do wartości domyślnych.',
+  'Altyazı görünümü varsayılana döndü':
+      'Wygląd napisów przywrócony do domyślnego',
+  '{} indiriliyor…': 'Pobieranie {}…',
+  'Seçince indirilir': 'Pobierze się po wybraniu',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Nie udało się pobrać czcionki. Wyświetlanie czcionką domyślną.',
+  'Beyaz': 'Biały',
+  'Siyah': 'Czarny',
+  'Kırmızı': 'Czerwony',
+  'Yeşil': 'Zielony',
+  'Mavi': 'Niebieski',
+  'Sarı': 'Żółty',
+  'Camgöbeği': 'Cyjan',
+  'Macenta': 'Magenta',
 };

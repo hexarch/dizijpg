@@ -1178,4 +1178,47 @@ const Map<String, String> cevirilerGu = {
   'Tüm raflara uygulanır': 'બધા છાજલીઓ પર લાગુ પડે છે',
   'En popüler {} yapım arasında sıralandı':
       '{} સૌથી લોકપ્રિય શીર્ષકોમાં ક્રમબદ્ધ',
+  'Altyazı görünümü': 'ઉપશીર્ષકનો દેખાવ',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'રંગ, ફોન્ટ, કદ, કિનારી અને અપારદર્શકતા',
+  'Bu bir örnek altyazıdır.': 'આ એક નમૂનારૂપ ઉપશીર્ષક છે.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'સેટિંગ બદલાતાં જ પૂર્વાવલોકન તરત અપડેટ થાય છે.',
+  'Yazı biçimi': 'લખાણની શૈલી',
+  'Yazı rengi': 'લખાણનો રંગ',
+  'Yazı opaklığı': 'લખાણની અપારદર્શકતા',
+  'Yazı tipi': 'ફોન્ટ',
+  'Yazı boyutu': 'લખાણનું કદ',
+  'Karakter ayrıtı': 'અક્ષરની કિનારી',
+  'Ayrıt türü': 'કિનારીનો પ્રકાર',
+  'Ayrıt rengi': 'કિનારીનો રંગ',
+  'Yok': 'કંઈ નહીં',
+  'Dış çizgi': 'આઉટલાઇન',
+  'Gölge': 'પડછાયો',
+  'Kabartma': 'ઊપસેલું',
+  'Oyma': 'દબાયેલું',
+  'Arka plan rengi': 'પૃષ્ઠભૂમિનો રંગ',
+  'Arka plan opaklığı': 'પૃષ્ઠભૂમિની અપારદર્શકતા',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'પૃષ્ઠભૂમિ એ લખાણની બરાબર પાછળનું ભરણ છે; વિન્ડો એ આખા ઉપશીર્ષક બ્લોકની પાછળની વધુ પહોળી સપાટી છે.',
+  'Pencere': 'વિન્ડો',
+  'Pencere rengi': 'વિન્ડોનો રંગ',
+  'Pencere opaklığı': 'વિન્ડોની અપારદર્શકતા',
+  'Altyazı görünümü sıfırlansın mı?': 'ઉપશીર્ષકનો દેખાવ રીસેટ કરવો છે?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'રંગ, ફોન્ટ, કદ, કિનારી અને અપારદર્શકતાનાં સેટિંગ ડિફોલ્ટ પર પાછાં આવશે.',
+  'Altyazı görünümü varsayılana döndü':
+      'ઉપશીર્ષકનો દેખાવ ડિફોલ્ટ પર પાછો આવ્યો',
+  '{} indiriliyor…': '{} ડાઉનલોડ થઈ રહ્યું છે…',
+  'Seçince indirilir': 'પસંદ કરતાં ડાઉનલોડ થશે',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'ફોન્ટ ડાઉનલોડ થઈ શક્યો નહીં. ડિફોલ્ટ ફોન્ટમાં બતાવીએ છીએ.',
+  'Beyaz': 'સફેદ',
+  'Siyah': 'કાળો',
+  'Kırmızı': 'લાલ',
+  'Yeşil': 'લીલો',
+  'Mavi': 'વાદળી',
+  'Sarı': 'પીળો',
+  'Camgöbeği': 'સાયન',
+  'Macenta': 'મેજેન્ટા',
 };

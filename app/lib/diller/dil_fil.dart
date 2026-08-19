@@ -1211,4 +1211,47 @@ const Map<String, String> cevirilerFil = {
   'Tüm raflara uygulanır': 'Naaangkop sa lahat ng istante',
   'En popüler {} yapım arasında sıralandı':
       'Inayos sa {} pinakasikat na pamagat',
+  'Altyazı görünümü': 'Hitsura ng subtitle',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Kulay, font, laki, gilid at opacity',
+  'Bu bir örnek altyazıdır.': 'Ito ay isang halimbawang subtitle.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Agad na nag-a-update ang preview habang binabago mo ang setting.',
+  'Yazı biçimi': 'Estilo ng text',
+  'Yazı rengi': 'Kulay ng text',
+  'Yazı opaklığı': 'Opacity ng text',
+  'Yazı tipi': 'Font',
+  'Yazı boyutu': 'Laki ng text',
+  'Karakter ayrıtı': 'Gilid ng karakter',
+  'Ayrıt türü': 'Uri ng gilid',
+  'Ayrıt rengi': 'Kulay ng gilid',
+  'Yok': 'Wala',
+  'Dış çizgi': 'Outline',
+  'Gölge': 'Drop shadow',
+  'Kabartma': 'Nakaangat',
+  'Oyma': 'Nakalubog',
+  'Arka plan rengi': 'Kulay ng background',
+  'Arka plan opaklığı': 'Opacity ng background',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Ang background ay ang punong bahagi sa likod mismo ng text; ang window naman ang mas malawak na ibabaw sa likod ng buong bloke ng subtitle.',
+  'Pencere': 'Window',
+  'Pencere rengi': 'Kulay ng window',
+  'Pencere opaklığı': 'Opacity ng window',
+  'Altyazı görünümü sıfırlansın mı?': 'I-reset ang hitsura ng subtitle?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Babalik sa default ang mga setting ng kulay, font, laki, gilid at opacity.',
+  'Altyazı görünümü varsayılana döndü':
+      'Naibalik sa default ang hitsura ng subtitle',
+  '{} indiriliyor…': 'Dina-download ang {}…',
+  'Seçince indirilir': 'Mada-download kapag pinili',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Hindi na-download ang font. Ipinapakita gamit ang default na font.',
+  'Beyaz': 'Puti',
+  'Siyah': 'Itim',
+  'Kırmızı': 'Pula',
+  'Yeşil': 'Berde',
+  'Mavi': 'Asul',
+  'Sarı': 'Dilaw',
+  'Camgöbeği': 'Cyan',
+  'Macenta': 'Magenta',
 };

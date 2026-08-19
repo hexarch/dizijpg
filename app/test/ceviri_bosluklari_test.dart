@@ -128,6 +128,45 @@ const _yeniAnahtarlar = [
   'Medya bağlantısının süresi dolmuş',
   'Bu medya için imzalı bağlantı gerekli',
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene',
+  // altyazi_bicem.dart — altyazı görünümü (biçimlendirme) ekranı.
+  // NOT: 'Mavi' ve 'Sarı' bilerek YOK — Azerice karşılıkları Türkçesiyle
+  // birebir aynı ('Mavi', 'Sarı') ve aşağıdaki "çevrilmemiş" kontrolüne
+  // yanlış yere takılırlar. Küme eşitliği testi onları da kapsıyor.
+  'Altyazı görünümü',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık',
+  'Bu bir örnek altyazıdır.',
+  'Ayar değiştikçe önizleme anında güncellenir.',
+  'Yazı biçimi',
+  'Yazı rengi',
+  'Yazı opaklığı',
+  'Yazı tipi',
+  'Yazı boyutu',
+  'Karakter ayrıtı',
+  'Ayrıt türü',
+  'Ayrıt rengi',
+  'Yok',
+  'Dış çizgi',
+  'Gölge',
+  'Kabartma',
+  'Oyma',
+  'Arka plan rengi',
+  'Arka plan opaklığı',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.',
+  'Pencere',
+  'Pencere rengi',
+  'Pencere opaklığı',
+  'Altyazı görünümü sıfırlansın mı?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.',
+  'Altyazı görünümü varsayılana döndü',
+  '{} indiriliyor…',
+  'Seçince indirilir',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.',
+  'Beyaz',
+  'Siyah',
+  'Kırmızı',
+  'Yeşil',
+  'Camgöbeği',
+  'Macenta',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).
@@ -271,6 +310,32 @@ void main() {
           1,
           reason: '$kod → yer tutucu kayıp/çoğaldı: "$ceviri"',
         );
+      }
+    });
+
+    // Font adı yer tutucusu: kaybolursa indirilen fontun adı ekranda hiç
+    // görünmez (altyazi_bicem.dart, font seçicinin alt satırı).
+    const fontlu = '{} indiriliyor…';
+
+    test('font yer tutucusu 45 çeviride de TEK ve üç nokta TEK karakter', () {
+      for (final kod in _cevrilenDiller) {
+        final ceviri = tumCeviriler[kod]![fontlu]!;
+        expect(
+          '{}'.allMatches(ceviri).length,
+          1,
+          reason: '$kod → font yer tutucusu kayıp/çoğaldı: "$ceviri"',
+        );
+        expect(ceviri, contains('…'), reason: '$kod → U+2026 yok');
+        expect(ceviri, isNot(contains('...')), reason: '$kod → üç ayrı nokta');
+      }
+    });
+
+    test('font adı .cf ile yerleşir, {} ekranda KALMAZ', () async {
+      for (final kod in _cevrilenDiller) {
+        await Ceviri.sec(kod);
+        final cikti = fontlu.cf(['Lora']);
+        expect(cikti, contains('Lora'), reason: '$kod → font adı yerleşmedi');
+        expect(cikti, isNot(contains('{}')), reason: '$kod → {} sızdı');
       }
     });
 

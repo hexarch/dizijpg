@@ -8,6 +8,7 @@ import 'tema.dart';
 import 'gorusme/gelen_arama_ekrani.dart';
 import 'gorusme/gorusme_ekrani.dart';
 import 'ekranlar/akis.dart';
+import 'ekranlar/altyazi_bicem.dart';
 import 'ekranlar/arama_cubugu.dart';
 import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
@@ -559,6 +560,14 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
       GoRoute(
         path: '/ayarlar',
         builder: (_, __) => _masa(const AyarlarEkrani()),
+      ),
+      // Ayarlar > Video altyazıları > Altyazı görünümü. Gizlenen yorumlar ile
+      // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.
+      // Adrese yazılan gezinme (`Navigator.push` DEĞİL) ki F5 kullanıcıyı
+      // ayarlara geri atmasın.
+      GoRoute(
+        path: '/altyazi-bicem',
+        builder: (_, _) => _masa(const AltyaziBicemEkrani()),
       ),
       // Ayarlar > Gizlilik > Gizlenen yorumlar. Kabuğun DIŞINDA: ayarların
       // kendisi gibi tam ekran açılır, geri tuşu ayarlara döner.

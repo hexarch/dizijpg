@@ -1187,4 +1187,47 @@ const Map<String, String> cevirilerTe = {
   'Tüm raflara uygulanır': 'అన్ని షెల్ఫ్‌లకు వర్తిస్తుంది',
   'En popüler {} yapım arasında sıralandı':
       'అత్యంత ప్రజాదరణ పొందిన {} శీర్షికల్లో క్రమబద్ధీకరించబడింది',
+  'Altyazı görünümü': 'ఉపశీర్షిక రూపం',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'రంగు, ఫాంట్, పరిమాణం, అంచు మరియు అపారదర్శకత',
+  'Bu bir örnek altyazıdır.': 'ఇది ఒక నమూనా ఉపశీర్షిక.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'సెట్టింగ్ మారగానే ప్రివ్యూ వెంటనే అప్‌డేట్ అవుతుంది.',
+  'Yazı biçimi': 'టెక్స్ట్ శైలి',
+  'Yazı rengi': 'టెక్స్ట్ రంగు',
+  'Yazı opaklığı': 'టెక్స్ట్ అపారదర్శకత',
+  'Yazı tipi': 'ఫాంట్',
+  'Yazı boyutu': 'టెక్స్ట్ పరిమాణం',
+  'Karakter ayrıtı': 'అక్షరం అంచు',
+  'Ayrıt türü': 'అంచు రకం',
+  'Ayrıt rengi': 'అంచు రంగు',
+  'Yok': 'ఏదీ లేదు',
+  'Dış çizgi': 'ఔట్‌లైన్',
+  'Gölge': 'నీడ',
+  'Kabartma': 'ఎత్తైనది',
+  'Oyma': 'లోతైనది',
+  'Arka plan rengi': 'నేపథ్య రంగు',
+  'Arka plan opaklığı': 'నేపథ్య అపారదర్శకత',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'నేపథ్యం అంటే టెక్స్ట్ వెనుక ఉన్న నింపు; విండో అంటే మొత్తం ఉపశీర్షిక బ్లాక్ వెనుక ఉన్న విశాలమైన ఉపరితలం.',
+  'Pencere': 'విండో',
+  'Pencere rengi': 'విండో రంగు',
+  'Pencere opaklığı': 'విండో అపారదర్శకత',
+  'Altyazı görünümü sıfırlansın mı?': 'ఉపశీర్షిక రూపాన్ని రీసెట్ చేయాలా?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'రంగు, ఫాంట్, పరిమాణం, అంచు మరియు అపారదర్శకత సెట్టింగ్‌లు డిఫాల్ట్‌కు తిరిగి వస్తాయి.',
+  'Altyazı görünümü varsayılana döndü':
+      'ఉపశీర్షిక రూపం డిఫాల్ట్‌కు తిరిగి వచ్చింది',
+  '{} indiriliyor…': '{} డౌన్‌లోడ్ అవుతోంది…',
+  'Seçince indirilir': 'ఎంచుకున్నప్పుడు డౌన్‌లోడ్ అవుతుంది',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'ఫాంట్ డౌన్‌లోడ్ కాలేదు. డిఫాల్ట్ ఫాంట్‌తో చూపుతోంది.',
+  'Beyaz': 'తెలుపు',
+  'Siyah': 'నలుపు',
+  'Kırmızı': 'ఎరుపు',
+  'Yeşil': 'ఆకుపచ్చ',
+  'Mavi': 'నీలం',
+  'Sarı': 'పసుపు',
+  'Camgöbeği': 'సియాన్',
+  'Macenta': 'మెజెంటా',
 };

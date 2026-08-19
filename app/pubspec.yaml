@@ -17,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
 # DİKKAT: sürümü artırınca lib/api.dart'taki Api.surum'u da güncelle.
-version: 1.86.0+136
+version: 1.87.0+137
 
 environment:
   sdk: ^3.12.2
@@ -165,6 +165,31 @@ flutter:
     # Emoji bayrak KULLANILMIYOR: Windows hiç çizmiyor, eski Android'de eksik.
     - assets/bayraklar/
 
+    # --- ALTYAZI FONTLARI: 29 aile / 56 dosya, 3,39 MB ham — 20 Agu 2026 ---
+    # NEDEN `assets:` ALTINDA, `fonts:` ALTINDA DEGIL (OLCULDU, TAHMIN DEGIL):
+    # `fonts:` altindaki her aile ACILISTA TOPLUCA iner. Flutter web motoru
+    # FontManifest.json'i okuyup butun aileleri `fontCollection.loadAssetFonts`
+    # ile cekiyor; "kullanilinca insin" diye bir sey YOK.
+    # Kanit (20 Agu 2026): pubspec'e hicbir Dart kodunun kullanmadigi 3 deneme
+    # fontu eklendi, derlenip `python3 -m http.server` ile yayinlandi; sunucu
+    # erisim gunlugunde ucu de acilista indi — ustelik AssetManifest.bin.json'DAN
+    # ONCE, yani ilk kareyi bloke eden yolda. 30 aile `fonts:` altinda birakilinca
+    # olculen acilis yuku: 56 dosya, 3.557.480 bayt ham / 1.586.787 bayt brotli.
+    # `assets:` girdileri TEMBELDIR: pakete girer ama acilista INMEZ. Font yalniz
+    # kullanici onu sectiginde `lib/altyazi_font.dart` icindeki FontLoader ile
+    # yuklenir — acilis maliyeti 0.
+    # BURAYI `fonts:` ALTINA GERI TASIMAYIN; 1,5 MB'lik acilis gerilemesi demek.
+    #
+    # Dosyalarin uretimi: google/fonts deposundan (hepsi OFL 1.1, lisanslar
+    # assets/fonts/LISANSLAR/ altinda), degisken olanlar fontTools.varLib.instancer
+    # ile wght=400/600 statik ornege cevrildi, sonra pyftsubset ile Latin+Latin-Ext
+    # (U+0000-00FF,U+0100-017F,U+0180-024F,U+2000-206F,U+20A0-20BF,U+2122) alt
+    # kumesi + --no-hinting. Turkce ı İ ğ Ğ ş Ş ç Ç ö Ö ü Ü 56 dosyanin hepsinde
+    # alt kumeleme SONRASI dogrulandi. Anton/Bebas Neue tek agirlikli (yalniz 400),
+    # PT Serif'te 600 yok -> 700. Dosya adlari lib/altyazi_font.dart'taki
+    # haritayla BIREBIR eslesmeli; test/altyazi_font_test.dart bunu dogruluyor.
+    - assets/fonts/altyazi/
+
   # Marka fontu: Poppins (Latin + Türkçe). Latin-dışı diller sistem fontuna düşer.
   #
   # --- ALTI AĞIRLIK DA GEREKLİ: SİLMEYİN (19 Ağu 2026, PageSpeed incelemesi) ---
@@ -217,6 +242,7 @@ flutter:
           weight: 800
         - asset: assets/fonts/Poppins-Black.ttf
           weight: 900
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

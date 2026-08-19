@@ -1206,4 +1206,47 @@ const Map<String, String> cevirilerTa = {
   'Tüm raflara uygulanır': 'அனைத்து அலமாரிகளுக்கும் பொருந்தும்',
   'En popüler {} yapım arasında sıralandı':
       'மிகவும் பிரபலமான {} தலைப்புகளில் வரிசைப்படுத்தப்பட்டது',
+  'Altyazı görünümü': 'வசன தோற்றம்',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'நிறம், எழுத்துரு, அளவு, விளிம்பு மற்றும் ஒளிபுகாநிலை',
+  'Bu bir örnek altyazıdır.': 'இது ஒரு மாதிரி வசனம்.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'அமைப்பை மாற்றும்போதே மாதிரிக்காட்சி உடனே புதுப்பிக்கப்படும்.',
+  'Yazı biçimi': 'உரை பாணி',
+  'Yazı rengi': 'உரை நிறம்',
+  'Yazı opaklığı': 'உரை ஒளிபுகாநிலை',
+  'Yazı tipi': 'எழுத்துரு',
+  'Yazı boyutu': 'உரை அளவு',
+  'Karakter ayrıtı': 'எழுத்து விளிம்பு',
+  'Ayrıt türü': 'விளிம்பு வகை',
+  'Ayrıt rengi': 'விளிம்பு நிறம்',
+  'Yok': 'எதுவும் இல்லை',
+  'Dış çizgi': 'வெளிக்கோடு',
+  'Gölge': 'நிழல்',
+  'Kabartma': 'உயர்ந்தது',
+  'Oyma': 'தாழ்ந்தது',
+  'Arka plan rengi': 'பின்னணி நிறம்',
+  'Arka plan opaklığı': 'பின்னணி ஒளிபுகாநிலை',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'பின்னணி என்பது உரையின் பின்னால் இருக்கும் நிரப்பு; சாளரம் என்பது முழு வசனத் தொகுதிக்குப் பின்னால் இருக்கும் பரந்த பரப்பு.',
+  'Pencere': 'சாளரம்',
+  'Pencere rengi': 'சாளர நிறம்',
+  'Pencere opaklığı': 'சாளர ஒளிபுகாநிலை',
+  'Altyazı görünümü sıfırlansın mı?': 'வசன தோற்றத்தை மீட்டமைக்கவா?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'நிறம், எழுத்துரு, அளவு, விளிம்பு மற்றும் ஒளிபுகாநிலை அமைப்புகள் இயல்புநிலைக்குத் திரும்பும்.',
+  'Altyazı görünümü varsayılana döndü':
+      'வசன தோற்றம் இயல்புநிலைக்குத் திரும்பியது',
+  '{} indiriliyor…': '{} பதிவிறக்கப்படுகிறது…',
+  'Seçince indirilir': 'தேர்ந்தெடுத்தால் பதிவிறக்கப்படும்',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'எழுத்துருவைப் பதிவிறக்க முடியவில்லை. இயல்பு எழுத்துருவில் காட்டப்படுகிறது.',
+  'Beyaz': 'வெள்ளை',
+  'Siyah': 'கருப்பு',
+  'Kırmızı': 'சிவப்பு',
+  'Yeşil': 'பச்சை',
+  'Mavi': 'நீலம்',
+  'Sarı': 'மஞ்சள்',
+  'Camgöbeği': 'சியான்',
+  'Macenta': 'மெஜந்தா',
 };

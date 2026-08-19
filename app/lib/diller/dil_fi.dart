@@ -1197,4 +1197,47 @@ const Map<String, String> cevirilerFi = {
   'Tüm raflara uygulanır': 'Koskee kaikkia hyllyjä',
   'En popüler {} yapım arasında sıralandı':
       'Järjestetty {} suosituimman nimikkeen joukossa',
+  'Altyazı görünümü': 'Tekstitysten ulkoasu',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'Väri, fontti, koko, reuna ja peittävyys',
+  'Bu bir örnek altyazıdır.': 'Tämä on esimerkkitekstitys.',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'Esikatselu päivittyy heti, kun muutat asetusta.',
+  'Yazı biçimi': 'Tekstin tyyli',
+  'Yazı rengi': 'Tekstin väri',
+  'Yazı opaklığı': 'Tekstin peittävyys',
+  'Yazı tipi': 'Fontti',
+  'Yazı boyutu': 'Tekstin koko',
+  'Karakter ayrıtı': 'Merkin reuna',
+  'Ayrıt türü': 'Reunan tyyppi',
+  'Ayrıt rengi': 'Reunan väri',
+  'Yok': 'Ei mitään',
+  'Dış çizgi': 'Ääriviiva',
+  'Gölge': 'Varjostus',
+  'Kabartma': 'Korotettu',
+  'Oyma': 'Upotettu',
+  'Arka plan rengi': 'Taustan väri',
+  'Arka plan opaklığı': 'Taustan peittävyys',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'Tausta on täyttö heti tekstin takana; ikkuna on koko tekstityslohkon takana oleva laajempi pinta.',
+  'Pencere': 'Ikkuna',
+  'Pencere rengi': 'Ikkunan väri',
+  'Pencere opaklığı': 'Ikkunan peittävyys',
+  'Altyazı görünümü sıfırlansın mı?': 'Palautetaanko tekstitysten ulkoasu?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'Värin, fontin, koon, reunan ja peittävyyden asetukset palautuvat oletusarvoihin.',
+  'Altyazı görünümü varsayılana döndü':
+      'Tekstitysten ulkoasu palautettiin oletuksiin',
+  '{} indiriliyor…': 'Ladataan {}…',
+  'Seçince indirilir': 'Ladataan valittaessa',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'Fontin lataus epäonnistui. Näytetään oletusfontilla.',
+  'Beyaz': 'Valkoinen',
+  'Siyah': 'Musta',
+  'Kırmızı': 'Punainen',
+  'Yeşil': 'Vihreä',
+  'Mavi': 'Sininen',
+  'Sarı': 'Keltainen',
+  'Camgöbeği': 'Syaani',
+  'Macenta': 'Magenta',
 };

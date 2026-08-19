@@ -1187,4 +1187,47 @@ const Map<String, String> cevirilerPa = {
   'Tüm raflara uygulanır': 'ਸਾਰੀਆਂ ਸ਼ੈਲਫਾਂ ਉੱਤੇ ਲਾਗੂ',
   'En popüler {} yapım arasında sıralandı':
       '{} ਸਭ ਤੋਂ ਪ੍ਰਸਿੱਧ ਸਿਰਲੇਖਾਂ ਵਿੱਚੋਂ ਕ੍ਰਮਬੱਧ',
+  'Altyazı görünümü': 'ਉਪਸਿਰਲੇਖ ਦੀ ਦਿੱਖ',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık':
+      'ਰੰਗ, ਫੌਂਟ, ਆਕਾਰ, ਕਿਨਾਰਾ ਅਤੇ ਅਪਾਰਦਰਸ਼ਤਾ',
+  'Bu bir örnek altyazıdır.': 'ਇਹ ਇੱਕ ਨਮੂਨਾ ਉਪਸਿਰਲੇਖ ਹੈ।',
+  'Ayar değiştikçe önizleme anında güncellenir.':
+      'ਸੈਟਿੰਗ ਬਦਲਦਿਆਂ ਹੀ ਝਲਕ ਤੁਰੰਤ ਅੱਪਡੇਟ ਹੁੰਦੀ ਹੈ।',
+  'Yazı biçimi': 'ਲਿਖਤ ਦੀ ਸ਼ੈਲੀ',
+  'Yazı rengi': 'ਲਿਖਤ ਦਾ ਰੰਗ',
+  'Yazı opaklığı': 'ਲਿਖਤ ਦੀ ਅਪਾਰਦਰਸ਼ਤਾ',
+  'Yazı tipi': 'ਫੌਂਟ',
+  'Yazı boyutu': 'ਲਿਖਤ ਦਾ ਆਕਾਰ',
+  'Karakter ayrıtı': 'ਅੱਖਰ ਦਾ ਕਿਨਾਰਾ',
+  'Ayrıt türü': 'ਕਿਨਾਰੇ ਦੀ ਕਿਸਮ',
+  'Ayrıt rengi': 'ਕਿਨਾਰੇ ਦਾ ਰੰਗ',
+  'Yok': 'ਕੋਈ ਨਹੀਂ',
+  'Dış çizgi': 'ਆਊਟਲਾਈਨ',
+  'Gölge': 'ਪਰਛਾਵਾਂ',
+  'Kabartma': 'ਉੱਭਰਿਆ',
+  'Oyma': 'ਧਸਿਆ',
+  'Arka plan rengi': 'ਪਿਛੋਕੜ ਦਾ ਰੰਗ',
+  'Arka plan opaklığı': 'ਪਿਛੋਕੜ ਦੀ ਅਪਾਰਦਰਸ਼ਤਾ',
+  'Arka plan yazının hemen arkasındaki dolgudur; pencere ise tüm altyazı bloğunun arkasındaki daha geniş yüzey.':
+      'ਪਿਛੋਕੜ ਲਿਖਤ ਦੇ ਬਿਲਕੁਲ ਪਿੱਛੇ ਦੀ ਭਰਾਈ ਹੈ; ਵਿੰਡੋ ਪੂਰੇ ਉਪਸਿਰਲੇਖ ਬਲਾਕ ਦੇ ਪਿੱਛੇ ਦੀ ਵੱਡੀ ਸਤ੍ਹਾ ਹੈ।',
+  'Pencere': 'ਵਿੰਡੋ',
+  'Pencere rengi': 'ਵਿੰਡੋ ਦਾ ਰੰਗ',
+  'Pencere opaklığı': 'ਵਿੰਡੋ ਦੀ ਅਪਾਰਦਰਸ਼ਤਾ',
+  'Altyazı görünümü sıfırlansın mı?': 'ਉਪਸਿਰਲੇਖ ਦੀ ਦਿੱਖ ਰੀਸੈਟ ਕਰਨੀ ਹੈ?',
+  'Renk, yazı tipi, boyut, ayrıt ve opaklık ayarları varsayılana döner.':
+      'ਰੰਗ, ਫੌਂਟ, ਆਕਾਰ, ਕਿਨਾਰਾ ਅਤੇ ਅਪਾਰਦਰਸ਼ਤਾ ਦੀਆਂ ਸੈਟਿੰਗਾਂ ਡਿਫੌਲਟ ਉੱਤੇ ਵਾਪਸ ਆ ਜਾਣਗੀਆਂ।',
+  'Altyazı görünümü varsayılana döndü':
+      'ਉਪਸਿਰਲੇਖ ਦੀ ਦਿੱਖ ਡਿਫੌਲਟ ਉੱਤੇ ਵਾਪਸ ਆ ਗਈ',
+  '{} indiriliyor…': '{} ਡਾਊਨਲੋਡ ਹੋ ਰਿਹਾ ਹੈ…',
+  'Seçince indirilir': 'ਚੁਣਨ ਉੱਤੇ ਡਾਊਨਲੋਡ ਹੋਵੇਗਾ',
+  'Yazı tipi indirilemedi. Varsayılan yazı tipiyle gösteriliyor.':
+      'ਫੌਂਟ ਡਾਊਨਲੋਡ ਨਹੀਂ ਹੋ ਸਕਿਆ। ਡਿਫੌਲਟ ਫੌਂਟ ਵਿੱਚ ਦਿਖਾ ਰਹੇ ਹਾਂ।',
+  'Beyaz': 'ਚਿੱਟਾ',
+  'Siyah': 'ਕਾਲਾ',
+  'Kırmızı': 'ਲਾਲ',
+  'Yeşil': 'ਹਰਾ',
+  'Mavi': 'ਨੀਲਾ',
+  'Sarı': 'ਪੀਲਾ',
+  'Camgöbeği': 'ਸਿਆਨ',
+  'Macenta': 'ਮੈਜੈਂਟਾ',
 };
