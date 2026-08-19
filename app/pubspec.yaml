@@ -162,6 +162,42 @@ flutter:
     - assets/bayraklar/
 
   # Marka fontu: Poppins (Latin + Türkçe). Latin-dışı diller sistem fontuna düşer.
+  #
+  # --- ALTI AĞIRLIK DA GEREKLİ: SİLMEYİN (19 Ağu 2026, PageSpeed incelemesi) ---
+  # Flutter web CanvasKit, burada tanımlı BÜTÜN fontları ilk kareden ÖNCE indirir
+  # (FontManifest.json -> fontCollection.loadAssetFonts). PageSpeed bu yüzden altı
+  # TTF'i birden `High` öncelikli, toplam ~385 KB (brotli) olarak görüyor. Ağırlık
+  # silmek cazip görünüyor; ÖLÇÜLDÜ, hiçbiri boşta değil:
+  #
+  #   w400 Regular   : `grep FontWeight.w400 lib` YALNIZ 2 sonuç verir AMA bu
+  #                    yanıltıcıdır — w400, Material'ın body*/display*/headline*/
+  #                    titleLarge varsayılanıdır (Typography.englishLike2021),
+  #                    yani stil verilmemiş HER metin bu dosyayı kullanır.
+  #   w500 Medium    : 10 açık kullanım + Material'ın titleMedium/titleSmall/
+  #                    labelLarge/labelMedium/labelSmall varsayılanı. Yani her
+  #                    ListTile başlığı, her TextButton/OutlinedButton etiketi,
+  #                    sekme etiketleri. Silinirse uygulamanın tüm düğme ve liste
+  #                    yazıları inceleşir — "10 kullanım, atarız" TUZAK budur.
+  #   w600 SemiBold  : 34 açık kullanım; biri tema.dart'taki navigationBarTheme
+  #                    etiket stili, yani alt menü her ekranda buna basıyor.
+  #   w700 Bold      : 93 açık kullanım.
+  #   w800 ExtraBold : 118 açık kullanım (EN ÇOK); ikisi tema.dart'ta —
+  #                    appBarTheme başlığı ve filledButtonTheme metni.
+  #                    Uygulamanın baskın vurgu ağırlığı.
+  #   w900 Black     : 20 açık kullanım, 15 dosyada; hepsi büyük punto vurgu
+  #                    (profil sayaçları, izleme istatistiği 34 px, karşılama
+  #                    24 px). Silinse metin KAYBOLMAZ (CanvasKit en yakın
+  #                    ağırlığa, w800'e düşürür) ama w800 zaten baskın ağırlık
+  #                    olduğu için başlık/sayaç ile gövde vurgusu arasındaki
+  #                    hiyerarşi TAMAMEN çöker. 62,8 KB için kötü takas.
+  #
+  # ASIL İSRAF AĞIRLIK DEĞİL, DEVANAGARI: Poppins-Regular.ttf'in 160.316 baytının
+  # 126.288'i `glyf`; cmap'te doğrudan eşlenen Latin glifleri bunun yalnız 17.740
+  # baytı, Devanagari temel glifleri 8.888 bayt. Kalan ~100 KB, cmap'te olmayan
+  # (GSUB ile ulaşılan) Devanagari birleşik/conjunct glifleri. Latin'e subset
+  # edilirse altı dosya ~385 KB -> ~120 KB'ye inerdi. YAPILMADI: Hindi (dil_hi)
+  # ve Marathi (dil_mr) desteklendiği için o iki dil sistem fontuna düşerdi —
+  # ürün kararı, ölçüm değil. Yapılacaksa pyftsubset + gözle doğrulama gerekir.
   fonts:
     - family: Poppins
       fonts:

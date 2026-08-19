@@ -65,7 +65,28 @@
        çalıştığına göre `google.accounts` nesnesi yeniden kuruluyor —
        eklentinin kaydettiği kimlik geri çağırması bu yarışta kaybolabilir.
        Eklenti kendi betiğinin `onGoogleLibraryLoad`unu beklediği için tek
-       kopya doğru olanı. -->
+       kopya doğru olanı.
+
+       TEMBELLEŞTİRİLEMİYOR (19 Ağu 2026, PageSpeed incelemesi): Lighthouse
+       `accounts.google.com/gsi/client` için 99.306 B indiriliyor, %84,4'ü
+       (83.197 B) kullanılmıyor diyor — çünkü betik giriş ekranı açılmasa bile
+       AÇILIŞTA iniyor. Kaynağı okundu:
+         google_sign_in_web/lib/google_sign_in_web.dart
+           static void registerWith(...) => GoogleSignInPlatform.instance =
+               GoogleSignInPlugin();
+           GoogleSignInPlugin() { ... _jsSdkLoadedFuture = loader.loadWebSdk(); }
+       `loadWebSdk()` yapıcının İÇİNDE, koşulsuz çağrılıyor; `registerWith` ise
+       Flutter'ın ÜRETTİĞİ `web_plugin_registrant.dart`tan runApp'ten önce
+       koşuyor. Eklentide tembel yükleme seçeneği (bayrak/parametre) YOK; en
+       yeni sürüm (1.1.3, biz 0.12.4+4) de aynı satırı taşıyor — sürüm yükseltmek
+       çözmez, üstelik google_sign_in 7.x kırıcı API göçü demek.
+       Geriye tek yol `document.head.appendChild`i JS'ten yamalayıp betiği
+       tutmak kalıyor; bu GERÇEK kullanıcıların giriş yolunu tarayıcı testi
+       olmadan doğrulanamayan bir yamaya bağlar (`flutter test` web DOM'unu
+       koşmaz) — CLAUDE.md 7. kural gereği yapılmadı.
+       HAFİFLETİCİ: betik zaten `async` + `defer` ile enjekte ediliyor
+       (google_identity_services_web/lib/src/js_loader.dart:57-59), yani
+       oluşturmayı ENGELLEMİYOR; maliyeti açılıştaki bant genişliği rekabeti. -->
   <meta name="google-signin-client_id"
         content="1026295944597-alc4fpkc2gvtn1qmq92hols5oba98h55.apps.googleusercontent.com">
 
