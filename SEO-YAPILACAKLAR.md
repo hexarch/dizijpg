@@ -1,6 +1,6 @@
 # dizi.jpg — SEO Yapılacaklar
 
-> Sürüm 1.0 · 19 Ağustos 2026
+> Sürüm 2.0 · 19 Ağustos 2026 — **Search Console verisiyle güncellendi**
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
 >
 > **Bu belge bir görev listesi değil, bir karar belgesidir.** Her maddede ne
@@ -29,9 +29,9 @@ Buna karşılık iki gerçek sorun var:
 sayfaları indekslenebilir hâle getirmek.** Rekabet edemeyeceğimiz yerde
 sıralanmaya çalışmak yerine, rakiplerin zayıf olduğu yüzeyleri açmak.
 
-> ⚠️ **Bu belgenin eksik ayağı:** Search Console verisi ölçüm anında henüz
-> alınmamıştı. §1'deki sorular cevaplanmadan §4'teki sıralama bir HİPOTEZDİR.
-> Veri geldiğinde bu belge güncellenecek.
+> ✅ **Search Console verisi alındı (19 Ağu 2026).** §1 gerçek rakamlarla
+> dolduruldu ve **öncelik sıralaması DEĞİŞTİ** — 1.0'daki en yüksek öncelikli
+> iş (bölüm sayfalarını açmak) veriye bakınca YANLIŞ hamle çıktı. Gerekçe §1.1.
 
 ---
 
@@ -42,39 +42,77 @@ adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
 
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
-| **1** | **Ölç** — Search Console | Bir gün sürmez ve **her şeyi yeniden çerçeveler**. Aşağıdaki sıralama bu veri gelmeden bir hipotezdir. | §1 | 🔨 |
-| **2** | **Riski kapat** — `aggregateRating` + persona puanları | Açık politika ihlali. Yüzeyi büyütmeden ÖNCE kapanmalı; yoksa riski çarparak taşırız. | §2 | 🔨 |
-| **3** | **Bölüm sayfalarını aç** — 61 → binlerce | En yüksek getiri/çaba. Veri var, SSR şablonu ÇALIŞIYOR, dar olan tek şey sitemap sorgusu. | §5 | ⬜ |
-| **4** | **Şirket SSR + görseller + `/gizlilik`** | Üçü de kısa ve birbirinden bağımsız; aynı turda kapanır. | §6.1–6.3 | 🔨 |
-| **5** | **hreflang / çok dilli SSR** | Tavanı en yüksek AMA dil başına URL şeması gerektiriyor — mimari karar, geri dönüşü pahalı. **1-3 bitmeden başlanmaz.** | §7 | ⬜ |
+| **1** | **Ölç** — Search Console | Her şeyi yeniden çerçeveledi: 1.0'ın 3. maddesi bu veri yüzünden ertelendi. | §1 | ✅ |
+| **2** | **Riski kapat** — `aggregateRating` + persona puanları | Manuel işlem YOK, yani risk teorik kalmış; düzeltme yine de yapıldı (önleme). | §2 | ✅ kod hazır, migrasyon bekliyor |
+| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §4.5 | ⬜ |
+| **4** | **İç bağlantıyı güçlendir** — şirket SSR + görseller + `/gizlilik` | Sinyali derin sayfalara taşır. `/icerik` → firma bağlantıları tam da "keşfedildi ama taranmadı" kuyruğunu hedefler. | §6.1–6.3 | ✅ |
+| **5** | **Dış görünürlük** — ilk gerçek bağlantılar | Tarama bütçesinin asıl kaynağı otorite. Kod işi değil; ayrı bir plan gerektiriyor. | §4.6 | ⬜ |
+| ~~6~~ | ~~Bölüm sayfalarını aç~~ **ERTELENDİ** | Kuyruk boşalmadan yeni URL ailesi açmak var olanların taranma olasılığını seyreltir. Bkz. §1.1. | §5 | ⛔ şimdilik |
+| **7** | **hreflang / çok dilli SSR** | TR dışı gösterim %10 ve hepsi tekil → acelesi YOK. | §7 | ⬜ |
 
-> **Belgenin geleceği:** Search Console verisi geldiğinde bu belge **2.0**
-> olarak yeniden yazılacak; ölçülen rakamlar §1'e işlenecek ve öncelik
-> sıralaması gerekiyorsa değişecek. Eldeki işler (deferred imports, CSP,
-> arayüz kuyruğu) bittikten sonra bu belge ana yol haritası olur.
+> **Bir sonraki gözden geçirme:** "Keşfedildi – dizine eklenmemiş" sayısı
+> (bugün **2.159**) ölçülecek. Düşüyorsa iç bağlantı ve 5xx temizliği işe
+> yarıyor demektir ve ertelenen bölüm sayfaları tekrar masaya gelir.
+> Düşmüyorsa sorun otoritededir ve kod yazarak çözülmez (§4.6).
 
 ---
 
-## 1. Önce ölçüm — cevaplanması gereken sorular
+## 1. ÖLÇÜLDÜ — Search Console, 19 Ağu 2026
 
-Alan verisi olmadan öncelik sıralaması tahmindir. Search Console'dan
-çıkarılacaklar ve her birinin **ne kararını değiştirdiği**:
-
-| # | Soru | Cevap ne değiştirir |
+| Ölçüm | Değer | Yorum |
 |---|---|---|
-| 1 | **Manuel işlem var mı?** | Varsa her şey durur, önce o ele alınır. §2'nin teorik mi gerçek mi olduğunu yalnız bu söyler. |
-| 2 | **Kaç sayfa dizine eklendi?** | Sitemap 2517 URL sunuyor. **2000+** → teknik işlere devam. **<500** → sorun kalite sinyalinde; §5-§7'yi yapmak boşa kürek olur, §3'e dönülür. |
-| 3 | "Tarandı – dizine eklenmedi" sayısı | Yüksekse Google içeriği GÖRDÜ ve değersiz buldu. §3'ün doğrudan kanıtı. |
-| 4 | "Yumuşak 404" sayısı | 14 Ağu'daki çalışmadan sonra **sıfır olmalı**. Değilse o iş beklendiği gibi çalışmamış. |
-| 5 | Marka DIŞI sorgu var mı? | Yoksa site henüz keşfedilmemiş. Varsa hangi yönde çekiş olduğunu gösterir → §5'in hedefini belirler. |
-| 6 | Hangi sayfa TİPLERİ gösterim alıyor? | `/icerik/*` mi, bölüm sayfaları mı? §5'in getirisini tahmin eder. |
-| 7 | TR dışı gösterim oranı | §7'nin (çok dillilik) yatırım getirisi için tek gerçek veri. |
-| 8 | CrUX saha verisi var mı? | "Yeterli veri yok" ise trafik eşiğin altında; lab puanı kovalamanın anlamı iyice azalır. |
-| 9 | Zengin sonuç / inceleme snippet'i durumu | §2'nin yapılandırılmış veri ayağının halihazırda cezalı olup olmadığı. |
-
-**Kural:** Bu tablo doldurulmadan §5 ve sonrasına kaynak ayrılmaz.
+| **Manuel işlem** | ✅ **Hiçbiri** | §2 riski TEORİK kalmış. Düzeltme yine yapılır — yangın söndürme değil, ÖNLEME. |
+| Güvenlik sorunu | ✅ Hiçbiri | |
+| **Dizine eklenen** | **264** / 2515 (**%10,4**) | |
+| **Keşfedildi – dizine eklenmemiş** | **2.159** | Google URL'leri BİLİYOR ama **hiç indirmemiş** |
+| Tarandı – dizine eklenmemiş | **30** | "Gördü ve değersiz buldu" senaryosu **marjinal** |
+| noindex ile hariç | 145 | Beklenen (profil, akış, takvim…) |
+| **Sunucu hatası (5xx)** | **32** | ⛔ Somut hata — §4.5 |
+| Yumuşak 404 | **0** | ✅ 14 Ağu çalışması tuttu |
+| Yinelenen/kanonik sorunu | 1 | İhmal edilebilir |
+| Sitemap | 2.515 URL, son okuma 19 Ağu, hatasız | |
+| **Gösterim / tıklama** | 77 / **0** (13 gün) | Ortalama konum **69,1** |
+| Sorgular | 53 sorgu, **ilk 25'in TAMAMI marka dışı** | "küçük ev dizisi oyuncuları", "geceyarısı ekspresi oyuncuları"… |
+| Gösterim alan sayfalar | 37, **%100'ü `/icerik/*`** | Bölüm/liste/keşfet sayfası HİÇ gösterim almamış |
+| Ülke | TR 69, diğer 8 (%10, hepsi tekil → gürültü) | §7'nin acelesi yok |
+| Cihaz | Masaüstü 69 / Mobil 8 | Örneklem çok küçük, anlam çıkarma |
+| **CrUX saha verisi** | ❌ **Yok** ("yeterli kullanım verisi yok") | §9 doğrulandı: hız SEO'ya bağlanmıyor |
+| Zengin sonuç gösterimi | "Veri yok" | |
+| **Yorum snippet'i** | **28 geçerli / 7 geçersiz** | Hata: *"aggregateRating nesnesini içermeyen birden fazla yorum var"* |
+| İçerik haritası (breadcrumb) | 10 geçerli / 0 geçersiz | ✅ |
+| `/listeler/8` denetimi | "URL Google tarafından bilinmiyor", yönlendiren sayfa YOK | §6.7 yetimlik **doğrulandı** |
+| `/icerik/tv/1396` denetimi | Dizine eklendi, son tarama 14 Ağu | |
 
 ---
+
+## 1.1 TEŞHİS DEĞİŞTİ — sürüm 1.0'daki hata
+
+**1.0'da yazılan:** *"<500 indeksliyse sorun kalite sinyalindedir."*
+İndeksli gerçekten 264. **Ama alt teşhis yanlış çıktı.**
+
+"Tarandı ama eklenmedi" yalnız **30**. Yani Google içeriği görüp reddetmiyor.
+Asıl yığın **2.159 sayfa "Keşfedildi – hiç indirilmedi"**: URL'ler biliniyor,
+Googlebot **taramaya gelmiyor**.
+
+Bu bir **kalite reddi değil**, şunların bileşimi:
+- **Tarama bütçesi** — yeni ve düşük otoriteli alan adı,
+- **Zayıf iç bağlantı** — sinyal dağınık, derin sayfalara akmıyor,
+- **Dış bağlantı yokluğu** — siteye işaret eden kimse yok,
+- **32 adet 5xx** — Googlebot hata alıyor, bütçe yanıyor ve güven düşüyor.
+
+### Doğrudan sonucu — 1.0'ın 3. maddesi ERTELENDİ
+
+Bölüm sayfalarını 61'den binlerce'ye çıkarmak, **Google'ın zaten boşaltamadığı
+bir kuyruğa binlerce URL daha eklemek** demekti. Var olan sayfaların taranma
+olasılığını seyreltirdi.
+
+> **Kural:** "Keşfedildi – dizine eklenmemiş" sayısı anlamlı biçimde
+> düşmeden **yeni URL ailesi açılmaz.** Önce kuyruk boşalmalı.
+
+Bunun tersi de doğru: **iç bağlantıyı güçlendiren** her iş artık öncelikli.
+Bugün eklenen `/icerik` → "Yapım firmaları" bağlantı bloğu (§6.1) tam da bu
+sınıfa girer — yeni URL açmakla kalmıyor, var olan sayfalar arasında sinyal
+taşıyor.
 
 ## 2. 🔨 KIRMIZI — Sentetik puanlar yapılandırılmış veriyi besliyor
 

@@ -195,10 +195,22 @@ test('SÜZÜLMEZ: içeriğin KAMUSAL sayaçları (puan ortalaması/dağılımı,
   // aynı dizinin puanı her kullanıcıda başka çıkar; paylaşılan ekran görüntüsü,
   // SEO sayfası ve admin paneli birbirini tutmazdı.
   const govde = ucGovdesi('get', '/incelemeler/:tur/:tmdbId');
-  // Ortalama sorgusu süzgeçsiz kalmalı (yalnız LİSTE süzülür).
-  assert.match(govde, /round\(avg\(puan\)/);
+  // Ortalama/dağılım ENGELLEME süzgecinden geçmemeli (yalnız LİSTE süzülür).
+  // 19 Ağu 2026: ikisi de satır içinden ortak sabitlere taşındı
+  // (`TOPLUM_PUAN_SQL` / `TOPLUM_PUAN_DAGILIM_SQL`) — SSR ve JSON-LD ile AYNI
+  // metni çalıştırsınlar diye. İddia sabitlerin üzerinden kuruluyor.
+  assert.match(govde, /havuz\.query\(TOPLUM_PUAN_SQL, olcut\)/);
+  assert.match(govde, /havuz\.query\(TOPLUM_PUAN_DAGILIM_SQL, olcut\)/);
   assert.equal((govde.match(/engelSuzgec\(/g) || []).length, 1,
     'yalnız inceleme LİSTESİ süzülmeli, ortalama/dağılım değil');
+  // Sabitlerin KENDİSİ de engel süzgeci taşımamalı — taşısaydı puan
+  // kullanıcıya göre değişir ve "8.4" bir daha hiçbir yerde tutmazdı.
+  for (const ad of ['TOPLUM_PUAN_SQL', 'TOPLUM_PUAN_DAGILIM_SQL']) {
+    const m = new RegExp(`const ${ad} = \`([\\s\\S]*?)\``).exec(KAYNAK);
+    assert.ok(m, `${ad} bulunamadı`);
+    assert.doesNotMatch(m[1], /engelSuzgec|engellemeler/,
+      `${ad} kişiselleştirilmiş: kamusal sayaç kullanıcıya göre değişemez`);
+  }
   // Gerekçe kodda yazılı kalmalı (uç kaydının HEMEN ÜSTÜNDEKİ blokta).
   assert.match(KAYNAK, /KAMUSAL istatistiğidir/);
 });

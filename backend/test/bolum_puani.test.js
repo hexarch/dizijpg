@@ -301,8 +301,11 @@ test('KARIŞMA YOK: puanlar üzerindeki HER sorgu sezon hedefini belirtiyor', ()
 
 test('SEO: aggregateRating ve inceleme vitrini YALNIZ dizi geneli puanı', () => {
   // Sayfada görünen ortalama + JSON-LD ratingValue aynı sorgudan gelir.
+  // 19 Ağu 2026: sorgu satır içinden `TOPLUM_PUAN_SQL` sabitine taşındı
+  // (arayüz ucu `/incelemeler` ile PAYLAŞILSIN diye) — iddia da oraya taşındı.
+  // `sezon IS NULL` koşulu değişmedi: bölüm puanı başlığın puanına karışamaz.
   assert.match(KAYNAK,
-    /round\(avg\(puan\)::numeric, 1\)::float AS ortalama[\s\S]{0,120}FROM puanlar WHERE tur = \$1 AND tmdb_id = \$2 AND sezon IS NULL/);
+    /const TOPLUM_PUAN_SQL = `[\s\S]{0,300}?p\.sezon IS NULL/);
   // İndeksleme kararı (ozgunIcerikVar) ve sitemap kapsamı da dizi geneli.
   assert.match(KAYNAK,
     /SELECT 1 FROM puanlar p JOIN kullanicilar k[\s\S]{0,160}p\.sezon IS NULL/);

@@ -2275,6 +2275,77 @@ const SEO_INCELEME_KOSUL =
   `NOT k.yasakli AND p.yorum IS NOT NULL AND ${SEO_GIZLI_ICERIK_YOK('p')}`
   + ` AND ${seoOzUzunluk('p.yorum')} >= ${SEO_INCELEME_MIN}`;
 
+// ===========================================================================
+// TOPLUM PUANI — TEK TANIM NOKTASI (19 Ağu 2026, SEO politika düzeltmesi)
+// ===========================================================================
+// SORUN: `/icerik/tv/1396` sayfası "ratingValue 4.3, ratingCount 15" basıyordu
+// ve o 15 puanın TAMAMI bizim ürettiğimiz persona hesaplarındandı
+// (`araclar/intl_profil_doldur.js` ve `araclar/intl_guclendir.js` doğrudan
+// `INSERT INTO puanlar` yapıyor). Google'ın inceleme snippet'i politikası
+// puanların GERÇEK kullanıcılardan gelmesini şart koşar; site sahibinin
+// ürettiği puanı toplum puanı diye yayınlamak zengin sonucun iptaliyle,
+// ağır durumda manuel işlemle cezalandırılır.
+//
+// ---------------------------------------------------------------------------
+// NEDEN TEK SABİT (kopyalanmış SQL değil)
+// ---------------------------------------------------------------------------
+// Yalnız JSON-LD'yi temizleyip sayfada 4,3'ü bırakmak İHLALİ İHLALLE
+// DEĞİŞTİRMEK olurdu: yapılandırılmış veri, sayfada GÖRÜNEN içerikle eşleşmek
+// zorundadır. Bu yüzden toplum puanı ÜÇ yerde de aynı olmalı:
+//   1) SSR bot sayfasının metni  (`seoDegerlendirmeGovdesi`)
+//   2) JSON-LD `aggregateRating`  (`seoOrtalamaPuan`)
+//   3) uygulamanın kendi arayüzü  (`GET /incelemeler/:tur/:tmdbId`)
+// Üçü de AŞAĞIDAKİ AYNI SQL METNİNİ çalıştırır. Sorgu kopyalansaydı biri
+// güncellenip diğeri unutulduğunda kural sessizce bozulurdu — bu dosyanın
+// tarihinde tam olarak bu hata bir kez yaşandı (bkz. `seoDegerlendirmeler`
+// üstündeki 14 Ağu notu).
+//
+// PUANLAR SİLİNMİYOR: satırlar veritabanında duruyor, yalnız TOPLAMA
+// girmiyorlar. Silmek geri alınamaz bir işlem olurdu ve hesaplar sitede gerçek
+// profil olarak yaşamaya devam ediyor.
+/**
+ * "Bu puan satırının sahibi tohum hesap DEĞİL" koşulu.
+ * `NOT EXISTS` (JOIN değil): çağıran sorguların bir kısmı `kullanicilar`a hiç
+ * katılmıyor ve JOIN eklemek onların satır sayısını/GROUP BY'ını değiştirme
+ * riski taşırdı. `tk.id` birincil anahtar, yani satır başına tekil arama.
+ */
+const TOHUM_PUANI_YOK = (alias) =>
+  `NOT EXISTS (SELECT 1 FROM kullanicilar tk
+        WHERE tk.id = ${alias}.kullanici_id AND tk.tohum)`;
+
+// DİZİ/FİLM GENELİ toplum puanı. `p.sezon IS NULL`: bölüm puanları başlığın
+// puanına karışmaz (8 Ağu 2026-d kararı).
+// `count(p.puan)`: `ratingCount` PUAN sayısıdır; `POST /puan` puansız satırı
+// zaten siliyor, yani bugün `count(*)` ile aynı sonucu verir — ama ortalamanın
+// dayandığı satır sayısıyla birebir aynı ifadeyi kullanmak niyeti sabitler.
+// `ortalama` BİLEREK numeric (float'a çevrilmiyor): 1 ondalık basamağın
+// kesinliği kaybolmasın. Okuyanların hepsi (`seoYildizOrt`, istemcideki
+// `puanSayisi()`) hem metni hem sayıyı kabul ediyor.
+const TOPLUM_PUAN_SQL = `
+  SELECT round(avg(p.puan)::numeric, 1) AS ortalama, count(p.puan)::int AS adet
+    FROM puanlar p
+   WHERE p.tur = $1 AND p.tmdb_id = $2 AND p.sezon IS NULL
+     AND ${TOHUM_PUANI_YOK('p')}`;
+
+// Puan dağılımı (IMDb tarzı histogram). WHERE'i ortalamayla BİREBİR AYNI
+// olmak ZORUNDA: aksi halde çubukların toplamı `adet`i tutmaz ve kullanıcı
+// "15 puan" yazıp 3 çubuk gösteren bir grafik görür.
+const TOPLUM_PUAN_DAGILIM_SQL = `
+  SELECT p.puan, count(*)::int AS adet
+    FROM puanlar p
+   WHERE p.tur = $1 AND p.tmdb_id = $2 AND p.sezon IS NULL
+     AND ${TOHUM_PUANI_YOK('p')}
+   GROUP BY p.puan ORDER BY p.puan`;
+
+// BÖLÜM toplum puanı — başlık sorgusunun bölüm karşılığı, aynı tohum süzgeci.
+// `::float` burada korunuyor: `/bolum-puanlari` ucu yıllardır sayı döndürüyor
+// ve istemci onu sayı olarak okuyor.
+const TOPLUM_PUAN_BOLUM_SQL = `
+  SELECT round(avg(p.puan)::numeric, 1)::float AS ortalama, count(p.puan)::int AS adet
+    FROM puanlar p
+   WHERE p.tur = 'tv' AND p.tmdb_id = $1 AND p.sezon = $2 AND p.bolum = $3
+     AND ${TOHUM_PUANI_YOK('p')}`;
+
 async function ozgunIcerikVar(tur, tmdbId) {
   try {
     const { rows } = await havuz.query(
@@ -2312,7 +2383,9 @@ async function ozgunIcerikVar(tur, tmdbId) {
 async function seoIcerikVerisi(tur, tmdbId) {
   const [yorum, inceleme, puan] = await Promise.all([
     havuz.query(
-      `SELECT y.metin, y.tarih, k.kullanici_adi
+      // `k.tohum`: metin SAYFADA KALIR (kullanıcı için değerli) ama JSON-LD
+      // `review` dizisine girmez — süzme kararı `seoDegerlendirmeler`de.
+      `SELECT y.metin, y.tarih, k.kullanici_adi, k.tohum
          FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
         WHERE y.tur = $1 AND y.tmdb_id = $2 AND y.sezon IS NULL
           AND ${SEO_YORUM_KOSUL}
@@ -2320,7 +2393,7 @@ async function seoIcerikVerisi(tur, tmdbId) {
     havuz.query(
       // `p.sezon IS NULL` (8 Ağu 2026-d): bölüm puanları/incelemeleri DİZİNİN
       // sayfasına girmez — bu vitrin dizinin/filmin kendisi hakkındadır.
-      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
+      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi, k.tohum
          FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
         WHERE p.tur = $1 AND p.tmdb_id = $2 AND p.sezon IS NULL
           AND ${SEO_INCELEME_KOSUL}
@@ -2328,10 +2401,9 @@ async function seoIcerikVerisi(tur, tmdbId) {
     // aggregateRating YALNIZ dizi geneli puanlarından hesaplanır: JSON-LD
     // TVSeries'i tanımlar ve sayfada GÖRÜNEN değerle birebir aynı olmak
     // zorundadır (bölüm puanları bu sayfada hiç gösterilmiyor).
-    havuz.query(
-      `SELECT round(avg(puan)::numeric, 1)::float AS ortalama, count(puan)::int AS adet
-         FROM puanlar WHERE tur = $1 AND tmdb_id = $2 AND sezon IS NULL`,
-      [tur, tmdbId]),
+    // SQL uygulamanın `/incelemeler` ucuyla ORTAKTIR (TOPLUM_PUAN_SQL): şema,
+    // SSR metni ve arayüz aynı sayıyı söylemek zorunda.
+    havuz.query(TOPLUM_PUAN_SQL, [tur, tmdbId]),
   ]);
   return {
     yorumlar: yorum.rows,
@@ -2399,6 +2471,93 @@ function seoBaglantiListesi(baslik, ogeler) {
   const li = ogeler
     .map((o) => `<li><a href="${htmlKacir(o.yol)}">${htmlKacir(o.ad)}</a></li>`)
     .join('');
+  return `\n<h2>${htmlKacir(baslik)}</h2>\n<ul>${li}</ul>`;
+}
+
+// ---------- SEO: SSR sayfalarında GÖRSEL (19 Ağu 2026) ----------
+// ÖLÇÜM: 16 SSR sayfasının HİÇBİRİNDE `<img>` yoktu. `og:image` vardı ama o
+// yalnız paylaşım kartını besler; Google Görseller'e sayfanın görseli olarak
+// giren şey sayfadaki `<img>`dir. Yani afişlerin tamamı image.tmdb.org'a
+// yazılıyordu, biz o trafiğin hiçbirini almıyorduk. İkinci kazanç `alt`:
+// "Breaking Bad (2008) afişi" bir sayfanın en ucuz konu sinyalidir ve
+// TMDB özetinin kopyası DEĞİLDİR (özgünlük eşiğine yardım eder).
+//
+// TAVAN NEDEN VAR: bot HTML'i bilerek hafif tutuluyor (bugünkü en büyük SSR
+// sayfası ~30 KB). Her `<img>` hem gövdeye ~130 bayt ekler hem de Googlebot
+// için AYRI bir tarama isteğidir; 100 öğelik bir liste sayfası tek başına 100
+// ek istek demektir. Sayfa başına 20: görsel aramada temsil edilmek için
+// fazlasıyla yeterli, tarama bütçesi için ucuz. Tavanı AŞAN öğeler sayfadan
+// DÜŞMEZ, yalnız görselsiz (düz bağlantı) basılır — iç bağlantı değeri korunur.
+const SEO_AFIS_TAVAN = 20;
+// TMDB kutu ölçüleri SABİTTİR: `w185` afiş/profil 185x278 (2:3), `w342`
+// 342x513. `width`/`height` yazmak CLS içindir — değerler uydurulamaz, bu
+// yüzden yalnız oranı BİLİNEN kutular kullanılır (firma logosu hariç, bkz.
+// `seoLogoGorseli`).
+const SEO_AFIS_BOYUT = 'w185';
+const SEO_AFIS_EN = 185;
+const SEO_AFIS_BOY = 278;
+const SEO_ANA_AFIS_BOYUT = 'w342';
+const SEO_ANA_AFIS_EN = 342;
+const SEO_ANA_AFIS_BOY = 513;
+
+/**
+ * Tek `<img>` etiketi. `alt` BOŞSA görsel HİÇ BASILMAZ.
+ *
+ * NEDEN: alt'sız afiş, görsel aramada hiçbir sorguya bağlanmayan ve ekran
+ * okuyucuda "resim" diye geçilen ölü bir istektir — tarama bütçesi harcar,
+ * karşılığında hiçbir şey vermez. Bu yüzden kural teknik değil, ürün kuralı:
+ * anlamlı metni olmayan görsel sayfaya girmez.
+ */
+function seoGorsel({ src, alt, en, boy }) {
+  const s = seoMetin(src);
+  const a = seoMetin(alt);
+  if (!s || !a) return '';
+  return `<img src="${htmlKacir(s)}" alt="${htmlKacir(a)}"`
+    + (en ? ` width="${en}"` : '') + (boy ? ` height="${boy}"` : '')
+    + ' loading="lazy">';
+}
+
+/** Tek görseli kendi paragrafında basar; görsel üretilemezse BOŞ döner. */
+const seoGorselP = (secenekler) => {
+  const g = seoGorsel(secenekler);
+  return g ? `\n<p>${g}</p>` : '';
+};
+
+/** Sayfanın ANA görseli (afiş/profil): `<h1>`in hemen altındaki tek büyük kare. */
+const seoAnaGorsel = (yol, alt) => seoGorselP({
+  src: tmdbGorsel(yol, SEO_ANA_AFIS_BOYUT), alt,
+  en: SEO_ANA_AFIS_EN, boy: SEO_ANA_AFIS_BOY,
+});
+
+// Bölüm karesi (still) 16:9'dur, afiş kutusu DEĞİL: `w300` -> 300x169.
+const SEO_KARE_BOYUT = 'w300';
+const seoBolumKaresi = (yol, alt) => seoGorselP({
+  src: tmdbGorsel(yol, SEO_KARE_BOYUT), alt, en: 300, boy: 169,
+});
+
+/**
+ * Afişli bağlantı listesi — `seoBaglantiListesi`nin görselli kardeşi.
+ * AYRI FONKSİYON çünkü metin listeleri (bölüm/komşu bağlantıları) görselsiz
+ * kalmalı: bölüm bağlantısının afişi yok, olmayan görseli zorlamak boş
+ * `<img>` üretirdi.
+ *
+ * `ogeler`: `{ ad, yol, afis (TMDB yolu), alt }`. `afis`/`alt` yoksa öğe düz
+ * bağlantı olarak basılır. `tavan`: kaç öğeye görsel verilecek (bkz.
+ * SEO_AFIS_TAVAN gerekçesi); geri kalanlar düz bağlantı.
+ *
+ * Görsel bağlantının İÇİNDE: afişe tıklayan da yapıma gider. `alt` bağlantı
+ * metniyle birebir aynı değildir ("… afişi" eki) — ekran okuyucuda yinelenme
+ * yerine bilgi eklesin diye.
+ */
+function seoAfisListesi(baslik, ogeler, tavan = SEO_AFIS_TAVAN) {
+  if (!ogeler.length) return '';
+  const li = ogeler.map((o, i) => {
+    const g = i < tavan ? seoGorsel({
+      src: tmdbGorsel(o.afis, SEO_AFIS_BOYUT), alt: o.alt,
+      en: SEO_AFIS_EN, boy: SEO_AFIS_BOY,
+    }) : '';
+    return `<li><a href="${htmlKacir(o.yol)}">${g}${htmlKacir(o.ad)}</a></li>`;
+  }).join('');
   return `\n<h2>${htmlKacir(baslik)}</h2>\n<ul>${li}</ul>`;
 }
 
@@ -2518,12 +2677,41 @@ const seoKisiNesnesi = (o) => ({
   '@type': 'Person', name: o.name, url: `${SITE_KOK}/kisi/${o.id}`,
 });
 
-/** `seoIcerikVerisi`/`seoBolumVerisi` çıktısını schema.org `Review` dizisine çevirir. */
+/**
+ * Bir satırın yazarı schema.org'da nasıl beyan edilir.
+ *
+ * `dizi.jpg.ai` bir KİŞİ DEĞİLDİR; onu `Person` diye bildirmek arama motoruna
+ * yapay zekâ üretimini insan beyanı gibi sunmak olur (19 Ağu 2026'ya kadar
+ * canlıda böyleydi). Resmî `dizi.jpg` hesabı da bir kişi değil, sitenin
+ * kendisi. İkisi de `Organization` olarak beyan edilir — schema.org'da
+ * `author`ın erim (range) tanımı `Person` VEYA `Organization`'dır, yani tip
+ * geçerli kalır ve okuyan taraf metnin kaynağını doğru anlar.
+ */
+const seoYazarNesnesi = (r) => ({
+  '@type': r.tohum ? 'Organization' : 'Person', name: r.kullanici_adi,
+});
+
+/**
+ * `seoIcerikVerisi`/`seoBolumVerisi` çıktısını schema.org `Review` dizisine
+ * çevirir.
+ *
+ * TOHUM YAZARLAR DIŞARIDA (19 Ağu 2026 — SEO politika düzeltmesi).
+ * Bu satırların METNİ SAYFADA KALIR: `seoDegerlendirmeGovdesi` onları basmaya
+ * devam eder, çünkü okuyan insan için gerçekten değerli. Yapılandırılmış
+ * `Review` ise ayrı bir şey: Google'ın inceleme snippet'i politikasında bir
+ * `Review`, sitenin KENDİ ürettiği değil KULLANICILARIN yazdığı değerlendirmedir.
+ * Site sahibinin (ya da onun yapay zekâsının) yazdığını `Review` diye beyan
+ * etmek, yıldızı kendi kendine veren bir sinyal üretir.
+ *
+ * `Organization` yazarla basıp bırakmak da düşünüldü ve REDDEDİLDİ: tipi
+ * düzeltmek beyanın yanlışlığını gidermiyor — sorun yazarın "kim" olduğu değil,
+ * tarafsız görünen bir inceleme vitrinine kendi metnimizi koymamız.
+ */
 function seoDegerlendirmeler(seo, limit = 10) {
   return [
-    ...seo.incelemeler.map((r) => ({
+    ...seo.incelemeler.filter((r) => !r.tohum).map((r) => ({
       '@type': 'Review',
-      author: { '@type': 'Person', name: r.kullanici_adi },
+      author: seoYazarNesnesi(r),
       datePublished: seoGun(r.tarih),
       reviewBody: seoMetin(r.yorum),
       ...(r.puan ? {
@@ -2533,9 +2721,9 @@ function seoDegerlendirmeler(seo, limit = 10) {
         },
       } : {}),
     })),
-    ...seo.yorumlar.map((r) => ({
+    ...seo.yorumlar.filter((r) => !r.tohum).map((r) => ({
       '@type': 'Review',
-      author: { '@type': 'Person', name: r.kullanici_adi },
+      author: seoYazarNesnesi(r),
       datePublished: seoGun(r.tarih),
       reviewBody: seoMetin(r.metin),
     })),
@@ -2543,12 +2731,33 @@ function seoDegerlendirmeler(seo, limit = 10) {
 }
 
 /**
- * AggregateRating — YALNIZCA gerçekten puan varsa üretilir (`ratingCount: 0`
- * basmak politika ihlali). Değer sayfaya basılan metinle AYNI fonksiyondan
- * (`seoYildizOrt`) geçer.
+ * `aggregateRating` için ALT SINIR (19 Ağu 2026).
+ *
+ * Eski eşik `adet > 0` idi. Tohum puanları toplamadan çıkınca çoğu yapımda
+ * gerçek puan sayısı bir-iki taneye düşüyor ve "tek kişinin verdiği 5,0"
+ * TOPLAM (aggregate) değildir: bir kişinin görüşüdür. Google bunu zayıf ve
+ * kolay istismar edilen bir sinyal olarak görür; ayrıca tek puan değişince
+ * arama sonucundaki yıldız zıplar.
+ *
+ * 3 seçildi: iki farklı görüş bir ortalamayı hâlâ uçlara savurur, üçüncü puan
+ * en azından bir eğilim gösterir. Sayı keyfî olduğu için TEK YERDE tanımlı —
+ * yükseltmek/indirmek isteyen burayı değiştirir.
+ *
+ * NOT: eşik altında kalınca sayfadaki "dizi.jpg puanı: X / 5" metni SİLİNMEZ.
+ * Kural tek yönlüdür: yapılandırılmış veride BEYAN EDİLEN her şey sayfada
+ * görünmelidir; sayfada görünen her şeyi beyan etmek zorunlu değildir.
+ * Beyan etmemek her zaman güvenli taraftır.
+ */
+const SEO_PUAN_MIN = 3;
+
+/**
+ * AggregateRating — YALNIZCA yeterli sayıda GERÇEK puan varsa üretilir
+ * (`ratingCount: 0` basmak politika ihlali). Değer sayfaya basılan metinle AYNI
+ * fonksiyondan (`seoYildizOrt`) ve aynı SQL'den (`TOPLUM_PUAN_SQL`) geçer.
+ * Tohum hesapların puanları `seo.adet`e zaten hiç girmemiştir.
  */
 function seoOrtalamaPuan(seo) {
-  if (!(seo.adet > 0) || !seo.ortalama) return null;
+  if (!(seo.adet >= SEO_PUAN_MIN) || !seo.ortalama) return null;
   return {
     '@type': 'AggregateRating',
     ratingValue: seoYildizOrt(seo.ortalama),
@@ -2567,9 +2776,16 @@ function seoDegerlendirmeGovdesi(seo, { incelemeBasligi, yorumBasligi }) {
   const puanBlok = seo.adet > 0 && seo.ortalama
     ? `\n<p>dizi.jpg puanı: ${htmlKacir(seoYildizOrt(seo.ortalama))} / 5`
       + ` (${htmlKacir(seo.adet)} puan)</p>` : '';
+  // `yorum` -> `metin` EŞLEMESİ ŞART (19 Ağu 2026'da bulundu).
+  // İnceleme satırları `puanlar` tablosundan gelir ve metin sütunu `yorum`dur;
+  // `seoYorumHtml` ise `metin` alanını okur. Eşleme olmadan sayfaya BOŞ `<p></p>`
+  // basılıyordu — oysa JSON-LD `reviewBody` aynı metni YAZIYORDU. Yani
+  // yapılandırılmış veri, sayfada GÖRÜNMEYEN bir içeriği beyan ediyordu:
+  // düzeltmeye geldiğimiz politika ihlalinin ta kendisi, sessiz hâli.
   const incelemeBlok = seo.incelemeler.length
     ? `\n<h2>${htmlKacir(incelemeBasligi)}</h2>\n`
-      + seo.incelemeler.map(seoYorumHtml).join('\n') : '';
+      + seo.incelemeler.map((r) => seoYorumHtml({ ...r, metin: r.metin ?? r.yorum }))
+        .join('\n') : '';
   const yorumBlok = seo.yorumlar.length
     ? `\n<h2>${htmlKacir(yorumBasligi)}</h2>\n`
       + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
@@ -2646,6 +2862,12 @@ function ogYok(res, url, aciklama) {
   }));
 }
 
+// İçerik sayfasında kaç yapım firmasına bağlantı verilir. TMDB bazı filmlerde
+// 10+ firma listeler (ortak yapımlar, ses/efekt stüdyoları); hepsini basmak
+// sayfanın bağlantı dengesini bozar ve tarama bütçesini dağıtır. 4: ana yapım
+// firmalarını kapsar, kuyruk stüdyoları dışarıda kalır.
+const SEO_ICERIK_FIRMA = 4;
+
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
   const id = parseInt(tmdbId, 10);
@@ -2668,13 +2890,38 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       incelemeBasligi: `${adYil} incelemeleri`,
       yorumBasligi: 'dizi.jpg kullanıcılarının yorumları',
     });
-    const oyuncuBlok = seoBaglantiListesi('Oyuncular',
+    // GÖRSELLER (19 Ağu 2026): oyuncu profilleri ve benzer yapım afişleri artık
+    // `<img>` olarak basılıyor (tavan gerekçesi SEO_AFIS_TAVAN'da). Sayfa
+    // toplamı: 1 ana afiş + 10 oyuncu + 8 benzer = 19 <= 20.
+    const oyuncuBlok = seoAfisListesi('Oyuncular',
       (v.credits?.cast || []).slice(0, 10)
-        .map((o) => ({ ad: o.name, yol: `/kisi/${o.id}` })));
-    const benzerBlok = seoBaglantiListesi(tur === 'tv' ? 'Benzer diziler' : 'Benzer filmler',
+        .map((o) => ({
+          ad: o.name, yol: `/kisi/${o.id}`,
+          afis: o.profile_path, alt: `${o.name} fotoğrafı`,
+        })), 10);
+    const benzerBlok = seoAfisListesi(tur === 'tv' ? 'Benzer diziler' : 'Benzer filmler',
       (v.similar?.results || []).slice(0, 8)
         .filter((b) => b.name || b.title)
-        .map((b) => ({ ad: b.name || b.title, yol: `/icerik/${tur}/${b.id}` })));
+        .map((b) => {
+          const bAd = b.name || b.title;
+          const bYil = String(b.first_air_date || b.release_date || '').slice(0, 4);
+          return {
+            ad: `${bAd}${bYil ? ` (${bYil})` : ''}`,
+            yol: `/icerik/${tur}/${b.id}`,
+            afis: b.poster_path,
+            alt: `${bAd}${bYil ? ` (${bYil})` : ''} afişi`,
+          };
+        }), 8);
+    // YAPIM FİRMASI BAĞLANTILARI (19 Ağu 2026): `/sirket/:id` SSR'ı bu turda
+    // yazıldı ama sitemap'e GİRMİYOR (hangi firma kimliklerinin sayfası olduğu
+    // bizde tutulmuyor). Googlebot'un o sayfaları bulabileceği TEK yol burası;
+    // bağlantı olmadan yeni yüzey kapalı kutu kalırdı. Veri zaten elde:
+    // `production_companies` detay yanıtının içinde geliyor, EK İSTEK YOK.
+    const firmaBlok = seoBaglantiListesi('Yapım firmaları',
+      (v.production_companies || [])
+        .filter((f) => f && f.name && gecerliTmdb(f.id))
+        .slice(0, SEO_ICERIK_FIRMA)
+        .map((f) => ({ ad: f.name, yol: `/sirket/${f.id}` })));
     // Bölüm kuyruğu dizi sayfasından keşfedilir (filmde sezon yok).
     const bolumBlok = tur === 'tv' ? await seoDiziBolumGovdesi(id, v) : '';
 
@@ -2687,7 +2934,11 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
       indexle: await ozgunIcerikVar(tur, id),
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
-      govde: degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok,
+      // Ana afiş EN ÜSTTE: sayfanın "kahraman görseli" Google Görseller'de bu
+      // sayfayla eşleşecek olan karedir. `alt` ad + yıl taşır (aynı adlı
+      // yapımlar ancak yılla ayrışıyor).
+      govde: seoAnaGorsel(v.poster_path, `${adYil} afişi`)
+        + degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok + firmaBlok,
       jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
   } catch (e) {
@@ -2865,11 +3116,19 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
     ).values()]
       .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
       .slice(0, SEO_KISI_YAPIM_LIMIT)
-      .map((y) => ({
-        ad: y.name || y.title,
-        tur: y.media_type,
-        yol: `/icerik/${y.media_type}/${y.id}`,
-      }));
+      .map((y) => {
+        const yAd = y.name || y.title;
+        const yYil = String(y.first_air_date || y.release_date || '').slice(0, 4);
+        return {
+          ad: yAd,
+          tur: y.media_type,
+          yol: `/icerik/${y.media_type}/${y.id}`,
+          // Görsel alanları (19 Ağu 2026): liste artık afişli basılıyor.
+          // `alt` ad + YIL taşır; aynı adlı yapımlar ancak yılla ayrışır.
+          afis: y.poster_path,
+          alt: `${yAd}${yYil ? ` (${yYil})` : ''} afişi`,
+        };
+      });
 
     // dizi.jpg'nin KİŞİ hakkındaki özgün içeriği (yorum + inceleme + puan).
     // İçerik sayfasıyla AYNI yardımcı: süzgeçler (spoiler/yasaklı/gizlenmiş)
@@ -2883,11 +3142,15 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
       v.deathday && `Ölüm: ${String(v.deathday).slice(0, 10)}`,
     ].filter(Boolean);
 
-    const govde = (kimlikSatirlari.length
-      ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
+    // GÖRSELLER (19 Ağu 2026): profil fotoğrafı + yapım afişleri.
+    // Sayfa toplamı: 1 profil + 12 yapım = 13 <= SEO_AFIS_TAVAN.
+    const govde = seoAnaGorsel(v.profile_path, `${ad} fotoğrafı`)
+      + (kimlikSatirlari.length
+        ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
       + (biyografi
         ? `\n<h2>${htmlKacir(ad)} kimdir?</h2>\n<p>${htmlKacir(biyografi)}</p>` : '')
-      + seoBaglantiListesi(`${ad} — dizi.jpg'deki yapımları`, yapimlar)
+      + seoAfisListesi(`${ad} — dizi.jpg'deki yapımları`, yapimlar,
+        SEO_KISI_YAPIM_LIMIT)
       + seoDegerlendirmeGovdesi(seo, {
         incelemeBasligi: `${ad} hakkında dizi.jpg incelemeleri`,
         yorumBasligi: `${ad} hakkında kullanıcı yorumları`,
@@ -2927,6 +3190,268 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
   }
 }));
 
+// ---------- SEO: /sirket/:id yapım firması sayfası (19 Ağu 2026) ----------
+// ÖLÇÜM: bu yol botlara JENERİK KABUK + `noindex,follow` dönüyordu (yakalayıcı
+// uçtaki "rota var ama SSR'ı yok" dalı). Oysa yapım firması sayfaları gerçek
+// arama hacmi olan bir yüzey ("Netflix dizileri", "HBO yapımları", "TIMS&B
+// dizileri") ve sayfanın TÜM verisi zaten elimizde — eksik olan tek şey SSR'dı.
+//
+// CLOAKING KİLİDİ (SEO-PLANI 3.1): `/sirket/` Flutter'ın `acikYolOnEkleri`
+// listesinde, yani oturumsuz ziyaretçi de aynı sayfayı görüyor. Bot ile insanın
+// gördüğü LİSTE de aynı: bu uç, `app/lib/ekranlar/sirket.dart`taki "Diziler" ve
+// "Filmler" raflarıyla BİREBİR aynı TMDB sorgusunu kullanır
+// (`/discover/{tv,movie}?with_companies=<id>&sort_by=popularity.desc`).
+// Sorgu ayrışırsa bot başka, insan başka liste görür — o zaman indekslemek
+// yanıltıcı olur. `test/seo_sirket.test.js` iki tarafı kilitliyor.
+//
+// TMDB İSTEKLERİ (üçü de `/tmdb/*` beyaz listesinde ve önbellekli):
+//   * `/company/{id}`               — ad, logo, ülke, merkez  (7 gün TTL:
+//     firma künyesi pratikte hiç değişmez)
+//   * `/discover/tv?with_companies` — firmanın dizileri       (6 saat TTL:
+//   * `/discover/movie?...`           yeni yapım eklendikçe liste değişir)
+//
+// GİZLİLİK: sayfa yalnız TMDB katalog verisi + dizi.jpg'nin KENDİ public
+// puan/yorumlarını basar (ortak süzgeçler: spoiler/yasaklı/gizlenmiş elenir).
+const SEO_SIRKET_YAPIM = 9;       // tür başına sayfaya basılan yapım (dizi/film)
+const SEO_SIRKET_YAPIM_MIN = 6;   // altındaysa ince sayfa -> noindex,follow
+
+/**
+ * `/sirket/:id` sayfası indekse girsin mi? Karar TEK BİR FONKSİYONDA
+ * (`kisiIndekslenir` ile aynı gerekçe: test onu ÇALIŞTIRARAK kilitler).
+ *
+ * EŞİK NEDEN YAPIM SAYISI: firma künyesi tek başına üç satırdır (ad, ülke,
+ * merkez) ve TMDB `description` alanı firmaların ezici çoğunluğunda BOŞTUR.
+ * Sayfanın özgün gerekçesi listedir: 6+ yapım bağlantısı olan sayfa, dizi/film
+ * sayfalarına köprü kuran gerçek bir düğümdür; 1-2 yapımlı firma ise ince
+ * içeriktir ve `noindex,follow` kalır (taranır, bağlantıları takip edilir).
+ * dizi.jpg'de firma hakkında özgün yorum/inceleme varsa eşik aranmaz.
+ */
+const sirketIndekslenir = ({ ozgunVar, yapimSayisi }) =>
+  Boolean(ozgunVar) || yapimSayisi >= SEO_SIRKET_YAPIM_MIN;
+
+// TMDB `origin_country` İKİ HARFLİ ISO KODUDUR ("US"). Sayfa dili tr; ham kod
+// basmak Türkçe metinde "ABD" yerine "US" demek olurdu. Uygulama bunu 45 dilde
+// çözüyor (`ulkeAdiKoddan`, sirket.dart) ama backend imajında `app/` YOK —
+// burada yapım firmalarının pratikte geldiği ülkeler için küçük bir eşleme
+// yeter; çözülemeyen kod HAM basılır (yanlış ad uydurmaktansa kod dursun).
+const SEO_ULKE_ADI = {
+  US: 'ABD', GB: 'Birleşik Krallık', TR: 'Türkiye', FR: 'Fransa',
+  DE: 'Almanya', IT: 'İtalya', ES: 'İspanya', JP: 'Japonya',
+  KR: 'Güney Kore', CN: 'Çin', HK: 'Hong Kong', IN: 'Hindistan',
+  CA: 'Kanada', AU: 'Avustralya', RU: 'Rusya', BR: 'Brezilya',
+  MX: 'Meksika', AR: 'Arjantin', SE: 'İsveç', NO: 'Norveç',
+  DK: 'Danimarka', FI: 'Finlandiya', NL: 'Hollanda', BE: 'Belçika',
+  IE: 'İrlanda', PL: 'Polonya', CZ: 'Çekya', IL: 'İsrail',
+  IR: 'İran', EG: 'Mısır', ZA: 'Güney Afrika', NZ: 'Yeni Zelanda',
+  AT: 'Avusturya', CH: 'İsviçre', PT: 'Portekiz', GR: 'Yunanistan',
+  TH: 'Tayland', TW: 'Tayvan', PH: 'Filipinler', ID: 'Endonezya',
+};
+const seoUlkeAdi = (kod) => {
+  const k = String(kod || '').toUpperCase();
+  return k ? (SEO_ULKE_ADI[k] || k) : '';
+};
+
+/**
+ * Firma logosu. TMDB `w185` yalnız GENİŞLİĞİ sabitler; yükseklik logodan
+ * logoya değişir (kalkan, uzun yazı, kare amblem hepsi var). Bu yüzden
+ * `height` BASILMAZ — uydurma yükseklik CLS'i düzeltmez, görüntüyü ezer.
+ * `width`/`height` ikilisi yalnız ölçüsü BİLİNEN kutular için kuraldır.
+ */
+const seoLogoGorseli = (yol, alt) =>
+  seoGorselP({ src: tmdbGorsel(yol, 'w185'), alt, en: 185 });
+
+/**
+ * Firma açıklaması. TMDB'nin `description` alanı firmaların çoğunda BOŞ;
+ * o zaman jenerik cümle yerine VERİDEN kurulmuş, her firma için FARKLI bir
+ * açıklama üretilir (`seoKisiAciklamasi` ile aynı gerekçe: yinelenen meta
+ * açıklama üretme, bir arama sorgusuna gerçekten cevap ver).
+ */
+function seoSirketAciklamasi(ad, firma, yapimlar) {
+  const merkez = seoMetin(firma?.headquarters);
+  const ulke = seoUlkeAdi(firma?.origin_country);
+  const nerede = merkez || ulke;
+  const parcalar = [`${ad}${nerede ? `, ${nerede} merkezli` : ''} bir yapım firması.`];
+  // ÜÇ yapım (kişi sayfasındaki BEŞ değil): `ogSayfa` meta açıklamayı 200
+  // karakterde kırpıyor ve yapım adları yıl ekiyle birlikte uzun. Beş adla
+  // cümle ortasında kesiliyordu (ölçüldü: Netflix'te "puanlarını" diye
+  // bitiyordu); üçle kapanış cümlesi de sığıyor.
+  if (yapimlar.length) {
+    parcalar.push(
+      `Öne çıkan yapımları: ${yapimlar.slice(0, 3).map((y) => y.ad).join(', ')}.`);
+  }
+  parcalar.push('dizi.jpg\'de puanlarını ve yorumlarını görebilirsin.');
+  return parcalar.join(' ');
+}
+
+/**
+ * Firma sayfasının yapısal verisi.
+ *
+ * TİP `Organization`: schema.org'da "yapım firması" diye bir tip YOKTUR
+ * (`ProductionCompany` uydurmadır ve doğrulayıcıda hata verir). `Movie`/
+ * `TVSeries` nesnelerinin `productionCompany` alanı da zaten `Organization`
+ * bekler.
+ *
+ * AGGREGATE RATING / REVIEW BASILMIYOR: sayfada dizi.jpg puanı GÖRÜNÜYOR ama
+ * Google'ın inceleme zengin sonuç politikası `Organization` için "kendi
+ * kendini değerlendirme" saymaya açık bir alan; `/og/kisi`de `Person` için
+ * verilen kararla aynı disiplinle yapısal veriye KOYULMUYOR. Sayfa metni ile
+ * yapısal veri arasında çelişki doğmaz (yapısal veri sessizdir, yanlış değil).
+ *
+ * ItemList sayfada GÖRÜNEN yapım listesinin birebir karşılığıdır.
+ */
+function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
+  const merkez = seoMetin(firma?.headquarters);
+  const ulkeKodu = String(firma?.origin_country || '').toUpperCase();
+  const yapimNesneleri = yapimlar.map((y) => ({
+    '@type': y.tur === 'tv' ? 'TVSeries' : 'Movie',
+    name: y.ad,
+    url: SITE_KOK + y.yol,
+  }));
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': `${url}#firma`,
+        name: ad,
+        url,
+        ...(logo ? { logo } : {}),
+        ...(aciklama ? { description: seoMetin(aciklama) } : {}),
+        ...(merkez || ulkeKodu ? {
+          address: {
+            '@type': 'PostalAddress',
+            ...(merkez ? { addressLocality: merkez } : {}),
+            ...(ulkeKodu ? { addressCountry: ulkeKodu } : {}),
+          },
+        } : {}),
+        ...(firma?.homepage ? { sameAs: [String(firma.homepage)] } : {}),
+      },
+      ...(yapimNesneleri.length ? [{
+        '@type': 'ItemList',
+        name: `${ad} — dizi.jpg'deki yapımları`,
+        numberOfItems: yapimNesneleri.length,
+        itemListElement: yapimNesneleri.map((y, i) => ({
+          '@type': 'ListItem', position: i + 1, name: y.name, url: y.url,
+        })),
+      }] : []),
+      {
+        // "Yapım firmaları" bir LİSTE SAYFASI DEĞİL: böyle bir rota yok, bu
+        // yüzden kırıntının o basamağı `item` (URL) TAŞIMAZ — olmayan URL'i
+        // bota bildirme kuralı (`/og/kisi`deki "Kişiler" basamağıyla aynı).
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { '@type': 'ListItem', position: 2, name: 'Yapım firmaları' },
+          { '@type': 'ListItem', position: 3, name: ad },
+        ],
+      },
+    ],
+  };
+}
+
+/** TMDB `/discover` yanıtını sayfaya basılabilir yapım listesine çevirir. */
+function seoSirketYapimlari(yanit, tur) {
+  return ((yanit || {}).results || [])
+    // `poster_path` süzgeci sirket.dart'takinin aynısı: afişsiz kayıt
+    // uygulamada da listelenmiyor, bot sayfası ondan fazlasını göstermesin.
+    .filter((y) => y && y.poster_path && (y.name || y.title) && gecerliTmdb(y.id))
+    .slice(0, SEO_SIRKET_YAPIM)
+    .map((y) => {
+      const ad = y.name || y.title;
+      const yil = String(y.first_air_date || y.release_date || '').slice(0, 4);
+      return {
+        ad: `${ad}${yil ? ` (${yil})` : ''}`,
+        tur,
+        yol: `/icerik/${tur}/${y.id}`,
+        afis: y.poster_path,
+        alt: `${ad}${yil ? ` (${yil})` : ''} afişi`,
+      };
+    });
+}
+
+app.get('/og/sirket/:id', sarici(async (req, res) => {
+  const sid = parseInt(req.params.id, 10);
+  const url = `${SITE_KOK}/sirket/${req.params.id}`;
+  if (!gecerliTmdb(sid)) {
+    return ogYok(res, url);
+  }
+  try {
+    // Künye ZORUNLU (yoksa 404), yapım listeleri İSTEĞE BAĞLI: discover
+    // geçici olarak düşerse sayfa künyeyle döner ama eşiği geçemeyip
+    // `noindex,follow` alır — var olan sayfayı indeksten düşürmez.
+    const [firma, diziYanit, filmYanit] = await Promise.all([
+      tmdbGetir(`/company/${sid}`, ONBELLEK_TTL_SN.uzun),
+      tmdbGetir(`/discover/tv?with_companies=${sid}&sort_by=popularity.desc`,
+        ONBELLEK_TTL_SN.varsayilan).catch(() => null),
+      tmdbGetir(`/discover/movie?with_companies=${sid}&sort_by=popularity.desc`,
+        ONBELLEK_TTL_SN.varsayilan).catch(() => null),
+    ]);
+    const ad = seoMetin(firma?.name);
+    // TMDB bazen 200 + boş gövde döndürüyor: adı olmayan firma sayfası
+    // "Sayfa bulunamadı" demektir (soft 404 disiplini).
+    if (!ad) return ogYok(res, url, 'Bu yapım firması dizi.jpg üzerinde yok.');
+
+    const diziler = seoSirketYapimlari(diziYanit, 'tv');
+    const filmler = seoSirketYapimlari(filmYanit, 'movie');
+    const yapimlar = [...diziler, ...filmler];
+    const logo = tmdbGorsel(firma.logo_path, 'w185');
+
+    // dizi.jpg'nin FİRMA hakkındaki özgün içeriği (yorum + inceleme + puan).
+    // `tur='company'` 19 Ağu 2026'da açıldı (migrasyon-2026-08-19.sql); uç
+    // içerik/kişi sayfalarıyla AYNI yardımcıyı kullanır, yani süzgeçler
+    // (spoiler/yasaklı/gizlenmiş) ve sıralama tek yerden gelir.
+    const seo = await seoIcerikVerisi('company', sid);
+
+    const kimlikSatirlari = [
+      seoMetin(firma.headquarters) && `Merkez: ${seoMetin(firma.headquarters)}`,
+      seoUlkeAdi(firma.origin_country) && `Ülke: ${seoUlkeAdi(firma.origin_country)}`,
+    ].filter(Boolean);
+    const tmdbAciklama = seoMetin(firma.description);
+
+    // Sayfa toplamı: 1 logo + 9 dizi + 9 film = 19 <= SEO_AFIS_TAVAN.
+    const govde = seoLogoGorseli(firma.logo_path, `${ad} logosu`)
+      + (kimlikSatirlari.length
+        ? `\n<p>${htmlKacir(kimlikSatirlari.join(' · '))}</p>` : '')
+      + (tmdbAciklama
+        ? `\n<h2>${htmlKacir(ad)} hakkında</h2>\n<p>${htmlKacir(tmdbAciklama)}</p>` : '')
+      + seoAfisListesi(`${ad} dizileri`, diziler, SEO_SIRKET_YAPIM)
+      + seoAfisListesi(`${ad} filmleri`, filmler, SEO_SIRKET_YAPIM)
+      + seoDegerlendirmeGovdesi(seo, {
+        incelemeBasligi: `${ad} hakkında dizi.jpg incelemeleri`,
+        yorumBasligi: `${ad} hakkında kullanıcı yorumları`,
+      });
+
+    res.type('html').send(ogSayfa({
+      baslik: `${ad} dizileri ve filmleri — dizi.jpg`,
+      h1: `${ad} yapımları`,
+      aciklama: tmdbAciklama || seoSirketAciklamasi(ad, firma, yapimlar),
+      gorsel: logo,
+      url,
+      canonical: `${SITE_KOK}/sirket/${sid}`,
+      // Eşik ELDEKİ veriyle ölçülür: fazladan sorgu atmaz ve sayfada BASILAN
+      // içerikle birebir aynı ölçüyü kullanır (`/og/kisi` ile aynı disiplin).
+      indexle: sirketIndekslenir({
+        ozgunVar: seo.yorumlar.length > 0 || seo.incelemeler.length > 0,
+        yapimSayisi: yapimlar.length,
+      }),
+      tur: 'website',
+      govde,
+      jsonLd: sirketJsonLd({
+        url: `${SITE_KOK}/sirket/${sid}`, ad,
+        aciklama: tmdbAciklama || seoSirketAciklamasi(ad, firma, yapimlar),
+        logo, firma, yapimlar,
+      }),
+    }));
+  } catch (e) {
+    // TMDB'de firma YOK -> gerçek 404 (soft 404 disiplini).
+    if (e && e.status === 404) return ogYok(res, url,
+      'Bu yapım firması dizi.jpg üzerinde yok.');
+    // TMDB'ye ulasilamadi (502/ag/zaman asimi): 404 DEGIL. Gecici arizada
+    // "yok" demek var olan sayfayi indeksten dusururdu.
+    res.type('html').send(ogSayfa({ baslik: 'dizi.jpg', url, indexle: false }));
+  }
+}));
+
 /**
  * Gönderi sayfası indekse girsin mi?
  *
@@ -2959,8 +3484,11 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
     // sayfasına bağlanıyor (o sayfa artık zengin ve indekslenebilir).
     // `y.tarih` yalnız GÜN olarak basılır (seoYorumHtml/seoGun).
     const { rows } = await havuz.query(
+      // `k.tohum`: `author` tipini belirler — `dizi.jpg.ai` bir KİŞİ değildir
+      // (bkz. seoYazarNesnesi). Bu uç `dizi.jpg.ai`nin yazdığı gönderileri de
+      // basıyor; 19 Ağu 2026'ya dek hepsi `"@type": "Person"` çıkıyordu.
       `SELECT y.metin, y.medya, y.tur, y.tmdb_id, y.sezon, y.bolum, y.tarih,
-              k.kullanici_adi
+              k.kullanici_adi, k.tohum
        FROM yorumlar y JOIN kullanicilar k ON k.id=y.kullanici_id
        WHERE y.id=$1 AND NOT k.yasakli AND NOT y.spoiler
          AND ${SEO_GIZLI_ICERIK_YOK('y')}`, [id]);
@@ -2982,9 +3510,11 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
       (m) => !m.endsWith('.mp4') && !m.endsWith('.webm'));
     let gorsel = foto ? `https://dizijpg.com/api${foto}` : '';
     let icerikAd = '';
+    let posterYolu = '';
     try {
       const v = await tmdbGetir(`/${y.tur}/${y.tmdb_id}`, ONBELLEK_TTL_SN.uzun);
       icerikAd = v.name || v.title || '';
+      posterYolu = v.poster_path || '';
       if (!gorsel) gorsel = tmdbGorsel(v.poster_path);
     } catch { /* içerik alınamazsa pos+ad boş */ }
 
@@ -3006,7 +3536,25 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
     // GÖVDE: gönderi metninin TAMAMI (og:description 200 karaktere kırpılıyor,
     // yani sayfanın kendisinde metin hiç yoktu). Yorum bloğu yardımcısı yeniden
     // kullanılıyor — kullanıcı adı DÜZ METİN kalır, bağlantıya çevrilmez.
-    const govde = (seoMetin(y.metin)
+    // GÖRSEL (19 Ağu 2026) — BU SAYFADA KENDİ MEDYAMIZ ÖNCELİKLİ.
+    // robots.txt `/api/medya/`yi bilerek tarama dışı bırakmıyor (Allow
+    // istisnası) ama bugüne dek hiçbir SSR sayfası oraya `<img>` ile
+    // referans vermiyordu: yani izin veriliyor, adres bildirilmiyordu.
+    // Gönderinin fotoğrafı BİZİM sunucumuzda; görsel aramasında kredi
+    // TMDB'ye değil bize yazılır. Fotoğrafı olmayan gönderide içeriğin
+    // TMDB afişine düşülür (paylaşım kartıyla aynı sıra).
+    //
+    // KENDİ MEDYAMIZDA width/height YOK: yüklenen görselin ölçüsü veritabanında
+    // tutulmuyor, uydurma değer basmak CLS'i düzeltmek yerine görüntüyü ezerdi.
+    // TMDB afişinde ölçü kutudan BİLİNDİĞİ için (`seoAnaGorsel`) veriliyor.
+    const gorselBlok = foto
+      ? seoGorselP({
+        src: gorsel,
+        alt: `${icerikAd ? `${icerikAd} — ` : ''}@${y.kullanici_adi} `
+          + 'gönderisindeki görsel',
+      })
+      : seoAnaGorsel(posterYolu, icerikAd ? `${icerikAd} afişi` : '');
+    const govde = gorselBlok + (seoMetin(y.metin)
       ? `\n<h2>Gönderi</h2>\n${seoYorumHtml({
         kullanici_adi: y.kullanici_adi, metin: y.metin, tarih: y.tarih,
       })}` : '')
@@ -3030,7 +3578,9 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
             '@type': 'SocialMediaPosting',
             '@id': `${SITE_KOK}/gonderi/${id}#gonderi`,
             url: `${SITE_KOK}/gonderi/${id}`,
-            author: { '@type': 'Person', name: y.kullanici_adi },
+            // Tohum hesap (`dizi.jpg`, `dizi.jpg.ai`) `Organization` olur:
+            // yapay zekâ üretimini insan beyanı gibi bildirmek yanlıştır.
+            author: seoYazarNesnesi(y),
             datePublished: seoGun(y.tarih),
             ...(seoMetin(y.metin) ? { articleBody: seoMetin(y.metin) } : {}),
             ...(gorsel ? { image: gorsel } : {}),
@@ -3076,7 +3626,9 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
 // tarama bütçesi boşa gider — bu maddenin tek gerçek riski budur.
 async function seoBolumYorumlari(tmdbId, sezon, bolum) {
   const { rows } = await havuz.query(
-    `SELECT y.metin, y.tarih, k.kullanici_adi
+    // `k.tohum`: içerik sayfasındakiyle aynı gerekçe — metin sayfada kalır,
+    // JSON-LD `review` dizisine girmez.
+    `SELECT y.metin, y.tarih, k.kullanici_adi, k.tohum
        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
       WHERE y.tur = 'tv' AND y.tmdb_id = $1 AND y.sezon = $2 AND y.bolum = $3
         AND ${SEO_YORUM_KOSUL}
@@ -3100,7 +3652,7 @@ async function seoBolumVerisi(tmdbId, sezon, bolum) {
   const [yorumlar, inceleme, puan] = await Promise.all([
     seoBolumYorumlari(tmdbId, sezon, bolum),
     havuz.query(
-      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi
+      `SELECT p.puan, p.yorum, p.tarih, k.kullanici_adi, k.tohum
          FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
         WHERE p.tur = 'tv' AND p.tmdb_id = $1 AND p.sezon = $2 AND p.bolum = $3
           AND ${SEO_INCELEME_KOSUL}
@@ -3108,11 +3660,8 @@ async function seoBolumVerisi(tmdbId, sezon, bolum) {
       [tmdbId, sezon, bolum, SEO_YORUM_LIMIT]),
     // Ortalama YALNIZ o bölümün puanlarından: sayfada GÖRÜNEN değerle JSON-LD
     // birebir aynı olmak zorunda (dizinin geneli bu sayfada hiç gösterilmiyor).
-    havuz.query(
-      `SELECT round(avg(puan)::numeric, 1)::float AS ortalama, count(puan)::int AS adet
-         FROM puanlar
-        WHERE tur = 'tv' AND tmdb_id = $1 AND sezon = $2 AND bolum = $3`,
-      [tmdbId, sezon, bolum]),
+    // Tohum hesaplar burada da dışlanır (TOPLUM_PUAN_BOLUM_SQL).
+    havuz.query(TOPLUM_PUAN_BOLUM_SQL, [tmdbId, sezon, bolum]),
   ]);
   return {
     yorumlar,
@@ -3298,7 +3847,12 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       canonical: `${SITE_KOK}/dizi/${id}/sezon/${s}/bolum/${b}`,
       indexle: bolumOzgunIcerikVar(seo),
       tur: 'video.episode',
-      govde: yayinBlok + ozetBlok
+      // GÖRSEL (19 Ağu 2026): bölüm karesi (still) varsa o, yoksa dizinin
+      // afişi. Kare 16:9 olduğu için AYRI yardımcı — afiş kutusunun 2:3
+      // ölçüsünü basmak görüntüyü ezerdi.
+      govde: (seoBolumKaresi(bol.still_path, `${diziAd} ${s}. sezon ${b}. bölüm karesi`)
+        || seoAnaGorsel(dizi.poster_path, `${diziAd} afişi`))
+        + yayinBlok + ozetBlok
         + seoDegerlendirmeGovdesi(seo, {
           incelemeBasligi: 'Bu bölüm hakkında incelemeler',
           yorumBasligi: 'Bu bölüm hakkında yorumlar',
@@ -3345,8 +3899,18 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
       ogeler.map((o) => `/${o.tur}/${o.tmdb_id}`), ONBELLEK_TTL_SN.uzun);
     const baglantilar = ogeler.map((o) => {
       const v = harita.get(`/${o.tur}/${o.tmdb_id}`);
-      return v && (v.name || v.title)
-        ? { ad: v.name || v.title, yol: `/icerik/${o.tur}/${o.tmdb_id}` } : null;
+      if (!v || !(v.name || v.title)) return null;
+      const ad = v.name || v.title;
+      const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
+      return {
+        ad,
+        yol: `/icerik/${o.tur}/${o.tmdb_id}`,
+        // Görsel alanları (19 Ağu 2026). `ad` BİLEREK yılsız kalıyor: JSON-LD
+        // `name` alanı ve bağlantı metni yapımın adıdır; yıl yalnız `alt`ta,
+        // görsel aramada aynı adlı yapımları ayırmak için.
+        afis: v.poster_path,
+        alt: `${ad}${yil ? ` (${yil})` : ''} afişi`,
+      };
     }).filter(Boolean);
 
     res.type('html').send(ogSayfa({
@@ -3359,7 +3923,9 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
       // 1 öğelik misafir listesi indekslenebilir çıkmıştı). Eşik: en az 3.
       indexle: baglantilar.length >= SEO_LISTE_MIN,
       tur: 'article',
-      govde: seoBaglantiListesi(`Listedeki ${baglantilar.length} içerik`, baglantilar),
+      // Liste 100 öğeye kadar çıkabilir: İLK SEO_AFIS_TAVAN öğe afişli, geri
+      // kalanı düz bağlantı basılır (öğe DÜŞMEZ, yalnız görseli olmaz).
+      govde: seoAfisListesi(`Listedeki ${baglantilar.length} içerik`, baglantilar),
       // GİZLİLİK: `author` YALNIZ ad taşır, profile `url` VERİLMEZ (aynı kural
       // /og/gonderi'de de geçerli). BreadcrumbList 14 Ağu 2026'da eklendi:
       // sayfa 1,5 KB'lık bir çıkmazdı ve hiyerarşide nereye oturduğu belirsizdi.
@@ -3642,6 +4208,282 @@ app.get('/og/gozat', ogKesifUcu({
     + 'listelenir; başlığa girince dizi.jpg puanını ve kullanıcı yorumlarını '
     + 'görürsünüz.',
 }));
+
+// ---------- SEO: /gizlilik politikası sayfası (19 Ağu 2026) ----------
+// ÖLÇÜM: bu yol botlara 283 baytlık JENERİK kabuk döndürüyordu ("Bu ekran
+// dizi.jpg uygulamasının içinde açılır…") + `noindex,follow`. Oysa gizlilik
+// politikası hem mağaza şartı hem E-E-A-T (güvenilirlik) sinyalidir:
+// "verileri satıyor mu", "hesabımı nasıl silerim", "mesajlar şifreli mi"
+// sorularının cevabı bu sayfada ve hiçbiri taranmıyordu.
+//
+// METİN UYDURULMADI: aşağıdaki bloklar `app/lib/ekranlar/gizlilik.dart`
+// içindeki _Baslik/_Govde/_Madde metinlerinin BİREBİR kopyasıdır (sıra dahil).
+// Kullanıcının OKUDUĞU metinle botun aldığı metin farklı olsaydı bu, tanımı
+// gereği cloaking olurdu — üstelik hukuki bir metinde.
+//
+// NEDEN KOPYA, TEK KAYNAK DEĞİL: backend imajında `app/` klasörü YOK
+// (Dockerfile yalnız backend dosyalarını kopyalar), yani çalışma zamanında
+// okunamaz — `BOT_ROTALARI` tablosuyla birebir aynı durum. AYRIŞMAYI TEST
+// ENGELLİYOR: `test/seo_gizlilik_sayfasi.test.js` gizlilik.dart'ı ayrıştırır,
+// her bloğun metnini burada ARAR ve sırayı doğrular; Flutter tarafında bir
+// cümle değişip burası güncellenmezse test kırmızıya döner.
+//
+// İNDEKSLENEBİLİR (noindex KALDIRILDI): `/gizlilik` Flutter'ın
+// `acikTamYollar` listesinde, yani oturumsuz ziyaretçi de AYNI sayfayı
+// görüyor. Cloaking kilidi (`SEO_KESIF_INDEKS` disiplini) böylece sağlanıyor
+// ve aynı test bunu da doğruluyor.
+const SEO_GIZLILIK_GUNCELLEME = '14.08.2026';   // gizlilik.dart: gizlilikGuncelleme
+const SEO_GIZLILIK_ILETISIM = 'iletisim@dizijpg.com';
+const SEO_GIZLILIK_BLOKLARI = [
+  {
+    tip: 'govde',
+    metin: 'Bu politika, dizi.jpg uygulamasını ve dizijpg.com sitesini '
+      + 'kullandığında hangi verilerin toplandığını, nasıl '
+      + 'kullanıldığını ve haklarının neler olduğunu açıklar.',
+  },
+  { tip: 'baslik', metin: 'Topladığımız Veriler' },
+  {
+    tip: 'madde',
+    metin: 'Hesap: e-posta adresi, kullanıcı adı ve şifre. Şifreler geri '
+      + 'döndürülemez şekilde özetlenerek saklanır; misafir hesaplar '
+      + 'e-postasız kullanılabilir.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Profil: avatar, kapak görseli, bio ve ülke gibi eklemeyi '
+      + 'seçtiğin bilgiler.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Kullanım: izleme geçmişin, puanların, yorumların, listelerin, '
+      + 'tepkilerin ve favorilerin.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Mesajlar: yazılı, görselli ve sesli mesajların sunucularımızda '
+      + 'saklanır. Mesajlar uçtan uca şifreli değildir; yalnızca '
+      + 'şikayet edilirse moderasyon amacıyla incelenir.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Yüklenen medya: profiline, yorumlarına ve mesajlarına '
+      + 'eklediğin fotoğraf, GIF, video ve ses kayıtları.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Teknik: IP adresi, yaklaşık konum (ülke/şehir düzeyi), cihaz '
+      + 'platformu, uygulama sürümü ve hata kayıtları. Bunlar güvenlik '
+      + 've hata ayıklama için tutulur.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Kullanım istatistikleri: hangi cihaz türü, işletim sistemi ve '
+      + 'tarayıcıyla girildiği kaba sınıflar hâlinde günlük toplam '
+      + 'sayaçlara eklenir; tarayıcı kimliğinin kendisi saklanmaz ve bu '
+      + 'sayılar kişilere bağlanamaz.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Gönderi sahibine gösterilen istatistikler için, gönderinin kaç '
+      + 'kez ve hangi yüzeyden (akış, profil, tam ekran akış, dizi/film '
+      + 'sayfası, paylaşılan bağlantı) görüntülendiği, görüntüleyenin o '
+      + 'an gönderi sahibini takip edip etmediği, gönderiden '
+      + 'profile/içeriğe geçiş, gönderi üzerinden kurulan takip, '
+      + 'paylaşım ve spoiler perdesi açılması toplu sayaçlar olarak '
+      + 'tutulur. Bu sayaçlarda kullanıcı kimliği, IP adresi veya zaman '
+      + 'damgası bulunmaz; kimin ne yaptığı sorgulanamaz.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Bir gönderiyi kaç farklı kişinin gördüğünü sayabilmek için, '
+      + 'görüntüleyen başına geri çevrilemez bir anahtarlı özet '
+      + '(kullanıcı kimliğinden veya IP adresinden türetilen '
+      + 'kriptografik kısaltma) 90 gün saklanır. Gönderi sahibine '
+      + 'yalnız sayı gösterilir; görüntüleyenlerin kimliği hiçbir '
+      + 'koşulda paylaşılmaz.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Bildirimler: push bildirimleri için cihaz token\'ı ve dil '
+      + 'tercihin saklanır. Bildirimleri cihazının ayarlarından '
+      + 'istediğin zaman kapatabilirsin.',
+  },
+  { tip: 'baslik', metin: 'Sesli ve Görüntülü Aramalar' },
+  {
+    tip: 'madde',
+    metin: 'Aramaların içeriği kaydedilmez. Ses ve görüntü, cihazlar '
+      + 'arasında uçtan uca şifreli (DTLS-SRTP) akar; sunucularımız bu '
+      + 'trafiği çözemez, dinleyemez ve saklayamaz.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Yalnızca arama üstverisi tutulur: kiminle, hangi yönde, ne '
+      + 'zaman ve ne kadar sürdüğü. Bu kayıtlar 90 gün sonra otomatik '
+      + 'silinir.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Doğrudan bağlantı kurulamazsa ses ve görüntü şifreli hâlde bir '
+      + 'aktarma sunucusundan (TURN) geçer. Aktarma sunucusu da içeriği '
+      + 'çözemez ve kaydetmez.',
+  },
+  {
+    tip: 'madde',
+    metin: 'Mikrofon yalnızca sesli veya görüntülü arama sırasında, kamera '
+      + 'ise yalnızca görüntülü arama sırasında kullanılır. Arama '
+      + 'bitince ikisi de kapatılır.',
+  },
+  { tip: 'baslik', metin: 'Verileri Nasıl Kullanırız' },
+  {
+    tip: 'govde',
+    metin: 'Verilerini yalnızca hizmeti sunmak, hesabını korumak, bildirim '
+      + 'göndermek, hataları gidermek ve kötüye kullanımı önlemek için '
+      + 'kullanırız. Verilerini satmayız, reklam amacıyla kimseyle '
+      + 'paylaşmayız.',
+  },
+  { tip: 'baslik', metin: 'Çerezler ve Yerel Depolama' },
+  {
+    tip: 'govde',
+    metin: 'Yalnızca oturumunu açık tutmak ve dil/tema gibi tercihlerini '
+      + 'hatırlamak için yerel depolama kullanırız. Reklam veya izleme '
+      + 'çerezi yoktur.',
+  },
+  { tip: 'baslik', metin: 'Üçüncü Taraf Hizmetler' },
+  {
+    tip: 'govde',
+    metin: 'Dizi ve film bilgileri TMDB\'den, izleme sağlayıcı bilgisi '
+      + 'JustWatch\'tan alınır. Push bildirimleri Google Firebase '
+      + 'üzerinden iletilir, site trafiği Cloudflare tarafından '
+      + 'korunur. Bu hizmetler kendi gizlilik politikalarına tabidir.',
+  },
+  { tip: 'baslik', metin: 'Saklama ve Silme' },
+  {
+    tip: 'govde',
+    metin: 'Verilerin hesabın açık olduğu sürece saklanır. Ayarlar\'daki '
+      + '"Hesabımı Sil" ile hesabını kalıcı olarak silebilirsin; '
+      + 'verilerin anında, yedeklerdeki kopyaları en geç 14 gün içinde '
+      + 'silinir. Hata kayıtları 30 gün sonra otomatik silinir.',
+  },
+  {
+    tip: 'govde',
+    metin: 'Verilerini Ayarlar\'dan ZIP olarak dışa aktarabilirsin; arşiv '
+      + 'e-posta adresine gönderilir.',
+  },
+  { tip: 'baslik', metin: 'Güvenlik' },
+  {
+    tip: 'govde',
+    metin: 'Veriler şifreli bağlantı (HTTPS) üzerinden taşınır ve erişimi '
+      + 'sınırlı sunucularda saklanır.',
+  },
+  { tip: 'baslik', metin: 'Çocukların Gizliliği' },
+  {
+    tip: 'govde',
+    metin: 'dizi.jpg 13 yaşından küçük çocuklara yönelik değildir.',
+  },
+  { tip: 'baslik', metin: 'Hakların' },
+  {
+    tip: 'govde',
+    metin: 'KVKK ve GDPR kapsamında verilerine erişme, düzeltme, silme ve '
+      + 'taşıma hakkına sahipsin. Bu haklar için bize yazabilirsin: {}',
+  },
+  { tip: 'baslik', metin: 'Değişiklikler' },
+  {
+    tip: 'govde',
+    metin: 'Bu politika değişirse yeni sürümü bu sayfada yayımlanır ve '
+      + 'güncelleme tarihi yenilenir.',
+  },
+];
+
+/**
+ * Politika bloklarını HTML'e çevirir.
+ *
+ * `{}` yer tutucusu Flutter'daki `.cf([...])` ile AYNI işi yapar: iletişim
+ * adresi tek yerde tanımlı kalsın ve metin dart'takiyle birebir eşleşsin
+ * (test karşılaştırmayı ham metin üzerinden yapıyor).
+ *
+ * Ardışık `madde`ler TEK bir `<ul>` altında toplanır: uygulamada da art arda
+ * gelen madde işaretli satırlardır, yani yapı GÖRÜNENLE aynı.
+ */
+function seoGizlilikGovdesi(bloklar = SEO_GIZLILIK_BLOKLARI) {
+  let html = '';
+  let listeAcik = false;
+  const listeKapat = () => {
+    if (listeAcik) { html += '</ul>'; listeAcik = false; }
+  };
+  for (const b of bloklar) {
+    const metin = htmlKacir(
+      String(b.metin ?? '').replace('{}', SEO_GIZLILIK_ILETISIM));
+    if (b.tip === 'madde') {
+      if (!listeAcik) { html += '\n<ul>'; listeAcik = true; }
+      html += `<li>${metin}</li>`;
+      continue;
+    }
+    listeKapat();
+    html += b.tip === 'baslik' ? `\n<h2>${metin}</h2>` : `\n<p>${metin}</p>`;
+  }
+  listeKapat();
+  return html;
+}
+
+/** `14.08.2026` -> `2026-08-14` (JSON-LD tarihleri ISO 8601 olmak zorunda). */
+const seoGizlilikIsoTarih = () =>
+  SEO_GIZLILIK_GUNCELLEME.split('.').reverse().join('-');
+
+/**
+ * Politika sayfasının yapısal verisi.
+ *
+ * TİP `WebPage`: schema.org'da "gizlilik politikası" diye bir tip YOKTUR
+ * (`PrivacyPolicy` uydurmadır ve doğrulayıcıda hata verir). Sayfanın anlamını
+ * taşıyan alanlar `name`, `dateModified` ve `publisher`dır.
+ * `isPartOf` `/og/ana`daki WebSite düğümüne (`#site`) bağlanır: iki sayfa aynı
+ * grafiği paylaşsın, ayrı iki site gibi görünmesin.
+ */
+const gizlilikJsonLd = (url) => ({
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': `${url}#sayfa`,
+      name: 'Gizlilik Politikası',
+      url,
+      inLanguage: 'tr',
+      dateModified: seoGizlilikIsoTarih(),
+      isPartOf: { '@id': `${SITE_KOK}/#site` },
+      publisher: { '@id': `${SITE_KOK}/#kurum` },
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+        { '@type': 'ListItem', position: 2, name: 'Gizlilik Politikası' },
+      ],
+    },
+  ],
+});
+
+// DB/TMDB'ye HİÇ dokunmaz (metin sabit), bu yüzden `sarici` de gerekmez.
+app.get('/og/gizlilik', (_req, res) => {
+  const url = `${SITE_KOK}/gizlilik`;
+  res.type('html').send(ogSayfa({
+    baslik: 'Gizlilik Politikası — dizi.jpg',
+    h1: 'Gizlilik Politikası',
+    aciklama: 'dizi.jpg hangi verileri toplar, nasıl kullanır, ne kadar '
+      + 'saklar ve nasıl silersin? Mesajlar, aramalar, çerezler ve '
+      + 'KVKK/GDPR hakların.',
+    url,
+    canonical: url,
+    tur: 'website',
+    // İndekse GİRER: sayfa gerçek ve TAM metni burada basılıyor (ince içerik
+    // değil ~6 KB), üstelik oturumsuz ziyaretçi de aynısını görüyor.
+    indexle: true,
+    govde: `\n<p>Son güncelleme: ${htmlKacir(SEO_GIZLILIK_GUNCELLEME)}</p>`
+      + seoGizlilikGovdesi()
+      + seoBaglantiListesi('Buradan devam edebilirsin', [
+        { ad: 'dizi.jpg ana sayfa', yol: '/' }, ...SEO_KESIF_HUB,
+      ]),
+    jsonLd: gizlilikJsonLd(url),
+  }));
+});
 
 // ---------- SEO 3.4: SOFT 404'Ü KAPAT ----------
 // ÖLÇÜM (14 Ağu 2026, canlı): `/boyle-bir-sayfa-yok` -> HTTP 200 + boş Flutter
@@ -4020,6 +4862,15 @@ const SITEMAP_GENEL_YOLLAR = [
   {
     yol: '/kesfet', changefreq: 'daily', priority: '0.7',
     indekslenir: () => SEO_KESIF_INDEKS,
+  },
+  // 19 Ağu 2026: gizlilik politikası artık SSR'lı ve indekslenebilir. Sitemap
+  // kapsamı ile `indexle` kararı AYRIŞMAMALI (SEO-PLANI 0.3): SSR'ı indekse
+  // açıp haritaya koymamak, Google'ın sayfayı yalnız iç bağlantıdan bulmasına
+  // bırakmak olurdu. `priority` düşük ve `changefreq` yearly: metin yılda
+  // birkaç kez değişir, tarama bütçesinde öne geçmesini istemiyoruz.
+  {
+    yol: '/gizlilik', changefreq: 'yearly', priority: '0.3',
+    indekslenir: () => true,
   },
 ];
 
@@ -5878,31 +6729,28 @@ app.get('/incelemeler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) 
        ORDER BY p.tarih DESC LIMIT 50`,
       [...olcut, req.kullanici?.id || 0],
     ),
-    havuz.query(
-      // `::int` ŞART (19 Ağu 2026): `count(*)` bigint döner ve node-pg
-      // bigint'i METİN olarak gönderir — yani `adet` JSON'da "0" idi, 0
-      // değil. Şirket sayfası bunu sayıya çevirmeye çalışınca TÜM SAYFA gri
-      // ekrana düştü. Hemen aşağıdaki dağılım sorgusu zaten `::int`
-      // kullanıyordu; bu satır o disiplinin dışında kalmıştı.
-      // `ortalama` BİLEREK numeric kalıyor: 1 ondalık basamağın kesinliği
-      // float'a çevrilince kaybolur, ve tüm okuyucular zaten `puanSayisi()`
-      // ile hem metni hem sayıyı kabul ediyor.
-      `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*)::int AS adet
-       FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL`,
-      olcut,
-    ),
+    // ORTALAMA + ADET — SQL, SSR/JSON-LD tarafıyla ORTAKTIR (TOPLUM_PUAN_SQL).
+    // 19 Ağu 2026'ya dek burada ayrı bir kopya vardı; artık arayüzde görünen
+    // sayı ile `aggregateRating`'in bastığı sayı AYNI METİNDEN üretiliyor —
+    // ikisi ayrışırsa yapılandırılmış veri politikası ihlal edilir.
+    // Tohum hesapların puanları o sabitte dışlanıyor (gerekçesi orada).
+    //
+    // Sabitin taşıdığı iki eski karar:
+    //  * `::int` ŞART (19 Ağu 2026): `count(*)` bigint döner ve node-pg
+    //    bigint'i METİN olarak gönderir — `adet` JSON'da "0" idi, 0 değil.
+    //    Şirket sayfası bunu sayıya çevirmeye çalışınca TÜM SAYFA gri ekrana
+    //    düştü.
+    //  * `ortalama` BİLEREK numeric kalıyor: 1 ondalık basamağın kesinliği
+    //    float'a çevrilince kaybolur, ve tüm okuyucular zaten `puanSayisi()`
+    //    ile hem metni hem sayıyı kabul ediyor.
+    havuz.query(TOPLUM_PUAN_SQL, olcut),
     // Madde 17 — puan dağılımı (IMDb tarzı). HAM DB ÖLÇEĞİNDE (1-10) döner;
     // 5 yıldıza kovalamayı İSTEMCİ yapar (`puan.dart` → `yildizDagilimi`).
     // Sunucu burada yuvarlasaydı ölçek çevirisi ikinci bir yerde daha
     // yaşardı ve iki taraf farklı kovaya düşebilirdi (puan.dart'ın başlığı
-    // tam da bu hatanın tarihçesi). Ortalama/adet ile aynı WHERE — toplam
-    // her zaman `adet`e eşit.
-    havuz.query(
-      `SELECT puan, count(*)::int AS adet
-       FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL
-       GROUP BY puan ORDER BY puan`,
-      olcut,
-    ),
+    // tam da bu hatanın tarihçesi). Ortalama/adet ile AYNI WHERE (aynı tohum
+    // süzgeci dahil) — toplam her zaman `adet`e eşit.
+    havuz.query(TOPLUM_PUAN_DAGILIM_SQL, olcut),
   ]);
   res.json({
     incelemeler: liste.rows,
@@ -5929,10 +6777,17 @@ app.get('/bolum-puanlari/:tmdbId/:sezon', girisIsteğeBagli, sarici(async (req, 
   }
   const [genel, benim] = await Promise.all([
     havuz.query(
+      // Tohum süzgeci `TOPLUM_PUANI_YOK` ile ORTAK (bkz. TOPLUM_PUAN_SQL
+      // üstündeki gerekçe). Bu sorgu tek bölümü değil SEZONUN TAMAMINI
+      // grupladığı için sabit metni paylaşamıyor; paylaşılan şey KOŞULDUR,
+      // yani "tohum kimdir" sorusunun cevabı yine tek yerde duruyor.
+      // Bölüm sayfasının JSON-LD'si (`TOPLUM_PUAN_BOLUM_SQL`) aynı koşulu
+      // kullanır — arayüzdeki bölüm puanı ile şemadaki ayrışmaz.
       `SELECT bolum, round(avg(puan)::numeric, 1)::float AS ortalama,
               count(puan)::int AS adet
-         FROM puanlar
+         FROM puanlar p
         WHERE tur='tv' AND tmdb_id=$1 AND sezon=$2 AND puan IS NOT NULL
+          AND ${TOHUM_PUANI_YOK('p')}
         GROUP BY bolum`,
       [tmdbId, sezon]),
     req.kullanici

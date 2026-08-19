@@ -25,6 +25,16 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   medya_bayt BIGINT NOT NULL DEFAULT 0,
   medya_kota_bayt BIGINT,
   yasakli BOOLEAN NOT NULL DEFAULT false,
+  -- TOHUM HESAP: içeriğini BİZİM ürettiğimiz hesap (resmî `dizi.jpg`, yapay
+  -- zekâ `dizi.jpg.ai` ve `araclar/intl_profiller.json` personaları).
+  -- Metinleri sayfada KALIR (kullanıcı için değerli) ama TOPLUM PUANINA ve
+  -- schema.org `review`/`aggregateRating` alanlarına GİRMEZ: Google'ın inceleme
+  -- snippet'i politikası puanların gerçek kullanıcılardan gelmesini şart koşar,
+  -- site sahibi kendi yapımına puan üretip toplum puanı diye yayınlayamaz.
+  -- Gerekçe: migrasyon-2026-08-19c.sql.
+  -- DEFAULT false: yeni açılan her GERÇEK hesap hiçbir şey yapmadan doğru
+  -- tarafta doğar (hata yönü güvenli).
+  tohum BOOLEAN NOT NULL DEFAULT false,
   bildir_begeni BOOLEAN NOT NULL DEFAULT true,
   bildir_yanit BOOLEAN NOT NULL DEFAULT true,
   bildir_takip BOOLEAN NOT NULL DEFAULT true,
