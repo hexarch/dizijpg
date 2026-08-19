@@ -1186,4 +1186,13 @@ const Map<String, String> cevirilerUk = {
   'Sıralama kaydedilemedi': 'Не вдалося зберегти порядок',
   'Değişiklik kaydedilemedi': 'Не вдалося зберегти зміну',
   'Kaldırılamadı': 'Не вдалося прибрати',
+  'Popülerlik': 'Популярність',
+  'TMDB puanı': 'Оцінка TMDB',
+  'Yapım yılı': 'Рік випуску',
+  'dizi.jpg puanı': 'Оцінка dizi.jpg',
+  'İzlenme': 'Перегляди',
+  'Yorum sayısı': 'Кількість коментарів',
+  'Tüm raflara uygulanır': 'Застосовується до всіх полиць',
+  'En popüler {} yapım arasında sıralandı':
+      'Відсортовано серед {} найпопулярніших творів',
 };

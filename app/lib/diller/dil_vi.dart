@@ -1181,4 +1181,13 @@ const Map<String, String> cevirilerVi = {
   'Sıralama kaydedilemedi': 'Không lưu được thứ tự',
   'Değişiklik kaydedilemedi': 'Không lưu được thay đổi',
   'Kaldırılamadı': 'Không xóa được',
+  'Popülerlik': 'Độ phổ biến',
+  'TMDB puanı': 'Điểm TMDB',
+  'Yapım yılı': 'Năm sản xuất',
+  'dizi.jpg puanı': 'Điểm dizi.jpg',
+  'İzlenme': 'Lượt xem',
+  'Yorum sayısı': 'Số bình luận',
+  'Tüm raflara uygulanır': 'Áp dụng cho mọi kệ',
+  'En popüler {} yapım arasında sıralandı':
+      'Đã sắp xếp trong {} tựa phổ biến nhất',
 };

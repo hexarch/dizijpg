@@ -10,19 +10,39 @@ import 'ortak.dart';
 /// Raf yalnız ilk sayfayı (20 içerik) gösterir; buradan TMDB sayfa sayfa
 /// çekilir, kullanıcı dibe yaklaşınca sıradaki sayfa eklenir. Poster kartı
 /// ortak olduğu için "izledin" rozeti burada da otomatik görünür.
+///
+/// 19 AĞU 2026 — EKRAN ARTIK YALNIZ TMDB'YE BAĞLI DEĞİL. "Sana Özel" rafı
+/// kişiye özel `/onerilen` ucundan geliyor; o ucun sayfa parametresi `sayfa`
+/// ve liste alanı `oneriler`. Sayfalama/iskelet/hata/ızgara mantığı birebir
+/// aynı olduğu için EKRANI KOPYALAMAK yerine bu iki ad parametreleştirildi —
+/// ikinci bir kopya, "dibe 600 px kala çek" gibi ince ayarların ikisinden
+/// birinde sessizce eskimesi demekti.
 class KatalogListeEkrani extends StatefulWidget {
   final String baslik;
 
-  /// TMDB yolu, sayfa parametresi OLMADAN. Örn:
-  /// `/tmdb/discover/movie?sort_by=revenue.desc`
+  /// Veri yolu, sayfa parametresi OLMADAN. Örn:
+  /// `/tmdb/discover/movie?sort_by=revenue.desc` ya da `/onerilen`.
   final String yol;
-  final String tur; // 'tv' | 'movie'
+
+  /// 'tv' | 'movie' — TÜM liste tek türdeyse. Öneri listesi karışık
+  /// (`media_type` her yapımda ayrı geliyor), orada null geçilir ve
+  /// [PosterKarti] kendi `media_type` alanına düşer.
+  final String? tur;
+
+  /// Sayfa numarasının sorgu parametresi adı. TMDB proxy'si `page` bekler,
+  /// kişiye özel `/onerilen` ucu `sayfa`.
+  final String sayfaParam;
+
+  /// Yanıttaki liste alanının adı (`results` / `oneriler`).
+  final String sonucAnahtari;
 
   const KatalogListeEkrani({
     super.key,
     required this.baslik,
     required this.yol,
-    required this.tur,
+    this.tur,
+    this.sayfaParam = 'page',
+    this.sonucAnahtari = 'results',
   });
 
   @override
@@ -64,8 +84,10 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
     });
     try {
       final ayirac = widget.yol.contains('?') ? '&' : '?';
-      final d = await Api.get('${widget.yol}${ayirac}page=${_sayfa + 1}');
-      final gelen = (d['results'] as List<dynamic>? ?? []);
+      final d = await Api.get(
+        '${widget.yol}$ayirac${widget.sayfaParam}=${_sayfa + 1}',
+      );
+      final gelen = (d[widget.sonucAnahtari] as List<dynamic>? ?? []);
       if (!mounted) return;
       setState(() {
         _sayfa++;
@@ -97,6 +119,15 @@ class _KatalogListeEkraniState extends State<KatalogListeEkrani> {
           _bitti = false;
           _sonrakiSayfa();
         },
+      );
+    } else if (_icerikler.isEmpty && !_yukluyor) {
+      // BOŞ IZGARA YERİNE BOŞ DURUM. TMDB rafları pratikte hiç boş dönmüyordu
+      // ama `/onerilen` dönebilir: izleme geçmişi olmayan (ya da havuzu
+      // tamamen kitaplığında olan) kullanıcı. Eskiden bu hâlde ekran KAPKARA
+      // kalırdı — kullanıcı için "sayfa bozuk" demek.
+      govde = BosDurum(
+        ikon: Icons.local_movies_outlined,
+        baslik: 'Yapım bulunamadı'.c,
       );
     } else if (_icerikler.isEmpty && _yukluyor) {
       govde = GridView.builder(

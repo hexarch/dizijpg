@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../api.dart';
 import '../bayrak.dart';
@@ -36,14 +37,106 @@ import 'yorumlar.dart';
 /// Firma sayfasının adresi. `ad` ve `tur` yalnız İLK KAREYİ iyileştirir:
 /// başlık `/company/{id}` yanıtı gelmeden dolu olur ve doğru sekme seçili
 /// gelir. İkisi de olmadan sayfa yine çalışır (paylaşılan çıplak bağlantı).
-String sirketYolu(int id, {String? ad, String? tur}) {
+///
+/// `sirala` ADRESE YAZILIR (19 Ağu 2026): F5'te seçim korunsun ve
+/// "HBO'nun en çok izlenenleri" bağlantısı paylaşılabilsin. Varsayılan
+/// (popülerlik) parametreyi HİÇ basmaz — eski bağlantılar birebir aynı kalır.
+String sirketYolu(int id, {String? ad, String? tur, String? sirala}) {
   final temizAd = ad?.trim() ?? '';
   final q = <String>[
     if (temizAd.isNotEmpty) 'ad=${Uri.encodeQueryComponent(temizAd)}',
     if (tur == 'tv' || tur == 'movie') 'tur=$tur',
+    if (sirala != null && sirala.isNotEmpty) 'sirala=$sirala',
   ];
   return q.isEmpty ? '/sirket/$id' : '/sirket/$id?${q.join('&')}';
 }
+
+/// ---------------------------------------------------------------------------
+/// SIRALAMA SEÇENEKLERİ (19 Ağu 2026 isteği)
+/// ---------------------------------------------------------------------------
+/// İSTEK: firmanın rafları TMDB puanına · yapım yılına · dizi.jpg puanına ·
+/// dizi.jpg izlenmesine · yorum sayısına göre sıralanabilsin.
+///
+/// SEÇENEKLER İKİ AYRI YOLDAN ÇALIŞIR ve bu ayrım tesadüfi değil:
+///
+///  * TMDB TABANLI (`sortBy` dolu) — `discover` bunları ZATEN biliyor. Tek
+///    yapılan sorguya `sort_by` eklemek; sayfalama, `total_results`, hepsi
+///    olduğu gibi kalır ve liste SINIRSIZ kaydırılabilir.
+///
+///  * BİZİM VERİMİZ (`alan` dolu) — TMDB puanımızı, izlenmemizi, yorum
+///    sayımızı BİLMEZ; `discover` ile sıralanamazlar. Bu modda istemci TMDB'den
+///    havuzu doldurur ([_havuzTavani] kadar), sayaçları `POST /yapim-sayaclari`
+///    ile tek seferde alır ve sıralamayı KENDİ yapar. Sunucu firmayı hiç
+///    bilmez: `puanlar`/`izlemeler`/`yorumlar` tablolarında firma sütunu YOK,
+///    firma↔yapım eşlemesi yalnız TMDB'de duruyor.
+class _Sira {
+  /// Adresteki `?sirala=` değeri. `null` = varsayılan (popülerlik) —
+  /// adrese hiç yazılmaz.
+  final String? deger;
+
+  /// Çipteki metin (çeviri anahtarı).
+  final String etiket;
+
+  /// TMDB `discover` `sort_by` değeri; dizi ve film için ayrı, çünkü tarih
+  /// alanının adı türe göre değişiyor (`first_air_date` / `primary_release_date`).
+  final String? tvSort;
+  final String? filmSort;
+
+  /// Bizim sayaç alanımız: 'puan' | 'izlenme' | 'yorum'.
+  final String? alan;
+
+  /// TMDB puanına göre sıralarken uygulanan EN AZ OY sayısı.
+  ///
+  /// NEDEN GEREKLİ: `sort_by=vote_average.desc` tek oylu yapımları 10,0 ile
+  /// tepeye taşır — TMDB'nin bilinen tuzağı. Süzgeçsiz raf "en iyi HBO
+  /// dizileri" diye kimsenin duymadığı bir belgeseli gösterirdi. 50, TMDB'nin
+  /// kendi sitesindeki 200'den GEVŞEK seçildi: 200'de küçük yapım firmalarının
+  /// rafı bomboş kalıyor, boş raf yanlış sıradan daha kötü.
+  final int? enAzOy;
+
+  const _Sira({
+    required this.deger,
+    required this.etiket,
+    this.tvSort,
+    this.filmSort,
+    this.alan,
+    this.enAzOy,
+  });
+}
+
+const List<_Sira> _siralamaSecenekleri = [
+  // İLK SIRA = MEVCUT DAVRANIŞ. Varsayılanın değişmemesi şart: bugüne kadar
+  // paylaşılmış her `/sirket/...` bağlantısı aynı listeyi göstermeye devam eder.
+  _Sira(
+    deger: null,
+    etiket: 'Popülerlik',
+    tvSort: 'popularity.desc',
+    filmSort: 'popularity.desc',
+  ),
+  _Sira(
+    deger: 'tmdb',
+    etiket: 'TMDB puanı',
+    tvSort: 'vote_average.desc',
+    filmSort: 'vote_average.desc',
+    enAzOy: 50,
+  ),
+  _Sira(
+    deger: 'yil',
+    etiket: 'Yapım yılı',
+    tvSort: 'first_air_date.desc',
+    filmSort: 'primary_release_date.desc',
+  ),
+  _Sira(deger: 'puan', etiket: 'dizi.jpg puanı', alan: 'puan'),
+  _Sira(deger: 'izlenme', etiket: 'İzlenme', alan: 'izlenme'),
+  _Sira(deger: 'yorum', etiket: 'Yorum sayısı', alan: 'yorum'),
+];
+
+/// Adresten gelen ham değeri seçeneğe çevirir; tanınmayan değer VARSAYILANA
+/// düşer (elle yazılmış `?sirala=abc` sayfayı bozmasın).
+_Sira _siralamaCoz(String? deger) => _siralamaSecenekleri.firstWhere(
+  (s) => s.deger == deger,
+  orElse: () => _siralamaSecenekleri.first,
+);
 
 /// TMDB `origin_country` İKİ HARFLİ ISO KODUDUR ("US").
 ///
@@ -141,15 +234,47 @@ class FirmaLogosu extends StatelessWidget {
 
 /// Rafı besleyen TEK bir TMDB sorgusu ve KENDİ sayfa imleci.
 class _RafKaynak {
-  /// `page` parametresi HARİÇ tam yol.
-  final String yol;
+  /// `page` VE `sort_by` HARİÇ yol. Sıralama seçimi çalışma anında eklenir —
+  /// yol sabit metin olsaydı her seçimde kaynak nesnesini yeniden kurmak
+  /// (ve `ScrollController`ı atmak) gerekirdi.
+  final String temel;
+
+  /// Bu kaynağın KENDİ doğal sırası (varsayılan seçenekte kullanılır).
+  ///
+  /// "Devam eden filmler" bilerek `primary_release_date.asc`: raf "şu an ne
+  /// geliyor" sorusunu cevaplıyor, yani EN YAKIN tarihli önce gelmeli.
+  final String varsayilanSira;
+
   final String tur;
   final List<dynamic> ogeler = [];
   int sayfa = 0;
   int toplam = 0;
   bool bitti = false;
 
-  _RafKaynak(this.yol, this.tur);
+  _RafKaynak(this.temel, this.tur, {required this.varsayilanSira});
+
+  /// Seçili sıralamaya göre tam yol (`page` hariç).
+  ///
+  /// BİZİM VERİMİZLE sıralarken TMDB tarafı VARSAYILAN sırada kalır: havuz
+  /// popülerlikten doldurulur, sıralamayı istemci sayaçlarla yapar. Aksi hâlde
+  /// TMDB'ye anlamsız bir `sort_by` gönderilirdi.
+  String yol(_Sira sira) {
+    final sortBy = tur == 'tv' ? sira.tvSort : sira.filmSort;
+    final buf = StringBuffer(temel)
+      ..write('&sort_by=${sortBy ?? varsayilanSira}');
+    // Oy eşiği yalnız TMDB puanı sıralamasında anlamlı; başka seçenekte
+    // eklenirse raftan sessizce yapım düşer.
+    if (sira.enAzOy != null) buf.write('&vote_count.gte=${sira.enAzOy}');
+    return buf.toString();
+  }
+
+  /// Sayfa imlecini ve birikmiş listeyi sıfırla (sıralama değişince).
+  void sifirla() {
+    ogeler.clear();
+    sayfa = 0;
+    toplam = 0;
+    bitti = false;
+  }
 }
 
 /// Bir raf: başlık + bir ya da BİRDEN ÇOK kaynak.
@@ -186,6 +311,14 @@ class _Raf {
   List<dynamic> get ogeler => [for (final k in kaynaklar) ...k.ogeler];
   int get toplam => kaynaklar.fold(0, (t, k) => t + k.toplam);
   bool get bitti => kaynaklar.every((k) => k.bitti);
+
+  void sifirla() {
+    for (final k in kaynaklar) {
+      k.sifirla();
+    }
+    ilkGeldi = false;
+    yukluyor = false;
+  }
 }
 
 class SirketEkrani extends StatefulWidget {
@@ -230,6 +363,33 @@ class _SirketEkraniState extends State<SirketEkrani> {
   Map<String, dynamic>? _benimPuan;
   Map<String, dynamic>? _toplum;
 
+  /// Seçili sıralama. Kaynak doğru: ADRES (`?sirala=`) — [didChangeDependencies]
+  /// her adres değişiminde buraya yazar, böylece geri/ileri tuşu ve paylaşılan
+  /// bağlantı da doğru sırayı gösterir.
+  _Sira _sira = _siralamaSecenekleri.first;
+  bool _adresOkundu = false;
+
+  /// `'<tur>:<tmdbId>'` → `{puan_ort, puan_adet, izlenme, yorum}`.
+  ///
+  /// Anahtar TÜRÜ DE taşır: TMDB'de aynı sayı hem bir diziye hem bir filme ait
+  /// olabilir ve ikisinin sayacı ayrıdır.
+  /// Sunucu HER sorulan kimlik için satır döndürüyor (veri yoksa sıfırlarla),
+  /// bu yüzden haritada bulunmak "soruldu" demek — aynı kimlik ikinci kez
+  /// sorulmaz.
+  final Map<String, Map<String, dynamic>> _sayaclar = {};
+
+  /// BİZİM VERİMİZLE sıralarken bir rafa alınacak EN ÇOK yapım.
+  ///
+  /// NEDEN TAVAN VAR: sıralamanın DOĞRU olması için havuzun sıralamadan ÖNCE
+  /// dolu olması gerekiyor. Yalnız yüklü 20 kartı kendi puanımıza göre dizmek
+  /// "en yüksek puanlı yapımlar" değil "ilk 20 popülerin en yüksek puanlısı"
+  /// olurdu — sessiz bir yalan. Sınırsız doldurmak ise 166 dizilik bir firmada
+  /// 9 TMDB isteği + 2 sayaç isteği demekti.
+  ///
+  /// 100 aynı zamanda sunucudaki `YAPIM_SAYAC_TAVAN` ile BİREBİR: bir raf tek
+  /// istekte sorulur, dilimleme gerekmez.
+  static const int _havuzTavani = 100;
+
   bool get _gecerli => widget.sirketId > 0;
 
   @override
@@ -250,13 +410,14 @@ class _SirketEkraniState extends State<SirketEkrani> {
         baslikKalibi: 'Devam eden yapımlar ({})',
         kaynaklar: [
           _RafKaynak(
-            '$onek/tv?$firma&with_status=0&sort_by=popularity.desc',
+            '$onek/tv?$firma&with_status=0',
             'tv',
+            varsayilanSira: 'popularity.desc',
           ),
           _RafKaynak(
-            '$onek/movie?$firma&primary_release_date.gte=$bugun'
-                '&sort_by=primary_release_date.asc',
+            '$onek/movie?$firma&primary_release_date.gte=$bugun',
             'movie',
+            varsayilanSira: 'primary_release_date.asc',
           ),
         ],
       ),
@@ -265,7 +426,11 @@ class _SirketEkraniState extends State<SirketEkrani> {
         ikon: Icons.tv_outlined,
         baslikKalibi: 'Diziler ({})',
         kaynaklar: [
-          _RafKaynak('$onek/tv?$firma&sort_by=popularity.desc', 'tv'),
+          _RafKaynak(
+            '$onek/tv?$firma',
+            'tv',
+            varsayilanSira: 'popularity.desc',
+          ),
         ],
       ),
       _Raf(
@@ -273,7 +438,11 @@ class _SirketEkraniState extends State<SirketEkrani> {
         ikon: Icons.movie_outlined,
         baslikKalibi: 'Filmler ({})',
         kaynaklar: [
-          _RafKaynak('$onek/movie?$firma&sort_by=popularity.desc', 'movie'),
+          _RafKaynak(
+            '$onek/movie?$firma',
+            'movie',
+            varsayilanSira: 'popularity.desc',
+          ),
         ],
       ),
     ];
@@ -290,7 +459,46 @@ class _SirketEkraniState extends State<SirketEkrani> {
     if (_gecerli) {
       _firmaYukle();
       _puanYenile();
+    }
+    // RAFLAR BURADA YÜKLENMEZ: hangi sırayla isteneceklerini ADRES söylüyor
+    // (`?sirala=`) ve adres ancak [didChangeDependencies] içinde okunabilir
+    // (`GoRouterState.of` bir InheritedWidget aramasıdır, `initState`te YASAK).
+    // İlk yükleme oraya taşındı — yoksa paylaşılan `?sirala=izlenme`
+    // bağlantısı önce popülerlik listesini çekip sonra onu atardı.
+  }
+
+  /// Adres → [_sira]. Her adres değişiminde çalışır: tarayıcının geri/ileri
+  /// tuşu da doğru sırayı geri getirir.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_gecerli) return;
+    final yeni = _siralamaCoz(_adrestenSirala());
+    if (!_adresOkundu) {
+      _adresOkundu = true;
+      _sira = yeni;
       _raflariYukle();
+      return;
+    }
+    // Adres DIŞARIDAN değiştiyse (geri tuşu, elle yazma) rafları yenile.
+    // Çipe dokunulduğunda [_siralaSec] `_sira`yı ÖNCE yazdığı için burası
+    // sessiz kalır — aynı iş iki kez yapılmaz.
+    if (yeni.deger != _sira.deger) {
+      _sira = yeni;
+      _raflariTazele();
+    }
+  }
+
+  /// Adresteki `?sirala=` değeri.
+  ///
+  /// try/catch: ekran yönlendirici olmadan da kurulabiliyor (widget testleri,
+  /// gelecekte bir modal). O durumda varsayılan sıra kullanılır — sayfa
+  /// yönlendiriciye BAĞIMLI olmamalı.
+  String? _adrestenSirala() {
+    try {
+      return GoRouterState.of(context).uri.queryParameters['sirala'];
+    } catch (_) {
+      return null;
     }
   }
 
@@ -350,17 +558,163 @@ class _SirketEkraniState extends State<SirketEkrani> {
 
   /// Her rafın HER kaynağından İLK sayfa; hepsi paralel. Dört küçük istek,
   /// hepsi `/tmdb/*` beyaz listesinde ve sunucuda önbellekli.
+  ///
+  /// BİZİM VERİMİZLE sıralarken raf ayrıca [_havuzuDoldur] ile tavana kadar
+  /// çekilir ve sayaçları alınır — gerekçe [_havuzTavani] üstünde.
   Future<void> _raflariYukle() async {
-    await Future.wait([
-      for (final r in _raflar)
-        for (final k in r.kaynaklar) _kaynakSayfa(k),
-    ]);
+    await Future.wait([for (final r in _raflar) _rafiYukle(r)]);
+  }
+
+  Future<void> _rafiYukle(_Raf raf) async {
+    await Future.wait([for (final k in raf.kaynaklar) _kaynakSayfa(k)]);
+    if (_sira.alan != null) await _havuzuDoldur(raf);
     if (!mounted) return;
+    setState(() => raf.ilkGeldi = true);
+  }
+
+  /// SIRALAMA DEĞİŞTİ: rafları boşalt, baştan yükle.
+  ///
+  /// `_Raf` NESNELERİ KORUNUR (yenisi kurulmaz): `ScrollController` onların
+  /// alanı ve hâlâ ekrandaki `ListView`a bağlı. Yeniden kurmak, kullanılan bir
+  /// denetleyiciyi `dispose` etmek olurdu. Açık/kapalı hâl de bilerek korunuyor:
+  /// kullanıcı "Tümünü gör" dedikten sonra sırayı değiştirince rafın kapanması
+  /// niyetini geri almak olurdu.
+  Future<void> _raflariTazele() async {
     setState(() {
       for (final r in _raflar) {
-        r.ilkGeldi = true;
+        r.sifirla();
+        // Şerit başa dönmeli: yeni liste eskisinin kaydırma konumunda açılırsa
+        // kullanıcı listenin ortasına düşer.
+        if (r.kaydirma.hasClients) r.kaydirma.jumpTo(0);
       }
     });
+    await _raflariYukle();
+  }
+
+  /// Bizim sayaçlarımızla sıralanacak rafı TAVANA kadar doldurur, sonra
+  /// sayaçları tek istekte alır ve rafı BİTMİŞ sayar.
+  ///
+  /// BİTMİŞ SAYMAK BİLİNÇLİ: liste bu modda sonludur. Kaydırdıkça yeni sayfa
+  /// gelseydi sıra her sayfada yeniden hesaplanır ve kartlar kullanıcının
+  /// gözünün önünde yer değiştirirdi.
+  Future<void> _havuzuDoldur(_Raf raf) async {
+    var koruma = 0;
+    while (mounted &&
+        !raf.bitti &&
+        raf.ogeler.length < _havuzTavani &&
+        koruma++ < 12) {
+      await _kaynakSayfa(raf.kaynaklar.firstWhere((k) => !k.bitti));
+    }
+    if (!mounted) return;
+    await _sayaclariGetir(raf.ogeler);
+    for (final k in raf.kaynaklar) {
+      k.bitti = true;
+    }
+  }
+
+  /// Eksik sayaçları `POST /yapim-sayaclari` ile getirir.
+  ///
+  /// TÜR BAŞINA AYRI İSTEK: uç `tur` alıyor (tablolarda `tur`+`tmdb_id` birlikte
+  /// anahtar). "Devam eden" rafı hem dizi hem film taşıdığı için orada iki
+  /// istek olur; ikisi paralel gider.
+  Future<void> _sayaclariGetir(List<dynamic> ogeler) async {
+    final eksik = <String, List<int>>{'tv': [], 'movie': []};
+    for (final o in ogeler) {
+      final tur = (o as Map<String, dynamic>)['_tur'] as String?;
+      final id = puanSayisi(o['id'])?.toInt();
+      if (tur == null || id == null || _sayaclar.containsKey('$tur:$id')) {
+        continue;
+      }
+      if (!eksik[tur]!.contains(id)) eksik[tur]!.add(id);
+    }
+    await Future.wait([
+      for (final girdi in eksik.entries)
+        if (girdi.value.isNotEmpty) _sayacIste(girdi.key, girdi.value),
+    ]);
+  }
+
+  Future<void> _sayacIste(String tur, List<int> idler) async {
+    // Tavanı sunucu da uyguluyor (400 döner); istemci burada BİLEREK dilimliyor
+    // ki gelecekte tavan aşan bir çağıran sessizce hata almasın.
+    for (var i = 0; i < idler.length; i += _havuzTavani) {
+      final son = (i + _havuzTavani).clamp(0, idler.length);
+      final dilim = idler.sublist(i, son);
+      try {
+        final d = await Api.post('/yapim-sayaclari', {
+          'tur': tur,
+          'tmdb_idler': dilim,
+        });
+        for (final s in (d['sayaclar'] as List<dynamic>? ?? [])) {
+          final m = s as Map<String, dynamic>;
+          final id = puanSayisi(m['tmdb_id'])?.toInt();
+          if (id != null) _sayaclar['$tur:$id'] = m;
+        }
+      } catch (_) {
+        // SESSİZ: sayaç gelmezse sıralama TMDB'nin verdiği sırada kalır. Rafı
+        // boşaltmak ya da hata basmak, çalışan bir listeyi bozmak olurdu.
+        // Sorulmuş sayılsın ki her sayfada yeniden denenmesin.
+        for (final id in dilim) {
+          _sayaclar.putIfAbsent('$tur:$id', () => const {});
+        }
+      }
+    }
+  }
+
+  /// Bir yapımın seçili alandaki sayacı; sıralamada kullanılır.
+  /// Veri YOKSA `null` — [_siraliOgeler] onu SONA atar (gizlemez).
+  num? _sayacDegeri(dynamic oge, String alan) {
+    final m = oge as Map<String, dynamic>;
+    final s = _sayaclar['${m['_tur']}:${puanSayisi(m['id'])?.toInt()}'];
+    if (s == null) return null;
+    final ham = puanSayisi(s[alan == 'puan' ? 'puan_ort' : alan]);
+    if (ham == null || ham == 0) return null;
+    return ham;
+  }
+
+  /// Rafın EKRANA ÇİZİLECEK listesi.
+  ///
+  /// TMDB tabanlı sıralamalarda liste olduğu gibi döner (sıra sunucudan
+  /// geliyor). Bizim verimizde burada sıralanır.
+  ///
+  /// İNDEKSLE SÜSLEME ŞART: `List.sort` Dart'ta KARARLI DEĞİL. Sayaçların
+  /// büyük kısmı eşit (çoğu yapımın hiç puanı yok) ve kararsız sıralama o
+  /// eşitlerin sırasını her `setState`te değiştirir — kartlar gözün önünde
+  /// zıplar. İkincil ölçüt "TMDB'nin verdiği sıra" (yani popülerlik).
+  List<dynamic> _siraliOgeler(_Raf raf) {
+    final alan = _sira.alan;
+    final ham = raf.ogeler;
+    if (alan == null) return ham;
+    final indeksli = [for (var i = 0; i < ham.length; i++) (i, ham[i])];
+    indeksli.sort((a, b) {
+      final da = _sayacDegeri(a.$2, alan);
+      final db = _sayacDegeri(b.$2, alan);
+      // Veri olmayan yapım GİZLENMEZ, SONA gider.
+      if (da == null || db == null) {
+        if (da == db) return a.$1.compareTo(b.$1);
+        return da == null ? 1 : -1;
+      }
+      final c = db.compareTo(da);
+      if (c != 0) return c;
+      // dizi.jpg puanında EŞİTLİĞİ PUAN SAYISI bozar: 10,0'ı tek kişi de
+      // vermiş olabilir. Eşiğe (ör. "en az 5 puan") gidilmedi — bugünkü
+      // hacimde eşik rafı bomboş bırakırdı; boş raf yanlış sıradan kötüdür.
+      if (alan == 'puan') {
+        final aa =
+            puanSayisi(
+              _sayaclar['${a.$2['_tur']}:${a.$2['id']}']?['puan_adet'],
+            ) ??
+            0;
+        final ba =
+            puanSayisi(
+              _sayaclar['${b.$2['_tur']}:${b.$2['id']}']?['puan_adet'],
+            ) ??
+            0;
+        final ca = ba.compareTo(aa);
+        if (ca != 0) return ca;
+      }
+      return a.$1.compareTo(b.$1);
+    });
+    return [for (final e in indeksli) e.$2];
   }
 
   /// Tek kaynaktan SIRADAKİ sayfa.
@@ -370,7 +724,7 @@ class _SirketEkraniState extends State<SirketEkrani> {
   Future<void> _kaynakSayfa(_RafKaynak kaynak) async {
     if (kaynak.bitti) return;
     try {
-      final d = await Api.get('${kaynak.yol}&page=${kaynak.sayfa + 1}');
+      final d = await Api.get('${kaynak.yol(_sira)}&page=${kaynak.sayfa + 1}');
       if (!mounted) return;
       final ham = (d['results'] as List<dynamic>? ?? []);
       kaynak.sayfa++;
@@ -541,6 +895,132 @@ class _SirketEkraniState extends State<SirketEkrani> {
     );
   }
 
+  /// ---------------------------------------------------------------------
+  /// SIRALAMA SEÇİCİ
+  /// ---------------------------------------------------------------------
+  /// NEDEN SAYFANIN ÜSTÜNDE VE TEK: raf başına ayrı seçici koymak üç ayrı
+  /// durum, üç ayrı adres parametresi ve "hangisini değiştirmiştim" sorusu
+  /// demekti. Kullanıcının cümlesi "HBO'nun en çok izlenenleri" — dizi/film
+  /// ayrımını sıralarken YAPMIYOR; o ayrımı zaten rafların kendisi yapıyor.
+  ///
+  /// BELİRSİZLİK "Tüm raflara uygulanır" ALT METNİYLE KAPANIYOR: seçici
+  /// rafların ÜSTÜNDE durduğu için "yalnız ilk rafa mı?" sorusu doğardı;
+  /// tek satırlık metin bunu sözle kapatıyor (ui-ux-pro-max, "sistem durumunun
+  /// görünürlüğü").
+  ///
+  /// AÇILIR LİSTE DEĞİL ÇİP: seçenekler altı tane ve kısa — çipler hepsini
+  /// dokunmadan gösterir, seçili olan tek bakışta okunur. Projede aynı desen
+  /// Gözat ekranında zaten var.
+  Widget get _siralamaSecici => Padding(
+    padding: const EdgeInsets.fromLTRB(12, 12, 0, 0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.sort, size: 17, color: DiziRenkler.metin54),
+            const SizedBox(width: 6),
+            Text(
+              'Sıralama'.c,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: DiziRenkler.metin54,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                'Tüm raflara uygulanır'.c,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 11.5, color: DiziRenkler.metin38),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(
+          // 48 px: çipin dokunma hedefi (`padded`) sığsın, satır kırpılmasın.
+          height: 48,
+          // TEMBEL LİSTE DEĞİL `SingleChildScrollView` + `Row`: seçenek sayısı
+          // SABİT ve altı tane. `ListView` yalnız GÖRÜNENİ kurar, yani dar
+          // ekranda "Yorum sayısı" çipi ağaca hiç girmezdi — ekran okuyucu onu
+          // duyuramaz, klavyeyle sekmeyle ulaşılamaz ve widget testi
+          // bulamaz (ilk yazımda tam bu yüzden iki test düştü). Altı kısa çipi
+          // peşin kurmanın maliyeti yok.
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(right: 12),
+            child: Row(
+              children: [
+                for (final s in _siralamaSecenekleri) ...[
+                  if (s != _siralamaSecenekleri.first) const SizedBox(width: 8),
+                  ChoiceChip(
+                    key: Key('sirala-${s.deger ?? 'varsayilan'}'),
+                    label: Text(s.etiket.c),
+                    selected: s.deger == _sira.deger,
+                    // Dokunma hedefi ikonla değil ÇEVRESİYLE büyütülür (44 px
+                    // kuralı) — `padded` bunu Material'a yaptırır.
+                    materialTapTargetSize: MaterialTapTargetSize.padded,
+                    onSelected: (secildi) {
+                      if (secildi) _siralaSec(s);
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+        // DÜRÜSTLÜK NOTU: bizim verimizle sıralarken liste sonludur
+        // (bkz. [_havuzTavani]). Bunu yazmazsak kullanıcı "firmanın TÜM
+        // yapımları arasında en yüksek puanlı" sanır — oysa sıralama en
+        // popüler 100 yapım havuzunda yapılıyor.
+        if (_sira.alan != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 2, bottom: 2, right: 12),
+            child: Text(
+              'En popüler {} yapım arasında sıralandı'.cf([_havuzTavani]),
+              style: TextStyle(fontSize: 11.5, color: DiziRenkler.metin38),
+            ),
+          ),
+      ],
+    ),
+  );
+
+  /// Çipe dokunuldu: durumu ÖNCE yaz, adresi sonra güncelle.
+  ///
+  /// SIRA ÖNEMLİ: `replace` sayfayı aynı sayfa anahtarıyla değiştirdiği için
+  /// durum korunur ve [didChangeDependencies] yeni adresle bir kez daha
+  /// çalışır. `_sira` orada zaten güncel olduğu için raflar İKİNCİ KEZ
+  /// yüklenmez.
+  void _siralaSec(_Sira yeni) {
+    if (yeni.deger == _sira.deger) return;
+    setState(() => _sira = yeni);
+    _raflariTazele();
+    _adresiGuncelle();
+  }
+
+  /// Seçimi adrese yaz — F5'te korunsun, bağlantı paylaşılabilsin.
+  ///
+  /// `replace` (push DEĞİL): her sıralama denemesi geçmişe bir kayıt eklerse
+  /// kullanıcı geri tuşuyla firmadan çıkamaz, altı kez sıralama gezinir.
+  /// try/catch: yönlendirici olmadan kurulmuş ekranda (widget testi) sessiz
+  /// geçilir — seçim yine de çalışır.
+  void _adresiGuncelle() {
+    try {
+      GoRouter.of(context).replace(
+        sirketYolu(
+          widget.sirketId,
+          ad: widget.sirketAdi,
+          tur: widget.baslangicTuru,
+          sirala: _sira.deger,
+        ),
+      );
+    } catch (_) {
+      // Adres yazılamadı; sayfa çalışmaya devam eder.
+    }
+  }
+
   /// Raftaki tek kartın genişliği. Yükseklik bundan TÜRETİLİR.
   static const double _rafKartGenisligi = 124;
 
@@ -563,7 +1043,7 @@ class _SirketEkraniState extends State<SirketEkrani> {
         ),
       ];
     }
-    final ogeler = raf.ogeler;
+    final ogeler = _siraliOgeler(raf);
     // Boş raf HİÇ çizilmez: "(0)" yazan bir başlık gürültüden ibaret.
     if (ogeler.isEmpty) return const [];
     return [
@@ -797,6 +1277,9 @@ class _SirketEkraniState extends State<SirketEkrani> {
             SliverToBoxAdapter(child: _baslik),
             // Puan + tepki: başlığın hemen altında (kişi sayfasıyla aynı yer).
             SliverToBoxAdapter(child: _puanSatiri),
+            // Sıralama seçici RAFLARIN ÜSTÜNDE: hepsine birden uygulanıyor
+            // (gerekçe [_siralamaSecici] üstünde).
+            SliverToBoxAdapter(child: _siralamaSecici),
             // Raflar: devam edenler → diziler → filmler. Başlığa dokununca
             // raf AŞAĞI DOĞRU açılır. Altta ayrı bir "Tüm yapımlar" ızgarası
             // ARTIK YOK: sonsuz sayfalanıp yorumları gömüyordu (19 Ağu 2026).

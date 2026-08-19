@@ -1185,4 +1185,13 @@ const Map<String, String> cevirilerBg = {
   'Sıralama kaydedilemedi': 'Подредбата не можа да се запази',
   'Değişiklik kaydedilemedi': 'Промяната не можа да се запази',
   'Kaldırılamadı': 'Не можа да бъде премахнато',
+  'Popülerlik': 'Популярност',
+  'TMDB puanı': 'Оценка в TMDB',
+  'Yapım yılı': 'Година на производство',
+  'dizi.jpg puanı': 'Оценка в dizi.jpg',
+  'İzlenme': 'Гледания',
+  'Yorum sayısı': 'Брой коментари',
+  'Tüm raflara uygulanır': 'Прилага се за всички рафтове',
+  'En popüler {} yapım arasında sıralandı':
+      'Подредено сред {} най-популярни заглавия',
 };

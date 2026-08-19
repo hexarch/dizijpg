@@ -1139,4 +1139,12 @@ const Map<String, String> cevirilerAm = {
   'Sıralama kaydedilemedi': 'ቅደም ተከተሉን ማስቀመጥ አልተቻለም',
   'Değişiklik kaydedilemedi': 'ለውጡን ማስቀመጥ አልተቻለም',
   'Kaldırılamadı': 'ማስወገድ አልተቻለም',
+  'Popülerlik': 'ተወዳጅነት',
+  'TMDB puanı': 'የTMDB ደረጃ',
+  'Yapım yılı': 'የምርት ዓመት',
+  'dizi.jpg puanı': 'የdizi.jpg ደረጃ',
+  'İzlenme': 'እይታዎች',
+  'Yorum sayısı': 'የአስተያየቶች ብዛት',
+  'Tüm raflara uygulanır': 'በሁሉም መደርደሪያዎች ላይ ይሠራል',
+  'En popüler {} yapım arasında sıralandı': 'ከ{} በጣም ተወዳጅ ርዕሶች መካከል ተደርድሯል',
 };

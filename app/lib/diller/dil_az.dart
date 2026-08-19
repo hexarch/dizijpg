@@ -1173,4 +1173,13 @@ const Map<String, String> cevirilerAz = {
   'Sıralama kaydedilemedi': 'Sıralama yadda saxlanmadı',
   'Değişiklik kaydedilemedi': 'Dəyişiklik yadda saxlanmadı',
   'Kaldırılamadı': 'Çıxarıla bilmədi',
+  'Popülerlik': 'Populyarlıq',
+  'TMDB puanı': 'TMDB reytinqi',
+  'Yapım yılı': 'İstehsal ili',
+  'dizi.jpg puanı': 'dizi.jpg reytinqi',
+  'İzlenme': 'Baxışlar',
+  'Yorum sayısı': 'Şərh sayı',
+  'Tüm raflara uygulanır': 'Bütün rəflərə tətbiq olunur',
+  'En popüler {} yapım arasında sıralandı':
+      'Ən populyar {} əsər arasında sıralandı',
 };

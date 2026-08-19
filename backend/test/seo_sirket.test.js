@@ -63,12 +63,30 @@ test('TMDB sorguları sirket.dart ile AYNI (bot ile insan aynı listeyi görür)
   // CLOAKING: SSR başka, uygulama başka bir liste gösterirse indekslenen sayfa
   // ziyaretçinin gördüğü sayfa olmaz. İki taraf da
   // `with_companies=<id>&sort_by=popularity.desc` kullanmak ZORUNDA.
+  // 19 AĞU 2026 — bu iddia LİTERAL METİN eşleştiriyordu ve sıralama seçenekleri
+  // eklenince kırıldı: `sort_by` artık çalışma anında ekleniyor
+  // (`_RafKaynak.yol()`), yol dizesi kaynakta sabit değil.
+  //
+  // NİYET DEĞİŞMEDİ, ölçüm noktası değişti: bot ile insanın AYNI URL'de aynı
+  // listeyi görmesi, uygulamanın VARSAYILAN sıralamasının SSR ile aynı olmasına
+  // bağlı. Onu ölçüyoruz. (Kullanıcı `?sirala=puan` seçtiğinde liste farklılaşır
+  // ama o AYRI bir URL'dir ve canonical çıplak adrese işaret eder — aşağıdaki
+  // iddia bunu da kilitliyor.)
   const sirketDart = fs.readFileSync(
     path.join(PROJE, 'app', 'lib', 'ekranlar', 'sirket.dart'), 'utf8');
-  assert.ok(sirketDart.includes("'\$onek/tv?\$firma&sort_by=popularity.desc'"),
-    'sirket.dart dizi sorgusu değişmiş — SSR sorgusu güncellenmeli');
-  assert.ok(sirketDart.includes("'\$onek/movie?\$firma&sort_by=popularity.desc'"),
-    'sirket.dart film sorgusu değişmiş — SSR sorgusu güncellenmeli');
+  const varsayilanlar = [...sirketDart.matchAll(/varsayilanSira: '([^']+)'/g)]
+    .map((m) => m[1]);
+  assert.ok(varsayilanlar.length >= 3,
+    `sirket.dart'ta varsayılan sıra bulunamadı: ${varsayilanlar}`);
+  // "Diziler" ve "Filmler" rafları popülerlikte kalmalı — SSR de öyle çekiyor.
+  // ("Devam eden filmler" bilerek tarih sıralı; SSR o rafı hiç basmıyor.)
+  assert.ok(
+    varsayilanlar.filter((v) => v === 'popularity.desc').length >= 3,
+    `varsayılan sıra SSR'dan ayrışmış: ${varsayilanlar}`,
+  );
+  // Sıralama seçimi ADRESTE taşınıyor ama canonical onu DÜŞÜRMELİ; yoksa
+  // her sıralama ayrı bir yinelenen sayfa olurdu.
+  assert.match(UC, /canonical: `\$\{SITE_KOK\}\/sirket\/\$\{sid\}`/);
   assert.match(UC, /\/discover\/tv\?with_companies=\$\{sid\}&sort_by=popularity\.desc/);
   assert.match(UC, /\/discover\/movie\?with_companies=\$\{sid\}&sort_by=popularity\.desc/);
   assert.match(UC, /\/company\/\$\{sid\}/);

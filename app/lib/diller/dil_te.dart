@@ -1178,4 +1178,13 @@ const Map<String, String> cevirilerTe = {
   'Sıralama kaydedilemedi': 'క్రమాన్ని సేవ్ చేయలేకపోయాం',
   'Değişiklik kaydedilemedi': 'మార్పును సేవ్ చేయలేకపోయాం',
   'Kaldırılamadı': 'తీసివేయలేకపోయాం',
+  'Popülerlik': 'ప్రజాదరణ',
+  'TMDB puanı': 'TMDB రేటింగ్',
+  'Yapım yılı': 'నిర్మాణ సంవత్సరం',
+  'dizi.jpg puanı': 'dizi.jpg రేటింగ్',
+  'İzlenme': 'వీక్షణలు',
+  'Yorum sayısı': 'వ్యాఖ్యల సంఖ్య',
+  'Tüm raflara uygulanır': 'అన్ని షెల్ఫ్‌లకు వర్తిస్తుంది',
+  'En popüler {} yapım arasında sıralandı':
+      'అత్యంత ప్రజాదరణ పొందిన {} శీర్షికల్లో క్రమబద్ధీకరించబడింది',
 };

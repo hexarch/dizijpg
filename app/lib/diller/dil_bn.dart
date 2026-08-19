@@ -1173,4 +1173,13 @@ const Map<String, String> cevirilerBn = {
   'Sıralama kaydedilemedi': 'ক্রম সংরক্ষণ করা যায়নি',
   'Değişiklik kaydedilemedi': 'পরিবর্তন সংরক্ষণ করা যায়নি',
   'Kaldırılamadı': 'সরানো যায়নি',
+  'Popülerlik': 'জনপ্রিয়তা',
+  'TMDB puanı': 'TMDB রেটিং',
+  'Yapım yılı': 'নির্মাণের বছর',
+  'dizi.jpg puanı': 'dizi.jpg রেটিং',
+  'İzlenme': 'দেখা হয়েছে',
+  'Yorum sayısı': 'মন্তব্যের সংখ্যা',
+  'Tüm raflara uygulanır': 'সব তাকের ক্ষেত্রে প্রযোজ্য',
+  'En popüler {} yapım arasında sıralandı':
+      '{} জনপ্রিয়তম শিরোনামের মধ্যে সাজানো',
 };

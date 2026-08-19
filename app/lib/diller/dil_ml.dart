@@ -1180,4 +1180,13 @@ const Map<String, String> cevirilerMl = {
   'Sıralama kaydedilemedi': 'ക്രമം സേവ് ചെയ്യാനായില്ല',
   'Değişiklik kaydedilemedi': 'മാറ്റം സേവ് ചെയ്യാനായില്ല',
   'Kaldırılamadı': 'നീക്കാനായില്ല',
+  'Popülerlik': 'ജനപ്രീതി',
+  'TMDB puanı': 'TMDB റേറ്റിംഗ്',
+  'Yapım yılı': 'നിർമ്മാണ വർഷം',
+  'dizi.jpg puanı': 'dizi.jpg റേറ്റിംഗ്',
+  'İzlenme': 'കാഴ്ചകൾ',
+  'Yorum sayısı': 'അഭിപ്രായങ്ങളുടെ എണ്ണം',
+  'Tüm raflara uygulanır': 'എല്ലാ ഷെൽഫുകൾക്കും ബാധകം',
+  'En popüler {} yapım arasında sıralandı':
+      'ഏറ്റവും ജനപ്രിയമായ {} ശീർഷകങ്ങൾക്കിടയിൽ അടുക്കി',
 };

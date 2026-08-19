@@ -1123,4 +1123,12 @@ const Map<String, String> cevirilerJa = {
   'Sıralama kaydedilemedi': '並び順を保存できませんでした',
   'Değişiklik kaydedilemedi': '変更を保存できませんでした',
   'Kaldırılamadı': '削除できませんでした',
+  'Popülerlik': '人気順',
+  'TMDB puanı': 'TMDB評価',
+  'Yapım yılı': '制作年',
+  'dizi.jpg puanı': 'dizi.jpg評価',
+  'İzlenme': '視聴数',
+  'Yorum sayısı': 'コメント数',
+  'Tüm raflara uygulanır': 'すべての棚に適用されます',
+  'En popüler {} yapım arasında sıralandı': '人気上位{}作品の中で並べ替えました',
 };

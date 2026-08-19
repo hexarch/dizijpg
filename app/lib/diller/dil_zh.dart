@@ -1108,4 +1108,12 @@ const Map<String, String> cevirilerZh = {
   'Sıralama kaydedilemedi': '无法保存顺序',
   'Değişiklik kaydedilemedi': '无法保存更改',
   'Kaldırılamadı': '无法移除',
+  'Popülerlik': '热门程度',
+  'TMDB puanı': 'TMDB 评分',
+  'Yapım yılı': '出品年份',
+  'dizi.jpg puanı': 'dizi.jpg 评分',
+  'İzlenme': '观看数',
+  'Yorum sayısı': '评论数',
+  'Tüm raflara uygulanır': '适用于所有栏目',
+  'En popüler {} yapım arasında sıralandı': '已在最热门的 {} 部作品中排序',
 };

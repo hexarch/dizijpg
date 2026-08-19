@@ -1188,4 +1188,13 @@ const Map<String, String> cevirilerFi = {
   'Sıralama kaydedilemedi': 'Järjestystä ei voitu tallentaa',
   'Değişiklik kaydedilemedi': 'Muutosta ei voitu tallentaa',
   'Kaldırılamadı': 'Poistaminen ei onnistunut',
+  'Popülerlik': 'Suosio',
+  'TMDB puanı': 'TMDB-arvosana',
+  'Yapım yılı': 'Julkaisuvuosi',
+  'dizi.jpg puanı': 'dizi.jpg-arvosana',
+  'İzlenme': 'Katselukerrat',
+  'Yorum sayısı': 'Kommenttien määrä',
+  'Tüm raflara uygulanır': 'Koskee kaikkia hyllyjä',
+  'En popüler {} yapım arasında sıralandı':
+      'Järjestetty {} suosituimman nimikkeen joukossa',
 };

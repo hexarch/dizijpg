@@ -1175,4 +1175,13 @@ const Map<String, String> cevirilerMr = {
   'Sıralama kaydedilemedi': 'क्रम जतन करता आला नाही',
   'Değişiklik kaydedilemedi': 'बदल जतन करता आला नाही',
   'Kaldırılamadı': 'काढता आले नाही',
+  'Popülerlik': 'लोकप्रियता',
+  'TMDB puanı': 'TMDB रेटिंग',
+  'Yapım yılı': 'निर्मिती वर्ष',
+  'dizi.jpg puanı': 'dizi.jpg रेटिंग',
+  'İzlenme': 'पाहिले',
+  'Yorum sayısı': 'टिप्पण्यांची संख्या',
+  'Tüm raflara uygulanır': 'सर्व शेल्फना लागू',
+  'En popüler {} yapım arasında sıralandı':
+      '{} सर्वाधिक लोकप्रिय शीर्षकांमध्ये क्रमवारी',
 };

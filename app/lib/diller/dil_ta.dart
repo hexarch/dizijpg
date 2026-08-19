@@ -1197,4 +1197,13 @@ const Map<String, String> cevirilerTa = {
   'Sıralama kaydedilemedi': 'வரிசையைச் சேமிக்க முடியவில்லை',
   'Değişiklik kaydedilemedi': 'மாற்றத்தைச் சேமிக்க முடியவில்லை',
   'Kaldırılamadı': 'நீக்க முடியவில்லை',
+  'Popülerlik': 'பிரபலம்',
+  'TMDB puanı': 'TMDB மதிப்பீடு',
+  'Yapım yılı': 'தயாரிப்பு ஆண்டு',
+  'dizi.jpg puanı': 'dizi.jpg மதிப்பீடு',
+  'İzlenme': 'பார்வைகள்',
+  'Yorum sayısı': 'கருத்துகளின் எண்ணிக்கை',
+  'Tüm raflara uygulanır': 'அனைத்து அலமாரிகளுக்கும் பொருந்தும்',
+  'En popüler {} yapım arasında sıralandı':
+      'மிகவும் பிரபலமான {} தலைப்புகளில் வரிசைப்படுத்தப்பட்டது',
 };

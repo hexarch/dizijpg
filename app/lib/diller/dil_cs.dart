@@ -1176,4 +1176,13 @@ const Map<String, String> cevirilerCs = {
   'Sıralama kaydedilemedi': 'Pořadí se nepodařilo uložit',
   'Değişiklik kaydedilemedi': 'Změnu se nepodařilo uložit',
   'Kaldırılamadı': 'Nepodařilo se odebrat',
+  'Popülerlik': 'Popularita',
+  'TMDB puanı': 'Hodnocení TMDB',
+  'Yapım yılı': 'Rok výroby',
+  'dizi.jpg puanı': 'Hodnocení dizi.jpg',
+  'İzlenme': 'Zhlédnutí',
+  'Yorum sayısı': 'Počet komentářů',
+  'Tüm raflara uygulanır': 'Platí pro všechny police',
+  'En popüler {} yapım arasında sıralandı':
+      'Seřazeno mezi {} nejoblíbenějšími tituly',
 };

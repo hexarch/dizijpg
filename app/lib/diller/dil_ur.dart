@@ -1180,4 +1180,13 @@ const Map<String, String> cevirilerUr = {
   'Sıralama kaydedilemedi': 'ترتیب محفوظ نہ ہو سکی',
   'Değişiklik kaydedilemedi': 'تبدیلی محفوظ نہ ہو سکی',
   'Kaldırılamadı': 'ہٹایا نہ جا سکا',
+  'Popülerlik': 'مقبولیت',
+  'TMDB puanı': 'TMDB درجہ بندی',
+  'Yapım yılı': 'سالِ تیاری',
+  'dizi.jpg puanı': 'dizi.jpg درجہ بندی',
+  'İzlenme': 'مشاہدات',
+  'Yorum sayısı': 'تبصروں کی تعداد',
+  'Tüm raflara uygulanır': 'تمام شیلفوں پر لاگو ہوتا ہے',
+  'En popüler {} yapım arasında sıralandı':
+      '{} مقبول ترین عنوانات میں ترتیب دیا گیا',
 };

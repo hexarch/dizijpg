@@ -1201,4 +1201,13 @@ const Map<String, String> cevirilerEl = {
   'Sıralama kaydedilemedi': 'Η σειρά δεν αποθηκεύτηκε',
   'Değişiklik kaydedilemedi': 'Η αλλαγή δεν αποθηκεύτηκε',
   'Kaldırılamadı': 'Δεν ήταν δυνατή η αφαίρεση',
+  'Popülerlik': 'Δημοτικότητα',
+  'TMDB puanı': 'Βαθμολογία TMDB',
+  'Yapım yılı': 'Έτος παραγωγής',
+  'dizi.jpg puanı': 'Βαθμολογία dizi.jpg',
+  'İzlenme': 'Προβολές',
+  'Yorum sayısı': 'Αριθμός σχολίων',
+  'Tüm raflara uygulanır': 'Ισχύει για όλα τα ράφια',
+  'En popüler {} yapım arasında sıralandı':
+      'Ταξινομήθηκε ανάμεσα στους {} πιο δημοφιλείς τίτλους',
 };

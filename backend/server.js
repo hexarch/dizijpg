@@ -776,6 +776,45 @@ const aramaTtl = (dolu, azEsigi = 3) => aramaTtlSecici({
   dolu, kisa: ONBELLEK_TTL_SN.kisa, orta: ONBELLEK_TTL_SN.orta, azEsigi,
 });
 
+// ---------- SSR SÜRE BÜTÇESİ (19 Ağu 2026) ----------
+// ÖLÇÜM — nginx error.log, 18 Ağu 2026:
+//   18:45:11 upstream timed out (110: Connection timed out) while reading
+//   response header from upstream, client: 66.249.79.129 (Googlebot),
+//   request: "GET /kisi/102426", upstream: "http://127.0.0.1:8500/og/kisi/102426"
+//   18:46:34 aynısı /kisi/113970 için.
+// Googlebot iki kişi sayfasında da 504 aldı; GSC bunu "Sunucu hatası (5xx)"
+// sayar, tarama bütçesini kısar ve sayfayı yeniden kuyruğa atar.
+//
+// SEBEP — İKİ SÜRE BİRBİRİNİ TANIMIYORDU:
+//   nginx `@og` bloğu     : proxy_read_timeout 20 sn
+//   tmdbGetir (buradaki)  : 15 sn × 3 deneme + aralarda 0,6 sn = ~46 sn
+// TMDB yavaşladığında nginx ÖNCE kopuyor, uygulama hâlâ yeniden deniyordu.
+// Sonuç: ucun `catch` bloğu HİÇ ÇALIŞMIYORDU — yani aşağıdaki disiplin
+// (test/seo_soft404_kayit.test.js: "TMDB arızasında 404 DÖNME, noindex dön")
+// kâğıt üzerinde doğruydu ama pratikte devreye giremiyordu.
+//
+// ÇÖZÜM: uygulamanın kendi süresi nginx'inkinden KÜÇÜK olmalı ki catch
+// çalışsın. Bot isteğine bir SON TARİH konur, tmdbGetir ona uyar.
+// 12 sn seçildi: nginx'in 20 sn'sine 8 sn marj bırakır (yanıtın kurulması,
+// JSON-LD üretimi, ağ). Marjı kısmak 504'ü geri getirir.
+const SSR_BUTCE_MS = 12000;
+// Deneme başına TMDB tavanı. Eskiden gövdeye gömülü sihirli sayıydı; SSR
+// bütçesiyle karşılaştırılabilmesi için adlandırıldı.
+const TMDB_ZAMAN_ASIMI_MS = 15000;
+
+/**
+ * SSR (bot) isteğinde kalan süre (ms).
+ *
+ * NEDEN `null` AYRI BİR DEĞER: normal kullanıcı/API istekleri bu bütçeye
+ * TABİ DEĞİL — orada uzun bir TMDB beklemesi kabul edilebilir, kimse
+ * indeksten düşmüyor. `null` = "son tarih yok, eski davranış aynen sürsün".
+ * Yalnız `/og/*` middleware'i bağlama son tarih yazar.
+ */
+function ssrKalanSure() {
+  const bitis = istekBaglam.getStore()?.ssrBitis;
+  return bitis ? bitis - Date.now() : null;
+}
+
 // `ttlSn` bir SAYI ya da yanıt gövdesine bakan bir SEÇİCİ olabilir
 // (geriye uyumlu: mevcut çağıranların hepsi sayı veriyor).
 async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = null) {
@@ -819,10 +858,24 @@ async function tmdbGetir(yol, ttlSn = ONBELLEK_TTL_SN.varsayilan, dilZorla = nul
   // Geçici ağ hatalarına ve rate-limit'e (429) karşı yeniden dene.
   let cevap;
   for (let deneme = 0; ; deneme++) {
+    // SSR SON TARİHİ (19 Ağu 2026): bot isteğinde kalan süreden FAZLASINI
+    // bekleme. Süre bittiyse yeniden deneme YOK — hemen 502 fırlatılır ki
+    // çağıran ucun catch bloğu ÇALIŞSIN ve nginx 504 basmadan noindex sayfa
+    // dönülsün. Eskiden burası nginx koptuktan sonra da denemeye devam
+    // ediyordu: kimsenin okumayacağı bir yanıt için işçi meşgul tutuluyordu.
+    const kalan = ssrKalanSure();
+    if (kalan !== null && kalan <= 0) {
+      throw Object.assign(new Error('TMDB süre bütçesi doldu'), { status: 502 });
+    }
+    // Deneme tavanı: SSR dışında 15 sn (eski davranış), SSR'da kalan süre —
+    // daha uzunu anlamsız, nginx o an çoktan kopmuş olurdu.
+    const bekleme = kalan === null
+      ? TMDB_ZAMAN_ASIMI_MS
+      : Math.min(TMDB_ZAMAN_ASIMI_MS, kalan);
     try {
       cevap = await fetch(`${TMDB}${yol}`, {
         headers: { Authorization: `Bearer ${TMDB_TOKEN}` },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(bekleme),
       });
       if (cevap.status === 429 && deneme < 4) {
         await new Promise((r) => setTimeout(r, 1500));
@@ -1340,6 +1393,16 @@ const girisIsteğeBagli = araSarici(girisIsteğeBagliHam);
 // olduğunu bilmiyorduk (yapilacaklar2 C1).
 const sarici = (fn) => (req, res) =>
   fn(req, res).catch((e) => {
+    // YANIT ZATEN GİTTİYSE İKİNCİ KEZ YAZMA (19 Ağu 2026).
+    // /og güvenlik ağı süre bütçesi dolunca yanıtı basmış olabilir; asıl
+    // işleyici sonradan bitip `res.send` çağırınca ERR_HTTP_HEADERS_SENT
+    // fırlatır ve buraya düşer. Aşağıdaki `res.status(...).json(...)` o
+    // durumda YİNE fırlatır — ve bu sefer yakalayan yok: unhandled rejection.
+    // Yani kalkanın kendisi süreci düşürebilirdi. Olayı loglayıp sessizce çık.
+    if (res.headersSent) {
+      logYaz({ olay: 'gec_yanit_yutuldu', req, durum: e.status || 500, hata: e });
+      return;
+    }
     const kod = e.status || 500;
     // 4xx BEKLENEN akıştır (geçersiz girdi, yetkisiz): yığın izi basmak
     // logu gürültüye boğar ve gerçek 500'leri görünmez kılar. Yalnız 5xx
@@ -2879,6 +2942,44 @@ function ogYok(res, url, aciklama) {
 // sayfanın bağlantı dengesini bozar ve tarama bütçesini dağıtır. 4: ana yapım
 // firmalarını kapsar, kuyruk stüdyoları dışarıda kalır.
 const SEO_ICERIK_FIRMA = 4;
+
+// ---------- SSR GÜVENLİK AĞI: /og/* ASLA 504 DÖNMESİN (19 Ağu 2026) ----------
+// Bu, SSR_BUTCE_MS'in İKİNCİ katmanı. `tmdbGetir` artık son tarihe uyuyor ama
+// TEK KALKAN O OLAMAZ: yavaşlık veritabanından da gelebilir (`seoIcerikVerisi`
+// yorum/inceleme sorguları, havuz tükenmesi). O durumda nginx yine 504 basardı.
+// Burası HER /og ucunu kapsayan tek kapı — hangi katman yavaşlarsa yavaşlasın
+// yanıt nginx'in 20 sn'sinden önce çıkar.
+//
+// NEDEN `noindex` KABUK (404 ya da 5xx DEĞİL):
+//   • 404 YASAK — projenin disiplini (test/seo_soft404_kayit.test.js): geçici
+//     arızada "yok" demek VAR OLAN sayfayı indeksten düşürür.
+//   • 5xx YASAK — Google 5xx'i "site bozuk" sayar; tarama bütçesini kısar.
+//     Sitenin asıl darboğazı zaten tarama bütçesi (2.159 sayfa "keşfedildi
+//     ama indirilmedi"), 5xx onu daha da daraltıyordu.
+//   • `noindex` üçüncü yol: sayfa indeksten DÜŞMEZ, o anki eksik içerik de
+//     indekslenmez. Google bir sonraki taramada tam sayfayı görür.
+app.use('/og', (req, res, next) => {
+  const baglam = istekBaglam.getStore();
+  // Son tarih BAĞLAMA yazılır (yeni bir run başlatılmaz): dil middleware'inin
+  // kurduğu store nesnesi zaten bu isteğe ait, üzerine alan eklemek yeterli.
+  // tmdbGetir bunu `ssrKalanSure()` ile okuyup denemelerini kısaltır.
+  if (baglam) baglam.ssrBitis = Date.now() + SSR_BUTCE_MS;
+  const zamanlayici = setTimeout(() => {
+    // Yanıt yola çıktıysa karışma: normal akış kazanır.
+    if (res.headersSent) return;
+    logYaz({ olay: 'ssr_butce_asimi', req, durum: 200 });
+    res.type('html').send(ogSayfa({
+      baslik: 'dizi.jpg',
+      url: `${SITE_KOK}${req.originalUrl}`,
+      indexle: false,
+    }));
+  }, SSR_BUTCE_MS);
+  // Zamanlayıcı boşta kalmasın: yanıt erken bittiğinde de, istemci bağlantıyı
+  // kopardığında da temizlenir. Aksi hâlde her bot isteği 12 sn boyunca bir
+  // timer tutar — tarama sırasında binlerce boşta timer demek.
+  res.on('close', () => clearTimeout(zamanlayici));
+  next();
+});
 
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
@@ -4543,6 +4644,12 @@ const BOT_ROTALARI = [
   // tire içerir. SSR'ı YOK: bot buradan noindex,follow minimal sayfa alır —
   // 404 DEĞİL, çünkü sayfa gerçekten var.
   { yol: '/raf/:slug', desen: /^\/raf\/[a-z0-9-]+$/ },
+  // "Sana Özel" rafının "Tümünü gör" sayfası (19 Ağu 2026). `/raf/:slug`in
+  // ALTINDA DEĞİL, KÖK yol: o raf kişiye özel (`/onerilen` girisZorunlu) ve
+  // robots.txt'te yalnız kendisi kapatılmalı. `/raf/sana-ozel` olsaydı ya joker
+  // bir Disallow (bu dosyanın kuralı: YOK) ya da `/raf/`in tamamını kapatmak
+  // gerekirdi — ikincisi indekslenebilir katalog sayfalarını da kapatırdı.
+  { yol: '/sana-ozel', desen: /^\/sana-ozel$/ },
 
   // Profil ve sosyal ekranlar (hepsi robots.txt ile KAPALI; tabloda olmaları
   // yalnız "bu yol vardır, 404 değildir" demek içindir).
@@ -6821,6 +6928,123 @@ app.get('/bolum-puanlari/:tmdbId/:sezon', girisIsteğeBagli, sarici(async (req, 
     };
   }
   res.json({ sezon, bolumler });
+}));
+
+// ---------------------------------------------------------------------------
+// YAPIM SAYAÇLARI — "dizi.jpg verisiyle sırala" ucu (19 Ağu 2026, md. 49)
+// ---------------------------------------------------------------------------
+// İSTEK: yapım firması sayfasındaki raflar TMDB puanına, yapım yılına AMA
+// AYRICA dizi.jpg puanına / izlenmesine / yorum sayısına göre de sıralanabilsin.
+//
+// NEDEN AYRI BİR UÇ GEREKTİ: ilk üçü TMDB `discover` zaten biliyor
+// (`sort_by=vote_average.desc`, `first_air_date.desc`, ...). Son üçü BİZİM
+// verimiz ve TMDB onları bilmez — `discover` ile sıralanamazlar.
+//
+// NEDEN "FİRMANIN YAPIMLARINI SIRALA" DİYE TEK BİR SQL YAZILAMAZ:
+// `puanlar` / `izlemeler` / `yorumlar` tablolarında FİRMA SÜTUNU YOK; yalnız
+// (`tur`, `tmdb_id`) var. Firma ↔ yapım eşlemesi SADECE TMDB'de duruyor.
+// Onu bizim tarafa kopyalamak, TMDB katalogunun bir parçasını süresiz
+// senkronlamak demekti (yeni yapım eklendiğinde bizim tablo yalan söyler).
+//
+// SEÇİLEN ÇÖZÜM: iş bölümü. Kimlik listesini İSTEMCİ getirir (TMDB'den),
+// SAYAÇLARI sunucu verir, SIRALAMAYI istemci yapar. Böylece:
+//   * firma↔yapım eşlemesi TMDB'de kalır (tek doğru kaynak),
+//   * sunucu yalnız kendi bildiği şeyi söyler,
+//   * uç FİRMAYA ÖZEL DEĞİLDİR — kişi sayfası, listeler, gözat aynı sayaçları
+//     ister istemez kullanabilir.
+//
+// BU YÜZDEN YOLDA FİRMA KİMLİĞİ YOK. `POST /sirket/:id/siralama` düşünüldü ve
+// BİLEREK seçilmedi: sunucu o kimliği hiçbir yerde KULLANAMAZ (yukarıdaki
+// sütun eksikliği), yani yol sözleşmede olmayan bir süzgeç VAAT EDERDİ.
+// Gövdedeki `sirala` alanı da aynı sebeple yok: sıralamayı istemci yapıyor,
+// sunucudan sıra istemek ölü parametre olurdu.
+//
+// TOHUM HESAPLAR ÜÇ SAYAÇTAN DA DIŞLANIR — `TOHUM_PUANI_YOK` ile (aynı koşul,
+// kopya yok). Gerekçe `TOPLUM_PUAN_SQL` üstünde: ürettiğimiz persona hesapları
+// kamusal bir sayıyı sürükleyemez. BURADA ÜÇÜ BİRDEN gerekiyor, çünkü
+// `araclar/intl_profil_doldur.js` ve `araclar/intl_guclendir.js` yalnız
+// `puanlar`a değil `izlemeler` ve `yorumlar` tablolarına da yazıyor: süzgeci
+// yalnız puana koysaydık "izlenme" ve "yorum sayısı" sıralamaları neredeyse
+// tamamen persona verisiyle dizilirdi.
+//
+// SAYAÇ TANIMLARI (hepsi bilinçli):
+//  * `izlenme` = count(DISTINCT kullanici_id), satır sayısı DEĞİL. `izlemeler`
+//    dizide BÖLÜM BAŞINA satır tutuyor; ham satır sayılsaydı 200 bölümlük bir
+//    dizi, 12 bölümlük bir başyapıtı her zaman ezerdi. Soru "kaç kişi izledi".
+//  * `puan_ort`/`puan_adet` = `TOPLUM_PUAN_SQL` ile AYNI küme (`sezon IS NULL`
+//    → bölüm puanları başlığın puanına karışmaz, 8 Ağu 2026-d kararı).
+//  * `yorum` = başlık altındaki yorumlar (`sezon IS NULL`); bölüm yorumları
+//    sayılsaydı yine uzun diziler kayırılırdı.
+//
+// VERİSİ OLMAYAN YAPIM GİZLENMEZ: satır her kimlik için döner (`hedef` CTE +
+// LEFT JOIN), sayaçlar 0 / `puan_ort` null olur. İstemci onları listenin
+// SONUNA koyar — ekrandan düşürmez.
+const YAPIM_SAYAC_SQL = `
+  WITH hedef AS (SELECT DISTINCT unnest($2::int[]) AS tmdb_id),
+  pu AS (
+    SELECT p.tmdb_id, round(avg(p.puan)::numeric, 1) AS ort,
+           count(p.puan)::int AS adet
+      FROM puanlar p
+     WHERE p.tur = $1 AND p.sezon IS NULL
+       AND p.tmdb_id IN (SELECT tmdb_id FROM hedef)
+       AND ${TOHUM_PUANI_YOK('p')}
+     GROUP BY p.tmdb_id),
+  iz AS (
+    SELECT i.tmdb_id, count(DISTINCT i.kullanici_id)::int AS kisi
+      FROM izlemeler i
+     WHERE i.tur = $1
+       AND i.tmdb_id IN (SELECT tmdb_id FROM hedef)
+       AND ${TOHUM_PUANI_YOK('i')}
+     GROUP BY i.tmdb_id),
+  yo AS (
+    SELECT y.tmdb_id, count(*)::int AS adet
+      FROM yorumlar y
+     WHERE y.tur = $1 AND y.sezon IS NULL
+       AND y.tmdb_id IN (SELECT tmdb_id FROM hedef)
+       AND ${TOHUM_PUANI_YOK('y')}
+     GROUP BY y.tmdb_id)
+  SELECT h.tmdb_id,
+         pu.ort AS puan_ort,
+         COALESCE(pu.adet, 0) AS puan_adet,
+         COALESCE(iz.kisi, 0) AS izlenme,
+         COALESCE(yo.adet, 0) AS yorum
+    FROM hedef h
+    LEFT JOIN pu ON pu.tmdb_id = h.tmdb_id
+    LEFT JOIN iz ON iz.tmdb_id = h.tmdb_id
+    LEFT JOIN yo ON yo.tmdb_id = h.tmdb_id`;
+
+/** Tek istekte sorulabilecek EN ÇOK yapım. Firma sayfasındaki bir rafın
+ *  havuz tavanıyla birebir aynı (bkz. app/lib/ekranlar/sirket.dart). Tavan
+ *  ŞART: sınırsız dizi, üç `IN (...)` taramasını istemcinin belirlediği
+ *  boyutta çalıştırmak olurdu. */
+const YAPIM_SAYAC_TAVAN = 100;
+
+// Hız limiti: uç oturumsuz ziyaretçiye de açık (firma sayfası açık yol), bu
+// yüzden anahtar kullanıcı YOKSA IP'ye düşer. 120/dk = bir kullanıcının üç
+// rafı × birkaç sıralama denemesi rahat sığar, kaba tarama sığmaz.
+const yapimSayacLimiti = hizLimiti(120, (req) => `ys:${req.kullanici?.id || req.ip}`);
+
+app.post('/yapim-sayaclari', girisIsteğeBagli, yapimSayacLimiti, sarici(async (req, res) => {
+  const { tur, tmdb_idler: idler } = req.body || {};
+  // Beyaz liste: `tur` doğrudan SQL parametresi olarak gitse de ('tv'/'movie'
+  // dışında bir değer yalnız boş sonuç verirdi) kapıda durdurulur — sözleşme
+  // dışı bir tür sessizce "veri yok" diye dönmesin, İSTEMCİ HATASI görsün.
+  if (!['tv', 'movie'].includes(tur)) {
+    return res.status(400).json({ hata: 'Geçersiz tür' });
+  }
+  if (!Array.isArray(idler) || idler.length === 0) {
+    return res.status(400).json({ hata: 'tmdb_idler boş olamaz' });
+  }
+  if (idler.length > YAPIM_SAYAC_TAVAN) {
+    return res.status(400).json({ hata: `En çok ${YAPIM_SAYAC_TAVAN} yapım` });
+  }
+  // Her kimlik TEK TEK doğrulanır. `filter` ile sessizce ayıklamak yerine 400:
+  // istemci bozuk bir listeyi eksik sonuçla değil, hatayla öğrensin.
+  if (!idler.every((x) => gecerliTmdb(x))) {
+    return res.status(400).json({ hata: 'Geçersiz tmdb_id' });
+  }
+  const { rows } = await havuz.query(YAPIM_SAYAC_SQL, [tur, idler]);
+  res.json({ sayaclar: rows });
 }));
 
 // 'person' 8 Ağu 2026'da eklendi: oyuncu da favorilenebiliyor (favori oyuncu
@@ -10283,36 +10507,114 @@ app.post('/auth/sifre-sifirla', authLimiti, sarici(async (req, res) => {
 }));
 
 // ---------- sana özel öneriler ----------
+//
 // Son izlenen/puanlanan içeriklerin TMDB önerilerinden, kitaplıkta olmayanlar.
+//
+// SİNYALLER: yalnız `izlemeler` (en son izlenen 6 BAŞLIK) ve "elimdekiler"
+// (izlemeler ∪ durumlar) — ikincisi süzgeç, kaynak değil. Puan/favori HİÇ
+// okunmuyor; öneri "en son ne izledin"e bakar.
+//
+// ---- 19 AĞU 2026: SAYFALAMA (`?sayfa=`) ----
+//
+// Raf yalnız ilk 20'yi gösteriyordu ve "Tümünü gör" YOKTU, çünkü öneri kişiye
+// özel üretiliyor: `anaSayfaRaflari` tablosundaki gibi sabit bir TMDB yolu yok,
+// `/raf/:slug` bu rafı sayfalayamıyordu. Artık uç sayfalanabilir; istemci
+// tarafı `/sana-ozel` ekranı bu ucu sayfa sayfa çekiyor.
+//
+// SIRA KARARLI OLMAK ZORUNDA. Sayfa 2 istendiğinde uç HER ŞEYİ baştan üretir
+// (imleç/oturum durumu tutmuyoruz); sıralama en ufak biçimde bile oynarsa
+// kullanıcı aynı diziyi iki sayfada birden görür. Eski kodda İKİ ayrı
+// kararsızlık vardı:
+//
+//   1) `Promise.all` + paylaşılan `gorulen` kümesi: aynı yapım iki kaynağın
+//      önerisinde çıkarsa onu HANGİ kaynağın "kaptığı" yanıtların geliş
+//      sırasına bağlıydı. Artık aday bir Map'te toplanıyor ve yinelenende EN
+//      KÜÇÜK katman kazanıyor — sonuç, yanıt sırasından bağımsız.
+//   2) `sort` yalnız `vote_count`a bakıyordu. Node'un sıralaması KARARLI ama
+//      girdi dizisinin sırası (yine yanıt sırası) kararsızdı, yani eşit oy
+//      sayılı yapımlar her istekte yer değiştirebiliyordu. Artık son ölçüt
+//      `media_type` + `id`: tam sıralama, girdi sırasından bağımsız.
+//
+// KATMAN NEDİR (ve sayfa 1 neden DEĞİŞMEDİ): TMDB önerileri BENZERLİK sırasında
+// gelir. Eski kod her kaynaktan ilk 8'i alıyordu; o 8'lik dilim "katman 0"
+// olarak aynen duruyor ve sıralamanın ilk ölçütü katman olduğu için 1. SAYFA
+// eskisiyle BİREBİR aynı kalıyor (rafın görüntüsü değişmesin). Havuzu
+// büyütmek için TMDB'nin AYNI yanıtının geri kalanı (9–20) "katman 1" diye
+// ekleniyor — ek HTTP isteği yok, sadece elimizdeki yanıtı sonuna kadar
+// kullanıyoruz. Böylece "Tümünü gör" 48 değil ~120 yapıma kadar açılıyor.
+//
+// HAVUZ TÜKENİNCE BOŞ LİSTE DÖNER — uydurma doldurma yok. İstemci boş sayfayı
+// "bitti" sayıp istemeyi keser.
+const ONERI_KAYNAK_SAYISI = 6;      // kaç yakın izlemeden öneri toplanır
+const ONERI_ODAK = 8;               // kaynak başına "katman 0" (eski davranış)
+const ONERI_TMDB_SAYFA = 20;        // TMDB tek yanıtta en çok bu kadar döner
+const ONERI_SAYFA_BOYU = 20;        // sayfa boyutu — eski `slice(0, 20)` ile aynı
+// Havuz en çok `kaynak × 20` aday tutabilir; bunun ötesindeki sayfa MATEMATİKSEL
+// olarak boştur. Sabitlerden türetiliyor ki biri değişince elle güncellenmesi
+// gereken ikinci bir sayı kalmasın.
+const ONERI_AZAMI_SAYFA = Math.ceil(
+  (ONERI_KAYNAK_SAYISI * ONERI_TMDB_SAYFA) / ONERI_SAYFA_BOYU);
+
+/**
+ * Aday havuzunu KARARLI sıraya dizip istenen sayfayı keser (saf fonksiyon).
+ *
+ * Ölçüt sırası: katman (benzerlik dilimi) → oy sayısı → tür → tmdb id.
+ * Son iki ölçüt TAM SIRALAMA kurar: aynı havuz her zaman aynı diziliş verir,
+ * yani sayfa 2'de sayfa 1'in yapımları TEKRAR ÇIKMAZ.
+ *
+ * `katman` yalnız sıralama alanıdır; yanıta sızmaz (istemci sözleşmesi
+ * değişmesin).
+ */
+function oneriSayfasi(adaylar, sayfa) {
+  const sirali = [...adaylar].sort((a, b) => (a.katman - b.katman)
+    || ((b.vote_count || 0) - (a.vote_count || 0))
+    || String(a.media_type).localeCompare(String(b.media_type))
+    || ((a.id || 0) - (b.id || 0)));
+  const bas = (sayfa - 1) * ONERI_SAYFA_BOYU;
+  return sirali.slice(bas, bas + ONERI_SAYFA_BOYU)
+    .map(({ katman, ...r }) => r);   // eslint-disable-line no-unused-vars
+}
+
 app.get('/onerilen', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
+  // Sayfa doğrulaması: tam sayı ve ≥1 olmalı. `Number('1.5')` → 1.5,
+  // `Number('abc')` → NaN, `Number('')` → 0; üçü de eleniyor.
+  const sayfa = req.query.sayfa === undefined ? 1 : Number(req.query.sayfa);
+  if (!Number.isInteger(sayfa) || sayfa < 1) {
+    return res.status(400).json({ hata: 'Geçersiz sayfa' });
+  }
+  // Havuzun ötesindeki sayfa için DB'ye de TMDB'ye de HİÇ gitme: yanıt zaten
+  // boş olacak. 400 DEĞİL 200: sayfa geçersiz değil, sadece o kadar öneri yok.
+  if (sayfa > ONERI_AZAMI_SAYFA) return res.json({ oneriler: [] });
   const [kaynaklar, eldekiler] = await Promise.all([
     havuz.query(
       `SELECT tur, tmdb_id, max(tarih) AS son FROM izlemeler
-       WHERE kullanici_id=$1 GROUP BY tur, tmdb_id ORDER BY son DESC LIMIT 6`,
-      [req.kullanici.id]),
+       WHERE kullanici_id=$1 GROUP BY tur, tmdb_id ORDER BY son DESC LIMIT $2`,
+      [req.kullanici.id, ONERI_KAYNAK_SAYISI]),
     havuz.query(
       `SELECT tur, tmdb_id FROM izlemeler WHERE kullanici_id=$1
        UNION SELECT tur, tmdb_id FROM durumlar WHERE kullanici_id=$1`,
       [req.kullanici.id]),
   ]);
   const eldeki = new Set(eldekiler.rows.map((r) => `${r.tur}:${r.tmdb_id}`));
-  const oneriler = [];
-  const gorulen = new Set();
+  // Map: anahtar `tur:id`. Yinelenende EN KÜÇÜK katman kalır — hangi kaynağın
+  // önce döndüğü sonucu DEĞİŞTİRMESİN (bkz. başlıktaki 1. kararsızlık).
+  const adaylar = new Map();
   await Promise.all(kaynaklar.rows.map(async ({ tur, tmdb_id }) => {
     try {
       const v = await tmdbGetir(
         `/${tur}/${tmdb_id}/recommendations?language=tr-TR`, ONBELLEK_TTL_SN.uzun);
-      for (const r of (v.results || []).slice(0, 8)) {
+      (v.results || []).slice(0, ONERI_TMDB_SAYFA).forEach((r, i) => {
         const rTur = r.media_type || tur;
         const anahtar = `${rTur}:${r.id}`;
-        if (eldeki.has(anahtar) || gorulen.has(anahtar)) continue;
-        gorulen.add(anahtar);
-        oneriler.push({ ...r, media_type: rTur });
-      }
+        if (eldeki.has(anahtar)) return;
+        const katman = i < ONERI_ODAK ? 0 : 1;
+        const eski = adaylar.get(anahtar);
+        if (eski && eski.katman <= katman) return;
+        adaylar.set(anahtar, { ...r, media_type: rTur, katman });
+      });
     } catch { /* tek kaynak hatası öneriyi bozmasın */ }
   }));
-  oneriler.sort((a, b) => ((b.vote_count || 0) - (a.vote_count || 0)));
-  res.json({ oneriler: oneriler.slice(0, 20) });
+  res.json({ oneriler: oneriSayfasi([...adaylar.values()], sayfa) });
 }));
 
 // ---------- yıl özeti ----------

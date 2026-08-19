@@ -1202,4 +1202,13 @@ const Map<String, String> cevirilerFil = {
   'Sıralama kaydedilemedi': 'Hindi na-save ang pagkakasunod',
   'Değişiklik kaydedilemedi': 'Hindi na-save ang pagbabago',
   'Kaldırılamadı': 'Hindi naalis',
+  'Popülerlik': 'Katanyagan',
+  'TMDB puanı': 'Rating sa TMDB',
+  'Yapım yılı': 'Taon ng produksyon',
+  'dizi.jpg puanı': 'Rating sa dizi.jpg',
+  'İzlenme': 'Panonood',
+  'Yorum sayısı': 'Bilang ng komento',
+  'Tüm raflara uygulanır': 'Naaangkop sa lahat ng istante',
+  'En popüler {} yapım arasında sıralandı':
+      'Inayos sa {} pinakasikat na pamagat',
 };

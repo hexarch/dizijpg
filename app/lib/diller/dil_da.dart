@@ -1181,4 +1181,13 @@ const Map<String, String> cevirilerDa = {
   'Sıralama kaydedilemedi': 'Rækkefølgen kunne ikke gemmes',
   'Değişiklik kaydedilemedi': 'Ændringen kunne ikke gemmes',
   'Kaldırılamadı': 'Kunne ikke fjernes',
+  'Popülerlik': 'Popularitet',
+  'TMDB puanı': 'TMDB-bedømmelse',
+  'Yapım yılı': 'Produktionsår',
+  'dizi.jpg puanı': 'dizi.jpg-bedømmelse',
+  'İzlenme': 'Visninger',
+  'Yorum sayısı': 'Antal kommentarer',
+  'Tüm raflara uygulanır': 'Gælder for alle hylder',
+  'En popüler {} yapım arasında sıralandı':
+      'Sorteret blandt de {} mest populære titler',
 };

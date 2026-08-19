@@ -76,6 +76,14 @@ Disallow: /izleme-istatistik
 # olsaydi ancak `Disallow: /gonderi/` ile kapanirdi ve o da SSR ile
 # INDEKSLENEN `/gonderi/123` sayfasini kapatirdi.
 Disallow: /gonderi-istatistik
+# 19 Agu 2026: Kesfet'teki "Sana Ozel" rafinin "Tumunu gor" sayfasi. Icerik
+# `/onerilen` ucundan geliyor, uc `girisZorunlu` ve oneri KISIYE OZEL (kisinin
+# son izlediklerinden turetiliyor) — oturumsuz acilmayan bir rota
+# indekslenmemeli. Yol KOK: `/raf/sana-ozel` olsaydi ya joker bir Disallow
+# gerekirdi (bu dosyanin kurali: joker YOK, bkz. seo_gizlilik.test.js) ya da
+# `/raf/` on ekinin tamami kapanirdi — o da herkese acik katalog sayfalarini
+# (Haftanin Dizileri, Kult Filmler ...) taramaya kapatirdi.
+Disallow: /sana-ozel
 Disallow: /akis
 Disallow: /takvim
 Disallow: /ozet/

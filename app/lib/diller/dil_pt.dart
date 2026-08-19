@@ -1203,4 +1203,13 @@ const Map<String, String> cevirilerPt = {
   'Sıralama kaydedilemedi': 'Não foi possível salvar a ordem',
   'Değişiklik kaydedilemedi': 'Não foi possível salvar a alteração',
   'Kaldırılamadı': 'Não foi possível remover',
+  'Popülerlik': 'Popularidade',
+  'TMDB puanı': 'Nota do TMDB',
+  'Yapım yılı': 'Ano de lançamento',
+  'dizi.jpg puanı': 'Nota do dizi.jpg',
+  'İzlenme': 'Visualizações',
+  'Yorum sayısı': 'Número de comentários',
+  'Tüm raflara uygulanır': 'Aplica-se a todas as prateleiras',
+  'En popüler {} yapım arasında sıralandı':
+      'Ordenado entre os {} títulos mais populares',
 };

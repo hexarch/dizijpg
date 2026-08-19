@@ -1176,4 +1176,13 @@ const Map<String, String> cevirilerKn = {
   'Sıralama kaydedilemedi': 'ಕ್ರಮವನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
   'Değişiklik kaydedilemedi': 'ಬದಲಾವಣೆಯನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
   'Kaldırılamadı': 'ತೆಗೆಯಲಾಗಲಿಲ್ಲ',
+  'Popülerlik': 'ಜನಪ್ರಿಯತೆ',
+  'TMDB puanı': 'TMDB ರೇಟಿಂಗ್',
+  'Yapım yılı': 'ನಿರ್ಮಾಣ ವರ್ಷ',
+  'dizi.jpg puanı': 'dizi.jpg ರೇಟಿಂಗ್',
+  'İzlenme': 'ವೀಕ್ಷಣೆಗಳು',
+  'Yorum sayısı': 'ಕಾಮೆಂಟ್‌ಗಳ ಸಂಖ್ಯೆ',
+  'Tüm raflara uygulanır': 'ಎಲ್ಲಾ ಕಪಾಟುಗಳಿಗೆ ಅನ್ವಯಿಸುತ್ತದೆ',
+  'En popüler {} yapım arasında sıralandı':
+      '{} ಅತ್ಯಂತ ಜನಪ್ರಿಯ ಶೀರ್ಷಿಕೆಗಳಲ್ಲಿ ವಿಂಗಡಿಸಲಾಗಿದೆ',
 };

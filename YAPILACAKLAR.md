@@ -1,6 +1,33 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-19 — ✅ "Sana Özel" rafına "Tümünü gör" (dağıtım BEKLİYOR)
+Keşfet'te başlığa dokununca `/raf/:slug` açılan TEK istisna "Sana Özel"di:
+diğer raflar `anaSayfaRaflari` tablosunda (ad, TMDB yolu, tür) duruyor,
+"Sana Özel" ise kişiye özel `/onerilen` ucundan geliyor — sabit TMDB yolu YOK,
+`rafBul(slug)` null dönüyordu.
+- ✅ **`/onerilen` sayfalanabilir** (`?sayfa=`, sayfa boyutu 20 — eskisiyle
+  aynı). SIRA KARARLI: aday havuzu Map'te toplanıyor (yinelenende en küçük
+  "katman" kazanır) ve sıra `katman → vote_count → media_type → id` ile TAM
+  sıralanıyor. Eskiden hem yinelenen sahipliği hem eşit oy sırası
+  `Promise.all` yanıt sırasına bağlıydı; sayfa 2 aynı diziyi tekrar verebilirdi.
+  SAYFA 1 DEĞİŞMEDİ (eski 8'lik dilim "katman 0"). Havuz 48 → ~120 (TMDB'nin
+  AYNI yanıtının 9–20. sıraları; ek HTTP isteği YOK). Havuz üstü sayfa DB/TMDB'ye
+  hiç gitmeden boş döner; geçersiz sayfa 400; `girisZorunlu` DURUYOR.
+- ✅ **Yeni rota `/sana-ozel`** (Keşfet ŞUBESİNİN içinde → alt çubuk kalıyor,
+  F5 yerinde). `/raf/sana-ozel` DEĞİL: rota oturum zorunlu ve robots.txt ile
+  kapatılmalı, ama robots kurallarımız joker içermiyor — alt yol olsaydı
+  `/raf/` ön ekinin tamamı (herkese açık katalog sayfaları dâhil) kapanırdı.
+  `BOT_ROTALARI` + `robots.txt`e eklendi, `acikYolOnEkleri`ne EKLENMEDİ.
+- ✅ `KatalogListeEkrani` parametreleştirildi (`sayfaParam`/`sonucAnahtari`,
+  `tur` artık isteğe bağlı — öneri listesi karışık). Boş havuzda kapkara ekran
+  yerine `BosDurum`.
+- Çeviri borcu YOK: `'Sana Özel'` ve `'Tümünü gör'` 45 dilde zaten vardı.
+- Kanıt: `backend/test/onerilen_sayfalama.test.js` (15 test) +
+  `app/test/sana_ozel_tumunu_gor_test.dart` (7 test). backend 1385 test / 0 fail,
+  Flutter 1796 test / analyze yalnız info.
+- **Dağıtım YOK, sürüm artırılmadı, commit YOK.**
+
 ## 2026-08-19 — ✅ Mesajlaşma gezinmesi (3 kullanıcı isteği, dağıtım BEKLİYOR)
 - ✅ **Mesaj ikonu tutarsızlığı.** Akış üst barı zarf (`Icons.mail_outline`),
   Ana Sayfa kâğıt uçak (`Icons.near_me_outlined`) çiziyordu; aynı yere giden

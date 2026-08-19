@@ -1161,4 +1161,13 @@ const Map<String, String> cevirilerTh = {
   'Sıralama kaydedilemedi': 'บันทึกลำดับไม่สำเร็จ',
   'Değişiklik kaydedilemedi': 'บันทึกการเปลี่ยนแปลงไม่สำเร็จ',
   'Kaldırılamadı': 'นำออกไม่สำเร็จ',
+  'Popülerlik': 'ความนิยม',
+  'TMDB puanı': 'คะแนน TMDB',
+  'Yapım yılı': 'ปีที่ผลิต',
+  'dizi.jpg puanı': 'คะแนน dizi.jpg',
+  'İzlenme': 'ยอดรับชม',
+  'Yorum sayısı': 'จำนวนความคิดเห็น',
+  'Tüm raflara uygulanır': 'ใช้กับทุกชั้น',
+  'En popüler {} yapım arasında sıralandı':
+      'จัดเรียงจาก {} เรื่องที่นิยมที่สุด',
 };

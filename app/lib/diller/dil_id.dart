@@ -1182,4 +1182,13 @@ const Map<String, String> cevirilerId = {
   'Sıralama kaydedilemedi': 'Urutan tidak dapat disimpan',
   'Değişiklik kaydedilemedi': 'Perubahan tidak dapat disimpan',
   'Kaldırılamadı': 'Tidak dapat dihapus',
+  'Popülerlik': 'Popularitas',
+  'TMDB puanı': 'Rating TMDB',
+  'Yapım yılı': 'Tahun produksi',
+  'dizi.jpg puanı': 'Rating dizi.jpg',
+  'İzlenme': 'Tontonan',
+  'Yorum sayısı': 'Jumlah komentar',
+  'Tüm raflara uygulanır': 'Berlaku untuk semua rak',
+  'En popüler {} yapım arasında sıralandı':
+      'Diurutkan di antara {} judul terpopuler',
 };

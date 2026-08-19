@@ -1178,4 +1178,13 @@ const Map<String, String> cevirilerPa = {
   'Sıralama kaydedilemedi': 'ਕ੍ਰਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
   'Değişiklik kaydedilemedi': 'ਤਬਦੀਲੀ ਸੰਭਾਲੀ ਨਹੀਂ ਜਾ ਸਕੀ',
   'Kaldırılamadı': 'ਹਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
+  'Popülerlik': 'ਪ੍ਰਸਿੱਧੀ',
+  'TMDB puanı': 'TMDB ਰੇਟਿੰਗ',
+  'Yapım yılı': 'ਨਿਰਮਾਣ ਸਾਲ',
+  'dizi.jpg puanı': 'dizi.jpg ਰੇਟਿੰਗ',
+  'İzlenme': 'ਵੇਖੇ ਗਏ',
+  'Yorum sayısı': 'ਟਿੱਪਣੀਆਂ ਦੀ ਗਿਣਤੀ',
+  'Tüm raflara uygulanır': 'ਸਾਰੀਆਂ ਸ਼ੈਲਫਾਂ ਉੱਤੇ ਲਾਗੂ',
+  'En popüler {} yapım arasında sıralandı':
+      '{} ਸਭ ਤੋਂ ਪ੍ਰਸਿੱਧ ਸਿਰਲੇਖਾਂ ਵਿੱਚੋਂ ਕ੍ਰਮਬੱਧ',
 };

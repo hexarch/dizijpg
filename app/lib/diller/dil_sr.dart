@@ -1185,4 +1185,13 @@ const Map<String, String> cevirilerSr = {
   'Sıralama kaydedilemedi': 'Redosled nije sačuvan',
   'Değişiklik kaydedilemedi': 'Izmena nije sačuvana',
   'Kaldırılamadı': 'Nije moglo da se ukloni',
+  'Popülerlik': 'Популарност',
+  'TMDB puanı': 'TMDB оцена',
+  'Yapım yılı': 'Година продукције',
+  'dizi.jpg puanı': 'dizi.jpg оцена',
+  'İzlenme': 'Прегледи',
+  'Yorum sayısı': 'Број коментара',
+  'Tüm raflara uygulanır': 'Примењује се на све полице',
+  'En popüler {} yapım arasında sıralandı':
+      'Сортирано међу {} најпопуларнијих наслова',
 };

@@ -1188,4 +1188,13 @@ const Map<String, String> cevirilerMy = {
   'Sıralama kaydedilemedi': 'အစီအစဉ်ကို မသိမ်းနိုင်ပါ',
   'Değişiklik kaydedilemedi': 'ပြောင်းလဲမှုကို မသိမ်းနိုင်ပါ',
   'Kaldırılamadı': 'မဖယ်ရှားနိုင်ပါ',
+  'Popülerlik': 'ရေပန်းစားမှု',
+  'TMDB puanı': 'TMDB အဆင့်သတ်မှတ်ချက်',
+  'Yapım yılı': 'ထုတ်လုပ်သည့်နှစ်',
+  'dizi.jpg puanı': 'dizi.jpg အဆင့်သတ်မှတ်ချက်',
+  'İzlenme': 'ကြည့်ရှုမှု',
+  'Yorum sayısı': 'မှတ်ချက်အရေအတွက်',
+  'Tüm raflara uygulanır': 'စင်အားလုံးတွင် သက်ရောက်သည်',
+  'En popüler {} yapım arasında sıralandı':
+      'ရေပန်းအစားဆုံး ခေါင်းစဉ် {} ခုအတွင်း စီစဉ်ထားသည်',
 };

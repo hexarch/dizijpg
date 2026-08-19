@@ -1156,4 +1156,12 @@ const Map<String, String> cevirilerAr = {
   'Sıralama kaydedilemedi': 'تعذّر حفظ الترتيب',
   'Değişiklik kaydedilemedi': 'تعذّر حفظ التغيير',
   'Kaldırılamadı': 'تعذّرت الإزالة',
+  'Popülerlik': 'الشعبية',
+  'TMDB puanı': 'تقييم TMDB',
+  'Yapım yılı': 'سنة الإنتاج',
+  'dizi.jpg puanı': 'تقييم dizi.jpg',
+  'İzlenme': 'المشاهدات',
+  'Yorum sayısı': 'عدد التعليقات',
+  'Tüm raflara uygulanır': 'يُطبق على جميع الرفوف',
+  'En popüler {} yapım arasında sıralandı': 'تم الترتيب بين أشهر {} عمل',
 };

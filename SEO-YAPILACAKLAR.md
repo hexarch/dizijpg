@@ -44,7 +44,7 @@ adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
 |---|---|---|---|---|
 | **1** | **Ölç** — Search Console | Her şeyi yeniden çerçeveledi: 1.0'ın 3. maddesi bu veri yüzünden ertelendi. | §1 | ✅ |
 | **2** | **Riski kapat** — `aggregateRating` + persona puanları | Manuel işlem YOK, yani risk teorik kalmış; düzeltme yine de yapıldı (önleme). | §2 | ✅ kod hazır, migrasyon bekliyor |
-| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §4.5 | ⬜ |
+| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §6.9 | ✅ kod hazır, dağıtım bekliyor |
 | **4** | **İç bağlantıyı güçlendir** — şirket SSR + görseller + `/gizlilik` | Sinyali derin sayfalara taşır. `/icerik` → firma bağlantıları tam da "keşfedildi ama taranmadı" kuyruğunu hedefler. | §6.1–6.3 | ✅ |
 | **5** | **Dış görünürlük** — ilk gerçek bağlantılar | Tarama bütçesinin asıl kaynağı otorite. Kod işi değil; ayrı bir plan gerektiriyor. | §4.6 | ⬜ |
 | ~~6~~ | ~~Bölüm sayfalarını aç~~ **ERTELENDİ** | Kuyruk boşalmadan yeni URL ailesi açmak var olanların taranma olasılığını seyreltir. Bkz. §1.1. | §5 | ⛔ şimdilik |
@@ -67,7 +67,7 @@ adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
 | **Keşfedildi – dizine eklenmemiş** | **2.159** | Google URL'leri BİLİYOR ama **hiç indirmemiş** |
 | Tarandı – dizine eklenmemiş | **30** | "Gördü ve değersiz buldu" senaryosu **marjinal** |
 | noindex ile hariç | 145 | Beklenen (profil, akış, takvim…) |
-| **Sunucu hatası (5xx)** | **32** | ⛔ Somut hata — §4.5 |
+| **Sunucu hatası (5xx)** | **32** | ✅ Kök neden bulundu ve düzeltildi — §6.9 |
 | Yumuşak 404 | **0** | ✅ 14 Ağu çalışması tuttu |
 | Yinelenen/kanonik sorunu | 1 | İhmal edilebilir |
 | Sitemap | 2.515 URL, son okuma 19 Ağu, hatasız | |
@@ -338,6 +338,70 @@ Almayan: **GoogleOther**, DuckDuckBot.
 
 Düşük öncelik (DuckDuckGo büyük ölçüde Bing indeksinden besleniyor, bingbot
 zaten listede), ama tek satırlık düzeltme.
+
+---
+
+### 6.9 ✅ Googlebot'a 504 — SSR süre bütçesi yoktu (19 Ağu 2026)
+
+GSC'deki **32 "Sunucu hatası (5xx)"** maddesinin kök nedeni. Tahmin değil,
+nginx günlüğünden ölçüldü.
+
+**Ölçülen kanıt** (`/var/log/nginx/error.log.1`, 18 Ağu 2026):
+
+```
+18:45:11 upstream timed out (110) while reading response header from upstream,
+  client: 66.249.79.129, request: "GET /kisi/102426",
+  upstream: "http://127.0.0.1:8500/og/kisi/102426"
+18:46:34 aynısı /kisi/113970 için
+```
+
+14 günlük günlükte **bot kaynaklı tek 5xx deseni buydu** (2 istek, ikisi de
+504, ikisi de `/kisi/*`). Kalan 78 adet 5xx bot değil: dağıtım penceresindeki
+`/api/*` 502'leri (18:36–18:38, `connect() failed`) ve medya 502/507'leri.
+
+**Kök neden — iki süre birbirini tanımıyordu:**
+
+| Katman | Süre |
+|---|---|
+| nginx `@og` `proxy_read_timeout` | 20 sn |
+| `tmdbGetir` (15 sn × 3 deneme + beklemeler) | **~46 sn** |
+
+TMDB yavaşladığında nginx **önce** kopuyordu. Sonuç kritik: ucun `catch`
+bloğu **hiç çalışamıyordu** — yani `seo_soft404_kayit.test.js`'in koruduğu
+"TMDB arızasında 404 değil, `noindex` dön" disiplini kâğıt üzerinde doğruydu
+ama pratikte devreye giremiyordu. Google 5xx'i "site bozuk" sayar ve tarama
+bütçesini kısar; sitenin zaten en dar kaynağı o (§1).
+
+**Düzeltme — üç katman** (hepsi `backend/server.js`):
+
+1. `SSR_BUTCE_MS = 12000` + `ssrKalanSure()`: bot isteğine son tarih konur.
+   12 sn, nginx'in 20 sn'sine 8 sn marj bırakır.
+2. `tmdbGetir` son tarihe uyar: deneme süresi kalan süreye kırpılır, süre
+   dolduysa yeniden deneme yok — hemen 502 fırlatılır ki `catch` çalışsın.
+3. `/og/*` güvenlik ağı ara katmanı: bütçe dolduğunda yanıt hâlâ yoksa
+   **200 + `noindex` kabuk** basılır. TMDB dışı yavaşlığı (DB, havuz) da
+   kapatır. 404 değil (var olan sayfa indeksten düşerdi), 5xx değil.
+
+Ayrıca `sarici`'ya `res.headersSent` koruması: güvenlik ağı yanıtı bastıktan
+sonra asıl işleyici bitince ikinci yazma `ERR_HTTP_HEADERS_SENT` fırlatıp
+yakalanamayan bir reddetmeye dönüşürdü — kalkanın kendisi süreci düşürebilirdi.
+
+**Kilit:** `backend/test/seo_ssr_sure_butcesi.test.js` (14 test). Kaynak
+iddialarının yanında **davranışsal** testler de var: ara katman sahte req/res
+ile gerçekten çalıştırılıp 200 + `noindex` bastığı görülüyor. En değerlisi,
+`SSR_BUTCE_MS < @og proxy_read_timeout` bağını nginx conf'unu **okuyarak**
+doğrulayan test — biri değişip diğeri unutulursa 504 sessizce geri gelirdi.
+
+**nginx'e dokunulmadı ve gerekmiyor:** canlıdaki 20 sn zaten bütçenin
+üstünde. `proxy_next_upstream` ile yeniden deneme **işe yaramaz** — tek
+upstream peer'i var, nginx yalnız çok üyeli grupta sonraki sunucuya geçer.
+Depodaki conf'a yalnız bu bağı anlatan yorum eklendi.
+
+**Kabul ölçütü:** dağıtımdan sonra GSC → Sayfalar → "Sunucu hatası (5xx)"
+**Doğrulamayı başlat**. 32 → 0 beklenir. Ek gösterge: `docker logs
+dizijpg-api | grep ssr_butce_asimi` — sıfır değilse SSR gerçekten yavaş
+demektir (bütçe onu 504 yerine `noindex`e çeviriyor, ama sebebi ayrıca
+kovalanmalı).
 
 ---
 

@@ -1186,4 +1186,13 @@ const Map<String, String> cevirilerMs = {
   'Sıralama kaydedilemedi': 'Susunan tidak dapat disimpan',
   'Değişiklik kaydedilemedi': 'Perubahan tidak dapat disimpan',
   'Kaldırılamadı': 'Tidak dapat dibuang',
+  'Popülerlik': 'Populariti',
+  'TMDB puanı': 'Penarafan TMDB',
+  'Yapım yılı': 'Tahun penerbitan',
+  'dizi.jpg puanı': 'Penarafan dizi.jpg',
+  'İzlenme': 'Tontonan',
+  'Yorum sayısı': 'Bilangan komen',
+  'Tüm raflara uygulanır': 'Digunakan pada semua rak',
+  'En popüler {} yapım arasında sıralandı':
+      'Diisih dalam kalangan {} judul paling popular',
 };

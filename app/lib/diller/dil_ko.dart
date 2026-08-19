@@ -1125,4 +1125,12 @@ const Map<String, String> cevirilerKo = {
   'Sıralama kaydedilemedi': '순서를 저장하지 못했습니다',
   'Değişiklik kaydedilemedi': '변경 사항을 저장하지 못했습니다',
   'Kaldırılamadı': '제거하지 못했습니다',
+  'Popülerlik': '인기순',
+  'TMDB puanı': 'TMDB 평점',
+  'Yapım yılı': '제작 연도',
+  'dizi.jpg puanı': 'dizi.jpg 평점',
+  'İzlenme': '시청 수',
+  'Yorum sayısı': '댓글 수',
+  'Tüm raflara uygulanır': '모든 선반에 적용됩니다',
+  'En popüler {} yapım arasında sıralandı': '인기 상위 {}개 작품 중에서 정렬했습니다',
 };

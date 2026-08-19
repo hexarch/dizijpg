@@ -1200,4 +1200,13 @@ const Map<String, String> cevirilerRo = {
   'Sıralama kaydedilemedi': 'Ordinea nu a putut fi salvată',
   'Değişiklik kaydedilemedi': 'Modificarea nu a putut fi salvată',
   'Kaldırılamadı': 'Nu a putut fi eliminat',
+  'Popülerlik': 'Popularitate',
+  'TMDB puanı': 'Nota TMDB',
+  'Yapım yılı': 'Anul producției',
+  'dizi.jpg puanı': 'Nota dizi.jpg',
+  'İzlenme': 'Vizualizări',
+  'Yorum sayısı': 'Număr de comentarii',
+  'Tüm raflara uygulanır': 'Se aplică tuturor rafturilor',
+  'En popüler {} yapım arasında sıralandı':
+      'Sortat între cele mai populare {} titluri',
 };

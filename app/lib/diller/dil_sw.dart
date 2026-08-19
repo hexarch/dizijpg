@@ -1184,4 +1184,13 @@ const Map<String, String> cevirilerSw = {
   'Sıralama kaydedilemedi': 'Mpangilio haukuhifadhiwa',
   'Değişiklik kaydedilemedi': 'Mabadiliko hayakuhifadhiwa',
   'Kaldırılamadı': 'Haikuweza kuondolewa',
+  'Popülerlik': 'Umaarufu',
+  'TMDB puanı': 'Ukadiriaji wa TMDB',
+  'Yapım yılı': 'Mwaka wa utayarishaji',
+  'dizi.jpg puanı': 'Ukadiriaji wa dizi.jpg',
+  'İzlenme': 'Mitazamo',
+  'Yorum sayısı': 'Idadi ya maoni',
+  'Tüm raflara uygulanır': 'Inatumika kwa rafu zote',
+  'En popüler {} yapım arasında sıralandı':
+      'Imepangwa miongoni mwa vipindi {} maarufu zaidi',
 };

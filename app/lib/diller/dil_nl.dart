@@ -1187,4 +1187,13 @@ const Map<String, String> cevirilerNl = {
   'Sıralama kaydedilemedi': 'Volgorde kon niet worden opgeslagen',
   'Değişiklik kaydedilemedi': 'Wijziging kon niet worden opgeslagen',
   'Kaldırılamadı': 'Kon niet worden verwijderd',
+  'Popülerlik': 'Populariteit',
+  'TMDB puanı': 'TMDB-score',
+  'Yapım yılı': 'Productiejaar',
+  'dizi.jpg puanı': 'dizi.jpg-score',
+  'İzlenme': 'Weergaven',
+  'Yorum sayısı': 'Aantal reacties',
+  'Tüm raflara uygulanır': 'Geldt voor alle planken',
+  'En popüler {} yapım arasında sıralandı':
+      'Gesorteerd onder de {} populairste titels',
 };

@@ -299,6 +299,40 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
                         );
                 },
               ),
+              // "Sana Özel" rafının "Tümünü gör" sayfası (19 Ağu 2026).
+              //
+              // NEDEN AYRI ROTA, `/raf/:slug` DEĞİL: `/raf/:slug` slug'ı
+              // `anaSayfaRaflari` tablosunda arar (`rafBul`) ve oradan sabit
+              // bir TMDB YOLU alır. "Sana Özel"in böyle bir yolu yok — içeriği
+              // kişiye özel `/onerilen` ucundan geliyor. Tabloya sahte bir
+              // kayıt eklemek Keşfet'in raf çekme döngüsünü bozardı (gerekçe
+              // uzun uzun `kesfet.dart` → [sanaOzelYolu] başlığında).
+              //
+              // KÖK YOL, `/raf/` ALTINDA DEĞİL: rota OTURUM ZORUNLU olmalı ve
+              // robots.txt ile kapatılmalı; bu dosyadaki `acikYolOnEkleri`
+              // listesinde `/raf/` ön eki HERKESE AÇIK duruyor. Alt yol
+              // olsaydı ya açık kalırdı ya da `/raf/` ön ekinin tamamı
+              // kapanırdı (herkese açık katalog sayfaları dâhil).
+              //
+              // KEŞFET ŞUBESİNİN İÇİNDE: `/raf/:slug` ile aynı gerekçe — alt
+              // gezinme çubuğu yerinde kalsın, F5'te Keşfet sekmesi seçili
+              // gelsin. Yol dizesi SABİTten değil ELLE yazılı: SEO testlerinin
+              // rota ayrıştırıcısı (`backend/test/yardimci/seo_kaynak.js`)
+              // yalnız bu dosyadaki ve `arama_cubugu.dart`taki `const String`
+              // sabitlerini çözüyor; `kesfet.dart`taki sabiti çözemez ve
+              // "path sabiti çözülemedi" diye KIRILIRDI.
+              GoRoute(
+                path: '/sana-ozel',
+                builder: (_, __) => const KatalogListeEkrani(
+                  baslik: sanaOzelBaslik,
+                  yol: '/onerilen',
+                  // Sayfa parametresi ve liste alanı TMDB'ninkinden farklı.
+                  sayfaParam: 'sayfa',
+                  sonucAnahtari: 'oneriler',
+                  // tur VERİLMİYOR: öneri listesi karışık (dizi + film), tür
+                  // her yapımın kendi `media_type` alanından okunur.
+                ),
+              ),
             ],
           ),
           StatefulShellBranch(

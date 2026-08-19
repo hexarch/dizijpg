@@ -1156,4 +1156,13 @@ const Map<String, String> cevirilerHe = {
   'Sıralama kaydedilemedi': 'לא ניתן היה לשמור את הסדר',
   'Değişiklik kaydedilemedi': 'לא ניתן היה לשמור את השינוי',
   'Kaldırılamadı': 'לא ניתן היה להסיר',
+  'Popülerlik': 'פופולריות',
+  'TMDB puanı': 'דירוג TMDB',
+  'Yapım yılı': 'שנת הפקה',
+  'dizi.jpg puanı': 'דירוג dizi.jpg',
+  'İzlenme': 'צפיות',
+  'Yorum sayısı': 'מספר תגובות',
+  'Tüm raflara uygulanır': 'חל על כל המדפים',
+  'En popüler {} yapım arasında sıralandı':
+      'מוין מבין {} הכותרים הפופולריים ביותר',
 };

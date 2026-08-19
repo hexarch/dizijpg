@@ -77,6 +77,25 @@ const anaSayfaRaflari = <(String, String, String)>[
   ),
 ];
 
+/// "Sana Özel" rafının başlığı (çeviri anahtarı) ve tam sayfa adresi.
+///
+/// NEDEN `anaSayfaRaflari`NDA DEĞİL: o tablo üçlüsü (ad, TMDB yolu, tür)
+/// Keşfet'in raf ÇEKME döngüsünü de besliyor (`for (final r in anaSayfaRaflari)
+/// Api.get(r.$2)`). Buraya bir kayıt eklemek üç şeyi birden bozardı:
+///  1. Raf İKİ KEZ çekilirdi (döngüde bir, aşağıdaki `if (Api.girisli)`
+///     dalında bir),
+///  2. Döngü oturumu SORMUYOR — oturumsuz ziyaretçi `/onerilen`den 401 yerdi,
+///  3. Yanıtın liste alanı `results` değil `oneriler`.
+///
+/// NEDEN ADRES `/raf/sana-ozel` DEĞİL, KÖK YOL: bu raf kişiye özel, yani rota
+/// OTURUM ZORUNLU ve robots.txt ile kapatılmalı. Projede robots.txt kuralları
+/// JOKER İÇERMİYOR (`backend/test/seo_gizlilik.test.js` kilitliyor); tek bir
+/// `/raf/...` alt yolunu kapatmanın yolu ya joker ya da `/raf/` ön ekinin
+/// tamamını kapatmaktı — ikincisi herkese açık katalog sayfalarını da taramaya
+/// kapatırdı. Kök yol ikisini de gerektirmez.
+const sanaOzelBaslik = 'Sana Özel';
+const sanaOzelYolu = '/sana-ozel';
+
 /// Türkçe raf başlığından üretilen KALICI adres parçası (`/raf/:slug`).
 ///
 /// NEDEN BAŞLIKTAN, NEDEN İNDEKSTEN DEĞİL: indeks kullansaydık
@@ -193,7 +212,7 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       final onerilen =
           (sonuclar.last['oneriler'] as List<dynamic>? ?? <dynamic>[]);
       final bolumler = <String, List<dynamic>>{
-        if (onerilen.isNotEmpty) 'Sana Özel': onerilen,
+        if (onerilen.isNotEmpty) sanaOzelBaslik: onerilen,
         for (var i = 0; i < anaSayfaRaflari.length; i++)
           anaSayfaRaflari[i].$1:
               (sonuclar[i]['results'] as List<dynamic>? ?? <dynamic>[]),
@@ -257,14 +276,21 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
                 baslik: e.key.c,
                 icerikler: e.value,
                 turZorla: rafMap[e.key]?.$3,
-                // "Sana Özel" kişiye özel üretiliyor, sayfalanamaz.
+                // "Sana Özel" 19 Ağu 2026'ya kadar "Tümünü gör"süz TEK raftı:
+                // içeriği `/onerilen` ucundan geliyor, `anaSayfaRaflari`ndaki
+                // gibi sabit bir TMDB yolu YOK, yani `/raf/:slug` onu
+                // sayfalayamıyordu. Artık uç `?sayfa=` alıyor ve rafın kendi
+                // tam sayfa adresi var ([sanaOzelYolu]).
+                //
                 // ADRESE YAZILAN gezinme (14 Ağu 2026). Eskiden burada
                 // `Navigator.push(MaterialPageRoute(...))` vardı: sayfa
                 // açılıyor ama URL `/kesfet`te kalıyordu, yani F5 kullanıcıyı
                 // Keşfet'e geri atıyordu (canlıda ölçüldü). `context.push`
                 // aynı görünümü verir — rota Keşfet şubesinin içinde, alt
                 // gezinme çubuğu yerinde kalır — ama adres sayfayı yansıtır.
-                onBaslikTap: rafMap[e.key] == null
+                onBaslikTap: e.key == sanaOzelBaslik
+                    ? () => context.push(sanaOzelYolu)
+                    : rafMap[e.key] == null
                     ? null
                     : () => context.push('/raf/${rafSlug(rafMap[e.key]!.$1)}'),
               ),

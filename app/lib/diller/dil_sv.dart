@@ -1192,4 +1192,13 @@ const Map<String, String> cevirilerSv = {
   'Sıralama kaydedilemedi': 'Ordningen kunde inte sparas',
   'Değişiklik kaydedilemedi': 'Ändringen kunde inte sparas',
   'Kaldırılamadı': 'Kunde inte tas bort',
+  'Popülerlik': 'Popularitet',
+  'TMDB puanı': 'TMDB-betyg',
+  'Yapım yılı': 'Produktionsår',
+  'dizi.jpg puanı': 'dizi.jpg-betyg',
+  'İzlenme': 'Visningar',
+  'Yorum sayısı': 'Antal kommentarer',
+  'Tüm raflara uygulanır': 'Gäller alla hyllor',
+  'En popüler {} yapım arasında sıralandı':
+      'Sorterat bland de {} populäraste titlarna',
 };

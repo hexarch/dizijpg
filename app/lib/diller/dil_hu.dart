@@ -1191,4 +1191,13 @@ const Map<String, String> cevirilerHu = {
   'Sıralama kaydedilemedi': 'A sorrendet nem sikerült menteni',
   'Değişiklik kaydedilemedi': 'A módosítást nem sikerült menteni',
   'Kaldırılamadı': 'Nem sikerült eltávolítani',
+  'Popülerlik': 'Népszerűség',
+  'TMDB puanı': 'TMDB-értékelés',
+  'Yapım yılı': 'Gyártási év',
+  'dizi.jpg puanı': 'dizi.jpg-értékelés',
+  'İzlenme': 'Megtekintések',
+  'Yorum sayısı': 'Hozzászólások száma',
+  'Tüm raflara uygulanır': 'Minden polcra érvényes',
+  'En popüler {} yapım arasında sıralandı':
+      'A(z) {} legnépszerűbb cím között rendezve',
 };

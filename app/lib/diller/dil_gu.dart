@@ -1169,4 +1169,13 @@ const Map<String, String> cevirilerGu = {
   'Sıralama kaydedilemedi': 'ક્રમ સાચવી શકાયો નહીં',
   'Değişiklik kaydedilemedi': 'ફેરફાર સાચવી શકાયો નહીં',
   'Kaldırılamadı': 'કાઢી શકાયું નહીં',
+  'Popülerlik': 'લોકપ્રિયતા',
+  'TMDB puanı': 'TMDB રેટિંગ',
+  'Yapım yılı': 'નિર્માણ વર્ષ',
+  'dizi.jpg puanı': 'dizi.jpg રેટિંગ',
+  'İzlenme': 'જોવાયું',
+  'Yorum sayısı': 'ટિપ્પણીઓની સંખ્યા',
+  'Tüm raflara uygulanır': 'બધા છાજલીઓ પર લાગુ પડે છે',
+  'En popüler {} yapım arasında sıralandı':
+      '{} સૌથી લોકપ્રિય શીર્ષકોમાં ક્રમબદ્ધ',
 };

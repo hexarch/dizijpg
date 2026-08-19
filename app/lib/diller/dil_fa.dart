@@ -1168,4 +1168,12 @@ const Map<String, String> cevirilerFa = {
   'Sıralama kaydedilemedi': 'ترتیب ذخیره نشد',
   'Değişiklik kaydedilemedi': 'تغییر ذخیره نشد',
   'Kaldırılamadı': 'حذف نشد',
+  'Popülerlik': 'محبوبیت',
+  'TMDB puanı': 'امتیاز TMDB',
+  'Yapım yılı': 'سال تولید',
+  'dizi.jpg puanı': 'امتیاز dizi.jpg',
+  'İzlenme': 'بازدیدها',
+  'Yorum sayısı': 'تعداد نظرها',
+  'Tüm raflara uygulanır': 'برای همه قفسه‌ها اعمال می‌شود',
+  'En popüler {} yapım arasında sıralandı': 'میان {} اثر محبوب مرتب شد',
 };
