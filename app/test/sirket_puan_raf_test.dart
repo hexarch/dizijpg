@@ -73,7 +73,26 @@ http.Client _sahteIstemci(List<String> kayit) => MockClient((istek) async {
     });
   }
   if (yol.startsWith('/api/incelemeler/')) {
-    return cevap({'incelemeler': <dynamic>[], 'ortalama': null, 'adet': 0});
+    // ==================================================================
+    // GERÇEK SUNUCU ŞEKLİ — UYDURMA DEĞİL (19 Ağu 2026 dersi)
+    // ==================================================================
+    // Burada eskiden `'adet': 0` yazıyordu, yani bir SAYI. Gerçek uç ise
+    // `"0"` döndürüyordu (SQL `count(*)` bigint, node-pg bigint'i metne
+    // çeviriyor) ve `ortalama` da `numeric` olduğu için metindi. Test bu
+    // yüzden yeşil kaldı, CANLI SAYFA gri ekrana düştü:
+    // "type 'String' is not a subtype of type 'num?'".
+    //
+    // Sunucu tarafı artık `count(*)::int` kullanıyor ama sahte yanıt
+    // BİLEREK ESKİ (metin) şekilde bırakıldı: istemci her iki biçimi de
+    // kaldırabilmeli. Eski sürüm bir sunucuya, ya da metin döndüren başka
+    // bir uca bakarsa yine çökmesin.
+    final puanli = istek.url.path.contains('/company/');
+    return cevap({
+      'incelemeler': <dynamic>[],
+      'ortalama': puanli ? '8.0' : null,
+      'adet': puanli ? '3' : '0',
+      'dagilim': <dynamic>[],
+    });
   }
   if (yol.startsWith('/api/benim/')) return cevap({'puan': null});
   if (yol.startsWith('/api/yorumlar/')) return cevap({'yorumlar': <dynamic>[]});

@@ -80,6 +80,32 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
 
+## 2026-08-19 — 🚀 WEB 1.81.1+130 (şirket sayfası GRİ EKRAN düzeltmesi)
+Kullanıcı bildirdi: "Dizi profilinden yapım firmalarını açınca gri bir ekran
+çıkıyor, Android cihazımda da webde de aynı."
+
+**KÖK NEDEN:** `/incelemeler/:tur/:id` ucu `adet` alanını METİN gönderiyordu
+(`"0"`). SQL `count(*)` bigint döner, node-postgres bigint'i dizgeye çevirir.
+`sirket.dart` bunu `as num?` ile okuyordu → `type 'String' is not a subtype of
+type 'num?'` → TÜM sayfa gri.
+
+**NEDEN TEST YAKALAMADI (asıl ders):** `sirket_puan_raf_test.dart`in sahte
+yanıtında `'adet': 0` yazıyordu — bir SAYI. Yani testi yazarken sunucunun
+GERÇEK yanıtını kopyalamak yerine şekli UYDURMUŞTUM. Test yeşil kaldı, canlı
+çöktü. Tarayıcıda da açıp bakmamıştım; kullanıcı bulmak zorunda kaldı.
+
+**ÜÇ KATMANDA DÜZELTİLDİ**
+- İstemci: `puanSayisi()` (projede bu tuzak için ZATEN vardı ve kardeş
+  ekranlar kullanıyordu — kopyalarken atlanmış).
+- Sunucu: `count(*)::int AS adet`. Aynı ucun kardeş sorgusu zaten `::int`
+  kullanıyordu; bu satır o disiplinin dışında kalmıştı.
+- Test: sahte yanıt GERÇEK şekle çevrildi (`'adet': '3'`, `'ortalama': '8.0'`).
+  Düzeltme geri alınınca 4 testin DÖRDÜ de kırmızıya döndü — kanıtlandı.
+
+Kanıt: canlı tarayıcıda sayfa açıldı (HBO başlığı, Puanla, tepkiler,
+"Devam eden yapımlar (19)", "Diziler (20)"), konsolda hata yok.
+1755 Flutter + 1271 backend testi yeşil.
+
 ## 2026-08-19 — 🚀 WEB 1.81.0+129 (İzleme İstatistiklerim)
 İstek: "kullanıcı profilindeki ayarlardan izleme istatistikleri tarafını daha
 iyi bir hale getir, biraz instagram ve tiktoktan örnek al".

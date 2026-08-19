@@ -238,7 +238,7 @@ class _SirketEkraniState extends State<SirketEkrani> {
       context,
       tur: 'company',
       tmdbId: widget.sirketId,
-      mevcutPuan: _benimPuan?['puan'] as int?,
+      mevcutPuan: puanSayisi(_benimPuan?['puan'])?.toInt(),
       mevcutYorum: _benimPuan?['yorum'] as String?,
     );
     if (kaydedildi) _puanYenile();
@@ -430,8 +430,15 @@ class _SirketEkraniState extends State<SirketEkrani> {
   /// Puan düğmesi + emoji tepkileri. Kişi sayfasındaki yerleşimin aynısı:
   /// ikisi de "senin bu firmaya dair hislerin" olduğu için alt alta durur.
   Widget get _puanSatiri {
-    final ort = (_toplum?['ortalama'] as num?)?.toDouble();
-    final adet = (_toplum?['adet'] as num?)?.toInt() ?? 0;
+    // `as num?` DEĞİL `puanSayisi`: sunucu bu uçta `adet`i METİN olarak
+    // gönderiyor ("0"), çünkü SQL `count(*)` (bigint) ve node-postgres
+    // bigint'i dizgeye çeviriyor. `ortalama` da `numeric` olduğu için aynı
+    // kapıya çıkar. 19 Ağu 2026'da sayfa TAM DA BURADA gri ekrana düştü:
+    // "type 'String' is not a subtype of type 'num?'". Kardeş ekranlar
+    // (kisi.dart, detay.dart) zaten `puanSayisi`/`yildizOrtalamaMetni`
+    // kullanıyordu; kopyalarken bu satır atlanmıştı.
+    final ort = puanSayisi(_toplum?['ortalama'])?.toDouble();
+    final adet = (puanSayisi(_toplum?['adet']) ?? 0).toInt();
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
       child: Column(

@@ -5840,7 +5840,15 @@ app.get('/incelemeler/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) 
       [...olcut, req.kullanici?.id || 0],
     ),
     havuz.query(
-      `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*) AS adet
+      // `::int` ŞART (19 Ağu 2026): `count(*)` bigint döner ve node-pg
+      // bigint'i METİN olarak gönderir — yani `adet` JSON'da "0" idi, 0
+      // değil. Şirket sayfası bunu sayıya çevirmeye çalışınca TÜM SAYFA gri
+      // ekrana düştü. Hemen aşağıdaki dağılım sorgusu zaten `::int`
+      // kullanıyordu; bu satır o disiplinin dışında kalmıştı.
+      // `ortalama` BİLEREK numeric kalıyor: 1 ondalık basamağın kesinliği
+      // float'a çevrilince kaybolur, ve tüm okuyucular zaten `puanSayisi()`
+      // ile hem metni hem sayıyı kabul ediyor.
+      `SELECT round(avg(puan)::numeric, 1) AS ortalama, count(*)::int AS adet
        FROM puanlar WHERE tur=$1 AND tmdb_id=$2 AND sezon IS NULL`,
       olcut,
     ),
