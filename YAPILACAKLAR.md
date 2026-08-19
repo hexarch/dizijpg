@@ -80,6 +80,53 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
 
+## 2026-08-19 — 🚀 WEB 1.83.1+133 (PageSpeed "kolay grup")
+Ölçüm: PSI API anonim erişime kapalı (429, kota 0) → yerel Lighthouse 13.4.1,
+PSI'nin kendi throttling profilleriyle. **CrUX alan verisi YOK.**
+Başlangıç: masaüstü 74 / mobil 63 (Erişilebilirlik ve SEO zaten 100).
+Kaybın tamamı TBT + Speed Index'ten; LCP/FCP/CLS tam puan.
+
+**1) CanvasKit artık KENDİ sunucumuzdan** — `--no-web-resources-cdn`.
+Bayraksız hâlde 1,65 MB gstatic'ten iniyordu: mobilde ölçülen **4,2 sn**,
+gstatic sunucu gecikmesi 431 ms (bizimki 133 ms). Dosyalar `build/web/canvaskit/`
+altında ZATEN üretiliyordu ve sunucuda duruyordu — tek eksik bayraktı.
+Bayrak dağıtım ritüeline (skill) gerekçesiyle yazıldı; unutmak sessiz gerileme.
+
+**2) `main.<hash>.dart.js` preload + `fetchpriority="high"`** — `araclar/web_hashla.js`
+artık satırı index.html'e enjekte ediyor. Öncesinde istek `Low` öncelikliydi ve
+ancak 496 ms'de başlıyordu (bootstrap çalışmadan keşfedilmiyor). Ad hash'li
+olduğu için satırı hash'i üreten yer yazmalı. IDEMPOTENT (kanıtlandı: iki tur,
+tek satır) ve `</head>` yoksa SESSİZ GEÇMİYOR, hata verip çıkıyor.
+
+**3) logo.png 102.864 → 8.898 B** (640×640 → 320×320, %91,3). Sayfadaki iki
+indirmenin toplamı 206 KB → 17,8 KB. Orijinaller `logo-640-yedek.png`.
+Kayıplı WebP bu logoda PNG-paletten hem büyük hem kötü çıktı (13,4 KB /
+PSNR 28,5 dB) — kullanılmadı.
+
+**4) nginx `no-store` → `no-cache`** (index.html + flutter_bootstrap.js +
+/kullanici/ + `/`). bf-cache açıldı: geri tuşuyla dönüşte 12,4 MB'lık uygulama
+yeniden başlamıyor. Tazelik AYNI (her istekte doğrulanır).
+Lighthouse puanına etkisi SIFIR; kazanç tamamen kullanıcıda.
+
+**5) Kök görsellere önbellek**: `/logo.png`, `/favicon.png`, `/icons/` — bu
+üçünde `cache-control` HİÇ YOKTU (ölçüldü), her ziyarette yeniden iniyordu.
+
+**6) CSP report-only**: `static.cloudflareinsights.com` (script-src) +
+`fonts.gstatic.com` (font-src). Sayfa başına 5 gereksiz `/api/csp-rapor`
+isteği üretiyorlardı. gstatic/canvaskit ihlali madde 1 ile kendiliğinden bitti.
+
+⬜ **KALAN (kullanıcı yapacak)**: Cloudflare panelinden Web Analytics
+otomatik enjeksiyonunu kapat — `static.cloudflareinsights.com/beacon.min.js`
+11,5 KB, açılışta `High` öncelikle ve CanvasKit'ten ÖNCE yükleniyor.
+⬜ **KALAN**: Cloudflare önbellek purge — origin'de yeni logo (8.898 B) var
+ama kenar eski kopyayı sunuyor (`cf-cache-status: HIT`). `/assets/` 30 günlük
+başlık taşıdığı için kendiliğinden düşmesi uzun sürebilir.
+
+**BEKLENTİ**: bu maddelerin hiçbiri TBT'yi düşürmüyor. Mobil puan ~63 → ~73
+bandına çıkar ve orada takılır. 90'a çıkmanın tek yolu deferred imports
+(`main.dart.js` 12,4 MB ham, %31,6'sı o oturumda çalışmıyor, pakette hiç
+`.part.js` yok).
+
 ## 2026-08-19 — 🚀 WEB+APK 1.83.0+132 (liste düzenleme modu)
 İstek: "listede liste isminin yanında edit ikonu... sürükle bırak ile sırayı
 değiştirebilsin, istediğini gizleyebilsin, listeden kaldırabilsin."
