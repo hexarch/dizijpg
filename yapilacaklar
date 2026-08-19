@@ -16,8 +16,8 @@
 # =========================================================================
 # DURUM (14 Ağustos 2026)
 # =========================================================================
-# CANLIDA: dizijpg.com — sürüm 1.48.0+96 (web). Backend 1.47.0+95 (değişmedi).
-#   JS: main.5639d9ac25b3.dart.js · SW sökücü · brotli q11.
+# CANLIDA: dizijpg.com — sürüm 1.53.0+101 (web). Backend değişmedi.
+#   JS: main.1a209e70667c.dart.js · SW sökücü · brotli q11.
 # PLAY: 1.40.0+86 Alpha'da. 14 gün sayacı kesintisiz ilerliyor (~13. gün).
 #   TESTÇİ LİSTESİNE DOKUNMA — biri düşerse sayaç sıfırlanabilir.
 #   AAB 1.46.0+93 hazır, Play'e YÜKLENMEDİ: ~/Desktop/dizijpg-1.46.0+93.aab
