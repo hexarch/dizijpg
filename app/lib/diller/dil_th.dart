@@ -1149,4 +1149,16 @@ const Map<String, String> cevirilerTh = {
   'Ekran süren, serin ve en çok izlediklerin':
       'เวลาหน้าจอ สตรีค และรายการที่ดูมากที่สุดของคุณ',
   'Daralt': 'ย่อ',
+  'Listeyi düzenle': 'แก้ไขรายการ',
+  'Bitti': 'เสร็จสิ้น',
+  'Sırala': 'จัดลำดับ',
+  'Herkese göster': 'แสดงให้ทุกคนเห็น',
+  'Başkalarından gizle': 'ซ่อนจากผู้อื่น',
+  'Listeden kaldır': 'นำออกจากรายการ',
+  'Listeden kaldırılsın mı?': 'นำออกจากรายการไหม',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'เรื่องนี้จะถูกนำออกจากรายการ หากต้องการเพียงซ่อน ให้ใช้ไอคอนรูปดวงตา',
+  'Sıralama kaydedilemedi': 'บันทึกลำดับไม่สำเร็จ',
+  'Değişiklik kaydedilemedi': 'บันทึกการเปลี่ยนแปลงไม่สำเร็จ',
+  'Kaldırılamadı': 'นำออกไม่สำเร็จ',
 };

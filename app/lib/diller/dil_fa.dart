@@ -1156,4 +1156,16 @@ const Map<String, String> cevirilerFa = {
   'Ekran süren, serin ve en çok izlediklerin':
       'زمان تماشا، زنجیره و پرتماشاترین‌هایت',
   'Daralt': 'جمع کردن',
+  'Listeyi düzenle': 'ویرایش فهرست',
+  'Bitti': 'تمام',
+  'Sırala': 'مرتب‌سازی',
+  'Herkese göster': 'نمایش به همه',
+  'Başkalarından gizle': 'پنهان از دیگران',
+  'Listeden kaldır': 'حذف از فهرست',
+  'Listeden kaldırılsın mı?': 'از فهرست حذف شود؟',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'این عنوان از فهرست بیرون می‌رود. اگر فقط می‌خواهی پنهانش کنی، از نماد چشم استفاده کن.',
+  'Sıralama kaydedilemedi': 'ترتیب ذخیره نشد',
+  'Değişiklik kaydedilemedi': 'تغییر ذخیره نشد',
+  'Kaldırılamadı': 'حذف نشد',
 };

@@ -1144,4 +1144,16 @@ const Map<String, String> cevirilerAr = {
   'Ekran süren, serin ve en çok izlediklerin':
       'وقت شاشتك وسلسلتك والأكثر مشاهدة',
   'Daralt': 'طي',
+  'Listeyi düzenle': 'تعديل القائمة',
+  'Bitti': 'تم',
+  'Sırala': 'إعادة الترتيب',
+  'Herkese göster': 'إظهار للجميع',
+  'Başkalarından gizle': 'إخفاء عن الآخرين',
+  'Listeden kaldır': 'إزالة من القائمة',
+  'Listeden kaldırılsın mı?': 'إزالته من القائمة؟',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'سيُزال هذا العمل من القائمة. إن كنت تريد إخفاءه فقط، فاستخدم رمز العين.',
+  'Sıralama kaydedilemedi': 'تعذّر حفظ الترتيب',
+  'Değişiklik kaydedilemedi': 'تعذّر حفظ التغيير',
+  'Kaldırılamadı': 'تعذّرت الإزالة',
 };

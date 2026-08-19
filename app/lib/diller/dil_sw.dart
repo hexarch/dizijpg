@@ -1172,4 +1172,16 @@ const Map<String, String> cevirilerSw = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Muda wako wa skrini, mfululizo na ulizotazama zaidi',
   'Daralt': 'Kunja',
+  'Listeyi düzenle': 'Hariri orodha',
+  'Bitti': 'Imekamilika',
+  'Sırala': 'Panga upya',
+  'Herkese göster': 'Onyesha kwa kila mtu',
+  'Başkalarından gizle': 'Ficha kwa wengine',
+  'Listeden kaldır': 'Ondoa kwenye orodha',
+  'Listeden kaldırılsın mı?': 'Kuondoa kwenye orodha?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Kichwa hiki kitatolewa kwenye orodha. Ukitaka kukificha tu, tumia aikoni ya jicho.',
+  'Sıralama kaydedilemedi': 'Mpangilio haukuhifadhiwa',
+  'Değişiklik kaydedilemedi': 'Mabadiliko hayakuhifadhiwa',
+  'Kaldırılamadı': 'Haikuweza kuondolewa',
 };

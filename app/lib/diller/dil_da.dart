@@ -1169,4 +1169,16 @@ const Map<String, String> cevirilerDa = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Din skærmtid, stime og mest sete',
   'Daralt': 'Skjul',
+  'Listeyi düzenle': 'Rediger liste',
+  'Bitti': 'Færdig',
+  'Sırala': 'Omorganiser',
+  'Herkese göster': 'Vis for alle',
+  'Başkalarından gizle': 'Skjul for andre',
+  'Listeden kaldır': 'Fjern fra listen',
+  'Listeden kaldırılsın mı?': 'Fjern fra listen?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Titlen fjernes fra listen. Vil du kun skjule den, så brug øjeikonet.',
+  'Sıralama kaydedilemedi': 'Rækkefølgen kunne ikke gemmes',
+  'Değişiklik kaydedilemedi': 'Ændringen kunne ikke gemmes',
+  'Kaldırılamadı': 'Kunne ikke fjernes',
 };

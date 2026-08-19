@@ -1170,4 +1170,16 @@ const Map<String, String> cevirilerId = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Waktu layar, rentetan, dan tontonan teratasmu',
   'Daralt': 'Ciutkan',
+  'Listeyi düzenle': 'Edit daftar',
+  'Bitti': 'Selesai',
+  'Sırala': 'Ubah urutan',
+  'Herkese göster': 'Tampilkan ke semua orang',
+  'Başkalarından gizle': 'Sembunyikan dari orang lain',
+  'Listeden kaldır': 'Hapus dari daftar',
+  'Listeden kaldırılsın mı?': 'Hapus dari daftar?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Judul ini akan dikeluarkan dari daftar. Jika hanya ingin menyembunyikan, gunakan ikon mata.',
+  'Sıralama kaydedilemedi': 'Urutan tidak dapat disimpan',
+  'Değişiklik kaydedilemedi': 'Perubahan tidak dapat disimpan',
+  'Kaldırılamadı': 'Tidak dapat dihapus',
 };

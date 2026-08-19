@@ -1127,4 +1127,16 @@ const Map<String, String> cevirilerAm = {
   'Ekran süren, serin ve en çok izlediklerin':
       'የስክሪን ጊዜዎ፣ ተከታታይዎ እና በብዛት የተመለከቷቸው',
   'Daralt': 'ሰብስብ',
+  'Listeyi düzenle': 'ዝርዝሩን አርትዕ',
+  'Bitti': 'ተጠናቋል',
+  'Sırala': 'ቅደም ተከተል ቀይር',
+  'Herkese göster': 'ለሁሉም አሳይ',
+  'Başkalarından gizle': 'ከሌሎች ደብቅ',
+  'Listeden kaldır': 'ከዝርዝሩ አስወግድ',
+  'Listeden kaldırılsın mı?': 'ከዝርዝሩ ይወገድ?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'ይህ ርዕስ ከዝርዝሩ ይወጣል። መደበቅ ብቻ ከፈለግህ የዓይን ምልክቱን ተጠቀም።',
+  'Sıralama kaydedilemedi': 'ቅደም ተከተሉን ማስቀመጥ አልተቻለም',
+  'Değişiklik kaydedilemedi': 'ለውጡን ማስቀመጥ አልተቻለም',
+  'Kaldırılamadı': 'ማስወገድ አልተቻለም',
 };

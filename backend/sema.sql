@@ -237,6 +237,13 @@ CREATE TABLE IF NOT EXISTS liste_ogeleri (
   tmdb_id INT NOT NULL,
   tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
   eklenme TIMESTAMPTZ DEFAULT now(),
+  -- Elle sıra (19 Ağu 2026, migrasyon-2026-08-19b.sql). NULL = kullanıcı bu
+  -- öğeyi hiç sıralamadı; sıralama `sira ASC NULLS FIRST, eklenme DESC` ile
+  -- yapılır, yani hiç düzenlenmemiş liste ESKİSİ GİBİ (en yeni önce) görünür.
+  sira INT,
+  -- Gizli öğe listede KALIR ama başkalarına gösterilmez; sahibi düzenleme
+  -- modunda görür ve geri açabilir. "Kaldır"dan ayrı bir eylemdir.
+  gizli BOOLEAN NOT NULL DEFAULT false,
   PRIMARY KEY (liste_id, tur, tmdb_id)
 );
 

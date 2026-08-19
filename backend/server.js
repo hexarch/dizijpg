@@ -6457,6 +6457,108 @@ app.post('/listeler/:id/oge', girisZorunlu, sarici(async (req, res) => {
   res.json({ tamam: true });
 }));
 
+// ---------------------------------------------------------------------------
+// LİSTE DÜZENLEME (19 Ağu 2026): elle SIRA + öğe GİZLEME
+// ---------------------------------------------------------------------------
+// "Listeden kaldır" ZATEN VAR (POST /listeler/:id/oge, ekle:false) — burada
+// yalnız eksik iki eylem var.
+//
+// SAHİPLİK KAPISI İKİSİNDE DE AYNI: `WHERE id=$1 AND kullanici_id=$2`.
+// Başkasının listesini sıralamak/gizlemek 404 döner (403 değil: listenin VAR
+// olduğunu bile sızdırmayalım — gizli liste zaten 404 veriyor, iki uç aynı
+// dili konuşsun).
+
+/** Öğe kimliği geçerli mi? (tur beyaz listede + tmdb_id makul) */
+const listeOgesiGecerli = (o) =>
+  // `!!o` — `o &&` yazılsaydı null girdide null DÖNERDİ. Koşulda sorun
+  // çıkarmazdı ama fonksiyon "boolean döner" sözünü tutmazdı; testin
+  // doğrudan çalıştırdığı bir yardımcıda o söz önemli.
+  !!o && ['tv', 'movie'].includes(o.tur) && gecerliTmdb(o.tmdb_id);
+
+// Listenin TAM sırasını yazar. Gövde: {ogeler: [{tur, tmdb_id}, ...]}
+//
+// NEDEN TAM LİSTE, "şunu şuraya taşı" DEĞİL: sürükle-bırak sırasında istemci
+// zaten nihai diziyi biliyor. Tekil taşıma komutları eşzamanlı iki cihazda
+// birbirinin üstüne biner ve sıra sessizce bozulur; tam liste yazmak son
+// yazanı kazandırır — çakışma da olsa sonuç TUTARLI kalır.
+//
+// TEK SORGUDA: `UPDATE ... FROM (VALUES ...)` — N öğe için N sorgu atmak,
+// yarısı uygulanmış bir sıralama bırakabilirdi (istek ortada kesilirse).
+app.put('/listeler/:id/sira', girisZorunlu, sarici(async (req, res) => {
+  const ham = req.body?.ogeler;
+  if (!Array.isArray(ham) || ham.length === 0) {
+    return res.status(400).json({ hata: 'Sıralanacak öğe yok' });
+  }
+  // TAVAN: gövde sınırı zaten var ama bu uç DÖNGÜ kuruyor; 2000 öğelik bir
+  // liste gerçekte yok, kötü niyetli gövde ise boşuna CPU yakar.
+  if (ham.length > 2000) {
+    return res.status(400).json({ hata: 'Liste çok uzun' });
+  }
+  if (!ham.every(listeOgesiGecerli)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
+  const sahip = await havuz.query(
+    'SELECT 1 FROM listeler WHERE id=$1 AND kullanici_id=$2',
+    [req.params.id, req.kullanici.id],
+  );
+  if (!sahip.rows.length) return res.status(404).json({ hata: 'Liste bulunamadı' });
+
+  // TAMLIK DENETİMİ (canlıda ölçülen tuzak, 19 Ağu 2026): 8 öğelik listeye
+  // 4 öğelik bir sıra yazılınca yazılanlar sira=0..3 alıyor, geri kalan 4'ü
+  // NULL kalıyor ve `NULLS FIRST` onları BAŞA taşıyor — yani kullanıcının
+  // sıraladığı öğeler listenin SONUNA düşüyordu. Uygulama her zaman tam
+  // listeyi gönderiyor, ama sözleşme bunu SÖYLEMİYORDU; söylemeyen sözleşme
+  // er geç çiğnenir. PUT zaten "kaynağın tamamını değiştir" demektir.
+  const sayim = await havuz.query(
+    'SELECT count(*)::int AS adet FROM liste_ogeleri WHERE liste_id=$1',
+    [req.params.id],
+  );
+  if (ham.length !== sayim.rows[0].adet) {
+    return res.status(400).json({
+      hata: 'Sıralama listenin TAMAMINI içermeli',
+      beklenen: sayim.rows[0].adet,
+      gelen: ham.length,
+    });
+  }
+
+  // $1 = liste_id, sonra her öğe için (tur, tmdb_id, sira) üçlüsü.
+  const p = [req.params.id];
+  const satirlar = ham.map((o, i) => {
+    p.push(o.tur, Number(o.tmdb_id), i);
+    return `($${p.length - 2}::text, $${p.length - 1}::int, $${p.length}::int)`;
+  });
+  await havuz.query(
+    `UPDATE liste_ogeleri o SET sira = v.sira
+       FROM (VALUES ${satirlar.join(',')}) AS v(tur, tmdb_id, sira)
+      WHERE o.liste_id = $1 AND o.tur = v.tur AND o.tmdb_id = v.tmdb_id`,
+    p,
+  );
+  res.json({ tamam: true });
+}));
+
+// Tek öğeyi gizler/gösterir. Gövde: {tur, tmdb_id, gizli}
+//
+// Gizli öğe listeden SİLİNMEZ: sahibi düzenleme modunda görür ve geri açar.
+// GET /listeler/:id gizlileri yalnız sahibine gönderir.
+app.post('/listeler/:id/oge/gizle', girisZorunlu, sarici(async (req, res) => {
+  const { tur, tmdb_id, gizli } = req.body || {};
+  if (!listeOgesiGecerli({ tur, tmdb_id })) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
+  if (typeof gizli !== 'boolean') {
+    return res.status(400).json({ hata: 'gizli true/false olmalı' });
+  }
+  const { rowCount } = await havuz.query(
+    `UPDATE liste_ogeleri o SET gizli=$4
+       FROM listeler l
+      WHERE l.id = o.liste_id AND l.id=$1 AND l.kullanici_id=$2
+        AND o.tur=$3 AND o.tmdb_id=$5`,
+    [req.params.id, req.kullanici.id, tur, gizli, Number(tmdb_id)],
+  );
+  if (!rowCount) return res.status(404).json({ hata: 'Liste bulunamadı' });
+  res.json({ tamam: true });
+}));
+
 app.get('/listeler/:id', girisIsteğeBagli, sarici(async (req, res) => {
   // ENGELLEME (13 Ağu 2026, md. 19): engellenen kişinin listesi 404 döner.
   // Liste artık profilde görünmüyor (profil boş dönüyor) ama DOĞRUDAN
@@ -6484,11 +6586,23 @@ app.get('/listeler/:id', girisIsteğeBagli, sarici(async (req, res) => {
       return res.status(404).json({ hata: 'Liste bulunamadı' });
     }
   }
+  // GİZLİ ÖĞELER (19 Ağu 2026): yalnız SAHİBİ görür. Başkasına hiç
+  // gönderilmez — istemcide süzmek, veriyi tel üzerinde göndermek demekti ve
+  // ağ sekmesine bakan herkes gizlenen yapımı okurdu.
+  // Sahiplik `req.kullanici`den okunur (girisIsteğeBagli). Geçersiz/süresi
+  // dolmuş token'da bu alan BOŞ kalır — yani "sahip değil" tarafına düşülür,
+  // güvenli varsayılan.
+  const sahibiyim = !!req.kullanici && req.kullanici.id === liste.rows[0].kullanici_id;
   const ogeler = await havuz.query(
-    'SELECT tmdb_id, tur, eklenme FROM liste_ogeleri WHERE liste_id=$1 ORDER BY eklenme DESC',
+    `SELECT tmdb_id, tur, eklenme, sira, gizli FROM liste_ogeleri
+      WHERE liste_id=$1 ${sahibiyim ? '' : 'AND NOT gizli'}
+      -- NULLS FIRST: sırası hiç verilmemiş öğeler önde ve kendi aralarında
+      -- ESKİ davranışla (en yeni önce). Böylece düzenlenmemiş liste
+      -- birebir aynı görünür, düzenlemeden sonra eklenen yapım en üste çıkar.
+      ORDER BY sira ASC NULLS FIRST, eklenme DESC`,
     [req.params.id],
   );
-  res.json({ ...liste.rows[0], ogeler: ogeler.rows });
+  res.json({ ...liste.rows[0], sahibiyim, ogeler: ogeler.rows });
 }));
 
 // ---------- kitaplığım / istatistik / takvim ----------

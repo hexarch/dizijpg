@@ -1164,4 +1164,16 @@ const Map<String, String> cevirilerHi = {
   'Ekran süren, serin ve en çok izlediklerin':
       'आपका स्क्रीन समय, लय और सबसे ज़्यादा देखे गए',
   'Daralt': 'छोटा करें',
+  'Listeyi düzenle': 'सूची संपादित करें',
+  'Bitti': 'हो गया',
+  'Sırala': 'क्रम बदलें',
+  'Herkese göster': 'सबको दिखाएँ',
+  'Başkalarından gizle': 'दूसरों से छिपाएँ',
+  'Listeden kaldır': 'सूची से हटाएँ',
+  'Listeden kaldırılsın mı?': 'सूची से हटाएँ?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'यह शीर्षक सूची से निकाल दिया जाएगा। अगर आप इसे सिर्फ़ छिपाना चाहते हैं तो आँख के चिह्न का उपयोग करें।',
+  'Sıralama kaydedilemedi': 'क्रम सहेजा नहीं जा सका',
+  'Değişiklik kaydedilemedi': 'बदलाव सहेजा नहीं जा सका',
+  'Kaldırılamadı': 'हटाया नहीं जा सका',
 };

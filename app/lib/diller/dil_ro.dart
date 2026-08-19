@@ -1188,4 +1188,16 @@ const Map<String, String> cevirilerRo = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Timpul tău pe ecran, seria și cele mai vizionate',
   'Daralt': 'Restrânge',
+  'Listeyi düzenle': 'Editează lista',
+  'Bitti': 'Gata',
+  'Sırala': 'Reordonează',
+  'Herkese göster': 'Arată tuturor',
+  'Başkalarından gizle': 'Ascunde de ceilalți',
+  'Listeden kaldır': 'Elimină din listă',
+  'Listeden kaldırılsın mı?': 'Elimini din listă?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Acest titlu va fi scos din listă. Dacă vrei doar să îl ascunzi, folosește pictograma ochi.',
+  'Sıralama kaydedilemedi': 'Ordinea nu a putut fi salvată',
+  'Değişiklik kaydedilemedi': 'Modificarea nu a putut fi salvată',
+  'Kaldırılamadı': 'Nu a putut fi eliminat',
 };

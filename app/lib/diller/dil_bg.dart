@@ -1173,4 +1173,16 @@ const Map<String, String> cevirilerBg = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Твоето екранно време, серия и най-гледани',
   'Daralt': 'Свиване',
+  'Listeyi düzenle': 'Редактиране на списъка',
+  'Bitti': 'Готово',
+  'Sırala': 'Пренареждане',
+  'Herkese göster': 'Покажи на всички',
+  'Başkalarından gizle': 'Скрий от другите',
+  'Listeden kaldır': 'Премахни от списъка',
+  'Listeden kaldırılsın mı?': 'Да се премахне ли от списъка?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Заглавието ще бъде извадено от списъка. Ако искаш само да го скриеш, използвай иконата с окото.',
+  'Sıralama kaydedilemedi': 'Подредбата не можа да се запази',
+  'Değişiklik kaydedilemedi': 'Промяната не можа да се запази',
+  'Kaldırılamadı': 'Не можа да бъде премахнато',
 };

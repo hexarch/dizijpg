@@ -1174,4 +1174,16 @@ const Map<String, String> cevirilerUk = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Твій екранний час, серія та найпопулярніші',
   'Daralt': 'Згорнути',
+  'Listeyi düzenle': 'Редагувати список',
+  'Bitti': 'Готово',
+  'Sırala': 'Змінити порядок',
+  'Herkese göster': 'Показати всім',
+  'Başkalarından gizle': 'Приховати від інших',
+  'Listeden kaldır': 'Прибрати зі списку',
+  'Listeden kaldırılsın mı?': 'Прибрати зі списку?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Цей тайтл буде прибрано зі списку. Якщо хочеш лише сховати його, скористайся піктограмою ока.',
+  'Sıralama kaydedilemedi': 'Не вдалося зберегти порядок',
+  'Değişiklik kaydedilemedi': 'Не вдалося зберегти зміну',
+  'Kaldırılamadı': 'Не вдалося прибрати',
 };

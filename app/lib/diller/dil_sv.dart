@@ -1180,4 +1180,16 @@ const Map<String, String> cevirilerSv = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Din skärmtid, svit och mest sedda',
   'Daralt': 'Fäll ihop',
+  'Listeyi düzenle': 'Redigera lista',
+  'Bitti': 'Klar',
+  'Sırala': 'Ordna om',
+  'Herkese göster': 'Visa för alla',
+  'Başkalarından gizle': 'Dölj för andra',
+  'Listeden kaldır': 'Ta bort från listan',
+  'Listeden kaldırılsın mı?': 'Ta bort från listan?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Titeln tas bort från listan. Om du bara vill dölja den använder du ögonikonen.',
+  'Sıralama kaydedilemedi': 'Ordningen kunde inte sparas',
+  'Değişiklik kaydedilemedi': 'Ändringen kunde inte sparas',
+  'Kaldırılamadı': 'Kunde inte tas bort',
 };

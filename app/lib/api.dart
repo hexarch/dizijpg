@@ -205,6 +205,22 @@ class Api {
     return _isle(cevap);
   }
 
+  /// PUT — kaynağın TAMAMINI değiştirir.
+  ///
+  /// Liste sıralaması için eklendi (19 Ağu 2026): sunucuya "şu öğeyi şuraya
+  /// taşı" değil NİHAİ DİZİ gönderiliyor, yani gövde kaynağın yeni tam hâli.
+  /// `patch` (kısmi değişiklik) bu anlamı taşımazdı.
+  static Future<dynamic> put(String yol, Map<String, dynamic> govde) async {
+    final cevap = await _istemci
+        .put(
+          Uri.parse('$apiTaban$yol'),
+          headers: _basliklar,
+          body: jsonEncode(govde),
+        )
+        .timeout(const Duration(seconds: 20));
+    return _isle(cevap);
+  }
+
   static Future<dynamic> patch(String yol, Map<String, dynamic> govde) async {
     final cevap = await _istemci
         .patch(
@@ -426,7 +442,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.82.0+131';
+  static const surum = '1.83.0+132';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

@@ -2073,11 +2073,25 @@ class ListeIcerigi extends StatefulWidget {
   /// Liste kaydı çözülünce çağrılır — tam sayfa başlığı buradan beslenir.
   final ValueChanged<Map<String, dynamic>>? onListe;
 
+  /// DÜZENLEME MODU açık mı? (19 Ağu 2026 isteği)
+  ///
+  /// Bayrağı bu widget DEĞİL, onu çizen ekran tutar: düzenle düğmesi liste
+  /// ADININ yanında olmalı ve o ad burada değil, [ListeSheet] başlığında ya
+  /// da [ListeEkrani]'nin AppBar'ında yaşıyor.
+  final bool duzenleme;
+
+  /// "Bu liste bana mı ait" bilgisini yukarı taşır. Düzenle düğmesi ancak
+  /// bundan sonra çizilir — sunucu sahipliği zaten biliyor
+  /// (`GET /listeler/:id` → `sahibiyim`), istemcide tahmin etmiyoruz.
+  final ValueChanged<bool>? onSahiplik;
+
   const ListeIcerigi({
     super.key,
     required this.listeId,
     this.modalIcinde = false,
     this.onListe,
+    this.duzenleme = false,
+    this.onSahiplik,
   });
 
   @override
@@ -2088,6 +2102,12 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
   List<dynamic>? _ogeler;
   String? _hata;
   int? _kod;
+  bool _sahibiyim = false;
+
+  /// Sıralama sunucuya yazılırken listeyi kilitler: art arda sürüklemede
+  /// ikinci istek birincinin yazdığından ESKİ bir sıra göndererek onu geri
+  /// alabilirdi.
+  bool _siraYaziliyor = false;
 
   @override
   void initState() {
@@ -2104,8 +2124,12 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       final d = await Api.get('/listeler/${widget.listeId}');
       if (!mounted) return;
       final liste = d as Map<String, dynamic>;
-      setState(() => _ogeler = (liste['ogeler'] as List<dynamic>?) ?? const []);
+      setState(() {
+        _ogeler = [...((liste['ogeler'] as List<dynamic>?) ?? const [])];
+        _sahibiyim = liste['sahibiyim'] == true;
+      });
       widget.onListe?.call(liste);
+      widget.onSahiplik?.call(_sahibiyim);
     } on ApiHata catch (e) {
       if (!mounted) return;
       setState(() {
@@ -2116,6 +2140,101 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       if (!mounted) return;
       setState(() => _hata = e.toString());
     }
+  }
+
+  /// Anahtar: aynı yapım iki türde de olabilir (tv 1396 ≠ movie 1396).
+  String _anahtar(Map o) => '${o['tur']}:${o['tmdb_id']}';
+
+  /// SÜRÜKLE-BIRAK. Önce EKRANDA uygulanır (iyimser), sonra sunucuya TAM
+  /// liste yazılır. Sunucu reddederse eski sıra GERİ ALINIR — sessizce
+  /// tutmak, kullanıcıya yalan bir sıra göstermek olurdu.
+  Future<void> _siraDegis(int eski, int yeni) async {
+    if (_ogeler == null || _siraYaziliyor) return;
+    final yedek = [..._ogeler!];
+    setState(() {
+      // ReorderableListView, öğe AŞAĞI taşınırken hedef indeksi bir fazla
+      // verir (çıkarılmadan önceki konuma göre).
+      final hedef = yeni > eski ? yeni - 1 : yeni;
+      final o = _ogeler!.removeAt(eski);
+      _ogeler!.insert(hedef, o);
+      _siraYaziliyor = true;
+    });
+    try {
+      await Api.put('/listeler/${widget.listeId}/sira', {
+        'ogeler': [
+          for (final o in _ogeler!)
+            {'tur': o['tur'], 'tmdb_id': (o['tmdb_id'] as num).toInt()},
+        ],
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _ogeler = yedek);
+      _uyar('Sıralama kaydedilemedi'.c);
+    } finally {
+      if (mounted) setState(() => _siraYaziliyor = false);
+    }
+  }
+
+  /// GİZLE / GÖSTER. Öğe listeden SİLİNMEZ; yalnız başkalarına gösterilmez.
+  Future<void> _gizleDegis(Map<String, dynamic> oge) async {
+    final yeniDeger = oge['gizli'] != true;
+    setState(() => oge['gizli'] = yeniDeger);
+    try {
+      await Api.post('/listeler/${widget.listeId}/oge/gizle', {
+        'tur': oge['tur'],
+        'tmdb_id': (oge['tmdb_id'] as num).toInt(),
+        'gizli': yeniDeger,
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => oge['gizli'] = !yeniDeger);
+      _uyar('Değişiklik kaydedilemedi'.c);
+    }
+  }
+
+  /// LİSTEDEN KALDIR. Geri alınamaz olduğu için ONAY sorulur — gizlemeden
+  /// farkı tam olarak budur.
+  Future<void> _kaldir(Map<String, dynamic> oge) async {
+    final onay = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('Listeden kaldırılsın mı?'.c),
+        content: Text(
+          'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini '
+                  'kullanabilirsin.'
+              .c,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(c, false),
+            child: Text('Vazgeç'.c),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text('Kaldır'.c),
+          ),
+        ],
+      ),
+    );
+    if (onay != true || !mounted) return;
+    final yedek = [..._ogeler!];
+    setState(() => _ogeler!.removeWhere((o) => _anahtar(o) == _anahtar(oge)));
+    try {
+      await Api.post('/listeler/${widget.listeId}/oge', {
+        'tur': oge['tur'],
+        'tmdb_id': (oge['tmdb_id'] as num).toInt(),
+        'ekle': false,
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _ogeler = yedek);
+      _uyar('Kaldırılamadı'.c);
+    }
+  }
+
+  void _uyar(String mesaj) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(mesaj)));
   }
 
   @override
@@ -2149,6 +2268,22 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
         ),
       );
     }
+    // ==================================================================
+    // DÜZENLEME MODU — IZGARA DEĞİL, SÜRÜKLENEBİLİR SATIR LİSTESİ
+    // ==================================================================
+    // İSTEK: "sürükle bırak ile sırayı değiştirebilsin, istediğini
+    // gizleyebilsin, listeden kaldırabilsin."
+    //
+    // NEDEN IZGARA DEĞİL: Flutter'da hazır bir "sürüklenebilir ızgara" YOK;
+    // `ReorderableListView` birinci partidir, ızgara için ya paket eklemek ya
+    // da sürükleme matematiğini elde yazmak gerekirdi. Üstelik satır düzeni
+    // bu iş için DAHA İYİ: 3'lü ızgarada bir posterin üstüne tutamak + göz +
+    // çöp kutusu sığmaz, satırda hepsi 44 px hedefle durur ve yapımın ADI da
+    // görünür — afişten tanımaya çalışmak zorunda kalmazsın.
+    //
+    // Normal moda dönünce ızgara aynen geri gelir; düzenleme geçici bir kip.
+    if (widget.duzenleme && _sahibiyim) return _duzenleyici();
+
     return GridView.builder(
       // ALT GÜVENLİ ALAN: GridView de bir BoxScrollView — AÇIK `padding`
       // verildiği an Flutter'ın MediaQuery alt payını kendiliğinden ekleme
@@ -2178,19 +2313,190 @@ class _ListeIcerigiState extends State<ListeIcerigi> {
       itemCount: _ogeler!.length,
       itemBuilder: (context, i) {
         final o = _ogeler![i] as Map<String, dynamic>;
-        return _ListeOgeKart(
+        final kart = _ListeOgeKart(
           tur: o['tur'] as String,
           tmdbId: (o['tmdb_id'] as num).toInt(),
           modalIcinde: widget.modalIcinde,
         );
+        // GİZLİ ÖĞE SAHİBİNE SOLUK + ROZETLİ GÖSTERİLİR.
+        // Başkasına hiç gönderilmiyor (sunucu süzüyor). Sahibinden de
+        // saklasaydık kullanıcı gizlediği yapımı "kaybolmuş" sanardı ve geri
+        // açmanın yolunu bulamazdı.
+        if (o['gizli'] != true) return kart;
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            Opacity(opacity: 0.35, child: kart),
+            Positioned(
+              right: 6,
+              top: 6,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: DiziRenkler.siyah.withValues(alpha: 0.7),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.visibility_off,
+                  size: 14,
+                  color: DiziRenkler.metin,
+                ),
+              ),
+            ),
+          ],
+        );
       },
+    );
+  }
+
+  /// Düzenleme kipi: sürükle-bırak sıra + gizle/göster + kaldır.
+  Widget _duzenleyici() => ReorderableListView.builder(
+    padding: EdgeInsets.fromLTRB(12, 0, 12, altGuvenli(context, ekstra: 20)),
+    itemCount: _ogeler!.length,
+    onReorder: _siraDegis,
+    // Varsayılan tutamak YOK: mobilde uzun basma, masaüstünde hiç. Açık
+    // tutamak her iki girdi türünde de aynı şekilde çalışır ve "buradan
+    // sürüklenir" bilgisini gözle verir.
+    buildDefaultDragHandles: false,
+    itemBuilder: (context, i) {
+      final o = _ogeler![i] as Map<String, dynamic>;
+      return _ListeDuzenSatir(
+        // ANAHTAR ŞART: ReorderableListView her çocuğun kalıcı bir kimliği
+        // olmasını ister; indeks kullanılsaydı sürükleme sonrası satırlar
+        // birbirinin durumunu (poster/ad) devralırdı.
+        key: ValueKey(_anahtar(o)),
+        sira: i,
+        tur: o['tur'] as String,
+        tmdbId: (o['tmdb_id'] as num).toInt(),
+        gizli: o['gizli'] == true,
+        onGizle: () => _gizleDegis(o),
+        onKaldir: () => _kaldir(o),
+      );
+    },
+  );
+}
+
+/// Düzenleme kipinin tek satırı: tutamak + afiş + ad + gizle + kaldır.
+///
+/// Ad ve afiş [IcerikDeposu]'ndan gelir: aynı karedeki bütün satırlar TEK
+/// toplu istekte çözülür (satır başına bir `/tmdb/...` çağrısı atmak 40
+/// öğelik listede 40 istek demekti).
+class _ListeDuzenSatir extends StatefulWidget {
+  final int sira;
+  final String tur;
+  final int tmdbId;
+  final bool gizli;
+  final VoidCallback onGizle;
+  final VoidCallback onKaldir;
+
+  const _ListeDuzenSatir({
+    super.key,
+    required this.sira,
+    required this.tur,
+    required this.tmdbId,
+    required this.gizli,
+    required this.onGizle,
+    required this.onKaldir,
+  });
+
+  @override
+  State<_ListeDuzenSatir> createState() => _ListeDuzenSatirState();
+}
+
+class _ListeDuzenSatirState extends State<_ListeDuzenSatir> {
+  Map<String, dynamic>? _icerik;
+
+  @override
+  void initState() {
+    super.initState();
+    IcerikDeposu.getir(widget.tur, widget.tmdbId).then((d) {
+      if (mounted && d != null) setState(() => _icerik = d);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
+    final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          // TUTAMAK — dokunma hedefi 44 px (ikon 24, gerisi dolgu).
+          ReorderableDragStartListener(
+            index: widget.sira,
+            child: Semantics(
+              label: 'Sırala'.c,
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: Icon(Icons.drag_handle, color: DiziRenkler.metin54),
+              ),
+            ),
+          ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: SizedBox(
+              width: 36,
+              height: 54,
+              child: poster == null
+                  ? ColoredBox(color: DiziRenkler.kart)
+                  : Opacity(
+                      opacity: widget.gizli ? 0.35 : 1,
+                      child: CachedNetworkImage(
+                        imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
+                        fit: BoxFit.cover,
+                        errorWidget: (_, _, _) =>
+                            ColoredBox(color: DiziRenkler.kart),
+                      ),
+                    ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              ad.isEmpty ? '#${widget.tmdbId}' : ad,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: widget.gizli ? DiziRenkler.metin54 : DiziRenkler.metin,
+              ),
+            ),
+          ),
+          // GİZLE/GÖSTER — durum ikondan BAŞKA ipuçlarıyla da anlaşılsın diye
+          // satır soluklaşıyor ve ekran okuyucu tam cümleyi duyuyor.
+          IconButton(
+            key: Key('liste-gizle-${widget.tur}-${widget.tmdbId}'),
+            tooltip: widget.gizli
+                ? 'Herkese göster'.c
+                : 'Başkalarından gizle'.c,
+            onPressed: widget.onGizle,
+            icon: Icon(
+              widget.gizli ? Icons.visibility_off : Icons.visibility,
+              color: widget.gizli ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+            ),
+          ),
+          IconButton(
+            key: Key('liste-kaldir-${widget.tur}-${widget.tmdbId}'),
+            tooltip: 'Listeden kaldır'.c,
+            onPressed: widget.onKaldir,
+            icon: Icon(Icons.delete_outline, color: DiziRenkler.metin54),
+          ),
+        ],
+      ),
     );
   }
 }
 
 /// Liste içeriği modalı: [ListeIcerigi]'ni başlıklı bir alt sayfaya sarar.
 /// Hem kendi profilinden hem başkasının profilinden açılır.
-class ListeSheet extends StatelessWidget {
+///
+/// DÜZENLE DÜĞMESİ BURADA (19 Ağu 2026 isteği: "liste isminin yanında edit
+/// ikonu"): liste adı bu başlıkta yaşıyor, düzenleme bayrağı da onunla
+/// birlikte. [ListeIcerigi] bayrağı alır, sahiplik bilgisini geri verir.
+class ListeSheet extends StatefulWidget {
   final int listeId;
   final String ad;
 
@@ -2210,34 +2516,93 @@ class ListeSheet extends StatelessWidget {
   }
 
   @override
+  State<ListeSheet> createState() => _ListeSheetState();
+}
+
+class _ListeSheetState extends State<ListeSheet> {
+  bool _duzenleme = false;
+  bool _sahibiyim = false;
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.75,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
             child: Row(
               children: [
                 const Icon(Icons.playlist_play, color: DiziRenkler.sari),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    ad,
+                    widget.ad,
                     style: const TextStyle(
                       fontSize: 17,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
+                // Düğme YALNIZ SAHİBİNE çizilir; sahiplik sunucudan gelir
+                // (`GET /listeler/:id` → `sahibiyim`), istemcide tahmin
+                // edilmez.
+                if (_sahibiyim)
+                  ListeDuzenleDugmesi(
+                    duzenleme: _duzenleme,
+                    onDegis: () => setState(() => _duzenleme = !_duzenleme),
+                  ),
               ],
             ),
           ),
-          Expanded(child: ListeIcerigi(listeId: listeId, modalIcinde: true)),
+          Expanded(
+            child: ListeIcerigi(
+              listeId: widget.listeId,
+              modalIcinde: true,
+              duzenleme: _duzenleme,
+              onSahiplik: (v) {
+                if (mounted && v != _sahibiyim) {
+                  setState(() => _sahibiyim = v);
+                }
+              },
+            ),
+          ),
         ],
       ),
     );
   }
+}
+
+/// Liste adının yanındaki düzenle/bitti düğmesi.
+///
+/// ORTAK: hem modalde ([ListeSheet]) hem tam sayfada (`liste.dart`) aynı
+/// düğme. İki kopya, bugün aynı yarın farklı davranan iki düğme demekti.
+///
+/// DURUM ÜÇ KANALDAN: ikon (kalem/onay), tooltip ve `Semantics.toggled`.
+/// Yalnız ikon değişseydi ekran okuyucu hiçbir şey duymazdı.
+class ListeDuzenleDugmesi extends StatelessWidget {
+  final bool duzenleme;
+  final VoidCallback onDegis;
+
+  const ListeDuzenleDugmesi({
+    super.key,
+    required this.duzenleme,
+    required this.onDegis,
+  });
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    toggled: duzenleme,
+    child: IconButton(
+      key: const Key('liste-duzenle'),
+      tooltip: duzenleme ? 'Bitti'.c : 'Listeyi düzenle'.c,
+      onPressed: onDegis,
+      icon: Icon(
+        duzenleme ? Icons.check : Icons.edit_outlined,
+        color: duzenleme ? DiziRenkler.sari : DiziRenkler.sariMetin,
+      ),
+    ),
+  );
 }
 
 /// Liste öğesi: posteri önbellekli TMDB'den çeker, tıklayınca detaya gider.

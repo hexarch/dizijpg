@@ -1174,4 +1174,16 @@ const Map<String, String> cevirilerMs = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Masa skrin, rentetan dan tontonan teratas anda',
   'Daralt': 'Kecilkan',
+  'Listeyi düzenle': 'Edit senarai',
+  'Bitti': 'Selesai',
+  'Sırala': 'Susun semula',
+  'Herkese göster': 'Tunjukkan kepada semua orang',
+  'Başkalarından gizle': 'Sembunyikan daripada orang lain',
+  'Listeden kaldır': 'Buang daripada senarai',
+  'Listeden kaldırılsın mı?': 'Buang daripada senarai?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Tajuk ini akan dikeluarkan daripada senarai. Jika anda hanya mahu menyembunyikannya, gunakan ikon mata.',
+  'Sıralama kaydedilemedi': 'Susunan tidak dapat disimpan',
+  'Değişiklik kaydedilemedi': 'Perubahan tidak dapat disimpan',
+  'Kaldırılamadı': 'Tidak dapat dibuang',
 };

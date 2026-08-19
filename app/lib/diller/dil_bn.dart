@@ -1161,4 +1161,16 @@ const Map<String, String> cevirilerBn = {
   'Ekran süren, serin ve en çok izlediklerin':
       'তোমার স্ক্রিন সময়, ধারা ও সবচেয়ে বেশি দেখা',
   'Daralt': 'সংক্ষিপ্ত করুন',
+  'Listeyi düzenle': 'তালিকা সম্পাদনা',
+  'Bitti': 'হয়ে গেছে',
+  'Sırala': 'ক্রম বদলাও',
+  'Herkese göster': 'সবাইকে দেখাও',
+  'Başkalarından gizle': 'অন্যদের থেকে লুকাও',
+  'Listeden kaldır': 'তালিকা থেকে সরাও',
+  'Listeden kaldırılsın mı?': 'তালিকা থেকে সরানো হবে?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'এই শিরোনামটি তালিকা থেকে বাদ যাবে। শুধু লুকাতে চাইলে চোখের আইকনটি ব্যবহার করো।',
+  'Sıralama kaydedilemedi': 'ক্রম সংরক্ষণ করা যায়নি',
+  'Değişiklik kaydedilemedi': 'পরিবর্তন সংরক্ষণ করা যায়নি',
+  'Kaldırılamadı': 'সরানো যায়নি',
 };

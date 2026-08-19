@@ -1176,4 +1176,16 @@ const Map<String, String> cevirilerFi = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Ruutuaikasi, putkesi ja katsotuimmat',
   'Daralt': 'Tiivistä',
+  'Listeyi düzenle': 'Muokkaa listaa',
+  'Bitti': 'Valmis',
+  'Sırala': 'Järjestä',
+  'Herkese göster': 'Näytä kaikille',
+  'Başkalarından gizle': 'Piilota muilta',
+  'Listeden kaldır': 'Poista listalta',
+  'Listeden kaldırılsın mı?': 'Poistetaanko listalta?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Tämä nimike poistetaan listalta. Jos haluat vain piilottaa sen, käytä silmäkuvaketta.',
+  'Sıralama kaydedilemedi': 'Järjestystä ei voitu tallentaa',
+  'Değişiklik kaydedilemedi': 'Muutosta ei voitu tallentaa',
+  'Kaldırılamadı': 'Poistaminen ei onnistunut',
 };

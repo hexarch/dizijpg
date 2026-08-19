@@ -1179,4 +1179,16 @@ const Map<String, String> cevirilerHu = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Képernyőidőd, sorozatod és a legtöbbet nézettek',
   'Daralt': 'Összecsukás',
+  'Listeyi düzenle': 'Lista szerkesztése',
+  'Bitti': 'Kész',
+  'Sırala': 'Átrendezés',
+  'Herkese göster': 'Megjelenítés mindenkinek',
+  'Başkalarından gizle': 'Elrejtés mások elől',
+  'Listeden kaldır': 'Eltávolítás a listáról',
+  'Listeden kaldırılsın mı?': 'Eltávolítod a listáról?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Ez a cím lekerül a listáról. Ha csak el szeretnéd rejteni, használd a szem ikont.',
+  'Sıralama kaydedilemedi': 'A sorrendet nem sikerült menteni',
+  'Değişiklik kaydedilemedi': 'A módosítást nem sikerült menteni',
+  'Kaldırılamadı': 'Nem sikerült eltávolítani',
 };

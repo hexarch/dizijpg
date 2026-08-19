@@ -1161,4 +1161,16 @@ const Map<String, String> cevirilerAz = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Ekran vaxtın, seriyan və ən çox izlədiklərin',
   'Daralt': 'Yığcamlaşdır',
+  'Listeyi düzenle': 'Siyahını redaktə et',
+  'Bitti': 'Bitdi',
+  'Sırala': 'Sırala',
+  'Herkese göster': 'Hamıya göstər',
+  'Başkalarından gizle': 'Başqalarından gizlət',
+  'Listeden kaldır': 'Siyahıdan çıxar',
+  'Listeden kaldırılsın mı?': 'Siyahıdan çıxarılsın?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Bu yapım siyahıdan çıxarılacaq. Yalnız gizlətmək istəyirsənsə, göz işarəsindən istifadə et.',
+  'Sıralama kaydedilemedi': 'Sıralama yadda saxlanmadı',
+  'Değişiklik kaydedilemedi': 'Dəyişiklik yadda saxlanmadı',
+  'Kaldırılamadı': 'Çıxarıla bilmədi',
 };

@@ -1111,4 +1111,16 @@ const Map<String, String> cevirilerJa = {
   'Son {} gün · haftalık': '直近{}日 · 週別',
   'Ekran süren, serin ve en çok izlediklerin': '視聴時間、連続記録、よく見た作品',
   'Daralt': '折りたたむ',
+  'Listeyi düzenle': 'リストを編集',
+  'Bitti': '完了',
+  'Sırala': '並べ替え',
+  'Herkese göster': '全員に表示',
+  'Başkalarından gizle': '他の人から隠す',
+  'Listeden kaldır': 'リストから削除',
+  'Listeden kaldırılsın mı?': 'リストから削除しますか？',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'この作品はリストから外されます。隠すだけなら目のアイコンを使ってください。',
+  'Sıralama kaydedilemedi': '並び順を保存できませんでした',
+  'Değişiklik kaydedilemedi': '変更を保存できませんでした',
+  'Kaldırılamadı': '削除できませんでした',
 };

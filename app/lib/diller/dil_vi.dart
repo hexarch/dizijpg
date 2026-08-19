@@ -1169,4 +1169,16 @@ const Map<String, String> cevirilerVi = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Thời gian xem, chuỗi ngày và mục xem nhiều nhất của bạn',
   'Daralt': 'Thu gọn',
+  'Listeyi düzenle': 'Sửa danh sách',
+  'Bitti': 'Xong',
+  'Sırala': 'Sắp xếp',
+  'Herkese göster': 'Hiện với mọi người',
+  'Başkalarından gizle': 'Ẩn với người khác',
+  'Listeden kaldır': 'Xóa khỏi danh sách',
+  'Listeden kaldırılsın mı?': 'Xóa khỏi danh sách?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Tựa này sẽ bị lấy ra khỏi danh sách. Nếu bạn chỉ muốn ẩn nó, hãy dùng biểu tượng con mắt.',
+  'Sıralama kaydedilemedi': 'Không lưu được thứ tự',
+  'Değişiklik kaydedilemedi': 'Không lưu được thay đổi',
+  'Kaldırılamadı': 'Không xóa được',
 };

@@ -1176,4 +1176,16 @@ const Map<String, String> cevirilerMy = {
   'Ekran süren, serin ve en çok izlediklerin':
       'သင့်ဖန်သားပြင်အချိန်၊ စဉ်ဆက်နှင့် အများဆုံးကြည့်ထားသည်များ',
   'Daralt': 'ခေါက်သိမ်းရန်',
+  'Listeyi düzenle': 'စာရင်း တည်းဖြတ်ရန်',
+  'Bitti': 'ပြီးပါပြီ',
+  'Sırala': 'အစီအစဉ်ပြောင်းရန်',
+  'Herkese göster': 'အားလုံးကို ပြရန်',
+  'Başkalarından gizle': 'အခြားသူများထံမှ ဖျောက်ရန်',
+  'Listeden kaldır': 'စာရင်းမှ ဖယ်ရန်',
+  'Listeden kaldırılsın mı?': 'စာရင်းမှ ဖယ်မလား။',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'ဤခေါင်းစဉ်ကို စာရင်းမှ ဖယ်ရှားပါမည်။ ဖျောက်ထားရုံသာ လိုချင်ပါက မျက်လုံးသင်္ကေတကို သုံးပါ။',
+  'Sıralama kaydedilemedi': 'အစီအစဉ်ကို မသိမ်းနိုင်ပါ',
+  'Değişiklik kaydedilemedi': 'ပြောင်းလဲမှုကို မသိမ်းနိုင်ပါ',
+  'Kaldırılamadı': 'မဖယ်ရှားနိုင်ပါ',
 };

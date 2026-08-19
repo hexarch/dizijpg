@@ -1168,4 +1168,16 @@ const Map<String, String> cevirilerUr = {
   'Ekran süren, serin ve en çok izlediklerin':
       'آپ کا اسکرین وقت، سلسلہ اور سب سے زیادہ دیکھے گئے',
   'Daralt': 'سمیٹیں',
+  'Listeyi düzenle': 'فہرست میں ترمیم',
+  'Bitti': 'ہو گیا',
+  'Sırala': 'ترتیب دیں',
+  'Herkese göster': 'سب کو دکھائیں',
+  'Başkalarından gizle': 'دوسروں سے چھپائیں',
+  'Listeden kaldır': 'فہرست سے ہٹائیں',
+  'Listeden kaldırılsın mı?': 'فہرست سے ہٹا دیں؟',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'یہ عنوان فہرست سے نکال دیا جائے گا۔ اگر آپ اسے صرف چھپانا چاہتے ہیں تو آنکھ کا نشان استعمال کریں۔',
+  'Sıralama kaydedilemedi': 'ترتیب محفوظ نہ ہو سکی',
+  'Değişiklik kaydedilemedi': 'تبدیلی محفوظ نہ ہو سکی',
+  'Kaldırılamadı': 'ہٹایا نہ جا سکا',
 };

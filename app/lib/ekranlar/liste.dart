@@ -28,6 +28,12 @@ class ListeEkrani extends StatefulWidget {
 class _ListeEkraniState extends State<ListeEkrani> {
   Map<String, dynamic>? _liste;
 
+  /// Düzenleme kipi ve sahiplik — modal ([ListeSheet]) ile AYNI desen:
+  /// bayrak burada durur çünkü düzenle düğmesi liste ADININ yanında, yani
+  /// AppBar'da; sahiplik bilgisi sunucudan [ListeIcerigi] üzerinden gelir.
+  bool _duzenleme = false;
+  bool _sahibiyim = false;
+
   @override
   Widget build(BuildContext context) {
     final ad = (_liste?['ad'] as String?)?.trim() ?? '';
@@ -54,9 +60,16 @@ class _ListeEkraniState extends State<ListeEkrani> {
                     ),
                 ],
               ),
-        // Oturumsuz ziyaretçinin alt gezinme çubuğu yoktur; bu buton olmasa
-        // sayfada çıkışsız kalırdı (içerik sayfalarındaki kalıbın aynısı).
-        actions: const [GirisEylemi()],
+        actions: [
+          if (_sahibiyim)
+            ListeDuzenleDugmesi(
+              duzenleme: _duzenleme,
+              onDegis: () => setState(() => _duzenleme = !_duzenleme),
+            ),
+          // Oturumsuz ziyaretçinin alt gezinme çubuğu yoktur; bu buton olmasa
+          // sayfada çıkışsız kalırdı (içerik sayfalarındaki kalıbın aynısı).
+          const GirisEylemi(),
+        ],
       ),
       // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
       // (madde 26); mobilde kısıt bağlamaz. Profildeki [ListeSheet] kendi
@@ -65,8 +78,12 @@ class _ListeEkraniState extends State<ListeEkrani> {
         azami: masaustuIcerikGenisligi,
         cocuk: ListeIcerigi(
           listeId: widget.listeId,
+          duzenleme: _duzenleme,
           onListe: (l) {
             if (mounted) setState(() => _liste = l);
+          },
+          onSahiplik: (v) {
+            if (mounted && v != _sahibiyim) setState(() => _sahibiyim = v);
           },
         ),
       ),

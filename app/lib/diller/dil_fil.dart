@@ -1190,4 +1190,16 @@ const Map<String, String> cevirilerFil = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Ang oras mo sa screen, sunod-sunod at pinakamadalas panoorin',
   'Daralt': 'I-collapse',
+  'Listeyi düzenle': 'I-edit ang listahan',
+  'Bitti': 'Tapos na',
+  'Sırala': 'Ayusin ang pagkakasunod',
+  'Herkese göster': 'Ipakita sa lahat',
+  'Başkalarından gizle': 'Itago sa iba',
+  'Listeden kaldır': 'Alisin sa listahan',
+  'Listeden kaldırılsın mı?': 'Alisin sa listahan?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Aalisin ang pamagat na ito sa listahan. Kung gusto mo lang itagong, gamitin ang icon na mata.',
+  'Sıralama kaydedilemedi': 'Hindi na-save ang pagkakasunod',
+  'Değişiklik kaydedilemedi': 'Hindi na-save ang pagbabago',
+  'Kaldırılamadı': 'Hindi naalis',
 };

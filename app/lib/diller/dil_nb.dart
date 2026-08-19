@@ -1168,4 +1168,16 @@ const Map<String, String> cevirilerNb = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Skjermtiden din, rekken og mest sett',
   'Daralt': 'Skjul',
+  'Listeyi düzenle': 'Rediger liste',
+  'Bitti': 'Ferdig',
+  'Sırala': 'Endre rekkefølge',
+  'Herkese göster': 'Vis for alle',
+  'Başkalarından gizle': 'Skjul for andre',
+  'Listeden kaldır': 'Fjern fra listen',
+  'Listeden kaldırılsın mı?': 'Fjerne fra listen?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Tittelen tas ut av listen. Vil du bare skjule den, bruk øyeikonet.',
+  'Sıralama kaydedilemedi': 'Rekkefølgen kunne ikke lagres',
+  'Değişiklik kaydedilemedi': 'Endringen kunne ikke lagres',
+  'Kaldırılamadı': 'Kunne ikke fjernes',
 };

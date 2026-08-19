@@ -1113,4 +1113,16 @@ const Map<String, String> cevirilerKo = {
   'Son {} gün · haftalık': '최근 {}일 · 주별',
   'Ekran süren, serin ve en çok izlediklerin': '시청 시간, 연속 기록, 가장 많이 본 작품',
   'Daralt': '접기',
+  'Listeyi düzenle': '목록 편집',
+  'Bitti': '완료',
+  'Sırala': '순서 변경',
+  'Herkese göster': '모두에게 표시',
+  'Başkalarından gizle': '다른 사람에게 숨기기',
+  'Listeden kaldır': '목록에서 제거',
+  'Listeden kaldırılsın mı?': '목록에서 제거할까요?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      '이 작품이 목록에서 빠집니다. 숨기기만 하려면 눈 아이콘을 사용하세요.',
+  'Sıralama kaydedilemedi': '순서를 저장하지 못했습니다',
+  'Değişiklik kaydedilemedi': '변경 사항을 저장하지 못했습니다',
+  'Kaldırılamadı': '제거하지 못했습니다',
 };

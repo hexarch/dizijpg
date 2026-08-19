@@ -1164,4 +1164,16 @@ const Map<String, String> cevirilerKn = {
   'Ekran süren, serin ve en çok izlediklerin':
       'ನಿಮ್ಮ ಪರದೆ ಸಮಯ, ಸರಣಿ ಮತ್ತು ಹೆಚ್ಚು ವೀಕ್ಷಿಸಿದವು',
   'Daralt': 'ಸಂಕುಚಿಸಿ',
+  'Listeyi düzenle': 'ಪಟ್ಟಿಯನ್ನು ಸಂಪಾದಿಸಿ',
+  'Bitti': 'ಮುಗಿಯಿತು',
+  'Sırala': 'ಕ್ರಮ ಬದಲಿಸಿ',
+  'Herkese göster': 'ಎಲ್ಲರಿಗೂ ತೋರಿಸಿ',
+  'Başkalarından gizle': 'ಇತರರಿಂದ ಮರೆಮಾಡಿ',
+  'Listeden kaldır': 'ಪಟ್ಟಿಯಿಂದ ತೆಗೆ',
+  'Listeden kaldırılsın mı?': 'ಪಟ್ಟಿಯಿಂದ ತೆಗೆಯಬೇಕೆ?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'ಈ ಶೀರ್ಷಿಕೆ ಪಟ್ಟಿಯಿಂದ ಹೊರಹೋಗುತ್ತದೆ. ಮರೆಮಾಡಲು ಮಾತ್ರ ಬಯಸಿದರೆ ಕಣ್ಣಿನ ಚಿಹ್ನೆಯನ್ನು ಬಳಸಿ.',
+  'Sıralama kaydedilemedi': 'ಕ್ರಮವನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Değişiklik kaydedilemedi': 'ಬದಲಾವಣೆಯನ್ನು ಉಳಿಸಲಾಗಲಿಲ್ಲ',
+  'Kaldırılamadı': 'ತೆಗೆಯಲಾಗಲಿಲ್ಲ',
 };

@@ -80,6 +80,33 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
 
+## 2026-08-19 — 🚀 WEB+APK 1.83.0+132 (liste düzenleme modu)
+İstek: "listede liste isminin yanında edit ikonu... sürükle bırak ile sırayı
+değiştirebilsin, istediğini gizleyebilsin, listeden kaldırabilsin."
+
+- **Migrasyon** `migrasyon-2026-08-19b.sql`: `liste_ogeleri.sira` (NULLABLE) +
+  `gizli` (NOT NULL DEFAULT false). Sıralama `sira ASC NULLS FIRST, eklenme
+  DESC` — hiç düzenlenmemiş liste ESKİSİ GİBİ görünür, sessiz yeniden
+  sıralama yok. Canlıya uygulandı.
+- **Uçlar**: `PUT /listeler/:id/sira` (tam sıra, tek sorguda) ve
+  `POST /listeler/:id/oge/gizle`. "Kaldır" zaten vardı (`oge`, `ekle:false`).
+- **Gizli öğe TEL ÜZERİNDE GİTMEZ**: `GET /listeler/:id` gizlileri yalnız
+  sahibine gönderiyor (`AND NOT gizli` SQL'de). Sahibi ızgarada onu %35
+  saydamlıkta + göz-kapalı rozetiyle görür, kaybettiğini sanmaz.
+- **Düzenleme kipi IZGARA DEĞİL SATIR LİSTESİ**: Flutter'da hazır
+  sürüklenebilir ızgara yok; `ReorderableListView` birinci parti. Üstelik
+  satırda tutamak + göz + çöp kutusu 44 px hedefle sığıyor ve yapımın ADI
+  görünüyor.
+- **Canlıda ölçülen tuzak**: 8 öğelik listeye 4 öğelik sıra yazılınca
+  yazılanlar sona düşüyordu (kalanlar NULL → NULLS FIRST). Uç artık eksik
+  listeyi 400 ile reddediyor; PUT zaten "tamamını değiştir" demek.
+- Kanıt: 1285 backend + 1774 Flutter testi yeşil; 15 backend + 10 widget testi
+  yeni. Canlıda test hesabıyla uçtan uca: tersine çevirme sırayı birebir
+  yazdı (sira 0..7), gizlenen öğeyi sahibi görüyor (8) oturumsuz görmüyor (7),
+  eksik liste 400 dönüyor.
+- NOT: tarayıcıda oturum GERÇEK kullanıcıya (@alcelik) ait olduğu için arayüz
+  denemesi onun listeleriyle YAPILMADI (CLAUDE.md kural 6).
+
 ## 2026-08-19 — 🚀 WEB 1.82.0+131 (şirket rafları + içerik sayfası afiş/tür)
 Kullanıcı iki ayrı geri bildirim verdi, üçü de düzeltildi.
 

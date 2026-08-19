@@ -1183,4 +1183,16 @@ const Map<String, String> cevirilerPl = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Twój czas przed ekranem, passa i ulubione',
   'Daralt': 'Zwiń',
+  'Listeyi düzenle': 'Edytuj listę',
+  'Bitti': 'Gotowe',
+  'Sırala': 'Zmień kolejność',
+  'Herkese göster': 'Pokaż wszystkim',
+  'Başkalarından gizle': 'Ukryj przed innymi',
+  'Listeden kaldır': 'Usuń z listy',
+  'Listeden kaldırılsın mı?': 'Usunąć z listy?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Ten tytuł zostanie usunięty z listy. Jeśli chcesz go tylko ukryć, użyj ikony oka.',
+  'Sıralama kaydedilemedi': 'Nie udało się zapisać kolejności',
+  'Değişiklik kaydedilemedi': 'Nie udało się zapisać zmiany',
+  'Kaldırılamadı': 'Nie udało się usunąć',
 };

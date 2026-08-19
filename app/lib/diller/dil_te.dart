@@ -1166,4 +1166,16 @@ const Map<String, String> cevirilerTe = {
   'Ekran süren, serin ve en çok izlediklerin':
       'మీ స్క్రీన్ సమయం, పరంపర మరియు ఎక్కువగా చూసినవి',
   'Daralt': 'కుదించు',
+  'Listeyi düzenle': 'జాబితాను సవరించు',
+  'Bitti': 'పూర్తయింది',
+  'Sırala': 'క్రమం మార్చు',
+  'Herkese göster': 'అందరికీ చూపు',
+  'Başkalarından gizle': 'ఇతరుల నుండి దాచు',
+  'Listeden kaldır': 'జాబితా నుండి తీసివేయి',
+  'Listeden kaldırılsın mı?': 'జాబితా నుండి తీసివేయాలా?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'ఈ శీర్షిక జాబితా నుండి తొలగించబడుతుంది. దాచాలనుకుంటే కంటి గుర్తును ఉపయోగించు.',
+  'Sıralama kaydedilemedi': 'క్రమాన్ని సేవ్ చేయలేకపోయాం',
+  'Değişiklik kaydedilemedi': 'మార్పును సేవ్ చేయలేకపోయాం',
+  'Kaldırılamadı': 'తీసివేయలేకపోయాం',
 };

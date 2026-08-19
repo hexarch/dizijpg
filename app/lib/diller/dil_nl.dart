@@ -1175,4 +1175,16 @@ const Map<String, String> cevirilerNl = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Je schermtijd, reeks en meest gekeken',
   'Daralt': 'Inklappen',
+  'Listeyi düzenle': 'Lijst bewerken',
+  'Bitti': 'Klaar',
+  'Sırala': 'Herschikken',
+  'Herkese göster': 'Aan iedereen tonen',
+  'Başkalarından gizle': 'Voor anderen verbergen',
+  'Listeden kaldır': 'Uit lijst verwijderen',
+  'Listeden kaldırılsın mı?': 'Uit de lijst verwijderen?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Deze titel wordt uit de lijst gehaald. Wil je hem alleen verbergen, gebruik dan het oogpictogram.',
+  'Sıralama kaydedilemedi': 'Volgorde kon niet worden opgeslagen',
+  'Değişiklik kaydedilemedi': 'Wijziging kon niet worden opgeslagen',
+  'Kaldırılamadı': 'Kon niet worden verwijderd',
 };

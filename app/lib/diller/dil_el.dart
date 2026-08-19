@@ -1189,4 +1189,16 @@ const Map<String, String> cevirilerEl = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Ο χρόνος οθόνης, το σερί και τα πιο παρακολουθημένα σου',
   'Daralt': 'Σύμπτυξη',
+  'Listeyi düzenle': 'Επεξεργασία λίστας',
+  'Bitti': 'Τέλος',
+  'Sırala': 'Αναδιάταξη',
+  'Herkese göster': 'Εμφάνιση σε όλους',
+  'Başkalarından gizle': 'Απόκρυψη από άλλους',
+  'Listeden kaldır': 'Αφαίρεση από τη λίστα',
+  'Listeden kaldırılsın mı?': 'Αφαίρεση από τη λίστα;',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Αυτός ο τίτλος θα βγει από τη λίστα. Αν θέλεις μόνο να τον κρύψεις, χρησιμοποίησε το εικονίδιο του ματιού.',
+  'Sıralama kaydedilemedi': 'Η σειρά δεν αποθηκεύτηκε',
+  'Değişiklik kaydedilemedi': 'Η αλλαγή δεν αποθηκεύτηκε',
+  'Kaldırılamadı': 'Δεν ήταν δυνατή η αφαίρεση',
 };

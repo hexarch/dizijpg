@@ -1166,4 +1166,16 @@ const Map<String, String> cevirilerPa = {
   'Ekran süren, serin ve en çok izlediklerin':
       'ਤੁਹਾਡਾ ਸਕ੍ਰੀਨ ਸਮਾਂ, ਲੜੀ ਅਤੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੇ ਗਏ',
   'Daralt': 'ਸੰਖੇਪ ਕਰੋ',
+  'Listeyi düzenle': 'ਸੂਚੀ ਸੋਧੋ',
+  'Bitti': 'ਹੋ ਗਿਆ',
+  'Sırala': 'ਕ੍ਰਮ ਬਦਲੋ',
+  'Herkese göster': 'ਸਾਰਿਆਂ ਨੂੰ ਦਿਖਾਓ',
+  'Başkalarından gizle': 'ਹੋਰਾਂ ਤੋਂ ਲੁਕਾਓ',
+  'Listeden kaldır': 'ਸੂਚੀ ਵਿੱਚੋਂ ਹਟਾਓ',
+  'Listeden kaldırılsın mı?': 'ਸੂਚੀ ਵਿੱਚੋਂ ਹਟਾਈਏ?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'ਇਹ ਸਿਰਲੇਖ ਸੂਚੀ ਵਿੱਚੋਂ ਕੱਢ ਦਿੱਤਾ ਜਾਵੇਗਾ। ਜੇ ਸਿਰਫ਼ ਲੁਕਾਉਣਾ ਹੈ ਤਾਂ ਅੱਖ ਦਾ ਨਿਸ਼ਾਨ ਵਰਤੋ।',
+  'Sıralama kaydedilemedi': 'ਕ੍ਰਮ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
+  'Değişiklik kaydedilemedi': 'ਤਬਦੀਲੀ ਸੰਭਾਲੀ ਨਹੀਂ ਜਾ ਸਕੀ',
+  'Kaldırılamadı': 'ਹਟਾਇਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
 };

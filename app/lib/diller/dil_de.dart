@@ -1193,4 +1193,16 @@ const Map<String, String> cevirilerDe = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Deine Bildschirmzeit, Serie und Favoriten',
   'Daralt': 'Einklappen',
+  'Listeyi düzenle': 'Liste bearbeiten',
+  'Bitti': 'Fertig',
+  'Sırala': 'Sortieren',
+  'Herkese göster': 'Für alle anzeigen',
+  'Başkalarından gizle': 'Vor anderen verbergen',
+  'Listeden kaldır': 'Aus der Liste entfernen',
+  'Listeden kaldırılsın mı?': 'Aus der Liste entfernen?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Dieser Titel wird aus der Liste genommen. Wenn du ihn nur verbergen möchtest, nutze das Augensymbol.',
+  'Sıralama kaydedilemedi': 'Reihenfolge konnte nicht gespeichert werden',
+  'Değişiklik kaydedilemedi': 'Änderung konnte nicht gespeichert werden',
+  'Kaldırılamadı': 'Konnte nicht entfernt werden',
 };

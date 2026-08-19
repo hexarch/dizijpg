@@ -1185,4 +1185,16 @@ const Map<String, String> cevirilerTa = {
   'Ekran süren, serin ve en çok izlediklerin':
       'உங்கள் திரை நேரம், தொடர் மற்றும் அதிகம் பார்த்தவை',
   'Daralt': 'சுருக்கு',
+  'Listeyi düzenle': 'பட்டியலைத் திருத்து',
+  'Bitti': 'முடிந்தது',
+  'Sırala': 'வரிசை மாற்று',
+  'Herkese göster': 'அனைவருக்கும் காட்டு',
+  'Başkalarından gizle': 'மற்றவர்களிடமிருந்து மறை',
+  'Listeden kaldır': 'பட்டியலிலிருந்து நீக்கு',
+  'Listeden kaldırılsın mı?': 'பட்டியலிலிருந்து நீக்கவா?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'இந்தத் தலைப்பு பட்டியலிலிருந்து நீக்கப்படும். மறைக்க மட்டும் விரும்பினால் கண் சின்னத்தைப் பயன்படுத்து.',
+  'Sıralama kaydedilemedi': 'வரிசையைச் சேமிக்க முடியவில்லை',
+  'Değişiklik kaydedilemedi': 'மாற்றத்தைச் சேமிக்க முடியவில்லை',
+  'Kaldırılamadı': 'நீக்க முடியவில்லை',
 };

@@ -1184,4 +1184,16 @@ const Map<String, String> cevirilerEs = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Tu tiempo de pantalla, racha y lo más visto',
   'Daralt': 'Contraer',
+  'Listeyi düzenle': 'Editar lista',
+  'Bitti': 'Listo',
+  'Sırala': 'Reordenar',
+  'Herkese göster': 'Mostrar a todos',
+  'Başkalarından gizle': 'Ocultar a los demás',
+  'Listeden kaldır': 'Quitar de la lista',
+  'Listeden kaldırılsın mı?': '¿Quitar de la lista?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Este título saldrá de la lista. Si solo quieres ocultarlo, usa el icono del ojo.',
+  'Sıralama kaydedilemedi': 'No se pudo guardar el orden',
+  'Değişiklik kaydedilemedi': 'No se pudo guardar el cambio',
+  'Kaldırılamadı': 'No se pudo quitar',
 };

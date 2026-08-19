@@ -1164,4 +1164,16 @@ const Map<String, String> cevirilerCs = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Tvůj čas u obrazovky, série a nejsledovanější',
   'Daralt': 'Sbalit',
+  'Listeyi düzenle': 'Upravit seznam',
+  'Bitti': 'Hotovo',
+  'Sırala': 'Změnit pořadí',
+  'Herkese göster': 'Zobrazit všem',
+  'Başkalarından gizle': 'Skrýt před ostatními',
+  'Listeden kaldır': 'Odebrat ze seznamu',
+  'Listeden kaldırılsın mı?': 'Odebrat ze seznamu?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Tento titul bude ze seznamu odebrán. Pokud jej chceš jen skrýt, použij ikonu oka.',
+  'Sıralama kaydedilemedi': 'Pořadí se nepodařilo uložit',
+  'Değişiklik kaydedilemedi': 'Změnu se nepodařilo uložit',
+  'Kaldırılamadı': 'Nepodařilo se odebrat',
 };

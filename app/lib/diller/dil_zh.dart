@@ -1096,4 +1096,16 @@ const Map<String, String> cevirilerZh = {
   'Son {} gün · haftalık': '最近 {} 天 · 按周',
   'Ekran süren, serin ve en çok izlediklerin': '你的观看时长、连续记录和最常看的作品',
   'Daralt': '收起',
+  'Listeyi düzenle': '编辑列表',
+  'Bitti': '完成',
+  'Sırala': '重新排序',
+  'Herkese göster': '对所有人显示',
+  'Başkalarından gizle': '对他人隐藏',
+  'Listeden kaldır': '从列表中移除',
+  'Listeden kaldırılsın mı?': '要从列表中移除吗？',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      '该作品将从列表中移除。如果只想隐藏，请使用眼睛图标。',
+  'Sıralama kaydedilemedi': '无法保存顺序',
+  'Değişiklik kaydedilemedi': '无法保存更改',
+  'Kaldırılamadı': '无法移除',
 };

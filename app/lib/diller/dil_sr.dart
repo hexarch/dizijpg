@@ -1173,4 +1173,16 @@ const Map<String, String> cevirilerSr = {
   'Ekran süren, serin ve en çok izlediklerin':
       'Tvoje vreme pred ekranom, niz i najgledanije',
   'Daralt': 'Skupi',
+  'Listeyi düzenle': 'Izmeni listu',
+  'Bitti': 'Gotovo',
+  'Sırala': 'Promeni redosled',
+  'Herkese göster': 'Prikaži svima',
+  'Başkalarından gizle': 'Sakrij od drugih',
+  'Listeden kaldır': 'Ukloni sa liste',
+  'Listeden kaldırılsın mı?': 'Ukloniti sa liste?',
+  'Bu yapım listeden çıkarılacak. Gizlemek istersen göz simgesini kullanabilirsin.':
+      'Ovaj naslov će biti uklonjen sa liste. Ako želiš samo da ga sakriješ, koristi ikonicu oka.',
+  'Sıralama kaydedilemedi': 'Redosled nije sačuvan',
+  'Değişiklik kaydedilemedi': 'Izmena nije sačuvana',
+  'Kaldırılamadı': 'Nije moglo da se ukloni',
 };
