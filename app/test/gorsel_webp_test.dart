@@ -239,7 +239,12 @@ void main() {
           );
           if (pencere.contains('gorselBasliklari')) {
             baslikliNoktalar++;
-          } else if (!pencere.contains('dosyaUrl(')) {
+            // `youtubeKapakUrl`: adres i.ytimg.com'a gider, TMDB'ye değil —
+            // oraya TMDB'nin WebP başlıklarını göndermek anlamsız olurdu.
+            // Bu ayrıklık 19 Ağu 2026'da eklendi; testi kırmak için değil,
+            // taramanın TMDB DIŞI kaynakları da tanıması için.
+          } else if (!pencere.contains('dosyaUrl(') &&
+              !pencere.contains('youtubeKapakUrl')) {
             final satir = kod.substring(0, eslesme.start).split('\n').length;
             eksikler.add('${dosya.path}:$satir');
           }

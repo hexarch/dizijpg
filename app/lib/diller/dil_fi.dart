@@ -1147,4 +1147,32 @@ const Map<String, String> cevirilerFi = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Soittopalvelu käynnistyy uudelleen; yritä hetken kuluttua',
   'Puan göstergesi': 'Arvosanojen selite',
+  'İzleme İstatistiklerim': 'Katselutilastoni',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Kun merkitset jakson tai elokuvan katsotuksi, tilastosi alkavat kertyä tänne.',
+  '{} sa {} dk': '{} t {} min',
+  'Yaklaşık ekran süresi': 'Arvioitu ruutuaika',
+  'İzleme serisi': 'Katseluputki',
+  'Şu anki seri': 'Nykyinen putki',
+  'En uzun seri': 'Pisin putki',
+  'Haftanın günleri': 'Viikonpäivät',
+  'En çok izlediklerin': 'Katsotuimmat',
+  'Bu dönemde izleme yok': 'Ei katselua tällä jaksolla',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Kaikkien aikojen: {} jaksoa · {} elokuvaa · ~{}',
+  'Paz': 'su',
+  'Pzt': 'ma',
+  'Sal': 'ti',
+  'Çar': 'ke',
+  'Per': 'to',
+  'Cum': 'pe',
+  'Cmt': 'la',
+  '{} bölüm': '{} jaksoa',
+  '{} bölüm~tekil': '{} jakso',
+  '{} kez': '{} kertaa',
+  '{} kez~tekil': '{} kerta',
+  'Son {} gün · günlük': 'Viimeiset {} päivää · päivittäin',
+  'Son {} gün · haftalık': 'Viimeiset {} päivää · viikoittain',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Ruutuaikasi, putkesi ja katsotuimmat',
 };

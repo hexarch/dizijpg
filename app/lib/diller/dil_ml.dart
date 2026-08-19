@@ -1139,4 +1139,32 @@ const Map<String, String> cevirilerMl = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'കോളിംഗ് സേവനം വീണ്ടും ആരംഭിക്കുന്നു; അൽപ്പം കഴിഞ്ഞ് ശ്രമിക്കൂ',
   'Puan göstergesi': 'റേറ്റിംഗ് ലെജൻഡ്',
+  'İzleme İstatistiklerim': 'എന്റെ കാഴ്ച സ്ഥിതിവിവരങ്ങൾ',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'ഒരു എപ്പിസോഡോ സിനിമയോ കണ്ടതായി അടയാളപ്പെടുത്തിയാൽ ഉടൻ നിങ്ങളുടെ സ്ഥിതിവിവരങ്ങൾ ഇവിടെ ശേഖരിക്കാൻ തുടങ്ങും.',
+  '{} sa {} dk': '{} മ {} മി',
+  'Yaklaşık ekran süresi': 'ഏകദേശ സ്ക്രീൻ സമയം',
+  'İzleme serisi': 'കാഴ്ച പരമ്പര',
+  'Şu anki seri': 'നിലവിലെ പരമ്പര',
+  'En uzun seri': 'ഏറ്റവും നീണ്ട പരമ്പര',
+  'Haftanın günleri': 'ആഴ്ചയിലെ ദിവസങ്ങൾ',
+  'En çok izlediklerin': 'ഏറ്റവും കൂടുതൽ കണ്ടവ',
+  'Bu dönemde izleme yok': 'ഈ കാലയളവിൽ കാഴ്ചയില്ല',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'എക്കാലവും: {} എപ്പിസോഡുകൾ · {} സിനിമകൾ · ~{}',
+  'Paz': 'ഞായ',
+  'Pzt': 'തിങ്ക',
+  'Sal': 'ചൊവ്വ',
+  'Çar': 'ബുധ',
+  'Per': 'വ്യാഴ',
+  'Cum': 'വെള്ളി',
+  'Cmt': 'ശനി',
+  '{} bölüm': '{} എപ്പിസോഡുകൾ',
+  '{} bölüm~tekil': '{} എപ്പിസോഡ്',
+  '{} kez': '{} തവണ',
+  '{} kez~tekil': '{} തവണ',
+  'Son {} gün · günlük': 'അവസാന {} ദിവസം · ദിവസേന',
+  'Son {} gün · haftalık': 'അവസാന {} ദിവസം · പ്രതിവാരം',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'നിങ്ങളുടെ സ്ക്രീൻ സമയം, പരമ്പര, ഏറ്റവും കൂടുതൽ കണ്ടവ',
 };

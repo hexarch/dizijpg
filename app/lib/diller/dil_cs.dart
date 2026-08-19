@@ -1135,4 +1135,32 @@ const Map<String, String> cevirilerCs = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Služba volání se restartuje; zkus to za chvíli',
   'Puan göstergesi': 'Legenda hodnocení',
+  'İzleme İstatistiklerim': 'Moje statistiky sledování',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Jakmile označíš epizodu nebo film jako zhlédnuté, tvoje statistiky se tu začnou hromadit.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Přibližný čas u obrazovky',
+  'İzleme serisi': 'Série sledování',
+  'Şu anki seri': 'Aktuální série',
+  'En uzun seri': 'Nejdelší série',
+  'Haftanın günleri': 'Dny v týdnu',
+  'En çok izlediklerin': 'Nejvíce sledované',
+  'Bu dönemde izleme yok': 'V tomto období žádné sledování',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Celkem: {} epizod · {} filmů · ~{}',
+  'Paz': 'ne',
+  'Pzt': 'po',
+  'Sal': 'út',
+  'Çar': 'st',
+  'Per': 'čt',
+  'Cum': 'pá',
+  'Cmt': 'so',
+  '{} bölüm': '{} epizod',
+  '{} bölüm~tekil': '{} epizoda',
+  '{} kez': '{} krát',
+  '{} kez~tekil': '{} krát',
+  'Son {} gün · günlük': 'Posledních {} dní · denně',
+  'Son {} gün · haftalık': 'Posledních {} dní · týdně',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Tvůj čas u obrazovky, série a nejsledovanější',
 };

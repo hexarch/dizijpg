@@ -1161,4 +1161,32 @@ const Map<String, String> cevirilerFil = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Nagre-restart ang calling service; subukan ulit sa ilang sandali',
   'Puan göstergesi': 'Gabay sa rating',
+  'İzleme İstatistiklerim': 'Aking Istatistika sa Panonood',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Sa sandaling markahan mo ang isang episode o pelikula bilang napanood, magsisimulang mag-ipon dito ang iyong istatistika.',
+  '{} sa {} dk': '{} o {} min',
+  'Yaklaşık ekran süresi': 'Tinatayang oras sa screen',
+  'İzleme serisi': 'Sunod-sunod na panonood',
+  'Şu anki seri': 'Kasalukuyang sunod-sunod',
+  'En uzun seri': 'Pinakamahabang sunod-sunod',
+  'Haftanın günleri': 'Mga araw ng linggo',
+  'En çok izlediklerin': 'Pinakamadalas panoorin',
+  'Bu dönemde izleme yok': 'Walang panonood sa panahong ito',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Sa kabuuan: {} episode · {} pelikula · ~{}',
+  'Paz': 'Lin',
+  'Pzt': 'Lun',
+  'Sal': 'Mar',
+  'Çar': 'Miy',
+  'Per': 'Huw',
+  'Cum': 'Biy',
+  'Cmt': 'Sab',
+  '{} bölüm': '{} episode',
+  '{} bölüm~tekil': '{} episode',
+  '{} kez': '{} beses',
+  '{} kez~tekil': '{} beses',
+  'Son {} gün · günlük': 'Huling {} araw · araw-araw',
+  'Son {} gün · haftalık': 'Huling {} araw · lingguhan',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Ang oras mo sa screen, sunod-sunod at pinakamadalas panoorin',
 };

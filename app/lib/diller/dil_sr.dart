@@ -1144,4 +1144,32 @@ const Map<String, String> cevirilerSr = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Услуга позива се поново покреће; покушај ускоро',
   'Puan göstergesi': 'Легенда оцена',
+  'İzleme İstatistiklerim': 'Moja statistika gledanja',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Čim označiš epizodu ili film kao odgledane, tvoja statistika počinje da se skuplja ovde.',
+  '{} sa {} dk': '{} č {} min',
+  'Yaklaşık ekran süresi': 'Približno vreme pred ekranom',
+  'İzleme serisi': 'Niz gledanja',
+  'Şu anki seri': 'Trenutni niz',
+  'En uzun seri': 'Najduži niz',
+  'Haftanın günleri': 'Dani u nedelji',
+  'En çok izlediklerin': 'Najviše gledano',
+  'Bu dönemde izleme yok': 'Nema gledanja u ovom periodu',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Sve vreme: {} epizoda · {} filmova · ~{}',
+  'Paz': 'ned',
+  'Pzt': 'pon',
+  'Sal': 'uto',
+  'Çar': 'sre',
+  'Per': 'čet',
+  'Cum': 'pet',
+  'Cmt': 'sub',
+  '{} bölüm': '{} epizoda',
+  '{} bölüm~tekil': '{} epizoda',
+  '{} kez': '{} puta',
+  '{} kez~tekil': '{} put',
+  'Son {} gün · günlük': 'Poslednjih {} dana · dnevno',
+  'Son {} gün · haftalık': 'Poslednjih {} dana · nedeljno',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Tvoje vreme pred ekranom, niz i najgledanije',
 };

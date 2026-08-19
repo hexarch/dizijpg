@@ -1132,4 +1132,32 @@ const Map<String, String> cevirilerBn = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'কল সেবা রিস্টার্ট হচ্ছে; কিছুক্ষণ পর চেষ্টা করো',
   'Puan göstergesi': 'রেটিং লেজেন্ড',
+  'İzleme İstatistiklerim': 'আমার দেখার পরিসংখ্যান',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'কোনো পর্ব বা সিনেমা দেখা হিসেবে চিহ্নিত করলেই তোমার পরিসংখ্যান এখানে জমতে শুরু করবে।',
+  '{} sa {} dk': '{} ঘ {} মি',
+  'Yaklaşık ekran süresi': 'আনুমানিক স্ক্রিন সময়',
+  'İzleme serisi': 'দেখার ধারা',
+  'Şu anki seri': 'বর্তমান ধারা',
+  'En uzun seri': 'দীর্ঘতম ধারা',
+  'Haftanın günleri': 'সপ্তাহের দিন',
+  'En çok izlediklerin': 'সবচেয়ে বেশি দেখা',
+  'Bu dönemde izleme yok': 'এই সময়ে কোনো দেখা নেই',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'সর্বকালে: {} পর্ব · {} সিনেমা · ~{}',
+  'Paz': 'রবি',
+  'Pzt': 'সোম',
+  'Sal': 'মঙ্গল',
+  'Çar': 'বুধ',
+  'Per': 'বৃহ',
+  'Cum': 'শুক্র',
+  'Cmt': 'শনি',
+  '{} bölüm': '{} পর্ব',
+  '{} bölüm~tekil': '{} পর্ব',
+  '{} kez': '{} বার',
+  '{} kez~tekil': '{} বার',
+  'Son {} gün · günlük': 'শেষ {} দিন · দৈনিক',
+  'Son {} gün · haftalık': 'শেষ {} দিন · সাপ্তাহিক',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'তোমার স্ক্রিন সময়, ধারা ও সবচেয়ে বেশি দেখা',
 };

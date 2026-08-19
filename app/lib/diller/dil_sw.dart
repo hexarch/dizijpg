@@ -1143,4 +1143,32 @@ const Map<String, String> cevirilerSw = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Huduma ya simu inaanza tena; jaribu baadaye kidogo',
   'Puan göstergesi': 'Ufunguo wa alama',
+  'İzleme İstatistiklerim': 'Takwimu Zangu za Kutazama',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Ukishaweka alama kwenye kipindi au filamu kuwa umeitazama, takwimu zako zitaanza kujikusanya hapa.',
+  '{} sa {} dk': 'saa {} dk {}',
+  'Yaklaşık ekran süresi': 'Muda wa skrini wa kadirio',
+  'İzleme serisi': 'Mfululizo wa kutazama',
+  'Şu anki seri': 'Mfululizo wa sasa',
+  'En uzun seri': 'Mfululizo mrefu zaidi',
+  'Haftanın günleri': 'Siku za wiki',
+  'En çok izlediklerin': 'Ulizotazama zaidi',
+  'Bu dönemde izleme yok': 'Hakuna kutazama katika kipindi hiki',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Muda wote: vipindi {} · filamu {} · ~{}',
+  'Paz': 'Jpi',
+  'Pzt': 'Jtt',
+  'Sal': 'Jnn',
+  'Çar': 'Jtn',
+  'Per': 'Alh',
+  'Cum': 'Iju',
+  'Cmt': 'Jmo',
+  '{} bölüm': 'vipindi {}',
+  '{} bölüm~tekil': 'kipindi {}',
+  '{} kez': 'mara {}',
+  '{} kez~tekil': 'mara {}',
+  'Son {} gün · günlük': 'Siku {} zilizopita · kila siku',
+  'Son {} gün · haftalık': 'Siku {} zilizopita · kila wiki',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Muda wako wa skrini, mfululizo na ulizotazama zaidi',
 };

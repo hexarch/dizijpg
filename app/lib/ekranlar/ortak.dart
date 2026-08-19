@@ -2534,3 +2534,274 @@ class _AcilirMetinState extends State<AcilirMetin> {
     );
   }
 }
+
+/// ---------------------------------------------------------------------------
+/// YÖN ROZETİ + TREND RENKLERİ — İstatistiklerim'den BURAYA TAŞINDI
+/// (19 Ağu 2026, İzleme İstatistiklerim ekranı eklenirken).
+///
+/// NEDEN TAŞINDI: ikinci bir istatistik ekranı aynı rozete ihtiyaç duydu.
+/// Kopyalamak, renk körlüğü üçlemesini (işaret + şekil + renk), ±%2 düz
+/// bandını ve ekran okuyucu cümlesini İKİ yerde tutmak demekti — biri
+/// düzeltilip öbürü unutulduğunda fark eden olmazdı. Kontrast oranları da
+/// tek yerde ölçülü kalsın.
+/// ---------------------------------------------------------------------------
+/// Artış rengi.
+///
+/// Koyu tema `DiziRenkler.cevrimiciYesil` ile AYNI ton (tek yeşil kimliği),
+/// AÇIK tema ise BİLEREK FARKLI: `cevrimiciYesil`in açık tonu (#1B9E4B) beyaz
+/// kart üstünde 3,5:1 verir ve o değer GRAFİK NESNE eşiğine (3:1) göre
+/// seçilmişti — orası bir NOKTA. Burada aynı renk 14 px KALIN YAZI taşıyor;
+/// yazının eşiği 4,5:1'dir (WCAG 1.4.3; 14 px kalın "büyük yazı" sayılmaz,
+/// büyük sayılmak için ≥18,66 px kalın gerekir). #157A38 beyazda 5,4:1,
+/// kırık beyazda 5,0:1 verir.
+Color get artisRengi =>
+    DiziRenkler.acik ? const Color(0xFF157A38) : DiziRenkler.cevrimiciYesil;
+
+/// Düşüş rengi. Açık temada beyaz kart üstünde 5,6:1, koyu temada #1F1F23
+/// üstünde 7,2:1 — ikisi de metin eşiğinin (4,5:1) üstünde.
+Color get dususRengi =>
+    DiziRenkler.acik ? const Color(0xFFC0332F) : const Color(0xFFFF8A85);
+
+/// YÖN ROZETİ — "▲ +%18 / önceki 30 güne göre".
+///
+/// ANLAM ÜÇ KANALDAN BİRDEN GİDER (renk körlüğü kuralı, md. 24):
+///   1. İŞARET: yazının başındaki + / − (U+2212, gerçek eksi).
+///   2. ŞEKİL:  trending_up / trending_down / trending_flat ikonu.
+///   3. RENK:   yeşil / kırmızı / nötr — YALNIZ bu üçüncüsü olsaydı gri
+///              tonlamalı bir ekranda artışla düşüş ayırt edilemezdi.
+/// Ekran okuyucu ise tam cümleyi duyar ("önceki 30 güne göre %18 arttı").
+///
+/// ±%2'lik bant "değişmedi" sayılır: 1 puanlık salınımı haber diye sunmak
+/// kullanıcıyı yanıltır (md. 23'teki ±%5 bandıyla aynı disiplin; burada bant
+/// dar tutuldu çünkü sunucu zaten `YON_EN_AZ_GORUNTULENME` eşiğini geçmiş
+/// bir paydayla hesaplıyor).
+class YonRozeti extends StatelessWidget {
+  final int yuzde;
+  final int oncekiGun;
+
+  /// Dar kartlarda (İzleme İstatistiklerim'in bölüm/film sayaçları) ALTTAKİ
+  /// "önceki N güne göre" açıklaması çizilmez ve yazı küçülür.
+  ///
+  /// NEDEN AYRI WIDGET DEĞİL: renk körlüğü üçlemesi, ±%2 düz bandı ve ekran
+  /// okuyucu cümlesi TEK yerde kalsın. İkinci bir "küçük rozet" sınıfı,
+  /// bugün aynı, altı ay sonra sessizce farklı davranan iki kopya demekti.
+  /// SESLİ ETİKET KISALMAZ: görsel olarak yer olmaması, ekran okuyucunun
+  /// karşılaştırma penceresini duymaması için bir sebep değil.
+  final bool kompakt;
+
+  const YonRozeti({
+    super.key,
+    required this.yuzde,
+    required this.oncekiGun,
+    this.kompakt = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final duz = yuzde.abs() <= 2;
+    final artis = yuzde > 0;
+    final renk = duz ? DiziRenkler.metin70 : (artis ? artisRengi : dususRengi);
+    final ikon = duz
+        ? Icons.trending_flat
+        : (artis ? Icons.trending_up : Icons.trending_down);
+    final govde = '%{}'.cf([yuzde.abs()]);
+    final metin = duz ? govde : '${artis ? '+' : '−'}$govde';
+    final sesli = duz
+        ? 'önceki {} güne göre değişmedi'.cf([oncekiGun])
+        : (artis
+              ? 'önceki {} güne göre %{} arttı'.cf([oncekiGun, yuzde])
+              : 'önceki {} güne göre %{} azaldı'.cf([oncekiGun, -yuzde]));
+    return Semantics(
+      // container: true — yoksa etiket üst düğüme karışır (bkz. [_Kahraman]).
+      container: true,
+      label: sesli,
+      excludeSemantics: true,
+      child: ConstrainedBox(
+        // Kahraman sayı sahnenin ortasında kalsın: rozet en fazla ekranın
+        // üçte biri kadar yer kaplar, uzun çevirilerde iki satıra sarar.
+        constraints: BoxConstraints(maxWidth: kompakt ? 96 : 132),
+        child: Column(
+          crossAxisAlignment: kompakt
+              ? CrossAxisAlignment.start
+              : CrossAxisAlignment.end,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(ikon, size: kompakt ? 13 : 16, color: renk),
+                const SizedBox(width: 3),
+                Flexible(
+                  child: Text(
+                    metin,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: kompakt ? 11.5 : 14,
+                      fontWeight: FontWeight.w800,
+                      color: renk,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (!kompakt) ...[
+              const SizedBox(height: 1),
+              Text(
+                'önceki {} güne göre'.cf([oncekiGun]),
+                textAlign: TextAlign.end,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: DiziRenkler.metin38, fontSize: 10.5),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// ---------------------------------------------------------------------------
+/// PENCERE SEÇİCİ — İstatistiklerim'den BURAYA TAŞINDI (19 Ağu 2026).
+///
+/// NEDEN TAŞINDI: İzleme İstatistiklerim ekranı da aynı seçiciye ihtiyaç
+/// duydu. İlk denemede `SegmentedButton` kullanıldı ve 360 dp'de 82 px taştı —
+/// oysa buradaki uygulama tam o sorunu (5 segment / dar ekran / uzun çeviri)
+/// FittedBox + eşit Expanded ile ÇÖZMÜŞTÜ. İkinci bir seçici yazmak, çözülmüş
+/// bir yerleşim problemini sıfırdan çözmeye kalkmaktı.
+/// ---------------------------------------------------------------------------
+
+/// Eskiden çipler bir `Wrap` içindeydi ve her çip `Container(alignment: ...)`
+/// kullanıyordu. `alignment` verilen bir Container child'ını `Align`a sarar;
+/// `Align` da GEVŞEK kısıtta ELİNDEKİ TÜM GENİŞLİĞİ kaplar. Yani her çip
+/// satırın tamamını yiyordu ve beş çip ALT ALTA beş satır oluyordu: 360 dp'de
+/// 252 dp yükseklik (5×44 + 4×8). İskeletin bu bloğa 44 dp ayırmış olması
+/// (bkz. [_Iskelet]) tek satırın en baştaki niyet olduğunu gösteriyor —
+/// bu bir tasarım tercihi değil, sessiz bir yerleşim hatasıydı.
+///
+/// Şimdi beş eşit segment tek `Row`da: blok 252 → 44 dp.
+///
+/// 14 AĞU 2026'da BLOK EKRANIN EN ÜSTÜNE TAŞINDI ve "Zaman kırılımı" başlığı
+/// KALDIRILDI: seçici artık ilk şey olduğu için neyi yönettiği yerinden belli
+/// (altındaki her şey), üstelik başlık 23 dp'lik bir vergi alıyordu.
+///
+/// ETİKET KISALTMASI: görünen yazı `'{} gün'` anahtarından ("30 gün",
+/// "30 days", "30 Tg.", "30 pv") — bu anahtar 45 dilde ZATEN var (profil ve
+/// yasaklı ekranları kullanıyor), yani yeni çeviri borcu YOK. "30g" gibi bir
+/// kısaltma seçilmedi: gün birimi Türkçe'de "g", İngilizce'de "d", Fince'de
+/// "pv", Japonca'da "日" — tek harfe indirgemek 45 dilin çoğunda anlamsız ya
+/// da çevrilemez olurdu. Ekran okuyucu ise kısaltılmış yazıyı DEĞİL, tam
+/// cümleyi ("Son 30 gün") duyar; kısalma yalnız GÖZE yapılan bir kısalmadır.
+class PencereSecici extends StatelessWidget {
+  /// Seçili pencere (gün); 0 = tüm zamanlar.
+  final int secili;
+  final ValueChanged<int> onSec;
+
+  /// Gösterilecek pencereler (gün). 0 = "tümü".
+  ///
+  /// LİSTE DIŞARIDAN GELİR: İstatistiklerim 30/60/90/120/tümü kullanıyor,
+  /// İzleme İstatistiklerim ise sunucunun döndürdüğü 7/30/90/365'i. Sabit
+  /// liste, ikinci ekranın sunucuyla uyumsuz bir seçici çizmesi demekti.
+  final List<int> gunler;
+
+  const PencereSecici({
+    super.key,
+    required this.secili,
+    required this.onSec,
+    this.gunler = const [30, 60, 90, 120, 0],
+  });
+
+  @override
+  Widget build(BuildContext context) => Row(
+    children: [
+      for (final g in gunler) ...[
+        if (g != gunler.first) const SizedBox(width: 5),
+        Expanded(
+          child: _PencereSegmenti(
+            gun: g,
+            etiket: g == 0 ? 'Tümü'.c : '{} gün'.cf([g]),
+            sesli: g == 0 ? 'Tümü'.c : 'Son {} gün'.cf([g]),
+            secili: secili == g,
+            onSec: () => onSec(g),
+          ),
+        ),
+      ],
+    ],
+  );
+}
+
+/// Seçicinin tek segmenti.
+///
+/// DOKUNMA HEDEFİ 44 dp KALIYOR ama GÖRSEL yükseklik 34 dp: aradaki 10 dp
+/// saydam dolgu. Böylece satır hafif görünürken parmak hedefi küçülmüyor.
+///
+/// SEÇİLİ DURUM RENKTEN BAŞKA İŞARET TAŞIR (erişilebilirlik): 2 px çerçeve
+/// (seçilmemişte 1 px) + w800 yazı (seçilmemişte w500). Gri tonlamalı bir
+/// ekranda ya da renk körlüğünde de hangisinin açık olduğu okunur.
+class _PencereSegmenti extends StatelessWidget {
+  final int gun;
+
+  /// Gözle okunan KISA etiket ("30 gün").
+  final String etiket;
+
+  /// Ekran okuyucunun duyduğu TAM etiket ("Son 30 gün").
+  final String sesli;
+  final bool secili;
+  final VoidCallback onSec;
+
+  const _PencereSegmenti({
+    required this.gun,
+    required this.etiket,
+    required this.sesli,
+    required this.secili,
+    required this.onSec,
+  });
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    button: true,
+    selected: secili,
+    label: sesli,
+    excludeSemantics: true,
+    child: InkWell(
+      // Anahtar ÇEVİRİYE DEĞİL sayıya bağlı: dil değişince test/otomasyon
+      // hedefi kaymasın ('pencere-0' = tümü).
+      key: Key('pencere-$gun'),
+      onTap: onSec,
+      borderRadius: BorderRadius.circular(22),
+      child: SizedBox(
+        height: 44,
+        child: Center(
+          child: Container(
+            height: 34,
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            decoration: BoxDecoration(
+              color: secili ? DiziRenkler.sari.withValues(alpha: 0.16) : null,
+              border: Border.all(
+                color: secili ? DiziRenkler.sari : DiziRenkler.metin12,
+                width: secili ? 2 : 1,
+              ),
+              borderRadius: BorderRadius.circular(17),
+            ),
+            // FittedBox: en uzun çevirilerde (it "120 giorni", el
+            // "120 μέρες") yazı taşmak yerine bir tık küçülür — segment
+            // genişliği sabit kaldığı için satır ASLA ikiye çıkmaz.
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                etiket,
+                maxLines: 1,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: secili ? FontWeight.w800 : FontWeight.w500,
+                  color: secili ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}

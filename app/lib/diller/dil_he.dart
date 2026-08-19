@@ -1115,4 +1115,32 @@ const Map<String, String> cevirilerHe = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'שירות השיחות מופעל מחדש; נסה שוב עוד מעט',
   'Puan göstergesi': 'מקרא דירוגים',
+  'İzleme İstatistiklerim': 'סטטיסטיקת הצפייה שלי',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'ברגע שתסמן פרק או סרט כנצפים, הסטטיסטיקה שלך תתחיל להצטבר כאן.',
+  '{} sa {} dk': '{} שע׳ {} דק׳',
+  'Yaklaşık ekran süresi': 'זמן מסך משוער',
+  'İzleme serisi': 'רצף צפייה',
+  'Şu anki seri': 'הרצף הנוכחי',
+  'En uzun seri': 'הרצף הארוך ביותר',
+  'Haftanın günleri': 'ימות השבוע',
+  'En çok izlediklerin': 'הנצפים ביותר',
+  'Bu dönemde izleme yok': 'אין צפייה בתקופה הזו',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'מאז ומעולם: {} פרקים · {} סרטים · ~{}',
+  'Paz': 'א׳',
+  'Pzt': 'ב׳',
+  'Sal': 'ג׳',
+  'Çar': 'ד׳',
+  'Per': 'ה׳',
+  'Cum': 'ו׳',
+  'Cmt': 'ש׳',
+  '{} bölüm': '{} פרקים',
+  '{} bölüm~tekil': '{} פרק',
+  '{} kez': '{} פעמים',
+  '{} kez~tekil': '{} פעם',
+  'Son {} gün · günlük': '{} הימים האחרונים · יומי',
+  'Son {} gün · haftalık': '{} הימים האחרונים · שבועי',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'זמן המסך, הרצף והנצפים ביותר שלך',
 };

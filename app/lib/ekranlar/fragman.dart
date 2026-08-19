@@ -114,12 +114,16 @@ class _FragmanOynaticiState extends State<FragmanOynatici>
 
   /// Kapak karesi + sarı oynat düğmesi (en az 44 dp).
   Widget _kapak() {
-    final kapak = youtubeKapakUrl(widget.youtubeId);
     return Stack(
       fit: StackFit.expand,
       children: [
         CachedNetworkImage(
-          imageUrl: kapak,
+          // Adres SATIR İÇİNDE çağrılıyor, ara değişkenle değil: WebP başlık
+          // denetimi (test/gorsel_webp_test.dart) çağrı noktasından sonraki
+          // 500 karakteri tarıyor ve ara değişken kaynağı o pencerenin DIŞINA
+          // itiyordu — kapak i.ytimg.com'dan gelir, TMDB başlıkları burada
+          // anlamsızdır ama tarayıcının bunu görebilmesi gerekiyor.
+          imageUrl: youtubeKapakUrl(widget.youtubeId),
           fit: BoxFit.cover,
           errorWidget: (_, _, _) => const ColoredBox(color: Colors.black),
         ),

@@ -1141,4 +1141,32 @@ const Map<String, String> cevirilerId = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Layanan panggilan sedang dimulai ulang; coba sebentar lagi',
   'Puan göstergesi': 'Keterangan rating',
+  'İzleme İstatistiklerim': 'Statistik Tontonanku',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Begitu kamu menandai sebuah episode atau film sebagai sudah ditonton, statistikmu mulai terkumpul di sini.',
+  '{} sa {} dk': '{} j {} mnt',
+  'Yaklaşık ekran süresi': 'Perkiraan waktu layar',
+  'İzleme serisi': 'Rentetan menonton',
+  'Şu anki seri': 'Rentetan saat ini',
+  'En uzun seri': 'Rentetan terpanjang',
+  'Haftanın günleri': 'Hari dalam seminggu',
+  'En çok izlediklerin': 'Paling banyak ditonton',
+  'Bu dönemde izleme yok': 'Tidak ada tontonan pada periode ini',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Sepanjang masa: {} episode · {} film · ~{}',
+  'Paz': 'Min',
+  'Pzt': 'Sen',
+  'Sal': 'Sel',
+  'Çar': 'Rab',
+  'Per': 'Kam',
+  'Cum': 'Jum',
+  'Cmt': 'Sab',
+  '{} bölüm': '{} episode',
+  '{} bölüm~tekil': '{} episode',
+  '{} kez': '{} kali',
+  '{} kez~tekil': '{} kali',
+  'Son {} gün · günlük': '{} hari terakhir · harian',
+  'Son {} gün · haftalık': '{} hari terakhir · mingguan',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Waktu layar, rentetan, dan tontonan teratasmu',
 };

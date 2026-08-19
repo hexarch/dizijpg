@@ -1134,4 +1134,32 @@ const Map<String, String> cevirilerMr = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'कॉलिंग सेवा पुन्हा सुरू होत आहे; थोड्या वेळाने प्रयत्न करा',
   'Puan göstergesi': 'रेटिंग लेजेंड',
+  'İzleme İstatistiklerim': 'माझी पाहण्याची आकडेवारी',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'तुम्ही एखादा भाग किंवा चित्रपट पाहिला म्हणून चिन्हांकित करताच तुमची आकडेवारी इथे जमा होऊ लागेल.',
+  '{} sa {} dk': '{} ता {} मि',
+  'Yaklaşık ekran süresi': 'अंदाजे स्क्रीन वेळ',
+  'İzleme serisi': 'पाहण्याची मालिका',
+  'Şu anki seri': 'सध्याची मालिका',
+  'En uzun seri': 'सर्वात मोठी मालिका',
+  'Haftanın günleri': 'आठवड्याचे दिवस',
+  'En çok izlediklerin': 'सर्वाधिक पाहिलेले',
+  'Bu dönemde izleme yok': 'या कालावधीत काहीही पाहिलेले नाही',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'आतापर्यंत: {} भाग · {} चित्रपट · ~{}',
+  'Paz': 'रवि',
+  'Pzt': 'सोम',
+  'Sal': 'मंगळ',
+  'Çar': 'बुध',
+  'Per': 'गुरु',
+  'Cum': 'शुक्र',
+  'Cmt': 'शनि',
+  '{} bölüm': '{} भाग',
+  '{} bölüm~tekil': '{} भाग',
+  '{} kez': '{} वेळा',
+  '{} kez~tekil': '{} वेळ',
+  'Son {} gün · günlük': 'शेवटचे {} दिवस · दैनंदिन',
+  'Son {} gün · haftalık': 'शेवटचे {} दिवस · साप्ताहिक',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'तुमचा स्क्रीन वेळ, मालिका आणि सर्वाधिक पाहिलेले',
 };

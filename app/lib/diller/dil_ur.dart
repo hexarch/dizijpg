@@ -1139,4 +1139,32 @@ const Map<String, String> cevirilerUr = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'کال سروس دوبارہ شروع ہو رہی ہے؛ تھोड़ी دیر بعد کوشش کریں',
   'Puan göstergesi': 'ریٹنگ کلید',
+  'İzleme İstatistiklerim': 'میرے دیکھنے کے اعداد و شمار',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'جیسے ہی آپ کسی قسط یا فلم کو دیکھا ہوا نشان زد کریں گے، آپ کے اعداد و شمار یہاں جمع ہونا شروع ہو جائیں گے۔',
+  '{} sa {} dk': '{} گھنٹے {} منٹ',
+  'Yaklaşık ekran süresi': 'تخمینی اسکرین وقت',
+  'İzleme serisi': 'دیکھنے کا سلسلہ',
+  'Şu anki seri': 'موجودہ سلسلہ',
+  'En uzun seri': 'سب سے طویل سلسلہ',
+  'Haftanın günleri': 'ہفتے کے دن',
+  'En çok izlediklerin': 'سب سے زیادہ دیکھے گئے',
+  'Bu dönemde izleme yok': 'اس مدت میں کوئی دیکھنا نہیں',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'ہمیشہ سے: {} اقساط · {} فلمیں · ~{}',
+  'Paz': 'اتوار',
+  'Pzt': 'پیر',
+  'Sal': 'منگل',
+  'Çar': 'بدھ',
+  'Per': 'جمعرات',
+  'Cum': 'جمعہ',
+  'Cmt': 'ہفتہ',
+  '{} bölüm': '{} اقساط',
+  '{} bölüm~tekil': '{} قسط',
+  '{} kez': '{} بار',
+  '{} kez~tekil': '{} بار',
+  'Son {} gün · günlük': 'آخری {} دن · روزانہ',
+  'Son {} gün · haftalık': 'آخری {} دن · ہفتہ وار',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'آپ کا اسکرین وقت، سلسلہ اور سب سے زیادہ دیکھے گئے',
 };

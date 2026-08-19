@@ -26,6 +26,7 @@ import 'ekranlar/gozat.dart';
 import 'ekranlar/hareketlerim.dart';
 import 'ekranlar/favori_oyuncular.dart';
 import 'ekranlar/istatistiklerim.dart';
+import 'ekranlar/izleme_istatistik.dart';
 import 'ekranlar/izlediklerim.dart';
 import 'ekranlar/kabuk.dart';
 import 'ekranlar/karsilama.dart';
@@ -542,6 +543,14 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
       GoRoute(
         path: '/istatistiklerim',
         builder: (_, _) => _masa(const IstatistiklerimEkrani()),
+      ),
+      // Ayarlar > İzleme İstatistiklerim (19 Ağu 2026). AYRI yol, çünkü
+      // /istatistiklerim GÖNDERİ erişimini ölçüyor; bu ekran kullanıcının
+      // KENDİ izlemesini. İkisini tek sayfada birleştirmek "kaç kişi gördü"
+      // ile "kaç bölüm izledim"i aynı manşete koymak olurdu.
+      GoRoute(
+        path: '/izleme-istatistik',
+        builder: (_, _) => _masa(const IzlemeIstatistikEkrani()),
       ),
       // Ayarlar > Hareketlerim (md. 20). Gizlenen yorumlar/engellenenler ile
       // AYNI kural: kabuğun DIŞINDA tam ekran, geri tuşu ayarlara döner.

@@ -3694,6 +3694,7 @@ const BOT_ROTALARI = [
   { yol: '/engellenenler', desen: /^\/engellenenler$/ },
   { yol: '/hareketlerim', desen: /^\/hareketlerim$/ },
   { yol: '/istatistiklerim', desen: /^\/istatistiklerim$/ },
+  { yol: '/izleme-istatistik', desen: /^\/izleme-istatistik$/ },
   { yol: '/gonderi-istatistik/:id', desen: /^\/gonderi-istatistik\/\d+$/ },
   { yol: '/ozet/:yil', desen: /^\/ozet\/\d+$/ },
   { yol: '/tam-arama', desen: /^\/tam-arama$/ },
@@ -6553,6 +6554,133 @@ async function tahminiDakika(kullaniciId) {
   );
   return izlemeDakikasi(rows);
 }
+
+// ---------------------------------------------------------------------------
+// İZLEME İSTATİSTİKLERİ (19 Ağu 2026 isteği)
+// ---------------------------------------------------------------------------
+// İSTEK: "kullanıcı profilindeki ayarlardan izleme istatistikleri tarafını
+// daha iyi bir hale getir, biraz instagram ve tiktoktan örnek al."
+//
+// NE ALINDI, NE ALINMADI: Instagram/TikTok'un istatistikte İYİ yaptığı şey
+// metrik ÇEŞİTLİLİĞİ değil, SUNUMU — tek kahraman sayı, önceki döneme göre
+// YÖN, günlük eğri, "en çok" listesi ve seri (streak). Bunlar buraya alındı.
+// ALINMAYAN: "erişim/etkileşim oranı" gibi yayıncı metrikleri — burada
+// ölçülen şey kullanıcının KENDİ izlemesi, bir kitleye ulaşma değil.
+// (Gönderi tarafının yayıncı metrikleri zaten /istatistiklerim'de.)
+//
+// TAHMİN YOK: `dakika` ölçülmüş değil TÜRETİLMİŞ bir sayıdır (bölüm 42 dk,
+// film 110 dk sabitleri) ve istemci bunu "yaklaşık" diye etiketler. Gerçek
+// süreyi bilmiyoruz; bildiğimizi iddia etmek `İstatistiklerim` ekranının
+// "eksik veriyi saklama" kuralına aykırı olurdu.
+//
+// PENCERE: 7 | 30 | 90 | 365 gün. `tum` yok — çıpa (ömür boyu) ayrı alanda
+// zaten dönüyor ve pencere seçicide "Tümü" olsaydı yön oku anlamsızlaşırdı
+// (öncesi yok).
+const IZLEME_PENCERELERI = [7, 30, 90, 365];
+
+app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
+  const kid = req.kullanici.id;
+  const istenen = Number.parseInt(req.query.gun, 10);
+  const gun = IZLEME_PENCERELERI.includes(istenen) ? istenen : 30;
+
+  // `durumlar.tekrar` ile çarpım BİLEREK YOK: tekrar sayacı ZAMANSIZDIR
+  // (kaçıncı gün tekrar izlendiği bilinmiyor). Ömür boyu toplamda tekrarı
+  // saymak doğru, PENCEREDE saymak tarihi olmayan bir olayı o pencereye
+  // yazmak olurdu. Bu yüzden pencere sayıları tekrarsızdır.
+  const p = [kid, gun];
+  const [pencere, oncekiP, seri, gunler, enCok, omur, zincirSatir] = await Promise.all([
+    havuz.query(
+      `SELECT tur, count(*)::int AS adet FROM izlemeler
+        WHERE kullanici_id=$1 AND tarih >= now() - make_interval(days => $2)
+        GROUP BY tur`, p),
+    havuz.query(
+      `SELECT tur, count(*)::int AS adet FROM izlemeler
+        WHERE kullanici_id=$1
+          AND tarih >= now() - make_interval(days => $2 * 2)
+          AND tarih <  now() - make_interval(days => $2)
+        GROUP BY tur`, p),
+    havuz.query(
+      `SELECT (tarih AT TIME ZONE 'utc')::date AS gun, count(*)::int AS adet
+         FROM izlemeler
+        WHERE kullanici_id=$1 AND tarih >= now() - make_interval(days => $2)
+        GROUP BY 1 ORDER BY 1`, p),
+    // Haftanın günü: 0=Pazar … 6=Cumartesi (Postgres dow ile aynı).
+    havuz.query(
+      `SELECT EXTRACT(dow FROM tarih AT TIME ZONE 'utc')::int AS gun,
+              count(*)::int AS adet
+         FROM izlemeler
+        WHERE kullanici_id=$1 AND tarih >= now() - make_interval(days => $2)
+        GROUP BY 1`, p),
+    havuz.query(
+      `SELECT tur, tmdb_id, count(*)::int AS adet
+         FROM izlemeler
+        WHERE kullanici_id=$1 AND tarih >= now() - make_interval(days => $2)
+        GROUP BY tur, tmdb_id ORDER BY adet DESC, tmdb_id LIMIT 5`, p),
+    havuz.query(
+      `SELECT count(*) FILTER (WHERE tur='tv')::int AS bolum,
+              count(*) FILTER (WHERE tur='movie')::int AS film
+         FROM izlemeler WHERE kullanici_id=$1`, [kid]),
+    // SERİ (streak): art arda izleme yapılan GÜN sayısı. Klasik "ada"
+    // yöntemi — gün numarasından sıra numarası çıkarılınca ardışık günler
+    // aynı gruba düşer. Tek sorguda hem güncel hem en uzun seri çıkar.
+    havuz.query(
+      `WITH gunler AS (
+         SELECT DISTINCT (tarih AT TIME ZONE 'utc')::date AS g
+           FROM izlemeler WHERE kullanici_id=$1),
+       adalar AS (
+         SELECT g, g - (row_number() OVER (ORDER BY g))::int AS ada FROM gunler),
+       seriler AS (
+         SELECT ada, count(*)::int AS uzunluk, max(g) AS son FROM adalar GROUP BY ada)
+       SELECT
+         COALESCE(max(uzunluk), 0) AS en_uzun,
+         COALESCE(max(uzunluk) FILTER (
+           WHERE son >= (now() AT TIME ZONE 'utc')::date - 1), 0) AS guncel
+       FROM seriler`, [kid]),
+  ]);
+
+  const say = (satirlar, tur) =>
+    Number(satirlar.find((r) => r.tur === tur)?.adet) || 0;
+  const bolum = say(pencere.rows, 'tv');
+  const film = say(pencere.rows, 'movie');
+  const oncekiBolum = say(oncekiP.rows, 'tv');
+  const oncekiFilm = say(oncekiP.rows, 'movie');
+  const dk = (b, f) => b * SURE_DK.tv + f * SURE_DK.movie;
+
+  // YÖN: önceki pencere BOŞSA yön YOK (null). 0'dan artışı "%100 arttı" diye
+  // sunmak, ilk kez izleyen herkese sahte bir başarı grafiği çizmek olurdu.
+  const yon = (simdi, once) =>
+    (once > 0 ? Math.round(((simdi - once) / once) * 100) : null);
+
+  res.json({
+    gun,
+    pencereler: IZLEME_PENCERELERI,
+    pencere: {
+      bolum, film, dakika: dk(bolum, film),
+      onceki: { bolum: oncekiBolum, film: oncekiFilm,
+        dakika: dk(oncekiBolum, oncekiFilm) },
+      degisim: {
+        bolum: yon(bolum, oncekiBolum),
+        film: yon(film, oncekiFilm),
+        dakika: yon(dk(bolum, film), dk(oncekiBolum, oncekiFilm)),
+      },
+    },
+    // Günlük seri: EKSİK GÜNLER DOLDURULMAZ burada; istemci 0 çizer.
+    // Sunucunun boş günü uydurması, "o gün veri yok" ile "o gün izlemedim"
+    // ayrımını siler.
+    seri: seri.rows.map((r) => ({ gun: r.gun, adet: r.adet })),
+    gunler: gunler.rows.map((r) => ({ gun: r.gun, adet: r.adet })),
+    en_cok: enCok.rows.map((r) => ({ tur: r.tur, tmdb_id: r.tmdb_id, adet: r.adet })),
+    zincir: {
+      guncel: Number(zincirSatir.rows[0]?.guncel) || 0,
+      en_uzun: Number(zincirSatir.rows[0]?.en_uzun) || 0,
+    },
+    omur: {
+      bolum: omur.rows[0]?.bolum || 0,
+      film: omur.rows[0]?.film || 0,
+      dakika: await tahminiDakika(kid),
+    },
+  });
+}));
 
 app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
   const [bolum, film, dizi, yorum, sosyal, etkilesim, dakika] = await Promise.all([

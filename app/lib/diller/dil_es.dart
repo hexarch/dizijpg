@@ -1155,4 +1155,32 @@ const Map<String, String> cevirilerEs = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'El servicio de llamadas se está reiniciando; prueba en un rato',
   'Puan göstergesi': 'Leyenda de puntuación',
+  'İzleme İstatistiklerim': 'Mis estadísticas de visionado',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Cuando marques un episodio o una película como visto, tus estadísticas empezarán a acumularse aquí.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Tiempo de pantalla aproximado',
+  'İzleme serisi': 'Racha de visionado',
+  'Şu anki seri': 'Racha actual',
+  'En uzun seri': 'Racha más larga',
+  'Haftanın günleri': 'Días de la semana',
+  'En çok izlediklerin': 'Lo más visto',
+  'Bu dönemde izleme yok': 'No hay visionados en este periodo',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Histórico: {} episodios · {} películas · ~{}',
+  'Paz': 'Dom',
+  'Pzt': 'Lun',
+  'Sal': 'Mar',
+  'Çar': 'Mié',
+  'Per': 'Jue',
+  'Cum': 'Vie',
+  'Cmt': 'Sáb',
+  '{} bölüm': '{} episodios',
+  '{} bölüm~tekil': '{} episodio',
+  '{} kez': '{} veces',
+  '{} kez~tekil': '{} vez',
+  'Son {} gün · günlük': 'Últimos {} días · diario',
+  'Son {} gün · haftalık': 'Últimos {} días · semanal',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Tu tiempo de pantalla, racha y lo más visto',
 };

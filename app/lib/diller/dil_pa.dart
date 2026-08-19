@@ -1137,4 +1137,32 @@ const Map<String, String> cevirilerPa = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'ਕਾਲਿੰਗ ਸੇਵਾ ਮੁੜ ਚਾਲੂ ਹੋ ਰਹੀ ਹੈ; ਥੋੜ੍ਹੀ ਦੇਰ ਬਾਅਦ ਕੋਸ਼ਿਸ਼ ਕਰੋ',
   'Puan göstergesi': 'ਰੇਟਿੰਗ ਲੈਜੰਡ',
+  'İzleme İstatistiklerim': 'ਮੇਰੇ ਦੇਖਣ ਦੇ ਅੰਕੜੇ',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'ਜਿਵੇਂ ਹੀ ਤੁਸੀਂ ਕਿਸੇ ਐਪੀਸੋਡ ਜਾਂ ਫ਼ਿਲਮ ਨੂੰ ਦੇਖਿਆ ਵਜੋਂ ਨਿਸ਼ਾਨਬੱਧ ਕਰੋਗੇ, ਤੁਹਾਡੇ ਅੰਕੜੇ ਇੱਥੇ ਜੁੜਨੇ ਸ਼ੁਰੂ ਹੋ ਜਾਣਗੇ।',
+  '{} sa {} dk': '{} ਘੰ {} ਮਿੰ',
+  'Yaklaşık ekran süresi': 'ਅਨੁਮਾਨਿਤ ਸਕ੍ਰੀਨ ਸਮਾਂ',
+  'İzleme serisi': 'ਦੇਖਣ ਦੀ ਲੜੀ',
+  'Şu anki seri': 'ਮੌਜੂਦਾ ਲੜੀ',
+  'En uzun seri': 'ਸਭ ਤੋਂ ਲੰਮੀ ਲੜੀ',
+  'Haftanın günleri': 'ਹਫ਼ਤੇ ਦੇ ਦਿਨ',
+  'En çok izlediklerin': 'ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੇ ਗਏ',
+  'Bu dönemde izleme yok': 'ਇਸ ਸਮੇਂ ਵਿੱਚ ਕੋਈ ਦੇਖਣਾ ਨਹੀਂ',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'ਹਮੇਸ਼ਾ ਤੋਂ: {} ਐਪੀਸੋਡ · {} ਫ਼ਿਲਮਾਂ · ~{}',
+  'Paz': 'ਐਤ',
+  'Pzt': 'ਸੋਮ',
+  'Sal': 'ਮੰਗਲ',
+  'Çar': 'ਬੁੱਧ',
+  'Per': 'ਵੀਰ',
+  'Cum': 'ਸ਼ੁੱਕਰ',
+  'Cmt': 'ਸ਼ਨੀ',
+  '{} bölüm': '{} ਐਪੀਸੋਡ',
+  '{} bölüm~tekil': '{} ਐਪੀਸੋਡ',
+  '{} kez': '{} ਵਾਰ',
+  '{} kez~tekil': '{} ਵਾਰ',
+  'Son {} gün · günlük': 'ਪਿਛਲੇ {} ਦਿਨ · ਰੋਜ਼ਾਨਾ',
+  'Son {} gün · haftalık': 'ਪਿਛਲੇ {} ਦਿਨ · ਹਫ਼ਤਾਵਾਰੀ',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'ਤੁਹਾਡਾ ਸਕ੍ਰੀਨ ਸਮਾਂ, ਲੜੀ ਅਤੇ ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੇ ਗਏ',
 };

@@ -763,6 +763,9 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   final _metin = TextEditingController();
   final _kaydirma = ScrollController();
   Timer? _sayac;
+
+  /// [_sonaKaydir]'ın gecikmeli denemeleri — dispose'da iptal edilir.
+  final List<Timer> _kaydirmaSayaclari = [];
   GoRouter? _yonlendirici;
 
   /// Bu konuşma ekranı görünür mü? Kabuk sekmesi değişince StatefulShell
@@ -960,6 +963,10 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
+    for (final t in _kaydirmaSayaclari) {
+      t.cancel();
+    }
+    _kaydirmaSayaclari.clear();
     _metin.removeListener(_yaziyorBildir);
     _metin.dispose();
     _kaydirma.dispose();
@@ -1113,12 +1120,26 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   void _sonaKaydir() {
     // Görsel/video baloncukları sonradan yüklenip yüksekliği değiştirdiğinden
     // birkaç kez dener; her seferinde gerçek en-alta sabitler.
+    //
+    // ZAMANLAYICILAR TUTULUYOR VE dispose'da İPTAL EDİLİYOR: eskiden burada
+    // çıplak `Future.delayed` vardı. `mounted` koruması çökmeyi engelliyordu
+    // ama zamanlayıcının KENDİSİ ağaç yok edildikten sonra da bekliyordu —
+    // widget testlerinde "A Timer is still pending even after the widget tree
+    // was disposed" ile düşüyordu (test/yenileme_ayni_sayfa_test.dart, tüm
+    // rotaları gezen sınama). Gerçek uygulamada da ekran kapandıktan sonra
+    // 400 ms boyunca kapanmış bir State'e tutunan üç kapanış demekti.
+    for (final t in _kaydirmaSayaclari) {
+      t.cancel();
+    }
+    _kaydirmaSayaclari.clear();
     for (final ms in const [0, 120, 400]) {
-      Future.delayed(Duration(milliseconds: ms), () {
-        if (mounted && _kaydirma.hasClients) {
-          _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
-        }
-      });
+      _kaydirmaSayaclari.add(
+        Timer(Duration(milliseconds: ms), () {
+          if (mounted && _kaydirma.hasClients) {
+            _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
+          }
+        }),
+      );
     }
   }
 

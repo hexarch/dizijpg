@@ -1162,4 +1162,32 @@ const Map<String, String> cevirilerPt = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'O serviço de chamadas está reiniciando; tente daqui a pouco',
   'Puan göstergesi': 'Legenda das notas',
+  'İzleme İstatistiklerim': 'Minhas estatísticas de exibição',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Assim que você marcar um episódio ou filme como visto, suas estatísticas começam a se acumular aqui.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Tempo de tela aproximado',
+  'İzleme serisi': 'Sequência de exibição',
+  'Şu anki seri': 'Sequência atual',
+  'En uzun seri': 'Maior sequência',
+  'Haftanın günleri': 'Dias da semana',
+  'En çok izlediklerin': 'Mais assistidos',
+  'Bu dönemde izleme yok': 'Nenhuma exibição neste período',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Desde sempre: {} episódios · {} filmes · ~{}',
+  'Paz': 'Dom',
+  'Pzt': 'Seg',
+  'Sal': 'Ter',
+  'Çar': 'Qua',
+  'Per': 'Qui',
+  'Cum': 'Sex',
+  'Cmt': 'Sáb',
+  '{} bölüm': '{} episódios',
+  '{} bölüm~tekil': '{} episódio',
+  '{} kez': '{} vezes',
+  '{} kez~tekil': '{} vez',
+  'Son {} gün · günlük': 'Últimos {} dias · diário',
+  'Son {} gün · haftalık': 'Últimos {} dias · semanal',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Seu tempo de tela, sequência e mais assistidos',
 };

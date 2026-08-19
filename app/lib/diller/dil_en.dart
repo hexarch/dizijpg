@@ -1139,4 +1139,32 @@ const Map<String, String> cevirilerEn = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Calling service is restarting, try again in a bit',
   'Puan göstergesi': 'Score legend',
+  'İzleme İstatistiklerim': 'Watch Stats',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Once you mark an episode or a movie as watched, your stats start building up here.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Approximate screen time',
+  'İzleme serisi': 'Watch streak',
+  'Şu anki seri': 'Current streak',
+  'En uzun seri': 'Longest streak',
+  'Haftanın günleri': 'Days of the week',
+  'En çok izlediklerin': 'Watched most',
+  'Bu dönemde izleme yok': 'No watching in this period',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'All time: {} episodes · {} movies · ~{}',
+  'Paz': 'Sun',
+  'Pzt': 'Mon',
+  'Sal': 'Tue',
+  'Çar': 'Wed',
+  'Per': 'Thu',
+  'Cum': 'Fri',
+  'Cmt': 'Sat',
+  '{} bölüm': '{} episodes',
+  '{} bölüm~tekil': '{} episode',
+  '{} kez': '{} times',
+  '{} kez~tekil': '{} time',
+  'Son {} gün · günlük': 'Last {} days · daily',
+  'Son {} gün · haftalık': 'Last {} days · weekly',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Your screen time, streak and most-watched',
 };

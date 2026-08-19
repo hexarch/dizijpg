@@ -1146,4 +1146,32 @@ const Map<String, String> cevirilerNl = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'De beldienst start opnieuw; probeer het zo weer',
   'Puan göstergesi': 'Scorelegenda',
+  'İzleme İstatistiklerim': 'Mijn kijkstatistieken',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Zodra je een aflevering of film als gekeken markeert, bouwen je statistieken zich hier op.',
+  '{} sa {} dk': '{} u {} min',
+  'Yaklaşık ekran süresi': 'Geschatte schermtijd',
+  'İzleme serisi': 'Kijkreeks',
+  'Şu anki seri': 'Huidige reeks',
+  'En uzun seri': 'Langste reeks',
+  'Haftanın günleri': 'Dagen van de week',
+  'En çok izlediklerin': 'Meest gekeken',
+  'Bu dönemde izleme yok': 'Geen kijkgeschiedenis in deze periode',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Aller tijden: {} afleveringen · {} films · ~{}',
+  'Paz': 'zo',
+  'Pzt': 'ma',
+  'Sal': 'di',
+  'Çar': 'wo',
+  'Per': 'do',
+  'Cum': 'vr',
+  'Cmt': 'za',
+  '{} bölüm': '{} afleveringen',
+  '{} bölüm~tekil': '{} aflevering',
+  '{} kez': '{} keer',
+  '{} kez~tekil': '{} keer',
+  'Son {} gün · günlük': 'Laatste {} dagen · dagelijks',
+  'Son {} gün · haftalık': 'Laatste {} dagen · wekelijks',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Je schermtijd, reeks en meest gekeken',
 };

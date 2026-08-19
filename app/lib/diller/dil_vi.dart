@@ -1140,4 +1140,32 @@ const Map<String, String> cevirilerVi = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Dịch vụ gọi đang khởi động lại; thử lại sau một lát',
   'Puan göstergesi': 'Chú giải điểm',
+  'İzleme İstatistiklerim': 'Thống kê xem của tôi',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Ngay khi bạn đánh dấu một tập hoặc một phim là đã xem, thống kê của bạn sẽ bắt đầu tích lũy ở đây.',
+  '{} sa {} dk': '{} giờ {} phút',
+  'Yaklaşık ekran süresi': 'Thời gian xem ước tính',
+  'İzleme serisi': 'Chuỗi ngày xem',
+  'Şu anki seri': 'Chuỗi hiện tại',
+  'En uzun seri': 'Chuỗi dài nhất',
+  'Haftanın günleri': 'Các ngày trong tuần',
+  'En çok izlediklerin': 'Xem nhiều nhất',
+  'Bu dönemde izleme yok': 'Không có lượt xem trong giai đoạn này',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Tất cả thời gian: {} tập · {} phim · ~{}',
+  'Paz': 'CN',
+  'Pzt': 'T2',
+  'Sal': 'T3',
+  'Çar': 'T4',
+  'Per': 'T5',
+  'Cum': 'T6',
+  'Cmt': 'T7',
+  '{} bölüm': '{} tập',
+  '{} bölüm~tekil': '{} tập',
+  '{} kez': '{} lần',
+  '{} kez~tekil': '{} lần',
+  'Son {} gün · günlük': '{} ngày qua · theo ngày',
+  'Son {} gün · haftalık': '{} ngày qua · theo tuần',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Thời gian xem, chuỗi ngày và mục xem nhiều nhất của bạn',
 };

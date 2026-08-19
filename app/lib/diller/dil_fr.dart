@@ -1161,4 +1161,32 @@ const Map<String, String> cevirilerFr = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Le service d\'appels redémarre ; réessaie un peu plus tard',
   'Puan göstergesi': 'Légende des notes',
+  'İzleme İstatistiklerim': 'Mes statistiques de visionnage',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Dès que tu marques un épisode ou un film comme vu, tes statistiques commencent à s’accumuler ici.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Temps d’écran approximatif',
+  'İzleme serisi': 'Série de visionnage',
+  'Şu anki seri': 'Série actuelle',
+  'En uzun seri': 'Plus longue série',
+  'Haftanın günleri': 'Jours de la semaine',
+  'En çok izlediklerin': 'Les plus regardés',
+  'Bu dönemde izleme yok': 'Aucun visionnage sur cette période',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Depuis toujours : {} épisodes · {} films · ~{}',
+  'Paz': 'Dim',
+  'Pzt': 'Lun',
+  'Sal': 'Mar',
+  'Çar': 'Mer',
+  'Per': 'Jeu',
+  'Cum': 'Ven',
+  'Cmt': 'Sam',
+  '{} bölüm': '{} épisodes',
+  '{} bölüm~tekil': '{} épisode',
+  '{} kez': '{} fois',
+  '{} kez~tekil': '{} fois',
+  'Son {} gün · günlük': '{} derniers jours · par jour',
+  'Son {} gün · haftalık': '{} derniers jours · par semaine',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Ton temps d’écran, ta série et tes favoris',
 };

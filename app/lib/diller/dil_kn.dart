@@ -1135,4 +1135,32 @@ const Map<String, String> cevirilerKn = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'ಕಾಲಿಂಗ್ ಸೇವೆ ಮರುಪ್ರಾರಂಭವಾಗುತ್ತಿದೆ; ಸ್ವಲ್ಪ ನಂತರ ಪ್ರಯತ್ನಿಸಿ',
   'Puan göstergesi': 'ರೇಟಿಂಗ್ ಲೆಜೆಂಡ್',
+  'İzleme İstatistiklerim': 'ನನ್ನ ವೀಕ್ಷಣಾ ಅಂಕಿಅಂಶಗಳು',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'ನೀವು ಒಂದು ಸಂಚಿಕೆ ಅಥವಾ ಚಲನಚಿತ್ರವನ್ನು ವೀಕ್ಷಿಸಿದ್ದೇನೆ ಎಂದು ಗುರುತಿಸಿದ ತಕ್ಷಣ ನಿಮ್ಮ ಅಂಕಿಅಂಶಗಳು ಇಲ್ಲಿ ಸಂಗ್ರಹವಾಗಲು ಆರಂಭವಾಗುತ್ತವೆ.',
+  '{} sa {} dk': '{} ಗಂ {} ನಿ',
+  'Yaklaşık ekran süresi': 'ಅಂದಾಜು ಪರದೆ ಸಮಯ',
+  'İzleme serisi': 'ವೀಕ್ಷಣಾ ಸರಣಿ',
+  'Şu anki seri': 'ಪ್ರಸ್ತುತ ಸರಣಿ',
+  'En uzun seri': 'ಅತಿ ಉದ್ದದ ಸರಣಿ',
+  'Haftanın günleri': 'ವಾರದ ದಿನಗಳು',
+  'En çok izlediklerin': 'ಹೆಚ್ಚು ವೀಕ್ಷಿಸಿದವು',
+  'Bu dönemde izleme yok': 'ಈ ಅವಧಿಯಲ್ಲಿ ವೀಕ್ಷಣೆ ಇಲ್ಲ',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'ಒಟ್ಟು: {} ಸಂಚಿಕೆಗಳು · {} ಚಲನಚಿತ್ರಗಳು · ~{}',
+  'Paz': 'ಭಾನು',
+  'Pzt': 'ಸೋಮ',
+  'Sal': 'ಮಂಗಳ',
+  'Çar': 'ಬುಧ',
+  'Per': 'ಗುರು',
+  'Cum': 'ಶುಕ್ರ',
+  'Cmt': 'ಶನಿ',
+  '{} bölüm': '{} ಸಂಚಿಕೆಗಳು',
+  '{} bölüm~tekil': '{} ಸಂಚಿಕೆ',
+  '{} kez': '{} ಬಾರಿ',
+  '{} kez~tekil': '{} ಬಾರಿ',
+  'Son {} gün · günlük': 'ಕಳೆದ {} ದಿನಗಳು · ದೈನಂದಿನ',
+  'Son {} gün · haftalık': 'ಕಳೆದ {} ದಿನಗಳು · ಸಾಪ್ತಾಹಿಕ',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'ನಿಮ್ಮ ಪರದೆ ಸಮಯ, ಸರಣಿ ಮತ್ತು ಹೆಚ್ಚು ವೀಕ್ಷಿಸಿದವು',
 };

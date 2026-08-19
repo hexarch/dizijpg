@@ -1150,4 +1150,32 @@ const Map<String, String> cevirilerHu = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'A hívásszolgáltatás újraindul; próbáld kicsit később',
   'Puan göstergesi': 'Értékelés jelmagyarázata',
+  'İzleme İstatistiklerim': 'Nézési statisztikáim',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Amint megjelölsz egy epizódot vagy filmet megnézettként, a statisztikáid itt kezdenek gyűlni.',
+  '{} sa {} dk': '{} ó {} p',
+  'Yaklaşık ekran süresi': 'Becsült képernyőidő',
+  'İzleme serisi': 'Nézési sorozat',
+  'Şu anki seri': 'Jelenlegi sorozat',
+  'En uzun seri': 'Leghosszabb sorozat',
+  'Haftanın günleri': 'A hét napjai',
+  'En çok izlediklerin': 'Legtöbbet nézett',
+  'Bu dönemde izleme yok': 'Ebben az időszakban nincs nézés',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Mindenkori: {} epizód · {} film · ~{}',
+  'Paz': 'V',
+  'Pzt': 'H',
+  'Sal': 'K',
+  'Çar': 'Sze',
+  'Per': 'Cs',
+  'Cum': 'P',
+  'Cmt': 'Szo',
+  '{} bölüm': '{} epizód',
+  '{} bölüm~tekil': '{} epizód',
+  '{} kez': '{} alkalommal',
+  '{} kez~tekil': '{} alkalommal',
+  'Son {} gün · günlük': 'Utolsó {} nap · naponta',
+  'Son {} gün · haftalık': 'Utolsó {} nap · hetente',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Képernyőidőd, sorozatod és a legtöbbet nézettek',
 };

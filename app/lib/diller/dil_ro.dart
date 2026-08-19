@@ -1159,4 +1159,32 @@ const Map<String, String> cevirilerRo = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Serviciul de apeluri se repornește; încearcă puțin mai târziu',
   'Puan göstergesi': 'Legenda notelor',
+  'İzleme İstatistiklerim': 'Statisticile mele de vizionare',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'De îndată ce marchezi un episod sau un film ca vizionat, statisticile tale încep să se adune aici.',
+  '{} sa {} dk': '{} h {} min',
+  'Yaklaşık ekran süresi': 'Timp aproximativ pe ecran',
+  'İzleme serisi': 'Serie de vizionare',
+  'Şu anki seri': 'Seria curentă',
+  'En uzun seri': 'Cea mai lungă serie',
+  'Haftanın günleri': 'Zilele săptămânii',
+  'En çok izlediklerin': 'Cele mai vizionate',
+  'Bu dönemde izleme yok': 'Nicio vizionare în această perioadă',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Dintotdeauna: {} episoade · {} filme · ~{}',
+  'Paz': 'Dum',
+  'Pzt': 'Lun',
+  'Sal': 'Mar',
+  'Çar': 'Mie',
+  'Per': 'Joi',
+  'Cum': 'Vin',
+  'Cmt': 'Sâm',
+  '{} bölüm': '{} episoade',
+  '{} bölüm~tekil': '{} episod',
+  '{} kez': '{} ori',
+  '{} kez~tekil': '{} dată',
+  'Son {} gün · günlük': 'Ultimele {} zile · zilnic',
+  'Son {} gün · haftalık': 'Ultimele {} zile · săptămânal',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Timpul tău pe ecran, seria și cele mai vizionate',
 };

@@ -1154,4 +1154,32 @@ const Map<String, String> cevirilerPl = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Usługa połączeń się restartuje; spróbuj za chwilę',
   'Puan göstergesi': 'Legenda ocen',
+  'İzleme İstatistiklerim': 'Moje statystyki oglądania',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Gdy oznaczysz odcinek lub film jako obejrzany, Twoje statystyki zaczną się tu gromadzić.',
+  '{} sa {} dk': '{} godz. {} min',
+  'Yaklaşık ekran süresi': 'Przybliżony czas przed ekranem',
+  'İzleme serisi': 'Passa oglądania',
+  'Şu anki seri': 'Obecna passa',
+  'En uzun seri': 'Najdłuższa passa',
+  'Haftanın günleri': 'Dni tygodnia',
+  'En çok izlediklerin': 'Najczęściej oglądane',
+  'Bu dönemde izleme yok': 'Brak oglądania w tym okresie',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Od zawsze: {} odcinków · {} filmów · ~{}',
+  'Paz': 'nd',
+  'Pzt': 'pn',
+  'Sal': 'wt',
+  'Çar': 'śr',
+  'Per': 'czw',
+  'Cum': 'pt',
+  'Cmt': 'sob',
+  '{} bölüm': '{} odcinków',
+  '{} bölüm~tekil': '{} odcinek',
+  '{} kez': '{} razy',
+  '{} kez~tekil': '{} raz',
+  'Son {} gün · günlük': 'Ostatnie {} dni · dziennie',
+  'Son {} gün · haftalık': 'Ostatnie {} dni · tygodniowo',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Twój czas przed ekranem, passa i ulubione',
 };

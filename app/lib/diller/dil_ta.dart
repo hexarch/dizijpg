@@ -1156,4 +1156,32 @@ const Map<String, String> cevirilerTa = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'அழைப்பு சேவை மறுதொடக்கம் ஆகிறது; சிறிது நேரம் கழித்து முயலவும்',
   'Puan göstergesi': 'மதிப்பீட்டு லெஜண்ட்',
+  'İzleme İstatistiklerim': 'எனது பார்வை புள்ளிவிவரங்கள்',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'ஒரு அத்தியாயத்தையோ திரைப்படத்தையோ பார்த்ததாகக் குறித்தவுடன், உங்கள் புள்ளிவிவரங்கள் இங்கே சேரத் தொடங்கும்.',
+  '{} sa {} dk': '{} ம {} நி',
+  'Yaklaşık ekran süresi': 'தோராயமான திரை நேரம்',
+  'İzleme serisi': 'பார்வைத் தொடர்',
+  'Şu anki seri': 'தற்போதைய தொடர்',
+  'En uzun seri': 'நீளமான தொடர்',
+  'Haftanın günleri': 'வாரத்தின் நாட்கள்',
+  'En çok izlediklerin': 'அதிகம் பார்த்தவை',
+  'Bu dönemde izleme yok': 'இந்தக் காலகட்டத்தில் பார்வை இல்லை',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'மொத்தம்: {} அத்தியாயங்கள் · {} திரைப்படங்கள் · ~{}',
+  'Paz': 'ஞாயி',
+  'Pzt': 'திங்',
+  'Sal': 'செவ்',
+  'Çar': 'புத',
+  'Per': 'வியா',
+  'Cum': 'வெள்',
+  'Cmt': 'சனி',
+  '{} bölüm': '{} அத்தியாயங்கள்',
+  '{} bölüm~tekil': '{} அத்தியாயம்',
+  '{} kez': '{} முறை',
+  '{} kez~tekil': '{} முறை',
+  'Son {} gün · günlük': 'கடைசி {} நாட்கள் · தினசரி',
+  'Son {} gün · haftalık': 'கடைசி {} நாட்கள் · வாராந்திர',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'உங்கள் திரை நேரம், தொடர் மற்றும் அதிகம் பார்த்தவை',
 };

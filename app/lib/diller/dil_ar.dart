@@ -1115,4 +1115,32 @@ const Map<String, String> cevirilerAr = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'خدمة المكالمات قيد إعادة التشغيل؛ أعد المحاولة بعد قليل',
   'Puan göstergesi': 'مفتاح التقييمات',
+  'İzleme İstatistiklerim': 'إحصاءات مشاهدتي',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'بمجرد أن تضع علامة "شوهد" على حلقة أو فيلم، تبدأ إحصاءاتك بالتراكم هنا.',
+  '{} sa {} dk': '{} س {} د',
+  'Yaklaşık ekran süresi': 'وقت الشاشة التقريبي',
+  'İzleme serisi': 'سلسلة المشاهدة',
+  'Şu anki seri': 'السلسلة الحالية',
+  'En uzun seri': 'أطول سلسلة',
+  'Haftanın günleri': 'أيام الأسبوع',
+  'En çok izlediklerin': 'الأكثر مشاهدة',
+  'Bu dönemde izleme yok': 'لا مشاهدة في هذه الفترة',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'طوال الوقت: {} حلقة · {} فيلم · ~{}',
+  'Paz': 'أحد',
+  'Pzt': 'إثن',
+  'Sal': 'ثلا',
+  'Çar': 'أرب',
+  'Per': 'خمي',
+  'Cum': 'جمع',
+  'Cmt': 'سبت',
+  '{} bölüm': '{} حلقة',
+  '{} bölüm~tekil': '{} حلقة',
+  '{} kez': '{} مرة',
+  '{} kez~tekil': '{} مرة',
+  'Son {} gün · günlük': 'آخر {} يوم · يوميًا',
+  'Son {} gün · haftalık': 'آخر {} يوم · أسبوعيًا',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'وقت شاشتك وسلسلتك والأكثر مشاهدة',
 };

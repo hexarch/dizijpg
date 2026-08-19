@@ -1164,4 +1164,32 @@ const Map<String, String> cevirilerDe = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Der Anrufdienst startet neu; versuch es gleich nochmal',
   'Puan göstergesi': 'Bewertungslegende',
+  'İzleme İstatistiklerim': 'Meine Sehstatistik',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Sobald du eine Folge oder einen Film als gesehen markierst, sammeln sich deine Statistiken hier an.',
+  '{} sa {} dk': '{} Std. {} Min.',
+  'Yaklaşık ekran süresi': 'Ungefähre Bildschirmzeit',
+  'İzleme serisi': 'Seh-Serie',
+  'Şu anki seri': 'Aktuelle Serie',
+  'En uzun seri': 'Längste Serie',
+  'Haftanın günleri': 'Wochentage',
+  'En çok izlediklerin': 'Am meisten gesehen',
+  'Bu dönemde izleme yok': 'In diesem Zeitraum nichts gesehen',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Insgesamt: {} Folgen · {} Filme · ~{}',
+  'Paz': 'So',
+  'Pzt': 'Mo',
+  'Sal': 'Di',
+  'Çar': 'Mi',
+  'Per': 'Do',
+  'Cum': 'Fr',
+  'Cmt': 'Sa',
+  '{} bölüm': '{} Folgen',
+  '{} bölüm~tekil': '{} Folge',
+  '{} kez': '{} Mal',
+  '{} kez~tekil': '{} Mal',
+  'Son {} gün · günlük': 'Letzte {} Tage · täglich',
+  'Son {} gün · haftalık': 'Letzte {} Tage · wöchentlich',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Deine Bildschirmzeit, Serie und Favoriten',
 };

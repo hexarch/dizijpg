@@ -1151,4 +1151,32 @@ const Map<String, String> cevirilerSv = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Samtalstjänsten startar om; försök om en stund',
   'Puan göstergesi': 'Betygsförklaring',
+  'İzleme İstatistiklerim': 'Min tittarstatistik',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Så fort du markerar ett avsnitt eller en film som sedd börjar din statistik byggas upp här.',
+  '{} sa {} dk': '{} tim {} min',
+  'Yaklaşık ekran süresi': 'Ungefärlig skärmtid',
+  'İzleme serisi': 'Tittarsvit',
+  'Şu anki seri': 'Nuvarande svit',
+  'En uzun seri': 'Längsta svit',
+  'Haftanın günleri': 'Veckodagar',
+  'En çok izlediklerin': 'Mest sedda',
+  'Bu dönemde izleme yok': 'Inget tittande under perioden',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Genom tiderna: {} avsnitt · {} filmer · ~{}',
+  'Paz': 'sön',
+  'Pzt': 'mån',
+  'Sal': 'tis',
+  'Çar': 'ons',
+  'Per': 'tors',
+  'Cum': 'fre',
+  'Cmt': 'lör',
+  '{} bölüm': '{} avsnitt',
+  '{} bölüm~tekil': '{} avsnitt',
+  '{} kez': '{} gånger',
+  '{} kez~tekil': '{} gång',
+  'Son {} gün · günlük': 'Senaste {} dagarna · dagligen',
+  'Son {} gün · haftalık': 'Senaste {} dagarna · veckovis',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Din skärmtid, svit och mest sedda',
 };

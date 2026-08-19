@@ -1105,6 +1105,36 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                // İZLEME İSTATİSTİKLERİM (19 Ağu isteği). İstatistiklerim'in
+                // HEMEN ALTINDA: ikisi de "kendi kaydım" ama biri gönderinin
+                // KİTLEYE ulaşmasını, bu ise kişinin KENDİ izlemesini ölçüyor.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-izleme-istatistik'),
+                    leading: Icon(
+                      Icons.query_stats_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'İzleme İstatistiklerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Ekran süren, serin ve en çok izlediklerin'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () =>
+                        GoRouter.of(context).push('/izleme-istatistik'),
+                  ),
+                ),
+                const SizedBox(height: 8),
                 // SIRA (3 Ağu isteği): Bildirim Tercihleri · Gizlilik · Geri
                 // Bildirim ARTIK "Verilerim"in ÜSTÜNDE. Günlük kullanılan üç
                 // tercih kartı, nadiren açılan dışa/içe aktarımın altında

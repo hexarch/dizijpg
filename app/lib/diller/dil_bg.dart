@@ -1144,4 +1144,32 @@ const Map<String, String> cevirilerBg = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Услугата за обаждания се рестартира; опитай след малко',
   'Puan göstergesi': 'Легенда на оценките',
+  'İzleme İstatistiklerim': 'Моята статистика на гледане',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Щом отбележиш епизод или филм като гледан, статистиката ти започва да се натрупва тук.',
+  '{} sa {} dk': '{} ч {} мин',
+  'Yaklaşık ekran süresi': 'Приблизително екранно време',
+  'İzleme serisi': 'Серия на гледане',
+  'Şu anki seri': 'Текуща серия',
+  'En uzun seri': 'Най-дълга серия',
+  'Haftanın günleri': 'Дни от седмицата',
+  'En çok izlediklerin': 'Най-гледани',
+  'Bu dönemde izleme yok': 'Няма гледане в този период',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'За всички времена: {} епизода · {} филма · ~{}',
+  'Paz': 'нед',
+  'Pzt': 'пон',
+  'Sal': 'вт',
+  'Çar': 'ср',
+  'Per': 'чет',
+  'Cum': 'пет',
+  'Cmt': 'съб',
+  '{} bölüm': '{} епизода',
+  '{} bölüm~tekil': '{} епизод',
+  '{} kez': '{} пъти',
+  '{} kez~tekil': '{} път',
+  'Son {} gün · günlük': 'Последните {} дни · дневно',
+  'Son {} gün · haftalık': 'Последните {} дни · седмично',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Твоето екранно време, серия и най-гледани',
 };

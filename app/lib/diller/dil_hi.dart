@@ -1135,4 +1135,32 @@ const Map<String, String> cevirilerHi = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'कॉलिंग सेवा रीस्टार्ट हो रही है; थोड़ी देर बाद कोशिश करो',
   'Puan göstergesi': 'रेटिंग लेजेंड',
+  'İzleme İstatistiklerim': 'मेरे देखने के आँकड़े',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'जैसे ही आप किसी एपिसोड या फ़िल्म को देखा हुआ चिह्नित करेंगे, आपके आँकड़े यहाँ जुड़ना शुरू हो जाएँगे।',
+  '{} sa {} dk': '{} घं {} मि',
+  'Yaklaşık ekran süresi': 'अनुमानित स्क्रीन समय',
+  'İzleme serisi': 'देखने की लय',
+  'Şu anki seri': 'मौजूदा लय',
+  'En uzun seri': 'सबसे लंबी लय',
+  'Haftanın günleri': 'सप्ताह के दिन',
+  'En çok izlediklerin': 'सबसे ज़्यादा देखे गए',
+  'Bu dönemde izleme yok': 'इस अवधि में कोई देखना नहीं',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'अब तक: {} एपिसोड · {} फ़िल्में · ~{}',
+  'Paz': 'रवि',
+  'Pzt': 'सोम',
+  'Sal': 'मंगल',
+  'Çar': 'बुध',
+  'Per': 'गुरु',
+  'Cum': 'शुक्र',
+  'Cmt': 'शनि',
+  '{} bölüm': '{} एपिसोड',
+  '{} bölüm~tekil': '{} एपिसोड',
+  '{} kez': '{} बार',
+  '{} kez~tekil': '{} बार',
+  'Son {} gün · günlük': 'पिछले {} दिन · रोज़ाना',
+  'Son {} gün · haftalık': 'पिछले {} दिन · साप्ताहिक',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'आपका स्क्रीन समय, लय और सबसे ज़्यादा देखे गए',
 };

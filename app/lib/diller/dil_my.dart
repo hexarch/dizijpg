@@ -1147,4 +1147,32 @@ const Map<String, String> cevirilerMy = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'ဖုန်းဝန်ဆောင်မှု ပြန်စနေသည်၊ ခဏနေ ပြန်ကြိုးစားပါ',
   'Puan göstergesi': 'အမှတ်အညွှန်း',
+  'İzleme İstatistiklerim': 'ကျွန်ုပ်၏ ကြည့်ရှုမှုစာရင်း',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'အပိုင်းတစ်ခု သို့မဟုတ် ရုပ်ရှင်တစ်ကားကို ကြည့်ပြီးဟု အမှတ်အသားပြုလိုက်သည်နှင့် သင့်စာရင်းများ ဤနေရာတွင် စတင်စုဆောင်းပါမည်။',
+  '{} sa {} dk': '{} နာရီ {} မိနစ်',
+  'Yaklaşık ekran süresi': 'ခန့်မှန်း ဖန်သားပြင်အချိန်',
+  'İzleme serisi': 'ကြည့်ရှုမှုစဉ်ဆက်',
+  'Şu anki seri': 'လက်ရှိ စဉ်ဆက်',
+  'En uzun seri': 'အရှည်ဆုံး စဉ်ဆက်',
+  'Haftanın günleri': 'ရက်သတ္တပတ်နေ့များ',
+  'En çok izlediklerin': 'အများဆုံးကြည့်ထားသည်',
+  'Bu dönemde izleme yok': 'ဤကာလအတွင်း ကြည့်ရှုမှုမရှိပါ',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'စုစုပေါင်း - {} အပိုင်း · {} ရုပ်ရှင် · ~{}',
+  'Paz': 'တနင်္ဂနွေ',
+  'Pzt': 'တနင်္လာ',
+  'Sal': 'အင်္ဂါ',
+  'Çar': 'ဗုဒ္ဓဟူး',
+  'Per': 'ကြာသပတေး',
+  'Cum': 'သောကြာ',
+  'Cmt': 'စနေ',
+  '{} bölüm': '{} အပိုင်း',
+  '{} bölüm~tekil': '{} အပိုင်း',
+  '{} kez': '{} ကြိမ်',
+  '{} kez~tekil': '{} ကြိမ်',
+  'Son {} gün · günlük': 'နောက်ဆုံး {} ရက် · နေ့စဉ်',
+  'Son {} gün · haftalık': 'နောက်ဆုံး {} ရက် · အပတ်စဉ်',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'သင့်ဖန်သားပြင်အချိန်၊ စဉ်ဆက်နှင့် အများဆုံးကြည့်ထားသည်များ',
 };

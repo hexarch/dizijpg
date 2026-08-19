@@ -1160,4 +1160,32 @@ const Map<String, String> cevirilerEl = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Η υπηρεσία κλήσεων επανεκκινείται· δοκίμασε σε λίγο',
   'Puan göstergesi': 'Υπόμνημα βαθμολογίας',
+  'İzleme İstatistiklerim': 'Τα στατιστικά παρακολούθησής μου',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Μόλις σημειώσεις ένα επεισόδιο ή μια ταινία ως παρακολουθημένα, τα στατιστικά σου αρχίζουν να συγκεντρώνονται εδώ.',
+  '{} sa {} dk': '{} ώ {} λ',
+  'Yaklaşık ekran süresi': 'Κατά προσέγγιση χρόνος οθόνης',
+  'İzleme serisi': 'Σερί παρακολούθησης',
+  'Şu anki seri': 'Τρέχον σερί',
+  'En uzun seri': 'Μεγαλύτερο σερί',
+  'Haftanın günleri': 'Ημέρες της εβδομάδας',
+  'En çok izlediklerin': 'Τα πιο παρακολουθημένα',
+  'Bu dönemde izleme yok': 'Καμία παρακολούθηση σε αυτή την περίοδο',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Όλων των εποχών: {} επεισόδια · {} ταινίες · ~{}',
+  'Paz': 'Κυρ',
+  'Pzt': 'Δευ',
+  'Sal': 'Τρί',
+  'Çar': 'Τετ',
+  'Per': 'Πέμ',
+  'Cum': 'Παρ',
+  'Cmt': 'Σάβ',
+  '{} bölüm': '{} επεισόδια',
+  '{} bölüm~tekil': '{} επεισόδιο',
+  '{} kez': '{} φορές',
+  '{} kez~tekil': '{} φορά',
+  'Son {} gün · günlük': 'Τελευταίες {} ημέρες · ημερήσια',
+  'Son {} gün · haftalık': 'Τελευταίες {} ημέρες · εβδομαδιαία',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Ο χρόνος οθόνης, το σερί και τα πιο παρακολουθημένα σου',
 };

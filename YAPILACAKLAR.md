@@ -1,5 +1,5 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-17 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
 ## 2026-08-17 — ⬜ Güvenlik denetimi (3. tur) bulguları
 Rapor: `GUVENLIK-DENETIMI-2026-08-17.md` (salt okuma; kod + sunucu).
@@ -79,6 +79,36 @@ Kimlik doğrulamasını atlayan açık YOK; SQL/yetki/oturum/şifreleme temiz.
   projelerin vhost'larını etkilediği için dokunulmadı); kullanıcı başına
   toplam medya kotası (bayt bütçesi + eşik kapısı riski pratikte kapattı);
   posta HTML süzgeci regex (sandbox iframe kurtarıyor — `allow-scripts` EKLEME).
+
+## 2026-08-19 — 🚀 WEB 1.81.0+129 (İzleme İstatistiklerim)
+İstek: "kullanıcı profilindeki ayarlardan izleme istatistikleri tarafını daha
+iyi bir hale getir, biraz instagram ve tiktoktan örnek al".
+
+- **Yeni uç** `GET /istatistiklerim/izleme?gun=7|30|90|365` (geçersiz değer
+  30'a düşer): pencere sayıları + önceki pencere + yön, günlük seri, haftanın
+  günü dağılımı, en çok izlenen 5, seri/streak (SQL "ada" yöntemi) ve ömür
+  boyu çıpa. Oturum zorunlu; adreste kullanıcı parametresi YOK.
+- **Yeni ekran** `app/lib/ekranlar/izleme_istatistik.dart` + `/izleme-istatistik`
+  rotası + Ayarlar'da "İstatistiklerim"in hemen altında satır.
+- **Instagram/TikTok'tan alınan SUNUM**: tek kahraman sayı + yön, pencere
+  seçici en üstte, düşebilen günlük seri, streak, "en çok" listesi, haftanın
+  günü dağılımı. ALINMAYAN: erişim/etkileşim gibi YAYINCI metrikleri — burada
+  ölçülen kullanıcının KENDİ izlemesi.
+- **Tahmin yok**: `dakika` türetilmiş bir sayı (bölüm 42 dk, film 110 dk),
+  bu yüzden "Yaklaşık ekran süresi" diye etiketlendi. Önceki pencere BOŞSA
+  yön oku hiç çizilmez (0'dan artış "%100 arttı" diye sunulmuyor).
+- **Kopya yerine ORTAK bileşen**: `YonRozeti` (renk körlüğü üçlemesi + ±%2 düz
+  bandı + ekran okuyucu cümlesi) ve `PencereSecici` İstatistiklerim'den
+  `ortak.dart`a taşındı. Rozete `kompakt` kipi eklendi.
+- 45 dile 25 yeni anahtar; 12 widget testi (360 dp taşma testi GERÇEK bir
+  taşma yakaladı: kahraman etiketi esnek değildi, 82 px taşıyordu).
+- Bu turda düzeltilen İKİ ESKİ KIRIK TEST: `sohbet.dart`'ta `_sonaKaydir`
+  çıplak `Future.delayed` kullanıyordu ve ağaç yok edildikten sonra da
+  bekleyen zamanlayıcı bırakıyordu (artık tutuluyor + dispose'da iptal);
+  `fragman.dart` YouTube kapağını ara değişkenle çağırdığı için WebP başlık
+  denetimi onu TMDB çağrısı sanıyordu (satır içine alındı).
+- Kanıt: 1755 Flutter + 1271 backend testi yeşil; canlıda uç 7/365/999 ile
+  doğrulandı, `/izleme-istatistik` robots.txt ve `BOT_ROTALARI`'na eklendi.
 
 ## 2026-08-17 — 🚀 WEB+APK 1.75.0+123 (ses kaydediyor: mikrofonda paused silmesin)
 Yazıyor düzelince kayıt hâlâ görünmüyordu: Android mikrofon izni `paused`

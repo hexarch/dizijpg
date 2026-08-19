@@ -1145,4 +1145,32 @@ const Map<String, String> cevirilerUk = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Служба дзвінків перезапускається, спробуй трохи згодом',
   'Puan göstergesi': 'Позначення оцінок',
+  'İzleme İstatistiklerim': 'Моя статистика переглядів',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Щойно позначиш серію або фільм як переглянуті, твоя статистика почне накопичуватися тут.',
+  '{} sa {} dk': '{} год {} хв',
+  'Yaklaşık ekran süresi': 'Приблизний екранний час',
+  'İzleme serisi': 'Серія переглядів',
+  'Şu anki seri': 'Поточна серія',
+  'En uzun seri': 'Найдовша серія',
+  'Haftanın günleri': 'Дні тижня',
+  'En çok izlediklerin': 'Найбільше переглянуто',
+  'Bu dönemde izleme yok': 'У цей період переглядів немає',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'За весь час: {} серій · {} фільмів · ~{}',
+  'Paz': 'нд',
+  'Pzt': 'пн',
+  'Sal': 'вт',
+  'Çar': 'ср',
+  'Per': 'чт',
+  'Cum': 'пт',
+  'Cmt': 'сб',
+  '{} bölüm': '{} серій',
+  '{} bölüm~tekil': '{} серія',
+  '{} kez': '{} разів',
+  '{} kez~tekil': '{} раз',
+  'Son {} gün · günlük': 'Останні {} днів · щодня',
+  'Son {} gün · haftalık': 'Останні {} днів · щотижня',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Твій екранний час, серія та найпопулярніші',
 };

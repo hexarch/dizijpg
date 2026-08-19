@@ -181,10 +181,14 @@ test('KOPYA YOK: `* 42` / `* 110` kaynağın hiçbir yerinde geçmiyor', () => {
 });
 
 test('/istatistiklerim ve /profil/:ad AYNI yardımcıyı çağırır', () => {
-  // tahminiDakika: 1 tanım + 2 çağrı. Üçten azsa uçlardan biri kendi
-  // hesabını yapıyor, üçten fazlaysa yeni bir uç eklenmiş (bilinçli olmalı).
+  // tahminiDakika: 1 tanım + 3 çağrı (/istatistiklerim, /profil/:ad ve
+  // 19 Ağu 2026'da eklenen /istatistiklerim/izleme). Beklenenden AZSA
+  // uçlardan biri kendi hesabını yapıyor demektir — testin asıl koruduğu şey
+  // bu: iki ekranın aynı kullanıcı için FARKLI ekran süresi göstermesi.
+  // FAZLAYSA yeni bir uç eklenmiştir ve bilinçli olmalı (bu satır o kararın
+  // kaydı).
   const sayi = (KAYNAK.match(/tahminiDakika\(/g) || []).length;
-  assert.equal(sayi, 3, `tahminiDakika( ${sayi} kez geçiyor, 3 bekleniyordu`);
+  assert.equal(sayi, 4, `tahminiDakika( ${sayi} kez geçiyor, 4 bekleniyordu`);
   // İki uç da yanıtta doğrudan bu değeri veriyor.
   const alan = (KAYNAK.match(/tahmini_dakika: dakika/g) || []).length;
   assert.equal(alan, 2, 'tahmini_dakika iki uçta da yardımcıdan gelmeli');

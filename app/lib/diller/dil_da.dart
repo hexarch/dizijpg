@@ -1140,4 +1140,32 @@ const Map<String, String> cevirilerDa = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Opkaldstjenesten genstarter; prøv igen om lidt',
   'Puan göstergesi': 'Vurderingsforklaring',
+  'İzleme İstatistiklerim': 'Min seerstatistik',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Så snart du markerer et afsnit eller en film som set, begynder din statistik at samle sig her.',
+  '{} sa {} dk': '{} t {} min',
+  'Yaklaşık ekran süresi': 'Omtrentlig skærmtid',
+  'İzleme serisi': 'Seerstime',
+  'Şu anki seri': 'Nuværende stime',
+  'En uzun seri': 'Længste stime',
+  'Haftanın günleri': 'Ugedage',
+  'En çok izlediklerin': 'Mest sete',
+  'Bu dönemde izleme yok': 'Ingen visninger i denne periode',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Nogensinde: {} afsnit · {} film · ~{}',
+  'Paz': 'søn',
+  'Pzt': 'man',
+  'Sal': 'tir',
+  'Çar': 'ons',
+  'Per': 'tor',
+  'Cum': 'fre',
+  'Cmt': 'lør',
+  '{} bölüm': '{} afsnit',
+  '{} bölüm~tekil': '{} afsnit',
+  '{} kez': '{} gange',
+  '{} kez~tekil': '{} gang',
+  'Son {} gün · günlük': 'Sidste {} dage · dagligt',
+  'Son {} gün · haftalık': 'Sidste {} dage · ugentligt',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Din skærmtid, stime og mest sete',
 };

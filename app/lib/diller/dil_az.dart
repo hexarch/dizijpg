@@ -1132,4 +1132,32 @@ const Map<String, String> cevirilerAz = {
   'Arama hizmeti yeniden başlatılıyor, birazdan tekrar dene':
       'Zəng xidməti yenidən başlayır, bir az sonra yenə cəhd et',
   'Puan göstergesi': 'Reytinq göstəricisi',
+  'İzleme İstatistiklerim': 'İzləmə statistikam',
+  'Bir bölümü ya da filmi izlendi olarak işaretlediğinde istatistiklerin burada birikmeye başlar.':
+      'Bir epizodu və ya filmi izlənmiş kimi işarələdiyin anda statistikan burada toplanmağa başlayır.',
+  '{} sa {} dk': '{} saat {} dəq',
+  'Yaklaşık ekran süresi': 'Təxmini ekran vaxtı',
+  'İzleme serisi': 'İzləmə seriyası',
+  'Şu anki seri': 'Cari seriya',
+  'En uzun seri': 'Ən uzun seriya',
+  'Haftanın günleri': 'Həftənin günləri',
+  'En çok izlediklerin': 'Ən çox izlədiklərin',
+  'Bu dönemde izleme yok': 'Bu dövrdə izləmə yoxdur',
+  'Tüm zamanlar: {} bölüm · {} film · ~{}':
+      'Bütün zamanlar: {} epizod · {} film · ~{}',
+  'Paz': 'B',
+  'Pzt': 'B.e',
+  'Sal': 'Ç.a',
+  'Çar': 'Ç',
+  'Per': 'C.a',
+  'Cum': 'C',
+  'Cmt': 'Ş',
+  '{} bölüm': '{} epizod',
+  '{} bölüm~tekil': '{} epizod',
+  '{} kez': '{} dəfə',
+  '{} kez~tekil': '{} dəfə',
+  'Son {} gün · günlük': 'Son {} gün · gündəlik',
+  'Son {} gün · haftalık': 'Son {} gün · həftəlik',
+  'Ekran süren, serin ve en çok izlediklerin':
+      'Ekran vaxtın, seriyan və ən çox izlədiklərin',
 };
