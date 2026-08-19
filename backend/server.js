@@ -776,6 +776,62 @@ const aramaTtl = (dolu, azEsigi = 3) => aramaTtlSecici({
   dolu, kisa: ONBELLEK_TTL_SN.kisa, orta: ONBELLEK_TTL_SN.orta, azEsigi,
 });
 
+// ---------------------------------------------------------------------------
+// İÇERİK DETAY TMDB YOLU — SSR ve UYGULAMA AYNI ÖNBELLEK SATIRINI PAYLAŞIR
+// (20 Ağu 2026)
+// ---------------------------------------------------------------------------
+// ÖLÇÜLEN ISKALAMA: `tmdb_onbellek` read-through bir aynadır ve anahtarı TAM
+// URL'dir. Aynı yapım için İKİ AYRI satır yazılıyordu:
+//   SSR (/og/icerik) : /tv/1396?append_to_response=credits,similar&language=tr-TR
+//   Uygulama (/tmdb) : /tv/1396?append_to_response=credits%2Cvideos%2C...
+// Yani uygulamada AÇILMIŞ bir yapımın taze verisi önbellekte dururken
+// Googlebot geldiğinde SSR onu GÖREMİYOR, canlı TMDB çağrısı yapıyordu.
+// Canlı ölçüm (20 Ağu 2026, tmdb_onbellek): 1.261 farklı yapımın tr-TR detayı
+// uygulama anahtarı altında vardı; SSR anahtarı altında yalnız 554'ü.
+//
+// DAHA KÖTÜSÜ, UYGULAMA ANAHTARI KARARSIZDI: `/tv/1396` için AYNI append
+// kümesinin 5 varyantı birikmişti — fark yalnız `include_image_language` /
+// `include_video_language`in VARLIĞI ve SIRASI (eski web derlemesi bunları
+// göndermiyor, yeni istemci gönderiyor; `URLSearchParams` istemcinin sırasını
+// koruyordu). Beş varyant = beş satır = beş kez TMDB isteği.
+//
+// ÇÖZÜM: anahtarı İSTEMCİ DEĞİL SUNUCU kurar. `/tmdb/(tv|movie)/:id` uca ne
+// gönderirse göndersin parametreler ATILIR ve bu tek fonksiyondan yeniden
+// kurulur; SSR de aynı fonksiyonu çağırır. Sıra da sabittir (append →
+// include_image_language → include_video_language; `language`ı `tmdbGetir`
+// sona ekler). Sonuç: yapım başına TEK satır, iki taraf da onu tazeliyor.
+//
+// `similar` YERİNE `recommendations` (SSR iç bağlantıları): SSR sayfası 8
+// "benzer yapım" bağlantısı basar, tarama derinliğinin tek kaynağı budur.
+// Uygulama anahtarında `similar` yok, `recommendations` var. Birleştirmeden
+// önce canlı önbellekten ölçüldü:
+//   similar          : 554 satır, 6'sı BOŞ (%1,08), ortalama 19,78 sonuç
+//   recommendations  : 1.933 satır, 3'ü BOŞ (%0,16), ortalama 19,95 sonuç
+// Yani `recommendations` DAHA DOLU. Somut örnek: Arka Sokaklar (tv/32836)
+// `similar` = 0 iken `recommendations` = 20. Gerileme değil, iyileşme.
+// Yine de SSR'da `recommendations || similar` yedeği duruyor: EK İSTEK
+// doğurmaz (ikisi de aynı yanıtın içinde), yalnız elde ne varsa onu kullanır.
+const ICERIK_APPEND = 'credits,videos,recommendations,external_ids,watch/providers,images';
+
+/**
+ * İçerik detayının PAYLAŞILAN TMDB yolu (önbellek anahtarının gövdesi).
+ * `language` BİLEREK yok: onu `tmdbGetir` isteğin diline göre sona ekler.
+ * @param {'tv'|'movie'} tur
+ * @param {number|string} tmdbId
+ * @param {string} dilKodu kısa dil kodu ('tr', 'en' ...) — fragman dili için
+ */
+function icerikTmdbYolu(tur, tmdbId, dilKodu = 'tr') {
+  const p = new URLSearchParams();
+  p.set('append_to_response', ICERIK_APPEND);
+  // `include_image_language=null` = YAZISIZ kapaklar (üstüne dizi adı basılmış
+  // afiş değil). Uygulama başlığı bunlardan çiziyor; yük ~4 KB artar.
+  p.set('include_image_language', 'null');
+  // TMDB `language=tr-TR` yalnız TR videoyu verir; Inception gibi yapımlarda
+  // resmi fragman EN. Kullanıcı dili + EN + dilsiz.
+  p.set('include_video_language', `${dilKodu},en,null`);
+  return `/${tur}/${tmdbId}?${p.toString()}`;
+}
+
 // ---------- SSR SÜRE BÜTÇESİ (19 Ağu 2026) ----------
 // ÖLÇÜM — nginx error.log, 18 Ağu 2026:
 //   18:45:11 upstream timed out (110: Connection timed out) while reading
@@ -2989,10 +3045,14 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     return ogYok(res, url);
   }
   try {
-    // credits/similar tek istekte gelir: iç bağlantılar bu maddenin gizli değeri,
-    // onlar olmadan tarama derinliği 1'de kalıyor.
+    // credits + "benzer yapımlar" TEK istekte gelir: iç bağlantılar bu maddenin
+    // gizli değeri, onlar olmadan tarama derinliği 1'de kalıyor.
+    // ANAHTAR UYGULAMAYLA ORTAK (bkz. `icerikTmdbYolu` başlığı): eskiden SSR
+    // `?append_to_response=credits,similar` diyordu ve uygulamanın yazdığı
+    // TAZE satırı göremiyordu. Artık iki taraf da AYNI satırı okuyup tazeliyor.
     const v = await tmdbGetir(
-      `/${tur}/${tmdbId}?append_to_response=credits,similar`, ONBELLEK_TTL_SN.uzun);
+      icerikTmdbYolu(tur, tmdbId, String(istekBaglam.getStore()?.dil || 'tr')),
+      ONBELLEK_TTL_SN.uzun);
     const ad = v.name || v.title || 'dizi.jpg';
     const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
     const adYil = `${ad}${yil ? ` (${yil})` : ''}`;
@@ -3013,7 +3073,11 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
           afis: o.profile_path, alt: `${o.name} fotoğrafı`,
         })), 10);
     const benzerBlok = seoAfisListesi(tur === 'tv' ? 'Benzer diziler' : 'Benzer filmler',
-      (v.similar?.results || []).slice(0, 8)
+      // `recommendations` ÖNCE (ölçüm gerekçesi `icerikTmdbYolu` başlığında:
+      // %0,16 boş, `similar`da %1,08). `similar` yedeği EK İSTEK DOĞURMAZ —
+      // aynı yanıtın içindedir; yalnız eski anahtardan gelen bir satır
+      // okunursa (ör. dağıtım anı) sayfa iç bağlantısız kalmasın diye duruyor.
+      ((v.recommendations?.results || v.similar?.results) || []).slice(0, 8)
         .filter((b) => b.name || b.title)
         .map((b) => {
           const bAd = b.name || b.title;
@@ -4682,6 +4746,7 @@ const BOT_ROTALARI = [
   { yol: '/yapimlar/:id', desen: /^\/yapimlar\/\d+$/ },
   { yol: '/izlediklerim', desen: /^\/izlediklerim$/ },
   { yol: '/gizlenen-yorumlar', desen: /^\/gizlenen-yorumlar$/ },
+  { yol: '/altyazi-bicem', desen: /^\/altyazi-bicem$/ },
   { yol: '/engellenenler', desen: /^\/engellenenler$/ },
   { yol: '/hareketlerim', desen: /^\/hareketlerim$/ },
   { yol: '/istatistiklerim', desen: /^\/istatistiklerim$/ },
@@ -5729,10 +5794,12 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
   } else if (!parametreler.has('language')) {
     parametreler.set('language', 'tr-TR');
   }
-  // Detay sayfalarına ek verileri tek istekte iliştir.
-  if (/^\/(tv|movie)\/\d+$/.test(yol) && !parametreler.has('append_to_response')) {
-    parametreler.set('append_to_response', 'credits,videos,recommendations,external_ids,watch/providers');
-  }
+  // Detay sayfası: ek veriler tek istekte gelir VE anahtarı İSTEMCİ DEĞİL
+  // SUNUCU kurar (20 Ağu 2026). Eskiden "istemci göndermişse dokunma" idi;
+  // istemcinin parametre SIRASI önbellek anahtarına sızdığı için aynı yapımın
+  // 5 ayrı satırı birikmişti ve SSR hiçbirini paylaşamıyordu. Gerekçenin
+  // tamamı `icerikTmdbYolu` başlığında.
+  const icerikDetayi = /^\/(tv|movie)\/\d+$/.test(yol);
   // Bölüm detayı: fragman tek istekte gelsin (ayrı /videos 403 olmasın).
   if (/^\/tv\/\d+\/season\/\d+\/episode\/\d+$/.test(yol) &&
       !parametreler.has('append_to_response')) {
@@ -5746,7 +5813,13 @@ app.get('/tmdb/*', tmdbLimiti, sarici(async (req, res) => {
     const kod = String(istekBaglam.getStore()?.dil || 'tr');
     parametreler.set('include_video_language', `${kod},en,null`);
   }
-  const tam = `${yol}?${parametreler.toString()}`;
+  // İçerik detayında istemcinin gönderdiği parametreler ATILIR: anahtar tek
+  // sabitten (`ICERIK_APPEND`) ve SABİT SIRAYLA kurulur ki SSR ile uygulama
+  // AYNI satırı paylaşsın. `language`ı yine `tmdbGetir` sona ekler.
+  const tam = icerikDetayi
+    ? icerikTmdbYolu(
+      yol.split('/')[1], yol.split('/')[2], String(istekBaglam.getStore()?.dil || 'tr'))
+    : `${yol}?${parametreler.toString()}`;
   // `company` bu listeye md. 49'da katıldı: bir yapım firmasının adı, logosu,
   // ülkesi ve merkezi PRATİKTE HİÇ değişmez — arama kademesiyle (onbellek_ttl.js,
   // 15/30 dk) ilgisi yok, en uzun katalog TTL'i (7 gün) doğru olanı.

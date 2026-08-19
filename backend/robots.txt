@@ -50,6 +50,9 @@ Disallow: /kitaplik/
 Disallow: /favori-oyuncular
 Disallow: /yapimlar/
 Disallow: /gizlenen-yorumlar
+# 20 Agu 2026: altyazi gorunumu ekrani (Ayarlar > Video altyazilari).
+# Kisiye ozel bir tercih ekrani; icerigi yok, indekslenecek bir sey yok.
+Disallow: /altyazi-bicem
 # 13 Agu 2026 (md. 19): engellenen kullanicilar ekrani. Kisiye ozel olmasinin
 # otesinde HASSAS bir liste — "kim kimi engellemis" hicbir kosulda taranmamali.
 Disallow: /engellenenler

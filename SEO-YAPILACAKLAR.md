@@ -43,12 +43,13 @@ adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
 | **1** | **Ölç** — Search Console | Her şeyi yeniden çerçeveledi: 1.0'ın 3. maddesi bu veri yüzünden ertelendi. | §1 | ✅ |
-| **2** | **Riski kapat** — `aggregateRating` + persona puanları | Manuel işlem YOK, yani risk teorik kalmış; düzeltme yine de yapıldı (önleme). | §2 | ✅ kod hazır, migrasyon bekliyor |
-| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §6.9 | ✅ kod hazır, dağıtım bekliyor |
+| **2** | **Riski kapat** — `aggregateRating` + persona puanları | Manuel işlem YOK, yani risk teorik kalmış; düzeltme yine de yapıldı (önleme). | §2 | ✅ **canlıda** (20 Ağu, 17 hesap işaretli) |
+| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §6.9 | ✅ **canlıda** (20 Ağu, 1.86.0+136) |
 | **4** | **İç bağlantıyı güçlendir** — şirket SSR + görseller + `/gizlilik` | Sinyali derin sayfalara taşır. `/icerik` → firma bağlantıları tam da "keşfedildi ama taranmadı" kuyruğunu hedefler. | §6.1–6.3 | ✅ |
 | **5** | **Dış görünürlük** — ilk gerçek bağlantılar | Tarama bütçesinin asıl kaynağı otorite. Kod işi değil; ayrı bir plan gerektiriyor. | §4.6 | ⬜ |
 | ~~6~~ | ~~Bölüm sayfalarını aç~~ **ERTELENDİ** | Kuyruk boşalmadan yeni URL ailesi açmak var olanların taranma olasılığını seyreltir. Bkz. §1.1. | §5 | ⛔ şimdilik |
-| **7** | **hreflang / çok dilli SSR** | TR dışı gösterim %10 ve hepsi tekil → acelesi YOK. | §7 | ⬜ |
+| **4.5** | **Tarama verimini yükselt** — önbellek ısıtıcısı + SSR/uygulama anahtar birleştirme | Kuyruğun sebebi kalite değil HIZ: Googlebot'un hiç girmediği 2.071 URL soğuk, ilk ziyarette canlı TMDB bekliyor. | §6.10 | 🔨 kod hazır, dağıtım bekliyor |
+| **7** | **hreflang / çok dilli SSR** | Tavanı en yüksek iş ama tarama kuyruğu boşalmadan URL sayısını 45'le çarpmak kuyruğu kilitler. | §7 | ⬜ |
 
 > **Bir sonraki gözden geçirme:** "Keşfedildi – dizine eklenmemiş" sayısı
 > (bugün **2.159**) ölçülecek. Düşüyorsa iç bağlantı ve 5xx temizliği işe
@@ -405,6 +406,69 @@ kovalanmalı).
 
 ---
 
+## 6.10 🔨 Tarama verimi — önbellek soğuk (20 Ağu 2026)
+
+### Ölçülen durum
+
+`tmdb_onbellek` bir **tembel** (read-through) ayna: sayfaya ziyaret gelince
+dolar, gelmezse süresi dolar. 20.329 satırın **17.221'i (%85) 7 günden eski**,
+yani en uzun TTL bile dolmuş. Sunucuda proaktif tazeleme işi YOKTU.
+
+Sonuç: Googlebot soğuk bir sayfaya girdiğinde **canlı TMDB çağrısını bekliyor.**
+18 Ağu'daki iki 504 tam olarak böyle oluştu (§6.9).
+
+Trafik dağılımı bu tabloyu netleştiriyor (7 günlük nginx günlüğü):
+
+| | |
+|---|---|
+| SSR isteği | 1.067 — **%90'ı Googlebot** (957) |
+| Googlebot'un dokunduğu farklı `/icerik` URL'i | 382 |
+| bunlardan önbellekte **taze** olan | **375 (%98,2)** |
+| Googlebot'un hiç girmediği sitemap URL'i | **2.071 (%84,4)** |
+
+Okunuşu: **trafik değdiği yeri zaten ısıtıyor.** Değer, botun hiç girmediği
+%84'te. Bu hızla tam bir tur ~45 gün sürüyor ve her ilk ziyaret yavaş.
+
+### İki müdahale
+
+1. **Isıtıcı** (`backend/isitici.js`) — sitemap'teki ve kullanıcıların
+   dokunduğu yapımları katmanlı olarak önden tazeler. Gece toplu koşu DEĞİL,
+   **24 saate yayılmış sürekli akış** (cron 10 dk, ~1 istek/sn): toplu koşuda
+   her şey aynı anda tazelenip aynı anda bayatlar ve kaçan tek koşu tüm
+   katalogu yaşlandırır.
+2. **SSR/uygulama anahtar birleştirme** — SSR
+   `?append_to_response=credits,similar` kullanıyor, uygulama farklı bir
+   append kümesi. Aynı yapım iki ayrı satırda. Sitemap'teki 2.453 içerik
+   sayfasının **1.153'ünün** tr-TR verisi uygulama anahtarı altında ZATEN VAR;
+   SSR göremediği için canlı TMDB çağrısı yapılıyor. Birleştirme bu 1.153
+   sayfayı **sıfır TMDB isteğiyle** ısıtır ve sonrasında bot ile uygulama aynı
+   satırı paylaşır.
+
+### Yol üstünde bulunan kusur
+
+Isıtıcının ilk sıralaması bir sınıfı tamamen aç bırakıyordu: hiç çekilmemiş
+anahtarların hepsi `yaş = Infinity` ile berabere kalıyor, eşitlik bozucu
+**alfabetik** olduğu için ilk 6 koşuda (2.880 istek) `bolum` sınıfına sıfır
+istek gidiyordu. Sıralama üç anahtarlı yapıldı: öncelik → aşım bandı
+(`yaş/ttl`, ham yaş DEĞİL) → sınıflar arası sırayla dağıtım. Doldurma süresi
+değişmedi (70 koşu ≈ 11,7 saat), yalnız dağılım düzeldi.
+
+### Kabul ölçütü
+
+- `/icerik` ve `/kisi` sayfalarında ilk-ziyaret SSR süresi düşmeli.
+- **Asıl ölçüt:** "Keşfedildi – dizine eklenmemiş" (bugün 2.159) düşmeli.
+  Düşmüyorsa sorun hızda değil otoritededir (§4.6).
+
+### Ayrıca ölçüldü — sitemap'te olmayan iki aile
+
+`SITEMAP_SORGU` yalnız `tv`/`movie` alıyor: **`/kisi` ve `/sirket` site
+haritasında HİÇ YOK.** Googlebot oraya yalnız içerik sayfasındaki bağlantılardan
+ulaşıyor. 18 Ağu'da 504 alan iki URL de tam olarak bu ilan edilmemiş kümede —
+tesadüf değil, yapısal. Isıtıcı kişi adaylarını bu yüzden içerik önbelleğindeki
+ilk 10 oyuncudan çıkarıyor (ek TMDB isteği harcamadan).
+
+---
+
 ## 7. ⬜ Çok dillilik — ayrı proje
 
 ### Ölçülen durum
@@ -417,18 +481,53 @@ kovalanmalı).
   metni var ama `<html lang="tr">` ve JSON-LD'de `inLanguage` yok — karışık
   dil sinyali.
 
+**20 Ağu 2026 — doğrudan ölçüm.** Önbellekteki SSR anahtarlarının **554/554'ü
+`tr-TR`.** Sebep: SSR dili `X-Dil` başlığından geliyor, o başlığı yalnız
+uygulama gönderiyor; Googlebot göndermediği için varsayılan `tr`ye düşüyor.
+Yani **Google, dizi.jpg'nin 45 dilinden yalnız birini görüyor.** Diğer 44'ü
+arama motoru için var değil. Depoda `hreflang` geçen satır sayısı: **0.**
+
 ### Neden şimdi değil
 
-Tavanı en yüksek iş ama **§2 çözülmeden ölçeklemek riski 45'le çarpar.**
+> **Engel DEĞİŞTİ (20 Ağu).** 1.0'daki gerekçe "§2 çözülmeden ölçeklemek riski
+> 45'le çarpar" idi; §2 artık canlıda. Yeni ve daha sert engel tarama bütçesi.
+
+Aritmetik kararı kendi veriyor:
+
+| | |
+|---|---|
+| Site haritasındaki URL | 2.518 |
+| Google'ın indekslediği | 264 |
+| **Keşfedilmiş ama taranmamış** | **2.159** |
+| Googlebot'un haftalık dokunduğu farklı URL | 382 |
+
+Sıra zaten 8 kat dolu. 45 dile açmak 2.453 × 45 ≈ **110.000 URL** demek;
+Googlebot'un bugünkü hızıyla bir tam tur **~5,5 yıl**. Taranmayan sayfa
+indekslenmez — yani 44 dili birden açmak, var olan Türkçe sayfaların taranma
+şansını da bölerdi.
+
 Ayrıca dil başına URL şeması (`/en/icerik/...` ya da alt alan adı) mimari bir
 karar ve geri dönüşü pahalı.
 
+**Lehimize olan:** bu sayfalar makine kopyası olmayacak. TMDB'nin o dillerde
+gerçek çevrilmiş özetleri var, üstüne bizim kullanıcı yorumlarımız biniyor —
+Google'ın "yinelenen içerik" saymayacağı gerçek yerelleştirme. İş yapmaya
+değer, sırası sonra.
+
 ### Sıra geldiğinde
 
-1. Dil başına URL şeması kararı (yol öneki mi, alt alan adı mı).
-2. Önce **iki dil**: `tr` + `en`. 45 dili birden açmak denetlenemez.
-3. `hreflang` + `x-default`.
-4. JSON-LD'ye `inLanguage`.
+0. **Ön koşul:** §6.10'un kabul ölçütü karşılanmalı — "keşfedildi ama
+   dizine eklenmemiş" düşüş eğiliminde olmalı. Kuyruk boşalmadan URL sayısını
+   çarpmak kuyruğu kilitler.
+1. **Hangi diller ölçümle seçilir**, tahminle değil: Search Console ülke
+   dağılımı + sunucu günlüğündeki gerçek ziyaretçi dilleri. Bu veriye bu
+   soruyla henüz bakılmadı.
+2. Dil başına URL şeması kararı (yol öneki mi, alt alan adı mı).
+3. Önce **iki dil**: `tr` + `en`. 45 dili birden açmak denetlenemez ve
+   tarama bütçesini bölerdi.
+4. `hreflang` + `x-default` + site haritasında `alternate` bağlantılar.
+   Üçü BİRLİKTE gelir; biri eksikse Google varyantları ayrı sayfa sayar.
+5. JSON-LD'ye `inLanguage`.
 
 ---
 
