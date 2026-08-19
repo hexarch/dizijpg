@@ -103,6 +103,7 @@ import { yaz as logYaz, olumcul as logOlumcul } from './gunluk.js';
 import {
   kumelenmisMi, isciSira, yayinla, abone, sayacArtir,
   istekKaydet, istekOzet,
+  cspKaydet, cspOzet, cspSifirla,
 } from './kume_ipc.js';
 import { havuzMax } from './kume_yardimci.js';
 // Admin paneli · cihaz dağılımı (md. 37). SAF modül: User-Agent → üç kapalı
@@ -2070,14 +2071,17 @@ app.post('/csp-rapor',
         try { kaynak = ham.startsWith('http') ? new URL(ham).origin : ham.split('?')[0]; }
         catch { /* şema değil (inline/eval/data) — olduğu gibi kalsın */ }
         const anahtar = `${direktif}|${kaynak.slice(0, 120)}`;
+        const ornekYol = String(r['document-uri'] || r.documentURL || '')
+          .replace(/^https?:\/\/[^/]+/, '').slice(0, 120);
+        // KÜME GENELİNE de yaz (19 Ağu 2026). Yerel sayaç KALIYOR: birincile
+        // ulaşılamadığı anın yedeği o. Ama karar noktası artık birleşik özet.
+        cspKaydet({ anahtar, ornekYol });
         CSP_TOPLAM++;
         const v = CSP_OZET.get(anahtar);
         if (v) { v.adet++; v.son = Date.now(); continue; }
         if (CSP_OZET.size >= CSP_SINIR) { CSP_TASTI++; continue; }
         CSP_OZET.set(anahtar, {
-          adet: 1, ilk: Date.now(), son: Date.now(),
-          ornekYol: String(r['document-uri'] || r.documentURL || '')
-            .replace(/^https?:\/\/[^/]+/, '').slice(0, 120),
+          adet: 1, ilk: Date.now(), son: Date.now(), ornekYol,
         });
       }
     } catch { /* bozuk rapor toplayıcıyı düşürmesin */ }
@@ -2086,29 +2090,55 @@ app.post('/csp-rapor',
 
 // Özet: report-only ölçümünün karar noktası. `toplam: 0` ise CSP zorunlu
 // yapılabilir. Admin IP kısıtlı (nginx /api/admin bloğu + adminKisit).
-app.get('/admin/csp', adminKisit, (_req, res) => {
+app.get('/admin/csp', adminKisit, sarici(async (_req, res) => {
+  // BİRLEŞİK ÖZET (19 Ağu 2026). Eskiden yalnız BU İŞÇİNİN sayacı dönüyordu
+  // ve küme 4 işçi çalıştırdığı için uç peş peşe çağrıldığında farklı
+  // rakamlar veriyordu (ölçüldü: 2, 3, 8, 1). Bu ucun tek işi "toplam 0 mı?"
+  // sorusuna cevap vermek ve o cevaba bakıp CSP'yi ZORUNLU moda almak —
+  // dörtte bir görüşe bakıp "0" demek, enforce'a geçip özelliği kırmanın
+  // en kolay yoluydu.
+  const birlesik = await cspOzet();
+  const cozumle = (anahtar) => {
+    const [direktif, kaynak] = String(anahtar).split('|');
+    return { direktif, kaynak };
+  };
+  if (birlesik) {
+    const ihlaller = (birlesik.ozet || [])
+      .map(({ anahtar, ...v }) => ({ ...cozumle(anahtar), ...v }))
+      .sort((a, b) => b.adet - a.adet);
+    return res.json({
+      kapsam: 'kume',
+      toplam: birlesik.toplam || 0,
+      ayri_tur: ihlaller.length,
+      tasan: birlesik.tasan || 0,
+      not: 'Küme geneli birleşik sayaç; birincil süreç yeniden başlarsa sıfırlanır.',
+      ihlaller,
+    });
+  }
+  // Birincile ulaşılamadı: yerel sayaca düş ama bunu SÖYLE — "0" gördü diye
+  // enforce'a geçilmesin.
   const ihlaller = [...CSP_OZET.entries()]
-    .map(([anahtar, v]) => {
-      const [direktif, kaynak] = anahtar.split('|');
-      return { direktif, kaynak, ...v };
-    })
+    .map(([anahtar, v]) => ({ ...cozumle(anahtar), ...v }))
     .sort((a, b) => b.adet - a.adet);
   res.json({
+    kapsam: 'yerel',
     toplam: CSP_TOPLAM,
     ayri_tur: ihlaller.length,
     tasan: CSP_TASTI,
-    // Sayaçlar BELLEKTE: konteyner yeniden başlarsa sıfırlanır. Ölçüm
-    // penceresini bir dağıtımdan SONRA başlatmak gerekir.
-    not: 'Sayaçlar bellek içidir; konteyner yeniden başlarsa sıfırlanır.',
+    not: 'UYARI: birincile ulaşılamadı, bu YALNIZ bir işçinin sayacıdır — '
+      + 'enforce kararı için yeterli DEĞİL.',
     ihlaller,
   });
-});
+}));
 
 // Ölçüm penceresini elle sıfırla (ör. bir direktifi düzelttikten sonra).
-app.post('/admin/csp/sifirla', adminKisit, (_req, res) => {
+app.post('/admin/csp/sifirla', adminKisit, sarici(async (_req, res) => {
+  // Yerel + BİRLEŞİK ikisi de sıfırlanır. Yalnız yereli sıfırlamak, ölçüm
+  // penceresini yalnız bir işçi için açardı.
   CSP_OZET.clear(); CSP_TOPLAM = 0; CSP_TASTI = 0;
-  res.json({ durum: 'ok' });
-});
+  const c = await cspSifirla();
+  res.json({ durum: 'ok', kume: c ? 'sifirlandi' : 'ulasilamadi' });
+}));
 
 // Sürüm kapısı: uygulama açılışta kendi derleme numarasını sorar.
 // zorunlu=true ise kapatılamayan güncelleme ekranı, oneri=true ise

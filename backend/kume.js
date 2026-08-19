@@ -80,6 +80,33 @@ function birincil() {
     if (ISTEK.son.length > ISTEK_SINIR) ISTEK.son.length = ISTEK_SINIR;
   }
 
+  // CSP İHLAL ÖZETİ — KÜME GENELİ (19 Ağu 2026).
+  //
+  // NEDEN BURAYA TAŞINDI: sayaç işçilerin BELLEĞİNDEYDİ ve her işçinin ayrı
+  // kopyası vardı. `/admin/csp` isteği hangi işçiye düşerse onun rakamını
+  // veriyordu — ölçüldü: aynı uç peş peşe 2, 3, 8, 1 döndü. Oysa o ucun tek
+  // işi "toplam 0 mı?" sorusuna cevap vermek ve o cevaba bakıp CSP'yi ZORUNLU
+  // moda almak. Dörtte bir görüşe bakıp "0" demek, enforce'a geçip özelliği
+  // kırmanın en kolay yoluydu.
+  //
+  // TAVAN İŞÇİDEKİYLE AYNI (CSP_SINIR 200): birleşik harita da sınırsız
+  // büyümemeli, bozuk/saldırgan bir istemci onu şişirebilir.
+  const CSP_SINIR = 200;
+  const CSP = { ozet: new Map(), toplam: 0, tasan: 0 };
+  function cspIsle(k) {
+    if (!k || typeof k !== 'object') return;
+    const anahtar = String(k.anahtar || '').slice(0, 200);
+    if (!anahtar) return;
+    CSP.toplam += 1;
+    const v = CSP.ozet.get(anahtar);
+    if (v) { v.adet += 1; v.son = Date.now(); return; }
+    if (CSP.ozet.size >= CSP_SINIR) { CSP.tasan += 1; return; }
+    CSP.ozet.set(anahtar, {
+      adet: 1, ilk: Date.now(), son: Date.now(),
+      ornekYol: String(k.ornekYol || '').slice(0, 120),
+    });
+  }
+
   // -------------------------------------------------------------------------
   // Mesaj santrali
   // -------------------------------------------------------------------------
@@ -94,10 +121,21 @@ function birincil() {
       }
     } else if (m.k === 'istek') {
       istekIsle(m.veri);
+    } else if (m.k === 'csp') {
+      cspIsle(m.veri);
     } else if (m.k === 'rpc') {
       let veri = null;
       if (m.ad === 'sayac' && m.veri && typeof m.veri.a === 'string') {
         veri = { sayi: sayacArtir(m.veri.a) };
+      } else if (m.ad === 'csp_ozet') {
+        veri = {
+          toplam: CSP.toplam,
+          tasan: CSP.tasan,
+          ozet: [...CSP.ozet].map(([anahtar, v]) => ({ anahtar, ...v })),
+        };
+      } else if (m.ad === 'csp_sifirla') {
+        CSP.ozet.clear(); CSP.toplam = 0; CSP.tasan = 0;
+        veri = { durum: 'ok' };
       } else if (m.ad === 'istek_ozet') {
         veri = {
           toplam: ISTEK.toplam,

@@ -120,6 +120,24 @@ export function istekKaydet(kayit) {
   try { process.send({ k: 'istek', veri: kayit }); } catch { /* telemetri isteği bozmaz */ }
 }
 
+/** CSP ihlalini birincile yolla (ateşle-unut). Rapor akışı kullanıcıyı
+ *  bekletmez; ulaşamazsak işçi kendi yerel sayacını yine de tutar. */
+export function cspKaydet(veri) {
+  if (!kumelenmisMi()) return;
+  try { process.send({ k: 'csp', veri }); } catch { /* rapor isteği bozmaz */ }
+}
+
+/** Birincildeki BİRLEŞİK CSP özeti. Ulaşamazsa null → çağıran yerel
+ *  sayacına düşer (eksik ama boş değil) ve bunu yanıtta BELİRTİR. */
+export function cspOzet() {
+  return rpc('csp_ozet', null, 800);
+}
+
+/** Birleşik CSP sayacını sıfırla. Ulaşamazsa null. */
+export function cspSifirla() {
+  return rpc('csp_sifirla', null, 800);
+}
+
 /** Birincildeki birleşik istek telemetrisi. Ulaşamazsa null (çağıran işçinin
  *  yerel halkasına düşer — eksik ama boş değil). */
 export function istekOzet() {
