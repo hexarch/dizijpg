@@ -1,6 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+// `hide TextDirection`: intl'in kendi `TextDirection` sınıfı Flutter'ınkiyle
+// çakışıyor ve [ButceRozeti] okun yönünü `Directionality.of(context)` ile,
+// yani FLUTTER'ın sıralamasıyla seçiyor.
+import 'package:intl/intl.dart' hide TextDirection;
 
 import '../api.dart';
 import '../gorsel_basliklari.dart';
@@ -109,6 +113,299 @@ List<String> kapaklariCikar(Map<String, dynamic> icerik) {
     if (y != null && y.isNotEmpty && !yollar.contains(y)) yollar.add(y);
   }
   return yollar;
+}
+
+/// ---------------------------------------------------------------------------
+/// YAPIM BÜTÇESİ ROZETİ (21 Ağu 2026 isteği: "dizi ve filmlere harcanan
+/// bütçeleri, yapım yılının yanında yazsın; sarı arka plan siyah yazı ile.
+/// Bu bilgi tüm dizi ve filmlerde olmasına gerek yok").
+///
+/// YALNIZ FİLMLERDE — dizide alan HİÇ YOK, uydurulamaz.
+/// Canlı önbellekte ölçüldü (21 Ağu 2026): 4.928 film satırının 3.370'inde
+/// (%68,4) `budget > 0`; `budget` alanı BULUNAN dizi satırı sayısı 0. TMDB
+/// dizi gövdesinde böyle bir alan yoktur. Bu yüzden dizide rozet aranmaz.
+///
+/// EK İSTEK YOK: `budget`, uygulamanın zaten çektiği `/tmdb/movie/:id`
+/// yanıtının KÖK alanıdır (canlı doğrulama: /api/tmdb/movie/155 → 185000000).
+/// Yeni uç, yeni sorgu, backend değişikliği gerekmez.
+///
+/// SIFIR = "BİLİNMİYOR", "bütçesiz" DEĞİL: TMDB doldurulmamış her yapımda 0
+/// döndürür. "0 $" basmak YANLIŞ BİLGİ olurdu — rozet hiç çizilmez.
+///
+/// [butceAlt] eşiğin ta kendisi: bunun ALTINDA kalan tutar rozet üretmez.
+/// Bugün 1, yani "0 ve negatif dışında her şey gösterilir" (istek birebir bu).
+/// TMDB'de elle girilmiş `budget: 1` gibi çöp değerler de var; eşiği tek
+/// yerden yükseltmek yeter — ama mikro bütçeli GERÇEK filmler ($7.000'lık
+/// "El Mariachi", $15.000'lık "Paranormal Activity") de burada kaybolur,
+/// o yüzden yükseltmek bilinçli bir karar olmalı.
+///
+/// AYNI EŞİK HASILATA DA UYGULANIR ([icerikHasilati]): `revenue: 0` da
+/// "bilinmiyor" demektir, "hiç hasılat yapmadı" değil.
+const butceAlt = 1;
+
+/// TMDB gövdesinden gösterilebilir bütçe; yoksa `null`.
+///
+/// Tip denetimi gevşek (`num`): eski önbellek satırları alanı hiç
+/// içermeyebilir, `double` da gelebilir. Süs veridir, sayfayı düşürmesin.
+int? icerikButcesi(Map<String, dynamic> icerik) => _paraAlani(icerik, 'budget');
+
+/// TMDB gövdesinden DÜNYA ÇAPINDA BRÜT HASILAT (`revenue`); yoksa `null`.
+///
+/// `budget` ile AYNI yerden gelir: `/tmdb/movie/:id` yanıtının KÖK alanı
+/// (canlı doğrulama 21 Ağu 2026 — /api/tmdb/movie/27205 → budget 160000000,
+/// revenue 839030630). EK İSTEK YOK, backend değişikliği yok.
+///
+/// BU SAYININ NE OLMADIĞI, ne olduğundan önemli:
+///  * KÂR DEĞİL. Sinema hasılatının kabaca yarısı salonlarda kalır, pazarlama
+///    bütçesi (çoğu blockbusterda yapım bütçesi kadar) `budget`e dâhil
+///    değildir. "Hasılat > bütçe" bir filmin para kazandığını KANITLAMAZ.
+///  * ENFLASYONA GÖRE DÜZELTİLMEMİŞ ve yapım yılının dolarıdır — `budget`
+///    ile aynı disiplin (bkz. [butceMetni] madde 1).
+///  * ESKİ FİLMLERDE SIK EKSİK. Canlı örnek: Nosferatu (1922) budget 0 /
+///    revenue 27.964; M (1931) budget 0 / revenue 35.274.
+///
+/// Bu yüzden ekranda TÜRETİLMİŞ SAYI BASILMAZ: "kâr", "×5,2 katı", "%320"
+/// gibi bir değer buradan çıkarılamaz, çıkarılırsa yanlış okunur. Rozet iki
+/// HAM tutarı yan yana koyar ve yorumu okura bırakır.
+int? icerikHasilati(Map<String, dynamic> icerik) =>
+    _paraAlani(icerik, 'revenue');
+
+/// [butceAlt] eşiğini ve gevşek tip denetimini iki alan için de tek yerde
+/// uygular — bütçe ile hasılatın kuralı ayrışmasın diye ortak.
+int? _paraAlani(Map<String, dynamic> icerik, String alan) {
+  final ham = icerik[alan];
+  if (ham is! num) return null;
+  final tutar = ham.toInt();
+  return tutar < butceAlt ? null : tutar;
+}
+
+/// Rozet metni: SEÇİLİ DİLE göre kısaltılmış DOLAR tutarı.
+///
+/// ÜÇ KARAR, üçü de bilinçli:
+///
+/// 1. PARA BİRİMİ DÖNÜŞTÜRÜLMEZ. TMDB bütçeleri USD'dir ve yapım yılının
+///    dolarıdır. 1968 yapımı "2001"in 12 milyon dolarını bugünkü kurla TL'ye
+///    çevirmek iki kez yanlış olurdu (58 yıllık enflasyon + bugünün kuru);
+///    ortaya kimsenin doğrulayamayacağı bir sayı çıkardı. `$` gösterilir.
+///
+/// 2. KISALTILIR, ama ELDE DEĞİL. `$185.000.000` rozete sığmaz; `$185M` sığar.
+///    Kısaltmayı elle yapıp `'{} milyon $'` gibi bir anahtar üretmedik:
+///    o 45 çeviri + dile göre değişen ÖLÇEK demekti. Hintçe/Bengalce/Gucaratça
+///    lakh–crore ile sayar (18,5 crore), Çince/Japonca/Korece 万–億 ile
+///    (1,85 亿) — "milyon" o dillerde doğal bölüm bile değildir.
+///    `NumberFormat.compactCurrency` CLDR verisini kullanır ve bunların
+///    hepsini doğru yapar. YENİ ÇEVRİLEBİLİR DİZE ÜRETMEZ.
+///
+/// 3. YERELLEŞTİRME ücretsiz gelir: ondalık ayracı (1.2 / 1,2), `$`ın YERİ
+///    (en "$185M", fr "185 M $"), yerel rakamlar (fa ۱۸۵, bn ১৮.৫) ve RTL
+///    yön işaretleri CLDR'den. `sayiBicimle` ile aynı disiplin — o da
+///    `NumberFormat...(Ceviri.dil.value)` kullanıyor (istatistiklerim.dart).
+///
+/// 45 dilin hepsinde çalıştığı ölçüldü; hiçbirinde istisna atmıyor.
+String butceMetni(int tutar) => NumberFormat.compactCurrency(
+  locale: Ceviri.dil.value,
+  symbol: r'$',
+).format(tutar);
+
+/// Bütçe → hasılat rozetinin metni.
+///
+/// [hasilat] yoksa dünkü tek tutarlı hâlin TA KENDİSİ döner — biçim, eşik ve
+/// yerelleştirme değişmez.
+///
+/// OKUN YÖNÜ METİN YÖNÜNDEN TÜRETİLİR. Arapça/İbranice/Farsça/Urduca'da
+/// (45 dilin 4'ü) satır sağdan sola dizilir: mantıksal sıra yine
+/// [butce] → [hasilat] olduğu için hasılat SOLDA görünür ve sabit bir "→"
+/// oku yanlış yöne, yani hasılattan bütçeye bakardı. `←` ile ok hep
+/// "bütçeden hasılata" okunur. Unicode'da kendiliğinden aynalanan bir ok
+/// karakteri yok; bu yüzden seçim ELDE yapılır.
+///
+/// OKTAN SONRA BÖLÜNMEZ BOŞLUK (U+00A0): rozet dar ekranda iki satıra
+/// düşerse kırılma OKTAN ÖNCE olsun ("160 Mn $" / "→ 839 Mn $"), ok tek
+/// başına satır sonunda asılı kalmasın. Ok ile bütçe arasındaki NORMAL boşluk
+/// bilinçli: rozetin tek meşru kırılma noktası orası.
+///
+/// TÜRETİLMİŞ SAYI YOK: kâr, kat, yüzde hesaplanmaz — gerekçesi
+/// [icerikHasilati] belgesinde.
+String paraRozetMetni(int butce, {int? hasilat, bool rtl = false}) {
+  if (hasilat == null) return butceMetni(butce);
+  // Ok ve bölünmez boşluk KAÇIŞ DİZİSİYLE yazılıyor: çıplak yazılsalardı
+  // kaynağa bakan "buradaki boşluk normal mi bölünmez mi" sorusunu gözle
+  // cevaplayamazdı (test dosyasındaki `_bb` sabiti aynı sebeple var).
+  final ok = rtl ? '\u2190' : '\u2192';
+  return '${butceMetni(butce)} $ok\u00a0${butceMetni(hasilat)}';
+}
+
+/// TMDB `status` → Türkçe çeviri ANAHTARI. Sıra ekranda görünmez, yalnız
+/// okunurluk için TMDB'nin yaşam döngüsü sırasına göre dizildi.
+///
+/// DEĞERLER İNGİLİZCE VE DİLE GÖRE DEĞİŞMEZ (TMDB `status` alanı
+/// `language=tr-TR` ile de İngilizce döner — canlı doğrulama 21 Ağu 2026:
+/// /api/tmdb/tv/1396 → "Ended"). Bu yüzden sabit metinlerle eşleşme güvenli;
+/// aynı disiplin [ekipRolleri]'ndeki `job` eşleşmesinde de var.
+///
+/// TÜRKÇE KARŞILIKLAR YENİ ANAHTARDIR ve BİLEREK var olan anahtarlardan
+/// AYRI seçildi:
+///  * 'Ended' için "Bitti" KULLANILAMAZ: bu anahtar zaten var (ortak.dart,
+///    liste düzenleme kipini kapatan buton) ve İngilizcesi "Done". Dizi
+///    durumunda "Done" yanlış olurdu. "Sona erdi" ayrıca kullanıcının kendi
+///    izleme durumu olan "Bitirdim" çipiyle de karışmaz.
+///  * "İptal edildi" ile "Sona erdi" AYRI tutulur: bir dizinin planlanan
+///    sonuna varması ile yayından kaldırılması aynı şey değil (backend'in
+///    SSS üreticisi de bu ikisini ayırıyor, server.js `SEO_BITMIS_DURUMLAR`).
+const diziDurumMetinleri = <String, String>{
+  'Planned': 'Planlandı',
+  'Pilot': 'Pilot bölüm',
+  'In Production': 'Yapımda',
+  'Returning Series': 'Devam ediyor',
+  'Ended': 'Sona erdi',
+  'Canceled': 'İptal edildi',
+  // TMDB tek "l" ile yazıyor; çift "l" İngiliz imlası ve veri girenlerin
+  // elinden kaçabiliyor. Tek satırlık sigorta: yoksa rozet SESSİZCE kaybolur.
+  'Cancelled': 'İptal edildi',
+};
+
+/// Dizi gövdesinden gösterilebilir durum ANAHTARI; tanımadığı her şeyde
+/// `null` (→ rozet HİÇ çizilmez).
+///
+/// TANIMADIĞINI BASMAZ: TMDB yarın yeni bir durum değeri eklerse ekrana ham
+/// İngilizce "Post Production" düşmesin. Bilinmeyen değer = veri yok.
+String? diziDurumu(Map<String, dynamic> icerik) {
+  final ham = icerik['status'];
+  if (ham is! String) return null;
+  return diziDurumMetinleri[ham.trim()];
+}
+
+/// Yapım yılının YANINDAKİ sarı rozetin ORTAK gövdesi.
+///
+/// NEDEN TEK BİLEŞEN: film (para) ve dizi (durum) rozeti AYNI görsel dili
+/// konuşmak zorunda — aynı sarı, aynı yuvarlaklık, aynı iç boşluk, aynı yazı
+/// ağırlığı. İki ayrı Container yazılsaydı biri gün gelip diğerinden
+/// ayrışırdı ve bunu hiçbir test yakalayamazdı (ikisi de "sarı zemin siyah
+/// yazı" sınavını tek başına geçer).
+///
+/// NEDEN "YilRozeti" adında TEK bir genel bileşen DEĞİL: film ile dizi
+/// rozetinin VERİSİ ve KURALI ayrı (int + eşik ↔ String + sözlük), ipucu
+/// metni ayrı, "hangi türde çizilir" kuralı ayrı. Tek bileşene indirgemek
+/// bu kararları çağıran yere taşırdı; oysa "dizide para rozeti ASLA, filmde
+/// durum rozeti ASLA" kuralının tek bir yerde ve sınanabilir durması işin
+/// aslı. Bu yüzden: görsel kabuk ORTAK, anlam katmanı AYRI.
+///
+/// SARI ZEMİN + SİYAH YAZI kullanıcının açık isteği; projenin kuralıyla da
+/// örtüşüyor ("sarı üstüne DAİMA siyah yazılır", tema.dart). Zemin
+/// [DiziRenkler.sari] — marka sarısı iki temada da AYNI sabit; yazı
+/// `Colors.black`, çünkü [DiziRenkler.siyah] tema-duyarlıdır ve AÇIK temada
+/// kırık beyaza döner (sarı üstünde beyaz = 1,5:1, okunmaz). Aynı seçim
+/// FilledButton temasında ve AI rozetinde de yapılıyor.
+///
+/// Rozet TIKLANABİLİR DEĞİL: hedefi yok, 44 px dokunma kuralı bağlamaz.
+/// Tek başına "$185M" ya da "Sona erdi" ne olduğunu söylemediği için
+/// [Tooltip] var — hem fareyle üstüne gelince hem de ekran okuyucuda okunur.
+///
+/// [kutuAnahtari] iç Container'a takılır (dışa değil): testler rozetin
+/// GERÇEK dekorasyonunu ve yazı rengini ağaçtan okuyabilsin diye.
+class SariRozet extends StatelessWidget {
+  const SariRozet({
+    required this.metin,
+    required this.ipucu,
+    this.kutuAnahtari,
+    super.key,
+  });
+
+  final String metin;
+  final String ipucu;
+  final Key? kutuAnahtari;
+
+  @override
+  Widget build(BuildContext context) => Tooltip(
+    message: ipucu,
+    child: Container(
+      key: kutuAnahtari,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: DiziRenkler.sari,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        metin,
+        style: const TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+          fontWeight: FontWeight.w800,
+          height: 1.3,
+        ),
+      ),
+    ),
+  );
+}
+
+/// FİLM rozeti: yapım bütçesi ve — varsa — dünya çapında hasılat.
+///
+/// TEK ROZET, İKİ TUTAR (kullanıcı kararı, 21 Ağu 2026). Yan yana İKİ sarı
+/// rozet denenmedi bile: aynı biçimdeki iki para tutarı hangisinin bütçe
+/// hangisinin hasılat olduğunu SÖYLEMEZ. Ok, sırayı ve nedenselliği tek
+/// görsel nesnede anlatır; ipucu metni de tek.
+///
+/// TEK TUTAR GÖRÜNÜYORSA O DAİMA BÜTÇEDİR — değişmez kural. Bu yüzden
+/// hasılatı olup bütçesi olmayan filmde (Nosferatu 1922: budget 0,
+/// revenue 27.964) rozet HİÇ çizilmez; "27.964 $" tek başına basılsaydı
+/// okur onu bütçe sanardı ve bu, kaçınmak için tek rozete indiğimiz
+/// belirsizliğin ta kendisi olurdu. [hasilat] yalnız okun HEDEFİ olarak
+/// var olabilir.
+class ButceRozeti extends StatelessWidget {
+  const ButceRozeti({required this.tutar, this.hasilat, super.key});
+
+  /// Yapım bütçesi. Rozetin var olma şartı; `null` olamaz.
+  final int tutar;
+
+  /// Dünya çapında brüt hasılat; `null` ise rozet dünkü tek tutarlı hâline
+  /// düşer (ok da ipucunun ikinci yarısı da görünmez).
+  final int? hasilat;
+
+  @override
+  Widget build(BuildContext context) => SariRozet(
+    kutuAnahtari: const Key('butce-rozeti'),
+    // İpucu iki tutarı SIRASIYLA adlandırır: ekran okuyucu "→" karakterini
+    // yalnızca "sağ ok" diye okur, anlamı taşıyan cümle burada.
+    //
+    // ANAHTARIN İÇİNDE OK YOK — bilerek: 45 çevirmenin (ve makine
+    // çevirisinin) elinden geçecek bir dizgede yön işareti ya düşer ya
+    // aynalanır, RTL dillerde de metnin yönüyle çelişirdi.
+    ipucu: hasilat == null
+        ? 'Yapım bütçesi'.c
+        : 'Yapım bütçesi ve dünya çapında hasılat'.c,
+    metin: paraRozetMetni(
+      tutar,
+      hasilat: hasilat,
+      rtl: Directionality.of(context) == TextDirection.rtl,
+    ),
+  );
+}
+
+/// DİZİ rozeti: yapımın yayın durumu.
+///
+/// NEDEN DİZİDE PARA DEĞİL DURUM: TMDB dizi gövdesinde bütçe/hasılat alanı
+/// YOK (ölçüm: canlı önbellekte `budget` içeren dizi satırı 0) ve dünyada
+/// bu veriyi derli toplu tutan bir kaynak da yok. Yılın yanındaki sarı yer
+/// dizide boş kalıyordu; kullanıcı oraya durumu koymayı seçti — dizi
+/// listesine bakan birinin ilk sorduğu şey ("hâlâ sürüyor mu, bitti mi")
+/// zaten bu.
+///
+/// [durum] TÜRKÇE ANAHTARDIR, ham TMDB değeri değil: eşleme
+/// [diziDurumu] ile ÇAĞIRAN yerde yapılır, tıpkı bütçedeki `null` denetimi
+/// gibi — "rozet çizilsin mi" kararı tek bir yerde, `build` içinde durur.
+class DiziDurumRozeti extends StatelessWidget {
+  const DiziDurumRozeti({required this.durum, super.key});
+
+  final String durum;
+
+  @override
+  Widget build(BuildContext context) => SariRozet(
+    kutuAnahtari: const Key('durum-rozeti'),
+    // "Sona erdi" tek başına neyin sona erdiğini söylemez; ayrıca sayfanın
+    // altındaki KULLANICI durumu çipleriyle ("Bitirdim") karışmasın.
+    ipucu: 'Dizinin yayın durumu'.c,
+    metin: durum.c,
+  );
 }
 
 /// ---------------------------------------------------------------------------
@@ -736,6 +1033,17 @@ class _DetayEkraniState extends State<DetayEkrani> {
     final yil = ((c['first_air_date'] ?? c['release_date'] ?? '') as String)
         .split('-')
         .first;
+    // Yapım bütçesi (+ varsa hasılat) — YALNIZ FİLMDE. Dizide TMDB'nin böyle
+    // bir alanı yok; `tv` dalında hiç bakılmaz ki eski/bozuk bir önbellek
+    // satırı yanlışlıkla dizide rozet çıkarmasın.
+    final butce = tv ? null : icerikButcesi(c);
+    // Hasılat yalnız okun HEDEFİ: bütçe yoksa hiç kullanılmaz, çünkü tek
+    // başına duran sarı tutar DAİMA bütçe demektir (bkz. [ButceRozeti]).
+    final hasilat = butce == null ? null : icerikHasilati(c);
+    // Yayın durumu — YALNIZ DİZİDE. Filmde de bir `status` alanı var
+    // ("Released", "Post Production"...) ama sözlükte karşılığı yok; yine de
+    // `tv` denetimi burada duruyor ki kural veriye değil TÜRE bağlı kalsın.
+    final durum = tv ? diziDurumu(c) : null;
     // TÜRLER ARTIK METİN DEĞİL, TIKLANABİLİR (19 Ağu 2026 isteği: "türlere
     // tıklanabilsin, tıklayınca o türdeki dizileri listele"). `id`si olmayan
     // kayıt atılır: dokunulacak bir hedefi yok, çip çizmek yalan olurdu.
@@ -864,13 +1172,43 @@ class _DetayEkraniState extends State<DetayEkrani> {
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                [
-                                  if (yil.isNotEmpty) yil,
-                                  if (tv)
-                                    '{} sezon'.cf([c['number_of_seasons']]),
-                                ].join(' · '),
-                                style: TextStyle(color: DiziRenkler.metin54),
+                              // YIL SATIRI + BÜTÇE ROZETİ.
+                              //
+                              // `Row` DEĞİL `Wrap`: uzun yıl/sezon metni ve
+                              // rozet dar telefonda ya da büyük yazı tipi
+                              // ölçeğinde aynı satıra sığmayabilir. Row'da bu
+                              // sarı taşma çizgisi demek; Wrap rozeti alt
+                              // satıra indirir. (Bu sütun zaten `Expanded`
+                              // içinde: solundaki afiş kadar daralabiliyor.)
+                              Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 8,
+                                runSpacing: 4,
+                                children: [
+                                  Text(
+                                    [
+                                      if (yil.isNotEmpty) yil,
+                                      if (tv)
+                                        '{} sezon'.cf([c['number_of_seasons']]),
+                                    ].join(' · '),
+                                    style: TextStyle(
+                                      color: DiziRenkler.metin54,
+                                    ),
+                                  ),
+                                  // Dizide `budget` alanı hiç yok → null →
+                                  // rozet çizilmez. Filmde 0 gelirse de aynı:
+                                  // 0 "bilinmiyor" demek, "sıfır" değil.
+                                  //
+                                  // İKİSİ AYNI ANDA ASLA ÇIKMAZ: `butce` yalnız
+                                  // filmde, `durum` yalnız dizide dolar. Yılın
+                                  // yanında hep EN FAZLA BİR sarı rozet durur —
+                                  // iki tane olsaydı hangisinin ne olduğu
+                                  // okunmazdı, tek rozete inmemizin sebebi de bu.
+                                  if (butce != null)
+                                    ButceRozeti(tutar: butce, hasilat: hasilat),
+                                  if (durum != null)
+                                    DiziDurumRozeti(durum: durum),
+                                ],
                               ),
                               if (turler.isNotEmpty) ...[
                                 const SizedBox(height: 8),

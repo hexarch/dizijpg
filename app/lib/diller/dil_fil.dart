@@ -1254,4 +1254,40 @@ const Map<String, String> cevirilerFil = {
   'Sarı': 'Dilaw',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Badyet sa produksyon',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Badyet sa produksyon at kita sa buong mundo',
+  'Dizinin yayın durumu': 'Status ng pagpapalabas ng serye',
+  'Devam ediyor': 'Tuloy pa',
+  'Sona erdi': 'Nagwakas na',
+  'İptal edildi': 'Kanselado',
+  'Yapımda': 'Ginagawa pa',
+  'Planlandı': 'Nakaplano',
+  'Pilot bölüm': 'Pilot episode',
+  'Ad': 'Pangalan',
+  'Adın': 'Ang pangalan mo',
+  'Kullanıcı adı': 'Username',
+  'Kullanıcı adını değiştir': 'Palitan ang username',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Puwede mong palitan ang username mo isang beses kada 90 araw',
+  'Değiştir': 'Palitan',
+  '{} gün sonra değiştirebilirsin': 'Mapapalitan mo ito sa loob ng {} araw',
+  'Kullanıcı adın: @{}': 'Ang username mo: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Kuha na ang username na ito',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Nakareserba muna ang username na ito para sa ibang account',
+  'Bu zaten senin kullanıcı adın': 'Ito na nga ang username mo',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Username 3–20 karakter; maliliit na letra, numero, tuldok, gitling, underscore',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Lumalabas sa profile mo sa ibabaw ng username mo. Puwede mong iwanang blangko.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Pagkatapos mong palitan, hindi mo na ito mababago sa loob ng 90 araw. Nakareserba pa rin sa iyo ang lumang username mo nang 90 araw — puwede kang bumalik dito, at walang ibang makakakuha nito sa panahong iyon. Hindi na bubuksan ng mga link sa lumang pangalan mo ang profile mo.',
+  'Etkinliğim': 'Aktibidad',
+  'Tercihler': 'Mga Kagustuhan',
+  'Gizlilik ve güvenlik': 'Privacy at seguridad',
+  'Destek': 'Suporta',
+  'Hesap': 'Account',
+  '{} dizileri': 'Mga serye: {}',
+  '{} filmleri': 'Mga pelikula: {}',
 };

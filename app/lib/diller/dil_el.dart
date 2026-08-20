@@ -1253,4 +1253,40 @@ const Map<String, String> cevirilerEl = {
   'Sarı': 'Κίτρινο',
   'Camgöbeği': 'Κυανό',
   'Macenta': 'Ματζέντα',
+  'Yapım bütçesi': 'Προϋπολογισμός παραγωγής',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Προϋπολογισμός παραγωγής και παγκόσμιες εισπράξεις',
+  'Dizinin yayın durumu': 'Κατάσταση προβολής της σειράς',
+  'Devam ediyor': 'Σε εξέλιξη',
+  'Sona erdi': 'Ολοκληρώθηκε',
+  'İptal edildi': 'Ακυρώθηκε',
+  'Yapımda': 'Σε παραγωγή',
+  'Planlandı': 'Προγραμματισμένη',
+  'Pilot bölüm': 'Πιλοτικό επεισόδιο',
+  'Ad': 'Όνομα',
+  'Adın': 'Το όνομά σου',
+  'Kullanıcı adı': 'Όνομα χρήστη',
+  'Kullanıcı adını değiştir': 'Αλλαγή ονόματος χρήστη',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Μπορείς να αλλάζεις το όνομα χρήστη μία φορά κάθε 90 μέρες',
+  'Değiştir': 'Αλλαγή',
+  '{} gün sonra değiştirebilirsin': 'Θα μπορείς να το αλλάξεις σε {} μέρες',
+  'Kullanıcı adın: @{}': 'Το όνομα χρήστη σου: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Αυτό το όνομα χρήστη είναι ήδη πιασμένο',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Αυτό το όνομα χρήστη είναι προς το παρόν δεσμευμένο για άλλον λογαριασμό',
+  'Bu zaten senin kullanıcı adın': 'Αυτό είναι ήδη το όνομα χρήστη σου',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Το όνομα 3–20 χαρακτήρες· πεζά, ψηφία, τελείες, παύλες και κάτω παύλες',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Εμφανίζεται στο προφίλ σου πάνω από το όνομα χρήστη. Μπορείς να το αφήσεις κενό.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Μετά την αλλαγή δεν θα μπορείς να το ξαναλλάξεις για 90 μέρες. Το παλιό όνομα χρήστη μένει δεσμευμένο για σένα 90 μέρες — μπορείς να επιστρέψεις σε αυτό και κανείς άλλος δεν μπορεί να το πάρει σε αυτό το διάστημα. Οι σύνδεσμοι προς το παλιό όνομα δεν θα ανοίγουν πια το προφίλ σου.',
+  'Etkinliğim': 'Δραστηριότητα',
+  'Tercihler': 'Προτιμήσεις',
+  'Gizlilik ve güvenlik': 'Απόρρητο και ασφάλεια',
+  'Destek': 'Υποστήριξη',
+  'Hesap': 'Λογαριασμός',
+  '{} dizileri': 'Σειρές: {}',
+  '{} filmleri': 'Ταινίες: {}',
 };

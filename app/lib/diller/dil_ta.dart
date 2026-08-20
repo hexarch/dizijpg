@@ -1249,4 +1249,41 @@ const Map<String, String> cevirilerTa = {
   'Sarı': 'மஞ்சள்',
   'Camgöbeği': 'சியான்',
   'Macenta': 'மெஜந்தா',
+  'Yapım bütçesi': 'தயாரிப்பு பட்ஜெட்',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'தயாரிப்பு பட்ஜெட்டும் உலகளாவிய வசூலும்',
+  'Dizinin yayın durumu': 'தொடரின் ஒளிபரப்பு நிலை',
+  'Devam ediyor': 'ஒளிபரப்பில் உள்ளது',
+  'Sona erdi': 'நிறைவடைந்தது',
+  'İptal edildi': 'ரத்து செய்யப்பட்டது',
+  'Yapımda': 'தயாரிப்பில் உள்ளது',
+  'Planlandı': 'திட்டமிடப்பட்டது',
+  'Pilot bölüm': 'பைலட் எபிசோட்',
+  'Ad': 'பெயர்',
+  'Adın': 'உன் பெயர்',
+  'Kullanıcı adı': 'பயனர்பெயர்',
+  'Kullanıcı adını değiştir': 'பயனர்பெயரை மாற்று',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'பயனர்பெயரை 90 நாட்களுக்கு ஒருமுறை மாற்றலாம்',
+  'Değiştir': 'மாற்று',
+  '{} gün sonra değiştirebilirsin': '{} நாட்களுக்குப் பிறகு மாற்றலாம்',
+  'Kullanıcı adın: @{}': 'உன் பயனர்பெயர்: @{}',
+  'Bu kullanıcı adı zaten alınmış':
+      'இந்தப் பயனர்பெயர் ஏற்கெனவே எடுக்கப்பட்டுவிட்டது',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'இந்தப் பயனர்பெயர் தற்போது வேறு கணக்குக்கு ஒதுக்கப்பட்டுள்ளது',
+  'Bu zaten senin kullanıcı adın': 'இது ஏற்கெனவே உன் பயனர்பெயர்தான்',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'பயனர் பெயர் 3–20; சிற்றெழுத்து, எண்கள், புள்ளி, ஹைபன், அடிக்கோடு',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'சுயவிவரத்தில் உன் பயனர்பெயருக்கு மேலே தெரியும். காலியாகவும் விடலாம்.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'மாற்றிய பிறகு 90 நாட்களுக்கு மீண்டும் மாற்ற முடியாது. பழைய பயனர்பெயர் 90 நாட்கள் உனக்காக ஒதுக்கி வைக்கப்படும் — வேண்டுமானால் திரும்பிச் செல்லலாம், அந்தக் காலத்தில் வேறு யாரும் எடுக்க முடியாது. பழைய பெயருக்கான இணைப்புகள் இனி உன் சுயவிவரத்தைத் திறக்காது.',
+  'Etkinliğim': 'செயல்பாடு',
+  'Tercihler': 'முன்னுரிமைகள்',
+  'Gizlilik ve güvenlik': 'தனியுரிமையும் பாதுகாப்பும்',
+  'Destek': 'உதவி',
+  'Hesap': 'கணக்கு',
+  '{} dizileri': '{} தொடர்கள்',
+  '{} filmleri': '{} படங்கள்',
 };

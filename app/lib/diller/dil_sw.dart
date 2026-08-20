@@ -1236,4 +1236,41 @@ const Map<String, String> cevirilerSw = {
   'Sarı': 'Njano',
   'Camgöbeği': 'Samawati',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Bajeti ya utayarishaji',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Bajeti ya utayarishaji na mapato ya dunia nzima',
+  'Dizinin yayın durumu': 'Hali ya utangazaji wa mfululizo',
+  'Devam ediyor': 'Inaendelea',
+  'Sona erdi': 'Imeisha',
+  'İptal edildi': 'Imeghairiwa',
+  'Yapımda': 'Inatayarishwa',
+  'Planlandı': 'Imepangwa',
+  'Pilot bölüm': 'Kipindi cha majaribio',
+  'Ad': 'Jina',
+  'Adın': 'Jina lako',
+  'Kullanıcı adı': 'Jina la mtumiaji',
+  'Kullanıcı adını değiştir': 'Badilisha jina la mtumiaji',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Unaweza kubadilisha jina la mtumiaji mara moja kila siku 90',
+  'Değiştir': 'Badilisha',
+  '{} gün sonra değiştirebilirsin': 'Utaweza kubadilisha baada ya siku {}',
+  'Kullanıcı adın: @{}': 'Jina lako la mtumiaji: @{}',
+  'Bu kullanıcı adı zaten alınmış':
+      'Jina hili la mtumiaji tayari limechukuliwa',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Jina hili la mtumiaji kwa sasa limehifadhiwa kwa akaunti nyingine',
+  'Bu zaten senin kullanıcı adın': 'Hili tayari ndilo jina lako la mtumiaji',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Jina 3–20; herufi ndogo, tarakimu, nukta, kiungo, mstari wa chini',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Huonekana juu ya jina lako la mtumiaji kwenye wasifu. Unaweza kuliacha wazi.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Baada ya kubadilisha huwezi kubadilisha tena kwa siku 90. Jina lako la zamani litahifadhiwa kwa ajili yako kwa siku 90 — unaweza kurudi kwake, na hakuna mtu mwingine anayeweza kulichukua kwa muda huo. Viungo vinavyoelekea jina lako la zamani havitafungua wasifu wako tena.',
+  'Etkinliğim': 'Shughuli',
+  'Tercihler': 'Mapendeleo',
+  'Gizlilik ve güvenlik': 'Faragha na usalama',
+  'Destek': 'Msaada',
+  'Hesap': 'Akaunti',
+  '{} dizileri': 'Vipindi vya {}',
+  '{} filmleri': 'Filamu za {}',
 };

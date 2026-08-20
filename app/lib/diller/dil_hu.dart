@@ -1243,4 +1243,40 @@ const Map<String, String> cevirilerHu = {
   'Sarı': 'Sárga',
   'Camgöbeği': 'Ciánkék',
   'Macenta': 'Bíbor',
+  'Yapım bütçesi': 'Gyártási költségvetés',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Gyártási költségvetés és világszintű bevétel',
+  'Dizinin yayın durumu': 'A sorozat adásának állapota',
+  'Devam ediyor': 'Fut',
+  'Sona erdi': 'Befejeződött',
+  'İptal edildi': 'Törölték',
+  'Yapımda': 'Gyártás alatt',
+  'Planlandı': 'Tervezett',
+  'Pilot bölüm': 'Pilotepizód',
+  'Ad': 'Név',
+  'Adın': 'A neved',
+  'Kullanıcı adı': 'Felhasználónév',
+  'Kullanıcı adını değiştir': 'Felhasználónév módosítása',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'A felhasználónevedet 90 naponta egyszer módosíthatod',
+  'Değiştir': 'Módosítás',
+  '{} gün sonra değiştirebilirsin': '{} nap múlva módosíthatod',
+  'Kullanıcı adın: @{}': 'A felhasználóneved: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Ez a felhasználónév már foglalt',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Ez a felhasználónév jelenleg egy másik fiókhoz van fenntartva',
+  'Bu zaten senin kullanıcı adın': 'Ez már most is a te felhasználóneved',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'A név 3–20 karakter; kisbetű, szám, pont, kötőjel, aláhúzás',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'A profilodon a felhasználóneved fölött jelenik meg. Üresen is hagyhatod.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'A módosítás után 90 napig nem változtathatod meg újra. A régi felhasználóneved 90 napig fenntartva marad neked — visszatérhetsz rá, és addig más nem foglalhatja le. A régi nevedre mutató linkek többé nem nyitják meg a profilodat.',
+  'Etkinliğim': 'Tevékenység',
+  'Tercihler': 'Preferenciák',
+  'Gizlilik ve güvenlik': 'Adatvédelem és biztonság',
+  'Destek': 'Támogatás',
+  'Hesap': 'Fiók',
+  '{} dizileri': '{} sorozatai',
+  '{} filmleri': '{} filmjei',
 };

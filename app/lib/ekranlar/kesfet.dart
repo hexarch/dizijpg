@@ -96,6 +96,30 @@ const anaSayfaRaflari = <(String, String, String)>[
 const sanaOzelBaslik = 'Sana Özel';
 const sanaOzelYolu = '/sana-ozel';
 
+/// Kişiselleştirilmiş tematik raf başlığı (çeviri anahtarı + firma/yönetmen adı).
+///
+/// TEK ANAHTAR, YER TUTUCULU: raf başlıkları firma ya da yönetmen ADI içeriyor
+/// ("Marvel Studios filmleri", "Nuri Bilge Ceylan filmleri"). Her ad için ayrı
+/// anahtar açmak 45 dil × N firma demekti; iki anahtar (`{} dizileri`,
+/// `{} filmleri`) bütün rafları karşılıyor. Ad ÇEVRİLMEZ — TMDB'deki özel ad.
+///
+/// Türkçede iki tür için ayrı anahtar şart: "dizileri"/"filmleri" tek bir
+/// "{} yapımları"na indirgenebilirdi ama o zaman kullanıcı rafın dizi mi film
+/// mi olduğunu başlıktan anlayamazdı (raf ikiye bölünmüş halde geliyor).
+String kisiselRafBasligi(Map<String, dynamic> raf) {
+  final ad = '${raf['ad'] ?? ''}';
+  return (raf['medya'] == 'tv' ? '{} dizileri' : '{} filmleri').cf([ad]);
+}
+
+/// Kişisel raf başlığına dokununca açılan sayfa.
+///
+/// YENİ ROTA AÇILMADI: firma rafının tam listesi zaten `/sirket/:id`, yönetmen
+/// rafınınki `/kisi/:id`. Bu sayfalar SSR'lı, oturumsuz da açılıyor ve rafla
+/// AYNI TMDB sorgusundan besleniyor — "Tümünü gör" için ayrı bir ekran yazmak
+/// üçüncü bir kopya olurdu.
+String kisiselRafYolu(Map<String, dynamic> raf) =>
+    raf['tip'] == 'firma' ? '/sirket/${raf['id']}' : '/kisi/${raf['id']}';
+
 /// Türkçe raf başlığından üretilen KALICI adres parçası (`/raf/:slug`).
 ///
 /// NEDEN BAŞLIKTAN, NEDEN İNDEKSTEN DEĞİL: indeks kullansaydık
@@ -152,6 +176,39 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
   Map<String, List<dynamic>>? _bolumler;
   int _mesajSayi = 0;
 
+  // --- kişiselleştirilmiş tematik raflar (21 Ağu 2026) ---
+  //
+  // YERLEŞİM KARARI: 1. SAYFA "Sana Özel"in hemen ALTINDA, sonraki sayfalar
+  // listenin EN SONUNDA. Gerekçe kaydırma sıçraması: bir ListView'a içerik
+  // EKLEMEK yalnız SONA eklendiğinde okunmakta olan içeriği yerinden
+  // oynatmaz. Sayfa 2+ kullanıcı zaten dibe indiğinde geliyor, yani sona
+  // eklenmeli; 1. sayfa ise ilk çizimin parçası (ve önbellekten anında
+  // geliyor), o yüzden en değerli yere — üste — konabiliyor.
+  final List<dynamic> _kisisel = [];
+  // Önceki oturumun 1. sayfası (SWR). Ağdan ilk sayfa gelene KADAR çizilir;
+  // `_kisisel` ile ASLA birleştirilmez, yoksa aynı raf iki kez görünürdü.
+  List<dynamic> _kisiselOnbellek = const [];
+  // Ağdan gelen 1. sayfanın raf sayısı; listenin üst/alt bloğa bölündüğü yer.
+  int _kisiselUstBlok = 0;
+  int _kisiselSayfa = 0;
+  bool _kisiselDevam = true;
+  bool _kisiselYukleniyor = false;
+  // Ağdan BİR yanıt alındı mı (boş bile olsa). Bayrak `_kisisel.isEmpty`
+  // yerine gerekiyor: kullanıcı raflardaki her şeyi işaretlediğinde sunucu
+  // BOŞ liste döner ve o an bayat önbellek kopyası sonsuza dek çizilmeye
+  // devam ederdi — hem de içinde ARTIK İZLENMİŞ yapımlarla.
+  bool _kisiselAgYaniti = false;
+
+  /// Üst blok (Sana Özel'in altı): ağdan geldiyse o, gelmediyse önbellek.
+  List<dynamic> get _kisiselUst => _kisiselAgYaniti
+      ? _kisisel.sublist(0, _kisiselUstBlok)
+      : _kisiselOnbellek;
+
+  /// Alt blok (listenin sonu): 2. sayfadan itibaren gelenler.
+  List<dynamic> get _kisiselAlt => _kisisel.length > _kisiselUstBlok
+      ? _kisisel.sublist(_kisiselUstBlok)
+      : const [];
+
   Future<void> _mesajSayisiYukle() async {
     // Oturumsuz ziyaretçi (SEO 1.4, 14 Ağu): rozet ucu girisZorunlu, 401
     // yememek için hiç isteme. Rozet zaten 0 kalır.
@@ -174,6 +231,7 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
     super.initState();
     _onbellektenYukle();
     _yukle();
+    _kisiselYukle();
     _mesajSayisiYukle();
   }
 
@@ -183,14 +241,85 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final ham = prefs.getString('kesfet_onbellek');
-      if (ham == null || !mounted || _bolumler != null) return;
-      final d = jsonDecode(ham) as Map<String, dynamic>;
-      if (_bolumler == null) {
-        setState(() {
-          _bolumler = {for (final e in d.entries) e.key: e.value as List};
-        });
+      // Kişisel rafların İLK sayfası da önbellekten gelir. Amacı hız değil
+      // DÜZEN: bu blok listenin ORTASINDA duruyor, ağdan sonradan gelirse
+      // altındaki sabit rafları aşağı iterdi. Önbellekten gelince ilk çizimin
+      // parçası olur ve hiçbir şey yerinden oynamaz.
+      final hamKisisel = prefs.getString('kesfet_kisisel');
+      if (!mounted || _bolumler != null) return;
+      if (hamKisisel != null && _kisiselOnbellek.isEmpty) {
+        _kisiselOnbellek = jsonDecode(hamKisisel) as List<dynamic>;
       }
+      if (ham == null) {
+        if (_kisiselOnbellek.isNotEmpty) setState(() {});
+        return;
+      }
+      final d = jsonDecode(ham) as Map<String, dynamic>;
+      setState(() {
+        _bolumler = {for (final e in d.entries) e.key: e.value as List};
+      });
     } catch (_) {}
+  }
+
+  /// Kişiselleştirilmiş tematik rafların BİR sayfası.
+  ///
+  /// SABİT RAFLARDAN AYRI İSTEK: uç soğuk önbellekte katalog profilini
+  /// kurmak zorunda kalabiliyor (ölçülen en kötü hâl ~9 sn). Aynı
+  /// `Future.wait` içine konsaydı bütün ana sayfa o süre boyunca iskelette
+  /// beklerdi; ayrı istek geç gelirse yalnız kendi bloğu geç dolar.
+  ///
+  /// BOŞ SAYFA ATLAMA: bir sayfanın raflarının hepsi sunucudaki içerik eşiğini
+  /// geçemezse liste BÜYÜMEZ, yani kaydırma tetikleyicisi bir daha ateşlenmez
+  /// ve sayfalama orada donardı. Sunucu `devam: true` diyorsa en çok üç sayfa
+  /// ileri atlanır (tavan `RAF_AZAMI_SAYFA` = 4 olduğu için bu tüm listeyi
+  /// tarar, sonsuz döngü kurulamaz).
+  Future<void> _kisiselYukle() async {
+    if (_kisiselYukleniyor || !_kisiselDevam || !Api.girisli) return;
+    _kisiselYukleniyor = true;
+    if (mounted) setState(() {});
+    final eklenen = <dynamic>[];
+    var yanitVar = false;
+    try {
+      var sayfa = _kisiselSayfa + 1;
+      for (var deneme = 0; deneme < 3; deneme++) {
+        final d = await Api.get('/kisisel-raflar?sayfa=$sayfa');
+        yanitVar = true;
+        final gelen = d['raflar'] as List<dynamic>? ?? const <dynamic>[];
+        _kisiselSayfa = sayfa;
+        _kisiselDevam = d['devam'] == true;
+        if (gelen.isNotEmpty) {
+          eklenen.addAll(gelen);
+          break;
+        }
+        if (!_kisiselDevam) break;
+        sayfa++;
+      }
+    } catch (_) {
+      // Sessiz DURDURMA: kişisel raf ikincil bir zenginleştirme, hata mesajı
+      // basıp ana sayfayı kirletmez. Aşağı çekip yenilemek yeniden dener.
+      // Ağ yanıtı ALINAMADIĞI için önbellek bloğu ekranda KALIR (çevrimdışı).
+      _kisiselDevam = false;
+    }
+    _kisiselYukleniyor = false;
+    if (!mounted) return;
+    final ilkYanit = yanitVar && !_kisiselAgYaniti;
+    setState(() {
+      _kisisel.addAll(eklenen);
+      if (ilkYanit) {
+        _kisiselAgYaniti = true;
+        _kisiselUstBlok = _kisisel.length;
+      }
+    });
+    if (!ilkYanit) return;
+    // Boş yanıt da YAZILIR (silinir): kullanıcı raftaki her şeyi izlediyse
+    // eski kopya bir daha çizilmesin.
+    SharedPreferences.getInstance().then((p) {
+      if (_kisiselUstBlok == 0) return p.remove('kesfet_kisisel');
+      return p.setString(
+        'kesfet_kisisel',
+        jsonEncode(_kisisel.sublist(0, _kisiselUstBlok)),
+      );
+    });
   }
 
   Future<void> _yukle() async {
@@ -226,6 +355,61 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       if (_bolumler == null) setState(() => _hata = e.toString());
     }
   }
+
+  /// Aşağı çekip yenileme: sabit rafları TAZELE, kişisel rafları SIFIRLA.
+  ///
+  /// Sıfırlamadan `_kisiselYukle()` çağırmak sayfa 2'yi isterdi; kullanıcı
+  /// yenilediğinde beklediği şey listenin BAŞTAN kurulmasıdır. Önbellek
+  /// bloğu (`_kisiselOnbellek`) DURUYOR: ağ yanıtı gelene kadar üst blok boş
+  /// kalmasın, düzen oynamasın.
+  Future<void> _tazele() async {
+    // Ekrandaki 1. sayfa, ağ yanıtı gelene kadar SWR bloğu olarak dursun:
+    // aksi hâlde blok bir an yok olur, altındaki her şey yukarı zıplardı.
+    if (_kisiselAgYaniti && _kisiselUstBlok > 0) {
+      _kisiselOnbellek = List<dynamic>.from(
+        _kisisel.sublist(0, _kisiselUstBlok),
+      );
+    }
+    _kisisel.clear();
+    _kisiselUstBlok = 0;
+    _kisiselSayfa = 0;
+    _kisiselDevam = true;
+    _kisiselAgYaniti = false;
+    await Future.wait([_yukle(), _kisiselYukle()]);
+  }
+
+  /// Dikey liste dibe yaklaşınca bir sonraki kişisel raf sayfasını ister.
+  ///
+  /// `axis` KONTROLÜ ŞART: afiş şeritleri de YATAY kaydırma bildirimi
+  /// yolluyor ve bu bildirimler aynı ağaçtan yukarı çıkıyor. Süzmezsek
+  /// kullanıcı bir şeridi yana ittiğinde sayfalama tetiklenirdi.
+  bool _kaydirmayiIzle(ScrollNotification n) {
+    if (n.metrics.axis != Axis.vertical) return false;
+    if (n.metrics.pixels >= n.metrics.maxScrollExtent - 800) _kisiselYukle();
+    return false;
+  }
+
+  /// Kişisel raf listesini widget'lara çevirir (üst ve alt blok aynı biçim).
+  List<Widget> _kisiselSeritler(List<dynamic> raflar) => [
+    for (final ham in raflar)
+      if (ham is Map)
+        Builder(
+          builder: (context) {
+            final raf = Map<String, dynamic>.from(ham);
+            final icerikler =
+                raf['icerikler'] as List<dynamic>? ?? const <dynamic>[];
+            // Sunucu ince rafı zaten göndermiyor; bu ikinci kapı ESKİ
+            // önbellek kopyasına karşı (biçim değişirse boş şerit çizilmesin).
+            if (icerikler.isEmpty) return const SizedBox.shrink();
+            return PosterSeridi(
+              baslik: kisiselRafBasligi(raf),
+              icerikler: icerikler,
+              turZorla: raf['medya'] as String?,
+              onBaslikTap: () => context.push(kisiselRafYolu(raf)),
+            );
+          },
+        ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -266,36 +450,68 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
       );
     } else {
       final rafMap = {for (final r in anaSayfaRaflari) r.$1: r};
+      // "Sana Özel" varsa İLK sıradadır; kişisel tematik raflar onun HEMEN
+      // ardına giriyor (ikisi de kişiye özel, birlikte tek bir blok okunuyor).
+      final tumEntries = _bolumler!.entries.toList();
+      final sanaOzelVar =
+          tumEntries.isNotEmpty && tumEntries.first.key == sanaOzelBaslik;
+      final ustDilim = sanaOzelVar
+          ? tumEntries.take(1)
+          : const <MapEntry<String, List<dynamic>>>[];
+      final altDilim = sanaOzelVar ? tumEntries.skip(1) : tumEntries;
+      Widget seritYap(MapEntry<String, List<dynamic>> e) => PosterSeridi(
+        baslik: e.key.c,
+        icerikler: e.value,
+        turZorla: rafMap[e.key]?.$3,
+        // "Sana Özel" 19 Ağu 2026'ya kadar "Tümünü gör"süz TEK raftı:
+        // içeriği `/onerilen` ucundan geliyor, `anaSayfaRaflari`ndaki
+        // gibi sabit bir TMDB yolu YOK, yani `/raf/:slug` onu
+        // sayfalayamıyordu. Artık uç `?sayfa=` alıyor ve rafın kendi
+        // tam sayfa adresi var ([sanaOzelYolu]).
+        //
+        // ADRESE YAZILAN gezinme (14 Ağu 2026). Eskiden burada
+        // `Navigator.push(MaterialPageRoute(...))` vardı: sayfa
+        // açılıyor ama URL `/kesfet`te kalıyordu, yani F5 kullanıcıyı
+        // Keşfet'e geri atıyordu (canlıda ölçüldü). `context.push`
+        // aynı görünümü verir — rota Keşfet şubesinin içinde, alt
+        // gezinme çubuğu yerinde kalır — ama adres sayfayı yansıtır.
+        onBaslikTap: e.key == sanaOzelBaslik
+            ? () => context.push(sanaOzelYolu)
+            : rafMap[e.key] == null
+            ? null
+            : () => context.push('/raf/${rafSlug(rafMap[e.key]!.$1)}'),
+      );
       govde = RefreshIndicator(
         color: DiziRenkler.sari,
-        onRefresh: _yukle,
-        child: ListView(
-          children: [
-            for (final e in _bolumler!.entries)
-              PosterSeridi(
-                baslik: e.key.c,
-                icerikler: e.value,
-                turZorla: rafMap[e.key]?.$3,
-                // "Sana Özel" 19 Ağu 2026'ya kadar "Tümünü gör"süz TEK raftı:
-                // içeriği `/onerilen` ucundan geliyor, `anaSayfaRaflari`ndaki
-                // gibi sabit bir TMDB yolu YOK, yani `/raf/:slug` onu
-                // sayfalayamıyordu. Artık uç `?sayfa=` alıyor ve rafın kendi
-                // tam sayfa adresi var ([sanaOzelYolu]).
-                //
-                // ADRESE YAZILAN gezinme (14 Ağu 2026). Eskiden burada
-                // `Navigator.push(MaterialPageRoute(...))` vardı: sayfa
-                // açılıyor ama URL `/kesfet`te kalıyordu, yani F5 kullanıcıyı
-                // Keşfet'e geri atıyordu (canlıda ölçüldü). `context.push`
-                // aynı görünümü verir — rota Keşfet şubesinin içinde, alt
-                // gezinme çubuğu yerinde kalır — ama adres sayfayı yansıtır.
-                onBaslikTap: e.key == sanaOzelBaslik
-                    ? () => context.push(sanaOzelYolu)
-                    : rafMap[e.key] == null
-                    ? null
-                    : () => context.push('/raf/${rafSlug(rafMap[e.key]!.$1)}'),
-              ),
-            const SizedBox(height: 24),
-          ],
+        onRefresh: _tazele,
+        child: NotificationListener<ScrollNotification>(
+          onNotification: _kaydirmayiIzle,
+          child: ListView(
+            children: [
+              for (final e in ustDilim) seritYap(e),
+              ..._kisiselSeritler(_kisiselUst),
+              for (final e in altDilim) seritYap(e),
+              ..._kisiselSeritler(_kisiselAlt),
+              // Sayfa 2+ yüklenirken dipte küçük bir gösterge. Kişisel raf
+              // KALMADIYSA hiçbir şey çizilmez — "bitti" yazısı, kullanıcının
+              // farkında bile olmadığı bir bölümü ilan etmek olurdu.
+              if (_kisiselYukleniyor && _kisisel.isNotEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: DiziRenkler.sari,
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       );
     }

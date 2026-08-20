@@ -1206,4 +1206,40 @@ const Map<String, String> cevirilerAr = {
   'Sarı': 'أصفر',
   'Camgöbeği': 'سماوي',
   'Macenta': 'أرجواني',
+  'Yapım bütçesi': 'ميزانية الإنتاج',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'ميزانية الإنتاج والإيرادات العالمية',
+  'Dizinin yayın durumu': 'حالة عرض المسلسل',
+  'Devam ediyor': 'مستمر',
+  'Sona erdi': 'انتهى',
+  'İptal edildi': 'أُلغي',
+  'Yapımda': 'قيد الإنتاج',
+  'Planlandı': 'مُخطط له',
+  'Pilot bölüm': 'حلقة تجريبية',
+  'Ad': 'الاسم',
+  'Adın': 'اسمك',
+  'Kullanıcı adı': 'اسم المستخدم',
+  'Kullanıcı adını değiştir': 'تغيير اسم المستخدم',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'يمكنك تغيير اسم المستخدم مرة كل 90 يومًا',
+  'Değiştir': 'تغيير',
+  '{} gün sonra değiştirebilirsin': 'يمكنك التغيير بعد {} يومًا',
+  'Kullanıcı adın: @{}': 'اسم المستخدم الخاص بك: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'اسم المستخدم هذا مأخوذ بالفعل',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'اسم المستخدم هذا محجوز حاليًا لحساب آخر',
+  'Bu zaten senin kullanıcı adın': 'هذا هو اسم المستخدم الخاص بك بالفعل',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'اسم المستخدم 3–20 حرفًا؛ أحرف صغيرة وأرقام ونقاط وشرطات وشرطات سفلية',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'يظهر فوق اسم المستخدم في ملفك الشخصي. يمكنك تركه فارغًا.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'بعد التغيير لن تتمكن من تغييره مرة أخرى لمدة 90 يومًا. يبقى اسم المستخدم القديم محجوزًا لك 90 يومًا — يمكنك العودة إليه، ولا يستطيع غيرك أخذه خلال تلك المدة. الروابط التي تشير إلى اسمك القديم لن تفتح ملفك بعد الآن.',
+  'Etkinliğim': 'النشاط',
+  'Tercihler': 'التفضيلات',
+  'Gizlilik ve güvenlik': 'الخصوصية والأمان',
+  'Destek': 'الدعم',
+  'Hesap': 'الحساب',
+  '{} dizileri': 'مسلسلات {}',
+  '{} filmleri': 'أفلام {}',
 };

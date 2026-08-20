@@ -1236,4 +1236,40 @@ const Map<String, String> cevirilerRu = {
   'Sarı': 'Жёлтый',
   'Camgöbeği': 'Голубой',
   'Macenta': 'Пурпурный',
+  'Yapım bütçesi': 'Бюджет производства',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Бюджет производства и мировые сборы',
+  'Dizinin yayın durumu': 'Статус выхода сериала',
+  'Devam ediyor': 'Продолжается',
+  'Sona erdi': 'Завершён',
+  'İptal edildi': 'Отменён',
+  'Yapımda': 'В производстве',
+  'Planlandı': 'Запланирован',
+  'Pilot bölüm': 'Пилотная серия',
+  'Ad': 'Имя',
+  'Adın': 'Твоё имя',
+  'Kullanıcı adı': 'Имя пользователя',
+  'Kullanıcı adını değiştir': 'Изменить имя пользователя',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Имя пользователя можно менять раз в 90 дней',
+  'Değiştir': 'Сменить',
+  '{} gün sonra değiştirebilirsin': 'Изменить можно через {} дн.',
+  'Kullanıcı adın: @{}': 'Твоё имя пользователя: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Это имя пользователя уже занято',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Это имя пользователя сейчас закреплено за другим аккаунтом',
+  'Bu zaten senin kullanıcı adın': 'Это и есть твоё имя пользователя',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Имя: 3–20 символов; строчные буквы, цифры, точки, дефисы и подчёркивания',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Показывается в профиле над именем пользователя. Можно оставить пустым.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'После смены изменить снова получится только через 90 дней. Старое имя пользователя останется закреплённым за тобой 90 дней — при желании сможешь вернуться к нему, и никто другой его в это время не займёт. Ссылки на старое имя больше не откроют твой профиль.',
+  'Etkinliğim': 'Активность',
+  'Tercihler': 'Предпочтения',
+  'Gizlilik ve güvenlik': 'Приватность и безопасность',
+  'Destek': 'Поддержка',
+  'Hesap': 'Аккаунт',
+  '{} dizileri': 'Сериалы: {}',
+  '{} filmleri': 'Фильмы: {}',
 };

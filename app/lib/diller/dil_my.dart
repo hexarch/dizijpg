@@ -1098,7 +1098,7 @@ const Map<String, String> cevirilerMy = {
   'Geçerli e-posta ve en az 6 karakter şifre gerekli':
       'မှန်ကန်သော အီးမေးလ်နှင့် အနည်းဆုံး 6 လုံး စကားဝှက် လိုသည်',
   'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)':
-      'အသုံးပြုသူအမည် 3–20; စာလုံးသေး၊ ဂဏန်း၊ အစက်၊ 하이픈၊ အောက်မျဉ်း (အစ/အဆုံး မရ)',
+      'အသုံးပြုသူအမည် 3–20; စာလုံးသေး၊ ဂဏန်း၊ အစက်၊ ဟိုက်ဖင်၊ အောက်မျဉ်း (အစ/အဆုံး မရ)',
   'Bu hesap zaten bağlı': 'ဤအကောင့် ချိတ်ပြီးသား',
   'Hesap oluşturulamadı': 'အကောင့် ဖန်တီးမရ',
   'Misafir hesabı oluşturulamadı': 'ဧည့်သည်အကောင့် ဖန်တီးမရ',
@@ -1241,4 +1241,41 @@ const Map<String, String> cevirilerMy = {
   'Sarı': 'အဝါ',
   'Camgöbeği': 'စိမ်းပြာ',
   'Macenta': 'မဂျင်တာ',
+  'Yapım bütçesi': 'ထုတ်လုပ်မှုအသုံးစရိတ်',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'ထုတ်လုပ်မှုအသုံးစရိတ်နှင့် ကမ္ဘာတစ်ဝှမ်း ဝင်ငွေ',
+  'Dizinin yayın durumu': 'စီးရီးထုတ်လွှင့်မှုအခြေအနေ',
+  'Devam ediyor': 'ဆက်လက်ထုတ်လွှင့်နေသည်',
+  'Sona erdi': 'ပြီးဆုံးသွားပြီ',
+  'İptal edildi': 'ဖျက်သိမ်းလိုက်ပြီ',
+  'Yapımda': 'ရိုက်ကူးနေဆဲ',
+  'Planlandı': 'စီစဉ်ထားသည်',
+  'Pilot bölüm': 'နမူနာအပိုင်း',
+  'Ad': 'အမည်',
+  'Adın': 'သင့်အမည်',
+  'Kullanıcı adı': 'အသုံးပြုသူအမည်',
+  'Kullanıcı adını değiştir': 'အသုံးပြုသူအမည် ပြောင်းရန်',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'အသုံးပြုသူအမည်ကို ၉၀ ရက်တစ်ကြိမ် ပြောင်းနိုင်သည်',
+  'Değiştir': 'ပြောင်းရန်',
+  '{} gün sonra değiştirebilirsin': '{} ရက်အကြာတွင် ပြောင်းနိုင်မည်',
+  'Kullanıcı adın: @{}': 'သင့်အသုံးပြုသူအမည်: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'ဤအသုံးပြုသူအမည်ကို အသုံးပြုပြီးသားဖြစ်သည်',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'ဤအသုံးပြုသူအမည်မှာ လက်ရှိတွင် အခြားအကောင့်အတွက် သီးသန့်ထားရှိသည်',
+  'Bu zaten senin kullanıcı adın':
+      'ဤအမည်သည် သင့်အသုံးပြုသူအမည် ဖြစ်နှင့်ပြီးဖြစ်သည်',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'အသုံးပြုသူအမည် 3–20; စာလုံးသေး၊ ဂဏန်း၊ အစက်၊ ဟိုက်ဖင်၊ အောက်မျဉ်း',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'ပရိုဖိုင်တွင် သင့်အသုံးပြုသူအမည်၏ အပေါ်တွင် ပေါ်သည်။ ကွက်လပ်ထားနိုင်သည်။',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'ပြောင်းပြီးနောက် ၉၀ ရက်အတွင်း ထပ်မံပြောင်း၍မရပါ။ အသုံးပြုသူအမည်အဟောင်းကို ၉၀ ရက် သင့်အတွက် သီးသန့်ထားပေးမည် — လိုအပ်ပါက ပြန်သွားနိုင်ပြီး ထိုကာလအတွင်း အခြားသူများ မယူနိုင်ပါ။ အမည်အဟောင်းသို့ ညွှန်းသော လင့်ခ်များသည် သင့်ပရိုဖိုင်ကို ဖွင့်တော့မည်မဟုတ်ပါ။',
+  'Etkinliğim': 'လှုပ်ရှားမှု',
+  'Tercihler': 'နှစ်သက်ရာများ',
+  'Gizlilik ve güvenlik': 'ကိုယ်ရေးလုံခြုံမှုနှင့် လုံခြုံရေး',
+  'Destek': 'အကူအညီ',
+  'Hesap': 'အကောင့်',
+  '{} dizileri': '{} ၏ ဇာတ်လမ်းတွဲများ',
+  '{} filmleri': '{} ၏ ရုပ်ရှင်များ',
 };

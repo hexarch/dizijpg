@@ -19,9 +19,16 @@ export const ROBOTS = fs.readFileSync(path.join(KOK, 'robots.txt'), 'utf8');
 export const YONLENDIRME = fs.readFileSync(
   path.join(PROJE, 'app', 'lib', 'yonlendirme.dart'), 'utf8');
 
-/** `function ad(...) {...}` ya da `const ad = ...;` bildiriminin tam metni. */
+/**
+ * `function ad(...) {...}`, `async function ad(...) {...}` ya da
+ * `const ad = ...;` bildiriminin tam metni.
+ *
+ * `async` 21 Ağu 2026'da eklendi (`/kisisel-raflar`): eski desen yalnız
+ * `^(const|function)` arıyordu, yani `async function` ile yazılmış saf
+ * yardımcılar "bildirim bulunamadı" diye patlıyordu.
+ */
 export function bildirimCek(ad) {
-  const m = new RegExp(`^(const|function) ${ad}\\b`, 'm').exec(KAYNAK);
+  const m = new RegExp(`^(?:async )?(const|function) ${ad}\\b`, 'm').exec(KAYNAK);
   assert.ok(m, `server.js içinde ${ad} bildirimi bulunamadı`);
   const bas = m.index;
   const fonksiyon = m[1] === 'function';

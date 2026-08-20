@@ -1225,4 +1225,40 @@ const Map<String, String> cevirilerAz = {
   'Sarı': 'Sarı',
   'Camgöbeği': 'Sian',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'İstehsal büdcəsi',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'İstehsal büdcəsi və dünya üzrə gəlir',
+  'Dizinin yayın durumu': 'Serialın yayım statusu',
+  'Devam ediyor': 'Davam edir',
+  'Sona erdi': 'Sona çatıb',
+  'İptal edildi': 'Ləğv edilib',
+  'Yapımda': 'İstehsalda',
+  'Planlandı': 'Planlaşdırılıb',
+  'Pilot bölüm': 'Pilot epizod',
+  'Ad': 'Ad',
+  'Adın': 'Adın',
+  'Kullanıcı adı': 'İstifadəçi adı',
+  'Kullanıcı adını değiştir': 'İstifadəçi adını dəyiş',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'İstifadəçi adını 90 gündə bir dəyişə bilərsən',
+  'Değiştir': 'Dəyiş',
+  '{} gün sonra değiştirebilirsin': '{} gün sonra dəyişə bilərsən',
+  'Kullanıcı adın: @{}': 'İstifadəçi adın: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Bu istifadəçi adı artıq tutulub',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Bu istifadəçi adı hazırda başqa hesab üçün saxlanılır',
+  'Bu zaten senin kullanıcı adın': 'Bu onsuz da sənin istifadəçi adındır',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'İstifadəçi adı 3–20 simvol; kiçik hərf, rəqəm, nöqtə, defis, alt xətt',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Profilində istifadəçi adının üstündə görünür. Boş buraxa bilərsən.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Dəyişdikdən sonra 90 gün ərzində yenidən dəyişə bilməzsən. Köhnə istifadəçi adın 90 gün sənə saxlanılır — istəsən geri qayıda bilərsən, o müddətdə başqası ala bilməz. Köhnə adına gedən keçidlər artıq profilini açmayacaq.',
+  'Etkinliğim': 'Fəaliyyət',
+  'Tercihler': 'Tərcihlər',
+  'Gizlilik ve güvenlik': 'Məxfilik və təhlükəsizlik',
+  'Destek': 'Dəstək',
+  'Hesap': 'Hesab',
+  '{} dizileri': '{} serialları',
+  '{} filmleri': '{} filmləri',
 };

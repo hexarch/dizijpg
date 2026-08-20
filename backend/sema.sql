@@ -4,6 +4,17 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   id SERIAL PRIMARY KEY,
   email TEXT UNIQUE,
   kullanici_adi TEXT UNIQUE NOT NULL,
+  -- GÖRÜNEN AD (21 Ağu 2026). `kullanici_adi` KİMLİK ANAHTARIDIR (profil yolu,
+  -- @bahsetme, giriş); `ad` yalnız ETİKETTİR — hiçbir sorgu ona göre kullanıcı
+  -- bulmaz, hiçbir URL onu taşımaz. Bu yüzden serbest metin olabilir. Uzunluk
+  -- kısıtı politika değil bozulma önlemedir (bildirim/başlık satırı taşmasın);
+  -- gerekçenin tamamı migrasyon-2026-08-21.sql'de. NULL = ad girilmemiş.
+  ad TEXT,
+  -- Son BAŞARILI kullanıcı adı değişiminin damgası; 90 gün kilidinin tek
+  -- dayanağı. NULL = hiç değiştirilmemiş → ilk değişim serbest. Damga tutulur,
+  -- sayaç değil: kalan süre her istekte now()'a göre hesaplanır, hiçbir cron'a
+  -- bağlı değildir.
+  kullanici_adi_degisim TIMESTAMPTZ,
   sifre_hash TEXT,
   misafir BOOLEAN DEFAULT false,
   avatar TEXT,
@@ -1113,3 +1124,38 @@ CREATE TABLE IF NOT EXISTS iki_adim_kodlari (
   bitis TIMESTAMPTZ NOT NULL,
   deneme INT NOT NULL DEFAULT 0
 );
+
+-- ===========================================================================
+-- 2026-08-21: GÖRÜNEN AD + KULLANICI ADI DEĞİŞTİRME
+-- ===========================================================================
+-- Tam gerekçe migrasyon-2026-08-21.sql'de. Özet:
+--  * `ad` — görünen ad. Kimlik DEĞİL etiket; serbest metin, en fazla 40 kod
+--    noktası. Kısıt politika değil bozulma önleme (başlık/bildirim taşması).
+--  * `kullanici_adi_degisim` — son değişimin damgası; 90 gün kilidinin tek
+--    dayanağı. NULL = hiç değiştirilmemiş, ilk değişim serbest.
+--  * `kullanici_adi_rezervleri` — BIRAKILAN ad 90 gün başkasına verilmez
+--    (kullanıcı kararı: eski bağlantılar yanlış profile gitmesin). Silinen
+--    hesabın adı da buraya düşer (`kullanici_id` NULL).
+--  * Kullanıcı başına EN FAZLA BİR rezerv → bir kişi en çok İKİ ad işgal eder
+--    (taşıdığı + bıraktığı). Kısmi tekil indeks bunu veritabanında zorlar.
+-- Sütunlar hem CREATE TABLE'da hem burada: yukarısı YENİ veritabanı için,
+-- burası MEVCUT veritabanı için (CREATE TABLE IF NOT EXISTS onu atlar).
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS ad TEXT;
+ALTER TABLE kullanicilar DROP CONSTRAINT IF EXISTS kullanicilar_ad_uzunluk;
+ALTER TABLE kullanicilar ADD CONSTRAINT kullanicilar_ad_uzunluk
+  CHECK (ad IS NULL OR char_length(ad) <= 40);
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS kullanici_adi_degisim TIMESTAMPTZ;
+
+CREATE TABLE IF NOT EXISTS kullanici_adi_rezervleri (
+  kullanici_adi TEXT PRIMARY KEY,
+  -- ON DELETE SET NULL (CASCADE DEĞİL): hesap silinse de rezerv süresi
+  -- dolana kadar YAŞAR — silinen hesabın adı hemen kapılmasın diye.
+  kullanici_id INT REFERENCES kullanicilar(id) ON DELETE SET NULL,
+  bitis TIMESTAMPTZ NOT NULL,
+  olusturma TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX IF NOT EXISTS kullanici_adi_rezerv_sahip
+  ON kullanici_adi_rezervleri (kullanici_id)
+  WHERE kullanici_id IS NOT NULL;
+CREATE INDEX IF NOT EXISTS kullanici_adi_rezerv_bitis
+  ON kullanici_adi_rezervleri (bitis);

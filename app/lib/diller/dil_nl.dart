@@ -1239,4 +1239,40 @@ const Map<String, String> cevirilerNl = {
   'Sarı': 'Geel',
   'Camgöbeği': 'Cyaan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Productiebudget',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Productiebudget en wereldwijde opbrengst',
+  'Dizinin yayın durumu': 'Uitzendstatus van de serie',
+  'Devam ediyor': 'Loopt nog',
+  'Sona erdi': 'Afgelopen',
+  'İptal edildi': 'Geannuleerd',
+  'Yapımda': 'In productie',
+  'Planlandı': 'Gepland',
+  'Pilot bölüm': 'Pilotaflevering',
+  'Ad': 'Naam',
+  'Adın': 'Je naam',
+  'Kullanıcı adı': 'Gebruikersnaam',
+  'Kullanıcı adını değiştir': 'Gebruikersnaam wijzigen',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Je kunt je gebruikersnaam eens per 90 dagen wijzigen',
+  'Değiştir': 'Wijzigen',
+  '{} gün sonra değiştirebilirsin': 'Over {} dagen weer te wijzigen',
+  'Kullanıcı adın: @{}': 'Je gebruikersnaam: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Deze gebruikersnaam is al bezet',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Deze gebruikersnaam is nu gereserveerd voor een ander account',
+  'Bu zaten senin kullanıcı adın': 'Dit is al je gebruikersnaam',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Gebruikersnaam 3–20 tekens; kleine letters, cijfers, punten, streepjes, underscores',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Verschijnt in je profiel boven je gebruikersnaam. Mag leeg blijven.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Na het wijzigen kun je hem 90 dagen lang niet opnieuw wijzigen. Je oude gebruikersnaam blijft 90 dagen voor je gereserveerd — je kunt terug en niemand anders kan hem in die tijd nemen. Links naar je oude naam openen je profiel niet meer.',
+  'Etkinliğim': 'Activiteit',
+  'Tercihler': 'Voorkeuren',
+  'Gizlilik ve güvenlik': 'Privacy en beveiliging',
+  'Destek': 'Ondersteuning',
+  'Hesap': 'Account',
+  '{} dizileri': 'Series van {}',
+  '{} filmleri': 'Films van {}',
 };

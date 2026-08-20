@@ -1243,4 +1243,40 @@ const Map<String, String> cevirilerSv = {
   'Sarı': 'Gul',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Produktionsbudget',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Produktionsbudget och intäkter världen över',
+  'Dizinin yayın durumu': 'Seriens sändningsstatus',
+  'Devam ediyor': 'Pågår',
+  'Sona erdi': 'Avslutad',
+  'İptal edildi': 'Nedlagd',
+  'Yapımda': 'Under produktion',
+  'Planlandı': 'Planerad',
+  'Pilot bölüm': 'Pilotavsnitt',
+  'Ad': 'Namn',
+  'Adın': 'Ditt namn',
+  'Kullanıcı adı': 'Användarnamn',
+  'Kullanıcı adını değiştir': 'Ändra användarnamn',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Du kan ändra ditt användarnamn en gång var 90:e dag',
+  'Değiştir': 'Ändra',
+  '{} gün sonra değiştirebilirsin': 'Du kan ändra om {} dagar',
+  'Kullanıcı adın: @{}': 'Ditt användarnamn: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Det användarnamnet är redan taget',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Det användarnamnet är just nu reserverat för ett annat konto',
+  'Bu zaten senin kullanıcı adın': 'Det är redan ditt användarnamn',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Användarnamn 3–20 tecken; gemener, siffror, punkter, bindestreck, understreck',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Visas ovanför ditt användarnamn på profilen. Du kan lämna det tomt.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Efter ändringen kan du inte ändra igen på 90 dagar. Ditt gamla användarnamn är reserverat åt dig i 90 dagar — du kan byta tillbaka och ingen annan kan ta det under tiden. Länkar till ditt gamla namn öppnar inte längre din profil.',
+  'Etkinliğim': 'Aktivitet',
+  'Tercihler': 'Preferenser',
+  'Gizlilik ve güvenlik': 'Integritet och säkerhet',
+  'Destek': 'Support',
+  'Hesap': 'Konto',
+  '{} dizileri': 'Serier av {}',
+  '{} filmleri': 'Filmer av {}',
 };

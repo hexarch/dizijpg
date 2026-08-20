@@ -1227,4 +1227,40 @@ const Map<String, String> cevirilerKn = {
   'Sarı': 'ಹಳದಿ',
   'Camgöbeği': 'ಸಯಾನ್',
   'Macenta': 'ಮೆಜೆಂಟಾ',
+  'Yapım bütçesi': 'ನಿರ್ಮಾಣ ಬಜೆಟ್',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'ನಿರ್ಮಾಣ ಬಜೆಟ್ ಮತ್ತು ವಿಶ್ವದಾದ್ಯಂತ ಗಳಿಕೆ',
+  'Dizinin yayın durumu': 'ಸರಣಿಯ ಪ್ರಸಾರ ಸ್ಥಿತಿ',
+  'Devam ediyor': 'ಮುಂದುವರಿಯುತ್ತಿದೆ',
+  'Sona erdi': 'ಮುಕ್ತಾಯವಾಗಿದೆ',
+  'İptal edildi': 'ರದ್ದಾಗಿದೆ',
+  'Yapımda': 'ನಿರ್ಮಾಣದಲ್ಲಿದೆ',
+  'Planlandı': 'ಯೋಜಿಸಲಾಗಿದೆ',
+  'Pilot bölüm': 'ಪೈಲಟ್ ಎಪಿಸೋಡ್',
+  'Ad': 'ಹೆಸರು',
+  'Adın': 'ನಿನ್ನ ಹೆಸರು',
+  'Kullanıcı adı': 'ಬಳಕೆದಾರ ಹೆಸರು',
+  'Kullanıcı adını değiştir': 'ಬಳಕೆದಾರ ಹೆಸರು ಬದಲಿಸು',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'ಬಳಕೆದಾರ ಹೆಸರನ್ನು 90 ದಿನಕ್ಕೊಮ್ಮೆ ಬದಲಿಸಬಹುದು',
+  'Değiştir': 'ಬದಲಿಸು',
+  '{} gün sonra değiştirebilirsin': '{} ದಿನಗಳ ನಂತರ ಬದಲಿಸಬಹುದು',
+  'Kullanıcı adın: @{}': 'ನಿನ್ನ ಬಳಕೆದಾರ ಹೆಸರು: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'ಈ ಬಳಕೆದಾರ ಹೆಸರು ಈಗಾಗಲೇ ಬಳಕೆಯಲ್ಲಿದೆ',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'ಈ ಬಳಕೆದಾರ ಹೆಸರು ಸದ್ಯ ಬೇರೆ ಖಾತೆಗೆ ಕಾಯ್ದಿರಿಸಲಾಗಿದೆ',
+  'Bu zaten senin kullanıcı adın': 'ಇದು ಈಗಾಗಲೇ ನಿನ್ನ ಬಳಕೆದಾರ ಹೆಸರೇ',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'ಬಳಕೆದಾರಹೆಸರು 3–20; ಸಣ್ಣ ಅಕ್ಷರ, ಅಂಕೆ, ಚುಕ್ಕೆ, ಹೈಫನ್, ಅಂಡರ್‌ಸ್ಕೋರ್',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'ಪ್ರೊಫೈಲ್‌ನಲ್ಲಿ ನಿನ್ನ ಬಳಕೆದಾರ ಹೆಸರಿನ ಮೇಲೆ ಕಾಣಿಸುತ್ತದೆ. ಖಾಲಿ ಬಿಡಬಹುದು.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'ಬದಲಿಸಿದ ಮೇಲೆ 90 ದಿನ ಮತ್ತೆ ಬದಲಿಸಲಾಗದು. ಹಳೆಯ ಬಳಕೆದಾರ ಹೆಸರು 90 ದಿನ ನಿನಗಾಗಿ ಕಾಯ್ದಿರಿಸಲ್ಪಡುತ್ತದೆ — ಬೇಕಿದ್ದರೆ ಹಿಂತಿರುಗಬಹುದು, ಆ ಅವಧಿಯಲ್ಲಿ ಬೇರೆ ಯಾರೂ ಪಡೆಯಲಾಗದು. ಹಳೆಯ ಹೆಸರಿನ ಲಿಂಕ್‌ಗಳು ಇನ್ನು ನಿನ್ನ ಪ್ರೊಫೈಲ್ ತೆರೆಯುವುದಿಲ್ಲ.',
+  'Etkinliğim': 'ಚಟುವಟಿಕೆ',
+  'Tercihler': 'ಆದ್ಯತೆಗಳು',
+  'Gizlilik ve güvenlik': 'ಗೌಪ್ಯತೆ ಮತ್ತು ಭದ್ರತೆ',
+  'Destek': 'ಬೆಂಬಲ',
+  'Hesap': 'ಖಾತೆ',
+  '{} dizileri': '{} ಸರಣಿಗಳು',
+  '{} filmleri': '{} ಸಿನಿಮಾಗಳು',
 };

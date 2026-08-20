@@ -1252,4 +1252,40 @@ const Map<String, String> cevirilerRo = {
   'Sarı': 'Galben',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Buget de producție',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Buget de producție și încasări mondiale',
+  'Dizinin yayın durumu': 'Statutul difuzării serialului',
+  'Devam ediyor': 'În desfășurare',
+  'Sona erdi': 'Încheiat',
+  'İptal edildi': 'Anulat',
+  'Yapımda': 'În producție',
+  'Planlandı': 'Planificat',
+  'Pilot bölüm': 'Episod pilot',
+  'Ad': 'Nume',
+  'Adın': 'Numele tău',
+  'Kullanıcı adı': 'Nume de utilizator',
+  'Kullanıcı adını değiştir': 'Schimbă numele de utilizator',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Poți schimba numele de utilizator o dată la 90 de zile',
+  'Değiştir': 'Schimbă',
+  '{} gün sonra değiştirebilirsin': 'Îl poți schimba peste {} zile',
+  'Kullanıcı adın: @{}': 'Numele tău de utilizator: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Acest nume de utilizator este deja luat',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Acest nume de utilizator este rezervat momentan pentru alt cont',
+  'Bu zaten senin kullanıcı adın': 'Acesta este deja numele tău de utilizator',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Numele: 3–20 caractere; minuscule, cifre, puncte, cratime și underscore',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Apare în profil deasupra numelui tău de utilizator. Îl poți lăsa gol.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'După schimbare nu îl mai poți schimba timp de 90 de zile. Numele vechi îți rămâne rezervat 90 de zile — poți reveni la el și nimeni altcineva nu îl poate lua în acest timp. Linkurile către numele vechi nu îți vor mai deschide profilul.',
+  'Etkinliğim': 'Activitate',
+  'Tercihler': 'Preferințe',
+  'Gizlilik ve güvenlik': 'Confidențialitate și securitate',
+  'Destek': 'Asistență',
+  'Hesap': 'Cont',
+  '{} dizileri': 'Seriale: {}',
+  '{} filmleri': 'Filme: {}',
 };

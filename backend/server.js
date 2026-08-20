@@ -3183,7 +3183,324 @@ function seoKisiBasligi({ ad, biyoVar, yapimlar = [] }) {
   return adaylar.find((x) => x.length <= SEO_BASLIK_MAX) || adaylar[adaylar.length - 1];
 }
 
-function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
+// ===========================================================================
+// SEO — SIK SORULAN SORULAR (21 Ağu 2026)
+// ===========================================================================
+// İSTEK: "kaç sezon", "nerede izlenir", "ne zaman bitti", "oyuncuları kimler"
+// gerçek uzun kuyruk sorguları; sayfada tam karşılıklarını bulunur kılalım.
+//
+// ---------------------------------------------------------------------------
+// 1. BU BLOK NİYE VAR — ve niye "FAQ zengin sonucu" İÇİN DEĞİL
+// ---------------------------------------------------------------------------
+// Google, Ağustos 2023'te FAQ zengin sonucunu yalnız "iyi bilinen, yetkili
+// resmî kurum ve sağlık siteleri" ile sınırladı. dizi.jpg o kümede DEĞİL, yani
+// `FAQPage` işaretlemesi bu sayfalarda açılır-kapanır soru kutucuğu ÜRETMEZ.
+// Bunu bilerek yazıyoruz; işaretlemenin kalması Google'a göre bir sorun da
+// değil (yalnız gösterilmiyor). O hâlde değer nerede:
+//
+//   a) GÖRÜNÜR METİN. "Breaking Bad kaç sezon" diye arayan biri, o cümlenin
+//      birebir karşılığını sayfada bulur. Pasaj eşleşmesi ve AI Overviews
+//      alıntısı için işleyen şey işaretleme değil, metnin kendisidir.
+//   b) `FAQPage`i Google dışındaki tüketiciler (Bing, LLM'ler, tarayıcı
+//      eklentileri) hâlâ okuyor; maliyeti ~40 satır JSON.
+//
+// ---------------------------------------------------------------------------
+// 2. CEVAPLAR UYDURULMAZ — soru VERİYE bağlı seçilir
+// ---------------------------------------------------------------------------
+// Her cevabın her parçası elimizdeki gerçek alandan kurulur. Alan yoksa SORU
+// HİÇ SORULMAZ; "bilinmiyor" yazmak, arama sonucundan gelen okura boş vaat
+// satmaktır (aynı disiplin `seoIcerikAciklamasi`de de var).
+// Somut sonuçları:
+//   · `status` ∈ {Ended, Canceled} DEĞİLSE "ne zaman bitti" sorulmaz.
+//   · `next_episode_to_air.air_date` BUGÜNDEN ESKİYSE "yeni bölüm ne zaman"
+//     sorulmaz — önbellek 7 gün TTL'li (`ONBELLEK_TTL_SN.uzun`), yani geçmiş
+//     bir tarihi "yayınlanacak" diye basmak GERÇEKTEN mümkün (canlı örnek:
+//     Home and Away, next=2026-08-20, sayfa 21 Ağu'da isteniyor).
+//   · Filmde sezon yok/dizide süre yok ayrımı `seoIcerikKunyesi` ile aynı.
+//
+// ---------------------------------------------------------------------------
+// 3. NİYE "AYNI BİLGİYİ TEKRAR BASMAK" DEĞİL
+// ---------------------------------------------------------------------------
+// Sezon sayısı ve oyuncu listesi TMDB verisidir; IMDb/Wikipedia'da da var
+// (SEO-YAPILACAKLAR §3). Bu yüzden LİSTEDEKİ İLK CEVABIN SONUNA, yalnız bizde
+// olan veri eklenir:
+//
+//   "Breaking Bad 5 sezon ve toplam 62 bölümden oluşuyor.
+//    dizi.jpg kullanıcıları 5.0/5 puan verdi (4 puan, 9 yorum)."
+//
+// Kuyruk YALNIZ BİR kez ve yalnız İLK cevaba eklenir: her cevaba eklemek aynı
+// cümleyi dört kez basmak, yani Google'ın "boilerplate" saydığı şey olurdu.
+//
+// PUAN ZİNCİRİ İKİNCİ SORGU AÇMAZ: `puanMetni`/`puanAdet` ucun zaten
+// hesapladığı `seoOrtalamaPuan(seo)` nesnesinden gelir — başlık ve JSON-LD
+// `aggregateRating` ile AYNI nesne, aynı tohum-süzülmüş SQL (`TOPLUM_PUAN_SQL`).
+// `SEO_PUAN_MIN` eşiğinin altında nesne `null`dur ve kuyruğa puan hiç girmez.
+//
+// ---------------------------------------------------------------------------
+// 4. TÜRKÇE EK KURALI — yapım adına ASLA ek getirilmez
+// ---------------------------------------------------------------------------
+// "Breaking Bad'in", "Silo'nun" gibi ekler ünlü uyumu + kesme işareti +
+// yabancı ad okunuşu demek; makineyle doğru üretilemez ("The Office'in" mi
+// "The Office'ın" mı?). Bütün soru ve cevap kalıpları adı EKSİZ bırakacak
+// biçimde kuruldu ("Breaking Bad oyuncuları kimler?"). Yeni kalıp eklerken bu
+// kural korunmalı — `seo_sss.test.js` adın hemen ardından kesme işareti
+// gelmediğini kilitliyor.
+const SEO_SSS_BASLIK = 'Sık sorulan sorular';
+// "Nerede izlenir" YALNIZ TÜRKİYE bölgesinden cevaplanır. SSR bugün tek dilli:
+// canlı ölçümde önbellekteki SSR anahtarlarının 554/554'ü `tr-TR`
+// (SEO-YAPILACAKLAR §7). Soru Türkçe soruluyorsa cevabı da Türkiye kataloğu
+// olmalı; TMDB'nin döndürdüğü ilk bölgeye düşmek (uygulamanın rozet ızgarası
+// bunu yapıyor, ÇÜNKÜ orada ülke adı YAZMIYOR) burada "Türkiye'de ... Kanada
+// sağlayıcısı" cümlesi üretirdi. §7 çok dilli SSR'a geldiğinde burası
+// `app/lib/ekranlar/detay.dart` içindeki `_NeredeIzlenir._bolgeler` haritasının
+// eşi olur; bugün tek değer yeterli.
+const SEO_SSS_BOLGE = 'TR';
+// Cevaba giren azami sağlayıcı ve oyuncu sayısı. Cümle okunabilir kalmalı:
+// 12 sağlayıcı sayan bir cevap ne okura ne pasaj eşleşmesine yarar.
+const SEO_SSS_SAGLAYICI = 4;
+const SEO_SSS_OYUNCU = 5;
+// Rol adı ancak KISA ve TEK ise parantez içinde verilir. TMDB `character`
+// alanı seslendirme dizilerinde yığın olabiliyor (canlı örnek, Simpsonlar:
+// "Homer Simpson / Abe Simpson / Barney Gumble / Krusty the Clown / ..." —
+// 96 karakter). Böyle bir dizgiyi kısaltmak oyuncuyu tek role indirger, yani
+// YANLIŞ bilgi olur; bu yüzden kısaltılmaz, DÜŞÜRÜLÜR ve yalnız ad basılır.
+const SEO_SSS_ROL_MAX = 40;
+// Tek soruluk bir "Sık sorulan sorular" başlığı hem okura tuhaf görünür hem de
+// sayfaya bölüm eklemekten başka iş yapmaz (ince içerik). İki sorunun altında
+// blok HİÇ basılmaz — ne görünür HTML ne JSON-LD.
+const SEO_SSS_MIN = 2;
+// TMDB dizi durumları: Returning Series / Planned / In Production / Ended /
+// Canceled / Pilot. "Bitti" sorusu yalnız son ikisinde anlamlı.
+const SEO_BITMIS_DURUMLAR = new Set(['Ended', 'Canceled']);
+const SEO_AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'];
+
+/**
+ * "2013-09-29" -> "29 Eylül 2013". Ayrıştırılamayan her şey için '' döner
+ * (çağıran '' görünce soruyu HİÇ sormaz).
+ *
+ * NEDEN ELLE AY TABLOSU: `toLocaleDateString('tr-TR')` ICU'ya bağlı ve
+ * "29.09.2013" üretir — bir cümlenin içinde okunmaz. Tablo saf ve testlenebilir.
+ * Saat/dakika BİLEREK yok: SSR tarihleri yalnız GÜN (SEO-YAPILACAKLAR §8/9).
+ */
+function seoTarihTr(iso) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(iso ?? '').slice(0, 10));
+  if (!m) return '';
+  const ay = Number(m[2]);
+  const gun = Number(m[3]);
+  if (ay < 1 || ay > 12 || gun < 1 || gun > 31) return '';
+  return `${gun} ${SEO_AYLAR[ay - 1]} ${m[1]}`;
+}
+
+/** "a" · "a ve b" · "a, b ve c" — cevap cümlesine giren Türkçe liste. */
+function seoVeListesi(ogeler) {
+  const l = (ogeler || []).map(seoMetin).filter(Boolean);
+  if (l.length <= 1) return l[0] || '';
+  return `${l.slice(0, -1).join(', ')} ve ${l[l.length - 1]}`;
+}
+
+// TMDB `watch/providers` grupları -> cevap cümlesindeki ulaç. Sıra bilinçli:
+// aboneliği olan kullanıcı için "zaten var mı" en değerli bilgi, satın alma en
+// az. `link` alanı KULLANILMIYOR: TMDB'nin kendi izleme sayfasına çıkar,
+// SSR sayfasından dışarıya bağlantı vermenin gerekçesi yok.
+const SEO_SAGLAYICI_GRUPLARI = [
+  ['flatrate', 'abonelikle'],
+  ['rent', 'kiralayarak'],
+  ['buy', 'satın alarak'],
+];
+
+/**
+ * "{X ve Y} üzerinden abonelikle" biçiminde parçalar. Bölgede hiç sağlayıcı
+ * yoksa BOŞ dizi -> "nerede izlenir" sorusu hiç sorulmaz.
+ *
+ * AYNI SAĞLAYICI KÜMESİ TEK KEZ SAYILIR. Canlı örnek (Başlangıç, movie/27205):
+ * `rent` ve `buy` listelerinin ikisi de {Google Play Movies, Apple TV Store}.
+ * Ayrı ayrı basınca cümle "… üzerinden kiralayarak ve … üzerinden satın
+ * alarak" diye aynı iki adı iki kez sayıyordu. Birleştirilince
+ * "… üzerinden kiralayarak ya da satın alarak" oluyor: aynı bilgi, yarısı
+ * kadar metin, sıfır tekrar.
+ *
+ * TAVAN AŞILIRSA KESİLİR ama cümle YANLIŞ OLMAZ: "A, B, C ve D üzerinden
+ * izlenebilir" 6 sağlayıcının 4'ünü sayıyorsa eksiktir, yanlış değildir.
+ * "yalnız" gibi bir sınırlama sözcüğü bilerek kullanılmıyor.
+ */
+function seoSaglayiciParcalari(v, bolge = SEO_SSS_BOLGE) {
+  const b = v?.['watch/providers']?.results?.[bolge];
+  if (!b || typeof b !== 'object') return [];
+  const kumeler = new Map();   // "a|b" -> { adlar, ulaclar }
+  for (const [alan, ulac] of SEO_SAGLAYICI_GRUPLARI) {
+    const adlar = [...new Set((Array.isArray(b[alan]) ? b[alan] : [])
+      .map((s) => seoMetin(s?.provider_name)).filter(Boolean))]
+      .slice(0, SEO_SSS_SAGLAYICI);
+    if (!adlar.length) continue;
+    const anahtar = adlar.join('|');
+    if (kumeler.has(anahtar)) kumeler.get(anahtar).ulaclar.push(ulac);
+    else kumeler.set(anahtar, { adlar, ulaclar: [ulac] });
+  }
+  return [...kumeler.values()]
+    .map(({ adlar, ulaclar }) => `${seoVeListesi(adlar)} üzerinden ${ulaclar.join(' ya da ')}`);
+}
+
+/** Cevaba girecek oyuncu adları — kısa ve tek rol varsa parantezle. */
+function seoSssOyunculari(v) {
+  return (v?.credits?.cast || []).map((o) => {
+    const ad = seoMetin(o?.name);
+    if (!ad) return '';
+    const rol = seoMetin(o?.character);
+    return rol && rol.length <= SEO_SSS_ROL_MAX && !rol.includes('/')
+      ? `${ad} (${rol})` : ad;
+  }).filter(Boolean).slice(0, SEO_SSS_OYUNCU);
+}
+
+/**
+ * Sayfanın soru-cevap listesi: `[{ soru, cevap }]`, ikisi de DÜZ METİN.
+ *
+ * TEK KAYNAK: görünür `<dl>` de (`seoSssGovdesi`) JSON-LD `FAQPage` de
+ * (`seoSssJsonLd`) BU dizinin üstünde kurulur; metin iki yere kopyalanmaz.
+ * Google'ın kuralı işaretlenen soru-cevabın sayfada GÖRÜNÜR olmasıdır —
+ * gizli JSON-LD SSS'i politika ihlalidir. Kopyalama olmadığı için ayrışma da
+ * mümkün değil (`seo_sss.test.js` bunu ayrıca kilitliyor).
+ *
+ * SIRA — okurun sorma sırası, "en çok aranan" değil:
+ *   1. künye (dizide sezon/bölüm, filmde süre) — sayfanın kimlik sorusu,
+ *   2. zaman (bitti mi / yeni bölüm ne zaman / ne zaman çıktı),
+ *   3. nerede izlenir — niyeti en "eyleme dönük" soru,
+ *   4. oyuncular — en uzun cevap, sona.
+ * Toplum kuyruğu 1'e eklenir; yani sayfanın en üstteki cevabı hem TMDB
+ * verisini hem yalnız bizde olanı taşır.
+ *
+ * @param {string} bugun 'YYYY-MM-DD' — gelecek bölüm süzgeci için (test edilebilirlik).
+ */
+function seoIcerikSorulari({ ad, tur, v, puanMetni, puanAdet, yorumAdet, bugun }) {
+  const sorular = [];
+  const ekle = (soru, cevap) => { if (soru && cevap) sorular.push({ soru, cevap }); };
+
+  if (tur === 'tv') {
+    const sezon = seoPozitif(v?.number_of_seasons);
+    const bolum = seoPozitif(v?.number_of_episodes);
+    if (sezon) {
+      ekle(bolum ? `${ad} kaç sezon, kaç bölüm?` : `${ad} kaç sezon?`,
+        bolum
+          ? `${ad} ${sezon} sezon ve toplam ${bolum} bölümden oluşuyor.`
+          : `${ad} ${sezon} sezondan oluşuyor.`);
+    }
+    const durum = seoMetin(v?.status);
+    const son = v?.last_episode_to_air;
+    // `last_episode_to_air.air_date` ÖNCE: `last_air_date` ile ayrıştıkları
+    // oluyor (canlı örnek Home and Away: 2026-08-06'ya karşı 2026-08-19) ve
+    // "son bölüm" cümlesi hangi bölümü sayıyorsa onun tarihini demeli.
+    const sonTarih = seoTarihTr(son?.air_date || v?.last_air_date);
+    const sonBolum = seoPozitif(son?.season_number) && seoPozitif(son?.episode_number)
+      ? `${seoPozitif(son.season_number)}. sezon ${seoPozitif(son.episode_number)}. bölüm`
+      : '';
+    if (SEO_BITMIS_DURUMLAR.has(durum) && sonTarih) {
+      if (durum === 'Canceled') {
+        // "İptal" ile "bitti" AYNI ŞEY DEĞİL ve okur da böyle aramıyor.
+        ekle(`${ad} iptal edildi mi?`,
+          `${ad} iptal edildi ve yeni bölüm yayınlanmıyor. Son bölüm`
+          + `${sonBolum ? ` (${sonBolum})` : ''} ${sonTarih} tarihinde yayınlandı.`);
+      } else {
+        // Ekli hâl YALNIZ bölüm varken kurulur: "… 16. bölümle sona erdi".
+        // Bölüm yoksa ek de yok ("… tarihinde sona erdi") — aradaki `le`nin
+        // dayanaksız kalması ("tarihindele") tam olarak bu yüzden ayrı dal.
+        ekle(`${ad} bitti mi, ne zaman sona erdi?`,
+          sonBolum
+            ? `${ad} ${sonTarih} tarihinde yayınlanan ${sonBolum}le sona erdi.`
+            : `${ad} ${sonTarih} tarihinde sona erdi.`);
+      }
+    }
+    const sonrakiIso = String(v?.next_episode_to_air?.air_date || '').slice(0, 10);
+    if (!SEO_BITMIS_DURUMLAR.has(durum) && sonrakiIso && bugun && sonrakiIso >= bugun) {
+      const s = seoPozitif(v.next_episode_to_air.season_number);
+      const b = seoPozitif(v.next_episode_to_air.episode_number);
+      ekle(`${ad} yeni bölümü ne zaman yayınlanacak?`,
+        `${ad} devam ediyor. ${s && b ? `${s}. sezon ${b}. bölüm` : 'Yeni bölüm'}`
+        + ` ${seoTarihTr(sonrakiIso)} tarihinde yayınlanacak.`);
+    }
+  } else {
+    const sure = seoPozitif(v?.runtime);
+    if (sure) {
+      const saat = Math.floor(sure / 60);
+      const dk = sure % 60;
+      ekle(`${ad} kaç dakika sürüyor?`,
+        `${ad} ${sure} dakika`
+        + `${saat ? `, yani yaklaşık ${saat} saat${dk ? ` ${dk} dakika` : ''}` : ''}`
+        + ' sürüyor.');
+    }
+    const vizyon = seoTarihTr(v?.release_date);
+    if (vizyon) ekle(`${ad} ne zaman çıktı?`, `${ad} ${vizyon} tarihinde vizyona girdi.`);
+  }
+
+  const saglayici = seoSaglayiciParcalari(v);
+  if (saglayici.length) {
+    // JustWatch atfı TMDB kullanım koşulu; uygulamada da basılıyor
+    // (`_NeredeIzlenir` -> "Veri: JustWatch"). Cevabın İÇİNDE duruyor ki
+    // metin nereye alıntılanırsa alıntılansın kaynağıyla birlikte gitsin.
+    // Parçalar NOKTALI VİRGÜLLE ayrılıyor, "ve" ile değil: her parçanın kendi
+    // içinde zaten "ve"si var ("Netflix, TV+ ve HBO Max üzerinden abonelikle")
+    // ve üç "ve"li bir cümle nerede bitip nerede başladığı belirsiz olurdu.
+    ekle(`${ad} nerede izlenir?`,
+      `${ad} Türkiye'de ${saglayici.join('; ')} izlenebilir.`
+      + ' Sağlayıcı verisi: JustWatch.');
+  }
+  const oyuncular = seoSssOyunculari(v);
+  if (oyuncular.length) {
+    ekle(`${ad} oyuncuları kimler?`,
+      `${ad} başrollerinde ${seoVeListesi(oyuncular)} yer alıyor.`);
+  }
+
+  // TOPLUM KUYRUĞU — yalnız İLK cevaba (gerekçe yukarıda, §3).
+  const kuyruk = puanMetni
+    ? `dizi.jpg kullanıcıları ${puanMetni} puan verdi`
+      + ` (${seoPozitif(puanAdet)} puan${seoPozitif(yorumAdet) ? `, ${seoPozitif(yorumAdet)} yorum` : ''}).`
+    : (seoPozitif(yorumAdet)
+      ? `dizi.jpg'de ${seoPozitif(yorumAdet)} kullanıcı yorumu ve incelemesi var.` : '');
+  if (kuyruk && sorular.length) sorular[0].cevap += ` ${kuyruk}`;
+
+  return sorular.length >= SEO_SSS_MIN ? sorular : [];
+}
+
+/**
+ * Görünür blok. `<dl>/<dt>/<dd>`: soru-cevap çiftinin semantik karşılığı bu —
+ * `<h3>`+`<p>` yığını da çalışırdı ama sayfadaki `<h2>` sayımını şişirirdi
+ * (bölüm/oyuncu/benzer blokları zaten `<h2>` kullanıyor).
+ */
+function seoSssGovdesi(sorular) {
+  if (!sorular?.length) return '';
+  const ogeler = sorular
+    .map(({ soru, cevap }) => `<dt>${htmlKacir(soru)}</dt><dd>${htmlKacir(cevap)}</dd>`)
+    .join('\n');
+  return `\n<h2>${htmlKacir(SEO_SSS_BASLIK)}</h2>\n<dl>${ogeler}</dl>`;
+}
+
+/**
+ * `FAQPage` düğümü — `icerikJsonLd`nin `@graph`ına ÜÇÜNCÜ ÖĞE olarak girer.
+ *
+ * NEDEN AYRI `@graph` ÖĞESİ (ayrı `<script>` ya da iç içe DEĞİL):
+ *  · `TVSeries`/`Movie` içine gömülemez — schema.org'da o tiplerin soru-cevap
+ *    taşıyan bir özelliği yok. `@type: ['TVSeries','FAQPage']` gibi birleşik
+ *    tip de yanlış olurdu: diziyi bir SSS sayfası ilan ederdi.
+ *  · Ayrı `<script>` de geçerli olurdu ama `ogSayfa` TEK `jsonLd` alıyor ve o
+ *    imza 16 SSR sayfasının ortak yüzeyi; ikinci script için hepsini
+ *    ilgilendiren bir sözleşme değişikliği gerekirdi. `@graph` zaten "aynı
+ *    sayfadaki birden çok üst düzey varlık" için var.
+ *  · `@id` verilir (`#sss`): düğüm adreslenebilir kalsın, `#icerik` ve
+ *    breadcrumb ile karışmasın.
+ */
+function seoSssJsonLd(sorular, url) {
+  if (!sorular?.length) return null;
+  return {
+    '@type': 'FAQPage',
+    '@id': `${url}#sss`,
+    mainEntity: sorular.map(({ soru, cevap }) => ({
+      '@type': 'Question',
+      name: soru,
+      acceptedAnswer: { '@type': 'Answer', text: cevap },
+    })),
+  };
+}
+
+function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
   const dizi = tur === 'tv';
   const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
   const oyuncular = (v.credits?.cast || []).slice(0, 10).map(seoKisiNesnesi);
@@ -3207,6 +3524,9 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
     ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
   };
 
+  // SSS düğümü SONA eklenir: `@graph[0]` ana varlık, `[1]` breadcrumb — ikisi
+  // de mevcut testlerde indeksle okunuyor, sıra korunmak zorunda.
+  const sssNesnesi = seoSssJsonLd(sss, url);
   return {
     '@context': 'https://schema.org',
     '@graph': [ana, {
@@ -3219,7 +3539,7 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
         },
         { '@type': 'ListItem', position: 3, name: ad },
       ],
-    }],
+    }, ...(sssNesnesi ? [sssNesnesi] : [])],
   };
 }
 
@@ -3404,6 +3724,20 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     const ozetBlok = seoMetin(v.overview)
       ? `\n<h2>${htmlKacir(adYil)} konusu</h2>\n<p>${htmlKacir(seoMetin(v.overview))}</p>` : '';
 
+    // ---- SIK SORULAN SORULAR (21 Ağu 2026) -----------------------------
+    // TEK LİSTE, İKİ ÇIKTI: `seoSssGovdesi` görünür `<dl>`i, `seoSssJsonLd`
+    // (icerikJsonLd içinden) `FAQPage`i AYNI diziden üretir. Google'ın kuralı
+    // işaretlenen soru-cevabın sayfada görünür olması; kopyalanmış iki metin
+    // zamanla ayrışıp gizli SSS'e dönüşürdü.
+    // `yorumAdet` meta açıklamadakiyle AYNI sayı: sayfaya BASILAN
+    // `<article>` sayısı (DB toplamı değil).
+    const yorumAdet = seo.yorumlar.length + seo.incelemeler.length;
+    const sssListesi = seoIcerikSorulari({
+      ad, tur, v, puanMetni, puanAdet: puanNesnesi?.ratingCount, yorumAdet,
+      bugun: seoGun(Date.now()),
+    });
+    const sssBlok = seoSssGovdesi(sssListesi);
+
     res.type('html').send(ogSayfa({
       baslik: seoIcerikBasligi({
         ad, yil, tur, sezon: sezonSayisi, bolum: bolumSayisi, sure: filmSuresi,
@@ -3414,7 +3748,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
         ad, yil, tur, sezon: sezonSayisi, bolum: bolumSayisi, sure: filmSuresi,
         ozet: v.overview, puanMetni, puanAdet: puanNesnesi?.ratingCount,
         // Sayfaya BASILAN değerlendirme sayısı (DB toplamı değil).
-        yorumAdet: seo.yorumlar.length + seo.incelemeler.length,
+        yorumAdet,
         oyuncuVar: oyuncular.length > 0, benzerVar: benzerListe.length > 0,
       }),
       gorsel,
@@ -3425,10 +3759,15 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       // Ana afiş EN ÜSTTE: sayfanın "kahraman görseli" Google Görseller'de bu
       // sayfayla eşleşecek olan karedir. `alt` ad + yıl taşır (aynı adlı
       // yapımlar ancak yılla ayrışıyor).
+      // SSS KONUNUN HEMEN ARDINDA: uzun kuyruk sorusunun tam karşılığı
+      // gövdenin üst yarısında dursun. Değerlendirme/bölüm/oyuncu listeleri
+      // (uzun ve tekrarlayan bloklar) altında kalır.
       govde: seoAnaGorsel(v.poster_path, `${adYil} afişi`)
-        + kunyeBlok + ozetBlok
+        + kunyeBlok + ozetBlok + sssBlok
         + degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok + firmaBlok,
-      jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
+      jsonLd: icerikJsonLd({
+        tur, url, ad, ozet: v.overview, gorsel, v, seo, sss: sssListesi,
+      }),
     }));
   } catch (e) {
     // TMDB'de bulunamadı/erişilemedi -> indekse girmesin (soft 404).
@@ -5748,29 +6087,324 @@ async function cihazKapisi(req, res) {
   return true;
 }
 
+// ===========================================================================
+// KULLANICI ADI + GÖRÜNEN AD (21 Ağu 2026)
+// ===========================================================================
+// Kullanıcı adı bu sistemin KİMLİK ANAHTARIDIR: profil yolu (`/kullanici/:ad`),
+// `@bahsetme` çözümü (`etiketBildirimleriGonder`), giriş alanı, mesaj/takip/
+// engelleme uçları hep onunla adresliyor. Bu yüzden kalıbı TEK YERDE tanımlı:
+// üç ayrı uçta üç kopya regex, biri güncellenmediği gün sessizce çatlardı.
+const KULLANICI_ADI_KALIBI = /^(?!.*\.\.)[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_]$/;
+const KULLANICI_ADI_KURALI = 'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)';
+// `misafir_<8 hex>` sunucunun ÜRETTİĞİ kalıptır ve kod bir hesabın misafir
+// olduğunu yer yer bu kalıptan okuyor (bkz. `/profil/:kullaniciAdi` yorumu).
+// Gerçek bir hesabın bu kalığa bürünmesi o çıkarımı sessizce yalanlardı.
+const MISAFIR_ADI_KALIBI = /^misafir_/;
+/** Kullanıcı adı değişimi arasındaki zorunlu bekleme (kullanıcı kararı). */
+const KULLANICI_ADI_KILIT_GUN = 90;
+/** Bırakılan adın başkasına verilmeden bekletildiği süre (kullanıcı kararı). */
+const KULLANICI_ADI_REZERV_GUN = 90;
+const GUN_MS = 24 * 60 * 60 * 1000;
+/** Görünen adın azami uzunluğu — KOD NOKTASI (emoji 1 sayılır). */
+const AD_AZAMI = 40;
+
+/**
+ * Görünen adı temizler ve doğrular.
+ *
+ * KULLANICI KARARI: "şimdilik sadece metin — emoji, tek karakter, taklit hepsi
+ * serbest". Yani burada POLİTİKA YOK (kimse "gerçek ad" ya da "taklit değil"
+ * diye elenmiyor). Yalnız BOZULMA ÖNLEME var; her biri gerçek bir arıza sınıfı:
+ *
+ *   * DENETİM KARAKTERLERİ (U+0000-001F, U+007F-009F): satır sonu içeren bir
+ *     "ad" profil başlığını iki satıra böler, bildirim metnini ("{ad} seni
+ *     takip etmeye başladı") ortasından kırar ve günlük satırlarını sahteler.
+ *     BOŞLUĞA çevriliyor, silinmiyor: "Ali\nVeli" → "Ali Veli" (silinseydi
+ *     "AliVeli" olurdu, yani kullanıcının yazdığı ayrım kaybolurdu).
+ *   * GÖRÜNMEZLER (sıfır genişlikli birleştirici/ayırıcı, BOM, çift yönlü
+ *     yazım geçersiz kılıcıları U+202A-202E / U+2066-2069): ekranda HİÇBİR ŞEY
+ *     göstermezler ama "eşsiz" ad üretmeye ve komşu metnin yönünü ters
+ *     çevirmeye yarar. Tamamen ATILIYOR.
+ *     U+200D (ZWJ) DA ATILIYOR ve bunun bir bedeli var: ZWJ ile birleşen aile
+ *     emojileri parçalanır. Kabul edildi — görünmez karakterle ad "boyamak"
+ *     ile emoji ailesi arasında, ilkinin kötüye kullanımı somut.
+ *   * BOŞLUK YIĞINI: her tür boşluk (NBSP, ideografik boşluk dahil) tek
+ *     boşluğa iner ve baş/son kırpılır. "        " gibi bir ad görünmez ama
+ *     satırı kaplar; kırpma sonrası boş kalırsa NULL'a düşer (= ad yok).
+ *   * UZUNLUK: KIRPILMIYOR, REDDEDİLİYOR. Sessiz kırpma kullanıcıya yalan
+ *     söyler ("kaydedildi" der, adının yarısını yutar); hata mesajı dürüsttür.
+ *
+ * Dönüş: `{ tamam: true, deger }` (deger `null` ise ad silinir) ya da
+ * `{ tamam: false, hata, kod }`.
+ */
+function adDogrula(ham) {
+  if (ham == null) return { tamam: true, deger: null };
+  // 1000: temizlik regexlerini megabaytlık gövdede çalıştırmamak için erken
+  // kalkan. Gerçek sınır aşağıda, TEMİZLENMİŞ metin üzerinden ölçülüyor.
+  if (typeof ham !== 'string' || ham.length > 1000) {
+    return { tamam: false, kod: 'AD_GECERSIZ', hata: 'Geçersiz ad' };
+  }
+  const temiz = ham
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, ' ')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u206F\uFEFF]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (temiz === '') return { tamam: true, deger: null };
+  if ([...temiz].length > AD_AZAMI) {
+    return {
+      tamam: false,
+      kod: 'AD_UZUN',
+      hata: `Ad en fazla ${AD_AZAMI} karakter olabilir`,
+    };
+  }
+  return { tamam: true, deger: temiz };
+}
+
+/**
+ * 90 gün kilidinden KALAN GÜN (0 = serbest).
+ *
+ * Yukarı yuvarlanır: 12 saat kalmışsa "1 gün" denir, "0 gün" değil — kullanıcı
+ * "0 gün sonra" yazısını okuyup hemen deneyip reddedilmemeli.
+ * `sonDegisim` NULL/geçersizse 0: hiç değiştirmemiş hesap serbesttir.
+ */
+function kullaniciAdiKalanGun(sonDegisim, simdi = Date.now()) {
+  if (!sonDegisim) return 0;
+  const damga = new Date(sonDegisim).getTime();
+  if (!Number.isFinite(damga)) return 0;
+  const kalanMs = damga + KULLANICI_ADI_KILIT_GUN * GUN_MS - simdi;
+  return kalanMs <= 0 ? 0 : Math.ceil(kalanMs / GUN_MS);
+}
+
+/**
+ * Ad BAŞKASINA ayrılmış mı? (aktif rezerv var ve sahibi `benId` değil)
+ *
+ * `bitis > now()` süzgeci ZORUNLU: süresi dolmuş satırlar tabloda kalabilir
+ * (temizlik gecelik budamada) ve onlar kimseyi engellememeli.
+ * `sorgulayici` havuz ya da işlem içindeki istemci olabilir.
+ */
+async function adRezerveMi(sorgulayici, ad, benId = null) {
+  const { rows } = await sorgulayici.query(
+    `SELECT kullanici_id FROM kullanici_adi_rezervleri
+      WHERE kullanici_adi = $1 AND bitis > now()`,
+    [ad],
+  );
+  if (!rows.length) return false;
+  return rows[0].kullanici_id !== benId;
+}
+
+/**
+ * Kullanıcı adını değiştirir. KURALIN TAMAMI BURADA; uç yalnız gövdeyi çözer.
+ *
+ * ---------------------------------------------------------------------------
+ * NEDEN AYRI FONKSİYON: bu kural motoru üç ayrı yarış ve bir zaman kilidi
+ * barındırıyor. Uç gövdesine gömülseydi test edilebilmesi için HTTP sunucusu
+ * ayağa kaldırmak gerekirdi; ayrı fonksiyon sahte bir havuzla doğrudan
+ * çalıştırılabiliyor (bkz. test/kullanici_adi.test.js).
+ *
+ * ---------------------------------------------------------------------------
+ * BENZERSİZLİK YARIŞI — HAKEM VERİTABANI KISITI
+ * "SELECT ile bak, boşsa UPDATE et" bir yarış koşuludur: iki istek aynı anda
+ * boş görür, ikisi de yazar. Burada tekilliği `kullanicilar.kullanici_adi
+ * UNIQUE` indeksi kararlaştırıyor; kaybeden taraf 23505 alır ve 409'a çevrilir.
+ * Ön kontrol (varsa) yalnız DAHA İYİ HATA MESAJI içindir, güvence değildir.
+ *
+ * ---------------------------------------------------------------------------
+ * REZERV YARIŞI — YAZDIKTAN SONRA TEKRAR OKUMA
+ * İnce delik şudur: A `ali`→`veli` yaparken `ali`yi rezerve ediyor; B tam o
+ * anda `ali` adıyla kayıt oluyor. B'nin ÖN KONTROLÜ A'nın rezervi daha
+ * görünmeden geçer. Ama B'nin YAZMASI, A'nın henüz işlenmemiş satırındaki
+ * `ali` indeks girdisine takılıp A'nın işlemi bitene kadar BEKLER. Bu yüzden
+ * yazma başarılı olduktan SONRA rezerv bir kez daha okunuyor: o okuma
+ * (READ COMMITTED, taze anlık görüntü) A'nın rezervini artık GÖRÜR ve işlem
+ * geri alınır. Ön kontrol + yazma + son kontrol üçlüsü deliği kapatır;
+ * ön kontrolü tek başına bırakmak kapatmaz.
+ *
+ * ---------------------------------------------------------------------------
+ * GERİ DÖNÜŞ MUAFİYETİ
+ * Hedef ad BENİM aktif rezervimse bu bir "geri dönüş"tür: 90 gün kilidi
+ * uygulanmaz ve kilit damgası GÜNCELLENMEZ. Gerekçe migrasyon-2026-08-21.sql'de
+ * uzun uzun yazılı; özeti: kilit ile rezerv aynı 90 günü paylaştığı için
+ * muafiyet olmadan "eski adına dönebilirsin" fiilen imkânsız olurdu, ve
+ * damga güncellenseydi iki ad arasında sonsuz gidip gelme ödüllendirilirdi.
+ */
+async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Date.now()) {
+  const yeni = String(istenen ?? '').trim().toLowerCase();
+  if (!KULLANICI_ADI_KALIBI.test(yeni)) {
+    return { durum: 400, kod: 'AD_GECERSIZ', hata: KULLANICI_ADI_KURALI };
+  }
+  if (MISAFIR_ADI_KALIBI.test(yeni)) {
+    return {
+      durum: 400,
+      kod: 'AD_AYRILMIS',
+      hata: 'Bu kullanıcı adı sistem tarafından ayrılmış',
+    };
+  }
+  const istemci = await havuzVeya.connect();
+  let acik = true;
+  const geriAl = async () => {
+    acik = false;
+    await istemci.query('ROLLBACK').catch(() => {});
+  };
+  try {
+    await istemci.query('BEGIN');
+    // FOR UPDATE: aynı hesaptan gelen iki eşzamanlı istek sıraya girsin,
+    // ikisi birden "kilit yok" görüp iki kez değiştirmesin.
+    const { rows: benSatir } = await istemci.query(
+      `SELECT kullanici_adi, kullanici_adi_degisim, misafir
+         FROM kullanicilar WHERE id = $1 FOR UPDATE`,
+      [kullaniciId],
+    );
+    if (!benSatir.length) {
+      await geriAl();
+      return { durum: 404, kod: 'HESAP_YOK', hata: 'Hesap bulunamadı' };
+    }
+    const ben = benSatir[0];
+    // MİSAFİR HESAP: adı sunucu üretti, e-postaya bağlı değil ve hesap bir
+    // dokunuşla açılıyor. Buradan ad seçmesine izin verilseydi, sıfır maliyetli
+    // hesaplarla ad işgal etmenin (her hesap 2 ad) önü açılırdı. Seçme hakkı
+    // `/auth/bagla` ile hesabını bağladığı anda zaten veriliyor.
+    if (ben.misafir === true) {
+      await geriAl();
+      return {
+        durum: 403,
+        kod: 'MISAFIR_AD_YOK',
+        hata: 'Kullanıcı adı seçmek için hesabını e-postanla bağla',
+      };
+    }
+    if (ben.kullanici_adi === yeni) {
+      await geriAl();
+      return { durum: 400, kod: 'AD_AYNI', hata: 'Bu zaten senin kullanıcı adın' };
+    }
+
+    const { rows: rez } = await istemci.query(
+      `SELECT kullanici_id FROM kullanici_adi_rezervleri
+        WHERE kullanici_adi = $1 AND bitis > now()`,
+      [yeni],
+    );
+    const geriDonus = rez.length > 0 && rez[0].kullanici_id === kullaniciId;
+    if (rez.length && !geriDonus) {
+      await geriAl();
+      return {
+        durum: 409,
+        kod: 'AD_REZERVE',
+        hata: 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış',
+      };
+    }
+
+    const kalan = geriDonus ? 0 : kullaniciAdiKalanGun(ben.kullanici_adi_degisim, simdi);
+    if (kalan > 0) {
+      await geriAl();
+      // SESSİZ RET YOK: kalan gün hem metinde hem MAKİNE ALANINDA gidiyor —
+      // istemci kendi 45 dilli cümlesini `kalan_gun` ile kurar.
+      return {
+        durum: 403,
+        kod: 'AD_KILIT',
+        kalan_gun: kalan,
+        hata: `Kullanıcı adını ${kalan} gün sonra değiştirebilirsin`,
+      };
+    }
+
+    let guncel;
+    try {
+      const { rows } = await istemci.query(
+        `UPDATE kullanicilar
+            SET kullanici_adi = $1,
+                kullanici_adi_degisim =
+                  CASE WHEN $2 THEN kullanici_adi_degisim ELSE now() END
+          WHERE id = $3
+        RETURNING id, kullanici_adi, email, misafir, kullanici_adi_degisim`,
+        [yeni, geriDonus, kullaniciId],
+      );
+      guncel = rows[0];
+    } catch (e) {
+      await geriAl();
+      if (e.code === '23505') {
+        return { durum: 409, kod: 'AD_ALINMIS', hata: 'Bu kullanıcı adı zaten alınmış' };
+      }
+      throw e;
+    }
+
+    if (await adRezerveMi(istemci, yeni, kullaniciId)) {
+      await geriAl();
+      return {
+        durum: 409,
+        kod: 'AD_REZERVE',
+        hata: 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış',
+      };
+    }
+
+    // KULLANICI BAŞINA TEK REZERV: önce eskisi düşer, sonra bıraktığı ad
+    // yazılır. `kullanici_adi_rezerv_sahip` kısmi tekil indeksi bunu
+    // veritabanı seviyesinde de garanti eder (silme unutulursa 23505 gelir).
+    await istemci.query(
+      'DELETE FROM kullanici_adi_rezervleri WHERE kullanici_id = $1',
+      [kullaniciId],
+    );
+    await istemci.query(
+      `INSERT INTO kullanici_adi_rezervleri (kullanici_adi, kullanici_id, bitis)
+       VALUES ($1, $2, now() + ($3 || ' days')::interval)
+       ON CONFLICT (kullanici_adi) DO UPDATE
+         SET kullanici_id = EXCLUDED.kullanici_id,
+             bitis = EXCLUDED.bitis,
+             olusturma = now()`,
+      [ben.kullanici_adi, kullaniciId, String(KULLANICI_ADI_REZERV_GUN)],
+    );
+    await istemci.query('COMMIT');
+    acik = false;
+    return {
+      durum: 200,
+      kullanici: guncel,
+      onceki_ad: ben.kullanici_adi,
+      geri_donus: geriDonus,
+      kalan_gun: kullaniciAdiKalanGun(guncel.kullanici_adi_degisim, simdi),
+    };
+  } catch (e) {
+    if (acik) await geriAl();
+    throw e;
+  } finally {
+    istemci.release();
+  }
+}
+
 app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
   if (await cihazKapisi(req, res)) return;
   const { email, kullanici_adi, sifre } = req.body || {};
   if (!email?.includes('@') || !kullanici_adi || (sifre || '').length < 6) {
     return res.status(400).json({ hata: 'Geçerli e-posta, kullanıcı adı ve en az 6 karakter şifre gerekli' });
   }
-  if (!/^(?!.*\.\.)[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_]$/.test(kullanici_adi)) {
-    return res.status(400).json({ hata: 'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)' });
+  if (!KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
+    return res.status(400).json({ hata: KULLANICI_ADI_KURALI });
   }
   const hash = await bcrypt.hash(sifre, 10);
+  // İŞLEM: rezerv kontrolü YAZMADAN SONRA da yapılıyor. Gerekçenin tamamı
+  // `kullaniciAdiDegistir` başlığındaki "REZERV YARIŞI" bölümünde; kısaca,
+  // ön kontrol tek başına "adını bırakan kullanıcı" ile yarışı kaybeder ve
+  // rezerv edilmiş bir ad yeni kayıtla kapılabilirdi.
+  const istemci = await havuz.connect();
   try {
-    const { rows } = await havuz.query(
+    await istemci.query('BEGIN');
+    const { rows } = await istemci.query(
       `INSERT INTO kullanicilar (email, kullanici_adi, sifre_hash)
        VALUES (lower($1), $2, $3)
        RETURNING id, kullanici_adi, email, misafir`,
       [email, kullanici_adi, hash],
     );
+    if (await adRezerveMi(istemci, kullanici_adi)) {
+      await istemci.query('ROLLBACK');
+      return res.status(409).json({
+        kod: 'AD_REZERVE',
+        hata: 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış',
+      });
+    }
+    await istemci.query('COMMIT');
     res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
   } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
     if (e.code === '23505') {
       return res.status(409).json({ hata: 'Bu e-posta veya kullanıcı adı zaten kayıtlı' });
     }
     throw e;
+  } finally {
+    istemci.release();
   }
 }));
 
@@ -5801,8 +6435,8 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
   if (!email?.includes('@') || (sifre || '').length < 6) {
     return res.status(400).json({ hata: 'Geçerli e-posta ve en az 6 karakter şifre gerekli' });
   }
-  if (kullanici_adi && !/^(?!.*\.\.)[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_]$/.test(kullanici_adi)) {
-    return res.status(400).json({ hata: 'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir (başta/sonda nokta-tire olamaz)' });
+  if (kullanici_adi && !KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
+    return res.status(400).json({ hata: KULLANICI_ADI_KURALI });
   }
   const mevcut = await havuz.query(
     'SELECT misafir FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
@@ -5810,8 +6444,13 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
     return res.status(400).json({ hata: 'Bu hesap zaten bağlı' });
   }
   const hash = await bcrypt.hash(sifre, 10);
+  // İŞLEM + YAZMA SONRASI REZERV KONTROLÜ: burası kullanıcı adının ikinci
+  // yazıldığı yer. Kontrol olmasaydı rezerv, "önce misafir aç sonra bağlan"
+  // yolundan bir istekte delinirdi. Yarış gerekçesi: `kullaniciAdiDegistir`.
+  const istemci = await havuz.connect();
   try {
-    const { rows } = await havuz.query(
+    await istemci.query('BEGIN');
+    const { rows } = await istemci.query(
       `UPDATE kullanicilar
        SET email = lower($1), sifre_hash = $2, misafir = false,
            kullanici_adi = COALESCE($3, kullanici_adi)
@@ -5819,6 +6458,14 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
        RETURNING id, kullanici_adi, email, misafir`,
       [email, hash, kullanici_adi || null, req.kullanici.id],
     );
+    if (kullanici_adi && await adRezerveMi(istemci, kullanici_adi, req.kullanici.id)) {
+      await istemci.query('ROLLBACK');
+      return res.status(409).json({
+        kod: 'AD_REZERVE',
+        hata: 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış',
+      });
+    }
+    await istemci.query('COMMIT');
     // `misafir` artık `kullaniciDurumu` önbelleğinde taşınıyor (30 sn TTL) ve
     // misafirlik arama uçlarını KAPATIYOR. Önbelleği düşürmezsek hesabını yeni
     // bağlamış kullanıcı yarım dakika boyunca "misafir hesaplar arama yapamaz"
@@ -5826,10 +6473,13 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
     sifreSurumOnbellekSil(req.kullanici.id);
     res.json({ token: jwtUret(rows[0]), kullanici: rows[0] });
   } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
     if (e.code === '23505') {
       return res.status(409).json({ hata: 'Bu e-posta veya kullanıcı adı zaten kayıtlı' });
     }
     throw e;
+  } finally {
+    istemci.release();
   }
 }));
 
@@ -7073,6 +7723,11 @@ async function tablolariBuda() {
     // röle oranı ölçümünün istediği "3 ay veri" ile birebir). İçerik zaten
     // hiç yazılmıyor; burada silinen yalnız "kim, kimi, ne zaman, ne kadar".
     `DELETE FROM aramalar WHERE baslangic < now() - interval '${ARAMA_SAKLAMA_GUN} days'`,
+    // Süresi dolmuş kullanıcı adı rezervleri. YALNIZ DİSK İÇİN: her sorgu
+    // zaten `bitis > now()` süzüyor, yani bu budama geciksin ya da hiç
+    // koşmasın kimse haksız yere engellenmez. `kullanici_adi_rezerv_bitis`
+    // indeksi tam bu tarama için var.
+    `DELETE FROM kullanici_adi_rezervleri WHERE bitis <= now()`,
   ];
   for (const sql of isler) {
     try { await havuz.query(sql); } catch (e) { console.error('buda:', e.message); }
@@ -8866,11 +9521,18 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
     // testci de gelir: kendi profil ekranı (profil.dart) başlığını `/profilim`
     // ile çizer, `/profil/:kullaniciAdi` ile değil — rozet orada da görünmeli.
     `SELECT id, kullanici_adi, email, misafir, avatar, kapak, bio, ulke, sosyal,
-            testci
+            testci, ad, kullanici_adi_degisim
      FROM kullanicilar WHERE id=$1`,
     [req.kullanici.id],
   );
   if (!rows.length) return res.status(404).json({ hata: 'Kullanıcı bulunamadı' });
+  // Kullanıcı adı kilidi: ayarlar ekranı alanı kilitli çizip KALAN GÜNÜ
+  // yazabilsin diye burada hesaplanıyor. AYRI UÇ AÇILMADI — ayarlar zaten
+  // `/profilim` çağırıyor, ikinci istek tur maliyeti dışında hiçbir şey
+  // kazandırmazdı. Kilit yine de SUNUCUDA zorlanıyor
+  // (`kullaniciAdiDegistir`): bu alan yalnız arayüz içindir, kural değil.
+  rows[0].kullanici_adi_kalan_gun =
+    kullaniciAdiKalanGun(rows[0].kullanici_adi_degisim);
   // Yasak yükü BURADA da veriliyor: yalnız okuyan (hiç yazmayan) yasaklı
   // kullanıcı 403 görmez ve cezasından haberi olmazdı. `/profilim` uygulama
   // açılışında çağrılıyor — uyarı orada çıkar. GÜVEN SKORU BİLEREK YOK
@@ -8879,12 +9541,21 @@ app.get('/profilim', girisZorunlu, sarici(async (req, res) => {
 }));
 
 app.post('/profilim', girisZorunlu, sarici(async (req, res) => {
-  const { bio, ulke, sosyal } = req.body || {};
+  const { bio, ulke, sosyal, ad } = req.body || {};
   if (bio != null && (typeof bio !== 'string' || bio.length > 300)) {
     return res.status(400).json({ hata: 'Bio en fazla 300 karakter olabilir' });
   }
   if (ulke != null && (typeof ulke !== 'string' || ulke.length > 60)) {
     return res.status(400).json({ hata: 'Geçersiz ülke' });
+  }
+  // GÖRÜNEN AD burada, KULLANICI ADI ayrı uçta (`/profilim/kullanici-adi`).
+  // Aynı gövdede taşınsalardı "Kaydet" düğmesi iki farklı ağırlıkta işi
+  // birlikte yapardı: biri geri alınabilir bir etiket, öteki 90 gün kilitleyen
+  // ve eski bağlantıları kesen bir kimlik değişimi. İkincisi kendi onayını
+  // hak ediyor.
+  const adSonuc = adDogrula(ad === undefined ? null : ad);
+  if (!adSonuc.tamam) {
+    return res.status(400).json({ hata: adSonuc.hata, kod: adSonuc.kod });
   }
   let sosyalTemiz = null;
   if (sosyal !== undefined) {
@@ -8898,14 +9569,54 @@ app.post('/profilim', girisZorunlu, sarici(async (req, res) => {
     `UPDATE kullanicilar
      SET bio  = CASE WHEN $1 THEN NULLIF($2, '') ELSE bio  END,
          ulke = CASE WHEN $3 THEN NULLIF($4, '') ELSE ulke END,
-         sosyal = CASE WHEN $5 THEN $6::jsonb ELSE sosyal END
+         sosyal = CASE WHEN $5 THEN $6::jsonb ELSE sosyal END,
+         ad = CASE WHEN $8 THEN $9 ELSE ad END
      WHERE id=$7
-     RETURNING id, kullanici_adi, email, misafir, avatar, bio, ulke, sosyal`,
+     RETURNING id, kullanici_adi, email, misafir, avatar, bio, ulke, sosyal, ad`,
     [bio !== undefined, bio ?? '', ulke !== undefined, ulke ?? '',
-     sosyal !== undefined, JSON.stringify(sosyalTemiz ?? []), req.kullanici.id],
+     sosyal !== undefined, JSON.stringify(sosyalTemiz ?? []), req.kullanici.id,
+     // `ad` GÖNDERİLMEDİYSE dokunulmaz; gönderilip boşsa (ya da yalnız
+     // görünmez karakterse) `adDogrula` NULL döndürür ve ad SİLİNİR.
+     // Bu, "adımı kaldırmak istiyorum" isteğinin tek doğal ifadesidir.
+     ad !== undefined, adSonuc.deger],
   );
   res.json(rows[0]);
 }));
+
+// ---------------------------------------------------------------------------
+// KULLANICI ADI DEĞİŞTİRME (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// AYRI UÇ, çünkü `/profilim`den farklı bir sözleşmesi var: 90 gün kilitler,
+// eski adı 90 gün rezerve eder, benzersizlik yarışına girer ve üç ayrı
+// çakışma kodu döndürebilir. Kuralların TAMAMI `kullaniciAdiDegistir`da.
+//
+// HIZ LİMİTİ: saatte 10. Kilit zaten en fazla 90 günde bir değişime izin
+// veriyor, yani limitin işi "değişim" değil DENEME selini kesmek: 409/403
+// yanıtları "bu ad alınmış mı" sorusuna cevap verdiği için uç, sınırsız
+// bırakılsaydı ad listesi taramaya yarardı.
+const kullaniciAdiLimiti = hizLimiti(10, (req) => `ka:${req.kullanici.id}`);
+
+app.post('/profilim/kullanici-adi', girisZorunlu, kullaniciAdiLimiti,
+  sarici(async (req, res) => {
+    const sonuc = await kullaniciAdiDegistir(
+      havuz, req.kullanici.id, req.body?.kullanici_adi);
+    if (sonuc.durum !== 200) {
+      const { durum, ...govde } = sonuc;
+      return res.status(durum).json(govde);
+    }
+    // TOKEN YENİLENMİYOR — bilerek. JWT yükü kullanıcı adını TAŞIYOR
+    // (`jwtUret`) ama sunucu onu HİÇBİR YERDE OKUMUYOR; yetkilendirme yalnız
+    // `id` ve `sv` üzerinden yürüyor. Yeni token basmak, `sv` değişmediği için
+    // hiçbir eski oturumu da geçersizleştirmezdi: tek etkisi istemcideki
+    // kopyanın tazelenmesi olurdu ve onu zaten yanıttaki `kullanici` yapıyor.
+    res.json({
+      kullanici: sonuc.kullanici,
+      onceki_ad: sonuc.onceki_ad,
+      geri_donus: sonuc.geri_donus,
+      kalan_gun: sonuc.kalan_gun,
+      rezerv_gun: KULLANICI_ADI_REZERV_GUN,
+    });
+  }));
 
 // Avatar yükleme: gövde ham resim verisi (GIF dahil). Tür sihirli baytlardan doğrulanır.
 const RESIM_TURLERI = [
@@ -11293,6 +12004,497 @@ app.get('/onerilen', girisZorunlu, takvimLimiti, sarici(async (req, res) => {
   res.json({ oneriler: oneriSayfasi([...adaylar.values()], sayfa) });
 }));
 
+// ===========================================================================
+// KİŞİSELLEŞTİRİLMİŞ TEMATİK RAFLAR — `/kisisel-raflar` (21 Ağu 2026)
+// ===========================================================================
+//
+// İSTEK: "İzlediği dizi veya filmin yönetmeninden veya yapımcı firmadan liste
+// yap — Marvel izleyene Marvel dizileri, Marvel filmleri gibi. Bu listelerden
+// baya olmalı, kullanıcı baya aşağı kaydırabilmeli."
+//
+// VERİ KAYNAĞI — EK TMDB İSTEĞİ YOK. `production_companies` ve
+// `credits.crew[job='Director']` zaten paylaşılan içerik detayının
+// (`ICERIK_APPEND`) İÇİNDE, yani `tmdb_onbellek`te DURUYOR. Profil çıkarmak
+// tek bir SELECT; TMDB'ye yalnız rafın İÇERİĞİ için gidiliyor.
+//
+// ---------------------------------------------------------------------------
+// 1) HAM SAYI YANILTIR — ÖLÇÜLDÜ (20-21 Ağu 2026, canlı `tmdb_onbellek`)
+// ---------------------------------------------------------------------------
+// Kullanıcının en ÇOK gördüğü firma neredeyse her zaman bir DAĞITIMCIDIR,
+// çünkü onlar her şeyin künyesinde var. `alcelik` (643 başlık) için ham sayıya
+// göre ilk sıralar:
+//
+//   Warner Bros. Pictures 37 · Universal 36 · Columbia 32 · Marvel Studios 29
+//
+// `emma.watches` (530 başlık) için:
+//
+//   Warner Bros. Pictures 14 · Pixar 12 · Paramount 11 · Universal 11
+//
+// Aynı kullanıcıların katalog oranına göre AŞIRI TEMSİL edilen firmaları ise
+// bambaşka: emma'da Arzu Film (10/10), TAFF Pictures (7/8), Mavi Film (6/6);
+// alcelik'te Marvel Studios, DreamWorks Animation, Cartoon Network Studios.
+// Warner Bros. Television emma'da kat kat ALTINDA temsil ediliyor (oran 0,58)
+// ama ham sayıda 9. sırada — ham sayı, "hiç sevmediği" bir firmayı raf yapardı.
+//
+// ---------------------------------------------------------------------------
+// 2) ÖLÇÜT: POISSON SÜRPRİZİ (log-olabilirlik oranı) — NEDEN DÜZ ORAN DEĞİL
+// ---------------------------------------------------------------------------
+// Düz oran (lift = kullanıcı oranı / katalog oranı) tek başına İKİ UÇTA da
+// bozuluyor; ikisi de canlı veriyle görüldü:
+//
+//   · ÜST UÇ  — küçük örneklem. 6.83 (= katalog/kullanıcı) tavanına oturan
+//     onlarca firma çıkıyor; hepsi "kullanıcı bu firmanın önbellekteki TÜM
+//     yapımlarını izlemiş" demek, ama 2 yapımlık bir firmada bu tesadüf.
+//   · ALT UÇ  — kanıt gücü. 29 Marvel yapımı ile 4 Marvel yapımı aynı orana
+//     düşebilir; ikisi aynı güvende değil.
+//
+// Poisson log-olabilirlik oranı ikisini TEK sayıda birleştirir:
+//
+//     beklenen = n_kullanici × (K_katalog / N_katalog)
+//     G        = k·ln(k/beklenen) − (k − beklenen)
+//
+// `2G`, serbestlik derecesi 1 olan ki-kare dağılımına yakınsar; `G ≥ 2`
+// yaklaşık **%5 anlamlılık** demektir (2G ≥ 4 ≈ χ²₍₁₎ %95 kritik değeri).
+// Eşik böylece keyfî bir sayı değil, açıklanabilir bir istatistiksel karar.
+//
+// ÖLÇÜLEN FARK (alcelik, aynı veri, aynı an):
+//   ham sayı sırası : Warner Bros. · Universal · Columbia · Marvel Studios
+//   G sırası        : Marvel Studios (14,7) · DreamWorks Animation · Pixar …
+//     Warner Bros. Pictures G ile de eşiği geçiyor (8,0) ama YAYGINLIK
+//     TAVANINA takılıp eleniyor (aşağıya bak).
+//
+// ---------------------------------------------------------------------------
+// 3) YAYGINLIK TAVANI — "her şeyde olan" firma raf OLAMAZ
+// ---------------------------------------------------------------------------
+// G tek başına yetmiyor: alcelik gerçekten de Warner'ı katalog ortalamasının
+// 2,1 katı izliyor (37 yapım, beklenen 17,7) ve bu istatistiksel olarak
+// anlamlı. Ama "Warner Bros. Pictures filmleri" rafı kullanıcıya HİÇBİR ŞEY
+// anlatmaz — Warner bir marka değil, dağıtımcı; rafın içi birbiriyle alakasız
+// 100 film olur.
+//
+// Katalog payı ölçüldü (3.561 başlık, 21 Ağu 2026):
+//
+//   Warner Bros. Pictures 2,75%  ·  Universal 2,36%  ·  Warner Bros. TV 2,30%
+//   Paramount 2,08%  ·  Columbia 2,02%  || Aniplex 1,88%  ·  20th Century Fox
+//   1,77%  ·  Marvel Studios 1,35%  ·  HBO 0,98%  ·  Pixar 0,84%
+//
+// %2 çizgisi tam da klasik beş dağıtımcı devini ayırıyor; altında kalanlar
+// kimlikli markalar. `RAF_YAYGIN_TAVAN` bu ölçümden geliyor. YÖNETMENDE
+// TAVAN HİÇ BAĞLAMAZ (en yaygın yönetmen Steven Spielberg, %0,37) — tek kural
+// iki varlık türünü de yönetiyor, ikinci bir eşiğe gerek kalmadı.
+//
+// ---------------------------------------------------------------------------
+// 4) FİRMA İLE YÖNETMEN NEDEN FARKLI EŞİK
+// ---------------------------------------------------------------------------
+// Bir firmanın 3 yapımını izlemek zayıf, bir yönetmenin 3 filmini izlemek
+// güçlü bir sinyaldir; çünkü yönetmenler AZ film yapar. Ölçüm bunu doğruluyor:
+// katalogdaki en üretken yönetmen 13 yapımda, en yaygın firma 98 yapımda.
+// Bu yüzden yalnız TABAN SAYAÇ ayrı (`RAF_FIRMA_MIN` 4, `RAF_YONETMEN_MIN` 3);
+// G eşiği ortak, çünkü G zaten "az film yapan" varlıkta beklenen değeri
+// küçülterek bu farkı kendiliğinden hesaba katıyor.
+//
+// ---------------------------------------------------------------------------
+// 5) MALİYET — RAF BAŞINA 1 TMDB İSTEĞİ, ÜSTELİK PAYLAŞILAN ANAHTARDA
+// ---------------------------------------------------------------------------
+//   · Firma rafı  : `/discover/{tv,movie}?with_companies=<id>&sort_by=
+//     popularity.desc` — `/sirket/:id` sayfasının ve `/og/sirket` SSR'ının
+//     KULLANDIĞI ANAHTARIN AYNISI (§6.10 disiplini). Yani firma sayfasına
+//     giren her ziyaretçi ve her Googlebot bu rafı da ısıtıyor.
+//   · Yönetmen rafı: `/person/<id>/combined_credits` — `/kisi/:id/izlenme`
+//     ucunun anahtarının AYNISI, TTL 7 gün. TEK istek hem dizileri hem
+//     filmleri getirdiği için yönetmenin İKİ rafı da tek çağrıya biniyor.
+//
+// SAYFALAMA: `?sayfa=` ile sayfa başına `RAF_SAYFA_BOYU` raf. İlk yükleme en
+// kötü ihtimalle 6 TMDB isteği; kullanıcı aşağı kaydırdıkça 6'şar geliyor.
+// Hepsini tek seferde üretmek 24 isteklik bir duvar olurdu.
+//
+// ÜST SINIR `RAF_TAVAN` = 24 (4 sayfa). Gerekçe: ölçülen aday sayısı
+// alcelik 82, emma.watches 41, umranknbr 43 — yani sınır GERÇEKTEN bağlıyor
+// ve en güçlü sinyalleri seçmiş oluyoruz. 24 raf ≈ 480 afiş, "baya aşağı
+// kaydırma" isteğini fazlasıyla karşılıyor; 50 raf hem 50 TMDB isteği hem de
+// G değeri 2'ye dayanmış, yani neredeyse gürültü olan raflar demekti.
+//
+// ÖNBELLEK KARARI:
+//   · KATALOG TABANI genel (kullanıcıdan bağımsız) → süreç içinde TEK kopya,
+//     6 saat TTL, tek-uçuş + BAYAT SERVİS (sitemap kovasıyla aynı kalıp).
+//     Ölçülen üretim süresi 8,9 sn / 599 kB; 4 işçi × 6 saatte bir demek.
+//   · RAF PLANI kullanıcıya özel ama SADECE sıralama/kimlik (içerik değil) —
+//     10 dk, en çok 500 kullanıcı. Amacı maliyet değil KARARLILIK: sayfa 2
+//     istenirken katalog tabanı tazelenirse raf sırası oynayabilirdi.
+//   · RAF İÇERİĞİ kullanıcı başına ÖNBELLEKLENMİYOR — o zaten paylaşılan
+//     `tmdb_onbellek` satırı; ikinci bir kopya bayatlık kaynağı olurdu.
+//
+// SOĞUK BAŞLANGIÇ: hiç izlemesi olmayan (ya da izledikleri henüz önbellekte
+// olmayan) kullanıcıda aday çıkmaz → `{ raflar: [], devam: false }`. İstemci
+// hiçbir şey çizmez; "sana özel raf yok" gibi bir boş durum metni de YOK,
+// çünkü kullanıcı zaten var olmayan bir bölümün eksikliğini fark etmez.
+// ===========================================================================
+
+/** Katalog tabanı (genel profil) ne kadar taze sayılır. */
+const RAF_TABAN_TTL_MS = 6 * 3600 * 1000;
+/** Raf planı (kullanıcı başına sıra) ne kadar taze sayılır. */
+const RAF_PLAN_TTL_MS = 10 * 60 * 1000;
+/** Süreçte en çok kaç kullanıcının raf planı tutulur. */
+const RAF_PLAN_TAVAN = 500;
+/** Firma aday olabilmek için kullanıcının izlediği en az yapım sayısı. */
+const RAF_FIRMA_MIN = 4;
+/** Yönetmen aday olabilmek için gereken en az yapım (bkz. md. 4). */
+const RAF_YONETMEN_MIN = 3;
+/** Varlığın katalogda görünme sayısı bunun altındaysa taban oranı GÜRÜLTÜ. */
+const RAF_TABAN_MIN = 6;
+/** Katalog payı bunu aşan varlık "her şeyde var" sayılır (bkz. md. 3). */
+const RAF_YAYGIN_TAVAN = 0.02;
+/** G eşiği — `2G ≥ 4 ≈ χ²₍₁₎` %95, yani ~%5 anlamlılık (bkz. md. 2). */
+const RAF_SURPRIZ_MIN = 2;
+/** Yeni adayın kanıt kümesi kabul edilmiş bir adayla bu kadar örtüşürse elenir. */
+const RAF_ORTUSME_TAVAN = 0.6;
+/** Sayfa başına raf. */
+const RAF_SAYFA_BOYU = 6;
+/** Toplam raf tavanı (bkz. md. 5). */
+const RAF_TAVAN = 24;
+/** Tavandan türetilir — elle güncellenecek ikinci bir sayı kalmasın. */
+const RAF_AZAMI_SAYFA = Math.ceil(RAF_TAVAN / RAF_SAYFA_BOYU);
+/** Raf bu kadar YENİ yapım toplayamıyorsa HİÇ gösterilmez (boş raf yasak). */
+const RAF_MIN_ICERIK = 5;
+/** Bir rafta en çok kaç yapım. */
+const RAF_ICERIK_TAVAN = 20;
+
+/**
+ * Ayırt edicilik ölçütü: Poisson log-olabilirlik oranı (SAF).
+ *
+ * `k` gözlenen, `beklenen` katalog oranından türeyen beklenti. Dönen sayı
+ * hem ORANI hem KANIT GÜCÜNÜ taşır: k=29/beklenen=8,7 → 14,7 iken
+ * k=4/beklenen=1,2 → 2,4.
+ *
+ * DİKKAT — BU BİR IRAKSAMA ÖLÇÜSÜ, YÖN TAŞIMAZ. Az temsilde de POZİTİF
+ * çıkar (k=2, beklenen=10 → 4,8). "Aşırı temsil" şartını `rafAdayOlcusu`
+ * ayrıca `k > beklenen` ile koyuyor; bu fonksiyona tek başına bakıp
+ * "yüksek G = kullanıcı seviyor" demek YANLIŞ olurdu.
+ */
+function rafSurprizi(k, beklenen) {
+  const g = Number(k);
+  const b = Number(beklenen);
+  if (!(g > 0) || !(b > 0) || !Number.isFinite(g) || !Number.isFinite(b)) return 0;
+  return g * Math.log(g / b) - (g - b);
+}
+
+/**
+ * Tek bir varlığın (firma ya da yönetmen) raf olmaya hak kazanıp kazanmadığı
+ * ve puanı (SAF).
+ *
+ * DÖRT KAPI birden geçilmeli:
+ *   1. `k >= enAzIzleme`  — kanıt tabanı (firma 4, yönetmen 3)
+ *   2. `katalog >= RAF_TABAN_MIN` — payda gürültü değil
+ *   3. `pay <= RAF_YAYGIN_TAVAN`  — dağıtımcı devi değil
+ *   4. `k > beklenen` ve `surpriz >= RAF_SURPRIZ_MIN` — aşırı temsil ANLAMLI
+ */
+function rafAdayOlcusu({ k, katalog, katalogToplam, kullaniciToplam, enAzIzleme }) {
+  const N = Number(katalogToplam) || 0;
+  const K = Number(katalog) || 0;
+  const n = Number(kullaniciToplam) || 0;
+  const beklenen = N > 0 ? (n * K) / N : 0;
+  const pay = N > 0 ? K / N : 1;
+  const surpriz = rafSurprizi(k, beklenen);
+  const gecti = k >= enAzIzleme
+    && K >= RAF_TABAN_MIN
+    && pay <= RAF_YAYGIN_TAVAN
+    && k > beklenen
+    && surpriz >= RAF_SURPRIZ_MIN;
+  return { beklenen, pay, surpriz, gecti };
+}
+
+/** `|a ∩ b| / |a|` — yeni adayın kanıtı kabul edilmiş adayın İÇİNDE mi (SAF). */
+function rafOrtusmesi(a, b) {
+  if (!a || !a.size) return 0;
+  let kesisim = 0;
+  for (const x of a) if (b.has(x)) kesisim++;
+  return kesisim / a.size;
+}
+
+/**
+ * KARARLI raf planı (SAF) — sıra, içerik değil.
+ *
+ * SIRA NEDEN TAM SIRALAMA OLMAK ZORUNDA: uç imleç tutmuyor, sayfa 2 istendiğinde
+ * plan baştan üretiliyor (`/onerilen` dersinin aynısı, 19 Ağu 2026). Ölçüt
+ * zinciri `skor ↓ → k ↓ → tip → id ↑` her zaman TEK bir diziliş verir; girdi
+ * Map'lerinin gezinme sırasından bağımsızdır.
+ *
+ * ÖRTÜŞME SÜZGECİ: "Marvel Studios" ve "Marvel Entertainment" aynı 11 yapımdan
+ * besleniyorsa iki raf da AYNI filmleri gösterirdi. Kanıt kümesi kabul edilmiş
+ * bir rafın içinde eriyen aday atılır — TMDB'ye sormadan, elimizdeki veriyle.
+ *
+ * MEDYA SEÇİMİ: bir varlık en çok İKİ raf açar (diziler + filmler) ve yalnız
+ * KANITI OLAN türde açar. Kullanıcı Cartoon Network'ün 15 dizisini izlemiş,
+ * hiç filmini izlememişse "Cartoon Network filmleri" rafı hem boşa TMDB
+ * isteği hem de gerekçesiz bir raf olurdu. Kanıtı çok olan tür ÖNCE gelir ve
+ * ikisi YAN YANA durur (istekteki "Marvel dizileri, Marvel filmleri" biçimi).
+ *
+ * @param {string[]} izlenenler  `tur:tmdbId` anahtarları
+ * @param {{toplam:number, yapim:Map, firma:Map, yonetmen:Map}} taban
+ */
+function rafPlaniKur(izlenenler, taban) {
+  if (!taban || !taban.toplam) return [];
+  const sayac = { firma: new Map(), yonetmen: new Map() };
+  let n = 0;
+  for (const anahtar of izlenenler) {
+    const y = taban.yapim.get(anahtar);
+    if (!y) continue;
+    n++;
+    const tur = anahtar.slice(0, anahtar.indexOf(':')) === 'tv' ? 'tv' : 'movie';
+    for (const [tip, idler] of [['firma', y.f], ['yonetmen', y.y]]) {
+      for (const id of idler) {
+        let s = sayac[tip].get(id);
+        if (!s) {
+          s = { k: 0, tv: 0, movie: 0, yapimlar: new Set() };
+          sayac[tip].set(id, s);
+        }
+        if (s.yapimlar.has(anahtar)) continue;   // aynı yapımda iki kez geçmesin
+        s.yapimlar.add(anahtar);
+        s.k++;
+        s[tur]++;
+      }
+    }
+  }
+  if (!n) return [];
+
+  const adaylar = [];
+  for (const tip of ['firma', 'yonetmen']) {
+    const enAzIzleme = tip === 'firma' ? RAF_FIRMA_MIN : RAF_YONETMEN_MIN;
+    for (const [id, s] of sayac[tip]) {
+      const kat = taban[tip].get(id);
+      if (!kat || !kat.ad) continue;
+      const olcu = rafAdayOlcusu({
+        k: s.k, katalog: kat.n, katalogToplam: taban.toplam,
+        kullaniciToplam: n, enAzIzleme,
+      });
+      if (!olcu.gecti) continue;
+      adaylar.push({
+        tip, id, ad: kat.ad, k: s.k, tv: s.tv, movie: s.movie,
+        skor: olcu.surpriz, yapimlar: s.yapimlar,
+      });
+    }
+  }
+  adaylar.sort((a, b) => (b.skor - a.skor)
+    || (b.k - a.k)
+    || a.tip.localeCompare(b.tip)
+    || (a.id - b.id));
+
+  const kabul = [];
+  const raflar = [];
+  for (const a of adaylar) {
+    if (raflar.length >= RAF_TAVAN) break;
+    if (kabul.some((s) => rafOrtusmesi(a.yapimlar, s.yapimlar) >= RAF_ORTUSME_TAVAN)) {
+      continue;
+    }
+    kabul.push(a);
+    const medyalar = (a.movie >= a.tv ? ['movie', 'tv'] : ['tv', 'movie'])
+      .filter((m) => a[m] > 0);
+    for (const medya of medyalar) {
+      if (raflar.length >= RAF_TAVAN) break;
+      raflar.push({ tip: a.tip, id: a.id, ad: a.ad, medya, skor: a.skor });
+    }
+  }
+  return raflar;
+}
+
+// Katalog tabanı sorgusu. `tmdb_onbellek` anahtarı TAM URL olduğu için yapım
+// kimliği yoldan ÇEKİLİYOR; aynı yapımın dil/eski-istemci varyantları arasından
+// EN TAZE satır alınıyor (`DISTINCT ON`). `LIKE` deseni paylaşılan içerik
+// anahtarını (`ICERIK_APPEND`) hedefler: `_` LIKE'ta joker olduğu için
+// kaçırılıyor, yoksa desen gevşerdi.
+const RAF_TABAN_SORGU = `
+  WITH ham AS (
+    SELECT (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)\\?'))[1] AS tur,
+           ((regexp_match(anahtar, '^/(tv|movie)/([0-9]+)\\?'))[2])::int AS tmdb_id,
+           veri, guncelleme
+      FROM tmdb_onbellek
+     WHERE anahtar LIKE '%append\\_to\\_response=credits%2Cvideos%'
+  ), detay AS (
+    SELECT DISTINCT ON (tur, tmdb_id) tur, tmdb_id, veri
+      FROM ham WHERE tur IS NOT NULL
+     ORDER BY tur, tmdb_id, guncelleme DESC
+  )
+  SELECT d.tur, d.tmdb_id,
+    (SELECT coalesce(jsonb_agg(DISTINCT jsonb_build_array((c->>'id')::int, c->>'name')), '[]'::jsonb)
+       FROM jsonb_array_elements(d.veri->'production_companies') c
+      WHERE jsonb_typeof(d.veri->'production_companies') = 'array'
+        AND (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> '') AS firmalar,
+    (SELECT coalesce(jsonb_agg(DISTINCT jsonb_build_array((p->>'id')::int, p->>'name')), '[]'::jsonb)
+       FROM jsonb_array_elements(d.veri->'credits'->'crew') p
+      WHERE jsonb_typeof(d.veri->'credits'->'crew') = 'array'
+        AND p->>'job' = 'Director'
+        AND (p->>'id') ~ '^[0-9]+$' AND coalesce(p->>'name', '') <> '') AS yonetmenler
+    FROM detay d`;
+
+/** SQL satırlarından katalog tabanını kurar (SAF — test doğrudan çağırır). */
+function rafTabaniKur(rows) {
+  const yapim = new Map();
+  const firma = new Map();
+  const yonetmen = new Map();
+  const ekle = (harita, ciftler) => {
+    const idler = [];
+    const gorulen = new Set();
+    for (const c of Array.isArray(ciftler) ? ciftler : []) {
+      const id = Number(Array.isArray(c) ? c[0] : NaN);
+      const ad = String((Array.isArray(c) ? c[1] : '') || '').trim();
+      if (!Number.isInteger(id) || id <= 0 || !ad || gorulen.has(id)) continue;
+      gorulen.add(id);
+      idler.push(id);
+      const kayit = harita.get(id);
+      if (kayit) kayit.n++;
+      else harita.set(id, { ad, n: 1 });
+    }
+    return idler;
+  };
+  for (const r of rows || []) {
+    const tur = r.tur === 'tv' ? 'tv' : 'movie';
+    yapim.set(`${tur}:${r.tmdb_id}`, {
+      f: ekle(firma, r.firmalar),
+      y: ekle(yonetmen, r.yonetmenler),
+    });
+  }
+  return { ts: Date.now(), toplam: yapim.size, yapim, firma, yonetmen };
+}
+
+// Tek-uçuş + BAYAT SERVİS kabı (sitemap kovasıyla aynı kalıp). Üretim 8,9 sn
+// sürüyor; bayat kopya varken hiçbir isteği bekletmiyoruz.
+const rafTabanKovasi = { taban: null, uretim: null };
+
+/** Katalog tabanı — taze varsa anında, bayat varsa bayat + arkada tazeleme. */
+function rafTabani() {
+  const eldeki = rafTabanKovasi.taban;
+  if (eldeki && Date.now() - eldeki.ts < RAF_TABAN_TTL_MS) return Promise.resolve(eldeki);
+  if (!rafTabanKovasi.uretim) {
+    rafTabanKovasi.uretim = havuz.query(RAF_TABAN_SORGU)
+      .then((r) => rafTabaniKur(r.rows))
+      .then(
+        (v) => { rafTabanKovasi.taban = v; rafTabanKovasi.uretim = null; return v; },
+        (e) => {
+          rafTabanKovasi.uretim = null;
+          console.error(`kisisel raf tabani uretilemedi: ${e?.message || e}`);
+          if (rafTabanKovasi.taban) return rafTabanKovasi.taban;
+          throw e;
+        });
+  }
+  const uretim = rafTabanKovasi.uretim;
+  if (!eldeki) return uretim;
+  // Bayat servis: tazeleme arkada koşsun ama REDDİ SAHİPSİZ KALMASIN
+  // (Node 15+ sahipsiz reddi süreci düşürür).
+  uretim.catch(() => {});
+  return Promise.resolve(eldeki);
+}
+
+// Kullanıcı başına raf planı. Değer KÜÇÜKTÜR (en çok 24 kimlik + izlenen küme).
+const rafPlanOnbellek = new Map();
+
+/** Plan önbelleğini tavanda tutar — en eski giriş düşer (Map ekleme sıralı). */
+function rafPlaniYaz(kullaniciId, deger) {
+  rafPlanOnbellek.set(kullaniciId, deger);
+  while (rafPlanOnbellek.size > RAF_PLAN_TAVAN) {
+    const enEski = rafPlanOnbellek.keys().next().value;
+    if (enEski === undefined) break;
+    rafPlanOnbellek.delete(enEski);
+  }
+}
+
+/**
+ * Kullanıcının raf planı (+ süzgeç kümesi). 10 dk önbellekli.
+ *
+ * `eldeki` = izlemeler ∪ durumlar — `/onerilen` ile AYNI süzgeç: kullanıcının
+ * işaretlediği hiçbir yapım rafta çıkmaz. Süzgecin de plana yazılması bilinçli:
+ * sayfa 2 istenirken kullanıcı bir şey işaretlerse sıra oynamasın.
+ */
+async function rafPlaniOku(kullaniciId) {
+  const eldekiPlan = rafPlanOnbellek.get(kullaniciId);
+  if (eldekiPlan && Date.now() - eldekiPlan.ts < RAF_PLAN_TTL_MS) return eldekiPlan;
+  const [taban, izl, durum] = await Promise.all([
+    rafTabani(),
+    havuz.query(
+      'SELECT DISTINCT tur, tmdb_id FROM izlemeler WHERE kullanici_id=$1', [kullaniciId]),
+    havuz.query(
+      'SELECT DISTINCT tur, tmdb_id FROM durumlar WHERE kullanici_id=$1', [kullaniciId]),
+  ]);
+  const izlenenler = izl.rows.map((r) => `${r.tur}:${r.tmdb_id}`);
+  const eldeki = new Set(izlenenler);
+  for (const r of durum.rows) eldeki.add(`${r.tur}:${r.tmdb_id}`);
+  const plan = { ts: Date.now(), raflar: rafPlaniKur(izlenenler, taban), eldeki };
+  rafPlaniYaz(kullaniciId, plan);
+  return plan;
+}
+
+/**
+ * Tek rafın içeriği. TEK TMDB isteği; ikisi de PAYLAŞILAN anahtar (bkz. md. 5).
+ *
+ * Afişsiz yapım ELENİR: kişiye özel raf "özenle seçilmiş" hissi vermeli, boş
+ * gri kutu tam tersini yapar. Katalog raflarında bu süzgeç YOK çünkü orada
+ * sıralama zaten popülerlik ve afişsiz yapım pratikte listeye girmiyor.
+ */
+async function rafIcerigi(raf, eldeki) {
+  let ham = [];
+  if (raf.tip === 'firma') {
+    const v = await tmdbGetir(
+      `/discover/${raf.medya}?with_companies=${raf.id}&sort_by=popularity.desc`,
+      ONBELLEK_TTL_SN.varsayilan);
+    ham = Array.isArray(v?.results) ? v.results : [];
+  } else {
+    const v = await tmdbGetir(
+      `/person/${raf.id}/combined_credits`, ONBELLEK_TTL_SN.uzun);
+    const gorulen = new Set();
+    ham = (Array.isArray(v?.crew) ? v.crew : [])
+      .filter((r) => r && r.job === 'Director' && (r.media_type || '') === raf.medya)
+      .filter((r) => {
+        const id = Number(r.id);
+        if (!Number.isInteger(id) || gorulen.has(id)) return false;
+        gorulen.add(id);
+        return true;
+      })
+      // `popularity` GÜNLÜK oynar, `vote_count` oynamaz: sıra kararlı olsun.
+      .sort((a, b) => ((b.vote_count || 0) - (a.vote_count || 0))
+        || ((a.id || 0) - (b.id || 0)));
+  }
+  const secilen = [];
+  for (const r of ham) {
+    const id = Number(r?.id);
+    if (!Number.isInteger(id) || id <= 0) continue;
+    if (!r.poster_path) continue;
+    if (eldeki.has(`${raf.medya}:${id}`)) continue;
+    secilen.push({ ...r, media_type: raf.medya });
+    if (secilen.length >= RAF_ICERIK_TAVAN) break;
+  }
+  return secilen;
+}
+
+// `kisiLimiti` (saatte 240): uç önbellek soğukken TMDB'ye dokunuyor, favori
+// oyuncu ucuyla aynı sınıf. `takvimLimiti` (60) dört sayfalık kaydırmayı iki
+// tazelemede tüketirdi.
+app.get('/kisisel-raflar', girisZorunlu, kisiLimiti, sarici(async (req, res) => {
+  const sayfa = req.query.sayfa === undefined ? 1 : Number(req.query.sayfa);
+  if (!Number.isInteger(sayfa) || sayfa < 1) {
+    return res.status(400).json({ hata: 'Geçersiz sayfa' });
+  }
+  // Tavanın ötesi için ne DB'ye ne TMDB'ye git — yanıt zaten boş. 400 DEĞİL
+  // 200: sayfa geçersiz değil, o kadar raf yok (`/onerilen` ile aynı sözleşme).
+  if (sayfa > RAF_AZAMI_SAYFA) return res.json({ raflar: [], devam: false });
+  const plan = await rafPlaniOku(req.kullanici.id);
+  const bas = (sayfa - 1) * RAF_SAYFA_BOYU;
+  const dilim = plan.raflar.slice(bas, bas + RAF_SAYFA_BOYU);
+  // `devam` PLANA bakar, dönen raf sayısına DEĞİL: bu sayfadaki rafların hepsi
+  // içerik eşiğini geçemese bile sonraki sayfa dolu olabilir.
+  const devam = sayfa < RAF_AZAMI_SAYFA && plan.raflar.length > bas + RAF_SAYFA_BOYU;
+  if (!dilim.length) return res.json({ raflar: [], devam: false });
+  const dolu = await Promise.all(dilim.map(async (r) => {
+    try {
+      const icerikler = await rafIcerigi(r, plan.eldeki);
+      // BOŞ/İNCE RAF ÇİZİLMEZ: kullanıcı her şeyi izlemişse o raf HİÇ olmaz.
+      if (icerikler.length < RAF_MIN_ICERIK) return null;
+      return { tip: r.tip, id: r.id, ad: r.ad, medya: r.medya, icerikler };
+    } catch {
+      return null;   // tek rafın TMDB hatası diğer rafları düşürmesin
+    }
+  }));
+  res.json({ raflar: dolu.filter(Boolean), devam });
+}));
+
 // ---------- yıl özeti ----------
 app.get('/ozet/:yil', girisZorunlu, sarici(async (req, res) => {
   const yil = parseInt(req.params.yil, 10);
@@ -12228,7 +13430,8 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
     // dokunmazlar (bkz. aşağıdaki "SAYAÇ SÜZÜLMEZ" gerekçesi) ama yanıta
     // konurlar ki istemci sayacı LİSTEYE GÖTÜRMEYEN bir kilitle çizebilsin —
     // aksi hâlde dokunan kişi boş bir "Takipçi yok" ekranı görürdü.
-    `SELECT id, kullanici_adi, avatar, kapak, bio, ulke, sosyal, olusturma,
+    // ad: görünen ad; kimlik değil ETİKET (migrasyon-2026-08-21.sql).
+    `SELECT id, kullanici_adi, ad, avatar, kapak, bio, ulke, sosyal, olusturma,
             izlenenler_gizli, yorumlar_gizli, yanitlar_gizli,
             takipciler_gizli, takip_edilenler_gizli, testci, misafir
      FROM kullanicilar WHERE kullanici_adi=$1`,
@@ -12563,7 +13766,43 @@ app.delete('/hesabim', girisZorunlu, sarici(async (req, res) => {
   if (rows[0].sifre_hash && !(await bcrypt.compare(sifre || '', rows[0].sifre_hash))) {
     return res.status(401).json({ hata: 'Şifre hatalı' });
   }
-  await havuz.query('DELETE FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+  // SİLİNEN HESABIN ADI DA 90 GÜN REZERVE (21 Ağu).
+  //
+  // Silme satırı yok ediyor, yani ad AYNI SANİYE yeniden kayıt olunabilir hâle
+  // geliyordu. Tehlike somut: `@bahsetme`ler yorum metninde DÜZ METİN olarak
+  // duruyor (`etiketBildirimleriGonder` adı yazma anında çözüyor, metne id
+  // yazmıyor) ve paylaşılmış `/kullanici/<ad>` bağlantıları dışarıda. Adı hemen
+  // kapan kişi, silinen kişiye yazılmış bütün bahsetmeleri ve bağlantıları
+  // DEVRALIRDI. Rezerv bunu 90 gün geciktirir; süre dolunca ad serbest kalır.
+  //
+  // `kullanici_id` BİLEREK NULL: geri alacak hesap kalmadı. Rezerv kimseye
+  // ayrılmış değil, yalnız KAPALI.
+  //
+  // MİSAFİR HESAP HARİÇ: adı sunucu üretti (`misafir_<8 hex>`), hiçbir yerde
+  // paylaşılmadı ve zaten yeniden üretilemez bir kalıp. Rezerve etmek boşuna
+  // satır biriktirirdi.
+  //
+  // İŞLEM: rezerv ile silme ATOMİK. Ayrı olsalardı, arada düşen bir sunucu
+  // ya adı korumasız bırakır ya da yaşayan bir hesabın adını kilitlerdi.
+  const istemci = await havuz.connect();
+  try {
+    await istemci.query('BEGIN');
+    await istemci.query(
+      `INSERT INTO kullanici_adi_rezervleri (kullanici_adi, kullanici_id, bitis)
+       SELECT kullanici_adi, NULL, now() + ($2 || ' days')::interval
+         FROM kullanicilar WHERE id = $1 AND NOT misafir
+       ON CONFLICT (kullanici_adi) DO UPDATE
+         SET kullanici_id = NULL, bitis = EXCLUDED.bitis, olusturma = now()`,
+      [req.kullanici.id, String(KULLANICI_ADI_REZERV_GUN)],
+    );
+    await istemci.query('DELETE FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+    await istemci.query('COMMIT');
+  } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
+    throw e;
+  } finally {
+    istemci.release();
+  }
   sifreSurumOnbellekSil(req.kullanici.id);
   res.json({ durum: 'silindi' });
 }));

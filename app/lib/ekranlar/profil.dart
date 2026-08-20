@@ -693,6 +693,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       );
     } else {
       final st = _istatistik!;
+      // Sayaçların TEK çözümleyicisi: alan adlarını `/istatistiklerim`
+      // şemasından okur (açık profil `ProfilSayaclari.acik` kullanır).
+      final sayaclar = ProfilSayaclari.kendi(st);
       final dakika = (st['tahmini_dakika'] as num?)?.toInt() ?? 0;
       final durumlar = (_kitaplik?['durumlar'] as List<dynamic>? ?? []);
       final gruplar = <String, List<dynamic>>{};
@@ -850,36 +853,15 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           // kutulu `EtkilesimSatiri` şeridiydi, şimdi takipçi
                           // ve takiple AYNI satır içi biçimde duruyor.
                           //
-                          // Row DEĞİL Wrap: dört sayaç, uzun çevirilerle
-                          // (pl "obserwujących", de "Aufrufe") 360 dp'de tek
-                          // satıra sığmaz — Row taşma çizgisi verirdi.
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 2,
-                            children: [
-                              TakipSayac(
-                                deger: '${st['takipci_sayisi'] ?? 0}',
-                                etiket: 'takipçi'.c,
-                                onTap: () => _takipListe(kullaniciAdi, true),
-                              ),
-                              TakipSayac(
-                                deger: '${st['takip_sayisi'] ?? 0}',
-                                etiket: 'takip'.c,
-                                onTap: () => _takipListe(kullaniciAdi, false),
-                              ),
-                              TakipSayac(
-                                deger:
-                                    '${(st['toplam_begeni'] as num?)?.toInt() ?? 0}',
-                                etiket: 'beğeni'.c,
-                                onTap: () => _yorumlarAc(kullaniciAdi),
-                              ),
-                              TakipSayac(
-                                deger:
-                                    '${(st['toplam_goruntulenme'] as num?)?.toInt() ?? 0}',
-                                etiket: 'görüntülenme'.c,
-                                onTap: () => _yorumlarAc(kullaniciAdi),
-                              ),
-                            ],
+                          // 21 Ağu 2026: blok ORTAK bileşene taşındı
+                          // ([ProfilTakipSatiri]) — açık profil de birebir
+                          // aynısını çiziyor (kullanıcı isteği). Biçim
+                          // kararları (Wrap, küçük harf etiket) orada yazılı.
+                          ProfilTakipSatiri(
+                            sayac: sayaclar,
+                            takipciTap: () => _takipListe(kullaniciAdi, true),
+                            takipTap: () => _takipListe(kullaniciAdi, false),
+                            etkilesimTap: () => _yorumlarAc(kullaniciAdi),
                           ),
                         ],
                       ),
@@ -927,43 +909,19 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   ),
                   const SizedBox(height: 14),
                 ],
-                // İstatistik kartları (dar ekranda alt satıra kayar)
-                LayoutBuilder(
-                  builder: (context, kutu) {
-                    const bosluk = 10.0;
-                    final genislik = (kutu.maxWidth - bosluk * 3) / 4;
-                    return Wrap(
-                      spacing: bosluk,
-                      runSpacing: bosluk,
-                      children: [
-                        // Sayaçlar tıklanır: ilgili liste/modal açılır
-                        StatMadalyon(
-                          genislik: genislik,
-                          deger: '${st['izlenen_bolum']}',
-                          etiket: 'Bölüm'.c,
-                          onTap: () => context.push('/izlediklerim?tur=tv'),
-                        ),
-                        StatMadalyon(
-                          genislik: genislik,
-                          deger: '${st['izlenen_film']}',
-                          etiket: 'Film'.c,
-                          onTap: () => context.push('/izlediklerim?tur=movie'),
-                        ),
-                        StatMadalyon(
-                          genislik: genislik,
-                          deger: '${st['takip_edilen_dizi']}',
-                          etiket: 'Dizi'.c,
-                          onTap: () => context.push('/izlediklerim?tur=tv'),
-                        ),
-                        StatMadalyon(
-                          genislik: genislik,
-                          deger: '${st['yorum_sayisi'] ?? 0}',
-                          etiket: 'Yorum'.c,
-                          onTap: () => _yorumlarAc(kullaniciAdi),
-                        ),
-                      ],
-                    );
-                  },
+                // Bölüm / film / dizi / yorum.
+                //
+                // 21 Ağu 2026 (kullanıcı isteği): yuvarlak [StatMadalyon]
+                // düzeni BURADAN kalktı, yerine açık profildeki eşit sütunlu
+                // [ProfilOlcumSatiri] geldi — "kendi profilimdeki bölüm, film,
+                // dizi, yorum da başkasının profiline baktığımdaki gibi
+                // gözüksün". Sayaçlar tıklanır kaldı: ilgili liste/modal açılır.
+                ProfilOlcumSatiri(
+                  sayac: sayaclar,
+                  bolumTap: () => context.push('/izlediklerim?tur=tv'),
+                  filmTap: () => context.push('/izlediklerim?tur=movie'),
+                  diziTap: () => context.push('/izlediklerim?tur=tv'),
+                  yorumTap: () => _yorumlarAc(kullaniciAdi),
                 ),
                 const SizedBox(height: 10),
                 // Toplam ekran süresi (yıl/ay/gün)
@@ -1347,23 +1305,282 @@ class ProfilUstBolum extends StatelessWidget {
   }
 }
 
+// ===========================================================================
+// PROFİL SAYAÇLARI — İKİ EKRAN, TEK KAYNAK (21 Ağu 2026)
+// ===========================================================================
+// KULLANICI İSTEĞİ (birebir): "Kendi profilime baktığımda ve başkasının
+// profiline baktığımda farklılıklar var, biraz mix yapacağız. Kullanıcı adı,
+// Ülke, takipçi, takip, beğeni, görüntülenme İKİSİNDE DE kendi profilime
+// baktığımdaki gibi gözüksün. Kendi profilimdeki bölüm, film, dizi, yorum da
+// başkasının profiline baktığımdaki gibi gözüksün."
+//
+// Yani iki blok, iki farklı kaynaktan:
+//  · takipçi/takip/beğeni/görüntülenme → kendi profilimin satır içi biçimi
+//    ([ProfilTakipSatiri], `TakipSayac` + Wrap, küçük harf etiket)
+//  · bölüm/film/dizi/yorum → açık profilin eşit sütunlu biçimi
+//    ([ProfilOlcumSatiri], sarı 18 px sayı + altında etiket)
+//
+// BURADA DURUYORLAR ÇÜNKÜ KOPYALAMA YASAK: iki ekranın bugün ayrışmasının
+// sebebi tam olarak bu blokların kopyalanmasıydı (kendi profilde 15 Ağu'da
+// yapılan değişiklik açık profile hiç gitmedi). `ortak.dart` daha doğru bir ev
+// olurdu ama açık profil zaten `profil.dart`tan widget alıyor (`RozetCipi`,
+// `SeviyeSatiri`, `ProfilSekmeleri`…) — aynı yolu izliyoruz.
+
+/// İki ucun sayaçlarını TEK yerde eşleyen çözümleyici.
+///
+/// **TUZAK:** aynı sayılar iki uçta FARKLI adlarla dönüyor —
+/// `/istatistiklerim` `takipci_sayisi`/`izlenen_bolum` derken
+/// `GET /profil/:kullaniciAdi` `takipci`/`bolum` diyor. Ortak bileşene ham
+/// Map verseydik biri unutulunca ekranda sessizce `0` yazardı; eşleme bu
+/// yüzden fabrikalarda kilitli.
+///
+/// **EKSİK ANAHTAR `0` DEĞİL `—` BASAR.** Gerekçe: `0` gerçek bir değer —
+/// "hiç takipçin yok" ile "sunucu bu alanı göndermedi" ayırt edilemez hâle
+/// gelir ve sözleşme kırıldığında kimse fark etmez (bugünkü kod eksik anahtarda
+/// ekrana `null` yazıyordu, kimse görmemiş). Tire ise hem kullanıcı için
+/// zararsız bir "bilinmiyor", hem gözden geçirende soru işareti yaratır.
+/// Çeviri gerektirmez (simge, sözcük değil).
+class ProfilSayaclari {
+  final int? takipci;
+  final int? takip;
+  final int? begeni;
+  final int? goruntulenme;
+  final int? bolum;
+  final int? film;
+  final int? dizi;
+  final int? yorum;
+
+  const ProfilSayaclari({
+    this.takipci,
+    this.takip,
+    this.begeni,
+    this.goruntulenme,
+    this.bolum,
+    this.film,
+    this.dizi,
+    this.yorum,
+  });
+
+  /// `GET /istatistiklerim` yanıtı (kendi profilim).
+  factory ProfilSayaclari.kendi(Map<String, dynamic>? st) => ProfilSayaclari(
+    takipci: _sayi(st, 'takipci_sayisi'),
+    takip: _sayi(st, 'takip_sayisi'),
+    begeni: _sayi(st, 'toplam_begeni'),
+    goruntulenme: _sayi(st, 'toplam_goruntulenme'),
+    bolum: _sayi(st, 'izlenen_bolum'),
+    film: _sayi(st, 'izlenen_film'),
+    dizi: _sayi(st, 'takip_edilen_dizi'),
+    yorum: _sayi(st, 'yorum_sayisi'),
+  );
+
+  /// `GET /profil/:kullaniciAdi` yanıtının `istatistik` alanı (açık profil).
+  factory ProfilSayaclari.acik(Map<String, dynamic>? st) => ProfilSayaclari(
+    takipci: _sayi(st, 'takipci'),
+    takip: _sayi(st, 'takip_edilen'),
+    begeni: _sayi(st, 'toplam_begeni'),
+    goruntulenme: _sayi(st, 'toplam_goruntulenme'),
+    bolum: _sayi(st, 'bolum'),
+    film: _sayi(st, 'film'),
+    dizi: _sayi(st, 'dizi'),
+    yorum: _sayi(st, 'yorum'),
+  );
+
+  static int? _sayi(Map<String, dynamic>? m, String anahtar) =>
+      (m?[anahtar] as num?)?.toInt();
+
+  /// Eksik değerin ekrandaki karşılığı (bkz. sınıf yorumu).
+  static const String eksik = '—';
+
+  static String yaz(int? deger) => deger == null ? eksik : '$deger';
+}
+
+/// takipçi · takip · beğeni · görüntülenme — KENDİ PROFİLİMİN biçimi.
+///
+/// Row DEĞİL Wrap: dört sayaç, uzun çevirilerle (pl "obserwujących",
+/// de "Aufrufe") 360 dp'de tek satıra sığmaz — Row taşma çizgisi verirdi.
+///
+/// Dokunma eylemleri opsiyonel: açık profilde `takipciler_gizli` /
+/// `takip_edilenler_gizli` / `yorumlar_gizli` açıkken ilgili sayaç YAZILIR ama
+/// dokunma bağlanmaz (sayı süzülmez — sunucu da süzmüyor).
+class ProfilTakipSatiri extends StatelessWidget {
+  final ProfilSayaclari sayac;
+  final VoidCallback? takipciTap;
+  final VoidCallback? takipTap;
+
+  /// Beğeni ve görüntülenme AYNI hedefe gider (ikisi de yorum istatistiği).
+  final VoidCallback? etkilesimTap;
+
+  const ProfilTakipSatiri({
+    super.key,
+    required this.sayac,
+    this.takipciTap,
+    this.takipTap,
+    this.etkilesimTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 16,
+      runSpacing: 2,
+      children: [
+        TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.takipci),
+          etiket: 'takipçi'.c,
+          onTap: takipciTap,
+        ),
+        TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.takip),
+          etiket: 'takip'.c,
+          onTap: takipTap,
+        ),
+        TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.begeni),
+          etiket: 'beğeni'.c,
+          onTap: etkilesimTap,
+        ),
+        TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.goruntulenme),
+          etiket: 'görüntülenme'.c,
+          onTap: etkilesimTap,
+        ),
+      ],
+    );
+  }
+}
+
+/// bölüm · film · dizi · yorum — AÇIK PROFİLİN biçimi: eşit dört sütun,
+/// üstte sarı kalın sayı, altında etiket. (Kendi profilimdeki yuvarlak
+/// [StatMadalyon] düzeninin yerini aldı — kullanıcı isteği, 21 Ağu 2026.)
+class ProfilOlcumSatiri extends StatelessWidget {
+  final ProfilSayaclari sayac;
+  final VoidCallback? bolumTap;
+  final VoidCallback? filmTap;
+  final VoidCallback? diziTap;
+  final VoidCallback? yorumTap;
+
+  const ProfilOlcumSatiri({
+    super.key,
+    required this.sayac,
+    this.bolumTap,
+    this.filmTap,
+    this.diziTap,
+    this.yorumTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        ProfilSayacSutunu(
+          deger: ProfilSayaclari.yaz(sayac.bolum),
+          etiket: 'Bölüm'.c,
+          onTap: bolumTap,
+        ),
+        ProfilSayacSutunu(
+          deger: ProfilSayaclari.yaz(sayac.film),
+          etiket: 'Film'.c,
+          onTap: filmTap,
+        ),
+        ProfilSayacSutunu(
+          deger: ProfilSayaclari.yaz(sayac.dizi),
+          etiket: 'Dizi'.c,
+          onTap: diziTap,
+        ),
+        ProfilSayacSutunu(
+          deger: ProfilSayaclari.yaz(sayac.yorum),
+          etiket: 'Yorum'.c,
+          onTap: yorumTap,
+        ),
+      ],
+    );
+  }
+}
+
+/// [ProfilOlcumSatiri]'nın tek sütunu. Açık profildeki `_Sayac`tan geldi;
+/// ortak kullanım için buraya taşındı ve herkese açıldı.
+///
+/// `Expanded`: sütunlar EŞİT genişlikte. Etiket tek satır + ellipsis, uzun
+/// çeviride ("Episodes"/"Kommentare") satır taşırmaz.
+class ProfilSayacSutunu extends StatelessWidget {
+  final String deger;
+  final String etiket;
+  final VoidCallback? onTap;
+  const ProfilSayacSutunu({
+    super.key,
+    required this.deger,
+    required this.etiket,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          // Dokunma hedefi ≥44 dp (skill md. 2). İçerik zaten ~53 dp tutuyor
+          // ama kısıt AÇIKÇA yazılı olsun: yazı boyu küçülünce sessizce
+          // eşiğin altına düşmesin.
+          constraints: const BoxConstraints(minHeight: TakipSayac.enAzHedef),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                deger,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  color: DiziRenkler.sariMetin,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                etiket,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class TakipSayac extends StatelessWidget {
   final String deger;
   final String etiket;
-  final VoidCallback onTap;
+
+  /// null = dokunulamaz. Açık profilde gizlilik tercihleri (`takipciler_gizli`
+  /// vb.) sayacı LİSTEYE GÖTÜRMEYEN bir hâle düşürüyor; sayı yine yazılır ama
+  /// dokunma bağlanmaz. Bu yüzden zorunlu değil, opsiyonel.
+  final VoidCallback? onTap;
   const TakipSayac({
     super.key,
     required this.deger,
     required this.etiket,
-    required this.onTap,
+    this.onTap,
   });
+
+  /// Dokunma hedefi en az bu kadar yüksek (skill md. 2: ≥44 dp). 13 px'lik
+  /// tek satır + 8'er dolgu yalnız ~31 dp veriyordu.
+  static const double enAzHedef = 44;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Padding(
+      child: Container(
+        constraints: const BoxConstraints(minHeight: enAzHedef),
+        alignment: Alignment.centerLeft,
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
         child: RichText(
           // RichText tema rengini devralmaz; renk açıkça verilmeli
@@ -1417,6 +1634,12 @@ class TakipSayac extends StatelessWidget {
 /// düşmez (44 dp dokunma hedefi + görsel denge) ve [_enCokCap] üstüne çıkmaz
 /// (masaüstünde dev daireler oluşurdu). Dokunma hedefi madalyon DEĞİL, tüm
 /// sütun (madalyon + etiket) — yani her zaman 44 dp'nin üstünde.
+///
+/// **21 AĞU 2026'DAN BERİ EKRANDA ÇİZİLMİYOR.** Kullanıcı bölüm/film/dizi/
+/// yorum bloğunun açık profildeki gibi ([ProfilOlcumSatiri]) görünmesini
+/// istedi. Sınıf, renk/kontrast kararlarıyla birlikte (ve onları kilitleyen
+/// `profil_stat_madalyon_test.dart` ile) DURUYOR: karar geri alınırsa
+/// yeniden bağlanacak tek yer burasıdır.
 class StatMadalyon extends StatelessWidget {
   final String deger;
   final String etiket;

@@ -18,8 +18,10 @@ import 'profil.dart'
         sureBicimle,
         RozetCipi,
         SeviyeSatiri,
-        EtkilesimSatiri,
+        ProfilOlcumSatiri,
+        ProfilSayaclari,
         ProfilSekmeleri,
+        ProfilTakipSatiri,
         ProfilYorumAkisi;
 import 'sosyal.dart';
 import 'takip_dugmesi.dart';
@@ -118,6 +120,25 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
       final yorumlar = (p['yorumlar'] as List<dynamic>? ?? []);
       final listeler = (p['listeler'] as List<dynamic>? ?? []);
       final izlenenler = (p['izlenenler'] as List<dynamic>? ?? []);
+
+      // Sayaçların TEK çözümleyicisi: alan adlarını AÇIK PROFİL şemasından
+      // okur (kendi profilim `ProfilSayaclari.kendi` kullanır — aynı sayılar,
+      // farklı anahtarlar; eşleme tek yerde, profil.dart'ta).
+      final sayaclar = ProfilSayaclari.acik(st);
+
+      // Yorum / beğeni / görüntülenme sayaçlarının dokunma hedefi.
+      //
+      // Kendi profilimde bu üçü yorum listesi modalini açıyor. Ziyaretçide
+      // modal yok, KARŞILIĞI "Yorumlar" sekmesidir (aynı liste, aynı ekran).
+      // İki durumda hiç bağlanmaz:
+      //  · `yorumlar_gizli` (sahibi hariç) — sekme zaten "yorumlarını gizlemiş"
+      //    diyor; sayacı oraya götürmek gizliliği delmez ama boş bir vaat olur.
+      //  · engellediğim kişi — sekmeler HİÇ çizilmiyor, `_sekme`yi değiştirmek
+      //    hiçbir şey yapmazdı.
+      final yorumSekmesi =
+          (engelledim || (!benMi && p['yorumlar_gizli'] == true))
+          ? null
+          : () => setState(() => _sekme = 1);
 
       final kapak = dosyaUrl(p['kapak'] as String?);
       govde = RefreshIndicator(
@@ -218,6 +239,34 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                                 padding: const EdgeInsets.only(top: 2),
                                 child: UlkeSatiri(ulke: p['ulke'] as String),
                               ),
+                            const SizedBox(height: 6),
+                            // Takipçi / takip / beğeni / görüntülenme —
+                            // KENDİ PROFİLİMDEKİ satır içi biçim (kullanıcı
+                            // isteği, 21 Ağu 2026). Kimlik bloğunun İÇİNDE,
+                            // ülkenin hemen altında duruyor; tıpkı orada.
+                            //
+                            // GİZLİLİK KORUNUYOR: `takipciler_gizli` /
+                            // `takip_edilenler_gizli` açıkken sayı YAZILIR
+                            // ama dokunma bağlanmaz — sunucu sayacı süzmüyor,
+                            // süzen şey listeye erişim. Sahibi kendi
+                            // profiline bakıyorsa (`ben_mi`) kilit yok.
+                            //
+                            // Beğeni/görüntülenme eskiden aşağıdaki kutulu
+                            // `EtkilesimSatiri` şeridiydi; kendi profilimde 15
+                            // Ağu'da buraya taşınmıştı, açık profil geride
+                            // kalmıştı. Artık ikisi de aynı bileşeni çiziyor.
+                            ProfilTakipSatiri(
+                              sayac: sayaclar,
+                              takipciTap:
+                                  (!benMi && p['takipciler_gizli'] == true)
+                                  ? null
+                                  : () => _liste(true),
+                              takipTap:
+                                  (!benMi && p['takip_edilenler_gizli'] == true)
+                                  ? null
+                                  : () => _liste(false),
+                              etkilesimTap: yorumSekmesi,
+                            ),
                           ],
                         ),
                       ),
@@ -233,27 +282,19 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                   // Sosyal bağlantılar (varsa)
                   SosyalSatiri(sosyal: p['sosyal'] as List<dynamic>? ?? []),
                   const SizedBox(height: 16),
-                  // Takipçi / takip / yorum sayaçları
-                  Row(
-                    children: [
-                      _Sayac(
-                        deger: '${st['takipci']}',
-                        etiket: 'Takipçi'.c,
-                        onTap: (!benMi && p['takipciler_gizli'] == true)
-                            ? null
-                            : () => _liste(true),
-                      ),
-                      _Sayac(
-                        deger: '${st['takip_edilen']}',
-                        etiket: 'Takip'.c,
-                        onTap: (!benMi && p['takip_edilenler_gizli'] == true)
-                            ? null
-                            : () => _liste(false),
-                      ),
-                      _Sayac(deger: '${st['yorum']}', etiket: 'Yorum'.c),
-                      _Sayac(deger: '${st['film']}', etiket: 'Film'.c),
-                      _Sayac(deger: '${st['bolum']}', etiket: 'Bölüm'.c),
-                    ],
+                  // Bölüm / film / dizi / yorum — bu ekranın eşit sütunlu
+                  // biçimi, artık kendi profilimde de aynısı çiziliyor.
+                  // "Dizi" sütunu 21 Ağu 2026'da EKLENDİ (sunucu `dizi`yi
+                  // zaten dönüyordu, ekran çizmiyordu); takipçi/takip buradan
+                  // ÇIKTI, yukarıdaki kimlik bloğuna taşındı.
+                  ProfilOlcumSatiri(
+                    sayac: sayaclar,
+                    // Bölüm/film/dizi için açık profilde GİDECEK YER YOK:
+                    // `/izlediklerim` yalnız kendi hesabını gösteren bir uç.
+                    // Ziyaretçinin karşılığı bu ekrandaki "Dizi ve Filmler"
+                    // sekmesidir — ama o zaten varsayılan sekme ve hemen
+                    // altta duruyor, dokunma eklemek boş bir eylem olurdu.
+                    yorumTap: yorumSekmesi,
                   ),
                   // Toplam ekran süresi (kendi profildekiyle aynı biçim)
                   if (((st['tahmini_dakika'] as num?)?.toInt() ?? 0) > 0) ...[
@@ -298,13 +339,11 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: 10),
-                  // Yorumlarının toplam beğeni + görüntülenmesi
-                  EtkilesimSatiri(
-                    begeni: (st['toplam_begeni'] as num?)?.toInt() ?? 0,
-                    goruntulenme:
-                        (st['toplam_goruntulenme'] as num?)?.toInt() ?? 0,
-                  ),
+                  // NOT: yorumların toplam beğeni/görüntülenmesi buradaki
+                  // kutulu `EtkilesimSatiri` şeridinden ÇIKARILDI (21 Ağu
+                  // 2026, kullanıcı isteği); artık yukarıda takipçi/takip ile
+                  // aynı satır içi biçimde duruyor. Sınıfın kendisi
+                  // `profil.dart`ta duruyor ama artık HİÇBİR ekran çizmiyor.
                   // Uyum: seninle ortak izlenenler + puan uyumu
                   if (!benMi && p['uyum'] != null) ...[
                     const SizedBox(height: 12),
@@ -831,44 +870,10 @@ class _UyumKarti extends StatelessWidget {
   }
 }
 
-class _Sayac extends StatelessWidget {
-  final String deger;
-  final String etiket;
-  final VoidCallback? onTap;
-  const _Sayac({required this.deger, required this.etiket, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            children: [
-              Text(
-                deger,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: DiziRenkler.sariMetin,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                etiket,
-                style: TextStyle(fontSize: 11, color: DiziRenkler.metin),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
+// NOT: buradaki `_Sayac` 21 Ağu 2026'da `profil.dart`a taşındı ve
+// `ProfilSayacSutunu` adıyla herkese açıldı — kendi profilim de artık aynı
+// sütunları çiziyor. Kopyasını buraya geri koyma; iki ekranın ayrışmasının
+// sebebi tam olarak buydu.
 
 /// Profildeki yorum: metin + görüntülenme/beğeni sayıları, içeriğe götürür.
 ///

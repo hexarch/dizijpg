@@ -1232,4 +1232,40 @@ const Map<String, String> cevirilerMl = {
   'Sarı': 'മഞ്ഞ',
   'Camgöbeği': 'സയാൻ',
   'Macenta': 'മജന്ത',
+  'Yapım bütçesi': 'നിർമ്മാണ ബജറ്റ്',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'നിർമ്മാണ ബജറ്റും ലോകവ്യാപക കളക്ഷനും',
+  'Dizinin yayın durumu': 'പരമ്പരയുടെ സംപ്രേഷണ നില',
+  'Devam ediyor': 'തുടരുന്നു',
+  'Sona erdi': 'അവസാനിച്ചു',
+  'İptal edildi': 'റദ്ദാക്കി',
+  'Yapımda': 'നിർമ്മാണത്തിലാണ്',
+  'Planlandı': 'ആസൂത്രണം ചെയ്തു',
+  'Pilot bölüm': 'പൈലറ്റ് എപ്പിസോഡ്',
+  'Ad': 'പേര്',
+  'Adın': 'നിന്റെ പേര്',
+  'Kullanıcı adı': 'യൂസർനെയിം',
+  'Kullanıcı adını değiştir': 'യൂസർനെയിം മാറ്റൂ',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'യൂസർനെയിം 90 ദിവസത്തിലൊരിക്കൽ മാറ്റാം',
+  'Değiştir': 'മാറ്റൂ',
+  '{} gün sonra değiştirebilirsin': '{} ദിവസം കഴിഞ്ഞ് മാറ്റാം',
+  'Kullanıcı adın: @{}': 'നിന്റെ യൂസർനെയിം: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'ഈ യൂസർനെയിം ഇതിനകം എടുത്തുകഴിഞ്ഞു',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'ഈ യൂസർനെയിം ഇപ്പോൾ മറ്റൊരു അക്കൗണ്ടിനായി കരുതിവച്ചിരിക്കുന്നു',
+  'Bu zaten senin kullanıcı adın': 'ഇത് ഇപ്പോൾ തന്നെ നിന്റെ യൂസർനെയിം ആണ്',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'ഉപയോക്തൃനാമം 3–20; ചെറിയക്ഷരം, അക്കം, ഡോട്ട്, ഹൈഫൻ, അണ്ടർസ്കോർ',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'പ്രൊഫൈലിൽ നിന്റെ യൂസർനെയിമിനു മുകളിൽ കാണാം. ഒഴിച്ചിടാം.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'മാറ്റിയ ശേഷം 90 ദിവസത്തേക്ക് വീണ്ടും മാറ്റാനാവില്ല. പഴയ യൂസർനെയിം 90 ദിവസം നിനക്കായി കരുതിവയ്ക്കും — വേണമെങ്കിൽ തിരികെ പോകാം, ആ സമയത്ത് മറ്റാർക്കും എടുക്കാനാവില്ല. പഴയ പേരിലേക്കുള്ള ലിങ്കുകൾ ഇനി നിന്റെ പ്രൊഫൈൽ തുറക്കില്ല.',
+  'Etkinliğim': 'പ്രവർത്തനം',
+  'Tercihler': 'മുൻഗണനകൾ',
+  'Gizlilik ve güvenlik': 'സ്വകാര്യതയും സുരക്ഷയും',
+  'Destek': 'പിന്തുണ',
+  'Hesap': 'അക്കൗണ്ട്',
+  '{} dizileri': '{} പരമ്പരകൾ',
+  '{} filmleri': '{} സിനിമകൾ',
 };

@@ -1230,4 +1230,40 @@ const Map<String, String> cevirilerTe = {
   'Sarı': 'పసుపు',
   'Camgöbeği': 'సియాన్',
   'Macenta': 'మెజెంటా',
+  'Yapım bütçesi': 'నిర్మాణ బడ్జెట్',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'నిర్మాణ బడ్జెట్ మరియు ప్రపంచవ్యాప్త వసూళ్లు',
+  'Dizinin yayın durumu': 'సిరీస్ ప్రసార స్థితి',
+  'Devam ediyor': 'కొనసాగుతోంది',
+  'Sona erdi': 'ముగిసింది',
+  'İptal edildi': 'రద్దయింది',
+  'Yapımda': 'నిర్మాణంలో ఉంది',
+  'Planlandı': 'ప్రణాళికలో ఉంది',
+  'Pilot bölüm': 'పైలట్ ఎపిసోడ్',
+  'Ad': 'పేరు',
+  'Adın': 'నీ పేరు',
+  'Kullanıcı adı': 'యూజర్‌నేమ్',
+  'Kullanıcı adını değiştir': 'యూజర్‌నేమ్ మార్చు',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'యూజర్‌నేమ్‌ను 90 రోజులకు ఒకసారి మార్చుకోవచ్చు',
+  'Değiştir': 'మార్చు',
+  '{} gün sonra değiştirebilirsin': '{} రోజుల తర్వాత మార్చుకోవచ్చు',
+  'Kullanıcı adın: @{}': 'నీ యూజర్‌నేమ్: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'ఈ యూజర్‌నేమ్ ఇప్పటికే తీసుకోబడింది',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'ఈ యూజర్‌నేమ్ ప్రస్తుతం మరో ఖాతాకు కేటాయించబడి ఉంది',
+  'Bu zaten senin kullanıcı adın': 'ఇది ఇప్పటికే నీ యూజర్‌నేమే',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'వినియోగదారు పేరు 3–20; చిన్న అక్షరాలు, అంకెలు, చుక్క, హైఫన్, అండర్‌స్కోర్',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'ప్రొఫైల్‌లో నీ యూజర్‌నేమ్ పైన కనిపిస్తుంది. ఖాళీగా వదిలేయవచ్చు.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'మార్చిన తర్వాత 90 రోజుల పాటు మళ్లీ మార్చలేవు. పాత యూజర్‌నేమ్ 90 రోజులు నీ కోసం కేటాయించి ఉంచబడుతుంది — కావాలంటే తిరిగి వెళ్లవచ్చు, ఆ సమయంలో ఇంకెవరూ తీసుకోలేరు. పాత పేరుకు ఉన్న లింక్‌లు ఇక నీ ప్రొఫైల్‌ను తెరవవు.',
+  'Etkinliğim': 'కార్యకలాపం',
+  'Tercihler': 'ప్రాధాన్యతలు',
+  'Gizlilik ve güvenlik': 'గోప్యత మరియు భద్రత',
+  'Destek': 'సహాయం',
+  'Hesap': 'ఖాతా',
+  '{} dizileri': '{} సిరీస్‌లు',
+  '{} filmleri': '{} సినిమాలు',
 };

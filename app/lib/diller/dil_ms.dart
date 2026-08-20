@@ -1238,4 +1238,40 @@ const Map<String, String> cevirilerMs = {
   'Sarı': 'Kuning',
   'Camgöbeği': 'Sian',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Bajet penerbitan',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Bajet penerbitan dan kutipan seluruh dunia',
+  'Dizinin yayın durumu': 'Status penyiaran siri',
+  'Devam ediyor': 'Masih disiarkan',
+  'Sona erdi': 'Tamat',
+  'İptal edildi': 'Dibatalkan',
+  'Yapımda': 'Sedang diterbitkan',
+  'Planlandı': 'Dirancang',
+  'Pilot bölüm': 'Episod perintis',
+  'Ad': 'Nama',
+  'Adın': 'Nama kamu',
+  'Kullanıcı adı': 'Nama pengguna',
+  'Kullanıcı adını değiştir': 'Tukar nama pengguna',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Nama pengguna boleh ditukar sekali setiap 90 hari',
+  'Değiştir': 'Tukar',
+  '{} gün sonra değiştirebilirsin': 'Boleh ditukar {} hari lagi',
+  'Kullanıcı adın: @{}': 'Nama pengguna kamu: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Nama pengguna ini sudah diambil',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Nama pengguna ini kini disimpan untuk akaun lain',
+  'Bu zaten senin kullanıcı adın': 'Ini memang sudah nama pengguna kamu',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Nama pengguna 3–20 aksara; huruf kecil, digit, titik, sengkang, garis bawah',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Dipaparkan di atas nama pengguna kamu dalam profil. Boleh dibiarkan kosong.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Selepas ditukar, kamu tidak boleh menukarnya lagi selama 90 hari. Nama pengguna lama kamu kekal disimpan untuk kamu selama 90 hari — kamu boleh kembali kepadanya dan orang lain tidak boleh mengambilnya dalam tempoh itu. Pautan ke nama lama kamu tidak akan membuka profil kamu lagi.',
+  'Etkinliğim': 'Aktiviti',
+  'Tercihler': 'Keutamaan',
+  'Gizlilik ve güvenlik': 'Privasi dan keselamatan',
+  'Destek': 'Sokongan',
+  'Hesap': 'Akaun',
+  '{} dizileri': 'Siri {}',
+  '{} filmleri': 'Filem {}',
 };

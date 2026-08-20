@@ -1231,4 +1231,40 @@ const Map<String, String> cevirilerEn = {
   'Sarı': 'Yellow',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Production budget',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Production budget and worldwide gross',
+  'Dizinin yayın durumu': "The show's airing status",
+  'Devam ediyor': 'Ongoing',
+  'Sona erdi': 'Ended',
+  'İptal edildi': 'Canceled',
+  'Yapımda': 'In production',
+  'Planlandı': 'Planned',
+  'Pilot bölüm': 'Pilot',
+  'Ad': 'Name',
+  'Adın': 'Your name',
+  'Kullanıcı adı': 'Username',
+  'Kullanıcı adını değiştir': 'Change your username',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'You can change your username once every 90 days',
+  'Değiştir': 'Change',
+  '{} gün sonra değiştirebilirsin': 'You can change it in {} days',
+  'Kullanıcı adın: @{}': 'Your username: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'That username is already taken',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'That username is currently reserved for another account',
+  'Bu zaten senin kullanıcı adın': "That's already your username",
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Username must be 3–20 characters; lowercase letters, digits, dots, hyphens and underscores',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Shown above your username on your profile. You can leave it blank.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      "After you change it you can't change it again for 90 days. Your old username stays reserved for you for 90 days — you can switch back, and no one else can take it in the meantime. Links to your old name will no longer open your profile.",
+  'Etkinliğim': 'Activity',
+  'Tercihler': 'Preferences',
+  'Gizlilik ve güvenlik': 'Privacy and security',
+  'Destek': 'Support',
+  'Hesap': 'Account',
+  '{} dizileri': '{} shows',
+  '{} filmleri': '{} movies',
 };

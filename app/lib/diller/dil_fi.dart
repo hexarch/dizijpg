@@ -1240,4 +1240,40 @@ const Map<String, String> cevirilerFi = {
   'Sarı': 'Keltainen',
   'Camgöbeği': 'Syaani',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Tuotantobudjetti',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Tuotantobudjetti ja maailmanlaajuinen tuotto',
+  'Dizinin yayın durumu': 'Sarjan esitystilanne',
+  'Devam ediyor': 'Käynnissä',
+  'Sona erdi': 'Päättynyt',
+  'İptal edildi': 'Peruttu',
+  'Yapımda': 'Tuotannossa',
+  'Planlandı': 'Suunnitteilla',
+  'Pilot bölüm': 'Pilottijakso',
+  'Ad': 'Nimi',
+  'Adın': 'Nimesi',
+  'Kullanıcı adı': 'Käyttäjänimi',
+  'Kullanıcı adını değiştir': 'Vaihda käyttäjänimi',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Voit vaihtaa käyttäjänimesi kerran 90 päivässä',
+  'Değiştir': 'Vaihda',
+  '{} gün sonra değiştirebilirsin': 'Voit vaihtaa {} päivän kuluttua',
+  'Kullanıcı adın: @{}': 'Käyttäjänimesi: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Tämä käyttäjänimi on jo varattu',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Tämä käyttäjänimi on juuri nyt varattu toiselle tilille',
+  'Bu zaten senin kullanıcı adın': 'Tämä on jo käyttäjänimesi',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Käyttäjätunnus 3–20 merkkiä; pienaakkoset, numerot, pisteet, yhdysmerkit ja alaviivat',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Näkyy profiilissasi käyttäjänimesi yläpuolella. Voit jättää tyhjäksi.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Vaihdon jälkeen et voi vaihtaa uudelleen 90 päivään. Vanha käyttäjänimesi pysyy varattuna sinulle 90 päivää — voit palata siihen, eikä kukaan muu voi ottaa sitä sinä aikana. Vanhaan nimeen osoittavat linkit eivät enää avaa profiiliasi.',
+  'Etkinliğim': 'Toiminta',
+  'Tercihler': 'Valinnat',
+  'Gizlilik ve güvenlik': 'Yksityisyys ja turvallisuus',
+  'Destek': 'Tuki',
+  'Hesap': 'Tili',
+  '{} dizileri': '{} -sarjat',
+  '{} filmleri': '{} -elokuvat',
 };

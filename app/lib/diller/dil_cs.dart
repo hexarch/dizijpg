@@ -1227,4 +1227,40 @@ const Map<String, String> cevirilerCs = {
   'Sarı': 'Žlutá',
   'Camgöbeği': 'Azurová',
   'Macenta': 'Purpurová',
+  'Yapım bütçesi': 'Rozpočet výroby',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Rozpočet výroby a celosvětové tržby',
+  'Dizinin yayın durumu': 'Stav vysílání seriálu',
+  'Devam ediyor': 'Pokračuje',
+  'Sona erdi': 'Skončil',
+  'İptal edildi': 'Zrušen',
+  'Yapımda': 'Ve výrobě',
+  'Planlandı': 'Plánován',
+  'Pilot bölüm': 'Pilotní díl',
+  'Ad': 'Jméno',
+  'Adın': 'Tvoje jméno',
+  'Kullanıcı adı': 'Uživatelské jméno',
+  'Kullanıcı adını değiştir': 'Změnit uživatelské jméno',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Uživatelské jméno můžeš změnit jednou za 90 dní',
+  'Değiştir': 'Změnit',
+  '{} gün sonra değiştirebilirsin': 'Změnit půjde za {} dní',
+  'Kullanıcı adın: @{}': 'Tvé uživatelské jméno: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Toto uživatelské jméno je už obsazené',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Toto uživatelské jméno je teď rezervované pro jiný účet',
+  'Bu zaten senin kullanıcı adın': 'Tohle už tvoje uživatelské jméno je',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Jméno 3–20 znaků; malá písmena, číslice, tečky, pomlčky a podtržítka',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Zobrazuje se v profilu nad uživatelským jménem. Můžeš nechat prázdné.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Po změně ho dalších 90 dní nezměníš. Staré uživatelské jméno ti zůstane rezervované 90 dní — můžeš se k němu vrátit a nikdo jiný si ho zatím nevezme. Odkazy na staré jméno už tvůj profil neotevřou.',
+  'Etkinliğim': 'Aktivita',
+  'Tercihler': 'Předvolby',
+  'Gizlilik ve güvenlik': 'Soukromí a zabezpečení',
+  'Destek': 'Podpora',
+  'Hesap': 'Účet',
+  '{} dizileri': 'Seriály: {}',
+  '{} filmleri': 'Filmy: {}',
 };

@@ -1233,4 +1233,40 @@ const Map<String, String> cevirilerVi = {
   'Sarı': 'Vàng',
   'Camgöbeği': 'Lục lam',
   'Macenta': 'Đỏ tươi',
+  'Yapım bütçesi': 'Kinh phí sản xuất',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Kinh phí sản xuất và doanh thu toàn cầu',
+  'Dizinin yayın durumu': 'Tình trạng phát sóng của phim',
+  'Devam ediyor': 'Đang chiếu',
+  'Sona erdi': 'Đã kết thúc',
+  'İptal edildi': 'Đã hủy',
+  'Yapımda': 'Đang sản xuất',
+  'Planlandı': 'Đã lên kế hoạch',
+  'Pilot bölüm': 'Tập thử nghiệm',
+  'Ad': 'Tên',
+  'Adın': 'Tên của bạn',
+  'Kullanıcı adı': 'Tên người dùng',
+  'Kullanıcı adını değiştir': 'Đổi tên người dùng',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Bạn có thể đổi tên người dùng 90 ngày một lần',
+  'Değiştir': 'Đổi',
+  '{} gün sonra değiştirebilirsin': 'Có thể đổi sau {} ngày',
+  'Kullanıcı adın: @{}': 'Tên người dùng của bạn: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Tên người dùng này đã có người dùng',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Tên người dùng này hiện đang được giữ cho một tài khoản khác',
+  'Bu zaten senin kullanıcı adın': 'Đây vốn đã là tên người dùng của bạn',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Tên 3–20 ký tự; chữ thường, số, chấm, gạch ngang, gạch dưới',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Hiển thị phía trên tên người dùng trên trang cá nhân. Bạn có thể để trống.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Sau khi đổi, bạn không thể đổi lại trong 90 ngày. Tên người dùng cũ được giữ cho bạn trong 90 ngày — bạn có thể quay lại, và trong thời gian đó không ai lấy được. Các liên kết tới tên cũ sẽ không còn mở trang cá nhân của bạn.',
+  'Etkinliğim': 'Hoạt động',
+  'Tercihler': 'Tùy chọn',
+  'Gizlilik ve güvenlik': 'Quyền riêng tư và bảo mật',
+  'Destek': 'Hỗ trợ',
+  'Hesap': 'Tài khoản',
+  '{} dizileri': 'Phim bộ của {}',
+  '{} filmleri': 'Phim lẻ của {}',
 };

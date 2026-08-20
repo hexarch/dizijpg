@@ -45,9 +45,12 @@ const seoKisiBasligi = alan(
 const seoOrtalamaPuan = alan(
   ['seoYildizOrt', 'SEO_PUAN_MIN', 'seoOrtalamaPuan'], 'seoOrtalamaPuan');
 const icerikJsonLd = alan(
+  // `seoSssJsonLd`: icerikJsonLd 21 Ağu 2026'dan beri `@graph`a FAQPage
+  // ekliyor (bkz. seo_sss.test.js). Bağımlılık listesinde olmazsa çağrı
+  // ReferenceError verir — testin gördüğü kod canlıdaki kodun aynısı.
   ['SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'icerikJsonLd'], 'icerikJsonLd');
+    'seoSssJsonLd', 'icerikJsonLd'], 'icerikJsonLd');
 const ogSayfa = alan(
   ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa'], 'ogSayfa');
 
@@ -229,7 +232,10 @@ test('açıklama ~155 karakter bütçesine uyuyor (ad tek başına aşmadıkça)
 
 test('açıklamadaki her sayı sayfada GERÇEKTEN olan bir şeyi sayar', () => {
   // Yorum sayısı DB toplamı değil, sayfaya BASILAN değerlendirme sayısıdır.
-  assert.match(UC, /yorumAdet: seo\.yorumlar\.length \+ seo\.incelemeler\.length/);
+  // 21 Ağu 2026'da adlandırılmış sabite alındı: SSS bloğu da AYNI sayıyı
+  // kullanıyor (`seo_sss.test.js`), iki kez hesaplanırsa ayrışabilirdi.
+  assert.match(UC, /const yorumAdet = seo\.yorumlar\.length \+ seo\.incelemeler\.length;/);
+  assert.match(UC, /aciklama: seoIcerikAciklamasi\(\{[\s\S]*?\n\s*yorumAdet,/);
   // Sezon/bölüm/süre sayıları için gövdeye GÖRÜNÜR künye satırı basılıyor.
   assert.match(UC, /const kunyeBlok = kunyeSatirlari\.length/);
   assert.match(UC, /govde: seoAnaGorsel\([^\n]*\n\s*\+ kunyeBlok \+ ozetBlok/);

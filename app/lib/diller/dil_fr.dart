@@ -1255,4 +1255,40 @@ const Map<String, String> cevirilerFr = {
   'Sarı': 'Jaune',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Budget de production',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Budget de production et recettes mondiales',
+  'Dizinin yayın durumu': 'Statut de diffusion de la série',
+  'Devam ediyor': 'En cours',
+  'Sona erdi': 'Terminée',
+  'İptal edildi': 'Annulée',
+  'Yapımda': 'En production',
+  'Planlandı': 'Prévue',
+  'Pilot bölüm': 'Épisode pilote',
+  'Ad': 'Nom',
+  'Adın': 'Ton nom',
+  'Kullanıcı adı': "Nom d'utilisateur",
+  'Kullanıcı adını değiştir': "Changer de nom d'utilisateur",
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      "Tu peux changer de nom d'utilisateur une fois tous les 90 jours",
+  'Değiştir': 'Changer',
+  '{} gün sonra değiştirebilirsin': 'Tu pourras le changer dans {} jours',
+  'Kullanıcı adın: @{}': "Ton nom d'utilisateur : @{}",
+  'Bu kullanıcı adı zaten alınmış': "Ce nom d'utilisateur est déjà pris",
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      "Ce nom d'utilisateur est actuellement réservé à un autre compte",
+  'Bu zaten senin kullanıcı adın': "C'est déjà ton nom d'utilisateur",
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      "L'identifiant doit faire 3–20 caractères ; minuscules, chiffres, points, tirets et underscores",
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      "Affiché au-dessus de ton nom d'utilisateur sur ton profil. Tu peux le laisser vide.",
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      "Après le changement, tu ne pourras plus en changer pendant 90 jours. Ton ancien nom d'utilisateur te reste réservé 90 jours — tu peux y revenir et personne d'autre ne peut le prendre pendant ce temps. Les liens vers ton ancien nom n'ouvriront plus ton profil.",
+  'Etkinliğim': 'Activité',
+  'Tercihler': 'Préférences',
+  'Gizlilik ve güvenlik': 'Confidentialité et sécurité',
+  'Destek': 'Assistance',
+  'Hesap': 'Compte',
+  '{} dizileri': 'Séries de {}',
+  '{} filmleri': 'Films de {}',
 };

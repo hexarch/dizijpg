@@ -1233,4 +1233,40 @@ const Map<String, String> cevirilerId = {
   'Sarı': 'Kuning',
   'Camgöbeği': 'Sian',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Anggaran produksi',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Anggaran produksi dan pendapatan global',
+  'Dizinin yayın durumu': 'Status tayang serial',
+  'Devam ediyor': 'Masih tayang',
+  'Sona erdi': 'Tamat',
+  'İptal edildi': 'Dibatalkan',
+  'Yapımda': 'Sedang diproduksi',
+  'Planlandı': 'Direncanakan',
+  'Pilot bölüm': 'Episode pilot',
+  'Ad': 'Nama',
+  'Adın': 'Namamu',
+  'Kullanıcı adı': 'Nama pengguna',
+  'Kullanıcı adını değiştir': 'Ubah nama pengguna',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Nama pengguna bisa diubah sekali setiap 90 hari',
+  'Değiştir': 'Ubah',
+  '{} gün sonra değiştirebilirsin': 'Bisa diubah {} hari lagi',
+  'Kullanıcı adın: @{}': 'Nama penggunamu: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Nama pengguna ini sudah dipakai',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Nama pengguna ini sedang dicadangkan untuk akun lain',
+  'Bu zaten senin kullanıcı adın': 'Ini memang sudah nama penggunamu',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Nama pengguna 3–20 karakter; huruf kecil, angka, titik, strip, garis bawah',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Tampil di atas nama penggunamu di profil. Boleh dikosongkan.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Setelah diubah, kamu tidak bisa mengubahnya lagi selama 90 hari. Nama pengguna lamamu tetap dicadangkan untukmu selama 90 hari — kamu bisa kembali ke sana dan orang lain tidak bisa mengambilnya selama itu. Tautan ke nama lamamu tidak lagi membuka profilmu.',
+  'Etkinliğim': 'Aktivitas',
+  'Tercihler': 'Preferensi',
+  'Gizlilik ve güvenlik': 'Privasi dan keamanan',
+  'Destek': 'Dukungan',
+  'Hesap': 'Akun',
+  '{} dizileri': 'Serial {}',
+  '{} filmleri': 'Film {}',
 };

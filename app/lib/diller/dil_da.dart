@@ -1234,4 +1234,40 @@ const Map<String, String> cevirilerDa = {
   'Sarı': 'Gul',
   'Camgöbeği': 'Cyan',
   'Macenta': 'Magenta',
+  'Yapım bütçesi': 'Produktionsbudget',
+  'Yapım bütçesi ve dünya çapında hasılat':
+      'Produktionsbudget og indtjening på verdensplan',
+  'Dizinin yayın durumu': 'Seriens sendestatus',
+  'Devam ediyor': 'Igangværende',
+  'Sona erdi': 'Afsluttet',
+  'İptal edildi': 'Aflyst',
+  'Yapımda': 'Under produktion',
+  'Planlandı': 'Planlagt',
+  'Pilot bölüm': 'Pilotafsnit',
+  'Ad': 'Navn',
+  'Adın': 'Dit navn',
+  'Kullanıcı adı': 'Brugernavn',
+  'Kullanıcı adını değiştir': 'Skift brugernavn',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin':
+      'Du kan skifte dit brugernavn én gang hver 90. dag',
+  'Değiştir': 'Skift',
+  '{} gün sonra değiştirebilirsin': 'Du kan skifte om {} dage',
+  'Kullanıcı adın: @{}': 'Dit brugernavn: @{}',
+  'Bu kullanıcı adı zaten alınmış': 'Det brugernavn er allerede taget',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış':
+      'Det brugernavn er lige nu reserveret til en anden konto',
+  'Bu zaten senin kullanıcı adın': 'Det er allerede dit brugernavn',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir':
+      'Brugernavn 3–20 tegn; små bogstaver, cifre, prikker, bindestreger og understreger',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.':
+      'Vises over dit brugernavn på din profil. Du kan lade det stå tomt.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.':
+      'Efter skiftet kan du ikke skifte igen i 90 dage. Dit gamle brugernavn er reserveret til dig i 90 dage — du kan skifte tilbage, og ingen andre kan tage det i mellemtiden. Links til dit gamle navn åbner ikke længere din profil.',
+  'Etkinliğim': 'Aktivitet',
+  'Tercihler': 'Præferencer',
+  'Gizlilik ve güvenlik': 'Privatliv og sikkerhed',
+  'Destek': 'Support',
+  'Hesap': 'Konto',
+  '{} dizileri': 'Serier af {}',
+  '{} filmleri': 'Film af {}',
 };

@@ -149,6 +149,52 @@ Widget _segmentEtiket(String metin) => FittedBox(
   child: Text(metin, maxLines: 1, softWrap: false),
 );
 
+/// Ayarlar ekranının BÖLÜM BAŞLIĞI (Profil · Etkinliğim · Tercihler · Gizlilik
+/// ve güvenlik · Destek · Verilerim · Hesap).
+///
+/// NEDEN VAR: ekran 25 ayarı DÜZ LİSTE hâlinde taşıyordu; kullanıcı "ayarlar
+/// kısmına bir çeki düzen ver, sınıflandır onları" dedi. Aynı ekranda kalması
+/// da isteğin parçası ("her şey bir ekranda") — bu yüzden ayrı sayfalar değil,
+/// başlıklı bölümler.
+///
+/// NEDEN ALAN ETİKETİYLE AYNI DEĞİL: `ui-ux-pro-max` *Heading Clarity*
+/// ("clear size/weight difference between heading and body", önem: orta) tek
+/// başına kalın yazıyı yeterli saymıyor. Alan etiketleri (`Bio`, `Ülke`) 14 dp
+/// beyaz-kalın; bölüm başlığı 15 dp, VURGU RENGİNDE ve İKONLU. Üç sinyal
+/// birden değişince göz iki düzeyi ayırt ediyor.
+class _Bolum extends StatelessWidget {
+  const _Bolum(this.baslik, this.ikon, {this.ilk = false});
+
+  final String baslik;
+  final IconData ikon;
+
+  /// İlk bölüm fotoğraf başlığının hemen altında; üst boşluğu küçük.
+  final bool ilk;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.fromLTRB(0, ilk ? 0 : 28, 0, 10),
+    child: Row(
+      children: [
+        Icon(ikon, size: 18, color: DiziRenkler.sariMetin),
+        const SizedBox(width: 8),
+        // Expanded: 320 dp genişlikte uzun çeviri ("Gizlilik ve güvenlik"in
+        // Almancası) taşmak yerine ikinci satıra sarar.
+        Expanded(
+          child: Text(
+            baslik,
+            style: TextStyle(
+              color: DiziRenkler.sariMetin,
+              fontSize: 15,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
 class AyarlarEkrani extends StatefulWidget {
   const AyarlarEkrani({super.key});
 
@@ -163,6 +209,9 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   bool _avatarYukleniyor = false;
   bool _kapakYukleniyor = false;
   final _bio = TextEditingController();
+  // GÖRÜNEN AD (21 Ağu). Kullanıcı adı DEĞİL: kimlik anahtarı `kullanici_adi`
+  // olmayı sürdürüyor, bu yalnız profilde görünen serbest metin.
+  final _ad = TextEditingController();
   String? _ulke;
   List<Map<String, dynamic>> _sosyal = [];
 
@@ -175,8 +224,19 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   @override
   void dispose() {
     _bio.dispose();
+    _ad.dispose();
     super.dispose();
   }
+
+  /// Kullanıcı adı kilidinden kalan gün (0 = değiştirebilir).
+  ///
+  /// SUNUCUDAN GELİR, İSTEMCİDE HESAPLANMAZ: kilit kuralı sunucudadır
+  /// (`kullaniciAdiDegistir`), buradaki sayı yalnız ONUN YANSIMASIDIR. Cihaz
+  /// saati ileri alınarak kilidin atlanamaması bu yüzden mümkün.
+  int get _kullaniciAdiKalanGun =>
+      (_profil?['kullanici_adi_kalan_gun'] as num?)?.toInt() ?? 0;
+
+  String get _kullaniciAdi => (_profil?['kullanici_adi'] as String?) ?? '';
 
   Future<void> _yukle() async {
     setState(() => _hata = null);
@@ -186,6 +246,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       setState(() {
         _profil = p;
         _bio.text = (p['bio'] as String?) ?? '';
+        _ad.text = (p['ad'] as String?) ?? '';
         _ulke = p['ulke'] as String?;
         _sosyal = [
           for (final s in p['sosyal'] as List<dynamic>? ?? [])
@@ -196,6 +257,38 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
       if (!mounted) return;
       setState(() => _hata = e.toString());
     }
+  }
+
+  /// Kullanıcı adı değiştirme sayfasını açar; başarılıysa profili tazeler.
+  ///
+  /// KİLİTLİYKEN AÇILMAZ ve sebebi SÖYLENİR. `ui-ux-pro-max` *Disabled States*
+  /// ("clearly indicate non-interactive elements") + *Error Recovery*: yalnız
+  /// "yapamazsın" demek yetmez, ne zaman yapabileceği yazılıyor. Kural yine de
+  /// SUNUCUDA (bu satır silinse bile uç 403 döner).
+  Future<void> _kullaniciAdiDegistir() async {
+    final kalan = _kullaniciAdiKalanGun;
+    if (kalan > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('{} gün sonra değiştirebilirsin'.cf([kalan]))),
+      );
+      return;
+    }
+    final yeni = await showModalBottomSheet<String>(
+      context: context,
+      backgroundColor: DiziRenkler.koyuGri,
+      isScrollControlled: true,
+      builder: (_) => KullaniciAdiSheet(mevcut: _kullaniciAdi),
+    );
+    if (yeni == null || !mounted) return;
+    final oturum = context.read<Oturum>();
+    await oturum.girisYapildi({...?oturum.kullanici, 'kullanici_adi': yeni});
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Kullanıcı adın: @{}'.cf([yeni]))));
+    // Kilidin kalan günü ve yeni ad SUNUCUDAN yeniden okunur: kalan günü
+    // istemcide 90 diye varsaymak, sunucu kuralı değişirse sessizce yalan olur.
+    await _yukle();
   }
 
   /// GIF mi? (sihirli baytlar) — GIF'ler kırpılmaz, animasyon korunur.
@@ -586,11 +679,18 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
   Future<void> _kaydet() async {
     setState(() => _kaydediliyor = true);
     try {
-      final p = await Api.profilGuncelle(
-        bio: _bio.text.trim(),
-        ulke: _ulke ?? '',
-        sosyal: _sosyal,
-      );
+      // `Api.profilGuncelle` YERİNE doğrudan `Api.post`: sarmalayıcı `ad`
+      // alanını tanımıyor ve `api.dart` bu turda başka bir ajanın elinde.
+      // Uç sözleşmesi aynı; tek fark gövdeye `ad` eklenmesi.
+      // TODO(koordinatör): `ad` parametresini `Api.profilGuncelle`ye taşı.
+      final p =
+          await Api.post('/profilim', {
+                'bio': _bio.text.trim(),
+                'ulke': _ulke ?? '',
+                'sosyal': _sosyal,
+                'ad': _ad.text,
+              })
+              as Map<String, dynamic>;
       if (!mounted) return;
       final oturum = context.read<Oturum>();
       await oturum.girisYapildi({...?oturum.kullanici, ...p});
@@ -788,6 +888,83 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                _Bolum('Profil'.c, Icons.person_outline, ilk: true),
+                Text(
+                  'Ad'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  key: const Key('ayar-ad'),
+                  controller: _ad,
+                  // 40 SUNUCUDAKİ SINIRLA AYNI (`AD_AZAMI`). Farklı olsaydı
+                  // kullanıcı yazabildiği bir adı kaydedemezdi.
+                  maxLength: 40,
+                  // Tek satır: satır sonu sunucuda zaten boşluğa çevriliyor,
+                  // kullanıcıya girilebilirmiş gibi göstermenin anlamı yok.
+                  maxLines: 1,
+                  textInputAction: TextInputAction.done,
+                  decoration: InputDecoration(hintText: 'Adın'.c),
+                ),
+                Text(
+                  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.'
+                      .c,
+                  style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Kullanıcı adı'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                // KİLİTLİ HÂL ÜÇ SİNYALLE anlatılıyor (kilit ikonu, soluk
+                // başlık, chevron yerine kilit) — `ui-ux-pro-max` *Disabled
+                // States*: tek sinyal (yalnız renk) yetmez. Satır yine de
+                // TIKLANABİLİR: dokununca kalan gün SnackBar'da tekrar edilir,
+                // yoksa kullanıcı neden çalışmadığını anlamazdı.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-kullanici-adi'),
+                    leading: Icon(
+                      _kullaniciAdiKalanGun > 0
+                          ? Icons.lock_outline
+                          : Icons.alternate_email,
+                      color: _kullaniciAdiKalanGun > 0
+                          ? DiziRenkler.metin54
+                          : DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      '@$_kullaniciAdi',
+                      style: TextStyle(
+                        // metin38 DEĞİL metin54: kilitli satırdaki metin
+                        // OKUNMASI GEREKEN metindir; pasiflik hissini kilit
+                        // ikonu veriyor, kontrasttan ödün verilmiyor.
+                        color: _kullaniciAdiKalanGun > 0
+                            ? DiziRenkler.metin54
+                            : DiziRenkler.metin,
+                      ),
+                    ),
+                    subtitle: Text(
+                      _kullaniciAdiKalanGun > 0
+                          ? '{} gün sonra değiştirebilirsin'.cf([
+                              _kullaniciAdiKalanGun,
+                            ])
+                          : 'Kullanıcı adını 90 günde bir değiştirebilirsin'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      _kullaniciAdiKalanGun > 0
+                          ? Icons.lock_outline
+                          : Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: _kullaniciAdiDegistir,
+                  ),
+                ),
+                const SizedBox(height: 12),
                 Text(
                   'Bio'.c,
                   style: const TextStyle(fontWeight: FontWeight.w800),
@@ -845,6 +1022,124 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   onDegisti: (yeni) => setState(() => _sosyal = yeni),
                 ),
                 const SizedBox(height: 12),
+                // Profil bölümlerinin sırası (sürükle-bırak)
+                Card(
+                  child: ListTile(
+                    leading: Icon(
+                      Icons.swap_vert,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text('Profil düzeni'.c),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: _profilDuzeni,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: _kaydediliyor ? null : _kaydet,
+                  child: _kaydediliyor
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
+                        )
+                      : Text('Kaydet'.c),
+                ),
+                _Bolum('Etkinliğim'.c, Icons.timeline),
+                // HAREKETLERİM (md. 20): beğeni/yorum/izleme/takip/puan/liste
+                // hareketlerinin TEK zaman akışı. Ayarların en üst tercih
+                // kartlarının hemen üstünde: kişinin KENDİ kaydı, tercih değil.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-hareketlerim'),
+                    leading: Icon(Icons.timeline, color: DiziRenkler.sariMetin),
+                    title: Text(
+                      'Hareketlerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Beğenilerin, yorumların, izlemelerin tek akışta'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => GoRouter.of(context).push('/hareketlerim'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // İSTATİSTİKLERİM (md. 24): kendi gönderilerinin görüntülenme
+                // ve beğeni sayıları + 30/60/90/120 günlük kırılım.
+                // Hareketlerim'in HEMEN ALTINDA çünkü ikisi de "tercih" değil
+                // KİŞİNİN KENDİ KAYDI: biri ne yaptığını, öbürü ne kadar
+                // ulaştığını gösteriyor.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-istatistiklerim'),
+                    leading: Icon(
+                      Icons.insights_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'İstatistiklerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Gönderilerinin görüntülenmesi ve beğenisi'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () => GoRouter.of(context).push('/istatistiklerim'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // İZLEME İSTATİSTİKLERİM (19 Ağu isteği). İstatistiklerim'in
+                // HEMEN ALTINDA: ikisi de "kendi kaydım" ama biri gönderinin
+                // KİTLEYE ulaşmasını, bu ise kişinin KENDİ izlemesini ölçüyor.
+                Card(
+                  child: ListTile(
+                    key: const Key('ayar-izleme-istatistik'),
+                    leading: Icon(
+                      Icons.query_stats_outlined,
+                      color: DiziRenkler.sariMetin,
+                    ),
+                    title: Text(
+                      'İzleme İstatistiklerim'.c,
+                      style: TextStyle(color: DiziRenkler.metin),
+                    ),
+                    subtitle: Text(
+                      'Ekran süren, serin ve en çok izlediklerin'.c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                      ),
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: DiziRenkler.metin38,
+                    ),
+                    onTap: () =>
+                        GoRouter.of(context).push('/izleme-istatistik'),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                _Bolum('Tercihler'.c, Icons.tune),
                 Text(
                   'Dil'.c,
                   style: const TextStyle(fontWeight: FontWeight.w800),
@@ -1039,129 +1334,11 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                // Profil bölümlerinin sırası (sürükle-bırak)
-                Card(
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.swap_vert,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                    title: Text('Profil düzeni'.c),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: DiziRenkler.metin38,
-                    ),
-                    onTap: _profilDuzeni,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  onPressed: _kaydediliyor ? null : _kaydet,
-                  child: _kaydediliyor
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.black,
-                          ),
-                        )
-                      : Text('Kaydet'.c),
-                ),
-                const SizedBox(height: 32),
-                Divider(color: DiziRenkler.metin12),
-                const SizedBox(height: 8),
-                // HAREKETLERİM (md. 20): beğeni/yorum/izleme/takip/puan/liste
-                // hareketlerinin TEK zaman akışı. Ayarların en üst tercih
-                // kartlarının hemen üstünde: kişinin KENDİ kaydı, tercih değil.
-                Card(
-                  child: ListTile(
-                    key: const Key('ayar-hareketlerim'),
-                    leading: Icon(Icons.timeline, color: DiziRenkler.sariMetin),
-                    title: Text(
-                      'Hareketlerim'.c,
-                      style: TextStyle(color: DiziRenkler.metin),
-                    ),
-                    subtitle: Text(
-                      'Beğenilerin, yorumların, izlemelerin tek akışta'.c,
-                      style: TextStyle(
-                        color: DiziRenkler.metin54,
-                        fontSize: 12,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: DiziRenkler.metin38,
-                    ),
-                    onTap: () => GoRouter.of(context).push('/hareketlerim'),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // İSTATİSTİKLERİM (md. 24): kendi gönderilerinin görüntülenme
-                // ve beğeni sayıları + 30/60/90/120 günlük kırılım.
-                // Hareketlerim'in HEMEN ALTINDA çünkü ikisi de "tercih" değil
-                // KİŞİNİN KENDİ KAYDI: biri ne yaptığını, öbürü ne kadar
-                // ulaştığını gösteriyor.
-                Card(
-                  child: ListTile(
-                    key: const Key('ayar-istatistiklerim'),
-                    leading: Icon(
-                      Icons.insights_outlined,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                    title: Text(
-                      'İstatistiklerim'.c,
-                      style: TextStyle(color: DiziRenkler.metin),
-                    ),
-                    subtitle: Text(
-                      'Gönderilerinin görüntülenmesi ve beğenisi'.c,
-                      style: TextStyle(
-                        color: DiziRenkler.metin54,
-                        fontSize: 12,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: DiziRenkler.metin38,
-                    ),
-                    onTap: () => GoRouter.of(context).push('/istatistiklerim'),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // İZLEME İSTATİSTİKLERİM (19 Ağu isteği). İstatistiklerim'in
-                // HEMEN ALTINDA: ikisi de "kendi kaydım" ama biri gönderinin
-                // KİTLEYE ulaşmasını, bu ise kişinin KENDİ izlemesini ölçüyor.
-                Card(
-                  child: ListTile(
-                    key: const Key('ayar-izleme-istatistik'),
-                    leading: Icon(
-                      Icons.query_stats_outlined,
-                      color: DiziRenkler.sariMetin,
-                    ),
-                    title: Text(
-                      'İzleme İstatistiklerim'.c,
-                      style: TextStyle(color: DiziRenkler.metin),
-                    ),
-                    subtitle: Text(
-                      'Ekran süren, serin ve en çok izlediklerin'.c,
-                      style: TextStyle(
-                        color: DiziRenkler.metin54,
-                        fontSize: 12,
-                      ),
-                    ),
-                    trailing: Icon(
-                      Icons.chevron_right,
-                      color: DiziRenkler.metin38,
-                    ),
-                    onTap: () =>
-                        GoRouter.of(context).push('/izleme-istatistik'),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                // SIRA (3 Ağu isteği): Bildirim Tercihleri · Gizlilik · Geri
-                // Bildirim ARTIK "Verilerim"in ÜSTÜNDE. Günlük kullanılan üç
-                // tercih kartı, nadiren açılan dışa/içe aktarımın altında
-                // kalmıyor. Kartların içeriği/davranışı DEĞİŞMEDİ, yalnız yer.
+                // BILDIRIM TERCIHLERI burada, "Tercihler" bölümünün SONUNDA.
+                // 3 Ağu kararı — "bildirim tercihleri, gizlilik ve geri bildirimi
+                // Verilerim'in ÜSTÜNE al" — sınıflandırmadan sonra da GEÇERLİ:
+                // üçü de aşağıdaki "Verilerim" bölümünden ÖNCE geliyor
+                // (kilit: test/ayarlar_sirasi_test.dart).
                 Card(
                   child: ListTile(
                     leading: Icon(
@@ -1185,6 +1362,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                _Bolum('Gizlilik ve güvenlik'.c, Icons.shield_outlined),
                 Card(
                   child: ListTile(
                     leading: Icon(
@@ -1239,6 +1417,18 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                   ),
                 ),
                 const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => context.push('/gizlilik'),
+                  child: Text(
+                    'Gizlilik Politikası'.c,
+                    style: TextStyle(
+                      color: DiziRenkler.metin54,
+                      decoration: TextDecoration.underline,
+                      decorationColor: DiziRenkler.metin54,
+                    ),
+                  ),
+                ),
+                _Bolum('Destek'.c, Icons.support_agent),
                 Card(
                   child: ListTile(
                     leading: Icon(
@@ -1261,12 +1451,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
-                Text(
-                  'Verilerim'.c,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                const SizedBox(height: 4),
+                _Bolum('Verilerim'.c, Icons.folder_outlined),
                 Text(
                   'Tüm verini (izleme, puan, yorum, liste) TV Time uyumlu ZIP olarak '
                           'al ya da başka uygulamadan gelen ZIP\'i içe aktar.'
@@ -1291,7 +1476,7 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     style: TextStyle(color: DiziRenkler.metin),
                   ),
                 ),
-                const SizedBox(height: 32),
+                _Bolum('Hesap'.c, Icons.manage_accounts_outlined),
                 OutlinedButton.icon(
                   onPressed: () async {
                     final oturum = context.read<Oturum>();
@@ -1306,18 +1491,11 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     style: const TextStyle(color: Colors.redAccent),
                   ),
                 ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => context.push('/gizlilik'),
-                  child: Text(
-                    'Gizlilik Politikası'.c,
-                    style: TextStyle(
-                      color: DiziRenkler.metin54,
-                      decoration: TextDecoration.underline,
-                      decorationColor: DiziRenkler.metin54,
-                    ),
-                  ),
-                ),
+                // 8 dp ARA: iki dokunma hedefi arasındaki asgari boşluk
+                // (`ui-ux-pro-max` *Touch & Interaction*). Bitişik dururlarsa
+                // "Çıkış Yap"a basmak isteyen parmak "Hesabımı Sil"e değebilir
+                // — ikincisi geri alınamaz.
+                const SizedBox(height: 8),
                 TextButton(
                   onPressed: _hesabiSil,
                   child: Text(
@@ -1897,6 +2075,223 @@ class _GizlilikSheetState extends State<_GizlilikSheet> {
             ],
             const SizedBox(height: 16),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Kullanıcı adı değiştirme sayfası. Başarılıysa YENİ ADI döndürür, aksi
+/// hâlde `null`.
+///
+/// ---------------------------------------------------------------------------
+/// NEDEN AYRI SAYFA (profil "Kaydet" düğmesine bağlanmadı)
+/// ---------------------------------------------------------------------------
+/// Bio ve ülke geri alınabilir etiketlerdir; kullanıcı adı KİMLİK ANAHTARIDIR:
+/// profil bağlantısı (`/kullanici/:ad`), eski yorumlardaki `@bahsetme`ler ve
+/// paylaşılmış bağlantılar ona bakıyor. Değişimi 90 gün kilitliyor. Böyle bir
+/// eylem, dört alanla birlikte tek "Kaydet"e sıkıştırılamaz — kendi onayını,
+/// kendi uyarısını ve kendi hata yüzeyini hak ediyor.
+///
+/// ---------------------------------------------------------------------------
+/// SONUÇLARI ÖNCEDEN YAZIYOR (uyarı kutusu)
+/// ---------------------------------------------------------------------------
+/// Üç sonuç da değişimden ÖNCE okunuyor: 90 gün kilit, eski adın 90 gün
+/// rezervi, eski bağlantıların artık profile gitmemesi. Sonradan öğrenilen bir
+/// kilit, geri alınamaz bir sürprizdir.
+///
+/// ---------------------------------------------------------------------------
+/// DOĞRULAMA HEM BURADA HEM SUNUCUDA
+/// ---------------------------------------------------------------------------
+/// Buradaki kalıp denetimi yalnız HIZLI GERİ BİLDİRİM içindir
+/// (`ui-ux-pro-max` *Inline Validation*: "validate on blur/as user types",
+/// submit-only doğrulama kötü). Gerçek kural sunucuda: kalıp, benzersizlik,
+/// rezerv ve 90 gün kilidi orada zorlanıyor; bu dosya silinse bile uç 4xx döner.
+class KullaniciAdiSheet extends StatefulWidget {
+  const KullaniciAdiSheet({super.key, required this.mevcut});
+
+  final String mevcut;
+
+  @override
+  State<KullaniciAdiSheet> createState() => _KullaniciAdiSheetState();
+}
+
+class _KullaniciAdiSheetState extends State<KullaniciAdiSheet> {
+  final _alan = TextEditingController();
+  bool _gonderiliyor = false;
+
+  /// Alanın altında kırmızı görünen hata. Sunucudan gelen çakışma da BURAYA
+  /// yazılıyor, yalnız SnackBar'a değil: `ui-ux-pro-max` *Error Clarity* —
+  /// hata, sebep olan alanın YANINDA durmalı; kaybolan bir SnackBar
+  /// kullanıcıyı "ne yazmıştım" diye geri dönmeye zorlar.
+  String? _hata;
+
+  /// Sunucudaki `KULLANICI_ADI_KALIBI` ile AYNI kural. İkisi ayrışırsa
+  /// kullanıcı ya yazamadığı bir adı kaydeder ya yazdığı ad reddedilir.
+  static final _kalip = RegExp(
+    r'^(?!.*\.\.)[a-z0-9_][a-z0-9_.-]{1,18}[a-z0-9_]$',
+  );
+
+  @override
+  void dispose() {
+    _alan.dispose();
+    super.dispose();
+  }
+
+  /// Girdi ne kadar "gönderilebilir"? Sunucu da aynısını yapıyor: kırpar ve
+  /// küçültür. Kullanıcı "Ali" yazınca reddedilmiyor, `ali` kaydediliyor.
+  String get _aday => _alan.text.trim().toLowerCase();
+
+  bool get _gecerli => _kalip.hasMatch(_aday) && _aday != widget.mevcut;
+
+  Future<void> _gonder() async {
+    if (!_gecerli || _gonderiliyor) return;
+    setState(() {
+      _gonderiliyor = true;
+      _hata = null;
+    });
+    final gezgin = Navigator.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final d =
+          await Api.post('/profilim/kullanici-adi', {'kullanici_adi': _aday})
+              as Map<String, dynamic>;
+      final yeni =
+          ((d['kullanici'] as Map?)?['kullanici_adi'] as String?) ?? _aday;
+      gezgin.pop(yeni);
+    } on ApiHata catch (e) {
+      if (!mounted) return;
+      // Sunucunun MAKİNE KODUNA göre dallanılıyor, Türkçe metnine göre değil:
+      // metin çevrildiği ya da değiştiği gün metne bakan kod sessizce kırılır.
+      final kalan = (e.govde?['kalan_gun'] as num?)?.toInt();
+      final metin = switch (e.makineKodu) {
+        'AD_ALINMIS' => 'Bu kullanıcı adı zaten alınmış'.c,
+        'AD_REZERVE' => 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış'.c,
+        'AD_KILIT' when kalan != null => '{} gün sonra değiştirebilirsin'.cf([
+          kalan,
+        ]),
+        _ => e.mesaj,
+      };
+      setState(() {
+        _gonderiliyor = false;
+        _hata = metin;
+      });
+      // Alanın altındaki hata ile YETİNİLMİYOR: kilit hatası alanla ilgili
+      // DEĞİL (yazılan ad kusursuz olabilir), o yüzden ayrıca duyuruluyor.
+      if (e.makineKodu == 'AD_KILIT') {
+        messenger.showSnackBar(SnackBar(content: Text(metin)));
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _gonderiliyor = false;
+        _hata = e.toString();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Yazarken canlı kalıp uyarısı; boş alanda uyarı YOK (kullanıcı daha bir
+    // şey yazmadan hata görmemeli).
+    final yaziliyor = _alan.text.trim().isNotEmpty;
+    final kalipHatasi = yaziliyor && !_kalip.hasMatch(_aday)
+        ? 'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir'
+              .c
+        : (yaziliyor && _aday == widget.mevcut
+              ? 'Bu zaten senin kullanıcı adın'.c
+              : null);
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  Icon(
+                    Icons.alternate_email,
+                    size: 20,
+                    color: DiziRenkler.sariMetin,
+                  ),
+                  const SizedBox(width: 8),
+                  // Expanded: uzun çeviri dar ekranda taşmak yerine sarar.
+                  Expanded(
+                    child: Text(
+                      'Kullanıcı adını değiştir'.c,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                key: const Key('kullanici-adi-alani'),
+                controller: _alan,
+                autofocus: true,
+                maxLength: 20,
+                onChanged: (_) => setState(() => _hata = null),
+                onSubmitted: (_) => _gonder(),
+                decoration: InputDecoration(
+                  prefixText: '@',
+                  hintText: widget.mevcut,
+                  errorText: _hata ?? kalipHatasi,
+                  errorMaxLines: 3,
+                ),
+              ),
+              // SONUÇLAR ÖNCEDEN: kilit, rezerv ve kopan bağlantılar.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.info_outline,
+                    size: 15,
+                    color: DiziRenkler.metin38,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. '
+                              'Eski kullanıcı adın 90 gün boyunca sana ayrılır — '
+                              'istersen geri dönebilirsin, o sürede başkası alamaz. '
+                              'Eski adına giden bağlantılar artık profilini açmaz.'
+                          .c,
+                      style: TextStyle(
+                        color: DiziRenkler.metin54,
+                        fontSize: 12,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              FilledButton(
+                key: const Key('kullanici-adi-kaydet'),
+                onPressed: (_gecerli && !_gonderiliyor) ? _gonder : null,
+                child: _gonderiliyor
+                    ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      )
+                    : Text('Değiştir'.c),
+              ),
+            ],
+          ),
         ),
       ),
     );

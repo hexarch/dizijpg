@@ -167,6 +167,52 @@ const _yeniAnahtarlar = [
   'Yeşil',
   'Camgöbeği',
   'Macenta',
+  // detay.dart — yılın yanındaki sarı rozet: filmde para, dizide yayın
+  // durumu. Son altısı `diziDurumMetinleri`nin TMDB karşılıkları.
+  //
+  // NOT — 'Sona erdi' KASITLI olarak 'Bitti'den (= "Done", liste düzenleme
+  // kipini kapatan buton) ve 'Bitirdim'den (= kullanıcının kendi izleme
+  // durumu) ayrı bir anahtardır. 45 dilin hiçbirinde bu üçü aynı dizgeye
+  // düşmüyor; uk ("Завершено" = Bitirdim) ve ja ("終了" = Bitiş/Çık)
+  // çakışmaları eklenirken düzeltildi.
+  'Yapım bütçesi',
+  'Yapım bütçesi ve dünya çapında hasılat',
+  'Dizinin yayın durumu',
+  'Devam ediyor',
+  'Sona erdi',
+  'İptal edildi',
+  'Yapımda',
+  'Planlandı',
+  'Pilot bölüm',
+  // ayarlar.dart — kimlik alanları (Ad / Kullanıcı adı) ve kullanıcı adı
+  // değiştirme sayfası.
+  //
+  // NOT: 'Ad' ve 'Adın' bilerek YOK — Azerice karşılıkları Türkçesiyle
+  // birebir aynı ('Ad', 'Adın'; Azericede de ad = isim) ve aşağıdaki
+  // "çevrilmemiş" kontrolüne yanlış yere takılırlar. Küme eşitliği testi
+  // onları da kapsıyor. Zayıflatma değil: 'Mavi'/'Sarı' ile aynı istisna.
+  'Kullanıcı adı',
+  'Kullanıcı adını değiştir',
+  'Kullanıcı adını 90 günde bir değiştirebilirsin',
+  'Değiştir',
+  '{} gün sonra değiştirebilirsin',
+  'Kullanıcı adın: @{}',
+  'Bu kullanıcı adı zaten alınmış',
+  'Bu kullanıcı adı şu an başka bir hesaba ayrılmış',
+  'Bu zaten senin kullanıcı adın',
+  'Kullanıcı adı 3-20 karakter; küçük harf, rakam, nokta, tire ve alt çizgi kullanılabilir',
+  'Profilinde kullanıcı adının üstünde görünür. Boş bırakabilirsin.',
+  'Değiştirdikten sonra 90 gün boyunca tekrar değiştiremezsin. Eski kullanıcı adın 90 gün boyunca sana ayrılır — istersen geri dönebilirsin, o sürede başkası alamaz. Eski adına giden bağlantılar artık profilini açmaz.',
+  // ayarlar.dart — bölüm başlıkları (_Bolum)
+  'Etkinliğim',
+  'Tercihler',
+  'Gizlilik ve güvenlik',
+  'Destek',
+  'Hesap',
+  // kesfet.dart — kişiselleştirilmiş raf başlıkları. {} yerine YAPIM FİRMASI
+  // ya da YÖNETMEN ADI gelir; ad çeviriye girmez.
+  '{} dizileri',
+  '{} filmleri',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).
@@ -221,7 +267,17 @@ Future<void> _ulkeSeciciAc(
   String mevcutGorunenAd,
   String ara,
 ) async {
-  await t.tap(find.text(mevcutGorunenAd));
+  // ÖNCE KAYDIR: 21 Ağu'da ayarların başına iki alan daha girdi (Ad, Kullanıcı
+  // adı) ve ülke satırı 800x600'lük varsayılan test penceresinin ALTINDA
+  // kaldı. Kaydırmadan `tap` "would not hit test" uyarısı verip ıskalıyordu.
+  final satir = find.text(mevcutGorunenAd);
+  await t.scrollUntilVisible(
+    satir,
+    200,
+    scrollable: find.byType(Scrollable).first,
+  );
+  await t.pumpAndSettle();
+  await t.tap(satir);
   await t.pumpAndSettle();
   await t.enterText(_aramaKutusu, ara);
   await t.pumpAndSettle();
@@ -345,6 +401,61 @@ void main() {
         final cikti = sayili.cf([7]);
         expect(cikti, contains('7'), reason: '$kod → sayı yerleşmedi');
         expect(cikti, isNot(contains('{}')), reason: '$kod → {} sızdı');
+      }
+    });
+
+    // 21 Ağu turunda gelen dört yeni yer tutuculu anahtar. Kaybolurlarsa
+    // ekranda sayı/ad HİÇ görünmez: kilit tek yerde toplandı.
+    const yeniYerTutuculu = [
+      // ayarlar.dart — kullanıcı adı kilidi ve başarı SnackBar'ı
+      '{} gün sonra değiştirebilirsin',
+      'Kullanıcı adın: @{}',
+      // kesfet.dart — kişiselleştirilmiş raf başlıkları
+      '{} dizileri',
+      '{} filmleri',
+    ];
+
+    test('yeni anahtarların 45 çevirisinde de TEK bir {} var', () {
+      for (final anahtar in yeniYerTutuculu) {
+        for (final kod in _cevrilenDiller) {
+          final ceviri = tumCeviriler[kod]![anahtar]!;
+          expect(
+            '{}'.allMatches(ceviri).length,
+            1,
+            reason: '$kod → "$anahtar" yer tutucusu kayıp/çoğaldı: "$ceviri"',
+          );
+        }
+      }
+    });
+
+    test('"Kullanıcı adın: @{}" çevirisinde @ işareti korunur', () {
+      // @ düşerse kullanıcı adı "@" olmadan basılır ve kopyalanan metin
+      // profil bağlantısı olarak işe yaramaz.
+      for (final kod in _cevrilenDiller) {
+        expect(
+          tumCeviriler[kod]!['Kullanıcı adın: @{}']!,
+          contains('@'),
+          reason: '$kod → @ işareti kayıp',
+        );
+      }
+    });
+
+    test('yeni anahtarlarda .cf değeri yerleştirir, {} sızmaz', () async {
+      for (final kod in _cevrilenDiller) {
+        await Ceviri.sec(kod);
+        for (final anahtar in yeniYerTutuculu) {
+          final cikti = anahtar.cf(['Marvel Studios']);
+          expect(
+            cikti,
+            contains('Marvel Studios'),
+            reason: '$kod → "$anahtar" değeri yerleşmedi',
+          );
+          expect(
+            cikti,
+            isNot(contains('{}')),
+            reason: '$kod → "$anahtar" içinde {} sızdı',
+          );
+        }
       }
     });
   });
