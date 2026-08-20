@@ -190,6 +190,20 @@ export const AYAR = {
   //   · en büyük kuyruk derinliği 0, hiçbir sınıfta aşım 1,00×'i geçmiyor.
   // Yani bütçe bol; darboğaz kapasitede değil, sıralama ADALETİNDE (bkz.
   // `siralamayiKur`) — ve orada ölçülen bir açlık VARDI, düzeltildi.
+  //
+  // YENİDEN HESAP (20 Ağu 2026 akşamı, bölüm haritası tüm bölümlere açıldı):
+  // `bolum` sınıfı adayı 115 → ~86.900 (78.725 bölüm + 2 × 4.089 sezon), yani
+  // toplam kuyruk ~33.600 değil ~95.000 anahtar. TABAN_PAY_ORANI DEĞİŞTİRİLMEDİ;
+  // aritmetik hâlâ tutuyor:
+  //   · üç sınıfın tabanı 3 × 96 = 288, bandın kalanı 192 → tamamı `bolum`a
+  //     gider (hepsi `yas = Infinity`) ⇒ bolum 288/koşu = 41.472/gün
+  //     ⇒ ilk doldurma 86.900 / 41.472 ≈ 2,1 gün,
+  //   · `icerik` ve `kisi` tabanla 96/koşu = 13.824/gün alır; ölçülen kararlı
+  //     talepleri toplam ~2.430/gün ⇒ AÇ KALMIYORLAR (20 Ağu'da düzeltilen
+  //     hatanın aynadaki görüntüsü bu tabanla oluşmuyor),
+  //   · kararlı durum: 86.900 / 30 gün (KATMAN.bolum) = ~2.900 istek/gün =
+  //     kapasitenin %4,2'si.
+  // Tavan koymaya da gerek YOK: taban payı zaten diğer sınıfları koruyor.
   CRON_DAKIKA: 10,
 
   /// Saniyedeki TMDB isteği. Sürekli kipte 1/sn: bu iş artık GÜNDÜZ de
@@ -519,15 +533,27 @@ export function bildirimCek(kaynak, ad) {
   return kaynak.slice(e.index, bildirimSonu(kaynak, e.index + e[0].length));
 }
 
-/** Site haritası SQL'lerini server.js kaynağından kurar (bağımlılıklarıyla). */
+/**
+ * Site haritası SQL'lerini server.js kaynağından kurar (bağımlılıklarıyla).
+ *
+ * ÜÇ SORGU, İKİ FARKLI İŞ (20 Ağu 2026):
+ *  · `SITEMAP_SORGU` / `SITEMAP_BOLUM_SORGU` — Google'a BİLDİRİLEN URL'ler.
+ *  · `ISITMA_BOLUM_SORGU` — ısıtılacak bölüm kuyruğu. Harita sorgusundan
+ *    AYRI olmak ZORUNDA: harita yalnız sezon yanıtı ÖNBELLEKTE OLAN bölümü
+ *    döndürür, ısıtıcı da yalnız haritadakini çekseydi önbellekte olmayan
+ *    sezon hiç çekilmez, harita da hiç büyümezdi (kendi kuyruğunu besleyen
+ *    kilit). Gerekçenin tamamı server.js'te sorgunun başlığında.
+ */
 export function sunucuSorgulari(kaynak) {
   const adlar = [
     'SEO_YORUM_MIN', 'SEO_INCELEME_MIN', 'seoOzUzunluk', 'SEO_GIZLI_ICERIK_YOK',
     'SEO_YORUM_KOSUL', 'SEO_INCELEME_KOSUL', 'SITEMAP_SORGU', 'SITEMAP_BOLUM_SORGU',
+    'ISITMA_BOLUM_SORGU',
   ];
   const govde = adlar.map((a) => bildirimCek(kaynak, a)).join('\n');
   // eslint-disable-next-line no-new-func
-  const sorgular = new Function(`${govde}\nreturn { SITEMAP_SORGU, SITEMAP_BOLUM_SORGU };`)();
+  const sorgular = new Function(
+    `${govde}\nreturn { SITEMAP_SORGU, SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU };`)();
   for (const [ad, sql] of Object.entries(sorgular)) {
     if (/\$\{/.test(sql)) throw new Error(`${ad} içinde çözülmemiş şablon var`);
   }
@@ -597,7 +623,7 @@ async function icerikKimlikleri(havuz, sitemapSorgu) {
   return rows.map((r) => ({ tur: r.tur, tmdbId: r.tmdb_id, oncelik: Number(r.oncelik) }));
 }
 
-/** Sitemap'teki bölüm sayfaları (tv, sezon, bölüm). */
+/** Isıtılacak bölüm sayfaları (tv, sezon, bölüm) — `ISITMA_BOLUM_SORGU`. */
 async function bolumKimlikleri(havuz, bolumSorgu) {
   const { rows } = await havuz.query(bolumSorgu);
   return rows.map((r) => ({ tmdbId: r.tmdb_id, sezon: r.sezon, bolum: r.bolum }));
@@ -666,7 +692,7 @@ async function kisiKimlikleri(havuz, icerikAnahtarlari) {
  * bayat sayılır (o sayfa bugün kesin soğuk açılıyor).
  */
 export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) {
-  const { SITEMAP_SORGU, SITEMAP_BOLUM_SORGU } = sunucuSorgulari(kaynak);
+  const { SITEMAP_SORGU, ISITMA_BOLUM_SORGU } = sunucuSorgulari(kaynak);
   const dilHaritasi = sunucuDilHaritasi(kaynak);
   // `istekler`: dilden BAĞIMSIZ yollar (kişi, bölüm, `/tv/:id`).
   // `dilliIstekler`: yolun KENDİSİ dile bağlı olanlar (içerik detayı —
@@ -704,14 +730,29 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
   }
 
   if (secim.siniflar.includes('bolum')) {
-    for (const b of await bolumKimlikleri(havuz, SITEMAP_BOLUM_SORGU)) {
+    // SIRA: sorgu (tv, sezon, bölüm) sıralı geliyor; dizi ve sezon anahtarı
+    // sezon DEĞİŞTİĞİNDE bir kez üretilir. Eskiden her bölüm satırı için
+    // yeniden üretilip Map'te tekilleşiyordu — 61 satırda görünmez, 78.725
+    // satırda 236 bin gereksiz nesne demek.
+    let sonSezon = '';
+    for (const b of await bolumKimlikleri(havuz, ISITMA_BOLUM_SORGU)) {
       const [dizi, sezon, bolum] = bolumYollari(b.tmdbId, b.sezon, b.bolum);
-      // `/tv/:id` (eksiz) içerik anahtarından FARKLIDIR ve onu YALNIZ bölüm
-      // SSR'ı okur. `sinif: 'icerik'` çünkü tazeleme aralığını dizinin durumu
-      // belirlemeli; `dilSinifi: 'diziDuz'` çünkü dili SSR'ınki (yalnız tr).
-      istekler.push({ yol: dizi, sinif: 'icerik', dilSinifi: 'diziDuz', oncelik: 0 });
-      istekler.push({ yol: sezon, sinif: 'bolum', dilSinifi: 'sezon', oncelik: 0 });
-      istekler.push({ yol: bolum, sinif: 'bolum', dilSinifi: 'bolum', oncelik: 0 });
+      if (sezon !== sonSezon) {
+        sonSezon = sezon;
+        // `/tv/:id` (eksiz) içerik anahtarından FARKLIDIR ve onu YALNIZ bölüm
+        // SSR'ı okur. `sinif: 'icerik'` çünkü tazeleme aralığını dizinin durumu
+        // belirlemeli; `dilSinifi: 'diziDuz'` çünkü dili SSR'ınki (yalnız tr).
+        istekler.push({ yol: dizi, sinif: 'icerik', dilSinifi: 'diziDuz', oncelik: 0 });
+        // ÖNCELİK 0 — SEZON ÖNCE, BÖLÜM SONRA (20 Ağu 2026).
+        // `siralamayiKur`da `oncelik` EN BAŞTAKİ sıralama anahtarı. Sezon
+        // yanıtı iki iş birden yapar: site haritasının kapsamını AÇAR
+        // (`SITEMAP_BOLUM_SORGU` sezon yanıtından okuyor) ve dizi sayfasının
+        // bölüm listesini besler. 8.178 sezon anahtarı ~1 günde biter ve
+        // harita o gün 78 bin URL'e ulaşır; 78.725 bölüm anahtarı arkadan
+        // gelir. Ters sırada harita günlerce dar kalırdı.
+        istekler.push({ yol: sezon, sinif: 'bolum', dilSinifi: 'sezon', oncelik: 0 });
+      }
+      istekler.push({ yol: bolum, sinif: 'bolum', dilSinifi: 'bolum', oncelik: 1 });
     }
   }
 

@@ -2687,8 +2687,23 @@ function seoAfisListesi(baslik, ogeler, tavan = SEO_AFIS_TAVAN) {
 // dizi sayfasından başlar; 15 Ağu ölçümünde Silo sayfasında 0 bölüm linki
 // vardı, sitemap-bölüm'de ise tüm sitede 2 URL. Tarama bütçesi için tavan:
 // son N sezonun bölümleri tek tek, daha eski sezonlar yalnız 1. bölüme.
+//
+// 20 Ağu 2026 — YETİMLİK ONARIMI. Eski kural bölüm linkini "yorumu olan
+// bölüm" ile sınırlıyordu; ölçüm 78.725 bölüm URL'inin 78.169'unun (%99,3)
+// sitede hiçbir sayfadan bağlantı almadığını gösterdi (Simpsonlar: 802 bölüm,
+// 0 link). Artık HER SEZON bağlantı alıyor:
+//   · son `SEO_DIZI_SEZON_TAM` sezon, `SEO_DIZI_BOLUM_TAVAN`a sığdığı kadar
+//     bölümüyle tek tek,
+//   · GERİ KALAN HER SEZON 1. bölümüne bir bağlantıyla ("diğer sezonlar").
+// İkinci katman bölüm sayfasında: oraya varan bot o sezonun tamamını görür
+// (`seoSezonGezinme`). Böylece her bölüm dizi sayfasından iki tık uzakta.
+//
+// `SEO_DIZI_SEZON_TAVAN`: "diğer sezonlar" listesinin tavanı. Canlı ölçümde
+// en çok sezonlu dizi 38 sezon (Simpsonlar); 60 hem marjlı hem de bozuk bir TMDB
+// yanıtının sayfayı şişirmesine karşı sigorta (SEO_AFIS_TAVAN disiplini).
 const SEO_DIZI_SEZON_TAM = 4;
 const SEO_DIZI_BOLUM_TAVAN = 80;
+const SEO_DIZI_SEZON_TAVAN = 60;
 
 /**
  * Sezon TMDB yükünden bölüm listesi HTML'i. Saf: TMDB çağırmaz, test edilir.
@@ -2723,65 +2738,61 @@ function seoDiziBolumHtml(id, diziAd, sezonlar, eskiBaglantilar = []) {
     const bn = x?.episode_number;
     if (!Number.isInteger(sn) || sn < 1 || !Number.isInteger(bn) || bn < 1) return null;
     return { ad: `${sn}. Sezon`, yol: `/dizi/${id}/sezon/${sn}/bolum/${bn}` };
-  }).filter(Boolean);
+  }).filter(Boolean).slice(0, SEO_DIZI_SEZON_TAVAN);
   return html + seoBaglantiListesi(`${diziAd} diğer sezonlar`, eski);
 }
 
 /**
- * Bu dizide sitemap ile AYNI kuralda indekslenen bölümler.
- * Dizi sayfasından boş/noindex bölüme link yok (Silo S3E8 tarama tuzağı).
+ * Dizi OG gövdesi: TÜM sezonlara bağlantı + son sezonların bölüm listesi.
+ *
+ * KAYNAK `v.seasons` — `/tv/:id` yanıtının İÇİNDE gelir, EK TMDB İSTEĞİ YOK
+ * (canlı ölçüm: haritadaki 1.219 dizinin %100'ünde bu dizi önbellekte).
+ * `episode_count`tan URL ÜRETİLMEZ; yalnız "bu sezonun bölümü var mı"
+ * sorusuna cevap olarak kullanılır ve sezon başına TEK bağlantı (1. bölüm)
+ * basılır. Tek tek bölüm bağlantıları HER ZAMAN gerçek sezon yanıtındaki
+ * `episodes[]` listesinden gelir — TMDB numaralandırmasında boşluk olsa bile
+ * bota olmayan bir URL bildirilmez (Silo S3E8 tarama tuzağı kuralı KORUNUYOR;
+ * değişen şey "yalnız yorumu olan bölüm" sınırı).
  */
-async function seoDiziIcerikBolumleri(tmdbId) {
-  const { rows } = await havuz.query(
-    `SELECT sezon, bolum FROM (
-       SELECT y.sezon, y.bolum
-         FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-        WHERE y.tur = 'tv' AND y.tmdb_id = $1
-          AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
-          AND ${SEO_YORUM_KOSUL}
-       UNION
-       SELECT p.sezon, p.bolum
-         FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-        WHERE p.tur = 'tv' AND p.tmdb_id = $1
-          AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
-          AND ${SEO_INCELEME_KOSUL}
-     ) t ORDER BY sezon, bolum`,
-    [tmdbId]);
-  return rows;
-}
-
-/** Dizi OG gövdesi: yalnız özgün içerikli bölümler + TMDB adı (8'li öbek). */
 async function seoDiziBolumGovdesi(id, v) {
-  const icerik = await seoDiziIcerikBolumleri(id);
-  if (!icerik.length) return '';
-  const sezonNolar = [...new Set(icerik.map((r) => r.sezon))]
-    .filter((n) => Number.isInteger(n) && n > 0)
-    .sort((a, b) => a - b);
-  const tamNolar = sezonNolar.slice(-SEO_DIZI_SEZON_TAM);
-  const eskiNolar = sezonNolar.filter((n) => !tamNolar.includes(n));
-  const yollar = tamNolar.map((n) => `/tv/${id}/season/${n}`);
+  const sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
+    .filter((s) => Number.isInteger(s?.season_number) && s.season_number >= 1
+      && Number.isInteger(s?.episode_count) && s.episode_count > 0)
+    .sort((a, b) => a.season_number - b.season_number);
+  if (!sezonlar.length) return '';
+  // SONDAN geriye: en yeni sezonlar tek tek, bölüm tavanına sığdığı kadar.
+  // İlk sezon tavanı tek başına aşsa bile listeye girer (`tam.length` şartı):
+  // aksi halde 1.000 bölümlük tek sezonlu bir dizi HİÇ bölüm linki almazdı;
+  // o durumda `seoDiziBolumHtml` içindeki tavan listeyi kısaltır.
+  const tam = [];
+  let toplam = 0;
+  for (let i = sezonlar.length - 1; i >= 0; i--) {
+    if (tam.length >= SEO_DIZI_SEZON_TAM) break;
+    const s = sezonlar[i];
+    if (tam.length && toplam + s.episode_count > SEO_DIZI_BOLUM_TAVAN) break;
+    tam.unshift(s.season_number);
+    toplam += s.episode_count;
+  }
+  const yollar = tam.map((n) => `/tv/${id}/season/${n}`);
   const harita = yollar.length
     ? await tmdbTopluGetir(yollar, ONBELLEK_TTL_SN.uzun)
     : new Map();
-  const sezonVerileri = tamNolar.map((n) => {
-    const s = harita.get(`/tv/${id}/season/${n}`);
-    const adByNo = new Map(
-      (Array.isArray(s?.episodes) ? s.episodes : [])
-        .filter((e) => Number.isInteger(e?.episode_number))
-        .map((e) => [e.episode_number, e.name]));
-    return {
-      season_number: n,
-      episodes: icerik
-        .filter((r) => r.sezon === n)
-        .map((r) => ({ episode_number: r.bolum, name: adByNo.get(r.bolum) })),
-    };
-  });
-  const eskiBag = eskiNolar.map((n) => {
-    const ilk = icerik.find((r) => r.sezon === n);
-    return { season_number: n, episode_number: ilk.bolum };
-  });
+  const sezonVerileri = [];
+  const basilan = new Set();
+  for (const n of tam) {
+    const bolumler = (harita.get(`/tv/${id}/season/${n}`)?.episodes || [])
+      .filter((e) => Number.isInteger(e?.episode_number) && e.episode_number >= 1);
+    // Sezon yanıtı çekilemediyse o sezon SESSİZCE DÜŞMEZ: aşağıdaki "diğer
+    // sezonlar" listesinde 1. bölümüne bağlanır (giriş noktası kaybolmasın).
+    if (!bolumler.length) continue;
+    basilan.add(n);
+    sezonVerileri.push({ season_number: n, episodes: bolumler });
+  }
+  const kalanlar = sezonlar
+    .filter((s) => !basilan.has(s.season_number))
+    .map((s) => s.season_number);
   const diziAd = seoMetin(v?.name) || 'Dizi';
-  return seoDiziBolumHtml(id, diziAd, sezonVerileri, eskiBag);
+  return seoDiziBolumHtml(id, diziAd, sezonVerileri, kalanlar);
 }
 
 // SEO 1.2 — yapısal veri. AggregateRating YALNIZCA gerçekten puan varsa basılır
@@ -2924,6 +2935,252 @@ function seoDegerlendirmeGovdesi(seo, { incelemeBasligi, yorumBasligi }) {
     ? `\n<h2>${htmlKacir(yorumBasligi)}</h2>\n`
       + seo.yorumlar.map(seoYorumHtml).join('\n') : '';
   return puanBlok + incelemeBlok + yorumBlok;
+}
+
+// ===========================================================================
+// SEO — BAŞLIK ve META AÇIKLAMA ŞABLONLARI (20 Ağu 2026)
+// ===========================================================================
+// ÖLÇÜLEN SORUN (canlı SSR, 20 Ağu):
+//   <title>Breaking Bad (2008) — dizi.jpg</title>
+//   <meta name="description" content="{TMDB özeti, KELİMESİ KELİMESİNE}">
+// İki ayrı kusur:
+//   1. Başlıkta HİÇBİR uzun kuyruk yok. Bölüm sayfası ("X 1. sezon 1. bölüm:
+//      ...") doğru yapıyordu, içerik sayfası yapmıyordu.
+//   2. Meta açıklama TMDB özetiydi — TMDB kullanan HER sitede aynı metin.
+//      Yinelenen içerik ve sıfır ayırt edicilik.
+//
+// ---------------------------------------------------------------------------
+// NEDEN "DAHA ÇOK ANAHTAR KELİME" DEĞİL
+// ---------------------------------------------------------------------------
+// Oyuncu listesi, konu özeti, yayın yılı TMDB verisidir; IMDb/Wikipedia/
+// Beyazperde'de de aynısı, kıyaslanamaz otoriteyle var (SEO-YAPILACAKLAR §3).
+// O sorguda anahtar ekleyerek kazanamayız. BİZDE OLUP ONLARDA OLMAYAN tek şey
+// KENDİ toplum puanımız ve yorum sayımız. Bu yüzden şablon, uzun kuyruğu
+// yalnız bizde olan veriye bağlar:
+//
+//   Breaking Bad (2008) oyuncuları — dizi.jpg puanı 5.0/5
+//
+// PUAN ZİNCİRİ TEK KAYNAKTAN: başlıktaki sayı `seoOrtalamaPuan()`in ürettiği
+// `ratingValue`dır — yani JSON-LD `aggregateRating` ile AYNI nesneden, aynı
+// biçimleyiciden (`seoYildizOrt`) ve aynı tohum-süzülmüş SQL'den
+// (`TOPLUM_PUAN_SQL`) gelir. İkinci bir sorgu YOK; eşiğin (`SEO_PUAN_MIN`)
+// altındaysa `seoOrtalamaPuan` null döner ve başlığa puan HİÇ basılmaz.
+// "0/10" ya da "henüz puan yok" yazmak boş bir vaatle tıklama çalmak olurdu.
+//
+// ---------------------------------------------------------------------------
+// UZUNLUK — Google beğenmediği başlığı KENDİ yeniden yazar
+// ---------------------------------------------------------------------------
+// Masaüstünde ~600px'te kesiliyor; pratik sınır ~60 karakter. Uzun adlarda
+// şablon taşar, o yüzden DÜŞÜRME SIRASI sabittir ve testle kilitlidir:
+//
+//   1. bölüm sayısı   (künyenin 2. parçası)
+//   2. sezon sayısı / süre (künyenin tamamı)
+//   3. yıl
+//   4. "oyuncuları" anahtarı
+//   5. dizi.jpg puanı
+//
+// DİZİ ADI ASLA DÜŞMEZ ve ASLA KESİLMEZ: hiçbir basamak sığmazsa en kısa
+// aday (`{ad} — dizi.jpg`) döner, uzun olsa bile. Adı kesmek, sayfanın neyle
+// ilgili olduğunu gizlemek demektir.
+//
+// "oyuncuları" NEDEN PUANDAN ÖNCE DÜŞER: Search Console'da ölçülen 25 marka
+// dışı sorgunun TAMAMI "X oyuncuları" kalıbında (§1), yani talep gerçek ve
+// sayfada karşılığı var (afişli oyuncu bloğu). Ama o sorguda bizi IMDb'den
+// ayıran şey anahtar değil PUAN; bu yüzden puan en son düşer.
+const SEO_BASLIK_MAX = 60;
+const SEO_ACIKLAMA_MAX = 155;
+// Marka eki TEK YERDE: bölüm sayfası da (`… bölüm: {ad} — dizi.jpg`) aynı
+// ayracı ve aynı markayı kullanır. Ayrışırsa arama sonucunda iki farklı site
+// gibi görünürüz.
+const SEO_MARKA = ' — dizi.jpg';
+
+/** Pozitif tamsayı ya da 0 — `undefined`/`null`/`0`/`"0"` hepsi 0'a düşer. */
+const seoPozitif = (x) => {
+  const n = Number(x);
+  return Number.isFinite(n) && n > 0 ? Math.trunc(n) : 0;
+};
+
+/**
+ * Yapımın SAYISAL künyesi — dizide sezon/bölüm, filmde süre.
+ * FİLM VE DİZİ FARKLI: filmde sezon yoktur, dizide süre yapım genelinde
+ * anlamsızdır (bölümden bölüme değişir; TMDB `episode_run_time` bir DİZİdir).
+ * Boş alanlar listeye HİÇ girmez — `0 sezon` ya da `undefined dakika` üretecek
+ * bir yol yok.
+ */
+function seoIcerikKunyesi({ tur, sezon, bolum, sure }) {
+  if (tur === 'tv') {
+    return [
+      seoPozitif(sezon) ? `${seoPozitif(sezon)} sezon` : '',
+      seoPozitif(bolum) ? `${seoPozitif(bolum)} bölüm` : '',
+    ].filter(Boolean);
+  }
+  return seoPozitif(sure) ? [`${seoPozitif(sure)} dakika`] : [];
+}
+
+/** Metni `max` karakterde KELİME sınırında kırpar ve `…` ekler. */
+function seoKirp(metin, max) {
+  const s = seoMetin(metin);
+  if (s.length <= max) return s;
+  const kesik = s.slice(0, max - 1);
+  const bosluk = kesik.lastIndexOf(' ');
+  const govde = bosluk > max * 0.5 ? kesik.slice(0, bosluk) : kesik;
+  return `${govde.replace(/[\s,;:.…-]+$/, '')}…`;
+}
+
+/**
+ * `/icerik/:tur/:id` sayfasının `<title>`ı.
+ * Düşürme sırası ve "ad asla kesilmez" kuralı yukarıdaki başlıkta.
+ * @param {string} puanMetni `seoOrtalamaPuan().ratingValue` + '/5' — yoksa null
+ */
+function seoIcerikBasligi({ ad, yil, tur, sezon, bolum, sure, oyuncuVar, puanMetni }) {
+  const kunye = seoIcerikKunyesi({ tur, sezon, bolum, sure });
+  const kur = ({ k, a, y, p }) => {
+    const bas = `${ad}${y && yil ? ` (${yil})` : ''}`;
+    const anahtar = a && oyuncuVar ? ' oyuncuları' : '';
+    const ek = kunye.slice(0, k).join(' ');
+    return `${bas}${anahtar}${ek ? `, ${ek}` : ''}${SEO_MARKA}`
+      + (p && puanMetni ? ` puanı ${puanMetni}` : '');
+  };
+  // Uzundan kısaya; her basamak bir şey DÜŞÜRÜR. İlk sığan kazanır.
+  const basamaklar = [
+    { k: 2, a: 1, y: 1, p: 1 },
+    { k: 1, a: 1, y: 1, p: 1 },
+    { k: 0, a: 1, y: 1, p: 1 },
+    { k: 0, a: 1, y: 0, p: 1 },
+    { k: 0, a: 0, y: 0, p: 1 },
+    { k: 0, a: 0, y: 0, p: 0 },
+  ];
+  let son = '';
+  for (const b of basamaklar) {
+    son = kur(b);
+    if (son.length <= SEO_BASLIK_MAX) return son;
+  }
+  return son;   // ad tek başına sınırı aşıyor: KESMEK YERİNE taşmayı kabul et
+}
+
+/**
+ * `/icerik/:tur/:id` sayfasının meta açıklaması (~155 karakter).
+ *
+ * TMDB ÖZETİ ARTIK BAŞA GEÇMİYOR: önce BİZİM verimizden bir cümle kurulur
+ * (künye + toplum puanı + yorum sayısı), özet ancak KALAN yere kırpılarak
+ * girer. Böylece iki sayfa aynı meta açıklamayı almaz.
+ *
+ * YAZILAN HER SAYI SAYFADA GERÇEKTEN VAR:
+ *   · sezon/bölüm/süre  -> gövdedeki künye satırı (`kunyeBlok`),
+ *   · puan + puan adedi -> `seoDegerlendirmeGovdesi` puan bloğu = JSON-LD,
+ *   · yorum adedi       -> sayfaya BASILAN `<article>` sayısı.
+ * `yorumAdet` bu yüzden veritabanı toplamı değil, basılan dizilerin uzunluğu.
+ */
+function seoIcerikAciklamasi({ ad, yil, tur, sezon, bolum, sure, ozet,
+  puanMetni, puanAdet, yorumAdet, oyuncuVar, benzerVar }) {
+  const kunye = seoIcerikKunyesi({ tur, sezon, bolum, sure });
+  // İLK CÜMLE ZORUNLU: adı kısaltmaktansa 155'i aşmayı kabul ederiz (başlıkla
+  // aynı disiplin). Sonraki cümleler yalnız SIĞIYORSA eklenir.
+  const parcalar = [
+    `${ad}${yil ? ` (${yil})` : ''} ${tur === 'tv' ? 'dizisi' : 'filmi'}`
+    + `${kunye.length ? `, ${kunye.join(' ')}` : ''}.`,
+  ];
+  const sigar = (c) => `${parcalar.join(' ')} ${c}`.length <= SEO_ACIKLAMA_MAX;
+  const ekle = (c) => { if (c && sigar(c)) parcalar.push(c); };
+  if (puanMetni) {
+    ekle(`dizi.jpg puanı ${puanMetni}`
+      + ` (${seoPozitif(puanAdet)} puan${yorumAdet ? `, ${yorumAdet} yorum` : ''}).`);
+  } else if (yorumAdet) {
+    // Puan yok ama okunacak metin var: vaat edilen şey sayfada duruyor.
+    ekle(`dizi.jpg'de ${yorumAdet} kullanıcı yorumu ve incelemesi.`);
+  } else {
+    // Ne puan ne yorum. Sayfada GERÇEKTEN basılan bloklar neyse o söylenir;
+    // "benzer filmler" cümlesi öneri listesi boşken yazılırsa tıklama tuzağı
+    // olur. Hiçbiri yoksa içerik değil, sitenin İŞLEVİ anlatılır.
+    const vitrin = [
+      oyuncuVar ? 'oyuncu kadrosu' : '',
+      benzerVar ? `benzer ${tur === 'tv' ? 'diziler' : 'filmler'}` : '',
+    ].filter(Boolean);
+    ekle(vitrin.length
+      ? `${vitrin.join(' ve ').replace(/^./, (c) => c.toLocaleUpperCase('tr'))} dizi.jpg'de.`
+      : 'dizi.jpg\'de puan ver, yorumla ve izleme listene ekle.');
+  }
+  const metin = parcalar.join(' ');
+  // ' Konu: ' = 7 karakter. Kalan yer 30'un altındaysa özet parçası HİÇ
+  // eklenmez: üç kelimelik bir kuyruk okura bilgi vermez, yalnız `…` üretir.
+  const kalan = SEO_ACIKLAMA_MAX - metin.length - 7;
+  const oz = seoMetin(ozet);
+  return oz && kalan >= 30 ? `${metin} Konu: ${seoKirp(oz, kalan)}` : metin;
+}
+
+/**
+ * `/dizi/:id/sezon/:s/bolum/:b` sayfasının meta açıklaması.
+ *
+ * İKİ ÖLÇÜLMÜŞ KUSURU birden kapatır (20 Ağu 2026 gövde ölçümü):
+ *
+ *  1. ÖZET İKİ KEZ BASILIYORDU. `aciklama` alanına HAM TMDB özeti veriliyordu;
+ *     `ogSayfa` onu gövdeye `<p>` olarak da basıyor, hemen altında
+ *     `<h2>… özeti</h2>` aynı metni TEKRAR basıyordu. Ölçülen yineleme 65-192
+ *     karakter — 627-1.090 karakterlik bir gövdenin dörtte biri kendi kopyası.
+ *  2. ÖZETSİZ SAYFALARIN AÇIKLAMASI BİREBİR AYNIYDI: "<dizi> N. sezon M. bölüm
+ *     <ad> — dizi.jpg puanı, incelemeleri ve kullanıcı yorumları." cümlesi
+ *     ~29.000 sayfada aynı kalıptı.
+ *
+ * NEDEN `seoIcerikAciklamasi`DEKİ "Konu: …" KUYRUĞU BURADA YOK — bilinçli
+ * AYRIM: içerik sayfasında TMDB özeti 300-800 karakter, kırpılan kuyruk onun
+ * küçük bir parçası. Bölüm özetinin ORTANCASI 145 karakter (canlı ölçüm), yani
+ * kuyruk özetin TAMAMI olurdu ve `ogSayfa` onu gövdeye basınca yineleme aynen
+ * geri gelirdi. Özet sayfada TEK YERDE yaşıyor: `<h2>… özeti</h2>` bloğunda.
+ * Meta açıklama bunun yerine SAYFADA GERÇEKTEN BULUNAN blokları anlatıyor.
+ *
+ * Yazılan her şey sayfada görünür: yayın tarihi `yayinBlok`ta, puan ve yorum
+ * adedi `seoDegerlendirmeGovdesi`nde, konuk oyuncular `konukBlok`ta, kare
+ * `seoBolumKaresi`nde. Vaat edilmeyen hiçbir blok cümleye girmiyor.
+ */
+function seoBolumAciklamasi({ diziAd, sezon, bolum, bolumAd, yayin,
+  puanMetni, puanAdet, yorumAdet, konukVar, kareVar }) {
+  const ad = seoMetin(bolumAd);
+  const parcalar = [
+    `${diziAd} ${sezon}. sezon ${bolum}. bölüm${ad ? ` "${ad}"` : ''}.`,
+  ];
+  const sigar = (c) => `${parcalar.join(' ')} ${c}`.length <= SEO_ACIKLAMA_MAX;
+  const ekle = (c) => { if (c && sigar(c)) parcalar.push(c); };
+  if (yayin) ekle(`Yayın tarihi ${yayin}.`);
+  if (puanMetni) {
+    ekle(`dizi.jpg puanı ${puanMetni}`
+      + ` (${seoPozitif(puanAdet)} puan${yorumAdet ? `, ${yorumAdet} yorum` : ''}).`);
+  } else if (yorumAdet) {
+    ekle(`dizi.jpg'de ${yorumAdet} kullanıcı yorumu ve incelemesi.`);
+  } else {
+    // Ne puan ne yorum: sayfada BASILAN bloklar neyse o söylenir. Hiçbiri
+    // yoksa içerik değil, sitenin işlevi anlatılır (içerik sayfasıyla aynı
+    // disiplin) — okura olmayan bir şey vaat edilmez.
+    const vitrin = [
+      konukVar ? 'konuk oyuncular' : '',
+      kareVar ? 'bölüm karesi' : '',
+    ].filter(Boolean);
+    ekle(vitrin.length
+      ? `${vitrin.join(' ve ').replace(/^./, (c) => c.toLocaleUpperCase('tr'))} dizi.jpg'de.`
+      : 'dizi.jpg\'de puan ver, yorumla ve izleme listene ekle.');
+  }
+  return parcalar.join(' ');
+}
+
+/**
+ * `/kisi/:id` sayfasının `<title>`ı.
+ *
+ * "kimdir?" YALNIZ BİYOGRAFİ VARSA: sayfadaki `<h2>{ad} kimdir?</h2>` bloğu
+ * biyografiye bağlı; biyografi yokken başlıkta soru sormak, cevabı olmayan
+ * bir sayfaya tıklatmak olur.
+ * "dizileri / filmleri" listede GERÇEKTEN ne varsa ona göre seçilir.
+ */
+function seoKisiBasligi({ ad, biyoVar, yapimlar = [] }) {
+  const tv = yapimlar.some((y) => y.tur === 'tv');
+  const film = yapimlar.some((y) => y.tur === 'movie');
+  const liste = tv && film ? 'dizileri ve filmleri' : (tv ? 'dizileri' : (film ? 'filmleri' : ''));
+  const buyuk = liste ? liste[0].toLocaleUpperCase('tr') + liste.slice(1) : '';
+  const adaylar = [
+    biyoVar && liste ? `${ad} kimdir? ${buyuk}${SEO_MARKA}` : '',
+    liste ? `${ad} ${liste}${SEO_MARKA}` : '',
+    biyoVar ? `${ad} kimdir?${SEO_MARKA}` : '',
+    `${ad}${SEO_MARKA}`,
+  ].filter(Boolean);
+  return adaylar.find((x) => x.length <= SEO_BASLIK_MAX) || adaylar[adaylar.length - 1];
 }
 
 function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo }) {
@@ -3069,19 +3326,23 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     // GÖRSELLER (19 Ağu 2026): oyuncu profilleri ve benzer yapım afişleri artık
     // `<img>` olarak basılıyor (tavan gerekçesi SEO_AFIS_TAVAN'da). Sayfa
     // toplamı: 1 ana afiş + 10 oyuncu + 8 benzer = 19 <= 20.
+    const oyuncular = (v.credits?.cast || []).filter((o) => o && o.name).slice(0, 10);
     const oyuncuBlok = seoAfisListesi('Oyuncular',
-      (v.credits?.cast || []).slice(0, 10)
+      oyuncular
         .map((o) => ({
           ad: o.name, yol: `/kisi/${o.id}`,
           afis: o.profile_path, alt: `${o.name} fotoğrafı`,
         })), 10);
+    // `recommendations` ÖNCE (ölçüm gerekçesi `icerikTmdbYolu` başlığında:
+    // %0,16 boş, `similar`da %1,08). `similar` yedeği EK İSTEK DOĞURMAZ —
+    // aynı yanıtın içindedir; yalnız eski anahtardan gelen bir satır
+    // okunursa (ör. dağıtım anı) sayfa iç bağlantısız kalmasın diye duruyor.
+    // TEK YERDE hesaplanıyor: meta açıklama "benzer diziler" cümlesini ancak
+    // liste GERÇEKTEN doluysa kuruyor (boş vaat üretmesin).
+    const benzerListe = ((v.recommendations?.results || v.similar?.results) || [])
+      .slice(0, 8).filter((b) => b.name || b.title);
     const benzerBlok = seoAfisListesi(tur === 'tv' ? 'Benzer diziler' : 'Benzer filmler',
-      // `recommendations` ÖNCE (ölçüm gerekçesi `icerikTmdbYolu` başlığında:
-      // %0,16 boş, `similar`da %1,08). `similar` yedeği EK İSTEK DOĞURMAZ —
-      // aynı yanıtın içindedir; yalnız eski anahtardan gelen bir satır
-      // okunursa (ör. dağıtım anı) sayfa iç bağlantısız kalmasın diye duruyor.
-      ((v.recommendations?.results || v.similar?.results) || []).slice(0, 8)
-        .filter((b) => b.name || b.title)
+      benzerListe
         .map((b) => {
           const bAd = b.name || b.title;
           const bYil = String(b.first_air_date || b.release_date || '').slice(0, 4);
@@ -3105,10 +3366,57 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     // Bölüm kuyruğu dizi sayfasından keşfedilir (filmde sezon yok).
     const bolumBlok = tur === 'tv' ? await seoDiziBolumGovdesi(id, v) : '';
 
+    // ---- BAŞLIK/AÇIKLAMA VERİSİ (20 Ağu 2026) --------------------------
+    // Puan TEK KAYNAKTAN: `seoOrtalamaPuan` JSON-LD `aggregateRating`i de
+    // üretiyor, yani başlıktaki sayı ile şemadaki sayı AYNI NESNEDEN gelir —
+    // ayrışmaları mümkün değil. Eşiğin (`SEO_PUAN_MIN`) altındaysa null
+    // döner ve ne başlığa ne açıklamaya puan basılır.
+    const puanNesnesi = seoOrtalamaPuan(seo);
+    const puanMetni = puanNesnesi ? `${puanNesnesi.ratingValue}/5` : null;
+    const sezonSayisi = tur === 'tv' ? seoPozitif(v.number_of_seasons) : 0;
+    const bolumSayisi = tur === 'tv' ? seoPozitif(v.number_of_episodes) : 0;
+    const filmSuresi = tur === 'tv' ? 0 : seoPozitif(v.runtime);
+    const kunye = seoIcerikKunyesi({
+      tur, sezon: sezonSayisi, bolum: bolumSayisi, sure: filmSuresi,
+    });
+    const turAdlari = (v.genres || []).map((g) => seoMetin(g?.name)).filter(Boolean);
+    const yayinTarihi = String(v.first_air_date || v.release_date || '').slice(0, 10);
+
+    // KÜNYE SATIRI — /og/kisi ve /og/sirket'teki `kimlikSatirlari` ile aynı
+    // desen. İKİ İŞ BİRDEN YAPAR:
+    //   1. Başlıkta/açıklamada geçen sezon-bölüm-süre sayılarının sayfadaki
+    //      GÖRÜNÜR karşılığı olur (yazdığımız her sayı sayfada olmalı).
+    //   2. JSON-LD'nin ZATEN beyan ettiği `numberOfSeasons`/`numberOfEpisodes`/
+    //      `duration`/`genre`/`datePublished` alanlarını görünür kılar —
+    //      "yapılandırılmış veri sayfada görünenle eşleşir" kuralındaki eski
+    //      bir boşluk böylece kapanıyor.
+    const kunyeSatirlari = [
+      ...kunye,
+      turAdlari.length ? `Tür: ${turAdlari.join(', ')}` : '',
+      yayinTarihi ? `${tur === 'tv' ? 'İlk yayın' : 'Vizyon'}: ${yayinTarihi}` : '',
+    ].filter(Boolean);
+    const kunyeBlok = kunyeSatirlari.length
+      ? `\n<p>${htmlKacir(kunyeSatirlari.join(' · '))}</p>` : '';
+    // KONU BLOĞU: TMDB özeti artık meta açıklamada değil, GÖVDEDE yaşıyor
+    // (bölüm sayfasındaki "… özeti" bloğuyla aynı desen). Meta açıklama
+    // yinelenmesin diye taşındı; JSON-LD `description` alanının görünür
+    // karşılığı olarak da burada durması ŞART.
+    const ozetBlok = seoMetin(v.overview)
+      ? `\n<h2>${htmlKacir(adYil)} konusu</h2>\n<p>${htmlKacir(seoMetin(v.overview))}</p>` : '';
+
     res.type('html').send(ogSayfa({
-      baslik: `${adYil} — dizi.jpg`,
+      baslik: seoIcerikBasligi({
+        ad, yil, tur, sezon: sezonSayisi, bolum: bolumSayisi, sure: filmSuresi,
+        oyuncuVar: oyuncular.length > 0, puanMetni,
+      }),
       h1: adYil,
-      aciklama: v.overview,
+      aciklama: seoIcerikAciklamasi({
+        ad, yil, tur, sezon: sezonSayisi, bolum: bolumSayisi, sure: filmSuresi,
+        ozet: v.overview, puanMetni, puanAdet: puanNesnesi?.ratingCount,
+        // Sayfaya BASILAN değerlendirme sayısı (DB toplamı değil).
+        yorumAdet: seo.yorumlar.length + seo.incelemeler.length,
+        oyuncuVar: oyuncular.length > 0, benzerVar: benzerListe.length > 0,
+      }),
       gorsel,
       url,
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
@@ -3118,6 +3426,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       // sayfayla eşleşecek olan karedir. `alt` ad + yıl taşır (aynı adlı
       // yapımlar ancak yılla ayrışıyor).
       govde: seoAnaGorsel(v.poster_path, `${adYil} afişi`)
+        + kunyeBlok + ozetBlok
         + degerlendirmeBlok + bolumBlok + oyuncuBlok + benzerBlok + firmaBlok,
       jsonLd: icerikJsonLd({ tur, url, ad, ozet: v.overview, gorsel, v, seo }),
     }));
@@ -3185,23 +3494,43 @@ const SEO_KISI_MESLEK = {
 };
 
 /**
- * Biyografisi HİÇ olmayan kişi için VERİDEN anlamlı bir açıklama kurar.
+ * Kişi sayfasının meta açıklaması — VERİDEN kurulur.
  * Jenerik "dizi.jpg üzerinde keşfet." cümlesinden farkı: her kişi için
  * FARKLIDIR (meslek + doğum + öne çıkan yapımlar), yani bir arama sorgusuna
  * gerçekten cevap verir ve yinelenen meta açıklama üretmez.
+ *
+ * 20 Ağu 2026 — İKİ DEĞİŞİKLİK:
+ *  1. BİYOGRAFİ ARTIK BAŞA GEÇMİYOR. Uç eskiden `biyografi || seoKisiAciklamasi()`
+ *     diyordu; biyografi TMDB metnidir ve TMDB kullanan her sitede aynıdır
+ *     (içerik sayfasındaki TMDB-özeti kusurunun kişi karşılığı). Artık her
+ *     zaman bu cümle kurulur, biyografi yalnız KALAN yere kırpılarak girer.
+ *  2. KAPANIŞ CÜMLESİ KOŞULLU. Eski hâli her sayfada "puanlarını ve kullanıcı
+ *     yorumlarını görebilirsin" diyordu — puanı/yorumu olmayan kişilerde bu
+ *     boş bir vaatti. Artık yalnız sayfaya BASILAN değerlendirme varsa yazılır.
+ * @param {{biyografi?: string, degerlendirmeAdet?: number}} ekler
  */
-function seoKisiAciklamasi(ad, v, yapimlar) {
+function seoKisiAciklamasi(ad, v, yapimlar, ekler = {}) {
+  const { biyografi = '', degerlendirmeAdet = 0 } = ekler;
   const meslek = SEO_KISI_MESLEK[v.known_for_department] || '';
   const yil = String(v.birthday || '').slice(0, 4);
   const yer = seoMetin(v.place_of_birth);
   const dogum = yil ? ` (d. ${yil}${yer ? `, ${yer}` : ''})` : '';
   const parcalar = [`${ad}${meslek ? `, ${meslek}` : ''}${dogum}.`];
-  if (yapimlar.length) {
-    parcalar.push(
-      `Öne çıkan yapımları: ${yapimlar.slice(0, 5).map((y) => y.ad).join(', ')}.`);
+  const sigar = (c) => `${parcalar.join(' ')} ${c}`.length <= SEO_ACIKLAMA_MAX;
+  // Kaç yapım adı sığıyorsa o kadar: sabit 5 ad, uzun adlarda cümleyi
+  // ortasından kestiriyordu (aynı kusur `seoSirketAciklamasi`de 3'e çekilerek
+  // çözülmüştü; burada sabit yerine ÖLÇÜ kullanılıyor).
+  for (let n = Math.min(5, yapimlar.length); n >= 1; n--) {
+    const c = `Öne çıkan yapımları: ${yapimlar.slice(0, n).map((y) => y.ad).join(', ')}.`;
+    if (sigar(c) || n === 1) { if (sigar(c)) parcalar.push(c); break; }
   }
-  parcalar.push('dizi.jpg\'de puanlarını ve kullanıcı yorumlarını görebilirsin.');
-  return parcalar.join(' ');
+  const c = seoPozitif(degerlendirmeAdet)
+    ? `dizi.jpg'de ${seoPozitif(degerlendirmeAdet)} kullanıcı yorumu ve incelemesi.` : '';
+  if (c && sigar(c)) parcalar.push(c);
+  const metin = parcalar.join(' ');
+  const kalan = SEO_ACIKLAMA_MAX - metin.length - 1;
+  const biyo = seoMetin(biyografi);
+  return biyo && kalan >= 30 ? `${metin} ${seoKirp(biyo, kalan)}` : metin;
 }
 
 /**
@@ -3346,11 +3675,17 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
     });
 
     res.type('html').send(ogSayfa({
-      baslik: `${ad} — dizi.jpg`,
+      // BAŞLIK (20 Ağu 2026): eski hâli `${ad} — dizi.jpg` idi, yani hiçbir
+      // uzun kuyruk taşımıyordu. "kimdir" ve "dizileri/filmleri" sayfanın
+      // GERÇEKTEN cevapladığı iki soru (biyografi bloğu + yapım listesi).
+      baslik: seoKisiBasligi({ ad, biyoVar: Boolean(biyografi), yapimlar }),
       h1: ad,
-      // Biyografi varsa meta açıklama ondan (ogSayfa 200 karaktere kırpar);
-      // yoksa veriden kurulmuş kişiye ÖZGÜ cümle.
-      aciklama: biyografi || seoKisiAciklamasi(ad, v, yapimlar),
+      // Meta açıklama her zaman VERİDEN kurulur; TMDB biyografisi yalnız
+      // kalan yere kırpılarak girer (gerekçe `seoKisiAciklamasi` başlığında).
+      aciklama: seoKisiAciklamasi(ad, v, yapimlar, {
+        biyografi,
+        degerlendirmeAdet: seo.yorumlar.length + seo.incelemeler.length,
+      }),
       gorsel: tmdbGorsel(v.profile_path, 'w500'),
       url,
       canonical: `${SITE_KOK}/kisi/${kid}`,
@@ -3446,20 +3781,27 @@ const seoLogoGorseli = (yol, alt) =>
  * açıklama üretilir (`seoKisiAciklamasi` ile aynı gerekçe: yinelenen meta
  * açıklama üretme, bir arama sorgusuna gerçekten cevap ver).
  */
-function seoSirketAciklamasi(ad, firma, yapimlar) {
+function seoSirketAciklamasi(ad, firma, yapimlar, ekler = {}) {
+  const { degerlendirmeAdet = 0 } = ekler;
   const merkez = seoMetin(firma?.headquarters);
   const ulke = seoUlkeAdi(firma?.origin_country);
   const nerede = merkez || ulke;
   const parcalar = [`${ad}${nerede ? `, ${nerede} merkezli` : ''} bir yapım firması.`];
-  // ÜÇ yapım (kişi sayfasındaki BEŞ değil): `ogSayfa` meta açıklamayı 200
-  // karakterde kırpıyor ve yapım adları yıl ekiyle birlikte uzun. Beş adla
-  // cümle ortasında kesiliyordu (ölçüldü: Netflix'te "puanlarını" diye
-  // bitiyordu); üçle kapanış cümlesi de sığıyor.
-  if (yapimlar.length) {
-    parcalar.push(
-      `Öne çıkan yapımları: ${yapimlar.slice(0, 3).map((y) => y.ad).join(', ')}.`);
+  const sigar = (c) => `${parcalar.join(' ')} ${c}`.length <= SEO_ACIKLAMA_MAX;
+  // ÜÇ yapım (kişi sayfasındaki BEŞ değil): yapım adları yıl ekiyle birlikte
+  // uzun ve cümle ortasında kesiliyordu (ölçüldü: Netflix'te "puanlarını" diye
+  // bitiyordu). 20 Ağu 2026: sabit üç yerine SIĞAN KADAR — uzun adlı üç yapım
+  // tek başına 155'i aşabiliyor.
+  for (let n = Math.min(3, yapimlar.length); n >= 1; n--) {
+    const c = `Öne çıkan yapımları: ${yapimlar.slice(0, n).map((y) => y.ad).join(', ')}.`;
+    if (sigar(c) || n === 1) { if (sigar(c)) parcalar.push(c); break; }
   }
-  parcalar.push('dizi.jpg\'de puanlarını ve yorumlarını görebilirsin.');
+  // KOŞULLU KAPANIŞ (20 Ağu 2026): eski hâli her firmada "puanlarını ve
+  // yorumlarını görebilirsin" diyordu; firma hakkında hiç yorum yokken bu
+  // boş bir vaatti (aynı düzeltme `seoKisiAciklamasi`de de yapıldı).
+  const c = seoPozitif(degerlendirmeAdet)
+    ? `dizi.jpg'de ${seoPozitif(degerlendirmeAdet)} kullanıcı yorumu ve incelemesi.` : '';
+  if (c && sigar(c)) parcalar.push(c);
   return parcalar.join(' ');
 }
 
@@ -3587,6 +3929,12 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       seoUlkeAdi(firma.origin_country) && `Ülke: ${seoUlkeAdi(firma.origin_country)}`,
     ].filter(Boolean);
     const tmdbAciklama = seoMetin(firma.description);
+    // TEK KEZ hesaplanır: hem meta açıklama hem (TMDB metni yoksa) JSON-LD
+    // `description` bunu kullanır. İki ayrı çağrı olsaydı biri yorum sayısını
+    // taşıyıp diğeri taşımayabilirdi — yapısal veri sayfadakinden ayrışırdı.
+    const metaAciklama = seoSirketAciklamasi(ad, firma, yapimlar, {
+      degerlendirmeAdet: seo.yorumlar.length + seo.incelemeler.length,
+    });
 
     // Sayfa toplamı: 1 logo + 9 dizi + 9 film = 19 <= SEO_AFIS_TAVAN.
     const govde = seoLogoGorseli(firma.logo_path, `${ad} logosu`)
@@ -3602,9 +3950,17 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       });
 
     res.type('html').send(ogSayfa({
+      // BAŞLIK KORUNDU: "Netflix dizileri" tam da hedeflenen uzun kuyruk
+      // (§6.1) ve 60 karakter bütçesine sığıyor. Puan eklenmiyor — firma
+      // JSON-LD'sinde bilinçli olarak `aggregateRating` YOK, başlıkta puan
+      // basmak şemayla çelişen bir sayı üretirdi.
       baslik: `${ad} dizileri ve filmleri — dizi.jpg`,
       h1: `${ad} yapımları`,
-      aciklama: tmdbAciklama || seoSirketAciklamasi(ad, firma, yapimlar),
+      // Meta açıklama artık HER ZAMAN veriden kurulur: TMDB'nin `description`
+      // metni TMDB kullanan her sitede aynıdır (yinelenen meta açıklama).
+      // O metin sayfada `<h2>{ad} hakkında</h2>` bloğunda GÖRÜNMEYE devam
+      // ediyor ve JSON-LD `description`ı da odur — beyan/görünüm eşliği bozulmaz.
+      aciklama: metaAciklama,
       gorsel: logo,
       url,
       canonical: `${SITE_KOK}/sirket/${sid}`,
@@ -3618,7 +3974,7 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       govde,
       jsonLd: sirketJsonLd({
         url: `${SITE_KOK}/sirket/${sid}`, ad,
-        aciklama: tmdbAciklama || seoSirketAciklamasi(ad, firma, yapimlar),
+        aciklama: tmdbAciklama || metaAciklama,
         logo, firma, yapimlar,
       }),
     }));
@@ -3852,20 +4208,96 @@ async function seoBolumVerisi(tmdbId, sezon, bolum) {
 }
 
 /**
- * Bölüm sayfasının KAPSAM KURALI — tek tanım noktası.
- * `ozgunIcerikVar`ın bölüm karşılığıdır ve ÜÇ yer bunu paylaşır: sayfanın
- * `indexle`si, `SITEMAP_BOLUM_SORGU` ve sayfaya basılan metin.
+ * BÖLÜM SAYFASININ KAPSAM KURALI — TEK TANIM NOKTASI (20 Ağu 2026).
+ *
+ * `ozgunIcerikVar`ın bölüm karşılığı. İKİ yer bunu paylaşmak ZORUNDA:
+ *   1. sayfanın `indexle`si            → burası,
+ *   2. `SITEMAP_BOLUM_SORGU` kapsamı   → `birlesik` CTE'sindeki WHERE.
+ * Ayrışırlarsa haritada olup `noindex` yiyen URL doğar; GSC'de
+ * "Gönderilen URL 'noindex' ile işaretlenmiş" hatası olarak görünür ve
+ * ölçekte (78 bin URL) haritanın tamamının güvenilirliğini bitirir.
+ * `test/seo_bolum_haritasi.test.js` iki tarafın AYNI DÖRT ALANI saydığını
+ * doğruluyor.
+ *
+ * ÖLÇÜ: sayfada H1 ve şablon cümle DIŞINDA gerçek bir veri var mı?
+ *   · bizim yorumumuz/incelememiz (en güçlü — özgün nesir),
+ *   · TMDB özeti (dil yedeği uygulanmış hali),
+ *   · konuk oyuncu (aynı zamanda `/kisi/:id`ye GERÇEK iç bağlantı),
+ *   · bölüm karesi (`still_path` — Google Görseller yüzeyi),
+ *   · GEÇMİŞ yayın tarihi (yayınlanmış bölümün sayfası "ne zaman
+ *     yayınlandı" sorusuna cevaptır; yayınlanmamışınki değildir).
+ * Beşinden hiçbiri yoksa sayfa gerçekten boştur: ne haritaya girer ne
+ * indexlenir. Canlı ölçümde bu küme %0,69.
+ *
  * Ölçü elde hazır veridir: fazladan sorgu atılmaz.
  */
-const bolumOzgunIcerikVar = (seo) =>
-  seo.yorumlar.length > 0 || seo.incelemeler.length > 0;
+const bolumIcerikOlcusu = (bol, ozet) => {
+  if (seoMetin(ozet)) return true;
+  if (Array.isArray(bol?.guest_stars) && bol.guest_stars.length > 0) return true;
+  if (seoMetin(bol?.still_path)) return true;
+  const gun = String(bol?.air_date ?? '');
+  // Harita tarafı `< current_date` kullanıyor (bir gün DAHA DAR): saat dilimi
+  // farkı yüzünden "haritada var ama noindex" durumu doğamasın.
+  return /^\d{4}-\d{2}-\d{2}$/.test(gun) && gun <= new Date().toISOString().slice(0, 10);
+};
 
-// Bölüm sayfasının iç bağlantı bütçesi. AYNI SEZONUN diğer bölümleri tarama
-// derinliğinin asıl kaynağı: tek bölüm sayfası sezonun tamamına köprü olur.
-// 12'de kesiliyor çünkü 40 bölümlük bir sezonun tamamını her bölüm sayfasına
-// basmak, içeriği olmayan onlarca bölüme tarama daveti çıkarır.
+const bolumOzgunIcerikVar = (seo, bol, ozet) =>
+  seo.yorumlar.length > 0 || seo.incelemeler.length > 0
+  || bolumIcerikOlcusu(bol, ozet);
+
+// ---------------------------------------------------------------------------
+// BÖLÜM SAYFASININ SEZON İÇİ GEZİNME BÜTÇESİ (20 Ağu 2026'da yeniden kuruldu)
+// ---------------------------------------------------------------------------
+// ÖLÇÜM: 78.725 bölüm URL'inin 78.169'u (%99,3) sitede HİÇBİR sayfadan
+// bağlantı almıyordu. Simpsonlar: 802 bölüm, dizi sayfasında 0 bölüm linki.
+// Yalnız haritadan keşfedilen URL Google için düşük öncelikli adaydır —
+// bugünkü GSC tablosu (2.518 URL'in 2.159'u "keşfedildi, taranmadı") bunun
+// kanıtı. Bağlantı olmadan harita tek başına çalışmaz.
+//
+// YENİ YAPI İKİ KATMANLI:
+//   dizi sayfası → HER SEZONUN 1. bölümü        (`seoDiziBolumHtml`)
+//   bölüm sayfası → O SEZONUN TÜM bölümleri     (aşağıdaki iki sabit)
+// Böylece her bölüm dizi sayfasından EN FAZLA İKİ TIKLIK uzakta.
+//
+// Eski kural "sezonun İLK 12 bölümü"ydü: 24 bölümlük bir sezonda 13-24 arası
+// yalnız önceki/sonraki zincirinden erişilebiliyordu (derinlik lineer).
+// Yenisi İKİ PARÇA:
+//   · PENCERE — bulunulan bölümün ±`SEO_BOLUM_KOMSU` komşusu (25 bölüm),
+//   · MERDİVEN — sezon uzunsa eşit aralıklı en fazla `SEO_BOLUM_MERDIVEN`
+//     basamak (+ sezonun son bölümü her zaman).
+// SAYILAR ÖLÇÜMDEN GELİYOR (canlı, 20 Ağu 2026): en uzun sezon 1.464 bölüm
+// (4.089 sezonun 549'u 25'ten uzun, 2'si 1.000'den). Merdiven adımı
+// `ceil(n / SEO_BOLUM_MERDIVEN)`; 1.464 / 60 = 25 = pencere genişliği
+// (2 × 12 + 1). Adım pencereyi AŞMADIĞI sürece basamakların pencereleri
+// BOŞLUKSUZ döşenir ⇒ veritabanındaki EN UZUN sezonda bile her bölüm,
+// herhangi bir bölüm sayfasından İKİ TIKLIK uzakta.
+// Sayfa başına en fazla ~85 bölüm bağlantısı (SEO_AFIS_TAVAN disipliniyle aynı
+// mantık: düz metin bağlantı ucuz, `<img>` değil — burada görsel YOK).
 const SEO_BOLUM_KOMSU = 12;
+const SEO_BOLUM_MERDIVEN = 60;
 const SEO_BOLUM_KONUK = 8;   // konuk oyuncu bağlantısı (/kisi/:id)
+
+/**
+ * Sezon içi gezinme kümesi. SAF fonksiyon (test edilir, TMDB çağırmaz).
+ * @param {number[]} nolar  sezondaki GERÇEK bölüm numaraları (artan)
+ * @param {number}   b      bulunulan bölüm
+ * @returns {number[]} bağlantı verilecek bölüm numaraları (artan, `b` hariç)
+ */
+function seoSezonGezinme(nolar, b) {
+  const n = nolar.length;
+  if (!n) return [];
+  const secili = new Set();
+  let i = nolar.indexOf(b);
+  if (i < 0) i = 0;                     // bölüm listede yoksa baştan pencerele
+  const bas = Math.max(0, i - SEO_BOLUM_KOMSU);
+  const son = Math.min(n, i + SEO_BOLUM_KOMSU + 1);
+  for (let k = bas; k < son; k++) secili.add(nolar[k]);
+  const adim = Math.max(1, Math.ceil(n / SEO_BOLUM_MERDIVEN));
+  for (let k = 0; k < n; k += adim) secili.add(nolar[k]);
+  secili.add(nolar[n - 1]);             // sezon finali her zaman erişilebilir
+  secili.delete(b);
+  return [...secili].sort((x, y) => x - y);
+}
 
 /**
  * Bölüm sayfasının yapısal verisi: TVEpisode (+ uygunsa AggregateRating ve
@@ -3994,15 +4426,16 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       });
     }
 
+    // Sezon içi gezinme: pencere + merdiven (gerekçe `SEO_BOLUM_KOMSU`da).
+    // Önceki/sonraki bölüm zaten `komsu` bloğunda, burada YİNELENMEZ.
+    const bolumAdlari = new Map(sezonBolumleri.map((e) => [e.episode_number, e.name]));
     const sezonBlok = seoBaglantiListesi(`${diziAd} ${s}. sezon bölümleri`,
-      sezonBolumleri
-        .filter((e) => e.episode_number !== b && e.episode_number !== b - 1
-          && e.episode_number !== b + 1)
-        .slice(0, SEO_BOLUM_KOMSU)
-        .map((e) => ({
-          ad: `${s}. Sezon ${e.episode_number}. Bölüm`
-            + (seoMetin(e.name) ? ` — ${seoMetin(e.name)}` : ''),
-          yol: `/dizi/${id}/sezon/${s}/bolum/${e.episode_number}`,
+      seoSezonGezinme([...bolumNolari].sort((x, y) => x - y), b)
+        .filter((n) => n !== b - 1 && n !== b + 1)
+        .map((n) => ({
+          ad: `${s}. Sezon ${n}. Bölüm`
+            + (seoMetin(bolumAdlari.get(n)) ? ` — ${seoMetin(bolumAdlari.get(n))}` : ''),
+          yol: `/dizi/${id}/sezon/${s}/bolum/${n}`,
         })));
 
     const konukBlok = seoBaglantiListesi('Bu bölümdeki konuk oyuncular',
@@ -4012,20 +4445,32 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
         .map((o) => ({ ad: o.name, yol: `/kisi/${o.id}` })));
 
     // Yayın tarihi görünür bilgi: JSON-LD'deki datePublished ile aynı gün.
-    const yayinBlok = bol.air_date
-      ? `\n<p>Yayın tarihi: ${htmlKacir(String(bol.air_date).slice(0, 10))}</p>` : '';
+    const yayinGunu = /^\d{4}-\d{2}-\d{2}/.test(String(bol.air_date ?? ''))
+      ? String(bol.air_date).slice(0, 10) : '';
+    const yayinBlok = yayinGunu
+      ? `\n<p>Yayın tarihi: ${htmlKacir(yayinGunu)}</p>` : '';
     const ozetBlok = ozet
       ? `\n<h2>${htmlKacir(bolumAd)} özeti</h2>\n<p>${htmlKacir(ozet)}</p>` : '';
+    const bolumPuani = seoOrtalamaPuan(seo);
 
     res.type('html').send(ogSayfa({
       baslik: `${diziAd} ${s}. sezon ${b}. bölüm: ${bolumAd} — dizi.jpg`,
       h1,
-      aciklama: ozet || `${diziAd} ${s}. sezon ${b}. bölüm "${bolumAd}" —`
-        + ' dizi.jpg puanı, incelemeleri ve kullanıcı yorumları.',
+      // ÖZET GÖVDEDE BİR KEZ (`ozetBlok`), meta açıklama BİZİM verimizden
+      // kuruluyor — gerekçe `seoBolumAciklamasi`da.
+      aciklama: seoBolumAciklamasi({
+        diziAd, sezon: s, bolum: b, bolumAd, yayin: yayinGunu,
+        puanMetni: bolumPuani ? `${bolumPuani.ratingValue}/5` : null,
+        puanAdet: bolumPuani?.ratingCount,
+        // Sayfaya BASILAN değerlendirme sayısı (DB toplamı değil).
+        yorumAdet: seo.yorumlar.length + seo.incelemeler.length,
+        konukVar: konukBlok !== '',
+        kareVar: !!seoMetin(bol.still_path),
+      }),
       gorsel: tmdbGorsel(bol.still_path, 'w780') || tmdbGorsel(dizi.poster_path),
       url,
       canonical: `${SITE_KOK}/dizi/${id}/sezon/${s}/bolum/${b}`,
-      indexle: bolumOzgunIcerikVar(seo),
+      indexle: bolumOzgunIcerikVar(seo, bol, ozet),
       tur: 'video.episode',
       // GÖRSEL (19 Ağu 2026): bölüm karesi (still) varsa o, yoksa dizinin
       // afişi. Kare 16:9 olduğu için AYRI yardımcı — afiş kutusunun 2:3
@@ -4890,31 +5335,181 @@ const SITEMAP_SORGU = `
 // (SEO-PLANI 3.7) ve SSR sayfası 6 Ağu'dan beri VAR — ama sitemap'te HİÇ YOKTU,
 // yani Google bölüm sayfalarını keşfetmiyordu.
 //
-// KAPSAM, içerik haritasıyla AYNI disiplindedir ve `bolumOzgunIcerikVar()` ile
-// BİREBİR örtüşür: yalnız o bölüme yayına değer yorum ya da inceleme yazılmış
-// bölümler. Aksi halde 2.400 dizi × ~50 bölüm = on binlerce boş sayfa taramaya
-// davet edilirdi (tarama bütçesi israfı, bu maddenin tek gerçek riski).
+// ---------------------------------------------------------------------------
+// 20 Ağu 2026 — KAPSAM 61 URL'DEN TÜM BÖLÜMLERE AÇILDI
+// ---------------------------------------------------------------------------
+// ESKİ KURAL: "yalnız o bölüme yayına değer yorum/inceleme yazılmış bölümler."
+// ÖLÇÜM (canlı, 20 Ağu): bu kural haritayı 61 URL'de tutuyordu ve süzgeci
+// TAMAMEN silmek bile yalnız 67 yapıyordu — çünkü tüm veritabanında bölüm
+// düzeyinde yorum almış 67 bölüm var ve 61'inin yazarı `tohum` (AI).
 //
-// SÜZGEÇLER ORTAK SABİTLERDEN gelir (SEO_YORUM_KOSUL / SEO_INCELEME_KOSUL):
-// spoiler, yasaklı yazar, "bu içeriği gizle" tercihi ve uzunluk eşiği burada da
-// aynen geçerli — sitemap ile sayfanın `indexle`si ayrışamaz.
+// KURAL DÖNGÜSELDİ: sayfa yayınlanmayınca Google'a girmiyor, Google'a
+// girmeyince ziyaretçi gelmiyor, ziyaretçi gelmeyince yorum yazılmıyor,
+// yorum olmayınca sayfa yayınlanmıyor. "Yorumu olan bölümü yayınla" kuralı
+// beklediği şeyin ÖN KOŞULUNU kendisi engelliyordu.
+//
+// YENİ ÖLÇÜ — `bolumIcerikOlcusu()` (server.js, tek tanım noktası) ile
+// BİREBİR aynı: sayfada H1 ve şablon cümle DIŞINDA gerçek bir veri varsa
+// yayınlanır. Dört kaynak (canlı ölçüm, 7.874 önbellekli bölüm üzerinde):
+//   · bizim yorumumuz/incelememiz  ·        61 bölüm
+//   · TMDB özeti                   · %71,3  (5.613)
+//   · konuk oyuncu listesi         · %69,1  (5.444)
+//   · bölüm karesi (still_path)    · %96,6  (7.609)
+//   · geçmiş yayın tarihi          · %99,1  (7.806)
+// Dördünden HİÇBİRİ olmayan = gerçekten boş sayfa: 54 / 7.874 = %0,69.
+// O küme haritaya da GİRMEZ, `indexle` de ALMAZ (B2: harita ile noindex
+// ayrışamaz — 78 bin "Gönderilen URL noindex ile işaretlenmiş" hatası).
+//
+// NEDEN `tmdb_onbellek` ÜZERİNDEN: bölüm evreni bizim tablolarımızda YOK
+// (`yorumlar`/`puanlar` yalnız DOKUNULMUŞ bölümü bilir). Sezon yanıtı
+// (`/tv/:id/season/:n`) bölümün özetini, konuk oyuncusunu, karesini ve yayın
+// tarihini ZATEN taşıyor — ek TMDB isteği gerekmiyor.
+//
+// YALNIZ `language=tr-TR` SATIRI OKUNUR — İKİ SEBEP:
+//   1. MALİYET: sezon belgeleri TOAST'lanmış büyük jsonb'ler. Canlı ölçüm:
+//      dil ayrımı olmadan 8.336 anahtar → 29,4 sn; tek dille 1.067 anahtar
+//      → 8,6 sn. Önbellek dolduğunda (4.089 sezon) tek dil ~25 sn, tüm
+//      diller ~5 dakika olurdu. Harita 6 saatte bir üretiliyor ama tek-uçuş
+//      kalıbında o süreyi BEKLEYEN gerçek bir istek var.
+//   2. GÜVENLİK YÖNÜ: tr satırı, sayfanın gördüğü verinin ALT KÜMESİ
+//      (sayfa ayrıca `translations` yedeğine düşüyor). Yani harita "içeriği
+//      var" dediğinde sayfa da diyor; ters yön mümkün ama zararsız
+//      (indekslenebilir ama haritada olmayan sayfa hata değil, iç
+//      bağlantıdan bulunur).
+//
+// `yayin < current_date` (`<=` DEĞİL): sayfa tarafı `<= bugün` (UTC)
+// kullanıyor. Veritabanı `current_date`i sunucu saat diliminde. Gün
+// dönümünde ikisi ayrışabilir; harita tarafını BİR GÜN DAHA DAR tutmak
+// "haritada var ama noindex" durumunu matematiksel olarak imkânsız kılar.
+//
+// SIRALAMA `tmdb_id, sezon, bolum` — `son DESC` DEĞİL. 78 bin URL 20.000'lik
+// dosyalara bölünüyor; sıra her üretimde değişirse URL'ler dosyalar arasında
+// yer değiştirir ve Google her seferinde tüm alt haritaları yeniden indirir.
+// Kimlik sırası sabittir: bir URL hep aynı dosyada kalır.
 const SITEMAP_BOLUM_SORGU = `
-  SELECT tmdb_id, sezon, bolum, max(tarih) AS son FROM (
-    SELECT y.tmdb_id, y.sezon, y.bolum, y.tarih
-      FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
-     WHERE y.tur = 'tv' AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
-       AND ${SEO_YORUM_KOSUL}
+  WITH harita_tv AS (
+    SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
+  ), sezon_yaniti AS (
+    SELECT (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[1]::int AS tmdb_id,
+           (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[2]::int AS sezon,
+           veri
+      FROM tmdb_onbellek
+     WHERE anahtar LIKE '/tv/%/season/%'
+       AND anahtar ~ '^/tv/[0-9]+/season/[0-9]+\\?language=tr-TR$'
+       AND jsonb_typeof(veri->'episodes') = 'array'
+  ), tmdb_bolum AS MATERIALIZED (
+    -- AS MATERIALIZED ve harita_tv birleşiminin SONRAYA bırakılması BİLİNÇLİ.
+    -- İlk yazımda harita_tv bu CTE'nin içinde birleştiriliyordu; planlayıcı
+    -- regex süzgeçli seq scan'e "rows=1" biçtiği için jsonb belgelerini
+    -- Materialize edip 1.219 kez YENİDEN TARAYAN bir nested loop seçti:
+    -- ölçülen 37 sn. Birleşim toplulaştırmadan SONRA yapılınca (küçük satırlar,
+    -- hash join) aynı sonuç 6-8 sn.
+    SELECT s.tmdb_id, s.sezon, (e->>'episode_number')::int AS bolum,
+           max(length(btrim(coalesce(e->>'overview', '')))) AS ozet,
+           max(jsonb_array_length(coalesce(e->'guest_stars', '[]'::jsonb))) AS konuk,
+           count(*) FILTER (WHERE coalesce(e->>'still_path', '') <> '') AS kare,
+           max(CASE WHEN e->>'air_date' ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'
+                    THEN (e->>'air_date')::date END) AS yayin
+      FROM sezon_yaniti s, jsonb_array_elements(s.veri->'episodes') e
+     WHERE s.sezon >= 1
+       AND e->>'episode_number' ~ '^[0-9]+$'
+       AND (e->>'episode_number')::int >= 1
+     GROUP BY 1, 2, 3
+  ), bizim_bolum AS (
+    SELECT tmdb_id, sezon, bolum, max(tarih) AS son FROM (
+      SELECT y.tmdb_id, y.sezon, y.bolum, y.tarih
+        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+       WHERE y.tur = 'tv' AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
+         AND ${SEO_YORUM_KOSUL}
+      UNION ALL
+      SELECT p.tmdb_id, p.sezon, p.bolum, p.tarih
+        FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+       WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
+         AND ${SEO_INCELEME_KOSUL}
+    ) t GROUP BY tmdb_id, sezon, bolum
+  ), birlesik AS (
+    SELECT b.tmdb_id, b.sezon, b.bolum,
+           CASE WHEN b.yayin < current_date THEN b.yayin END AS gun,
+           NULL::timestamptz AS bizim
+      FROM tmdb_bolum b JOIN harita_tv h ON h.tmdb_id = b.tmdb_id
+     WHERE b.ozet > 0 OR b.konuk > 0 OR b.kare > 0 OR b.yayin < current_date
     UNION ALL
-    SELECT p.tmdb_id, p.sezon, p.bolum, p.tarih
-      FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
-     WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
-       AND ${SEO_INCELEME_KOSUL}
-  ) t GROUP BY tmdb_id, sezon, bolum ORDER BY son DESC`;
+    SELECT tmdb_id, sezon, bolum, NULL::date, son FROM bizim_bolum
+  )
+  SELECT tmdb_id, sezon, bolum, coalesce(max(bizim)::date, max(gun)) AS son
+    FROM birlesik GROUP BY tmdb_id, sezon, bolum
+   ORDER BY tmdb_id, sezon, bolum`;
+
+// ---------------------------------------------------------------------------
+// ISITMA_BOLUM_SORGU — HARİTA DEĞİL, ISITICI KUYRUĞU
+// ---------------------------------------------------------------------------
+// `isitici.js` bugüne kadar ısıtılacak bölümleri `SITEMAP_BOLUM_SORGU`dan
+// alıyordu. Yeni harita sorgusuyla bu KİLİTLENİRDİ: harita yalnız SEZON
+// YANITI ÖNBELLEKTE OLAN bölümleri döndürür, ısıtıcı da yalnız haritadakileri
+// çeker ⇒ önbellekte olmayan sezon HİÇBİR ZAMAN çekilmez, harita 263 dizide
+// donardı. Bu yüzden ısıtma kuyruğu AYRI ve DAHA GENİŞ bir kaynaktan gelir.
+//
+// Kaynak: `/tv/:id` yanıtının `seasons[]` dizisi — `season_number` +
+// `episode_count`. Bu veri haritadaki 1.219 dizinin %100'ünde ZATEN
+// önbellekte (canlı ölçüm), yani ek TMDB isteği gerektirmiyor.
+//
+// `episode_count`tan URL ÜRETİLMEZ, yalnız ISITILACAK ANAHTAR üretilir:
+// numaralandırmada boşluk olsa bile en kötü ihtimalle boşa bir TMDB isteği
+// atılır. Bota bildirilen URL'ler (harita ve iç bağlantılar) her zaman
+// TMDB'nin GERÇEK bölüm listesinden gelir — uydurma URL yok.
+const ISITMA_BOLUM_SORGU = `
+  WITH harita_tv AS (
+    SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
+  ), tv_sezon AS (
+    SELECT DISTINCT ON (tv, sezon_no) tv, sezon_no, bolum_adedi FROM (
+      SELECT (regexp_match(anahtar, '^/tv/([0-9]+)(\\?|$)'))[1]::int AS tv,
+             (s->>'season_number')::int AS sezon_no,
+             (s->>'episode_count')::int AS bolum_adedi
+        FROM tmdb_onbellek,
+             jsonb_array_elements(coalesce(veri->'seasons', '[]'::jsonb)) s
+       WHERE anahtar LIKE '/tv/%'
+         AND anahtar ~ '^/tv/[0-9]+(\\?|$)'
+         AND s->>'season_number' ~ '^[0-9]+$'
+         AND s->>'episode_count' ~ '^[0-9]+$'
+    ) t ORDER BY tv, sezon_no, bolum_adedi DESC
+  )
+  SELECT v.tv AS tmdb_id, v.sezon_no AS sezon, g.bolum
+    FROM tv_sezon v
+    JOIN harita_tv h ON h.tmdb_id = v.tv,
+         LATERAL generate_series(1, v.bolum_adedi) g(bolum)
+   WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0
+   ORDER BY v.tv, v.sezon_no, g.bolum`;
 
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
-const SITEMAP_TTL_MS = 6 * 3600 * 1000; // sorgu tüm yorum tablosunu tarar; her istekte çalışmasın
+// TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 20 Ağu 2026, bölüm sorgusu):
+//   · bugün (719 tr-TR sezon belgesi, 7.820 URL) — 4,6 sn soğuk / 2,5 sn sıcak,
+//   · önbellek dolduğunda (4.089 sezon, ~78.000 URL) doğrusal ölçekle ~15-26 sn.
+// Maliyet jsonb belgelerinin TOAST açımından geliyor, satır sayısından değil.
+// Tek-uçuş kalıbı sayesinde 6 saatte YALNIZ BİR istek bunu bekler; nginx
+// `proxy_read_timeout` 300 sn olduğu için pay bol. Zamanlayıcıyla önden
+// ısıtmak KASITLI OLARAK yapılmadı: küme kipinde her işçi ayrı ayrı koşar ve
+// aynı sorgu N kat çalışırdı (ısıtıcının `setInterval` yasağıyla aynı tuzak).
+const SITEMAP_TTL_MS = 6 * 3600 * 1000;
 
-const gunTarihi = (d) => new Date(d).toISOString().slice(0, 10); // W3C: YYYY-MM-DD
+/**
+ * W3C tarih damgası (YYYY-MM-DD) — GEÇERSİZ GİRDİDE ATMAZ, boş döner.
+ *
+ * 20 Ağu 2026, BLOKE EDİCİ ONARIM. Eski hali koşulsuz `new Date(d).toISOString()`
+ * çağırıyordu; `d` yoksa `RangeError: Invalid time value` atıyordu. Bu hata
+ * SESSİZ olurdu: `sitemapKovaOku`nun hata dalı BAYAT önbelleği servis etmeye
+ * devam eder, `/sitemap.xml` de `allSettled` ile bölüm hatasını yutar. Yani
+ * dağıtım "başarılı" görünür, harita sonsuza kadar eski URL'lerde donardı.
+ * Bölüm haritası TMDB numaralandırmasına açıldığında tarihsiz satır KURAL
+ * HALİNE geldiği için (yayın tarihi bilinmeyen bölüm) bu artık istisna değil.
+ *
+ * Tarihsiz satır `lastmod`SUZ basılır — uydurma tarih basmak yasak (Google
+ * `lastmod`u tutarsız bulursa TAMAMEN yok sayar, bkz. `sitemapSatiri`).
+ */
+const gunTarihi = (d) => {
+  if (d === null || d === undefined || d === '') return '';
+  const t = new Date(d);
+  return Number.isNaN(t.getTime()) ? '' : t.toISOString().slice(0, 10);
+};
 
 // Önbellek kapları. İçerik ve bölüm haritaları AYRI kaplarda tutulur: biri
 // üretilemezse diğeri servis edilmeye devam eder.
@@ -4985,9 +5580,14 @@ function sitemapGonder(res, xml) {
   res.type('application/xml').send(xml);
 }
 
-/** `<url>` satırı — XML kaçışı ATLANMAZ (loc kullanıcı verisinden türese bile). */
+/**
+ * `<url>` satırı — XML kaçışı ATLANMAZ (loc kullanıcı verisinden türese bile).
+ * `lastmod` BOŞSA etiket HİÇ BASILMAZ: protokolde isteğe bağlı bir alan, ama
+ * uydurma/boş bir değer basmak haritanın tamamının güvenilirliğini düşürür.
+ */
 const sitemapSatiri = (u, changefreq, priority) =>
-  `  <url><loc>${htmlKacir(u.loc)}</loc><lastmod>${u.lastmod}</lastmod>`
+  `  <url><loc>${htmlKacir(u.loc)}</loc>`
+  + (u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : '')
   + `<changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
 
 const sitemapUrlseti = (satirlar) => `<?xml version="1.0" encoding="UTF-8"?>

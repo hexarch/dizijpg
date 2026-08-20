@@ -23,8 +23,13 @@ const UC = bolum("app.get('/og/sirket/:id'", '/**\n * Gönderi sayfası indekse 
 const sirketIndekslenir = alan(
   ['SEO_SIRKET_YAPIM_MIN', 'sirketIndekslenir'], 'sirketIndekslenir');
 const seoUlkeAdi = alan(['SEO_ULKE_ADI', 'seoUlkeAdi'], 'seoUlkeAdi');
+// `SEO_ACIKLAMA_MAX` + `seoPozitif` 20 Ağu 2026'da bağımlılık oldu: açıklama
+// artık ~155 karakter bütçesine göre kuruluyor ve kapanış cümlesi GERÇEK
+// yorum sayısına bağlı (boş vaat üretmesin diye). Testin niyeti aynı —
+// "açıklama veriden kuruluyor" — yalnız fonksiyonun bağlamı büyüdü.
 const seoSirketAciklamasi = alan(
-  ['seoMetin', 'SEO_ULKE_ADI', 'seoUlkeAdi', 'seoSirketAciklamasi'],
+  ['SEO_ACIKLAMA_MAX', 'seoPozitif', 'seoMetin', 'SEO_ULKE_ADI', 'seoUlkeAdi',
+    'seoSirketAciklamasi'],
   'seoSirketAciklamasi');
 const seoSirketYapimlari = alan(
   ['gecerliTmdb', 'SEO_SIRKET_YAPIM', 'seoSirketYapimlari'], 'seoSirketYapimlari');

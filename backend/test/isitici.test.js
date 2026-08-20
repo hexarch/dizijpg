@@ -207,8 +207,8 @@ test('upsert SQL server.js `tmdbGetir` ile aynı (guncelleme = now())', () => {
 // 2) SİTE HARİTASI KAPSAMI server.js'ten OKUNUYOR (tahmin edilmiyor)
 // ---------------------------------------------------------------------------
 test('sitemap sorguları server.js kaynağından KURULUYOR, çözülmemiş şablon yok', () => {
-  const { SITEMAP_SORGU, SITEMAP_BOLUM_SORGU } = sunucuSorgulari(SERVER);
-  for (const sql of [SITEMAP_SORGU, SITEMAP_BOLUM_SORGU]) {
+  const { SITEMAP_SORGU, SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU } = sunucuSorgulari(SERVER);
+  for (const sql of [SITEMAP_SORGU, SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU]) {
     assert.doesNotMatch(sql, /\$\{/, 'şablon çözülmemiş');
     assert.match(sql, /FROM yorumlar y/);
     assert.match(sql, /FROM puanlar p/);
@@ -218,7 +218,48 @@ test('sitemap sorguları server.js kaynağından KURULUYOR, çözülmemiş şabl
   // Eşikler server.js'ten geldi mi (elle yazılmadı mı)?
   assert.match(SITEMAP_SORGU, />= 80/);   // SEO_YORUM_MIN
   assert.match(SITEMAP_SORGU, />= 40/);   // SEO_INCELEME_MIN
+  // İDDİANIN NİYETİ (14 Ağu'dan beri): bölüm haritası GERÇEKTEN bölüm
+  // grenindedir — içerik sorgusunun kopyası değildir. 20 Ağu'da sorgu TMDB
+  // numaralandırmasına açılınca mekanizma değişti, niyet aynı kaldı:
+  //   · bizim yorum dalı hâlâ sezon/bölüm kırılımında (`y.sezon IS NOT NULL`),
+  //   · TMDB dalı sezon yanıtından bölüm çıkarıyor,
+  //   · ve çıktı ÜÇ SÜTUNLU (tmdb_id, sezon, bolum) — içerik haritası iki.
   assert.match(SITEMAP_BOLUM_SORGU, /y\.sezon IS NOT NULL/);
+  assert.match(SITEMAP_BOLUM_SORGU, /episode_number/, 'TMDB bölüm dalı yok');
+  assert.match(SITEMAP_BOLUM_SORGU,
+    /SELECT tmdb_id, sezon, bolum, coalesce\(max\(bizim\)::date, max\(gun\)\) AS son/);
+  assert.match(SITEMAP_SORGU, /SELECT tur, tmdb_id, max\(tarih\) AS son/);
+});
+
+test('ısıtma kuyruğu harita sorgusundan AYRI (kendini besleyen kilit yok)', () => {
+  // NEDEN VAR: `SITEMAP_BOLUM_SORGU` yalnız SEZON YANITI ÖNBELLEKTE OLAN
+  // bölümleri döndürüyor. Isıtıcı kuyruğunu oradan alsaydı, önbellekte
+  // olmayan sezon HİÇBİR ZAMAN çekilmez, harita da hiç büyümezdi — kuyruk
+  // kendi kaynağını besleyemez. Bu yüzden ısıtma kuyruğu `/tv/:id` yanıtının
+  // `seasons[]` dizisinden (episode_count) türetiliyor.
+  const { SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU } = sunucuSorgulari(SERVER);
+  assert.notEqual(SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU);
+  assert.match(ISITMA_BOLUM_SORGU, /episode_count/, 'ısıtma kuyruğu sezon dökümünden gelmiyor');
+  assert.match(ISITMA_BOLUM_SORGU, /generate_series\(1, v\.bolum_adedi\)/);
+  assert.doesNotMatch(ISITMA_BOLUM_SORGU, /season\/\[0-9\]\+/,
+    'ısıtma kuyruğu sezon ÖNBELLEĞİNE bağlanmış (kilit geri geldi)');
+  // Isıtıcı gerçekten AYRI sorguyu kullanıyor mu (harita sorgusuna dönmemiş)?
+  const blok = ISITICI.slice(ISITICI.indexOf('export async function adaylariTopla'));
+  assert.match(blok, /bolumKimlikleri\(havuz, ISITMA_BOLUM_SORGU\)/);
+  assert.doesNotMatch(blok, /bolumKimlikleri\(havuz, SITEMAP_BOLUM_SORGU\)/);
+});
+
+test('sezon anahtarı bölümden ÖNCE ısıtılır (harita kapsamını sezon açıyor)', () => {
+  // Sezon yanıtı iki iş birden yapar: haritanın kapsamını açar ve dizi
+  // sayfasının bölüm listesini besler. `oncelik` `siralamayiKur`da EN BAŞTAKİ
+  // sıralama anahtarı; sezon 0, bölüm 1 olmalı. Ters sırada 78 bin bölüm
+  // anahtarı 8 bin sezonun önüne geçer ve harita günlerce dar kalır.
+  const blok = ISITICI.slice(ISITICI.indexOf("if (secim.siniflar.includes('bolum'))"));
+  const sezon = /yol: sezon, sinif: 'bolum', dilSinifi: 'sezon', oncelik: (\d)/.exec(blok);
+  const bolum = /yol: bolum, sinif: 'bolum', dilSinifi: 'bolum', oncelik: (\d)/.exec(blok);
+  assert.ok(sezon && bolum, 'sezon/bölüm isteği bulunamadı');
+  assert.equal(sezon[1], '0');
+  assert.equal(bolum[1], '1');
 });
 
 test('sitemap SQL isitici.js içine KOPYALANMAMIŞ', () => {
@@ -495,7 +536,17 @@ test('ısıtıcı server.js\'e GÖMÜLMEZ: setInterval yok, ayrı betik', () => 
   // 4 işçili kümede gömülü bir zamanlayıcı TMDB'ye 4 kat yüklenirdi.
   // (Yalnız ÇAĞRI aranıyor; gerekçe yorumunda kelime geçebilir.)
   assert.doesNotMatch(ISITICI, /setInterval\s*\(/);
-  assert.doesNotMatch(SERVER, /isitici/i, 'server.js ısıtıcıyı çağırıyor');
+  // 20 Ağu 2026: iddia "server.js içinde /isitici/i GEÇMESİN" idi. Bu, kendi
+  // yorumundaki "gerekçe yorumunda kelime geçebilir" kuralıyla çelişiyordu ve
+  // ısıtıcı kuyruğunu besleyen `ISITMA_BOLUM_SORGU`nun gerekçesi yazılamaz
+  // hale geldi. İDDİA ZAYIFLATILMADI, KESKİNLEŞTİRİLDİ: aranan şey artık
+  // GERÇEK BAĞ — içe aktarma, require ve ısıtıcı giriş noktalarının çağrısı.
+  assert.doesNotMatch(SERVER, /from\s+['"]\.\/isitici(\.js)?['"]/,
+    'server.js ısıtıcıyı içe aktarıyor');
+  assert.doesNotMatch(SERVER, /require\(\s*['"]\.\/isitici/,
+    'server.js ısıtıcıyı require ediyor');
+  assert.doesNotMatch(SERVER, /\b(adaylariTopla|kosuYap|isiticiMain)\s*\(/,
+    'server.js ısıtıcı giriş noktasını çağırıyor');
   // Doğrudan çalıştırma kapısı: import edildiğinde main KOŞMAMALI.
   assert.match(ISITICI, /const dogrudan = process\.argv\[1\]/);
   assert.match(ISITICI, /if \(dogrudan\) \{/);

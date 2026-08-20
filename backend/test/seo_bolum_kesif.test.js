@@ -2,11 +2,11 @@
 // 15 Ağu ölçümü: Silo dizi sayfasında 0 bölüm linki, sitemap-bölüm 2 URL.
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { alan, bolum } from './yardimci/seo_kaynak.js';
+import { alan, bolum, KAYNAK } from './yardimci/seo_kaynak.js';
 
 const seoDiziBolumHtml = alan(
   ['htmlKacir', 'seoMetin', 'seoBaglantiListesi',
-    'SEO_DIZI_BOLUM_TAVAN', 'seoDiziBolumHtml'],
+    'SEO_DIZI_BOLUM_TAVAN', 'SEO_DIZI_SEZON_TAVAN', 'seoDiziBolumHtml'],
   'seoDiziBolumHtml',
 );
 
@@ -93,14 +93,63 @@ test('sezon çekimi 8\'li öbek + uzun TTL (tmdbTopluGetir)', () => {
   const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2');
   assert.match(b, /tmdbTopluGetir\(yollar, ONBELLEK_TTL_SN\.uzun\)/);
   assert.match(b, /SEO_DIZI_SEZON_TAM/);
-  assert.match(b, /seoDiziIcerikBolumleri/);
 });
 
-test('dizi sayfası bölüm linki sitemap süzgeciyle aynı (boş bölüme davet yok)', () => {
-  const b = bolum('async function seoDiziIcerikBolumleri', 'async function seoDiziBolumGovdesi');
-  assert.match(b, /SEO_YORUM_KOSUL/);
-  assert.match(b, /SEO_INCELEME_KOSUL/);
-  assert.match(b, /y\.tur = 'tv'/);
+// ---------------------------------------------------------------------------
+// 20 Ağu 2026 — "YALNIZ YORUMU OLAN BÖLÜME LİNK" KURALI BİLİNÇLİ OLARAK KALKTI
+// ---------------------------------------------------------------------------
+// Eski iddia şuydu: dizi sayfası bölüm linkini `seoDiziIcerikBolumleri` ile
+// (yani sitemap'in eski "yorumu var mı" süzgeciyle) sınırlar. Ölçüm o kuralın
+// bedelini gösterdi: 78.725 bölüm URL'inin 78.169'u (%99,3) sitede hiçbir
+// sayfadan bağlantı almıyordu ve Simpsonlar gibi 802 bölümlük diziler tam
+// yetimdi. Kural kaldırıldı, YERİNE KOYULAN GÜVENCE burada kilitli:
+// bağlantılar TMDB'nin GERÇEK verisinden gelir, uydurma URL üretilmez.
+test('dizi sayfası bölüm linkini `v.seasons`tan kurar — ek TMDB isteği yok', () => {
+  const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2');
+  assert.match(b, /v\?\.seasons/, 'sezon listesi /tv/:id yanıtından alınmıyor');
+  assert.match(b, /episode_count/);
+  // Eski süzgeç GERÇEKTEN kalktı (fonksiyon da silindi, ölü kod bırakılmadı).
+  assert.doesNotMatch(b, /seoDiziIcerikBolumleri/);
+  assert.equal(KAYNAK.includes('seoDiziIcerikBolumleri'), false,
+    'kaldırılan süzgeç fonksiyonu kaynakta duruyor');
+});
+
+test('tek tek bölüm linkleri episode_count\'tan DEĞİL, gerçek listeden gelir', () => {
+  // `episode_count` yalnız "bu sezonun bölümü var mı" sorusuna cevap; ondan
+  // URL üretmek TMDB numaralandırmasında boşluk olan dizilerde bota 404
+  // bildirirdi (Silo S3E8 tarama tuzağı kuralı KORUNUYOR).
+  const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2');
+  const uretim = b.slice(b.indexOf('const sezonVerileri'));
+  assert.match(uretim, /harita\.get\(`\/tv\/\$\{id\}\/season\/\$\{n\}`\)\?\.episodes/);
+  assert.doesNotMatch(uretim, /episode_count/,
+    'bölüm URL\'i episode_count\'tan üretiliyor');
+});
+
+test('sezon yanıtı çekilemezse o sezon SESSİZCE düşmez (1. bölümüne bağlanır)', () => {
+  const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2');
+  assert.match(b, /if \(!bolumler\.length\) continue;/);
+  assert.match(b, /\.filter\(\(s\) => !basilan\.has\(s\.season_number\)\)/);
+});
+
+test('HER sezon en az bir bağlantı alır (yetimlik onarımının özü)', () => {
+  // 36 sezonluk bir dizide 80 bölümlük tavan yalnız son sezonlara yeter;
+  // GERİ KALAN HER SEZON "diğer sezonlar" listesinde 1. bölümüne bağlanmalı.
+  const sezonNolar = Array.from({ length: 36 }, (_, i) => i + 1);
+  const tam = [34, 35, 36].map((n) => ({
+    season_number: n,
+    episodes: Array.from({ length: 22 }, (_, i) => ({ episode_number: i + 1 })),
+  }));
+  const kalan = sezonNolar.filter((n) => n < 34);
+  const h = seoDiziBolumHtml(456, 'Simpsonlar', tam, kalan);
+  for (const n of sezonNolar) {
+    assert.match(h, new RegExp(`/dizi/456/sezon/${n}/bolum/`), `${n}. sezon yetim`);
+  }
+});
+
+test('sezon listesi tavanı: SEO_DIZI_SEZON_TAVAN\'ı aşan sezon basılmaz', () => {
+  const h = seoDiziBolumHtml(1, 'X', [], Array.from({ length: 200 }, (_, i) => i + 1));
+  const link = h.match(/\/dizi\/1\/sezon\/\d+\/bolum\/1/g) || [];
+  assert.equal(link.length, 60);
 });
 
 test('bölüm tohumu eleştirmen uzunluğunda, tekil açılış, spoiler kalıbı yok', async () => {

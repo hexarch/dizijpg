@@ -193,10 +193,52 @@ test('sitemap YALNIZ içerik/bölüm URL\'i üretir — profil/kişisel URL yok'
   const sorgu = bildirimCek('SITEMAP_SORGU');
   assert.match(sorgu, /SELECT tur, tmdb_id, max\(tarih\) AS son/);
   const bolumSorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
-  assert.match(bolumSorgu, /SELECT tmdb_id, sezon, bolum, max\(tarih\) AS son/);
-  for (const [ad, s] of [['içerik', sorgu], ['bölüm', bolumSorgu]]) {
+  const isitmaSorgu = bildirimCek('ISITMA_BOLUM_SORGU');
+  // --------------------------------------------------------------------
+  // 20 Ağu 2026 — BÖLÜM SORGUSU TMDB NUMARALANDIRMASINA AÇILDI
+  // --------------------------------------------------------------------
+  // Eski iddia sorgunun DIŞ SELECT'ini birebir kilitliyordu
+  // (`SELECT tmdb_id, sezon, bolum, max(tarih) AS son`). Bu bir MEKANİZMA
+  // iddiasıydı; testin NİYETİ ise "gizli/yasaklı içerik haritaya sızmasın".
+  // Yeni sorgu iki daldan oluşuyor ve niyet İKİ AYRI YOLDAN sağlanıyor:
+  //
+  //  1. BİZİM YORUMUMUZ DALI (`bizim_bolum`) — eski dalın aynısı. Gizlilik
+  //     güvencesi eskisi gibi `SEO_YORUM_KOSUL`/`SEO_INCELEME_KOSUL`
+  //     sabitlerinden geliyor: yasaklı yazar, spoiler ve "bu içeriği gizle"
+  //     tercihi burada eleniyor.
+  //  2. TMDB DALI (`tmdb_bolum`) — kullanıcı tablolarına HİÇ DOKUNMUYOR.
+  //     Kaynağı yalnız `tmdb_onbellek`; bir kullanıcı satırı okunmadığı için
+  //     sızdıracak kişisel veri de yok. Bu, eskisinden DAHA GÜÇLÜ bir
+  //     güvence — ve aşağıdaki iddia tam olarak bunu doğruluyor.
+  const tmdbDali = bolum('), tmdb_bolum AS MATERIALIZED (', '), bizim_bolum AS (');
+  for (const tablo of ['yorumlar', 'puanlar', 'kullanicilar', 'izlemeler',
+    'favoriler', 'listeler', 'liste_ogeleri', 'gizli_icerikler', 'gonderiler']) {
+    assert.ok(!new RegExp(`\\b${tablo}\\b`).test(tmdbDali),
+      `TMDB dalı kullanıcı tablosuna dokunuyor: ${tablo}`);
+  }
+  assert.match(tmdbDali, /FROM sezon_yaniti s/, 'TMDB dalı sezon yanıtından okumuyor');
+  // Bizim yorum dalı gizlilik süzgeçlerini AYNEN taşıyor mu? Kaynakta bunlar
+  // ORTAK SABİT olarak duruyor (kopyalanmış SQL değil) — iddia hem sabitin
+  // kullanıldığını hem sabitin içeriğini doğruluyor.
+  const bizimDal = bolum('), bizim_bolum AS (', '), birlesik AS (');
+  assert.match(bizimDal, /\$\{SEO_YORUM_KOSUL\}/, 'yorum koşulu bölüm dalından düşmüş');
+  assert.match(bizimDal, /\$\{SEO_INCELEME_KOSUL\}/, 'inceleme koşulu bölüm dalından düşmüş');
+  assert.match(bolumSorgu, /\bSEO_GIZLI_ICERIK_YOK\b|\$\{SEO_YORUM_KOSUL\}/);
+  const yorumKosul = bildirimCek('SEO_YORUM_KOSUL');
+  const incelemeKosul = bildirimCek('SEO_INCELEME_KOSUL');
+  assert.match(yorumKosul, /SEO_GIZLI_ICERIK_YOK\('y'\)/, 'gizle tercihi düşmüş');
+  assert.match(yorumKosul, /NOT k\.yasakli/);
+  assert.match(yorumKosul, /NOT y\.spoiler/);
+  assert.match(incelemeKosul, /SEO_GIZLI_ICERIK_YOK\('p'\)/, 'gizle tercihi düşmüş');
+  assert.match(incelemeKosul, /NOT k\.yasakli/);
+  // Çıktı sütunları hâlâ yalnız TMDB kimliği + tarih.
+  assert.match(bolumSorgu,
+    /SELECT tmdb_id, sezon, bolum, coalesce\(max\(bizim\)::date, max\(gun\)\) AS son/);
+  for (const [ad, s] of [['içerik', sorgu], ['bölüm', bolumSorgu], ['ısıtma', isitmaSorgu]]) {
     assert.ok(!/kullanici_adi/.test(s), `${ad} sitemap sorgusu kullanıcı adı seçiyor`);
     assert.ok(!/\bemail\b/.test(s), `${ad} sitemap sorgusu e-posta seçiyor`);
+    assert.ok(!/\bmetin\b(?!, )/.test(s.replace(/regexp_replace\([yp]\.\w+/g, '')),
+      `${ad} sorgusu yorum METNİNİ çıktıya alıyor`);
   }
 });
 
