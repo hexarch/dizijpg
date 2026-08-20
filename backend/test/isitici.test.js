@@ -34,7 +34,7 @@ import {
   AYAR, SUREN_DURUMLAR, onbellekAnahtari, icerikYolu, kisiYolu, bolumYollari,
   katmanTtlSn, gecerliGovde, bayraklariCoz, bildirimCek, sunucuSorgulari,
   kosuYap, ozetSatiri, bagAyarlariDogrula, gunlukKapasite, siralamayiKur,
-  sunucuDilHaritasi, tmdbDilKodu,
+  sunucuDilHaritasi, tmdbDilKodu, payiDagit, sinifDilleri, kosuButcesi,
   konusmaliMi, bosalmaSaati,
 } from '../isitici.js';
 
@@ -792,4 +792,237 @@ test('Infinity karşılaştırması sıralamayı BOZMUYOR (NaN comparator tuzağ
   siralamayiKur(adaylar);
   assert.equal(new Set(adaylar.map((a) => a.anahtar)).size, 30, 'sıralama eleman kaybetti');
   assert.ok(adaylar.every((a) => a.payi >= 0 && Number.isInteger(a.payi)));
+});
+
+// ---------------------------------------------------------------------------
+// 14) CANLIDA ÖLÇÜLEN AÇLIK — sınıf başına asgari pay (20 Ağu 2026)
+// ---------------------------------------------------------------------------
+// KANIT (/var/log/dizijpg-isitici.log, beş ardışık koşu):
+//   tazelendi=480 kuyruk=27430 sınıf_payı=kisi:480   (× 5)
+// Bölüme iki saatte SIFIR istek gitti. 13. bölümdeki benzetim testi bunu
+// KAÇIRDI çünkü üç sınıfı da AYNI ANDA soğuk varsaydı; canlıda sınıflar
+// sırayla soğuyor (kişi kümesi içerik önbelleği doldukça patlıyor).
+// Aşağıdaki senaryo tam o ASİMETRİYİ kurar.
+
+/** Canlıdaki dağılım: kişi hiç çekilmemiş ve baskın, diğerleri bayat ama VAR. */
+function canliKuyruk({ kisiAdet = 25000, icerikAdet = 900, bolumAdet = 7800 } = {}) {
+  const gun = 86400;
+  const a = [];
+  // Kişi: satırı YOK → yas Infinity → asim Infinity → KALICI en üst bant.
+  //
+  // HEPSİ ÖNCELİK 0: en kötü hâli modelliyoruz — baskın soğuk sınıf, aç kalan
+  // sınıflarla AYNI önceliktedir. Öncelik farkı olsaydı `siralamayiKur` zaten
+  // bir miktar pay dağıtırdı ve test asıl mekanizmayı (bant asimetrisi)
+  // ölçmezdi. Canlıda da öncelik 0 kişi kümesi (favori/puan/tepki) büyüyor.
+  for (let i = 0; i < kisiAdet; i++) {
+    a.push({
+      anahtar: `/person/${i}`, sinif: 'kisi', oncelik: 0,
+      yas: Infinity, ttl: 14 * gun, tazeMi: false,
+    });
+  }
+  // Bölüm: satırı VAR ama bayat → SONLU yaş → alt bant.
+  for (let i = 0; i < bolumAdet; i++) {
+    a.push({
+      anahtar: `/tv/x/season/${i}`, sinif: 'bolum', oncelik: 0,
+      yas: 31 * gun, ttl: 30 * gun, tazeMi: false,
+    });
+  }
+  for (let i = 0; i < icerikAdet; i++) {
+    a.push({
+      anahtar: `/tv/${i}`, sinif: 'icerik', oncelik: 0,
+      yas: 32 * gun, ttl: 30 * gun, tazeMi: false,
+    });
+  }
+  return a;
+}
+
+/** Bir koşu simüle eder, sınıf paylarını döndürür. */
+async function kosuPaylari(adaylar, butce = 480) {
+  const ozet = await kosuYap({
+    adaylar: payiDagit(siralamayiKur(adaylar), butce),
+    getir: async () => ({ durum: 'tamam', veri: { id: 1 } }),
+    yaz: async () => {},
+    bekle: async () => {},
+    azamiIstek: butce,
+    azamiMs: Infinity,
+    istekSn: 1e9,
+  });
+  return ozet;
+}
+
+test('CANLI SENARYO: baskın+soğuk sınıf bütçenin tamamını YİYEMEZ', async () => {
+  const ozet = await kosuPaylari(canliKuyruk());
+  assert.equal(ozet.istek, 480, 'bütçe tam kullanılmadı');
+  const taban = Math.floor(480 * AYAR.TABAN_PAY_ORANI);
+  for (const sinif of ['icerik', 'kisi', 'bolum']) {
+    const pay = ozet.sinifSayaci[sinif] || 0;
+    assert.ok(pay >= taban,
+      `${sinif} asgari payı almadı: ${pay} < ${taban} `
+      + `(paylar: ${JSON.stringify(ozet.sinifSayaci)})`);
+  }
+  // Canlıdaki hata TAM OLARAK buydu: sınıf_payı=kisi:480.
+  assert.notEqual(ozet.sinifSayaci.kisi, 480, 'kişi yine bütçenin tamamını yedi');
+  // Baskın sınıf yine de en büyük payı alır (taban + bant sırasından kalan).
+  assert.ok(ozet.sinifSayaci.kisi > taban, 'baskın sınıf tabana hapsedilmiş');
+});
+
+test('CANLI SENARYO: bölüm sınıfı GÜNDE kuyruğunu kapatacak hızda ilerliyor', async () => {
+  const ozet = await kosuPaylari(canliKuyruk());
+  const gunlukBolum = (ozet.sinifSayaci.bolum || 0) * (1440 / AYAR.CRON_DAKIKA);
+  // Canlı ölçüm: 8.557 bölüm satırının 7.796'sı bayattı ve iki saatte 0 istek
+  // aldı. Bu hızla bir günde kapanmalı.
+  assert.ok(gunlukBolum >= 7796,
+    `bölüm günde ${gunlukBolum} istek alıyor, 7.796 bayat satır kapanmaz`);
+});
+
+test('DÜZELTME OLMADAN kırmızı: ham sıralama tek sınıfa gidiyor', async () => {
+  // `payiDagit`i ATLA — düzeltmenin gerçekten gerekli olduğunu kanıtlar.
+  // Bu iddia bozulursa (ham sıralama artık adilse) taban payı gereksizleşmiş
+  // demektir; o zaman bu testi silmek DOĞRU olur, gizlemek değil.
+  const ozet = await kosuYap({
+    adaylar: siralamayiKur(canliKuyruk()),
+    getir: async () => ({ durum: 'tamam', veri: { id: 1 } }),
+    yaz: async () => {},
+    bekle: async () => {},
+    azamiIstek: 480,
+    azamiMs: Infinity,
+    istekSn: 1e9,
+  });
+  assert.deepEqual(ozet.sinifSayaci, { kisi: 480 },
+    'ham sıralama artık adil — taban payı hâlâ gerekli mi, gözden geçir');
+});
+
+test('payiDagit: adayı az olan sınıfın payı DEVROLUR (bütçe boşa gitmez)', async () => {
+  // Bölümde yalnız 10 aday var; taban 96. Kalan 86 slot diğerlerine geçmeli.
+  const ozet = await kosuPaylari(canliKuyruk({ bolumAdet: 10, icerikAdet: 900 }));
+  assert.equal(ozet.istek, 480, 'bütçe boşa gitti');
+  assert.equal(ozet.sinifSayaci.bolum, 10, 'olmayan aday istenmiş');
+  assert.ok((ozet.sinifSayaci.kisi || 0) + (ozet.sinifSayaci.icerik || 0) === 470);
+});
+
+test('payiDagit: tek sınıf varsa sıra BOZULMAZ', () => {
+  const adaylar = siralamayiKur(canliKuyruk({ icerikAdet: 0, bolumAdet: 0 }));
+  const once = adaylar.map((a) => a.anahtar);
+  const sonra = payiDagit(adaylar, 480).map((a) => a.anahtar);
+  assert.deepEqual(sonra, once);
+});
+
+test('payiDagit: çok küçük bütçede saf bant sırasına düşer (çökmez)', () => {
+  const adaylar = siralamayiKur(canliKuyruk({ kisiAdet: 5, icerikAdet: 5, bolumAdet: 5 }));
+  // taban = floor(3 * 0.2) = 0 → dokunma.
+  const sonra = payiDagit(adaylar, 3);
+  assert.equal(sonra.length, adaylar.length);
+  assert.deepEqual(sonra.map((a) => a.anahtar), adaylar.map((a) => a.anahtar));
+});
+
+test('payiDagit: hiçbir aday KAYBOLMUYOR ve tekrar etmiyor', () => {
+  const adaylar = siralamayiKur(canliKuyruk({ kisiAdet: 300, icerikAdet: 50, bolumAdet: 70 }));
+  // Taze adaylar da listede kalsın (bütçe harcamasalar da).
+  adaylar[0].tazeMi = true;
+  adaylar[5].tazeMi = true;
+  const sonra = payiDagit(adaylar, 100);
+  assert.equal(sonra.length, adaylar.length);
+  assert.equal(new Set(sonra.map((a) => a.anahtar)).size, adaylar.length);
+});
+
+test('taban oranı TEK YERDEN (AYAR.TABAN_PAY_ORANI) okunuyor', async () => {
+  const yedek = AYAR.TABAN_PAY_ORANI;
+  try {
+    AYAR.TABAN_PAY_ORANI = 0.33;
+    const ozet = await kosuPaylari(canliKuyruk());
+    const taban = Math.floor(480 * 0.33);
+    assert.ok((ozet.sinifSayaci.bolum || 0) >= taban,
+      `oran değişince taban izlemedi: ${JSON.stringify(ozet.sinifSayaci)}`);
+  } finally {
+    AYAR.TABAN_PAY_ORANI = yedek;
+  }
+  // Sayı ikinci bir yerde yazılı olmasın.
+  assert.equal(yorumsuz(ISITICI).split('0.2').length - 1, 1);
+});
+
+test('adaylariTopla iki katı da uyguluyor (sıralama + taban pay)', () => {
+  assert.match(ISITICI, /payiDagit\(siralamayiKur\(adaylar\), kosuButcesi\(secim\)\)/);
+});
+
+test('sayaçlar LİSTENİN TAMAMINDAN (taban pay tazeleri sona atıyor)', async () => {
+  // `payiDagit` taze adayları sona atıyor; artımlı sayım "zaten_taze=0" derdi.
+  const adaylar = [
+    ...Array.from({ length: 30 }, (_, i) => aday(`/tv/t${i}?language=tr-TR`, true)),
+    ...Array.from({ length: 10 }, (_, i) => aday(`/tv/b${i}?language=tr-TR`)),
+  ];
+  const d = duzenek(adaylar, async () => ({ durum: 'tamam', veri: { id: 1 } }));
+  const ozet = await kosuYap({ ...d.p, azamiIstek: 2 });
+  assert.equal(ozet.bakilan, 40, 'bakılan liste boyu değil');
+  assert.equal(ozet.taze, 30, 'zaten_taze erken kırılmadan etkilenmiş');
+  assert.equal(ozet.bayatToplam, 10);
+  assert.equal(ozet.kuyruk, 8);
+});
+
+// ---------------------------------------------------------------------------
+// 15) SINIF BAŞINA DİL — "bu anahtarı KİM okuyor?" (20 Ağu 2026)
+// ---------------------------------------------------------------------------
+test('yalnız SSR\'ın okuduğu sınıflar TEK dilde ısıtılır', () => {
+  const secim = bayraklariCoz([]);
+  // Paylaşılan anahtarlar: uygulama da okuyor → kullanıcının dili önemli.
+  assert.deepEqual(sinifDilleri('icerik', secim), ['tr', 'en']);
+  assert.deepEqual(sinifDilleri('sezon', secim), ['tr', 'en']);
+  // Yalnız SSR: Googlebot dil başlığı göndermiyor → daima tr-TR.
+  assert.deepEqual(sinifDilleri('kisi', secim), ['tr']);
+  assert.deepEqual(sinifDilleri('bolum', secim), ['tr']);
+  assert.deepEqual(sinifDilleri('diziDuz', secim), ['tr']);
+});
+
+test('dil kararı KAYNAKTAN doğrulanabilir: anahtar şekilleri örtüşmüyor', () => {
+  // KİŞİ — SSR append kullanıyor, uygulama İKİ AYRI uç çağırıyor.
+  assert.match(SERVER, /\/person\/\$\{kid\}\?append_to_response=combined_credits,translations/);
+  const kisiDart = oku('../app/lib/ekranlar/kisi.dart');
+  assert.match(kisiDart, /'\/tmdb\/person\/\$\{widget\.kisiId\}'/);
+  assert.match(kisiDart, /'\/tmdb\/person\/\$\{widget\.kisiId\}\/combined_credits'/);
+  assert.doesNotMatch(kisiDart, /append_to_response=combined_credits/,
+    'uygulama artık SSR ile aynı kişi anahtarını kullanıyor — kisi dilleri gözden geçir');
+
+  // BÖLÜM — SSR `translations`, uygulamaya server.js `videos` ekliyor.
+  assert.match(SERVER, /parametreler\.set\('append_to_response', 'videos'\)/);
+
+  // SEZON — uygulama da düz `/tmdb/tv/:id/season/:n` çağırıyor: PAYLAŞILAN.
+  assert.match(oku('../app/lib/ekranlar/detay.dart'),
+    /'\/tmdb\/tv\/\$\{widget\.tmdbId\}\/season\/\$_no'/);
+});
+
+test('--diller sınıf listesiyle KESİŞİYOR (bayrak ters yorumlanmıyor)', () => {
+  const yalnizTr = bayraklariCoz(['--diller=tr']);
+  assert.deepEqual(sinifDilleri('icerik', yalnizTr), ['tr']);
+  assert.deepEqual(sinifDilleri('kisi', yalnizTr), ['tr']);
+  // `--diller=en`: kişi sınıfı 'en' ısıtmadığı için BOŞ küme — sessizce
+  // "hepsi"ne dönmek bayrağı ters yorumlamak olurdu.
+  const yalnizEn = bayraklariCoz(['--diller=en']);
+  assert.deepEqual(sinifDilleri('icerik', yalnizEn), ['en']);
+  assert.deepEqual(sinifDilleri('kisi', yalnizEn), []);
+  // Tanımsız sınıf → kısıt yok.
+  assert.deepEqual(sinifDilleri('bilinmeyen', yalnizTr), ['tr']);
+});
+
+test('kişi sınıfı tek dile inince anahtar sayısı YARIYA düşer', () => {
+  const secim = bayraklariCoz([]);
+  const kisiSayisi = 12000;
+  const once = kisiSayisi * secim.diller.length;              // eski davranış
+  const sonra = kisiSayisi * sinifDilleri('kisi', secim).length;
+  assert.equal(once, 24000);
+  assert.equal(sonra, 12000);
+});
+
+test('koşu bütçesi iki tavandan KÜÇÜĞÜ (taban payı buradan hesaplanır)', () => {
+  assert.equal(kosuButcesi({ azamiIstek: 480, azamiDakika: 8, istekSn: 1 }), 480);
+  // Hız kapısı bağlarsa ulaşılamayan tavana göre pay dağıtmayalım.
+  assert.equal(kosuButcesi({ azamiIstek: 5000, azamiDakika: 8, istekSn: 1 }), 480);
+  assert.equal(kosuButcesi({ azamiIstek: 100, azamiDakika: 8, istekSn: 1 }), 100);
+});
+
+test('aday kümesi büyümesi kuru koşuda GÖRÜNÜR (sıçrama kontrolsüz değil)', () => {
+  // 20 Ağu: kuru koşu 7.382 dedi, iki saat sonra bayat_toplam 27.910 oldu.
+  // Sebep kişi adaylarının içerik önbelleği doldukça türemesi.
+  assert.match(ISITICI, /liste\.icerikToplam = icerikAnahtarlari\.length;/);
+  assert.match(ISITICI, /içerik önbelleği/);
+  assert.match(ISITICI, /aday kümesi BÜYÜYECEK/);
+  assert.match(ISITICI, /OYUNCU_BAGLANTI \* sinifDilleri\('kisi', secim\)\.length/);
 });

@@ -103,6 +103,71 @@ export const AYAR = {
   DILLER: ['tr', 'en'],
 
   // ---------------------------------------------------------------------
+  // SINIF BAŞINA DİL — "hangi anahtarı KİM okuyor?" (20 Ağu 2026)
+  // ---------------------------------------------------------------------
+  // Her anahtarı iki dilde ısıtmak 24.000 kişi anahtarını 48.000 yapıyordu.
+  // Ölçü BÜTÇE DEĞİL DOĞRULUK: bir anahtarı ısıtmanın tek gerekçesi onu
+  // OKUYAN biri olmasıdır. Anahtar şekli okuyucuyu belirliyor ve bunu
+  // server.js + app/lib kaynağından tek tek doğruladım:
+  //
+  //   PAYLAŞILAN (uygulama da okur/yazar → kullanıcının dili önemli):
+  //     · icerik → `/tmdb/(tv|movie)/:id` aynı `icerikTmdbYolu`ya gidiyor.
+  //     · sezon  → app `detay.dart:1671` ve `tmdb_puan_izgara.dart:51`
+  //                `/tmdb/tv/:id/season/:n` çağırıyor; SSR de aynı anahtarı
+  //                okuyor. Yani en-US'un GERÇEK bir okuyucusu var.
+  //
+  //   YALNIZ SSR (bot okuyor; Googlebot dil başlığı GÖNDERMİYOR → daima tr-TR,
+  //   ölçüm: SSR anahtarlarının 554/554'ü tr-TR):
+  //     · kisi    → SSR `?append_to_response=combined_credits,translations`
+  //                 derken uygulama AYRI iki çağrı yapıyor (`kisi.dart:256-257`:
+  //                 `/tmdb/person/:id` + `/tmdb/person/:id/combined_credits`).
+  //                 Anahtarlar ÖRTÜŞMÜYOR → en-US kişi anahtarını KİMSE okumaz.
+  //     · bolum   → SSR `?append_to_response=translations`, uygulamaya ise
+  //                 server.js `append_to_response=videos` ekliyor (5807).
+  //                 Yine ayrı anahtar → en-US'u okuyan yok.
+  //     · diziDuz → `/tv/:id` (eksiz). Uygulamanın `/tmdb/tv/:id`si artık
+  //                 paylaşılan yola yönleniyor, yani bu anahtarı SADECE bölüm
+  //                 SSR'ı okuyor.
+  //
+  // Kısıtlamanın riski YOK: bu anahtarlar zaten TEMBEL doldurulmaya devam
+  // ediyor. En kötü ihtimalle Türkçe olmayan bir kullanıcı bir kez bekler —
+  // yani bugünkü davranışın aynısı.
+  SINIF_DILLERI: {
+    icerik: ['tr', 'en'],
+    sezon: ['tr', 'en'],
+    kisi: ['tr'],
+    bolum: ['tr'],
+    diziDuz: ['tr'],
+  },
+
+  // ---------------------------------------------------------------------
+  // SINIF BAŞINA ASGARİ BÜTÇE PAYI (20 Ağu 2026 — CANLIDA ÖLÇÜLEN AÇLIK)
+  // ---------------------------------------------------------------------
+  // KANIT (/var/log/dizijpg-isitici.log, beş ardışık koşu):
+  //   tazelendi=480 kuyruk=27430 sınıf_payı=kisi:480
+  //   tazelendi=480 kuyruk=26950 sınıf_payı=kisi:480   (× 5)
+  // Bölüme İKİ SAATTE SIFIR istek gitti; 8.557 bölüm satırının yalnız 761'i
+  // tazeydi. Kişi önbelleği 297 → 28.944 satıra çıkarken bölüm hiç ilerlemedi.
+  //
+  // SEBEP: `siralamayiKur`un round-robin'i BANT İÇİNDE çalışıyor. Hiç
+  // çekilmemiş kişi anahtarları `yas = Infinity` → `yas/ttl = Infinity` →
+  // KALICI olarak en üst bant. Bölümlerin satırı VAR (bayat ama mevcut) →
+  // sonlu yaş → alt bant. Üst bantta tek sınıf olunca round-robin dağıtacak
+  // ikinci sınıf GÖRMÜYOR.
+  //
+  // Benim ilk benzetimim bunu kaçırdı çünkü üç sınıfı da AYNI ANDA soğuk
+  // varsaydı. Canlıda sınıflar sırayla soğuyor: her içerik satırı önbelleğe
+  // girince 10 oyuncu × dil kadar YENİ kişi adayı doğuyor, yani kişi kümesi
+  // sonradan patlıyor.
+  //
+  // ÇÖZÜM: bant ne olursa olsun her sınıfa bütçeden bir TABAN pay. %20 =
+  // 480'lik koşuda sınıf başına 96 istek; üç sınıf 288, kalan 192 bant
+  // sırasına göre (yani baskın sınıfa) gider. Bölüm bu tabanla günde
+  // 144 × 96 ≈ 13.800 istek alır — 7.800 bayat satırı bir günde kapanır.
+  // Adayı olmayan sınıfın payı DEVROLUR (bütçe boşa gitmez).
+  TABAN_PAY_ORANI: 0.2,
+
+  // ---------------------------------------------------------------------
   // SÜREKLİ KİP — AŞAĞIDAKİ DÖRT SAYI BİRBİRİNE BAĞLIDIR
   // ---------------------------------------------------------------------
   // İKİ BAĞ (ikisi de `bagAyarlariDogrula` ile ZORLANIR, açılışta patlar):
@@ -198,10 +263,27 @@ export function bagAyarlariDogrula(ayar = AYAR) {
   return sorunlar;
 }
 
+/**
+ * Bir koşunun GERÇEK istek bütçesi: iki tavandan hangisi önce bağlarsa o.
+ * Taban payları da bu sayıdan hesaplanır — `azamiIstek`ten hesaplansaydı hız
+ * kapısı yüzünden hiç ulaşılamayan bir tavana göre pay dağıtırdık.
+ */
+export const kosuButcesi = (secim) =>
+  Math.min(secim.azamiIstek, Math.floor(secim.azamiDakika * 60 * secim.istekSn));
+
 /** Sürekli kipte günde kaç istek harcanabilir (kuyruk boşalma süresi bundan çıkar). */
 export function gunlukKapasite(secim, ayar = AYAR) {
-  const kosuBasi = Math.min(secim.azamiIstek, secim.azamiDakika * 60 * secim.istekSn);
-  return Math.floor((1440 / ayar.CRON_DAKIKA) * kosuBasi);
+  return Math.floor((1440 / ayar.CRON_DAKIKA) * kosuButcesi(secim));
+}
+
+/** Bu sınıf hangi dillerde ısıtılır? (`SINIF_DILLERI` ∩ seçilen diller) */
+export function sinifDilleri(dilSinifi, secim, ayar = AYAR) {
+  const izinli = ayar.SINIF_DILLERI[dilSinifi];
+  if (!izinli) return secim.diller;            // tanımsız sınıf → hepsi
+  const kesisim = secim.diller.filter((d) => izinli.includes(d));
+  // Kesişim boşsa kullanıcı `--diller` ile bu sınıfı tamamen dışarıda
+  // bırakmıştır; sessizce "hepsi"ne dönmek bayrağı ters yorumlamak olurdu.
+  return kesisim;
 }
 
 // ===========================================================================
@@ -555,7 +637,24 @@ async function kisiKimlikleri(havuz, icerikAnahtarlari) {
     );
     for (const r of rows) if (!oncelik.has(r.tmdb_id)) oncelik.set(r.tmdb_id, 1);
   }
-  return [...oncelik].map(([tmdbId, o]) => ({ tmdbId, oncelik: o }));
+  // ADAY KÜMESİ BÜYÜMESİ — kuru koşunun "neden 7.382 dedin de 27.910 oldu?"
+  // sorusunun cevabı. Kişi adayları ÖNBELLEKTEKİ içerik satırlarından türüyor:
+  // bir içerik anahtarı ilk kez ısıtılınca 10 oyuncusu O ANDAN İTİBAREN aday
+  // oluyor. Yani içerik önbelleği doldukça kişi kuyruğu BÜYÜR. Bu beklenen ve
+  // SINIRLI bir büyüme — tavanı `içerik sayısı × OYUNCU_BAGLANTI` — ama kuru
+  // koşuda görünmezse kuyruk sıçraması kontrolsüz sanılır.
+  let kapsananSayi = 0;
+  for (let i = 0; i < icerikAnahtarlari.length; i += OBEK) {
+    const { rows: kapsam } = await havuz.query(
+      `SELECT count(*)::int AS dolu FROM tmdb_onbellek WHERE anahtar = ANY($1::text[])`,
+      [icerikAnahtarlari.slice(i, i + OBEK)],
+    );
+    kapsananSayi += kapsam[0]?.dolu ?? 0;
+  }
+  const liste = [...oncelik].map(([tmdbId, o]) => ({ tmdbId, oncelik: o }));
+  liste.icerikToplam = icerikAnahtarlari.length;
+  liste.icerikDolu = kapsananSayi;
+  return liste;
 }
 
 /**
@@ -573,20 +672,30 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
   // `dilliIstekler`: yolun KENDİSİ dile bağlı olanlar (içerik detayı —
   // `include_video_language` kısa dil kodunu taşıyor). İkisi ayrı tutuluyor
   // çünkü birincisinde tek yol N dile açılır, ikincisinde her dil AYRI yol.
+  // `istekler`: yolu dilden BAĞIMSIZ olanlar (kişi, sezon, bölüm, `/tv/:id`).
+  // `dilliIstekler`: yolun KENDİSİ dile bağlı olanlar (içerik detayı —
+  // `include_video_language` kısa dil kodunu taşıyor). İkisi ayrı tutuluyor
+  // çünkü birincisinde tek yol N dile açılır, ikincisinde her dil AYRI yol.
+  //
+  // `dilSinifi` `sinif`ten AYRI bir alan: `sinif` TAZELEME KATMANINI ve
+  // raporlamayı, `dilSinifi` ise HANGİ DİLLERDE ısıtılacağını belirler
+  // (`AYAR.SINIF_DILLERI`). İkisi her zaman örtüşmüyor — bkz. `/tv/:id`.
   const istekler = [];
   const dilliIstekler = [];
   const icerikAnahtarlari = [];
+  let kisiBuyume = null;   // kişi adaylarının ne kadar büyüyeceği (kuru koşu raporu)
 
   const icerikler = secim.siniflar.includes('icerik') || secim.siniflar.includes('kisi')
     ? await icerikKimlikleri(havuz, SITEMAP_SORGU) : [];
+  const icerikDilleri = sinifDilleri('icerik', secim);
   for (const i of icerikler) {
     // Kişi listesi ÖNBELLEKTEKİ içerik satırından çıkarılıyor; cast bütün
     // dillerde aynı olduğu için ilk dilin anahtarı yeter.
-    const ilkKod = secim.diller[0];
+    const ilkKod = icerikDilleri[0] || secim.diller[0];
     icerikAnahtarlari.push(onbellekAnahtari(
       icerikYolu(i.tur, i.tmdbId, ilkKod), tmdbDilKodu(dilHaritasi, ilkKod)));
     if (secim.siniflar.includes('icerik')) {
-      for (const kod of secim.diller) {
+      for (const kod of icerikDilleri) {
         dilliIstekler.push({
           yol: icerikYolu(i.tur, i.tmdbId, kod), kod, sinif: 'icerik', oncelik: i.oncelik,
         });
@@ -596,19 +705,23 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
 
   if (secim.siniflar.includes('bolum')) {
     for (const b of await bolumKimlikleri(havuz, SITEMAP_BOLUM_SORGU)) {
-      // `/tv/:id` (eksiz) İÇERİK anahtarından FARKLIDIR ve bölüm sayfası onu
-      // ister; sınıfı yine de 'icerik' — tazeleme aralığını dizinin durumu
-      // belirlemeli, bölümünki değil.
       const [dizi, sezon, bolum] = bolumYollari(b.tmdbId, b.sezon, b.bolum);
-      istekler.push({ yol: dizi, sinif: 'icerik', oncelik: 0 });
-      istekler.push({ yol: sezon, sinif: 'bolum', oncelik: 0 });
-      istekler.push({ yol: bolum, sinif: 'bolum', oncelik: 0 });
+      // `/tv/:id` (eksiz) içerik anahtarından FARKLIDIR ve onu YALNIZ bölüm
+      // SSR'ı okur. `sinif: 'icerik'` çünkü tazeleme aralığını dizinin durumu
+      // belirlemeli; `dilSinifi: 'diziDuz'` çünkü dili SSR'ınki (yalnız tr).
+      istekler.push({ yol: dizi, sinif: 'icerik', dilSinifi: 'diziDuz', oncelik: 0 });
+      istekler.push({ yol: sezon, sinif: 'bolum', dilSinifi: 'sezon', oncelik: 0 });
+      istekler.push({ yol: bolum, sinif: 'bolum', dilSinifi: 'bolum', oncelik: 0 });
     }
   }
 
   if (secim.siniflar.includes('kisi')) {
-    for (const k of await kisiKimlikleri(havuz, icerikAnahtarlari)) {
-      istekler.push({ yol: kisiYolu(k.tmdbId), sinif: 'kisi', oncelik: k.oncelik });
+    const kisiler = await kisiKimlikleri(havuz, icerikAnahtarlari);
+    kisiBuyume = { toplam: kisiler.icerikToplam, dolu: kisiler.icerikDolu };
+    for (const k of kisiler) {
+      istekler.push({
+        yol: kisiYolu(k.tmdbId), sinif: 'kisi', dilSinifi: 'kisi', oncelik: k.oncelik,
+      });
     }
   }
 
@@ -620,8 +733,8 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
     if (!eski) harita.set(anahtar, { anahtar, sinif, oncelik, dil: kod });
     else if (oncelik < eski.oncelik) eski.oncelik = oncelik;
   };
-  for (const kod of secim.diller) {
-    for (const i of istekler) ekle(i.yol, kod, i.sinif, i.oncelik);
+  for (const i of istekler) {
+    for (const kod of sinifDilleri(i.dilSinifi, secim)) ekle(i.yol, kod, i.sinif, i.oncelik);
   }
   for (const i of dilliIstekler) ekle(i.yol, i.kod, i.sinif, i.oncelik);
 
@@ -633,7 +746,12 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
     a.ttl = katmanTtlSn({ sinif: a.sinif, durum: d?.durum, tarih: d?.tarih }, simdiMs);
     a.tazeMi = a.yas < a.ttl;
   }
-  return siralamayiKur(adaylar);
+  // İKİ KAT: önce bant/aşım sırası, sonra sınıf başına asgari pay. Sıra
+  // önemli — `payiDagit` her sınıfın KENDİ EN İYİ adaylarını öne alabilmek
+  // için zaten sıralanmış bir liste bekliyor.
+  const sirali = payiDagit(siralamayiKur(adaylar), kosuButcesi(secim));
+  sirali.kisiBuyume = kisiBuyume;
+  return sirali;
 }
 
 /// Aşım bandı tavanı: 5 katından fazla gecikmiş anahtarlar arasında ayrım
@@ -706,6 +824,58 @@ export function siralamayiKur(adaylar) {
   return adaylar;
 }
 
+/**
+ * SINIF BAŞINA ASGARİ PAY — `siralamayiKur`un ÜSTÜNE binen ikinci kat.
+ *
+ * NEDEN AYRI BİR KAT GEREKTİ (canlıda ölçüldü, bkz. `AYAR.TABAN_PAY_ORANI`):
+ * `siralamayiKur`un round-robin'i yalnız AYNI BANT içinde adil. Canlıda
+ * sınıflar aynı anda soğumadı — kişi kümesi sonradan patladı ve hepsi
+ * `yas = Infinity` (en üst bant) oldu; bölümlerin satırı vardı, yani alt
+ * banttaydı. Üst bantta tek sınıf kalınca round-robin dağıtacak ikinci sınıf
+ * bulamadı ve bütçenin %100'ü kişiye gitti (beş koşu üst üste `kisi:480`).
+ *
+ * ÇÖZÜM SIRALAMA KATMANINDA: `kosuYap` listeyi baştan yürüyüp bütçede kesiyor,
+ * dolayısıyla listenin BAŞINI yeniden dizmek kotayı UYGULAMAK demektir —
+ * `kosuYap`ın hiçbir şeyden haberi olmasına gerek yok.
+ *
+ * NASIL: her sınıf kendi sırasından ilk `taban` adayını verir, bunlar
+ * sınıflar arasında DÖNÜŞÜMLÜ olarak listenin başına alınır; geri kalan her
+ * şey eski (bant) sırasında arkaya eklenir. Böylece:
+ *   · her sınıf bütçeden en az `taban` kadar pay alır (bant ne olursa olsun),
+ *   · adayı `taban`dan az olan sınıfın artığı DEVROLUR (bütçe boşa gitmez),
+ *   · taban dışındaki bütçe yine en bayat/en öncelikli işe gider.
+ *
+ * ÖNCELİK 0 GARANTİSİ KORUNUR: her sınıfın kendi kuyruğu zaten `oncelik`e
+ * göre sıralı, yani bir sınıf tabanını ÖNCE öncelik 0 adaylarıyla doldurur.
+ * Bir sınıfın öncelik 1 adayı, BAŞKA sınıfın öncelik 0 adayının önüne
+ * geçebilir — ama o sınıf da aynı koşuda kendi tabanını aldığı için AÇ KALMAZ.
+ */
+export function payiDagit(adaylar, butce, tabanOran = AYAR.TABAN_PAY_ORANI) {
+  const bayat = [];
+  const digerleri = [];   // taze olanlar: bütçe harcamıyorlar, sıraları önemsiz
+  for (const a of adaylar) (a.tazeMi ? digerleri : bayat).push(a);
+  const taban = Math.floor(butce * tabanOran);
+  if (!bayat.length || taban < 1) return adaylar;
+
+  const kuyruklar = new Map();
+  for (const a of bayat) {
+    if (!kuyruklar.has(a.sinif)) kuyruklar.set(a.sinif, []);
+    kuyruklar.get(a.sinif).push(a);
+  }
+  // Tek sınıf varsa paylaştıracak kimse yok; sırayı bozmanın anlamı olmaz.
+  if (kuyruklar.size < 2) return adaylar;
+
+  const secilen = new Set();
+  const on = [];
+  for (let n = 0; n < taban; n++) {
+    for (const kuyruk of kuyruklar.values()) {
+      const a = kuyruk[n];
+      if (a) { on.push(a); secilen.add(a); }
+    }
+  }
+  return [...on, ...bayat.filter((a) => !secilen.has(a)), ...digerleri];
+}
+
 // ===========================================================================
 // 8) KOŞU ÇEKİRDEĞİ — saf, enjekte edilebilir (testler bunu sürüyor)
 // ===========================================================================
@@ -730,8 +900,13 @@ export async function kosuYap({
   // her şey; `kuyruk` = bunlardan bu koşunun bütçesine SIĞMAYANLAR. Günden güne
   // düşüyorsa doluyoruz; sabit kalıyorsa bütçe yetmiyor demektir.
   const bayatToplam = adaylar.reduce((n, a) => n + (a.tazeMi ? 0 : 1), 0);
+  // `bakilan`/`taze` LİSTENİN TAMAMINDAN sayılır, döngü ilerledikçe DEĞİL.
+  // Gerekçe: `payiDagit` taze adayları listenin sonuna atıyor ve bütçe
+  // dolunca döngü erken kırılıyor; artımlı sayım "zaten_taze=0" gibi yanlış
+  // bir rapor üretirdi. Bu iki sayı kuyruk ölçümünün bağlamı — yanlış olamaz.
   const ozet = {
-    bakilan: 0, taze: 0, tazelendi: 0, hata: 0, yok: 0, atlanan: 0,
+    bakilan: adaylar.length, taze: adaylar.length - bayatToplam,
+    tazelendi: 0, hata: 0, yok: 0, atlanan: 0,
     istek: 0, tavan: null, ornekler: [], sureMs: 0, kuru,
     bayatToplam, kuyruk: bayatToplam, sinifSayaci: {},
   };
@@ -741,11 +916,10 @@ export async function kosuYap({
 
   for (let i = 0; i < adaylar.length; i++) {
     const aday = adaylar[i];
-    if (aday.tazeMi) { ozet.bakilan++; ozet.taze++; continue; }
+    if (aday.tazeMi) continue;   // bütçe harcamaz; sayımı yukarıda yapıldı
     // TAVANLAR: aşıldığında listenin KALANI atlanır (kısmi koşu, sessiz değil).
     if (ozet.istek >= azamiIstek) { ozet.tavan = 'istek'; ozet.atlanan = adaylar.length - i; break; }
     if (simdi() - baslangic >= azamiMs) { ozet.tavan = 'sure'; ozet.atlanan = adaylar.length - i; break; }
-    ozet.bakilan++;
     ozet.istek++;
     // Sınıf başına pay: açlık olup olmadığı ancak burada GÖRÜNÜR olur.
     ozet.sinifSayaci[aday.sinif] = (ozet.sinifSayaci[aday.sinif] || 0) + 1;
@@ -958,6 +1132,23 @@ async function main(argv) {
         + `(${Math.floor(1440 / AYAR.CRON_DAKIKA)} koşu × ${AYAR.CRON_DAKIKA} dk)`);
       console.log(`  kuyruk bu hızla boşalır: `
         + `${bosalmaSaati(ozet.bayatToplam, gunluk).toFixed(1)} saat`);
+      // ADAY KÜMESİ BÜYÜMESİ: kuru koşunun verdiği sayı SABİT DEĞİL. Kişi
+      // adayları önbellekteki içerik satırlarından türüyor, yani içerik
+      // önbelleği doldukça kuyruk BÜYÜR. 20 Ağu 2026'da kuru koşu 7.382 dedi,
+      // iki saat sonra bayat_toplam 27.910'du — sebebi buydu, kontrolsüzlük
+      // değil. Tavan: kapsanmayan içerik × OYUNCU_BAGLANTI × kişi dili.
+      const b = adaylar.kisiBuyume;
+      if (b && b.toplam) {
+        const yuzde = ((b.dolu / b.toplam) * 100).toFixed(0);
+        const kalan = Math.max(0, b.toplam - b.dolu);
+        console.log(`  içerik önbelleği  : ${b.dolu}/${b.toplam} (%${yuzde}) dolu`);
+        if (kalan) {
+          console.log(`  UYARI: aday kümesi BÜYÜYECEK — kalan ${kalan} içerik `
+            + `satırı ısındıkça en fazla `
+            + `${kalan * AYAR.OYUNCU_BAGLANTI * sinifDilleri('kisi', secim).length} `
+            + 'yeni kişi anahtarı doğabilir (tekilleşmeden önceki TAVAN).');
+        }
+      }
       for (const a of ozet.ornekler) console.log(`  örnek anahtar: ${a}`);
     }
     if (konusmaliMi(ozet)) console.log(ozetSatiri(ozet, secim));
