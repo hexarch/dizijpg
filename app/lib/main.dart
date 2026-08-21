@@ -87,6 +87,15 @@ Future<void> main() async {
     });
     // Firebase çekirdeği + arka plan mesaj işleyicisi
     await acilisAdimi('push', pushCekirdek);
+    // Dil: önce kullanıcının SEÇİMİ, seçim yoksa CİHAZIN dili
+    // (`Ceviri.yukle` → `cihazDiliEsle`; desteklenmeyen dilde İngilizce).
+    // BURADA, `runApp`'ten ÖNCE olmak ZORUNDA: `Ceviri.dil` hem arayüzü hem
+    // `X-Dil` başlığıyla TMDB içeriğini belirliyor (api.dart `_basliklar` /
+    // `_dilliYol`). Sonraya bırakılsaydı ilk kare Türkçe çizilir, dil sonra
+    // değişirdi — göz kırpması; üstelik açılışta atılan istekler yanlış
+    // dille gider ve `Onbellek` yanlış dil anahtarına yazardı.
+    // `WidgetsFlutterBinding.ensureInitialized()`ten SONRA olmalı (yukarıda):
+    // platform dil listesi bağlama kurulmadan güvenilir değil.
     await acilisAdimi('ceviri', Ceviri.yukle);
     // KURULUM kimliği: ilk açılışta üretilir, sonraki açılışlarda okunur.
     // DONANIMDAN OKUNMAZ (Play politikası + gizlilik); yalnız moderasyon

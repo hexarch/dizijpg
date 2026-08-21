@@ -1578,27 +1578,37 @@ class TakipSayac extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      child: Container(
+      // ConstrainedBox + Center(widthFactor: 1) — Container DEĞİL.
+      // 21 Ağu 2026 GERİLEME: dokunma hedefi için `Container`a
+      // `alignment` verilmişti; Flutter'da alignment'lı Container
+      // mümkün olduğunca GENİŞLER. `Wrap` içinde her sayaç tüm satırı
+      // kapladı ve dördü ALT ALTA dizildi (kullanıcı bildirdi).
+      // `widthFactor: 1` çocuk genişliğinde kalır, yalnız dikeyde ortalar.
+      child: ConstrainedBox(
         constraints: const BoxConstraints(minHeight: enAzHedef),
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-        child: RichText(
-          // RichText tema rengini devralmaz; renk açıkça verilmeli
-          text: TextSpan(
-            style: TextStyle(fontSize: 13, color: DiziRenkler.metin),
-            children: [
-              TextSpan(
-                text: deger,
-                style: TextStyle(
-                  fontWeight: FontWeight.w900,
-                  color: DiziRenkler.metin,
-                ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+          child: Center(
+            widthFactor: 1,
+            child: RichText(
+              // RichText tema rengini devralmaz; renk açıkça verilmeli
+              text: TextSpan(
+                style: TextStyle(fontSize: 13, color: DiziRenkler.metin),
+                children: [
+                  TextSpan(
+                    text: deger,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                  TextSpan(
+                    text: ' $etiket',
+                    style: TextStyle(color: DiziRenkler.metin),
+                  ),
+                ],
               ),
-              TextSpan(
-                text: ' $etiket',
-                style: TextStyle(color: DiziRenkler.metin),
-              ),
-            ],
+            ),
           ),
         ),
       ),

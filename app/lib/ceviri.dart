@@ -1,3 +1,5 @@
+import 'dart:ui' show PlatformDispatcher;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,7 +9,37 @@ import 'diller/diller.dart';
 /// Uygulama dili. Türkçe metinler anahtar olarak kullanılır;
 /// seçili dilin haritasında karşılık yoksa Türkçe'ye düşülür.
 class Ceviri {
+  /// Çeviri anahtarlarının KAYNAK dili — yani `'Ayarlar'.c` çağrısındaki
+  /// Türkçe metnin kendisi. Seçili dilin haritasında karşılık yoksa metin
+  /// olduğu gibi (Türkçe) basılır.
+  ///
+  /// BU BİR MEKANİZMADIR, "ilk açılış dili" DEĞİLDİR — ikisi kasten ayrı:
+  /// burayı değiştirmek 45 dil dosyasının ANAHTARLARINI geçersiz kılar
+  /// (haritalar Türkçe anahtarla üretiliyor). Cihaz dili tanınmadığında
+  /// hangi dille açılacağı için [tespitGerilemesi]'ne bak.
   static const varsayilan = 'tr';
+
+  /// Cihazın tercih ettiği dillerin HİÇBİRİ desteklenmiyorsa açılış dili.
+  ///
+  /// NEDEN İNGİLİZCE, [varsayilan] (Türkçe) DEĞİL: uygulama Türkçe yazıldı,
+  /// 45 dil sonradan eklendi ve "ilk açılışta hangi dil?" sorusu hiç
+  /// sorulmadığı için temiz kurulumda herkes Türkçe açıyordu. İsveç'teki bir
+  /// kullanıcıya Türkçe göstermek, İngilizce göstermekten kötüdür: Türkçe
+  /// yalnız Türkçe bilene bir şey ifade eder, İngilizce ise dünyanın en yaygın
+  /// ikinci dilidir ve TMDB içeriğinin de temel dilidir (`X-Dil: en`).
+  /// Bu bir ÜRÜN kararıdır; anahtar kaynağı olan [varsayilan] ile
+  /// karıştırılmasın diye ayrı adlandırıldı.
+  static const tespitGerilemesi = 'en';
+
+  /// Kullanıcının AYARLARDAN seçtiği dilin kaydı.
+  ///
+  /// SÖZLEŞME: bu anahtarı yazan TEK yer [sec]'tir (tek çağrı noktası:
+  /// `lib/ekranlar/ayarlar.dart` dil seçici). Bu yüzden "anahtar var" =
+  /// "kullanıcı bilinçli olarak seçti" demektir — cihaz tespiti onu ASLA
+  /// ezmez, güncellemeden sonra da ezmez. Tespit edilen dil KAYDEDİLMEZ:
+  /// böylece (a) seçim ile tespit birbirine karışmaz, (b) kullanıcı
+  /// telefonunun dilini değiştirdiğinde uygulama sonraki açılışta uyar.
+  static const _secilenAnahtar = 'dil';
 
   /// Desteklenen diller: kod → yerel adı (dil seçicide gösterilir).
   static const Map<String, String> diller = {
@@ -69,21 +101,97 @@ class Ceviri {
   static List<Locale> get desteklenenLocaleler =>
       diller.keys.map(Locale.new).toList();
 
-  static Future<void> yukle() async {
-    final prefs = await SharedPreferences.getInstance();
-    final kod = prefs.getString('dil');
-    if (kod != null && diller.containsKey(kod)) {
-      _harita = tumCeviriler[kod] ?? const {};
-      dil.value = kod;
+  /// Cihaz kodu → bizim dosya kodumuz. dart:ui'nin `Locale.languageCode`
+  /// getter'ı ESKİ ISO kodlarını ZATEN çeviriyor (in→id, iw→he, ji→yi,
+  /// jw→jv, mo→ro — `platform_dispatcher.dart`), ki bu önemli: Android'in
+  /// Java `Locale`'i İbranice için hâlâ `iw`, Endonezce için `in` verir ve
+  /// ikisi de bizde DESTEKLENEN dil. Burada yalnız onun kapsamadıkları var.
+  static const Map<String, String> _dilTakma = {
+    // Tagalog ↔ Filipino: cihaz `tl` diyebilir, bizim dosyamız `fil`.
+    'tl': 'fil',
+    // `no` yazılı norm değil, makro-dil; Norveç cihazları `no`/`nb`/`nn`
+    // üçünü de verebiliyor. Bizde yalnız Bokmål (`nb`) var; Nynorsk okuru
+    // için Bokmål İngilizceden kat kat yakındır.
+    'no': 'nb',
+    'nn': 'nb',
+  };
+
+  /// Cihazın TERCİH SIRASINDAKİ dillerinden desteklediğimiz İLKİ; yoksa null.
+  ///
+  /// Neden liste: platform tek dil değil, sıralı bir tercih listesi verir
+  /// (`PlatformDispatcher.locales`). Yalnız birinciye bakıp pes etmek,
+  /// telefonunda `[sv, de, en]` yazan kullanıcıyı gereksiz yere geri düşüş
+  /// diline atardı — oysa ikinci tercihi Almanca ve o bizde var.
+  ///
+  /// BÖLGE VE YAZI KODU DÜŞER: `en-GB`→`en`, `pt-BR`→`pt`, `zh-Hant-TW`→`zh`.
+  /// `zh` KARARI: elimizdeki tek Çince dosyası BASİTLEŞTİRİLMİŞ (`dil_zh.dart`
+  /// baştan sona 简体; doğrulandı) ve TMDB de `zh` için basitleştirilmiş metin
+  /// döndürüyor. `zh-Hant` (Tayvan/Hong Kong) kullanıcısına bunu göstermek
+  /// kusurlu ama İngilizceye düşürmekten iyidir: geleneksel yazı okuyan biri
+  /// basitleştirilmiş metni sökebilir, çoğu için İngilizce ana dilinden çok
+  /// daha uzaktır. İleride ayrı bir `zh-Hant` dosyası eklenirse dallanacak
+  /// TEK yer burasıdır (`yerel.scriptCode == 'Hant'` kontrolü).
+  static String? cihazDiliEsle(List<Locale> tercihler) {
+    for (final yerel in tercihler) {
+      final kod = _dilTakma[yerel.languageCode] ?? yerel.languageCode;
+      if (diller.containsKey(kod)) return kod;
+    }
+    return null;
+  }
+
+  /// Cihaz dillerinin kaynağı. Yalnız test değiştirir (gerçek cihaz dilini
+  /// widget testinde taklit etmenin başka yolu yok: `PlatformDispatcher`
+  /// singleton'ı test ikamesi kabul etmiyor).
+  @visibleForTesting
+  static List<Locale> Function() cihazDilleri = platformDilleri;
+
+  /// Gerçek platform kaynağı. Arka plan izolatında (bildirim yanıtı) platform
+  /// dil bildirmeyebilir; patlamak yerine BOŞ liste döner ki [yukle] tespiti
+  /// atlasın ve mevcut davranış korunsun.
+  static List<Locale> platformDilleri() {
+    try {
+      return PlatformDispatcher.instance.locales;
+    } catch (_) {
+      return const <Locale>[];
     }
   }
 
-  static Future<void> sec(String kod) async {
-    if (!diller.containsKey(kod)) return;
+  static void _uygula(String kod) {
     _harita = tumCeviriler[kod] ?? const {};
     dil.value = kod;
+  }
+
+  /// Açılışta bir kez: önce KULLANICININ SEÇİMİ, o yoksa CİHAZIN DİLİ.
+  ///
+  /// Sıra kutsaldır. Seçim varsa cihaz dili hiç okunmaz — telefonu Almanca
+  /// olup uygulamayı Türkçe kullanmayı seçmiş kullanıcı her açılışta
+  /// seçtiği dili bulur, güncellemeden sonra da bulur (kayıt biçimi
+  /// değişmedi: aynı `dil` anahtarı, aynı değer).
+  ///
+  /// AÇILIŞI BEKLETMEZ ve GÖZ KIRPMASI YAPMAZ: `main()` bu adımı
+  /// `runApp`'ten ÖNCE `await` ediyor (`acilisAdimi('ceviri', ...)`), yani
+  /// İLK KARE zaten doğru dilde çizilir. Sonradan çağrılsaydı uygulama önce
+  /// Türkçe çizip sonra dil değiştirirdi.
+  static Future<void> yukle() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('dil', kod);
+    final secilen = prefs.getString(_secilenAnahtar);
+    if (secilen != null && diller.containsKey(secilen)) {
+      _uygula(secilen);
+      return;
+    }
+    final tercihler = cihazDilleri();
+    // Platform hiç dil bildirmediyse tahmin yürütme: eldeki dili koru.
+    if (tercihler.isEmpty) return;
+    _uygula(cihazDiliEsle(tercihler) ?? tespitGerilemesi);
+  }
+
+  /// Kullanıcının SEÇİMİ. [_secilenAnahtar]'ı yazan tek yer burasıdır;
+  /// buradan sonra cihaz dili bir daha devreye girmez.
+  static Future<void> sec(String kod) async {
+    if (!diller.containsKey(kod)) return;
+    _uygula(kod);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_secilenAnahtar, kod);
   }
 
   static String metin(String tr) => _harita[tr] ?? tr;

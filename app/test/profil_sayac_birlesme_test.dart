@@ -542,4 +542,72 @@ void main() {
       DiziRenkler.metin,
     );
   });
+
+  // -------------------------------------------------------------------------
+  // GERİLEME KİLİDİ — 21 Ağu 2026, KULLANICI BİLDİRDİ
+  //
+  // Dokunma hedefi (≥44 dp) için `TakipSayac`ın içine `Container` +
+  // `alignment: Alignment.centerLeft` konmuştu. Flutter'da alignment'lı
+  // Container MÜMKÜN OLDUĞUNCA GENİŞLER — `Wrap` içinde her sayaç tüm satırı
+  // kapladı ve dördü ALT ALTA dizildi, sağ taraf bomboş kaldı.
+  //
+  // 19 mevcut test bunu YAKALAYAMADI, çünkü hepsi "doğru sayı yazılıyor mu",
+  // "dokunma bağlı mı" diye soruyordu — hiçbiri YERLEŞİME bakmıyordu.
+  // Bu test tam olarak ona bakıyor: dört sayaç AYNI SATIRDA mı?
+  // -------------------------------------------------------------------------
+  testWidgets(
+    'takipçi/takip/beğeni/görüntülenme AYNI SATIRDA (alt alta DEĞİL)',
+    (tester) async {
+      tester.view.physicalSize = const Size(1200, 2000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: ProfilTakipSatiri(
+              sayac: const ProfilSayaclari(
+                takipci: 12,
+                takip: 34,
+                begeni: 5678,
+                goruntulenme: 91011,
+                bolum: 0,
+                film: 0,
+                dizi: 0,
+                yorum: 0,
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final kutular = tester
+          .widgetList<TakipSayac>(find.byType(TakipSayac))
+          .map((w) => tester.getRect(find.byWidget(w)))
+          .toList();
+      expect(kutular.length, 4, reason: 'dört sayaç bekleniyordu');
+
+      // Hepsi aynı dikey konumda mı? (Wrap satır atlamışsa `top` farklılaşır.)
+      final ustler = kutular.map((r) => r.top).toSet();
+      expect(
+        ustler.length,
+        1,
+        reason: 'sayaçlar ${ustler.length} satıra dağıldı — alt alta dizilmiş',
+      );
+
+      // Hiçbiri tüm genişliği kaplamamalı: kaplayan biri diğerlerini iter.
+      for (final r in kutular) {
+        expect(
+          r.width,
+          lessThan(1200 * 0.5),
+          reason: 'bir sayaç ekranın yarısından geniş — Container genişlemiş',
+        );
+      }
+
+      // Dokunma hedefi kuralı da DURUYOR (düzeltirken kaybetmeyelim).
+      for (final r in kutular) {
+        expect(r.height, greaterThanOrEqualTo(TakipSayac.enAzHedef));
+      }
+    },
+  );
 }
