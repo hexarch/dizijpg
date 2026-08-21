@@ -2365,7 +2365,13 @@ async function tik(){
     $('#uyari').classList.remove('gizli');
   }
 }
-globeKur(); tik(); setInterval(tik,3000);
+// Küre süs, veri değil: unpkg engellenirse (Brave Shields) Globe tanımsız
+// kalır; korumasız çağrı tik() dahil kalan HER ŞEYİ öldürüyordu (21 Ağu 2026).
+try{ if(typeof Globe==='function') globeKur(); else throw new Error('Globe yok'); }
+catch(e){ console.warn('Küre çizilemedi (engellenmiş olabilir):', e.message);
+  const gs=document.getElementById('globe-sar');
+  if(gs) gs.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;font-size:13px;padding:16px;text-align:center">Harita yüklenemedi — tarayıcı unpkg.com\'u engelliyor olabilir (Brave Kalkanı). Panelin geri kalanı çalışır.</div>'; }
+tik(); setInterval(tik,3000);
 // Mailler: rozet açılışta dolsun, dakikada bir tazelensin (ayrıştırma
 // önbellekli olduğundan tekrar maliyeti readdir+stat kadar).
 // Rozetler açılışta dolsun (mail, geri bildirim, disk/yedek uyarısı)
