@@ -36,6 +36,8 @@ import {
   kosuYap, ozetSatiri, bagAyarlariDogrula, gunlukKapasite, siralamayiKur,
   sunucuDilHaritasi, tmdbDilKodu, payiDagit, sinifDilleri, kosuButcesi,
   konusmaliMi, bosalmaSaati,
+  yokIsaretiUygula, yokIsaretleriniOku, yokIsaretiYaz, yokIsaretiSil,
+  yokIsaretleriniBuda,
 } from '../isitici.js';
 
 const KOK = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -233,16 +235,41 @@ test('sitemap sorguları server.js kaynağından KURULUYOR, çözülmemiş şabl
 
 test('ısıtma kuyruğu harita sorgusundan AYRI (kendini besleyen kilit yok)', () => {
   // NEDEN VAR: `SITEMAP_BOLUM_SORGU` yalnız SEZON YANITI ÖNBELLEKTE OLAN
-  // bölümleri döndürüyor. Isıtıcı kuyruğunu oradan alsaydı, önbellekte
+  // bölümleri döndürüyor. Isıtıcı kuyruğunu SADECE oradan alsaydı, önbellekte
   // olmayan sezon HİÇBİR ZAMAN çekilmez, harita da hiç büyümezdi — kuyruk
-  // kendi kaynağını besleyemez. Bu yüzden ısıtma kuyruğu `/tv/:id` yanıtının
-  // `seasons[]` dizisinden (episode_count) türetiliyor.
+  // kendi kaynağını besleyemez.
+  //
+  // İDDİA 21 AĞU 2026'DA DEĞİŞTİ, ZAYIFLAMADI. Eski hâli "sorgu `season/[0-9]+`
+  // İÇERMESİN" diyordu, yani kuyruğun sezon önbelleğine BAKMASINI yasaklıyordu.
+  // Bu, kilidi engellemek için gereğinden GENİŞ bir yasaktı ve canlıda ölçülen
+  // arızayı doğurdu: `generate_series(1, episode_count)` mutlak numaralandırma
+  // kullanan dizilerde (ör. /tv/31910 sezon 10 → gerçek numaralar 197..221)
+  // var olmayan bölümler üretiyordu — 1.837 hayalet anahtar, 1.833 gerçek
+  // bölüm ise hiç ısıtılmıyordu.
+  //
+  // KORUNAN ASIL NİYET: kuyruk sezon önbelleğine BAĞIMLI olmamalı. Yeni
+  // iddia tam da bunu ölçüyor — tahmin dalı DURUYOR ve yalnız "sezon belgesi
+  // YOK" halinde devreye giriyor (`kapsanan` LEFT JOIN + IS NULL).
   const { SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU } = sunucuSorgulari(SERVER);
   assert.notEqual(SITEMAP_BOLUM_SORGU, ISITMA_BOLUM_SORGU);
-  assert.match(ISITMA_BOLUM_SORGU, /episode_count/, 'ısıtma kuyruğu sezon dökümünden gelmiyor');
+
+  // DAL 2 (KİLİT KIRICI) — sezon belgesi olmadan da bölüm üretilebiliyor.
+  assert.match(ISITMA_BOLUM_SORGU, /episode_count/,
+    'tahmin dalı düştü: önbellekte sezonu olmayan dizi HİÇ ısıtılamaz (kilit)');
   assert.match(ISITMA_BOLUM_SORGU, /generate_series\(1, v\.bolum_adedi\)/);
-  assert.doesNotMatch(ISITMA_BOLUM_SORGU, /season\/\[0-9\]\+/,
-    'ısıtma kuyruğu sezon ÖNBELLEĞİNE bağlanmış (kilit geri geldi)');
+  assert.match(ISITMA_BOLUM_SORGU, /LEFT JOIN kapsanan k[\s\S]*?k\.tv IS NULL/,
+    'tahmin dalı "sezon belgesi yok" koşuluyla sınırlanmamış (iki dal çakışır)');
+
+  // DAL 1 (HAYALET KIRICI) — sezon belgesi varsa GERÇEK numaralandırma.
+  assert.match(ISITMA_BOLUM_SORGU, /episode_number/,
+    'gerçek bölüm listesi dalı yok: episode_count hayalet bölüm üretmeye devam eder');
+  assert.match(ISITMA_BOLUM_SORGU, /language=tr-TR/,
+    'sezon belgesi dalı dil süzgeci olmadan okunuyor (TOAST maliyeti 45 kat)');
+
+  // İki dal AYRIK olmalı: aynı sezon hem gerçek listeden hem tahminden
+  // gelirse kuyruk şişer ve hayaletler geri döner.
+  assert.match(ISITMA_BOLUM_SORGU, /UNION ALL/);
+
   // Isıtıcı gerçekten AYRI sorguyu kullanıyor mu (harita sorgusuna dönmemiş)?
   const blok = ISITICI.slice(ISITICI.indexOf('export async function adaylariTopla'));
   assert.match(blok, /bolumKimlikleri\(havuz, ISITMA_BOLUM_SORGU\)/);
@@ -328,15 +355,18 @@ test('katman süreleri YALNIZ AYAR.KATMAN blokunda yazılı', () => {
     .filter((m) => m.index < bas || m.index >= son)
     .map((m) => m[0]);
   assert.deepEqual(disarida, [], 'katman süresi KATMAN bloku dışında da yazılmış');
-  // Beş katmanın hepsi gerçekten burada tanımlı:
-  for (const ad of ['surenDizi', 'yeniYapim', 'dinlenmis', 'kisi', 'bolum']) {
+  // Altı katmanın hepsi gerçekten burada tanımlı. `yok404` 21 Ağu 2026'da
+  // eklendi: olumsuz önbelleğin ömrü de bir TAZELEME ARALIĞIDIR ve aynı
+  // disipline tabidir — ayrı bir sabit olarak dışarıda dursaydı ilk ayarda
+  // diğerlerinden sessizce ayrışırdı.
+  for (const ad of ['surenDizi', 'yeniYapim', 'dinlenmis', 'kisi', 'bolum', 'yok404']) {
     assert.match(eslesme[0], new RegExp(`\\n\\s{4}${ad}: \\d+ \\* 24 \\* 3600,`),
       `KATMAN.${ad} blokta yok`);
   }
   // Katmanlar KODDA yalnız `KATMAN.<ad>` olarak okunuyor (tek okuma noktası).
   const okumalar = [...ISITICI.matchAll(/KATMAN\.(\w+)/g)].map((m) => m[1]);
   assert.deepEqual([...new Set(okumalar)].sort(),
-    ['bolum', 'dinlenmis', 'kisi', 'surenDizi', 'yeniYapim']);
+    ['bolum', 'dinlenmis', 'kisi', 'surenDizi', 'yeniYapim', 'yok404']);
 });
 
 // ---------------------------------------------------------------------------
@@ -1076,4 +1106,356 @@ test('aday kümesi büyümesi kuru koşuda GÖRÜNÜR (sıçrama kontrolsüz de�
   assert.match(ISITICI, /içerik önbelleği/);
   assert.match(ISITICI, /aday kümesi BÜYÜYECEK/);
   assert.match(ISITICI, /OYUNCU_BAGLANTI \* sinifDilleri\('kisi', secim\)\.length/);
+});
+
+// ---------------------------------------------------------------------------
+// 16) OLUMSUZ ÖNBELLEK — CANLIDA ÖLÇÜLEN SONSUZ DÖNGÜ (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// KANIT (/var/log/dizijpg-isitici.log, ardışık koşular):
+//   tazelendi=480 hata=0 tmdb_404=0     ← normal
+//   tazelendi=38  hata=0 tmdb_404=442
+//   tazelendi=12  hata=0 tmdb_404=468   ← sonra HER koşuda AYNI sayılar
+// 480 isteğin 468'i 404 dönüyor ve AYNI anahtarlar 10 dakikada bir yeniden
+// isteniyordu (günde ~67.000 boşa istek). Sebep: 404'te `tmdb_onbellek`e satır
+// YAZILMIYOR (doğru karar), satır olmayınca `yas = Infinity` → en üst aşım
+// bandı → anahtar kuyruğun başına geri dönüyor. Başarısızlık kendini
+// ödüllendiriyordu.
+//
+// AŞAĞIDAKİ ÜÇ İDDİA DÜZELTMENİN TAMAMINI KİLİTLİYOR:
+//   · işaret SSR/uygulama yoluna SIZMIYOR (en tehlikeli yan etki),
+//   · aynı anahtar İKİNCİ koşuda İSTENMİYOR (döngü kırıldı),
+//   · süre dolunca YENİDEN deneniyor (sonradan eklenen bölüm geri gelir).
+
+/** Bellek içi `tmdb_yok` taklidi — gerçek SQL'leri tanıyan sahte havuz. */
+function sahteHavuz({ tabloYok = false } = {}) {
+  const satirlar = new Map();   // anahtar -> { yas, sayac }
+  const gorulen = [];
+  return {
+    satirlar,
+    gorulen,
+    /** Testin saati: bütün işaretleri yaşlandırır. */
+    yaslandir(sn) { for (const r of satirlar.values()) r.yas += sn; },
+    async query(sql, par = []) {
+      gorulen.push(sql.replace(/\s+/g, ' ').trim());
+      if (tabloYok) {
+        throw Object.assign(new Error('relation "tmdb_yok" does not exist'),
+          { code: '42P01' });
+      }
+      if (/^SELECT anahtar, EXTRACT/.test(sql)) {
+        return { rows: [...satirlar].map(([anahtar, r]) => ({ anahtar, yas: r.yas })) };
+      }
+      if (/^INSERT INTO tmdb_yok/.test(sql)) {
+        const v = satirlar.get(par[0]);
+        satirlar.set(par[0], { yas: 0, sayac: v ? v.sayac + 1 : 1 });
+        return { rowCount: 1 };
+      }
+      if (/^DELETE FROM tmdb_yok WHERE anahtar/.test(sql)) {
+        return { rowCount: satirlar.delete(par[0]) ? 1 : 0 };
+      }
+      if (/^DELETE FROM tmdb_yok WHERE guncelleme/.test(sql)) {
+        let n = 0;
+        for (const [a, r] of [...satirlar]) {
+          if (r.yas > Number(par[0])) { satirlar.delete(a); n++; }
+        }
+        return { rowCount: n };
+      }
+      throw new Error(`sahte havuz tanımadı: ${sql}`);
+    },
+  };
+}
+
+/** Olumsuz önbellekli tam koşu: adayları işaretle, koştur, işaretleri yaz. */
+async function isaretliKosu(havuz, adaylar, cevap) {
+  yokIsaretiUygula(adaylar, await yokIsaretleriniOku(havuz));
+  const istenen = [];
+  const yazilan = [];
+  const ozet = await kosuYap({
+    adaylar,
+    getir: async (a) => { istenen.push(a); return cevap(a); },
+    yaz: async (a, v) => { yazilan.push([a, v]); },
+    yokYaz: (a) => yokIsaretiYaz(havuz, a),
+    yokSil: (a) => yokIsaretiSil(havuz, a),
+    bekle: async () => {},
+    istekSn: 1e9,
+  });
+  return { ozet, istenen, yazilan };
+}
+
+/** Hayalet bölüm adayı: satırı YOK, yani `yas = Infinity` (en üst bant). */
+const hayalet = (anahtar) => ({
+  anahtar, sinif: 'bolum', oncelik: 1, satirVar: false,
+  yas: Infinity, ttl: AYAR.KATMAN.bolum, tazeMi: false,
+});
+
+test('DÜZELTME OLMADAN kırmızı: 404 alan anahtar HER koşuda yeniden isteniyor', async () => {
+  // Canlıdaki döngünün ta kendisi. Olumsuz önbellek DEVRE DIŞI (yokYaz yok) →
+  // aynı anahtar iki koşuda da isteniyor. Bu iddia bozulursa (döngü artık
+  // kendiliğinden kırılıyorsa) olumsuz önbellek gereksizleşmiş demektir;
+  // o zaman bu testi SİLMEK doğru olur, gizlemek değil.
+  const cevap = async () => ({ durum: 'yok' });
+  const k1 = await kosuYap({
+    adaylar: [hayalet('/tv/31910/season/10/episode/1?language=tr-TR')],
+    getir: cevap, yaz: async () => {}, bekle: async () => {}, istekSn: 1e9,
+  });
+  const k2 = await kosuYap({
+    adaylar: [hayalet('/tv/31910/season/10/episode/1?language=tr-TR')],
+    getir: cevap, yaz: async () => {}, bekle: async () => {}, istekSn: 1e9,
+  });
+  assert.equal(k1.istek, 1);
+  assert.equal(k2.istek, 1, 'olumsuz önbelleksiz döngü artık yok — tasarımı gözden geçir');
+});
+
+test('DÖNGÜ KIRILDI: aynı anahtar İKİNCİ koşuda İSTENMİYOR', async () => {
+  const havuz = sahteHavuz();
+  const anahtar = '/tv/31910/season/10/episode/1?append_to_response=translations&language=tr-TR';
+
+  // 1. koşu: TMDB 404 → satır yazılmaz, işaret konur.
+  const bir = await isaretliKosu(havuz, [hayalet(anahtar)], async () => ({ durum: 'yok' }));
+  assert.deepEqual(bir.istenen, [anahtar]);
+  assert.equal(bir.yazilan.length, 0, '404 gövdesi tmdb_onbellek\'e yazıldı');
+  assert.equal(bir.ozet.yok, 1);
+  assert.equal(bir.ozet.yokYeni, 1);
+  assert.equal(havuz.satirlar.get(anahtar).sayac, 1);
+
+  // 2. koşu: AYNI aday, taze bir işaret var → TMDB'ye HİÇ gidilmemeli.
+  const iki = await isaretliKosu(havuz, [hayalet(anahtar)],
+    async () => { throw new Error('İKİNCİ KOŞUDA TMDB\'YE GİDİLDİ — döngü sürüyor'); });
+  assert.deepEqual(iki.istenen, [], 'işaretli anahtar yeniden istendi (döngü kırılmadı)');
+  assert.equal(iki.ozet.istek, 0, 'işaretli anahtar bütçe harcadı');
+  assert.equal(iki.ozet.yokIsareti, 1);
+  // Sayım DÜRÜST: işaretli anahtar "taze veri" sayılmıyor, ayrı raporlanıyor.
+  assert.equal(iki.ozet.taze, 0, 'işaretli anahtar zaten_taze\'ye karıştı');
+  assert.equal(iki.ozet.bayatToplam, 0, 'işaretli anahtar kuyrukta görünmeye devam ediyor');
+});
+
+test('DÖNGÜ KIRILDI: 468 hayalet bütçeyi YEMİYOR, gerçek işe kalıyor', async () => {
+  // Canlıdaki sayı: 480 bütçenin 468'i hayalet, yalnız 12 gerçek iş yapılıyordu.
+  const havuz = sahteHavuz();
+  const yapay = () => [
+    ...Array.from({ length: 468 }, (_, i) => hayalet(`/tv/31910/season/1/episode/${i}?language=tr-TR`)),
+    ...Array.from({ length: 480 }, (_, i) => hayalet(`/tv/99999/season/1/episode/${i}?language=tr-TR`)),
+  ];
+  const cevap = async (a) => (a.startsWith('/tv/31910')
+    ? { durum: 'yok' } : { durum: 'tamam', veri: { id: 1 } });
+
+  const bir = await isaretliKosu(havuz, yapay(), cevap);
+  assert.equal(bir.ozet.yok, 468, 'senaryo canlıdaki dağılımı kurmuyor');
+  assert.equal(bir.ozet.tazelendi, 12, 'canlıdaki "tazelendi=12" üretilmedi');
+
+  // İKİNCİ koşu: 468 hayalet işaretli → bütçenin TAMAMI gerçek işe gider.
+  const iki = await isaretliKosu(havuz, yapay(), cevap);
+  assert.equal(iki.ozet.yokIsareti, 468);
+  assert.equal(iki.ozet.yok, 0, 'hayaletler yine TMDB\'ye gitti');
+  assert.equal(iki.ozet.tazelendi, 480,
+    `ikinci koşuda yalnız ${iki.ozet.tazelendi} gerçek iş yapıldı (480 olmalı)`);
+});
+
+test('SÜRE DOLUNCA YENİDEN DENENİR (sonradan eklenen bölüm geri gelir)', async () => {
+  const havuz = sahteHavuz();
+  const anahtar = '/tv/1396/season/6/episode/1?append_to_response=translations&language=tr-TR';
+  await isaretliKosu(havuz, [hayalet(anahtar)], async () => ({ durum: 'yok' }));
+  assert.equal(havuz.satirlar.has(anahtar), true);
+
+  // TTL'in HEMEN ALTINDA: hâlâ susturuluyor.
+  havuz.yaslandir(AYAR.KATMAN.yok404 - 1);
+  const erken = await isaretliKosu(havuz, [hayalet(anahtar)],
+    async () => { throw new Error('süre dolmadan istendi'); });
+  assert.deepEqual(erken.istenen, []);
+
+  // TTL DOLDU + bölüm bu arada TMDB'ye eklendi → istenir, yazılır, işaret SİLİNİR.
+  havuz.yaslandir(2);
+  const gec = await isaretliKosu(havuz, [hayalet(anahtar)],
+    async () => ({ durum: 'tamam', veri: { id: 62085, episode_number: 1 } }));
+  assert.deepEqual(gec.istenen, [anahtar], 'süresi dolan işaret yeniden denenmedi');
+  assert.equal(gec.yazilan.length, 1, 'gerçek veri tmdb_onbellek\'e yazılmadı');
+  assert.equal(gec.ozet.yokCozuldu, 1);
+  assert.equal(havuz.satirlar.has(anahtar), false,
+    'anahtar artık VAR ama 404 işareti duruyor — bir sonraki turda yine susturulur');
+});
+
+test('süre dolduktan sonra HÂLÂ 404 ise işaret TAZELENİR (döngü geri gelmez)', async () => {
+  const havuz = sahteHavuz();
+  const anahtar = '/tv/37854/season/1/episode/1?language=tr-TR';
+  await isaretliKosu(havuz, [hayalet(anahtar)], async () => ({ durum: 'yok' }));
+  havuz.yaslandir(AYAR.KATMAN.yok404 + 1);
+  const iki = await isaretliKosu(havuz, [hayalet(anahtar)], async () => ({ durum: 'yok' }));
+  assert.deepEqual(iki.istenen, [anahtar]);
+  assert.equal(havuz.satirlar.get(anahtar).yas, 0, 'işaret tazelenmedi');
+  assert.equal(havuz.satirlar.get(anahtar).sayac, 2, 'kaçıncı 404 olduğu izlenmiyor');
+  // Üçüncü koşu yine susar.
+  const uc = await isaretliKosu(havuz, [hayalet(anahtar)],
+    async () => { throw new Error('tazelenen işaret susturmadı'); });
+  assert.deepEqual(uc.istenen, []);
+});
+
+// --- EN TEHLİKELİ YAN ETKİ: işaret VERİ sanılırsa sayfa bozulur -------------
+test('OLUMSUZ ÖNBELLEK SSR/UYGULAMA YOLUNA SIZMIYOR (ayrı tablo)', () => {
+  // 1) server.js — SSR ve `/tmdb/*` ucu — bu tabloyu HİÇ TANIMIYOR. Yani
+  //    `tmdbGetir` işareti "gerçek yanıt" gibi döndüremez; bu bir kod
+  //    disiplini değil, YAPISAL imkânsızlık.
+  //    (Yorumsuz kaynakta aranıyor: `ISITMA_BOLUM_SORGU`nun GEREKÇESİ olumsuz
+  //    önbellekten söz ediyor ve etmeli — yasak olan KOD, kelime değil.)
+  assert.doesNotMatch(yorumsuz(SERVER), /tmdb_yok/,
+    'server.js olumsuz önbelleği okuyor — işaret SSR yanıtına sızabilir');
+  // Yorumda bile SQL kalıbı geçmemeli: kopyala-yapıştırla koda dönüşür.
+  assert.doesNotMatch(SERVER, /(FROM|INTO|JOIN|UPDATE)\s+tmdb_yok/i,
+    'server.js içinde tmdb_yok üzerinde SQL var');
+
+  // 2) İşaret `tmdb_onbellek`e YAZILMIYOR: o tabloya giden TEK yazma yolu
+  //    `onbellegeYaz` ve o da yalnız `gecerliGovde` geçmiş gövdeyle çağrılıyor.
+  const yazmalar = [...ISITICI.matchAll(/INSERT INTO (\w+)/g)].map((m) => m[1]);
+  assert.deepEqual([...new Set(yazmalar)].sort(), ['tmdb_onbellek', 'tmdb_yok']);
+  const yokBlok = ISITICI.slice(ISITICI.indexOf('export async function yokIsaretiYaz'));
+  assert.doesNotMatch(yokBlok.slice(0, 600), /tmdb_onbellek/,
+    '404 işareti tmdb_onbellek\'e yazılıyor');
+
+  // 3) `tmdb_yok` YALNIZ ısıtıcının kendi 7b bölümünde geçiyor: aday toplama
+  //    ve koşu çekirdeği ona doğrudan dokunmuyor (enjekte edilen geri
+  //    çağrılarla konuşuyor), yani sızıntı yüzeyi tek dosyada dört fonksiyon.
+  const tabloGecen = [...ISITICI.matchAll(/tmdb_yok/g)].length;
+  assert.ok(tabloGecen > 0 && tabloGecen <= 12,
+    `tmdb_yok ${tabloGecen} yerde geçiyor — sızıntı yüzeyi büyümüş`);
+
+  // 4) 404 sonucu GÖVDE TAŞIMIYOR: `tmdbCek` 404'te `{durum:'yok'}` dönüyor,
+  //    içinde `veri` yok. Marker şeklinde bir gövde uydurulup `yaz`a
+  //    verilmesi mümkün değil.
+  assert.match(ISITICI, /if \(cevap\.status === 404\) return \{ durum: 'yok' \};/);
+
+  // 5) Marker şeklinde bir gövde bir şekilde gelirse `gecerliGovde` reddeder.
+  assert.ok(!gecerliGovde({ yok: true }));
+  assert.ok(!gecerliGovde({ tmdb_yok: true, guncelleme: 'now' }));
+});
+
+test('404 işareti tmdb_onbellek satırını EZMİYOR / SİLMİYOR', async () => {
+  // 3. karar duruyor: 404 iyi veriyi bozmaz. Isıtıcı hâlâ hiçbir yerde
+  // `tmdb_onbellek`ten DELETE etmiyor ve 404'te `yaz` çağrılmıyor.
+  assert.doesNotMatch(ISITICI, /DELETE\s+FROM\s+tmdb_onbellek/i);
+  const havuz = sahteHavuz();
+  const d = await isaretliKosu(havuz,
+    [hayalet('/tv/9?language=tr-TR')], async () => ({ durum: 'yok' }));
+  assert.equal(d.yazilan.length, 0);
+
+  // GERÇEK SATIR HER ZAMAN KAZANIR: `satirVar` olan aday işaretlenemez.
+  const gercek = {
+    anahtar: '/tv/9?language=tr-TR', sinif: 'bolum', oncelik: 1,
+    satirVar: true, yas: 10, ttl: 100, tazeMi: true,
+  };
+  yokIsaretiUygula([gercek], new Map([['/tv/9?language=tr-TR', 0]]));
+  assert.equal(gercek.yokMu, undefined, '404 işareti gerçek önbellek satırını gizledi');
+});
+
+test('5xx/timeout işaret KOYMUYOR (yalnız 404 "yok" demektir)', async () => {
+  const havuz = sahteHavuz();
+  const bir = await isaretliKosu(havuz, [hayalet('/tv/5?language=tr-TR')],
+    async () => ({ durum: 'hata', mesaj: 'TMDB 500' }));
+  assert.equal(bir.ozet.hata, 1);
+  assert.equal(havuz.satirlar.size, 0, 'geçici hata kalıcı "yok" işareti bıraktı');
+  // Bozuk gövde de işaret koymaz (200 ama `success:false`).
+  await isaretliKosu(havuz, [hayalet('/tv/6?language=tr-TR')],
+    async () => ({ durum: 'tamam', veri: { success: false } }));
+  assert.equal(havuz.satirlar.size, 0);
+});
+
+test('--kuru olumsuz önbelleğe YAZMAZ (kuru koşu hiçbir şeye dokunmaz)', async () => {
+  const havuz = sahteHavuz();
+  const adaylar = [hayalet('/tv/7?language=tr-TR')];
+  yokIsaretiUygula(adaylar, await yokIsaretleriniOku(havuz));
+  const ozet = await kosuYap({
+    adaylar,
+    getir: async () => { throw new Error('kuru koşuda TMDB\'ye gidildi'); },
+    yaz: async () => { throw new Error('kuru koşuda yazıldı'); },
+    yokYaz: (a) => yokIsaretiYaz(havuz, a),
+    yokSil: (a) => yokIsaretiSil(havuz, a),
+    bekle: async () => {}, istekSn: 1e9, kuru: true,
+  });
+  assert.equal(ozet.istek, 1, 'plan gerçekçi değil');
+  assert.equal(havuz.satirlar.size, 0, 'kuru koşu olumsuz önbelleğe yazdı');
+  // Kuru koşu budamaz da (ana akışta `!secim.kuru` kapısı).
+  assert.match(ISITICI, /if \(!secim\.kuru\) \{\s*\n\s*const budanan = await yokIsaretleriniBuda/);
+});
+
+test('budama eşiği 2 × TTL ve AYAR\'dan OKUNUYOR (ikinci kopya yok)', async () => {
+  const havuz = sahteHavuz();
+  havuz.satirlar.set('/eski', { yas: 2 * AYAR.KATMAN.yok404 + 1, sayac: 1 });
+  havuz.satirlar.set('/yeni', { yas: AYAR.KATMAN.yok404 + 1, sayac: 1 });
+  const n = await yokIsaretleriniBuda(havuz);
+  assert.equal(n, 1);
+  assert.deepEqual([...havuz.satirlar.keys()], ['/yeni'],
+    'hâlâ aday olabilecek işaret budandı — döngü geri gelir');
+  // Eşik AYAR'ı gerçekten izliyor mu?
+  const yedek = AYAR.KATMAN.yok404;
+  try {
+    AYAR.KATMAN.yok404 = 1;
+    const h2 = sahteHavuz();
+    h2.satirlar.set('/x', { yas: 5, sayac: 1 });
+    assert.equal(await yokIsaretleriniBuda(h2), 1, 'eşik AYAR değişince izlemedi');
+  } finally { AYAR.KATMAN.yok404 = yedek; }
+});
+
+test('tablo YOKKEN betik ÇÖKMEZ ama GÜRÜLTÜLÜ uyarır (migrasyon kapısı)', async () => {
+  const havuz = sahteHavuz({ tabloYok: true });
+  const hatalar = [];
+  const eski = console.error;
+  console.error = (...a) => hatalar.push(a.join(' '));
+  try {
+    assert.equal((await yokIsaretleriniOku(havuz)).size, 0);
+    await yokIsaretiYaz(havuz, '/tv/1?language=tr-TR');
+    await yokIsaretiSil(havuz, '/tv/1?language=tr-TR');
+    assert.equal(await yokIsaretleriniBuda(havuz), 0);
+  } finally { console.error = eski; }
+  assert.ok(hatalar.some((h) => /tmdb_yok/.test(h) && /migrasyon/.test(h)),
+    'tablo eksikken SESSİZCE geçiliyor');
+  // Beklenmeyen bir DB hatası ise YUTULMAZ.
+  const bozuk = { query: async () => { throw new Error('bağlantı koptu'); } };
+  await assert.rejects(() => yokIsaretleriniOku(bozuk), /bağlantı koptu/);
+  await assert.rejects(() => yokIsaretiYaz(bozuk, '/x'), /bağlantı koptu/);
+});
+
+test('ana akış olumsuz önbelleği GERÇEKTEN bağlıyor (varsayılan sessizce kalmıyor)', () => {
+  // `kosuYap`ın varsayılanı boş fonksiyon; main bunları geçirmezse düzeltme
+  // sessizce devre dışı kalır ve döngü "her şey normal" görünümüyle geri döner.
+  const blok = ISITICI.slice(ISITICI.indexOf('const ozet = await kosuYap({'));
+  assert.match(blok, /yokYaz: \(anahtar\) => yokIsaretiYaz\(havuz, anahtar\)/);
+  assert.match(blok, /yokSil: \(anahtar\) => yokIsaretiSil\(havuz, anahtar\)/);
+  // Aday toplama da işaretleri UYGULUYOR mu?
+  const aday = ISITICI.slice(ISITICI.indexOf('export async function adaylariTopla'));
+  assert.match(aday, /yokIsaretiUygula\(adaylar, await yokIsaretleriniOku\(havuz\)\)/);
+  // ...ve sıralamadan ÖNCE (sonra olsaydı `tazeMi` değişimi geç kalırdı).
+  assert.ok(aday.indexOf('yokIsaretiUygula') < aday.indexOf('payiDagit(siralamayiKur'),
+    'işaretler sıralamadan SONRA uygulanıyor — bütçe yine hayaletlere gider');
+});
+
+test('özet satırı olumsuz önbelleği GÖRÜNÜR kılıyor', async () => {
+  const havuz = sahteHavuz();
+  const anahtar = '/tv/31910/season/10/episode/1?language=tr-TR';
+  await isaretliKosu(havuz, [hayalet(anahtar)], async () => ({ durum: 'yok' }));
+  const { ozet } = await isaretliKosu(havuz,
+    [hayalet(anahtar), hayalet('/tv/1?language=tr-TR')],
+    async () => ({ durum: 'tamam', veri: { id: 1 } }));
+  const satir = ozetSatiri(ozet, { diller: ['tr'] });
+  assert.match(satir, /yok_işareti=1/);
+  assert.match(satir, /yok_yeni=0/);
+  assert.match(satir, /yok_çözüldü=0/);
+  assert.match(satir, /tazelendi=1/);
+});
+
+test('şema gerçekten VAR: uyarının işaret ettiği migrasyon dosyası ve sema.sql', () => {
+  // Isıtıcı tablo eksikken bir MİGRASYON ADI basıyor. O ad yanlışsa uyarı
+  // yardımcı olmak yerine yanlış yere gönderir — sessiz olmayan ama YANILTAN
+  // bir arıza. Ad KAYNAKTAN okunup dosya sisteminde aranıyor.
+  const ad = /migrasyon-[0-9-]+[a-z]?\.sql/.exec(
+    ISITICI.slice(ISITICI.indexOf('function yokTabloEksik')));
+  assert.ok(ad, 'uyarı hangi migrasyonu uygulayacağımızı söylemiyor');
+  assert.ok(fs.existsSync(path.join(KOK, ad[0])), `${ad[0]} yok`);
+  const migrasyon = oku(ad[0]);
+  assert.match(migrasyon, /CREATE TABLE IF NOT EXISTS tmdb_yok/);
+  assert.match(migrasyon, /anahtar TEXT PRIMARY KEY/);
+  // Yeni tablo `sema.sql`e de işlenmiş mi (sıfırdan kurulan veritabanı)?
+  const sema = oku('sema.sql');
+  assert.match(sema, /CREATE TABLE IF NOT EXISTS tmdb_yok/,
+    'tmdb_yok sema.sql\'de yok — sıfırdan kurulan DB\'de olumsuz önbellek çalışmaz');
+  // Sütun adları kodun beklediğiyle aynı mı?
+  for (const sutun of ['anahtar', 'ilk', 'guncelleme', 'sayac']) {
+    assert.match(migrasyon, new RegExp(`\\n  ${sutun} `), `migrasyonda ${sutun} yok`);
+  }
 });

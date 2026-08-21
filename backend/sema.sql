@@ -275,6 +275,30 @@ CREATE TABLE IF NOT EXISTS tmdb_onbellek (
   guncelleme TIMESTAMPTZ DEFAULT now()
 );
 
+-- OLUMSUZ TMDB ÖNBELLEĞİ (21 Ağu 2026, migrasyon-2026-08-21b.sql).
+-- "TMDB bu anahtarda 404 dedi" bilgisi. YALNIZ `isitici.js` okur/yazar —
+-- server.js (SSR ve `/tmdb/*` ucu) bu tabloyu HİÇ TANIMAZ ve tanımamalı:
+-- işaretin gerçek yanıt sanılması bu tasarımın tek gerçek tehlikesi, ayrı
+-- tablo onu YAPISAL olarak imkânsız kılıyor.
+--
+-- NEDEN VAR: 404'te `tmdb_onbellek`e satır yazılmıyor (doğru karar — bozuk
+-- yanıt iyi veriyi ezmesin). Satır olmayınca ısıtıcı o anahtara `yas =
+-- Infinity` verip her koşuda kuyruğun başına alıyordu: canlıda ölçülen
+-- sonsuz döngü (480 isteğin 468'i aynı 404'ler, günde ~67.000 boşa istek).
+--
+-- ÖMÜR: `isitici.js` `AYAR.KATMAN.yok404` (30 gün) — süre dolunca anahtar
+-- YENİDEN denenir, yani sonradan TMDB'ye eklenen bölüm geri gelir.
+-- BUDAMA: `tablolariBuda` bu tabloya DOKUNMAZ (dokunsaydı işaret tam TTL
+-- dolarken silinir, döngü kırılmış görünüp maliyeti aynı kalırdı); ısıtıcı
+-- kendi buduyor, eşik 2 × TTL.
+CREATE TABLE IF NOT EXISTS tmdb_yok (
+  anahtar TEXT PRIMARY KEY,
+  ilk TIMESTAMPTZ NOT NULL DEFAULT now(),
+  guncelleme TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sayac INTEGER NOT NULL DEFAULT 1
+);
+CREATE INDEX IF NOT EXISTS idx_tmdb_yok_zaman ON tmdb_yok(guncelleme);
+
 CREATE INDEX IF NOT EXISTS idx_izleme_kullanici ON izlemeler(kullanici_id, tur, tmdb_id);
 CREATE INDEX IF NOT EXISTS idx_durum_kullanici ON durumlar(kullanici_id, durum);
 CREATE INDEX IF NOT EXISTS idx_puan_icerik ON puanlar(tur, tmdb_id);

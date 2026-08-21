@@ -231,6 +231,21 @@ export const AYAR = {
     kisi: 14 * 24 * 3600,
     /// Yayınlanmış bölüm/sezon metadatası: neredeyse hiç değişmez.
     bolum: 30 * 24 * 3600,
+    /// OLUMSUZ ÖNBELLEK ÖMRÜ — "TMDB bu anahtarda 404 dedi" bilgisi bu kadar
+    /// süre hatırlanır ve o süre boyunca anahtar BİR DAHA İSTENMEZ.
+    ///
+    /// NEDEN 30 GÜN (ne daha kısa ne daha uzun):
+    ///  · `KATMAN.bolum` İLE AYNI. 404'lerin tamamına yakınını bölüm sınıfı
+    ///    üretiyor; VAR OLAN bir bölümü 30 günde bir tazelerken YOK OLAN bir
+    ///    bölümü daha sık sormanın hiçbir gerekçesi yok.
+    ///  · `tablolariBuda` da `tmdb_onbellek`i 30 günde buduyor (server.js).
+    ///    "TMDB durumunu ne kadar hatırlıyoruz" sorusunun TEK cevabı olsun.
+    ///  · MALİYET: canlı ölçüm 1.837 hayalet anahtar (21 Ağu 2026). 30 günde
+    ///    bir yeniden denemek günde 61 istek = günlük kapasitenin %0,09'u.
+    ///    Yani "sonradan eklenen bölüm" senaryosu BEDAVA karşılanıyor: TMDB'ye
+    ///    bir bölüm eklenirse en geç 30 günde ısıtılır — zaten var olan bir
+    ///    bölümü tazeleme sıklığımızla AYNI gecikme.
+    yok404: 30 * 24 * 3600,
   },
 
   /// "Yeni yapım" sınırı (yıl). `KATMAN.yeniYapim` bu yaşa kadar uygulanır.
@@ -603,6 +618,177 @@ async function onbellekDurumu(havuz, anahtarlar) {
   return harita;
 }
 
+// ===========================================================================
+// 7b) OLUMSUZ ÖNBELLEK (`tmdb_yok`) — "TMDB burada YOK dedi" bilgisini SAKLA
+// ===========================================================================
+// ÖLÇÜLEN SONSUZ DÖNGÜ (canlı /var/log/dizijpg-isitici.log, 21 Ağu 2026):
+//   tazelendi=480 hata=0 tmdb_404=0     ← normal
+//   tazelendi=12  hata=0 tmdb_404=468   ← sonra HER koşuda aynı sayılar
+// 480 isteğin 468'i 404 dönüyordu ve AYNI anahtarlar her 10 dakikada bir
+// yeniden isteniyordu: günde 144 × 468 ≈ 67.000 boşa istek.
+//
+// KÖK NEDEN — DOĞRULANDI: 404 dönünce `tmdb_onbellek`e satır YAZILMIYOR
+// (3. karar: bozuk/boş yanıtla iyi veriyi ezme — bu karar DOĞRU ve duruyor).
+// Ama satır olmayınca `adaylariTopla` o anahtara `yas = Infinity` veriyor,
+// `Infinity / ttl = Infinity` en üst aşım bandı demek, yani anahtar kuyruğun
+// BAŞINA geri geliyor. Başarısızlık kendini ödüllendiriyordu.
+//
+// DAHA DA KÖTÜSÜ — KALICI DURMA: anahtar sırası sabit olduğu için hayaletler
+// frontier'in gerisinde BİRİKİYOR. 21 Ağu'da tek bir dizinin (`/tv/31910`)
+// 468 hayaleti bütçenin %97,5'ini yiyordu; sıra `/tv/37854`e (One Piece,
+// 1.120 hayalet) geldiğinde birikim 1.588 > 480 olacak ve ısıtıcı SIFIR
+// ilerlemeye düşecekti. Bu yüzden "israf" değil, ARIZA.
+//
+// NEDEN AYRI TABLO, `tmdb_onbellek`te BİR İŞARET DEĞİL
+// -----------------------------------------------------
+// Bu tasarımın TEK gerçek tehlikesi işaretin VERİ sanılmasıdır. server.js
+// `tmdbGetir` şunu yapıyor:
+//     SELECT veri FROM tmdb_onbellek WHERE anahtar=$1 AND guncelleme > ...
+//     ... return rows[0].veri;
+// İşareti aynı tabloya koysaydık SSR ve `/tmdb/*` ucu onu GERÇEK YANIT gibi
+// döndürürdü — sayfa bozulur, üstelik sessizce. Güvenli hâle getirmek için
+// `tmdbGetir`, `tmdbTopluGetir`, `SITEMAP_BOLUM_SORGU`, `ISITMA_BOLUM_SORGU`,
+// katalog sorgusu, `kisiKimlikleri` cast taraması ve admin istatistikleri —
+// yani 17 bin satırlık server.js'in yedi ayrı okuyucusu — tek tek süzgeç
+// eklemek zorunda kalırdı; birini unutmak sessiz bir arıza olurdu.
+// AYRI TABLO bu hatayı YAPILAMAZ kılar: SSR/uygulama yolu `tmdb_yok`u
+// hiç sorgulamıyor, dolayısıyla YANLIŞLIKLA okuyamaz. Testler bunu hem
+// kaynak üzerinden hem davranış üzerinden kilitliyor.
+//
+// BUDAMA İLE İLİŞKİ: `tablolariBuda` yalnız `tmdb_onbellek`i buduyor, bu
+// tabloya DOKUNMUYOR — yani "budama sildi, yeniden 404 aldık, döngü geri
+// geldi" senaryosu YOK. Şişmeyi kendimiz `yokIsaretleriniBuda` ile
+// engelliyoruz: 2 × TTL'den eski satır, aday kümesinden çıkmış bir anahtardır
+// (kümede kalsaydı TTL dolunca yeniden denenir ve damgası tazelenirdi).
+//
+// ŞEMA: `migrasyon-2026-08-21b.sql`. Tablo YOKKEN betik ÇÖKMEZ — her koşuda
+// GÜRÜLTÜLÜ bir hata satırı basıp eski davranışla devam eder. Gerekçe: cron
+// 10 dakikada bir koşuyor; dağıtım ile migrasyon arasında kalan bir koşunun
+// yığın iziyle patlaması, ısıtmayı tamamen durdurmaktan daha kötü. Sessizlik
+// yok: uyarı her koşuda log'a düşer.
+const YOK_TABLO_HATASI = /relation "tmdb_yok" does not exist|undefined_table/i;
+let yokTabloUyarildi = false;
+
+/** Tablo henüz yoksa GÜRÜLTÜLÜ uyar (koşu başına bir kez) ve devam et. */
+function yokTabloEksik(e) {
+  if (e?.code !== '42P01' && !YOK_TABLO_HATASI.test(e?.message || '')) return false;
+  if (!yokTabloUyarildi) {
+    yokTabloUyarildi = true;
+    console.error('isitici: UYARI — `tmdb_yok` tablosu yok, olumsuz önbellek '
+      + 'DEVRE DIŞI (404 alan anahtarlar her koşuda yeniden istenir). '
+      + 'migrasyon-2026-08-21b.sql uygulanmalı.');
+  }
+  return true;
+}
+
+/**
+ * Bütün 404 işaretleri (anahtar → saniye cinsinden yaş).
+ *
+ * TABLONUN TAMAMI TEK SORGUDA okunuyor, `anahtar = ANY($1)` ile öbeklenmiyor:
+ * aday kümesi 112.000 anahtar (57 öbek) ama işaret tablosu ölçülen 1.837
+ * satır. Öbekli okuma 57 gidiş-gelişi İKİYE KATLARDI, tam liste ise tek
+ * seq scan. Tablonun sınırı `yokIsaretleriniBuda` ile korunuyor.
+ */
+export async function yokIsaretleriniOku(havuz) {
+  try {
+    const { rows } = await havuz.query(
+      `SELECT anahtar, EXTRACT(EPOCH FROM (now() - guncelleme)) AS yas FROM tmdb_yok`);
+    return new Map(rows.map((r) => [r.anahtar, Number(r.yas)]));
+  } catch (e) {
+    if (yokTabloEksik(e)) return new Map();
+    throw e;
+  }
+}
+
+/**
+ * 404 işaretini yaz/tazele. `sayac` yalnız TEŞHİS için: bir anahtar kaç kez
+ * 404 aldığını söyler, yani "bu gerçekten yok" ile "TMDB o gün tökezledi"
+ * ayrımını sonradan SORGULANABİLİR kılar (404 kalıcı bir cevaptır, ama
+ * ölçmeden varsaymıyoruz).
+ */
+export async function yokIsaretiYaz(havuz, anahtar) {
+  try {
+    await havuz.query(
+      `INSERT INTO tmdb_yok (anahtar, ilk, guncelleme, sayac)
+       VALUES ($1, now(), now(), 1)
+       ON CONFLICT (anahtar) DO UPDATE
+         SET guncelleme = now(), sayac = tmdb_yok.sayac + 1`,
+      [anahtar],
+    );
+  } catch (e) {
+    if (!yokTabloEksik(e)) throw e;
+  }
+}
+
+/**
+ * İşareti kaldır — anahtar SONRADAN TMDB'ye eklenmişse.
+ *
+ * Yalnız süresi DOLMUŞ bir işaretin ardından başarılı bir çekim olduğunda
+ * çağrılır (`aday.yokEskimis`), yani sıcak yolda ek bir DELETE yok.
+ */
+export async function yokIsaretiSil(havuz, anahtar) {
+  try {
+    await havuz.query('DELETE FROM tmdb_yok WHERE anahtar = $1', [anahtar]);
+  } catch (e) {
+    if (!yokTabloEksik(e)) throw e;
+  }
+}
+
+/**
+ * Aday kümesinden çıkmış işaretleri unut (tablo sınırsız şişmesin).
+ *
+ * EŞİK 2 × TTL: hâlâ aday olan bir anahtar TTL dolar dolmaz yeniden denenir
+ * ve damgası tazelenir, yani 2 × TTL'yi ASLA geçemez. Geçen satır artık
+ * kuyrukta olmayan (dizi haritadan düştü, sezon değişti) bir anahtardır.
+ */
+export async function yokIsaretleriniBuda(havuz, ayar = AYAR) {
+  try {
+    const { rowCount } = await havuz.query(
+      `DELETE FROM tmdb_yok WHERE guncelleme < now() - ($1 || ' seconds')::interval`,
+      [2 * ayar.KATMAN.yok404],
+    );
+    return rowCount;
+  } catch (e) {
+    if (yokTabloEksik(e)) return 0;
+    throw e;
+  }
+}
+
+/**
+ * Adaylara 404 işaretini UYGULA — saf fonksiyon (testler bunu doğrudan sürer).
+ *
+ * İKİ HAL, İKİSİ DE GEREKLİ:
+ *  · İşaret TAZE (yas < TTL) → `yokMu = true` + `tazeMi = true`. Anahtar
+ *    listede KALIR (sayımı dürüst olsun) ama bütçe HARCAMAZ. Döngü burada
+ *    kırılıyor.
+ *  · İşaret ESKİ (yas ≥ TTL) → `yokEskimis = true`, aday BAYAT kalır: yeniden
+ *    denenir. Bölüm sonradan TMDB'ye eklenmişse böyle geri döner; çekim
+ *    başarılıysa `kosuYap` işareti siler.
+ *
+ * GERÇEK SATIR HER ZAMAN KAZANIR: `tmdb_onbellek`te satır varsa işarete
+ * bakılmaz. (Normalde ikisi bir arada olmaz — başarılı çekim işareti siler —
+ * ama elle doldurulmuş bir satırı 404 işareti gizlemesin.)
+ */
+export function yokIsaretiUygula(adaylar, isaretler, ayar = AYAR) {
+  const ttl = ayar.KATMAN.yok404;
+  let taze = 0;
+  let eskimis = 0;
+  for (const a of adaylar) {
+    if (a.satirVar) continue;
+    const yas = isaretler.get(a.anahtar);
+    if (yas === undefined) continue;
+    if (yas < ttl) {
+      a.yokMu = true;
+      a.tazeMi = true;
+      taze++;
+    } else {
+      a.yokEskimis = true;
+      eskimis++;
+    }
+  }
+  return { taze, eskimis };
+}
+
 /** Sitemap + kullanıcı dokunuşu birleşimi: ısıtılacak tv/movie kimlikleri. */
 async function icerikKimlikleri(havuz, sitemapSorgu) {
   const { rows } = await havuz.query(`
@@ -783,15 +969,21 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
   const durumlar = await onbellekDurumu(havuz, adaylar.map((a) => a.anahtar));
   for (const a of adaylar) {
     const d = durumlar.get(a.anahtar);
+    a.satirVar = Boolean(d);
     a.yas = d ? d.yas : Infinity;         // satır yoksa "sonsuz bayat"
     a.ttl = katmanTtlSn({ sinif: a.sinif, durum: d?.durum, tarih: d?.tarih }, simdiMs);
     a.tazeMi = a.yas < a.ttl;
   }
+  // OLUMSUZ ÖNBELLEK — `yas = Infinity` kapısını KAPATAN kat (7b). Sıralamadan
+  // ÖNCE uygulanmalı: `siralamayiKur` ve `payiDagit` `tazeMi`ye bakıyor, yani
+  // işaretli anahtar buradan sonra ne bütçe harcar ne sınıf kotası bozar.
+  const yokOzet = yokIsaretiUygula(adaylar, await yokIsaretleriniOku(havuz));
   // İKİ KAT: önce bant/aşım sırası, sonra sınıf başına asgari pay. Sıra
   // önemli — `payiDagit` her sınıfın KENDİ EN İYİ adaylarını öne alabilmek
   // için zaten sıralanmış bir liste bekliyor.
   const sirali = payiDagit(siralamayiKur(adaylar), kosuButcesi(secim));
   sirali.kisiBuyume = kisiBuyume;
+  sirali.yokOzet = yokOzet;
   return sirali;
 }
 
@@ -925,9 +1117,16 @@ export function payiDagit(adaylar, butce, tabanOran = AYAR.TABAN_PAY_ORANI) {
  * @param {Array} p.adaylar   `adaylariTopla` çıktısı
  * @param {(anahtar:string)=>Promise<{durum:'tamam'|'yok'|'hata', veri?:any}>} p.getir
  * @param {(anahtar:string, veri:any)=>Promise<void>} p.yaz
+ * @param {(anahtar:string)=>Promise<void>} [p.yokYaz] 404 işaretini kaydet (7b)
+ * @param {(anahtar:string)=>Promise<void>} [p.yokSil] süresi dolmuş işareti kaldır
  */
 export async function kosuYap({
   adaylar, getir, yaz,
+  // VARSAYILAN BOŞ, ÇÜNKÜ: bu iki geri çağrı yalnız veritabanı yan etkisidir;
+  // `kosuYap`ın saf çekirdek olma özelliği (testler onu havuzsuz sürüyor)
+  // korunsun diye zorunlu değiller. Ana akışın GERÇEKTEN geçirdiği testle
+  // ayrıca kilitli — yoksa düzeltme sessizce devre dışı kalabilirdi.
+  yokYaz = async () => {}, yokSil = async () => {},
   bekle = (ms) => new Promise((r) => setTimeout(r, ms)),
   simdi = () => Date.now(),
   azamiIstek = AYAR.AZAMI_ISTEK,
@@ -941,13 +1140,19 @@ export async function kosuYap({
   // her şey; `kuyruk` = bunlardan bu koşunun bütçesine SIĞMAYANLAR. Günden güne
   // düşüyorsa doluyoruz; sabit kalıyorsa bütçe yetmiyor demektir.
   const bayatToplam = adaylar.reduce((n, a) => n + (a.tazeMi ? 0 : 1), 0);
+  // 404 İŞARETLİ adaylar `tazeMi = true` ile geliyor (bütçe harcamasınlar
+  // diye) ama "taze veri" DEĞİLLER — ayrı sayılıyorlar. Aynı kovaya
+  // atsaydık `zaten_taze` bir gün sessizce "aslında hiç veri yok" demeye
+  // başlardı ve olumsuz önbelleğin büyüklüğü GÖRÜNMEZ olurdu.
+  const yokIsareti = adaylar.reduce((n, a) => n + (a.yokMu ? 1 : 0), 0);
   // `bakilan`/`taze` LİSTENİN TAMAMINDAN sayılır, döngü ilerledikçe DEĞİL.
   // Gerekçe: `payiDagit` taze adayları listenin sonuna atıyor ve bütçe
   // dolunca döngü erken kırılıyor; artımlı sayım "zaten_taze=0" gibi yanlış
   // bir rapor üretirdi. Bu iki sayı kuyruk ölçümünün bağlamı — yanlış olamaz.
   const ozet = {
-    bakilan: adaylar.length, taze: adaylar.length - bayatToplam,
-    tazelendi: 0, hata: 0, yok: 0, atlanan: 0,
+    bakilan: adaylar.length, taze: adaylar.length - bayatToplam - yokIsareti,
+    tazelendi: 0, hata: 0, yok: 0, yokIsareti, yokYeni: 0, yokCozuldu: 0,
+    atlanan: 0,
     istek: 0, tavan: null, ornekler: [], sureMs: 0, kuru,
     bayatToplam, kuyruk: bayatToplam, sinifSayaci: {},
   };
@@ -981,10 +1186,19 @@ export async function kosuYap({
     if (sonuc?.durum === 'tamam' && gecerliGovde(sonuc.veri)) {
       await yaz(aday.anahtar, sonuc.veri);
       ozet.tazelendi++;
+      // SÜRESİ DOLMUŞ İŞARET ÇÖZÜLDÜ: anahtar bir zamanlar 404'tü, artık VAR
+      // (bölüm sonradan TMDB'ye eklendi). İşareti kaldır ki bir daha
+      // beklemesin. Yalnız bu dalda — sıcak yolda fazladan DELETE yok.
+      if (aday.yokEskimis) { await yokSil(aday.anahtar); ozet.yokCozuldu++; }
     } else if (sonuc?.durum === 'yok') {
-      // TMDB 404: yapım silinmiş olabilir. SATIRA DOKUNMA — 404/noindex kararı
-      // server.js'in işi, ısıtıcı oraya karışmaz (3. karar).
+      // TMDB 404: bu kayıt YOK. SATIRA DOKUNMA — 404/noindex kararı
+      // server.js'in işi, ısıtıcı oraya karışmaz (3. karar). Ama "yok" bir
+      // BİLGİDİR ve AYRI tabloya yazılır (7b): aksi hâlde satırsız anahtar
+      // `yas = Infinity` ile her koşuda kuyruğun başına döner — canlıda
+      // ölçülen sonsuz döngü tam olarak buydu.
       ozet.yok++;
+      await yokYaz(aday.anahtar);
+      ozet.yokYeni++;
     } else {
       // 5xx / timeout / beklenmedik gövde → ESKİ VERİ KALIR.
       ozet.hata++;
@@ -1058,6 +1272,14 @@ export function ozetSatiri(ozet, secim) {
     ozet.kuru ? `tazelenecek=${ozet.istek}` : `tazelendi=${ozet.tazelendi}`,
     `hata=${ozet.hata}`,
     `tmdb_404=${ozet.yok}`,
+    // OLUMSUZ ÖNBELLEK GÖRÜNÜR OLMALI (7b): `yok_işareti` bu koşuda kaç
+    // anahtarın "TMDB'de yok" diye İSTENMEDİĞİNİ, `yok_yeni` kaç yeni işaret
+    // konduğunu, `yok_çözüldü` kaç anahtarın sonradan TMDB'ye eklendiğini
+    // söyler. Bunlar basılmasaydı düzeltme sessizce bozulabilir ve döngü
+    // "her şey normal" görünümü altında geri gelebilirdi.
+    `yok_işareti=${ozet.yokIsareti}`,
+    `yok_yeni=${ozet.yokYeni}`,
+    `yok_çözüldü=${ozet.yokCozuldu}`,
     `atlanan=${ozet.atlanan}`,
     `${ozet.kuru ? 'planlanan_istek' : 'istek'}=${ozet.istek}`,
     // KUYRUK: sürekli kipin TEK ilerleme göstergesi (bkz. kosuYap).
@@ -1137,6 +1359,19 @@ async function main(argv) {
     const adaylar = await adaylariTopla(havuz, secim, kaynak);
     const bayat = adaylar.filter((a) => !a.tazeMi);
 
+    // OLUMSUZ ÖNBELLEK BUDAMASI (7b) — BOŞ KOŞU KAPISININ ÖNÜNDE.
+    // NEDEN BURADA: kararlı durumda 404 işaretli adaylar `tazeMi = true`
+    // sayılıyor, yani `bayat.length === 0` olan koşular OLAĞAN hale gelecek.
+    // Budama kapının arkasında kalsaydı `tmdb_yok` tam da her şeyin yolunda
+    // olduğu dönemde hiç budanmazdı. Boş koşunun SESSİZLİĞİ bozulmuyor:
+    // silinecek satır yoksa hiçbir şey yazılmaz.
+    // `tablolariBuda` bu tabloyu bilmiyor, bilerek: ısıtıcının tek sahibi
+    // olduğu bir tabloyu iki yerden yönetmek, eşiklerin sessizce ayrışmasıdır.
+    if (!secim.kuru) {
+      const budanan = await yokIsaretleriniBuda(havuz);
+      if (budanan) console.log(`isitici: ${budanan} eski 404 işareti budandı`);
+    }
+
     // BOŞ KOŞU: TMDB'ye HİÇ dokunma, stdout'a HİÇBİR ŞEY yazma (5b maddesi).
     // Kuru koşu istisna: "kuyrukta ne var" sorusuna "hiçbir şey" da cevaptır.
     if (!bayat.length && !secim.kuru) return;
@@ -1145,6 +1380,11 @@ async function main(argv) {
       adaylar,
       getir: (anahtar) => tmdbCek(anahtar, TMDB_TOKEN),
       yaz: (anahtar, veri) => onbellegeYaz(havuz, anahtar, veri),
+      // OLUMSUZ ÖNBELLEK (7b) — kuru koşuda ZATEN yazılmıyor (`kosuYap` istek
+      // döngüsünü `kuru` bayrağında kesiyor), o yüzden burada ayrıca
+      // dallanmıyoruz: tek doğru yer o kapı.
+      yokYaz: (anahtar) => yokIsaretiYaz(havuz, anahtar),
+      yokSil: (anahtar) => yokIsaretiSil(havuz, anahtar),
       azamiIstek: secim.azamiIstek,
       azamiMs: secim.azamiDakika * 60000,
       istekSn: secim.istekSn,
@@ -1166,6 +1406,12 @@ async function main(argv) {
         console.log(`  sınıf ${ad.padEnd(7)} aday=${s.aday} bayat=${s.bayat}`);
       }
       console.log(`  bayat toplam      : ${ozet.bayatToplam}`);
+      // OLUMSUZ ÖNBELLEK: kuru koşunun "kuyrukta ne var" cevabının parçası.
+      // Bu satır olmadan 1.837 anahtarın NEREYE gittiği görünmez olurdu.
+      const yo = adaylar.yokOzet;
+      console.log(`  404 işaretli      : ${ozet.yokIsareti} (istenmeyecek, `
+        + `${Math.round(AYAR.KATMAN.yok404 / (24 * 3600))} gün) `
+        + `+ süresi dolmuş ${yo ? yo.eskimis : 0} (yeniden denenecek)`);
       console.log(`  bu koşuya sığar   : ${ozet.istek} `
         + `(tavan ${secim.azamiIstek} istek / ${secim.azamiDakika} dk / ${secim.istekSn}/sn)`);
       console.log(`  koşudan sonra kuyruk: ${ozet.kuyruk}`);

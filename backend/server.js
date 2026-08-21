@@ -5792,6 +5792,60 @@ const SITEMAP_BOLUM_SORGU = `
 // `episode_count`. Bu veri haritadaki 1.219 dizinin %100'ünde ZATEN
 // önbellekte (canlı ölçüm), yani ek TMDB isteği gerektirmiyor.
 //
+// -------------------------------------------------------------------------
+// İKİ KAYNAK, BİR KUYRUK — `episode_count` ARTIK YALNIZ TAHMİN (21 Ağu 2026)
+// -------------------------------------------------------------------------
+// ÖLÇÜLEN ARIZA (canlı /var/log/dizijpg-isitici.log, 21 Ağu 2026):
+//   tazelendi=480 hata=0 tmdb_404=0     ← normal
+//   tazelendi=12  hata=0 tmdb_404=468   ← sonra her koşuda AYNI sayılar
+// 480 isteğin 468'i 404 dönüyordu ve aynı anahtarlar her koşuda yeniden
+// isteniyordu.
+//
+// SEBEP `episode_count` DEĞİL, NUMARALANDIRMA. Bu sorgu `generate_series(1, N)`
+// ile 1..N üretiyordu; TMDB'de uzun soluklu dizilerin sezonları MUTLAK
+// numaralandırma kullanıyor. Canlı kanıt (`/tv/31910`, Naruto: Shippuuden,
+// sezon 10): `episode_count = 25` ama gerçek `episode_number` değerleri
+// 197..221. Yani ürettiğimiz 25 anahtarın 25'i de 404, gerçek 25 bölüm ise
+// HİÇ istenmiyor. Log'daki 468 sayısı tam olarak bu dizinin 20 sezonundaki
+// hayalet bölüm sayısıdır.
+//
+// ÖLÇÜM (21 Ağu 2026, canlı `tmdb_onbellek`, 78.725 satırlık kuyruk):
+//   · 1.837 HAYALET anahtar (9 yapımda; 37854 One Piece 1.120, 31910 468,
+//     46260 168, 46298 74, kalan 5 yapım 7) — hiçbiri TMDB'de YOK,
+//   · 1.833 GERÇEK bölüm site haritasında Google'a BİLDİRİLİYOR ama ısıtma
+//     kuyruğunda HİÇ YOK — yani tam da bota verdiğimiz URL'ler soğuk kalıyordu,
+//   · kuyruktaki 78.725 bölümün 78.725'inin (%100) sezon belgesi ZATEN
+//     önbellekte, yani tahmine bugün hiç ihtiyaç yok.
+//
+// DÖNGÜ NEDEN SONSUZDU: hayalet anahtar 404 döndüğü için `tmdb_onbellek`e
+// satır yazılmıyor → `adaylariTopla` onu `yas = Infinity` ile "en bayat"
+// sayıyor → her koşuda kuyruğun BAŞINA geri geliyor. Anahtar sırası sabit
+// olduğu için hayaletler frontier'in gerisinde BİRİKİYOR: 31910'da 468 hayalet
+// bütçenin %97,5'ini yiyordu, sıra 37854'e (One Piece, 1.120 hayalet) gelince
+// birikim 1.588 > 480 olacak ve ısıtıcı KALICI olarak sıfır ilerlemeye
+// düşecekti. Bu yüzden acil.
+//
+// ÇÖZÜM İKİ KAYNAĞIN BİRLEŞİMİ — kilidi geri getirmeden:
+//   1) SEZON BELGESİ ÖNBELLEKTEYSE gerçek `episodes[].episode_number` listesi.
+//      Harita (`SITEMAP_BOLUM_SORGU`) zaten bunu okuyor; artık ısıtıcı da AYNI
+//      kaynaktan besleniyor, yani "Google'a bildirilen URL ısıtılmıyor" durumu
+//      matematiksel olarak imkânsız hâle geliyor.
+//   2) SEZON BELGESİ YOKSA eski `episode_count` tahmini AYNEN KALIR. Bu şart:
+//      kuyruğu tamamen sezon önbelleğine bağlarsak önbellekte olmayan sezon
+//      hiç çekilmez ve kuyruk kendi kaynağını besleyemez (yukarıdaki kilit).
+//      İki dal `kapsanan` ile AYRIK: bir sezon ya gerçek listeden ya tahminden
+//      gelir, ikisinden birden değil.
+//
+// TAHMİN DALININ ARTIĞI: sezon belgesi geldiğinde numaralandırma mutlaksa o
+// tahmin yine hayalet üretir. Bu ARTIK SONSUZ DEĞİL — `isitici.js` 404 alan
+// anahtarı olumsuz önbelleğe (`tmdb_yok`) yazıyor ve 30 gün bir daha istemiyor.
+// Yani bu sorgu hacmi, olumsuz önbellek de tekrarı öldürüyor.
+//
+// `episodes[]` dizisi BOŞ olan sezon (canlı ölçüm: 7 sezon) tahmin dalında
+// KALIR — boş dizi ile "veri boşluğu" ayırt edilemiyor ve sezon belgesinin
+// kendisi kuyrukta kalsın istiyoruz (bu sorgu sezon anahtarını bölüm
+// satırlarından türetiyor). Ürettiği hayaletleri olumsuz önbellek susturur.
+//
 // `episode_count`tan URL ÜRETİLMEZ, yalnız ISITILACAK ANAHTAR üretilir:
 // numaralandırmada boşluk olsa bile en kötü ihtimalle boşa bir TMDB isteği
 // atılır. Bota bildirilen URL'ler (harita ve iç bağlantılar) her zaman
@@ -5811,13 +5865,38 @@ const ISITMA_BOLUM_SORGU = `
          AND s->>'season_number' ~ '^[0-9]+$'
          AND s->>'episode_count' ~ '^[0-9]+$'
     ) t ORDER BY tv, sezon_no, bolum_adedi DESC
+  ), sezon_belgesi AS (
+    -- YALNIZ tr-TR: bölüm NUMARALANDIRMASI dilden bağımsızdır ve tek dil
+    -- okumak TOAST açımını 45 kat azaltır (aynı gerekçe SITEMAP_BOLUM_SORGU'da
+    -- ölçüldü: dil ayrımsız 29,4 sn / tek dil 8,6 sn).
+    SELECT (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[1]::int AS tv,
+           (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[2]::int AS sezon_no,
+           veri
+      FROM tmdb_onbellek
+     WHERE anahtar LIKE '/tv/%/season/%'
+       AND anahtar ~ '^/tv/[0-9]+/season/[0-9]+\\?language=tr-TR$'
+       AND jsonb_typeof(veri->'episodes') = 'array'
+  ), gercek_bolum AS MATERIALIZED (
+    SELECT DISTINCT b.tv, b.sezon_no, (e->>'episode_number')::int AS bolum
+      FROM sezon_belgesi b, jsonb_array_elements(b.veri->'episodes') e
+     WHERE b.sezon_no >= 1
+       AND e->>'episode_number' ~ '^[0-9]+$'
+       AND (e->>'episode_number')::int >= 1
+  ), kapsanan AS (
+    SELECT DISTINCT tv, sezon_no FROM gercek_bolum
   )
-  SELECT v.tv AS tmdb_id, v.sezon_no AS sezon, g.bolum
-    FROM tv_sezon v
-    JOIN harita_tv h ON h.tmdb_id = v.tv,
-         LATERAL generate_series(1, v.bolum_adedi) g(bolum)
-   WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0
-   ORDER BY v.tv, v.sezon_no, g.bolum`;
+  SELECT tmdb_id, sezon, bolum FROM (
+    SELECT g.tv AS tmdb_id, g.sezon_no AS sezon, g.bolum
+      FROM gercek_bolum g
+      JOIN harita_tv h ON h.tmdb_id = g.tv
+    UNION ALL
+    SELECT v.tv, v.sezon_no, s.bolum
+      FROM tv_sezon v
+      JOIN harita_tv h ON h.tmdb_id = v.tv
+      LEFT JOIN kapsanan k ON k.tv = v.tv AND k.sezon_no = v.sezon_no,
+           LATERAL generate_series(1, v.bolum_adedi) s(bolum)
+     WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0 AND k.tv IS NULL
+  ) t ORDER BY tmdb_id, sezon, bolum`;
 
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
 // TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 20 Ağu 2026, bölüm sorgusu):
