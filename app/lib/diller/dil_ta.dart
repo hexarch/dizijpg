@@ -1286,4 +1286,21 @@ const Map<String, String> cevirilerTa = {
   'Hesap': 'கணக்கு',
   '{} dizileri': '{} தொடர்கள்',
   '{} filmleri': '{} படங்கள்',
+  'En üste taşı': 'மேலே கொண்டு செல்',
+  'Sırayı sıfırla': 'வரிசையை மீட்டமை',
+  'Listede ara': 'பட்டியலில் தேடு',
+  'Elle sıra sıfırlansın mı?': 'கைமுறை வரிசையை மீட்டமைக்கவா?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'பட்டியல் இயல்பு வரிசைக்குத் திரும்பும் (சமீபத்தில் குறித்தது முதலில்).',
+  'Sıra sıfırlanamadı': 'வரிசையை மீட்டமைக்க முடியவில்லை',
+  'Listenin en üstüne taşındı': 'பட்டியலின் மேலே கொண்டு செல்லப்பட்டது',
+  'Adlar yükleniyor…': 'பெயர்கள் ஏற்றப்படுகின்றன…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'போஸ்டரை அழுத்திப் பிடித்து இழு. தொலைவில் உள்ள ஒன்றை முன்னே கொண்டுவர “மேலே கொண்டு செல்” பயன்படுத்து.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'தேடலில் இழுத்தல் அணைக்கப்பட்டுள்ளது; “மேலே கொண்டு செல்” மூலம் முன்னே கொண்டுவா ({} முடிவுகள்).',
+  'Görünüm': 'காட்சி',
+  'En çok izlediğin filmler': 'அதிகம் பார்த்த படங்கள்',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'நேரம் தோராயமானது: எபிசோட் ~{} நிமி, படம் ~{} நிமி எனக் கணக்கிடப்படுகிறது',
 };

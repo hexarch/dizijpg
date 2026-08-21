@@ -191,7 +191,7 @@ const Map<String, String> cevirilerPl = {
   'Rozetler': 'Odznaki',
   'Verdiğin puan': 'Wystawione oceny',
   'Ortalama puanın': 'Twoja średnia ocena',
-  'En çok izlediğin diziler': 'Najczęściej oglądane seriale',
+  'En çok izlediğin diziler': 'Twoje najczęściej oglądane seriale',
   'İlk Bölüm': 'Pierwszy odcinek',
   '100 Bölüm': '100 odcinków',
   '1000 Bölüm': '1000 odcinków',
@@ -1283,4 +1283,21 @@ const Map<String, String> cevirilerPl = {
   'Hesap': 'Konto',
   '{} dizileri': 'Seriale: {}',
   '{} filmleri': 'Filmy: {}',
+  'En üste taşı': 'Przenieś na górę',
+  'Sırayı sıfırla': 'Zresetuj kolejność',
+  'Listede ara': 'Szukaj na liście',
+  'Elle sıra sıfırlansın mı?': 'Zresetować ręczną kolejność?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Lista wróci do domyślnej kolejności (ostatnio oznaczone na początku).',
+  'Sıra sıfırlanamadı': 'Nie udało się zresetować kolejności',
+  'Listenin en üstüne taşındı': 'Przeniesiono na górę listy',
+  'Adlar yükleniyor…': 'Wczytywanie tytułów…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Przytrzymaj plakat, aby go przeciągnąć. Aby przenieść odległy tytuł do przodu, użyj „Przenieś na górę”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Przeciąganie jest wyłączone w wyszukiwaniu; przenieś do przodu przez „Przenieś na górę” ({} wyników).',
+  'Görünüm': 'Widok',
+  'En çok izlediğin filmler': 'Twoje najczęściej oglądane filmy',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Czasy są szacunkowe: odcinek liczy się jako ~{} min, film jako ~{} min',
 };

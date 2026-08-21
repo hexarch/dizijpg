@@ -366,13 +366,19 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
 
-    // Rota → beklenen alt menü indeksi (kabuk şube sırası).
+    // Rota → beklenen alt çubuk HEDEF indeksi.
+    //
+    // DİKKAT: bu kabuk ŞUBE sırası değil, ÇUBUKTAKİ hedef sırası (21 Ağu
+    // 2026'dan beri ikisi bire bir DEĞİL). Keşfet (`/arama`) 3. şubede
+    // duruyor ama çubukta hedefi yok — Akış'ın (2) bir görünümü olduğu için
+    // Akış vurgulanır; 3. hedef artık Mesajlar (bkz. kabuk.dart →
+    // `hedefIndeksi`).
     const beklenen = {
       '/kesfet': 0,
       '/takvim': 1,
       '/akis': 2,
       '/kullanici/alcelik': 2,
-      '/arama': 3,
+      '/arama': 2,
       '/profil': 4,
       '/kitaplik/izledim': 4,
     };

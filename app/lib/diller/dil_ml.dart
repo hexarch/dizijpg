@@ -191,7 +191,7 @@ const Map<String, String> cevirilerMl = {
   'Rozetler': 'ബാഡ്ജുകൾ',
   'Verdiğin puan': 'നൽകിയ റേറ്റിംഗുകൾ',
   'Ortalama puanın': 'ശരാശരി റേറ്റിംഗ്',
-  'En çok izlediğin diziler': 'ഏറ്റവും കൂടുതൽ കണ്ട ഷോകൾ',
+  'En çok izlediğin diziler': 'നിങ്ങൾ ഏറ്റവും കൂടുതൽ കണ്ട ഷോകൾ',
   'İlk Bölüm': 'ആദ്യ എപ്പിസോഡ്',
   '100 Bölüm': '100 എപ്പിസോഡുകൾ',
   '1000 Bölüm': '1000 എപ്പിസോഡുകൾ',
@@ -1268,4 +1268,21 @@ const Map<String, String> cevirilerMl = {
   'Hesap': 'അക്കൗണ്ട്',
   '{} dizileri': '{} പരമ്പരകൾ',
   '{} filmleri': '{} സിനിമകൾ',
+  'En üste taşı': 'ഏറ്റവും മുകളിലേക്ക് മാറ്റുക',
+  'Sırayı sıfırla': 'ക്രമം പുനഃസജ്ജമാക്കുക',
+  'Listede ara': 'ലിസ്റ്റിൽ തിരയുക',
+  'Elle sıra sıfırlansın mı?': 'സ്വയം ക്രമീകരിച്ച ക്രമം പുനഃസജ്ജമാക്കണോ?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'ലിസ്റ്റ് സ്ഥിരസ്ഥിതി ക്രമത്തിലേക്ക് മടങ്ങും (ഏറ്റവും ഒടുവിൽ അടയാളപ്പെടുത്തിയത് ആദ്യം).',
+  'Sıra sıfırlanamadı': 'ക്രമം പുനഃസജ്ജമാക്കാനായില്ല',
+  'Listenin en üstüne taşındı': 'ലിസ്റ്റിന്റെ ഏറ്റവും മുകളിലേക്ക് മാറ്റി',
+  'Adlar yükleniyor…': 'പേരുകൾ ലോഡ് ചെയ്യുന്നു…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'പോസ്റ്റർ അമർത്തിപ്പിടിച്ച് വലിക്കുക. അകലെയുള്ള ഒന്ന് മുന്നിലെത്തിക്കാൻ “ഏറ്റവും മുകളിലേക്ക് മാറ്റുക” ഉപയോഗിക്കുക.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'തിരയലിൽ വലിക്കൽ ഓഫാണ്; “ഏറ്റവും മുകളിലേക്ക് മാറ്റുക” വഴി മുന്നിലെത്തിക്കുക ({} ഫലം).',
+  'Görünüm': 'കാഴ്ച',
+  'En çok izlediğin filmler': 'നിങ്ങൾ ഏറ്റവും കൂടുതൽ കണ്ട സിനിമകൾ',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'സമയം ഏകദേശമാണ്: എപ്പിസോഡ് ~{} മിനിറ്റ്, സിനിമ ~{} മിനിറ്റ് എന്ന കണക്കിൽ',
 };

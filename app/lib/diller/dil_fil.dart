@@ -1290,4 +1290,21 @@ const Map<String, String> cevirilerFil = {
   'Hesap': 'Account',
   '{} dizileri': 'Mga serye: {}',
   '{} filmleri': 'Mga pelikula: {}',
+  'En üste taşı': 'Ilipat sa itaas',
+  'Sırayı sıfırla': 'I-reset ang pagkakasunod',
+  'Listede ara': 'Maghanap sa listahan',
+  'Elle sıra sıfırlansın mı?': 'I-reset ang manual na pagkakasunod?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Babalik ang listahan sa default na pagkakasunod (nauuna ang huli mong minarkahan).',
+  'Sıra sıfırlanamadı': 'Hindi na-reset ang pagkakasunod',
+  'Listenin en üstüne taşındı': 'Inilipat sa itaas ng listahan',
+  'Adlar yükleniyor…': 'Nilo-load ang mga pamagat…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Pindutin nang matagal ang poster para hilahin ito. Para iharap ang malayong pamagat, gamitin ang “Ilipat sa itaas”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Naka-off ang paghila kapag naghahanap; iharap ito gamit ang “Ilipat sa itaas” ({} resulta).',
+  'Görünüm': 'Anyo',
+  'En çok izlediğin filmler': 'Mga pelikulang pinakamadalas mong pinanood',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Tinatayang tagal: bawat episode ~{} min, bawat pelikula ~{} min',
 };

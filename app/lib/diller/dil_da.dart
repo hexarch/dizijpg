@@ -1270,4 +1270,21 @@ const Map<String, String> cevirilerDa = {
   'Hesap': 'Konto',
   '{} dizileri': 'Serier af {}',
   '{} filmleri': 'Film af {}',
+  'En üste taşı': 'Flyt øverst',
+  'Sırayı sıfırla': 'Nulstil rækkefølgen',
+  'Listede ara': 'Søg i listen',
+  'Elle sıra sıfırlansın mı?': 'Vil du nulstille den manuelle rækkefølge?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Listen vender tilbage til standardrækkefølgen (senest markeret først).',
+  'Sıra sıfırlanamadı': 'Rækkefølgen kunne ikke nulstilles',
+  'Listenin en üstüne taşındı': 'Flyttet øverst på listen',
+  'Adlar yükleniyor…': 'Indlæser titler…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Hold en plakat nede for at trække den. Brug “Flyt øverst” til at hente en titel langt nede frem.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Træk er slået fra i søgningen; hent den frem med “Flyt øverst” ({} resultater).',
+  'Görünüm': 'Visning',
+  'En çok izlediğin filmler': 'Dine mest sete film',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Tiderne er skøn: et afsnit tæller ~{} min., en film ~{} min.',
 };

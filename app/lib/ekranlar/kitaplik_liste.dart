@@ -4,8 +4,14 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'siralanabilir_izgara.dart';
 
 /// Bir kitaplık durumunun (izliyorum/bitirdim/...) TAM listesi, dikey ızgara.
+///
+/// SIRALAMA (21 Ağu 2026): afişler basılı tutulup sürüklenerek yeniden
+/// dizilebilir; sıra sunucuda `kitaplik_sirasi` tablosunda tutulur. Durum
+/// anahtarı ([widget.durum]) sunucudaki liste anahtarıyla AYNI dizgedir
+/// (izliyorum/izleyecegim/bitirdim/biraktim) — ayrı eşleme tablosu yok.
 class KitaplikListesiEkrani extends StatefulWidget {
   final String durum;
 
@@ -19,6 +25,11 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
   List<dynamic>? _ogeler;
   Map<String, int> _sayilar = {}; // 'tur:id' → izlenen bölüm
   String? _hata;
+
+  /// Sıralama kipi: süzgeç + "en üste taşı" düğmeleri. Sürükle-bırak bu
+  /// kipten BAĞIMSIZ, her zaman açık (kullanıcı "listeye girdiğimde basılı
+  /// tutup sürükleyebilmeliyim" dedi).
+  bool _siralama = false;
 
   static const _adlar = {
     'izliyorum': 'İzliyorum',
@@ -75,20 +86,14 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
         ipucu: 'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.'.c,
       );
     } else {
-      govde = GridView.builder(
-        padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
-        gridDelegate: const PosterIzgarasi(satirBoslugu: 14, bosluk: 10),
-        itemCount: _ogeler!.length,
-        itemBuilder: (context, i) {
-          final o = _ogeler![i] as Map<String, dynamic>;
-          return MiniIcerik(
-            key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
-            tmdbId: (o['tmdb_id'] as num).toInt(),
-            tur: o['tur'] as String,
-            genislik: double.infinity,
-            izlenenSayi: _sayilar['${o['tur']}:${o['tmdb_id']}'],
-          );
-        },
+      govde = SiralanabilirPosterIzgarasi(
+        // Liste kimliği DEĞİŞİRSE (yenileme, sıfırlama) alt widget taze
+        // listeyi alsın diye `ogeler` doğrudan geçiliyor.
+        ogeler: _ogeler!,
+        liste: widget.durum,
+        siralamaKipi: _siralama,
+        izlenenSayi: (o) => _sayilar['${o['tur']}:${o['tmdb_id']}'],
+        onYenile: _yukle,
       );
     }
 
@@ -98,6 +103,16 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
           (_adlar[widget.durum] ?? widget.durum).c +
               (_ogeler != null ? ' (${_ogeler!.length})' : ''),
         ),
+        actions: [
+          // Tek öğelik listede sıralamanın anlamı yok.
+          if ((_ogeler?.length ?? 0) > 1)
+            IconButton(
+              key: const Key('kitaplik-sirala'),
+              tooltip: _siralama ? 'Bitti'.c : 'Sırala'.c,
+              onPressed: () => setState(() => _siralama = !_siralama),
+              icon: Icon(_siralama ? Icons.check : Icons.swap_vert),
+            ),
+        ],
       ),
       // PC'de ızgara ortalanmış ve [masaustuIcerikGenisligi] (1080) ile sınırlı
       // (madde 26); mobilde kısıt bağlamaz.

@@ -1288,4 +1288,21 @@ const Map<String, String> cevirilerRo = {
   'Hesap': 'Cont',
   '{} dizileri': 'Seriale: {}',
   '{} filmleri': 'Filme: {}',
+  'En üste taşı': 'Mută la început',
+  'Sırayı sıfırla': 'Resetează ordinea',
+  'Listede ara': 'Caută în listă',
+  'Elle sıra sıfırlansın mı?': 'Resetezi ordinea manuală?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Lista revine la ordinea implicită (cele marcate cel mai recent primele).',
+  'Sıra sıfırlanamadı': 'Ordinea nu a putut fi resetată',
+  'Listenin en üstüne taşındı': 'Mutat la începutul listei',
+  'Adlar yükleniyor…': 'Se încarcă titlurile…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Ține apăsat pe un afiș ca să-l tragi. Ca să aduci în față un titlu aflat departe, folosește „Mută la început”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Tragerea este dezactivată în căutare; adu-l în față cu „Mută la început” ({} rezultate).',
+  'Görünüm': 'Afișare',
+  'En çok izlediğin filmler': 'Filmele tale cele mai vizionate',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Duratele sunt estimative: un episod contează ~{} min, un film ~{} min',
 };

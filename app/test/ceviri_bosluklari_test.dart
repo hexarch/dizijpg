@@ -213,6 +213,30 @@ const _yeniAnahtarlar = [
   // ya da YÖNETMEN ADI gelir; ad çeviriye girmez.
   '{} dizileri',
   '{} filmleri',
+  // kitaplik.dart — afişi basılı tutup sürükleyerek elle sıralama.
+  //
+  // NOT: 'En üste taşı' hem DÜĞME metni hem de son iki ipucu cümlesinin
+  // İÇİNDE tırnaklı olarak geçiyor. Kullanıcı ekranda o düğmeyi arayacağı
+  // için ikisi BİREBİR aynı dizge olmalı — aşağıda ayrı bir test kilitler.
+  'En üste taşı',
+  'Sırayı sıfırla',
+  'Listede ara',
+  'Elle sıra sıfırlansın mı?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.',
+  'Sıra sıfırlanamadı',
+  'Listenin en üstüne taşındı',
+  'Adlar yükleniyor…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).',
+  // akis.dart — Akış/Keşfet seçicisinin ipucu metni
+  'Görünüm',
+  // ozet.dart + profil.dart — izleme süresi kırılımı.
+  //
+  // NOT: 'En çok izlediğin filmler' 10 dilde kesfet.dart'ın küresel
+  // 'En Çok İzlenen Filmler' rafıyla aynı dizgeye düşüyordu; kişisellik
+  // işareti eklenerek ayrıldı ('diziler' eşi de aynı kalıba çekildi).
+  'En çok izlediğin filmler',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır',
 ];
 
 /// Türkçe hariç bütün dil kodları (Türkçe'nin haritası yoktur: anahtar zaten o).
@@ -413,6 +437,8 @@ void main() {
       // kesfet.dart — kişiselleştirilmiş raf başlıkları
       '{} dizileri',
       '{} filmleri',
+      // kitaplik.dart — arama kipinde sürükleme kapalıyken sonuç sayısı
+      'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).',
     ];
 
     test('yeni anahtarların 45 çevirisinde de TEK bir {} var', () {
@@ -454,6 +480,72 @@ void main() {
             cikti,
             isNot(contains('{}')),
             reason: '$kod → "$anahtar" içinde {} sızdı',
+          );
+        }
+      }
+    });
+
+    // ozet.dart — izleme süresi kırılımının dipnotu. TEK anahtarda İKİ yer
+    // tutucu var ve SIRA ANLAMLI: `.cf` `replaceFirst` ile soldan doldurur,
+    // yani ilk {} BÖLÜM dakikası, ikincisi FİLM dakikasıdır. Bir dil cümleyi
+    // ters kurarsa kullanıcı "bölüm ~120 dk" gibi saçma bir dipnot görür.
+    const ikiliSureli = 'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır';
+
+    test('süre dipnotunda 45 çevirinin hepsinde TAM İKİ {} var', () {
+      for (final kod in _cevrilenDiller) {
+        final ceviri = tumCeviriler[kod]![ikiliSureli]!;
+        expect(
+          '{}'.allMatches(ceviri).length,
+          2,
+          reason: '$kod → iki yer tutucu bekleniyordu: "$ceviri"',
+        );
+      }
+    });
+
+    test('süre dipnotunda ÖNCE bölüm, SONRA film dakikası yerleşir', () async {
+      for (final kod in _cevrilenDiller) {
+        await Ceviri.sec(kod);
+        // Ayırt edici iki sayı: karışırsa sıra bozulmuş demektir.
+        final cikti = ikiliSureli.cf([42, 118]);
+        expect(cikti, isNot(contains('{}')), reason: '$kod → {} sızdı');
+        expect(cikti, contains('42'), reason: '$kod → bölüm dakikası yok');
+        expect(cikti, contains('118'), reason: '$kod → film dakikası yok');
+        expect(
+          cikti.indexOf('42'),
+          lessThan(cikti.indexOf('118')),
+          reason: '$kod → bölüm/film sırası ters: "$cikti"',
+        );
+      }
+    });
+
+    // kitaplık listesi adları yüklenirken görünen iskelet metni.
+    test('"Adlar yükleniyor…" 45 dilde de TEK karakter üç nokta taşır', () {
+      for (final kod in _cevrilenDiller) {
+        final ceviri = tumCeviriler[kod]!['Adlar yükleniyor…']!;
+        expect(ceviri, contains('…'), reason: '$kod → U+2026 yok');
+        expect(ceviri, isNot(contains('...')), reason: '$kod → üç ayrı nokta');
+      }
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // Sıralama ipuçları kullanıcıyı BİR DÜĞMEYE yönlendiriyor. İpucundaki
+  // tırnaklı metin düğmenin üstündeki metinden farklıysa kullanıcı ekranda
+  // öyle bir düğme arar ve bulamaz — çeviri "doğru" olsa bile akış kırılır.
+  group('SIRALAMA İPUÇLARI — düğme metnine birebir gönderme', () {
+    const ipuclari = [
+      'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.',
+      'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).',
+    ];
+
+    test('45 dilde ipuçları düğmenin ÇEVİRİSİNİ aynen içerir', () {
+      for (final kod in _cevrilenDiller) {
+        final dugme = tumCeviriler[kod]!['En üste taşı']!;
+        for (final ipucu in ipuclari) {
+          expect(
+            tumCeviriler[kod]![ipucu]!,
+            contains(dugme),
+            reason: '$kod → ipucu "$dugme" düğmesine göndermiyor',
           );
         }
       }

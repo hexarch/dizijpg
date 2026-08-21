@@ -1256,4 +1256,21 @@ const Map<String, String> cevirilerGu = {
   'Hesap': 'ખાતું',
   '{} dizileri': '{} ની સિરીઝ',
   '{} filmleri': '{} ની ફિલ્મો',
+  'En üste taşı': 'સૌથી ઉપર ખસેડો',
+  'Sırayı sıfırla': 'ક્રમ રીસેટ કરો',
+  'Listede ara': 'યાદીમાં શોધો',
+  'Elle sıra sıfırlansın mı?': 'જાતે ગોઠવેલો ક્રમ રીસેટ કરવો છે?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'યાદી ડિફોલ્ટ ક્રમમાં પાછી આવશે (સૌથી તાજેતરમાં નિશાન કરેલું પહેલાં).',
+  'Sıra sıfırlanamadı': 'ક્રમ રીસેટ કરી શકાયો નહીં',
+  'Listenin en üstüne taşındı': 'યાદીમાં સૌથી ઉપર ખસેડ્યું',
+  'Adlar yükleniyor…': 'નામ લોડ થઈ રહ્યાં છે…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'પોસ્ટર દબાવી રાખીને ખેંચો. દૂરની કોઈ કૃતિ આગળ લાવવા “સૌથી ઉપર ખસેડો” વાપરો.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'શોધમાં ખેંચવાનું બંધ છે; “સૌથી ઉપર ખસેડો” થી આગળ લાવો ({} પરિણામ).',
+  'Görünüm': 'દૃશ્ય',
+  'En çok izlediğin filmler': 'સૌથી વધુ જોયેલી ફિલ્મો',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'સમય અંદાજિત છે: એપિસોડ ~{} મિનિટ, ફિલ્મ ~{} મિનિટ ગણાય છે',
 };

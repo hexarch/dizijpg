@@ -1263,4 +1263,21 @@ const Map<String, String> cevirilerKn = {
   'Hesap': 'ಖಾತೆ',
   '{} dizileri': '{} ಸರಣಿಗಳು',
   '{} filmleri': '{} ಸಿನಿಮಾಗಳು',
+  'En üste taşı': 'ಮೇಲಕ್ಕೆ ಸರಿಸಿ',
+  'Sırayı sıfırla': 'ಕ್ರಮ ಮರುಹೊಂದಿಸಿ',
+  'Listede ara': 'ಪಟ್ಟಿಯಲ್ಲಿ ಹುಡುಕಿ',
+  'Elle sıra sıfırlansın mı?': 'ಕೈಯಿಂದ ಜೋಡಿಸಿದ ಕ್ರಮ ಮರುಹೊಂದಿಸಬೇಕೆ?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'ಪಟ್ಟಿ ಪೂರ್ವನಿಯೋಜಿತ ಕ್ರಮಕ್ಕೆ ಮರಳುತ್ತದೆ (ಇತ್ತೀಚೆಗೆ ಗುರುತಿಸಿದ್ದು ಮೊದಲು).',
+  'Sıra sıfırlanamadı': 'ಕ್ರಮವನ್ನು ಮರುಹೊಂದಿಸಲಾಗಲಿಲ್ಲ',
+  'Listenin en üstüne taşındı': 'ಪಟ್ಟಿಯ ಮೇಲಕ್ಕೆ ಸರಿಸಲಾಗಿದೆ',
+  'Adlar yükleniyor…': 'ಹೆಸರುಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'ಪೋಸ್ಟರ್ ಒತ್ತಿ ಹಿಡಿದು ಎಳೆಯಿರಿ. ದೂರದಲ್ಲಿರುವುದನ್ನು ಮುಂದೆ ತರಲು “ಮೇಲಕ್ಕೆ ಸರಿಸಿ” ಬಳಸಿ.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'ಹುಡುಕಾಟದಲ್ಲಿ ಎಳೆಯುವುದು ಆಫ್ ಆಗಿದೆ; “ಮೇಲಕ್ಕೆ ಸರಿಸಿ” ಮೂಲಕ ಮುಂದೆ ತನ್ನಿ ({} ಫಲಿತಾಂಶ).',
+  'Görünüm': 'ನೋಟ',
+  'En çok izlediğin filmler': 'ಹೆಚ್ಚು ನೋಡಿದ ಸಿನಿಮಾಗಳು',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'ಸಮಯ ಅಂದಾಜು: ಎಪಿಸೋಡ್ ~{} ನಿಮಿ, ಸಿನಿಮಾ ~{} ನಿಮಿ ಎಂದು ಎಣಿಸಲಾಗುತ್ತದೆ',
 };

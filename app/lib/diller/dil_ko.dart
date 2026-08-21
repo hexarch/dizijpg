@@ -188,7 +188,7 @@ const Map<String, String> cevirilerKo = {
   'Rozetler': '배지',
   'Verdiğin puan': '남긴 평점',
   'Ortalama puanın': '평균 평점',
-  'En çok izlediğin diziler': '가장 많이 본 시리즈',
+  'En çok izlediğin diziler': '내가 가장 많이 본 시리즈',
   'İlk Bölüm': '첫 에피소드',
   '100 Bölüm': '100화',
   '1000 Bölüm': '1000화',
@@ -1207,4 +1207,21 @@ const Map<String, String> cevirilerKo = {
   'Hesap': '계정',
   '{} dizileri': '{}의 드라마',
   '{} filmleri': '{}의 영화',
+  'En üste taşı': '맨 위로 이동',
+  'Sırayı sıfırla': '순서 초기화',
+  'Listede ara': '목록에서 검색',
+  'Elle sıra sıfırlansın mı?': '직접 정한 순서를 초기화할까요?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      '목록이 기본 순서(가장 최근에 표시한 순)로 돌아갑니다.',
+  'Sıra sıfırlanamadı': '순서를 초기화하지 못했습니다',
+  'Listenin en üstüne taşındı': '목록 맨 위로 옮겼어요',
+  'Adlar yükleniyor…': '이름을 불러오는 중…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      '포스터를 길게 눌러 끌어 보세요. 멀리 있는 작품을 앞으로 가져오려면 ‘맨 위로 이동’을 사용하세요.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      '검색 중에는 끌 수 없어요. ‘맨 위로 이동’으로 앞에 놓으세요 (결과 {}개).',
+  'Görünüm': '보기',
+  'En çok izlediğin filmler': '내가 가장 많이 본 영화',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      '시간은 어림값이에요: 에피소드는 약 {}분, 영화는 약 {}분으로 계산해요',
 };

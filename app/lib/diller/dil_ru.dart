@@ -191,7 +191,7 @@ const Map<String, String> cevirilerRu = {
   'Rozetler': 'Значки',
   'Verdiğin puan': 'Поставлено оценок',
   'Ortalama puanın': 'Средняя оценка',
-  'En çok izlediğin diziler': 'Самые просматриваемые сериалы',
+  'En çok izlediğin diziler': 'Твои самые просматриваемые сериалы',
   'İlk Bölüm': 'Первая серия',
   '100 Bölüm': '100 серий',
   '1000 Bölüm': '1000 серий',
@@ -1272,4 +1272,21 @@ const Map<String, String> cevirilerRu = {
   'Hesap': 'Аккаунт',
   '{} dizileri': 'Сериалы: {}',
   '{} filmleri': 'Фильмы: {}',
+  'En üste taşı': 'Переместить в начало',
+  'Sırayı sıfırla': 'Сбросить порядок',
+  'Listede ara': 'Поиск по списку',
+  'Elle sıra sıfırlansın mı?': 'Сбросить ручной порядок?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Список вернётся к порядку по умолчанию (последние отмеченные — первыми).',
+  'Sıra sıfırlanamadı': 'Не удалось сбросить порядок',
+  'Listenin en üstüne taşındı': 'Перемещено в начало списка',
+  'Adlar yükleniyor…': 'Загрузка названий…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Нажми и удерживай постер, чтобы перетащить его. Чтобы поднять далёкое название, используй «Переместить в начало».',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Перетаскивание в поиске отключено; подними наверх через «Переместить в начало» ({} результатов).',
+  'Görünüm': 'Вид',
+  'En çok izlediğin filmler': 'Твои самые просматриваемые фильмы',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Время примерное: эпизод считается за ~{} мин, фильм — за ~{} мин',
 };

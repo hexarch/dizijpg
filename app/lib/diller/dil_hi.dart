@@ -1262,4 +1262,21 @@ const Map<String, String> cevirilerHi = {
   'Hesap': 'अकाउंट',
   '{} dizileri': '{} की सीरीज़',
   '{} filmleri': '{} की फ़िल्में',
+  'En üste taşı': 'सबसे ऊपर ले जाएँ',
+  'Sırayı sıfırla': 'क्रम रीसेट करें',
+  'Listede ara': 'सूची में खोजें',
+  'Elle sıra sıfırlansın mı?': 'मैनुअल क्रम रीसेट करें?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'सूची डिफ़ॉल्ट क्रम में लौट आएगी (सबसे हाल में चिह्नित पहले)।',
+  'Sıra sıfırlanamadı': 'क्रम रीसेट नहीं हो सका',
+  'Listenin en üstüne taşındı': 'सूची में सबसे ऊपर ले जाया गया',
+  'Adlar yükleniyor…': 'नाम लोड हो रहे हैं…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'पोस्टर को दबाकर रखें और खींचें। दूर मौजूद किसी टाइटल को आगे लाने के लिए “सबसे ऊपर ले जाएँ” का इस्तेमाल करें।',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'खोज में खींचना बंद है; “सबसे ऊपर ले जाएँ” से आगे लाएँ ({} नतीजे)।',
+  'Görünüm': 'दृश्य',
+  'En çok izlediğin filmler': 'सबसे ज़्यादा देखी फ़िल्में',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'समय अनुमानित हैं: एपिसोड ~{} मिनट, फ़िल्म ~{} मिनट माने गए हैं',
 };

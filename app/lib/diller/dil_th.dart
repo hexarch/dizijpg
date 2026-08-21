@@ -1247,4 +1247,21 @@ const Map<String, String> cevirilerTh = {
   'Hesap': 'บัญชี',
   '{} dizileri': 'ซีรีส์ของ {}',
   '{} filmleri': 'หนังของ {}',
+  'En üste taşı': 'ย้ายขึ้นบนสุด',
+  'Sırayı sıfırla': 'รีเซ็ตลำดับ',
+  'Listede ara': 'ค้นหาในรายการ',
+  'Elle sıra sıfırlansın mı?': 'รีเซ็ตลำดับที่จัดเองไหม',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'รายการจะกลับไปเป็นลำดับเริ่มต้น (รายการที่ทำเครื่องหมายล่าสุดขึ้นก่อน)',
+  'Sıra sıfırlanamadı': 'รีเซ็ตลำดับไม่สำเร็จ',
+  'Listenin en üstüne taşındı': 'ย้ายขึ้นบนสุดของรายการแล้ว',
+  'Adlar yükleniyor…': 'กำลังโหลดชื่อ…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'กดค้างที่โปสเตอร์เพื่อลาก หากต้องการดึงเรื่องที่อยู่ไกลขึ้นมาข้างหน้า ให้ใช้ “ย้ายขึ้นบนสุด”',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'ลากไม่ได้ขณะค้นหา ใช้ “ย้ายขึ้นบนสุด” เพื่อดึงขึ้นมาข้างหน้า ({} ผลลัพธ์)',
+  'Görünüm': 'มุมมอง',
+  'En çok izlediğin filmler': 'หนังที่ดูมากที่สุด',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'เวลาเป็นค่าประมาณ: ตอนละ ~{} นาที หนังละ ~{} นาที',
 };

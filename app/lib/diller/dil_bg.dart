@@ -1272,4 +1272,21 @@ const Map<String, String> cevirilerBg = {
   'Hesap': 'Акаунт',
   '{} dizileri': 'Сериали от {}',
   '{} filmleri': 'Филми от {}',
+  'En üste taşı': 'Премести най-горе',
+  'Sırayı sıfırla': 'Нулирай подредбата',
+  'Listede ara': 'Търсене в списъка',
+  'Elle sıra sıfırlansın mı?': 'Да се нулира ли ръчната подредба?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Списъкът се връща към подредбата по подразбиране (последно отбелязаното е първо).',
+  'Sıra sıfırlanamadı': 'Подредбата не можа да се нулира',
+  'Listenin en üstüne taşındı': 'Преместено най-горе в списъка',
+  'Adlar yükleniyor…': 'Зареждане на заглавията…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Задръж плаката, за да го плъзнеш. За да изведеш напред далечно заглавие, използвай „Премести най-горе“.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Плъзгането е изключено при търсене; изведи напред с „Премести най-горе“ ({} резултата).',
+  'Görünüm': 'Изглед',
+  'En çok izlediğin filmler': 'Най-гледаните ти филми',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Времената са приблизителни: епизод ~{} мин, филм ~{} мин',
 };

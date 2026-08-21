@@ -4,10 +4,18 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
 import 'ortak.dart';
+import 'siralanabilir_izgara.dart';
 
 /// Otomatik "İzlediklerim": izlenen tüm film ve dizilerin ızgarası.
 /// Kendi verisini çeker (reload'da doğrudan açılabilir).
 /// [tur] verilirse yalnız o tür listelenir ('tv' | 'movie').
+///
+/// SIRALAMA (21 Ağu 2026): "İzlediğim Diziler" ve "İzlediğim Filmler" de elle
+/// sıralanabilir altı listeden ikisi — afişi basılı tutup sürükle.
+/// TÜRSÜZ çağrıda (tümü bir arada) sıralama YOK: sunucu orada tür başına 200
+/// ile kırpıyor, kırpılmış bir pencereye elle sıra uygulamak ya sıralananı
+/// keser ya da listeyi tam listeden farklı dizerdi (bkz. server.js
+/// `/izlediklerim`).
 class IzlenenlerEkrani extends StatefulWidget {
   final String? tur;
   const IzlenenlerEkrani({super.key, this.tur});
@@ -19,6 +27,10 @@ class IzlenenlerEkrani extends StatefulWidget {
 class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
   List<dynamic>? _ogeler;
   String? _hata;
+
+  /// Sıralama kipi (süzgeç + "en üste taşı"). Sürükle-bırak bu kipten
+  /// bağımsız, her zaman açık.
+  bool _siralama = false;
 
   @override
   void initState() {
@@ -65,7 +77,7 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
         baslik: 'Henüz izleme kaydın yok'.c,
         ipucu: 'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.'.c,
       );
-    } else {
+    } else if (widget.tur == null) {
       govde = GridView.builder(
         padding: EdgeInsets.fromLTRB(16, 16, 16, altGuvenli(context)),
         gridDelegate: const PosterIzgarasi(satirBoslugu: 16, bosluk: 12),
@@ -80,6 +92,14 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
             izlenenSayi: (o['sayi'] as num?)?.toInt(),
           );
         },
+      );
+    } else {
+      govde = SiralanabilirPosterIzgarasi(
+        ogeler: ogeler,
+        liste: 'izlenen_${widget.tur}',
+        siralamaKipi: _siralama,
+        izlenenSayi: (o) => (o['sayi'] as num?)?.toInt(),
+        onYenile: _yukle,
       );
     }
 
@@ -96,6 +116,16 @@ class _IzlenenlerEkraniState extends State<IzlenenlerEkrani> {
               : 'İzlediklerim'.c +
                     (ogeler != null ? ' (${ogeler.length})' : ''),
         ),
+        actions: [
+          // Yalnız tür süzülmüş (sıralanabilir) listede ve en az iki öğede.
+          if (widget.tur != null && (ogeler?.length ?? 0) > 1)
+            IconButton(
+              key: const Key('izlenen-sirala'),
+              tooltip: _siralama ? 'Bitti'.c : 'Sırala'.c,
+              onPressed: () => setState(() => _siralama = !_siralama),
+              icon: Icon(_siralama ? Icons.check : Icons.swap_vert),
+            ),
+        ],
       ),
       // PC'de ızgara ekranın tamamına yayılmasın: ortalanmış ve [masaustuIcerik
       // Genisligi] (1080) ile sınırlı — okuma kolonundan (720) geniş, çünkü

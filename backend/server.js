@@ -9145,14 +9145,170 @@ app.get('/listeler/:id', girisIsteğeBagli, sarici(async (req, res) => {
   res.json({ ...liste.rows[0], sahibiyim, ogeler: ogeler.rows });
 }));
 
+// ---------------------------------------------------------------------------
+// KİTAPLIK SIRASI — ALTI listede elle sürükle-bırak sıra (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// İSTEK: "Profilimdeki listeler de sürükle bırak ile düzenleme özelliği ekler
+// misin? Mesela İzliyorum listesine girdiğimde basılı tutup sürükle bırak ile
+// dizi film afişlerinin konumunu değiştirebilmeliyim."
+//
+// Sıra `kitaplik_sirasi` tablosunda; NEDEN ayrı tablo olduğu sema.sql'de
+// ve migrasyon-2026-08-21c.sql'de yazıyor (özet: `izlemeler` olay tablosu,
+// tek afiş 62 satır olabiliyor; tek mekanizma = tek uç + tek test kümesi).
+const KITAPLIK_LISTELERI = {
+  // durum listeleri: kaynak `durumlar`, süzgeç değeri = durumun kendisi
+  izliyorum: { kaynak: 'durum', suzgec: 'izliyorum' },
+  izleyecegim: { kaynak: 'durum', suzgec: 'izleyecegim' },
+  bitirdim: { kaynak: 'durum', suzgec: 'bitirdim' },
+  biraktim: { kaynak: 'durum', suzgec: 'biraktim' },
+  // izleme listeleri: kaynak `izlemeler`, süzgeç değeri = tür
+  izlenen_tv: { kaynak: 'izleme', suzgec: 'tv' },
+  izlenen_movie: { kaynak: 'izleme', suzgec: 'movie' },
+};
+
+// Hem `GET /izlediklerim?tur=` penceresi hem de yazma tavanı. TEK sabit:
+// pencere yazma tavanından büyük olsaydı istemci gördüğü listeyi
+// kaydedemezdi, küçük olsaydı gördüğünden fazlasını göndermeye çalışırdı.
+const IZLENEN_PENCERE = 2000;
+
+const kitaplikSiraLimiti = hizLimiti(300, (req) => `ksr:${req.kullanici.id}`);
+
+// Bir kitaplık listesinin TAM sırasını yazar. Gövde: {ogeler:[{tur,tmdb_id}...]}
+//
+// TAM LİSTE, "şunu şuraya taşı" DEĞİL (19 Ağu 2026'da `liste_ogeleri`nde
+// alınan karar, aynen): sürükle-bırak sırasında istemci nihai diziyi zaten
+// biliyor; tekil taşıma komutları iki cihazda birbirinin üstüne biner ve sıra
+// sessizce bozulur. PUT zaten "kaynağın tamamını değiştir" demektir.
+//
+// EKSİK LİSTE 400 (canlıda ölçülen tuzak): 8 öğelik listeye 4 öğelik sıra
+// yazılırsa kalan 4 satırsız kalır, `NULLS FIRST` onları BAŞA taşır ve
+// kullanıcının sıraladıkları listenin SONUNA düşer.
+//
+// TEK SORGUDA yazılır: silme + yazma aynı ifadede (veri değiştiren CTE), yani
+// istek ortada kesilse bile YARIM uygulanmış sıra kalmaz. Döngüde sorgu YOK.
+app.put('/kitaplik/sira/:liste', girisZorunlu, kitaplikSiraLimiti, sarici(async (req, res) => {
+  const liste = String(req.params.liste || '');
+  if (!Object.hasOwn(KITAPLIK_LISTELERI, liste)) {
+    return res.status(400).json({ hata: 'Bilinmeyen liste' });
+  }
+  const tanim = KITAPLIK_LISTELERI[liste];
+  const ham = req.body?.ogeler;
+  if (!Array.isArray(ham) || ham.length === 0) {
+    return res.status(400).json({ hata: 'Sıralanacak öğe yok' });
+  }
+  if (ham.length > IZLENEN_PENCERE) {
+    return res.status(400).json({ hata: 'Liste çok uzun' });
+  }
+  if (!ham.every(listeOgesiGecerli)) {
+    return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
+  }
+  // AYNI YAPIM İKİ KEZ: birincil anahtar çakışır ve `ON CONFLICT DO UPDATE`
+  // aynı satırı tek ifadede iki kez güncellemeye çalışıp patlardı. Üstelik
+  // tamlık sayımını da yanıltır (5 öğelik listeye 5 kopya gönderilebilirdi).
+  const anahtarlar = new Set(ham.map((o) => `${o.tur}:${Number(o.tmdb_id)}`));
+  if (anahtarlar.size !== ham.length) {
+    return res.status(400).json({ hata: 'Aynı yapım listede iki kez' });
+  }
+  // İzleme listelerinde tür SABİT: `izlenen_tv`ye film gönderilemez.
+  if (tanim.kaynak === 'izleme' && !ham.every((o) => o.tur === tanim.suzgec)) {
+    return res.status(400).json({ hata: 'Liste türüne uymayan öğe' });
+  }
+
+  // $1 kullanıcı, $2 liste adı, $3 kaynak süzgeci (durum değeri / tür),
+  // sonrasında her öğe için (tur, tmdb_id, sira) üçlüsü.
+  const p = [req.kullanici.id, liste, tanim.suzgec];
+  const satirlar = ham.map((o, i) => {
+    p.push(o.tur, Number(o.tmdb_id), i);
+    return `($${p.length - 2}::text, $${p.length - 1}::int, $${p.length}::int)`;
+  });
+  const degerler = `(VALUES ${satirlar.join(',')}) AS v(tur, tmdb_id, sira)`;
+  // Kaynağa göre iki şey değişir: listenin uzunluğu ve "bu öğe listede mi".
+  const kaynakSayim = tanim.kaynak === 'durum'
+    ? 'SELECT count(*)::int FROM durumlar WHERE kullanici_id=$1 AND durum=$3'
+    : 'SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur=$3';
+  const uyelik = tanim.kaynak === 'durum'
+    ? `EXISTS (SELECT 1 FROM durumlar d WHERE d.kullanici_id=$1 AND d.durum=$3
+                 AND d.tur=v.tur AND d.tmdb_id=v.tmdb_id)`
+    : `EXISTS (SELECT 1 FROM izlemeler i WHERE i.kullanici_id=$1 AND i.tur=$3
+                 AND i.tmdb_id=v.tmdb_id)`;
+
+  // TEK doğrulama sorgusu iki soruyu birden sorar:
+  //   adet    → liste gerçekte kaç öğe (tamlık denetimi)
+  //   eslesme → gönderilenlerin kaçı GERÇEKTEN bu listede (üyelik denetimi)
+  // Yalnız sayı denetlenseydi doğru SAYIDA ama yanlış yapımlar gönderilebilir,
+  // tabloya listeye ait olmayan öksüz satırlar yazılırdı.
+  const dogrula = await havuz.query(
+    `SELECT (${kaynakSayim}) AS adet,
+            (SELECT count(*)::int FROM ${degerler} WHERE ${uyelik}) AS eslesme`,
+    p,
+  );
+  const { adet, eslesme } = dogrula.rows[0];
+  if (ham.length !== adet) {
+    return res.status(400).json({
+      hata: 'Sıralama listenin TAMAMINI içermeli',
+      beklenen: adet,
+      gelen: ham.length,
+    });
+  }
+  if (eslesme !== ham.length) {
+    return res.status(400).json({ hata: 'Listede olmayan yapım gönderildi' });
+  }
+
+  // TEK İFADE: önce bu listenin gönderilmeyen satırları silinir (listeden
+  // düşmüş yapımların öksüz sıraları burada temizlenir), sonra gelenler
+  // yazılır. Veri değiştiren CTE ile ikisi aynı anlık görüntüde ve atomik.
+  await havuz.query(
+    `WITH yeni AS (SELECT * FROM ${degerler}),
+          sil AS (
+            DELETE FROM kitaplik_sirasi
+             WHERE kullanici_id=$1 AND liste=$2
+               AND (tur, tmdb_id) NOT IN (SELECT tur, tmdb_id FROM yeni)
+          )
+     INSERT INTO kitaplik_sirasi (kullanici_id, liste, tur, tmdb_id, sira)
+     SELECT $1, $2, tur, tmdb_id, sira FROM yeni
+     ON CONFLICT (kullanici_id, liste, tur, tmdb_id)
+     DO UPDATE SET sira = EXCLUDED.sira`,
+    p,
+  );
+  res.json({ tamam: true });
+}));
+
+// Elle sırayı SIFIRLAR: liste varsayılan (en yeni önce) düzenine döner.
+// Kaçış kapısı olmadan 578 öğelik bir listede bozulan sırayı elle düzeltmek
+// imkânsıza yakındı.
+app.delete('/kitaplik/sira/:liste', girisZorunlu, kitaplikSiraLimiti, sarici(async (req, res) => {
+  const liste = String(req.params.liste || '');
+  if (!Object.hasOwn(KITAPLIK_LISTELERI, liste)) {
+    return res.status(400).json({ hata: 'Bilinmeyen liste' });
+  }
+  await havuz.query(
+    'DELETE FROM kitaplik_sirasi WHERE kullanici_id=$1 AND liste=$2',
+    [req.kullanici.id, liste],
+  );
+  res.json({ tamam: true });
+}));
+
 // ---------- kitaplığım / istatistik / takvim ----------
 // `tekrar`: yeniden izleme sayısı (POST /rewatch). Poster kartlarındaki göz
 // rozetinin yanında "×2" olarak çizilir — istemci bu alanı BURADAN okur,
 // içerik başına ayrı istek atmaz.
 app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
+  // ELLE SIRA (21 Ağu 2026): `kitaplik_sirasi`ndaki satır "kullanıcı bu yapımı
+  // kendi eliyle konumlandırdı" demektir. `NULLS FIRST` şart:
+  //   * hiç düzenlenmemiş liste (hiç satır yok) BUGÜNKÜYLE aynı sırada gelir,
+  //   * düzenlemeden sonra eklenen yapım EN ÜSTTE çıkar (yeni işaretlediğin
+  //     dizi 182 öğenin dibinde kaybolmaz).
+  // Dört durum listesi TEK sorguda dönüyor; `s.liste = d.durum` eşlemesi
+  // sayesinde her satır KENDİ listesinin sırasını alır ve istemci `durum`a
+  // göre süzünce liste içi sıra doğru kalır.
   const { rows } = await havuz.query(
-    `SELECT tur, tmdb_id, durum, tekrar, guncelleme FROM durumlar
-     WHERE kullanici_id=$1 ORDER BY guncelleme DESC`,
+    `SELECT d.tur, d.tmdb_id, d.durum, d.tekrar, d.guncelleme, s.sira
+       FROM durumlar d
+       LEFT JOIN kitaplik_sirasi s
+              ON s.kullanici_id = d.kullanici_id AND s.liste = d.durum
+             AND s.tur = d.tur AND s.tmdb_id = d.tmdb_id
+      WHERE d.kullanici_id=$1
+      ORDER BY s.sira ASC NULLS FIRST, d.guncelleme DESC`,
     [req.kullanici.id],
   );
   const favoriler = await havuz.query(
@@ -9190,21 +9346,70 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 //     yazar, ama kullanıcı sonradan yeni sezon için "izliyorum"a dönebilir;
 //     o an geçmişte GERÇEKTEN izlenmiş tekrarların süresi silinmemeli.
 //     Durum tamamen kaldırılırsa satır silinir, tekrar da doğal olarak düşer.
+//
+// ---------------------------------------------------------------------------
+// NEDEN HÂLÂ SABİT — TMDB'NİN GERÇEK SÜRESİ ÖLÇÜLDÜ (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// Kullanıcı süre kırılımı isteyince "yapım başına GERÇEK süre kullanalım"
+// sorusu yeniden soruldu ve CANLI PROXY ÜZERİNDEN ÖLÇÜLDÜ (trending tv/movie
+// 59'ar yapım + 27 tanınmış dizi):
+//   · film `runtime`            : 59'un 57'sinde dolu (%96,6) ve KESİN.
+//   · dizi `episode_run_time`   : 59'un 13'ünde dolu (%22,0) — TMDB bu alanı
+//     pratikte terk etti. Dolu olduğunda çok isabetli (ortalama mutlak hata
+//     %4,8) ama kapsam yok.
+//   · dizi `last_episode_to_air.runtime` : kapsam yüksek (%91,5) ama SON
+//     bölümün süresi tipik bölümü temsil ETMİYOR — finaller uzun: Stranger
+//     Things 129 dk (gerçek medyan 50), Euphoria 93 (56), Friends 48 (23),
+//     The Office 45 (23). Ortalama mutlak hata %28,6; sabit 42'nin hatası
+//     %36,4. Yani "daha az yanlış" ama en popüler dizilerde 2,5 katına kadar
+//     şişiriyor — gerileme sayılır.
+//   · GERÇEKTEN doğru kaynak sezon belgesindeki `episodes[].runtime`
+//     (kapsam %92,6, bölüm bölüm kesin).
+// SEZON BELGESİ NEDEN KULLANILMIYOR: `tmdb_onbellek.veri` TOAST'lanmış büyük
+// jsonb. Ölçülen belge boyutları: film detayı 191-342 KB, sezon belgesi
+// 5-38 KB. Bu kartı her profil açılışında çizmek için 406 film + ~900 sezon
+// belgesini açmak gerekirdi (onlarca MB, saniyeler). Türetilmiş süreyi kendi
+// tablomuzda saklamak doğru çözüm ama yeni tablo + migrasyon demek; bu turun
+// kapsamı DEĞİL.
+// SONUÇ: sabitler kalıyor ve ekran bunu "yaklaşık" diye SÖYLÜYOR. Kırılımın
+// TAMAMI (toplam, dizi/film ayrımı, yapım başına liste) TEK formülden çıkar —
+// yani alt listelerin toplamı üstteki sayıyı TUTAR. Karışık kaynak (filmde
+// gerçek, dizide sabit) bu tutarlılığı kırardı ve kesin görünen bir tahmin
+// üretirdi.
 const SURE_DK = { tv: 42, movie: 110 }; // bölüm ~42 dk, film ~110 dk
+
+/// TEK YAPIMIN yaklaşık süresi (dk). Hem toplam hem yapım başına kırılım
+/// BURADAN geçer: alt listenin toplamı üstteki sayıyı tutmak zorunda.
+function yapimDakikasi(tur, adet, tekrar) {
+  const birim = SURE_DK[tur] || 0;
+  const kez = Math.max(0, Number(adet) || 0);
+  const yeniden = Math.max(0, Number(tekrar) || 0);
+  return birim * kez * (1 + yeniden);
+}
 
 /// [{ tur, adet, tekrar }] satırlarından toplam dakika.
 function izlemeDakikasi(satirlar) {
-  return (satirlar || []).reduce((toplam, s) => {
-    const birim = SURE_DK[s?.tur] || 0;
-    const adet = Math.max(0, Number(s?.adet) || 0);
-    const tekrar = Math.max(0, Number(s?.tekrar) || 0);
-    return toplam + birim * adet * (1 + tekrar);
-  }, 0);
+  return (satirlar || []).reduce(
+    (toplam, s) => toplam + yapimDakikasi(s?.tur, s?.adet, s?.tekrar), 0);
+}
+
+/// Aynı satırların TÜRE GÖRE kırılımı. `tv + movie === toplam` KURULUŞ GEREĞİ
+/// doğrudur (aynı satırlar iki kez, farklı süzgeçle toplanmaz — tek geçişte
+/// hem türe hem toplama yazılır). Profildeki "Diziler / Filmler" satırları ile
+/// üstteki toplam bu yüzden birbirini tutar.
+function izlemeKirilimi(satirlar) {
+  const k = { tv: 0, movie: 0, toplam: 0 };
+  for (const s of satirlar || []) {
+    const dk = yapimDakikasi(s?.tur, s?.adet, s?.tekrar);
+    if (s?.tur === 'tv' || s?.tur === 'movie') k[s.tur] += dk;
+    k.toplam += dk;
+  }
+  return k;
 }
 
 // Tür + tekrar sayısına göre öbeklenmiş izleme satırları: sonuç en fazla
 // birkaç satır (tür × farklı tekrar değeri), tüm kitaplık taşınmaz.
-async function tahminiDakika(kullaniciId) {
+async function izlemeSureSatirlari(kullaniciId) {
   const { rows } = await havuz.query(
     `SELECT i.tur, COALESCE(d.tekrar, 0) AS tekrar, count(*)::int AS adet
        FROM izlemeler i
@@ -9214,7 +9419,16 @@ async function tahminiDakika(kullaniciId) {
       GROUP BY i.tur, COALESCE(d.tekrar, 0)`,
     [kullaniciId],
   );
-  return izlemeDakikasi(rows);
+  return rows;
+}
+
+/// Türe göre kırılım + toplam. EK SORGU YOK: `tahminiDakika` ile aynı satırlar.
+async function tahminiDakikaKirilim(kullaniciId) {
+  return izlemeKirilimi(await izlemeSureSatirlari(kullaniciId));
+}
+
+async function tahminiDakika(kullaniciId) {
+  return izlemeDakikasi(await izlemeSureSatirlari(kullaniciId));
 }
 
 // ---------------------------------------------------------------------------
@@ -9373,7 +9587,7 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
           JOIN yorumlar y ON y.id=b.yorum_id
           WHERE y.kullanici_id=$1) AS begeni`,
       [req.kullanici.id]),
-    tahminiDakika(req.kullanici.id),
+    tahminiDakikaKirilim(req.kullanici.id),
   ]);
   res.json({
     izlenen_bolum: bolum.rows[0].adet,
@@ -9385,7 +9599,89 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
     toplam_goruntulenme: etkilesim.rows[0].goruntulenme,
     toplam_begeni: etkilesim.rows[0].begeni,
     // Yaklaşık ekran süresi — tekrar izlemeler dahil (bkz. `tahminiDakika`)
-    tahmini_dakika: dakika,
+    tahmini_dakika: dakika.toplam,
+    // KIRILIM (21 Ağu 2026 isteği: "toplam izleme süresine tıklayınca uzat").
+    // EK SORGU YOK — aynı satırlardan türüyor, bu yüzden
+    // `tahmini_dakika_dizi + tahmini_dakika_film === tahmini_dakika`.
+    tahmini_dakika_dizi: dakika.tv,
+    tahmini_dakika_film: dakika.movie,
+    // Ekranın "yaklaşık" notunu YAZABİLMESİ için sabitler de gider: istemci
+    // 42/110'u kendi kopyalasaydı sabit değişince ekran yalan söylerdi.
+    sure_bolum_dk: SURE_DK.tv,
+    sure_film_dk: SURE_DK.movie,
+  });
+}));
+
+// ---------------------------------------------------------------------------
+// YAPIM BAŞINA SÜRE KIRILIMI (21 Ağu 2026 isteği)
+// ---------------------------------------------------------------------------
+// İSTEK (birebir): "Profildeki Toplam izleme süresine tıklayınca onu uzat:
+// Diziler: / Filmler: olarak süreleri ver. Dizilere tıklarsa detaylıca hangi
+// diziyi kaç saat izlediğini söyle, filmlere tıklarsa detaylıca hangi filmi
+// kaç saat izlediğini söyle."
+//
+// SAHİPLİK: uç KULLANICI PARAMETRESİ ALMAZ. Kırılım "hangi diziyi kaç saat"
+// diyerek kitaplığın TAMAMINI sızdırır; açık profilde `izlenenler_gizli`
+// tercihi ekran süresini bile 0'a düşürüyor (bkz. GET /profil/:ad). Uç yalnız
+// `req.kullanici.id` ile çalışır — başkasının kırılımını isteyebilecek bir
+// yüzey hiç açılmıyor.
+//
+// SAYFALAMA: `alcelik` 406 film + 237 dizi izlemiş. Tek yanıtta 643 satır
+// hem gövdeyi hem de istemcinin TMDB kart çözümlemesini (POST /icerikler,
+// 120'lik parti) boğardı. Sayfa 50; `toplam` her sayfada döner ki istemci
+// "daha fazla" düğmesini doğru gizlesin.
+//
+// TEKRAR İZLEME: toplamla AYNI kural — `durumlar.tekrar` o başlığın kayıtlı
+// süresini katlar (çarpan `1 + tekrar`). Ayrı bir kural seçilseydi (ör.
+// tekrarı yok saymak) alt listelerin toplamı üstteki sayıyı TUTMAZDI ve
+// kullanıcı iki farklı rakam görürdü. `tekrar` satırda AÇIKÇA dönüyor:
+// ekran "3 kez" diye yazabilsin, sayı sihirli görünmesin.
+const sureLimiti = hizLimiti(120, (req) => `sd:${req.kullanici.id}`);
+const SURE_SAYFA = 50;
+
+app.get('/istatistiklerim/sure', girisZorunlu, sureLimiti, sarici(async (req, res) => {
+  const tur = req.query.tur;
+  if (tur !== 'tv' && tur !== 'movie') {
+    return res.status(400).json({ hata: 'tur tv ya da movie olmalı' });
+  }
+  // Sayfa numarası kullanıcı girdisi: NaN/negatif/absürt değerler kırpılır
+  // (OFFSET'e ham sayı geçirmek 1e9'luk bir taramaya davetiye olurdu).
+  const istenen = Number.parseInt(req.query.sayfa, 10);
+  const sayfa = Number.isFinite(istenen) ? Math.min(Math.max(istenen, 0), 200) : 0;
+  const { rows } = await havuz.query(
+    // `izlemeler` OLAY tablosu: dizide satır = izlenen bölüm, filmde satır =
+    // izleme. `durumlar` (kullanici_id, tur, tmdb_id) tekil olduğu için LEFT
+    // JOIN satırları çoğaltmaz — `tahminiDakika` da aynı birleşimi kullanıyor.
+    `WITH ozet AS (
+       SELECT i.tmdb_id,
+              count(*)::int AS adet,
+              GREATEST(COALESCE(max(d.tekrar), 0), 0)::int AS tekrar
+         FROM izlemeler i
+         LEFT JOIN durumlar d ON d.kullanici_id = i.kullanici_id
+                             AND d.tur = i.tur AND d.tmdb_id = i.tmdb_id
+        WHERE i.kullanici_id = $1 AND i.tur = $2
+        GROUP BY i.tmdb_id
+     )
+     SELECT tmdb_id, adet, tekrar,
+            count(*) OVER ()::int AS toplam
+       FROM ozet
+      ORDER BY adet * (1 + tekrar) DESC, tmdb_id
+      OFFSET $3 LIMIT $4`,
+    [req.kullanici.id, tur, sayfa * SURE_SAYFA, SURE_SAYFA],
+  );
+  res.json({
+    tur,
+    sayfa,
+    sayfa_boyu: SURE_SAYFA,
+    toplam: rows[0]?.toplam || 0,
+    birim_dk: SURE_DK[tur],
+    ogeler: rows.map((r) => ({
+      tur,
+      tmdb_id: r.tmdb_id,
+      adet: r.adet,
+      tekrar: r.tekrar,
+      dakika: yapimDakikasi(tur, r.adet, r.tekrar),
+    })),
   });
 }));
 
@@ -9394,17 +9690,53 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
 app.get('/izlediklerim', girisZorunlu, sarici(async (req, res) => {
   const tur = req.query.tur;
   // Tek tür istendiyse yalnız onu döndür (profildeki Dizi/Film sayacından).
+  //
+  // ELLE SIRA (21 Ağu 2026): "İzlediğim Diziler/Filmler" de sıralanabilir altı
+  // listeden ikisi. Sıra `kitaplik_sirasi`nda (liste = izlenen_tv/izlenen_movie)
+  // durur, `izlemeler`de DEĞİL — orası olay tablosu, tek afiş 62 satır olabilir.
+  //
+  // PENCERE (`LIMIT`) NEDEN 500'DEN 2000'E ÇIKTI: sıralama ancak istemcinin
+  // TAMAMINI gördüğü listede yazılabiliyor (yazma ucu eksik listeyi 400'le
+  // reddediyor). 500'lük pencere, 501 yapımı olan kullanıcıyı özelliğin
+  // tamamen dışında bırakırdı. Ölçüm (21 Ağu 2026): en büyük gerçek liste 429
+  // yapım; 2000 dört kattan fazla pay bırakıyor ve satır ~35 bayt.
+  //
+  // TAVAN AŞILIRSA ELLE SIRA UYGULANMAZ (CASE ... THEN NULL): pencere dolduğu
+  // an `NULLS FIRST` sıralanmışları listenin SONUNA iter ve LIMIT onları
+  // KESERDİ — kullanıcının sıraladığı yapımlar kaybolurdu (19 Ağu 2026'da
+  // `liste_ogeleri`nde canlıda ölçülen tuzağın aynısı). O durumda liste eski
+  // davranışına (en son izlenen önce) düşer; sıra satırları SİLİNMEZ, liste
+  // yeniden tavanın altına inince geri gelir.
   if (tur === 'tv' || tur === 'movie') {
     const { rows } = await havuz.query(
-      `SELECT tur, tmdb_id, count(*)::int AS sayi, max(tarih) AS son
-       FROM izlemeler WHERE kullanici_id=$1 AND tur=$2
-       GROUP BY tur, tmdb_id ORDER BY son DESC, tmdb_id DESC LIMIT 500`,
-      [req.kullanici.id, tur],
+      `WITH ozet AS (
+         SELECT i.tur, i.tmdb_id, count(*)::int AS sayi, max(i.tarih) AS son
+           FROM izlemeler i
+          WHERE i.kullanici_id=$1 AND i.tur=$2
+          GROUP BY i.tur, i.tmdb_id
+       ), sirali AS (
+         SELECT o.*, s.sira, count(*) OVER () AS toplam
+           FROM ozet o
+           LEFT JOIN kitaplik_sirasi s
+                  ON s.kullanici_id=$1 AND s.liste=$3
+                 AND s.tur=o.tur AND s.tmdb_id=o.tmdb_id
+       )
+       SELECT tur, tmdb_id, sayi, sira FROM sirali
+        ORDER BY (CASE WHEN toplam > $4 THEN NULL ELSE sira END) ASC NULLS FIRST,
+                 son DESC, tmdb_id DESC
+        LIMIT $4`,
+      [req.kullanici.id, tur, `izlenen_${tur}`, IZLENEN_PENCERE],
     );
     return res.json({
-      ogeler: rows.map(({ tur, tmdb_id, sayi }) => ({ tur, tmdb_id, sayi })),
+      ogeler: rows.map(({ tur, tmdb_id, sayi, sira }) => ({ tur, tmdb_id, sayi, sira })),
     });
   }
+  // TÜRSÜZ ÇAĞRI ELLE SIRA UYGULAMAZ — bilinçli. Burası bir ÖNİZLEME/sayaç
+  // beslemesi (profil şeridi + kitaplık ekranındaki bölüm sayıları) ve tür
+  // başına 200 ile kırpılıyor; 406 filmi olan kullanıcıda kırpılmış pencereye
+  // elle sıra uygulamak ya sıralanmışları kesecek ya da önizlemeyi tam listeden
+  // farklı dizecekti. Sıralanabilir altı listenin ikisi `?tur=` ile açılıyor.
+  //
   // Tür belirtilmezse her türden ayrı limit: tek LIMIT 200 bir türü aç bırakıyordu
   // (son 200 film olunca diziler 3'e düşüyordu).
   const { rows } = await havuz.query(

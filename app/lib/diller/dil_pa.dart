@@ -1265,4 +1265,21 @@ const Map<String, String> cevirilerPa = {
   'Hesap': 'ਖਾਤਾ',
   '{} dizileri': '{} ਦੀਆਂ ਸੀਰੀਜ਼',
   '{} filmleri': '{} ਦੀਆਂ ਫ਼ਿਲਮਾਂ',
+  'En üste taşı': 'ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਓ',
+  'Sırayı sıfırla': 'ਕ੍ਰਮ ਰੀਸੈਟ ਕਰੋ',
+  'Listede ara': 'ਸੂਚੀ ਵਿੱਚ ਖੋਜੋ',
+  'Elle sıra sıfırlansın mı?': 'ਹੱਥੀਂ ਲਾਇਆ ਕ੍ਰਮ ਰੀਸੈਟ ਕਰਨਾ ਹੈ?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'ਸੂਚੀ ਮੂਲ ਕ੍ਰਮ ਵਿੱਚ ਵਾਪਸ ਆ ਜਾਵੇਗੀ (ਸਭ ਤੋਂ ਹਾਲੀਆ ਨਿਸ਼ਾਨ ਲਾਇਆ ਪਹਿਲਾਂ)।',
+  'Sıra sıfırlanamadı': 'ਕ੍ਰਮ ਰੀਸੈਟ ਨਹੀਂ ਹੋ ਸਕਿਆ',
+  'Listenin en üstüne taşındı': 'ਸੂਚੀ ਵਿੱਚ ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਇਆ ਗਿਆ',
+  'Adlar yükleniyor…': 'ਨਾਂ ਲੋਡ ਹੋ ਰਹੇ ਹਨ…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'ਪੋਸਟਰ ਨੂੰ ਦੱਬ ਕੇ ਖਿੱਚੋ। ਦੂਰ ਪਈ ਕਿਸੇ ਚੀਜ਼ ਨੂੰ ਅੱਗੇ ਲਿਆਉਣ ਲਈ “ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਓ” ਵਰਤੋ।',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'ਖੋਜ ਵਿੱਚ ਖਿੱਚਣਾ ਬੰਦ ਹੈ; “ਸਭ ਤੋਂ ਉੱਪਰ ਲੈ ਜਾਓ” ਨਾਲ ਅੱਗੇ ਲਿਆਓ ({} ਨਤੀਜੇ)।',
+  'Görünüm': 'ਦ੍ਰਿਸ਼',
+  'En çok izlediğin filmler': 'ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਫ਼ਿਲਮਾਂ',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'ਸਮਾਂ ਅੰਦਾਜ਼ਨ ਹੈ: ਐਪੀਸੋਡ ~{} ਮਿੰਟ, ਫ਼ਿਲਮ ~{} ਮਿੰਟ ਗਿਣੇ ਜਾਂਦੇ ਹਨ',
 };

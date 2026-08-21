@@ -1292,4 +1292,21 @@ const Map<String, String> cevirilerDe = {
   'Hesap': 'Konto',
   '{} dizileri': 'Serien von {}',
   '{} filmleri': 'Filme von {}',
+  'En üste taşı': 'Nach ganz oben',
+  'Sırayı sıfırla': 'Reihenfolge zurücksetzen',
+  'Listede ara': 'In der Liste suchen',
+  'Elle sıra sıfırlansın mı?': 'Manuelle Reihenfolge zurücksetzen?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Die Liste kehrt zur Standardreihenfolge zurück (zuletzt Markiertes zuerst).',
+  'Sıra sıfırlanamadı': 'Reihenfolge konnte nicht zurückgesetzt werden',
+  'Listenin en üstüne taşındı': 'Nach ganz oben verschoben',
+  'Adlar yükleniyor…': 'Titel werden geladen…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Halte ein Poster gedrückt und zieh es. Um einen weit hinten liegenden Titel nach vorn zu holen, nutze „Nach ganz oben“.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'In der Suche ist Ziehen deaktiviert; hol den Titel mit „Nach ganz oben“ nach vorn ({} Treffer).',
+  'Görünüm': 'Ansicht',
+  'En çok izlediğin filmler': 'Deine meistgesehenen Filme',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Zeiten sind geschätzt: eine Folge zählt ~{} Min., ein Film ~{} Min.',
 };

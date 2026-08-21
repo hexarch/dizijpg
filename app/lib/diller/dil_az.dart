@@ -1261,4 +1261,21 @@ const Map<String, String> cevirilerAz = {
   'Hesap': 'Hesab',
   '{} dizileri': '{} serialları',
   '{} filmleri': '{} filmləri',
+  'En üste taşı': 'Ən yuxarı daşı',
+  'Sırayı sıfırla': 'Sıralamanı sıfırla',
+  'Listede ara': 'Siyahıda axtar',
+  'Elle sıra sıfırlansın mı?': 'Əl ilə qurulan sıra sıfırlansın?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Siyahı standart sırasına qayıdır (ən son işarələdiyin əvvəldə).',
+  'Sıra sıfırlanamadı': 'Sıra sıfırlanmadı',
+  'Listenin en üstüne taşındı': 'Siyahının ən yuxarısına daşındı',
+  'Adlar yükleniyor…': 'Adlar yüklənir…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Afişi basıb saxlayaraq sürüklə. Uzaqda qalan bir əsəri önə çəkmək üçün “Ən yuxarı daşı” düyməsindən istifadə et.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Axtarışda sürükləmə bağlıdır; “Ən yuxarı daşı” ilə önə çək ({} nəticə).',
+  'Görünüm': 'Görünüş',
+  'En çok izlediğin filmler': 'Ən çox izlədiyin filmlər',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Müddətlər təxminidir: epizod ~{} dəq, film ~{} dəq sayılır',
 };

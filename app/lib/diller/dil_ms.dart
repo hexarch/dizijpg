@@ -191,7 +191,7 @@ const Map<String, String> cevirilerMs = {
   'Rozetler': 'Lencana',
   'Verdiğin puan': 'Penilaian diberi',
   'Ortalama puanın': 'Purata penilaian anda',
-  'En çok izlediğin diziler': 'Siri paling banyak ditonton',
+  'En çok izlediğin diziler': 'Siri paling banyak anda tonton',
   'İlk Bölüm': 'Episod Pertama',
   '100 Bölüm': '100 Episod',
   '1000 Bölüm': '1000 Episod',
@@ -1274,4 +1274,21 @@ const Map<String, String> cevirilerMs = {
   'Hesap': 'Akaun',
   '{} dizileri': 'Siri {}',
   '{} filmleri': 'Filem {}',
+  'En üste taşı': 'Alih ke atas sekali',
+  'Sırayı sıfırla': 'Set semula susunan',
+  'Listede ara': 'Cari dalam senarai',
+  'Elle sıra sıfırlansın mı?': 'Set semula susunan manual?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Senarai kembali kepada susunan lalai (yang paling baru ditanda dahulu).',
+  'Sıra sıfırlanamadı': 'Susunan tidak dapat diset semula',
+  'Listenin en üstüne taşındı': 'Dialihkan ke atas sekali dalam senarai',
+  'Adlar yükleniyor…': 'Memuatkan tajuk…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Tekan lama poster untuk menyeretnya. Untuk membawa tajuk yang jauh ke hadapan, guna “Alih ke atas sekali”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Seretan dimatikan semasa mencari; bawa ke hadapan dengan “Alih ke atas sekali” ({} hasil).',
+  'Görünüm': 'Paparan',
+  'En çok izlediğin filmler': 'Filem paling banyak anda tonton',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Tempoh adalah anggaran: episod dikira ~{} min, filem ~{} min',
 };

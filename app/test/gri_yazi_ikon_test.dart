@@ -59,7 +59,9 @@ void main() {
       ),
     );
     await tester.pump();
-    final baglam = tester.element(find.byIcon(Icons.explore_outlined));
+    // 21 Ağu 2026: pusula (Keşfet) hedefi çubuktan çıktı; ölçüm seçili
+    // OLMAYAN bir hedefe bakmalı — takvim hedefi (indeks 1) o rolü aldı.
+    final baglam = tester.element(find.byIcon(Icons.calendar_month_outlined));
     expect(IconTheme.of(baglam).color, Colors.white);
     expect(tester.takeException(), isNull);
   });

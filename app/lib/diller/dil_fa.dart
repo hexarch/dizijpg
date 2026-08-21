@@ -1252,4 +1252,21 @@ const Map<String, String> cevirilerFa = {
   'Hesap': 'حساب',
   '{} dizileri': 'سریال‌های {}',
   '{} filmleri': 'فیلم‌های {}',
+  'En üste taşı': 'انتقال به بالا',
+  'Sırayı sıfırla': 'بازنشانی ترتیب',
+  'Listede ara': 'جستجو در فهرست',
+  'Elle sıra sıfırlansın mı?': 'ترتیب دستی بازنشانی شود؟',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'فهرست به ترتیب پیش‌فرض برمی‌گردد (آخرین موردی که علامت زده‌ای اول).',
+  'Sıra sıfırlanamadı': 'ترتیب بازنشانی نشد',
+  'Listenin en üstüne taşındı': 'به بالای فهرست منتقل شد',
+  'Adlar yükleniyor…': 'در حال بارگذاری نام‌ها…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'پوستر را نگه دار و بکش. برای جلو آوردن موردی که دور است، از «انتقال به بالا» استفاده کن.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'کشیدن در جستجو خاموش است؛ با «انتقال به بالا» جلو بیاور ({} نتیجه).',
+  'Görünüm': 'نما',
+  'En çok izlediğin filmler': 'پرتماشاترین فیلم‌هایت',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'زمان‌ها تخمینی‌اند: هر قسمت ~{} دقیقه و هر فیلم ~{} دقیقه حساب می‌شود',
 };

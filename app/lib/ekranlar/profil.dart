@@ -10,6 +10,7 @@ import '../bayrak.dart';
 import '../ceviri.dart';
 import '../gonderi_olcu.dart';
 import '../gorsel_basliklari.dart';
+import '../icerik_deposu.dart';
 import '../onbellek.dart';
 import '../seviye.dart';
 import '../tema.dart';
@@ -628,6 +629,17 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     );
   }
 
+  /// Süre kırılımının alt listesi: "hangi diziyi/filmi kaç saat izledim".
+  /// Modal (sayfa DEĞİL): kullanıcı profilden çıkmadan bakıp kapatıyor.
+  void _sureDetayAc(String tur) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => SureDetaySheet(tur: tur),
+    );
+  }
+
   void _takipListe(String kullaniciAdi, bool takipciler) {
     context.push(
       '/kullanici/$kullaniciAdi/${takipciler ? 'takipciler' : 'takip'}',
@@ -697,6 +709,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
       // şemasından okur (açık profil `ProfilSayaclari.acik` kullanır).
       final sayaclar = ProfilSayaclari.kendi(st);
       final dakika = (st['tahmini_dakika'] as num?)?.toInt() ?? 0;
+      // Avatar çapı: kimlik bloğunda üç yerde geçiyor (kutu, yükleme
+      // göstergesi, yer tutucu) — tek yerde tanımlı olsun.
+      final double avatarCap = genis ? 104 : 76;
       final durumlar = (_kitaplik?['durumlar'] as List<dynamic>? ?? []);
       final gruplar = <String, List<dynamic>>{};
       for (final d in durumlar) {
@@ -735,50 +750,91 @@ class _ProfilEkraniState extends State<ProfilEkrani>
               genis: genis,
               kimlik: [
                 // Profil başlığı: avatar (GIF olabilir), bio, ülke
+                //
+                // KULLANICI İSTEĞİ (21 Ağu 2026, birebir): "Profil resmini
+                // yukarıya kullanıcı adı ile aynı hizaya taşı. Görüntülenme
+                // sayısı da altında dursun."
+                //
+                // `crossAxisAlignment: start` TAM OLARAK BUNU YAPAR: Row'un
+                // VARSAYILANI `center` ve sağdaki sütun (ad + seviye + bio +
+                // ülke + sayaçlar) avatardan çok daha uzun olduğu için avatar
+                // ortalanıyor, adın epey ALTINA düşüyordu. Şimdi ikisinin de
+                // ÜST kenarı aynı çizgide.
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    GestureDetector(
-                      onTap: _gorselYukleniyor
-                          ? null
-                          : () => _gorselDuzenle(false),
-                      // GIF avatar profil başlığında OYNAMALI: bu yüzden
-                      // CircleAvatar(backgroundImage:) DEĞİL, ClipOval +
-                      // Image (DaireGorsel). DecorationImage animasyonlu
-                      // görselin ilk karesinde donar —
-                      // kanıt: test/gif_animasyon_test.dart.
-                      child: SizedBox(
-                        width: (genis ? 52 : 38) * 2,
-                        height: (genis ? 52 : 38) * 2,
-                        child: _gorselYukleniyor
-                            ? CircleAvatar(
-                                radius: genis ? 52 : 38,
-                                backgroundColor: DiziRenkler.kart,
-                                child: const SizedBox(
-                                  width: 22,
-                                  height: 22,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: DiziRenkler.sari,
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: _gorselYukleniyor
+                              ? null
+                              : () => _gorselDuzenle(false),
+                          // GIF avatar profil başlığında OYNAMALI: bu yüzden
+                          // CircleAvatar(backgroundImage:) DEĞİL, ClipOval +
+                          // Image (DaireGorsel). DecorationImage animasyonlu
+                          // görselin ilk karesinde donar —
+                          // kanıt: test/gif_animasyon_test.dart.
+                          child: SizedBox(
+                            width: avatarCap,
+                            height: avatarCap,
+                            child: _gorselYukleniyor
+                                ? CircleAvatar(
+                                    radius: avatarCap / 2,
+                                    backgroundColor: DiziRenkler.kart,
+                                    child: const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: DiziRenkler.sari,
+                                      ),
+                                    ),
+                                  )
+                                : dosyaUrl(_profil?['avatar'] as String?) !=
+                                      null
+                                ? DaireGorsel(
+                                    url: dosyaUrl(
+                                      _profil!['avatar'] as String,
+                                    )!,
+                                    cap: avatarCap,
+                                    arkaplan: DiziRenkler.kart,
+                                    ikonRenk: DiziRenkler.metin38,
+                                  )
+                                : CircleAvatar(
+                                    radius: avatarCap / 2,
+                                    backgroundColor: DiziRenkler.kart,
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 38,
+                                      color: DiziRenkler.metin38,
+                                    ),
                                   ),
-                                ),
-                              )
-                            : dosyaUrl(_profil?['avatar'] as String?) != null
-                            ? DaireGorsel(
-                                url: dosyaUrl(_profil!['avatar'] as String)!,
-                                cap: (genis ? 52 : 38) * 2,
-                                arkaplan: DiziRenkler.kart,
-                                ikonRenk: DiziRenkler.metin38,
-                              )
-                            : CircleAvatar(
-                                radius: genis ? 52 : 38,
-                                backgroundColor: DiziRenkler.kart,
-                                child: Icon(
-                                  Icons.person,
-                                  size: 38,
-                                  color: DiziRenkler.metin38,
-                                ),
-                              ),
-                      ),
+                          ),
+                        ),
+                        // GÖRÜNTÜLENME AVATARIN ALTINDA (aynı istek).
+                        //
+                        // Neden hâlâ [TakipSayac]: yandaki üç sayaçla AYNI
+                        // biçim ve AYNI 44 dp dokunma hedefi; ayrıca hedefi
+                        // (yorum modali) da değişmedi. `ProfilTakipSatiri`
+                        // ise `goruntulenmeGoster: false` ile çiziliyor —
+                        // AÇIK PROFİL o bileşeni varsayılanıyla kullandığı
+                        // için orada dördü de yerinde kalıyor.
+                        //
+                        // GENİŞLİK avatardan 24 dp geniş: "görüntülenme"
+                        // (pl "wyświetlenia", de "Aufrufe") 76 dp'ye sığmayıp
+                        // kırpılıyordu. Sınırsız bırakmak da olmazdı —
+                        // Column mainAxisSize.min en geniş çocuğu alır ve
+                        // kullanıcı adı sütununu daraltırdı.
+                        SizedBox(
+                          width: avatarCap + 24,
+                          child: TakipSayac(
+                            deger: ProfilSayaclari.yaz(sayaclar.goruntulenme),
+                            etiket: 'görüntülenme'.c,
+                            onTap: () => _yorumlarAc(kullaniciAdi),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(width: 14),
                     Expanded(
@@ -857,8 +913,15 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           // ([ProfilTakipSatiri]) — açık profil de birebir
                           // aynısını çiziyor (kullanıcı isteği). Biçim
                           // kararları (Wrap, küçük harf etiket) orada yazılı.
+                          //
+                          // 21 Ağu 2026 (akşam): görüntülenme BURADAN çıktı,
+                          // avatarın ALTINA taşındı (kullanıcı isteği). Bileşen
+                          // bayrakla söndürülüyor, ÇATALLANMIYOR: açık profil
+                          // aynı sınıfı VARSAYILANIYLA çağırdığı için orada
+                          // dört sayaç yerinde duruyor.
                           ProfilTakipSatiri(
                             sayac: sayaclar,
+                            goruntulenmeGoster: false,
                             takipciTap: () => _takipListe(kullaniciAdi, true),
                             takipTap: () => _takipListe(kullaniciAdi, false),
                             etkilesimTap: () => _yorumlarAc(kullaniciAdi),
@@ -924,48 +987,14 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   yorumTap: () => _yorumlarAc(kullaniciAdi),
                 ),
                 const SizedBox(height: 10),
-                // Toplam ekran süresi (yıl/ay/gün)
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: DiziRenkler.kart,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: DiziRenkler.metin12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.schedule,
-                        color: DiziRenkler.sariMetin,
-                        size: 22,
-                      ),
-                      const SizedBox(width: 12),
-                      // Expanded: pl "Łączny czas przed ekranem" (25 harf)
-                      // Spacer'lı halde 360 dp altında satırı taşırıyordu.
-                      Expanded(
-                        child: Text(
-                          'Toplam İzleme Süresi'.c,
-                          style: TextStyle(
-                            color: DiziRenkler.metin,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        sureBicimle(dakika),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w900,
-                          color: DiziRenkler.sariMetin,
-                        ),
-                      ),
-                    ],
-                  ),
+                // Toplam ekran süresi (yıl/ay/gün) — DOKUNUNCA AÇILIR
+                EkranSuresiKarti(
+                  dakika: dakika,
+                  diziDakika: (st['tahmini_dakika_dizi'] as num?)?.toInt(),
+                  filmDakika: (st['tahmini_dakika_film'] as num?)?.toInt(),
+                  bolumBirimDk: (st['sure_bolum_dk'] as num?)?.toInt(),
+                  filmBirimDk: (st['sure_film_dk'] as num?)?.toInt(),
+                  onTur: _sureDetayAc,
                 ),
                 // NOT: yorumların toplam beğeni/görüntülenmesi buradaki kutulu
                 // `EtkilesimSatiri` şeridinden ÇIKARILDI (15 Ağu 2026); artık
@@ -1410,12 +1439,23 @@ class ProfilTakipSatiri extends StatelessWidget {
   /// Beğeni ve görüntülenme AYNI hedefe gider (ikisi de yorum istatistiği).
   final VoidCallback? etkilesimTap;
 
+  /// Görüntülenme sayacı bu satırda çizilsin mi?
+  ///
+  /// VARSAYILAN `true` — AÇIK PROFİL (kullanici_profil.dart) bu bileşeni
+  /// varsayılanıyla çağırıyor ve orada dört sayaç yan yana kalmalı. Kendi
+  /// profilim 21 Ağu 2026 akşamı `false` geçmeye başladı: kullanıcı
+  /// görüntülenmeyi AVATARIN ALTINDA istedi. Bileşeni kopyalamak yerine
+  /// bayrak: kopya, 15 Ağu'da kendi profilde yapılan değişikliğin açık
+  /// profile hiç gitmemesine yol açan hatanın ta kendisiydi.
+  final bool goruntulenmeGoster;
+
   const ProfilTakipSatiri({
     super.key,
     required this.sayac,
     this.takipciTap,
     this.takipTap,
     this.etkilesimTap,
+    this.goruntulenmeGoster = true,
   });
 
   @override
@@ -1439,11 +1479,12 @@ class ProfilTakipSatiri extends StatelessWidget {
           etiket: 'beğeni'.c,
           onTap: etkilesimTap,
         ),
-        TakipSayac(
-          deger: ProfilSayaclari.yaz(sayac.goruntulenme),
-          etiket: 'görüntülenme'.c,
-          onTap: etkilesimTap,
-        ),
+        if (goruntulenmeGoster)
+          TakipSayac(
+            deger: ProfilSayaclari.yaz(sayac.goruntulenme),
+            etiket: 'görüntülenme'.c,
+            onTap: etkilesimTap,
+          ),
       ],
     );
   }
@@ -2679,5 +2720,471 @@ Future<void> yorumEylemleriAc(
     ScaffoldMessenger.of(
       disBaglam,
     ).showSnackBar(SnackBar(content: Text(e.toString())));
+  }
+}
+
+// ===========================================================================
+// EKRAN SÜRESİ KIRILIMI (21 Ağu 2026 isteği)
+// ===========================================================================
+// KULLANICI İSTEĞİ (birebir): "Profildeki Toplam izleme süresine tıklayınca
+// onu uzat: Diziler: / Filmler: olarak süreleri ver. Dizilere tıklarsa
+// detaylıca hangi diziyi kaç saat izlediğini söyle, filmlere tıklarsa
+// detaylıca hangi filmi kaç saat izlediğini söyle."
+//
+// *** SÜRE ÖLÇÜLMÜŞ DEĞİL, TÜRETİLMİŞTİR. *** Sunucu bölüm başına ~42 dk,
+// film başına ~110 dk sayıyor (server.js `SURE_DK`); TMDB'nin gerçek süresi
+// ölçüldü ve dizilerde kullanılamayacak kadar boş çıktı (gerekçe orada
+// yazılı). Bu yüzden ekran hiçbir yerde "3 saat 20 dakika izledin" DEMEZ:
+// her sayının başında `~` durur ve kırılım açılınca sabitleri adıyla söyleyen
+// bir not çıkar. Aynı dürüstlük İzleme İstatistikleri ekranında da var
+// ("Yaklaşık ekran süresi").
+//
+// Sayıların başındaki yaklaşıklık işareti. Sözcük değil simge olduğu için
+// çeviri gerektirmez (`ProfilSayaclari.eksik` ile aynı gerekçe).
+const String _yaklasik = '~';
+
+/// Toplam ekran süresi kartı: dokununca Diziler/Filmler kırılımına açılır,
+/// oradan da yapım başına listeye ([SureDetaySheet]) gider.
+///
+/// [diziDakika] ya da [filmDakika] null ise kart AÇILMAZ (ok da çizilmez):
+/// sunucu kırılımı göndermiyor demektir (eski sürüm). Eksik veriyi 0 diye
+/// göstermek "hiç dizi izlememişsin" yalanı olurdu — `ProfilSayaclari`nın
+/// "eksik anahtar 0 basmaz" kuralının aynısı.
+class EkranSuresiKarti extends StatefulWidget {
+  final int dakika;
+  final int? diziDakika;
+  final int? filmDakika;
+
+  /// Notta yazılan sabitler SUNUCUDAN gelir; istemci kendi kopyasını
+  /// tutsaydı sabit değişince ekran yalan söylerdi.
+  final int? bolumBirimDk;
+  final int? filmBirimDk;
+
+  /// 'tv' | 'movie' — yapım başına listeyi açar.
+  final void Function(String tur) onTur;
+
+  const EkranSuresiKarti({
+    super.key,
+    required this.dakika,
+    required this.onTur,
+    this.diziDakika,
+    this.filmDakika,
+    this.bolumBirimDk,
+    this.filmBirimDk,
+  });
+
+  @override
+  State<EkranSuresiKarti> createState() => _EkranSuresiKartiState();
+}
+
+class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
+  bool _acik = false;
+
+  bool get _acilabilir =>
+      widget.diziDakika != null && widget.filmDakika != null;
+
+  @override
+  Widget build(BuildContext context) {
+    final baslik = Row(
+      children: [
+        Icon(Icons.schedule, color: DiziRenkler.sariMetin, size: 22),
+        const SizedBox(width: 12),
+        // Expanded: pl "Łączny czas przed ekranem" (25 harf)
+        // Spacer'lı halde 360 dp altında satırı taşırıyordu.
+        Expanded(
+          child: Text(
+            'Toplam İzleme Süresi'.c,
+            style: TextStyle(color: DiziRenkler.metin, fontSize: 13),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$_yaklasik${sureBicimle(widget.dakika)}',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+            color: DiziRenkler.sariMetin,
+          ),
+        ),
+        if (_acilabilir)
+          Icon(
+            _acik ? Icons.expand_less : Icons.expand_more,
+            size: 20,
+            color: DiziRenkler.metin54,
+          ),
+      ],
+    );
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: DiziRenkler.kart,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: DiziRenkler.metin12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            // Kapalıyken tüm kart yuvarlak; açıkken yalnız ÜST köşeler —
+            // yoksa dalga efekti alt satırların üstüne taşıyor.
+            borderRadius: _acik
+                ? const BorderRadius.vertical(top: Radius.circular(14))
+                : BorderRadius.circular(14),
+            onTap: _acilabilir ? () => setState(() => _acik = !_acik) : null,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+              child: baslik,
+            ),
+          ),
+          if (_acik && _acilabilir) ...[
+            Divider(height: 1, color: DiziRenkler.metin12),
+            _SureTurSatiri(
+              ikon: Icons.tv_outlined,
+              etiket: 'Diziler'.c,
+              dakika: widget.diziDakika!,
+              onTap: () => widget.onTur('tv'),
+            ),
+            _SureTurSatiri(
+              ikon: Icons.movie_outlined,
+              etiket: 'Filmler'.c,
+              dakika: widget.filmDakika!,
+              onTap: () => widget.onTur('movie'),
+            ),
+            // TAHMİN OLDUĞU BURADA YAZIYOR. Sabitler sunucudan gelmediyse
+            // (eski sürüm) not HİÇ çizilmez — uydurma sayı yazmaktansa
+            // susmak doğru (bkz. sınıf yorumu).
+            if (widget.bolumBirimDk != null && widget.filmBirimDk != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
+                child: Text(
+                  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır'.cf([
+                    widget.bolumBirimDk,
+                    widget.filmBirimDk,
+                  ]),
+                  style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                ),
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Kırılımın tek satırı: "Diziler … ~3 ay 4 gün ›".
+class _SureTurSatiri extends StatelessWidget {
+  final IconData ikon;
+  final String etiket;
+  final int dakika;
+  final VoidCallback onTap;
+
+  const _SureTurSatiri({
+    required this.ikon,
+    required this.etiket,
+    required this.dakika,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: Container(
+      // Dokunma hedefi ≥44 dp (skill md. 2). `alignment` VERİLMEDİ:
+      // 21 Ağu 2026 gerilemesi tam olarak oydu (bkz. [TakipSayac]).
+      constraints: const BoxConstraints(minHeight: TakipSayac.enAzHedef),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      child: Row(
+        children: [
+          Icon(ikon, size: 18, color: DiziRenkler.metin54),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              etiket,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: DiziRenkler.metin, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '$_yaklasik${sureBicimle(dakika)}',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: DiziRenkler.sariMetin,
+            ),
+          ),
+          Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin38),
+        ],
+      ),
+    ),
+  );
+}
+
+/// "Hangi diziyi/filmi kaç saat izledim" listesi.
+///
+/// SAYFALAMA: sunucu 50'şer veriyor (`alcelik` 406 film + 237 dizi izlemiş).
+/// "Daha fazla" düğmesi yalnız gerçekten devamı varken çıkar — `toplam`
+/// her yanıtta dönüyor.
+///
+/// İÇERİK ADI/POSTERİ İSTEMCİDE ÇÖZÜLÜR ([IcerikDeposu]): süre ucu yalnız
+/// kimlik + sayı döner. Sunucunun her satır için TMDB belgesini açması
+/// gerekseydi (ölçüm: film detayı 191-342 KB) 50 satırlık bir sayfa on
+/// megabaytlarca jsonb detoast ederdi.
+class SureDetaySheet extends StatefulWidget {
+  final String tur;
+  const SureDetaySheet({super.key, required this.tur});
+
+  @override
+  State<SureDetaySheet> createState() => _SureDetaySheetState();
+}
+
+class _SureDetaySheetState extends State<SureDetaySheet> {
+  final List<dynamic> _ogeler = [];
+  int _sayfa = 0;
+  int _toplam = 0;
+  bool _yukleniyor = true;
+  String? _hata;
+
+  @override
+  void initState() {
+    super.initState();
+    _yukle();
+  }
+
+  Future<void> _yukle() async {
+    setState(() {
+      _yukleniyor = true;
+      _hata = null;
+    });
+    try {
+      final d = await Api.get(
+        '/istatistiklerim/sure?tur=${widget.tur}&sayfa=$_sayfa',
+      );
+      if (!mounted) return;
+      setState(() {
+        _ogeler.addAll(d['ogeler'] as List<dynamic>? ?? const []);
+        _toplam = (d['toplam'] as num?)?.toInt() ?? _ogeler.length;
+        _yukleniyor = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      // Hata SESSİZ DEĞİL: kullanıcı mesajı görür ve tekrar deneyebilir.
+      setState(() {
+        _hata = e.toString();
+        _yukleniyor = false;
+      });
+    }
+  }
+
+  void _dahaFazla() {
+    _sayfa++;
+    _yukle();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dizi = widget.tur == 'tv';
+    Widget govde;
+    if (_hata != null && _ogeler.isEmpty) {
+      govde = HataGorunumu(mesaj: _hata!, tekrar: _yukle);
+    } else if (_yukleniyor && _ogeler.isEmpty) {
+      govde = const Center(
+        child: CircularProgressIndicator(color: DiziRenkler.sari),
+      );
+    } else if (_ogeler.isEmpty) {
+      govde = BosDurum(
+        ikon: dizi ? Icons.tv_outlined : Icons.movie_outlined,
+        baslik: 'Henüz izleme kaydın yok'.c,
+        ipucu: 'İzlediğin dizi ve filmleri işaretledikçe burada toplanır.'.c,
+      );
+    } else {
+      govde = ListView.builder(
+        padding: EdgeInsets.fromLTRB(
+          14,
+          0,
+          14,
+          altGuvenli(context, ekstra: 20),
+        ),
+        itemCount: _ogeler.length + 1,
+        itemBuilder: (context, i) {
+          if (i == _ogeler.length) {
+            if (_ogeler.length >= _toplam) return const SizedBox(height: 8);
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Center(
+                child: _yukleniyor
+                    ? const CircularProgressIndicator(color: DiziRenkler.sari)
+                    : TextButton(
+                        onPressed: _dahaFazla,
+                        child: Text('Daha fazla'.c),
+                      ),
+              ),
+            );
+          }
+          final o = _ogeler[i] as Map<String, dynamic>;
+          return SureYapimSatiri(
+            key: ValueKey('${o['tur']}-${o['tmdb_id']}'),
+            tur: o['tur'] as String,
+            tmdbId: (o['tmdb_id'] as num).toInt(),
+            adet: (o['adet'] as num?)?.toInt() ?? 0,
+            tekrar: (o['tekrar'] as num?)?.toInt() ?? 0,
+            dakika: (o['dakika'] as num?)?.toInt() ?? 0,
+          );
+        },
+      );
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.75,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(
+                  dizi ? Icons.tv_outlined : Icons.movie_outlined,
+                  color: DiziRenkler.sariMetin,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (dizi
+                            ? 'En çok izlediğin diziler'
+                            : 'En çok izlediğin filmler')
+                        .c,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                if (_toplam > 0)
+                  Text(
+                    '$_toplam',
+                    style: TextStyle(color: DiziRenkler.metin54),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(child: govde),
+        ],
+      ),
+    );
+  }
+}
+
+/// Yapım başına tek satır: poster + ad + "128 bölüm · 2 kez" + ~süre.
+///
+/// Adı ve posteri [IcerikDeposu] çözer (toplu `POST /icerikler`); gelmezse
+/// satır `#kimlik` yazar ama SÜREYİ yine gösterir — süre TMDB'ye bağlı
+/// değil, bizim izleme kayıtlarımızdan çıkıyor.
+class SureYapimSatiri extends StatefulWidget {
+  final String tur;
+  final int tmdbId;
+  final int adet;
+  final int tekrar;
+  final int dakika;
+
+  const SureYapimSatiri({
+    super.key,
+    required this.tur,
+    required this.tmdbId,
+    required this.adet,
+    required this.tekrar,
+    required this.dakika,
+  });
+
+  @override
+  State<SureYapimSatiri> createState() => _SureYapimSatiriState();
+}
+
+class _SureYapimSatiriState extends State<SureYapimSatiri> {
+  Map<String, dynamic>? _icerik;
+
+  @override
+  void initState() {
+    super.initState();
+    IcerikDeposu.getir(widget.tur, widget.tmdbId).then((d) {
+      if (mounted && d != null) setState(() => _icerik = d);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final poster = posterUrl(_icerik?['poster_path'] as String?, boyut: 'w185');
+    final ad = (_icerik?['name'] ?? _icerik?['title'] ?? '') as String;
+    // Tekrar izleme süreyi katladığı için ALTBAŞLIKTA görünür: yoksa
+    // "12 bölüm" yazan bir satırın niye iki katı süre gösterdiği anlaşılmaz.
+    final alt = [
+      widget.tur == 'tv'
+          ? '{} bölüm'.cs(widget.adet)
+          : '{} kez'.cs(widget.adet),
+      if (widget.tekrar > 0) '{} kez'.cs(widget.tekrar + 1),
+    ].join(' · ');
+    return InkWell(
+      borderRadius: BorderRadius.circular(10),
+      onTap: () => context.push('/icerik/${widget.tur}/${widget.tmdbId}'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: SizedBox(
+                width: 36,
+                height: 54,
+                child: poster == null
+                    ? ColoredBox(color: DiziRenkler.kart)
+                    : CachedNetworkImage(
+                        imageUrl: poster,
+                        httpHeaders: gorselBasliklari(poster),
+                        fit: BoxFit.cover,
+                        errorWidget: (_, _, _) =>
+                            ColoredBox(color: DiziRenkler.kart),
+                      ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    ad.isEmpty ? '#${widget.tmdbId}' : ad,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: DiziRenkler.metin,
+                    ),
+                  ),
+                  Text(
+                    alt,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '$_yaklasik${sureBicimle(widget.dakika)}',
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w800,
+                color: DiziRenkler.sariMetin,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

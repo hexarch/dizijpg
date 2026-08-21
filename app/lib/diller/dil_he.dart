@@ -189,7 +189,7 @@ const Map<String, String> cevirilerHe = {
   'Rozetler': 'תגים',
   'Verdiğin puan': 'דירוגים שנתת',
   'Ortalama puanın': 'הדירוג הממוצע שלך',
-  'En çok izlediğin diziler': 'הסדרות הנצפות ביותר',
+  'En çok izlediğin diziler': 'הסדרות שצפית בהן הכי הרבה',
   'İlk Bölüm': 'פרק ראשון',
   '100 Bölüm': '100 פרקים',
   '1000 Bölüm': '1000 פרקים',
@@ -1241,4 +1241,21 @@ const Map<String, String> cevirilerHe = {
   'Hesap': 'חשבון',
   '{} dizileri': 'סדרות של {}',
   '{} filmleri': 'סרטים של {}',
+  'En üste taşı': 'העבר לראש הרשימה',
+  'Sırayı sıfırla': 'איפוס הסדר',
+  'Listede ara': 'חיפוש ברשימה',
+  'Elle sıra sıfırlansın mı?': 'לאפס את הסדר הידני?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'הרשימה תחזור לסדר ברירת המחדל (מה שסימנת לאחרונה יופיע ראשון).',
+  'Sıra sıfırlanamadı': 'לא ניתן היה לאפס את הסדר',
+  'Listenin en üstüne taşındı': 'הועבר לראש הרשימה',
+  'Adlar yükleniyor…': 'טוען שמות…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'לחץ ארוכות על הפוסטר כדי לגרור אותו. כדי להקדים כותר רחוק, השתמש ב“העבר לראש הרשימה”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'הגרירה מושבתת בחיפוש; הקדם באמצעות “העבר לראש הרשימה” ({} תוצאות).',
+  'Görünüm': 'תצוגה',
+  'En çok izlediğin filmler': 'הסרטים שצפית בהם הכי הרבה',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'הזמנים הם הערכה: פרק נחשב ~{} דק\', סרט ~{} דק\'',
 };

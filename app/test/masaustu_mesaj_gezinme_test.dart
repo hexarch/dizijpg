@@ -131,8 +131,12 @@ void main() {
     });
   });
 
-  group('2) masaüstü gezinme adasında Mesajlar', () {
-    testWidgets('masaüstünde 6. hedef ÇİZİLİR', (tester) async {
+  // 21 Ağu 2026 GÜNCELLEMESİ: Mesajlar artık 6. hedef DEĞİL, Keşfet'in
+  // boşalttığı 4. sıradaki hedef ve MOBİLDE DE ÇİZİLİYOR (kullanıcı isteği:
+  // "Keşfet'i kaldır, oraya mesajlar ikonu koy"). Aşağıdaki iki test bu
+  // yüzden ters yönde kilitliyor: sayı 6 değil 5, mobilde YOK değil VAR.
+  group('2) gezinme çubuğunda Mesajlar', () {
+    testWidgets('masaüstünde beş hedef, dördüncüsü Mesajlar', (tester) async {
       _ekran(tester, _genisG, _genisY);
       await _uygulama(tester, '/kesfet');
 
@@ -142,14 +146,12 @@ void main() {
           of: find.byType(NavigationBar),
           matching: find.byType(NavigationDestination),
         ),
-        findsNWidgets(6),
+        findsNWidgets(5),
       );
       expect(_mesajHedefi(), findsOneWidget);
     });
 
-    testWidgets('MOBİL REGRESYON: dar ekranda 6. hedef ÇİZİLMEZ', (
-      tester,
-    ) async {
+    testWidgets('MOBİLDE DE ÇİZİLİR (Keşfet\'in yerine geçti)', (tester) async {
       _ekran(tester, _darG, _darY);
       await _uygulama(tester, '/kesfet');
 
@@ -160,11 +162,30 @@ void main() {
           matching: find.byType(NavigationDestination),
         ),
         findsNWidgets(5),
-        reason: 'telefonda çubuk beş öğede kalmalı (6. öğe sığmıyor)',
+        reason: 'telefonda çubuk beş öğede kalmalı',
       );
-      expect(_mesajHedefi(), findsNothing);
-      // Katla düğmesi de masaüstüne özel: mobilde hiç çizilmez.
+      expect(
+        _mesajHedefi(),
+        findsOneWidget,
+        reason: 'mesaj hedefi mobilde de olmalı (Keşfet çıktı, yer açıldı)',
+      );
+      // Katla düğmesi masaüstüne özel: mobilde hiç çizilmez.
       expect(_katla(), findsNothing);
+    });
+
+    testWidgets('mobilde de dokununca /sohbetler açılır', (tester) async {
+      _ekran(tester, _darG, _darY);
+      final r = await _uygulama(tester, '/kesfet');
+
+      await tester.tap(_mesajHedefi());
+      for (var i = 0; i < 16; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(_ustKonum(r), '/sohbetler');
+      // Kabuğun İÇİNDE açılır: alt çubuk kaybolmaz.
+      expect(find.byType(NavigationBar), findsOneWidget);
+      // Zamanlayıcılı ekran (sohbet listesi yoklaması) ağaçtan çıkarılmalı.
+      await tester.pumpWidget(const SizedBox.shrink());
     });
 
     testWidgets('dokununca /sohbetler açılır', (tester) async {

@@ -1275,4 +1275,21 @@ const Map<String, String> cevirilerNl = {
   'Hesap': 'Account',
   '{} dizileri': 'Series van {}',
   '{} filmleri': 'Films van {}',
+  'En üste taşı': 'Naar boven verplaatsen',
+  'Sırayı sıfırla': 'Volgorde resetten',
+  'Listede ara': 'Zoeken in lijst',
+  'Elle sıra sıfırlansın mı?': 'Handmatige volgorde resetten?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'De lijst keert terug naar de standaardvolgorde (het laatst gemarkeerde eerst).',
+  'Sıra sıfırlanamadı': 'Volgorde kon niet worden gereset',
+  'Listenin en üstüne taşındı': 'Bovenaan de lijst gezet',
+  'Adlar yükleniyor…': 'Titels laden…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Houd een poster ingedrukt om te slepen. Gebruik ‘Naar boven verplaatsen’ om een titel die ver weg staat naar voren te halen.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Slepen staat uit tijdens zoeken; haal het naar voren met ‘Naar boven verplaatsen’ ({} resultaten).',
+  'Görünüm': 'Weergave',
+  'En çok izlediğin filmler': 'Je meest bekeken films',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Tijden zijn schattingen: een aflevering telt als ~{} min, een film als ~{} min',
 };

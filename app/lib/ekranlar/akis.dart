@@ -22,6 +22,128 @@ import 'ortak.dart';
 import 'paylas.dart' show gonderiPaylas;
 import 'yorumlar.dart' show BolumRozeti;
 
+/// Üst bardaki görünüm seçicisinin iki hâli.
+///
+/// KULLANICI İSTEĞİ (21 Ağu 2026): *"Keşfet'i kaldır, oraya mesajlar ikonu
+/// koy… Akışta 'akış' yazısına tıklanabilir olsun; tıklayıp akış ve keşfet
+/// seçimi yapılmalı."* Keşfet alt çubuktan çıktı ama KAYBOLMADI: Akış
+/// ekranının başlığı artık iki görünüm arasında geçiş yapan bir seçici.
+enum AkisGorunumu {
+  /// Sosyal akış — `/akis` ([AkisEkrani]).
+  akis,
+
+  /// Reels ızgarası — `/arama` (`KesfetAkisEkrani`).
+  kesfet,
+}
+
+/// Görünümlerin ROTALARI.
+///
+/// SEÇİM AYRI BİR TERCİHTE DEĞİL, ADRESTE TUTULUR. İkisi de kabuğun kendi
+/// dalları ve zaten rota tablosunda kayıtlı; seçici `context.go` ile dal
+/// değiştirir. Kazançları:
+///   · F5 seçimi korur (`/arama` yenilenince yine Keşfet açılır) —
+///     `test/yenileme_ayni_sayfa_test.dart` bunu kayıtlı her rota için
+///     zaten sınıyor;
+///   · derin bağlantı ve tarayıcı geri tuşu bozulmaz;
+///   · robots.txt / BOT_ROTALARI hizası değişmez (yeni yol EKLENMEDİ,
+///     `/akis` ve `/arama` ikisi de bugünkü hâliyle kapalı).
+/// SharedPreferences'a yazılan ayrı bir "son görünüm" tercihi bunun tam
+/// tersini yapardı: aynı adres (`/akis`) kimi açılışta Akış kimi açılışta
+/// Keşfet çizerdi — "bir adres = bir sayfa" kuralının ihlali.
+const Map<AkisGorunumu, String> akisGorunumYollari = {
+  AkisGorunumu.akis: '/akis',
+  AkisGorunumu.kesfet: '/arama',
+};
+
+/// AppBar başlığı olarak kullanılan görünüm seçicisi (Akış ⇄ Keşfet).
+///
+/// DOKUNMA HEDEFİ: metin + ok, [_seciciAsgariYukseklik] dp'lik bir kutuya
+/// oturur (ui-ux-pro-max "Touch Target Size", severity High). Ok İŞARETİ
+/// ŞART: tıklanabilir olduğunu gösteren tek görsel ipucu odur — düz bir
+/// başlık kimseye "bana dokun" demez.
+///
+/// DAR EKRAN: satır [MainAxisSize.min] ve metin [Flexible]+ellipsis. Uzun
+/// çevirilerde (ör. Endonezce "Jelajahi") başlık taşmak yerine kırpılır;
+/// ok her zaman görünür kalır.
+class AkisGorunumSecici extends StatelessWidget {
+  /// Şu an çizilen görünüm — ekranın kendisi bildirir.
+  final AkisGorunumu secili;
+
+  const AkisGorunumSecici({super.key, required this.secili});
+
+  static String etiket(AkisGorunumu g) =>
+      g == AkisGorunumu.kesfet ? 'Keşfet'.c : 'Akış'.c;
+
+  static IconData _ikon(AkisGorunumu g) =>
+      g == AkisGorunumu.kesfet ? Icons.explore_outlined : Icons.dynamic_feed;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<AkisGorunumu>(
+      key: const Key('akis-gorunum-secici'),
+      tooltip: 'Görünüm'.c,
+      position: PopupMenuPosition.under,
+      initialValue: secili,
+      onSelected: (g) {
+        if (g == secili) return;
+        // Rota tablosundan geçen gezinme (Navigator.push DEĞİL): adres
+        // çubuğu görünümü yansıtır, F5 kullanıcıyı başka sayfaya atmaz.
+        context.go(akisGorunumYollari[g]!);
+      },
+      itemBuilder: (context) => [for (final g in AkisGorunumu.values) _oge(g)],
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: _seciciAsgariYukseklik),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Flexible(
+              child: Text(
+                etiket(secili),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            // Renk AÇIKÇA veriliyor: AppBar başlık alanındaki ikon tema
+            // ikon rengini devralmayabiliyor, varsayılan siyah koyu temada
+            // kaybolurdu (dizijpg-ux-kontrol md. 2).
+            Icon(Icons.arrow_drop_down, color: DiziRenkler.metin70),
+          ],
+        ),
+      ),
+    );
+  }
+
+  PopupMenuItem<AkisGorunumu> _oge(AkisGorunumu g) {
+    final aktif = g == secili;
+    return PopupMenuItem<AkisGorunumu>(
+      value: g,
+      child: Row(
+        children: [
+          Icon(
+            _ikon(g),
+            size: 20,
+            color: aktif ? DiziRenkler.sariMetin : DiziRenkler.metin54,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              etiket(g),
+              style: TextStyle(
+                color: aktif ? DiziRenkler.sariMetin : DiziRenkler.metin,
+                fontWeight: aktif ? FontWeight.w700 : FontWeight.w400,
+              ),
+            ),
+          ),
+          if (aktif) Icon(Icons.check, size: 18, color: DiziRenkler.sariMetin),
+        ],
+      ),
+    );
+  }
+}
+
+/// Görünüm seçicisinin asgari dokunma yüksekliği.
+const double _seciciAsgariYukseklik = 44;
+
 /// Sosyal akış: kitaplığındaki içeriklere başkalarının yorumları.
 /// Spoiler emniyeti sunucuda: izlemediğin bölümün/filmin yorumu gelmez.
 class AkisEkrani extends StatefulWidget {
@@ -308,11 +430,15 @@ class _AkisEkraniState extends State<AkisEkrani>
 
     return Scaffold(
       appBar: AppBar(
+        // Başlık artık DÜZ YAZI DEĞİL, görünüm seçicisi: logo yerinde kalır,
+        // "Akış" yazısına dokununca Akış ⇄ Keşfet menüsü açılır (kullanıcı
+        // isteği, 21 Ağu 2026 — bkz. [AkisGorunumSecici]).
         title: Row(
           children: [
             Image.asset('assets/logo.png', height: 34),
             const SizedBox(width: 10),
-            Text('Akış'.c),
+            // Flexible: dar ekranda seçici taşmasın, kırpılsın.
+            const Flexible(child: AkisGorunumSecici(secili: AkisGorunumu.akis)),
           ],
         ),
         actions: [

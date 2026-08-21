@@ -191,7 +191,7 @@ const Map<String, String> cevirilerMr = {
   'Rozetler': 'बॅज',
   'Verdiğin puan': 'दिलेली रेटिंग',
   'Ortalama puanın': 'सरासरी रेटिंग',
-  'En çok izlediğin diziler': 'सर्वाधिक पाहिलेले शो',
+  'En çok izlediğin diziler': 'तू सर्वाधिक पाहिलेले शो',
   'İlk Bölüm': 'पहिला भाग',
   '100 Bölüm': '100 भाग',
   '1000 Bölüm': '1000 भाग',
@@ -1261,4 +1261,21 @@ const Map<String, String> cevirilerMr = {
   'Hesap': 'खाते',
   '{} dizileri': '{} च्या मालिका',
   '{} filmleri': '{} चे चित्रपट',
+  'En üste taşı': 'सर्वात वर न्या',
+  'Sırayı sıfırla': 'क्रम रीसेट करा',
+  'Listede ara': 'यादीत शोधा',
+  'Elle sıra sıfırlansın mı?': 'स्वतः लावलेला क्रम रीसेट करायचा?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'यादी डीफॉल्ट क्रमावर परत येईल (सर्वात अलीकडे खूण केलेलं आधी).',
+  'Sıra sıfırlanamadı': 'क्रम रीसेट करता आला नाही',
+  'Listenin en üstüne taşındı': 'यादीत सर्वात वर नेलं',
+  'Adlar yükleniyor…': 'नावं लोड होत आहेत…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'पोस्टर दाबून धरून ओढा. दूरचं एखादं नाव पुढे आणण्यासाठी “सर्वात वर न्या” वापरा.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'शोधात ओढणं बंद आहे; “सर्वात वर न्या” ने पुढे आणा ({} निकाल).',
+  'Görünüm': 'दृश्य',
+  'En çok izlediğin filmler': 'तू सर्वाधिक पाहिलेले चित्रपट',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'वेळ अंदाजे आहेत: एपिसोड ~{} मिनिटं, चित्रपट ~{} मिनिटं धरले जातात',
 };

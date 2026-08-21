@@ -1273,4 +1273,21 @@ const Map<String, String> cevirilerUk = {
   'Hesap': 'Акаунт',
   '{} dizileri': 'Серіали: {}',
   '{} filmleri': 'Фільми: {}',
+  'En üste taşı': 'Перемістити на початок',
+  'Sırayı sıfırla': 'Скинути порядок',
+  'Listede ara': 'Пошук у списку',
+  'Elle sıra sıfırlansın mı?': 'Скинути ручний порядок?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Список повернеться до типового порядку (нещодавно позначені — першими).',
+  'Sıra sıfırlanamadı': 'Не вдалося скинути порядок',
+  'Listenin en üstüne taşındı': 'Переміщено на початок списку',
+  'Adlar yükleniyor…': 'Завантаження назв…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Утримуй постер, щоб перетягнути його. Щоб підняти віддалену назву, скористайся «Перемістити на початок».',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Перетягування в пошуку вимкнено; підніми через «Перемістити на початок» ({} результатів).',
+  'Görünüm': 'Вигляд',
+  'En çok izlediğin filmler': 'Найбільш переглянуті фільми',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Час приблизний: епізод рахується як ~{} хв, фільм — як ~{} хв',
 };

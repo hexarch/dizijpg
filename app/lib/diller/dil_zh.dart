@@ -1189,4 +1189,21 @@ const Map<String, String> cevirilerZh = {
   'Hesap': '账号',
   '{} dizileri': '{}的剧集',
   '{} filmleri': '{}的电影',
+  'En üste taşı': '移到最前',
+  'Sırayı sıfırla': '重置顺序',
+  'Listede ara': '在列表中搜索',
+  'Elle sıra sıfırlansın mı?': '要重置手动排序吗？',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      '列表将恢复默认顺序（最近标记的排在前面）。',
+  'Sıra sıfırlanamadı': '无法重置顺序',
+  'Listenin en üstüne taşındı': '已移到列表最前',
+  'Adlar yükleniyor…': '正在加载名称…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      '长按海报即可拖动。想把靠后的作品提到前面，请用“移到最前”。',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      '搜索时无法拖动；用“移到最前”把它提到前面（{} 个结果）。',
+  'Görünüm': '视图',
+  'En çok izlediğin filmler': '看得最多的电影',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      '时长为估算：每集约 {} 分钟，每部电影约 {} 分钟',
 };

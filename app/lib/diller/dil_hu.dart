@@ -1279,4 +1279,21 @@ const Map<String, String> cevirilerHu = {
   'Hesap': 'Fiók',
   '{} dizileri': '{} sorozatai',
   '{} filmleri': '{} filmjei',
+  'En üste taşı': 'Legfelülre',
+  'Sırayı sıfırla': 'Sorrend visszaállítása',
+  'Listede ara': 'Keresés a listában',
+  'Elle sıra sıfırlansın mı?': 'Visszaállítod a kézi sorrendet?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'A lista visszatér az alapértelmezett sorrendhez (a legutóbb megjelölt elöl).',
+  'Sıra sıfırlanamadı': 'A sorrendet nem sikerült visszaállítani',
+  'Listenin en üstüne taşındı': 'A lista tetejére került',
+  'Adlar yükleniyor…': 'Címek betöltése…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Tarts nyomva egy posztert a húzáshoz. Egy távolabbi cím előrehozásához használd a „Legfelülre” gombot.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Keresés közben a húzás ki van kapcsolva; hozd előre a „Legfelülre” gombbal ({} találat).',
+  'Görünüm': 'Nézet',
+  'En çok izlediğin filmler': 'A legtöbbet nézett filmjeid',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Az időtartamok becslések: egy epizód ~{} perc, egy film ~{} perc',
 };

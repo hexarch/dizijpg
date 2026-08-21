@@ -95,6 +95,48 @@ CREATE TABLE IF NOT EXISTS durumlar (
   PRIMARY KEY (kullanici_id, tur, tmdb_id)
 );
 
+-- ---------------------------------------------------------------------------
+-- KİTAPLIK SIRASI — profildeki ALTI listenin elle sırası
+-- (21 Ağu 2026, migrasyon-2026-08-21c.sql)
+-- ---------------------------------------------------------------------------
+-- Sıralanan altı liste ve KAYNAKLARI:
+--   izliyorum / izleyecegim / bitirdim / biraktim → `durumlar` (durum sütunu)
+--   izlenen_tv / izlenen_movie                    → `izlemeler` (tur sütunu)
+--
+-- NEDEN AYRI TABLO, `durumlar`a + `izlemeler`e birer `sira` SÜTUNU DEĞİL:
+--   1) `izlemeler` bir OLAY tablosudur; birincil anahtarı sezon+bölümü de
+--      içerir. 62 bölümlük bir dizi orada 62 SATIRDIR ama ekranda TEK afiştir.
+--      Sıra sütunu oraya konsaydı tek afişi taşımak 62 satır yazmak olurdu ve
+--      okuma ucu GROUP BY yaptığı için sıra bir toplama işlevine
+--      (min/max) sokulurdu — iki satır farklı sıra söylerse hangisi doğru?
+--      Sıralanan şey OLAY değil, YAPIM.
+--   2) `durumlar`ın anahtarı yapım düzeyinde, oraya sütun eklenebilirdi; ama o
+--      zaman aynı kullanıcı özelliği İKİ ayrı mekanizmayla (bir sütun + bir
+--      tablo) yürürdü: iki uç, iki doğrulama, iki test kümesi, altı listeyi
+--      ikiye bölen bir çatlak. Tek tablo = tek uç, tek kural.
+--   3) Yeni bir sıralanabilir liste eklemek burada tek satırlık bir iştir
+--      (`liste` beyaz listesine bir değer).
+-- BEDELİ: okuma uçlarında bir LEFT JOIN (birincil anahtar üzerinden) ve
+-- listeden düşen yapımın öksüz sıra satırı. Öksüz satır okumada zarar vermez
+-- (JOIN eşleşmez); yazma ucu her kaydedişte o listenin dışında kalan satırları
+-- TEMİZLER (aynı tek sorguda).
+--
+-- `sira` NOT NULL: bu tabloda satır olması "kullanıcı bu yapımı elle
+-- konumlandırdı" demektir. "Sırasız" hâl satırın YOKLUĞUDUR — okuma
+-- `sira ASC NULLS FIRST` ile yapılır, yani hiç düzenlenmemiş liste bugünküyle
+-- BİREBİR aynı görünür (bkz. liste_ogeleri.sira, aynı kural).
+CREATE TABLE IF NOT EXISTS kitaplik_sirasi (
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  liste TEXT NOT NULL CHECK (liste IN
+    ('izliyorum','izleyecegim','bitirdim','biraktim','izlenen_tv','izlenen_movie')),
+  tur TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tmdb_id INT NOT NULL,
+  sira INT NOT NULL,
+  -- Birincil anahtar okuma JOIN'inin dört sütununu da bu sırayla kapsar;
+  -- AYRI indeks gerekmiyor.
+  PRIMARY KEY (kullanici_id, liste, tur, tmdb_id)
+);
+
 -- Puan (1-10) ve isteğe bağlı inceleme. person = oyuncu/yönetmen puanı.
 -- sezon/bolum NULL = dizi/film/kişi GENELİ; dolu = O BÖLÜM (8 Ağu 2026-d,
 -- `yorumlar`/`tepkiler` ile aynı kalıp). Ayrıntılar migrasyon-2026-08-08d.sql.

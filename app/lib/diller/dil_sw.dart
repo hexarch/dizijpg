@@ -1273,4 +1273,21 @@ const Map<String, String> cevirilerSw = {
   'Hesap': 'Akaunti',
   '{} dizileri': 'Vipindi vya {}',
   '{} filmleri': 'Filamu za {}',
+  'En üste taşı': 'Sogeza juu kabisa',
+  'Sırayı sıfırla': 'Weka upya mpangilio',
+  'Listede ara': 'Tafuta kwenye orodha',
+  'Elle sıra sıfırlansın mı?': 'Uweke upya mpangilio uliopanga mwenyewe?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Orodha itarudi kwenye mpangilio chaguo-msingi (uliyoweka alama karibuni zaidi kwanza).',
+  'Sıra sıfırlanamadı': 'Mpangilio haukuwekwa upya',
+  'Listenin en üstüne taşındı': 'Imesogezwa juu kabisa kwenye orodha',
+  'Adlar yükleniyor…': 'Inapakia majina…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Shikilia bango kisha uliburute. Ili kuleta mbele kazi iliyo mbali, tumia “Sogeza juu kabisa”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Kuburuta kumezimwa kwenye utafutaji; leta mbele kwa “Sogeza juu kabisa” (matokeo {}).',
+  'Görünüm': 'Mwonekano',
+  'En çok izlediğin filmler': 'Filamu ulizotazama zaidi',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Muda ni makadirio: kipindi huhesabiwa dakika ~{}, filamu dakika ~{}',
 };

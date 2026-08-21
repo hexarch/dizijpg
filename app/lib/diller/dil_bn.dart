@@ -191,7 +191,7 @@ const Map<String, String> cevirilerBn = {
   'Rozetler': 'ব্যাজ',
   'Verdiğin puan': 'দেওয়া রেটিং',
   'Ortalama puanın': 'গড় রেটিং',
-  'En çok izlediğin diziler': 'সবচেয়ে বেশি দেখা শো',
+  'En çok izlediğin diziler': 'তোমার সবচেয়ে বেশি দেখা শো',
   'İlk Bölüm': 'প্রথম পর্ব',
   '100 Bölüm': '১০০ পর্ব',
   '1000 Bölüm': '১০০০ পর্ব',
@@ -1259,4 +1259,21 @@ const Map<String, String> cevirilerBn = {
   'Hesap': 'অ্যাকাউন্ট',
   '{} dizileri': 'সিরিজ: {}',
   '{} filmleri': 'সিনেমা: {}',
+  'En üste taşı': 'একদম উপরে নাও',
+  'Sırayı sıfırla': 'ক্রম রিসেট করো',
+  'Listede ara': 'তালিকায় খোঁজো',
+  'Elle sıra sıfırlansın mı?': 'ম্যানুয়াল ক্রম রিসেট করবেন?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'তালিকা ডিফল্ট ক্রমে ফিরে যাবে (সবচেয়ে সম্প্রতি চিহ্নিতটি আগে)।',
+  'Sıra sıfırlanamadı': 'ক্রম রিসেট করা যায়নি',
+  'Listenin en üstüne taşındı': 'তালিকার একদম উপরে নেওয়া হয়েছে',
+  'Adlar yükleniyor…': 'নাম লোড হচ্ছে…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'পোস্টার চেপে ধরে টেনে নাও। দূরের কোনো কিছু সামনে আনতে “একদম উপরে নাও” ব্যবহার করো।',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'সার্চে টেনে সরানো বন্ধ; “একদম উপরে নাও” দিয়ে সামনে আনো ({} ফলাফল)।',
+  'Görünüm': 'প্রদর্শন',
+  'En çok izlediğin filmler': 'তোমার সবচেয়ে বেশি দেখা সিনেমা',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'সময় আনুমানিক: এপিসোড ~{} মিনিট, সিনেমা ~{} মিনিট ধরা হয়',
 };

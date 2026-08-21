@@ -191,7 +191,7 @@ const Map<String, String> cevirilerVi = {
   'Rozetler': 'Huy hiệu',
   'Verdiğin puan': 'Số lần chấm điểm',
   'Ortalama puanın': 'Điểm trung bình',
-  'En çok izlediğin diziler': 'Phim bạn xem nhiều nhất',
+  'En çok izlediğin diziler': 'Phim bộ bạn xem nhiều nhất',
   'İlk Bölüm': 'Tập đầu tiên',
   '100 Bölüm': '100 tập',
   '1000 Bölüm': '1000 tập',
@@ -1269,4 +1269,21 @@ const Map<String, String> cevirilerVi = {
   'Hesap': 'Tài khoản',
   '{} dizileri': 'Phim bộ của {}',
   '{} filmleri': 'Phim lẻ của {}',
+  'En üste taşı': 'Đưa lên đầu',
+  'Sırayı sıfırla': 'Đặt lại thứ tự',
+  'Listede ara': 'Tìm trong danh sách',
+  'Elle sıra sıfırlansın mı?': 'Đặt lại thứ tự thủ công?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Danh sách trở về thứ tự mặc định (đánh dấu gần đây nhất lên trước).',
+  'Sıra sıfırlanamadı': 'Không đặt lại được thứ tự',
+  'Listenin en üstüne taşındı': 'Đã đưa lên đầu danh sách',
+  'Adlar yükleniyor…': 'Đang tải tên…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Nhấn giữ áp phích để kéo. Để đưa một mục ở xa lên trước, dùng “Đưa lên đầu”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Không kéo được khi tìm kiếm; dùng “Đưa lên đầu” để đưa lên trước ({} kết quả).',
+  'Görünüm': 'Chế độ xem',
+  'En çok izlediğin filmler': 'Phim lẻ bạn xem nhiều nhất',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Thời lượng là ước tính: mỗi tập tính ~{} phút, mỗi phim ~{} phút',
 };

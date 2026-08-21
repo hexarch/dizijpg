@@ -53,9 +53,12 @@ function bildirimCek(kaynak, ad) {
   assert.fail(`${ad} bildiriminin sonu bulunamadı`);
 }
 
-const { SURE_DK, izlemeDakikasi } = new Function(
-  `${bildirimCek(KAYNAK, 'SURE_DK')}\n${bildirimCek(KAYNAK, 'izlemeDakikasi')}\n`
-  + 'return { SURE_DK, izlemeDakikasi };',
+const { SURE_DK, yapimDakikasi, izlemeDakikasi, izlemeKirilimi } = new Function(
+  `${bildirimCek(KAYNAK, 'SURE_DK')}\n`
+  + `${bildirimCek(KAYNAK, 'yapimDakikasi')}\n`
+  + `${bildirimCek(KAYNAK, 'izlemeDakikasi')}\n`
+  + `${bildirimCek(KAYNAK, 'izlemeKirilimi')}\n`
+  + 'return { SURE_DK, yapimDakikasi, izlemeDakikasi, izlemeKirilimi };',
 )();
 
 const tv = (adet, tekrar = 0) => ({ tur: 'tv', adet, tekrar });
@@ -181,14 +184,23 @@ test('KOPYA YOK: `* 42` / `* 110` kaynağın hiçbir yerinde geçmiyor', () => {
 });
 
 test('/istatistiklerim ve /profil/:ad AYNI yardımcıyı çağırır', () => {
-  // tahminiDakika: 1 tanım + 3 çağrı (/istatistiklerim, /profil/:ad ve
-  // 19 Ağu 2026'da eklenen /istatistiklerim/izleme). Beklenenden AZSA
+  // 21 Ağu 2026: `/istatistiklerim` artık `tahminiDakikaKirilim`e geçti
+  // (aynı satırlar, tür kırılımı da lazım). `tahminiDakika`: 1 tanım +
+  // 2 çağrı (/profil/:ad ve /istatistiklerim/izleme). Beklenenden AZSA
   // uçlardan biri kendi hesabını yapıyor demektir — testin asıl koruduğu şey
   // bu: iki ekranın aynı kullanıcı için FARKLI ekran süresi göstermesi.
   // FAZLAYSA yeni bir uç eklenmiştir ve bilinçli olmalı (bu satır o kararın
   // kaydı).
   const sayi = (KAYNAK.match(/tahminiDakika\(/g) || []).length;
-  assert.equal(sayi, 4, `tahminiDakika( ${sayi} kez geçiyor, 4 bekleniyordu`);
+  assert.equal(sayi, 3, `tahminiDakika( ${sayi} kez geçiyor, 3 bekleniyordu`);
+  const kirilim = (KAYNAK.match(/tahminiDakikaKirilim\(/g) || []).length;
+  assert.equal(kirilim, 2, 'tahminiDakikaKirilim: 1 tanım + /istatistiklerim');
+  // İKİSİ DE AYNI SATIRLARDAN türemeli: ayrı sorgu yazılırsa ikinci kopya
+  // sessizce ayrışır (tam olarak bu dosyanın açılış gerekçesi).
+  assert.equal(
+    (KAYNAK.match(/izlemeSureSatirlari\(/g) || []).length, 3,
+    'süre satırları TEK sorgudan gelmeli: 1 tanım + iki yardımcı',
+  );
   // İki uç da yanıtta doğrudan bu değeri veriyor.
   const alan = (KAYNAK.match(/tahmini_dakika: dakika/g) || []).length;
   assert.equal(alan, 2, 'tahmini_dakika iki uçta da yardımcıdan gelmeli');
@@ -206,9 +218,9 @@ test('yıl özeti tekrarı SAYMAZ (tekrarın yılı kayıtlı değil)', () => {
 // ---------------------------------------------------------------------------
 // SQL sözleşmesi
 // ---------------------------------------------------------------------------
-test('tahminiDakika sorgusu: izlemeler ⟕ durumlar, tür+tekrar öbekli', () => {
-  const m = /async function tahminiDakika[\s\S]*?\n}/.exec(KAYNAK);
-  assert.ok(m, 'tahminiDakika bulunamadı');
+test('süre sorgusu: izlemeler ⟕ durumlar, tür+tekrar öbekli', () => {
+  const m = /async function izlemeSureSatirlari[\s\S]*?\n}/.exec(KAYNAK);
+  assert.ok(m, 'izlemeSureSatirlari bulunamadı');
   const g = m[0];
   assert.match(g, /FROM izlemeler i/);
   assert.match(g, /LEFT JOIN durumlar d/,
@@ -239,8 +251,142 @@ test('/rewatch: yalnız "bitirdim" içerikte yazar ve 0-99 arasında kalır', ()
 test('/kitapligim yanıtı `tekrar` taşır (poster rozeti bunu okur)', () => {
   const m = /app\.get\('\/kitapligim'[\s\S]*?\n\}\)\);/.exec(KAYNAK);
   assert.ok(m, '/kitapligim ucu bulunamadı');
+  // 21 Ağu 2026: uç `kitaplik_sirasi` ile JOIN'lendiği için sütunlar takma
+  // adlı (`d.`) yazılıyor ve sorgu tek satır değil. İDDİA AYNI KALDI —
+  // yanıtta `tekrar` VAR MI — ama biçime değil ANLAMA bakıyor.
+  assert.match(m[0], /FROM durumlar\b/);
   assert.match(
-    m[0], /SELECT tur, tmdb_id, durum, tekrar, guncelleme FROM durumlar/,
+    m[0], /SELECT[\s\S]*?\bd\.tekrar\b[\s\S]*?FROM durumlar/,
     'tekrar dönmezse poster kartındaki "×2" hiç çıkmaz',
   );
+});
+
+// ===========================================================================
+// SÜRE KIRILIMI (21 Ağu 2026 isteği)
+// ===========================================================================
+// "Profildeki Toplam izleme süresine tıklayınca onu uzat: Diziler: / Filmler:
+//  olarak süreleri ver. Dizilere tıklarsa detaylıca hangi diziyi kaç saat
+//  izlediğini söyle, filmlere tıklarsa detaylıca hangi filmi kaç saat."
+//
+// Bu bölümün TEK BÜYÜK İDDİASI: ekranda üst üste duran üç sayı seviyesi
+// (toplam → tür → yapım) AYNI formülden çıkar, yani ALT TOPLAM ÜSTÜ TUTAR.
+// Kırılırsa kullanıcı "toplam 41.230 dk" görürken alt listeleri toplayınca
+// başka bir sayı bulur ve hangisinin doğru olduğunu bilemez.
+
+const kirilimSatir = (t, adet, tekrar = 0) => ({ tur: t, adet, tekrar });
+
+test('KIRILIM: dizi + film HER ZAMAN toplama eşit', () => {
+  const kumeler = [
+    [],
+    [tv(62, 0)],
+    [film(3, 2)],
+    [tv(100, 0), tv(20, 2), film(5, 0), film(2, 1)],
+    [tv(0, 5), film(0, 5)],
+    [kirilimSatir('person', 9, 3), tv(7, 1)], // bilinmeyen tür sızarsa
+    [tv(-3, 2), film(1, -5)], // bozuk girdi
+  ];
+  for (const k of kumeler) {
+    const kir = izlemeKirilimi(k);
+    assert.equal(kir.toplam, izlemeDakikasi(k), 'toplam iki yoldan aynı olmalı');
+    assert.equal(
+      kir.tv + kir.movie, kir.toplam,
+      'Diziler + Filmler ekranda üstteki toplamı TUTMALI',
+    );
+  }
+});
+
+test('KIRILIM: türler birbirine karışmaz', () => {
+  const k = izlemeKirilimi([tv(10, 0), film(2, 0)]);
+  assert.equal(k.tv, 10 * 42);
+  assert.equal(k.movie, 2 * 110);
+});
+
+test('YAPIM BAŞINA süre, toplamla AYNI fonksiyondan çıkar', () => {
+  // Alt liste satırları `yapimDakikasi` ile hesaplanıyor; toplam da onu
+  // çağıran `izlemeDakikasi` ile. İkisi ayrışamaz.
+  const yapimlar = [tv(62, 0), tv(13, 3), tv(9, 0)];
+  const elle = yapimlar.reduce(
+    (t, y) => t + yapimDakikasi(y.tur, y.adet, y.tekrar), 0);
+  assert.equal(elle, izlemeDakikasi(yapimlar));
+  assert.equal(yapimDakikasi('tv', 62, 0), 62 * 42);
+  assert.equal(yapimDakikasi('movie', 1, 1), 220);
+  assert.equal(yapimDakikasi('person', 5, 0), 0);
+});
+
+// ---------------------------------------------------------------------------
+// /istatistiklerim/sure — SAHİPLİK, DOĞRULAMA, SAYFALAMA
+// ---------------------------------------------------------------------------
+const SURE_UC = (() => {
+  const m = /app\.get\('\/istatistiklerim\/sure'[\s\S]*?\n\}\)\);/.exec(KAYNAK);
+  assert.ok(m, '/istatistiklerim/sure ucu bulunamadı');
+  return m[0];
+})();
+
+test('SAHİPLİK: uç yalnız İSTEYENİN kendi verisini okur', () => {
+  assert.match(SURE_UC, /girisZorunlu/, 'oturum zorunlu olmalı');
+  assert.match(
+    SURE_UC, /req\.kullanici\.id/,
+    'kimlik oturumdan gelmeli — sorguya sokulan tek kullanıcı budur',
+  );
+  // "Hangi diziyi kaç saat" kitaplığın TAMAMINI sızdırır; açık profilde
+  // `izlenenler_gizli` ekran süresini 0'a düşürüyor. Bu uçta başkasının
+  // kimliğini alabilecek bir parametre HİÇ olmamalı.
+  for (const sizinti of [
+    /req\.params\.kullaniciAdi/, /req\.query\.kullanici/, /req\.query\.id/,
+  ]) {
+    assert.ok(!sizinti.test(SURE_UC), `başkasının verisi istenebiliyor: ${sizinti}`);
+  }
+});
+
+test('HIZ LİMİTİ var ve kullanıcı başına', () => {
+  assert.match(SURE_UC, /sureLimiti/);
+  assert.match(KAYNAK, /const sureLimiti = hizLimiti\(\d+, \(req\) => `sd:\$\{req\.kullanici\.id\}`\)/);
+});
+
+test('GİRDİ DOĞRULAMA: tur beyaz listede, sayfa kırpılıyor', () => {
+  assert.match(
+    SURE_UC, /tur !== 'tv' && tur !== 'movie'/,
+    "tur beyaz listesi yoksa SURE_DK[tur] undefined olur ve süre NaN'a düşer",
+  );
+  assert.match(SURE_UC, /res\.status\(400\)/);
+  assert.match(
+    SURE_UC, /Math\.min\(Math\.max\(istenen, 0\), 200\)/,
+    'OFFSET ham kullanıcı sayısı olamaz (1e9 = tam tarama)',
+  );
+  assert.match(SURE_UC, /Number\.isFinite\(istenen\)/, 'NaN sayfa 0 olmalı');
+});
+
+test('SAYFALAMA: toplam da dönüyor (istemci "daha fazla"yı gizleyebilsin)', () => {
+  assert.match(SURE_UC, /count\(\*\) OVER \(\)::int AS toplam/);
+  assert.match(SURE_UC, /OFFSET \$3 LIMIT \$4/);
+  assert.match(SURE_UC, /sayfa \* SURE_SAYFA/);
+});
+
+test('SIRALAMA: en çok izlenen ÖNCE, eşitlikte kimlik (sayfalar kaymaz)', () => {
+  assert.match(
+    SURE_UC, /ORDER BY adet \* \(1 \+ tekrar\) DESC, tmdb_id/,
+    'ikincil anahtar yoksa aynı satır iki sayfada birden görünebilir',
+  );
+});
+
+test('TEKRAR: alt liste toplamla AYNI çarpanı kullanır', () => {
+  assert.match(SURE_UC, /LEFT JOIN durumlar d/,
+    'INNER JOIN olursa durumlar satırı olmayan filmler listeden düşer');
+  assert.match(SURE_UC, /GREATEST\(COALESCE\(max\(d\.tekrar\), 0\), 0\)/);
+  assert.match(SURE_UC, /yapimDakikasi\(tur, r\.adet, r\.tekrar\)/,
+    'satır süresi ortak yardımcıdan gelmeli, elle çarpılmamalı');
+  assert.match(SURE_UC, /tekrar: r\.tekrar/,
+    'tekrar ekrana da gitmeli: yoksa "3 kez" yazamaz, sayı sihirli görünür');
+});
+
+test('/istatistiklerim kırılımı + SABİTLERİ yanıtta veriyor', () => {
+  const m = /app\.get\('\/istatistiklerim', girisZorunlu[\s\S]*?\n\}\)\);/.exec(KAYNAK);
+  assert.ok(m, '/istatistiklerim ucu bulunamadı');
+  assert.match(m[0], /tahmini_dakika_dizi: dakika\.tv/);
+  assert.match(m[0], /tahmini_dakika_film: dakika\.movie/);
+  assert.match(m[0], /tahmini_dakika: dakika\.toplam/);
+  // Sabitler istemciye GİDİYOR: ekran "bölüm ~42 dk sayılır" notunu kendi
+  // kopyasından yazsaydı sabit değişince ekran yalan söylerdi.
+  assert.match(m[0], /sure_bolum_dk: SURE_DK\.tv/);
+  assert.match(m[0], /sure_film_dk: SURE_DK\.movie/);
 });

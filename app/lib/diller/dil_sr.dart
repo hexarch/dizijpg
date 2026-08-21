@@ -191,7 +191,7 @@ const Map<String, String> cevirilerSr = {
   'Rozetler': 'Беџеви',
   'Verdiğin puan': 'Дате оцене',
   'Ortalama puanın': 'Просечна оцена',
-  'En çok izlediğin diziler': 'Најгледаније серије',
+  'En çok izlediğin diziler': 'Твоје најгледаније серије',
   'İlk Bölüm': 'Прва епизода',
   '100 Bölüm': '100 епизода',
   '1000 Bölüm': '1000 епизода',
@@ -1272,4 +1272,21 @@ const Map<String, String> cevirilerSr = {
   'Hesap': 'Налог',
   '{} dizileri': 'Серије: {}',
   '{} filmleri': 'Филмови: {}',
+  'En üste taşı': 'Премести на врх',
+  'Sırayı sıfırla': 'Ресетуј редослед',
+  'Listede ara': 'Претражи листу',
+  'Elle sıra sıfırlansın mı?': 'Ресетовати ручни редослед?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Листа се враћа на подразумевани редослед (најскорије означено прво).',
+  'Sıra sıfırlanamadı': 'Редослед није ресетован',
+  'Listenin en üstüne taşındı': 'Премештено на врх листе',
+  'Adlar yükleniyor…': 'Учитавање наслова…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Држи постер да га превучеш. Да удаљени наслов доведеш напред, користи „Премести на врх“.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Превлачење је искључено у претрази; доведи напред помоћу „Премести на врх“ ({} резултата).',
+  'Görünüm': 'Приказ',
+  'En çok izlediğin filmler': 'Твоји најгледанији филмови',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Времена су процена: епизода се рачуна ~{} мин, филм ~{} мин',
 };

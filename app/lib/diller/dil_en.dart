@@ -1267,4 +1267,21 @@ const Map<String, String> cevirilerEn = {
   'Hesap': 'Account',
   '{} dizileri': '{} shows',
   '{} filmleri': '{} movies',
+  'En üste taşı': 'Move to top',
+  'Sırayı sıfırla': 'Reset order',
+  'Listede ara': 'Search in list',
+  'Elle sıra sıfırlansın mı?': 'Reset manual order?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'The list returns to its default order (most recently marked first).',
+  'Sıra sıfırlanamadı': 'Order could not be reset',
+  'Listenin en üstüne taşındı': 'Moved to the top of the list',
+  'Adlar yükleniyor…': 'Loading titles…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Press and hold a poster to drag it. To bring a distant title forward, use “Move to top”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Dragging is off while searching; use “Move to top” to bring it forward ({} results).',
+  'Görünüm': 'View',
+  'En çok izlediğin filmler': 'Your most watched movies',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Times are estimates: an episode counts as ~{} min, a movie as ~{} min',
 };

@@ -10,12 +10,13 @@ import 'dogum_gunu.dart';
 import 'profil.dart' show profilYenileTetik;
 import 'yasakli.dart';
 
-/// Masaüstünde alt çubuğun genişliği. Ada 280 dp'de SABİT tutuldu: masaüstüne
-/// 6. hedef (Mesajlar) eklenince hedef başına 278/6 ≈ 46.3 dp düşüyor ve bu
-/// hâlâ [dokunmaAsgari]'nin üstünde. Adayı büyütmek yerine hedefleri
-/// daraltmak seçildi çünkü ada sayfanın sol alt köşesinde duruyor; genişledikçe
-/// içeriğin üstüne binen bir şerit hâline gelirdi. 6 hedefin ötesine
-/// çıkılacaksa buranın da büyütülmesi gerekir (46.3 → 44 sınırına çok yakın).
+/// Masaüstünde alt çubuğun genişliği. Ada 280 dp'de SABİT tutuldu: 21 Ağu
+/// 2026'da Keşfet hedefi çubuktan çıkıp yerine Mesajlar geçince masaüstü de
+/// mobil gibi BEŞ hedefe indi, yani hedef başına 278/5 ≈ 55.6 dp düşüyor —
+/// [dokunmaAsgari]'nin rahat üstünde (önceki altı hedefli düzende 46.3 dp
+/// ile sınıra dayanıyordu). Adayı büyütmek yerine sabit tutmanın sebebi ada
+/// sayfanın sol alt köşesinde durması; genişledikçe içeriğin üstüne binen bir
+/// şerit hâline gelirdi.
 const double masaustuCubukGenisligi = 280;
 
 /// Masaüstünde adanın SAĞINDA duran katla/aç düğmesinin genişliği ve iki
@@ -41,24 +42,52 @@ const double masaustuCubukYuksekligi = dokunmaAsgari;
 /// Masaüstünde çubuğun sol/alt kenar boşluğu.
 const double masaustuCubukKenar = 12;
 
-/// Masaüstünde Mesajlar hedefinin indeksi. Kabuğun (StatefulShellRoute) beş
-/// dalı var; bu 6. öğe bir DAL DEĞİL, `/sohbetler`e giden bir kısayol —
-/// `onDestinationSelected` onu dal değiştirmeden ayırt edebilsin diye sabit.
-const int masaustuMesajIndeksi = 5;
+/// Alt çubuktaki **Mesajlar** hedefinin indeksi (kullanıcı isteği, 21 Ağu
+/// 2026: *"Keşfet'i kaldır, oraya mesajlar ikonu koy"*).
+///
+/// Bu hedef bir kabuk DALI DEĞİL: `/sohbetler` akış dalının içinde yaşıyor ve
+/// üst bardaki DM kısayollarıyla AYNI şekilde `push` ile açılıyor (geri tuşu
+/// bulunulan sayfaya döner; `go` olsaydı dönemezdi). Çubuğa bağlanan
+/// `onSec` bu indeksi görünce `goBranch` yerine o kısayolu çalıştırır.
+///
+/// DİKKAT — HEDEF İNDEKSİ ≠ DAL İNDEKSİ. 3 numaralı DAL hâlâ Keşfet'tir
+/// ([kesfetDali]); çubukta karşılığı kalmadı, Akış başlığındaki görünüm
+/// seçicisinden açılıyor. Dal → hedef çevirisi [hedefIndeksi]'dedir.
+const int mesajIndeksi = 3;
+
+/// Akış hedefinin/dalının indeksi.
+const int akisHedefi = 2;
+
+/// Keşfet'in (Reels ızgarası, `/arama`) kabuk DAL indeksi. Çubukta hedefi
+/// YOK: Akış'ın bir görünümü sayıldığı için [akisHedefi] vurgulanır.
+const int kesfetDali = 3;
+
+/// Profil hedefinin/dalının indeksi.
+const int profilHedefi = 4;
+
+/// Kabuk dalını alt çubuk hedefine çevirir.
+///
+/// Keşfet dalı ([kesfetDali]) çubukta artık Mesajlar'ın oturduğu indekstir;
+/// çeviri yapılmasaydı kullanıcı Keşfet'e bakarken çubukta MESAJLAR seçili
+/// görünürdü. Keşfet, Akış başlığından seçilen bir görünüm olduğu için
+/// [akisHedefi] vurgulanır.
+@visibleForTesting
+int hedefIndeksi(int dal) => dal == kesfetDali ? akisHedefi : dal;
 
 /// Alt gezinme sekmeleri. Kural: bir sekmenin seçili ve seçili olmayan ikonu
 /// AYNI ikon ailesinden olmalı (yalnız içi dolu/boş farkı) — yoksa sekme
 /// değiştikçe ikon başka bir şeye dönüşüyormuş gibi görünür. Test bunu kilitler.
 ///
-/// [mesajlar] YALNIZ masaüstünde açılır (kullanıcı isteği, 17 Ağu 2026).
-/// Mobilde çubuk ekran genişliğini beşe bölüyor; altıncı hedef telefonu
-/// 44 dp dokunma sınırına dayardı, o yüzden varsayılan kapalı.
-/// [okunmamis] > 0 ise hedefin üstünde sayaç çizilir — üst bardaki
+/// KEŞFET BURADA YOK ama KAYBOLMADI: Akış ekranının başlığı artık bir görünüm
+/// seçicisi (Akış ⇄ Keşfet, bkz. `akis.dart` → [AkisGorunumSecici]) ve
+/// `/arama` rotası olduğu gibi duruyor. Yerine gelen Mesajlar hedefi mobilde
+/// de masaüstünde de AYNI: 17 Ağu'da masaüstüne 6. hedef olarak eklenmişti,
+/// mobilde yer yok diye kapalıydı; Keşfet çıkınca beşinci yer boşaldı ve iki
+/// düzen tek listede birleşti.
+///
+/// [okunmamis] > 0 ise Mesajlar hedefinin üstünde sayaç çizilir — üst bardaki
 /// [RozetliIkon] ile AYNI kaynaktan (`SohbetOlaylari.okunmamis`) beslenir.
-List<NavigationDestination> kabukHedefleri({
-  bool mesajlar = false,
-  int okunmamis = 0,
-}) => [
+List<NavigationDestination> kabukHedefleri({int okunmamis = 0}) => [
   NavigationDestination(
     icon: const Icon(Icons.home_outlined),
     selectedIcon: const Icon(Icons.home),
@@ -75,23 +104,17 @@ List<NavigationDestination> kabukHedefleri({
     label: 'Akış'.c,
   ),
   NavigationDestination(
-    icon: const Icon(Icons.explore_outlined),
-    selectedIcon: const Icon(Icons.explore),
-    label: 'Keşfet'.c,
+    // Ana Sayfa ve Akış üst barlarındaki DM kısayoluyla aynı ikon ailesi:
+    // aynı yere giden üç düğme farklı çizilirse ayrı özellik sanılır.
+    icon: _rozetli(const Icon(Icons.near_me_outlined), okunmamis),
+    selectedIcon: _rozetli(const Icon(Icons.near_me), okunmamis),
+    label: 'Mesajlar'.c,
   ),
   NavigationDestination(
     icon: const Icon(Icons.person_outline),
     selectedIcon: const Icon(Icons.person),
     label: 'Profil'.c,
   ),
-  if (mesajlar)
-    NavigationDestination(
-      // Ana Sayfa ve Akış üst barlarındaki DM kısayoluyla aynı ikon ailesi:
-      // aynı yere giden üç düğme farklı çizilirse ayrı özellik sanılır.
-      icon: _rozetli(const Icon(Icons.near_me_outlined), okunmamis),
-      selectedIcon: _rozetli(const Icon(Icons.near_me), okunmamis),
-      label: 'Mesajlar'.c,
-    ),
 ];
 
 /// Hedefin üstüne okunmamış sayacı. Sayı 0'ken [Badge] hiç çizilmez —
@@ -176,18 +199,24 @@ Widget kabukCubugu(
   if (!masaustuMu(context)) {
     // Mobil: ekranın en altındaki renk ÇUBUĞUN zeminidir; sistem çubuğu da
     // o renge boyanır (Android ≤14) / o rengin üstündeki perde kaldırılır (15+).
-    // Beş hedef — masaüstüne eklenen Mesajlar burada AÇILMAZ (yer yok).
+    // Beş hedef — dördüncüsü artık Mesajlar (Keşfet, Akış başlığındaki
+    // görünüm seçicisine taşındı).
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: sistemCubukStili(altCubukZemini(context)),
-      child: NavigationBar(
-        // Etiketler gizli: beş ikon (ev, takvim, akış, pusula, kişi) zaten
-        // tanıdık; yazılar çubuğu yükseltip içerik alanını daraltıyordu.
-        // label'lar SİLİNMEDİ — erişilebilirlik (TalkBack) onları okuyor.
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
-        height: mobilCubukYuksekligi,
-        selectedIndex: secili,
-        onDestinationSelected: onSec,
-        destinations: kabukHedefleri(),
+      // Rozet ortak kaynaktan okunur ki üst bardaki DM rozetiyle AYNI anda
+      // değişsin (masaüstü adasıyla birebir aynı kalıp).
+      child: ValueListenableBuilder<int>(
+        valueListenable: SohbetOlaylari.okunmamis,
+        builder: (context, okunmamis, _) => NavigationBar(
+          // Etiketler gizli: beş ikon (ev, takvim, akış, uçak, kişi) zaten
+          // tanıdık; yazılar çubuğu yükseltip içerik alanını daraltıyordu.
+          // label'lar SİLİNMEDİ — erişilebilirlik (TalkBack) onları okuyor.
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+          height: mobilCubukYuksekligi,
+          selectedIndex: secili,
+          onDestinationSelected: onSec,
+          destinations: kabukHedefleri(okunmamis: okunmamis),
+        ),
       ),
     );
   }
@@ -253,8 +282,8 @@ class _MasaustuAda extends StatelessWidget {
     );
   }
 
-  /// Altı hedefli gezinme adası. Rozet sayısı ortak kaynaktan okunur ki üst
-  /// bardaki DM rozetiyle aynı anda değişsin.
+  /// Beş hedefli gezinme adası (mobil çubukla AYNI liste). Rozet sayısı ortak
+  /// kaynaktan okunur ki üst bardaki DM rozetiyle aynı anda değişsin.
   Widget _ada(BuildContext context) => Container(
     key: const Key('masaustu-alt-cubuk'),
     width: masaustuCubukGenisligi,
@@ -269,23 +298,16 @@ class _MasaustuAda extends StatelessWidget {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         height: masaustuCubukYuksekligi,
         selectedIndex: secili,
-        onDestinationSelected: (i) => _hedefSecildi(context, i),
-        destinations: kabukHedefleri(mesajlar: true, okunmamis: okunmamis),
+        // Mesajlar dâhil TÜM hedefler çağırana devredilir: `push` mi `go` mu
+        // olacağına kabuk-içi/kabuk-dışı bağlamı bilen taraf karar verir
+        // (bkz. [KabukEkrani] ve [kabukSekmeyeGit]). Ada kabuk DIŞINDA da
+        // çiziliyor; buradan `push` etmek orada ikinci bir kabuk kurup
+        // siyah ekran üretirdi.
+        onDestinationSelected: onSec,
+        destinations: kabukHedefleri(okunmamis: okunmamis),
       ),
     ),
   );
-
-  /// Mesajlar bir kabuk dalı DEĞİL: `push` ile üste açılır (üst bardaki DM
-  /// düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go` kullansaydık
-  /// kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
-  Future<void> _hedefSecildi(BuildContext context, int i) async {
-    if (i != masaustuMesajIndeksi) {
-      onSec(i);
-      return;
-    }
-    await context.push('/sohbetler');
-    await SohbetOlaylari.okunmamisYenile();
-  }
 
   /// Katla/aç düğmesi. Durum ÜÇ kanaldan okunur: okun YÖNÜ (görsel),
   /// `Tooltip` (fare) ve `Semantics.expanded` (ekran okuyucu). Kullanıcı
@@ -334,32 +356,41 @@ class _MasaustuAda extends StatelessWidget {
   }
 }
 
-/// Beş sekmenin kök yolları (soldan sağa). Kabuk-dışı sayfadan sekmeye
-/// basınca [context.go] buraya gider.
+/// Beş HEDEFİN kök yolları (soldan sağa). Kabuk-dışı sayfadan hedefe
+/// basınca [kabukSekmeyeGit] buraya gider.
+///
+/// 3. sıra artık `/arama` (Keşfet) değil `/sohbetler`: Keşfet çubuktan çıkıp
+/// Akış başlığındaki görünüm seçicisine taşındı (21 Ağu 2026). Rotası
+/// duruyor — yalnız çubuktaki hedefi yok.
 const List<String> kabukSekmeKokleri = [
   '/kesfet',
   '/takvim',
   '/akis',
-  '/arama',
+  '/sohbetler',
   '/profil',
 ];
 
-/// Yola göre hangi sekme seçili görünür.
+/// Yola göre hangi hedef seçili görünür.
 ///
 /// Kabuk-dışı tarama sayfaları (/icerik, /gonderi, /kisi…) Ana Sayfa (0)
-/// sayılır. Profil ailesi (ayarlar, istatistik, kitaplık) 4. sekmedir.
+/// sayılır. Profil ailesi (ayarlar, istatistik, kitaplık) 4. hedeftir.
+///
+/// `/arama` (Keşfet) AKIŞ (2) sayılır — kabuktaki [hedefIndeksi] çevirisiyle
+/// birebir aynı kural: Keşfet artık Akış'ın bir görünümü. Mesaj yüzeyleri de
+/// (sohbetler, mesaj istekleri) bugünkü gibi Akış'ta kalır: onlar kabuğun
+/// akış dalının İÇİNDE `push` edilen sayfalar, ayrı bir dal değil.
 @visibleForTesting
 int kabukSekmeIndeksi(String yol) {
   if (yol.startsWith('/takvim')) return 1;
   if (yol.startsWith('/akis') ||
+      yol == '/arama' ||
       yol.startsWith('/kullanici') ||
       yol.startsWith('/bildirim') ||
       yol.startsWith('/sohbet') ||
       yol.startsWith('/kisi-ara') ||
       yol.startsWith('/mesaj-istekleri')) {
-    return 2;
+    return akisHedefi;
   }
-  if (yol == '/arama') return 3;
   if (yol.startsWith('/profil') ||
       yol.startsWith('/kitaplik') ||
       yol.startsWith('/favori-oyuncular') ||
@@ -375,10 +406,16 @@ int kabukSekmeIndeksi(String yol) {
   return 0;
 }
 
-/// Masaüstünde kabuk-dışı sayfadan beşli çubuğa basınca ilgili sekmeye git.
+/// Masaüstünde kabuk-dışı sayfadan beşli çubuğa basınca ilgili hedefe git.
+///
+/// MESAJLAR BURADA `go`, KABUK İÇİNDE `push`: bu işlev yalnız kabuğun
+/// DIŞINDAKİ sayfalardan (detay, ayarlar, gönderi…) çağrılıyor ve `/sohbetler`
+/// kabuğun içinde bir rota. Oradan `push` etmek kabuğu ikinci kez kurar
+/// (GlobalKey çakışması → siyah ekran); bilinen tuzak `rotayaGit`in
+/// başlığında anlatılıyor.
 void kabukSekmeyeGit(BuildContext context, int i) {
   if (i < 0 || i >= kabukSekmeKokleri.length) return;
-  if (i == 4) profilYenileTetik.value++;
+  if (i == profilHedefi) profilYenileTetik.value++;
   context.go(kabukSekmeKokleri[i]);
 }
 
@@ -410,7 +447,7 @@ class MasaustuKaliciCubuk extends StatelessWidget {
   }
 }
 
-/// Ana kabuk: Keşfet · Takvim · Arama · Profil.
+/// Ana kabuk: Ana Sayfa · Takvim · Akış · Mesajlar · Profil.
 /// StatefulShellRoute ile sekme durumu korunur ve URL sekmeyi yansıtır.
 class KabukEkrani extends StatelessWidget {
   final StatefulNavigationShell shell;
@@ -431,13 +468,28 @@ class KabukEkrani extends StatelessWidget {
       body: DogumGunuKatmani(child: YasakSeridi(child: shell)),
       bottomNavigationBar: kabukCubugu(
         context,
-        secili: shell.currentIndex,
-        onSec: (i) {
-          if (i == 4) profilYenileTetik.value++;
+        // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan
+        // çubukta Mesajlar seçili görünürdü (bkz. [hedefIndeksi]).
+        secili: hedefIndeksi(shell.currentIndex),
+        onSec: (i) async {
+          // Mesajlar bir dal DEĞİL: `push` ile üste açılır (üst bardaki DM
+          // düğmeleriyle aynı davranış), dönünce rozet tazelenir. `go`
+          // kullansaydık kullanıcı geri tuşuyla bulunduğu sayfaya dönemezdi.
+          if (i == mesajIndeksi) {
+            await context.push('/sohbetler');
+            await SohbetOlaylari.okunmamisYenile();
+            return;
+          }
+          if (i == profilHedefi) profilYenileTetik.value++;
           shell.goBranch(
             i,
-            // Aynı sekmeye tekrar basınca köke dön
-            initialLocation: i == shell.currentIndex,
+            // Aynı hedefe tekrar basınca köke dön. Karşılaştırma ÇEVRİLMİŞ
+            // hedefle yapılır: Keşfet dalındayken (3) çubukta Akış (2) seçili
+            // görünüyor, yani kullanıcı için bu "seçili sekmeye tekrar
+            // basmak"tır ve karşılığı Akış'ın kökü olmalıdır. Dal indeksiyle
+            // karşılaştırsaydık akış dalında en son ne açıksa (ör. bildirimler)
+            // o gelirdi — kullanıcı Akış istemişken.
+            initialLocation: i == hedefIndeksi(shell.currentIndex),
           );
         },
       ),

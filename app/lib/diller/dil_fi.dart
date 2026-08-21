@@ -1276,4 +1276,21 @@ const Map<String, String> cevirilerFi = {
   'Hesap': 'Tili',
   '{} dizileri': '{} -sarjat',
   '{} filmleri': '{} -elokuvat',
+  'En üste taşı': 'Siirrä ylimmäksi',
+  'Sırayı sıfırla': 'Palauta järjestys',
+  'Listede ara': 'Hae listalta',
+  'Elle sıra sıfırlansın mı?': 'Palautetaanko käsin tehty järjestys?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Lista palaa oletusjärjestykseen (viimeksi merkitty ensin).',
+  'Sıra sıfırlanamadı': 'Järjestystä ei voitu palauttaa',
+  'Listenin en üstüne taşındı': 'Siirretty listan kärkeen',
+  'Adlar yükleniyor…': 'Ladataan nimiä…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Pidä julistetta pohjassa ja vedä sitä. Tuo kaukana oleva nimike eteen toiminnolla ”Siirrä ylimmäksi”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Vetäminen ei toimi haussa; tuo eteen toiminnolla ”Siirrä ylimmäksi” ({} tulosta).',
+  'Görünüm': 'Näkymä',
+  'En çok izlediğin filmler': 'Katsotuimmat elokuvasi',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Ajat ovat arvioita: jakso lasketaan ~{} min, elokuva ~{} min',
 };

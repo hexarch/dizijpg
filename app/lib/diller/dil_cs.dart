@@ -191,7 +191,7 @@ const Map<String, String> cevirilerCs = {
   'Rozetler': 'Odznaky',
   'Verdiğin puan': 'Udělená hodnocení',
   'Ortalama puanın': 'Tvé průměrné hodnocení',
-  'En çok izlediğin diziler': 'Nejsledovanější seriály',
+  'En çok izlediğin diziler': 'Tvoje nejsledovanější seriály',
   'İlk Bölüm': 'První díl',
   '100 Bölüm': '100 dílů',
   '1000 Bölüm': '1000 dílů',
@@ -1263,4 +1263,21 @@ const Map<String, String> cevirilerCs = {
   'Hesap': 'Účet',
   '{} dizileri': 'Seriály: {}',
   '{} filmleri': 'Filmy: {}',
+  'En üste taşı': 'Přesunout nahoru',
+  'Sırayı sıfırla': 'Obnovit pořadí',
+  'Listede ara': 'Hledat v seznamu',
+  'Elle sıra sıfırlansın mı?': 'Obnovit ruční pořadí?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Seznam se vrátí k výchozímu pořadí (naposledy označené první).',
+  'Sıra sıfırlanamadı': 'Pořadí se nepodařilo obnovit',
+  'Listenin en üstüne taşındı': 'Přesunuto na začátek seznamu',
+  'Adlar yükleniyor…': 'Načítání názvů…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Podrž plakát a přetáhni ho. Vzdálený titul posuneš dopředu pomocí „Přesunout nahoru“.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Při hledání je přetahování vypnuté; posuň dopředu pomocí „Přesunout nahoru“ ({} výsledků).',
+  'Görünüm': 'Pohled',
+  'En çok izlediğin filmler': 'Tvoje nejsledovanější filmy',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Časy jsou odhad: epizoda se počítá jako ~{} min, film jako ~{} min',
 };

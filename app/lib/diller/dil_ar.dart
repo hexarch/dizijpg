@@ -1242,4 +1242,21 @@ const Map<String, String> cevirilerAr = {
   'Hesap': 'الحساب',
   '{} dizileri': 'مسلسلات {}',
   '{} filmleri': 'أفلام {}',
+  'En üste taşı': 'نقل إلى الأعلى',
+  'Sırayı sıfırla': 'إعادة ضبط الترتيب',
+  'Listede ara': 'البحث في القائمة',
+  'Elle sıra sıfırlansın mı?': 'هل تريد إعادة ضبط الترتيب اليدوي؟',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'تعود القائمة إلى ترتيبها الافتراضي (الأحدث تعليمًا أولًا).',
+  'Sıra sıfırlanamadı': 'تعذّرت إعادة ضبط الترتيب',
+  'Listenin en üstüne taşındı': 'تم النقل إلى أعلى القائمة',
+  'Adlar yükleniyor…': 'جارٍ تحميل الأسماء…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'اضغط مطولًا على الملصق واسحبه. لتقديم عمل بعيد إلى الأمام، استخدم «نقل إلى الأعلى».',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'السحب معطّل أثناء البحث؛ استخدم «نقل إلى الأعلى» للتقديم ({} نتيجة).',
+  'Görünüm': 'العرض',
+  'En çok izlediğin filmler': 'أكثر أفلامك مشاهدة',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'المدد تقديرية: تُحتسب الحلقة ~{} د والفيلم ~{} د',
 };

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/kabuk.dart';
+import 'package:dizijpg/ekranlar/sohbet.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:dizijpg/yonlendirme.dart';
 import 'package:flutter/material.dart';
@@ -107,7 +108,14 @@ void main() {
       expect(kabukSekmeIndeksi('/takvim'), 1);
       expect(kabukSekmeIndeksi('/akis'), 2);
       expect(kabukSekmeIndeksi('/bildirimler'), 2);
-      expect(kabukSekmeIndeksi('/arama'), 3);
+      // 21 Ağu 2026: Keşfet (`/arama`) çubuktan çıkıp Akış başlığındaki
+      // görünüm seçicisine taşındı → artık AKIŞ hedefi vurgulanır. 3. hedef
+      // Mesajlar; `/arama` orayı vurgulasaydı kullanıcı Keşfet'e bakarken
+      // çubukta "Mesajlar" seçili görürdü.
+      expect(kabukSekmeIndeksi('/arama'), 2);
+      // Gelen arama ekranı `/arama` ÖN EKİNİ taşır ama Keşfet değildir —
+      // eşitlikle ayrıştırılıyor, kabuk-dışı sayılıp Ana Sayfa'ya düşer.
+      expect(kabukSekmeIndeksi('/arama-gelen'), 0);
       expect(kabukSekmeIndeksi('/ayarlar'), 4);
       expect(kabukSekmeIndeksi('/profil'), 4);
     });
@@ -138,6 +146,33 @@ void main() {
       await _uygulama(tester, '/kesfet');
       expect(_ada(), findsOneWidget);
       expect(find.byType(NavigationBar), findsOneWidget);
+    });
+
+    // 21 Ağu 2026: 3. hedef artık Keşfet değil MESAJLAR. Kabuğun DIŞINDAKİ
+    // sayfalarda bu hedef `go` etmeli — `push` etseydi kabuk ikinci kez
+    // kurulup siyah ekran verirdi (bkz. kabukSekmeyeGit başlığı).
+    testWidgets('dizi sayfasından MESAJLAR hedefi sohbetleri açar', (
+      tester,
+    ) async {
+      _ekran(tester, _genisG, _genisY);
+      await _uygulama(tester, '/icerik/tv/1396');
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(NavigationBar),
+          matching: find.byIcon(Icons.near_me_outlined),
+        ),
+      );
+      for (var i = 0; i < 16; i++) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      while (tester.takeException() != null) {}
+
+      expect(find.byType(SohbetlerEkrani), findsOneWidget);
+      // Kabuk kurulmuş olmalı ve ada TEK olmalı (çift kabuk = siyah ekran).
+      expect(find.byType(KabukEkrani), findsOneWidget);
+      expect(_ada(), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
     });
 
     testWidgets('dizi sayfasından takvim sekmesine gidilir', (tester) async {

@@ -1223,4 +1223,21 @@ const Map<String, String> cevirilerAm = {
   'Hesap': 'መለያ',
   '{} dizileri': 'የ{} ተከታታዮች',
   '{} filmleri': 'የ{} ፊልሞች',
+  'En üste taşı': 'ወደ አናት አንቀሳቅስ',
+  'Sırayı sıfırla': 'ቅደም ተከተሉን ዳግም አስጀምር',
+  'Listede ara': 'በዝርዝሩ ውስጥ ፈልግ',
+  'Elle sıra sıfırlansın mı?': 'በእጅ የተደረገው ቅደም ተከተል ዳግም ይጀመር?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'ዝርዝሩ ወደ ነባሪ ቅደም ተከተሉ ይመለሳል (በቅርቡ ምልክት ያደረግከው መጀመሪያ)።',
+  'Sıra sıfırlanamadı': 'ቅደም ተከተሉን ዳግም ማስጀመር አልተቻለም',
+  'Listenin en üstüne taşındı': 'ወደ ዝርዝሩ አናት ተንቀሳቅሷል',
+  'Adlar yükleniyor…': 'ስሞች እየተጫኑ ነው…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'ፖስተሩን ተጭነህ ያዝና ጎትት። ርቆ ያለን ሥራ ወደ ፊት ለማምጣት “ወደ አናት አንቀሳቅስ”ን ተጠቀም።',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'በፍለጋ ላይ መጎተት ጠፍቷል፤ “ወደ አናት አንቀሳቅስ” በመጠቀም ወደ ፊት አምጣ ({} ውጤት)።',
+  'Görünüm': 'አቀራረብ',
+  'En çok izlediğin filmler': 'በብዛት የተመለከትካቸው ፊልሞች',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'ጊዜዎቹ ግምታዊ ናቸው፦ ክፍል ~{} ደቂቃ፣ ፊልም ~{} ደቂቃ ተደርጎ ይቆጠራል',
 };

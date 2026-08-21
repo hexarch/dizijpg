@@ -1266,4 +1266,21 @@ const Map<String, String> cevirilerTe = {
   'Hesap': 'ఖాతా',
   '{} dizileri': '{} సిరీస్‌లు',
   '{} filmleri': '{} సినిమాలు',
+  'En üste taşı': 'మొదటికి తరలించు',
+  'Sırayı sıfırla': 'క్రమాన్ని రీసెట్ చేయి',
+  'Listede ara': 'జాబితాలో వెతుకు',
+  'Elle sıra sıfırlansın mı?': 'మాన్యువల్ క్రమాన్ని రీసెట్ చేయాలా?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'జాబితా డిఫాల్ట్ క్రమానికి తిరిగి వస్తుంది (ఇటీవల గుర్తు పెట్టినవి ముందు).',
+  'Sıra sıfırlanamadı': 'క్రమాన్ని రీసెట్ చేయలేకపోయాం',
+  'Listenin en üstüne taşındı': 'జాబితాలో మొదటికి తరలించాం',
+  'Adlar yükleniyor…': 'పేర్లు లోడ్ అవుతున్నాయి…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'పోస్టర్‌ను నొక్కి పట్టి లాగు. దూరంగా ఉన్నదాన్ని ముందుకు తేవడానికి “మొదటికి తరలించు” వాడు.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'వెతుకులాటలో లాగడం ఆఫ్‌లో ఉంది; “మొదటికి తరలించు”తో ముందుకు తే ({} ఫలితాలు).',
+  'Görünüm': 'వీక్షణ',
+  'En çok izlediğin filmler': 'ఎక్కువగా చూసిన సినిమాలు',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'సమయాలు అంచనా: ఎపిసోడ్ ~{} నిమి, సినిమా ~{} నిమిగా లెక్కిస్తాం',
 };

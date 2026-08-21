@@ -1205,4 +1205,21 @@ const Map<String, String> cevirilerJa = {
   'Hesap': 'アカウント',
   '{} dizileri': '{}のドラマ',
   '{} filmleri': '{}の映画',
+  'En üste taşı': '先頭へ移動',
+  'Sırayı sıfırla': '並び順をリセット',
+  'Listede ara': 'リスト内を検索',
+  'Elle sıra sıfırlansın mı?': '手動の並び順をリセットしますか？',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'リストは既定の並び順（最後に記録したものが先頭）に戻ります。',
+  'Sıra sıfırlanamadı': '並び順をリセットできませんでした',
+  'Listenin en üstüne taşındı': 'リストの先頭に移動しました',
+  'Adlar yükleniyor…': '名前を読み込み中…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'ポスターを長押ししてドラッグします。離れた作品を前に出すには「先頭へ移動」を使ってください。',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      '検索中はドラッグできません。「先頭へ移動」で前に出せます（{} 件）。',
+  'Görünüm': '表示',
+  'En çok izlediğin filmler': '最も見た映画',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      '時間は概算です：1話は約{}分、映画は約{}分として計算します',
 };

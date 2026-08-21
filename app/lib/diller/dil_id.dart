@@ -1269,4 +1269,21 @@ const Map<String, String> cevirilerId = {
   'Hesap': 'Akun',
   '{} dizileri': 'Serial {}',
   '{} filmleri': 'Film {}',
+  'En üste taşı': 'Pindah ke atas',
+  'Sırayı sıfırla': 'Setel ulang urutan',
+  'Listede ara': 'Cari di daftar',
+  'Elle sıra sıfırlansın mı?': 'Setel ulang urutan manual?',
+  'Liste varsayılan sırasına (en son işaretlediğin önce) döner.':
+      'Daftar kembali ke urutan bawaan (yang terakhir ditandai lebih dulu).',
+  'Sıra sıfırlanamadı': 'Urutan tidak dapat disetel ulang',
+  'Listenin en üstüne taşındı': 'Dipindahkan ke urutan teratas',
+  'Adlar yükleniyor…': 'Memuat judul…',
+  'Afişe basılı tutup sürükle. Uzaktaki bir yapımı öne almak için "En üste taşı"yı kullan.':
+      'Tekan lama poster untuk menggesernya. Untuk memajukan judul yang jauh, gunakan “Pindah ke atas”.',
+  'Aramada sürükleme kapalı; "En üste taşı" ile öne al ({} sonuç).':
+      'Menggeser dimatikan saat mencari; majukan dengan “Pindah ke atas” ({} hasil).',
+  'Görünüm': 'Tampilan',
+  'En çok izlediğin filmler': 'Film paling sering ditonton',
+  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
+      'Durasi adalah perkiraan: episode dihitung ~{} mnt, film ~{} mnt',
 };

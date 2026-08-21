@@ -147,11 +147,14 @@ void main() {
       final cubuk = tester.getSize(find.byType(NavigationBar));
       expect(cubuk.height, 44, reason: 'eski 56 dp → 44 dp (asgaride durdu)');
 
-      // 17 Ağu: masaüstünde 6. hedef (Mesajlar) eklendi. Ada genişlemedi, o
-      // yüzden asıl risk burada: 278/6 ≈ 46.3 dp, 44 sınırına yakın. Test
-      // altı hedefi de ölçer — sınıra dayanan bir düzenlemede ilk bu patlar.
-      expect(_hedefler(), findsNWidgets(6));
-      for (var i = 0; i < 6; i++) {
+      // 17 Ağu: masaüstüne 6. hedef (Mesajlar) eklenmişti ve 278/6 ≈ 46.3 dp
+      // ile 44 sınırına dayanıyordu. 21 Ağu: Keşfet hedefi çubuktan çıkıp
+      // Akış başlığındaki görünüm seçicisine taşındı, Mesajlar onun yerine
+      // geçti → yine BEŞ hedef, hedef başına 278/5 ≈ 55.6 dp. Ada genişliği
+      // değişmedi; test hedef sayısını da ölçer ki altıncı bir hedef sessizce
+      // geri eklenip sınırı zorlayamasın.
+      expect(_hedefler(), findsNWidgets(5));
+      for (var i = 0; i < 5; i++) {
         final h = tester.getSize(_hedefler().at(i));
         expect(
           h.height,
@@ -164,9 +167,10 @@ void main() {
           reason: '$i. sekme genişliği ${h.width} < 44',
         );
       }
-      // Yalnız ilk beşi basılır: 6. hedef kabuk dalı değil, GoRouter'a
-      // `push` eden bir kısayol — burada yönlendirici yok, davranışı
-      // masaustu_mesaj_gezinme_test.dart kilitliyor.
+      // Beş hedefin beşi de dokunulabilir. Mesajlar (3) bir kabuk dalı değil
+      // ama `kabukCubugu` artık kararı çağırana bırakıyor, yani burada da
+      // sıradan bir `onSec(3)` olarak görünür; nereye gittiği
+      // masaustu_mesaj_gezinme_test.dart ve akis_gorunum_secici_test.dart'ta.
       for (var i = 0; i < 5; i++) {
         await tester.tap(_hedefler().at(i));
         await tester.pump();

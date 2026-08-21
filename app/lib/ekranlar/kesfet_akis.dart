@@ -21,7 +21,7 @@ import '../sira_tercihi.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_kova.dart';
-import 'akis.dart' show AkisKarti;
+import 'akis.dart' show AkisGorunumSecici, AkisGorunumu, AkisKarti;
 import 'begenenler.dart';
 import 'etiket.dart';
 import 'giris_istem.dart';
@@ -467,7 +467,15 @@ class _KesfetAkisEkraniState extends State<KesfetAkisEkrani>
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text('Keşfet'.c),
+        // Akış'takiyle AYNI seçici (21 Ağu 2026): Keşfet alt çubuktan çıkınca
+        // buradan Akış'a dönebilmenin görünür bir yolu kalmalıydı. Alt
+        // çubuktaki Akış hedefi de bu ekranda seçili görünüyor (kabuk.dart →
+        // hedefIndeksi), yani iki yol da aynı yere çıkar.
+        //
+        // LOGO YOK (Akış'ta var): bu ekranın üst barı 3 Ağu'dan beri logosuz
+        // ve `sira_secici_test` bu ekranı ÇIPLAK pump ediyor — `Image.asset`
+        // testte varlık yükleyemeyip gürültü üretirdi.
+        title: const AkisGorunumSecici(secili: AkisGorunumu.kesfet),
         // Kullanıcı isteği (3 Ağu 2026): "keşfet yazısının en sağına
         // koyabilirsin bu seçeneği". Bu ekranın kendi sıralamasını yönetir.
         actions: [

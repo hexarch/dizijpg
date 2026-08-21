@@ -52,7 +52,14 @@ RUN npm ci --omit=dev
 # import ediyor; imaja GIRMEZSE konteyner "Cannot find module './disk.js'" ile
 # acilista olur ve restart dongusune girer — kripto.js / medya_imza.js /
 # arama.js ile AYNI tuzak. test/arama.test.js bu listeyi otomatik denetliyor.
-COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js disk.js arama.js gunluk.js onbellek_ttl.js isitici.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js admin.html ./
+# gsc_izle.js: Search Console gunluk izleme (cron: `docker exec dizijpg-api
+# node gsc_izle.js`). isitici.js ile AYNI tuzak: imaja GIRMEZSE cron her gece
+# "Cannot find module './gsc_izle.js'" verir ve izleme HIC baslamaz — ustelik
+# bu is SESSIZ calistigi icin (degisim yoksa posta yok) fark edilmesi haftalar
+# alirdi. test/gsc_izle.test.js bu satiri denetliyor.
+# NOT: servis hesabi anahtari BURAYA KOPYALANMAZ. Sir imaja girmez;
+# firebase-admin.json gibi calisma aninda `:ro` baglanir (docker-compose.yml).
+COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_durum.js cevrimici.js sohbet_bakiyor.js sohbet_durum.js kripto.js kisi_izlenme.js iki_adim.js yasak.js medya_imza.js medya_xaccel.js disk.js arama.js gunluk.js onbellek_ttl.js isitici.js gsc_izle.js kume.js kume_ipc.js kume_yardimci.js mesaj_sifrele_geri_doldur.js cihaz_sinif.js gonderi_istatistik.js admin.html ./
 # robots.txt: Node servis eder (GET /robots.txt). Imaja GIRMEZSE uc 404 doner
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./
