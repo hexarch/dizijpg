@@ -143,6 +143,23 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   /// JSON olarak yazılabilsin; çözümleme çizim anında yapılır.
   Map<String, dynamic>? _seviyeHam;
   String? _hata;
+
+  /// Son tazelemede EN AZ BİR uç düştü ama ekranda (önbellekten ya da önceki
+  /// turdan) veri var. Ekran boşaltılmaz, ama SESSİZ de kalınmaz: üstte
+  /// "Bağlantı koptu — Yenile" şeridi çıkar (takvim.dart'taki `_durumSeridi`
+  /// ile aynı disiplin).
+  ///
+  /// NEDEN VAR (21 Ağu 2026, canlıda ÖLÇÜLDÜ): emülatörde `/izlediklerim`
+  /// 20 sn zaman aşımına düşünce `Future.wait` TÜM turu düşürüyordu; eski
+  /// `catch` bloğu `_profil != null` diye hatayı YUTUYORDU. Ekran saatlerce
+  /// bayat önbellekle duruyor, kullanıcı bunu bilmiyordu — "Toplam İzleme
+  /// Süresi kartı açılmıyor" hatası tam olarak buydu (kırılım alanları TAZE
+  /// yanıtta vardı, ekrana hiç ulaşmıyordu).
+  bool _tazelemeHatasi = false;
+
+  /// Bu turda sunucudan EN AZ BİR taze yanıt geldi mi? SWR önbelleği yalnız
+  /// bu bayrak `false` iken ekrana basılabilir (bkz. [_onbellektenYukle]).
+  bool _tazeVeri = false;
   bool _gorselYukleniyor = false;
   // Varsayılan: rozetler en altta
   List<String> _bolumSirasi = const [
@@ -419,9 +436,14 @@ class _ProfilEkraniState extends State<ProfilEkrani>
   ];
 
   /// Son başarılı profil anında gösterilir (SWR); taze veri arkadan gelir.
+  ///
+  /// [_tazeVeri] KONTROLÜ ŞART: `_yukle` artık KISMİ başarıyla dönebiliyor
+  /// (bkz. [_cek]). `_profil` bakmak yetmez — `/profilim` düşüp
+  /// `/istatistiklerim` gelmiş olabilir; o durumda bayat kopya taze sayıların
+  /// ÜSTÜNE yazardı.
   Future<void> _onbellektenYukle() async {
     final d = await Onbellek.oku('profil');
-    if (d == null || !mounted || _profil != null) return;
+    if (d == null || !mounted || _tazeVeri) return;
     setState(() {
       _istatistik = d['istatistik'] as Map<String, dynamic>?;
       _kitaplik = d['kitaplik'] as Map<String, dynamic>?;
@@ -480,49 +502,84 @@ class _ProfilEkraniState extends State<ProfilEkrani>
     }
   }
 
+  /// Tek ucu çeker; DÜŞERSE turu düşürmez, `null` döner ve hatayı [hatalar]
+  /// listesine yazar.
+  ///
+  /// NEDEN (21 Ağu 2026, canlıda ölçülen hata): burada `Future.wait` vardı ve
+  /// HEPSİ YA DA HİÇBİRİ çalışıyordu. Emülatörde `/izlediklerim` 20 sn zaman
+  /// aşımına düştüğünde, ELDE OLAN `/istatistiklerim` yanıtı da çöpe gidiyor
+  /// ve ekran bayat önbellekle kalıyordu. O bayat kopya 21 Ağu öncesinden
+  /// kaldığı için `tahmini_dakika_dizi`/`_film` alanları YOKTU; sonuç:
+  /// "Toplam İzleme Süresi" kartı ok bile çizmiyor, dokununca açılmıyordu.
+  /// Bir ucun arızası, ilgisiz bir kartı sessizce sakat bırakamaz.
+  Future<dynamic> _cek(String yol, List<Object> hatalar) async {
+    try {
+      return await Api.get(yol);
+    } catch (e) {
+      hatalar.add(e);
+      return null;
+    }
+  }
+
   Future<void> _yukle() async {
     setState(() => _hata = null);
-    try {
-      final sonuclar = await Future.wait([
-        Api.get('/istatistiklerim'),
-        Api.get('/kitapligim'),
-        Api.get('/listelerim'),
-        Api.get('/profilim'),
-        Api.get('/izlediklerim'),
-        Api.get(
-          '/rozetler',
-        ).catchError((_) => <String, dynamic>{'rozetler': <dynamic>[]}),
-      ]);
-      if (!mounted) return;
-      setState(() {
-        _istatistik = sonuclar[0] as Map<String, dynamic>;
-        _kitaplik = sonuclar[1] as Map<String, dynamic>;
-        _listeler = sonuclar[2]['listeler'] as List<dynamic>;
-        _profil = sonuclar[3] as Map<String, dynamic>;
-        _izlenenler = sonuclar[4]['ogeler'] as List<dynamic>;
-        _rozetler = sonuclar[5]['rozetler'] as List<dynamic>? ?? [];
-        _seviyeHam = sonuclar[5]['seviye'] as Map<String, dynamic>?;
-      });
-      // Yorumlar sekmesi: kendi yorumların + içerik adları (açık profil ucu).
-      // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
-      final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
-      if (kadi.isNotEmpty) _yorumlariTazele();
-      // Favori oyuncu şeridi de ayrı yürür (gerekçe metodun başında).
-      _favorileriTazele();
-      Onbellek.yaz('profil', {
-        'istatistik': _istatistik,
-        'kitaplik': _kitaplik,
-        'listeler': _listeler,
-        'profil': _profil,
-        'izlenenler': _izlenenler,
-        'rozetler': _rozetler,
-        'seviye': _seviyeHam,
-        'favori_kisiler': _favoriKisiler,
-      });
-    } catch (e) {
-      if (!mounted) return;
-      if (_profil == null) setState(() => _hata = e.toString());
-    }
+    final hatalar = <Object>[];
+    final sonuclar = await Future.wait([
+      _cek('/istatistiklerim', hatalar),
+      _cek('/kitapligim', hatalar),
+      _cek('/listelerim', hatalar),
+      _cek('/profilim', hatalar),
+      _cek('/izlediklerim', hatalar),
+      // Rozetler EN BAŞTAN beri hatasız yürüyordu (yoksa liste boş kalır).
+      _cek('/rozetler', hatalar),
+    ]);
+    if (!mounted) return;
+    setState(() {
+      // GELEN NE VARSA YAZILIR; gelmeyen ESKİ hâliyle kalır. Alan başına
+      // tip kontrolü: bozuk/eksik gövde tüm turu düşürmesin.
+      final ist = sonuclar[0];
+      if (ist is Map<String, dynamic>) _istatistik = ist;
+      final kit = sonuclar[1];
+      if (kit is Map<String, dynamic>) _kitaplik = kit;
+      final lst = sonuclar[2];
+      if (lst is Map && lst['listeler'] is List) {
+        _listeler = lst['listeler'] as List<dynamic>;
+      }
+      final prf = sonuclar[3];
+      if (prf is Map<String, dynamic>) _profil = prf;
+      final izl = sonuclar[4];
+      if (izl is Map && izl['ogeler'] is List) {
+        _izlenenler = izl['ogeler'] as List<dynamic>;
+      }
+      final roz = sonuclar[5];
+      if (roz is Map) {
+        _rozetler = roz['rozetler'] as List<dynamic>? ?? [];
+        _seviyeHam = roz['seviye'] as Map<String, dynamic>?;
+      }
+      if (sonuclar.any((s) => s != null)) _tazeVeri = true;
+      // Elimizde HİÇ veri yoksa tam ekran hata; varsa şerit (aşağıda).
+      _tazelemeHatasi = hatalar.isNotEmpty && _istatistik != null;
+      if (_istatistik == null && hatalar.isNotEmpty) {
+        _hata = hatalar.first.toString();
+      }
+    });
+    if (_istatistik == null) return;
+    // Yorumlar sekmesi: kendi yorumların + içerik adları (açık profil ucu).
+    // Kitaplık yüklemesini bekletmesin diye ayrı ve hatasız yürür.
+    final kadi = (_profil?['kullanici_adi'] as String?) ?? '';
+    if (kadi.isNotEmpty) _yorumlariTazele();
+    // Favori oyuncu şeridi de ayrı yürür (gerekçe metodun başında).
+    _favorileriTazele();
+    Onbellek.yaz('profil', {
+      'istatistik': _istatistik,
+      'kitaplik': _kitaplik,
+      'listeler': _listeler,
+      'profil': _profil,
+      'izlenenler': _izlenenler,
+      'rozetler': _rozetler,
+      'seviye': _seviyeHam,
+      'favori_kisiler': _favoriKisiler,
+    });
   }
 
   Future<void> _hesabiBagla() async {
@@ -730,6 +787,11 @@ class _ProfilEkraniState extends State<ProfilEkrani>
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
+            // TAZELEME DÜŞTÜ ŞERİDİ. Ekran boşaltılmaz (elde veri var) ama
+            // sessiz de kalınmaz: kullanıcı EKRANDAKİNİN ESKİ olabileceğini
+            // görür ve tek dokunuşla yeniden dener. Yeni metin ANAHTARI YOK —
+            // `Bağlantı koptu` ve `Yenile` 45 dilde ZATEN var.
+            if (_tazelemeHatasi) ProfilTazelemeSeridi(onYenile: _yukle),
             // Kapak resmi (varsa) — dokununca değiştir/yeniden konumlandır
             if (dosyaUrl(_profil?['kapak'] as String?) != null)
               GestureDetector(
@@ -2743,6 +2805,52 @@ Future<void> yorumEylemleriAc(
 // çeviri gerektirmez (`ProfilSayaclari.eksik` ile aynı gerekçe).
 const String _yaklasik = '~';
 
+/// "Bağlantı koptu — Yenile" şeridi: profil TAZELENEMEDİĞİNDE listenin en
+/// üstünde durur.
+///
+/// NEDEN AYRI BİR ŞERİT, NEDEN SnackBar DEĞİL: SnackBar 4 saniyede kaybolur;
+/// bayat veri ekranda KALIR. Kullanıcı iki dakika sonra baktığında ekranın
+/// eski olduğunu gösteren hiçbir iz kalmazdı — 21 Ağu 2026'da tam olarak bu
+/// oldu: `/izlediklerim` zaman aşımına düştü, profil önbellekten çizildi,
+/// "Toplam İzleme Süresi" kartı (kırılım alanları o bayat kopyada yok diye)
+/// açılmaz hâlde kaldı ve hiçbir şey sebebini söylemedi.
+///
+/// Metinler MEVCUT anahtarlar (`Bağlantı koptu`, `Yenile`) — 45 dilde var.
+class ProfilTazelemeSeridi extends StatelessWidget {
+  final Future<void> Function() onYenile;
+
+  const ProfilTazelemeSeridi({super.key, required this.onYenile});
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: Colors.redAccent.withValues(alpha: 0.14),
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+      child: Row(
+        children: [
+          const Icon(Icons.cloud_off, size: 17, color: Colors.redAccent),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Bağlantı koptu'.c,
+              style: TextStyle(fontSize: 12.5, color: DiziRenkler.metin),
+            ),
+          ),
+          TextButton(
+            onPressed: onYenile,
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.redAccent,
+              // Dokunma hedefi ≥44 dp (skill md. 2).
+              minimumSize: const Size(64, TakipSayac.enAzHedef),
+            ),
+            child: Text('Yenile'.c),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 /// Toplam ekran süresi kartı: dokununca Diziler/Filmler kırılımına açılır,
 /// oradan da yapım başına listeye ([SureDetaySheet]) gider.
 ///
@@ -2780,6 +2888,13 @@ class EkranSuresiKarti extends StatefulWidget {
 class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
   bool _acik = false;
 
+  /// SIFIR GEÇERLİ BİR DEĞERDİR, EKSİK DEĞİL (21 Ağu 2026 kararı).
+  ///
+  /// Hiç film izlememiş bir kullanıcıda `tahmini_dakika_film` sunucudan `0`
+  /// gelir — `null` DEĞİL (`izlemeKirilimi` sayacı 0'dan başlatır). "62 bölüm
+  /// izledim ama kırılımı göremiyorum" olmaz: dizi kırılımı o hesapta tam
+  /// anlamlıdır ve "Filmler 0 dakika" DOĞRU bir cümledir. Kartı yalnız
+  /// alanın YOKLUĞU (eski sunucu / eski önbellek kopyası) kapatır.
   bool get _acilabilir =>
       widget.diziDakika != null && widget.filmDakika != null;
 
