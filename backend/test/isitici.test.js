@@ -678,8 +678,16 @@ test('ısıtılan anahtar SSR isteğinin ürettiğiyle aynı (dil zinciri uçtan
 test('varsayılanlar SÜREKLİ KİP değerleri (gece toplu koşu değil)', () => {
   assert.equal(AYAR.CRON_DAKIKA, 10);
   assert.equal(AYAR.ISTEK_SN, 1);
-  assert.equal(AYAR.AZAMI_DAKIKA, 8);
-  assert.equal(AYAR.AZAMI_ISTEK, 480);
+  // 21 Ağu 2026: 8 dk → 7 dk. CANLI ÖLÇÜM: iş fazı 8 dk tavanına TAM
+  // oturuyordu (`süre=479.4sn`, altı ardışık koşuda birebir aynı) ve üstüne
+  // aday toplama ~50 sn biniyordu → toplam ~530 sn, cron penceresi 600 sn.
+  // Marj %12'ye inmişti; `adaylariTopla` kuyruk büyüdükçe uzadığı için 600'ü
+  // aşmak an meselesiydi ve aşıldığında sonraki koşu kilide takılıp BOŞA
+  // döner (kapasite yarıya iner, yalnız günlüğe bakan fark eder).
+  // 7 dk → marj 130 sn. Bu sayılar ELLE seçildi; test onları kilitliyor ki
+  // değişiklik kasıtlı olsun.
+  assert.equal(AYAR.AZAMI_DAKIKA, 7);
+  assert.equal(AYAR.AZAMI_ISTEK, 420);
 });
 
 test('BAĞ A: AZAMI_DAKIKA < CRON_DAKIKA (yoksa sonraki koşu kilide takılır)', () => {
@@ -721,8 +729,8 @@ test('main açılışta bağları ZORLUYOR (yorumda kalmıyor)', () => {
 
 test('günlük kapasite: koşu başına bütçe × günlük koşu sayısı', () => {
   const secim = bayraklariCoz([]);
-  // 8 dk × 60 × 1/sn = 480; günde 1440/10 = 144 koşu → 69.120
-  assert.equal(gunlukKapasite(secim), 69120);
+  // 7 dk × 60 × 1/sn = 420; günde 1440/10 = 144 koşu → 60.480
+  assert.equal(gunlukKapasite(secim), 60480);
   // Hız kapısı istek tavanından küçükse KAPI belirler (tavan tek başına yalan söylemesin).
   assert.equal(gunlukKapasite({ azamiIstek: 10000, azamiDakika: 8, istekSn: 1 }), 69120);
   // Tersi de doğru: küçük istek tavanı süreyi bağlar.
@@ -1165,7 +1173,7 @@ function sahteHavuz({ tabloYok = false } = {}) {
 }
 
 /** Olumsuz önbellekli tam koşu: adayları işaretle, koştur, işaretleri yaz. */
-async function isaretliKosu(havuz, adaylar, cevap) {
+async function isaretliKosu(havuz, adaylar, cevap, azamiIstek) {
   yokIsaretiUygula(adaylar, await yokIsaretleriniOku(havuz));
   const istenen = [];
   const yazilan = [];
@@ -1177,6 +1185,7 @@ async function isaretliKosu(havuz, adaylar, cevap) {
     yokSil: (a) => yokIsaretiSil(havuz, a),
     bekle: async () => {},
     istekSn: 1e9,
+    ...(azamiIstek === undefined ? {} : { azamiIstek }),
   });
   return { ozet, istenen, yazilan };
 }
@@ -1229,7 +1238,13 @@ test('DÖNGÜ KIRILDI: aynı anahtar İKİNCİ koşuda İSTENMİYOR', async () =
 });
 
 test('DÖNGÜ KIRILDI: 468 hayalet bütçeyi YEMİYOR, gerçek işe kalıyor', async () => {
-  // Canlıdaki sayı: 480 bütçenin 468'i hayalet, yalnız 12 gerçek iş yapılıyordu.
+  // Bu test 20-21 Ağu 2026'daki CANLI OLAYI yeniden üretiyor: bütçe 480,
+  // hayalet 468, gerçek iş yalnız 12. Bütçe o günden beri 420'ye indirildi
+  // (koşu süresi marjı, bkz. AYAR.AZAMI_DAKIKA) — ama bu testin belgelediği
+  // OLAY değişmedi. Bu yüzden senaryo AYAR'a değil, olayın KENDİ sayılarına
+  // bağlı: `OLAY_BUTCE`. Ayarı takip etseydi test her bütçe değişiminde
+  // anlamsızlaşır, kırıldığı gün de "sayıyı güncelle" diye geçiştirilirdi.
+  const OLAY_BUTCE = 480;
   const havuz = sahteHavuz();
   const yapay = () => [
     ...Array.from({ length: 468 }, (_, i) => hayalet(`/tv/31910/season/1/episode/${i}?language=tr-TR`)),
@@ -1238,12 +1253,12 @@ test('DÖNGÜ KIRILDI: 468 hayalet bütçeyi YEMİYOR, gerçek işe kalıyor', a
   const cevap = async (a) => (a.startsWith('/tv/31910')
     ? { durum: 'yok' } : { durum: 'tamam', veri: { id: 1 } });
 
-  const bir = await isaretliKosu(havuz, yapay(), cevap);
+  const bir = await isaretliKosu(havuz, yapay(), cevap, OLAY_BUTCE);
   assert.equal(bir.ozet.yok, 468, 'senaryo canlıdaki dağılımı kurmuyor');
   assert.equal(bir.ozet.tazelendi, 12, 'canlıdaki "tazelendi=12" üretilmedi');
 
   // İKİNCİ koşu: 468 hayalet işaretli → bütçenin TAMAMI gerçek işe gider.
-  const iki = await isaretliKosu(havuz, yapay(), cevap);
+  const iki = await isaretliKosu(havuz, yapay(), cevap, OLAY_BUTCE);
   assert.equal(iki.ozet.yokIsareti, 468);
   assert.equal(iki.ozet.yok, 0, 'hayaletler yine TMDB\'ye gitti');
   assert.equal(iki.ozet.tazelendi, 480,

@@ -212,8 +212,18 @@ export const AYAR = {
   /// kullanıcı 429 yememeli. Etkin ortalama: 8/10 × 1 ≈ 0,8 istek/sn.
   ISTEK_SN: 1,
 
-  AZAMI_ISTEK: 480,
-  AZAMI_DAKIKA: 8,
+  /// 8 → 7 (21 Ağu 2026, CANLI ÖLÇÜM). İş fazı 8 dk tavanına TAM oturuyordu
+  /// (`süre=479.4sn`, altı ardışık koşuda birebir aynı), üstüne aday toplama
+  /// ~50 sn biniyor (`adaylariTopla` 41,7 sn + yeni `ISITMA_BOLUM_SORGU` 8 sn).
+  /// Toplam ≈ 530 sn, cron penceresi 600 sn → marj yalnız 70 sn (%12).
+  ///
+  /// TEHLİKE: `adaylariTopla` kuyruk büyüdükçe UZUYOR. 600 sn aşıldığı an
+  /// bir sonraki koşu advisory lock'a takılıp BOŞA döner — yani kapasite
+  /// yarıya iner ve bunu yalnız günlüğe bakan fark eder.
+  /// 7 dk ile marj 130 sn'ye çıkıyor. Maliyet: 480 → 420 istek/koşu
+  /// (60.480/gün), ölçülen kararlı talebin (~2.430/gün) hâlâ 24 katı.
+  AZAMI_ISTEK: 420,
+  AZAMI_DAKIKA: 7,
 
   /// KATMANLAR (saniye). Tazeleme aralığı: satırın yaşı bunu geçtiyse tazelenir.
   KATMAN: {
