@@ -492,6 +492,77 @@ ulaşıyor. 18 Ağu'da 504 alan iki URL de tam olarak bu ilan edilmemiş kümede
 tesadüf değil, yapısal. Isıtıcı kişi adaylarını bu yüzden içerik önbelleğindeki
 ilk 10 oyuncudan çıkarıyor (ek TMDB isteği harcamadan).
 
+> **21 Ağu 2026 — KAPANDI (§6.11).** İki aile de haritada:
+> `sitemap-kisi-1.xml` (9.738 URL) + `sitemap-sirket-1.xml` (243 URL).
+
+---
+
+## 6.11 ✅ Tarama bütçesi turu (21 Ağu 2026) — kod hazır, dağıtım bekliyor
+
+Ölçüm tabanı: nginx `access.log` 17–21 Ağu (5 gün, 1.375 Googlebot isteği,
+1.079 benzersiz URL ≈ 216/gün) + canlı DB + canlıya Googlebot UA ile curl.
+Çalışma kanıtları `backend/test/seo_harita_kapsami.test.js`te kilitli.
+
+### Bulgu 1 — "haritadaki ölü URL" hipotezi YANLIŞLANDI
+
+`SITEMAP_BOLUM_SORGU` numaraları sezon belgesinin GERÇEK
+`episodes[].episode_number` listesinden alıyor; `generate_series` yalnız
+ısıtıcı kuyruğunda (URL üretmez). Kanıt: 350 harita URL'i (200 rastgele +
+150 mutlak-numaralı, ör. One Piece bölüm 1.100+) canlıda **350/350 = 200**.
+Googlebot'un 404'ü `/dizi/32836/sezon/15/bolum/500` haritada YOK (S15 = 1..38)
+ve SSR gövdesi de üretmiyor — dış kaynaklı, 5 günde 1 istek. Bölüm sayfaları
+haritada KALDI: sayılar silmeyi haklı çıkarmıyor (bkz. Bulgu 4 hız tablosu;
+`changefreq=monthly`, `priority=0.6` katmanlaması zaten vardı).
+
+### Bulgu 2 — ASIL arıza: ilan edilen alt harita 404 dönüyordu
+
+20 Ağu: `/sitemap.xml` 6 parça ilan etti; 3 dk sonra `sitemap-bolum-2/4.xml`
+**404** (aynı pencerede `bolum-3` 200). Kök neden: 4 işçili küme + işçi başına
+AYRI bellek içi kova + 6 saat TTL — bölüm haritası 1 sayfadan 4 sayfaya
+büyüyünce bayat kovalı işçi yeni sayfayı 404'ledi ⇒ 40.000 URL keşfedilemez.
+Çözüm: `sitemapAltHarita` ortak ucu — sayfa kovada yoksa 404'ten ÖNCE bir kez
+zorunlu tazeleme (60 sn tabanlı, dışarıdan sorgu tetiklenemez).
+
+### Bulgu 3 — dizin `lastmod`u uydurmaydı
+
+6 alt haritanın 6'sı da her gün "bugün" damgası alıyordu (`kova.ts`). Artık
+`sitemapParcaLastmod`: satırların en yeni gerçek tarihi ∨ URL kümesinin
+gerçekten değiştiği an; ikisi de yoksa etiket basılmaz.
+
+### Bulgu 4 — hız engel değil; sorgu bütçesi ENGELDİ
+
+Canlı ölçüm (Googlebot UA, p50/p95 sn): bölüm 0,32/0,61 · içerik 0,29/0,52 ·
+kişi 0,26/0,41 · şirket 0,47/0,65 · botun HİÇ girmediği bölüm/içerik de aynı
+bantta (ısıtıcı işliyor). Ama nginx sitemap bloğu `proxy_read_timeout 30s`
+(server.js'teki eski "300 sn" yorumu yanlıştı) ve kişi sorgusunun ilk yazımı
+38 sn idi ⇒ jsonpath'e çevrildi (21,8 sn) + `sitemapSorgu` sarmalayıcısı
+`SET LOCAL statement_timeout=25s` — 504 yerine temiz düşüş + bayat kova.
+
+### Yeni bileşim (79.463 bölüm satırı sorgunun bugünkü sonucu; canlı 78.480)
+
+| harita | önce | sonra |
+|---|---|---|
+| genel | 4 | 4 |
+| icerik | 2.453 | 2.453 |
+| bolum | 78.480 | ≈79.463 |
+| **kisi** | **0** | **9.738** |
+| **sirket** | **0** | **243** |
+| TOPLAM | 80.937 | ≈91.901 |
+
+Eşikler sayfayla AYNI sabitlerden (`SEO_KISI_BIYO_MIN/YAPIM_MIN`,
+`SEO_SIRKET_YAPIM_MIN`); firma evreni kasıtlı DAR (kendi kataloğumuzda ≥6
+yapım ⇒ discover'da da ≥6 ⇒ sayfa kesin `index`). Doğrulama: haritaya girecek
+60 kişi + 60 firma → 60/60 `index`; girmeyen 25 kişi → 25/25 `noindex`.
+
+### Dağıtımda dikkat
+
+- `sitemap-kisi/sirket` rotaları nginx'in mevcut
+  `location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$` bloğuna zaten uyuyor — nginx
+  değişikliği GEREKMİYOR.
+- İlk kişi haritası isteği ~22 sn sürer (tek seferlik, sonra 6 saat önbellek).
+- Yan bulgu (bu turun kapsamı dışı): `/ads.txt` 200 + text/html (Flutter
+  kabuğu) dönüyor; Googlebot 5 günde 10 kez istedi. Gerçek dosya ya da 404.
+
 ---
 
 ## 7. ⬜ Çok dillilik — ayrı proje
@@ -552,6 +623,11 @@ değer, sırası sonra.
    tarama bütçesini bölerdi.
 4. `hreflang` + `x-default` + site haritasında `alternate` bağlantılar.
    Üçü BİRLİKTE gelir; biri eksikse Google varyantları ayrı sayfa sayar.
+   **Zemin hazır (21 Ağu 2026):** haritada `xhtml:link` alternatiflerinin
+   gireceği yer `sitemapAltHarita` ucunda "HREFLANG YERİ" yorumuyla işaretli
+   (satır üretimi `sitemapSatiri`nin içine, `xmlns:xhtml` bildirimi
+   `sitemapUrlseti`nin kök etiketine girecek). İşaret ve "erken uygulama
+   yasağı" `seo_harita_kapsami.test.js` ile kilitli.
 5. JSON-LD'ye `inLanguage`.
 
 ---

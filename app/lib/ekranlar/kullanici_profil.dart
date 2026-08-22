@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../aile_rozeti.dart';
 import '../api.dart';
 import '../bayrak.dart';
 import '../ceviri.dart';
@@ -18,6 +17,7 @@ import 'profil.dart'
         sureBicimle,
         RozetCipi,
         SeviyeSatiri,
+        ProfilKimlikBasligi,
         ProfilOlcumSatiri,
         ProfilSayaclari,
         ProfilSekmeleri,
@@ -179,38 +179,30 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Kullanıcı adı + (testçiyse) altın onay tiki.
+                            // Görünen ad (varsa, ÜSTTE) + kullanıcı adı +
+                            // (testçiyse) altın onay tiki.
                             // KULLANICI İSTEĞİ (7 Ağu): tik kullanıcı adının
                             // HEMEN YANINDA olacak; eski "Founding Member"
                             // yazısı + dizi.jpg logosu kaldırıldı.
-                            // Flexible + ellipsis: uzun kullanıcı adı tiki
-                            // ekran dışına itmesin, adın sonu üç noktaya
-                            // dönsün (tik daima görünür kalır).
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    '@${p['kullanici_adi']}',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
-                                      color: DiziRenkler.metin,
-                                    ),
-                                  ),
-                                ),
-                                // Bu ekran KENDİ kullanıcı adınla da
-                                // açılabiliyor; "kendi profilim mi" kararı
-                                // ekranın türünden değil sunucunun `ben_mi`
-                                // yargısından gelir (uzun basma menüsü de
-                                // aynı alanı kullanıyor).
-                                if (p['testci'] == true)
-                                  AileRozeti(
-                                    benMi: p['ben_mi'] == true,
-                                    olcu: 19,
-                                  ),
-                              ],
+                            //
+                            // 21 Ağu 2026: blok ORTAK bileşene taşındı
+                            // ([ProfilKimlikBasligi], profil.dart) — kendi
+                            // profilim birebir aynı kodu çiziyor. Ölçü de
+                            // oradan geliyor: burası sabit 18 px yazıyordu,
+                            // kendi profilim 17/21; kullanıcı ikisinin AYNI
+                            // görünmesini istedi (21 Ağu). KOPYALAMA YASAK —
+                            // bu iki ekran bugün kopyalama yüzünden ayrışmıştı.
+                            //
+                            // `benMi`: bu ekran KENDİ kullanıcı adınla da
+                            // açılabiliyor; "kendi profilim mi" kararı ekranın
+                            // türünden değil sunucunun `ben_mi` yargısından
+                            // gelir (uzun basma menüsü de aynı alanı kullanır).
+                            ProfilKimlikBasligi(
+                              ad: p['ad'],
+                              kullaniciAdi: '${p['kullanici_adi']}',
+                              testci: p['testci'] == true,
+                              benMi: benMi,
+                              genis: masaustuMu(context),
                             ),
                             // SEVİYE (md. 29): kullanıcı adının HEMEN ALTINDA,
                             // yalnız sayı ("Seviye 7").

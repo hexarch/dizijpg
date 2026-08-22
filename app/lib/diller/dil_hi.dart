@@ -1146,8 +1146,6 @@ const Map<String, String> cevirilerHi = {
   'Haftanın günleri': 'सप्ताह के दिन',
   'En çok izlediklerin': 'सबसे ज़्यादा देखे गए',
   'Bu dönemde izleme yok': 'इस अवधि में कोई देखना नहीं',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'अब तक: {} एपिसोड · {} फ़िल्में · ~{}',
   'Paz': 'रवि',
   'Pzt': 'सोम',
   'Sal': 'मंगल',
@@ -1279,4 +1277,13 @@ const Map<String, String> cevirilerHi = {
   'En çok izlediğin filmler': 'सबसे ज़्यादा देखी फ़िल्में',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'समय अनुमानित हैं: एपिसोड ~{} मिनट, फ़िल्म ~{} मिनट माने गए हैं',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'यह यूज़रनेम सिस्टम द्वारा सुरक्षित है',
+  'Ekran süresi': 'स्क्रीन समय',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'समय TMDB से एपिसोड और फ़िल्मों की असली अवधियाँ हैं',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'लगभग {}% समय असली हैं; बाक़ी में एपिसोड ~{} मिनट और फ़िल्म ~{} मिनट माने जाते हैं',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'अब तक: {} एपिसोड · {} फ़िल्में · {}',
 };

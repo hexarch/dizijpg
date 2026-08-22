@@ -5898,16 +5898,171 @@ const ISITMA_BOLUM_SORGU = `
      WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0 AND k.tv IS NULL
   ) t ORDER BY tmdb_id, sezon, bolum`;
 
+// ---------------------------------------------------------------------------
+// Sitemap: /kisi ve /sirket — İLAN EDİLMEMİŞ İKİ AİLE (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// ÖLÇÜM (nginx access.log, 17-21 Ağu, Googlebot): bot 5 günde **234 farklı
+// `/kisi`** ve **126 farklı `/sirket`** URL'ine girdi — hepsini yalnız içerik
+// sayfalarındaki bağlantılardan buldu, çünkü `SITEMAP_SORGU` yalnız `tv`/`movie`
+// alıyor. Keşif en pahalı yoldan yapılıyordu (§6.10 sonundaki not).
+//
+// KAPSAM KURALI DEĞİŞMİYOR: harita, sayfanın `indexle` kararından DAR olmalı.
+// Haritada olup `noindex` alan URL, GSC'de "Gönderilen URL 'noindex' ile
+// işaretlenmiş" hatası üretir (bölüm haritasındaki B2 tuzağının aynısı).
+//
+// ---------------------------------------------------------------------------
+// KİŞİ — `kisiIndekslenir` ile BİREBİR aynı ölçü
+// ---------------------------------------------------------------------------
+// Uç şunu diyor:  ozgunVar || (biyografi.length >= 200 && yapimSayisi >= 6)
+// Sorgu `ozgunVar` dalını KULLANMIYOR (o dal daha geniştir; dar kalmak
+// istiyoruz) ve kalan iki koşulu SSR'ın okuduğu ANAHTARIN TA KENDİSİNDEN
+// hesaplıyor: `/person/{id}?append_to_response=combined_credits,translations`
+// (tr-TR). Yani harita "içerik var" dediğinde sayfa da diyor.
+//
+// ÖLÇÜM (canlı, 21 Ağu 2026, 17.817 kişi belgesi):
+//   · biyografi >= 200 (tr, yoksa en çevirisi)         9.964
+//   · yapım >= 6                                      15.685
+//   · İKİSİ BİRDEN = haritaya giren                    9.738
+//
+// NEDEN `jsonb_path_query_first` VE TEK JSONPATH — SORGU BÜTÇESİ:
+// İlk yazım `jsonb_array_elements(translations)` + tür başına ayrı jsonpath
+// kullanıyordu ve **38 sn** sürüyordu. nginx'in sitemap bloğu 30 sn'de
+// koparıyor (bkz. SITEMAP_SORGU_ZAMAN_ASIMI_MS), yani her 6 saatte bir ilk
+// isteyen Googlebot 504 alacaktı. İki adımda 21,8 sn'ye indi:
+//   1. `translations` dizisini AÇMAK yerine jsonpath ile TEK değer çekmek
+//      (24,7 → 9,6 sn). TMDB'de bir kişide ~40 çeviri var; hepsini satıra
+//      açmanın maliyeti yalnız `en`i okumaktan kat kat fazla.
+//   2. cast/crew × tv/movie için 4 ayrı jsonpath yerine TEK jsonpath + TÜR
+//      ÖTESİ `count(DISTINCT)` (31,9 → 21,8 sn).
+//
+// (2)'nin DOĞRULUĞU — neden hâlâ DAR: uç `${media_type}:${id}` çiftine göre
+// tekilleştiriyor, bu sorgu ise yalnız `id`ye göre. Aynı sayısal kimlik hem
+// bir dizide hem bir filmde geçiyorsa bu sorgu 1, uç 2 sayar; yani sorgunun
+// sonucu ucun sayısının ALT SINIRIDIR. Alt sınır >= 6 ise ucun sayısı da >= 6.
+// Ters yönde hata İMKÂNSIZ. (Canlı doğrulama: birebir referans sorguyla aynı
+// 9.738 satır çıktı — bugünkü veride hiç ayrışma yok.)
+//
+// `poster_path != null` ve `@.id > 0` süzgeçleri ucun `hamYapimlar` süzgecinin
+// aynısı (afişsiz kayıt uygulamada da listelenmiyor, `gecerliTmdb`).
+// `name`/`title` kontrolü BİLEREK YOK: onu eklemek tür başına ayrı jsonpath
+// gerektirirdi (yukarıdaki 31,9 sn) ve sayıyı yalnız BÜYÜTEBİLİR — yani
+// bırakmak DAR yönde hata yapar, güvenli taraf.
+//
+// `lastmod` YOK (`son` NULL): kişi sayfasının içeriği TMDB biyografisi +
+// filmografi; bizde "son değişiklik" damgası yok. Uydurma tarih basmak
+// haritanın tamamının güvenilirliğini düşürür (bkz. `sitemapSatiri`).
+const SITEMAP_KISI_SORGU = `
+  WITH aday AS (
+    SELECT (regexp_match(anahtar, '^/person/([0-9]+)'))[1]::int AS tmdb_id, veri
+      FROM tmdb_onbellek
+     WHERE anahtar ~ '^/person/[0-9]+\\?append_to_response=combined_credits,translations&language=tr-TR$'
+       AND greatest(
+             length(btrim(coalesce(veri->>'biography', ''))),
+             length(btrim(coalesce(
+               jsonb_path_query_first(veri,
+                 '$.translations.translations[*] ? (@.iso_639_1 == "en").data.biography') #>> '{}', '')))
+           ) >= ${SEO_KISI_BIYO_MIN}
+  )
+  SELECT tmdb_id, NULL::date AS son FROM (
+    SELECT tmdb_id, (
+      SELECT count(DISTINCT v) FROM jsonb_array_elements_text(
+        jsonb_path_query_array(veri, ('$.combined_credits.*[*] ? ((@.media_type == "tv"'
+          || ' || @.media_type == "movie") && @.poster_path != null && @.id > 0).id')::jsonpath)) v) AS yapim
+      FROM aday
+  ) t WHERE yapim >= ${SEO_KISI_YAPIM_MIN} ORDER BY tmdb_id`;
+
+// ---------------------------------------------------------------------------
+// FİRMA — `sirketIndekslenir` (yapimSayisi >= SEO_SIRKET_YAPIM_MIN)
+// ---------------------------------------------------------------------------
+// Ucun saydığı `yapimSayisi` TMDB `/discover/{tv,movie}?with_companies=`
+// yanıtından gelir, yani TMDB'nin TÜM kataloğundan. Onu haritada yeniden
+// üretmek firma başına iki TMDB isteği demek olurdu (3.977 firma × 2).
+//
+// Bunun yerine KENDİ kataloğumuz sayılıyor: haritadaki 2.661 yapımın
+// `production_companies` alanı. Bu KASITLI OLARAK DAR bir ölçü ve yönü
+// KANITLI: bir firma bizim katalogda 6 farklı yapımda geçiyorsa o 6 yapım
+// TMDB'de de o firmaya bağlıdır, dolayısıyla `discover` en az 6 sonuç döndürür
+// ve sayfa eşiği geçer. Ters yön (TMDB'de 6+, bizde <6) garanti değil — o
+// firmalar haritaya girmez, ama sayfaları var ve iç bağlantıdan bulunur.
+//
+// ÖLÇÜM (canlı, 21 Ağu 2026):
+//   · firma evreni (kataloğumuzda geçen)   3.977
+//   · >= 3 yapımda geçen                     670
+//   · >= 6 yapımda geçen = haritaya giren    243
+//   · yalnız 1 yapımda geçen               2.752   (ince sayfa, girmiyor)
+//
+// Süre: 3,9 sn (yalnız `production_companies` okunuyor; `credits.cast`
+// açılsaydı aynı belgeler üzerinde 20,6 sn olurdu — ölçüldü).
+const SITEMAP_SIRKET_SORGU = `
+  WITH harita AS (
+    SELECT DISTINCT tur, tmdb_id FROM (${SITEMAP_SORGU}) h
+  ), yapim AS (
+    SELECT (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[1] AS tur,
+           (regexp_match(anahtar, '^/(tv|movie)/([0-9]+)'))[2]::int AS tmdb_id,
+           veri
+      FROM tmdb_onbellek
+     WHERE anahtar ~ '^/(tv|movie)/[0-9]+\\?append_to_response=credits'
+       AND anahtar LIKE '%language=tr-TR%'
+       AND jsonb_typeof(veri->'production_companies') = 'array'
+  )
+  SELECT (c->>'id')::int AS tmdb_id, NULL::date AS son
+    FROM (SELECT y.* FROM yapim y JOIN harita h ON h.tur = y.tur AND h.tmdb_id = y.tmdb_id) y,
+         jsonb_array_elements(y.veri->'production_companies') c
+   WHERE (c->>'id') ~ '^[0-9]+$' AND coalesce(c->>'name', '') <> ''
+   GROUP BY 1
+  HAVING count(DISTINCT y.tur || ':' || y.tmdb_id) >= ${SEO_SIRKET_YAPIM_MIN}
+   ORDER BY 1`;
+
 const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınırı 50.000)
-// TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 20 Ağu 2026, bölüm sorgusu):
-//   · bugün (719 tr-TR sezon belgesi, 7.820 URL) — 4,6 sn soğuk / 2,5 sn sıcak,
-//   · önbellek dolduğunda (4.089 sezon, ~78.000 URL) doğrusal ölçekle ~15-26 sn.
+// TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 21 Ağu 2026):
+//   · SITEMAP_SORGU (içerik, 2.453 satır)      — < 1 sn
+//   · SITEMAP_BOLUM_SORGU (79.463 satır)       — 6,7 sn
+//   · SITEMAP_KISI_SORGU (9.738 satır)         — 21,8 sn
+//   · SITEMAP_SIRKET_SORGU (243 satır)         — 3,9 sn
 // Maliyet jsonb belgelerinin TOAST açımından geliyor, satır sayısından değil.
-// Tek-uçuş kalıbı sayesinde 6 saatte YALNIZ BİR istek bunu bekler; nginx
-// `proxy_read_timeout` 300 sn olduğu için pay bol. Zamanlayıcıyla önden
-// ısıtmak KASITLI OLARAK yapılmadı: küme kipinde her işçi ayrı ayrı koşar ve
-// aynı sorgu N kat çalışırdı (ısıtıcının `setInterval` yasağıyla aynı tuzak).
+// Tek-uçuş kalıbı sayesinde 6 saatte YALNIZ BİR istek bunu bekler.
+// Zamanlayıcıyla önden ısıtmak KASITLI OLARAK yapılmadı: küme kipinde her işçi
+// ayrı ayrı koşar ve aynı sorgu N kat çalışırdı (ısıtıcının `setInterval`
+// yasağıyla aynı tuzak).
 const SITEMAP_TTL_MS = 6 * 3600 * 1000;
+
+// ---------------------------------------------------------------------------
+// SORGU ZAMAN AŞIMI — nginx'ten ÖNCE kopmak zorundayız (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// ÖLÇÜLEN GERÇEK (canlı /etc/nginx/sites-enabled/dizijpg.com):
+//     location = /sitemap.xml                  { proxy_read_timeout 30s; }
+//     location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$ { proxy_read_timeout 30s; }
+// Bu satırın üstündeki eski yorum "nginx 300 sn, pay bol" diyordu — YANLIŞTI.
+// 300 sn yalnız `/api/` ve `/api/admin` bloklarında geçerli.
+//
+// Sorgu 30 sn'yi aşarsa nginx bağlantıyı koparır ve Googlebot **504** alır.
+// §6.9'un tüm dersi bu: bota 5xx göstermek tarama tavanını düşürüyor, yani
+// tam da onarmaya çalıştığımız şeyi kırıyor. Üstelik hata SESSİZ olurdu —
+// `sitemapKovaOku`nun hata dalı bayat kovayı servis etmeye devam eder.
+//
+// Bu yüzden sorgunun kendisine son tarih konur: Postgres 25 sn'de `57014`
+// (query_canceled) ile TEMİZ düşer, `catch` çalışır, bayat kova servis edilir
+// ya da alt harita dizinde İLAN EDİLMEZ. 5 sn'lik pay TLS/proxy/serileştirme
+// için. `SET LOCAL` işlem içinde yaşar; işlem bitince havuzdaki bağlantı
+// varsayılana döner (havuz paylaşımlı olduğu için `SET` DEĞİL `SET LOCAL`).
+const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 25000;
+
+/** Site haritası sorgusu — son tarihli. Bkz. SITEMAP_SORGU_ZAMAN_ASIMI_MS. */
+async function sitemapSorgu(sql) {
+  const istemci = await havuz.connect();
+  try {
+    await istemci.query('BEGIN');
+    await istemci.query(`SET LOCAL statement_timeout = ${SITEMAP_SORGU_ZAMAN_ASIMI_MS}`);
+    const r = await istemci.query(sql);
+    await istemci.query('COMMIT');
+    return r;
+  } catch (e) {
+    await istemci.query('ROLLBACK').catch(() => {});
+    throw e;
+  } finally {
+    istemci.release();
+  }
+}
 
 /**
  * W3C tarih damgası (YYYY-MM-DD) — GEÇERSİZ GİRDİDE ATMAZ, boş döner.
@@ -5929,29 +6084,54 @@ const gunTarihi = (d) => {
   return Number.isNaN(t.getTime()) ? '' : t.toISOString().slice(0, 10);
 };
 
-// Önbellek kapları. İçerik ve bölüm haritaları AYRI kaplarda tutulur: biri
-// üretilemezse diğeri servis edilmeye devam eder.
+// Önbellek kapları. Dört harita da AYRI kaplarda tutulur: biri üretilemezse
+// diğerleri servis edilmeye devam eder.
 const sitemapKovasi = () => ({
   onbellek: { ts: 0, sayfalar: [], adet: 0 },
-  uretim: null,   // eşzamanlı istekler tek sorguyu paylaşsın
+  uretim: null,      // eşzamanlı istekler tek sorguyu paylaşsın
+  degisim: 0,        // URL KÜMESİ en son ne zaman değişti (dizin `lastmod`u)
+  sonZorlama: 0,     // en son ne zaman TTL'e rağmen tazeleme zorlandı
 });
 const sitemapIcerikKovasi = sitemapKovasi();
 const sitemapBolumKovasi = sitemapKovasi();
+const sitemapKisiKovasi = sitemapKovasi();
+const sitemapSirketKovasi = sitemapKovasi();
+
+// Zorlanmış tazeleme için taban aralık. `sitemapAltHarita` ucu, İSTENEN SAYFA
+// KOVADA YOKSA bir kez tazeleme zorluyor (bkz. o ucun başlığı). Bu, dışarıdan
+// tetiklenebilen bir sorgu demek: taban olmasa `/sitemap-bolum-999.xml`i
+// saniyede bir isteyen biri 22 sn'lik kişi sorgusunu sürekli koşturabilirdi.
+const SITEMAP_ZORLAMA_TABAN_MS = 60 * 1000;
 
 /**
- * "Tek uçuş" (single-flight) önbellek okuma. İki harita da bu kalıbı paylaşır:
+ * "Tek uçuş" (single-flight) önbellek okuma. Dört harita da bu kalıbı paylaşır:
  *  · TTL içinde ikinci sorgu atılmaz,
  *  · eşzamanlı istekler TEK sorguyu paylaşır,
  *  · üretim başarısızsa BAYAT önbellek servis edilir — boş bir sitemap
  *    yayınlamak Google'a "bu URL'ler artık yok" demektir, bayat liste kat kat
  *    iyidir.
+ *
+ * `kova.degisim`: üretim sonucu ÖNCEKİNDEN FARKLI SAYIDA satır döndürdüyse
+ * "dosya gerçekten değişti" demektir ve o an damgalanır. Dizin katmanının
+ * `lastmod`u bu damga ile satırların en yeni `lastmod`unun büyüğüdür — bkz.
+ * `/sitemap.xml`deki gerekçe.
+ *
+ * @param {boolean} zorla TTL'i yok sayıp yeniden üret (taban aralığa tabi).
  */
-async function sitemapKovaOku(kova, uretici) {
-  const taze = Date.now() - kova.onbellek.ts < SITEMAP_TTL_MS;
-  if (taze && kova.onbellek.sayfalar.length) return kova.onbellek;
+async function sitemapKovaOku(kova, uretici, zorla = false) {
+  const simdi = Date.now();
+  const taze = simdi - kova.onbellek.ts < SITEMAP_TTL_MS;
+  const zorlanabilir = zorla && simdi - kova.sonZorlama >= SITEMAP_ZORLAMA_TABAN_MS;
+  if (!zorlanabilir && taze && kova.onbellek.sayfalar.length) return kova.onbellek;
+  if (zorlanabilir) kova.sonZorlama = simdi;
   if (!kova.uretim) {
     kova.uretim = uretici().then(
-      (v) => { kova.onbellek = v; kova.uretim = null; return v; },
+      (v) => {
+        if (v.adet !== kova.onbellek.adet) kova.degisim = v.ts;
+        kova.onbellek = v;
+        kova.uretim = null;
+        return v;
+      },
       (e) => {
         kova.uretim = null;
         if (kova.onbellek.sayfalar.length) return kova.onbellek;
@@ -5975,22 +6155,40 @@ function sitemapSayfala(rows, locUret) {
 }
 
 async function sitemapUret() {
-  const { rows } = await havuz.query(SITEMAP_SORGU);
+  const { rows } = await sitemapSorgu(SITEMAP_SORGU);
   return sitemapSayfala(rows, (r) => `${SITE_KOK}/icerik/${r.tur}/${r.tmdb_id}`);
 }
 
-async function sitemapVerisi() {
-  return sitemapKovaOku(sitemapIcerikKovasi, sitemapUret);
+async function sitemapVerisi(zorla) {
+  return sitemapKovaOku(sitemapIcerikKovasi, sitemapUret, zorla);
 }
 
 async function sitemapBolumUret() {
-  const { rows } = await havuz.query(SITEMAP_BOLUM_SORGU);
+  const { rows } = await sitemapSorgu(SITEMAP_BOLUM_SORGU);
   return sitemapSayfala(rows,
     (r) => `${SITE_KOK}/dizi/${r.tmdb_id}/sezon/${r.sezon}/bolum/${r.bolum}`);
 }
 
-async function sitemapBolumVerisi() {
-  return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret);
+async function sitemapBolumVerisi(zorla) {
+  return sitemapKovaOku(sitemapBolumKovasi, sitemapBolumUret, zorla);
+}
+
+async function sitemapKisiUret() {
+  const { rows } = await sitemapSorgu(SITEMAP_KISI_SORGU);
+  return sitemapSayfala(rows, (r) => `${SITE_KOK}/kisi/${r.tmdb_id}`);
+}
+
+async function sitemapKisiVerisi(zorla) {
+  return sitemapKovaOku(sitemapKisiKovasi, sitemapKisiUret, zorla);
+}
+
+async function sitemapSirketUret() {
+  const { rows } = await sitemapSorgu(SITEMAP_SIRKET_SORGU);
+  return sitemapSayfala(rows, (r) => `${SITE_KOK}/sirket/${r.tmdb_id}`);
+}
+
+async function sitemapSirketVerisi(zorla) {
+  return sitemapKovaOku(sitemapSirketKovasi, sitemapSirketUret, zorla);
 }
 
 function sitemapGonder(res, xml) {
@@ -6014,28 +6212,81 @@ ${satirlar.join('\n')}
 </urlset>
 `;
 
+/**
+ * Bir alt haritanın `lastmod`u: İÇİNDEKİ satırların EN YENİ `lastmod`u ile
+ * "URL kümesi en son ne zaman değişti" damgasının büyüğü.
+ *
+ * 21 Ağu 2026 — ÖNCEKİ HÂLİ UYDURMAYDI. Dizin, altı alt haritanın ALTISINA da
+ * `gunTarihi(kova.ts)` basıyordu, yani ÜRETİM ZAMANINI. TTL 6 saat olduğu için
+ * bu değer HER GÜN bugüne kayıyordu; ölçüldü (canlı, 21 Ağu): altı satırın
+ * altısı da `2026-08-21`. Oysa `sitemap-bolum-1`in içindeki 19.991 satırın
+ * `lastmod`u gerçek yayın tarihi (1989-07-30 gibi).
+ *
+ * İki zararı vardı:
+ *   1. Google `lastmod`u TUTARSIZ bulursa TAMAMEN yok sayar — dizin katmanının
+ *      yalanı, satır katmanının DOĞRU tarihlerini de çöpe atma riski.
+ *   2. "Hepsi bugün değişti" demek 4 × ~3 MB bölüm haritasını her gün yeniden
+ *      indirtme davetidir.
+ *
+ * İKİ KAYNAĞIN BÜYÜĞÜ ALINIYOR, çünkü tek başına ikisi de eksik:
+ *   · yalnız satırların maksimumu: ısıtıcı 1989 tarihli ESKİ bir bölümü yeni
+ *     keşfedip haritaya eklediğinde maksimum kıpırdamaz, dosya değişmiş olsa
+ *     bile Google "değişmemiş" sanır ve yeni URL keşfedilmez.
+ *   · yalnız değişim damgası: satır tarihleri güncellendiğinde (yeni yorum)
+ *     satır sayısı sabit kalabilir.
+ * Büyüğü almak ikisini de kapsar ve HİÇBİR durumda uydurma olmaz: ya bir
+ * satırın gerçek tarihidir ya da kümenin gerçekten değiştiği andır.
+ */
+const sitemapParcaLastmod = (sayfa, degisim) => {
+  let en = '';
+  for (const u of sayfa) if (u.lastmod > en) en = u.lastmod;   // ISO: dizgi = tarih
+  // `degisim` 0 ise damga HİÇ konmamıştır. `gunTarihi(0)` geçerli bir tarih
+  // (1970-01-01) döndürdüğü için bu kontrol ŞART: testte yakalandı, yoksa
+  // damgasız kova "1970-01-01" ilan ederdi.
+  const d = degisim ? gunTarihi(degisim) : '';
+  return d > en ? d : en;
+};
+
 app.get('/sitemap.xml', sarici(async (_req, res) => {
-  // İki harita PARALEL ve BAĞIMSIZ okunur: bölüm sorgusu düşse bile içerik
-  // haritası dizinden kaybolmasın (`allSettled`).
-  const [icerik, bolum] = await Promise.allSettled([
-    sitemapVerisi(), sitemapBolumVerisi(),
+  // Dört harita PARALEL ve BAĞIMSIZ okunur: biri düşse bile diğerleri dizinden
+  // kaybolmasın (`allSettled`).
+  const [icerik, bolum, kisi, sirket] = await Promise.allSettled([
+    sitemapVerisi(), sitemapBolumVerisi(), sitemapKisiVerisi(), sitemapSirketVerisi(),
   ]);
-  const icerikD = icerik.status === 'fulfilled' ? icerik.value : { ts: 0, sayfalar: [] };
-  const bolumD = bolum.status === 'fulfilled' ? bolum.value : { ts: 0, sayfalar: [] };
-  if (bolum.status === 'rejected') console.error('sitemap-bolum', bolum.reason?.message);
+  const bos = { ts: 0, sayfalar: [] };
+  const al = (s, ad) => {
+    if (s.status === 'fulfilled') return s.value;
+    console.error(`sitemap-${ad}`, s.reason?.message);
+    return bos;
+  };
   if (icerik.status === 'rejected') throw icerik.reason;   // içerik haritası zorunlu
-  const tarih = gunTarihi(Math.max(icerikD.ts, bolumD.ts) || Date.now());
+  // İçi BOŞ alt harita dizine YAZILMAZ: 0 URL'lik bir alt harita bildirmek
+  // GSC'de uyarı üretir ve (kişi haritası gibi ilk üretimi 22 sn süren bir
+  // harita için) "hazır değil" durumu bir hata gibi görünür.
+  const aileler = [
+    ['icerik', al(icerik, 'icerik'), sitemapIcerikKovasi],
+    ['bolum', al(bolum, 'bolum'), sitemapBolumKovasi],
+    ['kisi', al(kisi, 'kisi'), sitemapKisiKovasi],
+    ['sirket', al(sirket, 'sirket'), sitemapSirketKovasi],
+  ];
   const parcalar = [
-    'genel',
-    ...icerikD.sayfalar.map((_, i) => `icerik-${i + 1}`),
-    // Boş bölüm haritası dizine YAZILMAZ: içi olmayan bir alt harita bildirmek
-    // GSC'de "0 URL" uyarısı üretir.
-    ...bolumD.sayfalar.filter((s) => s.length).map((_, i) => `bolum-${i + 1}`),
+    // `genel` elle yazılmış SABİT sayfalar: içeriği TMDB'den geliyor, bizde
+    // "son değişiklik" damgası YOK — `lastmod`suz bildirilir.
+    { ad: 'genel', lastmod: '' },
+    ...aileler.flatMap(([ad, d, kova]) => d.sayfalar
+      .map((sayfa, i) => ({ sayfa, i }))
+      .filter(({ sayfa }) => sayfa.length)
+      .map(({ sayfa, i }) => ({
+        ad: `${ad}-${i + 1}`,
+        lastmod: sitemapParcaLastmod(sayfa, kova.degisim),
+      }))),
   ];
   sitemapGonder(res, `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${parcalar.map((p) =>
-    `  <sitemap><loc>${SITE_KOK}/sitemap-${p}.xml</loc><lastmod>${tarih}</lastmod></sitemap>`
+    `  <sitemap><loc>${SITE_KOK}/sitemap-${p.ad}.xml</loc>`
+    + (p.lastmod ? `<lastmod>${p.lastmod}</lastmod>` : '')
+    + '</sitemap>'
   ).join('\n')}
 </sitemapindex>
 `);
@@ -6091,28 +6342,76 @@ app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
   sitemapGonder(res, sitemapUrlseti(satirlar));
 }));
 
+/**
+ * Alt harita ucu — DÖRT AİLE İÇİN ORTAK.
+ *
+ * ---------------------------------------------------------------------------
+ * 21 Ağu 2026 — İLAN EDİLEN ALT HARİTA 404 DÖNÜYORDU (ölçülmüş, kök nedeni bulundu)
+ * ---------------------------------------------------------------------------
+ * KANIT (nginx access.log, Googlebot):
+ *     20/Aug 12:43:28  GET /sitemap.xml         200  727   <- 6 alt harita ilan etti
+ *     20/Aug 12:46:12  GET /sitemap-bolum-2.xml 404    3
+ *     20/Aug 12:48:05  GET /sitemap-bolum-4.xml 404    3
+ *   (aynı pencerede /sitemap-bolum-3.xml 200 + 86.872 bayt döndü)
+ * Googlebot'un 5 günlük 15 adet 404'ünün ÜÇÜ site haritası dosyasının kendisi.
+ * Tek bir 404'ten kat kat pahalı: o an 40.000 URL Google için KEŞFEDİLEMEZ.
+ *
+ * KÖK NEDEN — KÜME + İŞÇİ BAŞINA AYRI KOVA:
+ * `docker exec dizijpg-api ps` → `kume.js` + DÖRT işçi. `sitemapBolumKovasi`
+ * her işçide AYRI ve TTL 6 saat. `tmdb_onbellek` dolarken satır sayısı büyüdü
+ * (20 Ağu: 7.820 → 78.480, yani 1 sayfa → 4 sayfa). Dizini YENİ kovaya sahip
+ * işçi servis ederken, alt haritayı 1 sayfalık BAYAT kovaya sahip işçi servis
+ * edince `d.sayfalar[3]` yok → 404. Kovalar süreç içi olduğu için işçiler
+ * birbirinin durumunu göremiyor.
+ *
+ * ÇÖZÜM: istenen sayfa kovada YOKSA hemen 404 basma — TTL'i yok sayıp BİR KEZ
+ * tazele, sonra karar ver. Bayat işçi böylece güncel duruma yetişir ve
+ * ayrışma penceresi kapanır. Sayfa tazelemeden SONRA da yoksa 404 DOĞRUDUR
+ * (gerçekten olmayan bir alt harita; Google onu listesinden düşürsün).
+ * Tazeleme `SITEMAP_ZORLAMA_TABAN_MS` ile tabanlı: `/sitemap-bolum-999.xml`
+ * ile 22 sn'lik kişi sorgusunu tetiklemeye çalışan biri boşa kürek çeker.
+ *
+ * NEDEN BOŞ 200 DEĞİL: içi boş bir `<urlset>` yayınlamak Google'a "bu 20.000
+ * URL artık YOK" demektir — 404'ten çok daha zararlı olurdu.
+ */
+function sitemapAltHarita(veriOku, changefreq, priority) {
+  return sarici(async (req, res) => {
+    const n = parseInt(req.params[0], 10);
+    let d = await veriOku();
+    if (!d.sayfalar[n - 1]?.length) d = await veriOku(true);
+    const sayfa = d.sayfalar[n - 1];
+    if (!sayfa || !sayfa.length) return res.status(404).type('text/plain').send('yok');
+    // HREFLANG YERİ (§7, sıra geldiğinde): 45 dilin `<xhtml:link rel="alternate"
+    // hreflang="...">` satırları `sitemapSatiri`nin İÇİNE, `<loc>`tan sonra
+    // girer; `sitemapUrlseti` de kök etikete `xmlns:xhtml` bildirimini eklemek
+    // zorundadır (bildirim olmadan Google tüm dosyayı ayrıştıramaz). Dil başına
+    // AYRI URL şeması kararı verilmeden buraya dokunulmaz — alternate'ler
+    // olmayan URL'lere işaret ederse her biri harcanmış tarama bütçesidir.
+    sitemapGonder(res, sitemapUrlseti(
+      sayfa.map((u) => sitemapSatiri(u, changefreq, priority))));
+  });
+}
+
 // Yol ".xml" ile bittiği için düz string rota yerine regex (path-to-regexp
 // nokta+parametre bileşimini beklendiği gibi ayırmıyor).
-app.get(/^\/sitemap-icerik-(\d+)\.xml$/, sarici(async (req, res) => {
-  const d = await sitemapVerisi();
-  const n = parseInt(req.params[0], 10);
-  const sayfa = d.sayfalar[n - 1];
-  if (!sayfa) return res.status(404).type('text/plain').send('yok');
-  sitemapGonder(res, sitemapUrlseti(sayfa.map((u) => sitemapSatiri(u, 'weekly', '0.8'))));
-}));
+app.get(/^\/sitemap-icerik-(\d+)\.xml$/, sitemapAltHarita(sitemapVerisi, 'weekly', '0.8'));
 
 // Bölüm haritası. `priority` 0.6 (içerik sayfalarının 0.8'inin ALTINDA):
 // bölüm sayfası dizinin kendi sayfasından daha dar bir sorguya cevap verir ve
 // tarama sırasında dizi sayfası önce gelmelidir. `changefreq` monthly:
 // yayınlanmış bir bölümün metadatası nadiren değişir, yeni yorum geldiğinde
 // IndexNow zaten anında haber veriyor.
-app.get(/^\/sitemap-bolum-(\d+)\.xml$/, sarici(async (req, res) => {
-  const d = await sitemapBolumVerisi();
-  const n = parseInt(req.params[0], 10);
-  const sayfa = d.sayfalar[n - 1];
-  if (!sayfa || !sayfa.length) return res.status(404).type('text/plain').send('yok');
-  sitemapGonder(res, sitemapUrlseti(sayfa.map((u) => sitemapSatiri(u, 'monthly', '0.6'))));
-}));
+app.get(/^\/sitemap-bolum-(\d+)\.xml$/, sitemapAltHarita(sitemapBolumVerisi, 'monthly', '0.6'));
+
+// Kişi haritası. `priority` 0.6: kişi sayfası bir DÜĞÜM (biyografi + 12 yapım
+// bağlantısı), yani tarama derinliğini besliyor ama kendi başına içerik
+// sayfası kadar dar bir sorguya cevap vermiyor. `changefreq` monthly:
+// filmografi yeni yapım eklendikçe değişir, biyografi neredeyse hiç.
+app.get(/^\/sitemap-kisi-(\d+)\.xml$/, sitemapAltHarita(sitemapKisiVerisi, 'monthly', '0.6'));
+
+// Firma haritası. `changefreq` weekly: sayfadaki liste TMDB `discover`
+// yanıtından geliyor ve firmanın yeni yapımıyla değişiyor (uçtaki TTL 6 saat).
+app.get(/^\/sitemap-sirket-(\d+)\.xml$/, sitemapAltHarita(sitemapSirketVerisi, 'weekly', '0.6'));
 
 // İstemci hata/çökme bildirimi (self-hosted; Firebase gerektirmez).
 // Anonim de kabul edilir; varsa kullanıcıyı iliştirir. Alanlar sınırlanır.
@@ -6179,6 +6478,122 @@ const KULLANICI_ADI_KURALI = 'Kullanıcı adı 3-20 karakter; küçük harf, rak
 // olduğunu yer yer bu kalıptan okuyor (bkz. `/profil/:kullaniciAdi` yorumu).
 // Gerçek bir hesabın bu kalığa bürünmesi o çıkarımı sessizce yalanlardı.
 const MISAFIR_ADI_KALIBI = /^misafir_/;
+
+// ===========================================================================
+// YASAKLI KULLANICI ADLARI — KİMLİK TAKLİDİ (21 Ağu 2026)
+// ===========================================================================
+// SORUN: `admin`, `destek`, `dizijpg` serbestti. Kullanıcı adı bu sistemin
+// KİMLİK ANAHTARI (profil yolu, `@bahsetme`, mesaj/engelleme uçları), yani
+// `@destek` adlı bir hesap kullanıcıya "resmî destek" gibi görünür ve DM ile
+// şifre/kart ister. 21 Ağu'da eklenen `POST /profilim/kullanici-adi` yüzeyi
+// büyüttü: artık YAŞLI, güvenilir görünen bir hesap sonradan `@admin` olabilir.
+//
+// ÜÇ GİRİŞ NOKTASI VAR ve üçü de buradan geçmek ZORUNDA:
+//   `/auth/kayit` · `/auth/bagla` (misafir bağlama) · `POST /profilim/kullanici-adi`
+// Tek yerde tanımlı olmasının gerekçesi `KULLANICI_ADI_KALIBI` ile aynı: üç
+// kopya listenin biri güncellenmediği gün yasak sessizce delinir.
+//
+// ---------------------------------------------------------------------------
+// NORMALLEŞTİRME KARARI — İSKELET, AMA SADECE İKİ DÖNÜŞÜM
+// ---------------------------------------------------------------------------
+// `@admin` / `@adm1n` / `@a.d.m.i.n` aynı şeyi taklit eder; düz metin
+// karşılaştırması üçünden ikisini kaçırır. Ama fazla agresif bir normalleştirme
+// `admiral`, `yardimci`, `sistemli` gibi MEŞRU adları da yakalar. Denge:
+//
+//  1) AYIRICILARI AT (`.` `_` `-`). Kalıp zaten yalnız bu üçüne izin veriyor
+//     ve hiçbiri anlam taşımıyor: `a.d.m.i.n` = `admin`.
+//  2) RAKAM→HARF (leet) yalnız TARTIŞMASIZ altı eşleme: 0→o 1→i 3→e 4→a
+//     5→s 7→t. `adm1n`, `4dmin`, `r00t`, `d1zijpg` yakalanır.
+//
+// SONRA KARŞILAŞTIRMA **TAM EŞİTLİK** — alt dize DEĞİL. Alt dize olsaydı
+// `admiral` (admin değil ama `adm`... değil, `admin` içermiyor) geçerdi, fakat
+// `yardimsever`/`sistemli`/`destekci` gibi meşru adlar `yardim`/`sistem`/
+// `destek` içerdikleri için haksız yere düşerdi. Tam eşitlik, meşru uzantıya
+// dokunmadan taklidi durdurur.
+//
+// EK OLARAK "SONDAKİ RAKAMLAR ATILMIŞ" varyantı da sınanır: `admin1`,
+// `destek2026` klasik taklit kalıbıdır ve tam eşitlik onları tek başına
+// kaçırırdı. Sıra önemli: rakamlar önce SONDAN atılır, sonra leet uygulanır —
+// aksi hâlde `admin1` önce `admini` olur ve eşleşme kaçardı.
+//
+// NE YAPMIYORUZ (bilerek): Unicode homoglif (Kiril `а`) taraması YOK, çünkü
+// `KULLANICI_ADI_KALIBI` girdiyi zaten `[a-z0-9._-]`e hapsediyor — büyük harf
+// ve Latin dışı karakter kalıptan geçemez. Levenshtein/benzerlik eşiği de YOK:
+// eşiksiz bir "benzer" tanımı yanlış pozitif üretir ve kullanıcıya
+// açıklanamaz ("adım neden reddedildi?").
+const AD_RAKAM_HARF = Object.freeze({
+  0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't',
+});
+
+// TAM EŞİTLİKLE yasaklananlar. Hepsi tek bir soruya "evet" diyor: bu adı taşıyan
+// hesabı sıradan bir kullanıcı SİTENİN KENDİSİ ya da yetkilisi sanır mı?
+//  · yetki/kurum: admin, administrator, yonetici, yonetim, yetkili, moderator
+//  · destek kanalı taklidi (kimlik avının klasik yolu): destek, yardim,
+//    support, help, helpdesk, staff
+//  · sistem/otomasyon kimliği: sistem, system, root, noreply
+//  · güvenlik uyarısı taklidi ("hesabın tehlikede"): guvenlik, security
+//  · "resmî hesap" iddiası: resmi, official
+// Türkçe ve İngilizce karşılıklar BİRLİKTE: uygulama 45 dilde ve tek dilli bir
+// liste diğer dildeki okura karşı hiçbir şey yapmaz.
+const YASAKLI_AD_ISKELETLERI = new Set([
+  'admin', 'administrator', 'yonetici', 'yonetim', 'yetkili', 'moderator',
+  'destek', 'yardim', 'support', 'help', 'helpdesk', 'staff',
+  'sistem', 'system', 'root', 'noreply',
+  'guvenlik', 'security',
+  'resmi', 'official',
+]);
+
+// MARKA: tam eşitlik DEĞİL, ALT DİZE. `dizijpg` bir sözcük değil, uydurma bir
+// markadır — hiçbir Türkçe/İngilizce sözcüğün içinde geçmez, yani yanlış pozitif
+// riski sıfıra yakın. Buna karşılık `dizijpg_destek`, `resmidizijpg`, `dizijpgtr`
+// hepsi resmî kanal gibi okunur. Bedeli kabul edildi: iyi niyetli bir hayran
+// hesabı da (`dizijpgfan`) reddedilir — tam da karışması en kolay ad.
+// `dizi.jpg` (id=42) ve `dizi.jpg.ai` (id=51) MEVCUT hesaplardır; bu kural
+// yalnız YENİ atamalarda çalıştığı için onlara dokunmaz (aşağıya bkz.).
+const MARKA_ISKELETI = 'dizijpg';
+
+/**
+ * Adın karşılaştırma iskeletleri: [düz, sondaki rakamlar atılmış].
+ * Girdi büyük harf içeriyorsa da çalışsın diye küçültülüyor (uçların biri
+ * girdiyi küçültmeden kalıba sokuyor; iskelet o sıradan bağımsız olmalı).
+ */
+function adIskeletleri(ad) {
+  const duz = String(ad ?? '').toLowerCase().replace(/[._-]/g, '');
+  const leet = (s) => s.replace(/[013457]/g, (c) => AD_RAKAM_HARF[c]);
+  return [leet(duz), leet(duz.replace(/[0-9]+$/, ''))];
+}
+
+/**
+ * Kullanıcı adı yasaklı mı? Yasaksa `null`, yasaklıysa `{ kod, hata }`.
+ *
+ * YALNIZ YENİ ATAMALARDA ÇAĞRILIR (kayıt · bağlama · ad değiştirme). Mevcut
+ * hesaplar HİÇBİR YERDE yeniden doğrulanmaz: giriş (`/auth/giris`) adı kalıba
+ * sokmaz, profil/arama uçları da sokmaz. Yani listeye bugün giren bir adı
+ * ZATEN taşıyan hesap kilitlenmez, girişini ve tüm akışlarını sürdürür.
+ * (Tek yan etkisi: böyle bir hesap adını değiştirirse ESKİ adına geri
+ * DÖNEMEZ — geri dönüş de bir yeni atamadır.)
+ *
+ * TEK HATA KODU (`AD_AYRILMIS`): "neden yasak" bilgisi saldırgana liste
+ * taratmaktan başka bir işe yaramaz, kullanıcıya da tek cümle yeter.
+ * `misafir_` kuralı da buraya taşındı — eskiden YALNIZ ad değiştirmede
+ * bakılıyordu, yani yeni kayıt `misafir_deadbeef` adını alıp sunucunun
+ * ürettiği kalığa bürünebiliyordu (bkz. MISAFIR_ADI_KALIBI yorumu).
+ */
+function yasakliKullaniciAdi(ad) {
+  const duz = String(ad ?? '').trim().toLowerCase();
+  const ayrilmis = {
+    kod: 'AD_AYRILMIS',
+    hata: 'Bu kullanıcı adı sistem tarafından ayrılmış',
+  };
+  if (MISAFIR_ADI_KALIBI.test(duz)) return ayrilmis;
+  for (const iskelet of adIskeletleri(duz)) {
+    if (!iskelet) continue;
+    if (YASAKLI_AD_ISKELETLERI.has(iskelet)) return ayrilmis;
+    if (iskelet.includes(MARKA_ISKELETI)) return ayrilmis;
+  }
+  return null;
+}
+
 /** Kullanıcı adı değişimi arasındaki zorunlu bekleme (kullanıcı kararı). */
 const KULLANICI_ADI_KILIT_GUN = 90;
 /** Bırakılan adın başkasına verilmeden bekletildiği süre (kullanıcı kararı). */
@@ -6310,13 +6725,11 @@ async function kullaniciAdiDegistir(havuzVeya, kullaniciId, istenen, simdi = Dat
   if (!KULLANICI_ADI_KALIBI.test(yeni)) {
     return { durum: 400, kod: 'AD_GECERSIZ', hata: KULLANICI_ADI_KURALI };
   }
-  if (MISAFIR_ADI_KALIBI.test(yeni)) {
-    return {
-      durum: 400,
-      kod: 'AD_AYRILMIS',
-      hata: 'Bu kullanıcı adı sistem tarafından ayrılmış',
-    };
-  }
+  // GİRİŞ NOKTASI 3/3 — ad değiştirme. `misafir_` kuralı da artık burada
+  // (ortak süzgecin içinde): eskiden bu blok yalnız `misafir_`e bakıyordu ve
+  // `admin`/`dizijpg` serbestti, yani yaşlı bir hesap kendini `@admin` yapabilirdi.
+  const yasak = yasakliKullaniciAdi(yeni);
+  if (yasak) return { durum: 400, ...yasak };
   const istemci = await havuzVeya.connect();
   let acik = true;
   const geriAl = async () => {
@@ -6453,6 +6866,11 @@ app.post('/auth/kayit', authLimiti, sarici(async (req, res) => {
   if (!KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
     return res.status(400).json({ hata: KULLANICI_ADI_KURALI });
   }
+  // GİRİŞ NOKTASI 1/3 — yeni kayıt. Kalıp kontrolünden HEMEN sonra, bcrypt ve
+  // veritabanına DOKUNMADAN: yasaklı ad için 100 ms'lik hash maliyeti ödemenin
+  // ya da INSERT deneyip geri almanın anlamı yok.
+  const yasakKayit = yasakliKullaniciAdi(kullanici_adi);
+  if (yasakKayit) return res.status(400).json(yasakKayit);
   const hash = await bcrypt.hash(sifre, 10);
   // İŞLEM: rezerv kontrolü YAZMADAN SONRA da yapılıyor. Gerekçenin tamamı
   // `kullaniciAdiDegistir` başlığındaki "REZERV YARIŞI" bölümünde; kısaca,
@@ -6516,6 +6934,17 @@ app.post('/auth/bagla', girisZorunlu, sarici(async (req, res) => {
   }
   if (kullanici_adi && !KULLANICI_ADI_KALIBI.test(kullanici_adi)) {
     return res.status(400).json({ hata: KULLANICI_ADI_KURALI });
+  }
+  // GİRİŞ NOKTASI 2/3 — misafir hesabı bağlama. Kullanıcı adının SUNUCU
+  // ÜRETİMİ olmaktan çıkıp kullanıcı seçimine döndüğü tek yer burasıdır;
+  // atlanırsa "önce misafir aç, sonra `@admin` diye bağlan" tek istekte
+  // çalışırdı. `kullanici_adi` gönderilmediyse ad DEĞİŞMİYOR (COALESCE) —
+  // o yüzden kontrol, kalıp kontrolüyle aynı koşula bağlı: mevcut adı
+  // yeniden doğrulamak, listeye sonradan giren bir adı taşıyan eski
+  // kullanıcının hesabını bağlamasını engellerdi.
+  if (kullanici_adi) {
+    const yasakBagla = yasakliKullaniciAdi(kullanici_adi);
+    if (yasakBagla) return res.status(400).json(yasakBagla);
   }
   const mevcut = await havuz.query(
     'SELECT misafir FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
@@ -9348,73 +9777,165 @@ app.get('/kitapligim', girisZorunlu, sarici(async (req, res) => {
 //     Durum tamamen kaldırılırsa satır silinir, tekrar da doğal olarak düşer.
 //
 // ---------------------------------------------------------------------------
-// NEDEN HÂLÂ SABİT — TMDB'NİN GERÇEK SÜRESİ ÖLÇÜLDÜ (21 Ağu 2026)
+// GERÇEK SÜRE — ÖLÇÜLDÜ, TÜRETİLDİ, TABLOYA YAZILDI (21 Ağu 2026)
 // ---------------------------------------------------------------------------
-// Kullanıcı süre kırılımı isteyince "yapım başına GERÇEK süre kullanalım"
-// sorusu yeniden soruldu ve CANLI PROXY ÜZERİNDEN ÖLÇÜLDÜ (trending tv/movie
-// 59'ar yapım + 27 tanınmış dizi):
-//   · film `runtime`            : 59'un 57'sinde dolu (%96,6) ve KESİN.
-//   · dizi `episode_run_time`   : 59'un 13'ünde dolu (%22,0) — TMDB bu alanı
-//     pratikte terk etti. Dolu olduğunda çok isabetli (ortalama mutlak hata
-//     %4,8) ama kapsam yok.
-//   · dizi `last_episode_to_air.runtime` : kapsam yüksek (%91,5) ama SON
-//     bölümün süresi tipik bölümü temsil ETMİYOR — finaller uzun: Stranger
-//     Things 129 dk (gerçek medyan 50), Euphoria 93 (56), Friends 48 (23),
-//     The Office 45 (23). Ortalama mutlak hata %28,6; sabit 42'nin hatası
-//     %36,4. Yani "daha az yanlış" ama en popüler dizilerde 2,5 katına kadar
-//     şişiriyor — gerileme sayılır.
-//   · GERÇEKTEN doğru kaynak sezon belgesindeki `episodes[].runtime`
-//     (kapsam %92,6, bölüm bölüm kesin).
-// SEZON BELGESİ NEDEN KULLANILMIYOR: `tmdb_onbellek.veri` TOAST'lanmış büyük
-// jsonb. Ölçülen belge boyutları: film detayı 191-342 KB, sezon belgesi
-// 5-38 KB. Bu kartı her profil açılışında çizmek için 406 film + ~900 sezon
-// belgesini açmak gerekirdi (onlarca MB, saniyeler). Türetilmiş süreyi kendi
-// tablomuzda saklamak doğru çözüm ama yeni tablo + migrasyon demek; bu turun
-// kapsamı DEĞİL.
-// SONUÇ: sabitler kalıyor ve ekran bunu "yaklaşık" diye SÖYLÜYOR. Kırılımın
-// TAMAMI (toplam, dizi/film ayrımı, yapım başına liste) TEK formülden çıkar —
-// yani alt listelerin toplamı üstteki sayıyı TUTAR. Karışık kaynak (filmde
-// gerçek, dizide sabit) bu tutarlılığı kırardı ve kesin görünen bir tahmin
-// üretirdi.
-const SURE_DK = { tv: 42, movie: 110 }; // bölüm ~42 dk, film ~110 dk
+// Sabitler artık BİRİNCİL kaynak değil, GÖRÜNÜR YEDEKTİR. İstek birebir:
+// "tek sefer çekip bizim db'ye yazıp öyle hesaplasana."
+//
+// ÖLÇÜM (aynı gün, canlı proxy üzerinden; trending tv/movie 59'ar yapım +
+// 27 tanınmış dizi) hangi TMDB alanının kullanılabilir olduğunu söylemişti:
+//   · film `runtime`            : %96,6 dolu ve KESİN            → KULLANILDI
+//   · dizi `episode_run_time`   : %22,0 dolu — TMDB terk etti    → kullanılmadı
+//   · `last_episode_to_air.runtime` : %91,5 dolu ama FİNAL süresi tipik bölümü
+//     temsil etmiyor (Stranger Things 129 dk / gerçek medyan 50; Euphoria
+//     93/56; Friends 48/23; The Office 45/23). Hata %28,6 — sabitin %36,4'üne
+//     göre "daha az yanlış" ama en popüler dizilerde 2,5 katına şişiriyor.
+//     GERİLEME sayılır                                           → kullanılmadı
+//   · sezon belgesi `episodes[].runtime` : kapsam %92,6, BÖLÜM BÖLÜM kesin
+//                                                                → KULLANILDI
+// Sabitin bedeli somut: Friends 236 bölüm × 42 = 9.912 dk yazıyordu; gerçeği
+// 236 × ~23 = 5.428 dk. Kullanıcıya izlemediği ~3 gün fazladan sayılıyordu.
+//
+// NEDEN TABLO (`yapim_sureleri`, migrasyon-2026-08-21e.sql): doğru kaynaklar
+// `tmdb_onbellek.veri` içinde TOAST'lanmış büyük jsonb'ler — film detayı
+// 191-342 KB, sezon belgesi 5-38 KB. Kırılımı her profil açılışında çizmek
+// için 406 film + ~900 sezon belgesi DETOAST etmek gerekirdi (onlarca MB).
+// Ama bölüm süresi TÜRETİLMİŞ VE DEĞİŞMEZ bir veridir: yayınlandıktan sonra
+// sabittir. Bir kez türetilip (`sure_doldur.js`) küçük satırlara yazılıyor;
+// bu uçlar artık YALNIZ o tabloyu okuyor, jsonb'ye hiç dokunmuyor.
+//
+// ---------------------------------------------------------------------------
+// KAPSAM %100 DEĞİL — ESKİ İTİRAZ VE CEVABI
+// ---------------------------------------------------------------------------
+// Bu bölümün eski hâli karışık kaynağı reddediyordu: "alt listelerin toplamı
+// üstteki sayıyı tutmak zorunda; karışık kaynak bu tutarlılığı kırar ve kesin
+// görünen bir tahmin üretir." İtiraz İKİ AYRI SORUNU birleştiriyordu:
+//
+//  (a) ARİTMETİK TUTARLILIK. Bu kaynak SAFLIĞIYLA değil TEK FORMÜLLE sağlanır.
+//      Her satırın dakikası — ister toplam, ister tür kırılımı, ister yapım
+//      başına liste, ister 7/30/90/365 penceresi olsun — ŞUDUR:
+//          (gercek_dk + eksik * SURE_DK[tur]) * (1 + tekrar)
+//      Üç uç da AYNI SQL parçasını (`SURE_KAYNAK_JOIN` + `SURE_OLCU_SECIM`) ve
+//      AYNI JS fonksiyonunu (`yapimDakikasi`) kullanıyor. Kaynak yapım yapım
+//      karışık olsa bile toplamlar bit-bit tutar; `test/gercek_sure.test.js`
+//      değişmezi (toplam = dizi + film = yapım başına listenin toplamı)
+//      doğrudan bu kodu çalıştırarak sınıyor.
+//
+//  (b) DÜRÜSTLÜK. Bu, sayıyı GİZLEYEREK değil ETİKETLEYEREK çözülür. Uçlar
+//      `sure_gercek_dk` ve `sure_tahmini_dk` döndürüyor (toplamları tam olarak
+//      `tahmini_dakika`), yapım satırları kendi `eksik` sayısını taşıyor.
+//      Ekran hepsi gerçekse "~" işaretini KALDIRIYOR, karışıksa yüzdeyi
+//      YAZIYOR ("%93'ü gerçek süre"), hiç yoksa eski sabit notunu gösteriyor.
+//      Yani tahmin ortadan kalkmıyor; nerede tahmin olduğu ÖLÇÜLEBİLİR hâle
+//      geliyor — bu, sabit kullanmaktan daha dürüst bir durum.
+//
+// ---------------------------------------------------------------------------
+// TEKRAR İZLEME: `durumlar.tekrar` o BAŞLIĞIN yeniden izlenme sayısıdır
+// (0 = bir kez izlendi) ve KAYITLI süreyi katlar (çarpan `1 + tekrar`) —
+// gerçek süreyle de, sabitle de. Çarpan iki parçaya AYNI uygulanır, yoksa
+// "gerçek" ve "tahmini" toplamı toplamı tutmazdı.
+const SURE_DK = { tv: 42, movie: 110 }; // GERÇEK süre yoksa yedek
 
-/// TEK YAPIMIN yaklaşık süresi (dk). Hem toplam hem yapım başına kırılım
-/// BURADAN geçer: alt listenin toplamı üstteki sayıyı tutmak zorunda.
-function yapimDakikasi(tur, adet, tekrar) {
+// `izlemeler` satırını gerçek süresine bağlayan JOIN. `yapim_sureleri`
+// anahtarı (tur, tmdb_id, sezon, bolum) `izlemeler`in kullanıcısız aynası
+// olduğu için birebirdir — SATIR ÇOĞALTMAZ, tam birincil anahtar üstünden
+// yürür. Filmde iki tarafta da sezon/bolum = 0, yani tek JOIN iki türe birden
+// hizmet ediyor.
+//
+// SABİT OLARAK PAYLAŞILIYOR ÇÜNKÜ ÜÇ UÇ DA AYNI OLMAK ZORUNDA: kopyalansaydı
+// biri güncellenir diğeri unutulurdu — bu projede aynı hata puanlamada bir kez
+// yaşandı ("10/10 vs 5.0", `app/lib/puan.dart`).
+const SURE_KAYNAK_JOIN = `LEFT JOIN yapim_sureleri s
+         ON s.tur = i.tur AND s.tmdb_id = i.tmdb_id
+        AND s.sezon = i.sezon AND s.bolum = i.bolum`;
+
+// Süre ölçüsünün ÜÇ sayısı. `eksik` gerçekten "kaç satırın süresi bilinmiyor"
+// demektir; `adet - eksik` de bilinen satır sayısıdır. İkisini ayrı taşımak
+// şart: yalnız `gercek_dk` gelseydi "0 dakika" ile "bilinmiyor" ayrışmazdı.
+const SURE_OLCU_SECIM = `count(*)::int AS adet,
+              COALESCE(sum(s.dakika), 0)::int AS gercek_dk,
+              count(*) FILTER (WHERE s.dakika IS NULL)::int AS eksik`;
+
+/// TEK SATIRIN süresi, GERÇEK ve TAHMİNİ parçaları AYRI. Hem toplam hem
+/// kırılım hem pencere buradan geçer.
+///
+/// `gercekDk`/`eksikAdet` HİÇ verilmezse satırın tamamı tahminidir — yani eski
+/// davranışın birebir aynısı. Bu geri uyum bilinçli: süre tablosu henüz
+/// doldurulmamışken (migrasyon uygulandı, betik koşmadı) ekran bugünküyle aynı
+/// sayıyı gösterir, boş kalmaz.
+function sureParcalari(tur, adet, tekrar, gercekDk, eksikAdet) {
   const birim = SURE_DK[tur] || 0;
-  const kez = Math.max(0, Number(adet) || 0);
-  const yeniden = Math.max(0, Number(tekrar) || 0);
-  return birim * kez * (1 + yeniden);
+  const kez = Math.max(0, Math.trunc(Number(adet) || 0));
+  const kat = 1 + Math.max(0, Math.trunc(Number(tekrar) || 0));
+  const olcumYok = (gercekDk === null || gercekDk === undefined)
+    && (eksikAdet === null || eksikAdet === undefined);
+  // `eksik` ADET'i AŞAMAZ: aşsaydı tahmini parça satır sayısından fazla
+  // bölüm sayar ve `gercek + tahmini` toplamı gerçek toplamı geçerdi.
+  const eksik = olcumYok
+    ? kez
+    : Math.min(kez, Math.max(0, Math.trunc(Number(eksikAdet) || 0)));
+  const gercek = olcumYok ? 0 : Math.max(0, Math.trunc(Number(gercekDk) || 0));
+  return { gercek: gercek * kat, tahmini: birim * eksik * kat };
 }
 
-/// [{ tur, adet, tekrar }] satırlarından toplam dakika.
+/// TEK YAPIMIN süresi (dk). Hem toplam hem yapım başına kırılım BURADAN
+/// geçer: alt listenin toplamı üstteki sayıyı tutmak zorunda.
+function yapimDakikasi(tur, adet, tekrar, gercekDk = null, eksikAdet = null) {
+  const p = sureParcalari(tur, adet, tekrar, gercekDk, eksikAdet);
+  return p.gercek + p.tahmini;
+}
+
+/// SQL satırı → parçalar. Sütun adları `SURE_OLCU_SECIM` ile aynı.
+function satirParcalari(s) {
+  return sureParcalari(s?.tur, s?.adet, s?.tekrar,
+    s?.gercek_dk ?? null, s?.eksik ?? null);
+}
+
+/// [{ tur, adet, tekrar, gercek_dk, eksik }] satırlarından toplam dakika.
 function izlemeDakikasi(satirlar) {
-  return (satirlar || []).reduce(
-    (toplam, s) => toplam + yapimDakikasi(s?.tur, s?.adet, s?.tekrar), 0);
+  return (satirlar || []).reduce((toplam, s) => {
+    const p = satirParcalari(s);
+    return toplam + p.gercek + p.tahmini;
+  }, 0);
 }
 
-/// Aynı satırların TÜRE GÖRE kırılımı. `tv + movie === toplam` KURULUŞ GEREĞİ
-/// doğrudur (aynı satırlar iki kez, farklı süzgeçle toplanmaz — tek geçişte
-/// hem türe hem toplama yazılır). Profildeki "Diziler / Filmler" satırları ile
-/// üstteki toplam bu yüzden birbirini tutar.
+/// Aynı satırların TÜRE GÖRE kırılımı + kaynak kırılımı. `tv + movie ===
+/// toplam` ve `gercek + tahmini === toplam` KURULUŞ GEREĞİ doğrudur: satırlar
+/// iki kez farklı süzgeçle toplanmaz, tek geçişte hepsine yazılır.
 function izlemeKirilimi(satirlar) {
-  const k = { tv: 0, movie: 0, toplam: 0 };
+  // `turTahmini` NEDEN AYRI: "Diziler" ve "Filmler" satırları kendi "~"
+  // işaretlerini taşıyor. Genel karışım kullanılsaydı, filmlerin TAMAMI gerçek
+  // olduğu hâlde (film runtime kapsamı %96,6) dizilerdeki eksik yüzünden film
+  // satırına da "~" konurdu — doğru olmayan bir uyarı.
+  const k = {
+    tv: 0, movie: 0, toplam: 0, gercek: 0, tahmini: 0,
+    turTahmini: { tv: 0, movie: 0 },
+  };
   for (const s of satirlar || []) {
-    const dk = yapimDakikasi(s?.tur, s?.adet, s?.tekrar);
-    if (s?.tur === 'tv' || s?.tur === 'movie') k[s.tur] += dk;
+    const p = satirParcalari(s);
+    const dk = p.gercek + p.tahmini;
+    if (s?.tur === 'tv' || s?.tur === 'movie') {
+      k[s.tur] += dk;
+      k.turTahmini[s.tur] += p.tahmini;
+    }
     k.toplam += dk;
+    k.gercek += p.gercek;
+    k.tahmini += p.tahmini;
   }
   return k;
 }
 
 // Tür + tekrar sayısına göre öbeklenmiş izleme satırları: sonuç en fazla
-// birkaç satır (tür × farklı tekrar değeri), tüm kitaplık taşınmaz.
+// birkaç satır (tür × farklı tekrar değeri), tüm kitaplık taşınmaz. Gerçek
+// süre TOPLAMI SQL'de alınır — jsonb açılmaz, yalnız int sütunu toplanır.
 async function izlemeSureSatirlari(kullaniciId) {
   const { rows } = await havuz.query(
-    `SELECT i.tur, COALESCE(d.tekrar, 0) AS tekrar, count(*)::int AS adet
+    `SELECT i.tur, COALESCE(d.tekrar, 0) AS tekrar,
+            ${SURE_OLCU_SECIM}
        FROM izlemeler i
        LEFT JOIN durumlar d ON d.kullanici_id = i.kullanici_id
                            AND d.tur = i.tur AND d.tmdb_id = i.tmdb_id
+       ${SURE_KAYNAK_JOIN}
       WHERE i.kullanici_id = $1
       GROUP BY i.tur, COALESCE(d.tekrar, 0)`,
     [kullaniciId],
@@ -9422,7 +9943,8 @@ async function izlemeSureSatirlari(kullaniciId) {
   return rows;
 }
 
-/// Türe göre kırılım + toplam. EK SORGU YOK: `tahminiDakika` ile aynı satırlar.
+/// Türe + kaynağa göre kırılım + toplam. EK SORGU YOK: `tahminiDakika` ile
+/// aynı satırlar.
 async function tahminiDakikaKirilim(kullaniciId) {
   return izlemeKirilimi(await izlemeSureSatirlari(kullaniciId));
 }
@@ -9444,10 +9966,12 @@ async function tahminiDakika(kullaniciId) {
 // ölçülen şey kullanıcının KENDİ izlemesi, bir kitleye ulaşma değil.
 // (Gönderi tarafının yayıncı metrikleri zaten /istatistiklerim'de.)
 //
-// TAHMİN YOK: `dakika` ölçülmüş değil TÜRETİLMİŞ bir sayıdır (bölüm 42 dk,
-// film 110 dk sabitleri) ve istemci bunu "yaklaşık" diye etiketler. Gerçek
-// süreyi bilmiyoruz; bildiğimizi iddia etmek `İstatistiklerim` ekranının
-// "eksik veriyi saklama" kuralına aykırı olurdu.
+// SÜRE ARTIK ÖLÇÜLÜ (21 Ağu 2026): `dakika` bölüm/film başına GERÇEK TMDB
+// süresinden çıkıyor (`yapim_sureleri`); yalnız süresi bilinmeyen satırlar
+// sabit yedeğine düşüyor. Pencere yanıtı `gercek_dk`/`tahmini_dk` diye
+// AYRIŞTIRIYOR ki istemci "yaklaşık" etiketini hak ettiği ölçüde koysun —
+// hepsi gerçekse hiç koymasın. Bu uç ile profildeki ömür boyu sayı AYNI
+// fonksiyondan (`izlemeKirilimi`) geçiyor: iki ekran farklı sayı gösteremez.
 //
 // PENCERE: 7 | 30 | 90 | 365 gün. `tum` yok — çıpa (ömür boyu) ayrı alanda
 // zaten dönüyor ve pencere seçicide "Tümü" olsaydı yön oku anlamsızlaşırdı
@@ -9466,15 +9990,20 @@ app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req
   const p = [kid, gun];
   const [pencere, oncekiP, seri, gunler, enCok, omur, zincirSatir] = await Promise.all([
     havuz.query(
-      `SELECT tur, count(*)::int AS adet FROM izlemeler
-        WHERE kullanici_id=$1 AND tarih >= now() - make_interval(days => $2)
-        GROUP BY tur`, p),
+      // Sayaç ve süre AYNI sorgudan: gerçek süre için ikinci bir tur atılsaydı
+      // "23 bölüm" ile o 23 bölümün dakikası ayrı anlarda okunur, sınır
+      // gününde ayrışabilirdi.
+      `SELECT i.tur, ${SURE_OLCU_SECIM} FROM izlemeler i
+        ${SURE_KAYNAK_JOIN}
+        WHERE i.kullanici_id=$1 AND i.tarih >= now() - make_interval(days => $2)
+        GROUP BY i.tur`, p),
     havuz.query(
-      `SELECT tur, count(*)::int AS adet FROM izlemeler
-        WHERE kullanici_id=$1
-          AND tarih >= now() - make_interval(days => $2 * 2)
-          AND tarih <  now() - make_interval(days => $2)
-        GROUP BY tur`, p),
+      `SELECT i.tur, ${SURE_OLCU_SECIM} FROM izlemeler i
+        ${SURE_KAYNAK_JOIN}
+        WHERE i.kullanici_id=$1
+          AND i.tarih >= now() - make_interval(days => $2 * 2)
+          AND i.tarih <  now() - make_interval(days => $2)
+        GROUP BY i.tur`, p),
     havuz.query(
       `SELECT (tarih AT TIME ZONE 'utc')::date AS gun, count(*)::int AS adet
          FROM izlemeler
@@ -9520,7 +10049,13 @@ app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req
   const film = say(pencere.rows, 'movie');
   const oncekiBolum = say(oncekiP.rows, 'tv');
   const oncekiFilm = say(oncekiP.rows, 'movie');
-  const dk = (b, f) => b * SURE_DK.tv + f * SURE_DK.movie;
+  // SÜRE SATIRLARDAN, SAYAÇTAN ÇARPILARAK DEĞİL: bölüm sayısını sabitle çarpan
+  // eski satır ikinci bir formül kopyasıydı ve gerçek süreyle birlikte ÜÇÜNCÜ
+  // bir sayı üretirdi. (Kopya yasağını `test/tekrar_izleme.test.js` bekliyor.)
+  // Pencere satırları `tekrar` taşımaz (tekrar sayacı zamansızdır, aşağıdaki
+  // nota bak) → `satirParcalari` onu 0 sayar, çarpan 1 kalır.
+  const pencereK = izlemeKirilimi(pencere.rows);
+  const oncekiK = izlemeKirilimi(oncekiP.rows);
 
   // YÖN: önceki pencere BOŞSA yön YOK (null). 0'dan artışı "%100 arttı" diye
   // sunmak, ilk kez izleyen herkese sahte bir başarı grafiği çizmek olurdu.
@@ -9531,13 +10066,17 @@ app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req
     gun,
     pencereler: IZLEME_PENCERELERI,
     pencere: {
-      bolum, film, dakika: dk(bolum, film),
+      bolum, film, dakika: pencereK.toplam,
+      // KAYNAK KIRILIMI: `gercek_dk + tahmini_dk === dakika`. İstemci
+      // "yaklaşık" etiketini buna bakarak koyuyor.
+      gercek_dk: pencereK.gercek,
+      tahmini_dk: pencereK.tahmini,
       onceki: { bolum: oncekiBolum, film: oncekiFilm,
-        dakika: dk(oncekiBolum, oncekiFilm) },
+        dakika: oncekiK.toplam },
       degisim: {
         bolum: yon(bolum, oncekiBolum),
         film: yon(film, oncekiFilm),
-        dakika: yon(dk(bolum, film), dk(oncekiBolum, oncekiFilm)),
+        dakika: yon(pencereK.toplam, oncekiK.toplam),
       },
     },
     // Günlük seri: EKSİK GÜNLER DOLDURULMAZ burada; istemci 0 çizer.
@@ -9550,11 +10089,18 @@ app.get('/istatistiklerim/izleme', girisZorunlu, takvimLimiti, sarici(async (req
       guncel: Number(zincirSatir.rows[0]?.guncel) || 0,
       en_uzun: Number(zincirSatir.rows[0]?.en_uzun) || 0,
     },
-    omur: {
-      bolum: omur.rows[0]?.bolum || 0,
-      film: omur.rows[0]?.film || 0,
-      dakika: await tahminiDakika(kid),
-    },
+    omur: await (async () => {
+      // Ömür boyu sayı profildekiyle AYNI fonksiyondan çıkar
+      // (`tahminiDakikaKirilim`) — iki ekran farklı rakam gösteremez.
+      const k = await tahminiDakikaKirilim(kid);
+      return {
+        bolum: omur.rows[0]?.bolum || 0,
+        film: omur.rows[0]?.film || 0,
+        dakika: k.toplam,
+        gercek_dk: k.gercek,
+        tahmini_dk: k.tahmini,
+      };
+    })(),
   });
 }));
 
@@ -9598,15 +10144,31 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
     takip_sayisi: sosyal.rows[0].takip,
     toplam_goruntulenme: etkilesim.rows[0].goruntulenme,
     toplam_begeni: etkilesim.rows[0].begeni,
-    // Yaklaşık ekran süresi — tekrar izlemeler dahil (bkz. `tahminiDakika`)
+    // Toplam ekran süresi — tekrar izlemeler dahil (bkz. `tahminiDakika`).
+    // ALAN ADI "tahmini_" OLARAK KALDI: eski istemciler bu anahtarı okuyor,
+    // yeniden adlandırmak kartı boşaltırdı. Artık çoğunlukla GERÇEK süre
+    // taşıyor; ne kadarının gerçek olduğu aşağıda AYRICA dönüyor.
     tahmini_dakika: dakika.toplam,
     // KIRILIM (21 Ağu 2026 isteği: "toplam izleme süresine tıklayınca uzat").
     // EK SORGU YOK — aynı satırlardan türüyor, bu yüzden
     // `tahmini_dakika_dizi + tahmini_dakika_film === tahmini_dakika`.
     tahmini_dakika_dizi: dakika.tv,
     tahmini_dakika_film: dakika.movie,
-    // Ekranın "yaklaşık" notunu YAZABİLMESİ için sabitler de gider: istemci
-    // 42/110'u kendi kopyalasaydı sabit değişince ekran yalan söylerdi.
+    // KAYNAK KIRILIMI (21 Ağu 2026): `sure_gercek_dk + sure_tahmini_dk`
+    // TAM OLARAK `tahmini_dakika`ya eşittir — ekran bu iki sayıya bakarak
+    // "~" işaretini koyup kaldırıyor ve karışık kaynakta yüzdeyi yazıyor.
+    // Yüzdeyi sunucu HESAPLAMIYOR: ham iki sayı gidiyor ki ekran yuvarlama
+    // kuralını (ör. %99,6 → "%99") kendi diliyle kursun.
+    sure_gercek_dk: dakika.gercek,
+    sure_tahmini_dk: dakika.tahmini,
+    // TÜR BAŞINA tahmini pay: "Diziler"/"Filmler" satırları kendi "~"
+    // işaretini taşısın. Gerçek payı `tahmini_dakika_dizi - bu` ile çıkar,
+    // ayrı alan göndermeye gerek yok.
+    sure_tahmini_dk_dizi: dakika.turTahmini.tv,
+    sure_tahmini_dk_film: dakika.turTahmini.movie,
+    // Sabitler yedek olarak hâlâ gidiyor: süresi bilinmeyen yapımlar için
+    // ekran "bölüm ~42 dk sayıldı" diyebilsin. İstemci 42/110'u kendi
+    // kopyalasaydı sabit değişince ekran yalan söylerdi.
     sure_bolum_dk: SURE_DK.tv,
     sure_film_dk: SURE_DK.movie,
   });
@@ -9639,6 +10201,15 @@ app.get('/istatistiklerim', girisZorunlu, sarici(async (req, res) => {
 const sureLimiti = hizLimiti(120, (req) => `sd:${req.kullanici.id}`);
 const SURE_SAYFA = 50;
 
+// SIRALAMA İFADESİ = `yapimDakikasi` ARİTMETİĞİ, SQL ağzından. Liste "en çok
+// izlenen" diye sıralanıyor; sayfa 50'lik olduğu için sıra YANLIŞSA kullanıcı
+// en uzun yapımı hiç göremeyebilir. `$5` birim (yedek) dakikadır.
+//
+// AYRI BİR SABİT ÇÜNKÜ TESTLE BAĞLANIYOR: `test/gercek_sure.test.js` bu diziyi
+// kaynaktan çekip JS'te çalıştırıyor ve `yapimDakikasi` ile eşitliğini
+// doğruluyor. İfade sessizce ayrışırsa (ör. `eksik` unutulursa) test patlar.
+const SURE_DAKIKA_SQL = '(gercek_dk + eksik * $5) * (1 + tekrar)';
+
 app.get('/istatistiklerim/sure', girisZorunlu, sureLimiti, sarici(async (req, res) => {
   const tur = req.query.tur;
   if (tur !== 'tv' && tur !== 'movie') {
@@ -9652,22 +10223,27 @@ app.get('/istatistiklerim/sure', girisZorunlu, sureLimiti, sarici(async (req, re
     // `izlemeler` OLAY tablosu: dizide satır = izlenen bölüm, filmde satır =
     // izleme. `durumlar` (kullanici_id, tur, tmdb_id) tekil olduğu için LEFT
     // JOIN satırları çoğaltmaz — `tahminiDakika` da aynı birleşimi kullanıyor.
+    // GERÇEK SÜRE aynı `SURE_KAYNAK_JOIN` ile geliyor: toplam kartı ile bu
+    // liste TEK bir birleşim ve TEK bir ölçü kümesi paylaşıyor, o yüzden
+    // "hangi diziyi kaç saat" satırlarının toplamı üstteki dizi toplamını
+    // TUTAR (test/gercek_sure.test.js).
     `WITH ozet AS (
        SELECT i.tmdb_id,
-              count(*)::int AS adet,
+              ${SURE_OLCU_SECIM},
               GREATEST(COALESCE(max(d.tekrar), 0), 0)::int AS tekrar
          FROM izlemeler i
          LEFT JOIN durumlar d ON d.kullanici_id = i.kullanici_id
                              AND d.tur = i.tur AND d.tmdb_id = i.tmdb_id
+         ${SURE_KAYNAK_JOIN}
         WHERE i.kullanici_id = $1 AND i.tur = $2
         GROUP BY i.tmdb_id
      )
-     SELECT tmdb_id, adet, tekrar,
+     SELECT tmdb_id, adet, tekrar, gercek_dk, eksik,
             count(*) OVER ()::int AS toplam
        FROM ozet
-      ORDER BY adet * (1 + tekrar) DESC, tmdb_id
+      ORDER BY ${SURE_DAKIKA_SQL} DESC, tmdb_id
       OFFSET $3 LIMIT $4`,
-    [req.kullanici.id, tur, sayfa * SURE_SAYFA, SURE_SAYFA],
+    [req.kullanici.id, tur, sayfa * SURE_SAYFA, SURE_SAYFA, SURE_DK[tur]],
   );
   res.json({
     tur,
@@ -9680,7 +10256,12 @@ app.get('/istatistiklerim/sure', girisZorunlu, sureLimiti, sarici(async (req, re
       tmdb_id: r.tmdb_id,
       adet: r.adet,
       tekrar: r.tekrar,
-      dakika: yapimDakikasi(tur, r.adet, r.tekrar),
+      dakika: yapimDakikasi(tur, r.adet, r.tekrar, r.gercek_dk, r.eksik),
+      // SATIR DÜZEYİNDE DÜRÜSTLÜK: `eksik` = süresi bilinmeyen bölüm/film
+      // sayısı. 0 ise satır "~"sız çizilir. Toplamda %93 gerçek olsa bile
+      // TEK BİR yapımın tamamı tahmini olabilir; satır bunu kendisi söyler,
+      // ekranın üstündeki yüzdeye bakıp genelleme yapmaz.
+      eksik: r.eksik,
     })),
   });
 }));
@@ -10492,7 +11073,7 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
             y.ust_id, y.goruntulenme, k.kullanici_adi, k.avatar, y.kaynak_dil,
             (y.spoiler OR (
                $3::int IS NULL AND y.sezon IS NOT NULL
-               AND y.kullanici_id <> $5 AND k.kullanici_adi <> $7
+               AND y.kullanici_id <> $5 AND NOT k.ai
                AND NOT EXISTS (SELECT 1 FROM izlenen iz
                      WHERE iz.sezon = y.sezon AND iz.bolum = y.bolum)
              )) AS spoiler,
@@ -10512,8 +11093,12 @@ app.get('/yorumlar/:tur/:tmdbId', girisIsteğeBagli, sarici(async (req, res) => 
        --    görünür bir üst gönderinin altındaki engellenen yanıtı bırakırdı.
        AND ${engelSuzgec('y.kullanici_id', '$5')}
      ORDER BY y.tarih DESC`,
+    // AI HESABI ARTIK PARAMETRE DEĞİL: muafiyet `k.ai` sütunundan okunuyor
+    // (eski hâl `k.kullanici_adi <> $7` idi ve ad değiştirilebilir olduğu için
+    // hem kaçırılabilir hem taklit edilebilirdi — migrasyon-2026-08-21d.sql).
+    // $7 kaldırıldı: kullanılmayan parametrenin tipini Postgres çıkaramaz.
     [req.params.tur, req.params.tmdbId, sezon, bolum, benId,
-     istekBaglam.getStore()?.dil || 'tr', AI_KULLANICI],
+     istekBaglam.getStore()?.dil || 'tr'],
   );
   // Görüntülenme: HER listeleme sayılır (aynı kişinin tekrarları dahil).
   // KAYNAK (md. 23) SUNUCUDAN, istemciden DEĞİL: bu uç yalnız dizi/film/kişi
@@ -10557,6 +11142,10 @@ const AKIS_ALANLAR = `
      SELECT y.id, y.kullanici_id, y.tur, y.tmdb_id, y.sezon, y.bolum,
             y.metin, y.medya, y.tarih, y.goruntulenme, y.spoiler AS spoiler_isaret,
             k.kullanici_adi, k.avatar, g.guvenli, y.kaynak_dil,
+            -- AI HESABI (spoiler muafiyeti, bkz. akisSatiri). Adla DEGIL
+            -- sutunla: ad degistirilebilir bir alan (migrasyon-2026-08-21d.sql).
+            -- Yanita CIKMAZ; akisSatiri onu ayiklar. (Sablon dizesi: BACKTICK YOK.)
+            k.ai AS ai_hesap,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
@@ -10697,17 +11286,23 @@ const ALG_OLCUM_SQL = `
     (SELECT count(*) FROM (SELECT DISTINCT y.tur, y.tmdb_id FROM yorumlar y
        JOIN icerik_dizini ic ON ic.tur = y.tur AND ic.tmdb_id = y.tmdb_id
        WHERE y.ust_id IS NULL) s)::int AS yapim_dizinde,
+    -- k.ai: panelin "N gonderi dizi.jpg.ai hesabina ait" cumlesi TEK hesabi
+    -- sayar. k.tohum OLMAZ -- o 17 hesabi kapsar (15 intl persona dahil) ve
+    -- yoneticiye AI'nin urettiginden 5-6 kat buyuk bir sayi gosterirdi.
+    -- Eski hal "k.kullanici_adi = $1" idi: ad degisince sayac sessizce
+    -- sifirlanir, adi kapan baskasi AI sanilirdi (migrasyon-2026-08-21d.sql).
+    -- SABLON DIZESI ICINDE: buraya BACKTICK YAZMA.
     (SELECT count(*) FROM g JOIN kullanicilar k ON k.id = g.kullanici_id
-       WHERE k.kullanici_adi = $1)::int AS ai_gonderi,
-    (SELECT count(*) FROM g WHERE g.tarih < now() - make_interval(hours => $2))::int AS arsiv_gonderi,
+       WHERE k.ai)::int AS ai_gonderi,
+    (SELECT count(*) FROM g WHERE g.tarih < now() - make_interval(hours => $1))::int AS arsiv_gonderi,
     (SELECT count(*) FROM yorumlar y WHERE y.ust_id IS NULL AND EXISTS
        (SELECT 1 FROM unnest(y.medya) m WHERE m LIKE '%.mp4' OR m LIKE '%.webm'))::int AS video,
     (SELECT count(*) FROM yorumlar y WHERE y.ust_id IS NULL
-       AND y.tarih < now() - make_interval(hours => $2) AND EXISTS
+       AND y.tarih < now() - make_interval(hours => $1) AND EXISTS
        (SELECT 1 FROM unnest(y.medya) m WHERE m LIKE '%.mp4' OR m LIKE '%.webm'))::int AS arsiv_video`;
 
 async function olcumHesapla() {
-  const { rows } = await havuz.query(ALG_OLCUM_SQL, [AI_KULLANICI, ARSIV_YAS_SAAT]);
+  const { rows } = await havuz.query(ALG_OLCUM_SQL, [ARSIV_YAS_SAAT]);
   const r = rows[0] || {};
   const say = (x) => (Number.isFinite(Number(x)) ? Number(x) : 0);
   return {
@@ -10776,7 +11371,11 @@ async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat, kesf
     // saat ve `arsiv` bayrağı Node'da tek bölmeyle türetilir.
     'EXTRACT(EPOCH FROM (now() - y.tarih))::int AS yas_sn',
     'g.guvenli',
-    '(k.kullanici_adi = $4) AS ai',
+    // `ai_payi` TAVANI (siralama.js): panelin kolu birebir "AI hesabı oranı".
+    // `k.tohum` OLMAZ — tavan 17 hesap arasında paylaştırılırsa yöneticinin
+    // çektiği kol sessizce başka bir şey yapmaya başlar. Eski hâl
+    // `(k.kullanici_adi = $4)` idi; ad değişince tavan boşa düşerdi.
+    'k.ai AS ai',
     // KOŞULSUZ: alt sorgusu yok (saf kolon karşılaştırması), maliyeti sıfır.
     // Ayrıca $2'yi HER ZAMAN kullanır — Postgres kullanılmayan parametrenin
     // tipini çıkaramaz ("could not determine data type of parameter $2") ve
@@ -10819,7 +11418,7 @@ async function adaylariGetir({ benId, dil, kadro, hacim, gorulenHaric, kat, kesf
   // DİKKAT: her parametre sorguda GERÇEKTEN kullanılmalı; kullanılmayan
   // parametrenin tipini Postgres çıkaramaz ve sorgu patlar
   // ("could not determine data type of parameter $N").
-  const par = [benId, dil, kadro, AI_KULLANICI];
+  const par = [benId, dil, kadro];
   // JIT KAPALI — ÖLÇÜLDÜ VE ŞART: bu sorgunun maliyet tahmini 115.589,
   // `jit_above_cost` ise 100.000. Postgres LLVM derlemesine giriyor ve
   // EXPLAIN'de 381 ms'i SADECE kod üretimine harcıyor (toplam 545 ms).
@@ -10977,9 +11576,19 @@ async function akisIcerikleri(rows) {
   return icerikBilgileri([...new Set(rows.map((r) => `${r.tur}:${r.tmdb_id}`))]);
 }
 
-// dizi.jpg AI hesabı: tanıtım yorumları spoilersız yazılır, izlenmemiş içerik
-// bulanıklığından muaftır (işaretlenirse yine bulanık olur).
-const AI_KULLANICI = 'dizi.jpg.ai';
+// dizi.jpg AI hesabı: tanıtım yorumları spoilersız ÜRETİLİR (ai_tohum.js,
+// araclar/seo_bolum_tohum.js), o yüzden izlenmemiş içerik bulanıklığından
+// muaftır (kendisi "spoiler içerir" işaretlerse yine bulanık olur).
+//
+// KİMLİK ARTIK SÜTUNDA (`kullanicilar.ai`), ADDA DEĞİL. Burada bir
+// `const AI_KULLANICI = 'dizi.jpg.ai'` vardı ve dört yerde metin olarak
+// karşılaştırılıyordu; 21 Ağu'da ad değiştirme açılınca hem kaçırılabilir hem
+// taklit edilebilir hâle geldi. Gerekçe: migrasyon-2026-08-21d.sql.
+//
+// MUAFİYET `tohum`A BAĞLANMADI, BİLEREK: `tohum` 17 hesabı işaretler ve 15
+// intl persona NORMAL izleyici yorumu yazar (araclar/intl_guclendir.js).
+// Onları da muaf tutmak, bölüm yorumlarını o bölümü izlememiş herkese açardı —
+// yani "düzeltme" spoiler sızdırırdı.
 
 // Gönderiyi OKUYANIN dilinde göster: metnin o dilde hazır çevirisi varsa
 // (ve gönderi zaten o dilde değilse) `metin` alanına çeviri konur, orijinal
@@ -10999,13 +11608,15 @@ function ceviriUygula({ ceviri_metin, ...r }) {
       && String(r.metin || '').trim().length > 1) };
 }
 
-const akisSatiri = ({ guvenli, spoiler_isaret, ...ham }) => ({
+// `ai_hesap` BURADA AYIKLANIYOR: sorgudan geliyor ama yanıt sözleşmesine
+// girmiyor — istemcinin ihtiyacı olan tek şey `spoiler` bayrağı.
+const akisSatiri = ({ guvenli, spoiler_isaret, ai_hesap, ...ham }) => ({
   ...ceviriUygula(ham),
   // İstemci bulanık gösterir. İki kaynak: (1) izlemediğin içeriğin yorumu
   // (otomatik), (2) yazan kişinin "spoiler içerir" işareti. Kişi yorumları ve
   // kitaplık eşleşmeleri otomatik spoiler sayılmaz ama işaretliyse yine bulanık.
   spoiler: spoiler_isaret === true ||
-    !(guvenli || ham.tur === 'person' || ham.kullanici_adi === AI_KULLANICI),
+    !(guvenli || ham.tur === 'person' || ai_hesap === true),
 });
 
 // ---------- Sık kullanılan emojiler (yorum kutusunun üstündeki 8'li satır) ----

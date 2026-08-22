@@ -53,9 +53,14 @@ function bildirimCek(kaynak, ad) {
   assert.fail(`${ad} bildiriminin sonu bulunamadı`);
 }
 
+// `sureParcalari`/`satirParcalari` 21 Ağu 2026'da eklendi: süre artık GERÇEK
+// TMDB dakikasından çıkıyor (`yapim_sureleri`) ve sabit yalnız yedek. Alan
+// bunları da derlemezse gerçek kod çalıştırılamaz.
 const { SURE_DK, yapimDakikasi, izlemeDakikasi, izlemeKirilimi } = new Function(
   `${bildirimCek(KAYNAK, 'SURE_DK')}\n`
+  + `${bildirimCek(KAYNAK, 'sureParcalari')}\n`
   + `${bildirimCek(KAYNAK, 'yapimDakikasi')}\n`
+  + `${bildirimCek(KAYNAK, 'satirParcalari')}\n`
   + `${bildirimCek(KAYNAK, 'izlemeDakikasi')}\n`
   + `${bildirimCek(KAYNAK, 'izlemeKirilimi')}\n`
   + 'return { SURE_DK, yapimDakikasi, izlemeDakikasi, izlemeKirilimi };',
@@ -184,17 +189,20 @@ test('KOPYA YOK: `* 42` / `* 110` kaynağın hiçbir yerinde geçmiyor', () => {
 });
 
 test('/istatistiklerim ve /profil/:ad AYNI yardımcıyı çağırır', () => {
-  // 21 Ağu 2026: `/istatistiklerim` artık `tahminiDakikaKirilim`e geçti
-  // (aynı satırlar, tür kırılımı da lazım). `tahminiDakika`: 1 tanım +
-  // 2 çağrı (/profil/:ad ve /istatistiklerim/izleme). Beklenenden AZSA
+  // 21 Ağu 2026: `/istatistiklerim` `tahminiDakikaKirilim`e geçti (aynı
+  // satırlar, tür kırılımı da lazım). AYNI GÜN İKİNCİ ADIM — gerçek süre:
+  // `/istatistiklerim/izleme` de kırılıma geçti, çünkü ömür boyu sayının
+  // yanında artık "ne kadarı gerçek" (`gercek_dk`/`tahmini_dk`) da gidiyor.
+  // Kalan `tahminiDakika` çağrısı `/profil/:ad`. Beklenenden AZSA
   // uçlardan biri kendi hesabını yapıyor demektir — testin asıl koruduğu şey
   // bu: iki ekranın aynı kullanıcı için FARKLI ekran süresi göstermesi.
   // FAZLAYSA yeni bir uç eklenmiştir ve bilinçli olmalı (bu satır o kararın
   // kaydı).
   const sayi = (KAYNAK.match(/tahminiDakika\(/g) || []).length;
-  assert.equal(sayi, 3, `tahminiDakika( ${sayi} kez geçiyor, 3 bekleniyordu`);
+  assert.equal(sayi, 2, `tahminiDakika( ${sayi} kez geçiyor, 2 bekleniyordu`);
   const kirilim = (KAYNAK.match(/tahminiDakikaKirilim\(/g) || []).length;
-  assert.equal(kirilim, 2, 'tahminiDakikaKirilim: 1 tanım + /istatistiklerim');
+  assert.equal(kirilim, 3,
+    'tahminiDakikaKirilim: 1 tanım + /istatistiklerim + /istatistiklerim/izleme');
   // İKİSİ DE AYNI SATIRLARDAN türemeli: ayrı sorgu yazılırsa ikinci kopya
   // sessizce ayrışır (tam olarak bu dosyanın açılış gerekçesi).
   assert.equal(
@@ -363,18 +371,30 @@ test('SAYFALAMA: toplam da dönüyor (istemci "daha fazla"yı gizleyebilsin)', (
 });
 
 test('SIRALAMA: en çok izlenen ÖNCE, eşitlikte kimlik (sayfalar kaymaz)', () => {
+  // 21 Ağu 2026: sıra artık HAM ADEDE değil GERÇEK DAKİKAYA göre. 236 bölümlük
+  // Friends (23 dk) ile 60 bölümlük bir dizi (60 dk) adet sıralamasında yanlış
+  // yerde çıkardı. İfade `SURE_DAKIKA_SQL` sabitinde ve `yapimDakikasi` ile
+  // eşitliği `test/gercek_sure.test.js`te doğrulanıyor.
   assert.match(
-    SURE_UC, /ORDER BY adet \* \(1 \+ tekrar\) DESC, tmdb_id/,
+    SURE_UC, /ORDER BY \$\{SURE_DAKIKA_SQL\} DESC, tmdb_id/,
     'ikincil anahtar yoksa aynı satır iki sayfada birden görünebilir',
   );
+  assert.match(KAYNAK,
+    /const SURE_DAKIKA_SQL = '\(gercek_dk \+ eksik \* \$5\) \* \(1 \+ tekrar\)'/,
+    'sıralama aritmetiği `yapimDakikasi` ile aynı kalmalı');
 });
 
 test('TEKRAR: alt liste toplamla AYNI çarpanı kullanır', () => {
   assert.match(SURE_UC, /LEFT JOIN durumlar d/,
     'INNER JOIN olursa durumlar satırı olmayan filmler listeden düşer');
   assert.match(SURE_UC, /GREATEST\(COALESCE\(max\(d\.tekrar\), 0\), 0\)/);
-  assert.match(SURE_UC, /yapimDakikasi\(tur, r\.adet, r\.tekrar\)/,
+  assert.match(SURE_UC,
+    /yapimDakikasi\(tur, r\.adet, r\.tekrar, r\.gercek_dk, r\.eksik\)/,
     'satır süresi ortak yardımcıdan gelmeli, elle çarpılmamalı');
+  // GERÇEK SÜRE de aynı paylaşılan parçadan gelmeli: kopyalanırsa alt liste
+  // üstteki sayıdan sessizce ayrışır.
+  assert.match(SURE_UC, /\$\{SURE_KAYNAK_JOIN\}/);
+  assert.match(SURE_UC, /\$\{SURE_OLCU_SECIM\}/);
   assert.match(SURE_UC, /tekrar: r\.tekrar/,
     'tekrar ekrana da gitmeli: yoksa "3 kez" yazamaz, sayı sihirli görünür');
 });

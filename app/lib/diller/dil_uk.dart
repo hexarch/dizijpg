@@ -1156,8 +1156,6 @@ const Map<String, String> cevirilerUk = {
   'Haftanın günleri': 'Дні тижня',
   'En çok izlediklerin': 'Найбільше переглянуто',
   'Bu dönemde izleme yok': 'У цей період переглядів немає',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'За весь час: {} серій · {} фільмів · ~{}',
   'Paz': 'нд',
   'Pzt': 'пн',
   'Sal': 'вт',
@@ -1290,4 +1288,13 @@ const Map<String, String> cevirilerUk = {
   'En çok izlediğin filmler': 'Найбільш переглянуті фільми',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Час приблизний: епізод рахується як ~{} хв, фільм — як ~{} хв',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      "Це ім'я користувача зарезервоване системою",
+  'Ekran süresi': 'Екранний час',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Час — це реальна тривалість епізодів і фільмів за даними TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Близько {}% часу — реальні дані; решта рахується: епізод ~{} хв, фільм ~{} хв',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'За весь час: {} серій · {} фільмів · {}',
 };

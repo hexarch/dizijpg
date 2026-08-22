@@ -1151,8 +1151,6 @@ const Map<String, String> cevirilerVi = {
   'Haftanın günleri': 'Các ngày trong tuần',
   'En çok izlediklerin': 'Xem nhiều nhất',
   'Bu dönemde izleme yok': 'Không có lượt xem trong giai đoạn này',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Tất cả thời gian: {} tập · {} phim · ~{}',
   'Paz': 'CN',
   'Pzt': 'T2',
   'Sal': 'T3',
@@ -1286,4 +1284,13 @@ const Map<String, String> cevirilerVi = {
   'En çok izlediğin filmler': 'Phim lẻ bạn xem nhiều nhất',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Thời lượng là ước tính: mỗi tập tính ~{} phút, mỗi phim ~{} phút',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Tên người dùng này được hệ thống dành riêng',
+  'Ekran süresi': 'Thời gian xem',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Thời lượng là thời lượng thực tế của tập phim và phim lẻ từ TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Khoảng {}% thời lượng là số thực; phần còn lại tính mỗi tập ~{} phút, mỗi phim ~{} phút',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Tất cả thời gian: {} tập · {} phim · {}',
 };

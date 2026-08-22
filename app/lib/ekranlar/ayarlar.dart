@@ -2167,6 +2167,10 @@ class _KullaniciAdiSheetState extends State<KullaniciAdiSheet> {
       final metin = switch (e.makineKodu) {
         'AD_ALINMIS' => 'Bu kullanıcı adı zaten alınmış'.c,
         'AD_REZERVE' => 'Bu kullanıcı adı şu an başka bir hesaba ayrılmış'.c,
+        // Yasaklı ad (admin/destek/dizijpg türevleri + misafir_ kalıbı).
+        // SEBEP SÖYLENMİYOR: hangi kuralın çalıştığını anlatmak yalnız listeyi
+        // taramaya yarar. Kullanıcı için tek cümle yeterli ve dürüst.
+        'AD_AYRILMIS' => 'Bu kullanıcı adı sistem tarafından ayrılmış'.c,
         'AD_KILIT' when kalan != null => '{} gün sonra değiştirebilirsin'.cf([
           kalan,
         ]),

@@ -1097,7 +1097,6 @@ const Map<String, String> cevirilerKo = {
   'Haftanın günleri': '요일별',
   'En çok izlediklerin': '가장 많이 본 작품',
   'Bu dönemde izleme yok': '이 기간에는 시청 기록이 없습니다',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}': '전체 기간: {}편 · 영화 {}편 · 약 {}',
   'Paz': '일',
   'Pzt': '월',
   'Sal': '화',
@@ -1224,4 +1223,11 @@ const Map<String, String> cevirilerKo = {
   'En çok izlediğin filmler': '내가 가장 많이 본 영화',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       '시간은 어림값이에요: 에피소드는 약 {}분, 영화는 약 {}분으로 계산해요',
+  'Bu kullanıcı adı sistem tarafından ayrılmış': '이 사용자 이름은 시스템에서 예약한 이름이에요',
+  'Ekran süresi': '시청 시간',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      '시간은 TMDB의 실제 에피소드·영화 길이예요',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      '시간의 약 {}%는 실제 값이에요. 나머지는 에피소드 약 {}분, 영화 약 {}분으로 계산해요',
+  'Tüm zamanlar: {} bölüm · {} film · {}': '전체 기간: {}화 · 영화 {}편 · {}',
 };

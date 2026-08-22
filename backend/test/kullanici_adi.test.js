@@ -116,11 +116,19 @@ const SABITLER = [
   'KULLANICI_ADI_KALIBI', 'KULLANICI_ADI_KURALI', 'MISAFIR_ADI_KALIBI',
   'KULLANICI_ADI_KILIT_GUN', 'KULLANICI_ADI_REZERV_GUN', 'GUN_MS', 'AD_AZAMI',
 ];
+// Yasaklı ad süzgeci (21 Ağu 2026) — `kullaniciAdiDegistir` artık buna bağlı,
+// yani sanal alana da girmesi gerekiyor. Ayrıntılı sınamalar
+// `yasakli_kullanici_adi.test.js`te; burada yalnız bağımlılık.
+const YASAK_SUZGEC = [
+  'AD_RAKAM_HARF', 'YASAKLI_AD_ISKELETLERI', 'MARKA_ISKELETI',
+  'adIskeletleri', 'yasakliKullaniciAdi',
+];
 const adDogrula = alan([...SABITLER, 'adDogrula'], 'adDogrula');
 const kullaniciAdiKalanGun = alan(
   [...SABITLER, 'kullaniciAdiKalanGun'], 'kullaniciAdiKalanGun');
 const kullaniciAdiDegistir = alan(
-  [...SABITLER, 'kullaniciAdiKalanGun', 'adRezerveMi', 'kullaniciAdiDegistir'],
+  [...SABITLER, ...YASAK_SUZGEC,
+    'kullaniciAdiKalanGun', 'adRezerveMi', 'kullaniciAdiDegistir'],
   'kullaniciAdiDegistir');
 const KILIT_GUN = alan(SABITLER, 'KULLANICI_ADI_KILIT_GUN');
 const REZERV_GUN = alan(SABITLER, 'KULLANICI_ADI_REZERV_GUN');

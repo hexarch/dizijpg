@@ -1150,8 +1150,6 @@ const Map<String, String> cevirilerEn = {
   'Haftanın günleri': 'Days of the week',
   'En çok izlediklerin': 'Watched most',
   'Bu dönemde izleme yok': 'No watching in this period',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'All time: {} episodes · {} movies · ~{}',
   'Paz': 'Sun',
   'Pzt': 'Mon',
   'Sal': 'Tue',
@@ -1284,4 +1282,13 @@ const Map<String, String> cevirilerEn = {
   'En çok izlediğin filmler': 'Your most watched movies',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Times are estimates: an episode counts as ~{} min, a movie as ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'That username is reserved by the system',
+  'Ekran süresi': 'Screen time',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Times are the real episode and movie runtimes from TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'About {}% of the times are real; the rest counts an episode as ~{} min, a movie as ~{} min',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'All time: {} episodes · {} movies · {}',
 };

@@ -1158,8 +1158,6 @@ const Map<String, String> cevirilerMy = {
   'Haftanın günleri': 'ရက်သတ္တပတ်နေ့များ',
   'En çok izlediklerin': 'အများဆုံးကြည့်ထားသည်',
   'Bu dönemde izleme yok': 'ဤကာလအတွင်း ကြည့်ရှုမှုမရှိပါ',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'စုစုပေါင်း - {} အပိုင်း · {} ရုပ်ရှင် · ~{}',
   'Paz': 'တနင်္ဂနွေ',
   'Pzt': 'တနင်္လာ',
   'Sal': 'အင်္ဂါ',
@@ -1296,4 +1294,13 @@ const Map<String, String> cevirilerMy = {
   'En çok izlediğin filmler': 'အကြည့်ဆုံး ရုပ်ရှင်များ',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'ကြာချိန်များမှာ ခန့်မှန်းချက်ဖြစ်သည်: အပိုင်းတစ်ခု ~{} မိနစ်၊ ရုပ်ရှင်တစ်ကား ~{} မိနစ် တွက်ချက်သည်',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'ဤအသုံးပြုသူအမည်ကို စနစ်က သီးသန့်ထားသည်',
+  'Ekran süresi': 'ဖန်သားပြင်အချိန်',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'ကြာချိန်များမှာ TMDB မှ အပိုင်းနှင့် ရုပ်ရှင်များ၏ အမှန်တကယ်ကြာချိန်များ ဖြစ်သည်',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'ကြာချိန်များ၏ {}% ခန့်သာ အမှန်ဖြစ်သည်။ ကျန်သည်ကို အပိုင်းတစ်ခု ~{} မိနစ်၊ ရုပ်ရှင်တစ်ကား ~{} မိနစ်ဖြင့် တွက်ချက်သည်',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'စုစုပေါင်း - {} အပိုင်း · {} ရုပ်ရှင် · {}',
 };

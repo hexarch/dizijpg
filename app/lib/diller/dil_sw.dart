@@ -1154,8 +1154,6 @@ const Map<String, String> cevirilerSw = {
   'Haftanın günleri': 'Siku za wiki',
   'En çok izlediklerin': 'Ulizotazama zaidi',
   'Bu dönemde izleme yok': 'Hakuna kutazama katika kipindi hiki',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Muda wote: vipindi {} · filamu {} · ~{}',
   'Paz': 'Jpi',
   'Pzt': 'Jtt',
   'Sal': 'Jnn',
@@ -1290,4 +1288,13 @@ const Map<String, String> cevirilerSw = {
   'En çok izlediğin filmler': 'Filamu ulizotazama zaidi',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Muda ni makadirio: kipindi huhesabiwa dakika ~{}, filamu dakika ~{}',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Jina hili la mtumiaji limehifadhiwa na mfumo',
+  'Ekran süresi': 'Muda wa skrini',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Muda ni urefu halisi wa vipindi na filamu kutoka TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Karibu {}% ya muda ni halisi; uliobaki huhesabiwa kipindi dakika ~{}, filamu dakika ~{}',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Muda wote: vipindi {} · filamu {} · {}',
 };

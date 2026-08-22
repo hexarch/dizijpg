@@ -1157,8 +1157,6 @@ const Map<String, String> cevirilerNl = {
   'Haftanın günleri': 'Dagen van de week',
   'En çok izlediklerin': 'Meest gekeken',
   'Bu dönemde izleme yok': 'Geen kijkgeschiedenis in deze periode',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Aller tijden: {} afleveringen · {} films · ~{}',
   'Paz': 'zo',
   'Pzt': 'ma',
   'Sal': 'di',
@@ -1292,4 +1290,13 @@ const Map<String, String> cevirilerNl = {
   'En çok izlediğin filmler': 'Je meest bekeken films',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Tijden zijn schattingen: een aflevering telt als ~{} min, een film als ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Deze gebruikersnaam is gereserveerd door het systeem',
+  'Ekran süresi': 'Schermtijd',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'De tijden zijn de echte speelduren van afleveringen en films van TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      "Zo'n {}% van de tijden is echt; de rest telt een aflevering als ~{} min, een film als ~{} min",
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Aller tijden: {} afleveringen · {} films · {}',
 };

@@ -1158,8 +1158,6 @@ const Map<String, String> cevirilerFi = {
   'Haftanın günleri': 'Viikonpäivät',
   'En çok izlediklerin': 'Katsotuimmat',
   'Bu dönemde izleme yok': 'Ei katselua tällä jaksolla',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Kaikkien aikojen: {} jaksoa · {} elokuvaa · ~{}',
   'Paz': 'su',
   'Pzt': 'ma',
   'Sal': 'ti',
@@ -1293,4 +1291,13 @@ const Map<String, String> cevirilerFi = {
   'En çok izlediğin filmler': 'Katsotuimmat elokuvasi',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Ajat ovat arvioita: jakso lasketaan ~{} min, elokuva ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Tämä käyttäjänimi on järjestelmän varaama',
+  'Ekran süresi': 'Ruutuaika',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Ajat ovat jaksojen ja elokuvien todellisia kestoja TMDB:stä',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Noin {} % ajoista on todellisia; lopuissa jakso lasketaan ~{} min ja elokuva ~{} min',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Kaikkien aikojen: {} jaksoa · {} elokuvaa · {}',
 };

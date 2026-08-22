@@ -165,6 +165,17 @@ export const AYAR = {
   // sırasına göre (yani baskın sınıfa) gider. Bölüm bu tabanla günde
   // 144 × 96 ≈ 13.800 istek alır — 7.800 bayat satırı bir günde kapanır.
   // Adayı olmayan sınıfın payı DEVROLUR (bütçe boşa gitmez).
+  //
+  // 21 AĞU 2026 — "TABAN TUTMUYOR" ŞÜPHESİ ÖLÇÜLDÜ VE ÇÜRÜTÜLDÜ.
+  // Şikâyet: 25 koşu üst üste `sınıf_payı=bolum:420`, yani bütçenin %100'ü tek
+  // sınıfa. ÖLÇÜM (`adaylariTopla` canlı DB'de salt okunur koşturuldu):
+  // 112.420 adayın 9.467'si bayat ve HEPSİ `bolum`; icerik 6.634 adayın 0'ı,
+  // sezon 8.180'in 0'ı, kisi 17.660'ın 0'ı, diziDuz 1.219'un 0'ı bayat.
+  // Yani taban payı BOZULMADI — UYGULANACAK BİR ŞEY YOKTU: `payiDagit`
+  // `kuyruklar.size < 2` kapısından dönüyor, çünkü bayat adayı olan tek sınıf
+  // var. 260 koşuluk günlükte taban payının çalıştığı koşular da duruyor
+  // (`sınıf_payı=bolum:384,icerik:96` — 96 = floor(480 × 0,2)).
+  // Kusur ORANDA değil RAPORDAydı; düzeltme 7c bölümünde.
   TABAN_PAY_ORANI: 0.2,
 
   // ---------------------------------------------------------------------
@@ -919,7 +930,8 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
     if (secim.siniflar.includes('icerik')) {
       for (const kod of icerikDilleri) {
         dilliIstekler.push({
-          yol: icerikYolu(i.tur, i.tmdbId, kod), kod, sinif: 'icerik', oncelik: i.oncelik,
+          yol: icerikYolu(i.tur, i.tmdbId, kod), kod,
+          sinif: 'icerik', dilSinifi: 'icerik', oncelik: i.oncelik,
         });
       }
     }
@@ -963,17 +975,23 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
   }
 
   // Dil × yol, tekilleştirilmiş anahtarlar.
+  //
+  // `kova` = `dilSinifi` (icerik/diziDuz/sezon/bolum/kisi) — RAPOR birimi.
+  // `sinif` (icerik/kisi/bolum) POLİTİKA birimi olarak kalıyor; ikisi neden
+  // ayrı, `kovaAdi`nın başında yazılı.
   const harita = new Map();
-  const ekle = (yol, kod, sinif, oncelik) => {
+  const ekle = (yol, kod, sinif, kova, oncelik) => {
     const anahtar = onbellekAnahtari(yol, tmdbDilKodu(dilHaritasi, kod));
     const eski = harita.get(anahtar);
-    if (!eski) harita.set(anahtar, { anahtar, sinif, oncelik, dil: kod });
+    if (!eski) harita.set(anahtar, { anahtar, sinif, kova, oncelik, dil: kod });
     else if (oncelik < eski.oncelik) eski.oncelik = oncelik;
   };
   for (const i of istekler) {
-    for (const kod of sinifDilleri(i.dilSinifi, secim)) ekle(i.yol, kod, i.sinif, i.oncelik);
+    for (const kod of sinifDilleri(i.dilSinifi, secim)) {
+      ekle(i.yol, kod, i.sinif, i.dilSinifi, i.oncelik);
+    }
   }
-  for (const i of dilliIstekler) ekle(i.yol, i.kod, i.sinif, i.oncelik);
+  for (const i of dilliIstekler) ekle(i.yol, i.kod, i.sinif, i.dilSinifi, i.oncelik);
 
   const adaylar = [...harita.values()];
   const durumlar = await onbellekDurumu(havuz, adaylar.map((a) => a.anahtar));
@@ -1120,6 +1138,47 @@ export function payiDagit(adaylar, butce, tabanOran = AYAR.TABAN_PAY_ORANI) {
 }
 
 // ===========================================================================
+// 7c) RAPOR KOVASI — POLİTİKA 3 KOVA, RAPOR 5 KOVA (21 Ağu 2026)
+// ===========================================================================
+// ÖLÇÜLEN YANLIŞ TEŞHİS: canlı günlükte 25 koşu üst üste
+//   `sınıf_payı=bolum:420 TAVAN=istek`
+// yazıyordu ve bu satır "sezon ve diziDuz sıfır istek alıyor" diye okundu.
+// YANLIŞ OKUMA DEĞİL, EKSİK SATIR: `sinif` yalnız TAZELEME KATMANINI seçen
+// KABA etikettir (icerik/kisi/bolum). Gerçek iş BEŞ kovada:
+//   · `sezon` istekleri `sinif: 'bolum'` diye,
+//   · `diziDuz` istekleri `sinif: 'icerik'` diye
+// raporlanıyordu — yani "bolum:420"ın içinde sezon da olabilirdi ve satır
+// bunu SÖYLEMİYORDU.
+//
+// İKİNCİ EKSİK: satırda sınıf başına BAYAT sayısı yoktu. `bolum:420`,
+//   (a) "diğer sınıflar aç kaldı" ile
+//   (b) "diğer sınıflarda tazelenecek TEK aday yok"
+// arasında ayrım yaptırmıyordu. Canlı ölçüm (21 Ağu, `adaylariTopla` salt
+// okunur koşturuldu): 112.420 adayın 9.467'si bayat ve HEPSİ `bolum` kovası,
+// hepsi SATIRSIZ (hiç çekilmemiş); icerik/diziDuz/sezon/kisi kovalarında bayat
+// aday sayısı SIFIR. Yani hal (b)ydi — açlık yoktu, `payiDagit` da
+// `kuyruklar.size < 2` kapısından dönüyordu (dağıtacak ikinci sınıf yok).
+// Bir günlük satırının bu iki hali ayırt ettirememesi ARIZADIR: sağlıklı bir
+// koşu 25 kez açlık gibi göründü.
+//
+// NEDEN POLİTİKA İNCE KOVAYA TAŞINMADI (sayıyla): `payiDagit` ince kovada
+// çalışsaydı ve beş kovanın beşinde de bayat aday olsaydı taban
+// 5 × floor(420 × TABAN_PAY_ORANI) = 5 × 84 = 420, yani bütçenin TAMAMI
+// rezerve olurdu ve `siralamayiKur` (öncelik → aşım bandı) ÖLÜ KOD'a dönerdi:
+// hiç çekilmemiş bir anahtar ile 1 gün gecikmiş bir anahtar aynı payı alırdı.
+// Kaba sınıfta rezerve 3 × 84 = 252/420, yani %40 sıralamaya kalıyor.
+//
+// DÜRÜSTLÜK NOTU — ilk gerekçem "ince kova `bolum`u aç bırakır"dı ve GERÇEK
+// KUYRUKLA BENZETİLİNCE ÇÜRÜDÜ: 30. gün uçurumu senaryosunda ince kova
+// bolum+sezon'a 210 istek/koşu, kaba kova 168 veriyor. İtiraz bölüşüm değil,
+// ACİLİYET SIRASININ KAYBI. Politika kaba, rapor ince.
+/**
+ * Bir adayın RAPOR kovası: `dilSinifi` (`kova`) varsa o, yoksa `sinif`.
+ * Düşme kuralı testlerin sentetik adayları için — onlarda `kova` yok.
+ */
+export const kovaAdi = (aday) => aday.kova || aday.sinif;
+
+// ===========================================================================
 // 8) KOŞU ÇEKİRDEĞİ — saf, enjekte edilebilir (testler bunu sürüyor)
 // ===========================================================================
 /**
@@ -1155,6 +1214,15 @@ export async function kosuYap({
   // atsaydık `zaten_taze` bir gün sessizce "aslında hiç veri yok" demeye
   // başlardı ve olumsuz önbelleğin büyüklüğü GÖRÜNMEZ olurdu.
   const yokIsareti = adaylar.reduce((n, a) => n + (a.yokMu ? 1 : 0), 0);
+  // KOVA BAŞINA BAYAT SAYISI — `sinifSayaci`nın PAYDASI (7c).
+  // Sıfırlar da yazılıyor: "icerik:0" tam olarak açlığı ÇÜRÜTEN kanıttır,
+  // atlanan bir anahtar ise "hiç bakılmadı mı, bakıldı da bayat mı çıkmadı?"
+  // sorusunu açık bırakır. Kovası olan HER aday sayılır, bayat olmasa bile.
+  const bayatSayaci = {};
+  for (const a of adaylar) {
+    const k = kovaAdi(a);
+    bayatSayaci[k] = (bayatSayaci[k] || 0) + (a.tazeMi ? 0 : 1);
+  }
   // `bakilan`/`taze` LİSTENİN TAMAMINDAN sayılır, döngü ilerledikçe DEĞİL.
   // Gerekçe: `payiDagit` taze adayları listenin sonuna atıyor ve bütçe
   // dolunca döngü erken kırılıyor; artımlı sayım "zaten_taze=0" gibi yanlış
@@ -1164,7 +1232,7 @@ export async function kosuYap({
     tazelendi: 0, hata: 0, yok: 0, yokIsareti, yokYeni: 0, yokCozuldu: 0,
     atlanan: 0,
     istek: 0, tavan: null, ornekler: [], sureMs: 0, kuru,
-    bayatToplam, kuyruk: bayatToplam, sinifSayaci: {},
+    bayatToplam, kuyruk: bayatToplam, sinifSayaci: {}, bayatSayaci,
   };
   const baslangic = simdi();
   const araMs = 1000 / istekSn;
@@ -1177,8 +1245,11 @@ export async function kosuYap({
     if (ozet.istek >= azamiIstek) { ozet.tavan = 'istek'; ozet.atlanan = adaylar.length - i; break; }
     if (simdi() - baslangic >= azamiMs) { ozet.tavan = 'sure'; ozet.atlanan = adaylar.length - i; break; }
     ozet.istek++;
-    // Sınıf başına pay: açlık olup olmadığı ancak burada GÖRÜNÜR olur.
-    ozet.sinifSayaci[aday.sinif] = (ozet.sinifSayaci[aday.sinif] || 0) + 1;
+    // Kova başına pay: açlık olup olmadığı ancak burada GÖRÜNÜR olur.
+    // `sinif` DEĞİL `kovaAdi` (7c): `sinif` sezonu bölümle, diziDuz'u içerikle
+    // aynı kovaya atıyor ve satır hangi işin yapıldığını söylemiyordu.
+    const kova = kovaAdi(aday);
+    ozet.sinifSayaci[kova] = (ozet.sinifSayaci[kova] || 0) + 1;
     if (ozet.ornekler.length < ornekTavan) ozet.ornekler.push(aday.anahtar);
     // KURU: istek sayılır (plan gerçekçi olsun) ama ne çağrı ne yazma yapılır.
     if (kuru) continue;
@@ -1296,6 +1367,9 @@ export function ozetSatiri(ozet, secim) {
     `kuyruk=${ozet.kuyruk}`,
     `bayat_toplam=${ozet.bayatToplam}`,
     `sınıf_payı=${sinifPaylari(ozet.sinifSayaci)}`,
+    // PAYDA (7c): kova başına BAYAT aday sayısı. `sınıf_payı` tek başına
+    // "açlık mı, yoksa diğerlerinde iş mi yok?" sorusunu cevaplamıyordu.
+    `sınıf_bayat=${sinifPaylari(ozet.bayatSayaci || {})}`,
     `süre=${sn(ozet.sureMs)}sn`,
     ozet.tavan ? `TAVAN=${ozet.tavan}` : 'tavan=yok',
     `diller=${secim.diller.join('+')}`,
@@ -1406,7 +1480,9 @@ async function main(argv) {
       const gunluk = gunlukKapasite(secim);
       const sinifOzeti = {};
       for (const a of adaylar) {
-        const s = (sinifOzeti[a.sinif] ||= { aday: 0, bayat: 0 });
+        // İNCE KOVA (7c) — kuru koşu "kuyrukta ne var" sorusunu cevaplıyor;
+        // sezonu bölümle birleştirseydi cevabın yarısı kaybolurdu.
+        const s = (sinifOzeti[kovaAdi(a)] ||= { aday: 0, bayat: 0 });
         s.aday++;
         if (!a.tazeMi) s.bayat++;
       }

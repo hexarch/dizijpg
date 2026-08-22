@@ -1165,8 +1165,6 @@ const Map<String, String> cevirilerPl = {
   'Haftanın günleri': 'Dni tygodnia',
   'En çok izlediklerin': 'Najczęściej oglądane',
   'Bu dönemde izleme yok': 'Brak oglądania w tym okresie',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Od zawsze: {} odcinków · {} filmów · ~{}',
   'Paz': 'nd',
   'Pzt': 'pn',
   'Sal': 'wt',
@@ -1300,4 +1298,13 @@ const Map<String, String> cevirilerPl = {
   'En çok izlediğin filmler': 'Twoje najczęściej oglądane filmy',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Czasy są szacunkowe: odcinek liczy się jako ~{} min, film jako ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Ta nazwa użytkownika jest zarezerwowana przez system',
+  'Ekran süresi': 'Czas przed ekranem',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Czasy to rzeczywiste długości odcinków i filmów z TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Około {}% czasów jest rzeczywistych; reszta liczy odcinek jako ~{} min, film jako ~{} min',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Od zawsze: {} odcinków · {} filmów · {}',
 };

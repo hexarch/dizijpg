@@ -1150,8 +1150,6 @@ const Map<String, String> cevirilerUr = {
   'Haftanın günleri': 'ہفتے کے دن',
   'En çok izlediklerin': 'سب سے زیادہ دیکھے گئے',
   'Bu dönemde izleme yok': 'اس مدت میں کوئی دیکھنا نہیں',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'ہمیشہ سے: {} اقساط · {} فلمیں · ~{}',
   'Paz': 'اتوار',
   'Pzt': 'پیر',
   'Sal': 'منگل',
@@ -1283,4 +1281,12 @@ const Map<String, String> cevirilerUr = {
   'En çok izlediğin filmler': 'سب سے زیادہ دیکھی فلمیں',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'دورانیے تخمینی ہیں: قسط ~{} منٹ اور فلم ~{} منٹ شمار ہوتی ہے',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'یہ صارف نام سسٹم کی طرف سے محفوظ ہے',
+  'Ekran süresi': 'اسکرین وقت',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'دورانیے TMDB سے اقساط اور فلموں کے اصل دورانیے ہیں',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'تقریباً {}% دورانیے اصل ہیں؛ باقی میں قسط ~{} منٹ اور فلم ~{} منٹ شمار ہوتی ہے',
+  'Tüm zamanlar: {} bölüm · {} film · {}': 'ہمیشہ سے: {} اقساط · {} فلمیں · {}',
 };

@@ -73,9 +73,37 @@ test('lastmod boşsa etiket HİÇ BASILMAZ (boş/uydurma damga yok)', () => {
   assert.match(yoksa, /^ {2}<url><loc>.*<\/url>$/);
 });
 
-test('/sitemap.xml dizininin lastmod\'u her zaman geçerli (ts yoksa bugün)', () => {
+test('/sitemap.xml dizininin lastmod\'u her zaman GEÇERLİ (asla Invalid Date)', () => {
+  // --------------------------------------------------------------------
+  // 21 Ağu 2026 — İDDİA MEKANİZMADAN NİYETE ÇEVRİLDİ
+  // --------------------------------------------------------------------
+  // Eski iddia kaynağı birebir kilitliyordu:
+  //     gunTarihi(Math.max(icerikD.ts, bolumD.ts) || Date.now())
+  // Bu, dizinin TÜM alt haritalarına ÜRETİM ZAMANINI (yani "bugün")
+  // bastığı hâlin ta kendisiydi. Canlı ölçüm (21 Ağu): altı satırın altısı
+  // da `2026-08-21`. Uydurma `lastmod` Google'ın TÜM lastmod'lara güvenini
+  // düşürür — satır katmanındaki DOĞRU tarihleri de çöpe atardı.
+  // Yeni hesap `sitemapParcaLastmod`ta (bkz. seo_harita_kapsami.test.js).
+  //
+  // Bu testin KORUDUĞU ŞEY DEĞİŞMEDİ (B1): dizin katmanı asla geçersiz bir
+  // tarih basmamalı. Artık davranışsal olarak sınanıyor.
   const b = bolum("app.get('/sitemap.xml'", '// ---------- sitemap-genel.xml');
-  assert.match(b, /gunTarihi\(Math\.max\(icerikD\.ts, bolumD\.ts\) \|\| Date\.now\(\)\)/);
+  assert.match(b, /sitemapParcaLastmod\(sayfa, kova\.degisim\)/,
+    'dizin lastmod\'u parça hesabından gelmiyor');
+  const parca = alan(['gunTarihi', 'sitemapParcaLastmod'], 'sitemapParcaLastmod');
+  for (const [sayfa, degisim] of [
+    [[], 0], [[], Date.now()],
+    [[{ loc: 'a', lastmod: '' }], 0],
+    [[{ loc: 'a', lastmod: '2026-08-14' }], 0],
+    [[{ loc: 'a', lastmod: '' }], Date.now()],
+  ]) {
+    const v = parca(sayfa, degisim);
+    assert.ok(v === '' || /^\d{4}-\d{2}-\d{2}$/.test(v),
+      `dizin lastmod'u geçersiz: ${JSON.stringify(v)}`);
+    assert.ok(!/Invalid|NaN/.test(v), `dizin lastmod'unda bozuk değer: ${v}`);
+  }
+  // BOŞ değer etiket olarak BASILMAZ (uydurma damga yasağı).
+  assert.match(b, /p\.lastmod \? `<lastmod>\$\{p\.lastmod\}<\/lastmod>` : ''/);
 });
 
 // ===========================================================================
@@ -309,5 +337,12 @@ test('20.000\'lik bölme ve boş sayfa dizine yazılmama kuralı duruyor', () =>
   assert.equal(d.sayfalar[2].length, 5001);
   assert.equal(d.adet, 45001);
   const b = bolum("app.get('/sitemap.xml'", '// ---------- sitemap-genel.xml');
-  assert.match(b, /bolumD\.sayfalar\.filter\(\(s\) => s\.length\)/);
+  // 21 Ağu 2026: süzgeç tek bir aileye değil DÖRT AİLEYE birden uygulanıyor
+  // (icerik/bolum/kisi/sirket ortak `aileler` listesinden geçiyor). Kural
+  // aynı: içi boş bir alt harita dizine YAZILMAZ.
+  assert.match(b, /\.filter\(\(\{ sayfa \}\) => sayfa\.length\)/,
+    'boş alt harita süzgeci düşmüş');
+  for (const aile of ['icerik', 'bolum', 'kisi', 'sirket']) {
+    assert.ok(b.includes(`'${aile}'`), `dizin ${aile} ailesini ilan etmiyor`);
+  }
 });

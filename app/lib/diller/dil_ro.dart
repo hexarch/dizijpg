@@ -1170,8 +1170,6 @@ const Map<String, String> cevirilerRo = {
   'Haftanın günleri': 'Zilele săptămânii',
   'En çok izlediklerin': 'Cele mai vizionate',
   'Bu dönemde izleme yok': 'Nicio vizionare în această perioadă',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Dintotdeauna: {} episoade · {} filme · ~{}',
   'Paz': 'Dum',
   'Pzt': 'Lun',
   'Sal': 'Mar',
@@ -1305,4 +1303,13 @@ const Map<String, String> cevirilerRo = {
   'En çok izlediğin filmler': 'Filmele tale cele mai vizionate',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Duratele sunt estimative: un episod contează ~{} min, un film ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Acest nume de utilizator este rezervat de sistem',
+  'Ekran süresi': 'Timp pe ecran',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Duratele sunt duratele reale ale episoadelor și filmelor de pe TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Aproximativ {}% din durate sunt reale; restul contează un episod ca ~{} min, un film ca ~{} min',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Dintotdeauna: {} episoade · {} filme · {}',
 };

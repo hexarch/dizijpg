@@ -35,7 +35,7 @@ import {
   katmanTtlSn, gecerliGovde, bayraklariCoz, bildirimCek, sunucuSorgulari,
   kosuYap, ozetSatiri, bagAyarlariDogrula, gunlukKapasite, siralamayiKur,
   sunucuDilHaritasi, tmdbDilKodu, payiDagit, sinifDilleri, kosuButcesi,
-  konusmaliMi, bosalmaSaati,
+  konusmaliMi, bosalmaSaati, adaylariTopla,
   yokIsaretiUygula, yokIsaretleriniOku, yokIsaretiYaz, yokIsaretiSil,
   yokIsaretleriniBuda,
 } from '../isitici.js';
@@ -1473,4 +1473,201 @@ test('şema gerçekten VAR: uyarının işaret ettiği migrasyon dosyası ve sem
   for (const sutun of ['anahtar', 'ilk', 'guncelleme', 'sayac']) {
     assert.match(migrasyon, new RegExp(`\\n  ${sutun} `), `migrasyonda ${sutun} yok`);
   }
+});
+
+// ---------------------------------------------------------------------------
+// 15) RAPOR KOVASI — "bolum:420" satırı NEYİ SÖYLEMİYORDU (21 Ağu 2026)
+// ---------------------------------------------------------------------------
+// CANLI GÜNLÜK, 25 ardışık koşu:
+//   ısıtıcı koşusu bitti bakılan=112400 zaten_taze=102062 tazelendi=420
+//   ... kuyruk=9918 bayat_toplam=10338 sınıf_payı=bolum:420 TAVAN=istek
+// Bu satır "bütçenin %100'ü bolum'a gidiyor, icerik/sezon/kisi/diziDuz AÇ"
+// diye okundu ve bir açlık soruşturması başlattı. ÖLÇÜM (21 Ağu,
+// `adaylariTopla` canlı veritabanında SALT OKUNUR koşturuldu):
+//
+//   kova            aday     taze     bayat   bayat_satırsız
+//   icerik/icerik   6.634    6.634        0        0
+//   icerik/diziDuz  1.219    1.219        0        0
+//   bolum/sezon     8.180    8.180        0        0
+//   bolum/bolum    78.727   69.260    9.467    9.467
+//   kisi/kisi      17.660   17.660        0        0
+//
+// Açlık YOKTU: bayat adayı olan TEK sınıf `bolum`du ve hepsi hiç çekilmemiş
+// bölüm anahtarıydı. `payiDagit` doğru davranıp `kuyruklar.size < 2`
+// kapısından dönmüştü. ARIZA GÜNLÜK SATIRINDAYDI: (a) `sinif` sezonu bölümle,
+// diziDuz'u içerikle aynı kovaya atıyordu, (b) satırda kova başına BAYAT
+// sayısı yoktu, yani "aç kaldılar" ile "işleri yoktu" ayırt edilemiyordu.
+
+/** Kovası belli aday. Varsayılan: hiç çekilmemiş (satırsız) ve bayat. */
+const kovali = (anahtar, sinif, kova, ek = {}) => ({
+  anahtar, sinif, kova, oncelik: 0, yas: Infinity, ttl: 30 * 86400, tazeMi: false, ...ek,
+});
+
+/** Bir koşuyu bütçeye kadar sürer (ağ/zaman yok). */
+async function kovaKosusu(adaylar, butce = 420) {
+  return kosuYap({
+    adaylar: payiDagit(siralamayiKur(adaylar), butce),
+    getir: async () => ({ durum: 'tamam', veri: { id: 1 } }),
+    yaz: async () => {},
+    bekle: async () => {},
+    azamiIstek: butce,
+    azamiMs: Infinity,
+    istekSn: 1e9,
+  });
+}
+
+test('CANLI ŞEKİL: özet satırı "aç kaldı" ile "işi yoktu"yu AYIRT EDİYOR', async () => {
+  // 21 Ağu 2026 ölçümünün BİREBİR aynısı (yukarıdaki tablo).
+  const adaylar = [];
+  for (let i = 0; i < 9467; i++) {
+    adaylar.push(kovali(`/tv/1/season/1/episode/${i}`, 'bolum', 'bolum', { oncelik: 1 }));
+  }
+  const taze = { tazeMi: true, yas: 60, ttl: 30 * 86400 };
+  for (let i = 0; i < 69260; i++) {
+    adaylar.push(kovali(`/tv/2/season/1/episode/${i}`, 'bolum', 'bolum', { ...taze, oncelik: 1 }));
+  }
+  for (let i = 0; i < 8180; i++) adaylar.push(kovali(`/tv/${i}/season/1`, 'bolum', 'sezon', taze));
+  for (let i = 0; i < 6634; i++) adaylar.push(kovali(`/tv/${i}?a`, 'icerik', 'icerik', taze));
+  for (let i = 0; i < 1219; i++) adaylar.push(kovali(`/tv/${i}?d`, 'icerik', 'diziDuz', taze));
+  for (let i = 0; i < 17660; i++) adaylar.push(kovali(`/person/${i}`, 'kisi', 'kisi', taze));
+
+  const ozet = await kovaKosusu(adaylar);
+  assert.equal(ozet.bayatToplam, 9467);
+  assert.deepEqual(ozet.sinifSayaci, { bolum: 420 }, 'canlı satır yeniden üretilemedi');
+
+  const satir = ozetSatiri(ozet, { diller: ['tr', 'en'] });
+  // ASIL İDDİA: satır, açlık ŞÜPHESİNİ KENDİ BAŞINA çürütebilmeli. Bu alan
+  // olmadan `bolum:420` iki farklı dünyayla uyumluydu ve yanlış teşhis edildi.
+  assert.match(satir, /sınıf_bayat=/, 'satırda kova başına bayat sayısı YOK — '
+    + '"bolum:420" hâlâ açlık sanılabilir');
+  for (const kanit of [/bolum:9467/, /icerik:0/, /kisi:0/, /sezon:0/, /diziDuz:0/]) {
+    assert.match(satir, kanit, `açlığı çürüten kanıt satırda yok: ${kanit}`);
+  }
+});
+
+test('AÇLIK ÜRETİLDİĞİNDE satır AÇLIK diyor (aynı alan ters yönde de çalışır)', async () => {
+  // Aynı şekil, TEK farkla: icerik ve kisi kovalarında da bayat aday var.
+  // Bu koşuda `sınıf_bayat` sıfırdan büyük olmalı ve `sınıf_payı` onunla
+  // karşılaştırılabilmeli — alan yalnız "her şey yolunda" demeye yaramıyor.
+  const adaylar = [];
+  for (let i = 0; i < 9467; i++) {
+    adaylar.push(kovali(`/tv/1/season/1/episode/${i}`, 'bolum', 'bolum', { oncelik: 1 }));
+  }
+  for (let i = 0; i < 300; i++) adaylar.push(kovali(`/tv/${i}?a`, 'icerik', 'icerik'));
+  for (let i = 0; i < 300; i++) adaylar.push(kovali(`/person/${i}`, 'kisi', 'kisi'));
+  const ozet = await kovaKosusu(adaylar);
+  const satir = ozetSatiri(ozet, { diller: ['tr'] });
+  assert.match(satir, /icerik:300/);
+  assert.match(satir, /kisi:300/);
+  // Taban payı: her KABA sınıf en az floor(420 × 0,2) = 84 istek alır.
+  const taban = Math.floor(420 * AYAR.TABAN_PAY_ORANI);
+  for (const kova of ['icerik', 'kisi']) {
+    assert.ok(ozet.sinifSayaci[kova] >= taban,
+      `${kova} aç kaldı: ${JSON.stringify(ozet.sinifSayaci)}`);
+  }
+});
+
+test('SEZON isteği "sezon" diye raporlanıyor, "bolum" diye DEĞİL', async () => {
+  // `sinif` ikisi için de 'bolum' (tazeleme katmanı aynı). Rapor bunları
+  // birleştirdiği sürece "sezon sıfır istek aldı" iddiası ÇÜRÜTÜLEMEZ.
+  const adaylar = [];
+  for (let i = 0; i < 500; i++) adaylar.push(kovali(`/tv/${i}/season/1`, 'bolum', 'sezon'));
+  for (let i = 0; i < 500; i++) {
+    adaylar.push(kovali(`/tv/9/season/1/episode/${i}`, 'bolum', 'bolum', { oncelik: 1 }));
+  }
+  const ozet = await kovaKosusu(adaylar);
+  assert.deepEqual(ozet.sinifSayaci, { sezon: 420 },
+    'sezon istekleri hâlâ bolum diye sayılıyor');
+  assert.match(ozetSatiri(ozet, { diller: ['tr'] }), /sınıf_bayat=bolum:500,sezon:500/);
+});
+
+test('POLİTİKA KABA KALDI: taban payı SINIF başına, kova başına DEĞİL', async () => {
+  // TABAN BİR ZEMİN, TAVAN DEĞİL. Üç KABA sınıfla rezerve edilen bütçe
+  // 3 × 84 = 252/420 (%60); kalan %40'a `siralamayiKur` (öncelik → aşım bandı)
+  // karar verir. Taban İNCE kovaya taşınsaydı ve beş kovanın beşinde de bayat
+  // aday olsaydı rezerve 5 × 84 = 420/420 (%100) olur ve SIRALAMA KATMANI ÖLÜ
+  // KOD'a dönerdi: hiç çekilmemiş (bant = Infinity) bir anahtarla 1 gün
+  // gecikmiş bir anahtar AYNI payı alırdı.
+  //
+  // DİKKAT — "ince kova bolum'u aç bırakır" İDDİASI DEĞİL. Gerçek canlı
+  // kuyrukla benzetildi (21 Ağu, 112.420 aday, 30. gün uçurumu senaryosu):
+  // ince kovada bolum+sezon 210/koşu, kabada 168/koşu — yani ince kova o
+  // senaryoda bolum'a DAHA ÇOK veriyor. Buradaki itiraz bölüşüm değil,
+  // ACİLİYET SIRASININ KAYBI.
+  //
+  // SENARYO: `bolum` HİÇ ÇEKİLMEMİŞ (bant = Infinity, yani en acil iş),
+  // diğer dört kova bayat ama VAR (bant 1). Hepsi öncelik 0 — kararı bant
+  // versin. Kaba tabanla acil iş kalan %40'ı da alır (84 + 168 = 252);
+  // ince tabanla 84'e, yani en az acil kovayla AYNI paya hapsolurdu.
+  const adaylar = [];
+  const varAmaBayat = { yas: 40 * 86400, ttl: 30 * 86400 };
+  for (let i = 0; i < 10000; i++) {
+    adaylar.push(kovali(`/tv/9/season/1/episode/${i}`, 'bolum', 'bolum'));
+  }
+  for (let i = 0; i < 500; i++) {
+    adaylar.push(kovali(`/tv/${i}/season/1`, 'bolum', 'sezon', varAmaBayat));
+    adaylar.push(kovali(`/tv/${i}?a`, 'icerik', 'icerik', varAmaBayat));
+    adaylar.push(kovali(`/tv/${i}?d`, 'icerik', 'diziDuz', varAmaBayat));
+    adaylar.push(kovali(`/person/${i}`, 'kisi', 'kisi', varAmaBayat));
+  }
+
+  const ozet = await kovaKosusu(adaylar);
+  const taban = Math.floor(420 * AYAR.TABAN_PAY_ORANI);
+  const s = ozet.sinifSayaci;
+  const kabaBolum = (s.bolum || 0) + (s.sezon || 0);
+  const kabaIcerik = (s.icerik || 0) + (s.diziDuz || 0);
+  assert.equal(ozet.istek, 420, 'bütçe boşa gitti');
+  // Üç KABA sınıfın üçü de tabanını aldı (açlık yok)...
+  for (const [ad, pay] of [['bolum', kabaBolum], ['icerik', kabaIcerik], ['kisi', s.kisi || 0]]) {
+    assert.ok(pay >= taban, `${ad} tabanı almadı: ${pay} < ${taban} `
+      + `(${JSON.stringify(s)})`);
+  }
+  // ...ve EN ACİL iş tabana HAPSEDİLMEDİ: 84 taban + kalan 168 = 252.
+  assert.ok((s.bolum || 0) >= 3 * taban,
+    `taban ince kovaya kaymış, sıralama katmanı ölü: bolum ${s.bolum} < `
+    + `${3 * taban} (${JSON.stringify(s)})`);
+  // TERS AÇLIK YOK: hiçbir kova bütçenin tamamını yemiyor.
+  for (const [kova, pay] of Object.entries(s)) {
+    assert.notEqual(pay, 420, `${kova} bütçenin %100'ünü yedi`);
+  }
+  // Rezerve edilen bütçe, bütçenin TAMAMI olamaz — yoksa sıralama ölü koddur.
+  assert.ok(3 * taban < 420, 'taban oranı sıralama katmanına yer bırakmıyor');
+});
+
+// --- `kova` alanı GERÇEKTEN aday kurulumunda doluyor mu? ------------------
+// Yukarıdaki testler `kova`yı elle veriyor. Bu test onu `adaylariTopla`nın
+// KENDİSİNE kurdurur (sahte havuzla, ağ/DB yok): alan orada dolmazsa üretimde
+// `kovaAdi` sessizce `sinif`e düşer ve rapor eski hâline geri döner.
+function kovaHavuzu(sorgular) {
+  return {
+    query: async (sql) => {
+      if (sql === sorgular.ISITMA_BOLUM_SORGU) {
+        return { rows: [{ tmdb_id: 9, sezon: 1, bolum: 1 }, { tmdb_id: 9, sezon: 1, bolum: 2 }] };
+      }
+      if (sql.includes('FROM tmdb_yok')) return { rows: [] };
+      if (sql.includes('AS dolu')) return { rows: [{ dolu: 0 }] };
+      if (sql.includes('WITH ORDINALITY')) return { rows: [] };
+      if (sql.includes("FROM favoriler WHERE tur = 'person'")) return { rows: [{ tmdb_id: 5 }] };
+      if (sql.includes('WITH harita AS (')) return { rows: [{ tur: 'tv', tmdb_id: 7, oncelik: 0 }] };
+      if (sql.includes('AS yas')) return { rows: [] };
+      throw new Error(`sahte havuz tanımadı: ${sql.slice(0, 60)}`);
+    },
+  };
+}
+
+test('adaylariTopla her adaya İNCE kovasını yazıyor', async () => {
+  const adaylar = await adaylariTopla(
+    kovaHavuzu(sunucuSorgulari(SERVER)), bayraklariCoz([]), SERVER);
+  const kovalar = new Map(adaylar.map((a) => [a.anahtar, a.kova]));
+  const bul = (im) => [...kovalar].filter(([k]) => im.test(k)).map(([, v]) => v);
+  assert.deepEqual(new Set(bul(/\/season\/1\?/)), new Set(['sezon']), 'sezon kovası yok');
+  assert.deepEqual(new Set(bul(/\/episode\//)), new Set(['bolum']), 'bolum kovası yok');
+  assert.deepEqual(new Set(bul(/^\/tv\/9\?language=/)), new Set(['diziDuz']),
+    'diziDuz kovası yok — /tv/:id yine "icerik" diye raporlanır');
+  assert.deepEqual(new Set(bul(/^\/(tv|movie)\/7\?append/)), new Set(['icerik']));
+  assert.deepEqual(new Set(bul(/^\/person\//)), new Set(['kisi']));
+  // Kova RAPOR birimi; `sinif` POLİTİKA birimi olarak DEĞİŞMEDEN duruyor.
+  const sinifi = (im) => new Set(adaylar.filter((a) => im.test(a.anahtar)).map((a) => a.sinif));
+  assert.deepEqual(sinifi(/\/season\/1\?/), new Set(['bolum']));
+  assert.deepEqual(sinifi(/^\/tv\/9\?language=/), new Set(['icerik']));
 });

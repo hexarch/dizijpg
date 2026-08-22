@@ -1139,7 +1139,6 @@ const Map<String, String> cevirilerFa = {
   'Haftanın günleri': 'روزهای هفته',
   'En çok izlediklerin': 'بیشترین تماشا',
   'Bu dönemde izleme yok': 'در این بازه تماشایی نیست',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}': 'در کل: {} قسمت · {} فیلم · ~{}',
   'Paz': 'یک',
   'Pzt': 'دو',
   'Sal': 'سه',
@@ -1269,4 +1268,12 @@ const Map<String, String> cevirilerFa = {
   'En çok izlediğin filmler': 'پرتماشاترین فیلم‌هایت',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'زمان‌ها تخمینی‌اند: هر قسمت ~{} دقیقه و هر فیلم ~{} دقیقه حساب می‌شود',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'این نام کاربری توسط سیستم رزرو شده است',
+  'Ekran süresi': 'زمان تماشا',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'زمان‌ها مدت‌های واقعی قسمت‌ها و فیلم‌ها از TMDB هستند',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'حدود {}٪ از زمان‌ها واقعی است؛ بقیه هر قسمت ~{} دقیقه و هر فیلم ~{} دقیقه حساب می‌شود',
+  'Tüm zamanlar: {} bölüm · {} film · {}': 'در کل: {} قسمت · {} فیلم · {}',
 };

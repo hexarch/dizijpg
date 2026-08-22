@@ -1155,8 +1155,6 @@ const Map<String, String> cevirilerRu = {
   'Haftanın günleri': 'Дни недели',
   'En çok izlediklerin': 'Больше всего смотрел',
   'Bu dönemde izleme yok': 'В этот период просмотров нет',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'За всё время: {} серий · {} фильмов · ~{}',
   'Paz': 'вс',
   'Pzt': 'пн',
   'Sal': 'вт',
@@ -1289,4 +1287,13 @@ const Map<String, String> cevirilerRu = {
   'En çok izlediğin filmler': 'Твои самые просматриваемые фильмы',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Время примерное: эпизод считается за ~{} мин, фильм — за ~{} мин',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Это имя пользователя зарезервировано системой',
+  'Ekran süresi': 'Экранное время',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Время — это реальная длительность эпизодов и фильмов по данным TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Около {}% времени — реальные данные; остальное считается: эпизод ~{} мин, фильм ~{} мин',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'За всё время: {} серий · {} фильмов · {}',
 };

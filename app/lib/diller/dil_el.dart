@@ -1171,8 +1171,6 @@ const Map<String, String> cevirilerEl = {
   'Haftanın günleri': 'Ημέρες της εβδομάδας',
   'En çok izlediklerin': 'Τα πιο παρακολουθημένα',
   'Bu dönemde izleme yok': 'Καμία παρακολούθηση σε αυτή την περίοδο',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Όλων των εποχών: {} επεισόδια · {} ταινίες · ~{}',
   'Paz': 'Κυρ',
   'Pzt': 'Δευ',
   'Sal': 'Τρί',
@@ -1306,4 +1304,13 @@ const Map<String, String> cevirilerEl = {
   'En çok izlediğin filmler': 'Οι πιο προβεβλημένες ταινίες σου',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Οι χρόνοι είναι κατά προσέγγιση: το επεισόδιο μετρά ~{} λεπ., η ταινία ~{} λεπ.',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Αυτό το όνομα χρήστη είναι δεσμευμένο από το σύστημα',
+  'Ekran süresi': 'Χρόνος οθόνης',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Οι χρόνοι είναι οι πραγματικές διάρκειες επεισοδίων και ταινιών από το TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Περίπου το {}% των χρόνων είναι πραγματικό· για τα υπόλοιπα το επεισόδιο μετρά ~{} λεπ., η ταινία ~{} λεπ.',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Όλων των εποχών: {} επεισόδια · {} ταινίες · {}',
 };

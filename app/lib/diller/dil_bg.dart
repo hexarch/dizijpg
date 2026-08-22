@@ -1155,8 +1155,6 @@ const Map<String, String> cevirilerBg = {
   'Haftanın günleri': 'Дни от седмицата',
   'En çok izlediklerin': 'Най-гледани',
   'Bu dönemde izleme yok': 'Няма гледане в този период',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'За всички времена: {} епизода · {} филма · ~{}',
   'Paz': 'нед',
   'Pzt': 'пон',
   'Sal': 'вт',
@@ -1289,4 +1287,13 @@ const Map<String, String> cevirilerBg = {
   'En çok izlediğin filmler': 'Най-гледаните ти филми',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Времената са приблизителни: епизод ~{} мин, филм ~{} мин',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Това потребителско име е запазено от системата',
+  'Ekran süresi': 'Екранно време',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Времената са реалните продължителности на епизодите и филмите от TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Около {}% от времената са реални; останалото се брои: епизод ~{} мин, филм ~{} мин',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'За всички времена: {} епизода · {} филма · {}',
 };

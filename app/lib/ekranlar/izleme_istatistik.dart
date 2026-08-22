@@ -7,6 +7,10 @@ import '../tema.dart';
 // YEREL ("1.234.567" / "1,234,567") — elde `replaceAllMapped` ile nokta
 // koymak Almanca'da doğru, İngilizce'de yanlış olurdu.
 import 'istatistiklerim.dart' show sayiBicimle;
+// `SureKaynagi` profil.dart'taki süre kartıyla ORTAK: "sayının ne kadarı
+// gerçek" kuralı iki ekranda ayrı yazılsaydı biri "~" koyup diğeri
+// koymayabilirdi (aynı kullanıcı, aynı dakika, iki farklı iddia).
+import 'profil.dart' show SureKaynagi;
 import 'ortak.dart';
 
 /// İZLEME İSTATİSTİKLERİM — Ayarlar > İzleme İstatistiklerim (19 Ağu 2026).
@@ -32,12 +36,19 @@ import 'ortak.dart';
 /// "kaç kişi gördü" ile "kaç bölüm izledim"i aynı ekranda eşitlerdi.
 ///
 /// ===========================================================================
-/// TAHMİN YOK — EKRAN SÜRESİ "YAKLAŞIK" DİYE ETİKETLENİR
+/// EKRAN SÜRESİ ARTIK GERÇEK — "YAKLAŞIK" ETİKETİ KOŞULLU (21 Ağu 2026)
 /// ===========================================================================
-/// `dakika` ölçülmüş değil TÜRETİLMİŞ bir sayıdır (bölüm 42 dk, film 110 dk).
-/// Gerçek süreyi bilmiyoruz. `İstatistiklerim` ekranının "eksik veriyi
-/// saklamamak" kuralı burada da geçerli: sayı gösterilir ama yanında
-/// "yaklaşık" yazar. Şişirme, oranlama, tahmin YASAK.
+/// `dakika` artık TMDB'nin GERÇEK bölüm/film süresinden çıkıyor: sunucu süreyi
+/// bir kez türetip `yapim_sureleri` tablosuna yazdı (backend/sure_doldur.js).
+/// Sabitler (bölüm 42, film 110) kaldırılmadı ama YEDEK: yalnız süresi
+/// bilinmeyen satırlar oraya düşüyor (ölçülen kapsam %92,6).
+///
+/// Bu yüzden "Yaklaşık ekran süresi" başlığı KOŞULLU oldu: sunucunun
+/// gönderdiği `gercek_dk`/`tahmini_dk` payına bakılıyor. Hepsi gerçekse başlık
+/// "Ekran süresi", tahmin varsa "Yaklaşık ekran süresi". Gerçek süreyi
+/// bildiğimiz hâlde tahmin gibi sunmak, tersi kadar yanlış olurdu.
+/// `İstatistiklerim` ekranının "eksik veriyi saklamamak" kuralı sürüyor:
+/// şişirme, oranlama, uydurma YASAK.
 ///
 /// YÖN OKU: önceki pencere BOŞSA çizilmez (sunucu `degisim: null` döner).
 /// 0'dan artışı "%100 arttı" diye sunmak, ilk kez izleyen herkese sahte bir
@@ -159,6 +170,11 @@ class _IzlemeIstatistikEkraniState extends State<IzlemeIstatistikEkrani> {
     final omur = v['omur'] as Map<String, dynamic>;
     final zincir = v['zincir'] as Map<String, dynamic>;
     final pencereler = (v['pencereler'] as List<dynamic>).cast<int>();
+    // Pencere ve ömür boyu sayıların kaynak karışımı AYRI okunur: son 7 günün
+    // tamamı gerçek olabilirken ömür boyu toplamda eski/az bilinen yapımlar
+    // yüzünden tahmin bulunabilir.
+    final pencereKaynak = SureKaynagi.oku(p, 'gercek_dk', 'tahmini_dk');
+    final omurKaynak = SureKaynagi.oku(omur, 'gercek_dk', 'tahmini_dk');
     return [
       // ORTAK seçici (ortak.dart): 360 dp'de FittedBox ile küçülüp taşmaz,
       // seçili durumu renkten başka iki kanalla da (2 px çerçeve + w800)
@@ -167,7 +183,10 @@ class _IzlemeIstatistikEkraniState extends State<IzlemeIstatistikEkrani> {
       const SizedBox(height: 16),
       _Kahraman(
         deger: _sure(p['dakika'] as num?),
-        etiket: 'Yaklaşık ekran süresi'.c,
+        // Başlık kaynağa göre: alanlar yoksa (eski sunucu) eski hâl korunur.
+        etiket: (pencereKaynak?.hepsiGercek ?? false)
+            ? 'Ekran süresi'.c
+            : 'Yaklaşık ekran süresi'.c,
         degisim: (d['dakika'] as num?)?.toInt(),
         gun: _gun,
       ),
@@ -237,10 +256,13 @@ class _IzlemeIstatistikEkraniState extends State<IzlemeIstatistikEkrani> {
       // (İstatistiklerim ekranındaki aynı karar: tekrar eden sayı, ikisinden
       //  birinin başka bir şeyi ölçtüğünü sanmaya yol açıyordu.)
       _Cipa(
-        metin: 'Tüm zamanlar: {} bölüm · {} film · ~{}'.cf([
+        // "~" METNE GÖMÜLÜ DEĞİL: eski anahtarda sabitti, artık veriye bağlı.
+        // Süresi tamamen bilinen bir kitaplıkta "~" göstermek, gerçek ölçümü
+        // tahmin diye sunmak olurdu.
+        metin: 'Tüm zamanlar: {} bölüm · {} film · {}'.cf([
           sayiBicimle((omur['bolum'] as num?)?.toInt() ?? 0),
           sayiBicimle((omur['film'] as num?)?.toInt() ?? 0),
-          _sure(omur['dakika'] as num?),
+          '${omurKaynak?.isaret ?? '~'}${_sure(omur['dakika'] as num?)}',
         ]),
       ),
     ];

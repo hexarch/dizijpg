@@ -1148,8 +1148,6 @@ const Map<String, String> cevirilerPa = {
   'Haftanın günleri': 'ਹਫ਼ਤੇ ਦੇ ਦਿਨ',
   'En çok izlediklerin': 'ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੇ ਗਏ',
   'Bu dönemde izleme yok': 'ਇਸ ਸਮੇਂ ਵਿੱਚ ਕੋਈ ਦੇਖਣਾ ਨਹੀਂ',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'ਹਮੇਸ਼ਾ ਤੋਂ: {} ਐਪੀਸੋਡ · {} ਫ਼ਿਲਮਾਂ · ~{}',
   'Paz': 'ਐਤ',
   'Pzt': 'ਸੋਮ',
   'Sal': 'ਮੰਗਲ',
@@ -1282,4 +1280,13 @@ const Map<String, String> cevirilerPa = {
   'En çok izlediğin filmler': 'ਸਭ ਤੋਂ ਵੱਧ ਦੇਖੀਆਂ ਫ਼ਿਲਮਾਂ',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'ਸਮਾਂ ਅੰਦਾਜ਼ਨ ਹੈ: ਐਪੀਸੋਡ ~{} ਮਿੰਟ, ਫ਼ਿਲਮ ~{} ਮਿੰਟ ਗਿਣੇ ਜਾਂਦੇ ਹਨ',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'ਇਹ ਯੂਜ਼ਰਨੇਮ ਸਿਸਟਮ ਵੱਲੋਂ ਰਾਖਵਾਂ ਹੈ',
+  'Ekran süresi': 'ਸਕ੍ਰੀਨ ਸਮਾਂ',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'ਸਮਾਂ TMDB ਤੋਂ ਐਪੀਸੋਡ ਅਤੇ ਫ਼ਿਲਮਾਂ ਦੀ ਅਸਲ ਮਿਆਦ ਹੈ',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'ਸਮੇਂ ਵਿੱਚੋਂ ਲਗਭਗ {}% ਅਸਲ ਹਨ; ਬਾਕੀ ਲਈ ਐਪੀਸੋਡ ~{} ਮਿੰਟ, ਫ਼ਿਲਮ ~{} ਮਿੰਟ ਗਿਣੇ ਜਾਂਦੇ ਹਨ',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'ਹਮੇਸ਼ਾ ਤੋਂ: {} ਐਪੀਸੋਡ · {} ਫ਼ਿਲਮਾਂ · {}',
 };

@@ -903,32 +903,24 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Kullanıcı adı + (testçiyse) altın onay tiki.
+                          // Görünen ad (varsa) + kullanıcı adı + (testçiyse)
+                          // altın onay tiki.
                           // KULLANICI İSTEĞİ (7 Ağu): tik adın hemen yanında;
                           // "Founding Member" yazısı + dizi.jpg logosu gitti.
                           // Bu ekran DAİMA kendi profilim (`/profilim` ile
-                          // çizilir), o yüzden modal ikinci tekil şahıs
-                          // varyantını gösterir.
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  '@$kullaniciAdi',
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: genis ? 21 : 17,
-                                    fontWeight: FontWeight.w900,
-                                    // Tema metni: koyu temada beyaz. Rengi
-                                    // vermezsek gövde stili web'de soluk
-                                    // görünebiliyor (kullanıcı: gri yazma).
-                                    color: DiziRenkler.metin,
-                                  ),
-                                ),
-                              ),
-                              if (_profil?['testci'] == true)
-                                AileRozeti(benMi: true, olcu: genis ? 22 : 19),
-                            ],
+                          // çizilir), o yüzden `benMi: true` — modal ikinci
+                          // tekil şahıs varyantını gösterir.
+                          //
+                          // 21 Ağu 2026: blok ORTAK bileşene taşındı
+                          // ([ProfilKimlikBasligi]) — görünen ad iki ekranda
+                          // da AYNI kodla çiziliyor. KOPYALAMA YASAK: bu iki
+                          // ekran bugün tam da kopyalama yüzünden ayrışmıştı.
+                          ProfilKimlikBasligi(
+                            ad: _profil?['ad'] as Object?,
+                            kullaniciAdi: kullaniciAdi,
+                            testci: _profil?['testci'] == true,
+                            benMi: true,
+                            genis: genis,
                           ),
                           // SEVİYE (md. 29): kullanıcı adının HEMEN ALTINDA.
                           // Bu ekran DAİMA kendi profilim — ilerleme çubuğu
@@ -1056,6 +1048,16 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                   filmDakika: (st['tahmini_dakika_film'] as num?)?.toInt(),
                   bolumBirimDk: (st['sure_bolum_dk'] as num?)?.toInt(),
                   filmBirimDk: (st['sure_film_dk'] as num?)?.toInt(),
+                  // Kaynak karışımı (21 Ağu 2026): süre artık TMDB'nin GERÇEK
+                  // dakikasından çıkıyor, sabit yalnız yedek. Alanlar yoksa
+                  // (eski sunucu/bayat kopya) kart eski davranışa düşer.
+                  kaynak: SureKaynagi.oku(
+                    st,
+                    'sure_gercek_dk',
+                    'sure_tahmini_dk',
+                  ),
+                  diziTahmini: (st['sure_tahmini_dk_dizi'] as num?)?.toInt(),
+                  filmTahmini: (st['sure_tahmini_dk_film'] as num?)?.toInt(),
                   onTur: _sureDetayAc,
                 ),
                 // NOT: yorumların toplam beğeni/görüntülenmesi buradaki kutulu
@@ -1392,6 +1394,128 @@ class ProfilUstBolum extends StatelessWidget {
               ]
             : [...kimlik, ...olcumler, ...altBolum],
       ),
+    );
+  }
+}
+
+// ===========================================================================
+// GÖRÜNEN AD + KULLANICI ADI — İKİ EKRAN, TEK BİLEŞEN (21 Ağu 2026)
+// ===========================================================================
+
+/// Profil başlığının kimlik satırı: **görünen ad ÜSTTE, kullanıcı adı ALTTA**.
+///
+/// Ayarlardaki alanın kendi açıklaması bunu vaat ediyor: "Profilinde kullanıcı
+/// adının ÜSTÜNDE görünür. Boş bırakabilirsin." `kullanicilar.ad` sütunu,
+/// ayarlar alanı ve iki uç (`GET /profilim`, `GET /profil/:kullaniciAdi`) aynı
+/// gün eklendi ama HİÇBİR ekran çizmiyordu — kullanıcı adını kaydedip "neden
+/// görünmüyor?" diye sordu. Bu sınıf o boşluğu kapatan TEK çizim yeridir.
+///
+/// --- AD BOŞKEN HİÇBİR ŞEY DEĞİŞMEZ ---
+/// Ad `null`/boş ise ÜST satır yine kullanıcı adıdır ve ikinci satır HİÇ
+/// çizilmez (boş `Text` bile değil — `SizedBox.shrink` de değil). Yani ad
+/// koymayan kullanıcı için başlığın yüksekliği ve hizası BİREBİR eskisi gibi
+/// kalır; altındaki seviye/bio/ülke/sayaç satırları kaymaz.
+/// Kanıt: test/profil_gorunen_ad_test.dart → "ad boşken yerleşim BİREBİR aynı".
+///
+/// --- ROZET NEREDE (karar) ---
+/// [AileRozeti] BİRİNCİL SATIRDA kalır: yani ad varsa ADIN yanında, yoksa
+/// kullanıcı adının yanında. Gerekçe: tik bir KİMLİK DOĞRULAMA nişanı ve
+/// doğruladığı şey ekranın en belirgin kimlik öğesidir (X, Instagram, TV Time
+/// hepsinde tik görünen adın yanındadır). İkincil satıra bırakılsaydı 44 dp'lik
+/// dokunma hedefi 13 px'lik bir satırı iki katına şişirir, ayrıca ad varken
+/// yokken tikin dikey konumu oynardı.
+///
+/// --- NEDEN KULLANICI ADI GRİ DEĞİL ---
+/// Görsel hiyerarşi PUNTO ve KALINLIKLA kuruluyor (17/21 w900 → 13/15 w600),
+/// renkle DEĞİL. KULLANICI İSTEĞİ (16 Ağu 2026): gri yazı yalnız PASİF öğede
+/// (kapalı düğme, ipucu, boş yer tutucu); kullanıcı adı pasif değil, profilin
+/// adresidir. Kilit: test/gri_yazi_ikon_test.dart + bu dosyanın renk testi.
+///
+/// --- UZUN AD ---
+/// Sunucu 40 KOD NOKTASINA kadar ad kabul ediyor (`AD_AZAMI`, server.js) ve
+/// KIRPMIYOR — reddediyor. O yüzden taşmayı ekran karşılamak zorunda:
+/// `Flexible` + `maxLines: 1` + `TextOverflow.ellipsis`. 320 dp'lik en dar
+/// telefonda bile satır taşmaz, tik ekran dışına itilmez.
+class ProfilKimlikBasligi extends StatelessWidget {
+  /// Ham `ad` alanı. Tipi bilerek `Object?`: doğrudan JSON gövdesinden
+  /// (`_profil['ad']`) geçiriliyor — `null`, `''`, yalnız boşluk, hatta bozuk
+  /// bir gövdede sayı bile olabilir. Ayıklama tek yerde: [temiz].
+  final Object? ad;
+  final String kullaniciAdi;
+  final bool testci;
+
+  /// Rozet modalinin ikinci tekil şahıs varyantı için (sunucunun `ben_mi`si).
+  final bool benMi;
+
+  /// Masaüstü ölçüleri. İKİ EKRAN AYNI ÖLÇÜYÜ KULLANIR: açık profil eskiden
+  /// sabit 18 px yazıyordu, kendi profilim 17/21 — kullanıcı 21 Ağu'da
+  /// "kullanıcı adı ikisinde de kendi profilime baktığımdaki gibi gözüksün"
+  /// dediği için ölçü de buraya taşındı.
+  final bool genis;
+
+  const ProfilKimlikBasligi({
+    super.key,
+    required this.ad,
+    required this.kullaniciAdi,
+    this.testci = false,
+    this.benMi = false,
+    this.genis = false,
+  });
+
+  /// Ekrana yazılacak görünen ad, yoksa `null`.
+  ///
+  /// Sunucu boş adı zaten NULL'a düşürüyor (`adDogrula`), ama istemci buna
+  /// GÜVENMEZ: önbellekteki bayat profil kaydı eski bir sunucudan gelmiş
+  /// olabilir ve `ad` alanı hiç bulunmayabilir ya da `''` olabilir. Tip de
+  /// kontrol ediliyor — bozuk gövde `as String` ile çökmesin.
+  static String? temiz(Object? ham) {
+    if (ham is! String) return null;
+    final t = ham.trim();
+    return t.isEmpty ? null : t;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final gorunenAd = temiz(ad);
+    final etiket = '@$kullaniciAdi';
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // BİRİNCİL SATIR: ad varsa ad, yoksa kullanıcı adı. Tik hep burada.
+        Row(
+          children: [
+            Flexible(
+              child: Text(
+                gorunenAd ?? etiket,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: genis ? 21 : 17,
+                  fontWeight: FontWeight.w900,
+                  // Tema metni açıkça veriliyor: gövde stili web'de soluk
+                  // görünebiliyor (kullanıcı: gri yazma).
+                  color: DiziRenkler.metin,
+                ),
+              ),
+            ),
+            if (testci) AileRozeti(benMi: benMi, olcu: genis ? 22 : 19),
+          ],
+        ),
+        // İKİNCİL SATIR YALNIZ AD VARKEN. Ad yoksa bu dal hiç çizilmez —
+        // boş satır/kayma olmaz (bkz. sınıf yorumu).
+        if (gorunenAd != null)
+          Text(
+            etiket,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: genis ? 15 : 13,
+              fontWeight: FontWeight.w600,
+              color: DiziRenkler.metin,
+            ),
+          ),
+      ],
     );
   }
 }
@@ -2793,17 +2917,69 @@ Future<void> yorumEylemleriAc(
 // detaylıca hangi diziyi kaç saat izlediğini söyle, filmlere tıklarsa
 // detaylıca hangi filmi kaç saat izlediğini söyle."
 //
-// *** SÜRE ÖLÇÜLMÜŞ DEĞİL, TÜRETİLMİŞTİR. *** Sunucu bölüm başına ~42 dk,
-// film başına ~110 dk sayıyor (server.js `SURE_DK`); TMDB'nin gerçek süresi
-// ölçüldü ve dizilerde kullanılamayacak kadar boş çıktı (gerekçe orada
-// yazılı). Bu yüzden ekran hiçbir yerde "3 saat 20 dakika izledin" DEMEZ:
-// her sayının başında `~` durur ve kırılım açılınca sabitleri adıyla söyleyen
-// bir not çıkar. Aynı dürüstlük İzleme İstatistikleri ekranında da var
-// ("Yaklaşık ekran süresi").
+// *** SÜRE ARTIK ÇOĞUNLUKLA GERÇEK (21 Ağu 2026). *** Sunucu bölüm/film
+// süresini TMDB'den bir kez türetip `yapim_sureleri` tablosuna yazıyor
+// (backend/sure_doldur.js, migrasyon-2026-08-21e.sql). Sabitler (bölüm 42,
+// film 110) KALDIRILMADI ama artık YEDEK: yalnız süresi bilinmeyen satırlar
+// oraya düşüyor (ölçülen kapsam %92,6).
+//
+// EKRANIN İŞİ: sayıyı gizlemek değil, KAYNAĞINI SÖYLEMEK. Sunucu her yanıtta
+// `sure_gercek_dk` + `sure_tahmini_dk` gönderiyor (toplamları tam olarak
+// gösterilen sayı) ve ekran üç hâlden birini yazıyor:
+//   · hepsi gerçek  → "~" YOK, "gerçek süreler" notu
+//   · karışık       → "~" VAR, "%93'ü gerçek" notu
+//   · hiç gerçek yok→ "~" VAR, eski sabit notu (süre tablosu henüz boş)
+// Eski hâlde her sayının başında koşulsuz "~" vardı; gerçek süreyi bildiğimiz
+// hâlde tahmin gibi sunmak da en az tersi kadar yanlış olurdu.
 //
 // Sayıların başındaki yaklaşıklık işareti. Sözcük değil simge olduğu için
 // çeviri gerektirmez (`ProfilSayaclari.eksik` ile aynı gerekçe).
 const String _yaklasik = '~';
+
+/// Bir süre sayısının KAYNAK KARIŞIMI: kaç dakikası TMDB'nin gerçek
+/// süresinden, kaç dakikası sabit yedeğinden geliyor.
+///
+/// SUNUCUDAN OKUNUR, İSTEMCİDE TÜRETİLMEZ: yüzdeyi burada yeniden hesaplamak
+/// (ör. "yapımların kaçında süre var") sunucunun DAKİKA üzerinden yaptığı
+/// hesapla ayrışırdı — 8 bölümlük süresiz bir dizi ile 236 bölümlük Friends
+/// yapım sayısında eşit, dakikada değil.
+///
+/// Alanlar YOKSA `oku` `null` döner: eski sunucu ya da bayat önbellek kopyası
+/// demektir ve ekran o zaman ESKİ davranışa (koşulsuz "~") düşer. 0 yazmak
+/// "hiçbiri gerçek değil" iddiası olurdu.
+class SureKaynagi {
+  final int gercek;
+  final int tahmini;
+
+  const SureKaynagi(this.gercek, this.tahmini);
+
+  static SureKaynagi? oku(
+    Map<String, dynamic>? m,
+    String gercekAd,
+    String tahminiAd,
+  ) {
+    if (m == null) return null;
+    final g = (m[gercekAd] as num?)?.toInt();
+    final t = (m[tahminiAd] as num?)?.toInt();
+    if (g == null || t == null) return null;
+    return SureKaynagi(g < 0 ? 0 : g, t < 0 ? 0 : t);
+  }
+
+  int get toplam => gercek + tahmini;
+
+  /// Hiç izleme yoksa (0 dakika) "hepsi gerçek" DEĞİLDİR — 0'ı kesin bir
+  /// ölçüm gibi sunmanın anlamı yok, ama kart zaten görünmüyor.
+  bool get hepsiGercek => tahmini == 0 && gercek > 0;
+
+  bool get hicGercekYok => gercek == 0;
+
+  /// Gerçek sürenin yüzdesi — AŞAĞI yuvarlanır. Yukarı yuvarlansaydı %99,6
+  /// "%100 gerçek" diye yazılır ve ekran olmayan bir kesinlik iddia ederdi.
+  int get yuzde => toplam <= 0 ? 0 : (gercek * 100) ~/ toplam;
+
+  /// Sayının önüne konacak işaret: hepsi gerçekse BOŞ.
+  String get isaret => hepsiGercek ? '' : _yaklasik;
+}
 
 /// "Bağlantı koptu — Yenile" şeridi: profil TAZELENEMEDİĞİNDE listenin en
 /// üstünde durur.
@@ -2868,6 +3044,15 @@ class EkranSuresiKarti extends StatefulWidget {
   final int? bolumBirimDk;
   final int? filmBirimDk;
 
+  /// Kaynak karışımı (gerçek/tahmini dakika). `null` = eski sunucu → ekran
+  /// koşulsuz "~" gösterir (eski davranış).
+  final SureKaynagi? kaynak;
+
+  /// Tür başına TAHMİNİ dakika — "Diziler"/"Filmler" satırlarının kendi "~"
+  /// işareti için. `null` = eski sunucu → satır "~" gösterir.
+  final int? diziTahmini;
+  final int? filmTahmini;
+
   /// 'tv' | 'movie' — yapım başına listeyi açar.
   final void Function(String tur) onTur;
 
@@ -2879,6 +3064,9 @@ class EkranSuresiKarti extends StatefulWidget {
     this.filmDakika,
     this.bolumBirimDk,
     this.filmBirimDk,
+    this.kaynak,
+    this.diziTahmini,
+    this.filmTahmini,
   });
 
   @override
@@ -2898,6 +3086,28 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
   bool get _acilabilir =>
       widget.diziDakika != null && widget.filmDakika != null;
 
+  /// Kırılımın altındaki kaynak notu. ÜÇ HÂL — hangisi yazılırsa yazılsın
+  /// GÖSTERİLEN SAYI DEĞİŞMEZ; değişen tek şey sayının nereden geldiğini
+  /// söylemek.
+  String _kaynakNotu() {
+    final k = widget.kaynak;
+    // Eski sunucu / bayat önbellek: kaynak bilinmiyor → eski cümle. (Bu
+    // cümle 45 dilde ZATEN var, yeni anahtar değil.)
+    if (k == null || k.hicGercekYok) {
+      return 'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır'.cf([
+        widget.bolumBirimDk,
+        widget.filmBirimDk,
+      ]);
+    }
+    if (k.hepsiGercek) {
+      return 'Süreler TMDB\'deki gerçek bölüm ve film süreleridir'.c;
+    }
+    // KARIŞIK: yüzde AŞAĞI yuvarlanır ve hangi sabite düşüldüğü de yazar —
+    // "%93'ü gerçek" tek başına, kalan %7'nin ne olduğunu söylemez.
+    return 'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor'
+        .cf([k.yuzde, widget.bolumBirimDk, widget.filmBirimDk]);
+  }
+
   @override
   Widget build(BuildContext context) {
     final baslik = Row(
@@ -2914,7 +3124,9 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
         ),
         const SizedBox(width: 8),
         Text(
-          '$_yaklasik${sureBicimle(widget.dakika)}',
+          // İŞARET KAYNAĞA BAĞLI: hepsi gerçekse "~" YOK. Kaynak alanı hiç
+          // gelmediyse (eski sunucu) eski davranış — koşulsuz "~".
+          '${widget.kaynak?.isaret ?? _yaklasik}${sureBicimle(widget.dakika)}',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w900,
@@ -2958,25 +3170,33 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
               ikon: Icons.tv_outlined,
               etiket: 'Diziler'.c,
               dakika: widget.diziDakika!,
+              // Satırın kendi "~"si: filmler tam gerçekken dizilerdeki eksik
+              // yüzünden film satırına da işaret koymak yanlış uyarı olurdu.
+              yaklasik: widget.diziTahmini == null
+                  ? true
+                  : widget.diziTahmini! > 0,
               onTap: () => widget.onTur('tv'),
             ),
             _SureTurSatiri(
               ikon: Icons.movie_outlined,
               etiket: 'Filmler'.c,
               dakika: widget.filmDakika!,
+              yaklasik: widget.filmTahmini == null
+                  ? true
+                  : widget.filmTahmini! > 0,
               onTap: () => widget.onTur('movie'),
             ),
-            // TAHMİN OLDUĞU BURADA YAZIYOR. Sabitler sunucudan gelmediyse
-            // (eski sürüm) not HİÇ çizilmez — uydurma sayı yazmaktansa
-            // susmak doğru (bkz. sınıf yorumu).
+            // KAYNAK BURADA YAZIYOR — ÜÇ HÂL (bkz. dosya başındaki not):
+            //   hepsi gerçek → sabitten hiç söz edilmez, "~" da yok
+            //   karışık      → yüzde + hangi sabite düşüldüğü
+            //   hiç yok      → eski cümle (süre tablosu henüz boş)
+            // Sabitler sunucudan gelmediyse (eski sürüm) not HİÇ çizilmez —
+            // uydurma sayı yazmaktansa susmak doğru (bkz. sınıf yorumu).
             if (widget.bolumBirimDk != null && widget.filmBirimDk != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
                 child: Text(
-                  'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır'.cf([
-                    widget.bolumBirimDk,
-                    widget.filmBirimDk,
-                  ]),
+                  _kaynakNotu(),
                   style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
                 ),
               ),
@@ -2992,12 +3212,17 @@ class _SureTurSatiri extends StatelessWidget {
   final IconData ikon;
   final String etiket;
   final int dakika;
+
+  /// Bu satırın sayısı tahmini içeriyor mu? Tür başına ayrı: filmlerin süre
+  /// kapsamı (%96,6) dizilerinkinden (%92,6) yüksek.
+  final bool yaklasik;
   final VoidCallback onTap;
 
   const _SureTurSatiri({
     required this.ikon,
     required this.etiket,
     required this.dakika,
+    required this.yaklasik,
     required this.onTap,
   });
 
@@ -3023,7 +3248,7 @@ class _SureTurSatiri extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            '$_yaklasik${sureBicimle(dakika)}',
+            '${yaklasik ? _yaklasik : ''}${sureBicimle(dakika)}',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
@@ -3146,6 +3371,7 @@ class _SureDetaySheetState extends State<SureDetaySheet> {
             adet: (o['adet'] as num?)?.toInt() ?? 0,
             tekrar: (o['tekrar'] as num?)?.toInt() ?? 0,
             dakika: (o['dakika'] as num?)?.toInt() ?? 0,
+            eksik: (o['eksik'] as num?)?.toInt(),
           );
         },
       );
@@ -3205,6 +3431,13 @@ class SureYapimSatiri extends StatefulWidget {
   final int tekrar;
   final int dakika;
 
+  /// Süresi BİLİNMEYEN bölüm/film sayısı (sunucudan `eksik`). SATIR DÜZEYİNDE
+  /// dürüstlük: toplamda %93 gerçek olsa bile TEK BİR yapımın tamamı tahmini
+  /// olabilir (ör. daha sezon belgesi önbelleğe girmemiş yeni dizi). Satır
+  /// üstteki yüzdeye bakıp genelleme yapmaz, kendi durumunu söyler.
+  /// `null` = eski sunucu → satır "~" gösterir (eski davranış).
+  final int? eksik;
+
   const SureYapimSatiri({
     super.key,
     required this.tur,
@@ -3212,6 +3445,7 @@ class SureYapimSatiri extends StatefulWidget {
     required this.adet,
     required this.tekrar,
     required this.dakika,
+    this.eksik,
   });
 
   @override
@@ -3290,7 +3524,9 @@ class _SureYapimSatiriState extends State<SureYapimSatiri> {
             ),
             const SizedBox(width: 8),
             Text(
-              '$_yaklasik${sureBicimle(widget.dakika)}',
+              // "~" YALNIZ bu satırda tahmin varsa.
+              '${(widget.eksik ?? 1) > 0 ? _yaklasik : ''}'
+              '${sureBicimle(widget.dakika)}',
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w800,

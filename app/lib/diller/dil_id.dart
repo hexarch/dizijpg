@@ -1152,8 +1152,6 @@ const Map<String, String> cevirilerId = {
   'Haftanın günleri': 'Hari dalam seminggu',
   'En çok izlediklerin': 'Paling banyak ditonton',
   'Bu dönemde izleme yok': 'Tidak ada tontonan pada periode ini',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Sepanjang masa: {} episode · {} film · ~{}',
   'Paz': 'Min',
   'Pzt': 'Sen',
   'Sal': 'Sel',
@@ -1286,4 +1284,13 @@ const Map<String, String> cevirilerId = {
   'En çok izlediğin filmler': 'Film paling sering ditonton',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Durasi adalah perkiraan: episode dihitung ~{} mnt, film ~{} mnt',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Nama pengguna ini dicadangkan oleh sistem',
+  'Ekran süresi': 'Waktu layar',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Durasi adalah durasi asli episode dan film dari TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Sekitar {}% durasi adalah data asli; sisanya dihitung episode ~{} mnt, film ~{} mnt',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Sepanjang masa: {} episode · {} film · {}',
 };

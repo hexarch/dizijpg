@@ -1172,8 +1172,6 @@ const Map<String, String> cevirilerFil = {
   'Haftanın günleri': 'Mga araw ng linggo',
   'En çok izlediklerin': 'Pinakamadalas panoorin',
   'Bu dönemde izleme yok': 'Walang panonood sa panahong ito',
-  'Tüm zamanlar: {} bölüm · {} film · ~{}':
-      'Sa kabuuan: {} episode · {} pelikula · ~{}',
   'Paz': 'Lin',
   'Pzt': 'Lun',
   'Sal': 'Mar',
@@ -1307,4 +1305,13 @@ const Map<String, String> cevirilerFil = {
   'En çok izlediğin filmler': 'Mga pelikulang pinakamadalas mong pinanood',
   'Süreler tahmindir: bölüm ~{} dk, film ~{} dk sayılır':
       'Tinatayang tagal: bawat episode ~{} min, bawat pelikula ~{} min',
+  'Bu kullanıcı adı sistem tarafından ayrılmış':
+      'Nakareserba ng system ang username na ito',
+  'Ekran süresi': 'Oras sa screen',
+  "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
+      'Ang mga tagal ay ang totoong tagal ng mga episode at pelikula mula sa TMDB',
+  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
+      'Humigit-kumulang {}% ng mga tagal ang totoo; ang natitira ay binibilang na ~{} min bawat episode at ~{} min bawat pelikula',
+  'Tüm zamanlar: {} bölüm · {} film · {}':
+      'Sa kabuuan: {} episode · {} pelikula · {}',
 };

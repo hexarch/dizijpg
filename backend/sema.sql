@@ -46,6 +46,14 @@ CREATE TABLE IF NOT EXISTS kullanicilar (
   -- DEFAULT false: yeni açılan her GERÇEK hesap hiçbir şey yapmadan doğru
   -- tarafta doğar (hata yönü güvenli).
   tohum BOOLEAN NOT NULL DEFAULT false,
+  -- AI HESABI: `tohum`un ALT KÜMESİ ve BAŞKA bir soruya cevap. `tohum` "bu
+  -- hesabın puanı yapılandırılmış veriye girsin mi" (17 hesap); `ai` "bu satır
+  -- yapay zekâ hesabının mı" (TEK hesap, `dizi.jpg.ai`). Dört yer buna bakar:
+  -- spoiler muafiyeti (yorum listesi + akış kartı), `ai_payi` tavanı ve panel
+  -- ölçümü. Eskiden kullanıcı adı dizesiyle karşılaştırılıyordu; ad
+  -- DEĞİŞTİRİLEBİLİR olduğu için (POST /profilim/kullanici-adi) süzgeç hem
+  -- kaçırılabilir hem taklit edilebilirdi. Gerekçe: migrasyon-2026-08-21d.sql.
+  ai BOOLEAN NOT NULL DEFAULT false,
   bildir_begeni BOOLEAN NOT NULL DEFAULT true,
   bildir_yanit BOOLEAN NOT NULL DEFAULT true,
   bildir_takip BOOLEAN NOT NULL DEFAULT true,
@@ -135,6 +143,53 @@ CREATE TABLE IF NOT EXISTS kitaplik_sirasi (
   -- Birincil anahtar okuma JOIN'inin dört sütununu da bu sırayla kapsar;
   -- AYRI indeks gerekmiyor.
   PRIMARY KEY (kullanici_id, liste, tur, tmdb_id)
+);
+
+-- ---------------------------------------------------------------------------
+-- GERÇEK İZLEME SÜRESİ — bölüm/film başına TMDB süresi
+-- (21 Ağu 2026, migrasyon-2026-08-21e.sql — tam gerekçe orada)
+-- ---------------------------------------------------------------------------
+-- Ekran süresi bugüne kadar SABİTTEN türüyordu (bölüm 42, film 110). Ölçüm
+-- sabitin ortalama mutlak hatasını %36,4 buldu: Friends'te 236 bölüm × 42 =
+-- 9.912 dk gösteriliyordu, gerçeği 236 × ~23 = 5.428 dk.
+--
+-- GERÇEK KAYNAK sezon belgesindeki `episodes[].runtime` (kapsam %92,6, bölüm
+-- bölüm kesin) ve film detayındaki `runtime` (%96,6). İkisi de
+-- `tmdb_onbellek.veri` içinde TOAST'lanmış büyük jsonb: film detayı 191-342 KB,
+-- sezon belgesi 5-38 KB. İstek anında açmak profil başına onlarca MB demekti —
+-- o yüzden süre BİR KEZ türetilip buraya yazılır (`sure_doldur.js`), sorgular
+-- yalnız buradan okur.
+--
+-- ANAHTAR `izlemeler`in KULLANICISIZ AYNASIDIR: (tur, tmdb_id, sezon, bolum).
+-- Böylece JOIN birebirdir ve satır çoğaltmaz. Filmde `izlemeler.sezon/bolum`
+-- DEFAULT 0 olduğu için film satırı da (0,0) yazılır — tek JOIN iki türe birden
+-- hizmet eder. Dizi başına TEK "ortalama süre" saklanmadı: kullanıcı bir
+-- dizinin yalnız 3 bölümünü ya da yalnız uzun finalini izlemiş olabilir,
+-- ortalama tam orada yanılır (kullanılmayan `last_episode_to_air` hatası).
+--
+-- `dakika` CHECK 1..1000: TMDB'de `runtime: 0`/`null` yaygın. 0 yazılsaydı
+-- "süresi bilinen ama 0 dakika süren bölüm" sayılır, sabit yedeğine DÜŞMEZ ve
+-- izlenen bölüm toplamdan sessizce silinirdi. Üst sınır, saniye girilmiş bozuk
+-- kayıtlara karşı.
+--
+-- KAPSAM %100 DEĞİL ve olmayacak. Eksik satır sabit yedeğine düşer; toplamın
+-- tutarlılığı kaynak saflığıyla değil TEK FORMÜLLE sağlanır (server.js
+-- `yapimDakikasi` + `SURE_OLCU_SECIM`), dürüstlük ise `sure_gercek_dk` /
+-- `sure_tahmini_dk` alanlarıyla EKRANDA yazılır.
+--
+-- Satırlar KULLANICI VERİSİ DEĞİL (TMDB olgusu): kullanıcı silmesi bu tabloyu
+-- ilgilendirmez, kitaplık boyutu sızdırmaz.
+CREATE TABLE IF NOT EXISTS yapim_sureleri (
+  tur        TEXT NOT NULL CHECK (tur IN ('tv','movie')),
+  tmdb_id    INT  NOT NULL,
+  sezon      INT  NOT NULL DEFAULT 0,
+  bolum      INT  NOT NULL DEFAULT 0,
+  dakika     INT  NOT NULL CHECK (dakika > 0 AND dakika <= 1000),
+  kaynak     TEXT NOT NULL CHECK (kaynak IN ('film','sezon','bolum')),
+  guncelleme TIMESTAMPTZ NOT NULL DEFAULT now(),
+  -- Okuma her zaman TAM anahtarla gelir (`izlemeler` satırı sezon/bolum'u da
+  -- taşır), yazma tek toplu UPSERT: EK İNDEKS YOK.
+  PRIMARY KEY (tur, tmdb_id, sezon, bolum)
 );
 
 -- Puan (1-10) ve isteğe bağlı inceleme. person = oyuncu/yönetmen puanı.
@@ -811,6 +866,12 @@ ALTER TABLE kullanicilar ADD CONSTRAINT kullanicilar_guven_araligi
 ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS guven_ihlal TIMESTAMPTZ;
 CREATE INDEX IF NOT EXISTS kullanicilar_yasak_bitis
   ON kullanicilar (yasak_bitis) WHERE yasakli AND yasak_bitis IS NOT NULL;
+-- AI HESABI BİR TANEDİR — varsayımı yorumda bırakmıyoruz. Kısmi tekil indeks
+-- ikinci `ai = true` işaretlemesini 23505 ile reddeder; aynı zamanda
+-- `WHERE k.ai` ölçüm sorgusunun tek satırlık aramasını karşılar.
+-- Gerekçe: migrasyon-2026-08-21d.sql.
+CREATE UNIQUE INDEX IF NOT EXISTS kullanicilar_tek_ai
+  ON kullanicilar ((ai)) WHERE ai;
 
 -- Denetim izi (SALT-EKLEME): kim, kimi, ne zaman, neden, ne kadar banladı.
 CREATE TABLE IF NOT EXISTS yasak_kayitlari (
