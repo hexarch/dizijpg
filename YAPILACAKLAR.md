@@ -1,5 +1,14 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-19 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-22 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-22 — 🚀 SEO 4.5 canlıda doğrulandı (ısıtıcı + anahtar birleştirme + site haritası turu)
+SEO-YAPILACAKLAR §6.10 + §6.11 dağıtımı doğrulandı ve belgede 🚀'ya çekildi:
+container 22 Ağu ~03:10'da yeni kodla kuruldu (md5 yerel=sunucu). Isıtıcı cron
+`*/10` çalışıyor, kuyruk=0; kanonik `recommendations` anahtarı 9.113 satır;
+site haritası 8 parça (kisi-1 + sirket-1 dahil, hepsi 200); Googlebot UA ile
+içerik/bölüm SSR 0,34-0,35 sn; `/api/saglik` ok. Sonraki adım kod değil ölçüm:
+"Keşfedildi – dizine eklenmemiş" (2.159) birkaç hafta sonra yeniden okunacak,
+sonrası §4.6 (dış görünürlük).
 
 ## 2026-08-19 — ✅ "Sana Özel" rafına "Tümünü gör" (dağıtım BEKLİYOR)
 Keşfet'te başlığa dokununca `/raf/:slug` açılan TEK istisna "Sana Özel"di:

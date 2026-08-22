@@ -48,7 +48,7 @@ adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
 | **4** | **İç bağlantıyı güçlendir** — şirket SSR + görseller + `/gizlilik` | Sinyali derin sayfalara taşır. `/icerik` → firma bağlantıları tam da "keşfedildi ama taranmadı" kuyruğunu hedefler. | §6.1–6.3 | ✅ |
 | **5** | **Dış görünürlük** — ilk gerçek bağlantılar | Tarama bütçesinin asıl kaynağı otorite. Kod işi değil; ayrı bir plan gerektiriyor. | §4.6 | ⬜ |
 | ~~6~~ | ~~Bölüm sayfalarını aç~~ **ERTELENDİ** | Kuyruk boşalmadan yeni URL ailesi açmak var olanların taranma olasılığını seyreltir. Bkz. §1.1. | §5 | ⛔ şimdilik |
-| **4.5** | **Tarama verimini yükselt** — önbellek ısıtıcısı + SSR/uygulama anahtar birleştirme | Kuyruğun sebebi kalite değil HIZ: Googlebot'un hiç girmediği 2.071 URL soğuk, ilk ziyarette canlı TMDB bekliyor. | §6.10 | 🔨 kod hazır, dağıtım bekliyor |
+| **4.5** | **Tarama verimini yükselt** — önbellek ısıtıcısı + SSR/uygulama anahtar birleştirme | Kuyruğun sebebi kalite değil HIZ: Googlebot'un hiç girmediği 2.071 URL soğuk, ilk ziyarette canlı TMDB bekliyor. | §6.10 | 🚀 **canlıda** (22 Ağu; kanıtlar §6.10 sonunda) |
 | **7** | **hreflang / çok dilli SSR** | Tavanı en yüksek iş ama tarama kuyruğu boşalmadan URL sayısını 45'le çarpmak kuyruğu kilitler. | §7 | ⬜ |
 
 > **Bir sonraki gözden geçirme:** "Keşfedildi – dizine eklenmemiş" sayısı
@@ -406,7 +406,7 @@ kovalanmalı).
 
 ---
 
-## 6.10 🔨 Tarama verimi — önbellek soğuk (20 Ağu 2026)
+## 6.10 🚀 Tarama verimi — önbellek soğuk (20 Ağu 2026)
 
 ### Ölçülen durum
 
@@ -484,6 +484,27 @@ Geçişten sonraki ilk günlerde kuyruk derinliğinin sıçraması beklenen davr
 - **Asıl ölçüt:** "Keşfedildi – dizine eklenmemiş" (bugün 2.159) düşmeli.
   Düşmüyorsa sorun hızda değil otoritededir (§4.6).
 
+### 🚀 Dağıtım doğrulaması (22 Ağu 2026)
+
+Container 22 Ağu ~03:10'da yeni kodla yeniden kuruldu; md5 ile yerel=sunucu
+doğrulandı (server.js, isitici.js, Dockerfile, sema.sql). Kanıtlar:
+
+- **Isıtıcı canlı ve kuyruk BOŞ:** host cron `*/10` → `/var/log/dizijpg-isitici.log`.
+  Son koşular `kuyruk=0 hata=0`, ilk büyük koşu `tazelendi=420` idi; artık koşu
+  başına 0-100 tazeleme bandında. Sıfır işlik koşular BİLEREK sessiz
+  (`konusmaliMi` — logda boşluk görürsen önce bunu hatırla).
+- **Anahtar birleştirme dolu:** `tmdb_onbellek`te kanonik `recommendations`
+  anahtarı 9.113 satır, eski `similar` 554'te kaldı (TTL ile düşecek);
+  toplam 147.289 anahtar, ısıtıcı bakılan=112.486.
+- **Site haritası 8 parça:** genel + icerik-1 + bolum-1..4 + **kisi-1 + sirket-1**,
+  hepsi 200 (kisi 0,9 sn — önbellekli).
+- **Bot SSR hızlı:** Googlebot UA ile `/icerik/tv/32836` 0,34 sn,
+  `/dizi/32836/sezon/15/bolum/12` 0,35 sn (18 Ağu'daki 504'lerle karşılaştır).
+- `curl /api/saglik` → ok.
+
+Kalan tek şey ölçüm: "Keşfedildi – dizine eklenmemiş" (2.159) birkaç hafta
+sonra Search Console'dan yeniden okunacak — düşüş §4.6/§7 kararlarını açar.
+
 ### Ayrıca ölçüldü — sitemap'te olmayan iki aile
 
 `SITEMAP_SORGU` yalnız `tv`/`movie` alıyor: **`/kisi` ve `/sirket` site
@@ -497,7 +518,7 @@ ilk 10 oyuncudan çıkarıyor (ek TMDB isteği harcamadan).
 
 ---
 
-## 6.11 ✅ Tarama bütçesi turu (21 Ağu 2026) — kod hazır, dağıtım bekliyor
+## 6.11 🚀 Tarama bütçesi turu (21 Ağu 2026) — 22 Ağu'da canlıda
 
 Ölçüm tabanı: nginx `access.log` 17–21 Ağu (5 gün, 1.375 Googlebot isteği,
 1.079 benzersiz URL ≈ 216/gün) + canlı DB + canlıya Googlebot UA ile curl.
