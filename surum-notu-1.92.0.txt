@@ -1,0 +1,27 @@
+Play Console sürüm notu — 1.92.0 (142)
+Alpha'daki son konsol sürümü: 137 (1.87.0), 20 Ağustos. Bu not 138→142
+(1.88.0–1.92.0) aralığını kapsar; 1.91.0+141 konsola hiç yüklenmedi.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama bilinçli olarak anılmıyor.
+⚠ KARAKTER SINIRI: Play "Yenilikler" alanı dil başına 500 karakter.
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır:
+
+<tr-TR>  (473 karakter)
+• Keşfet'te tematik raflar: temalara göre derlenmiş dizi ve filmler.
+• Dizi ve film sayfalarında SSS blokları.
+• Kitaplıkta sıralama seçenekleri; profilde Mesajlar sekmesi.
+• İzleme süresi artık gerçek bölüm sürelerinden hesaplanıyor, dizi/film kırılımıyla.
+• Profil: görünen ad desteği, yıl rozetleri; sayaç dizilimi ve ekranın eski veride takılı kalması düzeltildi.
+• Video altyazısında yazı tipi, kenarlık ve opaklık ayarları.
+• Daha hızlı sayfalar ve hata düzeltmeleri.
+</tr-TR>
+
+<en-US>  (445 karakter)
+• Discover: themed shelves of shows and movies curated by topic.
+• FAQ blocks on show and movie pages.
+• Library sorting options; a Messages tab on your profile.
+• Watch time is now computed from real episode runtimes, with a show/movie breakdown.
+• Profile: display-name support, yearly badges; fixed counter layout and the screen getting stuck on stale data.
+• Video subtitles: font, outline and opacity settings.
+• Faster pages and bug fixes.
+</en-US>
