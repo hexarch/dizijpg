@@ -273,6 +273,10 @@ void main() {
       final kopyalar = <String>[];
       for (final dosya in kaynaklar()) {
         if (dosya.path.endsWith('gorsel_basliklari.dart')) continue;
+        // Çeviri sözlükleri kullanıcı metnidir, HTTP başlığı değil:
+        // dil_en.dart'taki `'Kabul et': 'Accept'` gibi karşılıklar bu
+        // taramanın aradığı başlık kopyası değildir (23 Ağu 2026).
+        if (dosya.path.contains('lib/diller/')) continue;
         // Yorum satırları sayılmaz: gerekçe metinlerinde `image/webp` geçebilir.
         final kodSatirlari = dosya
             .readAsLinesSync()

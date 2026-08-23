@@ -1291,4 +1291,14 @@ const Map<String, String> cevirilerNb = {
       'Tidene er de faktiske spilletidene for episoder og filmer fra TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Gjennom tidene: {} episoder · {} filmer · {}',
+  'Kabul et':
+      'Godta',
+  'Reddedilenler':
+      'Avviste',
+  'İstekler':
+      'Forespørsler',
+  'Reddettiğin istek yok':
+      'Ingen avviste forespørsler',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Avviste forespørsler blir her; du kan godta dem igjen når du vil.',
 };

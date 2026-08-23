@@ -1263,4 +1263,14 @@ const Map<String, String> cevirilerHe = {
       'הזמנים הם משכי הפרקים והסרטים האמיתיים מ-TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'מאז ומעולם: {} פרקים · {} סרטים · {}',
+  'Kabul et':
+      'אישור',
+  'Reddedilenler':
+      'בקשות שנדחו',
+  'İstekler':
+      'בקשות',
+  'Reddettiğin istek yok':
+      'אין בקשות שנדחו',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'בקשות שנדחו נשארות כאן; אפשר לאשר אותן שוב בכל עת.',
 };

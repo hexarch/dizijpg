@@ -1312,4 +1312,14 @@ const Map<String, String> cevirilerPt = {
       'Os tempos são as durações reais de episódios e filmes no TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Desde sempre: {} episódios · {} filmes · {}',
+  'Kabul et':
+      'Aceitar',
+  'Reddedilenler':
+      'Recusadas',
+  'İstekler':
+      'Solicitações',
+  'Reddettiğin istek yok':
+      'Nenhuma solicitação recusada',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'As solicitações recusadas ficam aqui; você pode aceitá-las de novo quando quiser.',
 };

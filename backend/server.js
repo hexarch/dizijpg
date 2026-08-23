@@ -12115,12 +12115,15 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
                      false) AS cevrimici,
             (t.takip_eden_id IS NOT NULL) AS takip_ediyorum,
             (by.alici_id IS NOT NULL) AS ben_yazdim,
+            sd.karar AS istek_karar,
             COALESCE(o.adet, 0) AS okunmamis
      FROM mesajlar m
      JOIN kullanicilar k
        ON k.id = CASE WHEN m.gonderen_id=$1 THEN m.alici_id ELSE m.gonderen_id END
      LEFT JOIN takipler t
        ON t.takip_eden_id=$1 AND t.takip_edilen_id=k.id
+     LEFT JOIN mesaj_istek_kararlari sd
+       ON sd.kullanici_id=$1 AND sd.partner_id=k.id
      LEFT JOIN (
        SELECT DISTINCT alici_id FROM mesajlar WHERE gonderen_id=$1
      ) by ON by.alici_id = k.id
@@ -12145,20 +12148,17 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
     // ileride kolayca gözden kaçacak bir tutarsızlık olurdu.
     r.medya = medyaImzali(r.medya, MEDYA_IMZA_ANAHTARI);
   }
-  const { sohbetler, istekler } = sohbetleriAyir(rows);
+  const { sohbetler, istekler, reddedilenler } = sohbetleriAyir(rows);
   // Liste yoklaması da yazıyor/kayıt göstersin. Bellek yetmez: damga
   // sohbet_canli'de (küme işçileri). Tek sorgu, N+1 yok.
   const benId = req.kullanici.id;
   const partnerIdler = [...new Set([
     ...sohbetler.map((r) => r.partner_id),
     ...istekler.map((r) => r.partner_id),
+    ...reddedilenler.map((r) => r.partner_id),
   ])].filter((id) => Number.isInteger(id));
   const damgalar = await sohbetDurumToplu(benId, partnerIdler);
-  for (const r of sohbetler) {
-    r.durum = damgalar.get(r.partner_id) || null;
-    r.yaziyor = r.durum != null;
-  }
-  for (const r of istekler) {
+  for (const r of [...sohbetler, ...istekler, ...reddedilenler]) {
     r.durum = damgalar.get(r.partner_id) || null;
     r.yaziyor = r.durum != null;
   }
@@ -12166,13 +12166,23 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
   // rozette sonsuza kadar "1" gösterirdi: sohbet listede olmadığı için
   // kullanıcı onu AÇIP okuyamaz, rozet asla düşmezdi. (Bu, süzgeci yalnız
   // listeye koymanın en kolay gözden kaçan yan etkisi.)
+  // REDDEDİLENLER DE SÜZÜLÜR: reddettiğim kişinin mesajı beni dürtmesin diye
+  // reddettim — okunmamışı toplam rozeti şişirseydi red, sessize almak yerine
+  // kalıcı bir "1" üretirdi. Sohbet Reddedilenler'de görünür ve oradan
+  // okunabilir, yani rozet düşürülemez değil; sadece bilerek sayılmıyor.
   const toplam = await havuz.query(
     `SELECT count(*)::int AS adet FROM mesajlar
-     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}`,
+     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}
+       AND NOT EXISTS (SELECT 1 FROM mesaj_istek_kararlari rk
+                       WHERE rk.kullanici_id=$1 AND rk.partner_id=gonderen_id
+                         AND rk.karar='red')`,
     [req.kullanici.id]);
   res.json({
     sohbetler,
     istekler,
+    // Eski istemci bu alanı tanımaz ve görmezden gelir (çökme olmaz);
+    // yeni istemci Reddedilenler sekmesini bundan çizer.
+    reddedilenler,
     // Rozet SAYISI = okunmamışı olan istek sayısı (açılmış ama cevaplanmamış
     // eski istekler rozeti şişirmesin). `okunmamis` alanı GERİYE DÖNÜK
     // uyumluluk için TOPLAM kalır — eski istemciler onu okuyor.
@@ -12187,10 +12197,48 @@ app.get('/sohbetler', girisZorunlu, sarici(async (req, res) => {
 app.get('/sohbetler/okunmamis', girisZorunlu, sarici(async (req, res) => {
   const toplam = await havuz.query(
     `SELECT count(*)::int AS adet FROM mesajlar
-     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}`,
+     WHERE alici_id=$1 AND NOT okundu AND ${engelSuzgec('gonderen_id', '$1')}
+       AND NOT EXISTS (SELECT 1 FROM mesaj_istek_kararlari rk
+                       WHERE rk.kullanici_id=$1 AND rk.partner_id=gonderen_id
+                         AND rk.karar='red')`,
     [req.kullanici.id]);
   res.json({ okunmamis: toplam.rows[0].adet });
 }));
+
+// Mesaj isteği kararı: Kabul et / Reddet (Instagram akışı).
+//  · Karar YALNIZ karar verenin kutusunu etkiler; gönderici hiçbir değişiklik
+//    görmez, "reddedildin" sinyali sızmaz (bilinçli — sosyal baskı üretmez).
+//  · Yetki tasarımı: kullanici_id HER ZAMAN req.kullanici.id yazılır; istemci
+//    başkası adına karar veremez. Ek şart: partner bana gerçekten yazmış
+//    olmalı (ortada istek yokken satır üretmek anlamsız ve kirlilik).
+//  · 'kabul' cevap yazmadan sohbeti ana listeye taşır; 'red' Reddedilenler'e
+//    indirir + o kişinin sonraki mesajları bildirim üretmez (POST /mesajlar).
+//  · Hız limiti: kutu temizliği seri dokunuş üretir ama dakikada 30 fazlasıyla
+//    yeter; kötüye kullanımda tablo şişmez (PK upsert) yine de sınır konur.
+const istekKarariLimiti = hizLimiti(30, (req) => `ik:${req.kullanici.id}`);
+app.post('/mesaj-istekleri/karar', girisZorunlu, istekKarariLimiti,
+  sarici(async (req, res) => {
+    const { partner_id, karar } = req.body || {};
+    if (!Number.isInteger(partner_id) || partner_id === req.kullanici.id) {
+      return res.status(400).json({ hata: 'Geçersiz kullanıcı', kod: 'GECERSIZ_PARTNER' });
+    }
+    if (!['kabul', 'red'].includes(karar)) {
+      return res.status(400).json({ hata: 'Geçersiz karar', kod: 'GECERSIZ_KARAR' });
+    }
+    const v = await havuz.query(
+      'SELECT 1 FROM mesajlar WHERE gonderen_id=$1 AND alici_id=$2 LIMIT 1',
+      [partner_id, req.kullanici.id]);
+    if (!v.rows.length) {
+      return res.status(404).json({ hata: 'Mesaj isteği bulunamadı', kod: 'ISTEK_YOK' });
+    }
+    await havuz.query(
+      `INSERT INTO mesaj_istek_kararlari (kullanici_id, partner_id, karar)
+       VALUES ($1,$2,$3)
+       ON CONFLICT (kullanici_id, partner_id)
+       DO UPDATE SET karar=EXCLUDED.karar, tarih=now()`,
+      [req.kullanici.id, partner_id, karar]);
+    res.json({ tamam: true });
+  }));
 
 // Paylaşım hedefleri: mesajlaştıkların ÖNCE, sonra takip ettiklerin, sonra
 // takipçilerin (tekilleştirilmiş). Gönderiyi DM ile yollarken listelenir.
@@ -12775,11 +12823,26 @@ app.post('/mesajlar', girisZorunlu, mesajLimiti, sarici(async (req, res) => {
   // Kardeş işçilere de duyurulur (gizlilik gerekçesi abone bloğunda).
   ozelMedyaEkle(medya);
   yayinla('ozel_medya_ekle', medya);
+  // CEVAP VERMEK KABULDÜR: göndereni daha önce reddettiğim birine şimdi BEN
+  // yazıyorsam red kalkar (kabule yükselir) — yoksa sohbet ana listeye döndüğü
+  // halde karşı tarafın mesajları sessiz kalmaya devam ederdi.
+  await havuz.query(
+    `UPDATE mesaj_istek_kararlari SET karar='kabul', tarih=now()
+     WHERE kullanici_id=$1 AND partner_id=$2 AND karar='red'`,
+    [req.kullanici.id, aliciId]);
   // Alıcı bu konuşmanın ekranındaysa zil + FCM gereksiz: mesaj 3 sn
   // yoklamayla zaten iner. Başka sohbet / arka plan → bildirim gider.
+  // REDDEDİLEN GÖNDERİCİ SUSAR: alıcı bu göndereni reddettiyse bildirim de
+  // FCM de üretilmez — mesaj Reddedilenler'de birikir, alıcı isterse bakar.
   if (!sohbetAcikMi(sohbetBakanlar, aliciId, req.kullanici.id)) {
-    bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
-      temiz ? { metin: temiz } : null);
+    const red = await havuz.query(
+      `SELECT 1 FROM mesaj_istek_kararlari
+       WHERE kullanici_id=$1 AND partner_id=$2 AND karar='red'`,
+      [aliciId, req.kullanici.id]);
+    if (!red.rows.length) {
+      bildirimEkle(aliciId, 'mesaj', req.kullanici.id, null,
+        temiz ? { metin: temiz } : null);
+    }
   }
   res.json({ id: rows[0].id, tarih: rows[0].tarih });
 }));

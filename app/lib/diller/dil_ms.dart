@@ -1296,4 +1296,14 @@ const Map<String, String> cevirilerMs = {
       'Tempoh ialah tempoh sebenar episod dan filem daripada TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sepanjang masa: {} episod · {} filem · {}',
+  'Kabul et':
+      'Terima',
+  'Reddedilenler':
+      'Ditolak',
+  'İstekler':
+      'Permintaan',
+  'Reddettiğin istek yok':
+      'Tiada permintaan yang ditolak',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Permintaan yang ditolak kekal di sini; anda boleh menerimanya semula bila-bila masa.',
 };

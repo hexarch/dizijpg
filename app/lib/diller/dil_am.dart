@@ -1244,4 +1244,14 @@ const Map<String, String> cevirilerAm = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'ጊዜዎቹ ከTMDB የተገኙ የክፍሎች እና የፊልሞች እውነተኛ ርዝመቶች ናቸው',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'በአጠቃላይ፦ {} ክፍሎች · {} ፊልሞች · {}',
+  'Kabul et':
+      'ተቀበል',
+  'Reddedilenler':
+      'ውድቅ የተደረጉ',
+  'İstekler':
+      'ጥያቄዎች',
+  'Reddettiğin istek yok':
+      'ውድቅ የተደረገ ጥያቄ የለም',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'ውድቅ የተደረጉ ጥያቄዎች እዚህ ይቆያሉ፤ በማንኛውም ጊዜ መልሶ መቀበል ይቻላል።',
 };

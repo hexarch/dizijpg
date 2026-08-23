@@ -1295,4 +1295,14 @@ const Map<String, String> cevirilerSw = {
       'Muda ni urefu halisi wa vipindi na filamu kutoka TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Muda wote: vipindi {} · filamu {} · {}',
+  'Kabul et':
+      'Kubali',
+  'Reddedilenler':
+      'Zilizokataliwa',
+  'İstekler':
+      'Maombi',
+  'Reddettiğin istek yok':
+      'Hakuna maombi yaliyokataliwa',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Maombi yaliyokataliwa hubaki hapa; unaweza kuyakubali tena wakati wowote.',
 };

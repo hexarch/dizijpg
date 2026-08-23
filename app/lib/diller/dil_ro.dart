@@ -1310,4 +1310,14 @@ const Map<String, String> cevirilerRo = {
       'Duratele sunt duratele reale ale episoadelor și filmelor de pe TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Dintotdeauna: {} episoade · {} filme · {}',
+  'Kabul et':
+      'Acceptă',
+  'Reddedilenler':
+      'Respinse',
+  'İstekler':
+      'Cereri',
+  'Reddettiğin istek yok':
+      'Nicio cerere respinsă',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Cererile respinse rămân aici; le poți accepta din nou oricând.',
 };

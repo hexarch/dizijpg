@@ -610,7 +610,9 @@ const Map<String, String> cevirilerZh = {
   'Çalıyor...': '正在呼叫…',
   'Bağlanıyor...': '正在连接…',
   'Cevapla': '接听',
-  'Reddet': '拒接',
+  // '拒接' yalnız "aramayı reddet" demektir; anahtar artık mesaj isteğini
+  // reddetmek için de kullanılıyor — '拒绝' iki bağlamı da karşılar.
+  'Reddet': '拒绝',
   'Sessize al': '静音',
   'Hoparlör': '扬声器',
   'Kamerayı kapat': '关闭摄像头',
@@ -1209,4 +1211,14 @@ const Map<String, String> cevirilerZh = {
   'Ekran süresi': '观看时长',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir": '时长为 TMDB 上剧集和电影的真实时长',
   'Tüm zamanlar: {} bölüm · {} film · {}': '历史累计：{} 集 · {} 部电影 · {}',
+  'Kabul et':
+      '接受',
+  'Reddedilenler':
+      '已拒绝',
+  'İstekler':
+      '请求',
+  'Reddettiğin istek yok':
+      '没有已拒绝的请求',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      '已拒绝的请求会保留在这里，你可以随时重新接受。',
 };

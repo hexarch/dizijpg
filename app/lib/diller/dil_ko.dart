@@ -1228,4 +1228,14 @@ const Map<String, String> cevirilerKo = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       '시간은 TMDB의 실제 에피소드·영화 길이예요',
   'Tüm zamanlar: {} bölüm · {} film · {}': '전체 기간: {}화 · 영화 {}편 · {}',
+  'Kabul et':
+      '수락',
+  'Reddedilenler':
+      '거절됨',
+  'İstekler':
+      '요청',
+  'Reddettiğin istek yok':
+      '거절한 요청이 없습니다',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      '거절한 요청은 여기에 남아 있으며 언제든지 다시 수락할 수 있습니다.',
 };

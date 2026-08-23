@@ -1283,4 +1283,14 @@ const Map<String, String> cevirilerMr = {
       'वेळा TMDB वरील एपिसोड आणि चित्रपटांच्या खऱ्या कालावधी आहेत',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'आतापर्यंत: {} भाग · {} चित्रपट · {}',
+  'Kabul et':
+      'स्वीकारा',
+  'Reddedilenler':
+      'नाकारलेल्या',
+  'İstekler':
+      'विनंत्या',
+  'Reddettiğin istek yok':
+      'नाकारलेली विनंती नाही',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'नाकारलेल्या विनंत्या इथे राहतात; हवं तेव्हा पुन्हा स्वीकारू शकता.',
 };

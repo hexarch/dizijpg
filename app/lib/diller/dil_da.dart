@@ -1292,4 +1292,14 @@ const Map<String, String> cevirilerDa = {
       'Tiderne er de faktiske spilletider for afsnit og film fra TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Nogensinde: {} afsnit · {} film · {}',
+  'Kabul et':
+      'Acceptér',
+  'Reddedilenler':
+      'Afviste',
+  'İstekler':
+      'Anmodninger',
+  'Reddettiğin istek yok':
+      'Ingen afviste anmodninger',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Afviste anmodninger bliver her; du kan acceptere dem igen, når du vil.',
 };

@@ -1289,4 +1289,14 @@ const Map<String, String> cevirilerEn = {
       'Times are the real episode and movie runtimes from TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'All time: {} episodes · {} movies · {}',
+  'Kabul et':
+      'Accept',
+  'Reddedilenler':
+      'Declined',
+  'İstekler':
+      'Requests',
+  'Reddettiğin istek yok':
+      'No declined requests',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Declined requests stay here; you can accept them again anytime.',
 };

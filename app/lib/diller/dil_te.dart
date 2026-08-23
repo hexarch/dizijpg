@@ -1288,4 +1288,14 @@ const Map<String, String> cevirilerTe = {
       'సమయాలు TMDB నుండి ఎపిసోడ్, సినిమాల అసలు నిడివులు',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'మొత్తం: {} ఎపిసోడ్‌లు · {} సినిమాలు · {}',
+  'Kabul et':
+      'ఆమోదించండి',
+  'Reddedilenler':
+      'తిరస్కరించినవి',
+  'İstekler':
+      'అభ్యర్థనలు',
+  'Reddettiğin istek yok':
+      'తిరస్కరించిన అభ్యర్థనలు లేవు',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'తిరస్కరించిన అభ్యర్థనలు ఇక్కడ ఉంటాయి; కావాలంటే మళ్లీ ఆమోదించవచ్చు.',
 };

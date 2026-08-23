@@ -1302,4 +1302,14 @@ const Map<String, String> cevirilerIt = {
       'I tempi sono le durate reali di episodi e film su TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Da sempre: {} episodi · {} film · {}',
+  'Kabul et':
+      'Accetta',
+  'Reddedilenler':
+      'Rifiutate',
+  'İstekler':
+      'Richieste',
+  'Reddettiğin istek yok':
+      'Nessuna richiesta rifiutata',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Le richieste rifiutate restano qui; puoi accettarle di nuovo quando vuoi.',
 };

@@ -1287,4 +1287,14 @@ const Map<String, String> cevirilerPa = {
       'ਸਮਾਂ TMDB ਤੋਂ ਐਪੀਸੋਡ ਅਤੇ ਫ਼ਿਲਮਾਂ ਦੀ ਅਸਲ ਮਿਆਦ ਹੈ',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'ਹਮੇਸ਼ਾ ਤੋਂ: {} ਐਪੀਸੋਡ · {} ਫ਼ਿਲਮਾਂ · {}',
+  'Kabul et':
+      'ਸਵੀਕਾਰ ਕਰੋ',
+  'Reddedilenler':
+      'ਰੱਦ ਕੀਤੀਆਂ',
+  'İstekler':
+      'ਬੇਨਤੀਆਂ',
+  'Reddettiğin istek yok':
+      'ਕੋਈ ਰੱਦ ਕੀਤੀ ਬੇਨਤੀ ਨਹੀਂ',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'ਰੱਦ ਕੀਤੀਆਂ ਬੇਨਤੀਆਂ ਇੱਥੇ ਰਹਿੰਦੀਆਂ ਹਨ; ਜਦੋਂ ਚਾਹੋ ਮੁੜ ਸਵੀਕਾਰ ਕਰ ਸਕਦੇ ਹੋ।',
 };

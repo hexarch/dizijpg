@@ -443,10 +443,16 @@ class MesajIstekleriEkrani extends StatefulWidget {
 class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
     with WidgetsBindingObserver {
   List<dynamic>? _istekler;
+  List<dynamic> _reddedilenler = const [];
   String? _hata;
   Timer? _sayac;
   bool _cekiliyor = false;
   bool _bekleyenYukle = false;
+
+  /// Kararı sunucuya yazılmakta olan partner id'leri: buton kilidi + sessiz
+  /// yoklama susturması. Karar uçuştayken yoklama listeyi ezerse iyimser
+  /// taşıma bir anlığına geri alınmış görünür (titreme) — o yüzden beklenir.
+  final Set<int> _kararBekleyen = {};
 
   @override
   void initState() {
@@ -480,19 +486,24 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
       _bekleyenYukle = true;
       return;
     }
+    // Karar uçuştayken sessiz yoklama iyimser taşımayı ezmesin.
+    if (sessiz && _kararBekleyen.isNotEmpty) return;
     _cekiliyor = true;
     if (!sessiz) setState(() => _hata = null);
     try {
       final d = await Api.get('/sohbetler');
       if (!mounted) return;
       final istekler = (d['istekler'] as List<dynamic>?) ?? const [];
+      final reddedilenler = (d['reddedilenler'] as List<dynamic>?) ?? const [];
       if (sessiz &&
           _hata == null &&
-          _sohbetSatirlariAyni(_istekler, istekler)) {
+          _sohbetSatirlariAyni(_istekler, istekler) &&
+          _sohbetSatirlariAyni(_reddedilenler, reddedilenler)) {
         return;
       }
       setState(() {
         _istekler = istekler;
+        _reddedilenler = reddedilenler;
         _hata = null;
       });
     } catch (e) {
@@ -509,6 +520,139 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
     }
   }
 
+  /// Kabul et / Reddet. İyimser: satır hedef kovaya HEMEN taşınır; sunucu
+  /// hata verirse iki liste de eski hâline döner + SnackBar (kural: üç hal,
+  /// sessiz başarısızlık yok). Kabulde kullanıcı doğrudan sohbete girer.
+  Future<void> _karar(Map<String, dynamic> sohbet, String karar) async {
+    final partnerId = sohbet['partner_id'] as int?;
+    if (partnerId == null || _kararBekleyen.contains(partnerId)) return;
+    final eskiIstekler = List<dynamic>.from(_istekler ?? const []);
+    final eskiReddedilenler = List<dynamic>.from(_reddedilenler);
+    setState(() {
+      _kararBekleyen.add(partnerId);
+      _istekler = (_istekler ?? const [])
+          .where((s) => s['partner_id'] != partnerId)
+          .toList();
+      _reddedilenler = _reddedilenler
+          .where((s) => s['partner_id'] != partnerId)
+          .toList();
+      // Kabul edilen satır listeden düşer (artık ana listede); reddedilen
+      // Reddedilenler'in başına iner — kullanıcı nereye gittiğini GÖRÜR.
+      if (karar == 'red') _reddedilenler = [sohbet, ..._reddedilenler];
+    });
+    try {
+      await Api.post('/mesaj-istekleri/karar', {
+        'partner_id': partnerId,
+        'karar': karar,
+      });
+      if (!mounted) return;
+      setState(() => _kararBekleyen.remove(partnerId));
+      if (karar == 'kabul') {
+        // Kullanıcı isteği: kabul doğrudan sohbeti açar.
+        await context.push('/sohbet/${sohbet['partner']}');
+      }
+      _yukle(sessiz: true);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _kararBekleyen.remove(partnerId);
+        _istekler = eskiIstekler;
+        _reddedilenler = eskiReddedilenler;
+      });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+    }
+  }
+
+  /// Tek sekmenin gövdesi: istekler ya da reddedilenler listesi.
+  Widget _liste({required bool reddedilenler}) {
+    final satirlar = reddedilenler ? _reddedilenler : (_istekler ?? const []);
+    if (satirlar.isEmpty) {
+      return reddedilenler
+          ? BosDurum(
+              ikon: Icons.block_outlined,
+              baslik: 'Reddettiğin istek yok'.c,
+              ipucu:
+                  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.'
+                      .c,
+            )
+          : BosDurum(
+              ikon: Icons.mark_email_unread_outlined,
+              baslik: 'Mesaj isteğin yok'.c,
+              ipucu:
+                  'Takip etmediğin kişilerden gelen mesajlar burada görünür.'.c,
+            );
+    }
+    return RefreshIndicator(
+      color: DiziRenkler.sari,
+      onRefresh: () => _yukle(),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        itemCount: satirlar.length,
+        itemBuilder: (context, i) {
+          final sohbet = satirlar[i] as Map<String, dynamic>;
+          final bekliyor = _kararBekleyen.contains(sohbet['partner_id']);
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SohbetSatiri(
+                sohbet: sohbet,
+                onTap: () async {
+                  await context.push('/sohbet/${sohbet['partner']}');
+                  // Cevap verildiyse sohbet ana listeye geçer ve düşer.
+                  _yukle();
+                },
+              ),
+              Padding(
+                // Butonlar avatarın bittiği hizadan başlar (16 + 48 + 12).
+                padding: const EdgeInsets.fromLTRB(76, 0, 16, 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SizedBox(
+                        height: 44,
+                        child: FilledButton(
+                          onPressed: bekliyor
+                              ? null
+                              : () => _karar(sohbet, 'kabul'),
+                          child: bekliyor
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Text('Kabul et'.c, maxLines: 1),
+                        ),
+                      ),
+                    ),
+                    // Reddedilenler sekmesinde tek eylem var: geri kabul.
+                    if (!reddedilenler) ...[
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: SizedBox(
+                          height: 44,
+                          child: OutlinedButton(
+                            onPressed: bekliyor
+                                ? null
+                                : () => _karar(sohbet, 'red'),
+                            child: Text('Reddet'.c, maxLines: 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget govde;
@@ -521,36 +665,27 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
       );
     } else if (_istekler == null) {
       govde = const IskeletListe();
-    } else if (_istekler!.isEmpty) {
-      govde = BosDurum(
-        ikon: Icons.mark_email_unread_outlined,
-        baslik: 'Mesaj isteğin yok'.c,
-        ipucu: 'Takip etmediğin kişilerden gelen mesajlar burada görünür.'.c,
-      );
     } else {
-      govde = RefreshIndicator(
-        color: DiziRenkler.sari,
-        onRefresh: () => _yukle(),
-        child: ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 4),
-          itemCount: _istekler!.length,
-          itemBuilder: (context, i) => SohbetSatiri(
-            sohbet: _istekler![i] as Map<String, dynamic>,
-            onTap: () async {
-              await context.push('/sohbet/${_istekler![i]['partner']}');
-              // Cevap verildiyse ya da kişi takip edildiyse sohbet ana listeye
-              // geçer ve buradan DÜŞER — o yüzden dönüşte yeniden çekilir.
-              _yukle();
-            },
-          ),
-        ),
+      govde = TabBarView(
+        children: [_liste(reddedilenler: false), _liste(reddedilenler: true)],
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(title: Text('Gelen mesaj istekleri'.c)),
-      // Sohbet listesiyle aynı kolon: masaüstünde kullanıcılar sola yapışmasın.
-      body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Gelen mesaj istekleri'.c),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'İstekler'.c),
+              Tab(text: 'Reddedilenler'.c),
+            ],
+          ),
+        ),
+        // Sohbet listesiyle aynı kolon: masaüstünde satırlar sola yapışmasın.
+        body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
+      ),
     );
   }
 }

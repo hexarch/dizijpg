@@ -1284,4 +1284,14 @@ const Map<String, String> cevirilerHi = {
       'समय TMDB से एपिसोड और फ़िल्मों की असली अवधियाँ हैं',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'अब तक: {} एपिसोड · {} फ़िल्में · {}',
+  'Kabul et':
+      'स्वीकार करें',
+  'Reddedilenler':
+      'अस्वीकृत',
+  'İstekler':
+      'अनुरोध',
+  'Reddettiğin istek yok':
+      'कोई अस्वीकृत अनुरोध नहीं',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'अस्वीकृत अनुरोध यहाँ रहते हैं; चाहें तो फिर से स्वीकार कर सकते हैं।',
 };

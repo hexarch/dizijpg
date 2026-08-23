@@ -1290,4 +1290,14 @@ const Map<String, String> cevirilerMl = {
       'സമയങ്ങൾ TMDB-യിലെ എപ്പിസോഡുകളുടെയും സിനിമകളുടെയും യഥാർത്ഥ ദൈർഘ്യങ്ങളാണ്',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'എക്കാലവും: {} എപ്പിസോഡുകൾ · {} സിനിമകൾ · {}',
+  'Kabul et':
+      'സ്വീകരിക്കുക',
+  'Reddedilenler':
+      'നിരസിച്ചവ',
+  'İstekler':
+      'അഭ്യർത്ഥനകൾ',
+  'Reddettiğin istek yok':
+      'നിരസിച്ച അഭ്യർത്ഥനകളില്ല',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'നിരസിച്ച അഭ്യർത്ഥനകൾ ഇവിടെ നിലനിൽക്കും; വേണമെങ്കിൽ വീണ്ടും സ്വീകരിക്കാം.',
 };

@@ -1274,4 +1274,14 @@ const Map<String, String> cevirilerFa = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'زمان‌ها مدت‌های واقعی قسمت‌ها و فیلم‌ها از TMDB هستند',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'در کل: {} قسمت · {} فیلم · {}',
+  'Kabul et':
+      'پذیرفتن',
+  'Reddedilenler':
+      'ردشده‌ها',
+  'İstekler':
+      'درخواست‌ها',
+  'Reddettiğin istek yok':
+      'درخواست ردشده‌ای نیست',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'درخواست‌های ردشده اینجا می‌مانند؛ هر وقت بخواهی می‌توانی دوباره بپذیری.',
 };

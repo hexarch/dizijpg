@@ -1294,4 +1294,14 @@ const Map<String, String> cevirilerSr = {
       'Vremena su stvarna trajanja epizoda i filmova sa TMDB-a',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sve vreme: {} epizoda · {} filmova · {}',
+  'Kabul et':
+      'Прихвати',
+  'Reddedilenler':
+      'Одбијени',
+  'İstekler':
+      'Захтеви',
+  'Reddettiğin istek yok':
+      'Нема одбијених захтева',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Одбијени захтеви остају овде; можеш поново да их прихватиш кад год желиш.',
 };

@@ -1278,4 +1278,14 @@ const Map<String, String> cevirilerGu = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'સમય TMDB પરના એપિસોડ અને ફિલ્મોની સાચી અવધિ છે',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'કુલ: {} એપિસોડ · {} ફિલ્મો · {}',
+  'Kabul et':
+      'સ્વીકારો',
+  'Reddedilenler':
+      'નકારેલી',
+  'İstekler':
+      'વિનંતીઓ',
+  'Reddettiğin istek yok':
+      'કોઈ નકારેલી વિનંતી નથી',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'નકારેલી વિનંતીઓ અહીં રહે છે; ઇચ્છો ત્યારે ફરી સ્વીકારી શકો છો.',
 };

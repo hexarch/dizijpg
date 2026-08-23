@@ -1284,4 +1284,14 @@ const Map<String, String> cevirilerCs = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Časy jsou skutečné délky epizod a filmů z TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'Celkem: {} epizod · {} filmů · {}',
+  'Kabul et':
+      'Přijmout',
+  'Reddedilenler':
+      'Odmítnuté',
+  'İstekler':
+      'Žádosti',
+  'Reddettiğin istek yok':
+      'Žádné odmítnuté žádosti',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
+      'Odmítnuté žádosti zůstávají tady; kdykoli je můžete znovu přijmout.',
 };

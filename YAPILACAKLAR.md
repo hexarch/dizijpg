@@ -1,6 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — 🚀 DM istekleri: Kabul et / Reddet + Reddedilenler (Instagram akışı)
+
+Kullanıcı isteği (aynen): *"Gelen mesaj isteklerinde kabul et reddet buttonları
+olmalı instagram gibi kabul et diyince sohbete gitmeli reddet diyince gelen
+mesaj isteklerinde bir alan daha olacak reddedilenler diye oraya gitmeli sohbet"*
+
+- **Model:** istek/sohbet ayrımı TÜRETİLMİŞ kalır (cevrimici.js); yeni
+  `mesaj_istek_kararlari` tablosu yalnız AÇIK kararı saklar (kabul|red, PK
+  kullanici+partner; satır yoksa karar verilmemiş — 'bekliyor' değeri bilerek
+  yok). 'kabul' cevap yazmadan ana listeye taşır; 'red' Reddedilenler kovasına
+  indirir. Takip etmek/cevap yazmak reddi türetilmiş düzeyde geçersiz kılar;
+  cevap yazınca 'red' satırı 'kabul'e YÜKSELTİLİR (cevap vermek kabuldür).
+  Migrasyon `migrasyon-2026-08-23b.sql` CANLIYA UYGULANDI, sema.sql eşlendi.
+- **Sunucu:** `GET /sohbetler` artık `reddedilenler` dizisi de döndürür (eski
+  istemci alanı görmezden gelir); toplam okunmamış + `/sohbetler/okunmamis`
+  rozetleri reddedilen göndericileri SAYMAZ (reddin amacı susturmak). Yeni uç
+  `POST /mesaj-istekleri/karar` {partner_id, karar}: yalnız kendi kutun (satır
+  sahibi HER ZAMAN oturum), partner sana gerçekten yazmış olmalı (ISTEK_YOK),
+  dakikada 30 hız limiti, upsert. Reddedilen göndericinin yeni mesajları
+  bildirim/push ÜRETMEZ (POST /mesajlar süzgeci); gönderici reddedildiğini
+  HİÇBİR yerden anlayamaz (bilinçli — sosyal baskı üretmez).
+- **İstemci (sohbet.dart):** Gelen mesaj istekleri ekranı iki sekme oldu:
+  İstekler / Reddedilenler. İstek kartında Kabul et (dolu) + Reddet (çerçeveli),
+  ikisi de ≥44 dp; Reddedilenler'de tek eylem geri kabul. Kabul doğrudan
+  sohbeti açar. İyimser taşıma + hatada GERİ ALMA + SnackBar (üç hal kuralı);
+  karar uçuştayken sessiz yoklama listeyi ezmez.
+- **Çeviri:** 5 yeni anahtar × 45 dil (Kabul et, Reddedilenler, İstekler,
+  boş-durum başlık+ipucu); zh 'Reddet' 拒接→拒绝 (yalnız arama bağlamıydı,
+  artık mesaj reddinde de kullanılıyor). Kilit: ceviri_bosluklari_test.dart.
+- **Kanıt:** `app/test/mesaj_istek_karari_test.dart` (5 test: kabul→sohbet
+  rotası + POST gövdesi, red→Reddedilenler'e taşınma + orada Reddet yok, geri
+  kabul→sohbet, sunucu 500'de geri alma + SnackBar, 44 dp dokunma hedefleri) +
+  `backend/test/mesaj_istek_karari.test.js` (12 test: saf sınıflandırma +
+  şema + uç sözleşmeleri/yetki/süzgeç kilitleri). gorsel_webp bekçisi çeviri
+  sözlüklerini taramadan muaf tutuldu ('Kabul et': 'Accept' başlık değildir).
+  Testler: app 2103, backend 1851, hepsi yeşil.
+- İstemci değişikliği TOPLU WEB DAĞITIMINI bekliyor; mobilde 1.93.
+  Backend CANLIDA (md5 + uçtan uca curl kanıtı dağıtım bölümünde).
+
 ## 2026-08-23 — 🚀 Kitaplık sıralaması 500 düzeltmesi + medya yükleme tekrarı
 
 İki kullanıcı bildirimi (23 Ağu):
@@ -6242,3 +6281,14 @@ tepkiler · takvim: yetişme listesi + dizi bazlı gruplama + İzlemeyi Bırakt�
 bölüm modalı (İzledim/yıldız/tepki/yorum) · bildirimler + DM (metin) · şifre
 sıfırlama · Sana Özel · yıl özeti · rozetler v1 · arama geçmişi · profil şeritleri
 + %ilerleme · listeler + katlanır yorumlar · emoji→ikon süpürmesi · fare kaydırma.
+
+## DM İSTEKLERİNE KABUL ET / REDDET + REDDEDİLENLER (23 Ağu 2026)
+Instagram davranışı: istek kartında Kabul et (sohbete döner ve açılır) /
+Reddet (istek Reddedilenler bölümüne taşınır, bildirim üretmez, oradan geri
+kabul edilebilir). Karar kalıcı: mesaj_istek_kararlari tablosu
+(migrasyon-2026-08-23b, CANLIYA UYGULANDI); red, cevap yazınca kabule
+yükselir. Uç: POST /mesaj-istekleri/karar; /sohbetler yanıtına reddedilenler
+alanı eklendi. Kanıt: backend 1851/0 (11 yeni test), app 2103/2103,
+canlıda uçtan uca zincir (misafir istek → red → reddedilenler → geri kabul →
+sohbet) 23 Ağu koşuldu, test verileri temizlendi. İstemci web dağıtımı toplu
+dağıtımla çıkacak; mobil 1.93.

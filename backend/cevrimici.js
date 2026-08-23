@@ -73,20 +73,35 @@ export function cevrimiciMi(sonGorulme, cevrimiciGizli, simdi = Date.now()) {
  *     kutusuna düşseydi sohbet sürekli gözden kaybolurdu.
  *  2) Takip etmediğim birine BEN yazdıysam sohbet, kendi başlattığım halde
  *     "bana gelen istek" diye görünürdü.
- * Takip tek yönlü yeter (karşılıklılık aranmaz). Kural DURUMDAN türetilir,
- * kalıcı bir "kabul edildi" bayrağı tutulmaz: takipten çıkıp hiç yazmamışsam
- * sohbet isteklere geri düşer, fazladan tablo ve senkron derdi olmaz.
+ * Takip tek yönlü yeter (karşılıklılık aranmaz). Kural DURUMDAN türetilir;
+ * tek istisna kullanıcının AÇIK kararıdır (mesaj_istek_kararlari tablosu,
+ * satırda `istek_karar` olarak gelir): "Kabul et" cevap yazmadan ana listeye
+ * taşır — bu durumdan türetilemez, o yüzden kalıcı tutulur. Takipten çıkıp
+ * hiç yazmamışsam ve karar da vermemişsem sohbet isteklere geri düşer.
  */
 export function sohbetIstekMi(sohbet) {
-  return !sohbet.takip_ediyorum && !sohbet.ben_yazdim;
+  return !sohbet.takip_ediyorum && !sohbet.ben_yazdim &&
+         sohbet.istek_karar !== 'kabul';
 }
 
-/** Sohbet satırlarını ana liste / istekler diye ikiye ayırır (sıra korunur). */
+/**
+ * Sohbet satırlarını ana liste / istekler / reddedilenler diye ayırır
+ * (sıra korunur). Reddedilen (istek_karar='red') bir istek İstekler'de
+ * GÖRÜNMEZ ama silinmez: Reddedilenler bölümünde durur, kullanıcı oradan
+ * geri kabul edebilir (Instagram davranışı). Karşı tarafı takip etmeye
+ * başlamak ya da cevap yazmak reddi türetilmiş düzeyde geçersiz kılar —
+ * sohbet ana listeye döner (sohbetIstekMi false olur).
+ */
 export function sohbetleriAyir(satirlar) {
   const sohbetler = [];
   const istekler = [];
-  for (const s of satirlar) (sohbetIstekMi(s) ? istekler : sohbetler).push(s);
-  return { sohbetler, istekler };
+  const reddedilenler = [];
+  for (const s of satirlar) {
+    if (!sohbetIstekMi(s)) sohbetler.push(s);
+    else if (s.istek_karar === 'red') reddedilenler.push(s);
+    else istekler.push(s);
+  }
+  return { sohbetler, istekler, reddedilenler };
 }
 
 /** Rozet sayısı: okunmamış mesajı OLAN istek sayısı. */

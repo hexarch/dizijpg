@@ -33,6 +33,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // sohbet.dart — mesaj isteği Kabul et/Reddet akışı (23 Ağu 2026)
+  'Kabul et',
+  'Reddedilenler',
+  'İstekler',
+  'Reddettiğin istek yok',
+  'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.',
   'Önceki',
   'Sonraki',
   'Fragmanı oynat',

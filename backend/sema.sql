@@ -482,6 +482,21 @@ CREATE TABLE IF NOT EXISTS sohbet_canli (
 );
 CREATE INDEX IF NOT EXISTS sohbet_canli_alici_z ON sohbet_canli (alici_id, z);
 
+-- Mesaj isteği kararları (migrasyon-2026-08-23b.sql · DM Kabul et/Reddet).
+-- İstek/sohbet ayrımı türetilmiş kalır (cevrimici.js); bu tablo yalnız
+-- kullanıcının AÇIK kararını saklar: 'kabul' => cevap yazmadan ana listeye,
+-- 'red' => Reddedilenler bölümüne + göndericinin mesajları bildirim üretmez.
+-- Satır yoksa karar verilmemiştir ('bekliyor' değeri bilerek yok). 'red'
+-- cevap yazılınca 'kabul'e yükseltilir (cevap vermek kabuldür).
+CREATE TABLE IF NOT EXISTS mesaj_istek_kararlari (
+  kullanici_id INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  partner_id   INT NOT NULL REFERENCES kullanicilar(id) ON DELETE CASCADE,
+  karar        TEXT NOT NULL CHECK (karar IN ('kabul', 'red')),
+  tarih        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (kullanici_id, partner_id),
+  CHECK (kullanici_id <> partner_id)
+);
+
 CREATE TABLE IF NOT EXISTS sifirlama_kodlari (
   kullanici_id INT PRIMARY KEY REFERENCES kullanicilar(id) ON DELETE CASCADE,
   kod_hash TEXT NOT NULL,
