@@ -1311,4 +1311,10 @@ const Map<String, String> cevirilerMy = {
       'ငြင်းပယ်ထားသော တောင်းဆိုမှု မရှိပါ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ငြင်းပယ်ထားသော တောင်းဆိုမှုများ ဤနေရာတွင် ရှိနေမည်; လိုချင်သည့်အခါ ပြန်လက်ခံနိုင်သည်။',
+  'Ne izlesem?': 'ဘာကြည့်ရမလဲ?',
+  'Karışık': 'ရောနှော',
+  'Çarkı çevir': 'ဘီးကိုလှည့်ပါ',
+  'Tekrar çevir': 'ထပ်လှည့်ပါ',
+  'Bu türde içerik yok': 'ဤအမျိုးအစား အကြောင်းအရာမရှိပါ',
+  'Bütçe': 'ဘတ်ဂျက်',
 };

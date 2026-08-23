@@ -1300,4 +1300,10 @@ const Map<String, String> cevirilerMl = {
       'നിരസിച്ച അഭ്യർത്ഥനകളില്ല',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'നിരസിച്ച അഭ്യർത്ഥനകൾ ഇവിടെ നിലനിൽക്കും; വേണമെങ്കിൽ വീണ്ടും സ്വീകരിക്കാം.',
+  'Ne izlesem?': 'എന്ത് കാണണം?',
+  'Karışık': 'മിശ്രം',
+  'Çarkı çevir': 'ചക്രം കറക്കുക',
+  'Tekrar çevir': 'വീണ്ടും കറക്കുക',
+  'Bu türde içerik yok': 'ഈ തരത്തിലുള്ള ഉള്ളടക്കമില്ല',
+  'Bütçe': 'ബജറ്റ്',
 };

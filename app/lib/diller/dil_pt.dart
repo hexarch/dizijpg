@@ -1322,4 +1322,10 @@ const Map<String, String> cevirilerPt = {
       'Nenhuma solicitação recusada',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'As solicitações recusadas ficam aqui; você pode aceitá-las de novo quando quiser.',
+  'Ne izlesem?': 'O que assistir?',
+  'Karışık': 'Misto',
+  'Çarkı çevir': 'Girar a roleta',
+  'Tekrar çevir': 'Girar de novo',
+  'Bu türde içerik yok': 'Nenhum título desse tipo',
+  'Bütçe': 'Orçamento',
 };

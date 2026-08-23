@@ -1273,4 +1273,10 @@ const Map<String, String> cevirilerHe = {
       'אין בקשות שנדחו',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'בקשות שנדחו נשארות כאן; אפשר לאשר אותן שוב בכל עת.',
+  'Ne izlesem?': 'מה לצפות?',
+  'Karışık': 'מעורב',
+  'Çarkı çevir': 'סובב את הגלגל',
+  'Tekrar çevir': 'סובב שוב',
+  'Bu türde içerik yok': 'אין תוכן מסוג זה',
+  'Bütçe': 'תקציב',
 };

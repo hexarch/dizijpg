@@ -1305,4 +1305,10 @@ const Map<String, String> cevirilerSw = {
       'Hakuna maombi yaliyokataliwa',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Maombi yaliyokataliwa hubaki hapa; unaweza kuyakubali tena wakati wowote.',
+  'Ne izlesem?': 'Nitazame nini?',
+  'Karışık': 'Mchanganyiko',
+  'Çarkı çevir': 'Zungusha gurudumu',
+  'Tekrar çevir': 'Zungusha tena',
+  'Bu türde içerik yok': 'Hakuna maudhui ya aina hii',
+  'Bütçe': 'Bajeti',
 };

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../tema.dart';
+import 'izlem_carki.dart';
 import 'ortak.dart';
 import 'siralanabilir_izgara.dart';
 
@@ -104,6 +105,19 @@ class _KitaplikListesiEkraniState extends State<KitaplikListesiEkrani> {
               (_ogeler != null ? ' (${_ogeler!.length})' : ''),
         ),
         actions: [
+          // "Ne izlesem çarkı" — yalnız İzleyeceğim'de (23 Ağu 2026 isteği:
+          // "İzleyeceğim yazısının yanında çark olsun"). Boş listede çizilmez:
+          // ekran zaten BosDurum gösterir, boş çark çevirmek anlamsız.
+          if (widget.durum == 'izleyecegim' && (_ogeler?.isNotEmpty ?? false))
+            IconButton(
+              key: const Key('izlem-carki'),
+              tooltip: 'Ne izlesem?'.c,
+              onPressed: () => izlemCarkiniAc(
+                context,
+                _ogeler!.cast<Map<String, dynamic>>(),
+              ),
+              icon: const Icon(Icons.attractions),
+            ),
           // Tek öğelik listede sıralamanın anlamı yok.
           if ((_ogeler?.length ?? 0) > 1)
             IconButton(

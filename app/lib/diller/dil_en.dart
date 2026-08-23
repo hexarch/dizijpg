@@ -1299,4 +1299,10 @@ const Map<String, String> cevirilerEn = {
       'No declined requests',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Declined requests stay here; you can accept them again anytime.',
+  'Ne izlesem?': 'What should I watch?',
+  'Karışık': 'Mixed',
+  'Çarkı çevir': 'Spin the wheel',
+  'Tekrar çevir': 'Spin again',
+  'Bu türde içerik yok': 'No titles of this type',
+  'Bütçe': 'Budget',
 };

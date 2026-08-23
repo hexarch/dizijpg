@@ -1304,4 +1304,10 @@ const Map<String, String> cevirilerRu = {
       'Нет отклонённых запросов',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Отклонённые запросы остаются здесь; их можно снова принять в любой момент.',
+  'Ne izlesem?': 'Что посмотреть?',
+  'Karışık': 'Вперемешку',
+  'Çarkı çevir': 'Крутить колесо',
+  'Tekrar çevir': 'Крутить ещё раз',
+  'Bu türde içerik yok': 'Нет контента этого типа',
+  'Bütçe': 'Бюджет',
 };

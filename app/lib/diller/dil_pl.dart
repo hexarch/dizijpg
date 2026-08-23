@@ -1315,4 +1315,10 @@ const Map<String, String> cevirilerPl = {
       'Brak odrzuconych próśb',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Odrzucone prośby zostają tutaj; możesz je w każdej chwili znów zaakceptować.',
+  'Ne izlesem?': 'Co obejrzeć?',
+  'Karışık': 'Mieszane',
+  'Çarkı çevir': 'Zakręć kołem',
+  'Tekrar çevir': 'Zakręć ponownie',
+  'Bu türde içerik yok': 'Brak tytułów tego typu',
+  'Bütçe': 'Budżet',
 };

@@ -1294,4 +1294,10 @@ const Map<String, String> cevirilerHi = {
       'कोई अस्वीकृत अनुरोध नहीं',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'अस्वीकृत अनुरोध यहाँ रहते हैं; चाहें तो फिर से स्वीकार कर सकते हैं।',
+  'Ne izlesem?': 'क्या देखूँ?',
+  'Karışık': 'मिश्रित',
+  'Çarkı çevir': 'पहिया घुमाएँ',
+  'Tekrar çevir': 'फिर घुमाएँ',
+  'Bu türde içerik yok': 'इस प्रकार की कोई सामग्री नहीं',
+  'Bütçe': 'बजट',
 };

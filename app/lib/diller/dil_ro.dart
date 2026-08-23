@@ -1320,4 +1320,10 @@ const Map<String, String> cevirilerRo = {
       'Nicio cerere respinsă',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Cererile respinse rămân aici; le poți accepta din nou oricând.',
+  'Ne izlesem?': 'Ce să văd?',
+  'Karışık': 'Mixt',
+  'Çarkı çevir': 'Învârte roata',
+  'Tekrar çevir': 'Învârte din nou',
+  'Bu türde içerik yok': 'Niciun titlu de acest tip',
+  'Bütçe': 'Buget',
 };

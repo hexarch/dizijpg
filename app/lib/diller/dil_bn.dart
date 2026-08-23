@@ -1290,4 +1290,10 @@ const Map<String, String> cevirilerBn = {
       'প্রত্যাখ্যাত কোনো অনুরোধ নেই',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'প্রত্যাখ্যাত অনুরোধগুলো এখানে থাকে; চাইলে আবার গ্রহণ করতে পারেন।',
+  'Ne izlesem?': 'কী দেখব?',
+  'Karışık': 'মিশ্র',
+  'Çarkı çevir': 'চাকা ঘোরান',
+  'Tekrar çevir': 'আবার ঘোরান',
+  'Bu türde içerik yok': 'এই ধরনের কোনো কনটেন্ট নেই',
+  'Bütçe': 'বাজেট',
 };

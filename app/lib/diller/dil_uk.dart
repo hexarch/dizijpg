@@ -1305,4 +1305,10 @@ const Map<String, String> cevirilerUk = {
       'Немає відхилених запитів',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Відхилені запити залишаються тут; їх можна знову прийняти будь-коли.',
+  'Ne izlesem?': 'Що подивитися?',
+  'Karışık': 'Упереміш',
+  'Çarkı çevir': 'Крутити колесо',
+  'Tekrar çevir': 'Крутити ще раз',
+  'Bu türde içerik yok': 'Немає контенту цього типу',
+  'Bütçe': 'Бюджет',
 };

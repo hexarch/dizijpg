@@ -1301,4 +1301,10 @@ const Map<String, String> cevirilerNb = {
       'Ingen avviste forespørsler',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Avviste forespørsler blir her; du kan godta dem igjen når du vil.',
+  'Ne izlesem?': 'Hva skal jeg se?',
+  'Karışık': 'Blandet',
+  'Çarkı çevir': 'Snurr hjulet',
+  'Tekrar çevir': 'Snurr igjen',
+  'Bu türde içerik yok': 'Ingen titler av denne typen',
+  'Bütçe': 'Budsjett',
 };

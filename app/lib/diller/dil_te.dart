@@ -1298,4 +1298,10 @@ const Map<String, String> cevirilerTe = {
       'తిరస్కరించిన అభ్యర్థనలు లేవు',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'తిరస్కరించిన అభ్యర్థనలు ఇక్కడ ఉంటాయి; కావాలంటే మళ్లీ ఆమోదించవచ్చు.',
+  'Ne izlesem?': 'ఏం చూడాలి?',
+  'Karışık': 'మిశ్రమం',
+  'Çarkı çevir': 'చక్రం తిప్పండి',
+  'Tekrar çevir': 'మళ్లీ తిప్పండి',
+  'Bu türde içerik yok': 'ఈ రకమైన కంటెంట్ లేదు',
+  'Bütçe': 'బడ్జెట్',
 };

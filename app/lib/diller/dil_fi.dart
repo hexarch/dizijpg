@@ -1308,4 +1308,10 @@ const Map<String, String> cevirilerFi = {
       'Ei hylättyjä pyyntöjä',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Hylätyt pyynnöt pysyvät täällä; voit hyväksyä ne uudelleen milloin tahansa.',
+  'Ne izlesem?': 'Mitä katsoisin?',
+  'Karışık': 'Sekalainen',
+  'Çarkı çevir': 'Pyöräytä',
+  'Tekrar çevir': 'Pyöräytä uudelleen',
+  'Bu türde içerik yok': 'Ei tämän tyypin sisältöä',
+  'Bütçe': 'Budjetti',
 };

@@ -1324,4 +1324,10 @@ const Map<String, String> cevirilerDe = {
       'Keine abgelehnten Anfragen',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Abgelehnte Anfragen bleiben hier; du kannst sie jederzeit wieder annehmen.',
+  'Ne izlesem?': 'Was soll ich schauen?',
+  'Karışık': 'Gemischt',
+  'Çarkı çevir': 'Rad drehen',
+  'Tekrar çevir': 'Nochmal drehen',
+  'Bu türde içerik yok': 'Keine Inhalte dieser Art',
+  'Bütçe': 'Budget',
 };

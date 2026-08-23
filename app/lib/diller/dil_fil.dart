@@ -1322,4 +1322,10 @@ const Map<String, String> cevirilerFil = {
       'Walang tinanggihang kahilingan',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Nananatili rito ang mga tinanggihang kahilingan; puwede mo itong tanggapin ulit anumang oras.',
+  'Ne izlesem?': 'Ano ang papanoorin ko?',
+  'Karışık': 'Halo-halo',
+  'Çarkı çevir': 'Ikutin ang gulong',
+  'Tekrar çevir': 'Ikutin muli',
+  'Bu türde içerik yok': 'Walang nilalaman ng ganitong uri',
+  'Bütçe': 'Badyet',
 };

@@ -1311,4 +1311,10 @@ const Map<String, String> cevirilerHu = {
       'Nincs elutasított kérelem',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Az elutasított kérelmek itt maradnak; bármikor újra elfogadhatod őket.',
+  'Ne izlesem?': 'Mit nézzek?',
+  'Karışık': 'Vegyes',
+  'Çarkı çevir': 'Pörgesd meg',
+  'Tekrar çevir': 'Pörgesd újra',
+  'Bu türde içerik yok': 'Nincs ilyen típusú tartalom',
+  'Bütçe': 'Költségvetés',
 };

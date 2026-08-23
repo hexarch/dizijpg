@@ -1304,4 +1304,10 @@ const Map<String, String> cevirilerBg = {
       'Няма отхвърлени заявки',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Отхвърлените заявки остават тук; можеш да ги приемеш отново по всяко време.',
+  'Ne izlesem?': 'Какво да гледам?',
+  'Karışık': 'Смесено',
+  'Çarkı çevir': 'Завърти колелото',
+  'Tekrar çevir': 'Завърти пак',
+  'Bu türde içerik yok': 'Няма съдържание от този тип',
+  'Bütçe': 'Бюджет',
 };

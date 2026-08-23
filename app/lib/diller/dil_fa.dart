@@ -1284,4 +1284,10 @@ const Map<String, String> cevirilerFa = {
       'درخواست ردشده‌ای نیست',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'درخواست‌های ردشده اینجا می‌مانند؛ هر وقت بخواهی می‌توانی دوباره بپذیری.',
+  'Ne izlesem?': 'چه تماشا کنم؟',
+  'Karışık': 'ترکیبی',
+  'Çarkı çevir': 'چرخ را بچرخان',
+  'Tekrar çevir': 'دوباره بچرخان',
+  'Bu türde içerik yok': 'محتوایی از این نوع نیست',
+  'Bütçe': 'بودجه',
 };

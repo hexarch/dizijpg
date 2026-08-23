@@ -1238,4 +1238,10 @@ const Map<String, String> cevirilerKo = {
       '거절한 요청이 없습니다',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       '거절한 요청은 여기에 남아 있으며 언제든지 다시 수락할 수 있습니다.',
+  'Ne izlesem?': '뭘 볼까?',
+  'Karışık': '혼합',
+  'Çarkı çevir': '돌림판 돌리기',
+  'Tekrar çevir': '다시 돌리기',
+  'Bu türde içerik yok': '이 유형의 콘텐츠가 없어요',
+  'Bütçe': '제작비',
 };

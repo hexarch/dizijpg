@@ -1307,4 +1307,10 @@ const Map<String, String> cevirilerNl = {
       'Geen geweigerde verzoeken',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Geweigerde verzoeken blijven hier staan; je kunt ze altijd weer accepteren.',
+  'Ne izlesem?': 'Wat zal ik kijken?',
+  'Karışık': 'Gemengd',
+  'Çarkı çevir': 'Draai het rad',
+  'Tekrar çevir': 'Opnieuw draaien',
+  'Bu türde içerik yok': 'Geen titels van dit type',
+  'Bütçe': 'Budget',
 };

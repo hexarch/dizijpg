@@ -1318,4 +1318,10 @@ const Map<String, String> cevirilerTa = {
       'நிராகரிக்கப்பட்ட கோரிக்கைகள் இல்லை',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'நிராகரிக்கப்பட்ட கோரிக்கைகள் இங்கே இருக்கும்; விரும்பினால் மீண்டும் ஏற்கலாம்.',
+  'Ne izlesem?': 'என்ன பார்க்கலாம்?',
+  'Karışık': 'கலப்பு',
+  'Çarkı çevir': 'சக்கரத்தைச் சுற்று',
+  'Tekrar çevir': 'மீண்டும் சுற்று',
+  'Bu türde içerik yok': 'இந்த வகையில் எதுவும் இல்லை',
+  'Bütçe': 'பட்ஜெட்',
 };

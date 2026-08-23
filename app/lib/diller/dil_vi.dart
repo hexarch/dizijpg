@@ -1301,4 +1301,10 @@ const Map<String, String> cevirilerVi = {
       'Không có yêu cầu bị từ chối',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Yêu cầu bị từ chối sẽ ở lại đây; bạn có thể chấp nhận lại bất cứ lúc nào.',
+  'Ne izlesem?': 'Xem gì đây?',
+  'Karışık': 'Trộn lẫn',
+  'Çarkı çevir': 'Quay vòng quay',
+  'Tekrar çevir': 'Quay lại',
+  'Bu türde içerik yok': 'Không có nội dung loại này',
+  'Bütçe': 'Kinh phí',
 };

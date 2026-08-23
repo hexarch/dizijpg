@@ -1293,4 +1293,10 @@ const Map<String, String> cevirilerAz = {
       'Rədd edilmiş sorğu yoxdur',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Rədd edilmiş sorğular burada qalır; istəsəniz yenidən qəbul edə bilərsiniz.',
+  'Ne izlesem?': 'Nə izləyim?',
+  'Karışık': 'Qarışıq',
+  'Çarkı çevir': 'Çarxı fırlat',
+  'Tekrar çevir': 'Yenidən fırlat',
+  'Bu türde içerik yok': 'Bu növdə məzmun yoxdur',
+  'Bütçe': 'Büdcə',
 };

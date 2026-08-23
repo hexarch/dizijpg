@@ -1295,4 +1295,10 @@ const Map<String, String> cevirilerKn = {
       'ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿ ಇಲ್ಲ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿಗಳು ಇಲ್ಲಿ ಇರುತ್ತವೆ; ಬೇಕೆಂದಾಗ ಮತ್ತೆ ಸ್ವೀಕರಿಸಬಹುದು.',
+  'Ne izlesem?': 'ಏನು ನೋಡಲಿ?',
+  'Karışık': 'ಮಿಶ್ರ',
+  'Çarkı çevir': 'ಚಕ್ರ ತಿರುಗಿಸಿ',
+  'Tekrar çevir': 'ಮತ್ತೆ ತಿರುಗಿಸಿ',
+  'Bu türde içerik yok': 'ಈ ಬಗೆಯ ವಿಷಯವಿಲ್ಲ',
+  'Bütçe': 'ಬಜೆಟ್',
 };

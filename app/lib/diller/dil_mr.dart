@@ -1293,4 +1293,10 @@ const Map<String, String> cevirilerMr = {
       'नाकारलेली विनंती नाही',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'नाकारलेल्या विनंत्या इथे राहतात; हवं तेव्हा पुन्हा स्वीकारू शकता.',
+  'Ne izlesem?': 'काय पाहू?',
+  'Karışık': 'मिश्र',
+  'Çarkı çevir': 'चाक फिरवा',
+  'Tekrar çevir': 'पुन्हा फिरवा',
+  'Bu türde içerik yok': 'या प्रकारची सामग्री नाही',
+  'Bütçe': 'बजेट',
 };

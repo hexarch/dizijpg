@@ -6292,3 +6292,14 @@ alanı eklendi. Kanıt: backend 1851/0 (11 yeni test), app 2103/2103,
 canlıda uçtan uca zincir (misafir istek → red → reddedilenler → geri kabul →
 sohbet) 23 Ağu koşuldu, test verileri temizlendi. İstemci web dağıtımı toplu
 dağıtımla çıkacak; mobil 1.93.
+
+## NE İZLESEM ÇARKI (23 Ağu 2026) ✅
+İzleyeceğim ekranı başlığının yanında çark ikonu (yalnız izleyecegim, boş
+listede çizilmez). Tam yükseklik sheet: Karışık/Dizi/Film süzgeçli çark
+(CustomPainter; >16 dilimde ad yazılmaz, göbekte sayı), 3,6 sn easeOutQuart
+dönüş (reduced-motion: 400 ms/1 tur), seçim animasyondan ÖNCE seed'lenebilir
+Random ile. Sonuç kartı: poster + ad + yıl + puan + konu + bütçe rozeti
+(yalnız film, butceAlt eşiği); karta dokunmak sheet'i kapatıp /icerik açar,
+Tekrar çevir çarka döner. Detay isteği yalnız çark durunca (tek içerik).
+Boş türe dokunmak SnackBar açıklaması verir. 6 anahtar × 45 dil.
+Kanıt: test/izlem_carki_test.dart (7 test); paket 2110/2110.

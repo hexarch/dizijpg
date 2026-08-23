@@ -1288,4 +1288,10 @@ const Map<String, String> cevirilerGu = {
       'કોઈ નકારેલી વિનંતી નથી',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'નકારેલી વિનંતીઓ અહીં રહે છે; ઇચ્છો ત્યારે ફરી સ્વીકારી શકો છો.',
+  'Ne izlesem?': 'શું જોઉં?',
+  'Karışık': 'મિશ્ર',
+  'Çarkı çevir': 'ચક્ર ફેરવો',
+  'Tekrar çevir': 'ફરી ફેરવો',
+  'Bu türde içerik yok': 'આ પ્રકારની સામગ્રી નથી',
+  'Bütçe': 'બજેટ',
 };

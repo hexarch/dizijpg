@@ -1273,4 +1273,10 @@ const Map<String, String> cevirilerAr = {
       'لا توجد طلبات مرفوضة',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'تبقى الطلبات المرفوضة هنا؛ ويمكن قبولها مجددًا في أي وقت.',
+  'Ne izlesem?': 'ماذا أشاهد؟',
+  'Karışık': 'منوّع',
+  'Çarkı çevir': 'أدر العجلة',
+  'Tekrar çevir': 'أدر مجددًا',
+  'Bu türde içerik yok': 'لا يوجد محتوى من هذا النوع',
+  'Bütçe': 'الميزانية',
 };

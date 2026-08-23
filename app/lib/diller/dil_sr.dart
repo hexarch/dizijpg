@@ -1304,4 +1304,10 @@ const Map<String, String> cevirilerSr = {
       'Нема одбијених захтева',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Одбијени захтеви остају овде; можеш поново да их прихватиш кад год желиш.',
+  'Ne izlesem?': 'Шта да гледам?',
+  'Karışık': 'Мешовито',
+  'Çarkı çevir': 'Заврти точак',
+  'Tekrar çevir': 'Заврти поново',
+  'Bu türde içerik yok': 'Нема наслова ове врсте',
+  'Bütçe': 'Буџет',
 };

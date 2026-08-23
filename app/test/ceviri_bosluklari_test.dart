@@ -33,6 +33,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // izlem_carki.dart — "ne izlesem çarkı" (23 Ağu 2026)
+  'Ne izlesem?',
+  'Karışık',
+  'Çarkı çevir',
+  'Tekrar çevir',
+  'Bu türde içerik yok',
+  'Bütçe',
   // sohbet.dart — mesaj isteği Kabul et/Reddet akışı (23 Ağu 2026)
   'Kabul et',
   'Reddedilenler',

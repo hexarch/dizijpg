@@ -1279,4 +1279,10 @@ const Map<String, String> cevirilerTh = {
       'ไม่มีคำขอที่ปฏิเสธ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'คำขอที่ปฏิเสธจะอยู่ที่นี่ คุณยอมรับอีกครั้งได้ทุกเมื่อ',
+  'Ne izlesem?': 'ดูอะไรดี?',
+  'Karışık': 'คละกัน',
+  'Çarkı çevir': 'หมุนวงล้อ',
+  'Tekrar çevir': 'หมุนอีกครั้ง',
+  'Bu türde içerik yok': 'ไม่มีเนื้อหาประเภทนี้',
+  'Bütçe': 'งบประมาณ',
 };

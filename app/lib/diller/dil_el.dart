@@ -1321,4 +1321,10 @@ const Map<String, String> cevirilerEl = {
       'Δεν υπάρχουν απορριφθέντα αιτήματα',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Τα απορριφθέντα αιτήματα μένουν εδώ· μπορείς να τα αποδεχτείς ξανά όποτε θέλεις.',
+  'Ne izlesem?': 'Τι να δω;',
+  'Karışık': 'Μικτό',
+  'Çarkı çevir': 'Γύρνα τον τροχό',
+  'Tekrar çevir': 'Γύρνα ξανά',
+  'Bu türde içerik yok': 'Δεν υπάρχει περιεχόμενο εδώ',
+  'Bütçe': 'Προϋπολογισμός',
 };

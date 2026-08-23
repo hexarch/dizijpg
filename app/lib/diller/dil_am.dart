@@ -1254,4 +1254,10 @@ const Map<String, String> cevirilerAm = {
       'ውድቅ የተደረገ ጥያቄ የለም',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ውድቅ የተደረጉ ጥያቄዎች እዚህ ይቆያሉ፤ በማንኛውም ጊዜ መልሶ መቀበል ይቻላል።',
+  'Ne izlesem?': 'ምን ልመልከት?',
+  'Karışık': 'ድብልቅ',
+  'Çarkı çevir': 'መንኮራኩሩን አዙር',
+  'Tekrar çevir': 'እንደገና አዙር',
+  'Bu türde içerik yok': 'በዚህ አይነት ይዘት የለም',
+  'Bütçe': 'በጀት',
 };

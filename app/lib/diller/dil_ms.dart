@@ -1306,4 +1306,10 @@ const Map<String, String> cevirilerMs = {
       'Tiada permintaan yang ditolak',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Permintaan yang ditolak kekal di sini; anda boleh menerimanya semula bila-bila masa.',
+  'Ne izlesem?': 'Tonton apa?',
+  'Karışık': 'Campuran',
+  'Çarkı çevir': 'Putar roda',
+  'Tekrar çevir': 'Putar lagi',
+  'Bu türde içerik yok': 'Tiada kandungan jenis ini',
+  'Bütçe': 'Bajet',
 };

@@ -1297,4 +1297,10 @@ const Map<String, String> cevirilerPa = {
       'ਕੋਈ ਰੱਦ ਕੀਤੀ ਬੇਨਤੀ ਨਹੀਂ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ਰੱਦ ਕੀਤੀਆਂ ਬੇਨਤੀਆਂ ਇੱਥੇ ਰਹਿੰਦੀਆਂ ਹਨ; ਜਦੋਂ ਚਾਹੋ ਮੁੜ ਸਵੀਕਾਰ ਕਰ ਸਕਦੇ ਹੋ।',
+  'Ne izlesem?': 'ਕੀ ਵੇਖਾਂ?',
+  'Karışık': 'ਮਿਸ਼ਰਤ',
+  'Çarkı çevir': 'ਪਹੀਆ ਘੁਮਾਓ',
+  'Tekrar çevir': 'ਫਿਰ ਘੁਮਾਓ',
+  'Bu türde içerik yok': 'ਇਸ ਕਿਸਮ ਦੀ ਸਮੱਗਰੀ ਨਹੀਂ',
+  'Bütçe': 'ਬਜਟ',
 };

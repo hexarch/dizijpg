@@ -1297,4 +1297,10 @@ const Map<String, String> cevirilerUr = {
       'کوئی مسترد شدہ درخواست نہیں',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'مسترد شدہ درخواستیں یہاں رہتی ہیں؛ چاہیں تو دوبارہ قبول کر سکتے ہیں۔',
+  'Ne izlesem?': 'کیا دیکھوں؟',
+  'Karışık': 'ملا جلا',
+  'Çarkı çevir': 'پہیہ گھمائیں',
+  'Tekrar çevir': 'دوبارہ گھمائیں',
+  'Bu türde içerik yok': 'اس قسم کا کوئی مواد نہیں',
+  'Bütçe': 'بجٹ',
 };

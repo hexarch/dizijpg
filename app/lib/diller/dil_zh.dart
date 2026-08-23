@@ -1221,4 +1221,10 @@ const Map<String, String> cevirilerZh = {
       '没有已拒绝的请求',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       '已拒绝的请求会保留在这里，你可以随时重新接受。',
+  'Ne izlesem?': '看什么好？',
+  'Karışık': '混合',
+  'Çarkı çevir': '转动转盘',
+  'Tekrar çevir': '再转一次',
+  'Bu türde içerik yok': '没有此类型的内容',
+  'Bütçe': '预算',
 };

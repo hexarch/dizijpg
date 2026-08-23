@@ -1301,4 +1301,10 @@ const Map<String, String> cevirilerId = {
       'Tidak ada permintaan yang ditolak',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Permintaan yang ditolak tetap di sini; kamu bisa menerimanya lagi kapan saja.',
+  'Ne izlesem?': 'Nonton apa ya?',
+  'Karışık': 'Campuran',
+  'Çarkı çevir': 'Putar rodanya',
+  'Tekrar çevir': 'Putar lagi',
+  'Bu türde içerik yok': 'Tidak ada judul jenis ini',
+  'Bütçe': 'Anggaran',
 };

@@ -1311,4 +1311,10 @@ const Map<String, String> cevirilerSv = {
       'Inga avvisade förfrågningar',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Avvisade förfrågningar stannar här; du kan acceptera dem igen när du vill.',
+  'Ne izlesem?': 'Vad ska jag se?',
+  'Karışık': 'Blandat',
+  'Çarkı çevir': 'Snurra hjulet',
+  'Tekrar çevir': 'Snurra igen',
+  'Bu türde içerik yok': 'Inga titlar av den här typen',
+  'Bütçe': 'Budget',
 };

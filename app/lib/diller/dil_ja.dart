@@ -1236,4 +1236,10 @@ const Map<String, String> cevirilerJa = {
       '拒否したリクエストはありません',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       '拒否したリクエストはここに残ります。いつでも再承認できます。',
+  'Ne izlesem?': '何を見よう？',
+  'Karışık': 'ミックス',
+  'Çarkı çevir': 'ルーレットを回す',
+  'Tekrar çevir': 'もう一度回す',
+  'Bu türde içerik yok': 'この種類の作品はありません',
+  'Bütçe': '予算',
 };
