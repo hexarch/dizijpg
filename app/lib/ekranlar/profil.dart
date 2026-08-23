@@ -874,28 +874,6 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                                   ),
                           ),
                         ),
-                        // GÖRÜNTÜLENME AVATARIN ALTINDA (aynı istek).
-                        //
-                        // Neden hâlâ [TakipSayac]: yandaki üç sayaçla AYNI
-                        // biçim ve AYNI 44 dp dokunma hedefi; ayrıca hedefi
-                        // (yorum modali) da değişmedi. `ProfilTakipSatiri`
-                        // ise `goruntulenmeGoster: false` ile çiziliyor —
-                        // AÇIK PROFİL o bileşeni varsayılanıyla kullandığı
-                        // için orada dördü de yerinde kalıyor.
-                        //
-                        // GENİŞLİK avatardan 24 dp geniş: "görüntülenme"
-                        // (pl "wyświetlenia", de "Aufrufe") 76 dp'ye sığmayıp
-                        // kırpılıyordu. Sınırsız bırakmak da olmazdı —
-                        // Column mainAxisSize.min en geniş çocuğu alır ve
-                        // kullanıcı adı sütununu daraltırdı.
-                        SizedBox(
-                          width: avatarCap + 24,
-                          child: TakipSayac(
-                            deger: ProfilSayaclari.yaz(sayaclar.goruntulenme),
-                            etiket: 'görüntülenme'.c,
-                            onTap: () => _yorumlarAc(kullaniciAdi),
-                          ),
-                        ),
                       ],
                     ),
                     const SizedBox(width: 14),
@@ -968,14 +946,12 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                           // aynısını çiziyor (kullanıcı isteği). Biçim
                           // kararları (Wrap, küçük harf etiket) orada yazılı.
                           //
-                          // 21 Ağu 2026 (akşam): görüntülenme BURADAN çıktı,
-                          // avatarın ALTINA taşındı (kullanıcı isteği). Bileşen
-                          // bayrakla söndürülüyor, ÇATALLANMIYOR: açık profil
-                          // aynı sınıfı VARSAYILANIYLA çağırdığı için orada
-                          // dört sayaç yerinde duruyor.
+                          // 23 Ağu 2026: görüntülenme bu satıra GERİ DÖNDÜ
+                          // (kullanıcı isteği) — 21 Ağu'daki "avatar altı"
+                          // yerleşimi ve bayrak kaldırıldı; iki ekran yine
+                          // aynı bileşeni aynı biçimde çiziyor.
                           ProfilTakipSatiri(
                             sayac: sayaclar,
-                            goruntulenmeGoster: false,
                             takipciTap: () => _takipListe(kullaniciAdi, true),
                             takipTap: () => _takipListe(kullaniciAdi, false),
                             etkilesimTap: () => _yorumlarAc(kullaniciAdi),
@@ -1625,23 +1601,12 @@ class ProfilTakipSatiri extends StatelessWidget {
   /// Beğeni ve görüntülenme AYNI hedefe gider (ikisi de yorum istatistiği).
   final VoidCallback? etkilesimTap;
 
-  /// Görüntülenme sayacı bu satırda çizilsin mi?
-  ///
-  /// VARSAYILAN `true` — AÇIK PROFİL (kullanici_profil.dart) bu bileşeni
-  /// varsayılanıyla çağırıyor ve orada dört sayaç yan yana kalmalı. Kendi
-  /// profilim 21 Ağu 2026 akşamı `false` geçmeye başladı: kullanıcı
-  /// görüntülenmeyi AVATARIN ALTINDA istedi. Bileşeni kopyalamak yerine
-  /// bayrak: kopya, 15 Ağu'da kendi profilde yapılan değişikliğin açık
-  /// profile hiç gitmemesine yol açan hatanın ta kendisiydi.
-  final bool goruntulenmeGoster;
-
   const ProfilTakipSatiri({
     super.key,
     required this.sayac,
     this.takipciTap,
     this.takipTap,
     this.etkilesimTap,
-    this.goruntulenmeGoster = true,
   });
 
   @override
@@ -1665,12 +1630,11 @@ class ProfilTakipSatiri extends StatelessWidget {
           etiket: 'beğeni'.c,
           onTap: etkilesimTap,
         ),
-        if (goruntulenmeGoster)
-          TakipSayac(
-            deger: ProfilSayaclari.yaz(sayac.goruntulenme),
-            etiket: 'görüntülenme'.c,
-            onTap: etkilesimTap,
-          ),
+        TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.goruntulenme),
+          etiket: 'görüntülenme'.c,
+          onTap: etkilesimTap,
+        ),
       ],
     );
   }

@@ -183,7 +183,7 @@ void main() {
       );
     });
 
-    testWidgets('sürüm metni DURUYOR (kullanıcının referansı), BETA gizli', (
+    testWidgets('sürüm metni DURUYOR, BETA ibaresi sürümün ALTINDA', (
       tester,
     ) async {
       _ekran(tester, _darG, _darY);
@@ -191,10 +191,16 @@ void main() {
 
       final surum = 'v${Api.surum.split('+').first}';
       expect(find.text(surum), findsOneWidget);
-      // Rozet dar ekranda yer açmak için gizli; beta bilgisi sürümün
-      // ipucunda/erişilebilirlik etiketinde erişilebilir kalıyor.
-      expect(find.text('BETA'), findsNothing);
-      expect(find.byTooltip('BETA $surum'), findsOneWidget);
+      // 23 Ağu 2026: dar ekranda beta artık gözle görülür — sürümün hemen
+      // altında, sola hizalı küçük metin (sarı pill hâlâ yalnız masaüstünde).
+      final surumRect = tester.getRect(find.text(surum));
+      final betaRect = tester.getRect(find.text('BETA'));
+      expect(betaRect.top, greaterThanOrEqualTo(surumRect.bottom - 1));
+      expect(
+        betaRect.left,
+        moreOrLessEquals(surumRect.left, epsilon: 2),
+        reason: 'beta sürümle sola hizalı olmalı',
+      );
     });
 
     testWidgets('430 dp telefonda da düzen aynı (kutu daha da geniş)', (

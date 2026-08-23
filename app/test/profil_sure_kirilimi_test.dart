@@ -17,16 +17,16 @@
 //  C. EKSİK KIRILIM 0 DEĞİL, KAPALI KART. Eski sunucu `tahmini_dakika_dizi`
 //     göndermiyorsa kart açılmaz — "hiç dizi izlememişsin" yalanı yok
 //     (`ProfilSayaclari`nın "eksik anahtar `—` basar" kuralının aynısı).
-//  D. YERLEŞİM: avatarın ÜST kenarı kullanıcı adıyla aynı çizgide, görüntülenme
-//     sayacı avatarın ALTINDA.
-//  E. AÇIK PROFİL BOZULMADI: `ProfilTakipSatiri` orada hâlâ DÖRT sayaç çiziyor.
-//     (Kendi profilim bileşeni `goruntulenmeGoster: false` ile söndürüyor —
-//     kopyalamıyor. Kopya, 15 Ağu'daki "değişiklik açık profile gitmedi"
-//     hatasının kaynağıydı.)
+//  D. YERLEŞİM: avatarın ÜST kenarı kullanıcı adıyla aynı çizgide; görüntülenme
+//     sayacı takip satırında, diğer üç sayaçla YAN YANA (23 Ağu 2026 —
+//     21 Ağu'daki "avatar altı" yerleşimi kullanıcı isteğiyle geri alındı).
+//  E. AÇIK PROFİL BOZULMADI: iki ekran da `ProfilTakipSatiri`yi aynı biçimde,
+//     DÖRT sayaçla çiziyor (bayrak kalktı — kopya, 15 Ağu'daki "değişiklik
+//     açık profile gitmedi" hatasının kaynağıydı).
 //
 // NOT: `test/profil_sayac_birlesme_test.dart`teki yerleşim kilidi (dört sayaç
-// AYNI SATIRDA) HÂLÂ YEŞİL olmalı — o test `ProfilTakipSatiri`yi doğrudan,
-// yani varsayılan bayrağıyla kuruyor.
+// AYNI SATIRDA) HÂLÂ YEŞİL olmalı — o test `ProfilTakipSatiri`yi doğrudan
+// kuruyor.
 import 'dart:convert';
 
 import 'package:dizijpg/api.dart';
@@ -417,32 +417,28 @@ void main() {
       expect(avatar.right, lessThanOrEqualTo(ad.left));
     });
 
-    testWidgets('görüntülenme sayacı AVATARIN ALTINDA', (tester) async {
-      _sunucu();
-      await _kur(tester, const ProfilEkrani());
-      final avatar = tester.getRect(find.byType(CircleAvatar).first);
-      final gor = tester.getRect(
-        find.byWidgetPredicate(
-          (w) => w is TakipSayac && w.etiket == 'görüntülenme',
-        ),
-      );
-      expect(gor.top, greaterThanOrEqualTo(avatar.bottom - 1));
-      expect(
-        gor.center.dx,
-        lessThan(tester.getRect(_kimlikteAd()).left + 8),
-        reason: 'görüntülenme avatar sütununda kalmalı, ad sütununa geçmemeli',
-      );
-    });
-
-    testWidgets('takip satırında ÜÇ sayaç kaldı, görüntülenme ORADA DEĞİL', (
+    testWidgets('görüntülenme sayacı TAKİP SATIRINDA (avatar altı değil)', (
       tester,
     ) async {
       _sunucu();
       await _kur(tester, const ProfilEkrani());
-      final satir = tester.widget<ProfilTakipSatiri>(
-        find.byType(ProfilTakipSatiri),
+      // 23 Ağu 2026: sayaç takip satırına geri döndü — satırın İÇİNDE olmalı.
+      expect(
+        find.descendant(
+          of: find.byType(ProfilTakipSatiri),
+          matching: find.byWidgetPredicate(
+            (w) => w is TakipSayac && w.etiket == 'görüntülenme',
+          ),
+        ),
+        findsOneWidget,
       );
-      expect(satir.goruntulenmeGoster, isFalse);
+    });
+
+    testWidgets('takip satırında DÖRT sayaç: görüntülenme dahil', (
+      tester,
+    ) async {
+      _sunucu();
+      await _kur(tester, const ProfilEkrani());
       final icinde = tester
           .widgetList<TakipSayac>(
             find.descendant(
@@ -452,8 +448,7 @@ void main() {
           )
           .map((s) => s.etiket)
           .toList();
-      expect(icinde, ['takipçi', 'takip', 'beğeni']);
-      // Sayaç EKRANDAN kaybolmadı, yalnız YER değiştirdi.
+      expect(icinde, ['takipçi', 'takip', 'beğeni', 'görüntülenme']);
       expect(_takipSayac(tester, 'görüntülenme').deger, '44');
     });
 
@@ -520,14 +515,6 @@ void main() {
       });
       await _kur(tester, const KullaniciProfilEkrani(kullaniciAdi: 'baskasi'));
 
-      final satir = tester.widget<ProfilTakipSatiri>(
-        find.byType(ProfilTakipSatiri),
-      );
-      expect(
-        satir.goruntulenmeGoster,
-        isTrue,
-        reason: 'açık profil bileşeni VARSAYILANIYLA çağırır',
-      );
       final icinde = tester
           .widgetList<TakipSayac>(
             find.descendant(

@@ -1,6 +1,23 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — ✅ Görüntülenme takip satırına döndü + ana sayfada "beta" (dağıtım BEKLİYOR)
+
+İki kullanıcı isteği (23 Ağu):
+- **Görüntülenme sayacı** kendi profilde "çok yukarıda" (avatar altında) duruyordu →
+  takipçi/takip/beğeni satırına GERİ taşındı. 21 Ağu'daki "avatar altı" yerleşimi ve
+  `ProfilTakipSatiri.goruntulenmeGoster` bayrağı kaldırıldı; kendi profil ve açık
+  profil yine tek bileşeni aynı biçimde çiziyor. Hedef değişmedi (yorum modali).
+- **Ana sayfada "beta"**: dar ekranda sürüm yazısının (v1.92.0) hemen ALTINA küçük
+  sarı "BETA" metni eklendi (çeviri anahtarı yok — evrensel etiket; genişlik sürüm
+  metniyle aynı kaldığından arama kutusundan yer çalmıyor). Masaüstündeki sarı BETA
+  pill'i olduğu gibi duruyor; eski ipucu/erişilebilirlik dolambacı kalktı.
+- Kanıt: `profil_sure_kirilimi_test.dart` yerleşim kilitleri yeni düzene çevrildi,
+  `mobil_ust_bar_arama_test.dart` beta testi artık görünür metni ve hizayı ölçüyor.
+  flutter analyze yalnız info (92) · **2088/2088 test yeşil**.
+- Dağıtım YOK (bilerek): birikmiş istemci işleriyle birlikte toplu web dağıtımında
+  çıkacak; mobilde 1.93 paketine girer.
+
 ## 2026-08-23 — 🚀 Ziyaretçi profili: izlenenlere dokunmak (kullanıcı bildirimi)
 
 Bildirim (birebir): "Başkasının profilini incelediğimde izlediği diziler ve

@@ -524,9 +524,9 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
     // DAR EKRAN ÖLÇÜSÜ (360 dp): logo 40 + BETA 57 + sürüm 77 + boşluklar =
     // 204 dp, iki eylem ikonu 100 dp → arama kutusuna 56 dp kalıyordu; büyüteç
     // + tek kelimelik ipucu bile sığmaz. Bu yüzden dar ekranda logo 30'a
-    // küçültüldü ve BETA rozeti gizlendi (sürüm metni DURUYOR — kullanıcı onu
-    // referans alıyor; beta bilgisi sürümün ipucunda/erişilebilirlik
-    // etiketinde kaldı). Böylece kutuya ~127 dp açıldı.
+    // küçültüldü ve BETA rozeti gizlendi; beta ibaresi sürümün altına indi
+    // (genişlik sürüm metniyle aynı kaldığı için kutudan yer çalmıyor).
+    // Böylece kutuya ~127 dp açıldı.
     final marka = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -552,22 +552,42 @@ class _KesfetEkraniState extends State<KesfetEkrani> {
           ),
           const SizedBox(width: 6),
         ],
-        // Sürüm numarası (yapı numarası olmadan). Dar ekranda rozet
-        // gizlendiği için beta bilgisi buranın ipucuna/etiketine taşınır.
-        Tooltip(
-          message: genis ? '' : 'BETA v${Api.surum.split('+').first}',
-          child: Text(
-            'v${Api.surum.split('+').first}',
-            semanticsLabel: genis
-                ? null
-                : 'BETA v${Api.surum.split('+').first}',
-            style: TextStyle(
-              color: DiziRenkler.metin38,
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
+        // Sürüm numarası (yapı numarası olmadan). Dar ekranda BETA rozeti
+        // sığmadığı için ibare sürümün ALTINDA küçük metinle yazılır
+        // (23 Ağu 2026, kullanıcı isteği; önceki ipucu/erişilebilirlik
+        // dolambacı kalktı — beta artık gözle görülür).
+        genis
+            ? Text(
+                'v${Api.surum.split('+').first}',
+                style: TextStyle(
+                  color: DiziRenkler.metin38,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              )
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'v${Api.surum.split('+').first}',
+                    style: TextStyle(
+                      color: DiziRenkler.metin38,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    'BETA',
+                    style: TextStyle(
+                      color: DiziRenkler.sari,
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                ],
+              ),
       ],
     );
     final eylemler = <Widget>[
