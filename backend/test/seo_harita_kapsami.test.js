@@ -268,6 +268,19 @@ test('kişi haritası `kisiIndekslenir` eşiklerinin TA KENDİSİNİ kullanıyor
   const uc = bildirimCek('kisiIndekslenir');
   assert.match(uc, /SEO_KISI_BIYO_MIN/);
   assert.match(uc, /SEO_KISI_YAPIM_MIN/);
+  // Sayfa ile harita AYNI evren: adsız kredi ve ham boşluk sayılmaz.
+  assert.match(sorgu, /exists\(@\.name\)/,
+    'kişi haritası adsız krediyi sayıyor — sayfa noindex, harita gönderir');
+  assert.match(sorgu, /regexp_replace/,
+    'biyografi uzunluğu seoMetin ile aynı boşluk birleştirmesini yapmıyor');
+});
+
+test('kişi uç filmografiyi DİLİMLEMEDEN sayar (GSC noindex sapması)', () => {
+  const i = KAYNAK.indexOf("app.get('/og/kisi/:id'");
+  const parca = KAYNAK.slice(i, i + 4500);
+  assert.match(parca, /kisiFilmografi\(/);
+  assert.match(parca, /yapimSayisi: hamYapimlar\.length/);
+  assert.match(parca, /Promise\.all/);
 });
 
 test('firma haritası `sirketIndekslenir` eşiğini kullanıyor ve DAR tarafta', () => {
@@ -277,6 +290,8 @@ test('firma haritası `sirketIndekslenir` eşiğini kullanıyor ve DAR tarafta',
   // en az 6 döndürür ⇒ sayfa eşiği geçer. Ters yön garanti değil, o yüzden
   // harita sayfadan DAR kalır.
   assert.match(sorgu, /production_companies/);
+  assert.match(sorgu, /poster_path/,
+    'firma haritası afişsiz kataloğu sayıyor — sayfa noindex yer');
   assert.match(sorgu, /\$\{SITEMAP_SORGU\}/,
     'firma evreni içerik haritamızdan türemiyor — kapsam denetlenemez hale gelir');
 });

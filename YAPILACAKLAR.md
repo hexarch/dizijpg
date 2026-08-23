@@ -1,7 +1,15 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-23 — 🔨 GSC SEO: şema + kanonik + 45 dil (aynı URL)
+## 2026-08-24 — 🔨 GSC SEO devam: sitemap↔noindex + kişi 5xx + bot UA
+
+Durulmadı. Kalan GSC işi kodlandı:
+- Kişi sitemap adsız kredi + ham boşluk biyografisini saymasın (559 noindex).
+- Kişi SSR TMDB+DB paralel; filmografi dilimlenmeden sayılır.
+- Firma sitemap yalnız afişli katalog; discover 20'lik sayfa dilimsiz eşik.
+- sitemap-genel `/gizlilik` gerçek lastmod. GoogleOther + DuckDuckBot SSR.
+
+## 2026-08-23 — 🚀 GSC SEO: şema + kanonik + 45 dil (aynı URL)
 
 Kullanıcı: Search Console bildirimlerini oku; SEO'da gereken her şeyi **kodla**
 yap; 45 dil çeviri olarak işlensin — hreflang ile URL çarpma yok.

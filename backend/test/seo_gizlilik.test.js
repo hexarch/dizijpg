@@ -67,7 +67,7 @@ const seoKesifGovde = alan(
   ['htmlKacir', 'seoBaglantiListesi', 'seoKesifGovde'], 'seoKesifGovde');
 const seoKesifAdet = alan(['seoKesifAdet'], 'seoKesifAdet');
 const seoKesifJsonLd = alan(
-  ['SITE_KOK', 'seoKirinti', 'seoKesifJsonLd'], 'seoKesifJsonLd');
+  ['SITE_KOK', 'seoKirinti', 'seoIstDil', 'seoKesifJsonLd'], 'seoKesifJsonLd');
 const ogSayfa = alan(
   ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 

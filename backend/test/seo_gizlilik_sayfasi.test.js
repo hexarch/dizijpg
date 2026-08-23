@@ -174,6 +174,8 @@ test('robots.txt /gizlilik\'i kapatmıyor ve sitemap-genel kapsıyor', () => {
   // SSR kararı ile sitemap kapsamı AYRIŞMAMALI (SEO-PLANI 0.3).
   const genel = bildirimCek('SITEMAP_GENEL_YOLLAR');
   assert.match(genel, /yol: '\/gizlilik'[\s\S]*indekslenir: \(\) => true/);
+  assert.match(genel, /lastmod: seoGizlilikIsoTarih/,
+    'gizlilik lastmod uydurma tarihe düşmesin diye ISO yardımcıya bağlı değil');
 });
 
 test('JSON-LD: WebPage + dateModified + BreadcrumbList (uydurma tip yok)', () => {

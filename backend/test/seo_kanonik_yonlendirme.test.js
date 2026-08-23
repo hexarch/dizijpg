@@ -51,4 +51,6 @@ test('nginx sapma yolları 301 ile kanoniğe alır ve ads.txt HTML basmaz', () =
   assert.match(conf, /location ~\* \^\/\(icerik\|gonderi\|kisi\|dizi\|listeler\|sirket\)\//);
   assert.match(conf, /\[Ii\]\[Cc\]\[Ee\]\[Rr\]\[Ii\]\[Kk\]/,
     'büyük harf /Icerik/ 301 kanoniğe alınmıyor');
+  assert.match(conf, /GoogleOther/, 'GoogleOther bot SSR kapısından geçmiyor');
+  assert.match(conf, /DuckDuckBot/, 'DuckDuckBot SSR kapısından geçmiyor');
 });

@@ -2607,6 +2607,13 @@ async function seoIcerikVerisi(tur, tmdbId) {
   };
 }
 
+// SSR bütçesi daraldığında (veya DB geçici düştüğünde) boş vitrin: sayfa
+// TMDB gövdesiyle basılır, özgün içerik yok sayılır. İndeks eşiği biyografi
+// + yapım sayısına düşer — sitemap ile aynı dar ölçü.
+const SEO_BOS = Object.freeze({
+  yorumlar: [], incelemeler: [], ortalama: null, adet: 0,
+});
+
 const seoGun = (t) => {
   const d = t instanceof Date ? t : new Date(t);
   return Number.isNaN(d.getTime()) ? '' : d.toISOString().slice(0, 10);
@@ -3900,6 +3907,23 @@ const kisiIndekslenir = ({ ozgunVar, biyografi, yapimSayisi }) =>
   || (String(biyografi || '').length >= SEO_KISI_BIYO_MIN
     && yapimSayisi >= SEO_KISI_YAPIM_MIN);
 
+/**
+ * Kişi sayfasında ve indeks eşiğinde kullanılan filmografi.
+ * Dilimleme (SEO_KISI_YAPIM_LIMIT) YALNIZ basılan liste içindir; saymak
+ * dilimden önce yapılır. Aksi hâlde 6+ kayıt sitemap'e girer, sayfa 12'lik
+ * dilimde süzülüp noindex yer (GSC "gönderilen URL noindex").
+ */
+function kisiFilmografi(v) {
+  const ham = [
+    ...(v.combined_credits?.cast || []),
+    ...(v.combined_credits?.crew || []),
+  ].filter((y) => y && (y.media_type === 'tv' || y.media_type === 'movie')
+    && (y.name || y.title) && y.poster_path && gecerliTmdb(y.id));
+  return [...new Map(
+    ham.map((y) => [`${y.media_type}:${y.id}`, y]),
+  ).values()].sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+}
+
 // TMDB `known_for_department` -> Türkçe meslek. Sayfa dili tr; İngilizce
 // departman adını basmak hem okunmaz hem de meta açıklamayı bozardı.
 const SEO_KISI_MESLEK = {
@@ -4018,35 +4042,26 @@ function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar }) {
 
 app.get('/og/kisi/:id', sarici(async (req, res) => {
   const kid = parseInt(req.params.id, 10);
-  const url = `https://dizijpg.com/kisi/${req.params.id}`;
+  const url = `${SITE_KOK}/kisi/${req.params.id}`;
   if (!gecerliTmdb(kid)) {
     return ogYok(res, url);
   }
   try {
-    // TEK TMDB isteği: `combined_credits` iç bağlantıları, `translations`
-    // İngilizce biyografi yedeğini getirir (7 gün önbellekli).
-    const v = await tmdbGetir(
-      `/person/${kid}?append_to_response=combined_credits,translations`,
-      ONBELLEK_TTL_SN.uzun);
+    // TMDB + özgün içerik PARALEL: sıra toplamı bütçeyi aşıp GSC 5xx/noindex
+    // üretmesin (/kisi/102426, /kisi/113970). DB düşerse SEO_BOS ile basılır.
+    const [v, seo] = await Promise.all([
+      tmdbGetir(
+        `/person/${kid}?append_to_response=combined_credits,translations`,
+        ONBELLEK_TTL_SN.uzun),
+      seoIcerikVerisi('person', kid).catch(() => SEO_BOS),
+    ]);
     const ad = v.name || 'dizi.jpg';
     // Türkçe boşsa İngilizce çeviriye düş (bu maddenin asıl kusuru buydu).
     const biyografi = seoMetin(v.biography)
       || seoCeviriAlani(v.translations, 'biography');
 
-    // İÇ BAĞLANTILAR: yalnız BİZDE SAYFASI OLAN yapımlar, yani /icerik/:tur/:id
-    // (tv|movie). TMDB'nin başka media_type'ları atlanır — olmayan URL bota
-    // bildirilmez. Afişsiz kayıt uygulamada da listelenmiyor.
-    const hamYapimlar = [
-      ...(v.combined_credits?.cast || []),
-      ...(v.combined_credits?.crew || []),
-    ].filter((y) => y && (y.media_type === 'tv' || y.media_type === 'movie')
-      && (y.name || y.title) && y.poster_path && gecerliTmdb(y.id));
-    // Aynı yapımda hem oyuncu hem ekip olabilir (ör. yönetmen-oyuncu):
-    // tür+kimliğe göre tekilleştir, sonra popülerliğe göre sırala.
-    const yapimlar = [...new Map(
-      hamYapimlar.map((y) => [`${y.media_type}:${y.id}`, y]),
-    ).values()]
-      .sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+    const hamYapimlar = kisiFilmografi(v);
+    const yapimlar = hamYapimlar
       .slice(0, SEO_KISI_YAPIM_LIMIT)
       .map((y) => {
         const yAd = y.name || y.title;
@@ -4061,11 +4076,6 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
           alt: `${yAd}${yYil ? ` (${yYil})` : ''} afişi`,
         };
       });
-
-    // dizi.jpg'nin KİŞİ hakkındaki özgün içeriği (yorum + inceleme + puan).
-    // İçerik sayfasıyla AYNI yardımcı: süzgeçler (spoiler/yasaklı/gizlenmiş)
-    // ve sıralama (uzunluğa göre) tek yerden gelir.
-    const seo = await seoIcerikVerisi('person', kid);
 
     const kimlikSatirlari = [
       SEO_KISI_MESLEK[v.known_for_department] && `Meslek: ${SEO_KISI_MESLEK[v.known_for_department]}`,
@@ -4094,7 +4104,7 @@ app.get('/og/kisi/:id', sarici(async (req, res) => {
     const indexle = kisiIndekslenir({
       ozgunVar: seo.yorumlar.length > 0 || seo.incelemeler.length > 0,
       biyografi,
-      yapimSayisi: yapimlar.length,
+      yapimSayisi: hamYapimlar.length,
     });
 
     res.type('html').send(ogSayfa({
@@ -4293,12 +4303,12 @@ function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
 }
 
 /** TMDB `/discover` yanıtını sayfaya basılabilir yapım listesine çevirir. */
-function seoSirketYapimlari(yanit, tur) {
+function seoSirketYapimlari(yanit, tur, sinir = SEO_SIRKET_YAPIM) {
   return ((yanit || {}).results || [])
     // `poster_path` süzgeci sirket.dart'takinin aynısı: afişsiz kayıt
     // uygulamada da listelenmiyor, bot sayfası ondan fazlasını göstermesin.
     .filter((y) => y && y.poster_path && (y.name || y.title) && gecerliTmdb(y.id))
-    .slice(0, SEO_SIRKET_YAPIM)
+    .slice(0, sinir)
     .map((y) => {
       const ad = y.name || y.title;
       const yil = String(y.first_air_date || y.release_date || '').slice(0, 4);
@@ -4322,28 +4332,26 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
     // Künye ZORUNLU (yoksa 404), yapım listeleri İSTEĞE BAĞLI: discover
     // geçici olarak düşerse sayfa künyeyle döner ama eşiği geçemeyip
     // `noindex,follow` alır — var olan sayfayı indeksten düşürmez.
-    const [firma, diziYanit, filmYanit] = await Promise.all([
+    const [firma, diziYanit, filmYanit, seo] = await Promise.all([
       tmdbGetir(`/company/${sid}`, ONBELLEK_TTL_SN.uzun),
       tmdbGetir(`/discover/tv?with_companies=${sid}&sort_by=popularity.desc`,
         ONBELLEK_TTL_SN.varsayilan).catch(() => null),
       tmdbGetir(`/discover/movie?with_companies=${sid}&sort_by=popularity.desc`,
         ONBELLEK_TTL_SN.varsayilan).catch(() => null),
+      seoIcerikVerisi('company', sid).catch(() => SEO_BOS),
     ]);
     const ad = seoMetin(firma?.name);
     // TMDB bazen 200 + boş gövde döndürüyor: adı olmayan firma sayfası
     // "Sayfa bulunamadı" demektir (soft 404 disiplini).
     if (!ad) return ogYok(res, url, 'Bu yapım firması dizi.jpg üzerinde yok.');
 
-    const diziler = seoSirketYapimlari(diziYanit, 'tv');
-    const filmler = seoSirketYapimlari(filmYanit, 'movie');
+    // Discover ilk sayfa (20) dilimlenmeden sayılır; basılan liste tavanlı.
+    const diziHam = seoSirketYapimlari(diziYanit, 'tv', 20);
+    const filmHam = seoSirketYapimlari(filmYanit, 'movie', 20);
+    const diziler = diziHam.slice(0, SEO_SIRKET_YAPIM);
+    const filmler = filmHam.slice(0, SEO_SIRKET_YAPIM);
     const yapimlar = [...diziler, ...filmler];
     const logo = tmdbGorsel(firma.logo_path, 'w185');
-
-    // dizi.jpg'nin FİRMA hakkındaki özgün içeriği (yorum + inceleme + puan).
-    // `tur='company'` 19 Ağu 2026'da açıldı (migrasyon-2026-08-19.sql); uç
-    // içerik/kişi sayfalarıyla AYNI yardımcıyı kullanır, yani süzgeçler
-    // (spoiler/yasaklı/gizlenmiş) ve sıralama tek yerden gelir.
-    const seo = await seoIcerikVerisi('company', sid);
 
     const kimlikSatirlari = [
       seoMetin(firma.headquarters) && `Merkez: ${seoMetin(firma.headquarters)}`,
@@ -4389,7 +4397,7 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
       // içerikle birebir aynı ölçüyü kullanır (`/og/kisi` ile aynı disiplin).
       indexle: sirketIndekslenir({
         ozgunVar: seo.yorumlar.length > 0 || seo.incelemeler.length > 0,
-        yapimSayisi: yapimlar.length,
+        yapimSayisi: diziHam.length + filmHam.length,
       }),
       tur: 'website',
       govde,
@@ -5045,7 +5053,7 @@ app.get('/og/ana', sarici(async (_req, res) => {
           '@id': `${SITE_KOK}/#site`,
           name: 'dizi.jpg',
           url: `${SITE_KOK}/`,
-          inLanguage: 'tr',
+          inLanguage: seoIstDil(),
         },
         {
           '@type': 'Organization',
@@ -5166,7 +5174,7 @@ function seoKesifJsonLd({ url, ad, aciklama, kirintiAd, bloklar }) {
         name: ad,
         url,
         description: aciklama,
-        inLanguage: 'tr',
+        inLanguage: seoIstDil(),
         isPartOf: { '@id': `${SITE_KOK}/#site` },
         hasPart: bloklar.map((b) => ({
           '@type': 'ItemList',
@@ -6040,17 +6048,19 @@ const SITEMAP_KISI_SORGU = `
       FROM tmdb_onbellek
      WHERE anahtar ~ '^/person/[0-9]+\\?append_to_response=combined_credits,translations&language=tr-TR$'
        AND greatest(
-             length(btrim(coalesce(veri->>'biography', ''))),
-             length(btrim(coalesce(
+             length(btrim(regexp_replace(coalesce(veri->>'biography', ''), '\\s+', ' ', 'g'))),
+             length(btrim(regexp_replace(coalesce(
                jsonb_path_query_first(veri,
-                 '$.translations.translations[*] ? (@.iso_639_1 == "en").data.biography') #>> '{}', '')))
+                 '$.translations.translations[*] ? (@.iso_639_1 == "en").data.biography') #>> '{}', ''),
+               '\\s+', ' ', 'g')))
            ) >= ${SEO_KISI_BIYO_MIN}
   )
   SELECT tmdb_id, NULL::date AS son FROM (
     SELECT tmdb_id, (
       SELECT count(DISTINCT v) FROM jsonb_array_elements_text(
         jsonb_path_query_array(veri, ('$.combined_credits.*[*] ? ((@.media_type == "tv"'
-          || ' || @.media_type == "movie") && @.poster_path != null && @.id > 0).id')::jsonpath)) v) AS yapim
+          || ' || @.media_type == "movie") && @.poster_path != null && @.id > 0'
+          || ' && ((exists(@.name) && @.name != "") || (exists(@.title) && @.title != ""))).id')::jsonpath)) v) AS yapim
       FROM aday
   ) t WHERE yapim >= ${SEO_KISI_YAPIM_MIN} ORDER BY tmdb_id`;
 
@@ -6087,6 +6097,7 @@ const SITEMAP_SIRKET_SORGU = `
      WHERE anahtar ~ '^/(tv|movie)/[0-9]+\\?append_to_response=credits'
        AND anahtar LIKE '%language=tr-TR%'
        AND jsonb_typeof(veri->'production_companies') = 'array'
+       AND coalesce(veri->>'poster_path', '') <> ''
   )
   SELECT (c->>'id')::int AS tmdb_id, NULL::date AS son
     FROM (SELECT y.* FROM yapim y JOIN harita h ON h.tur = y.tur AND h.tmdb_id = y.tmdb_id) y,
@@ -6410,18 +6421,23 @@ const SITEMAP_GENEL_YOLLAR = [
   {
     yol: '/gizlilik', changefreq: 'yearly', priority: '0.3',
     indekslenir: () => true,
+    // Gerçek metin tarihi (SEO_GIZLILIK_GUNCELLEME) — uydurma "bugün" değil.
+    lastmod: seoGizlilikIsoTarih,
   },
 ];
 
 app.get('/sitemap-genel.xml', sarici(async (_req, res) => {
-  // `lastmod` YOK: bu sayfaların içeriği TMDB'den geliyor, bizde "son
-  // değişiklik" damgası yok. Uydurma tarih bildirmek sitemap'in güvenilirliğini
-  // düşürür (Google lastmod'u tutarsız bulursa tamamen yok sayar).
+  // `/`, `/gozat`, `/kesfet`: TMDB listesi, bizde değişim damgası yok.
+  // `/gizlilik`: politika metninin gerçek tarihi (`seoGizlilikIsoTarih`).
   const satirlar = SITEMAP_GENEL_YOLLAR
     .filter((s) => s.indekslenir())
-    .map((s) => `  <url><loc>${htmlKacir(kanonikUrl(s.yol))}</loc>`
-      + `<changefreq>${s.changefreq}</changefreq>`
-      + `<priority>${s.priority}</priority></url>`);
+    .map((s) => {
+      const lm = typeof s.lastmod === 'function' ? s.lastmod() : s.lastmod;
+      return `  <url><loc>${htmlKacir(kanonikUrl(s.yol))}</loc>`
+        + (lm ? `<lastmod>${htmlKacir(lm)}</lastmod>` : '')
+        + `<changefreq>${s.changefreq}</changefreq>`
+        + `<priority>${s.priority}</priority></url>`;
+    });
   sitemapGonder(res, sitemapUrlseti(satirlar));
 }));
 
