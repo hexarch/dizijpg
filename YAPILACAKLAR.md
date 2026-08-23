@@ -1,6 +1,39 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — ✅ Fragman oynatıcı kromu yenilendi (dağıtım BEKLİYOR)
+
+Kullanıcı isteği: "video playerimizi çok daha güzel bir hale getirebilirsin."
+Kontrol katmanı (`fragman_kontrol.dart`) iki platformun (io WebView + web
+iframe) ortak kromu olduğundan tek dosyada yenilendi:
+
+- **Otomatik gizlenme:** oynarken 3 sn dokunulmayınca çubuk + alt gradyan
+  200 ms'de kaybolur (YouTube kalıbı). Gizliyken tek dokunuş yalnız kromu
+  geri getirir (oynatmayı DEĞİŞTİRMEZ); çift dokunuş ±10 sarma gizliyken de
+  çalışır ve kromu açmaz. Duraklatınca/yüklenirken krom hep açık. Çubukta
+  sürükleme dahil her temas sayacı sıfırlar (kullanılırken kaybolmaz).
+- **Fare desteği (web/masaüstü):** fare kıpırdayınca krom geri gelir; ilerleme
+  çubuğunda imleç `click` olur. Dokunmatik davranış değişmedi (hover-only
+  tuzağı yok — ui-ux-pro-max "Hover vs Tap" kuralı).
+- **Görsel:** yüzen siyah kutu yerine alt gradyan üstünde daha saydam
+  (0.45) çubuk; duraklatınca ortada sarı dairesel oynat rozeti
+  (AnimatedScale/Opacity, easeOutBack); oynat/duraklat ikonu ScaleTransition'lı
+  AnimatedSwitcher; ±10 rozeti karartılmış pill içinde. Geçişler 200 ms
+  (150-300 ms bandı). Gizli kromda ExcludeSemantics — okuyucu görünmez
+  düğme duymaz.
+- **Ortak hata ekranı `FragmanHata`:** çıplak "Tekrar dene" TextButton yerine
+  ikon + "Bir şeyler ters gitti" + sarı dolgu "Tekrar dene" (≥44 dp); io
+  gömücüsünün hata dalı buna bağlandı. İKİ metin de mevcut anahtar — yeni
+  çeviri gerekmedi.
+- Kanıt: `app/test/fragman_krom_test.dart` (7 test: gizlenme, gizliyken
+  dokunuş oynatmayı değiştirmez, açıkken değiştirir, gizli çift dokunuş sarar,
+  duraklatınca sabit + sarı rozet, fare hover, hata ekranı) + eski 5 oynatıcı
+  testi değişmeden yeşil. flutter analyze yalnız info (92) ·
+  **2095/2095 test yeşil**.
+- Dağıtım YOK (bilerek): birikmiş istemci işleriyle toplu web dağıtımında;
+  mobilde 1.93. Tam ekran bilinçli kapsam dışı: gömme WebView/iframe rota
+  değişiminde yeniden kurulur (video başa sarar), `fs=0` bu yüzden duruyor.
+
 ## 2026-08-23 — ✅ Görüntülenme takip satırına döndü + ana sayfada "beta" (dağıtım BEKLİYOR)
 
 İki kullanıcı isteği (23 Ağu):

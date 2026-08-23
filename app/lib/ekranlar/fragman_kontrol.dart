@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import '../ceviri.dart';
@@ -11,6 +12,11 @@ import '../tema.dart';
 /// Altyazı ve kalıcı 1×/2× alt çubukta. İlerleme: koyu zemin, açık tampon,
 /// sarı oynanan — üçü de ayrı görünür. Yatay kaydırma video alanında
 /// PageView'e gider; yalnız çubukta sarma tanınır.
+///
+/// Krom OYNARKEN 3 sn dokunulmayınca gizlenir; gizliyken tek dokunuş yalnız
+/// geri getirir (oynatmayı değiştirmez), çift dokunuş sarmayı gizli de yapar.
+/// Duraklatınca ve yüklenirken hep görünür. Fare oynayınca da geri gelir —
+/// böylece masaüstü/web hover'la, telefon dokunuşla aynı davranışı alır.
 class FragmanKontrol extends StatefulWidget {
   final bool yukleniyor;
   final bool oynuyor;
@@ -58,22 +64,82 @@ class FragmanKontrol extends StatefulWidget {
 class _FragmanKontrolState extends State<FragmanKontrol> {
   Timer? _tekTik;
   Timer? _sarmaTik;
+  Timer? _gizleTik;
   DateTime? _sonDokunus;
   int _sonYan = 0;
   bool _basili = false;
   int _sarmaYan = 0;
+  bool _krom = true;
 
   static const _ciftSure = Duration(milliseconds: 240);
   static const _sarmaGoster = Duration(milliseconds: 300);
+  static const _gizleSure = Duration(seconds: 3);
+  static const _gecis = Duration(milliseconds: 200);
+
+  @override
+  void initState() {
+    super.initState();
+    _gizlemeyiKur();
+  }
 
   @override
   void dispose() {
     _tekTik?.cancel();
     _sarmaTik?.cancel();
+    _gizleTik?.cancel();
     super.dispose();
   }
 
-  /// Sol (−1) / sağ (+1) yarım: tek dokunuş oynat-duraklat, çift sarma.
+  @override
+  void didUpdateWidget(FragmanKontrol eski) {
+    super.didUpdateWidget(eski);
+    if (eski.oynuyor != widget.oynuyor ||
+        eski.yukleniyor != widget.yukleniyor) {
+      _gizlemeyiKur();
+    }
+  }
+
+  /// Duraklatınca/yüklenirken krom hep açık; oynamaya dönünce sayaç kurulur.
+  void _gizlemeyiKur() {
+    if (!widget.oynuyor || widget.yukleniyor) {
+      _gizleTik?.cancel();
+      _gizleTik = null;
+      if (!_krom) setState(() => _krom = true);
+      return;
+    }
+    _sayacKur();
+  }
+
+  void _sayacKur() {
+    _gizleTik?.cancel();
+    _gizleTik = Timer(_gizleSure, () {
+      if (!mounted || !widget.oynuyor || widget.yukleniyor) return;
+      setState(() => _krom = false);
+    });
+  }
+
+  /// Krom açıkken her el/fare teması sayacı baştan kurar (çubukta sürükleme
+  /// dahil — kullanıcı dokunurken krom kaybolmaz).
+  void _temas(PointerDownEvent _) {
+    if (_krom) _sayacKur();
+  }
+
+  /// Fare kıpırdayınca krom geri gelir (masaüstü/web); dokunmatik ekranlar
+  /// hover üretmez, onlar dokunuşla açar.
+  void _fare(PointerHoverEvent _) {
+    if (!_krom) {
+      setState(() => _krom = true);
+    }
+    if (widget.oynuyor && !widget.yukleniyor) _sayacKur();
+  }
+
+  void _kromAc() {
+    if (!_krom) setState(() => _krom = true);
+    if (widget.oynuyor && !widget.yukleniyor) _sayacKur();
+  }
+
+  /// Sol (−1) / sağ (+1) yarım: tek dokunuş oynat-duraklat (krom gizliyse
+  /// yalnız açar), çift sarma.
   void _dokun(int yan) {
     final simdi = DateTime.now();
     if (_sonYan == yan &&
@@ -96,9 +162,15 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
     }
     _sonYan = yan;
     _sonDokunus = simdi;
+    final gizliydi = !_krom;
     _tekTik?.cancel();
     _tekTik = Timer(_ciftSure, () {
-      if (mounted) widget.onOynatDuraklat();
+      if (!mounted) return;
+      if (gizliydi) {
+        _kromAc();
+      } else {
+        widget.onOynatDuraklat();
+      }
     });
   }
 
@@ -143,47 +215,101 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
     final tamponOran = sureSn <= 0
         ? 0.0
         : (widget.tampon.inMilliseconds / 1000).clamp(0, sureSn) / sureSn;
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Row(
-          children: [
-            Expanded(child: _yan(-1, '10 saniye geri'.c)),
-            Expanded(child: _yan(1, '10 saniye ileri'.c)),
-          ],
-        ),
-        if (_sarmaYan != 0) IgnorePointer(child: _sarmaRozeti(_sarmaYan < 0)),
-        if (_basili)
-          const IgnorePointer(
-            child: Center(
-              child: Text(
-                '2×',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 42,
-                  fontWeight: FontWeight.w800,
-                  shadows: [Shadow(blurRadius: 12, color: Colors.black87)],
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: _temas,
+      onPointerHover: _fare,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Row(
+            children: [
+              Expanded(child: _yan(-1, '10 saniye geri'.c)),
+              Expanded(child: _yan(1, '10 saniye ileri'.c)),
+            ],
+          ),
+          if (_sarmaYan != 0) IgnorePointer(child: _sarmaRozeti(_sarmaYan < 0)),
+          if (_basili)
+            const IgnorePointer(
+              child: Center(
+                child: Text(
+                  '2×',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 42,
+                    fontWeight: FontWeight.w800,
+                    shadows: [Shadow(blurRadius: 12, color: Colors.black87)],
+                  ),
+                ),
+              ),
+            ),
+          IgnorePointer(
+            child: AnimatedScale(
+              scale: !widget.oynuyor && !_basili ? 1 : 0.85,
+              duration: _gecis,
+              curve: Curves.easeOutBack,
+              child: AnimatedOpacity(
+                opacity: !widget.oynuyor && !_basili ? 1 : 0,
+                duration: _gecis,
+                child: Center(
+                  child: Container(
+                    width: 64,
+                    height: 64,
+                    decoration: const BoxDecoration(
+                      color: DiziRenkler.sari,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(blurRadius: 16, color: Colors.black45),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.play_arrow,
+                      size: 40,
+                      color: Colors.black,
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        if (!widget.oynuyor && !_basili)
-          const IgnorePointer(
-            child: Center(
-              child: Icon(
-                Icons.play_circle_outline,
-                size: 64,
-                color: Colors.white,
+          // Alt gradyan + kontrol çubuğu birlikte kaybolur; gizliyken
+          // dokunuşlar alta (oynat/sarma yüzeyine) geçer, okuyucular görmez.
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: IgnorePointer(
+              ignoring: !_krom,
+              child: ExcludeSemantics(
+                excluding: !_krom,
+                child: AnimatedOpacity(
+                  key: const ValueKey('fragman-krom'),
+                  opacity: _krom ? 1 : 0,
+                  duration: _gecis,
+                  child: DecoratedBox(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0x00000000), Color(0xB3000000)],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8, 24, 8, widget.altBosluk),
+                      child: AnimatedSlide(
+                        offset: _krom ? Offset.zero : const Offset(0, 0.3),
+                        duration: _gecis,
+                        curve: Curves.easeOut,
+                        child: _cubuk(konumOran, tamponOran, sureSn),
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        Positioned(
-          left: 8,
-          right: 8,
-          bottom: widget.altBosluk,
-          child: _cubuk(konumOran, tamponOran, sureSn),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -207,24 +333,31 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
     return Align(
       alignment: geri ? Alignment.centerLeft : Alignment.centerRight,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              geri ? Icons.fast_rewind : Icons.fast_forward,
-              color: Colors.white,
-              size: 36,
-            ),
-            Text(
-              geri ? '−10' : '+10',
-              style: const TextStyle(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.black54,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                geri ? Icons.fast_rewind : Icons.fast_forward,
                 color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
+                size: 32,
               ),
-            ),
-          ],
+              Text(
+                geri ? '−10' : '+10',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -234,16 +367,24 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
   Widget _cubuk(double konumOran, double tamponOran, double sureSn) {
     final ikiKat = widget.hiz >= 1.5;
     return Material(
-      color: Colors.black.withValues(alpha: 0.55),
-      borderRadius: BorderRadius.circular(14),
+      color: Colors.black.withValues(alpha: 0.45),
+      borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(2, 0, 2, 0),
         child: Row(
           children: [
-            _ikon(
-              widget.oynuyor ? Icons.pause : Icons.play_arrow,
-              widget.oynuyor ? 'Duraklat'.c : 'Oynat'.c,
-              widget.onOynatDuraklat,
+            AnimatedSwitcher(
+              duration: _gecis,
+              transitionBuilder: (cocuk, animasyon) =>
+                  ScaleTransition(scale: animasyon, child: cocuk),
+              child: KeyedSubtree(
+                key: ValueKey(widget.oynuyor),
+                child: _ikon(
+                  widget.oynuyor ? Icons.pause : Icons.play_arrow,
+                  widget.oynuyor ? 'Duraklat'.c : 'Oynat'.c,
+                  widget.onOynatDuraklat,
+                ),
+              ),
             ),
             Text(
               '${_sure(widget.konum)} / ${_sure(widget.sure)}',
@@ -332,6 +473,51 @@ class _FragmanKontrolState extends State<FragmanKontrol> {
   }
 }
 
+/// Fragman yüklenemeyince gösterilen ortak ekran: kısa mesaj + sarı
+/// "Tekrar dene". Gömücüler (io/web) hata dalında bunu kullanır.
+class FragmanHata extends StatelessWidget {
+  final VoidCallback onTekrar;
+
+  const FragmanHata({super.key, required this.onTekrar});
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, color: Colors.white70, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              'Bir şeyler ters gitti'.c,
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: onTekrar,
+              style: FilledButton.styleFrom(
+                backgroundColor: DiziRenkler.sari,
+                foregroundColor: Colors.black,
+                minimumSize: const Size(120, 44),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              child: Text('Tekrar dene'.c),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 /// Üç katmanlı bar: kalan (koyu) · tampon (açık gri) · oynanan (sarı).
 class _IlerlemeCubugu extends StatelessWidget {
   final double oynanan;
@@ -356,21 +542,26 @@ class _IlerlemeCubugu extends StatelessWidget {
         final w = kisit.maxWidth;
         return SizedBox(
           height: 44,
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTapDown: onSarma == null
-                ? null
-                : (d) => _oran(d.localPosition, w, onSarma!),
-            onHorizontalDragUpdate: onSarma == null
-                ? null
-                : (d) => _oran(d.localPosition, w, onSarma!),
-            child: CustomPaint(
-              key: const ValueKey('fragman-ilerleme'),
-              painter: FragmanIlerlemeBoyaci(
-                oynanan: oynanan.clamp(0.0, 1.0),
-                tampon: tampon.clamp(0.0, 1.0),
+          child: MouseRegion(
+            cursor: onSarma == null
+                ? MouseCursor.defer
+                : SystemMouseCursors.click,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTapDown: onSarma == null
+                  ? null
+                  : (d) => _oran(d.localPosition, w, onSarma!),
+              onHorizontalDragUpdate: onSarma == null
+                  ? null
+                  : (d) => _oran(d.localPosition, w, onSarma!),
+              child: CustomPaint(
+                key: const ValueKey('fragman-ilerleme'),
+                painter: FragmanIlerlemeBoyaci(
+                  oynanan: oynanan.clamp(0.0, 1.0),
+                  tampon: tampon.clamp(0.0, 1.0),
+                ),
+                child: const SizedBox.expand(),
               ),
-              child: const SizedBox.expand(),
             ),
           ),
         );

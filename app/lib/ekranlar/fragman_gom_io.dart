@@ -306,15 +306,7 @@ class _FragmanGomucuState extends State<FragmanGomucu> {
         // Dokunuş Flutter'da kalsın: kaydırıcı WebView pan'ini yutmasın.
         IgnorePointer(child: _webGorunum(denetci)),
         if (_hata)
-          ColoredBox(
-            color: Colors.black,
-            child: Center(
-              child: TextButton(
-                onPressed: _tekrar,
-                child: Text('Tekrar dene'.c),
-              ),
-            ),
-          )
+          FragmanHata(onTekrar: _tekrar)
         else
           FragmanKontrol(
             yukleniyor: _yukleniyor,
