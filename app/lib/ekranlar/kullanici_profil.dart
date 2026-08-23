@@ -94,6 +94,31 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
     );
   }
 
+  /// Ziyaretçi profilinde izlediklerinin ızgarası (sayaç ve şerit başlığından).
+  ///
+  /// `/izlediklerim` yalnız kendi hesabı gösterdiği için ziyaretçinin tam
+  /// listesi yok; sunucunun profil yanıtında gönderdiği son 60 kayıt burada
+  /// ızgara olarak açılır. Başlıktaki sayı yine GERÇEK toplamdır (şeritle
+  /// aynı, kabul edilmiş kalıp).
+  void _izlenenSheet(String tur) {
+    final izlenenler = (_profil?['izlenenler'] as List<dynamic>? ?? [])
+        .where((o) => o['tur'] == tur)
+        .toList();
+    if (izlenenler.isEmpty) return;
+    final st = _profil!['istatistik'] as Map<String, dynamic>;
+    final toplam = ((tur == 'tv' ? st['dizi'] : st['film']) as num?)?.toInt();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: DiziRenkler.koyuGri,
+      builder: (_) => _IzlenenlerSheet(
+        tur: tur,
+        ogeler: izlenenler,
+        toplam: toplam ?? izlenenler.length,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget govde;
@@ -281,11 +306,22 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                   // ÇIKTI, yukarıdaki kimlik bloğuna taşındı.
                   ProfilOlcumSatiri(
                     sayac: sayaclar,
-                    // Bölüm/film/dizi için açık profilde GİDECEK YER YOK:
-                    // `/izlediklerim` yalnız kendi hesabını gösteren bir uç.
-                    // Ziyaretçinin karşılığı bu ekrandaki "Dizi ve Filmler"
-                    // sekmesidir — ama o zaten varsayılan sekme ve hemen
-                    // altta duruyor, dokunma eklemek boş bir eylem olurdu.
+                    // Kendi profilde bu sayaçlar `/izlediklerim`e gider; o uç
+                    // yalnız kendi hesabı gösterdiği için ziyaretçide KARŞILIĞI
+                    // izlenenler alt sayfasıdır (22 Ağu 2026 — kullanıcının
+                    // "izlediği dizilere/filmlere tıklayamıyorum" bildirimi;
+                    // kendi profildeki AYNI şikâyet de vaktiyle sayaçlara
+                    // onTap eklenerek çözülmüştü). Veri yoksa (gizli/engelli)
+                    // sayaç dokunmasızdır — boş sayfa vaat edilmez.
+                    bolumTap: izlenenler.any((o) => o['tur'] == 'tv')
+                        ? () => _izlenenSheet('tv')
+                        : null,
+                    diziTap: izlenenler.any((o) => o['tur'] == 'tv')
+                        ? () => _izlenenSheet('tv')
+                        : null,
+                    filmTap: izlenenler.any((o) => o['tur'] == 'movie')
+                        ? () => _izlenenSheet('movie')
+                        : null,
                     yorumTap: yorumSekmesi,
                   ),
                   // Toplam ekran süresi (kendi profildekiyle aynı biçim)
@@ -456,32 +492,48 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                         'İzlediği Diziler ({})',
                         izlenenler.where((o) => o['tur'] == 'tv').toList(),
                         (st['dizi'] as num?)?.toInt(),
+                        'tv',
                       ),
                       (
                         Icons.movie_outlined,
                         'İzlediği Filmler ({})',
                         izlenenler.where((o) => o['tur'] == 'movie').toList(),
                         (st['film'] as num?)?.toInt(),
+                        'movie',
                       ),
                     ])
                       if (grup.$3.isNotEmpty) ...[
                         const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(
-                              grup.$1,
-                              size: 19,
-                              color: DiziRenkler.sariMetin,
-                            ),
-                            const SizedBox(width: 6),
-                            Text(
-                              grup.$2.cf([grup.$4 ?? grup.$3.length]),
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
+                        // Başlık da sayaçlar gibi izlenenler alt sayfasını
+                        // açar; ok ikonu dokunulabilirliği belli eder.
+                        InkWell(
+                          key: ValueKey('izlenen-baslik-${grup.$5}'),
+                          borderRadius: BorderRadius.circular(8),
+                          onTap: () => _izlenenSheet(grup.$5),
+                          child: Row(
+                            children: [
+                              Icon(
+                                grup.$1,
+                                size: 19,
+                                color: DiziRenkler.sariMetin,
                               ),
-                            ),
-                          ],
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  grup.$2.cf([grup.$4 ?? grup.$3.length]),
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                              Icon(
+                                Icons.chevron_right,
+                                size: 20,
+                                color: DiziRenkler.metin54,
+                              ),
+                            ],
+                          ),
                         ),
                         const SizedBox(height: 8),
                         SizedBox(
@@ -1609,6 +1661,93 @@ class _YorumDetayModal extends StatelessWidget {
                 style: TextStyle(fontSize: 11, color: DiziRenkler.gonderiEylem),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Ziyaretçinin izlediği dizi/filmlerin ızgara alt sayfası.
+///
+/// [ogeler] profil yanıtındaki son 60 kayıttır; [toplam] gerçek sayı olduğu
+/// için başlık şeritle aynı sayıyı söyler. Karolar [MiniIcerik] olduğundan
+/// dokununca içerik detayına gidilir (alt sayfa altta açık kalır, geri
+/// dönünce liste kaldığı yerdedir).
+class _IzlenenlerSheet extends StatelessWidget {
+  final String tur;
+  final List<dynamic> ogeler;
+  final int toplam;
+
+  const _IzlenenlerSheet({
+    required this.tur,
+    required this.ogeler,
+    required this.toplam,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final baslik =
+        (tur == 'tv' ? 'İzlediği Diziler ({})' : 'İzlediği Filmler ({})').cf([
+          toplam,
+        ]);
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.7,
+      minChildSize: 0.4,
+      maxChildSize: 0.92,
+      builder: (context, kontrol) => Column(
+        children: [
+          const SizedBox(height: 12),
+          Container(
+            width: 36,
+            height: 4,
+            decoration: BoxDecoration(
+              color: DiziRenkler.metin24,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: [
+                Icon(
+                  tur == 'tv' ? Icons.tv_outlined : Icons.movie_outlined,
+                  size: 19,
+                  color: DiziRenkler.sariMetin,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    baslik,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Expanded(
+            child: GridView.builder(
+              controller: kontrol,
+              padding: EdgeInsets.fromLTRB(16, 8, 16, altGuvenli(context)),
+              gridDelegate: const PosterIzgarasi(satirBoslugu: 16, bosluk: 12),
+              itemCount: ogeler.length,
+              itemBuilder: (context, i) {
+                final o = ogeler[i] as Map<String, dynamic>;
+                return MiniIcerik(
+                  key: ValueKey('sheet-${o['tur']}-${o['tmdb_id']}'),
+                  tmdbId: (o['tmdb_id'] as num).toInt(),
+                  tur: o['tur'] as String,
+                  genislik: double.infinity,
+                  izlenenSayi: (o['sayi'] as num?)?.toInt(),
+                );
+              },
+            ),
           ),
         ],
       ),

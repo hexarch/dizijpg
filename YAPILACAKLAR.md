@@ -1,6 +1,35 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — 🚀 Ziyaretçi profili: izlenenlere dokunmak (kullanıcı bildirimi)
+
+Bildirim (birebir): "Başkasının profilini incelediğimde izlediği diziler ve
+izlediği filmlere tıklıyamıyorum."
+
+Teşhis İKİ katman çıkardı:
+- Şerit KAROLARI aslında tıklanıyordu (PosterKarti kendi InkWell'iyle
+  `/icerik`e push eder; widget testiyle mobil+masaüstü doğrulandı) — regresyon
+  kilidi eklendi.
+- Asıl ölü yüzey SAYAÇLAR (Bölüm/Dizi/Film) ve şerit BAŞLIKLARIYDI: kendi
+  profilde sayaçlar `/izlediklerim`e gider, o uç ziyaretçiye kapalı olduğu
+  için açık profilde onTap hiç bağlanmamıştı (kod yorumunda "gidecek yer yok"
+  diye belgeliydi). Kendi profildeki AYNI "tıklayamıyorum" şikâyeti de
+  vaktiyle sayaçlara onTap eklenerek çözülmüştü (Sprint 6 md. 6).
+
+Çözüm: ziyaretçi karşılığı olarak `_IzlenenlerSheet` — profil yanıtındaki
+`izlenenler` (son 60) PosterIzgarasi'nda, başlıkta GERÇEK toplam (şeritle aynı
+kabul edilmiş kalıp). Dizi+Bölüm sayacı → tv ızgarası, Film sayacı → movie;
+şerit başlıklarına da aynı dokunuş + chevron ikonu (dokunulabilirlik imi).
+Veri yoksa (gizli/engelli) sayaç dokunmasız kalır — boş sayfa vaat edilmez.
+
+- Yeni metin YOK: 'İzlediği Diziler ({})' / 'İzlediği Filmler ({})' anahtarları
+  zaten 45 dilde.
+- Kanıt: `app/test/kullanici_profil_izlenen_tiklama_test.dart` (5 test —
+  karo→detay ×2, başlık→sheet→karo→detay, Dizi+Bölüm sayacı→tv sheet,
+  Film sayacı→movie sheet). Paket: 2088 test yeşil, analyze yalnız info.
+- Web canlıda (main.c02d3a033976); mobil tarafı sonraki sürümle gider
+  (1.92.0+142 paketleri bu düzeltmeden ÖNCE derlendi, sürüm artırılmadı).
+
 ## 2026-08-23 — süre notu sadeleşti ✅ + admin "Eksik Süreler" sekmesi 🚀
 Kullanıcı isteği (22 Ağu, birebir): "sürelerin %93 ü gerçek diyor o yazıyı
 kaldır ve admin panelinde hangi dizilerin filmlerin dakikalarını bilmiyoruz
