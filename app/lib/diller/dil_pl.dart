@@ -1305,14 +1305,10 @@ const Map<String, String> cevirilerPl = {
       'Czasy to rzeczywiste długości odcinków i filmów z TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Od zawsze: {} odcinków · {} filmów · {}',
-  'Kabul et':
-      'Akceptuj',
-  'Reddedilenler':
-      'Odrzucone',
-  'İstekler':
-      'Prośby',
-  'Reddettiğin istek yok':
-      'Brak odrzuconych próśb',
+  'Kabul et': 'Akceptuj',
+  'Reddedilenler': 'Odrzucone',
+  'İstekler': 'Prośby',
+  'Reddettiğin istek yok': 'Brak odrzuconych próśb',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Odrzucone prośby zostają tutaj; możesz je w każdej chwili znów zaakceptować.',
   'Ne izlesem?': 'Co obejrzeć?',

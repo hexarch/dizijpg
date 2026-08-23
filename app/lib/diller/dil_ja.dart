@@ -1226,14 +1226,10 @@ const Map<String, String> cevirilerJa = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       '時間はTMDBの実際のエピソード・映画の長さです',
   'Tüm zamanlar: {} bölüm · {} film · {}': '全期間：{}話 · {}本 · {}',
-  'Kabul et':
-      '承認',
-  'Reddedilenler':
-      '拒否済み',
-  'İstekler':
-      'リクエスト',
-  'Reddettiğin istek yok':
-      '拒否したリクエストはありません',
+  'Kabul et': '承認',
+  'Reddedilenler': '拒否済み',
+  'İstekler': 'リクエスト',
+  'Reddettiğin istek yok': '拒否したリクエストはありません',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       '拒否したリクエストはここに残ります。いつでも再承認できます。',
   'Ne izlesem?': '何を見よう？',

@@ -1312,14 +1312,10 @@ const Map<String, String> cevirilerFil = {
       'Ang mga tagal ay ang totoong tagal ng mga episode at pelikula mula sa TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sa kabuuan: {} episode · {} pelikula · {}',
-  'Kabul et':
-      'Tanggapin',
-  'Reddedilenler':
-      'Mga tinanggihan',
-  'İstekler':
-      'Mga kahilingan',
-  'Reddettiğin istek yok':
-      'Walang tinanggihang kahilingan',
+  'Kabul et': 'Tanggapin',
+  'Reddedilenler': 'Mga tinanggihan',
+  'İstekler': 'Mga kahilingan',
+  'Reddettiğin istek yok': 'Walang tinanggihang kahilingan',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Nananatili rito ang mga tinanggihang kahilingan; puwede mo itong tanggapin ulit anumang oras.',
   'Ne izlesem?': 'Ano ang papanoorin ko?',

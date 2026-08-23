@@ -1297,14 +1297,10 @@ const Map<String, String> cevirilerNl = {
       'De tijden zijn de echte speelduren van afleveringen en films van TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Aller tijden: {} afleveringen · {} films · {}',
-  'Kabul et':
-      'Accepteren',
-  'Reddedilenler':
-      'Geweigerd',
-  'İstekler':
-      'Verzoeken',
-  'Reddettiğin istek yok':
-      'Geen geweigerde verzoeken',
+  'Kabul et': 'Accepteren',
+  'Reddedilenler': 'Geweigerd',
+  'İstekler': 'Verzoeken',
+  'Reddettiğin istek yok': 'Geen geweigerde verzoeken',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Geweigerde verzoeken blijven hier staan; je kunt ze altijd weer accepteren.',
   'Ne izlesem?': 'Wat zal ik kijken?',

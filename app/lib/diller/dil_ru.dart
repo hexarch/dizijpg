@@ -1294,14 +1294,10 @@ const Map<String, String> cevirilerRu = {
       'Время — это реальная длительность эпизодов и фильмов по данным TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'За всё время: {} серий · {} фильмов · {}',
-  'Kabul et':
-      'Принять',
-  'Reddedilenler':
-      'Отклонённые',
-  'İstekler':
-      'Запросы',
-  'Reddettiğin istek yok':
-      'Нет отклонённых запросов',
+  'Kabul et': 'Принять',
+  'Reddedilenler': 'Отклонённые',
+  'İstekler': 'Запросы',
+  'Reddettiğin istek yok': 'Нет отклонённых запросов',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Отклонённые запросы остаются здесь; их можно снова принять в любой момент.',
   'Ne izlesem?': 'Что посмотреть?',

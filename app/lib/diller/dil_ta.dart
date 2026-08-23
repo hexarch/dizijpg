@@ -1308,14 +1308,10 @@ const Map<String, String> cevirilerTa = {
       'நேரங்கள் TMDB-யில் உள்ள எபிசோட் மற்றும் படங்களின் உண்மையான நேரங்கள்',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'மொத்தம்: {} அத்தியாயங்கள் · {} திரைப்படங்கள் · {}',
-  'Kabul et':
-      'ஏற்கவும்',
-  'Reddedilenler':
-      'நிராகரிக்கப்பட்டவை',
-  'İstekler':
-      'கோரிக்கைகள்',
-  'Reddettiğin istek yok':
-      'நிராகரிக்கப்பட்ட கோரிக்கைகள் இல்லை',
+  'Kabul et': 'ஏற்கவும்',
+  'Reddedilenler': 'நிராகரிக்கப்பட்டவை',
+  'İstekler': 'கோரிக்கைகள்',
+  'Reddettiğin istek yok': 'நிராகரிக்கப்பட்ட கோரிக்கைகள் இல்லை',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'நிராகரிக்கப்பட்ட கோரிக்கைகள் இங்கே இருக்கும்; விரும்பினால் மீண்டும் ஏற்கலாம்.',
   'Ne izlesem?': 'என்ன பார்க்கலாம்?',

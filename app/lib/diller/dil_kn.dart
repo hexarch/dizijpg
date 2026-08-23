@@ -1285,14 +1285,10 @@ const Map<String, String> cevirilerKn = {
       'ಸಮಯಗಳು TMDB ಯಲ್ಲಿನ ಎಪಿಸೋಡ್ ಮತ್ತು ಸಿನಿಮಾಗಳ ನಿಜವಾದ ಅವಧಿಗಳು',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'ಒಟ್ಟು: {} ಸಂಚಿಕೆಗಳು · {} ಚಲನಚಿತ್ರಗಳು · {}',
-  'Kabul et':
-      'ಸ್ವೀಕರಿಸಿ',
-  'Reddedilenler':
-      'ತಿರಸ್ಕರಿಸಿದವು',
-  'İstekler':
-      'ವಿನಂತಿಗಳು',
-  'Reddettiğin istek yok':
-      'ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿ ಇಲ್ಲ',
+  'Kabul et': 'ಸ್ವೀಕರಿಸಿ',
+  'Reddedilenler': 'ತಿರಸ್ಕರಿಸಿದವು',
+  'İstekler': 'ವಿನಂತಿಗಳು',
+  'Reddettiğin istek yok': 'ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿ ಇಲ್ಲ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ತಿರಸ್ಕರಿಸಿದ ವಿನಂತಿಗಳು ಇಲ್ಲಿ ಇರುತ್ತವೆ; ಬೇಕೆಂದಾಗ ಮತ್ತೆ ಸ್ವೀಕರಿಸಬಹುದು.',
   'Ne izlesem?': 'ಏನು ನೋಡಲಿ?',

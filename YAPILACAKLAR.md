@@ -6324,3 +6324,17 @@ eşleşmesi, profil gezinmesi). Canlıda: /ara-tur movie "süleyman" 10 sonuç
 (önizlemedeki 4'e karşı), person 20 sonuç, bio kanıtı (geçici benzersiz
 kelime tam listede bulundu, önizlemede bulunmadı, bio geri alındı),
 geçersiz tür 400. İstemci web dağıtımı toplu dağıtımla; mobil 1.93.
+
+## SÜRÜM 1.93.0+143 (23 Ağu 2026, gece) — TOPLU DAĞITIM
+Kapsam (1.92→1.93): DM Kabul et/Reddet + Reddedilenler · Ne izlesem çarkı ·
+yenilenen fragman oynatıcı · aramada Daha fazlasını gör + kullanıcı ad/bio
+tam listesi · başkasının profilinde izlenenlere dokunma · kitaplık sıralama
+42P18 düzeltmesi · kopan video yüklemede otomatik tekrar · görüntülenme
+sayacı takip satırında + BETA ibaresi · %N-gerçek notu kaldırıldı.
+Kanıt: analyze 0 uyarı, flutter test 2115/2115, backend 1851/0.
+Web CANLIDA: main.2eecd6f1473f.dart.js + 1 ertelenmiş parça, brotli servis
+doğrulandı (content-encoding: br), /api/saglik ok. Paketler:
+projeler/dizijpg.apk (80,1 MB) + projeler/dizijpg-1.93.0+143.aab (107,2 MB),
+ikisi de aapt2 ile 1.93.0/143 + apksigner yayın imzası doğrulandı; eski
+1.92.0+142.aab silindi. Sürüm notu: surum-notu-1.93.0.txt (tr 473/en 445 tarzı
+≤500). AAB üretim kanalına yüklenmeyi bekliyor.

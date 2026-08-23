@@ -1301,14 +1301,10 @@ const Map<String, String> cevirilerHu = {
       'Az időtartamok az epizódok és filmek valós hosszai a TMDB-ről',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Mindenkori: {} epizód · {} film · {}',
-  'Kabul et':
-      'Elfogadás',
-  'Reddedilenler':
-      'Elutasítottak',
-  'İstekler':
-      'Kérelmek',
-  'Reddettiğin istek yok':
-      'Nincs elutasított kérelem',
+  'Kabul et': 'Elfogadás',
+  'Reddedilenler': 'Elutasítottak',
+  'İstekler': 'Kérelmek',
+  'Reddettiğin istek yok': 'Nincs elutasított kérelem',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Az elutasított kérelmek itt maradnak; bármikor újra elfogadhatod őket.',
   'Ne izlesem?': 'Mit nézzek?',

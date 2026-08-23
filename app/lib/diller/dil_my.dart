@@ -1301,14 +1301,10 @@ const Map<String, String> cevirilerMy = {
       'ကြာချိန်များမှာ TMDB မှ အပိုင်းနှင့် ရုပ်ရှင်များ၏ အမှန်တကယ်ကြာချိန်များ ဖြစ်သည်',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'စုစုပေါင်း - {} အပိုင်း · {} ရုပ်ရှင် · {}',
-  'Kabul et':
-      'လက်ခံရန်',
-  'Reddedilenler':
-      'ငြင်းပယ်ထားသည်များ',
-  'İstekler':
-      'တောင်းဆိုမှုများ',
-  'Reddettiğin istek yok':
-      'ငြင်းပယ်ထားသော တောင်းဆိုမှု မရှိပါ',
+  'Kabul et': 'လက်ခံရန်',
+  'Reddedilenler': 'ငြင်းပယ်ထားသည်များ',
+  'İstekler': 'တောင်းဆိုမှုများ',
+  'Reddettiğin istek yok': 'ငြင်းပယ်ထားသော တောင်းဆိုမှု မရှိပါ',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'ငြင်းပယ်ထားသော တောင်းဆိုမှုများ ဤနေရာတွင် ရှိနေမည်; လိုချင်သည့်အခါ ပြန်လက်ခံနိုင်သည်။',
   'Ne izlesem?': 'ဘာကြည့်ရမလဲ?',

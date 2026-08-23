@@ -1311,14 +1311,10 @@ const Map<String, String> cevirilerEl = {
       'Οι χρόνοι είναι οι πραγματικές διάρκειες επεισοδίων και ταινιών από το TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Όλων των εποχών: {} επεισόδια · {} ταινίες · {}',
-  'Kabul et':
-      'Αποδοχή',
-  'Reddedilenler':
-      'Απορριφθέντα',
-  'İstekler':
-      'Αιτήματα',
-  'Reddettiğin istek yok':
-      'Δεν υπάρχουν απορριφθέντα αιτήματα',
+  'Kabul et': 'Αποδοχή',
+  'Reddedilenler': 'Απορριφθέντα',
+  'İstekler': 'Αιτήματα',
+  'Reddettiğin istek yok': 'Δεν υπάρχουν απορριφθέντα αιτήματα',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Τα απορριφθέντα αιτήματα μένουν εδώ· μπορείς να τα αποδεχτείς ξανά όποτε θέλεις.',
   'Ne izlesem?': 'Τι να δω;',

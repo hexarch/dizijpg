@@ -1313,14 +1313,10 @@ const Map<String, String> cevirilerFr = {
       'Les durées sont les durées réelles des épisodes et des films sur TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Depuis toujours : {} épisodes · {} films · {}',
-  'Kabul et':
-      'Accepter',
-  'Reddedilenler':
-      'Refusées',
-  'İstekler':
-      'Demandes',
-  'Reddettiğin istek yok':
-      'Aucune demande refusée',
+  'Kabul et': 'Accepter',
+  'Reddedilenler': 'Refusées',
+  'İstekler': 'Demandes',
+  'Reddettiğin istek yok': 'Aucune demande refusée',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Les demandes refusées restent ici ; tu peux les accepter à nouveau quand tu veux.',
   'Ne izlesem?': 'Je regarde quoi ?',

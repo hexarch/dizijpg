@@ -1283,14 +1283,10 @@ const Map<String, String> cevirilerAz = {
       'Müddətlər TMDB-dəki epizod və filmlərin gerçək müddətləridir',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Bütün zamanlar: {} epizod · {} film · {}',
-  'Kabul et':
-      'Qəbul et',
-  'Reddedilenler':
-      'Rədd edilənlər',
-  'İstekler':
-      'Sorğular',
-  'Reddettiğin istek yok':
-      'Rədd edilmiş sorğu yoxdur',
+  'Kabul et': 'Qəbul et',
+  'Reddedilenler': 'Rədd edilənlər',
+  'İstekler': 'Sorğular',
+  'Reddettiğin istek yok': 'Rədd edilmiş sorğu yoxdur',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Rədd edilmiş sorğular burada qalır; istəsəniz yenidən qəbul edə bilərsiniz.',
   'Ne izlesem?': 'Nə izləyim?',

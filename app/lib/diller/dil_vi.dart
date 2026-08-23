@@ -1291,14 +1291,10 @@ const Map<String, String> cevirilerVi = {
       'Thời lượng là thời lượng thực tế của tập phim và phim lẻ từ TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Tất cả thời gian: {} tập · {} phim · {}',
-  'Kabul et':
-      'Chấp nhận',
-  'Reddedilenler':
-      'Đã từ chối',
-  'İstekler':
-      'Yêu cầu',
-  'Reddettiğin istek yok':
-      'Không có yêu cầu bị từ chối',
+  'Kabul et': 'Chấp nhận',
+  'Reddedilenler': 'Đã từ chối',
+  'İstekler': 'Yêu cầu',
+  'Reddettiğin istek yok': 'Không có yêu cầu bị từ chối',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Yêu cầu bị từ chối sẽ ở lại đây; bạn có thể chấp nhận lại bất cứ lúc nào.',
   'Ne izlesem?': 'Xem gì đây?',

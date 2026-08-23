@@ -1291,14 +1291,10 @@ const Map<String, String> cevirilerId = {
       'Durasi adalah durasi asli episode dan film dari TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sepanjang masa: {} episode · {} film · {}',
-  'Kabul et':
-      'Terima',
-  'Reddedilenler':
-      'Ditolak',
-  'İstekler':
-      'Permintaan',
-  'Reddettiğin istek yok':
-      'Tidak ada permintaan yang ditolak',
+  'Kabul et': 'Terima',
+  'Reddedilenler': 'Ditolak',
+  'İstekler': 'Permintaan',
+  'Reddettiğin istek yok': 'Tidak ada permintaan yang ditolak',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Permintaan yang ditolak tetap di sini; kamu bisa menerimanya lagi kapan saja.',
   'Ne izlesem?': 'Nonton apa ya?',

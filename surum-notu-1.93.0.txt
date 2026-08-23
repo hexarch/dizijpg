@@ -1,0 +1,28 @@
+Play Console sürüm notu — 1.93.0 (143)
+Bir önceki paket: 1.92.0 (142), 23 Ağustos'ta derlendi ama Play'e yüklenmedi;
+üretime doğrudan 143 gidecek. Bu not 143'ün 142 üzerine getirdiklerini de
+kapsayacak şekilde 1.92→1.93 aralığını anlatır.
+⚠ ARAMA DUYURULMUYOR: sesli/görüntülü arama bilinçli olarak anılmıyor.
+⚠ KARAKTER SINIRI: Play "Yenilikler" alanı dil başına 500 karakter.
+--------------------------------------------------------------------
+KISA — Play'in "Yenilikler" alanına yapıştır:
+
+<tr-TR>  (479 karakter)
+• Mesaj isteklerinde Kabul et / Reddet; reddedilenler için ayrı bölüm.
+• "Ne izlesem?" çarkı: İzleyeceğim listenden karışık, dizi ya da film çevir.
+• Fragman oynatıcı yenilendi: kaybolan kontroller, çift dokunuşla 10 sn sarma.
+• Aramada "Daha fazlasını gör": tüm sonuçlar; kullanıcı araması ad ve bio'da da.
+• Profillerde izlenen dizi/filmlere dokunup listeyi açabilirsin.
+• Liste sıralaması kaydetme ve kopan video yüklemeleri düzeltildi.
+• Görüntülenme sayacı düzeni yenilendi.
+</tr-TR>
+
+<en-US>  (461 karakter)
+• Message requests now have Accept / Decline, with a separate Declined section.
+• "What to watch" wheel: spin your watchlist — mixed, shows or movies.
+• Redesigned trailer player: auto-hiding controls, double-tap to skip 10s.
+• Search: "See more" opens full results; user search also matches names and bios.
+• Tap watched shows/movies on any profile to browse them.
+• Fixed list reordering and interrupted video uploads.
+• Refreshed profile view counter layout.
+</en-US>

@@ -1263,14 +1263,10 @@ const Map<String, String> cevirilerAr = {
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'المدد هي المدد الفعلية للحلقات والأفلام من TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'طوال الوقت: {} حلقة · {} فيلم · {}',
-  'Kabul et':
-      'قبول',
-  'Reddedilenler':
-      'المرفوضة',
-  'İstekler':
-      'الطلبات',
-  'Reddettiğin istek yok':
-      'لا توجد طلبات مرفوضة',
+  'Kabul et': 'قبول',
+  'Reddedilenler': 'المرفوضة',
+  'İstekler': 'الطلبات',
+  'Reddettiğin istek yok': 'لا توجد طلبات مرفوضة',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'تبقى الطلبات المرفوضة هنا؛ ويمكن قبولها مجددًا في أي وقت.',
   'Ne izlesem?': 'ماذا أشاهد؟',

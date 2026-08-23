@@ -1307,14 +1307,10 @@ const Map<String, String> cevirilerEs = {
       'Los tiempos son las duraciones reales de episodios y películas en TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Histórico: {} episodios · {} películas · {}',
-  'Kabul et':
-      'Aceptar',
-  'Reddedilenler':
-      'Rechazadas',
-  'İstekler':
-      'Solicitudes',
-  'Reddettiğin istek yok':
-      'No hay solicitudes rechazadas',
+  'Kabul et': 'Aceptar',
+  'Reddedilenler': 'Rechazadas',
+  'İstekler': 'Solicitudes',
+  'Reddettiğin istek yok': 'No hay solicitudes rechazadas',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Las solicitudes rechazadas se quedan aquí; puedes aceptarlas de nuevo cuando quieras.',
   'Ne izlesem?': '¿Qué veo?',

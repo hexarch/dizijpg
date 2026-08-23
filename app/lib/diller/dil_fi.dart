@@ -1298,14 +1298,10 @@ const Map<String, String> cevirilerFi = {
       'Ajat ovat jaksojen ja elokuvien todellisia kestoja TMDB:stä',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Kaikkien aikojen: {} jaksoa · {} elokuvaa · {}',
-  'Kabul et':
-      'Hyväksy',
-  'Reddedilenler':
-      'Hylätyt',
-  'İstekler':
-      'Pyynnöt',
-  'Reddettiğin istek yok':
-      'Ei hylättyjä pyyntöjä',
+  'Kabul et': 'Hyväksy',
+  'Reddedilenler': 'Hylätyt',
+  'İstekler': 'Pyynnöt',
+  'Reddettiğin istek yok': 'Ei hylättyjä pyyntöjä',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Hylätyt pyynnöt pysyvät täällä; voit hyväksyä ne uudelleen milloin tahansa.',
   'Ne izlesem?': 'Mitä katsoisin?',

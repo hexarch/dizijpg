@@ -1301,14 +1301,10 @@ const Map<String, String> cevirilerSv = {
       'Tiderna är de faktiska speltiderna för avsnitt och filmer från TMDB',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Genom tiderna: {} avsnitt · {} filmer · {}',
-  'Kabul et':
-      'Acceptera',
-  'Reddedilenler':
-      'Avvisade',
-  'İstekler':
-      'Förfrågningar',
-  'Reddettiğin istek yok':
-      'Inga avvisade förfrågningar',
+  'Kabul et': 'Acceptera',
+  'Reddedilenler': 'Avvisade',
+  'İstekler': 'Förfrågningar',
+  'Reddettiğin istek yok': 'Inga avvisade förfrågningar',
   'Reddettiğin istekler burada durur; dilersen geri kabul edebilirsin.':
       'Avvisade förfrågningar stannar här; du kan acceptera dem igen när du vill.',
   'Ne izlesem?': 'Vad ska jag se?',
