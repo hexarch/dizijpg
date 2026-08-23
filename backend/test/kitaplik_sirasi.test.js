@@ -163,8 +163,27 @@ test('PUT sahiplik: satırlar YALNIZ req.kullanici.id ile yazılır', () => {
   const govde = ucGovdesi('/kitaplik/sira/:liste', 'put');
   // Kullanıcı kimliği YOLDAN/GÖVDEDEN gelmiyor; token'dan geliyor. Bu uçta
   // "başkasının listesi" diye bir şey olamaz.
-  assert.match(govde, /const p = \[req\.kullanici\.id, liste, tanim\.suzgec\]/);
+  assert.match(govde, /\[req\.kullanici\.id, tanim\.suzgec, \.\.\.uclu\]/);
+  assert.match(govde, /\[req\.kullanici\.id, liste, \.\.\.uclu\]/);
   assert.doesNotMatch(govde, /req\.body\?\.kullanici_id|params\.kullanici/);
+});
+
+test('PUT: her sorgu YALNIZ kendi kullandığı parametreleri alır (42P18)', () => {
+  // 23 Ağu 2026 canlı dersi: iki sorgu tek parametre dizisini paylaşınca
+  // doğrulama $2'yi, yazma $3'ü metninde hiç kullanmıyordu; PostgreSQL
+  // metinde geçmeyen parametrenin tipini çıkaramaz ve 42P18 ile İSTEĞİ
+  // DÜŞÜRÜR — her sürükle-bırak 500 oldu. Ortak dizi geri gelmesin.
+  const govde = ucGovdesi('/kitaplik/sira/:liste', 'put');
+  assert.doesNotMatch(
+    govde,
+    /const p = \[req\.kullanici\.id, liste, tanim\.suzgec\]/,
+    'ortak parametre dizisi geri gelmiş — 42P18 tuzağı',
+  );
+  // Doğrulama sorgusunun metni $2 (kaynak süzgeci) kullanır, dizisi de onu taşır.
+  assert.match(govde, /durum=\$2/);
+  assert.match(govde, /tur=\$2/);
+  // Üçlü yer tutucular her iki sorguda da $3'ten başlar (2 sabit parametre).
+  assert.match(govde, /const b = 2 \+ i \* 3;/);
 });
 
 test('PUT: boş / aşırı uzun / geçersiz / TEKRARLI gövde 400', () => {
@@ -186,7 +205,7 @@ test('PUT: izlenen_tv/izlenen_movie listesine yanlış TÜR giremez', () => {
 
 test('PUT EKSİK liste kabul ETMEZ (kısmi yazım sırayı bozar)', () => {
   const govde = ucGovdesi('/kitaplik/sira/:liste', 'put');
-  assert.match(govde, /count\(\*\)::int FROM durumlar WHERE kullanici_id=\$1 AND durum=\$3/);
+  assert.match(govde, /count\(\*\)::int FROM durumlar WHERE kullanici_id=\$1 AND durum=\$2/);
   assert.match(govde, /count\(DISTINCT tmdb_id\)::int FROM izlemeler/);
   // DENETİMİN VARLIĞI YETMEZ, ETKİN OLMALI: koşulu `if (false && ...)` ile
   // devre dışı bırakmak sadece "ham.length !== adet" arayan bir iddiadan

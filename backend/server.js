@@ -9643,22 +9643,30 @@ app.put('/kitaplik/sira/:liste', girisZorunlu, kitaplikSiraLimiti, sarici(async 
     return res.status(400).json({ hata: 'Liste türüne uymayan öğe' });
   }
 
-  // $1 kullanıcı, $2 liste adı, $3 kaynak süzgeci (durum değeri / tür),
-  // sonrasında her öğe için (tur, tmdb_id, sira) üçlüsü.
-  const p = [req.kullanici.id, liste, tanim.suzgec];
+  // İKİ AYRI PARAMETRE DİZİSİ (42P18 dersi, 23 Ağu 2026): doğrulama ve yazma
+  // sorguları tek `p` dizisini paylaşıyordu; doğrulama $2'yi (liste adı),
+  // yazma $3'ü (kaynak süzgeci) metninde HİÇ kullanmıyordu. PostgreSQL,
+  // sorgu metninde geçmeyen bir parametrenin tipini çıkaramaz ve 42P18
+  // "could not determine data type of parameter" ile isteği DÜŞÜRÜR — uç,
+  // kaynak-okuma testleri sorguyu gerçek PG'ye hiç göndermediği için her
+  // sürükle-bırakta 500 vererek canlıya çıktı. Artık her sorgu yalnız kendi
+  // kullandığı parametreleri alır: $1 kullanıcı, $2 sorgunun kendi ikincisi
+  // (doğrulamada kaynak süzgeci, yazmada liste adı), üçlüler $3'ten başlar.
+  const uclu = [];
   const satirlar = ham.map((o, i) => {
-    p.push(o.tur, Number(o.tmdb_id), i);
-    return `($${p.length - 2}::text, $${p.length - 1}::int, $${p.length}::int)`;
+    uclu.push(o.tur, Number(o.tmdb_id), i);
+    const b = 2 + i * 3;
+    return `($${b + 1}::text, $${b + 2}::int, $${b + 3}::int)`;
   });
   const degerler = `(VALUES ${satirlar.join(',')}) AS v(tur, tmdb_id, sira)`;
   // Kaynağa göre iki şey değişir: listenin uzunluğu ve "bu öğe listede mi".
   const kaynakSayim = tanim.kaynak === 'durum'
-    ? 'SELECT count(*)::int FROM durumlar WHERE kullanici_id=$1 AND durum=$3'
-    : 'SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur=$3';
+    ? 'SELECT count(*)::int FROM durumlar WHERE kullanici_id=$1 AND durum=$2'
+    : 'SELECT count(DISTINCT tmdb_id)::int FROM izlemeler WHERE kullanici_id=$1 AND tur=$2';
   const uyelik = tanim.kaynak === 'durum'
-    ? `EXISTS (SELECT 1 FROM durumlar d WHERE d.kullanici_id=$1 AND d.durum=$3
+    ? `EXISTS (SELECT 1 FROM durumlar d WHERE d.kullanici_id=$1 AND d.durum=$2
                  AND d.tur=v.tur AND d.tmdb_id=v.tmdb_id)`
-    : `EXISTS (SELECT 1 FROM izlemeler i WHERE i.kullanici_id=$1 AND i.tur=$3
+    : `EXISTS (SELECT 1 FROM izlemeler i WHERE i.kullanici_id=$1 AND i.tur=$2
                  AND i.tmdb_id=v.tmdb_id)`;
 
   // TEK doğrulama sorgusu iki soruyu birden sorar:
@@ -9669,7 +9677,7 @@ app.put('/kitaplik/sira/:liste', girisZorunlu, kitaplikSiraLimiti, sarici(async 
   const dogrula = await havuz.query(
     `SELECT (${kaynakSayim}) AS adet,
             (SELECT count(*)::int FROM ${degerler} WHERE ${uyelik}) AS eslesme`,
-    p,
+    [req.kullanici.id, tanim.suzgec, ...uclu],
   );
   const { adet, eslesme } = dogrula.rows[0];
   if (ham.length !== adet) {
@@ -9697,7 +9705,7 @@ app.put('/kitaplik/sira/:liste', girisZorunlu, kitaplikSiraLimiti, sarici(async 
      SELECT $1, $2, tur, tmdb_id, sira FROM yeni
      ON CONFLICT (kullanici_id, liste, tur, tmdb_id)
      DO UPDATE SET sira = EXCLUDED.sira`,
-    p,
+    [req.kullanici.id, liste, ...uclu],
   );
   res.json({ tamam: true });
 }));

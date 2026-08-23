@@ -1,3 +1,5 @@
+import 'dart:typed_data' show Uint8List;
+
 import 'package:image_picker/image_picker.dart' show XFile;
 
 import 'api.dart';
@@ -106,10 +108,18 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
           ]),
         );
       }
-      final d = await Api.medyaYukle(veri);
+      final d = await _yukleDenemeli(veri);
       yuklenen.add({'yol': d['yol'], 'video': d['video']});
-    } catch (e) {
-      hata ??= e.toString();
+    } on ApiHata catch (e) {
+      // Sunucunun bilinçli reddi (kota, tür, boyut): metni zaten anlamlı.
+      hata ??= e.mesaj.c;
+    } catch (_) {
+      // Taşıma katmanı (soket kopması, zaman aşımı): ham İngilizce istisna
+      // metni ("ClientException: Connection closed...") kullanıcıya hiçbir
+      // şey söylemiyordu — 23 Ağu 2026'da canlıda ölçüldü (nginx 499, dakika
+      // içinde vazgeçilmiş videolu yorum). Tek tekrar da burada denendi
+      // ([_yukleDenemeli]); yine düştüyse dürüst ve çevrili tek cümle kalır.
+      hata ??= 'Bağlantı koptu'.c;
     }
     adim?.call(++biten);
   }
@@ -118,4 +128,26 @@ Future<MedyaYuklemeSonuc> medyalariYukle(
     denenen: dosyalar.length,
     hata: hata,
   );
+}
+
+/// Ağ kopmasına karşı TEK otomatik tekrar.
+///
+/// [ApiHata] TEKRARLANMAZ: o, sunucunun bilinçli reddidir (kota dolu, tür
+/// desteklenmiyor, dosya büyük) — aynı gövdeye aynı cevap gelir, tekrar yalnız
+/// kullanıcıyı bekletir. Tekrar edilen yalnız TAŞIMA hatalarıdır (soket
+/// kopması, zaman aşımı): mobil ağda birkaç saniyelik kopma olağandır ve
+/// 23 Ağu 2026'da canlıda tam bu yüzden bir videolu yorum yarıda kalmıştır
+/// (nginx 499). İki saniyelik ara, hücre ağının toparlanma payıdır.
+///
+/// NEDEN 1 TEKRAR: dosya onlarca MB olabilir; üç-beş kez yeniden göndermek
+/// kullanıcıyı dakikalarca bekletir ve saatlik yükleme bütçesini boşa yakar.
+Future<Map<String, dynamic>> _yukleDenemeli(Uint8List veri) async {
+  try {
+    return await Api.medyaYukle(veri);
+  } on ApiHata {
+    rethrow;
+  } catch (_) {
+    await Future<void>.delayed(const Duration(seconds: 2));
+    return Api.medyaYukle(veri);
+  }
 }

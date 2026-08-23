@@ -1,6 +1,32 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — 🚀 Kitaplık sıralaması 500 düzeltmesi + medya yükleme tekrarı
+
+İki kullanıcı bildirimi (23 Ağu):
+- **"Sıralama kaydedilemedi" (kitaplık sürükle-bırak):** `PUT /kitaplik/sira/:liste`
+  HER çağrıda 500 veriyordu — doğrulama ve yazma sorguları tek parametre dizisini
+  paylaşıyordu; doğrulama $2'yi (liste adı), yazma $3'ü (kaynak süzgeci) metinde
+  hiç kullanmıyordu ve PG 42P18 ("could not determine data type") ile isteği
+  düşürüyordu. Özellik 1.90.0+140'ta hiç çalışmadan canlıya çıkmış: testleri
+  kaynak-okuma testleri olduğu için sorgu gerçek PG'ye hiç gitmemişti.
+  Düzeltme: her sorgu yalnız kendi kullandığı parametreleri alır (üçlüler $3'ten).
+  Kanıt: nginx'te 4×500 (03:56, gerçek kullanıcı) → curl ile aynı yük artık 200;
+  `kitaplik_sirasi.test.js`e 42P18 regresyon testi eklendi (ortak dizi yasak).
+  BACKEND CANLIDA. NOT: kullanıcı "listelerim" dese de iz kitaplık listesine
+  (İzliyorum) çıktı; `PUT /listeler/:id/sira` (özel listeler) curl ile sağlam.
+- **Videolu yorum yüklenemedi (Süleyman'ın Hikayesi):** sunucu tarafı kanıtla
+  sağlam (aynı filme curl ile 3 sn'lik mp4 + yorum: 200). İz: nginx 499 —
+  istemci büyük gövdeyi yüklerken bağlantı koptu, App tek deneme yapıp ham
+  İngilizce istisna metni gösteriyordu. Düzeltme (`medya_yukle.dart`):
+  taşıma hatası 2 sn arayla TEK KEZ otomatik tekrarlanır (ApiHata, yani
+  sunucunun bilinçli reddi TEKRARLANMAZ), kalan hata çevrili "Bağlantı koptu"
+  olur. Kanıt: `medya_yukle_tekrar_test.dart` (3 test). İçeriğe özgü değil,
+  genel dayanıklılık işi. İstemci değişikliği TOPLU WEB DAĞITIMINI bekliyor;
+  mobilde 1.93.
+- Testler: app 2098 / backend 1840, hepsi yeşil. Test verisi temizlendi
+  (yorum 5271 + medya, liste 8 sırası ve kitaplık sırası geri alındı).
+
 ## 2026-08-23 — ✅ Fragman oynatıcı kromu yenilendi (dağıtım BEKLİYOR)
 
 Kullanıcı isteği: "video playerimizi çok daha güzel bir hale getirebilirsin."
