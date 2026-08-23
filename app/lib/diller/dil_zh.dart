@@ -1227,4 +1227,5 @@ const Map<String, String> cevirilerZh = {
   'Tekrar çevir': '再转一次',
   'Bu türde içerik yok': '没有此类型的内容',
   'Bütçe': '预算',
+  'Daha fazlasını gör': '查看更多',
 };

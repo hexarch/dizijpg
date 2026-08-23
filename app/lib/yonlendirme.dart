@@ -10,6 +10,7 @@ import 'gorusme/gorusme_ekrani.dart';
 import 'ekranlar/akis.dart';
 import 'ekranlar/altyazi_bicem.dart';
 import 'ekranlar/arama_cubugu.dart';
+import 'ekranlar/arama_tam_liste.dart';
 import 'ekranlar/kesfet_akis.dart';
 import 'ekranlar/bildirimler.dart';
 import 'ekranlar/ozet.dart';
@@ -612,6 +613,18 @@ GoRouter yonlendiriciOlustur(Oturum oturum, {Uri? tarayiciAdresi}) {
           GozatEkrani(
             baslangicTuru: s.uri.queryParameters['tur'],
             baslangicGenre: int.tryParse(s.uri.queryParameters['genre'] ?? ''),
+          ),
+        ),
+      ),
+      // Aramanın "Daha fazlasını gör" tam listesi. Sorgu ve kategori adreste
+      // durur: F5 ve geri tuşu doğal çalışır, arama sayfası yığında kaldığı
+      // için geri dönünce sorgu/sonuçlar korunur.
+      GoRoute(
+        path: '/arama-liste',
+        builder: (_, s) => _masa(
+          AramaTamListeEkrani(
+            sorgu: s.uri.queryParameters['q'] ?? '',
+            tur: s.uri.queryParameters['tur'] ?? 'icerik',
           ),
         ),
       ),

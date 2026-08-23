@@ -1300,4 +1300,5 @@ const Map<String, String> cevirilerCs = {
   'Tekrar çevir': 'Točit znovu',
   'Bu türde içerik yok': 'Žádný obsah tohoto typu',
   'Bütçe': 'Rozpočet',
+  'Daha fazlasını gör': 'Zobrazit více',
 };

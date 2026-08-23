@@ -1307,4 +1307,5 @@ const Map<String, String> cevirilerId = {
   'Tekrar çevir': 'Putar lagi',
   'Bu türde içerik yok': 'Tidak ada judul jenis ini',
   'Bütçe': 'Anggaran',
+  'Daha fazlasını gör': 'Lihat selengkapnya',
 };

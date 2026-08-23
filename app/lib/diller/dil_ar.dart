@@ -1279,4 +1279,5 @@ const Map<String, String> cevirilerAr = {
   'Tekrar çevir': 'أدر مجددًا',
   'Bu türde içerik yok': 'لا يوجد محتوى من هذا النوع',
   'Bütçe': 'الميزانية',
+  'Daha fazlasını gör': 'عرض المزيد',
 };

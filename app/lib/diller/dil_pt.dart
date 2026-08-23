@@ -1328,4 +1328,5 @@ const Map<String, String> cevirilerPt = {
   'Tekrar çevir': 'Girar de novo',
   'Bu türde içerik yok': 'Nenhum título desse tipo',
   'Bütçe': 'Orçamento',
+  'Daha fazlasını gör': 'Ver mais',
 };

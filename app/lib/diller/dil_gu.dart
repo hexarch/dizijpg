@@ -1294,4 +1294,5 @@ const Map<String, String> cevirilerGu = {
   'Tekrar çevir': 'ફરી ફેરવો',
   'Bu türde içerik yok': 'આ પ્રકારની સામગ્રી નથી',
   'Bütçe': 'બજેટ',
+  'Daha fazlasını gör': 'વધુ જુઓ',
 };

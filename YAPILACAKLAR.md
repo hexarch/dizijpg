@@ -6303,3 +6303,24 @@ Random ile. Sonuç kartı: poster + ad + yıl + puan + konu + bütçe rozeti
 Tekrar çevir çarka döner. Detay isteği yalnız çark durunca (tek içerik).
 Boş türe dokunmak SnackBar açıklaması verir. 6 anahtar × 45 dil.
 Kanıt: test/izlem_carki_test.dart (7 test); paket 2110/2110.
+
+## ARAMA: "DAHA FAZLASINI GÖR" + KULLANICI BIO ARAMASI (23 Ağu 2026)
+Önizleme /ara TMDB'nin İLK sayfasıyla sınırlıydı ("süleyman" → 4 film
+görünüyordu). Şimdi: her kategori (Kullanıcılar / Dizi ve Filmler / Kişiler)
+4+ sonuç verince kuyruğunda "Daha fazlasını gör" satırı; /arama-liste tam
+listesi sonsuz kaydırmayla sayfa sayfa yükler. İçerik listesi tv+film
+harmanı (popülerliğe göre); yeni uç GET /ara-tur (tv|movie|person, sayfa
+1-50, media_type damgalı, aramaTtl disiplini). Kullanıcı TAM listesi
+kullanıcı adı + görünen ad + BIO içinde arar (/kullanici-ara?tam=1&sayfa=,
+30'luk sayfa + devam_var; misafir/engel süzgeçleri aynen); önizleme BİLEREK
+yalnız kullanıcı adında arar (her tuş vuruşu ucuz kalır). Bio için trgm
+indeksi bilinçli ERTELENDİ (tablo küçük, seq scan yeterli; yüz binlerde GIN
+eklenir). /arama-liste BOT_ROTALARI'na eklendi; robots'ta ayrı kural
+gerekmez (Disallow: /arama ön eki kapsıyor). Çeviri: 1 yeni anahtar
+("Daha fazlasını gör") × 45 dil.
+Kanıt: backend 1860/0 (9 yeni kaynak-kilidi testi + soft404 eşleşmesi),
+app 2115/2115 (5 yeni widget testi: buton eşiği, tam liste sayfalama, bio
+eşleşmesi, profil gezinmesi). Canlıda: /ara-tur movie "süleyman" 10 sonuç
+(önizlemedeki 4'e karşı), person 20 sonuç, bio kanıtı (geçici benzersiz
+kelime tam listede bulundu, önizlemede bulunmadı, bio geri alındı),
+geçersiz tür 400. İstemci web dağıtımı toplu dağıtımla; mobil 1.93.

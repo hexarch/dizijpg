@@ -5541,6 +5541,10 @@ const BOT_ROTALARI = [
   { yol: '/gonderi-istatistik/:id', desen: /^\/gonderi-istatistik\/\d+$/ },
   { yol: '/ozet/:yil', desen: /^\/ozet\/\d+$/ },
   { yol: '/tam-arama', desen: /^\/tam-arama$/ },
+  // Aramanın "Daha fazlasını gör" tam listesi (23 Ağu 2026). Oturum ister,
+  // kişiye göre değişir; robots.txt'te AYRI kural gerekmez — `Disallow:
+  // /arama` ön eki bu yolu da kapatır (kurallar jokersiz ön ektir).
+  { yol: '/arama-liste', desen: /^\/arama-liste$/ },
 ];
 
 /** Yol bilinen bir Flutter/SSR rotası mı? */
@@ -14426,6 +14430,42 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   res.json(duzeltme ? { results, duzeltme } : { results });
 }));
 
+// ARAMA TAM LİSTESİ (23 Ağu 2026): `/ara` önizlemesi TMDB'nin İLK sayfasıyla
+// sınırlı — "süleyman" gibi bol sonuçlu aramada devamını görmenin yolu yoktu.
+// "Daha fazlasını gör" bu ucu sayfa sayfa çağırır. multi yerine TÜRE ÖZEL
+// TMDB araması kullanılır: sayfalama kategori içinde tutarlı olur (multi'nin
+// N. sayfasında kaç dizi çıkacağı belirsizdir). Varyant/yazım düzeltme
+// takviyesi BİLEREK yok: bu uç "ilk sayfada bulamadım, devamını göster" ucu.
+const ARA_TUR_YOLLARI = {
+  tv: '/search/tv', movie: '/search/movie', person: '/search/person',
+};
+// TMDB arama sayfası 500'e kadar gider ama 50. sayfadan (1000 sonuç) sonrası
+// pratikte gürültü; üst sınır önbelleği ve TMDB kotasını korur.
+const ARA_TUR_AZAMI_SAYFA = 50;
+app.get('/ara-tur', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
+  const q = String(req.query.q || '').trim();
+  const tur = String(req.query.tur || '');
+  const yol = ARA_TUR_YOLLARI[tur];
+  if (!yol) return res.status(400).json({ hata: 'Geçersiz tür' });
+  if (q.length < 2) {
+    return res.json({ results: [], sayfa: 1, toplam_sayfa: 1 });
+  }
+  const sayfa = Math.min(
+    Math.max(parseInt(req.query.sayfa, 10) || 1, 1), ARA_TUR_AZAMI_SAYFA);
+  const d = await tmdbGetir(
+    `${yol}?query=${encodeURIComponent(q)}&page=${sayfa}`,
+    aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+  );
+  // İstemci satırları türsüz ayırt edemesin diye media_type damgalanır
+  // (türe özel TMDB uçları media_type alanı DÖNDÜRMEZ).
+  const results = (d.results || []).map((r) => ({ ...r, media_type: tur }));
+  res.json({
+    results,
+    sayfa: d.page || sayfa,
+    toplam_sayfa: Math.min(d.total_pages || 1, ARA_TUR_AZAMI_SAYFA),
+  });
+}));
+
 // ENGELLEME (13 Ağu 2026, md. 19): engellenen kişi arama sonuçlarında ÇIKMAZ.
 // Bu, `POST /engelle`nin karşılıklı takibi koparmasının doğal devamı: aksi
 // hâlde engellenen kişi adını yazıp profile girer, takip düğmesine basar ve
@@ -14435,6 +14475,43 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
 app.get('/kullanici-ara', girisIsteğeBagli, aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim().toLowerCase();
   if (q.length < 2) return res.json({ kullanicilar: [] });
+  // TAM LİSTE (23 Ağu 2026): `tam=1` ile kullanıcı adı YANINDA görünen ad
+  // (`ad`) ve bio da aranır, sonuç sayfalanır. Önizleme (tam'sız dal)
+  // BİLEREK yalnız kullanıcı adında arar ve tek sorgu kalır: her tuş
+  // vuruşunda çalışan yol ucuz kalmalı. Bio araması seq scan'dir ve bu
+  // bilinçlidir: kullanicilar tablosu küçük (binler mertebesi), trgm
+  // indeksi bu boyutta bakım maliyetine değmez — tablo yüz binlere
+  // ulaşırsa GIN trgm indeksi eklenir.
+  if (req.query.tam === '1') {
+    const SAYFA_BOY = 30;
+    const sayfa = Math.min(
+      Math.max(parseInt(req.query.sayfa, 10) || 1, 1), 100);
+    const { rows } = await havuz.query(
+      `SELECT kullanici_adi, ad, avatar, bio,
+              EXISTS (
+                SELECT 1 FROM takipler t
+                 WHERE t.takip_eden_id = $3::int
+                   AND t.takip_edilen_id = kullanicilar.id
+              ) AS takip_ediyorum,
+              (id = $3::int) AS ben_mi
+       FROM kullanicilar
+       WHERE misafir = false
+         AND (kullanici_adi LIKE $1
+              OR lower(COALESCE(ad, '')) LIKE $1
+              OR lower(COALESCE(bio, '')) LIKE $1)
+         AND ${engelSuzgec('id', '$3')}
+       ORDER BY (kullanici_adi = $2) DESC,
+                (kullanici_adi LIKE $1) DESC,
+                kullanici_adi
+       LIMIT ${SAYFA_BOY + 1} OFFSET ${(sayfa - 1) * SAYFA_BOY}`,
+      [`%${q}%`, q, req.kullanici?.id || 0],
+    );
+    return res.json({
+      kullanicilar: rows.slice(0, SAYFA_BOY),
+      sayfa,
+      devam_var: rows.length > SAYFA_BOY,
+    });
+  }
   const { rows } = await havuz.query(
     `SELECT kullanici_adi, avatar, bio,
             EXISTS (

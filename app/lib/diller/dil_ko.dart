@@ -1244,4 +1244,5 @@ const Map<String, String> cevirilerKo = {
   'Tekrar çevir': '다시 돌리기',
   'Bu türde içerik yok': '이 유형의 콘텐츠가 없어요',
   'Bütçe': '제작비',
+  'Daha fazlasını gör': '더 보기',
 };

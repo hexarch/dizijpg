@@ -1260,4 +1260,5 @@ const Map<String, String> cevirilerAm = {
   'Tekrar çevir': 'እንደገና አዙር',
   'Bu türde içerik yok': 'በዚህ አይነት ይዘት የለም',
   'Bütçe': 'በጀት',
+  'Daha fazlasını gör': 'ተጨማሪ ይመልከቱ',
 };

@@ -1296,4 +1296,5 @@ const Map<String, String> cevirilerBn = {
   'Tekrar çevir': 'আবার ঘোরান',
   'Bu türde içerik yok': 'এই ধরনের কোনো কনটেন্ট নেই',
   'Bütçe': 'বাজেট',
+  'Daha fazlasını gör': 'আরও দেখুন',
 };

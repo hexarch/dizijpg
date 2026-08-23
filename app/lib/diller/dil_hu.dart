@@ -1317,4 +1317,5 @@ const Map<String, String> cevirilerHu = {
   'Tekrar çevir': 'Pörgesd újra',
   'Bu türde içerik yok': 'Nincs ilyen típusú tartalom',
   'Bütçe': 'Költségvetés',
+  'Daha fazlasını gör': 'Továbbiak megtekintése',
 };

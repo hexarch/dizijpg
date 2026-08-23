@@ -1304,4 +1304,5 @@ const Map<String, String> cevirilerTe = {
   'Tekrar çevir': 'మళ్లీ తిప్పండి',
   'Bu türde içerik yok': 'ఈ రకమైన కంటెంట్ లేదు',
   'Bütçe': 'బడ్జెట్',
+  'Daha fazlasını gör': 'మరిన్ని చూడండి',
 };

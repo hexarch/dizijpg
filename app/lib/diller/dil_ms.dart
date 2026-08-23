@@ -1312,4 +1312,5 @@ const Map<String, String> cevirilerMs = {
   'Tekrar çevir': 'Putar lagi',
   'Bu türde içerik yok': 'Tiada kandungan jenis ini',
   'Bütçe': 'Bajet',
+  'Daha fazlasını gör': 'Lihat lagi',
 };

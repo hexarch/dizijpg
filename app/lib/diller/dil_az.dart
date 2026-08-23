@@ -1299,4 +1299,5 @@ const Map<String, String> cevirilerAz = {
   'Tekrar çevir': 'Yenidən fırlat',
   'Bu türde içerik yok': 'Bu növdə məzmun yoxdur',
   'Bütçe': 'Büdcə',
+  'Daha fazlasını gör': 'Daha çoxuna bax',
 };

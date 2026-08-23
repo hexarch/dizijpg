@@ -1290,4 +1290,5 @@ const Map<String, String> cevirilerFa = {
   'Tekrar çevir': 'دوباره بچرخان',
   'Bu türde içerik yok': 'محتوایی از این نوع نیست',
   'Bütçe': 'بودجه',
+  'Daha fazlasını gör': 'مشاهده بیشتر',
 };

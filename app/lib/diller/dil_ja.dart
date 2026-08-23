@@ -1242,4 +1242,5 @@ const Map<String, String> cevirilerJa = {
   'Tekrar çevir': 'もう一度回す',
   'Bu türde içerik yok': 'この種類の作品はありません',
   'Bütçe': '予算',
+  'Daha fazlasını gör': 'もっと見る',
 };

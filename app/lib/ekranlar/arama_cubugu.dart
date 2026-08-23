@@ -210,6 +210,18 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
     ),
   );
 
+  /// Kategori kuyruğundaki "Daha fazlasını gör" satırı.
+  ///
+  /// Önizleme `/ara` TMDB'nin İLK sayfasıyla sınırlı; tam liste ekranı
+  /// (`/arama-liste`) kategoriyi sayfa sayfa yükler. Kategori 4'ten az sonuç
+  /// verdiyse satır çizilmez — gösterilecek "daha fazlası" yoktur.
+  Widget _dahaFazla(String tur) => DahaFazlaSatiri(
+    key: Key('daha-fazla-$tur'),
+    onTap: () => context.push(
+      '/arama-liste?tur=$tur&q=${Uri.encodeComponent(sorgu.trim())}',
+    ),
+  );
+
   /// Arama sonuçları: bölümlü, satır tabanlı liste.
   ///
   /// DÖRT HÂL burada toplanır: hata (tekrar dene) → yükleniyor (spinner) →
@@ -307,7 +319,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
           if (_aramaKullanicilar.isNotEmpty) ...[
             baslik(Icons.people_outline, 'Kullanıcılar'.c),
             for (final k in _aramaKullanicilar.take(6))
-              _AramaSatiri(
+              AramaSatiri(
                 gorselUrl: dosyaUrl(
                   (k as Map<String, dynamic>)['avatar'] as String?,
                 ),
@@ -318,11 +330,12 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                 onTap: () =>
                     kullaniciyaGit(context, k['kullanici_adi'] as String),
               ),
+            if (_aramaKullanicilar.length >= 4) _dahaFazla('kullanici'),
           ],
           if (_aramaIcerik.isNotEmpty) ...[
             baslik(Icons.local_movies_outlined, 'Dizi ve Filmler'.c),
             for (final r in _aramaIcerik.take(12))
-              _AramaSatiri(
+              AramaSatiri(
                 gorselUrl: posterUrl(
                   (r as Map<String, dynamic>)['poster_path'] as String?,
                   boyut: 'w185',
@@ -337,11 +350,12 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                 onTap: () =>
                     context.push('/icerik/${r['media_type']}/${r['id']}'),
               ),
+            if (_aramaIcerik.length >= 4) _dahaFazla('icerik'),
           ],
           if (_aramaSirketler.isNotEmpty) ...[
             baslik(Icons.apartment_outlined, 'Şirketler'.c),
             for (final r in _aramaSirketler.take(8))
-              _AramaSatiri(
+              AramaSatiri(
                 key: Key('arama-sirket-${aramaTmdbId(r)}'),
                 gorselUrl: null,
                 sirketMi: true,
@@ -359,7 +373,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
           if (_aramaKisiler.isNotEmpty) ...[
             baslik(Icons.person_outline, 'Kişiler'.c),
             for (final r in _aramaKisiler.take(8))
-              _AramaSatiri(
+              AramaSatiri(
                 key: Key('arama-kisi-${aramaTmdbId(r)}'),
                 gorselUrl: posterUrl(
                   (r as Map<String, dynamic>)['profile_path'] as String?,
@@ -370,6 +384,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
                 altYazi: kisiAramaAltYazi(r),
                 onTap: () => context.push('/kisi/${r['id']}'),
               ),
+            if (_aramaKisiler.length >= 4) _dahaFazla('kisi'),
           ],
         ],
       ),
@@ -580,7 +595,10 @@ class _TamEkranAramaSayfasiState extends State<TamEkranAramaSayfasi>
 
 /// Arama sonucu satırı: küçük görsel (poster, yuvarlak avatar veya firma
 /// logosu) + ad + alt bilgi. Dokunma yüksekliği en az 44 dp.
-class _AramaSatiri extends StatelessWidget {
+///
+/// Hem önizleme listesi (AramaMantigi.aramaSonuclari) hem tam liste ekranı
+/// (AramaTamListeEkrani) bu satırı kullanır — görünüm tek yerden değişir.
+class AramaSatiri extends StatelessWidget {
   final String? gorselUrl;
   final String? sirketLogoYolu;
   final bool sirketMi;
@@ -589,7 +607,7 @@ class _AramaSatiri extends StatelessWidget {
   final String altYazi;
   final VoidCallback onTap;
   final String? kullaniciAdi;
-  const _AramaSatiri({
+  const AramaSatiri({
     super.key,
     required this.gorselUrl,
     this.sirketLogoYolu,
@@ -671,6 +689,44 @@ class _AramaSatiri extends StatelessWidget {
                 ),
               ),
               Icon(Icons.chevron_right, size: 18, color: DiziRenkler.metin),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Kategori sonunun "Daha fazlasını gör" satırı: sarı metin + ok.
+///
+/// Sonuç satırlarıyla aynı yatay hizada durur; dokunma yüksekliği 44 dp.
+class DahaFazlaSatiri extends StatelessWidget {
+  final VoidCallback onTap;
+  const DahaFazlaSatiri({super.key, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 44),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          child: Row(
+            children: [
+              // Önizleme satırlarındaki 40 dp görsel + 12 dp boşlukla hizalı
+              // dursun diye metin görsel sütunu kadar içeriden başlamaz;
+              // satır bir eylem olduğu için sola yaslı kalması bilinçli.
+              Text(
+                'Daha fazlasını gör'.c,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: DiziRenkler.sariMetin,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right, size: 18, color: DiziRenkler.sariMetin),
             ],
           ),
         ),

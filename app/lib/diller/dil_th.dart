@@ -1285,4 +1285,5 @@ const Map<String, String> cevirilerTh = {
   'Tekrar çevir': 'หมุนอีกครั้ง',
   'Bu türde içerik yok': 'ไม่มีเนื้อหาประเภทนี้',
   'Bütçe': 'งบประมาณ',
+  'Daha fazlasını gör': 'ดูเพิ่มเติม',
 };

@@ -1328,4 +1328,5 @@ const Map<String, String> cevirilerFil = {
   'Tekrar çevir': 'Ikutin muli',
   'Bu türde içerik yok': 'Walang nilalaman ng ganitong uri',
   'Bütçe': 'Badyet',
+  'Daha fazlasını gör': 'Tingnan ang higit pa',
 };

@@ -1318,4 +1318,5 @@ const Map<String, String> cevirilerIt = {
   'Tekrar çevir': 'Gira di nuovo',
   'Bu türde içerik yok': 'Nessun titolo di questo tipo',
   'Bütçe': 'Budget',
+  'Daha fazlasını gör': 'Vedi altro',
 };

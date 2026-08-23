@@ -1314,4 +1314,5 @@ const Map<String, String> cevirilerFi = {
   'Tekrar çevir': 'Pyöräytä uudelleen',
   'Bu türde içerik yok': 'Ei tämän tyypin sisältöä',
   'Bütçe': 'Budjetti',
+  'Daha fazlasını gör': 'Näytä lisää',
 };

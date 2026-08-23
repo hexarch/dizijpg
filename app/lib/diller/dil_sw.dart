@@ -1311,4 +1311,5 @@ const Map<String, String> cevirilerSw = {
   'Tekrar çevir': 'Zungusha tena',
   'Bu türde içerik yok': 'Hakuna maudhui ya aina hii',
   'Bütçe': 'Bajeti',
+  'Daha fazlasını gör': 'Ona zaidi',
 };
