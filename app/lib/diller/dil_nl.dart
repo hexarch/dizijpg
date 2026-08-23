@@ -1295,8 +1295,6 @@ const Map<String, String> cevirilerNl = {
   'Ekran süresi': 'Schermtijd',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'De tijden zijn de echte speelduren van afleveringen en films van TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      "Zo'n {}% van de tijden is echt; de rest telt een aflevering als ~{} min, een film als ~{} min",
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Aller tijden: {} afleveringen · {} films · {}',
 };

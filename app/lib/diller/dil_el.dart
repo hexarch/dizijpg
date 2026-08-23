@@ -1309,8 +1309,6 @@ const Map<String, String> cevirilerEl = {
   'Ekran süresi': 'Χρόνος οθόνης',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Οι χρόνοι είναι οι πραγματικές διάρκειες επεισοδίων και ταινιών από το TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Περίπου το {}% των χρόνων είναι πραγματικό· για τα υπόλοιπα το επεισόδιο μετρά ~{} λεπ., η ταινία ~{} λεπ.',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Όλων των εποχών: {} επεισόδια · {} ταινίες · {}',
 };

@@ -1310,8 +1310,6 @@ const Map<String, String> cevirilerFil = {
   'Ekran süresi': 'Oras sa screen',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Ang mga tagal ay ang totoong tagal ng mga episode at pelikula mula sa TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Humigit-kumulang {}% ng mga tagal ang totoo; ang natitira ay binibilang na ~{} min bawat episode at ~{} min bawat pelikula',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sa kabuuan: {} episode · {} pelikula · {}',
 };

@@ -1286,7 +1286,5 @@ const Map<String, String> cevirilerUr = {
   'Ekran süresi': 'اسکرین وقت',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'دورانیے TMDB سے اقساط اور فلموں کے اصل دورانیے ہیں',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'تقریباً {}% دورانیے اصل ہیں؛ باقی میں قسط ~{} منٹ اور فلم ~{} منٹ شمار ہوتی ہے',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'ہمیشہ سے: {} اقساط · {} فلمیں · {}',
 };

@@ -2927,7 +2927,8 @@ Future<void> yorumEylemleriAc(
 // `sure_gercek_dk` + `sure_tahmini_dk` gönderiyor (toplamları tam olarak
 // gösterilen sayı) ve ekran üç hâlden birini yazıyor:
 //   · hepsi gerçek  → "~" YOK, "gerçek süreler" notu
-//   · karışık       → "~" VAR, "%93'ü gerçek" notu
+//   · karışık       → "~" VAR, not YOK (yüzdeli cümle 22 Ağu 2026'da
+//                     kullanıcı isteğiyle kaldırıldı)
 //   · hiç gerçek yok→ "~" VAR, eski sabit notu (süre tablosu henüz boş)
 // Eski hâlde her sayının başında koşulsuz "~" vardı; gerçek süreyi bildiğimiz
 // hâlde tahmin gibi sunmak da en az tersi kadar yanlış olurdu.
@@ -2972,10 +2973,6 @@ class SureKaynagi {
   bool get hepsiGercek => tahmini == 0 && gercek > 0;
 
   bool get hicGercekYok => gercek == 0;
-
-  /// Gerçek sürenin yüzdesi — AŞAĞI yuvarlanır. Yukarı yuvarlansaydı %99,6
-  /// "%100 gerçek" diye yazılır ve ekran olmayan bir kesinlik iddia ederdi.
-  int get yuzde => toplam <= 0 ? 0 : (gercek * 100) ~/ toplam;
 
   /// Sayının önüne konacak işaret: hepsi gerçekse BOŞ.
   String get isaret => hepsiGercek ? '' : _yaklasik;
@@ -3086,10 +3083,13 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
   bool get _acilabilir =>
       widget.diziDakika != null && widget.filmDakika != null;
 
-  /// Kırılımın altındaki kaynak notu. ÜÇ HÂL — hangisi yazılırsa yazılsın
-  /// GÖSTERİLEN SAYI DEĞİŞMEZ; değişen tek şey sayının nereden geldiğini
-  /// söylemek.
-  String _kaynakNotu() {
+  /// Kırılımın altındaki kaynak notu. Hangisi yazılırsa yazılsın GÖSTERİLEN
+  /// SAYI DEĞİŞMEZ; değişen tek şey sayının nereden geldiğini söylemek.
+  ///
+  /// KARIŞIK hâlde not YOK (22 Ağu 2026, kullanıcı isteği: "%93'ü gerçek"
+  /// yazısı kaldırıldı) — satırlardaki "~" işaretleri yaklaşıklığı zaten
+  /// söylüyor, yüzdeli cümle kalabalıktı. `null` = not çizilmez.
+  String? _kaynakNotu() {
     final k = widget.kaynak;
     // Eski sunucu / bayat önbellek: kaynak bilinmiyor → eski cümle. (Bu
     // cümle 45 dilde ZATEN var, yeni anahtar değil.)
@@ -3102,10 +3102,7 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
     if (k.hepsiGercek) {
       return 'Süreler TMDB\'deki gerçek bölüm ve film süreleridir'.c;
     }
-    // KARIŞIK: yüzde AŞAĞI yuvarlanır ve hangi sabite düşüldüğü de yazar —
-    // "%93'ü gerçek" tek başına, kalan %7'nin ne olduğunu söylemez.
-    return 'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor'
-        .cf([k.yuzde, widget.bolumBirimDk, widget.filmBirimDk]);
+    return null;
   }
 
   @override
@@ -3186,17 +3183,19 @@ class _EkranSuresiKartiState extends State<EkranSuresiKarti> {
                   : widget.filmTahmini! > 0,
               onTap: () => widget.onTur('movie'),
             ),
-            // KAYNAK BURADA YAZIYOR — ÜÇ HÂL (bkz. dosya başındaki not):
-            //   hepsi gerçek → sabitten hiç söz edilmez, "~" da yok
-            //   karışık      → yüzde + hangi sabite düşüldüğü
+            // KAYNAK BURADA YAZIYOR (bkz. dosya başındaki not):
+            //   hepsi gerçek → "gerçek süreler" cümlesi, "~" da yok
+            //   karışık      → NOT YOK ("~" işaretleri yeter; 22 Ağu 2026)
             //   hiç yok      → eski cümle (süre tablosu henüz boş)
             // Sabitler sunucudan gelmediyse (eski sürüm) not HİÇ çizilmez —
             // uydurma sayı yazmaktansa susmak doğru (bkz. sınıf yorumu).
-            if (widget.bolumBirimDk != null && widget.filmBirimDk != null)
+            if (widget.bolumBirimDk != null &&
+                widget.filmBirimDk != null &&
+                _kaynakNotu() != null)
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 2, 16, 12),
                 child: Text(
-                  _kaynakNotu(),
+                  _kaynakNotu()!,
                   style: TextStyle(fontSize: 11, color: DiziRenkler.metin54),
                 ),
               ),

@@ -1208,7 +1208,5 @@ const Map<String, String> cevirilerZh = {
   'Bu kullanıcı adı sistem tarafından ayrılmış': '该用户名目前已由系统保留',
   'Ekran süresi': '观看时长',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir": '时长为 TMDB 上剧集和电影的真实时长',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      '约 {}% 的时长为真实数据；其余按每集约 {} 分钟、每部电影约 {} 分钟计算',
   'Tüm zamanlar: {} bölüm · {} film · {}': '历史累计：{} 集 · {} 部电影 · {}',
 };

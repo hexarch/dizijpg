@@ -190,8 +190,11 @@ void main() {
   // =========================================================================
   // B. KARIŞIK → "~" + YÜZDE (aşağı yuvarlanmış)
   // =========================================================================
-  testWidgets('KARIŞIK: "~" kalır ve yüzde AŞAĞI yuvarlanır', (tester) async {
-    // 4800 gerçek / 5300 toplam = %90,56 → "%90" (yukarı yuvarlansa %91).
+  testWidgets('KARIŞIK: "~" kalır, yüzdeli kaynak notu YAZILMAZ', (
+    tester,
+  ) async {
+    // 22 Ağu 2026: "%93'ü gerçek" cümlesi kullanıcı isteğiyle kaldırıldı —
+    // karışık hâlde satırlardaki "~" işaretleri dışında not çizilmez.
     _sunucu(
       _istatistik(gercek: 4800, tahmini: 500, diziTahmini: 500, filmTahmini: 0),
     );
@@ -199,12 +202,12 @@ void main() {
     expect(find.text('~3 gün 16 saat'), findsOneWidget);
 
     await _ac(tester);
+    expect(find.textContaining('kadarı gerçek'), findsNothing);
+    // Diğer iki hâlin cümleleri de karışık hâle sızmamalı.
+    expect(find.textContaining('Süreler tahmindir'), findsNothing);
     expect(
-      find.text(
-        'Sürelerin %90 kadarı gerçek; kalanı bölüm ~42 dk, film ~110 dk sayılıyor',
-      ),
-      findsOneWidget,
-      reason: 'yüzde yukarı yuvarlanırsa olmayan bir kesinlik iddia edilir',
+      find.textContaining('gerçek bölüm ve film süreleridir'),
+      findsNothing,
     );
   });
 

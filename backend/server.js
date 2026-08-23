@@ -16604,6 +16604,113 @@ app.post('/admin/ayar', adminKisit, sarici(async (req, res) => {
   res.json({ durum: 'ok' });
 }));
 
+// ---------- eksik süreler paneli (23 Ağu 2026) ----------
+// İSTEK (22 Ağu, birebir): "admin panelinde hangi dizilerin filmlerin
+// dakikalarını bilmiyoruz onları listele görebilelim biz gidip bakıp ekleriz."
+// TMDB kapsamı %92,6'da tıkanıyor; kalan satırlar sabit yedeğe (42/110 dk)
+// düşüyor. Bu iki uç insan eliyle kapatma yolu: liste + dakika girişi.
+// `kaynak='elle'` satırlarını sure_doldur.js gerçek ölçüm bulursa ezer —
+// bilerek (ölçüm tahmini yener, bkz. migrasyon-2026-08-23.sql).
+
+// İzlenen ama süresi bilinmeyen yapımlar. En çok izlenen önde: emeğin
+// karşılığı en çok kullanıcının süresini düzeltir.
+app.get('/admin/eksik-sureler', adminKisit, sarici(async (_req, res) => {
+  const [dizi, film] = await Promise.all([
+    // count(DISTINCT) FILTER: eksik bölüm sayısı bölüm bazında — aynı bölümü
+    // 40 kullanıcı izlediyse eksik 1'dir, 40 değil. `izlenme` ise satır
+    // sayısı: sıralama "kaç kullanıcı-bölümü düzelir" ölçüsüne bakar.
+    havuz.query(
+      `SELECT i.tmdb_id,
+              count(DISTINCT (i.sezon, i.bolum)) FILTER (WHERE s.dakika IS NULL)::int AS eksik_bolum,
+              count(DISTINCT (i.sezon, i.bolum))::int AS izlenen_bolum,
+              count(*) FILTER (WHERE s.dakika IS NULL)::int AS izlenme
+         FROM izlemeler i
+         ${SURE_KAYNAK_JOIN}
+        WHERE i.tur = 'tv'
+        GROUP BY i.tmdb_id
+       HAVING count(*) FILTER (WHERE s.dakika IS NULL) > 0
+        ORDER BY count(*) FILTER (WHERE s.dakika IS NULL) DESC, i.tmdb_id
+        LIMIT 200`),
+    havuz.query(
+      `SELECT i.tmdb_id, count(*)::int AS izlenme
+         FROM izlemeler i
+         ${SURE_KAYNAK_JOIN}
+        WHERE i.tur = 'movie'
+        GROUP BY i.tmdb_id
+       HAVING count(*) FILTER (WHERE s.dakika IS NULL) > 0
+        ORDER BY count(*) DESC, i.tmdb_id
+        LIMIT 200`),
+  ]);
+  // Ad çözümü tmdb_onbellek'ten: detay belgeleri zaten oradadır (`/tv/ID?...`,
+  // `/movie/ID?...`). tr-TR kopyası varsa o yeğlenir. KİŞİSEL VERİ YOK — uç
+  // yalnız yapım kimliği + sayaç döndürür, kullanıcı satırı sızdırmaz.
+  const adlar = async (tur, idler) => {
+    if (!idler.length) return new Map();
+    const r = await havuz.query(
+      `SELECT DISTINCT ON (kimlik) kimlik, ad FROM (
+         SELECT ((regexp_match(anahtar, '^/${tur}/([0-9]+)\\?'))[1])::int AS kimlik,
+                COALESCE(veri->>'name', veri->>'title') AS ad,
+                (anahtar LIKE '%language=tr-TR%')::int AS tr
+           FROM tmdb_onbellek
+          WHERE anahtar ~ '^/${tur}/[0-9]+\\?'
+       ) x WHERE kimlik = ANY($1::int[]) AND COALESCE(ad, '') <> ''
+       ORDER BY kimlik, tr DESC`, [idler]);
+    return new Map(r.rows.map((s) => [s.kimlik, s.ad]));
+  };
+  const [diziAd, filmAd] = await Promise.all([
+    adlar('tv', dizi.rows.map((s) => s.tmdb_id)),
+    adlar('movie', film.rows.map((s) => s.tmdb_id)),
+  ]);
+  res.json({
+    diziler: dizi.rows.map((s) => ({
+      tmdb_id: s.tmdb_id,
+      ad: diziAd.get(s.tmdb_id) || null,
+      eksik_bolum: s.eksik_bolum,
+      izlenen_bolum: s.izlenen_bolum,
+      izlenme: s.izlenme,
+    })),
+    filmler: film.rows.map((s) => ({
+      tmdb_id: s.tmdb_id,
+      ad: filmAd.get(s.tmdb_id) || null,
+      izlenme: s.izlenme,
+    })),
+  });
+}));
+
+// Elle dakika girişi. Dizide dakika o dizinin İZLENMİŞ ve süresiz TÜM
+// bölümlerine yazılır (tipik bölüm süresi); filmde tek (0,0) satırına.
+// YALNIZ EKSİK SATIRLAR DOLDURULUR (ON CONFLICT DO NOTHING): TMDB'den
+// türetilmiş gerçek ölçümün üstüne elle değer yazılamaz.
+app.post('/admin/eksik-sure', adminKisit, sarici(async (req, res) => {
+  const tur = req.body?.tur;
+  const tmdbId = Math.trunc(Number(req.body?.tmdb_id));
+  const dakika = Math.trunc(Number(req.body?.dakika));
+  if (tur !== 'tv' && tur !== 'movie') {
+    return res.status(400).json({ hata: 'GECERSIZ_TUR' });
+  }
+  if (!Number.isInteger(tmdbId) || tmdbId <= 0) {
+    return res.status(400).json({ hata: 'GECERSIZ_ID' });
+  }
+  // Üst sınır tablo CHECK'iyle aynı (1000): daha gevşek olsaydı 23'ün
+  // yanına yanlışlıkla 2300 yazan admin DB hatasıyla karşılaşırdı.
+  if (!Number.isInteger(dakika) || dakika <= 0 || dakika > 1000) {
+    return res.status(400).json({ hata: 'GECERSIZ_DAKIKA' });
+  }
+  const r = tur === 'movie'
+    ? await havuz.query(
+      `INSERT INTO yapim_sureleri (tur, tmdb_id, sezon, bolum, dakika, kaynak)
+       VALUES ('movie', $1, 0, 0, $2, 'elle')
+       ON CONFLICT (tur, tmdb_id, sezon, bolum) DO NOTHING`, [tmdbId, dakika])
+    : await havuz.query(
+      `INSERT INTO yapim_sureleri (tur, tmdb_id, sezon, bolum, dakika, kaynak)
+       SELECT DISTINCT 'tv', i.tmdb_id, i.sezon, i.bolum, $2, 'elle'
+         FROM izlemeler i
+         ${SURE_KAYNAK_JOIN}
+        WHERE i.tur = 'tv' AND i.tmdb_id = $1 AND s.dakika IS NULL
+       ON CONFLICT (tur, tmdb_id, sezon, bolum) DO NOTHING`, [tmdbId, dakika]);
+  res.json({ durum: 'ok', eklenen: r.rowCount });
+}));
+
 // ---------- sıralama algoritması paneli ----------
 // GÜVENLİK: bu uçlar `/admin/...` altında olduğu için nginx'teki
 // `location ^~ /api/admin` ÖNEK bloğu tarafından otomatik korunur (IP kısıtı +

@@ -1299,8 +1299,6 @@ const Map<String, String> cevirilerMy = {
   'Ekran süresi': 'ဖန်သားပြင်အချိန်',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'ကြာချိန်များမှာ TMDB မှ အပိုင်းနှင့် ရုပ်ရှင်များ၏ အမှန်တကယ်ကြာချိန်များ ဖြစ်သည်',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'ကြာချိန်များ၏ {}% ခန့်သာ အမှန်ဖြစ်သည်။ ကျန်သည်ကို အပိုင်းတစ်ခု ~{} မိနစ်၊ ရုပ်ရှင်တစ်ကား ~{} မိနစ်ဖြင့် တွက်ချက်သည်',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'စုစုပေါင်း - {} အပိုင်း · {} ရုပ်ရှင် · {}',
 };

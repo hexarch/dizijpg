@@ -1290,8 +1290,6 @@ const Map<String, String> cevirilerDa = {
   'Ekran süresi': 'Skærmtid',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Tiderne er de faktiske spilletider for afsnit og film fra TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Ca. {} % af tiderne er reelle; resten tæller et afsnit som ~{} min. og en film som ~{} min.',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Nogensinde: {} afsnit · {} film · {}',
 };

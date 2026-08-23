@@ -1310,8 +1310,6 @@ const Map<String, String> cevirilerPt = {
   'Ekran süresi': 'Tempo de tela',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Os tempos são as durações reais de episódios e filmes no TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Cerca de {}% dos tempos são reais; o resto conta um episódio como ~{} min e um filme como ~{} min',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Desde sempre: {} episódios · {} filmes · {}',
 };

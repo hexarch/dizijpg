@@ -185,7 +185,10 @@ CREATE TABLE IF NOT EXISTS yapim_sureleri (
   sezon      INT  NOT NULL DEFAULT 0,
   bolum      INT  NOT NULL DEFAULT 0,
   dakika     INT  NOT NULL CHECK (dakika > 0 AND dakika <= 1000),
-  kaynak     TEXT NOT NULL CHECK (kaynak IN ('film','sezon','bolum')),
+  -- 'elle' = admin panelinden insan girişi (migrasyon-2026-08-23.sql):
+  -- TMDB'nin bilmediği süreler için; sure_doldur.js gerçek ölçüm bulursa
+  -- üstüne yazar.
+  kaynak     TEXT NOT NULL CHECK (kaynak IN ('film','sezon','bolum','elle')),
   guncelleme TIMESTAMPTZ NOT NULL DEFAULT now(),
   -- Okuma her zaman TAM anahtarla gelir (`izlemeler` satırı sezon/bolum'u da
   -- taşır), yazma tek toplu UPSERT: EK İNDEKS YOK.

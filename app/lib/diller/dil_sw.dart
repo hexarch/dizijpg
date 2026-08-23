@@ -1293,8 +1293,6 @@ const Map<String, String> cevirilerSw = {
   'Ekran süresi': 'Muda wa skrini',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Muda ni urefu halisi wa vipindi na filamu kutoka TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Karibu {}% ya muda ni halisi; uliobaki huhesabiwa kipindi dakika ~{}, filamu dakika ~{}',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Muda wote: vipindi {} · filamu {} · {}',
 };

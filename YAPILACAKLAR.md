@@ -1,5 +1,27 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-22 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-23 — süre notu sadeleşti ✅ + admin "Eksik Süreler" sekmesi 🚀
+Kullanıcı isteği (22 Ağu, birebir): "sürelerin %93 ü gerçek diyor o yazıyı
+kaldır ve admin panelinde hangi dizilerin filmlerin dakikalarını bilmiyoruz
+onları listele görebilelim biz gidip bakıp ekleriz."
+- ✅ **"%{}'ü gerçek" cümlesi kalktı** (profil › Toplam İzleme Süresi
+  kırılımı, karışık kaynak hâli): satırlardaki "~" işaretleri yaklaşıklığı
+  zaten söylüyor. Diğer iki not ("gerçek süreler" / "tahmindir") duruyor.
+  Anahtar 45 dil dosyasından silindi (kullanılmayan tek kullanım yeriydi);
+  `SureKaynagi.yuzde` de öldü. Kanıt: profil_gercek_sure_test KARIŞIK
+  senaryosu artık notun YOKLUĞUNU kilitliyor. Flutter 2088 test yeşil.
+  ⚠ WEB DAĞITIMI YAPILMADI (profil tıklama düzeltmesiyle birlikte tek
+  seferde çıkacak) — canlı webde yazı o dağıtıma kadar görünür.
+- 🚀 **Admin "Eksik Süreler" sekmesi CANLIDA**: `GET /admin/eksik-sureler`
+  izlenen-ama-süresiz yapımları listeler (dizi: eksik/izlenen bölüm +
+  düzelecek kayıt sayısı, en çok izlenen önde; ad çözümü tmdb_onbellek'ten,
+  kişisel veri yok), `POST /admin/eksik-sure` dakika girer (dizide izlenmiş
+  süresiz TÜM bölümlere, filmde tek satıra; 1-1000 doğrulama). `kaynak='elle'`
+  (migrasyon-2026-08-23.sql, canlıya uygulandı): elle giriş gerçeği EZEMEZ
+  (DO NOTHING), sure_doldur.js gerçek ölçüm bulursa elle satırı EZER
+  (DO UPDATE) — ölçüm tahmini yener. Backend 1850 test yeşil
+  (eksik_sure.test.js +10; XSS bekçisi escJs kalıbına uyduruldu).
 
 ## 2026-08-22 — 🚀 SEO 4.5 canlıda doğrulandı (ısıtıcı + anahtar birleştirme + site haritası turu)
 SEO-YAPILACAKLAR §6.10 + §6.11 dağıtımı doğrulandı ve belgede 🚀'ya çekildi:

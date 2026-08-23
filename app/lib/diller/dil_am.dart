@@ -1243,7 +1243,5 @@ const Map<String, String> cevirilerAm = {
   'Ekran süresi': 'የስክሪን ጊዜ',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'ጊዜዎቹ ከTMDB የተገኙ የክፍሎች እና የፊልሞች እውነተኛ ርዝመቶች ናቸው',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'ከጊዜዎቹ ወደ {}% ያህሉ እውነተኛ ናቸው፤ ቀሪው ክፍል ~{} ደቂቃ፣ ፊልም ~{} ደቂቃ ተደርጎ ይቆጠራል',
   'Tüm zamanlar: {} bölüm · {} film · {}': 'በአጠቃላይ፦ {} ክፍሎች · {} ፊልሞች · {}',
 };

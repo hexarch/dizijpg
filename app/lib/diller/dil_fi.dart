@@ -1296,8 +1296,6 @@ const Map<String, String> cevirilerFi = {
   'Ekran süresi': 'Ruutuaika',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Ajat ovat jaksojen ja elokuvien todellisia kestoja TMDB:stä',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Noin {} % ajoista on todellisia; lopuissa jakso lasketaan ~{} min ja elokuva ~{} min',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Kaikkien aikojen: {} jaksoa · {} elokuvaa · {}',
 };

@@ -1289,8 +1289,6 @@ const Map<String, String> cevirilerId = {
   'Ekran süresi': 'Waktu layar',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Durasi adalah durasi asli episode dan film dari TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Sekitar {}% durasi adalah data asli; sisanya dihitung episode ~{} mnt, film ~{} mnt',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Sepanjang masa: {} episode · {} film · {}',
 };

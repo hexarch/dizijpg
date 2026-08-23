@@ -1293,8 +1293,6 @@ const Map<String, String> cevirilerUk = {
   'Ekran süresi': 'Екранний час',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Час — це реальна тривалість епізодів і фільмів за даними TMDB',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Близько {}% часу — реальні дані; решта рахується: епізод ~{} хв, фільм ~{} хв',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'За весь час: {} серій · {} фільмів · {}',
 };

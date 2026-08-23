@@ -225,6 +225,7 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
     <button class="sekme-btn" data-sekme="duyuru">Duyuru</button>
     <button class="sekme-btn" data-sekme="buyume">Büyüme</button>
     <button class="sekme-btn" data-sekme="cihazlar">Cihazlar</button>
+    <button class="sekme-btn" data-sekme="sureler">Eksik Süreler</button>
     <button class="sekme-btn" data-sekme="depolama">Depolama <span id="dep-rozet" class="rozet gizli">!</span></button>
     <button class="sekme-btn" data-sekme="algoritma">Algoritma</button>
     <button class="sekme-btn" data-sekme="bakim">Bakım</button>
@@ -728,6 +729,21 @@ input[type=range].sustu::-moz-range-thumb{background:var(--soluk2)}
   </div>
 </section>
 
+<!-- EKSİK SÜRELER: izlenen ama süresi bilinmeyen yapımlar. Dakika girilince
+     dizide izlenmiş-süresiz TÜM bölümlere, filmde tek satıra yazılır
+     (kaynak='elle'; TMDB gerçek ölçüm bulursa üstüne yazar). -->
+<section id="s-sureler" class="sayfa gizli">
+  <div class="panel" style="margin-bottom:16px">
+    <h3>⏱ Süresi Bilinmeyen Diziler <span class="sag" id="sure-dizi-say">—</span></h3>
+    <p class="kck" style="margin:4px 0 10px">Girilen dakika, o dizinin izlenmiş ve süresi bilinmeyen <b>tüm bölümlerine</b> tipik bölüm süresi olarak yazılır. En çok izlenen üstte.</p>
+    <div style="overflow:auto;max-height:480px"><table id="sure-dizi-tablo"></table></div>
+  </div>
+  <div class="panel">
+    <h3>⏱ Süresi Bilinmeyen Filmler <span class="sag" id="sure-film-say">—</span></h3>
+    <div style="overflow:auto;max-height:480px"><table id="sure-film-tablo"></table></div>
+  </div>
+</section>
+
 <!-- ŞİKAYETLER -->
 <section id="s-sikayetler" class="sayfa gizli">
   <div class="panel">
@@ -860,6 +876,8 @@ document.querySelectorAll('.sekme-btn').forEach(b=>b.onclick=()=>{
   if(s==='mailler') mailleriYukle();
   $('#s-buyume').classList.toggle('gizli',s!=='buyume');
   $('#s-cihazlar').classList.toggle('gizli',s!=='cihazlar');
+  $('#s-sureler').classList.toggle('gizli',s!=='sureler');
+  if(s==='sureler') sureleriYukle();
   $('#s-depolama').classList.toggle('gizli',s!=='depolama');
   $('#s-bakim').classList.toggle('gizli',s!=='bakim');
   $('#s-algoritma').classList.toggle('gizli',s!=='algoritma');
@@ -2058,6 +2076,46 @@ async function hatalariYukle(){
         </tr>`).join('')}</tbody>`
       : '<tbody><tr><td class="bos">🎉 Hiç hata yok</td></tr></tbody>';
   }catch(e){ $('#hata-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi</td></tr></tbody>'; }
+}
+
+/* ---- Eksik süreler ---- */
+async function sureleriYukle(){
+  try{
+    const {diziler,filmler}=await api('/eksik-sureler');
+    $('#sure-dizi-say').textContent=diziler.length+' dizi';
+    $('#sure-film-say').textContent=filmler.length+' film';
+    const ad=(y,tur)=>`<a href="https://www.themoviedb.org/${tur}/${y.tmdb_id}" target="_blank" rel="noopener" style="color:var(--mavi)">${y.ad?esc(y.ad):'<i>ad önbellekte yok</i>'}</a> <span class="mono" style="color:var(--soluk2)">#${y.tmdb_id}</span>`;
+    const kutu=(tur,id)=>`<td style="white-space:nowrap"><input type="number" min="1" max="1000" placeholder="dk" style="width:64px" id="sure-${tur}-${id}"> <button class="btn" onclick="sureKaydet('${escJs(tur)}',${id})">Kaydet</button> <span class="kck" id="sure-d-${tur}-${id}"></span></td>`;
+    $('#sure-dizi-tablo').innerHTML = diziler.length? `
+      <thead><tr><th>Dizi</th><th>Eksik bölüm</th><th>İzlenen bölüm</th><th>Düzelecek kayıt</th><th>Dakika</th></tr></thead>
+      <tbody>${diziler.map(d=>`
+        <tr><td style="max-width:360px">${ad(d,'tv')}</td>
+        <td class="mono">${d.eksik_bolum}</td>
+        <td class="mono">${d.izlenen_bolum}</td>
+        <td class="mono">${d.izlenme}</td>
+        ${kutu('tv',d.tmdb_id)}</tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">🎉 Tüm izlenen dizilerin süresi biliniyor</td></tr></tbody>';
+    $('#sure-film-tablo').innerHTML = filmler.length? `
+      <thead><tr><th>Film</th><th>Düzelecek kayıt</th><th>Dakika</th></tr></thead>
+      <tbody>${filmler.map(f=>`
+        <tr><td style="max-width:360px">${ad(f,'movie')}</td>
+        <td class="mono">${f.izlenme}</td>
+        ${kutu('movie',f.tmdb_id)}</tr>`).join('')}</tbody>`
+      : '<tbody><tr><td class="bos">🎉 Tüm izlenen filmlerin süresi biliniyor</td></tr></tbody>';
+  }catch(e){
+    $('#sure-dizi-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi</td></tr></tbody>';
+    $('#sure-film-tablo').innerHTML='<tbody><tr><td class="bos">Yüklenemedi</td></tr></tbody>';
+  }
+}
+async function sureKaydet(tur,id){
+  const kutu=$('#sure-'+tur+'-'+id), durum=$('#sure-d-'+tur+'-'+id);
+  const dk=Math.trunc(Number(kutu.value));
+  if(!Number.isInteger(dk)||dk<1||dk>1000){ durum.textContent='1-1000 dk girin'; durum.style.color='var(--kirmizi)'; return; }
+  durum.textContent='…'; durum.style.color='var(--soluk)';
+  try{
+    const r=await api('/eksik-sure',{method:'POST',body:JSON.stringify({tur,tmdb_id:id,dakika:dk})});
+    durum.textContent='✓ '+r.eklenen+' kayıt'; durum.style.color='var(--yesil)';
+  }catch(e){ durum.textContent='Kaydedilemedi'; durum.style.color='var(--kirmizi)'; }
 }
 
 /* ---- Şikayetler ---- */

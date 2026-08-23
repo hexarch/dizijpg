@@ -1225,7 +1225,5 @@ const Map<String, String> cevirilerJa = {
   'Ekran süresi': '視聴時間',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       '時間はTMDBの実際のエピソード・映画の長さです',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      '時間の約{}%は実際の値です。残りは1話約{}分、映画約{}分として計算します',
   'Tüm zamanlar: {} bölüm · {} film · {}': '全期間：{}話 · {}本 · {}',
 };

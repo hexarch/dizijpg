@@ -1299,8 +1299,6 @@ const Map<String, String> cevirilerHu = {
   'Ekran süresi': 'Képernyőidő',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       'Az időtartamok az epizódok és filmek valós hosszai a TMDB-ről',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      'Az időtartamok kb. {}%-a valós; a többinél egy epizód ~{} perc, egy film ~{} perc',
   'Tüm zamanlar: {} bölüm · {} film · {}':
       'Mindenkori: {} epizód · {} film · {}',
 };

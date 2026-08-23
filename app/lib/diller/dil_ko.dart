@@ -1227,7 +1227,5 @@ const Map<String, String> cevirilerKo = {
   'Ekran süresi': '시청 시간',
   "Süreler TMDB'deki gerçek bölüm ve film süreleridir":
       '시간은 TMDB의 실제 에피소드·영화 길이예요',
-  'Sürelerin %{} kadarı gerçek; kalanı bölüm ~{} dk, film ~{} dk sayılıyor':
-      '시간의 약 {}%는 실제 값이에요. 나머지는 에피소드 약 {}분, 영화 약 {}분으로 계산해요',
   'Tüm zamanlar: {} bölüm · {} film · {}': '전체 기간: {}화 · 영화 {}편 · {}',
 };
