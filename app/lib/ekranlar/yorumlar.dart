@@ -802,6 +802,17 @@ class _YorumKartiState extends State<YorumKarti> {
                         ),
                       ),
                     ),
+                    if (yorum['kullanici_adi'] == aiKullaniciAdi) ...[
+                      const SizedBox(width: 6),
+                      Text(
+                        'dizi.jpg AI özeti'.c,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: DiziRenkler.sari,
+                        ),
+                      ),
+                    ],
                     const SizedBox(width: 8),
                     Text(
                       tarih,

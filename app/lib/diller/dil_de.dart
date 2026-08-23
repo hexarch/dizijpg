@@ -1326,5 +1326,6 @@ const Map<String, String> cevirilerDe = {
   'Tekrar çevir': 'Nochmal drehen',
   'Bu türde içerik yok': 'Keine Inhalte dieser Art',
   'Bütçe': 'Budget',
+  'dizi.jpg AI özeti': 'dizi.jpg KI-Zusammenfassung',
   'Daha fazlasını gör': 'Mehr anzeigen',
 };

@@ -67,9 +67,9 @@ const seoKesifGovde = alan(
   ['htmlKacir', 'seoBaglantiListesi', 'seoKesifGovde'], 'seoKesifGovde');
 const seoKesifAdet = alan(['seoKesifAdet'], 'seoKesifAdet');
 const seoKesifJsonLd = alan(
-  ['SITE_KOK', 'seoKesifJsonLd'], 'seoKesifJsonLd');
+  ['SITE_KOK', 'seoKirinti', 'seoKesifJsonLd'], 'seoKesifJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 
 /** Kaynağın [bas, son) arasındaki bölümü; sınır yoksa test patlar. */
 function bolum(bas, son) {

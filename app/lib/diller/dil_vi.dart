@@ -1303,5 +1303,6 @@ const Map<String, String> cevirilerVi = {
   'Tekrar çevir': 'Quay lại',
   'Bu türde içerik yok': 'Không có nội dung loại này',
   'Bütçe': 'Kinh phí',
+  'dizi.jpg AI özeti': 'Tóm tắt AI dizi.jpg',
   'Daha fazlasını gör': 'Xem thêm',
 };

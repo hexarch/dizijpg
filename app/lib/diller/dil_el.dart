@@ -1323,5 +1323,6 @@ const Map<String, String> cevirilerEl = {
   'Tekrar çevir': 'Γύρνα ξανά',
   'Bu türde içerik yok': 'Δεν υπάρχει περιεχόμενο εδώ',
   'Bütçe': 'Προϋπολογισμός',
+  'dizi.jpg AI özeti': 'dizi.jpg περίληψη ΤΝ',
   'Daha fazlasını gör': 'Δείτε περισσότερα',
 };

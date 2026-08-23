@@ -1304,5 +1304,6 @@ const Map<String, String> cevirilerDa = {
   'Tekrar çevir': 'Drej igen',
   'Bu türde içerik yok': 'Intet indhold af denne type',
   'Bütçe': 'Budget',
+  'dizi.jpg AI özeti': 'dizi.jpg AI-resumé',
   'Daha fazlasını gör': 'Se mere',
 };

@@ -50,9 +50,9 @@ const icerikJsonLd = alan(
   // ReferenceError verir — testin gördüğü kod canlıdaki kodun aynısı.
   ['SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'seoSssJsonLd', 'icerikJsonLd'], 'icerikJsonLd');
+    'seoKirinti', 'seoIstDil', 'seoSssJsonLd', 'icerikJsonLd'], 'icerikJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 
 /** Breaking Bad'in canlı önbellekten alınmış gerçek künyesi. */
 const BB = {

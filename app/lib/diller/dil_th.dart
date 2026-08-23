@@ -1281,5 +1281,6 @@ const Map<String, String> cevirilerTh = {
   'Tekrar çevir': 'หมุนอีกครั้ง',
   'Bu türde içerik yok': 'ไม่มีเนื้อหาประเภทนี้',
   'Bütçe': 'งบประมาณ',
+  'dizi.jpg AI özeti': 'สรุป AI ของ dizi.jpg',
   'Daha fazlasını gör': 'ดูเพิ่มเติม',
 };

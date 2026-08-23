@@ -18,7 +18,7 @@ import {
 const BOT_ROTALARI = alan(['BOT_ROTALARI'], 'BOT_ROTALARI');
 const botRotasiVar = alan(['BOT_ROTALARI', 'botRotasiVar'], 'botRotasiVar');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 
 // Flutter rotası OLMADIĞI hâlde tabloda bulunması GEREKENLER ve gerekçeleri.
 // Tabloya bunun dışında bir şey eklenirse test kırmızıya döner: uydurma yol

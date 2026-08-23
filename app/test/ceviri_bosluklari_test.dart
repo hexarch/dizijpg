@@ -33,6 +33,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Bu turda haritaya eklenen anahtarlar. Hepsi ekranda GÖRÜNEN metindir.
 const _yeniAnahtarlar = [
+  // yorumlar.dart — AI yorumunun yanında görünen etiket (23 Ağu 2026)
+  'dizi.jpg AI özeti',
   // arama_cubugu.dart — kategori kuyruğu "Daha fazlasını gör" (23 Ağu 2026)
   'Daha fazlasını gör',
   // izlem_carki.dart — "ne izlesem çarkı" (23 Ağu 2026)

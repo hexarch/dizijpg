@@ -1320,5 +1320,6 @@ const Map<String, String> cevirilerTa = {
   'Tekrar çevir': 'மீண்டும் சுற்று',
   'Bu türde içerik yok': 'இந்த வகையில் எதுவும் இல்லை',
   'Bütçe': 'பட்ஜெட்',
+  'dizi.jpg AI özeti': 'dizi.jpg AI சுருக்கம்',
   'Daha fazlasını gör': 'மேலும் காண்க',
 };

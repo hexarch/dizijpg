@@ -300,7 +300,8 @@ test('Review dizisinde TOHUM yazar YOK, gerçek kullanıcı VAR', () => {
   const adlar = d.map((r) => r.author.name);
   assert.ok(!adlar.includes('dizi.jpg.ai'),
     'tohum yazar Review şemasına sızdı');
-  assert.deepEqual(adlar, ['alcelik', 'alcelik']);
+  // Puansız sosyal yorum Review DEĞİL (GSC: aggregateRating'sız çoklu yorum).
+  assert.deepEqual(adlar, ['alcelik']);
   // Gerçek kullanıcının puanı reviewRating olarak KALMALI (değer kaybı yok).
   assert.equal(d[0].reviewRating.ratingValue, '4');
   assert.equal(d[0].reviewBody, 'Gerçek kullanıcı incelemesi');

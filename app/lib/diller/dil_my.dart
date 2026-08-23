@@ -1313,5 +1313,6 @@ const Map<String, String> cevirilerMy = {
   'Tekrar çevir': 'ထပ်လှည့်ပါ',
   'Bu türde içerik yok': 'ဤအမျိုးအစား အကြောင်းအရာမရှိပါ',
   'Bütçe': 'ဘတ်ဂျက်',
+  'dizi.jpg AI özeti': 'dizi.jpg AI အနှစ်ချုပ်',
   'Daha fazlasını gör': 'ပိုမိုကြည့်ရန်',
 };

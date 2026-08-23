@@ -1310,5 +1310,6 @@ const Map<String, String> cevirilerFi = {
   'Tekrar çevir': 'Pyöräytä uudelleen',
   'Bu türde içerik yok': 'Ei tämän tyypin sisältöä',
   'Bütçe': 'Budjetti',
+  'dizi.jpg AI özeti': 'dizi.jpg tekoälyyhteenveto',
   'Daha fazlasını gör': 'Näytä lisää',
 };

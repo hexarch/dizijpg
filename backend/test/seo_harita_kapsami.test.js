@@ -339,3 +339,11 @@ test('hreflang\'in gireceği yer alt harita ucunda İŞARETLİ', () => {
     KAYNAK.replace(/^\s*\/\/.*$/gm, '')),
   'hreflang satırı üretiliyor — §7 sırası gelmeden uygulanmamalı');
 });
+
+test('SSR 45 dil og:locale:alternate basar; hreflang URL çarpanı YOK', () => {
+  assert.match(KAYNAK, /og:locale:alternate/,
+    'bot HTML\'inde 45 dil og:locale:alternate yok');
+  assert.match(KAYNAK, /function seoIstDil\(/);
+  // Kanonik URL dil parametresiz kalır — CF önbelleği parçalanmaz.
+  assert.match(KAYNAK, /Aynı kanonik URL/);
+});

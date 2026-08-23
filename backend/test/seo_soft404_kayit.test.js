@@ -13,7 +13,8 @@ import assert from 'node:assert/strict';
 import { KAYNAK, alan } from './yardimci/seo_kaynak.js';
 
 const ogYok = alan(
-  ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa',
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom',
+    'seoIstDil', 'seoOgYerel', 'ogSayfa',
     'SEO_KESIF_HUB', 'seoBaglantiListesi', 'ogYok'],
   'ogYok',
 );

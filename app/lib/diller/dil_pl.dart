@@ -1317,5 +1317,6 @@ const Map<String, String> cevirilerPl = {
   'Tekrar çevir': 'Zakręć ponownie',
   'Bu türde içerik yok': 'Brak tytułów tego typu',
   'Bütçe': 'Budżet',
+  'dizi.jpg AI özeti': 'Streszczenie AI dizi.jpg',
   'Daha fazlasını gör': 'Zobacz więcej',
 };

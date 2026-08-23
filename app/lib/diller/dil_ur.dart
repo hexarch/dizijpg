@@ -1299,5 +1299,6 @@ const Map<String, String> cevirilerUr = {
   'Tekrar çevir': 'دوبارہ گھمائیں',
   'Bu türde içerik yok': 'اس قسم کا کوئی مواد نہیں',
   'Bütçe': 'بجٹ',
+  'dizi.jpg AI özeti': 'dizi.jpg اے آئی خلاصہ',
   'Daha fazlasını gör': 'مزید دیکھیں',
 };

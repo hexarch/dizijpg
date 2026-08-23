@@ -34,9 +34,9 @@ const seoSirketAciklamasi = alan(
 const seoSirketYapimlari = alan(
   ['gecerliTmdb', 'SEO_SIRKET_YAPIM', 'seoSirketYapimlari'], 'seoSirketYapimlari');
 const sirketJsonLd = alan(
-  ['SITE_KOK', 'seoMetin', 'sirketJsonLd'], 'sirketJsonLd');
+  ['SITE_KOK', 'seoMetin', 'seoKirinti', 'sirketJsonLd'], 'sirketJsonLd');
 const ogSayfa = alan(
-  ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa'], 'ogSayfa');
+  ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 
 /** Gerçekçi bir TMDB `/discover` yanıtı. */
 const discoverYanit = (n, tur) => ({
@@ -165,8 +165,11 @@ test('başlık/canonical/JSON-LD üretiliyor (uçtan uca ogSayfa çıktısı)', 
   assert.equal(liste.itemListElement[0].url, 'https://dizijpg.com/icerik/tv/100');
   const kirinti = ld['@graph'][2];
   assert.equal(kirinti['@type'], 'BreadcrumbList');
-  // "Yapım firmaları" diye bir rota YOK: o basamak URL taşımamalı.
-  assert.equal(kirinti.itemListElement[1].item, undefined);
+  // Liste rotası yok: "Yapım firmaları" basamağı atılır (GSC item-eksik).
+  // Kırıntı ana sayfa → firmanın kendi URL'si.
+  assert.equal(kirinti.itemListElement.length, 2);
+  assert.equal(kirinti.itemListElement[1].name, 'Netflix');
+  assert.equal(kirinti.itemListElement[1].item, url);
 });
 
 test('JSON-LD uydurma alan/tip basmıyor (Organization + gerçek alanlar)', () => {

@@ -1313,5 +1313,6 @@ const Map<String, String> cevirilerHu = {
   'Tekrar çevir': 'Pörgesd újra',
   'Bu türde içerik yok': 'Nincs ilyen típusú tartalom',
   'Bütçe': 'Költségvetés',
+  'dizi.jpg AI özeti': 'dizi.jpg MI-összefoglaló',
   'Daha fazlasını gör': 'Továbbiak megtekintése',
 };

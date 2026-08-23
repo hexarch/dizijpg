@@ -258,7 +258,7 @@ const araKatmanKaynagi = (() => {
 
 /** Middleware'i enjekte edilmiş bağımlılıklarla kurar. */
 function araKatmanKur(butceMs) {
-  const ogSayfaKaynak = ['SITE_KOK', 'htmlKacir', 'kanonikUrl', 'jsonLdGom', 'ogSayfa']
+  const ogSayfaKaynak = ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa']
     .map(bildirimCek).join('\n');
   const kaydedilen = [];
   const fn = new Function(
@@ -268,14 +268,17 @@ function araKatmanKur(butceMs) {
   return { fn, kaydedilen };
 }
 
-/** Express `res` taklidi: send/headersSent/close davranışıyla. */
+/** Express `res` taklidi: send/headersSent/close + Cache-Control başlığı. */
 function sahteRes() {
   const kapanis = [];
-  const kayit = { tip: null, govde: null, kod: 200 };
+  const kayit = { tip: null, govde: null, kod: 200, basliklar: {} };
   const res = {
     get headersSent() { return kayit.govde !== null; },
     status(k) { kayit.kod = k; return res; },
     type(t) { kayit.tip = t; return res; },
+    set(k, v) { kayit.basliklar[String(k).toLowerCase()] = v; return res; },
+    setHeader(k, v) { return res.set(k, v); },
+    getHeader(k) { return kayit.basliklar[String(k).toLowerCase()]; },
     send(g) {
       assert.equal(kayit.govde, null, 'ÇİFT YANIT: res.send iki kez çağrıldı');
       kayit.govde = g;

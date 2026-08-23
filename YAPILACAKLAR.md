@@ -1,6 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — 🔨 GSC SEO: şema + kanonik + 45 dil (aynı URL)
+
+Kullanıcı: Search Console bildirimlerini oku; SEO'da gereken her şeyi **kodla**
+yap; 45 dil çeviri olarak işlensin — hreflang ile URL çarpma yok.
+
+- Breadcrumb: URL'siz orta basamak yok; son basamağa kanonik `item`.
+- Review: yalnız puanlı gerçek inceleme; çoklu Review + aggregateRating yoksa şemada Review yok.
+- nginx 301: slash, leading zero, büyük harf ilk segment; ads.txt 404.
+- SSR: `html lang` + `og:locale` + 45× `og:locale:alternate`; aynı kanonik URL.
+- AI özeti etiketi: Flutter 45 dil + SSR `<small>`; widget testi.
+- `/og` Cache-Control. Kişi sitemap eşikleri sayfa `kisiIndekslenir` ile aynı (dar taraf).
+
 ## 2026-08-23 — 🚀 DM istekleri: Kabul et / Reddet + Reddedilenler (Instagram akışı)
 
 Kullanıcı isteği (aynen): *"Gelen mesaj isteklerinde kabul et reddet buttonları

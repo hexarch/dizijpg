@@ -1295,5 +1295,6 @@ const Map<String, String> cevirilerMr = {
   'Tekrar çevir': 'पुन्हा फिरवा',
   'Bu türde içerik yok': 'या प्रकारची सामग्री नाही',
   'Bütçe': 'बजेट',
+  'dizi.jpg AI özeti': 'dizi.jpg AI सारांश',
   'Daha fazlasını gör': 'आणखी पहा',
 };

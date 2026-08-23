@@ -2303,11 +2303,35 @@ function htmlKacir(s) {
 // sorgu parametresiz ve sondaki eğik çizgi olmadan. www, trailing slash ve
 // UTM yinelemeleri böylece tek hamlede birleşir.
 const SITE_KOK = 'https://dizijpg.com';
+
+/**
+ * Kamuya açık yolun tek biçimi: küçük harf önek, sondaki `/` yok,
+ * sayı kimliklerinde baştaki sıfır yok. `/og` öneki varsa düşülür —
+ * nginx botu `/og$uri` ile proxy'ler, kanonik ASLA `/og/...` olmaz.
+ */
+function seoKamuYolu(yol) {
+  let y = String(yol || '/').split('?')[0];
+  if (y === '/og' || y === '/og/') return '/';
+  if (y.startsWith('/og/')) y = y.slice(3);
+  return y || '/';
+}
+
+function seoKanonikYol(yol) {
+  let y = seoKamuYolu(yol);
+  if (y.length > 1) y = y.replace(/\/+$/, '');
+  const parca = y.split('/');
+  if (parca[1]) parca[1] = parca[1].toLowerCase();
+  if (parca[1] === 'icerik' && parca[2]) parca[2] = parca[2].toLowerCase();
+  for (let i = 1; i < parca.length; i++) {
+    if (/^\d+$/.test(parca[i])) parca[i] = String(parseInt(parca[i], 10));
+  }
+  return parca.join('/') || '/';
+}
+
 function kanonikUrl(url) {
   let yol;
   try { yol = new URL(String(url ?? ''), SITE_KOK).pathname; } catch { yol = '/'; }
-  yol = yol.replace(/\/+$/, ''); // sondaki eğik çizgi (kök hariç)
-  return SITE_KOK + (yol || '/');
+  return SITE_KOK + seoKanonikYol(yol);
 }
 
 // JSON-LD gövdeye string olarak gömülür; `</script>` ve HTML ayraçları kaçırılmalı
@@ -2321,6 +2345,23 @@ function jsonLdGom(nesne) {
   return `\n<script type="application/ld+json">${s}</script>`;
 }
 
+/**
+ * BreadcrumbList öğeleri. GSC (23 Ağu 2026): "item alanı eksik
+ * (itemListElement içinde)" — URL'siz ORTA basamak (Kişiler, Yapım firmaları,
+ * Listeler) geçersiz. Liste rotası olmayan basamak atılır; son basamağa
+ * sayfanın kendi kanonik URL'si yazılır (Google son öğede item'ı isteğe
+ * bağlı sayar, dolu olması daha temiz).
+ */
+function seoKirinti(adimlar) {
+  const temiz = adimlar.filter((a, i, arr) => a.item || i === arr.length - 1);
+  return temiz.map((a, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: a.name,
+    ...(a.item ? { item: a.item } : {}),
+  }));
+}
+
 // `indexle=false` -> noindex,follow: sayfa indekse girmez ama iç bağlantılar
 // takip edilir. Kural için `ozgunIcerikVar()`e bakınız (tek tanım noktası).
 //
@@ -2328,6 +2369,23 @@ function jsonLdGom(nesne) {
 //          <title> "… — dizi.jpg" ile biterken <h1> marka ekisiz olsun diye var.
 // `govde`: <h1>/<p> sonrasına eklenen HAZIR HTML (çağıran htmlKacir'lamış olmalı).
 // `jsonLd`: yapısal veri nesnesi (SEO-PLANI 1.2).
+function seoIstDil() {
+  // Test kutusu ALS/TMDB_DIL taşımaz; yoksa varsayılan tr (Googlebot gibi).
+  try {
+    const d = istekBaglam.getStore()?.dil;
+    if (d && TMDB_DIL[d]) return d;
+  } catch (_) { /* yok */ }
+  return 'tr';
+}
+
+function seoOgYerel(dil) {
+  try {
+    return String(TMDB_DIL[dil] || 'tr-TR').replace('-', '_');
+  } catch (_) {
+    return 'tr_TR';
+  }
+}
+
 function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
                    canonical, indexle = true, h1 = null, govde = '', jsonLd = null }) {
   const b = htmlKacir(baslik);
@@ -2336,13 +2394,27 @@ function ogSayfa({ baslik, aciklama, gorsel, url, tur = 'website',
   const u = htmlKacir(url);
   const kan = htmlKacir(kanonikUrl(canonical || url));
   const gorselKart = g ? 'summary_large_image' : 'summary';
-  return `<!doctype html><html lang="tr"><head><meta charset="utf-8">
+  // Dil YALNIZ ?dil= / X-Dil'den (CF önbelleği URL anahtarlı). Googlebot
+  // varsayılanı tr. 45 dil: html lang + og:locale + og:locale:alternate.
+  // Aynı kanonik URL; sitemap'e 45× kopya YAZILMAZ (tarama kuyruğu).
+  const dil = seoIstDil();
+  const yerel = htmlKacir(seoOgYerel(dil));
+  let alternatif = '';
+  try {
+    alternatif = Object.keys(TMDB_DIL)
+      .filter((k) => k !== dil)
+      .map((k) => `<meta property="og:locale:alternate" content="${htmlKacir(seoOgYerel(k))}">`)
+      .join('\n');
+  } catch (_) { /* test kutusu */ }
+  return `<!doctype html><html lang="${htmlKacir(dil)}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${b}</title>
 <meta name="description" content="${a}">
 <link rel="canonical" href="${kan}">${indexle ? '' : '\n<meta name="robots" content="noindex,follow">'}
 <meta property="og:type" content="${htmlKacir(tur)}">
 <meta property="og:site_name" content="dizi.jpg">
+<meta property="og:locale" content="${yerel}">
+${alternatif}
 <meta property="og:title" content="${b}">
 <meta property="og:description" content="${a}">${g ? `\n<meta property="og:image" content="${g}">` : ''}
 <meta property="og:url" content="${u}">
@@ -2580,9 +2652,11 @@ function seoCeviriAlani(translations, alan, diller = ['en']) {
 
 // Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
 // reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
-function seoYorumHtml({ kullanici_adi, metin, tarih, puan }) {
+function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum }) {
   const t = seoGun(tarih);
-  return `<article><h3>@${htmlKacir(kullanici_adi)}`
+  const ai = !!tohum || kullanici_adi === 'dizi.jpg.ai';
+  const etiket = ai ? ' <small>dizi.jpg AI özeti</small>' : '';
+  return `<article><h3>@${htmlKacir(kullanici_adi)}${etiket}`
     + `${puan ? ` — ${htmlKacir(seoYildiz(puan))}/5` : ''}</h3>`
     + `<p>${htmlKacir(seoMetin(metin))}</p>`
     + `${t ? `<time datetime="${t}">${t}</time>` : ''}</article>`;
@@ -2841,26 +2915,21 @@ const seoYazarNesnesi = (r) => ({
  * tarafsız görünen bir inceleme vitrinine kendi metnimizi koymamız.
  */
 function seoDegerlendirmeler(seo, limit = 10) {
-  return [
-    ...seo.incelemeler.filter((r) => !r.tohum).map((r) => ({
-      '@type': 'Review',
-      author: seoYazarNesnesi(r),
-      datePublished: seoGun(r.tarih),
-      reviewBody: seoMetin(r.yorum),
-      ...(r.puan ? {
-        reviewRating: {
-          '@type': 'Rating', ratingValue: String(seoYildiz(r.puan)),
-          bestRating: '5', worstRating: '1',
-        },
-      } : {}),
-    })),
-    ...seo.yorumlar.filter((r) => !r.tohum).map((r) => ({
-      '@type': 'Review',
-      author: seoYazarNesnesi(r),
-      datePublished: seoGun(r.tarih),
-      reviewBody: seoMetin(r.metin),
-    })),
-  ].slice(0, limit);
+  // GSC (23 Ağu 2026): "aggregateRating nesnesini içermeyen birden fazla yorum"
+  // — puansız sosyal yorumu `Review` diye beyan etmek bu hatayı üretiyordu.
+  // Yorum METNİ sayfada kalır (`seoDegerlendirmeGovdesi`); şemaya yalnız
+  // puanı olan gerçek incelemeler girer. Google birden fazla Review için
+  // aggregateRating ister; o da `seoOrtalamaPuan` ile aynı kaynaktan gelir.
+  return seo.incelemeler.filter((r) => !r.tohum && r.puan).map((r) => ({
+    '@type': 'Review',
+    author: seoYazarNesnesi(r),
+    datePublished: seoGun(r.tarih),
+    reviewBody: seoMetin(r.yorum),
+    reviewRating: {
+      '@type': 'Rating', ratingValue: String(seoYildiz(r.puan)),
+      bestRating: '5', worstRating: '1',
+    },
+  })).slice(0, limit);
 }
 
 /**
@@ -3519,9 +3588,11 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
     ...(dizi && v.number_of_seasons ? { numberOfSeasons: v.number_of_seasons } : {}),
     ...(dizi && v.number_of_episodes ? { numberOfEpisodes: v.number_of_episodes } : {}),
     ...(!dizi && v.runtime ? { duration: `PT${v.runtime}M` } : {}),
+    inLanguage: seoIstDil(),
     ...(oyuncular.length ? { actor: oyuncular } : {}),
     ...(ortalama ? { aggregateRating: ortalama } : {}),
-    ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
+    ...((degerlendirmeler.length && (ortalama || degerlendirmeler.length === 1))
+      ? { review: degerlendirmeler } : {}),
   };
 
   // SSS düğümü SONA eklenir: `@graph[0]` ana varlık, `[1]` breadcrumb — ikisi
@@ -3531,14 +3602,11 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
     '@context': 'https://schema.org',
     '@graph': [ana, {
       '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-        {
-          '@type': 'ListItem', position: 2,
-          name: dizi ? 'Diziler' : 'Filmler', item: `${SITE_KOK}/gozat`,
-        },
-        { '@type': 'ListItem', position: 3, name: ad },
-      ],
+      itemListElement: seoKirinti([
+        { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+        { name: dizi ? 'Diziler' : 'Filmler', item: `${SITE_KOK}/gozat` },
+        { name: ad, item: url },
+      ]),
     }, ...(sssNesnesi ? [sssNesnesi] : [])],
   };
 }
@@ -3595,6 +3663,22 @@ const SEO_ICERIK_FIRMA = 4;
 //   • `noindex` üçüncü yol: sayfa indeksten DÜŞMEZ, o anki eksik içerik de
 //     indekslenmez. Google bir sonraki taramada tam sayfayı görür.
 app.use('/og', (req, res, next) => {
+  const kamu = seoKamuYolu(req.path);
+  const kanon = seoKanonikYol(kamu);
+  if (kamu !== kanon) {
+    res.set('Cache-Control', 'public, max-age=86400, s-maxage=86400');
+    return res.redirect(301, SITE_KOK + kanon);
+  }
+  const eskiSend = res.send.bind(res);
+  res.send = (govde) => {
+    if (!res.getHeader('Cache-Control')) {
+      res.setHeader(
+        'Cache-Control',
+        'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+      );
+    }
+    return eskiSend(govde);
+  };
   const baglam = istekBaglam.getStore();
   // Son tarih BAĞLAMA yazılır (yeni bir run başlatılmaz): dil middleware'inin
   // kurduğu store nesnesi zaten bu isteğe ait, üzerine alan eklemek yeterli.
@@ -3604,6 +3688,7 @@ app.use('/og', (req, res, next) => {
     // Yanıt yola çıktıysa karışma: normal akış kazanır.
     if (res.headersSent) return;
     logYaz({ olay: 'ssr_butce_asimi', req, durum: 200 });
+    res.set('Cache-Control', 'public, max-age=30, s-maxage=30');
     res.type('html').send(ogSayfa({
       baslik: 'dizi.jpg',
       url: `${SITE_KOK}${req.originalUrl}`,
@@ -3620,8 +3705,8 @@ app.use('/og', (req, res, next) => {
 app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
   const { tur, tmdbId } = req.params;
   const id = parseInt(tmdbId, 10);
-  const url = `https://dizijpg.com/icerik/${tur}/${tmdbId}`;
-  if (!['tv', 'movie'].includes(tur) || !gecerliTmdb(id)) {
+  const url = `${SITE_KOK}/icerik/${String(tur || '').toLowerCase()}/${id}`;
+  if (!['tv', 'movie'].includes(String(tur || '').toLowerCase()) || !gecerliTmdb(id)) {
     return ogYok(res, url);
   }
   try {
@@ -3922,11 +4007,10 @@ function kisiJsonLd({ url, ad, biyografi, gorsel, v, yapimlar }) {
       }] : []),
       {
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-          { '@type': 'ListItem', position: 2, name: 'Kişiler' },
-          { '@type': 'ListItem', position: 3, name: ad },
-        ],
+        itemListElement: seoKirinti([
+          { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { name: ad, item: url },
+        ]),
       },
     ],
   };
@@ -4196,15 +4280,13 @@ function sirketJsonLd({ url, ad, aciklama, logo, firma, yapimlar }) {
         })),
       }] : []),
       {
-        // "Yapım firmaları" bir LİSTE SAYFASI DEĞİL: böyle bir rota yok, bu
-        // yüzden kırıntının o basamağı `item` (URL) TAŞIMAZ — olmayan URL'i
-        // bota bildirme kuralı (`/og/kisi`deki "Kişiler" basamağıyla aynı).
+        // "Yapım firmaları" liste rotası YOK — uydurma URL basılmaz; basamak
+        // atılır (GSC item-eksik hatası). Kırıntı: ana sayfa → firma.
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-          { '@type': 'ListItem', position: 2, name: 'Yapım firmaları' },
-          { '@type': 'ListItem', position: 3, name: ad },
-        ],
+        itemListElement: seoKirinti([
+          { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { name: ad, item: url },
+        ]),
       },
     ],
   };
@@ -4469,17 +4551,13 @@ app.get('/og/gonderi/:id', sarici(async (req, res) => {
           },
           {
             '@type': 'BreadcrumbList',
-            itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
+            itemListElement: seoKirinti([
+              { name: 'dizi.jpg', item: `${SITE_KOK}/` },
               ...(icerikYolu && icerikAd ? [{
-                '@type': 'ListItem', position: 2, name: icerikAd,
-                item: SITE_KOK + icerikYolu,
+                name: icerikAd, item: SITE_KOK + icerikYolu,
               }] : []),
-              {
-                '@type': 'ListItem', position: icerikYolu && icerikAd ? 3 : 2,
-                name: `@${y.kullanici_adi} gönderisi`,
-              },
-            ],
+              { name: `@${y.kullanici_adi} gönderisi`, item: url },
+            ]),
           },
         ],
       },
@@ -4678,22 +4756,17 @@ function bolumJsonLd({ url, diziId, diziAd, bolumAd, sezon, bolum, ozet, gorsel,
         ...(konuklar.length
           ? { actor: konuklar.slice(0, SEO_BOLUM_KONUK).map(seoKisiNesnesi) } : {}),
         ...(ortalama ? { aggregateRating: ortalama } : {}),
-        ...(degerlendirmeler.length ? { review: degerlendirmeler } : {}),
+        ...((degerlendirmeler.length && (ortalama || degerlendirmeler.length === 1))
+          ? { review: degerlendirmeler } : {}),
       },
       {
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-          { '@type': 'ListItem', position: 2, name: 'Diziler', item: `${SITE_KOK}/gozat` },
-          {
-            '@type': 'ListItem', position: 3, name: diziAd,
-            item: `${SITE_KOK}/icerik/tv/${diziId}`,
-          },
-          {
-            '@type': 'ListItem', position: 4,
-            name: `${sezon}. Sezon ${bolum}. Bölüm`,
-          },
-        ],
+        itemListElement: seoKirinti([
+          { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { name: 'Diziler', item: `${SITE_KOK}/gozat` },
+          { name: diziAd, item: `${SITE_KOK}/icerik/tv/${diziId}` },
+          { name: `${sezon}. Sezon ${bolum}. Bölüm`, item: url },
+        ]),
       },
     ],
   };
@@ -4911,11 +4984,10 @@ app.get('/og/listeler/:id', sarici(async (req, res) => {
           },
           {
             '@type': 'BreadcrumbList',
-            itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-              { '@type': 'ListItem', position: 2, name: 'Listeler' },
-              { '@type': 'ListItem', position: 3, name: l.ad },
-            ],
+            itemListElement: seoKirinti([
+              { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+              { name: l.ad, item: `${SITE_KOK}/listeler/${id}` },
+            ]),
           },
         ],
       } : null,
@@ -5107,10 +5179,10 @@ function seoKesifJsonLd({ url, ad, aciklama, kirintiAd, bloklar }) {
       },
       {
         '@type': 'BreadcrumbList',
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-          { '@type': 'ListItem', position: 2, name: kirintiAd },
-        ],
+        itemListElement: seoKirinti([
+          { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+          { name: kirintiAd, item: url },
+        ]),
       },
     ],
   };
@@ -5417,10 +5489,10 @@ const gizlilikJsonLd = (url) => ({
     },
     {
       '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'dizi.jpg', item: `${SITE_KOK}/` },
-        { '@type': 'ListItem', position: 2, name: 'Gizlilik Politikası' },
-      ],
+      itemListElement: seoKirinti([
+        { name: 'dizi.jpg', item: `${SITE_KOK}/` },
+        { name: 'Gizlilik Politikası', item: url },
+      ]),
     },
   ],
 });
@@ -5613,6 +5685,13 @@ app.get('/robots.txt', (_req, res) => {
   if (!robotsMetin) return res.status(404).type('text/plain').send('yok');
   res.set('Cache-Control', 'public, max-age=3600');
   res.type('text/plain').send(robotsMetin);
+});
+
+// Reklam satılmıyor. Flutter SPA bu yolu 200 HTML ile yakalamasın diye
+// bilinçli 404 + text/plain (GSC "ads.txt bulunamadı"yı HTML 200'den ayırır).
+app.get('/ads.txt', (_req, res) => {
+  res.status(404).set('Cache-Control', 'public, max-age=86400');
+  res.type('text/plain; charset=utf-8').send('# dizi.jpg reklam satmıyor\n');
 });
 
 // ---------- IndexNow: yeni içeriği Bing/Yandex'e ANINDA bildir ----------
