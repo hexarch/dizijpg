@@ -95,8 +95,10 @@ class _AramaTamListeEkraniState extends State<AramaTamListeEkrani> {
         // harmanlanır ki liste "önce tüm diziler sonra tüm filmler" gibi
         // yapay bir sırayla akmasın.
         final y = await Future.wait([
-          Api.get('/ara-tur?tur=tv&q=$q&sayfa=$sayfa'),
-          Api.get('/ara-tur?tur=movie&q=$q&sayfa=$sayfa'),
+          Api.get('/ara-tur?tur=tv&q=$q&sayfa=$sayfa&dil=${Ceviri.dil.value}'),
+          Api.get(
+            '/ara-tur?tur=movie&q=$q&sayfa=$sayfa&dil=${Ceviri.dil.value}',
+          ),
         ]);
         gelen =
             [

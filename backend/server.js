@@ -31,6 +31,7 @@ import {
 } from './dizi_durum.js';
 import {
   CEVRIMICI_ESIK_SN, sonGorulmeYazilmali, sohbetleriAyir, istekRozeti,
+  sohbetIstekMi,
 } from './cevrimici.js';
 import {
   sohbetAcikAnahtar, sohbetAcikIsaretle, sohbetAcikKapat, sohbetAcikMi,
@@ -12824,6 +12825,24 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
   // ilk yükleme DESC+reverse ile aynı sıraya gelir. Bir kez daha
   // reverse yeni mesajları listenin başına atardı.
   const durum = await sohbetDurumGetir(partnerId, req.kullanici.id);
+  // Bu sohbet BENİM İÇİN bekleyen bir MESAJ İSTEĞİ mi? (24 Ağu 2026,
+  // kullanıcı isteği: Kabul/Reddet sohbetin İÇİNDE görünsün ve kabul
+  // edilmeden yanıt yazılamasın.) Kural `sohbetIstekMi` ile BİREBİR aynı —
+  // iki yerde iki ayrı tanım, birinin sessizce eskimesi demek olurdu.
+  const ist = await havuz.query(
+    `SELECT EXISTS(SELECT 1 FROM takipler
+                   WHERE takip_eden_id=$1 AND takip_edilen_id=$2) AS takip,
+            EXISTS(SELECT 1 FROM mesajlar
+                   WHERE gonderen_id=$1 AND alici_id=$2) AS ben_yazdim,
+            EXISTS(SELECT 1 FROM mesajlar
+                   WHERE gonderen_id=$2 AND alici_id=$1) AS o_yazdi,
+            (SELECT karar FROM mesaj_istek_kararlari
+             WHERE kullanici_id=$1 AND partner_id=$2) AS karar`,
+    [req.kullanici.id, partnerId]);
+  const iv = ist.rows[0];
+  const istek = iv.o_yazdi && sohbetIstekMi({
+    takip_ediyorum: iv.takip, ben_yazdim: iv.ben_yazdim, istek_karar: iv.karar,
+  }) ? (iv.karar === 'red' ? 'red' : 'bekliyor') : null;
   res.json({
     mesajlar: rows,
     guncellemeler,
@@ -12832,6 +12851,8 @@ app.get('/mesajlar/:kullaniciAdi', girisZorunlu, sarici(async (req, res) => {
     gonderiler,
     yaziyor: durum != null,
     durum: durum,
+    // 'bekliyor' | 'red' | null — eski istemci alanı tanımaz, görmezden gelir.
+    istek,
   });
 }));
 
@@ -13640,10 +13661,23 @@ async function rafPlaniOku(kullaniciId) {
 async function rafIcerigi(raf, eldeki) {
   let ham = [];
   if (raf.tip === 'firma') {
-    const v = await tmdbGetir(
-      `/discover/${raf.medya}?with_companies=${raf.id}&sort_by=popularity.desc`,
-      ONBELLEK_TTL_SN.varsayilan);
-    ham = Array.isArray(v?.results) ? v.results : [];
+    // TEK sayfa 20 sonuç veriyordu; kullanıcı çoğunu izlemişse süzgeçten
+    // sonra rafta 5-6 öğe kalıyordu (24 Ağu 2026 kullanıcı bildirimi:
+    // "Marvel Studios filmleri 5 tane gösteriyor"). Tavanı dolduracak aday
+    // birikene dek en çok 3 sayfa gezilir; ilk sayfanın adresi ESKİSİYLE
+    // AYNI bırakılır ki mevcut önbellek satırı boşa düşmesin.
+    for (let sayfa = 1; sayfa <= 3; sayfa++) {
+      const v = await tmdbGetir(
+        `/discover/${raf.medya}?with_companies=${raf.id}&sort_by=popularity.desc`
+        + (sayfa > 1 ? `&page=${sayfa}` : ''),
+        ONBELLEK_TTL_SN.varsayilan);
+      const gelen = Array.isArray(v?.results) ? v.results : [];
+      ham.push(...gelen);
+      if (gelen.length < 20) break; // TMDB'de devamı yok
+      const aday = ham.filter((r) => r && r.poster_path
+        && !eldeki.has(`${raf.medya}:${Number(r.id)}`)).length;
+      if (aday >= RAF_ICERIK_TAVAN) break;
+    }
   } else {
     const v = await tmdbGetir(
       `/person/${raf.id}/combined_credits`, ONBELLEK_TTL_SN.uzun);
@@ -14454,9 +14488,53 @@ function aramaKisiSirketYollari(varyantlar, q = '') {
 // Kişi (oyuncu/yönetmen/senarist) /search/person ile, şirket (Cartoon Network)
 // /search/company ile takviye edilir. Multi şirket DÖNMEZ; kişi sıralaması
 // zayıf kalabilir. Toplu çağrı tmdbTopluGetir ile 8'li öbek (proje kuralı).
+// ---- arama dil desteği (24 Ağu 2026, kullanıcı bildirimi) ----
+// /ara TMDB'ye DİLSİZ gidiyordu (TMDB varsayılanı en-US): İngilizce çevirisi
+// olmayan yapımlar aramada ORİJİNAL (Çince/Japonca...) adla listeleniyordu;
+// içerik sayfası ise kullanıcının dilinde ad gösteriyordu. Artık istemci
+// `dil` yollar ve arama o dilde yapılır. Latin alfabesi kullanan arayüz
+// dillerinde ek bir güvence daha var: seçilen ad HİÇ Latin harf içermiyorsa
+// (çeviri yok → TMDB orijinale düşmüş) en-US adı, o da Latin değilse Latin
+// orijinal ad tercih edilir — "kullanıcı Latin alfabesindeyse ad Latin
+// yazılışıyla görünsün".
+const ARAMA_DIL_ESLE = { tr: 'tr-TR', en: 'en-US', pt: 'pt-BR', zh: 'zh-CN' };
+const LATIN_DISI_DILLER = new Set([
+  'ar', 'fa', 'ur', 'he', 'ru', 'uk', 'bg', 'sr', 'mk', 'el', 'zh', 'ja',
+  'ko', 'th', 'hi', 'bn', 'mr', 'ta', 'te', 'kn', 'ml', 'gu', 'pa', 'ne',
+  'si', 'my', 'km', 'am', 'ka', 'yi',
+]);
+const LATIN_HARF = /[A-Za-z]/;
+function aramaDili(ham) {
+  const dil = String(ham || '').toLowerCase();
+  if (!/^[a-z]{2}(-[a-z]{2})?$/.test(dil)) return 'en-US';
+  return ARAMA_DIL_ESLE[dil] || dil;
+}
+// Satırların görünen adını YERİNDE Latinleştirir (yalnız tv/movie satırları).
+function latinAdDuzelt(satirlar, enAdlar) {
+  for (const r of satirlar) {
+    if (r.media_type !== 'tv' && r.media_type !== 'movie') continue;
+    const alan = r.media_type === 'tv' ? 'name' : 'title';
+    const ad = r[alan];
+    if (ad && LATIN_HARF.test(ad)) continue;
+    const en = enAdlar ? enAdlar.get(`${r.media_type}:${r.id}`) : null;
+    const orj = r.original_name || r.original_title;
+    const yeni = (en && LATIN_HARF.test(en)) ? en
+      : (orj && LATIN_HARF.test(orj)) ? orj : null;
+    if (yeni) r[alan] = yeni;
+  }
+}
+
 app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   const q = String(req.query.q || '').trim();
   if (q.length < 2) return res.json({ results: [] });
+  const dil = aramaDili(req.query.dil || 'en');
+  const dilKok = dil.slice(0, 2);
+  const latinUi = !LATIN_DISI_DILLER.has(dilKok);
+  // en-US ikinci getirme yalnız GEREKTİĞİNDE: Latin arayüz + dil zaten en
+  // değilse. Varyant başına en fazla bir ek çağrı ve o da 6 saate kadar
+  // önbellekte — arama gecikmesine ölçülür bir ek getirmez.
+  const enGerek = latinUi && dilKok !== 'en';
+  const enAdlar = new Map();
   // Tabanlar: aynen + "the"siz; her taban için bir de boşluksuz hali
   // ("the black list" → "the black list", "theblacklist", "black list",
   // "blacklist"). Bitişik → boşluklu yönü belirsiz olduğundan denenmez.
@@ -14467,13 +14545,26 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
       // TTL yanıta göre: sonuçsuz varyant 15 dk, kıl payı dolu (1-2) 30 dk,
       // dolu varyant 6 saat. Varyantlar AYRI önbellek satırları olduğundan
       // her biri kendi doluluğuna göre yaşar.
-      const d = await tmdbGetir(
-        `/search/multi?query=${encodeURIComponent(v)}`,
-        aramaTtl(ONBELLEK_TTL_SN.varsayilan),
-      );
+      const [d, dEn] = await Promise.all([
+        tmdbGetir(
+          `/search/multi?query=${encodeURIComponent(v)}&language=${dil}`,
+          aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+        ),
+        enGerek
+          ? tmdbGetir(
+            `/search/multi?query=${encodeURIComponent(v)}&language=en-US`,
+            aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+          ).catch(() => null)
+          : Promise.resolve(null),
+      ]);
       for (const r of (d.results || [])) {
         const k = `${r.media_type}:${r.id}`;
         sonuclar.set(k, aramaSatirBirlestir(sonuclar.get(k), r));
+      }
+      for (const r of ((dEn && dEn.results) || [])) {
+        if (r.media_type !== 'tv' && r.media_type !== 'movie') continue;
+        const ad = r.name || r.title;
+        if (ad) enAdlar.set(`${r.media_type}:${r.id}`, ad);
       }
     } catch { /* tek varyant hatası aramayı bozmasın */ }
   }));
@@ -14499,6 +14590,7 @@ app.get('/ara', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   // thrones" aramasında House of the Dragon (daha popüler) üste çıkıyordu.
   const hedefler = aramaHedefleri(q, varyantlar);
   let results = aramaSonuclariDiz(sonuclar.values(), hedefler);
+  if (latinUi) latinAdDuzelt(results, enAdlar);
   icerikDizineEkle(results); // dizin her başarılı aramayla zenginleşir
   let duzeltme = null;
   if (!results.length) {
@@ -14563,13 +14655,35 @@ app.get('/ara-tur', girisZorunlu, aramaLimiti, sarici(async (req, res) => {
   }
   const sayfa = Math.min(
     Math.max(parseInt(req.query.sayfa, 10) || 1, 1), ARA_TUR_AZAMI_SAYFA);
-  const d = await tmdbGetir(
-    `${yol}?query=${encodeURIComponent(q)}&page=${sayfa}`,
-    aramaTtl(ONBELLEK_TTL_SN.varsayilan),
-  );
+  // Dil desteği `/ara` ile aynı sözleşme: kullanıcının dilinde ara, Latin
+  // arayüzde Latin olmayan adı en-US/orijinal Latin karşılığıyla değiştir.
+  const dil = aramaDili(req.query.dil || 'en');
+  const dilKok = dil.slice(0, 2);
+  const latinUi = !LATIN_DISI_DILLER.has(dilKok);
+  const enGerek = latinUi && dilKok !== 'en' && tur !== 'person';
+  const [d, dEn] = await Promise.all([
+    tmdbGetir(
+      `${yol}?query=${encodeURIComponent(q)}&page=${sayfa}&language=${dil}`,
+      aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+    ),
+    enGerek
+      ? tmdbGetir(
+        `${yol}?query=${encodeURIComponent(q)}&page=${sayfa}&language=en-US`,
+        aramaTtl(ONBELLEK_TTL_SN.varsayilan),
+      ).catch(() => null)
+      : Promise.resolve(null),
+  ]);
   // İstemci satırları türsüz ayırt edemesin diye media_type damgalanır
   // (türe özel TMDB uçları media_type alanı DÖNDÜRMEZ).
   const results = (d.results || []).map((r) => ({ ...r, media_type: tur }));
+  if (latinUi && tur !== 'person') {
+    const enAdlar = new Map();
+    for (const r of ((dEn && dEn.results) || [])) {
+      const ad = r.name || r.title;
+      if (ad) enAdlar.set(`${tur}:${r.id}`, ad);
+    }
+    latinAdDuzelt(results, enAdlar);
+  }
   res.json({
     results,
     sayfa: d.page || sayfa,

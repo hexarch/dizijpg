@@ -150,7 +150,7 @@ mixin AramaMantigi<T extends StatefulWidget> on State<T> {
     try {
       final q = Uri.encodeComponent(sorgu.trim());
       final y = await Future.wait([
-        Api.get('/ara?q=$q'),
+        Api.get('/ara?q=$q&dil=${Ceviri.dil.value}'),
         Api.get('/kullanici-ara?q=$q').catchError((_) => <String, dynamic>{}),
       ]);
       if (!mounted || this.sorgu.trim() != sorgu.trim()) return;

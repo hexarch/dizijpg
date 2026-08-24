@@ -17,6 +17,8 @@ Durulmadı. Kalan GSC işi kodlandı:
 - Kişi SSR TMDB+DB paralel; filmografi dilimlenmeden sayılır.
 - Firma sitemap yalnız afişli katalog; discover 20'lik sayfa dilimsiz eşik.
 - sitemap-genel `/gizlilik` gerçek lastmod. GoogleOther + DuckDuckBot SSR.
+- Kişi haritası soğukta ~26 sn: sorgu tavanı 40 sn, nginx 45 sn (25 sn 500 basıyordu).
+- İçerik SSR TMDB+vitrin+eşik paralel; JSON-LD `dateModified` gerçek yorum gününden.
 
 ## 2026-08-23 — 🚀 GSC SEO: şema + kanonik + 45 dil (aynı URL)
 
@@ -6367,3 +6369,11 @@ projeler/dizijpg.apk (80,1 MB) + projeler/dizijpg-1.93.0+143.aab (107,2 MB),
 ikisi de aapt2 ile 1.93.0/143 + apksigner yayın imzası doğrulandı; eski
 1.92.0+142.aab silindi. Sürüm notu: surum-notu-1.93.0.txt (tr 473/en 445 tarzı
 ≤500). AAB üretim kanalına yüklenmeyi bekliyor.
+
+## 24 Ağu 2026 akşam istekleri (kullanıcı)
+- [x] Web sohbet: Enter mesajı göndersin, Shift+Enter yeni satır (yalnız web).
+- [x] Arama: sonuç adları kullanıcının dilinde; Latin alfabesi kullanan dilde CJK orijinal ad yerine Latin yazılış (kök neden: /ara dil paramsız → en-US; EN çevirisi olmayanlar orijinal kalıyor).
+- [x] Sohbet: yalnız emojiden oluşan mesaj balonu 2× büyük metin.
+- [x] Sohbet: yeni mesaj gelince otomatik dibe kaydır (kullanıcı dipteyse); sürekli elle kaydırma bitsin.
+- [x] Mesaj istekleri: Kabul et / Reddet sohbet ekranının İÇİNDE altta; kabul edilmeden yanıt yazılamasın.
+- [x] Ana sayfa rafları (ör. Marvel Studios filmleri): 5 öğeyle kalmasın — yatay kaydırdıkça sonraki sayfa yüklensin.

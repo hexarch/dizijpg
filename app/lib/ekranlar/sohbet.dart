@@ -3,6 +3,8 @@ import 'dart:ui' show FontFeature;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart'
+    show HardwareKeyboard, KeyDownEvent, LogicalKeyboardKey;
 import 'package:flutter/gestures.dart'
     show DragStartBehavior, HorizontalDragGestureRecognizer, PointerEvent;
 import 'package:flutter/material.dart';
@@ -17,6 +19,7 @@ import '../dosya_oku.dart';
 import '../gorsel_basliklari.dart';
 import '../gorusme/arama_dugmeleri.dart';
 import '../medya_yukle.dart';
+import '../yalniz_emoji.dart';
 import '../push.dart';
 import '../sohbet_olay.dart';
 import '../tema.dart';
@@ -856,7 +859,20 @@ class CevrimiciAvatar extends StatelessWidget {
 class SohbetEkrani extends StatefulWidget {
   final String kullaniciAdi;
 
-  const SohbetEkrani({super.key, required this.kullaniciAdi});
+  /// Enter mesajı gönderir mi? (Shift+Enter her zaman yeni satır.)
+  ///
+  /// Varsayılan `kIsWeb`: fiziksel klavyede Enter'dan gönderme beklentisi
+  /// web'e ait (WhatsApp Web geleneği); mobilde Enter yeni satırdır.
+  /// PARAMETRE olması test içindir — `flutter test` daima `kIsWeb == false`
+  /// koşar ve gömülü bayrak bu davranışı testlerden tamamen gizlerdi
+  /// (google_kapisi.dart'taki `web` parametresiyle aynı ders).
+  final bool enterIleGonder;
+
+  const SohbetEkrani({
+    super.key,
+    required this.kullaniciAdi,
+    bool? enterIleGonder,
+  }) : enterIleGonder = enterIleGonder ?? kIsWeb;
 
   @override
   State<SohbetEkrani> createState() => _SohbetEkraniState();
@@ -896,6 +912,40 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   /// koşulu da yalnız üçü de boşsa 400 veriyor.
   Map<String, dynamic>? _bekleyenIcerik;
   final _metin = TextEditingController();
+
+  /// Bu sohbet bekleyen bir MESAJ İSTEĞİ mi? Sunucudan gelir:
+  /// 'bekliyor' | 'red' | null. Null değilse yanıt kutusu yerine
+  /// Kabul et / Reddet çubuğu çizilir (24 Ağu 2026 kullanıcı isteği:
+  /// "kabul etmeden yanıt veremez olmalı, düğmeler sohbetin içinde").
+  String? _istek;
+
+  /// Web'de Enter = gönder, Shift+Enter = yeni satır (WhatsApp Web geleneği).
+  ///
+  /// `onKeyEvent` TextField'a KARAKTER GİRİLMEDEN önce çalışır: handled
+  /// dönülen Enter satır sonu olarak kutuya YAZILMAZ. KeyDown dışındaki
+  /// (repeat/up) Enter olayları da yutulur — basılı tutulan Enter art arda
+  /// boş satır basmasın.
+  late final FocusNode _metinOdak = FocusNode(
+    onKeyEvent: (node, olay) {
+      if (!widget.enterIleGonder) return KeyEventResult.ignored;
+      final enterMi =
+          olay.logicalKey == LogicalKeyboardKey.enter ||
+          olay.logicalKey == LogicalKeyboardKey.numpadEnter;
+      if (!enterMi) return KeyEventResult.ignored;
+      if (HardwareKeyboard.instance.isShiftPressed) {
+        return KeyEventResult.ignored; // Shift+Enter → yeni satır
+      }
+      if (olay is KeyDownEvent) {
+        final metin = _metin.text.trim();
+        // Boş Enter gönderim DENEMEZ ama yine yutulur: boş mesaj kutusuna
+        // salt satır sonu birikmesin.
+        if (metin.isNotEmpty || _bekleyenIcerik != null) {
+          _gonder(metin: metin);
+        }
+      }
+      return KeyEventResult.handled;
+    },
+  );
   final _kaydirma = ScrollController();
   Timer? _sayac;
 
@@ -1104,6 +1154,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kaydirmaSayaclari.clear();
     _metin.removeListener(_yaziyorBildir);
     _metin.dispose();
+    _metinOdak.dispose();
     _kaydirma.dispose();
     _saatKaydirici.dispose();
     super.dispose();
@@ -1252,6 +1303,58 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
+  /// Mesaj isteği çubuğu: yanıt kutusunun YERİNE çizilir. Düğme düzeni
+  /// istek listesindeki kartla aynı (FilledButton kabul, OutlinedButton red)
+  /// — iki ekranda iki ayrı dil olmasın.
+  Widget _istekCubugu() {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 44,
+            child: OutlinedButton(
+              onPressed: () => _istekKarari('red'),
+              child: Text('Reddet'.c, maxLines: 1),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: SizedBox(
+            height: 44,
+            child: FilledButton(
+              onPressed: () => _istekKarari('kabul'),
+              child: Text('Kabul et'.c, maxLines: 1),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _istekKarari(String karar) async {
+    final partnerId = (_partner?['id'] as num?)?.toInt();
+    if (partnerId == null) return;
+    try {
+      await Api.post('/mesaj-istekleri/karar', {
+        'partner_id': partnerId,
+        'karar': karar,
+      });
+    } catch (_) {
+      // Çubuk yerinde kalır; kullanıcı yeniden dokunabilir. Sessiz kayıp yok:
+      // düğme etkisiz kalmış gibi görünür ve tekrar denenebilir.
+      return;
+    }
+    if (!mounted) return;
+    if (karar == 'kabul') {
+      // Kutu anında açılır; sunucu da sonraki yoklamada istek=null döndürür.
+      setState(() => _istek = null);
+    } else {
+      // Reddedilen sohbette kalınmaz: listeye dönülür (Instagram davranışı).
+      context.pop();
+    }
+  }
+
   void _sonaKaydir() {
     // Görsel/video baloncukları sonradan yüklenip yüksekliği değiştirdiğinden
     // birkaç kez dener; her seferinde gerçek en-alta sabitler.
@@ -1267,12 +1370,21 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       t.cancel();
     }
     _kaydirmaSayaclari.clear();
-    for (final ms in const [0, 120, 400]) {
+    // Pencere 2,4 sn'ye uzatıldı (24 Ağu 2026, kullanıcı: "sürekli aşağı
+    // kaydırmak zorunda kalıyorum"): webde görseller 400 ms'den geç gelip
+    // listeyi büyütüyor, dip kaçıyordu. Geç zamanlayıcılar yalnız kullanıcı
+    // hâlâ dipteyken sabitler — bu pencere içinde bilerek yukarı kaydıran
+    // biri aşağı ÇEKİLMEZ.
+    for (final ms in const [0, 120, 400, 900, 1600, 2400]) {
       _kaydirmaSayaclari.add(
         Timer(Duration(milliseconds: ms), () {
-          if (mounted && _kaydirma.hasClients) {
-            _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
+          if (!mounted || !_kaydirma.hasClients) return;
+          if (ms > 400 &&
+              _kaydirma.position.pixels <
+                  _kaydirma.position.maxScrollExtent - 800) {
+            return;
           }
+          _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
         }),
       );
     }
@@ -1334,6 +1446,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       if (!mounted) return;
       final gelen = d['mesajlar'] as List<dynamic>? ?? const [];
       final durum = sohbetDurumCoz(d);
+      final istek = d['istek'] as String?;
       final partner = d['partner'] as Map<String, dynamic>?;
       final icerikler = d['icerikler'] as Map<String, dynamic>? ?? {};
       final gonderiler = d['gonderiler'] as Map<String, dynamic>? ?? {};
@@ -1364,7 +1477,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
 
       final parmak = _mesajParmakIzi(birlesik, durum, partner);
       final eski = _mesajParmakIzi(_mesajlar, _karsiDurum, _partner);
-      if (!ilk && parmak == eski && _hata == null) return;
+      if (!ilk && parmak == eski && istek == _istek && _hata == null) return;
 
       final altaYakinDi =
           !_kaydirma.hasClients ||
@@ -1374,6 +1487,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
         _icerikler.addAll(icerikler);
         _gonderiler.addAll(gonderiler);
         _karsiDurum = durum;
+        _istek = istek;
         if (partner != null) _partner = partner;
         _yuklendi = true;
         _hata = null;
@@ -2078,7 +2192,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
               SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 6, 8, 10),
-                  child: _kaydediyor
+                  // Bekleyen mesaj isteğinde yanıt kutusu HİÇ çizilmez:
+                  // kabul edilmeden yanıt verilemez (24 Ağu 2026).
+                  child: _istek != null
+                      ? _istekCubugu()
+                      : _kaydediyor
                       ? _kayitCubugu()
                       : Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -2088,6 +2206,7 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                             Expanded(
                               child: TextField(
                                 controller: _metin,
+                                focusNode: _metinOdak,
                                 minLines: 1,
                                 maxLines: 4,
                                 maxLength: 2000,
@@ -2783,7 +2902,16 @@ class _MesajBaloncugu extends StatelessWidget {
                     ),
                   ),
                 if (metin != null && metin.isNotEmpty)
-                  Text(metin, style: TextStyle(color: yaziRengi, height: 1.35)),
+                  Text(
+                    metin,
+                    style: TextStyle(
+                      color: yaziRengi,
+                      height: 1.35,
+                      // Yalnız emojiden oluşan mesaj 2× boyut (24 Ağu 2026
+                      // kullanıcı isteği; WhatsApp/Telegram geleneği).
+                      fontSize: yalnizEmoji(metin) ? 28 : null,
+                    ),
+                  ),
                 // Saat GÖRSEL OLARAK GİZLİ (sağdaki sürükleme sütununda).
                 // Ekran okuyucu kullanan biri sürükleme yapamaz, o yüzden
                 // balonun erişilebilirlik etiketinin SONUNA eklenir:

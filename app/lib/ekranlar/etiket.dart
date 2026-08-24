@@ -341,7 +341,9 @@ class _EtiketliGirdiState extends State<EtiketliGirdi> {
 
   Future<List<dynamic>> _iceriklerGetir(String q) async {
     try {
-      final d = await Api.get('/ara?q=${Uri.encodeQueryComponent(q.trim())}');
+      final d = await Api.get(
+        '/ara?q=${Uri.encodeQueryComponent(q.trim())}&dil=${Ceviri.dil.value}',
+      );
       return (d['results'] as List<dynamic>? ?? []);
     } catch (_) {
       return [];
