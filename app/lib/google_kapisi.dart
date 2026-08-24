@@ -155,6 +155,30 @@ class GoogleKapisiMobil implements GoogleKapisi {
     try {
       await google.signOut();
     } catch (_) {}
+    try {
+      return await _girisDene();
+    } catch (e) {
+      // --- BOZUK HESAP DURUMU: KOPAR VE BİR KEZ DAHA DENE (24 Ağu 2026) ---
+      // Kullanıcı bildirdi: Play'den inen 1.93'te "Google girişi başarısız (5)".
+      // ApiException 5 (INVALID_ACCOUNT) ve 16 (reauth failed) SUNUCUYA HİÇ
+      // ULAŞMADAN Play Services içinde patlar (nginx'te /auth/google izi yok)
+      // ve ikisi de aynı kök nedene işaret eder: cihazdaki Google hesabının
+      // önbelleklenmiş oturum bağı bozulmuş. `signOut()` bu bağı TEMİZLEMEZ —
+      // yalnız kendi tarafımızı sıfırlar; bağı koparan `disconnect()`tır.
+      // Bedeli küçük: kullanıcı bir sonraki girişte izin ekranını yeniden
+      // görür — ama bu yol ZATEN patlamış girişte çalışır, sürtünme hatadan
+      // iyidir. Diğer kodlar (7 ağ, 12501 iptal...) AYNEN fırlatılır: onlarda
+      // koparmak çare değil, mesajı gizlemek teşhisi de gizler.
+      final kod = googleHataKodu(e);
+      if (kod != ' (5)' && kod != ' (16)') rethrow;
+      try {
+        await google.disconnect();
+      } catch (_) {}
+      return await _girisDene();
+    }
+  }
+
+  Future<GoogleKimligi?> _girisDene() async {
     final hesap = await google.signIn();
     if (hesap == null) return null; // kullanıcı seçiciyi kapattı
     final yetki = await hesap.authentication;

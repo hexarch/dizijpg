@@ -1,0 +1,13 @@
+1.94.0 (144) — 24 Ağustos 2026
+
+DÜZELTME
+- Google ile giriş: Play Services "başarısız (5)" / "(16)" hatalarında uygulama
+  artık Google hesap bağını kendisi koparıp (disconnect) girişi otomatik olarak
+  bir kez daha deniyor. Bozuk hesap önbelleği yüzünden girişin tamamen
+  tıkanması son buldu; diğer hata kodları (ağ, iptal) davranışını korudu.
+
+Play mağaza notu (TR):
+- Google ile giriş hatası düzeltildi.
+
+Play store note (EN):
+- Fixed a Google Sign-In failure.
