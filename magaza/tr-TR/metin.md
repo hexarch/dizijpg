@@ -1,7 +1,7 @@
 # tr-TR
 
 ## Uygulama adı (≤30)
-dizi.jpg: Dizi ve Film Takibi
+Dizi JPG
 
 ## Kısa açıklama (≤80)
 Dizi ve film günlüğün: bölümleri işaretle, takvimle yetiş, birlikte keşfet.
