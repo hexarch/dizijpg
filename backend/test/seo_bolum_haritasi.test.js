@@ -120,8 +120,11 @@ const HARITA_DALI = bolum('  ), birlesik AS (', '  )\n  SELECT tmdb_id, sezon, b
 
 test('harita süzgeci ile sayfanın `indexle`si AYNI DÖRT ALANI sayıyor', () => {
   const olcu = bildirimCek('bolumIcerikOlcusu');
-  // SQL tarafı: `birlesik` CTE'sinin WHERE'i.
-  const where = /WHERE b\.ozet > 0 OR b\.konuk > 0 OR b\.kare > 0 OR b\.yayin < current_date/;
+  // SQL tarafı: `birlesik` CTE'sinin WHERE'i. 25 Ağu 2026'dan beri dört
+  // sinyal PARANTEZ içinde: üstüne dizi düzeyi kapsam süzgeci (aşağıdaki
+  // test) AND'lendi. Parantez şart — OR zinciri AND'den gevşek bağlanır,
+  // parantezsiz hâli `... OR (yayin < bugün AND kapsam)` okunurdu.
+  const where = /WHERE \(b\.ozet > 0 OR b\.konuk > 0 OR b\.kare > 0 OR b\.yayin < current_date\)/;
   assert.match(HARITA_DALI, where, 'harita süzgeci değişmiş');
   // JS tarafı: aynı dört sinyal, TMDB alan adlarıyla.
   assert.match(olcu, /seoMetin\(ozet\)/, 'özet sinyali yok');
@@ -132,6 +135,51 @@ test('harita süzgeci ile sayfanın `indexle`si AYNI DÖRT ALANI sayıyor', () =
   // güncellenmeli — sayı iddiası bunu zorluyor.
   const terimler = HARITA_DALI.match(/b\.(ozet|konuk|kare|yayin)\b/g) || [];
   assert.equal(new Set(terimler).size, 4);
+});
+
+// ===========================================================================
+// KAPSAM KESME (25 Ağu 2026, SEO-YAPILACAKLAR §5) — üç taraf AYNI süzgeç
+// ===========================================================================
+// 20 Ağu genişlemesi GSC'de 21.394'lük keşif kuyruğu üretti. Kesme kuralı
+// (TR yapım / yayında dizinin sonraki sezonu / eşikli yorum) ÜÇ yerde birden
+// yaşamak zorunda: harita, ısıtıcı kuyruğu, dizi sayfası iç bağlantıları.
+// Biri geniş kalırsa ya kesilen URL iç bağlantıyla geri keşfedilir ya da
+// haritadan çıkan URL'ye ısıtma bütçesi yanar.
+test('harita bölümü dizi düzeyi kapsam süzgecinden geçiriyor (TR / sonraki sezon)', () => {
+  const sorgu = bildirimCek('SITEMAP_BOLUM_SORGU');
+  assert.match(sorgu, /dizi_bilgi AS \(/, 'dizi düzeyi kapsam CTE\'si yok');
+  assert.match(sorgu, /\(veri->'origin_country'\) \? 'TR' AS tr_yapim/,
+    'TR yapım sinyali detay belgesinden okunmuyor');
+  assert.match(sorgu, /next_episode_to_air'->>'season_number'/,
+    'yayında-dizi sinyali yok');
+  assert.match(HARITA_DALI, /AND \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon\)/,
+    'kapsam süzgeci birlesik WHERE\'ine AND\'lenmemiş');
+  // `bizim_bolum` dalı kapsamdan BAĞIMSIZ kalmalı (eşikli yorum her dizide
+  // haritaya girer) — UNION dalında dizi_bilgi koşulu OLMAMALI.
+  const bizimSatir = HARITA_DALI.slice(HARITA_DALI.indexOf('UNION ALL'));
+  assert.doesNotMatch(bizimSatir, /dizi_bilgi|tr_yapim/,
+    'bizim_bolum dalı kapsam süzgecine bağlanmış — eşikli yorumlu bölüm düşer');
+});
+
+test('ısıtıcı kuyruğu haritayla AYNI kapsamda (haritadan çıkana bütçe yok)', () => {
+  const isitma = bildirimCek('ISITMA_BOLUM_SORGU');
+  assert.match(isitma, /dizi_bilgi AS \(/);
+  const kosullar = isitma.match(/d\.tr_yapim OR [gv]\.sezon_no = d\.sonraki_sezon/g) || [];
+  assert.equal(kosullar.length, 2, 'kapsam süzgeci iki dala da uygulanmalı');
+  // Haritanın `bizim_bolum` dalındaki bölümler de ısıtılmalı (bildirilen URL
+  // soğuk kalmasın) ve dallar çakışabildiği için dış SELECT DISTINCT olmalı.
+  assert.match(isitma, /\$\{SEO_YORUM_KOSUL\}/, 'bizim dalı ısıtma kuyruğunda yok');
+  assert.match(isitma, /SELECT DISTINCT tmdb_id, sezon, bolum FROM/);
+});
+
+test('dizi sayfası bölüm bağlantıları haritayla AYNI kapsamda', () => {
+  const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
+  assert.match(b, /origin_country.*includes\('TR'\)/, 'TR yapım dalı yok');
+  assert.match(b, /next_episode_to_air\?\.season_number/, 'yayında-dizi dalı yok');
+  assert.match(b, /if \(!trYapim && !sonrakiSezon\) return '';/,
+    'kapsam dışı dizi hâlâ bölüm bağlantısı basıyor — kesilen URL geri keşfedilir');
+  assert.match(b, /if \(!trYapim\) sezonlar = sezonlar\.filter\(\(s\) => s\.season_number === sonrakiSezon\);/,
+    'yayında dizide bağlantı sonraki sezonla sınırlanmamış');
 });
 
 test('harita, sayfadan BİR GÜN DAHA DAR (saat dilimi ayrışması imkânsız)', () => {

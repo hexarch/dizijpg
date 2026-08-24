@@ -2835,12 +2835,26 @@ function seoDiziBolumHtml(id, diziAd, sezonlar, eskiBaglantilar = []) {
  * `episodes[]` listesinden gelir — TMDB numaralandırmasında boşluk olsa bile
  * bota olmayan bir URL bildirilmez (Silo S3E8 tarama tuzağı kuralı KORUNUYOR;
  * değişen şey "yalnız yorumu olan bölüm" sınırı).
+ *
+ * 25 Ağu 2026 — BAĞLANTI KAPSAMI HARİTAYLA HİZALANDI (SEO-YAPILACAKLAR §5,
+ * §6.1). Harita kesilince (`SITEMAP_BOLUM_SORGU`, `dizi_bilgi` süzgeci) bu
+ * gövde eski genişlikte kalsaydı kesilen 73 bin URL iç bağlantıyla YENİDEN
+ * keşfedilir, GSC keşif kuyruğu (21.394) hiç inmezdi. Kural haritayla AYNI:
+ *   · TR YAPIMI dizi → eski davranış (son sezonlar tek tek + diğer sezonlar),
+ *   · YAYINDA dizi   → yalnız `next_episode_to_air.season_number` sezonu,
+ *   · diğerleri      → bölüm bloğu HİÇ basılmaz.
+ * Eşikli yorum/incelemesi olan bölümler (haritanın `bizim_bolum` dalı) zaten
+ * sayfadaki yorum bölümünden bağlantı alıyor; burada ayrıca ele alınmıyor.
  */
 async function seoDiziBolumGovdesi(id, v) {
-  const sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
+  const trYapim = Array.isArray(v?.origin_country) && v.origin_country.includes('TR');
+  const sonrakiSezon = seoPozitif(v?.next_episode_to_air?.season_number);
+  if (!trYapim && !sonrakiSezon) return '';
+  let sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
     .filter((s) => Number.isInteger(s?.season_number) && s.season_number >= 1
       && Number.isInteger(s?.episode_count) && s.episode_count > 0)
     .sort((a, b) => a.season_number - b.season_number);
+  if (!trYapim) sezonlar = sezonlar.filter((s) => s.season_number === sonrakiSezon);
   if (!sezonlar.length) return '';
   // SONDAN geriye: en yeni sezonlar tek tek, bölüm tavanına sığdığı kadar.
   // İlk sezon tavanı tek başına aşsa bile listeye girer (`tam.length` şartı):
@@ -5833,9 +5847,54 @@ const SITEMAP_SORGU = `
 // dosyalara bölünüyor; sıra her üretimde değişirse URL'ler dosyalar arasında
 // yer değiştirir ve Google her seferinde tüm alt haritaları yeniden indirir.
 // Kimlik sırası sabittir: bir URL hep aynı dosyada kalır.
+//
+// ---------------------------------------------------------------------------
+// 25 Ağu 2026 — HARİTA KESİLDİ: 78.484 → ~5.100 URL (SEO-YAPILACAKLAR §5)
+// ---------------------------------------------------------------------------
+// 20 Ağu genişlemesinin GSC'de ölçülen sonucu (23 Ağu): "Keşfedildi —
+// taranmadı" 2.159 → 21.394, "Tarandı — eklenmedi" 30 → 619, indeks payı
+// %10 → %4 (payda şişti). Otorite sıfırken (dış bağlantı 0) 78 bin URL
+// bildirmek tarama bütçesini `/icerik` ailesinden çalıyordu.
+//
+// YENİ KAPSAM — içerik ölçüsü (dört sinyal) DURUYOR, üstüne DİZİ DÜZEYİ
+// kapsam süzgeci geldi (`dizi_bilgi` CTE). Bölüm haritaya ancak şunlardan
+// biriyle girer:
+//   · dizi TR YAPIMI (`origin_country` 'TR' içeriyor) — eşsiz veri
+//     yüzeyimiz; 19 dizi, 2.726 bölüm (canlı ölçüm, 25 Ağu),
+//   · dizi YAYINDA ve bölüm `next_episode_to_air.season_number` SEZONUNDA —
+//     tazelik sorgusu ("[dizi] son bölüm") bu sezonda yaşar; 52 dizi,
+//     2.358 bölüm. SEZONLA sınırlamak bilinçli: "yayında dizinin TÜM
+//     bölümleri" 10.515 yapıyordu (One Piece tek başına binlerce),
+//   · bölüme EŞİĞİ GEÇEN yorum/incelememiz var (`bizim_bolum` — eski dal).
+// Birleşim ~5.084 + bizim dal ⇒ "düşük binler" hedefi (§5 Kabul).
+//
+// `dizi_bilgi` NEDEN `/tv/:id?...language=tr-TR` ANAHTARINDAN: dizi düzeyi
+// alanlar (origin_country, next_episode_to_air) yalnız detay belgesinde var
+// ve haritadaki 1.219 dizinin 1.219'unda bu belge önbellekte (canlı ölçüm).
+// INNER JOIN bilinçli: detay belgesi olmayan dizinin bölümü haritaya girmez
+// (harita ⊆ indexlenebilir korunur; eksik yönü zararsız).
+//
+// İNDEKSLENEBİLİRLİK DEĞİŞMEDİ: kesilen bölüm sayfaları 200 + index dönmeye
+// devam eder (bkz. `bolumIcerikOlcusu`). Harita artık indexlenebilirin
+// ALT KÜMESİ — "haritada olup noindex dönen URL" (B2) hâlâ imkânsız, çünkü
+// kesme yalnız DARALTIR. İç bağlantı tarafı da aynı kapsama çekildi
+// (`seoDiziBolumGovdesi`): kesilen URL iç bağlantıyla yeniden keşfedilmesin.
 const SITEMAP_BOLUM_SORGU = `
   WITH harita_tv AS (
     SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
+  ), dizi_bilgi AS (
+    SELECT DISTINCT ON (tv) tv AS tmdb_id,
+           (veri->'origin_country') ? 'TR' AS tr_yapim,
+           CASE WHEN veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
+                THEN (veri->'next_episode_to_air'->>'season_number')::int
+           END AS sonraki_sezon
+      FROM (
+        SELECT (regexp_match(anahtar, '^/tv/([0-9]+)\\?'))[1]::int AS tv, veri
+          FROM tmdb_onbellek
+         WHERE anahtar ~ '^/tv/[0-9]+\\?'
+           AND anahtar LIKE '%language=tr-TR%'
+      ) t JOIN harita_tv h ON h.tmdb_id = t.tv
+     ORDER BY tv
   ), sezon_yaniti AS (
     SELECT (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[1]::int AS tmdb_id,
            (regexp_match(anahtar, '^/tv/([0-9]+)/season/([0-9]+)'))[2]::int AS sezon,
@@ -5878,8 +5937,11 @@ const SITEMAP_BOLUM_SORGU = `
     SELECT b.tmdb_id, b.sezon, b.bolum,
            CASE WHEN b.yayin < current_date THEN b.yayin END AS gun,
            NULL::timestamptz AS bizim
-      FROM tmdb_bolum b JOIN harita_tv h ON h.tmdb_id = b.tmdb_id
-     WHERE b.ozet > 0 OR b.konuk > 0 OR b.kare > 0 OR b.yayin < current_date
+      FROM tmdb_bolum b
+      JOIN harita_tv h ON h.tmdb_id = b.tmdb_id
+      JOIN dizi_bilgi d ON d.tmdb_id = b.tmdb_id
+     WHERE (b.ozet > 0 OR b.konuk > 0 OR b.kare > 0 OR b.yayin < current_date)
+       AND (d.tr_yapim OR b.sezon = d.sonraki_sezon)
     UNION ALL
     SELECT tmdb_id, sezon, bolum, NULL::date, son FROM bizim_bolum
   )
@@ -5958,9 +6020,31 @@ const SITEMAP_BOLUM_SORGU = `
 // numaralandırmada boşluk olsa bile en kötü ihtimalle boşa bir TMDB isteği
 // atılır. Bota bildirilen URL'ler (harita ve iç bağlantılar) her zaman
 // TMDB'nin GERÇEK bölüm listesinden gelir — uydurma URL yok.
+//
+// 25 Ağu 2026 — KUYRUK HARİTAYLA AYNI KAPSAMA ÇEKİLDİ (§5: "haritadan çıkan
+// URL'yi ısıtmak bütçe israfı"). `dizi_bilgi` süzgeci (TR yapım / yayında
+// dizinin sonraki sezonu) İKİ dala da uygulanıyor; tahmin dalı bu kapsamda
+// DURMAYA devam ediyor (kapsam dizisinin sezon belgesi önbellekte yoksa onu
+// çekebilmek için — kilit gerekçesi değişmedi). Üçüncü dal `bizim` eşikli
+// yorum/incelemesi olan bölümler: haritada kapsamdan bağımsız yer aldıkları
+// için ısıtma güvencesi ("Google'a bildirilen URL soğuk kalmaz") onlara da
+// işlesin. Dallar çakışabilir ⇒ dış SELECT DISTINCT.
 const ISITMA_BOLUM_SORGU = `
   WITH harita_tv AS (
     SELECT DISTINCT tmdb_id FROM (${SITEMAP_SORGU}) h WHERE tur = 'tv'
+  ), dizi_bilgi AS (
+    SELECT DISTINCT ON (tv) tv AS tmdb_id,
+           (veri->'origin_country') ? 'TR' AS tr_yapim,
+           CASE WHEN veri->'next_episode_to_air'->>'season_number' ~ '^[0-9]+$'
+                THEN (veri->'next_episode_to_air'->>'season_number')::int
+           END AS sonraki_sezon
+      FROM (
+        SELECT (regexp_match(anahtar, '^/tv/([0-9]+)\\?'))[1]::int AS tv, veri
+          FROM tmdb_onbellek
+         WHERE anahtar ~ '^/tv/[0-9]+\\?'
+           AND anahtar LIKE '%language=tr-TR%'
+      ) t JOIN harita_tv h ON h.tmdb_id = t.tv
+     ORDER BY tv
   ), tv_sezon AS (
     SELECT DISTINCT ON (tv, sezon_no) tv, sezon_no, bolum_adedi FROM (
       SELECT (regexp_match(anahtar, '^/tv/([0-9]+)(\\?|$)'))[1]::int AS tv,
@@ -5993,17 +6077,33 @@ const ISITMA_BOLUM_SORGU = `
   ), kapsanan AS (
     SELECT DISTINCT tv, sezon_no FROM gercek_bolum
   )
-  SELECT tmdb_id, sezon, bolum FROM (
+  SELECT DISTINCT tmdb_id, sezon, bolum FROM (
     SELECT g.tv AS tmdb_id, g.sezon_no AS sezon, g.bolum
       FROM gercek_bolum g
       JOIN harita_tv h ON h.tmdb_id = g.tv
+      JOIN dizi_bilgi d ON d.tmdb_id = g.tv
+     WHERE d.tr_yapim OR g.sezon_no = d.sonraki_sezon
     UNION ALL
     SELECT v.tv, v.sezon_no, s.bolum
       FROM tv_sezon v
       JOIN harita_tv h ON h.tmdb_id = v.tv
+      JOIN dizi_bilgi d ON d.tmdb_id = v.tv
       LEFT JOIN kapsanan k ON k.tv = v.tv AND k.sezon_no = v.sezon_no,
            LATERAL generate_series(1, v.bolum_adedi) s(bolum)
      WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0 AND k.tv IS NULL
+       AND (d.tr_yapim OR v.sezon_no = d.sonraki_sezon)
+    UNION ALL
+    SELECT b.tmdb_id, b.sezon, b.bolum FROM (
+      SELECT y.tmdb_id, y.sezon, y.bolum
+        FROM yorumlar y JOIN kullanicilar k ON k.id = y.kullanici_id
+       WHERE y.tur = 'tv' AND y.sezon IS NOT NULL AND y.bolum IS NOT NULL
+         AND ${SEO_YORUM_KOSUL}
+      UNION
+      SELECT p.tmdb_id, p.sezon, p.bolum
+        FROM puanlar p JOIN kullanicilar k ON k.id = p.kullanici_id
+       WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
+         AND ${SEO_INCELEME_KOSUL}
+    ) b
   ) t ORDER BY tmdb_id, sezon, bolum`;
 
 // ---------------------------------------------------------------------------

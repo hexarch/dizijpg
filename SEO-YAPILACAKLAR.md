@@ -1,735 +1,314 @@
-# dizi.jpg — SEO Yapılacaklar
+# dizi.jpg — SEO yapılacaklar
 
-> Sürüm 2.0 · 19 Ağustos 2026 — **Search Console verisiyle güncellendi**
-> Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
+> Sürüm **3.0** · 23 Ağustos 2026 — **Search Console + canlı Googlebot ölçümü**  
+> Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak  
 >
-> **Bu belge bir görev listesi değil, bir karar belgesidir.** Her maddede ne
-> yapılacağı kadar NEDEN yapıldığı ve neyin yapılmayacağı da yazılıdır. Bir
-> maddeyi atlamaya karar veren, gerekçesini buraya yazar.
+> Bu belge bir görev listesi değil, **karar belgesidir**. Neden / neden değil yazılır. Atlanan maddenin gerekçesi buraya işlenir.  
+> Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (aynı gün).
 
 ---
 
 ## 0. Yönetici özeti
 
-dizi.jpg teknik olarak sağlam kurulmuş bir SEO altyapısına sahip: bot'lara
-sunucu tarafında gerçek HTML basılıyor, yapılandırılmış veri zengin, soft-404
-disiplini testlerle kilitli, gizlilik yüzeyleri kapalı. **Teknik borç küçük.**
+Teknik borç **küçük**. Asıl tablo:
 
-Buna karşılık iki gerçek sorun var:
+1. **Tarama kuyruğu şişti.** Sitemap ~91.230 URL (78.483 bölüm). GSC: 21.394 “keşfedildi – inmedi”, 998 indeks. 19 Ağu’daki “bölüm açma” yasağı çiğnendi; veri haklı çıkardı.
+2. **Otorite sıfır.** GSC dış bağlantı **0**. 152 gösterim, **0 tıklama**, konum 63,6. Şema bunu kırmaz.
+3. **Kazanan sorgu tipi belli.** 95 sorgunun başı `… oyuncuları` / `… konusu` / `ad + yıl`. Gösterim alan 61 sayfanın **hepsi** `/icerik/*`. Kişi/bölüm/şirket SERP’te yok.
 
-1. **Bir politika riski.** İndekslenen puanlar sentetik hesaplardan besleniyor.
-   Bu, Google'ın inceleme snippet'i kurallarının açık ihlali ve yaptırımı
-   somut. (§2)
-2. **Bir konumlandırma sorunu.** İndekslenebilir yüzeyin ~%98'i, otoritesi
-   kıyaslanamaz sitelerle (IMDb, Wikipedia, JustWatch, Beyazperde) aynı sorguda
-   yarışan AI özetlerinden oluşuyor. Teknik olarak kusursuz olsak bile o
-   sorgularda görünmeyiz. (§3)
-
-**Stratejik tez:** Daha çok AI özeti üretmek değil, **elimizde eşsiz veri olan
-sayfaları indekslenebilir hâle getirmek.** Rekabet edemeyeceğimiz yerde
-sıralanmaya çalışmak yerine, rakiplerin zayıf olduğu yüzeyleri açmak.
-
-> ✅ **Search Console verisi alındı (19 Ağu 2026).** §1 gerçek rakamlarla
-> dolduruldu ve **öncelik sıralaması DEĞİŞTİ** — 1.0'daki en yüksek öncelikli
-> iş (bölüm sayfalarını açmak) veriye bakınca YANLIŞ hamle çıktı. Gerekçe §1.1.
+**Tez (aynı, sıkılaştı):** daha çok URL ve daha çok AI özeti değil; haritayı **kes**, 998 içerik sayfasının taranmasını koru, eşsiz veri yüzeyini (puan, yorum, kadro, TR yapım, sıkı bölüm) besle, dışarıda link al.
 
 ---
 
-## 0.1 Üzerinde ANLAŞILAN uygulama sırası
+## 0.1 Bağlayıcı sıra (23 Ağu)
 
-Bu beş adım 19 Ağu 2026'da kararlaştırıldı. Sıra **bağlayıcıdır**: bir sonraki
-adıma, öncekinin kabul ölçütü karşılanmadan geçilmez.
+Öncekinin kabulü olmadan sonrakine geçilmez.
 
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
-| **1** | **Ölç** — Search Console | Her şeyi yeniden çerçeveledi: 1.0'ın 3. maddesi bu veri yüzünden ertelendi. | §1 | ✅ |
-| **2** | **Riski kapat** — `aggregateRating` + persona puanları | Manuel işlem YOK, yani risk teorik kalmış; düzeltme yine de yapıldı (önleme). | §2 | ✅ **canlıda** (20 Ağu, 17 hesap işaretli) |
-| **3** | **32 adet 5xx'i temizle** | Googlebot hata alıyor: tarama bütçesi yanıyor ve güven düşüyor. Kuyruk sorununun en somut ve en ucuz parçası. | §6.9 | ✅ **canlıda** (20 Ağu, 1.86.0+136) |
-| **4** | **İç bağlantıyı güçlendir** — şirket SSR + görseller + `/gizlilik` | Sinyali derin sayfalara taşır. `/icerik` → firma bağlantıları tam da "keşfedildi ama taranmadı" kuyruğunu hedefler. | §6.1–6.3 | ✅ |
-| **5** | **Dış görünürlük** — ilk gerçek bağlantılar | Tarama bütçesinin asıl kaynağı otorite. Kod işi değil; ayrı bir plan gerektiriyor. | §4.6 | ⬜ |
-| ~~6~~ | ~~Bölüm sayfalarını aç~~ **ERTELENDİ** | Kuyruk boşalmadan yeni URL ailesi açmak var olanların taranma olasılığını seyreltir. Bkz. §1.1. | §5 | ⛔ şimdilik |
-| **4.5** | **Tarama verimini yükselt** — önbellek ısıtıcısı + SSR/uygulama anahtar birleştirme | Kuyruğun sebebi kalite değil HIZ: Googlebot'un hiç girmediği 2.071 URL soğuk, ilk ziyarette canlı TMDB bekliyor. | §6.10 | 🚀 **canlıda** (22 Ağu; kanıtlar §6.10 sonunda) |
-| **7** | **hreflang / çok dilli SSR** | Tavanı en yüksek iş ama tarama kuyruğu boşalmadan URL sayısını 45'le çarpmak kuyruğu kilitler. | §7 | ⬜ |
+| **1** | **Ölç** — GSC 23 Ağu | v2’nin 19 Ağu tablosu eski; sıra değişti | §1 | ✅ |
+| **2** | **Haritayı kes** — bölüm sitemap eşiği | 78k URL kuyruğu 10× şişirdi; 998’i seyreltir | §5 | 🚀 25 Ağu — 78.484 → **5.137** |
+| **3** | **GSC temizlik** — snippet doğrulama + 5xx kapanışı | 5 geçersiz Review, 34 5xx; ucuz güven | §2.2, §2.5, §6.9 | 🔨 25 Ağu: snippet + breadcrumb doğrulaması BAŞLATILDI; 5xx doğrulaması sürüyor |
+| **4** | **İç bağlantıyı koru / daralt** | `/icerik` → kişi/şirket evet; bölüm linki yalnız haritada kalan URL | §6.1 | 🚀 25 Ağu — bölüm linki haritayla hizalandı |
+| **5** | **Dış görünürlük** | Tıklama tavanı burada; kod değil | §4.6 | ⬜ |
+| **6** | hreflang / konuşan URL / yeni aile | Kuyruk düşünce | §7, §8 | ⛔ şimdilik |
+| ~~bölüm ailesini genişlet~~ | | Zaten fazla geniş | §5 | ⛔ tersine |
 
-> **Bir sonraki gözden geçirme:** "Keşfedildi – dizine eklenmemiş" sayısı
-> (bugün **2.159**) ölçülecek. Düşüyorsa iç bağlantı ve 5xx temizliği işe
-> yarıyor demektir ve ertelenen bölüm sayfaları tekrar masaya gelir.
-> Düşmüyorsa sorun otoritededir ve kod yazarak çözülmez (§4.6).
+**Sonraki gözden geçirme (7 gün):** “Keşfedildi – dizine eklenmemiş” 21.394. Düşüyorsa kesme işe yaradı. Artıyorsa harita hâlâ geniş veya Index’te yeni parça var. **Düşmeden slug/hreflang yok.**
 
 ---
 
-## 1. ÖLÇÜLDÜ — Search Console, 19 Ağu 2026
+## 1. ÖLÇÜLDÜ — Search Console, 23 Ağustos 2026
 
-| Ölçüm | Değer | Yorum |
+Pencere: performans 5–21 Ağu (GSC “3 ay”, fiilen bu). Dizin son güncelleme **21 Ağu**. Snippet **22 Ağu**. Sitemap okuma **23 Ağu**. Hesap: `alcelikbcayir@gmail.com` (`/u/0` bu oturumda; plan notundaki `/u/2` eskimiş olabilir — mülk aynı).
+
+| Ölçüm | 19 Ağu | **23 Ağu** | Yorum |
+|---|---|---|---|
+| Manuel işlem / güvenlik | yok | yok | |
+| Dizine eklenen | 264 / 2.515 (%10) | **998** / ~23,6 bin bilinen | İndeks 3,8×; pay %4 çünkü payda şişti |
+| Keşfedildi – taranmadı | 2.159 | **21.394** | Asıl yangın |
+| Tarandı – eklenmedi | 30 | **619** | İnce sayfa reddi |
+| noindex | 145 | **559** | Beklenen |
+| 5xx | 32 | **34** (doğrulama başladı) | |
+| Yumuşak 404 | 0 | **0** | |
+| Sitemap GSC | 2.515, hatasız | indeks **Başarılı**, son okuma bugün | Canlı origin ~91.230 URL |
+| Gösterim / tıklama / konum | 77 / 0 / 69,1 | **152 / 0 / 63,6** | Tepe gün ~30 gösterim |
+| Sorgu / sayfa | 53 / 37, %100 `/icerik` | **95 / 61**, yine %100 `/icerik` | |
+| Ülke | TR 69 (%90) | TR **123** (%81), 20 ülke | TR önce |
+| CrUX | yok | yok | §9 |
+| Yorum snippet | 28 geçerli / 7 geçersiz | **24 / 5** | Aynı hata; 23 Ağu kodu henüz yansımaz |
+| Dış bağlantı | — | **0** | |
+
+Canlı origin sitemap (curl, 23 Ağu): genel 4 · içerik 2.453 · bölüm **78.483** · kişi 10.067 · şirket 223.
+
+---
+
+## 1.1 Teşhis — v2 haklıydı, uygulama ters gitti
+
+v2: *“kuyruk boşalmadan yeni URL ailesi açma.”*  
+v3 saha: bölüm+kişi haritaları açıldı → keşif 2.159 → **21.394**, taranıp reddedilen 30 → **619**.
+
+Bu kalite reddi değil (o 619, marjinal ama büyüyor). Asıl yığın hâlâ **taranmamış keşif**. Otorite yok + 91k bildirilmiş URL = bot `/icerik` turunu da yavaşlatır.
+
+**Kural (yeniden, bağlayıcı):** Keşfedildi–taranmadı belirgin düşmeden **yeni aile yok**. Mevcut bölüm ailesi **daralır**.
+
+---
+
+## 2. Şema ve sentetik puan — kapanış artıkları
+
+### 2.1 🚀 Sentetik `aggregateRating` (20 Ağu)
+
+Tohum hesapları toplum puanından ve Review yazarından düştü; sayfa = JSON-LD. GSC’de manuel işlem yoktu; önlemdi. **Yeniden açılmaz.**
+
+### 2.2 🔨 Review snippet: 5 geçersiz — doğrulama BAŞLATILDI (25 Ağu)
+
+Hata aynı: birden fazla `Review` + `aggregateRating` yok. 23 Ağu: şemada Review yalnız puanlı gerçek inceleme; çoklu Review eşiksiz basılmaz.
+
+- ✅ 25 Ağu: 5 geçersiz öğe = 2 sayfa (Wednesday 119051 son tarama 18 Ağu,
+  The Mandalorian 82856 son tarama 14 Ağu) — ikisi de düzeltme ÖNCESİ tarama.
+  Canlı curl kanıtı: iki sayfada da artık Review/aggregateRating HİÇ basılmıyor
+  (puanlı gerçek inceleme yok), geçersiz kalıp üretilemez.
+- ✅ 25 Ağu: GSC → Yorum snippet'leri → **Doğrulama başlatıldı** (25.08).
+- Kabul: geçersiz 0, doğrulama yeşil.
+
+### 2.5 🔨 Breadcrumb: 11 geçersiz — doğrulama BAŞLATILDI (25 Ağu)
+
+GSC "İçerik haritaları" 11 geçerli / 11 geçersiz: **"item" alanı eksik
+(itemListElement içinde)**, ilk tespit 21 Ağu — yani 23 Ağu'daki breadcrumb
+düzeltmesinden (§2.3) ÖNCEKİ taramalar. Canlı curl kanıtı (25 Ağu, Googlebot
+UA, dört sayfa tipi: /icerik, /dizi bölüm, /kisi, /sirket): her basamakta
+`item` dolu. Doğrulama 25 Ağu'da başlatıldı. Kabul: geçersiz 0.
+
+### 2.3 🚀 Breadcrumb + kanonik (23 Ağu)
+
+URL’siz orta basamak yok; son basamakta kanonik `item`. nginx 301: slash, leading zero, ilk segment büyük harf. `ads.txt` 404.
+
+### 2.4 🚀 45 dil, aynı URL (23 Ağu)
+
+`html lang` + `og:locale` + 45× `og:locale:alternate`. **hreflang yok, dil önekli URL yok.** §7 ile çelişmez; pekiştirir.
+
+---
+
+## 3. Konumlandırma — GSC ile kilitli
+
+İndeks omurgası hâlâ AI tohumlu `/icerik`. “X konusu”nda otorite siteleri yeneriz diye iddia **yok**.
+
+GSC’nin gösterdiği kazanılabilir kümeler:
+
+| Yüzey | Kanıt | Yap |
 |---|---|---|
-| **Manuel işlem** | ✅ **Hiçbiri** | §2 riski TEORİK kalmış. Düzeltme yine yapılır — yangın söndürme değil, ÖNLEME. |
-| Güvenlik sorunu | ✅ Hiçbiri | |
-| **Dizine eklenen** | **264** / 2515 (**%10,4**) | |
-| **Keşfedildi – dizine eklenmemiş** | **2.159** | Google URL'leri BİLİYOR ama **hiç indirmemiş** |
-| Tarandı – dizine eklenmemiş | **30** | "Gördü ve değersiz buldu" senaryosu **marjinal** |
-| noindex ile hariç | 145 | Beklenen (profil, akış, takvim…) |
-| **Sunucu hatası (5xx)** | **32** | ✅ Kök neden bulundu ve düzeltildi — §6.9 |
-| Yumuşak 404 | **0** | ✅ 14 Ağu çalışması tuttu |
-| Yinelenen/kanonik sorunu | 1 | İhmal edilebilir |
-| Sitemap | 2.515 URL, son okuma 19 Ağu, hatasız | |
-| **Gösterim / tıklama** | 77 / **0** (13 gün) | Ortalama konum **69,1** |
-| Sorgular | 53 sorgu, **ilk 25'in TAMAMI marka dışı** | "küçük ev dizisi oyuncuları", "geceyarısı ekspresi oyuncuları"… |
-| Gösterim alan sayfalar | 37, **%100'ü `/icerik/*`** | Bölüm/liste/keşfet sayfası HİÇ gösterim almamış |
-| Ülke | TR 69, diğer 8 (%10, hepsi tekil → gürültü) | §7'nin acelesi yok |
-| Cihaz | Masaüstü 69 / Mobil 8 | Örneklem çok küçük, anlam çıkarma |
-| **CrUX saha verisi** | ❌ **Yok** ("yeterli kullanım verisi yok") | §9 doğrulandı: hız SEO'ya bağlanmıyor |
-| Zengin sonuç gösterimi | "Veri yok" | |
-| **Yorum snippet'i** | **28 geçerli / 7 geçersiz** | Hata: *"aggregateRating nesnesini içermeyen birden fazla yorum var"* |
-| İçerik haritası (breadcrumb) | 10 geçerli / 0 geçersiz | ✅ |
-| `/listeler/8` denetimi | "URL Google tarafından bilinmiyor", yönlendiren sayfa YOK | §6.7 yetimlik **doğrulandı** |
-| `/icerik/tv/1396` denetimi | Dizine eklendi, son tarama 14 Ağu | |
+| Oyuncu | `küçük ev dizisi oyuncuları` vb. | Başlık şablonu durur; `/kisi` taraması harita kesilince artar |
+| Ad+yıl | `jack reacher 2022` | `/icerik/movie` |
+| Konu | `bron broen konusu` | SSS + inceleme; “izle” vaadi yok |
+| Bölüm tazeliği | henüz 0 gösterim | **Az URL**, yüksek tazelik — 78k değil |
+| TR yapım / şirket | 0 gösterim | Şablon canlı; kuyruk bitmeden büyütme |
+| `{ad} izle` | `derinlik sarhoşluğu izle` | ⛔ hedefleme; korsan SERP |
+
+⛔ Daha fazla AI özeti. ⛔ Genel “konu” savaşı için içerik çiftleme.
 
 ---
 
-## 1.1 TEŞHİS DEĞİŞTİ — sürüm 1.0'daki hata
-
-**1.0'da yazılan:** *"<500 indeksliyse sorun kalite sinyalindedir."*
-İndeksli gerçekten 264. **Ama alt teşhis yanlış çıktı.**
-
-"Tarandı ama eklenmedi" yalnız **30**. Yani Google içeriği görüp reddetmiyor.
-Asıl yığın **2.159 sayfa "Keşfedildi – hiç indirilmedi"**: URL'ler biliniyor,
-Googlebot **taramaya gelmiyor**.
-
-Bu bir **kalite reddi değil**, şunların bileşimi:
-- **Tarama bütçesi** — yeni ve düşük otoriteli alan adı,
-- **Zayıf iç bağlantı** — sinyal dağınık, derin sayfalara akmıyor,
-- **Dış bağlantı yokluğu** — siteye işaret eden kimse yok,
-- **32 adet 5xx** — Googlebot hata alıyor, bütçe yanıyor ve güven düşüyor.
-
-### Doğrudan sonucu — 1.0'ın 3. maddesi ERTELENDİ
-
-Bölüm sayfalarını 61'den binlerce'ye çıkarmak, **Google'ın zaten boşaltamadığı
-bir kuyruğa binlerce URL daha eklemek** demekti. Var olan sayfaların taranma
-olasılığını seyreltirdi.
-
-> **Kural:** "Keşfedildi – dizine eklenmemiş" sayısı anlamlı biçimde
-> düşmeden **yeni URL ailesi açılmaz.** Önce kuyruk boşalmalı.
-
-Bunun tersi de doğru: **iç bağlantıyı güçlendiren** her iş artık öncelikli.
-Bugün eklenen `/icerik` → "Yapım firmaları" bağlantı bloğu (§6.1) tam da bu
-sınıfa girer — yeni URL açmakla kalmıyor, var olan sayfalar arasında sinyal
-taşıyor.
-
-## 2. 🔨 KIRMIZI — Sentetik puanlar yapılandırılmış veriyi besliyor
-
-### Ölçülen durum
-
-- `backend/araclar/intl_profil_doldur.js:248` ve `intl_guclendir.js:285` →
-  `INSERT INTO puanlar`. 15 "uluslararası persona" hesabı yapımlara **puan
-  veriyor**.
-- Bu puanlar `aggregateRating`'e giriyor. Canlı ölçüm, `/icerik/tv/1396`:
-  `ratingValue 4.3, ratingCount 15`.
-- `Review` şemasında `dizi.jpg.ai` yazarı **`"@type": "Person"`** olarak
-  çıkıyor — yapay zekayı kişi diye beyan etmek yanlış.
-- `backend/ai_tohum.js` puan **yazmıyor** (yalnız yorum). Bu doğrulandı.
-
-### Neden ihlal
-
-Google'ın inceleme snippet'i kuralları: puanlar gerçek kullanıcılardan
-gelmeli, site sahibi tarafından üretilmemeli. Yaptırım zengin sonuç iptali,
-ağır durumda manuel işlem.
-
-Kodun kendisi bu bilinci taşıyor — `backend/server.js:2507`:
-*"AggregateRating YALNIZCA gerçekten puan varsa basılır (ratingCount: 0 ile
-basmak politika ihlali)"*. Kural biliniyordu; denetlenmeyen şey kaynağın
-**gerçekliğiydi**.
-
-### Kritik kısıt — bir ihlali başkasıyla değiştirme
-
-**Görünen sayfa ile JSON-LD aynı sayıyı söylemek zorunda.** Yalnız şemayı
-temizleyip sayfada 4,3'ü bırakmak, "yapılandırılmış veri görünen içerikle
-eşleşmeli" kuralını ihlal ederdi. Toplum puanı artık **her yerde** gerçek
-kullanıcılardan hesaplanacak: SSR metninde, şemada ve uygulamanın kendi
-arayüzünde.
-
-### Yapılacaklar
-
-- 🔨 `kullanicilar.tohum BOOLEAN` sütunu (`migrasyon-2026-08-19c.sql`).
-  Kullanıcı adına göre süzmek kırılgan — ad değişir, yeni persona eklenir.
-- 🔨 Puan toplayan TÜM SQL'ler tohum hesaplarını dışlasın
-  (`/incelemeler/:tur/:tmdbId`, `/bolum-puanlari/*`, SSR `seo` hesapları).
-- 🔨 `Review` şemasından tohum yazarları düşsün — **metin sayfada kalsın**
-  (kullanıcı için değerli, yalnız yapılandırılmış veri iddiası kalksın).
-- 🔨 `dizi.jpg.ai` için doğru yazar tipi.
-- ⬜ AI özetlerini sayfada **görünür şekilde etiketle** ("dizi.jpg AI özeti").
-  Şeffaflık, ölçekli içerik değerlendirmesinde lehimize sayılan tek şey.
-
-### Kabul ölçütü
-
-`/icerik/tv/1396` SSR'ında görünen puan = JSON-LD'deki puan = yalnız gerçek
-kullanıcı puanlarının ortalaması. Gerçek puan yoksa `aggregateRating` **hiç
-basılmaz** (kod bunu zaten yapıyor, kaynağı değişiyor).
-
-### ⛔ Yapılmayacak
-
-Mevcut puan verisini **silmek**. Geri alınamaz. Yalnız hesaplamadan dışlanır.
-
----
-
-## 3. Konumlandırma — neyle yarıştığımızın dürüst değerlendirmesi
-
-### Sorun
-
-`backend/ai_yorumlar.json` → **2400 kayıt** (1200 dizi + 1200 film).
-`sitemap-icerik-1.xml` → **2453 URL**. Sitemap kapsamı `ozgunIcerikVar()` ile
-aynı: "yayına değer yorum/inceleme var mı". Yani indekslenebilir yüzeyin
-neredeyse tamamını AI tohum içeriği belirliyor.
-
-"Breaking Bad konusu" sorgusunda IMDb, Wikipedia, Beyazperde, JustWatch ile
-yarışıyoruz. Otoriteleri kıyaslanamaz. O sayfalarda **500. kopyayız**.
-
-Ayrıca Google'ın Mart 2024 "ölçekli içerik kötüye kullanımı" politikası tam bu
-deseni hedefliyor. Sitenin asıl işi bir takip uygulaması olduğu için
-savunulabilir, ama korpusun ağırlığı oradaysa risk gerçektir.
-
-### Tez
-
-**Rakiplerin zayıf olduğu, bizim eşsiz verimizin olduğu yüzeyleri aç.**
-
-| Yüzey | Neden kazanılabilir | Elimizdeki veri |
-|---|---|---|
-| **Bölüm sayfaları** | "X 3. sezon 5. bölüm" uzun kuyruğu geniş, rekabet zayıf | Sitemap'te yalnız **61** tane; veri tam |
-| **Tazelik soruları** | "X yeni sezon ne zaman", "X kaçıncı bölümde" her hafta yeniden soruluyor; otorite değil **güncellik** kazandırır | `next_episode_to_air`, takvim |
-| **Türk yapımları** | Uluslararası siteler bu konuda zayıf; doğal avantaj | Katalog + Türkçe içerik |
-| **Yapım firmaları** | "Netflix dizileri", "HBO yapımları" — gerçek hacim | TMDB `discover`, SSR'ı yok (§6) |
-
-### ⛔ Yapılmayacak
-
-- Daha fazla AI özeti üretmek.
-- Otorite sitelerinin baskın olduğu genel sorgular için içerik yazmak.
-
----
-
-## 4. Öncelik sıralaması
-
-Sıra **etki / çaba** oranına göre. §1 ölçümü geldiğinde gözden geçirilecek.
+## 4. Öncelik (etki/çaba, 23 Ağu)
 
 | Sıra | İş | Bölüm | Durum |
 |---|---|---|---|
-| 1 | Search Console ölçümü | §1 | 🔨 |
-| 2 | Sentetik puan temizliği | §2 | 🔨 |
-| 3 | Bölüm sayfalarını aç (61 → binlerce) | §5 | ⬜ |
-| 4 | `/og/sirket` SSR | §6.1 | 🔨 |
-| 5 | SSR'a görseller | §6.2 | 🔨 |
-| 6 | `/gizlilik` SSR | §6.3 | 🔨 |
-| 7 | Yinelenen URL varyantları → 301 | §6.4 | ⬜ |
-| 8 | SSR yanıtlarına kenar önbelleği | §6.5 | ⬜ |
-| 9 | `sitemap-genel.xml` `lastmod` | §6.6 | ⬜ |
-| 10 | `/listeler/*` yetimliği | §6.7 | ⬜ (koşullu) |
-| 11 | Çok dillilik + hreflang | §7 | ⬜ (ayrı proje) |
+| 1 | Bölüm sitemap eşiğini sıkılaştır | §5 | ⬜ |
+| 2 | Snippet doğrulama + 5xx 0 | §2.2, §6.9 | ⬜ |
+| 3 | Bölüm iç linkini harita ile hizala | §6.1 | ⬜ |
+| 4 | Dış bağlantı (Play, topluluk, yazı) | §4.6 | ⬜ |
+| 5 | Liste sayfası zenginleşmeden index yok | §6.7 | ⛔ şimdilik |
+| 6 | Konuşan URL | §8 | ⛔ kuyruk+tıklama sonrası |
+| 7 | hreflang tr+en | §7 | ⛔ kuyruk sonrası |
 
 ---
 
-## 5. ⬜ Bölüm sayfaları — en yüksek getiri/çaba
+## 4.6 ⬜ Dış görünürlük
 
-### Ölçülen durum
+Kod çıktısı yok. GSC Bağlantılar: **Toplam 0**.
 
-`sitemap-bolum-1.xml` yalnız **61 URL** taşıyor. Oysa `/dizi/:id/sezon/:s/bolum/:b`
-rotasının SSR'ı **çalışıyor ve zengin**: ölçümde `TVEpisode + TVSeason +
-TVSeries` JSON-LD'si, 1444 karakter gövde, 5 `h2`, 16 iç bağlantı.
+Yapılacak (ürün/pazarlama): Play Store’da web URL, paylaşım (OG çalışıyor), Ekşi/Reddit/Twitter dizi kamuları, Türkçe uygulama yazıları. **Satın link yok.**
 
-Yani şablon hazır; dar olan **sitemap sorgusu**.
+Kabul: GSC’de ≥1 referring domain. Bu olmadan konum 63’ten sayfa 1 beklenmez.
 
-### Neden değerli
+---
 
-- Uzun kuyruk: "X dizisi 3 sezon 5 bölüm konusu / özeti / ne zaman"
-- Rekabet zayıf: bölüm düzeyinde Türkçe içerik az.
-- Bizde zaten var: bölüm adı, tarih, özet, puan, yorumlar.
+## 5. ⬜ Bölüm sitemap — genişletme değil, kesme
 
-### Yapılacaklar
+### Ölçülen
 
-- ⬜ Bölüm sitemap sorgusunun neden 61'de kaldığını **ölç** (`SITEMAP_SORGU`
-  ve `ozgunIcerikVar()` bölüm dalı). Eşik mi dar, veri mi eksik?
-- ⬜ Eşiği bölüm sayfası gerçekliğine göre yeniden belirle. **Dikkat:** eşiği
-  gevşetmek ince içerik üretme riski taşır — bölüm sayfasının kendi gövdesi
-  (özet + puan + yorum) yeterince doluysa açılır, değilse açılmaz.
-- ⬜ Sitemap'i parçalara böl (50.000 URL/dosya sınırı ve tarama bütçesi).
-- ⬜ `lastmod` bölüm yayın tarihinden türetilsin — tazelik sinyali.
+Şablon iyi: `/dizi/1396/sezon/1/bolum/1` → 200, TVEpisode JSON-LD, index, ~9 KB.  
+Sorgu kötü: `SITEMAP_BOLUM_SORGU` bölümü `ozet>0 OR konuk>0 OR kare>0 OR yayin<bugün` ile alıyor → **78.483 URL**. v2’deki 61’lik özgün-yorum eşiğinin tersi.
 
-### Kabul ölçütü
+### Yapılacak
 
-Bölüm sitemap'i binlerce URL taşıyor, örneklenen 10 URL'nin 10'u da 200 ve
-`noindex` DEĞİL; gövdeleri boş kabuk değil.
+- ⬜ WHERE’i daralt: eşiği geçen bölüm yorumu/incelemesi **veya** `next_episode_to_air` **veya** TR origin. TMDB özeti tek başına yetmez.
+- ⬜ Isıtıcı kuyruğunu (`ISITMA_BOLUM_SORGU`) harita ile **aynı** eşiğe çek — haritadan çıkan URL’yi ısıtmak bütçe israfı.
+- ⬜ Dağıtım sonrası `sitemap-bolum-*.xml` loc sayısı ve GSC keşif kuyruğu 7 gün izlenir.
+- ⬜ `/icerik` gövdesindeki bölüm listesi yalnız **haritada kalan** (veya noindex) URL’lere links — aksi halde kesilen URL iç linkle geri keşfedilir.
+
+### Kabul
+
+Bölüm loc **düşük binler** (on binler değil). Örnek 10 URL: 200, noindex değil, gövde boş kabuk değil. GSC keşif kuyruğu 2–4 haftada düşüş eğiliminde.
 
 ### Risk
 
-Eşiği fazla gevşetmek §3'teki ölçekli içerik riskini büyütür. **Bölüm sayfası
-ancak kendi başına bir okura değer veriyorsa indekslenmeli.**
+Aşırı kesmek tazelik sorgusunu kaçırır — “sonraki bölüm” istisnası bu yüzden var. Aşırı gevşetmek 619’luk “tarandı–eklenmedi”yi büyütür.
 
 ---
 
-## 6. Teknik boşluklar
+## 6. Teknik artıklar
 
-### 6.1 🔨 `/sirket/:id` SSR yok
+### 6.1 🔨 İç bağlantı
 
-Bot'a jenerik kabuk + `noindex,follow` dönüyor. nginx'teki
-`location ~ ^/(icerik|gonderi|kisi|dizi|listeler)/` regex'inde **`sirket` yok**
-ve `/og/sirket` ucu hiç yazılmamış.
+🚀 `/icerik` → şirket, `/sirket` SSR, afiş `<img alt>`, `/gizlilik` SSR — canlı (Googlebot 23 Ağu).  
+⬜ Bölüm linki §5 ile hizalanacak.  
+⬜ Kişi linki durur (kadro zaten Person JSON-LD + `<a>`).
 
-"Netflix dizileri", "HBO yapımları" gerçek arama hacmi olan sorgular; veri
-(TMDB `company` + `discover`) elimizde ve önbellekli.
+### 6.2 🚀 SSR görselleri
 
-### 6.2 🔨 SSR sayfalarında hiç `<img>` yok
+Afiş `img` + alt + width/height. `/icerik/tv/1396` 17 img.
 
-16 SSR sayfasının hiçbirinde `<img>` etiketi yok. `og:image` var ama
-`image.tmdb.org`a işaret ediyor — görsel aramanın kredisi TMDB'ye gidiyor.
+### 6.3 🚀 `/gizlilik` SSR
 
-`robots.txt` `Allow: /api/medya/` ve `Allow: /api/avatarlar/` istisnalarını
-bilerek açmış ama **hiçbir SSR sayfası o yollara referans vermiyor**, yani
-istisna şu an ölü.
+Bot tam politika metni; cloaking yok.
 
-Yapılacak: afişleri `<img src>` + **anlamlı `alt`** (yapım adı + yıl) +
-`width`/`height` ile bas. Bot HTML'i hafif kalsın diye sayfa başına üst sınır.
+### 6.4 🚀 URL varyantları 301
 
-### 6.3 🔨 `/gizlilik` SSR yok
+http→https, www→apex, trailing slash, leading zero, büyük harf ilk segment — 23 Ağu nginx. Canonical yedek.
 
-Bot'a 283 karakterlik jenerik metin dönüyor. Gizlilik politikası hem mağaza
-zorunluluğu hem E-E-A-T sinyali. SSR **uygulamadaki metnin aynısını** basmalı —
-uydurma metin cloaking olur.
+### 6.5 🚀 SSR kenar önbelleği
 
-### 6.4 ⬜ Yinelenen URL varyantları 301 yerine 200
+`Cache-Control: public, max-age=300, s-maxage=3600, stale-while-revalidate=86400`. 19 Ağu maddesi kapandı.
 
-| Varyant | Durum |
-|---|---|
-| `http://` → `https://` | ✅ 301 |
-| `www.` → apex | ✅ 301 |
-| `/icerik/tv/1396/` (sondaki `/`) | ⚠️ 200 |
-| `/Icerik/tv/1396` (büyük harf) | ⚠️ 200 |
-| `/icerik/tv/01396` (baştaki sıfır) | ⚠️ 200 |
-| `?utm_source=x` | ⚠️ 200 |
+### 6.6 ⬜ `sitemap-genel.xml` lastmod
 
-Canonical dördünde de **doğru**, yani indeks birleştirmesi çalışıyor — acil
-değil. Ama `/icerik/tv/01396` gibi **sonsuz varyant üretilebiliyor** ve her
-biri tarama bütçesi yiyor.
+Hâlâ zayıf sinyal olabilir (4 URL). Düşük öncelik; kuyruk işinden sonra.
 
-### 6.5 ⬜ SSR yanıtları önbelleksiz
+### 6.7 ⛔ `/listeler/*` index
 
-İçerik SSR yanıtında **hiç `Cache-Control` yok**, `cf-cache-status: DYNAMIC`.
-TTFB 0,35–0,70 sn. Bot sayfaları saatlerce değişmiyor; kısa `s-maxage` + CF
-kenar önbelleği tarama bütçesini ve origin yükünü doğrudan düşürür.
+Canlı örnek `noindex,follow` (ince liste). Eşik metin uzunluğuna çekilmeden iç link **verilmez**.
 
-### 6.6 ⬜ `sitemap-genel.xml`de `lastmod` yok
+### 6.8 ⬜ Bot UA (GoogleOther, DuckDuckBot)
 
-3 URL, **0 `lastmod`**. Diğer ikisinde eksiksiz. `/`, `/gozat`, `/kesfet` en
-sık değişen üç sayfa ve tam onlarda tarih sinyali yok.
+Tek satır nginx. Düşük öncelik.
 
-### 6.7 ⬜ `/listeler/*` tam yetim — koşullu
+### 6.9 ⬜ 5xx kuyruğu
 
-Sitemap'te yok **ve hiçbir SSR sayfası liste linki vermiyor**. İndekslenebilir
-ama Google'ın bulmasının hiçbir yolu yok.
+Kök neden (SSR süre bütçesi) 20 Ağu’da kapandı. GSC **34**, doğrulama başladı.  
+⬜ Doğrulama yeşil + 0. Yeni 5xx olursa `ssr_butce_asimi` logu.
 
-**Şimdilik düşük öncelik, bilinçli:** `/listeler/8` gövdesi 238 karakter,
-büyük kısmı başlık. Link vererek Google'a ince içerik sunmuş oluruz.
-Eşik de metne değil sayıya bakıyor (`SEO_LISTE_MIN = 3`, `server.js:3360`) —
-oysa içerik sayfalarında uzunluk eşiği titizce kurulmuş (`SEO_YORUM_MIN=80`,
-`SEO_INCELEME_MIN=40`).
+### 6.10 🚀 Isıtıcı + anahtar birleştirme
 
-**Önce liste sayfası zenginleşmeli, sonra bağlanmalı.**
+22 Ağu canlı. Kuyruk=0 işe yarar **harita küçülünce**; 78k soğuk bölüm ısıtıcısını da şişirir. §5 ile birlikte düşün.
 
-### 6.8 ⬜ Bot regex'inde eksik ajanlar
+### 6.11 🚀 Kişi/şirket haritası
 
-SSR alanlar: Googlebot, bingbot, Yandex, **Google-InspectionTool**, Applebot,
-facebookexternalhit, Twitterbot, WhatsApp, Telegram, Slack, Discord.
-Almayan: **GoogleOther**, DuckDuckBot.
-
-Düşük öncelik (DuckDuckGo büyük ölçüde Bing indeksinden besleniyor, bingbot
-zaten listede), ama tek satırlık düzeltme.
+`sitemap-kisi-1` 10.067, `sitemap-sirket-1` 223, 200. Eşik testli. **Gevşetilmez.** Şirket zaten dar.
 
 ---
 
-### 6.9 ✅ Googlebot'a 504 — SSR süre bütçesi yoktu (19 Ağu 2026)
+## 7. ⛔ Çok dillilik / hreflang — sıra gelmedi
 
-GSC'deki **32 "Sunucu hatası (5xx)"** maddesinin kök nedeni. Tahmin değil,
-nginx günlüğünden ölçüldü.
+23 Ağu: 45 dil **aynı kanonik URL** (og locale alternate). Doğru.
 
-**Ölçülen kanıt** (`/var/log/nginx/error.log.1`, 18 Ağu 2026):
+Aritmetik aynı: 91k × 45 dil = felaket. Kuyruk (21.394) + 0 tıklama iken dil öneki açmak `/icerik` taramasını öldürür.
 
-```
-18:45:11 upstream timed out (110) while reading response header from upstream,
-  client: 66.249.79.129, request: "GET /kisi/102426",
-  upstream: "http://127.0.0.1:8500/og/kisi/102426"
-18:46:34 aynısı /kisi/113970 için
-```
-
-14 günlük günlükte **bot kaynaklı tek 5xx deseni buydu** (2 istek, ikisi de
-504, ikisi de `/kisi/*`). Kalan 78 adet 5xx bot değil: dağıtım penceresindeki
-`/api/*` 502'leri (18:36–18:38, `connect() failed`) ve medya 502/507'leri.
-
-**Kök neden — iki süre birbirini tanımıyordu:**
-
-| Katman | Süre |
-|---|---|
-| nginx `@og` `proxy_read_timeout` | 20 sn |
-| `tmdbGetir` (15 sn × 3 deneme + beklemeler) | **~46 sn** |
-
-TMDB yavaşladığında nginx **önce** kopuyordu. Sonuç kritik: ucun `catch`
-bloğu **hiç çalışamıyordu** — yani `seo_soft404_kayit.test.js`'in koruduğu
-"TMDB arızasında 404 değil, `noindex` dön" disiplini kâğıt üzerinde doğruydu
-ama pratikte devreye giremiyordu. Google 5xx'i "site bozuk" sayar ve tarama
-bütçesini kısar; sitenin zaten en dar kaynağı o (§1).
-
-**Düzeltme — üç katman** (hepsi `backend/server.js`):
-
-1. `SSR_BUTCE_MS = 12000` + `ssrKalanSure()`: bot isteğine son tarih konur.
-   12 sn, nginx'in 20 sn'sine 8 sn marj bırakır.
-2. `tmdbGetir` son tarihe uyar: deneme süresi kalan süreye kırpılır, süre
-   dolduysa yeniden deneme yok — hemen 502 fırlatılır ki `catch` çalışsın.
-3. `/og/*` güvenlik ağı ara katmanı: bütçe dolduğunda yanıt hâlâ yoksa
-   **200 + `noindex` kabuk** basılır. TMDB dışı yavaşlığı (DB, havuz) da
-   kapatır. 404 değil (var olan sayfa indeksten düşerdi), 5xx değil.
-
-Ayrıca `sarici`'ya `res.headersSent` koruması: güvenlik ağı yanıtı bastıktan
-sonra asıl işleyici bitince ikinci yazma `ERR_HTTP_HEADERS_SENT` fırlatıp
-yakalanamayan bir reddetmeye dönüşürdü — kalkanın kendisi süreci düşürebilirdi.
-
-**Kilit:** `backend/test/seo_ssr_sure_butcesi.test.js` (14 test). Kaynak
-iddialarının yanında **davranışsal** testler de var: ara katman sahte req/res
-ile gerçekten çalıştırılıp 200 + `noindex` bastığı görülüyor. En değerlisi,
-`SSR_BUTCE_MS < @og proxy_read_timeout` bağını nginx conf'unu **okuyarak**
-doğrulayan test — biri değişip diğeri unutulursa 504 sessizce geri gelirdi.
-
-**nginx'e dokunulmadı ve gerekmiyor:** canlıdaki 20 sn zaten bütçenin
-üstünde. `proxy_next_upstream` ile yeniden deneme **işe yaramaz** — tek
-upstream peer'i var, nginx yalnız çok üyeli grupta sonraki sunucuya geçer.
-Depodaki conf'a yalnız bu bağı anlatan yorum eklendi.
-
-**Kabul ölçütü:** dağıtımdan sonra GSC → Sayfalar → "Sunucu hatası (5xx)"
-**Doğrulamayı başlat**. 32 → 0 beklenir. Ek gösterge: `docker logs
-dizijpg-api | grep ssr_butce_asimi` — sıfır değilse SSR gerçekten yavaş
-demektir (bütçe onu 504 yerine `noindex`e çeviriyor, ama sebebi ayrıca
-kovalanmalı).
+Sıra: §5 kabulü + keşif kuyruğu düşüşü, sonra yalnız **tr+en** ve yalnız özgün metni olan URL. `hreflang` + `x-default` + sitemap `xhtml:link` üçü birlikte. 45 dil asla.
 
 ---
 
-## 6.10 🚀 Tarama verimi — önbellek soğuk (20 Ağu 2026)
+## 8. ⛔ Konuşan URL
 
-### Ölçülen durum
-
-`tmdb_onbellek` bir **tembel** (read-through) ayna: sayfaya ziyaret gelince
-dolar, gelmezse süresi dolar. 20.329 satırın **17.221'i (%85) 7 günden eski**,
-yani en uzun TTL bile dolmuş. Sunucuda proaktif tazeleme işi YOKTU.
-
-Sonuç: Googlebot soğuk bir sayfaya girdiğinde **canlı TMDB çağrısını bekliyor.**
-18 Ağu'daki iki 504 tam olarak böyle oluştu (§6.9).
-
-Trafik dağılımı bu tabloyu netleştiriyor (7 günlük nginx günlüğü):
-
-| | |
-|---|---|
-| SSR isteği | 1.067 — **%90'ı Googlebot** (957) |
-| Googlebot'un dokunduğu farklı `/icerik` URL'i | 382 |
-| bunlardan önbellekte **taze** olan | **375 (%98,2)** |
-| Googlebot'un hiç girmediği sitemap URL'i | **2.071 (%84,4)** |
-
-Okunuşu: **trafik değdiği yeri zaten ısıtıyor.** Değer, botun hiç girmediği
-%84'te. Bu hızla tam bir tur ~45 gün sürüyor ve her ilk ziyaret yavaş.
-
-### İki müdahale
-
-1. **Isıtıcı** (`backend/isitici.js`) — sitemap'teki ve kullanıcıların
-   dokunduğu yapımları katmanlı olarak önden tazeler. Gece toplu koşu DEĞİL,
-   **24 saate yayılmış sürekli akış** (cron 10 dk, ~1 istek/sn): toplu koşuda
-   her şey aynı anda tazelenip aynı anda bayatlar ve kaçan tek koşu tüm
-   katalogu yaşlandırır.
-2. **SSR/uygulama anahtar birleştirme** — SSR
-   `?append_to_response=credits,similar` kullanıyordu, uygulama farklı bir
-   append kümesi. Aynı yapım iki ayrı satırda, ikisi de diğerinin
-   önbelleğinden yararlanamıyordu.
-
-   **Kararsızlığın sebebi bulundu:** `/tmdb/*` ucu `new URLSearchParams(req.query)`
-   ile İSTEMCİNİN parametre sırasını anahtara sızdırıyordu. Eski web derlemesi
-   `include_video_language` göndermiyor, yenisi gönderiyor → tek yapım için
-   5 ayrı satır. Anahtar sunucuya alındı: istemcinin gönderdiği parametreler
-   atılıyor, anahtar tek sabitten (`ICERIK_APPEND` + `icerikTmdbYolu`,
-   server.js:778-828) sabit sırayla kuruluyor. Böylece **eski APK ve web
-   derlemeleri de otomatik aynı satıra düşüyor** — istemci dağıtımı beklemeye
-   gerek yok.
-
-   `similar` → `recommendations` geçişi ölçüldü, GERİLEME DEĞİL İYİLEŞME:
-   boş dönen oran `similar` %1,08 (554 satırda 6), `recommendations` %0,16
-   (1.933 satırda 3). Ortak 60 yapımda ikisi de 20 sonuç döndü. Somut kazanç:
-   Arka Sokaklar (tv/32836) `similar`=0 iken `recommendations`=20.
-
-   > **DÜZELTME — ilk verilen "1.153 sayfa" rakamı yanıltıcıydı.**
-   > Uygulama anahtarı altında 1.261 farklı yapım var, ama TTL 7 gün olduğu
-   > için ANINDA sıcak sayılacak olan **258** (tek kanonik anahtar altında
-   > **39**). Yani birleştirmenin anlık ısıtma kazancı küçük. **Asıl kazanç
-   > kalıcı olan:** bundan sonra uygulama ve bot aynı satırı yazıp okuyor,
-   > yani her kullanıcı ziyareti botun sayfasını da ısıtıyor.
-
-### Yol üstünde bulunan kusur
-
-Isıtıcının ilk sıralaması bir sınıfı tamamen aç bırakıyordu: hiç çekilmemiş
-anahtarların hepsi `yaş = Infinity` ile berabere kalıyor, eşitlik bozucu
-**alfabetik** olduğu için ilk 6 koşuda (2.880 istek) `bolum` sınıfına sıfır
-istek gidiyordu. Sıralama üç anahtarlı yapıldı: öncelik → aşım bandı
-(`yaş/ttl`, ham yaş DEĞİL) → sınıflar arası sırayla dağıtım. Doldurma süresi
-değişmedi (70 koşu ≈ 11,7 saat), yalnız dağılım düzeldi.
-
-### ⚠️ Dağıtım sırası — ikisi AYNI dağıtımda gitmeli
-
-Ölçüm: eski SSR anahtarında **375 taze yapım**, yeni paylaşılan anahtarda
-yalnız **39**. Isıtıcı hizalanmadan anahtar değişikliği dağıtılırsa ısıtıcı
-ölü bir anahtarı tazelemeye devam eder ve SSR SOĞUR — kısa vadeli gerileme.
-Geçişten sonraki ilk günlerde kuyruk derinliğinin sıçraması beklenen davranış.
-
-### Kabul ölçütü
-
-- `/icerik` ve `/kisi` sayfalarında ilk-ziyaret SSR süresi düşmeli.
-- **Asıl ölçüt:** "Keşfedildi – dizine eklenmemiş" (bugün 2.159) düşmeli.
-  Düşmüyorsa sorun hızda değil otoritededir (§4.6).
-
-### 🚀 Dağıtım doğrulaması (22 Ağu 2026)
-
-Container 22 Ağu ~03:10'da yeni kodla yeniden kuruldu; md5 ile yerel=sunucu
-doğrulandı (server.js, isitici.js, Dockerfile, sema.sql). Kanıtlar:
-
-- **Isıtıcı canlı ve kuyruk BOŞ:** host cron `*/10` → `/var/log/dizijpg-isitici.log`.
-  Son koşular `kuyruk=0 hata=0`, ilk büyük koşu `tazelendi=420` idi; artık koşu
-  başına 0-100 tazeleme bandında. Sıfır işlik koşular BİLEREK sessiz
-  (`konusmaliMi` — logda boşluk görürsen önce bunu hatırla).
-- **Anahtar birleştirme dolu:** `tmdb_onbellek`te kanonik `recommendations`
-  anahtarı 9.113 satır, eski `similar` 554'te kaldı (TTL ile düşecek);
-  toplam 147.289 anahtar, ısıtıcı bakılan=112.486.
-- **Site haritası 8 parça:** genel + icerik-1 + bolum-1..4 + **kisi-1 + sirket-1**,
-  hepsi 200 (kisi 0,9 sn — önbellekli).
-- **Bot SSR hızlı:** Googlebot UA ile `/icerik/tv/32836` 0,34 sn,
-  `/dizi/32836/sezon/15/bolum/12` 0,35 sn (18 Ağu'daki 504'lerle karşılaştır).
-- `curl /api/saglik` → ok.
-
-Kalan tek şey ölçüm: "Keşfedildi – dizine eklenmemiş" (2.159) birkaç hafta
-sonra Search Console'dan yeniden okunacak — düşüş §4.6/§7 kararlarını açar.
-
-### Ayrıca ölçüldü — sitemap'te olmayan iki aile
-
-`SITEMAP_SORGU` yalnız `tv`/`movie` alıyor: **`/kisi` ve `/sirket` site
-haritasında HİÇ YOK.** Googlebot oraya yalnız içerik sayfasındaki bağlantılardan
-ulaşıyor. 18 Ağu'da 504 alan iki URL de tam olarak bu ilan edilmemiş kümede —
-tesadüf değil, yapısal. Isıtıcı kişi adaylarını bu yüzden içerik önbelleğindeki
-ilk 10 oyuncudan çıkarıyor (ek TMDB isteği harcamadan).
-
-> **21 Ağu 2026 — KAPANDI (§6.11).** İki aile de haritada:
-> `sitemap-kisi-1.xml` (9.738 URL) + `sitemap-sirket-1.xml` (243 URL).
+Slug + 301, indeks 998 ve kuyruk 21k iken **sıfırlama riski**. İlk tıklamalar + kuyruk düşünce. ID URL’si (`/icerik/tv/1396`) konuşmuyor ama GSC’de gösterim alan tek aile bu — şimdi göç yok.
 
 ---
 
-## 6.11 🚀 Tarama bütçesi turu (21 Ağu 2026) — 22 Ağu'da canlıda
+## 9. ⛔ Core Web Vitals — SEO hanesine yazılmaz
 
-Ölçüm tabanı: nginx `access.log` 17–21 Ağu (5 gün, 1.375 Googlebot isteği,
-1.079 benzersiz URL ≈ 216/gün) + canlı DB + canlıya Googlebot UA ile curl.
-Çalışma kanıtları `backend/test/seo_harita_kapsami.test.js`te kilitli.
-
-### Bulgu 1 — "haritadaki ölü URL" hipotezi YANLIŞLANDI
-
-`SITEMAP_BOLUM_SORGU` numaraları sezon belgesinin GERÇEK
-`episodes[].episode_number` listesinden alıyor; `generate_series` yalnız
-ısıtıcı kuyruğunda (URL üretmez). Kanıt: 350 harita URL'i (200 rastgele +
-150 mutlak-numaralı, ör. One Piece bölüm 1.100+) canlıda **350/350 = 200**.
-Googlebot'un 404'ü `/dizi/32836/sezon/15/bolum/500` haritada YOK (S15 = 1..38)
-ve SSR gövdesi de üretmiyor — dış kaynaklı, 5 günde 1 istek. Bölüm sayfaları
-haritada KALDI: sayılar silmeyi haklı çıkarmıyor (bkz. Bulgu 4 hız tablosu;
-`changefreq=monthly`, `priority=0.6` katmanlaması zaten vardı).
-
-### Bulgu 2 — ASIL arıza: ilan edilen alt harita 404 dönüyordu
-
-20 Ağu: `/sitemap.xml` 6 parça ilan etti; 3 dk sonra `sitemap-bolum-2/4.xml`
-**404** (aynı pencerede `bolum-3` 200). Kök neden: 4 işçili küme + işçi başına
-AYRI bellek içi kova + 6 saat TTL — bölüm haritası 1 sayfadan 4 sayfaya
-büyüyünce bayat kovalı işçi yeni sayfayı 404'ledi ⇒ 40.000 URL keşfedilemez.
-Çözüm: `sitemapAltHarita` ortak ucu — sayfa kovada yoksa 404'ten ÖNCE bir kez
-zorunlu tazeleme (60 sn tabanlı, dışarıdan sorgu tetiklenemez).
-
-### Bulgu 3 — dizin `lastmod`u uydurmaydı
-
-6 alt haritanın 6'sı da her gün "bugün" damgası alıyordu (`kova.ts`). Artık
-`sitemapParcaLastmod`: satırların en yeni gerçek tarihi ∨ URL kümesinin
-gerçekten değiştiği an; ikisi de yoksa etiket basılmaz.
-
-### Bulgu 4 — hız engel değil; sorgu bütçesi ENGELDİ
-
-Canlı ölçüm (Googlebot UA, p50/p95 sn): bölüm 0,32/0,61 · içerik 0,29/0,52 ·
-kişi 0,26/0,41 · şirket 0,47/0,65 · botun HİÇ girmediği bölüm/içerik de aynı
-bantta (ısıtıcı işliyor). Ama nginx sitemap bloğu `proxy_read_timeout 30s`
-(server.js'teki eski "300 sn" yorumu yanlıştı) ve kişi sorgusunun ilk yazımı
-38 sn idi ⇒ jsonpath'e çevrildi (21,8 sn) + `sitemapSorgu` sarmalayıcısı
-`SET LOCAL statement_timeout=25s` — 504 yerine temiz düşüş + bayat kova.
-
-### Yeni bileşim (79.463 bölüm satırı sorgunun bugünkü sonucu; canlı 78.480)
-
-| harita | önce | sonra |
-|---|---|---|
-| genel | 4 | 4 |
-| icerik | 2.453 | 2.453 |
-| bolum | 78.480 | ≈79.463 |
-| **kisi** | **0** | **9.738** |
-| **sirket** | **0** | **243** |
-| TOPLAM | 80.937 | ≈91.901 |
-
-Eşikler sayfayla AYNI sabitlerden (`SEO_KISI_BIYO_MIN/YAPIM_MIN`,
-`SEO_SIRKET_YAPIM_MIN`); firma evreni kasıtlı DAR (kendi kataloğumuzda ≥6
-yapım ⇒ discover'da da ≥6 ⇒ sayfa kesin `index`). Doğrulama: haritaya girecek
-60 kişi + 60 firma → 60/60 `index`; girmeyen 25 kişi → 25/25 `noindex`.
-
-### Dağıtımda dikkat
-
-- `sitemap-kisi/sirket` rotaları nginx'in mevcut
-  `location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$` bloğuna zaten uyuyor — nginx
-  değişikliği GEREKMİYOR.
-- İlk kişi haritası isteği ~22 sn sürer (tek seferlik, sonra 6 saat önbellek).
-- Yan bulgu (bu turun kapsamı dışı): `/ads.txt` 200 + text/html (Flutter
-  kabuğu) dönüyor; Googlebot 5 günde 10 kez istedi. Gerçek dosya ya da 404.
+Saha verisi yok. Bot ~10–20 KB HTML alıyor; Flutter paketini indirmiyor. CanvasKit/önbellek kullanıcı işi. Puan avcılığı SEO gerekçesiyle yapılmaz.
 
 ---
 
-## 7. ⬜ Çok dillilik — ayrı proje
-
-### Ölçülen durum
-
-- Uygulama **45 dilli**, SSR **tek dilli**: `Accept-Language: tr|en|de|es`
-  dördünde de aynı Türkçe başlık dönüyor.
-- 16 SSR sayfasının hiçbirinde **`hreflang` yok**.
-- Dil başına ayrı URL şeması yok.
-- Ek risk: `/icerik/tv/1396` gövdesinde Rusça, Almanca, İngilizce inceleme
-  metni var ama `<html lang="tr">` ve JSON-LD'de `inLanguage` yok — karışık
-  dil sinyali.
-
-**20 Ağu 2026 — doğrudan ölçüm.** Önbellekteki SSR anahtarlarının **554/554'ü
-`tr-TR`.** Sebep: SSR dili `X-Dil` başlığından geliyor, o başlığı yalnız
-uygulama gönderiyor; Googlebot göndermediği için varsayılan `tr`ye düşüyor.
-Yani **Google, dizi.jpg'nin 45 dilinden yalnız birini görüyor.** Diğer 44'ü
-arama motoru için var değil. Depoda `hreflang` geçen satır sayısı: **0.**
-
-### Neden şimdi değil
-
-> **Engel DEĞİŞTİ (20 Ağu).** 1.0'daki gerekçe "§2 çözülmeden ölçeklemek riski
-> 45'le çarpar" idi; §2 artık canlıda. Yeni ve daha sert engel tarama bütçesi.
-
-Aritmetik kararı kendi veriyor:
-
-| | |
-|---|---|
-| Site haritasındaki URL | 2.518 |
-| Google'ın indekslediği | 264 |
-| **Keşfedilmiş ama taranmamış** | **2.159** |
-| Googlebot'un haftalık dokunduğu farklı URL | 382 |
-
-Sıra zaten 8 kat dolu. 45 dile açmak 2.453 × 45 ≈ **110.000 URL** demek;
-Googlebot'un bugünkü hızıyla bir tam tur **~5,5 yıl**. Taranmayan sayfa
-indekslenmez — yani 44 dili birden açmak, var olan Türkçe sayfaların taranma
-şansını da bölerdi.
-
-Ayrıca dil başına URL şeması (`/en/icerik/...` ya da alt alan adı) mimari bir
-karar ve geri dönüşü pahalı.
-
-**Lehimize olan:** bu sayfalar makine kopyası olmayacak. TMDB'nin o dillerde
-gerçek çevrilmiş özetleri var, üstüne bizim kullanıcı yorumlarımız biniyor —
-Google'ın "yinelenen içerik" saymayacağı gerçek yerelleştirme. İş yapmaya
-değer, sırası sonra.
-
-### Sıra geldiğinde
-
-0. **Ön koşul:** §6.10'un kabul ölçütü karşılanmalı — "keşfedildi ama
-   dizine eklenmemiş" düşüş eğiliminde olmalı. Kuyruk boşalmadan URL sayısını
-   çarpmak kuyruğu kilitler.
-1. **Hangi diller ölçümle seçilir**, tahminle değil: Search Console ülke
-   dağılımı + sunucu günlüğündeki gerçek ziyaretçi dilleri. Bu veriye bu
-   soruyla henüz bakılmadı.
-2. Dil başına URL şeması kararı (yol öneki mi, alt alan adı mı).
-3. Önce **iki dil**: `tr` + `en`. 45 dili birden açmak denetlenemez ve
-   tarama bütçesini bölerdi.
-4. `hreflang` + `x-default` + site haritasında `alternate` bağlantılar.
-   Üçü BİRLİKTE gelir; biri eksikse Google varyantları ayrı sayfa sayar.
-   **Zemin hazır (21 Ağu 2026):** haritada `xhtml:link` alternatiflerinin
-   gireceği yer `sitemapAltHarita` ucunda "HREFLANG YERİ" yorumuyla işaretli
-   (satır üretimi `sitemapSatiri`nin içine, `xmlns:xhtml` bildirimi
-   `sitemapUrlseti`nin kök etiketine girecek). İşaret ve "erken uygulama
-   yasağı" `seo_harita_kapsami.test.js` ile kilitli.
-5. JSON-LD'ye `inLanguage`.
-
----
-
-## 8. ⛔ DOKUNULMAYACAKLAR
-
-Bu kararlar testlerle kilitli. "İyileştirme" niyetiyle bozulmaları kolay;
-yeniden önerilmemeli.
+## 10. ⛔ Dokunulmayacaklar (test kilitli)
 
 | # | Karar | Kilit |
 |---|---|---|
-| 1 | **Soft-404**: bilinmeyen rota gerçek 404, bilinen ama SSR'sız rota 200 + `noindex,follow` + çıkış linkleri | `seo_soft404.test.js` (215 satır) |
-| 2 | **`BOT_ROTALARI` ↔ `yonlendirme.dart` birebir eşleşme** — tablo elle yazılı, test ayrışmayı engelliyor | `seo_soft404.test.js` |
-| 3 | **TMDB arızasında 404 DÖNMEME** — 502'de indeksten düşürmeyi önler | `seo_soft404_kayit.test.js:120` |
-| 4 | **CLOAKING KİLİDİ** — bir rota Flutter'da oturumsuz açılmıyorsa SSR'ı `noindex` basmak zorunda | `seo_gizlilik.test.js:405` |
-| 5 | **Profil gizliliği üç katmanlı**: robots `Disallow: /kullanici/` + `/og/kullanici` ucunun HİÇ olmaması + hiçbir SSR sayfasının profile link vermemesi | testli |
-| 6 | **Sitemap kapsamı = `ozgunIcerikVar()`** — sitemap'te olup `noindex` yiyen sayfa üretilemez | tasarımla |
-| 7 | **Spoiler / yasaklı yazar / gizlenen içerik süzgeçleri** SSR yüzeyine de uygulanır | testli |
-| 8 | **UGC spam yüzeyi yok** — kullanıcı metnindeki URL bağlantıya çevrilmez | testli |
-| 9 | **SSR tarihleri yalnız GÜN** — saat/dakika parmak izi vermez | tasarımla |
-| 10 | **`robots.txt` Node tarafından servis edilir** — Flutter dağıtımı ezemez | tasarımla |
-| 11 | **`Content-Signal: search=yes, ai-train=no, use=reference`** + Google-Extended açık — AI Overviews'da kaynak gösterilme izni korunur, eğitim kapalı | bilinçli |
-| 12 | **robots.txt `Disallow` kuralları joker İÇERMEZ** | `seo_gizlilik.test.js` |
+| 1 | Soft-404: bilinmeyen gerçek 404; ince bilinen 200+noindex | `seo_soft404.test.js` |
+| 2 | Bot rota tablosu ↔ `yonlendirme.dart` | aynı |
+| 3 | TMDB arızasında 404 yok | `seo_soft404_kayit.test.js` |
+| 4 | Cloaking kilidi: Flutter kapalıysa SSR noindex | `seo_gizlilik.test.js` |
+| 5 | Profil asla index: robots + og ucu yok + link yok | testli |
+| 6 | Sitemap kapsamı indexable kuralla aynı tanım | tasarım |
+| 7 | Spoiler / yasaklı / gizli içerik SSR’da da | testli |
+| 8 | UGC URL’si `<a>` olmaz | testli |
+| 9 | SSR tarih yalnız gün | tasarım |
+| 10 | robots.txt Node | tasarım |
+| 11 | Google-Extended açık, eğitim botları kapalı | bilinçli |
+| 12 | robots Disallow jokersiz | testli |
+| 13 | Toplum puanı tohum hesapsız | 20 Ağu |
+| 14 | Dil başına URL yok (23 Ağu) | GSC kuyruğu |
 
 ---
 
-## 9. ⛔ Core Web Vitals — SEO hanesine yazılmayacak
+## 11. v2’den devralınıp kapananlar
 
-Mobil PageSpeed puanı ~63–73 bandında ve 19 Ağu'da bir tur iyileştirme yapıldı
-(CanvasKit yerelleştirme, ana paket preload, logo %91 küçültme, bf-cache).
-**Bunlar kullanıcı deneyimi için doğru işlerdi, SEO için değil.**
-
-Gerekçe: **Googlebot'un gördüğü sayfa kullanıcının gördüğü sayfa değil.** Bot
-~12 KB'lık statik SSR HTML alıyor (TTFB 0,4 sn) ve 9,5 MB'lık Flutter paketini
-**hiç indirmiyor**. CWV zaten zayıf bir sıralama faktörü; burada uygulanan
-yüzey bile bot'un görmediği yüzey.
-
-**Puan avcılığına ek mühendislik harcanmayacak.** Deferred imports gibi işler
-kullanıcı için sürdürülür, SEO gerekçesiyle değil.
+| Madde (v2) | Sonuç |
+|---|---|
+| Şirket SSR | 🚀 `/sirket/4` Organization+ItemList |
+| SSR `<img>` | 🚀 |
+| `/gizlilik` SSR | 🚀 |
+| Sentetik puan | 🚀 |
+| 5xx kök neden | 🚀 doğrulama bekliyor |
+| Isıtıcı / sitemap kişi-şirket | 🚀 hacim sorunu bölümde |
+| Bölüm sayfalarını **aç** | ⛔ tersine — **kes** |
+| hreflang şimdi | ⛔ |
 
 ---
 
-## 10. Ölçüm ve gözden geçirme
+## 12. Ölçüm ritmi
 
-| Ne | Nasıl | Sıklık |
+| Ne | Nerede | Sıklık |
 |---|---|---|
-| İndeksleme | Search Console → Sayfalar | Haftalık |
-| Manuel işlem | Search Console → Güvenlik ve Manuel İşlemler | Haftalık |
-| Marka dışı sorgu | Search Console → Performans, marka süzgeci | Haftalık |
-| Zengin sonuç geçerliliği | Search Console → Geliştirmeler | §2 sonrası |
-| SSR sağlığı | Googlebot UA ile `curl`, sayfa tipi başına | Her dağıtım |
-| Sitemap ↔ robots çelişkisi | Otomatik denetim betiği (⬜ yazılacak) | Her dağıtım |
+| Keşif kuyruğu + indeks | GSC Sayfalar | Haftalık |
+| Gösterim / ilk tıklama | GSC Performans | Haftalık |
+| Dış bağlantı | GSC Bağlantılar | Haftalık |
+| Snippet geçersiz | GSC Yorum snippet | §2.2 sonrası |
+| 5xx | GSC Sayfalar | Doğrulama bitene |
+| Bölüm loc sayısı | `curl sitemap-bolum-1.xml` | Her dağıtım |
+| Manuel işlem | GSC Güvenlik | Haftalık |
 
-**Gözden geçirme:** Bu belge §1 verisi geldiğinde 2.0 olarak güncellenecek;
-öncelik sıralaması (§4) o veriye göre değişebilir.
+Bu belge ancak yeni GSC turuyla 4.0 olur. Tahminle sıra değiştirilmez.
 
 ---
 
-## Ek A — Doğrulanmış ölçümler (19 Ağu 2026)
+## Ek A — Canlı kanıt (23 Ağu 2026)
 
-Bu belgedeki her sayı aşağıdakilerden birine dayanır:
-
-- **SSR içeriği**: Googlebot UA ile `curl`, 16 sayfa tipi.
-- **Cloaking kontrolü**: insan UA ile aynı üç sayfa → üçü de aynı 11.182 baytlık
-  dosya (md5 aynı), yani insana giden içerik DOM'da yok, CanvasKit çiziyor.
-  Bot'a basılan metin uygulamanın gerçekten gösterdiği metinle aynı →
-  **meşru dynamic rendering**.
-- **Sitemap**: `sitemap-icerik-1.xml` 2453 URL, `sitemap-bolum-1.xml` 61 URL,
-  `sitemap-genel.xml` 3 URL / 0 `lastmod`. Örneklenen 10 URL'nin 10'u 200.
-- **robots.txt ↔ sitemap**: çelişki YOK; 2517 URL'nin hiçbiri `Disallow`
-  önekine girmiyor.
-- **Puan zinciri**: `intl_profil_doldur.js:248`, `intl_guclendir.js:285` →
-  `INSERT INTO puanlar`; canlı `/icerik/tv/1396` → `ratingCount 15`.
-- **404 davranışı**: `/icerik/tv/999999999` → gerçek 404.
+- GSC ekranları: genel bakış (998 / 22,6 bin), dizin 8 neden, performans 152/0/63,6, sorgular, 61 sayfa, 20 ülke, sitemap başarılı, bağlantı 0, snippet 24/5.
+- Googlebot curl: `/icerik/tv/1396`, `/kisi/17419`, `/dizi/1396/sezon/1/bolum/1`, `/sirket/4`, `/gizlilik`, `/listeler/1` (noindex), `/icerik/tv/999999999` → 404.
+- Sitemap loc sayıları §1 tablosu.
 
 ## Ek B — Terimler
 
-- **SSR**: Sunucu tarafında üretilen HTML. Burada yalnız bot'lara sunulur.
-- **Dynamic rendering**: Bot'a HTML, insana JS uygulaması sunmak. Google'ın
-  kabul ettiği bir çözüm — **içerik aynı olduğu sürece**. Farklı olursa
-  cloaking olur ve cezalandırılır.
-- **E-E-A-T**: Deneyim, Uzmanlık, Otorite, Güvenilirlik.
-- **Tarama bütçesi**: Google'ın siteye ayırdığı istek kotası. Gereksiz
-  varyantlar bunu yer.
+- **Keşfedildi – taranmadı:** Google URL’yi biliyor, indirmemiş. Bütçe/otorite; “içerik kötü” demek değil.
+- **Tarandı – eklenmedi:** İndi, indekslememeyi seçti. İnce/yinelenen sinyal.
+- **Dynamic rendering:** Bota HTML, insana CanvasKit. İçerik aynı olduğu sürece meşru; divergince cloaking.
