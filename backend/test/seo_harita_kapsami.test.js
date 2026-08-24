@@ -283,6 +283,19 @@ test('kişi uç filmografiyi DİLİMLEMEDEN sayar (GSC noindex sapması)', () =>
   assert.match(parca, /Promise\.all/);
 });
 
+test('içerik uç TMDB+vitrin+eşik PARALEL (5xx bütçesi)', () => {
+  const i = KAYNAK.indexOf("app.get('/og/icerik/:tur/:tmdbId'");
+  const parca = KAYNAK.slice(i, i + 2500);
+  assert.match(parca, /Promise\.all/);
+  assert.match(parca, /seoIcerikVerisi\(/);
+  assert.match(parca, /ozgunIcerikVar\(/);
+});
+
+test('kişi sitemap süresi nginx 45 sn tavanının ALTINDA', () => {
+  assert.ok(SITEMAP_SORGU_ZAMAN_ASIMI_MS >= 35000,
+    'kişi sorgusu soğukta ~26 sn; 25 sn tavan canlıda 500 basmıştı');
+});
+
 test('firma haritası `sirketIndekslenir` eşiğini kullanıyor ve DAR tarafta', () => {
   const sorgu = bildirimCek('SITEMAP_SIRKET_SORGU');
   assert.match(sorgu, />= \$\{SEO_SIRKET_YAPIM_MIN\}/, 'firma eşiği sabitten gelmiyor');

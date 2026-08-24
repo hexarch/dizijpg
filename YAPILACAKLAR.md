@@ -1,6 +1,15 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-23 — ✅ SEO-PLANI + SEO-YAPILACAKLAR v3 (GSC taze tur)
+
+Kullanıcı: md’ler eski, Search Console’a bak, ikisini güncelle, profesyonel SEO.
+GSC 21–23 Ağu + Googlebot curl. Belgeler v3.0 yazıldı.
+
+- 998 indeks, 152 gösterim, 0 tıklama, konum 63,6, dış link 0.
+- Asıl yangın: ~91k sitemap URL (78k bölüm) → 21.394 “keşfedildi – taranmadı”.
+- Bağlayıcı sonraki iş: bölüm haritasını kes (`SEO-YAPILACAKLAR.md` §5).
+
 ## 2026-08-24 — 🔨 GSC SEO devam: sitemap↔noindex + kişi 5xx + bot UA
 
 Durulmadı. Kalan GSC işi kodlandı:

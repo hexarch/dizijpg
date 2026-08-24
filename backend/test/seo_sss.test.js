@@ -49,7 +49,7 @@ const icerikJsonLd = alan(
   [...new Set([
     'SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'seoKirinti', 'seoIstDil', ...SSS_DEP, 'icerikJsonLd'])], 'icerikJsonLd');
+    'seoKirinti', 'seoIstDil', ...SSS_DEP, 'seoIcerikSonTarih', 'icerikJsonLd'])], 'icerikJsonLd');
 const jsonLdGom = alan(['jsonLdGom'], 'jsonLdGom');
 
 const UC = bolum("app.get('/og/icerik/:tur/:tmdbId'", '// ---------- SEO: /kisi/:id');

@@ -50,7 +50,7 @@ const icerikJsonLd = alan(
   // ReferenceError verir — testin gördüğü kod canlıdaki kodun aynısı.
   ['SITE_KOK', 'seoMetin', 'seoGun', 'seoYildiz', 'seoYildizOrt', 'SEO_PUAN_MIN',
     'seoKisiNesnesi', 'seoYazarNesnesi', 'seoDegerlendirmeler', 'seoOrtalamaPuan',
-    'seoKirinti', 'seoIstDil', 'seoSssJsonLd', 'icerikJsonLd'], 'icerikJsonLd');
+    'seoKirinti', 'seoIstDil', 'seoSssJsonLd', 'seoIcerikSonTarih', 'icerikJsonLd'], 'icerikJsonLd');
 const ogSayfa = alan(
   ['SITE_KOK', 'htmlKacir', 'seoKamuYolu', 'seoKanonikYol', 'kanonikUrl', 'jsonLdGom', 'seoIstDil', 'seoOgYerel', 'ogSayfa'], 'ogSayfa');
 
@@ -137,6 +137,27 @@ test('başlıktaki puan JSON-LD aggregateRating ile AYNI SAYI', () => {
   // Şemada `bestRating: '5'` — başlık da /5 der, /10 DEMEZ.
   assert.equal(oran.bestRating, '5');
   assert.ok(!baslik.includes('/10'), 'başlık 10\'luk puan basıyor, şema 5\'lik');
+});
+
+test('dateModified yalnız gerçek yorum/inceleme gününden gelir', () => {
+  const taban = {
+    tur: 'tv', url: 'https://dizijpg.com/icerik/tv/1396', ad: 'Breaking Bad',
+    ozet: '', gorsel: '', v: { first_air_date: '2008-01-20' },
+  };
+  const yok = icerikJsonLd({
+    ...taban, seo: { ortalama: null, adet: 0, yorumlar: [], incelemeler: [] },
+  });
+  assert.equal(yok['@graph'][0].dateModified, undefined,
+    'yorum yokken uydurma dateModified basılmış');
+  const varOlan = icerikJsonLd({
+    ...taban,
+    seo: {
+      ortalama: null, adet: 0,
+      yorumlar: [{ tarih: '2026-08-10', metin: 'x', kullanici_adi: 'a' }],
+      incelemeler: [{ tarih: '2026-08-21', yorum: 'y', kullanici_adi: 'b' }],
+    },
+  });
+  assert.equal(varOlan['@graph'][0].dateModified, '2026-08-21');
 });
 
 test('eşik altında puan HİÇ basılmaz (0/10 ya da "puan yok" YASAK)', () => {

@@ -3576,12 +3576,23 @@ function seoSssJsonLd(sorular, url) {
   };
 }
 
+/** Sayfada basılan yorum/incelemenin en yeni günü — uydurma lastmod yok. */
+function seoIcerikSonTarih(seo) {
+  let en = '';
+  for (const r of [...(seo?.yorumlar || []), ...(seo?.incelemeler || [])]) {
+    const g = seoGun(r.tarih);
+    if (g > en) en = g;
+  }
+  return en;
+}
+
 function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
   const dizi = tur === 'tv';
   const tarih = String(v.first_air_date || v.release_date || '').slice(0, 10);
   const oyuncular = (v.credits?.cast || []).slice(0, 10).map(seoKisiNesnesi);
   const degerlendirmeler = seoDegerlendirmeler(seo);
   const ortalama = seoOrtalamaPuan(seo);
+  const degisti = seoIcerikSonTarih(seo);
 
   const ana = {
     '@type': dizi ? 'TVSeries' : 'Movie',
@@ -3591,6 +3602,7 @@ function icerikJsonLd({ tur, url, ad, ozet, gorsel, v, seo, sss = [] }) {
     ...(gorsel ? { image: gorsel } : {}),
     ...(ozet ? { description: seoMetin(ozet) } : {}),
     ...(tarih ? { datePublished: tarih } : {}),
+    ...(degisti ? { dateModified: degisti } : {}),
     ...(v.genres?.length ? { genre: v.genres.map((g) => g.name) } : {}),
     ...(dizi && v.number_of_seasons ? { numberOfSeasons: v.number_of_seasons } : {}),
     ...(dizi && v.number_of_episodes ? { numberOfEpisodes: v.number_of_episodes } : {}),
@@ -3722,14 +3734,18 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
     // ANAHTAR UYGULAMAYLA ORTAK (bkz. `icerikTmdbYolu` başlığı): eskiden SSR
     // `?append_to_response=credits,similar` diyordu ve uygulamanın yazdığı
     // TAZE satırı göremiyordu. Artık iki taraf da AYNI satırı okuyup tazeliyor.
-    const v = await tmdbGetir(
-      icerikTmdbYolu(tur, tmdbId, String(istekBaglam.getStore()?.dil || 'tr')),
-      ONBELLEK_TTL_SN.uzun);
+    // TMDB + vitrin + indeks eşiği PARALEL: sıra toplamı bütçeyi yemesin.
+    const [v, seo, indexle] = await Promise.all([
+      tmdbGetir(
+        icerikTmdbYolu(tur, tmdbId, String(istekBaglam.getStore()?.dil || 'tr')),
+        ONBELLEK_TTL_SN.uzun),
+      seoIcerikVerisi(tur, id).catch(() => SEO_BOS),
+      ozgunIcerikVar(tur, id).catch(() => false),
+    ]);
     const ad = v.name || v.title || 'dizi.jpg';
     const yil = String(v.first_air_date || v.release_date || '').slice(0, 4);
     const adYil = `${ad}${yil ? ` (${yil})` : ''}`;
     const gorsel = tmdbGorsel(v.poster_path) || tmdbGorsel(v.backdrop_path, 'w1280');
-    const seo = await seoIcerikVerisi(tur, id);
 
     const degerlendirmeBlok = seoDegerlendirmeGovdesi(seo, {
       incelemeBasligi: `${adYil} incelemeleri`,
@@ -3846,7 +3862,7 @@ app.get('/og/icerik/:tur/:tmdbId', sarici(async (req, res) => {
       gorsel,
       url,
       canonical: `${SITE_KOK}/icerik/${tur}/${id}`,
-      indexle: await ozgunIcerikVar(tur, id),
+      indexle,
       tur: tur === 'tv' ? 'video.tv_show' : 'video.movie',
       // Ana afiş EN ÜSTTE: sayfanın "kahraman görseli" Google Görseller'de bu
       // sayfayla eşleşecek olan karedir. `alt` ad + yıl taşır (aynı adlı
@@ -6035,9 +6051,10 @@ const ISITMA_BOLUM_SORGU = `
 //
 // `poster_path != null` ve `@.id > 0` süzgeçleri ucun `hamYapimlar` süzgecinin
 // aynısı (afişsiz kayıt uygulamada da listelenmiyor, `gecerliTmdb`).
-// `name`/`title` kontrolü BİLEREK YOK: onu eklemek tür başına ayrı jsonpath
-// gerektirirdi (yukarıdaki 31,9 sn) ve sayıyı yalnız BÜYÜTEBİLİR — yani
-// bırakmak DAR yönde hata yapar, güvenli taraf.
+// `name`/`title` kontrolü SAYFAYLA AYNI: adsız kredi `kisiFilmografi`'de
+// sayılmıyor. jsonpath `exists(@.name|title)` soğukta ~26 sn (19k kişi
+// satırı, 24 Ağu 2026); 25 sn'lik eski tavan haritayı 500'e düşürüyordu.
+// Süre bütçesi `SITEMAP_SORGU_ZAMAN_ASIMI_MS` ile birlikte yükseltildi.
 //
 // `lastmod` YOK (`son` NULL): kişi sayfasının içeriği TMDB biyografisi +
 // filmografi; bizde "son değişiklik" damgası yok. Uydurma tarih basmak
@@ -6111,7 +6128,7 @@ const SITEMAP_SAYFA_BOYU = 20000;      // sitemap başına URL (protokol sınır
 // TTL 6 saat. ÖLÇÜLEN MALİYET (canlı, 21 Ağu 2026):
 //   · SITEMAP_SORGU (içerik, 2.453 satır)      — < 1 sn
 //   · SITEMAP_BOLUM_SORGU (79.463 satır)       — 6,7 sn
-//   · SITEMAP_KISI_SORGU (9.738 satır)         — 21,8 sn
+//   · SITEMAP_KISI_SORGU (~10.000 satır)       — ~26 sn soğuk (24 Ağu 2026)
 //   · SITEMAP_SIRKET_SORGU (243 satır)         — 3,9 sn
 // Maliyet jsonb belgelerinin TOAST açımından geliyor, satır sayısından değil.
 // Tek-uçuş kalıbı sayesinde 6 saatte YALNIZ BİR istek bunu bekler.
@@ -6124,22 +6141,21 @@ const SITEMAP_TTL_MS = 6 * 3600 * 1000;
 // SORGU ZAMAN AŞIMI — nginx'ten ÖNCE kopmak zorundayız (21 Ağu 2026)
 // ---------------------------------------------------------------------------
 // ÖLÇÜLEN GERÇEK (canlı /etc/nginx/sites-enabled/dizijpg.com):
-//     location = /sitemap.xml                  { proxy_read_timeout 30s; }
-//     location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$ { proxy_read_timeout 30s; }
+//     location = /sitemap.xml                  { proxy_read_timeout 45s; }
+//     location ~ ^/sitemap-[A-Za-z0-9-]+\.xml$ { proxy_read_timeout 45s; }
 // Bu satırın üstündeki eski yorum "nginx 300 sn, pay bol" diyordu — YANLIŞTI.
 // 300 sn yalnız `/api/` ve `/api/admin` bloklarında geçerli.
 //
-// Sorgu 30 sn'yi aşarsa nginx bağlantıyı koparır ve Googlebot **504** alır.
-// §6.9'un tüm dersi bu: bota 5xx göstermek tarama tavanını düşürüyor, yani
-// tam da onarmaya çalıştığımız şeyi kırıyor. Üstelik hata SESSİZ olurdu —
+// Sorgu nginx tavanını aşarsa Googlebot **504** alır. §6.9'un tüm dersi bu:
+// bota 5xx göstermek tarama tavanını düşürüyor. Üstelik hata SESSİZ olurdu —
 // `sitemapKovaOku`nun hata dalı bayat kovayı servis etmeye devam eder.
 //
-// Bu yüzden sorgunun kendisine son tarih konur: Postgres 25 sn'de `57014`
-// (query_canceled) ile TEMİZ düşer, `catch` çalışır, bayat kova servis edilir
-// ya da alt harita dizinde İLAN EDİLMEZ. 5 sn'lik pay TLS/proxy/serileştirme
-// için. `SET LOCAL` işlem içinde yaşar; işlem bitince havuzdaki bağlantı
+// 24 Ağu 2026: kişi sorgusu adsız-kredi süzgeciyle soğukta ~26 sn
+// (önceki 21,8 sn / 25 sn tavan → canlı 500). Postgres 40 sn'de `57014`
+// ile TEMİZ düşer; nginx 45 sn. 5 sn'lik pay TLS/proxy/serileştirme için.
+// `SET LOCAL` işlem içinde yaşar; işlem bitince havuzdaki bağlantı
 // varsayılana döner (havuz paylaşımlı olduğu için `SET` DEĞİL `SET LOCAL`).
-const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 25000;
+const SITEMAP_SORGU_ZAMAN_ASIMI_MS = 40000;
 
 /** Site haritası sorgusu — son tarihli. Bkz. SITEMAP_SORGU_ZAMAN_ASIMI_MS. */
 async function sitemapSorgu(sql) {
