@@ -20,6 +20,7 @@ import '../ceviri.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 import '../video_kova.dart';
+import 'izlem_carki.dart';
 import 'medya_goster.dart';
 
 /// Yorum/akış postlarındaki fotoğraf-video galerisi.
@@ -2523,6 +2524,10 @@ class _ListeSheetState extends State<ListeSheet> {
   bool _duzenleme = false;
   bool _sahibiyim = false;
 
+  /// Çark için liste öğeleri (tur + tmdb_id) — [ListeIcerigi.onListe]
+  /// yüklenince doldurur; boşken çark düğmesi çizilmez.
+  List<dynamic> _ogeler = const [];
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -2544,6 +2549,18 @@ class _ListeSheetState extends State<ListeSheet> {
                     ),
                   ),
                 ),
+                // "Ne izlesem çarkı" burada da (24 Ağu 2026 isteği) —
+                // tam sayfa liste (liste.dart) ile aynı davranış.
+                if (_ogeler.isNotEmpty)
+                  IconButton(
+                    key: const Key('liste-sheet-izlem-carki'),
+                    tooltip: 'Ne izlesem?'.c,
+                    onPressed: () => izlemCarkiniAc(
+                      context,
+                      _ogeler.cast<Map<String, dynamic>>(),
+                    ),
+                    icon: const Icon(Icons.attractions),
+                  ),
                 // Düğme YALNIZ SAHİBİNE çizilir; sahiplik sunucudan gelir
                 // (`GET /listeler/:id` → `sahibiyim`), istemcide tahmin
                 // edilmez.
@@ -2560,6 +2577,12 @@ class _ListeSheetState extends State<ListeSheet> {
               listeId: widget.listeId,
               modalIcinde: true,
               duzenleme: _duzenleme,
+              onListe: (l) {
+                if (!mounted) return;
+                setState(() {
+                  _ogeler = (l['ogeler'] as List<dynamic>?) ?? const [];
+                });
+              },
               onSahiplik: (v) {
                 if (mounted && v != _sahibiyim) {
                   setState(() => _sahibiyim = v);

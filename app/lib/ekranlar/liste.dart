@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../ceviri.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
+import 'izlem_carki.dart';
 import 'ortak.dart';
 
 /// `/listeler/:id` — tek listenin TAM SAYFA hâli.
@@ -61,6 +63,21 @@ class _ListeEkraniState extends State<ListeEkrani> {
                 ],
               ),
         actions: [
+          // "Ne izlesem çarkı" kendi listelerde de (24 Ağu 2026 isteği: çark
+          // yalnız kitaplık İzleyeceğim'indeydi, kullanıcı web'de kendi
+          // listesinde arayıp bulamadı). Sahiplik ŞART DEĞİL: başkasının
+          // listesinden de "ne izlesem" çevrilebilir. Boş listede çizilmez.
+          if (((_liste?['ogeler'] as List<dynamic>?) ?? const []).isNotEmpty)
+            IconButton(
+              key: const Key('liste-izlem-carki'),
+              tooltip: 'Ne izlesem?'.c,
+              onPressed: () => izlemCarkiniAc(
+                context,
+                (_liste!['ogeler'] as List<dynamic>)
+                    .cast<Map<String, dynamic>>(),
+              ),
+              icon: const Icon(Icons.attractions),
+            ),
           if (_sahibiyim)
             ListeDuzenleDugmesi(
               duzenleme: _duzenleme,

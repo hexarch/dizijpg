@@ -6377,3 +6377,4 @@ ikisi de aapt2 ile 1.93.0/143 + apksigner yayın imzası doğrulandı; eski
 - [x] Sohbet: yeni mesaj gelince otomatik dibe kaydır (kullanıcı dipteyse); sürekli elle kaydırma bitsin.
 - [x] Mesaj istekleri: Kabul et / Reddet sohbet ekranının İÇİNDE altta; kabul edilmeden yanıt yazılamasın.
 - [x] Ana sayfa rafları (ör. Marvel Studios filmleri): 5 öğeyle kalmasın — yatay kaydırdıkça sonraki sayfa yüklensin.
+- [x] Çark kullanıcı listelerinde de (tam sayfa + modal); animasyon yavaşlatıldı (3-4 tur / 5,2 sn, yumuşak kalkış + geri oturma).

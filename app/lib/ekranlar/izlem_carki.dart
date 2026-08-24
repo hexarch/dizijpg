@@ -134,11 +134,18 @@ class _IzlemCarkiState extends State<IzlemCarki>
     //   -π/2 - θ ≡ i·dilim + dilim/2  (mod 2π)
     final hedefYerel = i * dilim + dilim / 2;
     final kisitli = MediaQuery.of(context).disableAnimations;
-    final tamTur = kisitli ? 1 : 4 + _rastgele.nextInt(3); // 4-6 tur
+    // 3-4 tur: eski 4-6 tur / 3,6 sn kurgusunda kalkış anındaki hız
+    // bulanıklığa dönüşüyordu (24 Ağu 2026 bildirimi: "çark çok hızlı
+    // dönüyor"). Daha az tur + daha uzun süre = aynı tören, okunur hız.
+    final tamTur = kisitli ? 1 : 3 + _rastgele.nextInt(2);
     final mevcutKalan = _aci % (2 * math.pi);
     var delta = (-math.pi / 2 - hedefYerel - mevcutKalan) % (2 * math.pi);
     if (delta < 0) delta += 2 * math.pi;
     final hedef = _aci + tamTur * 2 * math.pi + delta;
+    // Son "tık": çark hedefi dilimin üçte biri kadar İLERİ geçip kısa bir
+    // yaylanmayla geri oturur — gerçek çarkın ibreden dönen son dişi.
+    // Kısıtlı animasyonda (reduced motion) taşma yok, sonuç aynı.
+    final tasma = kisitli ? 0.0 : dilim / 3;
 
     setState(() {
       _donuyor = true;
@@ -148,22 +155,40 @@ class _IzlemCarkiState extends State<IzlemCarki>
     });
     _donus.value = 0;
     final baslangic = _aci;
+    final ilkHedef = hedef + tasma;
     final animasyon = CurvedAnimation(
       parent: _donus,
-      // easeOutQuart: hızlı kalkış, uzun ve okunur yavaşlama — gerçek çark
-      // hissi (150-300 ms bandı geçiş animasyonları içindir; bu bir "süreç").
-      curve: Curves.easeOutQuart,
+      // easeInOutCubicEmphasized: YUMUŞAK kalkış, ortada tepe hız, çok uzun
+      // ve kararlı yavaşlama. easeOutQuart sıfırıncı milisaniyede tepe hızla
+      // fırlıyordu; sürecin "hızlanıyor → süzülüyor → duruyor" diye
+      // okunması bu eğriyle geldi.
+      curve: Curves.easeInOutCubicEmphasized,
     );
     void dinle() {
-      _aci = baslangic + (hedef - baslangic) * animasyon.value;
+      _aci = baslangic + (ilkHedef - baslangic) * animasyon.value;
     }
 
     _donus.addListener(dinle);
     _donus
-        .animateTo(1, duration: Duration(milliseconds: kisitli ? 400 : 3600))
-        .whenComplete(() {
+        .animateTo(1, duration: Duration(milliseconds: kisitli ? 400 : 5200))
+        .whenComplete(() async {
           _donus.removeListener(dinle);
           if (!mounted) return;
+          if (tasma > 0) {
+            _donus.value = 0;
+            final geri = CurvedAnimation(parent: _donus, curve: Curves.easeOut);
+            void geriDinle() {
+              _aci = ilkHedef - tasma * geri.value;
+            }
+
+            _donus.addListener(geriDinle);
+            await _donus.animateTo(
+              1,
+              duration: const Duration(milliseconds: 320),
+            );
+            _donus.removeListener(geriDinle);
+            if (!mounted) return;
+          }
           setState(() {
             _aci = hedef;
             _donuyor = false;

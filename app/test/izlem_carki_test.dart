@@ -135,10 +135,11 @@ Future<GoRouter> _carkiAc(
   return yonlendirici;
 }
 
-/// Çevirme animasyonunu sonuna kadar oynatır.
+/// Çevirme animasyonunu sonuna kadar oynatır
+/// (5,2 sn dönüş + 320 ms geri oturma "tık"ı).
 Future<void> _cevirVeBekle(WidgetTester tester) async {
   await tester.tap(find.byKey(const Key('cark-cevir')));
-  for (var i = 0; i < 16; i++) {
+  for (var i = 0; i < 24; i++) {
     await tester.pump(const Duration(milliseconds: 250));
   }
   await tester.pump(const Duration(milliseconds: 300)); // detay + geçiş
@@ -276,7 +277,7 @@ void main() {
     await _cevirVeBekle(tester);
     expect(find.byKey(const Key('cark-sonuc')), findsOneWidget);
     await tester.tap(find.byKey(const Key('cark-tekrar')));
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < 24; i++) {
       await tester.pump(const Duration(milliseconds: 250));
     }
     await tester.pump(const Duration(milliseconds: 300));
