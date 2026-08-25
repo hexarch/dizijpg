@@ -14,7 +14,7 @@ kullanıcının profil resmini daire içinde göster. GIF'ler hareket etmeli.
 - Dokunma alanı 44 dp (dairenin kendisi 24 dp). Widget testleri kilitler.
 - Canlı web **1.95.0+145**: `main.ea0975022fbe.dart.js` (eski `14e685d05b7e`
   origin'den silindi) · parça `main.dart.js_1.17398367e92b.part.js` · SW sökücü
-  · brotli q11. APK bu turda yok; yerelde çalışan Flutter'ı sen yenile.
+  · brotli q11. APK `~/Desktop/dizijpg-1.95.0-145.apk` (76 MB, arm+arm64, imzalı).
 
 ## 2026-08-25 — 🚀 Paylaşılan video/görsel netliği (kapak 720 + süzgeç)
 
