@@ -22,7 +22,8 @@ const VIDEO_UZANTI = /\.(mp4|webm)$/i;
 function videolariTopla(kok) {
   const adlar = fs.readdirSync(kok);
   return adlar
-    .filter((a) => VIDEO_UZANTI.test(a) && !a.endsWith('.jpg'))
+    .filter((a) => VIDEO_UZANTI.test(a) && !a.endsWith('.jpg')
+      && !a.startsWith('._'))
     .map((a) => path.join(kok, a));
 }
 

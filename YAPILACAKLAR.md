@@ -1,7 +1,7 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-25 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
-## 2026-08-25 — 🔨 Paylaşılan video/görsel netliği (kapak 720 + süzgeç)
+## 2026-08-25 — 🚀 Paylaşılan video/görsel netliği (kapak 720 + süzgeç)
 
 Kullanıcı: bazı paylaşılan videolar ve görseller çok kalitesiz; kaliteleştirme
 kütüphanesi varsa hepsini elden geçir.
@@ -11,8 +11,10 @@ kütüphanesi varsa hepsini elden geçir.
   düşürdü) aynı kapıyı kapatmıştı. Özgün video/fotoğraf ezilmez.
 - Video kapağı 480/q4 → **720 tavan, büyütme yok, lanczos, q=2**. Keşfet
   ızgarası videoyu değil bu JPEG'i gösteriyordu; 1080p kaynak 480'e inip
-  ızgarada 2× büyüyordu. `backend/video_kare.js` + toplu yenileme betiği.
-- Kullanıcı görseli `FilterQuality.high` (akış, Reels, tam ekran, avatar).
+  ızgarada 2× büyüyordu. Canlı: **482 kapak yenilendi** (ör. 720×406, 75 KB);
+  444 `._` AppleDouble çöpü atlandı. Yeni yükleme aynı komutu kullanıyor.
+- Kullanıcı görseli `FilterQuality.high` (akış, Reels, tam ekran, avatar) —
+  web/APK derlemesi gerekir.
 
 ## 2026-08-23 — ✅ SEO-PLANI + SEO-YAPILACAKLAR v3 (GSC taze tur)
 
