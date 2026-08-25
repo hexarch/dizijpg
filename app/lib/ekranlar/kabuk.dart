@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../api.dart';
 import '../ceviri.dart';
 import '../sohbet_olay.dart';
 import '../tema.dart';
 import 'dogum_gunu.dart';
+import 'ortak.dart' show DaireGorsel;
 import 'profil.dart' show profilYenileTetik;
 import 'yasakli.dart';
 
@@ -74,9 +77,12 @@ const int profilHedefi = 4;
 @visibleForTesting
 int hedefIndeksi(int dal) => dal == kesfetDali ? akisHedefi : dal;
 
-/// Alt gezinme sekmeleri. Kural: bir sekmenin seçili ve seçili olmayan ikonu
+/// Alt gezinme sekmeleri. İlk dört hedefin seçili / seçili olmayan ikonu
 /// AYNI ikon ailesinden olmalı (yalnız içi dolu/boş farkı) — yoksa sekme
 /// değiştikçe ikon başka bir şeye dönüşüyormuş gibi görünür. Test bunu kilitler.
+///
+/// Sağdaki beşinci hedef kişi ikonu DEĞİL: oturumdaki yuvarlak avatar
+/// ([KabukProfilIkonu]). Fotoğraf yoksa yedek olarak kişi ikonu ailesi durur.
 ///
 /// KEŞFET BURADA YOK ama KAYBOLMADI: Akış ekranının başlığı artık bir görünüm
 /// seçicisi (Akış ⇄ Keşfet, bkz. `akis.dart` → [AkisGorunumSecici]) ve
@@ -87,7 +93,10 @@ int hedefIndeksi(int dal) => dal == kesfetDali ? akisHedefi : dal;
 ///
 /// [okunmamis] > 0 ise Mesajlar hedefinin üstünde sayaç çizilir — üst bardaki
 /// [RozetliIkon] ile AYNI kaynaktan (`SohbetOlaylari.okunmamis`) beslenir.
-List<NavigationDestination> kabukHedefleri({int okunmamis = 0}) => [
+List<NavigationDestination> kabukHedefleri({
+  int okunmamis = 0,
+  String? avatarUrl,
+}) => [
   NavigationDestination(
     icon: const Icon(Icons.home_outlined),
     selectedIcon: const Icon(Icons.home),
@@ -111,11 +120,65 @@ List<NavigationDestination> kabukHedefleri({int okunmamis = 0}) => [
     label: 'Mesajlar'.c,
   ),
   NavigationDestination(
-    icon: const Icon(Icons.person_outline),
-    selectedIcon: const Icon(Icons.person),
+    icon: KabukProfilIkonu(url: avatarUrl),
+    selectedIcon: KabukProfilIkonu(url: avatarUrl, secili: true),
     label: 'Profil'.c,
   ),
 ];
+
+/// Oturumdaki avatarın tam HTTPS adresi.
+///
+/// Ağaçta [Oturum] yoksa (birim testleri çubuğu tek başına çizer), girişsizse
+/// veya yol boşsa null — çubuk kişi ikonuna düşer. [listen] true: Ayarlar'dan
+/// fotoğraf değişince beşli çubuk kendiliğinden yenilenir.
+@visibleForTesting
+String? kabukAvatarUrl(BuildContext context) {
+  Oturum? oturum;
+  try {
+    oturum = Provider.of<Oturum>(context, listen: true);
+  } on ProviderNotFoundException {
+    oturum = null;
+  }
+  final ham = oturum?.kullanici?['avatar'];
+  if (ham is! String || ham.trim().isEmpty) return null;
+  return dosyaUrl(ham);
+}
+
+/// Rozet + oturum avatarını birleştiren canlı hedef listesi.
+List<NavigationDestination> _canliHedefler(
+  BuildContext context,
+  int okunmamis,
+) => kabukHedefleri(okunmamis: okunmamis, avatarUrl: kabukAvatarUrl(context));
+
+/// Alt çubuğun sağındaki profil hedefi: yuvarlak fotoğraf, GIF oynar.
+///
+/// `CircleAvatar(backgroundImage:)` KULLANILMAZ — o görseli DecorationImage
+/// olarak boyar ve animasyonlu GIF'in yalnız ilk karesini çizer (8/9 Ağu
+/// 2026). Fotoğraf [DaireGorsel] → [AgGorsel] ile gelir; web'de de kareler
+/// akar. Fotoğraf yoksa (misafir / henüz yüklenmemiş) kişi ikonu yedeği.
+class KabukProfilIkonu extends StatelessWidget {
+  /// Diğer çubuk ikonlarıyla aynı görsel ölçü; dokunma alanı çubuk hedefinin
+  /// 44 dp kutusudur, dairenin kendisi değil.
+  static const double cap = 24;
+
+  final String? url;
+  final bool secili;
+
+  const KabukProfilIkonu({super.key, this.url, this.secili = false});
+
+  @override
+  Widget build(BuildContext context) {
+    if (url != null) {
+      return DaireGorsel(
+        url: url!,
+        cap: cap,
+        arkaplan: DiziRenkler.koyuGri,
+        ikonRenk: DiziRenkler.metin38,
+      );
+    }
+    return Icon(secili ? Icons.person : Icons.person_outline, size: cap);
+  }
+}
 
 /// Hedefin üstüne okunmamış sayacı. Sayı 0'ken [Badge] hiç çizilmez —
 /// `isLabelVisible` yerine widget'ı komple atlamak, boş rozetin ikonu
@@ -208,14 +271,14 @@ Widget kabukCubugu(
       child: ValueListenableBuilder<int>(
         valueListenable: SohbetOlaylari.okunmamis,
         builder: (context, okunmamis, _) => NavigationBar(
-          // Etiketler gizli: beş ikon (ev, takvim, akış, uçak, kişi) zaten
-          // tanıdık; yazılar çubuğu yükseltip içerik alanını daraltıyordu.
+          // Etiketler gizli: dört ikon + yuvarlak avatar zaten tanıdık;
+          // yazılar çubuğu yükseltip içerik alanını daraltıyordu.
           // label'lar SİLİNMEDİ — erişilebilirlik (TalkBack) onları okuyor.
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
           height: mobilCubukYuksekligi,
           selectedIndex: secili,
           onDestinationSelected: onSec,
-          destinations: kabukHedefleri(okunmamis: okunmamis),
+          destinations: _canliHedefler(context, okunmamis),
         ),
       ),
     );
@@ -304,7 +367,7 @@ class _MasaustuAda extends StatelessWidget {
         // çiziliyor; buradan `push` etmek orada ikinci bir kabuk kurup
         // siyah ekran üretirdi.
         onDestinationSelected: onSec,
-        destinations: kabukHedefleri(okunmamis: okunmamis),
+        destinations: _canliHedefler(context, okunmamis),
       ),
     ),
   );

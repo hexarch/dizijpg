@@ -1,6 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-25 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-25 — 🚀 Alt çubuk profil: kişi ikonu → yuvarlak avatar (GIF oynar)
+
+Kullanıcı: sabit 5'li bardaki en sağdaki profil ikonunu kaldır; yerine
+kullanıcının profil resmini daire içinde göster. GIF'ler hareket etmeli.
+
+- Sağdaki hedef hâlâ Profil (etiket TalkBack'te duruyor); ikon
+  `Icons.person` değil `[KabukProfilIkonu]`. Fotoğraf `DaireGorsel` →
+  `AgGorsel` (8/9 Ağu GIF tuzağı: `CircleAvatar(backgroundImage:)` ilk karede
+  donardı). Fotoğraf yoksa yedek kişi ikonu.
+- Oturumdaki `avatar` izlenir: Ayarlar'dan değişince çubuk yenilenir.
+- Dokunma alanı 44 dp (dairenin kendisi 24 dp). Widget testleri kilitler.
+
 ## 2026-08-25 — 🚀 Paylaşılan video/görsel netliği (kapak 720 + süzgeç)
 
 Kullanıcı: bazı paylaşılan videolar ve görseller çok kalitesiz; kaliteleştirme

@@ -1,7 +1,11 @@
+import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ceviri.dart';
 import 'package:dizijpg/ekranlar/kabuk.dart';
+import 'package:dizijpg/ekranlar/ortak.dart';
+import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 /// Alt gezinme çubuğu hatası (2 Ağu): ilk sekmenin seçili ikonu PUSULA,
 /// seçili olmayan ikonu EV idi — sekme değiştikçe ikon başka bir şeye
@@ -13,23 +17,31 @@ import 'package:flutter_test/flutter_test.dart';
 /// (kâğıt uçak) geldi. Pusula ailesi listeden SİLİNDİ ki hedef geri
 /// sızarsa test "bilinmeyen ikon" demesin — Keşfet artık Akış başlığındaki
 /// görünüm seçicisinden açılıyor.
+///
+/// 25 Ağu 2026: sağdaki Profil hedefi kişi ikonu değil yuvarlak avatar.
+/// GIF [DaireGorsel]/[AgGorsel] ile oynar; CircleAvatar backgroundImage
+/// ilk karede dondururdu.
 
-/// Seçili olmayan ikon → aynı ailenin dolu hâli.
+/// Seçili olmayan ikon → aynı ailenin dolu hâli. Profil (avatar) bu
+/// haritada yok: fotoğraf aynı daire, yedek ikon ayrı testte.
 final _aile = <IconData, IconData>{
   Icons.home_outlined: Icons.home,
   Icons.calendar_month_outlined: Icons.calendar_month,
   Icons.add_circle_outline: Icons.add_circle,
   Icons.near_me_outlined: Icons.near_me,
-  Icons.person_outline: Icons.person,
 };
 
 IconData _ikon(Widget? w) => (w as Icon).icon!;
 
+KabukProfilIkonu _profil(Widget? w) => w as KabukProfilIkonu;
+
 void main() {
-  test('her sekmenin seçili ikonu, seçili olmayanla aynı aileden', () {
+  test('her ikon sekmesinin seçili hali aynı aileden', () {
     final hedefler = kabukHedefleri();
     expect(hedefler.length, 5);
-    for (final h in hedefler) {
+    for (var i = 0; i < hedefler.length; i++) {
+      if (i == profilHedefi) continue;
+      final h = hedefler[i];
       final bos = _ikon(h.icon);
       expect(
         _aile.containsKey(bos),
@@ -84,7 +96,10 @@ void main() {
   test('çubukta Keşfet (pusula) YOK, Mesajlar VAR — 4. sırada', () {
     final hedefler = kabukHedefleri();
     expect(hedefler.length, 5);
-    final ikonlar = hedefler.map((h) => _ikon(h.icon)).toList();
+    expect(hedefler[profilHedefi].icon, isA<KabukProfilIkonu>());
+    final ikonlar = [
+      for (var i = 0; i < mesajIndeksi + 1; i++) _ikon(hedefler[i].icon),
+    ];
     expect(
       ikonlar.contains(Icons.explore_outlined),
       isFalse,
@@ -120,5 +135,121 @@ void main() {
     expect(kabukSekmeKokleri.length, 5);
     expect(kabukSekmeKokleri[mesajIndeksi], '/sohbetler');
     expect(kabukSekmeKokleri.contains('/arama'), isFalse);
+  });
+
+  // -------------------------------------------------------------------------
+  // 25 Ağu 2026 — sağdaki hedef: kişi ikonu değil yuvarlak (GIF oynayan) avatar
+  // -------------------------------------------------------------------------
+  test('profil hedefi KabukProfilIkonu, kişi Icon widget\'ı değil', () {
+    final profil = kabukHedefleri().elementAt(profilHedefi);
+    expect(profil.icon, isA<KabukProfilIkonu>());
+    expect(profil.selectedIcon, isA<KabukProfilIkonu>());
+    expect(profil.icon, isNot(isA<Icon>()));
+    expect(profil.label, 'Profil'.c);
+  });
+
+  test('yedek: fotoğraf yokken kişi ailesi (boş/dolu) durur', () {
+    final profil = kabukHedefleri().elementAt(profilHedefi);
+    expect(_profil(profil.icon).url, isNull);
+    expect(_profil(profil.icon).secili, isFalse);
+    expect(_profil(profil.selectedIcon).url, isNull);
+    expect(_profil(profil.selectedIcon).secili, isTrue);
+  });
+
+  test('avatar URL her iki hâle de aynı adresi taşır', () {
+    const url = 'https://dizijpg.com/api/avatarlar/x.gif';
+    final profil = kabukHedefleri(avatarUrl: url).elementAt(profilHedefi);
+    expect(_profil(profil.icon).url, url);
+    expect(_profil(profil.selectedIcon).url, url);
+  });
+
+  testWidgets('fotoğraf yokken yedek kişi ikonu çizilir', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: Center(child: KabukProfilIkonu())),
+      ),
+    );
+    expect(find.byIcon(Icons.person_outline), findsOneWidget);
+    expect(find.byType(DaireGorsel), findsNothing);
+    expect(find.byType(CircleAvatar), findsNothing);
+  });
+
+  testWidgets('seçili yedek dolu kişi ikonu', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: Center(child: KabukProfilIkonu(secili: true))),
+      ),
+    );
+    expect(find.byIcon(Icons.person), findsOneWidget);
+    expect(find.byIcon(Icons.person_outline), findsNothing);
+  });
+
+  testWidgets('GIF avatar DaireGorsel + AgGorsel, CircleAvatar YOK', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: diziTema(acik: false),
+        home: const Scaffold(
+          body: Center(
+            child: KabukProfilIkonu(url: 'https://ornek/avatar.gif'),
+          ),
+        ),
+      ),
+    );
+    expect(find.byType(DaireGorsel), findsOneWidget);
+    expect(find.byType(AgGorsel), findsOneWidget);
+    expect(find.byType(ClipOval), findsWidgets);
+    expect(find.byType(Image), findsWidgets);
+    expect(find.byIcon(Icons.person_outline), findsNothing);
+    expect(find.byIcon(Icons.person), findsNothing);
+    for (final a in tester.widgetList<CircleAvatar>(
+      find.byType(CircleAvatar),
+    )) {
+      expect(
+        a.backgroundImage,
+        isNull,
+        reason: 'çubuk avatarında backgroundImage GIF\'i dondurur',
+      );
+    }
+  });
+
+  testWidgets('oturumdaki avatar çubuğa düşer, kişi ikonu kalkar', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final oturum = Oturum()
+      ..kullanici = {
+        'id': 1,
+        'kullanici_adi': 'testkullanici',
+        'avatar': '/avatarlar/ben.gif',
+      };
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp(
+          theme: diziTema(acik: false),
+          home: Builder(
+            builder: (c) => Scaffold(
+              body: const SizedBox.expand(),
+              bottomNavigationBar: kabukCubugu(c, secili: 0, onSec: (_) {}),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.byType(KabukProfilIkonu), findsWidgets);
+    expect(find.byType(DaireGorsel), findsOneWidget);
+    expect(find.byIcon(Icons.person_outline), findsNothing);
+    final gorunen = tester.widget<KabukProfilIkonu>(
+      find.byType(KabukProfilIkonu).first,
+    );
+    expect(gorunen.url, dosyaUrl('/avatarlar/ben.gif'));
   });
 }
