@@ -620,12 +620,14 @@ class _KesfetKutusuState extends State<_KesfetKutusu> {
             CachedNetworkImage(
               imageUrl: arka,
               httpHeaders: gorselBasliklari(arka),
+              filterQuality: kullaniciGorselKalitesi,
               fit: BoxFit.cover,
               // Video karesi henüz üretilmemişse içerik posterine düş
               errorWidget: (context, url, hata) => poster != null
                   ? CachedNetworkImage(
                       imageUrl: poster,
                       httpHeaders: gorselBasliklari(poster),
+                      filterQuality: kullaniciGorselKalitesi,
                       fit: BoxFit.cover,
                     )
                   : Container(color: DiziRenkler.kart),
@@ -1728,6 +1730,7 @@ class _ReelSayfaState extends State<_ReelSayfa>
         child: CachedNetworkImage(
           imageUrl: foto,
           httpHeaders: gorselBasliklari(foto),
+          filterQuality: kullaniciGorselKalitesi,
           fit: BoxFit.contain,
         ),
       );
@@ -3056,6 +3059,8 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
                                                   imageUrl: dosyaUrl(
                                                     _ekler[i]['yol'] as String,
                                                   )!,
+                                                  filterQuality:
+                                                      kullaniciGorselKalitesi,
                                                   fit: BoxFit.cover,
                                                 ),
                                         ),

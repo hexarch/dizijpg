@@ -1,5 +1,18 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-23 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-25 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-25 — 🔨 Paylaşılan video/görsel netliği (kapak 720 + süzgeç)
+
+Kullanıcı: bazı paylaşılan videolar ve görseller çok kalitesiz; kaliteleştirme
+kütüphanesi varsa hepsini elden geçir.
+
+- AI upscale (Real-ESRGAN/Topaz) **yok**: GPU yok, CPU dakikalar sürer, olmayan
+  detayı uydurur. MEDYA-EDITOR-PLANI §8 ve madde 35a (yeniden kodlama VMAF'ı
+  düşürdü) aynı kapıyı kapatmıştı. Özgün video/fotoğraf ezilmez.
+- Video kapağı 480/q4 → **720 tavan, büyütme yok, lanczos, q=2**. Keşfet
+  ızgarası videoyu değil bu JPEG'i gösteriyordu; 1080p kaynak 480'e inip
+  ızgarada 2× büyüyordu. `backend/video_kare.js` + toplu yenileme betiği.
+- Kullanıcı görseli `FilterQuality.high` (akış, Reels, tam ekran, avatar).
 
 ## 2026-08-23 — ✅ SEO-PLANI + SEO-YAPILACAKLAR v3 (GSC taze tur)
 

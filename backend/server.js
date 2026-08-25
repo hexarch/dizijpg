@@ -8,6 +8,7 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
+import { videoKareCikar } from './video_kare.js';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import http from 'http';
@@ -330,15 +331,10 @@ const MEDYA_DIZIN = process.env.MEDYA_DIZIN || './medya';
 // Video için küçük resim: ilk saniyeden bir kare alınıp <dosya>.jpg olarak
 // yazılır. Keşfet ızgarası bunu gösterir — video yerine resim koymak, aynı
 // anda onlarca çözücü açılmasını (ve telefonun ısınmasını) engeller.
-// Başarısız olursa sessiz geçilir; istemci kapak yoksa postere düşer.
+// Komut `video_kare.js`'te: 720 tavan, büyütme yok, lanczos. Başarısız
+// olursa sessiz geçilir; istemci kapak yoksa postere düşer.
 function videoKaresiCikar(dosyaYolu) {
-  return new Promise((bitti) => {
-    execFile('ffmpeg', [
-      '-y', '-ss', '0.5', '-i', dosyaYolu,
-      '-frames:v', '1', '-vf', 'scale=480:-2',
-      '-q:v', '4', `${dosyaYolu}.jpg`,
-    ], { timeout: 20000 }, (hata) => bitti(!hata));
-  });
+  return videoKareCikar(dosyaYolu);
 }
 
 fs.mkdirSync(AVATAR_DIZIN, { recursive: true });

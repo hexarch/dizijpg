@@ -44,6 +44,17 @@
 /// dolaşması riski doğardı. Bu yüzden karar: kendi sunucumuza EK BAŞLIK YOK.
 library;
 
+import 'package:flutter/painting.dart';
+
+/// Kullanıcının yüklediği görsel (yorum, Reels, avatar, video kapağı)
+/// ekranda kaynaktan büyük çizildiğinde kullanılan süzgeç.
+///
+/// `low` küçük Instagram karelerini 3× ekranda bulanıklaştırır. `high` kayıp
+/// sıkıştırmayı GERİ GETİRMEZ — olmayan pikseli uydurmaz — ama kübik
+/// örnekleme kenarı temiz tutar. TMDB poster ızgarası kart boyutuna zaten
+/// oturduğu için bu sabit orada kullanılmaz.
+const FilterQuality kullaniciGorselKalitesi = FilterQuality.high;
+
 /// TMDB görsel CDN'inin adres ön eki. Katalog görselleri (poster, arka plan,
 /// kişi fotoğrafı, firma logosu) yalnızca bu ön ekten gelir — `api.dart`
 /// içindeki `posterUrl()` bunu üretir.

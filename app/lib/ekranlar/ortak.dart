@@ -94,6 +94,7 @@ class MedyaGaleri extends StatelessWidget {
             : CachedNetworkImage(
                 imageUrl: urller[i],
                 httpHeaders: gorselBasliklari(urller[i]),
+                filterQuality: kullaniciGorselKalitesi,
                 fit: BoxFit.cover,
                 placeholder: (_, _) => Container(color: DiziRenkler.kart),
                 errorWidget: (_, _, _) => Container(
@@ -139,6 +140,7 @@ class MedyaGaleri extends StatelessWidget {
             child: CachedNetworkImage(
               imageUrl: urller[0],
               httpHeaders: gorselBasliklari(urller[0]),
+              filterQuality: kullaniciGorselKalitesi,
               width: double.infinity,
               fit: BoxFit.fitWidth,
               placeholder: (_, _) =>
@@ -379,6 +381,7 @@ class _AkisMedyaState extends State<AkisMedya> {
                           child: CachedNetworkImage(
                             imageUrl: url,
                             httpHeaders: gorselBasliklari(url),
+                            filterQuality: kullaniciGorselKalitesi,
                             // İlk medya oranı kutuyu belirlediği için o tam
                             // oturur; diğerleri kırpılmadan sığdırılır.
                             fit: widget.tumunuKapla || i == 0
@@ -1835,6 +1838,7 @@ Widget agGorselKur({
     return Image.network(
       url,
       fit: fit,
+      filterQuality: kullaniciGorselKalitesi,
       // Kare değişiminde beyaz parlama olmasın.
       gaplessPlayback: true,
       loadingBuilder: yerTutucu == null
@@ -1851,6 +1855,7 @@ Widget agGorselKur({
     // uygulanıyor: yarın buraya bir TMDB adresi verilirse kazanç kendiliğinden
     // gelsin, çağıran ayrıca bir şey hatırlamak zorunda kalmasın.
     httpHeaders: gorselBasliklari(url),
+    filterQuality: kullaniciGorselKalitesi,
     fit: fit,
     placeholder: yerTutucu == null ? null : (_, _) => yerTutucu,
     errorWidget: hata == null ? null : (_, _, _) => hata,

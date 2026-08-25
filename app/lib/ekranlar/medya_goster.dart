@@ -185,6 +185,7 @@ class _MedyaGorunumuState extends State<_MedyaGorunumu> {
                         // sunucumuzdaki yorum/mesaj medyası. Hangisi olduğu
                         // ancak ÇALIŞMA ANINDA bilinir; kararı adres veriyor.
                         httpHeaders: gorselBasliklari(url),
+                        filterQuality: kullaniciGorselKalitesi,
                         fit: BoxFit.contain,
                         progressIndicatorBuilder: (_, __, ___) =>
                             const CircularProgressIndicator(
