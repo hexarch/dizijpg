@@ -11,6 +11,8 @@ sohbetin içinde de var — dışarıdakini kaldır.
   geri kabul de aynı yol.
 - `mesaj_istek_karari_test.dart` buna kilitlendi; içerideki düğmeler
   `sohbet_enter_istek_emoji_test.dart`'ta duruyor.
+- Canlı web **1.96.0+146**: `main.13a48ba93fc0.dart.js` · parça
+  `main.dart.js_1.d7c2a4915618.part.js` · SW sökücü · brotli.
 
 ## 2026-08-25 — 🚀 Alt çubuk profil: kişi ikonu → yuvarlak avatar (GIF oynar)
 
