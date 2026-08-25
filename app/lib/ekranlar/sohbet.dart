@@ -452,11 +452,6 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
   bool _cekiliyor = false;
   bool _bekleyenYukle = false;
 
-  /// Kararı sunucuya yazılmakta olan partner id'leri: buton kilidi + sessiz
-  /// yoklama susturması. Karar uçuştayken yoklama listeyi ezerse iyimser
-  /// taşıma bir anlığına geri alınmış görünür (titreme) — o yüzden beklenir.
-  final Set<int> _kararBekleyen = {};
-
   @override
   void initState() {
     super.initState();
@@ -489,8 +484,6 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
       _bekleyenYukle = true;
       return;
     }
-    // Karar uçuştayken sessiz yoklama iyimser taşımayı ezmesin.
-    if (sessiz && _kararBekleyen.isNotEmpty) return;
     _cekiliyor = true;
     if (!sessiz) setState(() => _hata = null);
     try {
@@ -523,52 +516,13 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
     }
   }
 
-  /// Kabul et / Reddet. İyimser: satır hedef kovaya HEMEN taşınır; sunucu
-  /// hata verirse iki liste de eski hâline döner + SnackBar (kural: üç hal,
-  /// sessiz başarısızlık yok). Kabulde kullanıcı doğrudan sohbete girer.
-  Future<void> _karar(Map<String, dynamic> sohbet, String karar) async {
-    final partnerId = sohbet['partner_id'] as int?;
-    if (partnerId == null || _kararBekleyen.contains(partnerId)) return;
-    final eskiIstekler = List<dynamic>.from(_istekler ?? const []);
-    final eskiReddedilenler = List<dynamic>.from(_reddedilenler);
-    setState(() {
-      _kararBekleyen.add(partnerId);
-      _istekler = (_istekler ?? const [])
-          .where((s) => s['partner_id'] != partnerId)
-          .toList();
-      _reddedilenler = _reddedilenler
-          .where((s) => s['partner_id'] != partnerId)
-          .toList();
-      // Kabul edilen satır listeden düşer (artık ana listede); reddedilen
-      // Reddedilenler'in başına iner — kullanıcı nereye gittiğini GÖRÜR.
-      if (karar == 'red') _reddedilenler = [sohbet, ..._reddedilenler];
-    });
-    try {
-      await Api.post('/mesaj-istekleri/karar', {
-        'partner_id': partnerId,
-        'karar': karar,
-      });
-      if (!mounted) return;
-      setState(() => _kararBekleyen.remove(partnerId));
-      if (karar == 'kabul') {
-        // Kullanıcı isteği: kabul doğrudan sohbeti açar.
-        await context.push('/sohbet/${sohbet['partner']}');
-      }
-      _yukle(sessiz: true);
-    } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _kararBekleyen.remove(partnerId);
-        _istekler = eskiIstekler;
-        _reddedilenler = eskiReddedilenler;
-      });
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
   /// Tek sekmenin gövdesi: istekler ya da reddedilenler listesi.
+  ///
+  /// Kabul et / Reddet BURADA YOK (26 Ağu 2026): düğmeler sohbet ekranının
+  /// içinde (`_istekCubugu`). Listede aynı iki buton hem yer kaplıyor hem
+  /// "kararı burada mı içeride mi vereceğim?" diye iki yüzey üretiyordu.
+  /// Satıra dokunmak sohbeti açar; karar orada verilir. Reddedilenler'den
+  /// geri kabul de aynı yol — sohbeti aç, içeride Kabul et.
   Widget _liste({required bool reddedilenler}) {
     final satirlar = reddedilenler ? _reddedilenler : (_istekler ?? const []);
     if (satirlar.isEmpty) {
@@ -595,61 +549,13 @@ class _MesajIstekleriEkraniState extends State<MesajIstekleriEkrani>
         itemCount: satirlar.length,
         itemBuilder: (context, i) {
           final sohbet = satirlar[i] as Map<String, dynamic>;
-          final bekliyor = _kararBekleyen.contains(sohbet['partner_id']);
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SohbetSatiri(
-                sohbet: sohbet,
-                onTap: () async {
-                  await context.push('/sohbet/${sohbet['partner']}');
-                  // Cevap verildiyse sohbet ana listeye geçer ve düşer.
-                  _yukle();
-                },
-              ),
-              Padding(
-                // Butonlar avatarın bittiği hizadan başlar (16 + 48 + 12).
-                padding: const EdgeInsets.fromLTRB(76, 0, 16, 8),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 44,
-                        child: FilledButton(
-                          onPressed: bekliyor
-                              ? null
-                              : () => _karar(sohbet, 'kabul'),
-                          child: bekliyor
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                )
-                              : Text('Kabul et'.c, maxLines: 1),
-                        ),
-                      ),
-                    ),
-                    // Reddedilenler sekmesinde tek eylem var: geri kabul.
-                    if (!reddedilenler) ...[
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: SizedBox(
-                          height: 44,
-                          child: OutlinedButton(
-                            onPressed: bekliyor
-                                ? null
-                                : () => _karar(sohbet, 'red'),
-                            child: Text('Reddet'.c, maxLines: 1),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
+          return SohbetSatiri(
+            sohbet: sohbet,
+            onTap: () async {
+              await context.push('/sohbet/${sohbet['partner']}');
+              // Karar içeride verildiyse satır kovadan düşer.
+              _yukle();
+            },
           );
         },
       ),
@@ -1303,9 +1209,8 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
-  /// Mesaj isteği çubuğu: yanıt kutusunun YERİNE çizilir. Düğme düzeni
-  /// istek listesindeki kartla aynı (FilledButton kabul, OutlinedButton red)
-  /// — iki ekranda iki ayrı dil olmasın.
+  /// Mesaj isteği çubuğu: yanıt kutusunun YERİNE çizilir. Karar yalnız
+  /// sohbetin İÇİNDE verilir — istek listesinde bu düğmeler yok.
   Widget _istekCubugu() {
     return Row(
       children: [

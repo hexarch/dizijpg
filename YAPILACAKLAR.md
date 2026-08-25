@@ -1,5 +1,16 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-25 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-26 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-26 — 🚀 Mesaj istekleri: liste düğmeleri kalktı (karar sohbetin içinde)
+
+Kullanıcı: gelen mesaj isteklerinde hâlâ dışarıda Kabul et / Reddet var;
+sohbetin içinde de var — dışarıdakini kaldır.
+
+- Liste satırı yalnız sohbeti açar. Kabul et / Reddet `_istekCubugu` ile
+  sohbet altındadır (kabul edilmeden yanıt kutusu yok). Reddedilenler'den
+  geri kabul de aynı yol.
+- `mesaj_istek_karari_test.dart` buna kilitlendi; içerideki düğmeler
+  `sohbet_enter_istek_emoji_test.dart`'ta duruyor.
 
 ## 2026-08-25 — 🚀 Alt çubuk profil: kişi ikonu → yuvarlak avatar (GIF oynar)
 
