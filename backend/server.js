@@ -8,7 +8,7 @@ import path from 'path';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import { execFile } from 'child_process';
-import { videoKareCikar } from './video_kare.js';
+import { videoKareCikar, medyaBoyutOlc } from './video_kare.js';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import http from 'http';
@@ -2620,8 +2620,14 @@ const seoMetin = (s) => String(s ?? '').replace(/\s+/g, ' ').trim();
 // birebir aynı dönüşüm). Bot sayfası 10'luk basarsa arama sonucunda ★10 görüp
 // uygulamada 5.0 gören kullanıcı çıkar; yapısal veri de sayfada görünen
 // değerden farklı olamaz.
-const seoYildiz = (p) => Math.min(5, Math.max(0, Math.round(Number(p) / 2)));
-const seoYildizOrt = (p) => Math.min(5, Number(p) / 2).toFixed(1);
+// SEO ÇIKTISI DAİMA 5 YILDIZDIR — kullanıcının kendi ölçeği (5-100) burayı
+// ETKİLEMEZ. Gerekçe: SSR/JSON-LD tek ve ANONİM bir çıktıdır; okuyucusu
+// Google'dır, oturum sahibi değil. Ölçeği kişiye göre değiştirmek aynı sayfayı
+// ziyaretçiden ziyaretçiye farklı `bestRating` ile sunmak olurdu.
+// Kanonik depolama 1-100'e çıktığı için bölen 2 → 20 oldu
+// (migrasyon-2026-08-26b.sql).
+const seoYildiz = (p) => Math.min(5, Math.max(0, Math.round(Number(p) / 20)));
+const seoYildizOrt = (p) => Math.min(5, Number(p) / 20).toFixed(1);
 
 // `seoOzUzunluk` SQL ifadesinin JS karşılığı: etiket (#tag), bahsetme (@ad) ve
 // bağlantılar ATILDIKTAN SONRA kalan metnin uzunluğu.
@@ -7268,7 +7274,10 @@ function girisYuku(k) {
   const { id, kullanici_adi, email, misafir } = k;
   return {
     token: jwtUret(k),
-    kullanici: { id, kullanici_adi, email, misafir },
+    // `puan_olcegi` giriş yükünde: istemci ilk kareden doğru ölçeği çizsin,
+    // 5 yıldız gösterip saniye sonra 100'e atlamasın. Sütun yoksa (migrasyon
+    // uygulanmamış sunucu) varsayılan 5 — eski davranış.
+    kullanici: { id, kullanici_adi, email, misafir, puan_olcegi: k.puan_olcegi ?? 5 },
     ...(yasak ? { yasak } : {}),
   };
 }
@@ -7380,7 +7389,10 @@ app.post('/auth/google', authLimiti, sarici(async (req, res) => {
     const { id, kullanici_adi, email: eposta, misafir } = k;
     return res.json({
       token: jwtUret(k),
-      kullanici: { id, kullanici_adi, email: eposta, misafir },
+      kullanici: {
+        id, kullanici_adi, email: eposta, misafir,
+        puan_olcegi: k.puan_olcegi ?? 5, // bkz. girisYuku
+      },
       yeni: false,
       ...(yasak ? { yasak } : {}),
     });
@@ -8825,8 +8837,12 @@ app.post('/puan', girisZorunlu, sarici(async (req, res) => {
   if (!hedef) return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   const { tur, tmdb_id, sezon, bolum } = hedef;
   const { puan, yorum = null } = req.body || {};
-  if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 10)) {
-    return res.status(400).json({ hata: 'Puan 1-10 arası olmalı' });
+  // KANONİK ÖLÇEK 1-100 (migrasyon-2026-08-26b.sql). İstemci kullanıcının
+  // seçtiği ölçekten (5-100) buraya ÇEVİREREK gönderir; sunucu ölçeği bilmez
+  // ve bilmemelidir — aynı puan farklı ölçeklerdeki iki cihazdan aynı sayıyla
+  // gelir. Kullanıcının görünüm tercihi yalnız `kullanicilar.puan_olcegi`.
+  if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 100)) {
+    return res.status(400).json({ hata: 'Puan 1-100 arası olmalı' });
   }
   if (yorum != null && String(yorum).length > 2000) {
     return res.status(400).json({ hata: 'İnceleme en fazla 2000 karakter olabilir' });
@@ -9283,6 +9299,38 @@ app.post('/bildirim-tercihleri', girisZorunlu, sarici(async (req, res) => {
     deg,
   );
   res.json(rows[0]);
+}));
+
+// ---------------------------------------------------------------------------
+// PUAN ÖLÇEĞİ (kullanıcı isteği, 26 Ağu 2026) — 5 / 10 / 50 / 100 ya da arası
+// ---------------------------------------------------------------------------
+// SUNUCUDA TUTULUYOR, CİHAZDA DEĞİL: kullanıcı telefonda 100'lük ölçeğe geçip
+// web'de 5 yıldız görseydi aynı puan iki ekranda iki farklı sayı olurdu.
+// SharedPreferences yalnız AÇILIŞ ÖNBELLEĞİ (istemci ilk kareyi çizerken
+// sunucuyu beklemesin); doğrunun kaynağı bu sütundur.
+//
+// ÖLÇEK PUANI DEĞİŞTİRMEZ: kayıtlar kanonik 1-100'de durur, N yalnız gösterim.
+// Bu yüzden ölçek değiştirmek bir VERİ GÖÇÜ değildir — hiçbir satır yazılmaz.
+const PUAN_OLCEK_ALT = 5;
+const PUAN_OLCEK_UST = 100;
+
+app.get('/puan-olcegi', girisZorunlu, sarici(async (req, res) => {
+  const { rows } = await havuz.query(
+    'SELECT puan_olcegi FROM kullanicilar WHERE id=$1', [req.kullanici.id]);
+  res.json({ olcek: rows[0]?.puan_olcegi ?? PUAN_OLCEK_ALT });
+}));
+
+app.post('/puan-olcegi', girisZorunlu, sarici(async (req, res) => {
+  const olcek = Number((req.body || {}).olcek);
+  if (!Number.isInteger(olcek) || olcek < PUAN_OLCEK_ALT || olcek > PUAN_OLCEK_UST) {
+    return res.status(400).json({
+      hata: `Ölçek ${PUAN_OLCEK_ALT}-${PUAN_OLCEK_UST} arası tam sayı olmalı`,
+    });
+  }
+  const { rows } = await havuz.query(
+    'UPDATE kullanicilar SET puan_olcegi=$2 WHERE id=$1 RETURNING puan_olcegi',
+    [req.kullanici.id, olcek]);
+  res.json({ olcek: rows[0].puan_olcegi });
 }));
 
 // md. 28 — KİŞİ BAZLI bildirim kipi ("kişinin profilinde bildirim işareti").
@@ -10956,6 +11004,17 @@ app.post('/medya',
     const videoMu = VIDEO_TURLERI.includes(tur);
     // Kare çıkarma yüklemeyi ~1 sn uzatır ama ızgarayı çok hafifletir.
     const kapakVar = videoMu ? await videoKaresiCikar(tamYol) : false;
+    // Oran kaydı (zıplama düzeltmesi, 26 Ağu 2026): akış kartı kutuyu ilk
+    // kareden doğru boyda kurabilsin diye en/boy ölçülüp yazılır. ATEŞLE-UNUT
+    // ve başarısızlık yüklemeyi BOZMAZ: oransız medyada istemci bugünkü gibi
+    // kendisi ölçer (yalnız o kartta zıplama kalır).
+    if (!SES_TURLERI.includes(tur)) {
+      medyaBoyutOlc(tamYol).then((b) => b && havuz.query(
+        `INSERT INTO medya_olculer (medya, en, boy) VALUES ($1, $2, $3)
+         ON CONFLICT (medya) DO UPDATE SET en = EXCLUDED.en, boy = EXCLUDED.boy`,
+        [`/medya/${dosya}`, b.en, b.boy],
+      )).catch(() => {});
+    }
     // Altyazı işini KUYRUĞA at — yüklemeyi BEKLETMEDEN. Konuşma tanıma
     // dakikalar sürebilir; kullanıcı gönderisini beklemesin. Sunucudaki işçi
     // (araclar/altyazi_uret.js --isle --surekli) kuyruğu sırayla boşaltır.
@@ -11366,6 +11425,11 @@ const AKIS_ALANLAR = `
             -- sutunla: ad degistirilebilir bir alan (migrasyon-2026-08-21d.sql).
             -- Yanita CIKMAZ; akisSatiri onu ayiklar. (Sablon dizesi: BACKTICK YOK.)
             k.ai AS ai_hesap,
+            -- Ilk medyanin en/boy orani (medya_olculer): istemci karti bu
+            -- oranda kurar, medya yuklenince ziplama olmaz. Kayit yoksa NULL,
+            -- istemci bugunku gibi olcer. (Sablon dizesi: BACKTICK YOK.)
+            (SELECT mo.en::float / mo.boy FROM medya_olculer mo
+                   WHERE mo.medya = y.medya[1]) AS medya_oran,
             (SELECT c.metin FROM metin_cevirileri c
                    WHERE c.ozet = md5(btrim(y.metin)) AND c.dil = $4) AS ceviri_metin,
             (SELECT count(*)::int FROM yorum_begeniler b WHERE b.yorum_id=y.id) AS begeni,
@@ -11672,7 +11736,10 @@ async function turListesi({ benId, yuzey, dil, kadro, ayar, olcum, tohum, gorule
   if (eldeki) return eldeki;
   const hacim = hacimUygula(ayar, olcum);
   const adaylar = await adaylariGetir({
-    benId, dil, kadro, hacim, gorulenHaric, kat: hacim.pay.medya > 0,
+    benId, dil, kadro, hacim, gorulenHaric,
+    // `kat` video tabanı için de gerekir: bayrak gelmezse siralaVeKotala
+    // hiçbir adayı video olarak tanıyamaz ve taban sessizce çalışmaz.
+    kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
     kesfet: yuzey === 'kesfet', // sert filtre: Keşfet havuzunda medyasız yok
   });
   const { idler } = siralaVeKotala(adaylar, ayar, olcum);
@@ -15165,7 +15232,10 @@ app.get('/profil/:kullaniciAdi', girisIsteğeBagli, sarici(async (req, res) => {
          ) o`,
         [benId, id]),
       havuz.query(
-        `SELECT round(avg(1 - abs(a.puan - b.puan) / 9.0) * 100)::int AS yuzde,
+        // 99.0: kanonik ölçek 1-100 olduğundan iki puan arası EN BÜYÜK fark
+        // 99'dur (eskiden 1-10 ölçekte 9). Bölen güncellenmezse uyum yüzdesi
+        // her çiftte ~%99'a yapışır ve ayırt etme gücü kalmaz.
+        `SELECT round(avg(1 - abs(a.puan - b.puan) / 99.0) * 100)::int AS yuzde,
                 count(*)::int AS ortak_puan
          -- sezon IS NULL (İKİ TARAFTA DA): süzgeçsiz JOIN "senin S1B4 puanın"
          -- ile "onun dizi geneli puanını" eşleştirir ve aynı diziyi bölüm
@@ -17279,7 +17349,7 @@ app.get('/admin/algoritma-onizleme', adminKisit, sarici(async (req, res) => {
   const t0 = Date.now();
   const adaylar = await adaylariGetir({
     benId: kimId, dil: 'tr', kadro: [], hacim,
-    gorulenHaric: false, kat: hacim.pay.medya > 0,
+    gorulenHaric: false, kat: hacim.pay.medya > 0 || ayar.video_tabani > 0,
     // Panel YALAN SÖYLEMEMELİ: kullanıcı yolundaki sert filtre burada da var.
     kesfet: yuzey === 'kesfet',
   });

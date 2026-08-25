@@ -36,6 +36,9 @@ export const SAYI_ALANLARI = {
   spoiler_ceza: { alt: 0.1, ust: 1 },
   ai_payi: { alt: 0, ust: 100 }, // % — AI hesabının listedeki azami payı
   arsiv_payi: { alt: 0, ust: 100 }, // % — arşiv gönderilerinin azami payı
+  // TAVANLARIN SİMETRİĞİ: seçilen kartlarda videolu gönderinin ASGARİ payı.
+  // Üst sınır 50 — yarıdan fazlası zorla video olan bir akış artık Keşfet'tir.
+  video_tabani: { alt: 0, ust: 50 }, // % — 0: kapalı (bugünkü davranış)
   hacim_esigi: { alt: 0, ust: 1000 },
 };
 
@@ -55,7 +58,10 @@ export const VARSAYILAN_AKIS = Object.freeze({
   yazar_kalite: 10, dil: 10, begeni: 0, yanit: 0, takip_begendi: 0,
   yari_omur_saat: 36, tazelik_gucu: 85,
   yazar_doygunluk: 0.7, icerik_doygunluk: 0.8, spoiler_ceza: 0.85,
-  ai_payi: 50, arsiv_payi: 45, hacim_esigi: 3,
+  // video_tabani %10: her 10 kartta en az 1 video. Ölçüm (26 Ağu 2026):
+  // medya ağırlığı 0 + 36 saatlik yarı ömür, arşiv videolarını (460'ın %91,5'i
+  // 2017-2021 Instagram aktarımı) hiçbir sayfada sıraya sokmuyordu.
+  ai_payi: 50, arsiv_payi: 45, video_tabani: 10, hacim_esigi: 3,
 });
 
 // Keşfet ayrı set (plan §4.4): sosyal graf 20 kenarla Keşfet'i besleyemez,
@@ -66,7 +72,7 @@ export const VARSAYILAN_KESFET = Object.freeze({
   yazar_kalite: 10, dil: 0, begeni: 0, yanit: 0, takip_begendi: 0,
   yari_omur_saat: 168, tazelik_gucu: 85,
   yazar_doygunluk: 0.5, icerik_doygunluk: 0.8, spoiler_ceza: 0.85,
-  ai_payi: 50, arsiv_payi: 45, hacim_esigi: 3,
+  ai_payi: 50, arsiv_payi: 45, video_tabani: 0, hacim_esigi: 3,
 });
 
 export const varsayilan = (yuzey) => (yuzey === 'kesfet' ? VARSAYILAN_KESFET : VARSAYILAN_AKIS);
@@ -223,6 +229,14 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
   let arsivSayi = 0;
   const aiTavan = kis(ayar.ai_payi, 0, 100) / 100;
   const arsivTavan = kis(ayar.arsiv_payi, 0, 100) / 100;
+  // VİDEO TABANI (26 Ağu 2026): tavanlar "en fazla şu kadar" der, bu "en az
+  // şu kadar". Videolar skor sıralı listenin DİBİNDE yaşadığı için (akışta
+  // medya ağırlığı 0 + tazelik arşivi tabana çakar) doygunluk penceresi onları
+  // asla görmez; taban tetiklenince en iyi video TÜM kalan havuzdan seçilir.
+  // Maliyet ölçülü: tetik seçimlerin ~%10'unda, tarama O(kalan) → 400 kart ×
+  // 25k aday en kötü halde ~1M ucuz karşılaştırma, tek sefer (liste donuyor).
+  const videoTaban = kis(ayar.video_tabani ?? 0, 0, 100) / 100;
+  let videoSayi = 0;
   const kalan = puanli;
   let bas = 0; // kalan[bas..] henüz seçilmemişler (seçilen öne takas edilir)
 
@@ -239,7 +253,27 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
     let enIyi = -1;
     let enIyiPuan = -Infinity;
     const sonraki = secilen.length + 1;
-    for (let i = bas; i < son; i++) {
+    // Taban tetiği: floor() BİLEREK — taban %10'da ilk video 10. kartta
+    // belirir, 1. kartta değil (akışın girişi videoya kilitlenmesin).
+    // AI/arşiv tavanları bu seçimde BİLEREK atlanır: videoların %91,5'i arşiv
+    // AI hesabında, tavanlar uygulansa taban hiç çalışmazdı. Sayaçlara yine de
+    // işlenir ki organik seçim dengelesin. Doygunluk cezaları uygulanır —
+    // taban aynı yazarın/yapımın videolarını art arda dizmesin.
+    if (videoTaban > 0 && videoSayi < Math.floor(videoTaban * sonraki + 1e-9)) {
+      for (let i = bas; i < kalan.length; i++) {
+        const v = kalan[i];
+        if (v.g.kat !== 0) continue;
+        const yz = yazarSayac.get(v.g.kullanici_id) || 0;
+        const ic = icerikSayac.get(`${v.g.tur}:${v.g.tmdb_id}`) || 0;
+        const puan = v.skor
+          * Math.pow(ayar.yazar_doygunluk, yz)
+          * Math.pow(ayar.icerik_doygunluk, ic);
+        if (puan > enIyiPuan) { enIyiPuan = puan; enIyi = i; }
+      }
+      // Havuzda hiç video kalmadıysa taban sessizce devreden çıkar (enIyi=-1
+      // kaldı) ve normal pencere seçimi çalışır — liste asla kısalmaz.
+    }
+    if (enIyi < 0) for (let i = bas; i < son; i++) {
       const p = kalan[i];
       // Kota kontrolü: bu kartı ALIRSAK pay tavanı aşılıyor mu?
       if (p.g.ai && (aiSayi + 1) / sonraki > aiTavan + 1e-9) continue;
@@ -265,7 +299,7 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
         id: p.id, skor: p.skor, etkin_skor: enIyi >= 0 ? enIyiPuan : p.skor,
         ilgi: p.ilgi, tazelik: p.tazelik, ceza_spoiler: p.ceza_spoiler,
         sinyal: p.sinyal, kullanici_id: p.g.kullanici_id,
-        ai: !!p.g.ai, arsiv: !!p.g.arsiv,
+        ai: !!p.g.ai, arsiv: !!p.g.arsiv, videolu: p.g.kat === 0,
       });
     }
     yazarSayac.set(p.g.kullanici_id, (yazarSayac.get(p.g.kullanici_id) || 0) + 1);
@@ -273,6 +307,7 @@ export function siralaVeKotala(adaylar, ayar, olcum, {
     icerikSayac.set(ick, (icerikSayac.get(ick) || 0) + 1);
     if (p.g.ai) aiSayi++;
     if (p.g.arsiv) arsivSayi++;
+    if (p.g.kat === 0) videoSayi++; // organik seçilen video da tabanı doldurur
   }
   return { idler: secilen, kirilim };
 }

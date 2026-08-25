@@ -5,9 +5,15 @@ import '../ceviri.dart';
 import '../puan.dart';
 import '../tema.dart';
 import 'ortak.dart' show altGuvenli;
+import 'puan_sec_sheet.dart';
 
-/// 1-10 puan + isteğe bağlı inceleme sheet'i. Kaydederse true döner.
+/// Puan + isteğe bağlı inceleme sheet'i. Kaydederse true döner.
 /// tur: 'tv' | 'movie' | 'person'
+///
+/// ÖLÇEK (26 Ağu 2026): yıldız satırı yalnız ölçek ≤ 10 iken çizilir; üstünde
+/// satır yerine dokunulabilir bir ROZET durur ve [puanSecSheet] açılır
+/// (gerekçe: `yildizSatiriOlur`). Böylece bu sheet 100'lük ölçekte de
+/// inceleme yazma işlevini korur — puan seçimi iç sayfaya devredilir.
 Future<bool> puanlaVeKaydet(
   BuildContext context, {
   required String tur,
@@ -16,8 +22,10 @@ Future<bool> puanlaVeKaydet(
   String? mevcutYorum,
 }) async {
   final yorumKutusu = TextEditingController(text: mevcutYorum ?? '');
-  // 5 yıldız ölçeği; sunucuda 1-10 tutulur (bkz. lib/puan.dart)
-  var secilen = yildiza(mevcutPuan);
+  // Görünüm ölçeği; sunucuda kanonik 1-100 tutulur (bkz. lib/puan.dart).
+  // Sheet açıkken ölçek değişemeyeceği için bir kez okunur.
+  final olcek = PuanOlcegi.deger.value;
+  var secilen = yildiza(mevcutPuan, olcek: olcek);
   var kaydediyor = false;
 
   try {
@@ -34,7 +42,7 @@ Future<bool> puanlaVeKaydet(
               await Api.post('/puan', {
                 'tmdb_id': tmdbId,
                 'tur': tur,
-                'puan': secilen == 0 ? null : dbPuani(secilen),
+                'puan': secilen == 0 ? null : dbPuani(secilen, olcek: olcek),
                 'yorum': yorumKutusu.text.trim().isEmpty
                     ? null
                     : yorumKutusu.text.trim(),
@@ -85,28 +93,56 @@ Future<bool> puanlaVeKaydet(
                   ),
                 ),
                 const SizedBox(height: 12),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 4,
-                  children: [
-                    for (var p = 1; p <= 5; p++)
-                      IconButton(
-                        onPressed: () => setModal(() => secilen = p),
-                        icon: Icon(
-                          p <= secilen
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
-                          color: DiziRenkler.sari,
-                          size: 40,
+                if (yildizSatiriOlur(olcek))
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 4,
+                    children: [
+                      for (var p = 1; p <= olcek; p++)
+                        IconButton(
+                          onPressed: () => setModal(() => secilen = p),
+                          icon: Icon(
+                            p <= secilen
+                                ? Icons.star_rounded
+                                : Icons.star_outline_rounded,
+                            color: DiziRenkler.sari,
+                            // 10 yıldızda 40 dp ikonlar Wrap'i iki satıra
+                            // kırıyordu; ölçekle küçülür (tek kaynak:
+                            // yildizIkonBoyu).
+                            size: yildizIkonBoyu(olcek, taban: 40),
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(
+                            minWidth: 44,
+                            minHeight: 44,
+                          ),
                         ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(
-                          minWidth: 44,
-                          minHeight: 44,
-                        ),
+                    ],
+                  )
+                else
+                  // Geniş ölçek: satır yerine rozet → kaydırıcılı iç sayfa.
+                  Center(
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        final s = await puanSecSheet(
+                          context,
+                          olcek: olcek,
+                          mevcut: secilen,
+                        );
+                        if (s != null) setModal(() => secilen = s);
+                      },
+                      icon: Icon(
+                        secilen > 0
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        color: DiziRenkler.sari,
                       ),
-                  ],
-                ),
+                      label: Text(
+                        secilen > 0 ? '$secilen/$olcek' : 'Puanla'.c,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                  ),
                 const SizedBox(height: 12),
                 TextField(
                   controller: yorumKutusu,

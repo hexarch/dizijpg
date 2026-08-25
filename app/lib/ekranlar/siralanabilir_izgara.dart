@@ -40,6 +40,34 @@ import 'ortak.dart';
 /// yoksa bir ekrandan uzağa taşımak mümkün olmazdı.
 ///
 /// ---------------------------------------------------------------------------
+/// UZUN BASMA ≠ SÜRÜKLEME (kullanıcı isteği, 26 Ağu 2026)
+/// ---------------------------------------------------------------------------
+/// Kullanıcı: *"sadece basılı tutarsam afişin çapraz yukarısında en aşağıya
+/// gönder olsun, elimi çekip ona tıklayabileyim; ama sürüklersem onu kaldır,
+/// bıraktığım yere gitsin"*.
+///
+/// Tek jest iki işe hizmet ediyor, ayrım PARMAK HAREKETİ:
+///   * basılı tut + KIMILDAMA → afişin sağ üstünde "En aşağıya gönder"
+///     düğmesi belirir ve parmak kalkınca EKRANDA KALIR (tıklanabilir).
+///   * basılı tut + SÜRÜKLE   → düğme anında kaybolur, klasik taşıma çalışır.
+/// Eşik [_surukleEsigi]: bu kadar pikselden az hareket "titreme" sayılır,
+/// düğme kaybolmaz — yoksa parmağın doğal oynaması düğmeyi söndürürdü.
+///
+/// ---------------------------------------------------------------------------
+/// BIRAKMA TOLERANSI — "ARAYA" BIRAKMA
+/// ---------------------------------------------------------------------------
+/// Kullanıcı: *"bırakırken tam başka afişin üzerine bırakmamı istiyor, onu
+/// biraz tolere et; iki dizinin ortasında bırakırsam ortasına yerleşsin"*.
+///
+/// Eski davranış "hedefin YERİNİ al" idi: nişan hedefin gövdesine tutmazsa
+/// hiçbir şey olmuyordu. Artık hedefin HANGİ YARISINA bırakıldığına bakılır —
+/// sol yarı "bunun ÖNÜNE", sağ yarı "bunun ARKASINA". İki afişin arasını
+/// nişanlayan parmak ya soldakinin sağ yarısına ya sağdakinin sol yarısına
+/// düşer; İKİSİ DE AYNI SONUCU verir. Tolerans budur: isabet etmesi gereken
+/// nokta değil, doğru tarafa düşmesi gereken bir sınır var.
+/// (RTL'de "sol yarı = önce" tersine döner; yön [Directionality]'den okunur.)
+///
+/// ---------------------------------------------------------------------------
 /// SUNUCUYA YAZMA
 /// ---------------------------------------------------------------------------
 /// İYİMSER: sıra önce EKRANDA uygulanır, sonra `PUT /kitaplik/sira/<liste>`
@@ -150,6 +178,41 @@ class _SiralanabilirPosterIzgarasiState
   /// [kaynak] öğesini [hedef] konumuna taşır (bırakılan afiş hedefin YERİNİ
   /// alır). İndeksler TAM listeye göredir — süzgeç açıkken sürükleme kapalı
   /// olduğu için burada karışma olamaz.
+  /// Uzun basılan afişin anahtarı — "En aşağıya gönder" düğmesi bunun
+  /// üstünde çizilir. Parmak kalkınca SİLİNMEZ: kullanıcı düğmeye
+  /// tıklayabilsin diye ekranda kalır, başka bir yere dokununca kapanır.
+  String? _uzunBasilan;
+
+  /// Bu basmada parmak gerçekten sürüklendi mi (eşiği aştı mı)?
+  bool _suruklendi = false;
+
+  /// Bu basmada biriken toplam hareket (px). `delta` toplanır, ham konum
+  /// farkı değil: ileri-geri gidip başladığı yere dönen parmak da
+  /// "sürükledi" sayılmalı.
+  double _toplamKayma = 0;
+
+  /// Titreme ile sürükleme ayrımı. 12 dp: Flutter'ın kendi `kTouchSlop`u
+  /// (18) sürükleme JESTİNİ başlatmak için; burada jest zaten başlamış,
+  /// yalnız "niyet kaydırmak mıydı" sorusunu yanıtlıyoruz.
+  static const double _surukleEsigi = 12;
+
+  /// Hücrelerin GlobalKey'leri — bırakma noktasının HANGİ HÜCREnin hangi
+  /// yarısına düştüğünü ölçmek için gerekli.
+  ///
+  /// NEDEN GlobalKey: `_hucre` bir METOT, içindeki `context` State'in
+  /// context'idir ve `findRenderObject()` TÜM IZGARANIN kutusunu döndürür.
+  /// İlk sürümde ölçüm bu yüzden hep "ekranın sol yarısı" diyordu ve her
+  /// bırakma öğeyi listenin başına atıyordu (26 Ağu 2026 testinde yakalandı).
+  final Map<String, GlobalKey> _hucreAnahtarlari = {};
+
+  GlobalKey _hucreAnahtari(String anahtar) =>
+      _hucreAnahtarlari.putIfAbsent(anahtar, GlobalKey.new);
+
+  /// Hedefin hangi bölgesine düşülüyor: -1 önüne · 0 yerini al · +1 arkasına.
+  /// Sürükleme sırasında canlı güncellenir ki kılavuz doğru kenarda görünsün
+  /// (kullanıcı nereye düşeceğini bırakmadan görür).
+  final Map<int, int> _oncesineDusuyor = {};
+
   Future<void> _tasi(int kaynak, int hedef) async {
     if (_yaziliyor || kaynak == hedef) return;
     if (kaynak < 0 || kaynak >= _ogeler.length) return;
@@ -160,6 +223,40 @@ class _SiralanabilirPosterIzgarasiState
       _ogeler.insert(hedef, o);
     });
     await _kaydet(yedek);
+  }
+
+  /// ARAYA EKLE — sürükle-bırakın asıl yolu (bkz. sınıf başlığı "BIRAKMA
+  /// TOLERANSI"). [ekleNoktasi] ORİJİNAL liste indekslerinde "şu öğeden
+  /// önce" demektir ve `0.._ogeler.length` aralığındadır.
+  ///
+  /// İNDEKS KAYMASI: kaynak, ekleme noktasının SOLUNDAYSA öğe listeden
+  /// çıkarılınca hedef bir sola kayar. Bu düzeltme yapılmazsa afiş her
+  /// seferinde istenen yerin bir sağına düşer.
+  Future<void> _tasiAraya(int kaynak, int ekleNoktasi) async {
+    if (_yaziliyor) return;
+    if (kaynak < 0 || kaynak >= _ogeler.length) return;
+    if (ekleNoktasi < 0 || ekleNoktasi > _ogeler.length) return;
+    // Kendi yerine bırakmak (önüne ya da arkasına) sıfır iş: yazma yapma.
+    if (ekleNoktasi == kaynak || ekleNoktasi == kaynak + 1) return;
+    final yedek = [..._ogeler];
+    setState(() {
+      final o = _ogeler.removeAt(kaynak);
+      final hedef = kaynak < ekleNoktasi ? ekleNoktasi - 1 : ekleNoktasi;
+      _ogeler.insert(hedef.clamp(0, _ogeler.length), o);
+    });
+    await _kaydet(yedek);
+  }
+
+  /// EN AŞAĞIYA GÖNDER — uzun basma düğmesinin eylemi. "En üste taşı"nın
+  /// simetriği: 3. sıradaki afişi 578. sıraya sürüklemek de imkânsızdı.
+  Future<void> _altaTasi(Map<String, dynamic> oge) async {
+    final i = _ogeler.indexWhere(
+      (o) => _anahtar(o as Map<String, dynamic>) == _anahtar(oge),
+    );
+    if (i < 0 || i == _ogeler.length - 1) return;
+    setState(() => _uzunBasilan = null);
+    await _tasiAraya(i, _ogeler.length);
+    if (mounted) _uyar('Listenin en altına taşındı'.c);
   }
 
   /// EN ÜSTE TAŞI — uzun listenin asıl çözümü. 400. sıradaki afişi 1. sıraya
@@ -431,20 +528,123 @@ class _SiralanabilirPosterIzgarasiState
       );
     }
 
+    // Bırakma noktası hücrenin hangi yarısında? Global koordinat hücrenin
+    // yerel koordinatına çevrilir; RenderBox henüz yoksa (ilk kare) ortadan
+    // böleriz — yanlış tarafa düşmektense eski davranışa dönmek yeğdir.
+    /// Bırakma noktası hedefin neresine düştü?
+    ///   -1 → ÖNÜNE ekle · 0 → YERİNİ AL · +1 → ARKASINA ekle
+    ///
+    /// ÜÇ BÖLGE, İKİ DEĞİL: orta şerit bilerek korundu. Afişin tam üstüne
+    /// bırakmak 21 Ağu'dan beri "onun yerine geç" demekti ve sezgisel olan
+    /// bu; ikiye bölseydik hedefin ortasına nişan alan her bırakma, pikselin
+    /// hangi tarafa düştüğüne göre rastgele önüne ya da arkasına giderdi.
+    /// Kenar şeritleri (%30) ARAYA bırakma içindir — kullanıcının istediği
+    /// tolerans orada yaşıyor.
+    int hedefBolge(Offset kuresel) {
+      final kutu = _hucreAnahtari(anahtar).currentContext?.findRenderObject();
+      if (kutu is! RenderBox || !kutu.hasSize) return 0;
+      final oran = kutu.globalToLocal(kuresel).dx / kutu.size.width;
+      // RTL'de görsel "sol", listenin SONRAKİ öğesidir.
+      final rtl = Directionality.of(context) == TextDirection.rtl;
+      if (oran < 0.3) return rtl ? 1 : -1;
+      if (oran > 0.7) return rtl ? -1 : 1;
+      return 0;
+    }
+
     return DragTarget<int>(
-      onWillAcceptWithDetails: (d) => surukleAcik && d.data != i,
-      onAcceptWithDetails: (d) => _tasi(d.data, i),
+      onWillAcceptWithDetails: (d) {
+        if (!surukleAcik || d.data == i) return false;
+        // `d.offset` sürüklenen hayaletin SOL ÜST köşesi; nişan noktası
+        // olarak merkezi kullanmak parmağın hissettiği yere daha yakın.
+        final yeni = hedefBolge(d.offset + Offset(hucreGenisligi / 2, 0));
+        if (_oncesineDusuyor[i] != yeni) {
+          // Kılavuz çizgisini taşımak için kare sonunda yeniden çiz;
+          // build içinde setState çağırmak yasak olduğundan ertelenir.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) setState(() => _oncesineDusuyor[i] = yeni);
+          });
+        }
+        return true;
+      },
+      onLeave: (_) => _oncesineDusuyor.remove(i),
+      onAcceptWithDetails: (d) {
+        final bolge = hedefBolge(d.offset + Offset(hucreGenisligi / 2, 0));
+        _oncesineDusuyor.remove(i);
+        // Orta şerit: eski "yerini al" yolu (indeks kaydırma semantiği ORADA,
+        // `_tasi` içinde). Kenarlar: ekleme noktası semantiği.
+        if (bolge == 0) {
+          _tasi(d.data, i);
+        } else {
+          _tasiAraya(d.data, bolge < 0 ? i : i + 1);
+        }
+      },
       builder: (context, aday, _) {
         final hedefte = aday.isNotEmpty;
-        final cerceve = DecoratedBox(
+        final bolge = _oncesineDusuyor[i] ?? 0;
+        Widget cerceve = DecoratedBox(
+          key: _hucreAnahtari(anahtar),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
-            border: hedefte
+            // Kılavuz: kutuyu tümden çevrelemek yerine DÜŞECEĞİ KENARA kalın
+            // sarı çizgi — kullanıcı "yerini mi alacak, yanına mı girecek"
+            // sorusunu bırakmadan yanıtlar.
+            // Kılavuz: ARAYA girecekse düşeceği KENARDA kalın çizgi,
+            // YERİNİ ALACAKSA kutuyu çevreleyen çerçeve — kullanıcı
+            // bırakmadan önce hangisinin olacağını görür.
+            border: !hedefte
+                ? null
+                : bolge == 0
                 ? Border.all(color: DiziRenkler.sari, width: 2)
-                : null,
+                : Border(
+                    left: bolge < 0
+                        ? BorderSide(color: DiziRenkler.sari, width: 4)
+                        : BorderSide.none,
+                    right: bolge > 0
+                        ? BorderSide(color: DiziRenkler.sari, width: 4)
+                        : BorderSide.none,
+                  ),
           ),
           child: govde,
         );
+        // Uzun basıldı ve parmak kımıldamadı → "En aşağıya gönder".
+        // Sürükleme başlarsa (`_suruklendi`) düğme çizilmez.
+        if (_uzunBasilan == anahtar && !_suruklendi && i < _ogeler.length - 1) {
+          cerceve = Stack(
+            fit: StackFit.expand,
+            children: [
+              cerceve,
+              Positioned(
+                // SINIR İÇİNDE: Stack'in dışına taşan Positioned Flutter'da
+                // görünür ama TIKLANAMAZ (skill md. 2 tuzağı, 22 Tem 2026'da
+                // avatar seçicide yaşandı). "Çapraz yukarı" isteği köşeye
+                // yaslayarak karşılanıyor, dışarı taşırarak değil.
+                top: 0,
+                right: 0,
+                child: Material(
+                  color: DiziRenkler.sari,
+                  borderRadius: BorderRadius.circular(10),
+                  child: InkWell(
+                    key: Key('sira-alta-$anahtar'),
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => _altaTasi(oge),
+                    child: SizedBox(
+                      width: 44,
+                      height: 44,
+                      child: Tooltip(
+                        message: 'En aşağıya gönder'.c,
+                        child: Icon(
+                          Icons.vertical_align_bottom,
+                          size: 20,
+                          color: DiziRenkler.siyah,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
         if (!surukleAcik) return cerceve;
         return LongPressDraggable<int>(
           data: i,
@@ -472,10 +672,29 @@ class _SiralanabilirPosterIzgarasiState
           childWhenDragging: Opacity(opacity: 0.25, child: cerceve),
           onDragStarted: () {
             HapticFeedback.selectionClick();
-            setState(() => _surukleniyor = true);
+            setState(() {
+              _surukleniyor = true;
+              _suruklendi = false;
+              // Bu afişin düğmesi belirir; başka afişinki varsa kapanır.
+              _uzunBasilan = anahtar;
+            });
+          },
+          onDragUpdate: (d) {
+            // Eşiği BİR KEZ aşmak yeter: parmak sonra geri gelse bile bu
+            // jest artık "sürükleme"dir, düğme geri gelmemeli.
+            if (_suruklendi) return;
+            if (d.localPosition.distance == 0) return;
+            _toplamKayma += d.delta.distance;
+            if (_toplamKayma >= _surukleEsigi && mounted) {
+              setState(() {
+                _suruklendi = true;
+                _uzunBasilan = null; // sürüklüyor → düğmeyi KALDIR
+              });
+            }
           },
           onDragEnd: (_) {
             _kaydirmayiDurdur();
+            _toplamKayma = 0;
             if (mounted) setState(() => _surukleniyor = false);
           },
           child: cerceve,

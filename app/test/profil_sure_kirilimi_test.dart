@@ -448,7 +448,8 @@ void main() {
           )
           .map((s) => s.etiket)
           .toList();
-      expect(icinde, ['takipçi', 'takip', 'beğeni', 'görüntülenme']);
+      // 26 Ağu 2026: görüntülenme BAŞA alındı (kullanıcı isteği, ikonlu biçim).
+      expect(icinde, ['görüntülenme', 'takipçi', 'takip', 'beğeni']);
       expect(_takipSayac(tester, 'görüntülenme').deger, '44');
     });
 
@@ -524,7 +525,8 @@ void main() {
           )
           .map((s) => s.etiket)
           .toList();
-      expect(icinde, ['takipçi', 'takip', 'beğeni', 'görüntülenme']);
+      // 26 Ağu 2026: görüntülenme BAŞA alındı (kullanıcı isteği, ikonlu biçim).
+      expect(icinde, ['görüntülenme', 'takipçi', 'takip', 'beğeni']);
       // (Dördünün AYNI SATIRDA durduğu kilit
       //  test/profil_sayac_birlesme_test.dart'te — orası bileşeni 1200 dp'lik
       //  bir tuvale kuruyor; burada 420 dp'de Wrap zaten satır atlar.)

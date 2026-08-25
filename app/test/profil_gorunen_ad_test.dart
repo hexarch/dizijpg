@@ -623,13 +623,26 @@ void main() {
         lessThan(8),
         reason: 'avatarın ÜST kenarı kimlik bloğuyla aynı çizgide kalmalı',
       );
+      // 26 Ağu 2026: "avatarın altında" kuralı KALKTI — görüntülenme artık
+      // takip satırının İLK öğesi (ikonlu biçim; kullanıcı isteği). Burada
+      // kalan kilit: satırda takipçinin SOLUNDA ve onunla AYNI HİZADA durur.
       final goruntulenme = tester
           .widgetList<TakipSayac>(find.byType(TakipSayac))
           .firstWhere((w) => w.etiket == 'görüntülenme');
+      final takipci = tester
+          .widgetList<TakipSayac>(find.byType(TakipSayac))
+          .firstWhere((w) => w.etiket == 'takipçi');
+      final gRect = tester.getRect(find.byWidget(goruntulenme));
+      final tRect = tester.getRect(find.byWidget(takipci));
       expect(
-        tester.getRect(find.byWidget(goruntulenme)).top,
-        greaterThan(avatar.bottom - 1),
-        reason: 'görüntülenme sayacı avatarın ALTINDA kalmalı',
+        gRect.left,
+        lessThan(tRect.left),
+        reason: 'görüntülenme takipçinin SOLUNDA olmalı',
+      );
+      expect(
+        (gRect.top - tRect.top).abs(),
+        lessThan(1),
+        reason: 'görüntülenme ile takipçi AYNI satırda olmalı',
       );
     });
   });

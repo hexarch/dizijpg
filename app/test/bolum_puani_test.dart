@@ -27,11 +27,11 @@ import 'package:http/testing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Sunucunun `/bolum-puanlari/:tmdbId/:sezon` yanıtı: S1B9'a 5 kişi ortalama
-/// 8 (yani 4.0 yıldız) vermiş, kullanıcının kendi puanı 6 (3 yıldız).
+/// kanonik 80 (yani 4.0 yıldız) vermiş, kullanıcının kendi puanı 60 (3 yıldız).
 const _sezonYaniti = {
   'sezon': 1,
   'bolumler': {
-    '9': {'ortalama': 8, 'adet': 5, 'benim': 6},
+    '9': {'ortalama': 80, 'adet': 5, 'benim': 60},
   },
 };
 
@@ -104,14 +104,14 @@ void main() {
     );
   });
 
-  testWidgets('sunucudaki 6 puan ekranda 3 DOLU yıldız (puan.dart ölçeği)', (
+  testWidgets('kanonik 60 puan ekranda 3 DOLU yıldız (puan.dart ölçeği)', (
     tester,
   ) async {
     await tester.pumpWidget(
       _kabuk(const BolumPuani(tmdbId: 1399, sezon: 1, bolum: 9)),
     );
     await _bekle(tester);
-    expect(yildiza(6), 3); // ölçeğin kendisi puan.dart'tan
+    expect(yildiza(60), 3); // ölçeğin kendisi puan.dart'tan
     expect(find.byIcon(Icons.star_rounded), findsNWidgets(3));
     expect(find.byIcon(Icons.star_outline_rounded), findsNWidgets(2));
     // Topluluk ortalaması 8 → 4.0 (10'luk değer EKRANA BASILMAZ).
@@ -136,7 +136,7 @@ void main() {
     expect(gonderilen['bolum'], 9);
     // 5 yıldız → DB 10; dönüşüm puan.dart'tan.
     expect(gonderilen['puan'], dbPuani(5));
-    expect(gonderilen['puan'], 10);
+    expect(gonderilen['puan'], 100); // kanonik tavan
   });
 
   testWidgets(

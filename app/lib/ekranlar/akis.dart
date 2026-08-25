@@ -1010,6 +1010,15 @@ class _AkisKartiState extends State<AkisKarti> {
               // Reels açar (indeks düşerse ilk kareden başlardı).
               onCiftDokunus: _begen,
               otomatikOynat: true,
+              // Sunucunun ölçtüğü oran: kutu ilk kareden doğru boyda kurulur,
+              // medya yüklenince kart zıplamaz. Sınır AkisMedya'nın kendi
+              // ölçümüyle aynı (0.5 – 16:9); eski kayıtlarda alan yok → null.
+              oran: (y['medya_oran'] as num?) == null
+                  ? null
+                  : (y['medya_oran'] as num)
+                        .toDouble()
+                        .clamp(0.5, 16 / 9)
+                        .toDouble(),
               // md. 23 — videolu gönderide elde tutma eğrisinin verisi.
               gonderiId: y['id'],
             ),

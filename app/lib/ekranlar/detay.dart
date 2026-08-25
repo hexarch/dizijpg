@@ -567,7 +567,8 @@ class DetayEkrani extends StatefulWidget {
   State<DetayEkrani> createState() => _DetayEkraniState();
 }
 
-class _DetayEkraniState extends State<DetayEkrani> {
+class _DetayEkraniState extends State<DetayEkrani>
+    with OlcekDinler<DetayEkrani> {
   Map<String, dynamic>? _icerik;
   Map<String, dynamic>? _benim;
   Map<String, dynamic>? _incelemeler;

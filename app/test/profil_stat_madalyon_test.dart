@@ -202,7 +202,7 @@ void main() {
   // =========================================================================
   // Beğeni / görüntülenme artık takipçi-takip biçiminde
   // =========================================================================
-  testWidgets('TakipSayac satır içi biçim: "sayı etiket", kutu YOK', (
+  testWidgets('TakipSayac satır içi biçim: ikon + sayı, kutu YOK', (
     tester,
   ) async {
     DiziRenkler.acik = false;
@@ -214,6 +214,7 @@ void main() {
             child: TakipSayac(
               deger: '340',
               etiket: 'görüntülenme',
+              ikon: Icons.remove_red_eye,
               onTap: () {},
             ),
           ),
@@ -233,21 +234,35 @@ void main() {
       reason: 'takipçi/takip stili düz metindir, kutulu şerit değil',
     );
 
-    final rt = tester.widget<RichText>(
+    // 26 Ağu 2026: etiket yazısı İKONA döndü (kullanıcı: "yazı saçma olmuş").
+    // Ekranda ikon + sayı var; sözcük Tooltip/Semantics'te yaşıyor.
+    expect(
       find.descendant(
         of: find.byType(TakipSayac),
-        matching: find.byType(RichText),
+        matching: find.byIcon(Icons.remove_red_eye),
       ),
+      findsOneWidget,
     );
-    final metin = rt.text.toPlainText();
-    expect(metin, '340 görüntülenme');
-
-    final kok = rt.text as TextSpan;
-    final etiket = kok.children![1] as TextSpan;
+    final sayi = tester.widget<Text>(
+      find.descendant(of: find.byType(TakipSayac), matching: find.text('340')),
+    );
     expect(
-      etiket.style?.color,
+      sayi.style?.color,
       DiziRenkler.metin,
-      reason: 'kullanıcı gri etiket istemedi, koyu temada beyaz',
+      reason: 'sayı koyu temada beyaz — RichText tuzağının ikonlu karşılığı',
+    );
+    expect(sayi.style?.fontWeight, FontWeight.w900);
+    // Sözcük ekrandan kalktı ama Tooltip'te duruyor ("bu ne?" için).
+    expect(
+      tester
+          .widget<Tooltip>(
+            find.descendant(
+              of: find.byType(TakipSayac),
+              matching: find.byType(Tooltip),
+            ),
+          )
+          .message,
+      'görüntülenme',
     );
   });
 }

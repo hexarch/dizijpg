@@ -64,7 +64,7 @@ COPY server.js veri_aktar.js mail_kutu.js emoji.js depolama.js siralama.js dizi_
 # ve nginx eski statik dosyaya duser — sessiz ama yanlis davranis olur.
 COPY robots.txt ./
 # Kitaplık durumu geriye dönük düzeltme aracı (docker exec ... node araclar/...)
-COPY araclar/durum_duzelt.js araclar/video_kare_yenile.js ./araclar/
+COPY araclar/durum_duzelt.js araclar/video_kare_yenile.js araclar/medya_olcu_doldur.js ./araclar/
 # dizi.jpg AI bakım araçları: imaja girsin ki her yeniden derlemede
 # elle `docker cp` gerekmesin (tohumlama + kare tekrar temizliği).
 COPY ai_tohum.js ai_kare_tazele.js ai_yorumlar.json ./

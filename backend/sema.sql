@@ -204,7 +204,10 @@ CREATE TABLE IF NOT EXISTS puanlar (
   tur TEXT NOT NULL CHECK (tur IN ('tv','movie','person','company')),
   sezon INT,
   bolum INT,
-  puan INT CHECK (puan BETWEEN 1 AND 10),
+  -- KANONİK ÖLÇEK 1-100 (migrasyon-2026-08-26b.sql). Kullanıcının seçtiği
+  -- 5/10/50/100'lük ölçek yalnız GÖRÜNÜMDÜR (kullanicilar.puan_olcegi);
+  -- kayıt daima burada, ölçek değişince puan kaybolmaz yeniden ifade edilir.
+  puan INT CHECK (puan BETWEEN 1 AND 100),
   yorum TEXT,
   tarih TIMESTAMPTZ DEFAULT now(),
   CONSTRAINT puanlar_bolum_ciftli CHECK ((sezon IS NULL) = (bolum IS NULL)),
@@ -767,6 +770,17 @@ CREATE TABLE IF NOT EXISTS video_altyazi_durum (
 -- İşçi "sırada ne var" sorgusunu bu indeksle yapar.
 CREATE INDEX IF NOT EXISTS video_altyazi_durum_kuyruk
   ON video_altyazi_durum (durum, olusturma);
+
+-- 2026-08-26: medya piksel ölçüleri (migrasyon-2026-08-26.sql).
+-- Akış kartındaki ZIPLAMANIN kökü: istemci medya kutusunu 4:5 varsayımıyla
+-- kurup gerçek oranı medya yüklendikten sonra öğreniyordu. Oran artık yükleme
+-- anında ffprobe ile ölçülür (video_kare.js medyaBoyutOlc), /akis yanıtına
+-- `medya_oran` olarak girer; eski dosyaları araclar/medya_olcu_doldur.js tarar.
+CREATE TABLE IF NOT EXISTS medya_olculer (
+  medya TEXT PRIMARY KEY,  -- '/medya/<dosya>' (yorumlar.medya öğesiyle aynı biçim)
+  en  INT NOT NULL CHECK (en > 0),
+  boy INT NOT NULL CHECK (boy > 0)
+);
 -- 2026-08-03: admin paneli — sürüm takibi + ayar deposu
 
 -- Sürüm dağılımı: bugüne dek yalnız HATA gönderen kullanıcının sürümü
@@ -1290,6 +1304,12 @@ ALTER TABLE kullanicilar DROP CONSTRAINT IF EXISTS kullanicilar_ad_uzunluk;
 ALTER TABLE kullanicilar ADD CONSTRAINT kullanicilar_ad_uzunluk
   CHECK (ad IS NULL OR char_length(ad) <= 40);
 ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS kullanici_adi_degisim TIMESTAMPTZ;
+
+-- 2026-08-26b: kullanıcının GÖRÜNÜM puan ölçeği (5-100). Kanonik kayıt 1-100.
+ALTER TABLE kullanicilar ADD COLUMN IF NOT EXISTS puan_olcegi INT NOT NULL DEFAULT 5;
+ALTER TABLE kullanicilar DROP CONSTRAINT IF EXISTS kullanicilar_puan_olcegi_check;
+ALTER TABLE kullanicilar ADD CONSTRAINT kullanicilar_puan_olcegi_check
+  CHECK (puan_olcegi BETWEEN 5 AND 100);
 
 CREATE TABLE IF NOT EXISTS kullanici_adi_rezervleri (
   kullanici_adi TEXT PRIMARY KEY,

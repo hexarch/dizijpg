@@ -19,6 +19,7 @@ import 'gorsel_kirp.dart';
 import 'iki_adim_sheet.dart' show IkiAdimAyariSheet;
 import 'ortak.dart' show AgGorsel, DaireGorsel, altGuvenli;
 import 'sosyal.dart';
+import '../puan.dart';
 import '../tema.dart';
 import '../veri_tasarrufu.dart';
 
@@ -1223,6 +1224,13 @@ class _AyarlarEkraniState extends State<AyarlarEkrani> {
                     ),
                   ),
                 ),
+                const SizedBox(height: 12),
+                Text(
+                  'Yıldız sistemi'.c,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 8),
+                const _YildizSistemi(),
                 const SizedBox(height: 12),
                 Text(
                   'Veri tasarrufu'.c,
@@ -2502,6 +2510,179 @@ class _AramaliSecimSayfasiState extends State<_AramaliSecimSayfasi> {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// AYARLAR > TERCİHLER > YILDIZ SİSTEMİ (kullanıcı isteği, 26 Ağu 2026).
+///
+/// ---------------------------------------------------------------------------
+/// NE YAPAR
+/// ---------------------------------------------------------------------------
+/// Puanların KAÇ YILDIZ üzerinden gösterileceğini seçtirir: 5 / 10 / 50 / 100
+/// hazır düğmeleri + aradaki her değer için kaydırıcı (5-100).
+///
+/// ---------------------------------------------------------------------------
+/// TASARIM KARARLARI (ui-ux-pro-max: Forms & Input)
+/// ---------------------------------------------------------------------------
+///  * HAZIR DÖRT DÜĞME ÖNDE: kullanıcıların ezici çoğunluğu bu dördünden birini
+///    ister; kaydırıcıyla 5'i tutturmaya çalışmak gereksiz emek olurdu.
+///    Kaydırıcı ARA değerler için ikinci sırada durur.
+///  * CANLI ÖNİZLEME: seçim altında o ölçeğin GERÇEK görünümü çizilir —
+///    ≤10 ise yıldız satırı, üstünde rozet. Kullanıcı "100 seçersem ne
+///    göreceğim" sorusunu ayarları kapatmadan yanıtlar. Önizleme puanı örnek
+///    (ölçeğin %80'i), gerçek veriye DOKUNMAZ.
+///  * VERİ KAYBI YOK UYARISI: ölçek değiştirmek eski puanları silmez, yeniden
+///    ifade eder. Kullanıcı bunu bilmeden 100'e geçmeye çekinirdi.
+///  * Kaydetme üç halli: kilit + hata SnackBar'ı + eski değere dönüş
+///    (PuanOlcegi.sec sunucu reddederse geri alır).
+class _YildizSistemi extends StatefulWidget {
+  const _YildizSistemi();
+
+  @override
+  State<_YildizSistemi> createState() => _YildizSistemiState();
+}
+
+class _YildizSistemiState extends State<_YildizSistemi> {
+  bool _kaydediyor = false;
+
+  Future<void> _sec(int olcek) async {
+    if (_kaydediyor || olcek == PuanOlcegi.deger.value) return;
+    setState(() => _kaydediyor = true);
+    try {
+      await PuanOlcegi.sec(olcek);
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Ölçek kaydedilemedi'.c)),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _kaydediyor = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<int>(
+      valueListenable: PuanOlcegi.deger,
+      builder: (context, olcek, _) => Card(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.star_rounded, color: DiziRenkler.sariMetin),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      '{} yıldız üzerinden'.cf([olcek]),
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                  ),
+                  if (_kaydediyor)
+                    const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              // Hazır seçenekler — Wrap: uzun çeviride alt satıra sarar.
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final s in puanOlcekSecenekleri)
+                    ChoiceChip(
+                      label: Text('$s'),
+                      selected: olcek == s,
+                      onSelected: _kaydediyor ? null : (_) => _sec(s),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              // Ara değerler. `divisions` 95 = 5..100 arasındaki her tam sayı.
+              Slider(
+                value: olcek.toDouble(),
+                min: puanOlcekAlt.toDouble(),
+                max: puanOlcekUst.toDouble(),
+                divisions: puanOlcekUst - puanOlcekAlt,
+                label: '$olcek',
+                activeColor: DiziRenkler.sari,
+                // onChanged ANINDA sunucuya yazmaz: kaydırırken her tıkta bir
+                // POST atmak 95 isteğe kadar çıkardı. Yazma parmak KALKINCA.
+                onChanged: _kaydediyor
+                    ? null
+                    : (v) => PuanOlcegi.deger.value = v.round(),
+                onChangeEnd: (v) => _sec(v.round()),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Önizleme'.c,
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+              ),
+              const SizedBox(height: 4),
+              _OlcekOnizleme(olcek: olcek),
+              const SizedBox(height: 8),
+              Text(
+                'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni '
+                        'ölçekte gösterilir.'
+                    .c,
+                style: TextStyle(color: DiziRenkler.metin54, fontSize: 12),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Seçilen ölçeğin GERÇEK görünümü — örnek puanla (ölçeğin ~%80'i).
+///
+/// `YildizPuan` widget'ı kullanılamaz: o gerçek bir tmdb hedefine yazar.
+/// Burada yalnız görsel karşılık çizilir, hiçbir dokunuş kaydedilmez.
+class _OlcekOnizleme extends StatelessWidget {
+  final int olcek;
+  const _OlcekOnizleme({required this.olcek});
+
+  @override
+  Widget build(BuildContext context) {
+    final ornek = (olcek * 0.8).round().clamp(1, olcek);
+    if (!yildizSatiriOlur(olcek)) {
+      // Geniş ölçek: kullanıcı satır değil rozet görecek.
+      return Row(
+        children: [
+          Icon(Icons.star_rounded, color: DiziRenkler.sari, size: 22),
+          const SizedBox(width: 6),
+          Text(
+            '$ornek/$olcek',
+            style: const TextStyle(fontWeight: FontWeight.w800),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'dokununca açılır'.c,
+              style: TextStyle(color: DiziRenkler.metin38, fontSize: 12),
+            ),
+          ),
+        ],
+      );
+    }
+    final boy = yildizIkonBoyu(olcek, taban: 26);
+    return Row(
+      children: [
+        for (var y = 1; y <= olcek; y++)
+          Icon(
+            y <= ornek ? Icons.star_rounded : Icons.star_outline_rounded,
+            size: boy,
+            color: y <= ornek ? DiziRenkler.sari : DiziRenkler.metin38,
+          ),
+      ],
     );
   }
 }

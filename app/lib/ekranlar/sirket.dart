@@ -346,7 +346,8 @@ class SirketEkrani extends StatefulWidget {
   State<SirketEkrani> createState() => _SirketEkraniState();
 }
 
-class _SirketEkraniState extends State<SirketEkrani> {
+class _SirketEkraniState extends State<SirketEkrani>
+    with OlcekDinler<SirketEkrani> {
   Map<String, dynamic>? _firma;
 
   /// Firma başlığının kendi hatası GÖVDEYİ DÜŞÜRMEZ: ad zaten adresten

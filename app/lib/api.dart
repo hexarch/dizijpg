@@ -11,6 +11,7 @@ import 'google_kapisi.dart';
 import 'icerik_deposu.dart';
 import 'kitaplik_durumu.dart';
 import 'onbellek.dart';
+import 'puan.dart';
 
 /// dizi.jpg API istemcisi (nginx + Cloudflare arkasında, TLS'li).
 const String apiTaban = 'https://dizijpg.com/api';
@@ -442,7 +443,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.96.0+146';
+  static const surum = '1.97.0+147';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.
@@ -629,6 +630,9 @@ class Oturum extends ChangeNotifier {
     kullanici = k;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('kullanici', jsonEncode(k));
+    // Puan ölçeği giriş yükünde geliyor: ayrı bir ağ turu atmadan eşitle.
+    // Hesap değiştiren kullanıcı ÖNCEKİ hesabın ölçeğinde kalmamalı.
+    unawaited(PuanOlcegi.oturumdan(k['puan_olcegi']));
     KitaplikDurumu.yukle(); // poster kartlarındaki "izledin" rozeti için
     notifyListeners();
     // GİRİŞ YANITINDA AVATAR YOK — bu yüzden hemen `/profilim` ile tazelenir.

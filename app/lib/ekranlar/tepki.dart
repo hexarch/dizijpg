@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 import '../api.dart';
 import '../ceviri.dart';
 import '../puan.dart';
+import 'puan_sec_sheet.dart';
 import '../tema.dart';
 import 'giris_istem.dart';
 
@@ -352,12 +353,19 @@ class _TepkiSatiriState extends State<TepkiSatiri> {
   }
 }
 
-/// Doğrudan tıklanan 5 yıldızlık puan satırı (sheet açmadan kaydeder).
+/// Doğrudan tıklanan puan satırı (sheet açmadan kaydeder).
 ///
-/// ÖLÇEK: sunucuda puan 1-10 tutulur, kullanıcı 5 yıldız görür. Dönüşüm
-/// BURADA YAPILMAZ — `lib/puan.dart`taki `yildiza()`/`dbPuani()` TEK KAYNAKTIR
-/// (7 Ağu 2026 SEO denetimi: altı dosyada kopyalanan `/2` hesabı sunucu
-/// çıktısıyla uygulamayı ayrıştırmıştı).
+/// ÖLÇEK: sunucuda puan kanonik 1-100 tutulur, kullanıcı KENDİ SEÇTİĞİ
+/// ölçeği (5-100) görür. Dönüşüm BURADA YAPILMAZ — `lib/puan.dart`taki
+/// `yildiza()`/`dbPuani()` TEK KAYNAKTIR (7 Ağu 2026 SEO denetimi: altı
+/// dosyada kopyalanan `/2` hesabı sunucu çıktısıyla uygulamayı ayrıştırmıştı).
+///
+/// İKİ KİP (26 Ağu 2026, kullanıcı isteği):
+///   * ölçek ≤ 10 → yıldızlar SATIR hâlinde, tek dokunuşla puan.
+///   * ölçek > 10 → tek ROZET ("73/100"); dokununca [puanSecSheet] açılır.
+/// Eşiğin gerekçesi `yildizSatiriOlur()` içinde yazılı. Kip değişimi ölçeğe
+/// bağlı olduğu için widget `PuanOlcegi.deger`i DİNLER: kullanıcı Ayarlar'dan
+/// ölçeği değiştirince açık ekranlar kendini yeniden çizer.
 ///
 /// HEDEF (8 Ağu 2026-d): `sezon`+`bolum` verilirse puan O BÖLÜME, verilmezse
 /// dizi/film/kişi GENELİNE yazılır — `TepkiSatiri` ve yorumlarla aynı
@@ -367,10 +375,10 @@ class YildizPuan extends StatefulWidget {
   final int tmdbId;
   final int? sezon;
   final int? bolum;
-  final int? baslangicPuan; // sunucu ölçeği (1-10)
+  final int? baslangicPuan; // sunucu (kanonik) ölçeği 1-100
   final double boyut;
 
-  /// Kaydetme BAŞARILI olduğunda çağrılır: (yıldız 0-5, sunucu yanıtı).
+  /// Kaydetme BAŞARILI olduğunda çağrılır: (yıldız 0..N, sunucu yanıtı).
   /// 0 = puan silindi. Üst blok ortalamayı tazelemek ve sunucunun bildirdiği
   /// yan etkiyi (bölüm "izlendi" işaretlendi) göstermek için kullanır.
   final void Function(int yildiz, Map<String, dynamic> yanit)? kaydedildi;
@@ -408,8 +416,13 @@ class _YildizPuanState extends State<YildizPuan> {
     // (`TepkiSatiri._sec` ile aynı kural; burada 8 Ağu 2026'ya kadar eksikti).
     if (!girisGerekli(context)) return;
     if (_isleniyor) return;
+    // Aynı yıldıza basınca sil — YALNIZ SATIR KİPİNDE geçerli kısayol.
+    await _yaz(yildiz == _yildiz ? 0 : yildiz);
+  }
+
+  /// Puanı yaz (0 = sil). İyimser güncelleme; hata olursa ESKİ DEĞERE DÖNER.
+  Future<void> _yaz(int yeni) async {
     final eski = _yildiz;
-    final yeni = yildiz == _yildiz ? 0 : yildiz; // aynı yıldıza basınca sil
     setState(() {
       _yildiz = yeni;
       _isleniyor = true;
@@ -439,31 +452,113 @@ class _YildizPuanState extends State<YildizPuan> {
     }
   }
 
+  /// Geniş ölçek kipi: rozete dokununca kaydırıcılı sayfa açılır.
+  Future<void> _sheetAc(int olcek) async {
+    if (!girisGerekli(context)) return;
+    if (_isleniyor) return;
+    final secim = await puanSecSheet(context, olcek: olcek, mevcut: _yildiz);
+    // null = vazgeçti. 0 = sil. Diğerleri puan. `_sec` "aynı değere basınca
+    // sil" mantığı taşıdığı için BURADA kullanılamaz: kullanıcı sayfada
+    // mevcut puanını onaylamak isteyebilir, bu silme olmamalı.
+    if (secim == null || !mounted) return;
+    await _yaz(secim);
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Ölçek değişince (Ayarlar) açık ekranlar kendiliğinden yeniden çizilir.
+    return ValueListenableBuilder<int>(
+      valueListenable: PuanOlcegi.deger,
+      builder: (context, olcek, _) {
+        if (!yildizSatiriOlur(olcek)) return _rozet(olcek);
+        final boy = yildizIkonBoyu(olcek, taban: widget.boyut);
+        // DOKUNMA HEDEFİ — ÖLÇÜLMÜŞ TAVİZ (26 Ağu 2026):
+        // 10 yıldız × 44 dp = 440 dp, 360 dp'lik telefona SIĞMAZ. Yani
+        // "10'a kadar satır" (kullanıcı kuralı) ile "her hedef 44 dp"
+        // aynı anda sağlanamıyor. Seçim: DİKEYDE 44 dp GARANTİ, yatayda
+        // eldeki genişliği yıldızlara EŞİT böl — IMDb/Letterboxd'un 10'luk
+        // ölçeklerinde yaptığı gibi. Bitişik ölçek elemanlarında yatay
+        // daralma kabul edilebilir; hedefin TAMAMEN kaybolması değil.
+        // Ölçek 5'te (varsayılan) hiçbir taviz yok: 44x44 korunur.
+        return LayoutBuilder(
+          builder: (context, kisit) {
+            // Sonsuz genişlikte (Row içinde ölçüsüz) eldeki tek bilgi ikon
+            // boyu; o durumda eski sabit payı kullan.
+            final kullanilabilir = kisit.maxWidth.isFinite
+                ? kisit.maxWidth
+                : olcek * (boy + 14);
+            final hucre = (kullanilabilir / olcek).clamp(boy + 4, 44.0);
+            final yatay = ((hucre - boy) / 2).clamp(2.0, 7.0);
+            return _satir(olcek, boy, yatay);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _satir(int olcek, double boy, double yatay) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (var y = 1; y <= 5; y++)
+        for (var y = 1; y <= olcek; y++)
           InkWell(
             borderRadius: BorderRadius.circular(6),
             onTap: () => _sec(y),
-            // DOKUNMA HEDEFİ: 30 dp ikon + 2x7 dp yatay pay = 44 dp; dikeyde
-            // 30 + 2x8 = 46 dp. Eski 2x4 pay 38 dp veriyordu, yani asgari
+            // DOKUNMA HEDEFİ: ikon + 2x yatay pay = 44 dp; dikeyde
+            // + 2x8. Eski 2x4 pay 38 dp veriyordu, yani asgari
             // 44x44'ün ALTINDA (ui-ux-pro-max "Touch Target Size", High).
             // Yıldızlar arasında BİLEREK boşluk yok: puan şeridi tek bir
-            // ölçektir, komşu hedefler arası 8 dp kuralı ayrı EYLEMLERİ olan
-            // butonlar içindir; boşluk bırakmak ölçeği kesikli gösterirdi.
+            // ölçektir, komşu hedefler arası 8 dp kuralı ayrı EYLEMLERİ
+            // olan butonlar içindir; boşluk ölçeği kesikli gösterirdi.
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
+              // Dikey pay: ikon ne kadar küçülürse küçülsün hedef en az
+              // 44 dp yüksekliğinde kalır (yukarıdaki taviz notu).
+              padding: EdgeInsets.symmetric(
+                horizontal: yatay,
+                vertical: ((44 - boy) / 2).clamp(8.0, 20.0),
+              ),
               child: Icon(
                 y <= _yildiz ? Icons.star_rounded : Icons.star_outline_rounded,
-                size: widget.boyut,
+                size: boy,
                 color: y <= _yildiz ? DiziRenkler.sari : DiziRenkler.metin38,
               ),
             ),
           ),
       ],
+    );
+  }
+
+  /// Geniş ölçekte satır yerine çizilen rozet. Puansızken de dokunulabilir
+  /// olmalı — yoksa geniş ölçekteki kullanıcı puan VEREMEZ.
+  Widget _rozet(int olcek) {
+    final puanli = _yildiz > 0;
+    return InkWell(
+      onTap: () => _sheetAc(olcek),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 44),
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              puanli ? Icons.star_rounded : Icons.star_outline_rounded,
+              size: 22,
+              color: puanli ? DiziRenkler.sari : DiziRenkler.metin38,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              puanli ? '$_yildiz/$olcek' : 'Puanla'.c,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: puanli ? DiziRenkler.metin : DiziRenkler.metin54,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

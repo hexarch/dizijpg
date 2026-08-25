@@ -17,6 +17,7 @@ import 'ekranlar/kabuk.dart' show KabukKatlama;
 import 'gorusme/arama_servisi.dart';
 import 'push.dart';
 import 'kitaplik_durumu.dart';
+import 'puan.dart';
 import 'sira_tercihi.dart';
 import 'surum_kapisi.dart';
 import 'tema.dart';
@@ -108,6 +109,11 @@ Future<void> main() async {
     await acilisAdimi('altyazi', AltyaziAyar.yukle);
     // Akış/Keşfet: Kronolojik mi Önerilen mi
     await acilisAdimi('sira', SiraTercihi.yukle);
+    // Puan ölçeği (5-100): ÖNBELLEKTEN. Doğrunun kaynağı sunucudur ama ilk
+    // kare ağı bekleyemez — yanlış ölçekte çizilen yıldız satırı saniye sonra
+    // 100'lük rozete dönüşseydi göze çarpan bir zıplama olurdu. Sunucu
+    // tazelemesi oturum kurulduktan SONRA, arka planda.
+    await acilisAdimi('puan-olcegi', PuanOlcegi.yukle);
     // Masaüstü gezinme adası katlı mı? İlk kareden ÖNCE okunmalı, yoksa
     // çubuk bir açılıp hemen kapanır (göze çarpan bir zıplama).
     await acilisAdimi('cubuk-katlama', KabukKatlama.yukle);
@@ -116,6 +122,8 @@ Future<void> main() async {
     // Girişli kullanıcıda push'u başlat (izin + token kaydı)
     if (oturum.girisli) pushBaslat();
     if (oturum.girisli) KitaplikDurumu.yukle();
+    // Ölçeği sunucudan tazele (cihazlar arası tutarlılık). Bloklamaz.
+    if (oturum.girisli) PuanOlcegi.tazele();
     if (oturum.girisli) {
       // Arama özellik bayrakları + ICE/TURN kimliği: açılışta BİR KEZ
       // (sözleşme §14.1). Yalnız BELLEKTE tutulur. Beklenmez — ağ yoksa

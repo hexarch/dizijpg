@@ -1,6 +1,92 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-26 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-26 — ✅ Seçilebilir puan ölçeği (5 / 10 / 50 / 100 yıldız)
+
+Kullanıcı: puanlama sistemini ayarlardan değiştirebilsin; 5-100 arası,
+100'de UX bozulacağı için 10 üstünde tıklayınca açılan div.
+
+- **Kanonik depolama 1-10 → 1-100** (migrasyon-2026-08-26b.sql, ×10, tek
+  seferlik bayrakla idempotent, `ayarlar.puan_olcek_100`). 100 ayrı değeri
+  1-10'a sıkıştırmak "73 verdim, 70 göründü" demekti.
+- **Ölçek GÖRÜNÜMDÜR, veri değil**: `kullanicilar.puan_olcegi` (5-100,
+  CHECK). Ölçek değiştirmek puanı SİLMEZ, yeniden ifade eder — birim testi
+  bunu kilitliyor. Uçlar: `GET/POST /puan-olcegi`; giriş yükünde de gelir.
+- **İki kip**: ≤10 yıldız satırı (ikon boyu ölçekle küçülür), >10 rozet +
+  `puan_sec_sheet.dart` (dev sayı + kaydırıcı + ±1 + 5'lik önizleme).
+  Eşik tek yerde: `yildizSatiriOlur()`.
+- **Dağılım grafiği** 10 üstü ölçekte 10 kovaya gruplanır ("91-100").
+- **Ayarlar > Tercihler > Yıldız sistemi**: 4 hazır çip + kaydırıcı + canlı
+  önizleme + "puanların silinmez" notu. Açık ekranlar `OlcekDinler`
+  karışımıyla ölçek değişince tazelenir.
+- SEO/JSON-LD DAİMA 5 yıldız (anonim çıktı, kişiye göre değişemez); bölen
+  2 → 20. Uyum yüzdesindeki `/9.0` → `/99.0`.
+- Çeviri **1086 anahtar × 45 dil**. Testler: 13 yeni + eski 17 taşındı.
+- 🚀 CANLIDA: migrasyon + API + web (`main.355ee6bfba57.dart.js`).
+  Uçtan uca curl: kanonik 73 yaz/oku/sil, sınır dışı 101 ve ölçek 3 reddedildi.
+
+## 2026-08-26 — ✅ Sıralama: uzun basma ≠ sürükleme + araya bırakma
+
+Kullanıcı: basılı tutunca afişin çapraz yukarısında "en aşağıya gönder"
+çıksın, elimi çekince tıklayabileyim; sürüklersem kaybolsun. Bırakırken tam
+afişin üstüne denk getirmek zor, tolere et; iki dizinin ortasına bırakırsam
+ortasına yerleşsin.
+
+- Jest ayrımı PARMAK HAREKETİ: 12 px eşiği aşılmazsa "En aşağıya gönder"
+  düğmesi belirir ve parmak kalkınca EKRANDA KALIR; eşik aşılırsa düğme
+  anında kaybolur, klasik taşıma çalışır.
+- **Üç bölgeli bırakma**: kenar %30'lar ARAYA ekler (önüne/arkasına), orta
+  %40 eski "yerini al" davranışını korur. İki afiş arasını nişanlayan parmak
+  hangi taraftan düşerse düşsün AYNI sonucu verir — tolerans bu.
+- Kılavuz: araya girecekse düşeceği kenarda kalın çizgi, yerini alacaksa
+  çerçeve. RTL'de yön çevrilir.
+- Düğme Stack SINIRI İÇİNDE (dışa taşan Positioned tıklanamaz — 22 Tem tuzağı).
+- Testler: 7 yeni (18/18 yeşil). İlk sürümde `context.findRenderObject()`
+  tüm ızgarayı ölçüyordu, her bırakma öğeyi başa atıyordu — test yakaladı,
+  hücre başına GlobalKey ile düzeltildi.
+- ⬜ CANLIYA: web build (ölçek dağıtımından SONRA yapıldı).
+
+## 2026-08-26 — ✅ Akış medya zıplaması: oran sunucudan (medya_olculer)
+
+Kullanıcı: akışta video yüklenene kadar kutu sabit boyda, açılınca ekran
+kayıyor; Instagram gibi standart kalıp olmalı.
+
+- Kök: `AkisMedya` kutuyu `4:5` varsayımıyla kurup gerçek oranı medya
+  YÜKLENDİKTEN sonra ölçüyordu (`setState` → kart boy değiştirir → kayma).
+- Çözüm Instagram'ınkiyle aynı: oran API'den önceden gelir. Yükleme anında
+  ffprobe ile ölçülür (`video_kare.js medyaBoyutOlc`, görsel+video),
+  `medya_olculer` tablosuna yazılır (migrasyon-2026-08-26.sql), `AKIS_ALANLAR`
+  ilk medyanın oranını `medya_oran` olarak döner; istemci kutuyu İLK KAREDEN
+  bu oranda kurar (sınır yine 0.5–16:9). Oran yoksa bugünkü davranış.
+- Eski dosyalar: `docker exec dizijpg-api node araclar/medya_olcu_doldur.js`.
+- ⬜ CANLIYA: migrasyon + server.js + web build + doldurma betiği.
+
+## 2026-08-26 — ✅ Akışa video tabanı (video_tabani, varsayılan %10)
+
+Kullanıcı: akışta neden hiç video denk gelmiyor?
+
+- Kök: akışta `medya` ağırlığı 0 + 36 saatlik yarı ömür; videoların %91,5'i
+  arşiv AI hesabında → skor tabana çakılıyor, 30'luk sayfalara hiç giremiyor.
+  `arsiv_payi` tavandır, taban değil.
+- Çözüm: `siralama.js`e tavanların simetriği **video_tabani** (% asgari video
+  payı, floor(taban·n) — %10'da ilk video 10. kartta). Taban tetiklenince en
+  iyi video TÜM kalan havuzdan seçilir (pencere videoları görmez), AI/arşiv
+  tavanları bu seçimde bilerek delinir, doygunluk cezaları uygulanır.
+  Akış varsayılanı 10, Keşfet 0. Panelde "Video tabanı" slider'ı (0–50).
+- 5 yeni birim testi; 56/56 yeşil. ⬜ CANLIYA: server.js + admin.html.
+
+## 2026-08-26 — ✅ Profil sayaçları: yazı → ikon, görüntülenme başa
+
+Kullanıcı: görüntülenme takipçi/takipin altına sarkıyor; takipçinin soluna
+çek; göz/takipçi/takip/kalp ikonları koy, yazı saçma olmuş.
+
+- `TakipSayac` ikonlu biçime geçti (göz=görüntülenme, grup=takipçi,
+  kişi-ekle=takip, kalp=beğeni); sıra: görüntülenme · takipçi · takip · beğeni.
+  Sözcük Tooltip + Semantics'te duruyor (erişilebilirlik). İki profil de aynı
+  bileşen (`ProfilTakipSatiri`) — ikisi birden değişti. Çeviri anahtarı
+  değişmedi. Widget testleri güncellendi, tümü yeşil.
+- ⬜ CANLIYA: web build.
+
 ## 2026-08-26 — 🚀 Mesaj istekleri: liste düğmeleri kalktı (karar sohbetin içinde)
 
 Kullanıcı: gelen mesaj isteklerinde hâlâ dışarıda Kabul et / Reddet var;

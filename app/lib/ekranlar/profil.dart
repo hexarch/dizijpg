@@ -1585,10 +1585,18 @@ class ProfilSayaclari {
   static String yaz(int? deger) => deger == null ? eksik : '$deger';
 }
 
-/// takipçi · takip · beğeni · görüntülenme — KENDİ PROFİLİMİN biçimi.
+/// görüntülenme · takipçi · takip · beğeni — KENDİ PROFİLİMİN biçimi.
 ///
-/// Row DEĞİL Wrap: dört sayaç, uzun çevirilerle (pl "obserwujących",
-/// de "Aufrufe") 360 dp'de tek satıra sığmaz — Row taşma çizgisi verirdi.
+/// ETİKET YAZISI YOK, İKON VAR (kullanıcı isteği, 26 Ağu 2026: "yazı saçma
+/// olmuş"): göz = görüntülenme, grup = takipçi, kişi-ekle = takip (takip
+/// butonuyla aynı ikon), kalp = beğeni. Sözcük karşılığı Tooltip +
+/// Semantics'te duruyor — ekran okuyucu ve "bu ne?" diye basılı tutan
+/// kullanıcı için. Görüntülenme BAŞA alındı (aynı istek: uzun "görüntülenme"
+/// çevirisi satır sonunda alta sarkıyordu; ikonla artık sarkmaz ama sıra da
+/// istendiği gibi kaldı).
+///
+/// Wrap korundu: ikonlarla dördü 360 dp'ye rahat sığar ama büyük yazı
+/// ölçeğinde (erişilebilirlik) Row yine taşma çizgisi verirdi.
 ///
 /// Dokunma eylemleri opsiyonel: açık profilde `takipciler_gizli` /
 /// `takip_edilenler_gizli` / `yorumlar_gizli` açıkken ilgili sayaç YAZILIR ama
@@ -1616,23 +1624,28 @@ class ProfilTakipSatiri extends StatelessWidget {
       runSpacing: 2,
       children: [
         TakipSayac(
+          deger: ProfilSayaclari.yaz(sayac.goruntulenme),
+          etiket: 'görüntülenme'.c,
+          ikon:
+              Icons.remove_red_eye, // yorum kartlarındaki görüntülenmeyle aynı
+          onTap: etkilesimTap,
+        ),
+        TakipSayac(
           deger: ProfilSayaclari.yaz(sayac.takipci),
           etiket: 'takipçi'.c,
+          ikon: Icons.group,
           onTap: takipciTap,
         ),
         TakipSayac(
           deger: ProfilSayaclari.yaz(sayac.takip),
           etiket: 'takip'.c,
+          ikon: Icons.person_add, // açık profildeki Takip Et butonuyla aynı
           onTap: takipTap,
         ),
         TakipSayac(
           deger: ProfilSayaclari.yaz(sayac.begeni),
           etiket: 'beğeni'.c,
-          onTap: etkilesimTap,
-        ),
-        TakipSayac(
-          deger: ProfilSayaclari.yaz(sayac.goruntulenme),
-          etiket: 'görüntülenme'.c,
+          ikon: Icons.favorite, // beğeni her yerde kalp
           onTap: etkilesimTap,
         ),
       ],
@@ -1747,7 +1760,13 @@ class ProfilSayacSutunu extends StatelessWidget {
 
 class TakipSayac extends StatelessWidget {
   final String deger;
+
+  /// Ekranda YAZILMAZ — Tooltip ve Semantics etiketi olarak kullanılır
+  /// (ikonlu biçime geçildi, 26 Ağu 2026). Çeviri anahtarları duruyor.
   final String etiket;
+
+  /// Sayacın anlamını taşıyan ikon (göz/grup/kişi-ekle/kalp).
+  final IconData ikon;
 
   /// null = dokunulamaz. Açık profilde gizlilik tercihleri (`takipciler_gizli`
   /// vb.) sayacı LİSTEYE GÖTÜRMEYEN bir hâle düşürüyor; sayı yine yazılır ama
@@ -1757,6 +1776,7 @@ class TakipSayac extends StatelessWidget {
     super.key,
     required this.deger,
     required this.etiket,
+    required this.ikon,
     this.onTap,
   });
 
@@ -1766,38 +1786,43 @@ class TakipSayac extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      // ConstrainedBox + Center(widthFactor: 1) — Container DEĞİL.
-      // 21 Ağu 2026 GERİLEME: dokunma hedefi için `Container`a
-      // `alignment` verilmişti; Flutter'da alignment'lı Container
-      // mümkün olduğunca GENİŞLER. `Wrap` içinde her sayaç tüm satırı
-      // kapladı ve dördü ALT ALTA dizildi (kullanıcı bildirdi).
-      // `widthFactor: 1` çocuk genişliğinde kalır, yalnız dikeyde ortalar.
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: enAzHedef),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-          child: Center(
-            widthFactor: 1,
-            child: RichText(
-              // RichText tema rengini devralmaz; renk açıkça verilmeli
-              text: TextSpan(
-                style: TextStyle(fontSize: 13, color: DiziRenkler.metin),
-                children: [
-                  TextSpan(
-                    text: deger,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: DiziRenkler.metin,
+    // Tooltip: etiket ekrandan kalktı; basılı tutan kullanıcı sözcüğü yine
+    // görür. Semantics: ekran okuyucu "12 takipçi" okur, "12" değil.
+    return Semantics(
+      label: '$deger $etiket',
+      excludeSemantics: true,
+      child: Tooltip(
+        message: etiket,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(8),
+          // ConstrainedBox + Center(widthFactor: 1) — Container DEĞİL.
+          // 21 Ağu 2026 GERİLEME: dokunma hedefi için `Container`a
+          // `alignment` verilmişti; Flutter'da alignment'lı Container
+          // mümkün olduğunca GENİŞLER. `Wrap` içinde her sayaç tüm satırı
+          // kapladı ve dördü ALT ALTA dizildi (kullanıcı bildirdi).
+          // `widthFactor: 1` çocuk genişliğinde kalır, yalnız dikeyde ortalar.
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: enAzHedef),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+              child: Center(
+                widthFactor: 1,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(ikon, size: 15, color: DiziRenkler.metin54),
+                    const SizedBox(width: 4),
+                    Text(
+                      deger,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        color: DiziRenkler.metin,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: ' $etiket',
-                    style: TextStyle(color: DiziRenkler.metin),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,7 +1,7 @@
 // Madde 17 — PUAN DAĞILIMI (IMDb tarzı).
 //
 // Kilitlenen davranışlar (KANIT ZORUNLU, CLAUDE.md kural 7):
-//   * Kovalama `yildiza` ile AYNI: DB 1-10 → yıldız 1-5 (sınırlar dahil).
+//   * Kovalama `yildiza` ile AYNI: kanonik 1-100 → yıldız 1-5 (sınırlar dahil).
 //     Sunucu ham ölçek gönderiyor; buradaki eşleşme bozulursa grafik,
 //     ekranda görünen yıldızdan farklı bir kovaya yazar.
 //   * Grafik 5→1 SIRALI çizilir (değere göre değil — yıldız sıralı ölçek).
@@ -27,7 +27,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
-/// Sunucunun ham dağılım biçimi: `[{puan: 1-10, adet: n}]`.
+/// Sunucunun ham dağılım biçimi: `[{puan: 1-100, adet: n}]`.
 List<Map<String, Object>> _ham(Map<int, int> puandanAdete) => [
   for (final g in puandanAdete.entries) {'puan': g.key, 'adet': g.value},
 ];
@@ -60,7 +60,7 @@ List<double> _oranlar(WidgetTester tester) => tester
 
 void main() {
   group('kovalama (puan.dart) — ölçek çevirisi tek kaynaktan', () {
-    test('DB 1-10 kovaları `yildiza` ile BİREBİR aynı', () {
+    test('kanonik 1-100 kovaları `yildiza` ile BİREBİR aynı', () {
       for (var p = 1; p <= dbPuanAzami; p++) {
         final kovalar = yildizDagilimi(_ham({p: 1}));
         final beklenen = yildiza(p);
@@ -74,8 +74,8 @@ void main() {
       }
     });
 
-    test('sınırlar: 1-2 → 1 yıldız, 9-10 → 5 yıldız, 5 → 3 yıldız', () {
-      final k = yildizDagilimi(_ham({1: 3, 2: 2, 5: 7, 9: 4, 10: 6}));
+    test('sınırlar: 10-20 → 1 yıldız, 90-100 → 5 yıldız, 50 → 3 yıldız', () {
+      final k = yildizDagilimi(_ham({10: 3, 20: 2, 50: 7, 90: 4, 100: 6}));
       expect(k[1], 5); // 1 ve 2 aynı kovada
       expect(k[3], 7); // 5 → 2.5 → yukarı yuvarlanır
       expect(k[5], 10); // 9 ve 10 aynı kovada
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('kovalar HER ZAMAN 1..5 ve toplam `adet` ile tutarlı', () {
-      final k = yildizDagilimi(_ham({8: 12, 10: 30}));
+      final k = yildizDagilimi(_ham({80: 12, 100: 30}));
       expect(k.keys.toList()..sort(), [1, 2, 3, 4, 5]);
       expect(k.values.fold<int>(0, (t, a) => t + a), 42);
     });
@@ -160,7 +160,7 @@ void main() {
     testWidgets('kendi puanın renkten BAŞKA işaretle de belli', (tester) async {
       // DB 8 = 4 yıldız
       await tester.pumpWidget(
-        _grafik(kovalar: {5: 10, 4: 20, 3: 5, 2: 1, 1: 1}, benimDbPuani: 8),
+        _grafik(kovalar: {5: 10, 4: 20, 3: 5, 2: 1, 1: 1}, benimDbPuani: 80),
       );
       await tester.pumpAndSettle();
 
@@ -236,8 +236,8 @@ void main() {
       );
       puanDagilimiAc(
         ctx,
-        dagilim: _ham({10: 8, 8: 4}),
-        ortalama: 9.3, // DB ölçeği → 4.7 yıldız
+        dagilim: _ham({100: 8, 80: 4}),
+        ortalama: 93, // kanonik ölçek → 4.7 yıldız (5'lik görünüm)
       );
       await tester.pumpAndSettle();
 
@@ -294,8 +294,8 @@ void main() {
       );
       puanDagilimiAc(
         ctx,
-        dagilim: _ham({10: 64, 8: 32, 6: 16, 4: 9, 2: 7}),
-        ortalama: 8.1,
+        dagilim: _ham({100: 64, 80: 32, 60: 16, 40: 9, 20: 7}),
+        ortalama: 81,
       );
       await tester.pumpAndSettle();
       return tester.getSize(find.byType(PuanDagilimiSheet)).height;
@@ -404,13 +404,13 @@ void main() {
         } else if (yol.startsWith('/incelemeler/')) {
           govde = {
             'incelemeler': <dynamic>[],
-            'ortalama': 8.4,
+            'ortalama': 84,
             'adet': 25,
-            'dagilim': _ham({10: 10, 8: 9, 6: 4, 2: 2}),
+            'dagilim': _ham({100: 10, 80: 9, 60: 4, 20: 2}),
           };
         } else if (yol.startsWith('/benim/')) {
           govde = {
-            'puan': {'puan': 10},
+            'puan': {'puan': 100},
           };
         }
         return http.Response(
@@ -455,7 +455,7 @@ void main() {
 
       expect(find.byType(PuanDagilimiSheet), findsOneWidget);
       expect(find.text('25 kişi puanladı'), findsOneWidget);
-      // Kendi puanı (DB 10 = 5 yıldız) işaretli
+      // Kendi puanı (kanonik 100 = 5 yıldız) işaretli
       expect(find.byIcon(Icons.person), findsOneWidget);
     });
   });

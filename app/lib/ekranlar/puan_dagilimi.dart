@@ -9,7 +9,9 @@
 ///  * SAYI HER ÇUBUKTA YAZILI: uzunluk/renk tek başına bilgi taşımaz
 ///    (erişilebilirlik kuralı). Ekran okuyucu için ayrıca satır bazlı
 ///    `Semantics` etiketi var.
-///  * SIRALAMA 5→1, değere göre DEĞİL. Veritabanındaki "kategoriyi değere göre
+///  * ÖLÇEK 10'U AŞARSA 10 KOVAYA GRUPLANIR (`dagilimKovaSayisi`): 100 çubuk
+///    okunmaz bir tarak olurdu, etiketler aralık gösterir ("91-100").
+///  * SIRALAMA yüksekten alçağa, değere göre DEĞİL. Veritabanındaki "kategoriyi değere göre
 ///    azalan sırala" kuralı NOMİNAL kategoriler içindir; yıldız SIRALI bir
 ///    ölçektir, karıştırmak grafiği okunmaz yapardı (IMDb/Letterboxd da 5→1).
 ///  * Kullanıcının kendi puanı vurgulanır: renk TEK BAŞINA ayırt edici değil,
@@ -47,7 +49,11 @@ void puanDagilimiAc(
   required Object? ortalama,
   int? benimDbPuani,
 }) {
-  final kovalar = yildizDagilimi(dagilim);
+  // Ölçek AÇILIŞTA sabitlenir: sheet açıkken Ayarlar'dan ölçek değişemez,
+  // dinlemeye gerek yok — ama grafik hangi ölçekte kovalandığını BİLMELİ,
+  // yoksa etiketler ("91-100") kova sayısıyla uyuşmaz.
+  final olcek = PuanOlcegi.deger.value;
+  final kovalar = yildizDagilimi(dagilim, olcek: olcek);
   final toplam = kovalar.values.fold<int>(0, (t, a) => t + a);
   if (toplam == 0) return;
   showModalBottomSheet(
@@ -62,6 +68,7 @@ void puanDagilimiAc(
       kovalar: kovalar,
       ortalama: ortalama,
       benimDbPuani: benimDbPuani,
+      olcek: olcek,
     ),
   );
 }
@@ -71,11 +78,16 @@ class PuanDagilimiSheet extends StatelessWidget {
   final Object? ortalama;
   final int? benimDbPuani;
 
+  /// Kovaların hangi görünüm ölçeğinde üretildiği. Varsayılan: kullanıcının
+  /// geçerli ölçeği (eski çağrı yerleri kırılmasın).
+  final int? olcek;
+
   const PuanDagilimiSheet({
     super.key,
     required this.kovalar,
     this.ortalama,
     this.benimDbPuani,
+    this.olcek,
   });
 
   @override
@@ -139,7 +151,7 @@ class PuanDagilimiSheet extends StatelessWidget {
                       Icon(Icons.star, color: DiziRenkler.sariMetin, size: 16),
                       const SizedBox(width: 4),
                       Text(
-                        yildizOrtalamaMetni(ortalama),
+                        yildizOrtalamaMetni(ortalama, olcek: olcek),
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                       const SizedBox(width: 10),
@@ -159,6 +171,7 @@ class PuanDagilimiSheet extends StatelessWidget {
                 PuanDagilimiGrafigi(
                   kovalar: kovalar,
                   benimDbPuani: benimDbPuani,
+                  olcek: olcek,
                 ),
               ],
             ),
@@ -172,17 +185,22 @@ class PuanDagilimiSheet extends StatelessWidget {
 /// Grafiğin kendisi — sheet'ten ayrı, çünkü ileride detay sayfasına gömülü de
 /// kullanılabilir ve testte tek başına kurulabilir.
 class PuanDagilimiGrafigi extends StatelessWidget {
-  /// 1..5 → kişi sayısı. Boş kovalar 0 ile gelir ([yildizDagilimi] garanti eder).
+  /// 1..N → kişi sayısı (N = [dagilimKovaSayisi]). Boş kovalar 0 ile gelir
+  /// ([yildizDagilimi] garanti eder).
   final Map<int, int> kovalar;
 
-  /// Kullanıcının KENDİ puanı, ham DB ölçeğinde (1-10). Yıldıza burada çevrilir
-  /// ki kova eşleşmesi ekrandaki yıldızla aynı işlevden çıksın.
+  /// Kullanıcının KENDİ puanı, ham DB ölçeğinde (1-100). Kovaya burada
+  /// çevrilir ki eşleşme ekrandaki çubukla aynı işlevden çıksın.
   final int? benimDbPuani;
+
+  /// Kovaların üretildiği görünüm ölçeği (etiketler buna göre yazılır).
+  final int? olcek;
 
   const PuanDagilimiGrafigi({
     super.key,
     required this.kovalar,
     this.benimDbPuani,
+    this.olcek,
   });
 
   @override
@@ -190,18 +208,26 @@ class PuanDagilimiGrafigi extends StatelessWidget {
     // Çubuk boyu EN KALABALIK kovaya göre ölçeklenir (toplama göre değil):
     // 5 kova arasındaki FARK okunacak; toplama bölünce hepsi cılız kalırdı.
     final enBuyuk = kovalar.values.fold<int>(0, (e, a) => a > e ? a : e);
-    final benim = benimDbPuani == null ? 0 : yildiza(benimDbPuani);
+    final n = olcek ?? yildizAzami;
+    final kovaSayisi = dagilimKovaSayisi(n);
+    // Kendi puanım da KOVA ölçeğine çevrilir — görünüm ölçeğine değil.
+    // 100'lük ölçekte 73 puan "8. kova"dır (71-80), "73. çubuk" diye bir şey
+    // yok; görünüm ölçeğiyle çevirseydik hiçbir çubuk vurgulanmazdı.
+    final benim = benimDbPuani == null
+        ? 0
+        : yildiza(benimDbPuani, olcek: kovaSayisi);
     final sure = Duration(
       milliseconds: MediaQuery.disableAnimationsOf(context) ? 0 : 350,
     );
     return Column(
       children: [
-        for (var yildiz = yildizAzami; yildiz >= 1; yildiz--)
+        for (var kova = kovaSayisi; kova >= 1; kova--)
           _Satir(
-            yildiz: yildiz,
-            adet: kovalar[yildiz] ?? 0,
+            yildiz: kova,
+            etiket: dagilimKovaEtiketi(kova, n),
+            adet: kovalar[kova] ?? 0,
             enBuyuk: enBuyuk,
-            benimKovam: yildiz == benim,
+            benimKovam: kova == benim,
             sure: sure,
           ),
       ],
@@ -211,6 +237,9 @@ class PuanDagilimiGrafigi extends StatelessWidget {
 
 class _Satir extends StatelessWidget {
   final int yildiz;
+
+  /// Ekranda yazılan etiket: dar ölçekte "4", geniş ölçekte "31-40".
+  final String etiket;
   final int adet;
   final int enBuyuk;
   final bool benimKovam;
@@ -218,6 +247,7 @@ class _Satir extends StatelessWidget {
 
   const _Satir({
     required this.yildiz,
+    required this.etiket,
     required this.adet,
     required this.enBuyuk,
     required this.benimKovam,
@@ -233,11 +263,17 @@ class _Satir extends StatelessWidget {
     // çubuk 4 kat ölçekte bile ezilmesin. İçerideki `FittedBox` son güvence —
     // dört haneli sayı + devasa ölçek gibi uç birleşimde yazı bir tık küçülür,
     // taşma ASLA olmaz.
-    final yanEn = MediaQuery.textScalerOf(context).scale(34).clamp(34.0, 96.0);
+    // Geniş ölçekte etiket "91-100" (6 karakter) olabiliyor; taban genişlik
+    // etiketin uzunluğuna göre seçilir, yoksa FittedBox yazıyı okunmaz
+    // derecede küçültürdü.
+    final taban = etiket.length > 2 ? 58.0 : 34.0;
+    final yanEn = MediaQuery.textScalerOf(context)
+        .scale(taban)
+        .clamp(taban, 110.0);
     return Semantics(
       // Ekran okuyucu tek cümle duysun: "4 yıldız: 32 kişi puanladı".
       label:
-          '${'{} yıldız'.cf([yildiz])}: ${'{} kişi puanladı'.cf([adet])}'
+          '${'{} yıldız'.cf([etiket])}: ${'{} kişi puanladı'.cf([adet])}'
           '${benimKovam ? ' (${'Puanın'.c})' : ''}',
       excludeSemantics: true,
       child: Padding(
@@ -254,7 +290,7 @@ class _Satir extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      '$yildiz',
+                      etiket,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         color: benimKovam

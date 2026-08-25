@@ -1,13 +1,18 @@
-// Puan ölçeği — DB 1-10 ↔ ekran 5 yıldız.
+// Puan ölçeği — kanonik DB 1-100 ↔ kullanıcının SEÇTİĞİ görünüm ölçeği (5-100).
 //
 // 7 Ağu 2026: sunucunun SSR sayfası ve JSON-LD'si "10/10" basarken uygulama
 // aynı puanı "5.0" gösteriyordu. Doğru olan UYGULAMA tarafıdır (5 yıldız).
 // Dönüşüm altı dosyada kopyalanmıştı; artık yalnız lib/puan.dart'ta.
 //
-// Bu testler üç şeyi kilitler:
-//  1. dönüşümün matematiği,
-//  2. dönüşümün TEK YERDEN geldiği (kaynak taraması),
-//  3. 10'luk değerin ekranda 5'lik göründüğü (widget).
+// 26 Ağu 2026: ölçek KULLANICI TERCİHİ oldu (5/10/50/100 ya da arası) ve
+// kanonik depolama 1-100'e taşındı (migrasyon-2026-08-26b.sql). Ölçek
+// değiştirmek VERİ GÖÇÜ DEĞİLDİR — bu testlerin ana yükü budur.
+//
+// Bu testler kilitler:
+//  1. dönüşümün matematiği (her iki yön, her ölçek),
+//  2. ölçek değiştirmenin puanı KAYBETMEDİĞİ,
+//  3. dönüşümün TEK YERDEN geldiği (kaynak taraması),
+//  4. kanonik değerin ekranda seçilen ölçekte göründüğü (widget).
 import 'dart:convert';
 import 'dart:io';
 
@@ -42,7 +47,8 @@ http.Client _sahteIstemci() => MockClient((istek) async {
   }
   if (yol.startsWith('/api/incelemeler/')) {
     // Sunucu `avg(puan)` sonucunu METİN olarak da döndürebiliyor.
-    return cevap({'incelemeler': <dynamic>[], 'ortalama': '10'});
+    // 100 = kanonik ölçeğin tavanı (migrasyon-2026-08-26b.sql sonrası).
+    return cevap({'incelemeler': <dynamic>[], 'ortalama': '100'});
   }
   if (yol.startsWith('/api/yorumlar/')) return cevap({'yorumlar': <dynamic>[]});
   if (yol.startsWith('/api/tepkiler/')) {
@@ -53,51 +59,122 @@ http.Client _sahteIstemci() => MockClient((istek) async {
 
 void main() {
   group('ölçek dönüşümü', () {
-    test('DB puanı (1-10) → yıldız (0-5)', () {
-      expect(yildiza(10), 5);
-      expect(yildiza(8), 4);
-      expect(yildiza(6), 3);
-      expect(yildiza(2), 1);
-      expect(yildiza(null), 0);
-      // Tek sayılar yukarı yuvarlanır (9 → 4.5 → 5).
-      expect(yildiza(9), 5);
-      expect(yildiza(7), 4);
+    test('kanonik puan (1-100) → 5 yıldız', () {
+      expect(yildiza(100, olcek: 5), 5);
+      expect(yildiza(80, olcek: 5), 4);
+      expect(yildiza(60, olcek: 5), 3);
+      expect(yildiza(20, olcek: 5), 1);
+      expect(yildiza(null, olcek: 5), 0);
+      // Ara değerler yuvarlanır (90 → 4.5 → 5).
+      expect(yildiza(90, olcek: 5), 5);
+      expect(yildiza(70, olcek: 5), 4);
       // Metin gelen alanlar da çevrilir; bozuk değer 0.
-      expect(yildiza('8'), 4);
-      expect(yildiza('abc'), 0);
+      expect(yildiza('80', olcek: 5), 4);
+      expect(yildiza('abc', olcek: 5), 0);
       // Ölçek dışına taşan bozuk veri kırpılır.
-      expect(yildiza(99), 5);
+      expect(yildiza(999, olcek: 5), 5);
     });
 
-    test('ortalama metni tek ondalıkla 5 üzerinden', () {
-      expect(yildizOrtalamaMetni(10), '5.0');
-      expect(yildizOrtalamaMetni('8.4'), '4.2');
-      expect(yildizOrtalamaMetni(7), '3.5');
-      expect(yildizOrtalamaMetni(null), '0.0');
+    test('kanonik puan → geniş ölçekler', () {
+      // 100'lük ölçek kanonikle BİREBİR: kayıp yok.
+      expect(yildiza(73, olcek: 100), 73);
+      expect(dbPuani(73, olcek: 100), 73);
+      // 10'luk ölçek: 73 → 7,3 → 7.
+      expect(yildiza(73, olcek: 10), 7);
+      // 50'lik ölçek: 73 → 36,5 → 37 (yukarı).
+      expect(yildiza(73, olcek: 50), 37);
     });
 
-    test('yıldız → DB puanı (yazma yönü)', () {
-      expect(dbPuani(5), 10);
-      expect(dbPuani(3), 6);
-      expect(dbPuani(0), 0);
-      // Gidiş-dönüş kayıpsız.
-      for (var y = 0; y <= yildizAzami; y++) {
-        expect(yildiza(dbPuani(y)), y);
+    test('ortalama metni: dar ölçekte ondalıklı, geniş ölçekte tam', () {
+      expect(yildizOrtalamaMetni(100, olcek: 5), '5.0');
+      expect(yildizOrtalamaMetni('84', olcek: 5), '4.2');
+      expect(yildizOrtalamaMetni(70, olcek: 5), '3.5');
+      expect(yildizOrtalamaMetni(null, olcek: 5), '0.0');
+      // 10'un üstünde ondalık SAHTE KESİNLİK: atılır.
+      expect(yildizOrtalamaMetni('83.4', olcek: 100), '83');
+      expect(yildizOrtalamaMetni(50, olcek: 50), '25');
+    });
+
+    test('yıldız → kanonik puan (yazma yönü)', () {
+      expect(dbPuani(5, olcek: 5), 100);
+      expect(dbPuani(3, olcek: 5), 60);
+      expect(dbPuani(0, olcek: 5), 0);
+      expect(dbPuani(7, olcek: 10), 70);
+      // Gidiş-dönüş HER ölçekte kayıpsız: kullanıcının kendi ölçeğinde
+      // verdiği puan aynı ölçekte birebir geri okunmalı.
+      for (final olcek in [5, 10, 20, 50, 100]) {
+        for (var y = 0; y <= olcek; y++) {
+          expect(
+            yildiza(dbPuani(y, olcek: olcek), olcek: olcek),
+            y,
+            reason: 'ölçek $olcek, yıldız $y gidiş-dönüşte kaydı',
+          );
+        }
       }
     });
 
-    test('ölçek sabitleri', () {
-      expect(dbPuanAzami, 10);
-      expect(yildizAzami, 5);
+    test('ÖLÇEK DEĞİŞTİRMEK PUANI SİLMEZ (yeniden ifade eder)', () {
+      // 5'lik ölçekte verilen 4 yıldız kanonikte 80'dir.
+      final kanonik = dbPuani(4, olcek: 5);
+      expect(kanonik, 80);
+      // Kullanıcı 100'lük ölçeğe geçer: puanı kaybolmaz, 80 görür.
+      expect(yildiza(kanonik, olcek: 100), 80);
+      // 10'luğa geçer: 8 görür.
+      expect(yildiza(kanonik, olcek: 10), 8);
+      // 5'liğe döner: yine 4.
+      expect(yildiza(kanonik, olcek: 5), 4);
+    });
+
+    test('dbPuani en az 1 döner (geniş ölçekte sıfıra yuvarlanmaz)', () {
+      // 100'lük ölçekte 1 → 1. Yuvarlama 0 verseydi "puan yok" sayılır ve
+      // kullanıcının verdiği en düşük puan sessizce SİLİNİRDİ.
+      expect(dbPuani(1, olcek: 100), 1);
+      expect(dbPuani(1, olcek: 50), 2);
+      expect(dbPuani(1, olcek: 5), 20);
+    });
+
+    test('ölçek sabitleri ve satır/sheet eşiği', () {
+      expect(dbPuanAzami, 100);
+      expect(puanOlcekAlt, 5);
+      expect(puanOlcekUst, 100);
+      expect(puanOlcekSecenekleri, [5, 10, 50, 100]);
+      // 10 ve altı satır, üstü sheet (kullanıcı kararı).
+      expect(yildizSatiriOlur(5), isTrue);
+      expect(yildizSatiriOlur(10), isTrue);
+      expect(yildizSatiriOlur(11), isFalse);
+      expect(yildizSatiriOlur(100), isFalse);
+    });
+
+    test('dağılım kovaları: 10 üstü ölçek 10 kovaya gruplanır', () {
+      expect(dagilimKovaSayisi(5), 5);
+      expect(dagilimKovaSayisi(10), 10);
+      expect(dagilimKovaSayisi(50), 10);
+      expect(dagilimKovaSayisi(100), 10);
+      // Etiketler: dar ölçekte tek sayı, geniş ölçekte aralık.
+      expect(dagilimKovaEtiketi(4, 5), '4');
+      expect(dagilimKovaEtiketi(10, 100), '91-100');
+      expect(dagilimKovaEtiketi(1, 100), '1-10');
+      expect(dagilimKovaEtiketi(1, 50), '1-5');
+    });
+
+    test('yıldız ikon boyu ölçekle küçülür (satır taşmasın)', () {
+      expect(yildizIkonBoyu(5), 30);
+      expect(yildizIkonBoyu(10), 22);
+      // Ara ölçek: 5 ile 10 arasında kalır.
+      final ara = yildizIkonBoyu(8);
+      expect(ara, lessThan(30));
+      expect(ara, greaterThan(22));
     });
   });
 
   test('ölçek dönüşümü lib/ içinde TEK YERDE', () {
     // NEDEN kaynak taraması: hata tam da kopyalanmış `/ 2` satırlarından
     // doğdu. Yeni bir ekran kendi dönüşümünü yazarsa bu test kırmızıya döner.
+    // Kanonik ölçek 1-100 olduğundan kaçak dönüşüm artık `/ 100`, `* 100`,
+    // `/ 20`, `* 20` ya da eski `/ 2` biçiminde görünür — hepsini ara.
     final kacak = RegExp(
-      r'(?:puan|ortalama)[^\n;]*(?:/|\*)\s*2\b'
-      r'|(?:/|\*)\s*2[^\n;]*(?:puan|ortalama)',
+      r'(?:puan|ortalama)[^\n;]*(?:/|\*)\s*(?:2|20|100)\b'
+      r'|(?:/|\*)\s*(?:2|20|100)[^\n;]*(?:puan|ortalama)',
       caseSensitive: false,
     );
     final bulgular = <String>[];
@@ -110,6 +187,16 @@ void main() {
       for (var i = 0; i < satirlar.length; i++) {
         final s = satirlar[i].trim();
         if (s.startsWith('//')) continue;
+        // YANLIŞ POZİTİF AYIKLAMA: "ortalama" sözcüğü puan dışında da geçiyor
+        // (gönderi istatistiğindeki `ortalamaIzlenme * 100` bir YÜZDE hesabı,
+        // ölçek çevirisi değil). Yüzde/oran/izlenme bağlamı elenir — aksi
+        // halde test kalıcı kırmızı kalır ve gerçek kaçağı gizler.
+        if (RegExp(
+          r'izlenme|yuzde|yüzde|oran|percent',
+          caseSensitive: false,
+        ).hasMatch(satirlar[i])) {
+          continue;
+        }
         if (kacak.hasMatch(satirlar[i])) {
           bulgular.add('${girdi.path}:${i + 1}: $s');
         }
@@ -124,7 +211,7 @@ void main() {
     );
   });
 
-  testWidgets('10 üzerinden gelen toplum ortalaması ekranda 5 üzerinden', (
+  testWidgets('kanonik 100 ortalaması varsayılan 5 yıldız ölçeğinde 5.0', (
     tester,
   ) async {
     tester.view.physicalSize = const Size(500, 1400);
@@ -153,9 +240,47 @@ void main() {
       await tester.pump(const Duration(milliseconds: 60));
     }
 
-    // Sunucu 10 dedi; kullanıcı 5.0 görür — SSR'daki 10/10 ile aradaki fark
-    // sunucu tarafında kapatılacak (bkz. rapor: server.js satırları).
+    // Sunucu kanonik 100 dedi; varsayılan ölçekte (5) kullanıcı 5.0 görür.
     expect(find.text('ort. 5.0'), findsOneWidget);
-    expect(find.text('ort. 10.0'), findsNothing);
+    expect(find.text('ort. 100.0'), findsNothing);
+  });
+
+  testWidgets('ölçek 100 iken AYNI ortalama 100 olarak görünür', (
+    tester,
+  ) async {
+    // ÖLÇEK GÖRÜNÜMDÜR kilidi: aynı sunucu yanıtı, farklı ölçek, farklı
+    // ekran metni — ama ALTTAKİ VERİ aynı. Ölçek değişince ekranın gerçekten
+    // yeniden çizildiğini de doğrular (OlcekDinler karışımı).
+    tester.view.physicalSize = const Size(500, 1400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    addTearDown(() => PuanOlcegi.deger.value = puanOlcekAlt);
+    Oturum.karsilamaGerekli = false;
+
+    SharedPreferences.setMockInitialValues({});
+    await Api.tokenYukle();
+    Api.istemci = _sahteIstemci();
+    PuanOlcegi.deger.value = 100;
+    final oturum = Oturum();
+    await oturum.yukle();
+    final yonlendirici = yonlendiriciOlustur(oturum);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: oturum,
+        child: MaterialApp.router(
+          routerConfig: yonlendirici,
+          theme: diziTema(acik: false),
+        ),
+      ),
+    );
+    await tester.pump();
+    yonlendirici.go('/kisi/6193');
+    for (var i = 0; i < 10; i++) {
+      await tester.pump(const Duration(milliseconds: 60));
+    }
+
+    // 100'lük ölçekte ondalık atılır (sahte kesinlik) → "ort. 100".
+    expect(find.text('ort. 100'), findsOneWidget);
+    expect(find.text('ort. 5.0'), findsNothing);
   });
 }

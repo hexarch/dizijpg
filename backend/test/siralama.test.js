@@ -557,3 +557,71 @@ test('SERT FİLTRE: motor kendisine verilmeyen gönderiyi ASLA listeye ekleyemez
   const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
   assert.deepEqual([...idler].sort(), [1, 2]);
 });
+
+// ---------------------------------------------------------------------------
+// VİDEO TABANI — akışta videoların hiç görünmemesinin kök çözümü (26 Ağu 2026)
+test('video tabanı: skoru dipteki videolar yine de her 10 kartta bir girer', () => {
+  const a = ayarBirlestir({ video_tabani: 10, tazelik_gucu: 0, yazar_doygunluk: 1,
+    icerik_doygunluk: 1, ai_payi: 100, arsiv_payi: 100 }, 'akis');
+  // 30 videosuz kart yüksek skorlu (kitaplıkta), 5 video sıfır skorlu
+  const adaylar = [
+    ...Array.from({ length: 30 }, (_, i) => gonderi({
+      id: 100 + i, kullanici_id: 2 + i, tmdb_id: 600 + i, kat: 2, guvenli: true })),
+    ...Array.from({ length: 5 }, (_, i) => gonderi({
+      id: 300 + i, kullanici_id: 1, tmdb_id: 500 + i, kat: 0 })),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.equal(idler.length, 35, 'taban listeyi kısaltmamalı');
+  const video = (dilim) => dilim.filter((id) => id >= 300).length;
+  assert.ok(video(idler.slice(0, 10)) >= 1,
+    'ilk 10 kartta en az 1 video beklenirdi');
+  assert.ok(video(idler.slice(0, 20)) >= 2,
+    'ilk 20 kartta en az 2 video beklenirdi');
+  assert.equal(video(idler.slice(0, 9)), 0,
+    'floor() gereği ilk video 10. karttan önce ZORLANMAMALI');
+});
+
+test('video tabanı 0: bugünkü davranış birebir (video zorlanmaz)', () => {
+  const a = ayarBirlestir({ video_tabani: 0, tazelik_gucu: 0, yazar_doygunluk: 1,
+    icerik_doygunluk: 1, ai_payi: 100, arsiv_payi: 100 }, 'akis');
+  const adaylar = [
+    ...Array.from({ length: 20 }, (_, i) => gonderi({
+      id: 100 + i, kullanici_id: 2 + i, tmdb_id: 600 + i, kat: 2, guvenli: true })),
+    ...Array.from({ length: 3 }, (_, i) => gonderi({
+      id: 300 + i, kullanici_id: 1, tmdb_id: 500 + i, kat: 0 })),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.equal(idler.slice(0, 20).filter((id) => id >= 300).length, 0,
+    'taban 0 iken düşük skorlu video öne çekilmemeli');
+});
+
+test('video tabanı AI/arşiv tavanlarını DELER (yoksa hiç çalışmazdı)', () => {
+  const a = ayarBirlestir({ video_tabani: 10, ai_payi: 0, arsiv_payi: 0,
+    tazelik_gucu: 0, yazar_doygunluk: 1, icerik_doygunluk: 1 }, 'akis');
+  // Videoların tamamı arşiv AI hesabında — canlıdaki gerçek dağılım (%91,5)
+  const adaylar = [
+    ...Array.from({ length: 15 }, (_, i) => gonderi({
+      id: 100 + i, kullanici_id: 2 + i, tmdb_id: 600 + i, kat: 2, guvenli: true })),
+    ...Array.from({ length: 3 }, (_, i) => gonderi({
+      id: 300 + i, kullanici_id: 1, tmdb_id: 500 + i, kat: 0, ai: true, arsiv: true })),
+  ];
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.ok(idler.slice(0, 10).filter((id) => id >= 300).length >= 1,
+    'AI/arşiv tavanı 0 olsa bile taban video sokabilmeli');
+});
+
+test('video tabanı: havuzda hiç video yoksa sessizce devreden çıkar', () => {
+  const a = ayarBirlestir({ video_tabani: 50, tazelik_gucu: 0 }, 'akis');
+  const adaylar = Array.from({ length: 12 }, (_, i) => gonderi({
+    id: 100 + i, kullanici_id: 2 + i, tmdb_id: 600 + i, kat: 2, guvenli: true }));
+  const { idler } = siralaVeKotala(adaylar, a, OLCUM_CANLI);
+  assert.equal(idler.length, 12, 'video yokken liste kısalmamalı');
+  assert.equal(new Set(idler).size, 12, 'tekrar olmamalı');
+});
+
+test('ayarBirlestir: video_tabani 0-50 aralığına kırpılır', () => {
+  const a = ayarBirlestir({ video_tabani: 500 }, 'akis');
+  assert.equal(a.video_tabani, 50);
+  assert.equal(ayarBirlestir({}, 'akis').video_tabani, 10, 'akış varsayılanı %10');
+  assert.equal(ayarBirlestir({}, 'kesfet').video_tabani, 0, 'Keşfet varsayılanı kapalı');
+});

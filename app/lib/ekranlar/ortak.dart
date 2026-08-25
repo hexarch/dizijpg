@@ -45,6 +45,12 @@ class MedyaGaleri extends StatelessWidget {
   /// md. 23 — elde tutma ölçüsünün yazılacağı gönderi. Verilmezse ölçüm kapalı.
   final Object? gonderiId;
 
+  /// İlk medyanın bilinen en/boy oranı (sunucunun `medya_oran` alanı).
+  /// Verilirse akış kutusu İLK KAREDEN bu oranda kurulur — medya yüklenince
+  /// kart boy değiştirip akışı kaydırmaz (zıplama düzeltmesi, 26 Ağu 2026).
+  /// null: bugünkü davranış (4:5 ile başla, yüklenince ölç).
+  final double? oran;
+
   const MedyaGaleri({
     super.key,
     required this.yollar,
@@ -52,6 +58,7 @@ class MedyaGaleri extends StatelessWidget {
     this.onCiftDokunus,
     this.otomatikOynat = false,
     this.gonderiId,
+    this.oran,
   });
 
   static bool _video(String m) => m.endsWith('.mp4') || m.endsWith('.webm');
@@ -67,6 +74,7 @@ class MedyaGaleri extends StatelessWidget {
         urller: urller,
         onAc: onAc,
         onCiftDokunus: onCiftDokunus,
+        oran: oran,
         gonderiId: gonderiId,
       );
     }

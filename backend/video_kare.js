@@ -48,6 +48,42 @@ export function videoKareFfmpegArgs(dosyaYolu) {
 }
 
 /**
+ * Medyanın piksel boyutlarını ölçer — GÖRSEL ve VİDEO için aynı komut
+ * (ffprobe her ikisini de okur; ses dosyasında v:0 akışı yoktur, null döner).
+ *
+ * NEDEN: akış kartı medya kutusunu 4:5 varsayımıyla kurup gerçek oranı medya
+ * YÜKLENDİKTEN sonra öğreniyordu; kutu o anda boy değiştirip akışı
+ * kaydırıyordu (kullanıcı bildirdi, 26 Ağu 2026). Oran artık yükleme anında
+ * ölçülür, `medya_olculer` tablosuna yazılır ve /akis yanıtında `medya_oran`
+ * olarak gider — kutu İLK KAREDEN doğru boyda kurulur, zıplama olmaz.
+ *
+ * @param {string} dosyaYolu
+ * @param {{ timeout?: number }} [secenek]
+ * @returns {Promise<{en: number, boy: number}|null>} Başarısızsa null.
+ */
+export function medyaBoyutOlc(dosyaYolu, secenek = {}) {
+  const timeout = secenek.timeout ?? 10000;
+  return new Promise((bitti) => {
+    execFile(
+      'ffprobe',
+      ['-v', 'error', '-select_streams', 'v:0',
+        '-show_entries', 'stream=width,height', '-of', 'csv=s=x:p=0',
+        dosyaYolu],
+      { timeout },
+      (hata, stdout) => {
+        if (hata) return bitti(null);
+        // Animasyonlu GIF birden çok satır dökebilir; ilki yeter.
+        const e = String(stdout).trim().split('\n')[0].match(/^(\d+)x(\d+)/);
+        if (!e) return bitti(null);
+        const en = parseInt(e[1], 10);
+        const boy = parseInt(e[2], 10);
+        bitti(en > 0 && boy > 0 ? { en, boy } : null);
+      },
+    );
+  });
+}
+
+/**
  * Videodan kapak karesi üretir. Başarısızsa `false` (yüklemeyi bozmaz).
  *
  * @param {string} dosyaYolu

@@ -248,7 +248,12 @@ void main() {
           theme: diziTema(acik: false),
           home: Scaffold(
             body: Center(
-              child: TakipSayac(deger: '3', etiket: 'takipçi', onTap: () {}),
+              child: TakipSayac(
+                deger: '3',
+                etiket: 'takipçi',
+                ikon: Icons.group,
+                onTap: () {},
+              ),
             ),
           ),
         ),
