@@ -1336,4 +1336,6 @@ const Map<String, String> cevirilerPt = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Alterar a escala não apaga as suas avaliações; as mesmas são exibidas na nova escala.',
   'En aşağıya gönder': 'Enviar para o fim',
   'Listenin en altına taşındı': 'Movido para o fim da lista',
+  'Oturumun sonlandı': 'Sua sessão terminou',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Esta conta foi desconectada em todos os dispositivos ou a senha mudou. Entre novamente para continuar.',
 };

@@ -1319,4 +1319,6 @@ const Map<String, String> cevirilerUk = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Зміна шкали не видаляє ваші оцінки — ті самі оцінки показуються в новій шкалі.',
   'En aşağıya gönder': 'У кінець списку',
   'Listenin en altına taşındı': 'Переміщено в кінець списку',
+  'Oturumun sonlandı': 'Ваш сеанс завершено',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'З цього облікового запису вийшли всюди або змінено пароль. Увійдіть знову, щоб продовжити.',
 };

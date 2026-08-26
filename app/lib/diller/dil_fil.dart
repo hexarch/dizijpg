@@ -1336,4 +1336,6 @@ const Map<String, String> cevirilerFil = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Ang pagpapalit ng scale ay hindi nagbubura ng iyong mga rating; ipinapakita ang parehong rating sa bagong scale.',
   'En aşağıya gönder': 'Ipadala sa ibaba',
   'Listenin en altına taşındı': 'Inilipat sa ibaba ng listahan',
+  'Oturumun sonlandı': 'Natapos na ang session mo',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Na-sign out ang account na ito sa lahat ng device o nagbago ang password. Mag-sign in ulit para magpatuloy.',
 };

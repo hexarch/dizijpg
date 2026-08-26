@@ -152,6 +152,34 @@ class Api {
 
   /// Yanıt gövdesindeki `yasak` alanını yakalar (varsa) ve bildiriyi günceller.
   /// Ceza kalkmışsa (sunucu artık yasak göndermiyorsa) uyarı da kalkar.
+  /// OTURUM DÜŞTÜ — sunucu token'ı reddetti (401).
+  ///
+  /// ---------------------------------------------------------------------
+  /// HANGİ HATAYI ÇÖZÜYOR (26 Ağu 2026, kullanıcı bildirdi)
+  /// ---------------------------------------------------------------------
+  /// Ayarlar'dan "tüm oturumları kapat" denince sunucu `sifre_surumu`nu
+  /// artırıyor ve eski token'lar 401 + "Oturum sonlandı" alıyor — SUNUCU
+  /// TARAFI DOĞRU ÇALIŞIYORDU. Sorun istemcideydi: 401 hiçbir yerde ÖZEL
+  /// işlenmiyordu (`kod == 401` araması tüm uygulamada boştu). `_isle`
+  /// genel bir `ApiHata` fırlatıyor, ekranlar bunu "yüklenemedi / bağlantı
+  /// hatası" diye gösteriyordu. Yerel token ve `kullanici` kaydı DURUYORDU,
+  /// yani kullanıcı hâlâ giriş yapmış görünüyor ama her isteği düşüyordu.
+  ///
+  /// `api.dart` web ve Android'de ORTAK olduğu için hata iki platformda da
+  /// aynıydı.
+  ///
+  /// ÇÖZÜM: 401'i tek yerde yakala, bayrağı kaldır. Kabuk bunu dinleyip
+  /// oturumu temizler ve kullanıcıya NE OLDUĞUNU söyler.
+  ///
+  /// NEDEN BURADA `cikis()` ÇAĞRILMIYOR: `Oturum` bir ChangeNotifier ve
+  /// Provider ağacında yaşıyor; `Api` onu tanımıyor (bağımlılık yönü
+  /// tersine dönerdi). Sinyali yayınlamak `Api`nin, oturumu kapatmak
+  /// arayüzün işi.
+  static final ValueNotifier<bool> oturumDustu = ValueNotifier(false);
+
+  /// Oturum düştü bayrağını indir (çıkış tamamlanınca arayüz çağırır).
+  static void oturumDustuTemizle() => oturumDustu.value = false;
+
   static void _yasakOku(dynamic govde, {bool temizle = false}) {
     if (govde is Map && govde['yasak'] is Map) {
       yasak.value = Map<String, dynamic>.from(govde['yasak'] as Map);
@@ -236,6 +264,11 @@ class Api {
   static dynamic _isle(http.Response cevap) {
     final govde = cevap.body.isEmpty ? {} : jsonDecode(cevap.body);
     if (cevap.statusCode >= 400) {
+      // 401 = token yok/geçersiz/sürümü eski. `_token != null` koşulu şart:
+      // token OLMADAN atılan istek de 401 alır, ama orada düşecek bir oturum
+      // yoktur ve bayrağı kaldırmak giriş ekranındaki ziyaretçiye anlamsız
+      // bir "oturumun sonlandı" uyarısı gösterirdi.
+      if (cevap.statusCode == 401 && _token != null) oturumDustu.value = true;
       // 403 + `yasak` = hesap askıda. Bilgiyi yakala ki ekranlar sebebi ve
       // kalan süreyi gösterebilsin; hata yine de fırlatılır (çağıran akış
       // "başarılı" sanmasın).
@@ -443,7 +476,7 @@ class Api {
   /// pubspec ile AYNI olmalı — `test/surum_tutarlilik_test.dart` bunu doğrular
   /// (3 Ağu: 1.12.9+52'de kalmıştı, hata günlüğü iki sürüm yanlış etiketlendi
   /// ve sürüm kapısı yanlış derleme numarasını karşılaştıracaktı).
-  static const surum = '1.97.0+147';
+  static const surum = '1.97.1+148';
 
   /// İstemci hatası/çökmesini sunucuya bildirir (self-hosted günlük).
   /// Ateşle-unut: kendi hatasında sessiz kalır ki döngü oluşmasın.

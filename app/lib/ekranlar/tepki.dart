@@ -435,6 +435,9 @@ class _YildizPuanState extends State<YildizPuan> {
         if (widget.sezon != null) 'sezon': widget.sezon,
         if (widget.sezon != null) 'bolum': widget.bolum,
         'puan': yeni == 0 ? null : dbPuani(yeni),
+        // Sunucuya "bu puan KANONİK 1-100 ölçeğinde" de. Bayrak yoksa sunucu
+        // gönderileni 1-10 sayıp ×10 uygular (eski sürüm koruması).
+        'kanonik': true,
       });
       if (!mounted) return;
       widget.kaydedildi?.call(

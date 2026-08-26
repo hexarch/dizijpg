@@ -43,6 +43,8 @@ Future<bool> puanlaVeKaydet(
                 'tmdb_id': tmdbId,
                 'tur': tur,
                 'puan': secilen == 0 ? null : dbPuani(secilen, olcek: olcek),
+                'kanonik': true, // bkz. tepki.dart'taki gerekçe
+
                 'yorum': yorumKutusu.text.trim().isEmpty
                     ? null
                     : yorumKutusu.text.trim(),

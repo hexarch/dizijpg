@@ -1235,4 +1235,6 @@ const Map<String, String> cevirilerZh = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': '更改评分制不会删除你的评分，同样的评分会按新制显示。',
   'En aşağıya gönder': '移到最下方',
   'Listenin en altına taşındı': '已移到列表最下方',
+  'Oturumun sonlandı': '你的会话已结束',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': '此账号已在所有设备退出登录，或密码已更改。请重新登录以继续。',
 };

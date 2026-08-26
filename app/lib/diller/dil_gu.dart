@@ -1302,4 +1302,6 @@ const Map<String, String> cevirilerGu = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'સ્કેલ બદલવાથી તમારાં રેટિંગ ભૂંસાતાં નથી; એ જ રેટિંગ નવા સ્કેલમાં બતાવાય છે.',
   'En aşağıya gönder': 'સૌથી નીચે મોકલો',
   'Listenin en altına taşındı': 'યાદીના તળિયે ખસેડ્યું',
+  'Oturumun sonlandı': 'તમારું સત્ર સમાપ્ત થયું',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'આ એકાઉન્ટ બધે સાઇન આઉટ થયું અથવા પાસવર્ડ બદલાયો. ચાલુ રાખવા ફરી સાઇન ઇન કરો.',
 };

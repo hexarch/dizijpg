@@ -1335,4 +1335,6 @@ const Map<String, String> cevirilerEl = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Η αλλαγή κλίμακας δεν διαγράφει τις βαθμολογίες σου· εμφανίζονται στη νέα κλίμακα.',
   'En aşağıya gönder': 'Στο κάτω μέρος',
   'Listenin en altına taşındı': 'Μετακινήθηκε στο τέλος της λίστας',
+  'Oturumun sonlandı': 'Η συνεδρία σου έληξε',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Έγινε αποσύνδεση αυτού του λογαριασμού παντού ή άλλαξε ο κωδικός. Συνδέσου ξανά για να συνεχίσεις.',
 };

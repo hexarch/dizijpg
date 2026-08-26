@@ -1334,4 +1334,6 @@ const Map<String, String> cevirilerRo = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Schimbarea scării nu îți șterge notele; aceleași note apar pe noua scară.',
   'En aşağıya gönder': 'Trimite la final',
   'Listenin en altına taşındı': 'Mutat la finalul listei',
+  'Oturumun sonlandı': 'Sesiunea ta s-a încheiat',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Acest cont a fost deconectat peste tot sau i s-a schimbat parola. Conectează-te din nou pentru a continua.',
 };

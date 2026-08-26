@@ -1308,4 +1308,6 @@ const Map<String, String> cevirilerCs = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Změna škály nesmaže vaše hodnocení; stejná hodnocení se zobrazí v nové škále.',
   'En aşağıya gönder': 'Přesunout dolů',
   'Listenin en altına taşındı': 'Přesunuto na konec seznamu',
+  'Oturumun sonlandı': 'Vaše relace skončila',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tento účet byl odhlášen všude nebo se změnilo heslo. Pokračujte opětovným přihlášením.',
 };

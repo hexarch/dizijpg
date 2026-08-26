@@ -1293,4 +1293,6 @@ const Map<String, String> cevirilerTh = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'การเปลี่ยนระดับไม่ลบคะแนนของคุณ คะแนนเดิมจะแสดงในระดับใหม่',
   'En aşağıya gönder': 'ส่งไปล่างสุด',
   'Listenin en altına taşındı': 'ย้ายไปล่างสุดของรายการ',
+  'Oturumun sonlandı': 'เซสชันของคุณสิ้นสุดแล้ว',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'บัญชีนี้ออกจากระบบทุกอุปกรณ์ หรือรหัสผ่านเปลี่ยนไป เข้าสู่ระบบอีกครั้งเพื่อดำเนินการต่อ',
 };

@@ -1287,4 +1287,6 @@ const Map<String, String> cevirilerAr = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'تغيير المقياس لا يحذف تقييماتك؛ تُعرض التقييمات نفسها بالمقياس الجديد.',
   'En aşağıya gönder': 'إرسال إلى الأسفل',
   'Listenin en altına taşındı': 'تم النقل إلى نهاية القائمة',
+  'Oturumun sonlandı': 'انتهت جلستك',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'تم تسجيل الخروج من هذا الحساب في كل الأجهزة أو تغيّرت كلمة المرور. سجّل الدخول مرة أخرى للمتابعة.',
 };

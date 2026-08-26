@@ -1250,4 +1250,6 @@ const Map<String, String> cevirilerJa = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': '段階を変えても評価は消えません。同じ評価が新しい段階で表示されます。',
   'En aşağıya gönder': '一番下へ移動',
   'Listenin en altına taşındı': 'リストの一番下に移動しました',
+  'Oturumun sonlandı': 'セッションが終了しました',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'このアカウントはすべての端末からログアウトされたか、パスワードが変更されました。続けるには再度ログインしてください。',
 };

@@ -1315,4 +1315,6 @@ const Map<String, String> cevirilerId = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Mengubah skala tidak menghapus penilaianmu; penilaian yang sama ditampilkan pada skala baru.',
   'En aşağıya gönder': 'Kirim ke bawah',
   'Listenin en altına taşındı': 'Dipindahkan ke bawah daftar',
+  'Oturumun sonlandı': 'Sesimu telah berakhir',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akun ini keluar dari semua perangkat atau kata sandinya berubah. Masuk lagi untuk melanjutkan.',
 };

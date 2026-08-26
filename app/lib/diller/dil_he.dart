@@ -1287,4 +1287,6 @@ const Map<String, String> cevirilerHe = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'שינוי הסולם אינו מוחק את הדירוגים שלך; אותם דירוגים מוצגים בסולם החדש.',
   'En aşağıya gönder': 'שלח לתחתית',
   'Listenin en altına taşındı': 'הועבר לתחתית הרשימה',
+  'Oturumun sonlandı': 'ההפעלה שלך הסתיימה',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'החשבון הזה נותק בכל המכשירים או שהסיסמה שונתה. התחבר שוב כדי להמשיך.',
 };

@@ -1321,4 +1321,6 @@ const Map<String, String> cevirilerNl = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'De schaal wijzigen verwijdert je beoordelingen niet; dezelfde beoordelingen worden op de nieuwe schaal getoond.',
   'En aşağıya gönder': 'Naar onderen',
   'Listenin en altına taşındı': 'Naar onderaan de lijst verplaatst',
+  'Oturumun sonlandı': 'Je sessie is beëindigd',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Dit account is overal afgemeld of het wachtwoord is gewijzigd. Log opnieuw in om door te gaan.',
 };

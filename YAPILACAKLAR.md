@@ -1,6 +1,41 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-26 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-26 — ✅ 401 = oturum düştü (otomatik çıkış)
+
+Kullanıcı: "tüm oturumları kapattık ama oturumdan atmak yerine bağlantı koptu
+hatası veriyor, neden otomatik çıkış yapmadı, webde ve androidde aynı mı?"
+
+- **Aynıydı** — `api.dart` iki platformda ORTAK. Sunucu DOĞRU çalışıyordu
+  (`sifre_surumu` artıyor, eski token 401 + "Oturum sonlandı" alıyor); hata
+  istemcideydi: 401 hiçbir yerde özel işlenmiyordu (`kod == 401` araması tüm
+  kodda boştu), genel `ApiHata` "bağlantı hatası" gibi görünüyordu ve yerel
+  token/`kullanici` kaydı DURUYORDU.
+- `Api.oturumDustu` bayrağı (401 + token varsa; tokensızda kalkmaz) +
+  `OturumDustuKatmani` kabuğun en dışında: sebebi söyleyen katman →
+  "Giriş Yap" → oturum temizlenir → /giris. Arka ekran ModalBarrier ile kilitli.
+- **Testin yakaladığı üç gerçek sorun:** (1) `showDialog` GoRouter'ın iç içe
+  Navigator'ları altında HİÇ açılmıyordu → gövdeye gömülü katmana çevrildi;
+  (2) `addPostFrameCallback` tetiklenmiyordu (bayrak düz atamadan geliyor, yeni
+  kare planlanmıyor) → build aşamasında değilsek doğrudan setState;
+  (3) `Oturum.cikis()` içindeki Google oturum kapatma HİÇ DÖNMÜYORDU →
+  kullanıcı sonsuz spinner'da kilitleniyordu → çıkış arka plana alındı.
+- Çeviri **1090 anahtar × 45 dil**. 4 yeni test; paket 2170/2170 yeşil.
+- 🚀 Web'de. Mobilde bir sonraki sürümde (148 incelemeye gitmişti).
+
+## 2026-08-26 — 🚀 Play üretim: 1.97.1+148 incelemeye gönderildi
+
+- 147 iptal edildi: puan depolaması 1-100'e taşınınca mağazadaki 1.94.0
+  uyumsuz kaldı (5 yıldız → 10 → kanonik ölçekte yarım yıldız kaydediliyordu).
+  Düzeltme: istemci `kanonik: true` bildirir, bayrak yoksa sunucu ×10 çevirir.
+  Sürüm başlığı DEĞİL gövde bayrağı — önbellekten açılan eski web derlemesi
+  "yeni sürüm" gibi görünebilirdi. Canlıda 5 senaryo curl ile doğrulandı.
+- **TUZAK:** `docker-compose up -d --build api` iki denemede de konteyneri
+  yenilemedi (biri 255 ile düştü), API 8 saat eski kodda kaldı. İlk canlı test
+  yakaladı; `docker cp` + `docker restart` ile çözüldü. Dağıtımdan sonra
+  konteynerdeki kodu GREPLE doğrula, "done" çıktısına güvenme.
+- Sürüm notları 11 dilde. %100, 177 ülke. İnceleme ~7 gün.
+
 ## 2026-08-26 — ✅ Seçilebilir puan ölçeği (5 / 10 / 50 / 100 yıldız)
 
 Kullanıcı: puanlama sistemini ayarlardan değiştirebilsin; 5-100 arası,

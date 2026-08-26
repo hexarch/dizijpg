@@ -1337,4 +1337,6 @@ const Map<String, String> cevirilerFr = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Changer d\'échelle ne supprime pas vos notes ; elles sont affichées sur la nouvelle échelle.',
   'En aşağıya gönder': 'Envoyer en bas',
   'Listenin en altına taşındı': 'Déplacé en bas de la liste',
+  'Oturumun sonlandı': 'Votre session a pris fin',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Ce compte a été déconnecté partout ou son mot de passe a changé. Reconnectez-vous pour continuer.',
 };

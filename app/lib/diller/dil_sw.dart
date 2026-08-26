@@ -1319,4 +1319,6 @@ const Map<String, String> cevirilerSw = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Kubadilisha kipimo hakufuti ukadiriaji wako; ukadiriaji uleule huonyeshwa kwa kipimo kipya.',
   'En aşağıya gönder': 'Peleka chini',
   'Listenin en altına taşındı': 'Imehamishwa chini ya orodha',
+  'Oturumun sonlandı': 'Kipindi chako kimeisha',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akaunti hii ilitolewa kwenye vifaa vyote au nenosiri lilibadilika. Ingia tena ili kuendelea.',
 };

@@ -1329,4 +1329,6 @@ const Map<String, String> cevirilerPl = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Zmiana skali nie usuwa Twoich ocen; te same oceny są pokazywane w nowej skali.',
   'En aşağıya gönder': 'Przenieś na dół',
   'Listenin en altına taşındı': 'Przeniesiono na dół listy',
+  'Oturumun sonlandı': 'Twoja sesja zakończyła się',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'To konto zostało wylogowane wszędzie lub zmieniono jego hasło. Zaloguj się ponownie, aby kontynuować.',
 };

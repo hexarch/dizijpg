@@ -8836,12 +8836,31 @@ app.post('/puan', girisZorunlu, sarici(async (req, res) => {
   const hedef = puanHedef(req.body);
   if (!hedef) return res.status(400).json({ hata: 'Geçersiz tür veya tmdb_id' });
   const { tur, tmdb_id, sezon, bolum } = hedef;
-  const { puan, yorum = null } = req.body || {};
-  // KANONİK ÖLÇEK 1-100 (migrasyon-2026-08-26b.sql). İstemci kullanıcının
-  // seçtiği ölçekten (5-100) buraya ÇEVİREREK gönderir; sunucu ölçeği bilmez
-  // ve bilmemelidir — aynı puan farklı ölçeklerdeki iki cihazdan aynı sayıyla
-  // gelir. Kullanıcının görünüm tercihi yalnız `kullanicilar.puan_olcegi`.
-  if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 100)) {
+  const { puan: gelenPuan, yorum = null, kanonik = false } = req.body || {};
+  // ---- ÖLÇEK SÖZLEŞMESİ (migrasyon-2026-08-26b.sql) ----
+  // KANONİK ÖLÇEK 1-100. İstemci kullanıcının seçtiği ölçekten (5-100) buraya
+  // ÇEVİREREK gönderir; sunucu görünüm ölçeğini bilmez ve bilmemelidir —
+  // aynı puan farklı ölçeklerdeki iki cihazdan aynı sayıyla gelir.
+  //
+  // GERİYE UYUM — ZORUNLU (26 Ağu 2026): mağazadaki ESKİ sürümler (≤1.96) ve
+  // önbellekte kalmış eski web derlemeleri puanı HÂLÂ 1-10 ölçeğinde
+  // gönderiyor. Onları kanonik sanmak sessiz veri bozulmasıdır: kullanıcı
+  // 5 yıldız verir, 10/100 (yarım yıldız) kaydedilirdi.
+  //
+  // AYIRT EDİCİ GÖVDEDEKİ `kanonik` BAYRAĞI, sürüm başlığı DEĞİL: eski
+  // istemciler sürüm başlığı da göndermiyor ve web'de önbellekten açılan eski
+  // derleme "yeni sürüm" gibi görünebilirdi. Bayrağı YALNIZ yeni istemci
+  // yollar; yokluğu "1-10 ölçeği" anlamına gelir.
+  //
+  // DEĞER ARALIĞINA BAKMAK ÇÖZÜM DEĞİL: 100'lük ölçekte 7 puan veren yeni
+  // kullanıcı da 7 gönderir, eski istemcinin 7'siyle ayırt edilemezdi.
+  let puan = gelenPuan;
+  if (puan != null && !kanonik) {
+    if (!Number.isInteger(puan) || puan < 1 || puan > 10) {
+      return res.status(400).json({ hata: 'Puan 1-10 arası olmalı' });
+    }
+    puan *= 10; // 1-10 → kanonik 1-100
+  } else if (puan != null && (!Number.isInteger(puan) || puan < 1 || puan > 100)) {
     return res.status(400).json({ hata: 'Puan 1-100 arası olmalı' });
   }
   if (yorum != null && String(yorum).length > 2000) {

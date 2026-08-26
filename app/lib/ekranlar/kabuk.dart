@@ -11,6 +11,7 @@ import '../tema.dart';
 import 'dogum_gunu.dart';
 import 'ortak.dart' show DaireGorsel;
 import 'profil.dart' show profilYenileTetik;
+import 'oturum_dustu.dart';
 import 'yasakli.dart';
 
 /// Masaüstünde alt çubuğun genişliği. Ada 280 dp'de SABİT tutuldu: 21 Ağu
@@ -528,7 +529,9 @@ class KabukEkrani extends StatelessWidget {
       // konmaz — kullanıcı hangi sekmede açarsa açsın görsün. Doğum günü
       // değilse ya da tarih girilmemişse katman hiçbir şey çizmez, ölçüye de
       // dokunmaz (`build` doğrudan `child`ı döndürür).
-      body: DogumGunuKatmani(child: YasakSeridi(child: shell)),
+      body: OturumDustuKatmani(
+        child: DogumGunuKatmani(child: YasakSeridi(child: shell)),
+      ),
       bottomNavigationBar: kabukCubugu(
         context,
         // Dal → hedef çevirisi ŞART: Keşfet dalındayken (3) çeviri olmadan

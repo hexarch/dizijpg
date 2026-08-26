@@ -1315,4 +1315,6 @@ const Map<String, String> cevirilerNb = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Å endre skalaen sletter ikke vurderingene dine; de samme vises på den nye skalaen.',
   'En aşağıya gönder': 'Flytt nederst',
   'Listenin en altına taşındı': 'Flyttet nederst i listen',
+  'Oturumun sonlandı': 'Økten din er avsluttet',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Denne kontoen ble logget ut overalt, eller passordet ble endret. Logg inn igjen for å fortsette.',
 };

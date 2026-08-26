@@ -1325,4 +1325,6 @@ const Map<String, String> cevirilerMy = {
   'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'စကေးပြောင်းခြင်းက သင့်အဆင့်သတ်မှတ်ချက်များကို ဖျက်မည်မဟုတ်ပါ၊ တူညီသောအဆင့်များကို စကေးအသစ်ဖြင့် ပြသပါမည်။',
   'En aşağıya gönder': 'အောက်ဆုံးသို့ပို့',
   'Listenin en altına taşındı': 'စာရင်း၏အောက်ဆုံးသို့ ရွှေ့ပြီး',
+  'Oturumun sonlandı': 'သင့်ဆက်ရှင် ပြီးဆုံးသွားပါပြီ',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ဤအကောင့်ကို နေရာတိုင်းမှ ထွက်လိုက်ပြီ သို့မဟုတ် စကားဝှက် ပြောင်းသွားပါပြီ။ ဆက်လုပ်ရန် ပြန်ဝင်ပါ။',
 };
