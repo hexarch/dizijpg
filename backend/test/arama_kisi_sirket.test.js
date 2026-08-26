@@ -65,8 +65,11 @@ const aramaSonuclariDiz = alan(
 const aramaKisiSirketYollari = alan(['aramaKisiSirketYollari'], 'aramaKisiSirketYollari');
 const icerikDizinSatirlari = alan(['icerikDizinSatirlari'], 'icerikDizinSatirlari');
 
+// `[^`]*`: sorgunun ARDINA dil parametresi eklendi
+// (`&language=${dil}`). Test onu bilmediği için kalıcı kırmızıydı; kilidin
+// amacı "multi çağrısı + aramaTtl" ikilisi, parametre listesi değil.
 test('/ara hâlâ /search/multi çağırır (aramaTtl seçici, eski istemci yolu)', () => {
-  assert.match(ara, /\/search\/multi\?query=\$\{encodeURIComponent\(v\)\}`,\s*\n\s*aramaTtl\(/);
+  assert.match(ara, /\/search\/multi\?query=\$\{encodeURIComponent\(v\)\}[^`]*`,\s*\n\s*aramaTtl\(/);
 });
 
 test('/ara kaynağında /search/company ve /search/person kilitli', () => {

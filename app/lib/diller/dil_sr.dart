@@ -1320,4 +1320,6 @@ const Map<String, String> cevirilerSr = {
   'Listenin en altına taşındı': 'Померено на дно листе',
   'Oturumun sonlandı': 'Твоја сесија је завршена',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Овај налог је одјављен свуда или је лозинка промењена. Пријави се поново да наставиш.',
+  'Son izleme: {}': 'Последње гледано: {}',
+  '{} tarihinde izledin': 'Гледано {}',
 };

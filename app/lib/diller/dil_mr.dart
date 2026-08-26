@@ -1309,4 +1309,6 @@ const Map<String, String> cevirilerMr = {
   'Listenin en altına taşındı': 'यादीच्या तळाशी हलवले',
   'Oturumun sonlandı': 'तुमचे सत्र संपले',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'हे खाते सर्वत्र साइन आउट केले गेले किंवा पासवर्ड बदलला. सुरू ठेवण्यासाठी पुन्हा साइन इन करा.',
+  'Son izleme: {}': 'शेवटचे पाहिले: {}',
+  '{} tarihinde izledin': '{} रोजी पाहिले',
 };

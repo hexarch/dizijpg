@@ -1318,4 +1318,6 @@ const Map<String, String> cevirilerDa = {
   'Listenin en altına taşındı': 'Flyttet nederst på listen',
   'Oturumun sonlandı': 'Din session er afsluttet',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Denne konto blev logget ud overalt, eller adgangskoden blev ændret. Log ind igen for at fortsætte.',
+  'Son izleme: {}': 'Sidst set: {}',
+  '{} tarihinde izledin': 'Set den {}',
 };

@@ -2662,9 +2662,15 @@ function seoCeviriAlani(translations, alan, diller = ['en']) {
 
 // Tek yorum/inceleme bloğu. `puan` verilirse başlıkta gösterilir — JSON-LD'deki
 // reviewRating ile sayfada GÖRÜNEN değer aynı olmalı (yapısal veri politikası).
-function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum }) {
+function seoYorumHtml({ kullanici_adi, metin, tarih, puan, tohum, ai: aiSutun }) {
   const t = seoGun(tarih);
-  const ai = !!tohum || kullanici_adi === 'dizi.jpg.ai';
+  // KİMLİK SÜTUNDA, ADDA DEĞİL (21 Ağu 2026 kuralı, migrasyon-2026-08-21d.sql).
+  // Burada AI hesabı ADIYLA karşılaştırılıyordu (27 Ağu 2026'da temizlendi):
+  // ad değiştirilebilir bir alan olduğu için hem kaçırılabilir hem taklit
+  // edilebilirdi. Kaynak taraması testi bu kalıbı kilitliyor —
+  // test/yasakli_kullanici_adi.test.js. Sorgular `k.tohum` döndürüyor; `ai` sütunu da varsa o da
+  // sayılır (tek hesap) — ikisi de yoksa normal kullanıcı.
+  const ai = !!tohum || aiSutun === true;
   const etiket = ai ? ' <small>dizi.jpg AI özeti</small>' : '';
   return `<article><h3>@${htmlKacir(kullanici_adi)}${etiket}`
     + `${puan ? ` — ${htmlKacir(seoYildiz(puan))}/5` : ''}</h3>`
@@ -9232,7 +9238,15 @@ app.get('/kisi/:id/izlenme', girisZorunlu, kisiLimiti, sarici(async (req, res) =
 app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
   const p = [req.kullanici.id, req.params.tur, req.params.tmdbId];
   const [izleme, durum, puan, favori, kaynak, gizli] = await Promise.all([
-    havuz.query('SELECT sezon, bolum FROM izlemeler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
+    // `tarih` DE DÖNER (27 Ağu 2026, kullanıcı isteği: "izlenen dizi filmlere
+    // tarihlerini de ekler misin... dizi bölümlerine de bölüm izlenme tarihini
+    // eklemeyi unutma"). Alan zaten `izlemeler.tarih`te duruyordu, hiçbir yere
+    // taşınmıyordu. Diziyle filmi AYIRMIYORUZ: film tek satırdır, dizide her
+    // bölüm kendi satırıdır — istemci hangisini göstereceğine kendisi karar
+    // verir (içerik geneli için `son_izleme`, bölüm satırı için kendi tarihi).
+    havuz.query(
+      `SELECT sezon, bolum, tarih FROM izlemeler
+        WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3`, p),
     havuz.query('SELECT durum, tekrar FROM durumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     // sezon IS NULL: bu uç içeriğin GENEL durumunu döner; bölüm puanları
     // `/bolum-puanlari/:tmdbId/:sezon` ucundan okunur.
@@ -9243,8 +9257,15 @@ app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
     havuz.query('SELECT platform FROM izleme_kaynaklari WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     havuz.query('SELECT 1 FROM gizli_icerikler WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
   ]);
+  // Son izleme: dizide EN SON izlenen bölümün tarihi, filmde tek satırın
+  // tarihi — ikisi de aynı hesaptan çıkar (kullanıcı kararı 27 Ağu 2026:
+  // "son izlenen bölüm", bitirme tarihi değil; izlemeye devam edende de
+  // anlamlı olan tek tarih budur).
+  const sonIzleme = izleme.rows.reduce(
+    (e, r) => (r.tarih && (!e || r.tarih > e) ? r.tarih : e), null);
   res.json({
     izlenenler: izleme.rows,
+    son_izleme: sonIzleme,
     durum: durum.rows[0]?.durum || null,
     tekrar: durum.rows[0]?.tekrar || 0,
     puan: puan.rows[0] || null,

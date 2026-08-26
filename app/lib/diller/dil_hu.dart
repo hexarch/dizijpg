@@ -1327,4 +1327,6 @@ const Map<String, String> cevirilerHu = {
   'Listenin en altına taşındı': 'A lista aljára helyezve',
   'Oturumun sonlandı': 'A munkameneted véget ért',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Ezt a fiókot mindenhonnan kiléptették, vagy megváltozott a jelszava. A folytatáshoz jelentkezz be újra.',
+  'Son izleme: {}': 'Utoljára megnézve: {}',
+  '{} tarihinde izledin': 'Megnézve: {}',
 };

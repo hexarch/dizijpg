@@ -1270,4 +1270,6 @@ const Map<String, String> cevirilerAm = {
   'Listenin en altına taşındı': 'ወደ ዝርዝሩ ታች ተወስዷል',
   'Oturumun sonlandı': 'ክፍለ ጊዜዎ አብቅቷል',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ይህ መለያ በሁሉም ቦታ ወጥቷል ወይም የይለፍ ቃሉ ተቀይሯል። ለመቀጠል እንደገና ይግቡ።',
+  'Son izleme: {}': 'መጨረሻ የታየው: {}',
+  '{} tarihinde izledin': '{} ላይ ተመልክተዋል',
 };

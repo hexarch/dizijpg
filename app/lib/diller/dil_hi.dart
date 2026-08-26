@@ -1310,4 +1310,6 @@ const Map<String, String> cevirilerHi = {
   'Listenin en altına taşındı': 'सूची के सबसे नीचे ले जाया गया',
   'Oturumun sonlandı': 'आपका सत्र समाप्त हो गया',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'इस खाते को सभी जगह से साइन आउट किया गया या पासवर्ड बदला गया। जारी रखने के लिए फिर से साइन इन करें।',
+  'Son izleme: {}': 'आखिरी बार देखा: {}',
+  '{} tarihinde izledin': '{} को देखा',
 };

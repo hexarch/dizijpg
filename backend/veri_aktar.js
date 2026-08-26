@@ -509,17 +509,36 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       const anahtar = `${tmdbId}:${sezon}:${bolum}`;
       if (izlemeGorulen.has(anahtar)) continue;
       izlemeGorulen.add(anahtar);
-      izlemeYeni.push([tmdbId, sezon, bolum]);
+      // GERÇEK İZLEME TARİHİ (27 Ağu 2026'da düzeltildi).
+      //
+      // Bu yol tarihi HİÇ OKUMUYORDU: satır `[tmdbId, sezon, bolum]` olarak
+      // ekleniyor, INSERT'te `tarih` sütunu geçilmiyor ve DEFAULT now()
+      // devreye giriyordu. Sonuç: 16 bin bölümün tamamı İÇE AKTARMA GÜNÜNE
+      // damgalanıyordu — kullanıcı "Breaking Bad'i 2019'da izledim" derken
+      // uygulama "16 Temmuz 2026" gösteriyordu (ölçüm: 16.753 satır, yalnız
+      // 24 farklı gün).
+      //
+      // TV Time bu CSV'de tarihi `created_at` sütununda veriyor
+      // ("2025-08-01 21:40:45"). Tek dosyalı yeni format `watched_at`
+      // kullandığı için ikisi de kabul edilir.
+      //
+      // BOZUK/BOŞ TARİH `null` GEÇER: aşağıdaki COALESCE onu now()'a çevirir,
+      // yani eski davranış YEDEK olarak korunur — tarihi olmayan satır yine
+      // içeri girer, sessizce düşmez.
+      const ham = String(r.created_at || r.watched_at || '').trim();
+      const t = ham && !Number.isNaN(Date.parse(ham)) ? new Date(ham) : null;
+      izlemeYeni.push([tmdbId, sezon, bolum, t]);
     }
   }
   // Toplu ekleme (15binlerce satır olabilir): 500'lük gruplar
   for (let i = 0; i < izlemeYeni.length; i += 500) {
     const grup = izlemeYeni.slice(i, i + 500);
     const degerler = grup
-      .map((_, j) => `($1,'tv',$${j * 3 + 2},$${j * 3 + 3},$${j * 3 + 4})`)
+      .map((_, j) => `($1,'tv',$${j * 4 + 2},$${j * 4 + 3},$${j * 4 + 4},`
+        + `COALESCE($${j * 4 + 5}::timestamptz, now()))`)
       .join(',');
     await havuz.query(
-      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
        VALUES ${degerler} ON CONFLICT DO NOTHING`,
       [userId, ...grup.flat()],
     );

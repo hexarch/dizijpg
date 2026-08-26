@@ -233,7 +233,7 @@ test('dağılım ile ortalama AYNI WHERE: çubukların toplamı adet\'i tutar', 
 test('sayfadaki metin ile aggregateRating AYNI değeri üretir', () => {
   // Aynı `seo` nesnesi iki yoldan geçirilir; ikisi de `seoYildizOrt`e
   // dayandığı için sonuç birebir aynı olmak ZORUNDA.
-  const seo = { ortalama: '8.6', adet: 7, incelemeler: [], yorumlar: [] };
+  const seo = { ortalama: '86', adet: 7, incelemeler: [], yorumlar: [] };
   const govde = seoDegerlendirmeGovdesi(seo,
     { incelemeBasligi: 'x', yorumBasligi: 'y' });
   const sema = seoOrtalamaPuan(seo);
@@ -275,7 +275,7 @@ test('aggregateRating ALT SINIRI: puan YOKSA basılmaz, VARSA basılır', () => 
 // nesnede birleştirmek testi yalancı yeşile boyardı (19 Ağu 2026'da tam da bu
 // ayrım bir hatayı ortaya çıkardı: sayfa boş `<p></p>` basıyordu).
 const TOHUM_INCELEME = {
-  kullanici_adi: 'dizi.jpg.ai', tohum: true, puan: 10,
+  kullanici_adi: 'dizi.jpg.ai', tohum: true, puan: 100,
   yorum: 'Yapay zekâ incelemesi', tarih: '2026-08-01T00:00:00Z',
 };
 const TOHUM_YORUM = {
@@ -283,7 +283,7 @@ const TOHUM_YORUM = {
   metin: 'Yapay zekâ gönderisi', tarih: '2026-08-01T00:00:00Z',
 };
 const GERCEK_INCELEME = {
-  kullanici_adi: 'alcelik', tohum: false, puan: 8,
+  kullanici_adi: 'alcelik', tohum: false, puan: 80,
   yorum: 'Gerçek kullanıcı incelemesi', tarih: '2026-08-02T00:00:00Z',
 };
 const GERCEK_YORUM = {

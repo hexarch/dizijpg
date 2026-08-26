@@ -1309,4 +1309,6 @@ const Map<String, String> cevirilerAz = {
   'Listenin en altına taşındı': 'Siyahının ən altına köçürüldü',
   'Oturumun sonlandı': 'Sessiyanız bitdi',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Bu hesabdan hər yerdə çıxış edilib və ya şifrəsi dəyişib. Davam etmək üçün yenidən daxil olun.',
+  'Son izleme: {}': 'Son baxış: {}',
+  '{} tarihinde izledin': '{} tarixində baxdın',
 };

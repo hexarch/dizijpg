@@ -1313,4 +1313,6 @@ const Map<String, String> cevirilerPa = {
   'Listenin en altına taşındı': 'ਸੂਚੀ ਦੇ ਹੇਠਾਂ ਭੇਜ ਦਿੱਤਾ',
   'Oturumun sonlandı': 'ਤੁਹਾਡਾ ਸੈਸ਼ਨ ਖਤਮ ਹੋ ਗਿਆ',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ਇਹ ਖਾਤਾ ਹਰ ਥਾਂ ਤੋਂ ਸਾਈਨ ਆਊਟ ਹੋ ਗਿਆ ਜਾਂ ਪਾਸਵਰਡ ਬਦਲ ਗਿਆ। ਜਾਰੀ ਰੱਖਣ ਲਈ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।',
+  'Son izleme: {}': 'ਆਖਰੀ ਵਾਰ ਦੇਖਿਆ: {}',
+  '{} tarihinde izledin': '{} ਨੂੰ ਦੇਖਿਆ',
 };

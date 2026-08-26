@@ -1317,4 +1317,6 @@ const Map<String, String> cevirilerVi = {
   'Listenin en altına taşındı': 'Đã chuyển xuống cuối danh sách',
   'Oturumun sonlandı': 'Phiên của bạn đã kết thúc',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tài khoản này đã đăng xuất ở mọi nơi hoặc mật khẩu đã đổi. Đăng nhập lại để tiếp tục.',
+  'Son izleme: {}': 'Xem lần cuối: {}',
+  '{} tarihinde izledin': 'Đã xem ngày {}',
 };

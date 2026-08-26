@@ -1338,4 +1338,6 @@ const Map<String, String> cevirilerFil = {
   'Listenin en altına taşındı': 'Inilipat sa ibaba ng listahan',
   'Oturumun sonlandı': 'Natapos na ang session mo',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Na-sign out ang account na ito sa lahat ng device o nagbago ang password. Mag-sign in ulit para magpatuloy.',
+  'Son izleme: {}': 'Huling napanood: {}',
+  '{} tarihinde izledin': 'Napanood noong {}',
 };

@@ -1333,4 +1333,6 @@ const Map<String, String> cevirilerEs = {
   'Listenin en altına taşındı': 'Movido al final de la lista',
   'Oturumun sonlandı': 'Tu sesión ha finalizado',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Se cerró la sesión de esta cuenta en todos los dispositivos o cambió su contraseña. Inicia sesión de nuevo.',
+  'Son izleme: {}': 'Visto por última vez: {}',
+  '{} tarihinde izledin': 'Visto el {}',
 };

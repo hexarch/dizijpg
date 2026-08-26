@@ -1254,4 +1254,6 @@ const Map<String, String> cevirilerKo = {
   'Listenin en altına taşındı': '목록 맨 아래로 이동했습니다',
   'Oturumun sonlandı': '세션이 종료되었습니다',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': '이 계정이 모든 기기에서 로그아웃되었거나 비밀번호가 변경되었습니다. 계속하려면 다시 로그인하세요.',
+  'Son izleme: {}': '마지막 시청: {}',
+  '{} tarihinde izledin': '{}에 시청함',
 };

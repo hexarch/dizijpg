@@ -11,6 +11,7 @@ import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
 import '../ceviri.dart';
 import '../puan.dart';
+import '../tarih.dart';
 import '../tema.dart';
 import '../tmdb_bolum_puan.dart';
 import '../tmdb_fragman.dart';
@@ -1073,10 +1074,18 @@ class _DetayEkraniState extends State<DetayEkrani>
     final sezonlar = ((c['seasons'] as List<dynamic>?) ?? [])
         .where((s) => (s['season_number'] as int) > 0)
         .toList();
-    final izlenenSet = {
+    // '$sezon:$bolum' → izlenme tarihi (ISO). Küme yerine HARİTA (27 Ağu
+    // 2026, kullanıcı isteği): bölüm satırı artık "izledin mi" sorusunun
+    // yanında "ne zaman" sorusunu da yanıtlıyor. `izlenenSet` aynı haritanın
+    // anahtarlarından türetiliyor — tek kaynak, iki görünüm.
+    final izlenmeTarihleri = <String, String>{
       for (final r in (_benim?['izlenenler'] as List<dynamic>? ?? []))
-        '${r['sezon']}:${r['bolum']}',
+        '${r['sezon']}:${r['bolum']}': (r['tarih'] ?? '').toString(),
     };
+    final izlenenSet = izlenmeTarihleri.keys.toSet();
+    // Dizide EN SON izlenen bölümün, filmde tek satırın tarihi (sunucu
+    // hesaplıyor; kullanıcı kararı: bitirme tarihi değil son izleme).
+    final sonIzleme = (_benim?['son_izleme'] ?? '').toString();
     final filmIzlendi = !tv && izlenenSet.contains('0:0');
     final favori = _benim?['favori'] == true;
     final benimDurum = _benim?['durum'] as String?;
@@ -1416,6 +1425,45 @@ class _DetayEkraniState extends State<DetayEkrani>
                           ),
                       ],
                     ),
+                    // ---- İZLEME TARİHİ (27 Ağu 2026, kullanıcı isteği) ----
+                    // Filmde "12 Ağustos 2026'da izledin", dizide "Son izleme:
+                    // 12 Ağustos 2026". Dizide BİTİRME tarihi değil SON İZLEME
+                    // gösteriliyor (kullanıcı kararı): izlemeye devam edende de
+                    // anlamlı olan tek tarih budur, bitirme yalnız bir durumda
+                    // vardır.
+                    //
+                    // Yıl DAİMA yazılır (`hepYil`): bu tek satırlık özet
+                    // arşiv bilgisidir, "14 Ağustos" tek başına hangi yıl
+                    // olduğunu söylemezdi.
+                    if (sonIzleme.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.event_available_outlined,
+                            size: 16,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              tv
+                                  ? 'Son izleme: {}'.cf([
+                                      tarihBicimle(sonIzleme, hepYil: true),
+                                    ])
+                                  : '{} tarihinde izledin'.cf([
+                                      tarihBicimle(sonIzleme, hepYil: true),
+                                    ]),
+                              style: TextStyle(
+                                color: DiziRenkler.metin70,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                     // Yeniden izleme (yalnız "bitirdim" durumunda): Letterboxd tarzı
                     if (benimDurum == 'bitirdim') ...[
                       const SizedBox(height: 10),
@@ -1602,6 +1650,7 @@ class _DetayEkraniState extends State<DetayEkrani>
                         tmdbId: widget.tmdbId,
                         sezon: s as Map<String, dynamic>,
                         izlenenSet: izlenenSet,
+                        izlenmeTarihleri: izlenmeTarihleri,
                         degisti: _benimYenile,
                       ),
                   ],
@@ -1984,12 +2033,16 @@ class _SezonSatiri extends StatefulWidget {
   final int tmdbId;
   final Map<String, dynamic> sezon;
   final Set<String> izlenenSet;
+
+  /// '$sezon:$bolum' → izlenme tarihi (ISO). Bölüm satırı bunu gösterir.
+  final Map<String, String> izlenmeTarihleri;
   final VoidCallback degisti;
 
   const _SezonSatiri({
     required this.tmdbId,
     required this.sezon,
     required this.izlenenSet,
+    required this.izlenmeTarihleri,
     required this.degisti,
   });
 
@@ -2161,6 +2214,8 @@ class _SezonSatiriState extends State<_SezonSatiri> {
                   izlendi: widget.izlenenSet.contains(
                     '$_no:${b['episode_number']}',
                   ),
+                  izlenmeTarihi:
+                      widget.izlenmeTarihleri['$_no:${b['episode_number']}'],
                   izlendiToggle: () => _toggle(b['episode_number'] as int),
                   degisti: widget.degisti,
                 ),
@@ -2178,6 +2233,9 @@ class _BolumSatiri extends StatelessWidget {
   final int sezonNo;
   final Map<String, dynamic> bolum;
   final bool izlendi;
+
+  /// Bu bölümü NE ZAMAN izledin (ISO). İzlenmemişse null.
+  final String? izlenmeTarihi;
   final VoidCallback izlendiToggle;
   final VoidCallback degisti;
 
@@ -2186,6 +2244,7 @@ class _BolumSatiri extends StatelessWidget {
     required this.sezonNo,
     required this.bolum,
     required this.izlendi,
+    required this.izlenmeTarihi,
     required this.izlendiToggle,
     required this.degisti,
   });
@@ -2194,7 +2253,7 @@ class _BolumSatiri extends StatelessWidget {
   Widget build(BuildContext context) {
     final no = bolum['episode_number'] as int;
     final gorsel = posterUrl(bolum['still_path'] as String?, boyut: 'w300');
-    final tarih = bolum['air_date'] as String? ?? '';
+    final yayin = bolum['air_date'] as String? ?? '';
 
     return InkWell(
       onTap: () async {
@@ -2239,13 +2298,65 @@ class _BolumSatiri extends StatelessWidget {
                       fontSize: 13,
                     ),
                   ),
-                  if (tarih.isNotEmpty)
-                    Text(
-                      tarih,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: DiziRenkler.metin38,
-                      ),
+                  // ALT SATIR: yayın tarihi · izlenme tarihi.
+                  //
+                  // İKİSİ AYNI SATIRDA AMA AYRIŞIYOR: yayın tarihi soluk ve
+                  // düz, izlenme tarihi göz ikonuyla ve sarı. Kullanıcı
+                  // "bölüm ne zaman yayınlandı" ile "ben ne zaman izledim"i
+                  // karıştırmasın — ikisi de tarihtir, ayırt edici işaret
+                  // ikondur (renk TEK BAŞINA ayırt edici sayılmaz).
+                  //
+                  // Yayın tarihi de artık HAM ISO DEĞİL ("2008-01-20" değil
+                  // "20 Ocak 2008"): aynı satırda biri okunur biri ham
+                  // görünürdü.
+                  if (yayin.isNotEmpty || izlenmeTarihi != null)
+                    Row(
+                      children: [
+                        if (yayin.isNotEmpty)
+                          Flexible(
+                            child: Text(
+                              tarihBicimle(yayin, hepYil: true),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: DiziRenkler.metin38,
+                              ),
+                            ),
+                          ),
+                        if (izlenmeTarihi != null &&
+                            izlenmeTarihi!.isNotEmpty) ...[
+                          if (yayin.isNotEmpty)
+                            Text(
+                              '  ·  ',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: DiziRenkler.metin24,
+                              ),
+                            ),
+                          Icon(
+                            Icons.visibility_outlined,
+                            size: 11,
+                            color: DiziRenkler.sariMetin,
+                          ),
+                          const SizedBox(width: 3),
+                          Flexible(
+                            child: Text(
+                              // Yıl yok: bölüm listesi uzun, satır dar ve
+                              // "bu yıl" zaten baskın durum. Geçmiş yıllarda
+                              // `tarihBicimle` yılı kendisi ekler.
+                              tarihBicimle(izlenmeTarihi),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: DiziRenkler.sariMetin,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                 ],
               ),

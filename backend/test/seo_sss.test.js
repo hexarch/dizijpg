@@ -70,7 +70,7 @@ const saglayicilar = (...adlar) =>
 
 /** Çok sezonlu, BİTMİŞ dizi + gerçek toplum puanı. */
 const BREAKING_BAD = {
-  tur: 'tv', id: 1396, ad: 'Breaking Bad', ortalama: '10.0', adet: 4, yorumAdet: 9,
+  tur: 'tv', id: 1396, ad: 'Breaking Bad', ortalama: '100', adet: 4, yorumAdet: 9,
   v: {
     status: 'Ended', number_of_seasons: 5, number_of_episodes: 62,
     first_air_date: '2008-01-20', last_air_date: '2013-09-29',
@@ -105,7 +105,7 @@ const SIMPSONLAR = {
 
 /** DEVAM EDEN dizi, gelecek bölüm AÇIKLANMAMIŞ. */
 const HOTD = {
-  tur: 'tv', id: 94997, ad: 'House of the Dragon', ortalama: '7.3', adet: 6, yorumAdet: 1,
+  tur: 'tv', id: 94997, ad: 'House of the Dragon', ortalama: '73', adet: 6, yorumAdet: 1,
   v: {
     status: 'Returning Series', number_of_seasons: 3, number_of_episodes: 26,
     first_air_date: '2022-08-21', last_air_date: '2026-08-09',
@@ -120,7 +120,7 @@ const HOTD = {
 
 /** TEK SEZONLUK bitmiş dizi. */
 const CHERNOBYL = {
-  tur: 'tv', id: 87108, ad: 'Chernobyl', ortalama: '10.0', adet: 1, yorumAdet: 3,
+  tur: 'tv', id: 87108, ad: 'Chernobyl', ortalama: '100', adet: 1, yorumAdet: 3,
   v: {
     status: 'Ended', number_of_seasons: 1, number_of_episodes: 5,
     first_air_date: '2019-05-06', last_air_date: '2019-06-03',
@@ -135,7 +135,7 @@ const CHERNOBYL = {
 /** TÜRKİYE SAĞLAYICISI YOK (TMDB'de CA/FI/GB/IE/NO/SE var, TR yok) +
  *  gelecek bölüm tarihi BAYAT (2026-08-20, sayfa 21 Ağu'da isteniyor). */
 const HOME_AND_AWAY = {
-  tur: 'tv', id: 2354, ad: 'Home and Away', ortalama: '10.0', adet: 1, yorumAdet: 0,
+  tur: 'tv', id: 2354, ad: 'Home and Away', ortalama: '100', adet: 1, yorumAdet: 0,
   v: {
     status: 'Returning Series', number_of_seasons: 39, number_of_episodes: 8772,
     first_air_date: '1988-01-18', last_air_date: '2026-08-06',
@@ -177,7 +177,7 @@ const FIREFLY = {
 
 /** FİLM — `rent` ve `buy` listeleri BİREBİR AYNI (tekrar tuzağı). */
 const BASLANGIC = {
-  tur: 'movie', id: 27205, ad: 'Başlangıç', ortalama: '9.3', adet: 3, yorumAdet: 4,
+  tur: 'movie', id: 27205, ad: 'Başlangıç', ortalama: '93', adet: 3, yorumAdet: 4,
   v: {
     status: 'Released', runtime: 148, release_date: '2010-07-15',
     'watch/providers': trSaglayici({
@@ -518,7 +518,7 @@ test('adsız/bozuk kadro satırları elenir', () => {
 // 8) MEVCUT ŞEMA BOZULMUYOR + kaçış
 // ===========================================================================
 test('@graph sırası korunur: [0] ana varlık, [1] breadcrumb, [2] FAQPage', () => {
-  const seo = { ortalama: '10.0', adet: 4, yorumlar: [], incelemeler: [] };
+  const seo = { ortalama: '100', adet: 4, yorumlar: [], incelemeler: [] };
   const url = 'https://dizijpg.com/icerik/tv/1396';
   const sss = sorular(BREAKING_BAD);
   const ld = icerikJsonLd({
@@ -548,7 +548,7 @@ test('SSS yoksa @graph 2 öğede kalır (eski davranış aynen)', () => {
 });
 
 test('FAQPage TVSeries düğümünün İÇİNE gömülmez, tipi de birleştirilmez', () => {
-  const seo = { ortalama: '10.0', adet: 4, yorumlar: [], incelemeler: [] };
+  const seo = { ortalama: '100', adet: 4, yorumlar: [], incelemeler: [] };
   const ld = icerikJsonLd({
     tur: 'tv', url: 'https://dizijpg.com/icerik/tv/1396', ad: 'Breaking Bad',
     ozet: '', gorsel: '', v: BREAKING_BAD.v, seo, sss: sorular(BREAKING_BAD),

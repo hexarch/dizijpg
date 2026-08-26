@@ -1321,4 +1321,6 @@ const Map<String, String> cevirilerSw = {
   'Listenin en altına taşındı': 'Imehamishwa chini ya orodha',
   'Oturumun sonlandı': 'Kipindi chako kimeisha',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akaunti hii ilitolewa kwenye vifaa vyote au nenosiri lilibadilika. Ingia tena ili kuendelea.',
+  'Son izleme: {}': 'Ulitazamwa mwisho: {}',
+  '{} tarihinde izledin': 'Ulitazama {}',
 };

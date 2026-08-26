@@ -1310,4 +1310,6 @@ const Map<String, String> cevirilerCs = {
   'Listenin en altına taşındı': 'Přesunuto na konec seznamu',
   'Oturumun sonlandı': 'Vaše relace skončila',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tento účet byl odhlášen všude nebo se změnilo heslo. Pokračujte opětovným přihlášením.',
+  'Son izleme: {}': 'Naposledy zhlédnuto: {}',
+  '{} tarihinde izledin': 'Zhlédnuto {}',
 };

@@ -1338,4 +1338,6 @@ const Map<String, String> cevirilerPt = {
   'Listenin en altına taşındı': 'Movido para o fim da lista',
   'Oturumun sonlandı': 'Sua sessão terminou',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Esta conta foi desconectada em todos os dispositivos ou a senha mudou. Entre novamente para continuar.',
+  'Son izleme: {}': 'Visto pela última vez: {}',
+  '{} tarihinde izledin': 'Visto em {}',
 };

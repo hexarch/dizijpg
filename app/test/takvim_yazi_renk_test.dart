@@ -13,11 +13,6 @@ void _ekran(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-String _k(DateTime t) =>
-    '${t.year.toString().padLeft(4, '0')}-'
-    '${t.month.toString().padLeft(2, '0')}-'
-    '${t.day.toString().padLeft(2, '0')}';
-
 void main() {
   tearDown(() => DiziRenkler.acik = false);
 
@@ -26,27 +21,22 @@ void main() {
   ) async {
     _ekran(tester);
     DiziRenkler.acik = false;
-    final bugun = DateTime.now();
-    final sonra = DateTime(
-      bugun.year,
-      bugun.month,
-      bugun.day,
-    ).add(const Duration(days: 5));
+    // OLAYSIZ TAKVİM — BİLEREK (27 Ağu 2026'da düzeltildi).
+    //
+    // Eski kurgu olayı "bugün + 5 gün"e koyuyordu ve AYIN SON HAFTASINDA
+    // kendiliğinden kırılıyordu: 27 Ağustos + 5 = 1 Eylül, yani olay BİR
+    // SONRAKİ AYA taşıyor, takvim ilk dolu güne atlıyor ve aranan "1" artık
+    // boş bir gün değil SEÇİLİ gün oluyordu (sarı dairede siyah yazı).
+    // Test bu yüzden ayın 26'sına kadar yeşil, sonrasında kırmızıydı.
+    //
+    // Testin ölçtüğü şey zaten BOŞ gün ve BOŞ uyarı renkleri; olaya hiç
+    // ihtiyacı yok. Olaysız takvimde seçim bugünde kalır, "Bu gün bölüm yok"
+    // çıkar ve bugün DIŞINDAKİ her gün boştur.
     await tester.pumpWidget(
       MaterialApp(
         theme: diziTema(acik: false),
         home: Scaffold(
-          body: AyTakvimi(
-            olaylar: [
-              {
-                'tarih': _k(sonra),
-                'dizi_adi': 'A Dizisi',
-                'sezon': 1,
-                'bolum': 1,
-              },
-            ],
-            onAc: (_) async {},
-          ),
+          body: AyTakvimi(olaylar: const [], onAc: (_) async {}),
         ),
       ),
     );
@@ -64,9 +54,11 @@ void main() {
       expect(t.style?.color, DiziRenkler.metin);
     }
 
-    // Ayın 1'i bu veri setinde boş (olay 5 gün sonra). Sarı dairede siyah
-    // OLMAZ; tema metni (koyu = beyaz).
-    final bir = tester.widget<Text>(find.text('1').first);
+    // Boş gün rakamı: sarı dairede siyah OLMAZ; tema metni (koyu = beyaz).
+    // BUGÜNÜN GÜNÜ SEÇİLİDİR, onu sorma — ayın 1'i bugünse 2'ye geç.
+    final bugunGun = DateTime.now().day;
+    final bosGun = bugunGun == 1 ? '2' : '1';
+    final bir = tester.widget<Text>(find.text(bosGun).first);
     expect(bir.style?.color, DiziRenkler.metin);
 
     final uyari = tester.widget<Text>(find.text('Bu gün bölüm yok'));

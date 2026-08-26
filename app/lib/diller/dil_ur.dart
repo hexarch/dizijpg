@@ -1313,4 +1313,6 @@ const Map<String, String> cevirilerUr = {
   'Listenin en altına taşındı': 'فہرست کے آخر میں منتقل کر دیا گیا',
   'Oturumun sonlandı': 'آپ کا سیشن ختم ہو گیا',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'اس اکاؤنٹ کو ہر جگہ سے سائن آؤٹ کر دیا گیا یا پاس ورڈ بدل گیا۔ جاری رکھنے کے لیے دوبارہ سائن ان کریں۔',
+  'Son izleme: {}': 'آخری بار دیکھا: {}',
+  '{} tarihinde izledin': '{} کو دیکھا',
 };

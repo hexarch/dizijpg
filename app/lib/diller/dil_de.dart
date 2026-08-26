@@ -1340,4 +1340,6 @@ const Map<String, String> cevirilerDe = {
   'Listenin en altına taşındı': 'Ans Ende der Liste verschoben',
   'Oturumun sonlandı': 'Deine Sitzung ist beendet',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Dieses Konto wurde überall abgemeldet oder sein Passwort wurde geändert. Melde dich erneut an.',
+  'Son izleme: {}': 'Zuletzt gesehen: {}',
+  '{} tarihinde izledin': 'Gesehen am {}',
 };

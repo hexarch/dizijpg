@@ -1324,4 +1324,6 @@ const Map<String, String> cevirilerFi = {
   'Listenin en altına taşındı': 'Siirretty listan alimmaksi',
   'Oturumun sonlandı': 'Istuntosi päättyi',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tämä tili kirjattiin ulos kaikkialta tai salasana vaihtui. Kirjaudu uudelleen jatkaaksesi.',
+  'Son izleme: {}': 'Viimeksi katsottu: {}',
+  '{} tarihinde izledin': 'Katsottu {}',
 };

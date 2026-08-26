@@ -59,6 +59,21 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+    # TEK İSTİSNA — DAC_READ_SEARCH (26 Ağu 2026, admin panelinde HTTP 500).
+    # Panelin "gelen mail" görünümü Maildir dosyalarını OKUYOR, ama Postfix
+    # onları `600 admin:admin` yazıyor. Konteyner root olsa da yetenekleri
+    # tamamen düşürülmüş olduğu için 600'lük başkasına ait dosyayı açamıyordu
+    # (EACCES; liste geliyordu çünkü DİZİN 755, içerik gelmiyordu).
+    #
+    # NEDEN BU YETENEK, DAC_OVERRIDE DEĞİL: DAC_READ_SEARCH yalnız OKUMA ve
+    # dizinde arama izni verir; yazma/silme yetkisi vermez. Maildir mount'ları
+    # zaten `:ro` — yani iki katman birden posta kutusunu değiştirilemez tutar.
+    #
+    # ALTERNATİFLER NEDEN SEÇİLMEDİ: dosyaları 644 yapmak kalıcı değil (Postfix
+    # her yeni maili yine 600 yazar); `group_add` ise dosyaların 640 olmasını
+    # gerektirirdi, yani yine aynı umask sorunu.
+    cap_add:
+      - DAC_READ_SEARCH
     depends_on:
       - db
     environment:

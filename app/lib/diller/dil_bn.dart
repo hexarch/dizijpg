@@ -1306,4 +1306,6 @@ const Map<String, String> cevirilerBn = {
   'Listenin en altına taşındı': 'তালিকার একদম নিচে সরানো হয়েছে',
   'Oturumun sonlandı': 'আপনার সেশন শেষ হয়েছে',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'এই অ্যাকাউন্ট সব জায়গা থেকে সাইন আউট করা হয়েছে বা পাসওয়ার্ড বদলেছে। চালিয়ে যেতে আবার সাইন ইন করুন।',
+  'Son izleme: {}': 'সর্বশেষ দেখা: {}',
+  '{} tarihinde izledin': '{} তারিখে দেখেছেন',
 };

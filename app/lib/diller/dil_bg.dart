@@ -1320,4 +1320,6 @@ const Map<String, String> cevirilerBg = {
   'Listenin en altına taşındı': 'Преместено най-долу в списъка',
   'Oturumun sonlandı': 'Сесията ти приключи',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Този акаунт беше изведен навсякъде или паролата му е сменена. Влез отново, за да продължиш.',
+  'Son izleme: {}': 'Последно гледано: {}',
+  '{} tarihinde izledin': 'Гледано на {}',
 };

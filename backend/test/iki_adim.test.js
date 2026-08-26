@@ -318,7 +318,13 @@ test('2FA KAPALIYKEN giriş akışı DEĞİŞMEDİ', () => {
   assert.match(g, /res\.json\(girisYuku\(rows\[0\]\)\)/);
   const y = uc('function girisYuku', 500);
   assert.match(y, /token: jwtUret\(k\)/);
-  assert.match(y, /kullanici: \{ id, kullanici_adi, email, misafir \}/);
+  // `puan_olcegi` 26 Ağu 2026'da EKLENDİ (seçilebilir puan ölçeği): istemci
+  // ilk kareden doğru ölçeği çizsin diye giriş yükünde geliyor. Testin
+  // koruduğu şey alanın TAM LİSTESİ değil, DÖRT ZORUNLU ALANIN düşmemesi.
+  for (const alan of ['id', 'kullanici_adi', 'email', 'misafir']) {
+    assert.match(y, new RegExp(`kullanici: \\{[^}]*\\b${alan}\\b`),
+      `giriş yükünden '${alan}' düştü`);
+  }
   assert.match(y, /\.\.\.\(yasak \? \{ yasak \} : \{\}\)/,
     'ceza yükü düştü — yasaklı kullanıcı uyarısını görmez');
 });

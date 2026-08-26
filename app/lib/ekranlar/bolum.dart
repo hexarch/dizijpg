@@ -6,6 +6,7 @@ import '../api.dart';
 import '../ceviri.dart';
 import '../gorsel_basliklari.dart';
 import '../kitaplik_durumu.dart';
+import '../tarih.dart';
 import '../tema.dart';
 import '../tmdb_fragman.dart';
 import 'giris_istem.dart';
@@ -46,6 +47,11 @@ class _BolumEkraniState extends State<BolumEkrani> {
   String? _hata;
   late bool _izlendi = widget.izlendi;
 
+  /// Bu bölümü NE ZAMAN izledim (ISO). `/benim` ucundan gelir; izlenmemişse
+  /// null. Kullanıcı isteği (27 Ağu 2026): "dizi bölümlerine de bölüm
+  /// izlenme tarihini eklemeyi unutma".
+  String? _izlenmeTarihi;
+
   @override
   void initState() {
     super.initState();
@@ -69,10 +75,35 @@ class _BolumEkraniState extends State<BolumEkrani> {
         Api.get(
           '/tmdb/tv/${widget.tmdbId}/season/${widget.sezonNo}/videos?$videoDil',
         ).catchError((_) => null),
+        // İzlenme tarihi: `/benim` dizinin TÜM izlenen bölümlerini döner,
+        // içinden bu bölümünki alınır. Ayrı bir "tek bölümün tarihi" ucu
+        // AÇILMADI — mevcut uç zaten bu sayfanın ihtiyacını karşılıyor ve
+        // sözleşmeyi genişletmek yeni bir bakım yüzeyi olurdu.
+        //
+        // OTURUMSUZ ZİYARETÇİDE 401 GELİR ve `catchError` ile yutulur: tarih
+        // satırı çizilmez, sayfanın geri kalanı aynen çalışır.
+        if (Api.girisli)
+          Api.get('/benim/tv/${widget.tmdbId}').catchError((_) => null)
+        else
+          Future<dynamic>.value(),
       ]);
       if (!mounted) return;
       final b = sonuc[0] as Map<String, dynamic>;
+      // `izlenenler` satırlarından BU bölümün tarihi.
+      String? izlenme;
+      final benim = sonuc.length > 3 ? sonuc[3] : null;
+      if (benim is Map) {
+        for (final r in (benim['izlenenler'] as List<dynamic>? ?? [])) {
+          if (r is Map &&
+              r['sezon'] == widget.sezonNo &&
+              r['bolum'] == widget.bolumNo) {
+            izlenme = (r['tarih'] ?? '').toString();
+            break;
+          }
+        }
+      }
       setState(() {
+        _izlenmeTarihi = (izlenme?.isEmpty ?? true) ? null : izlenme;
         _bolum = b;
         _kareler = _kareleriCikar(b, sonuc[1]);
         _fragmanlar = fragmanlariBirlestir(
@@ -220,7 +251,7 @@ class _BolumEkraniState extends State<BolumEkrani> {
                 Text(
                   [
                     'S${widget.sezonNo}B${widget.bolumNo}',
-                    if (tarih.isNotEmpty) tarih,
+                    if (tarih.isNotEmpty) tarihBicimle(tarih, hepYil: true),
                     if (sure != null) '{} dk'.cf([sure]),
                     if (b['vote_average'] != null)
                       '{} TMDB'.cf([
@@ -229,6 +260,35 @@ class _BolumEkraniState extends State<BolumEkrani> {
                   ].join(' · '),
                   style: TextStyle(color: DiziRenkler.metin54),
                 ),
+                // İZLENME TARİHİ — yayın tarihinden AYRI satırda ve göz
+                // ikonuyla. Üstteki meta satırına eklenseydi "· 20 Ocak 2008 ·
+                // 14 Ağustos ·" gibi iki tarih yan yana gelir, hangisinin ne
+                // olduğu okunmazdı (bölüm listesinde de aynı ayrım var).
+                if (_izlendi && _izlenmeTarihi != null) ...[
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.visibility_outlined,
+                        size: 14,
+                        color: DiziRenkler.sariMetin,
+                      ),
+                      const SizedBox(width: 5),
+                      Flexible(
+                        child: Text(
+                          '{} tarihinde izledin'.cf([
+                            tarihBicimle(_izlenmeTarihi, hepYil: true),
+                          ]),
+                          style: TextStyle(
+                            color: DiziRenkler.sariMetin,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 14),
                 FilledButton.icon(
                   onPressed: _izlendiToggle,

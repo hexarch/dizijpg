@@ -1304,4 +1304,6 @@ const Map<String, String> cevirilerGu = {
   'Listenin en altına taşındı': 'યાદીના તળિયે ખસેડ્યું',
   'Oturumun sonlandı': 'તમારું સત્ર સમાપ્ત થયું',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'આ એકાઉન્ટ બધે સાઇન આઉટ થયું અથવા પાસવર્ડ બદલાયો. ચાલુ રાખવા ફરી સાઇન ઇન કરો.',
+  'Son izleme: {}': 'છેલ્લે જોયું: {}',
+  '{} tarihinde izledin': '{} ના રોજ જોયું',
 };

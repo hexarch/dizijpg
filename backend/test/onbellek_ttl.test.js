@@ -170,7 +170,7 @@ test('/ara ucu: her sorgu VARYANTI kendi doluluğuna göre yaşar', () => {
   const i = SERVER.indexOf("app.get('/ara'");
   assert.ok(i > 0, '/ara ucu yok');
   const uc = SERVER.slice(i, i + 2500);
-  assert.match(uc, /\/search\/multi\?query=\$\{encodeURIComponent\(v\)\}`,\s*\n\s*aramaTtl\(/,
+  assert.match(uc, /\/search\/multi\?query=\$\{encodeURIComponent\(v\)\}[^`]*`,\s*\n\s*aramaTtl\(/,
     '/ara sorgu varyantları hâlâ sabit TTL ile önbellekleniyor');
 });
 

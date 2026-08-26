@@ -1336,4 +1336,6 @@ const Map<String, String> cevirilerRo = {
   'Listenin en altına taşındı': 'Mutat la finalul listei',
   'Oturumun sonlandı': 'Sesiunea ta s-a încheiat',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Acest cont a fost deconectat peste tot sau i s-a schimbat parola. Conectează-te din nou pentru a continua.',
+  'Son izleme: {}': 'Vizionat ultima dată: {}',
+  '{} tarihinde izledin': 'Vizionat pe {}',
 };

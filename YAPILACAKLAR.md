@@ -1,6 +1,50 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-26 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-27 — ✅ İzleme tarihleri (detay + bölüm) & içe aktarım onarımı
+
+Kullanıcı: "İzlenen dizi filmlere tarihlerini de ekler misin ama nereye
+ekleyeceğiz tarihi onu konuşalım" + "dizi bölümlerine de bölüm izlenme
+tarihini eklemeyi unutma".
+
+**Konuşularak verilen kararlar:** yerleşim = DETAY SAYFASINDA SATIR (listeler
+temiz kalsın, elle sıralama bozulmasın); dizide gösterilen = SON İZLENEN
+BÖLÜM (bitirme tarihi değil — izlemeye devam edende de anlamlı tek tarih).
+
+- Veri zaten vardı (`izlemeler.tarih`), yeni kolon YOK. `/benim/:tur/:id`
+  artık her satırın `tarih`ini + içerik geneli için `son_izleme` döner.
+- Detay: film "…tarihinde izledin", dizi "Son izleme: …".
+  Bölüm listesi: `yayın tarihi · 👁 izlenme tarihi` (ikisi de tarih olduğu
+  için ayırt edici RENK DEĞİL İKON). Yayın tarihi de ham ISO'dan çıktı.
+  Bölüm sayfası: başlık altında ayrı satır.
+- `lib/tarih.dart`: yıl yalnız GEREKTİĞİNDE yazılır (bu yıl → yazılmaz).
+  `intl` DateFormat kullanılamıyor (initializeDateFormatting yok) — ay adları
+  karşılama ekranının 12 çeviri anahtarından. Kopya `istatistiklerim`den
+  buraya taşındı.
+- Çeviri **1092 anahtar × 45 dil**. 6 yeni test.
+
+**YOL BOYUNCA ÇIKAN 4 GERÇEK SORUN:**
+1. **İçe aktarım tarihleri ATIYORDU** — v2 CSV yolu (`tracking-prod-records
+   -v2.csv`) `created_at` sütununu hiç okumuyor, INSERT'e `tarih` koymuyor,
+   DEFAULT now() damgalanıyordu. ÖLÇÜM: alcelik'te 16.753 satır / yalnız 24
+   farklı gün. Düzeltildi (`created_at` || `watched_at`, COALESCE ile eski
+   davranış yedek). ⬜ MEVCUT VERİ HÂLÂ YANLIŞ — onarım betiği bekliyor.
+2. **`takvim_yazi_renk_test` tarihe bağımlıydı** — "bugün+5 gün" olayı ayın
+   son haftasında SONRAKİ AYA taşıyor, takvim ilk dolu güne atlıyor ve aranan
+   "1" seçili (sarı/siyah) oluyordu. Ayın 26'sına kadar yeşil, sonrası
+   kırmızı. Olaysız kurguya çevrildi.
+3. **AI kimliği hâlâ ADLA karşılaştırılıyordu** — `seoYorumHtml`'de
+   `kullanici_adi === '<ai>'` kalıntısı; 21 Ağu'daki "kimlik sütunda" kuralının
+   ihlali. `ai` sütununa çevrildi.
+4. **26 Ağu puan ölçeği işi 3 backend testini kırmış** — o gün backend paketi
+   TAM KOŞULMAMIŞ (yalnız siralama.test.js). iki_adim (girisYuku'ya eklenen
+   puan_olcegi), tohum_puan + seo_sss (fixture'lar 1-10 ölçeğinde kalmış).
+   Üçü de düzeltildi. **DERS: server.js'e dokunan her iş `node --test
+   test/*.test.js` ile bitmeli** (`node --test test/` bu Node'da dizini modül
+   sanıyor, yanıltıcı "1 fail" verir).
+- Ayrıca dünden beri kırık 2 arama testi (bayat `&language=` regexi) onarıldı.
+  **Backend artık 1885/1885, Flutter 2176/2176 — ikisi de tam yeşil.**
+
 ## 2026-08-26 — ✅ 401 = oturum düştü (otomatik çıkış)
 
 Kullanıcı: "tüm oturumları kapattık ama oturumdan atmak yerine bağlantı koptu

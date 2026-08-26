@@ -1300,4 +1300,6 @@ const Map<String, String> cevirilerFa = {
   'Listenin en altına taşındı': 'به انتهای فهرست منتقل شد',
   'Oturumun sonlandı': 'نشست شما پایان یافت',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'از این حساب در همه دستگاه‌ها خارج شده یا رمز عبور تغییر کرده است. برای ادامه دوباره وارد شوید.',
+  'Son izleme: {}': 'آخرین تماشا: {}',
+  '{} tarihinde izledin': 'در {} تماشا کردی',
 };

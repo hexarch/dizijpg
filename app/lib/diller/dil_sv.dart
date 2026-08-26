@@ -1327,4 +1327,6 @@ const Map<String, String> cevirilerSv = {
   'Listenin en altına taşındı': 'Flyttad längst ner i listan',
   'Oturumun sonlandı': 'Din session avslutades',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Det här kontot loggades ut överallt eller så ändrades lösenordet. Logga in igen för att fortsätta.',
+  'Son izleme: {}': 'Senast sedd: {}',
+  '{} tarihinde izledin': 'Sedd {}',
 };

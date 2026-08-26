@@ -1311,4 +1311,6 @@ const Map<String, String> cevirilerKn = {
   'Listenin en altına taşındı': 'ಪಟ್ಟಿಯ ಕೊನೆಗೆ ಸರಿಸಲಾಗಿದೆ',
   'Oturumun sonlandı': 'ನಿಮ್ಮ ಸೆಷನ್ ಕೊನೆಗೊಂಡಿದೆ',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ಈ ಖಾತೆಯನ್ನು ಎಲ್ಲೆಡೆ ಸೈನ್ ಔಟ್ ಮಾಡಲಾಗಿದೆ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಗಿದೆ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.',
+  'Son izleme: {}': 'ಕೊನೆಯ ವೀಕ್ಷಣೆ: {}',
+  '{} tarihinde izledin': '{} ರಂದು ವೀಕ್ಷಿಸಿದ್ದೀರಿ',
 };

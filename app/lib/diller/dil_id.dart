@@ -1317,4 +1317,6 @@ const Map<String, String> cevirilerId = {
   'Listenin en altına taşındı': 'Dipindahkan ke bawah daftar',
   'Oturumun sonlandı': 'Sesimu telah berakhir',
   'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akun ini keluar dari semua perangkat atau kata sandinya berubah. Masuk lagi untuk melanjutkan.',
+  'Son izleme: {}': 'Terakhir ditonton: {}',
+  '{} tarihinde izledin': 'Ditonton pada {}',
 };
