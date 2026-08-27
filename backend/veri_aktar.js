@@ -23,7 +23,12 @@ export async function disaAktar(havuz, userId) {
     await Promise.all([
       havuz.query('SELECT id, kullanici_adi, email, bio, ulke, olusturma FROM kullanicilar WHERE id=$1', [userId]),
       havuz.query('SELECT tur, tmdb_id, durum, guncelleme FROM durumlar WHERE kullanici_id=$1', [userId]),
-      havuz.query('SELECT tur, tmdb_id, sezon, bolum, tarih FROM izlemeler WHERE kullanici_id=$1', [userId]),
+      // `tarih_kesin` DE TAŞINIR (27 Ağu 2026): yoksa kendi yedeğimizi geri
+      // yüklemek, toplu içe aktarım damgasını "güvenilir" diye YENİDEN
+      // işaretlerdi — bozuk veriyi kendi yedeğimizle aklamış olurduk.
+      havuz.query(
+        'SELECT tur, tmdb_id, sezon, bolum, tarih, tarih_kesin FROM izlemeler'
+        + ' WHERE kullanici_id=$1', [userId]),
       // sezon/bolum (8 Ağu 2026-d): bölüm puanları da KULLANICININ VERİSİDİR,
       // KVKK/GDPR dışa aktarımında eksik kalamaz ve geri yüklemede kaybolamaz.
       havuz.query(
@@ -105,7 +110,15 @@ export async function disaAktar(havuz, userId) {
 
   // Kayıpsız geri yükleme için kendi biçimimiz (TMDB kimlikleriyle)
   const native = {
-    surum: 1,
+    // SÜRÜM 2 (27 Ağu 2026): puan ölçeği 26 Ağu'da 1-10'dan KANONİK 1-100'e
+    // taşındı (migrasyon-2026-08-26b.sql) ama bu alan bump EDİLMEMİŞTİ —
+    // yani `surum: 1` yazan bir dosyanın 1-10 mu 1-100 mü olduğu
+    // anlaşılamıyordu. Ölçek artık AÇIKÇA yazılıyor; okuyan taraf tahmin
+    // etmek zorunda kalmıyor.
+    surum: 2,
+    // Dosyadaki `puanlar[].puan` değerlerinin ölçeği. KULLANICININ GÖRÜNÜM
+    // tercihi (`kullanicilar.puan_olcegi`) DEĞİL — o yalnız arayüzü ilgilendirir.
+    puan_olcek: 100,
     kullanici: { kullanici_adi: k.kullanici_adi, bio: k.bio, ulke: k.ulke },
     durumlar: durumlar.rows,
     izlemeler: izlemeler.rows,
@@ -681,6 +694,24 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   return ozet;
 }
 
+/**
+ * `dizijpg.json` dosyasındaki puanların hangi ölçekte olduğunu çözer (5-100).
+ *
+ * MODÜL DÜZEYİNDE ÇÜNKÜ TEST EDİLEBİLİR OLMALI: yanlış çözülen ölçek puanları
+ * ya eler ya da 10 katına çıkarır; ikisi de sessiz veri bozulmasıdır.
+ * Karar sırası ve gerekçeleri çağrı yerindeki blokta yazılı.
+ */
+function puanOlcegiCoz(veri, puanListesi) {
+  const sayi = (v) => (Number.isInteger(v) ? v : null);
+  const bildirilen = sayi(veri?.puan_olcek);
+  if (bildirilen && bildirilen >= 5 && bildirilen <= 100) return bildirilen;
+  if ((sayi(veri?.surum) || 1) >= 2) return 100;
+  const enBuyuk = (puanListesi || []).reduce(
+    (e, x) => Math.max(e, sayi(x?.puan) || 0), 0);
+  // Eski ölçekte 10'u aşan değer ÜRETİLEMEZDİ: gördüysek dosya kanoniktir.
+  return enBuyuk > 10 ? 100 : 10;
+}
+
 async function iceAktarNative(havuz, userId, json, ozet) {
   let veri;
   try { veri = JSON.parse(json); } catch {
@@ -727,7 +758,12 @@ async function iceAktarNative(havuz, userId, json, ozet) {
     const sezon = tamsayi(i.sezon) ?? 0;
     const bolum = tamsayi(i.bolum) ?? 0;
     const ham = String(i.tarih ?? i.created_at ?? '').trim();
-    const t = ham && !Number.isNaN(Date.parse(ham)) ? new Date(ham) : null;
+    // Dosya "bu tarih güvenilmez" diyorsa (kendi yedeğimizden gelen bayrak)
+    // tarihi HİÇ almayız: alsaydık `tarih_kesin` true yazılır ve toplu
+    // damga aklanırdı. Bayrak yoksa (eski dosya/TV Time) tarih geçerlidir.
+    const guvenilir = i.tarih_kesin !== false;
+    const t = guvenilir && ham && !Number.isNaN(Date.parse(ham))
+      ? new Date(ham) : null;
     const anahtar = `${i.tur}:${i.tmdb_id}:${sezon}:${bolum}`;
     const onceki = izlemeHarita.get(anahtar);
     if (!onceki) izlemeHarita.set(anahtar, [i.tur, i.tmdb_id, sezon, bolum, t]);
@@ -752,10 +788,33 @@ async function iceAktarNative(havuz, userId, json, ozet) {
       parametreler);
     ozet.izleme += grup.length;
   }
-  for (const p of (veri.puanlar || []).slice(0, 5000)) {
+  //
+  // PUAN ÖLÇEĞİ — SESSİZ VERİ KAYBI DÜZELTMESİ (27 Ağu 2026)
+  // -------------------------------------------------------------------------
+  // Kanonik ölçek 26 Ağu'da 1-100 oldu; bu döngü ise hâlâ `puan > 10` olanı
+  // ELİYORDU. Yani kullanıcı kendi yedeğini geri yüklediğinde puanlarının
+  // NEREDEYSE TAMAMI sessizce düşüyordu (5 yıldız = 100 > 10 → atlanan).
+  //
+  // Eski dosyalar 1-10, yeniler 1-100 taşıyor ve `surum` alanı ölçek
+  // değişiminde bump edilmemişti. Çözüm sırası:
+  //   1. `puan_olcek` yazıyorsa ona uy (sürüm 2+ dosyaları böyle),
+  //   2. `surum >= 2` ise kanonik 100,
+  //   3. yoksa DOSYAYA BAK: 10'dan büyük bir puan varsa dosya kanoniktir
+  //      (eski ölçekte 10'u aşan değer ÜRETİLEMEZDİ),
+  //   4. hepsi <= 10 ise dosya ESKİ sayılır ve ×10 ile taşınır.
+  // 4. adımın gerekçesi: kanonik ölçek bir günlük; tüm puanlarını 1-10/100
+  // aralığında (yani yarım yıldızın altında) veren bir kullanıcı gerçekçi
+  // değil, oysa eski dosyalar sahada bol.
+  const puanListesi = (veri.puanlar || []).slice(0, 5000);
+  const kaynakOlcek = puanOlcegiCoz(veri, puanListesi);
+  ozet.puan_olcek = kaynakOlcek; // özet ekranında görünür: sessiz dönüşüm yok
+  for (const p of puanListesi) {
     if (!tamsayi(p.tmdb_id) || !turGecerli(p.tur)) { ozet.atlanan++; continue; }
-    const puan = tamsayi(p.puan);
-    if (!puan || puan < 1 || puan > 10) { ozet.atlanan++; continue; }
+    const ham = tamsayi(p.puan);
+    if (!ham || ham < 1 || ham > kaynakOlcek) { ozet.atlanan++; continue; }
+    // Kanonik 1-100'e taşı. `puanlar.puan` CHECK'i 1-100; kırpma bilinçli:
+    // yuvarlama 0 üretemez (ham >= 1 ve olcek <= 100).
+    const puan = Math.min(100, Math.max(1, Math.round(ham * 100 / kaynakOlcek)));
     const yorum = typeof p.yorum === 'string' ? p.yorum.slice(0, 2000) : null;
     // BÖLÜM HEDEFİ (8 Ağu 2026-d): sezon+bolum ya İKİSİ birden ya hiç; bölüm
     // yalnız 'tv'de olur. Yarım/geçersiz hedef DB'deki CHECK'lere takılıp tüm

@@ -186,3 +186,94 @@ test('yeniden yükleme bayrağı da ONARIR (OR ile)', () => {
     'bir yolda tarih_kesin sabit true yazılmış');
 });
 
+// ===========================================================================
+// PUAN ÖLÇEĞİ — SESSİZ VERİ KAYBI (27 Ağu 2026)
+// ===========================================================================
+// Kanonik ölçek 26 Ağu'da 1-10 → 1-100 oldu (migrasyon-2026-08-26b.sql) ama
+// `iceAktarNative` hâlâ `puan > 10` olanı ELİYORDU. Yani kullanıcı KENDİ
+// yedeğini geri yüklediğinde puanlarının neredeyse tamamı sessizce düşüyordu
+// (5 yıldız = kanonik 100 > 10 → atlanan). `surum` alanı da ölçek değişiminde
+// bump edilmediği için eski/yeni dosya ayırt edilemiyordu.
+const puanOlcegiCoz = new Function(
+  `${bildirim('puanOlcegiCoz')}\nreturn puanOlcegiCoz;`)();
+
+test('dışa aktarım ölçeği AÇIKÇA yazıyor (sürüm 2)', () => {
+  assert.match(AKTAR, /surum: 2,/, 'sürüm bump edilmemiş — eski/yeni ayrılamaz');
+  assert.match(AKTAR, /puan_olcek: 100,/, 'dosya ölçeği açıkça yazılmıyor');
+  // Kullanıcının GÖRÜNÜM tercihi yazılmamalı: dosyadaki değerler kanoniktir.
+  assert.doesNotMatch(AKTAR, /puan_olcek: k\.puan_olcegi/);
+});
+
+test('ölçek çözümü: bildirilen değer her şeyin ÖNÜNDE', () => {
+  assert.equal(puanOlcegiCoz({ puan_olcek: 100, surum: 1 }, [{ puan: 5 }]), 100);
+  assert.equal(puanOlcegiCoz({ puan_olcek: 10, surum: 2 }, [{ puan: 5 }]), 10);
+  assert.equal(puanOlcegiCoz({ puan_olcek: 5 }, [{ puan: 3 }]), 5);
+  // Aralık dışı/bozuk bildirim YOK SAYILIR, sonraki adıma düşer.
+  for (const olcek of [0, 4, 101, -1, 'x', null, 1.5]) {
+    assert.equal(puanOlcegiCoz({ puan_olcek: olcek, surum: 2 }, []), 100,
+      `bozuk bildirim kabul edildi: ${olcek}`);
+  }
+});
+
+test('ölçek çözümü: sürüm 2+ kanonik, sürüm 1 DOSYAYA bakar', () => {
+  assert.equal(puanOlcegiCoz({ surum: 2 }, [{ puan: 5 }]), 100);
+  assert.equal(puanOlcegiCoz({ surum: 3 }, [{ puan: 5 }]), 100);
+  // Sürüm 1 + 10'u aşan puan → dosya kanoniktir (eski ölçek 10'u aşamazdı).
+  assert.equal(puanOlcegiCoz({ surum: 1 }, [{ puan: 7 }, { puan: 73 }]), 100);
+  // Sürüm 1 + hepsi <= 10 → ESKİ dosya sayılır.
+  assert.equal(puanOlcegiCoz({ surum: 1 }, [{ puan: 7 }, { puan: 10 }]), 10);
+  assert.equal(puanOlcegiCoz({}, [{ puan: 10 }]), 10, 'sürümsüz dosya eski sayılmalı');
+  assert.equal(puanOlcegiCoz({}, []), 10, 'boş liste eski varsayılmalı');
+});
+
+test('ölçek çözümü bozuk girdide ATMAZ', () => {
+  for (const v of [null, undefined, {}, { puanlar: null }, 5, 'x']) {
+    assert.doesNotThrow(() => puanOlcegiCoz(v, null));
+    const o = puanOlcegiCoz(v, null);
+    assert.ok(o >= 5 && o <= 100, `mantıksız ölçek: ${o}`);
+  }
+});
+
+test('dönüşüm kanonik 1-100e taşıyor ve ELEME ölçeğe göre', () => {
+  // Eleme sınırı artık sabit 10 DEĞİL, kaynak ölçek.
+  assert.match(AKTAR, /if \(!ham \|\| ham < 1 \|\| ham > kaynakOlcek\)/,
+    'eleme hâlâ sabit sınırla yapılıyor — kanonik puanlar düşer');
+  assert.doesNotMatch(AKTAR, /puan < 1 \|\| puan > 10/,
+    'eski 1-10 kontrolü duruyor');
+  // Taşıma formülü + kırpma (puanlar.puan CHECK 1-100).
+  assert.match(AKTAR,
+    /Math\.min\(100, Math\.max\(1, Math\.round\(ham \* 100 \/ kaynakOlcek\)\)\)/);
+  // Dönüşüm sessiz olmasın: özete yazılıyor.
+  assert.match(AKTAR, /ozet\.puan_olcek = kaynakOlcek/);
+});
+
+test('taşıma matematiği: eski 1-10 dosyası migrasyonla AYNI sonucu vermeli', () => {
+  // migrasyon-2026-08-26b.sql mevcut puanları ×10 ile taşımıştı; geri
+  // yüklenen eski bir dosya da aynı yere düşmeli, yoksa aynı kullanıcının
+  // yedeği ile canlı verisi ayrışır.
+  const tasi = (ham, olcek) => Math.min(100, Math.max(1, Math.round(ham * 100 / olcek)));
+  for (let p = 1; p <= 10; p++) assert.equal(tasi(p, 10), p * 10);
+  // Kanonik dosya AYNEN korunur (kimlik dönüşümü).
+  for (const p of [1, 37, 73, 100]) assert.equal(tasi(p, 100), p);
+  // 5'lik ölçek: 4 yıldız = 80.
+  assert.equal(tasi(4, 5), 80);
+  assert.equal(tasi(1, 5), 20);
+});
+
+test('yuvarlak yol bozuk tarihi AKLAMAZ (tarih_kesin yedekte taşınır)', () => {
+  // Açık: dışa aktarım `tarih_kesin`i taşımasaydı, kendi yedeğimizi geri
+  // yüklemek toplu içe aktarım damgasını GERÇEK tarih sanıp bayrağı true
+  // yapardı (LEAST aynı değeri korur, OR bayrağı yükseltirdi). Yani bozuk
+  // veriyi kendi yedeğimizle aklamış olurduk.
+  assert.match(AKTAR, /SELECT tur, tmdb_id, sezon, bolum, tarih, tarih_kesin FROM izlemeler/,
+    'dışa aktarım tarih_kesin sütununu taşımıyor');
+  assert.match(AKTAR, /const guvenilir = i\.tarih_kesin !== false;/,
+    'içe aktarım dosyadaki güvenilmezlik bayrağını yok sayıyor');
+  assert.match(AKTAR, /const t = guvenilir && ham && !Number\.isNaN\(Date\.parse\(ham\)\)/,
+    'güvenilmez tarih yine de okunuyor');
+  // `!== false` bilinçli: bayrağı OLMAYAN dosyalarda (TV Time, eski sürüm)
+  // tarih geçerli sayılmalı, yoksa çalışan yolları bozardık.
+  assert.doesNotMatch(AKTAR, /i\.tarih_kesin === true/,
+    'katı kontrol eski dosyalarda tüm tarihleri düşürür');
+});
+
