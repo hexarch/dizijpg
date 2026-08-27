@@ -91,3 +91,14 @@ test('panel: sekme düğmesi, bölüm ve yükleyici bağlı', () => {
   assert.match(ADMIN, /if\(s==='sureler'\) sureleriYukle\(\)/);
   assert.match(ADMIN, /min="1" max="1000"/);
 });
+
+// 27 Ağu 2026: dizi dalı canlıda 500 veriyordu. `SELECT DISTINCT` içindeki
+// TİPSİZ `$2` parse aşamasında `text`e çözülüyor, `dakika int` sütununa
+// yazılamıyor (Postgres 42804). Cast olmadan uç HİÇ çalışmaz — 0 satır
+// eşleşse bile atar. Bu testler statik; SQL'i çalıştırmadıkları için hatayı
+// ancak cast'in VARLIĞINI şart koşarak yakalayabilirler.
+test('elle giriş: dizi INSERT`inde $2::int cast`i var (Postgres 42804 koruması)', () => {
+  const g = ucGovdesi("app.post('/admin/eksik-sure'");
+  assert.match(g, /SELECT DISTINCT 'tv'[\s\S]*?\$2::int/,
+    'SELECT DISTINCT içinde tipsiz $2 `text`e çözülür, dakika int sütununa yazılamaz');
+});

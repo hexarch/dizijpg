@@ -17573,8 +17573,20 @@ app.post('/admin/eksik-sure', adminKisit, sarici(async (req, res) => {
        VALUES ('movie', $1, 0, 0, $2, 'elle')
        ON CONFLICT (tur, tmdb_id, sezon, bolum) DO NOTHING`, [tmdbId, dakika])
     : await havuz.query(
+      // `$2::int` ŞART — çıplak `$2` bu ucu TAMAMEN çalışmaz yapıyordu (500,
+      // 27 Ağu 2026). Sebep: node-pg parametreyi TİPSİZ gönderir; `SELECT
+      // DISTINCT` eşitlik operatörü aramak için tipi HEDEF SÜTUNA bakmadan,
+      // parse aşamasında `unknown` -> `text` diye çözer. Sonra INSERT hedefi
+      // `dakika int` ile karşılaşınca Postgres 42804 verir:
+      //   column "dakika" is of type integer but expression is of type text
+      // Film dalı aynı hatayı YAŞAMAZ: orada `VALUES` var, hedef sütun tipi
+      // parametreye doğrudan uygulanır. Yani hata yalnız dizi dalındaydı ve
+      // 0 satır eşleşse bile atıyordu (parse hatası, çalıştırma değil).
+      // Testler yalnız kaynak metnini regex'liyor, SQL'i ÇALIŞTIRMIYOR —
+      // bu yüzden yakalanmadı; aşağıdaki cast'i kaldıran regresyon testi
+      // test/eksik_sure.test.js'e eklendi.
       `INSERT INTO yapim_sureleri (tur, tmdb_id, sezon, bolum, dakika, kaynak)
-       SELECT DISTINCT 'tv', i.tmdb_id, i.sezon, i.bolum, $2, 'elle'
+       SELECT DISTINCT 'tv', i.tmdb_id, i.sezon, i.bolum, $2::int, 'elle'
          FROM izlemeler i
          ${SURE_KAYNAK_JOIN}
         WHERE i.tur = 'tv' AND i.tmdb_id = $1 AND s.dakika IS NULL
