@@ -28,8 +28,23 @@ abonelikle izlenebilir. Sağlayıcı verisi: JustWatch").
   Origin doğrulaması (CF atlanarak): altısı da **200 + 16.215 bayt SSR**;
   insan trafiği ve GPTBot **değişmedi** (12.680 bayt kabuk). Yedek:
   `dizijpg.com.yedek-geo-20260827`. ⚠ Dışarıdan curl HÂLÂ 403 verir — CF.
-- ⬜ **2. adım SIRADAKİ, KULLANICI/PANEL İŞİ:** Cloudflare'de eğitim ≠ cevap
-  ayrımı (cevap botları açılacak, GPTBot/ClaudeBot/CCBot/Bytespider kapalı).
+- ⚠ **2. ADIM ÖLÇÜLDÜ ve İDDİAM YANLIŞ ÇIKTI (GEO-PLANI v1.1 §0.0):** CF
+  cevap botlarını ENGELLEMİYOR. Panelde `AI Search` + `AI Assistant` açık,
+  yalnız `AI Crawler` (eğitim) engelli — yani CF'in ayrımı politikamızla
+  örtüşüyor. **Gördüğüm 403'ler sahte UA'ya (ev IP'sinden `curl -A`) verilen
+  DOĞRU yanıttı**; CF botları IP/ASN ile doğruluyor.
+  KANIT: CF panelinde Claude-SearchBot **Allowed 6 / 12,16 kB**; nginx
+  access.log'da 24 saatte **14 Claude-SearchBot isteği**, `/sitemap.xml` → 200.
+  **DERS: doğrulanmış bot erişimi UA taklit ederek ÖLÇÜLEMEZ** — ya origin'den
+  test et (`--resolve …:127.0.0.1`) ya da access.log'da gerçek trafiği oku.
+  **Asıl duvar zaten bizimkiydi ve bugün yıkıldı:** o 14 gerçek istek
+  düzeltmeden önce boş kabuk alıyordu.
+- ⬜ **Geriye tek bot kaldı: `Claude-User`.** CF onu `AI Crawler` (eğitim)
+  saymış, oysa kardeşleri ChatGPT-User/Perplexity-User `AI Assistant` ve açık.
+  Tek tıkla açılmıyor: engel zone düzeyindeki `Block AI Bots` kuralından
+  geliyor, kuralı kapatmak ~15 eğitim botunu birden açma riski taşıyor.
+  **Öneri: DOKUNMA** — Claude-SearchBot zaten açık ve çalışıyor, marjinal
+  fayda blanket korumayı sökmeye değmez. Karar kullanıcıda.
 - ⬜ 3-4. adım: uçtan uca curl doğrulaması + ölçüm hattı (GEO'nun Search
   Console'u YOK: sunucu logu + atıf `Referer` + aylık elle sorgu turu).
 - ⛔ `llms.txt` şimdilik yok — hiçbir büyük motorun kullandığı doğrulanmadı ve

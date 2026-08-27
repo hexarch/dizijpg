@@ -1,6 +1,6 @@
 # dizi.jpg — GEO (Üretken Motor Optimizasyonu) Planı
 
-> Sürüm **1.0** · 27 Ağustos 2026 — **canlı ölçümle yazıldı**
+> Sürüm **1.1** · 27 Ağustos 2026 — **v1.0'ın ana bulgusu DÜZELTİLDİ (§0.0)**
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
 >
 > Bu belge bir görev listesi değil, **karar belgesidir** — `SEO-YAPILACAKLAR.md`
@@ -14,6 +14,37 @@
 
 ---
 
+## 0.0 ⚠ DÜZELTME — v1.0'IN ANA BULGUSU YANLIŞTI
+
+v1.0 şunu iddia ediyordu: *"Cloudflare her AI cevap botunu 403'lüyor, site
+üretken motorlara görünmez."* **Bu yanlış.** CF panelinden ve sunucu
+loglarından doğrulandı (27 Ağu, aynı gün):
+
+| Kanıt | Sonuç |
+|---|---|
+| CF → AI Crawl Control → Security | `AI Search` + `AI Assistant` kategorileri **ENGELLİ DEĞİL** (OAI-SearchBot, PerplexityBot, Claude-SearchBot, ChatGPT-User, Perplexity-User, Applebot, DuckAssistBot…) |
+| CF panelinde Claude-SearchBot | **Allowed: 6 · 12,16 kB** — gerçek trafik geçiyor |
+| nginx access.log (24 saat) | `Claude-SearchBot` **14 istek**, içlerinde `/sitemap.xml` → **200** (597 B) ×3 |
+
+**PEKİ 403'LER NEYDİ?** Ölçümü **sahte UA ile, ev IP'sinden** yaptım
+(`curl -A "…OAI-SearchBot…"`). Cloudflare AI tarayıcılarını **IP/ASN ile
+doğruluyor**; kimliği taklit eden bir isteği 403'lemesi DOĞRU davranış.
+Yani ölçtüğüm şey "bot engelli" değil, **"sahtekârlık engelli"**ydi.
+
+> **DERS (yönteme yazıldı):** Doğrulanmış bot erişimi **UA taklit ederek
+> ölçülemez.** İki geçerli yöntem var: (1) origin'den test
+> (`--resolve dizijpg.com:443:127.0.0.1`, CF'i atlar), (2) `access.log`'da
+> GERÇEK bot trafiğini okumak. v1.0 birincisini yapmadan hüküm verdi.
+
+**ASIL DUVAR ZATEN BİZİMKİYDİ — ve bugün yıkıldı.** O 14 gerçek
+Claude-SearchBot isteği, düzeltmeden önce **boş Flutter kabuğu** alıyordu.
+Yani §3 (nginx regex) gereksiz bir iş değil, **tek gerçek iş**miş.
+
+**GERİYE KALAN TEK ENGEL: `Claude-User`.** CF onu `AI Crawler` (eğitim)
+kategorisine koymuş — oysa kardeşleri `ChatGPT-User` ve `Perplexity-User`
+`AI Assistant` sayılıp açık. Detay ve karar: §2.
+
+---
 ## 0. Yönetici özeti — İKİ DUVAR
 
 Kötü haber: **dizi.jpg şu anda üretken arama motorlarının hiçbirine görünmüyor.**
@@ -22,8 +53,8 @@ altyapısı (SSR + şema + SSS) zaten hazır ve şu anda **boşa çalışıyor**
 
 | Duvar | Ölçülen | Kimin | Sıra |
 |---|---|---|---|
-| **Cloudflare her AI cevap botunu 403'lüyor** | `Your request was blocked.` (25 bayt) | Cloudflare paneli | 2. |
-| ~~**nginx bot regex'inde AI botları YOK**~~ | ~~CF geçse bile 12.679 baytlık BOŞ Flutter kabuğu~~ | bizde | ✅ **27 Ağu YIKILDI** |
+| ~~Cloudflare her AI cevap botunu 403'lüyor~~ **YANLIŞ — bkz. §0.0** | 403'ler sahte UA'ya verilen doğru yanıttı | — | ✅ düzeltildi |
+| ~~**nginx bot regex'inde AI botları YOK**~~ | ~~gerçek botlar 12.679 baytlık BOŞ kabuk alıyordu~~ | bizde | ✅ **27 Ağu YIKILDI — ASIL DUVAR BUYDU** |
 
 Sıra ters görünüyor ama bilinçli: **önce arkayı hazırla, sonra kapıyı aç**
 (gerekçe §0.1).
@@ -52,7 +83,7 @@ görmüyor.
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
 | **1** | ✅🚀 **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ✅ **27 Ağu, canlıda** |
-| **2** | **CF'te AI cevap botlarının engelini kaldır** | Arkası hazır — **artık açılabilir** | §2 | ⬜ **SIRADAKİ · KULLANICI/PANEL** |
+| **2** | ~~CF'te engeli kaldır~~ → **panelde ölçüldü: cevap botları ZATEN AÇIK** | Tek sapma `Claude-User`; açmanın bedeli blanket korumayı sökmek | §2 | ✅ ölçüldü · karar **A (dokunma)** öneriliyor |
 | **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ⬜ |
 | **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ⬜ |
 | **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | ⬜ |
@@ -123,32 +154,51 @@ kaynak atıflı, karşılaştırılabilir**. Şu anda hiçbiri okunmuyor.
 
 ---
 
-## 2. ⬜ CLOUDFLARE — engeli kaldır (§3'ten SONRA)
+## 2. ⬜ CLOUDFLARE — geriye TEK bot kaldı: `Claude-User`
 
-**Kanıt:** 403 + `Your request was blocked.` + `cf-nel` başlığı, tüm AI cevap
-botlarında; Googlebot'ta 200. Yani ayrım UA bazlı ve CF katmanında.
+**Panelde ölçülen gerçek durum** (AI Crawl Control → Security):
 
-**Muhtemel kaynak (panelden doğrulanacak):** Cloudflare **AI Crawl Control**
-(eski adı "Block AI Scrapers and Crawlers") ya da bir Bot/WAF kuralı. CF bu
-özellikte eğitim botlarıyla cevap botlarını AYNI kovaya koyuyor; bizim
-politikamız ise ikisini ayırıyor.
-
-**Yapılacak:** panelde AI botları için **eğitim ≠ cevap** ayrımı kurulacak:
-
-| Bot | Karar | Gerekçe |
+| Kategori | Örnekler | Durum |
 |---|---|---|
-| `OAI-SearchBot`, `ChatGPT-User` | **AÇ** | ChatGPT Search cevabında kaynak gösterme |
-| `PerplexityBot`, `Perplexity-User` | **AÇ** | Perplexity atıf veren motor |
-| `Claude-User`, `Claude-SearchBot` | **AÇ** | Claude yanıtlarında kaynak |
-| `Google-Extended` | **AÇIK KALSIN** | Zaten açık; AI Overviews/Gemini atfı |
-| `GPTBot`, `ClaudeBot`, `CCBot`, `Bytespider`, `Amazonbot`, `meta-externalagent`, `Applebot-Extended` | **KAPALI KALSIN** | Model EĞİTİMİ — kullanıcı kararı, `ai-train=no` |
+| `Search Engine Crawler` | Googlebot (500 istek), BingBot (128) | açık ✅ |
+| `AI Search` | Claude-SearchBot (**6 istek, 12,16 kB**), OAI-SearchBot, PerplexityBot, Applebot | açık ✅ |
+| `AI Assistant` | ChatGPT-User, Perplexity-User, DuckAssistBot, Meta-ExternalFetcher, MistralAI-User | açık ✅ |
+| `AI Crawler` (eğitim) | GPTBot, ClaudeBot, CCBot, Bytespider, Amazonbot, Meta-ExternalAgent, PetalBot… | **engelli** ✅ istenen |
+| `AI Crawler` — **YANLIŞ KATEGORİ** | **`Claude-User`** | **engelli** ⚠ |
 
-⚠ **Bu adım panel işi; kod değişikliği değil.** Ölçüt: yukarıdaki üç satırın
-403 yerine 200 dönmesi.
+Yani CF'in ayrımı bizim politikamızla neredeyse birebir örtüşüyor. Tek sapma
+`Claude-User`: kullanıcı Claude'a bir linki incelet(tir)diğinde yapılan CANLI
+GETİRMEdir — `ChatGPT-User` / `Perplexity-User` ile aynı sınıf, eğitim değil.
 
-⚠ **KURAL (8 Ağu dersinden):** CF'te AI ile ilgili herhangi bir yönetilen
-özellik açıldığında `robots.txt` ve bot davranışı YENİDEN ölçülür. CF sessizce
-bizim adımıza karar veriyor.
+### ⚠ NEDEN TEK TIKLA AÇILMIYOR
+
+Panelde toggle'a basınca çıkan uyarı:
+
+> *"This crawler is being blocked by the **Block AI Bots** security setting.
+> **Disable it** to control it in AI Crawl Control."*
+
+Aynı uyarı CCBot'ta da çıkıyor. Yani **bütün eğitim engelleri tek bir zone
+kuralından** (`Block AI training bots: Block on all pages`) geliyor; tablodaki
+açık/kapalı toggle'lar o kuraldan TÜREYEN görüntüler. Kuralı kapatmak
+denetimi tek tek toggle'lara devreder ve **eğitim botlarının hepsini birden
+açma riski** taşır — kullanıcının bilinçli `ai-train=no` kararına aykırı.
+
+### KARAR (kullanıcıya bırakıldı)
+
+| Seçenek | Kazanç | Bedel |
+|---|---|---|
+| **A — dokunma** | Risk yok | `Claude-User` kapalı kalır |
+| **B — kuralı kapat, ~15 eğitim botunu ELLE engelle** | `Claude-User` açılır | Geçiş anında eğitim botları açık kalabilir; bakım yükü kalıcı olarak bizde |
+
+**Öneri: A.** Gerekçe: `Claude-SearchBot` (Claude'un ARAMA tarayıcısı) zaten
+açık ve **fiilen çalışıyor** — GEO kazancının büyük kısmı oradan gelir.
+`Claude-User` yalnız kullanıcı bir linki elle incelettiğinde devreye girer.
+Bu tek botun marjinal faydası, blanket korumayı söküp 15 botu elle yönetme
+riskine değmez. Kural sağlayıcı tarafında düzelirse (CF kategoriyi
+`AI Assistant`'a çekerse) kendiliğinden açılır.
+
+⚠ **KURAL (8 Ağu dersinden, hâlâ geçerli):** CF'te AI ile ilgili yönetilen bir
+özellik değiştiğinde `robots.txt` beyanı ve bot davranışı YENİDEN ölçülür.
 
 ---
 
