@@ -14,6 +14,7 @@
 //   3) İzlenmemiş içerikte satır HİÇ çizilmez.
 //   4) Bölüm satırında yayın tarihi ve izlenme tarihi AYRI AYRI görünür.
 import 'package:dizijpg/ceviri.dart';
+import 'package:dizijpg/ekranlar/karsilama.dart' show karsilamaAylar;
 import 'package:dizijpg/tarih.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -104,6 +105,63 @@ void main() {
       expect(tarihBicimle(t, hepYil: true), '20 Ocak 2008');
       // Güvenilmeyen satırda hiç biçimlemeye GİRİLMEZ.
       expect(izlemeTarihiVeyaNull(''), isNull);
+    });
+  });
+
+  // =========================================================================
+  // BÖLÜM LİSTESİNDE SAYISAL TARİH (28 Ağu 2026)
+  // =========================================================================
+  // Kullanıcı: "dizilerde sezonlardaki bölümleri listeleyince tarih yazıyor ya
+  // orada ay ismi kullanma sayı kullan sadece ikisi içinde" — yani hem yayın
+  // hem izlenme tarihi. Satır dar ve iki tarih yan yana duruyor.
+  group('tarihSayi', () {
+    test('geçmiş yılda gg.aa.yyyy', () {
+      expect(tarihSayi('2008-01-20T00:00:00Z'), '20.01.2008');
+      expect(tarihSayi('2025-12-05'), '05.12.2025');
+    });
+
+    test('gün ve ay İKİ HANEYE tamamlanır (hizalı sütun)', () {
+      // "5.1.2025" satırda zıplardı; sabit genişlik listede sütun hissi verir.
+      expect(tarihSayi('2025-01-05'), '05.01.2025');
+    });
+
+    test(
+      'içinde bulunulan yılda YIL YAZILMAZ (tarihBicimle ile aynı kural)',
+      () {
+        final buYil = DateTime.now().year;
+        expect(tarihSayi('$buYil-08-14'), '14.08');
+      },
+    );
+
+    test(
+      'hepYil: true ile yıl DAİMA yazılır (yayın tarihi böyle basılıyor)',
+      () {
+        final buYil = DateTime.now().year;
+        expect(tarihSayi('$buYil-08-14', hepYil: true), '14.08.$buYil');
+      },
+    );
+
+    test('AY ADI HİÇ GEÇMEZ (asıl istek)', () {
+      for (final g in ['2008-01-20', '2026-08-14', '2020-12-31']) {
+        final s = tarihSayi(g, hepYil: true);
+        for (final ay in karsilamaAylar) {
+          expect(s.contains(ay.c), isFalse, reason: '$s içinde ay adı var');
+        }
+      }
+    });
+
+    test('bozuk/boş değer sessizce kaybolmaz', () {
+      expect(tarihSayi(null), '');
+      expect(tarihSayi(''), '');
+      expect(tarihSayi('yok'), 'yok');
+      expect(tarihSayi('2026-13-01'), '2026-13-01');
+    });
+
+    test('tarihBicimle DEĞİŞMEDİ (öteki 15 çağrı yeri aynen ay adı yazar)', () {
+      // Değişiklik YALNIZ bölüm listesi içindi; genel biçimlendirici aynı
+      // kalmalı, yoksa "Son izleme", istatistikler ve karşılama da sayıya
+      // döner ve kullanıcının istemediği bir gerileme olur.
+      expect(tarihBicimle('2008-01-20'), '20 Ocak 2008');
     });
   });
 }

@@ -2311,16 +2311,20 @@ class _BolumSatiri extends StatelessWidget {
                   // karıştırmasın — ikisi de tarihtir, ayırt edici işaret
                   // ikondur (renk TEK BAŞINA ayırt edici sayılmaz).
                   //
-                  // Yayın tarihi de artık HAM ISO DEĞİL ("2008-01-20" değil
-                  // "20 Ocak 2008"): aynı satırda biri okunur biri ham
-                  // görünürdü.
+                  // TARİHLER SAYISAL (28 Ağu 2026, kullanıcı isteği: "orada ay
+                  // ismi kullanma sayı kullan, sadece ikisi için de"). Satır
+                  // DAR ve İKİ tarih yan yana; "20 Ocak 2008" satırın yarısını
+                  // yiyordu. Ay adı YALNIZ BURADA sayıya çevrildi —
+                  // `tarihBicimle` öteki yerlerde (detaydaki "Son izleme",
+                  // istatistikler…) aynen duruyor. Ham ISO'ya da DÖNÜLMEDİ:
+                  // "2008-01-20" makine çıktısı gibi durur.
                   if (yayin.isNotEmpty || izlenmeTarihi != null)
                     Row(
                       children: [
                         if (yayin.isNotEmpty)
                           Flexible(
                             child: Text(
-                              tarihBicimle(yayin, hepYil: true),
+                              tarihSayi(yayin, hepYil: true),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -2349,8 +2353,8 @@ class _BolumSatiri extends StatelessWidget {
                             child: Text(
                               // Yıl yok: bölüm listesi uzun, satır dar ve
                               // "bu yıl" zaten baskın durum. Geçmiş yıllarda
-                              // `tarihBicimle` yılı kendisi ekler.
-                              tarihBicimle(izlenmeTarihi),
+                              // `tarihSayi` yılı kendisi ekler.
+                              tarihSayi(izlenmeTarihi),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(

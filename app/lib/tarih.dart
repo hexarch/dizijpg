@@ -57,3 +57,38 @@ String? izlemeTarihiVeyaNull(Object? ham) {
   final metin = (ham ?? '').toString().trim();
   return metin.isEmpty ? null : metin;
 }
+
+/// ISO tarihini SAYISAL biçime çevirir: "2008-01-20" → "20.01.2008".
+///
+/// NEDEN AYRI BİR BİÇİM (28 Ağu 2026, kullanıcı isteği): "dizilerde
+/// sezonlardaki bölümleri listeleyince tarih yazıyor ya, orada ay ismi
+/// kullanma sayı kullan, sadece ikisi için de". Bölüm satırı DAR ve satırda
+/// İKİ tarih yan yana duruyor (yayın · izlenme); "20 Ocak 2008" gibi bir ad
+/// satırın yarısını yiyordu. Ay adı yalnız o listede sayıya çevrildi —
+/// [tarihBicimle] öteki 15 çağrı yerinde AYNEN duruyor (detay sayfasındaki
+/// "Son izleme" satırı, istatistikler, karşılama…).
+///
+/// YIL KURALI [tarihBicimle] İLE BİREBİR AYNI: `hepYil` false iken içinde
+/// bulunulan yılda yıl YAZILMAZ ("20.01"). Kullanıcı ay adını değiştirmemizi
+/// istedi, yılın ne zaman görüneceğini değil — o karar (dar satır, "bu yıl"
+/// baskın durum) korunuyor.
+///
+/// Çözülemeyen değerde girdiyi OLDUĞU GİBİ döndürür ([tarihBicimle] ile aynı
+/// disiplin): ekranda ham metin görmek, satırın sessizce boş kalmasından iyi.
+String tarihSayi(Object? ham, {bool hepYil = false}) {
+  final metin = ham?.toString() ?? '';
+  if (metin.isEmpty) return '';
+  final parca = metin.split('T').first.split('-');
+  if (parca.length != 3) return metin;
+  final yil = int.tryParse(parca[0]);
+  final ay = int.tryParse(parca[1]);
+  final gun = int.tryParse(parca[2]);
+  if (yil == null || ay == null || gun == null || ay < 1 || ay > 12) {
+    return metin;
+  }
+  final iki = (int n) => n.toString().padLeft(2, '0');
+  final buYil = DateTime.now().year;
+  return (hepYil || yil != buYil)
+      ? '${iki(gun)}.${iki(ay)}.$yil'
+      : '${iki(gun)}.${iki(ay)}';
+}
