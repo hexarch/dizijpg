@@ -1311,11 +1311,13 @@ const Map<String, String> cevirilerMl = {
   'Bir azalt': 'ഒന്ന് കുറയ്ക്കുക',
   'Bir artır': 'ഒന്ന് കൂട്ടുക',
   'Ölçek kaydedilemedi': 'സ്കെയിൽ സംരക്ഷിക്കാനായില്ല',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'സ്കെയിൽ മാറ്റുന്നത് നിങ്ങളുടെ റേറ്റിംഗുകൾ ഇല്ലാതാക്കില്ല; അതേ റേറ്റിംഗുകൾ പുതിയ സ്കെയിലിൽ കാണിക്കും.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'സ്കെയിൽ മാറ്റുന്നത് നിങ്ങളുടെ റേറ്റിംഗുകൾ ഇല്ലാതാക്കില്ല; അതേ റേറ്റിംഗുകൾ പുതിയ സ്കെയിലിൽ കാണിക്കും.',
   'En aşağıya gönder': 'ഏറ്റവും താഴേക്ക്',
   'Listenin en altına taşındı': 'പട്ടികയുടെ അവസാനത്തേക്ക് മാറ്റി',
   'Oturumun sonlandı': 'നിങ്ങളുടെ സെഷൻ അവസാനിച്ചു',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ഈ അക്കൗണ്ട് എല്ലായിടത്തും സൈൻ ഔട്ട് ചെയ്തു അല്ലെങ്കിൽ പാസ്‌വേഡ് മാറി. തുടരാൻ വീണ്ടും സൈൻ ഇൻ ചെയ്യുക.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'ഈ അക്കൗണ്ട് എല്ലായിടത്തും സൈൻ ഔട്ട് ചെയ്തു അല്ലെങ്കിൽ പാസ്‌വേഡ് മാറി. തുടരാൻ വീണ്ടും സൈൻ ഇൻ ചെയ്യുക.',
   'Son izleme: {}': 'അവസാനം കണ്ടത്: {}',
   '{} tarihinde izledin': '{} ന് കണ്ടു',
 };

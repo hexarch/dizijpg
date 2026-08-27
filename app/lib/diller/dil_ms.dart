@@ -1317,11 +1317,13 @@ const Map<String, String> cevirilerMs = {
   'Bir azalt': 'Kurangkan satu',
   'Bir artır': 'Tambah satu',
   'Ölçek kaydedilemedi': 'Skala tidak dapat disimpan',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Menukar skala tidak memadam penilaian anda; penilaian yang sama dipaparkan pada skala baharu.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Menukar skala tidak memadam penilaian anda; penilaian yang sama dipaparkan pada skala baharu.',
   'En aşağıya gönder': 'Hantar ke bawah',
   'Listenin en altına taşındı': 'Dialihkan ke bawah senarai',
   'Oturumun sonlandı': 'Sesi anda telah tamat',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akaun ini telah log keluar di semua tempat atau kata laluannya berubah. Log masuk semula untuk teruskan.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Akaun ini telah log keluar di semua tempat atau kata laluannya berubah. Log masuk semula untuk teruskan.',
   'Son izleme: {}': 'Terakhir ditonton: {}',
   '{} tarihinde izledin': 'Ditonton pada {}',
 };

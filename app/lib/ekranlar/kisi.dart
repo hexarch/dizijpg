@@ -21,8 +21,7 @@ class KisiEkrani extends StatefulWidget {
   State<KisiEkrani> createState() => _KisiEkraniState();
 }
 
-class _KisiEkraniState extends State<KisiEkrani>
-    with OlcekDinler<KisiEkrani> {
+class _KisiEkraniState extends State<KisiEkrani> with OlcekDinler<KisiEkrani> {
   Map<String, dynamic>? _kisi;
   List<dynamic> _isler = [];
   Map<String, dynamic>? _benimPuan;

@@ -1232,11 +1232,13 @@ const Map<String, String> cevirilerZh = {
   'Bir azalt': '减一',
   'Bir artır': '加一',
   'Ölçek kaydedilemedi': '无法保存评分制',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': '更改评分制不会删除你的评分，同样的评分会按新制显示。',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      '更改评分制不会删除你的评分，同样的评分会按新制显示。',
   'En aşağıya gönder': '移到最下方',
   'Listenin en altına taşındı': '已移到列表最下方',
   'Oturumun sonlandı': '你的会话已结束',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': '此账号已在所有设备退出登录，或密码已更改。请重新登录以继续。',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      '此账号已在所有设备退出登录，或密码已更改。请重新登录以继续。',
   'Son izleme: {}': '最近观看：{}',
   '{} tarihinde izledin': '观看于 {}',
 };

@@ -1249,11 +1249,13 @@ const Map<String, String> cevirilerKo = {
   'Bir azalt': '1 감소',
   'Bir artır': '1 증가',
   'Ölçek kaydedilemedi': '척도를 저장하지 못했습니다',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': '척도를 바꿔도 평점은 삭제되지 않고 새 척도로 표시됩니다.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      '척도를 바꿔도 평점은 삭제되지 않고 새 척도로 표시됩니다.',
   'En aşağıya gönder': '맨 아래로',
   'Listenin en altına taşındı': '목록 맨 아래로 이동했습니다',
   'Oturumun sonlandı': '세션이 종료되었습니다',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': '이 계정이 모든 기기에서 로그아웃되었거나 비밀번호가 변경되었습니다. 계속하려면 다시 로그인하세요.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      '이 계정이 모든 기기에서 로그아웃되었거나 비밀번호가 변경되었습니다. 계속하려면 다시 로그인하세요.',
   'Son izleme: {}': '마지막 시청: {}',
   '{} tarihinde izledin': '{}에 시청함',
 };

@@ -1304,11 +1304,13 @@ const Map<String, String> cevirilerAz = {
   'Bir azalt': 'Bir azalt',
   'Bir artır': 'Bir artır',
   'Ölçek kaydedilemedi': 'Miqyas yadda saxlanmadı',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Miqyası dəyişmək reytinqlərinizi silmir; eyni reytinqlər yeni miqyasda göstərilir.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Miqyası dəyişmək reytinqlərinizi silmir; eyni reytinqlər yeni miqyasda göstərilir.',
   'En aşağıya gönder': 'Ən aşağıya göndər',
   'Listenin en altına taşındı': 'Siyahının ən altına köçürüldü',
   'Oturumun sonlandı': 'Sessiyanız bitdi',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Bu hesabdan hər yerdə çıxış edilib və ya şifrəsi dəyişib. Davam etmək üçün yenidən daxil olun.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Bu hesabdan hər yerdə çıxış edilib və ya şifrəsi dəyişib. Davam etmək üçün yenidən daxil olun.',
   'Son izleme: {}': 'Son baxış: {}',
   '{} tarihinde izledin': '{} tarixində baxdın',
 };

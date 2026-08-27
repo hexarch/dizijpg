@@ -1308,11 +1308,13 @@ const Map<String, String> cevirilerPa = {
   'Bir azalt': 'ਇੱਕ ਘਟਾਓ',
   'Bir artır': 'ਇੱਕ ਵਧਾਓ',
   'Ölçek kaydedilemedi': 'ਸਕੇਲ ਸੰਭਾਲਿਆ ਨਹੀਂ ਜਾ ਸਕਿਆ',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'ਸਕੇਲ ਬਦਲਣ ਨਾਲ ਤੁਹਾਡੀਆਂ ਰੇਟਿੰਗਾਂ ਨਹੀਂ ਮਿਟਦੀਆਂ; ਉਹੀ ਰੇਟਿੰਗਾਂ ਨਵੇਂ ਸਕੇਲ ਤੇ ਦਿਖਦੀਆਂ ਹਨ।',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'ਸਕੇਲ ਬਦਲਣ ਨਾਲ ਤੁਹਾਡੀਆਂ ਰੇਟਿੰਗਾਂ ਨਹੀਂ ਮਿਟਦੀਆਂ; ਉਹੀ ਰੇਟਿੰਗਾਂ ਨਵੇਂ ਸਕੇਲ ਤੇ ਦਿਖਦੀਆਂ ਹਨ।',
   'En aşağıya gönder': 'ਸਭ ਤੋਂ ਹੇਠਾਂ ਭੇਜੋ',
   'Listenin en altına taşındı': 'ਸੂਚੀ ਦੇ ਹੇਠਾਂ ਭੇਜ ਦਿੱਤਾ',
   'Oturumun sonlandı': 'ਤੁਹਾਡਾ ਸੈਸ਼ਨ ਖਤਮ ਹੋ ਗਿਆ',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ਇਹ ਖਾਤਾ ਹਰ ਥਾਂ ਤੋਂ ਸਾਈਨ ਆਊਟ ਹੋ ਗਿਆ ਜਾਂ ਪਾਸਵਰਡ ਬਦਲ ਗਿਆ। ਜਾਰੀ ਰੱਖਣ ਲਈ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'ਇਹ ਖਾਤਾ ਹਰ ਥਾਂ ਤੋਂ ਸਾਈਨ ਆਊਟ ਹੋ ਗਿਆ ਜਾਂ ਪਾਸਵਰਡ ਬਦਲ ਗਿਆ। ਜਾਰੀ ਰੱਖਣ ਲਈ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।',
   'Son izleme: {}': 'ਆਖਰੀ ਵਾਰ ਦੇਖਿਆ: {}',
   '{} tarihinde izledin': '{} ਨੂੰ ਦੇਖਿਆ',
 };

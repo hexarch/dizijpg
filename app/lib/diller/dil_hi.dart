@@ -1305,11 +1305,13 @@ const Map<String, String> cevirilerHi = {
   'Bir azalt': 'एक कम करें',
   'Bir artır': 'एक बढ़ाएं',
   'Ölçek kaydedilemedi': 'स्केल सहेजा नहीं जा सका',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'स्केल बदलने से आपकी रेटिंग नहीं मिटती; वही रेटिंग नए स्केल पर दिखती है।',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'स्केल बदलने से आपकी रेटिंग नहीं मिटती; वही रेटिंग नए स्केल पर दिखती है।',
   'En aşağıya gönder': 'सबसे नीचे भेजें',
   'Listenin en altına taşındı': 'सूची के सबसे नीचे ले जाया गया',
   'Oturumun sonlandı': 'आपका सत्र समाप्त हो गया',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'इस खाते को सभी जगह से साइन आउट किया गया या पासवर्ड बदला गया। जारी रखने के लिए फिर से साइन इन करें।',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'इस खाते को सभी जगह से साइन आउट किया गया या पासवर्ड बदला गया। जारी रखने के लिए फिर से साइन इन करें।',
   'Son izleme: {}': 'आखिरी बार देखा: {}',
   '{} tarihinde izledin': '{} को देखा',
 };

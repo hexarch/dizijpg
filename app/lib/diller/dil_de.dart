@@ -1335,11 +1335,13 @@ const Map<String, String> cevirilerDe = {
   'Bir azalt': 'Um eins verringern',
   'Bir artır': 'Um eins erhöhen',
   'Ölçek kaydedilemedi': 'Skala konnte nicht gespeichert werden',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Das Ändern der Skala löscht deine Bewertungen nicht; dieselben Bewertungen werden auf der neuen Skala angezeigt.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Das Ändern der Skala löscht deine Bewertungen nicht; dieselben Bewertungen werden auf der neuen Skala angezeigt.',
   'En aşağıya gönder': 'Nach ganz unten',
   'Listenin en altına taşındı': 'Ans Ende der Liste verschoben',
   'Oturumun sonlandı': 'Deine Sitzung ist beendet',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Dieses Konto wurde überall abgemeldet oder sein Passwort wurde geändert. Melde dich erneut an.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Dieses Konto wurde überall abgemeldet oder sein Passwort wurde geändert. Melde dich erneut an.',
   'Son izleme: {}': 'Zuletzt gesehen: {}',
   '{} tarihinde izledin': 'Gesehen am {}',
 };

@@ -1329,11 +1329,13 @@ const Map<String, String> cevirilerTa = {
   'Bir azalt': 'ஒன்று குறை',
   'Bir artır': 'ஒன்று கூட்டு',
   'Ölçek kaydedilemedi': 'அளவை சேமிக்க முடியவில்லை',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'அளவை மாற்றுவது உங்கள் மதிப்பீடுகளை நீக்காது; அதே மதிப்பீடுகள் புதிய அளவில் காட்டப்படும்.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'அளவை மாற்றுவது உங்கள் மதிப்பீடுகளை நீக்காது; அதே மதிப்பீடுகள் புதிய அளவில் காட்டப்படும்.',
   'En aşağıya gönder': 'கீழே அனுப்பு',
   'Listenin en altına taşındı': 'பட்டியலின் கீழே நகர்த்தப்பட்டது',
   'Oturumun sonlandı': 'உங்கள் அமர்வு முடிந்தது',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'இந்தக் கணக்கு எல்லா இடங்களிலும் வெளியேற்றப்பட்டது அல்லது கடவுச்சொல் மாறியது. தொடர மீண்டும் உள்நுழையவும்.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'இந்தக் கணக்கு எல்லா இடங்களிலும் வெளியேற்றப்பட்டது அல்லது கடவுச்சொல் மாறியது. தொடர மீண்டும் உள்நுழையவும்.',
   'Son izleme: {}': 'கடைசியாக பார்த்தது: {}',
   '{} tarihinde izledin': '{} அன்று பார்த்தீர்கள்',
 };

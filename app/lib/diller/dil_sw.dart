@@ -1316,11 +1316,13 @@ const Map<String, String> cevirilerSw = {
   'Bir azalt': 'Punguza moja',
   'Bir artır': 'Ongeza moja',
   'Ölçek kaydedilemedi': 'Kipimo hakikuhifadhiwa',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Kubadilisha kipimo hakufuti ukadiriaji wako; ukadiriaji uleule huonyeshwa kwa kipimo kipya.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Kubadilisha kipimo hakufuti ukadiriaji wako; ukadiriaji uleule huonyeshwa kwa kipimo kipya.',
   'En aşağıya gönder': 'Peleka chini',
   'Listenin en altına taşındı': 'Imehamishwa chini ya orodha',
   'Oturumun sonlandı': 'Kipindi chako kimeisha',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Akaunti hii ilitolewa kwenye vifaa vyote au nenosiri lilibadilika. Ingia tena ili kuendelea.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Akaunti hii ilitolewa kwenye vifaa vyote au nenosiri lilibadilika. Ingia tena ili kuendelea.',
   'Son izleme: {}': 'Ulitazamwa mwisho: {}',
   '{} tarihinde izledin': 'Ulitazama {}',
 };

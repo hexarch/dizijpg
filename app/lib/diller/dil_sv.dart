@@ -1322,11 +1322,13 @@ const Map<String, String> cevirilerSv = {
   'Bir azalt': 'Minska med ett',
   'Bir artır': 'Öka med ett',
   'Ölçek kaydedilemedi': 'Skalan kunde inte sparas',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Att ändra skalan raderar inte dina betyg; samma betyg visas på den nya skalan.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Att ändra skalan raderar inte dina betyg; samma betyg visas på den nya skalan.',
   'En aşağıya gönder': 'Flytta längst ner',
   'Listenin en altına taşındı': 'Flyttad längst ner i listan',
   'Oturumun sonlandı': 'Din session avslutades',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Det här kontot loggades ut överallt eller så ändrades lösenordet. Logga in igen för att fortsätta.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Det här kontot loggades ut överallt eller så ändrades lösenordet. Logga in igen för att fortsätta.',
   'Son izleme: {}': 'Senast sedd: {}',
   '{} tarihinde izledin': 'Sedd {}',
 };

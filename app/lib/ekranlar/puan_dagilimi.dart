@@ -267,9 +267,9 @@ class _Satir extends StatelessWidget {
     // etiketin uzunluğuna göre seçilir, yoksa FittedBox yazıyı okunmaz
     // derecede küçültürdü.
     final taban = etiket.length > 2 ? 58.0 : 34.0;
-    final yanEn = MediaQuery.textScalerOf(context)
-        .scale(taban)
-        .clamp(taban, 110.0);
+    final yanEn = MediaQuery.textScalerOf(
+      context,
+    ).scale(taban).clamp(taban, 110.0);
     return Semantics(
       // Ekran okuyucu tek cümle duysun: "4 yıldız: 32 kişi puanladı".
       label:

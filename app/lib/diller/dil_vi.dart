@@ -1312,11 +1312,13 @@ const Map<String, String> cevirilerVi = {
   'Bir azalt': 'Giảm một',
   'Bir artır': 'Tăng một',
   'Ölçek kaydedilemedi': 'Không thể lưu thang điểm',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Đổi thang điểm không xóa đánh giá của bạn; cùng đánh giá đó hiển thị theo thang mới.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Đổi thang điểm không xóa đánh giá của bạn; cùng đánh giá đó hiển thị theo thang mới.',
   'En aşağıya gönder': 'Đưa xuống cuối',
   'Listenin en altına taşındı': 'Đã chuyển xuống cuối danh sách',
   'Oturumun sonlandı': 'Phiên của bạn đã kết thúc',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tài khoản này đã đăng xuất ở mọi nơi hoặc mật khẩu đã đổi. Đăng nhập lại để tiếp tục.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Tài khoản này đã đăng xuất ở mọi nơi hoặc mật khẩu đã đổi. Đăng nhập lại để tiếp tục.',
   'Son izleme: {}': 'Xem lần cuối: {}',
   '{} tarihinde izledin': 'Đã xem ngày {}',
 };

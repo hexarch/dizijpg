@@ -1295,11 +1295,13 @@ const Map<String, String> cevirilerFa = {
   'Bir azalt': 'یکی کم کن',
   'Bir artır': 'یکی زیاد کن',
   'Ölçek kaydedilemedi': 'مقیاس ذخیره نشد',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'تغییر مقیاس امتیازهای شما را حذف نمی‌کند؛ همان امتیازها در مقیاس جدید نمایش داده می‌شوند.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'تغییر مقیاس امتیازهای شما را حذف نمی‌کند؛ همان امتیازها در مقیاس جدید نمایش داده می‌شوند.',
   'En aşağıya gönder': 'انتقال به پایین',
   'Listenin en altına taşındı': 'به انتهای فهرست منتقل شد',
   'Oturumun sonlandı': 'نشست شما پایان یافت',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'از این حساب در همه دستگاه‌ها خارج شده یا رمز عبور تغییر کرده است. برای ادامه دوباره وارد شوید.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'از این حساب در همه دستگاه‌ها خارج شده یا رمز عبور تغییر کرده است. برای ادامه دوباره وارد شوید.',
   'Son izleme: {}': 'آخرین تماشا: {}',
   '{} tarihinde izledin': 'در {} تماشا کردی',
 };

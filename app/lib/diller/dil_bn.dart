@@ -1301,11 +1301,13 @@ const Map<String, String> cevirilerBn = {
   'Bir azalt': 'এক কমান',
   'Bir artır': 'এক বাড়ান',
   'Ölçek kaydedilemedi': 'স্কেল সংরক্ষণ করা যায়নি',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'স্কেল বদলালে আপনার রেটিং মুছে যায় না; একই রেটিং নতুন স্কেলে দেখানো হয়।',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'স্কেল বদলালে আপনার রেটিং মুছে যায় না; একই রেটিং নতুন স্কেলে দেখানো হয়।',
   'En aşağıya gönder': 'একদম নিচে পাঠান',
   'Listenin en altına taşındı': 'তালিকার একদম নিচে সরানো হয়েছে',
   'Oturumun sonlandı': 'আপনার সেশন শেষ হয়েছে',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'এই অ্যাকাউন্ট সব জায়গা থেকে সাইন আউট করা হয়েছে বা পাসওয়ার্ড বদলেছে। চালিয়ে যেতে আবার সাইন ইন করুন।',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'এই অ্যাকাউন্ট সব জায়গা থেকে সাইন আউট করা হয়েছে বা পাসওয়ার্ড বদলেছে। চালিয়ে যেতে আবার সাইন ইন করুন।',
   'Son izleme: {}': 'সর্বশেষ দেখা: {}',
   '{} tarihinde izledin': '{} তারিখে দেখেছেন',
 };

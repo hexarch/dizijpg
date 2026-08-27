@@ -1316,11 +1316,13 @@ const Map<String, String> cevirilerUk = {
   'Bir azalt': 'Зменшити на одиницю',
   'Bir artır': 'Збільшити на одиницю',
   'Ölçek kaydedilemedi': 'Не вдалося зберегти шкалу',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Зміна шкали не видаляє ваші оцінки — ті самі оцінки показуються в новій шкалі.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Зміна шкали не видаляє ваші оцінки — ті самі оцінки показуються в новій шкалі.',
   'En aşağıya gönder': 'У кінець списку',
   'Listenin en altına taşındı': 'Переміщено в кінець списку',
   'Oturumun sonlandı': 'Ваш сеанс завершено',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'З цього облікового запису вийшли всюди або змінено пароль. Увійдіть знову, щоб продовжити.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'З цього облікового запису вийшли всюди або змінено пароль. Увійдіть знову, щоб продовжити.',
   'Son izleme: {}': 'Останній перегляд: {}',
   '{} tarihinde izledin': 'Переглянуто {}',
 };

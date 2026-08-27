@@ -1313,11 +1313,13 @@ const Map<String, String> cevirilerDa = {
   'Bir azalt': 'Sænk med én',
   'Bir artır': 'Øg med én',
   'Ölçek kaydedilemedi': 'Skalaen kunne ikke gemmes',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'At ændre skalaen sletter ikke dine bedømmelser; de samme vises på den nye skala.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'At ændre skalaen sletter ikke dine bedømmelser; de samme vises på den nye skala.',
   'En aşağıya gönder': 'Flyt nederst',
   'Listenin en altına taşındı': 'Flyttet nederst på listen',
   'Oturumun sonlandı': 'Din session er afsluttet',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Denne konto blev logget ud overalt, eller adgangskoden blev ændret. Log ind igen for at fortsætte.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Denne konto blev logget ud overalt, eller adgangskoden blev ændret. Log ind igen for at fortsætte.',
   'Son izleme: {}': 'Sidst set: {}',
   '{} tarihinde izledin': 'Set den {}',
 };

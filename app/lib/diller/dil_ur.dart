@@ -1308,11 +1308,13 @@ const Map<String, String> cevirilerUr = {
   'Bir azalt': 'ایک کم کریں',
   'Bir artır': 'ایک بڑھائیں',
   'Ölçek kaydedilemedi': 'پیمانہ محفوظ نہیں ہو سکا',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'پیمانہ بدلنے سے آپ کی درجہ بندیاں حذف نہیں ہوتیں؛ وہی درجہ بندیاں نئے پیمانے پر دکھائی جاتی ہیں۔',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'پیمانہ بدلنے سے آپ کی درجہ بندیاں حذف نہیں ہوتیں؛ وہی درجہ بندیاں نئے پیمانے پر دکھائی جاتی ہیں۔',
   'En aşağıya gönder': 'سب سے نیچے بھیجیں',
   'Listenin en altına taşındı': 'فہرست کے آخر میں منتقل کر دیا گیا',
   'Oturumun sonlandı': 'آپ کا سیشن ختم ہو گیا',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'اس اکاؤنٹ کو ہر جگہ سے سائن آؤٹ کر دیا گیا یا پاس ورڈ بدل گیا۔ جاری رکھنے کے لیے دوبارہ سائن ان کریں۔',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'اس اکاؤنٹ کو ہر جگہ سے سائن آؤٹ کر دیا گیا یا پاس ورڈ بدل گیا۔ جاری رکھنے کے لیے دوبارہ سائن ان کریں۔',
   'Son izleme: {}': 'آخری بار دیکھا: {}',
   '{} tarihinde izledin': '{} کو دیکھا',
 };

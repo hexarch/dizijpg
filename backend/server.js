@@ -12351,10 +12351,29 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
        FROM bildirimler b
        LEFT JOIN kullanicilar k ON k.id = b.aktor_id
        LEFT JOIN yorumlar y ON y.id = b.yorum_id
-       WHERE b.kullanici_id=$1 ORDER BY b.id DESC LIMIT 50`,
+       -- MESAJ BİLDİRİMLERİ BU LİSTEDE YOK (27 Ağu 2026, kullanıcı bildirdi:
+       -- "beni takip edenleri göstermiyor... beğenen yorum yapanlar da yok").
+       --
+       -- KÖK NEDEN ÖLÇÜLDÜ: DM'in kendi yüzeyi zaten var (rozetli zarf +
+       -- sohbet listesi), ama her mesaj BİR DE buraya satır yazıyordu.
+       -- Kullanıcının son 50 bildiriminin 28'i mesajdı; takip (8) ve beğeni
+       -- (13) satırları listenin dibine itilip görünmez olmuştu. Yani
+       -- bildirimler kaybolmuyordu, MESAJLAR ONLARI EZİYORDU.
+       --
+       -- KAYIT SİLİNMİYOR, YALNIZ GÖSTERİLMİYOR: satırlar tabloda duruyor
+       -- (push geçmişi ve olası "tümü" görünümü için). Kararı geri almak bu
+       -- tek satırı kaldırmakla olur. (Sablon dizesi: BACKTICK YOK.)
+       WHERE b.kullanici_id=$1 AND b.tur <> 'mesaj'
+       -- 50 → 100: mesajlar çıkınca yer açıldı; etkileşim bildirimleri
+       -- birikince eskiler yine de elde kalsın.
+       ORDER BY b.id DESC LIMIT 100`,
       [req.kullanici.id]),
     havuz.query(
-      'SELECT count(*)::int AS adet FROM bildirimler WHERE kullanici_id=$1 AND NOT okundu',
+      // Okunmamış SAYACI da mesajsız: zil rozeti listede GÖRÜNMEYEN bir şeyi
+      // saymamalı (kullanıcı zili açıp "neden hâlâ 12 yazıyor" derdi).
+      // Okunmamış DM zaten zarf rozetinde ayrıca sayılıyor.
+      `SELECT count(*)::int AS adet FROM bildirimler
+        WHERE kullanici_id=$1 AND NOT okundu AND tur <> 'mesaj'`,
       [req.kullanici.id]),
   ]);
   const bolumler = liste.rows.filter((r) => r.tur === 'bolum' && r.tmdb_id);

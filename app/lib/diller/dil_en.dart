@@ -1310,11 +1310,13 @@ const Map<String, String> cevirilerEn = {
   'Bir azalt': 'Decrease by one',
   'Bir artır': 'Increase by one',
   'Ölçek kaydedilemedi': 'Scale could not be saved',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Changing the scale does not delete your ratings; the same ratings are shown on the new scale.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Changing the scale does not delete your ratings; the same ratings are shown on the new scale.',
   'En aşağıya gönder': 'Send to bottom',
   'Listenin en altına taşındı': 'Moved to the bottom of the list',
   'Oturumun sonlandı': 'Your session ended',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'This account was signed out everywhere or its password changed. Sign in again to continue.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'This account was signed out everywhere or its password changed. Sign in again to continue.',
   'Son izleme: {}': 'Last watched: {}',
   '{} tarihinde izledin': 'Watched on {}',
 };

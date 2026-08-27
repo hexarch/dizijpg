@@ -1304,11 +1304,13 @@ const Map<String, String> cevirilerMr = {
   'Bir azalt': 'एकने कमी करा',
   'Bir artır': 'एकने वाढवा',
   'Ölçek kaydedilemedi': 'स्केल जतन करता आले नाही',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'स्केल बदलल्याने तुमची रेटिंग हटत नाहीत; तीच रेटिंग नव्या स्केलवर दाखवली जातात.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'स्केल बदलल्याने तुमची रेटिंग हटत नाहीत; तीच रेटिंग नव्या स्केलवर दाखवली जातात.',
   'En aşağıya gönder': 'सर्वात खाली पाठवा',
   'Listenin en altına taşındı': 'यादीच्या तळाशी हलवले',
   'Oturumun sonlandı': 'तुमचे सत्र संपले',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'हे खाते सर्वत्र साइन आउट केले गेले किंवा पासवर्ड बदलला. सुरू ठेवण्यासाठी पुन्हा साइन इन करा.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'हे खाते सर्वत्र साइन आउट केले गेले किंवा पासवर्ड बदलला. सुरू ठेवण्यासाठी पुन्हा साइन इन करा.',
   'Son izleme: {}': 'शेवटचे पाहिले: {}',
   '{} tarihinde izledin': '{} रोजी पाहिले',
 };

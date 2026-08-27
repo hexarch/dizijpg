@@ -1265,11 +1265,13 @@ const Map<String, String> cevirilerAm = {
   'Bir azalt': 'በአንድ ቀንስ',
   'Bir artır': 'በአንድ ጨምር',
   'Ölçek kaydedilemedi': 'መለኪያው መቀመጥ አልቻለም',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'መለኪያውን መቀየር ደረጃዎችዎን አይሰርዝም፤ ተመሳሳይ ደረጃዎች በአዲሱ መለኪያ ይታያሉ።',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'መለኪያውን መቀየር ደረጃዎችዎን አይሰርዝም፤ ተመሳሳይ ደረጃዎች በአዲሱ መለኪያ ይታያሉ።',
   'En aşağıya gönder': 'ወደ ታች ላክ',
   'Listenin en altına taşındı': 'ወደ ዝርዝሩ ታች ተወስዷል',
   'Oturumun sonlandı': 'ክፍለ ጊዜዎ አብቅቷል',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ይህ መለያ በሁሉም ቦታ ወጥቷል ወይም የይለፍ ቃሉ ተቀይሯል። ለመቀጠል እንደገና ይግቡ።',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'ይህ መለያ በሁሉም ቦታ ወጥቷል ወይም የይለፍ ቃሉ ተቀይሯል። ለመቀጠል እንደገና ይግቡ።',
   'Son izleme: {}': 'መጨረሻ የታየው: {}',
   '{} tarihinde izledin': '{} ላይ ተመልክተዋል',
 };

@@ -20,8 +20,7 @@ class OzetEkrani extends StatefulWidget {
   State<OzetEkrani> createState() => _OzetEkraniState();
 }
 
-class _OzetEkraniState extends State<OzetEkrani>
-    with OlcekDinler<OzetEkrani> {
+class _OzetEkraniState extends State<OzetEkrani> with OlcekDinler<OzetEkrani> {
   Map<String, dynamic>? _ozet;
   String? _hata;
 

@@ -1,0 +1,69 @@
+1.98.0 (149) — 27 Ağustos 2026
+
+YENİ
+- İzleme tarihleri: bir filmi ne zaman izlediğin detay sayfasında, dizilerde
+  "Son izleme" satırında, bölüm listesinde ise yayın tarihinin yanında
+  göz ikonuyla görünüyor.
+
+DÜZELTME
+- Oturum düştüğünde (tüm oturumları kapatma, şifre değişimi) uygulama artık
+  "bağlantı hatası" demiyor; sebebi söyleyip giriş ekranına yönlendiriyor.
+- Bildirimler listesi sadeleşti: mesaj bildirimleri kendi zarf sekmesinde
+  kaldı, takip/beğeni/yorum bildirimleri artık listenin dibine itilmiyor.
+
+---- Play sürüm notları (11 dil) ----
+
+[tr-TR]
+• İzleme tarihleri geldi: filmi ne zaman izlediğin detayda, dizilerde son izleme, bölüm listesinde ise her bölümün izlenme tarihi görünüyor.
+• Oturumun kapandığında artık "bağlantı hatası" yerine bilgilendirilip giriş ekranına yönlendiriliyorsun.
+• Bildirimler sadeleşti: mesajlar kendi sekmesinde kaldı, takip/beğeni/yorum bildirimleri kaybolmuyor.
+
+[en-US]
+• Watch dates are here: see when you watched a movie on its detail page, your last watch for shows, and each episode's watch date in the episode list.
+• When your session ends you now get a clear message and are taken to the sign-in screen instead of a "connection error".
+• Cleaner notifications: messages stay in their own tab, so follows, likes and comments no longer get buried.
+
+[de-DE]
+• Sehdaten: Wann du einen Film gesehen hast, steht jetzt auf der Detailseite, bei Serien das letzte Ansehen und in der Episodenliste das Datum jeder Folge.
+• Wenn deine Sitzung endet, erscheint jetzt ein klarer Hinweis mit Weiterleitung zur Anmeldung statt eines "Verbindungsfehlers".
+• Übersichtlichere Benachrichtigungen: Nachrichten bleiben in ihrem Tab, Follows, Likes und Kommentare gehen nicht mehr unter.
+
+[el-GR]
+• Ημερομηνίες παρακολούθησης: πότε είδες μια ταινία στη σελίδα λεπτομερειών, την τελευταία προβολή στις σειρές και την ημερομηνία κάθε επεισοδίου στη λίστα.
+• Όταν λήγει η συνεδρία σου, βλέπεις πλέον σαφές μήνυμα και οδηγείσαι στη σύνδεση αντί για "σφάλμα σύνδεσης".
+• Πιο καθαρές ειδοποιήσεις: τα μηνύματα μένουν στη δική τους καρτέλα, ώστε ακολουθήσεις, "μου αρέσει" και σχόλια να μη χάνονται.
+
+[es-ES]
+• Fechas de visionado: cuándo viste una película en su ficha, la última vez en las series y la fecha de cada episodio en la lista.
+• Si tu sesión caduca, ahora recibes un aviso claro y vas a la pantalla de inicio de sesión en lugar de un "error de conexión".
+• Notificaciones más limpias: los mensajes se quedan en su pestaña y los seguimientos, me gusta y comentarios ya no quedan sepultados.
+
+[ar]
+• تواريخ المشاهدة: متى شاهدت الفيلم في صفحة التفاصيل، وآخر مشاهدة للمسلسلات، وتاريخ مشاهدة كل حلقة في القائمة.
+• عند انتهاء جلستك تظهر الآن رسالة واضحة وتنتقل إلى شاشة تسجيل الدخول بدلاً من "خطأ في الاتصال".
+• إشعارات أوضح: الرسائل تبقى في تبويبها، فلا تختفي إشعارات المتابعة والإعجاب والتعليقات.
+
+[fr-FR]
+• Dates de visionnage : quand vous avez vu un film sur sa fiche, le dernier visionnage pour les séries et la date de chaque épisode dans la liste.
+• À l'expiration de votre session, un message clair s'affiche et vous êtes redirigé vers la connexion au lieu d'une "erreur de connexion".
+• Notifications allégées : les messages restent dans leur onglet, les abonnements, j'aime et commentaires ne sont plus noyés.
+
+[id]
+• Tanggal tonton: kapan kamu menonton film ada di halaman detail, tontonan terakhir untuk serial, dan tanggal tiap episode di daftar episode.
+• Saat sesimu berakhir, kini muncul pesan yang jelas dan kamu diarahkan ke layar masuk, bukan "kesalahan koneksi".
+• Notifikasi lebih rapi: pesan tetap di tabnya sendiri, jadi follow, suka, dan komentar tidak lagi tertimbun.
+
+[it-IT]
+• Date di visione: quando hai visto un film nella sua scheda, l'ultima visione per le serie e la data di ogni episodio nell'elenco.
+• Quando la sessione scade ora ricevi un messaggio chiaro e vieni portato alla schermata di accesso invece di un "errore di connessione".
+• Notifiche più pulite: i messaggi restano nella loro scheda, così follow, mi piace e commenti non si perdono.
+
+[pt-BR]
+• Datas de exibição: quando você assistiu a um filme na página de detalhes, a última exibição nas séries e a data de cada episódio na lista.
+• Quando sua sessão expira, agora você recebe um aviso claro e vai para a tela de login em vez de um "erro de conexão".
+• Notificações mais limpas: as mensagens ficam na própria aba, então seguidores, curtidas e comentários não somem mais.
+
+[ru-RU]
+• Даты просмотра: когда вы посмотрели фильм — на его странице, последний просмотр для сериалов и дата каждого эпизода в списке.
+• Когда сессия завершается, теперь появляется понятное сообщение и переход к экрану входа вместо «ошибки соединения».
+• Уведомления стали чище: сообщения остались на своей вкладке, а подписки, лайки и комментарии больше не теряются.

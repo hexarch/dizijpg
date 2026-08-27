@@ -1322,11 +1322,13 @@ const Map<String, String> cevirilerHu = {
   'Bir azalt': 'Csökkentés eggyel',
   'Bir artır': 'Növelés eggyel',
   'Ölçek kaydedilemedi': 'A skálát nem sikerült menteni',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'A skála módosítása nem törli az értékeléseidet; ugyanazok jelennek meg az új skálán.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'A skála módosítása nem törli az értékeléseidet; ugyanazok jelennek meg az új skálán.',
   'En aşağıya gönder': 'Legaljára',
   'Listenin en altına taşındı': 'A lista aljára helyezve',
   'Oturumun sonlandı': 'A munkameneted véget ért',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Ezt a fiókot mindenhonnan kiléptették, vagy megváltozott a jelszava. A folytatáshoz jelentkezz be újra.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Ezt a fiókot mindenhonnan kiléptették, vagy megváltozott a jelszava. A folytatáshoz jelentkezz be újra.',
   'Son izleme: {}': 'Utoljára megnézve: {}',
   '{} tarihinde izledin': 'Megnézve: {}',
 };

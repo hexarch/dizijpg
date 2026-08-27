@@ -1299,11 +1299,13 @@ const Map<String, String> cevirilerGu = {
   'Bir azalt': 'એક ઘટાડો',
   'Bir artır': 'એક વધારો',
   'Ölçek kaydedilemedi': 'સ્કેલ સાચવી શકાયું નથી',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'સ્કેલ બદલવાથી તમારાં રેટિંગ ભૂંસાતાં નથી; એ જ રેટિંગ નવા સ્કેલમાં બતાવાય છે.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'સ્કેલ બદલવાથી તમારાં રેટિંગ ભૂંસાતાં નથી; એ જ રેટિંગ નવા સ્કેલમાં બતાવાય છે.',
   'En aşağıya gönder': 'સૌથી નીચે મોકલો',
   'Listenin en altına taşındı': 'યાદીના તળિયે ખસેડ્યું',
   'Oturumun sonlandı': 'તમારું સત્ર સમાપ્ત થયું',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'આ એકાઉન્ટ બધે સાઇન આઉટ થયું અથવા પાસવર્ડ બદલાયો. ચાલુ રાખવા ફરી સાઇન ઇન કરો.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'આ એકાઉન્ટ બધે સાઇન આઉટ થયું અથવા પાસવર્ડ બદલાયો. ચાલુ રાખવા ફરી સાઇન ઇન કરો.',
   'Son izleme: {}': 'છેલ્લે જોયું: {}',
   '{} tarihinde izledin': '{} ના રોજ જોયું',
 };

@@ -2553,9 +2553,9 @@ class _YildizSistemiState extends State<_YildizSistemi> {
       await PuanOlcegi.sec(olcek);
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ölçek kaydedilemedi'.c)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Ölçek kaydedilemedi'.c)));
       }
     } finally {
       if (mounted) setState(() => _kaydediyor = false);

@@ -1315,11 +1315,13 @@ const Map<String, String> cevirilerSr = {
   'Bir azalt': 'Смањи за један',
   'Bir artır': 'Повећај за један',
   'Ölçek kaydedilemedi': 'Скала није сачувана',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Промена скале не брише твоје оцене; исте оцене се приказују у новој скали.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Промена скале не брише твоје оцене; исте оцене се приказују у новој скали.',
   'En aşağıya gönder': 'Пошаљи на дно',
   'Listenin en altına taşındı': 'Померено на дно листе',
   'Oturumun sonlandı': 'Твоја сесија је завршена',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Овај налог је одјављен свуда или је лозинка промењена. Пријави се поново да наставиш.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Овај налог је одјављен свуда или је лозинка промењена. Пријави се поново да наставиш.',
   'Son izleme: {}': 'Последње гледано: {}',
   '{} tarihinde izledin': 'Гледано {}',
 };

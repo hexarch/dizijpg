@@ -1309,11 +1309,13 @@ const Map<String, String> cevirilerTe = {
   'Bir azalt': 'ఒకటి తగ్గించు',
   'Bir artır': 'ఒకటి పెంచు',
   'Ölçek kaydedilemedi': 'స్కేల్ సేవ్ చేయలేకపోయాం',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'స్కేల్ మార్చడం మీ రేటింగ్‌లను తొలగించదు; అవే రేటింగ్‌లు కొత్త స్కేల్‌లో చూపబడతాయి.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'స్కేల్ మార్చడం మీ రేటింగ్‌లను తొలగించదు; అవే రేటింగ్‌లు కొత్త స్కేల్‌లో చూపబడతాయి.',
   'En aşağıya gönder': 'కిందికి పంపు',
   'Listenin en altına taşındı': 'జాబితా చివరకు తరలించబడింది',
   'Oturumun sonlandı': 'మీ సెషన్ ముగిసింది',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'ఈ ఖాతా అన్ని చోట్ల నుండి సైన్ అవుట్ చేయబడింది లేదా పాస్‌వర్డ్ మారింది. కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'ఈ ఖాతా అన్ని చోట్ల నుండి సైన్ అవుట్ చేయబడింది లేదా పాస్‌వర్డ్ మారింది. కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి.',
   'Son izleme: {}': 'చివరిగా చూసినది: {}',
   '{} tarihinde izledin': '{} న చూశారు',
 };

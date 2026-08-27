@@ -1319,11 +1319,13 @@ const Map<String, String> cevirilerFi = {
   'Bir azalt': 'Vähennä yhdellä',
   'Bir artır': 'Lisää yhdellä',
   'Ölçek kaydedilemedi': 'Asteikkoa ei voitu tallentaa',
-  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.': 'Asteikon vaihtaminen ei poista arvioitasi; samat arviot näytetään uudella asteikolla.',
+  'Ölçeği değiştirmek puanlarını silmez; aynı puanlar yeni ölçekte gösterilir.':
+      'Asteikon vaihtaminen ei poista arvioitasi; samat arviot näytetään uudella asteikolla.',
   'En aşağıya gönder': 'Siirrä alimmaksi',
   'Listenin en altına taşındı': 'Siirretty listan alimmaksi',
   'Oturumun sonlandı': 'Istuntosi päättyi',
-  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.': 'Tämä tili kirjattiin ulos kaikkialta tai salasana vaihtui. Kirjaudu uudelleen jatkaaksesi.',
+  'Bu hesabın oturumları kapatıldı ya da şifresi değişti. Devam etmek için tekrar giriş yap.':
+      'Tämä tili kirjattiin ulos kaikkialta tai salasana vaihtui. Kirjaudu uudelleen jatkaaksesi.',
   'Son izleme: {}': 'Viimeksi katsottu: {}',
   '{} tarihinde izledin': 'Katsottu {}',
 };
