@@ -31,10 +31,7 @@ void main() {
 
     test('hepYil: true ile yıl DAİMA yazılır (tek satırlık özet)', () {
       final buYil = DateTime.now().year;
-      expect(
-        tarihBicimle('$buYil-08-14', hepYil: true),
-        '14 Ağustos $buYil',
-      );
+      expect(tarihBicimle('$buYil-08-14', hepYil: true), '14 Ağustos $buYil');
     });
 
     test('boş/bozuk değer sessizce kaybolmaz', () {
@@ -63,12 +60,50 @@ void main() {
     test('film ve dizi metinleri AYRI anahtarlar', () {
       // Aynı anahtarı iki bağlamda kullanmak, dile göre bozuk cümle üretirdi
       // ("Son izleme" bir filmde yanlış, "izledin" bir dizide eksik).
-      expect('{} tarihinde izledin'.cf(['14 Ağustos 2026']),
-          contains('14 Ağustos 2026'));
-      expect('Son izleme: {}'.cf(['14 Ağustos 2026']),
-          contains('14 Ağustos 2026'));
-      expect('{} tarihinde izledin'.cf(['x']),
-          isNot(equals('Son izleme: {}'.cf(['x']))));
+      expect(
+        '{} tarihinde izledin'.cf(['14 Ağustos 2026']),
+        contains('14 Ağustos 2026'),
+      );
+      expect(
+        'Son izleme: {}'.cf(['14 Ağustos 2026']),
+        contains('14 Ağustos 2026'),
+      );
+      expect(
+        '{} tarihinde izledin'.cf(['x']),
+        isNot(equals('Son izleme: {}'.cf(['x']))),
+      );
+    });
+  });
+
+  group('izlemeTarihiVeyaNull — güvenilmeyen tarih EKRANA ÇIKMAZ', () {
+    // 27 Ağu 2026: içe aktarım yolları `tarih`i okumadığında satır DEFAULT
+    // now() ile damgalanıyordu (ölçüm: melis.izler 14.872 satır / 5 gün,
+    // dizi.jpg 10.756 / 1). Sunucu artık o satırlarda `tarih: null` dönüyor.
+    //
+    // TUZAK: JSON'dan okunan null `(x ?? '').toString()` ile BOŞ DİZGEYE
+    // dönüşüyordu ve bölüm satırındaki `izlenmeTarihi != null` kontrolünden
+    // GEÇİYORDU — göz ikonunun yanına boş bir tarih basılırdı.
+    test('null ve boş değerler null olur (satır çizilmez)', () {
+      expect(izlemeTarihiVeyaNull(null), isNull);
+      expect(izlemeTarihiVeyaNull(''), isNull);
+      expect(izlemeTarihiVeyaNull('   '), isNull);
+    });
+
+    test('gerçek tarih AYNEN korunur', () {
+      expect(
+        izlemeTarihiVeyaNull('2019-03-04T20:00:00Z'),
+        '2019-03-04T20:00:00Z',
+      );
+      expect(izlemeTarihiVeyaNull('2026-08-14'), '2026-08-14');
+    });
+
+    test('çıktı doğrudan tarihBicimle ile eşleşiyor (uçtan uca)', () {
+      // Satırın gerçek akışı: JSON → izlemeTarihiVeyaNull → != null → biçimle.
+      final t = izlemeTarihiVeyaNull('2008-01-20T00:00:00Z');
+      expect(t, isNotNull);
+      expect(tarihBicimle(t, hepYil: true), '20 Ocak 2008');
+      // Güvenilmeyen satırda hiç biçimlemeye GİRİLMEZ.
+      expect(izlemeTarihiVeyaNull(''), isNull);
     });
   });
 }

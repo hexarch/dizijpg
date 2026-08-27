@@ -97,13 +97,13 @@ class _BolumEkraniState extends State<BolumEkrani> {
           if (r is Map &&
               r['sezon'] == widget.sezonNo &&
               r['bolum'] == widget.bolumNo) {
-            izlenme = (r['tarih'] ?? '').toString();
+            izlenme = izlemeTarihiVeyaNull(r['tarih']);
             break;
           }
         }
       }
       setState(() {
-        _izlenmeTarihi = (izlenme?.isEmpty ?? true) ? null : izlenme;
+        _izlenmeTarihi = izlenme;
         _bolum = b;
         _kareler = _kareleriCikar(b, sonuc[1]);
         _fragmanlar = fragmanlariBirlestir(

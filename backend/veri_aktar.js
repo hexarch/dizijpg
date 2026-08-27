@@ -238,8 +238,14 @@ function izlemeTarihi(r) {
 // tarihinden SONRADIR, yani "en erken" almak yanlış damgayı gerçek tarihle
 // değiştirir ama gerçek bir tarihi ileri kaydırmaz. İdempotent: ikinci koşu
 // hiçbir şeyi değiştirmez.
+//
+// `tarih_kesin` DE ONARILIR (27 Ağu 2026-b): eski satır toplu damgalıysa
+// (false) ve dosyada gerçek tarih varsa bayrak `true`ya döner — yani yeniden
+// yükleme hem tarihi hem güvenilirliği geri getirir. OR bilinçli: bir kez
+// gerçek tarih öğrendiysek onu bir daha kaybetmeyiz.
 const IZLEME_CAKISMA = `ON CONFLICT (kullanici_id, tur, tmdb_id, sezon, bolum)
-       DO UPDATE SET tarih = LEAST(izlemeler.tarih, EXCLUDED.tarih)`;
+       DO UPDATE SET tarih = LEAST(izlemeler.tarih, EXCLUDED.tarih),
+                     tarih_kesin = izlemeler.tarih_kesin OR EXCLUDED.tarih_kesin`;
 
 export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = null, tmdbDetay = null, tmdbAraFilm = null) {
   let zip;
@@ -383,8 +389,8 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       }
       const benzersiz = [...tekil.values()];
       const { rowCount } = await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
-         SELECT $1, 'tv', $2, u.s, u.b, COALESCE(u.t, now())
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih, tarih_kesin)
+         SELECT $1, 'tv', $2, u.s, u.b, COALESCE(u.t, now()), u.t IS NOT NULL
          FROM unnest($3::int[], $4::int[], $5::timestamptz[]) AS u(s, b, t)
          ${IZLEME_CAKISMA}`,
         [userId, id,
@@ -417,8 +423,8 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       const id = await coz('movie', isim, bilgi.tmdb);
       if (!id) { ozet.atlanan += 1; continue; }
       const { rowCount } = await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
-         VALUES ($1,'movie',$2,0,0,COALESCE($3,now()))
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih, tarih_kesin)
+         VALUES ($1,'movie',$2,0,0,COALESCE($3,now()), $3 IS NOT NULL)
          ${IZLEME_CAKISMA}`,
         [userId, id, bilgi.t]);
       ozet.izleme += rowCount;
@@ -498,8 +504,9 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       if (izlemeGorulen.has(anahtar)) continue;
       izlemeGorulen.add(anahtar);
       await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
-         VALUES ($1,'tv',$2,$3,$4,COALESCE($5::timestamptz, now()))
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih, tarih_kesin)
+         VALUES ($1,'tv',$2,$3,$4,COALESCE($5::timestamptz, now()),
+                 $5::timestamptz IS NOT NULL)
          ${IZLEME_CAKISMA}`,
         [userId, tmdbId, sezon, bolum, izlemeTarihi(r)]);
       ozet.izleme++;
@@ -594,10 +601,12 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     const grup = izlemeYeni.slice(i, i + 500);
     const degerler = grup
       .map((_, j) => `($1,'tv',$${j * 4 + 2},$${j * 4 + 3},$${j * 4 + 4},`
-        + `COALESCE($${j * 4 + 5}::timestamptz, now()))`)
+        + `COALESCE($${j * 4 + 5}::timestamptz, now()),`
+        + `$${j * 4 + 5}::timestamptz IS NOT NULL)`)
       .join(',');
     await havuz.query(
-      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih,
+                              tarih_kesin)
        VALUES ${degerler}
        ${IZLEME_CAKISMA}`,
       [userId, ...grup.flat()],
@@ -614,8 +623,9 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       try { filmId = await tmdbAraFilm(temiz); } catch { filmId = null; }
       if (!filmId) { ozet.atlanan++; continue; }
       await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
-         VALUES ($1,'movie',$2,0,0,COALESCE($3::timestamptz, now()))
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih, tarih_kesin)
+         VALUES ($1,'movie',$2,0,0,COALESCE($3::timestamptz, now()),
+                 $3::timestamptz IS NOT NULL)
          ${IZLEME_CAKISMA}`,
         [userId, filmId, tarih]);
       ozet.film++;
@@ -731,10 +741,12 @@ async function iceAktarNative(havuz, userId, json, ozet) {
       const b = j * 5;
       parametreler.push(r[0], r[1], r[2], r[3], r[4]);
       return `($1,$${b + 2},$${b + 3},$${b + 4},$${b + 5},`
-        + `COALESCE($${b + 6}::timestamptz, now()))`;
+        + `COALESCE($${b + 6}::timestamptz, now()),`
+        + `$${b + 6}::timestamptz IS NOT NULL)`;
     });
     await havuz.query(
-      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih,
+                              tarih_kesin)
        VALUES ${degerler.join(',')}
        ${IZLEME_CAKISMA}`,
       parametreler);

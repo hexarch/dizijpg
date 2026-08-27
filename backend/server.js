@@ -9388,7 +9388,7 @@ app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
     // bölüm kendi satırıdır — istemci hangisini göstereceğine kendisi karar
     // verir (içerik geneli için `son_izleme`, bölüm satırı için kendi tarihi).
     havuz.query(
-      `SELECT sezon, bolum, tarih FROM izlemeler
+      `SELECT sezon, bolum, tarih, tarih_kesin FROM izlemeler
         WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3`, p),
     havuz.query('SELECT durum, tekrar FROM durumlar WHERE kullanici_id=$1 AND tur=$2 AND tmdb_id=$3', p),
     // sezon IS NULL: bu uç içeriğin GENEL durumunu döner; bölüm puanları
@@ -9404,10 +9404,19 @@ app.get('/benim/:tur/:tmdbId', girisZorunlu, sarici(async (req, res) => {
   // tarihi — ikisi de aynı hesaptan çıkar (kullanıcı kararı 27 Ağu 2026:
   // "son izlenen bölüm", bitirme tarihi değil; izlemeye devam edende de
   // anlamlı olan tek tarih budur).
-  const sonIzleme = izleme.rows.reduce(
+  //
+  // GÜVENİLMEYEN TARİH HİÇ ÇIKMAZ (27 Ağu 2026-b). İçe aktarım yolları tarihi
+  // okumadığında satır DEFAULT now() ile damgalanmıştı; o damga gerçek izleme
+  // anı DEĞİL. `tarih_kesin=false` satırlarda `tarih` null dönüyor — süzgeç
+  // TEK NOKTADA, uçta: istemcinin (mobil + web + gelecekteki her yüzey)
+  // ayrıca hatırlaması gereken bir kural bırakmıyoruz.
+  // Bayrak nasıl konuluyor: migrasyon-2026-08-27b.sql (yığın sezgisi ölçümü).
+  const izlenenler = izleme.rows.map(
+    (r) => ({ sezon: r.sezon, bolum: r.bolum, tarih: r.tarih_kesin ? r.tarih : null }));
+  const sonIzleme = izlenenler.reduce(
     (e, r) => (r.tarih && (!e || r.tarih > e) ? r.tarih : e), null);
   res.json({
-    izlenenler: izleme.rows,
+    izlenenler,
     son_izleme: sonIzleme,
     durum: durum.rows[0]?.durum || null,
     tekrar: durum.rows[0]?.tekrar || 0,

@@ -1343,3 +1343,11 @@ CREATE TABLE IF NOT EXISTS seo_kazanan_bolum (
   PRIMARY KEY (tmdb_id, sezon, bolum)
 );
 CREATE INDEX IF NOT EXISTS seo_kazanan_bolum_dizi ON seo_kazanan_bolum (tmdb_id);
+
+-- 2026-08-27b: bu izlemenin TARİHİNE güvenilir mi? İçe aktarım yolları
+-- tarihi okumadığında DEFAULT now() damgalanıyordu; "izleme tarihleri"
+-- özelliği o satırlarda uydurma tarih gösteriyordu. `false` = tarih gerçek
+-- izleme anı DEĞİL (toplu içe aktarım damgası), arayüz tarihi göstermez.
+-- Uzun gerekçe + yığın sezgisinin ölçümü: migrasyon-2026-08-27b.sql.
+ALTER TABLE izlemeler
+  ADD COLUMN IF NOT EXISTS tarih_kesin BOOLEAN NOT NULL DEFAULT true;

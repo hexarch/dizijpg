@@ -121,3 +121,68 @@ test('film satırları da tarih taşıyor (Set → Map değişimi korunuyor)', (
   assert.doesNotMatch(AKTAR, /filmAdlari\.add\(/, 'Set API\'si kalmış');
   assert.match(AKTAR, /for \(const \[isim, tarih\] of filmAdlari\)/);
 });
+
+// ===========================================================================
+// tarih_kesin — GÜVENİLMEYEN TARİH UÇTA SÜZÜLÜR (27 Ağu 2026-b)
+// ===========================================================================
+const SUNUCU = fs.readFileSync(path.join(KOK, 'server.js'), 'utf8');
+const MIGRASYON = fs.readFileSync(path.join(KOK, 'migrasyon-2026-08-27b.sql'), 'utf8');
+const SEMA = fs.readFileSync(path.join(KOK, 'sema.sql'), 'utf8');
+
+test('/benim ucu güvenilmeyen tarihi NULL döndürüyor (tek süzgeç noktası)', () => {
+  assert.match(SUNUCU, /SELECT sezon, bolum, tarih, tarih_kesin FROM izlemeler/,
+    'uç tarih_kesin sütununu okumuyor');
+  assert.match(SUNUCU, /tarih: r\.tarih_kesin \? r\.tarih : null/,
+    'güvenilmeyen tarih uçta süzülmüyor — istemciye uydurma tarih gider');
+  // `son_izleme` de süzülmüş listeden hesaplanmalı; ham satırlardan
+  // hesaplanırsa gizlenen tarih ÖZET satırında geri sızar.
+  assert.match(SUNUCU, /const sonIzleme = izlenenler\.reduce\(/,
+    'son_izleme hâlâ ham satırlardan hesaplanıyor');
+});
+
+test('şema ve migrasyon: tarih_kesin varsayılan TRUE', () => {
+  // Varsayılan false olsaydı uygulama içinde işaretlenen HER izleme
+  // güvenilmez sayılır ve tarih hiç görünmezdi.
+  assert.match(SEMA, /tarih_kesin BOOLEAN NOT NULL DEFAULT true/);
+  assert.match(MIGRASYON, /ADD COLUMN IF NOT EXISTS tarih_kesin BOOLEAN NOT NULL DEFAULT true/);
+});
+
+test('yığın sezgisi: SATIR SAYISI TEK BAŞINA yetmez, FARKLI YAPIM şart', () => {
+  // Ölçüm (27 Ağu): ozkanpiqubo 2.454 satır / 3 farklı yapım — bu bir içe
+  // aktarım DEĞİL, uzun animeleri uygulamadan işaretlemiş ve o damga
+  // DÜRÜST. Yalnız satır sayısına bakan bir eşik onu da yanlış işaretlerdi.
+  assert.match(MIGRASYON, /count\(\*\) >= 100 AND count\(DISTINCT tmdb_id\) >= 30/,
+    'yığın eşiği farklı yapım sayısını içermiyor');
+  assert.match(MIGRASYON, /date_trunc\('minute', tarih\)/,
+    'yığın kırılımı dakika değil');
+  // Geri doldurma yalnız DÜŞÜRÜR (true → false); tersini yapmaz.
+  // YORUM SATIRLARI ELENİR: gerekçe bloğunda geri alma komutu ("UPDATE
+  // izlemeler SET tarih_kesin = true") METİN olarak geçiyor; ham dosyada
+  // arama yapmak onu ÇALIŞTIRILAN SQL sanıyordu (bu test öyle yakalandı).
+  const sql = MIGRASYON.split('\n').filter((l) => !l.trim().startsWith('--')).join('\n');
+  assert.match(sql, /SET tarih_kesin = false/);
+  assert.doesNotMatch(sql, /SET tarih_kesin = true/);
+  // Veri silinmiyor: tarih sütununa dokunulmuyor.
+  assert.doesNotMatch(sql, /DELETE FROM izlemeler|SET tarih =/);
+});
+
+test('yeniden yükleme bayrağı da ONARIR (OR ile)', () => {
+  const c = bildirim('IZLEME_CAKISMA');
+  assert.match(c, /tarih_kesin = izlemeler\.tarih_kesin OR EXCLUDED\.tarih_kesin/,
+    'yeniden yükleme güvenilirliği geri getirmiyor');
+  // Her izleme INSERT'i sütunu taşımalı.
+  const bloklar = AKTAR.match(/INSERT INTO izlemeler \([^)]*\)[\s\S]{0,700}?`/g) || [];
+  assert.ok(bloklar.length >= 6);
+  for (const b of bloklar) {
+    assert.match(b, /tarih_kesin/, `tarih_kesin yazmayan izleme INSERT'i:\n${b}`);
+  }
+  // Bayrak SABİT yazılmamalı: gerçek tarih okunabildiyse true, okunamadıysa
+  // false olmalı. Toplu yollarda VALUES listesi ayrı kuruluyor, o yüzden
+  // iddia blok bazlı değil DOSYA bazlı (blok penceresi onları görmüyordu).
+  const kosullu = (AKTAR.match(/IS NOT NULL/g) || []).length;
+  assert.ok(kosullu >= 6,
+    `bayrak koşullu yazılan yol sayısı az (${kosullu}) — biri sabit true olabilir`);
+  assert.doesNotMatch(AKTAR, /tarih_kesin\)\s*\n?\s*VALUES[^`]*,\s*true\)/,
+    'bir yolda tarih_kesin sabit true yazılmış');
+});
+

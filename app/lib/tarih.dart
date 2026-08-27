@@ -44,3 +44,16 @@ String tarihBicimle(Object? ham, {bool hepYil = false}) {
   final buYil = DateTime.now().year;
   return (hepYil || yil != buYil) ? '$gun $ayAdi $yil' : '$gun $ayAdi';
 }
+
+/// Sunucudan gelen izleme tarihini "yoksa null" biçimine indirger.
+///
+/// NEDEN AYRI YARDIMCI (27 Ağu 2026): sunucu, güvenilmeyen izleme tarihini
+/// (toplu içe aktarım damgası) `null` döndürüyor. JSON'dan okunan değer
+/// `(x ?? '').toString()` ile boş DİZGEYE dönüşürse, bölüm satırındaki
+/// `izlenmeTarihi != null` kontrolünden GEÇER ve göz ikonunun yanına BOŞ bir
+/// tarih basılır. Boşluğu null'a çevirmek tek satırlık bir iş ama iki ayrı
+/// ekranda tekrarlanıyor; kopyalanınca biri unutulur.
+String? izlemeTarihiVeyaNull(Object? ham) {
+  final metin = (ham ?? '').toString().trim();
+  return metin.isEmpty ? null : metin;
+}

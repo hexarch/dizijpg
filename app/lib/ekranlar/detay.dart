@@ -1078,9 +1078,14 @@ class _DetayEkraniState extends State<DetayEkrani>
     // 2026, kullanıcı isteği): bölüm satırı artık "izledin mi" sorusunun
     // yanında "ne zaman" sorusunu da yanıtlıyor. `izlenenSet` aynı haritanın
     // anahtarlarından türetiliyor — tek kaynak, iki görünüm.
-    final izlenmeTarihleri = <String, String>{
+    // DEĞER NULL OLABİLİR, ANAHTAR HER ZAMAN VAR: anahtarlar "izlendi mi"
+    // sorusunu (`izlenenSet`) besliyor, değer yalnız tarihi. Sunucu güvenilmeyen
+    // tarihi null döndürüyor (içe aktarım damgası — bkz. /benim ucu); boş dizge
+    // BURADA null'a çevrilmezse bölüm satırındaki `!= null` kontrolünden geçip
+    // göz ikonunun yanına BOŞ bir tarih basılırdı.
+    final izlenmeTarihleri = <String, String?>{
       for (final r in (_benim?['izlenenler'] as List<dynamic>? ?? []))
-        '${r['sezon']}:${r['bolum']}': (r['tarih'] ?? '').toString(),
+        '${r['sezon']}:${r['bolum']}': izlemeTarihiVeyaNull(r['tarih']),
     };
     final izlenenSet = izlenmeTarihleri.keys.toSet();
     // Dizide EN SON izlenen bölümün, filmde tek satırın tarihi (sunucu
@@ -2035,7 +2040,7 @@ class _SezonSatiri extends StatefulWidget {
   final Set<String> izlenenSet;
 
   /// '$sezon:$bolum' → izlenme tarihi (ISO). Bölüm satırı bunu gösterir.
-  final Map<String, String> izlenmeTarihleri;
+  final Map<String, String?> izlenmeTarihleri;
   final VoidCallback degisti;
 
   const _SezonSatiri({
