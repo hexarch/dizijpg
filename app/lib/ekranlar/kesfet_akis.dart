@@ -2355,21 +2355,28 @@ class _ReelsDugme extends StatelessWidget {
 /// Gönderinin yanıt sheet'ini açar (Reels, profil yorum akışı vb.).
 /// TAM AÇILIR: sheet ekranın tamamını (durum çubuğu hariç) kaplar; eskiden
 /// ekranın %60'ında takılıydı ve klavye açılınca yazma kutusu ortada kalıyordu.
-Future<void> yanitlariAc(BuildContext context, Map<String, dynamic> yorum) =>
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      // Yorumlar da bir OKUMA kolonu: masaüstünde sheet 1920 dp'ye yayılınca
-      // avatar solda, saat sağda, arası bomboş kalıyordu. Akışla AYNI genişlik
-      // ([masaustuKolonGenisligi]) — sheet o zaman yatayda ortalanır.
-      // MOBİLDE ETKİSİZ: 360-430 dp ekranda kısıt bağlamaz, sheet tam genişlik.
-      constraints: const BoxConstraints(maxWidth: masaustuKolonGenisligi),
-      backgroundColor: DiziRenkler.koyuGri,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
-      ),
-      builder: (_) => YanitlarSheet(yorum: yorum),
-    );
+///
+/// [ilkYanitlanan]: sheet açılır açılmaz hedeflenecek YANIT satırı (yanıtın
+/// yanıtı). İçerik sayfasının yorum bölümü bunu kullanır: kullanıcı bir
+/// yanıta "Yanıtla" dediğinde sheet ÜST yorumla açılır ama hedef kaybolmaz.
+Future<void> yanitlariAc(
+  BuildContext context,
+  Map<String, dynamic> yorum, {
+  Map<String, dynamic>? ilkYanitlanan,
+}) => showModalBottomSheet<void>(
+  context: context,
+  isScrollControlled: true,
+  // Yorumlar da bir OKUMA kolonu: masaüstünde sheet 1920 dp'ye yayılınca
+  // avatar solda, saat sağda, arası bomboş kalıyordu. Akışla AYNI genişlik
+  // ([masaustuKolonGenisligi]) — sheet o zaman yatayda ortalanır.
+  // MOBİLDE ETKİSİZ: 360-430 dp ekranda kısıt bağlamaz, sheet tam genişlik.
+  constraints: const BoxConstraints(maxWidth: masaustuKolonGenisligi),
+  backgroundColor: DiziRenkler.koyuGri,
+  shape: const RoundedRectangleBorder(
+    borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+  ),
+  builder: (_) => YanitlarSheet(yorum: yorum, ilkYanitlanan: ilkYanitlanan),
+);
 
 /// Yorum kutusunun üstündeki 8'li hızlı emoji satırının kaynağı.
 ///
@@ -2453,7 +2460,10 @@ const enCokYanitEk = 4;
 /// nerede atılırsa atılsın her iki tarafta da görünür.
 class YanitlarSheet extends StatefulWidget {
   final Map<String, dynamic> yorum;
-  const YanitlarSheet({super.key, required this.yorum});
+
+  /// Açılışta hedeflenecek yanıt satırı (bkz. [yanitlariAc]).
+  final Map<String, dynamic>? ilkYanitlanan;
+  const YanitlarSheet({super.key, required this.yorum, this.ilkYanitlanan});
 
   @override
   State<YanitlarSheet> createState() => _YanitlarSheetState();
@@ -2477,7 +2487,8 @@ class _YanitlarSheetState extends State<YanitlarSheet> {
   // gider (sohbet ekranında medyasız gönderim hatası buradan çıkmıştı).
   bool _gonderBekliyor = false;
   bool _yaziVar = false; // gönder düğmesi bu bayrakla belirir
-  Map<String, dynamic>? _yanitlanan; // yanıtın yanıtı: hedeflenen satır
+  late Map<String, dynamic>? _yanitlanan = // yanıtın yanıtı: hedeflenen satır
+      widget.ilkYanitlanan;
   List<String> _emojiler = SikEmojiler.onbellek ?? SikEmojiler.yedek;
 
   @override

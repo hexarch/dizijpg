@@ -855,8 +855,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
   final _kaydirma = ScrollController();
   Timer? _sayac;
 
-  /// [_sonaKaydir]'ın gecikmeli denemeleri — dispose'da iptal edilir.
-  final List<Timer> _kaydirmaSayaclari = [];
   GoRouter? _yonlendirici;
 
   /// Bu konuşma ekranı görünür mü? Kabuk sekmesi değişince StatefulShell
@@ -1054,10 +1052,6 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     _kayitSayaci?.cancel();
     _seviyeAbonelik?.cancel();
     _kaydedici?.dispose();
-    for (final t in _kaydirmaSayaclari) {
-      t.cancel();
-    }
-    _kaydirmaSayaclari.clear();
     _metin.removeListener(_yaziyorBildir);
     _metin.dispose();
     _metinOdak.dispose();
@@ -1260,39 +1254,15 @@ class _SohbetEkraniState extends State<SohbetEkrani>
     }
   }
 
+  /// En yeni mesaja döner. TERS listede dip offset 0'dır → tek `jumpTo`.
+  ///
+  /// ESKİDEN: 0/120/400/900/1600/2400 ms'lik altı zamanlayıcı `maxScrollExtent`
+  /// kovalıyordu, çünkü liste düz çiziliyor ve geç yüklenen görseller dibi
+  /// kaçırıyordu. `reverse: true` ile o yarış tamamen ortadan kalktı:
+  /// içerik yukarıda büyüse bile çapa dipte durur (bkz. ListView yorumu).
   void _sonaKaydir() {
-    // Görsel/video baloncukları sonradan yüklenip yüksekliği değiştirdiğinden
-    // birkaç kez dener; her seferinde gerçek en-alta sabitler.
-    //
-    // ZAMANLAYICILAR TUTULUYOR VE dispose'da İPTAL EDİLİYOR: eskiden burada
-    // çıplak `Future.delayed` vardı. `mounted` koruması çökmeyi engelliyordu
-    // ama zamanlayıcının KENDİSİ ağaç yok edildikten sonra da bekliyordu —
-    // widget testlerinde "A Timer is still pending even after the widget tree
-    // was disposed" ile düşüyordu (test/yenileme_ayni_sayfa_test.dart, tüm
-    // rotaları gezen sınama). Gerçek uygulamada da ekran kapandıktan sonra
-    // 400 ms boyunca kapanmış bir State'e tutunan üç kapanış demekti.
-    for (final t in _kaydirmaSayaclari) {
-      t.cancel();
-    }
-    _kaydirmaSayaclari.clear();
-    // Pencere 2,4 sn'ye uzatıldı (24 Ağu 2026, kullanıcı: "sürekli aşağı
-    // kaydırmak zorunda kalıyorum"): webde görseller 400 ms'den geç gelip
-    // listeyi büyütüyor, dip kaçıyordu. Geç zamanlayıcılar yalnız kullanıcı
-    // hâlâ dipteyken sabitler — bu pencere içinde bilerek yukarı kaydıran
-    // biri aşağı ÇEKİLMEZ.
-    for (final ms in const [0, 120, 400, 900, 1600, 2400]) {
-      _kaydirmaSayaclari.add(
-        Timer(Duration(milliseconds: ms), () {
-          if (!mounted || !_kaydirma.hasClients) return;
-          if (ms > 400 &&
-              _kaydirma.position.pixels <
-                  _kaydirma.position.maxScrollExtent - 800) {
-            return;
-          }
-          _kaydirma.jumpTo(_kaydirma.position.maxScrollExtent);
-        }),
-      );
-    }
+    if (!_kaydirma.hasClients) return;
+    _kaydirma.jumpTo(0);
   }
 
   int? _sonMesajId() {
@@ -1384,9 +1354,11 @@ class _SohbetEkraniState extends State<SohbetEkrani>
       final eski = _mesajParmakIzi(_mesajlar, _karsiDurum, _partner);
       if (!ilk && parmak == eski && istek == _istek && _hata == null) return;
 
+      // TERS listede dibe (en yeni mesaja) uzaklık doğrudan `pixels`tir.
+      // Kullanıcı geçmişi okuyorsa (250 px'den uzaktaysa) gelen mesaj onu
+      // aşağı ÇEKMEZ — sadece rozet/liste güncellenir.
       final altaYakinDi =
-          !_kaydirma.hasClients ||
-          _kaydirma.position.pixels >= _kaydirma.position.maxScrollExtent - 250;
+          !_kaydirma.hasClients || _kaydirma.position.pixels <= 250;
       setState(() {
         _mesajlar = birlesik;
         _icerikler.addAll(icerikler);
@@ -1918,9 +1890,31 @@ class _SohbetEkraniState extends State<SohbetEkrani>
                         },
                         child: ListView.builder(
                           controller: _kaydirma,
+                          // TERS LİSTE = ÇAPA DİPTE (28 Ağu 2026).
+                          // Kullanıcı: "sohbet ekranı sürekli yukarı kayıyor,
+                          // klavye aç/kapa yapıyorum, mesaj geliyor, mesaj
+                          // atıyorum — sürekli kayıyor."
+                          // SEBEP: liste düz çiziliyordu, dip ise `jumpTo(
+                          // maxScrollExtent)` ile TAKLİT ediliyordu. Kaydırma
+                          // uzaklığı listenin BAŞINDAN ölçülür; klavye açılıp
+                          // viewport küçülünce, yeni mesaj eklenince ya da bir
+                          // görsel geç yüklenip yüksekliği büyütünce
+                          // `maxScrollExtent` değişiyor ama `pixels` sabit
+                          // kalıyordu — görüntü dibe göre YUKARI kayıyordu.
+                          // Zamanlayıcılı jumpTo'lar bunu kovalıyor, arada bir
+                          // yetişemiyordu.
+                          // `reverse: true` ile offset 0 = EN YENİ mesaj ve
+                          // ölçüm dipten yapılır: içerik yukarıda büyüse de
+                          // çapa oynamaz. Kullanıcı kaydırmadıkça ekran
+                          // kıpırdamaz — istenen davranış BU.
+                          reverse: true,
                           padding: const EdgeInsets.all(12),
                           itemCount: _mesajlar.length,
-                          itemBuilder: (context, i) {
+                          itemBuilder: (context, tersIndeks) {
+                            // `_mesajlar` KRONOLOJİK kalır (eski→yeni); yalnız
+                            // çizim sırası ters. Böylece "önceki gün" karşı-
+                            // laştırması ve tarih ayracı aynen çalışır.
+                            final i = _mesajlar.length - 1 - tersIndeks;
                             final m = _mesajlar[i] as Map<String, dynamic>;
                             final gun = (m['tarih'] as String? ?? '')
                                 .split('T')

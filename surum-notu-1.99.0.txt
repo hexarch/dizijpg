@@ -1,0 +1,86 @@
+1.99.0 (150) — 28 Ağustos 2026
+
+YENİ
+- Geri bildirim yanıtı artık uygulamada da görünüyor: bize yazdığın mesaja
+  cevap gelince zil çalıyor ve bildirimlerde hem senin yazdığın hem gelen
+  cevap yan yana duruyor. (E-posta da gitmeye devam ediyor.)
+
+DÜZELTME
+- Profil gönderi listesinde fotoğraflı/videolu paylaşımların görselleri
+  görünmüyordu; artık listede de görünüyor.
+- Film ve dizi sayfasında bir yoruma "Yanıtla" deyince sayfa yukarı zıplıyordu.
+  Artık akıştaki gibi yanıt sayfası açılıyor: yazma kutusu klavyenin üstünde,
+  yanıtladığın yorum ekranda kalıyor.
+- Sohbet ekranı kendiliğinden kayıyordu (klavye açılıp kapanınca, mesaj
+  gelince, mesaj atınca). Artık sen kaydırmadıkça ekran yerinde duruyor;
+  geçmişi okurken gelen mesaj seni aşağı çekmiyor.
+- Bölüm listesindeki tarihler ay adı yerine sayıyla yazılıyor (20.01.2008) —
+  dar satırda yayın ve izlenme tarihi yan yana sığıyor.
+
+---- Play sürüm notları (11 dil) ----
+
+[tr-TR]
+• Sohbet ekranı artık kendiliğinden kaymıyor: klavye açılıp kapansa da, mesaj gelse de sen kaydırmadıkça ekran yerinde duruyor.
+• Film ve dizi sayfasında yanıt verirken sayfa yukarı zıplamıyor; akıştaki gibi yanıt sayfası açılıyor.
+• Bize gönderdiğin geri bildirime gelen cevap artık uygulama içinde de bildirimle geliyor.
+• Profil gönderi listesindeki fotoğraf ve videolar görünüyor.
+
+[en-US]
+• The chat screen no longer jumps on its own: open or close the keyboard, receive a message — the view stays put unless you scroll.
+• Replying to a comment on a movie or show page no longer scrolls the page up; you get the same reply sheet as in the feed.
+• Replies to the feedback you send us now arrive as an in-app notification too.
+• Photos and videos now show up in your profile's post list.
+
+[de-DE]
+• Der Chat springt nicht mehr von selbst: Tastatur auf oder zu, neue Nachricht — die Ansicht bleibt, bis du selbst scrollst.
+• Beim Antworten auf einen Kommentar bei Filmen und Serien springt die Seite nicht mehr nach oben; es öffnet sich dieselbe Antwortansicht wie im Feed.
+• Antworten auf dein Feedback erreichen dich jetzt auch als Benachrichtigung in der App.
+• Fotos und Videos erscheinen jetzt in der Beitragsliste deines Profils.
+
+[el-GR]
+• Η οθόνη συνομιλίας δεν μετακινείται πια μόνη της: είτε ανοίξει το πληκτρολόγιο είτε έρθει μήνυμα, η προβολή μένει στη θέση της.
+• Απαντώντας σε σχόλιο σε ταινία ή σειρά, η σελίδα δεν ανεβαίνει πια· ανοίγει η ίδια οθόνη απάντησης όπως στη ροή.
+• Οι απαντήσεις στα σχόλιά σου προς εμάς φτάνουν πλέον και ως ειδοποίηση στην εφαρμογή.
+• Οι φωτογραφίες και τα βίντεο εμφανίζονται στη λίστα δημοσιεύσεων του προφίλ σου.
+
+[es-ES]
+• La pantalla de chat ya no se mueve sola: abras o cierres el teclado, llegue un mensaje, la vista se queda donde estaba.
+• Al responder a un comentario en una película o serie, la página ya no salta hacia arriba; se abre la misma hoja de respuesta que en el feed.
+• Las respuestas a tus comentarios ahora también llegan como notificación dentro de la app.
+• Las fotos y vídeos ya se ven en la lista de publicaciones de tu perfil.
+
+[ar]
+• لم تعد شاشة المحادثة تتحرك من تلقاء نفسها: سواء فتحت لوحة المفاتيح أو وصلتك رسالة، يبقى العرض مكانه ما لم تمرّر أنت.
+• عند الرد على تعليق في صفحة فيلم أو مسلسل لم تعد الصفحة تقفز للأعلى؛ تُفتح شاشة الرد نفسها الموجودة في التغذية.
+• ردود فريقنا على ملاحظاتك تصل الآن كإشعار داخل التطبيق أيضًا.
+• تظهر الصور والفيديوهات الآن في قائمة منشورات ملفك الشخصي.
+
+[fr-FR]
+• L'écran de discussion ne bouge plus tout seul : clavier ouvert ou fermé, message reçu, la vue reste en place tant que vous ne faites pas défiler.
+• Répondre à un commentaire sur une page de film ou de série ne fait plus remonter la page ; la même feuille de réponse que dans le fil s'ouvre.
+• Les réponses à vos retours arrivent désormais aussi en notification dans l'application.
+• Les photos et vidéos s'affichent maintenant dans la liste de publications de votre profil.
+
+[id]
+• Layar obrolan tidak lagi bergeser sendiri: keyboard dibuka atau ditutup, pesan masuk — tampilan tetap di tempatnya kecuali kamu menggulir.
+• Membalas komentar di halaman film atau serial tidak lagi melompat ke atas; terbuka lembar balasan yang sama seperti di beranda.
+• Balasan atas masukan yang kamu kirim kini juga datang sebagai notifikasi di aplikasi.
+• Foto dan video kini tampil di daftar postingan profilmu.
+
+[it-IT]
+• La schermata chat non si sposta più da sola: che tu apra o chiuda la tastiera o arrivi un messaggio, la vista resta ferma finché non scorri tu.
+• Rispondere a un commento su film e serie non fa più saltare la pagina in alto; si apre lo stesso pannello di risposta del feed.
+• Le risposte ai tuoi feedback ora arrivano anche come notifica nell'app.
+• Foto e video ora si vedono nell'elenco dei post del tuo profilo.
+
+[pt-BR]
+• A tela de conversa não se move mais sozinha: abrindo ou fechando o teclado, chegando mensagem — a visualização fica parada até você rolar.
+• Responder a um comentário em filmes e séries não joga mais a página para cima; abre a mesma folha de resposta do feed.
+• As respostas aos seus comentários enviados agora também chegam como notificação no app.
+• Fotos e vídeos agora aparecem na lista de publicações do seu perfil.
+
+[ru-RU]
+• Экран чата больше не сдвигается сам: открывается или закрывается клавиатура, приходит сообщение — вид остаётся на месте, пока вы не прокрутите.
+• Ответ на комментарий на странице фильма или сериала больше не подбрасывает страницу вверх — открывается та же панель ответа, что и в ленте.
+• Ответы на ваши отзывы теперь приходят и уведомлением в приложении.
+• Фото и видео теперь видны в списке публикаций вашего профиля.

@@ -1,6 +1,31 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-28 — 🔨 OTURUM İŞ LİSTESİ (kullanıcı: "hepsi yapılmalı")
+
+Bu oturumda istenen HER ŞEY. Sırayla yapılacak, biten işaretlenecek.
+
+1. ✅ **GEO ilk "sonrası" ölçümü** — nginx düzeltmesi gerçek trafikte doğrulandı.
+   `GEO-PLANI.md` §6.1'e yazıldı; tekrarlanabilir betik `araclar/geo-olcum.sh`
+   (sunucuda `/root/geo-olcum.sh`).
+2. ✅ **Film sayfasında yoruma yanıt akıştaki gibi olsun.** Kullanıcı: "Filme
+   gidip yapılan yoruma yanıt ver diyince yukarı çıkıyor, neden akıştaki gibi
+   yanıt veremiyorum". `yorumlar.dart` artık akışla AYNI sheet'i açıyor
+   (`yanitlariAc`); yazma kutusuna kaydırma kaldırıldı.
+3. ✅ **Sohbet ekranı sürekli yukarı kayıyor.** Kullanıcı: "kullanıcı
+   kaydırmadığı sürece asla yukarı kaymamalı; klavye aç/kapa, mesaj geliyor,
+   mesaj atıyorum — sürekli kayıyor". `sohbet.dart` listesi `reverse: true`
+   yapıldı (çapa dipte), altı zamanlayıcılı `jumpTo` kovalaması kaldırıldı.
+4. ⬜ **Sürüm 1.99.0+150: APK + AAB derle, Play'e yükle.** (149 zaten
+   incelemede olduğu için sürüm kodu yükseltildi; `api.dart` sürümü de eşlendi.)
+5. ⬜ **2009alperon@gmail.com hesabına "founding member" etiketi ver.**
+6. ⬜ **GEO planındaki KALAN her madde sırayla** — §2 `Claude-User` kararı,
+   §5 içerik (ölçüm `/kisi/` sayfalarını işaret etti), §6 ölçüm kanalları.
+7. ⬜ **Sonra: SEO ve GEO'yu daha nasıl geliştirebiliriz** — araştır, plana
+   yaz, uygula.
+
+---
+
 ## 2026-08-27 — 📄 GEO planı yazıldı (`GEO-PLANI.md` v1.0)
 
 Kullanıcı: "biraz da geo tarafına odaklanalım, geo için bir plan hazırla seo gibi".

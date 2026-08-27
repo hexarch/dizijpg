@@ -15,7 +15,7 @@ import 'etiket.dart';
 import 'gonderi_istatistik.dart' show IstatistikGirisi;
 import 'medya_inceleme.dart';
 import 'giris_istem.dart';
-import 'kesfet_akis.dart' show ReelsGorunumu;
+import 'kesfet_akis.dart' show ReelsGorunumu, yanitlariAc;
 import 'ortak.dart';
 
 /// Bir yoruma eklenebilecek en çok medya.
@@ -62,8 +62,7 @@ class _YorumBolumuState extends State<YorumBolumu> {
   List<dynamic>? _yorumlar;
   bool _yorumHatasi = false; // yükleme başarısız mı (boş ≠ hata)
   final _metin = TextEditingController();
-  final _odak = FocusNode(); // Yanıtla → kutuya odaklan
-  final _kutuKey = GlobalKey(); // Yanıtla → kutuya kaydır
+  final _odak = FocusNode(); // yazma kutusunun odağı
   final List<Map<String, dynamic>> _ekler = []; // {yol, video}
   bool _ekYukleniyor = false;
   int _ekToplam =
@@ -71,7 +70,6 @@ class _YorumBolumuState extends State<YorumBolumu> {
   int _ekBiten = 0;
   bool _gonderiliyor = false;
   bool _spoiler = false; // "spoiler içerir" işareti
-  Map<String, dynamic>? _yanitlanan; // yanıt modundaki üst yorum
 
   /// Reels'in içerik kartı için: {'tur:tmdb_id': {ad, poster}}
   Map<String, dynamic> _icerikler = const {};
@@ -89,22 +87,39 @@ class _YorumBolumuState extends State<YorumBolumu> {
     super.dispose();
   }
 
-  /// Yanıtla: yazma kutusunu yanıtlanana ayarla, kutuya kaydır ve klavyeyi aç
-  /// (kutu ekranın üstünde olduğundan kullanıcı "bir şey olmadı" sanmasın).
-  void _yanitla(Map<String, dynamic> hedef) {
+  /// Yanıtla: AKIŞTAKİ İLE AYNI YÜZEY — yanıt sheet'i açılır ([yanitlariAc]).
+  ///
+  /// NEDEN DEĞİŞTİ (28 Ağu 2026, kullanıcı bildirdi: "yanıt ver deyince yukarı
+  /// çıkıyor, neden akıştaki gibi yanıt veremiyorum"): yazma kutusu yorum
+  /// bölümünün EN ÜSTÜNDE; eski davranış sayfayı oraya kaydırıyordu. Kullanıcı
+  /// yanıtladığı yorumu görüş alanından kaybediyor, klavye de kutuyu örtüyordu.
+  /// Sheet klavyenin üstünde açılıyor ve konuşma bağlamı ekranda kalıyor.
+  ///
+  /// Yorum uçları tür/tmdb taşımaz (SELECT'te yok, sayfa zaten bilir) —
+  /// sheet'in `POST /yorumlar` için ihtiyacı olduğundan burada EKLENİR;
+  /// [_medyaliYorumlar] Reels için aynısını yapıyor.
+  Future<void> _yanitla(Map<String, dynamic> hedef) async {
     if (!girisGerekli(context)) return;
-    setState(() => _yanitlanan = hedef);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final ctx = _kutuKey.currentContext;
-      if (ctx != null) {
-        Scrollable.ensureVisible(
-          ctx,
-          duration: const Duration(milliseconds: 300),
-          alignment: 0.1,
-        );
+    // Sheet HER ZAMAN üst yorumla açılır (bir yanıtın kendi yanıt listesi
+    // yoktur; iş parçacığı tek seviyedir). Hedef bir yanıtsa kaybolmasın diye
+    // sheet'e "bu satıra yanıt veriliyor" bilgisiyle girilir.
+    final ustId = hedef['ust_id'] as int?;
+    Map<String, dynamic> ust = hedef;
+    if (ustId != null) {
+      for (final y in _yorumlar ?? const []) {
+        if ((y as Map)['id'] == ustId) {
+          ust = y as Map<String, dynamic>;
+          break;
+        }
       }
-      _odak.requestFocus();
-    });
+    }
+    await yanitlariAc(context, {
+      ...ust,
+      'tur': widget.tur,
+      'tmdb_id': widget.tmdbId,
+    }, ilkYanitlanan: identical(ust, hedef) ? null : hedef);
+    // Sheet'te yazılan yanıt listede de görünsün.
+    if (mounted) await _yukle();
   }
 
   String get _sorgu => widget.sezon != null
@@ -277,11 +292,9 @@ class _YorumBolumuState extends State<YorumBolumu> {
         'metin': metin,
         'medya': _ekler.map((e) => e['yol']).toList(),
         'spoiler': _spoiler,
-        if (_yanitlanan != null) 'ust_id': _yanitlanan!['id'],
       });
       _metin.clear();
       _ekler.clear();
-      _yanitlanan = null;
       _spoiler = false;
       await _yukle();
     } catch (e) {
@@ -346,52 +359,12 @@ class _YorumBolumuState extends State<YorumBolumu> {
           GirisIstemiKarti(metin: 'Yorum yazmak için giriş yap'.c),
         if (Api.girisli)
           Card(
-            key: _kutuKey,
             margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (_yanitlanan != null)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.reply,
-                            size: 16,
-                            color: DiziRenkler.sariMetin,
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Text(
-                              '@{} kullanıcısına yanıt veriyorsun'.cf([
-                                _yanitlanan!['kullanici_adi'],
-                              ]),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: DiziRenkler.sariMetin,
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(16),
-                            onTap: () => setState(() => _yanitlanan = null),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: Icon(
-                                Icons.close,
-                                size: 16,
-                                color: DiziRenkler.metin38,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   EtiketliGirdi(
                     controller: _metin,
                     focusNode: _odak,
