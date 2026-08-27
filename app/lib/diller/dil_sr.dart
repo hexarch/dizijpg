@@ -1324,4 +1324,8 @@ const Map<String, String> cevirilerSr = {
       'Овај налог је одјављен свуда или је лозинка промењена. Пријави се поново да наставиш.',
   'Son izleme: {}': 'Последње гледано: {}',
   '{} tarihinde izledin': 'Гледано {}',
+  'Geri bildirimine yanıt verdik':
+      'Odgovorili smo na tvoju povratnu informaciju',
+  'Bu yanıt artık görüntülenemiyor.': 'Ovaj odgovor više nije dostupan.',
+  'Gönderdiğin geri bildirim': 'Povratna informacija koju si poslao',
 };

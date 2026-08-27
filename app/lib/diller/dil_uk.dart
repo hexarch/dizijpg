@@ -1325,4 +1325,7 @@ const Map<String, String> cevirilerUk = {
       'З цього облікового запису вийшли всюди або змінено пароль. Увійдіть знову, щоб продовжити.',
   'Son izleme: {}': 'Останній перегляд: {}',
   '{} tarihinde izledin': 'Переглянуто {}',
+  'Geri bildirimine yanıt verdik': 'Ми відповіли на ваш відгук',
+  'Bu yanıt artık görüntülenemiyor.': 'Цю відповідь більше не можна показати.',
+  'Gönderdiğin geri bildirim': 'Надісланий вами відгук',
 };

@@ -1293,4 +1293,7 @@ const Map<String, String> cevirilerAr = {
       'تم تسجيل الخروج من هذا الحساب في كل الأجهزة أو تغيّرت كلمة المرور. سجّل الدخول مرة أخرى للمتابعة.',
   'Son izleme: {}': 'آخر مشاهدة: {}',
   '{} tarihinde izledin': 'شاهدته في {}',
+  'Geri bildirimine yanıt verdik': 'لقد رددنا على ملاحظاتك',
+  'Bu yanıt artık görüntülenemiyor.': 'لم يعد بالإمكان عرض هذا الرد.',
+  'Gönderdiğin geri bildirim': 'الملاحظات التي أرسلتها',
 };

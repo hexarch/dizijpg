@@ -1341,4 +1341,8 @@ const Map<String, String> cevirilerEl = {
       'Έγινε αποσύνδεση αυτού του λογαριασμού παντού ή άλλαξε ο κωδικός. Συνδέσου ξανά για να συνεχίσεις.',
   'Son izleme: {}': 'Τελευταία προβολή: {}',
   '{} tarihinde izledin': 'Το είδες στις {}',
+  'Geri bildirimine yanıt verdik': 'Απαντήσαμε στα σχόλιά σου',
+  'Bu yanıt artık görüntülenemiyor.':
+      'Αυτή η απάντηση δεν είναι πλέον διαθέσιμη.',
+  'Gönderdiğin geri bildirim': 'Τα σχόλια που έστειλες',
 };

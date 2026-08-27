@@ -1332,4 +1332,7 @@ const Map<String, String> cevirilerIt = {
       'Questo account è stato disconnesso ovunque o la password è cambiata. Accedi di nuovo per continuare.',
   'Son izleme: {}': 'Visto l\'ultima volta: {}',
   '{} tarihinde izledin': 'Visto il {}',
+  'Geri bildirimine yanıt verdik': 'Abbiamo risposto al tuo feedback',
+  'Bu yanıt artık görüntülenemiyor.': 'Questa risposta non è più disponibile.',
+  'Gönderdiğin geri bildirim': 'Il feedback che hai inviato',
 };

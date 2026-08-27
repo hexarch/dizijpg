@@ -1324,4 +1324,7 @@ const Map<String, String> cevirilerRu = {
       'Из этого аккаунта вышли на всех устройствах или изменился пароль. Войдите снова, чтобы продолжить.',
   'Son izleme: {}': 'Последний просмотр: {}',
   '{} tarihinde izledin': 'Просмотрено {}',
+  'Geri bildirimine yanıt verdik': 'Мы ответили на ваш отзыв',
+  'Bu yanıt artık görüntülenemiyor.': 'Этот ответ больше недоступен.',
+  'Gönderdiğin geri bildirim': 'Отправленный вами отзыв',
 };

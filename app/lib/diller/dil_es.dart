@@ -1337,4 +1337,7 @@ const Map<String, String> cevirilerEs = {
       'Se cerró la sesión de esta cuenta en todos los dispositivos o cambió su contraseña. Inicia sesión de nuevo.',
   'Son izleme: {}': 'Visto por última vez: {}',
   '{} tarihinde izledin': 'Visto el {}',
+  'Geri bildirimine yanıt verdik': 'Respondimos a tus comentarios',
+  'Bu yanıt artık görüntülenemiyor.': 'Esta respuesta ya no está disponible.',
+  'Gönderdiğin geri bildirim': 'Los comentarios que enviaste',
 };

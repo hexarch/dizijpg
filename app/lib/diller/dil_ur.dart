@@ -1317,4 +1317,7 @@ const Map<String, String> cevirilerUr = {
       'اس اکاؤنٹ کو ہر جگہ سے سائن آؤٹ کر دیا گیا یا پاس ورڈ بدل گیا۔ جاری رکھنے کے لیے دوبارہ سائن ان کریں۔',
   'Son izleme: {}': 'آخری بار دیکھا: {}',
   '{} tarihinde izledin': '{} کو دیکھا',
+  'Geri bildirimine yanıt verdik': 'ہم نے آپ کی رائے کا جواب دیا',
+  'Bu yanıt artık görüntülenemiyor.': 'یہ جواب اب دکھایا نہیں جا سکتا۔',
+  'Gönderdiğin geri bildirim': 'آپ کی بھیجی گئی رائے',
 };

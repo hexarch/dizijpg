@@ -1331,4 +1331,7 @@ const Map<String, String> cevirilerHu = {
       'Ezt a fiókot mindenhonnan kiléptették, vagy megváltozott a jelszava. A folytatáshoz jelentkezz be újra.',
   'Son izleme: {}': 'Utoljára megnézve: {}',
   '{} tarihinde izledin': 'Megnézve: {}',
+  'Geri bildirimine yanıt verdik': 'Válaszoltunk a visszajelzésedre',
+  'Bu yanıt artık görüntülenemiyor.': 'Ez a válasz már nem jeleníthető meg.',
+  'Gönderdiğin geri bildirim': 'Az általad küldött visszajelzés',
 };

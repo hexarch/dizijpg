@@ -1274,4 +1274,7 @@ const Map<String, String> cevirilerAm = {
       'ይህ መለያ በሁሉም ቦታ ወጥቷል ወይም የይለፍ ቃሉ ተቀይሯል። ለመቀጠል እንደገና ይግቡ።',
   'Son izleme: {}': 'መጨረሻ የታየው: {}',
   '{} tarihinde izledin': '{} ላይ ተመልክተዋል',
+  'Geri bildirimine yanıt verdik': 'ለአስተያየትህ መልስ ሰጥተናል',
+  'Bu yanıt artık görüntülenemiyor.': 'ይህ መልስ ከእንግዲህ አይታይም።',
+  'Gönderdiğin geri bildirim': 'የላክኸው አስተያየት',
 };

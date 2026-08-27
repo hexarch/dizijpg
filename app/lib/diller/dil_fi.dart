@@ -1328,4 +1328,7 @@ const Map<String, String> cevirilerFi = {
       'Tämä tili kirjattiin ulos kaikkialta tai salasana vaihtui. Kirjaudu uudelleen jatkaaksesi.',
   'Son izleme: {}': 'Viimeksi katsottu: {}',
   '{} tarihinde izledin': 'Katsottu {}',
+  'Geri bildirimine yanıt verdik': 'Vastasimme palautteeseesi',
+  'Bu yanıt artık görüntülenemiyor.': 'Tätä vastausta ei voi enää näyttää.',
+  'Gönderdiğin geri bildirim': 'Lähettämäsi palaute',
 };

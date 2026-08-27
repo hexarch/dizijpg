@@ -1750,22 +1750,22 @@ const buzLimiti = hizLimiti(60, (req) => `bz:${req.kullanici.id}`);
 // (özne "серия", dişil), ar 'صدرت' (özne "حلقة", dişil).
 // Kilit: test/cinsiyetsiz_dil.test.js.
 const PUSH_SABLON = {
-  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}' },
-  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}' },
-  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}' },
-  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}' },
-  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}' },
-  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}' },
-  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}' },
-  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}' },
-  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}' },
-  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}' },
-  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}' },
-  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}' },
-  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}' },
-  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}' },
-  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}' },
-  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}' },
+  tr: { takip: '{ad} seni takip etmeye başladı', begeni: '{ad} yorumunu beğendi', yanit: '{ad} yorumuna yanıt verdi', mesaj: '{ad} sana mesaj gönderdi', etiket: '{ad} bir yorumda seni etiketledi', arama: '{ad} seni arıyor', kacirilan_arama: '{ad} seni aradı', bolum: '{dizi} {sb} yayınlandı', kisi: '{kisi} yeni bir yapımda: {yapim}', geri_bildirim: 'Geri bildirimine yanıt verdik' },
+  en: { takip: '{ad} started following you', begeni: '{ad} liked your comment', yanit: '{ad} replied to your comment', mesaj: '{ad} sent you a message', etiket: '{ad} mentioned you in a comment', arama: '{ad} is calling you', kacirilan_arama: '{ad} called you', bolum: '{dizi} {sb} is out', kisi: 'New from {kisi}: {yapim}', geri_bildirim: 'We replied to your feedback' },
+  es: { takip: '{ad} empezó a seguirte', begeni: '{ad} le gustó tu comentario', yanit: '{ad} respondió a tu comentario', mesaj: '{ad} te envió un mensaje', etiket: '{ad} te mencionó en un comentario', arama: '{ad} te está llamando', kacirilan_arama: '{ad} te llamó', bolum: 'Ya está disponible {dizi} {sb}', kisi: 'Novedad de {kisi}: {yapim}', geri_bildirim: 'Respondimos a tus comentarios' },
+  pt: { takip: '{ad} começou a te seguir', begeni: '{ad} curtiu seu comentário', yanit: '{ad} respondeu ao seu comentário', mesaj: '{ad} te enviou uma mensagem', etiket: '{ad} te mencionou em um comentário', arama: '{ad} está te ligando', kacirilan_arama: '{ad} te ligou', bolum: '{dizi} {sb} já está disponível', kisi: 'Novidade de {kisi}: {yapim}', geri_bildirim: 'Respondemos ao seu feedback' },
+  de: { takip: '{ad} folgt dir jetzt', begeni: '{ad} gefällt dein Kommentar', yanit: '{ad} hat auf deinen Kommentar geantwortet', mesaj: '{ad} hat dir eine Nachricht geschickt', etiket: '{ad} hat dich in einem Kommentar erwähnt', arama: '{ad} ruft dich an', kacirilan_arama: '{ad} hat dich angerufen', bolum: '{dizi} {sb} ist da', kisi: 'Neu von {kisi}: {yapim}', geri_bildirim: 'Wir haben auf dein Feedback geantwortet' },
+  fr: { takip: '{ad} te suit maintenant', begeni: '{ad} a aimé ton commentaire', yanit: '{ad} a répondu à ton commentaire', mesaj: '{ad} t\'a envoyé un message', etiket: 'Mention de {ad} dans un commentaire', arama: '{ad} t\'appelle', kacirilan_arama: 'Appel manqué de {ad}', bolum: '{dizi} {sb} est disponible', kisi: 'Nouveauté de {kisi} : {yapim}', geri_bildirim: 'Nous avons répondu à ton retour' },
+  it: { takip: '{ad} ha iniziato a seguirti', begeni: '{ad} ha messo mi piace al tuo commento', yanit: '{ad} ha risposto al tuo commento', mesaj: '{ad} ti ha inviato un messaggio', etiket: 'Menzione da {ad} in un commento', arama: '{ad} ti sta chiamando', kacirilan_arama: 'Chiamata persa da {ad}', bolum: '{dizi} {sb} è disponibile', kisi: 'Novità di {kisi}: {yapim}', geri_bildirim: 'Abbiamo risposto al tuo feedback' },
+  ru: { takip: 'Новый подписчик: {ad}', begeni: 'Новая оценка твоего комментария: {ad}', yanit: 'Новый ответ на твой комментарий: {ad}', mesaj: 'Новое сообщение от {ad}', etiket: 'Упоминание от {ad} в комментарии', arama: '{ad} звонит тебе', kacirilan_arama: 'Пропущенный звонок от {ad}', bolum: 'Вышла серия {dizi} {sb}', kisi: 'Новинка с участием {kisi}: {yapim}', geri_bildirim: 'Мы ответили на ваш отзыв' },
+  ar: { takip: 'متابعة جديدة: {ad}', begeni: 'إعجاب جديد بتعليقك: {ad}', yanit: 'رد جديد على تعليقك: {ad}', mesaj: 'رسالة جديدة من {ad}', etiket: 'إشارة إليك من {ad} في تعليق', arama: 'مكالمة واردة من {ad}', kacirilan_arama: 'مكالمة فائتة من {ad}', bolum: 'صدرت {dizi} {sb}', kisi: 'جديد من {kisi}: {yapim}', geri_bildirim: 'لقد رددنا على ملاحظاتك' },
+  hi: { takip: '{ad} ने आपको फ़ॉलो किया', begeni: '{ad} ने आपके कमेंट को पसंद किया', yanit: '{ad} ने आपके कमेंट का जवाब दिया', mesaj: '{ad} ने आपको मैसेज भेजा', etiket: '{ad} ने एक कमेंट में आपको मेंशन किया', arama: '{ad} की ओर से कॉल आ रही है', kacirilan_arama: '{ad} ने आपको कॉल किया', bolum: '{dizi} {sb} आ गया है', kisi: '{kisi} का नया काम: {yapim}', geri_bildirim: 'हमने आपके फ़ीडबैक का जवाब दिया' },
+  id: { takip: '{ad} mulai mengikutimu', begeni: '{ad} menyukai komentarmu', yanit: '{ad} membalas komentarmu', mesaj: '{ad} mengirimimu pesan', etiket: '{ad} menyebutmu di komentar', arama: '{ad} sedang meneleponmu', kacirilan_arama: '{ad} meneleponmu', bolum: '{dizi} {sb} sudah tayang', kisi: 'Baru dari {kisi}: {yapim}', geri_bildirim: 'Kami membalas masukanmu' },
+  ja: { takip: '{ad}さんがあなたをフォローしました', begeni: '{ad}さんがあなたのコメントにいいねしました', yanit: '{ad}さんがあなたのコメントに返信しました', mesaj: '{ad}さんがメッセージを送りました', etiket: '{ad}さんがコメントであなたをメンションしました', arama: '{ad}さんが着信中です', kacirilan_arama: '{ad}さんから不在着信があります', bolum: '{dizi} {sb} が配信されました', kisi: '{kisi}さんの新作: {yapim}', geri_bildirim: 'フィードバックに返信しました' },
+  ko: { takip: '{ad}님이 회원님을 팔로우했어요', begeni: '{ad}님이 회원님의 댓글을 좋아해요', yanit: '{ad}님이 회원님의 댓글에 답글을 남겼어요', mesaj: '{ad}님이 메시지를 보냈어요', etiket: '{ad}님이 댓글에서 회원님을 언급했어요', arama: '{ad}님이 전화를 걸고 있어요', kacirilan_arama: '{ad}님의 부재중 전화가 있어요', bolum: '{dizi} {sb}이(가) 공개됐어요', kisi: '{kisi}님의 신작: {yapim}', geri_bildirim: '보내주신 의견에 답변했어요' },
+  zh: { takip: '{ad} 关注了你', begeni: '{ad} 赞了你的评论', yanit: '{ad} 回复了你的评论', mesaj: '{ad} 给你发了消息', etiket: '{ad} 在评论中提到了你', arama: '{ad} 正在呼叫你', kacirilan_arama: '{ad} 给你打过电话', bolum: '{dizi} {sb} 已更新', kisi: '{kisi} 的新作: {yapim}', geri_bildirim: '我们回复了你的反馈' },
+  nl: { takip: '{ad} volgt je nu', begeni: '{ad} vindt je reactie leuk', yanit: '{ad} heeft op je reactie gereageerd', mesaj: '{ad} heeft je een bericht gestuurd', etiket: '{ad} heeft je genoemd in een reactie', arama: '{ad} belt je', kacirilan_arama: '{ad} heeft je gebeld', bolum: '{dizi} {sb} is uit', kisi: 'Nieuw van {kisi}: {yapim}', geri_bildirim: 'We hebben op je feedback gereageerd' },
+  pl: { takip: '{ad} obserwuje cię teraz', begeni: '{ad} lubi twój komentarz', yanit: 'Nowa odpowiedź na twój komentarz: {ad}', mesaj: 'Nowa wiadomość od {ad}', etiket: 'Wzmianka od {ad} w komentarzu', arama: '{ad} dzwoni do ciebie', kacirilan_arama: 'Nieodebrane połączenie od {ad}', bolum: '{dizi} {sb} już jest', kisi: 'Nowość od {kisi}: {yapim}', geri_bildirim: 'Odpowiedzieliśmy na Twoją opinię' },
 };
 
 /**
@@ -1814,7 +1814,11 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
             .replace('{kisi}', String(ekstra.kisi_adi).slice(0, 100))
             .replace('{yapim}', String(ekstra.yapim_adi).slice(0, 100))
           : '')
-        : (sablon[tur] || '').replace('{ad}', ad);
+        // Geri bildirim yanıtı AKTÖRSÜZDÜR: gönderen SİTEDİR, bir kullanıcı
+        // değil. '@' kalıbına GİRMEZ, şablonda {ad} yer tutucusu da yoktur.
+        : tur === 'geri_bildirim'
+          ? (sablon.geri_bildirim || '')
+          : (sablon[tur] || '').replace('{ad}', ad);
     if (!govde) return;
     const tokens = tok.rows.map((r) => r.token);
     // Derin bağlantı + görsel için ortak veri (FCM data değerleri string olmalı)
@@ -1825,6 +1829,12 @@ async function pushBildirim(aliciId, tur, aktorId, ekstra = null) {
     };
     // Beğeni/yanıt/etiket: dokununca doğrudan o gönderiye gidilebilsin
     if (ekstra?.yorum_id) veri.yorum_id = String(ekstra.yorum_id);
+    // Geri bildirim yanıtı: istemci bildirim listesinde bu satırı bulup
+    // yanıtı açabilsin (metin push'ta GİTMEZ — 4 KB veri sınırı ve yanıt
+    // panelden düzeltilebiliyor; tek doğru kaynak veritabanıdır).
+    if (tur === 'geri_bildirim') {
+      veri.geri_bildirim_id = String(ekstra?.geri_bildirim_id ?? '');
+    }
     // Yeni bölüm: dokununca bölüm sayfasına (FCM data değerleri STRING olmalı)
     if (tur === 'bolum') {
       veri.tmdb_id = String(ekstra?.tmdb_id ?? '');
@@ -1938,6 +1948,41 @@ async function bildirimEkle(aliciId, tur, aktorId, yorumId = null, pushEkstra = 
   ).catch(() => {});
   // Push data'sına yorum_id de gider (dokununca doğrudan gönderiye)
   pushBildirim(aliciId, tur, aktorId, { ...(pushEkstra || {}), yorum_id: yorumId });
+}
+
+/**
+ * GERİ BİLDİRİM YANITI bildirimi yazar (28 Ağu 2026).
+ *
+ * NEDEN `bildirimEkle` DEĞİL — `bolumBildirimiEkle` ile aynı üç gerekçe:
+ *  1) AKTÖR YOK: gönderen SİTEDİR. `bildirimEkle`nin ilk satırı aktör varsayar.
+ *  2) `bildirimEkle` INSERT hatasını yutup KOŞULSUZ push atar; burada push
+ *     yalnız satır GERÇEKTEN yazıldıysa gitmeli (aynı geri bildirime ikinci
+ *     kez yanıt yazılırsa kullanıcıya ikinci push gitmesin).
+ *  3) Sütun farklı: `yorum_id` yerine `geri_bildirim_id`.
+ *
+ * TERCİH KAPISI YOK — BİLİNÇLİ: bu, kullanıcının BİZE yazdığı bir mesaja
+ * verilen doğrudan cevaptır; "bildirimleri kapat" tercihleri başkalarının
+ * etkileşimleri içindir. Kendi sorusunun cevabını kaçırmak istemez.
+ *
+ * @returns {Promise<boolean>} satır GERÇEKTEN yazıldı mı
+ */
+async function geriBildirimYanitBildirimi(aliciId, geriBildirimId) {
+  if (!aliciId || !gecerliTmdb(geriBildirimId)) return false;
+  // ON CONFLICT çıkarımı `bildirimler_geri_bildirim_tekil` kısmi indeksine
+  // dayanır; WHERE yan tümcesi indeksin yüklemiyle BİREBİR aynı olmalı.
+  const y = await havuz.query(
+    `INSERT INTO bildirimler (kullanici_id, tur, geri_bildirim_id)
+     VALUES ($1,'geri_bildirim',$2)
+     ON CONFLICT (kullanici_id, geri_bildirim_id) WHERE tur='geri_bildirim'
+     DO NOTHING`,
+    [aliciId, geriBildirimId],
+  ).catch((e) => {
+    console.error('geri bildirim bildirimi:', e.message);
+    return { rowCount: 0 };
+  });
+  if (!y.rowCount) return false; // zaten bildirilmiş → push da YOK
+  pushBildirim(aliciId, 'geri_bildirim', null, { geri_bildirim_id: geriBildirimId });
+  return true;
 }
 
 /**
@@ -12499,10 +12544,17 @@ app.get('/bildirimler', girisZorunlu, sarici(async (req, res) => {
               b.kisi_id, b.icerik_tur,
               k.kullanici_adi AS aktor, k.avatar AS aktor_avatar,
               y.tur AS yorum_tur, y.tmdb_id AS yorum_tmdb,
-              y.sezon AS yorum_sezon, y.bolum AS yorum_bolum
+              y.sezon AS yorum_sezon, y.bolum AS yorum_bolum,
+              -- Geri bildirim yanıtı: metin BİLDİRİMDE DEĞİL, kaynağında
+              -- durur (yanıt panelden düzeltilirse kopya ayrışmasın).
+              -- Kullanıcının kendi yazdığı da gelir: aylar sonra açılan
+              -- yanıtta bağlam kalsın (mailde de aynı disiplin var).
+              g.yanit_metni AS geri_bildirim_yanit,
+              g.metin       AS geri_bildirim_metin
        FROM bildirimler b
        LEFT JOIN kullanicilar k ON k.id = b.aktor_id
        LEFT JOIN yorumlar y ON y.id = b.yorum_id
+       LEFT JOIN geri_bildirimler g ON g.id = b.geri_bildirim_id
        -- MESAJ BİLDİRİMLERİ BU LİSTEDE YOK (27 Ağu 2026, kullanıcı bildirdi:
        -- "beni takip edenleri göstermiyor... beğenen yorum yapanlar da yok").
        --
@@ -17743,6 +17795,12 @@ app.post('/admin/geri-bildirim-yanit', adminKisit, sarici(async (req, res) => {
     `UPDATE geri_bildirimler SET yanit_metni=$1, yanit_tarihi=now(),
        durum=CASE WHEN durum='yeni' THEN 'okundu' ELSE durum END WHERE id=$2`,
     [govde, id]);
+  // UYGULAMA İÇİ BİLDİRİM (28 Ağu 2026) — mailin YERİNE değil, YANINDA.
+  // Mail hattı kusursuz değil (`mailler`de sifirlama türünde 3 gönderildi /
+  // 2 hata) ve noreply+yeni alan adı spam'e düşebiliyor; kullanıcı en azından
+  // uygulamada görsün. SIRA ÖNEMLİ: UPDATE'ten SONRA çağrılır, çünkü istemci
+  // bildirime dokununca `yanit_metni`ni okuyacak — önce yazılmış olmalı.
+  await geriBildirimYanitBildirimi(rows[0].kullanici_id, id);
   res.json({ durum: 'ok', kime: rows[0].email });
 }));
 

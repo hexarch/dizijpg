@@ -1326,4 +1326,8 @@ const Map<String, String> cevirilerMs = {
       'Akaun ini telah log keluar di semua tempat atau kata laluannya berubah. Log masuk semula untuk teruskan.',
   'Son izleme: {}': 'Terakhir ditonton: {}',
   '{} tarihinde izledin': 'Ditonton pada {}',
+  'Geri bildirimine yanıt verdik': 'Kami membalas maklum balas anda',
+  'Bu yanıt artık görüntülenemiyor.':
+      'Balasan ini tidak dapat dipaparkan lagi.',
+  'Gönderdiğin geri bildirim': 'Maklum balas yang anda hantar',
 };

@@ -1304,4 +1304,7 @@ const Map<String, String> cevirilerFa = {
       'از این حساب در همه دستگاه‌ها خارج شده یا رمز عبور تغییر کرده است. برای ادامه دوباره وارد شوید.',
   'Son izleme: {}': 'آخرین تماشا: {}',
   '{} tarihinde izledin': 'در {} تماشا کردی',
+  'Geri bildirimine yanıt verdik': 'به بازخورد شما پاسخ دادیم',
+  'Bu yanıt artık görüntülenemiyor.': 'این پاسخ دیگر قابل نمایش نیست.',
+  'Gönderdiğin geri bildirim': 'بازخوردی که فرستادید',
 };

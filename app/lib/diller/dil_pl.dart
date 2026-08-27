@@ -1335,4 +1335,7 @@ const Map<String, String> cevirilerPl = {
       'To konto zostało wylogowane wszędzie lub zmieniono jego hasło. Zaloguj się ponownie, aby kontynuować.',
   'Son izleme: {}': 'Ostatnio oglądane: {}',
   '{} tarihinde izledin': 'Obejrzane {}',
+  'Geri bildirimine yanıt verdik': 'Odpowiedzieliśmy na Twoją opinię',
+  'Bu yanıt artık görüntülenemiyor.': 'Ta odpowiedź nie jest już dostępna.',
+  'Gönderdiğin geri bildirim': 'Wysłana przez Ciebie opinia',
 };

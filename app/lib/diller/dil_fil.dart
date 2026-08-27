@@ -1342,4 +1342,7 @@ const Map<String, String> cevirilerFil = {
       'Na-sign out ang account na ito sa lahat ng device o nagbago ang password. Mag-sign in ulit para magpatuloy.',
   'Son izleme: {}': 'Huling napanood: {}',
   '{} tarihinde izledin': 'Napanood noong {}',
+  'Geri bildirimine yanıt verdik': 'Sinagot namin ang feedback mo',
+  'Bu yanıt artık görüntülenemiyor.': 'Hindi na makikita ang sagot na ito.',
+  'Gönderdiğin geri bildirim': 'Ang feedback na ipinadala mo',
 };

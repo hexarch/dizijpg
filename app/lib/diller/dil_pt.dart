@@ -1342,4 +1342,7 @@ const Map<String, String> cevirilerPt = {
       'Esta conta foi desconectada em todos os dispositivos ou a senha mudou. Entre novamente para continuar.',
   'Son izleme: {}': 'Visto pela última vez: {}',
   '{} tarihinde izledin': 'Visto em {}',
+  'Geri bildirimine yanıt verdik': 'Respondemos ao seu feedback',
+  'Bu yanıt artık görüntülenemiyor.': 'Esta resposta não está mais disponível.',
+  'Gönderdiğin geri bildirim': 'O feedback que você enviou',
 };

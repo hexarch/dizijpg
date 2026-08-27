@@ -1324,4 +1324,7 @@ const Map<String, String> cevirilerBg = {
       'Този акаунт беше изведен навсякъде или паролата му е сменена. Влез отново, за да продължиш.',
   'Son izleme: {}': 'Последно гледано: {}',
   '{} tarihinde izledin': 'Гледано на {}',
+  'Geri bildirimine yanıt verdik': 'Отговорихме на обратната ви връзка',
+  'Bu yanıt artık görüntülenemiyor.': 'Този отговор вече не може да се покаже.',
+  'Gönderdiğin geri bildirim': 'Изпратената от вас обратна връзка',
 };

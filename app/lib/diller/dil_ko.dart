@@ -1258,4 +1258,7 @@ const Map<String, String> cevirilerKo = {
       '이 계정이 모든 기기에서 로그아웃되었거나 비밀번호가 변경되었습니다. 계속하려면 다시 로그인하세요.',
   'Son izleme: {}': '마지막 시청: {}',
   '{} tarihinde izledin': '{}에 시청함',
+  'Geri bildirimine yanıt verdik': '보내주신 의견에 답변했어요',
+  'Bu yanıt artık görüntülenemiyor.': '이 답변은 더 이상 볼 수 없어요.',
+  'Gönderdiğin geri bildirim': '보내주신 의견',
 };

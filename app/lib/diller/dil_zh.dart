@@ -1241,4 +1241,7 @@ const Map<String, String> cevirilerZh = {
       '此账号已在所有设备退出登录，或密码已更改。请重新登录以继续。',
   'Son izleme: {}': '最近观看：{}',
   '{} tarihinde izledin': '观看于 {}',
+  'Geri bildirimine yanıt verdik': '我们回复了你的反馈',
+  'Bu yanıt artık görüntülenemiyor.': '此回复已无法显示。',
+  'Gönderdiğin geri bildirim': '你发送的反馈',
 };

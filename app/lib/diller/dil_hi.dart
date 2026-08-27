@@ -1314,4 +1314,7 @@ const Map<String, String> cevirilerHi = {
       'इस खाते को सभी जगह से साइन आउट किया गया या पासवर्ड बदला गया। जारी रखने के लिए फिर से साइन इन करें।',
   'Son izleme: {}': 'आखिरी बार देखा: {}',
   '{} tarihinde izledin': '{} को देखा',
+  'Geri bildirimine yanıt verdik': 'हमने आपके फ़ीडबैक का जवाब दिया',
+  'Bu yanıt artık görüntülenemiyor.': 'यह जवाब अब नहीं दिखाया जा सकता।',
+  'Gönderdiğin geri bildirim': 'आपका भेजा गया फ़ीडबैक',
 };

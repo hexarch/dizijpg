@@ -1327,4 +1327,7 @@ const Map<String, String> cevirilerNl = {
       'Dit account is overal afgemeld of het wachtwoord is gewijzigd. Log opnieuw in om door te gaan.',
   'Son izleme: {}': 'Laatst bekeken: {}',
   '{} tarihinde izledin': 'Bekeken op {}',
+  'Geri bildirimine yanıt verdik': 'We hebben op je feedback gereageerd',
+  'Bu yanıt artık görüntülenemiyor.': 'Deze reactie is niet meer beschikbaar.',
+  'Gönderdiğin geri bildirim': 'De feedback die je stuurde',
 };

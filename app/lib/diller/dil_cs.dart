@@ -1314,4 +1314,7 @@ const Map<String, String> cevirilerCs = {
       'Tento účet byl odhlášen všude nebo se změnilo heslo. Pokračujte opětovným přihlášením.',
   'Son izleme: {}': 'Naposledy zhlédnuto: {}',
   '{} tarihinde izledin': 'Zhlédnuto {}',
+  'Geri bildirimine yanıt verdik': 'Odpověděli jsme na tvou zpětnou vazbu',
+  'Bu yanıt artık görüntülenemiyor.': 'Tuto odpověď už nelze zobrazit.',
+  'Gönderdiğin geri bildirim': 'Zpětná vazba, kterou jsi poslal',
 };

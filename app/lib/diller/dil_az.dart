@@ -1313,4 +1313,7 @@ const Map<String, String> cevirilerAz = {
       'Bu hesabdan hər yerdə çıxış edilib və ya şifrəsi dəyişib. Davam etmək üçün yenidən daxil olun.',
   'Son izleme: {}': 'Son baxış: {}',
   '{} tarihinde izledin': '{} tarixində baxdın',
+  'Geri bildirimine yanıt verdik': 'Rəyinizə cavab verdik',
+  'Bu yanıt artık görüntülenemiyor.': 'Bu cavab artıq göstərilə bilmir.',
+  'Gönderdiğin geri bildirim': 'Göndərdiyiniz rəy',
 };

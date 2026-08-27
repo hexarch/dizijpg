@@ -123,6 +123,17 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
               ? '{} {} yayınlandı'.cf([b['dizi_adi'], _sezonBolum(b)])
               : 'Yeni bölüm yayınlandı'.c,
         );
+      // 28 Ağu 2026 — GERİ BİLDİRİM YANITI. Üçüncü aktörsüz tür: gönderen
+      // SİTEDİR, bir kullanıcı değil; '@' kalıbına GİRMEZ.
+      //
+      // NEDEN VAR: yanıt bugüne kadar YALNIZ e-postayla gidiyordu, kullanıcı
+      // mailini açmazsa haberi olmuyordu (üstelik mail hattında ölçülmüş
+      // hatalar var). Artık zil de haber veriyor ve metin burada okunuyor.
+      case 'geri_bildirim':
+        return (
+          Icons.mark_email_read_outlined,
+          'Geri bildirimine yanıt verdik'.c,
+        );
       case 'kisi':
         // Md. 28 — aktörsüz ikinci tür. Adlar TMDB'den gelir ve KULLANICI ADI
         // DEĞİLDİR: "@" kalıbına GİRMEZ. Sunucu TMDB'den ad çekemediyse
@@ -178,7 +189,10 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
             // AKTÖRSÜZ TÜRLERDE ('bolum' md.27, 'kisi' md.28) avatar yerine
             // YAPIMIN POSTERİ durur; kişi ikonu koymak "biri bir şey yaptı"
             // der ve yanıltıcı olurdu.
-            final aktorsuz = b['tur'] == 'bolum' || b['tur'] == 'kisi';
+            final aktorsuz =
+                b['tur'] == 'bolum' ||
+                b['tur'] == 'kisi' ||
+                b['tur'] == 'geri_bildirim';
             final avatar = aktorsuz
                 ? posterUrl(b['poster'] as String?, boyut: 'w185')
                 : dosyaUrl(b['aktor_avatar'] as String?);
@@ -202,6 +216,10 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                           ? Icon(switch (b['tur']) {
                               'bolum' => Icons.tv_outlined,
                               'kisi' => Icons.movie_outlined,
+                              // Geri bildirim yanıtının posteri/avatarı YOK;
+                              // kişi ikonu "biri bir şey yaptı" der ve
+                              // yanıltırdı.
+                              'geri_bildirim' => Icons.support_agent,
                               _ => Icons.person,
                             }, color: DiziRenkler.metin38)
                           : null,
@@ -234,10 +252,21 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
                 // Hedefi olmayan satır TIKLANMAZ (onTap null → dalga da yok):
                 // "dokundum, hiçbir şey olmadı" hissi vermek yerine satır
                 // baştan etkileşimsiz görünsün.
-                onTap: switch (_hedef(b)) {
-                  final String yol => () => context.push(yol),
-                  _ => null,
-                },
+                // GERİ BİLDİRİM YANITI GİDİLECEK BİR SAYFA DEĞİL, OKUNACAK
+                // BİR METİNDİR: rota yerine modal açılır (gönderi detayıyla
+                // aynı kalıp). Ayrı bir ekran/rota açmak robots.txt ve derin
+                // bağlantı tarafında bedel getirirdi; metin tek yerde yaşıyor.
+                onTap: b['tur'] == 'geri_bildirim'
+                    ? () => showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: DiziRenkler.koyuGri,
+                        builder: (_) => _GeriBildirimYanitSheet(bildirim: b),
+                      )
+                    : switch (_hedef(b)) {
+                        final String yol => () => context.push(yol),
+                        _ => null,
+                      },
               ),
             );
           },
@@ -250,6 +279,88 @@ class _BildirimlerEkraniState extends State<BildirimlerEkrani> {
       // PC'de akış ile AYNI ortalanmış okuma kolonu (madde 26); mobilde kısıt
       // bağlamaz.
       body: OrtaKolon(azami: masaustuKolonGenisligi, cocuk: govde),
+    );
+  }
+}
+
+/// Geri bildirim yanıtının okunduğu modal (28 Ağu 2026).
+///
+/// NEDEN MODAL, NEDEN AYRI EKRAN DEĞİL: bu bir gezinilecek yüzey değil, tek
+/// seferlik okunacak bir metin. Ayrı rota açmak robots.txt kuralı, derin
+/// bağlantı ve `yonlendirme.dart` tablosu (SEO soft-404 testi bu tabloyu
+/// kilitliyor) demek olurdu — hepsi okunacak iki paragraf için.
+///
+/// KULLANICININ KENDİ YAZDIĞI DA GÖSTERİLİR: yanıt aylar sonra gelebiliyor,
+/// "neye cevap bu?" sorusu kalmasın. Mail gövdesinde de aynı disiplin var
+/// (server.js, `/admin/geri-bildirim-yanit` alıntı bloğu).
+class _GeriBildirimYanitSheet extends StatelessWidget {
+  final Map<String, dynamic> bildirim;
+  const _GeriBildirimYanitSheet({required this.bildirim});
+
+  @override
+  Widget build(BuildContext context) {
+    final yanit = (bildirim['geri_bildirim_yanit'] as String? ?? '').trim();
+    final soru = (bildirim['geri_bildirim_metin'] as String? ?? '').trim();
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.5,
+      minChildSize: 0.3,
+      maxChildSize: 0.9,
+      builder: (context, kontrol) => ListView(
+        controller: kontrol,
+        padding: EdgeInsets.fromLTRB(
+          18,
+          18,
+          18,
+          altGuvenli(context, ekstra: 20),
+        ),
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.support_agent, color: DiziRenkler.sari),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Geri bildirimine yanıt verdik'.c,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          // Yanıt sunucudan gelmezse (geri bildirim silinmiş) boş bir kutu
+          // göstermek yerine sebebi söylenir — sessiz boşluk yasak.
+          Text(
+            yanit.isNotEmpty ? yanit : 'Bu yanıt artık görüntülenemiyor.'.c,
+            style: const TextStyle(height: 1.55, fontSize: 14),
+          ),
+          if (soru.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            Divider(color: DiziRenkler.metin38.withValues(alpha: 0.3)),
+            const SizedBox(height: 12),
+            Text(
+              'Gönderdiğin geri bildirim'.c,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: DiziRenkler.metin54,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              soru,
+              style: TextStyle(
+                height: 1.5,
+                fontSize: 13,
+                color: DiziRenkler.metin54,
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

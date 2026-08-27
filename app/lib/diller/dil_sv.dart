@@ -1331,4 +1331,7 @@ const Map<String, String> cevirilerSv = {
       'Det här kontot loggades ut överallt eller så ändrades lösenordet. Logga in igen för att fortsätta.',
   'Son izleme: {}': 'Senast sedd: {}',
   '{} tarihinde izledin': 'Sedd {}',
+  'Geri bildirimine yanıt verdik': 'Vi har svarat på din feedback',
+  'Bu yanıt artık görüntülenemiyor.': 'Det här svaret kan inte längre visas.',
+  'Gönderdiğin geri bildirim': 'Feedbacken du skickade',
 };

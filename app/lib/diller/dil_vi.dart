@@ -1321,4 +1321,7 @@ const Map<String, String> cevirilerVi = {
       'Tài khoản này đã đăng xuất ở mọi nơi hoặc mật khẩu đã đổi. Đăng nhập lại để tiếp tục.',
   'Son izleme: {}': 'Xem lần cuối: {}',
   '{} tarihinde izledin': 'Đã xem ngày {}',
+  'Geri bildirimine yanıt verdik': 'Chúng tôi đã phản hồi góp ý của bạn',
+  'Bu yanıt artık görüntülenemiyor.': 'Không thể hiển thị phản hồi này nữa.',
+  'Gönderdiğin geri bildirim': 'Góp ý bạn đã gửi',
 };

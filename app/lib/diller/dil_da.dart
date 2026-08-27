@@ -1322,4 +1322,7 @@ const Map<String, String> cevirilerDa = {
       'Denne konto blev logget ud overalt, eller adgangskoden blev ændret. Log ind igen for at fortsætte.',
   'Son izleme: {}': 'Sidst set: {}',
   '{} tarihinde izledin': 'Set den {}',
+  'Geri bildirimine yanıt verdik': 'Vi har svaret på din feedback',
+  'Bu yanıt artık görüntülenemiyor.': 'Dette svar kan ikke længere vises.',
+  'Gönderdiğin geri bildirim': 'Den feedback du sendte',
 };

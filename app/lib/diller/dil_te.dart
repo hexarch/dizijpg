@@ -1318,4 +1318,7 @@ const Map<String, String> cevirilerTe = {
       'ఈ ఖాతా అన్ని చోట్ల నుండి సైన్ అవుట్ చేయబడింది లేదా పాస్‌వర్డ్ మారింది. కొనసాగించడానికి మళ్లీ సైన్ ఇన్ చేయండి.',
   'Son izleme: {}': 'చివరిగా చూసినది: {}',
   '{} tarihinde izledin': '{} న చూశారు',
+  'Geri bildirimine yanıt verdik': 'మీ అభిప్రాయానికి మేము స్పందించాం',
+  'Bu yanıt artık görüntülenemiyor.': 'ఈ సమాధానాన్ని ఇక చూపలేం.',
+  'Gönderdiğin geri bildirim': 'మీరు పంపిన అభిప్రాయం',
 };

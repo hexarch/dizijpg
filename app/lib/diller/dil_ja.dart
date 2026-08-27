@@ -1256,4 +1256,7 @@ const Map<String, String> cevirilerJa = {
       'このアカウントはすべての端末からログアウトされたか、パスワードが変更されました。続けるには再度ログインしてください。',
   'Son izleme: {}': '最後に視聴: {}',
   '{} tarihinde izledin': '{}に視聴',
+  'Geri bildirimine yanıt verdik': 'フィードバックに返信しました',
+  'Bu yanıt artık görüntülenemiyor.': 'この返信は表示できなくなりました。',
+  'Gönderdiğin geri bildirim': '送信したフィードバック',
 };

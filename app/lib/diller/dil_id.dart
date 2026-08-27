@@ -1321,4 +1321,8 @@ const Map<String, String> cevirilerId = {
       'Akun ini keluar dari semua perangkat atau kata sandinya berubah. Masuk lagi untuk melanjutkan.',
   'Son izleme: {}': 'Terakhir ditonton: {}',
   '{} tarihinde izledin': 'Ditonton pada {}',
+  'Geri bildirimine yanıt verdik': 'Kami membalas masukanmu',
+  'Bu yanıt artık görüntülenemiyor.':
+      'Balasan ini tidak dapat ditampilkan lagi.',
+  'Gönderdiğin geri bildirim': 'Masukan yang kamu kirim',
 };

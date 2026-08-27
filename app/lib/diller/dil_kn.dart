@@ -1315,4 +1315,7 @@ const Map<String, String> cevirilerKn = {
       'ಈ ಖಾತೆಯನ್ನು ಎಲ್ಲೆಡೆ ಸೈನ್ ಔಟ್ ಮಾಡಲಾಗಿದೆ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ಬದಲಾಗಿದೆ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.',
   'Son izleme: {}': 'ಕೊನೆಯ ವೀಕ್ಷಣೆ: {}',
   '{} tarihinde izledin': '{} ರಂದು ವೀಕ್ಷಿಸಿದ್ದೀರಿ',
+  'Geri bildirimine yanıt verdik': 'ನಿಮ್ಮ ಪ್ರತಿಕ್ರಿಯೆಗೆ ನಾವು ಉತ್ತರಿಸಿದ್ದೇವೆ',
+  'Bu yanıt artık görüntülenemiyor.': 'ಈ ಉತ್ತರವನ್ನು ಇನ್ನು ತೋರಿಸಲಾಗುವುದಿಲ್ಲ.',
+  'Gönderdiğin geri bildirim': 'ನೀವು ಕಳುಹಿಸಿದ ಪ್ರತಿಕ್ರಿಯೆ',
 };

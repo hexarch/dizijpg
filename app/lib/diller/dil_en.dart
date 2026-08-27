@@ -1319,4 +1319,7 @@ const Map<String, String> cevirilerEn = {
       'This account was signed out everywhere or its password changed. Sign in again to continue.',
   'Son izleme: {}': 'Last watched: {}',
   '{} tarihinde izledin': 'Watched on {}',
+  'Geri bildirimine yanıt verdik': 'We replied to your feedback',
+  'Bu yanıt artık görüntülenemiyor.': 'This reply is no longer available.',
+  'Gönderdiğin geri bildirim': 'The feedback you sent',
 };

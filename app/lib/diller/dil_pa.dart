@@ -1317,4 +1317,7 @@ const Map<String, String> cevirilerPa = {
       'ਇਹ ਖਾਤਾ ਹਰ ਥਾਂ ਤੋਂ ਸਾਈਨ ਆਊਟ ਹੋ ਗਿਆ ਜਾਂ ਪਾਸਵਰਡ ਬਦਲ ਗਿਆ। ਜਾਰੀ ਰੱਖਣ ਲਈ ਦੁਬਾਰਾ ਸਾਈਨ ਇਨ ਕਰੋ।',
   'Son izleme: {}': 'ਆਖਰੀ ਵਾਰ ਦੇਖਿਆ: {}',
   '{} tarihinde izledin': '{} ਨੂੰ ਦੇਖਿਆ',
+  'Geri bildirimine yanıt verdik': 'ਅਸੀਂ ਤੁਹਾਡੇ ਸੁਝਾਅ ਦਾ ਜਵਾਬ ਦਿੱਤਾ',
+  'Bu yanıt artık görüntülenemiyor.': 'ਇਹ ਜਵਾਬ ਹੁਣ ਨਹੀਂ ਦਿਖਾਇਆ ਜਾ ਸਕਦਾ।',
+  'Gönderdiğin geri bildirim': 'ਤੁਹਾਡਾ ਭੇਜਿਆ ਸੁਝਾਅ',
 };

@@ -1321,4 +1321,7 @@ const Map<String, String> cevirilerNb = {
       'Denne kontoen ble logget ut overalt, eller passordet ble endret. Logg inn igjen for å fortsette.',
   'Son izleme: {}': 'Sist sett: {}',
   '{} tarihinde izledin': 'Sett {}',
+  'Geri bildirimine yanıt verdik': 'Vi har svart på tilbakemeldingen din',
+  'Bu yanıt artık görüntülenemiyor.': 'Dette svaret kan ikke lenger vises.',
+  'Gönderdiğin geri bildirim': 'Tilbakemeldingen du sendte',
 };

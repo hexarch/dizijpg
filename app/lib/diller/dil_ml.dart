@@ -1320,4 +1320,7 @@ const Map<String, String> cevirilerMl = {
       'ഈ അക്കൗണ്ട് എല്ലായിടത്തും സൈൻ ഔട്ട് ചെയ്തു അല്ലെങ്കിൽ പാസ്‌വേഡ് മാറി. തുടരാൻ വീണ്ടും സൈൻ ഇൻ ചെയ്യുക.',
   'Son izleme: {}': 'അവസാനം കണ്ടത്: {}',
   '{} tarihinde izledin': '{} ന് കണ്ടു',
+  'Geri bildirimine yanıt verdik': 'നിങ്ങളുടെ ഫീഡ്‌ബാക്കിന് ഞങ്ങൾ മറുപടി നൽകി',
+  'Bu yanıt artık görüntülenemiyor.': 'ഈ മറുപടി ഇനി കാണാനാകില്ല.',
+  'Gönderdiğin geri bildirim': 'നിങ്ങൾ അയച്ച ഫീഡ്‌ബാക്ക്',
 };

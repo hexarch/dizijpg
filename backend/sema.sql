@@ -1351,3 +1351,18 @@ CREATE INDEX IF NOT EXISTS seo_kazanan_bolum_dizi ON seo_kazanan_bolum (tmdb_id)
 -- Uzun gerekçe + yığın sezgisinin ölçümü: migrasyon-2026-08-27b.sql.
 ALTER TABLE izlemeler
   ADD COLUMN IF NOT EXISTS tarih_kesin BOOLEAN NOT NULL DEFAULT true;
+
+-- 2026-08-28: geri bildirim yanıtı uygulama içinde de görünsün. Yanıt bugüne
+-- kadar YALNIZ e-postayla gidiyordu; kullanıcı mailini açmazsa haberi olmuyordu
+-- (üstelik `mailler`de sifirlama türünde 3 gönderildi / 2 HATA var).
+-- Bildirim METNİ TAŞIMAZ, `geri_bildirimler` satırına bağlanır — yanıt panelden
+-- düzeltilirse iki kopya ayrışmasın. Uzun gerekçe: migrasyon-2026-08-28.sql.
+ALTER TABLE bildirimler DROP CONSTRAINT IF EXISTS bildirimler_tur_check;
+ALTER TABLE bildirimler ADD CONSTRAINT bildirimler_tur_check
+  CHECK (tur IN ('yanit', 'begeni', 'takip', 'mesaj', 'etiket',
+                 'kacirilan_arama', 'bolum', 'kisi', 'geri_bildirim'));
+ALTER TABLE bildirimler ADD COLUMN IF NOT EXISTS geri_bildirim_id INT
+  REFERENCES geri_bildirimler(id) ON DELETE CASCADE;
+CREATE UNIQUE INDEX IF NOT EXISTS bildirimler_geri_bildirim_tekil
+  ON bildirimler (kullanici_id, geri_bildirim_id)
+  WHERE tur = 'geri_bildirim';

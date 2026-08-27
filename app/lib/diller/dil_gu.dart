@@ -1308,4 +1308,7 @@ const Map<String, String> cevirilerGu = {
       'આ એકાઉન્ટ બધે સાઇન આઉટ થયું અથવા પાસવર્ડ બદલાયો. ચાલુ રાખવા ફરી સાઇન ઇન કરો.',
   'Son izleme: {}': 'છેલ્લે જોયું: {}',
   '{} tarihinde izledin': '{} ના રોજ જોયું',
+  'Geri bildirimine yanıt verdik': 'અમે તમારા પ્રતિસાદનો જવાબ આપ્યો',
+  'Bu yanıt artık görüntülenemiyor.': 'આ જવાબ હવે જોઈ શકાતો નથી.',
+  'Gönderdiğin geri bildirim': 'તમે મોકલેલો પ્રતિસાદ',
 };

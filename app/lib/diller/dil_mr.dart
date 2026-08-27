@@ -1313,4 +1313,7 @@ const Map<String, String> cevirilerMr = {
       'हे खाते सर्वत्र साइन आउट केले गेले किंवा पासवर्ड बदलला. सुरू ठेवण्यासाठी पुन्हा साइन इन करा.',
   'Son izleme: {}': 'शेवटचे पाहिले: {}',
   '{} tarihinde izledin': '{} रोजी पाहिले',
+  'Geri bildirimine yanıt verdik': 'आम्ही तुमच्या अभिप्रायाला उत्तर दिले',
+  'Bu yanıt artık görüntülenemiyor.': 'हे उत्तर आता दाखवता येत नाही.',
+  'Gönderdiğin geri bildirim': 'तुम्ही पाठवलेला अभिप्राय',
 };

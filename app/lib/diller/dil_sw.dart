@@ -1325,4 +1325,7 @@ const Map<String, String> cevirilerSw = {
       'Akaunti hii ilitolewa kwenye vifaa vyote au nenosiri lilibadilika. Ingia tena ili kuendelea.',
   'Son izleme: {}': 'Ulitazamwa mwisho: {}',
   '{} tarihinde izledin': 'Ulitazama {}',
+  'Geri bildirimine yanıt verdik': 'Tumejibu maoni yako',
+  'Bu yanıt artık görüntülenemiyor.': 'Jibu hili haliwezi kuonyeshwa tena.',
+  'Gönderdiğin geri bildirim': 'Maoni uliyotuma',
 };

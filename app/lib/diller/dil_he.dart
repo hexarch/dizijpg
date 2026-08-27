@@ -1293,4 +1293,7 @@ const Map<String, String> cevirilerHe = {
       'החשבון הזה נותק בכל המכשירים או שהסיסמה שונתה. התחבר שוב כדי להמשיך.',
   'Son izleme: {}': 'נצפה לאחרונה: {}',
   '{} tarihinde izledin': 'נצפה ב-{}',
+  'Geri bildirimine yanıt verdik': 'הגבנו למשוב שלך',
+  'Bu yanıt artık görüntülenemiyor.': 'לא ניתן עוד להציג את התגובה הזו.',
+  'Gönderdiğin geri bildirim': 'המשוב ששלחת',
 };

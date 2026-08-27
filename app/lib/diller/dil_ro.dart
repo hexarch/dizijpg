@@ -1340,4 +1340,7 @@ const Map<String, String> cevirilerRo = {
       'Acest cont a fost deconectat peste tot sau i s-a schimbat parola. Conectează-te din nou pentru a continua.',
   'Son izleme: {}': 'Vizionat ultima dată: {}',
   '{} tarihinde izledin': 'Vizionat pe {}',
+  'Geri bildirimine yanıt verdik': 'Am răspuns la feedbackul tău',
+  'Bu yanıt artık görüntülenemiyor.': 'Acest răspuns nu mai poate fi afișat.',
+  'Gönderdiğin geri bildirim': 'Feedbackul pe care l-ai trimis',
 };

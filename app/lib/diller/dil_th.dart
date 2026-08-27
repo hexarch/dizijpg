@@ -1299,4 +1299,7 @@ const Map<String, String> cevirilerTh = {
       'บัญชีนี้ออกจากระบบทุกอุปกรณ์ หรือรหัสผ่านเปลี่ยนไป เข้าสู่ระบบอีกครั้งเพื่อดำเนินการต่อ',
   'Son izleme: {}': 'ดูล่าสุด: {}',
   '{} tarihinde izledin': 'ดูเมื่อ {}',
+  'Geri bildirimine yanıt verdik': 'เราตอบกลับความคิดเห็นของคุณแล้ว',
+  'Bu yanıt artık görüntülenemiyor.': 'ไม่สามารถแสดงคำตอบนี้ได้อีกต่อไป',
+  'Gönderdiğin geri bildirim': 'ความคิดเห็นที่คุณส่ง',
 };
