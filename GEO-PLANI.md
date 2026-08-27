@@ -20,10 +20,13 @@ Kötü haber: **dizi.jpg şu anda üretken arama motorlarının hiçbirine gör�
 İyi haber: sebep içerik değil, **iki ayar**. Ve GEO için gereken içerik
 altyapısı (SSR + şema + SSS) zaten hazır ve şu anda **boşa çalışıyor**.
 
-| # | Duvar | Ölçülen | Kimin |
+| Duvar | Ölçülen | Kimin | Sıra |
 |---|---|---|---|
-| **1** | **Cloudflare her AI cevap botunu 403'lüyor** | `Your request was blocked.` (25 bayt) | Cloudflare paneli |
-| **2** | **nginx bot regex'inde AI botları YOK** | CF geçse bile 12.679 baytlık BOŞ Flutter kabuğu | bizde, tek satır |
+| **Cloudflare her AI cevap botunu 403'lüyor** | `Your request was blocked.` (25 bayt) | Cloudflare paneli | 2. |
+| **nginx bot regex'inde AI botları YOK** | CF geçse bile 12.679 baytlık BOŞ Flutter kabuğu | bizde, tek satır | **1.** |
+
+Sıra ters görünüyor ama bilinçli: **önce arkayı hazırla, sonra kapıyı aç**
+(gerekçe §0.1).
 
 **En can alıcı çelişki:** kendi `robots.txt`imizde şu yazıyor —
 
@@ -42,13 +45,14 @@ doğru olsa bile davranış CF'te ölçülmeli.**
 
 ## 0.1 Bağlayıcı sıra
 
-Öncekinin kabulü olmadan sonrakine geçilmez. Sebep basit: 1 ve 2 çözülmeden
-yapılan HER içerik işi ölçülemez, çünkü botlar sayfayı hiç görmüyor.
+Öncekinin kabulü olmadan sonrakine geçilmez. Sebep basit: iki duvar da
+yıkılmadan yapılan HER içerik işi ölçülemez, çünkü botlar sayfayı hiç
+görmüyor.
 
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
-| **1** | **CF'te AI cevap botlarının engelini kaldır** | Sayfayı hiç göremeyen bota içerik yazmanın anlamı yok | §2 | ⬜ **KULLANICI/PANEL** |
-| **2** | **nginx `$og_bot` regex'ine AI botlarını ekle** | CF açılınca bile kabuk dönerdi | §3 | ⬜ tek satır + test |
+| **1** | **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ⬜ tek satır + test |
+| **2** | **CF'te AI cevap botlarının engelini kaldır** | Arkası hazır olduğu anda aç | §2 | ⬜ **KULLANICI/PANEL** |
 | **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ⬜ |
 | **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ⬜ |
 | **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | ⬜ |
@@ -119,7 +123,7 @@ kaynak atıflı, karşılaştırılabilir**. Şu anda hiçbiri okunmuyor.
 
 ---
 
-## 2. ⬜ DUVAR 1 — Cloudflare (ÖNCE BU)
+## 2. ⬜ CLOUDFLARE — engeli kaldır (§3'ten SONRA)
 
 **Kanıt:** 403 + `Your request was blocked.` + `cf-nel` başlığı, tüm AI cevap
 botlarında; Googlebot'ta 200. Yani ayrım UA bazlı ve CF katmanında.
@@ -148,9 +152,10 @@ bizim adımıza karar veriyor.
 
 ---
 
-## 3. ⬜ DUVAR 2 — nginx bot regex'i (bizde, ucuz)
+## 3. ⬜ nginx bot regex'i — İLK ADIM (bizde, ucuz)
 
-CF açıldığı anda bu satır olmadan botlar boş kabuk alır.
+CF açıldığı anda bu satır olmadan botlar boş kabuk alır — bu yüzden CF'ten
+ÖNCE yapılır (bkz. §0.1).
 
 **Yapılacak:** `$og_bot` regex'ine ekle:
 
