@@ -202,6 +202,45 @@ const MAX_FIND = 1000; // TheTVDB→TMDB eşleme çağrısı üst sınırı (ön
 //                   ama izlenmiş diziler için yedek). İkisini de server.js sağlar.
 // tmdbDetay(tmdbId) → { number_of_episodes } | null. Bitirme tespiti için.
 // tmdbAraFilm(isim) → TMDB film id | null (izlenen filmleri eşlemek için).
+// ---------------------------------------------------------------------------
+// İÇE AKTARIM TARİHİ — TEK OKUMA NOKTASI (27 Ağu 2026)
+// ---------------------------------------------------------------------------
+// 26 Ağu'da yalnız `tracking-prod-records-v2.csv` yolu onarılmıştı; ölçüm
+// (27 Ağu, canlı) diğer yolların hâlâ tarihi düşürdüğünü gösterdi:
+//   ozkanpiqubo 15.727 satır / 2 GÜN · melis.izler 14.872 / 5 · dizi.jpg
+//   10.756 / 1 · ocalselda361 7.085 / 1 (BUGÜN, düzeltme canlıyken aktardı).
+// Karşılaştırma: dogru aktarilmis emma.watches 5.969 satır / 885 gün.
+//
+// Sebep: `seen_episode_latest.csv` + `watched_on_episode.csv`, film satırları
+// ve KENDİ dışa aktarım formatımız (`iceAktarNative`) INSERT'e `tarih`
+// koymuyordu, DEFAULT now() damgalanıyordu. Yani kullanıcı "2019'da izledim"
+// derken uygulama içe aktarma gününü gösteriyordu.
+//
+// Sütun adı kaynaktan kaynağa değişiyor; hepsi burada tek yerde denenir.
+const IZLEME_TARIH_SUTUNLARI = ['created_at', 'watched_at', 'watched_on', 'date'];
+
+/** CSV satırından gerçek izleme tarihi; okunamazsa null (çağıran now()'a düşer). */
+function izlemeTarihi(r) {
+  for (const sutun of IZLEME_TARIH_SUTUNLARI) {
+    const ham = String(r?.[sutun] ?? '').trim();
+    if (ham && !Number.isNaN(Date.parse(ham))) return new Date(ham);
+  }
+  return null;
+}
+
+// ÇAKIŞMADA "DO NOTHING" DEĞİL, TARİHİ ONAR.
+//
+// Bu satır olmadan düzeltmenin GEÇMİŞE FAYDASI YOK: yanlış damgalanmış satır
+// zaten tabloda olduğu için yeniden içe aktarım onu atlar ve tarih sonsuza
+// kadar yanlış kalır. Kullanıcının elindeki tek onarım yolu buydu.
+//
+// LEAST BİLİNÇLİ: içe aktarım damgası (now()) her zaman gerçek izleme
+// tarihinden SONRADIR, yani "en erken" almak yanlış damgayı gerçek tarihle
+// değiştirir ama gerçek bir tarihi ileri kaydırmaz. İdempotent: ikinci koşu
+// hiçbir şeyi değiştirmez.
+const IZLEME_CAKISMA = `ON CONFLICT (kullanici_id, tur, tmdb_id, sezon, bolum)
+       DO UPDATE SET tarih = LEAST(izlemeler.tarih, EXCLUDED.tarih)`;
+
 export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = null, tmdbDetay = null, tmdbAraFilm = null) {
   let zip;
   try {
@@ -332,14 +371,25 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
     for (const [isim, bolumler] of diziler) {
       const id = await coz('tv', isim, bolumler[0].tmdb);
       if (!id) { ozet.atlanan += bolumler.length; continue; }
+      // TEKİLLEŞTİRME: CSV aynı bölümü iki kez taşıyabilir ve
+      // `ON CONFLICT ... DO UPDATE` aynı satıra tek deyimde iki kez
+      // dokunamaz (PostgreSQL 21000). En erken tarih kazanır.
+      const tekil = new Map();
+      for (const x of bolumler) {
+        const a = `${x.s}:${x.b}`;
+        const onceki = tekil.get(a);
+        if (!onceki) tekil.set(a, x);
+        else if (x.t && (!onceki.t || x.t < onceki.t)) onceki.t = x.t;
+      }
+      const benzersiz = [...tekil.values()];
       const { rowCount } = await havuz.query(
         `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
          SELECT $1, 'tv', $2, u.s, u.b, COALESCE(u.t, now())
          FROM unnest($3::int[], $4::int[], $5::timestamptz[]) AS u(s, b, t)
-         ON CONFLICT DO NOTHING`,
+         ${IZLEME_CAKISMA}`,
         [userId, id,
-         bolumler.map((x) => x.s), bolumler.map((x) => x.b),
-         bolumler.map((x) => x.t)],
+         benzersiz.map((x) => x.s), benzersiz.map((x) => x.b),
+         benzersiz.map((x) => x.t)],
       );
       ozet.izleme += rowCount;
       // Durum: tüm bölümler izlendiyse bitirdim, değilse izliyorum
@@ -369,7 +419,7 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       const { rowCount } = await havuz.query(
         `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
          VALUES ($1,'movie',$2,0,0,COALESCE($3,now()))
-         ON CONFLICT DO NOTHING`,
+         ${IZLEME_CAKISMA}`,
         [userId, id, bilgi.t]);
       ozet.izleme += rowCount;
     }
@@ -448,9 +498,10 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       if (izlemeGorulen.has(anahtar)) continue;
       izlemeGorulen.add(anahtar);
       await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
-         VALUES ($1,'tv',$2,$3,$4) ON CONFLICT DO NOTHING`,
-        [userId, tmdbId, sezon, bolum]);
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+         VALUES ($1,'tv',$2,$3,$4,COALESCE($5::timestamptz, now()))
+         ${IZLEME_CAKISMA}`,
+        [userId, tmdbId, sezon, bolum, izlemeTarihi(r)]);
       ozet.izleme++;
     }
   }
@@ -483,7 +534,8 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
 
   ozet.isim_eslesme = 0; // isimle (fuzzy) eşleşen dizi sayısı → kullanıcı doğrulasın
   const isimleGelenler = new Set();
-  const filmAdlari = new Set(); // izlenen film adları (tracking'den)
+  // Ad → EN ERKEN izleme tarihi. Eskiden Set'ti ve tarih ATILIYORDU.
+  const filmAdlari = new Map(); // izlenen film adı → Date|null (tracking'den)
   const izlemeYeni = []; // toplu ekleme için [tmdbId, sezon, bolum]
   for (const ad of ['tracking-prod-records-v2.csv', 'tracking-prod-records.csv']) {
     for (const r of csv(ad)) {
@@ -492,7 +544,14 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       if (!Number.isInteger(sezon) || !Number.isInteger(bolum)) {
         // Bölüm değil → film olabilir (movie_name dolu)
         const film = String(r.movie_name || '').trim();
-        if (film) filmAdlari.add(film);
+        if (film) {
+          const t = izlemeTarihi(r);
+          const onceki = filmAdlari.get(film);
+          // Aynı film birden çok satırda olabilir: en erken tarih kazanır.
+          if (!filmAdlari.has(film) || (t && (!onceki || t < onceki))) {
+            filmAdlari.set(film, t);
+          }
+        }
         continue;
       }
       const tvdb = isimdenTvdb.get(r.series_name);
@@ -539,7 +598,8 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
       .join(',');
     await havuz.query(
       `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
-       VALUES ${degerler} ON CONFLICT DO NOTHING`,
+       VALUES ${degerler}
+       ${IZLEME_CAKISMA}`,
       [userId, ...grup.flat()],
     );
     ozet.izleme += grup.length;
@@ -548,15 +608,16 @@ export async function iceAktar(havuz, userId, zipBuffer, tmdbFind, tmdbAra = nul
   // İzlenen filmler → izlemeler(movie, tmdb_id, 0, 0). İsimle TMDB araması.
   ozet.film = 0;
   if (tmdbAraFilm) {
-    for (const isim of filmAdlari) {
+    for (const [isim, tarih] of filmAdlari) {
       const temiz = isim.replace(/\s*\(\d{4}\)\s*$/, '').trim();
       let filmId = null;
       try { filmId = await tmdbAraFilm(temiz); } catch { filmId = null; }
       if (!filmId) { ozet.atlanan++; continue; }
       await havuz.query(
-        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
-         VALUES ($1,'movie',$2,0,0) ON CONFLICT DO NOTHING`,
-        [userId, filmId]);
+        `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+         VALUES ($1,'movie',$2,0,0,COALESCE($3::timestamptz, now()))
+         ${IZLEME_CAKISMA}`,
+        [userId, filmId, tarih]);
       ozet.film++;
     }
   }
@@ -640,22 +701,42 @@ async function iceAktarNative(havuz, userId, json, ozet) {
   }
   // İzlemeler (100k'ya kadar) TOPLU eklenir: tek tek INSERT = 100k round-trip
   // = DB havuzunu tıkayan DoS. 500'lük çok-satırlı VALUES ile gruplanır.
-  const izlemeGecerli = [];
+  //
+  // KENDİ DIŞA AKTARIM FORMATIMIZ DA TARİHİ DÜŞÜRÜYORDU (27 Ağu 2026):
+  // `disaAktar` her izlemeyi `created_at` ile yazıyor ama bu yol onu HİÇ
+  // okumuyordu. Yani kullanıcı dizi.jpg yedeğini indirip geri yüklediğinde
+  // TÜM izleme geçmişinin tarihi yükleme gününe çöküyordu — yedeğin kendisi
+  // veri kaybettiriyordu.
+  //
+  // TEKİLLEŞTİRME ZORUNLU: `ON CONFLICT ... DO UPDATE` aynı satıra tek
+  // deyimde iki kez dokunamaz (PostgreSQL 21000 hatası). Dosyada yinelenen
+  // kayıt olabilir; en erken tarih kazanır (IZLEME_CAKISMA ile aynı kural).
+  const izlemeHarita = new Map();
   for (const i of (veri.izlemeler || []).slice(0, 100000)) {
     if (!tamsayi(i.tmdb_id) || !['tv', 'movie'].includes(i.tur)) { ozet.atlanan++; continue; }
-    izlemeGecerli.push([i.tur, i.tmdb_id, tamsayi(i.sezon) ?? 0, tamsayi(i.bolum) ?? 0]);
+    const sezon = tamsayi(i.sezon) ?? 0;
+    const bolum = tamsayi(i.bolum) ?? 0;
+    const ham = String(i.tarih ?? i.created_at ?? '').trim();
+    const t = ham && !Number.isNaN(Date.parse(ham)) ? new Date(ham) : null;
+    const anahtar = `${i.tur}:${i.tmdb_id}:${sezon}:${bolum}`;
+    const onceki = izlemeHarita.get(anahtar);
+    if (!onceki) izlemeHarita.set(anahtar, [i.tur, i.tmdb_id, sezon, bolum, t]);
+    else if (t && (!onceki[4] || t < onceki[4])) onceki[4] = t;
   }
+  const izlemeGecerli = [...izlemeHarita.values()];
   for (let g = 0; g < izlemeGecerli.length; g += 500) {
     const grup = izlemeGecerli.slice(g, g + 500);
     const parametreler = [userId];
     const degerler = grup.map((r, j) => {
-      const b = j * 4;
-      parametreler.push(r[0], r[1], r[2], r[3]);
-      return `($1,$${b + 2},$${b + 3},$${b + 4},$${b + 5})`;
+      const b = j * 5;
+      parametreler.push(r[0], r[1], r[2], r[3], r[4]);
+      return `($1,$${b + 2},$${b + 3},$${b + 4},$${b + 5},`
+        + `COALESCE($${b + 6}::timestamptz, now()))`;
     });
     await havuz.query(
-      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum)
-       VALUES ${degerler.join(',')} ON CONFLICT DO NOTHING`,
+      `INSERT INTO izlemeler (kullanici_id, tur, tmdb_id, sezon, bolum, tarih)
+       VALUES ${degerler.join(',')}
+       ${IZLEME_CAKISMA}`,
       parametreler);
     ozet.izleme += grup.length;
   }
