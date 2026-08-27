@@ -1,6 +1,37 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-27 — 📄 GEO planı yazıldı (`GEO-PLANI.md` v1.0)
+
+Kullanıcı: "biraz da geo tarafına odaklanalım, geo için bir plan hazırla seo gibi".
+
+**ÖLÇÜMLE ÇIKAN ASIL BULGU — iki duvar, site AI motorlarına GÖRÜNMEZ:**
+1. **Cloudflare tüm AI cevap botlarını 403'lüyor** (`Your request was blocked.`,
+   25 bayt, `cf-nel` başlığı): OAI-SearchBot, ChatGPT-User, PerplexityBot,
+   Perplexity-User, Claude-User, Claude-SearchBot. Googlebot/bingbot/DuckDuckBot
+   200 + 16.215 bayt tam SSR alıyor. **Bu, kendi robots.txt beyanımızla
+   ÇELİŞİYOR** (`Content-Signal: search=yes,ai-train=no,use=reference`) —
+   8 Ağu'daki "CF Managed robots.txt, Google-Extended'ı sessizce kapatmış"
+   olayının aynısı. DERS: CF bizim adımıza AI politikası koyuyor.
+2. **nginx `$og_bot` regex'inde tek bir AI botu yok** — CF açılsa bile boş
+   Flutter kabuğu (12.679 bayt, başlık yalnız "dizi.jpg") dönerdi. Bu 403'ten
+   daha kötü: 403 geçici sayılır, boş sayfa kalıcı kanaat olur.
+
+**İyi haber:** GEO içeriği zaten hazır ve boşa çalışıyor — `/icerik/tv/1396`
+SSR'ında FAQPage (4 soru/cevap), TVSeries, AggregateRating, Review, 9 Person,
+BreadcrumbList var. SSS cümleleri birebir alıntılanabilir biçimde ("5 sezon ve
+toplam 62 bölüm… dizi.jpg kullanıcıları 5.0/5 puan verdi", "Netflix üzerinden
+abonelikle izlenebilir. Sağlayıcı verisi: JustWatch").
+
+- ⬜ **1. adım KULLANICI/PANEL İŞİ:** Cloudflare'de eğitim ≠ cevap ayrımı
+  (cevap botları açılacak, GPTBot/ClaudeBot/CCBot/Bytespider kapalı kalacak).
+- ⬜ 2. adım bizde ve tek satır: nginx regex'ine altı UA eklenecek + test.
+- ⬜ 3-4. adım: uçtan uca curl doğrulaması + ölçüm hattı (GEO'nun Search
+  Console'u YOK: sunucu logu + atıf `Referer` + aylık elle sorgu turu).
+- ⛔ `llms.txt` şimdilik yok — hiçbir büyük motorun kullandığı doğrulanmadı ve
+  bugün `/llms.txt` zaten 200 dönüyor (SPA fallback kabuğu basıyor, aynısı
+  `/uydurma-dosya-xyz.txt` için de geçerli), yani ölçemeyiz bile.
+
 ## 2026-08-27 — 🚀 Puan ölçeği veri kaybı + yedeğin bozuk tarihi aklaması
 
 Kullanıcı "bunları da düzelt" dedi (önceki turda not edilen üç madde).
