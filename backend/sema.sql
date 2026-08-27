@@ -1324,3 +1324,22 @@ CREATE UNIQUE INDEX IF NOT EXISTS kullanici_adi_rezerv_sahip
   WHERE kullanici_id IS NOT NULL;
 CREATE INDEX IF NOT EXISTS kullanici_adi_rezerv_bitis
   ON kullanici_adi_rezervleri (bitis);
+
+-- 2026-08-27: SEO'da ÖLÇÜLMÜŞ performansı olan bölümler. Bölüm haritası
+-- 25 Ağu'da kesilince (78.484 → 5.137) tıklama getiren 6 bölüm URL'si harita
+-- dışında ve iç bağlantısız kaldı. Bu tablo kesme kuralının DÖRDÜNCÜ dalıdır:
+-- harita + ısıtıcı + dizi sayfası iç bağlantısı üçü de okur.
+-- Uzun gerekçe: migrasyon-2026-08-27.sql, SEO-YAPILACAKLAR §5.
+CREATE TABLE IF NOT EXISTS seo_kazanan_bolum (
+  tmdb_id      INT         NOT NULL,
+  sezon        INT         NOT NULL CHECK (sezon >= 1),
+  bolum        INT         NOT NULL CHECK (bolum >= 1),
+  kaynak       TEXT        NOT NULL DEFAULT 'gsc',
+  tiklama      INT         NOT NULL DEFAULT 0,
+  gosterim     INT         NOT NULL DEFAULT 0,
+  olcum_gunu   DATE,
+  eklendi      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  guncellendi  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (tmdb_id, sezon, bolum)
+);
+CREATE INDEX IF NOT EXISTS seo_kazanan_bolum_dizi ON seo_kazanan_bolum (tmdb_id);

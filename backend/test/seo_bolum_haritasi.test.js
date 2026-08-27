@@ -152,7 +152,8 @@ test('harita bölümü dizi düzeyi kapsam süzgecinden geçiriyor (TR / sonraki
     'TR yapım sinyali detay belgesinden okunmuyor');
   assert.match(sorgu, /next_episode_to_air'->>'season_number'/,
     'yayında-dizi sinyali yok');
-  assert.match(HARITA_DALI, /AND \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon\)/,
+  assert.match(HARITA_DALI,
+    /AND \(d\.tr_yapim OR b\.sezon = d\.sonraki_sezon OR kz\.tmdb_id IS NOT NULL\)/,
     'kapsam süzgeci birlesik WHERE\'ine AND\'lenmemiş');
   // `bizim_bolum` dalı kapsamdan BAĞIMSIZ kalmalı (eşikli yorum her dizide
   // haritaya girer) — UNION dalında dizi_bilgi koşulu OLMAMALI.
@@ -176,8 +177,9 @@ test('dizi sayfası bölüm bağlantıları haritayla AYNI kapsamda', () => {
   const b = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
   assert.match(b, /origin_country.*includes\('TR'\)/, 'TR yapım dalı yok');
   assert.match(b, /next_episode_to_air\?\.season_number/, 'yayında-dizi dalı yok');
-  assert.match(b, /if \(!trYapim && !sonrakiSezon\) return '';/,
-    'kapsam dışı dizi hâlâ bölüm bağlantısı basıyor — kesilen URL geri keşfedilir');
+  assert.match(b, /if \(!trYapim && !sonrakiSezon\) return kurtarilan;/,
+    'kapsam dışı dizi hâlâ SEZON bloğu basıyor — kesilen URL geri keşfedilir'
+    + ' (yalnız kazanan bölümler istisnadır, bkz. dördüncü dal testleri)');
   assert.match(b, /if \(!trYapim\) sezonlar = sezonlar\.filter\(\(s\) => s\.season_number === sonrakiSezon\);/,
     'yayında dizide bağlantı sonraki sezonla sınırlanmamış');
 });
@@ -264,6 +266,69 @@ test('harita sırası SABİT (dosya üyeliği her üretimde değişmesin)', () =
   // KENDİ dış sıralaması kimlik sırasıdır.
   const disSelect = sorgu.slice(sorgu.indexOf('  SELECT tmdb_id, sezon, bolum, coalesce'));
   assert.doesNotMatch(disSelect, /ORDER BY son DESC/);
+});
+
+// ===========================================================================
+// DÖRDÜNCÜ DAL — SEO'DA KAZANAN BÖLÜM (27 Ağu 2026)
+// ===========================================================================
+// 25 Ağu kesmesi tıklama getiren 6 bölüm URL'sini harita dışında VE dizi
+// sayfasından bağlantısız bıraktı (öksüz). Sitenin toplam 9 organik
+// tıklamasının 7'si bu sayfalardan geliyordu. `seo_kazanan_bolum` tablosu
+// kapsam süzgecinin istisnası; kesme kuralı gibi ÜÇ YERDE birden yaşamalı.
+test('kazanan dalı ÜÇ TARAFTA da var (harita + ısıtıcı + iç bağlantı)', () => {
+  const harita = bildirimCek('SITEMAP_BOLUM_SORGU');
+  const isitma = bildirimCek('ISITMA_BOLUM_SORGU');
+  const govde = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
+  for (const [ad, metin] of [['harita', harita], ['ısıtıcı', isitma]]) {
+    assert.match(metin, /kazanan AS \(/, `${ad}: kazanan CTE yok`);
+    assert.match(metin, /FROM seo_kazanan_bolum/, `${ad}: tablo okunmuyor`);
+  }
+  assert.match(govde, /await kazananBolumler\(id\)/,
+    'dizi sayfası kazanan bölümleri sormuyor — URL yine öksüz kalır');
+});
+
+test('kazanan dalı İÇERİK ÖLÇÜSÜNÜ atlamıyor (B2 tuzağı hâlâ imkânsız)', () => {
+  // Gevşeyen YALNIZ dizi düzeyi kapsam. İçerik ölçüsü (dört sinyal) ayrı bir
+  // AND'de kalmalı; aynı parantezin içine düşerse içeriksiz bölüm haritaya
+  // girer ve GSC "Gönderilen URL noindex ile işaretlenmiş" hatası verir.
+  const icerik = HARITA_DALI.match(
+    /WHERE \(b\.ozet > 0 OR b\.konuk > 0 OR b\.kare > 0 OR b\.yayin < current_date\)/);
+  assert.ok(icerik, 'içerik ölçüsü kendi parantezinde değil');
+  const kapsam = HARITA_DALI.match(/AND \(d\.tr_yapim OR[^)]*\)/);
+  assert.ok(kapsam, 'kapsam süzgeci ayrı AND değil');
+  assert.match(kapsam[0], /kz\.tmdb_id IS NOT NULL/,
+    'kazanan istisnası KAPSAM parantezinde olmalı');
+  assert.doesNotMatch(icerik[0], /kz\./,
+    'kazanan istisnası içerik ölçüsünü gevşetmiş — noindex URL haritaya sızar');
+});
+
+test('ısıtıcı kazanan dalını İKİ dalda da tanıyor', () => {
+  // Isıtıcının iki dalı var (gerçek sezon yanıtı + episode_count türetmesi).
+  // Biri kazananı görmezse bildirilen URL soğuk kalır.
+  const isitma = bildirimCek('ISITMA_BOLUM_SORGU');
+  const varliklar = isitma.match(/EXISTS \(SELECT 1 FROM kazanan kz/g) || [];
+  assert.equal(varliklar.length, 2, 'kazanan istisnası iki ısıtma dalına da girmeli');
+});
+
+test('kazanan bölüm bağlantısı kapsam DIŞI dizide de basılıyor', () => {
+  // Asıl hata buydu: /dizi/65988 (ne TR yapımı ne yayında) tıklama getiren
+  // bölümüne 0 bağlantı veriyordu.
+  const govde = bolum('async function seoDiziBolumGovdesi', '// SEO 1.2 — yapısal veri');
+  assert.match(govde, /if \(!trYapim && !sonrakiSezon\) return kurtarilan;/);
+  assert.match(govde, /if \(!sezonlar\.length\) return kurtarilan;/,
+    'sezon listesi boşken kazanan bölüm düşüyor');
+  assert.match(govde, /seoDiziBolumHtml\([^)]*\) \+ kurtarilan/,
+    'kapsam içi dizide kazanan blok ekleniyor mu');
+});
+
+test('kazanan bölüm okuması SSR\'ı ÇÖKERTMEZ (tablo yoksa boş dal)', () => {
+  // Migrasyon dağıtımdan önce uygulanır; sıra ters giderse sayfa 25 Ağu
+  // davranışını sürdürmeli, 500 dönmemeli.
+  const f = bolum('async function kazananBolumHaritasi', '/** Bir dizinin SEO');
+  assert.match(f, /try \{/, 'sorgu try içinde değil');
+  assert.match(f, /\} catch \{/, 'hata yutulmuyor');
+  assert.match(f, /KAZANAN_BOLUM_HATA_TTL_MS/,
+    'hata sonrası kısa TTL yok — migrasyon uygulanınca fark edilmez');
 });
 
 // ===========================================================================

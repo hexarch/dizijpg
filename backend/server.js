@@ -12,6 +12,7 @@ import { videoKareCikar, medyaBoyutOlc } from './video_kare.js';
 import { AsyncLocalStorage } from 'async_hooks';
 import os from 'os';
 import http from 'http';
+import net from 'net';
 import geoip from 'geoip-lite';
 import admin from 'firebase-admin';
 import { disaAktar, iceAktar } from './veri_aktar.js';
@@ -2832,6 +2833,85 @@ function seoDiziBolumHtml(id, diziAd, sezonlar, eskiBaglantilar = []) {
   return html + seoBaglantiListesi(`${diziAd} diğer sezonlar`, eski);
 }
 
+// ---------------------------------------------------------------------------
+// SEO'DA KAZANAN BÖLÜMLER — kesme kuralının DÖRDÜNCÜ dalı (27 Ağu 2026)
+// ---------------------------------------------------------------------------
+// 25 Ağu'da bölüm haritası 78.484 → 5.137'ye kesildi ve iç bağlantı kapsamı da
+// (`seoDiziBolumGovdesi`) haritayla hizalandı. Doğru karardı: 21.394'lük keşif
+// kuyruğu `/icerik` ailesinin tarama bütçesini yiyordu.
+//
+// 27 Ağu GSC ÖLÇÜMÜ kuralın bir varsayımını çürüttü: sitenin TOPLAM 9 organik
+// tıklamasının 7'si BÖLÜM sayfalarından geliyor (6 URL, 11 gösterim → TO ~%64;
+// sorgu hiper-spesifik: "verdades secretas 1 bölüm izle"). Ve o altı URL'nin
+// ALTISI DA kesme sonrası harita dışında + dizi sayfasından 0 iç bağlantılı,
+// yani ÖKSÜZ kalmıştı: 200 + index dönüyorlar ama Google'ın onlara ulaşacak
+// yolu yok. Kesme sırasında elimizde tıklama verisi olmadığı için belgeye
+// "bölüm tazeliği: henüz 0 gösterim" yazılmıştı; artık veri var.
+//
+// ÇÖZÜM 78 BİNE DÖNMEK DEĞİL: `seo_kazanan_bolum` tablosundaki (arama
+// sonuçlarında ölçülmüş performansı olan) bölümler kapsam süzgecinin
+// İSTİSNASI olur. Bugün 6 satır — kuyruğu şişirecek hacim değil.
+//
+// TABLO YOKKEN SSR ÇÖKMEZ: migrasyon dağıtımdan önce uygulanır, ama sıra ters
+// giderse sorgu hatası yutulur ve sayfa 25 Ağu davranışını sürdürür.
+const KAZANAN_BOLUM_TTL_MS = 5 * 60 * 1000;
+// Hata TTL'i KISA: migrasyon uygulanır uygulanmaz bir sonraki istek görsün.
+const KAZANAN_BOLUM_HATA_TTL_MS = 30 * 1000;
+let kazananBolumOnbellek = { zaman: 0, ttl: 0, harita: new Map() };
+
+/**
+ * `seo_kazanan_bolum` tablosunun tamamını dizi kimliğine göre gruplar.
+ *
+ * TAMAMI OKUNUR, dizi başına sorgu YAPILMAZ: tablo tanımı gereği küçüktür
+ * (bölüm ailesi 78 bin, gerçekten sıralayan kısmı binde birler) ve dizi
+ * sayfası her bot isteğinde bunu soruyor.
+ */
+async function kazananBolumHaritasi() {
+  const simdi = Date.now();
+  if (simdi - kazananBolumOnbellek.zaman < kazananBolumOnbellek.ttl) {
+    return kazananBolumOnbellek.harita;
+  }
+  try {
+    const { rows } = await havuz.query(
+      'SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum'
+      + ' ORDER BY tmdb_id, sezon, bolum');
+    const harita = new Map();
+    for (const r of rows) {
+      if (!harita.has(r.tmdb_id)) harita.set(r.tmdb_id, []);
+      harita.get(r.tmdb_id).push({ sezon: r.sezon, bolum: r.bolum });
+    }
+    kazananBolumOnbellek = { zaman: simdi, ttl: KAZANAN_BOLUM_TTL_MS, harita };
+  } catch {
+    kazananBolumOnbellek = {
+      zaman: simdi, ttl: KAZANAN_BOLUM_HATA_TTL_MS,
+      harita: kazananBolumOnbellek.harita,
+    };
+  }
+  return kazananBolumOnbellek.harita;
+}
+
+/** Bir dizinin SEO'da ölçülmüş bölümleri; yoksa boş dizi. */
+const kazananBolumler = async (id) =>
+  (await kazananBolumHaritasi()).get(Number(id)) || [];
+
+/**
+ * Kazanan bölümler için iç bağlantı bloğu.
+ *
+ * SEZON LİSTESİYLE ÇAKIŞMA SÜZGEÇLENMEZ (bilinçli): TR yapımı bir dizide aynı
+ * URL hem sezon listesinde hem burada çıkabilir. Aynı sayfada aynı URL'ye iki
+ * bağlantı ZARARSIZDIR; bağlantının HİÇ olmaması ise düzeltmeye çalıştığımız
+ * hatanın ta kendisi (`SEO_DIZI_BOLUM_TAVAN` listeyi kırptığında sezon
+ * basılmış olsa bile kazanan bölüm dışarıda kalabilir).
+ */
+function seoKurtarilanBolumHtml(id, diziAd, kazanan) {
+  const ogeler = (kazanan || []).slice(0, SEO_DIZI_BOLUM_TAVAN).map((k) => ({
+    ad: `${k.sezon}. Sezon ${k.bolum}. Bölüm`,
+    yol: `/dizi/${id}/sezon/${k.sezon}/bolum/${k.bolum}`,
+  }));
+  return ogeler.length
+    ? seoBaglantiListesi(`${diziAd} öne çıkan bölümler`, ogeler) : '';
+}
+
 /**
  * Dizi OG gövdesi: TÜM sezonlara bağlantı + son sezonların bölüm listesi.
  *
@@ -2857,13 +2937,16 @@ function seoDiziBolumHtml(id, diziAd, sezonlar, eskiBaglantilar = []) {
 async function seoDiziBolumGovdesi(id, v) {
   const trYapim = Array.isArray(v?.origin_country) && v.origin_country.includes('TR');
   const sonrakiSezon = seoPozitif(v?.next_episode_to_air?.season_number);
-  if (!trYapim && !sonrakiSezon) return '';
+  const diziAd = seoMetin(v?.name) || 'Dizi';
+  // Kapsam dışı dizide bile basılır: kazanan bölüm ÖKSÜZ KALMAMALI (27 Ağu).
+  const kurtarilan = seoKurtarilanBolumHtml(id, diziAd, await kazananBolumler(id));
+  if (!trYapim && !sonrakiSezon) return kurtarilan;
   let sezonlar = (Array.isArray(v?.seasons) ? v.seasons : [])
     .filter((s) => Number.isInteger(s?.season_number) && s.season_number >= 1
       && Number.isInteger(s?.episode_count) && s.episode_count > 0)
     .sort((a, b) => a.season_number - b.season_number);
   if (!trYapim) sezonlar = sezonlar.filter((s) => s.season_number === sonrakiSezon);
-  if (!sezonlar.length) return '';
+  if (!sezonlar.length) return kurtarilan;
   // SONDAN geriye: en yeni sezonlar tek tek, bölüm tavanına sığdığı kadar.
   // İlk sezon tavanı tek başına aşsa bile listeye girer (`tam.length` şartı):
   // aksi halde 1.000 bölümlük tek sezonlu bir dizi HİÇ bölüm linki almazdı;
@@ -2895,8 +2978,7 @@ async function seoDiziBolumGovdesi(id, v) {
   const kalanlar = sezonlar
     .filter((s) => !basilan.has(s.season_number))
     .map((s) => s.season_number);
-  const diziAd = seoMetin(v?.name) || 'Dizi';
-  return seoDiziBolumHtml(id, diziAd, sezonVerileri, kalanlar);
+  return seoDiziBolumHtml(id, diziAd, sezonVerileri, kalanlar) + kurtarilan;
 }
 
 // SEO 1.2 — yapısal veri. AggregateRating YALNIZCA gerçekten puan varsa basılır
@@ -5941,6 +6023,13 @@ const SITEMAP_BOLUM_SORGU = `
        WHERE p.tur = 'tv' AND p.sezon IS NOT NULL AND p.bolum IS NOT NULL
          AND ${SEO_INCELEME_KOSUL}
     ) t GROUP BY tmdb_id, sezon, bolum
+  ), kazanan AS (
+    -- KESME KURALININ DÖRDÜNCÜ DALI (27 Ağu 2026): arama sonuçlarında ÖLÇÜLMÜŞ
+    -- performansı olan bölüm, dizi düzeyi kapsam süzgecinden MUAFTIR.
+    -- Gerekçe ve kanıt: migrasyon-2026-08-27.sql (6 URL, 11 gösterim, 7 tıklama
+    -- — sitenin toplam 9 tıklamasının 7'si; altısı da kesme sonrası öksüz
+    -- kalmıştı). Tablo tanımı gereği küçük kalır, kuyruğu şişirmez.
+    SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum
   ), birlesik AS (
     SELECT b.tmdb_id, b.sezon, b.bolum,
            CASE WHEN b.yayin < current_date THEN b.yayin END AS gun,
@@ -5948,8 +6037,14 @@ const SITEMAP_BOLUM_SORGU = `
       FROM tmdb_bolum b
       JOIN harita_tv h ON h.tmdb_id = b.tmdb_id
       JOIN dizi_bilgi d ON d.tmdb_id = b.tmdb_id
+      LEFT JOIN kazanan kz ON kz.tmdb_id = b.tmdb_id
+                          AND kz.sezon = b.sezon AND kz.bolum = b.bolum
+     -- İÇERİK ÖLÇÜSÜ (ilk satır) KAZANAN DALINDA DA ARANIR: gevşeyen yalnız
+     -- DİZİ DÜZEYİ kapsam. Böylece "haritada var ama noindex" tuzağı (B2)
+     -- matematiksel olarak imkânsız kalır — içeriksiz bölüm bu tablodayken
+     -- bile haritaya giremez.
      WHERE (b.ozet > 0 OR b.konuk > 0 OR b.kare > 0 OR b.yayin < current_date)
-       AND (d.tr_yapim OR b.sezon = d.sonraki_sezon)
+       AND (d.tr_yapim OR b.sezon = d.sonraki_sezon OR kz.tmdb_id IS NOT NULL)
     UNION ALL
     SELECT tmdb_id, sezon, bolum, NULL::date, son FROM bizim_bolum
   )
@@ -6084,6 +6179,12 @@ const ISITMA_BOLUM_SORGU = `
        AND (e->>'episode_number')::int >= 1
   ), kapsanan AS (
     SELECT DISTINCT tv, sezon_no FROM gercek_bolum
+  ), kazanan AS (
+    -- Harita ne bildiriyorsa ısıtıcı onu ısıtır (SEO-YAPILACAKLAR §6.10).
+    -- Kazanan dalı haritaya girdiği için ısıtma kuyruğuna da girmeli, yoksa
+    -- bildirilen URL soğuk kalır. Bkz. SITEMAP_BOLUM_SORGU icindeki ayni
+    -- adli CTE. (Sablon dizesi: BACKTICK YOK.)
+    SELECT tmdb_id, sezon, bolum FROM seo_kazanan_bolum
   )
   SELECT DISTINCT tmdb_id, sezon, bolum FROM (
     SELECT g.tv AS tmdb_id, g.sezon_no AS sezon, g.bolum
@@ -6091,6 +6192,8 @@ const ISITMA_BOLUM_SORGU = `
       JOIN harita_tv h ON h.tmdb_id = g.tv
       JOIN dizi_bilgi d ON d.tmdb_id = g.tv
      WHERE d.tr_yapim OR g.sezon_no = d.sonraki_sezon
+        OR EXISTS (SELECT 1 FROM kazanan kz WHERE kz.tmdb_id = g.tv
+                    AND kz.sezon = g.sezon_no AND kz.bolum = g.bolum)
     UNION ALL
     SELECT v.tv, v.sezon_no, s.bolum
       FROM tv_sezon v
@@ -6099,7 +6202,9 @@ const ISITMA_BOLUM_SORGU = `
       LEFT JOIN kapsanan k ON k.tv = v.tv AND k.sezon_no = v.sezon_no,
            LATERAL generate_series(1, v.bolum_adedi) s(bolum)
      WHERE v.sezon_no >= 1 AND v.bolum_adedi > 0 AND k.tv IS NULL
-       AND (d.tr_yapim OR v.sezon_no = d.sonraki_sezon)
+       AND (d.tr_yapim OR v.sezon_no = d.sonraki_sezon
+            OR EXISTS (SELECT 1 FROM kazanan kz WHERE kz.tmdb_id = v.tv
+                        AND kz.sezon = v.sezon_no AND kz.bolum = s.bolum))
     UNION ALL
     SELECT b.tmdb_id, b.sezon, b.bolum FROM (
       SELECT y.tmdb_id, y.sezon, y.bolum
@@ -16011,16 +16116,85 @@ function esitGizli(a, b) {
   return crypto.timingSafeEqual(ab, bb);
 }
 
+// ---------------------------------------------------------------------------
+// IP / CIDR eşleme — ADMIN_IPLER (27 Ağu 2026: IPv6 zorunluluğu)
+// ---------------------------------------------------------------------------
+// Liste 27 Ağu'ya kadar BİREBİR METİN karşılaştırılıyordu ve bu IPv4'te
+// çalışıyordu. IPv6'da çalışmaz: privacy extensions (RFC 4941) arayüz
+// kimliğini saatler içinde döndürür, yani tek adres yazmak paneli birkaç
+// saatte tekrar kapatır. ÖLÇÜLDÜ (27 Ağu): tarayıcı dizijpg.com'a IPv6 ile
+// bağlanıyor, IPv4 adresi listede olmasına rağmen panel 404/403 veriyordu.
+//
+// Çözüm önek (prefix) eşlemesi: `2a00:...:c00::/64` gibi bir kural aboneliğin
+// /64'ünü kapsar — IPv4'te tek ev adresini yazmakla aynı mertebede açıklık.
+//
+// FAIL-CLOSED: ayrıştırılamayan kural veya IP `false` döner (kural bozuksa
+// kapı AÇILMAZ). Öneksiz kural eski davranışı korur: tam eşitlik.
+
+/** IP metnini bayt dizisine çevirir (IPv4 4, IPv6 16); anlamsızsa null. */
+function ipBaytlari(ip) {
+  if (typeof ip !== 'string') return null;
+  let s = ip.trim();
+  if (net.isIPv4(s)) return Buffer.from(s.split('.').map(Number));
+  if (!net.isIPv6(s)) return null;
+  // Gömülü IPv4 kuyruğu (::ffff:1.2.3.4) iki hex gruba çevrilir; böylece
+  // aşağıdaki grup mantığı tek biçim görür.
+  const v4 = /:(\d+\.\d+\.\d+\.\d+)$/.exec(s);
+  if (v4) {
+    const [a, b, c, d] = v4[1].split('.').map(Number);
+    s = s.slice(0, v4.index + 1)
+      + (((a << 8) | b) >>> 0).toString(16) + ':' + (((c << 8) | d) >>> 0).toString(16);
+  }
+  const cift = s.indexOf('::');
+  const on = (cift < 0 ? s : s.slice(0, cift)).split(':').filter(Boolean);
+  const arka = cift < 0 ? [] : s.slice(cift + 2).split(':').filter(Boolean);
+  const eksik = 8 - on.length - arka.length;
+  if (cift < 0 ? on.length !== 8 : eksik < 0) return null;
+  const gruplar = [...on, ...Array(cift < 0 ? 0 : eksik).fill('0'), ...arka];
+  const bayt = Buffer.alloc(16);
+  for (let i = 0; i < 8; i++) {
+    const g = parseInt(gruplar[i], 16);
+    if (!Number.isInteger(g) || g < 0 || g > 0xffff) return null;
+    bayt.writeUInt16BE(g, i * 2);
+  }
+  return bayt;
+}
+
+/** `ip`, `kural` (tek adres ya da CIDR) kapsamında mı? */
+function ipEslesir(ip, kural) {
+  if (typeof kural !== 'string') return false;
+  const egik = kural.indexOf('/');
+  const hedef = ipBaytlari(ip);
+  const ag = ipBaytlari(egik < 0 ? kural : kural.slice(0, egik));
+  // Aile karışması (IPv4 kuralı ↔ IPv6 istemci) eşleşme SAYILMAZ.
+  if (!hedef || !ag || hedef.length !== ag.length) return false;
+  if (egik < 0) return hedef.equals(ag);
+  // ÖNEK RAKAMLA YAZILMIŞ OLMALI. `Number('')` sıfırdır: bu denetim olmadan
+  // "2a00::/" gibi bozuk bir kural /0'a dönüşür ve TÜM İNTERNETİ admin
+  // paneline sokar. (Testle yakalandı, 27 Ağu 2026 — test/admin_ip_cidr.)
+  const onekMetni = kural.slice(egik + 1);
+  if (!/^[0-9]{1,3}$/.test(onekMetni)) return false;
+  const onek = Number(onekMetni);
+  if (onek > ag.length * 8) return false;
+  const tamBayt = onek >> 3;
+  if (tamBayt && !hedef.subarray(0, tamBayt).equals(ag.subarray(0, tamBayt))) return false;
+  const kalanBit = onek & 7;
+  if (!kalanBit) return true;
+  const maske = (0xff << (8 - kalanBit)) & 0xff;
+  return (hedef[tamBayt] & maske) === (ag[tamBayt] & maske);
+}
+
 // Erişim: gerçek IP ADMIN_IPLER listesinde VEYA ADMIN_TOKEN eşleşiyorsa.
 // GÜVENLİK: token yalnız X-Admin-Token BAŞLIĞINDAN okunur (query string'den
 // DEĞİL — query nginx/referer loglarına ve tarayıcı geçmişine sızardı) ve
 // sabit-zamanlı karşılaştırılır. IP artık spoof edilemez (bkz. gercekIp).
+// Liste artık CIDR de kabul eder (bkz. ipEslesir); öneksiz girdi tam eşitlik.
 function adminKisit(req, res, next) {
   const ip = gercekIp(req);
   const izinli = ADMIN_IPLER.split(',').map((s) => s.trim()).filter(Boolean);
   const tokenGecerli =
     !!ADMIN_TOKEN && esitGizli(req.headers['x-admin-token'] || '', ADMIN_TOKEN);
-  if (izinli.includes(ip) || tokenGecerli) return next();
+  if (izinli.some((k) => ipEslesir(ip, k)) || tokenGecerli) return next();
   return res.status(403).json({ hata: 'Erişim reddedildi' });
 }
 
