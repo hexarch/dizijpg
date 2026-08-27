@@ -305,10 +305,14 @@ test('her SSR <title> "— dizi.jpg" ile biter (bölüm sayfası dahil)', () => 
     assert.ok(/— dizi\.jpg$/.test(b) || /^dizi\.jpg( —|$)/.test(b),
       `marka eki/ayraç ayrışmış: ${b}`);
   }
-  // Bölüm sayfasının başlığı DEĞİŞMEDİ (zaten doğruydu).
+  // Bölüm başlığı 27 Ağu 2026'da İKİYE BÖLÜNDÜ: ad ancak BİLGİ KATIYORSA
+  // ekleniyor (`seoOzgunBolumAdi`), yoksa "4. bölüm: 4. Bölüm" tekrarı olurdu.
   assert.ok(KAYNAK.includes(
-    'baslik: `${diziAd} ${s}. sezon ${b}. bölüm: ${bolumAd} — dizi.jpg`'),
-  'bölüm sayfası başlığı değişmiş');
+    'baslik: `${diziAd} ${s}. sezon ${b}. bölüm`'),
+  'bölüm sayfası başlığının gövdesi değişmiş');
+  assert.ok(KAYNAK.includes(
+    "+ `${ozgunAd ? `: ${ozgunAd}` : ''} — dizi.jpg`"),
+  'bölüm başlığındaki koşullu ad eki kaybolmuş');
   // Şablon tarafı da aynı sabitten besleniyor.
   assert.equal(SEO_MARKA, ' — dizi.jpg');
   assert.ok(seoIcerikBasligi(BB).includes(SEO_MARKA));

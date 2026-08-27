@@ -3315,13 +3315,16 @@ function seoIcerikAciklamasi({ ad, yil, tur, sezon, bolum, sure, ozet,
  */
 function seoBolumAciklamasi({ diziAd, sezon, bolum, bolumAd, yayin,
   puanMetni, puanAdet, yorumAdet, konukVar, kareVar }) {
-  const ad = seoMetin(bolumAd);
+  // Şablon ad ("4. Bölüm") cümlede TEKRAR olur — atılır (seoOzgunBolumAdi).
+  const ad = seoOzgunBolumAdi(bolumAd);
   const parcalar = [
     `${diziAd} ${sezon}. sezon ${bolum}. bölüm${ad ? ` "${ad}"` : ''}.`,
   ];
   const sigar = (c) => `${parcalar.join(' ')} ${c}`.length <= SEO_ACIKLAMA_MAX;
   const ekle = (c) => { if (c && sigar(c)) parcalar.push(c); };
-  if (yayin) ekle(`Yayın tarihi ${yayin}.`);
+  // TÜRKÇE TARİH: ham ISO ("2018-08-10") SERP'te makine çıktısı gibi durur.
+  // JSON-LD'deki `datePublished` ISO KALIR (schema.org öyle istiyor).
+  if (yayin) ekle(`Yayın tarihi ${seoTarihTr(yayin) || yayin}.`);
   if (puanMetni) {
     ekle(`dizi.jpg puanı ${puanMetni}`
       + ` (${seoPozitif(puanAdet)} puan${yorumAdet ? `, ${yorumAdet} yorum` : ''}).`);
@@ -3471,6 +3474,34 @@ function seoTarihTr(iso) {
   const gun = Number(m[3]);
   if (ay < 1 || ay > 12 || gun < 1 || gun > 31) return '';
   return `${gun} ${SEO_AYLAR[ay - 1]} ${m[1]}`;
+}
+
+// TMDB, ADI OLMAYAN bölüme dilin şablonunu yazar: tr'de "4. Bölüm",
+// en'de "Episode 4". Bizim yedeğimiz de (`${b}. Bölüm`) aynı kalıp.
+// Salt sayı da ("4", "4.") bilgi katmaz: başlıkta "4. bölüm: 4" olurdu.
+const SEO_SABLON_BOLUM_ADI =
+  /^(?:\d+\s*\.?|\d+\s*\.?\s*(?:bölüm|bolum)|(?:bölüm|bolum|episode|ep)\s*\.?\s*#?\s*\d+)$/i;
+
+/**
+ * Bölüm adı BİLGİ KATIYORSA döner, katmıyorsa ''.
+ *
+ * NEDEN (27 Ağu 2026 ölçümü): başlık şablonu adı koşulsuz ekliyordu ve adsız
+ * bölümlerde kendini tekrar ediyordu:
+ *   "Wynonna Earp 3. sezon 4. bölüm: 4. Bölüm — dizi.jpg"
+ *   "Verdades Secretas 1. sezon 1. bölüm "1. Bölüm". Yayın tarihi …"
+ * Aynı gün ölçülen GSC verisine göre sitenin organik tıklamalarının çoğu tam
+ * da bu sayfalardan geliyor (bkz. migrasyon-2026-08-27.sql), yani SERP'te
+ * görünen metin doğrudan gelir kalemi. Tekrar hem karakter yiyor hem
+ * "bu sayfa şablon" izlenimi veriyordu.
+ *
+ * NUMARA EŞLEŞMESİ ARANMAZ: "Episode 5" adlı 4. bölüm de bilgi katmaz.
+ */
+function seoOzgunBolumAdi(ad) {
+  // METİN OLMAYAN GİRDİ ELENİR: `seoMetin({})` "[object Object]" döndürüyor ve
+  // bu değer doğrudan <title>'a basılırdı (testle yakalandı, 27 Ağu 2026).
+  if (typeof ad !== 'string') return '';
+  const t = seoMetin(ad).replace(/\s+/g, ' ').trim();
+  return t && !SEO_SABLON_BOLUM_ADI.test(t) ? t : '';
 }
 
 /** "a" · "a ve b" · "a, b ve c" — cevap cümlesine giren Türkçe liste. */
@@ -4940,7 +4971,9 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     const bolumAd = bol.name
       || seoCeviriAlani(bol.translations, 'name')
       || `${b}. Bölüm`;
-    const h1 = `${diziAd} ${s}. Sezon ${b}. Bölüm — ${bolumAd}`;
+    // Ad bilgi katmıyorsa (TMDB'nin "4. Bölüm" şablonu) başlıkta TEKRARLANMAZ.
+    const ozgunAd = seoOzgunBolumAdi(bolumAd);
+    const h1 = `${diziAd} ${s}. Sezon ${b}. Bölüm${ozgunAd ? ` — ${ozgunAd}` : ''}`;
     // Bölüm özeti Türkçe boşsa İngilizceye düş (TMDB'de sık görülür).
     const ozet = seoMetin(bol.overview)
       || seoCeviriAlani(bol.translations, 'overview');
@@ -4974,8 +5007,10 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       seoSezonGezinme([...bolumNolari].sort((x, y) => x - y), b)
         .filter((n) => n !== b - 1 && n !== b + 1)
         .map((n) => ({
+          // Aynı disiplin: "3. Sezon 7. Bölüm — 7. Bölüm" yazmayız.
           ad: `${s}. Sezon ${n}. Bölüm`
-            + (seoMetin(bolumAdlari.get(n)) ? ` — ${seoMetin(bolumAdlari.get(n))}` : ''),
+            + (seoOzgunBolumAdi(bolumAdlari.get(n))
+              ? ` — ${seoOzgunBolumAdi(bolumAdlari.get(n))}` : ''),
           yol: `/dizi/${id}/sezon/${s}/bolum/${n}`,
         })));
 
@@ -4988,14 +5023,17 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     // Yayın tarihi görünür bilgi: JSON-LD'deki datePublished ile aynı gün.
     const yayinGunu = /^\d{4}-\d{2}-\d{2}/.test(String(bol.air_date ?? ''))
       ? String(bol.air_date).slice(0, 10) : '';
+    // GÖRÜNÜR tarih Türkçe; JSON-LD `datePublished` ham ISO'yu (yayinGunu)
+    // kullanmaya DEVAM eder — schema.org ISO 8601 istiyor.
     const yayinBlok = yayinGunu
-      ? `\n<p>Yayın tarihi: ${htmlKacir(yayinGunu)}</p>` : '';
+      ? `\n<p>Yayın tarihi: ${htmlKacir(seoTarihTr(yayinGunu) || yayinGunu)}</p>` : '';
     const ozetBlok = ozet
       ? `\n<h2>${htmlKacir(bolumAd)} özeti</h2>\n<p>${htmlKacir(ozet)}</p>` : '';
     const bolumPuani = seoOrtalamaPuan(seo);
 
     res.type('html').send(ogSayfa({
-      baslik: `${diziAd} ${s}. sezon ${b}. bölüm: ${bolumAd} — dizi.jpg`,
+      baslik: `${diziAd} ${s}. sezon ${b}. bölüm`
+        + `${ozgunAd ? `: ${ozgunAd}` : ''} — dizi.jpg`,
       h1,
       // ÖZET GÖVDEDE BİR KEZ (`ozetBlok`), meta açıklama BİZİM verimizden
       // kuruluyor — gerekçe `seoBolumAciklamasi`da.

@@ -404,13 +404,16 @@ test('meta açıklama ham özet DEĞİL, bizim verimizden kurulu cümle', () => 
 
 test('seoBolumAciklamasi her sayfada FARKLI, sınırı aşmıyor, ÖZET İÇERMİYOR', () => {
   const f = alan(
-    ['SEO_ACIKLAMA_MAX', 'seoMetin', 'seoPozitif', 'seoBolumAciklamasi'],
+    ['SEO_ACIKLAMA_MAX', 'seoMetin', 'seoPozitif', 'SEO_AYLAR', 'seoTarihTr',
+      'SEO_SABLON_BOLUM_ADI', 'seoOzgunBolumAdi', 'seoBolumAciklamasi'],
     'seoBolumAciklamasi');
   const a = f({ diziAd: 'Simpsonlar', sezon: 30, bolum: 12, bolumAd: 'Bart', yayin: '2019-01-13', kareVar: true });
   const b = f({ diziAd: 'Simpsonlar', sezon: 30, bolum: 13, bolumAd: 'Lisa', yayin: '2019-01-20', kareVar: true });
   assert.notEqual(a, b, 'iki bölümün açıklaması aynı');
   assert.match(a, /Simpsonlar 30\. sezon 12\. bölüm "Bart"\./);
-  assert.match(a, /Yayın tarihi 2019-01-13\./);
+  // TÜRKÇE TARİH (27 Ağu 2026): ham ISO SERP'te makine çıktısı gibi duruyordu.
+  assert.match(a, /Yayın tarihi 13 Ocak 2019\./);
+  assert.doesNotMatch(a, /2019-01-13/, 'ham ISO hâlâ açıklamada');
   for (const m of [a, b]) assert.ok(m.length <= 155, `açıklama ${m.length} karakter`);
   // ÖZET KUYRUĞU YOK: `ogSayfa` açıklamayı gövdeye <p> olarak da basıyor;
   // özet oraya girseydi <h2>… özeti</h2> bloğuyla YİNELENİRDİ (ölçülen kusur).
@@ -425,6 +428,33 @@ test('seoBolumAciklamasi her sayfada FARKLI, sınırı aşmıyor, ÖZET İÇERM�
   assert.match(
     f({ diziAd: 'X', sezon: 1, bolum: 1, puanMetni: '4.5/5', puanAdet: 3, yorumAdet: 2 }),
     /dizi\.jpg puanı 4\.5\/5 \(3 puan, 2 yorum\)\./);
+  // ŞABLON AD TEKRARLANMAZ (27 Ağu 2026): TMDB adsız bölüme dilin kalıbını
+  // yazıyor ve cümle "1. bölüm \"1. Bölüm\"." oluyordu.
+  const sablon = f({ diziAd: 'Verdades Secretas', sezon: 1, bolum: 1,
+    bolumAd: '1. Bölüm', yayin: '2015-06-08', kareVar: true });
+  assert.match(sablon, /^Verdades Secretas 1\. sezon 1\. bölüm\. /);
+  assert.doesNotMatch(sablon, /"/, 'şablon ad hâlâ tırnak içinde tekrarlanıyor');
+});
+
+test('seoOzgunBolumAdi: şablon adı eler, GERÇEK adı korur', () => {
+  const f = alan(['seoMetin', 'SEO_SABLON_BOLUM_ADI', 'seoOzgunBolumAdi'],
+    'seoOzgunBolumAdi');
+  // Şablonlar (TMDB tr/en + bizim yedeğimiz) — hepsi elenmeli.
+  for (const ad of ['4. Bölüm', '4.Bölüm', '4 Bölüm', 'bölüm 4', 'Bölüm  4',
+    'Episode 4', 'episode 4', 'Ep 4', 'Ep. 4', '23. bolum', '  12. Bölüm  ']) {
+    assert.equal(f(ad), '', `şablon geçti: ${ad}`);
+  }
+  // Gerçek adlar KORUNMALI — aşırı süzgeç bilgi kaybettirir.
+  for (const ad of ['Pilot Bölüm', 'Bart', 'Bölüm Sonu Canavarı', '4. Kat',
+    'Episode of Nami', '4. Bölüm: Veda', 'Son Bölüm']) {
+    assert.equal(f(ad), ad.trim(), `gerçek ad elendi: ${ad}`);
+  }
+  // Salt sayı da bilgi katmaz ("4. bölüm: 4" olurdu).
+  for (const ad of ['4', '4.', ' 12 ']) assert.equal(f(ad), '', `sayı geçti: ${ad}`);
+  for (const ad of [null, undefined, '', '   ', 5, {}]) {
+    assert.doesNotThrow(() => f(ad));
+    assert.equal(f(ad), '');
+  }
 });
 
 test('TMDB özeti gövdede TAM OLARAK BİR KEZ', () => {
