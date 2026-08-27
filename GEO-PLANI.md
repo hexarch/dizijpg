@@ -1,6 +1,6 @@
 # dizi.jpg — GEO (Üretken Motor Optimizasyonu) Planı
 
-> Sürüm **1.1** · 27 Ağustos 2026 — **v1.0'ın ana bulgusu DÜZELTİLDİ (§0.0)**
+> Sürüm **1.2** · 27 Ağustos 2026 — **ilk "sonrası" ölçümü eklendi (§6.1): düzeltme gerçek trafikte doğrulandı**
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
 >
 > Bu belge bir görev listesi değil, **karar belgesidir** — `SEO-YAPILACAKLAR.md`
@@ -303,6 +303,64 @@ gösteren resmî bir panel yok.** Kurulacak üç kanal:
    olarak geçiyor mu diye BAKILIR. Öznel ama tek doğrudan ölçüm.
 
 **Başlangıç değeri (27 Ağu 2026): üçü de sıfır — çünkü botlar 403 alıyor.**
+
+---
+
+## 6.1 ✅ İLK "SONRASI" ÖLÇÜMÜ — 27 Ağustos 2026, 19:20 (düzeltmeden 7 saat sonra)
+
+Kanal 1 (sunucu logu) kuruldu ve **ilk gerçek veriyi verdi**. Ölçüm penceresi:
+27 Ağu 00:00–19:20; kesme noktası nginx reload'u **12:18:49**.
+
+| Bot | Toplam | 12:18 ÖNCESİ | 12:18 SONRASI |
+|---|---|---|---|
+| OAI-SearchBot | 24 | **0** | **24** |
+| Claude-SearchBot | 21 | 12 | 9 |
+| ChatGPT-User | 3 | 0 | 3 |
+| PerplexityBot / Perplexity-User | 2 / 2 | 0 | kendi testimiz |
+| Claude-User | 2 | 0 | kendi testimiz (CF hâlâ engelli, bkz. §2) |
+
+**ANA BULGU — cevap botları düzeltmeden ÖNCE HİÇ İÇERİK SAYFASI ÇEKMEMİŞTİ.**
+12:18 öncesi tüm gerçek istekler yalnız `/robots.txt` ve `/sitemap.xml`.
+12:18'den sonra OAI-SearchBot (74.7.x = OpenAI ASN) **22 içerik sayfası** çekti:
+11× `/icerik/tv/…`, 6× `/kisi/…`, 5× `/sirket/…`. Hepsi 200.
+
+**SSR gerçekten gidiyor mu? Üç bağımsız kanıt (bayt sayıları gzip'lidir):**
+1. **Değişkenlik**: bot yanıtları 983–3.815 bayt arasında sayfaya göre DEĞİŞİYOR.
+   Kabuk tek bir dosyadır → sabit boyut verirdi.
+2. **İnsan referansı**: Chrome istekleri `/icerik/tv/*` için **sabit 4.725/4.727**
+   bayt (= kabuk). Bot değerleriyle örtüşmüyor ⇒ ayrım çalışıyor.
+3. **Googlebot referansı**: 1.942–3.189 bayt — cevap botlarıyla aynı profil,
+   yani onlarla aynı SSR'ı alıyorlar.
+
+**Eğitim botları kapalı kaldı ✅**: GPTBot ve ClaudeBot 24 saatte YALNIZ
+`/robots.txt` istedi (304), tek bir içerik sayfası çekmedi. `CCBot`,
+`Bytespider`, `Amazonbot`, `meta-externalagent`, `Applebot-Extended`: **0 istek**.
+
+**Kanal 2 (atıf trafiği): hâlâ 0.** Beklenen — §8'de yazıldığı gibi indekse
+girmek haftalar sürer, 0 burada başarısızlık değil.
+
+### ⚠ ÖLÇÜM TUZAĞI (yeni): kendi testlerimiz logu kirletiyor
+Ek A'daki döngü `/icerik/tv/1396?n=$RANDOM` isteklerini gerçek bot UA'sıyla
+atıyor; log'da GERÇEK bot trafiğinden ayırt edilemiyorlar ve 16.215 baytlık
+(sıkıştırılmamış) yanıtlarıyla ortalamayı bozuyorlar. **Kural: log okurken
+`?n=` içeren istekleri ve `127.0.0.1` kaynaklı satırları HARİÇ TUT.**
+
+### 📌 ÖLÇÜMDEN ÇIKAN YENİ İŞ — tarama bütçesi ince sayfalara gidiyor
+OAI-SearchBot'un çektiği 22 sayfanın **11'i `/kisi/` ve `/sirket/`**. Bu iki
+yüzeyin SSR zenginliği dizi sayfasının çok altında:
+
+| Yol | Ham SSR | Şema | `<p>` |
+|---|---|---|---|
+| `/icerik/tv/1396` | 16.215 B | TVSeries, **FAQPage**, AggregateRating, Review, Person… | 15 |
+| `/kisi/8293` | 16.622 B | Person, TVSeries, Movie, ItemList — **FAQPage YOK** | 5 |
+| `/sirket/7382` | 8.877 B | Organization, PostalAddress, ItemList | 4 |
+| `/sirket/161325` | **5.105 B** | Organization, PostalAddress, ItemList | 3 |
+
+Yani motorun bizden aldığı örneklemin yarısı, GEO için hazırladığımız
+SSS/alıntı yüzeyine sahip DEĞİL. §5'in ilk hedefi buradan belirlendi:
+**tahminle değil, ölçülmüş tarama davranışıyla** → `/kisi/` sayfalarına
+SSS + tek cümlelik olgu kalıbı. `/sirket/` ikinci öncelik (hacim düşük,
+sayfa doğası ince).
 
 ---
 
