@@ -1,5 +1,29 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
-> Güncelleme: 2026-08-26 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+> Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
+
+## 2026-08-27 — 🚀 Play üretim: 1.98.0+149 incelemeye gönderildi
+
+- 148 (1.97.1) 26 Ağu'da **onaylanıp yayına alındı** (Play bildirimi: "Uygulama
+  güncellemesi yayınlandı"), yani 149 temiz bir üretim sürümü olarak gitti.
+- İçerik: izleme tarihleri (detay + bölüm), 401 = oturum düştü katmanı,
+  bildirim listesinden mesajların çıkarılması.
+- Sürüm notları **11 dilde** (`surum-notu-1.98.0.txt`), %100, 177 ülke.
+  İndirme boyutu 23,6 MB (+16 KB), güncelleme boyutu 4,6 MB, cihaz kaybı yok.
+- **TUZAK:** AAB'nin ilk sürükleme denemesi "Yüklenemedi. Tekrar deneyin."
+  ile düştü, ikincisi geçti — yükleme sonrası paket tablosunda
+  `149 (1.98.0)` satırını GÖRMEDEN ilerleme.
+- Sürüm notlarını textarea'ya JS ile yazmak (native value setter + `input`
+  olayı) çalışıyor; 4300 karakteri elle yazmaktan çok daha güvenilir.
+- ⬜ Play'in 148 için verdiği 2 öneri 149'a da taşındı: (1) **uçtan uca ekran**
+  — SDK 35+ Android 15'te varsayılan edge-to-edge çiziyor, ekleri (insets)
+  kullanmamız isteniyor, görsel kesilme kontrolü gerek; (2) bitmap alt
+  örnekleme — işaret edilen yerler `flutter_webrtc` FrameCapturer'ı, bizim
+  kodumuz değil, YAPILACAK BİR ŞEY YOK.
+- ⬜ **Android geliştirici doğrulaması son tarih 30 Eylül 2026.** Play
+  uygulamaları kayıtlı (ana sayfa banner'ı onaylıyor); Play DIŞINDA
+  dağıtılan APK'nın imza anahtarı ayrıca kaydedilmeli mi, bakılacak.
+- ⬜ Canlı web hâlâ 1.97.1+148 sürüm dizesiyle derlenmiş (`Api.surum`);
+  içerik 1.98.0 ile aynı, yalnız etiket eski. Sonraki web dağıtımında düzelir.
 
 ## 2026-08-27 — ✅ İzleme tarihleri (detay + bölüm) & içe aktarım onarımı
 
