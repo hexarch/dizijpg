@@ -23,7 +23,7 @@ altyapısı (SSR + şema + SSS) zaten hazır ve şu anda **boşa çalışıyor**
 | Duvar | Ölçülen | Kimin | Sıra |
 |---|---|---|---|
 | **Cloudflare her AI cevap botunu 403'lüyor** | `Your request was blocked.` (25 bayt) | Cloudflare paneli | 2. |
-| **nginx bot regex'inde AI botları YOK** | CF geçse bile 12.679 baytlık BOŞ Flutter kabuğu | bizde, tek satır | **1.** |
+| ~~**nginx bot regex'inde AI botları YOK**~~ | ~~CF geçse bile 12.679 baytlık BOŞ Flutter kabuğu~~ | bizde | ✅ **27 Ağu YIKILDI** |
 
 Sıra ters görünüyor ama bilinçli: **önce arkayı hazırla, sonra kapıyı aç**
 (gerekçe §0.1).
@@ -51,8 +51,8 @@ görmüyor.
 
 | # | Adım | Neden bu sırada | Bölüm | Durum |
 |---|---|---|---|---|
-| **1** | **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ⬜ tek satır + test |
-| **2** | **CF'te AI cevap botlarının engelini kaldır** | Arkası hazır olduğu anda aç | §2 | ⬜ **KULLANICI/PANEL** |
+| **1** | ✅🚀 **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ✅ **27 Ağu, canlıda** |
+| **2** | **CF'te AI cevap botlarının engelini kaldır** | Arkası hazır — **artık açılabilir** | §2 | ⬜ **SIRADAKİ · KULLANICI/PANEL** |
 | **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ⬜ |
 | **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ⬜ |
 | **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | ⬜ |
@@ -152,7 +152,30 @@ bizim adımıza karar veriyor.
 
 ---
 
-## 3. ⬜ nginx bot regex'i — İLK ADIM (bizde, ucuz)
+## 3. ✅🚀 nginx bot regex'i — YAPILDI (27 Ağu 2026)
+
+**Uygulandı ve origin'de doğrulandı.** Parça dosyası:
+`backend/nginx-geo-20260827.parca.conf`; test kilidi:
+`backend/test/geo_bot_regex.test.js` (6 test, robots.txt ile hizayı da denetler).
+
+ORIGIN ÖLÇÜMÜ (CF atlanarak, `--resolve dizijpg.com:443:127.0.0.1`):
+
+| İstemci | Önce | Sonra |
+|---|---|---|
+| OAI-SearchBot · ChatGPT-User | kabuk | **200 · 16.215 B SSR** ✅ |
+| PerplexityBot · Perplexity-User | kabuk | **200 · 16.215 B SSR** ✅ |
+| Claude-User · Claude-SearchBot | kabuk | **200 · 16.215 B SSR** ✅ |
+| Googlebot | 16.215 B | 16.215 B (değişmedi) |
+| insan (Chrome) | 12.680 B kabuk | 12.680 B kabuk (**değişmedi**) |
+| GPTBot (eğitim) | kabuk | kabuk (**istenen**) |
+
+Yedek: `/etc/nginx/sites-available/dizijpg.com.yedek-geo-20260827`.
+
+> DIŞARIDAN TEST ETME TUZAĞI: `curl https://dizijpg.com` ile bu UA'lar hâlâ
+> **403** döner — çünkü Cloudflare istekleri nginx'e ulaştırmıyor (§2). Bu
+> adımın doğrulaması ancak origin'den yapılabilir.
+
+### Uygulanan (arşiv)
 
 CF açıldığı anda bu satır olmadan botlar boş kabuk alır — bu yüzden CF'ten
 ÖNCE yapılır (bkz. §0.1).

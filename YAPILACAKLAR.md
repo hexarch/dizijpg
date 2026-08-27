@@ -23,9 +23,13 @@ BreadcrumbList var. SSS cümleleri birebir alıntılanabilir biçimde ("5 sezon 
 toplam 62 bölüm… dizi.jpg kullanıcıları 5.0/5 puan verdi", "Netflix üzerinden
 abonelikle izlenebilir. Sağlayıcı verisi: JustWatch").
 
-- ⬜ **1. adım KULLANICI/PANEL İŞİ:** Cloudflare'de eğitim ≠ cevap ayrımı
-  (cevap botları açılacak, GPTBot/ClaudeBot/CCBot/Bytespider kapalı kalacak).
-- ⬜ 2. adım bizde ve tek satır: nginx regex'ine altı UA eklenecek + test.
+- 🚀 **1. ADIM YAPILDI (27 Ağu):** nginx `$og_bot` regex'ine altı AI cevap botu
+  eklendi (`nginx-geo-20260827.parca.conf`, testi `geo_bot_regex.test.js`).
+  Origin doğrulaması (CF atlanarak): altısı da **200 + 16.215 bayt SSR**;
+  insan trafiği ve GPTBot **değişmedi** (12.680 bayt kabuk). Yedek:
+  `dizijpg.com.yedek-geo-20260827`. ⚠ Dışarıdan curl HÂLÂ 403 verir — CF.
+- ⬜ **2. adım SIRADAKİ, KULLANICI/PANEL İŞİ:** Cloudflare'de eğitim ≠ cevap
+  ayrımı (cevap botları açılacak, GPTBot/ClaudeBot/CCBot/Bytespider kapalı).
 - ⬜ 3-4. adım: uçtan uca curl doğrulaması + ölçüm hattı (GEO'nun Search
   Console'u YOK: sunucu logu + atıf `Referer` + aylık elle sorgu turu).
 - ⛔ `llms.txt` şimdilik yok — hiçbir büyük motorun kullandığı doğrulanmadı ve
