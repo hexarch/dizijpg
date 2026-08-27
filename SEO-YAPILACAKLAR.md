@@ -1,13 +1,81 @@
 # dizi.jpg — SEO yapılacaklar
 
-> Sürüm **3.0** · 23 Ağustos 2026 — **Search Console + canlı Googlebot ölçümü**  
+> Sürüm **4.0** · 27 Ağustos 2026 — **Search Console yeni tur + ilk organik tıklamalar**  
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak  
 >
 > Bu belge bir görev listesi değil, **karar belgesidir**. Neden / neden değil yazılır. Atlanan maddenin gerekçesi buraya işlenir.  
-> Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (aynı gün).
+> Strateji ve GSC tablolarının anlatımı: `SEO-PLANI.md` v3.0 (23 Ağu).
 
 ---
 
+## 0.0 v4.0 NE DEĞİŞTİ — TIKLAMA VERİSİ GELDİ (27 Ağustos 2026)
+
+v3.0 "0 tıklama" tablosuyla yazılmıştı ve bir yerde YANILDI. Bugünkü ölçüm:
+
+| Ölçüm | 23 Ağu (v3.0) | **27 Ağu (v4.0)** |
+|---|---|---|
+| Tıklama / gösterim / konum | 0 / 152 / 63,6 | **9 / 715 / 44,6** (TO %1,3) |
+| Dizine eklenen | 998 | **998** |
+| Keşfedildi – taranmadı | 21.394 | **21.394** (veri 21 Ağu'da bitiyor) |
+| Yorum snippet geçersiz | 5 | **0** ✅ |
+| Breadcrumb geçersiz | 11 | **3** (doğrulama "İyi görünüyor") |
+| Bölüm haritası loc | 78.484 → 5.137 | **5.141** (+6, aşağıya bak) |
+| Dış bağlantı | 0 | **0** |
+| Site haritası | Başarılı | Başarılı, **son okuma 27 Ağu, 18.208 URL** |
+
+**ÇÜRÜYEN VARSAYIM — §3'teki "bölüm tazeliği: henüz 0 gösterim" satırı.**
+Gerçek: **9 tıklamanın 7'si BÖLÜM sayfalarından.** Altı URL, 11 gösterim,
+**TO ~%64** — çünkü sorgu hiper-spesifik ("verdades secretas 1 bölüm izle")
+ve başlığımız birebir eşleşiyor. 409 sayfalık listede bölüm ailesinden başka
+gösterim alan URL yok.
+
+**VE O ALTI URL ÖKSÜZDÜ.** 25 Ağu kesmesi onları haritadan çıkardı, §6.1 iç
+bağlantı hizalaması da dizi sayfasından bağlantılarını kesti. 27 Ağu kanıtı
+(curl, Googlebot UA): altısı da **200 + index**, **6/6 harita dışı**, dizi
+sayfası (`/icerik/tv/<id>`) **0 bölüm linki**. Yani tek besleyen yol eski
+indeks kaydıydı; o düşünce tıklamalar da giderdi.
+
+> ÖLÇÜM DERSİ: ilk turda iç bağlantıyı `/dizi/<id>` üzerinden ölçmüştüm — o
+> URL **404**. Dizi sayfası `/icerik/tv/<id>`. Yanlış URL'de ölçülen "0 link"
+> doğru sonucu tesadüfen verdi; kanıt yine de yeniden alındı.
+
+**KESME GERİ ALINMADI, İSTİSNA EKLENDİ.** `seo_kazanan_bolum` tablosu kesme
+kuralının **dördüncü dalı**: arama sonuçlarında ölçülmüş performansı olan
+bölüm, dizi düzeyi kapsam süzgecinden muaf. Bugün 6 satır.
+· Üç yerde birden okunur: `SITEMAP_BOLUM_SORGU`, `ISITMA_BOLUM_SORGU`,
+  `seoDiziBolumGovdesi` — kesme kuralının yaşadığı her yer.
+· İçerik ölçüsünü ATLAMAZ: yalnız dizi düzeyi kapsam gevşer, yani "haritada
+  var ama noindex" (B2) hâlâ imkânsız.
+· 🚀 CANLIDA: harita **5.135 → 5.141**, altı URL de içeride; dizi sayfaları
+  artık tam o bölümlere link veriyor. **Karşı kontrol:** Breaking Bad (1396)
+  ve The Mandalorian (82856) hâlâ **0 bölüm linki** — kesme bozulmadı.
+· Liste GSC'den elle tazelenir (§12 haftalık ritüelin parçası). Search Console
+  API yolu kapalı (Google Cloud hizmet şartları onayı bekliyor).
+
+**BAŞLIK/AÇIKLAMA ONARIMI (aynı gün, 🚀 canlıda).** Kazanan yüzey bölüm
+sayfası olduğu için SERP metni doğrudan gelir kalemi. İki kusur ölçüldü:
+```
+<title>Wynonna Earp 3. sezon 4. bölüm: 4. Bölüm — dizi.jpg</title>
+description: … 1. bölüm "1. Bölüm". Yayın tarihi 2018-08-10.
+```
+· `seoOzgunBolumAdi`: TMDB adsız bölüme dilin şablonunu yazıyor ("4. Bölüm",
+  "Episode 4"); bilgi katmayan ad artık başlık, h1, meta açıklama ve sezon
+  listesinde tekrarlanmaz. Gerçek adlar korunur ("Pilot Bölüm").
+· Görünür tarih + meta açıklama `seoTarihTr` ile Türkçe ("10 Ağustos 2018").
+  **JSON-LD `datePublished` ISO KALDI** — canlıda doğrulandı.
+
+**KAPANAN GSC İŞLERİ:** yorum snippet 5 → **0** (§2.2 ✅). Breadcrumb 11 → 3,
+kalan üçünün son taraması 23 Ağu, yani düzeltmeden önce; canlı `/kisi/83633`
+BreadcrumbList'inde iki öğede de `item` dolu (§2.5 ✅ sayılır, doğrulama
+kendiliğinden kapanacak). 5xx 34: listenin tamamı eski Next.js URL'leri
+(`www.` + slug, `/_next/static/...`); güncel olan iki `/kisi` sayfası ARTIK
+200. noindex 559'un doğrulaması "Başarısız oldu" — **beklenen**, noindex
+kasıtlı, o doğrulama asla geçmez, bildirimleri görmezden gel.
+
+**AÇIK KALAN TEK YANGIN:** keşif kuyruğu 21.394. Sayfa raporu verisi 21 Ağu'da
+bittiği için 25 Ağu kesmesinin etkisi **henüz görünmüyor**. 1 Eylül civarı bak.
+
+---
 ## 0. Yönetici özeti
 
 Teknik borç **küçük**. Asıl tablo:
@@ -28,13 +96,13 @@ Teknik borç **küçük**. Asıl tablo:
 |---|---|---|---|---|
 | **1** | **Ölç** — GSC 23 Ağu | v2’nin 19 Ağu tablosu eski; sıra değişti | §1 | ✅ |
 | **2** | **Haritayı kes** — bölüm sitemap eşiği | 78k URL kuyruğu 10× şişirdi; 998’i seyreltir | §5 | 🚀 25 Ağu — 78.484 → **5.137** |
-| **3** | **GSC temizlik** — snippet doğrulama + 5xx kapanışı | 5 geçersiz Review, 34 5xx; ucuz güven | §2.2, §2.5, §6.9 | 🔨 25 Ağu: snippet + breadcrumb doğrulaması BAŞLATILDI; 5xx doğrulaması sürüyor |
+| **3** | **GSC temizlik** — snippet doğrulama + 5xx kapanışı | 5 geçersiz Review, 34 5xx; ucuz güven | §2.2, §2.5, §6.9 | ✅ 27 Ağu: snippet **0**, breadcrumb 3 (eski tarama), 5xx listesi eski site — bkz. §0.0 |
 | **4** | **İç bağlantıyı koru / daralt** | `/icerik` → kişi/şirket evet; bölüm linki yalnız haritada kalan URL | §6.1 | 🚀 25 Ağu — bölüm linki haritayla hizalandı |
-| **5** | **Dış görünürlük** | Tıklama tavanı burada; kod değil | §4.6 | ⬜ |
+| **5** | **Dış görünürlük** | Tıklama tavanı burada; kod değil | §4.6 | ⬜ **SIRADAKİ** (dış bağlantı hâlâ 0) |
 | **6** | hreflang / konuşan URL / yeni aile | Kuyruk düşünce | §7, §8 | ⛔ şimdilik |
 | ~~bölüm ailesini genişlet~~ | | Zaten fazla geniş | §5 | ⛔ tersine |
 
-**Sonraki gözden geçirme (7 gün):** “Keşfedildi – dizine eklenmemiş” 21.394. Düşüyorsa kesme işe yaradı. Artıyorsa harita hâlâ geniş veya Index’te yeni parça var. **Düşmeden slug/hreflang yok.**
+**Sonraki gözden geçirme (1 Eylül):** “Keşfedildi – dizine eklenmemiş” 21.394. Düşüyorsa kesme işe yaradı. Artıyorsa harita hâlâ geniş veya Index’te yeni parça var. **Düşmeden slug/hreflang yok.**
 
 ---
 
@@ -120,7 +188,7 @@ GSC’nin gösterdiği kazanılabilir kümeler:
 | Oyuncu | `küçük ev dizisi oyuncuları` vb. | Başlık şablonu durur; `/kisi` taraması harita kesilince artar |
 | Ad+yıl | `jack reacher 2022` | `/icerik/movie` |
 | Konu | `bron broen konusu` | SSS + inceleme; “izle” vaadi yok |
-| Bölüm tazeliği | henüz 0 gösterim | **Az URL**, yüksek tazelik — 78k değil |
+| Bölüm tazeliği | ⚠ v4.0: **9 tıklamanın 7'si burada**, TO ~%64 | **Az URL**, yüksek tazelik — kazananı `seo_kazanan_bolum` ile KORU (§0.0) |
 | TR yapım / şirket | 0 gösterim | Şablon canlı; kuyruk bitmeden büyütme |
 | `{ad} izle` | `derinlik sarhoşluğu izle` | ⛔ hedefleme; korsan SERP |
 

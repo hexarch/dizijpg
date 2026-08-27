@@ -1,6 +1,40 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-27 — 🚀 SEO: öksüz kalan kazanan bölümler + başlık onarımı
+
+GSC turu (bkz. SEO-YAPILACAKLAR v4.0 §0.0) bir gerileme ortaya çıkardı:
+**9 organik tıklamanın 7'si bölüm sayfalarından geliyor ve o 6 URL'nin ALTISI
+DA 25 Ağu kesmesinden sonra öksüz kalmış** — 200 + index dönüyorlar ama ne
+haritada ne dizi sayfasının iç bağlantısında.
+
+- `seo_kazanan_bolum` (migrasyon-2026-08-27.sql) = kesme kuralının DÖRDÜNCÜ
+  dalı. Üç yerde okunur: harita + ısıtıcı + `seoDiziBolumGovdesi`. İçerik
+  ölçüsünü atlamaz (B2 tuzağı hâlâ imkânsız). 🚀 Harita 5.135 → **5.141**,
+  altı URL de içeride. Karşı kontrol: Breaking Bad / Mandalorian hâlâ 0 link.
+- **Bölüm başlığı/açıklaması:** adsız bölümlerde "4. bölüm: 4. Bölüm" tekrarı
+  vardı ve tarih ham ISO'ydu. `seoOzgunBolumAdi` + `seoTarihTr` ile düzeltildi;
+  JSON-LD `datePublished` ISO kaldı. 🚀 Canlıda doğrulandı.
+- **ÖLÇÜM TUZAĞI:** dizi sayfası `/icerik/tv/<id>` — `/dizi/<id>` **404**.
+  İlk turda yanlış URL'de ölçtüm; sonuç tesadüfen doğruydu, kanıt yenilendi.
+- ⬜ Sıradaki: keşif kuyruğu 21.394 (veri 21 Ağu'da bitiyor, **1 Eylül'de bak**)
+  ve §4.6 dış bağlantı (GSC Bağlantılar: dış 0, iç 0).
+
+## 2026-08-27 — 🔒 Admin paneli IPv6'da kapalıymış (ADMIN_IPLER artık CIDR)
+
+- Kullanıcı paneli isteyince çıktı: `ADMIN_IPLER` **birebir metin**
+  karşılaştırıyordu; tarayıcı siteye **IPv6** ile bağlandığı için IPv4 adresi
+  listede olsa bile 404/403 alınıyordu. IPv6 privacy extensions adresi
+  saatlerde bir döndürdüğü için tek adres yazmak kalıcı çözüm değil.
+- `ipEslesir` / `ipBaytlari` ile **CIDR desteği** eklendi (öneksiz girdi eski
+  tam-eşitlik davranışını korur, aile karışması eşleşmez, bozuk kural
+  fail-closed). nginx geo + .env'e `2a00:1d34:5517:c00::/64` eklendi.
+- **TEST BİR FAIL-OPEN YAKALADI:** "2a00::/" gibi bozuk kuralda `Number('')`
+  sıfır olduğu için kural /0'a dönüşüp TÜM İNTERNETİ panele sokuyordu. Önek
+  artık rakam zorunlu (`test/admin_ip_cidr.test.js` kilitliyor).
+- 🚀 Canlı: `/api/admin` ve `/api/admin/ozet` IPv6 ve IPv4'te 200.
+  Yedekler: `*.yedek-adminipv6-20260827`.
+
 ## 2026-08-27 — 🚀 Play üretim: 1.98.0+149 incelemeye gönderildi
 
 - 148 (1.97.1) 26 Ağu'da **onaylanıp yayına alındı** (Play bildirimi: "Uygulama
