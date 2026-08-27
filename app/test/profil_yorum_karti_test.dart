@@ -2,6 +2,7 @@ import 'package:dizijpg/api.dart';
 import 'package:dizijpg/ekranlar/akis.dart';
 import 'package:dizijpg/ekranlar/kesfet_akis.dart';
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
+import 'package:dizijpg/ekranlar/ortak.dart';
 import 'package:dizijpg/tema.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,6 +158,102 @@ void main() {
     expect(
       tester.widget<Text>(find.text('2026-08-02')).style?.color,
       DiziRenkler.gonderiEylem,
+    );
+  });
+
+  // =========================================================================
+  // MEDYA LİSTEDE GÖRÜNÜR (27 Ağu 2026)
+  // =========================================================================
+  // Kullanıcı bildirdi: "profilimdeki göz ikonuna tıkladığımda fotoğraf video
+  // ile yaptığım paylaşımların fotoğraf ve videoları gözükmüyor."
+  //
+  // ÖLÇÜLDÜ: veri hep vardı — `GET /profil/:ad` `y.medya`yı döndürüyor
+  // (canlı yanıt: 20 gönderinin 11'i medyalı, ör. ['/medya/m3-….png']) ve
+  // dosyalar 200 dönüyor. Kusur ÇİZİMDE: kart medyayı hiç basmıyordu, yalnız
+  // detay modali basıyordu — fotoğraflı gönderi listede düz metin gibi
+  // görünüyordu.
+  Future<void> kartKur(WidgetTester tester, List<String> medya) async {
+    DiziRenkler.acik = false;
+    SharedPreferences.setMockInitialValues({});
+    await Api.tokenYukle();
+    await tester.pumpWidget(
+      ChangeNotifierProvider<Oturum>.value(
+        value: Oturum(),
+        child: MaterialApp(
+          home: Scaffold(
+            body: SingleChildScrollView(
+              child: ProfilYorumKarti(
+                yorum: {..._profilYorumu(), 'medya': medya},
+                icerikler: _icerikler,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+  }
+
+  testWidgets('FOTOĞRAFLI gönderi kartında medya çizilir', (tester) async {
+    await kartKur(tester, ['/medya/m3-abc.png']);
+    expect(
+      find.byType(MedyaGaleri),
+      findsOneWidget,
+      reason: 'fotoğraflı gönderi listede hâlâ düz metin gibi görünüyor',
+    );
+    expect(tester.widget<MedyaGaleri>(find.byType(MedyaGaleri)).yollar, [
+      '/medya/m3-abc.png',
+    ]);
+  });
+
+  testWidgets('VİDEOLU gönderi kartında da medya çizilir', (tester) async {
+    // Video da fotoğrafla aynı bileşenden geçer: MedyaGaleri siyah kapak +
+    // oynat ikonu basar ve dokununca tam ekran görüntüleyici açar.
+    await kartKur(tester, ['/medya/m3-abc.mp4']);
+    expect(find.byType(MedyaGaleri), findsOneWidget);
+  });
+
+  testWidgets('ÇOKLU medya tek galeriye verilir (kart başına bir bileşen)', (
+    tester,
+  ) async {
+    await kartKur(tester, ['/medya/a.png', '/medya/b.png', '/medya/c.mp4']);
+    expect(find.byType(MedyaGaleri), findsOneWidget);
+    expect(
+      tester.widget<MedyaGaleri>(find.byType(MedyaGaleri)).yollar.length,
+      3,
+    );
+  });
+
+  testWidgets('MEDYASIZ gönderide galeri HİÇ çizilmez (boş kutu kalmasın)', (
+    tester,
+  ) async {
+    await kartKur(tester, <String>[]);
+    expect(find.byType(MedyaGaleri), findsNothing);
+  });
+
+  testWidgets('liste kartında video KENDİLİĞİNDEN OYNAMAZ', (tester) async {
+    // `otomatikOynat` yalnız akışa ait: listede açık olsaydı kaydırmada birden
+    // çok oynatıcı açılır ve çift ses verirdi.
+    await kartKur(tester, ['/medya/m3-abc.mp4']);
+    expect(
+      tester.widget<MedyaGaleri>(find.byType(MedyaGaleri)).otomatikOynat,
+      isFalse,
+    );
+  });
+
+  testWidgets('etkileşim satırı medyanın ALTINDA, üstüne BİNDİRİLMEZ', (
+    tester,
+  ) async {
+    // Kullanıcının 14 Ağu'daki açık isteği: etkileşim satırı hiçbir hâlde
+    // görselin üstüne (Stack) bindirilmez. Medya karta gelince bu kural daha
+    // da bağlayıcı oldu — konum karşılaştırmasıyla kilitleniyor.
+    await kartKur(tester, ['/medya/m3-abc.png']);
+    final medyaAlt = tester.getBottomLeft(find.byType(MedyaGaleri)).dy;
+    final gozUst = tester.getTopLeft(find.byIcon(Icons.remove_red_eye)).dy;
+    expect(
+      gozUst,
+      greaterThanOrEqualTo(medyaAlt),
+      reason: 'etkileşim satırı görselin üstüne binmiş',
     );
   });
 }

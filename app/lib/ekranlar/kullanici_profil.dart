@@ -958,6 +958,8 @@ class ProfilYorumKarti extends StatelessWidget {
     // ve giriş açılıp uçtan 404 alırdı.
     final benimId = context.watch<Oturum>().kullanici?['id'];
     final benim = benimId != null && yorum['kullanici_id'] == benimId;
+    // Uç (`GET /profil/:ad`) `y.medya`yı DÖNÜYOR — veri hep vardı, çizilmiyordu.
+    final medya = (yorum['medya'] as List<dynamic>? ?? []).cast<String>();
 
     return Card(
       margin: EdgeInsets.zero,
@@ -1065,11 +1067,32 @@ class ProfilYorumKarti extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(height: 1.4),
                   ),
+                  // MEDYA LİSTEDE DE GÖRÜNÜR (27 Ağu 2026, kullanıcı bildirdi:
+                  // "profilimdeki göz ikonuna tıkladığımda fotoğraf video ile
+                  // yaptığım paylaşımların fotoğraf ve videoları gözükmüyor").
+                  //
+                  // Eskiden medya YALNIZ detay modalinde çiziliyordu: fotoğraflı
+                  // bir gönderi listede düz metin gibi görünüyor, kullanıcı hangi
+                  // gönderinin görselli olduğunu ancak tek tek açarak bulabiliyordu.
+                  //
+                  // `MedyaGaleri` AKIŞLA AYNI bileşen: tek medya doğal oranında
+                  // tam genişlik, çoklu medya 2'li ızgara, video siyah kapak +
+                  // oynat ikonu, dokununca tam ekran görüntüleyici. Kopya bir
+                  // şerit yazmak yerine ortak bileşen kullanılıyor ki akış ile
+                  // profil zamanla ayrışmasın.
+                  //
+                  // `otomatikOynat` VERİLMEZ (varsayılan false): liste içinde
+                  // kendiliğinden oynayan video, kaydırmada birden çok oynatıcı
+                  // ve çift ses demek olurdu — o davranış yalnız akışa ait.
+                  if (medya.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    MedyaGaleri(yollar: medya),
+                  ],
                   const SizedBox(height: 8),
-                  // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin)
-                  // ALTINDA, AYRI satırda. Medyalı gönderide medya bu kartta değil
-                  // detay modalinde çizilir; satır hiçbir hâlde bir Stack'e alınıp
-                  // görselin üstüne bindirilmez (kullanıcının açık isteği).
+                  // ETKİLEŞİM SATIRI — kart gövdesinin (poster, başlık, metin,
+                  // medya) ALTINDA, AYRI satırda. Satır hiçbir hâlde bir Stack'e
+                  // alınıp görselin üstüne bindirilmez (kullanıcının açık isteği,
+                  // 14 Ağu) — medya karta gelince bu kural DAHA da bağlayıcı.
                   //
                   // SIRA VE HİZA: göz → görüntülenme → "İstatistikleri gör" →
                   // beğeni. Satır SOLA DAYALI (Row varsayılanı `start`); giriş
@@ -1577,42 +1600,16 @@ class _YorumDetayModal extends StatelessWidget {
             yorum['metin'] as String? ?? '',
             style: const TextStyle(height: 1.5, fontSize: 14),
           ),
+          // MODALDE DE ORTAK BİLEŞEN (27 Ağu 2026). Buradaki eski kod elde
+          // yazılmış 120 px'lik yatay bir şeritti ve iki kusuru vardı:
+          //   1. VİDEO HİÇ GÖRÜNMÜYORDU — düz renkli kutuya bir oynat ikonu
+          //      basılıyordu, kare yok, dokununca da hiçbir şey açılmıyordu.
+          //   2. Fotoğrafa dokunmak tam ekran görüntüleyiciyi AÇMIYORDU.
+          // `MedyaGaleri` ikisini de çözüyor ve kart ile modal artık AYNI
+          // bileşeni kullandığı için görünüm zamanla ayrışamaz.
           if (medya.isNotEmpty) ...[
             const SizedBox(height: 12),
-            SizedBox(
-              height: 120,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: medya.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (context, i) => ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: medya[i].endsWith('.mp4') || medya[i].endsWith('.webm')
-                      ? Container(
-                          width: 120,
-                          color: DiziRenkler.kart,
-                          child: Icon(
-                            Icons.play_circle_outline,
-                            color: DiziRenkler.metin54,
-                            size: 32,
-                          ),
-                        )
-                      : CachedNetworkImage(
-                          imageUrl: dosyaUrl(medya[i])!,
-                          width: 120,
-                          fit: BoxFit.cover,
-                          errorWidget: (_, __, ___) => Container(
-                            width: 120,
-                            color: DiziRenkler.kart,
-                            child: Icon(
-                              Icons.broken_image,
-                              color: DiziRenkler.metin38,
-                            ),
-                          ),
-                        ),
-                ),
-              ),
-            ),
+            MedyaGaleri(yollar: medya),
           ],
           const SizedBox(height: 12),
           Row(
