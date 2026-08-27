@@ -1,6 +1,45 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-27 — 🚀 İçe aktarım tarihleri: kod onarıldı + geçmiş veri işaretlendi
+
+Bugün yayına aldığımız "izleme tarihleri" özelliği ağır kullanıcılarda UYDURMA
+tarih gösteriyordu. İki ayrı iş yapıldı.
+
+**(1) Kod: kalan üç yol da gerçek tarihi okuyor.** 26 Ağu'da yalnız
+`tracking-prod-records-v2.csv` onarılmıştı. `seen_episode_latest.csv` +
+`watched_on_episode.csv`, film satırları ve KENDİ dışa aktarım formatımız
+(`iceAktarNative`) tarihi hâlâ düşürüyordu — sonuncusu yuvarlak yol kusuruydu:
+dizi.jpg yedeğini geri yükleyen kullanıcı tüm geçmişinin tarihini kaybediyordu.
+`izlemeTarihi()` tek okuma noktası (created_at / watched_at / watched_on / date).
+- **ASIL KUSUR `ON CONFLICT DO NOTHING`'di:** yanlış damgalı satır zaten tabloda
+  olduğu için yeniden içe aktarım onu ATLIYORDU, yani düzeltmenin geçmişe hiç
+  faydası olmuyordu. Artık `DO UPDATE SET tarih = LEAST(...)`. Onarımın açtığı
+  yeni risk (PG 21000: aynı satıra tek deyimde iki kez dokunma) tekilleştirmeyle
+  kapatıldı. SQL canlı DB'de BEGIN/ROLLBACK ile doğrulandı.
+
+**(2) Veri: `izlemeler.tarih_kesin`** (migrasyon-2026-08-27b.sql, kullanıcı
+A seçeneğini seçti). Güvenilmeyen tarih EKRANA ÇIKMIYOR.
+- **Yığın sezgisi ölçümle şekillendi:** "bir dakikada binlerce satır" YETMEZ —
+  `ozkanpiqubo` 2.454 satır / **3 farklı yapım** uzun animeleri uygulamadan
+  işaretlemiş ve o damga DÜRÜST. Ayırt edici sinyal FARKLI YAPIM SAYISI
+  (içe aktarım 82-221, uygulama içi 2-14; arada temiz uçurum).
+  Eşik: >= 100 satır VE >= 30 farklı yapım, dakika kırılımında.
+- Canlıda **47.261 satır / 4 kullanıcı** işaretlendi (melis.izler %99,
+  dizi.jpg %100, ocalselda361 %100, alcelik %87,7 — kalanı gerçek aktivitesi).
+  **Veri silinmedi**, tarih duruyor; geri alma tek UPDATE.
+- Süzgeç TEK NOKTADA `/benim` ucunda; `son_izleme` de süzülmüş listeden.
+- ⚠ **İSTEMCİ TUZAĞI:** JSON null'ı `(x ?? '').toString()` ile BOŞ DİZGEYE
+  dönüşüp bölüm satırındaki `!= null` kontrolünden geçiyor, göz ikonunun yanına
+  boş tarih basıyordu. `izlemeTarihiVeyaNull` (lib/tarih.dart) iki ekranda da.
+- ⚠ **MİGRASYON YETKİSİ:** ALTER TABLE için app rolü YETMEZ (`must be owner`),
+  owner rolüyle çalıştırılmalı. Yeni tablo yaratmak app rolüyle oluyordu.
+- ⬜ Play'deki 149 bu istemci düzeltmesini İÇERMİYOR (inceleme sırasında çıktı):
+  o sürümde güvenilmeyen bölümde göz ikonunun yanı boş görünebilir. 150'de
+  düzelir; web'de zaten düzeldi.
+- 🚀 Backend + web canlıda (`main.472f8b5f54b2.dart.js`). Backend 1912/1912,
+  Flutter 2179/2179. Canlı web artık 1.98.0+149 etiketli (eski uyumsuzluk bitti).
+
 ## 2026-08-27 — 🚀 SEO: öksüz kalan kazanan bölümler + başlık onarımı
 
 GSC turu (bkz. SEO-YAPILACAKLAR v4.0 §0.0) bir gerileme ortaya çıkardı:
