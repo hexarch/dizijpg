@@ -1,6 +1,39 @@
 # dizi.jpg — Yol Haritası ve Yapılacaklar
 > Güncelleme: 2026-08-27 · Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda
 
+## 2026-08-27 — 🚀 Puan ölçeği veri kaybı + yedeğin bozuk tarihi aklaması
+
+Kullanıcı "bunları da düzelt" dedi (önceki turda not edilen üç madde).
+
+- **PUAN ÖLÇEĞİ (asıl iş):** kanonik ölçek 26 Ağu'da 1-100 oldu ama
+  `iceAktarNative` hâlâ `puan > 10` olanı eliyordu → kendi yedeğini geri
+  yükleyen kullanıcı puanlarının neredeyse TAMAMINI sessizce kaybediyordu.
+  CANLI ÖLÇÜM (konteynerde `disaAktar` çağrıldı): test hesabında 170 puan,
+  aralık **60-100** — yani 170/170'i eski kodda atlanacaktı.
+  · `surum` alanı ölçek değişiminde bump EDİLMEMİŞTİ; dışa aktarım artık
+    `surum: 2` + açıkça `puan_olcek: 100` yazıyor.
+  · `puanOlcegiCoz()`: bildirilen ölçek → sürüm 2+ ise 100 → dosyada 10'u aşan
+    puan varsa 100 → yoksa eski sayıp 10. Taşıma migrasyon-2026-08-26b ile
+    AYNI sonucu veriyor (testle kilitli).
+- ⚠ **YOL BOYUNCA ÇIKAN AÇIK:** dışa aktarım `tarih_kesin` taşımıyordu. Kendi
+  yedeğimizi geri yüklemek toplu içe aktarım damgasını gerçek tarih sanıp
+  bayrağı `true` yapardı — **bozuk veriyi kendi yedeğimizle aklardık.** Sütun
+  artık yedekte de var. Canlı: yedekte 14.872 izlemenin 14.722'si false.
+- **`araclar/migrasyon_uygula.sh`:** `ALTER TABLE` app rolüyle çalışmıyor
+  ("must be owner of table"); ayrıca soket yerine `-h 127.0.0.1` şart (peer
+  auth "role postgres does not exist" veriyor). Not olarak kalmasın diye araca
+  çevrildi ve sunucuda gerçekten koşturuldu — migrasyonun idempotent olduğu da
+  böyle doğrulandı (`UPDATE 0`).
+- null→boş dizge tuzağı için kod tarandı: **başka örnek yok**.
+- ⬜ AYRI EKSİK (bu turda yapılmadı): TV Time ZIP'i puanları HİÇ içe aktarmıyor
+  (`ratings.csv` okunuyor ama `puanlar` tablosuna yalnız `iceAktarNative`
+  yazıyor). Kullanıcı TV Time'dan gelirken puanları kayıp.
+- 🚀 Backend canlıda. Backend 1919/1919.
+- **NOT:** test hesabı (id=1) artık `melis.izler` adında — bozuk tarihli dört
+  hesaptan biri aslında test hesabımızmış. Giriş **e-postayla** yapılıyor
+  (`{"email": "cinark0183@gmail.com", "sifre": "test1234"}`); kullanıcı adıyla
+  değil, alan adı `email`.
+
 ## 2026-08-27 — 🚀 İçe aktarım tarihleri: kod onarıldı + geçmiş veri işaretlendi
 
 Bugün yayına aldığımız "izleme tarihleri" özelliği ağır kullanıcılarda UYDURMA
