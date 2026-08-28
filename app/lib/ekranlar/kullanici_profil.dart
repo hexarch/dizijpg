@@ -22,7 +22,6 @@ import 'profil.dart'
         ProfilSekmeleri,
         ProfilTakipSatiri,
         ProfilYorumAkisi;
-import 'sosyal.dart';
 import 'takip_dugmesi.dart';
 
 /// Başka bir kullanıcının herkese açık profili: istatistik, takip, yorumlar.
@@ -225,6 +224,7 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                               ad: p['ad'],
                               kullaniciAdi: '${p['kullanici_adi']}',
                               ulke: p['ulke'] as String?,
+                              sosyal: p['sosyal'] as List<dynamic>? ?? const [],
                               testci: p['testci'] == true,
                               benMi: benMi,
                               genis: masaustuMu(context),
@@ -292,8 +292,8 @@ class _KullaniciProfilEkraniState extends State<KullaniciProfilEkrani> {
                       style: TextStyle(color: DiziRenkler.metin, height: 1.4),
                     ),
                   ],
-                  // Sosyal bağlantılar (varsa)
-                  SosyalSatiri(sosyal: p['sosyal'] as List<dynamic>? ?? []),
+                  // SOSYAL SATIRI BURADAN KALKTI (28 Ağu 2026): kimlik
+                  // satırında, bayrağın yanında — iki ekran da AYNI bileşen.
                   const SizedBox(height: 16),
                   // Bölüm / film / dizi / yorum — bu ekranın eşit sütunlu
                   // biçimi, artık kendi profilimde de aynısı çiziliyor.

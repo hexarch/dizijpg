@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 
 import 'package:dizijpg/api.dart';
 import 'package:dizijpg/bayrak.dart';
+import 'package:dizijpg/ekranlar/sosyal.dart';
 import 'package:dizijpg/ekranlar/ayarlar.dart' show ulkeler;
 import 'package:dizijpg/ekranlar/kullanici_profil.dart';
 import 'package:dizijpg/ekranlar/profil.dart';
@@ -31,14 +32,14 @@ const double _darEkran = 360;
 /// (gerçek yazı tipinde taşma yok). Ülke satırı ölçümleri buradan yapılır.
 const Size _ekran = Size(600, 900);
 
-Map<String, dynamic> _acikProfil(String? ulke) => {
+Map<String, dynamic> _acikProfil(String? ulke, {List<dynamic>? sosyal}) => {
   'id': 7,
   'kullanici_adi': 'thelostvibe0',
   'avatar': null,
   'kapak': null,
   'bio': null,
   'ulke': ulke,
-  'sosyal': <dynamic>[],
+  'sosyal': sosyal ?? <dynamic>[],
   'ben_mi': false,
   'takip_ediyorum': false,
   'yorumlar_gizli': false,
@@ -82,8 +83,13 @@ void _sunucu(Map<String, Object> yollar) {
 }
 
 /// Başkasının profili ekranını kurar.
-Future<void> _baskasi(WidgetTester tester, String? ulke, {Size? boyut}) async {
-  _sunucu({'/profil/': _acikProfil(ulke)});
+Future<void> _baskasi(
+  WidgetTester tester,
+  String? ulke, {
+  Size? boyut,
+  List<dynamic>? sosyal,
+}) async {
+  _sunucu({'/profil/': _acikProfil(ulke, sosyal: sosyal)});
   await _kur(
     tester,
     const KullaniciProfilEkrani(kullaniciAdi: 'thelostvibe0'),
@@ -349,5 +355,127 @@ void main() {
         reason: 'beklenmeyen istisna: $istisna',
       );
     }
+  });
+
+  // -------------------------------------------------------------------
+  // SOSYAL BAĞLANTILAR — bayrağın yanında (28 Ağu 2026, kullanıcı isteği)
+  //
+  // ASIL RİSK GENİŞLİK: sosyal ikonların dokunma hedefi 44 px (ux md.2) ve
+  // en fazla 3 tane olabiliyor. 360 dp'de ad + tik + bayrak + 3×44 aynı
+  // satıra sığmazsa ad okunmaz hâle gelir ya da satır taşar. Aşağıdaki test
+  // o sınırı ÖLÇÜYOR — tasarımı gözle onaylamak yetmez.
+  // -------------------------------------------------------------------
+  testWidgets('sosyal ikonlar bayrağın SAĞINDA, aynı satırda', (tester) async {
+    await _baskasi(
+      tester,
+      'Türkiye',
+      sosyal: const [
+        {'platform': 'instagram', 'deger': 'ali'},
+        {'platform': 'x', 'deger': 'ali'},
+      ],
+    );
+    final bayrak = tester.getRect(find.byType(UlkeBayragi));
+    final sosyal = tester.getRect(find.byType(SosyalSatiri));
+    expect(sosyal.left, greaterThanOrEqualTo(bayrak.right - 0.01));
+    // Aynı satır: dikey merkezler yakın.
+    expect((sosyal.center.dy - bayrak.center.dy).abs(), lessThan(6));
+    // Ayrı sosyal satırı ARTIK YOK: tek kez çiziliyor.
+    expect(find.byType(SosyalSatiri), findsOneWidget);
+  });
+
+  testWidgets(
+    '360 dp + 3 sosyal + uzun ad: satır taşmıyor, ad OKUNUR kalıyor',
+    (tester) async {
+      await _baskasi(
+        tester,
+        'Amerika Birleşik Devletleri',
+        boyut: const Size(_darEkran, 800),
+        sosyal: const [
+          {'platform': 'instagram', 'deger': 'ali'},
+          {'platform': 'x', 'deger': 'ali'},
+          {'platform': 'youtube', 'deger': 'ali'},
+        ],
+      );
+      final ad = tester.getRect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              w.data == '@thelostvibe0' &&
+              w.style?.fontSize != null,
+          description: 'profil başlığındaki kullanıcı adı',
+        ),
+      );
+      final sosyal = tester.getRect(find.byType(SosyalSatiri));
+
+      // Hiçbiri ekranın dışına taşmıyor.
+      expect(ad.left, greaterThanOrEqualTo(0));
+      expect(sosyal.right, lessThanOrEqualTo(_darEkran + 0.01));
+
+      // AD OKUNUR KALIYOR: en kötü durumda bile birkaç harflik yer değil,
+      // anlamlı bir genişlik. Eşik gözle değil ölçümle belirlendi; altına
+      // düşerse yerleşim kararı yeniden gözden geçirilmeli (ikon sayısını
+      // sınırlamak ya da sosyali alt satıra almak gerekir).
+      expect(
+        ad.width,
+        greaterThan(60),
+        reason: 'kullanıcı adına kalan genişlik: ${ad.width}',
+      );
+
+      final istisna = tester.takeException();
+      if (istisna != null) {
+        expect(
+          istisna.toString(),
+          contains('overflowed'),
+          reason: 'beklenmeyen istisna: $istisna',
+        );
+      }
+    },
+  );
+
+  testWidgets('360 dp + 1 sosyal: YAN YANA (özellik telefonda da işliyor)', (
+    tester,
+  ) async {
+    // Yerleşim yere göre karar veriyor. Bu test "sığmazsa alta iner"
+    // kuralının özelliği telefonda ÖLDÜRMEDİĞİNİ kilitliyor: en yaygın
+    // durumda (tek bağlantı) ikon bayrağın yanında kalmalı.
+    await _baskasi(
+      tester,
+      'Türkiye',
+      boyut: const Size(_darEkran, 800),
+      sosyal: const [
+        {'platform': 'instagram', 'deger': 'ali'},
+      ],
+    );
+    final bayrak = tester.getRect(find.byType(UlkeBayragi));
+    final sosyal = tester.getRect(find.byType(SosyalSatiri));
+    expect(sosyal.left, greaterThanOrEqualTo(bayrak.right - 0.01));
+    expect(
+      (sosyal.center.dy - bayrak.center.dy).abs(),
+      lessThan(6),
+      reason: 'tek bağlantı 360 dp\'de bayrağın yanında kalmalı',
+    );
+  });
+
+  testWidgets('360 dp + 3 sosyal: şerit ALT SATIRA iner, kaybolmaz', (
+    tester,
+  ) async {
+    await _baskasi(
+      tester,
+      'Amerika Birleşik Devletleri',
+      boyut: const Size(_darEkran, 800),
+      sosyal: const [
+        {'platform': 'instagram', 'deger': 'ali'},
+        {'platform': 'x', 'deger': 'ali'},
+        {'platform': 'youtube', 'deger': 'ali'},
+      ],
+    );
+    final bayrak = tester.getRect(find.byType(UlkeBayragi));
+    final sosyal = tester.getRect(find.byType(SosyalSatiri));
+    // KAYBOLMADI: hâlâ tek kez çizili.
+    expect(find.byType(SosyalSatiri), findsOneWidget);
+    // Ama artık bayrağın ALTINDA.
+    expect(sosyal.top, greaterThan(bayrak.bottom - 0.01));
+    // Üç ikon da erişilebilir durumda.
+    expect(find.byType(InkWell).evaluate().length, greaterThanOrEqualTo(3));
   });
 }

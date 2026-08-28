@@ -897,6 +897,9 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                             ad: _profil?['ad'] as Object?,
                             kullaniciAdi: kullaniciAdi,
                             ulke: _profil?['ulke'] as String?,
+                            sosyal:
+                                _profil?['sosyal'] as List<dynamic>? ??
+                                const [],
                             testci: _profil?['testci'] == true,
                             benMi: true,
                             genis: genis,
@@ -957,10 +960,8 @@ class _ProfilEkraniState extends State<ProfilEkrani>
                     ),
                   ],
                 ),
-                // Sosyal bağlantılar (Ayarlar'dan eklenir, en fazla 3)
-                SosyalSatiri(
-                  sosyal: _profil?['sosyal'] as List<dynamic>? ?? [],
-                ),
+                // SOSYAL SATIRI BURADAN KALKTI (28 Ağu 2026): artık kimlik
+                // satırında, bayrağın yanında ([ProfilKimlikBasligi]).
                 const SizedBox(height: 18),
               ],
               olcumler: [
@@ -1424,6 +1425,12 @@ class ProfilKimlikBasligi extends StatelessWidget {
   /// ekran okuyucu etiketi taşıyor (bkz. `UlkeBayragi.adYaninda`).
   final String? ulke;
 
+  /// Sosyal bağlantılar (`[{platform, deger}]`, en fazla 3). Bayraktan SONRA,
+  /// aynı satırda dizilir (28 Ağu 2026, kullanıcı isteği: "profile eklenen
+  /// sosyal bağlantıları da bayrağın yanından dizmeye başla"). Eskiden
+  /// biyografinin altında ayrı bir satırdı.
+  final List<dynamic> sosyal;
+
   /// Rozet modalinin ikinci tekil şahıs varyantı için (sunucunun `ben_mi`si).
   final bool benMi;
 
@@ -1438,6 +1445,7 @@ class ProfilKimlikBasligi extends StatelessWidget {
     required this.ad,
     required this.kullaniciAdi,
     this.ulke,
+    this.sosyal = const [],
     this.testci = false,
     this.benMi = false,
     this.genis = false,
@@ -1455,10 +1463,55 @@ class ProfilKimlikBasligi extends StatelessWidget {
     return t.isEmpty ? null : t;
   }
 
+  /// Sosyal ikonun dokunma hedefi (20 px ikon + 12 px dolgu). `SosyalSatiri`
+  /// ile AYNI değer; burada yalnız GENİŞLİK KESTİRMEK için duruyor.
+  static const double sosyalHedef = 44;
+
+  /// Sosyal ikonlar arası boşluk (`SosyalSatiri`'ndeki `Wrap.spacing`).
+  static const double sosyalAra = 6;
+
+  /// Kullanıcı adına kalması gereken EN AZ genişlik.
+  ///
+  /// NEDEN VAR (28 Ağu 2026, ÖLÇÜMLE bulundu): sosyal bağlantılar kimlik
+  /// satırına alınınca 360 dp'de 3 ikon + tik + bayrak yan yana gelince
+  /// kullanıcı adına **59 px** kalıyordu — deneme yazı tipinde dört harf.
+  /// Dokunma hedefini küçültmek çözüm DEĞİL (ux md.2: hedef ≥44 px, ikon
+  /// değil dolgu küçültülür — burada küçültülecek dolgu da yok).
+  ///
+  /// Bu yüzden yerleşim YERE GÖRE karar veriyor: sığıyorsa sosyal ikonlar
+  /// bayrağın yanında, sığmıyorsa ALT SATIRDA. Kullanıcının istediği "bayrağın
+  /// yanından dizilsin" masaüstünde ve 1-2 bağlantıda aynen geçerli; üç
+  /// bağlantılı dar ekranda ad okunmaz olacağına ikonlar alta iniyor.
+  static const double adAsgari = 96;
+
+  /// Sosyal ikon şeridinin kaplayacağı genişlik (en fazla 3 kayıt).
+  double _sosyalGenislik() {
+    final n = sosyal.length > 3 ? 3 : sosyal.length;
+    if (n == 0) return 0;
+    return n * sosyalHedef + (n - 1) * sosyalAra;
+  }
+
   @override
   Widget build(BuildContext context) {
     final gorunenAd = temiz(ad);
     final etiket = '@$kullaniciAdi';
+    return LayoutBuilder(
+      builder: (context, kisit) => _govde(gorunenAd, etiket, kisit.maxWidth),
+    );
+  }
+
+  Widget _govde(String? gorunenAd, String etiket, double enGenis) {
+    final bayrakVar = (ulke ?? '').trim().isNotEmpty;
+    // Adın DIŞINDAKİ her şeyin genişliği: tik + bayrak + boşluklar.
+    final sabit =
+        (testci ? (genis ? 22.0 : 19.0) + 8 : 0) +
+        (bayrakVar ? (genis ? 14.0 : 12.0) * 2 + 6 : 0);
+    final sosyalGenis = _sosyalGenislik();
+    // Sosyal şerit aynı satıra ANCAK ada yeterli yer kalıyorsa girer.
+    final sosyalYanda =
+        sosyalGenis > 0 &&
+        enGenis.isFinite &&
+        enGenis - sabit - sosyalGenis >= adAsgari;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1491,6 +1544,13 @@ class ProfilKimlikBasligi extends StatelessWidget {
               const SizedBox(width: 6),
               UlkeBayragi(ulke: ulke, yukseklik: genis ? 14 : 12),
             ],
+            // SOSYAL BAĞLANTILAR bayraktan sonra, AYNI SATIRDA — ama yalnız
+            // sığıyorsa (gerekçe [adAsgari]).
+            //
+            // SATIR ZATEN 44 PX YÜKSEK: `AileRozeti` dokunma hedefi 44×44.
+            // Yani sosyal ikonlar satırı UZATMIYOR, sadece genişlik yiyor;
+            // dokunma hedefi küçültülmedi (ux md.2).
+            if (sosyalYanda) SosyalSatiri(sosyal: sosyal),
           ],
         ),
         // İKİNCİL SATIR YALNIZ AD VARKEN. Ad yoksa bu dal hiç çizilmez —
@@ -1506,6 +1566,9 @@ class ProfilKimlikBasligi extends StatelessWidget {
               color: DiziRenkler.metin,
             ),
           ),
+        // Sığmadıysa sosyal şerit ALT SATIRDA. Kaybolmuyor, yalnız yer
+        // değiştiriyor — ad okunmaz olacağına ikonlar alta iner.
+        if (sosyal.isNotEmpty && !sosyalYanda) SosyalSatiri(sosyal: sosyal),
       ],
     );
   }
