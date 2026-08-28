@@ -16,7 +16,11 @@ Bu oturumda istenen HER ŞEY. Sırayla yapılacak, biten işaretlenecek.
    kaydırmadığı sürece asla yukarı kaymamalı; klavye aç/kapa, mesaj geliyor,
    mesaj atıyorum — sürekli kayıyor". `sohbet.dart` listesi `reverse: true`
    yapıldı (çapa dipte), altı zamanlayıcılı `jumpTo` kovalaması kaldırıldı.
-4. 🔨 **Sürüm 1.99.0+150: APK + AAB derlendi, web canlıda, Play taslağı hazır.**
+4. ✅🚀 **Sürüm 1.99.0+150: APK + AAB derlendi, web canlıda, Play'e GÖNDERİLDİ.**
+   28 Ağu: AAB yüklendi (107 MB), sürüm doğrulandı (App bundle 150 (1.99.0),
+   hedef SDK 36, güncelleme boyutu 4,53 MB), %100 sunum / tüm hedef ülkeler
+   (149 ile aynı), sürüm notları 11/11 dilde. **İncelemeye gönderildi** —
+   Play "İncelenmekte olan değişiklikler" diyor. İnceleme genelde 7 gün.
    - APK/AAB: `magaza/cikti/dizijpg-1.99.0-150.{apk,aab}` — versionCode 150,
      gerçek yayın anahtarıyla imzalı (`CN=dizi.jpg`, debug DEĞİL).
    - Web dağıtımı YAPILDI (paket `main.8f458c79ce16.dart.js`, brotli üretildi,
