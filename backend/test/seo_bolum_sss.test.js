@@ -20,6 +20,8 @@ import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 const DEP = [
   'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN',
   'SEO_AYLAR', 'seoTarihTr', 'seoVeListesi', 'SEO_BOLUM_SSS_KONUK',
+  'SEO_SSS_BOLGE', 'SEO_SSS_SAGLAYICI', 'SEO_SAGLAYICI_GRUPLARI',
+  'seoSaglayiciParcalari',
   'seoBolumSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
 ];
 const seoBolumSorulari = alan(DEP, 'seoBolumSorulari');
@@ -37,6 +39,7 @@ const TAM = {
     { name: 'Steven Michael Quezada' }, { name: 'Laura Fraser' },
     { name: 'Kevin Rankin' }, { name: 'Emily Rios' }, { name: 'Beşinci Kişi' },
   ],
+  saglayicilar: ['Netflix üzerinden abonelikle'],
   puanMetni: '4.8/5',
   puanAdet: 12,
   yorumAdet: 5,
@@ -48,11 +51,16 @@ test('dört soru, öznesi açık cümleler, kuyruk yalnız ilk cevapta', () => {
     'Breaking Bad 5. sezon 14. bölüm adı ne?',
     'Breaking Bad 5. sezon 14. bölüm ne zaman yayınlandı?',
     'Breaking Bad 5. sezon 14. bölüm kaç dakika?',
+    // "izle" niyeti (GSC ölçümü) — uzun konuk listesinden ÖNCE.
+    'Breaking Bad 5. sezon 14. bölüm nerede izlenir?',
     'Breaking Bad 5. sezon 14. bölüm konuk oyuncuları kimler?',
   ]);
 
   // ÖZNE: her cevap hangi bölümden söz ettiğini kendi içinde söylüyor.
-  for (const { cevap } of sorular) {
+  // "nerede izlenir" HARİÇ: onun öznesi bilerek DİZİ (aşağıda ayrıca kilitli),
+  // çünkü JustWatch verisi bölüm bazında değil.
+  for (const { soru, cevap } of sorular) {
+    if (soru.includes('nerede izlenir')) continue;
     assert.match(cevap, /Breaking Bad dizisinin 5\. sezon 14\. bölümü/);
   }
 
@@ -69,11 +77,17 @@ test('dört soru, öznesi açık cümleler, kuyruk yalnız ilk cevapta', () => {
     'Breaking Bad dizisinin 5. sezon 14. bölümü 15 Eylül 2013 tarihinde yayınlandı.');
   assert.equal(sorular[2].cevap,
     'Breaking Bad dizisinin 5. sezon 14. bölümü 48 dakika sürüyor.');
-  // Konuk sayısı SEO_BOLUM_SSS_KONUK (4) ile sınırlı: beşincisi yok.
+  // NEREDE İZLENİR — özne DİZİ ve veri kapsamı cümlenin İÇİNDE.
   assert.equal(sorular[3].cevap,
+    'Breaking Bad dizisi Türkiye\'de Netflix üzerinden abonelikle izlenebilir.'
+    + ' Sağlayıcı verisi bölüm bazında değil dizi geneli içindir'
+    + ' (kaynak: JustWatch).');
+
+  // Konuk sayısı SEO_BOLUM_SSS_KONUK (4) ile sınırlı: beşincisi yok.
+  assert.equal(sorular[4].cevap,
     'Breaking Bad dizisinin 5. sezon 14. bölümü konuk oyuncuları:'
     + ' Steven Michael Quezada, Laura Fraser, Kevin Rankin ve Emily Rios.');
-  assert.ok(!sorular[3].cevap.includes('Beşinci Kişi'));
+  assert.ok(!sorular[4].cevap.includes('Beşinci Kişi'));
 });
 
 test('CEVAP UYDURULMAZ: ad/süre/konuk yoksa o sorular hiç kurulmaz', () => {
@@ -149,4 +163,32 @@ test('bölüm rotası SSS bloğunu basıyor ve jsonLd\'ye geçiriyor', () => {
     rota.indexOf('});', rota.indexOf('seoBolumSorulari(')));
   assert.ok(!/\bozet\b/.test(cagri),
     'özet SSS\'e geçirilmemeli — sayfada zaten basılıyor');
+});
+
+test('SAĞLAYICI YOKSA soru HİÇ sorulmaz (uydurma platform yazılmaz)', () => {
+  const sorular = seoBolumSorulari({ ...TAM, saglayicilar: [] });
+  assert.ok(!sorular.some((s) => s.soru.includes('nerede izlenir')));
+});
+
+test('birden çok sağlayıcı grubu noktalı virgülle ayrılır', () => {
+  // İçerik sayfasıyla AYNI kalıp: her parçanın kendi içinde "ve"si var,
+  // üç "ve"li cümlede nerenin bittiği belirsiz olurdu.
+  const sorular = seoBolumSorulari({
+    ...TAM,
+    saglayicilar: [
+      'Netflix ve HBO Max üzerinden abonelikle',
+      'Apple TV Store üzerinden satın alarak',
+    ],
+  });
+  const s = sorular.find((x) => x.soru.includes('nerede izlenir'));
+  assert.match(s.cevap, /Netflix ve HBO Max üzerinden abonelikle; Apple TV Store üzerinden satın alarak izlenebilir\./);
+});
+
+test('bölüm rotası dizi sağlayıcılarını AYNI istekte alıyor', () => {
+  const i = KAYNAK.indexOf("app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum'");
+  const rota = KAYNAK.slice(i, i + 9000);
+  assert.ok(rota.includes('append_to_response=watch/providers'),
+    'dizi çağrısına watch/providers eklenmeli — fazladan TMDB isteği atmadan');
+  assert.ok(rota.includes('saglayicilar: seoSaglayiciParcalari(dizi)'),
+    'içerik sayfasıyla AYNI yardımcı kullanılmalı');
 });

@@ -5254,8 +5254,8 @@ const SEO_BOLUM_SSS_KONUK = 4;
  * yok, yalnız bizde var. Modelin başka yerden alamayacağı veri budur.
  */
 function seoBolumSorulari({
-  diziAd, sezon, bolum, ozgunAd, yayinGunu, sure, konuklar, puanMetni, puanAdet,
-  yorumAdet,
+  diziAd, sezon, bolum, ozgunAd, yayinGunu, sure, konuklar, saglayicilar,
+  puanMetni, puanAdet, yorumAdet,
 }) {
   const sorular = [];
   const ekle = (soru, cevap) => { if (soru && cevap) sorular.push({ soru, cevap }); };
@@ -5275,6 +5275,25 @@ function seoBolumSorulari({
   if (dk) {
     ekle(`${konu} kaç dakika?`, `${kim} ${dk} dakika sürüyor.`);
   }
+
+  // NEREDE İZLENİR — 28 Ağu 2026, GSC ÖLÇÜMÜYLE eklendi.
+  //
+  // Bölüm sayfası sitenin aramada gerçekten çalışan yüzeyi (ilk 10 sayfanın
+  // 9'u) ve tıklanan sorguların çoğu "… bölüm İZLE": kullanıcı nerede
+  // izleyeceğini arıyor. Bu cevap yalnız dizi/film sayfasında vardı.
+  //
+  // ⚠ DÜRÜSTLÜK: JustWatch sağlayıcı verisi BÖLÜM bazında değil, DİZİ
+  // genelinde. Cevabın öznesi bu yüzden "dizisi" ve veri kapsamı cümlenin
+  // İÇİNDE söyleniyor — "bu bölüm şurada var" demek, doğrulayamadığımız bir
+  // iddia olurdu (bir platform yalnız bazı sezonları taşıyabilir).
+  const saglayici = saglayicilar || [];
+  if (saglayici.length) {
+    ekle(`${konu} nerede izlenir?`,
+      `${diziAd} dizisi Türkiye'de ${saglayici.join('; ')} izlenebilir.`
+      + ' Sağlayıcı verisi bölüm bazında değil dizi geneli içindir'
+      + ' (kaynak: JustWatch).');
+  }
+
   const adlar = (konuklar || []).slice(0, SEO_BOLUM_SSS_KONUK)
     .map((o) => seoMetin(o?.name)).filter(Boolean);
   if (adlar.length) {
@@ -5364,7 +5383,12 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
     //               soft 404). Sezon alınamazsa sayfa yine döner: `.catch(null)`.
     //  · bölüm    — özet + konuk oyuncu + ekip + İngilizce çeviri yedeği.
     const [dizi, sezonV, bol] = await Promise.all([
-      tmdbGetir(`/tv/${id}`, ONBELLEK_TTL_SN.uzun),
+      // `watch/providers` EKLENDİ (28 Ağu 2026, GSC ölçümü): bölüm sayfasına
+      // gelen sorguların büyük kısmı "… bölüm İZLE" — kullanıcı nerede
+      // izleyeceğini arıyor ve bu cevap yalnız dizi/film sayfasında vardı.
+      // Ek alan aynı isteğe biniyor, fazladan TMDB çağrısı YOK.
+      tmdbGetir(`/tv/${id}?append_to_response=watch/providers`,
+        ONBELLEK_TTL_SN.uzun),
       tmdbGetir(`/tv/${id}/season/${s}`, ONBELLEK_TTL_SN.uzun).catch((e) => {
         if (e && e.status === 404) return null;
         throw e;
@@ -5450,6 +5474,9 @@ app.get('/og/dizi/:id/sezon/:sezon/bolum/:bolum', sarici(async (req, res) => {
       diziAd, sezon: s, bolum: b, ozgunAd, yayinGunu,
       sure: bol.runtime,
       konuklar: Array.isArray(bol.guest_stars) ? bol.guest_stars : [],
+      // Dizi genelinin sağlayıcıları — içerik sayfasıyla AYNI yardımcı,
+      // aynı bölge süzgeci ve aynı JustWatch atfı.
+      saglayicilar: seoSaglayiciParcalari(dizi),
       puanMetni: bolumPuani ? `${bolumPuani.ratingValue}/5` : null,
       puanAdet: bolumPuani?.ratingCount,
       yorumAdet: seo.yorumlar.length + seo.incelemeler.length,

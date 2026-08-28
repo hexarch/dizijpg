@@ -125,7 +125,8 @@ export const AYAR = {
   //     · bolum   → SSR `?append_to_response=translations`, uygulamaya ise
   //                 server.js `append_to_response=videos` ekliyor (5807).
   //                 Yine ayrı anahtar → en-US'u okuyan yok.
-  //     · diziDuz → `/tv/:id` (eksiz). Uygulamanın `/tmdb/tv/:id`si artık
+  //     · diziDuz → bölüm SSR'ının çektiği dizi yolu (28 Ağu 2026'dan beri
+  //       `?append_to_response=watch/providers` EKLİ). Uygulamanın `/tmdb/tv/:id`si artık
   //                 paylaşılan yola yönleniyor, yani bu anahtarı SADECE bölüm
   //                 SSR'ı okuyor.
   //
@@ -428,7 +429,12 @@ export function kisiYolu(tmdbId) {
 /** `/og/dizi/:id/sezon/:s/bolum/:b` → üç paralel istek. */
 export function bolumYollari(tmdbId, sezon, bolum) {
   return [
-    `/tv/${tmdbId}`,
+    // `watch/providers` EKİ ŞART (28 Ağu 2026): bölüm SSR'ı "nerede izlenir"
+    // cevabı için diziyi bu ekle çekiyor. Ek olmadan ısıtılan `/tv/:id`
+    // BAŞKA bir önbellek anahtarıdır — ısıtma boşa gider, sayfa ilk taramada
+    // TMDB'ye canlı çıkar ve SSR süre bütçesini yer.
+    // `test/isitici.test.js` iki tarafı hizalı tutuyor.
+    `/tv/${tmdbId}?append_to_response=watch/providers`,
     `/tv/${tmdbId}/season/${sezon}`,
     `/tv/${tmdbId}/season/${sezon}/episode/${bolum}?append_to_response=translations`,
   ];
@@ -947,7 +953,8 @@ export async function adaylariTopla(havuz, secim, kaynak, simdiMs = Date.now()) 
       const [dizi, sezon, bolum] = bolumYollari(b.tmdbId, b.sezon, b.bolum);
       if (sezon !== sonSezon) {
         sonSezon = sezon;
-        // `/tv/:id` (eksiz) içerik anahtarından FARKLIDIR ve onu YALNIZ bölüm
+        // Bu yol içerik anahtarından FARKLIDIR (o `ICERIK_APPEND` taşır) ve
+        // onu YALNIZ bölüm
         // SSR'ı okur. `sinif: 'icerik'` çünkü tazeleme aralığını dizinin durumu
         // belirlemeli; `dilSinifi: 'diziDuz'` çünkü dili SSR'ınki (yalnız tr).
         istekler.push({ yol: dizi, sinif: 'icerik', dilSinifi: 'diziDuz', oncelik: 0 });

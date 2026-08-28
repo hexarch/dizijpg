@@ -173,14 +173,17 @@ test('SSR yolu ile uygulama ucu AYNI anahtarı paylaşıyor (bölünme yok)', ()
 test('kişi ve bölüm yolları DEĞİŞMEDİ (kaynaktan doğrulandı)', () => {
   // Paralel ajan yalnız içerik yolunu paylaşıma aldı; bu ikisi hâlâ SSR'a özel.
   assert.match(SERVER, /\/person\/\$\{kid\}\?append_to_response=combined_credits,translations/);
-  assert.match(SERVER, /tmdbGetir\(`\/tv\/\$\{id\}`, ONBELLEK_TTL_SN\.uzun\)/);
+  // 28 Ağu 2026: bölüm SSR'ı diziyi `watch/providers` EKİYLE çekiyor
+  // ("nerede izlenir" cevabı). Isıtıcı da AYNI yolu ısıtmalı, yoksa anahtar
+  // ayrışır ve ısıtma boşa gider — bu iddia o hizayı kilitliyor.
+  assert.match(SERVER, /tmdbGetir\(`\/tv\/\$\{id\}\?append_to_response=watch\/providers`/);
   assert.match(SERVER, /tmdbGetir\(`\/tv\/\$\{id\}\/season\/\$\{s\}`/);
   assert.match(SERVER, /\/tv\/\$\{id\}\/season\/\$\{s\}\/episode\/\$\{b\}\?append_to_response=translations/);
 
   assert.equal(kisiYolu(102426),
     '/person/102426?append_to_response=combined_credits,translations');
   assert.deepEqual(bolumYollari(1396, 5, 14), [
-    '/tv/1396',
+    '/tv/1396?append_to_response=watch/providers',
     '/tv/1396/season/5',
     '/tv/1396/season/5/episode/14?append_to_response=translations',
   ]);
@@ -1662,12 +1665,17 @@ test('adaylariTopla her adaya İNCE kovasını yazıyor', async () => {
   const bul = (im) => [...kovalar].filter(([k]) => im.test(k)).map(([, v]) => v);
   assert.deepEqual(new Set(bul(/\/season\/1\?/)), new Set(['sezon']), 'sezon kovası yok');
   assert.deepEqual(new Set(bul(/\/episode\//)), new Set(['bolum']), 'bolum kovası yok');
-  assert.deepEqual(new Set(bul(/^\/tv\/9\?language=/)), new Set(['diziDuz']),
+  // 28 Ağu 2026: bölüm SSR'ının çektiği dizi yolu artık `watch/providers`
+  // ekli ("nerede izlenir" cevabı). Anahtar değişti, KOVA değişmedi.
+  assert.deepEqual(
+    new Set(bul(/^\/tv\/9\?append_to_response=watch\/providers/)),
+    new Set(['diziDuz']),
     'diziDuz kovası yok — /tv/:id yine "icerik" diye raporlanır');
   assert.deepEqual(new Set(bul(/^\/(tv|movie)\/7\?append/)), new Set(['icerik']));
   assert.deepEqual(new Set(bul(/^\/person\//)), new Set(['kisi']));
   // Kova RAPOR birimi; `sinif` POLİTİKA birimi olarak DEĞİŞMEDEN duruyor.
   const sinifi = (im) => new Set(adaylar.filter((a) => im.test(a.anahtar)).map((a) => a.sinif));
   assert.deepEqual(sinifi(/\/season\/1\?/), new Set(['bolum']));
-  assert.deepEqual(sinifi(/^\/tv\/9\?language=/), new Set(['icerik']));
+  assert.deepEqual(
+    sinifi(/^\/tv\/9\?append_to_response=watch\/providers/), new Set(['icerik']));
 });
