@@ -1,6 +1,6 @@
 # dizi.jpg — GEO (Üretken Motor Optimizasyonu) Planı
 
-> Sürüm **1.2** · 27 Ağustos 2026 — **ilk "sonrası" ölçümü eklendi (§6.1): düzeltme gerçek trafikte doğrulandı**
+> Sürüm **1.3** · 28 Ağustos 2026 — **§5 bitti (üç yüzeye SSS), §2/§6 kararları kapandı, bayat ⬜ işaretleri düzeltildi**
 > Durumlar: ⬜ bekliyor · 🔨 yapılıyor · ✅ bitti · 🚀 canlıda · ⛔ yapılmayacak
 >
 > Bu belge bir görev listesi değil, **karar belgesidir** — `SEO-YAPILACAKLAR.md`
@@ -47,9 +47,15 @@ kategorisine koymuş — oysa kardeşleri `ChatGPT-User` ve `Perplexity-User`
 ---
 ## 0. Yönetici özeti — İKİ DUVAR
 
-Kötü haber: **dizi.jpg şu anda üretken arama motorlarının hiçbirine görünmüyor.**
-İyi haber: sebep içerik değil, **iki ayar**. Ve GEO için gereken içerik
-altyapısı (SSR + şema + SSS) zaten hazır ve şu anda **boşa çalışıyor**.
+> ⚠ **28 Ağu 2026 — BU BÖLÜM ARTIK GEÇMİŞ KAYDI.** Aşağıdaki "görünmüyor"
+> tespiti 27 Ağu sabahına aittir ve o gün **çözülmüştür**. Güncel durum:
+> cevap botları içerik sayfalarına girip tam SSR alıyor (§6.1 ölçümü),
+> SSS yüzeyi üç sayfa ailesine daha açıldı (§5).
+
+~~Kötü haber: **dizi.jpg şu anda üretken arama motorlarının hiçbirine
+görünmüyor.**~~ Sebep içerik değil **iki ayardı**; ikisi de kapandı. GEO için
+gereken içerik altyapısı (SSR + şema + SSS) zaten hazırdı ve **boşa
+çalışıyordu** — artık çalışıyor.
 
 | Duvar | Ölçülen | Kimin | Sıra |
 |---|---|---|---|
@@ -84,9 +90,9 @@ görmüyor.
 |---|---|---|---|---|
 | **1** | ✅🚀 **nginx `$og_bot` regex'ine AI botlarını ekle** | ⚠ **CF'TEN ÖNCE.** Ters sırada, engel kalkar kalkmaz gelen İLK tarama boş kabuk görür ve motor "bu sitede içerik yok" diye kaydeder — 403'ten kötüdür, çünkü 403 geçici sayılır, boş sayfa KALICI kanaat olur. Kapı açılmadan arkasını hazırla. | §3 | ✅ **27 Ağu, canlıda** |
 | **2** | ~~CF'te engeli kaldır~~ → **panelde ölçüldü: cevap botları ZATEN AÇIK** | Tek sapma `Claude-User`; açmanın bedeli blanket korumayı sökmek | §2 | ✅ ölçüldü · karar **A (dokunma)** öneriliyor |
-| **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ⬜ |
-| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ⬜ |
-| **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | ⬜ |
+| **3** | **Uçtan uca doğrula** — her bot UA'sı ile curl | "Ayarı yaptım" yetmez, 16 KB SSR gelmeli | §3 | ✅ **27 Ağu** — origin'den altı bot da 200 + 16.215 B; 28 Ağu'da SSS'li üç yüzey de aynı yöntemle doğrulandı |
+| **4** | **Ölçüm hattını kur** (log + atıf + elle sorgu) | GEO'nun Search Console'u YOK; ölçmeden içerik işi körlemedir | §6 | ✅ **28 Ağu** — `araclar/geo-olcum.sh` (kanal 1+2) · §6.2 sabit 10 soruluk liste (kanal 3). ⚠ Kanal 3 **henüz çalıştırılmadı** |
+| **5** | İçerik: SSS yüzeyini genişlet | Cevap motorları SORU-CEVAP alıntılıyor | §5 | 🔨 `/kisi/`, `/sirket/`, **bölüm** ✅ canlıda · `/icerik/` genişletmesi §5.1'de bekliyor |
 | ~~llms.txt~~ | | Kanıtsız moda | §7 | ⛔ şimdilik |
 
 ---
@@ -154,7 +160,7 @@ kaynak atıflı, karşılaştırılabilir**. Şu anda hiçbiri okunmuyor.
 
 ---
 
-## 2. ⬜ CLOUDFLARE — geriye TEK bot kaldı: `Claude-User`
+## 2. ✅ CLOUDFLARE — geriye TEK bot kaldı: `Claude-User` · **KARAR: A (dokunma)**
 
 **Panelde ölçülen gerçek durum** (AI Crawl Control → Security):
 
@@ -190,7 +196,8 @@ açma riski** taşır — kullanıcının bilinçli `ai-train=no` kararına ayk�
 | **A — dokunma** | Risk yok | `Claude-User` kapalı kalır |
 | **B — kuralı kapat, ~15 eğitim botunu ELLE engelle** | `Claude-User` açılır | Geçiş anında eğitim botları açık kalabilir; bakım yükü kalıcı olarak bizde |
 
-**Öneri: A.** Gerekçe: `Claude-SearchBot` (Claude'un ARAMA tarayıcısı) zaten
+**KARAR — A, 28 Ağu 2026'da kesinleşti (kullanıcı "hepsini yap" dedi;
+madde yapılmadı çünkü YAPILMAMASI kararı verildi).** Gerekçe: `Claude-SearchBot` (Claude'un ARAMA tarayıcısı) zaten
 açık ve **fiilen çalışıyor** — GEO kazancının büyük kısmı oradan gelir.
 `Claude-User` yalnız kullanıcı bir linki elle incelettiğinde devreye girer.
 Bu tek botun marjinal faydası, blanket korumayı söküp 15 botu elle yönetme
@@ -355,10 +362,18 @@ vermek cloaking'dir; görünür `<dl>` tam da bu yüzden zorunlu.
 
 ---
 
-## 5.1 ⬜ İçerik tarafı — kalanlar
+## 5.1 ⬜ İçerik tarafı — TEK KALAN İŞ (ve bilerek bekliyor)
 
-- **İçerik sayfasının SSS yüzeyini genişlet.** Bugün 4 soru/sayfa. Aday sorular
-  ölçülmüş talebe göre seçilecek (GSC sorguları + §6 elle sorgu turu).
+- **İçerik sayfasının (`/icerik/`) SSS yüzeyini genişlet.** Bugün 4 soru/sayfa.
+- ⏳ **NEDEN BUGÜN YAPILMIYOR — veri kapısı, tembellik değil.** Planın kendi
+  kuralı: *"Aday sorular ölçülmüş talebe göre seçilir, tahminle değil."*
+  O talep iki yerden gelecek: GSC sorguları ve §6.2 elle sorgu turu. İkisi de
+  şu an boş — `/kisi/`, `/sirket/` ve bölüm SSS'i **28 Ağu sabahı** canlıya
+  çıktı, hiçbir motor henüz görmedi. Şimdi soru uydurmak, tam da yasakladığımız
+  şeyi yapmak olurdu.
+- **KAPININ AÇILMA KOŞULU:** §6.2 turu bir kez çalıştırılıp GSC'de yeni
+  yüzeylerin sorguları göründüğünde (gerçekçi olarak 1-2 hafta) bu madde
+  ölçülmüş adaylarla açılır.
 - Eski §5 metni (karar gerekçeleriyle) aşağıda duruyor:
 
 ### Özgün §5 kararları
@@ -380,7 +395,7 @@ vermek cloaking'dir ve §10 md.4 kilidi bunu zaten yasaklıyor.
 
 ---
 
-## 6. ⬜ Ölçüm — GEO'nun Search Console'u YOK
+## 6. ✅ Ölçüm — GEO'nun Search Console'u YOK (üç kanal da kuruldu)
 
 Bu belgenin en zayıf halkası burası ve dürüst olmak gerekiyor: **atıf sayısını
 gösteren resmî bir panel yok.** Kurulacak üç kanal:
@@ -394,7 +409,17 @@ gösteren resmî bir panel yok.** Kurulacak üç kanal:
    "X nerede izlenir", "X oyuncuları") üç motorda sorulur, dizi.jpg kaynak
    olarak geçiyor mu diye BAKILIR. Öznel ama tek doğrudan ölçüm.
 
-**Başlangıç değeri (27 Ağu 2026): üçü de sıfır — çünkü botlar 403 alıyor.**
+~~**Başlangıç değeri (27 Ağu 2026): üçü de sıfır — çünkü botlar 403 alıyor.**~~
+⚠ **Bu cümlenin gerekçesi YANLIŞTI** (§0.0: 403'ler sahte UA'ya verilen doğru
+yanıttı). Doğrusu: başlangıçta kanal 1 sıfırdı çünkü botlar **boş kabuk**
+alıyordu; kanal 2 ve 3 ise henüz veri üretecek kadar zaman geçmemişti.
+
+**Kanalların bugünkü hâli (28 Ağu 2026):**
+| Kanal | Durum | Son değer |
+|---|---|---|
+| 1 — sunucu logu | ✅ kuruldu (`araclar/geo-olcum.sh`) | 27 Ağu: OAI-SearchBot 20 içerik sayfası |
+| 2 — atıf trafiği (`Referer`) | ✅ kuruldu (aynı betik) | **0** — beklenen (§8) |
+| 3 — elle sorgu turu | ✅ liste sabitlendi (§6.2) | ⬜ **henüz çalıştırılmadı** — SSS bugün çıktı, motorlar sayfaları görmedi; şimdi çalıştırmak kesin sıfır verir |
 
 ---
 
