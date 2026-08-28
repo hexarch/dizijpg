@@ -22,7 +22,8 @@ import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 
 const DEP = [
   'seoMetin', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN', 'seoVeListesi',
-  'SEO_ULKE_ADI', 'seoUlkeAdi', 'SEO_SIRKET_SSS_YAPIM',
+  'SEO_ULKE_ADI', 'seoUlkeAdi', 'SEO_SIRKET_SSS_YAPIM', 'SEO_SIRKET_SAYIM',
+  'seoYapimEki',
   'seoSirketSssCumlesi', 'seoSirketSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
 ];
 const seoSirketSorulari = alan(DEP, 'seoSirketSorulari');
@@ -52,17 +53,18 @@ test('künye + diziler + filmler; kuyruk yalnız ilk cevapta', () => {
     /dizi\.jpg kullanıcıları Netflix yapımları hakkında 5 yorum ve inceleme yazdı\./);
   assert.ok(!sorular[1].cevap.includes('dizi.jpg kullanıcıları'));
 
-  // Dizi: sayılan (20) basılandan (5) fazla → "dahil N dizinin".
+  // Dizi: sayım TAVANA (20) dayanmış → sayı verilmez, "20'den fazla" denir.
+  // 28 Ağu: burada düz "20" yazıyordu ve alt sınırı toplam gibi sunuyordu.
   assert.equal(sorular[1].soru, 'Netflix hangi dizileri yaptı?');
   assert.equal(sorular[1].cevap,
     'Netflix dizi.jpg\'de Stranger Things, Wednesday, The Witcher, Dark ve Ozark'
-    + ' dahil 20 dizinin yapımında yer alıyor.');
+    + ' dahil 20\'den fazla dizinin yapımında yer alıyor.');
 
-  // Film: sayılan (3) = basılan (3) → "dahil" YOK, uydurma sayı da yok.
+  // Film: sayılan (3) = basılan (3) → "dahil" YOK; ÇOĞUL ek.
   assert.equal(sorular[2].soru, 'Netflix hangi filmleri yaptı?');
   assert.equal(sorular[2].cevap,
     'Netflix dizi.jpg\'de Roma, The Irishman ve Don\'t Look Up'
-    + ' yapımında yer alıyor.');
+    + ' yapımlarında yer alıyor.');
 });
 
 test('ülke yoksa merkez sorusuna düşer', () => {
@@ -75,6 +77,9 @@ test('ülke yoksa merkez sorusuna düşer', () => {
   });
   assert.equal(sorular[0].soru, 'Küçük Yapım nerede kurulu?');
   assert.equal(sorular[0].cevap, 'Küçük Yapım merkezi İstanbul.');
+  // TEK yapım -> TEKİL ek.
+  assert.equal(sorular[1].cevap,
+    'Küçük Yapım dizi.jpg\'de Bir Dizi yapımında yer alıyor.');
   // Film listesi boş → film sorusu HİÇ kurulmadı.
   assert.deepEqual(sorular.map((s) => s.soru), [
     'Küçük Yapım nerede kurulu?',
@@ -145,4 +150,16 @@ test('/sirket/ rotası SSS bloğunu gövdeye basıyor ve jsonLd\'ye geçiriyor',
     rota.indexOf('seoSssGovdesi(sssListesi)') < rota.indexOf('seoAfisListesi(`${ad} dizileri`'),
     'SSS yapım raflarından ÖNCE gelmeli',
   );
+});
+
+test('TAVAN ALTINDAKİ sayı olduğu gibi verilir', () => {
+  // Sayım tavana dayanmadıysa gerçek sayı dürüsttür, "…'den fazla" denmez.
+  const sorular = seoSirketSorulari({
+    ad: 'Orta Firma', firma: { origin_country: 'TR' },
+    diziAdlari: ['A', 'B'], filmAdlari: [],
+    diziToplam: 9, filmToplam: 0,
+    seo: { yorumlar: [], incelemeler: [] },
+  });
+  assert.equal(sorular[1].cevap,
+    'Orta Firma dizi.jpg\'de A ve B dahil 9 dizinin yapımında yer alıyor.');
 });

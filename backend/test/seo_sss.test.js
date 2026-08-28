@@ -29,7 +29,8 @@ const SSS_DEP = [
   'seoMetin', 'seoPozitif', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_BOLGE',
   'SEO_SSS_SAGLAYICI', 'SEO_SSS_OYUNCU', 'SEO_SSS_ROL_MAX', 'SEO_SSS_MIN',
   'SEO_BITMIS_DURUMLAR', 'SEO_AYLAR', 'seoTarihTr', 'seoVeListesi',
-  'SEO_SAGLAYICI_GRUPLARI', 'seoSaglayiciParcalari', 'seoSssOyunculari',
+  'SEO_SAGLAYICI_GRUPLARI', 'seoSaglayiciParcalari', 'seoRolSadelestir',
+  'seoSssOyunculari',
   'seoIcerikSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
 ];
 const seoIcerikSorulari = alan(SSS_DEP, 'seoIcerikSorulari');
@@ -624,7 +625,9 @@ test('gerçek yüklerin ürettiği tam metin (kanıt kilidi)', () => {
       ['Simpsonlar nerede izlenir?',
         'Simpsonlar Türkiye\'de Disney Plus üzerinden abonelikle izlenebilir. Sağlayıcı verisi: JustWatch.'],
       ['Simpsonlar oyuncuları kimler?',
-        'Simpsonlar başrollerinde Dan Castellaneta, Julie Kavner, Nancy Cartwright, Yeardley Smith (Lisa Simpson (voice)) ve Hank Azaria yer alıyor.'],
+        // 28 Ağu 2026: eskiden "(Lisa Simpson (voice))" idi — iç içe parantez +
+      // Türkçe cümlede İngilizce not. Bu kilit hatayı kaydetmişti.
+      'Simpsonlar başrollerinde Dan Castellaneta, Julie Kavner, Nancy Cartwright, Yeardley Smith (Lisa Simpson) ve Hank Azaria yer alıyor.'],
     ],
     'tv:87108': [
       ['Chernobyl kaç sezon, kaç bölüm?',
@@ -667,4 +670,37 @@ test('gerçek yüklerin ürettiği tam metin (kanıt kilidi)', () => {
     if (!b) continue;
     assert.deepEqual(sorular(o).map((x) => [x.soru, x.cevap]), b, o.ad);
   }
+});
+
+// --- ROL NOTU (28 Ağu 2026, canlı çıktı okunurken bulundu) ----------------
+// Rol zaten parantez içinde basıldığı için TMDB'nin "(voice)" notu İÇ İÇE
+// parantez üretiyordu ve Türkçe cümlenin ortasında İngilizce kelime kalıyordu:
+// "…Chris Parnell (Jerry Smith (voice)), Spencer Grammer (Summer Smith (voice))…"
+const seoSssOyunculari2 = alan(SSS_DEP, 'seoSssOyunculari');
+
+test('rol sonundaki parantezli not atılır, iç içe parantez oluşmaz', () => {
+  const v = { credits: { cast: [
+    { name: 'Chris Parnell', character: 'Jerry Smith (voice)' },
+    { name: 'Sarah Chalke', character: 'Beth Smith (voice)' },
+    { name: 'Bir Oyuncu', character: 'Normal Rol' },
+  ] } };
+  assert.deepEqual(seoSssOyunculari2(v), [
+    'Chris Parnell (Jerry Smith)',
+    'Sarah Chalke (Beth Smith)',
+    'Bir Oyuncu (Normal Rol)',
+  ]);
+  for (const p of seoSssOyunculari2(v)) {
+    assert.ok(!p.includes('(('), `iç içe parantez: ${p}`);
+    assert.ok(!/voice/i.test(p), `İngilizce not sızdı: ${p}`);
+  }
+});
+
+test('rolün TAMAMI parantezliyse yalnız oyuncu adı basılır', () => {
+  const v = { credits: { cast: [{ name: 'Yalnız Ad', character: '(voice)' }] } };
+  assert.deepEqual(seoSssOyunculari2(v), ['Yalnız Ad']);
+});
+
+test('rolün ORTASINDAKİ parantez korunur (yalnız SON not atılır)', () => {
+  const v = { credits: { cast: [{ name: 'X', character: 'Dr. No' }] } };
+  assert.deepEqual(seoSssOyunculari2(v), ['X (Dr. No)']);
 });

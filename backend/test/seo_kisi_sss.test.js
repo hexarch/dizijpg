@@ -26,7 +26,8 @@ import { alan, KAYNAK } from './yardimci/seo_kaynak.js';
 const DEP = [
   'seoMetin', 'htmlKacir', 'SEO_SSS_BASLIK', 'SEO_SSS_MIN', 'SEO_AYLAR',
   'seoTarihTr', 'seoVeListesi', 'SEO_KISI_MESLEK', 'SEO_KISI_SSS_YAPIM',
-  'seoKisiYasi', 'seoKisiSorulari', 'seoSssGovdesi', 'seoSssJsonLd',
+  'seoYapimEki', 'seoKisiYasi', 'seoKisiSorulari', 'seoSssGovdesi',
+  'seoSssJsonLd',
 ];
 const seoKisiSorulari = alan(DEP, 'seoKisiSorulari');
 const seoKisiYasi = alan(DEP, 'seoKisiYasi');
@@ -131,9 +132,9 @@ test('CEVAP UYDURULMAZ: alan yoksa soru da yok', () => {
     'Adsız Yönetmen hangi dizi ve filmlerde yer aldı?',
   ]);
   assert.match(sorular[0].cevap, /bir yönetmen ve İstanbul, Türkiye doğumlu\./);
-  // Tek yapım: "dahil N yapımda" değil, doğrudan sayılır.
+  // TEK yapım -> TEKİL ek. (28 Ağu: burada "yapımlarında" yazıyordu.)
   assert.equal(sorular[1].cevap,
-    'Adsız Yönetmen dizi.jpg\'de Bir Dizi yapımlarında yer alıyor.');
+    'Adsız Yönetmen dizi.jpg\'de Bir Dizi yapımında yer alıyor.');
 });
 
 test('yaş yoksa ama doğum tarihi varsa "ne zaman doğdu" sorulur', () => {
@@ -231,7 +232,8 @@ test('/kisi/ rotası SSS bloğunu gövdeye BASIYOR ve jsonLd\'ye geçiriyor', ()
 // buydu; dizi/film takip sitesinde bu YANLIŞ cevap.
 const kisiFilmografi = alan(
   ['gecerliTmdb', 'SEO_KISI_ELENEN_TUR', 'kisiKonukluk',
-    'SEO_KISI_ANA_BOLUM', 'SEO_KISI_ANA_SIRA', 'kisiRolAgirligi',
+    'SEO_KISI_ANA_BOLUM', 'SEO_KISI_ANA_SIRA', 'SEO_KISI_KENDISI',
+    'kisiRolAgirligi',
     'kisiFilmografi'],
   'kisiFilmografi',
 );
@@ -344,5 +346,45 @@ test('alan eksikse ANA kabul edilir (gerçek başrolü geriye atmaktansa)', () =
   assert.deepEqual(
     kisiFilmografi(v).map((y) => y.name),
     ['Bölüm Sayısı Yok', 'Tek Bölüm'],
+  );
+});
+
+test('tekil/çoğul eki liste uzunluğundan gelir', () => {
+  const iki = seoKisiSorulari({
+    ad: 'İki Yapımlı', v: { known_for_department: 'Acting' },
+    hamYapimlar: [
+      { name: 'Bir Dizi', media_type: 'tv' },
+      { title: 'Bir Film', media_type: 'movie' },
+    ],
+    seo: { yorumlar: [], incelemeler: [] }, bugun: BUGUN,
+  });
+  assert.equal(iki[1].cevap,
+    'İki Yapımlı dizi.jpg\'de Bir Dizi ve Bir Film yapımlarında yer alıyor.');
+});
+
+test('"Self" kredisi (ödül töreni) geriye çekilir, SİLİNMEZ', () => {
+  // Üçüncü tur: tür süzgeci ve rol ağırlığından sonra bile Nicolas Cage'in
+  // cevabında "The Oscars", Johansson'ınkinde "Tony Awards" vardı. Ödül
+  // törenlerinin ayırt edici TÜRÜ yok ama `character` alanı "Self" diyor.
+  const v = { combined_credits: { cast: [
+    { ...kredi(1, 'The Oscars', 'tv', 900, [99]), character: 'Self', episode_count: 5 },
+    { ...kredi(2, 'Tony Awards', 'tv', 850, []), character: 'Herself - Presenter', episode_count: 4 },
+    { ...kredi(3, 'Hayalet Sürücü', 'movie', 50, [28]), character: 'Johnny Blaze', order: 0 },
+  ] } };
+  assert.deepEqual(
+    kisiFilmografi(v).map((y) => y.name || y.title),
+    ['Hayalet Sürücü', 'The Oscars', 'Tony Awards'],
+  );
+  assert.equal(kisiFilmografi(v).length, 3, 'kayıt silinmemeli');
+});
+
+test('"Selfridge" gibi adlar YANLIŞLIKLA eşleşmez (kelime sınırı)', () => {
+  const v = { combined_credits: { cast: [
+    { ...kredi(1, 'Mr Selfridge', 'tv', 10, [18]), character: 'Selfridge', episode_count: 30 },
+    { ...kredi(2, 'Bir Tören', 'tv', 900, []), character: 'Self', episode_count: 30 },
+  ] } };
+  assert.deepEqual(
+    kisiFilmografi(v).map((y) => y.name),
+    ['Mr Selfridge', 'Bir Tören'],
   );
 });

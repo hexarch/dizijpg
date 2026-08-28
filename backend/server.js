@@ -3598,12 +3598,29 @@ function seoSaglayiciParcalari(v, bolge = SEO_SSS_BOLGE) {
     .map(({ adlar, ulaclar }) => `${seoVeListesi(adlar)} üzerinden ${ulaclar.join(' ya da ')}`);
 }
 
+/**
+ * TMDB rol adının sonundaki parantezli NOT'u atar: "(voice)", "(uncredited)",
+ * "(archive footage)"…
+ *
+ * NEDEN (28 Ağu 2026, canlı çıktı okunurken): rol zaten parantez içinde
+ * basıldığı için not İÇ İÇE parantez üretiyordu ve Türkçe cümlenin ortasında
+ * İngilizce bir kelime kalıyordu — "Rick and Morty başrollerinde Chris Parnell
+ * (Jerry Smith (voice))… yer alıyor." Bu cümle motora olduğu gibi alıntılanıyor.
+ * Not sayfada başka yerde de basılmıyor, yani bilgi kaybı yok.
+ */
+function seoRolSadelestir(rol) {
+  const sade = String(rol ?? '').replace(/\s*\([^()]*\)\s*$/, '').trim();
+  // Rolün TAMAMI parantezliyse ("(voice)") geriye bir şey kalmaz: o zaman rol
+  // basılmaz, yalnız oyuncunun adı geçer.
+  return sade;
+}
+
 /** Cevaba girecek oyuncu adları — kısa ve tek rol varsa parantezle. */
 function seoSssOyunculari(v) {
   return (v?.credits?.cast || []).map((o) => {
     const ad = seoMetin(o?.name);
     if (!ad) return '';
-    const rol = seoMetin(o?.character);
+    const rol = seoRolSadelestir(seoMetin(o?.character));
     return rol && rol.length <= SEO_SSS_ROL_MAX && !rol.includes('/')
       ? `${ad} (${rol})` : ad;
   }).filter(Boolean).slice(0, SEO_SSS_OYUNCU);
@@ -4152,8 +4169,20 @@ function kisiKonukluk(y) {
 const SEO_KISI_ANA_BOLUM = 3;   // dizide ana kadro sayılmak için en az bölüm
 const SEO_KISI_ANA_SIRA = 10;   // filmde jenerik sırası bu değere kadar ana
 
+// "Self" / "Himself" / "Herself" / "Kendisi" — kişinin KENDİSİ olarak
+// göründüğü kredi: ödül töreni, talk show, kendisi hakkında belgesel.
+//
+// NEDEN (28 Ağu 2026, üçüncü tur — canlı çıktı yine okundu): tür süzgeci ve
+// rol ağırlığı katmanından SONRA bile Nicolas Cage'in cevabında "The Oscars",
+// Scarlett Johansson'ınkinde "Tony Awards" vardı. Ödül törenlerinin TMDB'de
+// ayırt edici bir TÜRÜ yok (10767/10763/10764'e girmiyorlar), ama `character`
+// alanı "Self" diyor. Bu kayıtlar SİLİNMİYOR, geriye çekiliyor: kişinin
+// gerçekten katıldığı yayınlar, sadece filmografisinin başında durmamalı.
+const SEO_KISI_KENDISI = /^(self|himself|herself|kendisi)\b/i;
+
 function kisiRolAgirligi(y) {
   const ekip = Boolean(y?.department || y?.job);
+  if (!ekip && SEO_KISI_KENDISI.test(String(y?.character || ''))) return 1;
   if (y?.media_type === 'tv') {
     const bolum = Number(y.episode_count);
     return Number.isFinite(bolum) && bolum < SEO_KISI_ANA_BOLUM ? 1 : 0;
@@ -4185,6 +4214,19 @@ function kisiFilmografi(v) {
 // kalsın (içerik sayfasındaki `SEO_SSS_OYUNCU` = 5 ile aynı gerekçe) —
 // listenin TAMAMI zaten sayfadaki afişli blokta ve `ItemList`te duruyor.
 const SEO_KISI_SSS_YAPIM = 6;
+
+/**
+ * "yapımında" / "yapımlarında" — cevap cümlesindeki tekil-çoğul uyumu.
+ *
+ * NEDEN AYRI YARDIMCI (28 Ağu 2026, canlı çıktı okunurken bulundu): kişi ve
+ * firma cümleleri ayrı yazılmıştı ve İKİSİ DE yanlıştı, ters yönlerde —
+ * kişide tek yapım için "…Bir Dizi yapımlarında", firmada dört film için
+ * "…Jack'in Kayık Gezisi (2010) yapımında" çıkıyordu. Ek artık LİSTE
+ * UZUNLUĞUNDAN türetiliyor, iki çağıran da aynı kaynağı kullanıyor.
+ */
+function seoYapimEki(adet) {
+  return adet === 1 ? 'yapımında' : 'yapımlarında';
+}
 
 /**
  * Doğum (ve varsa ölüm) tarihinden TAM YIL yaş. Ay/gün geçmediyse bir eksik.
@@ -4263,7 +4305,8 @@ function seoKisiSorulari({ ad, v, hamYapimlar, seo, bugun }) {
     ekle(`${ad} hangi dizi ve filmlerde yer aldı?`,
       toplam > adlar.length
         ? `${ad} dizi.jpg'de ${seoVeListesi(adlar)} dahil ${toplam} yapımda yer alıyor.`
-        : `${ad} dizi.jpg'de ${seoVeListesi(adlar)} yapımlarında yer alıyor.`);
+        : `${ad} dizi.jpg'de ${seoVeListesi(adlar)}`
+          + ` ${seoYapimEki(adlar.length)} yer alıyor.`);
   }
 
   // TOPLUM KUYRUĞU — yalnız İLK cevaba (içerik sayfasıyla aynı disiplin).
@@ -4534,6 +4577,9 @@ const SEO_SIRKET_YAPIM_MIN = 6;   // altındaysa ince sayfa -> noindex,follow
 // Firma SSS cevabında adı geçen yapım sayısı — kişi sayfasıyla aynı gerekçe
 // (cümle tek satırda okunur kalsın); tam liste zaten afişli blokta ve ItemList'te.
 const SEO_SIRKET_SSS_YAPIM = 5;
+// Firma yapımları SAYILIRKEN kullanılan tavan = TMDB discover'ın bir sayfası.
+// Cevap cümlesi bu değere dayandığında sayı vermez, "…'den fazla" der.
+const SEO_SIRKET_SAYIM = 20;
 
 /**
  * `/sirket/:id` sayfasının soru-cevap listesi. Kişi sayfasıyla AYNI sözleşme.
@@ -4590,10 +4636,19 @@ function seoSirketSorulari({ ad, firma, diziAdlari, filmAdlari, diziToplam, film
 function seoSirketSssCumlesi(ad, adlar, toplam, tur) {
   const liste = (adlar || []).filter(Boolean);
   if (!liste.length) return '';
-  return toplam > liste.length
-    ? `${ad} dizi.jpg'de ${seoVeListesi(liste)} dahil ${toplam} ${tur}`
-      + ' yapımında yer alıyor.'
-    : `${ad} dizi.jpg'de ${seoVeListesi(liste)} yapımında yer alıyor.`;
+  if (toplam <= liste.length) {
+    return `${ad} dizi.jpg'de ${seoVeListesi(liste)}`
+      + ` ${seoYapimEki(liste.length)} yer alıyor.`;
+  }
+  // TAVANA DAYANDIYSA SAYI VERİLMEZ, "…'den fazla" DENİR (28 Ağu 2026).
+  // `toplam` discover'ın İLK SAYFASINDAN sayılıyor ve o sayfa en çok
+  // SEO_SIRKET_SAYIM (20) kayıt döndürüyor. Canlı çıktıda görüldü: Marvel
+  // Studios için hem dizi hem film "20" çıkıyordu — çünkü ikisi de tavana
+  // dayanmıştı. "Marvel Studios 20 dizinin yapımında yer alıyor" cümlesi
+  // ALT SINIRI toplam gibi sunuyordu; motora yanlış olgu alıntılatırdı.
+  const sayi = toplam >= SEO_SIRKET_SAYIM ? `${SEO_SIRKET_SAYIM}'den fazla` : `${toplam}`;
+  return `${ad} dizi.jpg'de ${seoVeListesi(liste)} dahil ${sayi} ${tur}`
+    + ' yapımında yer alıyor.';
 }
 
 
@@ -4784,8 +4839,8 @@ app.get('/og/sirket/:id', sarici(async (req, res) => {
     if (!ad) return ogYok(res, url, 'Bu yapım firması dizi.jpg üzerinde yok.');
 
     // Discover ilk sayfa (20) dilimlenmeden sayılır; basılan liste tavanlı.
-    const diziHam = seoSirketYapimlari(diziYanit, 'tv', 20);
-    const filmHam = seoSirketYapimlari(filmYanit, 'movie', 20);
+    const diziHam = seoSirketYapimlari(diziYanit, 'tv', SEO_SIRKET_SAYIM);
+    const filmHam = seoSirketYapimlari(filmYanit, 'movie', SEO_SIRKET_SAYIM);
     const diziler = diziHam.slice(0, SEO_SIRKET_YAPIM);
     const filmler = filmHam.slice(0, SEO_SIRKET_YAPIM);
     const yapimlar = [...diziler, ...filmler];
